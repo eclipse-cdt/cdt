@@ -142,10 +142,7 @@ public class CPPFunctionTests extends PDOMTestBase {
 		assertReturnType(pdom, "floatCPPFunction", IBasicType.t_float);
 	}
 
-	public void _testOverloadedFunction() throws Exception {
-		// Right now, only one binding is showing up for overloaded functions.
-		// There really should be one for each declaration.
-
+	public void testOverloadedFunction() throws Exception {
 		IBinding[] bindings = findQualifiedName(pdom, "overloadedFunction");
 		assertEquals(2, bindings.length);
 		boolean[] seen = new boolean[2];

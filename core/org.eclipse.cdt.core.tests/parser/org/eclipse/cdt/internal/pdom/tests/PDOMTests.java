@@ -22,11 +22,14 @@ public class PDOMTests extends TestSuite {
 	public static Test suite() {
 		TestSuite suite = new PDOMTests();
 		
-		suite.addTest(EnumerationTests.suite());
-		suite.addTest(ClassTests.suite());
-		suite.addTest(TypesTests.suite());
-		suite.addTest(IncludesTests.suite());
-		suite.addTest(BTreeTests.suite());
+		suite.addTestSuite(EnumerationTests.class);
+		suite.addTestSuite(ClassTests.class);
+		suite.addTestSuite(TypesTests.class);
+		suite.addTestSuite(IncludesTests.class);
+		suite.addTestSuite(OverloadsWithinSingleTUTests.class);
+		suite.addTestSuite(OverloadsWithinCommonHeaderTests.class);
+		suite.addTestSuite(BTreeTests.class);
+		
 
 		suite.addTest(CPPFieldTests.suite());
 		suite.addTest(CPPFunctionTests.suite());

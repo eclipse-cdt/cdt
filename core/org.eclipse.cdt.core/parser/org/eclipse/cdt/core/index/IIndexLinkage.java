@@ -7,6 +7,7 @@
  *
  * Contributors:
  *    Markus Schorn - initial API and implementation
+ *    Andrew Ferguson (Symbian)
  *******************************************************************************/ 
 
 package org.eclipse.cdt.core.index;

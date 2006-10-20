@@ -8,6 +8,7 @@
  * Contributors:
  * QNX - Initial API and implementation
  * IBM Corporation
+ * Andrew Ferguson (Symbian)
  *******************************************************************************/
 
 package org.eclipse.cdt.internal.core.pdom.dom.cpp;
@@ -210,8 +211,19 @@ class PDOMCPPMethod extends PDOMCPPBinding implements ICPPMethod, ICPPFunctionTy
 	}
 
 	public IType[] getParameterTypes() throws DOMException {
-		return new IType[0];
-//		TODO throw new PDOMNotImplementedError();
+		try {
+			int n = pdom.getDB().getInt(record + NUM_PARAMS);
+			IType[] types = new IType[n];
+			PDOMCPPParameter param = getFirstParameter();
+			while (param != null) {
+				types[--n] = param.getType();
+				param = param.getNextParameter();
+			}
+			return types;
+		} catch (CoreException e) {
+			CCorePlugin.log(e);
+			return new IType[0];
+		}
 	}
 
 	public IType getReturnType() throws DOMException {
@@ -235,5 +247,13 @@ class PDOMCPPMethod extends PDOMCPPBinding implements ICPPMethod, ICPPFunctionTy
 		// TODO further analysis to compare with DOM objects
 		return false;
 	}
-
+	
+	public IScope getScope() throws DOMException {
+		try {
+			return (IScope)getParentNode();
+		} catch(CoreException ce) {
+			CCorePlugin.log(ce);
+			return null;
+		}
+	}
 }

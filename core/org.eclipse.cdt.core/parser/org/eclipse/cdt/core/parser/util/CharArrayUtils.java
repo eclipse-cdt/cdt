@@ -7,23 +7,21 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Andrew Ferguson (Symbian)
  *******************************************************************************/
 /*
  * Created on May 28, 2004
- *
- * TODO To change the template for this generated file go to
- * Window - Preferences - Java - Code Style - Code Templates
  */
 package org.eclipse.cdt.core.parser.util;
 
 /**
+ * A static utility class for char arrays
  * @author dschaefe
  *
- * TODO To change the template for this generated type comment go to
- * Window - Preferences - Java - Code Style - Code Templates
  */
 public class CharArrayUtils {
-
+	private CharArrayUtils() {}
+	
 	public static final int hash(char[] str, int start, int length) {
 		int h = 0;
 		int end = start + length;
@@ -50,6 +48,32 @@ public class CharArrayUtils {
 				return false;
 		
 		return true;
+	}
+	
+	/**
+	 * Implements a lexicographical comparator for char arrays. Comparison is done
+	 * on a per char basis, not a code-point basis.
+	 * 
+	 * @param str1 the first of the two char arrays to compare
+	 * @param str2 the second of the two char arrays to compare
+	 * @return  0 if str1==str2, -1 if str1 &lt; str2 and 1 if str1 &gt; str2
+	 */
+	/* 
+	 * aftodo - we should think about using the Character codepoint static methods
+	 * if we move to Java 5
+	 */
+	public static final int compare(char[] str1, char[] str2) {
+		if (str1 == str2)
+			return 0;
+		
+		if (str1.length != str2.length)
+			return str1.length < str2.length ? -1 : 1;
+		
+		for (int i = 0; i < str1.length; ++i)
+			if (str1[i] != str2[i])
+				return str1[i] < str2[i] ? -1 : 1;
+		
+		return 0;
 	}
 	
 	public static final boolean equals(char[] str1, int start1, int length1, char[] str2) {
@@ -231,7 +255,6 @@ public class CharArrayUtils {
 	}
 	
 	final static public char[] trim(char[] chars) {
-
 		if (chars == null)
 			return null;
 
@@ -248,7 +271,6 @@ public class CharArrayUtils {
 		return chars;
 	}
 
-	
 	final static public char[] lastSegment(char[] array, char[] separator) {
 		int pos = lastIndexOf(separator, array);
 		if (pos < 0)
@@ -268,6 +290,4 @@ public class CharArrayUtils {
             buff[ i + j ] = charImage[j];
         }
     }
-
-
 }

@@ -53,4 +53,7 @@ public class PDOMFastIndexer implements IPDOMIndexer {
 		CCoreInternals.getPDOMManager().enqueue(new PDOMFastReindex(this));
 	}
 	
+	public String getID() {
+		return ID;
+	}
 }

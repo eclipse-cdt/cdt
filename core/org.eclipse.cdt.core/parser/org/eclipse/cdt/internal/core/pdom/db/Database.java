@@ -11,6 +11,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom.db;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 
@@ -53,6 +54,7 @@ import org.eclipse.core.runtime.Status;
  */
 public class Database {
 
+	private final File location;
 	private final RandomAccessFile file;
 	Chunk[] toc;
 	
@@ -73,6 +75,7 @@ public class Database {
 		
 	public Database(String filename) throws CoreException {
 		try {
+			location = new File(filename);
 			file = new RandomAccessFile(filename, "rw"); //$NON-NLS-1$
 			
 			// Allocate chunk table, make sure we have at least one
@@ -330,5 +333,12 @@ public class Database {
 	 */
 	public void close() throws IOException {
 		file.close();
+	}
+	
+	/**
+     * This method is public for testing purposes only.
+     */
+	public File getLocation() {
+		return location;
 	}
 }

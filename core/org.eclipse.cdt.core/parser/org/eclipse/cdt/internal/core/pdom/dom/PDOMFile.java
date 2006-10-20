@@ -99,6 +99,13 @@ public class PDOMFile implements IIndexFragmentFile {
 		setFirstIncludedBy(null);
 	}
 	
+	public void setFilename(String newName) throws CoreException {
+		Database db = pdom.getDB();
+		int oldRecord = db.getInt(record + FILE_NAME);
+		db.free(oldRecord);
+		db.putInt(record + FILE_NAME, db.newString(newName).getRecord());
+	}
+	
 	public int getRecord() {
 		return record;
 	}

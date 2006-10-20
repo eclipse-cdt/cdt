@@ -23,6 +23,7 @@ import org.eclipse.cdt.core.dom.IPDOMNode;
 import org.eclipse.cdt.core.dom.IPDOMVisitor;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTName;
+import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IField;
 import org.eclipse.cdt.core.dom.ast.IScope;
@@ -42,12 +43,14 @@ import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMLinkage;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMName;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
-import org.eclipse.cdt.internal.core.pdom.dom.PDOMNotImplementedError;
 import org.eclipse.core.runtime.CoreException;
 
 /**
  * @author Doug Schaefer
  * 
+ */
+/*
+ * aftodo - contract get Methods/Fields not honoured?
  */
 class PDOMCPPClassType extends PDOMCPPBinding implements ICPPClassType,
 		ICPPClassScope, IPDOMMemberOwner {
@@ -74,13 +77,13 @@ class PDOMCPPClassType extends PDOMCPPBinding implements ICPPClassType,
 		// linked list is initialized by storage being zero'd by malloc
 	}
 	
+	public PDOMCPPClassType(PDOM pdom, int bindingRecord) {
+		super(pdom, bindingRecord);
+	}
+	
 	public void addMember(PDOMNode member) throws CoreException {
 		PDOMNodeLinkedList list = new PDOMNodeLinkedList(pdom, record + MEMBERLIST, getLinkageImpl());
 		list.addMember(member);
-	}
-	
-	public PDOMCPPClassType(PDOM pdom, int bindingRecord) {
-		super(pdom, bindingRecord);
 	}
 
 	protected int getRecordSize() {
@@ -114,14 +117,6 @@ class PDOMCPPClassType extends PDOMCPPBinding implements ICPPClassType,
 			// TODO - should we check for real?
 			return false;
 	}
-
-	public Object clone() {
-		throw new PDOMNotImplementedError();
-	}
-
-	public IField findField(String name) throws DOMException {
-		throw new PDOMNotImplementedError();
-	}
 	
 	public ICPPBase[] getBases() throws DOMException {
 		try {
@@ -143,15 +138,6 @@ class PDOMCPPClassType extends PDOMCPPBinding implements ICPPClassType,
 		list.accept(visitor);
 	}
 	
-	public ICPPConstructor[] getConstructors() throws DOMException {
-		// TODO
-		return new ICPPConstructor[0];
-	}
-
-	public ICPPField[] getDeclaredFields() throws DOMException {
-		throw new PDOMNotImplementedError();
-	}
-
 	private static class GetMethods implements IPDOMVisitor {
 		private final List methods;
 		public GetMethods(List methods) {
@@ -245,9 +231,7 @@ class PDOMCPPClassType extends PDOMCPPBinding implements ICPPClassType,
 		}
 	}
 
-	public IBinding[] getFriends() throws DOMException {
-		throw new PDOMNotImplementedError();
-	}
+
 
 	private static class GetNestedClasses implements IPDOMVisitor {
 		private List nestedClasses = new ArrayList();
@@ -299,29 +283,9 @@ class PDOMCPPClassType extends PDOMCPPBinding implements ICPPClassType,
 		return this;
 	}
 
-	public ICPPMethod[] getImplicitMethods() {
-		throw new PDOMNotImplementedError();
-	}
-
-	public void addBinding(IBinding binding) throws DOMException {
-		throw new PDOMNotImplementedError();
-	}
-
 	public void addName(IASTName name) throws DOMException {
 		// TODO - this might be a better way of adding names to scopes
 		// but for now do nothing.
-	}
-
-	public IBinding[] find(String name) throws DOMException {
-		throw new PDOMNotImplementedError();
-	}
-
-	public IBinding getBinding(IASTName name, boolean resolve) throws DOMException {
-		return null;
-	}
-
-	public IScope getParent() throws DOMException {
-		return null;
 	}
 
 	public IName getScopeName() throws DOMException {
@@ -336,8 +300,44 @@ class PDOMCPPClassType extends PDOMCPPBinding implements ICPPClassType,
 		}
 	}
 
-	public void removeBinding(IBinding binding) throws DOMException {
-		throw new PDOMNotImplementedError();
+	public void addChild(PDOMNode member) throws CoreException {addMember(member);}
+	
+	public ICPPConstructor[] getConstructors() throws DOMException {
+		// TODO
+		return new ICPPConstructor[0];
+	}
+	
+	public boolean isFullyCached() throws DOMException {return true;}
+	
+	public IBinding getBinding(IASTName name, boolean resolve) throws DOMException {
+		return null;
+	}
+
+	public IScope getParent() throws DOMException {
+		return null;
+	}
+	
+	// Not implemented
+	
+	public Object clone() {fail();return null;}
+	public IField findField(String name) throws DOMException {fail();return null;}
+	public IBinding[] getFriends() throws DOMException {fail();return null;}
+	public ICPPMethod[] getImplicitMethods() {fail(); return null;}
+	public void addBinding(IBinding binding) throws DOMException {fail();}
+	public IBinding[] find(String name) throws DOMException {fail();return null;}
+	public void flushCache() throws DOMException {fail();}	
+	public ICPPField[] getDeclaredFields() throws DOMException {fail();return null;}
+	public void removeBinding(IBinding binding) throws DOMException {fail();}
+	public void setFullyCached(boolean b) throws DOMException {fail();}
+	public IASTNode getPhysicalNode() throws DOMException {fail();return null;}
+	
+	public IScope getScope() throws DOMException {
+		try {
+			return (IScope)getParentNode();
+		} catch(CoreException ce) {
+			CCorePlugin.log(ce);
+			return null;
+		}
 	}
 	
 	public boolean mayHaveChildren() {

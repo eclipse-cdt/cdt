@@ -48,7 +48,6 @@ import org.eclipse.cdt.internal.core.pdom.dom.PDOMInclude;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMLinkage;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMName;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
-import org.eclipse.cdt.internal.core.pdom.dom.PDOMFile.Comparator;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMFile.Finder;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
@@ -64,7 +63,7 @@ import org.eclipse.core.runtime.Status;
 public class PDOM extends PlatformObject implements IIndexFragment, IPDOM {
 
 	private Database db;
-	
+
 	public static final int VERSION = 13;
 	// 0 - the beginning of it all
 	// 1 - first change to kick off upgrades
@@ -83,7 +82,7 @@ public class PDOM extends PlatformObject implements IIndexFragment, IPDOM {
 
 	public static final int LINKAGES = Database.DATA_AREA;
 	public static final int FILE_INDEX = Database.DATA_AREA + 4;
-	
+
 	// Local caches
 	private BTree fileIndex;
 	private Map fLinkageIDCache = new HashMap();
@@ -93,12 +92,12 @@ public class PDOM extends PlatformObject implements IIndexFragment, IPDOM {
 		// Load up the database
 		fPath= dbPath;
 		db = new Database(dbPath.toOSString());
-		
+
 		if (db.getVersion() == VERSION) {
 			readLinkages();
 		}
 	}
-	
+
 	public boolean versionMismatch() {
 		if (db.getVersion() != VERSION) {
 			db.setVersion(VERSION);
@@ -106,32 +105,32 @@ public class PDOM extends PlatformObject implements IIndexFragment, IPDOM {
 		} else
 			return false;
 	}
-	
+
 	public void accept(IPDOMVisitor visitor) throws CoreException {
 		for (Iterator iter = fLinkageIDCache.values().iterator(); iter.hasNext();) {
 			PDOMLinkage linkage = (PDOMLinkage) iter.next();
 			linkage.accept(visitor);
 		}
 	}
-	
+
 	public static interface IListener {
 		public void handleChange(PDOM pdom);
 	}
-	
+
 	private List listeners;
-	
+
 	public void addListener(IListener listener) {
 		if (listeners == null)
 			listeners = new LinkedList();
 		listeners.add(listener);
 	}
-	
+
 	public void removeListener(IListener listener) {
 		if (listeners == null)
 			return;
 		listeners.remove(listener);
 	}
-	
+
 	private void fireChange() {
 		if (listeners == null)
 			return;
@@ -146,7 +145,7 @@ public class PDOM extends PlatformObject implements IIndexFragment, IPDOM {
 
 	public BTree getFileIndex() throws CoreException {
 		if (fileIndex == null)
-			fileIndex = new BTree(getDB(), FILE_INDEX);
+			fileIndex = new BTree(getDB(), FILE_INDEX, new PDOMFile.Comparator(getDB()));
 		return fileIndex;
 	}
 
@@ -156,29 +155,29 @@ public class PDOM extends PlatformObject implements IIndexFragment, IPDOM {
 		int record = finder.getRecord();
 		return record != 0 ? new PDOMFile(this, record) : null;
 	}
-	
+
 	public IIndexFragmentFile getFile(IPath path) throws CoreException {
 		return getFile(path.toOSString());
 	}
-	
+
 	protected IIndexFragmentFile addFile(String filename) throws CoreException {
 		PDOMFile file = getFile(filename);
 		if (file == null) {
 			file = new PDOMFile(this, filename);
-			getFileIndex().insert(file.getRecord(), new Comparator(db));
+			getFileIndex().insert(file.getRecord());
 		}
 		return file;		
 	}
-	
+
 	protected void clear() throws CoreException {
 		Database db = getDB();
 		// Clear out the database
 		db.clear();
-		
+
 		// Zero out the File Index and Linkages
 		db.putInt(FILE_INDEX, 0);
 		fileIndex = null;
-		
+
 		db.putInt(LINKAGES, 0);
 		fLinkageIDCache.clear();
 	}
@@ -201,8 +200,8 @@ public class PDOM extends PlatformObject implements IIndexFragment, IPDOM {
 		if (binding instanceof PDOMBinding) {
 			List names = new ArrayList();
 			for (PDOMName name = ((PDOMBinding)binding).getFirstDefinition();
-					name != null;
-					name = name.getNextInBinding())
+			name != null;
+			name = name.getNextInBinding())
 				names.add(name);
 			return (IName[]) names.toArray(new IIndexName[names.size()]);
 		}
@@ -216,14 +215,14 @@ public class PDOM extends PlatformObject implements IIndexFragment, IPDOM {
 		if (binding instanceof PDOMBinding) {
 			List names = new ArrayList();
 			for (PDOMName name = ((PDOMBinding)binding).getFirstReference();
-					name != null;
-					name = name.getNextInBinding())
+			name != null;
+			name = name.getNextInBinding())
 				names.add(name);
 			return (IName[]) names.toArray(new IIndexName[names.size()]);
 		}
 		return IIndexFragmentName.EMPTY_NAME_ARRAY;
 	}
-		
+
 	public IIndexProxyBinding findBinding(IASTName name) throws CoreException {
 		PDOMLinkage linkage= adaptLinkage(name.getLinkage());
 		if (linkage != null) {
@@ -235,13 +234,13 @@ public class PDOM extends PlatformObject implements IIndexFragment, IPDOM {
 	private static class BindingFinder implements IPDOMVisitor {
 		private final Pattern[] pattern;
 		private final IProgressMonitor monitor;
-		
+
 		private final ArrayList currentPath= new ArrayList();
 		private final ArrayList matchStack= new ArrayList();
 		private List bindings = new ArrayList();
 		private boolean isFullyQualified;
 		private BitSet matchesUpToLevel;
-		
+
 		public BindingFinder(Pattern[] pattern, boolean isFullyQualified, IProgressMonitor monitor) {
 			this.pattern = pattern;
 			this.monitor = monitor;
@@ -250,11 +249,11 @@ public class PDOM extends PlatformObject implements IIndexFragment, IPDOM {
 			matchesUpToLevel.set(0);
 			matchStack.add(matchesUpToLevel);
 		}
-		
+
 		public boolean visit(IPDOMNode node) throws CoreException {
 			if (monitor.isCanceled())
 				throw new CoreException(Status.OK_STATUS);
-			
+
 			if (node instanceof PDOMBinding) {
 				PDOMBinding binding = (PDOMBinding)node;
 				String name = binding.getName();
@@ -264,7 +263,7 @@ public class PDOM extends PlatformObject implements IIndexFragment, IPDOM {
 				if (matchesUpToLevel.get(lastIdx) && pattern[lastIdx].matcher(name).matches()) {
 					bindings.add(binding);
 				}
-						
+
 				// check if we have a partial match
 				if (binding.mayHaveChildren()) {
 					boolean visitNextLevel= false;
@@ -298,12 +297,12 @@ public class PDOM extends PlatformObject implements IIndexFragment, IPDOM {
 				matchesUpToLevel= (BitSet) matchStack.remove(matchStack.size()-1);
 			}
 		}
-		
+
 		public IIndexFragmentBinding[] getBindings() {
 			return (IIndexFragmentBinding[])bindings.toArray(new IIndexFragmentBinding[bindings.size()]);
 		}
 	}
-	
+
 	/** 
 	 * @deprecated
 	 */
@@ -317,7 +316,7 @@ public class PDOM extends PlatformObject implements IIndexFragment, IPDOM {
 	public IBinding[] findBindings(Pattern[] pattern, IProgressMonitor monitor) throws CoreException {
 		return findBindings(pattern, true, new IndexFilter(), monitor);
 	}
-	
+
 	public IIndexBinding[] findBindings(Pattern pattern, boolean isFullyQualified, IndexFilter filter, IProgressMonitor monitor) throws CoreException {
 		return findBindings(new Pattern[] { pattern }, isFullyQualified, filter, monitor);
 	}
@@ -373,7 +372,7 @@ public class PDOM extends PlatformObject implements IIndexFragment, IPDOM {
 	public PDOMLinkage getLinkage(int record) throws CoreException {
 		if (record == 0)
 			return null;
-		
+
 		// First check the cache. We do a linear search since there will be very few linkages
 		// in a given database.
 		Iterator i = fLinkageIDCache.values().iterator();
@@ -382,26 +381,26 @@ public class PDOM extends PlatformObject implements IIndexFragment, IPDOM {
 			if (linkage.getRecord() == record)
 				return linkage;
 		}
-		
+
 		String id = PDOMLinkage.getId(this, record).getString();
 		return createLinkage(id);
 	}
-	
+
 	private int getFirstLinkageRecord() throws CoreException {
 		return db.getInt(LINKAGES);
 	}
-	
+
 	public PDOMLinkage[] getLinkages() {
 		Collection values = fLinkageIDCache.values();
 		return (PDOMLinkage[]) values.toArray(new PDOMLinkage[values.size()]);
 	}
-	
+
 	public void insertLinkage(PDOMLinkage linkage) throws CoreException {
 		linkage.setNext(db.getInt(LINKAGES));
 		db.putInt(LINKAGES, linkage.getRecord());
 		fLinkageIDCache.put(linkage.getID(), linkage);
 	}
-	
+
 	public PDOMBinding getBinding(int record) throws CoreException {
 		if (record == 0)
 			return null;
@@ -417,7 +416,7 @@ public class PDOM extends PlatformObject implements IIndexFragment, IPDOM {
 	private int lockCount;
 	private int waitingReaders;
 	private long lastWriteAccess= 0;
-	
+
 	public void acquireReadLock() throws InterruptedException {
 		synchronized (mutex) {
 			++waitingReaders;
@@ -427,7 +426,7 @@ public class PDOM extends PlatformObject implements IIndexFragment, IPDOM {
 			++lockCount;
 		}
 	}
-	
+
 	public void releaseReadLock() {
 		synchronized (mutex) {
 			assert lockCount > 0: "No lock to release"; //$NON-NLS-1$
@@ -436,11 +435,11 @@ public class PDOM extends PlatformObject implements IIndexFragment, IPDOM {
 			mutex.notifyAll();
 		}
 	}
-	
+
 	public void acquireWriteLock() throws InterruptedException {
 		acquireWriteLock(0);
 	}
-	
+
 	public void acquireWriteLock(int giveupReadLocks) throws InterruptedException {
 		synchronized (mutex) {
 			if (giveupReadLocks > 0) {
@@ -453,18 +452,18 @@ public class PDOM extends PlatformObject implements IIndexFragment, IPDOM {
 					lockCount= 0;
 				}
 			}
-			
+
 			// Let the readers go first
 			while (lockCount != 0 || waitingReaders > 0)
 				mutex.wait();
 			--lockCount;
 		}
 	}
-	
+
 	public void releaseWriteLock() {
 		releaseWriteLock(0);
 	}
-	
+
 	public void releaseWriteLock(int establishReadLocks) {
 		assert lockCount == -1;
 		lastWriteAccess= System.currentTimeMillis();
@@ -475,8 +474,8 @@ public class PDOM extends PlatformObject implements IIndexFragment, IPDOM {
 		}
 		fireChange();
 	}
-		
-	
+
+
 	public long getLastWriteAccess() {
 		return lastWriteAccess;
 	}
@@ -492,7 +491,7 @@ public class PDOM extends PlatformObject implements IIndexFragment, IPDOM {
 				return pdomBinding;
 			}
 		}
-		
+
 		PDOMLinkage linkage= adaptLinkage(binding.getLinkage());
 		if (linkage != null) {
 			return linkage.adaptBinding(binding);
@@ -525,7 +524,7 @@ public class PDOM extends PlatformObject implements IIndexFragment, IPDOM {
 
 	public IIndexFragmentName[] findNames(IIndexProxyBinding binding, int options) throws CoreException {
 		PDOMBinding pdomBinding = (PDOMBinding) adaptBinding(binding);
-		
+
 		if (pdomBinding != null) {
 			PDOMName name;
 			List names = new ArrayList();
@@ -565,7 +564,7 @@ public class PDOM extends PlatformObject implements IIndexFragment, IPDOM {
 		if (file.getIndexFragment() == this && file instanceof PDOMFile) {
 			return (PDOMFile) file;
 		}
-		
+
 		return getFile(file.getLocation());
 	}
 
@@ -580,7 +579,7 @@ public class PDOM extends PlatformObject implements IIndexFragment, IPDOM {
 		}
 		return new PDOMInclude[0];
 	}
-	
+
 	public IIndexFragmentFile resolveInclude(IIndexFragmentInclude include) throws CoreException {
 		if (include.getFragment() == this && include instanceof PDOMInclude) {
 			PDOMInclude pdomInclude= (PDOMInclude) include;
@@ -592,5 +591,4 @@ public class PDOM extends PlatformObject implements IIndexFragment, IPDOM {
 	public IPath getPath() {
 		return fPath;
 	}
-
 }

@@ -53,6 +53,7 @@ class PDOMFullHandleDelta extends PDOMFullIndexerJob {
 	}
 
 	public void run(IProgressMonitor monitor) {
+		setupIndexAndReaderFactory();
 		try {
 			long start = System.currentTimeMillis();
 					

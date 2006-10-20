@@ -140,20 +140,21 @@ public class DBTest extends TestCase {
 				"BETA"
 		};
 		
-		BTree btree = new BTree(db, Database.DATA_AREA);
+		IBTreeComparator comparator = new IBTreeComparator() {
+			public int compare(int record1, int record2) throws CoreException {
+				IString string1 = db.getString(db.getInt(record1 + 4));
+				IString string2 = db.getString(db.getInt(record2 + 4));
+				return string1.compare(string2);
+			}
+		};
+		BTree btree = new BTree(db, Database.DATA_AREA, comparator);
 		for (int i = 0; i < names.length; ++i) {
 			String name = names[i];
 			int record = db.malloc(8);
 			db.putInt(record + 0, i);
 			IString string = db.newString(name);
 			db.putInt(record + 4, string.getRecord());
-			btree.insert(record, new IBTreeComparator() {
-				public int compare(int record1, int record2) throws CoreException {
-					IString string1 = db.getString(db.getInt(record1 + 4));
-					IString string2 = db.getString(db.getInt(record2 + 4));
-					return string1.compare(string2);
-				}
-			});
+			btree.insert(record);
 		}
 		
 		for (int i = 0; i < names.length; ++i) {

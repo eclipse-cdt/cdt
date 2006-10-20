@@ -9,12 +9,11 @@
  * QNX - Initial API and implementation
  * Markus Schorn (Wind River Systems)
  * IBM Corporation
+ * Andrew Ferguson (Symbian)
  *******************************************************************************/
 
 package org.eclipse.cdt.internal.core.pdom.dom.c;
 
-import org.eclipse.cdt.core.dom.IPDOMNode;
-import org.eclipse.cdt.core.dom.IPDOMVisitor;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionCallExpression;
 import org.eclipse.cdt.core.dom.ast.IASTIdExpression;
@@ -32,16 +31,20 @@ import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.core.dom.ast.c.ICASTElaboratedTypeSpecifier;
+import org.eclipse.cdt.core.dom.ast.c.ICBasicType;
 import org.eclipse.cdt.core.dom.ast.gnu.c.GCCLanguage;
 import org.eclipse.cdt.core.model.ILanguage;
 import org.eclipse.cdt.internal.core.Util;
+import org.eclipse.cdt.internal.core.dom.bid.IBindingIdentityFactory;
+import org.eclipse.cdt.internal.core.dom.bid.ILocalBindingIdentity;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
+import org.eclipse.cdt.internal.core.pdom.dom.FindBindingByLinkageConstant;
+import org.eclipse.cdt.internal.core.pdom.dom.FindEquivalentBinding;
 import org.eclipse.cdt.internal.core.pdom.dom.IPDOMMemberOwner;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMFile;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMLinkage;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMName;
-import org.eclipse.cdt.internal.core.pdom.dom.PDOMNamedNode;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Status;
@@ -58,6 +61,10 @@ class PDOMCLinkage extends PDOMLinkage {
 	public PDOMCLinkage(PDOM pdom) throws CoreException {
 		super(pdom, C_LINKAGE_ID, C_LINKAGE_ID.toCharArray()); 
 	}
+
+	public int getNodeType() {
+		return LINKAGE;
+	}
 	
 	public String getID() {
 		return C_LINKAGE_ID;
@@ -70,19 +77,23 @@ class PDOMCLinkage extends PDOMLinkage {
 	public static final int CENUMERATION = PDOMLinkage.LAST_NODE_TYPE + 5;
 	public static final int CENUMERATOR = PDOMLinkage.LAST_NODE_TYPE + 6;
 	public static final int CTYPEDEF = PDOMLinkage.LAST_NODE_TYPE + 7;
+	public static final int CPARAMETER = PDOMLinkage.LAST_NODE_TYPE + 8;
+	public static final int CBASICTYPE = PDOMLinkage.LAST_NODE_TYPE + 9;
 
 	public ILanguage getLanguage() {
 		return new GCCLanguage();
 	}
+
 		
+
 	public PDOMBinding addName(IASTName name, PDOMFile file) throws CoreException {
 		if (name == null)
 			return null;
-		
+
 		char[] namechars = name.toCharArray();
 		if (namechars == null || name.toCharArray().length == 0)
 			return null;
-		
+
 		IBinding binding = name.resolveBinding();
 		if (binding == null || binding instanceof IProblemBinding)
 			// can't tell what it is
@@ -91,13 +102,13 @@ class PDOMCLinkage extends PDOMLinkage {
 		if (binding instanceof IParameter)
 			// skip parameters
 			return null;
-	
+
 		PDOMBinding pdomBinding = adaptBinding(binding);
 		if (pdomBinding == null) {
 			PDOMNode parent = getAdaptedParent(binding);
 			if (parent == null)
 				return null;
-			
+
 			if (binding instanceof IParameter)
 				return null; // skip parameters
 			else if (binding instanceof IField) { // must be before IVariable
@@ -116,74 +127,21 @@ class PDOMCLinkage extends PDOMLinkage {
 					IEnumeration enumeration = (IEnumeration)((IEnumerator)binding).getType();
 					PDOMBinding pdomEnumeration = adaptBinding(enumeration);
 					if (pdomEnumeration instanceof PDOMCEnumeration)
-					pdomBinding = new PDOMCEnumerator(pdom, parent, name,
-							(PDOMCEnumeration)pdomEnumeration);
+						pdomBinding = new PDOMCEnumerator(pdom, parent, name,
+								(PDOMCEnumeration)pdomEnumeration);
 				} catch (DOMException e) {
 					throw new CoreException(Util.createStatus(e));
 				}
 			} else if (binding instanceof ITypedef)
 				pdomBinding = new PDOMCTypedef(pdom, parent, name, (ITypedef)binding);
+			
+			parent.addChild(pdomBinding);
 		}
-		
+
 		if (pdomBinding != null)
 			new PDOMName(pdom, name, file, pdomBinding);
-		
+
 		return pdomBinding;
-	}
-
-	private static final class FindBinding extends PDOMNamedNode.NodeFinder {
-		PDOMBinding pdomBinding;
-		final int desiredType;
-		public FindBinding(PDOM pdom, char[] name, int desiredType) {
-			super(pdom, name);
-			this.desiredType = desiredType;
-		}
-		public boolean visit(int record) throws CoreException {
-			if (record == 0)
-				return true;
-			PDOMBinding tBinding = pdom.getBinding(record);
-			if (!tBinding.hasName(name))
-				// no more bindings with our desired name
-				return false;
-			if (tBinding.getNodeType() != desiredType)
-				// wrong type, try again
-				return true;
-			
-			// got it
-			pdomBinding = tBinding;
-			return false;
-		}
-	}
-
-	private static class FindBinding2 implements IPDOMVisitor {
-		private PDOMBinding binding;
-		private final char[] name;
-		private final int[] desiredType;
-		public FindBinding2(char[] name, int desiredType) {
-			this(name, new int[] { desiredType });
-		}
-		public FindBinding2(char[] name, int[] desiredType) {
-			this.name = name;
-			this.desiredType = desiredType;
-		}
-		public boolean visit(IPDOMNode node) throws CoreException {
-			if (node instanceof PDOMBinding) {
-				PDOMBinding tBinding = (PDOMBinding)node;
-				if (tBinding.hasName(name)) {
-					int nodeType = tBinding.getNodeType();
-					for (int i = 0; i < desiredType.length; ++i)
-						if (nodeType == desiredType[i]) {
-							// got it
-							binding = tBinding;
-							throw new CoreException(Status.OK_STATUS);
-						}
-				}
-			}
-			return false;
-		}
-		public void leave(IPDOMNode node) throws CoreException {
-		}
-		public PDOMBinding getBinding() { return binding; }
 	}
 
 	protected int getBindingType(IBinding binding) {
@@ -205,7 +163,7 @@ class PDOMCLinkage extends PDOMLinkage {
 		else
 			return 0;
 	}
-	
+
 	public PDOMBinding adaptBinding(IBinding binding) throws CoreException {
 		if (binding instanceof PDOMBinding) {
 			// there is no guarantee, that the binding is from the same PDOM object.
@@ -215,31 +173,33 @@ class PDOMCLinkage extends PDOMLinkage {
 			}
 			// so if the binding is from another pdom it has to be adapted. 
 		}
+
 		
+		FindEquivalentBinding visitor = new FindEquivalentBinding(this, binding);
 		PDOMNode parent = getAdaptedParent(binding);
+
 		if (parent == this) {
-			FindBinding visitor = new FindBinding(pdom, binding.getNameCharArray(), getBindingType(binding));
 			getIndex().accept(visitor);
-			return visitor.pdomBinding;
+			return visitor.getResult();
 		} else if (parent instanceof IPDOMMemberOwner) {
-			FindBinding2 visitor = new FindBinding2(binding.getNameCharArray(), getBindingType(binding));
 			IPDOMMemberOwner owner = (IPDOMMemberOwner)parent;
 			try {
 				owner.accept(visitor);
 			} catch (CoreException e) {
 				if (e.getStatus().equals(Status.OK_STATUS))
-					return visitor.getBinding();
+					return visitor.getResult();
 				else
 					throw e;
 			}
 		}
+		
 		return null;
 	}
 
 	public PDOMNode getNode(int record) throws CoreException {
 		if (record == 0)
 			return null;
-		
+
 		switch (PDOMNode.getNodeType(pdom, record)) {
 		case CVARIABLE:
 			return new PDOMCVariable(pdom, record);
@@ -255,36 +215,54 @@ class PDOMCLinkage extends PDOMLinkage {
 			return new PDOMCEnumerator(pdom, record);
 		case CTYPEDEF:
 			return new PDOMCTypedef(pdom, record);
+		case CPARAMETER:
+			return new PDOMCParameter(pdom, record);
+		case CBASICTYPE:
+			return new PDOMCBasicType(pdom, record);
 		}
 
 		return super.getNode(record);
 	}
 
 	public PDOMBinding resolveBinding(IASTName name) throws CoreException {
+		int constant;
 		IASTNode parent = name.getParent();
-		if (parent instanceof IASTIdExpression) {
-			// reference
+		if (parent instanceof IASTIdExpression) {			// reference
 			IASTNode eParent = parent.getParent();
 			if (eParent instanceof IASTFunctionCallExpression) {
-				FindBinding visitor = new FindBinding(pdom, name.toCharArray(), CFUNCTION);
-				getIndex().accept(visitor);
-				return visitor.pdomBinding;
+				constant = CFUNCTION;
 			} else {
-				FindBinding visitor = new FindBinding(pdom, name.toCharArray(), CVARIABLE);
-				getIndex().accept(visitor);
-				return visitor.pdomBinding;
+				constant = CVARIABLE;
 			}
 		} else if (parent instanceof ICASTElaboratedTypeSpecifier) {
-			FindBinding visitor = new FindBinding(pdom, name.toCharArray(), CSTRUCTURE);
-			getIndex().accept(visitor);
-			return visitor.pdomBinding;
+			constant = CSTRUCTURE;
+		} else {
+			return null;
 		}
-		return null;
+		
+		FindBindingByLinkageConstant finder = new FindBindingByLinkageConstant(this, name.toCharArray(), constant);
+		getIndex().accept(finder);
+		return finder.getResult();
 	}
-	
+
 	public PDOMNode addType(PDOMNode parent, IType type) throws CoreException {
-		// TODO Auto-generated method stub
-		return null;
+		if (type instanceof ICBasicType) {
+			return new PDOMCBasicType(pdom, parent, (ICBasicType)type);
+		} else if (type instanceof ICompositeType) {
+			FindEquivalentBinding feb = new FindEquivalentBinding(this,(ICompositeType)type);
+			getIndex().accept(feb);
+			if(feb.getResult()!=null) {
+				return feb.getResult();
+			}
+		}
+		return super.addType(parent, type); 
 	}
 	
+	public ILocalBindingIdentity getLocalBindingIdentity(IBinding b) throws CoreException {
+		return new CBindingIdentity(b, this);
+	}
+	
+	public IBindingIdentityFactory getBindingIdentityFactory() {
+		return this;
+	}
 }

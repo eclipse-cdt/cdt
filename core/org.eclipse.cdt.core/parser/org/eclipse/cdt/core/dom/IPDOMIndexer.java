@@ -7,6 +7,7 @@
  *
  * Contributors:
  * QNX - Initial API and implementation
+ * Andrew Ferguson (Symbian)
  *******************************************************************************/
 
 package org.eclipse.cdt.core.dom;
@@ -29,4 +30,9 @@ public interface IPDOMIndexer {
 	
 	public void reindex() throws CoreException;
 	
+	/**
+	 * Return the unique ID of type of this indexer
+	 * @return the unique ID of type of this indexer
+	 */
+	public String getID();
 }

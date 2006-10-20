@@ -8,6 +8,7 @@
  * Contributors:
  * QNX - Initial API and implementation
  * Markus Schorn (Wind River Systems)
+ * Andrew Ferguson (Symbian)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom.dom;
 
@@ -36,6 +37,10 @@ public abstract class PDOMBinding extends PDOMNamedNode implements IIndexFragmen
 	
 	protected PDOMBinding(PDOM pdom, PDOMNode parent, IASTName name) throws CoreException {
 		super(pdom, parent, name.toCharArray());
+	}
+	
+	protected PDOMBinding(PDOM pdom, PDOMNode parent, char[] name) throws CoreException {
+		super(pdom, parent, name);
 	}
 	
 	public PDOMBinding(PDOM pdom, int record) {
@@ -149,12 +154,12 @@ public abstract class PDOMBinding extends PDOMNamedNode implements IIndexFragmen
 		}
 		return new char[0];
 	}
-
+	
 	public IScope getScope() throws DOMException {
 		// TODO implement this
 		return null;
 	}
-
+	
 	public IIndexBinding getParentBinding() throws CoreException {
 		PDOMNode parent= getParentNode();
 		if (parent instanceof IIndexBinding) {
@@ -166,6 +171,22 @@ public abstract class PDOMBinding extends PDOMNamedNode implements IIndexFragmen
 	public IIndexFragment getFragment() {
 		return pdom;
 	}
+
+	abstract protected int getRecordSize(); // superclass's implementation is no longer valid
+	
+	public String toString() {
+		try {
+			return getLinkageImpl().getLocalBindingIdentity(this).toString();
+		} catch(CoreException ce) {
+			CCorePlugin.log(ce);
+			return super.toString();
+		}
+	}
+	
+	/**
+     * Convenience method to shorten subclass file length
+     */
+	protected void fail() { throw new PDOMNotImplementedError(); }
 
 	public boolean mayHaveChildren() {
 		return false;

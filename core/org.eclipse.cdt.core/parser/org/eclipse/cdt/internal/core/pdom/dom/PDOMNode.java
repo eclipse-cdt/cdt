@@ -8,6 +8,7 @@
  * Contributors:
  * QNX - Initial API and implementation
  * Markus Schorn (Wind River Systems)
+ * Andrew Ferguson (Symbian)
  *******************************************************************************/
 
 package org.eclipse.cdt.internal.core.pdom.dom;
@@ -26,7 +27,7 @@ import org.eclipse.core.runtime.CoreException;
  * PDOM nodes form a multi-root tree with linkages being the roots.
  * This class managed the parent pointer.
  */
-public abstract class PDOMNode implements IPDOMNode{
+public abstract class PDOMNode implements IPDOMNode {
 
 	private static final int TYPE = 0;
 	private static final int PARENT = 4;
@@ -52,8 +53,6 @@ public abstract class PDOMNode implements IPDOMNode{
 		
 		// parent
 		db.putInt(record + PARENT, parent != null ? parent.getRecord() : 0);
-		if (parent instanceof IPDOMMemberOwner)
-			((IPDOMMemberOwner)parent).addMember(this);
 	}
 
 	protected abstract int getRecordSize();
@@ -111,8 +110,8 @@ public abstract class PDOMNode implements IPDOMNode{
 		return pdom.getLinkage(linkagerec);
 	}
 
-	protected void addChild(PDOMNamedNode child) throws CoreException {
+	public void addChild(PDOMNode child) throws CoreException {
 		// nothing here
 	}
-
+	
 }

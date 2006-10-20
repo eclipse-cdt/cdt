@@ -8,16 +8,21 @@
  * Contributors:
  * Andrew Ferguson (Symbian) - Initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.internal.core.pdom.dom;
+package org.eclipse.cdt.internal.core.dom.bid;
 
-import org.eclipse.cdt.core.dom.IPDOMVisitor;
 import org.eclipse.core.runtime.CoreException;
 
 /**
- * Interface for PDOM entities that contain members. Note this is not a generic
+ * An ILocalBindingIdentity instance uniquely defines a binding within a scope.
+ * <p>
+ * All LocalBindingIdentity instances are required to order by name as the most significant
+ * component, and then by any other information. This is for indexing purposes.
  */
-public interface IPDOMMemberOwner {
-	public void addMember(PDOMNode member) throws CoreException;
-	public void accept(IPDOMVisitor visitor) throws CoreException;
-	public void addChild(PDOMNode member) throws CoreException;
+public interface ILocalBindingIdentity {
+	/**
+	 * Get the name of the binding this identity represents
+	 * @return the name of the binding this identity represents
+	 * @throws CoreException
+	 */
+	public char[] getNameCharArray() throws CoreException;
 }

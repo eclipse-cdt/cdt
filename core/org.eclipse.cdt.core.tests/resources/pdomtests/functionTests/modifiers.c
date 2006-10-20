@@ -11,3 +11,10 @@ int intCFunction();
 double doubleCFunction();
 char charCFunction();
 float floatCFunction();
+
+
+struct S {
+	struct D {
+		int a;
+	};
+};

@@ -7,6 +7,7 @@
  *
  * Contributors:
  *    Markus Schorn - initial API and implementation
+ *    Andrew Ferguson (Symbian)
  *******************************************************************************/ 
 
 package org.eclipse.cdt.core.index;
@@ -33,5 +34,19 @@ public class IndexFilter {
 	 */
 	public boolean acceptLinkage(ILinkage linkage) {
 		return true;
+	}
+	
+	/**
+	 * Get an IndexFilter that filters out bindings from linkages other than that
+	 * specified
+	 * @param target the linkage whose bindings should be retained
+	 * @return an IndexFilter instance
+	 */
+	public static IndexFilter getFilter(final ILinkage target) {
+		return new IndexFilter() {
+			public boolean acceptLinkage(ILinkage linkage) {
+				return linkage.getID() == target.getID();
+			}
+		};
 	}
 }

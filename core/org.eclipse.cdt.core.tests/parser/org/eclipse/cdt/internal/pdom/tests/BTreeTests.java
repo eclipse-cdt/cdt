@@ -52,8 +52,8 @@ public class BTreeTests extends BaseTestCase {
 		dbFile = File.createTempFile("pdomtest", "db");
 		db = new Database(dbFile.getAbsolutePath());
 		rootRecord = Database.DATA_AREA;
-		btree = new BTree(db, rootRecord, degree);
 		comparator = new BTMockRecordComparator();
+		btree = new BTree(db, rootRecord, degree, comparator);
 	}
 
 	// tearDown is not used for the same reason as above
@@ -131,7 +131,7 @@ public class BTreeTests extends BaseTestCase {
 					history.add(btValue);
 					if(debugMode)
 						System.out.println("Add: "+value+" @ "+btValue.record);
-					btree.insert(btValue.getRecord(), comparator);
+					btree.insert(btValue.getRecord());
 				}
 			} else {
 				if(!history.isEmpty()) {
@@ -141,7 +141,7 @@ public class BTreeTests extends BaseTestCase {
 					expected.remove(new Integer(btValue.intValue()));
 					if(debugMode)
 						System.out.println("Remove: "+btValue.intValue()+" @ "+btValue.record);
-					btree.delete(btValue.getRecord(), comparator);
+					btree.delete(btValue.getRecord());
 				}
 			}
 			if(i % 1000 == 0) {

@@ -12,6 +12,7 @@
 package org.eclipse.cdt.internal.core.pdom.indexer.full;
 
 import org.eclipse.cdt.core.dom.IPDOMIndexer;
+import org.eclipse.cdt.core.dom.IPDOMManager;
 import org.eclipse.cdt.core.model.ICElementDelta;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.internal.core.CCoreInternals;
@@ -25,7 +26,8 @@ import org.eclipse.core.runtime.CoreException;
  *
  */
 public class PDOMFullIndexer implements IPDOMIndexer {
-
+	public static final String ID = IPDOMManager.ID_FULL_INDEXER;
+	
 	private ICProject project;
 	
 	public ICProject getProject() {
@@ -44,4 +46,7 @@ public class PDOMFullIndexer implements IPDOMIndexer {
 		CCoreInternals.getPDOMManager().enqueue(new PDOMFullReindex(this));
 	}
 
+	public String getID() {
+		return ID;
+	}
 }

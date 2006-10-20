@@ -14,7 +14,9 @@
 package org.eclipse.cdt.internal.pdom.tests;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.regex.Pattern;
 
@@ -23,6 +25,8 @@ import org.eclipse.cdt.core.dom.IName;
 import org.eclipse.cdt.core.dom.IPDOMManager;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IBinding;
+import org.eclipse.cdt.core.dom.ast.IFunction;
+import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMember;
 import org.eclipse.cdt.core.index.IndexFilter;
 import org.eclipse.cdt.core.model.ICProject;
@@ -30,6 +34,7 @@ import org.eclipse.cdt.core.testplugin.CProjectHelper;
 import org.eclipse.cdt.core.testplugin.CTestPlugin;
 import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
 import org.eclipse.cdt.core.testplugin.util.TestSourceReader;
+import org.eclipse.cdt.internal.core.Util;
 import org.eclipse.cdt.internal.core.index.IIndexFragment;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.core.resources.IWorkspace;
@@ -47,7 +52,7 @@ import org.eclipse.ui.dialogs.IOverwriteQuery;
 import org.eclipse.ui.wizards.datatransfer.FileSystemStructureProvider;
 import org.eclipse.ui.wizards.datatransfer.ImportOperation;
 
-/**
+/** 
  * @author Doug Schaefer
  */
 public class PDOMTestBase extends BaseTestCase {
@@ -57,7 +62,11 @@ public class PDOMTestBase extends BaseTestCase {
 	private String projectName= null;
 
 	protected ICProject createProject(String folderName) throws CoreException {
-		
+		return createProject(folderName, false);
+	}
+	
+	protected ICProject createProject(String folderName, final boolean cpp) throws CoreException {
+
 		// Create the project
 		projectName = "ProjTest_" + System.currentTimeMillis();
 		final File rootDir = CTestPlugin.getDefault().getFileInPlugin(rootPath.append(folderName));
@@ -66,11 +75,12 @@ public class PDOMTestBase extends BaseTestCase {
 		workspace.run(new IWorkspaceRunnable() {
 			public void run(IProgressMonitor monitor) throws CoreException {
 				// Create the project
-				ICProject cproject= CProjectHelper.createCProject(projectName, null);
+				ICProject cproject= cpp ? CProjectHelper.createCCProject(projectName, null)
+						: CProjectHelper.createCProject(projectName, null);
 
 				// Set the indexer to the null indexer and invoke it later on.
 				CCorePlugin.getPDOMManager().setIndexerId(cproject, IPDOMManager.ID_NO_INDEXER);
-				
+
 				// Import the files at the root
 				ImportOperation importOp = new ImportOperation(cproject.getProject().getFullPath(),
 						rootDir, FileSystemStructureProvider.INSTANCE, new IOverwriteQuery() {
@@ -84,7 +94,7 @@ public class PDOMTestBase extends BaseTestCase {
 				} catch (Exception e) {
 					throw new CoreException(new Status(IStatus.ERROR, CTestPlugin.PLUGIN_ID, 0, "Import Interrupted", e));
 				}
-				
+
 				cprojects[0] = cproject;
 			}
 		}, null);
@@ -92,7 +102,7 @@ public class PDOMTestBase extends BaseTestCase {
 		// Index the project
 		CCorePlugin.getPDOMManager().setIndexerId(cprojects[0], IPDOMManager.ID_FAST_INDEXER);
 		// wait until the indexer is done
-		assertTrue(CCorePlugin.getIndexManager().joinIndexer(5000, new NullProgressMonitor()));
+		assertTrue(CCorePlugin.getIndexManager().joinIndexer(360000, new NullProgressMonitor()));
 
 		return cprojects[0];
 	}
@@ -146,7 +156,7 @@ public class PDOMTestBase extends BaseTestCase {
 		} else {
 			assertEquals(0, count);
 		}
-		
+
 	}
 
 	/**
@@ -172,5 +182,48 @@ public class PDOMTestBase extends BaseTestCase {
 		assertEquals(1, bindings.length);
 		ICPPMember member = (ICPPMember) bindings[0];
 		assertEquals(visibility, member.getVisibility());
+	}
+
+
+
+	public static final void assertFunctionRefCount(PDOM pdom, Class[] args, IBinding[] bindingPool, int refCount) throws CoreException {
+		IBinding[] bindings = findIFunctions(args, bindingPool);
+		assertEquals(1, bindings.length);
+		IName[] refs = pdom.getReferences(bindings[0]);
+		assertEquals(refCount, refs.length);
+	}
+
+	// this is only approximate - composite types are not supported
+	public static IBinding[] findIFunctions(Class[] paramTypes, IBinding[] bindings) throws CoreException {
+		try {
+			List preresult = new ArrayList();
+			for(int i=0; i<bindings.length; i++) {
+				if(bindings[i] instanceof IFunction) {
+					IFunction function = (IFunction) bindings[i];
+					IType[] candidate = function.getType().getParameterTypes();
+					boolean areEqual = candidate.length == paramTypes.length;
+					for(int j=0; areEqual && j<paramTypes.length; j++) {
+						if(!paramTypes[j].isAssignableFrom(candidate[j].getClass())) {
+							areEqual = false;
+						}
+					}
+					if(areEqual) {
+						preresult.add(bindings[i]);
+					}
+				}
+			}
+			return (IBinding[]) preresult.toArray(new IBinding[preresult.size()]);
+		} catch(DOMException e) {
+			throw new CoreException(Util.createStatus(e));
+		}
+	}
+
+
+	public static Pattern[] makePatternArray(String[] args) {
+		List preresult = new ArrayList();
+		for(int i=0; i<args.length; i++) {
+			preresult.add(Pattern.compile(args[i]));
+		}
+		return (Pattern[]) preresult.toArray(new Pattern[preresult.size()]);
 	}
 }

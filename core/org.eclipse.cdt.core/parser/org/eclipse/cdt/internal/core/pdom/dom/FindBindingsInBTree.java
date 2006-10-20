@@ -15,9 +15,18 @@ import java.util.List;
 
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
+import org.eclipse.cdt.internal.core.pdom.db.IBTreeVisitor;
 import org.eclipse.core.runtime.CoreException;
 
-public final class FindBindingsInBTree extends PDOMNamedNode.NodeFinder {
+public final class FindBindingsInBTree implements IBTreeVisitor {
+	protected final PDOM pdom;
+	protected final char[] name;
+	
+	
+	public int compare(int record) throws CoreException {
+		PDOMNamedNode node = ((PDOMNamedNode)pdom.getLinkage(record).getNode(record)); 
+		return node.getDBName().compare(name);
+	}
 	
 	private List bindings = new ArrayList();
 	private final int[] desiredType;
@@ -51,7 +60,8 @@ public final class FindBindingsInBTree extends PDOMNamedNode.NodeFinder {
 	 * @param desiredType
 	 */
 	public FindBindingsInBTree(PDOM pdom, char[] name, int[] desiredType) {
-		super(pdom, name);
+		this.pdom = pdom;
+		this.name = name;
 		this.desiredType = desiredType;
 	}
 	
@@ -83,5 +93,4 @@ public final class FindBindingsInBTree extends PDOMNamedNode.NodeFinder {
 	public IBinding[] getBinding() {
 		return (IBinding[])bindings.toArray(new IBinding[bindings.size()]);
 	}
-	
 }

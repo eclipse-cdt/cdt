@@ -8,6 +8,7 @@
  * Contributors:
  * QNX - Initial API and implementation
  * IBM Corporation
+ * Andrew Ferguson (Symbian)
  *******************************************************************************/
 
 package org.eclipse.cdt.internal.core.pdom.dom;
@@ -16,7 +17,6 @@ import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.db.Database;
 import org.eclipse.cdt.internal.core.pdom.db.IBTreeComparator;
-import org.eclipse.cdt.internal.core.pdom.db.IBTreeVisitor;
 import org.eclipse.cdt.internal.core.pdom.db.IString;
 import org.eclipse.core.runtime.CoreException;
 
@@ -45,9 +45,6 @@ public abstract class PDOMNamedNode extends PDOMNode {
 		Database db = pdom.getDB();
 		db.putInt(record + NAME,
 				name != null ? db.newString(name).getRecord() : 0);
-		
-		if (parent != null)
-			parent.addChild(this);
 	}
 
 	protected int getRecordSize() {
@@ -75,7 +72,7 @@ public abstract class PDOMNamedNode extends PDOMNode {
 				int string1 = db.getInt(record1 + NAME);
 				int string2 = db.getInt(record2 + NAME);
 				return db.getString(string1).compare(db.getString(string2));
-			};
+			}
 		};
 	}
 	
@@ -103,20 +100,6 @@ public abstract class PDOMNamedNode extends PDOMNode {
 	protected boolean getBit(int bitVector, int offset) {
 		int mask = 1 << offset;
 		return (bitVector & mask) == mask;
-	}
-
-	public abstract static class NodeFinder implements IBTreeVisitor {
-		protected final PDOM pdom;
-		protected final char[] name;
-		protected NodeFinder(PDOM pdom, char [] name) {
-			this.pdom = pdom;
-			this.name = name;
-		}
-		public int compare(int record) throws CoreException {
-			Database db = pdom.getDB();
-			int namerec = db.getInt(record + NAME);
-			return db.getString(namerec).compare(name);
-		}
 	}
 
 }

@@ -23,6 +23,7 @@ import org.eclipse.cdt.core.dom.IName;
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.ICompositeType;
+import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.index.IndexFilter;
 import org.eclipse.cdt.core.model.ICProject;
@@ -272,16 +273,21 @@ public class DefDeclTests extends PDOMTestBase {
 		assertDefDeclRef("type", "_t03", 1, 1, 1);
 	}
 
-	public void testStructAndTypedef_t04_unexpected() throws Exception {
-		// suppose to find either 2 findings or 2 def/ref pairs
-		// because type_t04 defined as struct type_04 as typedef
+	public void _testStructAndTypedef_t04_unexpected() throws Exception {
 		String num = "_t04";
 		String elName = "type" + num;
-		ICompositeType element = (ICompositeType) findSingleBinding(elName);
-		// checkReference(element, "ref" + num, 1);
-		checkReference(element, "refS" + num, 1);
-		checkDefinition(element, "defS" + num, 1);
-		// checkDeclaration(element, "def" + num, 1);
+		
+		IBinding[] bindings = pdom.findBindings(Pattern.compile(elName), false, new IndexFilter(), new NullProgressMonitor());
+		assertEquals(2,bindings.length);
+		
+		IBinding typedef = bindings[0] instanceof ITypedef ? bindings[0] : bindings[1];
+		IBinding struct = bindings[0] instanceof ICompositeType ? bindings[0] : bindings[1];
+		
+		checkReference(typedef, "ref" + num, 1);
+		checkDeclaration(typedef, "def" + num, 1);
+		
+		checkReference(struct, "refS" + num, 1);
+		checkDefinition(struct, "defS" + num, 1);
 	}
 
 	public void testTypedefAndAnonymousStruct_t05() throws Exception {

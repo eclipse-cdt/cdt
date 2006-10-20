@@ -9,6 +9,7 @@
  * QNX - Initial API and implementation
  * Markus Schorn (Wind River Systems)
  * IBM Corporation
+ * Andrew Ferguson (Symbian)
  *******************************************************************************/
 
 package org.eclipse.cdt.internal.core.pdom.dom;
@@ -30,10 +31,13 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespaceScope;
 import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.core.index.IIndexLinkage;
 import org.eclipse.cdt.internal.core.Util;
+import org.eclipse.cdt.internal.core.dom.bid.CLocalBindingIdentityComparator;
+import org.eclipse.cdt.internal.core.dom.bid.IBindingIdentityFactory;
 import org.eclipse.cdt.internal.core.dom.parser.ASTInternal;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.db.BTree;
 import org.eclipse.cdt.internal.core.pdom.db.Database;
+import org.eclipse.cdt.internal.core.pdom.db.IBTreeComparator;
 import org.eclipse.cdt.internal.core.pdom.db.IBTreeVisitor;
 import org.eclipse.cdt.internal.core.pdom.db.IString;
 import org.eclipse.core.runtime.CoreException;
@@ -44,7 +48,7 @@ import org.eclipse.core.runtime.CoreException;
  * This class represents a collection of symbols that can be linked together at
  * link time. These are generally global symbols specific to a given language.
  */
-public abstract class PDOMLinkage extends PDOMNamedNode implements IIndexLinkage {
+public abstract class PDOMLinkage extends PDOMNamedNode implements IBindingIdentityFactory, IIndexLinkage {
 
 	// record offsets
 	private static final int ID_OFFSET   = PDOMNamedNode.RECORD_SIZE + 0;
@@ -97,7 +101,7 @@ public abstract class PDOMLinkage extends PDOMNamedNode implements IIndexLinkage
 	}
 	
 	public BTree getIndex() throws CoreException {
-		return new BTree(pdom.getDB(), record + INDEX_OFFSET);
+		return new BTree(pdom.getDB(), record + INDEX_OFFSET, getIndexComparator());
 	}
 	
 	public void accept(final IPDOMVisitor visitor) throws CoreException {
@@ -122,8 +126,8 @@ public abstract class PDOMLinkage extends PDOMNamedNode implements IIndexLinkage
 		return this;
 	}
 
-	protected void addChild(PDOMNamedNode child) throws CoreException {
-		getIndex().insert(child.getRecord(), child.getIndexComparator());
+	public final void addChild(PDOMNode child) throws CoreException {
+		getIndex().insert(child.getRecord());
 	}
 	
 	public PDOMNode getNode(int record) throws CoreException {
@@ -137,68 +141,97 @@ public abstract class PDOMLinkage extends PDOMNamedNode implements IIndexLinkage
 	}
 	
 	public PDOMNode addType(PDOMNode parent, IType type) throws CoreException {
+		PDOMNode node;
+		
 		if (type instanceof IPointerType)
-			return new PDOMPointerType(pdom, parent, (IPointerType)type);
+			node = new PDOMPointerType(pdom, parent, (IPointerType)type);
 		else if (type instanceof IQualifierType)
-			return new PDOMQualifierType(pdom, parent, (IQualifierType)type);
+			node = new PDOMQualifierType(pdom, parent, (IQualifierType)type);
 		else
-			return null;
+			node = null;
+		
+		if(node!=null) {
+			parent.addChild(node);
+		}
+		
+		return node;
 	}
 
+	public final IBTreeComparator getIndexComparator() {
+		return new IBTreeComparator() {
+			CLocalBindingIdentityComparator cmp = new CLocalBindingIdentityComparator(PDOMLinkage.this);
+			public final int compare(int record1, int record2) throws CoreException {
+				PDOMNode node1 = getNode(record1);
+				PDOMNode node2 = getNode(record2);
+				return cmp.compare((IBinding)node1,(IBinding)node2);
+			}
+		};
+	}
+	
 	public abstract PDOMBinding addName(IASTName name, PDOMFile file) throws CoreException;
 	
 	public abstract PDOMBinding adaptBinding(IBinding binding) throws CoreException;
 	
 	public abstract PDOMBinding resolveBinding(IASTName name) throws CoreException;
 	
+	/**
+	 * 
+	 * @param binding
+	 * @return null for filescope for non-pdom bindings, this for filescope for pdom bindings
+	 * or the parent binding in any other case
+	 * @throws CoreException
+	 */
 	public PDOMNode getAdaptedParent(IBinding binding) throws CoreException {
 		try {
-			IScope scope = binding.getScope();
-			if (scope == null)
-				return null;
-			
-			if (scope instanceof IIndexBinding) {
-				IIndexBinding parent= ((IIndexBinding) scope).getParentBinding();
-				if (parent == null) {
-					return this;
-				}
-				return adaptBinding(parent);
-			}
-				
-			// the scope is from the ast
-			
-			// mstodo revisit unnamed namespaces
-			IScope testScope= scope;
-			while (testScope instanceof ICPPNamespaceScope) {
-				IName name= testScope.getScopeName();
-				if (name != null && name.toCharArray().length == 0) {
-					testScope= scope.getParent();
-					if (testScope != null) {
-						scope= testScope;
-					}
-				}
-				else {
-					testScope= null;
-				}
-			}
-			
-			IASTNode scopeNode = ASTInternal.getPhysicalNodeOfScope(scope);
-			if (scopeNode instanceof IASTCompoundStatement)
-				return null;
-			else if (scopeNode instanceof IASTTranslationUnit)
+		IScope scope = binding.getScope();
+		if (scope == null) {
+			return binding instanceof PDOMBinding ? this : null;
+		}
+		
+		if (scope instanceof IIndexBinding) {
+			IIndexBinding parent= ((IIndexBinding) scope).getParentBinding();
+			if (parent == null) {
 				return this;
-			else {
-				IName scopeName = scope.getScopeName();
-				if (scopeName instanceof IASTName) {
-					IBinding scopeBinding = ((IASTName) scopeName).resolveBinding();
-					PDOMBinding scopePDOMBinding = adaptBinding(scopeBinding);
-					if (scopePDOMBinding != null)
-						return scopePDOMBinding;
+			}
+			return adaptBinding(parent);
+		}
+			
+		// the scope is from the ast
+		
+		// mstodo revisit unnamed namespaces
+		IScope testScope= scope;
+		while (testScope instanceof ICPPNamespaceScope) {
+			IName name= testScope.getScopeName();
+			if (name != null && name.toCharArray().length == 0) {
+				testScope= scope.getParent();
+				if (testScope != null) {
+					scope= testScope;
 				}
 			}
+			else {
+				testScope= null;
+			}
+		}
+		
+		IASTNode scopeNode = ASTInternal.getPhysicalNodeOfScope(scope);
+		if (scopeNode instanceof IASTCompoundStatement)
+			return null;
+		else if (scopeNode instanceof IASTTranslationUnit)
+			return this;
+		else {
+			IName scopeName = scope.getScopeName();
+			if (scopeName instanceof IASTName) {
+				IBinding scopeBinding = ((IASTName) scopeName).resolveBinding();
+				PDOMBinding scopePDOMBinding = adaptBinding(scopeBinding);
+				if (scopePDOMBinding != null)
+					return scopePDOMBinding;
+			}
+		}
 		} catch (DOMException e) {
 			throw new CoreException(Util.createStatus(e));
 		}
 		return null;
 	}
+	
+	public abstract IBindingIdentityFactory getBindingIdentityFactory();
 }

@@ -7,7 +7,7 @@
  *
  * Contributors:
  * QNX - Initial API and implementation
- * Symbian - Provide B-tree deletion routine
+ * Andrew Ferguson (Symbian) - Provide B-tree deletion routine
  *******************************************************************************/
 
 package org.eclipse.cdt.internal.core.pdom.db;
@@ -39,8 +39,10 @@ public class BTree {
 	protected final int OFFSET_CHILDREN;
 	protected final int MEDIAN_RECORD;
 
-	public BTree(Database db, int rootPointer) {
-		this(db, rootPointer, 8);
+	protected final IBTreeComparator cmp;
+	
+	public BTree(Database db, int rootPointer, IBTreeComparator cmp) {
+		this(db, rootPointer, 8, cmp);
 	}
 
 	/**
@@ -49,13 +51,14 @@ public class BTree {
 	 * @param db the database containing the btree
 	 * @param root offset into database of the pointer to the root node
 	 */
-	public BTree(Database db, int rootPointer, int degree) {
+	public BTree(Database db, int rootPointer, int degree, IBTreeComparator cmp) {
 		if(degree<2)
 			throw new IllegalArgumentException(Messages.getString("BTree.IllegalDegree")); //$NON-NLS-1$
 
 		this.db = db;
 		this.rootPointer = rootPointer;
-
+		this.cmp = cmp;
+		
 		this.DEGREE = degree;
 		this.MIN_RECORDS = DEGREE - 1;
 		this.MAX_RECORDS = 2*DEGREE - 1;
@@ -92,7 +95,7 @@ public class BTree {
 	 * @param offset of the record
 	 * @return 
 	 */
-	public int insert(int record, IBTreeComparator comparator) throws CoreException {
+	public int insert(int record) throws CoreException {
 		int root = getRoot();
 
 		// is this our first time in
@@ -101,10 +104,10 @@ public class BTree {
 			return record;
 		}
 
-		return insert(null, 0, 0, root, record, comparator);
+		return insert(null, 0, 0, root, record);
 	}
 
-	private int insert(Chunk pChunk, int parent, int iParent, int node, int record, IBTreeComparator comparator) throws CoreException {
+	private int insert(Chunk pChunk, int parent, int iParent, int node, int record) throws CoreException {
 		Chunk chunk = db.getChunk(node);
 
 		// if this node is full (last record isn't null), split it
@@ -149,7 +152,7 @@ public class BTree {
 				putRecord(chunk, node, MEDIAN_RECORD, 0);
 
 				// set the node to the correct one to follow
-				if (comparator.compare(record, median) > 0) {
+				if (cmp.compare(record, median) > 0) {
 					node = newnode;
 					chunk = newchunk;
 				}
@@ -164,7 +167,7 @@ public class BTree {
 				// past the end
 				break;
 			} else {
-				int compare = comparator.compare(record1, record);
+				int compare = cmp.compare(record1, record);
 				if (compare == 0)
 					// found it, no insert, just return the record
 					return record;
@@ -177,7 +180,7 @@ public class BTree {
 		int	child = getChild(chunk, node, i);
 		if (child != 0) {
 			// visit the children
-			return insert(chunk, node, i, child, record, comparator);
+			return insert(chunk, node, i, child, record);
 		} else {
 			// were at the leaf, add us in.
 			// first copy everything after over one
@@ -218,9 +221,9 @@ public class BTree {
 	 * @param cmp the comparator for locating the record
 	 * @throws CoreException
 	 */
-	public void delete(int record, IBTreeComparator cmp) throws CoreException {
+	public void delete(int record) throws CoreException {
 		try {
-			deleteImp(record, getRoot(), DELMODE_NORMAL, cmp);
+			deleteImp(record, getRoot(), DELMODE_NORMAL);
 		} catch(BTreeKeyNotFoundException e) {
 			// contract of this method is to NO-OP upon this event
 		}
@@ -277,7 +280,7 @@ public class BTree {
 	 * @return the address of the record removed from the B-tree
 	 * @throws CoreException
 	 */
-	private int deleteImp(int key, int nodeRecord, int mode, IBTreeComparator cmp)
+	private int deleteImp(int key, int nodeRecord, int mode)
 	throws CoreException, BTreeKeyNotFoundException {
 		BTNode node = new BTNode(nodeRecord);
 
@@ -316,7 +319,7 @@ public class BTree {
 				BTNode succ = node.getChild(keyIndexInNode+1);
 				if(succ!=null && succ.keyCount > MIN_RECORDS) {
 					/* Case 2a: Delete key by overwriting it with its successor (which occurs in a leaf node) */
-					int subst = deleteImp(-1, succ.node, DELMODE_DELETE_MINIMUM, cmp);
+					int subst = deleteImp(-1, succ.node, DELMODE_DELETE_MINIMUM);
 					putRecord(node.chunk, node.node, keyIndexInNode, subst);
 					return key;
 				}
@@ -324,7 +327,7 @@ public class BTree {
 				BTNode pred = node.getChild(keyIndexInNode); 
 				if(pred!=null && pred.keyCount > MIN_RECORDS) {
 					/* Case 2b: Delete key by overwriting it with its predecessor (which occurs in a leaf node) */
-					int subst = deleteImp(-1, pred.node, DELMODE_DELETE_MAXIMUM, cmp);
+					int subst = deleteImp(-1, pred.node, DELMODE_DELETE_MAXIMUM);
 					putRecord(node.chunk, node.node, keyIndexInNode, subst);
 					return key;
 				}
@@ -332,7 +335,7 @@ public class BTree {
 				/* Case 2c: Merge successor and predecessor */
 				// assert(pred!=null && succ!=null);
 				mergeNodes(succ, node, keyIndexInNode, pred);
-				return deleteImp(key, pred.node, mode, cmp);
+				return deleteImp(key, pred.node, mode);
 			} else {
 				/* Case 3: non-leaf node which does not itself contain the key */
 
@@ -358,7 +361,7 @@ public class BTree {
 				}
 
 				if(child.keyCount > MIN_RECORDS) {
-					return deleteImp(key, child.node, mode, cmp);
+					return deleteImp(key, child.node, mode);
 				} else {
 					BTNode sibR = node.getChild(subtreeIndex+1);
 					if(sibR!=null && sibR.keyCount > MIN_RECORDS) {
@@ -368,7 +371,7 @@ public class BTree {
 						append(child, rightKey, getChild(sibR.chunk, sibR.node, 0));
 						nodeContentDelete(sibR, 0, 1);
 						putRecord(node.chunk, node.node, subtreeIndex, leftmostRightSiblingKey);
-						return deleteImp(key, child.node, mode, cmp);
+						return deleteImp(key, child.node, mode);
 					}
 
 					BTNode sibL = node.getChild(subtreeIndex-1);
@@ -380,19 +383,19 @@ public class BTree {
 						putRecord(sibL.chunk, sibL.node, sibL.keyCount-1, 0);
 						putChild(sibL.chunk, sibL.node, sibL.keyCount, 0);
 						putRecord(node.chunk, node.node, subtreeIndex-1, rightmostLeftSiblingKey);
-						return deleteImp(key, child.node, mode, cmp);
+						return deleteImp(key, child.node, mode);
 					}
 
 					/* Case 3b (i,ii): leftSibling, child, rightSibling all have minimum number of keys */
 
 					if(sibL!=null) { // merge child into leftSibling
 						mergeNodes(child, node, subtreeIndex-1, sibL);
-						return deleteImp(key, sibL.node, mode, cmp);
+						return deleteImp(key, sibL.node, mode);
 					}
 
 					if(sibR!=null) { // merge rightSibling into child
 						mergeNodes(sibR, node, subtreeIndex, child);
-						return deleteImp(key, child.node, mode, cmp);
+						return deleteImp(key, child.node, mode);
 					}
 
 					throw new BTreeKeyNotFoundException(

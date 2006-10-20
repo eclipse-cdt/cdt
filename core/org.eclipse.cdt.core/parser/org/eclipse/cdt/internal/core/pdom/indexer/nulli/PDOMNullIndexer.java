@@ -73,8 +73,12 @@ public class PDOMNullIndexer implements IPDOMIndexer {
 			return 1;
 		}
 	}
+	
 	public void reindex() throws CoreException {
 		CCoreInternals.getPDOMManager().enqueue(new PDOMNullReindex());
 	}
 
+	public String getID() {
+		return ID;
+	}
 }

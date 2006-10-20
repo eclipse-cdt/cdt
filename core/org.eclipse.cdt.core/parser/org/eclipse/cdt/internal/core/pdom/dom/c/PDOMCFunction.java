@@ -8,21 +8,28 @@
  * Contributors:
  * QNX - Initial API and implementation
  * IBM Corporation
+ * Andrew Ferguson (Symbian)
  *******************************************************************************/
 
 package org.eclipse.cdt.internal.core.pdom.dom.c;
 
+import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTName;
+import org.eclipse.cdt.core.dom.ast.IASTNode;
+import org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration;
+import org.eclipse.cdt.core.dom.ast.IASTStandardFunctionDeclarator;
+import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IFunction;
 import org.eclipse.cdt.core.dom.ast.IFunctionType;
 import org.eclipse.cdt.core.dom.ast.IParameter;
 import org.eclipse.cdt.core.dom.ast.IScope;
+import org.eclipse.cdt.core.dom.ast.IType;
+import org.eclipse.cdt.core.dom.ast.gnu.c.ICASTKnRFunctionDeclarator;
 import org.eclipse.cdt.internal.core.Util;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
-import org.eclipse.cdt.internal.core.pdom.dom.PDOMNotImplementedError;
 import org.eclipse.core.runtime.CoreException;
 
 /**
@@ -31,29 +38,68 @@ import org.eclipse.core.runtime.CoreException;
  */
 class PDOMCFunction extends PDOMBinding implements IFunction {
 	/**
+	 * Offset of total number of function parameters (relative to the
+	 * beginning of the record).
+	 */
+	public static final int NUM_PARAMS = PDOMBinding.RECORD_SIZE + 0;
+	
+	/**
+	 * Offset of total number of function parameters (relative to the
+	 * beginning of the record).
+	 */
+	public static final int FIRST_PARAM = PDOMBinding.RECORD_SIZE + 4;
+	
+	/**
 	 * Offset of annotation information (relative to the beginning of the
 	 * record).
 	 */
-	private static final int ANNOTATIONS = PDOMBinding.RECORD_SIZE + 0; // byte
+	private static final int ANNOTATIONS = PDOMBinding.RECORD_SIZE + 8; // byte
 	
 	/**
-	 * The size in bytes of a PDOMCFunction record in the database.
+	 * The size in bytes of a PDOMCPPFunction record in the database.
 	 */
-	protected static final int RECORD_SIZE = PDOMBinding.RECORD_SIZE + 1;
-
+	public static final int RECORD_SIZE = PDOMBinding.RECORD_SIZE + 9;
+	
 	public PDOMCFunction(PDOM pdom, PDOMNode parent, IASTName name) throws CoreException {
 		super(pdom, parent, name);
 		try {
+			IASTNode parentNode = name.getParent();
+			if (parentNode instanceof IASTStandardFunctionDeclarator) {
+				IASTStandardFunctionDeclarator funcDecl = (IASTStandardFunctionDeclarator)parentNode;
+				IASTParameterDeclaration[] params = funcDecl.getParameters();
+				pdom.getDB().putInt(record + NUM_PARAMS, params.length);
+				for (int i = 0; i < params.length; ++i) {
+					IASTParameterDeclaration param = params[i];
+					IASTName paramName = param.getDeclarator().getName();
+					IBinding binding = paramName.resolveBinding();
+					IParameter paramBinding = (IParameter)binding;
+					setFirstParameter(new PDOMCParameter(pdom, this, paramName, paramBinding));
+				}
+			} else if(parentNode instanceof ICASTKnRFunctionDeclarator) {
+				fail(); // aftodo
+			}
 			pdom.getDB().putByte(record + ANNOTATIONS, PDOMCAnnotation.encodeAnnotation(name.resolveBinding()));
-		} catch (DOMException e) {
+		} catch(DOMException e) {
 			throw new CoreException(Util.createStatus(e));
 		}
+	}
+	
+	public PDOMCParameter getFirstParameter() throws CoreException {
+		int rec = pdom.getDB().getInt(record + FIRST_PARAM);
+		return rec != 0 ? new PDOMCParameter(pdom, rec) : null;
+	}
+	
+	public void setFirstParameter(PDOMCParameter param) throws CoreException {
+		if (param != null)
+			param.setNextParameter(getFirstParameter());
+		int rec = param != null ? param.getRecord() :  0;
+		pdom.getDB().putInt(record + FIRST_PARAM, rec);
 	}
 
 	public PDOMCFunction(PDOM pdom, int record) {
 		super(pdom, record);
 	}
-
+	
 	protected int getRecordSize() {
 		return RECORD_SIZE;
 	}
@@ -61,17 +107,27 @@ class PDOMCFunction extends PDOMBinding implements IFunction {
 	public int getNodeType() {
 		return PDOMCLinkage.CFUNCTION;
 	}
-	
-	public IParameter[] getParameters() throws DOMException {
-		throw new PDOMNotImplementedError();
-	}
-
-	public IScope getFunctionScope() throws DOMException {
-		throw new PDOMNotImplementedError();
-	}
 
 	public IFunctionType getType() throws DOMException {
-		throw new PDOMNotImplementedError();
+		/*
+		 * CVisitor binding resolution assumes any IBinding which is
+		 * also an IType should be converted to a IProblemBinding in a
+		 * route through the code that triggers errors here. This means
+		 * we can't use the convenient idea of having PDOMCFunction implement
+		 * both the IType and IBinding subinterfaces. 
+		 */
+		return new IFunctionType() {
+			public Object clone() { fail(); return null;	}
+			public IType[] getParameterTypes() throws DOMException {
+				return PDOMCFunction.this.getParameterTypes();
+			}
+			public IType getReturnType() throws DOMException {
+				return PDOMCFunction.this.getReturnType();
+			}
+			public boolean isSameType(IType type) {
+				return PDOMCFunction.this.isSameType(type);
+			}
+		};
 	}
 
 	public boolean isStatic() throws DOMException {
@@ -82,6 +138,38 @@ class PDOMCFunction extends PDOMBinding implements IFunction {
 		return getBit(getByte(record + ANNOTATIONS), PDOMCAnnotation.EXTERN_OFFSET);
 	}
 
+	public IParameter[] getParameters() throws DOMException {
+		try {
+			int n = pdom.getDB().getInt(record + NUM_PARAMS);
+			IParameter[] params = new IParameter[n];
+			PDOMCParameter param = getFirstParameter();
+			while (param != null) {
+				params[--n] = param;
+				param = param.getNextParameter();
+			}
+			return params;
+		} catch (CoreException e) {
+			CCorePlugin.log(e);
+			return new IParameter[0];
+		}
+	}
+	
+	public IType[] getParameterTypes() throws DOMException {
+		try {
+			int n = pdom.getDB().getInt(record + NUM_PARAMS);
+			IType[] types = new IType[n];
+			PDOMCParameter param = getFirstParameter();
+			while (param != null) {
+				types[--n] = param.getType();
+				param = param.getNextParameter();
+			}
+			return types;
+		} catch (CoreException e) {
+			CCorePlugin.log(e);
+			return new IType[0];
+		}
+	}
+	
 	public boolean isAuto() throws DOMException {
 		// ISO/IEC 9899:TC1 6.9.1.4
 		return false;
@@ -99,5 +187,9 @@ class PDOMCFunction extends PDOMBinding implements IFunction {
 	public boolean takesVarArgs() throws DOMException {
 		return getBit(getByte(record + ANNOTATIONS), PDOMCAnnotation.VARARGS_OFFSET);
 	}
-
+	
+	public IScope getFunctionScope() throws DOMException {fail(); return null;}
+	public IType getReturnType() throws DOMException {fail();return null;}
+	public boolean isSameType(IType type) {fail(); return false;}
+	public Object clone() {fail(); return null;}
 }

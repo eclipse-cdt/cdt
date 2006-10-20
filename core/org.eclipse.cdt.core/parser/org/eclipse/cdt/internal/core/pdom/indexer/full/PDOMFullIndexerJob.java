@@ -48,6 +48,9 @@ abstract class PDOMFullIndexerJob extends PDOMIndexerTask implements IPDOMIndexe
 		return indexer;
 	}
 	
+	protected void setupIndexAndReaderFactory() {
+		// mstodo delay setting up index to here.
+	}
 	
 	protected void doChangeTU(ITranslationUnit tu) throws CoreException, InterruptedException {
 		IPath path = tu.getLocation();

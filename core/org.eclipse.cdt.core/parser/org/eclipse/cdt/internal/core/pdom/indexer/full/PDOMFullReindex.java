@@ -41,9 +41,8 @@ class PDOMFullReindex extends PDOMFullIndexerJob {
 
 	public void run(final IProgressMonitor monitor) {
 		try {
-			long start = System.currentTimeMillis();
-			
-			// First clear out the PDOM
+			long start = System.currentTimeMillis();			
+			setupIndexAndReaderFactory();
 			clearIndex(index);
 			fFilesToIndex--;
 			
@@ -73,7 +72,7 @@ class PDOMFullReindex extends PDOMFullIndexerJob {
 			String showTimings = Platform.getDebugOption(CCorePlugin.PLUGIN_ID
 					+ "/debug/pdomtimings"); //$NON-NLS-1$
 			if (showTimings != null && showTimings.equalsIgnoreCase("true")) //$NON-NLS-1$
-				System.out.println("PDOM Full Reindex Time: " + (System.currentTimeMillis() - start) //$NON-NLS-1$
+				System.out.println(indexer.getID()+" indexing time: " + (System.currentTimeMillis() - start) //$NON-NLS-1$
 						+ " " + indexer.getProject().getElementName()); //$NON-NLS-1$
 		} catch (CoreException e) {
 			if (e.getStatus() != Status.CANCEL_STATUS)

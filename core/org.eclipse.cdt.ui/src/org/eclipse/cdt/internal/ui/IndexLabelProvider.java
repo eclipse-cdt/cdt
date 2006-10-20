@@ -9,30 +9,38 @@
  * QNX - Initial API and implementation
  * Markus Schorn (Wind River Systems)
  * IBM Corporation
+ * Andrew Ferguson (Symbian)
  *******************************************************************************/
 
 package org.eclipse.cdt.internal.ui;
 
-import org.eclipse.cdt.core.dom.ast.DOMException;
-import org.eclipse.cdt.core.dom.ast.ICompositeType;
-import org.eclipse.cdt.core.dom.ast.IFunction;
-import org.eclipse.cdt.core.dom.ast.IVariable;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
-import org.eclipse.cdt.core.model.ICContainer;
-import org.eclipse.cdt.core.model.ICProject;
-import org.eclipse.cdt.core.model.ITranslationUnit;
-import org.eclipse.cdt.internal.core.pdom.dom.PDOMLinkage;
-import org.eclipse.cdt.internal.core.pdom.dom.PDOMNamedNode;
-import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
-import org.eclipse.cdt.internal.ui.viewsupport.CElementImageProvider;
-import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
+
+import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
+import org.eclipse.cdt.core.dom.ast.DOMException;
+import org.eclipse.cdt.core.dom.ast.ICompositeType;
+import org.eclipse.cdt.core.dom.ast.IEnumeration;
+import org.eclipse.cdt.core.dom.ast.IEnumerator;
+import org.eclipse.cdt.core.dom.ast.IFunction;
+import org.eclipse.cdt.core.dom.ast.ITypedef;
+import org.eclipse.cdt.core.dom.ast.IVariable;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
+import org.eclipse.cdt.core.model.ICContainer;
+import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.cdt.ui.CUIPlugin;
+
+import org.eclipse.cdt.internal.core.pdom.dom.PDOMLinkage;
+import org.eclipse.cdt.internal.core.pdom.dom.PDOMNamedNode;
+import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
+
+import org.eclipse.cdt.internal.ui.viewsupport.CElementImageProvider;
 
 /**
  * Common label provider for index based viewers.
@@ -45,7 +53,21 @@ public class IndexLabelProvider extends LabelProvider {
 			return "null :("; //$NON-NLS-1$
 		} else if (element instanceof PDOMNode) {
 			try {
-				return ((PDOMNamedNode)element).getDBName().getString();
+				String result = ((PDOMNamedNode)element).getDBName().getString();
+				
+				/*
+				 * aftodo - Ideally here we'd call ASTTypeUtil.getType but
+				 * we don't currently store return types
+				 */
+				if(element instanceof IFunction) {
+					try {
+						result += " "+ASTTypeUtil.getParameterTypeString(((IFunction) element).getType()); //$NON-NLS-1$
+					} catch(DOMException de) {
+						/* NO-OP: just use plain name as label */
+					}
+				}
+				
+				return result;
 			} catch (CoreException e) {
 				return e.getMessage();
 			}
@@ -81,6 +103,12 @@ public class IndexLabelProvider extends LabelProvider {
 			desc = CElementImageProvider.getStructImageDescriptor();
 		else if (element instanceof ICPPNamespace)
 			desc = CElementImageProvider.getNamespaceImageDescriptor();
+		else if (element instanceof IEnumeration)
+			desc = CElementImageProvider.getEnumerationImageDescriptor();
+		else if (element instanceof IEnumerator)
+			CElementImageProvider.getEnumeratorImageDescriptor();
+		else if (element instanceof ITypedef)
+			desc = CElementImageProvider.getTypedefImageDescriptor();
 		else if (element instanceof ICProject)
 			desc = CPluginImages.DESC_OBJS_SEARCHHIERPROJECT;
 		else if (element instanceof ICContainer)

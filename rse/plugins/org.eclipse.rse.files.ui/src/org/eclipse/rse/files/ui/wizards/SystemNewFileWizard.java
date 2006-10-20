@@ -343,7 +343,7 @@ public class SystemNewFileWizard
 			if (rffs.listRoots())
 			{
 				try {
-				IRemoteFile[] roots = parentSubSystem.listRoots();
+				IRemoteFile[] roots = parentSubSystem.listRoots(null);
 				for (int rootIdx = 0; (roots!=null) && (rootIdx<roots.length); rootIdx++)
 				{
 			         if (uniqueNames.indexOf(roots[idx].getName())==-1)

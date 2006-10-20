@@ -183,7 +183,7 @@ public final class FileServiceSubSystem extends RemoteFileSubSystem implements I
 			{
 				try
 				{
-					return listRoots()[0];
+					return listRoots(null)[0];
 				}
 				catch (Exception e)
 				{
@@ -322,7 +322,7 @@ public final class FileServiceSubSystem extends RemoteFileSubSystem implements I
 	 * @param fileNameFilter The name pattern to subset the file list by, or null to return all files.
 	 * @param context The holder of state information
 	 */
-	public IRemoteFile[] listFoldersAndFiles(IRemoteFile parent, String fileNameFilter, IRemoteFileContext context) throws SystemMessageException
+	public IRemoteFile[] listFoldersAndFiles(IRemoteFile parent, String fileNameFilter, IRemoteFileContext context, IProgressMonitor monitor) throws SystemMessageException
 	{
 		String parentPath = null;
 		if (parent != null) {
@@ -337,7 +337,7 @@ public final class FileServiceSubSystem extends RemoteFileSubSystem implements I
 			throw new SystemMessageException(msg);
 		}
 		
-		IHostFile[] results = getFilesAndFolders(null, parentPath, fileNameFilter); 
+		IHostFile[] results = getFilesAndFolders(monitor, parentPath, fileNameFilter); 
 
 		IRemoteFile[] farr = getHostFileToRemoteFileAdapter().convertToRemoteFiles(this, context, parent, results);
 		parent.setContents(RemoteChildrenContentsType.getInstance(), fileNameFilter, farr);
@@ -352,7 +352,7 @@ public final class FileServiceSubSystem extends RemoteFileSubSystem implements I
 	 * @param fileNameFilter The name pattern to subset the list by, or null to return all files.
 	 * @param context The holder of state information
 	 */
-	public IRemoteFile[] listFiles(IRemoteFile parent, String fileNameFilter, IRemoteFileContext context) throws SystemMessageException
+	public IRemoteFile[] listFiles(IRemoteFile parent, String fileNameFilter, IRemoteFileContext context,IProgressMonitor monitor) throws SystemMessageException
 	{
 		String parentPath = null;
 		if (parent != null) {
@@ -370,7 +370,7 @@ public final class FileServiceSubSystem extends RemoteFileSubSystem implements I
 		IHostFile[] results = null;
 		try
 		{
-			results = getFiles(null, parentPath, fileNameFilter);
+			results = getFiles(monitor, parentPath, fileNameFilter);
 		}
 		catch (SystemMessageException e)
 		{
@@ -388,7 +388,7 @@ public final class FileServiceSubSystem extends RemoteFileSubSystem implements I
 	 * @param fileNameFilter The name pattern for subsetting the file list when this folder is subsequently expanded
 	 * @param context The holder of state information
 	 */
-	public IRemoteFile[] listFolders(IRemoteFile parent, String fileNameFilter, IRemoteFileContext context) throws SystemMessageException
+	public IRemoteFile[] listFolders(IRemoteFile parent, String fileNameFilter, IRemoteFileContext context, IProgressMonitor monitor) throws SystemMessageException
 	{
 		String parentPath = null;
 		if (parent != null) {
@@ -406,7 +406,7 @@ public final class FileServiceSubSystem extends RemoteFileSubSystem implements I
 		IHostFile[] results = null;
 		try
 		{
-			results = getFolders(null, parentPath, fileNameFilter);
+			results = getFolders(monitor, parentPath, fileNameFilter);
 		}
 		catch (SystemMessageException e)
 		{			
@@ -416,12 +416,12 @@ public final class FileServiceSubSystem extends RemoteFileSubSystem implements I
 		return farr;
 	}
 	
-	public IRemoteFile[] listRoots(IRemoteFileContext context) throws InterruptedException 
+	public IRemoteFile[] listRoots(IRemoteFileContext context, IProgressMonitor monitor) throws InterruptedException 
 	{
 		IHostFile[] roots = null;
 		try
 		{
-			roots = getRoots(null);
+			roots = getRoots(monitor);
 		}
 		catch (SystemMessageException e)
 		{

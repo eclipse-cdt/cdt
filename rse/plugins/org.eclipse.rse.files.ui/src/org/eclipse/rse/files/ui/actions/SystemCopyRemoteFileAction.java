@@ -257,7 +257,7 @@ public class SystemCopyRemoteFileAction extends SystemBaseCopyAction
    				
    				IRemoteFile newTargetFolder = targetFS.getRemoteFileObject(newPath);
    				targetFS.createFolder(newTargetFolder);
-   				IRemoteFile[] children = srcFS.listFoldersAndFiles(srcFileOrFolder);
+   				IRemoteFile[] children = srcFS.listFoldersAndFiles(srcFileOrFolder, monitor);
    				if (children != null)
    				{
 	   				for (int i = 0; i < children.length; i++)

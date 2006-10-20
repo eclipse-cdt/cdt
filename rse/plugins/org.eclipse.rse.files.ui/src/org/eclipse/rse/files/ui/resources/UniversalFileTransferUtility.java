@@ -346,7 +346,7 @@ public class UniversalFileTransferUtility
 						tempFolder = getTempFileFor(srcFileOrFolder);
 						try
 						{
-							IRemoteFile[] children = srcFS.listFoldersAndFiles(srcFileOrFolder);
+							IRemoteFile[] children = srcFS.listFoldersAndFiles(srcFileOrFolder,monitor);
 							
 							
 							SystemRemoteResourceSet childSet = new SystemRemoteResourceSet(srcFS, children);
@@ -766,7 +766,7 @@ public class UniversalFileTransferUtility
 				IRemoteFile[] children = null;
 				try
 				{
-					children = srcFS.listFoldersAndFiles(srcFileOrFolder);
+					children = srcFS.listFoldersAndFiles(srcFileOrFolder, monitor);
 				}
 				catch (SystemMessageException e)
 				{
@@ -1532,7 +1532,7 @@ public class UniversalFileTransferUtility
 						if (!shouldExtract)
 						{
 						    // check for empty dir
-						    IRemoteFile[] children = localSS.listFiles(currentSource);
+						    IRemoteFile[] children = localSS.listFiles(currentSource, monitor);
 						    
 						    if (children == null || children.length == 0)
 						    {

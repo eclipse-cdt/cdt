@@ -32,7 +32,7 @@ import org.eclipse.rse.services.clientserver.processes.IHostProcessFilter;
 import org.eclipse.rse.services.clientserver.processes.ISystemProcessRemoteConstants;
 import org.eclipse.rse.services.clientserver.processes.ISystemProcessRemoteTypes;
 import org.eclipse.rse.subsystems.processes.core.subsystem.IRemoteProcess;
-import org.eclipse.rse.subsystems.processes.core.subsystem.RemoteProcessSubSystem;
+import org.eclipse.rse.subsystems.processes.core.subsystem.IRemoteProcessSubSystem;
 import org.eclipse.rse.ui.ISystemContextMenuConstants;
 import org.eclipse.rse.ui.ISystemMessages;
 import org.eclipse.rse.ui.RSEUIPlugin;
@@ -159,14 +159,14 @@ public class SystemViewRemoteProcessAdapter extends AbstractSystemViewAdapter
 	public Object[] getChildren(Object element)
 	{
 		IRemoteProcess process = (IRemoteProcess) element;
-		RemoteProcessSubSystem ss = process.getParentRemoteProcessSubSystem();
+		IRemoteProcessSubSystem ss = process.getParentRemoteProcessSubSystem();
 		IHostProcessFilter orgRpfs = process.getFilterString();
 		
 		Object[] children = null;
 		
 		try
 		{
-			children = ss.listAllProcesses(orgRpfs, process.getContext());
+			children = ss.listAllProcesses(orgRpfs, process.getContext(), null);
 			if ((children == null) || (children.length == 0))
 			{
 				children = EMPTY_LIST;

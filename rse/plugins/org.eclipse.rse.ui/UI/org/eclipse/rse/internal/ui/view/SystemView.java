@@ -73,6 +73,7 @@ import org.eclipse.rse.core.model.ISystemMessageObject;
 import org.eclipse.rse.core.model.ISystemRegistry;
 import org.eclipse.rse.core.references.IRSEBaseReferencingObject;
 import org.eclipse.rse.core.subsystems.ISubSystem;
+import org.eclipse.rse.core.subsystems.SubSystem;
 import org.eclipse.rse.model.ISystemPromptableObject;
 import org.eclipse.rse.model.ISystemRemoteChangeEvent;
 import org.eclipse.rse.model.ISystemRemoteChangeEvents;
@@ -2549,13 +2550,17 @@ public class SystemView extends TreeViewer implements ISystemTree, ISystemResour
 		matches = findAllRemoteItemReferences(oldElementName, renameObject, subsystem, matches);
 		if (matches == null) return;
 
+		TreeItem[] selected = getTree().getSelection();
+		getTree().deselectAll();
+		
+		boolean refresh = false;
 		// STEP 3: process all references to the old name object
 		for (int idx = 0; idx < matches.size(); idx++) {
 			Item match = (Item) matches.elementAt(idx);
 			// a reference to this remote object
 			if ((match instanceof TreeItem) && !((TreeItem) match).isDisposed()) {
 				Object data = match.getData();
-				boolean refresh = false;
+		
 				if (data != renameObject) // not a binary match
 				{
 					if (rmtAdapter == null) rmtAdapter = getRemoteAdapter(data);
@@ -2563,12 +2568,22 @@ public class SystemView extends TreeViewer implements ISystemTree, ISystemResour
 				} else {
 					refresh = true;
 				}
-				update(data, properties); // for refreshing non-structural properties in viewer when model changes
+			
+				
+				internalUpdate(match, data, properties);
+						
+				//update(data, properties); // for refreshing non-structural properties in viewer when model changes
 				//System.out.println("Match found. refresh required? " + refresh);
-				if (refresh)
+//				if (refresh)
 				//refreshRemoteObject(data,null,false);
-					smartRefresh(new TreeItem[] { (TreeItem) match });
+	//				smartRefresh(new TreeItem[] { (TreeItem) match });
 			}
+		}
+		
+		if (refresh)
+		{
+			smartRefresh((TreeItem[])matches.toArray(new TreeItem[matches.size()]));
+			getTree().setSelection(selected);
 		}
 
 		// STEP 4: update property sheet, just in case.    	
@@ -4418,7 +4433,10 @@ public class SystemView extends TreeViewer implements ISystemTree, ISystemResour
 				ok = adapter.doRename(getShell(), element, newNames[nameIdx++]);
 				if (ok) {
 					if (remoteAdapter != null)
-						sr.fireRemoteResourceChangeEvent(ISystemRemoteChangeEvents.SYSTEM_REMOTE_RESOURCE_RENAMED, element, parentElement, null, oldFullName, this);
+					{
+						ISubSystem ss = adapter.getSubSystem(element);
+						sr.fireRemoteResourceChangeEvent(ISystemRemoteChangeEvents.SYSTEM_REMOTE_RESOURCE_RENAMED, element, parentElement, ss, oldFullName, this);
+					}
 
 					else
 						sr.fireEvent(new org.eclipse.rse.model.SystemResourceChangeEvent(element, ISystemResourceChangeEvents.EVENT_RENAME, parentElement));

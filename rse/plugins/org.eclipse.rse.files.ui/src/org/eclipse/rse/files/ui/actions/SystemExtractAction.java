@@ -144,7 +144,7 @@ public class SystemExtractAction extends SystemBaseAction
 		{
 			try
 			{
-			IRemoteFile[] sources = sourceSS.listFoldersAndFiles(selection);
+			IRemoteFile[] sources = sourceSS.listFoldersAndFiles(selection, monitor);
 			for (int j = 0; j < sources.length && !monitor.isCanceled(); j++)
 			{
 				try

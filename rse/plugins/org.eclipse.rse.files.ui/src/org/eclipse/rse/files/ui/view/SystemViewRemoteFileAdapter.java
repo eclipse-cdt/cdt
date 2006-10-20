@@ -2136,7 +2136,7 @@ public class SystemViewRemoteFileAdapter
 								IRemoteFile newTargetFolder = targetFS.getRemoteFileObject(newPath);
 								targetFS.createFolder(newTargetFolder);
 
-								IRemoteFile[] children = localFS.listFoldersAndFiles(srcFileOrFolder);
+								IRemoteFile[] children = localFS.listFoldersAndFiles(srcFileOrFolder, monitor);
 								if (children != null)
 								{
 									for (int i = 0; i < children.length; i++)

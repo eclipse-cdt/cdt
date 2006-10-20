@@ -81,7 +81,7 @@ public class ValidatorFileUniqueName
 		                );  
 		try
 		{
-		IRemoteFile[] contents = parentFolder.getParentRemoteFileSubSystem().listFoldersAndFiles(parentFolder);
+		IRemoteFile[] contents = parentFolder.getParentRemoteFileSubSystem().listFoldersAndFiles(parentFolder, null);
 		if (contents!=null)
 		{
 		  String[] names = new String[contents.length];

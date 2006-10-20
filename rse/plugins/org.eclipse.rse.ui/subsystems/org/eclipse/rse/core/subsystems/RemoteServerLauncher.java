@@ -148,7 +148,8 @@ public class RemoteServerLauncher extends ServerLauncher implements IRemoteServe
 				_serverLaunchType  = ServerLaunchType.get(launchTypeName);
 				
 				IProperty daemonPortProperty = set.getProperty(KEY_DAEMON_PORT);
-				daemonPortProperty.setEnabled(_serverLaunchType.getType() == ServerLaunchType.DAEMON);
+				boolean daemon = _serverLaunchType == null || _serverLaunchType.getType() == ServerLaunchType.DAEMON;
+				daemonPortProperty.setEnabled(daemon);
 				daemonPortProperty.setLabel(SystemResources.RESID_CONNECTION_DAEMON_PORT_LABEL);
 				
 				_daemonPort = Integer.parseInt(daemonPortProperty.getValue());
@@ -156,13 +157,14 @@ public class RemoteServerLauncher extends ServerLauncher implements IRemoteServe
 				IProperty autoDetectProperty = set.getProperty(KEY_AUTODETECT_SSL);
 				if (autoDetectProperty != null)
 				{
-					autoDetectProperty.setEnabled(_serverLaunchType.getType() == ServerLaunchType.REXEC);
+					boolean autoDetect = _serverLaunchType == null || _serverLaunchType.getType() == ServerLaunchType.REXEC;
+					autoDetectProperty.setEnabled(autoDetect);
 					autoDetectProperty.setLabel(SystemResources.RESID_SUBSYSTEM_AUTODETECT_LABEL);
 				
 					_autoDetectSSL = Boolean.getBoolean(autoDetectProperty.getValue());
 				}
 				
-				boolean usingRexec = _serverLaunchType.getType() == ServerLaunchType.REXEC;
+				boolean usingRexec = _serverLaunchType != null && _serverLaunchType.getType() == ServerLaunchType.REXEC;
 				IProperty rexecPortProperty = set.getProperty(KEY_REXEC_PORT);
 				rexecPortProperty.setEnabled(usingRexec);
 				rexecPortProperty.setLabel(SystemResources.RESID_CONNECTION_PORT_LABEL);
@@ -197,6 +199,8 @@ public class RemoteServerLauncher extends ServerLauncher implements IRemoteServe
 			set = createPropertySet(PROPERTY_SET_NAME, getDescription());						
 		}
 		
+		if (_serverLaunchType == null)
+			_serverLaunchType = ServerLaunchType.get(ServerLaunchType.DAEMON);
 		IProperty launchTypeProperty = set.addProperty(KEY_SERVER_LAUNCH_TYPE_NAME, _serverLaunchType.getName(), getServerLauncherPropertyType());
 		launchTypeProperty.setLabel(SystemResources.RESID_PROP_SERVERLAUNCHER_MEANS_LABEL);
 		

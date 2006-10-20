@@ -40,7 +40,7 @@ import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
 import org.eclipse.rse.services.clientserver.processes.ISystemProcessRemoteConstants;
 import org.eclipse.rse.subsystems.processes.core.subsystem.IRemoteProcess;
-import org.eclipse.rse.subsystems.processes.core.subsystem.RemoteProcessSubSystem;
+import org.eclipse.rse.subsystems.processes.core.subsystem.IRemoteProcessSubSystem;
 import org.eclipse.rse.ui.ISystemContextMenuConstants;
 import org.eclipse.rse.ui.ISystemMessages;
 import org.eclipse.rse.ui.RSEUIPlugin;
@@ -211,7 +211,7 @@ public class SystemKillProcessAction extends SystemBaseDialogAction implements I
 		throws Exception 
     {
 
-		RemoteProcessSubSystem ss;
+		IRemoteProcessSubSystem ss;
 		boolean ok = false;
 		ss = process.getParentRemoteProcessSubSystem();
 		

@@ -17,7 +17,6 @@
 package org.eclipse.rse.subsystems.processes.servicesubsystem;
 
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.rse.core.SystemBasePlugin;
 import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.subsystems.IConnectorService;
 import org.eclipse.rse.core.subsystems.IServiceSubSystemConfiguration;
@@ -118,30 +117,30 @@ public class ProcessServiceSubSystem extends RemoteProcessSubSystemImpl implemen
 	/* (non-Javadoc)
 	 * @see org.eclipse.rse.subsystems.processes.core.subsystem.impl.RemoteProcessSubSystemImpl#listAllProcesses(org.eclipse.rse.services.clientserver.processes.IHostProcessFilter, org.eclipse.rse.subsystems.processes.core.subsystem.IRemoteProcessContext)
 	 */
-	public IRemoteProcess[] listAllProcesses(IHostProcessFilter processFilter, IRemoteProcessContext context) throws InterruptedException, SystemMessageException 
+	public IRemoteProcess[] listAllProcesses(IHostProcessFilter processFilter, IRemoteProcessContext context, IProgressMonitor monitor) throws InterruptedException, SystemMessageException 
 	{
 		checkIsConnected();
-		IHostProcess[] processes = getProcessService().listAllProcesses(null, processFilter);
+		IHostProcess[] processes = getProcessService().listAllProcesses(monitor, processFilter);
 		return getHostProcessToRemoteProcessAdapter().convertToRemoteProcesses(context, null, processes);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.rse.subsystems.processes.core.subsystem.RemoteProcessSubSystem#listChildProcesses(org.eclipse.rse.subsystems.processes.core.subsystem.IRemoteProcess, org.eclipse.rse.services.clientserver.processes.IHostProcessFilter, org.eclipse.rse.subsystems.processes.core.subsystem.IRemoteProcessContext)
 	 */
-	public IRemoteProcess[] listChildProcesses(IRemoteProcess parent, IHostProcessFilter processFilter, IRemoteProcessContext context) throws SystemMessageException
+	public IRemoteProcess[] listChildProcesses(IRemoteProcess parent, IHostProcessFilter processFilter, IRemoteProcessContext context, IProgressMonitor monitor) throws SystemMessageException
 	{
 		checkIsConnected();
-		IHostProcess[] processes = getProcessService().listChildProcesses(null, parent.getPid(), processFilter);
+		IHostProcess[] processes = getProcessService().listChildProcesses(monitor, parent.getPid(), processFilter);
 		return getHostProcessToRemoteProcessAdapter().convertToRemoteProcesses(context, parent, processes);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.rse.subsystems.processes.core.subsystem.RemoteProcessSubSystem#listChildProcesses(org.eclipse.rse.subsystems.processes.core.subsystem.IRemoteProcess, org.eclipse.rse.subsystems.processes.core.subsystem.IRemoteProcessContext)
 	 */
-	public IRemoteProcess[] listChildProcesses(IRemoteProcess parent, IRemoteProcessContext context) throws SystemMessageException
+	public IRemoteProcess[] listChildProcesses(IRemoteProcess parent, IRemoteProcessContext context, IProgressMonitor monitor) throws SystemMessageException
 	{
 		checkIsConnected();
-		IHostProcess[] processes = getProcessService().listChildProcesses(null, parent.getPid());
+		IHostProcess[] processes = getProcessService().listChildProcesses(monitor, parent.getPid());
 		return getHostProcessToRemoteProcessAdapter().convertToRemoteProcesses(context, parent, processes);
 	}
 

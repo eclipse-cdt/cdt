@@ -25,7 +25,7 @@ import org.eclipse.rse.services.clientserver.processes.IHostProcessFilter;
 import org.eclipse.rse.services.clientserver.processes.ISystemProcessRemoteConstants;
 import org.eclipse.rse.subsystems.processes.core.subsystem.IRemoteProcess;
 import org.eclipse.rse.subsystems.processes.core.subsystem.IRemoteProcessContext;
-import org.eclipse.rse.subsystems.processes.core.subsystem.RemoteProcessSubSystem;
+import org.eclipse.rse.subsystems.processes.core.subsystem.IRemoteProcessSubSystem;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
@@ -67,7 +67,7 @@ public class RemoteProcessImpl implements IRemoteProcess, ISystemProcessRemoteCo
 	/* (non-Javadoc)
 	 * @see org.eclipse.rse.subsystems.processes.core.subsystem.IRemoteProcess#getParentRemoteProcessSubSystem()
 	 */
-	public RemoteProcessSubSystem getParentRemoteProcessSubSystem()
+	public IRemoteProcessSubSystem getParentRemoteProcessSubSystem()
 	{
 		return _context.getParentRemoteProcessSubSystem();
 	}
@@ -77,7 +77,7 @@ public class RemoteProcessImpl implements IRemoteProcess, ISystemProcessRemoteCo
 	 */
 	public IHost getSystemConnection()
 	{
-    	RemoteProcessSubSystem ss = _context.getParentRemoteProcessSubSystem();
+    	IRemoteProcessSubSystem ss = _context.getParentRemoteProcessSubSystem();
     	if (ss == null)
     	  return null;
     	else
@@ -122,7 +122,7 @@ public class RemoteProcessImpl implements IRemoteProcess, ISystemProcessRemoteCo
 	    	IRemoteProcess parentProcess = _context.getParentRemoteProcess();
 	    	if ((parentProcess == null) && getPPid() != -1)
 	    	{    	  
-	    		RemoteProcessSubSystem ss = _context.getParentRemoteProcessSubSystem();
+	    		IRemoteProcessSubSystem ss = _context.getParentRemoteProcessSubSystem();
 	    		if (ss != null)
 	    		{
 	    			try 

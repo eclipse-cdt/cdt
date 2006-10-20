@@ -506,7 +506,7 @@ public class CommandEntryContentAssistProcessor implements IContentAssistProcess
 				 }
 				 else
 				 {
-				 	fileList = parent.getParentRemoteFileSubSystem().listFoldersAndFiles(parent, currentText + "*");
+				 	fileList = parent.getParentRemoteFileSubSystem().listFoldersAndFiles(parent, currentText + "*", null);
 				 }
 			
 
@@ -562,7 +562,7 @@ public class CommandEntryContentAssistProcessor implements IContentAssistProcess
 		 {
 			 try
 			 {	
-				 fileList = workingDirectory.getParentRemoteFileSubSystem().listFoldersAndFiles(workingDirectory, currentText + "*");
+				 fileList = workingDirectory.getParentRemoteFileSubSystem().listFoldersAndFiles(workingDirectory, currentText + "*", null);
 			 }
 			 catch (SystemMessageException e)
 			 {

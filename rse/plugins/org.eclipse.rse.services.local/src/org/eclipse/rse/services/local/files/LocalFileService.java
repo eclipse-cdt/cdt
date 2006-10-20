@@ -638,6 +638,11 @@ public class LocalFileService extends AbstractFileService implements IFileServic
 		}
 		else
 		{
+			//	allow cancel before doing the os query
+			if (monitor != null && monitor.isCanceled())
+			{
+				return null;
+			}
 			if (!fFilter.isGeneric())
 			{
 				File file = new File(localParent, fileFilter);

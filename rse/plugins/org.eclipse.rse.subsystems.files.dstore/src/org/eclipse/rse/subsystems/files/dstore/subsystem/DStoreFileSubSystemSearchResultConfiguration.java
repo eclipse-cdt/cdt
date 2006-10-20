@@ -80,7 +80,7 @@ public class DStoreFileSubSystemSearchResultConfiguration extends DStoreSearchRe
 						if (!parentRemoteFile.hasContents(RemoteChildrenContentsType.getInstance()))
 						{
 							// query all files to save time (so we can retrieve cached files
-							_fileSubSystem.listFiles(parentRemoteFile);
+							_fileSubSystem.listFiles(parentRemoteFile, null);
 						}
 						
 						String path = fileNode.getValue() + "/" + fileNode.getName(); //$NON-NLS-1$

@@ -49,7 +49,7 @@ public interface IRemoteProcess extends IHostProcess, IAdaptable
 	/**
 	 * Get parent subsystem
 	 */
-	public RemoteProcessSubSystem getParentRemoteProcessSubSystem();
+	public IRemoteProcessSubSystem getParentRemoteProcessSubSystem();
 	
     /**
      * Return the connection this remote process is from.

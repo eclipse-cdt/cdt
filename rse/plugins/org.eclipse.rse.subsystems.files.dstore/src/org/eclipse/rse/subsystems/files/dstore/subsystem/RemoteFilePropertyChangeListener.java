@@ -29,7 +29,6 @@ import org.eclipse.dstore.core.model.DataStore;
 import org.eclipse.dstore.extra.internal.extra.DomainEvent;
 import org.eclipse.dstore.extra.internal.extra.IDomainListener;
 import org.eclipse.rse.core.SystemBasePlugin;
-import org.eclipse.rse.core.model.ISystemRegistry;
 import org.eclipse.rse.core.subsystems.CommunicationsEvent;
 import org.eclipse.rse.core.subsystems.ICommunicationsListener;
 import org.eclipse.rse.core.subsystems.IConnectorService;

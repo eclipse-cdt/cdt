@@ -25,7 +25,7 @@ import org.eclipse.rse.core.filters.ISystemFilterReference;
 import org.eclipse.rse.processes.ui.SystemProcessesResources;
 import org.eclipse.rse.services.clientserver.processes.IHostProcess;
 import org.eclipse.rse.subsystems.processes.core.subsystem.IRemoteProcess;
-import org.eclipse.rse.subsystems.processes.core.subsystem.RemoteProcessSubSystem;
+import org.eclipse.rse.subsystems.processes.core.subsystem.IRemoteProcessSubSystem;
 import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemWidgetHelpers;
 import org.eclipse.rse.ui.dialogs.SystemPromptDialog;
@@ -51,12 +51,12 @@ public class RemoteProcessesDialog extends SystemPromptDialog implements KeyList
 {
 	private Text _nameFilterText;
 	private SystemTableView _viewer;
-	private RemoteProcessSubSystem _subSystem;
+	private IRemoteProcessSubSystem _subSystem;
 	private String _executableFilter;
 	private Table _table;
 	private IHostProcess _selected;
 
-	public RemoteProcessesDialog(Shell shell, String title, RemoteProcessSubSystem subSystem, String executableFilter)
+	public RemoteProcessesDialog(Shell shell, String title, IRemoteProcessSubSystem subSystem, String executableFilter)
 	{
 		super(shell, title);
 		_subSystem = subSystem;

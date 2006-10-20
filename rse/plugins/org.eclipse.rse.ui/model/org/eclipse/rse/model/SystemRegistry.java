@@ -62,6 +62,7 @@ import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
 import org.eclipse.rse.core.subsystems.ISubSystemConfigurationProxy;
 import org.eclipse.rse.core.subsystems.util.ISubSystemConfigurationAdapter;
 import org.eclipse.rse.filters.SystemFilterPool;
+import org.eclipse.rse.filters.SystemFilterReference;
 import org.eclipse.rse.filters.SystemFilterStartHere;
 import org.eclipse.rse.internal.model.SystemHostPool;
 import org.eclipse.rse.internal.model.SystemModelChangeEvent;
@@ -2970,7 +2971,17 @@ public class SystemRegistry implements ISystemRegistryUI, ISystemModelChangeEven
 	    	String remoteResourceName = null;
 	        if (remoteResource instanceof String)
 	    	  remoteResourceName = (String)remoteResource;    	  
-	    	else
+	        else if (remoteResource instanceof SystemFilterReference)
+	        {
+	        	ISystemFilterReference ref = (ISystemFilterReference)remoteResource;
+	        	ISubSystem ss = ref.getSubSystem();
+	        	remoteResource = ss.getTargetForFilter(ref);
+	      		ISystemRemoteElementAdapter ra = getRemoteAdapter(remoteResource);
+	    		if (ra == null)
+	    		  return null;
+	    		remoteResourceName = ra.getAbsoluteName(remoteResource);
+	        }
+	        else 
 	    	{
 	    		ISystemRemoteElementAdapter ra = getRemoteAdapter(remoteResource);
 	    		if (ra == null)

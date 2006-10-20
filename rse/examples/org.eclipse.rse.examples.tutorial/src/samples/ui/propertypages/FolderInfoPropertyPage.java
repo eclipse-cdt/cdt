@@ -199,7 +199,7 @@ public class FolderInfoPropertyPage
 		{
 			try
 			{
-			IRemoteFile[] folders = currFolder.getParentRemoteFileSubSystem().listFoldersAndFiles(currFolder);
+			IRemoteFile[] folders = currFolder.getParentRemoteFileSubSystem().listFoldersAndFiles( currFolder, null);
 			if ((folders != null) && (folders.length>0))
 			{
 				for (int idx=0; !stopped && (idx<folders.length); idx++)

@@ -31,7 +31,7 @@ import org.eclipse.rse.services.clientserver.processes.IHostProcessFilter;
 import org.eclipse.rse.subsystems.processes.core.subsystem.IRemoteProcess;
 import org.eclipse.rse.subsystems.processes.core.subsystem.IRemoteProcessContext;
 import org.eclipse.rse.subsystems.processes.core.subsystem.IRemoteProcessSubSystemConfiguration;
-import org.eclipse.rse.subsystems.processes.core.subsystem.RemoteProcessSubSystem;
+import org.eclipse.rse.subsystems.processes.core.subsystem.IRemoteProcessSubSystem;
 
 /**
  * The implementation of the RemoteProcessSubSystem interface. 
@@ -46,7 +46,7 @@ import org.eclipse.rse.subsystems.processes.core.subsystem.RemoteProcessSubSyste
  *
  */
 public abstract class RemoteProcessSubSystemImpl extends SubSystem implements
-		RemoteProcessSubSystem, ICommunicationsListener
+		IRemoteProcessSubSystem, ICommunicationsListener
 {
 	
 	public RemoteProcessSubSystemImpl(IHost host, IConnectorService connectorService)
@@ -132,7 +132,7 @@ public abstract class RemoteProcessSubSystemImpl extends SubSystem implements
 		IRemoteProcess[] ps = null;
 		try
 		{
-			ps = listAllProcesses(rpf, context);
+			ps = listAllProcesses(rpf, context, monitor);
 		}
 		catch (SystemMessageException e)
 		{
@@ -144,7 +144,7 @@ public abstract class RemoteProcessSubSystemImpl extends SubSystem implements
 	/**
 	 * At this point there is only one root process, the 'init' process with pid 1
 	 */
-	public IRemoteProcess[] listRoots(IRemoteProcessContext context)
+	public IRemoteProcess[] listRoots(IRemoteProcessContext context, IProgressMonitor monitor)
 	{
 		IRemoteProcess[] roots = new IRemoteProcess[1];
 		try
@@ -163,7 +163,8 @@ public abstract class RemoteProcessSubSystemImpl extends SubSystem implements
 	 */
 	public abstract IRemoteProcess[] listAllProcesses(
 			IHostProcessFilter processNameFilter,
-			IRemoteProcessContext context) throws InterruptedException,
+			IRemoteProcessContext context,
+			IProgressMonitor monitor) throws InterruptedException,
 			SystemMessageException;
 
 	/* (non-Javadoc)

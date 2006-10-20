@@ -17,6 +17,7 @@
 package org.eclipse.rse.subsystems.processes.core.subsystem;
 
 
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
 import org.eclipse.rse.services.clientserver.processes.IHostProcessFilter;
@@ -26,7 +27,7 @@ import org.eclipse.rse.services.clientserver.processes.IHostProcessFilter;
  * @author mjberger
  *
  */
-public interface RemoteProcessSubSystem extends ISubSystem
+public interface IRemoteProcessSubSystem extends ISubSystem
 {
 
     // ----------------------
@@ -52,31 +53,35 @@ public interface RemoteProcessSubSystem extends ISubSystem
 	 * This version is called directly by users.
 	 * @param processNameFilter filter the results according to this object
 	 * @param context A context object that will be associated with each returned process
+	 * @param monitor the progress monitor
 	 * @return the list of all processes running on the host machine that correspond to the filter, 
 	 * or null if there are none.
 	 */
-	public IRemoteProcess[] listAllProcesses(IHostProcessFilter processNameFilter, IRemoteProcessContext context) throws InterruptedException, SystemMessageException;
+	public IRemoteProcess[] listAllProcesses(IHostProcessFilter processNameFilter, IRemoteProcessContext context, IProgressMonitor monitor) throws InterruptedException, SystemMessageException;
 	
 	/**
 	 * Returns root processes
 	 * @param context A context object that will be associated with each returned process
+	 * @param monitor the progress monitor
 	 */
-	public IRemoteProcess[] listRoots(IRemoteProcessContext context);
+	public IRemoteProcess[] listRoots(IRemoteProcessContext context, IProgressMonitor monitor);
 	
 	/**
 	 * Return a list of all remote child processes of the given parent process on the remote system
 	 * @param parent The parent process whose children to list
 	 * @param context A context object that will be associated with each returned process
+	 * @param monitor the progress monitor
 	 */
-	public IRemoteProcess[] listChildProcesses(IRemoteProcess parent, IRemoteProcessContext context) throws SystemMessageException;
+	public IRemoteProcess[] listChildProcesses(IRemoteProcess parent, IRemoteProcessContext context, IProgressMonitor monitor) throws SystemMessageException;
 			
 	/**
 	 * Return a list of remote child processes of the given process, which match the filter.
 	 * @param parent The parent process whose children to list
 	 * @param processFilter The process filter to subset the list by, or null to return all child processes.
 	 * @param context A context object that will be associated with each returned process
+	 * @param monitor the progress monitor
 	 */
-	public IRemoteProcess[] listChildProcesses(IRemoteProcess parent, IHostProcessFilter processFilter, IRemoteProcessContext context) throws SystemMessageException;
+	public IRemoteProcess[] listChildProcesses(IRemoteProcess parent, IHostProcessFilter processFilter, IRemoteProcessContext context, IProgressMonitor monitor) throws SystemMessageException;
 			
 	/**
 	 * Given a process, return its parent process object.
@@ -94,7 +99,6 @@ public interface RemoteProcessSubSystem extends ISubSystem
 	 * Kill the given process. 
 	 * 
 	 * @param process represents the object to be killed.
-	 * @param the signal to send to the process
 	 * @return false if the given process doesn't exist, else true. Throws an exception if anything fails.
 	 */
 	public boolean kill(IRemoteProcess process, String signal) throws SystemMessageException;	

@@ -22,7 +22,7 @@ import java.util.Vector;
 import org.eclipse.rse.services.clientserver.processes.IHostProcessFilter;
 import org.eclipse.rse.subsystems.processes.core.subsystem.IRemoteProcess;
 import org.eclipse.rse.subsystems.processes.core.subsystem.IRemoteProcessContext;
-import org.eclipse.rse.subsystems.processes.core.subsystem.RemoteProcessSubSystem;
+import org.eclipse.rse.subsystems.processes.core.subsystem.IRemoteProcessSubSystem;
 
 /**
  * This class represents a place to hold contextual information stored within
@@ -36,7 +36,7 @@ import org.eclipse.rse.subsystems.processes.core.subsystem.RemoteProcessSubSyste
 public class RemoteProcessContext implements IRemoteProcessContext
 {
 
-    protected RemoteProcessSubSystem subsystem;
+    protected IRemoteProcessSubSystem subsystem;
     protected IRemoteProcess parentProcess;
     protected IHostProcessFilter filterString;
     protected Vector                 allFilterStrings;
@@ -44,7 +44,7 @@ public class RemoteProcessContext implements IRemoteProcessContext
     /**
      * Constructor that takes all inputs.
      */ 
-    public RemoteProcessContext(RemoteProcessSubSystem subsystem, IRemoteProcess parentProcessObject, 
+    public RemoteProcessContext(IRemoteProcessSubSystem subsystem, IRemoteProcess parentProcessObject, 
     		IHostProcessFilter filterString)
     {
     	this.subsystem = subsystem;
@@ -64,7 +64,7 @@ public class RemoteProcessContext implements IRemoteProcessContext
     /**
      * Set the parent subsystem
      */
-    public void setParentRemoteProcessSubSystem(RemoteProcessSubSystem subsystem)
+    public void setParentRemoteProcessSubSystem(IRemoteProcessSubSystem subsystem)
     {
     	this.subsystem = subsystem;
     }
@@ -119,7 +119,7 @@ public class RemoteProcessContext implements IRemoteProcessContext
     /**
      * Return the parent subsystem
      */
-    public RemoteProcessSubSystem getParentRemoteProcessSubSystem()
+    public IRemoteProcessSubSystem getParentRemoteProcessSubSystem()
     {
     	return subsystem;
     }

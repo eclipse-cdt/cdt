@@ -34,7 +34,7 @@ public interface IRemoteProcessContext
 	/**
 	 * Get parent subsystem
 	 */
-	public RemoteProcessSubSystem getParentRemoteProcessSubSystem();
+	public IRemoteProcessSubSystem getParentRemoteProcessSubSystem();
 	
     /**
      * Return the parent remote process object expanded to get this object, or null if no such parent
@@ -54,7 +54,7 @@ public interface IRemoteProcessContext
 	/**
 	 * Set parent subsystem
 	 */
-	public void setParentRemoteProcessSubSystem(RemoteProcessSubSystem parentSubSystem);
+	public void setParentRemoteProcessSubSystem(IRemoteProcessSubSystem parentSubSystem);
 	
     /**
      * Set the parent remote process object expanded to get this object, or null if no such parent

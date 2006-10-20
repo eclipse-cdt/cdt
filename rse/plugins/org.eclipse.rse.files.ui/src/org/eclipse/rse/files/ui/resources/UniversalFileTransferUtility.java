@@ -541,7 +541,7 @@ public class UniversalFileTransferUtility
 		}
 		catch (Exception e)
 		{
-			RSEUIPlugin.logError("An exception occured " + e.getMessage(), e);
+			SystemBasePlugin.logError("An exception occured " + e.getMessage(), e);
 			return null;
 		}
 

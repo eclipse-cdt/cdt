@@ -94,7 +94,7 @@ public class RSEFileStoreRemoteFileWrapper extends FileStore implements IFileSto
 		{
 			try
 			{
-				IRemoteFile[] children = _subSystem.listFoldersAndFiles(_remoteFile);
+				IRemoteFile[] children = _subSystem.listFoldersAndFiles(_remoteFile, monitor);
 				names = new String[children.length];
 				for (int i = 0; i < children.length; i++)
 				{

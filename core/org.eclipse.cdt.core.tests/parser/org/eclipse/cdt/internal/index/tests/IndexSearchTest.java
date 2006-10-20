@@ -17,7 +17,6 @@ import java.util.regex.Pattern;
 import junit.framework.TestSuite;
 
 import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.dom.IPDOMManager;
 import org.eclipse.cdt.core.dom.IPDOMNode;
 import org.eclipse.cdt.core.dom.IPDOMVisitor;
 import org.eclipse.cdt.core.dom.ast.IEnumeration;
@@ -33,19 +32,14 @@ import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.core.index.IndexFilter;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.testplugin.CProjectHelper;
-import org.eclipse.cdt.core.testplugin.CTestPlugin;
-import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
 import org.eclipse.cdt.internal.core.index.CIndex;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
-import org.eclipse.core.resources.IWorkspace;
-import org.eclipse.core.resources.IWorkspaceRunnable;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 
-public class IndexSearchTest extends BaseTestCase {
+public class IndexSearchTest extends IndexTestBase {
 
 	private static final IndexFilter INDEX_FILTER = new IndexFilter();
 	private static final IProgressMonitor NPM= new NullProgressMonitor();
@@ -66,7 +60,7 @@ public class IndexSearchTest extends BaseTestCase {
 	public void setUp() throws Exception {
 		super.setUp();
 		if (fProject == null) {
-			createProject();
+			fProject= createProject(true);
 		}
 		fIndex= CCorePlugin.getIndexManager().getIndex(fProject);
 	}
@@ -76,23 +70,6 @@ public class IndexSearchTest extends BaseTestCase {
 		super.tearDown();
 	}
 		
-	
-	private void createProject() throws CoreException {
-		// Create the project
-		final IWorkspace workspace = ResourcesPlugin.getWorkspace();
-		workspace.run(new IWorkspaceRunnable() {
-			public void run(IProgressMonitor monitor) throws CoreException {
-				fProject= CProjectHelper.createCProject("IndexSearchTest_" + System.currentTimeMillis(), null);
-				
-				CCorePlugin.getPDOMManager().setIndexerId(fProject, IPDOMManager.ID_NO_INDEXER);
-				CProjectHelper.importSourcesFromPlugin(fProject, CTestPlugin.getDefault().getBundle(), "resources/indexTests/search");
-			}
-		}, null);
-		CCorePlugin.getPDOMManager().setIndexerId(fProject, IPDOMManager.ID_FAST_INDEXER);		
-		// wait until the indexer is done
-		assertTrue(CCorePlugin.getIndexManager().joinIndexer(5000, new NullProgressMonitor()));
-	}
-
 	public void deleteProject() {
 		if (fProject != null) {
 			CProjectHelper.delete(fProject);

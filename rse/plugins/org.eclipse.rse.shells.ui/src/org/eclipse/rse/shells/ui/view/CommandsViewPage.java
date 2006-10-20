@@ -95,7 +95,7 @@ FocusListener
 			if (checkState(e))
 			{
 				
-				if (e.character == '\r') // "enter" key
+				if (e.character == '\r' && e.stateMask!=262144) // "enter" key, but not Ctrl+M (bug 160786)
 				{
 					sendInput();
 				}

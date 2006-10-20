@@ -167,7 +167,6 @@ deliverables did not make it into this build:
 The following critical or major bugs are currently known.
 We'll strive to fix these as soon as possible.
 <ul>
-  <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=160786">bug 160786</a> - cri - remote shell - ctrl-m maximizes and sends command buffer</li>
   <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=143462">bug 143462</a> - maj - [updating] Dirty remote editors do not get notified</li>
   <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=158534">bug 158534</a> - maj - [ssh] Save conflict when modifying remote file</li>
   <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=158765">bug 158765</a> - maj - content assist miss causes enter to not send command</li>

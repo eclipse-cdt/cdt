@@ -87,12 +87,17 @@ public class PDOMManager implements IPDOMManager, IWritableIndexManager, IListen
 		}
 	};
 
+	/**
+	 * Protects indexerJob, currentTask and taskQueue.
+	 */
+    private Object taskQueueMutex = new Object();
     private PDOMIndexerJob indexerJob;
 	private IPDOMIndexerTask currentTask;
 	private LinkedList taskQueue = new LinkedList();
-    private Object taskQueueMutex = new Object();
-	private Object fWakeupOnIdle= new Object();
-    
+	
+    /**
+     * Stores mapping from pdom to project, used to serialize\ creation of new pdoms.
+     */
     private Map fPDOMs= new HashMap();
 	private ListenerList fChangeListeners= new ListenerList();
 	private ListenerList fStateListeners= new ListenerList();
@@ -100,10 +105,13 @@ public class PDOMManager implements IPDOMManager, IWritableIndexManager, IListen
 	private IndexChangeEvent fIndexChangeEvent= new IndexChangeEvent();
 	private IndexerStateEvent fIndexerStateEvent= new IndexerStateEvent();
 
-	// classes that help out to make this one simpler
 	private IElementChangedListener fCModelListener= new CModelListener(this);
 	private IndexFactory fIndexFactory= new IndexFactory(this);
     
+	/**
+	 * Serializes creation of new indexer, when acquiring the lock you are 
+	 * not allowed to hold a lock on fPDOMs.
+	 */
 	private Object fIndexerMutex= new Object();
 	private IPreferenceChangeListener fPreferenceChangeListener= new IPreferenceChangeListener(){
 		public void preferenceChange(PreferenceChangeEvent event) {
@@ -200,7 +208,7 @@ public class PDOMManager implements IPDOMManager, IWritableIndexManager, IListen
     	}
     }
     
-    public String getIndexerId(ICProject project) throws CoreException {
+    public String getIndexerId(ICProject project) {
     	IEclipsePreferences prefs = new ProjectScope(project.getProject()).getNode(CCorePlugin.PLUGIN_ID);
     	if (prefs == null)
     		return getDefaultIndexerId();
@@ -240,7 +248,7 @@ public class PDOMManager implements IPDOMManager, IWritableIndexManager, IListen
   	    return indexerId;
     }
 
-    public void setIndexerId(final ICProject project, String indexerId) throws CoreException {
+    public void setIndexerId(final ICProject project, String indexerId) {
     	IEclipsePreferences prefs = new ProjectScope(project.getProject()).getNode(CCorePlugin.PLUGIN_ID);
     	if (prefs == null)
     		return; // TODO why would this be null?
@@ -277,9 +285,8 @@ public class PDOMManager implements IPDOMManager, IWritableIndexManager, IListen
 					ICProject cproject= CoreModel.getDefault().create(project);
 					if (cproject != null) {
 						try {
-							String oldId= (String) event.getOldValue();
 							String newId= (String) event.getNewValue();
-							if (newId != null && !newId.equals(oldId)) {
+							if (newId != null) {
 								changeIndexer(cproject, newId);
 							}
 						}
@@ -293,70 +300,90 @@ public class PDOMManager implements IPDOMManager, IWritableIndexManager, IListen
 	}
 
 	private void changeIndexer(ICProject cproject, String newid) throws CoreException {
-		IPDOMIndexer indexer= getIndexer(cproject, false);
-		if (indexer != null) {
-			stopIndexer(indexer);
+		assert !Thread.holdsLock(fPDOMs);
+		IPDOMIndexer oldIndexer= null;
+		synchronized (fIndexerMutex) {
+			oldIndexer= getIndexer(cproject, false);
+			if (oldIndexer != null) {
+				if (oldIndexer.getID().equals(newid)) {
+					return;
+				}
+			}
+			createIndexer(cproject, newid, true);
 		}
-		indexer= createIndexer(cproject, newid, true);
+		
+		if (oldIndexer != null) {
+			stopIndexer(oldIndexer);
+		}
 	}
 
 	public IPDOMIndexer getIndexer(ICProject project, boolean create) {
-		try {
-			synchronized (fIndexerMutex) {
-				IProject rproject = project.getProject();
-				if (!rproject.isOpen()) {
-					return null;
-				}
-				IPDOMIndexer indexer = (IPDOMIndexer)rproject.getSessionProperty(indexerProperty);
-				
-				if (indexer != null) {
-					ICProject indexerProject= indexer.getProject();
-					if (!project.equals(indexerProject)) {
-						indexer= null;
-					}
-				}
-				if (indexer == null && create) {
-					indexer = createIndexer(project, getIndexerId(project), false);
-				}
+		assert !Thread.holdsLock(fPDOMs);
+		synchronized (fIndexerMutex) {
+			IProject rproject = project.getProject();
+			if (!rproject.isOpen()) {
+				return null;
+			}
 
+			IPDOMIndexer indexer;
+			try {
+				indexer = (IPDOMIndexer)rproject.getSessionProperty(indexerProperty);
+			} catch (CoreException e) {
+				CCorePlugin.log(e);
+				return null;
+			}
+
+			if (indexer != null && indexer.getProject().equals(project)) {
 				return indexer;
 			}
-		} catch (CoreException e) {
-			CCorePlugin.log(e);
+
+			if (create) {
+				try {
+					return createIndexer(project, getIndexerId(project), false);
+				} catch (CoreException e) {
+					CCorePlugin.log(e);
+				}
+			}
 			return null;
 		}
 	}
 		
-    private IPDOMIndexer createIndexer(ICProject project, String indexerId, boolean forceReindex) throws CoreException {
-		PDOM pdom= (PDOM) getPDOM(project);
-		boolean reindex= forceReindex || pdom.versionMismatch() || pdom.isEmpty();
-    	synchronized (fIndexerMutex) {
-    		IPDOMIndexer indexer = null;
-    		// Look up in extension point
-    		IExtension indexerExt = Platform.getExtensionRegistry().getExtension(CCorePlugin.INDEXER_UNIQ_ID, indexerId);
-    		if (indexerExt != null) {
-    			IConfigurationElement[] elements = indexerExt.getConfigurationElements();
-    			for (int i = 0; i < elements.length; ++i) {
-    				IConfigurationElement element = elements[i];
-    				if ("run".equals(element.getName())) { //$NON-NLS-1$
-    					indexer = (IPDOMIndexer)element.createExecutableExtension("class"); //$NON-NLS-1$
-    					break;
-    				}
+    private IPDOMIndexer createIndexer(ICProject project, String indexerId, boolean forceReindex) throws CoreException  {
+    	assert Thread.holdsLock(fIndexerMutex);
+    	
+    	PDOM pdom= (PDOM) getPDOM(project);
+    	boolean reindex= forceReindex || pdom.versionMismatch() || pdom.isEmpty();
+
+    	IPDOMIndexer indexer = null;
+    	// Look up in extension point
+    	IExtension indexerExt = Platform.getExtensionRegistry().getExtension(CCorePlugin.INDEXER_UNIQ_ID, indexerId);
+    	if (indexerExt != null) {
+    		IConfigurationElement[] elements = indexerExt.getConfigurationElements();
+    		for (int i = 0; i < elements.length; ++i) {
+    			IConfigurationElement element = elements[i];
+    			if ("run".equals(element.getName())) { //$NON-NLS-1$
+    				try {
+						indexer = (IPDOMIndexer)element.createExecutableExtension("class"); //$NON-NLS-1$
+					} catch (CoreException e) {
+						CCorePlugin.log(e);
+					} 
+    				break;
     			}
     		}
-    		if (indexer == null) 
-    			// Unknown index, default to the null one
-    			indexer = new PDOMNullIndexer();
-
-    		indexer.setProject(project);
-    		project.getProject().setSessionProperty(indexerProperty, indexer);
-    		registerPreferenceListener(project);
-
-    		if (reindex) {
-    			indexer.reindex();
-    		}
-    		return indexer;
     	}
+
+    	// Unknown index, default to the null one
+    	if (indexer == null) 
+    		indexer = new PDOMNullIndexer();
+
+		indexer.setProject(project);
+		registerPreferenceListener(project);
+		project.getProject().setSessionProperty(indexerProperty, indexer);
+
+		if (reindex) {
+			indexer.reindex();
+		}
+		return indexer;
     }
 
     public void enqueue(IPDOMIndexerTask subjob) {
@@ -467,6 +494,19 @@ public class PDOMManager implements IPDOMManager, IWritableIndexManager, IListen
 
 	private void stopIndexer(IPDOMIndexer indexer) {
 		ICProject project= indexer.getProject();
+		synchronized (fIndexerMutex) {
+			IProject rp= project.getProject();
+			if (rp.isOpen()) {
+				try {
+					if (rp.getSessionProperty(indexerProperty) == indexer) {
+						rp.setSessionProperty(indexerProperty, null);
+					}
+				}
+				catch (CoreException e) {
+					CCorePlugin.log(e);
+				}
+			}
+		}
 		unregisterPreferenceListener(project);
 		synchronized (taskQueueMutex) {
 			if (indexerJob != null) {
@@ -493,9 +533,8 @@ public class PDOMManager implements IPDOMManager, IWritableIndexManager, IListen
 
     private void notifyState(final int state) {
     	if (state == IndexerStateEvent.STATE_IDLE) {
-    		assert !Thread.holdsLock(taskQueueMutex);
-    		synchronized(fWakeupOnIdle) {
-    			fWakeupOnIdle.notifyAll();
+    		synchronized(taskQueueMutex) {
+    			taskQueueMutex.notifyAll();
     		}
     	}
     	
@@ -573,31 +612,30 @@ public class PDOMManager implements IPDOMManager, IWritableIndexManager, IListen
 				if (monitor.isCanceled()) {
 					return false;
 				}
-				boolean wouldFail= false;
+				boolean hasTimedOut= false;
 				int wait= 1000;
 				if (waitMaxMillis >= 0) {
 					int rest= (int) (limit - System.currentTimeMillis());
 					if (rest < wait) {
 						if (rest <= 0) {
-							wouldFail= true;
+							hasTimedOut= true;
 						}
 
 						wait= rest;
 					}
 				}
 				
-	    		assert !Thread.holdsLock(taskQueueMutex);
-				synchronized(fWakeupOnIdle) {
+				synchronized(taskQueueMutex) {
 					if (isIndexerIdle()) {
 						return true;
 					}
-					if (wouldFail) {
+					if (hasTimedOut) {
 						return false;
 					}
 
 					monitor.subTask(MessageFormat.format(Messages.PDOMManager_FilesToIndexSubtask, new Object[] {new Integer(getFilesToIndexCount())}));
 					try {
-						fWakeupOnIdle.wait(wait);
+						taskQueueMutex.wait(wait);
 					} catch (InterruptedException e) {
 						return false;
 					}

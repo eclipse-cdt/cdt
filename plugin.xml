@@ -15,5 +15,16 @@
         </enablement>    
     </renderingBindings>          
 </extension>
+<extension
+      point="org.eclipse.ui.preferencePages">
+   <page
+         class="org.eclipse.dd.debug.memory.renderings.MemoryRenderingTraditionalPreferencePage"
+         id="org.eclipse.dd.debug.memory.renderings.MemoryRenderingTraditionalPreferencePage"
+         name="Traditional Memory Rendering"/>
+</extension>
+<extension
+      point="org.eclipse.core.runtime.preferences">
+   <initializer class="org.eclipse.dd.debug.memory.renderings.MemoryRenderingTraditionalPreferenceInitializer"/>
+</extension>
 
 </plugin>

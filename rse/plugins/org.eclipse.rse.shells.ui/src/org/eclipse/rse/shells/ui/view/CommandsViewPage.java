@@ -58,7 +58,6 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Table;
@@ -160,7 +159,7 @@ FocusListener
 	private Button _upButton;
 	private Button _downButton;
 	private Composite _inputContainer;
-	private Group _tabFolderPage;
+	private Composite _tabFolderPage;
 
 	private int _commandHistoryOffset;
 	private SystemCommandsViewPart _viewPart;
@@ -182,7 +181,7 @@ FocusListener
 
 	public Composite createTabFolderPage(CTabFolder tabFolder, CellEditorActionHandler editorActionHandler)
 	{ 
-		_tabFolderPage = new Group(tabFolder, SWT.NULL);
+		_tabFolderPage = new Composite(tabFolder, SWT.NULL);
 	
 		 Font font = tabFolder.getFont();		
 		 _tabFolderPage.setFont(font);
@@ -190,7 +189,7 @@ FocusListener
 		 // fix for 138311
 		 String dummyTitle = ShellResources.RESID_SHELLS_COMMAND_SHELL_LABEL;
 		 
-		 _tabFolderPage.setText(dummyTitle);
+//		 _tabFolderPage.setText(dummyTitle);
 		GridLayout gridLayout = new GridLayout();
 		_tabFolderPage.setLayout(gridLayout);
 		createControl(_tabFolderPage);
@@ -505,7 +504,7 @@ FocusListener
 
 			msg.makeSubstitution(title);
 			_title = msg.getLevelOneText();
-			_tabFolderPage.setText(_title);
+//			_tabFolderPage.setText(_title);
 		}
 	}
 

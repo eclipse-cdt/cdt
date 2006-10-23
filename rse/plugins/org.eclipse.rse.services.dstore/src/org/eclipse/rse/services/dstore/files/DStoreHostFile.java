@@ -53,6 +53,10 @@ public class DStoreHostFile implements IHostFile
 	public static String getNameFromPath(String path)
 	{
 		int lastSlash = path.lastIndexOf('/');
+		if (lastSlash == -1) // account for windows
+		{
+			lastSlash = path.lastIndexOf('\\');
+		}
 		if (lastSlash > 0 && lastSlash != path.length() - 1)
 		{
 			return path.substring(lastSlash);
@@ -63,6 +67,10 @@ public class DStoreHostFile implements IHostFile
 	public static String getParentPathFromPath(String path)
 	{
 		int lastSlash = path.lastIndexOf('/');
+		if (lastSlash == -1) // acount for windows
+		{
+			lastSlash = path.lastIndexOf('\\');
+		}
 		if (lastSlash > 0 && lastSlash != path.length() - 1)
 		{
 			return path.substring(0, lastSlash);

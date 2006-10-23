@@ -149,6 +149,7 @@ public abstract class AbstractDStoreService implements IDStoreService
 			}
 			catch (Exception e)
 			{				
+				e.printStackTrace();
 			}			
 		}
 		return new DataElement[0];

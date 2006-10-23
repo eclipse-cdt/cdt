@@ -699,17 +699,18 @@ public abstract class SubSystem extends RSEModelObject implements IAdaptable, IS
     	if (filter.isPromptable() || !doesFilterTypeMatch(filter, remoteObjectAbsoluteName))
     	  return false;
     	boolean would = false;
-    	ISystemFilterString[] strings = filter.getSystemFilterStrings();
+
+    	String[] strings = filter.getFilterStrings();
     	if (strings != null)
     	{
     	  for (int idx=0; !would && (idx<strings.length); idx++)
     	  {
-    	  	 if (strings[idx].getString().equals("*"))
+    	  	 if (strings[idx].equals("*"))
     	  	   would = true;
-    	  	 else if (strings[idx].getString().equals("./*"))
+    	  	 else if (strings[idx].equals("./*"))
     	  	   would = true;
     	  	 else
-    	       would = doesFilterStringMatch(strings[idx].getString(), remoteObjectAbsoluteName, strings[idx].getParentSystemFilter().areStringsCaseSensitive());
+    	       would = doesFilterStringMatch(strings[idx], remoteObjectAbsoluteName, filter.areStringsCaseSensitive());
     	  }
     	}
     	return would;

@@ -309,13 +309,17 @@ FocusListener
 	
 	public boolean isPollingEnabled()
 	{
-		if (_isPolling)
+		if (_isPolling && !getViewer().getControl().isDisposed())
 		{
 			return true;
 		}
 		return false;
 	}
 	
+	public void setPollingEnabled(boolean flag)
+	{
+		_isPolling = flag;
+	}
 
 	public void setEnabled(boolean flag)
 	{
@@ -474,6 +478,7 @@ FocusListener
 	{
 		_viewer.dispose();
 		_tabFolderPage.dispose();
+		_isPolling = false;
 	}
 
 

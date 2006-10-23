@@ -28,6 +28,7 @@ import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.rse.ui.view.ISystemViewElementAdapter;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.ui.model.IWorkbenchAdapter;
 
 
 /**
@@ -79,8 +80,18 @@ public class SystemScratchpadViewProvider implements ILabelProvider, ITreeConten
 
 	public boolean hasChildren(Object object)
 	{
-		return getAdapterFor(object).hasChildren(object);
-		
+		ISystemViewElementAdapter adapter = getAdapterFor(object);
+		if (adapter != null)
+		{
+			return adapter.hasChildren(object);
+		}
+		else if (object instanceof IAdaptable) 
+		{
+			IWorkbenchAdapter wa = (IWorkbenchAdapter)((IAdaptable)object).getAdapter(IWorkbenchAdapter.class);
+			if (wa != null)
+				return wa.getChildren(object).length > 0;
+		}
+		return false;
 	}
 
 	public Object getElementAt(Object object, int i)
@@ -95,9 +106,12 @@ public class SystemScratchpadViewProvider implements ILabelProvider, ITreeConten
 	    {
 	    	IAdaptable adapt = (IAdaptable) object;
 			ISystemViewElementAdapter result = (ISystemViewElementAdapter) adapt.getAdapter(ISystemViewElementAdapter.class);
-			result.setPropertySourceInput(object);
-			result.setViewer(_view);
-			return result;
+			if (result != null)
+			{
+				result.setPropertySourceInput(object);
+				result.setViewer(_view);
+				return result;
+			}
 	    }
 		return null;
 	}
@@ -113,6 +127,12 @@ public class SystemScratchpadViewProvider implements ILabelProvider, ITreeConten
 				{
 					results = adapter.getChildren(object);
 				}
+				else
+				{
+					IWorkbenchAdapter wa = (IWorkbenchAdapter)((IAdaptable)object).getAdapter(IWorkbenchAdapter.class);
+					if (wa != null)
+						return wa.getChildren(object);
+				}
 			}
 		if (results == null)
 		{
@@ -124,30 +144,77 @@ public class SystemScratchpadViewProvider implements ILabelProvider, ITreeConten
 
 	public String getText(Object object)
 	{
-		return getAdapterFor(object).getText(object);
+		if (object instanceof String)
+		{
+			return (String)object;
+		}
+		ISystemViewElementAdapter adapter = getAdapterFor(object);
+		if (adapter != null)
+		{
+			return adapter.getText(object);
+		}
+		else if (object instanceof IAdaptable)
+		{
+			IWorkbenchAdapter wa = (IWorkbenchAdapter)((IAdaptable)object).getAdapter(IWorkbenchAdapter.class);
+			if (wa != null)
+			{
+				return wa.getLabel(object);
+			}
+		}
+		return object.toString();
 	}
 
 	public Image getImage(Object object)
 	{
-
-		ImageDescriptor descriptor = getAdapterFor(object).getImageDescriptor(object);
-
 		Image image = null;
-		if (descriptor != null)
+		if (object instanceof String)
 		{
-			Object iobj = imageTable.get(descriptor);
-			if (iobj == null)
+			return null;
+		}
+		ISystemViewElementAdapter adapter = getAdapterFor(object);
+		if (adapter != null)
+		{
+			ImageDescriptor descriptor = adapter.getImageDescriptor(object);
+	
+			
+			if (descriptor != null)
 			{
-				image = descriptor.createImage();
-				imageTable.put(descriptor, image);
+				Object iobj = imageTable.get(descriptor);
+				if (iobj == null)
+				{
+					image = descriptor.createImage();
+					imageTable.put(descriptor, image);
+				}
+				else
+				{
+					image = (Image) iobj;
+				}
 			}
-			else
+			return image;
+		}
+		else if (object instanceof IAdaptable)
+		{
+			IWorkbenchAdapter wa = (IWorkbenchAdapter)((IAdaptable)object).getAdapter(IWorkbenchAdapter.class);
+			if (wa != null)
 			{
-				image = (Image) iobj;
+				ImageDescriptor descriptor = wa.getImageDescriptor(object);
+				if (descriptor != null)
+				{
+					Object iobj = imageTable.get(descriptor);
+					if (iobj == null)
+					{
+						image = descriptor.createImage();
+						imageTable.put(descriptor, image);
+					}
+					else
+					{
+						image = (Image) iobj;
+					}
+				}
+				return image;
 			}
 		}
-
-		return image;
+		return null;
 	}
 
 

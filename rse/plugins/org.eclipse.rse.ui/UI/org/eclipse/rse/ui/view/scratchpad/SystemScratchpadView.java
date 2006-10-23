@@ -1137,7 +1137,10 @@ public class SystemScratchpadView
 			{
 				Object element = elements.next();
 				ISystemViewElementAdapter adapter = getAdapter(element);
-				adapters.put(adapter, element); // want only unique adapters
+				if (adapter != null)
+				{
+					adapters.put(adapter, element); // want only unique adapters
+				}
 			}
 			Enumeration uniqueAdapters = adapters.keys();
 			Shell shell = getShell();
@@ -1392,28 +1395,30 @@ public class SystemScratchpadView
 		{
 			Object element = elements.next();
 			ISystemViewElementAdapter adapter = getAdapter(element);
-
-			if (_selectionShowRefreshAction)
-				_selectionShowRefreshAction = adapter.showRefresh(element);
-
-			if (_selectionShowOpenViewActions)
-				_selectionShowOpenViewActions = adapter.showOpenViewActions(element);
-
-			if (_selectionShowDeleteAction)
-				_selectionShowDeleteAction = adapter.showDelete(element);
-
-			if (_selectionShowRenameAction)
-				_selectionShowRenameAction = adapter.showRename(element);
-
-			if (_selectionEnableDeleteAction)
-				_selectionEnableDeleteAction = _selectionShowDeleteAction && adapter.canDelete(element);
-			//System.out.println("ENABLE DELETE SET TO " + selectionEnableDeleteAction);
-
-			if (_selectionEnableRenameAction)
-				_selectionEnableRenameAction = _selectionShowRenameAction && adapter.canRename(element);
-
-			if (_selectionIsRemoteObject)
-				_selectionIsRemoteObject = (getRemoteAdapter(element) != null);
+			if (adapter != null)
+			{
+				if (_selectionShowRefreshAction)
+					_selectionShowRefreshAction = adapter.showRefresh(element);
+	
+				if (_selectionShowOpenViewActions)
+					_selectionShowOpenViewActions = adapter.showOpenViewActions(element);
+	
+				if (_selectionShowDeleteAction)
+					_selectionShowDeleteAction = adapter.showDelete(element);
+	
+				if (_selectionShowRenameAction)
+					_selectionShowRenameAction = adapter.showRename(element);
+	
+				if (_selectionEnableDeleteAction)
+					_selectionEnableDeleteAction = _selectionShowDeleteAction && adapter.canDelete(element);
+				//System.out.println("ENABLE DELETE SET TO " + selectionEnableDeleteAction);
+	
+				if (_selectionEnableRenameAction)
+					_selectionEnableRenameAction = _selectionShowRenameAction && adapter.canRename(element);
+	
+				if (_selectionIsRemoteObject)
+					_selectionIsRemoteObject = (getRemoteAdapter(element) != null);
+			}
 		}
 
 	}

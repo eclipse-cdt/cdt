@@ -1669,7 +1669,9 @@ public class UniversalFileTransferUtility
 		}
 		
 		path = path.append(absolutePath);
-		IPath workspacePath = getLocalPathObject(path.toString());
+		String pathstr = normalizePath(path.toString(), srcFileOrFolder.getParentRemoteFileSubSystem().getSeparatorChar());
+		
+		IPath workspacePath = getLocalPathObject(pathstr);
 		
 		IResource result = null;
 		if (srcFileOrFolder.isDirectory())
@@ -1682,6 +1684,16 @@ public class UniversalFileTransferUtility
 		}
 
 		return result;
+	}
+	
+	protected static String normalizePath(String localpath, char rmtSeparator)
+	{
+		char localSeparator = File.separatorChar;
+		if (localSeparator != rmtSeparator)
+		{
+			return localpath.replace(rmtSeparator, localSeparator);			
+		}
+		return localpath;
 	}
 	
 	/**

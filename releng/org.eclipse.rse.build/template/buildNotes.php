@@ -101,6 +101,11 @@
   implementations which still reside in the UI plugin (these will be moved
   to core eventually, too).
 </li>
+<li><b>Renamed</b> the <b>RemoteProcessSubSystem</b> interface to <b>IRemoteProcessSubSystem</b> to conform with naming conventions.
+</li>
+<li><b>Added</b> IProgressMonitor parameter to the <b>IRemoteFileSubSystem</b> and <b>IRemoteProcessSubSystem</b> list APIs.  Each of 
+these methods, such as listFiles(), now includes an IProgressMonitor as the last parameter.
+</li>
 </ul>
 </td></tr></tbody></table>
 

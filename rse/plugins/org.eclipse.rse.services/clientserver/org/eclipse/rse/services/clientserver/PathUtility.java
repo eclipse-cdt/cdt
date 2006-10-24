@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2006 IBM Corporation. All rights reserved.
+ * Copyright (c) 2006 IBM Corporation and Wind River Systems, Inc. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -11,7 +11,8 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * Martin Oberhuber (WindRiver) - Fix for bug 161844 - regex matching backslashes
+ * 
  ********************************************************************************/
 
 package org.eclipse.rse.services.clientserver;
@@ -29,9 +30,10 @@ public class PathUtility
 		boolean containsDoubleSlashes = false;
 		boolean endsWithSlash = false;
 		
-		if (path.indexOf("/") != -1) containsForwardSlash = true;
-		if (path.indexOf("\\\\") != -1) containsDoubleSlashes = true;
-		if (path.endsWith("\\") || path.endsWith("/")) endsWithSlash = true;
+		//TODO Improve performance by using a pre-compiled Regex Pattern
+		if (path.indexOf('/') != -1) containsForwardSlash = true;
+		if (path.indexOf("\\\\") != -1) containsDoubleSlashes = true; //$NON-NLS-1$
+		if (path.endsWith("\\") || path.endsWith("/")) endsWithSlash = true; //$NON-NLS-1$ //$NON-NLS-2$
 		
 		boolean needsNormalizing = containsForwardSlash || containsDoubleSlashes || endsWithSlash;
 		if (!needsNormalizing) return path;
@@ -39,14 +41,15 @@ public class PathUtility
 		if (containsForwardSlash)
 		{
 			path = path.replace('/', '\\');
-			containsDoubleSlashes = (path.indexOf("\\\\") != -1);
+			containsDoubleSlashes = (path.indexOf("\\\\") != -1); //$NON-NLS-1$
 		}
 		
 		while (containsDoubleSlashes)
 		{
+			//TODO Improve performance by manually iterating over char array
 			//need to quote once for the string, then again for the regex
-			path = path.replaceAll("\\\\\\\\", "\\");
-			containsDoubleSlashes = (path.indexOf("\\\\") != -1);
+			path = path.replaceAll("\\\\\\\\", "\\"); //$NON-NLS-1$ //$NON-NLS-2$
+			containsDoubleSlashes = (path.indexOf("\\\\") != -1); //$NON-NLS-1$
 		}
 		if (endsWithSlash)
 		{
@@ -62,9 +65,10 @@ public class PathUtility
 		boolean containsDoubleSlashes = false;
 		boolean endsWithSlash = false;
 		
-		if (path.indexOf("\\") != -1) containsBackSlash = true;
-		if (path.indexOf("//") != -1) containsDoubleSlashes = true;
-		if (path.endsWith("\\") || path.endsWith("/")) endsWithSlash = true;
+		//TODO Improve performance by using a pre-compiled Regex Pattern
+		if (path.indexOf('\\') != -1) containsBackSlash = true;
+		if (path.indexOf("//") != -1) containsDoubleSlashes = true; //$NON-NLS-1$
+		if (path.endsWith("\\") || path.endsWith("/")) endsWithSlash = true; //$NON-NLS-1$ //$NON-NLS-2$
 
 		boolean needsNormalizing = containsBackSlash || containsDoubleSlashes || endsWithSlash;
 		if (!needsNormalizing) return path;
@@ -72,13 +76,14 @@ public class PathUtility
 		if (containsBackSlash)
 		{
 			path = path.replace('\\', '/');
-			containsDoubleSlashes = (path.indexOf("//") != -1);
+			containsDoubleSlashes = (path.indexOf("//") != -1); //$NON-NLS-1$
 		}
 		
 		while (containsDoubleSlashes)
 		{
-			path = path.replaceAll("//", "/");
-			containsDoubleSlashes = (path.indexOf("//") != -1);
+			//TODO Improve performance by manually iterating over char array
+			path = path.replaceAll("//", "/"); //$NON-NLS-1$ //$NON-NLS-2$
+			containsDoubleSlashes = (path.indexOf("//") != -1); //$NON-NLS-1$
 		}
 		
 		if (endsWithSlash)
@@ -129,11 +134,11 @@ public class PathUtility
 	{
 		if (path.length() > 1 && path.charAt(1) == ':')
 		{
-			return "\\";
+			return "\\"; //$NON-NLS-1$
 		}
 		else
 		{
-			return "/";
+			return "/"; //$NON-NLS-1$
 		}
 	}
 }

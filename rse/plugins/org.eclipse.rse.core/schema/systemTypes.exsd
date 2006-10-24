@@ -175,12 +175,13 @@ If not specified, a default icon will be used by RSE.
          The following is an example of the extension point schema:
 &lt;p&gt;
 &lt;pre&gt;
-  &lt;extension point=&quot;org.eclipse.rse.ui.systemTypes&quot;&gt;
+  &lt;extension point=&quot;org.eclipse.rse.core.systemTypes&quot;&gt;
       &lt;systemType id=&quot;com.acme.systemtype.Solaris&quot;
             name=&quot;Solaris&quot;
-   &lt;property name=&quot;icon&quot; value=&quot;icons/solaris.gif&quot;/&gt;
-   &lt;property name=&quot;iconLive&quot; value=&quot;icons/solarisLive.gif&quot;/&gt;
-   &lt;/systemType&gt;
+            description=&quot;Connects to Solaris systems.&quot;
+   			icon=&quot;icons/solaris.gif&quot;
+   			iconLive=&quot;icons/solarisLive.gif&quot;&gt;
+	  &lt;/systemType&gt;
   &lt;/extension&gt;
 &lt;/pre&gt;
 &lt;/p&gt;

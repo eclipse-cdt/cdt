@@ -27,7 +27,6 @@ class PDOMFastHandleDelta extends PDOMFastIndexerJob {
 
 	private List changed = new ArrayList();
 	private List removed = new ArrayList();
-	private volatile int fFilesToIndex= 0;
 
 	public PDOMFastHandleDelta(PDOMFastIndexer indexer, ICElementDelta delta) throws CoreException {
 		super(indexer);
@@ -37,18 +36,17 @@ class PDOMFastHandleDelta extends PDOMFastIndexerJob {
 
 	public void run(IProgressMonitor monitor) {
 		try {
-			setupIndexAndReaderFactory();
 			long start = System.currentTimeMillis();
-			Iterator i = changed.iterator();
-			while (i.hasNext()) {
-				if (monitor.isCanceled())
-					return;
-				ITranslationUnit tu = (ITranslationUnit)i.next();
-				changeTU(tu);
-				fFilesToIndex--;
+
+			setupIndexAndReaderFactory();
+			registerTUsInReaderFactory(changed);
+			
+			parseTUs(changed, monitor);
+			if (monitor.isCanceled()) {
+				return;
 			}
-						
-			i = removed.iterator();
+			
+			Iterator i= removed.iterator();
 			while (i.hasNext()) {
 				if (monitor.isCanceled())
 					return;
@@ -65,9 +63,5 @@ class PDOMFastHandleDelta extends PDOMFastIndexerJob {
 			CCorePlugin.log(e);
 		} catch (InterruptedException e) {
 		}
-	}
-	
-	public int getFilesToIndexCount() {
-		return fFilesToIndex;
 	}
 }

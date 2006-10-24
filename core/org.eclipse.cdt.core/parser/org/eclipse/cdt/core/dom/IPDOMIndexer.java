@@ -35,4 +35,16 @@ public interface IPDOMIndexer {
 	 * @return the unique ID of type of this indexer
 	 */
 	public String getID();
+	
+	/**
+	 * Returns whether to index headers that are not actually included by any source.
+	 * @since 4.0
+	 */
+	public boolean getIndexAllHeaders();
+	
+	/**
+	 * Clients are not allowed to call this method, it is called by the framework. 
+	 * @since 4.0
+	 */
+	public void setIndexAllHeaders(boolean value);
 }

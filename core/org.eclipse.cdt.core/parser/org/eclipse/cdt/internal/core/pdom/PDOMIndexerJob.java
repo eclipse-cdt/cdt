@@ -42,60 +42,76 @@ public class PDOMIndexerJob extends Job {
 
 	protected IStatus run(IProgressMonitor monitor) {
 		this.monitor = monitor;
-
 		long start = System.currentTimeMillis();
-		
+
 		String taskName = CCorePlugin.getResourceString("pdom.indexer.task"); //$NON-NLS-1$
 		monitor.beginTask(taskName, IProgressMonitor.UNKNOWN);
-		
-		while (!pdomManager.finishIndexerJob()) {
-			IPDOMIndexerTask nextTask= pdomManager.getNextTask();
-			synchronized (taskMutex) {
-				currentTask= nextTask;	// write to currentTask needs protection
-			}
 
-			try {
-				currentTask.run(monitor);
-			}
-			catch (Exception e) {
-				CCorePlugin.log(e);
-			}
-			boolean cancelledByUser= false;
-			synchronized (taskMutex) {
-				currentTask= null;		// write to currentTask needs protection
-				if (cancelledByManager) {	
-					// TODO chance for confusion here is user cancels
-					// while project is getting deletes.
-					monitor.setCanceled(false);
-					cancelledByManager = false;
+		try {
+			do {
+				synchronized(taskMutex) {
+					currentTask= null;
 					taskMutex.notify();
-				} 
-				else {
-					cancelledByUser= monitor.isCanceled();
+
+					// user cancel, tell manager and return
+					if (monitor.isCanceled()) {
+						pdomManager.cancelledJob(cancelledByManager);
+						return Status.CANCEL_STATUS;
+					}
+
+					// pick up new task
+					currentTask= pdomManager.getNextTask();
+				}
+
+				if (currentTask != null) {
+					try {
+						currentTask.run(monitor);
+					}
+					catch (Exception e) {
+						CCorePlugin.log(e);
+					}
 				}
 			}
-			if (cancelledByUser) {
-				pdomManager.cancelledByUser();
-				return Status.CANCEL_STATUS;
-			}
-		}
-		
-		String showTimings = Platform.getDebugOption(CCorePlugin.PLUGIN_ID
-				+ "/debug/pdomtimings"); //$NON-NLS-1$
-		if (showTimings != null && showTimings.equalsIgnoreCase("true")) //$NON-NLS-1$
-			System.out.println("PDOM Indexer Job Time: " + (System.currentTimeMillis() - start)); //$NON-NLS-1$
+			while (currentTask != null);
 
-		return Status.OK_STATUS;
+			String showTimings = Platform.getDebugOption(CCorePlugin.PLUGIN_ID
+					+ "/debug/pdomtimings"); //$NON-NLS-1$
+			if (showTimings != null && showTimings.equalsIgnoreCase("true")) //$NON-NLS-1$
+				System.out.println("PDOM Indexer Job Time: " + (System.currentTimeMillis() - start)); //$NON-NLS-1$
+
+			return Status.OK_STATUS;
+		}
+		catch (RuntimeException e) {
+			CCorePlugin.log(e);
+			pdomManager.cancelledJob(true);
+			synchronized (taskMutex) {
+				currentTask= null;
+				taskMutex.notify();
+			}
+			throw e;
+		}
+		catch (Error e) {
+			CCorePlugin.log(e);
+			pdomManager.cancelledJob(true);
+			synchronized (taskMutex) {
+				currentTask= null;
+				taskMutex.notify();
+			}
+			throw e;
+		}
 	}
 		
 	public void cancelJobs(IPDOMIndexer indexer) {
 		synchronized (taskMutex) {
-			if (currentTask != null && currentTask.getIndexer().equals(indexer)) {
+			if (currentTask != null && currentTask.getIndexer() == indexer) {
 				monitor.setCanceled(true);
 				cancelledByManager = true;
-				try {
-					taskMutex.wait();
-				} catch (InterruptedException e) {
+				while (currentTask != null && currentTask.getIndexer() == indexer) {
+					try {
+						taskMutex.wait();
+					} catch (InterruptedException e) {
+						return;
+					}
 				}
 			}
 		}

@@ -50,4 +50,11 @@ public interface IIndexFile {
 	 * @throws CoreException
 	 */
 	IIndexMacro[] getMacros() throws CoreException;
+	
+	/**
+	 * Last modification of file before it was indexed.
+	 * @return the last modification date of the file at the time it was parsed.
+	 * @throws CoreException 
+	 */
+	long getTimestamp() throws CoreException;
 }

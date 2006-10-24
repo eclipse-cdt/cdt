@@ -18,7 +18,6 @@ import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.index.IndexFilter;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 
 /**
@@ -55,7 +54,7 @@ public interface IIndexFragment {
 	 * @return the file for the location
 	 * @throws CoreException
 	 */
-	IIndexFragmentFile getFile(IPath location) throws CoreException;
+	IIndexFragmentFile getFile(String location) throws CoreException;
 
 	/**
 	 * Returns all include directives that point to the given file. The input file may belong to 

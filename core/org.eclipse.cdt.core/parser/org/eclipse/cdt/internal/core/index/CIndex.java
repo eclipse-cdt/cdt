@@ -33,7 +33,6 @@ import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.SubProgressMonitor;
 
 public class CIndex implements IIndex {
@@ -169,8 +168,9 @@ public class CIndex implements IIndex {
 
 	public IIndexFile getFile(IPath location) throws CoreException {
 		IIndexFile result= null;
+		String path= location.toOSString();
 		for (int i = 0; result==null && i < fPrimaryFragmentCount; i++) {
-			result= fFragments[i].getFile(location);
+			result= fFragments[i].getFile(path);
 		}
 		return result;
 	}
@@ -184,7 +184,7 @@ public class CIndex implements IIndex {
 				return result;
 			}
 		}
-		Path location= new Path(include.getIncludesLocation());
+		String location= include.getIncludesLocation();
 		for (int i = 0; i < fPrimaryFragmentCount; i++) {
 			IIndexFragment otherFrag = fFragments[i];
 			if (otherFrag != frag) {

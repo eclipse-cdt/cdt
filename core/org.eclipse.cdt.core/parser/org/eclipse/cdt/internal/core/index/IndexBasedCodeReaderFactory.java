@@ -15,17 +15,17 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ICodeReaderFactory;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.index.IIndexFile;
 import org.eclipse.cdt.core.index.IIndexInclude;
+import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.parser.CodeReader;
 import org.eclipse.cdt.core.parser.ICodeReaderCache;
 import org.eclipse.cdt.core.parser.IMacro;
@@ -41,13 +41,20 @@ import org.eclipse.core.runtime.Path;
  */
 public class IndexBasedCodeReaderFactory implements ICodeReaderFactory {
 
+	private final static boolean CASE_SENSITIVE_FILES= !new File("a").equals(new File("A"));  //$NON-NLS-1$//$NON-NLS-2$
 	private final IIndex index;
-	
-	private Map fileCache = new HashMap(); // filename, pdomFile
-	private Map macroCache = new HashMap();// record, list of IMacros
+	private Map fileInfoCache = new HashMap(); // filename, fileInfo
 	private List usedMacros = new ArrayList();
 	
 	private static final char[] EMPTY_CHARS = new char[0];
+	
+	public static class FileInfo {
+		private FileInfo() {}
+		public IIndexFile fFile= null;
+		public IMacro[] fMacros= null;
+		public boolean fNeedToIndex= false;
+	}
+	private static class NeedToParseException extends Exception {}
 	
 	public IndexBasedCodeReaderFactory(IIndex index) {
 		this.index = index;
@@ -61,68 +68,85 @@ public class IndexBasedCodeReaderFactory implements ICodeReaderFactory {
 		return ParserUtil.createReader(path, null);
 	}
 	
-	private void fillMacros(IIndexFragmentFile file, IScanner scanner, Set visited) throws CoreException {
-		Object key= file.getLocation();	// mstodo revisit, the pdom-id was faster but cannot be used in indexes.
-		if (!visited.add(key)) {
-			return;
-		}
-
-		// Follow the includes
-		IIndexInclude[] includeDirectives= file.getIncludes();
-		for (int i = 0; i < includeDirectives.length; i++) {
-			IIndexFragmentFile includedFile= (IIndexFragmentFile) index.resolveInclude(includeDirectives[i]);
-			if (includedFile != null) {
-				fillMacros(includedFile, scanner, visited);
-			}
-			// mstodo revisit, what if includedFile == null (problem with index??)
-		}
-		
-		// Add in my macros now
-		IMacro[] macros = (IMacro[]) macroCache.get(key);
-		if (macros == null) {
-			macros= file.getMacros();
-			macroCache.put(key, macros);
-		}
-
-		for (int i = 0; i < macros.length; ++i)
-			scanner.addDefinition(macros[i]);
-
-		// record the macros we used.
-		usedMacros.add(macros);
-	}
-	
 	public CodeReader createCodeReaderForInclusion(IScanner scanner, String path) {
-		// Don't parse inclusion if it is already captured
-		try {
+		// if the file is in the index, we skip it
+		File location= new File(path);
+		String canonicalPath= path;
+		if (!location.exists()) {
+			return null;
+		}
+		if (!CASE_SENSITIVE_FILES) {
 			try {
-				File file = new File(path);
-				if (!file.exists())
-					return null;
-				path = file.getCanonicalPath();
-			} catch (IOException e) {
-				// ignore and use the path we were passed in
+				canonicalPath= location.getCanonicalPath();
 			}
-			IIndexFragmentFile file = getCachedFile(path);
-			if (file == null) {
-				file = (IIndexFragmentFile) index.getFile(new Path(path));
-				if (file != null) {
-					addFileToCache(path, file);
+			catch (IOException e) {
+				// just use the original
+			}
+		}
+		try {
+			FileInfo info= createInfo(canonicalPath, null);
+
+			// try to build macro dictionary off index
+			if (info.fFile != null) {
+				try {
+					LinkedHashSet infos= new LinkedHashSet();
+					getInfosForMacroDictionary(info, infos);
+					for (Iterator iter = infos.iterator(); iter.hasNext();) {
+						FileInfo fi = (FileInfo) iter.next();
+						if (fi.fMacros == null) {
+							assert fi.fFile != null;
+							fi.fMacros= fi.fFile.getMacros();
+						}
+						for (int i = 0; i < fi.fMacros.length; ++i) {
+							scanner.addDefinition(fi.fMacros[i]);
+						}
+						// record the macros we used.
+						usedMacros.add(fi.fMacros);
+					}
+					return new CodeReader(canonicalPath, EMPTY_CHARS);
+				} catch (NeedToParseException e) {
 				}
 			}
-			if (file != null) {
-				// Already got things from here,
-				// add the macros to the scanner
-				fillMacros(file, scanner, new HashSet());
-				return new CodeReader(path, EMPTY_CHARS);
-			}
-		} catch (CoreException e) {
-			CCorePlugin.log(e); 
 		}
-		
-		return ParserUtil.createReader(path, null);
+		catch (CoreException e) {
+			CCorePlugin.log(e);
+			// still try to parse the file.
+		}
+
+		return ParserUtil.createReader(canonicalPath, null);
+	}
+
+	private FileInfo createInfo(String location, IIndexFile file) throws CoreException {
+		FileInfo info= (FileInfo) fileInfoCache.get(location);
+		if (info == null) {
+			info= new FileInfo();			
+			info.fFile= file == null ? index.getFile(new Path(location)) : file;
+			fileInfoCache.put(location, info);
+		}
+		return info;
 	}
 	
-	public void clearMacros() {
+	private void getInfosForMacroDictionary(FileInfo fileInfo, LinkedHashSet target) throws CoreException, NeedToParseException {
+		if (!target.add(fileInfo)) {
+			return;
+		}
+		if (fileInfo.fFile == null || fileInfo.fNeedToIndex) {
+			throw new NeedToParseException();
+		}
+		
+		// Follow the includes
+		IIndexFile file= fileInfo.fFile;
+		IIndexInclude[] includeDirectives= file.getIncludes();
+		for (int i = 0; i < includeDirectives.length; i++) {
+			IIndexFile includedFile= index.resolveInclude(includeDirectives[i]);
+			if (includedFile != null) {
+				FileInfo nextInfo= createInfo(includedFile.getLocation(), includedFile);
+				getInfosForMacroDictionary(nextInfo, target);
+			}
+		}
+	}
+	
+	public void clearMacroAttachements() {
 		Iterator i = usedMacros.iterator();
 		while (i.hasNext()) {
 			IMacro[] macros = (IMacro[])i.next();
@@ -139,29 +163,12 @@ public class IndexBasedCodeReaderFactory implements ICodeReaderFactory {
 		// No need for cache here
 		return null;
 	}
-
-	protected IIndexFragmentFile getCachedFile(String filename) throws CoreException {
-		IIndexFragmentFile file = (IIndexFragmentFile) fileCache.get(filename);
-		if (file == null) {
-			file = (IIndexFragmentFile) index.getFile(new Path(filename));
-			if (file != null) {
-				addFileToCache(filename, file);
-			}
-		}
-		return file;
-	}
 	
-	protected void addFileToCache(String filename, IIndexFile file) {
-		fileCache.put(filename, file);
+	public FileInfo createFileInfo(String location) throws CoreException {
+		return createInfo(location, null);
 	}
 
-	public IIndexFragmentFile createCachedFile(IWritableIndex index, String location) throws CoreException {
-		assert this.index == index;
-		
-		IIndexFragmentFile file= getCachedFile(location);
-		if (file == null) {
-			file= index.addFile(location);
-		}
-		return file;
+	public FileInfo createFileInfo(ITranslationUnit tu) throws CoreException {
+		return createInfo(tu.getLocation().toOSString(), null);
 	}
 }

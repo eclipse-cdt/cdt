@@ -30,6 +30,8 @@ public class PDOMFastIndexer implements IPDOMIndexer {
 	public static final String ID = IPDOMManager.ID_FAST_INDEXER;
 	
 	protected ICProject project;
+
+	private boolean fIndexAllHeaders;
 	
 	public PDOMFastIndexer() {
 	}
@@ -55,5 +57,13 @@ public class PDOMFastIndexer implements IPDOMIndexer {
 	
 	public String getID() {
 		return ID;
+	}
+
+	public void setIndexAllHeaders(boolean val) {
+		fIndexAllHeaders= val;
+	}
+
+	public boolean getIndexAllHeaders() {
+		return fIndexAllHeaders;
 	}
 }

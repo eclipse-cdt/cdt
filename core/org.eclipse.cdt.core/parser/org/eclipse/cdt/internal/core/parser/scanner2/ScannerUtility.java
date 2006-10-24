@@ -22,10 +22,10 @@ import org.eclipse.cdt.core.parser.ISourceElementRequestor;
  */
 public class ScannerUtility {
 
-	static final char DOT    = '.';  //$NON-NLS-1$
-	static final char SLASH  = '/';  //$NON-NLS-1$
-	static final char BSLASH = '\\'; //$NON-NLS-1$
-	static final char QUOTE  = '\"'; //$NON-NLS-1$
+	static final char DOT    = '.';  
+	static final char SLASH  = '/';
+	static final char BSLASH = '\\'; 
+	static final char QUOTE  = '\"'; 
 
 	/**
 	 * This method is quick 1-pass path reconciler.

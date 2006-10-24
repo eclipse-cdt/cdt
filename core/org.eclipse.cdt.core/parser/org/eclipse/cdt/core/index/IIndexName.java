@@ -12,6 +12,7 @@
 package org.eclipse.cdt.core.index;
 
 import org.eclipse.cdt.core.dom.IName;
+import org.eclipse.core.runtime.CoreException;
 
 
 /**
@@ -35,6 +36,12 @@ public interface IIndexName extends IName {
 	 */
 	public String getFileName();
 
+	/**
+	 * Returns the file the name belongs to.
+	 * @throws CoreException 
+	 */
+	public IIndexFile getFile() throws CoreException;
+	
 	/**
 	 * Returns the character offset of the location of the name.
 	 */

@@ -34,6 +34,8 @@ public class PDOMNullIndexer implements IPDOMIndexer {
 	public static final String ID = IPDOMManager.ID_NO_INDEXER;
 	
 	private ICProject project;
+
+	private boolean fIndexAllHeaders;
 	
 	public ICProject getProject() {
 		return project;
@@ -80,5 +82,13 @@ public class PDOMNullIndexer implements IPDOMIndexer {
 
 	public String getID() {
 		return ID;
+	}
+
+	public boolean getIndexAllHeaders() {
+		return fIndexAllHeaders;
+	}
+
+	public void setIndexAllHeaders(boolean value) {
+		fIndexAllHeaders= value;
 	}
 }

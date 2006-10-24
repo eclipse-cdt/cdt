@@ -26,6 +26,8 @@ import org.eclipse.cdt.core.dom.ILinkage;
  */
 
 public class IndexFilter {
+	public static final IndexFilter ALL = new IndexFilter();
+
 	/**
 	 * Returns whether or not to include objects of the given linkage in the query.
 	 * @see IIndex#findBindings(java.util.regex.Pattern, boolean, IndexFilter, org.eclipse.core.runtime.IProgressMonitor)

@@ -13,12 +13,9 @@
 package org.eclipse.cdt.internal.core.pdom.indexer.full;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 
 import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
@@ -29,46 +26,27 @@ import org.eclipse.core.runtime.Status;
  */
 class PDOMFullReindex extends PDOMFullIndexerJob {
 
-	private volatile int fFilesToIndex= 0;
 	private ArrayList fTUs= new ArrayList();
-	private ArrayList fHeaders= new ArrayList();
 
 	public PDOMFullReindex(PDOMFullIndexer indexer) throws CoreException {
 		super(indexer);
-		collectSources(indexer.getProject(), fTUs, fHeaders);
-		fFilesToIndex= fTUs.size()+fHeaders.size() + 1;
+		collectSources(indexer.getProject(), fTUs, fTUs);
+		fFilesToIndex= fTUs.size() + 1;
 	}
 
 	public void run(final IProgressMonitor monitor) {
 		try {
+			System.out.println(this);
 			long start = System.currentTimeMillis();			
+
 			setupIndexAndReaderFactory();
+			registerTUsInReaderFactory(fTUs);
+			
 			clearIndex(index);
 			fFilesToIndex--;
 			
-			for (Iterator iter = fTUs.iterator(); iter.hasNext();) {
-				ITranslationUnit tu = (ITranslationUnit) iter.next();
-				if (monitor.isCanceled())
-					return;
-				changeTU(tu);
-				fFilesToIndex--;
-			}
-			
-			for (Iterator iter = fHeaders.iterator(); iter.hasNext();) {
-				ITranslationUnit tu = (ITranslationUnit) iter.next();
-				if (monitor.isCanceled())
-					return;
-			
-				IPath fileLocation = tu.getLocation();
-				if ( fileLocation != null ) {
-					if (index.getFile(fileLocation) == null) {
-						changeTU(tu);
-					}
-					fFilesToIndex--;
-				}
-			}
+			parseTUs(fTUs, monitor);
 
-			assert fFilesToIndex==0;
 			String showTimings = Platform.getDebugOption(CCorePlugin.PLUGIN_ID
 					+ "/debug/pdomtimings"); //$NON-NLS-1$
 			if (showTimings != null && showTimings.equalsIgnoreCase("true")) //$NON-NLS-1$
@@ -80,9 +58,4 @@ class PDOMFullReindex extends PDOMFullIndexerJob {
 		} catch (InterruptedException e) {
 		}
 	}
-
-	public int getFilesToIndexCount() {
-		return fFilesToIndex;
-	}
-
 }

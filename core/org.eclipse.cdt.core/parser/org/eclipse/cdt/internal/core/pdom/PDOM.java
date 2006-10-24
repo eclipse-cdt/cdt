@@ -64,7 +64,7 @@ public class PDOM extends PlatformObject implements IIndexFragment, IPDOM {
 
 	private Database db;
 
-	public static final int VERSION = 13;
+	public static final int VERSION = 14;
 	// 0 - the beginning of it all
 	// 1 - first change to kick off upgrades
 	// 2 - added file inclusions
@@ -149,22 +149,19 @@ public class PDOM extends PlatformObject implements IIndexFragment, IPDOM {
 		return fileIndex;
 	}
 
-	public PDOMFile getFile(String filename) throws CoreException {
-		Finder finder = new Finder(db, filename);
+	public IIndexFragmentFile getFile(String path) throws CoreException {
+		Finder finder = new Finder(db, path);
 		getFileIndex().accept(finder);
 		int record = finder.getRecord();
 		return record != 0 ? new PDOMFile(this, record) : null;
 	}
 
-	public IIndexFragmentFile getFile(IPath path) throws CoreException {
-		return getFile(path.toOSString());
-	}
-
-	protected IIndexFragmentFile addFile(String filename) throws CoreException {
-		PDOMFile file = getFile(filename);
+	protected IIndexFragmentFile addFile(String path) throws CoreException {
+		IIndexFragmentFile file = getFile(path);
 		if (file == null) {
-			file = new PDOMFile(this, filename);
-			getFileIndex().insert(file.getRecord());
+			PDOMFile pdomFile = new PDOMFile(this, path);
+			getFileIndex().insert(pdomFile.getRecord());
+			file= pdomFile;
 		}
 		return file;		
 	}
@@ -565,27 +562,7 @@ public class PDOM extends PlatformObject implements IIndexFragment, IPDOM {
 			return (PDOMFile) file;
 		}
 
-		return getFile(file.getLocation());
-	}
-
-	public IIndexFragmentInclude[] findIncludes(IIndexFragmentFile file) throws CoreException {
-		PDOMFile pdomFile= adaptFile(file);
-		if (file != null) {
-			List result = new ArrayList();
-			for (PDOMInclude i= pdomFile.getFirstInclude(); i != null; i= i.getNextInIncludes()) {
-				result.add(i);
-			}
-			return (IIndexFragmentInclude[]) result.toArray(new PDOMInclude[result.size()]);
-		}
-		return new PDOMInclude[0];
-	}
-
-	public IIndexFragmentFile resolveInclude(IIndexFragmentInclude include) throws CoreException {
-		if (include.getFragment() == this && include instanceof PDOMInclude) {
-			PDOMInclude pdomInclude= (PDOMInclude) include;
-			return pdomInclude.getIncludes();
-		}
-		return getFile(include.getIncludesLocation());
+		return (PDOMFile) getFile(file.getLocation());
 	}
 
 	public IPath getPath() {

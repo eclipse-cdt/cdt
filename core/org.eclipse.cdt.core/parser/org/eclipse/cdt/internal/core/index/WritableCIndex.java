@@ -14,6 +14,7 @@ package org.eclipse.cdt.internal.core.index;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorMacroDefinition;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 
 public class WritableCIndex extends CIndex implements IWritableIndex {
 
@@ -32,13 +33,12 @@ public class WritableCIndex extends CIndex implements IWritableIndex {
 		return result;
 	}
 
-	public IIndexFragmentFile addFile(String fileLocation) throws CoreException {
+	public IIndexFragmentFile addFile(IPath fileLocation) throws CoreException {
 		IWritableIndexFragment frag= selectFragment(fileLocation);
-		
-		return frag.addFile(fileLocation);
+		return frag.addFile(fileLocation.toOSString());
 	}
 
-	private IWritableIndexFragment selectFragment(String fileLocation) {
+	private IWritableIndexFragment selectFragment(IPath fileLocation) {
 		// todo handling of multiple writable indices
 		assert fWritableFragments.length == 1;
 		return fWritableFragments[0];

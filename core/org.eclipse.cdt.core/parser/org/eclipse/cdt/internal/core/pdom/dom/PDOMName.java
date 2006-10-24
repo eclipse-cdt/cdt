@@ -14,6 +14,7 @@ package org.eclipse.cdt.internal.core.pdom.dom;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IASTName;
+import org.eclipse.cdt.core.index.IIndexFile;
 import org.eclipse.cdt.internal.core.index.IIndexFragment;
 import org.eclipse.cdt.internal.core.index.IIndexFragmentName;
 import org.eclipse.cdt.internal.core.index.IIndexProxyBinding;
@@ -142,7 +143,7 @@ public class PDOMName implements IIndexFragmentName, IASTFileLocation {
 		setNameField(BINDING_NEXT_OFFSET, name);
 	}
 	
-	public PDOMFile getFile() throws CoreException {
+	public IIndexFile getFile() throws CoreException {
 		int filerec = pdom.getDB().getInt(record + FILE_REC_OFFSET);
 		return filerec != 0 ? new PDOMFile(pdom, filerec) : null;
 	}
@@ -225,7 +226,7 @@ public class PDOMName implements IIndexFragmentName, IASTFileLocation {
 
 	public String getFileName() {
 		try {
-			PDOMFile file = getFile();
+			PDOMFile file = (PDOMFile) getFile();
 			return file != null ? file.getFileName().getString() : null;
 		} catch (CoreException e) {
 			CCorePlugin.log(e);

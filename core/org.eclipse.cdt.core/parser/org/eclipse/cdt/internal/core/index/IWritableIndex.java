@@ -15,6 +15,7 @@ import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorMacroDefinition;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 
 /**
  * Interface used by the indexer to write to the index. 
@@ -26,7 +27,7 @@ public interface IWritableIndex extends IIndex {
 	/**
 	 * Creates a file object for the given location or returns an existing one.
 	 */
-	IIndexFragmentFile addFile(String fileLocation) throws CoreException;
+	IIndexFragmentFile addFile(IPath fileLocation) throws CoreException;
 
 	/**
 	 * Adds an AST name to the given file.

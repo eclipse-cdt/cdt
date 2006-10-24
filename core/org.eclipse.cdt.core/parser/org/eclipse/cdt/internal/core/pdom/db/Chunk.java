@@ -65,6 +65,14 @@ public class Chunk {
 	public int getInt(int offset) {
 		return buffer.getInt(offset % Database.CHUNK_SIZE);
 	}
+
+	public long getLong(int offset) {
+		return buffer.getLong(offset % Database.CHUNK_SIZE);
+	}
+
+	public void putLong(int offset, long value) {
+		buffer.putLong(offset % Database.CHUNK_SIZE, value);
+	}
 	
 	public void putChar(int offset, char value) {
 		buffer.putChar(offset % Database.CHUNK_SIZE, value);

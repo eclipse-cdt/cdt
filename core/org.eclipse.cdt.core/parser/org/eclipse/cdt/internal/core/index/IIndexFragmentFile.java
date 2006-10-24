@@ -12,6 +12,7 @@
 package org.eclipse.cdt.internal.core.index;
 
 import org.eclipse.cdt.core.index.IIndexFile;
+import org.eclipse.core.runtime.CoreException;
 
 public interface IIndexFragmentFile extends IIndexFile {
 
@@ -19,5 +20,11 @@ public interface IIndexFragmentFile extends IIndexFile {
 	 * Returns the fragment that owns this file.
 	 */
 	IIndexFragment getIndexFragment();
+
+	/**
+	 * Sets the timestamp of the file
+	 * @throws CoreException 
+	 */
+	void setTimestamp(long timestamp) throws CoreException;
 
 }

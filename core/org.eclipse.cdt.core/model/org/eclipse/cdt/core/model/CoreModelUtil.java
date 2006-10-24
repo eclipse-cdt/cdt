@@ -11,7 +11,10 @@
 
 package org.eclipse.cdt.core.model;
 
+import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
 
 public class CoreModelUtil {
@@ -520,5 +523,62 @@ public class CoreModelUtil {
 				return i;
 		return -1;
 	}
+
+	/**
+	 * Searches for a translation unit within the cprojects. For external files the ones
+	 * from the given project are preferred.
+	 * @since 4.0
+	 */
+	public static ITranslationUnit findTranslationUnitForLocation(IPath location, ICProject preferredProject) throws CModelException {
+		IFile[] files= ResourcesPlugin.getWorkspace().getRoot().findFilesForLocation(location);
+		if (files.length > 0) {
+			for (int i = 0; i < files.length; i++) {
+				IFile file = files[i];
+				ITranslationUnit tu= findTranslationUnit(file);
+				if (tu != null) {
+					return tu;
+				}
+			}
+		}
+		else {
+			CoreModel coreModel = CoreModel.getDefault();
+			ITranslationUnit tu= null;
+			if (preferredProject != null) {
+				tu= coreModel.createTranslationUnitFrom(preferredProject, location);
+			}
+			if (tu == null) {
+				ICProject[] projects= coreModel.getCModel().getCProjects();
+				for (int i = 0; i < projects.length && tu == null; i++) {
+					ICProject project = projects[i];
+					if (!project.equals(preferredProject)) {
+						tu= coreModel.createTranslationUnitFrom(project, location);
+					}
+				}
+			}
+			return tu;
+		}
+		return null;
+	}	
+	
+	/**
+	 * Returns the translation unit for the file given or <code>null</code>.
+	 */
+    public static ITranslationUnit findTranslationUnit(IFile file) {
+		if (CoreModel.isTranslationUnit(file)) {
+			ICProject cp= CoreModel.getDefault().getCModel().getCProject(file.getProject().getName());
+			if (cp != null) {
+				ICElement tu;
+				try {
+					tu = cp.findElement(file.getProjectRelativePath());
+					if (tu instanceof ITranslationUnit) {
+						return (ITranslationUnit) tu;
+					}
+				} catch (CModelException e) {
+					CCorePlugin.log(e);
+				}
+			}
+		}
+        return null;
+    }
 
 }

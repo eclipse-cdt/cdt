@@ -28,7 +28,9 @@ import org.eclipse.core.runtime.CoreException;
 public class PDOMFullIndexer implements IPDOMIndexer {
 	public static final String ID = IPDOMManager.ID_FULL_INDEXER;
 	
+	private boolean fIndexAllHeaders= true;
 	private ICProject project;
+
 	
 	public ICProject getProject() {
 		return project;
@@ -39,7 +41,10 @@ public class PDOMFullIndexer implements IPDOMIndexer {
 	}
 	
 	public void handleDelta(ICElementDelta delta) throws CoreException {
-		CCoreInternals.getPDOMManager().enqueue(new PDOMFullHandleDelta(this, delta));
+		PDOMFullHandleDelta task = new PDOMFullHandleDelta(this, delta);
+		if (task.getFilesToIndexCount() > 0) {
+			CCoreInternals.getPDOMManager().enqueue(task);
+		}
 	}
 
 	public void reindex() throws CoreException {
@@ -48,5 +53,13 @@ public class PDOMFullIndexer implements IPDOMIndexer {
 
 	public String getID() {
 		return ID;
+	}
+
+	public void setIndexAllHeaders(boolean val) {
+		fIndexAllHeaders= val;
+	}
+
+	public boolean getIndexAllHeaders() {
+		return fIndexAllHeaders;
 	}
 }

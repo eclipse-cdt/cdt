@@ -42,8 +42,9 @@ public class PDOMFile implements IIndexFragmentFile {
 	private static final int FIRST_INCLUDED_BY = 8;
 	private static final int FIRST_MACRO = 12;
 	private static final int FILE_NAME = 16;
+	private static final int TIME_STAMP = 20;
 	
-	private static final int RECORD_SIZE = 20;
+	private static final int RECORD_SIZE = 28;
 	
 	public static class Comparator implements IBTreeComparator {
 		private Database db;
@@ -94,16 +95,10 @@ public class PDOMFile implements IIndexFragmentFile {
 		Database db = pdom.getDB();
 		record = db.malloc(RECORD_SIZE);
 		db.putInt(record + FILE_NAME, db.newString(filename).getRecord());
+		db.putLong(record + TIME_STAMP, 0);
 		setFirstName(null);
 		setFirstInclude(null);
 		setFirstIncludedBy(null);
-	}
-	
-	public void setFilename(String newName) throws CoreException {
-		Database db = pdom.getDB();
-		int oldRecord = db.getInt(record + FILE_NAME);
-		db.free(oldRecord);
-		db.putInt(record + FILE_NAME, db.newString(newName).getRecord());
 	}
 	
 	public int getRecord() {
@@ -123,6 +118,23 @@ public class PDOMFile implements IIndexFragmentFile {
 	public IString getFileName() throws CoreException {
 		Database db = pdom.getDB();
 		return db.getString(db.getInt(record + FILE_NAME));
+	}
+	
+	public void setFilename(String newName) throws CoreException {
+		Database db = pdom.getDB();
+		int oldRecord = db.getInt(record + FILE_NAME);
+		db.free(oldRecord);
+		db.putInt(record + FILE_NAME, db.newString(newName).getRecord());
+	}
+
+	public long getTimestamp() throws CoreException {
+		Database db = pdom.getDB();
+		return db.getLong(record + TIME_STAMP);
+	}
+	
+	public void setTimestamp(long timestamp) throws CoreException {
+		Database db= pdom.getDB();
+		db.putLong(record + TIME_STAMP, timestamp);
 	}
 	
 	public PDOMName getFirstName() throws CoreException {

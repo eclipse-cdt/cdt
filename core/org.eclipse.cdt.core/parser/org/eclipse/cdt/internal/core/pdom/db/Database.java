@@ -271,6 +271,16 @@ public class Database {
 		return chunk.getInt(offset);
 	}
 
+	public void putLong(int offset, long value) throws CoreException {
+		Chunk chunk= getChunk(offset);
+		chunk.putLong(offset, value);
+	}
+	
+	public long getLong(int offset) throws CoreException {
+		Chunk chunk = getChunk(offset);
+		return chunk.getLong(offset);
+	}
+
 	public void putChar(int offset, char value) throws CoreException {
 		Chunk chunk = getChunk(offset);
 		chunk.putChar(offset, value);

@@ -13,10 +13,8 @@
 package org.eclipse.cdt.internal.core.pdom.indexer.fast;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 
 import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Platform;
@@ -26,8 +24,6 @@ import org.eclipse.core.runtime.Platform;
  *
  */
 class PDOMFastReindex extends PDOMFastIndexerJob {
-
-	private volatile int fFilesToIndex= 0;
 	private ArrayList fTUs= new ArrayList();
 	
 	public PDOMFastReindex(PDOMFastIndexer indexer) throws CoreException {
@@ -40,14 +36,12 @@ class PDOMFastReindex extends PDOMFastIndexerJob {
 		try {
 			long start = System.currentTimeMillis();
 			setupIndexAndReaderFactory();
+			registerTUsInReaderFactory(fTUs);
+			
 			clearIndex(index);
 			fFilesToIndex--;
 
-			for (Iterator iter = fTUs.iterator(); iter.hasNext();) {
-				ITranslationUnit tu = (ITranslationUnit) iter.next();
-				changeTU(tu);
-				fFilesToIndex--;
-			}
+			parseTUs(fTUs, monitor);
 
 			assert fFilesToIndex == 0;
 			String showTimings = Platform.getDebugOption(CCorePlugin.PLUGIN_ID
@@ -61,9 +55,4 @@ class PDOMFastReindex extends PDOMFastIndexerJob {
 		} catch (InterruptedException e) {
 		}
 	}
-
-	public int getFilesToIndexCount() {
-		return fFilesToIndex;
-	}
-
 }

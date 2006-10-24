@@ -63,6 +63,12 @@ public class DownloadJob extends Job
 
 	private ISystemEditableRemoteObject _editable;
 	private boolean _systemEditor;
+	
+	/**
+	 * Download job.
+	 * @param editable the editable remote object.
+	 * @param systemEditor whether to use the system editor.
+	 */
 	public DownloadJob(ISystemEditableRemoteObject editable, boolean systemEditor)
 	{
 		super("Download");

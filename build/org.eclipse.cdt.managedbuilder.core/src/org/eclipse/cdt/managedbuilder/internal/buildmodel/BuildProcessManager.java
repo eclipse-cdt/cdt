@@ -13,7 +13,6 @@ package org.eclipse.cdt.managedbuilder.internal.buildmodel;
 
 import java.io.BufferedReader;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
@@ -23,6 +22,9 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.cdt.managedbuilder.buildmodel.IBuildCommand;
+import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
+import org.eclipse.cdt.managedbuilder.envvar.IBuildEnvironmentVariable;
+import org.eclipse.cdt.managedbuilder.envvar.IEnvironmentVariableProvider;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 
@@ -137,7 +139,7 @@ public class BuildProcessManager {
 		if(map == null)
 			return null;
 		
-		List list = new ArrayList();
+		List<String> list = new ArrayList<String>();
 		
 		for(Iterator iter = map.entrySet().iterator(); iter.hasNext();){
 			Map.Entry entry = (Map.Entry)iter.next();
@@ -159,10 +161,16 @@ public class BuildProcessManager {
 		String os = System.getProperty("os.name"); //$NON-NLS-1$
 		if (os != null) {
 			if (os.startsWith("Win")) { //$NON-NLS-1$
-				try {
-					x = new Integer(System.getenv("NUMBER_OF_PROCESSORS")).intValue(); //$NON-NLS-1$
-					if (x > 0) { procNumber = x; }
-				} catch (NumberFormatException e) {} // fallthrough and return default
+				IEnvironmentVariableProvider evp = ManagedBuildManager.getEnvironmentVariableProvider();
+				if (evp != null) {
+					IBuildEnvironmentVariable var = evp.getVariable("NUMBER_OF_PROCESSORS", null, false, false); //$NON-NLS-1$
+					if (var != null) {
+						try {
+							x = new Integer(var.getValue()).intValue(); //$NON-NLS-1$
+							if (x > 0) { procNumber = x; }
+						} catch (NumberFormatException e) {} // fallthrough and return default
+					}
+				}
 			} else { // linux
 				String p = "/proc/cpuinfo"; //$NON-NLS-1$
 				try {

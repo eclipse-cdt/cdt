@@ -28,7 +28,7 @@ Contributors:
             icon="icons/full/obj16/systemfiles_obj.gif"
             category="files"
             class="org.eclipse.rse.subsystems.files.dstore.subsystem.DStoreFileSubSystemConfiguration"
-            vendor="Eclipse.org"
+            vendor="Eclipse DSDP Project"
             priority="100"
             id="dstore.files">
       </configuration>
@@ -41,7 +41,7 @@ Contributors:
             icon="icons/full/obj16/systemfiles_obj.gif"
             category="files"
             class="org.eclipse.rse.subsystems.files.dstore.subsystem.DStoreWindowsFileSubSystemConfiguration"
-            vendor="Eclipse.org"
+            vendor="Eclipse DSDP Project"
             priority="100"
             id="dstore.windows.files">
       </configuration>

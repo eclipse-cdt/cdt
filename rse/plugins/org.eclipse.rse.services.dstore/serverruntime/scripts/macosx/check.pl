@@ -1,4 +1,14 @@
 #!/usr/bin/perl -w
+#*******************************************************************************
+# Copyright (c) 2005, 2006 IBM Corporation and others.
+# All rights reserved. This program and the accompanying materials
+# are made available under the terms of the Eclipse Public License v1.0
+# which accompanies this distribution, and is available at
+# http://www.eclipse.org/legal/epl-v10.html
+#
+# Contributors:
+# IBM Corporation - initial API and implementation
+#*******************************************************************************
 
 # On MacOS X the password check must be run under the user's uid.
 # If the password is OK, prints "0\n" to STDOUT.

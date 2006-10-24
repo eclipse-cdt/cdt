@@ -42,13 +42,12 @@ public class PathUtility
 			containsDoubleSlashes = (path.indexOf("\\\\") != -1);
 		}
 		
-		/* DKM - replaceAll is causing exception
 		while (containsDoubleSlashes)
 		{
-			path = path.replaceAll("\\\\", "\\");
+			//need to quote once for the string, then again for the regex
+			path = path.replaceAll("\\\\\\\\", "\\");
 			containsDoubleSlashes = (path.indexOf("\\\\") != -1);
 		}
-		*/
 		if (endsWithSlash)
 		{
 			if (!(path.length() == 3)) path = path.substring(0, path.length() - 1);
@@ -72,7 +71,7 @@ public class PathUtility
 		
 		if (containsBackSlash)
 		{
-			path = path.replaceAll("\\", "/");
+			path = path.replace('\\', '/');
 			containsDoubleSlashes = (path.indexOf("//") != -1);
 		}
 		

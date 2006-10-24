@@ -31,6 +31,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Group;
 
 /**
  * An InheritButton is a specialized control that 
@@ -89,10 +90,22 @@ public class InheritButton extends Composite {
 		createToggleImages(toggle.getBackground());
 		toggle.getAccessible().addAccessibleListener(new AccessibleAdapter() {
 			public void getHelp(AccessibleEvent e) { // this is the one that should supply the text heard.
-				e.result = getToolTipText();
+				e.result = "";
 			}
 			public void getName(AccessibleEvent e) { // this is the one that apparently does supply the text heard.
-				e.result = getToolTipText();
+				e.result = toggle.getToolTipText();
+				String prefix = null;
+				Composite parent = toggle.getParent();
+				while (parent != null && prefix == null) {
+					if (parent instanceof Group) {
+						Group group = (Group) parent;
+						prefix = group.getText();
+					}
+					parent = parent.getParent();
+				}
+				if (prefix != null) {
+					e.result = prefix + " " + e.result;
+				}
 			}
 		});
 		toggle.addDisposeListener(new DisposeListener() {

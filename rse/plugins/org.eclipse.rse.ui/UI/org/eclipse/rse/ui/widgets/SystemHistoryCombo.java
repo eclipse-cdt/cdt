@@ -40,6 +40,7 @@ import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Group;
 
 
 /**
@@ -409,7 +410,7 @@ public class SystemHistoryCombo extends Composite implements ISystemCombo, Trave
     {
 	    historyCombo.removeModifyListener(listener);
     }
-	
+    	
 	/**
 	 * Return the current history for the directory combo box
 	 */
@@ -635,10 +636,22 @@ public class SystemHistoryCombo extends Composite implements ISystemCombo, Trave
 	    historyButton.setToolTipText(SystemResources.RESID_WORKWITHHISTORY_BUTTON_TIP);
 		historyButton.getAccessible().addAccessibleListener(new AccessibleAdapter() {
 			public void getHelp(AccessibleEvent e) { // this is the one that should supply the text heard.
-				e.result = historyButton.getToolTipText();
+				e.result = "";
 			}
 			public void getName(AccessibleEvent e) { // this is the one that apparently does supply the text heard.
 				e.result = historyButton.getToolTipText();
+				String prefix = null;
+				Composite parent = historyButton.getParent();
+				while (parent != null && prefix == null) {
+					if (parent instanceof Group) {
+						Group group = (Group) parent;
+						prefix = group.getText();
+					}
+					parent = parent.getParent();
+				}
+				if (prefix != null) {
+					e.result = prefix + " " + e.result;
+				}
 			}
 		});
 

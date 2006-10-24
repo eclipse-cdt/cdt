@@ -314,6 +314,10 @@ public class SystemEditionAction extends SystemBaseAction
 		{
 			throw new InvocationTargetException(e);
 		}
+		catch (Exception e) // TODO in Eclipse 3.3 this should be changed to IOException
+		{
+			throw new InvocationTargetException(e);
+		}
 	}
 
 	private IDocument getDocument(IFile file)

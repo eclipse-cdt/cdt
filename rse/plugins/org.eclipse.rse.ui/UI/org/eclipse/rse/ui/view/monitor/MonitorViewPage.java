@@ -401,6 +401,7 @@ FocusListener
 		_scaleValue.setEnabled(_isPolling);		
 						
 		collapsable.addCollapseListener(new CollapsableListener(inputContainer));
+		collapsable.setCollapsed(true);
 	}
 	
 	class CollapsableListener implements ISystemCollapsableSectionListener

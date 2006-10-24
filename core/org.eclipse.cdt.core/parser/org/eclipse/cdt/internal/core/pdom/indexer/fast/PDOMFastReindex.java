@@ -43,7 +43,6 @@ class PDOMFastReindex extends PDOMFastIndexerJob {
 
 			parseTUs(fTUs, monitor);
 
-			assert fFilesToIndex == 0;
 			String showTimings = Platform.getDebugOption(CCorePlugin.PLUGIN_ID
 					+ "/debug/pdomtimings"); //$NON-NLS-1$
 			if (showTimings != null && showTimings.equalsIgnoreCase("true")) //$NON-NLS-1$

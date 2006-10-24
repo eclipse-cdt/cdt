@@ -11,6 +11,7 @@
 
 package org.eclipse.cdt.internal.index.tests;
 
+import java.io.ByteArrayInputStream;
 import java.util.regex.Pattern;
 
 import junit.framework.TestSuite;
@@ -19,12 +20,19 @@ import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.IPDOMManager;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.index.IIndexBinding;
+import org.eclipse.cdt.core.index.IIndexFile;
 import org.eclipse.cdt.core.index.IndexFilter;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.testplugin.CProjectHelper;
 import org.eclipse.cdt.internal.core.CCoreInternals;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IWorkspaceRunnable;
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.Path;
 
 public class IndexIncludeTest extends IndexTestBase {
 	private static final IProgressMonitor NPM= new NullProgressMonitor();
@@ -69,6 +77,8 @@ public class IndexIncludeTest extends IndexTestBase {
 		CCoreInternals.getPDOMManager().setIndexAllHeaders(fProject, true);
 		waitForIndexer();
 		checkHeader(true);
+		
+		checkContext();
 	}
 
 	private void waitForIndexer() {
@@ -84,6 +94,8 @@ public class IndexIncludeTest extends IndexTestBase {
 		CCoreInternals.getPDOMManager().setIndexAllHeaders(fProject, true);
 		waitForIndexer();
 		checkHeader(true);
+		
+		checkContext();
 	}
 
 	private void checkHeader(boolean all) throws Exception {
@@ -95,5 +107,30 @@ public class IndexIncludeTest extends IndexTestBase {
 		finally {
 			fIndex.releaseReadLock();
 		}
+	}
+	
+	private void checkContext() throws Exception {
+		final long timestamp= System.currentTimeMillis();
+		final IResource file= fProject.getProject().findMember(new Path("included.h"));
+		assertNotNull(file);
+		ResourcesPlugin.getWorkspace().run(new IWorkspaceRunnable() {
+			public void run(IProgressMonitor monitor) throws CoreException {
+				((IFile) file).setContents(new ByteArrayInputStream( "int included; int CONTEXT;\n".getBytes()), false, false, NPM);
+			}
+		}, NPM);
+		waitForIndexer();
+		fIndex.acquireReadLock();
+		try {
+			IIndexFile ifile= fIndex.getFile(file.getLocation());
+			assertNotNull(ifile);
+			assertTrue(ifile.getTimestamp() >= timestamp);
+
+			IIndexBinding[] result= fIndex.findBindings(Pattern.compile("testInclude_cpp"), true, IndexFilter.ALL, NPM);
+			assertEquals(1, result.length);
+		}
+		finally {
+			fIndex.releaseReadLock();
+		}
 	}			
+
 }

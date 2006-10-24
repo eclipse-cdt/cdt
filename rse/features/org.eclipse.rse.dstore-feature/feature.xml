@@ -10,6 +10,10 @@
       %description
    </description>
 
+   <copyright url="http://www.eclipse.org/legal/epl-v10.html">
+      %copyright
+   </copyright>
+
    <license url="%licenseURL">
       %license
    </license>
@@ -28,57 +32,57 @@
 
    <plugin
          id="org.eclipse.dstore.core"
-         download-size="0"
-         install-size="0"
+         download-size="52"
+         install-size="154"
          version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.dstore.extra"
-         download-size="0"
-         install-size="0"
+         download-size="4"
+         install-size="13"
          version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.rse.connectorservice.dstore"
-         download-size="0"
-         install-size="0"
+         download-size="16"
+         install-size="40"
          version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.rse.services.dstore"
-         download-size="0"
-         install-size="0"
+         download-size="59"
+         install-size="156"
          version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.rse.subsystems.files.dstore"
-         download-size="0"
-         install-size="0"
+         download-size="14"
+         install-size="42"
          version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.rse.subsystems.processes.dstore"
-         download-size="0"
-         install-size="0"
+         download-size="5"
+         install-size="10"
          version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.rse.subsystems.shells.dstore"
-         download-size="0"
-         install-size="0"
+         download-size="5"
+         install-size="10"
          version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.rse.dstore.security"
-         download-size="0"
-         install-size="0"
+         download-size="20"
+         install-size="56"
          version="0.0.0"
          unpack="false"/>
 

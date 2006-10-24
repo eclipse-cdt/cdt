@@ -26,7 +26,6 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.jface.action.ContributionItem;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.rse.core.SystemBasePlugin;
 import org.eclipse.rse.files.ui.FileResources;
 import org.eclipse.rse.files.ui.resources.SystemEditableRemoteFile;
 import org.eclipse.rse.files.ui.resources.SystemIFileProperties;
@@ -45,6 +44,7 @@ import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.ui.IEditorDescriptor;
 import org.eclipse.ui.IEditorRegistry;
 import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.IDE;
 
@@ -177,10 +177,10 @@ protected void createMenuItem(Menu menu, final IEditorDescriptor descriptor, fin
 }
 
 
-protected void openEditor(IRemoteFile remoteFile, IEditorDescriptor descriptor)
-{
+protected void openEditor(IRemoteFile remoteFile, IEditorDescriptor descriptor) {
 	
 	SystemEditableRemoteFile editable = null;
+	
 	if (descriptor == null)
 	{
 		editable = new SystemEditableRemoteFile(remoteFile);
@@ -189,40 +189,25 @@ protected void openEditor(IRemoteFile remoteFile, IEditorDescriptor descriptor)
 	{
 		editable = new SystemEditableRemoteFile(remoteFile, descriptor.getId());
 	}
+	
 	boolean systemEditor = descriptor != null && descriptor.getId().equals(IEditorRegistry.SYSTEM_EXTERNAL_EDITOR_ID);
 
-
-		if (isFileCached(editable, remoteFile))
-		{
-			try
-			{
-				if (systemEditor)
-				{
-					editable.openSystemEditor();
-				}
-				else
-				{
-					editable.openEditor();
-				}
-			}
-			catch (Exception e)
-			{
-				
-			}
-		}
-		else
-		{
-			DownloadJob oJob = new DownloadJob(editable, systemEditor);
-			oJob.schedule();
-		}
-
-/*
-	else
-	{
-		editableFile.open(SystemBasePlugin.getActiveWorkbenchShell());
-	}
-	*/
+	if (isFileCached(editable, remoteFile)) {
 		
+		try {
+			if (systemEditor) {
+				editable.openSystemEditor();
+			}
+			else {
+				editable.openEditor();
+			}
+		}
+		catch (Exception e) {}
+	}
+	else {
+		DownloadJob oJob = new DownloadJob(editable, systemEditor);
+		oJob.schedule();
+	}
 }
 
 private boolean isFileCached(ISystemEditableRemoteObject editable, IRemoteFile remoteFile)
@@ -299,7 +284,7 @@ protected IEditorDescriptor getDefaultEditor(IRemoteFile remoteFile)
 {
 	IFile localFile = getLocalResource(remoteFile);
 	
-	if (localFile == null) {
+	if (localFile == null || !localFile.exists()) {
 		return registry.getDefaultEditor(remoteFile.getName());
 	}
 	else 
@@ -427,9 +412,15 @@ protected void createDefaultMenuItem(Menu menu, final IRemoteFile file)
 					{
 						setDefaultEditor(file, null);
 		
-						IEditorDescriptor defaultEditor = getDefaultEditor(file);
-						openEditor(file, defaultEditor);
-					
+						IEditorDescriptor defaultEditor = null;
+						
+						try {
+							defaultEditor = getEditorDescriptor(file);
+							openEditor(file, defaultEditor);
+						}
+						catch (PartInitException e) {
+							RSEUIPlugin.logError("Error getting default editor descriptor", e);
+						}
 					}
 					break;
 			}
@@ -437,6 +428,10 @@ protected void createDefaultMenuItem(Menu menu, final IRemoteFile file)
 	};
 	
 	menuItem.addListener(SWT.Selection, listener);
+}
+
+protected IEditorDescriptor getEditorDescriptor(IRemoteFile file) throws PartInitException {
+	return IDE.getEditorDescriptor(file.getName(), true);
 }
 
 }

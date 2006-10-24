@@ -11,7 +11,7 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * Michael Scharf (WindRiver) - patch for an NPE in getSubSystemConfigurations()
+ * Michael Scharf (Wind River) - patch for an NPE in getSubSystemConfigurations()
  ********************************************************************************/
 
 package org.eclipse.rse.model;

@@ -11,7 +11,7 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * Martin Oberhuber (WindRiver) - Fix for bug 161844 - regex matching backslashes
+ * Martin Oberhuber (Wind River) - Fix for bug 161844 - regex matching backslashes
  * 
  ********************************************************************************/
 

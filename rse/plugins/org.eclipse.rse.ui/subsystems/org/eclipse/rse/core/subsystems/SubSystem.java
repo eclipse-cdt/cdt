@@ -11,7 +11,7 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * Martin Oberhuber (WindRiver) - 141803: Fix cpu usage 100% while connecting
+ * Martin Oberhuber (Wind River) - 141803: Fix cpu usage 100% while connecting
  * 
  ********************************************************************************/
 

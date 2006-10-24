@@ -9,6 +9,10 @@
       %description
    </description>
 
+   <copyright>
+      %copyright
+   </copyright>
+
    <license url="%licenseURL">
       %license
    </license>
@@ -39,78 +43,78 @@
 
    <plugin
          id="org.eclipse.rse.files.ui"
-         download-size="0"
-         install-size="0"
+         download-size="111"
+         install-size="407"
          version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.rse.logging"
-         download-size="0"
-         install-size="0"
+         download-size="12"
+         install-size="28"
          version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.rse.processes.ui"
-         download-size="0"
-         install-size="0"
+         download-size="22"
+         install-size="61"
          version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.rse.services"
-         download-size="0"
-         install-size="0"
+         download-size="57"
+         install-size="183"
          version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.rse.shells.ui"
-         download-size="0"
-         install-size="0"
+         download-size="40"
+         install-size="135"
          version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.rse.subsystems.files.core"
-         download-size="0"
-         install-size="0"
+         download-size="32"
+         install-size="98"
          version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.rse.subsystems.processes.core"
-         download-size="0"
-         install-size="0"
+         download-size="7"
+         install-size="21"
          version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.rse.subsystems.shells.core"
-         download-size="0"
-         install-size="0"
+         download-size="16"
+         install-size="56"
          version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.rse.ui"
-         download-size="0"
-         install-size="0"
+         download-size="548"
+         install-size="1677"
          version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.rse.core"
-         download-size="0"
-         install-size="0"
+         download-size="41"
+         install-size="133"
          version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.rse.doc.user"
-         download-size="0"
-         install-size="0"
+         download-size="159"
+         install-size="193"
          version="0.0.0"
          unpack="false"/>
 

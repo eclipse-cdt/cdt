@@ -17,6 +17,7 @@ import java.io.FileNotFoundException;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
+import org.eclipse.cdt.core.dom.IPDOMManager;
 import org.eclipse.cdt.core.model.IArchive;
 import org.eclipse.cdt.core.model.IBinary;
 import org.eclipse.cdt.core.model.ICElement;
@@ -83,7 +84,7 @@ public class ArchiveTests extends TestCase {
          * Setup the various files, paths and projects that are needed by the
          * tests
          */
-        testProject=CProjectHelper.createCProject("filetest", "none");
+        testProject=CProjectHelper.createCProject("filetest", "none", IPDOMManager.ID_NO_INDEXER);
         if (testProject==null)
             fail("Unable to create project");
 

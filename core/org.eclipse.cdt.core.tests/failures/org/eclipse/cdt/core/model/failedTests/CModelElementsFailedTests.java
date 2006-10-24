@@ -17,6 +17,7 @@ import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
+import org.eclipse.cdt.core.dom.IPDOMManager;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.testplugin.CProjectHelper;
 import org.eclipse.cdt.core.testplugin.CTestPlugin;
@@ -52,7 +53,7 @@ public class CModelElementsFailedTests extends TestCase {
 		monitor = new NullProgressMonitor();
 		String pluginRoot = CTestPlugin.getDefault().find(new Path("/")).getFile();
 	
-		fCProject= CProjectHelper.createCCProject("TestProject1", "bin");
+		fCProject= CProjectHelper.createCCProject("TestProject1", "bin", IPDOMManager.ID_NO_INDEXER);
 		headerFile = fCProject.getProject().getFile("CModelElementsTest.h");
 		if (!headerFile.exists()) {
 			try{

@@ -20,6 +20,7 @@ import junit.framework.TestSuite;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.ICDescriptor;
 import org.eclipse.cdt.core.ICDescriptorOperation;
+import org.eclipse.cdt.core.dom.IPDOMManager;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.IBinary;
 import org.eclipse.cdt.core.model.ICElement;
@@ -92,7 +93,7 @@ public class BinaryTests extends TestCase {
          * tests
          */
             
-        testProject=CProjectHelper.createCProject("filetest", "none");
+        testProject=CProjectHelper.createCProject("filetest", "none", IPDOMManager.ID_NO_INDEXER);
         
         // since our test require that we can read the debug info from the exe whne must set the GNU elf 
         // binary parser since the default (generic elf binary parser) does not do this.

@@ -20,17 +20,6 @@ import java.io.FileInputStream;
 
 import junit.framework.TestCase;
 
-import org.eclipse.cdt.core.CCProjectNature;
-import org.eclipse.cdt.core.dom.ast.ASTCompletionNode;
-import org.eclipse.cdt.core.dom.ast.IASTName;
-import org.eclipse.cdt.core.dom.ast.IBinding;
-import org.eclipse.cdt.core.model.CoreModel;
-import org.eclipse.cdt.core.model.ICProject;
-import org.eclipse.cdt.core.model.ITranslationUnit;
-import org.eclipse.cdt.core.testplugin.CProjectHelper;
-import org.eclipse.cdt.internal.ui.editor.CEditor;
-import org.eclipse.cdt.internal.ui.text.contentassist.CCompletionProcessor2;
-import org.eclipse.cdt.ui.testplugin.CTestPlugin;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
@@ -45,6 +34,20 @@ import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.FileEditorInput;
+
+import org.eclipse.cdt.core.CCProjectNature;
+import org.eclipse.cdt.core.dom.IPDOMManager;
+import org.eclipse.cdt.core.dom.ast.ASTCompletionNode;
+import org.eclipse.cdt.core.dom.ast.IASTName;
+import org.eclipse.cdt.core.dom.ast.IBinding;
+import org.eclipse.cdt.core.model.CoreModel;
+import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.cdt.core.testplugin.CProjectHelper;
+import org.eclipse.cdt.ui.testplugin.CTestPlugin;
+
+import org.eclipse.cdt.internal.ui.editor.CEditor;
+import org.eclipse.cdt.internal.ui.text.contentassist.CCompletionProcessor2;
 
 public abstract class CompletionProposalsBaseTest  extends TestCase{
 	protected static final String EMPTY_STRING = ""; //$NON-NLS-1$
@@ -85,7 +88,7 @@ public abstract class CompletionProposalsBaseTest  extends TestCase{
 	protected void setUp() throws Exception {
 		monitor = new NullProgressMonitor();
 		
-		fCProject= CProjectHelper.createCProject(projectName, projectType);
+		fCProject= CProjectHelper.createCProject(projectName, projectType, IPDOMManager.ID_NO_INDEXER);
 		fHeaderFile = fCProject.getProject().getFile(getHeaderFileName());
 		String fileName = getFileName();
 		fCFile = fCProject.getProject().getFile(fileName);

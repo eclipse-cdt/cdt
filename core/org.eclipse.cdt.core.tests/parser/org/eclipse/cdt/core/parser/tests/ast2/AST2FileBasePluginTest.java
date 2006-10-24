@@ -53,7 +53,7 @@ public class AST2FileBasePluginTest extends TestCase {
 			workspace = ResourcesPlugin.getWorkspace();
 			
 	        try {
-	        	cPrj = CProjectHelper.createCCProject("AST2BasedProjectMofo", "bin"); //$NON-NLS-1$ //$NON-NLS-2$
+	        	cPrj = CProjectHelper.createCCProject("AST2BasedProjectMofo", "bin", IPDOMManager.ID_NO_INDEXER); //$NON-NLS-1$ //$NON-NLS-2$
 	        	
 	            project = cPrj.getProject();
 	            
@@ -101,6 +101,8 @@ public class AST2FileBasePluginTest extends TestCase {
         for( int i = 0; i < members.length; i++ ){
             if( members[i].getName().equals( ".project" ) || members[i].getName().equals( ".cdtproject" ) ) //$NON-NLS-1$ //$NON-NLS-2$
                 continue;
+            if (members[i].getName().equals(".settings")) 
+            	continue;
             try{
                 members[i].delete( false, monitor );
             } catch( Throwable e ){

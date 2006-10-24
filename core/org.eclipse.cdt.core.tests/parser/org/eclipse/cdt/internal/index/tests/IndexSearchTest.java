@@ -60,9 +60,10 @@ public class IndexSearchTest extends IndexTestBase {
 	public void setUp() throws Exception {
 		super.setUp();
 		if (fProject == null) {
-			fProject= createProject(true);
+			fProject= createProject(true, "resources/indexTests/search");
 		}
 		fIndex= CCorePlugin.getIndexManager().getIndex(fProject);
+		fIndex.acquireReadLock();
 	}
 	
 	public void tearDown() throws Exception {

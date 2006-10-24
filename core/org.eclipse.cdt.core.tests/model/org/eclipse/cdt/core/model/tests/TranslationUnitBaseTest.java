@@ -14,6 +14,7 @@ import java.io.FileInputStream;
 
 import junit.framework.TestCase;
 
+import org.eclipse.cdt.core.dom.IPDOMManager;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.testplugin.CProjectHelper;
 import org.eclipse.cdt.core.testplugin.CTestPlugin;
@@ -95,7 +96,7 @@ public class TranslationUnitBaseTest extends TestCase
          * tests
          */
             
-        testProject=CProjectHelper.createCProject("filetest", "none");
+        testProject=CProjectHelper.createCProject("filetest", "none", IPDOMManager.ID_NO_INDEXER);
         if (testProject==null)
             fail("Unable to create project");
     

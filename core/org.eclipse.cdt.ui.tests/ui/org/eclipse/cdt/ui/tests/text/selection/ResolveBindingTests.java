@@ -49,8 +49,7 @@ public class ResolveBindingTests extends BaseUITestCase  {
 
 	protected void setUp() throws Exception {
 		super.setUp();
-		fCProject= CProjectHelper.createCProject("ResolveBindingTests", "bin");
-		CCorePlugin.getPDOMManager().setIndexerId(fCProject, IPDOMManager.ID_FAST_INDEXER);
+		fCProject= CProjectHelper.createCProject("ResolveBindingTests", "bin", IPDOMManager.ID_NO_INDEXER);
 		IPDOMIndexer indexer = CCorePlugin.getPDOMManager().getIndexer(fCProject);
 		try {
 			indexer.reindex();

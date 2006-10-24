@@ -33,6 +33,8 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.FileEditorInput;
 
+import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.dom.IPDOMManager;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICProject;
@@ -61,7 +63,7 @@ public class ContentAssistTests extends BaseUITestCase {
     	if (project == null) {
     		ICProject cPrj; 
     		try {
-    			cPrj = CProjectHelper.createCCProject("ContentAssistTestProject", "bin"); //$NON-NLS-1$ //$NON-NLS-2$
+    			cPrj = CProjectHelper.createCCProject("ContentAssistTestProject", "bin", IPDOMManager.ID_FAST_INDEXER); //$NON-NLS-1$ //$NON-NLS-2$
 
     			project = cPrj.getProject();
     		} catch ( CoreException e ) {
@@ -69,6 +71,7 @@ public class ContentAssistTests extends BaseUITestCase {
     		}
     		if (project == null)
     			fail("Unable to create project"); //$NON-NLS-1$
+    		assertTrue(CCorePlugin.getIndexManager().joinIndexer(10000, monitor));
     	}
 	}
     public ContentAssistTests()
@@ -120,6 +123,8 @@ public class ContentAssistTests extends BaseUITestCase {
         for( int i = 0; i < members.length; i++ ){
             if( members[i].getName().equals( ".project" ) || members[i].getName().equals( ".cdtproject" ) ) //$NON-NLS-1$ //$NON-NLS-2$
                 continue;
+            if (members[i].getName().equals(".settings")) 
+            	continue;
             try{
                 members[i].delete( false, monitor );
             } catch( Throwable e ){

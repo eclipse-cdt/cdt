@@ -20,15 +20,6 @@ import java.io.FileInputStream;
 
 import junit.framework.TestCase;
 
-import org.eclipse.cdt.core.CCProjectNature;
-import org.eclipse.cdt.core.model.CModelException;
-import org.eclipse.cdt.core.model.CoreModel;
-import org.eclipse.cdt.core.model.ICProject;
-import org.eclipse.cdt.core.model.ITranslationUnit;
-import org.eclipse.cdt.core.model.IWorkingCopy;
-import org.eclipse.cdt.core.parser.ast.IASTCompletionNode;
-import org.eclipse.cdt.core.testplugin.CProjectHelper;
-import org.eclipse.cdt.ui.testplugin.CTestPlugin;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
@@ -37,6 +28,19 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.text.Document;
+
+import org.eclipse.cdt.core.CCProjectNature;
+import org.eclipse.cdt.core.dom.IPDOMManager;
+import org.eclipse.cdt.core.model.CModelException;
+import org.eclipse.cdt.core.model.CoreModel;
+import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.cdt.core.model.IWorkingCopy;
+import org.eclipse.cdt.core.parser.ast.IASTCompletionNode;
+import org.eclipse.cdt.core.testplugin.CProjectHelper;
+import org.eclipse.cdt.ui.testplugin.CTestPlugin;
+
+import org.eclipse.cdt.internal.core.CCoreInternals;
 
 public abstract class CompletionProposalsBaseTest  extends TestCase{
 	protected static final String EMPTY_STRING = ""; //$NON-NLS-1$
@@ -73,7 +77,8 @@ public abstract class CompletionProposalsBaseTest  extends TestCase{
 	protected void setUp() throws Exception {
 		monitor = new NullProgressMonitor();
 		
-		fCProject= CProjectHelper.createCProject(projectName, projectType);
+		fCProject= CProjectHelper.createCProject(projectName, projectType, IPDOMManager.ID_NO_INDEXER);
+		CCoreInternals.getPDOMManager().setIndexerId(fCProject, IPDOMManager.ID_NO_INDEXER);
 		fHeaderFile = fCProject.getProject().getFile(getHeaderFileName());
 		String fileName = getFileName();
 		fCFile = fCProject.getProject().getFile(fileName);

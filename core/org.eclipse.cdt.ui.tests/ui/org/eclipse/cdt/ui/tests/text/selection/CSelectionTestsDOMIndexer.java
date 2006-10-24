@@ -115,7 +115,7 @@ public class CSelectionTestsDOMIndexer extends BaseSelectionTestsIndexer {
 	}
 
 	private IProject createProject(String projectName) throws CoreException {
-		ICProject cPrj = CProjectHelper.createCCProject(projectName, "bin"); //$NON-NLS-1$
+		ICProject cPrj = CProjectHelper.createCCProject(projectName, "bin", IPDOMManager.ID_NO_INDEXER); //$NON-NLS-1$
 		return cPrj.getProject();
 	}
 	

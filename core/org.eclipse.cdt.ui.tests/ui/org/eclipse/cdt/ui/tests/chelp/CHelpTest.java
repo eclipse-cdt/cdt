@@ -14,21 +14,24 @@ import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.Platform;
+
+import org.eclipse.cdt.core.dom.IPDOMManager;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.testplugin.CProjectHelper;
-import org.eclipse.cdt.internal.ui.CHelpProviderManager;
-import org.eclipse.cdt.internal.ui.text.CHelpBookDescriptor;
-import org.eclipse.cdt.internal.ui.text.CHelpSettings;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.ICHelpBook;
 import org.eclipse.cdt.ui.ICHelpResourceDescriptor;
 import org.eclipse.cdt.ui.IFunctionSummary;
 import org.eclipse.cdt.ui.text.ICHelpInvocationContext;
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.core.runtime.Platform;
+
+import org.eclipse.cdt.internal.ui.CHelpProviderManager;
+import org.eclipse.cdt.internal.ui.text.CHelpBookDescriptor;
+import org.eclipse.cdt.internal.ui.text.CHelpSettings;
 
 /**
  * 
@@ -77,13 +80,13 @@ public class CHelpTest extends TestCase {
 
 	private ICProject getCProject() throws CoreException{
 		if(fCProject == null)
-			fCProject = CProjectHelper.createCProject(C_PROJECT_NAME, BIN_DIR_NAME);
+			fCProject = CProjectHelper.createCProject(C_PROJECT_NAME, BIN_DIR_NAME, IPDOMManager.ID_NO_INDEXER);
 		return fCProject;
 	}
 	
 	private ICProject getCCProject() throws CoreException{
 		if(fCCProject == null)
-			fCCProject = CProjectHelper.createCCProject(CC_PROJECT_NAME, BIN_DIR_NAME);
+			fCCProject = CProjectHelper.createCCProject(CC_PROJECT_NAME, BIN_DIR_NAME, IPDOMManager.ID_NO_INDEXER);
 		return fCCProject;
 	}
 

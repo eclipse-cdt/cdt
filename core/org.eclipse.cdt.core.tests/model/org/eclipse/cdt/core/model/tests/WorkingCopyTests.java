@@ -18,6 +18,7 @@ import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
+import org.eclipse.cdt.core.dom.IPDOMManager;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.IBuffer;
 import org.eclipse.cdt.core.model.ICProject;
@@ -58,7 +59,7 @@ public class WorkingCopyTests extends TestCase {
 	protected void setUp() throws Exception {
 		monitor = new NullProgressMonitor();
 	
-		fCProject= CProjectHelper.createCCProject("TestProject1", "bin");
+		fCProject= CProjectHelper.createCCProject("TestProject1", "bin", IPDOMManager.ID_NO_INDEXER);
 		//Path filePath = new Path(ResourcesPlugin.getWorkspace().getRoot().getLocation().toString()+ fCProject.getPath().toString()+ "/WorkingCopyTest.h");
 		headerFile = fCProject.getProject().getFile("WorkingCopyTest.h");
 		if (!headerFile.exists()) {

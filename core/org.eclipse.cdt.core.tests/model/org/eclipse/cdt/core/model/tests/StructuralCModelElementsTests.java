@@ -19,6 +19,7 @@ import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.dom.IPDOMManager;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICElement;
@@ -70,7 +71,7 @@ public class StructuralCModelElementsTests extends TestCase {
 		
 	protected void setUp() throws Exception {
 		monitor = new NullProgressMonitor();
-		fCProject= CProjectHelper.createCCProject("TestProject1", "bin"); //$NON-NLS-1$ //$NON-NLS-2$
+		fCProject= CProjectHelper.createCCProject("TestProject1", "bin", IPDOMManager.ID_NO_INDEXER); //$NON-NLS-1$ //$NON-NLS-2$
 		headerFile = fCProject.getProject().getFile("CModelElementsTest.h"); //$NON-NLS-1$
 		includedFile = fCProject.getProject().getFile("included.h"); //$NON-NLS-1$
 		if (!headerFile.exists()) {

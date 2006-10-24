@@ -51,7 +51,7 @@ abstract public class BaseTestFramework extends TestCase {
 			workspace = ResourcesPlugin.getWorkspace();
 			
 	        try {
-	            cproject = CProjectHelper.createCCProject("RegressionTestProject", "bin"); //$NON-NLS-1$ //$NON-NLS-2$
+	            cproject = CProjectHelper.createCCProject("RegressionTestProject", "bin", IPDOMManager.ID_NO_INDEXER); //$NON-NLS-1$ //$NON-NLS-2$
 	        
 	            project = cproject.getProject();
 	            
@@ -106,6 +106,8 @@ abstract public class BaseTestFramework extends TestCase {
         for( int i = 0; i < members.length; i++ ){
             if( members[i].getName().equals( ".project" ) || members[i].getName().equals( ".cdtproject" ) ) //$NON-NLS-1$ //$NON-NLS-2$
                 continue;
+            if (members[i].getName().equals(".settings")) 
+            	continue;
             try{
                 members[i].delete( false, monitor );
             } catch( Throwable e ){

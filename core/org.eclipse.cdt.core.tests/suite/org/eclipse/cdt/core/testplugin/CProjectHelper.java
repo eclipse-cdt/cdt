@@ -29,6 +29,7 @@ import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.ISourceRoot;
 import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.cdt.internal.core.CCoreInternals;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
@@ -61,12 +62,16 @@ public class CProjectHelper {
 		}
 	};
 
+	public static ICProject createCProject(final String projectName, String binFolderName) throws CoreException {
+		return createCCProject(projectName, binFolderName, null);
+	}
+	
 	/**
 	 * Creates a ICProject.
 	 */
-	public static ICProject createCProject(final String projectName, String binFolderName) throws CoreException {
+	public static ICProject createCProject(final String projectName, String binFolderName, final String indexerID) throws CoreException {
 		final IWorkspace ws = ResourcesPlugin.getWorkspace();
-		final IProject newProject[] = new IProject[1];
+		final ICProject newProject[] = new ICProject[1];
 		ws.run(new IWorkspaceRunnable() {
 
 			public void run(IProgressMonitor monitor) throws CoreException {
@@ -85,11 +90,14 @@ public class CProjectHelper {
 					addNatureToProject(project, CProjectNature.C_NATURE_ID, null);
 					CCorePlugin.getDefault().mapCProjectOwner(project, projectId, false);
 				}
-				newProject[0] = project;
+				newProject[0] = CCorePlugin.getDefault().getCoreModel().create(project);
+				if (indexerID != null) {
+					CCoreInternals.getPDOMManager().setIndexerId(newProject[0], indexerID);
+				}
 			}
 		}, null);
 
-		return CCorePlugin.getDefault().getCoreModel().create(newProject[0]);
+		return newProject[0];
 	}
 	
 	private static String getMessage(IStatus status) {
@@ -106,12 +114,16 @@ public class CProjectHelper {
 	}
 
 	public static ICProject createCCProject(final String projectName, final String binFolderName) throws CoreException {
+		return createCCProject(projectName, binFolderName, null);
+	}
+
+	public static ICProject createCCProject(final String projectName, final String binFolderName, final String indexerID) throws CoreException {
 		final IWorkspace ws = ResourcesPlugin.getWorkspace();
 		final ICProject newProject[] = new ICProject[1];
 		ws.run(new IWorkspaceRunnable() {
 
 			public void run(IProgressMonitor monitor) throws CoreException {
-				ICProject cproject = createCProject(projectName, binFolderName);
+				ICProject cproject = createCProject(projectName, binFolderName, indexerID);
 				if (!cproject.getProject().hasNature(CCProjectNature.CC_NATURE_ID)) {
 					addNatureToProject(cproject.getProject(), CCProjectNature.CC_NATURE_ID, null);
 				}

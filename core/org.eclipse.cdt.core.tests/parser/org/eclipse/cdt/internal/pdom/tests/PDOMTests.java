@@ -27,7 +27,7 @@ public class PDOMTests extends TestSuite {
 		suite.addTestSuite(TypesTests.class);
 		suite.addTestSuite(IncludesTests.class);
 		suite.addTestSuite(OverloadsWithinSingleTUTests.class);
-		suite.addTestSuite(OverloadsWithinCommonHeaderTests.class);
+		suite.addTest(OverloadsWithinCommonHeaderTests.suite());
 		suite.addTestSuite(BTreeTests.class);
 		
 

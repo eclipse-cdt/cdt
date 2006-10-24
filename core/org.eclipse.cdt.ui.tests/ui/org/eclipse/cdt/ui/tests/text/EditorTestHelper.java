@@ -69,6 +69,7 @@ import org.eclipse.ui.wizards.datatransfer.FileSystemStructureProvider;
 import org.eclipse.ui.wizards.datatransfer.IImportStructureProvider;
 import org.eclipse.ui.wizards.datatransfer.ImportOperation;
 
+import org.eclipse.cdt.core.dom.IPDOMManager;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.testplugin.CProjectHelper;
 import org.eclipse.cdt.ui.CUIPlugin;
@@ -434,7 +435,7 @@ public class EditorTestHelper {
 	}
 	
 	public static ICProject createCProject(String project, String externalSourceFolder, boolean linkSourceFolder) throws CoreException {
-		ICProject cProject= CProjectHelper.createCProject(project, "bin");
+		ICProject cProject= CProjectHelper.createCProject(project, "bin", IPDOMManager.ID_NO_INDEXER);
 		IFolder folder;
 		if (linkSourceFolder)
 			folder= ResourceHelper.createLinkedFolder((IProject) cProject.getUnderlyingResource(), new Path("src"), CTestPlugin.getDefault(), new Path(externalSourceFolder));

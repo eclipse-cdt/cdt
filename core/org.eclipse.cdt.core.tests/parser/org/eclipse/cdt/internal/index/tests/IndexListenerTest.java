@@ -40,10 +40,8 @@ public class IndexListenerTest extends BaseTestCase {
 	}
 
 	protected void setUp() throws Exception {
-		fProject1 = CProjectHelper.createCCProject("testIndexListener1", null);
-		fProject2 = CProjectHelper.createCCProject("testIndexListener2", null);
-		CCorePlugin.getPDOMManager().setIndexerId(fProject1, IPDOMManager.ID_FAST_INDEXER);
-		CCorePlugin.getPDOMManager().setIndexerId(fProject2, IPDOMManager.ID_FAST_INDEXER);
+		fProject1 = CProjectHelper.createCCProject("testIndexListener1", null, IPDOMManager.ID_FAST_INDEXER);
+		fProject2 = CProjectHelper.createCCProject("testIndexListener2", null, IPDOMManager.ID_FAST_INDEXER);
 		assertTrue(CCorePlugin.getIndexManager().joinIndexer(2000, new NullProgressMonitor()));
 	}
 

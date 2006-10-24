@@ -13,13 +13,14 @@ package org.eclipse.cdt.core.model.tests;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
+import org.eclipse.cdt.core.dom.IPDOMManager;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ElementChangedEvent;
 import org.eclipse.cdt.core.model.ICElementDelta;
-import org.eclipse.cdt.core.model.IContainerEntry;
-import org.eclipse.cdt.core.model.IPathEntry;
 import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.core.model.IContainerEntry;
 import org.eclipse.cdt.core.model.IElementChangedListener;
+import org.eclipse.cdt.core.model.IPathEntry;
 import org.eclipse.cdt.core.model.IPathEntryContainer;
 import org.eclipse.cdt.core.testplugin.CProjectHelper;
 import org.eclipse.cdt.core.testplugin.CTestPlugin;
@@ -135,7 +136,7 @@ public class CPathEntryTest extends TestCase {
 	 */
 	public void testCPathEntries() throws CoreException {
 		ICProject testProject;
-		testProject = CProjectHelper.createCProject("cpathtest", "none");
+		testProject = CProjectHelper.createCProject("cpathtest", "none", IPDOMManager.ID_NO_INDEXER);
 		if (testProject == null) {
 			fail("Unable to create project");
 		}
@@ -164,7 +165,7 @@ public class CPathEntryTest extends TestCase {
 	 */
 	public void testCPathEntriesDelta() throws CoreException {
 		ICProject testProject;
-		testProject = CProjectHelper.createCProject("cpathtest", "none");
+		testProject = CProjectHelper.createCProject("cpathtest", "none", IPDOMManager.ID_NO_INDEXER);
 		if (testProject == null) {
 			fail("Unable to create project");
 		}
@@ -187,7 +188,7 @@ public class CPathEntryTest extends TestCase {
 	 */
 	public void testPathEntryContainer() throws CoreException {
 		ICProject testProject;
-		testProject = CProjectHelper.createCProject("cpathtest", "none");
+		testProject = CProjectHelper.createCProject("cpathtest", "none", IPDOMManager.ID_NO_INDEXER);
 		if (testProject == null) {
 			fail("Unable to create project");
 		}

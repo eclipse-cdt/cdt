@@ -35,6 +35,7 @@ import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.ui.PartInitException;
 
+import org.eclipse.cdt.core.dom.IPDOMManager;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.ICContainer;
 import org.eclipse.cdt.core.model.ICProject;
@@ -98,7 +99,7 @@ public class BracketInserterTest extends TestCase {
 	}
 	
 	private void setUpProject() throws CoreException {
-		fProject= CProjectHelper.createCProject(getName(), "bin");
+		fProject= CProjectHelper.createCProject(getName(), "bin", IPDOMManager.ID_NO_INDEXER);
 		ICContainer cContainer= CProjectHelper.addCContainer(fProject, SRC);
 		IFile file= EditorTestHelper.createFile((IContainer)cContainer.getResource(), TU_NAME, TU_CONTENTS, new NullProgressMonitor());
 		assertNotNull(file);

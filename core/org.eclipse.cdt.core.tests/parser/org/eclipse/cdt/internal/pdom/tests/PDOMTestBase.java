@@ -75,11 +75,8 @@ public class PDOMTestBase extends BaseTestCase {
 		workspace.run(new IWorkspaceRunnable() {
 			public void run(IProgressMonitor monitor) throws CoreException {
 				// Create the project
-				ICProject cproject= cpp ? CProjectHelper.createCCProject(projectName, null)
-						: CProjectHelper.createCProject(projectName, null);
-
-				// Set the indexer to the null indexer and invoke it later on.
-				CCorePlugin.getPDOMManager().setIndexerId(cproject, IPDOMManager.ID_NO_INDEXER);
+				ICProject cproject= cpp ? CProjectHelper.createCCProject(projectName, null, IPDOMManager.ID_NO_INDEXER)
+						: CProjectHelper.createCProject(projectName, null, IPDOMManager.ID_NO_INDEXER);
 
 				// Import the files at the root
 				ImportOperation importOp = new ImportOperation(cproject.getProject().getFullPath(),

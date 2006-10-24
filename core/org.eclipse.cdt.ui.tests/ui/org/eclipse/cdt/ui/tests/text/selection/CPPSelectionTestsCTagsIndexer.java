@@ -17,16 +17,6 @@ import junit.framework.AssertionFailedError;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
-import org.eclipse.cdt.core.CCProjectNature;
-import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.dom.ast.IASTName;
-import org.eclipse.cdt.core.dom.ast.IASTNode;
-import org.eclipse.cdt.core.model.ICProject;
-import org.eclipse.cdt.core.testplugin.CProjectHelper;
-import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
-import org.eclipse.cdt.make.core.MakeProjectNature;
-import org.eclipse.cdt.make.core.scannerconfig.ScannerConfigNature;
-import org.eclipse.cdt.make.internal.core.scannerconfig2.PerProjectSICollector;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
@@ -36,6 +26,19 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.text.TextSelection;
 import org.eclipse.jface.viewers.ISelection;
+
+import org.eclipse.cdt.core.CCProjectNature;
+import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.dom.IPDOMManager;
+import org.eclipse.cdt.core.dom.ast.IASTName;
+import org.eclipse.cdt.core.dom.ast.IASTNode;
+import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.core.testplugin.CProjectHelper;
+import org.eclipse.cdt.make.core.MakeProjectNature;
+import org.eclipse.cdt.make.core.scannerconfig.ScannerConfigNature;
+import org.eclipse.cdt.make.internal.core.scannerconfig2.PerProjectSICollector;
+
+import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 
 /**
  * Test Ctrl_F3/F3 with the CTags Indexer for a CPP project.
@@ -113,7 +116,7 @@ public class CPPSelectionTestsCTagsIndexer extends BaseSelectionTestsIndexer {
 	}
 
 	private IProject createProject(String projectName) throws CoreException {
-		ICProject cPrj = CProjectHelper.createCCProject(projectName, "bin"); //$NON-NLS-1$
+		ICProject cPrj = CProjectHelper.createCCProject(projectName, "bin", IPDOMManager.ID_NO_INDEXER); //$NON-NLS-1$
 		return cPrj.getProject();
 	}
 	

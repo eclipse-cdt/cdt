@@ -20,6 +20,7 @@ import java.io.FileNotFoundException;
 import junit.framework.TestCase;
 
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.dom.IPDOMManager;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICProject;
@@ -69,7 +70,7 @@ public abstract class IntegratedCModelTest extends TestCase {
 
 	public void setUp() throws Exception {
 		monitor = new NullProgressMonitor();
-		fCProject= CProjectHelper.createCCProject("TestProject1", "bin");
+		fCProject= CProjectHelper.createCCProject("TestProject1", "bin", IPDOMManager.ID_NO_INDEXER);
 		sourceFile = fCProject.getProject().getFile( getSourcefileResource() );
 		if (!sourceFile.exists()) {
 			try{

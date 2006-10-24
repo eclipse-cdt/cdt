@@ -19,6 +19,7 @@ import junit.framework.TestSuite;
 
 import org.eclipse.cdt.core.CCProjectNature;
 import org.eclipse.cdt.core.CProjectNature;
+import org.eclipse.cdt.core.dom.IPDOMManager;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.testplugin.CProjectHelper;
@@ -114,7 +115,7 @@ public class CModelTests extends TestCase {
      */
     public void testHasNature() throws CoreException {
         ICProject testProject;
-        testProject=CProjectHelper.createCProject("naturetest", "none");
+        testProject=CProjectHelper.createCProject("naturetest", "none", IPDOMManager.ID_NO_INDEXER);
         if (testProject==null)
             fail("Unable to create project");
         assertTrue("hasCNature works", CoreModel.hasCNature(testProject.getProject()));
@@ -140,7 +141,7 @@ public class CModelTests extends TestCase {
      */
     public void testFileType() throws CoreException,FileNotFoundException {
         ICProject testProject;
-        testProject=CProjectHelper.createCProject("filetest", "none");
+        testProject=CProjectHelper.createCProject("filetest", "none", IPDOMManager.ID_NO_INDEXER);
         if (testProject==null)
             fail("Unable to create project");
 

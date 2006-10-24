@@ -41,8 +41,7 @@ public class CallHierarchyBaseTest extends BaseUITestCase {
 	}
 
 	protected void setUp() throws CoreException {
-		fCProject= CProjectHelper.createCCProject("__chTest__", "bin");
-		CCorePlugin.getPDOMManager().setIndexerId(fCProject, IPDOMManager.ID_FAST_INDEXER);
+		fCProject= CProjectHelper.createCCProject("__chTest__", "bin", IPDOMManager.ID_FAST_INDEXER);
 		IPDOMIndexer indexer = CCorePlugin.getPDOMManager().getIndexer(fCProject);
 		try {
 			indexer.reindex();

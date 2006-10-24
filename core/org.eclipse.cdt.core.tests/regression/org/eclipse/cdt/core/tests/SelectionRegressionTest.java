@@ -20,6 +20,7 @@ import java.io.Writer;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
+import org.eclipse.cdt.core.dom.IPDOMManager;
 import org.eclipse.cdt.core.parser.CodeReader;
 import org.eclipse.cdt.core.parser.IParser;
 import org.eclipse.cdt.core.parser.NullLogService;
@@ -96,7 +97,7 @@ public class SelectionRegressionTest extends BaseTestFramework {
         super.setUp();
 		try{
 			if (project == null){
-			   cproject = CProjectHelper.createCCProject("RegressionTestProject", "bin"); //$NON-NLS-1$ //$NON-NLS-2$
+			   cproject = CProjectHelper.createCCProject("RegressionTestProject", "bin", IPDOMManager.ID_NO_INDEXER); //$NON-NLS-1$ //$NON-NLS-2$
 			   project = cproject.getProject();
 			}
 		} catch ( CoreException e ) { //boo

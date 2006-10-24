@@ -40,6 +40,7 @@ import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.texteditor.AbstractTextEditor;
 
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.dom.IPDOMManager;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
@@ -78,7 +79,7 @@ public class CSelectionTestsNoIndexer extends TestCase {
         workspace = ResourcesPlugin.getWorkspace();
         
         try {
-            cPrj = CProjectHelper.createCProject("CSelectionTestsNoIndexerProject", "bin"); //$NON-NLS-1$ //$NON-NLS-2$
+            cPrj = CProjectHelper.createCProject("CSelectionTestsNoIndexerProject", "bin", IPDOMManager.ID_NO_INDEXER); //$NON-NLS-1$ //$NON-NLS-2$
         
             project = cPrj.getProject();
 			
@@ -130,6 +131,8 @@ public class CSelectionTestsNoIndexer extends TestCase {
         for( int i = 0; i < members.length; i++ ){
             if( members[i].getName().equals( ".project" ) || members[i].getName().equals( ".cdtproject" ) ) //$NON-NLS-1$ //$NON-NLS-2$
                 continue;
+            if (members[i].getName().equals(".settings")) 
+            	continue;
             try{
                 members[i].delete( false, monitor );
             } catch( Throwable e ){

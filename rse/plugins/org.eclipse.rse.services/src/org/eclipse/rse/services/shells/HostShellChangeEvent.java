@@ -41,9 +41,9 @@ public class HostShellChangeEvent implements IHostShellChangeEvent
 		return _reader;
 	}
 	
-	public Object[] getLines()
+	public IHostOutput[] getLines()
 	{
-		Object[] lines = new Object[_range];
+		IHostOutput[] lines = new IHostOutput[_range];
 		int r = 0;
 		int size = _offset + _range ;
 		for (int i= _offset; i < size; i++)
@@ -54,7 +54,7 @@ public class HostShellChangeEvent implements IHostShellChangeEvent
 		return lines;
 	}
 	
-	public Object[] getLineObjects()
+	public IHostOutput[] getLineObjects()
 	{
 		return getLines();
 	}

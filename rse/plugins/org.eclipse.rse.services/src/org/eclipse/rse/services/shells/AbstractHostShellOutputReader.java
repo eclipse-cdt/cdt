@@ -67,19 +67,11 @@ public abstract class AbstractHostShellOutputReader  extends Thread implements I
 
 	public void handle()
 	{
-		Object line = internalReadLine();
+		IHostOutput line = internalReadLine();
 
 		if (line != null)
 		{
-			if (line instanceof String)
-			{
-				//if (lineStr.length() > 0)
-					addLine(line);
-			}
-			else
-			{
-				addLine(line);
-			}
+			addLine(line);
 		}
 
 		else
@@ -89,7 +81,7 @@ public abstract class AbstractHostShellOutputReader  extends Thread implements I
 	
 	}
 	
-	protected void addLine(Object line)
+	protected void addLine(IHostOutput line)
 	{	
 		_linesOfOutput.add(line);
 		int sizenow = _linesOfOutput.size();
@@ -108,19 +100,19 @@ public abstract class AbstractHostShellOutputReader  extends Thread implements I
 		}
 	}
 	
-	public Object readLine()
+	public IHostOutput readLine()
 	{
 		if (!isAlive())
 		{
 			internalReadLine();
 			start();			
 		}
-		return _linesOfOutput.get(_consumerOffset++);		
+		return (IHostOutput)_linesOfOutput.get(_consumerOffset++);		
 	}
 	
-	public Object readLine(int lineNumber)
+	public IHostOutput readLine(int lineNumber)
 	{
-		return _linesOfOutput.get(lineNumber);		
+		return (IHostOutput)_linesOfOutput.get(lineNumber);		
 	}
 	
 	
@@ -191,6 +183,6 @@ public abstract class AbstractHostShellOutputReader  extends Thread implements I
 		}
 	}
 	
-	protected abstract Object internalReadLine();
+	protected abstract IHostOutput internalReadLine();
 
 }

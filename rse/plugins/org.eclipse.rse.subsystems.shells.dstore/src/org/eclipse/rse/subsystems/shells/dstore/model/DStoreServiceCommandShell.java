@@ -21,7 +21,9 @@ import org.eclipse.rse.internal.services.dstore.shell.DStoreShellOutputReader;
 import org.eclipse.rse.internal.subsystems.shells.servicesubsystem.OutputRefreshJob;
 import org.eclipse.rse.internal.subsystems.shells.subsystems.RemoteError;
 import org.eclipse.rse.internal.subsystems.shells.subsystems.RemoteOutput;
+import org.eclipse.rse.services.dstore.shells.DStoreHostOutput;
 import org.eclipse.rse.services.dstore.shells.DStoreHostShell;
+import org.eclipse.rse.services.shells.IHostOutput;
 import org.eclipse.rse.services.shells.IHostShell;
 import org.eclipse.rse.services.shells.IHostShellChangeEvent;
 import org.eclipse.rse.subsystems.shells.core.subsystems.IRemoteCmdSubSystem;
@@ -57,15 +59,15 @@ public class DStoreServiceCommandShell extends ServiceCommandShell
 
 	public void shellOutputChanged(IHostShellChangeEvent event)
 	{
-		Object[] lines = event.getLines();
+		IHostOutput[] lines = event.getLines();
 		IRemoteOutput[] outputs = new IRemoteOutput[lines.length];
 		for (int i = 0; i < lines.length; i++)
 		{
 			RemoteOutput output = null;
 			Object lineObj = lines[i];
-			if (lineObj instanceof DataElement)
+			if (lineObj instanceof DStoreHostOutput)
 			{
-				DataElement line = (DataElement)lineObj;
+				DataElement line = ((DStoreHostOutput)lineObj).getElement();
 				String type = line.getType();
 				String src = line.getSource();
 				if (event.isError())

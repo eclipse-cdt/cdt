@@ -20,8 +20,10 @@ import org.eclipse.rse.internal.subsystems.shells.servicesubsystem.OutputRefresh
 import org.eclipse.rse.internal.subsystems.shells.subsystems.RemoteCommandShell;
 import org.eclipse.rse.internal.subsystems.shells.subsystems.RemoteError;
 import org.eclipse.rse.internal.subsystems.shells.subsystems.RemoteOutput;
+import org.eclipse.rse.services.shells.IHostOutput;
 import org.eclipse.rse.services.shells.IHostShell;
 import org.eclipse.rse.services.shells.IHostShellChangeEvent;
+import org.eclipse.rse.services.shells.SimpleHostOutput;
 import org.eclipse.rse.subsystems.shells.core.ShellStrings;
 import org.eclipse.rse.subsystems.shells.core.subsystems.ICandidateCommand;
 import org.eclipse.rse.subsystems.shells.core.subsystems.IRemoteCmdSubSystem;
@@ -59,33 +61,30 @@ public class ServiceCommandShell extends RemoteCommandShell implements IServiceC
 
 	public void shellOutputChanged(IHostShellChangeEvent event)
 	{
-		Object[] lines = event.getLines();
+		IHostOutput[] lines = event.getLines();
 		IRemoteOutput[] outputs = new IRemoteOutput[lines.length];
 		for (int i = 0; i < lines.length; i++)
 		{
 			RemoteOutput output = null;
-			Object lineObj = lines[i];
-			if (lineObj instanceof String)
+			IHostOutput lineObj = lines[i];
+			if (lineObj instanceof SimpleHostOutput)
 			{
-				String line = (String)lineObj;
-			
-				if (line != null)
+				SimpleHostOutput line = (SimpleHostOutput)lineObj;
+
+				String type = event.isError() ? "stderr" : "stdout";
+				if (event.isError())
 				{
-					String type = event.isError() ? "stderr" : "stdout";
-					if (event.isError())
-					{
-						output = new RemoteError(this, type);
-						
-					}
-					else
-					{
-						output = new RemoteOutput(this, type);
-					}
-					output.setText(line);
-					
-					addOutput(output);
-					outputs[i] = output;
+					output = new RemoteError(this, type);			
 				}
+				else
+				{
+					output = new RemoteOutput(this, type);
+				}
+				String str = line.getString();
+				output.setText(str);
+				
+				addOutput(output);
+				outputs[i] = output;			
 			}
 		}
 		if (_lastRefreshJob == null || _lastRefreshJob.isComplete())

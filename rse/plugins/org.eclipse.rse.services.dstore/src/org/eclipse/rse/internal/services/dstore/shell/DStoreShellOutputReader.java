@@ -19,9 +19,12 @@ package org.eclipse.rse.internal.services.dstore.shell;
 import org.eclipse.dstore.core.model.DataElement;
 import org.eclipse.dstore.extra.internal.extra.DomainEvent;
 import org.eclipse.dstore.extra.internal.extra.IDomainListener;
+import org.eclipse.rse.services.dstore.shells.DStoreHostOutput;
 import org.eclipse.rse.services.shells.AbstractHostShellOutputReader;
+import org.eclipse.rse.services.shells.IHostOutput;
 import org.eclipse.rse.services.shells.IHostShell;
 import org.eclipse.rse.services.shells.IHostShellOutputReader;
+import org.eclipse.rse.services.shells.SimpleHostOutput;
 
 public class DStoreShellOutputReader extends AbstractHostShellOutputReader implements IHostShellOutputReader, IDomainListener
 {
@@ -45,7 +48,7 @@ public class DStoreShellOutputReader extends AbstractHostShellOutputReader imple
 		return pwd;
 	}
 	
-	protected Object internalReadLine()
+	protected IHostOutput internalReadLine()
 	{
 		if (_status != null && _keepRunning)
 		{
@@ -54,18 +57,18 @@ public class DStoreShellOutputReader extends AbstractHostShellOutputReader imple
 			while (newSize > _statusOffset)
 			{
 				DataElement line = _status.get(_statusOffset++);
-
+				
 			
 				
 				String type = line.getType();
 				boolean isError =  type.equals("error") || type.equals("stderr");
 				if (_isErrorReader && isError)
 				{
-					return line;
+					return new DStoreHostOutput(line);
 				}
 				else if (!_isErrorReader && !isError)
 				{
-					return line;
+					return new DStoreHostOutput(line);
 				}
 			}
 			
@@ -85,14 +88,14 @@ public class DStoreShellOutputReader extends AbstractHostShellOutputReader imple
 			if (!_isErrorReader)
 			{
 				DataElement dummyLine = _status.getDataStore().createObject(_status, "stdout", "");
-				return dummyLine;
+				return new DStoreHostOutput(dummyLine);
 			}
 			else
 			{
 				return null;
 			}
 		}
-		return "";
+		return new SimpleHostOutput("");
 	}
 
 	public boolean listeningTo(DomainEvent e)

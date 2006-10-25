@@ -21,8 +21,10 @@ import java.io.BufferedReader;
 import java.io.IOException;
 
 import org.eclipse.rse.services.shells.AbstractHostShellOutputReader;
+import org.eclipse.rse.services.shells.IHostOutput;
 import org.eclipse.rse.services.shells.IHostShell;
 import org.eclipse.rse.services.shells.IHostShellOutputReader;
+import org.eclipse.rse.services.shells.SimpleHostOutput;
 import org.eclipse.rse.services.ssh.Activator;
 
 /**
@@ -49,7 +51,7 @@ public class SshShellOutputReader extends AbstractHostShellOutputReader
 		getHostShell().isActive();
 	}
 
-	protected Object internalReadLine() {
+	protected IHostOutput internalReadLine() {
 		if (fReader == null) {
 			//Our workaround sets the stderr reader to null, so we never give any stderr output.
 			//TODO Check if ssh supports some method of having separate stdout and stderr streams
@@ -150,7 +152,7 @@ public class SshShellOutputReader extends AbstractHostShellOutputReader
 			String debugLine = theDebugLine.toString();
 			debugLine.compareTo(""); //$NON-NLS-1$
 		}
-		return theLine.toString();
+		return new SimpleHostOutput(theLine.toString());
 	}
 
 }

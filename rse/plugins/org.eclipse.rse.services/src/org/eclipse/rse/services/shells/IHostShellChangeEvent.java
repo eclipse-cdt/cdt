@@ -20,6 +20,6 @@ public interface IHostShellChangeEvent
 {
 	public IHostShell getHostShell();
 	public IHostShellOutputReader getReader();
-	public Object[] getLines();
+	public IHostOutput[] getLines();
 	public boolean isError();
 }

@@ -25,6 +25,7 @@ import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.internal.subsystems.shells.servicesubsystem.OutputRefreshJob;
 import org.eclipse.rse.internal.subsystems.shells.subsystems.RemoteError;
 import org.eclipse.rse.internal.subsystems.shells.subsystems.RemoteOutput;
+import org.eclipse.rse.services.shells.IHostOutput;
 import org.eclipse.rse.services.shells.IHostShell;
 import org.eclipse.rse.services.shells.IHostShellChangeEvent;
 import org.eclipse.rse.services.shells.ParsedOutput;
@@ -77,12 +78,12 @@ public class SshServiceCommandShell extends ServiceCommandShell implements ISyst
 
 	public void shellOutputChanged(IHostShellChangeEvent event)
 	{
-		Object[] lines = event.getLines();
+		IHostOutput[] lines = event.getLines();
 		boolean gotCommand = false;
 		ArrayList outputs = new ArrayList(lines.length);
 		for (int i = 0; i < lines.length; i++)
 		{
-			String line = (String)lines[i];
+			String line = lines[i].getString();
 			if (line.endsWith(getPromptCommand())) {
 				continue; //ignore our synthetic prompt command
 			}

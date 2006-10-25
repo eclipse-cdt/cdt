@@ -21,8 +21,10 @@ import java.io.IOException;
 
 import org.eclipse.rse.services.local.Activator;
 import org.eclipse.rse.services.shells.AbstractHostShellOutputReader;
+import org.eclipse.rse.services.shells.IHostOutput;
 import org.eclipse.rse.services.shells.IHostShell;
 import org.eclipse.rse.services.shells.IHostShellOutputReader;
+import org.eclipse.rse.services.shells.SimpleHostOutput;
 
 /**
  * Listener to shell output. As io streams through, refresh events are sent out
@@ -133,7 +135,7 @@ public class LocalShellOutputReader extends AbstractHostShellOutputReader implem
 		return theLine.toString();
 	}
 */
-	protected Object internalReadLine() {
+	protected IHostOutput internalReadLine() {
 		if (_reader == null) {
 			//Our workaround sets the stderr reader to null, so we never give any stderr output.
 			//TODO Check if ssh supports some method of having separate stdout and stderr streams
@@ -232,7 +234,7 @@ public class LocalShellOutputReader extends AbstractHostShellOutputReader implem
 			String debugLine = theDebugLine.toString();
 			debugLine.compareTo(""); //$NON-NLS-1$
 		}
-		return theLine.toString();
+		return new SimpleHostOutput(theLine.toString());
 	}
 
 

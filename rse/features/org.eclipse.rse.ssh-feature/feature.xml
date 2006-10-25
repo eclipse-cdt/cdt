@@ -10,6 +10,10 @@
       %description
    </description>
 
+   <copyright>
+      %copyright
+   </copyright>
+
    <license url="%licenseURL">
       %license
    </license>
@@ -36,29 +40,29 @@
 
    <plugin
          id="org.eclipse.rse.services.ssh"
-         download-size="0"
-         install-size="0"
+         download-size="19"
+         install-size="34"
          version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.rse.connectorservice.ssh"
-         download-size="0"
-         install-size="0"
+         download-size="9"
+         install-size="23"
          version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.rse.subsystems.files.ssh"
-         download-size="0"
-         install-size="0"
+         download-size="5"
+         install-size="10"
          version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.rse.subsystems.shells.ssh"
-         download-size="0"
-         install-size="0"
+         download-size="5"
+         install-size="10"
          version="0.0.0"
          unpack="false"/>
 

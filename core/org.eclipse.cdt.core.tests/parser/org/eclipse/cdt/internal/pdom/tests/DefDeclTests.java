@@ -227,12 +227,18 @@ public class DefDeclTests extends PDOMTestBase {
 	public void testStaticBindings_f08_unexpected() throws Exception {
 		// should be 2 bindings, otherwise how to distinguish proper def/decl
 		// pairs?
+		// static elements cannot be found on global scope, see bug 161216
 		String elName = "foo" + "08";
-		IBinding binding = findSingleBinding(elName);
-		checkDefinition(binding, "def" + "08", 2);
-		checkReference(binding, "ref" + "08", 2);
-		checkDefinition(binding, "defS" + "08", 2);
-		checkReference(binding, "refS" + "08", 2);
+		IBinding[] binds = pdom.findBindings(Pattern.compile(elName), true,
+				IndexFilter.ALL, new NullProgressMonitor());
+		assertEquals(0, binds.length);
+//		assertEquals(elName, binds[0].getName());
+//		IBinding element = binds[0];
+//		IBinding binding = element;
+//		checkDefinition(binding, "def" + "08", 2);
+//		checkReference(binding, "ref" + "08", 2);
+//		checkDefinition(binding, "defS" + "08", 2);
+//		checkReference(binding, "refS" + "08", 2);
 	}
 
 	public void testSimpleGlobalWrite_v09() throws Exception {

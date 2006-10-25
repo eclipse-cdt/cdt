@@ -97,7 +97,7 @@ public class CallHierarchyBaseTest extends BaseUITestCase {
 		try {
 			TreeItem root= tree.getItem(i0);
 			TreeItem item= root.getItem(i1);
-			for (int i=0; i<20; i++) {
+			for (int i=0; i<40; i++) {
 				if (!"...".equals(item.getText())) {
 					break;
 				}

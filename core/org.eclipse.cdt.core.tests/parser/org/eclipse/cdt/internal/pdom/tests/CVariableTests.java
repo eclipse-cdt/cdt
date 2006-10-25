@@ -64,10 +64,11 @@ public class CVariableTests extends PDOMTestBase {
 	}
 
 	public void testCStaticVariable() throws Exception {
+		// static elements cannot be found on global scope, see bug 161216		
 		IBinding[] bindings = findQualifiedName(pdom, "staticCVariable");
-		assertEquals(1, bindings.length);
-		IVariable variable = (IVariable) bindings[0];
-		assertTrue(variable.isStatic());
+		assertEquals(0, bindings.length);
+//		IVariable variable = (IVariable) bindings[0];
+//		assertTrue(variable.isStatic());
 	}
 
 }

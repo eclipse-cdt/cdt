@@ -136,8 +136,12 @@ class PDOMCPPLinkage extends PDOMLinkage {
 					if (binding instanceof ICPPField && parent instanceof PDOMCPPClassType)
 						pdomBinding = new PDOMCPPField(pdom, (PDOMCPPClassType)parent, name);
 					else if (binding instanceof ICPPVariable) {
-						if (!(binding.getScope() instanceof CPPBlockScope))
-							pdomBinding = new PDOMCPPVariable(pdom, parent, name);
+						if (!(binding.getScope() instanceof CPPBlockScope)) {
+							ICPPVariable var= (ICPPVariable) binding;
+							if (!var.isStatic()) {  // bug 161216
+								pdomBinding = new PDOMCPPVariable(pdom, parent, name);
+							}
+						}
 					} else if (binding instanceof ICPPMethod && parent instanceof PDOMCPPClassType) {
 						pdomBinding = new PDOMCPPMethod(pdom, parent, name);
 					} else if (binding instanceof CPPImplicitMethod && parent instanceof PDOMCPPClassType) {
@@ -147,7 +151,10 @@ class PDOMCPPLinkage extends PDOMLinkage {
 							pdomBinding = new PDOMCPPMethod(pdom, parent, name);
 						}
 					} else if (binding instanceof ICPPFunction) {
-						pdomBinding = new PDOMCPPFunction(pdom, parent, name);
+						ICPPFunction func= (ICPPFunction) binding;
+						if (!func.isStatic()) {  // bug 161216
+							pdomBinding = new PDOMCPPFunction(pdom, parent, name);
+						}
 					} else if (binding instanceof ICPPClassType) {
 						pdomBinding = new PDOMCPPClassType(pdom, parent, name);
 					} else if (binding instanceof ICPPNamespaceAlias) {

@@ -64,9 +64,10 @@ public class CPPVariableTests extends PDOMTestBase {
 	}
 
 	public void testCPPStaticVariable() throws Exception {
+		// static elements cannot be found on global scope, see bug 161216
 		IBinding[] bindings = findQualifiedName(pdom, "staticCPPVariable");
-		assertEquals(1, bindings.length);
-		ICPPVariable variable = (ICPPVariable) bindings[0];
-		assertTrue(variable.isStatic());
+		assertEquals(0, bindings.length);
+//		ICPPVariable variable = (ICPPVariable) bindings[0];
+//		assertTrue(variable.isStatic());
 	}
 }

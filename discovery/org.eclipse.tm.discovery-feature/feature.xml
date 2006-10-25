@@ -43,64 +43,64 @@
 
    <plugin
          id="org.eclipse.rse.discovery"
-         download-size="0"
-         install-size="0"
+         download-size="5"
+         install-size="10"
          version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.tm.discovery.engine"
-         download-size="0"
-         install-size="0"
+         download-size="9"
+         install-size="16"
          version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.tm.discovery.model"
-         download-size="0"
-         install-size="0"
+         download-size="17"
+         install-size="55"
          version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.tm.discovery.model.edit"
-         download-size="0"
-         install-size="0"
+         download-size="7"
+         install-size="21"
          version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.tm.discovery.protocol.dnssd"
-         download-size="0"
-         install-size="0"
+         download-size="6"
+         install-size="13"
          version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.tm.discovery.transport.udp"
-         download-size="0"
-         install-size="0"
+         download-size="3"
+         install-size="6"
          version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.tm.discovery.view"
-         download-size="0"
-         install-size="0"
+         download-size="6"
+         install-size="17"
          version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.tm.discovery.wizard"
-         download-size="0"
-         install-size="0"
+         download-size="8"
+         install-size="25"
          version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.tm.discovery.source"
-         download-size="0"
-         install-size="0"
+         download-size="73"
+         install-size="212"
          version="0.0.0"/>
 
 </feature>

@@ -37,7 +37,7 @@ Contributors:
             iconlive=""
             icon=""
             class="org.eclipse.rse.discovery.ServiceDiscoverySubSystemConfiguration"
-            vendor="Eclipse.org"
+            vendor="%providerName"
             priority="100"
             id="Discovery">
       </configuration>

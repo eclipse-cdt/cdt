@@ -568,6 +568,13 @@ public interface ISystemRegistry extends ISchedulingRule
     public IHost moveHost(IProgressMonitor monitor, IHost conn, 
                                            ISystemProfile targetProfile, String newName)
            throws Exception;
+    
+    /**
+     * Return true if any subsystem supports connecting.
+     * @param conn the connection.
+     * @return <code>true</code> if any subsystem supports connecting, <code>false</code> otherwise.
+     */
+    public boolean isAnySubSystemSupportsConnect(IHost conn);
 
     /**
      * Return true if any of the subsystems for the given connection are currently connected

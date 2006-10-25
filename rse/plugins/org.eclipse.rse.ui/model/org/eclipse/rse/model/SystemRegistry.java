@@ -17,6 +17,7 @@
 package org.eclipse.rse.model;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Vector;
 
@@ -2619,6 +2620,31 @@ public class SystemRegistry implements ISystemRegistryUI, ISystemModelChangeEven
 		return newConn;
 	}
 
+	/**
+	 * @see org.eclipse.rse.core.model.ISystemRegistry#isAnySubSystemSupportsConnect(org.eclipse.rse.core.model.IHost)
+	 */
+	public boolean isAnySubSystemSupportsConnect(IHost conn) {
+		Vector v = getSubSystemFactories(conn);
+		
+		if (v != null) {
+			Iterator iter = v.iterator();
+			
+			while (iter.hasNext()) {
+				Object obj = iter.next();
+				
+				if (obj instanceof ISubSystemConfiguration) {
+					ISubSystemConfiguration config = (ISubSystemConfiguration)obj;
+					
+					if (config.supportsSubSystemConnect()) {
+						return true;
+					}
+				}
+			}
+		}
+		
+		return false;
+	}
+	
 	/**
 	 * Return true if any of the subsystems for the given connection are currently connected
 	 */

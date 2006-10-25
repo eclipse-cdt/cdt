@@ -125,10 +125,14 @@ public class SystemViewConnectionAdapter
 	{
 		IHost sysCon = (IHost) selection.getFirstElement();
 		ISystemRegistry sysReg = RSEUIPlugin.getTheSystemRegistry();
-		boolean anyConnected = sysReg.isAnySubSystemConnected(sysCon);
-	    boolean allConnected = sysReg.areAllSubSystemsConnected(sysCon);
-		if (!allConnected) menu.add(menuGroup, connectAction);
-		if (anyConnected) menu.add(menuGroup, disconnectAction);
+		boolean anySupportsConnect = sysReg.isAnySubSystemSupportsConnect(sysCon);
+		
+		if (anySupportsConnect) {
+			boolean anyConnected = sysReg.isAnySubSystemConnected(sysCon);
+			boolean allConnected = sysReg.areAllSubSystemsConnected(sysCon);
+			if (!allConnected) menu.add(menuGroup, connectAction);
+			if (anyConnected) menu.add(menuGroup, disconnectAction);
+		}
 	}
 	
 	private void createActions()

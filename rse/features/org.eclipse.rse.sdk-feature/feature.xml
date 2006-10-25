@@ -10,6 +10,10 @@
       %description
    </description>
 
+   <copyright>
+      %copyright
+   </copyright>
+
    <license url="%licenseURL">
       %license
    </license>
@@ -81,22 +85,22 @@
 
    <plugin
          id="org.eclipse.rse.sdk"
-         download-size="0"
-         install-size="0"
+         download-size="7"
+         install-size="8"
          version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.rse.doc.isv"
-         download-size="0"
-         install-size="0"
+         download-size="6630"
+         install-size="11610"
          version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.dstore.doc.isv"
-         download-size="0"
-         install-size="0"
+         download-size="339"
+         install-size="684"
          version="0.0.0"
          unpack="false"/>
 

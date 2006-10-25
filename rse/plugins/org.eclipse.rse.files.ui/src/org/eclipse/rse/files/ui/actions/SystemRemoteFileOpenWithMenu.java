@@ -26,6 +26,7 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.jface.action.ContributionItem;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.rse.core.SystemBasePlugin;
 import org.eclipse.rse.files.ui.FileResources;
 import org.eclipse.rse.files.ui.resources.SystemEditableRemoteFile;
 import org.eclipse.rse.files.ui.resources.SystemIFileProperties;
@@ -419,7 +420,7 @@ protected void createDefaultMenuItem(Menu menu, final IRemoteFile file)
 							openEditor(file, defaultEditor);
 						}
 						catch (PartInitException e) {
-							RSEUIPlugin.logError("Error getting default editor descriptor", e);
+							SystemBasePlugin.logError("Error getting default editor descriptor", e);
 						}
 					}
 					break;

@@ -108,6 +108,15 @@ public class LocalFileSubSystemConfiguration extends FileServiceSubSystemConfigu
 		  // ---------------------------------------------------------------------------------------------
 		  if (isUserPrivateProfile(mgr))
 		  {
+		      // Create 'My Home' filter for local (should apply to both _isWindows and linux clients)
+	    	  String myHomeFilterName = SystemFileResources.RESID_FILTER_MYHOME;
+	    	  RemoteFileFilterString myDocsFilterString = new RemoteFileFilterString(this);
+	    	  myDocsFilterString.setPath(System.getProperty("user.home") + getSeparator()); //$NON-NLS-1$
+	    	  Vector myDocsFilterStrings = new Vector();
+	    	  myDocsFilterStrings.add(myDocsFilterString.toString());
+	    	  mgr.createSystemFilter(pool, myHomeFilterName, myDocsFilterStrings);
+			  
+			  
 		      Vector filterStrings = new Vector();
 		      RemoteFileFilterString defaultFilterString = new RemoteFileFilterString(this);
 		      if (!_isWindows)
@@ -120,22 +129,6 @@ public class LocalFileSubSystemConfiguration extends FileServiceSubSystemConfigu
 		      else
 		        filterName = SystemFileResources.RESID_FILTER_ROOTFILES;
 		      mgr.createSystemFilter(pool, filterName, filterStrings);
-		      
-		      // Create 'My Home' filter for local (should apply to both _isWindows and linux clients)
-	    	  filterName = SystemFileResources.RESID_FILTER_MYHOME;
-	    	  RemoteFileFilterString myDocsFilterString = new RemoteFileFilterString(this);
-	    	  myDocsFilterString.setPath(System.getProperty("user.home") + getSeparator()); //$NON-NLS-1$
-	    	  Vector myDocsFilterStrings = new Vector();
-	    	  myDocsFilterStrings.add(myDocsFilterString.toString());
-	    	  mgr.createSystemFilter(pool, filterName, myDocsFilterStrings);
-
-		      //System.out.println("filter created");		  
-		      // -----------------------------------------------------
-		      // add a default named filter for integrated file system    	
-		      // -----------------------------------------------------      	
-		      //filterStrings = new Vector();
-		      //filterStrings.add(new AS400IFSFilterString().toString());
-		      //mgr.createSystemFilter(pool,rb.getString(IAS400Constants.RESID_IFS_LIST),filterStrings);
 		  }
 		} catch (Exception exc)
 		{

@@ -474,4 +474,17 @@ public class SystemMessage
 		return sub.toString();
 	}
 
+	/**
+	 * Creates a new message with the same component, subcomponent, number, level 1 and level 2 text as this message.
+	 * @see java.lang.Object#clone()
+	 */
+	protected Object clone() throws CloneNotSupportedException {
+		
+		try {
+			return new SystemMessage(component, subComponent, messageNumber, indicator, level1NS, level2NS);
+		}
+		catch (IndicatorException e) {
+			return null;
+		}
+	}
 }

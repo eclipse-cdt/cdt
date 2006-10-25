@@ -10,6 +10,10 @@
       %description
    </description>
 
+   <copyright url="http://www.eclipse.org/legal/epl-v10.html">
+      %copyright
+   </copyright>
+
    <license url="%licenseURL">
       %license
    </license>
@@ -35,36 +39,36 @@
 
    <plugin
          id="org.eclipse.rse.services.local"
-         download-size="0"
-         install-size="0"
+         download-size="21"
+         install-size="45"
          version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.rse.subsystems.files.local"
-         download-size="0"
-         install-size="0"
+         download-size="7"
+         install-size="17"
          version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.rse.subsystems.processes.local"
-         download-size="0"
-         install-size="0"
+         download-size="5"
+         install-size="10"
          version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.rse.subsystems.shells.local"
-         download-size="0"
-         install-size="0"
+         download-size="5"
+         install-size="10"
          version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.rse.connectorservice.local"
-         download-size="0"
-         install-size="0"
+         download-size="3"
+         install-size="8"
          version="0.0.0"
          unpack="false"/>
 

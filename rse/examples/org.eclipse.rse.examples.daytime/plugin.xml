@@ -31,7 +31,7 @@ Martin Oberhuber (Wind River) - initial API and implementation
 			icon="icons/full/obj16/systemfiles_obj.gif"
 			category="files"
 			class="org.eclipse.rse.subsystems.files.ftp.FTPFileSubSystemConfiguration"
-			vendor="Eclipse.org"
+			vendor="Eclipse DSDP Project"
 			priority="100"
 			id="ftp.files">
 		</configuration>

@@ -60,7 +60,7 @@ Martin Oberhuber (Wind River) - Adapted original tutorial code to Open RSE.
 			name="Teams"
 			class="samples.subsystems.DeveloperSubSystemConfiguration"
 			category="users"
-			vendor="Eclipse.org"
+			vendor="Eclipse DSDP Project"
 			description="Example Developer Subsystem"
 			iconlive="icons/systemconnectionlive.gif"
 			icon="icons/systemconnection.gif"

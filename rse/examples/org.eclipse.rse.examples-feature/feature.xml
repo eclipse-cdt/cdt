@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
-	  id="org.eclipse.rse.examples"
+      id="org.eclipse.rse.examples"
       label="%featureName"
       version="1.0.0.qualifier"
-      image= "eclipse_update_120.jpg"
-      provider-name="%providerName">
+      provider-name="%providerName"
+      image="eclipse_update_120.jpg">
 
    <description>
       %description
@@ -31,20 +31,22 @@
 
    <plugin
          id="org.eclipse.rse.examples.daytime"
-         download-size="0"
-         install-size="0"
+         download-size="9"
+         install-size="25"
          version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.rse.examples.tutorial"
-         download-size="0"
-         install-size="0"
+         download-size="12"
+         install-size="33"
          version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.rse.examples.source"
+         download-size="51"
+         install-size="212"
          version="0.0.0"/>
 
 </feature>

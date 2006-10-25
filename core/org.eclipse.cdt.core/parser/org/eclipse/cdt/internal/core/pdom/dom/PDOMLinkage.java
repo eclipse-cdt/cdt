@@ -197,19 +197,11 @@ public abstract class PDOMLinkage extends PDOMNamedNode implements IBindingIdent
 		}
 			
 		// the scope is from the ast
-		
-		// mstodo revisit unnamed namespaces
-		IScope testScope= scope;
-		while (testScope instanceof ICPPNamespaceScope) {
-			IName name= testScope.getScopeName();
+		if (scope instanceof ICPPNamespaceScope) {
+			IName name= scope.getScopeName();
 			if (name != null && name.toCharArray().length == 0) {
-				testScope= scope.getParent();
-				if (testScope != null) {
-					scope= testScope;
-				}
-			}
-			else {
-				testScope= null;
+				// skip unnamed namespaces
+				return null;
 			}
 		}
 		

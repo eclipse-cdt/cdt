@@ -210,6 +210,7 @@ public class OpenIncludeAction extends Action {
 					IPath rPath = proxy.requestResource().getLocation();
 					int numSegToRemove = rPath.segmentCount() - name.segmentCount();
 					IPath sPath = rPath.removeFirstSegments(numSegToRemove);
+					sPath = sPath.setDevice(name.getDevice());
 					if (sPath.equals(name))
 						list.add(rPath);
 					return false;

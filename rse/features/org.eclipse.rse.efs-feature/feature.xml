@@ -36,15 +36,15 @@
 
    <plugin
          id="org.eclipse.rse.eclipse.filesystem"
-         download-size="0"
-         install-size="0"
+         download-size="13"
+         install-size="23"
          version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.rse.efs.source"
-         download-size="0"
-         install-size="0"
+         download-size="17"
+         install-size="68"
          version="0.0.0"/>
 
 </feature>

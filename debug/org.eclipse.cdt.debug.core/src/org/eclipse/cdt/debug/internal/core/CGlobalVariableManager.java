@@ -136,6 +136,10 @@ public class CGlobalVariableManager implements ICGlobalVariableManager {
 	 * @see org.eclipse.cdt.debug.core.ICGlobalVariableManager#removeAllGlobals()
 	 */
 	public void removeAllGlobals() {
+		if (fGlobals == null ) {
+			return;
+		}
+
 		ICGlobalVariable[] globals = new ICGlobalVariable[0];
 		synchronized( fGlobals ) {
 			globals = (ICGlobalVariable[])fGlobals.toArray( new ICGlobalVariable[fGlobals.size()] );

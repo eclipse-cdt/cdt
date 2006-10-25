@@ -139,7 +139,7 @@ public class BuildProcessManager {
 		if(map == null)
 			return null;
 		
-		List<String> list = new ArrayList<String>();
+		List list = new ArrayList();
 		
 		for(Iterator iter = map.entrySet().iterator(); iter.hasNext();){
 			Map.Entry entry = (Map.Entry)iter.next();
@@ -166,7 +166,7 @@ public class BuildProcessManager {
 					IBuildEnvironmentVariable var = evp.getVariable("NUMBER_OF_PROCESSORS", null, false, false); //$NON-NLS-1$
 					if (var != null) {
 						try {
-							x = new Integer(var.getValue()).intValue(); //$NON-NLS-1$
+							x = new Integer(var.getValue()).intValue();
 							if (x > 0) { procNumber = x; }
 						} catch (NumberFormatException e) {} // fallthrough and return default
 					}

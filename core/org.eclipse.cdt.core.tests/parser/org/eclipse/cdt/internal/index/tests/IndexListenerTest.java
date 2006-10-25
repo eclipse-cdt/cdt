@@ -69,7 +69,7 @@ public class IndexListenerTest extends BaseTestCase {
 		
 		TestSourceReader.createFile(fProject1.getProject(), "test.cpp", "int a;");
 		Thread.sleep(200);
-		assertTrue(im.joinIndexer(4000, new NullProgressMonitor()));
+		assertTrue(im.joinIndexer(10000, new NullProgressMonitor()));
 		Thread.sleep(200);
 		assertEquals(1, state[0]);
 		assertEquals(1, state[1]);

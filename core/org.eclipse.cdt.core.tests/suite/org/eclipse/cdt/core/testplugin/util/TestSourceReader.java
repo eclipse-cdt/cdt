@@ -62,8 +62,8 @@ public class TestSourceReader {
 	 * is started with '// {tag}' and ends with the first line not started by '//' 
 	 * @since 4.0
 	 */
-	public static String readTaggedComment(Bundle bundle, Class clazz, final String tag) throws IOException {
-	    IPath filePath= new Path("ui/" + clazz.getName().replace('.', '/') + ".java");
+	public static String readTaggedComment(Bundle bundle, String srcRoot, Class clazz, final String tag) throws IOException {
+	    IPath filePath= new Path(srcRoot + '/' + clazz.getName().replace('.', '/') + ".java");
 	    
 	    InputStream in= FileLocator.openStream(bundle, filePath, false);
 	    LineNumberReader reader= new LineNumberReader(new InputStreamReader(in));

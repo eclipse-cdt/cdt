@@ -48,7 +48,7 @@ public class BaseUITestCase extends BaseTestCase {
 	 * @since 4.0
 	 */
     protected String readTaggedComment(final String tag) throws IOException {
-    	return TestSourceReader.readTaggedComment(CTestPlugin.getDefault().getBundle(), getClass(), tag);
+    	return TestSourceReader.readTaggedComment(CTestPlugin.getDefault().getBundle(), "ui", getClass(), tag);
     }
     
     protected IFile createFile(IContainer container, String fileName, String contents) throws Exception {

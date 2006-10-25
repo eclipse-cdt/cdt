@@ -161,17 +161,7 @@ public class IndexSearchTest extends IndexTestBase {
 		checkIsNamespace(bindings[0]);
 	}
 
-	public void testClassInUnnamedNamespace1() throws CoreException {
-		Pattern pcl= Pattern.compile("CInUnnamed160913");
-		
-		IIndexBinding[] bindings;
-
-		bindings= fIndex.findBindings(pcl, false, INDEX_FILTER, NPM);
-		assertEquals(1, bindings.length);
-		checkIsClass(bindings[0]);
-	}
-
-	public void _testClassInUnnamedNamespace2() throws CoreException {
+	public void testClassInUnnamedNamespace() throws CoreException {
 		Pattern pcl= Pattern.compile("CInUnnamed160913");
 		
 		IIndexBinding[] bindings;

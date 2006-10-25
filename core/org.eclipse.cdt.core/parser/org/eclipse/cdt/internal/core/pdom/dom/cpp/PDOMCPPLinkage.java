@@ -453,10 +453,11 @@ class PDOMCPPLinkage extends PDOMLinkage {
 		if (type instanceof ICPPBasicType) {
 			return new PDOMCPPBasicType(pdom, parent, (ICPPBasicType)type);
 		} else if (type instanceof ICPPClassType) {
-			FindEquivalentBinding feb = new FindEquivalentBinding(this,(ICPPClassType)type);
-			getIndex().accept(feb);
-			if(feb.getResult()!=null) {
-				return feb.getResult();
+			// aftodo: please review, the binding may be nested in a namespace bug 162011
+			//   it might be necessary to create the binding for the class here.
+			PDOMBinding binding= adaptBinding((ICPPClassType) type);
+			if (binding != null) {
+				return binding;
 			}
 		}
 		return super.addType(parent, type); 

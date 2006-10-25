@@ -23,6 +23,7 @@ public class IndexTests extends TestSuite {
 		suite.addTest(IndexListenerTest.suite());
 		suite.addTest(IndexSearchTest.suite());
 		suite.addTest(IndexIncludeTest.suite());
+		suite.addTest(IndexBugsTests.suite());
 		return suite;
 	}
 	

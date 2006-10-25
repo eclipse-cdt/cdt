@@ -77,32 +77,32 @@ public class IndexBugsTests extends BaseTestCase {
     	return TestSourceReader.readTaggedComment(CTestPlugin.getDefault().getBundle(), "parser", getClass(), tag);
     }
     
-    protected IFile createFile(IContainer container, String fileName, String contents, int waitMillis) throws Exception {
-    	long now= System.currentTimeMillis();
-    	IFile result= TestSourceReader.createFile(container, new Path(fileName), contents);
-    	if (waitMillis >= 0) {
-    		long endTime= now + waitMillis;
-    		int timeLeft= (int) (endTime-now);
-    		while (timeLeft >= 0) {
-    			assertTrue(CCorePlugin.getIndexManager().joinIndexer(timeLeft, NPM));
-    			fIndex.acquireReadLock();
-    			try {
-    				IIndexFile pfile= fIndex.getFile(result.getLocation());
-    				if (pfile != null && pfile.getTimestamp() >= now) {
-    					return result;
-    				}
-    			}
-    			finally {
-    				fIndex.releaseReadLock();
-    			}
-    			Thread.sleep(50);
-    			timeLeft= (int) (endTime - System.currentTimeMillis());
-    		}
-    		throw new Exception("Indexer did not complete in time!");
-    	}
-		return result;
+    protected IFile createFile(IContainer container, String fileName, String contents) throws Exception {
+    	return TestSourceReader.createFile(container, new Path(fileName), contents);
     }
-    
+
+	protected void waitForIndexer(IFile file, int maxmillis) throws Exception {
+		long endTime= System.currentTimeMillis() + maxmillis;
+		int timeLeft= maxmillis;
+		while (timeLeft >= 0) {
+			assertTrue(CCorePlugin.getIndexManager().joinIndexer(timeLeft, NPM));
+			fIndex.acquireReadLock();
+			try {
+				IIndexFile pfile= fIndex.getFile(file.getLocation());
+				if (pfile != null && pfile.getTimestamp() >= file.getLocalTimeStamp()) {
+					return;
+				}
+			}
+			finally {
+				fIndex.releaseReadLock();
+			}
+			
+			Thread.sleep(50);
+			timeLeft= (int) (endTime-System.currentTimeMillis());
+		}
+		throw new Exception("Indexer did not complete in time!");
+	}
+
 	protected Pattern[] getPattern(String qname) {
 		String[] parts= qname.split("::");
 		Pattern[] result= new Pattern[parts.length];
@@ -127,7 +127,8 @@ public class IndexBugsTests extends BaseTestCase {
 
 		int indexOfDecl = content.indexOf(funcName);
 		int indexOfDef  = content.indexOf(funcName, indexOfDecl+1);
-		createFile(getProject(), fileName, content, 1000);
+		IFile file= createFile(getProject(), fileName, content);
+		waitForIndexer(file, 1000);
 		
 		// make sure the ast is correct
 		ITranslationUnit tu= (ITranslationUnit) fCProject.findElement(new Path(fileName));

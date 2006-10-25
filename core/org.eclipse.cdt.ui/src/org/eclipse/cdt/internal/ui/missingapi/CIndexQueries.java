@@ -383,12 +383,14 @@ public class CIndexQueries {
 			if (declName instanceof IIndexName) {
 				IIndexName pname= (IIndexName) declName;
 				region= new Region(pname.getNodeOffset(), pname.getNodeLength());
-				//	mstodo use correct timestamp			
-				//	PDOMFile file= pname.getFile();
-				long timestamp= tu.getPath().toFile().lastModified();
-				IPositionConverter pc= CCorePlugin.getPositionTrackerManager().findPositionConverter(tu.getPath(), timestamp);
-				if (pc != null) {
-					region= pc.historicToActual(region);
+				try {
+					long timestamp= pname.getFile().getTimestamp();
+					IPositionConverter pc= CCorePlugin.getPositionTrackerManager().findPositionConverter(tu.getPath(), timestamp);
+					if (pc != null) {
+						region= pc.historicToActual(region);
+					}
+				} catch (CoreException e) {
+					CUIPlugin.getDefault().log(e);
 				}
 			}
 			else {

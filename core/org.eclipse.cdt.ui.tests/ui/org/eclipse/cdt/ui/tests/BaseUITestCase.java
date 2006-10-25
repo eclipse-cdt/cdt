@@ -73,8 +73,7 @@ public class BaseUITestCase extends BaseTestCase {
 			index.acquireReadLock();
 			try {
 				IIndexFile pfile= index.getFile(file.getLocation());
-				// mstodo check timestamp
-				if (pfile != null) {
+				if (pfile != null && pfile.getTimestamp() >= file.getLocalTimeStamp()) {
 					return;
 				}
 			}

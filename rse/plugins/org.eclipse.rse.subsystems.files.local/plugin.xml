@@ -28,7 +28,7 @@ Contributors:
             icon="icons/full/obj16/systemfiles_obj.gif"
             category="files"
             class="org.eclipse.rse.subsystems.files.local.LocalFileSubSystemConfiguration"
-            vendor="Eclipse DSDP Project"
+            vendor="%providerName"
             priority="100"
             id="local.files">
       </configuration>

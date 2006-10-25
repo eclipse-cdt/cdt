@@ -32,7 +32,7 @@ Contributors:
             icon="icons/full/obj16/processsubsystem_obj.gif"
             category="processes"
             class="org.eclipse.rse.subsystems.processes.local.LocalProcessSubSystemFactory"
-            vendor="Eclipse DSDP Project"
+            vendor="%providerName"
             priority="200"
             id="local.processes">
       </factory>

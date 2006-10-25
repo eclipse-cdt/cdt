@@ -28,12 +28,12 @@ Contributors:
             icon="icons/full/obj16/systemfiles_obj.gif"
             category="files"
             class="org.eclipse.rse.subsystems.files.dstore.subsystem.DStoreFileSubSystemConfiguration"
-            vendor="Eclipse DSDP Project"
+            vendor="%providerName"
             priority="100"
             id="dstore.files">
       </configuration>
 
-          <configuration 
+      <configuration 
             systemTypes="Windows"
             name="%Files"
             description="%FilesDescription"
@@ -41,7 +41,7 @@ Contributors:
             icon="icons/full/obj16/systemfiles_obj.gif"
             category="files"
             class="org.eclipse.rse.subsystems.files.dstore.subsystem.DStoreWindowsFileSubSystemConfiguration"
-            vendor="Eclipse DSDP Project"
+            vendor="%providerName"
             priority="100"
             id="dstore.windows.files">
       </configuration>

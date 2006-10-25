@@ -29,7 +29,7 @@ Contributors:
             icon="icons/full/obj16/systemcommands_obj.gif"
             category="shells"
             class="org.eclipse.rse.subsystems.shells.dstore.DStoreShellSubSystemConfiguration"
-            vendor="Eclipse DSDP Project"
+            vendor="%providerName"
             priority="300"
             id="dstore.shells">
          </configuration>

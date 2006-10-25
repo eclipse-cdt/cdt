@@ -32,7 +32,7 @@ Contributors:
             icon="icons/full/obj16/systemcommands_obj.gif"
             category="shells"
             class="org.eclipse.rse.subsystems.shells.local.LocalShellSubSystemConfiguration"
-            vendor="Eclipse DSDP Project"
+            vendor="%providerName"
             priority="300"
             id="local.shells">
       </configuration>

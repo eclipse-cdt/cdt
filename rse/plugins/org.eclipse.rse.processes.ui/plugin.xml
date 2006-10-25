@@ -30,7 +30,7 @@ Contributors:
             icon="icons/full/obj16/activeprocess.gif"
             category="processes"
             class="org.eclipse.rse.subsystems.processes.local.LocalProcessSubSystemConfiguration"
-            vendor="Eclipse DSDP Project"
+            vendor="%providerName"
             id="local.processes">
       </factory>
       </extension>

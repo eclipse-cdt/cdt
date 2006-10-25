@@ -467,6 +467,8 @@ public class SystemCommandsViewPart
 
 	private void addMenuItems(IMenuManager menuManager)
 	{
+		menuManager.removeAll();
+		
 		IMenuManager launchMenu = new CommandMenuManager();
 
 		launchMenu.add(new SystemBaseDummyAction());

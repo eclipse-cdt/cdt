@@ -16,6 +16,7 @@ import junit.framework.TestSuite;
 
 import org.eclipse.cdt.core.parser.tests.ParserTestSuite;
 import org.eclipse.cdt.core.parser.tests.prefix.CompletionTestSuite;
+import org.eclipse.cdt.core.tests.FailingTest;
 
 /**
  * @author jcamelon
@@ -31,6 +32,7 @@ public class DOMParserTestSuite extends TestCase {
 		suite.addTestSuite( QuickParser2Tests.class );
 		suite.addTestSuite( CompleteParser2Tests.class );
 		suite.addTestSuite( DOMLocationTests.class );
+		suite.addTest( new FailingTest(new DOMLocationTests("_testBug162180"), 162180) );
         suite.addTestSuite( DOMLocationMacroTests.class );
 		suite.addTest( DOMLocationInclusionTests.suite() );
 		suite.addTestSuite( AST2KnRTests.class );

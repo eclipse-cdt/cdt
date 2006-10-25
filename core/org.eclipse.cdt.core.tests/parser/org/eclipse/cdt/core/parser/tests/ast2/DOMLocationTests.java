@@ -40,6 +40,7 @@ import org.eclipse.cdt.core.dom.ast.IASTPreprocessorMacroDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorObjectStyleMacroDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorStatement;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorUndefStatement;
+import org.eclipse.cdt.core.dom.ast.IASTProblem;
 import org.eclipse.cdt.core.dom.ast.IASTReturnStatement;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTStandardFunctionDeclarator;
@@ -63,7 +64,11 @@ public class DOMLocationTests extends AST2BaseTest {
 
     private static final String _TEXT_ = "<text>"; //$NON-NLS-1$
 
-    public void testBaseCase() throws ParserException {
+	public DOMLocationTests(String name) {
+		setName(name);
+	}
+
+	public void testBaseCase() throws ParserException {
         for (ParserLanguage p = ParserLanguage.C; p != null; p = (p == ParserLanguage.C) ? ParserLanguage.CPP
                 : null) {
             IASTTranslationUnit tu = parse("int x;", p); //$NON-NLS-1$
@@ -441,6 +446,25 @@ public class DOMLocationTests extends AST2BaseTest {
             assertSoleLocation( undef, code.indexOf("#undef _APPLE_H_"), "#undef _APPLE_H_".length() ); //$NON-NLS-1$ //$NON-NLS-2$
             IASTPreprocessorEndifStatement endif = (IASTPreprocessorEndifStatement) statements[3];
             assertSoleLocation( endif, code.indexOf( "#endif"), "#endif".length() ); //$NON-NLS-1$ //$NON-NLS-2$
+        }
+    }
+    
+    public void _testBug162180() throws Exception {
+        StringBuffer buffer = new StringBuffer();
+        buffer.append( "#include <notfound.h>\n"); //$NON-NLS-1$
+        int declOffset= buffer.length();
+        buffer.append( "int x;\n"); //$NON-NLS-1$
+        String code = buffer.toString();
+        for (ParserLanguage p = ParserLanguage.C; p != null; p = (p == ParserLanguage.C) ? ParserLanguage.CPP
+                : null) {
+            IASTTranslationUnit tu = parse(code, p, false, false);
+            IASTDeclaration[] decls= tu.getDeclarations();
+            assertEquals( decls.length, 1 );
+            IASTPreprocessorStatement [] statements = tu.getAllPreprocessorStatements();
+            assertEquals( statements.length, 0 );
+            IASTProblem[] problems = tu.getPreprocessorProblems();
+            assertEquals( problems.length, 1 );
+            assertSoleLocation( decls[0], code.indexOf( "int x;"), "int x;".length() ); //$NON-NLS-1$ //$NON-NLS-2$
         }
     }
     

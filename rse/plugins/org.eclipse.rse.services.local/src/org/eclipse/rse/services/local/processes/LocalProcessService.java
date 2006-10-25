@@ -75,6 +75,12 @@ public class LocalProcessService extends AbstractProcessService implements ILoca
 		try
 		{
 			process = getProcess(monitor, PID);
+			
+			// if there is no process, simply return true
+			if (process == null) {
+				return true;
+			}
+			
 			handler.kill(process, signal);
 			return true;
 		}

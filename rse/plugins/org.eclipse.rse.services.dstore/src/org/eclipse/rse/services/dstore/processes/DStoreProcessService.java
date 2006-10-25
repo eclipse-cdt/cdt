@@ -191,6 +191,12 @@ public class DStoreProcessService extends AbstractProcessService implements IPro
 		
 			// run kill command on host
 			DStoreHostProcess process = (DStoreHostProcess) getProcess(monitor, PID);
+			
+			// if there is no process, simply return true
+			if (process == null) {
+				return true;
+			}
+			
 			DataElement deObj = (DataElement) process.getObject();
 			DataElement killCmd = ds.localDescriptorQuery(deObj.getDescriptor(), C_PROCESS_KILL);
 			deObj.setAttribute(DE.A_SOURCE, signal);

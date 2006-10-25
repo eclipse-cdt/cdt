@@ -83,7 +83,7 @@ public abstract class AbstractProcessService implements IProcessService
 		rpfs.setPid(pidString);
 		
 		IHostProcess[] results = listAllProcesses(monitor, rpfs);
-		if (results == null) return null;
+		if ((results == null) || (results.length == 0)) return null;
 		else return results[0];
 	}
 	

@@ -3460,6 +3460,8 @@ public class SystemView extends TreeViewer implements ISystemTree, ISystemResour
 	 */
 	protected void findAndUpdateFilterParent(ISystemResourceChangeEvent event, int type) {
 		ISubSystem ss = (ISubSystem) event.getGrandParent();
+		
+		
 		boolean add = false, move = false, delete = false;
 		boolean afilterstring = false;
 		//if (debug)
@@ -5020,16 +5022,30 @@ public class SystemView extends TreeViewer implements ISystemTree, ISystemResour
 		Vector matches = new Vector();
 		matches = findAllRemoteItemReferences(parentElementOrTreePath, parentElementOrTreePath, matches);
 
+		
+		
 		//Widget[] widgets = internalFindItems(parentElementOrTreePath);
 		// If parent hasn't been realized yet, just ignore the add.
 		if (matches.size() == 0) {
 			super.add(parentElementOrTreePath, childElements);
-			return;
 		}
-
+		else
+		{
 		for (int i = 0; i < matches.size(); i++) {
 			Widget match = (Widget) matches.get(i);
 			internalAdd(match, parentElementOrTreePath, childElements);
 		}
+		}
+		
+		TreeItem item = getFirstSelectedTreeItem();
+		if (item != null)
+		{
+			if (item.getData() == parentElementOrTreePath)
+			{
+				updatePropertySheet();
+			}
+		}
+
+		
 	}
 }

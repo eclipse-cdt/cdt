@@ -6,7 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html 
  * 
  * Contributors: 
- * Ewa Matejska (PalmSource)
+ * Ewa Matejska (PalmSource) - initial version
+ * Martin Oberhuber (Wind River) - adapt to IHostOutput API (bug 161773, 158312)
  *******************************************************************************/
 
 package org.eclipse.rse.remotecdt;
@@ -17,6 +18,7 @@ import java.io.OutputStream;
 import java.io.PipedInputStream;
 import java.io.PipedOutputStream;
 
+import org.eclipse.rse.services.shells.IHostOutput;
 import org.eclipse.rse.services.shells.IHostShell;
 import org.eclipse.rse.services.shells.IHostShellChangeEvent;
 import org.eclipse.rse.services.shells.IHostShellOutputListener;
@@ -106,11 +108,11 @@ IHostShellOutputListener {
 	}
 	
 	public void shellOutputChanged(IHostShellChangeEvent event) {
-		Object[] input = event.getLines();
+		IHostOutput[] input = event.getLines();
 		OutputStream outputStream = event.isError() ? hostShellError : hostShellInput;
 		try {
 		for(int i = 0; i < input.length; i++) {
-			outputStream.write(input[i].toString().getBytes());
+			outputStream.write(input[i].getString().getBytes());
 			outputStream.write('\n');
 			outputStream.flush();
 		}

@@ -69,7 +69,6 @@ import org.eclipse.rse.ui.messages.SystemMessageDialog;
 import org.eclipse.rse.ui.propertypages.ISystemSubSystemPropertyPageCoreForm;
 import org.eclipse.rse.ui.propertypages.SystemSubSystemPropertyPageCoreForm;
 import org.eclipse.rse.ui.validators.ISystemValidator;
-import org.eclipse.rse.ui.validators.ValidatorPortInput;
 import org.eclipse.rse.ui.validators.ValidatorSpecialChar;
 import org.eclipse.rse.ui.view.ISystemRemoteElementAdapter;
 import org.eclipse.rse.ui.widgets.IServerLauncherForm;
@@ -2216,29 +2215,42 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 			boolean nested = !(parent instanceof ISystemFilterPool);
 			ISystemFilter nestedParentFilter = nested ? (ISystemFilter) parent : null;
 			for (int idx = 0; idx < subsystems.length; idx++)
-			{
+			{			
+				Object parentObj = null;
 				// CASE 1: FILTER IS NOT NESTED, SO SIMPLY GET ITS FILTER POOL REFERENCE AND USE AS A PARENT...
 				if (!nested)
 				{
+			
 					// SPECIAL CASE 1A: it makes a difference if we are showing filter pools or not...
 					if (showFilterPools())
-						event.setParent(subsystems[idx].getSystemFilterPoolReferenceManager().getReferenceToSystemFilterPool(pool));
+					{
+						parentObj = subsystems[idx].getSystemFilterPoolReferenceManager().getReferenceToSystemFilterPool(pool);
+					}
 					else
-						event.setParent(subsystems[idx]);
-					fireSubSystemEvent(event, subsystems[idx]);
+					{
+						parentObj = subsystems[idx];
+					}
 				}
 				// CASE 2: FILTER IS NESTED, THIS IS MORE DIFFICULT, AS EVERY FILTER CONTAINS A RANDOMLY
 				//          GENERATED REFERENCE THAT ONLY THE GUI KNOWS ABOUT.
 				//         ONLY OPTION IS TO LET THE GUI FIGURE IT OUT.
 				else
 				{
-					event.setParent(nestedParentFilter);
-					fireSubSystemEvent(event, subsystems[idx]);
+					parentObj = nestedParentFilter;					
 				}
+				event = cloneEvent(event, parentObj);
+				event.setParent(parentObj);
+				fireSubSystemEvent(event, subsystems[idx]);
 			}
 		}
 	}
-
+	
+	protected SystemResourceChangeEvent cloneEvent(SystemResourceChangeEvent event, Object parent)
+	{
+		SystemResourceChangeEvent result = new SystemResourceChangeEvent(event.getSource(), event.getType(), parent);
+		return result;
+	}
+	
 	/*
 	 * Fire an event of a given id to subsystems that hold a reference to the given filter string
 	 */

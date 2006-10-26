@@ -29,6 +29,7 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.IAction;
@@ -39,7 +40,6 @@ import org.eclipse.jface.action.IStatusLineManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.jface.util.ListenerList;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.IOpenListener;
@@ -118,7 +118,7 @@ public class SystemTeamViewPart
 	extends ViewPart
 	implements ISetSelectionTarget, ISelectionProvider, ISystemModelChangeListener, 
 	           ISystemMessageLine, ISelectionChangedListener,
-				ISystemDeleteTarget, ISystemRenameTarget, IMenuListener, IRSEViewPart
+				ISystemDeleteTarget, ISystemRenameTarget, IRSEViewPart
 {
 
 	private boolean menuListenerAdded;
@@ -132,10 +132,8 @@ public class SystemTeamViewPart
 	private SystemMessage      sysErrorMessage;
 
 	// selectionChangedListeners 
-	private ListenerList selectionChangedListeners = new ListenerList(6);
-	
-	private boolean privateProfileStillExists = false;
-	
+	private ListenerList selectionChangedListeners = new ListenerList(ListenerList.IDENTITY);
+		
 	// context menu actions for project...
 	protected SystemTeamReloadAction reloadRSEAction;
 	protected SystemNewProfileAction newProfileAction;
@@ -247,11 +245,21 @@ public class SystemTeamViewPart
 		menuMgr.setRemoveAllWhenShown(true);
 		Menu menu = menuMgr.createContextMenu(treeViewer.getTree());
 		treeViewer.getTree().setMenu(menu);
+		menuMgr.addMenuListener(new IMenuListener() {
+			public void menuAboutToShow(IMenuManager manager) {
+				fillContextMenu(manager);
+				addMenuListener(manager);
+			}
+		});
 		getSite().registerContextMenu(menuMgr, treeViewer);
+		menuMgr.addMenuListener(new IMenuListener() {
+			public void menuAboutToShow(IMenuManager manager) {
+				scrubOtherContributions(manager);
+			}
+		});
 		// important to add our listener after registering, so we are called second!
 		// This gives us the opportunity to scrub the contributions added by others, to screen out
 		//  non-team additions.
-		menuMgr.addMenuListener(this);
 		/*
 		menuMgr.addMenuListener(new IMenuListener() {
 			public void menuAboutToShow(IMenuManager manager) {
@@ -293,14 +301,7 @@ public class SystemTeamViewPart
 		fMemento= null;
 	}
 
-	/**
-	 * Called when the context menu is about to open.
-	 * From IMenuListener interface
-	 * Calls {@link #fillContextMenu(IMenuManager)}
-	 */
-	public void menuAboutToShow(IMenuManager menu)
-	{
-		fillContextMenu(menu);
+	private void addMenuListener(IMenuManager menu) {
 		if (!menuListenerAdded)
 		{
 		  if (menu instanceof MenuManager)
@@ -315,7 +316,6 @@ public class SystemTeamViewPart
 			}
 		  }
 		}
-		//System.out.println("Inside menuAboutToShow: menu null? "+( ((MenuManager)menu).getMenu()==null));
 	}
 	
 	// -------------------------------------------
@@ -465,7 +465,6 @@ public class SystemTeamViewPart
 		if (!(selection instanceof StructuredSelection))
 		  return;
 		StructuredSelection ssel = (StructuredSelection)selection;
-		java.util.List test = ssel.toList();
 		if (!ssel.isEmpty()) {
 			// select and reveal the item
 			treeViewer.setSelection(ssel, true);
@@ -479,23 +478,18 @@ public class SystemTeamViewPart
 	{
 		SystemMenuManager ourMenu = new SystemMenuManager(menu);
 		
-	    privateProfileStillExists = (SystemStartHere.getSystemProfileManager().getDefaultPrivateSystemProfile() != null);
-
 		// Populate with our stuff...
 		IStructuredSelection selection = getStructuredSelection();
 		Object firstSelection = selection.getFirstElement();
+		createStandardGroups(menu);			
 		if (firstSelection instanceof IProject)
 		{
 			// Scrub unrelated menu items
-			scrubOtherContributions(menu);
-
-			createStandardGroups(menu);			
 			if (selection.size() == 1)
 		      fillProjectContextMenu(ourMenu, selection);
 		}
 		else
 		{
-			createStandardGroups(menu);
 			ISystemViewElementAdapter adapter = SystemAdapterHelpers.getAdapter(firstSelection, treeViewer);
 			if (adapter != null)
 			{
@@ -513,7 +507,7 @@ public class SystemTeamViewPart
 				}
 			}			
 		}
-		// wail through all actions, updating shell and selection
+		// whale through all actions, updating shell and selection
 		IContributionItem[] items = menu.getItems();
 		for (int idx=0; idx < items.length; idx++)
 		{
@@ -657,6 +651,7 @@ public class SystemTeamViewPart
 	 */
 	private SystemTeamReloadAction getReloadRSEAction(IStructuredSelection selection)
 	{
+	    boolean privateProfileStillExists = (SystemStartHere.getSystemProfileManager().getDefaultPrivateSystemProfile() != null);
 		if (reloadRSEAction == null)
 		  reloadRSEAction = new SystemTeamReloadAction(getShell());
         reloadRSEAction.setSelection(selection);
@@ -718,27 +713,21 @@ public class SystemTeamViewPart
 	/**
 	 * Scrub the popup menu to remove everything but team-related stuff...
 	 */
-	private void scrubOtherContributions(IMenuManager menuMgr)
-	{
-	     IContributionItem items[] = menuMgr.getItems();		
-
-	     if (items != null)
-	     {
-	        //System.out.println("# existing menu items: "+items.length);
-	     	for (int idx=0; idx<items.length; idx++)
-	     	{
-	     		IContributionItem item = items[idx];
-	     		//System.out.println("menu item id: " + item.getId());
-	     		if (item.getId()!=null)
-	     		{
-	     			if (!item.getId().equals("team.main") || privateProfileStillExists)
-	     			  menuMgr.remove(item);
-
-	     		}
-	     	}
-	     }
-	     //else
-	       //System.out.println("existing menu items null");
+	private void scrubOtherContributions(IMenuManager menuMgr) {
+		IStructuredSelection selection = getStructuredSelection();
+		Object firstSelection = selection.getFirstElement();
+		if (firstSelection instanceof IProject) {
+			boolean privateProfileStillExists = (SystemStartHere.getSystemProfileManager().getDefaultPrivateSystemProfile() != null);
+			IContributionItem items[] = menuMgr.getItems();
+			if (items != null) {
+				for (int idx = 0; idx < items.length; idx++) {
+					IContributionItem item = items[idx];
+					if (item.getId() != null) {
+						if (!item.getId().equals("team.main") || privateProfileStillExists) menuMgr.remove(item);
+					}
+				}
+			}
+		}
 	}
 
 	public void dispose() 
@@ -761,8 +750,8 @@ public class SystemTeamViewPart
 	 */
 	public void updateTitle() 
 	{
-		Object input = getTreeViewer().getInput();
-		String viewName = getConfigurationElement().getAttribute("name");
+//		Object input = getTreeViewer().getInput();
+//		String viewName = getConfigurationElement().getAttribute("name");
 	    setPartName(getTitle());
 		setTitleToolTip("");
 	}

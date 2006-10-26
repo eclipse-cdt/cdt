@@ -17,6 +17,7 @@
 package org.eclipse.rse.persistence;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.rse.persistence.dom.RSEDOM;
 
 
@@ -52,4 +53,11 @@ public interface IRSEPersistenceProvider
 	 * @return The names of the profiles that have been saved by this persistence provider.
 	 */
 	public String[] getSavedProfileNames();
+	
+	/**
+	 * Removes a profile. Does nothing if the profile is not found.
+	 * @param profileName the name of the profile to remove
+	 * @param monitor the monitor for the operation
+	 */
+	public IStatus deleteProfile(String profileName, IProgressMonitor monitor);
 }

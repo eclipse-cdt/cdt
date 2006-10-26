@@ -34,19 +34,20 @@ public class SystemAdapterHelpers
 	
 	
     /**
-     * Returns the implementation of ISystemViewElement for the given
-     * object.  Returns null if the adapter is not defined or the
-     * object is not adaptable.
-     */
-    public static ISystemViewElementAdapter getAdapter(Object o) 
-    {
-    	ISystemViewElementAdapter adapter = null;
-    	if (!(o instanceof IAdaptable)) 
-          adapter = (ISystemViewElementAdapter)Platform.getAdapterManager().getAdapter(o,ISystemViewElementAdapter.class);
-        else        
-    	  adapter = (ISystemViewElementAdapter)((IAdaptable)o).getAdapter(ISystemViewElementAdapter.class);
-    	return adapter;
-    }
+	 * Returns the implementation of ISystemViewElement for the given
+	 * object.  Returns null if the adapter is not defined or the
+	 * object is not adaptable.
+	 */
+	public static ISystemViewElementAdapter getAdapter(Object o) {
+		ISystemViewElementAdapter adapter = null;
+		if (o instanceof IAdaptable) {
+			adapter = (ISystemViewElementAdapter) ((IAdaptable) o).getAdapter(ISystemViewElementAdapter.class);
+		} if (o != null) {
+			adapter = (ISystemViewElementAdapter) Platform.getAdapterManager().getAdapter(o, ISystemViewElementAdapter.class);
+		}
+		return adapter;
+	}
+    
     /**
      * Overload to use when calling from a viewer. This not only finds and returns
      *  the adapter, but also sets its viewer to the given viewer. Many actions rely

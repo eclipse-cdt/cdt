@@ -16,6 +16,7 @@
 
 package org.eclipse.rse.persistence;
 
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.rse.core.filters.ISystemFilter;
 import org.eclipse.rse.core.filters.ISystemFilterPool;
 import org.eclipse.rse.core.filters.ISystemFilterPoolManager;
@@ -116,4 +117,10 @@ public interface IRSEPersistenceManager
     
 	public boolean isExporting();
 	public boolean isImporting();
+	
+	/**
+	 * Delete the persistent form of a profile.
+	 * @param profileName The name of the profile to delete
+	 */
+	public void deleteProfile(String profileName);
 }

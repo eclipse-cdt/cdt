@@ -31,6 +31,8 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.rse.persistence.IRSEPersistenceProvider;
 import org.eclipse.rse.persistence.dom.RSEDOM;
 
@@ -176,4 +178,17 @@ public class SerializingProvider implements IRSEPersistenceProvider
 		
 		return true;
 	}    
+	
+	public IStatus deleteProfile(String profileName, IProgressMonitor monitor) {
+		IStatus result = Status.OK_STATUS;
+		IFile profileFile = getProfileFile(profileName, monitor);
+		if (profileFile.exists()) {
+			try {
+				profileFile.delete(IResource.FORCE | IResource.KEEP_HISTORY, monitor);
+			} catch (CoreException e) {
+				result = new Status(IStatus.ERROR, null, 0, "Unexpected Exception", e);
+			}
+		}
+		return result;
+	}
 }

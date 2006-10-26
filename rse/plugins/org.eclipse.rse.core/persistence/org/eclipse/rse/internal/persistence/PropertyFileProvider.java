@@ -29,6 +29,7 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.Vector;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.eclipse.core.resources.IContainer;
@@ -39,7 +40,9 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.rse.persistence.IRSEPersistenceProvider;
 import org.eclipse.rse.persistence.dom.IRSEDOMConstants;
 import org.eclipse.rse.persistence.dom.RSEDOM;
@@ -99,7 +102,7 @@ public class PropertyFileProvider implements IRSEPersistenceProvider {
 					String candidateName = profileCandidate.getName();
 					String[] parts = split(candidateName, 2);
 					if (parts[0].equals(AB_PROFILE)) {
-						String name = parts[1];
+						String name = thaw(parts[1]);
 						names.add(name);
 					}
 				}
@@ -131,6 +134,23 @@ public class PropertyFileProvider implements IRSEPersistenceProvider {
 		}
 		return true;
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.persistence.IRSEPersistenceProvider#deleteProfile(java.lang.String, org.eclipse.core.runtime.IProgressMonitor)
+	 */
+	public IStatus deleteProfile(String profileName, IProgressMonitor monitor) {
+		IStatus result = Status.OK_STATUS;
+		IFolder profileFolder = getProfileFolder(profileName);
+		if (profileFolder.exists()) {
+			try {
+				profileFolder.delete(IResource.FORCE, monitor);
+			} catch (CoreException e) {
+				result = new Status(IStatus.ERROR, null, 0, "Unexpected Exception", e);
+			}
+		}
+		return result;
+	}
+
 	
 	/**
 	 * Saves a node from the DOM to the file system.
@@ -190,8 +210,6 @@ public class PropertyFileProvider implements IRSEPersistenceProvider {
 		}
 	}
 
-	private static final String VALID = "abcdefghijklmnopqrstuvwxyz0123456789-._";
-	private static final String UPPER = "ABCDEFGHIJKLMNOPQRTSUVWXYZ";
 	/**
 	 * Returns the name of a folder that can be used to store a node of a particular 
 	 * type. Since this is a folder, its name must conform to the rules of the file
@@ -205,6 +223,24 @@ public class PropertyFileProvider implements IRSEPersistenceProvider {
 		String type = node.getType();
 		type = (String) typeQualifiers.get(type);
 		String name = node.getName();
+		name = freeze(name);
+		String result = combine(type, name);
+		return result;
+	}
+	
+	private static final String VALID = "abcdefghijklmnopqrstuvwxyz0123456789-._";
+	private static final String UPPER = "ABCDEFGHIJKLMNOPQRTSUVWXYZ";
+	/**
+	 * Transforms an arbitrary name into one that can be used in any file system
+	 * that supports long names. The transformation appends a number to the name
+	 * that captures the case of the letters in the name. If a character falls
+	 * outside the range of understood characters, it is converted to its hexadecimal unicode
+	 * equivalent. Spaces are converted to underscores.
+	 * @param name The name to be transformed
+	 * @return The transformed name
+	 * @see #thaw(String)
+	 */
+	private String freeze(String name) {
 		int p = name.indexOf(':');
 		if (p >= 0) {
 			name = name.substring(p + 1);
@@ -230,7 +266,64 @@ public class PropertyFileProvider implements IRSEPersistenceProvider {
 			}			
 		}
 		name = buf.toString() + "_" + Long.toString(suffix);
-		String result = combine(type, name);
+		return name;
+	}
+	
+	/**
+	 * Recovers an arbitrary name from its frozen counterpart.
+	 * @param name The name to be transformed
+	 * @return The transformed name
+	 * @see #freeze(String)
+	 */
+	private String thaw(String name) {
+		String result = name;
+		Pattern suffixPattern = Pattern.compile("_(\\d+)$");
+		Matcher m = suffixPattern.matcher(name);
+		if (m.find()) {
+			String root = name.substring(0, m.start());
+			String suffix = m.group(1);
+			long caseCode = Long.parseLong(suffix);
+			root = thawUnicode(root);
+			root = thawCase(root, caseCode);
+			result = root;
+		}
+		return result;
+	}
+	
+	private String thawUnicode(String name) {
+		Pattern unicodePattern = Pattern.compile("#(\\p{XDigit}+)#");
+		Matcher m = unicodePattern.matcher(name);
+		StringBuffer b = new StringBuffer();
+		int p0 = 0;
+		while (m.find()) {
+			int p1 = m.start();
+			String chunk0 = name.substring(p0, p1);
+			String digits = m.group(1);
+			int codePoint = Integer.valueOf(digits, 16).intValue();
+			char ch = (char) codePoint;
+			String chunk1 = Character.toString(ch);
+			b.append(chunk0);
+			b.append(chunk1);
+			p0 = m.end();
+		}
+		b.append(name.substring(p0));
+		String result = b.toString();
+		return result;
+	}
+	
+	private String thawCase(String name, long caseCode) {
+		StringBuffer b = new StringBuffer();
+		char[] chars = name.toCharArray();
+		for (int i = chars.length - 1; i >= 0; i--) {
+			char ch = chars[i];
+			boolean shift = (caseCode & 1L) == 1;
+			if (shift) { 
+				ch = (ch == '_') ? ' ' : Character.toUpperCase(ch);
+			}
+			b.append(ch);
+			caseCode = caseCode >> 1;
+		}
+		String result = b.reverse().toString();
 		return result;
 	}
 	
@@ -672,7 +765,7 @@ public class PropertyFileProvider implements IRSEPersistenceProvider {
 	 * @return The folder that was created or found.
 	 */
 	private IFolder getProfileFolder(String profileName) {
-		String profileFolderName = combine(AB_PROFILE, profileName);
+		String profileFolderName = combine(AB_PROFILE, freeze(profileName));
 		IFolder providerFolder = getProviderFolder();
 		IFolder profileFolder = getFolder(providerFolder, profileFolderName);
 		return profileFolder;

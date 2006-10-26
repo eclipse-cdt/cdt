@@ -104,8 +104,10 @@ public interface ISystemProfileManager {
 	/**
 	 * Delete the given profile
 	 * @param profile the name of the profile to delete.
+	 * @param persist true if the deletion is meant to be persisted as well, false if the deletion is just in the 
+	 * model.
 	 */
-	public void deleteSystemProfile(ISystemProfile profile);
+	public void deleteSystemProfile(ISystemProfile profile, boolean persist);
 
 	/**
 	 * Clone the given profile

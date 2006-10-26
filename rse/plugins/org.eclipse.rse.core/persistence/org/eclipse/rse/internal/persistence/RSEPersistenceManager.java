@@ -25,7 +25,10 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionRegistry;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.filters.ISystemFilter;
@@ -391,6 +394,20 @@ public class RSEPersistenceManager implements IRSEPersistenceManager {
 			}
 		}
 		return result;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.persistence.IRSEPersistenceManager#deleteProfile(java.lang.String)
+	 */
+	public void deleteProfile(final String profileName) {
+		Job job = new Job("delete profile") {
+			protected IStatus run(IProgressMonitor monitor) {
+				IRSEPersistenceProvider provider = getRSEPersistenceProvider();
+				IStatus result = provider.deleteProfile(profileName, monitor);
+				return result;
+			}
+		};
+		job.schedule();
 	}
 
 	public boolean isExporting() {

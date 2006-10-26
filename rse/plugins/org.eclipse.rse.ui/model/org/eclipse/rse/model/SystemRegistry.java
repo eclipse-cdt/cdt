@@ -1020,7 +1020,7 @@ public class SystemRegistry implements ISystemRegistryUI, ISystemModelChangeEven
 					if (factory != null)
 						factory.deletingSystemProfile(newProfile);
 				}
-				getSystemProfileManager().deleteSystemProfile(newProfile);
+				getSystemProfileManager().deleteSystemProfile(newProfile, true);
 			}
 			catch (Exception exc)
 			{
@@ -1071,7 +1071,7 @@ public class SystemRegistry implements ISystemRegistryUI, ISystemModelChangeEven
 			}
 		}
 		// last step... physically blow away the profile...
-		getSystemProfileManager().deleteSystemProfile(profile);
+		getSystemProfileManager().deleteSystemProfile(profile, true);
 		SystemPreferencesManager.getPreferencesManager().setConnectionNamesOrder(); // update preferences order list        
 		if ((connections != null) && (connections.length > 0)) // defect 42112
 			fireEvent(new org.eclipse.rse.model.SystemResourceChangeEvent(connections, ISystemResourceChangeEvents.EVENT_DELETE_MANY, this));

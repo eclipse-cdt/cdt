@@ -99,7 +99,7 @@ public class SystemProfileManager implements ISystemProfileManager {
 		// FIXME - used to use MOF
 		ISystemProfile existingProfile = getSystemProfile(name);
 		if (existingProfile != null) {
-			deleteSystemProfile(existingProfile); // replace the existing one with a new profile
+			deleteSystemProfile(existingProfile, false); // replace the existing one with a new profile
 		}
 
 		ISystemProfile newProfile = internalCreateSystemProfileAndFolder(name);
@@ -265,9 +265,9 @@ public class SystemProfileManager implements ISystemProfileManager {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.rse.core.model.ISystemProfileManager#deleteSystemProfile(org.eclipse.rse.core.model.ISystemProfile)
+	 * @see org.eclipse.rse.core.model.ISystemProfileManager#deleteSystemProfile(org.eclipse.rse.core.model.ISystemProfile, boolean)
 	 */
-	public void deleteSystemProfile(ISystemProfile profile) {
+	public void deleteSystemProfile(ISystemProfile profile, boolean persist) {
 		String oldName = profile.getName();
 		boolean isActive = isSystemProfileActive(oldName);
 		getProfiles().remove(profile);
@@ -280,7 +280,9 @@ public class SystemProfileManager implements ISystemProfileManager {
 		 */
 		if (isActive) SystemPreferencesManager.getPreferencesManager().deleteActiveProfile(oldName);
 		invalidateCache();
-		// FIXME RSEUIPlugin.getThePersistenceManager().save(this);
+		if (persist) {
+			RSEUIPlugin.getThePersistenceManager().deleteProfile(oldName);
+		}
 	}
 
 	/* (non-Javadoc)

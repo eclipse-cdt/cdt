@@ -19,9 +19,14 @@ package samples.ui.actions;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.files.ui.actions.SystemAbstractRemoteFilePopupMenuExtensionAction;
+import org.eclipse.rse.services.shells.IHostOutput;
+import org.eclipse.rse.services.shells.IHostShell;
+import org.eclipse.rse.services.shells.IHostShellChangeEvent;
+import org.eclipse.rse.services.shells.IHostShellOutputListener;
 import org.eclipse.rse.shells.ui.RemoteCommandHelpers;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile;
 import org.eclipse.rse.subsystems.shells.core.subsystems.IRemoteCmdSubSystem;
+import org.eclipse.rse.subsystems.shells.core.subsystems.servicesubsystem.IServiceCommandShell;
 
 /**
  * An action that runs a command to display the contents of a Jar file.
@@ -66,11 +71,28 @@ public class ShowJarContents extends SystemAbstractRemoteFilePopupMenuExtensionA
 		IRemoteCmdSubSystem cmdss = getRemoteCmdSubSystem();
 		if (cmdss!=null && cmdss.isConnected()) {
 			//Option A: run the command invisibly
-			//cmdss.runCommand(command, null, "", false); //$NON-NLS-1$
+			//runCommandInvisibly(cmdss, command);
 			//Option B: run the command in a visible shell
 			RemoteCommandHelpers.runUniversalCommand(getShell(), command, ".", cmdss); //$NON-NLS-1$
 		} else {
 			MessageDialog.openError(getShell(), "No command subsystem", "Found no command subsystem");
+		}
+	}
+	
+	public void runCommandInvisibly(IRemoteCmdSubSystem cmdss, String command) throws Exception
+	{
+		Object[] result = cmdss.runCommand(command, null, false);
+		if (result.length>0 && result[0] instanceof IServiceCommandShell) {
+			IServiceCommandShell scs = (IServiceCommandShell)result[0];
+			IHostShell hs = scs.getHostShell();
+			hs.addOutputListener(new IHostShellOutputListener() {
+				public void shellOutputChanged(IHostShellChangeEvent event) {
+					IHostOutput[] lines = event.getLines();
+					for(int i=0; i<lines.length; i++) {
+						System.out.println(lines[i]);
+					}
+				}
+			});
 		}
 	}
 

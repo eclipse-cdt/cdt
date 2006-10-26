@@ -88,4 +88,10 @@ public class LocalVirtualHostFile extends LocalHostFile
 		return false;
 	}
 
+	/**
+	 * @see org.eclipse.rse.services.local.files.LocalHostFile#renameTo(java.lang.String)
+	 */
+	public void renameTo(String newAbsolutePath) {
+		_child.renameTo(newAbsolutePath);
+	}
 }

@@ -1293,28 +1293,30 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 					{
 						ISystemFilterPoolReference poolRef = oldReferences[idx];
 						ISystemFilterPool pool = poolRef.getReferencedFilterPool();
-						// if just copying a connnection, then copy references to pools as-is
-						if (!copyProfileOperation)
-						{
-							newRefMgr.addReferenceToSystemFilterPool(pool);
-						}
-						// if copying a profile, update references to pools in old profile to become references to pools in new profile...
-						else
-						{
-							ISystemFilterPoolManager poolMgr = pool.getSystemFilterPoolManager();
-							String poolProfileName = getSystemProfileName(poolMgr);
-							if (poolProfileName.equals(oldSubSystemProfileName))
+						if (pool != null) {
+							// if just copying a connnection, then copy references to pools as-is
+							if (!copyProfileOperation)
 							{
-								//RSEUIPlugin.logDebugMessage(this.getClass().getName(),"found reference to copied filter pool " + pool.getName() + ", so changing to reference to new copy");
-								ISystemFilterPoolManager newPoolMgr = getFilterPoolManager(newConnection.getSystemProfile());
-								ISystemFilterPool newPool = newPoolMgr.getSystemFilterPool(pool.getName());
-								//RSEUIPlugin.logDebugMessage(this.getClass().getName(),"...new pool = " + newPoolMgr.getName()+"."+newPool.getName());
-								newRefMgr.addReferenceToSystemFilterPool(newPool);
+								newRefMgr.addReferenceToSystemFilterPool(pool);
 							}
+							// if copying a profile, update references to pools in old profile to become references to pools in new profile...
 							else
 							{
-								//RSEUIPlugin.logDebugMessage(this.getClass().getName(),"found reference to filter pool from another profile " + poolProfileName+"."+pool.getName() + ", so not changing to reference to new copy");
-								newRefMgr.addReferenceToSystemFilterPool(pool);
+								ISystemFilterPoolManager poolMgr = pool.getSystemFilterPoolManager();
+								String poolProfileName = getSystemProfileName(poolMgr);
+								if (poolProfileName.equals(oldSubSystemProfileName))
+								{
+									//RSEUIPlugin.logDebugMessage(this.getClass().getName(),"found reference to copied filter pool " + pool.getName() + ", so changing to reference to new copy");
+									ISystemFilterPoolManager newPoolMgr = getFilterPoolManager(newConnection.getSystemProfile());
+									ISystemFilterPool newPool = newPoolMgr.getSystemFilterPool(pool.getName());
+									//RSEUIPlugin.logDebugMessage(this.getClass().getName(),"...new pool = " + newPoolMgr.getName()+"."+newPool.getName());
+									newRefMgr.addReferenceToSystemFilterPool(newPool);
+								}
+								else
+								{
+									//RSEUIPlugin.logDebugMessage(this.getClass().getName(),"found reference to filter pool from another profile " + poolProfileName+"."+pool.getName() + ", so not changing to reference to new copy");
+									newRefMgr.addReferenceToSystemFilterPool(pool);
+								}
 							}
 						}
 					}
@@ -2215,12 +2217,11 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 			boolean nested = !(parent instanceof ISystemFilterPool);
 			ISystemFilter nestedParentFilter = nested ? (ISystemFilter) parent : null;
 			for (int idx = 0; idx < subsystems.length; idx++)
-			{			
+			{
 				Object parentObj = null;
 				// CASE 1: FILTER IS NOT NESTED, SO SIMPLY GET ITS FILTER POOL REFERENCE AND USE AS A PARENT...
 				if (!nested)
 				{
-			
 					// SPECIAL CASE 1A: it makes a difference if we are showing filter pools or not...
 					if (showFilterPools())
 					{
@@ -2229,7 +2230,7 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 					else
 					{
 						parentObj = subsystems[idx];
-					}
+				}
 				}
 				// CASE 2: FILTER IS NESTED, THIS IS MORE DIFFICULT, AS EVERY FILTER CONTAINS A RANDOMLY
 				//          GENERATED REFERENCE THAT ONLY THE GUI KNOWS ABOUT.
@@ -2240,17 +2241,17 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 				}
 				event = cloneEvent(event, parentObj);
 				event.setParent(parentObj);
-				fireSubSystemEvent(event, subsystems[idx]);
+					fireSubSystemEvent(event, subsystems[idx]);
+				}
 			}
 		}
-	}
 	
 	protected SystemResourceChangeEvent cloneEvent(SystemResourceChangeEvent event, Object parent)
 	{
 		SystemResourceChangeEvent result = new SystemResourceChangeEvent(event.getSource(), event.getType(), parent);
 		return result;
 	}
-	
+
 	/*
 	 * Fire an event of a given id to subsystems that hold a reference to the given filter string
 	 */

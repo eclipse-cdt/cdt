@@ -404,7 +404,8 @@ public class RSEDOMExporter implements IRSEDOMExporter {
 
 		if (clean || node.isDirty()) {
 			ISystemFilterPool filterPool = filterPoolReference.getReferencedFilterPool();
-			node.addAttribute(IRSEDOMConstants.ATTRIBUTE_REF_ID, filterPool.getId());
+			String refId = (filterPool != null) ? filterPool.getId() : "unknown";
+			node.addAttribute(IRSEDOMConstants.ATTRIBUTE_REF_ID, refId);
 		}
 
 		createPropertySetNodes(node, filterPoolReference, clean);

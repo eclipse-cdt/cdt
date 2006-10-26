@@ -121,8 +121,6 @@ public class PropertyFileProvider implements IRSEPersistenceProvider {
 	 */
 	public boolean saveRSEDOM(RSEDOM dom, IProgressMonitor monitor) {
 		IFolder providerFolder = getProviderFolder();
-//		String profileName = dom.getName();
-//		System.out.println("saving profile " + profileName + " to " + providerFolder.getFullPath().toString() + "...");
 		try {
 			int n = countNodes(dom);
 			if (monitor != null) monitor.beginTask("Saving DOM", n);

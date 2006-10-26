@@ -15,7 +15,9 @@
  ********************************************************************************/
 
 package org.eclipse.rse.internal.filters;
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
 import org.eclipse.rse.core.filters.ISystemFilter;
 import org.eclipse.rse.core.filters.ISystemFilterContainer;
@@ -107,11 +109,12 @@ public class SystemFilterContainerReferenceCommonMethods
         //  return a complete list. However, to save memory we try to only
         //  re-gen the list if something has changed.
     	ISystemFilterContainer parent = parentRef.getReferencedSystemFilterContainer();
-    	java.util.List mofList = null;
+    	List mofList = null;
     	if (parent instanceof ISystemFilterPool)
     	  mofList = ((ISystemFilterPool)parent).getFilters();
-    	else
+    	else if (parent instanceof ISystemFilter) {
           mofList = ((ISystemFilter)parent).getNestedFilters();
+    	}
     	boolean needToReGen = compareFilters(mofList);
     	//System.out.println("In getSFRefs for " + getName() + ": regen? " + needToReGen);
     	
@@ -121,6 +124,9 @@ public class SystemFilterContainerReferenceCommonMethods
     	  
     	  // second, build new references...
     	  referencedFilters = generateFilterReferences(subSystem, mofList);
+    	}
+    	if (referencedFilters == null) {
+    		referencedFilters = new ISystemFilterReference[0];
     	}
     	return referencedFilters;
     }

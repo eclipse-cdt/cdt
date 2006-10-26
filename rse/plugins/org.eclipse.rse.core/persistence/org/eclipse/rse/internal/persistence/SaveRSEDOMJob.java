@@ -16,14 +16,14 @@
 
 package org.eclipse.rse.internal.persistence;
 
+import org.eclipse.core.resources.WorkspaceJob;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.rse.persistence.IRSEPersistenceProvider;
 import org.eclipse.rse.persistence.dom.RSEDOM;
 
-public class SaveRSEDOMJob extends Job {
+public class SaveRSEDOMJob extends WorkspaceJob {
 	
 	private RSEDOM _dom;
 	private IRSEPersistenceProvider _provider;
@@ -34,7 +34,7 @@ public class SaveRSEDOMJob extends Job {
 		_provider = provider;
 	}
 
-	protected IStatus run(IProgressMonitor monitor) {
+	public IStatus runInWorkspace(IProgressMonitor monitor) {
 		IStatus result = Status.OK_STATUS;
 		synchronized (_dom) { // synchronize on the DOM to prevent its update while writing
 			if (_dom.needsSave()) {

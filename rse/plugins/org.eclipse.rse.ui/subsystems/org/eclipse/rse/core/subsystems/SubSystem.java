@@ -1617,12 +1617,6 @@ public abstract class SubSystem extends RSEModelObject implements IAdaptable, IS
     	
     	public void performOperation(IProgressMonitor mon) throws InterruptedException, Exception
     	{
-    		String msg = null;
-    		int totalWorkUnits = IProgressMonitor.UNKNOWN;
-    		
-    	    msg = SubSystemConfiguration.getDisconnectingMessage(getHostName(), getConnectorService().getPort());
-
-    	    if (!implicitConnect(false, mon, msg, totalWorkUnits)) throw new Exception(RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_CONNECT_FAILED).makeSubstitution(getHostName()).getLevelOneText());   		
     	    internalDisconnect(mon);
     	    _disconnecting = false;
     	    _connectionError = false;

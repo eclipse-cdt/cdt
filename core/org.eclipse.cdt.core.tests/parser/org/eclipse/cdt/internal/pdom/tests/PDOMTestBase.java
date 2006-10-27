@@ -47,7 +47,6 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.ui.dialogs.IOverwriteQuery;
 import org.eclipse.ui.wizards.datatransfer.FileSystemStructureProvider;
 import org.eclipse.ui.wizards.datatransfer.ImportOperation;
@@ -104,7 +103,7 @@ public class PDOMTestBase extends BaseTestCase {
 		return cprojects[0];
 	}
 
-	protected int offset(String projectRelativePath, String lookfor) throws BadLocationException, CoreException {
+	protected int offset(String projectRelativePath, String lookfor) throws Exception, CoreException {
 		Path path= new Path(projectName + "/" + projectRelativePath);
 		return TestSourceReader.indexOfInFile(lookfor, path);
 	}

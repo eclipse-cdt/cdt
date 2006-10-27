@@ -11,22 +11,23 @@
 
 package org.eclipse.cdt.core.testplugin.util;
 
+import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.LineNumberReader;
+import java.io.Reader;
+import java.io.UnsupportedEncodingException;
 
 import junit.framework.Assert;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.index.IIndexFile;
-import org.eclipse.core.filebuffers.FileBuffers;
-import org.eclipse.core.filebuffers.ITextFileBuffer;
-import org.eclipse.core.filebuffers.ITextFileBufferManager;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IPath;
@@ -42,21 +43,54 @@ public class TestSourceReader {
 	 * @param fullPath full path of the workspace file
 	 * @return the offset or -1
 	 * @throws CoreException
+	 * @throws UnsupportedEncodingException 
 	 * @since 4.0
 	 */
-	public static int indexOfInFile(String lookfor, Path fullPath) throws CoreException {
-		ITextFileBufferManager fbm= FileBuffers.getTextFileBufferManager();
-		fbm.connect(fullPath, new NullProgressMonitor());
+	public static int indexOfInFile(String lookfor, Path fullPath) throws Exception {
+		IFile file= ResourcesPlugin.getWorkspace().getRoot().getFile(fullPath);
+		Reader reader= new BufferedReader(new InputStreamReader(file.getContents(), file.getCharset()));
+		Assert.assertTrue(lookfor.indexOf('\n') == -1);
 		try {
-			ITextFileBuffer buf= FileBuffers.getTextFileBufferManager().getTextFileBuffer(fullPath);
-			Assert.assertTrue("Could not find " + fullPath.toString(),  buf.getModificationStamp() > 0);
-			String content= buf.getDocument().get();
-			int result= content.indexOf(lookfor);
-			Assert.assertTrue("Could not find '" + lookfor + "' in " + fullPath.toString(), result >= 0);
-			return result;
+			int c= 0;
+			int offset= 0;
+			StringBuffer buf= new StringBuffer();
+			while ( (c=reader.read()) >= 0) {
+				buf.append((char) c);
+				if (c == '\n') {
+					int idx= buf.indexOf(lookfor);
+					if (idx >= 0) {
+						return idx+offset;
+					}
+					offset+=buf.length();
+					buf.setLength(0);
+				}
+			}
+			int idx= buf.indexOf(lookfor);
+			if (idx >= 0) {
+				return idx+offset;
+			}
+			return -1;
 		}
 		finally {
-			fbm.disconnect(fullPath, new NullProgressMonitor());
+			reader.close();
+		}
+	}
+	
+	public static int getLineNumber(int offset, Path fullPath) throws Exception {
+		IFile file= ResourcesPlugin.getWorkspace().getRoot().getFile(fullPath);
+		Reader reader= new BufferedReader(new InputStreamReader(file.getContents(), file.getCharset()));
+		try {
+			int line = 1;
+			for (int i = 0; i < offset; i++) {
+				int c= reader.read();
+				Assert.assertTrue(c >= 0);
+				if (c == '\n')
+					line++;
+			}
+			return line;
+		}
+		finally {
+			reader.close();
 		}
 	}
 

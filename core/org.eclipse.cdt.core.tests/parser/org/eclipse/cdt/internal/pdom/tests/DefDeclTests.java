@@ -14,7 +14,6 @@ package org.eclipse.cdt.internal.pdom.tests;
 import java.io.File;
 import java.util.regex.Pattern;
 
-import junit.framework.Assert;
 import junit.framework.AssertionFailedError;
 import junit.framework.Test;
 
@@ -27,10 +26,8 @@ import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.index.IndexFilter;
 import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.core.testplugin.util.TestSourceReader;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
-import org.eclipse.core.filebuffers.FileBuffers;
-import org.eclipse.core.filebuffers.ITextFileBuffer;
-import org.eclipse.core.filebuffers.ITextFileBufferManager;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
@@ -74,22 +71,22 @@ public class DefDeclTests extends PDOMTestBase {
 	}
 
 	private void checkReference(IBinding element, String mark, int checkCount)
-			throws CoreException, BadLocationException {
+			throws Exception {
 		checkUsage(element, mark, checkCount, IIndex.FIND_REFERENCES);
 	}
 
 	private void checkDeclaration(IBinding element, String mark, int num)
-			throws CoreException, BadLocationException {
+			throws Exception {
 		checkUsage(element, mark, num, IIndex.FIND_DECLARATIONS);
 	}
 
 	private void checkDefinition(IBinding element, String mark, int countNum)
-			throws CoreException, BadLocationException {
+			throws Exception {
 		checkUsage(element, mark, countNum, IIndex.FIND_DEFINITIONS);
 	}
 
 	private void checkUsage(IBinding element, String mark, int countNum,
-			int flags) throws CoreException, BadLocationException {
+			int flags) throws Exception {
 		if (mark == null || countNum == 0) {
 			getFirstUsage(element, 0, flags);
 		} else {
@@ -145,45 +142,27 @@ public class DefDeclTests extends PDOMTestBase {
 	}
 
 	protected void assertAtMark(IASTFileLocation loc, String mark)
-			throws CoreException, BadLocationException {
+			throws Exception {
 		String fileName = new File(loc.getFileName()).getName();
 		int markLine = getMarkLine(mark, fileName);
 		int nodeLine = getLineNumber(loc.getNodeOffset(), fileName);
 		assertEquals(markLine, nodeLine);
 	}
 
-	private int getMarkLine(String mark, String fileName) throws CoreException,
+	private int getMarkLine(String mark, String fileName) throws Exception,
 			BadLocationException {
 		int markLine = getLineNumber(offset(fileName, mark), fileName);
 		return markLine;
 	}
 
 	protected int getLineNumber(int position, String projectRelativePath)
-			throws CoreException {
+			throws Exception {
 		Path fullPath = new Path(projectName + "/" + projectRelativePath);
-		ITextFileBufferManager fbm = FileBuffers.getTextFileBufferManager();
-		fbm.connect(fullPath, new NullProgressMonitor());
-		try {
-			ITextFileBuffer buf = FileBuffers.getTextFileBufferManager()
-					.getTextFileBuffer(fullPath);
-			Assert.assertTrue("Could not find " + fullPath.toString(), buf
-					.getModificationStamp() > 0);
-			String content = buf.getDocument().get();
-			int len = content.length();
-			int line = 1;
-			for (int i = 0; i < len && i < position; i++) {
-				char c = content.charAt(i);
-				if (c == '\n')
-					line++;
-			}
-			return line;
-		} finally {
-			fbm.disconnect(fullPath, new NullProgressMonitor());
-		}
+		return TestSourceReader.getLineNumber(position, fullPath);
 	}
 
 	public void assertDefDeclRef(String name, String testNum, int def,
-			int decl, int ref) throws CoreException, BadLocationException {
+			int decl, int ref) throws Exception {
 		String elName = name + testNum;
 		IBinding binding = findSingleBinding(elName);
 		checkDefinition(binding, "def" + testNum, def);

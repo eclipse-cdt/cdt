@@ -11,7 +11,7 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * Javier Montalvo Orús (Symbian) - Bug 149151: New Connection first page should use a Listbox for systemtype
  ********************************************************************************/
 
 package org.eclipse.rse.ui.wizards;
@@ -24,12 +24,13 @@ import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemResources;
 import org.eclipse.rse.ui.SystemWidgetHelpers;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.List;
 import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.Text;
 
 /**
  * The New Connection Wizard main page that allows selection of system type.
@@ -37,7 +38,8 @@ import org.eclipse.swt.widgets.Listener;
 public class RSENewConnectionWizardMainPage extends AbstractSystemWizardPage implements Listener {
 	
 	protected String parentHelpId;
-	protected Combo textSystemType;
+	protected List textSystemType;
+	protected Text descriptionSystemType;
 	protected IWizardPage nextPage;
 	protected IRSESystemType[] restrictedSystemTypes;
 
@@ -68,7 +70,7 @@ public class RSENewConnectionWizardMainPage extends AbstractSystemWizardPage imp
 		labelSystemType.setToolTipText(SystemResources.RESID_CONNECTION_SYSTEMTYPE_TIP);
 		
 		if (restrictedSystemTypes == null) {
-			textSystemType = SystemWidgetHelpers.createSystemTypeCombo(parent, null);
+			textSystemType = SystemWidgetHelpers.createSystemTypeListBox(parent, null);
 		}
 		else {
 			String[] systemTypeNames = new String[restrictedSystemTypes.length];
@@ -77,13 +79,17 @@ public class RSENewConnectionWizardMainPage extends AbstractSystemWizardPage imp
 				systemTypeNames[i] = restrictedSystemTypes[i].getName();
 			}
 			
-			textSystemType = SystemWidgetHelpers.createSystemTypeCombo(parent, null, systemTypeNames);
+			textSystemType = SystemWidgetHelpers.createSystemTypeListBox(parent, null, systemTypeNames);
 		}
 		
 		textSystemType.setToolTipText(SystemResources.RESID_CONNECTION_SYSTEMTYPE_TIP);
 		SystemWidgetHelpers.setHelp(textSystemType, RSEUIPlugin.HELPPREFIX + "ccon0003");
 		
 		textSystemType.addListener(SWT.Selection, this);
+		
+		descriptionSystemType = SystemWidgetHelpers.createMultiLineTextField(parent,null,30);
+		descriptionSystemType.setEditable(false);
+		
 		
 		return composite_prompts;
 	}
@@ -123,7 +129,7 @@ public class RSENewConnectionWizardMainPage extends AbstractSystemWizardPage imp
 		// get the new connection wizard delegate for the selected system type and
 		// ask for the main page
 		if (wizard instanceof IRSENewConnectionWizard) {
-			String systemTypeStr = textSystemType.getText();
+			String systemTypeStr = textSystemType.getSelection()[0];
 			IRSENewConnectionWizard newConnWizard = (IRSENewConnectionWizard)wizard;
 			newConnWizard.setSelectedSystemType(RSECorePlugin.getDefault().getRegistry().getSystemType(systemTypeStr));
 			return newConnWizard.getDelegate().getMainPage();
@@ -139,10 +145,13 @@ public class RSENewConnectionWizardMainPage extends AbstractSystemWizardPage imp
 	public void handleEvent(Event event) {
 		
 		if (event.type == SWT.Selection && event.widget == textSystemType) {
+			
+			descriptionSystemType.setText(RSEUIPlugin.getTheSystemRegistry().getSubSystemConfigurationsBySystemType(textSystemType.getSelection()[0])[0].getDescription());
+			
 			IWizard wizard = getWizard();
 		
 			if (wizard instanceof IRSENewConnectionWizard) {
-				String systemTypeStr = textSystemType.getText();
+				String systemTypeStr = textSystemType.getSelection()[0];
 				IRSENewConnectionWizard newConnWizard = (IRSENewConnectionWizard)wizard;
 				newConnWizard.setSelectedSystemType(RSECorePlugin.getDefault().getRegistry().getSystemType(systemTypeStr));
 			}

@@ -11,7 +11,7 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * Javier Montalvo Orús (Symbian) - Bug 149151: New Connection first page should use a Listbox for systemtype
  ********************************************************************************/
 
 package org.eclipse.rse.ui;
@@ -747,6 +747,46 @@ public class SystemWidgetHelpers {
 		return createPushButton(group, label, listener, tooltip);
 	}
 
+	/**
+	 * Creates a readonly system type listbox.
+	 * Does NOT create the leading prompt or anything except the listbox.
+	 * @param group composite to put the listbox into.
+	 * @param listener object to listen for events. Can be null.
+	 * @return empty listbox  
+	 */
+	public static List createSystemTypeListBox(Composite group, Listener listener) {
+		return createSystemTypeListBox(group, listener, null);
+	}
+	
+	/**
+	 * Creates a readonly system type listbox with the given system types.
+	 * Does NOT create the leading prompt or anything except the listbox.
+	 * @param group composite to put the listbox into.
+	 * @param listener object to listen for events. Can be null.
+	 * @param systemTypes array of system types to add to the listbox
+	 * @return listbox containing the given system types  
+	 
+	 */
+	public static List createSystemTypeListBox(Composite group, Listener listener, String[] systemTypes) {
+		List list = createListBox(group, listener, false, null, SystemResources.RESID_CONNECTION_SYSTEMTYPE_TIP);
+		String[] typeItems = ((systemTypes == null) ? RSECorePlugin.getDefault().getRegistry().getSystemTypeNames() : systemTypes);
+		
+		if (systemTypes == null) {
+			for (int i = 0; i < typeItems.length; i++) {
+				ISubSystemConfiguration[] configurations = RSEUIPlugin.getTheSystemRegistry().getSubSystemConfigurationsBySystemType(typeItems[i]);
+				
+				if (configurations != null && configurations.length > 0) {
+					list.add(typeItems[i]);
+				}
+			}
+		}
+		
+		list.select(0);
+		
+		return list;
+	}
+	
+	
 	/**
 	 * Creates a new listbox instance and sets the default
 	 * layout data.

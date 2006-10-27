@@ -15,7 +15,7 @@ import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IFunction;
 import org.eclipse.cdt.core.dom.ast.IVariable;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionType;
 
 /**
  * A utility class for packing various annotations into bit fields.  This
@@ -67,14 +67,17 @@ public class PDOMCAnnotation {
 	
 	/**
 	 * Encodes CV qualifiers from a method declarator as a bit vector.
-	 * @param declarator Method declarator.
+	 * @param type the function type
 	 * @return a bit vector of the CV qualifiers.
 	 */
-	public static byte encodeCVQualifiers(ICPPASTFunctionDeclarator declarator) {
+	/*
+	 * aftodo - will we put CV information in C pdom bindings or should we
+	 * move this to PDOMCPPAnnotation?
+	 */
+	public static byte encodeCVQualifiers(ICPPFunctionType type) {
 		byte modifiers = 0;
-		modifiers |= (declarator.isConst() ? 1 : 0) << CONST_OFFSET;
-		modifiers |= (declarator.isVolatile() ? 1 : 0) << VOLATILE_OFFSET;
+		modifiers |= (type.isConst() ? 1 : 0) << CONST_OFFSET;
+		modifiers |= (type.isVolatile() ? 1 : 0) << VOLATILE_OFFSET;
 		return modifiers;
 	}
-
 }

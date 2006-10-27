@@ -102,7 +102,7 @@ class PDOMCLinkage extends PDOMLinkage {
 		if (binding instanceof IParameter)
 			// skip parameters
 			return null;
-
+		
 		PDOMBinding pdomBinding = adaptBinding(binding);
 		try {
 			if (pdomBinding == null) {
@@ -114,42 +114,38 @@ class PDOMCLinkage extends PDOMLinkage {
 					return null; // skip parameters
 				else if (binding instanceof IField) { // must be before IVariable
 					if (parent instanceof IPDOMMemberOwner)
-						pdomBinding = new PDOMCField(pdom, (IPDOMMemberOwner)parent, name);
+						pdomBinding = new PDOMCField(pdom, (IPDOMMemberOwner)parent, (IField) binding);
 				} else if (binding instanceof IVariable) {
 					IVariable var= (IVariable) binding;
 					if (!var.isStatic()) {  // bug 161216
-						pdomBinding = new PDOMCVariable(pdom, parent, name);
+						pdomBinding = new PDOMCVariable(pdom, parent, var);
 					}
-				}
-				else if (binding instanceof IFunction) {
+				} else if (binding instanceof IFunction) {
 					IFunction func= (IFunction) binding;
 					if (!func.isStatic()) {  // bug 161216
-						pdomBinding = new PDOMCFunction(pdom, parent, name);
+						pdomBinding = new PDOMCFunction(pdom, parent, func);
 					}
-				}
-				else if (binding instanceof ICompositeType)
-					pdomBinding = new PDOMCStructure(pdom, parent, name);
+				} else if (binding instanceof ICompositeType)
+					pdomBinding = new PDOMCStructure(pdom, parent, (ICompositeType) binding);
 				else if (binding instanceof IEnumeration)
-					pdomBinding = new PDOMCEnumeration(pdom, parent, name);
+					pdomBinding = new PDOMCEnumeration(pdom, parent, (IEnumeration) binding);
 				else if (binding instanceof IEnumerator) {
 					try {
 						IEnumeration enumeration = (IEnumeration)((IEnumerator)binding).getType();
 						PDOMBinding pdomEnumeration = adaptBinding(enumeration);
 						if (pdomEnumeration instanceof PDOMCEnumeration)
-							pdomBinding = new PDOMCEnumerator(pdom, parent, name,
-									(PDOMCEnumeration)pdomEnumeration);
+							pdomBinding = new PDOMCEnumerator(pdom, parent, (IEnumerator) binding, (PDOMCEnumeration)pdomEnumeration);
 					} catch (DOMException e) {
 						throw new CoreException(Util.createStatus(e));
 					}
 				} else if (binding instanceof ITypedef)
-					pdomBinding = new PDOMCTypedef(pdom, parent, name, (ITypedef)binding);
+					pdomBinding = new PDOMCTypedef(pdom, parent, (ITypedef)binding);
 
 				if(pdomBinding!=null) {
 					parent.addChild(pdomBinding);
 				}
 			}
-		}
-		catch (DOMException e) {
+		} catch (DOMException e) {
 			throw new CoreException(Util.createStatus(e));
 		}
 

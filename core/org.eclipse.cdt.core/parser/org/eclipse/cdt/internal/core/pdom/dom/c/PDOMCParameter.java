@@ -15,7 +15,6 @@ package org.eclipse.cdt.internal.core.pdom.dom.c;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTInitializer;
-import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IParameter;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
@@ -44,9 +43,9 @@ class PDOMCParameter extends PDOMNamedNode implements IParameter {
 		super(pdom, record);
 	}
 
-	public PDOMCParameter(PDOM pdom, PDOMNode parent, IASTName name, IParameter param)
+	public PDOMCParameter(PDOM pdom, PDOMNode parent, IParameter param)
 			throws CoreException {
-		super(pdom, parent, name.toCharArray());
+		super(pdom, parent, param.getNameCharArray());
 		
 		Database db = pdom.getDB();
 

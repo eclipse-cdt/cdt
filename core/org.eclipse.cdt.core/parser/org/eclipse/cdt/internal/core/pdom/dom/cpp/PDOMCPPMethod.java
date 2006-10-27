@@ -15,20 +15,13 @@ package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.DOMException;
-import org.eclipse.cdt.core.dom.ast.IASTName;
-import org.eclipse.cdt.core.dom.ast.IASTNode;
-import org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration;
-import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IFunctionType;
 import org.eclipse.cdt.core.dom.ast.IParameter;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTParameterDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPParameter;
 import org.eclipse.cdt.internal.core.Util;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.db.Database;
@@ -78,29 +71,24 @@ class PDOMCPPMethod extends PDOMCPPBinding implements ICPPMethod, ICPPFunctionTy
 	 */
 	private static final int CV_OFFSET = 2;
 
-	public PDOMCPPMethod(PDOM pdom, PDOMNode parent, IASTName name) throws CoreException {
-		super(pdom, parent, name);
-		IASTNode parentNode = name.getParent();
-		byte annotation = 0;
+	public PDOMCPPMethod(PDOM pdom, PDOMNode parent, ICPPMethod method) throws CoreException {
+		super(pdom, parent, method.getNameCharArray());
+		
 		Database db = pdom.getDB();
-		if (parentNode instanceof ICPPASTFunctionDeclarator) {
-			ICPPASTFunctionDeclarator funcDecl = (ICPPASTFunctionDeclarator)parentNode;
-			IASTParameterDeclaration[] params = funcDecl.getParameters();
-			db.putInt(record + NUM_PARAMS, params.length);
-			for (int i = 0; i < params.length; ++i) {
-				ICPPASTParameterDeclaration param = (ICPPASTParameterDeclaration)params[i];
-				IASTName paramName = param.getDeclarator().getName();
-				IBinding binding = paramName.resolveBinding();
-				ICPPParameter paramBinding = (ICPPParameter)binding;
-				setFirstParameter(new PDOMCPPParameter(pdom, this, paramName, paramBinding));
-			}
-			annotation |= PDOMCAnnotation.encodeCVQualifiers(funcDecl) << CV_OFFSET;
-		}
+		
 		try {
-			IBinding binding = name.resolveBinding();
-			annotation |= PDOMCPPAnnotation.encodeExtraAnnotation(binding);
-			db.putByte(record + ANNOTATION0, PDOMCPPAnnotation.encodeAnnotation(binding));
-			db.putByte(record + ANNOTATION1, annotation);
+			IParameter[] params = method.getParameters();
+			db.putInt(record + NUM_PARAMS, params.length);
+			
+			for (int i=0; i<params.length; ++i) {
+				setFirstParameter(new PDOMCPPParameter(pdom, this, params[i]));
+			}
+			ICPPFunctionType type = (ICPPFunctionType) method.getType();
+			byte annotation = 0;
+			annotation |= PDOMCAnnotation.encodeCVQualifiers(type) << CV_OFFSET;
+			annotation |= PDOMCPPAnnotation.encodeExtraAnnotation(method);
+			db.putByte(record + ANNOTATION0, PDOMCPPAnnotation.encodeAnnotation(method));
+			db.putByte(record + ANNOTATION1, annotation);			
 		} catch (DOMException e) {
 			throw new CoreException(Util.createStatus(e));
 		}

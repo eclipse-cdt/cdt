@@ -49,8 +49,8 @@ class PDOMCPPNamespace extends PDOMCPPBinding
 	
 	protected static final int RECORD_SIZE = PDOMBinding.RECORD_SIZE + 4;
 
-	public PDOMCPPNamespace(PDOM pdom, PDOMNode parent, IASTName name) throws CoreException {
-		super(pdom, parent, name);
+	public PDOMCPPNamespace(PDOM pdom, PDOMNode parent, ICPPNamespace namespace) throws CoreException {
+		super(pdom, parent, namespace.getNameCharArray());
 	}
 
 	public PDOMCPPNamespace(PDOM pdom, int record) throws CoreException {

@@ -177,8 +177,10 @@ public abstract class PDOMLinkage extends PDOMNamedNode implements IBindingIdent
 	/**
 	 * 
 	 * @param binding
-	 * @return null for filescope for non-pdom bindings, this for filescope for pdom bindings
-	 * or the parent binding in any other case
+	 * @return <ul><li> null - skip this binding (don't add to pdom)
+	 * <li>this - for filescope
+	 * <li>a PDOMBinding instance - parent adapted binding
+	 * </ul>
 	 * @throws CoreException
 	 */
 	public PDOMNode getAdaptedParent(IBinding binding) throws CoreException {

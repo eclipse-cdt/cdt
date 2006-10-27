@@ -16,7 +16,6 @@ import java.util.List;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.DOMException;
-import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBinding;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
@@ -31,7 +30,7 @@ abstract public class PDOMCPPBinding extends PDOMBinding implements ICPPBinding 
 	public PDOMCPPBinding(PDOM pdom, int record) {
 		super(pdom, record);
 	}
-	public PDOMCPPBinding(PDOM pdom, PDOMNode parent, IASTName name) throws CoreException {
+	public PDOMCPPBinding(PDOM pdom, PDOMNode parent, char[] name) throws CoreException {
 		super(pdom, parent, name);
 	}
 		

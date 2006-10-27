@@ -15,13 +15,9 @@ package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.DOMException;
-import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
-import org.eclipse.cdt.core.dom.ast.IASTName;
-import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPVariable;
 import org.eclipse.cdt.internal.core.Util;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPVisitor;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.db.Database;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
@@ -52,21 +48,17 @@ class PDOMCPPVariable extends PDOMCPPBinding implements ICPPVariable {
 	 */
 	protected static final int RECORD_SIZE = PDOMBinding.RECORD_SIZE + 5;
 	
-	public PDOMCPPVariable(PDOM pdom, PDOMNode parent, IASTName name) throws CoreException {
-		super(pdom, parent, name);
+	public PDOMCPPVariable(PDOM pdom, PDOMNode parent, ICPPVariable variable) throws CoreException {
+		super(pdom, parent, variable.getNameCharArray());
 		
-		// Find the type record
-		IASTNode nameParent = name.getParent();
-		Database db = pdom.getDB();
-		if (nameParent instanceof IASTDeclarator) {
-			IASTDeclarator declarator = (IASTDeclarator)nameParent;
-			IType type = CPPVisitor.createType(declarator);
-			PDOMNode typeNode = parent.getLinkageImpl().addType(this, type);
+		try {
+			// Find the type record
+			Database db = pdom.getDB();
+			PDOMNode typeNode = parent.getLinkageImpl().addType(this, variable.getType());
 			if (typeNode != null)
 				db.putInt(record + TYPE_OFFSET, typeNode.getRecord());
-		}
-		try {
-			db.putByte(record + ANNOTATIONS, PDOMCPPAnnotation.encodeAnnotation(name.resolveBinding()));
+
+			db.putByte(record + ANNOTATIONS, PDOMCPPAnnotation.encodeAnnotation(variable));
 		} catch (DOMException e) {
 			throw new CoreException(Util.createStatus(e));
 		}

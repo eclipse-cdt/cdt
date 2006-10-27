@@ -12,7 +12,6 @@
 package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 
 import org.eclipse.cdt.core.dom.ast.DOMException;
-import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespaceAlias;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespaceScope;
@@ -28,9 +27,9 @@ import org.eclipse.core.runtime.CoreException;
 class PDOMCPPNamespaceAlias extends PDOMCPPBinding implements
 		ICPPNamespaceAlias {
 
-	public PDOMCPPNamespaceAlias(PDOM pdom, PDOMNode parent,
-			IASTName name) throws CoreException {
-		super(pdom, parent, name);
+	public PDOMCPPNamespaceAlias(PDOM pdom, PDOMNode parent, ICPPNamespaceAlias alias)
+	throws CoreException {
+		super(pdom, parent, alias.getNameCharArray());
 	}
 
 	public PDOMCPPNamespaceAlias(PDOM pdom, int record) {

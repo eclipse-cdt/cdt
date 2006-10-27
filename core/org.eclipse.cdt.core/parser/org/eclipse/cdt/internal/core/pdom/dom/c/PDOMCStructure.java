@@ -20,7 +20,6 @@ import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.IPDOMNode;
 import org.eclipse.cdt.core.dom.IPDOMVisitor;
 import org.eclipse.cdt.core.dom.ast.DOMException;
-import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.ICompositeType;
 import org.eclipse.cdt.core.dom.ast.IField;
 import org.eclipse.cdt.core.dom.ast.IScope;
@@ -42,8 +41,8 @@ public class PDOMCStructure extends PDOMBinding implements ICompositeType, IPDOM
 	private static final int MEMBERLIST = PDOMBinding.RECORD_SIZE;
 	protected static final int RECORD_SIZE = PDOMBinding.RECORD_SIZE + 4;
 	
-	public PDOMCStructure(PDOM pdom, PDOMNode parent, IASTName name) throws CoreException {
-		super(pdom, parent, name);
+	public PDOMCStructure(PDOM pdom, PDOMNode parent, ICompositeType compType) throws CoreException {
+		super(pdom, parent, compType.getNameCharArray());
 		// linked list is initialized by malloc zeroing allocated storage
 	}
 

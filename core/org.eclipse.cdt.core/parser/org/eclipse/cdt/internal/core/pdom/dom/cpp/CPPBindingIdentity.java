@@ -102,7 +102,7 @@ public class CPPBindingIdentity extends AbstractCLocalBindingIdentity {
 		}
 		
 		public String toString() {
-			return name+" "+type+" "+mangledExtendedType;
+			return name+" "+type+" "+mangledExtendedType; //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		
 		public char[] getNameCharArray() throws CoreException {

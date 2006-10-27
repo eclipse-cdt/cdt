@@ -14,7 +14,6 @@ package org.eclipse.cdt.internal.core.pdom.dom;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.DOMException;
-import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.internal.core.index.IIndexFragment;
@@ -34,10 +33,6 @@ public abstract class PDOMBinding extends PDOMNamedNode implements IIndexFragmen
 	private static final int FIRST_REF_OFFSET    = PDOMNamedNode.RECORD_SIZE + 8; // size 4
 	
 	protected static final int RECORD_SIZE = PDOMNamedNode.RECORD_SIZE + 12;
-	
-	protected PDOMBinding(PDOM pdom, PDOMNode parent, IASTName name) throws CoreException {
-		super(pdom, parent, name.toCharArray());
-	}
 	
 	protected PDOMBinding(PDOM pdom, PDOMNode parent, char[] name) throws CoreException {
 		super(pdom, parent, name);

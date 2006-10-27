@@ -119,7 +119,7 @@ class PDOMCPPLinkage extends PDOMLinkage {
 			return null;
 
 		IBinding binding = name.resolveBinding();
-
+		
 		if (binding == null || binding instanceof IProblemBinding)
 			// Can't tell what it is
 			return null;
@@ -132,50 +132,51 @@ class PDOMCPPLinkage extends PDOMLinkage {
 		try {
 			if (pdomBinding == null) {
 				PDOMNode parent = getAdaptedParent(binding);
-				if (parent != null) {
-					if (binding instanceof ICPPField && parent instanceof PDOMCPPClassType)
-						pdomBinding = new PDOMCPPField(pdom, (PDOMCPPClassType)parent, name);
-					else if (binding instanceof ICPPVariable) {
-						if (!(binding.getScope() instanceof CPPBlockScope)) {
-							ICPPVariable var= (ICPPVariable) binding;
-							if (!var.isStatic()) {  // bug 161216
-								pdomBinding = new PDOMCPPVariable(pdom, parent, name);
-							}
+				if (parent == null)
+					return null;
+				
+				if (binding instanceof ICPPField && parent instanceof PDOMCPPClassType)
+					pdomBinding = new PDOMCPPField(pdom, (PDOMCPPClassType)parent, (ICPPField) binding);
+				else if (binding instanceof ICPPVariable && !(binding.getScope() instanceof CPPBlockScope)) {
+					if (!(binding.getScope() instanceof CPPBlockScope)) {
+						ICPPVariable var= (ICPPVariable) binding;
+						if (!var.isStatic()) {  // bug 161216
+							pdomBinding = new PDOMCPPVariable(pdom, parent, var);
 						}
-					} else if (binding instanceof ICPPMethod && parent instanceof PDOMCPPClassType) {
-						pdomBinding = new PDOMCPPMethod(pdom, parent, name);
-					} else if (binding instanceof CPPImplicitMethod && parent instanceof PDOMCPPClassType) {
-						if(!name.isReference()) {
-							//because we got the implicit method off of an IASTName that is not a reference,
-							//it is no longer completly implicit and it should be treated as a normal method.						
-							pdomBinding = new PDOMCPPMethod(pdom, parent, name);
-						}
-					} else if (binding instanceof ICPPFunction) {
-						ICPPFunction func= (ICPPFunction) binding;
-						if (!func.isStatic()) {  // bug 161216
-							pdomBinding = new PDOMCPPFunction(pdom, parent, name);
-						}
-					} else if (binding instanceof ICPPClassType) {
-						pdomBinding = new PDOMCPPClassType(pdom, parent, name);
-					} else if (binding instanceof ICPPNamespaceAlias) {
-						pdomBinding = new PDOMCPPNamespaceAlias(pdom, parent, name);
-					} else if (binding instanceof ICPPNamespace) {
-						pdomBinding = new PDOMCPPNamespace(pdom, parent, name);
-					} else if (binding instanceof IEnumeration) {
-						pdomBinding = new PDOMCPPEnumeration(pdom, parent, name);
-					} else if (binding instanceof IEnumerator) {
-						IEnumeration enumeration = (IEnumeration)((IEnumerator)binding).getType();
-						PDOMBinding pdomEnumeration = adaptBinding(enumeration);
-						if (pdomEnumeration instanceof PDOMCPPEnumeration)
-							pdomBinding = new PDOMCPPEnumerator(pdom, parent, name,
-									(PDOMCPPEnumeration)pdomEnumeration);
-					} else if (binding instanceof ITypedef) {
-						pdomBinding = new PDOMCPPTypedef(pdom, parent, name, (ITypedef)binding);
 					}
-					
-					if(pdomBinding!=null) {
-						parent.addChild(pdomBinding);
+				} else if (parent instanceof PDOMCPPClassType && binding instanceof ICPPMethod) {
+					pdomBinding = new PDOMCPPMethod(pdom, parent, (ICPPMethod)binding);
+				} else if (binding instanceof CPPImplicitMethod && parent instanceof PDOMCPPClassType) {
+					if(!name.isReference()) {
+						//because we got the implicit method off of an IASTName that is not a reference,
+						//it is no longer completly implicit and it should be treated as a normal method.						
+						pdomBinding = new PDOMCPPMethod(pdom, parent, (ICPPMethod)binding);
 					}
+				} else if (binding instanceof ICPPFunction) {
+					ICPPFunction func= (ICPPFunction) binding;
+					if (!func.isStatic()) {  // bug 161216
+						pdomBinding = new PDOMCPPFunction(pdom, parent, func);
+					}
+				} else if (binding instanceof ICPPClassType) {
+					pdomBinding = new PDOMCPPClassType(pdom, parent, (ICPPClassType) binding);
+				} else if (binding instanceof ICPPNamespaceAlias) {
+					pdomBinding = new PDOMCPPNamespaceAlias(pdom, parent, (ICPPNamespaceAlias) binding);
+				} else if (binding instanceof ICPPNamespace) {
+					pdomBinding = new PDOMCPPNamespace(pdom, parent, (ICPPNamespace) binding);
+				} else if (binding instanceof IEnumeration) {
+					pdomBinding = new PDOMCPPEnumeration(pdom, parent, (IEnumeration) binding);
+				} else if (binding instanceof IEnumerator) {
+					IEnumeration enumeration = (IEnumeration)((IEnumerator)binding).getType();
+					PDOMBinding pdomEnumeration = adaptBinding(enumeration);
+					if (pdomEnumeration instanceof PDOMCPPEnumeration)
+						pdomBinding = new PDOMCPPEnumerator(pdom, parent, (IEnumerator) binding,
+								(PDOMCPPEnumeration)pdomEnumeration);
+				} else if (binding instanceof ITypedef) {
+					pdomBinding = new PDOMCPPTypedef(pdom, parent, name, (ITypedef)binding);
+				}
+
+				if(pdomBinding!=null) {
+					parent.addChild(pdomBinding);
 				}
 			}
 		} catch(DOMException e) {

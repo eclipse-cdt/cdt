@@ -52,7 +52,7 @@ public class OverloadsWithinCommonHeaderTests extends PDOMTestBase {
 	
 	public void testDummy() {}
 	
-	public void _testOverloadedInCommonHeader_ClassScope() throws CoreException {
+	public void testOverloadedInCommonHeader_ClassScope() throws CoreException {
 		Pattern[] ManyOverloadedQuxPath = makePatternArray(new String[] {"ManyOverloaded","qux"});
 		IBinding[] ManyOverloadedQux = pdom.findBindings(ManyOverloadedQuxPath, new NullProgressMonitor());
 		assertEquals(5,ManyOverloadedQux.length);
@@ -73,7 +73,7 @@ public class OverloadsWithinCommonHeaderTests extends PDOMTestBase {
 		assertFunctionRefCount(new Class[]{ICPPClassType.class}, ManyOverloadedQux, 10);
 	}
 	
-	public void _testOverloadedInCommonHeader_FileScope() throws CoreException {
+	public void testOverloadedInCommonHeader_FileScope() throws CoreException {
 		Pattern[] QuuxPath = makePatternArray(new String[] {"quux"});		
 		IBinding[] Quux = pdom.findBindings(QuuxPath, false, IndexFilter.getFilter(Linkage.CPP_LINKAGE), new NullProgressMonitor());
 		
@@ -95,7 +95,7 @@ public class OverloadsWithinCommonHeaderTests extends PDOMTestBase {
 		assertFunctionRefCount(new Class[] {ICPPClassType.class}, Quux, 12);
 	}
 	
-	public void _testOverloadedInCommonHeader_NamespaceScope() throws CoreException {
+	public void testOverloadedInCommonHeader_NamespaceScope() throws CoreException {
 		Pattern[] GraultPath = makePatternArray(new String[] {"corge","grault"});
 		IBinding[] Grault = pdom.findBindings(GraultPath, true, IndexFilter.getFilter(Linkage.CPP_LINKAGE), new NullProgressMonitor());
 		assertEquals(5,Grault.length);

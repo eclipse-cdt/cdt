@@ -15,17 +15,11 @@ package org.eclipse.cdt.internal.core.pdom.dom.c;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.DOMException;
-import org.eclipse.cdt.core.dom.ast.IASTName;
-import org.eclipse.cdt.core.dom.ast.IASTNode;
-import org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration;
-import org.eclipse.cdt.core.dom.ast.IASTStandardFunctionDeclarator;
-import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IFunction;
 import org.eclipse.cdt.core.dom.ast.IFunctionType;
 import org.eclipse.cdt.core.dom.ast.IParameter;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
-import org.eclipse.cdt.core.dom.ast.gnu.c.ICASTKnRFunctionDeclarator;
 import org.eclipse.cdt.internal.core.Util;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
@@ -60,25 +54,16 @@ class PDOMCFunction extends PDOMBinding implements IFunction {
 	 */
 	public static final int RECORD_SIZE = PDOMBinding.RECORD_SIZE + 9;
 	
-	public PDOMCFunction(PDOM pdom, PDOMNode parent, IASTName name) throws CoreException {
-		super(pdom, parent, name);
+	public PDOMCFunction(PDOM pdom, PDOMNode parent, IFunction function) throws CoreException {
+		super(pdom, parent, function.getNameCharArray());
+		
 		try {
-			IASTNode parentNode = name.getParent();
-			if (parentNode instanceof IASTStandardFunctionDeclarator) {
-				IASTStandardFunctionDeclarator funcDecl = (IASTStandardFunctionDeclarator)parentNode;
-				IASTParameterDeclaration[] params = funcDecl.getParameters();
-				pdom.getDB().putInt(record + NUM_PARAMS, params.length);
-				for (int i = 0; i < params.length; ++i) {
-					IASTParameterDeclaration param = params[i];
-					IASTName paramName = param.getDeclarator().getName();
-					IBinding binding = paramName.resolveBinding();
-					IParameter paramBinding = (IParameter)binding;
-					setFirstParameter(new PDOMCParameter(pdom, this, paramName, paramBinding));
-				}
-			} else if(parentNode instanceof ICASTKnRFunctionDeclarator) {
-				fail(); // aftodo
+			IParameter[] params = function.getParameters();
+			pdom.getDB().putInt(record + NUM_PARAMS, params.length);
+			for (int i = 0; i < params.length; ++i) {
+				setFirstParameter(new PDOMCParameter(pdom, this, params[i]));
 			}
-			pdom.getDB().putByte(record + ANNOTATIONS, PDOMCAnnotation.encodeAnnotation(name.resolveBinding()));
+			pdom.getDB().putByte(record + ANNOTATIONS, PDOMCAnnotation.encodeAnnotation(function));
 		} catch(DOMException e) {
 			throw new CoreException(Util.createStatus(e));
 		}

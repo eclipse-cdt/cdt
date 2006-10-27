@@ -16,10 +16,9 @@ package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTInitializer;
-import org.eclipse.cdt.core.dom.ast.IASTName;
+import org.eclipse.cdt.core.dom.ast.IParameter;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPParameter;
 import org.eclipse.cdt.internal.core.Util;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.db.Database;
@@ -33,7 +32,7 @@ import org.eclipse.core.runtime.CoreException;
  * 
  * @author Doug Schaefer
  */
-class PDOMCPPParameter extends PDOMNamedNode implements ICPPParameter {
+class PDOMCPPParameter extends PDOMNamedNode implements IParameter {
 
 	/**
 	 * Offset of pointer to the next parameter (relative to the
@@ -56,9 +55,9 @@ class PDOMCPPParameter extends PDOMNamedNode implements ICPPParameter {
 		super(pdom, record);
 	}
 
-	public PDOMCPPParameter(PDOM pdom, PDOMNode parent, IASTName name, ICPPParameter param)
+	public PDOMCPPParameter(PDOM pdom, PDOMNode parent, IParameter param)
 			throws CoreException {
-		super(pdom, parent, name.toCharArray());
+		super(pdom, parent, param.getNameCharArray());
 		
 		Database db = pdom.getDB();
 

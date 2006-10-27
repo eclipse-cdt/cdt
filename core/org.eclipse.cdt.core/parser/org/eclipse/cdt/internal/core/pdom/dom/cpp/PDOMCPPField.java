@@ -14,8 +14,6 @@ package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.DOMException;
-import org.eclipse.cdt.core.dom.ast.IASTName;
-import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
@@ -44,13 +42,12 @@ class PDOMCPPField extends PDOMCPPBinding implements ICPPField {
 	 */
 	protected static final int RECORD_SIZE = PDOMBinding.RECORD_SIZE + 1;
 	
-	public PDOMCPPField(PDOM pdom, PDOMCPPClassType parent, IASTName name)
+	public PDOMCPPField(PDOM pdom, PDOMCPPClassType parent, ICPPField field)
 			throws CoreException {
-		super(pdom, parent, name);
-		IBinding binding = name.resolveBinding();
+		super(pdom, parent, field.getNameCharArray());
 		try {
 			Database db = pdom.getDB();
-			db.putByte(record + ANNOTATION, PDOMCPPAnnotation.encodeAnnotation(binding));
+			db.putByte(record + ANNOTATION, PDOMCPPAnnotation.encodeAnnotation(field));
 		} catch (DOMException e) {
 			throw new CoreException(Util.createStatus(e));
 		}

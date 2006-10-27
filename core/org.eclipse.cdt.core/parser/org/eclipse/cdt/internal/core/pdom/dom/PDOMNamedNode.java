@@ -16,7 +16,6 @@ package org.eclipse.cdt.internal.core.pdom.dom;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.db.Database;
-import org.eclipse.cdt.internal.core.pdom.db.IBTreeComparator;
 import org.eclipse.cdt.internal.core.pdom.db.IString;
 import org.eclipse.core.runtime.CoreException;
 
@@ -47,9 +46,7 @@ public abstract class PDOMNamedNode extends PDOMNode {
 				name != null ? db.newString(name).getRecord() : 0);
 	}
 
-	protected int getRecordSize() {
-		return RECORD_SIZE;
-	}
+	abstract protected int getRecordSize();
 
 	public IString getDBName() throws CoreException {
 		Database db = pdom.getDB();
@@ -65,17 +62,6 @@ public abstract class PDOMNamedNode extends PDOMNode {
 		return getDBName().equals(name);
 	}
 
-	public IBTreeComparator getIndexComparator() {
-		return new IBTreeComparator() {
-			public int compare(int record1, int record2) throws CoreException {
-				Database db = pdom.getDB();
-				int string1 = db.getInt(record1 + NAME);
-				int string2 = db.getInt(record2 + NAME);
-				return db.getString(string1).compare(db.getString(string2));
-			}
-		};
-	}
-	
 	/**
 	 * Convenience method for fetching a byte from the database.
 	 * @param offset Location of the byte.

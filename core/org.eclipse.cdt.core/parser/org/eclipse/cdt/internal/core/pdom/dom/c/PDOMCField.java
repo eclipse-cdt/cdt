@@ -13,7 +13,6 @@
 package org.eclipse.cdt.internal.core.pdom.dom.c;
 
 import org.eclipse.cdt.core.dom.ast.DOMException;
-import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IField;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
@@ -28,8 +27,8 @@ import org.eclipse.core.runtime.CoreException;
  */
 class PDOMCField extends PDOMBinding implements IField {
 
-	public PDOMCField(PDOM pdom, IPDOMMemberOwner parent, IASTName name) throws CoreException {
-		super(pdom, (PDOMNode) parent, name);
+	public PDOMCField(PDOM pdom, IPDOMMemberOwner parent, IField field) throws CoreException {
+		super(pdom, (PDOMNode) parent, field.getNameCharArray());
 	}
 
 	public PDOMCField(PDOM pdom, int record) {

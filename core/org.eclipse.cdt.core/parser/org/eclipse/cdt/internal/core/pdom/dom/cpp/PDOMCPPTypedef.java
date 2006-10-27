@@ -34,7 +34,7 @@ class PDOMCPPTypedef extends PDOMBinding implements ITypedef {
 	
 	public PDOMCPPTypedef(PDOM pdom, PDOMNode parent, IASTName name, ITypedef typedef)
 			throws CoreException {
-		super(pdom, parent, name);
+		super(pdom, parent, name.toCharArray());
 		try {
 			IType type = typedef.getType();
 			PDOMNode typeNode = parent.getLinkageImpl().addType(this, type);

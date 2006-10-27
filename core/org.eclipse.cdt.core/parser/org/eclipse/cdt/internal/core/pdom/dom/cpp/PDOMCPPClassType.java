@@ -23,7 +23,6 @@ import org.eclipse.cdt.core.dom.IPDOMNode;
 import org.eclipse.cdt.core.dom.IPDOMVisitor;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTName;
-import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IField;
 import org.eclipse.cdt.core.dom.ast.IScope;
@@ -61,16 +60,12 @@ class PDOMCPPClassType extends PDOMCPPBinding implements ICPPClassType,
 	
 	protected static final int RECORD_SIZE = PDOMCPPBinding.RECORD_SIZE + 12;
 
-	public PDOMCPPClassType(PDOM pdom, PDOMNode parent, IASTName name)
+	public PDOMCPPClassType(PDOM pdom, PDOMNode parent, ICPPClassType classType)
 			throws CoreException {
-		super(pdom, parent, name);
+		super(pdom, parent, classType.getName().toCharArray());
 
-		IBinding binding = name.resolveBinding();
 		try {
-			int key = 0;
-			if (binding instanceof ICPPClassType) // not sure why it wouldn't
-				key = ((ICPPClassType) binding).getKey();
-			pdom.getDB().putByte(record + KEY, (byte) key);
+			pdom.getDB().putByte(record + KEY, (byte) classType.getKey());
 		} catch (DOMException e) {
 			throw new CoreException(Util.createStatus(e));
 		}

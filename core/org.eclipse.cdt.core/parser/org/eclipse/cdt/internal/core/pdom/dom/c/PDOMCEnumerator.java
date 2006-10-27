@@ -13,7 +13,6 @@ package org.eclipse.cdt.internal.core.pdom.dom.c;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.DOMException;
-import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IEnumerator;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
@@ -32,9 +31,9 @@ class PDOMCEnumerator extends PDOMBinding implements IEnumerator {
 	
 	protected static final int RECORD_SIZE = PDOMBinding.RECORD_SIZE + 8;
 	
-	public PDOMCEnumerator(PDOM pdom, PDOMNode parent, IASTName name, PDOMCEnumeration enumeration)
+	public PDOMCEnumerator(PDOM pdom, PDOMNode parent, IEnumerator enumerator, PDOMCEnumeration enumeration)
 			throws CoreException {
-		super(pdom, parent, name);
+		super(pdom, parent, enumerator.getNameCharArray());
 		pdom.getDB().putInt(record + ENUMERATION, enumeration.getRecord());
 		enumeration.addEnumerator(this);
 	}

@@ -14,19 +14,13 @@ package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.DOMException;
-import org.eclipse.cdt.core.dom.ast.IASTName;
-import org.eclipse.cdt.core.dom.ast.IASTNode;
-import org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IFunctionType;
 import org.eclipse.cdt.core.dom.ast.IParameter;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTParameterDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionType;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPParameter;
 import org.eclipse.cdt.internal.core.Util;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.db.Database;
@@ -65,26 +59,18 @@ class PDOMCPPFunction extends PDOMCPPBinding implements ICPPFunction, ICPPFuncti
 	 */
 	protected static final int RECORD_SIZE = PDOMBinding.RECORD_SIZE + 9;
 	
-	public PDOMCPPFunction(PDOM pdom, PDOMNode parent, IASTName name) throws CoreException {
-		super(pdom, parent, name);
-		IASTNode parentNode = name.getParent();
+	public PDOMCPPFunction(PDOM pdom, PDOMNode parent, ICPPFunction function) throws CoreException {
+		super(pdom, parent, function.getNameCharArray());
+		
 		Database db = pdom.getDB();
-		if (parentNode instanceof ICPPASTFunctionDeclarator) {
-			ICPPASTFunctionDeclarator funcDecl = (ICPPASTFunctionDeclarator)parentNode;
-			IASTParameterDeclaration[] params = funcDecl.getParameters();
-			db.putInt(record + NUM_PARAMS, params.length);
-			for (int i = 0; i < params.length; ++i) {
-				ICPPASTParameterDeclaration param = (ICPPASTParameterDeclaration)params[i];
-				IASTName paramName = param.getDeclarator().getName();
-				IBinding binding = paramName.resolveBinding();
-				if (!(binding instanceof ICPPParameter))
-					continue;
-				ICPPParameter paramBinding = (ICPPParameter)binding;
-				setFirstParameter(new PDOMCPPParameter(pdom, this, paramName, paramBinding));
-			}
-		}
-		IBinding binding = name.resolveBinding();
+		IBinding binding = function;
 		try {
+			IParameter[] params = function.getParameters();
+			db.putInt(record + NUM_PARAMS, params.length);
+			
+			for (int i=0; i<params.length; ++i) {
+				setFirstParameter(new PDOMCPPParameter(pdom, this, params[i]));
+			}
 			db.putByte(record + ANNOTATION, PDOMCPPAnnotation.encodeAnnotation(binding));
 		} catch (DOMException e) {
 			throw new CoreException(Util.createStatus(e));

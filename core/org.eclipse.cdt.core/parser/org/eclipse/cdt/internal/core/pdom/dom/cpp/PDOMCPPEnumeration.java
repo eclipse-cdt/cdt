@@ -14,7 +14,6 @@ import java.util.ArrayList;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.DOMException;
-import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IEnumeration;
 import org.eclipse.cdt.core.dom.ast.IEnumerator;
 import org.eclipse.cdt.core.dom.ast.IType;
@@ -34,9 +33,9 @@ class PDOMCPPEnumeration extends PDOMCPPBinding implements IEnumeration, ICPPBin
 	
 	protected static final int RECORD_SIZE = PDOMBinding.RECORD_SIZE + 4;
 	
-	public PDOMCPPEnumeration(PDOM pdom, PDOMNode parent, IASTName name)
+	public PDOMCPPEnumeration(PDOM pdom, PDOMNode parent, IEnumeration enumeration)
 			throws CoreException {
-		super(pdom, parent, name);
+		super(pdom, parent, enumeration.getNameCharArray());
 	}
 
 	public PDOMCPPEnumeration(PDOM pdom, int record) {

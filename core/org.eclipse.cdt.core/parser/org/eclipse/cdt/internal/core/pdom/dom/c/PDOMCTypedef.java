@@ -14,7 +14,6 @@ package org.eclipse.cdt.internal.core.pdom.dom.c;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.DOMException;
-import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.internal.core.Util;
@@ -33,9 +32,9 @@ class PDOMCTypedef extends PDOMBinding implements ITypedef {
 	
 	protected static final int RECORD_SIZE = PDOMBinding.RECORD_SIZE + 4;
 	
-	public PDOMCTypedef(PDOM pdom, PDOMNode parent, IASTName name, ITypedef typedef)
+	public PDOMCTypedef(PDOM pdom, PDOMNode parent, ITypedef typedef)
 			throws CoreException {
-		super(pdom, parent, name);
+		super(pdom, parent, typedef.getNameCharArray());
 		
 		try {
 			IType type = typedef.getType();

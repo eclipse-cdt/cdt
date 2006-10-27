@@ -107,9 +107,6 @@
         <td>Linux (<a href="http://www.eclipse.org/dsdp/tm/development/plan.php#OperatingEnvironments">Supported Versions</a>)</td>
         <td><a href="http://www.eclipse.org/downloads/download.php?file=/dsdp/tm/downloads/drops/@dropDir@/rseserver-@buildId@-linux.tar">rseserver-@buildId@-linux.tar</a></td></tr>
 	<tr><td><div align=left><img src = "OK.gif" width=19 height=23></div></td>
-        <td>AIX (<a href="http://www.eclipse.org/dsdp/tm/development/plan.php#OperatingEnvironments">Supported Versions</a>)</td>
-        <td><a href="http://www.eclipse.org/downloads/download.php?file=/dsdp/tm/downloads/drops/@dropDir@/rseserver-@buildId@-aix.tar">rseserver-@buildId@-aix.tar</a></td></tr>
-	<tr><td><div align=left><img src = "OK.gif" width=19 height=23></div></td>
         <td>Other Unix (<a href="http://www.eclipse.org/dsdp/tm/development/plan.php#OperatingEnvironments">Supported Versions</a>)</td>
         <td><a href="http://www.eclipse.org/downloads/download.php?file=/dsdp/tm/downloads/drops/@dropDir@/rseserver-@buildId@-unix.tar">rseserver-@buildId@-unix.tar</a></td></tr>
 	<tr><td><div align=left><img src = "OK.gif" width=19 height=23></div></td>

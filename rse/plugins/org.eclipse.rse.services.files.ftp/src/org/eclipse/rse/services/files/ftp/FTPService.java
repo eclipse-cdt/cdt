@@ -22,6 +22,7 @@
  * Javier Montalvo Orus (Symbian) - Fixing 161238 - [ftp] expand "My Home" node on 
  *    ftp.ibiblio.org as anonymous fails
  * Javier Montalvo Orus (Symbian) - Fixing 160922 - create folder/file fails for FTP service
+ * David Dykstal (IBM) - Fixing 162511 - FTP file service does not process filter strings correctly
  ********************************************************************************/
 
 package org.eclipse.rse.services.files.ftp;
@@ -39,6 +40,8 @@ import org.apache.commons.net.ftp.FTP;
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPFile;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.rse.services.clientserver.FileTypeMatcher;
+import org.eclipse.rse.services.clientserver.IMatcher;
 import org.eclipse.rse.services.clientserver.NamePatternMatcher;
 import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
 import org.eclipse.rse.services.files.AbstractFileService;
@@ -176,8 +179,13 @@ public class FTPService extends AbstractFileService implements IFileService, IFT
 		{
 			fileFilter = "*";
 		}
-		
-		NamePatternMatcher filematcher = new NamePatternMatcher(fileFilter, true, true);
+		IMatcher filematcher = null;
+		if (fileFilter.endsWith(",")) {
+			String[] types = fileFilter.split(",");
+			filematcher = new FileTypeMatcher(types, true);
+		} else {
+			filematcher = new NamePatternMatcher(fileFilter, true, true);
+		}
 		List results = new ArrayList();
 		
 		try
@@ -206,7 +214,8 @@ public class FTPService extends AbstractFileService implements IFileService, IFT
 			
 			for(int i=0; i<ftpFiles.length; i++)
 			{
-				if(filematcher.matches(ftpFiles[i].getName()))
+				FTPFile f = ftpFiles[i];
+				if(filematcher.matches(f.getName()) || f.isDirectory())
 				{
 					results.add(new FTPHostFile(parentPath,ftpFiles[i],systemName));
 				}

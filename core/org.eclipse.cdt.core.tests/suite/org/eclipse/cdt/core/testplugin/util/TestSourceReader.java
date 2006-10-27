@@ -19,6 +19,9 @@ import java.io.LineNumberReader;
 
 import junit.framework.Assert;
 
+import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.index.IIndex;
+import org.eclipse.cdt.core.index.IIndexFile;
 import org.eclipse.core.filebuffers.FileBuffers;
 import org.eclipse.core.filebuffers.ITextFileBuffer;
 import org.eclipse.core.filebuffers.ITextFileBufferManager;
@@ -143,4 +146,35 @@ public class TestSourceReader {
 	public static IFile createFile(IContainer container, String filePath, String contents) throws CoreException {
 		return createFile(container, new Path(filePath), contents);
 	}
+	
+	/**
+	 * Waits until the given file is indexed. Fails if this does not happen within the
+	 * given time. 
+	 * @param file
+	 * @param maxmillis
+	 * @throws Exception
+	 * @since 4.0
+	 */
+	public static void waitUntilFileIsIndexed(IIndex index, IFile file, int maxmillis) throws Exception {
+		long endTime= System.currentTimeMillis() + maxmillis;
+		int timeLeft= maxmillis;
+		while (timeLeft >= 0) {
+			Assert.assertTrue(CCorePlugin.getIndexManager().joinIndexer(timeLeft, new NullProgressMonitor()));
+			index.acquireReadLock();
+			try {
+				IIndexFile pfile= index.getFile(file.getLocation());
+				if (pfile != null && pfile.getTimestamp() >= file.getLocalTimeStamp()) {
+					return;
+				}
+			}
+			finally {
+				index.releaseReadLock();
+			}
+			
+			Thread.sleep(50);
+			timeLeft= (int) (endTime-System.currentTimeMillis());
+		}
+		Assert.fail("Indexing " + file.getFullPath() + " did not complete in time!");
+	}
+
 }

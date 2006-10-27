@@ -18,7 +18,6 @@ import junit.framework.Test;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.IPDOMManager;
-import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.index.IIndexChangeEvent;
 import org.eclipse.cdt.core.index.IIndexChangeListener;
 import org.eclipse.cdt.core.index.IIndexManager;
@@ -28,10 +27,12 @@ import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.testplugin.CProjectHelper;
 import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
 import org.eclipse.cdt.core.testplugin.util.TestSourceReader;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 
 public class IndexListenerTest extends BaseTestCase {
-	protected IIndex fIndex;
+	private static final IProgressMonitor NPM = new NullProgressMonitor();
 	private ICProject fProject1;
 	private ICProject fProject2;
 
@@ -51,54 +52,88 @@ public class IndexListenerTest extends BaseTestCase {
 	}
 
 	public void testIdleListener() throws Exception {
+		final Object mutex= new Object();
 		final int[] state= new int[] {0, 0, 0};
 		IIndexManager im= CCorePlugin.getIndexManager();
+		assertTrue(im.joinIndexer(10000, NPM));
 		
-		im.addIndexerStateListener(new IIndexerStateListener() {
+		IIndexerStateListener listener = new IIndexerStateListener() {
 			public void indexChanged(IIndexerStateEvent event) {
-				if (event.indexerIsIdle()) {
-					state[0]++;
-					state[2]= 0;
-				}
-				else {
-					state[1]++;
-					state[2]= 1;
+				synchronized (mutex) {
+					if (event.indexerIsIdle()) {
+						state[0]++;
+						state[2]= 0;
+					}
+					else {
+						state[1]++;
+						state[2]= 1;
+					}
+					mutex.notify();
 				}
 			}
-		});
+		};
 		
-		TestSourceReader.createFile(fProject1.getProject(), "test.cpp", "int a;");
-		Thread.sleep(200);
-		assertTrue(im.joinIndexer(10000, new NullProgressMonitor()));
-		Thread.sleep(200);
-		assertEquals(1, state[0]);
-		assertEquals(1, state[1]);
-		assertEquals(0, state[2]);
+		im.addIndexerStateListener(listener);
+		try {
+			IFile file= TestSourceReader.createFile(fProject1.getProject(), "test.cpp", "int a;");
+			synchronized (mutex) {
+				mutex.wait(1000);
+				if (state[0]+state[1] < 2) {
+					mutex.wait(1000);
+				}
+			}
+			assertEquals(1, state[0]);
+			assertEquals(1, state[1]);
+			assertEquals(0, state[2]);
+		}
+		finally {
+			im.removeIndexerStateListener(listener);
+		}
 	}
+		
 
 	public void testChangeListener() throws Exception {
+		final Object mutex= new Object();
 		final List projects= new ArrayList();
 		IIndexManager im= CCorePlugin.getIndexManager();
 		
-		im.addIndexChangeListener(new IIndexChangeListener() {
+		assertTrue(im.joinIndexer(10000, NPM));
+		IIndexChangeListener listener = new IIndexChangeListener() {
 			public void indexChanged(IIndexChangeEvent event) {
-				projects.add(event.getAffectedProject());
+				synchronized (mutex) {
+					projects.add(event.getAffectedProject());
+					mutex.notify();
+				}
 			}
-		});
-		
-		TestSourceReader.createFile(fProject1.getProject(), "test.cpp", "int a;");
-		Thread.sleep(200);
-		assertEquals(1, projects.size());
-		assertTrue(projects.contains(fProject1));
-		projects.clear();
-		
+		};
+				
+		im.addIndexChangeListener(listener);
+		try {
+			IFile file= TestSourceReader.createFile(fProject1.getProject(), "test.cpp", "int a;");
+			
+			synchronized (mutex) {
+				mutex.wait(1000);
+			}
+			assertEquals(1, projects.size());
+			assertTrue(projects.contains(fProject1));
+			projects.clear();
 
-		TestSourceReader.createFile(fProject1.getProject(), "test.cpp", "int a;");
-		TestSourceReader.createFile(fProject2.getProject(), "test.cpp", "int b;");
-		Thread.sleep(200);
-		assertEquals(2, projects.size());
-		assertTrue(projects.contains(fProject1));
-		assertTrue(projects.contains(fProject2));
-		projects.clear();
+
+			IFile file1= TestSourceReader.createFile(fProject1.getProject(), "test.cpp", "int a;");
+			IFile file2= TestSourceReader.createFile(fProject2.getProject(), "test.cpp", "int b;");
+			synchronized (mutex) {
+				mutex.wait(1000);
+				if (projects.size() < 2) {
+					mutex.wait(1000);
+				}
+			}
+			assertEquals(2, projects.size());
+			assertTrue(projects.contains(fProject1));
+			assertTrue(projects.contains(fProject2));
+			projects.clear();
+		}
+		finally {
+			im.removeIndexChangeListener(listener);
+		}
 	}
 }

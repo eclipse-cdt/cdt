@@ -25,7 +25,6 @@ import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.index.IIndexBinding;
-import org.eclipse.cdt.core.index.IIndexFile;
 import org.eclipse.cdt.core.index.IIndexName;
 import org.eclipse.cdt.core.index.IndexFilter;
 import org.eclipse.cdt.core.model.ICProject;
@@ -81,28 +80,6 @@ public class IndexBugsTests extends BaseTestCase {
     	return TestSourceReader.createFile(container, new Path(fileName), contents);
     }
 
-	protected void waitForIndexer(IFile file, int maxmillis) throws Exception {
-		long endTime= System.currentTimeMillis() + maxmillis;
-		int timeLeft= maxmillis;
-		while (timeLeft >= 0) {
-			assertTrue(CCorePlugin.getIndexManager().joinIndexer(timeLeft, NPM));
-			fIndex.acquireReadLock();
-			try {
-				IIndexFile pfile= fIndex.getFile(file.getLocation());
-				if (pfile != null && pfile.getTimestamp() >= file.getLocalTimeStamp()) {
-					return;
-				}
-			}
-			finally {
-				fIndex.releaseReadLock();
-			}
-			
-			Thread.sleep(50);
-			timeLeft= (int) (endTime-System.currentTimeMillis());
-		}
-		throw new Exception("Indexer did not complete in time!");
-	}
-
 	protected Pattern[] getPattern(String qname) {
 		String[] parts= qname.split("::");
 		Pattern[] result= new Pattern[parts.length];
@@ -110,6 +87,10 @@ public class IndexBugsTests extends BaseTestCase {
 			result[i]= Pattern.compile(parts[i]);			
 		}
 		return result;
+	}
+
+	protected void waitUntilFileIsIndexed(IFile file, int time) throws Exception {
+		TestSourceReader.waitUntilFileIsIndexed(fIndex, file, time);
 	}
 
     // {bug162011}
@@ -128,7 +109,7 @@ public class IndexBugsTests extends BaseTestCase {
 		int indexOfDecl = content.indexOf(funcName);
 		int indexOfDef  = content.indexOf(funcName, indexOfDecl+1);
 		IFile file= createFile(getProject(), fileName, content);
-		waitForIndexer(file, 1000);
+		waitUntilFileIsIndexed(file, 1000);
 		
 		// make sure the ast is correct
 		ITranslationUnit tu= (ITranslationUnit) fCProject.findElement(new Path(fileName));

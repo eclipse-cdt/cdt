@@ -24,9 +24,9 @@ import org.eclipse.cdt.core.index.IIndexFile;
 import org.eclipse.cdt.core.index.IndexFilter;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.testplugin.CProjectHelper;
+import org.eclipse.cdt.core.testplugin.util.TestSourceReader;
 import org.eclipse.cdt.internal.core.CCoreInternals;
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
@@ -111,14 +111,16 @@ public class IndexIncludeTest extends IndexTestBase {
 	
 	private void checkContext() throws Exception {
 		final long timestamp= System.currentTimeMillis();
-		final IResource file= fProject.getProject().findMember(new Path("included.h"));
+		final IFile file= (IFile) fProject.getProject().findMember(new Path("included.h"));
 		assertNotNull(file);
+		waitForIndexer();
+		
 		ResourcesPlugin.getWorkspace().run(new IWorkspaceRunnable() {
 			public void run(IProgressMonitor monitor) throws CoreException {
-				((IFile) file).setContents(new ByteArrayInputStream( "int included; int CONTEXT;\n".getBytes()), false, false, NPM);
+				file.setContents(new ByteArrayInputStream( "int included; int CONTEXT;\n".getBytes()), false, false, NPM);
 			}
 		}, NPM);
-		waitForIndexer();
+		TestSourceReader.waitUntilFileIsIndexed(fIndex, file, 1000);
 		fIndex.acquireReadLock();
 		try {
 			IIndexFile ifile= fIndex.getFile(file.getLocation());

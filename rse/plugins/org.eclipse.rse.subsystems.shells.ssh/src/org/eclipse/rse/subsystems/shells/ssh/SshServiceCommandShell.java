@@ -93,17 +93,24 @@ public class SshServiceCommandShell extends ServiceCommandShell implements ISyst
 				gotCommand = true;
 			} else {
 				try {
-					parsedMsg = _patterns.matchLine(line);
+					
+					if ((_curCommand == null) || (!_curCommand.equals("ls"))) {
+						parsedMsg = _patterns.matchLine(line);
+					}
 				}
 				catch (Throwable e) {
 					e.printStackTrace();
 				}
 			}
+			
 			RemoteOutput output = null;
+			
 			String type = "stdout"; //$NON-NLS-1$
+			
 			if (parsedMsg != null) {
 				type = parsedMsg.type;
 			}
+			
 			if (event.isError()) {
 				output = new RemoteError(this, type);
 			}		

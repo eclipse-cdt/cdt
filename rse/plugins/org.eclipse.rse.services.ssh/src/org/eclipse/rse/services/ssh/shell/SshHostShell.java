@@ -20,11 +20,13 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.PrintWriter;
+import java.util.Hashtable;
 import java.util.regex.Pattern;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 
 import com.jcraft.jsch.Channel;
+import com.jcraft.jsch.ChannelShell;
 import com.jcraft.jsch.Session;
 
 import org.eclipse.rse.services.shells.AbstractHostShell;
@@ -55,6 +57,24 @@ public class SshHostShell extends AbstractHostShell implements IHostShell {
 		    //if(fChannel instanceof ChannelShell) {
 		    //	((ChannelShell)fChannel).setPty(false);
 		    //}
+		    
+		    //Try to set the user envionment. On most sshd configurations, this will
+		    //not work since in sshd_config, PermitUserEnvironment and AcceptEnv
+		    //settings are disabled. Still, it's worth a try.
+		    if (environment!=null && environment.length>0 && fChannel instanceof ChannelShell) {
+		    	Hashtable envTable=new Hashtable();
+		    	for(int i=0; i<environment.length; i++) {
+		    		String curStr=environment[i];
+		    		int curLen=environment[i].length();
+		    		int idx = curStr.indexOf('=');
+		    		if (idx>0 && idx<curLen-1) {
+		    			String key=environment[i].substring(0, idx);
+		    			String value=environment[i].substring(idx+1, curLen);
+		    			envTable.put(key, value);
+		    		}
+		    	}
+		    	((ChannelShell)fChannel).setEnv(envTable);
+		    }
 
 			fStdoutHandler = new SshShellOutputReader(this, new BufferedReader(new InputStreamReader(fChannel.getInputStream())), false);
 			fStderrHandler = new SshShellOutputReader(this, null,true);

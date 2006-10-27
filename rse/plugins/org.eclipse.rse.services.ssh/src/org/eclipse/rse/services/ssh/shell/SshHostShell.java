@@ -39,6 +39,8 @@ import org.eclipse.rse.services.ssh.ISshSessionProvider;
  */
 public class SshHostShell extends AbstractHostShell implements IHostShell {
 
+	public static final String SHELL_INVOCATION = ">"; //$NON-NLS-1$
+
 	private ISshSessionProvider fSessionProvider;
 	private Channel fChannel;
 	private SshShellOutputReader fStdoutHandler;
@@ -54,7 +56,7 @@ public class SshHostShell extends AbstractHostShell implements IHostShell {
 		    ////By default, jsch always creates a vt100 connection sized
 		    ////80x24 / 640x480 (dimensions can be changed).
 		    ////I wonder whether jsch could give us a dumb terminal?
-		    //if(fChannel instanceof ChannelShell) {
+		    //if(commandToRun!=null && !commandToRun.equals(SHELL_INVOCATION) & (fChannel instanceof ChannelShell)) {
 		    //	((ChannelShell)fChannel).setPty(false);
 		    //}
 		    
@@ -93,6 +95,9 @@ public class SshHostShell extends AbstractHostShell implements IHostShell {
 		    ) { 
 			    writeToShell("cd "+initialWorkingDirectory); //$NON-NLS-1$
 		    }
+		    if(commandToRun!=null && commandToRun.length()>0 && !commandToRun.equals(SHELL_INVOCATION)) {
+		    	writeToShell(commandToRun);
+		    }
 		} catch(Exception e) {
 			//TODO Forward exception to RSE properly
 			e.printStackTrace();
@@ -111,7 +116,7 @@ public class SshHostShell extends AbstractHostShell implements IHostShell {
 	protected void start(IProgressMonitor monitor)
 	{
 		//TODO Move stuff from constructor to here
-		//TODO Set up environment variables fro proper prompting, e.g. like dstore
+		//TODO Set up environment variables for proper prompting, e.g. like dstore
 		//varTable.put("PS1","$PWD/>");
 		//varTable.put("COLUMNS","256");
 		//alias ls='ls -1'

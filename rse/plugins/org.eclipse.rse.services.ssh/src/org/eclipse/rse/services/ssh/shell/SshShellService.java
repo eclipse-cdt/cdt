@@ -31,7 +31,6 @@ import org.eclipse.rse.services.ssh.SshServiceResources;
  */
 public class SshShellService implements ISshService, IShellService {
 
-	private static final String SHELL_INVOCATION = ">"; //$NON-NLS-1$
 	private ISshSessionProvider fSessionProvider;
 	
 	public SshShellService(ISshSessionProvider sessionProvider) {
@@ -48,7 +47,7 @@ public class SshShellService implements ISshService, IShellService {
 	public IHostShell launchShell(IProgressMonitor monitor,
 			String initialWorkingDirectory, String encoding,
 			String[] environment) {
-		SshHostShell hostShell = new SshHostShell(fSessionProvider, initialWorkingDirectory, SHELL_INVOCATION, encoding, environment);
+		SshHostShell hostShell = new SshHostShell(fSessionProvider, initialWorkingDirectory, SshHostShell.SHELL_INVOCATION, encoding, environment);
 		return hostShell;
 	}
 
@@ -59,7 +58,6 @@ public class SshShellService implements ISshService, IShellService {
 		return runCommand(monitor, initialWorkingDirectory, command, defaultEncoding, environment);
 	}
 
-	//TODO command is ignored by SshHostShell for now (just like DStoreHostShell).
 	public IHostShell runCommand(IProgressMonitor monitor,
 			String initialWorkingDirectory, String command, String encoding,
 			String[] environment) {

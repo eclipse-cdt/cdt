@@ -420,10 +420,6 @@
 		</copy>
 
 		<antcall target="rseserver-os-tar">
-			<param name="os" value="aix"/>
-			<param name="eol" value="lf"/>
-		</antcall>
-		<antcall target="rseserver-os-tar">
 			<param name="os" value="unix"/>
 			<param name="eol" value="lf"/>
 		</antcall>

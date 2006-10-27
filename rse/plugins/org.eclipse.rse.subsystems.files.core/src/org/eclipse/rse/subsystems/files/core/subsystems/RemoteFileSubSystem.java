@@ -894,9 +894,10 @@ public abstract class RemoteFileSubSystem extends SubSystem implements IRemoteFi
 	 */
 	public IRemoteFile[] listFiles(IRemoteFile parent, String fileNameFilter, IProgressMonitor monitor) throws SystemMessageException
 	{
-		RemoteFileFilterString filterString = new RemoteFileFilterString(getParentRemoteFileSubSystemConfiguration());
-		filterString.setPath(parent.getAbsolutePath());
-		filterString.setFile((fileNameFilter == null) ? "*" : fileNameFilter);
+		fileNameFilter = (fileNameFilter == null) ? "*" : fileNameFilter;
+		String parentPath = parent.getAbsolutePath();
+		IRemoteFileSubSystemConfiguration config = getParentRemoteFileSubSystemConfiguration();
+		RemoteFileFilterString filterString = new RemoteFileFilterString(config, parentPath, fileNameFilter);
 		filterString.setShowFiles(true);
 		filterString.setShowSubDirs(false);
 		RemoteFileContext context = new RemoteFileContext(this, parent, filterString);
@@ -923,13 +924,10 @@ public abstract class RemoteFileSubSystem extends SubSystem implements IRemoteFi
 	 */
 	public IRemoteFile[] listFoldersAndFiles(IRemoteFile parent, String fileNameFilter, IProgressMonitor monitor) throws SystemMessageException
 	{
-		
-		
-		RemoteFileFilterString filterString = new RemoteFileFilterString(getParentRemoteFileSubSystemConfiguration());
-		filterString.setPath(parent.getAbsolutePath());
-		if (fileNameFilter == null)
-			fileNameFilter = "*"; //$NON-NLS-1$
-		filterString.setFile(fileNameFilter);
+		String path = parent.getAbsolutePath();
+		fileNameFilter = (fileNameFilter == null) ? "*" : fileNameFilter;
+		IRemoteFileSubSystemConfiguration config = getParentRemoteFileSubSystemConfiguration();
+		RemoteFileFilterString filterString = new RemoteFileFilterString(config, path, fileNameFilter);
 		filterString.setShowFiles(true);
 		filterString.setShowSubDirs(true);
 		RemoteFileContext context = new RemoteFileContext(this, parent, filterString);

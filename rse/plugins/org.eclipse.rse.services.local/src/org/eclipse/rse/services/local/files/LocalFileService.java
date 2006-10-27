@@ -32,6 +32,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.rse.services.clientserver.FileTypeMatcher;
+import org.eclipse.rse.services.clientserver.IMatcher;
 import org.eclipse.rse.services.clientserver.ISystemFileTypes;
 import org.eclipse.rse.services.clientserver.NamePatternMatcher;
 import org.eclipse.rse.services.clientserver.SystemEncodingUtil;
@@ -123,10 +125,15 @@ public class LocalFileService extends AbstractFileService implements IFileServic
 	
 	public class LocalFileNameFilter implements FilenameFilter
 	{
-		private NamePatternMatcher _matcher;
+		private IMatcher _matcher;
 		public LocalFileNameFilter(String filter)
 		{
-			_matcher = new NamePatternMatcher(filter);
+			if (filter.endsWith(",")) {
+				String[] types = filter.split(",");
+				_matcher = new FileTypeMatcher(types);
+			} else {
+				_matcher = new NamePatternMatcher(filter);
+			}
 		}
 		public boolean accept(File dir, String name) 
 		{
@@ -134,7 +141,12 @@ public class LocalFileService extends AbstractFileService implements IFileServic
 		}
 		public boolean isGeneric()
 		{
-			return _matcher.isGeneric();
+			boolean result = true;
+			if (_matcher instanceof NamePatternMatcher) {
+				NamePatternMatcher new_name = (NamePatternMatcher) _matcher;
+				result = new_name.isGeneric();
+			}
+			return result;
 		}
 		
 	}

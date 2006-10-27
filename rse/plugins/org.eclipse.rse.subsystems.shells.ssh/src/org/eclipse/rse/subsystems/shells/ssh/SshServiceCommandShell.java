@@ -17,6 +17,7 @@
 package org.eclipse.rse.subsystems.shells.ssh;
 
 import java.util.ArrayList;
+import java.util.StringTokenizer;
 
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
@@ -94,8 +95,26 @@ public class SshServiceCommandShell extends ServiceCommandShell implements ISyst
 			} else {
 				try {
 					
-					if ((_curCommand == null) || (!_curCommand.equals("ls"))) {
+					// Bug 160202: Remote shell dies.
+					if ((_curCommand == null) || (!_curCommand.trim().equals("ls"))) {
 						parsedMsg = _patterns.matchLine(line);
+						
+						// Bug 160202: Remote shell dies.
+						if (_curCommand != null) {
+							String temp = _curCommand.trim();
+							StringTokenizer tokenizer = new StringTokenizer(temp);
+							
+							if (tokenizer.countTokens() == 2) {
+								String token1 = tokenizer.nextToken();
+								String token2 = tokenizer.nextToken();
+								
+								if ((token1.equals("ls")) && (token2.indexOf('-') == 0) && (token2.indexOf('l') > 0)) {
+									if (line.startsWith("total")) {
+										parsedMsg = null;
+									}
+								}
+							}
+						}
 					}
 				}
 				catch (Throwable e) {

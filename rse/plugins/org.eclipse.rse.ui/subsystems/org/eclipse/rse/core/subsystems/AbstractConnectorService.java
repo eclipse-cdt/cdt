@@ -1022,26 +1022,26 @@ public abstract class AbstractConnectorService extends RSEModelObject implements
 	// -------------------------
 	// PRIVATE HELPER METHODS...
 	// -------------------------
-	/**
-	 * Call this method to identify specific server launch types that are not to be permitted.
-	 * <p>
-	 * You normally do not call this! Rather, your subsystem factory class will override
-	 * {@link org.eclipse.rse.core.subsystems.SubSystemConfiguration#supportsServerLaunchType(ServerLaunchType)}.
-	 * However, this method is needed by ISVs that re-use predefined subsystem factories,
-	 * and merely supply their own ISystem object via the "systemClass" attribute of the
-	 * subsystemConfigurations extension point.
-	 * 
-	 * @see org.eclipse.rse.core.subsystems.ServerLaunchType
-	 */
-	protected void enableServerLaunchType(ISubSystem subsystem, ServerLaunchType serverLaunchType, boolean enable)
-	{
-		IServerLauncherProperties sl =getRemoteServerLauncherProperties();
-		if (sl instanceof RemoteServerLauncher)
-		{
-			RemoteServerLauncher isl = (RemoteServerLauncher)sl;
-			isl.enableServerLaunchType(serverLaunchType, enable);
-		}
-	}
+//	/**
+//	 * Call this method to identify specific server launch types that are not to be permitted.
+//	 * <p>
+//	 * You normally do not call this! Rather, your subsystem factory class will override
+//	 * {@link org.eclipse.rse.core.subsystems.SubSystemConfiguration#supportsServerLaunchType(ServerLaunchType)}.
+//	 * However, this method is needed by ISVs that re-use predefined subsystem factories,
+//	 * and merely supply their own ISystem object via the "systemClass" attribute of the
+//	 * subsystemConfigurations extension point.
+//	 * 
+//	 * @see org.eclipse.rse.core.subsystems.ServerLaunchType
+//	 */
+//	protected void enableServerLaunchType(ISubSystem subsystem, ServerLaunchType serverLaunchType, boolean enable)
+//	{
+//		IServerLauncherProperties sl =getRemoteServerLauncherProperties();
+//		if (sl instanceof RemoteServerLauncher)
+//		{
+//			RemoteServerLauncher isl = (RemoteServerLauncher)sl;
+//			isl.enableServerLaunchType(serverLaunchType, enable);
+//		}
+//	}
 	/**
 	 * This methods returns the enablement state per server launch type.
 	 * If {@link #enableServerLaunchType(ServerLaunchType,boolean)} has not been

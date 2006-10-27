@@ -384,32 +384,32 @@ public class DStoreConnectorService extends AbstractConnectorService implements 
 		return dstorePath.getAbsolutePath();
 	}
 	
-	/**
-	 * Specify if you support connecting to a running daemon  
-	 * @deprecated use {@link #enableServerLaunchType(ISubSystem, ServerLaunchType, boolean)}
-	 *  or your subsystem factory should override {@link org.eclipse.rse.core.subsystems.SubSystemConfiguration#supportsServerLaunchType(ServerLaunchType)} 
-	 */	
-	public void setDaemonLaunchEnabled(SubSystem subsystemImpl, boolean enable) {
-		enableServerLaunchType(subsystemImpl, ServerLaunchType.DAEMON_LITERAL, enable);
-	}
+//	/**
+//	 * Specify if you support connecting to a running daemon  
+//	 * @deprecated use {@link #enableServerLaunchType(ISubSystem, ServerLaunchType, boolean)}
+//	 *  or your subsystem factory should override {@link org.eclipse.rse.core.subsystems.SubSystemConfiguration#supportsServerLaunchType(ServerLaunchType)} 
+//	 */	
+//	public void setDaemonLaunchEnabled(SubSystem subsystemImpl, boolean enable) {
+//		enableServerLaunchType(subsystemImpl, ServerLaunchType.DAEMON_LITERAL, enable);
+//	}
 
-	/**
-	 * Return if you support connecting to a running daemon  
-	 * @deprecated Use instead {@link #isEnabledServerLaunchType(ISubSystem, ServerLaunchType)} 
-	 *  or {@link org.eclipse.rse.core.subsystems.SubSystemConfiguration#supportsServerLaunchType(ServerLaunchType)}
-	 */		
-	public boolean getDaemonLaunchEnabled(SubSystem subsystemImpl) {
-		return isEnabledServerLaunchType(subsystemImpl, ServerLaunchType.DAEMON_LITERAL); 
-	}
+//	/**
+//	 * Return if you support connecting to a running daemon  
+//	 * @deprecated Use instead {@link #isEnabledServerLaunchType(ISubSystem, ServerLaunchType)} 
+//	 *  or {@link org.eclipse.rse.core.subsystems.SubSystemConfiguration#supportsServerLaunchType(ServerLaunchType)}
+//	 */		
+//	public boolean getDaemonLaunchEnabled(SubSystem subsystemImpl) {
+//		return isEnabledServerLaunchType(subsystemImpl, ServerLaunchType.DAEMON_LITERAL); 
+//	}
 
-	/**
-	 * Specify if you support remotely launching a server script 
-	 * @deprecated use {@link #enableServerLaunchType(ISubSystem, ServerLaunchType, boolean)} 
-	 *  or your subsystem factory should override {@link org.eclipse.rse.core.subsystems.SubSystemConfiguration#supportsServerLaunchType(ServerLaunchType)} 
-	 */		
-	public void setRexecLaunchEnabled(SubSystem subsystemImpl, boolean enable) {
-		enableServerLaunchType(subsystemImpl, ServerLaunchType.REXEC_LITERAL, enable);
-	}
+//	/**
+//	 * Specify if you support remotely launching a server script 
+//	 * @deprecated use {@link #enableServerLaunchType(ISubSystem, ServerLaunchType, boolean)} 
+//	 *  or your subsystem factory should override {@link org.eclipse.rse.core.subsystems.SubSystemConfiguration#supportsServerLaunchType(ServerLaunchType)} 
+//	 */		
+//	public void setRexecLaunchEnabled(SubSystem subsystemImpl, boolean enable) {
+//		enableServerLaunchType(subsystemImpl, ServerLaunchType.REXEC_LITERAL, enable);
+//	}
 
 	/**
 	 * Return if you support remotely launching a server script 
@@ -420,14 +420,14 @@ public class DStoreConnectorService extends AbstractConnectorService implements 
 		return isEnabledServerLaunchType(subsystemImpl, ServerLaunchType.REXEC_LITERAL);
 	}
 
-	/**
-	 * Specify if you support connecting to a server already running 
-	 * @deprecated use {@link #enableServerLaunchType(ISubSystem, ServerLaunchType, boolean)} 
-	 *  or your subsystem factory should override {@link org.eclipse.rse.core.subsystems.SubSystemConfiguration#supportsServerLaunchType(ServerLaunchType)} 
-	 */			
-	public void setNoLaunchEnabled(SubSystem subsystemImpl, boolean enable) {
-		enableServerLaunchType(subsystemImpl, ServerLaunchType.RUNNING_LITERAL, enable);
-	}
+//	/**
+//	 * Specify if you support connecting to a server already running 
+//	 * @deprecated use {@link #enableServerLaunchType(ISubSystem, ServerLaunchType, boolean)} 
+//	 *  or your subsystem factory should override {@link org.eclipse.rse.core.subsystems.SubSystemConfiguration#supportsServerLaunchType(ServerLaunchType)} 
+//	 */			
+//	public void setNoLaunchEnabled(SubSystem subsystemImpl, boolean enable) {
+//		enableServerLaunchType(subsystemImpl, ServerLaunchType.RUNNING_LITERAL, enable);
+//	}
 
 	/**
 	 * Return if you support connecting to a server already running 

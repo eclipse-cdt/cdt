@@ -27,7 +27,7 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.SystemBasePlugin;
-import org.eclipse.rse.core.subsystems.IConnectorService;
+//import org.eclipse.rse.core.subsystems.IConnectorService;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
 import org.eclipse.rse.core.subsystems.ISubSystemConfigurationProxy;
 import org.eclipse.rse.core.subsystems.SubSystemConfiguration;
@@ -41,7 +41,8 @@ import org.osgi.framework.Bundle;
  */
 public class SubSystemConfigurationProxy implements ISubSystemConfigurationProxy
 {
-    private String name,description,id,types,vendor, category, systemClassName;
+//    private String name,description,id,types,vendor, category, systemClassName;
+    private String name,description,id,types,vendor, category;
     private int priority;
     private String[] systemTypes;
     private List typesArray;
@@ -65,7 +66,7 @@ public class SubSystemConfigurationProxy implements ISubSystemConfigurationProxy
 		this.types = element.getAttribute("systemTypes");
 		this.vendor = element.getAttribute("vendor");
 		this.category = element.getAttribute("category");
-		this.systemClassName = element.getAttribute("systemClass");
+//		this.systemClassName = element.getAttribute("systemClass");
 		this.priority = Integer.MAX_VALUE;
 		
 		String priorityStr = element.getAttribute("priority");
@@ -292,30 +293,30 @@ public class SubSystemConfigurationProxy implements ISubSystemConfigurationProxy
     	}
     	return object;
     }            
-	/**
-	 * Return an instance of the ISystem class identified by the "systemClass" attribute
-	 * of this subsystemFactory extension point. Note each call to this method returns a
-	 * new instance of the class, or null if no "systemClass" attribute was specified. 
-	 */
-	public IConnectorService getSystemObject()
-	{
-		if (systemClassName == null)
-			return null;
-		Object object = null;
-		try
-		{
-			 object = (IConnectorService)element.createExecutableExtension("systemClass");
-		} catch (Exception exc)
-		{
-			 SystemBasePlugin.logError("Unable to instantiate ISystem class "+ systemClassName + " for extension point " + id,exc);
-			 org.eclipse.swt.widgets.MessageBox mb = new org.eclipse.swt.widgets.MessageBox(SystemBasePlugin.getActiveWorkbenchShell());
-			 mb.setText("Unexpected Error");
-			 String errmsg = "Unable to instantiate ISystem class " + systemClassName + " for extension point " + id +": " + exc.getClass().getName()+" - " + exc.getMessage();
-			 mb.setMessage(errmsg);	
-			 mb.open();   	         
-		}    		
-		return (IConnectorService)object;
-	}            
+//	/**
+//	 * Return an instance of the ISystem class identified by the "systemClass" attribute
+//	 * of this subsystemFactory extension point. Note each call to this method returns a
+//	 * new instance of the class, or null if no "systemClass" attribute was specified. 
+//	 */
+//	public IConnectorService getSystemObject()
+//	{
+//		if (systemClassName == null)
+//			return null;
+//		Object object = null;
+//		try
+//		{
+//			 object = (IConnectorService)element.createExecutableExtension("systemClass");
+//		} catch (Exception exc)
+//		{
+//			 SystemBasePlugin.logError("Unable to instantiate ISystem class "+ systemClassName + " for extension point " + id,exc);
+//			 org.eclipse.swt.widgets.MessageBox mb = new org.eclipse.swt.widgets.MessageBox(SystemBasePlugin.getActiveWorkbenchShell());
+//			 mb.setText("Unexpected Error");
+//			 String errmsg = "Unable to instantiate ISystem class " + systemClassName + " for extension point " + id +": " + exc.getClass().getName()+" - " + exc.getMessage();
+//			 mb.setMessage(errmsg);	
+//			 mb.open();   	         
+//		}    		
+//		return (IConnectorService)object;
+//	}            
     
 	/**
 	 * Reset for a full refresh from disk, such as after a team synch. 

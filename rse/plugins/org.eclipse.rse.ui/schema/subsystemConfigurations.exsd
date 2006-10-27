@@ -180,16 +180,6 @@ category of &quot;database&quot;.
                </documentation>
             </annotation>
          </attribute>
-         <attribute name="systemClass" type="string">
-            <annotation>
-               <documentation>
-                  Optional.
-               </documentation>
-               <appInfo>
-                  <meta.attribute kind="java" basedOn="org.eclipse.rse.core.subsystems.IConnectorService"/>
-               </appInfo>
-            </annotation>
-         </attribute>
          <attribute name="priority" type="string">
             <annotation>
                <documentation>

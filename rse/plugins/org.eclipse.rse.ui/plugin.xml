@@ -60,7 +60,7 @@ Contributors:
 <!--      system. Name a class that implements                                          -->
 <!--        org.eclipse.rse.subsystems.ISystem or extends the appropriate               -->
 <!--      predefined class such as org.eclipse.rse.universal.UniversalSystem            -->
-<!--      for unix, windows and system types.                                           -->
+<!--      for unix, windows and system types.   (systemClass removed in OpenRSE)                                        -->
 <!-- ================================================================================== -->
 <!--                                                                                    -->
 <!-- For systemTypes, if you specify * for all, you still have a chance at runtime to   -->

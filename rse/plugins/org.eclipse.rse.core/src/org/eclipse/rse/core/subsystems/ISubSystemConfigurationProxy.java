@@ -74,12 +74,12 @@ public interface ISubSystemConfigurationProxy
      * Return the subsystem factory singleton instance. Will instantiate if not already.
      */
     public ISubSystemConfiguration getSubSystemConfiguration();
-	/**
-	 * Return an instance of the ISystem class identified by the "systemClass" attribute
-	 * of this subsystemFactory extension point. Note each call to this method returns a
-	 * new instance of the class, or null if no "systemClass" attribute was specified. 
-	 */
-	public IConnectorService getSystemObject();
+//	/**
+//	 * Return an instance of the ISystem class identified by the "systemClass" attribute
+//	 * of this subsystemFactory extension point. Note each call to this method returns a
+//	 * new instance of the class, or null if no "systemClass" attribute was specified. 
+//	 */
+//	public IConnectorService getSystemObject();
 	
     /**
      * Test if the given system type matches one or more of the type names declared in the

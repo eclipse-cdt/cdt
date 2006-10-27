@@ -181,7 +181,7 @@ public interface IRemoteServerLauncher extends IServerLauncherProperties{
 	 * 
 	 * @see org.eclipse.rse.core.subsystems.ServerLaunchType
 	 */
-	public void enableServerLaunchType(ServerLaunchType serverLaunchType, boolean enable);
+//	public void enableServerLaunchType(ServerLaunchType serverLaunchType, boolean enable);
 
 	/**
 	 * This methods returns the enablement state per server launch type.

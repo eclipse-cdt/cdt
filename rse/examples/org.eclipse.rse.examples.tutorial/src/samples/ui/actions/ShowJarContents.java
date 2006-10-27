@@ -16,17 +16,22 @@
 
 package samples.ui.actions;
 
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.files.ui.actions.SystemAbstractRemoteFilePopupMenuExtensionAction;
+import org.eclipse.rse.internal.subsystems.shells.subsystems.RemoteError;
+import org.eclipse.rse.internal.subsystems.shells.subsystems.RemoteOutput;
 import org.eclipse.rse.services.shells.IHostOutput;
 import org.eclipse.rse.services.shells.IHostShell;
 import org.eclipse.rse.services.shells.IHostShellChangeEvent;
 import org.eclipse.rse.services.shells.IHostShellOutputListener;
+import org.eclipse.rse.services.shells.IShellService;
 import org.eclipse.rse.shells.ui.RemoteCommandHelpers;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile;
 import org.eclipse.rse.subsystems.shells.core.subsystems.IRemoteCmdSubSystem;
-import org.eclipse.rse.subsystems.shells.core.subsystems.servicesubsystem.IServiceCommandShell;
+import org.eclipse.rse.subsystems.shells.core.subsystems.IRemoteCommandShell;
+import org.eclipse.rse.subsystems.shells.core.subsystems.servicesubsystem.IShellServiceSubSystem;
 
 /**
  * An action that runs a command to display the contents of a Jar file.
@@ -50,7 +55,9 @@ public class ShowJarContents extends SystemAbstractRemoteFilePopupMenuExtensionA
 		try {
 			runCommand(cmdToRun);
 		} catch(Exception e) {
-			MessageDialog.openError(getShell(), e.getClass().getName(), e.getLocalizedMessage());
+			String excType = e.getClass().getName();
+			MessageDialog.openError(getShell(), excType, excType+": "+e.getLocalizedMessage()); //$NON-NLS-1$
+			e.printStackTrace();
 		}
 	}
 
@@ -70,29 +77,64 @@ public class ShowJarContents extends SystemAbstractRemoteFilePopupMenuExtensionA
 	{
 		IRemoteCmdSubSystem cmdss = getRemoteCmdSubSystem();
 		if (cmdss!=null && cmdss.isConnected()) {
-			//Option A: run the command invisibly
+			//Option A: run the command invisibly through SubSystem API
 			//runCommandInvisibly(cmdss, command);
-			//Option B: run the command in a visible shell
+			//Option B: run the command invisibly through Service API
+			//runCommandInvisiblyService(cmdss, command);
+			//Option C: run the command in a visible shell
 			RemoteCommandHelpers.runUniversalCommand(getShell(), command, ".", cmdss); //$NON-NLS-1$
 		} else {
 			MessageDialog.openError(getShell(), "No command subsystem", "Found no command subsystem");
 		}
 	}
+
+	public static class StdOutOutputListener implements IHostShellOutputListener {
+		public void shellOutputChanged(IHostShellChangeEvent event) {
+			IHostOutput[] lines = event.getLines();
+			for(int i=0; i<lines.length; i++) {
+				System.out.println(lines[i]);
+			}
+		}
+	}
 	
+	/** New version of running commands through IShellService / IHostShell */
+	public void runCommandInvisiblyService(IRemoteCmdSubSystem cmdss, String command) throws Exception
+	{
+		if (cmdss instanceof IShellServiceSubSystem) {
+			IShellService shellService = ((IShellServiceSubSystem)cmdss).getShellService();
+	        String [] environment = new String[1];
+	        environment[0] = "AAA=BBB"; //$NON-NLS-1$
+	        String initialWorkingDirectory = "."; //$NON-NLS-1$
+
+	        IHostShell hostShell = shellService.launchShell(new NullProgressMonitor(), initialWorkingDirectory, environment);
+			hostShell.addOutputListener(new StdOutOutputListener());
+	        //hostShell.writeToShell("pwd"); //$NON-NLS-1$
+	        //hostShell.writeToShell("echo ${AAA}"); //$NON-NLS-1$
+	        //hostShell.writeToShell("env"); //$NON-NLS-1$
+	        hostShell.writeToShell(command);
+	        hostShell.writeToShell("exit"); //$NON-NLS-1$
+		}
+	}
+	
+	/** Old version of running commands through the command subsystem */
 	public void runCommandInvisibly(IRemoteCmdSubSystem cmdss, String command) throws Exception
 	{
+		command = command + cmdss.getParentRemoteCmdSubSystemConfiguration().getCommandSeparator() + "exit"; //$NON-NLS-1$
 		Object[] result = cmdss.runCommand(command, null, false);
-		if (result.length>0 && result[0] instanceof IServiceCommandShell) {
-			IServiceCommandShell scs = (IServiceCommandShell)result[0];
-			IHostShell hs = scs.getHostShell();
-			hs.addOutputListener(new IHostShellOutputListener() {
-				public void shellOutputChanged(IHostShellChangeEvent event) {
-					IHostOutput[] lines = event.getLines();
-					for(int i=0; i<lines.length; i++) {
-						System.out.println(lines[i]);
-					}
+		if (result.length>0 && result[0] instanceof IRemoteCommandShell) {
+			IRemoteCommandShell cs = (IRemoteCommandShell)result[0];
+			while (cs.isActive()) {
+				Thread.sleep(1000);
+			}
+			Object[] output = cs.listOutput();
+			for (int i=0; i<output.length; i++) {
+				if (output[i] instanceof RemoteOutput) {
+					System.out.println(((RemoteOutput)output[i]).getText());
+				} else if (output[i] instanceof RemoteError) {
+					System.err.println(((RemoteError)output[i]).getText());
 				}
-			});
+			}
+			cmdss.removeShell(cs);
 		}
 	}
 

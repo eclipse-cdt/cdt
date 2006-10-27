@@ -11,7 +11,7 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * Javier Montalvo Orús (Symbian) - Bug 149151: New Connection first page should use a Listbox for systemtype
+ * Javier Montalvo OrÃºs (Symbian) - Bug 149151: New Connection first page should use a Listbox for systemtype
  ********************************************************************************/
 
 package org.eclipse.rse.ui;

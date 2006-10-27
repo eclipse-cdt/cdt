@@ -34,7 +34,7 @@
    <feature url="features/org.eclipse.tm.discovery_1.0.0.qualifier.jar" id="org.eclipse.tm.discovery" version="1.0.0.qualifier">
       <category name="RSE Experimental Add-ons"/>
    </feature>
-   <feature url="features/org.apache.commons_net_1.4.1.qualifier.jar" id="org.apache.commons_net" version="1.4.1.qualifier">
+   <feature url="features/org.apache.commons_net_1.4.1.qualifier.jar" id="org.apache.commons.net" version="1.4.1.qualifier">
       <category name="Enabling Features"/>
    </feature>
    <feature url="features/org.apache.oro_2.0.8.qualifier.jar" id="org.apache.oro" version="2.0.8.qualifier">

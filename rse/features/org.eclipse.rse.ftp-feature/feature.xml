@@ -24,7 +24,7 @@
    </url>
 
    <includes
-         id="org.apache.commons_net"
+         id="org.apache.commons.net"
          version="0.0.0"/>
 
    <includes

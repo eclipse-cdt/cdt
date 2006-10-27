@@ -12,7 +12,7 @@
 		</ant>
 		<ant antfile="${genericTargets}" target="${target}">
 			<property name="type" value="feature" />
-			<property name="id" value="org.apache.commons_net" />
+			<property name="id" value="org.apache.commons.net" />
 		</ant>
 		-->
 		<ant antfile="${genericTargets}" target="${target}">
@@ -70,7 +70,7 @@
 		<ant antfile="${assembleScriptName}" dir="${buildDirectory}"/>
 		<antcall target="unpackUpdateJarsForPackaging" />
 	</target>
-	<target name="assemble.org.apache.commons_net">
+	<target name="assemble.org.apache.commons.net">
 		<property name="archiveName" value="commons-net-${buildId}.zip"/>
 		<ant antfile="${assembleScriptName}" dir="${buildDirectory}"/>
 		<antcall target="unpackUpdateJarsForPackaging" />

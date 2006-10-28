@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2002, 2006 IBM Corporation. All rights reserved.
+ * Copyright (c) 2002, 2006 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -11,7 +11,7 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * Martin Oberhuber (Wind River) - fix 158766: content assist works 1st time only
  ********************************************************************************/
 
 package org.eclipse.rse.shells.ui.view;
@@ -542,27 +542,28 @@ public class CommandEntryContentAssistProcessor implements IContentAssistProcess
 	{
 		
 		 Object[] fileList = null;
+		 String filterString = currentText + "*"; //$NON-NLS-1$
 		 
 		 if (workingDirectory.hasContents(RemoteChildrenContentsType.getInstance()) && !workingDirectory.isStale())
 		 {
 			if (flag == FILES_ONLY)
 			{
-				fileList = workingDirectory.getContents(RemoteFileChildrenContentsType.getInstance());
+				fileList = workingDirectory.getContents(RemoteFileChildrenContentsType.getInstance(), filterString);
 			}			
 			else if (flag == FOLDERS_ONLY)
 			{
-				fileList = workingDirectory.getContents(RemoteFolderChildrenContentsType.getInstance());
+				fileList = workingDirectory.getContents(RemoteFolderChildrenContentsType.getInstance(), filterString);
 			}
 			else
 			{
-				fileList = workingDirectory.getContents(RemoteChildrenContentsType.getInstance());
+				fileList = workingDirectory.getContents(RemoteChildrenContentsType.getInstance(), filterString);
 			}
 		 }
-		 else
+		 if (fileList==null || fileList.length==0) 
 		 {
 			 try
 			 {	
-				 fileList = workingDirectory.getParentRemoteFileSubSystem().listFoldersAndFiles(workingDirectory, currentText + "*", null);
+				 fileList = workingDirectory.getParentRemoteFileSubSystem().listFoldersAndFiles(workingDirectory, filterString, null);
 			 }
 			 catch (SystemMessageException e)
 			 {

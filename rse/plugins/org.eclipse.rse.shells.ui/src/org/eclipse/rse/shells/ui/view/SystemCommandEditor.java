@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2002, 2006 IBM Corporation. All rights reserved.
+ * Copyright (c) 2002, 2006 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -11,7 +11,7 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * Martin Oberhuber (Wind River) - fix 158765: content assist miss disables enter
  ********************************************************************************/
 
 package org.eclipse.rse.shells.ui.view;
@@ -155,7 +155,9 @@ public class SystemCommandEditor extends SourceViewer
 					switch (e.character)
 					{
 						case ' ' :
-							setInCodeAssist(true);
+							//bug 158765: enter may be disabled only when the widget is shown,
+							//not if content assist is requested (since results may be empty)
+							//setInCodeAssist(true);
 							doOperation(ISourceViewer.CONTENTASSIST_PROPOSALS);
 							//e.doit = false;
 							break;
@@ -416,6 +418,14 @@ public class SystemCommandEditor extends SourceViewer
 		}
 		return result;
 	}
+	public boolean requestWidgetToken(IWidgetTokenKeeper requester, int priority)
+	{
+		boolean result = super.requestWidgetToken(requester, priority);
+		if (result) {
+			setInCodeAssist(true);
+		}
+		return result;
+	}
 	public void releaseWidgetToken(IWidgetTokenKeeper tokenKeeper)
 	{
 		super.releaseWidgetToken(tokenKeeper);
@@ -483,10 +493,12 @@ public class SystemCommandEditor extends SourceViewer
 	
 	public void doOperation(int operation) 
 	{
-	    if (operation == CONTENTASSIST_PROPOSALS)
-	    {
-	        isInCodeAssist = true;
-	    }
+		//bug 158765: enter may be disabled only when the widget is shown,
+		//not if content assist is requested (since results may be empty)
+	    //if (operation == CONTENTASSIST_PROPOSALS)
+	    //{
+	    //    isInCodeAssist = true;
+	    //}
 	    super.doOperation(operation);
 	}
 }

@@ -1,12 +1,13 @@
 /*******************************************************************************
- * Copyright (c) 2006 Wind River Systems, Inc.
+ * Copyright (c) 2006 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0 
  * which accompanies this distribution, and is available at 
  * http://www.eclipse.org/legal/epl-v10.html 
  * 
  * Contributors: 
- * Martin Oberhuber (Wind River) - initial API and implementation 
+ * Martin Oberhuber (Wind River) - initial API and implementation
+ * Dave Dykstal (IBM) - fixing bug 162510: correctly process filter strings  
  *******************************************************************************/
 
 package org.eclipse.rse.services.ssh.files;
@@ -38,6 +39,8 @@ import com.jcraft.jsch.SftpException;
 import com.jcraft.jsch.SftpProgressMonitor;
 
 import org.eclipse.rse.services.Mutex;
+import org.eclipse.rse.services.clientserver.FileTypeMatcher;
+import org.eclipse.rse.services.clientserver.IMatcher;
 import org.eclipse.rse.services.clientserver.NamePatternMatcher;
 import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
 import org.eclipse.rse.services.files.AbstractFileService;
@@ -210,7 +213,13 @@ public class SftpFileService extends AbstractFileService implements IFileService
 		if (fileFilter == null) {
 			fileFilter = "*"; //$NON-NLS-1$
 		}
-		NamePatternMatcher filematcher = new NamePatternMatcher(fileFilter, true, true);
+		IMatcher filematcher = null;
+		if (fileFilter.endsWith(",")) { //$NON-NLS-1$
+			String[] types = fileFilter.split(","); //$NON-NLS-1$
+			filematcher = new FileTypeMatcher(types, true);
+		} else {
+			filematcher = new NamePatternMatcher(fileFilter, true, true);
+		}
 		List results = new ArrayList();
 		if (fDirChannelMutex.waitForLock(monitor, fDirChannelTimeout)) {
 			try {
@@ -224,7 +233,7 @@ public class SftpFileService extends AbstractFileService implements IFileService
 			    			//don't show the trivial names
 			    			continue;
 			    		}
-			    		if (filematcher.matches(fileName)) {
+			    		if (filematcher.matches(fileName) || lsEntry.getAttrs().isDir()) {
 			    			SftpHostFile node = makeHostFile(parentPath, fileName, lsEntry.getAttrs());
 			    			if (isRightType(fileType, node)) {
 			    				results.add(node);

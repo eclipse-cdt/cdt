@@ -27,6 +27,7 @@ import java.util.Vector;
 import java.util.regex.Pattern;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.osgi.util.NLS;
 
@@ -323,6 +324,10 @@ public class SftpFileService extends AbstractFileService implements IFileService
 	{
 		//TODO what to do with isBinary?
 		ChannelSftp channel = null;
+		//Fixing bug 158534. TODO remove when bug 162688 is fixed.
+		if (monitor==null) {
+			monitor = new NullProgressMonitor();
+		}
 		try {
 			SftpProgressMonitor sftpMonitor=new MyProgressMonitor(monitor);
 			int mode=ChannelSftp.OVERWRITE;

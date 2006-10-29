@@ -11,7 +11,7 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * Martin Oberhuber (Wind River) - Fix 158534 - NPE in upload/download after conflict
  ********************************************************************************/
 
 package org.eclipse.rse.subsystems.files.core.servicesubsystem;
@@ -21,6 +21,7 @@ import java.io.File;
 import java.io.InputStream;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.rse.core.SystemBasePlugin;
 import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.subsystems.IConnectorService;
@@ -443,6 +444,10 @@ public final class FileServiceSubSystem extends RemoteFileSubSystem implements I
 	 */
 	public void download(IRemoteFile file, String localpath, String encoding, IProgressMonitor monitor) 
 	{
+		//Fixing bug 158534. TODO remove when bug 162688 is fixed.
+		if (monitor==null) {
+			monitor = new NullProgressMonitor();
+		}
 		String parentPath = file.getParentPath();
 		File localFile = new File(localpath);
 		try

@@ -58,8 +58,10 @@
 </table>
 <table><tbody><tr><td>
 <ul>
+<li>Changed <b>HostShellChangeEvent.getLines()</b> to return IHostOutput[] instead of Object[]
+  (<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=161773">bug 161773</a>).</li>
 <li><b>Removed</b> the <b>rseserver-aix.tar</b> package. Use rseserver-unix.tar instead on AIX
-  (<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=160470">bug 160470</a>).
+  (<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=160470">bug 160470</a>).</li>
 <li><b>Removed</b> the attribute <b>systemClass</b> from extension point 
   <a href="http://dsdp.eclipse.org/help/latest/topic/org.eclipse.rse.doc.isv/reference/extension-points/org_eclipse_rse_ui_subsystemConfigurations.html">
   subsystemConfigurations</a> because it did not work properly and was nowhere used

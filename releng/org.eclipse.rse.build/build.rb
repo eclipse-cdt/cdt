@@ -52,7 +52,9 @@ publishDirectory = "#{working}/publish"
 
 tag = ask("Enter tag to fetch from CVS", "HEAD")
 buildType = ask("Enter build type (P=Personal, N=Nightly, I=Integration, S=Stable)", "P")
-buildId = ask("Enter the build id", buildType + Time.now.strftime("%Y%m%d-%H%M"))
+mydstamp = Time.now.strftime("%Y%m%d")
+mytstamp = Time.now.strftime("%H%M")
+buildId = ask("Enter the build id", buildType + mydstamp + "-" + mydstamp)
 
 command = "java -cp #{basebuilder}/startup.jar org.eclipse.core.launcher.Main "
 command += "-application org.eclipse.ant.core.antRunner "
@@ -65,6 +67,8 @@ command += "-DbaseLocation=#{eclipse} "
 command += "-DbuildType=#{buildType} "
 command += "-DbuildId=#{buildId} "
 command += "-DmapVersionTag=#{tag} "
+command += "-Dmydstamp=#{mydstamp} "
+command += "-Dmytstamp=#{mytstamp} "
 if ("#{buildType}" == "N") then
 	command += "-DforceContextQualifier=#{buildId} "
 	command += "-DfetchTag=HEAD "

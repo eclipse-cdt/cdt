@@ -35,7 +35,9 @@ packageDirectory="${working}/package"
 
 tag="HEAD"
 buildType="N"
-timestamp=`date +'%Y%m%d-%H%M'`
+mydstamp=`date +'%Y%m%d'`
+mytstamp=`date +'%H%M'`
+timestamp="${mydstamp}-${mytstamp}"
 buildId="${buildType}${timestamp}"
 rm -rf "${buildDirectory}"
 
@@ -53,6 +55,8 @@ command="$command -DmapVersionTag=${tag} "
 command="$command -DdoPublish=true "
 command="$command -DforceContextQualifier=${buildId} "
 command="$command -DfetchTag=HEAD "
+command="$command -Dmydstamp=${mydstamp} "
+command="$command -Dmytstamp=${mytstamp} "
 #command="$command postBuild "
 
 echo "$command"

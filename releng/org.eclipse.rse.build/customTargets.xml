@@ -186,7 +186,7 @@
 		<echo message="buildName = ${buildName}"/>
 		<echo message="buildType = ${buildType}"/>
 		<echo message="buildLabel = ${buildLabel}"/>
-		<echo message="tstamp = ${DSTAMP}-${TSTAMP} of ${dateLong}"/>
+		<echo message="tstamp = ${mydstamp}-${mytstamp} of ${dateLong}"/>
 		<echo message="archivePrefix = ${archivePrefix}"/>
 		<echo message="collectingFolder = ${collectingFolder}"/>
 	</target>
@@ -205,7 +205,7 @@
 		<condition property="doCopy">
 			<not><equals arg1="${publishDirectory}" arg2=""/></not>
 		</condition>
-		<condition property="dropDir" value="S-${buildId}-${DSTAMP}${TSTAMP}" else="${buildId}">
+		<condition property="dropDir" value="S-${buildId}-${mydstamp}${mytstamp}" else="${buildId}">
 			<equals arg1="${buildType}" arg2="S"/>
 		</condition>
 		<property name="buildUpdateSitePath" value="${packageDirectory}/${dropDir}/updates"/>

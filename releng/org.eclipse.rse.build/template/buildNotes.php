@@ -37,11 +37,11 @@
 <li>Numerous bugs have been fixed, and we consider RSE safe now for 
   all kinds of data transfer, even if it's done in multiple background sessions.</li>
 <li>Use 
-  <!-- <a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced&classification=DSDP&product=Target+Management&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&resolution=FIXED&resolution=WONTFIX&resolution=INVALID&resolution=WORKSFORME&chfieldfrom=2006-10-09&chfieldto=2006-10-20&chfield=resolution&cmdtype=doit"> -->
-  <a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced&classification=DSDP&product=Target+Management&target_milestone=1.0+RC2&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&resolution=FIXED&resolution=WONTFIX&resolution=INVALID&resolution=WORKSFORME&cmdtype=doit">
+  <!-- <a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced&classification=DSDP&product=Target+Management&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&resolution=FIXED&resolution=WONTFIX&resolution=INVALID&resolution=WORKSFORME&chfieldfrom=2006-10-20&chfieldto=2006-10-30&chfield=resolution&cmdtype=doit">  -->
+  <a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced&classification=DSDP&product=Target+Management&target_milestone=1.0+RC3&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&resolution=FIXED&resolution=WONTFIX&resolution=INVALID&resolution=WORKSFORME&cmdtype=doit">
   this query</a> to show the list of bugs fixed since the last milestone,
-  <a href="http://download.eclipse.org/dsdp/tm/downloads/drops/S-1.0RC1-200610082121/index.php">
-  RSE 1.0RC1</a>.</li>
+  <a href="http://download.eclipse.org/dsdp/tm/downloads/drops/S-1.0RC2-200610201821/index.php">
+  RSE 1.0RC2</a>.</li>
 <li>For details on checkins, see the
   <a href="http://download.eclipse.org/dsdp/tm/downloads/drops/N-changelog/index.html">
   RSE CVS changelog</a>, and the
@@ -53,11 +53,20 @@
 <table border="0" cellspacing="5" cellpadding="2" width="100%">
 	<tr>
 		<td align="LEFT" valign="TOP" colspan="3" bgcolor="#808080"><b>
-		<font face="Arial,Helvetica" color="#FFFFFF">API Changes since RSE 1.0 M4 (official API freeze)</font></b></td>
+		<font face="Arial,Helvetica" color="#FFFFFF">API Changes since RSE 1.0 M4 (official API freeze) - newest changest first</font></b></td>
 	</tr>
 </table>
 <table><tbody><tr><td>
 <ul>
+<li><b>Removed</b> the <b>rseserver-aix.tar</b> package. Use rseserver-unix.tar instead on AIX
+  (<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=160470">bug 160470</a>).
+<li><b>Removed</b> the attribute <b>systemClass</b> from extension point 
+  <a href="http://dsdp.eclipse.org/help/latest/topic/org.eclipse.rse.doc.isv/reference/extension-points/org_eclipse_rse_ui_subsystemConfigurations.html">
+  subsystemConfigurations</a> because it did not work properly and was nowhere used
+  (<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=162098">bug 162098</a>).</li>
+<li><b>Added</b> IProgressMonitor parameter to the <b>IRemoteFileSubSystem</b> and <b>IRemoteProcessSubSystem</b> list APIs.  Each of 
+these methods, such as listFiles(), now includes an IProgressMonitor as the last parameter
+  (<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=160777">bug 160777</a>).</li>
 <li><b>Renamed</b> the <b>org.eclipse.rse.ui.subsystemConfiguration</b> extension point 
   to <a href="http://dsdp.eclipse.org/help/latest/topic/org.eclipse.rse.doc.isv/reference/extension-points/org_eclipse_rse_ui_subsystemConfigurations.html">
   subsystemConfigurations</a> 
@@ -102,9 +111,6 @@
   to core eventually, too).
 </li>
 <li><b>Renamed</b> the <b>RemoteProcessSubSystem</b> interface to <b>IRemoteProcessSubSystem</b> to conform with naming conventions.
-</li>
-<li><b>Added</b> IProgressMonitor parameter to the <b>IRemoteFileSubSystem</b> and <b>IRemoteProcessSubSystem</b> list APIs.  Each of 
-these methods, such as listFiles(), now includes an IProgressMonitor as the last parameter.
 </li>
 </ul>
 </td></tr></tbody></table>
@@ -158,7 +164,7 @@ about your endeavours and keep yourself up-to-date.
 	</tr>
 </table>
 <table><tbody><tr><td>
-The following RC2 <a href="http://www.eclipse.org/dsdp/tm/development/plan.php#M5">plan</a>
+The following RSE 1.0 <a href="http://www.eclipse.org/dsdp/tm/development/plan.php#M5">plan</a>
 deliverables did not make it into this build:
 <ul>
 <li>User Actions, and Import/Export were deferred with M3 already. 
@@ -169,26 +175,29 @@ deliverables did not make it into this build:
   instead. Due to the missing Unit Test Framework, automated tests could also
   not yet be added to this build.</li>
 </ul>
+<!--
 The following critical or major bugs are currently known.
 We'll strive to fix these as soon as possible.
 <ul>
   <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=143462">bug 143462</a> - maj - [updating] Dirty remote editors do not get notified</li>
-  <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=158534">bug 158534</a> - maj - [ssh] Save conflict when modifying remote file</li>
-  <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=158765">bug 158765</a> - maj - content assist miss causes enter to not send command</li>
-  <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=158766">bug 158766</a> - maj - Content Assist does not work on Windows-local, Linux-local and Windows-dstore shells</li>
-  <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=160202">bug 160202</a> - maj -	Remote shell dies.</li>
-  <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=160818">bug 160818</a> - maj - Remote Shell view doesn't auto scroll to bottom of text after connect</li>
   <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=161146">bug 161146</a> - maj - downloading a file using FTP inserts spaces between each line</li>
 </ul>
+-->
+<p>No major or critical bugs are currently known. Use 
+<a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced&classification=DSDP&product=Target+Management&component=RSE&bug_status=UNCONFIRMED&bug_status=NEW&bug_status=ASSIGNED&bug_status=REOPENED&bug_severity=blocker&bug_severity=critical&bug_severity=major&cmdtype=doit">this query</a>
+for an up-to-date list of major or critical bugs.</p>
+
 <p>The 
-<a href="http://wiki.eclipse.org/index.php/RSE_1.0RC2_Known_Issues_and_Workarounds">
-RSE 1.0RC2 Known Issues and Workarounds</a> Wiki page gives an up-to-date list
+<a href="http://wiki.eclipse.org/index.php/RSE_1.0RC3_Known_Issues_and_Workarounds">
+RSE 1.0RC3 Known Issues and Workarounds</a> Wiki page gives an up-to-date list
 of the most frequent and obvious problems, and describes workarounds for them.
 </p>
 
 <p>Click 
+<!--
 <a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced&classification=DSDP&product=Target+Management&component=RSE&bug_status=UNCONFIRMED&bug_status=NEW&bug_status=ASSIGNED&bug_status=REOPENED&bug_severity=blocker&bug_severity=critical&bug_severity=major&cmdtype=doit">here</a>
 for an up-to-date list of major or critical bugs, or
+-->
 <a href="https://bugs.eclipse.org/bugs/report.cgi?x_axis_field=bug_severity&y_axis_field=op_sys&z_axis_field=&query_format=report-table&classification=DSDP&product=Target+Management&component=RSE&bug_status=UNCONFIRMED&bug_status=NEW&bug_status=ASSIGNED&bug_status=REOPENED&format=table&action=wrap">here</a>
 for a complete up-to-date bugzilla status report, or
 <a href="https://bugs.eclipse.org/bugs/report.cgi?x_axis_field=bug_severity&y_axis_field=op_sys&z_axis_field=&query_format=report-table&classification=DSDP&product=Target+Management&component=RSE&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&format=table&action=wrap">here</a>

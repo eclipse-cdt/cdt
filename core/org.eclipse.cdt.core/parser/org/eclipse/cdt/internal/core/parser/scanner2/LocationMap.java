@@ -914,8 +914,8 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
         }
 
         public int context_directive_start;
-        public int context_directive_end;
-        public int context_ends;
+        public int context_directive_end;	// inclusive
+        public int context_ends;			// inclusive
         public _CompositeContext parent;
 
         public _CompositeContext getParent() {
@@ -971,16 +971,11 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
         public _Context[] getSubContexts() {
             if (subContexts == null)
                 return EMPTY_CONTEXT_ARRAY;
-            trimSubContexts();
+            final int length= subContexts.length;
+            if (length > 0 && subContexts[length-1] == null) {
+            	subContexts = (_Context[]) ArrayUtil.trim(_Context.class, subContexts);
+            }
             return subContexts;
-        }
-
-        /**
-         * 
-         */
-        private void trimSubContexts() {
-            subContexts = (_Context[]) ArrayUtil.trim(_Context.class,
-                    subContexts);
         }
 
         public void addSubContext(_Context c) {
@@ -990,19 +985,6 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
                     subContexts, c);
         }
 
-        public void removeSubContext(_Context c) {
-            if (subContexts == null)
-                return;         
-            for (int i = 0; i < subContexts.length; ++i)
-                if (subContexts[i] == c) {
-                	subContexts[i] = null;
-                    return;
-                }
-        }
-
-        /**
-         * @return
-         */
         public boolean hasSubContexts() {
             if (subContexts == null)
                 return false;
@@ -1015,19 +997,28 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
         public _Context findContextContainingOffset(int offset) {
             if (subContexts != null)
             {
-	            for (int i = 0; i < subContexts.length; ++i) {
-	                _Context c = subContexts[i];
-	                if (c == null) continue;
-	                if ((offset >= c.context_directive_start && offset <= c.context_ends)) {
-	                    if (c instanceof _CompositeContext) {
-	                        _Context trial = ((_CompositeContext) c)
-	                                .findContextContainingOffset(offset);
-	                        if (trial == null)
-	                            return c;
-	                        return trial;
+	            int left = 0;
+	            int right = subContexts.length - 1;
+	            int middle = 0;
+	            while (left <= right) {
+	            	middle = (left+right) / 2;
+	            	_Context c = subContexts[middle];
+	            	if (c== null || offset < c.context_directive_start) {
+	            		right= middle-1;
+	            	}
+	            	else if (offset > c.context_ends) {
+	            		left= middle+1;
+	            	}
+	            	else {
+	            		if (c instanceof _CompositeContext) {
+	                        final _CompositeContext compositeContext = (_CompositeContext) c;
+							_Context nested= compositeContext.findContextContainingOffset(offset);
+	                        if (nested != null) {
+	                        	return nested;
+	                        }
 	                    }
 	                    return c;
-	                }
+	            	}
 	            }
             }
             // if no sub context contains this, do it this way
@@ -1591,19 +1582,11 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
         _Context c = findContextForOffset(offset);
         if( c == null )
             return EMPTY_LOCATION_ARRAY;
-        int offset1 = offset + length;
-        if ((offset1 >= c.context_directive_start && offset1 <= c.context_ends)) {
+        int offset1 = offset + length - 1;
+        if (offset1 < c.context_ends) {
             if (c instanceof _CompositeContext) {
                 _Context[] subz = ((_CompositeContext) c).getSubContexts();
-                boolean foundNested = false;
-                for (int i = 0; i < subz.length; ++i) {
-                    _Context sub = subz[i];
-                    if (sub.context_directive_start > offset
-                            && sub.context_ends <= offset + length) {
-                        foundNested = true;
-                        break;
-                    }
-                }
+            	boolean foundNested = findNested( subz, offset, length);
                 if (!foundNested)
                     return createSoleLocationArray(c, offset, length);
             } else
@@ -1619,6 +1602,30 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
                     length);
 
         return createMegaLocationArray(offset, length, extraContexts);
+    }
+
+    private boolean findNested(_Context[] subz, int offset, int length){
+    	final int offset2= offset+length-1;
+    	int left = 0;
+    	int right = subz.length-1;
+    	int middle = 0;
+    	_Context sub = null;
+    	
+    	while( left <= right ){
+    		middle = (left+right)/2;
+    		sub = subz[middle];
+    		if (offset2 < sub.context_directive_start) {
+    			right= middle-1;
+    		}
+    		else if (offset > sub.context_ends) {
+    			left= middle+1;
+    		} 
+    		else {
+    			return true;
+    		}
+    	}
+    	
+    	return false;
     }
 
     private IASTNodeLocation[] createMegaLocationArray(int offset, int length,

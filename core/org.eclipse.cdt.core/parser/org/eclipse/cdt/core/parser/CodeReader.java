@@ -7,6 +7,7 @@
  *
  * Contributors:
  * IBM Rational Software - Initial API and implementation
+ * Cheong, Jeong-Sik - fix for 162381
  *******************************************************************************/
 package org.eclipse.cdt.core.parser;
 
@@ -100,10 +101,15 @@ public class CodeReader {
 
 		
 		CharBuffer charBuffer = Charset.forName(encoding).decode(byteBuffer);
-		if (charBuffer.hasArray())
-			return charBuffer.array();
-		// Got to copy it out
-		char[] buff = new char[charBuffer.length()];
+		char[] buff= null;
+		if (charBuffer.hasArray()) {
+			buff= charBuffer.array();
+			// bug 162381, handle the case where the buffer is longer
+			if (buff.length == charBuffer.length()) {
+				return buff;
+			}
+		}
+		buff = new char[charBuffer.length()];
 		charBuffer.get(buff);
 		return buff;
 	}

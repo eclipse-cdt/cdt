@@ -36,9 +36,9 @@ class PDOMFastReindex extends PDOMFastIndexerJob {
 		try {
 			long start = System.currentTimeMillis();
 			setupIndexAndReaderFactory();
-			registerTUsInReaderFactory(fTUs);
 			
 			clearIndex(index);
+			registerTUsInReaderFactory(fTUs);
 			fFilesToIndex--;
 
 			parseTUs(fTUs, monitor);

@@ -40,9 +40,8 @@ class PDOMFullReindex extends PDOMFullIndexerJob {
 			long start = System.currentTimeMillis();			
 
 			setupIndexAndReaderFactory();
-			registerTUsInReaderFactory(fTUs);
-			
 			clearIndex(index);
+			registerTUsInReaderFactory(fTUs);			
 			fFilesToIndex--;
 			
 			parseTUs(fTUs, monitor);

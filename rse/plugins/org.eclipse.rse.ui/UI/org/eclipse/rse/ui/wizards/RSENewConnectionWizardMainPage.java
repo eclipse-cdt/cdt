@@ -89,7 +89,12 @@ public class RSENewConnectionWizardMainPage extends AbstractSystemWizardPage imp
 		
 		descriptionSystemType = SystemWidgetHelpers.createMultiLineTextField(parent,null,30);
 		descriptionSystemType.setEditable(false);
+
+		IRSESystemType systemType = RSECorePlugin.getDefault().getRegistry().getSystemType(textSystemType.getSelection()[0]);
 		
+		if(systemType!=null) {
+			descriptionSystemType.setText(systemType.getDescription());
+		}
 		
 		return composite_prompts;
 	}
@@ -146,14 +151,15 @@ public class RSENewConnectionWizardMainPage extends AbstractSystemWizardPage imp
 		
 		if (event.type == SWT.Selection && event.widget == textSystemType) {
 			
-			descriptionSystemType.setText(RSEUIPlugin.getTheSystemRegistry().getSubSystemConfigurationsBySystemType(textSystemType.getSelection()[0])[0].getDescription());
-			
 			IWizard wizard = getWizard();
 		
 			if (wizard instanceof IRSENewConnectionWizard) {
 				String systemTypeStr = textSystemType.getSelection()[0];
 				IRSENewConnectionWizard newConnWizard = (IRSENewConnectionWizard)wizard;
-				newConnWizard.setSelectedSystemType(RSECorePlugin.getDefault().getRegistry().getSystemType(systemTypeStr));
+				
+				IRSESystemType systemType = RSECorePlugin.getDefault().getRegistry().getSystemType(systemTypeStr);
+				newConnWizard.setSelectedSystemType(systemType);
+				descriptionSystemType.setText(systemType.getDescription());
 			}
 		}
 	}

@@ -44,12 +44,19 @@ public class IncludesTests extends PDOMTestBase {
 		pdom.releaseReadLock();
 	}
 	
-	public void test1() throws Exception {
+	public void testIncludedBy() throws Exception {
 		IPath loc = project.getProject().getLocation().append("I2.h");
 		IIndexFile file = pdom.getFile(loc);
 		assertNotNull(file);
 		IIndexInclude[] allIncludedBy = pdom.findIncludedBy(file, -1);
 		assertEquals(9, allIncludedBy.length); // i.e. all of them
 	}
-
+	
+	public void testIncludes() throws Exception {
+		IPath loc = project.getProject().getLocation().append("I1.cpp");
+		IIndexFile file = pdom.getFile(loc);
+		assertNotNull(file);
+		IIndexInclude[] allIncludesTo= pdom.findIncludes(file, -1);
+		assertEquals(2, allIncludesTo.length); // i.e. I1.h, I2.h
+	}
 }

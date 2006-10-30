@@ -241,11 +241,10 @@ public class CIndex implements IIndex {
 	public IIndexInclude[] findIncludes(IIndexFile file, int depth) throws CoreException {
 		List result= new ArrayList();
 		findIncludes(Collections.singletonList(file), result, depth, new HashSet());
-		result= result.subList(1, result.size());
 		return (IIndexInclude[]) result.toArray(new IIndexInclude[result.size()]);
 	}
 
-	public void findIncludes(List in, List out, int depth, HashSet handled) throws CoreException {
+	private void findIncludes(List in, List out, int depth, HashSet handled) throws CoreException {
 		List nextLevel= depth != 0 ? new LinkedList() : null;
 		for (Iterator it= in.iterator(); it.hasNext(); ) {
 			IIndexFragmentFile file = (IIndexFragmentFile) it.next();

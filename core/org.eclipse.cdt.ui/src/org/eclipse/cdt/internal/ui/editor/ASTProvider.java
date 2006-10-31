@@ -13,6 +13,7 @@
 
 package org.eclipse.cdt.internal.ui.editor;
 
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.ISafeRunnable;
@@ -21,7 +22,6 @@ import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.jface.text.Assert;
 import org.eclipse.ui.IPartListener2;
 import org.eclipse.ui.IWindowListener;
 import org.eclipse.ui.IWorkbenchPart;
@@ -269,14 +269,16 @@ public final class ASTProvider {
 	 * Installs this AST provider.
 	 */
 	void install() {
-		// Create and register activation listener
-		fActivationListener= new ActivationListener();
-		PlatformUI.getWorkbench().addWindowListener(fActivationListener);
-
-		// Ensure existing windows get connected
-		IWorkbenchWindow[] windows= PlatformUI.getWorkbench().getWorkbenchWindows();
-		for (int i= 0, length= windows.length; i < length; i++)
-			windows[i].getPartService().addPartListener(fActivationListener);
+		if (PlatformUI.isWorkbenchRunning()) {
+			// Create and register activation listener
+			fActivationListener= new ActivationListener();
+			PlatformUI.getWorkbench().addWindowListener(fActivationListener);
+	
+			// Ensure existing windows get connected
+			IWorkbenchWindow[] windows= PlatformUI.getWorkbench().getWorkbenchWindows();
+			for (int i= 0, length= windows.length; i < length; i++)
+				windows[i].getPartService().addPartListener(fActivationListener);
+		}
 	}
 
 	private void activeEditorChanged(IWorkbenchPart editor) {
@@ -606,9 +608,11 @@ public final class ASTProvider {
 	 */
 	public void dispose() {
 
-		// Dispose activation listener
-		PlatformUI.getWorkbench().removeWindowListener(fActivationListener);
-		fActivationListener= null;
+		if (fActivationListener != null) {
+			// Dispose activation listener
+			PlatformUI.getWorkbench().removeWindowListener(fActivationListener);
+			fActivationListener= null;
+		}
 
 		disposeAST();
 

@@ -445,11 +445,18 @@ public class CUIPlugin extends AbstractUIPlugin {
 	 * @see org.osgi.framework.BundleActivator#stop(org.osgi.framework.BundleContext)
 	 */
 	public void stop(BundleContext context) throws Exception {
+		if (fASTProvider != null) {
+			fASTProvider.dispose();
+			fASTProvider= null;
+		}
 		if (fTextTools != null) {
 			fTextTools.dispose();
+			fTextTools= null;
 		}
-		if (fImageDescriptorRegistry != null)
+		if (fImageDescriptorRegistry != null) {
 			fImageDescriptorRegistry.dispose();
+			fImageDescriptorRegistry= null;
+		}
 		if ( fBuildConsoleManager != null ) {
 			fBuildConsoleManager.shutdown();
 			fBuildConsoleManager = null;

@@ -62,7 +62,7 @@ if [ "$FILES" != "" ]; then
 fi
 
 #Update the testUpdates site
-if [ "$FILES" = "1" ]; then
+if [ "$FILES" != "" ]; then
   cd $HOME/downloads-tm/testUpdates/bin
   ./mkTestUpdates.sh
   cd "$curdir"

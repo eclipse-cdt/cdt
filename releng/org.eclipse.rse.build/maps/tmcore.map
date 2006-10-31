@@ -1,4 +1,4 @@
-feature@org.apache.commons.net=v20061026,:pserver:anonymous:none@dev.eclipse.org:/cvsroot/dsdp,,org.eclipse.tm.core/thirdparty/org.apache.commons.net-feature
-feature@org.apache.oro=v20061026,:pserver:anonymous:none@dev.eclipse.org:/cvsroot/dsdp,,org.eclipse.tm.core/thirdparty/org.apache.oro-feature
-plugin@org.apache.commons.net=v20061026,:pserver:anonymous:none@dev.eclipse.org:/cvsroot/dsdp,,org.eclipse.tm.core/thirdparty/org.apache.commons.net
-plugin@org.apache.oro=v20061026,:pserver:anonymous:none@dev.eclipse.org:/cvsroot/dsdp,,org.eclipse.tm.core/thirdparty/org.apache.oro
+feature@org.apache.commons.net=v20061031,:pserver:anonymous:none@dev.eclipse.org:/cvsroot/dsdp,,org.eclipse.tm.core/thirdparty/org.apache.commons.net-feature
+feature@org.apache.oro=v20061031,:pserver:anonymous:none@dev.eclipse.org:/cvsroot/dsdp,,org.eclipse.tm.core/thirdparty/org.apache.oro-feature
+plugin@org.apache.commons.net=v20061031,:pserver:anonymous:none@dev.eclipse.org:/cvsroot/dsdp,,org.eclipse.tm.core/thirdparty/org.apache.commons.net
+plugin@org.apache.oro=v20061031,:pserver:anonymous:none@dev.eclipse.org:/cvsroot/dsdp,,org.eclipse.tm.core/thirdparty/org.apache.oro

@@ -23,6 +23,9 @@
  *    ftp.ibiblio.org as anonymous fails
  * Javier Montalvo Orus (Symbian) - Fixing 160922 - create folder/file fails for FTP service
  * David Dykstal (IBM) - Fixing 162511 - FTP file service does not process filter strings correctly
+ * Javier Montalvo Orus (Symbian) - Fixing 162511 - FTP file service does not process filter strings correctly
+ * Javier Montalvo Orus (Symbian) - Fixing 162782 - File filter does not display correct result in RC3
+ * Javier Montalvo Orus (Symbian) - Fixing 162878 - New file and new folder dialogs don't work in FTP in a folder with subfolders
  ********************************************************************************/
 
 package org.eclipse.rse.services.files.ftp;
@@ -151,16 +154,53 @@ public class FTPService extends AbstractFileService implements IFileService, IFT
 	 */
 	public IHostFile getFile(IProgressMonitor monitor, String remoteParent, String fileName)
 	{
-		IHostFile[] matches = internalFetch(monitor, remoteParent, fileName, FILE_TYPE_FILES_AND_FOLDERS);
+		FTPHostFile file = null;
 		
-		if (matches != null && matches.length > 0)
-		{
-			return matches[0];
+		try{
+		
+			//try to retrieve the file
+			FTPClient ftp = getFTPClient();
+			try
+			{
+				ftp.noop();
+			}
+			catch (Exception e)
+			{
+				disconnect();
+				reconnect();
+				ftp = getFTPClient();
+			}
+			
+			if(!ftp.changeWorkingDirectory(remoteParent))
+			{
+				return null;
+			}
+			
+			String systemName = ftp.getSystemName();
+			
+			FTPFile[] ftpFiles = ftp.listFiles();
+			
+			for (int i = 0; i < ftpFiles.length; i++) 
+			{
+				if(ftpFiles[i].getName().equalsIgnoreCase(fileName))
+				{
+					file = new FTPHostFile(remoteParent,ftpFiles[i],systemName);
+					break;
+				}
+			}
+			
+			// if not found, create new object with non-existing flag
+			if(file == null)
+			{
+				file = new FTPHostFile(remoteParent,fileName, false, false, 0, 0, false);
+			}
+		
+		
+		}catch (IOException e){
+			//file will be null
 		}
-		else
-		{
-			return new FTPHostFile(remoteParent,fileName, false, false, 0, 0, false);
-		}
+		
+		return file;
 	}
 	
 	public boolean isConnected()
@@ -447,6 +487,12 @@ public class FTPService extends AbstractFileService implements IFileService, IFT
 		try
 		{
 			FTPClient ftp = getFTPClient();
+			
+			if(!ftp.changeWorkingDirectory(remoteParent))
+			{
+				return null;
+			}
+			
 			ftp.makeDirectory(folderName);
 		}
 		catch (Exception e)	{}
@@ -480,17 +526,12 @@ public class FTPService extends AbstractFileService implements IFileService, IFT
 	
     public boolean copy(IProgressMonitor monitor, String srcParent, String srcName, String tgtParent, String tgtName) 
 	{
-		return move(monitor, srcParent, srcName, tgtParent, tgtName);
+    	return false;
 	}
 	
 	public boolean copyBatch(IProgressMonitor monitor, String[] srcParents, String[] srcNames, String tgtParent) throws SystemMessageException 
 	{
-		boolean ok = true;
-		for (int i = 0; i < srcParents.length; i++)
-		{
-			ok = ok && copy(monitor, srcParents[i], srcNames[i], tgtParent, srcNames[i]);
-		}
-		return ok;
+		return false;
 	}
 
 	public void initService(IProgressMonitor monitor)

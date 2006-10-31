@@ -11,8 +11,8 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * Martin Oberhuber (Wind River) - Fix for bug 161844 - regex matching backslashes
- * 
+ * Martin Oberhuber (Wind River) - Fix 161844 - regex matching backslashes
+ * Martin Oberhuber (Wind River) - Fix 162781 - normalize without replaceAll()
  ********************************************************************************/
 
 package org.eclipse.rse.services.clientserver;
@@ -35,26 +35,32 @@ public class PathUtility
 		if (path.indexOf("\\\\") != -1) containsDoubleSlashes = true; //$NON-NLS-1$
 		if (path.endsWith("\\") || path.endsWith("/")) endsWithSlash = true; //$NON-NLS-1$ //$NON-NLS-2$
 		
-		boolean needsNormalizing = containsForwardSlash || containsDoubleSlashes || endsWithSlash;
-		if (!needsNormalizing) return path;
-		
-		if (containsForwardSlash)
-		{
-			path = path.replace('/', '\\');
-			containsDoubleSlashes = (path.indexOf("\\\\") != -1); //$NON-NLS-1$
-		}
-		
-		while (containsDoubleSlashes)
-		{
-			//TODO Improve performance by manually iterating over char array
-			//need to quote once for the string, then again for the regex
-			//Replace "\\" by "\": Regex matcher needs quoting twice in search, once in replacement
-			path = path.replaceAll("\\\\\\\\", "\\\\"); //$NON-NLS-1$ //$NON-NLS-2$
-			containsDoubleSlashes = (path.indexOf("\\\\") != -1); //$NON-NLS-1$
-		}
-		if (endsWithSlash)
-		{
-			if (!(path.length() == 3)) path = path.substring(0, path.length() - 1);
+		if (containsForwardSlash || containsDoubleSlashes) {
+			//Replace /->\, then replace \\->\
+			StringBuffer buf = new StringBuffer(path.length());
+			boolean foundBackslash=false;
+			for (int i=0; i<path.length(); i++) {
+				char c = path.charAt(i);
+				if (c=='/') {
+					c='\\';
+				}
+				if (c=='\\') {
+					if (!foundBackslash) {
+						foundBackslash=true;
+						buf.append(c);
+					}
+				} else {
+					foundBackslash=false;
+					buf.append(c);
+				}
+			}
+			if (endsWithSlash && buf.length()!=3) {
+				buf.deleteCharAt(buf.length()-1);
+			}
+			path = buf.toString();
+		} else if (endsWithSlash && path.length()!=3) {
+			//remove trailing slash only
+			path = path.substring(0, path.length() - 1);			
 		}
 		return path;
 	}
@@ -71,28 +77,34 @@ public class PathUtility
 		if (path.indexOf("//") != -1) containsDoubleSlashes = true; //$NON-NLS-1$
 		if (path.endsWith("\\") || path.endsWith("/")) endsWithSlash = true; //$NON-NLS-1$ //$NON-NLS-2$
 
-		boolean needsNormalizing = containsBackSlash || containsDoubleSlashes || endsWithSlash;
-		if (!needsNormalizing) return path;
-		
-		if (containsBackSlash)
-		{
-			path = path.replace('\\', '/');
-			containsDoubleSlashes = (path.indexOf("//") != -1); //$NON-NLS-1$
-		}
-		
-		while (containsDoubleSlashes)
-		{
-			//TODO Improve performance by manually iterating over char array
-			path = path.replaceAll("//", "/"); //$NON-NLS-1$ //$NON-NLS-2$
-			containsDoubleSlashes = (path.indexOf("//") != -1); //$NON-NLS-1$
-		}
-		
-		if (endsWithSlash)
-		{
-			if (!(path.length() == 1)) path = path.substring(0, path.length() - 1);
+		if (containsBackSlash || containsDoubleSlashes) {
+			//Replace \->/, then replace //->/
+			StringBuffer buf = new StringBuffer(path.length());
+			boolean foundSlash=false;
+			for (int i=0; i<path.length(); i++) {
+				char c = path.charAt(i);
+				if (c=='\\') {
+					c='/';
+				}
+				if (c=='/') {
+					if (!foundSlash) {
+						foundSlash=true;
+						buf.append(c);
+					}
+				} else {
+					foundSlash=false;
+					buf.append(c);
+				}
+			}
+			if (endsWithSlash && buf.length()!=1) {
+				buf.deleteCharAt(buf.length()-1);
+			}
+			path = buf.toString();
+		} else if (endsWithSlash && path.length()!=1) {
+			//remove trailing slash only
+			path = path.substring(0, path.length() - 1);			
 		}
 		return path;
-
 	}
 	
 	public static String normalizeVirtualWindows(String path)

@@ -48,7 +48,8 @@ public class PathUtility
 		{
 			//TODO Improve performance by manually iterating over char array
 			//need to quote once for the string, then again for the regex
-			path = path.replaceAll("\\\\\\\\", "\\"); //$NON-NLS-1$ //$NON-NLS-2$
+			//Replace "\\" by "\": Regex matcher needs quoting twice in search, once in replacement
+			path = path.replaceAll("\\\\\\\\", "\\\\"); //$NON-NLS-1$ //$NON-NLS-2$
 			containsDoubleSlashes = (path.indexOf("\\\\") != -1); //$NON-NLS-1$
 		}
 		if (endsWithSlash)

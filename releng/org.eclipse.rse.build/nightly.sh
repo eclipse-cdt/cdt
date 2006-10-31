@@ -11,6 +11,12 @@
 #*******************************************************************************
 #nightly build for RSE - to be executed on build.eclipse.org
 #
+# Usage:
+#   nightly.sh [mapVersionTag] [buildType] [buildId]
+# Examples:
+#   nightly.sh HEAD I
+#   nightly.sh HEAD S 1.0RC3
+#
 # Prerequisites:
 # - Eclipse 3.2 installed or linked from ../eclipse
 # - org.eclipse.releng.basebuilder checked out to ../org.eclipse.releng.basebuilder
@@ -34,11 +40,20 @@ buildDirectory="${working}/build"
 packageDirectory="${working}/package"
 
 tag="HEAD"
+if [ "$1" != "" ]; then
+  tag="$1"
+fi
 buildType="N"
+if [ "$2" != "" ]; then
+  buildType="$2"
+fi
 mydstamp=`date +'%Y%m%d'`
 mytstamp=`date +'%H%M'`
 timestamp="${mydstamp}-${mytstamp}"
 buildId="${buildType}${timestamp}"
+if [ "$3" != "" ]; then
+  buildId="$3"
+fi
 rm -rf "${buildDirectory}"
 
 command="java -cp ${basebuilder}/startup.jar org.eclipse.core.launcher.Main "
@@ -52,11 +67,13 @@ command="$command -DbaseLocation=${eclipse} "
 command="$command -DbuildType=${buildType} "
 command="$command -DbuildId=${buildId} "
 command="$command -DmapVersionTag=${tag} "
-command="$command -DdoPublish=true "
-command="$command -DforceContextQualifier=${buildId} "
-command="$command -DfetchTag=HEAD "
 command="$command -Dmydstamp=${mydstamp} "
 command="$command -Dmytstamp=${mytstamp} "
+if [ "$buildType" = "N" ]; then
+  command="$command -DforceContextQualifier=${buildId} "
+  command="$command -DfetchTag=HEAD "
+fi
+command="$command -DdoPublish=true "
 #command="$command postBuild "
 
 echo "$command"

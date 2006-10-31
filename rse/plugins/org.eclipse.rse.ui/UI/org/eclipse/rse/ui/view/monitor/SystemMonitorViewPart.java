@@ -813,6 +813,7 @@ class SubSetAction extends BrowseAction
 			case ISystemResourceChangeEvents.EVENT_PROPERTY_CHANGE:
 			{						
 				_folder.removeDisconnected();
+				updateActionStates();
 			}
 			break;
 			case ISystemResourceChangeEvents.EVENT_RENAME:

@@ -63,6 +63,7 @@ fi
 
 #Update the testUpdates site
 if [ "$FILES" != "" ]; then
+  sg dsdp-tm-rse -c "echo \"Refreshing update site\" "
   cd $HOME/downloads-tm/testUpdates/bin
   ./mkTestUpdates.sh
   cd "$curdir"

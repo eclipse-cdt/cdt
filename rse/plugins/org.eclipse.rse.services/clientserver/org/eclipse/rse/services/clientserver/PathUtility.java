@@ -13,29 +13,28 @@
  * Contributors:
  * Martin Oberhuber (Wind River) - Fix 161844 - regex matching backslashes
  * Martin Oberhuber (Wind River) - Fix 162781 - normalize without replaceAll()
+ * Martin Oberhuber (Wind River) - Use pre-compiled regex Pattern
  ********************************************************************************/
 
 package org.eclipse.rse.services.clientserver;
+
+import java.util.regex.Pattern;
 
 import org.eclipse.rse.services.clientserver.archiveutils.AbsoluteVirtualPath;
 import org.eclipse.rse.services.clientserver.archiveutils.ArchiveHandlerManager;
 
 public class PathUtility 
 {
+	//Regex pattern: / or \\
+	private static Pattern badSlashPatternWin=Pattern.compile("/|\\\\\\\\"); //$NON-NLS-1$
 
 	public static String normalizeWindows(String path)
 	{
-		if (path == null || path.length() < 2) return path;
-		boolean containsForwardSlash = false;
-		boolean containsDoubleSlashes = false;
-		boolean endsWithSlash = false;
-		
-		//TODO Improve performance by using a pre-compiled Regex Pattern
-		if (path.indexOf('/') != -1) containsForwardSlash = true;
-		if (path.indexOf("\\\\") != -1) containsDoubleSlashes = true; //$NON-NLS-1$
-		if (path.endsWith("\\") || path.endsWith("/")) endsWithSlash = true; //$NON-NLS-1$ //$NON-NLS-2$
-		
-		if (containsForwardSlash || containsDoubleSlashes) {
+		if (path == null || path.length() < 2) {
+			return path;
+		}
+		boolean endsWithSlash = (path.endsWith("\\") || path.endsWith("/"));
+		if (badSlashPatternWin.matcher(path).find()) {
 			//Replace /->\, then replace \\->\
 			StringBuffer buf = new StringBuffer(path.length());
 			boolean foundBackslash=false;
@@ -64,20 +63,17 @@ public class PathUtility
 		}
 		return path;
 	}
-	
+
+	//Regex pattern: \ or //
+	private static Pattern badSlashPatternUnix=Pattern.compile("\\\\|//"); //$NON-NLS-1$
+
 	public static String normalizeUnix(String path)
 	{
-		if (path == null || path.length() < 2) return path;
-		boolean containsBackSlash = false;
-		boolean containsDoubleSlashes = false;
-		boolean endsWithSlash = false;
-		
-		//TODO Improve performance by using a pre-compiled Regex Pattern
-		if (path.indexOf('\\') != -1) containsBackSlash = true;
-		if (path.indexOf("//") != -1) containsDoubleSlashes = true; //$NON-NLS-1$
-		if (path.endsWith("\\") || path.endsWith("/")) endsWithSlash = true; //$NON-NLS-1$ //$NON-NLS-2$
-
-		if (containsBackSlash || containsDoubleSlashes) {
+		if (path == null || path.length() < 2) {
+			return path;
+		}
+		boolean endsWithSlash = (path.endsWith("\\") || path.endsWith("/"));
+		if (badSlashPatternUnix.matcher(path).find()) {
 			//Replace \->/, then replace //->/
 			StringBuffer buf = new StringBuffer(path.length());
 			boolean foundSlash=false;

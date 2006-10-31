@@ -112,7 +112,7 @@ public class CPPASTTranslationUnit extends CPPASTNode implements
     public IASTDeclaration[] getDeclarations() {
         if (decls == null)
             return IASTDeclaration.EMPTY_DECLARATION_ARRAY;
-        return (IASTDeclaration[]) ArrayUtil.removeNulls( IASTDeclaration.class, decls );
+        return (IASTDeclaration[]) ArrayUtil.trim( IASTDeclaration.class, decls );
     }
 
     /*
@@ -212,6 +212,7 @@ public class CPPASTTranslationUnit extends CPPASTNode implements
             if (!names[i].isDefinition())
                 names[i] = null;
         }
+    	// nulls can be anywhere, don't use trim()
         return (IASTName[])ArrayUtil.removeNulls(IASTName.class, names);
     }
 
@@ -585,7 +586,7 @@ public class CPPASTTranslationUnit extends CPPASTNode implements
         if( decls == null ) return;
         for( int i = 0; i < decls.length; ++i )
         {
-           if( decls[i] == null ) continue;
+           if( decls[i] == null ) break;
            if( decls[i] == child )
            {
                other.setParent( child.getParent() );

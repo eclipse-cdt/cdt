@@ -13,6 +13,7 @@
 package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -33,7 +34,6 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
-import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.internal.core.Util;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.db.PDOMNodeLinkedList;
@@ -118,8 +118,8 @@ class PDOMCPPClassType extends PDOMCPPBinding implements ICPPClassType,
 			List list = new ArrayList();
 			for (PDOMCPPBase base = getFirstBase(); base != null; base = base.getNextBase())
 				list.add(base);
+			Collections.reverse(list);
 			ICPPBase[] bases = (ICPPBase[])list.toArray(new ICPPBase[list.size()]);
-			ArrayUtil.reverse(bases);
 			return bases;
 		} catch (CoreException e) {
 			CCorePlugin.log(e);

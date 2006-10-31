@@ -60,7 +60,7 @@ public class CPPASTTemplateId extends CPPASTNode implements ICPPASTTemplateId, I
      */
     public IASTNode[] getTemplateArguments() {
         if( templateArguments == null ) return ICPPASTTemplateId.EMPTY_ARG_ARRAY;
-        return (IASTNode[]) ArrayUtil.removeNulls( IASTNode.class, templateArguments );
+        return (IASTNode[]) ArrayUtil.trim( IASTNode.class, templateArguments );
     }
     
     private IASTNode [] templateArguments = null;

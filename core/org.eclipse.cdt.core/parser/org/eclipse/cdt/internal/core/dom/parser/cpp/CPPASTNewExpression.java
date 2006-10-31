@@ -73,7 +73,7 @@ public class CPPASTNewExpression extends CPPASTNode implements
 
     public IASTExpression [] getNewTypeIdArrayExpressions() {
         if( arrayExpressions == null ) return IASTExpression.EMPTY_EXPRESSION_ARRAY;
-        return (IASTExpression[]) ArrayUtil.removeNulls( IASTExpression.class, arrayExpressions );
+        return (IASTExpression[]) ArrayUtil.trim( IASTExpression.class, arrayExpressions );
     }
 
     public void addNewTypeIdArrayExpression(IASTExpression expression) {

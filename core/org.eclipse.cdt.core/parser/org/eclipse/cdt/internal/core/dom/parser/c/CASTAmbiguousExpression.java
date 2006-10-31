@@ -7,6 +7,7 @@
  *
  * Contributors:
  * IBM - Initial API and implementation
+ * Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.c;
 
@@ -24,8 +25,7 @@ public class CASTAmbiguousExpression extends CASTAmbiguity implements
 
     public void addExpression(IASTExpression e) {
     	if (e != null) {
-    		expressionsPos++;
-    		expressions = (IASTExpression[]) ArrayUtil.append( IASTExpression.class, expressions, e );
+    		expressions = (IASTExpression[]) ArrayUtil.append( IASTExpression.class, expressions, ++expressionsPos, e );
     	}
     }
 

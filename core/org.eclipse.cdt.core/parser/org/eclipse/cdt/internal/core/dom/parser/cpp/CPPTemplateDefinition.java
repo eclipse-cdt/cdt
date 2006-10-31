@@ -349,17 +349,7 @@ public abstract class CPPTemplateDefinition extends PlatformObject implements IC
 			definition = null;
 			return;
 		}
-		if( declarations != null ) {
-			for (int i = 0; i < declarations.length; i++) {
-				if( node == declarations[i] ) {
-					if( i == declarations.length - 1 )
-						declarations[i] = null;
-					else
-						System.arraycopy( declarations, i + 1, declarations, i, declarations.length - 1 - i );
-					return;
-				}
-			}
-		}
+		ArrayUtil.remove(declarations, node);
 	}
 	protected void updateTemplateParameterBindings( IASTName name ){
     	IASTName orig = definition != null ? definition : declarations[0];

@@ -108,17 +108,9 @@ public class CPPParameter extends PlatformObject implements ICPPParameter, ICPPI
 	}
 	
 	public void removeDeclaration(IASTNode node) {
-		if( declarations != null ) {
-			for (int i = 0; i < declarations.length; i++) {
-				if( node == declarations[i] ) {
-					if( i == declarations.length - 1 )
-						declarations[i] = null;
-					else
-						System.arraycopy( declarations, i + 1, declarations, i, declarations.length - 1 - i );
-				}
-			}
-		}
+		ArrayUtil.remove(declarations, node);
 	}
+	
 	private IASTName getPrimaryDeclaration(){
 	    if( declarations != null ){
 	        for( int i = 0; i < declarations.length && declarations[i] != null; i++ ){

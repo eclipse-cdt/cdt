@@ -112,7 +112,7 @@ public class IndexListenerTest extends BaseTestCase {
 			IFile file= TestSourceReader.createFile(fProject1.getProject(), "test.cpp", "int a;");
 			
 			synchronized (mutex) {
-				mutex.wait(1000);
+				mutex.wait(2000);
 			}
 			assertEquals(1, projects.size());
 			assertTrue(projects.contains(fProject1));

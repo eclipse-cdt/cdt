@@ -26,8 +26,7 @@ public class CPPASTFunctionTryBlockDeclarator extends CPPASTFunctionDeclarator
      */
     public void addCatchHandler(ICPPASTCatchHandler statement) {
     	if (statement != null) {
-    		catchHandlersPos++;
-    		catchHandlers = (ICPPASTCatchHandler[]) ArrayUtil.append( ICPPASTCatchHandler.class, catchHandlers, statement );	
+    		catchHandlers = (ICPPASTCatchHandler[]) ArrayUtil.append( ICPPASTCatchHandler.class, catchHandlers, ++catchHandlersPos, statement );	
     	}
     }
 

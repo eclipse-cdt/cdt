@@ -34,7 +34,7 @@ public class CPPASTCompoundStatement extends CPPASTNode implements
      */
     public IASTStatement[] getStatements() {
         if( statements == null ) return IASTStatement.EMPTY_STATEMENT_ARRAY;
-        return (IASTStatement[]) ArrayUtil.removeNulls( IASTStatement.class, statements );
+        return (IASTStatement[]) ArrayUtil.trim( IASTStatement.class, statements );
     }
 
     /* (non-Javadoc)

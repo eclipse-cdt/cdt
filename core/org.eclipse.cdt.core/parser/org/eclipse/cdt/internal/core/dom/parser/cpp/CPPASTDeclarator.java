@@ -78,8 +78,7 @@ public class CPPASTDeclarator extends CPPASTNode implements IASTDeclarator {
      */
     public void addPointerOperator(IASTPointerOperator operator) {
     	if (operator != null) {
-    		pointerOpsPos++;
-    		pointerOps = (IASTPointerOperator[]) ArrayUtil.append( IASTPointerOperator.class, pointerOps, operator );
+    		pointerOps = (IASTPointerOperator[]) ArrayUtil.append( IASTPointerOperator.class, pointerOps, ++pointerOpsPos, operator );
     	}
     }
 

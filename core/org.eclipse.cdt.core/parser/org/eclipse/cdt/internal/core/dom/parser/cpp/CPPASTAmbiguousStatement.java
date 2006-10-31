@@ -23,8 +23,7 @@ public class CPPASTAmbiguousStatement extends CPPASTAmbiguity implements
     
     public void addStatement(IASTStatement s) {
     	if (s != null) {
-    		stmtsPos++;
-    		stmts = (IASTStatement[]) ArrayUtil.append( IASTStatement.class, stmts, s );
+    		stmts = (IASTStatement[]) ArrayUtil.append( IASTStatement.class, stmts, ++stmtsPos, s );
     	}
     }
 

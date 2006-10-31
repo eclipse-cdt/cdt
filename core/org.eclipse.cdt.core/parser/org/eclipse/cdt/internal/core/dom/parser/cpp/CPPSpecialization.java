@@ -87,16 +87,7 @@ public abstract class CPPSpecialization extends PlatformObject implements ICPPSp
 			definition = null;
 			return;
 		}
-		if( declarations != null ) {
-			for (int i = 0; i < declarations.length; i++) {
-				if( node == declarations[i] ) {
-					if( i == declarations.length - 1 )
-						declarations[i] = null;
-					else
-						System.arraycopy( declarations, i + 1, declarations, i, declarations.length - 1 - i );
-				}
-			}
-		}
+		ArrayUtil.remove(declarations, node);
 	}
 	
 	public String getName() {

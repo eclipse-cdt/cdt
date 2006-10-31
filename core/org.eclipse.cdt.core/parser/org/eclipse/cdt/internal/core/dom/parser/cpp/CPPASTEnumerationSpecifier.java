@@ -31,8 +31,7 @@ public class CPPASTEnumerationSpecifier extends CPPASTBaseDeclSpecifier
 	 */
 	public void addEnumerator(IASTEnumerator enumerator) {
 		if (enumerator != null) {
-			enumeratorsPos++;
-			enumerators = (IASTEnumerator[]) ArrayUtil.append( IASTEnumerator.class, enumerators, enumerator );
+			enumerators = (IASTEnumerator[]) ArrayUtil.append( IASTEnumerator.class, enumerators, ++enumeratorsPos, enumerator );
 		}
 	}
 

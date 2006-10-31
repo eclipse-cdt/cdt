@@ -50,8 +50,7 @@ public class CPPASTCompositeTypeSpecifier extends CPPASTBaseDeclSpecifier
      */
     public void addBaseSpecifier(ICPPASTBaseSpecifier baseSpec) {
     	if (baseSpec != null) {
-    		baseSpecsPos++;
-    		baseSpecs = (ICPPASTBaseSpecifier[]) ArrayUtil.append( ICPPASTBaseSpecifier.class, baseSpecs, baseSpec );
+    		baseSpecs = (ICPPASTBaseSpecifier[]) ArrayUtil.append( ICPPASTBaseSpecifier.class, baseSpecs, ++baseSpecsPos, baseSpec );
     	}
     }
 
@@ -88,7 +87,7 @@ public class CPPASTCompositeTypeSpecifier extends CPPASTBaseDeclSpecifier
      */
     public IASTDeclaration[] getMembers() {
         if( declarations == null ) return IASTDeclaration.EMPTY_DECLARATION_ARRAY;
-        return (IASTDeclaration[]) ArrayUtil.removeNulls( IASTDeclaration.class, declarations );
+        return (IASTDeclaration[]) ArrayUtil.trim( IASTDeclaration.class, declarations );
 
     }
 
@@ -151,7 +150,9 @@ public class CPPASTCompositeTypeSpecifier extends CPPASTBaseDeclSpecifier
         if( declarations == null ) return;
         for( int i = 0; i < declarations.length; ++i )
         {
-           if( declarations[i] == null ) continue;
+           if( declarations[i] == null ) {
+        	   break;
+           }
            if( declarations[i] == child )
            {
                other.setParent( child.getParent() );

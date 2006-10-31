@@ -981,8 +981,7 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
         public void addSubContext(_Context c) {
             if (subContexts == null)
                 subContexts = new _Context[DEFAULT_SUBCONTEXT_ARRAY_SIZE];
-            subContexts = (_Context[]) ArrayUtil.append(_Context.class,
-                    subContexts, c);
+            subContexts = (_Context[]) ArrayUtil.append(_Context.class, subContexts, c);
         }
 
         public boolean hasSubContexts() {
@@ -1093,8 +1092,7 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
         
         public void addBuiltinMacro(IMacroDefinition def) {
         	if (def != null) {
-        		builtinsPos++;
-        		builtins = (IMacroDefinition[]) ArrayUtil.append( IMacroDefinition.class, builtins, def );	
+        		builtins = (IMacroDefinition[]) ArrayUtil.append( IMacroDefinition.class, builtins, ++builtinsPos, def );	
         	}
         }
         
@@ -1667,17 +1665,15 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
             else if (cc instanceof _MacroExpansion && r.hasAncestor(cc))
                 ++currentCount;
             else {
-                result = (_WeightedContext[]) ArrayUtil.append(
-                        _WeightedContext.class, result, new _WeightedContext(
-                                cc, currentCount));
+                result = (_WeightedContext[]) ArrayUtil.append(_WeightedContext.class, result, 
+                		new _WeightedContext(cc, currentCount));
                 cc = r;
                 currentCount = 1;
             }
         }
-        result = (_WeightedContext[]) ArrayUtil.append(_WeightedContext.class,
-                result, new _WeightedContext(cc, currentCount));
-        return (_WeightedContext[]) ArrayUtil.removeNulls(
-                _WeightedContext.class, result);
+        result = (_WeightedContext[]) ArrayUtil.append(_WeightedContext.class, result,
+        		new _WeightedContext(cc, currentCount));
+        return (_WeightedContext[]) ArrayUtil.trim(_WeightedContext.class, result);
     }
 
     protected IASTNodeLocation createSoleLocation(_Context c, int offset,
@@ -2492,7 +2488,7 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
                     results = (_Context[]) ArrayUtil.addAll( _Context.class, results, s );
             }
         }
-        return (_Context[]) ArrayUtil.removeNulls( _Context.class, results );
+        return (_Context[]) ArrayUtil.trim( _Context.class, results );
     }
 
     public IASTName[] getDeclarations(IMacroBinding binding) {

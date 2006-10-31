@@ -31,6 +31,7 @@ import org.eclipse.cdt.core.parser.tests.scanner2.Scanner2Test;
 public class ParserTestSuite extends TestCase {
 	public static Test suite() { 
 		TestSuite suite= new TestSuite(ParserTestSuite.class.getName());
+		suite.addTestSuite(ArrayUtilsTest.class);
 		suite.addTestSuite(Scanner2Test.class );
 		suite.addTestSuite(QuickParseASTTests.class);
 		suite.addTestSuite(ParserSymbolTableTest.class);

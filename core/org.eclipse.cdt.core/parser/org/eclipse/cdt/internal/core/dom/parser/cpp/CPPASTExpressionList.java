@@ -26,7 +26,7 @@ public class CPPASTExpressionList extends CPPASTNode implements
 
 	public IASTExpression [] getExpressions() {
         if( expressions == null ) return IASTExpression.EMPTY_EXPRESSION_ARRAY;
-        return (IASTExpression[]) ArrayUtil.removeNulls( IASTExpression.class, expressions );
+        return (IASTExpression[]) ArrayUtil.trim( IASTExpression.class, expressions );
     }
 
     public void addExpression(IASTExpression expression) {

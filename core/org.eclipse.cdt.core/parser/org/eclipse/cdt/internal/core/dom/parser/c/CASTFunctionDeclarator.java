@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005 IBM Corporation and others.
+ * Copyright (c) 2005, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  * IBM Rational Software - Initial API and implementation
+ * Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.c;
 
@@ -41,8 +42,7 @@ public class CASTFunctionDeclarator extends CASTDeclarator implements
      */
     public void addParameterDeclaration(IASTParameterDeclaration parameter) {
     	if (parameter != null) {
-    		parametersPos++;
-    		parameters = (IASTParameterDeclaration[]) ArrayUtil.append( IASTParameterDeclaration.class, parameters, parameter );
+    		parameters = (IASTParameterDeclaration[]) ArrayUtil.append( IASTParameterDeclaration.class, parameters, ++parametersPos, parameter );
     	}        
     }
 

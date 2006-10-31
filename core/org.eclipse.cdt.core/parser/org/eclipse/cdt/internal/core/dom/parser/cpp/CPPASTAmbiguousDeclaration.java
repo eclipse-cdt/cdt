@@ -27,8 +27,7 @@ public class CPPASTAmbiguousDeclaration extends CPPASTAmbiguity implements
     
     public void addDeclaration(IASTDeclaration d) {
     	if (d != null) {
-    		declsPos++;
-    		decls = (IASTDeclaration[]) ArrayUtil.append(IASTDeclaration.class, decls, d );
+    		decls = (IASTDeclaration[]) ArrayUtil.append(IASTDeclaration.class, decls, ++declsPos, d );
     	}
     }
 

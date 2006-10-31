@@ -206,17 +206,7 @@ public class CPPTypedef extends PlatformObject implements ITypedef, ITypeContain
 	}
 	
 	public void removeDeclaration(IASTNode node) {
-		if( declarations != null ) {
-			for (int i = 0; i < declarations.length; i++) {
-				if( node == declarations[i] ) {
-					if( i == declarations.length - 1 )
-						declarations[i] = null;
-					else
-						System.arraycopy( declarations, i + 1, declarations, i, declarations.length - 1 - i );
-					return;
-				}
-			}
-		}
+		ArrayUtil.remove(declarations, node);
 	}
 	
 	public ILinkage getLinkage() {

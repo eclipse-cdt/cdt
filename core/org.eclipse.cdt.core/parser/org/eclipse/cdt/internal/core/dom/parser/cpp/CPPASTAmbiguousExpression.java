@@ -24,8 +24,7 @@ public class CPPASTAmbiguousExpression extends CPPASTAmbiguity implements
     
     public void addExpression(IASTExpression e) {
     	if (e != null) {
-    		expPos++;
-    		exp = (IASTExpression[]) ArrayUtil.append( IASTExpression.class, exp, e );    		
+    		exp = (IASTExpression[]) ArrayUtil.append( IASTExpression.class, exp, ++expPos, e );    		
     	}
     }
 

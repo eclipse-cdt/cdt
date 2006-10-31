@@ -336,17 +336,7 @@ public class CPPNamespace extends PlatformObject implements ICPPNamespace, ICPPI
 		addDefinition( node );
 	}
 	public void removeDeclaration(IASTNode node) {
-		if( namespaceDefinitions != null ) {
-			for (int i = 0; i < namespaceDefinitions.length; i++) {
-				if( node == namespaceDefinitions[i] ) {
-					if( i == namespaceDefinitions.length - 1 )
-						namespaceDefinitions[i] = null;
-					else
-						System.arraycopy( namespaceDefinitions, i + 1, namespaceDefinitions, i, namespaceDefinitions.length - 1 - i );
-					return;
-				}
-			}
-		}
+		ArrayUtil.remove(namespaceDefinitions, node);
 	}
 
 	public IBinding[] getMemberBindings() {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005 IBM Corporation and others.
+ * Copyright (c) 2005, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  * IBM Rational Software - Initial API and implementation
+ * Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.c;
 
@@ -28,8 +29,7 @@ public class CASTEnumerationSpecifier extends CASTBaseDeclSpecifier implements
      */
     public void addEnumerator(IASTEnumerator enumerator) {
     	if (enumerator != null) {
-    		enumeratorsPos++;
-    		enumerators = (IASTEnumerator[]) ArrayUtil.append( IASTEnumerator.class, enumerators, enumerator );
+    		enumerators = (IASTEnumerator[]) ArrayUtil.append( IASTEnumerator.class, enumerators, ++enumeratorsPos, enumerator );
     	}
     }
 

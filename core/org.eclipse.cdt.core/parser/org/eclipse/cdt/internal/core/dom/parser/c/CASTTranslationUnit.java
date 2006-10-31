@@ -88,8 +88,7 @@ public class CASTTranslationUnit extends CASTNode implements
     
 	public void addDeclaration(IASTDeclaration d) {
 		if (d != null) {
-			declsPos++;
-			decls = (IASTDeclaration[]) ArrayUtil.append( IASTDeclaration.class, decls, d );	
+			decls = (IASTDeclaration[]) ArrayUtil.append( IASTDeclaration.class, decls, ++declsPos, d );	
 		}
 	}
 
@@ -175,6 +174,7 @@ public class CASTTranslationUnit extends CASTNode implements
     		if (!names[i].isDefinition())
     			names[i] = null;
     	}
+    	// nulls can be anywhere, don't use trim()
     	return (IASTName[])ArrayUtil.removeNulls(IASTName.class, names);
     }
     

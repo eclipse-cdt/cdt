@@ -34,8 +34,7 @@ public class CPPASTInitializerList extends CPPASTNode implements
     public void addInitializer( IASTInitializer d )
     {
     	if (d != null) {
-    		initializersPos++;
-    		initializers = (IASTInitializer[]) ArrayUtil.append( IASTInitializer.class, initializers, d );
+    		initializers = (IASTInitializer[]) ArrayUtil.append( IASTInitializer.class, initializers, ++initializersPos, d );
     	}
     }
     

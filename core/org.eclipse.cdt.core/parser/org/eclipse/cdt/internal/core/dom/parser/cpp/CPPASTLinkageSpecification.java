@@ -43,14 +43,14 @@ public class CPPASTLinkageSpecification extends CPPASTNode implements
      */
     public IASTDeclaration [] getDeclarations() {
         if( declarations == null ) return IASTDeclaration.EMPTY_DECLARATION_ARRAY;
-        return (IASTDeclaration[]) ArrayUtil.removeNulls( IASTDeclaration.class, declarations );
+        return (IASTDeclaration[]) ArrayUtil.trim( IASTDeclaration.class, declarations );
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPASTLinkageSpecification#addDeclaration(org.eclipse.cdt.core.dom.ast.IASTDeclaration)
      */
     public void addDeclaration(IASTDeclaration declaration) {
-        declarations = (IASTDeclaration[]) ArrayUtil.append( IASTDeclaration.class, declarations, declaration );
+    	declarations = (IASTDeclaration[]) ArrayUtil.append( IASTDeclaration.class, declarations, declaration );
     }
 
     private IASTDeclaration [] declarations = new IASTDeclaration[4];

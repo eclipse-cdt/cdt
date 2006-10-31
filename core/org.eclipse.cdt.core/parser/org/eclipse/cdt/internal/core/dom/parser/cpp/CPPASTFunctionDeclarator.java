@@ -52,8 +52,7 @@ public class CPPASTFunctionDeclarator extends CPPASTDeclarator implements
      */
     public void addParameterDeclaration(IASTParameterDeclaration parameter) {
     	if (parameter != null) {
-    		parametersPos++;
-    		parameters = (IASTParameterDeclaration []) ArrayUtil.append( IASTParameterDeclaration.class, parameters, parameter );
+    		parameters = (IASTParameterDeclaration []) ArrayUtil.append( IASTParameterDeclaration.class, parameters, ++parametersPos, parameter );
     	}
     }
 
@@ -120,8 +119,7 @@ public class CPPASTFunctionDeclarator extends CPPASTDeclarator implements
      */
     public void addExceptionSpecificationTypeId(IASTTypeId typeId) {
     	if (typeId != null) {
-    		typeIdsPos++;
-    		typeIds = (IASTTypeId[]) ArrayUtil.append( IASTTypeId.class, typeIds, typeId );
+    		typeIds = (IASTTypeId[]) ArrayUtil.append( IASTTypeId.class, typeIds, ++typeIdsPos, typeId );
     	}
     }
 
@@ -160,8 +158,7 @@ public class CPPASTFunctionDeclarator extends CPPASTDeclarator implements
      */
     public void addConstructorToChain(ICPPASTConstructorChainInitializer initializer) {
     	if (initializer != null) {
-    		constructorChainPos++;
-    		constructorChain = (ICPPASTConstructorChainInitializer[]) ArrayUtil.append( ICPPASTConstructorChainInitializer.class, constructorChain, initializer );
+    		constructorChain = (ICPPASTConstructorChainInitializer[]) ArrayUtil.append(ICPPASTConstructorChainInitializer.class, constructorChain, ++constructorChainPos, initializer );
     	}
     }
 

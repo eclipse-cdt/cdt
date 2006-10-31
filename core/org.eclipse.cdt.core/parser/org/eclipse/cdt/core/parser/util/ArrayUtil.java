@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2005 IBM Corporation and others.
+ * Copyright (c) 2004, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 
 /*
@@ -25,67 +26,90 @@ public class ArrayUtil {
     }
     
     public static final int DEFAULT_LENGTH = 2;
+    
     /**
-     * Adds obj to array in the first null slot.  
-     * If array is null, a new array is created and obj is added to the new array.  
-     * If the array is full, a new array of larger size is created, the contents 
-     * of array are copied over and obj is added to the new array.
-     * 
-     * The type of any new arrays will be array of c, where c is given.
-     * es:  c = IBinding.class results in an IBinding[]
-     * @param Class c
-     * @param Object [] array
-     * @param Object obj
-     * @return
+     * Assumes that array contains nulls at the end, only. 
+     * Appends element after the last non-null element. 
+     * If the array is null or not large enough, a larger one is allocated, using
+     * the given class object.
      */
     static public Object [] append( Class c, Object[] array, Object obj ){
     	if( obj == null )
     		return array;
-        if( array == null || array.length == 0){
-            array = (Object[]) Array.newInstance( c, DEFAULT_LENGTH );
-            array[0] = obj;
-            return array;
-        }
-        
-        int i = 0;
-        for( ; i < array.length; i++ ){
-            if( array[i] == null ){
-                array[i] = obj;
-                return array;
-            }
-        }
-        Object [] temp = (Object[]) Array.newInstance( c, array.length * 2 );
-        System.arraycopy( array, 0, temp, 0, array.length );
-        temp[array.length] = obj;
-        array = temp;
-        return array;
+    	if( array == null || array.length == 0){
+    		array = (Object[]) Array.newInstance( c, DEFAULT_LENGTH );
+    		array[0] = obj;
+    		return array;
+    	}
+
+    	int i= findFirstNull(array);
+    	if (i >= 0) {
+    		array[i]= obj;
+    		return array;
+    	}
+
+    	Object [] temp = (Object[]) Array.newInstance( c, array.length * 2 );
+    	System.arraycopy( array, 0, temp, 0, array.length );
+    	temp[array.length] = obj;
+    	return temp;
     }
+
+    /**
+     * Assumes that array contains nulls at the end, only.
+     * @returns index of first null, or -1
+     */ 
+    private static int findFirstNull(Object[] array) {
+    	boolean haveNull= false;
+    	int left= 0;
+    	int right= array.length-1;
+    	while (left <= right) {
+    		int mid= (left+right)/2;
+    		if (array[mid] == null) {
+    			haveNull= true;
+    			right= mid-1;
+    		}
+    		else {
+    			left= mid+1;
+    		}
+    	}
+		return haveNull ? right+1 : -1;
+	}
     
-    static public int [] setInt( int[] array, int idx, int val ){
-        if( array == null ){
-            array = new int [ DEFAULT_LENGTH > idx + 1 ? DEFAULT_LENGTH : idx + 1];
-            array[idx] = val;
-            return array;
-        }
-        
-        if( array.length <= idx ){
-            int newLen = array.length * 2;
-            while( newLen <= idx ) newLen *=2;
-            int [] temp = new int [newLen];
-            System.arraycopy( array, 0, temp, 0, array.length );
-            
-            array = temp;
-        }
-        array[idx] = val;
-        return array;
+
+    /**
+     * Assumes that array contains nulls at the end, only. 
+     * Appends object using the current length of the array.
+     * @since 4.0
+     */
+    static public Object [] append(Class c, Object[] array, int currentLength, Object obj ){
+    	if( obj == null )
+    		return array;
+    	if( array == null || array.length == 0){
+    		array = (Object[]) Array.newInstance( c, DEFAULT_LENGTH );
+    		array[0] = obj;
+    		return array;
+    	}
+
+    	if (currentLength < array.length) {
+    		assert array[currentLength] == null;
+    		assert currentLength == 0 || array[currentLength-1] != null;
+    		array[currentLength]= obj;
+    		return array;
+    	}
+
+    	Object [] temp = (Object[]) Array.newInstance( c, array.length * 2 );
+    	System.arraycopy( array, 0, temp, 0, array.length );
+    	temp[array.length] = obj;
+    	return temp;
     }
-    
+
     static public Object [] append( Object[] array, Object obj ){
         return append( Object.class, array, obj );
     }
     
     /**
      * Trims the given array and returns a new array with no null entries.
+     * Assumes that nulls can be found at the end, only.
      * if array == null, a new array of length 0 is returned
      * if forceNew == true, a new array will always be created.
      * if forceNew == false, a new array will only be created if the original array
@@ -100,16 +124,20 @@ public class ArrayUtil {
         if( array == null )
             return (Object[]) Array.newInstance( c, 0 );
         
-        int i = 0;
-        for( ; i < array.length; i++ ){
-            if( array[i] == null ) break;
+        int i = array.length;
+        if (i==0 || array[i-1] != null) {
+        	if (!forceNew) {
+        		return array;
+        	}
         }
-        if( forceNew || i < array.length ){
-            Object [] temp = (Object[]) Array.newInstance( c, i );
-            System.arraycopy( array, 0, temp, 0, i );
-            array = temp;
+        else {
+        	i=findFirstNull(array);
+        	assert i>=0;
         }
-        return array;
+
+        Object [] temp = (Object[]) Array.newInstance( c, i );
+        System.arraycopy( array, 0, temp, 0, i );
+        return temp;
     }
 
     /**
@@ -122,19 +150,19 @@ public class ArrayUtil {
     }
 
     /**
-     * @param transitives
-     * @param usings
+     * Assumes that both arrays contain nulls at the end, only.
      */
     public static Object[] addAll( Class c, Object[] dest, Object[] source ) {
         if( source == null || source.length == 0 )
             return dest;
         
-        int numToAdd = 0;
-        while( numToAdd < source.length && source[numToAdd] != null )
-            numToAdd++;
-        
-        if( numToAdd == 0 )
-            return dest;
+        int numToAdd = findFirstNull(source);
+        if (numToAdd <= 0) {
+        	if (numToAdd == 0) {
+        		return dest;
+        	}
+        	numToAdd= source.length;
+        }
         
         if( dest == null || dest.length == 0 ){
             dest = (Object[]) Array.newInstance( c, numToAdd );
@@ -142,9 +170,10 @@ public class ArrayUtil {
             return dest;
         }
         
-        int firstFree = 0;
-        while( firstFree < dest.length && dest[firstFree] != null )
-            firstFree++;
+        int firstFree = findFirstNull(dest);
+        if (firstFree < 0) {
+        	firstFree= dest.length;
+        }
         
         if( firstFree + numToAdd <= dest.length ){
             System.arraycopy( source, 0, dest, firstFree, numToAdd );
@@ -154,32 +183,6 @@ public class ArrayUtil {
         System.arraycopy( dest, 0, temp, 0, firstFree );
         System.arraycopy( source, 0, temp, firstFree, numToAdd );
         return temp;
-    }
-
-    /**
-     * Replaces the item at index idx with the given object.  If the obj is an Object[],
-     * then the contents of that array are inserted with the first element overwriting 
-     * whatever was at idx.
-     * @param class1
-     * @param nodes
-     * @param declarations
-     * @return
-     */
-    public static Object[] replace( Class c, Object[] array, int idx, Object obj ) {
-        if( array == null || idx >= array.length )
-            return array;
-        
-        if( obj instanceof Object [] ){
-            Object [] objs = (Object[]) obj;
-            Object [] temp = (Object[]) Array.newInstance( c, array.length + objs.length - 1 );
-            System.arraycopy( array, 0, temp, 0, idx );
-            System.arraycopy( objs, 0, temp, idx, objs.length );
-            System.arraycopy( array, idx + 1, temp, idx + objs.length, array.length - idx - 1);
-            array = temp;
-        } else {
-            array[idx] = obj;
-        }
-        return array;
     }
     
     public static boolean contains( Object [] array, Object obj ){
@@ -198,8 +201,6 @@ public class ArrayUtil {
      *
      * If there are no nulls in the original array then the original
      * array is returned.
-     *
-	 * @return
 	 */
 	public static Object[] removeNulls(Class c, Object[] array) {
         if( array == null )
@@ -222,7 +223,7 @@ public class ArrayUtil {
 		
 		return newArray;
 	}
-	
+
 	/**
 	 * To improve performance, this method should be used instead of ArrayUtil#removeNulls(Class, Object[]) when
 	 * all of the non-null elements in the array are grouped together at the beginning of the array
@@ -235,24 +236,19 @@ public class ArrayUtil {
         if( array == null || index < 0)
             return (Object[]) Array.newInstance( c, 0 );
         
-        if( array.length == index + 1 )
+        final int newLen= index+1;
+        if( array.length == newLen)
         	return array;
         
-        Object[] newArray = (Object[]) Array.newInstance(c, index + 1);
-        for( int i = 0; i <= index; i++ ){
-            newArray[i] = array[i];
-        }
-		
+        Object[] newArray = (Object[]) Array.newInstance(c, newLen);
+        System.arraycopy(array, 0, newArray, 0, newLen);
 		return newArray;
 	}
 
+
 	/**
 	 * Insert the obj at the beginning of the array, shifting the whole thing one index
-	 * @param c
-	 * @param array
-	 * @param idx
-	 * @param obj
-	 * @return
+	 * Assumes that array contains nulls at the end, only. 
 	 */
 	public static Object[] prepend(Class c, Object[] array, Object obj) {
 		if( obj == null )
@@ -263,17 +259,12 @@ public class ArrayUtil {
             return array;
         }
         
-        int i = 0;
-        for( ; i < array.length; i++ ){
-            if( array[i] == null ){
-                array[i] = obj;
-                return array;
-            }
-        }
-		if( i < array.length ){
-			System.arraycopy( array, 0, array, 1, array.length - i );
+        int i = findFirstNull(array);
+        if (i >= 0) {
+			System.arraycopy( array, 0, array, 1, i);
 			array[0] = obj;
-		} else {
+        }
+        else {
 			Object [] temp = (Object[]) Array.newInstance( c, array.length * 2 );
 	        System.arraycopy( array, 0, temp, 1, array.length );
 	        temp[0] = obj;
@@ -283,13 +274,41 @@ public class ArrayUtil {
         return array;
 	}
 	
-	public static void reverse(Object [] array) {
-		for (int left = 0, right = array.length - 1;
-				left < right; ++left, --right) {
-			Object tmp = array[left];
-			array[left] = array[right];
-			array[right] = tmp;
+	/**
+	 * Removes first occurrence of element in array and moves objects behind up front.
+	 * @since 4.0
+	 */
+	public static void remove(Object[] array, Object element) {
+		if( array != null ) {
+			for (int i = 0; i < array.length; i++) {
+				if( element == array[i] ) {
+					System.arraycopy(array, i+1, array, i, array.length-i-1);
+					array[array.length-1]= null;
+					return;
+				}
+			}
 		}
 	}
+	
+    static public int [] setInt( int[] array, int idx, int val ){
+        if( array == null ){
+            array = new int [ DEFAULT_LENGTH > idx + 1 ? DEFAULT_LENGTH : idx + 1];
+            array[idx] = val;
+            return array;
+        }
+        
+        if( array.length <= idx ){
+            int newLen = array.length * 2;
+            while( newLen <= idx ) newLen *=2;
+            int [] temp = new int [newLen];
+            System.arraycopy( array, 0, temp, 0, array.length );
+            
+            array = temp;
+        }
+        array[idx] = val;
+        return array;
+    }
+    
+
 	
 }

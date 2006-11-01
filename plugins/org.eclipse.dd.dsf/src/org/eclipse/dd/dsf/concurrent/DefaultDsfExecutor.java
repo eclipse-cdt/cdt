@@ -178,10 +178,16 @@ public class DefaultDsfExecutor extends ScheduledThreadPoolExecutor
     
                 // Append executable class name
                 traceBuilder.append(getExecutable().getClass().getName());
+                
+                // Add executable's toString().
+                traceBuilder.append("\n        ");
+                traceBuilder.append(getExecutable().toString());
+
+                // Append "create by" info.
                 if (getExecutable() instanceof DsfExecutable) {
                     DsfExecutable dsfExecutable = (DsfExecutable)getExecutable(); 
                     if (dsfExecutable.fCreatedAt != null || dsfExecutable.fCreatedBy != null) {
-                        traceBuilder.append("\n        Created  ");
+                        traceBuilder.append("\n            created  ");
                         if (dsfExecutable.fCreatedBy != null) {
                             traceBuilder.append(" by #");
                             traceBuilder.append(dsfExecutable.fCreatedBy.fSequenceNumber);
@@ -194,19 +200,14 @@ public class DefaultDsfExecutor extends ScheduledThreadPoolExecutor
                 }
     
                 // Submitted info
-                traceBuilder.append("\n        ");
-                traceBuilder.append("Submitted");
+                traceBuilder.append("\n            submitted");
                 if (fSubmittedBy != null) {
                     traceBuilder.append(" by #");
                     traceBuilder.append(fSubmittedBy.fSequenceNumber);
                 }
                 traceBuilder.append(" at ");
                 traceBuilder.append(fSubmittedAt.fStackTraceElements[0].toString());
-                
-                // Finally, the executable's toString().
-                traceBuilder.append("\n        ");
-                traceBuilder.append(getExecutable().toString());
-                
+                                
                 // Finally write out to console
                 DsfPlugin.debug(traceBuilder.toString());
             }

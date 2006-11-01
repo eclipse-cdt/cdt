@@ -220,7 +220,7 @@ public class DsfSession
     /** 
      * Map of registered adapters, for implementing the 
      * IModelContext.getAdapter() method.
-     * @see org.eclipse.dd.dsf.model.AbstractDMC#getAdapter 
+     * @see org.eclipse.dd.dsf.datamodel.AbstractDMContext#getAdapter 
      */
     private Map<Class,Object> fAdapters = Collections.synchronizedMap(new HashMap<Class,Object>());
 
@@ -282,7 +282,7 @@ public class DsfSession
      * Registers a IModelContext adapter of given type.
      * @param adapterType class type to register the adapter for
      * @param adapter adapter instance to register
-     * @see org.eclipse.dsdp.model.AbstractDMC#getAdapter
+     * @see org.eclipse.dsdp.model.AbstractDMContext#getAdapter
      */
     @ThreadSafe
     public void registerModelAdapter(Class adapterType, Object adapter) {
@@ -292,7 +292,7 @@ public class DsfSession
     /**
      * Un-registers a IModelContext adapter of given type.
      * @param adapterType adapter type to unregister
-     * @see org.eclipse.dsdp.model.AbstractDMC#getAdapter
+     * @see org.eclipse.dsdp.model.AbstractDMContext#getAdapter
      */
     @ThreadSafe
     public void unregisterModelAdapter(Class adapterType) {
@@ -303,7 +303,7 @@ public class DsfSession
      * Retrieves an adapter for given type for IModelContext.
      * @param adapterType adapter type to look fors
      * @return adapter object for given type, null if none is registered with the session
-     * @see org.eclipse.dsdp.model.AbstractDMC#getAdapter
+     * @see org.eclipse.dsdp.model.AbstractDMContext#getAdapter
      */
     @ThreadSafe
     public Object getModelAdapter(Class adapterType) {

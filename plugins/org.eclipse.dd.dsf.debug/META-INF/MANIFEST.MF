@@ -1,0 +1,14 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: %pluginName
+Bundle-Vendor: %providerName
+Bundle-SymbolicName: org.eclipse.dd.dsf.debug
+Bundle-Version: 1.0.0
+Bundle-Activator: org.eclipse.dd.dsf.debug.DsfDebugPlugin
+Bundle-Localization: plugin
+Require-Bundle: org.eclipse.core.runtime,
+ org.eclipse.debug.core, 
+ org.eclipse.dd.dsf
+Eclipse-LazyStart: true
+Export-Package: org.eclipse.dd.dsf.debug.service
+Bundle-RequiredExecutionEnvironment: J2SE-1.5

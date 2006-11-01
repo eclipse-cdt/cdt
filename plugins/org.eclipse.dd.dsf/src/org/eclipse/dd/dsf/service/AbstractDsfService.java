@@ -90,6 +90,10 @@ abstract public class AbstractDsfService
      */
     @SuppressWarnings("unchecked")
     protected void register(String[] classes, Dictionary properties) {
+        /*
+         * Ensure that the list of classes contains the base DSF service 
+         * interface, as well as the actual class type of this object.
+         */
         if (!Arrays.asList(classes).contains(IDsfService.class.getName())) {
             String[] newClasses = new String[classes.length + 1];
             System.arraycopy(classes, 0, newClasses, 1, classes.length);
@@ -102,32 +106,62 @@ abstract public class AbstractDsfService
             newClasses[0] = getClass().getName();
             classes = newClasses;
         }
+        /*
+         * Make sure that the session ID is set in the service properties.
+         * The session ID distinguishes this service instance from instances
+         * of the same service in other sessions.
+         */
         properties.put(PROP_SESSION_ID, getSession().getId());
         fProperties = properties;
         fRegistration = getBundleContext().registerService(classes, this, properties);
+        
+        /*
+         * Retrieve the OBJECTCLASS property directly from the service 
+         * registration info.  This is the best bet for getting an accurate 
+         * value.
+         */
         fRegistration.getReference().getProperty(Constants.OBJECTCLASS);
-        fFilter = generateFilter(fProperties);
         fProperties.put(Constants.OBJECTCLASS, fRegistration.getReference().getProperty(Constants.OBJECTCLASS));
+        
+        /*
+         * Create the filter for this service based on all the properties.  If 
+         * there is a single service instance per session, or if the properties
+         * parameter uniquely identifies this service instance among other 
+         * instances in this session.  Then this filter will fetch this service
+         * and only this service from OSGi.
+         */
+        fFilter = generateFilter(fProperties);
     }
-    
+
+    /**
+     * Generates an LDAP filter to uniquely identify this service.
+     */
     private String generateFilter(Dictionary properties) {
         StringBuffer filter = new StringBuffer();
         filter.append("(&");
         
-        // Add the service class to the filter.
-        filter.append('(');
-        filter.append(Constants.OBJECTCLASS);
-        filter.append('=');        
-        filter.append(this.getClass().getName());
-        filter.append(')');
-        
         for (Enumeration keys = properties.keys(); keys.hasMoreElements();) {
             Object key = keys.nextElement();
-            filter.append('(');
-            filter.append(key.toString());
-            filter.append('=');
-            filter.append(properties.get(key).toString());
-            filter.append(')');
+            Object value = properties.get(key);
+            if (value instanceof Object[]) {
+                /*
+                 * For arrays, add a test to check that every element in array 
+                 * is present.  This is here mainly to handle OBJECTCLASS property.
+                 */
+                for (Object arrayValue : (Object[])value) {
+                    filter.append('(');
+                    filter.append(key.toString());
+                    filter.append("=*");
+                    filter.append(arrayValue.toString());
+                    filter.append(')');
+                }
+            } else {
+                filter.append('(');
+                filter.append(key.toString());
+                filter.append('=');
+                filter.append(value.toString());
+                filter.append(')');
+            }
         }
         filter.append(')');
         return filter.toString();

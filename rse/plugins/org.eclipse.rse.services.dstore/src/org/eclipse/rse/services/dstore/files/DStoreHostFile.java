@@ -214,6 +214,8 @@ public class DStoreHostFile implements IHostFile
 	
 	public boolean exists()
 	{
+		if (_element.isDeleted())
+			return false;
 		String type = _element.getType();
 		if (type.equals(IUniversalDataStoreConstants.UNIVERSAL_FILE_DESCRIPTOR) ||
 				type.equals(IUniversalDataStoreConstants.UNIVERSAL_FOLDER_DESCRIPTOR) ||

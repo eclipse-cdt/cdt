@@ -761,7 +761,10 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 		}
 		else
 		{
-			de = getElementFor(remoteParent + getSeparator(remoteParent) + name);
+			StringBuffer buf = new StringBuffer(remoteParent);
+			buf.append(getSeparator(remoteParent));
+			buf.append(name);
+			de = getElementFor(buf.toString());
 		}
 		dsQueryCommand(monitor, de, C_QUERY_GET_REMOTE_OBJECT);
 		return new DStoreHostFile(de);

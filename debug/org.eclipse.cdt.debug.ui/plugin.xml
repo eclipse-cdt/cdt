@@ -1206,6 +1206,10 @@
             containerTypeID="org.eclipse.cdt.debug.core.containerType.mapEntry"
             icon="icons/obj16/mapentry_obj.gif"
             id="org.eclipse.cdt.debug.ui.sourceContainerPresentation.mapEntry"/>
+      <sourceContainerPresentation
+            containerTypeID="org.eclipse.cdt.debug.core.containerType.absolutePath"
+            icon="icons/obj16/abspath_obj.gif"
+            id="org.eclipse.cdt.debug.ui.sourceContainerPresentation.absolutePath"/>
    </extension>
    <extension
          point="org.eclipse.core.filebuffers.annotationModelCreation">

@@ -7,7 +7,8 @@
  *
  * Contributors:
  * QNX Software Systems - Initial API and implementation
- *******************************************************************************/
+ * Nokia - Added support for AbsoluteSourceContainer( 159833 ) 
+*******************************************************************************/
 package org.eclipse.cdt.debug.internal.core.sourcelookup; 
 
 import java.io.File;
@@ -77,21 +78,7 @@ public class CSourceLookupParticipant extends AbstractSourceLookupParticipant {
 		else if ( object instanceof String ) {
 			name = (String)object;
 		}
-		// Workaround. See bug #91808.
-		if ( name != null ) {
-			File file = new File( name );
-			if ( file.isAbsolute() && file.exists() ) {
-				return findSourceElementByFile( file );
-			}
-		}
 		return super.findSourceElements( object );
-	}
-
-	private Object[] findSourceElementByFile( File file ) {
-		IFile[] wfiles = ResourcesPlugin.getWorkspace().getRoot().findFilesForLocation( new Path( file.getPath() ) );
-		if ( wfiles.length > 0 )
-			return wfiles;
-		return new LocalFileStorage[] { new LocalFileStorage( file ) };
 	}
 
 	/* (non-Javadoc)

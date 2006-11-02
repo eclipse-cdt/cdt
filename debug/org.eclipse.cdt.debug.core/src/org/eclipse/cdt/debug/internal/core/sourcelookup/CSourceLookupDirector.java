@@ -7,13 +7,15 @@
  *
  * Contributors:
  * QNX Software Systems - Initial API and implementation
- *******************************************************************************/
+ * Nokia - Added support for AbsoluteSourceContainer( 159833 ) 
+*******************************************************************************/
 package org.eclipse.cdt.debug.internal.core.sourcelookup; 
 
 import java.io.File;
 import java.util.HashSet;
 import java.util.Set;
 import org.eclipse.cdt.debug.core.model.ICBreakpoint;
+import org.eclipse.cdt.debug.core.sourcelookup.AbsolutePathSourceContainer;
 import org.eclipse.cdt.debug.core.sourcelookup.MappingSourceContainer;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
@@ -150,6 +152,9 @@ public class CSourceLookupDirector extends AbstractSourceLookupDirector {
 		}
 		if ( container instanceof MappingSourceContainer ) {
 			return ( ((MappingSourceContainer)container).getCompilationPath( sourceName ) != null ); 
+		}
+		if ( container instanceof AbsolutePathSourceContainer ) {
+			return ( ((AbsolutePathSourceContainer)container).isValidAbsoluteFilePath( sourceName ) ); 
 		}
 		try {
 			ISourceContainer[] containers;

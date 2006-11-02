@@ -134,6 +134,7 @@ public abstract class SystemPromptDialog
 {
 	
 	protected boolean okPressed = false;
+	protected boolean cancelAllPressed = false;
 	protected boolean showBrowseButton = false;
 	protected boolean showTestButton = false;
 	protected boolean showAddButton = false;
@@ -144,12 +145,13 @@ public abstract class SystemPromptDialog
 	protected boolean initialDetailsButtonEnabledState = true;
 	protected boolean detailsButtonHideMode = false;
 	protected boolean showOkButton = true;
+	protected boolean showCancelAllButton = false;
 	protected Shell   overallShell = null;
 	protected Composite parentComposite, dialogAreaComposite;
 	protected Composite buttonsComposite;
-	protected Button  okButton, cancelButton, testButton, browseButton, addButton, detailsButton;
-	protected String  title, labelOk, labelBrowse, labelTest, labelCancel, labelAdd, labelDetailsShow, labelDetailsHide;
-	protected String  tipOk, tipBrowse, tipTest, tipCancel, tipAdd, tipDetailsShow, tipDetailsHide;
+	protected Button  okButton, cancelButton, cancelAllButton, testButton, browseButton, addButton, detailsButton;
+	protected String  title, labelOk, labelBrowse, labelTest, labelCancel, labelCancelAll, labelAdd, labelDetailsShow, labelDetailsHide;
+	protected String  tipOk, tipBrowse, tipTest, tipCancel, tipCancelAll, tipAdd, tipDetailsShow, tipDetailsHide;
 	protected boolean noShowAgainOption;
 	protected Button noShowAgainButton;
 	protected String  detailsShowLabel;
@@ -191,6 +193,8 @@ public abstract class SystemPromptDialog
 	protected static final int TEST_ID = 60;	
 	protected static final int ADD_ID = 70;	
 	protected static final int DETAILS_ID = 80;	
+	protected static final int CANCEL_ALL_ID = 90;
+	
 	protected static final boolean BROWSE_BUTTON_YES = true;
 	protected static final boolean BROWSE_BUTTON_NO  = false;	
 	protected static final boolean TEST_BUTTON_YES = true;
@@ -376,10 +380,15 @@ public abstract class SystemPromptDialog
 	
 	/**
 	 * Allow caller to determine if window was cancelled or not.
+	 * Will return <code>false</code> if Cancel All was pressed.
 	 */
 	public boolean wasCancelled()
 	{
 		return !okPressed;
+	}
+	
+	public boolean wasCancelledAll() {
+		return cancelAllPressed;
 	}
 	
 	/** 
@@ -454,6 +463,7 @@ public abstract class SystemPromptDialog
 	{
 		this.showOkButton = showOk;
 	}
+	
 	/**
 	 * For explicitly setting ok button label
 	 */
@@ -461,6 +471,7 @@ public abstract class SystemPromptDialog
 	{
 		this.labelOk = label;
 	}
+	
 	/**
 	 * For explicitly setting ok button tooltip text
 	 */
@@ -468,6 +479,7 @@ public abstract class SystemPromptDialog
 	{
 		this.tipOk = tip;
 	}
+	
 	/**
 	 * For explicitly enabling/disabling ok button.
 	 */
@@ -545,7 +557,59 @@ public abstract class SystemPromptDialog
 	protected boolean processCancel() 
 	{
 		return true;
-	}		
+	}
+	
+	// ------------------------------
+	// CANCEL ALL BUTTON CONFIGURATION...
+	// ------------------------------
+	/**
+	 * Enable or disable showing of Cancel All button
+	 */
+	public void setShowCancelAllButton(boolean showCancelAll)
+	{
+		this.showCancelAllButton = showCancelAll;
+	}
+	
+	/**
+	 * For explicitly setting cancel button label
+	 */
+	public void setCancelAllButtonLabel(String label)
+	{
+		this.labelCancelAll = label;
+	}
+	/**
+	 * For explicitly setting cancel button tooltip text
+	 */
+	public void setCancelAllButtonToolTipText(String tip)
+	{
+		this.tipCancelAll = tip;
+	}
+	/**
+	 * For explicitly enabling/disabling cancel button.
+	 */
+	public void enableCancelAllButton(boolean enable)
+	{
+		if (cancelAllButton != null)
+		  cancelAllButton.setEnabled(enable);
+	}
+	/**
+	 * Return cancel button widget.
+	 * Be careful <i>not</i> to call the deprecated inherited method getCancelButton()!
+	 */
+	public Button getCancelAllButton()
+	{
+		return cancelAllButton;
+	}
+	/**
+	 * To be overridden by children.
+	 * Called when user presses CANCEL button. 
+	 * Return true to close dialog.
+	 * Return false to not close dialog.
+	 */
+	protected boolean processCancelAll() 
+	{
+		return true;
+	}	
 
 	// ------------------------------
 	// BROWSE BUTTON CONFIGURATION...
@@ -894,8 +958,14 @@ public abstract class SystemPromptDialog
 	          else if (!detailsButtonHideMode && (tipDetailsHide != null))
 	            detailsButton.setToolTipText(tipDetailsHide);		  	  
 		  	}
-		}		  
-
+		}
+		else if (buttonId == CANCEL_ALL_ID) {
+			
+			if (processCancelAll()) {
+				cancelAllPressed = true;
+				close();
+			}
+		}
 	}
 	
 	/**
@@ -1009,6 +1079,15 @@ public abstract class SystemPromptDialog
 		   }
 	   };
 	   cancelButton.addSelectionListener(cancelListener);
+	   
+	   if (showCancelAllButton) {
+		   String cancelAllLabel = (labelCancelAll != null) ? labelCancelAll: SystemResources.BUTTON_CANCEL_ALL;
+		   cancelAllButton = createButton(parent, CANCEL_ALL_ID, cancelAllLabel, false);
+		   
+		   if (tipCancelAll != null) {
+			   cancelAllButton.setToolTipText(tipCancelAll);
+		   }
+	   }
 
        buttonsComposite = parent;
 	   if (helpId != null)

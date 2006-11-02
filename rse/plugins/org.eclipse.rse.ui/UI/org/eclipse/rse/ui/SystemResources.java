@@ -51,7 +51,8 @@ public class SystemResources extends NLS
 	public static String BUTTON_APPLY_TOOLTIP;
 	public static String BUTTON_RESET_LABEL;
 	public static String BUTTON_RESET_TOOLTIP;
-
+	public static String BUTTON_CANCEL_ALL;
+	public static String BUTTON_CANCEL_ALL_TOOLTIP;
 
 	// THESE TERMS ARE USED POTENTIALLY ANYWHERE
 	public static String TERM_YES;

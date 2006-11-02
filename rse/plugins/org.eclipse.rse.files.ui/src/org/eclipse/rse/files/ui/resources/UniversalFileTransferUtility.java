@@ -37,13 +37,16 @@ import org.eclipse.core.resources.ResourceAttributes;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.rse.core.SystemBasePlugin;
 import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.model.ISystemRegistry;
 import org.eclipse.rse.core.model.SystemWorkspaceResourceSet;
 import org.eclipse.rse.core.subsystems.ISubSystem;
+import org.eclipse.rse.files.ui.Activator;
 import org.eclipse.rse.files.ui.FileResources;
 import org.eclipse.rse.model.SystemRemoteResourceSet;
 import org.eclipse.rse.services.clientserver.SystemEncodingUtil;
@@ -79,6 +82,22 @@ public class UniversalFileTransferUtility
 	static final boolean doCompressedTransfer = true;//false;
 
 	static final String _rootPath = SystemRemoteEditManager.getDefault().getRemoteEditProjectLocation().makeAbsolute().toOSString();
+	
+	public static class RenameStatus extends Status {
+		
+		private static final int CANCEL_ALL = 16;
+
+		/**
+		 * @param severity
+		 * @param pluginId
+		 * @param code
+		 * @param message
+		 * @param exception
+		 */
+		public RenameStatus(int severity, String pluginId, int code, String message, Throwable exception) {
+			super(severity, pluginId, code, message, exception);
+		}
+	}
 	
 	/**
 	 * Transfer a remote file or folder from one remote location to another.
@@ -962,11 +981,22 @@ public class UniversalFileTransferUtility
 				String oldPath = newPathBuf.toString() + name;
 				if (checkForCollisions)
 				{
-					name = checkForCollision(existingFiles, targetFolder, name, oldPath);
-					if (name == null)
-					{
-						continue;
-						//return null;
+					RenameStatus status = checkForCollision(existingFiles, targetFolder, name, oldPath);
+					int severity = status.getSeverity();
+					
+					if (severity == IStatus.OK) {
+						name = status.getMessage();
+					}
+					else if (severity == IStatus.CANCEL) {
+						
+						int code = status.getCode();
+						
+						if (code == IStatus.CANCEL) {
+							continue;
+						}
+						else if (code == RenameStatus.CANCEL_ALL) {
+							break;
+						}
 					}
 				}
 
@@ -1894,47 +1924,83 @@ public class UniversalFileTransferUtility
 		return SystemRemoteEditManager.getDefault().getWorkspacePathFor(hostname, remotePath);
 	}
 
-	protected static String checkForCollision(SystemRemoteResourceSet existingFiles, IRemoteFile targetFolder, String oldName, String oldPath)
+	protected static RenameStatus checkForCollision(SystemRemoteResourceSet existingFiles, IRemoteFile targetFolder, String oldName, String oldPath)
 	{
 		String newName = oldName;
 
-			IRemoteFileSubSystem ss = targetFolder.getParentRemoteFileSubSystem();
-			IRemoteFile targetFileOrFolder = (IRemoteFile)existingFiles.get(oldPath);
+		IRemoteFileSubSystem ss = targetFolder.getParentRemoteFileSubSystem();
+		IRemoteFile targetFileOrFolder = (IRemoteFile) existingFiles.get(oldPath);
 
-			if (targetFileOrFolder != null && targetFileOrFolder.exists())
-			{
-				RenameRunnable rr = new RenameRunnable(targetFileOrFolder);
-				Display.getDefault().syncExec(rr);
-				newName = rr.getNewName();
+		RenameStatus status = new RenameStatus(IStatus.OK, Activator.getDefault().getBundle().getSymbolicName(), IStatus.OK, newName, null);
+
+		if (targetFileOrFolder != null && targetFileOrFolder.exists()) {
+			RenameRunnable rr = new RenameRunnable(targetFileOrFolder);
+			Display.getDefault().syncExec(rr);
+			newName = rr.getNewName();
+
+			if (newName == null) {
+
+				int state = rr.getCancelStatus();
+
+				if (state == RenameRunnable.RENAME_DIALOG_CANCELLED_ALL) {
+					status = new RenameStatus(IStatus.CANCEL, Activator.getDefault().getBundle().getSymbolicName(), RenameStatus.CANCEL_ALL, "", null);
+				}
+				else if (state == RenameRunnable.RENAME_DIALOG_CANCELLED) {
+					status = new RenameStatus(IStatus.CANCEL, Activator.getDefault().getBundle().getSymbolicName(), IStatus.CANCEL, "", null);
+				}
 			}
+			else {
+				status = new RenameStatus(IStatus.OK, Activator.getDefault().getBundle().getSymbolicName(), IStatus.OK, newName, null);
+			}
+		}
 
 
-		return newName;
+		return status;
 	}
 
 	public static class RenameRunnable implements Runnable
 	{
 		private IRemoteFile _targetFileOrFolder;
 		private String _newName;
+		private int cancelStatus;
+		
+		public static int RENAME_DIALOG_NOT_CANCELLED = -1;
+		public static int RENAME_DIALOG_CANCELLED = 0;
+		public static int RENAME_DIALOG_CANCELLED_ALL = 1;
+		
 		public RenameRunnable(IRemoteFile targetFileOrFolder)
 		{
 			_targetFileOrFolder = targetFileOrFolder;
+			cancelStatus = RENAME_DIALOG_NOT_CANCELLED;
 		}
 		
 		public void run() {
 			ValidatorFileUniqueName validator = null; 				
 			SystemRenameSingleDialog dlg = new SystemRenameSingleDialog(null, true, _targetFileOrFolder, validator); // true => copy-collision-mode
+			dlg.setShowCancelAllButton(true);
 			
 			dlg.open();
-			if (!dlg.wasCancelled())
+			if (!dlg.wasCancelled() && !dlg.wasCancelledAll())
 				_newName = dlg.getNewName();
-			else
+			else {
 				_newName = null;
+				
+				if (dlg.wasCancelledAll()) {
+					cancelStatus = RENAME_DIALOG_CANCELLED_ALL;
+				}
+				else {
+					cancelStatus = RENAME_DIALOG_CANCELLED;
+				}
+			}
 		}
 		
 		public String getNewName()
 		{
 			return _newName;
+		}
+		
+		public int getCancelStatus() {
+			return cancelStatus;
 		}
 	}
 	

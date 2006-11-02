@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2002, 2006 IBM Corporation. All rights reserved.
+ * Copyright (c) 2002, 2006 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -11,7 +11,7 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * Martin Oberhuber (Wind River) - Fix 162962 - recursive removeCachedRemoteFile()
  ********************************************************************************/
 
 package org.eclipse.rse.subsystems.files.core.subsystems;
@@ -28,6 +28,7 @@ import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Vector;
 
@@ -1624,6 +1625,21 @@ public abstract class RemoteFileSubSystem extends SubSystem implements IRemoteFi
 					}
 				}
 			}
+			//Workaround for bug 162962: getContents() incomplete, children not deleted
+			//If getContents() is implemented correctly, no matches should be removed
+			String prefix = file.getAbsolutePath() + file.getSeparator();
+			//Clone the hashMap in order to avoid ConcurrentModificationException in the iterator
+			HashMap tmpMap = (HashMap)_cachedRemoteFiles.clone();
+			Iterator it = tmpMap.keySet().iterator();
+			while (it.hasNext()) {
+				String remotePath = (String)it.next();
+				if (remotePath.startsWith(prefix)) {
+					//FIXME this should never be called if getContents() is implemented correctly
+					//such that children are already removed in the code above.
+					removeCachedRemoteFile(remotePath);
+				}
+			}
+
 		}
 		_cachedRemoteFiles.remove(file.getAbsolutePath());
 	}

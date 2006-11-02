@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2006 IBM Corporation. All rights reserved.
+ * Copyright (c) 2006 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -12,6 +12,7 @@
  * 
  * Contributors:
  * Martin Oberhuber (Wind River) - Fix 158534 - NPE in upload/download after conflict
+ * Martin Oberhuber (Wind River) - Fix 162962 - recursive removeCachedRemoteFile()
  ********************************************************************************/
 
 package org.eclipse.rse.subsystems.files.core.servicesubsystem;
@@ -700,6 +701,8 @@ public final class FileServiceSubSystem extends RemoteFileSubSystem implements I
 			parents[i] = folderOrFiles[i].getParentPath();
 			names[i] = folderOrFiles[i].getName();
 			folderOrFiles[i].markStale(true);
+			//bug 162962: need to recursively remove children from cache
+			removeCachedRemoteFile(folderOrFiles[i]);
 		}
 		IFileService service = getFileService();
 		try

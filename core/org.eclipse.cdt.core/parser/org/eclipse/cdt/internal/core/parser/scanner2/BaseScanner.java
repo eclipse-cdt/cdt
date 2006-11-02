@@ -2871,7 +2871,7 @@ abstract class BaseScanner implements IScanner {
         char[] fileNameArray = filename.toCharArray();
         // TODO else we need to do macro processing on the rest of the line
         endLine = getLineNumber(bufferPos[bufferStackPos]);
-        skipToLastBeforeNewline();
+        skipToNewLine(false, true);
 
         findAndPushInclusion(filename, fileNameArray, local, include_next, startOffset, nameOffset, nameEndOffset, endOffset, startingLineNumber, nameLine, endLine);
     }
@@ -3573,9 +3573,7 @@ abstract class BaseScanner implements IScanner {
                 if (pos + 1 < limit) {
                     if (buffer[pos + 1] == '/') {
                         // C++ comment, skip rest of line
-                        skipToNewLine(true);
-                        // leave the new line there
-                        --bufferPos[bufferStackPos];
+                        skipToNewLine(true, true);
                         return false;
                     } else if (buffer[pos + 1] == '*') {
                         // C comment, find closing */
@@ -3917,81 +3915,25 @@ abstract class BaseScanner implements IScanner {
     }
 
     protected void skipToNewLine() {
-    	skipToNewLine(false);
+    	skipToNewLine(false, false);
     }
     
-    protected void skipToNewLine(boolean insideComment) {
-        char[] buffer = bufferStack[bufferStackPos];
-        int limit = bufferLimit[bufferStackPos];
-        int pos = ++bufferPos[bufferStackPos];
-
-        if ((pos < limit && buffer[pos] == '\n') ||
-				(pos+1 < limit && buffer[pos] == '\r' && buffer[pos+1] == '\n'))
-            return;
-
-        boolean escaped = false;
-        while (++bufferPos[bufferStackPos] < limit) {
-            switch (buffer[bufferPos[bufferStackPos]]) {
-            case '/':
-            	if (insideComment)
-            		break;
-            	
-                pos = bufferPos[bufferStackPos];
-                if (pos + 1 < limit && buffer[pos + 1] == '*') {
-                    ++bufferPos[bufferStackPos];
-                    while (++bufferPos[bufferStackPos] < limit) {
-                        pos = bufferPos[bufferStackPos];
-                        if (buffer[pos] == '*' && pos + 1 < limit
-                                && buffer[pos + 1] == '/') {
-                            ++bufferPos[bufferStackPos];
-                            break;
-                        }
-                    }
-                }
-                break;
-            case '\\':
-                escaped = !escaped;
-                continue;
-            case '\n':
-                if (escaped) {
-                    escaped = false;
-                    break;
-                }
-                return;
-            case '\r':
-                if (escaped && bufferPos[bufferStackPos] < limit
-                        && buffer[bufferPos[bufferStackPos] + 1] == '\n') {
-                    escaped = false;
-                    bufferPos[bufferStackPos]++;
-                    break;
-                } else if (!escaped && bufferPos[bufferStackPos] < limit
-                        && buffer[bufferPos[bufferStackPos] + 1] == '\n') {
-//                    bufferPos[bufferStackPos]++;  // Do not want to skip past the \r
-                    return;
-                }
-                break;
-            }
-            escaped = false;
-        }
-    }
-
     /** 
-     * Skips everything up to the next newline. Returns offset for last 
-     * character that was not a whitespace and no comment.
-     * @since 4.0
+     * Skips everything up to the next newline. 
      */
-    protected int skipToLastBeforeNewline() {
+    protected void skipToNewLine(boolean insideComment, boolean stopBefore) {
         char[] buffer = bufferStack[bufferStackPos];
         int limit = bufferLimit[bufferStackPos];
         int pos = bufferPos[bufferStackPos];
-        int lastMeaningful= pos;
         
         boolean escaped = false;
-        boolean inComment= false;
         while (++pos < limit) {
         	char ch= buffer[pos];
             switch (ch) {
             case '/':
+            	if (insideComment) {
+            		break;
+            	}
                 if (pos + 1 < limit) {
                 	char c= buffer[pos + 1];
                 	if (c == '*') {
@@ -4006,45 +3948,35 @@ abstract class BaseScanner implements IScanner {
                         break;
                 	}
                 	else if (c == '/') {
-                		inComment= true;
+                		insideComment= true;
                 	}
-                }
-                if (!inComment) {
-                	lastMeaningful= pos;
                 }
                 break;
             case '\\':
                 escaped = !escaped;
-                if (!inComment) {
-                	lastMeaningful= pos;
-                }
                 continue;
             case '\n':
                 if (escaped) {
-                    escaped = false;
                     break;
                 }
-                bufferPos[bufferStackPos]= pos-1;
-                return lastMeaningful;
+                bufferPos[bufferStackPos]= stopBefore ? pos-1 : pos;
+                return;
             case '\r':
-                if (escaped) {
-                    escaped = false;
-                    break;
-                } else if (pos+1 < limit && buffer[pos+1] == '\n') {
-                	bufferPos[bufferStackPos]= pos-1;
-                    return lastMeaningful;
+            	if (pos+1 < limit && buffer[pos+1] == '\n') {
+            		if (escaped) {
+            			pos++;
+            			break;
+            		}
+                	bufferPos[bufferStackPos]= stopBefore ? pos-1 : pos;
+                    return;
                 }
                 break;
             default:
-            	if (!inComment && !Character.isWhitespace(ch)) {
-            		lastMeaningful= pos;
-            	}
             	break;
             }
             escaped = false;
         }
-        bufferPos[bufferStackPos]= pos-1;
-        return lastMeaningful;
+        bufferPos[bufferStackPos]= stopBefore ? pos-1 : pos;
     }
 
     protected char[] handleFunctionStyleMacro(FunctionStyleMacro macro,

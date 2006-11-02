@@ -613,31 +613,32 @@ public class SystemHistoryCombo extends Composite implements ISystemCombo, Trave
 		scheme used an SWT.ARROW button style which was not tab enabled and could not provide a focus rectangle.  
 		Changes: made the control a push button, programmatically drew the arrow on the button, and provided accessibility information. 
 		*/
-    	/*
-    	 * dwd: as of eclipse 3.2 it now appears the arrow buttons are accessible, reverting to previous implementation.
-    	 */
-	    historyButton = new Button(this, SWT.ARROW);
-	    historyButton.setAlignment(SWT.UP);
-//	    historyButton = new Button(this, SWT.PUSH);
-//		Display display = this.getDisplay();
-//		final Image upArrow = new Image(display, 5, 6);
-//		GC gc = new GC(upArrow);
-//		gc.setBackground(historyButton.getBackground());
-//		gc.fillRectangle(upArrow.getBounds());
-//		gc.setForeground(historyButton.getForeground());
-//		gc.drawLine(0, 5, 4, 5);
-//		gc.drawLine(0, 4, 4, 4);
-//		gc.drawLine(1, 3, 3, 3);
-//		gc.drawLine(1, 2, 3, 2);
-//		gc.drawLine(2, 1, 2, 1);
-//		gc.drawLine(2, 0, 2, 0);
-//		gc.dispose();
-//		historyButton.addDisposeListener(new DisposeListener() {
-//			public void widgetDisposed(DisposeEvent e) {
-//				upArrow.dispose();
-//			}
-//		});
-//		historyButton.setImage(upArrow);
+	    boolean isDrawn = System.getProperty("os.name").toLowerCase().startsWith("win");
+	    if (isDrawn) {
+		    historyButton = new Button(this, SWT.PUSH);
+			Display display = this.getDisplay();
+			final Image upArrow = new Image(display, 5, 6);
+			GC gc = new GC(upArrow);
+			gc.setBackground(historyButton.getBackground());
+			gc.fillRectangle(upArrow.getBounds());
+			gc.setForeground(historyButton.getForeground());
+			gc.drawLine(0, 5, 4, 5);
+			gc.drawLine(0, 4, 4, 4);
+			gc.drawLine(1, 3, 3, 3);
+			gc.drawLine(1, 2, 3, 2);
+			gc.drawLine(2, 1, 2, 1);
+			gc.drawLine(2, 0, 2, 0);
+			gc.dispose();
+			historyButton.addDisposeListener(new DisposeListener() {
+				public void widgetDisposed(DisposeEvent e) {
+					upArrow.dispose();
+				}
+			});
+			historyButton.setImage(upArrow);
+	    } else {
+		    historyButton = new Button(this, SWT.ARROW);
+		    historyButton.setAlignment(SWT.UP);
+	    }
 	    historyButton.setToolTipText(SystemResources.RESID_WORKWITHHISTORY_BUTTON_TIP);
 		historyButton.getAccessible().addAccessibleListener(new AccessibleAdapter() {
 			public void getHelp(AccessibleEvent e) { // this is the one that should supply the text heard.

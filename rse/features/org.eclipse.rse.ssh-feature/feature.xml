@@ -26,7 +26,7 @@
    <requires>
       <import plugin="org.eclipse.core.runtime"/>
       <import plugin="org.eclipse.rse.services"/>
-      <import plugin="com.jcraft.jsch" version="0.1.28"/>
+      <import plugin="com.jcraft.jsch" version="0.1.28" match="compatible"/>
       <import plugin="org.eclipse.rse.ui"/>
       <import plugin="org.eclipse.team.cvs.core" version="3.2.0" match="compatible"/>
       <import plugin="org.eclipse.team.cvs.ssh2" version="3.2.0" match="compatible"/>

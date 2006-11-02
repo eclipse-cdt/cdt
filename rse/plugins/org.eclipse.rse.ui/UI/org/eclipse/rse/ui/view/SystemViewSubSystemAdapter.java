@@ -511,7 +511,8 @@ public class SystemViewSubSystemAdapter extends AbstractSystemViewAdapter
     	}
     	int portInt = portInteger.intValue();
         ISubSystemConfiguration ssFactory = subsys.getSubSystemConfiguration();	    
-	    ssFactory.updateSubSystem(subsys, false, subsys.getLocalUserId(), true, portInt); 		  		                      
+	    ssFactory.updateSubSystem(subsys, false, subsys.getLocalUserId(), true, portInt);
+	    subsys.commit();
     }
 
 	

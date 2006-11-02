@@ -647,4 +647,24 @@ public class DOMLocationTests extends AST2BaseTest {
 		assertSoleLocation( funC, buffer.toString().indexOf("C::C(int ii, double id)\ntry\n: i(f(ii)), d(id)"), "C::C(int ii, double id)\ntry\n: i(f(ii)), d(id)".length() );  //$NON-NLS-1$//$NON-NLS-2$
 	}
 
+    public void testBug157009_1() throws Exception {
+        StringBuffer buffer = new StringBuffer();
+        buffer.append("#ifndef A\r\n#error X\r\n#else\r\n#error Y\r\n#endif");
+        IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP, false, false);
+
+        IASTProblem[] problems= tu.getPreprocessorProblems();
+        assertEquals(1, problems.length);
+        assertSoleLocation(problems[0], buffer.indexOf("X"), "X".length() );
+    }	   
+
+    public void testBug157009_2() throws Exception {
+        StringBuffer buffer = new StringBuffer();
+        buffer.append("#ifndef A\n#error X\n#else\n#error Y\n#endif");
+        IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP, false, false);
+
+        IASTProblem[] problems= tu.getPreprocessorProblems();
+        assertEquals(1, problems.length);
+        assertSoleLocation(problems[0], buffer.indexOf("X"), "X".length() );
+    }	   
+
 }

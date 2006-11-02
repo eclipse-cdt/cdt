@@ -2602,7 +2602,6 @@ abstract class BaseScanner implements IScanner {
         if (start >= limit || buffer[start] == '\n')
             return;
 
-        boolean problem = false;
         char c = buffer[start];
         if ((c >= 'a' && c <= 'z')) {
             while (++bufferPos[bufferStackPos] < limit) {
@@ -2616,7 +2615,8 @@ abstract class BaseScanner implements IScanner {
             if (isLimitReached())
                 handleCompletionOnPreprocessorDirective(new String(buffer, pos,
                         len + 1));
-
+            
+            int end;
             int type = ppKeywords.get(buffer, start, len);
             if (type != ppKeywords.undefined) {
                 switch (type) {
@@ -2638,10 +2638,11 @@ abstract class BaseScanner implements IScanner {
                 case ppIfndef:
                     handlePPIfdef(pos, false);
                     return;
-                case ppIf:
-                    start = bufferPos[bufferStackPos] + 1;
+                case ppIf: 
+                    start = bufferPos[bufferStackPos]+1;
                     skipToNewLine();
-                    len = bufferPos[bufferStackPos] - start;
+                    end= bufferPos[bufferStackPos]+1;
+                    len = end - start;
                     if (isLimitReached())
                         handleCompletionOnExpression(CharArrayUtils.extract(
                                 buffer, start, len));
@@ -2649,14 +2650,14 @@ abstract class BaseScanner implements IScanner {
                     
                     if (expressionEvaluator.evaluate(buffer, start, len,
                             definitions,
-                            getLineNumber(bufferPos[bufferStackPos]),
+                            getLineNumber(start),
                             getCurrentFilename()) == 0) {
-                    	processIf(pos, bufferPos[bufferStackPos], false);
+                    	processIf(pos, end, false);
                         skipOverConditionalCode(true);
                         if (isLimitReached())
                             handleInvalidCompletion();
                     } else {
-                    	processIf(pos, bufferPos[bufferStackPos], true);
+                    	processIf(pos, end, true);
                     }
                     return;
                 case ppElse:
@@ -2664,12 +2665,12 @@ abstract class BaseScanner implements IScanner {
                     // Condition must have been true, skip over the rest
 
                     if (branchState(type == ppElse ? BRANCH_ELSE : BRANCH_ELIF)) {
+                    	skipToNewLine();
                         if (type == ppElse)
                             processElse(pos, bufferPos[bufferStackPos] + 1,
                                     false);
                         else
-                            processElsif(pos, bufferPos[bufferStackPos], false);
-                        skipToNewLine();
+                            processElsif(pos, bufferPos[bufferStackPos] + 1, false);
                         skipOverConditionalCode(false);
                     } else {
                         handleProblem(
@@ -2685,39 +2686,32 @@ abstract class BaseScanner implements IScanner {
                     skipOverWhiteSpace();
                     start = bufferPos[bufferStackPos] + 1;
                     skipToNewLine();
-                    if (bufferPos[bufferStackPos] - 1 > 0
-                            && buffer[bufferPos[bufferStackPos] - 1] == '\r')
-                        len = bufferPos[bufferStackPos] - start - 1;
-                    else
-                        len = bufferPos[bufferStackPos] - start;
+                    end= bufferPos[bufferStackPos] + 1;
                     handleProblem(IProblem.PREPROCESSOR_POUND_ERROR, start,
-                            CharArrayUtils.extract(buffer, start, len));
-                    processError(pos, pos + len);
-                    break;
+                            CharArrayUtils.extract(buffer, start, end-start));
+                    processError(pos, end);
+                    return;
                 case ppEndif:
-                    if (!branchState(BRANCH_END))
+                    skipToNewLine();
+                    if (branchState(BRANCH_END)) {
+                        processEndif(pos, bufferPos[bufferStackPos] + 1);
+                    }
+                    else {
                         handleProblem(
                                 IProblem.PREPROCESSOR_UNBALANCE_CONDITION,
                                 start, ppKeywords.findKey(buffer, start, len));
-                    processEndif(pos, bufferPos[bufferStackPos] + 1);
-                    break;
+                    }
+                    return;
                 case ppPragma:
                     skipToNewLine();
-                    processPragma(pos, bufferPos[bufferStackPos]);
-                    break;
-                default:
-                    problem = true;
-                    break;
+                    processPragma(pos, bufferPos[bufferStackPos]+1);
+                    return;
                 }
             }
-        } else
-            problem = true;
-
-        if (problem)
-            handleProblem(IProblem.PREPROCESSOR_INVALID_DIRECTIVE, start, null);
-
-        // don't know, chew up to the end of line
-        // includes endif which is immatereal at this point
+        } 
+            
+            // directive was not handled, create a problem
+        handleProblem(IProblem.PREPROCESSOR_INVALID_DIRECTIVE, start, null);
         skipToNewLine();
     }
 
@@ -2871,7 +2865,7 @@ abstract class BaseScanner implements IScanner {
         char[] fileNameArray = filename.toCharArray();
         // TODO else we need to do macro processing on the rest of the line
         endLine = getLineNumber(bufferPos[bufferStackPos]);
-        skipToNewLine(false, true);
+        skipToNewLine();
 
         findAndPushInclusion(filename, fileNameArray, local, include_next, startOffset, nameOffset, nameEndOffset, endOffset, startingLineNumber, nameLine, endLine);
     }
@@ -3341,7 +3335,7 @@ abstract class BaseScanner implements IScanner {
         
 
         Object definition = definitions.remove(buffer, idstart, idlen);
-        processUndef(pos, bufferPos[bufferStackPos], CharArrayUtils.extract(buffer, idstart, idlen ), idstart, definition);
+        processUndef(pos, bufferPos[bufferStackPos]+1, CharArrayUtils.extract(buffer, idstart, idlen ), idstart, definition);
     }
 
     /**
@@ -3402,11 +3396,11 @@ abstract class BaseScanner implements IScanner {
         branchState(BRANCH_IF);
 
         if ((definitions.get(buffer, idstart, idlen) != null) == positive) {
-            processIfdef(pos, bufferPos[bufferStackPos], positive, true);
+            processIfdef(pos, bufferPos[bufferStackPos]+1, positive, true);
             return;
         }
 
-        processIfdef(pos, bufferPos[bufferStackPos], positive, false);
+        processIfdef(pos, bufferPos[bufferStackPos]+1, positive, false);
         // skip over this group
         skipOverConditionalCode(true);
         if (isLimitReached())
@@ -3462,12 +3456,12 @@ abstract class BaseScanner implements IScanner {
                             skipToNewLine();
                             if (type == ppIfdef)
                                 processIfdef(startPos,
-                                        bufferPos[bufferStackPos], true, false);
+                                        bufferPos[bufferStackPos]+1, true, false);
                             else if (type == ppIfndef)
                                 processIfdef(startPos,
-                                        bufferPos[bufferStackPos], false, false);
+                                        bufferPos[bufferStackPos]+1, false, false);
                             else
-                                processIf(startPos, bufferPos[bufferStackPos],
+                                processIf(startPos, bufferPos[bufferStackPos]+1,
                                         false);
                             break;
                         case ppElse:
@@ -3475,11 +3469,11 @@ abstract class BaseScanner implements IScanner {
                                 skipToNewLine();
                                 if (checkelse && nesting == 0) {
                                     processElse(startPos,
-                                            bufferPos[bufferStackPos], true);
+                                            bufferPos[bufferStackPos]+1, true);
                                     return;
                                 }
                                 processElse(startPos,
-                                        bufferPos[bufferStackPos], false);
+                                        bufferPos[bufferStackPos]+1, false);
                             } else {
                                 //problem, ignore this one.
                                 handleProblem(
@@ -3495,26 +3489,24 @@ abstract class BaseScanner implements IScanner {
                                     // check the condition
                                     start = bufferPos[bufferStackPos] + 1;
                                     skipToNewLine();
-                                    len = bufferPos[bufferStackPos] - start;
+                                    int end= bufferPos[bufferStackPos] + 1;
+                                    len= end - start;
                                     if (expressionEvaluator
                                             .evaluate(
                                                     buffer,
                                                     start,
                                                     len,
                                                     definitions,
-                                                    getLineNumber(bufferPos[bufferStackPos]),
+                                                    getLineNumber(start),
                                                     getCurrentFilename()) != 0) {
 										// condition passed, we're good
-                                        processElsif(startPos,
-                                                bufferPos[bufferStackPos], true);
+                                        processElsif(startPos, end, true);
                                         return;
                                     }
-                                    processElsif(startPos,
-                                            bufferPos[bufferStackPos], false);
+                                    processElsif(startPos, end, false);
                                 } else {
                                     skipToNewLine();
-                                    processElsif(startPos,
-                                            bufferPos[bufferStackPos], false);
+                                    processElsif(startPos, bufferPos[bufferStackPos] + 1, false);
                                 }
                             } else {
                                 //problem, ignore this one.
@@ -3573,7 +3565,7 @@ abstract class BaseScanner implements IScanner {
                 if (pos + 1 < limit) {
                     if (buffer[pos + 1] == '/') {
                         // C++ comment, skip rest of line
-                        skipToNewLine(true, true);
+                        skipToNewLine(true);
                         return false;
                     } else if (buffer[pos + 1] == '*') {
                         // C comment, find closing */
@@ -3915,13 +3907,13 @@ abstract class BaseScanner implements IScanner {
     }
 
     protected void skipToNewLine() {
-    	skipToNewLine(false, false);
+    	skipToNewLine(false);
     }
     
     /** 
      * Skips everything up to the next newline. 
      */
-    protected void skipToNewLine(boolean insideComment, boolean stopBefore) {
+    protected void skipToNewLine(boolean insideComment) {
         char[] buffer = bufferStack[bufferStackPos];
         int limit = bufferLimit[bufferStackPos];
         int pos = bufferPos[bufferStackPos];
@@ -3959,7 +3951,7 @@ abstract class BaseScanner implements IScanner {
                 if (escaped) {
                     break;
                 }
-                bufferPos[bufferStackPos]= stopBefore ? pos-1 : pos;
+                bufferPos[bufferStackPos]= pos-1;
                 return;
             case '\r':
             	if (pos+1 < limit && buffer[pos+1] == '\n') {
@@ -3967,7 +3959,7 @@ abstract class BaseScanner implements IScanner {
             			pos++;
             			break;
             		}
-                	bufferPos[bufferStackPos]= stopBefore ? pos-1 : pos;
+                	bufferPos[bufferStackPos]= pos-1;
                     return;
                 }
                 break;
@@ -3976,7 +3968,7 @@ abstract class BaseScanner implements IScanner {
             }
             escaped = false;
         }
-        bufferPos[bufferStackPos]= stopBefore ? pos-1 : pos;
+        bufferPos[bufferStackPos]= pos-1;
     }
 
     protected char[] handleFunctionStyleMacro(FunctionStyleMacro macro,

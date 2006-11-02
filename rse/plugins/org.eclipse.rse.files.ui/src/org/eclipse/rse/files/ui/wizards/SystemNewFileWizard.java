@@ -285,6 +285,10 @@ public class SystemNewFileWizard
 			selectedFilterRef.markStale(true);
 		}
 		
+		// invalidate filters that reference this object
+		// TODO: we shouldn't have to do this. Presumably step 0 below should take care of it.
+		SystemRegistry.getSystemRegistry().invalidateFiltersFor(newFileOrFolder, parentFolder.getParentRemoteFileSubSystem());
+		
      	// step 0: refresh all affected filters...
     	ISubSystem fileSS = newFileOrFolder.getParentRemoteFileSubSystem();
     	sr.fireRemoteResourceChangeEvent(ISystemRemoteChangeEvents.SYSTEM_REMOTE_RESOURCE_CREATED, newFileOrFolder, parentFolder, fileSS, null, viewer);

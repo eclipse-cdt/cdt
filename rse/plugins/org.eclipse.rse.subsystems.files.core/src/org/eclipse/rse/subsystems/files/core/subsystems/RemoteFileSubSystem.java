@@ -303,9 +303,9 @@ public abstract class RemoteFileSubSystem extends SubSystem implements IRemoteFi
       					return false;
       				}
       			}
-      			else if (strings[idx].equals("./*")) {
-      				would = true;
-      			}
+      			//else if (strings[idx].equals("./*")) {
+      			//	would = true;
+      			//}
       			else {
       				would = doesFilterStringMatch(strings[idx], remoteObjectAbsoluteName, filter.areStringsCaseSensitive());
       			}

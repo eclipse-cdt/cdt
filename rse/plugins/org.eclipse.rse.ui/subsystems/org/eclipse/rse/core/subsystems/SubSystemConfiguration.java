@@ -1487,6 +1487,10 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 			{
 				connectorService.setPort(port);
 			}
+			if (connectorService.isDirty()) {
+				setDirty(true);
+				subsystem.setDirty(true);
+			}
 		}
 		else
 		{

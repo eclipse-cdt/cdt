@@ -323,6 +323,7 @@ public class RSEDOMExporter implements IRSEDOMExporter {
 			// can't do this til connector service owns the properties (right now it's still subsystem)
 			node.addAttribute(IRSEDOMConstants.ATTRIBUTE_GROUP, connectorService.getName());
 			node.addAttribute(IRSEDOMConstants.ATTRIBUTE_USE_SSL, getBooleanString(connectorService.isUsingSSL()));
+			node.addAttribute(IRSEDOMConstants.ATTRIBUTE_PORT, Integer.toString(connectorService.getPort()));
 		}
 		// store the server launcher
 		// right now subsystem still owns the server launchers

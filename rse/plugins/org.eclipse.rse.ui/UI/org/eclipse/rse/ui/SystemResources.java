@@ -223,6 +223,9 @@ public class SystemResources extends NLS
 	public static String RESID_CONNECTION_DEFAULTUSERID_TIP;
 	public static String RESID_CONNECTION_DEFAULTUSERID_INHERITBUTTON_TIP;
 
+	public static String RESID_CONNECTION_RUNNING_PORT_LABEL;
+	public static String RESID_CONNECTION_RUNNING_PORT_TIP;
+
 	public static String RESID_CONNECTION_PORT_LABEL;
 	public static String RESID_CONNECTION_PORT_TIP;
 

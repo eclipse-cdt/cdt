@@ -348,6 +348,7 @@ public class SystemSubSystemPropertyPageCoreForm extends AbstractSystemSubSystem
 		    String userId = getUserId();
 		    updateUserId(ss);
 		  }
+		  ss.commit();
 		}
 		return ok;
 	}

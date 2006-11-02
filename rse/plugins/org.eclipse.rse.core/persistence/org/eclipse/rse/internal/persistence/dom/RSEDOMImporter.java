@@ -172,6 +172,11 @@ public class RSEDOMImporter implements IRSEDOMImporter
 //		String type = connectorServiceNode.getAttribute(IRSEDOMConstants.ATTRIBUTE_TYPE).getValue();
 //		String group = connectorServiceNode.getAttribute(IRSEDOMConstants.ATTRIBUTE_GROUP).getValue();
 		boolean useSSL = getBooleanValue(connectorServiceNode.getAttribute(IRSEDOMConstants.ATTRIBUTE_USE_SSL).getValue());
+		RSEDOMNodeAttribute att = connectorServiceNode.getAttribute(IRSEDOMConstants.ATTRIBUTE_PORT);
+		int port = 0;
+		if (att != null) {
+			port = getIntegerValue(att.getValue());
+		}
 		
 		// first restore subsystems (since right now we need subsystem to get at service
 		RSEDOMNode[] ssChildren = connectorServiceNode.getChildren(IRSEDOMConstants.TYPE_SUBSYSTEM);
@@ -201,7 +206,7 @@ public class RSEDOMImporter implements IRSEDOMImporter
 							}
 						}
 					}
-		
+					service.setPort(port);
 					service.setIsUsingSSL(useSSL);
 				}
 			}
@@ -532,7 +537,14 @@ public class RSEDOMImporter implements IRSEDOMImporter
 	
 	private int getIntegerValue(String integerString)
 	{
-		return Integer.parseInt(integerString);
+		int result = 0;
+		if (integerString != null) {
+			try {
+				result = Integer.parseInt(integerString);
+			} catch (NumberFormatException e) {
+			}
+		}
+		return result;
 	}
 	
 	/**

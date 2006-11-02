@@ -2425,4 +2425,26 @@ public class Scanner2Test extends BaseScanner2Test
        validateIdentifier("C");
        validateEOF();
    }
+   
+   public void testBug162214() throws Exception {
+       StringBuffer buffer = new StringBuffer();
+       buffer.append("#ifdef xxx  // is not defined            \n");
+       buffer.append("A                                        \n");
+       buffer.append("#endif                                   \n");
+       buffer.append("B                                        \n");
+       
+       initializeScanner(buffer.toString());
+       validateIdentifier("B");
+       validateEOF();
+
+       buffer.setLength(0);
+       buffer.append("#ifdef xxx  //* is not defined           \n");
+       buffer.append("A                                        \n");
+       buffer.append("#endif                                   \n");
+       buffer.append("B                                        \n");
+       
+       initializeScanner(buffer.toString());
+       validateIdentifier("B");
+       validateEOF();
+   }	   
 }

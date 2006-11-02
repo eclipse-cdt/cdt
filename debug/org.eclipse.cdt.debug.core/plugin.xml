@@ -158,6 +158,11 @@
             description="%containerDescription.directory"
             id="org.eclipse.cdt.debug.core.containerType.directory"
             name="%containerName.directory"/>
+      <sourceContainerType
+            class="org.eclipse.cdt.debug.internal.core.sourcelookup.AbsolutePathSourceContainerType"
+            description="%containerDescription.absolutePath"
+            id="org.eclipse.cdt.debug.core.containerType.absolutePath"
+            name="%containerName.absolutePath"/>
    </extension>
 
 </plugin>

@@ -7,12 +7,14 @@
  *
  * Contributors:
  * QNX Software Systems - Initial API and implementation
- *******************************************************************************/
+ * Nokia - Added support for AbsoluteSourceContainer( 159833 ) 
+*******************************************************************************/
 package org.eclipse.cdt.debug.internal.core.sourcelookup; 
 
 import java.util.ArrayList;
 import org.eclipse.cdt.debug.core.CDebugCorePlugin;
 import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
+import org.eclipse.cdt.debug.core.sourcelookup.AbsolutePathSourceContainer;
 import org.eclipse.cdt.debug.core.sourcelookup.MappingSourceContainer;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -54,6 +56,7 @@ public class CSourcePathComputerDelegate implements ISourcePathComputerDelegate 
 				containers.add( 0, new ProjectSourceContainer( project, true ) );
 			}
 		}
+		containers.add( new AbsolutePathSourceContainer() );
 		return (ISourceContainer[])containers.toArray( new ISourceContainer[containers.size()] );
 	}
 }

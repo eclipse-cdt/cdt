@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2005 IBM Corporation and others.
+ * Copyright (c) 2004, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  * IBM - Initial API and implementation
+ * Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.core.parser.tests.ast2;
 
@@ -16,7 +17,6 @@ import junit.framework.TestSuite;
 
 import org.eclipse.cdt.core.parser.tests.ParserTestSuite;
 import org.eclipse.cdt.core.parser.tests.prefix.CompletionTestSuite;
-import org.eclipse.cdt.core.tests.FailingTest;
 
 /**
  * @author jcamelon
@@ -32,7 +32,6 @@ public class DOMParserTestSuite extends TestCase {
 		suite.addTestSuite( QuickParser2Tests.class );
 		suite.addTestSuite( CompleteParser2Tests.class );
 		suite.addTestSuite( DOMLocationTests.class );
-		suite.addTest( new FailingTest(new DOMLocationTests("_testBug162180"), 162180) );
         suite.addTestSuite( DOMLocationMacroTests.class );
 		suite.addTest( DOMLocationInclusionTests.suite() );
 		suite.addTestSuite( AST2KnRTests.class );

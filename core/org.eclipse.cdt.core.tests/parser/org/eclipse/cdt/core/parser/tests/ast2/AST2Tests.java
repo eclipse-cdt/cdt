@@ -7,6 +7,7 @@
  *
  * Contributors:
  * IBM - Initial API and implementation
+ * Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.core.parser.tests.ast2;
 
@@ -3379,8 +3380,9 @@ public class AST2Tests extends AST2BaseTest {
     	buffer.append("((int arg1)){\r\n"); //$NON-NLS-1$
     	buffer.append("return 0;\r\n"); //$NON-NLS-1$
     	buffer.append("}\r\n"); //$NON-NLS-1$
-    	parse(buffer.toString(), ParserLanguage.C);
-    	IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP);
+    	IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.C);
+    	assertFalse( tu.getDeclarations()[1] instanceof IASTProblemDeclaration );
+    	tu = parse(buffer.toString(), ParserLanguage.CPP);
     	assertFalse( tu.getDeclarations()[1] instanceof IASTProblemDeclaration );
     	
     	buffer = new StringBuffer();
@@ -3392,8 +3394,9 @@ public class AST2Tests extends AST2BaseTest {
     	buffer.append("((int arg1)){\n"); //$NON-NLS-1$
     	buffer.append("return 0;\n"); //$NON-NLS-1$
     	buffer.append("}\n"); //$NON-NLS-1$
-    	parse(buffer.toString(), ParserLanguage.C);
-    	tu = parse(buffer.toString(), ParserLanguage.CPP);
+    	tu= parse(buffer.toString(), ParserLanguage.C);
+    	assertFalse( tu.getDeclarations()[1] instanceof IASTProblemDeclaration );
+    	tu= parse(buffer.toString(), ParserLanguage.CPP);
     	assertFalse( tu.getDeclarations()[1] instanceof IASTProblemDeclaration );
     }
     
@@ -3407,8 +3410,10 @@ public class AST2Tests extends AST2BaseTest {
     	buffer.append("((int arg1)){\r\n"); //$NON-NLS-1$
     	buffer.append("return 0;\r\n"); //$NON-NLS-1$
     	buffer.append("}\r\n"); //$NON-NLS-1$
-    	parse(buffer.toString(), ParserLanguage.C);
-    	IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP);
+    	IASTTranslationUnit tu= parse(buffer.toString(), ParserLanguage.C);
+    	assertFalse( tu.getDeclarations()[1] instanceof IASTProblemDeclaration );
+    	
+    	tu = parse(buffer.toString(), ParserLanguage.CPP);
     	assertFalse( tu.getDeclarations()[1] instanceof IASTProblemDeclaration );
     	
     	buffer = new StringBuffer();
@@ -3420,7 +3425,8 @@ public class AST2Tests extends AST2BaseTest {
     	buffer.append("((int arg1)){\n"); //$NON-NLS-1$
     	buffer.append("return 0;\n"); //$NON-NLS-1$
     	buffer.append("}\n"); //$NON-NLS-1$
-    	parse(buffer.toString(), ParserLanguage.C);
+    	tu = parse(buffer.toString(), ParserLanguage.C);
+    	assertFalse( tu.getDeclarations()[1] instanceof IASTProblemDeclaration );
     	tu = parse(buffer.toString(), ParserLanguage.CPP);
     	assertFalse( tu.getDeclarations()[1] instanceof IASTProblemDeclaration );
     }

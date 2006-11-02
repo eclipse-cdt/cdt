@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2005 IBM Corporation and others.
+ * Copyright (c) 2004, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  * IBM - Initial API and implementation
+ * Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.core.parser.tests.ast2;
 
@@ -113,15 +114,15 @@ public class DOMLocationMacroTests extends AST2BaseTest {
         for (ParserLanguage p = ParserLanguage.C; p != null; p = (p == ParserLanguage.C) ? ParserLanguage.CPP
                 : null) {
             IASTTranslationUnit tu = parse(code, p);
-            IASTPreprocessorObjectStyleMacroDefinition XYZ = (IASTPreprocessorObjectStyleMacroDefinition) tu.getMacroDefinitions()[0];
+            IASTPreprocessorObjectStyleMacroDefinition defXYZ = (IASTPreprocessorObjectStyleMacroDefinition) tu.getMacroDefinitions()[0];
             IASTSimpleDeclaration var = (IASTSimpleDeclaration) tu.getDeclarations()[0];
             IASTSimpleDeclSpecifier declSpec = (IASTSimpleDeclSpecifier) var.getDeclSpecifier();
             IASTNodeLocation [] declSpecLocations = declSpec.getNodeLocations();
             assertEquals( declSpecLocations.length, 2 );
             IASTMacroExpansion expansion = (IASTMacroExpansion) declSpecLocations[0];
-            assertEqualsMacros( XYZ, expansion.getMacroDefinition() );
+            assertEqualsMacros( defXYZ, expansion.getMacroDefinition() );
             assertEquals( expansion.getNodeOffset(), 0 );
-            assertEquals( expansion.getNodeLength(), 6 );
+            assertEquals( expansion.getNodeLength(), "const".length() );
             IASTNodeLocation [] expansionLocations = expansion.getExpansionLocations();
             assertEquals( expansionLocations.length, 1 );
             assertTrue( expansionLocations[0] instanceof IASTFileLocation );

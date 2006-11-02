@@ -90,15 +90,21 @@ abstract class BaseScanner implements IScanner {
             this.endOffset = end;
             this.macro = macro;
         }
-
-        public final int startOffset;
-
-        public final int endOffset;
+        
+        private final int startOffset;
+        private final int endOffset;
 
         public final IMacro macro;
         
         public String toString() {
             return macro.toString();
+        }
+        
+        public int getStartOffset() {
+        	return startOffset;
+        }
+        public int getLength() {
+        	return endOffset-startOffset;
         }
     }
 
@@ -2110,17 +2116,19 @@ abstract class BaseScanner implements IScanner {
             } else if (expObject instanceof ObjectStyleMacro) {
                 ObjectStyleMacro expMacro = (ObjectStyleMacro) expObject;
                 char[] expText = expMacro.getExpansion();
-                if (expText.length > 0)
-                    pushContext(expText, new MacroData(
-                            bufferPos[bufferStackPos] - expMacro.name.length + 1, 
-                            bufferPos[bufferStackPos], expMacro));
+                if (expText.length > 0) {
+                	final int endOffset= bufferPos[bufferStackPos]+1;
+                	final int startOffset= endOffset - expMacro.name.length;
+                    pushContext(expText, new MacroData(startOffset, endOffset, expMacro));
+                }
             } else if (expObject instanceof DynamicStyleMacro) {
                 DynamicStyleMacro expMacro = (DynamicStyleMacro) expObject;
                 char[] expText = expMacro.execute();
-                if (expText.length > 0)
-                    pushContext(expText, new MacroData(
-                            bufferPos[bufferStackPos] - expMacro.name.length
-                                    + 1, bufferPos[bufferStackPos], expMacro));
+                if (expText.length > 0) {
+                	final int endOffset= bufferPos[bufferStackPos]+1;
+                	final int startOffset= endOffset - expMacro.name.length;
+                    pushContext(expText, new MacroData(startOffset, endOffset, expMacro));
+                }
 
             } else if (expObject instanceof char[]) {
                 char[] expText = (char[]) expObject;
@@ -2863,7 +2871,7 @@ abstract class BaseScanner implements IScanner {
         char[] fileNameArray = filename.toCharArray();
         // TODO else we need to do macro processing on the rest of the line
         endLine = getLineNumber(bufferPos[bufferStackPos]);
-        skipToNewLine();
+        skipToLastBeforeNewline();
 
         findAndPushInclusion(filename, fileNameArray, local, include_next, startOffset, nameOffset, nameEndOffset, endOffset, startingLineNumber, nameLine, endLine);
     }
@@ -3967,6 +3975,78 @@ abstract class BaseScanner implements IScanner {
         }
     }
 
+    /** 
+     * Skips everything up to the next newline. Returns offset for last 
+     * character that was not a whitespace and no comment.
+     * @since 4.0
+     */
+    protected int skipToLastBeforeNewline() {
+        char[] buffer = bufferStack[bufferStackPos];
+        int limit = bufferLimit[bufferStackPos];
+        int pos = bufferPos[bufferStackPos];
+        int lastMeaningful= pos;
+        
+        boolean escaped = false;
+        boolean inComment= false;
+        while (++pos < limit) {
+        	char ch= buffer[pos];
+            switch (ch) {
+            case '/':
+                if (pos + 1 < limit) {
+                	char c= buffer[pos + 1];
+                	if (c == '*') {
+                        pos+=2;
+                        while (++pos < limit) {
+                            if (buffer[pos-1] == '*' && buffer[pos] == '/') {
+                            	pos++;
+                                break;
+                            }
+                        }
+                        pos--;
+                        break;
+                	}
+                	else if (c == '/') {
+                		inComment= true;
+                	}
+                }
+                if (!inComment) {
+                	lastMeaningful= pos;
+                }
+                break;
+            case '\\':
+                escaped = !escaped;
+                if (!inComment) {
+                	lastMeaningful= pos;
+                }
+                continue;
+            case '\n':
+                if (escaped) {
+                    escaped = false;
+                    break;
+                }
+                bufferPos[bufferStackPos]= pos-1;
+                return lastMeaningful;
+            case '\r':
+                if (escaped) {
+                    escaped = false;
+                    break;
+                } else if (pos+1 < limit && buffer[pos+1] == '\n') {
+                	bufferPos[bufferStackPos]= pos-1;
+                    return lastMeaningful;
+                }
+                break;
+            default:
+            	if (!inComment && !Character.isWhitespace(ch)) {
+            		lastMeaningful= pos;
+            	}
+            	break;
+            }
+            escaped = false;
+        }
+        bufferPos[bufferStackPos]= pos-1;
+        return lastMeaningful;
+    }
+
     protected char[] handleFunctionStyleMacro(FunctionStyleMacro macro,
             boolean pushContext) {
         char[] buffer = bufferStack[bufferStackPos];
@@ -4133,8 +4213,7 @@ abstract class BaseScanner implements IScanner {
         }
         if (pushContext)
         {
-            pushContext(result, new MacroData(start, bufferPos[bufferStackPos],
-                    macro));
+            pushContext(result, new MacroData(start, bufferPos[bufferStackPos]+1, macro));
         }
         return result;
     }
@@ -4583,13 +4662,13 @@ abstract class BaseScanner implements IScanner {
 
     // standard built-ins
     protected static final ObjectStyleMacro __cplusplus = new ObjectStyleMacro(
-            "__cplusplus".toCharArray(), ONE); //$NON-NLS-1$ //$NON-NLS-2$
+            "__cplusplus".toCharArray(), ONE);   //$NON-NLS-1$
 
     protected static final ObjectStyleMacro __STDC__ = new ObjectStyleMacro(
-            "__STDC__".toCharArray(), ONE); //$NON-NLS-1$ //$NON-NLS-2$
+            "__STDC__".toCharArray(), ONE);  //$NON-NLS-1$
 
     protected static final ObjectStyleMacro __STDC_HOSTED__ = new ObjectStyleMacro(
-            "__STDC_HOSTED_".toCharArray(), ONE); //$NON-NLS-1$ //$NON-NLS-2$
+            "__STDC_HOSTED_".toCharArray(), ONE);  //$NON-NLS-1$
 
     protected static final ObjectStyleMacro __STDC_VERSION__ = new ObjectStyleMacro(
             "__STDC_VERSION_".toCharArray(), "199901L".toCharArray()); //$NON-NLS-1$ //$NON-NLS-2$
@@ -4780,107 +4859,107 @@ abstract class BaseScanner implements IScanner {
         CharArrayIntMap words = new CharArrayIntMap(IToken.tLAST, -1);
 
         // Common keywords
-        words.put(Keywords.cAUTO, IToken.t_auto); //$NON-NLS-1$
-        words.put(Keywords.cBREAK, IToken.t_break); //$NON-NLS-1$
-        words.put(Keywords.cCASE, IToken.t_case); //$NON-NLS-1$
-        words.put(Keywords.cCHAR, IToken.t_char); //$NON-NLS-1$
-        words.put(Keywords.cCONST, IToken.t_const); //$NON-NLS-1$
-        words.put(Keywords.cCONTINUE, IToken.t_continue); //$NON-NLS-1$
-        words.put(Keywords.cDEFAULT, IToken.t_default); //$NON-NLS-1$
-        words.put(Keywords.cDO, IToken.t_do); //$NON-NLS-1$
-        words.put(Keywords.cDOUBLE, IToken.t_double); //$NON-NLS-1$
-        words.put(Keywords.cELSE, IToken.t_else); //$NON-NLS-1$
-        words.put(Keywords.cENUM, IToken.t_enum); //$NON-NLS-1$
-        words.put(Keywords.cEXTERN, IToken.t_extern); //$NON-NLS-1$
-        words.put(Keywords.cFLOAT, IToken.t_float); //$NON-NLS-1$
-        words.put(Keywords.cFOR, IToken.t_for); //$NON-NLS-1$
-        words.put(Keywords.cGOTO, IToken.t_goto); //$NON-NLS-1$
-        words.put(Keywords.cIF, IToken.t_if); //$NON-NLS-1$
-        words.put(Keywords.cINLINE, IToken.t_inline); //$NON-NLS-1$
-        words.put(Keywords.cINT, IToken.t_int); //$NON-NLS-1$
-        words.put(Keywords.cLONG, IToken.t_long); //$NON-NLS-1$
-        words.put(Keywords.cREGISTER, IToken.t_register); //$NON-NLS-1$
-        words.put(Keywords.cRETURN, IToken.t_return); //$NON-NLS-1$
-        words.put(Keywords.cSHORT, IToken.t_short); //$NON-NLS-1$
-        words.put(Keywords.cSIGNED, IToken.t_signed); //$NON-NLS-1$
-        words.put(Keywords.cSIZEOF, IToken.t_sizeof); //$NON-NLS-1$
-        words.put(Keywords.cSTATIC, IToken.t_static); //$NON-NLS-1$
-        words.put(Keywords.cSTRUCT, IToken.t_struct); //$NON-NLS-1$
-        words.put(Keywords.cSWITCH, IToken.t_switch); //$NON-NLS-1$
-        words.put(Keywords.cTYPEDEF, IToken.t_typedef); //$NON-NLS-1$
-        words.put(Keywords.cUNION, IToken.t_union); //$NON-NLS-1$
-        words.put(Keywords.cUNSIGNED, IToken.t_unsigned); //$NON-NLS-1$
-        words.put(Keywords.cVOID, IToken.t_void); //$NON-NLS-1$
-        words.put(Keywords.cVOLATILE, IToken.t_volatile); //$NON-NLS-1$
-        words.put(Keywords.cWHILE, IToken.t_while); //$NON-NLS-1$
-        words.put(Keywords.cASM, IToken.t_asm); //$NON-NLS-1$
+        words.put(Keywords.cAUTO, IToken.t_auto);
+        words.put(Keywords.cBREAK, IToken.t_break);
+        words.put(Keywords.cCASE, IToken.t_case); 
+        words.put(Keywords.cCHAR, IToken.t_char); 
+        words.put(Keywords.cCONST, IToken.t_const); 
+        words.put(Keywords.cCONTINUE, IToken.t_continue); 
+        words.put(Keywords.cDEFAULT, IToken.t_default); 
+        words.put(Keywords.cDO, IToken.t_do); 
+        words.put(Keywords.cDOUBLE, IToken.t_double); 
+        words.put(Keywords.cELSE, IToken.t_else); 
+        words.put(Keywords.cENUM, IToken.t_enum); 
+        words.put(Keywords.cEXTERN, IToken.t_extern); 
+        words.put(Keywords.cFLOAT, IToken.t_float); 
+        words.put(Keywords.cFOR, IToken.t_for); 
+        words.put(Keywords.cGOTO, IToken.t_goto); 
+        words.put(Keywords.cIF, IToken.t_if); 
+        words.put(Keywords.cINLINE, IToken.t_inline); 
+        words.put(Keywords.cINT, IToken.t_int); 
+        words.put(Keywords.cLONG, IToken.t_long); 
+        words.put(Keywords.cREGISTER, IToken.t_register); 
+        words.put(Keywords.cRETURN, IToken.t_return); 
+        words.put(Keywords.cSHORT, IToken.t_short); 
+        words.put(Keywords.cSIGNED, IToken.t_signed); 
+        words.put(Keywords.cSIZEOF, IToken.t_sizeof); 
+        words.put(Keywords.cSTATIC, IToken.t_static); 
+        words.put(Keywords.cSTRUCT, IToken.t_struct); 
+        words.put(Keywords.cSWITCH, IToken.t_switch); 
+        words.put(Keywords.cTYPEDEF, IToken.t_typedef); 
+        words.put(Keywords.cUNION, IToken.t_union); 
+        words.put(Keywords.cUNSIGNED, IToken.t_unsigned); 
+        words.put(Keywords.cVOID, IToken.t_void); 
+        words.put(Keywords.cVOLATILE, IToken.t_volatile); 
+        words.put(Keywords.cWHILE, IToken.t_while); 
+        words.put(Keywords.cASM, IToken.t_asm); 
 
         // ANSI C keywords
         ckeywords = (CharArrayIntMap) words.clone();
-        ckeywords.put(Keywords.cRESTRICT, IToken.t_restrict); //$NON-NLS-1$
-        ckeywords.put(Keywords.c_BOOL, IToken.t__Bool); //$NON-NLS-1$
-        ckeywords.put(Keywords.c_COMPLEX, IToken.t__Complex); //$NON-NLS-1$
-        ckeywords.put(Keywords.c_IMAGINARY, IToken.t__Imaginary); //$NON-NLS-1$
+        ckeywords.put(Keywords.cRESTRICT, IToken.t_restrict); 
+        ckeywords.put(Keywords.c_BOOL, IToken.t__Bool); 
+        ckeywords.put(Keywords.c_COMPLEX, IToken.t__Complex); 
+        ckeywords.put(Keywords.c_IMAGINARY, IToken.t__Imaginary); 
 
         // C++ Keywords
         cppkeywords = words;
-        cppkeywords.put(Keywords.cBOOL, IToken.t_bool); //$NON-NLS-1$
-        cppkeywords.put(Keywords.cCATCH, IToken.t_catch); //$NON-NLS-1$
-        cppkeywords.put(Keywords.cCLASS, IToken.t_class); //$NON-NLS-1$
-        cppkeywords.put(Keywords.cCONST_CAST, IToken.t_const_cast); //$NON-NLS-1$
-        cppkeywords.put(Keywords.cDELETE, IToken.t_delete); //$NON-NLS-1$
-        cppkeywords.put(Keywords.cDYNAMIC_CAST, IToken.t_dynamic_cast); //$NON-NLS-1$
-        cppkeywords.put(Keywords.cEXPLICIT, IToken.t_explicit); //$NON-NLS-1$
-        cppkeywords.put(Keywords.cEXPORT, IToken.t_export); //$NON-NLS-1$
-        cppkeywords.put(Keywords.cFALSE, IToken.t_false); //$NON-NLS-1$
-        cppkeywords.put(Keywords.cFRIEND, IToken.t_friend); //$NON-NLS-1$
-        cppkeywords.put(Keywords.cMUTABLE, IToken.t_mutable); //$NON-NLS-1$
-        cppkeywords.put(Keywords.cNAMESPACE, IToken.t_namespace); //$NON-NLS-1$
-        cppkeywords.put(Keywords.cNEW, IToken.t_new); //$NON-NLS-1$
-        cppkeywords.put(Keywords.cOPERATOR, IToken.t_operator); //$NON-NLS-1$
-        cppkeywords.put(Keywords.cPRIVATE, IToken.t_private); //$NON-NLS-1$
-        cppkeywords.put(Keywords.cPROTECTED, IToken.t_protected); //$NON-NLS-1$
-        cppkeywords.put(Keywords.cPUBLIC, IToken.t_public); //$NON-NLS-1$
-        cppkeywords.put(Keywords.cREINTERPRET_CAST, IToken.t_reinterpret_cast); //$NON-NLS-1$
-        cppkeywords.put(Keywords.cSTATIC_CAST, IToken.t_static_cast); //$NON-NLS-1$
-        cppkeywords.put(Keywords.cTEMPLATE, IToken.t_template); //$NON-NLS-1$
-        cppkeywords.put(Keywords.cTHIS, IToken.t_this); //$NON-NLS-1$
-        cppkeywords.put(Keywords.cTHROW, IToken.t_throw); //$NON-NLS-1$
-        cppkeywords.put(Keywords.cTRUE, IToken.t_true); //$NON-NLS-1$
-        cppkeywords.put(Keywords.cTRY, IToken.t_try); //$NON-NLS-1$
-        cppkeywords.put(Keywords.cTYPEID, IToken.t_typeid); //$NON-NLS-1$
-        cppkeywords.put(Keywords.cTYPENAME, IToken.t_typename); //$NON-NLS-1$
-        cppkeywords.put(Keywords.cUSING, IToken.t_using); //$NON-NLS-1$
-        cppkeywords.put(Keywords.cVIRTUAL, IToken.t_virtual); //$NON-NLS-1$
-        cppkeywords.put(Keywords.cWCHAR_T, IToken.t_wchar_t); //$NON-NLS-1$
+        cppkeywords.put(Keywords.cBOOL, IToken.t_bool); 
+        cppkeywords.put(Keywords.cCATCH, IToken.t_catch); 
+        cppkeywords.put(Keywords.cCLASS, IToken.t_class); 
+        cppkeywords.put(Keywords.cCONST_CAST, IToken.t_const_cast); 
+        cppkeywords.put(Keywords.cDELETE, IToken.t_delete); 
+        cppkeywords.put(Keywords.cDYNAMIC_CAST, IToken.t_dynamic_cast); 
+        cppkeywords.put(Keywords.cEXPLICIT, IToken.t_explicit); 
+        cppkeywords.put(Keywords.cEXPORT, IToken.t_export); 
+        cppkeywords.put(Keywords.cFALSE, IToken.t_false); 
+        cppkeywords.put(Keywords.cFRIEND, IToken.t_friend); 
+        cppkeywords.put(Keywords.cMUTABLE, IToken.t_mutable); 
+        cppkeywords.put(Keywords.cNAMESPACE, IToken.t_namespace); 
+        cppkeywords.put(Keywords.cNEW, IToken.t_new); 
+        cppkeywords.put(Keywords.cOPERATOR, IToken.t_operator); 
+        cppkeywords.put(Keywords.cPRIVATE, IToken.t_private); 
+        cppkeywords.put(Keywords.cPROTECTED, IToken.t_protected); 
+        cppkeywords.put(Keywords.cPUBLIC, IToken.t_public); 
+        cppkeywords.put(Keywords.cREINTERPRET_CAST, IToken.t_reinterpret_cast); 
+        cppkeywords.put(Keywords.cSTATIC_CAST, IToken.t_static_cast); 
+        cppkeywords.put(Keywords.cTEMPLATE, IToken.t_template); 
+        cppkeywords.put(Keywords.cTHIS, IToken.t_this); 
+        cppkeywords.put(Keywords.cTHROW, IToken.t_throw); 
+        cppkeywords.put(Keywords.cTRUE, IToken.t_true); 
+        cppkeywords.put(Keywords.cTRY, IToken.t_try); 
+        cppkeywords.put(Keywords.cTYPEID, IToken.t_typeid); 
+        cppkeywords.put(Keywords.cTYPENAME, IToken.t_typename); 
+        cppkeywords.put(Keywords.cUSING, IToken.t_using); 
+        cppkeywords.put(Keywords.cVIRTUAL, IToken.t_virtual); 
+        cppkeywords.put(Keywords.cWCHAR_T, IToken.t_wchar_t); 
 
         // C++ operator alternative
-        cppkeywords.put(Keywords.cAND, IToken.t_and); //$NON-NLS-1$
-        cppkeywords.put(Keywords.cAND_EQ, IToken.t_and_eq); //$NON-NLS-1$
-        cppkeywords.put(Keywords.cBITAND, IToken.t_bitand); //$NON-NLS-1$
-        cppkeywords.put(Keywords.cBITOR, IToken.t_bitor); //$NON-NLS-1$
-        cppkeywords.put(Keywords.cCOMPL, IToken.t_compl); //$NON-NLS-1$
-        cppkeywords.put(Keywords.cNOT, IToken.t_not); //$NON-NLS-1$
-        cppkeywords.put(Keywords.cNOT_EQ, IToken.t_not_eq); //$NON-NLS-1$
-        cppkeywords.put(Keywords.cOR, IToken.t_or); //$NON-NLS-1$
-        cppkeywords.put(Keywords.cOR_EQ, IToken.t_or_eq); //$NON-NLS-1$
-        cppkeywords.put(Keywords.cXOR, IToken.t_xor); //$NON-NLS-1$
-        cppkeywords.put(Keywords.cXOR_EQ, IToken.t_xor_eq); //$NON-NLS-1$
+        cppkeywords.put(Keywords.cAND, IToken.t_and); 
+        cppkeywords.put(Keywords.cAND_EQ, IToken.t_and_eq); 
+        cppkeywords.put(Keywords.cBITAND, IToken.t_bitand); 
+        cppkeywords.put(Keywords.cBITOR, IToken.t_bitor); 
+        cppkeywords.put(Keywords.cCOMPL, IToken.t_compl); 
+        cppkeywords.put(Keywords.cNOT, IToken.t_not); 
+        cppkeywords.put(Keywords.cNOT_EQ, IToken.t_not_eq); 
+        cppkeywords.put(Keywords.cOR, IToken.t_or); 
+        cppkeywords.put(Keywords.cOR_EQ, IToken.t_or_eq); 
+        cppkeywords.put(Keywords.cXOR, IToken.t_xor); 
+        cppkeywords.put(Keywords.cXOR_EQ, IToken.t_xor_eq); 
 
         // Preprocessor keywords
         ppKeywords = new CharArrayIntMap(16, -1);
-        ppKeywords.put(Keywords.cIF, ppIf); //$NON-NLS-1$
-        ppKeywords.put(Keywords.cIFDEF, ppIfdef); //$NON-NLS-1$
-        ppKeywords.put(Keywords.cIFNDEF, ppIfndef); //$NON-NLS-1$
-        ppKeywords.put(Keywords.cELIF, ppElif); //$NON-NLS-1$
-        ppKeywords.put(Keywords.cELSE, ppElse); //$NON-NLS-1$
-        ppKeywords.put(Keywords.cENDIF, ppEndif); //$NON-NLS-1$
-        ppKeywords.put(Keywords.cINCLUDE, ppInclude); //$NON-NLS-1$
-        ppKeywords.put(Keywords.cDEFINE, ppDefine); //$NON-NLS-1$
-        ppKeywords.put(Keywords.cUNDEF, ppUndef); //$NON-NLS-1$
-        ppKeywords.put(Keywords.cERROR, ppError); //$NON-NLS-1$
-        ppKeywords.put(Keywords.cINCLUDE_NEXT, ppInclude_next); //$NON-NLS-1$
-        ppKeywords.put(Keywords.cPRAGMA, ppPragma); //$NON-NLS-1$
+        ppKeywords.put(Keywords.cIF, ppIf); 
+        ppKeywords.put(Keywords.cIFDEF, ppIfdef); 
+        ppKeywords.put(Keywords.cIFNDEF, ppIfndef); 
+        ppKeywords.put(Keywords.cELIF, ppElif); 
+        ppKeywords.put(Keywords.cELSE, ppElse); 
+        ppKeywords.put(Keywords.cENDIF, ppEndif); 
+        ppKeywords.put(Keywords.cINCLUDE, ppInclude); 
+        ppKeywords.put(Keywords.cDEFINE, ppDefine); 
+        ppKeywords.put(Keywords.cUNDEF, ppUndef); 
+        ppKeywords.put(Keywords.cERROR, ppError); 
+        ppKeywords.put(Keywords.cINCLUDE_NEXT, ppInclude_next); 
+        ppKeywords.put(Keywords.cPRAGMA, ppPragma); 
     }
 
     /**

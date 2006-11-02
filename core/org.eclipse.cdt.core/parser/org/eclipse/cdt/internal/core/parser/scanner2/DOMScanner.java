@@ -133,7 +133,7 @@ public class DOMScanner extends BaseScanner {
             char[] filenamePath, boolean local, int startOffset,
             int startingLineNumber, int nameOffset, int nameEndOffset,
             int nameLine, int endOffset, int endLine, boolean isForced) {
-        return new DOMInclusion(filenamePath, resolveOffset(startOffset));
+        return new DOMInclusion(filenamePath, getGlobalOffset(startOffset));
     }
 
     /*
@@ -148,13 +148,13 @@ public class DOMScanner extends BaseScanner {
         IScannerPreprocessorLog.IMacroDefinition m = null;
         if (macro instanceof FunctionStyleMacro)
             m = locationMap.defineFunctionStyleMacro(
-                    (FunctionStyleMacro) macro, resolveOffset(startingOffset),
-                    resolveOffset(idstart), resolveOffset(idend),
-                    resolveOffset(textEnd));
+                    (FunctionStyleMacro) macro, getGlobalOffset(startingOffset),
+                    getGlobalOffset(idstart), getGlobalOffset(idend),
+                    getGlobalOffset(textEnd));
         else if (macro instanceof ObjectStyleMacro)
             m = locationMap.defineObjectStyleMacro((ObjectStyleMacro) macro,
-                    resolveOffset(startingOffset), resolveOffset(idstart),
-                    resolveOffset(idend), resolveOffset(textEnd));
+                    getGlobalOffset(startingOffset), getGlobalOffset(idstart),
+                    getGlobalOffset(idend), getGlobalOffset(textEnd));
         if (m != null && macro instanceof ObjectStyleMacro)
             ((ObjectStyleMacro) macro).attachment = m;
 
@@ -194,7 +194,7 @@ public class DOMScanner extends BaseScanner {
             if( ! isCircularInclusion( (InclusionData) data ))
             {
                 DOMInclusion inc = ((DOMInclusion) ((InclusionData) data).inclusion);
-                locationMap.startInclusion(((InclusionData) data).reader, inc.o, resolveOffset(getCurrentOffset()));
+                locationMap.startInclusion(((InclusionData) data).reader, inc.o, getGlobalOffset(getCurrentOffset())+1);
                 bufferDelta[bufferStackPos + 1] = 0;
             }
         }
@@ -203,21 +203,23 @@ public class DOMScanner extends BaseScanner {
             MacroData d = (MacroData) data;
             if (d.macro instanceof FunctionStyleMacro && fsmCount == 0) {
                 FunctionStyleMacro fsm = (FunctionStyleMacro) d.macro;
+                int startOffset= getGlobalOffset(d.getStartOffset());
+                int endOffset= startOffset+d.getLength();
                 locationMap.startFunctionStyleExpansion(fsm.attachment,
-                        fsm.arglist, resolveOffset(d.startOffset),
-                        resolveOffset(d.endOffset));
+                        fsm.arglist, startOffset, endOffset);
                 bufferDelta[bufferStackPos + 1] = 0;
             } else if (d.macro instanceof ObjectStyleMacro && fsmCount == 0) {
                 ObjectStyleMacro osm = (ObjectStyleMacro) d.macro;
+                int startOffset= getGlobalOffset(d.getStartOffset());
+                int endOffset= startOffset+d.getLength();
                 locationMap.startObjectStyleMacroExpansion(osm.attachment,
-                        resolveOffset(d.startOffset),
-                        resolveOffset(d.endOffset));
+                		startOffset, endOffset);
                 bufferDelta[bufferStackPos + 1] = 0;
             }
         }
         else if( data instanceof CodeReader && !macroFilesInitialized )
         {
-            int resolved = getGlobalCounter(0);
+            int resolved = getGlobalOffset(0, 0);
             locationMap.startInclusion( (CodeReader) data, resolved, resolved );
         }
 
@@ -233,23 +235,21 @@ public class DOMScanner extends BaseScanner {
      */
     protected Object popContext() {
         Object result = super.popContext();
-        int delta_pos = 0;
-        if( bufferPos[bufferStackPos + 1] > bufferLimit[ bufferStackPos + 1 ] )
-            delta_pos += bufferLimit[ bufferStackPos + 1 ];
-        else
-            delta_pos += bufferPos[ bufferStackPos + 1 ];
+        int bufferEndOffset = Math.min(bufferPos[bufferStackPos+1] + 1, bufferLimit[bufferStackPos+1]);
 
         if (result instanceof CodeReader) {
-            if( isInitialized )
-                locationMap.endTranslationUnit(bufferDelta[0]
-                        + ((CodeReader) result).buffer.length);
-            else
-            {
-                bufferDelta[0] += bufferDelta[bufferStackPos + 1] + ((CodeReader) result).buffer.length;
-                locationMap.endInclusion( ((CodeReader) result), getGlobalCounter(0) );
+            CodeReader codeReader = (CodeReader) result;
+            if( isInitialized ) {
+				locationMap.endTranslationUnit(bufferDelta[0] + codeReader.buffer.length);
+            }
+            else {
+            	// handling of macro-file
+                bufferDelta[0] += codeReader.buffer.length;
+                locationMap.endInclusion(codeReader, getGlobalOffset(0,0));
             }
 
-        } else if (result instanceof InclusionData) {
+        } 
+        else if (result instanceof InclusionData) {
             CodeReader codeReader = ((InclusionData) result).reader;
             if (log.isTracing()) {
                 StringBuffer buffer = new StringBuffer("Exiting inclusion "); //$NON-NLS-1$
@@ -257,64 +257,33 @@ public class DOMScanner extends BaseScanner {
                 log.traceLog(buffer.toString());
             }
 
-            int value = getGlobalCounter(bufferStackPos + 1) + delta_pos;                                      
-            locationMap.endInclusion(codeReader, value);
-            bufferDelta[bufferStackPos] += bufferDelta[bufferStackPos + 1]
-                    + codeReader.buffer.length;
-        } else if (result instanceof MacroData) {
+            int endOffset = getGlobalOffset(bufferStackPos+1, bufferEndOffset);                                      
+            locationMap.endInclusion(codeReader, endOffset);
+            bufferDelta[bufferStackPos] += bufferDelta[bufferStackPos + 1] + bufferEndOffset;
+        } 
+        else if (result instanceof MacroData) {
+            int endOffset = getGlobalOffset(bufferStackPos + 1, bufferEndOffset);                                      
             MacroData data = (MacroData) result;
             if (data.macro instanceof FunctionStyleMacro && fsmCount == 0) {
-
-                locationMap
-                        .endFunctionStyleExpansion(((FunctionStyleMacro)data.macro).attachment, getGlobalCounter(bufferStackPos + 1)
-                                + delta_pos + 1); // functionstyle
-                // macro)
-                // ;
-                bufferDelta[bufferStackPos] += bufferDelta[bufferStackPos + 1]
-                        + delta_pos + 1;
-            } else if (data.macro instanceof ObjectStyleMacro && fsmCount == 0) {
-                locationMap
-                        .endObjectStyleMacroExpansion(((ObjectStyleMacro)data.macro).attachment, getGlobalCounter(bufferStackPos + 1)
-                                + delta_pos );
-                bufferDelta[bufferStackPos] += bufferDelta[bufferStackPos + 1]
-                        + delta_pos;
-
+                locationMap.endFunctionStyleExpansion(((FunctionStyleMacro)data.macro).attachment, endOffset);
+                bufferDelta[bufferStackPos]+= bufferDelta[bufferStackPos + 1] + bufferEndOffset;                
+            } 
+            else if (data.macro instanceof ObjectStyleMacro && fsmCount == 0) {
+                locationMap.endObjectStyleMacroExpansion(((ObjectStyleMacro)data.macro).attachment, endOffset);
+                bufferDelta[bufferStackPos]+= bufferDelta[bufferStackPos + 1] + bufferEndOffset;
             }
         }
         return result;
     }
 
-    protected int getGlobalCounter(int value) {
-        if (value < 0)
-            return 0;
-        int result = bufferDelta[value];
-        for (int i = value - 1; i >= 0; --i)
-        {
-            if( bufferPos[i] > bufferLimit[i] )
-                result += bufferLimit[i] + bufferDelta[i];
-            else
-                result += bufferPos[i] + bufferDelta[i];
-        }
-
-        return result;
-
-    }
-
-    protected int getGlobalCounter() {
-        return getGlobalCounter(bufferStackPos);
-    }
-
-    /**
-     * @return
-     */
     protected IToken newToken(int signal) {
         return new _BasicToken(signal,
-                resolveOffset(bufferPos[bufferStackPos] + 1));
+                getGlobalOffset(bufferPos[bufferStackPos] + 1));
     }
 
     protected IToken newToken(int signal, char[] buffer) {
         IToken i = new _ImagedToken(signal, buffer,
-                resolveOffset(bufferPos[bufferStackPos] + 1));
+                getGlobalOffset(bufferPos[bufferStackPos] + 1));
         if (buffer != null && buffer.length == 0 && signal != IToken.tSTRING
                 && signal != IToken.tLSTRING)
             bufferPos[bufferStackPos] += 1; // TODO - remove this hack at some
@@ -340,18 +309,27 @@ public class DOMScanner extends BaseScanner {
      */
     protected void handleProblem(int id, int offset, char[] arg) {
         IASTProblem problem = new ScannerASTProblem(id, arg, true, false);
-        int o = resolveOffset(offset);
+        int o = getGlobalOffset(offset);
         ((ScannerASTProblem) problem).setOffsetAndLength(o,
-                resolveOffset(getCurrentOffset() + 1) - o);
+                getGlobalOffset(getCurrentOffset() + 1) - o);
         locationMap.encounterProblem(problem);
     }
 
     /**
-     * @param offset
-     * @return
+     * works only if bufferOffset is past the last context inserted in the current one.
      */
-    private int resolveOffset(int offset) {
-        return getGlobalCounter() + offset;
+    private int getGlobalOffset(int bufferOffset) {
+        return getGlobalOffset(bufferStackPos, bufferOffset);
+    }
+
+    private int getGlobalOffset(int stackPos, int offset) {
+        if (stackPos < 0)
+            return offset;
+        offset+= bufferDelta[stackPos];
+        for (int i = stackPos - 1; i >= 0; --i) {
+        	offset+= Math.min(bufferPos[i]+1, bufferLimit[i]) + bufferDelta[i];
+        }
+        return offset;
     }
 
     /*
@@ -375,11 +353,11 @@ public class DOMScanner extends BaseScanner {
     protected void processIfdef(int startPos, int endPos, boolean positive,
             boolean taken) {
         if (positive)
-            locationMap.encounterPoundIfdef(resolveOffset(startPos),
-                    resolveOffset(endPos), taken);
+            locationMap.encounterPoundIfdef(getGlobalOffset(startPos),
+                    getGlobalOffset(endPos), taken);
         else
-            locationMap.encounterPoundIfndef(resolveOffset(startPos),
-                    resolveOffset(endPos), taken);
+            locationMap.encounterPoundIfndef(getGlobalOffset(startPos),
+                    getGlobalOffset(endPos), taken);
 
     }
 
@@ -390,8 +368,8 @@ public class DOMScanner extends BaseScanner {
      *      int, boolean)
      */
     protected void processIf(int startPos, int endPos, boolean taken) {
-        locationMap.encounterPoundIf(resolveOffset(startPos),
-                resolveOffset(endPos), taken);
+        locationMap.encounterPoundIf(getGlobalOffset(startPos),
+                getGlobalOffset(endPos), taken);
     }
 
     /*
@@ -401,8 +379,8 @@ public class DOMScanner extends BaseScanner {
      *      int, boolean)
      */
     protected void processElsif(int startPos, int endPos, boolean taken) {
-        locationMap.encounterPoundElif(resolveOffset(startPos),
-                resolveOffset(endPos), taken);
+        locationMap.encounterPoundElif(getGlobalOffset(startPos),
+                getGlobalOffset(endPos), taken);
     }
 
     /*
@@ -412,8 +390,8 @@ public class DOMScanner extends BaseScanner {
      *      int, boolean)
      */
     protected void processElse(int startPos, int endPos, boolean taken) {
-        locationMap.encounterPoundElse(resolveOffset(startPos),
-                resolveOffset(endPos), taken);
+        locationMap.encounterPoundElse(getGlobalOffset(startPos),
+                getGlobalOffset(endPos), taken);
     }
 
     /*
@@ -426,8 +404,8 @@ public class DOMScanner extends BaseScanner {
             int namePos, Object definition) {
         final IScannerPreprocessorLog.IMacroDefinition macroDefinition = (definition instanceof ObjectStyleMacro) ? ((ObjectStyleMacro) definition).attachment
                 : null;
-        locationMap.encounterPoundUndef(resolveOffset(pos),
-                resolveOffset(endPos), symbol, namePos, macroDefinition);
+        locationMap.encounterPoundUndef(getGlobalOffset(pos),
+                getGlobalOffset(endPos), symbol, namePos, macroDefinition);
     }
 
     /*
@@ -437,8 +415,8 @@ public class DOMScanner extends BaseScanner {
      *      int)
      */
     protected void processError(int startPos, int endPos) {
-        locationMap.encounterPoundError(resolveOffset(startPos),
-                resolveOffset(endPos));
+        locationMap.encounterPoundError(getGlobalOffset(startPos),
+                getGlobalOffset(endPos));
     }
 
     /*
@@ -448,8 +426,7 @@ public class DOMScanner extends BaseScanner {
      *      int)
      */
     protected void processEndif(int startPos, int endPos) {
-        locationMap.encounterPoundEndIf(resolveOffset(startPos),
-                resolveOffset(endPos));
+        locationMap.encounterPoundEndIf(getGlobalOffset(startPos), getGlobalOffset(endPos));
     }
 
     /*
@@ -459,8 +436,7 @@ public class DOMScanner extends BaseScanner {
      *      int)
      */
     protected void processPragma(int startPos, int endPos) {
-        locationMap.encounterPoundPragma(resolveOffset(startPos),
-                resolveOffset(endPos));
+        locationMap.encounterPoundPragma(getGlobalOffset(startPos), getGlobalOffset(endPos));
     }
 
     protected void beforeReplaceAllMacros() {

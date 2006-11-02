@@ -913,26 +913,50 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
             this.parent = parent;
         }
 
+        /**
+         * Global offset of start of directive (inclusive).
+         */
         public int context_directive_start;
-        public int context_directive_end;	// inclusive
-        public int context_ends;			// inclusive
+        /**
+         * Global offset of end of directive (exclusive).
+         */
+        public int context_directive_end;	
+        /**
+         * Global offset of end of context introduced by directive (exclusive).
+         */
+        public int context_ends;			
         public _CompositeContext parent;
 
         public _CompositeContext getParent() {
             return parent;
         }
 
+        public int getDirectiveStart() {
+        	return context_directive_start;
+        }
+        
+        public int getDirectiveLength() {
+        	return context_directive_end - context_directive_start;
+        }
+        
+        public int getContextStart() {
+        	return context_directive_end;
+        }
+        
+        public int getContextLength() {
+        	return context_ends- context_directive_end;
+        }
+            	
         public final boolean contains(int offset) {
-            return (offset >= context_directive_start && offset <= context_ends);
+            return (offset >= context_directive_start && offset < context_ends);
+        }
+
+        public final boolean containsInContext(int offset) {
+            return (offset >= context_directive_end && offset < context_ends);
         }
 
         public boolean containsInDirective(int offset, int length) {
-            if( length > 0 && offset == context_directive_end )
-                return false;
-            if (offset >= context_directive_start
-                    && offset + length - 1 <= context_directive_end )
-                return true;
-            return false;
+        	return context_directive_start <= offset && offset + length <= context_directive_end;
         }
 
         public boolean hasAncestor(_Context cc) {
@@ -1005,7 +1029,7 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
 	            	if (c== null || offset < c.context_directive_start) {
 	            		right= middle-1;
 	            	}
-	            	else if (offset > c.context_ends) {
+	            	else if (offset >= c.context_ends) {
 	            		left= middle+1;
 	            	}
 	            	else {
@@ -1021,7 +1045,7 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
 	            }
             }
             // if no sub context contains this, do it this way
-            if ((offset >= context_directive_start && offset <= context_ends))
+            if ((offset >= context_directive_start && offset < context_ends))
                 return this;
             return null;
         }
@@ -1037,6 +1061,23 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
             return result;
         }
 
+        public int getOffsetInContext(int globalOffset) {
+            int externalCount= 0;
+            if (subContexts != null) {
+            	for (int i = 0; i < subContexts.length; ++i) {
+            		_Context subC = subContexts[i];
+            		if (subC == null || globalOffset < subC.getContextStart()) {
+            			break;
+            		}
+            		if (subC instanceof _CompositeContext) {
+            			assert !subC.containsInContext(globalOffset);
+            			externalCount+= subC.getContextLength();
+            		}
+            	}
+            }
+            final int result = globalOffset - externalCount - getContextStart();
+            return ((result < 0) ? 0 : result);
+        }
     }    
 
     protected static class _CompositeFileContext extends _CompositeContext {
@@ -1065,7 +1106,6 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
             }
             return lineNumber;
         }
-
     }
 
     protected static class _Inclusion extends _CompositeFileContext implements
@@ -1079,10 +1119,6 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
 
     protected static class _TranslationUnit extends _CompositeFileContext {
 
-        /**
-         * @param startOffset
-         * @param endOffset
-         */
         public _TranslationUnit() {
             super(null, 0, 0 );
         }
@@ -1248,7 +1284,7 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
                 expansionName = new ASTMacroName( definition.getName() );
                 expansionName.setParent( rootNode );
                 expansionName.setPropertyInParent( IASTTranslationUnit.EXPANSION_NAME );
-                ((ASTNode)expansionName).setOffsetAndLength( context_directive_start, context_directive_end - context_directive_start + 1);
+                ((ASTNode)expansionName).setOffsetAndLength(context_directive_start, getDirectiveLength());
             }
             return expansionName;
         }
@@ -1358,8 +1394,7 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
         ((ASTNode) name).setOffsetAndLength(d.nameOffset, d.name.length);
         r.setName(name);
         r.setExpansion(new String(d.getExpansion()));
-        ((ASTNode) r).setOffsetAndLength(d.context_directive_start,
-                d.context_directive_end - d.context_directive_start);
+        ((ASTNode) r).setOffsetAndLength(d.context_directive_start, d.getDirectiveLength());
         d.astNode = r;
 		r.setParent(rootNode);
 		r.setPropertyInParent(IASTTranslationUnit.PREPROCESSOR_STATEMENT);
@@ -1392,11 +1427,9 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
     private IASTPreprocessorIncludeStatement createASTInclusion(_Inclusion inc) {
         IASTPreprocessorIncludeStatement result = new ASTInclusionStatement(
                 inc.reader.filename);
-        ((ASTNode) result).setOffsetAndLength(
-                inc.context_directive_start, inc.context_directive_end
-                        - inc.context_directive_start);
-        ((ASTInclusionStatement) result).startOffset = inc.context_directive_end;
-        ((ASTInclusionStatement) result).endOffset = inc.context_ends;
+        ((ASTNode) result).setOffsetAndLength(inc.context_directive_start, inc.getDirectiveLength());
+        ((ASTInclusionStatement) result).startOffset = inc.getContextStart();
+        ((ASTInclusionStatement) result).endOffset = inc.context_directive_end;
 		((ASTInclusionStatement) result).setParent(rootNode);
 		((ASTInclusionStatement) result).setPropertyInParent(IASTTranslationUnit.PREPROCESSOR_STATEMENT);
 		result.setParent(rootNode);
@@ -1457,8 +1490,7 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
      */
     private IASTPreprocessorStatement createASTEndif(_Endif endif) {
         IASTPreprocessorEndifStatement result = new ASTEndif();
-        ((ASTNode) result).setOffsetAndLength(endif.context_directive_start,
-                endif.context_directive_end - endif.context_directive_start);
+        ((ASTNode) result).setOffsetAndLength(endif.context_directive_start, endif.getDirectiveLength());
 		result.setParent(rootNode);
 		result.setPropertyInParent(IASTTranslationUnit.PREPROCESSOR_STATEMENT);
         return result;
@@ -1470,8 +1502,7 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
      */
     private IASTPreprocessorStatement createASTElif(_Elif elif) {
         IASTPreprocessorElifStatement result = new ASTElif(elif.taken);
-        ((ASTNode) result).setOffsetAndLength(elif.context_directive_start,
-                elif.context_directive_end - elif.context_directive_start);
+        ((ASTNode) result).setOffsetAndLength(elif.context_directive_start, elif.getDirectiveLength());
 		result.setParent(rootNode);
 		result.setPropertyInParent(IASTTranslationUnit.PREPROCESSOR_STATEMENT);
         return result;
@@ -1483,8 +1514,7 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
      */
     private IASTPreprocessorStatement createASTElse(_Else e) {
         IASTPreprocessorElseStatement result = new ASTElse(e.taken);
-        ((ASTNode) result).setOffsetAndLength(e.context_directive_start,
-                e.context_directive_end - e.context_directive_start);
+        ((ASTNode) result).setOffsetAndLength(e.context_directive_start, e.getDirectiveLength());
 		result.setParent(rootNode);
 		result.setPropertyInParent(IASTTranslationUnit.PREPROCESSOR_STATEMENT);
         return result;
@@ -1496,8 +1526,7 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
      */
     private IASTPreprocessorStatement createASTIfndef(_Ifndef ifndef) {
         IASTPreprocessorIfndefStatement result = new ASTIfndef(ifndef.taken);
-        ((ASTNode) result).setOffsetAndLength(ifndef.context_directive_start,
-                ifndef.context_directive_end - ifndef.context_directive_start);
+        ((ASTNode) result).setOffsetAndLength(ifndef.context_directive_start, ifndef.getDirectiveLength());
 		result.setParent(rootNode);
 		result.setPropertyInParent(IASTTranslationUnit.PREPROCESSOR_STATEMENT);
         return result;
@@ -1509,8 +1538,7 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
      */
     private IASTPreprocessorStatement createASTIfdef(_Ifdef ifdef) {
         IASTPreprocessorIfdefStatement result = new ASTIfdef(ifdef.taken);
-        ((ASTNode) result).setOffsetAndLength(ifdef.context_directive_start,
-                ifdef.context_directive_end - ifdef.context_directive_start);
+        ((ASTNode) result).setOffsetAndLength(ifdef.context_directive_start, ifdef.getDirectiveLength());
 		result.setParent(rootNode);
 		result.setPropertyInParent(IASTTranslationUnit.PREPROCESSOR_STATEMENT);
         return result;
@@ -1522,8 +1550,7 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
      */
     private IASTPreprocessorStatement createASTIf(_If i) {
         IASTPreprocessorIfStatement result = new ASTIf(i.taken);
-        ((ASTNode) result).setOffsetAndLength(i.context_directive_start,
-                i.context_directive_end - i.context_directive_start);
+        ((ASTNode) result).setOffsetAndLength(i.context_directive_start, i.getDirectiveLength());
 		result.setParent(rootNode);
 		result.setPropertyInParent(IASTTranslationUnit.PREPROCESSOR_STATEMENT);
         return result;
@@ -1535,8 +1562,7 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
      */
     private IASTPreprocessorStatement createASTError(_Error error) {
         IASTPreprocessorErrorStatement result = new ASTError();
-        ((ASTNode) result).setOffsetAndLength(error.context_directive_start,
-                error.context_directive_end - error.context_directive_start);
+        ((ASTNode) result).setOffsetAndLength(error.context_directive_start, error.getDirectiveLength());
 		result.setParent(rootNode);
 		result.setPropertyInParent(IASTTranslationUnit.PREPROCESSOR_STATEMENT);
         return result;
@@ -1548,8 +1574,7 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
      */
     private IASTPreprocessorStatement createASTPragma(_Pragma pragma) {
         IASTPreprocessorPragmaStatement result = new ASTPragma();
-        ((ASTNode) result).setOffsetAndLength(pragma.context_directive_start,
-                pragma.context_directive_end - pragma.context_directive_start);
+        ((ASTNode) result).setOffsetAndLength(pragma.getDirectiveStart(), pragma.getDirectiveLength());
 		result.setParent(rootNode);
 		result.setPropertyInParent(IASTTranslationUnit.PREPROCESSOR_STATEMENT);
         return result;
@@ -1561,8 +1586,7 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
      */
     private IASTPreprocessorStatement createASTUndef(_Undef undef) {
         IASTPreprocessorUndefStatement result = new ASTUndef(undef.getName());
-        ((ASTNode) result).setOffsetAndLength(undef.context_directive_start,
-                undef.context_directive_end - undef.context_directive_start);
+        ((ASTNode) result).setOffsetAndLength(undef.getDirectiveStart(), undef.getDirectiveLength());
 		result.setParent(rootNode);
 		result.setPropertyInParent(IASTTranslationUnit.PREPROCESSOR_STATEMENT);
         return result;
@@ -1580,8 +1604,7 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
         _Context c = findContextForOffset(offset);
         if( c == null )
             return EMPTY_LOCATION_ARRAY;
-        int offset1 = offset + length - 1;
-        if (offset1 < c.context_ends) {
+        if (offset + length <= c.context_ends) {
             if (c instanceof _CompositeContext) {
                 _Context[] subz = ((_CompositeContext) c).getSubContexts();
             	boolean foundNested = findNested( subz, offset, length);
@@ -1615,7 +1638,7 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
     		if (offset2 < sub.context_directive_start) {
     			right= middle-1;
     		}
-    		else if (offset > sub.context_ends) {
+    		else if (offset >= sub.context_ends) {
     			left= middle+1;
     		} 
     		else {
@@ -1678,38 +1701,32 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
 
     protected IASTNodeLocation createSoleLocation(_Context c, int offset,
             int length) {
-        if (c instanceof _IPreprocessorDirective || c instanceof _Problem ) {
+    	
+    	if (c instanceof _IPreprocessorDirective || c instanceof _Problem ) {
             if (c.containsInDirective(offset, length)) {
                 _CompositeContext parent = c.parent;
-                while (!(parent instanceof _CompositeFileContext))
-                    parent = parent.parent;
-                _CompositeFileContext fc = (_CompositeFileContext) parent;
-                return new FileLocation(fc.reader.filename, reconcileOffset(fc,
-                        c, offset), length);
+                if (parent instanceof _CompositeFileContext) {
+                	_CompositeFileContext fc = (_CompositeFileContext) parent;
+                	return new FileLocation(fc.reader.filename, fc.getOffsetInContext(offset), length);
+                }
             }
         }
         if (c instanceof _CompositeFileContext) {
-            return new FileLocation(
-                    ((_CompositeFileContext) c).reader.filename,
-                    reconcileOffset(c, offset), length);
+            _CompositeFileContext cfc = (_CompositeFileContext) c;
+			return new FileLocation(cfc.reader.filename, cfc.getOffsetInContext(offset), length);
         }
         if (c instanceof _MacroExpansion) {
             _MacroExpansion expansion = (_MacroExpansion) c;
-            //first check to see if we are in the directive rather than the expansion
-            if( c.containsInDirective( offset, length ) )
-            {
+            if (c.containsInDirective(offset, length)) {
                 _CompositeContext parent = c.parent;
-                while (!(parent instanceof _CompositeFileContext))
-                    parent = parent.parent;
-                _CompositeFileContext fc = (_CompositeFileContext) parent;
-                return new FileLocation(fc.reader.filename, reconcileOffset(fc,
-                        c, offset), length);                
+                if (parent instanceof _CompositeFileContext) {
+                	_CompositeFileContext fc = (_CompositeFileContext) parent;
+                	return new FileLocation(fc.reader.filename, fc.getOffsetInContext(offset), length);
+                }
             }
             
             
-            IASTNodeLocation[] locations = createSoleLocationArray(c.parent,
-                    c.context_directive_start, c.context_directive_end
-                            - c.context_directive_start + 1);
+            IASTNodeLocation[] locations = createSoleLocationArray(c.parent, c.getDirectiveStart(), c.getDirectiveLength());
             IASTPreprocessorMacroDefinition definition = null;
             _MacroDefinition d = (_MacroDefinition) expansion.definition;
             if (d.astNode != null)
@@ -1720,8 +1737,7 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
                 definition = astNode;
             }
 
-            return new MacroExpansionLocation(definition, locations,
-                    reconcileOffset(c, offset), length);
+            return new MacroExpansionLocation(definition, locations, expansion.getOffsetInContext(offset), length);
         }
         return null;
     }
@@ -1743,58 +1759,6 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
         return result;
     }
 
-    /**
-     * @param fc
-     * @param c
-     * @param offset
-     * @return
-     */
-    protected int reconcileOffset(_CompositeFileContext fc, _Context c,
-            int offset) {
-        int subtractOff = 0;
-        if (c.parent == fc) {
-            _Context[] subs = fc.getSubContexts();
-            for (int i = 0; i < subs.length; ++i) {
-                _Context sample = subs[i];
-                if (sample == c)
-                    break;
-                if (!(sample instanceof _CompositeContext))
-                    continue;
-                subtractOff += sample.context_ends
-                        - sample.context_directive_end;
-            }
-        }
-        return offset - fc.context_directive_end - subtractOff;
-    }
-
-    /**
-     * @param c
-     * @param offset
-     * @return
-     */
-    protected static int reconcileOffset(_Context c, int offset) {
-        int subtractOff = 0;
-        if (c instanceof _CompositeFileContext) {
-            _Context[] subs = ((_CompositeFileContext) c).getSubContexts();
-            for (int i = 0; i < subs.length; ++i) {
-                _Context subC = subs[i];
-                if (subC.context_ends > offset)
-                    break;
-                if (!(subC instanceof _CompositeContext))
-                    continue;
-
-                subtractOff += subC.context_ends - subC.context_directive_end;
-
-            }
-        }
-        final int result = offset - c.context_directive_end - subtractOff;
-        return ((result < 0) ? 0 : result);
-    }
-
-    /**
-     * @param offset
-     * @return
-     */
     protected _Context findContextForOffset(int offset) {
         return tu.findContextContainingOffset(offset);
     }
@@ -2126,9 +2090,9 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
      */
     public void encounterProblem(IASTProblem problem) {
         ScannerASTProblem p = (ScannerASTProblem) problem;
-        _Problem pr = new _Problem(currentContext, p.getOffset(), p.getOffset()
-                + p.getLength(), problem);
-        pr.context_ends = p.getOffset() + p.getLength();
+        int offset= p.getOffset();
+        int endoffset= offset + p.getLength();
+        _Problem pr = new _Problem(currentContext, offset, endoffset, problem);
         currentContext.addSubContext(pr);
     }
 
@@ -2310,46 +2274,45 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
         if (!(startContext instanceof _CompositeContext))
             throw new InvalidPreprocessorNodeException(NOT_VALID_MACRO,
                     globalOffset);
-        _Context[] contexts = ((_CompositeContext) startContext)
-                .getSubContexts();
+        _Context[] contexts = ((_CompositeContext) startContext).getSubContexts();
 
         // check if a macro in the location map is the selection
         for (int i = 0; result == null && i < contexts.length; i++) {
             _Context context = contexts[i];
 
-            // if offset is past the _Context then increment globalOffset
-            if (globalOffset > context.context_directive_end) {
-                globalOffset += context.context_ends
-                        - context.context_directive_end;
+            if (globalOffset < context.getDirectiveStart()) {
+            	break;
             }
-
+            
             // check if the _Context is the selection
-            if (globalOffset == context.context_directive_start
-                    && length == context.context_directive_end
-                            - context.context_directive_start) {
-                    result = createPreprocessorStatement(context);
-            }
-            else if( context instanceof _MacroExpansion  &&  globalOffset == context.context_directive_start )
-            {
-                _MacroExpansion expansion = (_MacroExpansion)context;
-                if( expansion.definition.getName().length == length )
-                    result = expansion.getName();
+            if (globalOffset == context.getDirectiveStart()) {
+            	if( context instanceof _MacroExpansion) {
+                    _MacroExpansion expansion = (_MacroExpansion)context;
+                    if( expansion.definition.getName().length == length ) 
+                        result = expansion.getName();
+                }
+            	else if (length == context.getDirectiveLength()) {
+            		result = createPreprocessorStatement(context);
+            	}
             }
 
             // check if a sub node of the macro is the selection // TODO
             // determine how this can be kept in sync with logic in
             // getAllPreprocessorStatements (i.e. 1:1 mapping)
-            if ((globalOffset >= context.context_directive_start && globalOffset <= context.context_ends) && context instanceof _MacroDefinition) {
-                if (globalOffset == ((_MacroDefinition) context).nameOffset
-                        && length == ((_MacroDefinition) context).name.length)
-                    result = createASTMacroDefinition(
-                            (_MacroDefinition) context).getName();
+            if (context.containsInDirective(globalOffset, length)) {
+            	if (context instanceof _MacroDefinition) {
+            		_MacroDefinition macroDefinition = (_MacroDefinition) context;
+					if (globalOffset == macroDefinition.nameOffset
+            				&& length == macroDefinition.name.length) {
+            			result = createASTMacroDefinition(macroDefinition).getName();
+					}
+            	}
             }
 
-            // stop searching the _Contexts if they've gone past the selection
-            if (globalOffset < context.context_directive_end)
-                break;
-
+            // if offset is past the _Context then increment globalOffset
+            if (globalOffset >= context.getContextStart()) {
+                globalOffset += context.getContextLength();
+            }
         }
 
         return new ASTPreprocessorSelectionResult(result, globalOffset);
@@ -2375,16 +2338,9 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
             foundContext = findInclusion(tu, path);
 
             if (foundContext == null) {
-                throw new InvalidPreprocessorNodeException(
-                        TU_INCLUDE_NOT_FOUND, globalOffset);
+                throw new InvalidPreprocessorNodeException(TU_INCLUDE_NOT_FOUND, globalOffset);
             } else if (foundContext instanceof _Inclusion) {
-                globalOffset = foundContext.context_directive_end + offset; // start
-                // at
-                // #include's
-                // directive_end
-                // +
-                // real
-                // offset
+                globalOffset = foundContext.getContextStart() + offset; 
             }
         }
 

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2005 IBM Corporation and others.
+ * Copyright (c) 2004, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  * IBM - Initial API and implementation
+ * Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.core.parser.tests.ast2;
 
@@ -187,6 +188,12 @@ public class DOMLocationTests extends AST2BaseTest {
         IASTNodeLocation nodeLocation = locations[0];
         assertEquals(offset, nodeLocation.getNodeOffset());
         assertEquals(length, nodeLocation.getNodeLength());
+    }
+
+    private void assertFileLocation(IASTNode n, int offset, int length) {
+        IASTNodeLocation location = n.getFileLocation();
+        assertEquals(offset, location.getNodeOffset());
+        assertEquals(length, location.getNodeLength());
     }
 
     public void testBug83664() throws Exception {
@@ -449,7 +456,7 @@ public class DOMLocationTests extends AST2BaseTest {
         }
     }
     
-    public void _testBug162180() throws Exception {
+    public void testBug162180() throws Exception {
         StringBuffer buffer = new StringBuffer();
         buffer.append( "#include <notfound.h>\n"); //$NON-NLS-1$
         int declOffset= buffer.length();
@@ -464,10 +471,127 @@ public class DOMLocationTests extends AST2BaseTest {
             assertEquals( statements.length, 0 );
             IASTProblem[] problems = tu.getPreprocessorProblems();
             assertEquals( problems.length, 1 );
-            assertSoleLocation( decls[0], code.indexOf( "int x;"), "int x;".length() ); //$NON-NLS-1$ //$NON-NLS-2$
+            assertSoleLocation( decls[0], code, "int x;");  
         }
     }
-    
+
+	private void assertSoleLocation(IASTNode node, String code, String snip) {
+		assertSoleLocation(node, code.indexOf(snip), snip.length());
+	}
+
+	private void assertFileLocation(IASTNode node, String code, String snip) {
+		assertFileLocation(node, code.indexOf(snip), snip.length());
+	}
+
+    public void testBug162180_0() throws Exception {
+        StringBuffer buffer = new StringBuffer();
+        buffer.append( "#include <notfound.h>\n"); //$NON-NLS-1$
+        buffer.append( "#include <notfound1.h> \r\n"); //$NON-NLS-1$
+        buffer.append( "#include <notfound2.h>  // more stuff \n"); //$NON-NLS-1$
+        int declOffset= buffer.length();
+        buffer.append( "int x;\n"); //$NON-NLS-1$
+        String code = buffer.toString();
+        for (ParserLanguage p = ParserLanguage.C; p != null; p = (p == ParserLanguage.C) ? ParserLanguage.CPP
+                : null) {
+            IASTTranslationUnit tu = parse(code, p, false, false);
+            IASTDeclaration[] decls= tu.getDeclarations();
+            IASTPreprocessorStatement [] statements = tu.getAllPreprocessorStatements();
+            IASTProblem[] problems = tu.getPreprocessorProblems();
+            assertEquals( 1, decls.length);
+            assertEquals( 0, statements.length);
+            assertEquals( 3, problems.length);
+            String snip= "<notfound.h>";
+            assertSoleLocation(problems[0], code, "#include <notfound.h>");
+            assertSoleLocation(problems[1], code, "#include <notfound1.h> ");
+            assertSoleLocation(problems[2], code, "#include <notfound2.h>  // more stuff ");
+            assertSoleLocation(decls[0], code, "int x;");
+        }
+    }
+
+    public void test162180_1() throws Exception {
+        StringBuffer buffer = new StringBuffer();
+        buffer.append( "#define xxx(!) int a\n"); // [0-20]
+        buffer.append( "int x;\n"); 			  // [21-27]
+        buffer.append( "int x\\i;\n"); 			  // [28-36]
+        buffer.append( "int x2;\n"); 			  // [37-44]
+        String code = buffer.toString();
+        for (ParserLanguage p = ParserLanguage.C; p != null; p = (p == ParserLanguage.C) ? ParserLanguage.CPP
+                : null) {
+            IASTTranslationUnit tu = parse(code, p, false, false);
+            IASTDeclaration[] decls= tu.getDeclarations();
+            IASTPreprocessorStatement [] statements = tu.getAllPreprocessorStatements();
+            IASTProblem[] problems = tu.getPreprocessorProblems();
+            assertEquals( 3, decls.length);
+            assertEquals( 0, statements.length);
+            assertEquals( 2, problems.length);
+            assertSoleLocation(problems[0], code, "xxx(!");
+            assertSoleLocation( decls[0], code, "int x;"); 
+            assertSoleLocation( problems[1], code, "\\"); 
+            assertFileLocation( decls[1], code, "int x\\i"); 
+            assertSoleLocation( decls[2], code, "int x2;"); 
+        }
+    }
+
+    public void test162180_2() throws Exception {
+        StringBuffer buffer = new StringBuffer();
+        buffer.append( "#define ! x\n"); 
+        buffer.append( "int x;\n"); 			  
+        String code = buffer.toString();
+        for (ParserLanguage p = ParserLanguage.C; p != null; p = (p == ParserLanguage.C) ? ParserLanguage.CPP
+                : null) {
+            IASTTranslationUnit tu = parse(code, p, false, false);
+            IASTDeclaration[] decls= tu.getDeclarations();
+            IASTPreprocessorStatement [] statements = tu.getAllPreprocessorStatements();
+            IASTProblem[] problems = tu.getPreprocessorProblems();
+            assertEquals( 1, decls.length);
+            assertEquals( 0, statements.length);
+            assertEquals( 1, problems.length);
+            assertSoleLocation(problems[0], code, "!");
+            assertSoleLocation( decls[0], code, "int x;"); 
+        }
+    }
+
+    public void test162180_3() throws Exception {
+        StringBuffer buffer = new StringBuffer();
+        buffer.append( "#define nix(x) x\n"); 
+        buffer.append( "nix(y,z);");
+        buffer.append( "int x;\n"); 			  
+        String code = buffer.toString();
+        for (ParserLanguage p = ParserLanguage.C; p != null; p = (p == ParserLanguage.C) ? ParserLanguage.CPP
+                : null) {
+            IASTTranslationUnit tu = parse(code, p, false, false);
+            IASTDeclaration[] decls= tu.getDeclarations();
+            IASTPreprocessorStatement [] statements = tu.getAllPreprocessorStatements();
+            IASTProblem[] problems = tu.getPreprocessorProblems();
+            assertEquals( 2, decls.length);
+            assertEquals( 1, statements.length);
+            assertEquals( 1, problems.length);
+            assertSoleLocation(problems[0], code, "z");
+            assertSoleLocation( decls[1], code, "int x;"); 
+        }
+    }
+
+    public void test162180_4() throws Exception {
+        StringBuffer buffer = new StringBuffer();
+        buffer.append( "#include \"\"\n"); 
+        buffer.append( "#else\n"); 
+        buffer.append( "int x;\n"); 			  
+        String code = buffer.toString();
+        for (ParserLanguage p = ParserLanguage.C; p != null; p = (p == ParserLanguage.C) ? ParserLanguage.CPP
+                : null) {
+            IASTTranslationUnit tu = parse(code, p, false, false);
+            IASTDeclaration[] decls= tu.getDeclarations();
+            IASTPreprocessorStatement [] statements = tu.getAllPreprocessorStatements();
+            IASTProblem[] problems = tu.getPreprocessorProblems();
+            assertEquals( 1, decls.length);
+            assertEquals( 0, statements.length);
+            assertEquals( 2, problems.length);
+            assertSoleLocation(problems[0], code, "#include \"\"");
+            assertSoleLocation(problems[1], code, "else");
+            assertSoleLocation( decls[0], code, "int x;"); 
+        }
+    }
+
     public void testBug85820() throws Exception {
 		String code = "int *p = (int []){2, 4};"; //$NON-NLS-1$
 		IASTTranslationUnit tu = parse( code, ParserLanguage.C );

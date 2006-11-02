@@ -193,8 +193,8 @@ public class Scanner2 extends BaseScanner {
                         || bufferData[mostRelevant] instanceof CodeReader)
                     break;
             MacroData data = (MacroData) bufferData[mostRelevant + 1];
-            return new SimpleExpansionToken(signal, data.startOffset,
-                    data.endOffset - data.startOffset + 1,
+            return new SimpleExpansionToken(signal, data.getStartOffset(),
+                    data.getLength(),
                     getCurrentFilename(),
                     getLineNumber(bufferPos[mostRelevant] + 1));
         }
@@ -211,18 +211,14 @@ public class Scanner2 extends BaseScanner {
                         || bufferData[mostRelevant] instanceof CodeReader)
                     break;
             MacroData data = (MacroData) bufferData[mostRelevant + 1];
-            return new ImagedExpansionToken(signal, buffer, data.startOffset,
-                    data.endOffset - data.startOffset + 1,
+            return new ImagedExpansionToken(signal, buffer, data.getStartOffset(),
+                    data.getLength(),
                     getCurrentFilename(),
                     getLineNumber(bufferPos[mostRelevant] + 1));
         }
         IToken i = new ImagedToken(signal, buffer,
                 bufferPos[bufferStackPos] + 1, getCurrentFilename(),
                 getLineNumber(bufferPos[bufferStackPos] + 1));
-        if (buffer != null && buffer.length == 0 && signal != IToken.tSTRING
-                && signal != IToken.tLSTRING)
-            bufferPos[bufferStackPos] += 1; // TODO - remove this hack at some
-        // point
 
         return i;
     }

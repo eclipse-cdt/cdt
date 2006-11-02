@@ -607,12 +607,11 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
                 if (LA(1).hashCode() == checkOffset)
                     failParseWithErrorHandling();
             } catch (EndOfFileException e) {
-                // As expected
-                if (translationUnit.getDeclarations().length != 0) {
-                    CASTNode d = (CASTNode) translationUnit.getDeclarations()[translationUnit
-                            .getDeclarations().length - 1];
-                    ((CASTNode) translationUnit).setLength(d.getOffset()
-                            + d.getLength());
+                IASTDeclaration[] declarations = translationUnit.getDeclarations();
+				// As expected
+                if (declarations.length != 0) {
+                    CASTNode d = (CASTNode) declarations[declarations.length-1];
+                    ((CASTNode) translationUnit).setLength(d.getOffset() + d.getLength());
                 } else
                     ((CASTNode) translationUnit).setLength(0);
                 break;

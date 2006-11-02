@@ -57,14 +57,13 @@ import org.osgi.framework.Bundle;
  * Provides a view of the test suites installed in this workbench.
  */
 public class TestSuiteHolderView extends ViewPart implements ITestSuiteHolderListener, ISelectionChangedListener {
+
 	private class MyLabelProvider implements ITableLabelProvider {
 		public Image getColumnImage(Object element, int columnIndex) {
 			AbstractTestSuiteHolder holder = (AbstractTestSuiteHolder) element;
 			Image columnImage = null;
-			switch (columnIndex) {
-			case 1: // name column
-				break;
-			case 0: { // graphic column
+			String columnId = getColumnId(columnIndex);
+			if (columnId.equals("graphic")) {
 				TestResult result = holder.getTestResult();
 				if (result != null) {
 					if (result.wasSuccessful()) {
@@ -75,14 +74,6 @@ public class TestSuiteHolderView extends ViewPart implements ITestSuiteHolderLis
 				} else {
 					columnImage = graphicUnknown;
 				}
-				break;
-			}
-			case 2: // status column
-				break;
-			case 3: // date column
-				break;
-			default:
-				break;
 			}
 			return columnImage;
 		}
@@ -90,14 +81,12 @@ public class TestSuiteHolderView extends ViewPart implements ITestSuiteHolderLis
 		public String getColumnText(Object element, int columnIndex) {
 			AbstractTestSuiteHolder holder = (AbstractTestSuiteHolder) element;
 			String columnText = null;
-			switch (columnIndex) {
-			case 1: // name column
+			String columnId = getColumnId(columnIndex);
+			if (columnId.equals("name")) {
 				columnText = holder.getName();
-				break;
-			case 0: // graphic column
+			} else if (columnId.equals("graphic")) {
 				columnText = "";
-				break;
-			case 2: // status column
+			} else if (columnId.equals("status")) {
 				TestResult result = holder.getTestResult();
 				if (result != null) {
 					Object[] values = { new Integer(result.runCount()), new Integer(result.failureCount()), new Integer(result.errorCount()) };
@@ -106,8 +95,7 @@ public class TestSuiteHolderView extends ViewPart implements ITestSuiteHolderLis
 				} else {
 					columnText = "";
 				}
-				break;
-			case 3: // run date/time column
+			} else if (columnId.equals("stamp")) {
 				Calendar stamp = holder.getLastRunTime();
 				if (stamp != null) {
 					DateFormat formatter = DateFormat.getDateTimeInstance();
@@ -115,12 +103,9 @@ public class TestSuiteHolderView extends ViewPart implements ITestSuiteHolderLis
 				} else {
 					columnText = "";
 				}
-				break;
-			default:
-				break;
 			}
 			return columnText;
-		};
+		}
 
 		public void addListener(ILabelProviderListener listener) {
 		}
@@ -219,10 +204,11 @@ public class TestSuiteHolderView extends ViewPart implements ITestSuiteHolderLis
 	private String[] columnTitles = {"", "Test Suite", "Summary", "Time Run"};
 	private SelectionListener[] columnListeners = {graphicListener, nameListener, statusListener, stampListener};
 	private boolean[] columnResizable = {false, true, true, true};
+	private boolean[] columnMoveable = {false, true, true, true};
 	private Image graphicFailed = null;
 	private Image graphicPassed = null;
 	private Image graphicUnknown = null;
-
+	
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -241,9 +227,11 @@ public class TestSuiteHolderView extends ViewPart implements ITestSuiteHolderLis
 		int n = columnIds.length;
 		for (int i = 0; i < n; i++) {
 			TableColumn column = new TableColumn(table, SWT.NONE);
+			column.setData("id", columnIds[i]);
 			column.setText(columnTitles[i]);
 			column.setWidth(columnWidths[i]);
 			column.setResizable(columnResizable[i]);
+			column.setMoveable(columnMoveable[i]);
 			column.addSelectionListener(columnListeners[i]);
 		}
 		holderViewer = new TableViewer(table);
@@ -349,7 +337,28 @@ public class TestSuiteHolderView extends ViewPart implements ITestSuiteHolderLis
 	 */
 	public void testHolderReset(ITestSuiteHolder holder) {
 		updateHolderInView(holder);
-		updateResultString(holder);;
+		updateResultString(holder);
+	}
+	
+	/**
+	 * Columns in this table may be reordered. Given a column index retrieve its id.
+	 * @param columnIndex the index of the column
+	 * @return The string id of the column. Will be null if no id has been assigned or columnIndex is out
+	 * of range.
+	 */
+	private String getColumnId(int columnIndex) {
+		String columnId = null;
+		if (holderViewer != null) {
+			Table table = holderViewer.getTable();
+			int n = table.getColumnCount();
+			if (0 <= columnIndex && columnIndex < n) {
+				TableColumn column = table.getColumn(columnIndex);
+				if (column != null) {
+					columnId = (String) column.getData("id");
+				}
+			}
+		}
+		return columnId;
 	}
 	
 	/**
@@ -367,7 +376,7 @@ public class TestSuiteHolderView extends ViewPart implements ITestSuiteHolderLis
 			control.getDisplay().syncExec(runnable);
 		}
 	}
-
+	
 	/**
 	 * Updates the result string for the holder if the holder is the only one in the
 	 * current selection.  Can be run from a non-UI thread.

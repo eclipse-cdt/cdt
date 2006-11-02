@@ -9,6 +9,7 @@
  * *******************************************************************************/
 package org.eclipse.rse.tests.framework.actions;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.Iterator;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -16,9 +17,13 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.operation.IRunnableContext;
+import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.rse.tests.framework.AbstractTestSuiteHolder;
+import org.eclipse.rse.tests.framework.TestFrameworkPlugin;
 import org.eclipse.ui.IObjectActionDelegate;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartSite;
@@ -61,26 +66,19 @@ public class RunHolderDelegate implements IObjectActionDelegate {
 	 * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
 	 */
 	public void run(IAction action) {
-		final ISelection selection = this.selection;
+		IPreferenceStore store = TestFrameworkPlugin.getDefault().getPreferenceStore();
+		boolean runInBackground = store.getBoolean(TestFrameworkPlugin.PREF_RUN_IN_BACKGROUND);
+		if (runInBackground) {
+			runInBackground();
+		} else {
+			runInUI();
+		}
+	}
+	
+	private void runInBackground() {
 		Job job = new Job("Running JUnit Tests Suites") {
-			IStatus result = Status.OK_STATUS;
-
 			protected IStatus run(IProgressMonitor monitor) {
-				if (selection instanceof IStructuredSelection) {
-					IStructuredSelection ss = (IStructuredSelection) selection;
-					monitor.beginTask("", ss.size());
-					for (Iterator z = ss.iterator(); z.hasNext();) {
-						AbstractTestSuiteHolder holder = (AbstractTestSuiteHolder) z.next();
-						monitor.subTask(holder.getName());
-						IProgressMonitor subMonitor = new SubProgressMonitor(monitor, 1);
-						holder.run(subMonitor);
-						if (monitor.isCanceled()) {
-							result = Status.CANCEL_STATUS;
-							break;
-						}
-					}
-					monitor.done();
-				}
+				IStatus result = runTests(monitor);
 				return result;
 			}
 		};
@@ -90,4 +88,40 @@ public class RunHolderDelegate implements IObjectActionDelegate {
 		IWorkbenchSiteProgressService siteService = (IWorkbenchSiteProgressService) site.getAdapter(IWorkbenchSiteProgressService.class);
 		siteService.schedule(job, 0, true);
 	}
+	
+	private void runInUI() {
+		IRunnableWithProgress runnable = new IRunnableWithProgress() {
+			public void run(IProgressMonitor monitor) {
+				runTests(monitor);
+			}
+		};
+		IWorkbenchPartSite site = part.getSite();
+		IWorkbenchSiteProgressService siteService = (IWorkbenchSiteProgressService) site.getAdapter(IWorkbenchSiteProgressService.class);
+		try {
+			siteService.runInUI(siteService, runnable, null);
+		} catch (InvocationTargetException e) {
+		} catch (InterruptedException e) {
+		}
+	}
+	
+	private IStatus runTests(IProgressMonitor monitor) {
+		IStatus result = Status.OK_STATUS;
+		if (selection instanceof IStructuredSelection) {
+			IStructuredSelection ss = (IStructuredSelection) selection;
+			monitor.beginTask("", ss.size());
+			for (Iterator z = ss.iterator(); z.hasNext();) {
+				AbstractTestSuiteHolder holder = (AbstractTestSuiteHolder) z.next();
+				monitor.subTask(holder.getName());
+				IProgressMonitor subMonitor = new SubProgressMonitor(monitor, 1);
+				holder.run(subMonitor);
+				if (monitor.isCanceled()) {
+					result = Status.CANCEL_STATUS;
+					break;
+				}
+			}
+			monitor.done();
+		}
+		return result;
+	}
+	
 }

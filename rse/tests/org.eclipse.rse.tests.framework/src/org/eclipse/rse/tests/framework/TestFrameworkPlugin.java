@@ -9,7 +9,9 @@
  * *******************************************************************************/
 package org.eclipse.rse.tests.framework;
 
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
@@ -17,6 +19,8 @@ import org.osgi.framework.BundleContext;
  * The main plugin class to be used in the desktop.
  */
 public class TestFrameworkPlugin extends AbstractUIPlugin {
+	
+	public static final String PREF_RUN_IN_BACKGROUND = "org.eclipse.rse.tests.runInBackground";
 
 	private static TestFrameworkPlugin plugin;
 	
@@ -26,6 +30,8 @@ public class TestFrameworkPlugin extends AbstractUIPlugin {
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
 		plugin = this;
+		IPreferenceStore store = getPreferenceStore();
+		store.setDefault(PREF_RUN_IN_BACKGROUND, true);
 	}
 
 	/* (non-Javadoc)
@@ -50,7 +56,7 @@ public class TestFrameworkPlugin extends AbstractUIPlugin {
 	public void logUnexpectedException(Exception e) {
 		e.printStackTrace();
 		String id = getBundle().getSymbolicName();
-		Status status = new Status(Status.ERROR, id, 0, "Unexpected Exception", e);
+		Status status = new Status(IStatus.ERROR, id, 0, "Unexpected Exception", e);
 		getLog().log(status);
 	}
 	

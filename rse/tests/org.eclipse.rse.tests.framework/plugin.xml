@@ -62,6 +62,24 @@
                id="org.eclipse.rse.tests.framework.RunHolder"/>
       </objectContribution>
    </extension>
+   
+   <extension point="org.eclipse.ui.viewActions">
+      <viewContribution
+            id="org.eclipse.rse.tests.framework.HolderViewActions"
+            targetID="org.eclipse.rse.tests.framework.HolderView">
+         <action
+               class="org.eclipse.rse.tests.framework.actions.ToggleRunInBackgroundDelegate"
+               icon="icons/GreenDot.gif"
+               id="org.eclipse.rse.tests.framework.runInBackgroundToggle"
+               label="Run In Background"
+               state="true"
+               style="toggle"
+               toolbarPath="RunGroup"
+               tooltip="Run In Background"/>
+      </viewContribution>
+   
+   </extension>
+   
    <extension point="org.eclipse.help.toc">
       <toc primary="true" file="toc.xml"/>
    </extension>

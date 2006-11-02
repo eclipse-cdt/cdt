@@ -17,6 +17,7 @@
 package org.eclipse.rse.files.ui.actions;
 
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.window.Window;
 import org.eclipse.rse.core.SystemBasePlugin;
 import org.eclipse.rse.files.ui.FileResources;
@@ -443,7 +444,7 @@ public class SystemUploadConflictAction extends SystemBaseAction implements Runn
                 // and user wants to overwrite the remote file with pending changes
                 try
                 {
-                    fs.uploadUTF8(_tempFile, _remoteFile, null);
+                    fs.uploadUTF8(_tempFile, _remoteFile, new NullProgressMonitor());
                     _remoteFile.markStale(true);
                     _remoteFile = fs.getRemoteFileObject(_remoteFile.getAbsolutePath());
                     properties.setRemoteFileTimeStamp(_remoteFile.getLastModified());
@@ -465,7 +466,7 @@ public class SystemUploadConflictAction extends SystemBaseAction implements Runn
                 try
                 {     	
                     // download remote version
-                    fs.downloadUTF8(_remoteFile, _tempFile, null);
+                    fs.downloadUTF8(_remoteFile, _tempFile, new NullProgressMonitor());
 
                     properties.setRemoteFileTimeStamp(_remoteFile.getLastModified());
 					//properties.setRemoteFileTimeStamp(-1);                

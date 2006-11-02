@@ -56,15 +56,15 @@ public class InheritButton extends Composite {
 	/**
 	 * Value is 12 pixels.
 	 */
-	public static final int DEFAULT_WIDTH = 12;
+//	public static final int DEFAULT_WIDTH = 40;
 
 	/**
 	 * Value is 20 pixels.
 	 */
-	public static final int DEFAULT_HEIGHT = 20;
+//	public static final int DEFAULT_HEIGHT = 35;
 	
-	private Image leftArrow = null; // arrow points left, value is inherited
-	private Image rightArrow = null; // arrow points right, value is the local value 
+//	private Image leftArrow = null; // arrow points left, value is inherited
+//	private Image rightArrow = null; // arrow points right, value is the local value 
 	private boolean isLocal = false; // default is "inherit"
 	private Button toggle = null; 
 	
@@ -74,10 +74,10 @@ public class InheritButton extends Composite {
 	 */
 	public InheritButton(Composite parent) {
 		super(parent, SWT.NONE);
-		GridData data = new GridData(SWT.CENTER, SWT.CENTER, false, false);
-		data.widthHint = DEFAULT_WIDTH;
-		data.heightHint = DEFAULT_HEIGHT;
-		setLayoutData(data);
+//		GridData data = new GridData(SWT.CENTER, SWT.CENTER, false, false);
+//		data.widthHint = DEFAULT_WIDTH;
+//		data.heightHint = DEFAULT_HEIGHT;
+//		setLayoutData(data);
 		GridLayout layout = new GridLayout();
 		layout.marginHeight = 0;
 		layout.marginWidth = 0;
@@ -86,8 +86,9 @@ public class InheritButton extends Composite {
 	}
 
 	private void initializeToggle(Composite parent) {
-		toggle = new Button(parent, SWT.PUSH);
-		createToggleImages(toggle.getBackground());
+//		toggle = new Button(parent, SWT.PUSH );
+		toggle = new Button(parent, SWT.ARROW );
+//		createToggleImages(toggle.getBackground());
 		toggle.getAccessible().addAccessibleListener(new AccessibleAdapter() {
 			public void getHelp(AccessibleEvent e) { // this is the one that should supply the text heard.
 				e.result = "";
@@ -108,11 +109,11 @@ public class InheritButton extends Composite {
 				}
 			}
 		});
-		toggle.addDisposeListener(new DisposeListener() {
-			public void widgetDisposed(DisposeEvent e) {
-				disposeToggleImages();
-			}
-		});
+//		toggle.addDisposeListener(new DisposeListener() {
+//			public void widgetDisposed(DisposeEvent e) {
+//				disposeToggleImages();
+//			}
+//		});
 		toggle.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 		setToggleImage();
 	}
@@ -207,7 +208,9 @@ public class InheritButton extends Composite {
 	 * In the "inherit" state, the arrow image points to the left.
 	 */
 	private void setToggleImage() {
-		toggle.setImage(isLocal ? rightArrow : leftArrow);
+//		toggle.setImage(isLocal ? rightArrow : leftArrow);
+		int alignment = isLocal ? SWT.RIGHT : SWT.LEFT;
+		toggle.setAlignment(alignment);
 	}
 
 	/**
@@ -216,38 +219,38 @@ public class InheritButton extends Composite {
 	 * @param backgroundColor The background color with which the arrow images
 	 * should be painted.  The foreground color is black.
 	 */
-	private void createToggleImages(Color backgroundColor) {
-		Display display = Display.getCurrent();
-		GC gc = null;
-		if (display != null) {
-			leftArrow = new Image(display, 3, 5);
-			gc = new GC(leftArrow);
-			gc.setBackground(backgroundColor);
-			gc.fillRectangle(leftArrow.getBounds());
-			gc.setForeground(display.getSystemColor(SWT.COLOR_BLACK));
-			gc.drawLine(0, 2, 0, 2);
-			gc.drawLine(1, 1, 1, 3);
-			gc.drawLine(2, 0, 2, 4);
-			gc.dispose();
-			rightArrow = new Image(display, 3, 5);
-			gc = new GC(rightArrow);
-			gc.setBackground(backgroundColor);
-			gc.fillRectangle(rightArrow.getBounds());
-			gc.setForeground(display.getSystemColor(SWT.COLOR_BLACK));
-			gc.drawLine(0, 0, 0, 4);
-			gc.drawLine(1, 1, 1, 3);
-			gc.drawLine(2, 2, 2, 2);
-			gc.dispose();
-		}
-	}
+//	private void createToggleImages(Color backgroundColor) {
+//		Display display = Display.getCurrent();
+//		GC gc = null;
+//		if (display != null) {
+//			leftArrow = new Image(display, 3, 5);
+//			gc = new GC(leftArrow);
+//			gc.setBackground(backgroundColor);
+//			gc.fillRectangle(leftArrow.getBounds());
+//			gc.setForeground(display.getSystemColor(SWT.COLOR_BLACK));
+//			gc.drawLine(0, 2, 0, 2);
+//			gc.drawLine(1, 1, 1, 3);
+//			gc.drawLine(2, 0, 2, 4);
+//			gc.dispose();
+//			rightArrow = new Image(display, 3, 5);
+//			gc = new GC(rightArrow);
+//			gc.setBackground(backgroundColor);
+//			gc.fillRectangle(rightArrow.getBounds());
+//			gc.setForeground(display.getSystemColor(SWT.COLOR_BLACK));
+//			gc.drawLine(0, 0, 0, 4);
+//			gc.drawLine(1, 1, 1, 3);
+//			gc.drawLine(2, 2, 2, 2);
+//			gc.dispose();
+//		}
+//	}
 
 	/**
 	 * Dispose of the images used for the arrow graphics.  Should be invoked
 	 * when the button is disposed.
 	 */
-	private void disposeToggleImages() {
-		if (leftArrow != null) leftArrow.dispose();
-		if (rightArrow != null) rightArrow.dispose();
-	}
+//	private void disposeToggleImages() {
+//		if (leftArrow != null) leftArrow.dispose();
+//		if (rightArrow != null) rightArrow.dispose();
+//	}
 	
 }

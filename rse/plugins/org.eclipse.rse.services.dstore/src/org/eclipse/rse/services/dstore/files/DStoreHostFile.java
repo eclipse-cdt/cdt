@@ -59,7 +59,7 @@ public class DStoreHostFile implements IHostFile
 		}
 		if (lastSlash > 0 && lastSlash != path.length() - 1)
 		{
-			return path.substring(lastSlash);
+			return path.substring(lastSlash + 1);
 		}
 		return path;
 	}

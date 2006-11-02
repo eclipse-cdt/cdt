@@ -115,7 +115,6 @@ public class SystemUniversalTempFileListener extends SystemTempFileListener
 	{
 		if (subsystem instanceof IRemoteFileSubSystem)
 		{
-			Shell shell = RSEUIPlugin.getTheSystemRegistry().getShell();
 			IRemoteFileSubSystem fs = (IRemoteFileSubSystem) subsystem;
 			
 			// first we need to get the stored timestamp property and the actual remote timestamp

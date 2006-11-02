@@ -497,7 +497,7 @@ public class SystemUploadConflictAction extends SystemBaseAction implements Runn
                     	fs = remoteFile.getParentRemoteFileSubSystem();
                         if (!remoteFile.exists())
                         {
-                            fs.createFile(remoteFile);
+                            remoteFile = fs.createFile(remoteFile);
                         }                        
                     }
                     catch (SystemMessageException e)
@@ -512,7 +512,7 @@ public class SystemUploadConflictAction extends SystemBaseAction implements Runn
                     try
                     {
                         // copy temp file to remote system
-                        fs.uploadUTF8(_tempFile, remoteFile, null);
+                        fs.uploadUTF8(_tempFile, remoteFile, new NullProgressMonitor());
                      
                         // set original time stamp to 0 so that file will be overwritten next download
                         properties.setRemoteFileTimeStamp(0);

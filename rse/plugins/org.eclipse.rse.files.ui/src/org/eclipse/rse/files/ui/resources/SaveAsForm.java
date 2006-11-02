@@ -163,7 +163,7 @@ public class SaveAsForm extends SystemSelectRemoteFileOrFolderForm {
 				super.setPreSelection(parentFile);
 			}
 		
-			fileName = parentFile.getName();
+			fileName = selection.getName();//parentFile.getName();
 			initialFileName=fileName;
 		}
 	}

@@ -236,9 +236,28 @@ public class SystemNewFileWizard
 	 */
 	protected boolean meetsFilterCriteria(ISystemFilterReference selectedFilterRef, IRemoteFile parentFolder, String newAbsName)
 	{
-		boolean meets = false;
 		IRemoteFileSubSystem parentSubSystem = (IRemoteFileSubSystem)selectedFilterRef.getSubSystem();
-		meets = parentSubSystem.doesFilterMatch(selectedFilterRef.getReferencedFilter(),newAbsName);
+		
+		ISystemFilter filter = selectedFilterRef.getReferencedFilter();
+		
+		// if the filter is "*", this represents the Drives filter on Windows
+		// we can not create a file directly under it since it doesn't actually represent a container
+		// if we create a new file or folder by right clicking on this filter, the parent folder defaults to the first drive
+		// that shows up when this filter is resolved. Hence we ignore this filter from the filter matching criteria
+		String[] strings = filter.getFilterStrings();
+		
+		if (strings != null) {
+	      		
+	      	for (int idx = 0; idx < strings.length; idx++) {
+	      		
+	      		if (strings[idx].equals("*")) {
+	      			return true;
+	      		}
+	      	}
+		}		
+	
+		boolean meets = parentSubSystem.doesFilterMatch(filter, newAbsName);
+
 		if (!meets)
 		{
 			SystemMessage msg = RSEUIPlugin.getPluginMessage(ISystemMessages.FILEMSG_CREATE_RESOURCE_NOTVISIBLE);

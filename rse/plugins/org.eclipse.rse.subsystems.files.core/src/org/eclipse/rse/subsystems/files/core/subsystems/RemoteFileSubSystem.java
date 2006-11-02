@@ -32,9 +32,12 @@ import java.util.List;
 import java.util.Vector;
 
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.rse.core.SystemBasePlugin;
+import org.eclipse.rse.core.filters.ISystemFilter;
 import org.eclipse.rse.core.filters.ISystemFilterReference;
 import org.eclipse.rse.core.filters.ISystemFilterString;
 import org.eclipse.rse.core.model.IHost;
@@ -271,6 +274,46 @@ public abstract class RemoteFileSubSystem extends SubSystem implements IRemoteFi
 	// -------------------------
 	// Filter Testing Methods...
 	// -------------------------
+	
+	/**
+	 * @see org.eclipse.rse.core.subsystems.SubSystem#doesFilterMatch(org.eclipse.rse.core.filters.ISystemFilter, java.lang.String)
+	 */
+	public boolean doesFilterMatch(ISystemFilter filter, String remoteObjectAbsoluteName) {
+		
+    	if (filter.isPromptable() || !doesFilterTypeMatch(filter, remoteObjectAbsoluteName)) {
+    		return false;
+    	}
+      	
+    	boolean would = false;
+
+      	String[] strings = filter.getFilterStrings();
+      	
+      	if (strings != null) {
+      		
+      		for (int idx = 0; !would && (idx < strings.length); idx++) {
+      			
+      			// for "Drives" filter on Windows, only return match if the absolute path is a drive letter
+      			if (strings[idx].equals("*")) {
+      				IPath path = new Path(remoteObjectAbsoluteName);
+      				
+      				if (path.segmentCount() == 0) {
+      					return true;
+      				}
+      				else {
+      					return false;
+      				}
+      			}
+      			else if (strings[idx].equals("./*")) {
+      				would = true;
+      			}
+      			else {
+      				would = doesFilterStringMatch(strings[idx], remoteObjectAbsoluteName, filter.areStringsCaseSensitive());
+      			}
+      		}
+      	}
+      	
+      	return would;
+	}
 
 	/**
 	 * Return true if the given remote object name will pass the filtering criteria for 
@@ -340,6 +383,7 @@ public abstract class RemoteFileSubSystem extends SubSystem implements IRemoteFi
 		else
 			return true;
 	}
+
 	/**
 	 * Return true if the given filter string lists the contents of the given remote object.
 	 *  For example, if given a folder, return true if the given filter string

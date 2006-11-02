@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2006 IBM Corporation. All rights reserved.
+ * Copyright (c) 2006 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -11,7 +11,7 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * Javier Montalvo Orús (Symbian) - fixed NPE when new local filters are created
  ********************************************************************************/
 
 package org.eclipse.rse.services.local.files;
@@ -128,6 +128,9 @@ public class LocalFileService extends AbstractFileService implements IFileServic
 		private IMatcher _matcher;
 		public LocalFileNameFilter(String filter)
 		{
+			if (filter == null) {
+				filter = "*";
+			}
 			if (filter.endsWith(",")) {
 				String[] types = filter.split(",");
 				_matcher = new FileTypeMatcher(types);

@@ -60,6 +60,97 @@ if [ `basename $SITE` = testUpdates ]; then
     mv -f web/site.xsl.new web/site.xsl
 else
     echo "Working on official update site"
+    echo "Signing jars from test update site..."
+    STAGING=/home/data/httpd/download-staging.priv/dsdp/tm
+    stamp=`date +'%Y%m%d-%H%M'`
+    if [ -d ${STAGING} -a -d ${SITE}/../testUpdates ]; then
+      #get jars from testUpdates, sign them and put them here
+      mkdir ${SITE}/features.${stamp}
+      mkdir -p ${STAGING}/updates.${stamp}/features
+      cp -R ${SITE}/../testUpdates/features/*.jar ${STAGING}/updates.${stamp}/features
+      cd ${STAGING}/updates.${stamp}/features
+      for x in `ls *.jar`; do
+        echo "signing feature: ${x}"
+        sign ${x} nomail >/dev/null
+      done
+      TRIES=10
+      while [ $TRIES -gt 0 ]; do
+        sleep 30
+        echo "TRIES to go: ${TRIES}"
+        for x in `ls *.jar | grep -v '^temp[_.]'`; do
+          result=`jarsigner -verify ${x}`
+          if [ "$result" = "jar verified." ]; then
+            echo "${result}: ${x}"
+            cp ${x} ${SITE}/features.${stamp}
+            rm ${x}
+          else
+            echo "-pending- ${x} : ${result}" | head -1
+            sleep 30
+          fi
+        done
+        FILES=`ls 2>/dev/null`
+        if [ "$FILES" = "" ]; then
+          TRIES=0
+          ok=1
+        else
+          echo "--> FILES is $FILES"
+          TRIES=`expr $TRIES - 1`
+          ok=0
+        fi
+      done
+      if [ "$ok" = "1" ]; then
+        rmdir ${STAGING}/updates.${stamp}/features
+        mkdir ${SITE}/plugins.${stamp}
+        mkdir -p ${STAGING}/updates.${stamp}/plugins
+        cp ${SITE}/../testUpdates/plugins/*.jar ${STAGING}/updates.${stamp}/plugins
+        cd ${STAGING}/updates.${stamp}/plugins
+        for x in `ls *.jar`; do
+          echo "signing plugin: ${x}"
+          sign ${x} nomail >/dev/null
+        done
+        TRIES=10
+        while [ $TRIES -gt 0 ]; do
+          sleep 30
+          echo "TRIES to go: ${TRIES}"
+          for x in `ls *.jar | grep -v '^temp[_.]'`; do
+            result=`jarsigner -verify ${x}`
+            if [ "$result" = "jar verified." ]; then
+              echo "${result}: ${x}"
+              cp ${x} ${SITE}/plugins.${stamp}
+              rm ${x}
+            else
+              echo "-pending- ${x} : ${result}" | head -1
+              sleep 30
+            fi
+          done
+          FILES=`ls 2>/dev/null`
+          if [ "$FILES" = "" ]; then
+            TRIES=0
+            ok=1
+          else
+            echo "--> FILES is $FILES"
+            TRIES=`expr $TRIES - 1`
+            ok=0
+          fi
+        done
+      fi
+      if [ "$ok" = "1" ]; then
+        cd ${SITE}
+        rmdir ${STAGING}/updates.${stamp}/plugins
+        rmdir ${STAGING}/updates.${stamp}
+        mv features features.old.${stamp}
+        mv plugins plugins.old.${stamp}
+        mv features.${stamp} features
+        mv plugins.${stamp} plugins
+      else
+        echo "Something went wrong during staging and signing."
+        echo "Keeping existing update site intact."
+        exit 1
+      fi
+    else
+      echo "staging or testUpdates not found:"
+      echo "expect that you copied features and plugins yourself"
+    fi
 fi
 FEATURES=`grep 'features/[^ ]*\.qualifier\.jar' site.xml | sed -e 's,^[^"]*"features/\([^0-9]*[0-9][0-9.]*\).*$,\1,g'`
 for feature in $FEATURES ; do

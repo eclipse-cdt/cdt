@@ -185,4 +185,5 @@ java -jar $HOME/ws/eclipse/startup.jar \
 cd $SITE
 chgrp -R dsdp-tm-rse .
 chmod -R g+w .
+chmod -R a+r .
 cd $curdir

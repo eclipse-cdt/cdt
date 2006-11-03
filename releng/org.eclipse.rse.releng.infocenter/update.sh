@@ -58,6 +58,9 @@ if [ "$NEED_RESTART" != "0" ]; then
   ####################### Deploy dd.dsf ############################
   rm $IHOME/plugins/dd.dsf/eclipse/plugins/*
   cp -p $IHOME/deploy/dd.dsf/plugins/* $IHOME/plugins/dd.dsf/eclipse/plugins/
+  ####################### Deploy nab ###############################
+  rm $IHOME/plugins/nab/eclipse/plugins/*
+  cp -p $IHOME/deploy/nab/plugins/* $IHOME/plugins/nab/eclipse/plugins/
   
   #TODO: not sure if we need to delete the old index to force re-indexing
   echo "Deleting old index..."

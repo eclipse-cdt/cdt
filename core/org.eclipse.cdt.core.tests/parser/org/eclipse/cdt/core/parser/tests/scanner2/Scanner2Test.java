@@ -2495,4 +2495,11 @@ public class Scanner2Test extends BaseScanner2Test
        validateEOF();
    }
 
+   public void testBug162410() throws Exception {
+       StringBuffer buffer = new StringBuffer();
+       buffer.append("#pragma message (\"test\") \n");
+       buffer.append("a       		             \n");
+       initializeScanner(buffer.toString());
+       validateIdentifier("a");
+   }	   
 }

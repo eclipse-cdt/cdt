@@ -11,7 +11,7 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * Javier Montalvo Orús (Symbian) - fixed NPE when new local filters are created
+ * Javier Montalvo Orús (Symbian) - patch for bug 163103 - NPE in filters
  ********************************************************************************/
 
 package org.eclipse.rse.services.local.files;
@@ -52,30 +52,30 @@ public class LocalFileService extends AbstractFileService implements IFileServic
 {
 	private static final String[] ALLDRIVES =
 	{
-		"C:\\",
-		"D:\\",
-		"E:\\",
-		"F:\\",
-		"G:\\",
-		"H:\\",
-		"I:\\",
-		"J:\\",
-		"K:\\",
-		"L:\\",
-		"M:\\",
-		"N:\\",
-		"O:\\",
-		"P:\\",
-		"Q:\\",
-		"R:\\",
-		"S:\\",
-		"T:\\",
-		"U:\\",
-		"V:\\",
-		"W:\\",
-		"X:\\",
-		"Y:\\",
-		"Z:\\" };
+		"C:\\", //$NON-NLS-1$
+		"D:\\", //$NON-NLS-1$
+		"E:\\", //$NON-NLS-1$
+		"F:\\", //$NON-NLS-1$
+		"G:\\", //$NON-NLS-1$
+		"H:\\", //$NON-NLS-1$
+		"I:\\", //$NON-NLS-1$
+		"J:\\", //$NON-NLS-1$
+		"K:\\", //$NON-NLS-1$
+		"L:\\", //$NON-NLS-1$
+		"M:\\", //$NON-NLS-1$
+		"N:\\", //$NON-NLS-1$
+		"O:\\", //$NON-NLS-1$
+		"P:\\", //$NON-NLS-1$
+		"Q:\\", //$NON-NLS-1$
+		"R:\\", //$NON-NLS-1$
+		"S:\\", //$NON-NLS-1$
+		"T:\\", //$NON-NLS-1$
+		"U:\\", //$NON-NLS-1$
+		"V:\\", //$NON-NLS-1$
+		"W:\\", //$NON-NLS-1$
+		"X:\\", //$NON-NLS-1$
+		"Y:\\", //$NON-NLS-1$
+		"Z:\\" }; //$NON-NLS-1$
 	
 	private boolean _checkedOS = false;
 	private boolean _isWindows = false;
@@ -105,18 +105,18 @@ public class LocalFileService extends AbstractFileService implements IFileServic
 	{
 		if (!_checkedOS)
 		{
-			String osName = System.getProperty("os.name").toLowerCase();
-			_isWindows = osName.startsWith("win");
-			_isWin95 = _isWindows && ((osName.indexOf("95") >= 0) || (osName.indexOf("98") >= 0) || (osName.indexOf("me") >= 0));
-			_isWinNT = _isWindows && ((osName.indexOf("nt") >= 0) || (osName.indexOf("2000") >= 0) || (osName.indexOf("xp") >= 0));
+			String osName = System.getProperty("os.name").toLowerCase(); //$NON-NLS-1$
+			_isWindows = osName.startsWith("win"); //$NON-NLS-1$
+			_isWin95 = _isWindows && ((osName.indexOf("95") >= 0) || (osName.indexOf("98") >= 0) || (osName.indexOf("me") >= 0)); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			_isWinNT = _isWindows && ((osName.indexOf("nt") >= 0) || (osName.indexOf("2000") >= 0) || (osName.indexOf("xp") >= 0)); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			
 			if (_isWinNT)
 			{
-				_osCmdShell = "cmd /C ";
+				_osCmdShell = "cmd /C "; //$NON-NLS-1$
 			}
 			else if (_isWin95)
 			{
-				_osCmdShell = "start /B ";
+				_osCmdShell = "start /B "; //$NON-NLS-1$
 			}
 			_checkedOS = true;
 		}
@@ -129,10 +129,10 @@ public class LocalFileService extends AbstractFileService implements IFileServic
 		public LocalFileNameFilter(String filter)
 		{
 			if (filter == null) {
-				filter = "*";
+				filter = "*"; //$NON-NLS-1$
 			}
-			if (filter.endsWith(",")) {
-				String[] types = filter.split(",");
+			if (filter.endsWith(",")) { //$NON-NLS-1$
+				String[] types = filter.split(","); //$NON-NLS-1$
 				_matcher = new FileTypeMatcher(types);
 			} else {
 				_matcher = new NamePatternMatcher(filter);
@@ -172,15 +172,15 @@ public class LocalFileService extends AbstractFileService implements IFileServic
 				VirtualChild child = ArchiveHandlerManager.getInstance().getVirtualObject(destinationFile.getAbsolutePath());
 				ISystemArchiveHandler handler = child.getHandler();
 				if (handler == null)
-					throwCorruptArchiveException(this.getClass() + ".upload()");
+					throwCorruptArchiveException(this.getClass() + ".upload()"); //$NON-NLS-1$
 				return handler.add(stream, child.path, remoteFile, SystemEncodingUtil.ENCODING_UTF_8, hostEncoding, !isBinary);
 			}
 			if (ArchiveHandlerManager.getInstance().isArchive(destinationFile))
 			{
 				ISystemArchiveHandler handler = ArchiveHandlerManager.getInstance().getRegisteredHandler(destinationFile);
 				if (handler == null)
-					throwCorruptArchiveException(this.getClass() + ".copyToArchive()");
-				return handler.add(stream, "", remoteFile, SystemEncodingUtil.ENCODING_UTF_8, hostEncoding, !isBinary);
+					throwCorruptArchiveException(this.getClass() + ".copyToArchive()"); //$NON-NLS-1$
+				return handler.add(stream, "", remoteFile, SystemEncodingUtil.ENCODING_UTF_8, hostEncoding, !isBinary); //$NON-NLS-1$
 			}
 			
 			File destinationParent = destinationFile.getParentFile();
@@ -429,7 +429,7 @@ public class LocalFileService extends AbstractFileService implements IFileServic
 			}
 			ISystemArchiveHandler handler = virtualChild.getHandler();
 			if (handler == null)
-				throwCorruptArchiveException(this.getClass() + ".copyToArchive()");
+				throwCorruptArchiveException(this.getClass() + ".copyToArchive()"); //$NON-NLS-1$
 			if (file.isDirectory())
 			{
 			    ok = handler.add(file, path, newName, sourceEncoding, targetEncoding, _fileTypeRegistry);
@@ -443,21 +443,21 @@ public class LocalFileService extends AbstractFileService implements IFileServic
 		{
 			ISystemArchiveHandler handler = ArchiveHandlerManager.getInstance().getRegisteredHandler(destination);
 			if (handler == null)
-				throwCorruptArchiveException(this.getClass() + ".copyToArchive()");
+				throwCorruptArchiveException(this.getClass() + ".copyToArchive()"); //$NON-NLS-1$
 			if (file.isDirectory())
 			{
-			    ok = handler.add(file, "", newName, sourceEncoding, targetEncoding, _fileTypeRegistry);			    
+			    ok = handler.add(file, "", newName, sourceEncoding, targetEncoding, _fileTypeRegistry); //$NON-NLS-1$			    
 			}
 			else
 			{
-				ok = handler.add(file, "", newName, sourceEncoding, targetEncoding, isText);
+				ok = handler.add(file, "", newName, sourceEncoding, targetEncoding, isText); //$NON-NLS-1$
 			}			    
 		}
 		if (!ok)
 		{
 			// SystemPlugin.logError("LocalFileSubSystemImpl.copyToArchive(): Handler's add() method returned false.");
-			SystemMessage msg = getMessage("RSEF5006");
-			msg.makeSubstitution(destination.getName(), "localhost");
+			SystemMessage msg = getMessage("RSEF5006"); //$NON-NLS-1$
+			msg.makeSubstitution(destination.getName(), "localhost"); //$NON-NLS-1$
 			throw new SystemMessageException(msg);
 		}
 		else
@@ -624,7 +624,7 @@ public class LocalFileService extends AbstractFileService implements IFileServic
 				
 				if (isArchive)
 				{
-					contents = ArchiveHandlerManager.getInstance().getContents(localParent, "");
+					contents = ArchiveHandlerManager.getInstance().getContents(localParent, ""); //$NON-NLS-1$
 				}
 				else if (isVirtual)
 				{
@@ -710,7 +710,7 @@ public class LocalFileService extends AbstractFileService implements IFileServic
 
 	public IHostFile getUserHome() 
 	{
-		String userHome  =System.getProperty("user.home");
+		String userHome  =System.getProperty("user.home"); //$NON-NLS-1$
 		File userHomeFile = new File(userHome);		
 		return new LocalHostFile(userHomeFile);
 	}
@@ -738,7 +738,7 @@ public class LocalFileService extends AbstractFileService implements IFileServic
 		}
 		else
 		{
-			v.add(new File("/"));
+			v.add(new File("/")); //$NON-NLS-1$
 		}
 		
 		IHostFile[] fileObjs = new LocalHostFile[v.size()];
@@ -783,7 +783,7 @@ public class LocalFileService extends AbstractFileService implements IFileServic
 			}
 			else
 			{
-				fullpath = fullpath + "/";
+				fullpath = fullpath + "/"; //$NON-NLS-1$
 			}
 			LocalVirtualHostFile results;
 			VirtualChild vc = ArchiveHandlerManager.getInstance().getVirtualObject(fullpath + name);
@@ -818,7 +818,7 @@ public class LocalFileService extends AbstractFileService implements IFileServic
 						if (!ArchiveHandlerManager.getInstance().createEmptyArchive(fileToCreate))
 						{
 							// SystemPlugin.logError("LocalFileSubSystemImpl.createFile(): HandlerManager's createEmptyArchive() method returned false.");
-							throw new SystemMessageException(getMessage("RSEG1122"));
+							throw new SystemMessageException(getMessage("RSEG1122")); //$NON-NLS-1$
 						}
 					}
 				}
@@ -835,11 +835,11 @@ public class LocalFileService extends AbstractFileService implements IFileServic
 		VirtualChild child = ArchiveHandlerManager.getInstance().getVirtualObject(newFile.getAbsolutePath());
 		ISystemArchiveHandler handler = child.getHandler();
 		if (handler == null)
-			throwCorruptArchiveException(this.getClass() + ".createFileInArchive()");
+			throwCorruptArchiveException(this.getClass() + ".createFileInArchive()"); //$NON-NLS-1$
 		if (!handler.createFile(child.fullName))
 		{
 			//SystemPlugin.logError("LocalFileSubSystemImpl.createFileInArchive(): Archive Handler's createFile method returned false. Couldn't create virtual object.");
-			throw new SystemMessageException(getMessage("RSEG1124").makeSubstitution(newFile));
+			throw new SystemMessageException(getMessage("RSEG1124").makeSubstitution(newFile)); //$NON-NLS-1$
 		}
 		return new LocalVirtualHostFile(child);
 	}
@@ -847,7 +847,7 @@ public class LocalFileService extends AbstractFileService implements IFileServic
 	private void throwCorruptArchiveException(String classAndMethod) throws SystemMessageException
 	{
 		// SystemPlugin.logError(classAndMethod + ": Couldn't instantiate archive handler. Archive could be corrupted.");
-		throw new SystemMessageException(getMessage("RSEG1122"));
+		throw new SystemMessageException(getMessage("RSEG1122")); //$NON-NLS-1$
 	}
 	
 	protected File getContainingArchive(File file)
@@ -885,11 +885,11 @@ public class LocalFileService extends AbstractFileService implements IFileServic
 		VirtualChild child = ArchiveHandlerManager.getInstance().getVirtualObject(newFolder.getAbsolutePath());
 		ISystemArchiveHandler handler = child.getHandler();
 		if (handler == null)
-			throwCorruptArchiveException(this.getClass() + ".createFolderInArchive()");
+			throwCorruptArchiveException(this.getClass() + ".createFolderInArchive()"); //$NON-NLS-1$
 		if (!handler.createFolder(child.fullName))
 		{
 			// SystemPlugin.logError("LocalFileSubSystemImpl.createFolderInArchive(): Archive Handler's createFolder method returned false. Couldn't create virtual object.");
-			throw new SystemMessageException(getMessage("RSEG1124").makeSubstitution(newFolder));
+			throw new SystemMessageException(getMessage("RSEG1124").makeSubstitution(newFolder)); //$NON-NLS-1$
 		}
 		return new LocalVirtualHostFile(child);
 	}
@@ -952,11 +952,11 @@ public class LocalFileService extends AbstractFileService implements IFileServic
 		VirtualChild child = ArchiveHandlerManager.getInstance().getVirtualObject(destination.getAbsolutePath());
 		ISystemArchiveHandler handler = child.getHandler();
 		if (handler == null)
-			throwCorruptArchiveException(this.getClass() + ".deleteFromArchive()");
+			throwCorruptArchiveException(this.getClass() + ".deleteFromArchive()"); //$NON-NLS-1$
 		if (!handler.delete(child.fullName))
 		{
 			// SystemPlugin.logError("LocalFileSubSystemImpl.deleteFromArchive(): Archive Handler's delete method returned false. Couldn't delete virtual object.");
-			throw new SystemMessageException(getMessage("RSEG1125").makeSubstitution(destination));
+			throw new SystemMessageException(getMessage("RSEG1125").makeSubstitution(destination)); //$NON-NLS-1$
 		}
 		return true;
 	}
@@ -998,12 +998,12 @@ public class LocalFileService extends AbstractFileService implements IFileServic
 		VirtualChild child = ArchiveHandlerManager.getInstance().getVirtualObject(destination.getAbsolutePath());
 		ISystemArchiveHandler handler = child.getHandler();
 		if (handler == null)
-			throwCorruptArchiveException(this.getClass() + ".renameVirtualFile()");
+			throwCorruptArchiveException(this.getClass() + ".renameVirtualFile()"); //$NON-NLS-1$
 		boolean retval = handler.rename(child.fullName, newName);
 		if (!retval)
 		{
 			// SystemPlugin.logError("LocalFileSubSystemImpl.renameVirtualFile(): Archive Handler's rename method returned false. Couldn't rename virtual object.");
-			throw new SystemMessageException(getMessage("RSEG1127").makeSubstitution(child.fullName));
+			throw new SystemMessageException(getMessage("RSEG1127").makeSubstitution(child.fullName)); //$NON-NLS-1$
 		}
 		else return retval;
 	}
@@ -1069,8 +1069,8 @@ public class LocalFileService extends AbstractFileService implements IFileServic
 		handleSpecialChars(srcBuf);
 		handleSpecialChars(tgtBuf);
 		
-		src = "\"" + srcBuf.toString() + "\"";
-		target = "\"" + tgtBuf.toString() + "\"";
+		src = "\"" + srcBuf.toString() + "\""; //$NON-NLS-1$ //$NON-NLS-2$
+		target = "\"" + tgtBuf.toString() + "\""; //$NON-NLS-1$ //$NON-NLS-2$
 		/*
 		// handle imbedded blanks of from or to name...
 		if (src.indexOf(' ') >= 0)
@@ -1078,26 +1078,26 @@ public class LocalFileService extends AbstractFileService implements IFileServic
 		if (target.indexOf(' ') >= 0)
 			target = "\"" + target + "\"";
 		*/
-		boolean isWindows = System.getProperty("os.name").toLowerCase().startsWith("win");
+		boolean isWindows = System.getProperty("os.name").toLowerCase().startsWith("win"); //$NON-NLS-1$ //$NON-NLS-2$
 		if (isWindows)
 		{
 			if (folderCopy)
 			{
-				command = "xcopy " + src + " " + target + " /S /E /K /Q /H /I";
+				command = "xcopy " + src + " " + target + " /S /E /K /Q /H /I"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			}
 			else
-				command = _osCmdShell + "copy " + src + " " + target;
+				command = _osCmdShell + "copy " + src + " " + target; //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		else
 		{
 			
 			if (folderCopy)
 			{
-				command = "cp  -r " + src + " " + target;
+				command = "cp  -r " + src + " " + target; //$NON-NLS-1$ //$NON-NLS-2$
 			}
 			else // it is a file 	 
 			{
-				command = "cp " + src + " " + target;
+				command = "cp " + src + " " + target; //$NON-NLS-1$ //$NON-NLS-2$
 			}
 		}
 		int rc = -1;
@@ -1107,15 +1107,15 @@ public class LocalFileService extends AbstractFileService implements IFileServic
 			Runtime runtime = Runtime.getRuntime();
 			if (isWindows)
 			{
-				String theShell = "cmd /C ";
+				String theShell = "cmd /C "; //$NON-NLS-1$
 				p = runtime.exec(theShell + command);	
 			}
 			else
 			{
-				String theShell = "sh";
+				String theShell = "sh"; //$NON-NLS-1$
 				String args[] = new String[3];
 				args[0] = theShell;					
-				args[1] = "-c";
+				args[1] = "-c"; //$NON-NLS-1$
 				args[2] = command;
 												
 				p = runtime.exec(args);
@@ -1143,7 +1143,7 @@ public class LocalFileService extends AbstractFileService implements IFileServic
 		
 			if (isSpecialChar)
 			{
-				buf.insert(i, "\\");
+				buf.insert(i, "\\"); //$NON-NLS-1$
 				i++;
 			}
 		}
@@ -1200,7 +1200,7 @@ public class LocalFileService extends AbstractFileService implements IFileServic
 			File tempSource = null;
 			try
 			{
-				tempSource = File.createTempFile(child.name, "virtual");
+				tempSource = File.createTempFile(child.name, "virtual"); //$NON-NLS-1$
 				tempSource.deleteOnExit();
 			}
 			catch (IOException e)
@@ -1212,11 +1212,11 @@ public class LocalFileService extends AbstractFileService implements IFileServic
 			if (!tempSource.mkdir())
 			{
 				// SystemPlugin.logError("LocalFileSubSystemImpl.copy(): Couldn't create temp dir.");
-				throw new SystemMessageException(getMessage("RSEG1306").makeSubstitution(sourceFolderOrFile));
+				throw new SystemMessageException(getMessage("RSEG1306").makeSubstitution(sourceFolderOrFile)); //$NON-NLS-1$
 			}
 			ISystemArchiveHandler handler = child.getHandler();
 			if (handler == null)
-				throwCorruptArchiveException(this.getClass() + ".copy()");
+				throwCorruptArchiveException(this.getClass() + ".copy()"); //$NON-NLS-1$
 			handler.extractVirtualDirectory(child.fullName, tempSource, sourceEncoding, isText);
 			src = tempSource.getAbsolutePath() + File.separatorChar + child.name;
 		}
@@ -1229,27 +1229,27 @@ public class LocalFileService extends AbstractFileService implements IFileServic
 		String target = targetFolder.getAbsolutePath() + java.io.File.separator + newName;
 		// handle embedded blanks of from or to name...
 		if (src.indexOf(' ') >= 0)
-			src = "\"" + src + "\"";
+			src = "\"" + src + "\""; //$NON-NLS-1$ //$NON-NLS-2$
 		if (target.indexOf(' ') >= 0)
-			target = "\"" + target + "\"";
-		if (System.getProperty("os.name").toLowerCase().startsWith("win"))
+			target = "\"" + target + "\""; //$NON-NLS-1$ //$NON-NLS-2$
+		if (System.getProperty("os.name").toLowerCase().startsWith("win")) //$NON-NLS-1$ //$NON-NLS-2$
 		{
 			if (folderCopy)
 			{
-				command = "xcopy " + src + " " + target + " /S /E /K /Q /H /I";
+				command = "xcopy " + src + " " + target + " /S /E /K /Q /H /I"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			}
 			else
-				command = _osCmdShell + "copy " + src + " " + target;
+				command = _osCmdShell + "copy " + src + " " + target; //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		else
 		{
 			if (folderCopy)
 			{
-				command = "cp  -r " + src + " " + target;
+				command = "cp  -r " + src + " " + target; //$NON-NLS-1$ //$NON-NLS-2$
 			}
 			else // it is a file 	 
 			{
-				command = "cp " + src + " " + target;
+				command = "cp " + src + " " + target; //$NON-NLS-1$ //$NON-NLS-2$
 			}
 		}
 		int rc = -1;

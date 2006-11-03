@@ -23,25 +23,30 @@
 </table>
 <table><tbody><tr><td>
 <ul>
+<li>The <a href="http://download.eclipse.org/dsdp/tm/updates/">TM Update Site</a> now uses <b>Signed Jarfiles</b>.</li>
 <li>The <b>CDT Remote Launch Integration</b> is now available as a
   download, or from the <a href="http://download.eclipse.org/dsdp/tm/updates/">Update Site</a>.</li>
+<!--
 <li>An <b>Experimental RSE EFS Provider</b> is now available as a
   download, or from the <a href="http://download.eclipse.org/dsdp/tm/updates/">Update Site</a>.</li>
+-->
 <li><b>Jakarta Commons Net</b> is now available for <b>FTP</b>.
   A Telnet implementation is available (from Commons Net) but has not yet been integrated 
   as an RSE subsystem.</li>
 <li>RSE now has an <b>FTP Only</b> system type (<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=160168">Bug 160168</a>)</li>
+<!--
 <li>Both Windows dstore daemon and server can now be started by simply double clicking on daemon.bat.
   Documentation has been updated
   (<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=142952">Bug 142952</a>)</li>
+-->
 <li>Numerous bugs have been fixed, and we consider RSE safe now for 
   all kinds of data transfer, even if it's done in multiple background sessions.</li>
 <li>Use 
-  <!-- <a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced&classification=DSDP&product=Target+Management&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&resolution=FIXED&resolution=WONTFIX&resolution=INVALID&resolution=WORKSFORME&chfieldfrom=2006-10-20&chfieldto=2006-10-30&chfield=resolution&cmdtype=doit">  -->
-  <a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced&classification=DSDP&product=Target+Management&target_milestone=1.0+RC3&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&resolution=FIXED&resolution=WONTFIX&resolution=INVALID&resolution=WORKSFORME&cmdtype=doit">
+  <!-- <a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced&classification=DSDP&product=Target+Management&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&resolution=FIXED&resolution=WONTFIX&resolution=INVALID&resolution=WORKSFORME&chfieldfrom=2006-10-30&chfieldto=2006-11-03&chfield=resolution&cmdtype=doit"> -->
+  <a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced&classification=DSDP&product=Target+Management&target_milestone=1.0+RC4&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&resolution=FIXED&resolution=WONTFIX&resolution=INVALID&resolution=WORKSFORME&cmdtype=doit">
   this query</a> to show the list of bugs fixed since the last milestone,
-  <a href="http://download.eclipse.org/dsdp/tm/downloads/drops/S-1.0RC2-200610201821/index.php">
-  RSE 1.0RC2</a>.</li>
+  <a href="http://download.eclipse.org/dsdp/tm/downloads/drops/S-1.0RC3-200610300941/index.php">
+  RSE 1.0RC3</a>.</li>
 <li>For details on checkins, see the
   <a href="http://download.eclipse.org/dsdp/tm/downloads/drops/N-changelog/index.html">
   RSE CVS changelog</a>, and the
@@ -177,21 +182,25 @@ deliverables did not make it into this build:
   instead. Due to the missing Unit Test Framework, automated tests could also
   not yet be added to this build.</li>
 </ul>
-<!--
 The following critical or major bugs are currently known.
 We'll strive to fix these as soon as possible.
 <ul>
-  <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=143462">bug 143462</a> - maj - [updating] Dirty remote editors do not get notified</li>
-  <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=161146">bug 161146</a> - maj - downloading a file using FTP inserts spaces between each line</li>
+  <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=162883">bug 162883</a> - maj - [shell updating] No prompt on Solaris local shell</li>
+  <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=163267">bug 163267</a> - maj - After a period of not using the Windows dstore connectio gets unusable</li>
+  <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=163381">bug 163381</a> - cri - refresh doesn't refresh when browsing the same folder on 2 connections</li>
+  <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=163264">bug 163264</a> - maj - FTP Only can not delete first subfolder</li>
+  <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=162993">bug 162993</a> - maj - ssh connection gets confused</li>
 </ul>
+<!--
+<p>No major or critical bugs are currently known.
 -->
-<p>No major or critical bugs are currently known. Use 
+Use 
 <a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced&classification=DSDP&product=Target+Management&component=RSE&bug_status=UNCONFIRMED&bug_status=NEW&bug_status=ASSIGNED&bug_status=REOPENED&bug_severity=blocker&bug_severity=critical&bug_severity=major&cmdtype=doit">this query</a>
 for an up-to-date list of major or critical bugs.</p>
 
 <p>The 
-<a href="http://wiki.eclipse.org/index.php/RSE_1.0RC3_Known_Issues_and_Workarounds">
-RSE 1.0RC3 Known Issues and Workarounds</a> Wiki page gives an up-to-date list
+<a href="http://wiki.eclipse.org/index.php/RSE_1.0RC4_Known_Issues_and_Workarounds">
+RSE 1.0RC4 Known Issues and Workarounds</a> Wiki page gives an up-to-date list
 of the most frequent and obvious problems, and describes workarounds for them.
 </p>
 

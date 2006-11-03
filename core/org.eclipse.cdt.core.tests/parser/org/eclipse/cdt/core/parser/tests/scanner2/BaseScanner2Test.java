@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corp. - Rational Software - initial implementation
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 
 package org.eclipse.cdt.core.parser.tests.scanner2;
@@ -110,8 +111,9 @@ public class BaseScanner2Test extends TestCase {
 	{
 		try {
 			IToken t= scanner.nextToken();
-			assertEquals( t.getType(), IToken.tIDENTIFIER );
-			assertEquals(t.getImage(), expectedImage );
+			assertNotNull(t);
+			assertEquals(IToken.tIDENTIFIER, t.getType());
+			assertEquals(expectedImage, t.getImage());
 		} catch (EndOfFileException e) {
 			assertTrue(false);
 		} 

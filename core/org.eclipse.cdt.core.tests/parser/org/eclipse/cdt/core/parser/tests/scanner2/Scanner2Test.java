@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corp. - Rational Software - initial implementation
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 
 package org.eclipse.cdt.core.parser.tests.scanner2;
@@ -2447,4 +2448,51 @@ public class Scanner2Test extends BaseScanner2Test
        validateIdentifier("B");
        validateEOF();
    }	   
+   
+   public void testBug156988() throws Exception {
+       StringBuffer buffer = new StringBuffer();
+       buffer.append("#define a        			\n");
+       buffer.append("#define b \"      		\n");
+       buffer.append("#define c <     			\n");
+       buffer.append("#define d \"\"   			\n");
+       buffer.append("#define e <>      		\n");
+       buffer.append("#define f f     			\n");
+       buffer.append("#define g gg     			\n");
+       buffer.append("#include a                \n");
+       buffer.append("#include b                \n");
+       buffer.append("#include c                \n");
+       buffer.append("#include d                \n");
+       buffer.append("#include e                \n");
+       buffer.append("#include f                \n");
+       buffer.append("#include g                \n");
+       buffer.append("A			                \n");
+       
+       initializeScanner(buffer.toString());
+       validateIdentifier("A");
+       validateEOF();
+   }
+
+   public void testBug156988_1() throws Exception {
+       StringBuffer buffer = new StringBuffer();
+       buffer.append("#define a(x) x  			\n");
+       buffer.append("#define b \"      		\n");
+       buffer.append("#define c <     			\n");
+       buffer.append("#define d \"\"   			\n");
+       buffer.append("#define e <>      		\n");
+       buffer.append("#define f f     			\n");
+       buffer.append("#define g gg     			\n");
+       buffer.append("#include a()              \n");
+       buffer.append("#include a(<)             \n");
+       buffer.append("#include a(\"\")          \n");
+       buffer.append("#include a(<>)            \n");
+       buffer.append("#include a(f)             \n");
+       buffer.append("#include a(gg)            \n");
+       buffer.append("#include a(g\\\ng)        \n");
+       buffer.append("A				            \n");
+       
+       initializeScanner(buffer.toString());
+       validateIdentifier("A");
+       validateEOF();
+   }
+
 }

@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial implementation
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.parser.scanner2;
 
@@ -2812,30 +2813,28 @@ abstract class BaseScanner implements IScanner {
             break;
         default:
             // handle macro expansions
-            int startPos = pos;
-            int len = 1;
             while (++bufferPos[bufferStackPos] < limit) {
                 c = buffer[bufferPos[bufferStackPos]];
                 if ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z')
                         || c == '_' || (c >= '0' && c <= '9')
                         || Character.isUnicodeIdentifierPart(c)) {
-                    ++len;
                     continue;
                 } else if (c == '\\'
                         && bufferPos[bufferStackPos] + 1 < buffer.length
                         && buffer[bufferPos[bufferStackPos] + 1] == '\n') {
                     // escaped newline
                     ++bufferPos[bufferStackPos];
-                    len += 2;
                     continue;
                 }
                 break;
             }
-
+        	int startPos= pos;
+        	int len= bufferPos[bufferStackPos] - startPos;
+        	bufferPos[bufferStackPos]--;
+        	
             Object expObject = definitions.get(buffer, startPos, len);
 
             if (expObject != null) {
-                --bufferPos[bufferStackPos];
                 char[] t = null;
                 if (expObject instanceof FunctionStyleMacro) {
                     t = handleFunctionStyleMacro(
@@ -2845,12 +2844,14 @@ abstract class BaseScanner implements IScanner {
                 }
                 if (t != null) {
                     t = replaceArgumentMacros(t);
-                    if ((t[t.length - 1] == t[0]) && (t[0] == '\"')) {
-                        local = true;
-                        filename = new String(t, 1, t.length - 2);
-                    } else if (t[0] == '<' && t[t.length - 1] == '>') {
-                        local = false;
-                        filename = new String(t, 1, t.length - 2);
+                    if (t.length >= 2) {
+                    	if (t[0] == '"' && t[t.length-1] == '"') {
+                    		local = true;
+                    		filename = new String(t, 1, t.length-2);
+                    	} else if (t[0] == '<' && t[t.length-1] == '>') {
+                    		local = false;
+                    		filename = new String(t, 1, t.length-2);
+                    	}
                     }
                 }
             }

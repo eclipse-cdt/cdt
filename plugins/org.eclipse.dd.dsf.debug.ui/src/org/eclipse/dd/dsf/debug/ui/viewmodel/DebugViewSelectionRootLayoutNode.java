@@ -37,6 +37,12 @@ public class DebugViewSelectionRootLayoutNode extends AbstractVMRootLayoutNode
     
     public DebugViewSelectionRootLayoutNode(DsfExecutor executor, IWorkbenchWindow window) {
         super(executor);
+        ISelection selection = DebugContextManager.getDefault().getActiveContext(window);
+        if (selection instanceof IStructuredSelection) {
+            fRootVMC = new RootVMC<Object>( this, ((IStructuredSelection)selection).getFirstElement() );
+        } else {
+            fRootVMC = new RootVMC<Object>( this, null );
+        }
         DebugContextManager.getDefault().addDebugContextListener(this, window);
     }
 
@@ -103,10 +109,8 @@ public class DebugViewSelectionRootLayoutNode extends AbstractVMRootLayoutNode
         if (selection instanceof IStructuredSelection) {
             fRootVMC = new RootVMC<Object>( this, ((IStructuredSelection)selection).getFirstElement() );
         } else {
-            fRootVMC = null;
+            fRootVMC = new RootVMC<Object>( this, null );
         }
-        // TODO: Do we need to generate a delta for the view?  Or will Debug view
-        // selection change somehow cause a refresh anyway.
     }
     
     public void contextChanged(ISelection selection, IWorkbenchPart part) {

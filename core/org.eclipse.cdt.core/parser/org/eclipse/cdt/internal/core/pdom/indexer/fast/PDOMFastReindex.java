@@ -28,15 +28,20 @@ class PDOMFastReindex extends PDOMFastIndexerJob {
 	
 	public PDOMFastReindex(PDOMFastIndexer indexer) throws CoreException {
 		super(indexer);
-		collectSources(indexer.getProject(), fTUs, fTUs);
-		fFilesToIndex= fTUs.size()+1;
+		fFilesToIndex= 1;
 	}
 		
 	public void run(final IProgressMonitor monitor) {
 		try {
 			long start = System.currentTimeMillis();
-			setupIndexAndReaderFactory();
+			collectSources(indexer.getProject(), fTUs, fTUs);
+			fFilesToIndex= fTUs.size()+1;
+
+			if (fFilesToIndex == 1 || monitor.isCanceled()) {
+				return;
+			}
 			
+			setupIndexAndReaderFactory();
 			clearIndex(index);
 			registerTUsInReaderFactory(fTUs);
 			fFilesToIndex--;

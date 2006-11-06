@@ -30,14 +30,18 @@ class PDOMFullReindex extends PDOMFullIndexerJob {
 
 	public PDOMFullReindex(PDOMFullIndexer indexer) throws CoreException {
 		super(indexer);
-		collectSources(indexer.getProject(), fTUs, fTUs);
-		fFilesToIndex= fTUs.size() + 1;
+		fFilesToIndex= 1;
 	}
 
 	public void run(final IProgressMonitor monitor) {
 		try {
-			System.out.println(this);
 			long start = System.currentTimeMillis();			
+			collectSources(indexer.getProject(), fTUs, fTUs);
+			fFilesToIndex= fTUs.size()+1;
+
+			if (fFilesToIndex == 1 || monitor.isCanceled()) {
+				return;
+			}
 
 			setupIndexAndReaderFactory();
 			clearIndex(index);

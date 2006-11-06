@@ -190,10 +190,10 @@ public class SystemCommandsView extends SystemTableView implements ISystemThemeC
 								}
 							}
 						}
-						if (index > 0)
-						{
-							table.setTopIndex(index - 1);
-						}
+						int y = table.getSize().y;
+						int h = table.getItemHeight();
+						int n = y / h - 1;
+						table.setTopIndex(Math.max(0, index - n));
 					}
 				}
 				if (needsLayout)

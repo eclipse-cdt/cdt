@@ -175,7 +175,10 @@ public class GCCPerFileBOPConsoleParserUtility extends AbstractGCCBOPConsolePars
      */
     IPath getAbsolutePath(String filePath) {
         IPath pFilePath;
-        if (filePath.startsWith("/") || filePath.startsWith("\\") || //$NON-NLS-1$ //$NON-NLS-2$
+        if (filePath.startsWith("/")) { //$NON-NLS-1$
+        	return convertCygpath(new Path(filePath));
+        }
+        else if (filePath.startsWith("\\") || //$NON-NLS-1$
             (!filePath.startsWith(".") && //$NON-NLS-1$
              filePath.length() > 2 && filePath.charAt(1) == ':' && 
              (filePath.charAt(2) == '\\' || filePath.charAt(2) == '/'))) {

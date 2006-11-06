@@ -93,26 +93,25 @@ public abstract class AbstractGCCBOPConsoleParserUtility {
                 pwd = dir.removeFirstSegments(fBaseDirectory.segmentCount());
             } else {
                 // check if it is a cygpath
-                if (dir.toString().startsWith("/cygdrive/")) {  //$NON-NLS-1$
-                    char driveLetter = dir.toString().charAt(10);
-                    driveLetter = (Character.isLowerCase(driveLetter)) ? Character.toUpperCase(driveLetter) : driveLetter;
-                    StringBuffer buf = new StringBuffer();
-                    buf.append(driveLetter);
-                    buf.append(':');
-                    String drive = buf.toString();
-                    pwd = dir.removeFirstSegments(2);
-                    pwd = pwd.setDevice(drive);
-                    pwd = pwd.makeAbsolute();
-                }
-                else {
-                    pwd = dir;
-                }
+            	pwd= convertCygpath(dir);
             }
             fDirectoryStack.addElement(pwd);
         }
     }
 
-    protected IPath popDirectory() {
+    protected IPath convertCygpath(IPath path) {
+    	if (path.segmentCount() > 1 && path.segment(0).equals("cygdrive")) { //$NON-NLS-1$
+            StringBuffer buf = new StringBuffer(2);
+            buf.append(Character.toUpperCase(path.segment(1).charAt(0)));
+            buf.append(':');
+            path = path.removeFirstSegments(2);
+            path = path.setDevice(buf.toString());
+            path = path.makeAbsolute();
+        }
+    	return path;
+	}
+
+	protected IPath popDirectory() {
         int i = getDirectoryLevel();
         if (i != 0) {
             IPath dir = (IPath) fDirectoryStack.lastElement();

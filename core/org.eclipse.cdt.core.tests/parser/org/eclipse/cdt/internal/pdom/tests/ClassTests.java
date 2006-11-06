@@ -8,6 +8,7 @@
  * Contributors:
  * QNX - Initial API and implementation
  * Markus Schorn (Wind River Systems)
+ * IBM Corporation
  *******************************************************************************/
 package org.eclipse.cdt.internal.pdom.tests;
 
@@ -18,9 +19,11 @@ import junit.framework.Test;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.IName;
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
+import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IField;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespaceScope;
@@ -28,6 +31,7 @@ import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.index.IndexFilter;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
+import org.eclipse.cdt.internal.core.pdom.dom.PDOMName;
 import org.eclipse.core.runtime.NullProgressMonitor;
 
 /**
@@ -101,5 +105,53 @@ public class ClassTests extends PDOMTestBase {
 		for (int i = 0; i < refs.length; ++i)
 			System.out.println(refs[i].getFileLocation().getNodeOffset());
 		assertEquals(5, refs.length);
+	}
+	
+	/* Test friend relationships between classes */
+	public void _testFriend() throws Exception {
+		//TODO this test is failing		
+		IBinding[] bindings = pdom.findBindings(Pattern.compile("ClassA"), false, new IndexFilter(), new NullProgressMonitor());
+		assertEquals(1, bindings.length);
+		ICPPClassType classA = (ICPPClassType) bindings[0];
+		IBinding[] friends = classA.getFriends();
+		assertEquals(1, friends.length);
+		bindings = pdom.findBindings(Pattern.compile("ClassC"), false, new IndexFilter(), new NullProgressMonitor());
+		assertEquals(bindings[0], friends[0]); //ClassC is a friend class of ClassA
+		
+		bindings = pdom.findBindings(Pattern.compile("ClassC"), false, new IndexFilter(), new NullProgressMonitor());
+		assertEquals(1, bindings.length);
+		ICPPClassType classC = (ICPPClassType) bindings[0];
+		friends = classC.getFriends();
+		assertEquals(1, friends.length);
+		Pattern[] patterns = {Pattern.compile("ClassB"),Pattern.compile("functionB")};
+		bindings = pdom.findBindings(patterns, false, new IndexFilter(), new NullProgressMonitor());
+		assertEquals(bindings[0], friends[0]); //functionB is a friend of ClassC
+	}
+	
+	public void testConstructor() throws Exception {
+		//TODO PDOM doesn't have information on constructor
+		IBinding[] bindings = pdom.findBindings(Pattern.compile("Class1"), false, new IndexFilter(), new NullProgressMonitor());
+		assertEquals(2, bindings.length);
+		assertTrue(bindings[0] instanceof ICPPClassType);
+		assertTrue(bindings[1] instanceof ICPPMethod);
+		
+		IName[] decls = pdom.findNames(bindings[1], IIndex.FIND_DECLARATIONS_DEFINITIONS);
+		assertEquals(2, decls.length);
+		IASTFileLocation loc = decls[0].getFileLocation();
+		assertEquals(offset("constructor.cpp","Class1(int num);"), loc.getNodeOffset()); //character offset	
+		
+		loc = decls[1].getFileLocation();
+		assertEquals(offset("constructor.cpp","Class1::Class1") + 8, loc.getNodeOffset()); //character offset
+		
+		/* Member initialization */
+		bindings = pdom.findBindings(Pattern.compile("number"), false, new IndexFilter(), new NullProgressMonitor());
+		assertEquals(1, bindings.length);
+		
+		IName[] refs = pdom.findNames(bindings[0], IIndex.FIND_REFERENCES);
+		assertEquals(1, refs.length);
+		loc = refs[0].getFileLocation();
+		assertEquals(offset("constructor.cpp","number(num)"), loc.getNodeOffset()); //character offset	
+		
+		assertEquals(bindings[0], ((PDOMName)refs[0]).resolveBinding());
 	}
 }

@@ -7,6 +7,7 @@
  *
  * Contributors:
  * QNX - Initial API and implementation
+ * IBM Corporation
  *******************************************************************************/
 package org.eclipse.cdt.internal.pdom.tests;
 
@@ -22,6 +23,7 @@ public class PDOMTests extends TestSuite {
 	public static Test suite() {
 		TestSuite suite = new PDOMTests();
 		
+		suite.addTest(PDOMSearchTest.suite());
 		suite.addTestSuite(EnumerationTests.class);
 		suite.addTestSuite(ClassTests.class);
 		suite.addTestSuite(TypesTests.class);
@@ -35,9 +37,11 @@ public class PDOMTests extends TestSuite {
 		suite.addTest(CPPFunctionTests.suite());
 		suite.addTest(CPPVariableTests.suite());
 		suite.addTest(MethodTests.suite());
+		suite.addTest(NamespaceTests.suite());
 
 		suite.addTest(CFunctionTests.suite());
 		suite.addTest(CVariableTests.suite());
+		suite.addTest(CCompositeTypeTests.suite());
     
 		suite.addTest(DefDeclTests.suite());
 		

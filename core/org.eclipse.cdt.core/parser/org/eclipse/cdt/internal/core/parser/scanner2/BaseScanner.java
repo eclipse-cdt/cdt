@@ -2828,11 +2828,12 @@ abstract class BaseScanner implements IScanner {
                 }
                 break;
             }
-        	int startPos= pos;
-        	int len= bufferPos[bufferStackPos] - startPos;
+        	nameOffset= pos;
+        	int len= bufferPos[bufferStackPos] - nameOffset;
+        	nameEndOffset= nameOffset + len;
         	bufferPos[bufferStackPos]--;
         	
-            Object expObject = definitions.get(buffer, startPos, len);
+            Object expObject = definitions.get(buffer, nameOffset, len);
 
             if (expObject != null) {
                 char[] t = null;

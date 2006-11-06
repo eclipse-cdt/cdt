@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2005 IBM Corporation and others.
+ * Copyright (c) 2004, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  * IBM - Initial API and implementation
+ * Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.ast;
 
@@ -19,10 +20,28 @@ public interface IASTPreprocessorIncludeStatement extends
 		IASTPreprocessorStatement {
 
 	/**
-	 * Get the full path filename of the file found through #include.
-	 * 
-	 * @return
+	 * <code>INCLUDE_NAME</code> describes the relationship between an include directive and
+	 * it's name.
+	 */
+	public static final ASTNodeProperty INCLUDE_NAME = new ASTNodeProperty(
+			"IASTPreprocessorMacroDefinition.INCLUDE_NAME - Include Name"); //$NON-NLS-1$
+
+
+	/**
+	 * Returns the absolute location of the file found through #include.
 	 */
 	public String getPath();
-
+	
+	/**
+	 * Returns the name of the file as specified in the directive. Does not include quotes or
+	 * angle brackets.
+	 * @since 4.0
+	 */
+	public IASTName getName();
+	
+	/**
+	 * Returns whether this is a system include (one specified with angle brackets).
+	 * @since 4.0
+	 */
+	public boolean isSystemInclude();
 }

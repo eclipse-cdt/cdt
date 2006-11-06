@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2005 IBM Corporation and others.
+ * Copyright (c) 2004, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Andrew Ferguson (Symbian)
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 /*
  * Created on May 28, 2004
@@ -20,6 +21,8 @@ package org.eclipse.cdt.core.parser.util;
  *
  */
 public class CharArrayUtils {
+	public static final char[] EMPTY = new char[0];
+
 	private CharArrayUtils() {}
 	
 	public static final int hash(char[] str, int start, int length) {

@@ -7,6 +7,7 @@
  *
  * Contributors:
  * IBM - Initial API and implementation
+ * Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.parser.scanner2;
 
@@ -40,15 +41,22 @@ public class DOMScanner extends BaseScanner {
 
     private static class DOMInclusion {
         public final char[] pt;
-
         public final int o;
+		public final int nameOffset;
+		public final int nameEndoffset;
+		public final char[] name;
+		public boolean systemInclude;
 
         /**
          *  
          */
-        public DOMInclusion(char[] path, int offset) {
+        public DOMInclusion(char[] path, int offset, int nameOffset, int nameEndoffset, char[] name, boolean systemInclude) {
             this.pt = path;
             this.o = offset;
+            this.nameOffset= nameOffset;
+            this.nameEndoffset= nameEndoffset;
+            this.name= name;
+            this.systemInclude= systemInclude;
         }
     }
 
@@ -133,7 +141,7 @@ public class DOMScanner extends BaseScanner {
             char[] filenamePath, boolean local, int startOffset,
             int startingLineNumber, int nameOffset, int nameEndOffset,
             int nameLine, int endOffset, int endLine, boolean isForced) {
-        return new DOMInclusion(filenamePath, getGlobalOffset(startOffset));
+        return new DOMInclusion(filenamePath, getGlobalOffset(startOffset), nameOffset, nameEndOffset, fileName, !local);
     }
 
     /*
@@ -194,7 +202,8 @@ public class DOMScanner extends BaseScanner {
             if( ! isCircularInclusion( (InclusionData) data ))
             {
                 DOMInclusion inc = ((DOMInclusion) ((InclusionData) data).inclusion);
-                locationMap.startInclusion(((InclusionData) data).reader, inc.o, getGlobalOffset(getCurrentOffset())+1);
+                locationMap.startInclusion(((InclusionData) data).reader, inc.o, getGlobalOffset(getCurrentOffset())+1,
+                		inc.nameOffset, inc.nameEndoffset, inc.name, inc.systemInclude);
                 bufferDelta[bufferStackPos + 1] = 0;
             }
         }
@@ -220,7 +229,8 @@ public class DOMScanner extends BaseScanner {
         else if( data instanceof CodeReader && !macroFilesInitialized )
         {
             int resolved = getGlobalOffset(0, 0);
-            locationMap.startInclusion( (CodeReader) data, resolved, resolved );
+            CodeReader codeReader = (CodeReader) data;
+			locationMap.startInclusion( codeReader, resolved, resolved, resolved, resolved, CharArrayUtils.EMPTY, false);
         }
 
         super.pushContext(buffer, data);

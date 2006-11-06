@@ -445,10 +445,12 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
             IASTPreprocessorIncludeStatement {
 
         private final char[] path;
+		private IASTName fName;
 
         public int startOffset;
-
         public int endOffset;
+		private boolean fSystemInclude;
+
 
         /**
          * @param cs
@@ -469,8 +471,22 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
         public String toString() {
             return getPath();
         }
-        
 
+		public IASTName getName() {
+			return fName;
+		}
+		
+		public void setName(IASTName name) {
+			fName= name;
+		}
+		
+		public boolean isSystemInclude() {
+			return fSystemInclude;
+		}
+		
+		public void setSystemInclude(boolean val) {
+			fSystemInclude= val;
+		}
     }
 
     /**
@@ -710,6 +726,52 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
          */
         public void setBinding(IBinding binding) {
             //do nothing
+        }
+        
+    	public ILinkage getLinkage() {
+    		return Linkage.NO_LINKAGE;
+    	}
+    }
+
+    public class ASTIncludeName extends ASTNode implements IASTName {
+        private final char[] name;
+       
+        public ASTIncludeName(char[] n) {
+            this.name = n;
+        }
+
+        public IBinding resolveBinding() {
+            return null; 
+        }
+        public IBinding[] resolvePrefix() {
+            return null;
+        }
+
+        public char[] toCharArray() {
+            return name;
+        }
+
+        public String toString() {
+            return new String(name);
+        }
+
+        public boolean isDeclaration() {
+            return false;
+        }
+        
+        public boolean isDefinition() {
+        	return false;
+        }
+
+        public boolean isReference() {
+            return false;
+        }
+
+        public IBinding getBinding() {
+            return null;
+        }
+
+        public void setBinding(IBinding binding) {
         }
         
     	public ILinkage getLinkage() {
@@ -1111,9 +1173,18 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
     protected static class _Inclusion extends _CompositeFileContext implements
             _IPreprocessorDirective {
 
-        public _Inclusion(_CompositeContext parent, CodeReader reader,
-                int startOffset, int endOffset) {
+        public final int fNameOffset;
+        public final int fNameEndOffset;
+		public final char[] fName;
+		public boolean fSystemInclude;
+
+		public _Inclusion(_CompositeContext parent, CodeReader reader,
+                int startOffset, int endOffset, int nameOffset, int nameEndoffset, char[] name, boolean systemInclude) {
             super(parent, startOffset, endOffset, reader);
+            fNameOffset= nameOffset;
+            fNameEndOffset= nameEndoffset;
+            fName= name;
+            fSystemInclude= systemInclude;
         }
     }
 
@@ -1143,13 +1214,6 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
     protected static class _MacroDefinition extends _Context implements
             IMacroDefinition {
 
-        /**
-         * @param parent
-         * @param startOffset
-         * @param endOffset
-         * @param nameOffset
-         *            TODO
-         */
         public _MacroDefinition(_CompositeContext parent, int startOffset,
                 int endOffset, char[] name, int nameOffset, char[] expansion) {
             super(parent, startOffset, endOffset);
@@ -1425,15 +1489,18 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
      * @return
      */
     private IASTPreprocessorIncludeStatement createASTInclusion(_Inclusion inc) {
-        IASTPreprocessorIncludeStatement result = new ASTInclusionStatement(
-                inc.reader.filename);
-        ((ASTNode) result).setOffsetAndLength(inc.context_directive_start, inc.getDirectiveLength());
-        ((ASTInclusionStatement) result).startOffset = inc.getContextStart();
-        ((ASTInclusionStatement) result).endOffset = inc.context_directive_end;
-		((ASTInclusionStatement) result).setParent(rootNode);
-		((ASTInclusionStatement) result).setPropertyInParent(IASTTranslationUnit.PREPROCESSOR_STATEMENT);
+    	ASTInclusionStatement result = new ASTInclusionStatement(inc.reader.filename);
+        result.setOffsetAndLength(inc.context_directive_start, inc.getDirectiveLength());
+        result.startOffset = inc.getContextStart();
+        result.endOffset = inc.context_directive_end;
+        ASTIncludeName name= new ASTIncludeName(inc.fName);
+        name.setPropertyInParent(IASTPreprocessorIncludeStatement.INCLUDE_NAME);
+        name.setParent(result);
+        name.setOffsetAndLength(inc.fNameOffset, inc.fNameEndOffset-inc.fNameOffset);
+        result.setName(name);
 		result.setParent(rootNode);
 		result.setPropertyInParent(IASTTranslationUnit.PREPROCESSOR_STATEMENT);
+		result.setSystemInclude(inc.fSystemInclude);
         return result;
     }
 
@@ -1787,8 +1854,8 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
      * @see org.eclipse.cdt.internal.core.parser.scanner2.IScannerPreprocessorLog#startInclusion(char[],
      *      int)
      */
-    public void startInclusion(CodeReader reader, int offset, int endOffset) {
-        _Inclusion i = new _Inclusion(currentContext, reader, offset, endOffset);
+    public void startInclusion(CodeReader reader, int offset, int endOffset, int nameOffset, int nameEndoffset, char[] name, boolean systemInclude) {
+        _Inclusion i = new _Inclusion(currentContext, reader, offset, endOffset, nameOffset, nameEndoffset, name, systemInclude);
         currentContext.addSubContext(i);
         currentContext = i;
     }

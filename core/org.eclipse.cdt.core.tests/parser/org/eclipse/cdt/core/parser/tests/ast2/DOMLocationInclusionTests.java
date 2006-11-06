@@ -22,6 +22,7 @@ import org.eclipse.cdt.core.dom.IParserConfiguration;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
+import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTNodeLocation;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorIncludeStatement;
@@ -192,6 +193,14 @@ public class DOMLocationInclusionTests extends AST2FileBasePluginTest {
         assertEquals(length, nodeLocation.getNodeLength());
     }
 
+    private void assertFileLocation(IASTNode n, String pathEndsWith,
+            int offset, int length) {
+        IASTFileLocation location = n.getFileLocation();
+        assertTrue(location.getFileName().endsWith(pathEndsWith));
+        assertEquals(offset, location.getNodeOffset());
+        assertEquals(length, location.getNodeLength());
+    }
+
     public void testSimpleInclusion() throws Exception {
         String foo = "int FOO;"; //$NON-NLS-1$
         String code = "int bar;\n#include \"foo.h\"\n"; //$NON-NLS-1$
@@ -216,10 +225,21 @@ public class DOMLocationInclusionTests extends AST2FileBasePluginTest {
             assertNotNull(incs);
             assertEquals(incs.length, 1);
             assertSoleFileLocation(incs[0], filename, code.indexOf("#inc"), "#include \"foo.h\"".length());
+            
+            checkInclude(incs[0], filename, code, "foo.h", false);
         }
     }
 
-    public void testSimpleInclusion2() throws Exception {
+    private void checkInclude(IASTPreprocessorIncludeStatement inc, String file, String code, String name, boolean system) {
+        IASTName incName= inc.getName();
+    	
+        assertEquals(system, inc.isSystemInclude());
+        assertEquals(name, incName.toString());
+        assertSoleFileLocation(incName, file, code.indexOf(name), name.length());
+
+	}
+
+	public void testSimpleInclusion2() throws Exception {
         String foo = "int FOO;"; //$NON-NLS-1$
         String code = "int bar;\n#include \"foo.h\"\nfloat byob;\n"; //$NON-NLS-1$
 
@@ -531,7 +551,7 @@ public class DOMLocationInclusionTests extends AST2FileBasePluginTest {
             IFile code = importFile(filename,
                     "int main() { return BEAST * sizeof( Include ); } "); //$NON-NLS-1$ //$NON-NLS-2$
 
-            IASTTranslationUnit tu = parse(code, scannerInfo); //$NON-NLS-1$
+            IASTTranslationUnit tu = parse(code, scannerInfo); 
             IASTPreprocessorMacroDefinition[] macro_defs = tu
                     .getMacroDefinitions();
             assertEquals(macro_defs.length, 4);
@@ -552,6 +572,41 @@ public class DOMLocationInclusionTests extends AST2FileBasePluginTest {
             for (int j = 0; j < macro_defs.length; ++j)
                 assertNotNull(macro_defs[j].getName().getFileLocation());
 
+        }
+    }
+    
+    public void testSystemInclude() throws Exception {
+        IFile incsh= importFile("incs.h", "");
+        StringBuffer buffer = new StringBuffer();
+        buffer.append("#include <incs.h>\n"); 
+        buffer.append("#include <../AST2BasedProjectMofo/incs.h>\n"); 
+        buffer.append("#define TARG <incs.h>\n");
+        buffer.append("#include TARG\n"); 
+        String code= buffer.toString();
+        IExtendedScannerInfo scannerInfo = new ExtendedScannerInfo(
+                Collections.EMPTY_MAP, new String[] {incsh.getLocation().removeLastSegments(1).toOSString()}, null, null);
+        for (ParserLanguage p = ParserLanguage.C; p != null; p = (p == ParserLanguage.C) ? ParserLanguage.CPP
+                : null) {
+            String filename = (p == ParserLanguage.CPP) ? "main.cc" : "main.c"; 
+            IFile sfile = importFile(filename, code); 
+            IASTTranslationUnit tu = parse(sfile, scannerInfo); 
+
+            IASTPreprocessorIncludeStatement[] incs = tu.getIncludeDirectives();
+            assertNotNull(incs);
+            assertEquals(3, incs.length);
+
+            assertSoleFileLocation(incs[0], filename, code.indexOf("#include <incs.h>"), "#include <incs.h>".length());
+            checkInclude(incs[0], filename, code, "incs.h", true);
+
+            assertSoleFileLocation(incs[1], filename, code.indexOf("#include <../AST2BasedProjectMofo/incs.h>"), "#include <../AST2BasedProjectMofo/incs.h>".length());
+            checkInclude(incs[1], filename, code, "../AST2BasedProjectMofo/incs.h", true);
+
+            assertFileLocation(incs[2], filename, code.indexOf("#include TARG"), "#include TARG".length());
+            IASTName incName= incs[2].getName();
+			
+			assertEquals(true, incs[2].isSystemInclude());
+			assertEquals("incs.h", incName.toString());
+			assertFileLocation(incName, filename, code.lastIndexOf("TARG"), "TARG".length());
         }
     }
 }

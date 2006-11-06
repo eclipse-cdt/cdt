@@ -38,8 +38,26 @@ import org.eclipse.ui.texteditor.ITextEditor;
 public class SelectionConverter {
 
 	protected static final ICElement[] EMPTY_RESULT= new ICElement[0];
-    
-	public static IStructuredSelection convertSelectionToCElements(ISelection s) {
+ 
+	/**
+	 * Converts objects of a structured selection to c elements if possible.
+	 * This is a convenience method, fully equivalent to 
+	 * <code>convertSelectionToCElements(s, false)</code>.
+	 * @param s The structured selection
+	 * @return The converted selection
+	 */
+	 	public static IStructuredSelection convertSelectionToCElements(ISelection s) {
+		return convertSelectionToCElements(s, false);
+	}
+
+	/**
+	 * Converts objects of a structured selection to c elements if possible.
+	 * @param s The structured selection
+	 * @param keepNonCElements Whether to keep objects in selection if they cannot be converted
+	 * @return The converted selection
+	 */
+	public static IStructuredSelection convertSelectionToCElements(ISelection s,
+			boolean keepNonCElements) {
 		List converted = new ArrayList();
 		if (s instanceof StructuredSelection) {
 			Object[] elements = ((StructuredSelection) s).toArray();
@@ -51,8 +69,10 @@ public class SelectionConverter {
 					ICElement c = (ICElement) ((IAdaptable) e).getAdapter(ICElement.class);
 					if (c != null) {
 						converted.add(c);
-					}
-				}
+					} else if (keepNonCElements)
+						converted.add(e);
+				} else if (keepNonCElements)
+					converted.add(e);
 			}
 		}
 		return new StructuredSelection(converted.toArray());

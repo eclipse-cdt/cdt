@@ -203,7 +203,7 @@ public class CView extends ViewPart implements ISetSelectionTarget, IPropertyCha
 	 * @see ISetSelectionTarget#selectReveal()
 	 */
 	public void selectReveal(ISelection selection) {
-		IStructuredSelection ssel = SelectionConverter.convertSelectionToCElements(selection);
+		IStructuredSelection ssel = SelectionConverter.convertSelectionToCElements(selection, true);
 		if (!ssel.isEmpty()) {
 			getViewer().setSelection(ssel, true);
 		}

@@ -183,6 +183,7 @@ public class CNavigatorDropAdapterAssistant extends CommonDropAdapterAssistant {
 						sourceNames)) {
 					return Status.CANCEL_STATUS;
 				}
+				return Status.OK_STATUS;
 			}
 		}
 

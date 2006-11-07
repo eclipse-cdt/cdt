@@ -12,8 +12,10 @@
 package org.eclipse.cdt.internal.core.pdom.dom;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
+import org.eclipse.cdt.core.dom.ast.IASTPreprocessorIncludeStatement;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorMacroDefinition;
 import org.eclipse.cdt.core.index.IIndexInclude;
 import org.eclipse.cdt.core.index.IIndexMacro;
@@ -234,19 +236,19 @@ public class PDOMFile implements IIndexFragmentFile {
 		setFirstName(null);
 	}
 	
-	public PDOMInclude addIncludeTo(PDOMFile file) throws CoreException {
-		PDOMInclude include = new PDOMInclude(pdom);
-		include.setIncludedBy(this);
-		include.setIncludes(file);
+	public PDOMInclude addIncludeTo(PDOMFile file, IASTPreprocessorIncludeStatement include) throws CoreException {
+		PDOMInclude pdomInclude = new PDOMInclude(pdom, include);
+		pdomInclude.setIncludedBy(this);
+		pdomInclude.setIncludes(file);
 		
 		PDOMInclude firstInclude = getFirstInclude();
 		if (firstInclude != null) {
-			include.setNextInIncludes(firstInclude);
+			pdomInclude.setNextInIncludes(firstInclude);
 		}
-		setFirstInclude(include);
+		setFirstInclude(pdomInclude);
 		
-		file.addIncludedBy(include);
-		return include;
+		file.addIncludedBy(pdomInclude);
+		return pdomInclude;
 	}
 	
 	public void addIncludedBy(PDOMInclude include) throws CoreException {
@@ -267,6 +269,7 @@ public class PDOMFile implements IIndexFragmentFile {
 			result.add(include);
 			include = include.getNextInIncludes();
 		}
+		Collections.reverse(result);
 		return (IIndexInclude[]) result.toArray(new IIndexInclude[result.size()]);
 	}
 

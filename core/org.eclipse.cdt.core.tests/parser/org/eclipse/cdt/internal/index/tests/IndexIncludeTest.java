@@ -21,9 +21,11 @@ import org.eclipse.cdt.core.dom.IPDOMManager;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.core.index.IIndexFile;
+import org.eclipse.cdt.core.index.IIndexInclude;
 import org.eclipse.cdt.core.index.IndexFilter;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.testplugin.CProjectHelper;
+import org.eclipse.cdt.core.testplugin.TestScannerProvider;
 import org.eclipse.cdt.core.testplugin.util.TestSourceReader;
 import org.eclipse.cdt.internal.core.CCoreInternals;
 import org.eclipse.core.resources.IFile;
@@ -135,4 +137,43 @@ public class IndexIncludeTest extends IndexTestBase {
 		}
 	}			
 
+	// {source20061107}
+	// #include "user20061107.h"
+	// #include <system20061107.h>
+	
+	public void testIncludeProperties() throws Exception {
+		waitForIndexer();
+		TestScannerProvider.sIncludes= new String[]{fProject.getProject().getLocation().toOSString()};
+		try {
+			String content= readTaggedComment("source20061107");
+			TestSourceReader.createFile(fProject.getProject(), "user20061107.h", "");
+			TestSourceReader.createFile(fProject.getProject(), "system20061107.h", "");
+			IFile file= TestSourceReader.createFile(fProject.getProject(), "source20061107.cpp", content);
+			TestSourceReader.waitUntilFileIsIndexed(fIndex, file, 4000);
+
+			fIndex.acquireReadLock();
+			try {
+				IIndexFile ifile= fIndex.getFile(file.getLocation());
+				assertNotNull(ifile);
+				IIndexInclude[] includes= ifile.getIncludes();
+				assertEquals(2, includes.length);
+				
+				checkInclude(includes[0], content, "user20061107.h", false);
+				checkInclude(includes[1], content, "system20061107.h", true);
+			}
+			finally {
+				fIndex.releaseReadLock();
+			}
+		}
+		finally {
+			TestScannerProvider.sIncludes= null;
+		}
+	}
+
+	private void checkInclude(IIndexInclude include, String content, String includeName, boolean isSystem) throws CoreException {
+		int offset= content.indexOf(includeName);
+		assertEquals(offset, include.getNameOffset());
+		assertEquals(includeName.length(), include.getNameLength());
+		assertEquals(isSystem, include.isSystemInclude());
+	}	
 }

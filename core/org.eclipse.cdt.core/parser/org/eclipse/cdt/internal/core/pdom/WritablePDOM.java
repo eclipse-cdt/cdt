@@ -15,6 +15,7 @@ import java.text.MessageFormat;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.IASTName;
+import org.eclipse.cdt.core.dom.ast.IASTPreprocessorIncludeStatement;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorMacroDefinition;
 import org.eclipse.cdt.internal.core.index.IIndexFragmentFile;
 import org.eclipse.cdt.internal.core.index.IWritableIndexFragment;
@@ -32,10 +33,11 @@ public class WritablePDOM extends PDOM implements IWritableIndexFragment {
 		return super.addFile(filename);
 	}
 
-	public void addInclude(IIndexFragmentFile sourceFile, IIndexFragmentFile destFile) throws CoreException {
+	public void addInclude(IIndexFragmentFile sourceFile, IIndexFragmentFile destFile,
+			IASTPreprocessorIncludeStatement include) throws CoreException {
 		assert sourceFile.getIndexFragment() == this;
 		assert destFile.getIndexFragment() == this;
-		((PDOMFile) sourceFile).addIncludeTo((PDOMFile) destFile);
+		((PDOMFile) sourceFile).addIncludeTo((PDOMFile) destFile, include);
 	}
 
 	public void addMacro(IIndexFragmentFile sourceFile, IASTPreprocessorMacroDefinition macro) throws CoreException {

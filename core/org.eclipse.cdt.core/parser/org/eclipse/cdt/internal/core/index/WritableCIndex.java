@@ -12,6 +12,7 @@
 package org.eclipse.cdt.internal.core.index;
 
 import org.eclipse.cdt.core.dom.ast.IASTName;
+import org.eclipse.cdt.core.dom.ast.IASTPreprocessorIncludeStatement;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorMacroDefinition;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
@@ -44,12 +45,13 @@ public class WritableCIndex extends CIndex implements IWritableIndex {
 		return fWritableFragments[0];
 	}
 
-	public void addInclude(IIndexFragmentFile sourceFile, IIndexFragmentFile destFile) throws CoreException {
+	public void addInclude(IIndexFragmentFile sourceFile, IIndexFragmentFile destFile,
+			IASTPreprocessorIncludeStatement include) throws CoreException {
 		IIndexFragment indexFragment = sourceFile.getIndexFragment();
 		assert isWritableFragment(indexFragment);
 		assert isWritableFragment(destFile.getIndexFragment());
 		
-		((IWritableIndexFragment) indexFragment).addInclude(sourceFile, destFile);
+		((IWritableIndexFragment) indexFragment).addInclude(sourceFile, destFile, include);
 	}
 
 	private boolean isWritableFragment(IIndexFragment frag) {

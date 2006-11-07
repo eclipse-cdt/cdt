@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.core.testplugin;
 
@@ -17,13 +18,16 @@ import org.eclipse.cdt.core.parser.IScannerInfo;
 
 public class TestScannerInfo implements IScannerInfo {
 	private Map emptyMap = new HashMap(0);
+	private String[] fIncludes;
 
+	public TestScannerInfo(String[] includes) {
+		fIncludes= includes;
+	}
 	public Map getDefinedSymbols() {
 		return emptyMap;
 	}
 
 	public String[] getIncludePaths() {
-		return new String[0];
+		return fIncludes == null ? new String[0] : fIncludes;
 	}
-	
 }

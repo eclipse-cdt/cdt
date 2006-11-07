@@ -8,6 +8,7 @@
  * Contributors:
  * QNX - Initial API and implementation
  * Symbian - Add some non-javadoc implementation notes
+ * Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom.db;
 
@@ -269,6 +270,16 @@ public class Database {
 	public int getInt(int offset) throws CoreException {
 		Chunk chunk = getChunk(offset);
 		return chunk.getInt(offset);
+	}
+
+	public void putShort(int offset, short value) throws CoreException {
+		Chunk chunk = getChunk(offset);
+		chunk.putShort(offset, value);
+	}
+	
+	public short getShort(int offset) throws CoreException {
+		Chunk chunk = getChunk(offset);
+		return chunk.getShort(offset);
 	}
 
 	public void putLong(int offset, long value) throws CoreException {

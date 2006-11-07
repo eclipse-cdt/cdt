@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.core.testplugin;
 
@@ -18,10 +19,11 @@ import org.eclipse.core.resources.IResource;
 
 public class TestScannerProvider extends AbstractCExtension implements IScannerInfoProvider {
 
+	public static String[] sIncludes= null;
 	public final static String SCANNER_ID = CTestPlugin.PLUGIN_ID + ".TestScanner";
 	
 	public IScannerInfo getScannerInformation(IResource resource) {
-		return new TestScannerInfo();
+		return new TestScannerInfo(sIncludes);
 	}
 
 	public void subscribe(IResource resource, IScannerInfoChangeListener listener) {

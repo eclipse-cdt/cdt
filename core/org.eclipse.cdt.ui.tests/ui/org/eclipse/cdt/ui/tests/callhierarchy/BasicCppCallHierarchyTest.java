@@ -24,7 +24,7 @@ import org.eclipse.cdt.internal.ui.editor.CEditor;
 
 public class BasicCppCallHierarchyTest extends CallHierarchyBaseTest {
 	
-	private static final int MAX_TIME_INDEXER = 2000;
+	private static final int MAX_TIME_INDEXER = 8000;
 
 	public BasicCppCallHierarchyTest(String name) {
 		super(name);

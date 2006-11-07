@@ -253,7 +253,7 @@ abstract class PDOMFullIndexerJob extends PDOMIndexerTask implements IPDOMIndexe
 		for (int i = 0; i < list.size(); i++) {
 			IASTPreprocessorIncludeStatement include= (IASTPreprocessorIncludeStatement) list.get(i);
 			IIndexFragmentFile destFile= index.addFile(new Path(include.getPath()));
-			index.addInclude(file, destFile);
+			index.addInclude(file, destFile, include);
 		}
 
 		// macros

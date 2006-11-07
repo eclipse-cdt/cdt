@@ -12,6 +12,7 @@
 package org.eclipse.cdt.internal.core.index;
 
 import org.eclipse.cdt.core.dom.ast.IASTName;
+import org.eclipse.cdt.core.dom.ast.IASTPreprocessorIncludeStatement;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorMacroDefinition;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.core.runtime.CoreException;
@@ -42,7 +43,7 @@ public interface IWritableIndex extends IIndex {
 	/**
 	 * Adds an include to the given file.
 	 */
-	void addInclude(IIndexFragmentFile sourceFile, IIndexFragmentFile destFile) throws CoreException;
+	void addInclude(IIndexFragmentFile sourceFile, IIndexFragmentFile destFile, IASTPreprocessorIncludeStatement directive) throws CoreException;
 
 	/**
 	 * Clears the entire index.

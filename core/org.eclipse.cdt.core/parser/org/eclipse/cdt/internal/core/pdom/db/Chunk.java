@@ -7,6 +7,7 @@
  *
  * Contributors:
  * QNX - Initial API and implementation
+ * Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom.db;
 
@@ -64,6 +65,14 @@ public class Chunk {
 	
 	public int getInt(int offset) {
 		return buffer.getInt(offset % Database.CHUNK_SIZE);
+	}
+
+	public void putShort(int offset, short value) {
+		buffer.putShort(offset % Database.CHUNK_SIZE, value);
+	}
+	
+	public short getShort(int offset) {
+		return buffer.getShort(offset % Database.CHUNK_SIZE);
 	}
 
 	public long getLong(int offset) {

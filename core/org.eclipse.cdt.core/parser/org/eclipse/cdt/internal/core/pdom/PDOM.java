@@ -64,7 +64,7 @@ public class PDOM extends PlatformObject implements IIndexFragment, IPDOM {
 
 	private Database db;
 
-	public static final int VERSION = 14;
+	public static final int VERSION = 15;
 	// 0 - the beginning of it all
 	// 1 - first change to kick off upgrades
 	// 2 - added file inclusions

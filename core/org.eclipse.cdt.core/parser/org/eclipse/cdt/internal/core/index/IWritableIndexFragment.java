@@ -12,6 +12,7 @@
 package org.eclipse.cdt.internal.core.index;
 
 import org.eclipse.cdt.core.dom.ast.IASTName;
+import org.eclipse.cdt.core.dom.ast.IASTPreprocessorIncludeStatement;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorMacroDefinition;
 import org.eclipse.core.runtime.CoreException;
 
@@ -38,7 +39,7 @@ public interface IWritableIndexFragment extends IIndexFragment {
 	/**
 	 * Adds an include to the given file.
 	 */
-	void addInclude(IIndexFragmentFile sourceFile, IIndexFragmentFile destFile) throws CoreException;
+	void addInclude(IIndexFragmentFile sourceFile, IIndexFragmentFile destFile, IASTPreprocessorIncludeStatement include) throws CoreException;
 
 	/**
 	 * Adds a AST macro to the given file.

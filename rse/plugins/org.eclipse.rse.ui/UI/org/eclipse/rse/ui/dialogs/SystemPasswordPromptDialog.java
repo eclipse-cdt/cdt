@@ -204,8 +204,6 @@ public final class SystemPasswordPromptDialog extends SystemPromptDialog impleme
 			SystemWidgetHelpers.createLabel(composite_prompts, "");
 			savePasswordCB = SystemWidgetHelpers.createCheckBox(composite_prompts, 1, this, SystemResources.RESID_PASSWORD_SAVE_LABEL, SystemResources.RESID_PASSWORD_SAVE_TOOLTIP);
 			savePasswordCB.setSelection(savePassword);
-			// disable until the user enters something for consistency with the save user ID checkbox
-			savePasswordCB.setEnabled(false);
 		}
 
 		initializeInput();
@@ -449,7 +447,7 @@ public final class SystemPasswordPromptDialog extends SystemPromptDialog impleme
 				controlInError = textPassword;
 			}
 		}
-		if (getErrorMessage() != null) {
+		if (controlInError != null) {
 			controlInError.setFocus(); // validate methods already displayed error message
 		}
 	}

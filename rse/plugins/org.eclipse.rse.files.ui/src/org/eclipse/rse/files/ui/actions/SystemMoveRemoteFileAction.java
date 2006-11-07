@@ -21,6 +21,8 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.model.ISystemRemoteChangeEvents;
+import org.eclipse.rse.model.ISystemResourceChangeEvents;
+import org.eclipse.rse.model.SystemResourceChangeEvent;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile;
@@ -95,12 +97,15 @@ public class SystemMoveRemoteFileAction extends SystemCopyRemoteFileAction
 		{
 		   String sep = targetFolder.getSeparator();
 		   String targetFolderName = targetFolder.getAbsolutePath();
+		   String resultPath = null;
+		   
 		   if (!targetFolderName.endsWith(sep))		     
-		     copiedFiles.addElement(targetFolderName+sep+newName);
+			   resultPath = targetFolderName+sep+newName;
 		   else
-		     copiedFiles.addElement(targetFolderName+newName);
-		     
-		   movedFiles.addElement(srcFileOrFolder);  
+			   resultPath = targetFolderName+newName;
+
+		   copiedFiles.addElement(resultPath);
+		   movedFiles.add(srcFileOrFolder);
 		}
 
 		return ok;
@@ -154,7 +159,8 @@ public class SystemMoveRemoteFileAction extends SystemCopyRemoteFileAction
 		  // ISystemRemoteChangeEvents.SYSTEM_REMOTE_RESOURCE_DELETED, copiedFiles, firstSelectionParent.getAbsolutePath(), fileSS, null, null);
     	RSEUIPlugin.getTheSystemRegistry().fireRemoteResourceChangeEvent(
 		   ISystemRemoteChangeEvents.SYSTEM_REMOTE_RESOURCE_DELETED, movedFiles, firstSelectionParent.getAbsolutePath(), fileSS, null, null);
-		           
+
+    	
     	/* old release 1.0 way of doing it...
 		Viewer v = getViewer();
 		if (v instanceof ISystemTree)

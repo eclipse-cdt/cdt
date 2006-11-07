@@ -34,6 +34,7 @@ import org.eclipse.rse.core.filters.ISystemFilterPoolManager;
 import org.eclipse.rse.core.filters.ISystemFilterPoolReference;
 import org.eclipse.rse.core.filters.ISystemFilterReference;
 import org.eclipse.rse.core.model.IHost;
+import org.eclipse.rse.core.model.ISystemContainer;
 import org.eclipse.rse.core.model.ISystemMessageObject;
 import org.eclipse.rse.core.model.ISystemResourceSet;
 import org.eclipse.rse.core.model.SystemChildrenContentsType;
@@ -345,15 +346,32 @@ public class SystemViewFilterReferenceAdapter
 						}
 					}
 					
-					
+					boolean doQuery = true;
 					if (!referencedFilter.isTransient() && 
 							ssf.supportsFilterCaching() &&
 							!fRef.isStale() && 
 							fRef.hasContents(SystemChildrenContentsType.getInstance()))
 					{
+						doQuery = false;
 					    children = fRef.getContents(SystemChildrenContentsType.getInstance());
+					    if (children != null)
+					    {
+					    	// check for stale children
+					    	for (int i = 0; i < children.length && !doQuery; i++)
+					    	{
+					    		Object child = children[i];
+					    		if (child instanceof ISystemContainer)
+					    		{
+					    			if (((ISystemContainer)child).isStale())
+					    			{
+					    				doQuery = true;
+					    				fRef.markStale(true);
+					    			}
+					    		}
+					    	}
+					    }
 					}
-					else
+					if (doQuery)
 					{
 					    Object[] allChildren = null;
 					    

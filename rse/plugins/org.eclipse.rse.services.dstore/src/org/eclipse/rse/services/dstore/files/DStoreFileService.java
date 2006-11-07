@@ -1054,6 +1054,10 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 		DataElement srcDE = getElementFor(srcRemotePath);
 		
 		DataElement tgtDE = getElementFor(tgtParent);
+		if (tgtDE.getType().equals(IUniversalDataStoreConstants.UNIVERSAL_FILTER_DESCRIPTOR))
+		{
+			dsQueryCommand(monitor, tgtDE, C_QUERY_GET_REMOTE_OBJECT);
+		}
 		
 		DataElement cpCmd = getCommandDescriptor(tgtDE, C_COPY);
 	

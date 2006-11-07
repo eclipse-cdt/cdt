@@ -63,9 +63,6 @@ import org.eclipse.rse.services.files.IFileService;
 import org.eclipse.rse.services.files.IHostFile;
 import org.eclipse.rse.services.files.RemoteFileIOException;
 import org.eclipse.rse.services.files.RemoteFolderNotEmptyException;
-import org.eclipse.ui.console.ConsolePlugin;
-import org.eclipse.ui.console.IConsole;
-import org.eclipse.ui.console.MessageConsole;
 
 
 public class FTPService extends AbstractFileService implements IFileService, IFTPService
@@ -79,7 +76,7 @@ public class FTPService extends AbstractFileService implements IFileService, IFT
 	private transient String _password;
 	private transient int _portNumber;
 	
-	private OutputStream _ftpConsoleOutputStream;
+	private OutputStream _ftpLoggingOutputStream;
 	
 	
 	/*
@@ -118,6 +115,11 @@ public class FTPService extends AbstractFileService implements IFileService, IFT
 	{
 		_password = password;
 	}
+	
+	public void setLoggingStream(OutputStream  ftpLoggingOutputStream)
+	{
+		 _ftpLoggingOutputStream =  ftpLoggingOutputStream;
+	}
 
 	public void connect() throws Exception
 	{
@@ -126,29 +128,11 @@ public class FTPService extends AbstractFileService implements IFileService, IFT
 			_ftpClient = new FTPClient();
 			
 		}
-		
-		if(_ftpConsoleOutputStream==null)
+
+		if(_ftpLoggingOutputStream!=null)
 		{
-			MessageConsole messageConsole=null;
-			
-			IConsole[] consoles = ConsolePlugin.getDefault().getConsoleManager().getConsoles();
-			for (int i = 0; i < consoles.length; i++) {
-				if(consoles[i].getName().equals("FTP log: "+_hostName+":"+_portNumber)) { //$NON-NLS-1$ //$NON-NLS-2$
-					messageConsole = (MessageConsole)consoles[i];
-					break;
-				}	
-			}
-			
-			if(messageConsole==null){
-				messageConsole = new MessageConsole("FTP log: "+_hostName+":"+_portNumber, null); //$NON-NLS-1$ //$NON-NLS-2$
-				ConsolePlugin.getDefault().getConsoleManager().addConsoles(new IConsole[]{ messageConsole });
-			}
-			
-			_ftpConsoleOutputStream = messageConsole.newOutputStream();
-			ConsolePlugin.getDefault().getConsoleManager().showConsoleView(messageConsole);
+			_ftpClient.registerSpyStream(_ftpLoggingOutputStream);
 		}
-		
-		_ftpClient.registerSpyStream(_ftpConsoleOutputStream);
 		
 		if (_portNumber == 0) {
 			_ftpClient.connect(_hostName);
@@ -552,7 +536,7 @@ public class FTPService extends AbstractFileService implements IFileService, IFT
 		
 		MyProgressMonitor progressMonitor = new MyProgressMonitor(monitor);
 		
-		progressMonitor.init("Deleting "+fileName, 1);  //$NON-NLS-1$
+		progressMonitor.init(FTPServiceResources.FTP_File_Service_Deleting_Task+fileName, 1);  
 		
 		boolean isFile = getFile(null,remoteParent,fileName).isFile();
 		
@@ -572,7 +556,7 @@ public class FTPService extends AbstractFileService implements IFileService, IFT
 			}
 			
 			if(!hasSucceeded){
-				throw new Exception(ftpClient.getReplyString()+" ("+fileName+")");
+				throw new Exception(ftpClient.getReplyString()+" ("+fileName+")"); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 			else
 			{
@@ -716,7 +700,7 @@ public class FTPService extends AbstractFileService implements IFileService, IFT
     	
     public boolean copy(IProgressMonitor monitor, String srcParent, String srcName, String tgtParent, String tgtName) throws SystemMessageException  
 	{
-    	throw new RemoteFileIOException(new Exception("FTP copy not supported, use move instead")); //$NON-NLS-1$
+    	throw new RemoteFileIOException(new Exception(FTPServiceResources.FTP_File_Service_Copy_Not_Supported)); 
     }
 	
 	public boolean copyBatch(IProgressMonitor monitor, String[] srcParents, String[] srcNames, String tgtParent) throws SystemMessageException 
@@ -753,14 +737,14 @@ public class FTPService extends AbstractFileService implements IFileService, IFT
 	{
 		boolean result = true;
 		
-		Job fetchJob = new Job("Listing files..."){ //$NON-NLS-1$
+		Job fetchJob = new Job(FTPServiceResources.FTP_File_Service_Listing_Job){ 
 			protected IStatus run(IProgressMonitor monitor) {
 				try {
 					_ftpFiles = _ftpClient.listFiles();
 				} catch (IOException e) {
 					return new Status(IStatus.ERROR, "org.eclipse.rse.services.files.ftp",IStatus.ERROR,e.getMessage(),e);  //$NON-NLS-1$
 				}
-				return new Status(IStatus.OK,"org.eclipse.rse.services.files.ftp",IStatus.OK,"Success",null);  //$NON-NLS-1$
+				return new Status(IStatus.OK,"org.eclipse.rse.services.files.ftp",IStatus.OK,FTPServiceResources.FTP_File_Service_Listing_Job_Success,null);  //$NON-NLS-1$ 
 			}};
 		
 		IStatus fetchResult = null;	
@@ -845,7 +829,7 @@ public class FTPService extends AbstractFileService implements IFileService, IFT
 			  Long workToDateKB = new Long(fWorkToDate / 1024L);
 			  Double workPercent = new Double(fWorkPercentFactor * fWorkToDate);
 			  String subDesc = MessageFormat.format(
-					 "{0,number,integer} KB of {1,number,integer} KB complete ({2,number,percent})",  //$NON-NLS-1$
+					 FTPServiceResources.FTP_File_Service_Monitor_Format,  
 					  new Object[] {
 						workToDateKB, fMaxWorkKB, workPercent	  
 					  });

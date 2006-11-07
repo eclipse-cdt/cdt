@@ -8,8 +8,6 @@ Bundle-Vendor: %providerName
 Bundle-Localization: plugin
 Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.rse.services,
- org.apache.commons.net,
- org.eclipse.ui.console,
- org.eclipse.jface
+ org.apache.commons.net
 Eclipse-LazyStart: true
 Export-Package: org.eclipse.rse.services.files.ftp

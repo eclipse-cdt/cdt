@@ -11,7 +11,7 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * Javier Montalvo Orus (Symbian) - Added Externalized Strings
  ********************************************************************************/
 
 package org.eclipse.rse.services.files.ftp;
@@ -21,7 +21,11 @@ import org.eclipse.osgi.util.NLS;
 public class FTPServiceResources extends NLS 
 {
 	private static String BUNDLE_NAME = "org.eclipse.rse.services.files.ftp.FTPServiceResources";//$NON-NLS-1$
-
+	public static String FTP_File_Service_Copy_Not_Supported;
+	public static String FTP_File_Service_Deleting_Task;
+	public static String FTP_File_Service_Listing_Job;
+	public static String FTP_File_Service_Listing_Job_Success;
+	public static String FTP_File_Service_Monitor_Format;
 	public static String FTP_File_Service_Name;
 	public static String FTP_File_Service_Description;
 	

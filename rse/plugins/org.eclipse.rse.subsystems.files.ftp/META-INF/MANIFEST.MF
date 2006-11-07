@@ -13,7 +13,8 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.rse.files.ui,
  org.eclipse.rse.subsystems.files.core,
  org.eclipse.rse.core,
- org.eclipse.rse.ui
+ org.eclipse.rse.ui,
+ org.eclipse.ui.console
 Eclipse-LazyStart: true
 Export-Package: org.eclipse.rse.subsystems.files.ftp,
  org.eclipse.rse.subsystems.files.ftp.connectorservice,

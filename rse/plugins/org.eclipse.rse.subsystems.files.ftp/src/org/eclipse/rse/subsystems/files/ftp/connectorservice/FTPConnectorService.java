@@ -11,10 +11,13 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * Javier Montalvo Orús (Symbian) - Bug 140348 - FTP did not use port number
+ * Javier Montalvo Orus (Symbian) - Bug 140348 - FTP did not use port number
+ * Javier Montalvo Orus (Symbian) - Bug 161209 - Need a Log of ftp commands
  ********************************************************************************/
 
 package org.eclipse.rse.subsystems.files.ftp.connectorservice;
+
+import java.io.OutputStream;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.rse.core.model.IHost;
@@ -23,6 +26,9 @@ import org.eclipse.rse.core.subsystems.AbstractConnectorService;
 import org.eclipse.rse.services.files.IFileService;
 import org.eclipse.rse.services.files.ftp.FTPService;
 import org.eclipse.rse.subsystems.files.core.SystemFileResources;
+import org.eclipse.ui.console.ConsolePlugin;
+import org.eclipse.ui.console.IConsole;
+import org.eclipse.ui.console.MessageConsole;
 
 
 
@@ -43,12 +49,36 @@ public class FTPConnectorService extends AbstractConnectorService
 
 	private void internalConnect() throws Exception
 	{
+		
 		SystemSignonInformation info = getPasswordInformation();
 		_ftpService.setHostName(info.getHostname());
 		_ftpService.setUserId(info.getUserid());
 		_ftpService.setPassword(info.getPassword());
 		_ftpService.setPortNumber(getPort());
-		_ftpService.connect();
+		_ftpService.setLoggingStream(getLoggingStream(info.getHostname(),getPort()));
+		_ftpService.connect();	
+	}
+	
+	private OutputStream getLoggingStream(String hostName,int portNumber)
+	{
+		MessageConsole messageConsole=null;
+		
+		IConsole[] consoles = ConsolePlugin.getDefault().getConsoleManager().getConsoles();
+		for (int i = 0; i < consoles.length; i++) {
+			if(consoles[i].getName().equals("FTP log: "+hostName+":"+portNumber)) { //$NON-NLS-1$ //$NON-NLS-2$
+				messageConsole = (MessageConsole)consoles[i];
+				break;
+			}	
+		}
+		
+		if(messageConsole==null){
+			messageConsole = new MessageConsole("FTP log: "+hostName+":"+portNumber, null); //$NON-NLS-1$ //$NON-NLS-2$
+			ConsolePlugin.getDefault().getConsoleManager().addConsoles(new IConsole[]{ messageConsole });
+		}
+		
+		ConsolePlugin.getDefault().getConsoleManager().showConsoleView(messageConsole);
+		
+		return messageConsole.newOutputStream();
 	}
 	
 	public IFileService getFileService()
@@ -71,8 +101,6 @@ public class FTPConnectorService extends AbstractConnectorService
 	{
 		return false;
 	}
-
-	
 
 	public boolean isConnected() 
 	{

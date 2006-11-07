@@ -749,6 +749,7 @@ public final class FileServiceSubSystem extends RemoteFileSubSystem implements I
 		String tgtParent = targetFolder.getAbsolutePath();
 		try
 		{
+			removeCachedRemoteFile(sourceFolderOrFile);
 			result = service.move(monitor, srcParent, srcName, tgtParent, newName);
 			sourceFolderOrFile.markStale(true);
 			targetFolder.markStale(true);

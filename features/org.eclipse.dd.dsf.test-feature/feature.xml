@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
-      id="org.eclipse.dd.dsf.test_feature"
+      id="org.eclipse.dd.dsf.test"
       label="DSF Test Feature"
       version="1.0.0">
 
@@ -15,6 +15,11 @@
    <license url="http://www.example.com/license">
       [Enter License Description here.]
    </license>
+
+   <requires>
+      <import feature="org.eclipse.dd.dsf.mi" version="1.0.0"/>
+      <import feature="org.eclipse.dd.dsf.sdk" version="1.0.0"/>
+   </requires>
 
    <plugin
          id="org.eclipse.dd.dsf.test"

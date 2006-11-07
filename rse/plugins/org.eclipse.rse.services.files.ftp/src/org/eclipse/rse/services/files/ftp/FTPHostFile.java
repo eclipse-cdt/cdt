@@ -63,7 +63,7 @@ public class FTPHostFile implements IHostFile
 		_size = ftpFile.getSize();
 		_isArchive = internalIsArchive();
 		
-		if(!systemName.toUpperCase().startsWith("WINDOWS"))
+		if(!systemName.toUpperCase().startsWith("WINDOWS")) //$NON-NLS-1$
 		{
 			_canRead = ftpFile.hasPermission(FTPFile.USER_ACCESS, FTPFile.READ_PERMISSION);
 			_canWrite = ftpFile.hasPermission(FTPFile.USER_ACCESS, FTPFile.WRITE_PERMISSION);
@@ -111,7 +111,7 @@ public class FTPHostFile implements IHostFile
 			return getName();
 		} else {
 			StringBuffer path = new StringBuffer(getParentPath());
-			if (!_parentPath.endsWith("/"))
+			if (!_parentPath.endsWith("/")) //$NON-NLS-1$
 			{
 				path.append('/');
 			}
@@ -148,7 +148,7 @@ public class FTPHostFile implements IHostFile
 
 	public void renameTo(String newAbsolutePath) 
 	{
-		int i = newAbsolutePath.lastIndexOf("/");
+		int i = newAbsolutePath.lastIndexOf("/"); //$NON-NLS-1$
 		if (i == -1)
 		{
 			_name = newAbsolutePath;

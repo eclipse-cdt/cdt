@@ -402,6 +402,9 @@ public class SystemResources extends NLS
 
 	public static String RESID_PASSWORD_LABEL;
 	public static String RESID_PASSWORD_TIP;
+	
+	public static String RESID_PASSWORD_SYSTEMTYPE_LABEL;
+	public static String RESID_PASSWORD_HOSTNAME_LABEL;
 
 	public static String RESID_PASSWORD_USERID_LABEL;
 	public static String RESID_PASSWORD_USERID_TIP;

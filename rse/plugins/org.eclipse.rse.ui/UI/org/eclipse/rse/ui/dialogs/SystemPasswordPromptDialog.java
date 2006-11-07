@@ -160,7 +160,7 @@ public final class SystemPasswordPromptDialog extends SystemPromptDialog impleme
 		// dwd: cannot set height hints on labels since that causes cut off text for large fonts used by those with impaired vision
 
 		// System type
-		String text = SystemWidgetHelpers.appendColon(SystemResources.RESID_CONNECTION_SYSTEMTYPE_READONLY_LABEL);
+		String text = SystemWidgetHelpers.appendColon(SystemResources.RESID_PASSWORD_SYSTEMTYPE_LABEL);
 		Label label = SystemWidgetHelpers.createLabel(composite_prompts, text);
 		GridData gd = new GridData();
 		label.setLayoutData(gd);
@@ -169,7 +169,7 @@ public final class SystemPasswordPromptDialog extends SystemPromptDialog impleme
 		label.setLayoutData(gd);
 
 		// Host name
-		text = SystemWidgetHelpers.appendColon(SystemResources.RESID_CONNECTION_HOSTNAME_READONLY_LABEL);
+		text = SystemWidgetHelpers.appendColon(SystemResources.RESID_PASSWORD_HOSTNAME_LABEL);
 		label = SystemWidgetHelpers.createLabel(composite_prompts, text);
 		gd = new GridData();
 		label.setLayoutData(gd);
@@ -179,7 +179,7 @@ public final class SystemPasswordPromptDialog extends SystemPromptDialog impleme
 
 		// UserId
 		if (connectorService.supportsUserId()) {
-			textUserId = SystemWidgetHelpers.createLabeledTextField(composite_prompts, this, SystemResources.RESID_CONNECTION_USERID_LABEL, SystemResources.RESID_CONNECTION_USERID_TIP);
+			textUserId = SystemWidgetHelpers.createLabeledTextField(composite_prompts, this, SystemResources.RESID_PASSWORD_USERID_LABEL, SystemResources.RESID_PASSWORD_USERID_TIP);
 		}
 
 		// Password prompt

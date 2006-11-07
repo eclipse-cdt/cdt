@@ -257,9 +257,11 @@ public final class SystemPasswordPromptDialog extends SystemPromptDialog impleme
 		}
 		if (textUserId != null && userId != null) {
 			textUserId.setText(userId);
+			textUserId.setSelection(0, userId.length());
 		}
 		if (textPassword != null && password != null) {
 			textPassword.setText(password);
+			textPassword.setSelection(0, password.length());
 		}
 	}
 

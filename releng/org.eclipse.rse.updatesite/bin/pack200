@@ -8,6 +8,7 @@ cd `dirname $0`
 mydir=`pwd`
 cd "$curdir"
 
+rm "$mydir/pack200.stamp"
 touch "$mydir/pack200.stamp"
 date >> "$mydir/pack200.stamp"
 echo "pack200 -E4 $*" >> "$mydir/pack200.stamp"

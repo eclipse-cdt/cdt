@@ -27,8 +27,9 @@ export PATH=/shared/common/ibm-java2-ppc64-50/jre/bin:/shared/common/ibm-java2-p
 # patch site.xml
 cd ..
 SITE=`pwd`
-rm site.xml web/site.xsl
-cvs -q update -dPR
+if [ -f index.html.new ]; then
+  rm -f index.html.new
+fi
 if [ -f site.xml.new ]; then
   rm -f site.xml.new
 fi
@@ -51,6 +52,12 @@ if [ `basename $SITE` = testUpdates ]; then
         cp -R $DIR/plugins .
       fi
     fi
+    rm index.html site.xml web/site.xsl
+    cvs -q update -dPR
+    sed -e 's,/dsdp/tm/updates,/dsdp/tm/testUpdates,g' \
+    	-e 's,Project Update,Project Test Update,g' \
+    	index.html > index.html.new
+    mv -f index.html.new index.html
     sed -e 's,/dsdp/tm/updates,/dsdp/tm/testUpdates,g' \
         -e 's,Project Update,Project Test Update,g' \
         site.xml > site.xml.new
@@ -58,8 +65,8 @@ if [ `basename $SITE` = testUpdates ]; then
     sed -e 's,Project Update,Project Test Update,g' \
     	web/site.xsl > web/site.xsl.new
     mv -f web/site.xsl.new web/site.xsl
-else
-    echo "Working on official update site"
+elif [ `basename $SITE` = signedUpdates ]; then
+    echo "Working on signed update site"
     echo "Signing jars from test update site..."
     STAGING=/home/data/httpd/download-staging.priv/dsdp/tm
     stamp=`date +'%Y%m%d-%H%M'`
@@ -138,8 +145,9 @@ else
         cd ${SITE}
         rmdir ${STAGING}/updates.${stamp}/plugins
         rmdir ${STAGING}/updates.${stamp}
-        mv features features.old.${stamp}
-        mv plugins plugins.old.${stamp}
+        #mv features features.old.${stamp}
+        #mv plugins plugins.old.${stamp}
+        rm -rf features plugins
         mv features.${stamp} features
         mv plugins.${stamp} plugins
       else
@@ -149,8 +157,28 @@ else
       fi
     else
       echo "staging or testUpdates not found:"
-      echo "expect that you copied features and plugins yourself"
+      echo "please fix your pathes"
+      exit 1
     fi
+    rm index.html site.xml web/site.xsl
+    cvs -q update -dPR
+    sed -e 's,/dsdp/tm/updates,/dsdp/tm/signedUpdates,g' \
+    	-e 's,Project Update,Project Signed Test Update,g' \
+    	index.html > index.html.new
+    mv -f index.html.new index.html
+    sed -e 's,/dsdp/tm/updates,/dsdp/tm/signedUpdates,g' \
+        -e 's,Project Update,Project Signed Test Update,g' \
+        site.xml > site.xml.new
+    mv -f site.xml.new site.xml
+    sed -e 's,Project Update,Project Signed Test Update,g' \
+    	web/site.xsl > web/site.xsl.new
+    mv -f web/site.xsl.new web/site.xsl
+else
+    echo "Working on official update site"
+    echo "Expect that you copied your features and plugins yourself"
+    stamp=`date +'%Y%m%d-%H%M'`
+    rm index.html site.xml web/site.xsl
+    cvs -q update -dPR
 fi
 FEATURES=`grep 'features/[^ ]*\.qualifier\.jar' site.xml | sed -e 's,^[^"]*"features/\([^0-9]*[0-9][0-9.]*\).*$,\1,g'`
 for feature in $FEATURES ; do

@@ -20,6 +20,8 @@ import org.eclipse.cdt.internal.ui.cview.CViewLabelProvider;
 import org.eclipse.cdt.internal.ui.cview.CViewMessages;
 import org.eclipse.cdt.internal.ui.viewsupport.AppearanceAwareLabelProvider;
 import org.eclipse.cdt.internal.ui.viewsupport.CElementImageProvider;
+import org.eclipse.cdt.internal.ui.viewsupport.ProblemsLabelDecorator;
+
 import org.eclipse.core.resources.IResource;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.model.IWorkbenchAdapter;
@@ -42,6 +44,7 @@ public class CNavigatorLabelProvider extends CViewLabelProvider implements IComm
 		super(AppearanceAwareLabelProvider.DEFAULT_TEXTFLAGS,
 				AppearanceAwareLabelProvider.DEFAULT_IMAGEFLAGS
 						| CElementImageProvider.SMALL_ICONS);
+		addLabelDecorator(new ProblemsLabelDecorator(null));
 	}
 
 	/*

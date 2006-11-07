@@ -138,8 +138,8 @@ public abstract class PDOMIndexerTask implements IPDOMIndexerTask {
 		}
 	}
 	
-	protected boolean indexAllHeaders() {
-		return getIndexer().getIndexAllHeaders();
+	protected boolean getIndexAllFiles() {
+		return getIndexer().getIndexAllFiles();
 	}
 	
 	protected ITranslationUnit findContext(IIndex index, String path) {

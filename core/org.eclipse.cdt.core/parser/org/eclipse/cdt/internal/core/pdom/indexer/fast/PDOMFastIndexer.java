@@ -31,7 +31,7 @@ public class PDOMFastIndexer implements IPDOMIndexer {
 	
 	protected ICProject project;
 
-	private boolean fIndexAllHeaders;
+	private boolean fIndexAllFiles;
 	
 	public PDOMFastIndexer() {
 	}
@@ -59,11 +59,15 @@ public class PDOMFastIndexer implements IPDOMIndexer {
 		return ID;
 	}
 
-	public void setIndexAllHeaders(boolean val) {
-		fIndexAllHeaders= val;
+	public void setIndexAllFiles(boolean val) {
+		fIndexAllFiles= val;
 	}
 
-	public boolean getIndexAllHeaders() {
-		return fIndexAllHeaders;
+	public boolean getIndexAllFiles() {
+		return fIndexAllFiles;
+	}
+	
+	public boolean isIndexAllFiles(boolean val) {
+		return fIndexAllFiles==val;
 	}
 }

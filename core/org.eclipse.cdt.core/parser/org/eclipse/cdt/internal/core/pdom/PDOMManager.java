@@ -78,8 +78,8 @@ public class PDOMManager implements IPDOMManager, IWritableIndexManager, IListen
 	private static final QualifiedName dbNameProperty= new QualifiedName(CCorePlugin.PLUGIN_ID, "pdomName"); //$NON-NLS-1$
 	private static final QualifiedName pdomProperty= new QualifiedName(CCorePlugin.PLUGIN_ID, "pdom"); //$NON-NLS-1$
 
-	private static final String INDEXER_ID_KEY = "indexerId"; //$NON-NLS-1$
-	private static final String INDEX_ALL_HEADERS = "indexAllHeaders"; //$NON-NLS-1$
+	public static final String INDEXER_ID_KEY = "indexerId"; //$NON-NLS-1$
+	public static final String INDEX_ALL_FILES = "indexAllFiles"; //$NON-NLS-1$
 	private static final ISchedulingRule NOTIFICATION_SCHEDULING_RULE = new ISchedulingRule(){
 		public boolean contains(ISchedulingRule rule) {
 			return rule == this;
@@ -273,12 +273,12 @@ public class PDOMManager implements IPDOMManager, IWritableIndexManager, IListen
     	job.schedule(2000);
     }
 
-    public void setIndexAllHeaders(final ICProject project, boolean val) {
+    public void setIndexAllFiles(final ICProject project, boolean val) {
     	IEclipsePreferences prefs = new ProjectScope(project.getProject()).getNode(CCorePlugin.PLUGIN_ID);
     	if (prefs == null)
     		return; // TODO why would this be null?
 
-    	prefs.putBoolean(INDEX_ALL_HEADERS, val);
+    	prefs.putBoolean(INDEX_ALL_FILES, val);
     	Job job= new Job(Messages.PDOMManager_savePrefsJob) {
         	protected IStatus run(IProgressMonitor monitor) {
        	    	IEclipsePreferences prefs = new ProjectScope(project.getProject()).getNode(CCorePlugin.PLUGIN_ID);
@@ -296,9 +296,9 @@ public class PDOMManager implements IPDOMManager, IWritableIndexManager, IListen
     	job.schedule(2000);
     }
 
-    public boolean getIndexAllHeaders(ICProject project) {
+    public boolean getIndexAllFiles(ICProject project) {
     	IScopeContext[] scope= new IScopeContext[] {new ProjectScope(project.getProject()), new InstanceScope()};
-		return Platform.getPreferencesService().getBoolean(CCorePlugin.PLUGIN_ID, INDEX_ALL_HEADERS, true, scope); 
+		return Platform.getPreferencesService().getBoolean(CCorePlugin.PLUGIN_ID, INDEX_ALL_FILES, false, scope); 
     }
 
     public IPDOMIndexer getIndexer(ICProject project) {
@@ -307,7 +307,7 @@ public class PDOMManager implements IPDOMManager, IWritableIndexManager, IListen
 	
 	public void onPreferenceChange(PreferenceChangeEvent event) {
 		Object key= event.getKey();
-		if (key.equals(INDEXER_ID_KEY) || key.equals(INDEX_ALL_HEADERS)) {
+		if (key.equals(INDEXER_ID_KEY) || key.equals(INDEX_ALL_FILES)) {
 			Preferences node = event.getNode();
 			if (CCorePlugin.PLUGIN_ID.equals(node.name())) {
 				node= node.parent();
@@ -331,16 +331,16 @@ public class PDOMManager implements IPDOMManager, IWritableIndexManager, IListen
 		assert !Thread.holdsLock(fPDOMs);
 		IPDOMIndexer oldIndexer= null;
 		String newid= getIndexerId(cproject);
-		boolean allHeaders= getIndexAllHeaders(cproject);
+		boolean allFiles= getIndexAllFiles(cproject);
 		
 		synchronized (fIndexerMutex) {
 			oldIndexer= getIndexer(cproject, false);
 			if (oldIndexer != null) {
-				if (oldIndexer.getID().equals(newid) && oldIndexer.getIndexAllHeaders() == allHeaders) {
+				if (oldIndexer.getID().equals(newid) && oldIndexer.isIndexAllFiles(allFiles)) {
 					return;
 				}
 			}
-			createIndexer(cproject, newid, allHeaders, true);
+			createIndexer(cproject, newid, allFiles, true);
 		}
 		
 		if (oldIndexer != null) {
@@ -370,7 +370,7 @@ public class PDOMManager implements IPDOMManager, IWritableIndexManager, IListen
 
 			if (create) {
 				try {
-					return createIndexer(project, getIndexerId(project), getIndexAllHeaders(project), false);
+					return createIndexer(project, getIndexerId(project), getIndexAllFiles(project), false);
 				} catch (CoreException e) {
 					CCorePlugin.log(e);
 				}
@@ -395,7 +395,7 @@ public class PDOMManager implements IPDOMManager, IWritableIndexManager, IListen
     			if ("run".equals(element.getName())) { //$NON-NLS-1$
     				try {
 						indexer = (IPDOMIndexer)element.createExecutableExtension("class"); //$NON-NLS-1$
-						indexer.setIndexAllHeaders(allHeaders);
+						indexer.setIndexAllFiles(allHeaders);
 					} catch (CoreException e) {
 						CCorePlugin.log(e);
 					} 

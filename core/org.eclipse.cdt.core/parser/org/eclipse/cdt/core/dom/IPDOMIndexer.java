@@ -37,14 +37,21 @@ public interface IPDOMIndexer {
 	public String getID();
 	
 	/**
-	 * Returns whether to index headers that are not actually included by any source.
+	 * Returns whether to index source files that are not actually part of the build.
 	 * @since 4.0
 	 */
-	public boolean getIndexAllHeaders();
+	public boolean getIndexAllFiles();
 	
 	/**
 	 * Clients are not allowed to call this method, it is called by the framework. 
 	 * @since 4.0
 	 */
-	public void setIndexAllHeaders(boolean value);
+	public void setIndexAllFiles(boolean value);
+	
+	/**
+	 * Clients are not allowed to call this method, it is called by the framework. 
+	 * Used to check whether we need to reindex a project.
+	 * @since 4.0
+	 */
+	public boolean isIndexAllFiles(boolean value);
 }

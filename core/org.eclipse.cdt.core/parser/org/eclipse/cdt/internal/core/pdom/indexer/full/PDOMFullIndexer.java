@@ -28,7 +28,7 @@ import org.eclipse.core.runtime.CoreException;
 public class PDOMFullIndexer implements IPDOMIndexer {
 	public static final String ID = IPDOMManager.ID_FULL_INDEXER;
 	
-	private boolean fIndexAllHeaders= true;
+	private boolean fIndexAllFiles= true;
 	private ICProject project;
 
 	
@@ -55,11 +55,15 @@ public class PDOMFullIndexer implements IPDOMIndexer {
 		return ID;
 	}
 
-	public void setIndexAllHeaders(boolean val) {
-		fIndexAllHeaders= val;
+	public void setIndexAllFiles(boolean val) {
+		fIndexAllFiles= val;
 	}
 
-	public boolean getIndexAllHeaders() {
-		return fIndexAllHeaders;
+	public boolean getIndexAllFiles() {
+		return fIndexAllFiles;
+	}
+
+	public boolean isIndexAllFiles(boolean val) {
+		return fIndexAllFiles==val;
 	}
 }

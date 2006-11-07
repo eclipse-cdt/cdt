@@ -70,11 +70,11 @@ public class IndexIncludeTest extends IndexTestBase {
 	
 	public void testFastIndexer() throws Exception {
 		CCoreInternals.getPDOMManager().setIndexerId(fProject, IPDOMManager.ID_FAST_INDEXER);
-		CCoreInternals.getPDOMManager().setIndexAllHeaders(fProject, false);
+		CCoreInternals.getPDOMManager().setIndexAllFiles(fProject, false);
 		waitForIndexer();
 		checkHeader(false);
 
-		CCoreInternals.getPDOMManager().setIndexAllHeaders(fProject, true);
+		CCoreInternals.getPDOMManager().setIndexAllFiles(fProject, true);
 		waitForIndexer();
 		checkHeader(true);
 		
@@ -87,11 +87,11 @@ public class IndexIncludeTest extends IndexTestBase {
 
 	public void testFullIndexer() throws Exception {
 		CCoreInternals.getPDOMManager().setIndexerId(fProject, IPDOMManager.ID_FULL_INDEXER);
-		CCoreInternals.getPDOMManager().setIndexAllHeaders(fProject, false);
+		CCoreInternals.getPDOMManager().setIndexAllFiles(fProject, false);
 		waitForIndexer();
 		checkHeader(false);
 
-		CCoreInternals.getPDOMManager().setIndexAllHeaders(fProject, true);
+		CCoreInternals.getPDOMManager().setIndexAllFiles(fProject, true);
 		waitForIndexer();
 		checkHeader(true);
 		

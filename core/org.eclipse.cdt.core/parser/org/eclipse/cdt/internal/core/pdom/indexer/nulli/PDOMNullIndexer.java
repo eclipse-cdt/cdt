@@ -35,8 +35,6 @@ public class PDOMNullIndexer implements IPDOMIndexer {
 	
 	private ICProject project;
 
-	private boolean fIndexAllHeaders;
-	
 	public ICProject getProject() {
 		return project;
 	}
@@ -84,11 +82,14 @@ public class PDOMNullIndexer implements IPDOMIndexer {
 		return ID;
 	}
 
-	public boolean getIndexAllHeaders() {
-		return fIndexAllHeaders;
+	public boolean getIndexAllFiles() {
+		return false;
 	}
 
-	public void setIndexAllHeaders(boolean value) {
-		fIndexAllHeaders= value;
+	public void setIndexAllFiles(boolean value) {
+	}
+	
+	public boolean isIndexAllFiles(boolean val) {
+		return true;
 	}
 }

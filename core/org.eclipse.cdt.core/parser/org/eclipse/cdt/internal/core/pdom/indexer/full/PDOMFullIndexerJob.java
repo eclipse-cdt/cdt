@@ -109,7 +109,7 @@ abstract class PDOMFullIndexerJob extends PDOMIndexerTask implements IPDOMIndexe
 		}
 
 		// headers without context
-		if (indexAllHeaders()) {
+		if (getIndexAllFiles()) {
 			i = translationUnits.iterator();
 			while (i.hasNext()) {
 				ITranslationUnit tu = (ITranslationUnit)i.next();
@@ -129,7 +129,11 @@ abstract class PDOMFullIndexerJob extends PDOMIndexerTask implements IPDOMIndexe
 		if (path == null) {
 			return;
 		}
-		IASTTranslationUnit ast= tu.getAST(null, ITranslationUnit.AST_SKIP_IF_NO_BUILD_INFO);
+		int options= 0;
+		if (!getIndexAllFiles()) {
+			options |= ITranslationUnit.AST_SKIP_IF_NO_BUILD_INFO;
+		}
+		IASTTranslationUnit ast= tu.getAST(null, options);
 		if (ast == null)
 			return;
 		System.out.println(path.toOSString());

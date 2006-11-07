@@ -17,9 +17,10 @@ import java.util.Map;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.CCorePreferenceConstants;
+import org.eclipse.cdt.core.dom.IPDOMManager;
 import org.eclipse.cdt.core.formatter.DefaultCodeFormatterConstants;
 import org.eclipse.cdt.internal.core.model.CModelManager;
-//import org.eclipse.core.runtime.Preferences;
+import org.eclipse.cdt.internal.core.pdom.PDOMManager;
 import org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer;
 import org.eclipse.core.runtime.preferences.DefaultScope;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
@@ -42,6 +43,7 @@ public class CCorePreferenceInitializer extends AbstractPreferenceInitializer {
 		defaultOptionsMap.put(CCorePreferenceConstants.TRANSLATION_TASK_PRIORITIES, CCorePreferenceConstants.DEFAULT_TASK_PRIORITY); 
 		defaultOptionsMap.put(CCorePreferenceConstants.CODE_FORMATTER, CCorePreferenceConstants.DEFAULT_CODE_FORMATTER); 
                 
+		
 		// Store default values to default preferences
 	 	IEclipsePreferences defaultPreferences = ((IScopeContext) new DefaultScope()).getNode(CCorePlugin.PLUGIN_ID);
 		for (Iterator iter = defaultOptionsMap.entrySet().iterator(); iter.hasNext();) {
@@ -50,6 +52,10 @@ public class CCorePreferenceInitializer extends AbstractPreferenceInitializer {
 			defaultPreferences.put(optionName, (String)entry.getValue());
 			optionNames.add(optionName);
 		}
+
+		// indexer defaults
+		defaultPreferences.putBoolean(PDOMManager.INDEX_ALL_FILES, false);
+		defaultPreferences.put(PDOMManager.INDEXER_ID_KEY, IPDOMManager.ID_FAST_INDEXER);
 	}
 
 }

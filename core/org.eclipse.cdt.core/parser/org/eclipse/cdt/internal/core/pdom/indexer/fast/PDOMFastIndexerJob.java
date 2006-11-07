@@ -86,9 +86,12 @@ abstract class PDOMFastIndexerJob extends PDOMIndexerTask implements IPDOMIndexe
 			return;
 	
 		// skip if no scanner info
-		IScannerInfo scanner= tu.getScannerInfo(false);
+		IScannerInfo scanner= tu.getScannerInfo(getIndexAllFiles());
+		if (scanner == null) {
+			return;
+		}
 		CodeReader codeReader = tu.getCodeReader();
-		if (scanner == null || codeReader == null) {
+		if (codeReader == null) {
 			return;
 		}
 
@@ -267,7 +270,7 @@ abstract class PDOMFastIndexerJob extends PDOMIndexerTask implements IPDOMIndexe
 		}
 
 		// headers without context
-		if (indexAllHeaders()) {
+		if (getIndexAllFiles()) {
 			i = translationUnits.iterator();
 			while (i.hasNext()) {
 				if (monitor.isCanceled())

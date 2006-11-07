@@ -55,6 +55,7 @@ import org.eclipse.rse.core.subsystems.CommunicationsEvent;
 import org.eclipse.rse.core.subsystems.IRemoteServerLauncher;
 import org.eclipse.rse.core.subsystems.IServerLauncher;
 import org.eclipse.rse.core.subsystems.IServerLauncherProperties;
+import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.core.subsystems.ServerLaunchType;
 import org.eclipse.rse.core.subsystems.SubSystem;
 import org.eclipse.rse.dstore.universal.miners.environment.EnvironmentMiner;
@@ -292,7 +293,7 @@ public class DStoreConnectorService extends AbstractConnectorService implements 
 	}
 
 	/**
-	 * @see org.eclipse.rse.core.subsystems.IConnectorService#disconnect()
+	 * @see org.eclipse.rse.core.subsystems.IConnectorService#disconnect(IProgressMonitor)
 	 */
 	public void internalDisconnect(IProgressMonitor monitor) throws Exception
 	{
@@ -1253,33 +1254,33 @@ public class DStoreConnectorService extends AbstractConnectorService implements 
 	/**
 	* @see org.eclipse.rse.core.subsystems.AbstractConnectorService#getPasswordInformation()
 	*/
-	public SystemSignonInformation getPasswordInformation()
-	{
-		// For Windows we want to avoid the signon prompt (because we never
-		// really authenticate with the remote system and this would be decieving 
-		// for the end user
-
-		if (getPrimarySubSystem().getHost().getSystemType().equals(IRSESystemType.SYSTEMTYPE_WINDOWS))
-		{
-			String userid = getPrimarySubSystem().getUserId();
-			if (userid == null)
-			{
-				userid = "remoteuser"; //$NON-NLS-1$
-			}
-			SystemSignonInformation info = new SystemSignonInformation(getPrimarySubSystem().getHost().getHostName(),
-																	   userid, "", IRSESystemType.SYSTEMTYPE_WINDOWS); //$NON-NLS-1$
-			return info;
-		}
-		else
-		{
-			return super.getPasswordInformation();
-		}
-	}
+//	public SystemSignonInformation getPasswordInformation()
+//	{
+//		// For Windows we want to avoid the signon prompt (because we never
+//		// really authenticate with the remote system and this would be deceiving 
+//		// for the end user
+//
+//		if (getPrimarySubSystem().getHost().getSystemType().equals(IRSESystemType.SYSTEMTYPE_WINDOWS))
+//		{
+//			String userid = getPrimarySubSystem().getUserId();
+//			if (userid == null)
+//			{
+//				userid = "remoteuser"; //$NON-NLS-1$
+//			}
+//			SystemSignonInformation info = new SystemSignonInformation(getPrimarySubSystem().getHost().getHostName(),
+//																	   userid, "", IRSESystemType.SYSTEMTYPE_WINDOWS); //$NON-NLS-1$
+//			return info;
+//		}
+//		else
+//		{
+//			return super.getPasswordInformation();
+//		}
+//	}
 
 	/**
 	 * @see org.eclipse.rse.core.subsystems.AbstractConnectorService#isPasswordCached()
 	 */
-//	public boolean isPasswordCached() // DWD is this method needed?
+//	public boolean isPasswordCached()
 //	{
 //		// For Windows we never prompt for userid / password so we don't need 
 //		// to clear the password cache
@@ -1292,10 +1293,6 @@ public class DStoreConnectorService extends AbstractConnectorService implements 
 //			return super.isPasswordCached();
 //		}
 //	}
-
-
-
-
 
 	public boolean hasRemoteServerLauncherProperties() 
 	{
@@ -1317,13 +1314,30 @@ public class DStoreConnectorService extends AbstractConnectorService implements 
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.eclipse.rse.core.subsystems.AbstractConnectorService#requiresPassword()
+	 * @see org.eclipse.rse.core.subsystems.AbstractConnectorService#supportsPassword()
 	 */
-	public boolean requiresPassword() {
+	public boolean supportsPassword() {
+		boolean result = super.supportsPassword();
 		IHost host = getHost();
 		String systemType = host.getSystemType();
-		boolean requiresPassword = !systemType.equals("Windows");
-		return requiresPassword;
+		if (systemType.equals(IRSESystemType.SYSTEMTYPE_WINDOWS)) {
+			result = false;
+		}
+		return result;
 	}
-
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.core.subsystems.AbstractConnectorService#supportsUserid()
+	 */
+	public boolean supportsUserId() {
+		boolean result = super.supportsUserId();
+		IHost host = getHost();
+		String systemType = host.getSystemType();
+		if (systemType.equals(IRSESystemType.SYSTEMTYPE_WINDOWS)) {
+			result = false;
+		}
+		return result;
+	}
+	
+	
 }

@@ -123,11 +123,11 @@ public class LocalFileService extends AbstractFileService implements IFileServic
 		return _isWindows;
 	}
 	
-	public class LocalFileNameFilter implements FilenameFilter
-	{
+	public class LocalFileNameFilter implements FilenameFilter {
 		private IMatcher _matcher;
-		public LocalFileNameFilter(String filter)
-		{
+		private int type;
+
+		public LocalFileNameFilter(String filter, int type) {
 			if (filter == null) {
 				filter = "*"; //$NON-NLS-1$
 			}
@@ -137,13 +137,25 @@ public class LocalFileService extends AbstractFileService implements IFileServic
 			} else {
 				_matcher = new NamePatternMatcher(filter);
 			}
+			this.type = type;
 		}
-		public boolean accept(File dir, String name) 
-		{
-			return _matcher.matches(name);  
+
+		public boolean accept(File dir, String name) {
+			boolean result = false;
+			File entry = new File(dir, name);
+			if (entry.exists()) {
+				if (entry.isFile()) {
+					result = _matcher.matches(name);
+				} else if (entry.isDirectory()) {
+					if (type == FILE_TYPE_FILES_AND_FOLDERS || type == FILE_TYPE_FOLDERS) {
+						result = true;
+					}
+				}
+			}
+			return result;
 		}
-		public boolean isGeneric()
-		{
+
+		public boolean isGeneric() {
 			boolean result = true;
 			if (_matcher instanceof NamePatternMatcher) {
 				NamePatternMatcher new_name = (NamePatternMatcher) _matcher;
@@ -589,87 +601,58 @@ public class LocalFileService extends AbstractFileService implements IFileServic
 		return true;
 	}
 	
-	protected IHostFile[] internalFetch(IProgressMonitor monitor, String remoteParent, String fileFilter, int type)
-	{
-		
-		LocalFileNameFilter fFilter = new LocalFileNameFilter(fileFilter);
-		
+	protected IHostFile[] internalFetch(IProgressMonitor monitor, String remoteParent, String fileFilter, int type) {
+		LocalFileNameFilter fFilter = new LocalFileNameFilter(fileFilter, type);
 		File localParent = new File(remoteParent);
-		
 		// if the system type is Windows, we get the canonical path so that we have the correct case in the path
 		// this is needed because Windows paths are case insensitive
 		if (isWindows()) {
-		
 			try {
 				localParent = localParent.getCanonicalFile();
-			}
-			catch (IOException e) {
+			} catch (IOException e) {
 				System.out.println("Can not get canonical path: " + localParent.getAbsolutePath());
 			}
 		}
-
-		if (remoteParent.endsWith(ArchiveHandlerManager.VIRTUAL_SEPARATOR))
-		{
+		if (remoteParent.endsWith(ArchiveHandlerManager.VIRTUAL_SEPARATOR)) {
 			remoteParent = remoteParent.substring(0, remoteParent.length() - ArchiveHandlerManager.VIRTUAL_SEPARATOR.length());
 		}
 		boolean isVirtual = ArchiveHandlerManager.isVirtual(remoteParent);
 		boolean isArchive = ArchiveHandlerManager.getInstance().isArchive(localParent);
-		if (isVirtual || isArchive)
-		{
-			try
-			{
+		if (isVirtual || isArchive) {
+			try {
 				VirtualChild[] contents = null;
-				
 				File theFile = getContainingArchive(localParent);
-				
-				if (isArchive)
-				{
+				if (isArchive) {
 					contents = ArchiveHandlerManager.getInstance().getContents(localParent, ""); //$NON-NLS-1$
-				}
-				else if (isVirtual)
-				{
+				} else if (isVirtual) {
 					AbsoluteVirtualPath avp = new AbsoluteVirtualPath(remoteParent);
 					contents = ArchiveHandlerManager.getInstance().getContents(theFile, avp.getVirtualPart());
 				}
-				
-				if (contents == null)
-				{
+				if (contents == null) {
 					return null;
 				}
-	
 				IHostFile[] results = new LocalVirtualHostFile[contents.length];
-	
-				for (int i = 0; i < contents.length; i++)
-				{
+				for (int i = 0; i < contents.length; i++) {
 					results[i] = new LocalVirtualHostFile(contents[i]);
-				}			
+				}
 				return results;
-			}
-			catch (IOException e)
-			{
+			} catch (IOException e) {
 				// FIXME: Do something!
 				return null;
 			}
-		}
-		else
-		{
+		} else {
 			//	allow cancel before doing the os query
-			if (monitor != null && monitor.isCanceled())
-			{
+			if (monitor != null && monitor.isCanceled()) {
 				return null;
 			}
-			if (!fFilter.isGeneric())
-			{
+			if (!fFilter.isGeneric()) {
 				File file = new File(localParent, fileFilter);
 				return convertToHostFiles(new File[] { file }, type);
 			}
-			if (localParent.exists())
-			{		
+			if (localParent.exists()) {
 				File[] files = localParent.listFiles(fFilter);
 				return convertToHostFiles(files, type);
-			}
-			else
-			{
+			} else {
 				return new IHostFile[0];
 			}
 		}

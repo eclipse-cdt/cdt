@@ -41,8 +41,6 @@ import org.eclipse.rse.subsystems.files.core.model.RemoteFileFilterString;
 import org.eclipse.rse.subsystems.files.core.model.SystemFileTransferModeRegistry;
 import org.eclipse.rse.ui.ISystemPreferencesConstants;
 import org.eclipse.rse.ui.RSEUIPlugin;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Shell;
 
 
 /**
@@ -1125,10 +1123,7 @@ public abstract class RemoteFile implements IRemoteFile,  IAdaptable, Comparable
 			String otherPath = other.getAbsolutePath();
 			String path = this.getAbsolutePath();
 			String otherHost = other.getHostName();
-			String otherHostAlias = other.getParentRemoteFileSubSystem().getHostAliasName();
-			return getHostName().equals(otherHost) && (path.equals(otherPath) || otherPath.equals(path));	
-			//return getParentRemoteFileSubSystem().getHostAliasName().equals(otherHostAlias);
-			
+			return getHostName().equals(otherHost) && path.equals(otherPath);				
 		}
 		else
 		{

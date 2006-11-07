@@ -23,17 +23,31 @@
 </table>
 <table><tbody><tr><td>
 <ul>
+<!--
 <li>The <a href="http://download.eclipse.org/dsdp/tm/updates/">TM Update Site</a> now uses <b>Signed Jarfiles</b>.</li>
+-->
+<li>There is a new update site which uses <b>signed Jarfiles</b>: 
+    <a href="http://download.eclipse.org/dsdp/tm/signedUpdates">
+    http://download.eclipse.org/dsdp/tm/signedUpdates</a>.<br/>
+    When testing signed jars, we came across 
+    <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=163421">bug 163421</a>,
+    so we want to further investigate the impact of this problem before we switch
+    the main TM update site to using signed jars.</li>
 <li>The <b>CDT Remote Launch Integration</b> is now available as a
-  download, or from the <a href="http://download.eclipse.org/dsdp/tm/updates/">Update Site</a>.</li>
+  download, or from the <a href="http://download.eclipse.org/dsdp/tm/updates/">Update Site</a>.
+  It also works for dstore connections now
+  (<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=158312">bug 158312</a>).</li>
 <!--
 <li>An <b>Experimental RSE EFS Provider</b> is now available as a
   download, or from the <a href="http://download.eclipse.org/dsdp/tm/updates/">Update Site</a>.</li>
 -->
 <li><b>Jakarta Commons Net</b> is now available for <b>FTP</b>.
-  A Telnet implementation is available (from Commons Net) but has not yet been integrated 
-  as an RSE subsystem.</li>
-<li>RSE now has an <b>FTP Only</b> system type (<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=160168">Bug 160168</a>)</li>
+  <ul>
+    <li>A Telnet implementation is available (from Commons Net) but has not 
+       yet been integrated as an RSE subsystem.</li>
+    <li>RSE now has an <b>FTP Only</b> system type (<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=160168">Bug 160168</a>)</li>
+    <li>FTP now logs the commands issued into a console (<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=161209">bug 161209</a>).</li>
+  </ul>
 <!--
 <li>Both Windows dstore daemon and server can now be started by simply double clicking on daemon.bat.
   Documentation has been updated
@@ -42,17 +56,72 @@
 <li>Numerous bugs have been fixed, and we consider RSE safe now for 
   all kinds of data transfer, even if it's done in multiple background sessions.</li>
 <li>Use 
-  <!-- <a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced&classification=DSDP&product=Target+Management&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&resolution=FIXED&resolution=WONTFIX&resolution=INVALID&resolution=WORKSFORME&chfieldfrom=2006-10-30&chfieldto=2006-11-03&chfield=resolution&cmdtype=doit"> -->
-  <a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced&classification=DSDP&product=Target+Management&target_milestone=1.0+RC4&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&resolution=FIXED&resolution=WONTFIX&resolution=INVALID&resolution=WORKSFORME&cmdtype=doit">
+  <a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced&classification=DSDP&product=Target+Management&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&resolution=FIXED&resolution=WONTFIX&resolution=INVALID&resolution=WORKSFORME&chfieldfrom=2006-11-03&chfieldto=2006-11-10&chfield=resolution&cmdtype=doit">
+  <!-- <a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced&classification=DSDP&product=Target+Management&target_milestone=1.0+RC4&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&resolution=FIXED&resolution=WONTFIX&resolution=INVALID&resolution=WORKSFORME&cmdtype=doit"> -->
   this query</a> to show the list of bugs fixed since the last milestone,
-  <a href="http://download.eclipse.org/dsdp/tm/downloads/drops/S-1.0RC3-200610300941/index.php">
-  RSE 1.0RC3</a>.</li>
+  <a href="http://download.eclipse.org/dsdp/tm/downloads/drops/S-1.0RC4-200611031816/index.php">
+  RSE 1.0RC4</a>.</li>
 <li>For details on checkins, see the
   <a href="http://download.eclipse.org/dsdp/tm/downloads/drops/N-changelog/index.html">
   RSE CVS changelog</a>, and the
   <a href="http://download.eclipse.org/dsdp/tm/downloads/drops/N-changelog/core/index.html">
   TM Core CVS changelog</a>.</li>
+<li>For other questions, please check the
+  <a href="http://wiki.eclipse.org/index.php/TM_and_RSE_FAQ">TM and RSE FAQ</a>
+  as well as the
+  <a href="http://wiki.eclipse.org/index.php/RSE_1.0_Known_Issues_and_Workarounds">
+  RSE 1.0 Known Issues and Workarounds</a>.</li>
 </ul>
+</td></tr></tbody></table>
+
+<table border="0" cellspacing="5" cellpadding="2" width="100%">
+	<tr>
+		<td align="LEFT" valign="TOP" colspan="3" bgcolor="#0080C0"><b>
+		<font face="Arial,Helvetica" color="#FFFFFF">Getting Started</font></b></td>
+	</tr>
+</table>
+<table><tbody><tr><td>
+<p>The RSE User Documentation now has a
+<a href="http://dsdp.eclipse.org/help/latest/index.jsp?topic=/org.eclipse.rse.doc.user/gettingstarted/g_start.html">
+Getting Started Tutorial</a> that guides you through installation, first steps,
+connection setup and important tasks.</p>
+</td></tr></tbody></table>
+
+<table border="0" cellspacing="5" cellpadding="2" width="100%">
+	<tr>
+		<td align="LEFT" valign="TOP" colspan="3" bgcolor="#0080C0"><b>
+		<font face="Arial,Helvetica" color="#FFFFFF">API Status</font></b></td>
+	</tr>
+</table>
+<table><tbody><tr><td>
+<p>As per the Target Management 
+<a href="http://www.eclipse.org/dsdp/tm/development/plan.php#M4">plan</a>,
+we reached API Freeze for RSE 1.0M4.</p>
+<p>In fact we have reviewed and documented all relevant APIs, and they
+have proven useful in earlier proprietary versions of RSE.<br/>
+Yet, due to a lack of public feedback so far we still want to 
+<b>declare the APIs provisional for now</b>.</p>
+<p>This means, that we reserve the right to change any API after RSE 1.0
+in a not backward compatible way. All such API changes will be voted on
+by committers on the <a href="http://dev.eclipse.org/mailman/listinfo/dsdp-tm-dev">
+dsdp-tm-dev</a> developer mailing list, and documented in a migration guide
+for future releases.</p>
+<p>Currently, we see the following areas for potential API changes:
+<ul>
+  <li>Classes and Interfaces that are not meant for public use will be
+   moved to packages tagged as <tt>internal</tt>. This will apply 
+   particularly to the "implementation" plugins for the ssh, ftp and
+   local subsystems (these do not define any new APIs anyways).</li>
+  <li>The <tt>IConnectorService</tt> interface may be slightly modified
+   in order to allow for better UI / Non-UI separation.</li>
+  <li>Some more RSE Model classes may be moved from the UI plugin to the 
+   non-UI core plugin.</li>
+</ul>
+If you want to start programming against RSE APIs now, best let us know
+about your endeavours and keep yourself up-to-date. Stay in contact with
+the <a href="http://dev.eclipse.org/mailman/listinfo/dsdp-tm-dev">
+dsdp-tm-dev</a> developer mailing list, and give feedback to make the 
+APIs better.
 </td></tr></tbody></table>
 
 <table border="0" cellspacing="5" cellpadding="2" width="100%">
@@ -125,48 +194,6 @@ these methods, such as listFiles(), now includes an IProgressMonitor as the last
 <table border="0" cellspacing="5" cellpadding="2" width="100%">
 	<tr>
 		<td align="LEFT" valign="TOP" colspan="3" bgcolor="#0080C0"><b>
-		<font face="Arial,Helvetica" color="#FFFFFF">Getting Started</font></b></td>
-	</tr>
-</table>
-<table><tbody><tr><td>
-<p>The RSE User Documentation now has a
-<a href="http://dsdp.eclipse.org/help/latest/index.jsp?topic=/org.eclipse.rse.doc.user/gettingstarted/g_start.html">
-Getting Started Tutorial</a> that guides you through installation, first steps,
-connection setup and important tasks.</p>
-</td></tr></tbody></table>
-
-<table border="0" cellspacing="5" cellpadding="2" width="100%">
-	<tr>
-		<td align="LEFT" valign="TOP" colspan="3" bgcolor="#0080C0"><b>
-		<font face="Arial,Helvetica" color="#FFFFFF">API Freeze</font></b></td>
-	</tr>
-</table>
-<table><tbody><tr><td>
-<p>As per the Target Management 
-<a href="http://www.eclipse.org/dsdp/tm/development/plan.php#M4">plan</a>,
-we reached API Freeze for RSE M4.</p>
-<p>In fact we have reviewed and documented all relevant APIs, but just like most
-Eclipse projects, we'll still reserve the right to make API improvements when
-committers vote on them. Votes will be held publicly, such that everyone will
-be informed in case the APIs should change.</p>
-<p>Currently, we see the following areas for potential API changes:
-<ul>
-  <li>Classes and Interfaces that are not meant for public use will be
-   moved to packages tagged as <tt>internal</tt>. This will apply 
-   particularly to the "implementation" plugins for the ssh, ftp and
-   local subsystems (these do not define any new APIs anyways).</li>
-  <li>The <tt>IConnectorService</tt> interface may be slightly modified
-   in order to allow for better UI / Non-UI separation.</li>
-  <li>Some more RSE Model classes may be moved from the UI plugin to the 
-   non-UI core plugin.</li>
-</ul>
-If you want to start programming against RSE APIs now, best let us know
-about your endeavours and keep yourself up-to-date.
-</td></tr></tbody></table>
-
-<table border="0" cellspacing="5" cellpadding="2" width="100%">
-	<tr>
-		<td align="LEFT" valign="TOP" colspan="3" bgcolor="#0080C0"><b>
 		<font face="Arial,Helvetica" color="#FFFFFF">Known Problems and Workarounds</font></b></td>
 	</tr>
 </table>
@@ -176,20 +203,21 @@ deliverables did not make it into this build:
 <ul>
 <li>User Actions, and Import/Export were deferred with M3 already. 
   A new plan has been published with M3 already.</li>
-<li>JUnit tests did not make it into the build due to pending IP legal review.
-  They are available from Bugzilla 
+<li>JUnit tests did not make it into the build because IP legal review was 
+  not completed in time. The Unit Test Framework is available from Bugzilla
   <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=149080">bug 149080</a>
-  instead. Due to the missing Unit Test Framework, automated tests could also
-  not yet be added to this build.</li>
+  instead. Most of this has been committed into the CVS Repository already,
+  but actual Unit Tests making use of the framework do not exist yet.
+  </li>
 </ul>
 The following critical or major bugs are currently known.
 We'll strive to fix these as soon as possible.
 <ul>
   <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=162883">bug 162883</a> - maj - [shell updating] No prompt on Solaris local shell</li>
-  <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=163267">bug 163267</a> - maj - After a period of not using the Windows dstore connectio gets unusable</li>
-  <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=163381">bug 163381</a> - cri - refresh doesn't refresh when browsing the same folder on 2 connections</li>
-  <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=163264">bug 163264</a> - maj - FTP Only can not delete first subfolder</li>
   <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=162993">bug 162993</a> - maj - ssh connection gets confused</li>
+  <!--
+  <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=163264">bug 163264</a> - maj - FTP Only can not delete first subfolder</li>
+  -->
 </ul>
 <!--
 <p>No major or critical bugs are currently known.
@@ -199,9 +227,11 @@ Use
 for an up-to-date list of major or critical bugs.</p>
 
 <p>The 
-<a href="http://wiki.eclipse.org/index.php/RSE_1.0RC4_Known_Issues_and_Workarounds">
-RSE 1.0RC4 Known Issues and Workarounds</a> Wiki page gives an up-to-date list
-of the most frequent and obvious problems, and describes workarounds for them.
+<a href="http://wiki.eclipse.org/index.php/RSE_1.0_Known_Issues_and_Workarounds">
+RSE 1.0 Known Issues and Workarounds</a> Wiki page gives an up-to-date list
+of the most frequent and obvious problems, and describes workarounds for them.<br/>
+If you have other questions regarding RSE, please check the
+<a href="http://wiki.eclipse.org/index.php/TM_and_RSE_FAQ">TM and RSE FAQ</a>
 </p>
 
 <p>Click 

@@ -838,7 +838,7 @@ public class SystemView extends TreeViewer implements ISystemTree, ISystemResour
 				//}
 			}
 
-			// wail through all actions, updating shell and selection
+			// whale through all actions, updating shell and selection
 			IContributionItem[] items = menu.getItems();
 			for (int idx = 0; idx < items.length; idx++) {
 				if ((items[idx] instanceof ActionContributionItem) && (((ActionContributionItem) items[idx]).getAction() instanceof ISystemAction)) {

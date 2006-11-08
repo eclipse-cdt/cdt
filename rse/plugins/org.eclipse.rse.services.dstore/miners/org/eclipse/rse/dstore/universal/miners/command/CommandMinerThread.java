@@ -136,7 +136,7 @@ public class CommandMinerThread extends MinerThread
 			{
 				_cwdStr = System.getProperty("user.home");
 			}
-
+			_status.setAttribute(DE.A_SOURCE, _cwdStr);
 
 			String theShell = null;
 			if (!_isWindows)
@@ -376,35 +376,6 @@ public class CommandMinerThread extends MinerThread
 		_stdErrorHandler = new OutputHandler(_stdError, null, _isWindows || _isTTY, true, _isShell, this);
 		_stdErrorHandler.setWaitTime(10);
 		_stdErrorHandler.start();
-
-		if (_isOS400)
-		{
-		    /*
-			//DKM - this isn't working properly from merge environments
-			// so I'm keeping these exports for now
-		    try
-		    {
-			_stdOutput.write("export QIBM_JAVA_STDIO_CONVERT=Y");
-			_stdOutput.write("export QIBM_USE_DESCRIPTOR_STDIO=I");
-			_stdOutput.write("\r");
-			_stdOutput.flush();
-		    }
-		    catch (IOException e)
-		    {
-		        
-		    }
-			
-    		sendInput("export PASE_STDIO_ISATTY=N");
-    		
-    	    sendInput("export QPTY_ISATTY=Y");
-    	    sendInput("export STDIO_ISATTY=Y");
-    	    sendInput("export TERMINAL_TYPE=REMOTE"); 
-    	  
-    	    sendInput("export QIBM_PASE_DESCRIPTOR_STDIO=T");
-    		sendInput("export QIBM_DESCRIPTOR_STDIN=CRLN=Y");      
-    		*/
-		}
-		
     	
 		getCurrentProccesses();
 		queryCWD();

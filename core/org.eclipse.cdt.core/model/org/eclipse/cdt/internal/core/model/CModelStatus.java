@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.model;
 
@@ -189,7 +190,7 @@ public class CModelStatus extends Status implements ICModelStatus, ICModelStatus
 					return CoreModelMessages.getFormattedString("status.ParserError"); //$NON-NLS-1$
 
 				case ELEMENT_DOES_NOT_EXIST :
-					return CoreModelMessages.getFormattedString("element.doesNotExist", getFirstElementName()); //$NON-NLS-1$
+					return CoreModelMessages.getFormattedString("status.elementDoesNotExist", getFirstElementName()); //$NON-NLS-1$
 
 				case EVALUATION_ERROR :
 					return CoreModelMessages.getFormattedString("status.evaluationError", getString()); //$NON-NLS-1$
@@ -250,7 +251,7 @@ public class CModelStatus extends Status implements ICModelStatus, ICModelStatus
 					if (fString != null) {
 						return fString;
 					}
-					return CoreModelMessages.getFormattedString("status.nameCollision", sb.toString()); //$NON-NLS-1$ //$NON-NLS-2$
+					return CoreModelMessages.getFormattedString("status.nameCollision", sb.toString()); //$NON-NLS-1$
 
 				case NO_ELEMENTS_TO_PROCESS :
 					return CoreModelMessages.getFormattedString("operation.needElements"); //$NON-NLS-1$

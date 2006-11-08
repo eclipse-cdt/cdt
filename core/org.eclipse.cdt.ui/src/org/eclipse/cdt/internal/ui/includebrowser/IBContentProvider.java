@@ -13,18 +13,21 @@ package org.eclipse.cdt.internal.ui.includebrowser;
 
 import java.util.ArrayList;
 
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.swt.widgets.Display;
 
-import org.eclipse.cdt.core.model.CModelException;
-import org.eclipse.cdt.core.model.CoreModel;
-import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.index.IIndex;
+import org.eclipse.cdt.core.index.IIndexFile;
+import org.eclipse.cdt.core.index.IIndexInclude;
+import org.eclipse.cdt.core.index.IIndexManager;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.ui.CUIPlugin;
 
-import org.eclipse.cdt.internal.ui.missingapi.CIndexQueries;
-import org.eclipse.cdt.internal.ui.missingapi.CIndexIncludeRelation;
 import org.eclipse.cdt.internal.ui.viewsupport.AsyncTreeContentProvider;
 
 /** 
@@ -53,7 +56,7 @@ public class IBContentProvider extends AsyncTreeContentProvider {
 	protected Object[] syncronouslyComputeChildren(Object parentElement) {
 		if (parentElement instanceof ITranslationUnit) {
 			ITranslationUnit tu = (ITranslationUnit) parentElement;
-			return new Object[] { new IBNode(null, new IBFile(tu), null, null, 0, 0) };
+			return new Object[] { new IBNode(null, new IBFile(tu), null, null, 0, 0, 0) };
 		}
 		if (parentElement instanceof IBNode) {
 			IBNode node = (IBNode) parentElement;
@@ -69,50 +72,63 @@ public class IBContentProvider extends AsyncTreeContentProvider {
 		if (parentElement instanceof IBNode) {
 			IBNode node = (IBNode) parentElement;
 			ITranslationUnit tu= node.getRepresentedTranslationUnit();
-			if (tu != null) {
-				CIndexIncludeRelation[] includes;
+			if (tu == null) {
+				return NO_CHILDREN;
+			}
+			
+			IIndex index;
+			try {
+				index = CCorePlugin.getIndexManager().getIndex(tu.getCProject(), 
+						fComputeIncludedBy ? IIndexManager.ADD_DEPENDENT : IIndexManager.ADD_DEPENDENCIES);
+				index.acquireReadLock();
+			} catch (CoreException e) {
+				CUIPlugin.getDefault().log(e);
+				return NO_CHILDREN;
+			} catch (InterruptedException e) {
+				return NO_CHILDREN;
+			}
+			
+			try {
 				IBFile directiveFile= null;
 				IBFile targetFile= null;
+				IIndexInclude[] includes;
 				if (fComputeIncludedBy) {
-					ICProject[] projects;
-					try {
-						projects = CoreModel.getDefault().getCModel().getCProjects();
-					} catch (CModelException e) {
-						CUIPlugin.getDefault().log(e);
-						return NO_CHILDREN;
-					}
-					includes= CIndexQueries.getInstance().findIncludedBy(projects, tu, NPM);
+					includes= findIncludedBy(index, tu, NPM);
 				}
 				else {
-					includes= CIndexQueries.getInstance().findIncludesTo(tu, NPM);
+					includes= findIncludesTo(index, tu, NPM);
 					directiveFile= node.getRepresentedFile();
 				}
 				if (includes.length > 0) {
 					ArrayList result= new ArrayList(includes.length);
 					for (int i = 0; i < includes.length; i++) {
-						CIndexIncludeRelation include = includes[i];
+						IIndexInclude include = includes[i];
 						try {
+							Path includesPath = new Path(include.getIncludesLocation());
 							if (fComputeIncludedBy) {
-								directiveFile= targetFile= new IBFile(tu.getCProject(), include.getIncludedBy());
+								directiveFile= targetFile= new IBFile(tu.getCProject(), new Path(include.getIncludedByLocation()));
 							}
 							else {
-								targetFile= new IBFile(tu.getCProject(), include.getIncludes());
+								targetFile= new IBFile(tu.getCProject(), includesPath);
 							}
-						} catch (CModelException e) {
-							CUIPlugin.getDefault().log(e);
-							targetFile= null;
-						}
-
-						if (targetFile != null) {
 							IBNode newnode= new IBNode(node, targetFile, directiveFile, 
-									include.getName(), include.getOffset(), include.getTimestamp());
-							newnode.setIsActiveCode(include.isActiveCode());
+									includesPath.lastSegment(), include.getNameOffset(), 
+									include.getNameLength(), 
+									include.getIncludedBy().getTimestamp());
+							newnode.setIsActiveCode(true);
 							newnode.setIsSystemInclude(include.isSystemInclude());
 							result.add(newnode);
 						}
+						catch (CoreException e) {
+							CUIPlugin.getDefault().log(e);
+						}
 					}
+
 					return result.toArray();
 				}
+			}
+			finally {
+				index.releaseReadLock();
 			}
 		}
 		return NO_CHILDREN;
@@ -126,5 +142,38 @@ public class IBContentProvider extends AsyncTreeContentProvider {
 
 	public boolean getComputeIncludedBy() {
 		return fComputeIncludedBy;
+	}
+	
+	
+	private IIndexInclude[] findIncludedBy(IIndex index, ITranslationUnit tu, IProgressMonitor pm) {
+		try {
+			IPath location= tu.getLocation();
+			if (location != null) {
+				IIndexFile file= index.getFile(location);
+				if (file != null) {
+					return index.findIncludedBy(file);
+				}
+			}
+		}
+		catch (CoreException e) {
+			CUIPlugin.getDefault().log(e);
+		} 
+		return new IIndexInclude[0];
+	}
+
+	public IIndexInclude[] findIncludesTo(IIndex index, ITranslationUnit tu, IProgressMonitor pm) {
+		try {
+			IPath location= tu.getLocation();
+			if (location != null) {
+				IIndexFile file= index.getFile(location);
+				if (file != null) {
+					return index.findIncludes(file);
+				}
+			}
+		}
+		catch (CoreException e) {
+			CUIPlugin.getDefault().log(e);
+		} 
+		return new IIndexInclude[0];
 	}
 }

@@ -114,7 +114,7 @@ public class IndexIncludeTest extends IndexTestBase {
 	private void checkContext() throws Exception {
 		final long timestamp= System.currentTimeMillis();
 		final IFile file= (IFile) fProject.getProject().findMember(new Path("included.h"));
-		assertNotNull(file);
+		assertNotNull("Can't find included.h", file);
 		waitForIndexer();
 		
 		ResourcesPlugin.getWorkspace().run(new IWorkspaceRunnable() {
@@ -122,12 +122,13 @@ public class IndexIncludeTest extends IndexTestBase {
 				file.setContents(new ByteArrayInputStream( "int included; int CONTEXT;\n".getBytes()), false, false, NPM);
 			}
 		}, NPM);
-		TestSourceReader.waitUntilFileIsIndexed(fIndex, file, 1000);
+		assertTrue("Timestamp was not increased", file.getLocalTimeStamp() >= timestamp);
+		TestSourceReader.waitUntilFileIsIndexed(fIndex, file, 4000);
 		fIndex.acquireReadLock();
 		try {
 			IIndexFile ifile= fIndex.getFile(file.getLocation());
-			assertNotNull(ifile);
-			assertTrue(ifile.getTimestamp() >= timestamp);
+			assertNotNull("Can't find " + file.getLocation(), ifile);
+			assertTrue("timestamp not ok", ifile.getTimestamp() >= timestamp);
 
 			IIndexBinding[] result= fIndex.findBindings(Pattern.compile("testInclude_cpp"), true, IndexFilter.ALL, NPM);
 			assertEquals(1, result.length);
@@ -140,7 +141,6 @@ public class IndexIncludeTest extends IndexTestBase {
 	// {source20061107}
 	// #include "user20061107.h"
 	// #include <system20061107.h>
-	
 	public void testIncludeProperties() throws Exception {
 		waitForIndexer();
 		TestScannerProvider.sIncludes= new String[]{fProject.getProject().getLocation().toOSString()};
@@ -169,6 +169,35 @@ public class IndexIncludeTest extends IndexTestBase {
 			TestScannerProvider.sIncludes= null;
 		}
 	}
+	
+	public void testIncludeProperties_2() throws Exception {
+		TestScannerProvider.sIncludes= new String[]{fProject.getProject().getLocation().toOSString()};
+		try {
+			TestSourceReader.createFile(fProject.getProject(), "header20061107.h", "");
+			String content = "// comment \n#include \"header20061107.h\"\n";
+			IFile file= TestSourceReader.createFile(fProject.getProject(), "intermed20061107.h", content);
+			TestSourceReader.createFile(fProject.getProject(), "source20061107.cpp", "#include \"intermed20061107.h\"\n");
+			CCoreInternals.getPDOMManager().getIndexer(fProject).reindex();
+			waitForIndexer();
+			
+
+			fIndex.acquireReadLock();
+			try {
+				IIndexFile ifile= fIndex.getFile(file.getLocation());
+				assertNotNull(ifile);
+				IIndexInclude[] includes= ifile.getIncludes();
+				assertEquals(1, includes.length);
+				
+				checkInclude(includes[0], content, "header20061107.h", false);
+			}
+			finally {
+				fIndex.releaseReadLock();
+			}
+		}
+		finally {
+			TestScannerProvider.sIncludes= null;
+		}
+	}
 
 	private void checkInclude(IIndexInclude include, String content, String includeName, boolean isSystem) throws CoreException {
 		int offset= content.indexOf(includeName);
@@ -176,4 +205,5 @@ public class IndexIncludeTest extends IndexTestBase {
 		assertEquals(includeName.length(), include.getNameLength());
 		assertEquals(isSystem, include.isSystemInclude());
 	}	
+
 }

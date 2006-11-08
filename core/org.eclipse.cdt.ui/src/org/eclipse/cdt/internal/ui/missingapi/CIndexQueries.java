@@ -12,8 +12,6 @@
 package org.eclipse.cdt.internal.ui.missingapi;
 
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
@@ -34,9 +32,6 @@ import org.eclipse.cdt.core.dom.ast.IFunction;
 import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.core.dom.ast.c.ICExternalBinding;
 import org.eclipse.cdt.core.index.IIndex;
-import org.eclipse.cdt.core.index.IIndexFile;
-import org.eclipse.cdt.core.index.IIndexInclude;
-import org.eclipse.cdt.core.index.IIndexManager;
 import org.eclipse.cdt.core.index.IIndexName;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.ICElement;
@@ -57,7 +52,6 @@ import org.eclipse.cdt.internal.corext.util.CModelUtil;
 public class CIndexQueries {
     private static final int ASTTU_OPTIONS = ITranslationUnit.AST_SKIP_INDEXED_HEADERS;
 	private static final ICElement[] EMPTY_ELEMENTS = new ICElement[0];
-    private static final CIndexIncludeRelation[] EMPTY_INCLUDES = new CIndexIncludeRelation[0];
     private static final CIndexQueries sInstance= new CIndexQueries();
 	
 	public static CIndexQueries getInstance() {
@@ -99,87 +93,6 @@ public class CIndexQueries {
 		return false;
 	}
 
-	/**
-	 * Searches for all include-relations that include the given translation unit.
-	 * @param scope the projects to be searched.
-	 * @param tu a translation unit
-	 * @param pm a monitor for reporting progress.
-	 * @return an array of include relations.
-	 * @since 4.0
-	 */
-	public CIndexIncludeRelation[] findIncludedBy(ICProject[] scope, ITranslationUnit tu, IProgressMonitor pm) {
-		HashMap result= new HashMap();
-		try {
-			IIndex index= CCorePlugin.getIndexManager().getIndex(scope);
-			index.acquireReadLock();
-			
-			try {
-				IPath location= tu.getLocation();
-				if (location != null) {
-					IIndexFile file= index.getFile(location);
-					if (file != null) {
-						IIndexInclude[] includes= index.findIncludedBy(file);
-						for (int i = 0; i < includes.length; i++) {
-							IIndexInclude include = includes[i];
-							CIndexIncludeRelation rel= new CIndexIncludeRelation(include);
-							result.put(rel.getIncludedBy(), rel);
-						}
-					}
-				}
-			}
-			finally {
-				index.releaseReadLock();
-			}
-		}
-		catch (InterruptedException e) {
-		} 
-		catch (CoreException e) {
-			CUIPlugin.getDefault().log(e);
-		}
-		Collection includes= result.values();
-		return (CIndexIncludeRelation[]) includes.toArray(new CIndexIncludeRelation[includes.size()]);
-	}
-	
-	/**
-	 * Searches for all include-relations defined in the given translation unit.
-	 * @param tu a translation unit.
-	 * @param pm a monitor to report progress.
-	 * @return an array of include relations.
-	 * @since 4.0
-	 */
-	public CIndexIncludeRelation[] findIncludesTo(ITranslationUnit tu, IProgressMonitor pm) {
-		try {
-			ICProject cproject= tu.getCProject();
-			if (cproject != null) {
-				IIndex index= CCorePlugin.getIndexManager().getIndex(cproject, IIndexManager.ADD_DEPENDENCIES);
-				index.acquireReadLock();
-				try {
-					IPath location= tu.getLocation();
-					if (location != null) {
-						IIndexFile file= index.getFile(location);
-						if (file != null) {
-							IIndexInclude includes[]= index.findIncludes(file);
-							ArrayList result= new ArrayList();
-							for (int i = 0; i < includes.length; i++) {
-								IIndexInclude include = includes[i];
-								result.add(new CIndexIncludeRelation(include));
-							}
-							return (CIndexIncludeRelation[]) result.toArray(new CIndexIncludeRelation[result.size()]);
-						}
-					}
-				}
-				finally {
-					index.releaseReadLock();
-				}
-			}
-		}
-		catch (CoreException e) {
-			CUIPlugin.getDefault().log(e);
-		} 
-		catch (InterruptedException e) {
-		}	
-		return EMPTY_INCLUDES;
-	}
 
 	/**
 	 * Searches for functions and methods that call a given element.

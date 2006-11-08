@@ -141,7 +141,9 @@ public class DOMScanner extends BaseScanner {
             char[] filenamePath, boolean local, int startOffset,
             int startingLineNumber, int nameOffset, int nameEndOffset,
             int nameLine, int endOffset, int endLine, boolean isForced) {
-        return new DOMInclusion(filenamePath, getGlobalOffset(startOffset), nameOffset, nameEndOffset, fileName, !local);
+        return new DOMInclusion(filenamePath, getGlobalOffset(startOffset), 
+        		getGlobalOffset(nameOffset), getGlobalOffset(nameEndOffset), 
+        		fileName, !local);
     }
 
     /*

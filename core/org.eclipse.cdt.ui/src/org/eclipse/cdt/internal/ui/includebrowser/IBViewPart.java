@@ -659,7 +659,7 @@ public class IBViewPart extends ViewPart
             IWorkbenchPage page= getSite().getPage();
         	IBFile ibf= node.getDirectiveFile();
             if (ibf != null) {
-                IRegion region= new Region(node.getDirectiveCharacterOffset(), node.getDirectiveName().length() + 2);
+                IRegion region= new Region(node.getDirectiveCharacterOffset(), node.getDirectiveLength());
                 long timestamp= node.getTimestamp();
 
                 IFile f= ibf.getResource();

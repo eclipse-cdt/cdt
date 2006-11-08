@@ -192,13 +192,13 @@ public class AsyncViewerTest extends BaseUITestCase {
         
         // + a
         // + b
-        dlg.fViewer.setInput(root); runEventQueue(0);
+        dlg.fViewer.setInput(root); runEventQueue(50);
         assertEquals(2, countVisibleItems(dlg.fViewer));
 
         // - a
         //   - ...
         // + b
-        dlg.fViewer.setExpandedState(a, true); runEventQueue(0);
+        dlg.fViewer.setExpandedState(a, true); runEventQueue(50);
         assertEquals("...", dlg.fViewer.getTree().getItem(0).getItem(0).getText());
         assertEquals(3, countVisibleItems(dlg.fViewer));
         
@@ -211,10 +211,10 @@ public class AsyncViewerTest extends BaseUITestCase {
         // + a
         // + b
         dlg.fViewer.setInput(null); 
-        dlg.fViewer.setInput(root); runEventQueue(0);
+        dlg.fViewer.setInput(root); runEventQueue(50);
         
         // expand async with two children
-        dlg.fViewer.setExpandedState(b, true); runEventQueue(0);
+        dlg.fViewer.setExpandedState(b, true); runEventQueue(50);
         // + a
         // - b
         //   - ...
@@ -231,7 +231,7 @@ public class AsyncViewerTest extends BaseUITestCase {
         // + a
         // + b
         dlg.fViewer.setInput(null); 
-        dlg.fViewer.setInput(root); runEventQueue(0);
+        dlg.fViewer.setInput(root); runEventQueue(50);
 
         // wait until children are computed (for the sake of the +-sign)
         runEventQueue(800); 
@@ -255,7 +255,7 @@ public class AsyncViewerTest extends BaseUITestCase {
                 }, 150)
             }, 0);
         
-        dlg.fViewer.setInput(root); runEventQueue(0);
+        dlg.fViewer.setInput(root); runEventQueue(50);
         assertEquals(2, countVisibleItems(dlg.fViewer));
 
         dlg.fContentProvider.recompute();

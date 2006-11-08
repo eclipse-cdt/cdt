@@ -160,12 +160,19 @@ public class SshServiceCommandShell extends ServiceCommandShell implements ISyst
 			addOutput(output);
 			outputs.add(output);
 		}
-		if (_lastRefreshJob == null || _lastRefreshJob.isComplete())
+		IRemoteOutput[] remoteOutputs = (IRemoteOutput[])outputs.toArray(new IRemoteOutput[outputs.size()]);
+		//if (_lastRefreshJob == null || _lastRefreshJob.isComplete())
 		{
-			IRemoteOutput[] remoteOutputs = (IRemoteOutput[])outputs.toArray(new IRemoteOutput[outputs.size()]);
 			_lastRefreshJob = new OutputRefreshJob(this, remoteOutputs, false);
 			_lastRefreshJob.schedule();
 		}
+		/*
+		else
+		{
+			_lastRefreshJob.addOutputs(remoteOutputs);
+			_lastRefreshJob.schedule();
+		}
+		*/
 	}
 	
 	/**

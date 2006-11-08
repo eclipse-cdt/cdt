@@ -43,7 +43,7 @@ public class DefaultDsfExecutor extends ScheduledThreadPoolExecutor
         Thread fThread;
         public Thread newThread(Runnable r) {
             assert fThread == null;  // Should be called only once.
-            fThread = new Thread(new ThreadGroup("DSF Thread Group"), r, "DSF Dispatch Thread", 0); 
+            fThread = new Thread(new ThreadGroup("DSF Thread Group"), r, "DSF Dispatch Thread", 0);   //$NON-NLS-1$//$NON-NLS-2$
             return fThread;
         }
     }
@@ -64,7 +64,7 @@ public class DefaultDsfExecutor extends ScheduledThreadPoolExecutor
     @Override
     protected void afterExecute(Runnable r, Throwable t) {
         if (r instanceof Future) {
-            Future future = (Future)r;
+            Future<?> future = (Future<?>)r;
             try {
                 /*
                  * Try to retrieve the value, which should throw exception in 
@@ -89,14 +89,14 @@ public class DefaultDsfExecutor extends ScheduledThreadPoolExecutor
         ILog log = DsfPlugin.getDefault().getLog();
         if (log != null) {
             log.log(new Status(
-                IStatus.ERROR, DsfPlugin.PLUGIN_ID, -1, "Uncaught exception in DSF executor thread", t));
+                IStatus.ERROR, DsfPlugin.PLUGIN_ID, -1, "Uncaught exception in DSF executor thread", t)); //$NON-NLS-1$
         }                   
         // Print out the stack trace to console if assertions are enabled. 
         if(ASSERTIONS_ENABLED) {
             ByteArrayOutputStream outStream = new ByteArrayOutputStream(512);
             PrintStream printStream = new PrintStream(outStream);
             try {
-                printStream.write("Uncaught exception in session executor thread: ".getBytes());
+                printStream.write("Uncaught exception in session executor thread: ".getBytes()); //$NON-NLS-1$
             } catch (IOException e2) {}
             t.printStackTrace(new PrintStream(outStream));
             System.err.println(outStream.toString());
@@ -180,32 +180,32 @@ public class DefaultDsfExecutor extends ScheduledThreadPoolExecutor
                 traceBuilder.append(getExecutable().getClass().getName());
                 
                 // Add executable's toString().
-                traceBuilder.append("\n        ");
+                traceBuilder.append("\n        "); //$NON-NLS-1$
                 traceBuilder.append(getExecutable().toString());
 
                 // Append "create by" info.
                 if (getExecutable() instanceof DsfExecutable) {
                     DsfExecutable dsfExecutable = (DsfExecutable)getExecutable(); 
                     if (dsfExecutable.fCreatedAt != null || dsfExecutable.fCreatedBy != null) {
-                        traceBuilder.append("\n            created  ");
+                        traceBuilder.append("\n            created  "); //$NON-NLS-1$
                         if (dsfExecutable.fCreatedBy != null) {
-                            traceBuilder.append(" by #");
+                            traceBuilder.append(" by #"); //$NON-NLS-1$
                             traceBuilder.append(dsfExecutable.fCreatedBy.fSequenceNumber);
                         }
                         if (dsfExecutable.fCreatedAt != null) {
-                            traceBuilder.append(" at ");
+                            traceBuilder.append(" at "); //$NON-NLS-1$
                             traceBuilder.append(dsfExecutable.fCreatedAt.fStackTraceElements[0].toString());
                         }   
                     }
                 }
     
                 // Submitted info
-                traceBuilder.append("\n            submitted");
+                traceBuilder.append("\n            submitted"); //$NON-NLS-1$
                 if (fSubmittedBy != null) {
-                    traceBuilder.append(" by #");
+                    traceBuilder.append(" by #"); //$NON-NLS-1$
                     traceBuilder.append(fSubmittedBy.fSequenceNumber);
                 }
-                traceBuilder.append(" at ");
+                traceBuilder.append(" at "); //$NON-NLS-1$
                 traceBuilder.append(fSubmittedAt.fStackTraceElements[0].toString());
                                 
                 // Finally write out to console

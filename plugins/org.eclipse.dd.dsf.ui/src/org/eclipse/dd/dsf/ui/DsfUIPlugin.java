@@ -19,7 +19,7 @@ import org.osgi.framework.BundleContext;
 public class DsfUIPlugin extends AbstractUIPlugin {
 
 	// The plug-in ID
-	public static final String PLUGIN_ID = "org.eclipse.dd.dsf.ui";
+	public static final String PLUGIN_ID = "org.eclipse.dd.dsf.ui"; //$NON-NLS-1$
 
 	// The shared instance
 	private static DsfUIPlugin fgPlugin;

@@ -42,7 +42,7 @@ public interface IDsfService {
      * Property name for the session-id of this service.  This property should be set by 
      * all DSF services when they are registered with OSGI service framework. 
      */
-    final static String PROP_SESSION_ID = "org.eclipse.dd.dsf.service.IService.session_id";
+    final static String PROP_SESSION_ID = "org.eclipse.dd.dsf.service.IService.session_id"; //$NON-NLS-1$
     
     /** 
      * Error code indicating that the service is in a state which does not allow the 
@@ -84,6 +84,7 @@ public interface IDsfService {
     /**
      * Returns the map of properties that this service was registered with.
      */
+    @SuppressWarnings("unchecked")
     Dictionary getProperties();
     
     /**

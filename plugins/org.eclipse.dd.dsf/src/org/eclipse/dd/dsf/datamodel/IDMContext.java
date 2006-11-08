@@ -73,5 +73,5 @@ public interface IDMContext<V extends IDMData> extends IAdaptable
      * the client.
      * @return parent context of this context.
      */
-    public IDMContext[] getParents();
+    public IDMContext<?>[] getParents();
 }

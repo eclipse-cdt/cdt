@@ -48,7 +48,7 @@ public abstract class DoneCollector extends Done {
      *
      */
     public DoneCollector(DsfExecutor executor) {
-        setStatus(new MultiStatus(DsfPlugin.PLUGIN_ID, 0, "Collective status for set of sub-operations.", null));
+        setStatus(new MultiStatus(DsfPlugin.PLUGIN_ID, 0, "Collective status for set of sub-operations.", null)); //$NON-NLS-1$
         fExecutor = executor;
     }
     
@@ -108,6 +108,6 @@ public abstract class DoneCollector extends Done {
     
     @Override
     public String toString() {
-        return "Done Collector: " + getStatus().toString();
+        return "Done Collector: " + getStatus().toString(); //$NON-NLS-1$
     }
 }

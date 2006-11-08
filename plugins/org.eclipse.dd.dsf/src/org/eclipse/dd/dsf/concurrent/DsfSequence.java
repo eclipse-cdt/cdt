@@ -110,10 +110,10 @@ abstract public class DsfSequence extends DsfRunnable implements Future<Object> 
     final private Done fDone;
     
     /** Status indicating the success/failure of the test.  Used internally only. */
-    @ConfinedToDsfExecutor("getExecutor")
+    @ConfinedToDsfExecutor("getExecutor") 
     private IStatus fStatus = Status.OK_STATUS;    
     
-    @ConfinedToDsfExecutor("getExecutor")
+    @ConfinedToDsfExecutor("getExecutor") 
     private int fCurrentStepIdx = 0;
     
     /** Task name for this sequence used with the progress monitor */ 
@@ -128,12 +128,12 @@ abstract public class DsfSequence extends DsfRunnable implements Future<Object> 
     
     /** Convenience constructor with limited arguments. */
     public DsfSequence(DsfExecutor executor) {
-        this(executor, new NullProgressMonitor(), "", "", null);
+        this(executor, new NullProgressMonitor(), "", "", null); //$NON-NLS-1$ //$NON-NLS-2$
     }
 
     /** Convenience constructor with limited arguments. */
     public DsfSequence(DsfExecutor executor, Done done) {
-        this(executor, new NullProgressMonitor(), "", "", done);
+        this(executor, new NullProgressMonitor(), "", "", done); //$NON-NLS-1$ //$NON-NLS-2$
     }
 
     /**
@@ -285,7 +285,7 @@ abstract public class DsfSequence extends DsfRunnable implements Future<Object> 
                     }
                 }
                 public String toString() {
-                    return "DsfSequence \"" + fTaskName + "\", result for executing step #" + fStepIdx + " = " + getStatus();
+                    return "DsfSequence \"" + fTaskName + "\", result for executing step #" + fStepIdx + " = " + getStatus(); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
                 }
             });
         } catch(Throwable t) {
@@ -297,7 +297,7 @@ abstract public class DsfSequence extends DsfRunnable implements Future<Object> 
              */ 
             abortExecution(new Status(
                 IStatus.ERROR, DsfPlugin.PLUGIN_ID, 0, 
-                "Unhandled exception when executing DsfSequence " + this + ", step #" + fCurrentStepIdx, 
+                "Unhandled exception when executing DsfSequence " + this + ", step #" + fCurrentStepIdx,  //$NON-NLS-1$ //$NON-NLS-2$
                 t));
             
             /*
@@ -338,7 +338,7 @@ abstract public class DsfSequence extends DsfRunnable implements Future<Object> 
                 };
                 @Override
                 public String toString() {
-                    return "DsfSequence \"" + fTaskName + "\", result for rolling back step #" + fStepIdx + " = " + getStatus();
+                    return "DsfSequence \"" + fTaskName + "\", result for rolling back step #" + fStepIdx + " = " + getStatus(); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
                 }                
             });
         } catch(Throwable t) {
@@ -350,7 +350,7 @@ abstract public class DsfSequence extends DsfRunnable implements Future<Object> 
              */ 
             abortRollBack(new Status(
                 IStatus.ERROR, DsfPlugin.PLUGIN_ID, 0, 
-                "Unhandled exception when rolling back DsfSequence " + this + ", step #" + fCurrentStepIdx, 
+                "Unhandled exception when rolling back DsfSequence " + this + ", step #" + fCurrentStepIdx,  //$NON-NLS-1$ //$NON-NLS-2$
                 t));
             
             /*
@@ -369,7 +369,7 @@ abstract public class DsfSequence extends DsfRunnable implements Future<Object> 
         if (fRollbackTaskName != null) {
             fProgressMonitor.subTask(fRollbackTaskName);
         }
-        fStatus = new Status(IStatus.CANCEL, DsfPlugin.PLUGIN_ID, -1, "Sequence \"" + fTaskName + "\" cancelled.", null);
+        fStatus = new Status(IStatus.CANCEL, DsfPlugin.PLUGIN_ID, -1, "Sequence \"" + fTaskName + "\" cancelled.", null); //$NON-NLS-1$ //$NON-NLS-2$
         if (fDone != null) {
             fDone.setStatus(fStatus);
         }
@@ -418,7 +418,7 @@ abstract public class DsfSequence extends DsfRunnable implements Future<Object> 
          */
         MultiStatus newStatus = 
             new MultiStatus(DsfPlugin.PLUGIN_ID, error.getCode(), 
-                            "Sequence \"" + fTaskName + "\" failed while rolling back.", null);
+                            "Sequence \"" + fTaskName + "\" failed while rolling back.", null); //$NON-NLS-1$ //$NON-NLS-2$
         newStatus.merge(error);
         newStatus.merge(fStatus);
         fStatus = newStatus;

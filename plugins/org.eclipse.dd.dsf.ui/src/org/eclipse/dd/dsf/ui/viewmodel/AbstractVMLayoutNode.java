@@ -94,7 +94,16 @@ abstract public class AbstractVMLayoutNode implements IVMLayoutNode {
             parent.getVMC(), 
             new GetDataDone<IVMContext[]>() { 
                 public void run() {
-                    if (propagateError(getExecutor(), done, "Failed to retrieve elements in layout node " + AbstractVMLayoutNode.this)) return;
+                    if (propagateError(getExecutor(), done, "Failed to retrieve elements in layout node " + AbstractVMLayoutNode.this)) return; //$NON-NLS-1$
+                    
+                    /*
+                     * Check for an empty list of elements.  If it's empty then we 
+                     * don't have to call the children nodes, so return here.
+                     */
+                    if (getData().length == 0) {
+                        getExecutor().execute(done);
+                    }
+                    
                     /* 
                      * The execution for this node is not done until all the child nodes
                      * are done.  Use the tracker to wait for all children to complete. 
@@ -152,7 +161,7 @@ abstract public class AbstractVMLayoutNode implements IVMLayoutNode {
      * that the layout node depends on, are not available.
      */
     protected void handleFailedRetrieveLabel(ILabelRequestMonitor result) {
-        result.setLabels(new String[] { "..."} );
+        result.setLabels(new String[] { "..."} ); //$NON-NLS-1$
         result.done();
     }
     

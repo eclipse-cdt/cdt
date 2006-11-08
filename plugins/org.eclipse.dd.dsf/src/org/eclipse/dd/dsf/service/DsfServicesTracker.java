@@ -43,7 +43,7 @@ import org.osgi.framework.ServiceReference;
 public class DsfServicesTracker {
     
     private static String getServiceFilter(String sessionId) {
-        return ("(" + IDsfService.PROP_SESSION_ID + "=" + sessionId + ")").intern(); 
+        return ("(" + IDsfService.PROP_SESSION_ID + "=" + sessionId + ")").intern();   //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
     }
 
     private static class ServiceKey 
@@ -93,6 +93,7 @@ public class DsfServicesTracker {
      * session-ID 
      * @return OSGI service reference object to the desired service, null if not found
      */
+    @SuppressWarnings("unchecked")
     public ServiceReference getServiceReference(Class serviceClass, String filter) {
         ServiceKey key = new ServiceKey(serviceClass.getName().intern(), filter != null ? filter : fServiceFilter);
         if (fServiceReferences.containsKey(key)) {
@@ -109,7 +110,7 @@ public class DsfServicesTracker {
                 return references[0];
             }
         } catch(InvalidSyntaxException e) {
-            assert false : "Invalid session ID syntax";
+            assert false : "Invalid session ID syntax"; //$NON-NLS-1$
         }
         return null;
     }
@@ -154,8 +155,8 @@ public class DsfServicesTracker {
      * to avoid leaking OSGI service references.
      */
     public void dispose() {
-        for (Iterator itr = fServices.keySet().iterator(); itr.hasNext();) {
-            fBundleContext.ungetService((ServiceReference)itr.next());
+        for (Iterator<ServiceReference> itr = fServices.keySet().iterator(); itr.hasNext();) {
+            fBundleContext.ungetService(itr.next());
             itr.remove();
         }
     }

@@ -115,9 +115,9 @@ public class DsfExecutable {
             traceBuilder.append(' ');
             
             // Record the event
-            traceBuilder.append("DsfExecutable was never executed:\n        ");
+            traceBuilder.append("DsfExecutable was never executed:\n        "); //$NON-NLS-1$
             traceBuilder.append(this);
-            traceBuilder.append("\nCreated at:");
+            traceBuilder.append("\nCreated at:"); //$NON-NLS-1$
             traceBuilder.append(fCreatedAt);
             
             DsfPlugin.debug(traceBuilder.toString());

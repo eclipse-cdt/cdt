@@ -39,6 +39,7 @@ abstract public class AbstractVMRootLayoutNode extends AbstractVMLayoutNode impl
         
         public IVMLayoutNode getLayoutNode() { return fVMRootLayoutNode; }
         
+        @SuppressWarnings("unchecked")
         public Object getAdapter(Class adapter) {
             if (fInputObject instanceof IAdaptable) {
                 return ((IAdaptable)fInputObject).getAdapter(adapter);
@@ -55,7 +56,7 @@ abstract public class AbstractVMRootLayoutNode extends AbstractVMLayoutNode impl
             return fInputObject.hashCode();
         }
         
-        public String toString() { return "Root VMC for " + fInputObject.toString(); }
+        public String toString() { return "Root VMC for " + fInputObject.toString(); } //$NON-NLS-1$
     }
         
     public AbstractVMRootLayoutNode(DsfExecutor executor) {
@@ -111,7 +112,7 @@ abstract public class AbstractVMRootLayoutNode extends AbstractVMLayoutNode impl
          */
         final DoneCollector doneCollector = new DoneCollector(getExecutor()) { 
             public void run() {
-                if (propagateError(getExecutor(), done, "Failed to generate child deltas.")) return;
+                if (propagateError(getExecutor(), done, "Failed to generate child deltas.")) return; //$NON-NLS-1$
                 done.setData(rootDelta);            
                 getExecutor().execute(done);                                
             }

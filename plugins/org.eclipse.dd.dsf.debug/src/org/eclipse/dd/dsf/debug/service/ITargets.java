@@ -29,7 +29,7 @@ public interface ITargets extends IDMService {
         boolean isConnected();
     }
     
-    public interface ITargetStateChanged extends IDMEvent {}
+    public interface ITargetStateChanged extends IDMEvent<ITargetDMContext> {}
     
     public interface ICoreDMContext extends IDMContext<ICoreDMData> {}
 
@@ -39,7 +39,7 @@ public interface ITargets extends IDMService {
         IOS.IOSDMContext getOSDMContext();
     }
 
-    public interface ICoreStateChangedDMEvent extends IDMEvent {}
+    public interface ICoreStateChangedDMEvent extends IDMEvent<ICoreDMContext> {}
 
     public void getTargets(GetDataDone<ITargetDMContext> done);
     public void getCores(ITargetDMContext target, GetDataDone<ICoreDMContext> done);

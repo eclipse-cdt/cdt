@@ -29,6 +29,7 @@ import org.eclipse.debug.internal.ui.viewers.provisional.IAsynchronousLabelAdapt
 import org.eclipse.debug.internal.ui.viewers.provisional.IChildrenRequestMonitor;
 import org.eclipse.debug.internal.ui.viewers.provisional.IContainerRequestMonitor;
 import org.eclipse.debug.internal.ui.viewers.provisional.ILabelRequestMonitor;
+import org.eclipse.debug.internal.ui.viewers.provisional.IModelChangedListener;
 import org.eclipse.debug.internal.ui.viewers.provisional.IModelDelta;
 import org.eclipse.debug.internal.ui.viewers.provisional.IModelProxy;
 
@@ -74,6 +75,18 @@ public class VMProvider
         public void dispose() {
             fProxyActive--;
             super.dispose();
+        }
+        
+        @Override
+        public void removeModelChangedListener(IModelChangedListener listener) {
+            // TODO Auto-generated method stub
+            super.removeModelChangedListener(listener);
+        }
+        
+        @Override
+        public void addModelChangedListener(IModelChangedListener listener) {
+            // TODO Auto-generated method stub
+            super.addModelChangedListener(listener);
         }
 
         /**
@@ -206,7 +219,7 @@ public class VMProvider
          * nothing to do, just mark the monitor done. 
          */
         if (parentVmc.getLayoutNode().getChildLayoutNodes().length == 0) {
-            assert false : "We should never get here, because isContainer() should have returned false";
+            assert false : "We should never get here, because isContainer() should have returned false"; //$NON-NLS-1$
             monitor.done();
             return;
         }
@@ -310,7 +323,7 @@ public class VMProvider
      * @param e
      */
     @DsfServiceEventHandler
-    public void eventDispatched(final IDMEvent event) {
+    public void eventDispatched(final IDMEvent<?> event) {
         if (fRootLayoutNode.hasDeltaFlags(event)) {
             fRootLayoutNode.createDelta(event, new GetDataDone<IModelDelta>() {
                 public void run() {
@@ -319,7 +332,7 @@ public class VMProvider
                     }
                 }
                 @Override public String toString() {
-                    return "Result of a delta for event: '" + event.toString() + "' in VMP: '" + VMProvider.this + "'"; 
+                    return "Result of a delta for event: '" + event.toString() + "' in VMP: '" + VMProvider.this + "'";  //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
                 }
             });
         }

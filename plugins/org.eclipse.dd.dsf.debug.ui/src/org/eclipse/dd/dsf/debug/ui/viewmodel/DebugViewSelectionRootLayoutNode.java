@@ -11,17 +11,18 @@
 package org.eclipse.dd.dsf.debug.ui.viewmodel;
 
 import org.eclipse.dd.dsf.concurrent.DsfExecutor;
+import org.eclipse.dd.dsf.concurrent.DsfRunnable;
 import org.eclipse.dd.dsf.datamodel.DMContexts;
 import org.eclipse.dd.dsf.datamodel.IDMContext;
 import org.eclipse.dd.dsf.datamodel.IDMEvent;
 import org.eclipse.dd.dsf.ui.viewmodel.AbstractVMRootLayoutNode;
 import org.eclipse.dd.dsf.ui.viewmodel.IVMRootLayoutNode;
 import org.eclipse.dd.dsf.ui.viewmodel.DMContextVMLayoutNode.DMContextVMContext;
-import org.eclipse.debug.internal.ui.contexts.DebugContextManager;
-import org.eclipse.debug.internal.ui.contexts.provisional.IDebugContextListener;
+import org.eclipse.debug.ui.DebugUITools;
+import org.eclipse.debug.ui.contexts.DebugContextEvent;
+import org.eclipse.debug.ui.contexts.IDebugContextListener;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
 
 /**
@@ -29,7 +30,6 @@ import org.eclipse.ui.IWorkbenchWindow;
  * Views such as variables and registers base their content based on the 
  * selection in Debug view, and this node provides tracking of that selection.
  */
-@SuppressWarnings("restriction")
 public class DebugViewSelectionRootLayoutNode extends AbstractVMRootLayoutNode 
     implements IVMRootLayoutNode, IDebugContextListener 
 {
@@ -37,18 +37,18 @@ public class DebugViewSelectionRootLayoutNode extends AbstractVMRootLayoutNode
     
     public DebugViewSelectionRootLayoutNode(DsfExecutor executor, IWorkbenchWindow window) {
         super(executor);
-        ISelection selection = DebugContextManager.getDefault().getActiveContext(window);
+        ISelection selection = DebugUITools.getDebugContextManager().getContextService(window).getActiveContext();
         if (selection instanceof IStructuredSelection) {
             fRootVMC = new RootVMC<Object>( this, ((IStructuredSelection)selection).getFirstElement() );
         } else {
             fRootVMC = new RootVMC<Object>( this, null );
         }
-        DebugContextManager.getDefault().addDebugContextListener(this, window);
+        DebugUITools.getDebugContextManager().addDebugContextListener(this);
     }
 
     @Override
     public void sessionDispose() {
-        DebugContextManager.getDefault().removeDebugContextListener(this);
+        DebugUITools.getDebugContextManager().removeDebugContextListener(this);
         super.sessionDispose();
     }
     
@@ -75,17 +75,14 @@ public class DebugViewSelectionRootLayoutNode extends AbstractVMRootLayoutNode
      */
     @Override
     public boolean hasDeltaFlags(Object event) {
-        /*
-         * TODO: This logic needs to be tested and probably enhanced.
-         */
         if (event instanceof IDMEvent && fRootVMC.getInputObject() instanceof DMContextVMContext) {
             boolean potentialMatchFound = false;
             boolean matchFound = false;
             
-            IDMContext eventDmc = ((IDMEvent)event).getDMContext();
-            IDMContext inputDmc = ((DMContextVMContext)fRootVMC.getInputObject()).getDMC();
-            for (IDMContext eventDmcAncestor : DMContexts.toList(eventDmc)) {
-                IDMContext inputDmcAncestor = DMContexts.getAncestorOfType(inputDmc, eventDmcAncestor.getClass()); 
+            IDMContext<?> eventDmc = ((IDMEvent)event).getDMContext();
+            IDMContext<?> inputDmc = ((DMContextVMContext)fRootVMC.getInputObject()).getDMC();
+            for (IDMContext<?> eventDmcAncestor : DMContexts.toList(eventDmc)) {
+                IDMContext<?> inputDmcAncestor = DMContexts.getAncestorOfType(inputDmc, eventDmcAncestor.getClass()); 
                 if (inputDmcAncestor != null) {
                     potentialMatchFound = true;
                     if (inputDmcAncestor.equals(eventDmcAncestor)) {
@@ -105,16 +102,17 @@ public class DebugViewSelectionRootLayoutNode extends AbstractVMRootLayoutNode
         return fRootVMC;
     }
     
-    public void contextActivated(ISelection selection, IWorkbenchPart part) {
-        if (selection instanceof IStructuredSelection) {
-            fRootVMC = new RootVMC<Object>( this, ((IStructuredSelection)selection).getFirstElement() );
-        } else {
-            fRootVMC = new RootVMC<Object>( this, null );
-        }
-    }
-    
-    public void contextChanged(ISelection selection, IWorkbenchPart part) {
-        // No need to do anything. Element changes should be handled 
-        // through standard event handlers.
+    public void debugContextChanged(DebugContextEvent event) {
+        final ISelection selection = event.getContext();
+        getExecutor().execute(new DsfRunnable() {
+            public void run() {
+                if (selection instanceof IStructuredSelection) {
+                    fRootVMC = new RootVMC<Object>( DebugViewSelectionRootLayoutNode.this, 
+                                                    ((IStructuredSelection)selection).getFirstElement() );
+                } else {
+                    fRootVMC = new RootVMC<Object>( DebugViewSelectionRootLayoutNode.this, null );
+                }
+            }
+        });
     }
 }

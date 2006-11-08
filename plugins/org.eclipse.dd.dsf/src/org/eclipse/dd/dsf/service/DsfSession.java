@@ -49,7 +49,7 @@ import org.osgi.framework.Filter;
  * 
  * @see org.eclipse.dd.dsf.concurrent.DsfExecutor
  */
-@ConfinedToDsfExecutor("getExecutor")
+@ConfinedToDsfExecutor("getExecutor") 
 public class DsfSession 
 {    
     /** 
@@ -222,6 +222,7 @@ public class DsfSession
      * IModelContext.getAdapter() method.
      * @see org.eclipse.dd.dsf.datamodel.AbstractDMContext#getAdapter 
      */
+    @SuppressWarnings("unchecked") 
     private Map<Class,Object> fAdapters = Collections.synchronizedMap(new HashMap<Class,Object>());
 
     /** Returns the owner ID of this session */
@@ -271,10 +272,11 @@ public class DsfSession
      * @param serviceProperties properties of the service requesting the event to be dispatched
      */
     @ThreadSafe
+    @SuppressWarnings("unchecked")
     public void dispatchEvent(final Object event, final Dictionary serviceProperties) {
         getExecutor().submit(new DsfRunnable() { 
             public void run() { doDispatchEvent(event, serviceProperties);}
-            public String toString() { return "Event: " + event + ", from service " + serviceProperties; } 
+            public String toString() { return "Event: " + event + ", from service " + serviceProperties; }  //$NON-NLS-1$ //$NON-NLS-2$
             });
     }
     
@@ -285,6 +287,7 @@ public class DsfSession
      * @see org.eclipse.dsdp.model.AbstractDMContext#getAdapter
      */
     @ThreadSafe
+    @SuppressWarnings("unchecked") 
     public void registerModelAdapter(Class adapterType, Object adapter) {
         fAdapters.put(adapterType, adapter);
     }
@@ -295,6 +298,7 @@ public class DsfSession
      * @see org.eclipse.dsdp.model.AbstractDMContext#getAdapter
      */
     @ThreadSafe
+    @SuppressWarnings("unchecked")
     public void unregisterModelAdapter(Class adapterType) {
         fAdapters.remove(adapterType);
     }
@@ -306,6 +310,7 @@ public class DsfSession
      * @see org.eclipse.dsdp.model.AbstractDMContext#getAdapter
      */
     @ThreadSafe
+    @SuppressWarnings("unchecked") 
     public Object getModelAdapter(Class adapterType) {
         return fAdapters.get(adapterType);
     }
@@ -318,6 +323,7 @@ public class DsfSession
     @ThreadSafe
     public int hashCode() { return fId.hashCode(); }
 
+    @SuppressWarnings("unchecked") 
     private void doDispatchEvent(Object event, Dictionary serviceProperties) {
         // Build a list of listeners;
         SortedMap<ListenerEntry,List<Method>> listeners = new TreeMap<ListenerEntry,List<Method>>(new Comparator<ListenerEntry>() {
@@ -349,8 +355,8 @@ public class DsfSession
             Method[] allMethods = entry.getValue();
             List<Method> matchingMethods = new ArrayList<Method>();
             for (Method method : allMethods) {
-            	assert method.getParameterTypes().length > 0 : eventClass.getName() + "." + method.getName()
-            		+ " signature contains zero parameters";
+            	assert method.getParameterTypes().length > 0 : eventClass.getName() + "." + method.getName() //$NON-NLS-1$
+            		+ " signature contains zero parameters"; //$NON-NLS-1$
     	    	if ( method.getParameterTypes()[0].isAssignableFrom(eventClass) ) {
                     matchingMethods.add(method);
                 }
@@ -368,13 +374,13 @@ public class DsfSession
                 }
                 catch (IllegalAccessException e) {
                     DsfPlugin.getDefault().getLog().log(new Status(
-                        IStatus.ERROR, DsfPlugin.PLUGIN_ID, -1, "Security exception when calling a service event handler method", e));
-                    assert false : "IServiceEventListener.ServiceHandlerMethod method not accessible, is listener declared public?";
+                        IStatus.ERROR, DsfPlugin.PLUGIN_ID, -1, "Security exception when calling a service event handler method", e)); //$NON-NLS-1$
+                    assert false : "IServiceEventListener.ServiceHandlerMethod method not accessible, is listener declared public?"; //$NON-NLS-1$
                 }
                 catch (InvocationTargetException e) {
                     DsfPlugin.getDefault().getLog().log(new Status(
-                        IStatus.ERROR, DsfPlugin.PLUGIN_ID, -1, "Invocation exception when calling a service event handler method", e));
-                    assert false : "Exception thrown by a IServiceEventListener.ServiceHandlerMethod method";
+                        IStatus.ERROR, DsfPlugin.PLUGIN_ID, -1, "Invocation exception when calling a service event handler method", e)); //$NON-NLS-1$
+                    assert false : "Exception thrown by a IServiceEventListener.ServiceHandlerMethod method"; //$NON-NLS-1$
                 }
             }
         }
@@ -389,17 +395,17 @@ public class DsfSession
                 if (method.isAnnotationPresent(DsfServiceEventHandler.class)) {
                     Class<?>[] paramTypes = method.getParameterTypes();
                     if (paramTypes.length > 2) {
-                        throw new IllegalArgumentException("ServiceEventHandler method has incorrect number of parameters");
+                        throw new IllegalArgumentException("ServiceEventHandler method has incorrect number of parameters"); //$NON-NLS-1$
                     } 
                     retVal.add(method);
                 }
             }
         } catch(SecurityException e) {
-            throw new IllegalArgumentException("No permission to access ServiceEventHandler method");
+            throw new IllegalArgumentException("No permission to access ServiceEventHandler method"); //$NON-NLS-1$
         }
         
         if (retVal.isEmpty()) {
-            throw new IllegalArgumentException("No methods marked with @ServiceEventHandler in listener, is listener declared public?");
+            throw new IllegalArgumentException("No methods marked with @ServiceEventHandler in listener, is listener declared public?"); //$NON-NLS-1$
         }
         return retVal.toArray(new Method[retVal.size()]);
     }

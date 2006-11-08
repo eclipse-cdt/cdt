@@ -20,9 +20,9 @@ import org.eclipse.dd.dsf.debug.service.IRunControl.IExecutionDMContext;
 import org.eclipse.dd.dsf.mi.service.MIRunControl;
 import org.eclipse.dd.dsf.service.DsfSession;
 import org.eclipse.dd.dsf.ui.viewmodel.DMContextVMLayoutNode;
-import org.eclipse.dd.dsf.ui.viewmodel.GetDataDoneWithRequestMonitor;
 import org.eclipse.dd.dsf.ui.viewmodel.IVMContext;
 import org.eclipse.dd.dsf.ui.viewmodel.VMDelta;
+import org.eclipse.dd.dsf.ui.viewmodel.DMContextVMLayoutNode.DMContextVMContext;
 import org.eclipse.debug.internal.ui.viewers.provisional.ILabelRequestMonitor;
 import org.eclipse.debug.internal.ui.viewers.provisional.IModelDelta;
 import org.eclipse.debug.ui.DebugUITools;
@@ -69,9 +69,16 @@ public class ThreadLayoutNode extends DMContextVMLayoutNode {
         
         processes.getModelData(
             processes.getThreadForExecutionContext(dmc), 
-            new GetDataDoneWithRequestMonitor<IThreadDMData>(result) { public void doRun() {
-                result.setLabels(new String[] { getData().getName() });
-            }});
+            new GetDataDone<IThreadDMData>() { 
+                public void run() {
+                    if (!getStatus().isOK() || !getData().isValid()) {
+                        result.done();
+                        return;
+                    }
+                    result.setLabels(new String[] { getData().getName() });
+                    result.done();
+                }
+            });
     }
 
     public boolean hasDeltaFlagsForDMEvent(IDMEvent e) {

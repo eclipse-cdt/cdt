@@ -42,6 +42,7 @@ abstract public class AbstractDsfService
     private DsfServicesTracker fTracker;
     
     /** Properties that this service was registered with */
+    @SuppressWarnings("unchecked")
     private Dictionary fProperties;
 
     /** Properties that this service was registered with */
@@ -58,9 +59,14 @@ abstract public class AbstractDsfService
     }
 
     public DsfExecutor getExecutor() { return fSession.getExecutor(); }
+
+    @SuppressWarnings("unchecked")
     public Dictionary getProperties() { return fProperties; }
+    
     public String getServiceFilter() { return fFilter; }
+    
     public int getStartupNumber() { return fStartupNumber; }
+    
     public void initialize(Done done) {
         fTracker = new DsfServicesTracker(getBundleContext(), fSession.getId());
         fStartupNumber = fSession.getAndIncrementServiceStartupCounter();
@@ -136,9 +142,10 @@ abstract public class AbstractDsfService
     /**
      * Generates an LDAP filter to uniquely identify this service.
      */
+    @SuppressWarnings("unchecked")
     private String generateFilter(Dictionary properties) {
         StringBuffer filter = new StringBuffer();
-        filter.append("(&");
+        filter.append("(&"); //$NON-NLS-1$
         
         for (Enumeration keys = properties.keys(); keys.hasMoreElements();) {
             Object key = keys.nextElement();
@@ -151,7 +158,7 @@ abstract public class AbstractDsfService
                 for (Object arrayValue : (Object[])value) {
                     filter.append('(');
                     filter.append(key.toString());
-                    filter.append("=*");
+                    filter.append("=*"); //$NON-NLS-1$
                     filter.append(arrayValue.toString());
                     filter.append(')');
                 }

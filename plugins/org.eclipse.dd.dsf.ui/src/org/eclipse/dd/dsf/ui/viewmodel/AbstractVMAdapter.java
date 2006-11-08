@@ -98,13 +98,13 @@ abstract public class AbstractVMAdapter
                     
                     VMProvider provider = getViewModelProvider(context);
                     if (provider == null) {
-                        result.setStatus(new Status(IStatus.ERROR, DsfUIPlugin.PLUGIN_ID, IDsfService.INTERNAL_ERROR, "No model provider for object: " + object.toString(), null));
+                        result.setStatus(new Status(IStatus.ERROR, DsfUIPlugin.PLUGIN_ID, IDsfService.INTERNAL_ERROR, "No model provider for object: " + object.toString(), null)); //$NON-NLS-1$
                         result.done();
                     }
                     provider.retrieveLabel(object, result);
                 }
                 @Override
-                public String toString() { return "Switch to dispatch thread to execute retrieveLabel()"; }
+                public String toString() { return "Switch to dispatch thread to execute retrieveLabel()"; } //$NON-NLS-1$
             });
         } catch(RejectedExecutionException e) {
             // This can happen if session is being shut down.
@@ -120,12 +120,12 @@ abstract public class AbstractVMAdapter
                     
                     VMProvider provider = getViewModelProvider(context);
                     if (provider == null) {
-                        result.setStatus(new Status(IStatus.ERROR, DsfUIPlugin.PLUGIN_ID, IDsfService.INTERNAL_ERROR, "No model provider for object: " + element.toString(), null));
+                        result.setStatus(new Status(IStatus.ERROR, DsfUIPlugin.PLUGIN_ID, IDsfService.INTERNAL_ERROR, "No model provider for object: " + element.toString(), null)); //$NON-NLS-1$
                         result.done();
                     }
                     provider.isContainer(element, result);
                 }
-                public String toString() { return "Switch to dispatch thread to execute isContainer()"; }
+                public String toString() { return "Switch to dispatch thread to execute isContainer()"; } //$NON-NLS-1$
             });
         } catch(RejectedExecutionException e) {
             // This can happen if session is being shut down.
@@ -141,12 +141,12 @@ abstract public class AbstractVMAdapter
                     
                     VMProvider provider = getViewModelProvider(context);
                     if (provider == null) {
-                        result.setStatus(new Status(IStatus.ERROR, DsfUIPlugin.PLUGIN_ID, IDsfService.INTERNAL_ERROR, "No model provider for object: " + element.toString(), null));
+                        result.setStatus(new Status(IStatus.ERROR, DsfUIPlugin.PLUGIN_ID, IDsfService.INTERNAL_ERROR, "No model provider for object: " + element.toString(), null)); //$NON-NLS-1$
                         result.done();
                     }
                     provider.retrieveChildren(element, result);
                 }
-                public String toString() { return "Switch to dispatch thread to execute retrieveChildren()"; }
+                public String toString() { return "Switch to dispatch thread to execute retrieveChildren()"; } //$NON-NLS-1$
             });
         } catch(RejectedExecutionException e) {
             // This can happen if session is being shut down.
@@ -155,8 +155,13 @@ abstract public class AbstractVMAdapter
     }
 
     public IModelProxy createModelProxy(Object element, IPresentationContext context) {
+        /*
+         * Model proxy is the object that correlates events from the data model 
+         * into view model deltas that the view can process.  We only need to 
+         * create a proxy for the root element of the tree.
+         */
         VMProvider provider = getViewModelProvider(context);
-        if (provider != null) {
+        if (provider != null && element.equals(provider.getRootLayoutNode().getRootVMC().getInputObject())) {
             return provider.getModelProxy();
         }
         return null;

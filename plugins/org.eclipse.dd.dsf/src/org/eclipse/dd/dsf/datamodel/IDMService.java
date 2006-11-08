@@ -26,7 +26,7 @@ public interface IDMService extends IDsfService, IDMData {
      * usually used in events to indicate that lists of contexts in this 
      * service are changed. 
      */
-    IDMContext getServiceContext();
+    IDMContext<?> getServiceContext();
     
     /**
      * Retrieves model data object for given context.  This method makes it

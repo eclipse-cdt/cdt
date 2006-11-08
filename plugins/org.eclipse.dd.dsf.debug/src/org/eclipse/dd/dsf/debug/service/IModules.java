@@ -30,12 +30,12 @@ public interface IModules extends IDMService {
      * types of debugging, like kernel or no-OS debugging, it's useful to 
      * separate the concept of a symbol context from a process.
      */
-    public interface ISymbolDMContext extends IDMContext {}
+    public interface ISymbolDMContext extends IDMContext<ISymbolDMData>{}
     
     /**
      * Module context represents a single module that is loaded.
      */
-    public interface IModuleDMContext extends IDMContext<ModuleDMData> {}
+    public interface IModuleDMContext extends IDMContext<IModuleDMData> {}
     
     /**
      * Event indicating a change in the symbol information for given context.
@@ -90,7 +90,7 @@ public interface IModules extends IDMService {
      * Symbol context data includes a mapping between run-time addresses and 
      * module-section-offset coordinates.
      */
-    public interface SymbolDMData extends IDMData {
+    public interface ISymbolDMData extends IDMData {
         /** Convert link-time address 'addr' to run-time address */
         public long convertToRT(ModuleSectionOffset mso);
 
@@ -99,7 +99,7 @@ public interface IModules extends IDMService {
     }
     
     /** Module information. */
-    public interface ModuleDMData extends IDMData {
+    public interface IModuleDMData extends IDMData {
         String getName();
         String getFile();
         long getTimeStamp();

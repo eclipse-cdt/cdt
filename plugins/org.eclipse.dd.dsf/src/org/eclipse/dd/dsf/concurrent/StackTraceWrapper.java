@@ -24,7 +24,7 @@ class StackTraceWrapper {
         StringBuilder builder = new StringBuilder(fStackTraceElements.length * 30);
         for (int i = 0; i < fStackTraceElements.length && i < 10; i++) {
             builder.append(fStackTraceElements[i]);
-            if (i < fStackTraceElements.length && i < 10) builder.append("\n       at ");
+            if (i < fStackTraceElements.length && i < 10) builder.append("\n       at "); //$NON-NLS-1$
         }
         return builder.toString();
     }

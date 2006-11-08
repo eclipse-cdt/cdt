@@ -20,7 +20,7 @@ import org.osgi.framework.BundleContext;
 public class DsfDebugPlugin extends Plugin {
 
 	// The plug-in ID
-	public static final String PLUGIN_ID = "org.eclipse.dd.dsf.debug.debug.service";
+	public static final String PLUGIN_ID = "org.eclipse.dd.dsf.debug.debug.service"; //$NON-NLS-1$
 
 	// The shared instance
 	private static DsfDebugPlugin fgPlugin;

@@ -38,17 +38,18 @@ abstract public class DMContextVMLayoutNode extends AbstractVMLayoutNode {
     @Immutable
     public class DMContextVMContext implements IVMContext {
         private final IVMContext fParent;
-        private final IDMContext fDmc;
+        private final IDMContext<?> fDmc;
         
-        public DMContextVMContext(IVMContext parent, IDMContext dmc) {
+        public DMContextVMContext(IVMContext parent, IDMContext<?> dmc) {
             fParent = parent;
             fDmc = dmc;
         }
         
-        public IDMContext getDMC() { return fDmc; }
+        public IDMContext<?> getDMC() { return fDmc; }
         public IVMContext getParent() { return fParent; }
         public IVMLayoutNode getLayoutNode() { return DMContextVMLayoutNode.this; }
         
+        @SuppressWarnings("unchecked")
         public Object getAdapter(Class adapter) {
             return fDmc.getAdapter(adapter);
         }
@@ -66,7 +67,7 @@ abstract public class DMContextVMLayoutNode extends AbstractVMLayoutNode {
         }
      
         public String toString() {
-            return fParent.toString() + "->" + fDmc.toString();
+            return fParent.toString() + "->" + fDmc.toString(); //$NON-NLS-1$
         }
     }
 
@@ -75,7 +76,7 @@ abstract public class DMContextVMLayoutNode extends AbstractVMLayoutNode {
     
     
     /** Class type that the elements of this schema node are based on. */
-    private Class<? extends IDMContext> fDMCClassType;
+    private Class<? extends IDMContext<?>> fDMCClassType;
 
     /** 
      * Constructor initializes instance data, except for the child nodes.  
@@ -84,7 +85,7 @@ abstract public class DMContextVMLayoutNode extends AbstractVMLayoutNode {
      * @param dmcClassType
      * @see #setChildNodes(IVMLayoutNode[])
      */
-    public DMContextVMLayoutNode(DsfSession session, Class<? extends IDMContext> dmcClassType) {
+    public DMContextVMLayoutNode(DsfSession session, Class<? extends IDMContext<?>> dmcClassType) {
         super(session.getExecutor());
         fServices = new DsfServicesTracker(DsfUIPlugin.getBundleContext(), session.getId());        
         fDMCClassType = dmcClassType;
@@ -112,7 +113,7 @@ abstract public class DMContextVMLayoutNode extends AbstractVMLayoutNode {
      * DMC-specific version of {@link IVMLayoutNode#hasDeltaFlags(Object)}.
      * By default, it falls back on the super-class implementation.
      */
-    protected boolean hasDeltaFlagsForDMEvent(IDMEvent e) {
+    protected boolean hasDeltaFlagsForDMEvent(IDMEvent<?> e) {
         return super.hasDeltaFlags(e);
     }
     
@@ -129,7 +130,7 @@ abstract public class DMContextVMLayoutNode extends AbstractVMLayoutNode {
      * Adds an optimization (over the AbstractViewModelLayoutNode) which 
      * narrows down the list of children based on the DMC within the event. 
      */
-    public void buildDeltaForDMEvent(final IDMEvent e, final VMDelta parent, final Done done) {
+    public void buildDeltaForDMEvent(final IDMEvent<?> e, final VMDelta parent, final Done done) {
         /* 
          * Take the IDMContext (DMC) that the event is based on, and 
          * search its ancestors.  Look for the DMC class typs that this schema 
@@ -138,7 +139,7 @@ abstract public class DMContextVMLayoutNode extends AbstractVMLayoutNode {
          * behavior and generate a IModelDelta for every element in this schema 
          * node. 
          */
-        IDMContext dmc = DMContexts.getAncestorOfType(e.getDMContext(), fDMCClassType);
+        IDMContext<?> dmc = DMContexts.getAncestorOfType(e.getDMContext(), fDMCClassType);
         if (dmc != null) {
             IVMLayoutNode[] childNodes = getChildNodesWithDeltas(e);
             if (childNodes.length == 0) {
@@ -179,7 +180,7 @@ abstract public class DMContextVMLayoutNode extends AbstractVMLayoutNode {
      * @param dmcs Array of DMC objects to build return array on.
      * @return Array of IVMContext objects.
      */
-    protected IVMContext[] dmcs2vmcs(IVMContext parent, IDMContext[] dmcs) {
+    protected IVMContext[] dmcs2vmcs(IVMContext parent, IDMContext<?>[] dmcs) {
         IVMContext[] vmContexts = new IVMContext[dmcs.length];
         for (int i = 0; i < dmcs.length; i++) {
             vmContexts[i] = new DMContextVMContext(parent, dmcs[i]);

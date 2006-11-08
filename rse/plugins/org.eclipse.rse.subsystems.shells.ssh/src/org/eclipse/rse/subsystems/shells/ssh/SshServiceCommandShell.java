@@ -92,6 +92,7 @@ public class SshServiceCommandShell extends ServiceCommandShell implements ISyst
 			ParsedOutput parsedMsg = null;
 			if (!gotCommand && line.equals(_curCommand)) {
 				gotCommand = true;
+				continue; //ignore remote command echo
 			} else {
 				try {
 					

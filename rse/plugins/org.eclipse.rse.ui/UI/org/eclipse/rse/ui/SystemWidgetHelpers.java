@@ -16,6 +16,7 @@
 
 package org.eclipse.rse.ui;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Locale;
 
 import org.eclipse.jface.action.IAction;
@@ -768,7 +769,10 @@ public class SystemWidgetHelpers {
 	 
 	 */
 	public static List createSystemTypeListBox(Composite group, Listener listener, String[] systemTypes) {
+		ArrayList arrayList = new ArrayList();
+		
 		List list = createListBox(group, listener, false, null, SystemResources.RESID_CONNECTION_SYSTEMTYPE_TIP);
+		
 		String[] typeItems = ((systemTypes == null) ? RSECorePlugin.getDefault().getRegistry().getSystemTypeNames() : systemTypes);
 		
 		if (systemTypes == null) {
@@ -776,13 +780,22 @@ public class SystemWidgetHelpers {
 				ISubSystemConfiguration[] configurations = RSEUIPlugin.getTheSystemRegistry().getSubSystemConfigurationsBySystemType(typeItems[i]);
 				
 				if (configurations != null && configurations.length > 0) {
-					list.add(typeItems[i]);
+					arrayList.add(typeItems[i]);
 				}
 			}
+			
+			systemTypes = (String[])arrayList.toArray(new String[arrayList.size()]);
+			Arrays.sort(systemTypes);
 		}
 		
-		list.select(0);
+		for(int i=0; i<systemTypes.length; i++){
+			list.add(systemTypes[i]);
+		}
 		
+		if(list.getItemCount()>0){
+			list.select(0);	
+		}
+	
 		return list;
 	}
 	

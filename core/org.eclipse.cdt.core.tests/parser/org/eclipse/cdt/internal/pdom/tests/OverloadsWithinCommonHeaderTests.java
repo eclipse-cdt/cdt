@@ -75,7 +75,7 @@ public class OverloadsWithinCommonHeaderTests extends PDOMTestBase {
 	
 	public void testOverloadedInCommonHeader_FileScope() throws CoreException {
 		Pattern[] QuuxPath = makePatternArray(new String[] {"quux"});		
-		IBinding[] Quux = pdom.findBindings(QuuxPath, false, IndexFilter.getFilter(Linkage.CPP_LINKAGE), new NullProgressMonitor());
+		IBinding[] Quux = pdom.findBindings(QuuxPath, true, IndexFilter.getFilter(Linkage.CPP_LINKAGE), new NullProgressMonitor());
 		
 		assertEquals(5,Quux.length);
 		
@@ -112,8 +112,29 @@ public class OverloadsWithinCommonHeaderTests extends PDOMTestBase {
 		// corge::grault(ManyOverloaded*)
 		assertFunctionRefCount(new Class[] {IPointerType.class}, Grault, 12);
 		
-		// (corge::grault(ManyOverloaded)
+		// corge::grault(ManyOverloaded)
 		assertFunctionRefCount(new Class[] {ICPPClassType.class}, Grault, 14);
+	}
+	
+	public void testOverloadedInCommonHeader_NamespaceScope_Collides_With_Filescope() throws CoreException {
+		Pattern[] ns2Path = makePatternArray(new String[] {"ns2","quux"});
+		IBinding[] ns2 = pdom.findBindings(ns2Path, true, IndexFilter.getFilter(Linkage.CPP_LINKAGE), new NullProgressMonitor());
+		assertEquals(5,ns2.length);
+		 
+		// ns2::quux()
+		assertFunctionRefCount(new Class[0], ns2, 16);
+		
+		// ns2::quux(int,char)
+		assertFunctionRefCount(new Class[] {IBasicType.class}, ns2, 20);
+		
+		// ns2::quux(int,char)
+		assertFunctionRefCount(new Class[] {IBasicType.class, IBasicType.class}, ns2, 24);
+		
+		// ns2::quux(ManyOverloaded*)
+		assertFunctionRefCount(new Class[] {IPointerType.class}, ns2, 28);
+		
+		// ns2::quux(ManyOverloaded)
+		assertFunctionRefCount(new Class[] {ICPPClassType.class}, ns2, 32);
 	}
 	
 	protected void assertFunctionRefCount(Class[] args, IBinding[] bindingPool, int refCount) throws CoreException {

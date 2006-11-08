@@ -1,4 +1,19 @@
-#include "class.h"
+#include "common.h"
+
+namespace corge {
+   void referencesB_inNS() {
+      ManyOverloaded m;
+      ns2::quux(); ns2::quux(); ns2::quux(); ns2::quux(); 
+      ns2::quux(5); ns2::quux(5); ns2::quux(5); ns2::quux(5); ns2::quux(5);
+      ns2::quux(6,'f'); ns2::quux(6,'f'); ns2::quux(6,'f'); ns2::quux(6,'f'); ns2::quux(6,'f'); ns2::quux(6,'f');
+      ns2::quux(new ManyOverloaded()); ns2::quux(new ManyOverloaded());
+      ns2::quux(new ManyOverloaded()); ns2::quux(new ManyOverloaded());
+      ns2::quux(new ManyOverloaded()); ns2::quux(new ManyOverloaded());
+      ns2::quux(new ManyOverloaded()); 
+      ns2::quux(m); ns2::quux(m); ns2::quux(m); ns2::quux(m); ns2::quux(m);
+      ns2::quux(m); ns2::quux(m); ns2::quux(m);
+   }
+}
 
 void referencesB() {
   ManyOverloaded m;
@@ -24,4 +39,30 @@ void referencesB() {
   corge::grault(new ManyOverloaded()); corge::grault(new ManyOverloaded());
   corge::grault(m); corge::grault(m); corge::grault(m); corge::grault(m); corge::grault(m);
   corge::grault(m); corge::grault(m);
+  
+  ns2::quux(); ns2::quux(); ns2::quux(); ns2::quux(); 
+  ns2::quux(5); ns2::quux(5); ns2::quux(5); ns2::quux(5); ns2::quux(5);
+  ns2::quux(6,'f'); ns2::quux(6,'f'); ns2::quux(6,'f'); ns2::quux(6,'f'); ns2::quux(6,'f'); ns2::quux(6,'f');
+  ns2::quux(new ManyOverloaded()); ns2::quux(new ManyOverloaded());
+  ns2::quux(new ManyOverloaded()); ns2::quux(new ManyOverloaded());
+  ns2::quux(new ManyOverloaded()); ns2::quux(new ManyOverloaded());
+  ns2::quux(new ManyOverloaded());
+  ns2::quux(m); ns2::quux(m); ns2::quux(m); ns2::quux(m); ns2::quux(m);
+  ns2::quux(m); ns2::quux(m); ns2::quux(m); 
+  
+  m.qux(UNRESOLVED_SYMBOL); // indexer should skip without error
+  m.qux(4, UNRESOLVED_SYMBOL); // indexer should skip without error
+  quux(UNRESOLVED_SYMBOL); // indexer should skip without error
+  quux(6, UNRESOLVED_SYMBOL); // indexer should skip without error
+  corge::grault(UNRESOLVED_SYMBOL); // indexer should skip without error
+  corge::grault(6, UNRESOLVED_SYMBOL); // indexer should skip without error
+  ns2::quux(UNRESOLVED_SYMBOL); // indexer should skip without error
+  ns2::quux(4, UNRESOLVED_SYMBOL); // indexer should skip without error
+}
+
+namespace corge {
+   void problemRefsB() {
+      ns2::quux(UNRESOLVED_SYMBOL); // indexer should skip without error
+	  ns2::quux(4, UNRESOLVED_SYMBOL); // indexer should skip without error
+   }
 }

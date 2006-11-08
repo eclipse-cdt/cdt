@@ -76,12 +76,10 @@ public class InheritButton extends Composite {
 	public InheritButton(Composite parent) {
 		super(parent, SWT.NONE);
 		isDrawn = System.getProperty("os.name").toLowerCase().startsWith("win");
-		if (isDrawn) {
-			GridData data = new GridData(SWT.CENTER, SWT.CENTER, false, false);
-			data.widthHint = DEFAULT_WIDTH;
-			data.heightHint = DEFAULT_HEIGHT;
-			setLayoutData(data);
-		}
+		GridData data = new GridData(SWT.CENTER, SWT.CENTER, false, false);
+		data.widthHint = DEFAULT_WIDTH;
+		data.heightHint = DEFAULT_HEIGHT;
+		setLayoutData(data);
 		GridLayout layout = new GridLayout();
 		layout.marginHeight = 0;
 		layout.marginWidth = 0;

@@ -132,6 +132,28 @@ Contributors:
             pattern="RemoteSystemsTempFiles">
       </filter>    
     </extension>
+
+<!-- ================================================================= -->
+<!--     Hide RemoteSystemsConnections and RemoteSystemsTempFiles      -->
+<!-- 	 in the CDT CView					                       -->
+<!-- ================================================================= -->	
+	<extension
+		 point="org.eclipse.cdt.ui.CElementFilters">
+        <filter
+      		targetId="org.eclipse.cdt.ui.CView"
+            name="%ViewFilter.RSEConnections"
+            enabled="true"
+            description=""
+            pattern="RemoteSystemsConnections">
+        </filter>
+        <filter
+  	 		targetId="org.eclipse.cdt.ui.CView"
+            name="%ViewFilter.RSETempFiles"
+            enabled="true"
+            description=""
+            pattern="RemoteSystemsTempFiles">
+		</filter>    
+    </extension>
     
 	
 <!-- ================================================================= -->

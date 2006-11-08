@@ -22,7 +22,7 @@ package org.eclipse.rse.core.subsystems;
  * <p> 
  * A server launcher is responsible for starting the server-side code needed for this client subsystem to 
  * access remote resources on the remote system. It starts the server half of the client/server code needed
- * for this subsystem. It is consulted in the default implementation of connect() in ISystem, and the
+ * for this subsystem. It is consulted in the default implementation of connect() in IConnectorService, and the
  * manages the properties in the Remote Server Launcher property page.    
  * <p>
  * The following features are supported:
@@ -174,7 +174,7 @@ public interface IRemoteServerLauncher extends IServerLauncherProperties{
 	 * You normally do not call this! Rather, your subsystem factory class will override
 	 * {@link org.eclipse.rse.core.subsystems.SubSystemConfiguration#supportsServerLaunchType(ServerLaunchType)}.
 	 * However, this method is needed by ISVs that re-use IBM-supplied subsystem factories,
-	 * and merely supply their own ISystem object via the "systemClass" attribute of the
+	 * and merely supply their own IConnectorService object via the "systemClass" attribute of the
 	 * subsystemConfigurations extension point. They don't call this method directly actually, but
 	 * rather {@link AbstractConnectorService#enableServerLaunchType(SubSystem, ServerLaunchType, boolean)},
 	 * which in turn calls this.

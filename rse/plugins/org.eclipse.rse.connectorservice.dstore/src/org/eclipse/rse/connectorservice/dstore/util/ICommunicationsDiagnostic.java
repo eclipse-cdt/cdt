@@ -35,7 +35,7 @@ public interface ICommunicationsDiagnostic extends Runnable {
 	 *  String id: assign an ID for this diagnostic instance
 	 *  boolean quiet: true if user to be prompted for a dialog
 	 *  String server: the host network name
-	 *  ISystem system: the connection to be investigated
+	 *  IConnectorService system: the connection to be investigated
 	 *  String str1, str2, str3: optional strings 
 	 */ 
 	public void setUp(String id, boolean quiet, String server, IConnectorService system, String str1, String str2, String str3);		

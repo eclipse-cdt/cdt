@@ -23,11 +23,11 @@ import org.eclipse.rse.core.subsystems.ISubSystem;
 
 
 /**
- * ISystem manager class.
+ * IConnectorService manager class.
  * There should be only one of these instantiated.
  * Use getTheUniversalSystemManager to get that singleton.
  * <p>
- * The job of this manager is to manage and return ISystem objects.
+ * The job of this manager is to manage and return IConnectorService objects.
  * It ensures there is only ever one per unique SystemConnection,
  *  so that both the file and cmd subsystems can share the same system object.
  */
@@ -67,7 +67,7 @@ public class DStoreConnectorServiceManager extends AbstractConnectorServiceManag
     // -------------------------------------
     
     /**
-     * Return the actual ISystem object. We return an instance of UniversalSystem.
+     * Return the actual IConnectorService object. We return an instance of UniversalSystem.
      */
     public IConnectorService createConnectorService(IHost host)
     {
@@ -77,13 +77,13 @@ public class DStoreConnectorServiceManager extends AbstractConnectorServiceManag
 
     /**
      * For all subsystems in a particular SystemConnection, we need to know which
-     *  ones are to share a single ISystem object. To do this, we need a key which
+     *  ones are to share a single IConnectorService object. To do this, we need a key which
      *  is canonical for all subsystems in a given connection. This can be anything,
      *  but is typically a unique interface that all subsystems supported a shared
-     *  ISystem object implement. 
+     *  IConnectorService object implement. 
      * <p>
      * Whatever is returned from here is used as the key into a hashtable to find the
-     *  singleton ISystem object in getSystemObject.
+     *  singleton IConnectorService object in getSystemObject.
      * <p>
      * @return IUniversalSubSystem.class
      */
@@ -92,7 +92,7 @@ public class DStoreConnectorServiceManager extends AbstractConnectorServiceManag
     	return IUniversalDStoreSubSystem.class;
     }
 	/**
-	 * Given another subsystem, return true if that subsystem shares a single ISystem object
+	 * Given another subsystem, return true if that subsystem shares a single IConnectorService object
 	 * with this one. You must override this to return true if you recognize that subsystem 
 	 * as one of your own. You are guaranteed the other subsystem will be from the same 
 	 * SystemConnection as this one.

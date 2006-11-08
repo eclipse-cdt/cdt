@@ -174,7 +174,7 @@ public class ConnectionStatusListener implements IDomainListener, IRunnableWithP
 	}
 
 	/**
-	 * Callback method for the ISystem to determine if the connection is down.  This is
+	 * Callback method for the IConnectorService to determine if the connection is down.  This is
 	 * called by the disconnect method to determine if we can do saves or not.
 	 */
 	public boolean isConnectionDown()

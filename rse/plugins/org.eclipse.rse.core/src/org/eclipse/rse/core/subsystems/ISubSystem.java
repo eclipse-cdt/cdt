@@ -74,21 +74,21 @@ public interface ISubSystem extends ISystemFilterPoolReferenceManagerProvider, I
 	public IHost getHost();
 	
 	/**
-	 * Called on each subsystem associated with a particular ISystem after it connects
+	 * Called on each subsystem associated with a particular IConnectorService after it connects
 	 */
 	public void initializeSubSystem(IProgressMonitor monitor);
 	
 	/**
-	 * Called on each subsystem associated with a particular ISystem after it disconnects
+	 * Called on each subsystem associated with a particular IConnectorService after it disconnects
 	 */
 	public void uninitializeSubSystem(IProgressMonitor monitor);
 	
 	/**
-	 * @return true if this subsystem's properties should take precedence over other subsystems that share the same ISystem
+	 * @return true if this subsystem's properties should take precedence over other subsystems that share the same IConnectorService
 	 */
 	public boolean isPrimarySubSystem();
 	/**
-	 * Return the primary subsystem associated with this subsystem's ISystem
+	 * Return the primary subsystem associated with this subsystem's IConnectorService
 	 */
 	public ISubSystem getPrimarySubSystem();
 	
@@ -301,7 +301,7 @@ public interface ISubSystem extends ISystemFilterPoolReferenceManagerProvider, I
 	// The following methods relate to the live connection
 	// ---------------------------------------------------
 	/**
-	 * Return the ISystem object that represents the live connection for this system.
+	 * Return the IConnectorService object that represents the live connection for this system.
 	 */
 	public IConnectorService getConnectorService();
 

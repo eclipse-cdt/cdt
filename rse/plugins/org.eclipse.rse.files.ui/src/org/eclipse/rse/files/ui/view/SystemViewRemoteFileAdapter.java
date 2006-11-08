@@ -2639,29 +2639,18 @@ public class SystemViewRemoteFileAdapter
 	 */
 	public boolean refreshRemoteObject(Object oldElement, Object newElement)
 	{
-		//System.out.println("INSIDE REFRESHREMOTEOBJECT");
-		if (oldElement instanceof RemoteFile)
+		if ((oldElement instanceof RemoteFile) && (newElement instanceof IRemoteFile))
 		{
-			/* FIXME do we still need this?
-			RemoteFile oldFile = (RemoteFile) oldElement;
-			RemoteFile newFile = (RemoteFile) newElement;
-
-			oldFile.setName(newFile.getName());
-			oldFile.setCanRead(newFile.canRead());
-			oldFile.setCanWrite(newFile.canWrite());
-			oldFile.setIsHidden(newFile.isHidden());
-			oldFile.setLastModified(newFile.getLastModified());
-			oldFile.setLength(newFile.getLength());
-			//  if (oldFile instanceof LocalFileImpl)
-			//  {
-			// 	LocalFileImpl oldLocalFile = (LocalFileImpl)oldFile;
-			// 	LocalFileImpl newLocalFile = (LocalFileImpl)newFile;
-			oldFile.setFile(newFile.getFile());
-			// } 
-			return oldFile.isDirectory(); // refresh kids if this is a directory
-			*/
+			RemoteFile oldFile = (RemoteFile)oldElement;
+			RemoteFile newFile = (RemoteFile)newElement;
+			
+			if ((oldFile != newFile) && (oldFile.isFile()) && (newFile.isFile())) {
+				oldFile.getHostFile().renameTo(newFile.getAbsolutePath());
+			}
+			
 			return true;
 		}
+		
 		return false;
 	}
 

@@ -52,18 +52,16 @@ public class UniversalMacOSXProcessHandler implements ProcessHandler {
 	 */
 	public SortedSet lookupProcesses(IHostProcessFilter rpfs) throws Exception {
 		SortedSet results = new TreeSet(new ProcessComparator());
-
-		// create the remote command with the Mac OS X specific attributes
-		String cmdLine = "/bin/ps -A -o 'pid ucomm state ppid uid user gid vsz rss'";
-		// run the command and get output
-		Process ps = Runtime.getRuntime().exec(cmdLine);
+		// Using -A is problematic - the command never returns! Using -a for now.
+		String command = "/bin/ps -awwo pid,ucomm,state,ppid,uid,user,gid,vsz,rss"; 
+		Process ps = Runtime.getRuntime().exec(command);
 		InputStreamReader isr = new InputStreamReader(ps.getInputStream());
 		BufferedReader reader = new BufferedReader(isr);
-		String nextLine = reader.readLine(); // Header line
-		nextLine = reader.readLine();
-		while (nextLine != null) {
+		String line = reader.readLine(); // Header line
+		line = reader.readLine();
+		while (line != null) {
 			// Input line looks like "pid ucomm state ppid uid user gid vsz rss"
-			String[] words = nextLine.split("\\s+");
+			String[] words = line.trim().split("\\s+");
 			UniversalServerProcessImpl usp = new UniversalServerProcessImpl();
 			usp.setPid(words[0]);
 			usp.setName(words[1]);
@@ -79,14 +77,13 @@ public class UniversalMacOSXProcessHandler implements ProcessHandler {
 			if (rpfs.allows(usp.getAllProperties())) {
 				results.add(usp);
 			}
-			nextLine = reader.readLine();
+			line = reader.readLine();
 		}
 		reader.close();
 		isr.close();
-		if (results.size() == 0) return null;
 		return results;
 	}
-
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.rse.services.clientserver.processes.ProcessHandler#kill
 	 */
@@ -118,10 +115,10 @@ public class UniversalMacOSXProcessHandler implements ProcessHandler {
 	 * the ps listing on Mac OS X.
 	 */
 	protected String convertToStateCode(String state) {
-		String key = state.substring(0, 0);
+		String key = state.substring(0, 1);
 		String stateCode = (String) stateMap.get(key);
 		if (stateCode == null) {
-			stateCode = "";
+			stateCode = Character.toString(ISystemProcessRemoteConstants.STATE_RUNNING);
 		}
 		return stateCode;
 	}

@@ -30,8 +30,8 @@ import org.eclipse.core.runtime.CoreException;
 public class PDOMQualifierType extends PDOMNode implements IQualifierType,
 		ITypeContainer {
 
-	private static final int FLAGS = PDOMNode.RECORD_SIZE + 1;
-	private static final int TYPE = PDOMNode.RECORD_SIZE + 4;
+	private static final int FLAGS = PDOMNode.RECORD_SIZE;
+	private static final int TYPE = PDOMNode.RECORD_SIZE + 1;
 	
 	private static final int RECORD_SIZE = PDOMNode.RECORD_SIZE + 5;
 	

@@ -29,8 +29,8 @@ import org.eclipse.core.runtime.CoreException;
 public class PDOMPointerType extends PDOMNode implements IPointerType,
 		ITypeContainer {
 
-	private static final int FLAGS = PDOMNode.RECORD_SIZE + 1;
-	private static final int TYPE = PDOMNode.RECORD_SIZE + 4;
+	private static final int FLAGS = PDOMNode.RECORD_SIZE + 0;	// byte
+	private static final int TYPE = PDOMNode.RECORD_SIZE + 1;
 	
 	private static final int RECORD_SIZE = PDOMNode.RECORD_SIZE + 5;
 	

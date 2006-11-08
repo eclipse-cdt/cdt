@@ -30,6 +30,8 @@ public class Expression extends CObject implements ICDIExpression {
 	private int id;
 	String fExpression;
 	Type fType;
+	Variable fVariable;
+	ICDIStackFrame fContext;
 	
 	public Expression(Target target, String ex) {
 		super(target);
@@ -96,8 +98,19 @@ public class Expression extends CObject implements ICDIExpression {
 	public ICDIValue getValue(ICDIStackFrame context) throws CDIException {
 		Session session = (Session)getTarget().getSession();
 		ExpressionManager mgr = session.getExpressionManager();
-		Variable var = mgr.createVariable((StackFrame)context, getExpressionText());
-		return var.getValue();
+		if (fVariable != null && fContext != null && !context.equals(fContext))
+		{ // Get rid of the underlying variable if the context has changed.
+			// This is defensive, in practice each stack frame has it's own
+			// list of expressions.
+			mgr.deleteVariable(fVariable);
+			fVariable = null;
+		}
+		if (fVariable == null)
+		{ // Reuse the variable so we don't have to ask gdb to create another one. Bug 150565.
+			fVariable = mgr.createVariable((StackFrame)context, getExpressionText());
+		}
+		fContext = context;
+		return fVariable.getValue();
 	}
 
 	/* (non-Javadoc)
@@ -107,6 +120,8 @@ public class Expression extends CObject implements ICDIExpression {
 		Session session = (Session)getTarget().getSession();
 		ExpressionManager mgr = session.getExpressionManager();
 		mgr.destroyExpressions((Target)getTarget(), new Expression[] {this});
+		if (fVariable != null)
+			mgr.deleteVariable(fVariable);
 	}
 
 }

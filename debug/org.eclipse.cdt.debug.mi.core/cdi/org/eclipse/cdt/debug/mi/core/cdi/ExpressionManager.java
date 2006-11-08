@@ -249,8 +249,8 @@ public class ExpressionManager extends Manager {
 		} catch (MIException e) {
 			//throw new MI2CDIException(e);
 		}
-		//List varList = getVariableList(target);
-		//varList.remove(variable);
+		List varList = getVariableList(target);
+		varList.remove(variable);
 
 		// remove any children
 		ICDIVariable[] children = variable.children;

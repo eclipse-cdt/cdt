@@ -12,6 +12,7 @@ package org.eclipse.cdt.debug.internal.ui.views.modules;
 
 import java.util.HashMap;
 import java.util.Iterator;
+
 import org.eclipse.cdt.core.IAddress;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.debug.core.model.ICDebugTarget;
@@ -30,10 +31,11 @@ import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.internal.ui.contexts.DebugContextManager;
-import org.eclipse.debug.internal.ui.contexts.provisional.IDebugContextListener;
 import org.eclipse.debug.internal.ui.viewers.PresentationContext;
 import org.eclipse.debug.ui.AbstractDebugView;
 import org.eclipse.debug.ui.IDebugUIConstants;
+import org.eclipse.debug.ui.contexts.DebugContextEvent;
+import org.eclipse.debug.ui.contexts.IDebugContextListener;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
@@ -98,6 +100,7 @@ public class ModulesView extends AbstractDebugView implements IDebugContextListe
 	interface ICursorListener extends MouseListener, KeyListener {
 	}
 
+	
 	/**
 	 * The selection provider for the modules view changes depending on whether
 	 * the variables viewer or detail pane source viewer have focus. This "super" 
@@ -390,7 +393,7 @@ public class ModulesView extends AbstractDebugView implements IDebugContextListe
 		getSite().setSelectionProvider( getModulesViewSelectionProvider() );
 
 		// listen to debug context
-		DebugContextManager.getDefault().addDebugContextListener( this, getSite().getWorkbenchWindow() );
+		DebugContextManager.getDefault().addDebugContextListener(this);
 		return modulesViewer;
 	}
 
@@ -787,7 +790,7 @@ public class ModulesView extends AbstractDebugView implements IDebugContextListe
 	 */
 	protected void becomesVisible() {
 		super.becomesVisible();
-		ISelection selection = DebugContextManager.getDefault().getActiveContext( getSite().getWorkbenchWindow() );
+		ISelection selection = DebugContextManager.getDefault().getContextService( getSite().getWorkbenchWindow() ).getActiveContext();
 		contextActivated( selection, null );
 	}
 
@@ -977,8 +980,8 @@ public class ModulesView extends AbstractDebugView implements IDebugContextListe
 		showViewer();
 	}
 
-	public void contextChanged( ISelection selection, IWorkbenchPart part ) {
+	public void debugContextChanged(DebugContextEvent event) {
 		// TODO Auto-generated method stub
-		
 	}
+	
 }

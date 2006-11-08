@@ -14,7 +14,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.internal.ui.viewers.AsynchronousTreeViewer;
-import org.eclipse.debug.internal.ui.viewers.provisional.IAsynchronousRequestMonitor;
+import org.eclipse.debug.ui.commands.IStatusMonitor;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.progress.UIJob;
  
@@ -45,7 +45,7 @@ public class ModulesViewer extends AsynchronousTreeViewer {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.model.viewers.AsynchronousModelViewer#updateComplete(org.eclipse.debug.internal.ui.viewers.provisional.IAsynchronousRequestMonitor)
 	 */
-	protected void updateComplete( IAsynchronousRequestMonitor update ) {
+	protected void updateComplete( IStatusMonitor update ) {
 		super.updateComplete( update );
 		if ( fView != null ) {
 			fRestoreJob.schedule( 100 );
@@ -55,7 +55,7 @@ public class ModulesViewer extends AsynchronousTreeViewer {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.model.viewers.AsynchronousModelViewer#handlePresentationFailure(org.eclipse.debug.internal.ui.viewers.provisional.IAsynchronousRequestMonitor, org.eclipse.core.runtime.IStatus)
 	 */
-	protected void handlePresentationFailure( IAsynchronousRequestMonitor update, IStatus status ) {
+	protected void handlePresentationFailure( IStatusMonitor update, IStatus status ) {
 		fView.showMessage( status.getMessage() );
 	}
 

@@ -152,16 +152,20 @@ class PDOMCPPNamespace extends PDOMCPPBinding
 				// reference
 				IASTNode eParent = parent.getParent();
 				if (eParent instanceof IASTFunctionCallExpression) {
-					IType[] types = ((PDOMCPPLinkage)getLinkage()).getTypes(
-							((IASTFunctionCallExpression)eParent).getParameterExpression()
-							);
-					ILocalBindingIdentity bid = new CPPBindingIdentity.Holder(
-						new String(name.toCharArray()),
-						PDOMCPPLinkage.CPPFUNCTION,
-						types);
-					FindEquivalentBinding feb = new FindEquivalentBinding(getLinkageImpl(), bid);
-					getIndex().accept(feb);
-					return feb.getResult();
+					if(parent.getPropertyInParent().equals(IASTFunctionCallExpression.FUNCTION_NAME)) {
+						IType[] types = ((PDOMCPPLinkage)getLinkage()).getTypes(
+								((IASTFunctionCallExpression)eParent).getParameterExpression()
+						);
+						if(types!=null) {
+							ILocalBindingIdentity bid = new CPPBindingIdentity.Holder(
+									new String(name.toCharArray()),
+									PDOMCPPLinkage.CPPFUNCTION,
+									types);
+							FindEquivalentBinding feb = new FindEquivalentBinding(getLinkageImpl(), bid);
+							getIndex().accept(feb);
+							return feb.getResult();
+						}
+					}
 				} else {
 					FindBindingsInBTree visitor = new FindBindingsInBTree(getLinkageImpl(), name.toCharArray(), 
 							(name.getParent() instanceof ICPPASTQualifiedName

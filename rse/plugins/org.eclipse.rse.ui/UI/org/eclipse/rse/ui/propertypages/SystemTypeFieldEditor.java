@@ -308,30 +308,26 @@ public class SystemTypeFieldEditor extends FieldEditor
 		return sb.toString();
 	}
 	
-	private IRSESystemType[] getSystemTypes(boolean defaults)
-	{
+	/**
+	 * Retrieve an array of currently known system types.
+	 * @param restoreDefaults restore the default values for the system types
+	 * @return The list of system types known to be in existence
+	 */
+	private IRSESystemType[] getSystemTypes(boolean restoreDefaults) {
 		IRSESystemType[] types = RSECorePlugin.getDefault().getRegistry().getSystemTypes();
-		
 		ArrayList list = new ArrayList();
-
-		if (systemTypes == null) {
-			
+		if (systemTypes == null || restoreDefaults) {
 			for (int i = 0; i < types.length; i++) {
-				
 				ISubSystemConfiguration[] configurations = RSEUIPlugin.getTheSystemRegistry().getSubSystemConfigurationsBySystemType(types[i].getName());
-				
 				if (configurations != null && configurations.length > 0) {
 					list.add(types[i]);
 				}
 			}
 		}
-		
 		types = new IRSESystemType[list.size()];
-		
 		for (int i = 0; i < list.size(); i++) {
-			types[i] = (IRSESystemType)(list.get(i));
+			types[i] = (IRSESystemType) (list.get(i));
 		}
-		
 		return types;
 	}
 

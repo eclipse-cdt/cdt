@@ -31,34 +31,33 @@ public interface ICommunicationsDiagnostic extends Runnable {
 	/**
 	 * Setup for the diagnostic
 	 * 
-	 * @param
-	 *  String id: assign an ID for this diagnostic instance
-	 *  boolean quiet: true if user to be prompted for a dialog
-	 *  String server: the host network name
-	 *  IConnectorService system: the connection to be investigated
-	 *  String str1, str2, str3: optional strings 
+	 * @param id assign an ID for this diagnostic instance
+	 * @param quiet true if user to be prompted for a dialog
+	 * @param server the host network name
+	 * @param system the connection to be investigated
+	 * @param str1 optional string
+	 * @param str2 optional string
+	 * @param str3 optional string 
 	 */ 
 	public void setUp(String id, boolean quiet, String server, IConnectorService system, String str1, String str2, String str3);		
 			
 	/**
 	 * Log an error in the .log file
 	 * 
-	 * @param
-	 *  String text: message text to be logged
+	 * @param text message text to be logged
 	 */ 
 	public void logError(String text);
 	 
 	/**
 	 * Check if network is down
-	 * @param None
-	 * @return true or false
 	 * 
+	 * @return true or false
 	 */ 
     public boolean isNetworkDown();
     
     /**
      * Check if host server is still active
-     * @param None
+     * 
      * @return true or false
      */
     public boolean isServerActive();
@@ -66,8 +65,7 @@ public interface ICommunicationsDiagnostic extends Runnable {
     /**
      * Dispaly a message dialog
      * 
-     * @param
-     *  int id: message to be displayed.
+     * @param id message to be displayed.
      */
     public void displayMessage(String id);
     

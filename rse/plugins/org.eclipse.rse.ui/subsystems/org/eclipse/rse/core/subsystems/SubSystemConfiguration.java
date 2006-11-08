@@ -1503,7 +1503,7 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 		// fire model change event in case any BP code is listening...
 		RSEUIPlugin.getTheSystemRegistry().fireModelChangeEvent(ISystemModelChangeEvents.SYSTEM_RESOURCE_CHANGED, ISystemModelChangeEvents.SYSTEM_RESOURCETYPE_SUBSYSTEM, subsystem, null);						
 
-		// if the updated subsystem is one of many that share a single ISystem, then 
+		// if the updated subsystem is one of many that share a single IConnectorService, then 
 		// update all of them too...
 		// DKM - now that ConnectorService is independent of subsystme, this should be unnecessary
 	/*	AbstractConnectorServiceManager systemManager = subsystem.getConnectorService();

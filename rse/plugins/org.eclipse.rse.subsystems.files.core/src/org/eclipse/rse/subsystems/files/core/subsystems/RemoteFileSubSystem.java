@@ -135,7 +135,8 @@ public abstract class RemoteFileSubSystem extends SubSystem implements IRemoteFi
 		_searchHistory = new ArrayList();
 	}
 	/**
-	 * @return true if this subsystem's properties should take precedence over other subsystems that share the same ISystem
+	 * @return true if this subsystem's properties should take precedence
+	 *  over other subsystems that share the same {@link IConnectorService}
 	 */
 	public boolean isPrimarySubSystem()
 	{

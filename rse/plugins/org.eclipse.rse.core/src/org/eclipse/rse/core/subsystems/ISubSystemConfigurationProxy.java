@@ -75,7 +75,7 @@ public interface ISubSystemConfigurationProxy
      */
     public ISubSystemConfiguration getSubSystemConfiguration();
 //	/**
-//	 * Return an instance of the ISystem class identified by the "systemClass" attribute
+//	 * Return an instance of the IConnectorService class identified by the "systemClass" attribute
 //	 * of this subsystemFactory extension point. Note each call to this method returns a
 //	 * new instance of the class, or null if no "systemClass" attribute was specified. 
 //	 */

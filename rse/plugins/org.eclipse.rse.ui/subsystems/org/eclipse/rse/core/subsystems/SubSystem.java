@@ -2473,7 +2473,7 @@ public abstract class SubSystem extends RSEModelObject implements IAdaptable, IS
     }
 
     /**
-     * This gets called after the corresponding ISystem connect method finishes.
+     * This gets called after the corresponding {@link IConnectorService} connect method finishes.
      * This method should be overridden if any initialization for the subsystem needs
      * to occur at this time
      */
@@ -2707,15 +2707,15 @@ public abstract class SubSystem extends RSEModelObject implements IAdaptable, IS
 	// ----------------------------------
 
 	/**
-	 * Return the {@link org.eclipse.rse.core.subsystems.IConnectorService ISystem} object that represents the live connection for this system.
-	 * This must return an object that implements ISystem. A good starting point for that
+	 * Return the {@link org.eclipse.rse.core.subsystems.IConnectorService IConnectorService} object that represents the live connection for this system.
+	 * This must return an object that implements {@link IConnectorService}. A good starting point for that
 	 *  is the base class {@link AbstractConnectorService}.
 	 * <p>If you only have a single subsystem class, you may override this method to return the
-	 *  ISystem object that manages the connect/disconnect actions. If, on the other hand,
-	 *  you have multiple subsystem classes that desire to share a single ISystem connection,
+	 *  IConnectorService object that manages the connect/disconnect actions. If, on the other hand,
+	 *  you have multiple subsystem classes that desire to share a single IConnectorService connection,
 	 *  (ie, share the same communications pipe) then do not override this. By default, this
 	 *  calls getSystemManager() which returns an {@link AbstractConnectorServiceManager} object that manages maintaining a singleton
-	 *  ISystem object per system connection. You should subclass AbstractSystemManager,
+	 *  IConnectorService object per system connection. You should subclass AbstractSystemManager,
 	 *  and override getSystemManager() to return a singleton instance of that subclass.
 	 * <p>Default implementation:</p>
 	 * <pre><code>
@@ -3231,7 +3231,8 @@ public abstract class SubSystem extends RSEModelObject implements IAdaptable, IS
 
 	
 	/**
-	 * @return true if this subsystem's properties should take precedence over other subsystems that share the same ISystem
+	 * @return true if this subsystem's properties should take precedence
+	 *  over other subsystems that share the same IConnectorService
 	 */
 	public boolean isPrimarySubSystem()
 	{

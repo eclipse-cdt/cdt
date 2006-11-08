@@ -24,7 +24,7 @@ import org.eclipse.rse.core.subsystems.ISubSystem;
 /**
  * This class manages our DeveloperConnectorService objects, so that if we 
  * ever have multiple subsystem factories, different subsystems can share 
- * the same system object if they share the communication layer.
+ * the same IConnectorService object if they share the communication layer.
  */
 public class DeveloperConnectorServiceManager extends
 		AbstractConnectorServiceManager {

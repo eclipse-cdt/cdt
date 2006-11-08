@@ -54,13 +54,14 @@ Contributors:
 <!--  description => translatable descriptin for subsystems of this configuration       -->
 <!--  id          => unique id for this extension point. Will be used for a folder name -->
 <!--  vendor      => name of company supplying this configuration                       -->
-<!--  systemClass => Optional. Only used when naming a predefined subsystem configuration  -->
+<!--  systemClass => OBSOLETE - Removed in OpenRSE.                                     -->
+<!--      Was only used when naming a predefined subsystem configuration                -->
 <!--      in the <samp>class</samp> attribute, when you want to subclass or replace the -->
-<!--      predefined ISystem object used to manage the live connection with the remote  -->
-<!--      system. Name a class that implements                                          -->
-<!--        org.eclipse.rse.subsystems.ISystem or extends the appropriate               -->
+<!--      predefined IConnectorService object used to manage the live connection with   -->
+<!--      the remote system. Name a class that implements                               -->
+<!--        org.eclipse.rse.core.subsystems.IConnectorService or extends the appropriate     -->
 <!--      predefined class such as org.eclipse.rse.universal.UniversalSystem            -->
-<!--      for unix, windows and system types.   (systemClass removed in OpenRSE)                                        -->
+<!--      for unix, windows and system types.                                           -->
 <!-- ================================================================================== -->
 <!--                                                                                    -->
 <!-- For systemTypes, if you specify * for all, you still have a chance at runtime to   -->

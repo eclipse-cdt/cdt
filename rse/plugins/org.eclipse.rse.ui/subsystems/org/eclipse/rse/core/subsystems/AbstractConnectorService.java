@@ -1028,7 +1028,7 @@ public abstract class AbstractConnectorService extends RSEModelObject implements
 //	 * You normally do not call this! Rather, your subsystem factory class will override
 //	 * {@link org.eclipse.rse.core.subsystems.SubSystemConfiguration#supportsServerLaunchType(ServerLaunchType)}.
 //	 * However, this method is needed by ISVs that re-use predefined subsystem factories,
-//	 * and merely supply their own ISystem object via the "systemClass" attribute of the
+//	 * and merely supply their own IConnectorService object via the "systemClass" attribute of the
 //	 * subsystemConfigurations extension point.
 //	 * 
 //	 * @see org.eclipse.rse.core.subsystems.ServerLaunchType

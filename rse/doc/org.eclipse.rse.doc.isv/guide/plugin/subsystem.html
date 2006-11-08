@@ -158,9 +158,9 @@ following summarizes the minimum set of classes you will be creating in order to
 <OL>
   <li>Creating an interface for your subsystem. It can, and often is, an empty interface.</li>
   <li>Creating a subclass of <A href="../../reference/api/org/eclipse/rse/core/subsystems/AbstractConnectorService.html">AbstractConnectorService</A>.
-      The code here will interact as necessary with your subsystem to manage the live connection to the remote system.</li>
+      The code here will interact as necessary with your subsystem to manage the connection lifecycle to the remote system.</li>
   <li>Creating a subclass of <A href="../../reference/api/org/eclipse/rse/core/subsystems/AbstractConnectorServiceManager.html">AbstractConnectorServiceManager</A>.
-      The code here will re-use the same system object from step 2 for all subsystems that implement the interface from step 1, within the same connection.</li>
+      The code here will re-use the same IConnectorService object from step 2 for all subsystems that implement the interface from step 1, within the same connection.</li>
   <li>Designing the classes to represent the remote resources (your <i>model</i>) that you will show from your subsystem.
       Each must implement the <samp>org.eclipse.core.runtime.IAdaptable</samp> interface from Eclipse.
       It is also very helpful if they also maintain a reference to the subsystem which created them. The base class

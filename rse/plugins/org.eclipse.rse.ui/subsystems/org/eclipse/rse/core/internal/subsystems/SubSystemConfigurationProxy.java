@@ -294,7 +294,7 @@ public class SubSystemConfigurationProxy implements ISubSystemConfigurationProxy
     	return object;
     }            
 //	/**
-//	 * Return an instance of the ISystem class identified by the "systemClass" attribute
+//	 * Return an instance of the IConnectorService class identified by the "systemClass" attribute
 //	 * of this subsystemFactory extension point. Note each call to this method returns a
 //	 * new instance of the class, or null if no "systemClass" attribute was specified. 
 //	 */
@@ -308,10 +308,10 @@ public class SubSystemConfigurationProxy implements ISubSystemConfigurationProxy
 //			 object = (IConnectorService)element.createExecutableExtension("systemClass");
 //		} catch (Exception exc)
 //		{
-//			 SystemBasePlugin.logError("Unable to instantiate ISystem class "+ systemClassName + " for extension point " + id,exc);
+//			 SystemBasePlugin.logError("Unable to instantiate IConnectorService class "+ systemClassName + " for extension point " + id,exc);
 //			 org.eclipse.swt.widgets.MessageBox mb = new org.eclipse.swt.widgets.MessageBox(SystemBasePlugin.getActiveWorkbenchShell());
 //			 mb.setText("Unexpected Error");
-//			 String errmsg = "Unable to instantiate ISystem class " + systemClassName + " for extension point " + id +": " + exc.getClass().getName()+" - " + exc.getMessage();
+//			 String errmsg = "Unable to instantiate IConnectorService class " + systemClassName + " for extension point " + id +": " + exc.getClass().getName()+" - " + exc.getMessage();
 //			 mb.setMessage(errmsg);	
 //			 mb.open();   	         
 //		}    		

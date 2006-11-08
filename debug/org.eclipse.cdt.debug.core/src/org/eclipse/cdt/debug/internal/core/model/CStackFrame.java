@@ -181,7 +181,7 @@ public class CStackFrame extends CDebugElement implements ICStackFrame, IRestart
 	 * @see org.eclipse.debug.core.model.IStackFrame#hasVariables()
 	 */
 	public boolean hasVariables() throws DebugException {
-		return ( isDisposed() ) ? false : getVariables0().size() > 0;
+		return ( isDisposed() ) ? false : (getVariables0().size() > 0 || getGlobals().length > 0);
 	}
 
 	/* (non-Javadoc)

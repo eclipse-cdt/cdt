@@ -55,7 +55,6 @@ public class NumberRule implements IRule
             }
             if (ch == '0') {
             	int xCh = scanner.read();
-            	++unreadCount;
             	if (xCh == 'x' || xCh == 'X') {
                 	// hexnumber starting with [+-]?0[xX]
                     do {
@@ -66,9 +65,9 @@ public class NumberRule implements IRule
             	}
             	scanner.unread();
             	// assert ch == '0';
-            } else if (!Character.isDigit((char)ch)) {
-            	ch = scanner.read();
-            	++unreadCount;
+            } else if (ch == '.') {
+                ch = scanner.read();
+                ++unreadCount;
             }
             if (Character.isDigit((char)ch)) {
             	// need at least one digit

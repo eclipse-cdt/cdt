@@ -114,6 +114,13 @@ public class NumberRuleTest extends TestCase {
 //		assertNoNumber("1e+");
 	}
 
+	public void testBug163691() {
+		assertNoNumber("+x1");
+		assertNoNumber("-z0");
+		assertNoNumber("- 0");
+		assertNoNumber("+ 9");
+	}
+
 	/**
 	 * Validate that given string is recognized as a number.
 	 * @param string

@@ -4337,6 +4337,8 @@ public class SystemView extends TreeViewer implements ISystemTree, ISystemResour
 		boolean ok = true;
 		boolean anyOk = false;
 		Vector deletedVector = new Vector();
+		
+		// keep track of the current set
 		SystemRemoteElementResourceSet set = null;
 		
 		try {
@@ -4359,7 +4361,10 @@ public class SystemView extends TreeViewer implements ISystemTree, ISystemResour
 				ISystemViewElementAdapter srcAdapter = set.getAdapter();
 
 				if (srcSubSystem != null) {
+					
+					// this call can throw an exception
 					ok = srcAdapter.doDeleteBatch(getShell(), set.getResourceSet(), monitor);
+					
 					if (ok) {
 						anyOk = true;
 						deletedVector.addAll(set.getResourceSet());
@@ -4377,6 +4382,10 @@ public class SystemView extends TreeViewer implements ISystemTree, ISystemResour
 			// refresh all parents if selection is remote objects
 			if (selectionIsRemoteObject) {
 				
+				// we only need to iterate over the last set in the list of sets since presumably the sets before did not cause any exceptions
+				// if elements in the list before were deleted successfully, then the code after this catch block will handle them (by firing delete events)
+				// for the current set that caused the exception, we refresh the parents of the elements in the set (since we don't know which
+				// elements in the set may have been deleted successfully before the exception occurred). 
 				if (set != null) {
 					List list = set.getResourceSet();
 					

@@ -313,7 +313,8 @@ public interface IRemoteFileSubSystem extends ISubSystem{
 	 * <ul>
 	 *   <li>If any of the inputs are a folder, those folders must be empty for this to succeed.
 	 * </ul>
-	 * 
+	 * Should throw an exception if some files and folders were deleted and others were not due to an exception during the operation.
+	 * Without an exception thrown in such cases, views may not be refreshed correctly to account for deleted resources.
 	 * @param folderOrFiles represents the objects to be deleted.
 	 * @param monitor progressMonitor
 	 * @return false if any of the given folder/file dont exist to begin with, else true. Throws an exception if anything fails.

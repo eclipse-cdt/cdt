@@ -184,7 +184,9 @@ public interface IFileService extends IService
 	public boolean delete(IProgressMonitor monitor, String remoteParent, String fileName) throws SystemMessageException;
 
 	/**
-	 * Deletes a set of files or folders on the host
+	 * Deletes a set of files or folders on the host. Should throw an exception if some files and folders were deleted and others were not
+	 * due to an exception during the operation. Without an exception thrown in such cases, views may not be refreshed correctly to account
+	 * for deleted resources.
 	 * @param monitor the progress monitor
 	 * @param remoteParents the array of folders containing the files to delete
 	 * @param fileNames the names of the files or folders to delete

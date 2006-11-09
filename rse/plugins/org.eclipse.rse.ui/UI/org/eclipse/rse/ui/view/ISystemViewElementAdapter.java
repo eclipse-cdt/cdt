@@ -235,7 +235,10 @@ public interface ISystemViewElementAdapter extends IPropertySource, ISystemDragD
 	    throws Exception;
 
 	/**
-	 * Perform the delete on the given set of items. This is after the user has been asked to confirm deletion.
+	 * Perform the delete on the given set of items. This is after the user has been asked to confirm deletion. Should throw an exception
+	 * if some elements were deleted and others were not due to an exception during the operation. Without an exception
+	 * thrown in such cases, views may not be refreshed correctly to account for deleted resources.
+	 * @return <code>true</code> if the delete was successful, <code>false</code> if it was not.
 	 */
 	public boolean doDeleteBatch(Shell shell, List resourceSet, IProgressMonitor monitor)
 		throws Exception;

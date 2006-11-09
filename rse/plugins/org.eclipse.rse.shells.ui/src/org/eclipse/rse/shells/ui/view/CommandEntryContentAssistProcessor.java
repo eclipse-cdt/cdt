@@ -342,7 +342,7 @@ public class CommandEntryContentAssistProcessor implements IContentAssistProcess
 				if (separatorIndex > 0)
 				{
 					String previousText = currentText.substring(0, separatorIndex + 1).replace(_foreignFileSeparator, _fileSeparator);
-					String nextText = "";
+					String nextText = ""; //$NON-NLS-1$
 					if (separatorIndex < currentText.length())
 					{
 						nextText = currentText.substring(separatorIndex + 1, currentText.length());
@@ -383,11 +383,11 @@ public class CommandEntryContentAssistProcessor implements IContentAssistProcess
 					{
 						if (!_isWindows && currentText.length() > 0 && currentText.charAt(0) == _fileSeparator)
 						{
-							getAbsoluteFileCompletions("", currentText, results, FILES_AND_FOLDERS);
+							getAbsoluteFileCompletions("", currentText, results, FILES_AND_FOLDERS); //$NON-NLS-1$
 						}
 						else
 						{
-							getFileCompletions(workingDirectory, "", currentText, results, FILES_ONLY);
+							getFileCompletions(workingDirectory, "", currentText, results, FILES_ONLY); //$NON-NLS-1$
 							getCommandCompletions(currentText, results);
 						}
 					}
@@ -395,7 +395,7 @@ public class CommandEntryContentAssistProcessor implements IContentAssistProcess
 					{
 						int flag = FILES_AND_FOLDERS;
 
-						if (firstToken.equals("cd"))
+						if (firstToken.equals("cd")) //$NON-NLS-1$
 						{
 							flag = FOLDERS_ONLY;
 						}
@@ -403,20 +403,20 @@ public class CommandEntryContentAssistProcessor implements IContentAssistProcess
 						{
 							if (_isWindows)
 							{
-								if (firstToken.equals("set") || currentText.startsWith("%"))
+								if (firstToken.equals("set") || currentText.startsWith("%")) //$NON-NLS-1$ //$NON-NLS-2$
 								{
 									getEnvironmentCompletions(currentText, results);
 									return results;
 								}
 							}
-							else if (firstToken.equals("export") || currentText.startsWith("$"))
+							else if (firstToken.equals("export") || currentText.startsWith("$")) //$NON-NLS-1$ //$NON-NLS-2$
 							{
 								getEnvironmentCompletions(currentText, results);
 								return results;
 							}
 						}
 
-						getFileCompletions(workingDirectory, "", currentText, results, flag);
+						getFileCompletions(workingDirectory, "", currentText, results, flag); //$NON-NLS-1$
 					}
 				}
 			}
@@ -443,16 +443,16 @@ public class CommandEntryContentAssistProcessor implements IContentAssistProcess
 					int eqSepIndex = var.indexOf('=');
 					String name = var.substring(0, eqSepIndex);
 					String value = var.substring(eqSepIndex + 1, var.length());
-					boolean hasDollars = currentText.startsWith("$");
+					boolean hasDollars = currentText.startsWith("$"); //$NON-NLS-1$
 					String compareName = name;
 					if (hasDollars)
 					{
-						compareName = "$" + name;
+						compareName = "$" + name; //$NON-NLS-1$
 					}
-					boolean hasPercent = currentText.startsWith("%");
+					boolean hasPercent = currentText.startsWith("%"); //$NON-NLS-1$
 					if (hasPercent)
 					{
-						compareName = "%" + name + "%";
+						compareName = "%" + name + "%"; //$NON-NLS-1$ //$NON-NLS-2$
 					}
 
 					if (compareName.toLowerCase().startsWith(currentText.toLowerCase()))
@@ -491,7 +491,7 @@ public class CommandEntryContentAssistProcessor implements IContentAssistProcess
 	{
 		if (!_isWindows)
 		{
-			int lastSlashIndex = currentText.lastIndexOf("/");
+			int lastSlashIndex = currentText.lastIndexOf("/"); //$NON-NLS-1$
 			String parentPath = currentText.substring(0, lastSlashIndex);
 			IRemoteFileSubSystem fs = RemoteFileUtility.getFileSubSystem(_remoteCommand.getCommandSubSystem().getHost());
 			try
@@ -506,7 +506,7 @@ public class CommandEntryContentAssistProcessor implements IContentAssistProcess
 				 }
 				 else
 				 {
-				 	fileList = parent.getParentRemoteFileSubSystem().listFoldersAndFiles(parent, currentText + "*", null);
+				 	fileList = parent.getParentRemoteFileSubSystem().listFoldersAndFiles(parent, currentText + "*", null); //$NON-NLS-1$
 				 }
 			
 

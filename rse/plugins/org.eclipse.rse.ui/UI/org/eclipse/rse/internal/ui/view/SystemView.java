@@ -73,7 +73,6 @@ import org.eclipse.rse.core.model.ISystemMessageObject;
 import org.eclipse.rse.core.model.ISystemRegistry;
 import org.eclipse.rse.core.references.IRSEBaseReferencingObject;
 import org.eclipse.rse.core.subsystems.ISubSystem;
-import org.eclipse.rse.core.subsystems.SubSystem;
 import org.eclipse.rse.model.ISystemPromptableObject;
 import org.eclipse.rse.model.ISystemRemoteChangeEvent;
 import org.eclipse.rse.model.ISystemRemoteChangeEvents;
@@ -83,6 +82,7 @@ import org.eclipse.rse.model.ISystemResourceChangeEvents;
 import org.eclipse.rse.model.ISystemResourceChangeListener;
 import org.eclipse.rse.model.SystemRegistry;
 import org.eclipse.rse.model.SystemRemoteElementResourceSet;
+import org.eclipse.rse.model.SystemResourceChangeEvent;
 import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
 import org.eclipse.rse.ui.ISystemContextMenuConstants;
 import org.eclipse.rse.ui.ISystemDeleteTarget;
@@ -121,7 +121,6 @@ import org.eclipse.swt.events.TreeEvent;
 import org.eclipse.swt.graphics.Cursor;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Item;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Shell;
@@ -4338,6 +4337,8 @@ public class SystemView extends TreeViewer implements ISystemTree, ISystemResour
 		boolean ok = true;
 		boolean anyOk = false;
 		Vector deletedVector = new Vector();
+		SystemRemoteElementResourceSet set = null;
+		
 		try {
 			while (ok && elements.hasNext()) {
 				element = elements.next();
@@ -4353,7 +4354,7 @@ public class SystemView extends TreeViewer implements ISystemTree, ISystemResour
 			// now we have things divided into sets
 			// delete 1 set at a time
 			for (int s = 0; s < _setList.size() && ok; s++) {
-				SystemRemoteElementResourceSet set = (SystemRemoteElementResourceSet) _setList.get(s);
+				set = (SystemRemoteElementResourceSet) _setList.get(s);
 				ISubSystem srcSubSystem = set.getSubSystem();
 				ISystemViewElementAdapter srcAdapter = set.getAdapter();
 
@@ -4369,10 +4370,37 @@ public class SystemView extends TreeViewer implements ISystemTree, ISystemResour
 			SystemMessageDialog.displayErrorMessage(getShell(), exc.getSystemMessage());
 			ok = false;
 		} catch (Exception exc) {
-			exc.printStackTrace();
 			String msg = exc.getMessage();
 			if ((msg == null) || (exc instanceof ClassCastException)) msg = exc.getClass().getName();
 			SystemMessageDialog.displayErrorMessage(getShell(), RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_EXCEPTION_DELETING).makeSubstitution(element, msg));
+			
+			// refresh all parents if selection is remote objects
+			if (selectionIsRemoteObject) {
+				
+				if (set != null) {
+					List list = set.getResourceSet();
+					
+					if (list != null && list.size() > 0) {
+						
+						Iterator iter = list.iterator();
+						
+						Vector refreshedList = new Vector();
+						
+						while (iter.hasNext()) {
+							Object obj = iter.next();
+							ISystemViewElementAdapter adp = getAdapter(obj);
+							Object parent = adp.getParent(obj);
+							
+							if ((parent != null) && !(refreshedList.contains(parent))) {
+								SystemResourceChangeEvent event = new SystemResourceChangeEvent(parent, ISystemResourceChangeEvents.EVENT_REFRESH_REMOTE, null);
+								sr.fireEvent(event);
+								refreshedList.add(parent);
+							}
+						}
+					}
+				}
+			}
+			
 			ok = false;
 		}
 		//System.out.println("in doDelete. Any ok? " + anyOk + ", selectionIsRemoteObject? " + selectionIsRemoteObject);

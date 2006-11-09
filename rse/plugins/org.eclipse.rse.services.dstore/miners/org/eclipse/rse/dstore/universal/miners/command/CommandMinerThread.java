@@ -91,7 +91,7 @@ public class CommandMinerThread extends MinerThread
 		_descriptors = descriptors;
 		
 		_subject = theElement;
-		String theOS = System.getProperty("os.name");
+		String theOS = System.getProperty("os.name"); //$NON-NLS-1$
 		
 		_invocation = invocation.trim();
 		_patterns = thePatterns;
@@ -100,20 +100,20 @@ public class CommandMinerThread extends MinerThread
 		
 		
 	
-		if (theOS.toLowerCase().startsWith("os/400"))
+		if (theOS.toLowerCase().startsWith("os/400")) //$NON-NLS-1$
 		{		    
 		    _isOS400 = true;
 		}
 		
-		if (theOS.toLowerCase().startsWith("z"))
+		if (theOS.toLowerCase().startsWith("z")) //$NON-NLS-1$
 		{
-		  System.setProperty("dstore.stdin.encoding","Cp037");
+		  System.setProperty("dstore.stdin.encoding","Cp037"); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	    	
-		_isWindows = theOS.toLowerCase().startsWith("win");
+		_isWindows = theOS.toLowerCase().startsWith("win"); //$NON-NLS-1$
 		if (!_isWindows)
 		{
-			PSEUDO_TERMINAL = _dataStore.getAttribute(DataStoreAttributes.A_PLUGIN_PATH) + File.separatorChar + "rseterm" + File.separatorChar + "rseterm";
+			PSEUDO_TERMINAL = _dataStore.getAttribute(DataStoreAttributes.A_PLUGIN_PATH) + File.separatorChar + "rseterm" + File.separatorChar + "rseterm"; //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		
 		try
@@ -122,7 +122,7 @@ public class CommandMinerThread extends MinerThread
 			_cwdStr = theElement.getSource();
 			if (_cwdStr == null || _cwdStr.length() == 0)
 			{
-				_cwdStr = System.getProperty("user.home");
+				_cwdStr = System.getProperty("user.home"); //$NON-NLS-1$
 			}
 
 			File theDirectory = new File(_cwdStr);
@@ -134,7 +134,7 @@ public class CommandMinerThread extends MinerThread
 			}
 			catch (Exception e)
 			{
-				_cwdStr = System.getProperty("user.home");
+				_cwdStr = System.getProperty("user.home"); //$NON-NLS-1$
 			}
 			_status.setAttribute(DE.A_SOURCE, _cwdStr);
 
@@ -153,7 +153,7 @@ public class CommandMinerThread extends MinerThread
 				}
 				_patterns.setIsTerminal(_isTTY && !_isOS400);
 				
-				String property = "SHELL=";
+				String property = "SHELL="; //$NON-NLS-1$
 				
 				String[] env = getEnvironment(_subject);
 				for (int i = 0; i < env.length; i++)
@@ -162,23 +162,23 @@ public class CommandMinerThread extends MinerThread
 					if (var.startsWith(property))
 					{
 						theShell = var.substring(property.length(), var.length());
-						if (theShell.endsWith("bash"))
+						if (theShell.endsWith("bash")) //$NON-NLS-1$
 						{
-							theShell = "sh";
+							theShell = "sh"; //$NON-NLS-1$
 						}
 					}
 					if (_isOS400)
 					{
-					    theShell = "/QOpenSys/usr/bin/sh";//var.substring(property.length(), var.length());
+					    theShell = "/QOpenSys/usr/bin/sh";//var.substring(property.length(), var.length()); //$NON-NLS-1$
 					}
 				}
 			
 				
 				if (theShell == null)
 				{
-					if (_invocation.equals(">"))
+					if (_invocation.equals(">")) //$NON-NLS-1$
 					{
-						_invocation = "sh";
+						_invocation = "sh"; //$NON-NLS-1$
 						_isShell = true;
 					}
 					if (_isTTY)
@@ -195,7 +195,7 @@ public class CommandMinerThread extends MinerThread
 				}
 				else
 				{
-					if (_invocation.equals(">"))
+					if (_invocation.equals(">")) //$NON-NLS-1$
 					{					
 						_invocation = theShell;
 				
@@ -209,16 +209,16 @@ public class CommandMinerThread extends MinerThread
 						    {
 						        args = new String[4];
 								args[0] = PSEUDO_TERMINAL;
-								args[1] = "/QOpenSys/usr/bin/sh";
-								args[2] = "-c";						
-								args[3] = "export TERMINAL_TYPE=REMOTE;export QIBM_JAVA_STDIO_CONVERT=Y;export QIBM_USE_DESCRIPTOR_STDIO=I;" + theShell;
+								args[1] = "/QOpenSys/usr/bin/sh"; //$NON-NLS-1$
+								args[2] = "-c";	 //$NON-NLS-1$
+								args[3] = "export TERMINAL_TYPE=REMOTE;export QIBM_JAVA_STDIO_CONVERT=Y;export QIBM_USE_DESCRIPTOR_STDIO=I;" + theShell; //$NON-NLS-1$
 						    }
 						    else
 						    {
 						        args = new String[4];
 								args[0] = PSEUDO_TERMINAL;
-								args[1] = "-w";
-								args[2] = "256";
+								args[1] = "-w"; //$NON-NLS-1$
+								args[2] = "256"; //$NON-NLS-1$
 								args[3] = _invocation;
 						    }
 						    
@@ -242,7 +242,7 @@ public class CommandMinerThread extends MinerThread
 							String args[] = new String[4];
 							args[0] = PSEUDO_TERMINAL;
 							args[1] = theShell;
-							args[2] = "-c";
+							args[2] = "-c"; //$NON-NLS-1$
 							args[3] = _invocation;
 				/*
 							for (int i = 0; i < inv.length; i++)
@@ -258,7 +258,7 @@ public class CommandMinerThread extends MinerThread
 	
 							String args[] = new String[3];
 							args[0] = theShell;
-							args[1] = "-c";
+							args[1] = "-c"; //$NON-NLS-1$
 							args[2] = _invocation;
 							/*
 							for (int i = 0; i < inv.length; i++)
@@ -274,15 +274,15 @@ public class CommandMinerThread extends MinerThread
 			}
 			else // windows
 			{
-				if ((theOS.indexOf("95") >= 0) || (theOS.indexOf("98") >= 0) || (theOS.indexOf("ME") >= 0))
+				if ((theOS.indexOf("95") >= 0) || (theOS.indexOf("98") >= 0) || (theOS.indexOf("ME") >= 0)) //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 				{
-					theShell = "start";
+					theShell = "start"; //$NON-NLS-1$
 				}
 				else
 				{
-					theShell = "cmd";
+					theShell = "cmd"; //$NON-NLS-1$
 				}
-				if (_invocation.equals(">"))
+				if (_invocation.equals(">")) //$NON-NLS-1$
 				{
 					_invocation = theShell;
 					_isShell = true;
@@ -291,13 +291,13 @@ public class CommandMinerThread extends MinerThread
 			
 				String args[] = new String[3];
 				args[0]= theShell;
-				if (theShell.equals("start"))
+				if (theShell.equals("start")) //$NON-NLS-1$
 				{
-					args[1] = "/B ";
+					args[1] = "/B "; //$NON-NLS-1$
 				}
 				else
 				{
-					args[1] = "/C ";
+					args[1] = "/C "; //$NON-NLS-1$
 				}
 				args[2] = _invocation;
 		
@@ -322,7 +322,7 @@ public class CommandMinerThread extends MinerThread
 			_stdError = new DataInputStream(_theProcess.getErrorStream());
 	
 			
-			String specialEncoding = System.getProperty("dstore.stdin.encoding");
+			String specialEncoding = System.getProperty("dstore.stdin.encoding"); //$NON-NLS-1$
 			
 			if (specialEncoding != null)
 			{		
@@ -351,23 +351,23 @@ public class CommandMinerThread extends MinerThread
 		{
 			_theProcess = null;
 			e.printStackTrace();
-			createObject("command", e.getMessage());
-			status.setAttribute(DE.A_NAME, "done");
+			createObject("command", e.getMessage()); //$NON-NLS-1$
+			status.setAttribute(DE.A_NAME, "done"); //$NON-NLS-1$
 			return;
 		} 
 
-		createObject("command", _invocation);
-		createObject("stdout", "");
+		createObject("command", _invocation); //$NON-NLS-1$
+		createObject("stdout", ""); //$NON-NLS-1$ //$NON-NLS-2$
 
 	
 		
 		if (_isShell && !_isWindows && !_isTTY)
 		{
-			createPrompt(_cwdStr +">", _cwdStr);
+			createPrompt(_cwdStr +">", _cwdStr); //$NON-NLS-1$
 			//createObject("prompt", _cwdStr + ">");
 		}
 
-		status.setAttribute(DE.A_NAME, "progress");
+		status.setAttribute(DE.A_NAME, "progress"); //$NON-NLS-1$
 		_dataStore.update(status);
 		_dataStore.disconnectObjects(status);
 		_stdOutputHandler = new OutputHandler(_stdInput, null, _isWindows || _isTTY, false, _isShell, this);
@@ -435,7 +435,7 @@ public class CommandMinerThread extends MinerThread
 		try
 		{
 			// hidden command
-			writer.write("echo '<'PWD=$PWD");
+			writer.write("echo '<'PWD=$PWD"); //$NON-NLS-1$
 			writer.newLine(); 
 			writer.flush();
 		}
@@ -484,16 +484,16 @@ public class CommandMinerThread extends MinerThread
 			{
 				BufferedWriter writer = _stdOutput;
 			    // pty executable handles the break now
-				if (input.equals("#break") && !_isTTY)
+				if (input.equals("#break") && !_isTTY) //$NON-NLS-1$
 				{
 					sendBreak();
 					return;
 				}
-				else if (input.equals("#enter"))
+				else if (input.equals("#enter")) //$NON-NLS-1$
 				{
 					if (_isOS400)
 					{
-					    writer.write("\r");
+					    writer.write("\r"); //$NON-NLS-1$
 					}
 					else
 					{
@@ -510,7 +510,7 @@ public class CommandMinerThread extends MinerThread
 					    if (!_isTTY)
 					    {
 					        String promptText = _lastPrompt.getName();
-					        if (promptText.endsWith(">"))
+					        if (promptText.endsWith(">")) //$NON-NLS-1$
 					        {
 					            _lastPrompt.setAttribute(DE.A_NAME, promptText + input);
 					            _dataStore.refresh(_lastPrompt);
@@ -531,14 +531,14 @@ public class CommandMinerThread extends MinerThread
 
 				if (!_isWindows && !_isTTY)
 				{
-					createObject("input", input);
+					createObject("input", input); //$NON-NLS-1$
 				}
 
 				writer.write(input);
 				
 				if (_isOS400)
 				{
-				    writer.write("\r");
+				    writer.write("\r"); //$NON-NLS-1$
 				}
 				else
 				{
@@ -547,7 +547,7 @@ public class CommandMinerThread extends MinerThread
 				writer.flush();
 				
 
-				if (!_isWindows && (input.startsWith("cd ") || input.equals("cd")))
+				if (!_isWindows && (input.startsWith("cd ") || input.equals("cd"))) //$NON-NLS-1$ //$NON-NLS-2$
 				{
 					queryCWD();
 				}
@@ -560,9 +560,9 @@ public class CommandMinerThread extends MinerThread
 					// special case for pattern interpretting
 					// if cwd is not set, then files aren't resolved
 					// create mock prompt to ensure that they do get resolved
-					if (input.startsWith("cd ") || input.equals("cd"))
+					if (input.startsWith("cd ") || input.equals("cd")) //$NON-NLS-1$ //$NON-NLS-2$
 					{
-						writer.write("echo $PWD'>'");
+						writer.write("echo $PWD'>'"); //$NON-NLS-1$
 						writer.newLine(); 
 						writer.flush();
 
@@ -590,13 +590,13 @@ public class CommandMinerThread extends MinerThread
 	{
 		//Grab the system environment:
 		DataElement envMiner = _dataStore.findMinerInformation(EnvironmentMiner.MINER_ID);
-		DataElement systemEnv = _dataStore.find(envMiner, DE.A_NAME, "System Environment", 1);
+		DataElement systemEnv = _dataStore.find(envMiner, DE.A_NAME, "System Environment", 1); //$NON-NLS-1$
 		//Walk up until we find an element with an inhabits relationship.
 		DataElement theProject = theSubject;
 		List projectEnvReference = null;
-		while (theProject != null && !theProject.getValue().equals("Data"))
+		while (theProject != null && !theProject.getValue().equals("Data")) //$NON-NLS-1$
 		{
-			projectEnvReference = theProject.getAssociated("inhabits");
+			projectEnvReference = theProject.getAssociated("inhabits"); //$NON-NLS-1$
 			if (projectEnvReference.size() > 0)
 				break;
 			theProject = theProject.getParent();
@@ -636,7 +636,7 @@ public class CommandMinerThread extends MinerThread
 		for (int i = 0; i < prjVars.size(); i++)
 		{
 			DataElement envElement = (DataElement) prjVars.get(i);
-			if (!envElement.getType().equals("Environment Variable"))
+			if (!envElement.getType().equals("Environment Variable")) //$NON-NLS-1$
 				continue;
 			String theVariable = envElement.getValue();
 			String theKey = getKey(theVariable);
@@ -648,22 +648,22 @@ public class CommandMinerThread extends MinerThread
 
 		if (_isTTY)
 		{
-			varTable.put("PS1","$PWD/>");
-			varTable.put("COLUMNS","256");
+			varTable.put("PS1","$PWD/>"); //$NON-NLS-1$ //$NON-NLS-2$
+			varTable.put("COLUMNS","256"); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		
 
 		/*  DKM: for some reason this isn't getting applied properly here
 		 * but it works via export
 		 * */
-		String theOS = System.getProperty("os.name");
-		if (theOS.toLowerCase().startsWith("os"))
+		String theOS = System.getProperty("os.name"); //$NON-NLS-1$
+		if (theOS.toLowerCase().startsWith("os")) //$NON-NLS-1$
 		{
-			varTable.put("QIBM_JAVA_STDIO_CONVERT","Y");
-    		varTable.put("QIBM_USE_DESCRIPTOR_STDIO","I");
-    		varTable.put("PASE_STDIO_ISATTY","N");
-    		varTable.put("TERMINAL_TYPE","REMOTE"); 
-    		varTable.put("STDIO_ISATTY","Y");
+			varTable.put("QIBM_JAVA_STDIO_CONVERT","Y"); //$NON-NLS-1$ //$NON-NLS-2$
+    		varTable.put("QIBM_USE_DESCRIPTOR_STDIO","I"); //$NON-NLS-1$ //$NON-NLS-2$
+    		varTable.put("PASE_STDIO_ISATTY","N"); //$NON-NLS-1$ //$NON-NLS-2$
+    		varTable.put("TERMINAL_TYPE","REMOTE"); //$NON-NLS-1$ //$NON-NLS-2$
+    		varTable.put("STDIO_ISATTY","Y"); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		
 	
@@ -678,7 +678,7 @@ public class CommandMinerThread extends MinerThread
 	// 3. %FOO%    - Windows command interpreter
 	private String calculateValue(String value, Hashtable theTable)
 	{
-		value = value.replaceAll("}","\n}");
+		value = value.replaceAll("}","\n}"); //$NON-NLS-1$ //$NON-NLS-2$
 		StringBuffer theValue = new StringBuffer(value);
 		try
 		{
@@ -708,7 +708,7 @@ public class CommandMinerThread extends MinerThread
 						//If there is a { then we just look for the closing }, and replace the span with the variable value
 						if (c == '{')
 						{
-							int next = theValue.toString().indexOf("}", nextIndex);
+							int next = theValue.toString().indexOf("}", nextIndex); //$NON-NLS-1$
 							if (next > 0)
 							{
 								String replacementValue = findValue(theValue.substring(nextIndex + 1, next), theTable, true);
@@ -736,7 +736,7 @@ public class CommandMinerThread extends MinerThread
 				} //If the current char is a %, then simply look for a matching %
 				else if (c == '%')
 				{
-					int next = theValue.toString().indexOf("%", index + 1);
+					int next = theValue.toString().indexOf("%", index + 1); //$NON-NLS-1$
 					if (next > 0)
 					{
 						String replacementValue = findValue(theValue.substring(index + 1, next), theTable, false);
@@ -782,23 +782,23 @@ public class CommandMinerThread extends MinerThread
 			}
 		}
 		if (theValue == null)
-			return "";
+			return ""; //$NON-NLS-1$
 		return (String) theValue;
 	}
 	private String getKey(String var)
 	{
-		int index = var.indexOf("=");
+		int index = var.indexOf("="); //$NON-NLS-1$
 		if (index < 0)
 			return var;
 		return var.substring(0, index);
 	}
 	private String getValue(String var)
 	{
-		var = var.replaceAll("}","\n}");
-		int index = var.indexOf("=") + 1;
+		var = var.replaceAll("}","\n}"); //$NON-NLS-1$ //$NON-NLS-2$
+		int index = var.indexOf("=") + 1; //$NON-NLS-1$
 		int varLength = var.length();
 		if ((index < 1) || (index == var.length()))
-			return "";
+			return ""; //$NON-NLS-1$
 		return var.substring(index, varLength);
 	}
 	private Hashtable mapVars(List theVars)
@@ -833,7 +833,7 @@ public class CommandMinerThread extends MinerThread
 		{
 			String theKey = (String) e.nextElement();
 			String theValue = (String) theTable.get(theKey);
-			theArray[i++] = theKey + "=" + theValue;
+			theArray[i++] = theKey + "=" + theValue; //$NON-NLS-1$
 		}
 		return theArray;
 	}
@@ -857,7 +857,7 @@ public class CommandMinerThread extends MinerThread
 	{
 	    if (_isShell)
 	    {
-	        sendInput("exit");
+	        sendInput("exit"); //$NON-NLS-1$
 	    }
 	}
 	
@@ -872,7 +872,7 @@ public class CommandMinerThread extends MinerThread
 		_isDone = true;
 		try
 		{
-			_status.setAttribute(DE.A_NAME, "done");
+			_status.setAttribute(DE.A_NAME, "done"); //$NON-NLS-1$
 			_dataStore.refresh(_status, true);
 			_stdOutputHandler.finish();
 			_stdErrorHandler.finish();
@@ -890,7 +890,7 @@ public class CommandMinerThread extends MinerThread
 					else
 					{
 						exitcode = _theProcess.exitValue();
-						createObject("prompt", "> Shell Completed (exit code = " + exitcode + ")");
+						createObject("prompt", "> Shell Completed (exit code = " + exitcode + ")"); //$NON-NLS-1$ //$NON-NLS-3$
 					}
 				}
 				catch (IllegalThreadStateException e)
@@ -910,18 +910,18 @@ public class CommandMinerThread extends MinerThread
 	public void interpretLine(String line, boolean stdError)
 	{
 		// for prompting
-		if (line.startsWith("<PWD"))
+		if (line.startsWith("<PWD")) //$NON-NLS-1$
 		{
 			// special processing
 			String statement = line.substring(1);
-			String pair[] = statement.split("=");
+			String pair[] = statement.split("="); //$NON-NLS-1$
 //			String key = pair[0];
 			String value = pair[1];
 			_status.setAttribute(DE.A_SOURCE, value);
 		
 			return;
 		}
-		if (line.indexOf("echo '<'PWD=$PWD") > 0)
+		if (line.indexOf("echo '<'PWD=$PWD") > 0) //$NON-NLS-1$
 		{
 			// ignore this line
 			return;
@@ -957,7 +957,7 @@ public class CommandMinerThread extends MinerThread
 			{	    			    
 				String fileName = parsedMsg.file;  
 //				DataElement object = null;
-				if (parsedMsg.type.equals("prompt"))
+				if (parsedMsg.type.equals("prompt")) //$NON-NLS-1$
 				{
 					File promptFile = new File(fileName);
 					if (promptFile.exists())
@@ -969,7 +969,7 @@ public class CommandMinerThread extends MinerThread
 						createObject(_descriptors._stdout, line);
 					}
 				}
-				else if (parsedMsg.type.equals("file"))
+				else if (parsedMsg.type.equals("file")) //$NON-NLS-1$
 				{
 //					object = createObject(parsedMsg.type, line, fileName, null);				    
 					createObject(parsedMsg.type, line, fileName, null);				    
@@ -999,11 +999,11 @@ public class CommandMinerThread extends MinerThread
 		if (size > 0)
 		{
 			DataElement lastObject = _status.get(size - 1);
-			if (!lastObject.getType().equals("prompt"))
+			if (!lastObject.getType().equals("prompt")) //$NON-NLS-1$
 			{
-			    line = line.replaceAll("//", "/");
-			    fileName = fileName.replaceAll("//", "/");
-				object = createObject("prompt", line, fileName, null);
+			    line = line.replaceAll("//", "/"); //$NON-NLS-1$ //$NON-NLS-2$
+			    fileName = fileName.replaceAll("//", "/"); //$NON-NLS-1$ //$NON-NLS-2$
+				object = createObject("prompt", line, fileName, null); //$NON-NLS-1$
 			
 				_lastPrompt = object;
 				_cwdStr = object.getSource();
@@ -1054,18 +1054,18 @@ public class CommandMinerThread extends MinerThread
 	    DataElement descriptorType = _descriptors.getDescriptorFor(type);
 	    if (descriptorType != null)
 	    {
-	        newObj = _dataStore.createObject(_status, descriptorType, text, "");
+	        newObj = _dataStore.createObject(_status, descriptorType, text, ""); //$NON-NLS-1$
 	    }
 	    else
 	    {
-	        newObj = _dataStore.createObject(_status, type, text, "");
+	        newObj = _dataStore.createObject(_status, type, text, ""); //$NON-NLS-1$
 	    }
 		return newObj;
 	}
 
 	public DataElement createObject(DataElement type, String text)
 	{
-		return _dataStore.createObject(_status, type, text, "");
+		return _dataStore.createObject(_status, type, text, ""); //$NON-NLS-1$
 	}
 	
 	/************************************************************************************************
@@ -1083,25 +1083,25 @@ public class CommandMinerThread extends MinerThread
 		    boolean foundFile = false;
 			String expectedPath = null;
 			File aFile = new File(file);
-			if (type.equals("prompt"))
+			if (type.equals("prompt")) //$NON-NLS-1$
 			 {
 			    descriptorType = _descriptors._prompt;
 				expectedPath = file;
-				_cwdStr = file.replaceAll("//", "/");
+				_cwdStr = file.replaceAll("//", "/"); //$NON-NLS-1$ //$NON-NLS-2$
 			 }
 			 else if (aFile != null && aFile.exists())
 			 {
 			   expectedPath = aFile.getAbsolutePath();
 			   file = expectedPath;
-			   if (aFile.isDirectory() && type.equals("file"))
+			   if (aFile.isDirectory() && type.equals("file")) //$NON-NLS-1$
 			   {
-			       type = "directory";
+			       type = "directory"; //$NON-NLS-1$
 			   }
 			   foundFile = true;
 			 }
-			 else if (_cwdStr.endsWith("/"))
+			 else if (_cwdStr.endsWith("/")) //$NON-NLS-1$
 			 {
-			     if (file.equals("/"))
+			     if (file.equals("/")) //$NON-NLS-1$
 			     {
 			         expectedPath = _cwdStr;
 			     }
@@ -1112,7 +1112,7 @@ public class CommandMinerThread extends MinerThread
 			 }
 			 else 
 			 {
-			     expectedPath = _cwdStr + "/" + file;
+			     expectedPath = _cwdStr + "/" + file; //$NON-NLS-1$
 			   }
 		
 			if (!foundFile)
@@ -1125,9 +1125,9 @@ public class CommandMinerThread extends MinerThread
 					qfile = new File(expectedPath);
 					if (qfile.exists())
 					{
-						if (qfile.isDirectory() && type.equals("file"))
+						if (qfile.isDirectory() && type.equals("file")) //$NON-NLS-1$
 						{
-							type = "directory";
+							type = "directory"; //$NON-NLS-1$
 						}
 					}
 					else
@@ -1139,40 +1139,40 @@ public class CommandMinerThread extends MinerThread
 							cwdParent = cwdFile.getParentFile().getAbsolutePath();
 						}
 	
-						if (cwdParent.endsWith("/"))
+						if (cwdParent.endsWith("/")) //$NON-NLS-1$
 						{
 							expectedPath = cwdParent + file;
 						}
 						else
 						{
-							expectedPath = cwdParent + "/" + file;
+							expectedPath = cwdParent + "/" + file; //$NON-NLS-1$
 						}
 	
 						qfile = new File(expectedPath);
 						if (qfile.exists())
 						{
-							if (qfile.isDirectory() && type.equals("file"))
+							if (qfile.isDirectory() && type.equals("file")) //$NON-NLS-1$
 							{
-								type = "directory";
+								type = "directory"; //$NON-NLS-1$
 							}
 							file = expectedPath;
 						}
 						else
 						{
 						    // no match, so can't be a file
-						    if (type.equals("file"))
+						    if (type.equals("file")) //$NON-NLS-1$
 						    {
-						        type = "stdout";
+						        type = "stdout"; //$NON-NLS-1$
 						        descriptorType = _descriptors._stdout;
 						    }
-						    else if (type.equals("error"))
+						    else if (type.equals("error")) //$NON-NLS-1$
 						    {
-						        type = "stderr";
+						        type = "stderr"; //$NON-NLS-1$
 						        descriptorType = _descriptors._stderr;
 						    }
 						    else
 						    {
-						        type = "stdout";
+						        type = "stdout"; //$NON-NLS-1$
 						        descriptorType = _descriptors._stdout;
 						    }
 						}
@@ -1180,10 +1180,10 @@ public class CommandMinerThread extends MinerThread
 				}
 				else
 				{
-					if (qfile.isDirectory() && type.equals("file"))
+					if (qfile.isDirectory() && type.equals("file")) //$NON-NLS-1$
 					{
-						type = "directory";
-						expectedPath = expectedPath.replaceAll("//", "/");
+						type = "directory"; //$NON-NLS-1$
+						expectedPath = expectedPath.replaceAll("//", "/"); //$NON-NLS-1$ //$NON-NLS-2$
 					}
 					file = expectedPath;
 				}

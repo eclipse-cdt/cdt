@@ -210,10 +210,13 @@ public class UniversalFileTransferUtility
 				}
 		    }
 		}
-		catch (RemoteFileIOException e)
+		catch (final RemoteFileIOException e)
 		{
-			SystemMessageDialog dlg = new SystemMessageDialog(SystemBasePlugin.getActiveWorkbenchShell(), e.getSystemMessage());
-			dlg.open();
+			runInDisplayThread(new Runnable() {
+				public void run() {
+					SystemMessageDialog dlg = new SystemMessageDialog(SystemBasePlugin.getActiveWorkbenchShell(), e.getSystemMessage());
+					dlg.open();
+				}});
 			return null;
 		}
 		catch (Exception e)
@@ -2004,15 +2007,15 @@ public class UniversalFileTransferUtility
 		}
 	}
 	
-	protected static String checkForCollision(IRemoteFile targetFolder, String oldName)
+	protected static String checkForCollision(final IRemoteFile targetFolder, String oldName)
 	{
-		String newName = oldName;
+		final String[] newName = new String[]{oldName};
 
 		try
 		{
 
 			IRemoteFileSubSystem ss = targetFolder.getParentRemoteFileSubSystem();
-			IRemoteFile targetFileOrFolder = ss.getRemoteFileObject(targetFolder, oldName);
+			final IRemoteFile targetFileOrFolder = ss.getRemoteFileObject(targetFolder, oldName);
 
 			//RSEUIPlugin.logInfo("CHECKING FOR COLLISION ON '"+srcFileOrFolder.getAbsolutePath() + "' IN '" +targetFolder.getAbsolutePath()+"'");
 			//RSEUIPlugin.logInfo("...TARGET FILE: '"+tgtFileOrFolder.getAbsolutePath()+"'");  		
@@ -2020,18 +2023,21 @@ public class UniversalFileTransferUtility
 			if (targetFileOrFolder.exists())
 			{
 				//monitor.setVisible(false); wish we could!
-
 				// we no longer have to set the validator here... the common rename dialog we all now use queries the input
 				// object's system view adaptor for its name validator. See getNameValidator in SystemViewRemoteFileAdapter. phil
-				ValidatorFileUniqueName validator = null; // new ValidatorFileUniqueName(shell, targetFolder, srcFileOrFolder.isDirectory());
-				//SystemCollisionRenameDialog dlg = new SystemCollisionRenameDialog(shell, validator, oldName);
-				SystemRenameSingleDialog dlg = new SystemRenameSingleDialog(SystemBasePlugin.getActiveWorkbenchShell(), true, targetFileOrFolder, validator); // true => copy-collision-mode
+				runInDisplayThread(new Runnable() {
+					public void run() {
+						ValidatorFileUniqueName validator = null; // new ValidatorFileUniqueName(shell, targetFolder, srcFileOrFolder.isDirectory());
+						//SystemCollisionRenameDialog dlg = new SystemCollisionRenameDialog(shell, validator, oldName);
+						SystemRenameSingleDialog dlg = new SystemRenameSingleDialog(SystemBasePlugin.getActiveWorkbenchShell(), true, targetFileOrFolder, validator); // true => copy-collision-mode
 
-				dlg.open();
-				if (!dlg.wasCancelled())
-					newName = dlg.getNewName();
-				else
-					newName = null;
+						dlg.open();
+						if (!dlg.wasCancelled())
+							newName[0] = dlg.getNewName();
+						else
+							newName[0] = null;
+					}
+				});
 			}
 		}
 		catch (SystemMessageException e)
@@ -2039,6 +2045,19 @@ public class UniversalFileTransferUtility
 			SystemBasePlugin.logError("SystemCopyRemoteFileAction.checkForCollision()", e);
 		}
 
-		return newName;
+		return newName[0];
+	}
+
+	private static void runInDisplayThread(Runnable runnable) {
+		Display display = Display.getCurrent();
+		if (display == null)
+			display = Display.getDefault();
+		if(Thread.currentThread()==display.getThread()) {
+			// if we are in the display thread we can call the method directly
+			runnable.run();
+		} else {
+			// we execute it in the Display Thread but we wait for the result...
+			display.syncExec(runnable);
+		}
 	}
 }

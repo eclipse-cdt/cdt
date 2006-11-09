@@ -1,3 +1,17 @@
+/********************************************************************************
+ * Copyright (c) 2006 IBM Corporation. All rights reserved.
+ * This program and the accompanying materials are made available under the terms
+ * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
+ * available at http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Initial Contributors:
+ * The following IBM employees contributed the initial implementation:
+ * David McKnight.
+ * 
+ * Contributors:
+ * {Name} (company) - description of contribution.
+ ********************************************************************************/
+
 package org.eclipse.rse.ui.view;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -31,10 +45,8 @@ public class SystemDeferredTableTreeContentManager extends
 	
 	public class RelayoutView implements Runnable
 	{
-		private Object _parent;
 		public RelayoutView(Object parent)
 		{
-			_parent = parent;
 		}
 		
 		public void run()

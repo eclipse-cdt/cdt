@@ -31,7 +31,7 @@ import org.eclipse.rse.services.shells.IShellService;
 
 public class LocalShellService implements IShellService, ILocalService
 {
-	private static final String SHELL_INVOCATION = ">";
+	private static final String SHELL_INVOCATION = ">"; //$NON-NLS-1$
 	private String[] _envVars;
 	
 	public LocalShellService()
@@ -50,7 +50,7 @@ public class LocalShellService implements IShellService, ILocalService
 	
 	public IHostShell launchShell(IProgressMonitor monitor, String initialWorkingDirectory, String[] environment)
 	{
-		String defaultEncoding = System.getProperty("file.encoding");
+		String defaultEncoding = System.getProperty("file.encoding"); //$NON-NLS-1$
 		return launchShell(monitor, initialWorkingDirectory, defaultEncoding, environment);
 	}
 
@@ -63,7 +63,7 @@ public class LocalShellService implements IShellService, ILocalService
 
 	public IHostShell runCommand(IProgressMonitor monitor, String initialWorkingDirectory, String command, String[] environment)
 	{
-		String defaultEncoding = System.getProperty("file.encoding");
+		String defaultEncoding = System.getProperty("file.encoding"); //$NON-NLS-1$
 		return runCommand(monitor, initialWorkingDirectory, command, defaultEncoding, environment);
 	}
 	
@@ -82,17 +82,17 @@ public class LocalShellService implements IShellService, ILocalService
 
 			String[] envCommand = new String[3];
 			//If we're on windows, change the envCommand. 
-			if (System.getProperty("os.name").toLowerCase().startsWith("win"))
+			if (System.getProperty("os.name").toLowerCase().startsWith("win")) //$NON-NLS-1$ //$NON-NLS-2$
 			{
-				envCommand[0] = "cmd";
-				envCommand[1] = "/c";
-				envCommand[2] = "set";
+				envCommand[0] = "cmd"; //$NON-NLS-1$
+				envCommand[1] = "/c"; //$NON-NLS-1$
+				envCommand[2] = "set"; //$NON-NLS-1$
 			}
 			else
 			{
-				envCommand[0] = "sh";
-				envCommand[1] = "-c";
-				envCommand[2] = "env";
+				envCommand[0] = "sh"; //$NON-NLS-1$
+				envCommand[1] = "-c"; //$NON-NLS-1$
+				envCommand[2] = "env"; //$NON-NLS-1$
 			}
 
 			BufferedReader reader = null;
@@ -106,7 +106,7 @@ public class LocalShellService implements IShellService, ILocalService
 				String curLine = null;
 				while ((curLine = reader.readLine()) != null)
 				{
-					if (curLine.indexOf("=") > 0)
+					if (curLine.indexOf("=") > 0) //$NON-NLS-1$
 					{
 						envVars.add(curLine);
 					}

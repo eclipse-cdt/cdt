@@ -56,17 +56,17 @@ public class ProcessTracker extends Handler
 
 		public String toString()
 		{
-			String result = getPID() + " " + getCMD();
+			String result = getPID() + " " + getCMD(); //$NON-NLS-1$
 			if (ProcessDescriptor.this == _newestProcess)
 			{
-				result += " *";
+				result += " *"; //$NON-NLS-1$
 			}
 			return result;
 		}
 
 		public boolean hasCMD(String cmdname)
 		{
-			StringTokenizer tokenizer = new StringTokenizer(_cmd, "/");
+			StringTokenizer tokenizer = new StringTokenizer(_cmd, "/"); //$NON-NLS-1$
 
 			while (tokenizer.hasMoreTokens())
 			{
@@ -117,28 +117,28 @@ public class ProcessTracker extends Handler
 
 	private String getFormatOptions(String theOS)
 	{
-		String formatOptions = "";
-		if (theOS.startsWith("z"))
+		String formatOptions = ""; //$NON-NLS-1$
+		if (theOS.startsWith("z")) //$NON-NLS-1$
 		{
-			formatOptions = "-o pid,comm";
+			formatOptions = "-o pid,comm"; //$NON-NLS-1$
 		}
-		else if (theOS.startsWith("linux"))
+		else if (theOS.startsWith("linux")) //$NON-NLS-1$
 		{
-			formatOptions = "--format pid,ucomm";
+			formatOptions = "--format pid,ucomm"; //$NON-NLS-1$
 		}
-		else if (theOS.startsWith("aix"))
+		else if (theOS.startsWith("aix")) //$NON-NLS-1$
 		{
-			formatOptions = "-F pid,ucomm";
+			formatOptions = "-F pid,ucomm"; //$NON-NLS-1$
 		}
 		return formatOptions;
 	}
 
 	private void init()
 	{
-		String userID = System.getProperty("user.name");
-		String userOptions = "-u " + userID;
+		String userID = System.getProperty("user.name"); //$NON-NLS-1$
+		String userOptions = "-u " + userID; //$NON-NLS-1$
 
-		String theOS = System.getProperty("os.name").toLowerCase();
+		String theOS = System.getProperty("os.name").toLowerCase(); //$NON-NLS-1$
 		String formatOptions = getFormatOptions(theOS);
 		if (formatOptions.length() == 0)
 		{
@@ -151,15 +151,15 @@ public class ProcessTracker extends Handler
 		if (_isEnabled)
 		{
 
-			_psCommand = "ps " + userOptions + " " + formatOptions;
+			_psCommand = "ps " + userOptions + " " + formatOptions; //$NON-NLS-1$ //$NON-NLS-2$
 			try
 			{
 
 				if (_psShell == null)
 				{
-					_psShell = Runtime.getRuntime().exec("sh");
+					_psShell = Runtime.getRuntime().exec("sh"); //$NON-NLS-1$
 
-					String specialEncoding = System.getProperty("dstore.stdin.encoding");
+					String specialEncoding = System.getProperty("dstore.stdin.encoding"); //$NON-NLS-1$
 					if (specialEncoding != null)
 					{
 						_psReader = new BufferedReader(new InputStreamReader(_psShell.getInputStream(), specialEncoding));
@@ -255,7 +255,7 @@ public class ProcessTracker extends Handler
 		try
 		{
 			_psWriter.write(_psCommand);
-			_psWriter.write("\n");
+			_psWriter.write("\n"); //$NON-NLS-1$
 			_psWriter.flush();
 
 			// skip first line
@@ -271,7 +271,7 @@ public class ProcessTracker extends Handler
 					String pid = line.substring(0, firstBlank);
 					String cmd = line.substring(firstBlank + 1, line.length());
 					ProcessDescriptor descriptor = new ProcessDescriptor(pid, cmd);
-					if (!descriptor.hasCMD("ps"))
+					if (!descriptor.hasCMD("ps")) //$NON-NLS-1$
 					{
 						newPIDs.add(descriptor);
 					}
@@ -333,8 +333,8 @@ public class ProcessTracker extends Handler
 		{
 			try
 			{
-				_psWriter.write("exit");
-				_psWriter.write("\n");
+				_psWriter.write("exit"); //$NON-NLS-1$
+				_psWriter.write("\n"); //$NON-NLS-1$
 				_psWriter.flush();
 
 				_psReader.close();
@@ -392,8 +392,8 @@ public class ProcessTracker extends Handler
 		{
 			try
 			{
-				_psWriter.write("kill " + descriptor.getPID());
-				_psWriter.write("\n");
+				_psWriter.write("kill " + descriptor.getPID()); //$NON-NLS-1$
+				_psWriter.write("\n"); //$NON-NLS-1$
 				_psWriter.flush();
 				_psReader.reset();
 			}

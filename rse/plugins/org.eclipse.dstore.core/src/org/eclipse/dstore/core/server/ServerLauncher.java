@@ -90,7 +90,7 @@ public class ServerLauncher extends Thread {
 				_reader = new BufferedReader(new InputStreamReader(_socket
 						.getInputStream(), DE.ENCODING_UTF_8));
 			} catch (java.io.IOException e) {
-				System.out.println("ServerLauncher:" + e);
+				System.out.println("ServerLauncher:" + e); //$NON-NLS-1$
 			}
 		}
 
@@ -135,11 +135,11 @@ public class ServerLauncher extends Thread {
 
 						_serverProcess.waitFor();
 					} catch (Exception e) {
-						System.out.println("ServerLauncher:" + e);
+						System.out.println("ServerLauncher:" + e); //$NON-NLS-1$
 					}
 				}
 
-				System.out.println("finished on port " + _port);
+				System.out.println("finished on port " + _port); //$NON-NLS-1$
 				_outReader = null;
 				_errReader = null;
 				_serverProcess = null;
@@ -169,7 +169,7 @@ public class ServerLauncher extends Thread {
 
 		private boolean isPortInRange(String portStr, String portRange) {
 			if (portRange != null) {
-				String[] range = portRange.split("-");
+				String[] range = portRange.split("-"); //$NON-NLS-1$
 				if (range.length == 2) {
 					int lPort = 0;
 					int hPort = 0;
@@ -211,12 +211,12 @@ public class ServerLauncher extends Thread {
 			catch (IOException e)
 			{
 				e.printStackTrace();
-				_port = "0";
+				_port = "0"; //$NON-NLS-1$
 			}
 
 			
 			
-			if (_serverPortRange != null && (_port == null || _port.equals("0")))
+			if (_serverPortRange != null && (_port == null || _port.equals("0"))) //$NON-NLS-1$
 			{
 				_port = _serverPortRange;
 			}		
@@ -239,13 +239,13 @@ public class ServerLauncher extends Thread {
 				try
 				{
 					String launchStatus = null;
-					String ticket = new String("" + System.currentTimeMillis());
+					String ticket = new String("" + System.currentTimeMillis()); //$NON-NLS-1$
 
-					String theOS = System.getProperty("os.name");
-					String timeout = "120000";
+					String theOS = System.getProperty("os.name"); //$NON-NLS-1$
+					String timeout = "120000"; //$NON-NLS-1$
 
 							
-					if (!theOS.toLowerCase().startsWith("win"))
+					if (!theOS.toLowerCase().startsWith("win")) //$NON-NLS-1$
 					{
 						// assuming unix compatable
                         //
@@ -253,7 +253,7 @@ public class ServerLauncher extends Thread {
                         // contains the authorization
                         // script path
                         //
-						String authPath = System.getProperty("RSE.AUTH");
+						String authPath = System.getProperty("RSE.AUTH"); //$NON-NLS-1$
 						File authFile = null;
 						if (authPath != null && authPath.length() > 0)
 						{
@@ -261,26 +261,26 @@ public class ServerLauncher extends Thread {
 						}
 						if (authFile == null || !authFile.exists())
 						{
-							authPath = "perl " + _path + File.separator + "auth.pl";							
+							authPath = "perl " + _path + File.separator + "auth.pl"; //$NON-NLS-1$ //$NON-NLS-2$							
 						}
 
 						String authString =
 								authPath
-								+ " "
+								+ " " //$NON-NLS-1$
 								+ user
-								+ " "
+								+ " " //$NON-NLS-1$
 								+ _path
-								+ " "
+								+ " " //$NON-NLS-1$
 								+ _port
-								+ " "
+								+ " " //$NON-NLS-1$
 								+ timeout
-								+ " "
+								+ " " //$NON-NLS-1$
 								+ ticket
 								+ " " //$NON-NLS-1$
-								+ System.getProperty("java.home"); //$NON-NLS-1$
+								+ System.getProperty("java.home") //$NON-NLS-1$
 								;
 
-						String[] authArray = { "sh", "-c", authString };
+						String[] authArray = { "sh", "-c", authString }; //$NON-NLS-1$ //$NON-NLS-2$
 
 						// test password
 						_serverProcess = Runtime.getRuntime().exec(authArray);
@@ -301,9 +301,9 @@ public class ServerLauncher extends Thread {
 						// launch new server
 						String[] cmdArray =
 							{
-								"java",
-								"-DA_PLUGIN_PATH=" + _path,
-								"org.eclipse.dstore.core.server.Server",
+								"java", //$NON-NLS-1$
+								"-DA_PLUGIN_PATH=" + _path, //$NON-NLS-1$
+								"org.eclipse.dstore.core.server.Server", //$NON-NLS-1$
 								_port,
 								timeout,
 								ticket};
@@ -312,10 +312,10 @@ public class ServerLauncher extends Thread {
 						_outReader = new BufferedReader(new InputStreamReader(_serverProcess.getInputStream()));
 						_errReader = new BufferedReader(new InputStreamReader(_serverProcess.getErrorStream()));
 
-						launchStatus = "success";
+						launchStatus = "success"; //$NON-NLS-1$
 					}
 
-					if ((launchStatus == null) || !launchStatus.equals("success"))
+					if ((launchStatus == null) || !launchStatus.equals("success")) //$NON-NLS-1$
 					{
 						_writer.println(IDataStoreConstants.AUTHENTICATION_FAILED);
 					}
@@ -341,7 +341,7 @@ public class ServerLauncher extends Thread {
 							_writer.println(_port);
 							_writer.println(ticket);
 
-							System.out.println("launched new server on " + _port);
+							System.out.println("launched new server on " + _port); //$NON-NLS-1$
 							connected = true;
 						}
 						else
@@ -381,14 +381,14 @@ public class ServerLauncher extends Thread {
 			}
 			catch (IOException e)
 			{
-				System.out.println("ServerLauncher:" + e);
+				System.out.println("ServerLauncher:" + e); //$NON-NLS-1$
 			}
 
 			return connected;
 		}
 
 		public void handshakeCompleted(HandshakeCompletedEvent event) {
-			System.out.println("handshake completed");
+			System.out.println("handshake completed"); //$NON-NLS-1$
 			System.out.println(event);
 
 		}
@@ -410,9 +410,9 @@ public class ServerLauncher extends Thread {
 	 * Constructor
 	 */
 	public ServerLauncher() {
-		String pluginPath = System.getProperty("A_PLUGIN_PATH");
+		String pluginPath = System.getProperty("A_PLUGIN_PATH"); //$NON-NLS-1$
 		if (pluginPath == null) {
-			System.out.println("A_PLUGIN_PATH is not defined");
+			System.out.println("A_PLUGIN_PATH is not defined"); //$NON-NLS-1$
 			System.exit(-1);
 		}
 
@@ -420,7 +420,7 @@ public class ServerLauncher extends Thread {
 
 		_connections = new ArrayList();
 
-		init(DEFAULT_DAEMON_PORT + "");
+		init(DEFAULT_DAEMON_PORT + ""); //$NON-NLS-1$
 	}
 
 	/**
@@ -430,9 +430,9 @@ public class ServerLauncher extends Thread {
 	 *            the port for the daemon socket to run on
 	 */
 	public ServerLauncher(String portStr) {
-		String pluginPath = System.getProperty("A_PLUGIN_PATH");
+		String pluginPath = System.getProperty("A_PLUGIN_PATH"); //$NON-NLS-1$
 		if (pluginPath == null) {
-			System.out.println("A_PLUGIN_PATH is not defined");
+			System.out.println("A_PLUGIN_PATH is not defined"); //$NON-NLS-1$
 			System.exit(-1);
 		}
 
@@ -451,9 +451,9 @@ public class ServerLauncher extends Thread {
 	 *            the port range for launched servers
 	 */
 	public ServerLauncher(String portStr, String serverPortRange) {
-		String pluginPath = System.getProperty("A_PLUGIN_PATH");
+		String pluginPath = System.getProperty("A_PLUGIN_PATH"); //$NON-NLS-1$
 		if (pluginPath == null) {
-			System.out.println("A_PLUGIN_PATH is not defined");
+			System.out.println("A_PLUGIN_PATH is not defined"); //$NON-NLS-1$
 			System.exit(-1);
 		}
 
@@ -475,15 +475,14 @@ public class ServerLauncher extends Thread {
 	/**
 	 * initializes the DataStore daemon
 	 * 
-	 * @param port
-	 *            the daemon port
+	 * @param portStr the daemon port
 	 */
 	public void init(String portStr) {
 		// create server socket from port
 		_sslProperties = new ServerSSLProperties();
 
 		// determine if portStr is a port range or just a port
-		String[] range = portStr.split("-");
+		String[] range = portStr.split("-"); //$NON-NLS-1$
 		if (range.length == 2) {
 			int lPort = 0;
 			int hPort = 0;
@@ -517,9 +516,9 @@ public class ServerLauncher extends Thread {
 					if (_serverSocket != null
 							&& _serverSocket.getLocalPort() > 0) {
 						socketBound = true;
-						System.out.println("Daemon running on: "
+						System.out.println("Daemon running on: " //$NON-NLS-1$
 								+ InetAddress.getLocalHost().getHostName()
-								+ ", port: " + i);
+								+ ", port: " + i); //$NON-NLS-1$
 					}
 				} catch (UnknownHostException e) {
 					System.err
@@ -527,7 +526,7 @@ public class ServerLauncher extends Thread {
 					e.printStackTrace();
 					System.exit(-1);
 				} catch (BindException e) {
-					System.err.println("socket taken on " + i);
+					System.err.println("socket taken on " + i); //$NON-NLS-1$
 					// keep going
 				} catch (IOException e) {
 					System.err.println("Failure to create ServerSocket");
@@ -556,8 +555,8 @@ public class ServerLauncher extends Thread {
 				} else {
 					_serverSocket = new ServerSocket(port);
 				}
-				System.out.println("Daemon running on: "
-						+ InetAddress.getLocalHost().getHostName() + ", port: "
+				System.out.println("Daemon running on: " //$NON-NLS-1$
+						+ InetAddress.getLocalHost().getHostName() + ", port: " //$NON-NLS-1$
 						+ port);
 			} catch (UnknownHostException e) {
 				System.err
@@ -607,13 +606,13 @@ public class ServerLauncher extends Thread {
 
 								public void handshakeCompleted(
 										HandshakeCompletedEvent event) {
-									System.out.println("handshake completed");
+									System.out.println("handshake completed"); //$NON-NLS-1$
 								}
 
 							});
 					SSLSession session = sslSocket.getSession();
 					if (session == null) {
-						System.out.println("handshake failed");
+						System.out.println("handshake failed"); //$NON-NLS-1$
 
 						sslSocket.close();
 						connectionOkay = false;

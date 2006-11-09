@@ -60,11 +60,9 @@ public class LocalShellThread extends Thread
 	
 	/**
 	 * consturtor for local command shell monitor
-	 * @param fileSubSystem associated local file subsystem
 	 * @param cwd initial working directory
 	 * @param invocation launch shell command
 	 * @param encoding
-	 * @param patterns patterns file for output interpretation
 	 * @param envVars user and system environment variables to launch shell with
 	 */
 	public LocalShellThread(String cwd, String invocation, String encoding, String[] envVars)
@@ -79,7 +77,7 @@ public class LocalShellThread extends Thread
 		// then the rse.pty property will have been set
 		// by the contributor of the pty exectuable
 		// on linux client this is a likely scenario
-		PSEUDO_TERMINAL = System.getProperty("rse.pty");
+		PSEUDO_TERMINAL = System.getProperty("rse.pty"); //$NON-NLS-1$
 		try
 		{
 			PSEUDO_TERMINAL = Platform.resolve(new URL(PSEUDO_TERMINAL)).getPath();
@@ -130,8 +128,8 @@ public class LocalShellThread extends Thread
 			File theDirectory = new File(_cwd);
 			if (!theDirectory.isDirectory())
 				theDirectory = theDirectory.getParentFile();
-			String theOS = System.getProperty("os.name");
-			_isWindows = theOS.toLowerCase().startsWith("win");
+			String theOS = System.getProperty("os.name"); //$NON-NLS-1$
+			_isWindows = theOS.toLowerCase().startsWith("win"); //$NON-NLS-1$
 			_isTTY = PSEUDO_TERMINAL != null && (new File(PSEUDO_TERMINAL).exists());
 			
 			String theShell = null;
@@ -142,7 +140,7 @@ public class LocalShellThread extends Thread
 				if (theShell == null)
 				{
 
-					String property = "SHELL=";
+					String property = "SHELL="; //$NON-NLS-1$
 					
 					for (int i = 0; i < envVars.length; i++)
 					{
@@ -151,9 +149,9 @@ public class LocalShellThread extends Thread
 						{
 							theShell = var.substring(property.length(), var.length());
 							
-							if (theShell.endsWith("bash"))
+							if (theShell.endsWith("bash")) //$NON-NLS-1$
 							{
-								theShell = "sh";
+								theShell = "sh"; //$NON-NLS-1$
 							}
 							
 						}
@@ -161,13 +159,13 @@ public class LocalShellThread extends Thread
 			
 					if (theShell == null)
 					{
-						theShell = "sh";
+						theShell = "sh"; //$NON-NLS-1$
 					}
 				
 					
 				    if (_isTTY)
 				    {
-				        if (_invocation.equals(">"))
+				        if (_invocation.equals(">")) //$NON-NLS-1$
 						{
 							_invocation = theShell;
 							_isShell = true;
@@ -181,7 +179,7 @@ public class LocalShellThread extends Thread
 				    }
 				    else
 				    {
-						if (_invocation.equals(">"))
+						if (_invocation.equals(">")) //$NON-NLS-1$
 						{
 							_invocation = theShell;
 							_isShell = true;
@@ -197,7 +195,7 @@ public class LocalShellThread extends Thread
 				{
 				    if (_isTTY)
 				    {
-				        if (_invocation.equals(">"))
+				        if (_invocation.equals(">")) //$NON-NLS-1$
 						{
 							_invocation = theShell;
 							_isShell = true;
@@ -206,14 +204,14 @@ public class LocalShellThread extends Thread
 						String args[] = new String[4];
 						args[0] = PSEUDO_TERMINAL;
 						args[1] = theShell;
-						args[2] = "-c";
+						args[2] = "-c"; //$NON-NLS-1$
 						args[3] = _invocation;
 	
 						_theProcess = Runtime.getRuntime().exec(args, envVars, theDirectory);
 				    }
 				    else
 				    {
-					    if (_invocation.equals(">"))
+					    if (_invocation.equals(">")) //$NON-NLS-1$
 						{
 							_invocation = theShell;
 							_isShell = true;
@@ -221,7 +219,7 @@ public class LocalShellThread extends Thread
 	
 						String args[] = new String[3];
 						args[0] = theShell;
-						args[1] = "-c";
+						args[1] = "-c"; //$NON-NLS-1$
 						args[2] = _invocation;
 	
 						_theProcess = Runtime.getRuntime().exec(args, envVars, theDirectory);
@@ -232,28 +230,28 @@ public class LocalShellThread extends Thread
 			else
 			{
 				String[] envVars = getEnvironmentVariables(true);
-				if ((theOS.indexOf("95") >= 0) || (theOS.indexOf("98") >= 0) || (theOS.indexOf("ME") >= 0))
+				if ((theOS.indexOf("95") >= 0) || (theOS.indexOf("98") >= 0) || (theOS.indexOf("ME") >= 0)) //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 				{
-					theShell = "start";
+					theShell = "start"; //$NON-NLS-1$
 				}
 				else
 				{
-					theShell = "cmd";
+					theShell = "cmd"; //$NON-NLS-1$
 				}
 
-				if (_invocation.equals(">"))
+				if (_invocation.equals(">")) //$NON-NLS-1$
 				{
 					_invocation = theShell;
 					_isShell = true;
 				}
 
-				if (theShell.equals("start"))
+				if (theShell.equals("start")) //$NON-NLS-1$
 				{
-					theShell += " /B ";
+					theShell += " /B "; //$NON-NLS-1$
 				}
 				else
 				{
-					theShell += " /C ";
+					theShell += " /C "; //$NON-NLS-1$
 				}
 
 				_theProcess = Runtime.getRuntime().exec(theShell + _invocation, envVars, theDirectory);
@@ -277,7 +275,7 @@ public class LocalShellThread extends Thread
 				{		
 					if (_encoding == null || _encoding.length() == 0)
 					{
-						_encoding = System.getProperty("file.encoding");
+						_encoding = System.getProperty("file.encoding"); //$NON-NLS-1$
 					}
 				}
 			}
@@ -309,7 +307,7 @@ public class LocalShellThread extends Thread
 	
 		try
 		{
-			writer.write("echo $PWD'>'");
+			writer.write("echo $PWD'>'"); //$NON-NLS-1$
 			writer.write('\n');
 			writer.flush();
 		}
@@ -455,7 +453,7 @@ public class LocalShellThread extends Thread
 	{
 		if (_isShell)
 		{
-			sendInput("exit");
+			sendInput("exit"); //$NON-NLS-1$
 		}
 
 		_isDone = true;
@@ -504,7 +502,7 @@ public class LocalShellThread extends Thread
 			for (int i = 0; i < vars.length; i++)
 			{
 				String var = vars[i].toUpperCase();
-				if (var.startsWith("PATH="))
+				if (var.startsWith("PATH=")) //$NON-NLS-1$
 				{
 					return var;
 				}
@@ -528,7 +526,7 @@ public class LocalShellThread extends Thread
 			String[] newEnv = new String[_envVars.length + 1];
 			for (int i = 0; i < _envVars.length; i++)
 				newEnv[i] = _envVars[i];
-			newEnv[_envVars.length] = "PS1=$PWD/>";
+			newEnv[_envVars.length] = "PS1=$PWD/>"; //$NON-NLS-1$
 			_envVars = newEnv;
 		}
 		return _envVars;

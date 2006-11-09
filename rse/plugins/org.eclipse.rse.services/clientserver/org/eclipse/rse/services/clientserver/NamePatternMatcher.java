@@ -58,7 +58,7 @@ public class NamePatternMatcher implements IMatcher
 	 * Wildcard character: *
 	 */
 	public static final char WILDCARD = '*';
-	private static final String WILDCARD_DOUBLED = "**";    
+	private static final String WILDCARD_DOUBLED = "**"; //$NON-NLS-1$    
 	/**
 	 * Example: Quoted name delimiter: "
 	 */	    
@@ -104,7 +104,8 @@ public class NamePatternMatcher implements IMatcher
 	// used in writeInfo debugging method
 	private static final int[] TYPES_IDX = {SCALAR,ALL,WILDCARD_END,WILDCARD_START,WILDCARD_MIDDLE,
 				   WILDCARD_START_END,WILDCARD_MIDDLE_END,WILDCARD_START_MIDDLE,WILDCARD_MIDDLE_MIDDLE};
-	private static final String[] TYPES = {"SCALAR","ALL","END","START","MIDDLE","START_END","MIDDLE_END","START_MIDDLE","MIDDLE_MIDDLE"};
+	private static final String[] TYPES = {"SCALAR","ALL","END","START","MIDDLE", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
+				"START_END","MIDDLE_END","START_MIDDLE","MIDDLE_MIDDLE"}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
     
 	private String genericName, part1, part2, part3;
 	private int part1len,part2len,part3len,part12len,part123len;
@@ -174,7 +175,7 @@ public class NamePatternMatcher implements IMatcher
 	{
 		  this.caseSensitive = caseSensitive;
 		  if (genericName == null)
-			  genericName = "*";
+			  genericName = "*"; //$NON-NLS-1$
 		  int len = 0;
 		  // determine if given a null name
 		  if ((genericName == null) || (genericName.length()==0))
@@ -194,8 +195,8 @@ public class NamePatternMatcher implements IMatcher
 		  if (validName)
 		  {
 		     // change *BLANK into 10 blanks
-		     if (genericName.equals("*BLANK"))
-		       genericName = "          ";
+		     if (genericName.equals("*BLANK")) //$NON-NLS-1$
+		       genericName = "          "; //$NON-NLS-1$
 		     // away we go...
 		     int firstCharPos = quotedName ? 1 : 0;
 		     int lastCharPos = quotedName ? len-2 : len-1;
@@ -209,7 +210,7 @@ public class NamePatternMatcher implements IMatcher
 		     }
 		     else if (wildcardOccurrences==1)
 		     {
-		  	     if ((!quotedName && (len == 1)) || (quotedName && (len ==3)) || genericName.equals("*ALL") || genericName.equals("\"*ALL\"") || genericName.equals("*LIBL"))
+		  	     if ((!quotedName && (len == 1)) || (quotedName && (len ==3)) || genericName.equals("*ALL") || genericName.equals("\"*ALL\"") || genericName.equals("*LIBL")) //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		  	       patternType = ALL;
 		  	     else if (firstChar == WILDCARD)
 		  	     {
@@ -406,10 +407,10 @@ public class NamePatternMatcher implements IMatcher
 	 */
    public void writeInfo(PrintWriter stream)
    {
-		 stream.println("GENERIC NAME: " + genericName);
-		 stream.println(" isValid: " + isValid());
-		 stream.println(" isGeneric: " + isGeneric());
-		 stream.println(" isQuoted: " + isQuoted());
+		 stream.println("GENERIC NAME: " + genericName); //$NON-NLS-1$
+		 stream.println(" isValid: " + isValid()); //$NON-NLS-1$
+		 stream.println(" isGeneric: " + isGeneric()); //$NON-NLS-1$
+		 stream.println(" isQuoted: " + isQuoted()); //$NON-NLS-1$
 		 int type = getPatternType();
 		 int typeidx = 0;
 		 boolean match=false;
@@ -419,13 +420,13 @@ public class NamePatternMatcher implements IMatcher
 				typeidx = idx;
 				match = true;
 			}
-		 stream.println(" patternType: " + TYPES[typeidx]);
+		 stream.println(" patternType: " + TYPES[typeidx]); //$NON-NLS-1$
 		 if (part1 != null)
-		   stream.println(" part1: " + part1);         
+		   stream.println(" part1: " + part1); //$NON-NLS-1$
 		 if (part2 != null)
-		   stream.println(" part2: " + part2);   
+		   stream.println(" part2: " + part2); //$NON-NLS-1$
 		 if (part3 != null)
-		   stream.println(" part3: " + part3);
+		   stream.println(" part3: " + part3); //$NON-NLS-1$
 		 stream.println();
 		 stream.flush();
    }         

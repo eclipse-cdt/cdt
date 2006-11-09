@@ -33,7 +33,7 @@ public class PathUtility
 		if (path == null || path.length() < 2) {
 			return path;
 		}
-		boolean endsWithSlash = (path.endsWith("\\") || path.endsWith("/"));
+		boolean endsWithSlash = (path.endsWith("\\") || path.endsWith("/")); //$NON-NLS-1$ //$NON-NLS-2$
 		if (badSlashPatternWin.matcher(path).find()) {
 			//Replace /->\, then replace \\->\
 			StringBuffer buf = new StringBuffer(path.length());
@@ -72,7 +72,7 @@ public class PathUtility
 		if (path == null || path.length() < 2) {
 			return path;
 		}
-		boolean endsWithSlash = (path.endsWith("\\") || path.endsWith("/"));
+		boolean endsWithSlash = (path.endsWith("\\") || path.endsWith("/")); //$NON-NLS-1$ //$NON-NLS-2$
 		if (badSlashPatternUnix.matcher(path).find()) {
 			//Replace \->/, then replace //->/
 			StringBuffer buf = new StringBuffer(path.length());

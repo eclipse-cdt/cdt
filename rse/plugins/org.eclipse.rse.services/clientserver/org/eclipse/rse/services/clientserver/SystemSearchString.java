@@ -50,7 +50,7 @@ public class SystemSearchString {
 							  String fileNamesString, boolean isFileNamesRegex, boolean includeArchives,
 							  boolean includeSubfolders) {
 		this(textString, isCaseSensitive, isTextStringRegex, fileNamesString, isFileNamesRegex, includeArchives,
-				includeSubfolders, "");
+				includeSubfolders, ""); //$NON-NLS-1$
 	}
 	
 	/**
@@ -146,8 +146,8 @@ public class SystemSearchString {
 	 * @see java.lang.Object#toString()
 	 */
 	public String toString() {
-		return textString + " - " + isCaseSensitive + " - " + isTextStringRegex + " - " +
-				fileNamesString + " - " + isFileNamesRegex + " - " + includeArchives + " - " +
-				includeSubfolders + " - " + classificationString;
+		return textString + " - " + isCaseSensitive + " - " + isTextStringRegex + " - " + //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				fileNamesString + " - " + isFileNamesRegex + " - " + includeArchives + " - " + //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				includeSubfolders + " - " + classificationString; //$NON-NLS-1$
 	}
 }

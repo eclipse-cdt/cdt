@@ -187,8 +187,8 @@ public class FileTypeMatcher implements IMatcher
 	   	    {
 	   	 	   if (name.equals(names[idx]))	   	 	   
 	   	 	      matches = true;	   	 	
-	   	 	   else if (names[idx].endsWith(".null") &&
-	   	 	             name.equals(names[idx].substring(0,names[idx].indexOf(".null"))) )
+	   	 	   else if (names[idx].endsWith(".null") && //$NON-NLS-1$
+	   	 	             name.equals(names[idx].substring(0,names[idx].indexOf(".null"))) ) //$NON-NLS-1$
 	   	 	      matches = true;
 	   	    }
 	   	    if (matches)
@@ -212,7 +212,7 @@ public class FileTypeMatcher implements IMatcher
 	   	 else if (dotIdx == -1)
 	   	 {
 	   	 	for (int idx=0; !matches && (idx<types.length); idx++)
-	   	 	   if ("null".equals(types[idx]))
+	   	 	   if ("null".equals(types[idx])) //$NON-NLS-1$
 	   	 	     matches = true;	   	 		   	    	
 	   	 }
 	   }  
@@ -226,16 +226,16 @@ public class FileTypeMatcher implements IMatcher
 	 */
    public String toString()
    {
-   	   StringBuffer typesBuffer = new StringBuffer("");
+   	   StringBuffer typesBuffer = new StringBuffer(""); //$NON-NLS-1$
    	   if (orgTypes != null)
    	   {
    	     for (int idx=0; idx<orgTypes.length; idx++)
-   	        typesBuffer.append(orgTypes[idx]+","); 
+   	        typesBuffer.append(orgTypes[idx]+","); //$NON-NLS-1$ 
    	   }
    	   if (orgNames != null)
    	   {
    	     for (int idx=0; idx<orgNames.length; idx++)
-   	        typesBuffer.append(orgNames[idx]+","); 
+   	        typesBuffer.append(orgNames[idx]+","); //$NON-NLS-1$ 
    	   }
 	   return typesBuffer.toString();
    }      
@@ -247,7 +247,7 @@ public class FileTypeMatcher implements IMatcher
 	 */
 	public static String[] parseTypes(String typeList)
 	{
-		StringTokenizer tokens = new StringTokenizer(typeList,",");
+		StringTokenizer tokens = new StringTokenizer(typeList,","); //$NON-NLS-1$
 		Vector v = new Vector();
 		while (tokens.hasMoreTokens())
 		{
@@ -268,7 +268,7 @@ public class FileTypeMatcher implements IMatcher
 	 */
 	public static String[] parseNames(String typeList)
 	{
-		StringTokenizer tokens = new StringTokenizer(typeList,",");
+		StringTokenizer tokens = new StringTokenizer(typeList,","); //$NON-NLS-1$
 		Vector v = new Vector();
 		while (tokens.hasMoreTokens())
 		{

@@ -24,40 +24,40 @@ public interface IClassifierConstants {
 	/**
 	 * Default type. 
 	 */
-	public static final String TYPE_DEFAULT = "file";
+	public static final String TYPE_DEFAULT = "file"; //$NON-NLS-1$
 	
 	/**
 	 * Link type, "link".
 	 */
-	public static final String TYPE_LINK = "link";
+	public static final String TYPE_LINK = "link"; //$NON-NLS-1$
 	
 	/**
 	 * Java executable type, "executable(java:*)".
 	 */
-	public static final String TYPE_EXECUTABLE_JAVA = "executable(java:*)";
+	public static final String TYPE_EXECUTABLE_JAVA = "executable(java:*)"; //$NON-NLS-1$
 	
 	/**
 	 * Binary executable type, "executable(binary)".
 	 */
-	public static final String TYPE_EXECUTABLE_BINARY = "executable(binary)";
+	public static final String TYPE_EXECUTABLE_BINARY = "executable(binary)"; //$NON-NLS-1$
 	
 	/**
 	 * Script executable type, "executable(script)".
 	 */
-	public static final String TYPE_EXECUTABLE_SCRIPT = "executable(script)";
+	public static final String TYPE_EXECUTABLE_SCRIPT = "executable(script)"; //$NON-NLS-1$
 	
 	/**
 	 * Match java executable type, "*executable(java:*)*".
 	 */
-	public static final String MATCH_EXECUTABLE_JAVA = "*executable(java:*)*";
+	public static final String MATCH_EXECUTABLE_JAVA = "*executable(java:*)*"; //$NON-NLS-1$
 	
 	/**
 	 * Match binary executable type, "*executable(java:*)*".
 	 */
-	public static final String MATCH_EXECUTABLE_BINARY = "*executable(binary)*";
+	public static final String MATCH_EXECUTABLE_BINARY = "*executable(binary)*"; //$NON-NLS-1$
 	
 	/**
 	 * Match script executable type, "*executable(java:*)*".
 	 */
-	public static final String MATCH_EXECUTABLE_SCRIPT = "*executable(script)*";
+	public static final String MATCH_EXECUTABLE_SCRIPT = "*executable(script)*"; //$NON-NLS-1$
 }

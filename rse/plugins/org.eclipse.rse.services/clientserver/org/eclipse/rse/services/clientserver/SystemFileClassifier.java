@@ -107,7 +107,7 @@ public class SystemFileClassifier {
     protected String classifyNonVirtual(String absolutePath) {
     	
     	// default type
-    	String type = "file";
+    	String type = "file"; //$NON-NLS-1$
     	
     	File file = new File(absolutePath);
     	
@@ -117,41 +117,41 @@ public class SystemFileClassifier {
     	}
     	
     	// find out if we are on Windows
-    	boolean isWindows = System.getProperty("os.name").toLowerCase().startsWith("win");
+    	boolean isWindows = System.getProperty("os.name").toLowerCase().startsWith("win"); //$NON-NLS-1$ //$NON-NLS-2$
     	
     	// for Windows, we only detect *.exe and *.dll files
     	if (isWindows) 
     	{
     	    absolutePath = absolutePath.toLowerCase();
     		// classify *.class file
-    		if (absolutePath.endsWith(".class")) {
+    		if (absolutePath.endsWith(".class")) { //$NON-NLS-1$
     			type = classifyClassFile(absolutePath);
     		}
     		// *.exe files are binary executables
-    		else if (absolutePath.endsWith(".exe")) {
-    			type = "executable(binary)";
+    		else if (absolutePath.endsWith(".exe")) { //$NON-NLS-1$
+    			type = "executable(binary)"; //$NON-NLS-1$
     		}
     		// *.dll files are of type "module"
-    		else if (absolutePath.endsWith(".dll")) {
-    			type = "module";
+    		else if (absolutePath.endsWith(".dll")) { //$NON-NLS-1$
+    			type = "module"; //$NON-NLS-1$
     		}
     		
     		return type;
     	}
     	
     	// get specified encoding if any
-    	String encoding = System.getProperty("dstore.stdin.encoding");
+    	String encoding = System.getProperty("dstore.stdin.encoding"); //$NON-NLS-1$
     	
     	// otherwise, default to system encoding
-    	if (encoding == null || encoding.equals("")) {
-    		encoding = System.getProperty("file.encoding");
+    	if (encoding == null || encoding.equals("")) { //$NON-NLS-1$
+    		encoding = System.getProperty("file.encoding"); //$NON-NLS-1$
     	}
     	
     	// create command "sh -c file <absolutePath>"
     	String args[] = new String[3];
-    	args[0] = "sh";
-    	args[1] = "-c";
-    	args[2] = "file \"" + absolutePath + "\"";
+    	args[0] = "sh"; //$NON-NLS-1$
+    	args[1] = "-c"; //$NON-NLS-1$
+    	args[2] = "file \"" + absolutePath + "\""; //$NON-NLS-1$ //$NON-NLS-2$
     		
     	BufferedReader poutReader = null;
     	
@@ -173,9 +173,9 @@ public class SystemFileClassifier {
             	poutReader.close();
         		
             	// if it a symbolic link, then get the canonical path and classify it as well
-        		if (type.equals("link")) {
+        		if (type.equals("link")) { //$NON-NLS-1$
         			String canonicalPath = file.getCanonicalPath();
-        			return type + "(" + classifyNonVirtual(canonicalPath) + ")" + ":" + canonicalPath;
+        			return type + "(" + classifyNonVirtual(canonicalPath) + ")" + ":" + canonicalPath; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
         		}
         		else {
         			return type;
@@ -203,10 +203,10 @@ public class SystemFileClassifier {
     protected String getClassification(String absolutePath, String line) {
     	
     	// default type
-    	String type = "file";
+    	String type = "file"; //$NON-NLS-1$
     	
     	String name = line;
-    	String fulltype = "";
+    	String fulltype = ""; //$NON-NLS-1$
     	
     	// Look for colon. Name appears before colon. Full type appears after the colon
     	int colon = line.indexOf(':');
@@ -217,27 +217,27 @@ public class SystemFileClassifier {
     	
     	// if it is a *.class file, then we look for main method and qulaified class name
     	// as part of the classification
-    	if (name.endsWith(".class")) {
+    	if (name.endsWith(".class")) { //$NON-NLS-1$
     		type = classifyClassFile(absolutePath);
     	}
     	
     	// check if it is a shared library
-    	boolean matchesLib =	(fulltype.indexOf("shared object") > -1) ||
-								(fulltype.indexOf("object module") > -1) ||
-								(fulltype.indexOf("archive") > -1);
+    	boolean matchesLib =	(fulltype.indexOf("shared object") > -1) || //$NON-NLS-1$
+								(fulltype.indexOf("object module") > -1) || //$NON-NLS-1$
+								(fulltype.indexOf("archive") > -1); //$NON-NLS-1$
 
     	// check if it is an executable
-    	boolean matchesExe = (fulltype.indexOf("executable") > -1);
+    	boolean matchesExe = (fulltype.indexOf("executable") > -1); //$NON-NLS-1$
     	
     	// check if it is a script
-    	boolean matchesScript =  (fulltype.indexOf("script") > -1);
+    	boolean matchesScript =  (fulltype.indexOf("script") > -1); //$NON-NLS-1$
     	
        	// shared library
     	if (matchesLib) {
     		
     		// all *.a, *.so and *.so.* files are of type "module"
-    		if (name.endsWith(".a") || name.endsWith(".so") || (name.indexOf(".so.") > 0)) {
-    			type = "module";
+    		if (name.endsWith(".a") || name.endsWith(".so") || (name.indexOf(".so.") > 0)) { //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+    			type = "module"; //$NON-NLS-1$
     		}
     	}
     	
@@ -246,27 +246,27 @@ public class SystemFileClassifier {
     		
     		// an executable script file
     		if (matchesExe) {
-    			type = "executable(script)";
+    			type = "executable(script)"; //$NON-NLS-1$
     		}
     		// non-executable script file
     		else {
-    			type = "script";
+    			type = "script"; //$NON-NLS-1$
     		}
     	}
     	
     	// binary executable
     	else if (matchesExe) {
-    		type = "executable(binary)";
+    		type = "executable(binary)"; //$NON-NLS-1$
     	}
     	
     	// on iSeries we look for "OS/400 object" as a type
-    	else if (fulltype.indexOf("OS/400 object") > -1) {
-    		type = "OS/400 object";
+    	else if (fulltype.indexOf("OS/400 object") > -1) { //$NON-NLS-1$
+    		type = "OS/400 object"; //$NON-NLS-1$
     	}
     	
     	// finally, if the full type contains the symbolic link string, then type is simply "link"
-    	else if (fulltype.startsWith("symbolic link to")) {
-    		type = "link";
+    	else if (fulltype.startsWith("symbolic link to")) { //$NON-NLS-1$
+    		type = "link"; //$NON-NLS-1$
     	}
     	
     	return type;      
@@ -280,7 +280,7 @@ public class SystemFileClassifier {
     protected String classifyClassFile(String absolutePath) {
     	
     	// default type
-    	String type = "file";
+    	String type = "file"; //$NON-NLS-1$
     	
     	// input stream to file
 		FileInputStream stream = null;
@@ -305,19 +305,20 @@ public class SystemFileClassifier {
 			
 			// we assume not executable
 			isExecutable = false;
+			return type;
 		}
 		
 		// if it is executable, then also get qualified class name
 		if (isExecutable) {
-			type = "executable(java";
+			type = "executable(java"; //$NON-NLS-1$
 			
 			String qualifiedClassName = parser.getQualifiedClassName();
 			
 			if (qualifiedClassName != null) {
-    			type = type + ":" + qualifiedClassName;
+    			type = type + ":" + qualifiedClassName; //$NON-NLS-1$
 			}
 			
-			type = type + ")";
+			type = type + ")"; //$NON-NLS-1$
 		}
 		
 		return type;

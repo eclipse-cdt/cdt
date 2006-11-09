@@ -28,7 +28,7 @@ import java.io.InputStreamReader;
 public class SystemEncodingUtil {
 	
 	private static SystemEncodingUtil instance;
-	public static String ENCODING_UTF_8 = "UTF-8";
+	public static String ENCODING_UTF_8 = "UTF-8"; //$NON-NLS-1$
 
 	/**
 	 * Constructor to create the utility class.
@@ -56,7 +56,7 @@ public class SystemEncodingUtil {
 	 * @return the evironment encoding.
 	 */
 	public String getEnvironmentEncoding() {
-		return System.getProperty("file.encoding");
+		return System.getProperty("file.encoding"); //$NON-NLS-1$
 	}
 	
 	/**
@@ -66,7 +66,7 @@ public class SystemEncodingUtil {
 	 */
 	public boolean isXML(String filePath) {
 		
-		int index = filePath.lastIndexOf(".");
+		int index = filePath.lastIndexOf("."); //$NON-NLS-1$
 		
 		// check if there is a "."
 		if (index == -1) {
@@ -81,7 +81,7 @@ public class SystemEncodingUtil {
 			else {
 				String extension = filePath.substring(index+1);
 				
-				if (extension.equalsIgnoreCase("xml") || extension.equalsIgnoreCase("xmi")) {
+				if (extension.equalsIgnoreCase("xml") || extension.equalsIgnoreCase("xmi")) { //$NON-NLS-1$ //$NON-NLS-2$
 					return true;
 				}
 				else {
@@ -158,7 +158,7 @@ public class SystemEncodingUtil {
 			// in big-endian order and ASCII characters encoded as ASCII values (the encoding
 			// declaration must be read to determine which)
 			else if (temp[0] == 0x00 && temp[1] == 0x3C && temp[2] == 0x00 && temp[3] == 0x3F) {
-				encodingGuess = "UnicodeBigUnmarked";
+				encodingGuess = "UnicodeBigUnmarked"; //$NON-NLS-1$
 			}
 			
 			
@@ -166,14 +166,14 @@ public class SystemEncodingUtil {
 			// in little-endian order and ASCII characters encoded as ASCII values (the encoding
 			// declaration must be read to determine which)
 			else if (temp[0] == 0x3C && temp[1] == 0x00 && temp[2] == 0x3F && temp[3] == 0x00) {
-				encodingGuess = "UnicodeLittleUnmarked";
+				encodingGuess = "UnicodeLittleUnmarked"; //$NON-NLS-1$
 			}
 			
 			
 			// EBCDIC (in some flavor; the full encoding declaration must be read to tell which
 			// code page is in use)
 			else if (temp[0] == 0x4C && temp[1] == 0x6F && temp[2] == 0xA7 && temp[3] == 0x94) {
-				encodingGuess = "Cp037";
+				encodingGuess = "Cp037"; //$NON-NLS-1$
 			}
 			
 			
@@ -218,7 +218,7 @@ public class SystemEncodingUtil {
 			
 			while (line != null) {
 				
-				int encodingIndex = line.indexOf("encoding");
+				int encodingIndex = line.indexOf("encoding"); //$NON-NLS-1$
 				
 				// look for the encoding attribute
 				if (encodingIndex != -1) {
@@ -320,8 +320,8 @@ public class SystemEncodingUtil {
 				
 				// check if our initial guess was UTF-8 or UTF-16
 				// those do not have to have an encoding declaration
-				if (encodingGuess.equals(SystemEncodingUtil.ENCODING_UTF_8) || encodingGuess.startsWith("UnicodeBig") ||
-					encodingGuess.equals("UnicodeLittle")) {
+				if (encodingGuess.equals(SystemEncodingUtil.ENCODING_UTF_8) || encodingGuess.startsWith("UnicodeBig") || //$NON-NLS-1$
+					encodingGuess.equals("UnicodeLittle")) { //$NON-NLS-1$
 					encoding = encodingGuess;
 				}
 			}
@@ -385,11 +385,11 @@ public class SystemEncodingUtil {
 		}
 		// UTF-16, big-endian order
 		else if (bomBytes[0] == 0xFE && bomBytes[1] == 0xFF && !(bomBytes[2] == 0x00 && bomBytes[3] == 0x00)) {
-			return "UnicodeBig";
+			return "UnicodeBig"; //$NON-NLS-1$
 		}
 		// UTF-16, little-endian order
 		else if (bomBytes[0] == 0xFF && bomBytes[1] == 0xFE && !(bomBytes[2] == 0x00 && bomBytes[3] == 0x00)) {
-			return "UnicodeLittle";
+			return "UnicodeLittle"; //$NON-NLS-1$
 		}
 		// not a BOM
 		else {

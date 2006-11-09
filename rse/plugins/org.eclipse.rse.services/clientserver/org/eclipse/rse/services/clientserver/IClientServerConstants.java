@@ -30,27 +30,27 @@ public interface IClientServerConstants {
 //	// Messages
 //	public static final String MSG_PREFIX = RESID_PREFIX+"msg.";		
 	
-	public static final String MSG_EXCEPTION_OCCURRED = "RSEG1003";
-	public static final String MSG_EXCEPTION_DELETING = "RSEG1063"; //""RSEG1004";	
-	public static final String MSG_EXCEPTION_RENAMING = "RSEG1064"; //"RSEG1005"; //MSG_EXCEPTION_PREFIX + "Renaming";		
-	public static final String MSG_EXCEPTION_MOVING   = "RSEG1065"; //MSG_EXCEPTION_PREFIX + "Moving";		  	
+	public static final String MSG_EXCEPTION_OCCURRED = "RSEG1003"; //$NON-NLS-1$
+	public static final String MSG_EXCEPTION_DELETING = "RSEG1063"; //""RSEG1004"; //$NON-NLS-1$	
+	public static final String MSG_EXCEPTION_RENAMING = "RSEG1064"; //"RSEG1005"; //MSG_EXCEPTION_PREFIX + "Renaming"; //$NON-NLS-1$		
+	public static final String MSG_EXCEPTION_MOVING   = "RSEG1065"; //MSG_EXCEPTION_PREFIX + "Moving"; //$NON-NLS-1$
 
-	public static final String FILEMSG_DELETE_FILE_FAILED  = "RSEF1300";
-	public static final String FILEMSG_RENAME_FILE_FAILED  = "RSEF1301";
-	public static final String FILEMSG_CREATE_FILE_FAILED  = "RSEF1302";
-	public static final String FILEMSG_CREATE_FILE_FAILED_EXIST  = "RSEF1303";
-	public static final String FILEMSG_CREATE_FOLDER_FAILED  = "RSEF1304";
-	public static final String FILEMSG_CREATE_FOLDER_FAILED_EXIST  = "RSEF1309";
-	public static final String FILEMSG_CREATE_RESOURCE_NOTVISIBLE  = "RSEF1310";
-	public static final String FILEMSG_RENAME_RESOURCE_NOTVISIBLE  = "RSEF1311";
-	public static final String FILEMSG_ERROR_NOFILETYPES = "RSEF1010";
-	public static final String FILEMSG_COPY_FILE_FAILED  = "RSEF1306";
-	public static final String FILEMSG_MOVE_FILE_FAILED  = "RSEF1307";
-	public static final String FILEMSG_MOVE_TARGET_EQUALS_SOURCE  = "RSEF1308";
-	public static final String FILEMSG_ARCHIVE_CORRUPTED = "RSEG1122";
-	public static final String FILEMSG_NO_PERMISSION = "RSEF5001";
+	public static final String FILEMSG_DELETE_FILE_FAILED  = "RSEF1300"; //$NON-NLS-1$
+	public static final String FILEMSG_RENAME_FILE_FAILED  = "RSEF1301"; //$NON-NLS-1$
+	public static final String FILEMSG_CREATE_FILE_FAILED  = "RSEF1302"; //$NON-NLS-1$
+	public static final String FILEMSG_CREATE_FILE_FAILED_EXIST  = "RSEF1303"; //$NON-NLS-1$
+	public static final String FILEMSG_CREATE_FOLDER_FAILED  = "RSEF1304"; //$NON-NLS-1$
+	public static final String FILEMSG_CREATE_FOLDER_FAILED_EXIST  = "RSEF1309"; //$NON-NLS-1$
+	public static final String FILEMSG_CREATE_RESOURCE_NOTVISIBLE  = "RSEF1310"; //$NON-NLS-1$
+	public static final String FILEMSG_RENAME_RESOURCE_NOTVISIBLE  = "RSEF1311"; //$NON-NLS-1$
+	public static final String FILEMSG_ERROR_NOFILETYPES = "RSEF1010"; //$NON-NLS-1$
+	public static final String FILEMSG_COPY_FILE_FAILED  = "RSEF1306"; //$NON-NLS-1$
+	public static final String FILEMSG_MOVE_FILE_FAILED  = "RSEF1307"; //$NON-NLS-1$
+	public static final String FILEMSG_MOVE_TARGET_EQUALS_SOURCE  = "RSEF1308"; //$NON-NLS-1$
+	public static final String FILEMSG_ARCHIVE_CORRUPTED = "RSEG1122"; //$NON-NLS-1$
+	public static final String FILEMSG_NO_PERMISSION = "RSEF5001"; //$NON-NLS-1$
 
-	public static final String FILEMSG_REMOTE_SAVE_FAILED = "RSEF5006";
+	public static final String FILEMSG_REMOTE_SAVE_FAILED = "RSEF5006"; //$NON-NLS-1$
     /**
 	 * Flag to indicate "include files only, not folders"
 	 */

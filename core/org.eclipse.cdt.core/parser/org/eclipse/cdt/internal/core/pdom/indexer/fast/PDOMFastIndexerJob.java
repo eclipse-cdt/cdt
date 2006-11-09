@@ -16,7 +16,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 
@@ -43,6 +43,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Platform;
 
 /**
  * @author Doug Schaefer
@@ -53,10 +54,14 @@ abstract class PDOMFastIndexerJob extends PDOMIndexerTask implements IPDOMIndexe
 	protected final PDOMFastIndexer indexer;
 	protected IWritableIndex index;
 	protected IndexBasedCodeReaderFactory codeReaderFactory;
-	protected volatile int fFilesToIndex= 0;
+	private boolean fTrace= false;
 
 	public PDOMFastIndexerJob(PDOMFastIndexer indexer) throws CoreException {
 		this.indexer = indexer;
+		String trace = Platform.getDebugOption(CCorePlugin.PLUGIN_ID + "/debug/indexer"); //$NON-NLS-1$
+		if (trace != null && trace.equalsIgnoreCase("true")) { //$NON-NLS-1$
+			fTrace= true;
+		}
 	}
 	
 	protected void setupIndexAndReaderFactory() throws CoreException {
@@ -76,7 +81,7 @@ abstract class PDOMFastIndexerJob extends PDOMIndexerTask implements IPDOMIndexe
 		return indexer;
 	}
 	
-	protected void doParseTU(ITranslationUnit tu) throws CoreException, InterruptedException {
+	protected void doParseTU(ITranslationUnit tu, IProgressMonitor pm) throws CoreException, InterruptedException {
 		IPath path = tu.getLocation();
 		if (path == null) {
 			return;
@@ -95,30 +100,31 @@ abstract class PDOMFastIndexerJob extends PDOMIndexerTask implements IPDOMIndexe
 			return;
 		}
 
+		LinkedHashSet paths= new LinkedHashSet();
+		paths.add(path.toOSString());
+		codeReaderFactory.setPathCollector(paths);
 		index.acquireReadLock();
 		try {
 			// get the AST in a "Fast" way
 			IASTTranslationUnit ast= language.getASTTranslationUnit(codeReader, scanner, codeReaderFactory, index);
-
-			index.acquireWriteLock(1);
-			try {
-				// Clear the macros
-				codeReaderFactory.clearMacroAttachements();
-				
-				// Add the new symbols
-				addSymbols(ast);
-			} finally {
-				index.releaseWriteLock(1);
+			if (pm.isCanceled()) {
+				return;
 			}
+			// Clear the macros
+			codeReaderFactory.clearMacroAttachements();
+				
+			// Add the new symbols
+			addSymbols(paths, ast, pm);
 		}
 		finally {
 			index.releaseReadLock();
+			codeReaderFactory.setPathCollector(null);
 		}
 	}
 
-	protected void addSymbols(IASTTranslationUnit ast) throws InterruptedException, CoreException {
+	protected void addSymbols(Collection paths, IASTTranslationUnit ast, IProgressMonitor pm) throws InterruptedException, CoreException {
 		// Add in the includes
-		final LinkedHashMap symbolMap= new LinkedHashMap(); // makes bugs reproducible
+		final HashMap symbolMap= new HashMap();
 		
 		// includes
 		IASTPreprocessorIncludeStatement[] includes = ast.getIncludeDirectives();
@@ -162,9 +168,15 @@ abstract class PDOMFastIndexerJob extends PDOMIndexerTask implements IPDOMIndexe
 
 		for (Iterator iter = symbolMap.entrySet().iterator(); iter.hasNext();) {
 			Map.Entry entry = (Map.Entry) iter.next();
+			if (pm.isCanceled()) {
+				return;
+			}
 			String path= (String) entry.getKey();
 			FileInfo info= codeReaderFactory.createFileInfo(path);
 			if (!info.fNeedToIndex && info.fFile != null) {
+				if (fTrace) {
+					System.out.println("Indexer: skipping " + path); //$NON-NLS-1$
+				}
 				iter.remove();
 			}
 			else {
@@ -176,12 +188,26 @@ abstract class PDOMFastIndexerJob extends PDOMIndexerTask implements IPDOMIndexe
 			}				
 		}
 
-		for (Iterator iter = symbolMap.entrySet().iterator(); iter.hasNext();) {
-			Map.Entry entry = (Map.Entry) iter.next();
-			String path= (String) entry.getKey();
-			FileInfo info= codeReaderFactory.createFileInfo(path);
-			info.fNeedToIndex= false;
-			addToIndex(path, info, (ArrayList[]) entry.getValue());
+		index.acquireWriteLock(1);
+		try {
+			for (Iterator iter = paths.iterator(); iter.hasNext();) {
+				String path = (String) iter.next();
+				FileInfo info= codeReaderFactory.createFileInfo(path);
+				if (!info.fNeedToIndex) {
+					fTotalTasks++;
+				}
+				info.fNeedToIndex= false;
+				if (fTrace) {
+					System.out.println("Indexer: adding " + path); //$NON-NLS-1$
+				}
+				addToIndex(path, info, (ArrayList[]) symbolMap.get(path));
+				fCompletedTasks++;
+				if (pm.isCanceled()) {
+					return;
+				}
+			}
+		} finally {
+			index.releaseWriteLock(1);
 		}
 	}
 
@@ -207,25 +233,27 @@ abstract class PDOMFastIndexerJob extends PDOMIndexerTask implements IPDOMIndexe
 		}
 		file.setTimestamp(path.toFile().lastModified());
 
-		// includes
-		ArrayList list= lists[0];
-		for (int i = 0; i < list.size(); i++) {
-			IASTPreprocessorIncludeStatement include= (IASTPreprocessorIncludeStatement) list.get(i);
-			IIndexFragmentFile destFile= createIndexFile(include.getPath());
-			index.addInclude(file, destFile, include);
-		}
+		if (lists != null) {
+			// includes
+			ArrayList list= lists[0];
+			for (int i = 0; i < list.size(); i++) {
+				IASTPreprocessorIncludeStatement include= (IASTPreprocessorIncludeStatement) list.get(i);
+				IIndexFragmentFile destFile= createIndexFile(include.getPath());
+				index.addInclude(file, destFile, include);
+			}
 
-		// macros
-		list= lists[1];
-		for (int i = 0; i < list.size(); i++) {
-			index.addMacro(file, (IASTPreprocessorMacroDefinition) list.get(i));
-		}
+			// macros
+			list= lists[1];
+			for (int i = 0; i < list.size(); i++) {
+				index.addMacro(file, (IASTPreprocessorMacroDefinition) list.get(i));
+			}
 
-		// symbols
-		list= lists[2];
-		for (int i = 0; i < list.size(); i++) {
-			index.addName(file, (IASTName) list.get(i));
-		}		
+			// symbols
+			list= lists[2];
+			for (int i = 0; i < list.size(); i++) {
+				index.addName(file, (IASTName) list.get(i));
+			}	
+		}
 	}
 
 	private IIndexFragmentFile createIndexFile(String path) throws CoreException {
@@ -244,9 +272,9 @@ abstract class PDOMFastIndexerJob extends PDOMIndexerTask implements IPDOMIndexe
 				return;
 			ITranslationUnit tu = (ITranslationUnit)i.next();
 			if (tu.isSourceUnit()) {
-				parseTU(tu);
+				parseTU(tu, monitor);
 				i.remove();
-				fFilesToIndex--;
+				fCompletedTasks++;
 			}
 		}
 
@@ -259,12 +287,11 @@ abstract class PDOMFastIndexerJob extends PDOMIndexerTask implements IPDOMIndexe
 			FileInfo info= codeReaderFactory.createFileInfo(tu);
 			if (!info.fNeedToIndex) {
 				i.remove();
-				fFilesToIndex--;
 			}
 			else if (info.fFile != null) {
 				ITranslationUnit context= findContext(index, info.fFile.getLocation());
 				if (context != null) {
-					parseTU(context);
+					parseTU(context, monitor);
 				}
 			}
 		}
@@ -281,14 +308,9 @@ abstract class PDOMFastIndexerJob extends PDOMIndexerTask implements IPDOMIndexe
 					i.remove();
 				}
 				else {
-					parseTU(tu);
+					parseTU(tu, monitor);
 				}
-				fFilesToIndex--;
 			}
 		}
-	}
-	
-	final public int getFilesToIndexCount() {
-		return fFilesToIndex;
 	}
 }

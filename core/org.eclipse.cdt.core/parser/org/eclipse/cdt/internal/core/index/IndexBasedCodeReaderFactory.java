@@ -14,6 +14,7 @@ package org.eclipse.cdt.internal.core.index;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
@@ -45,6 +46,7 @@ public class IndexBasedCodeReaderFactory implements ICodeReaderFactory {
 	private final IIndex index;
 	private Map fileInfoCache = new HashMap(); // filename, fileInfo
 	private List usedMacros = new ArrayList();
+	private Collection fPathCollector;
 	
 	private static final char[] EMPTY_CHARS = new char[0];
 	
@@ -65,6 +67,9 @@ public class IndexBasedCodeReaderFactory implements ICodeReaderFactory {
 	}
 
 	public CodeReader createCodeReaderForTranslationUnit(String path) {
+		if (fPathCollector != null) {
+			fPathCollector.add(path);
+		}
 		return ParserUtil.createReader(path, null);
 	}
 	
@@ -113,6 +118,9 @@ public class IndexBasedCodeReaderFactory implements ICodeReaderFactory {
 			// still try to parse the file.
 		}
 
+		if (fPathCollector != null) {
+			fPathCollector.add(canonicalPath);
+		}
 		return ParserUtil.createReader(canonicalPath, null);
 	}
 
@@ -170,5 +178,9 @@ public class IndexBasedCodeReaderFactory implements ICodeReaderFactory {
 
 	public FileInfo createFileInfo(ITranslationUnit tu) throws CoreException {
 		return createInfo(tu.getLocation().toOSString(), null);
+	}
+
+	public void setPathCollector(Collection paths) {
+		fPathCollector= paths;
 	}
 }

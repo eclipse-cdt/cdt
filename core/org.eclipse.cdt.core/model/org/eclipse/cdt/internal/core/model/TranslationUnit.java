@@ -21,6 +21,7 @@ import org.eclipse.cdt.core.dom.ICodeReaderFactory;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.model.CModelException;
+import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.IBuffer;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICProject;
@@ -796,12 +797,14 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 		ICProject project = getCProject();
 		IProject rproject = project.getProject();
 
-		IScannerInfoProvider provider = CCorePlugin.getDefault()
-				.getScannerInfoProvider(rproject);
+		if (!force && CoreModel.isScannerInformationEmpty(resource)) {
+			return null;
+		}
+		
+		IScannerInfoProvider provider = CCorePlugin.getDefault().getScannerInfoProvider(rproject);
 		if (provider != null) {
 			IResource infoResource = resource != null ? resource : rproject;
-			IScannerInfo scanInfo = provider
-					.getScannerInformation(infoResource);
+			IScannerInfo scanInfo = provider.getScannerInformation(infoResource);
 			if (scanInfo != null)
 				return scanInfo;
 		}

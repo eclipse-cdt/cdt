@@ -376,7 +376,11 @@ public class Util {
 	 * @return an IStatus object based on the given Throwable.
 	 */
 	public static IStatus createStatus(Throwable t) {
-		return new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, 0, t.getMessage(), t);
+		String msg= t.getMessage();
+		if (msg == null) {
+			msg= Messages.Util_unexpectedError; 
+		}
+		return new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, 0, msg, t);
 	}
 }
 

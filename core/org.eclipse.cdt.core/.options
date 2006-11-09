@@ -35,3 +35,7 @@ org.eclipse.cdt.core/debug/typeresolver=false
 
 # Reports timings for PDOM
 org.eclipse.cdt.core/debug/pdomtimings=false
+
+# Reports sequence of files indexed
+org.eclipse.cdt.core/debug/indexer=false
+

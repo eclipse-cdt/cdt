@@ -69,8 +69,16 @@ public class PDOMNullIndexer implements IPDOMIndexer {
 			}
 		}
 
-		public int getFilesToIndexCount() {
-			return 1;
+		public String getMonitorMessageDetail() {
+			return null;
+		}
+
+		public int getCompletedSubtaskCount() {
+			return 0;
+		}
+
+		public int getRemainingSubtaskCount() {
+			return 0;
 		}
 	}
 	

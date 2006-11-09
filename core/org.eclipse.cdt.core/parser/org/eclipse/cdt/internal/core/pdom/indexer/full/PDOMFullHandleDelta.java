@@ -13,6 +13,7 @@
 package org.eclipse.cdt.internal.core.pdom.indexer.full;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
@@ -35,27 +36,27 @@ class PDOMFullHandleDelta extends PDOMFullIndexerJob {
 	public PDOMFullHandleDelta(PDOMFullIndexer indexer, ICElementDelta delta) throws CoreException {
 		super(indexer);
 		processDelta(delta, changed, changed, removed);
-		fFilesToIndex= changed.size() + removed.size();
+		fTotalTasks= changed.size() + removed.size();
 	}
 
 	public void run(IProgressMonitor monitor) {
 		try {
 			long start = System.currentTimeMillis();
 			setupIndexAndReaderFactory();
-			registerTUsInReaderFactory(changed);
+			registerTUsInReaderFactory(changed, Collections.EMPTY_LIST);
 					
-			parseTUs(changed, monitor);
-			if (monitor.isCanceled()) {
-				return;
-			}
-			
 			Iterator i= removed.iterator();
 			while (i.hasNext()) {
 				if (monitor.isCanceled())
 					return;
 				ITranslationUnit tu = (ITranslationUnit)i.next();
 				removeTU(index, tu);
-				fFilesToIndex--;
+				fCompletedTasks++;
+			}
+
+			parseTUs(changed, monitor);
+			if (monitor.isCanceled()) {
+				return;
 			}
 				
 			String showTimings = Platform.getDebugOption(CCorePlugin.PLUGIN_ID

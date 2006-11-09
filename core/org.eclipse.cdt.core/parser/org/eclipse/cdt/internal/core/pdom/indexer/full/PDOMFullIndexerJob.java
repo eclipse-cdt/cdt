@@ -15,12 +15,10 @@ package org.eclipse.cdt.internal.core.pdom.indexer.full;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.IPDOMIndexer;
@@ -49,8 +47,7 @@ abstract class PDOMFullIndexerJob extends PDOMIndexerTask implements IPDOMIndexe
 
 	protected final PDOMFullIndexer indexer;
 	protected IWritableIndex index= null;
-	private Set filePathsToParse= null;
-	protected volatile int fFilesToIndex= 0;
+	private Map filePathsToParse= null;
 
 	public PDOMFullIndexerJob(PDOMFullIndexer indexer) throws CoreException {
 		this.indexer = indexer;
@@ -64,12 +61,16 @@ abstract class PDOMFullIndexerJob extends PDOMIndexerTask implements IPDOMIndexe
 		this.index = ((IWritableIndexManager) CCorePlugin.getIndexManager()).getWritableIndex(indexer.getProject());
 	}
 	
-	protected void registerTUsInReaderFactory(Collection tus) throws CoreException {
-		filePathsToParse= new HashSet();
+	protected void registerTUsInReaderFactory(Collection required, Collection optional) throws CoreException {
+		filePathsToParse= new HashMap();
 		
-		for (Iterator iter = tus.iterator(); iter.hasNext();) {
+		for (Iterator iter = required.iterator(); iter.hasNext();) {
 			ITranslationUnit tu = (ITranslationUnit) iter.next();
-			filePathsToParse.add(tu.getLocation().toOSString());
+			filePathsToParse.put(tu.getLocation().toOSString(), Boolean.TRUE);
+		}
+		for (Iterator iter = optional.iterator(); iter.hasNext();) {
+			ITranslationUnit tu = (ITranslationUnit) iter.next();
+			filePathsToParse.put(tu.getLocation().toOSString(), Boolean.FALSE);
 		}
 	}
 	
@@ -81,11 +82,11 @@ abstract class PDOMFullIndexerJob extends PDOMIndexerTask implements IPDOMIndexe
 				return;
 			ITranslationUnit tu = (ITranslationUnit)i.next();
 			String path = tu.getLocation().toOSString();
-			if (!filePathsToParse.contains(path)) {
+			if (filePathsToParse.get(path) == null) {
 				i.remove();
 			}
 			else if (tu.isSourceUnit()) {
-				parseTU(tu);
+				parseTU(tu, monitor);
 				i.remove();
 			}
 		}
@@ -97,13 +98,13 @@ abstract class PDOMFullIndexerJob extends PDOMIndexerTask implements IPDOMIndexe
 				return;
 			ITranslationUnit tu = (ITranslationUnit)i.next();
 			String path = tu.getLocation().toOSString();
-			if (!filePathsToParse.contains(path)) {
+			if (filePathsToParse.get(path)==null) {
 				i.remove();
 			}
 			else {
 				ITranslationUnit context= findContext(index, path);
 				if (context != null) {
-					parseTU(context);
+					parseTU(context, monitor);
 				}
 			}
 		}
@@ -114,17 +115,17 @@ abstract class PDOMFullIndexerJob extends PDOMIndexerTask implements IPDOMIndexe
 			while (i.hasNext()) {
 				ITranslationUnit tu = (ITranslationUnit)i.next();
 				String path = tu.getLocation().toOSString();
-				if (!filePathsToParse.contains(path)) {
+				if (filePathsToParse.get(path)==null) {
 					i.remove();
 				}
 				else {
-					parseTU(tu);
+					parseTU(tu, monitor);
 				}
 			}
 		}
 	}
 
-	protected void doParseTU(ITranslationUnit tu) throws CoreException, InterruptedException {
+	protected void doParseTU(ITranslationUnit tu, IProgressMonitor pm) throws CoreException, InterruptedException {
 		IPath path = tu.getLocation();
 		if (path == null) {
 			return;
@@ -134,34 +135,11 @@ abstract class PDOMFullIndexerJob extends PDOMIndexerTask implements IPDOMIndexe
 			options |= ITranslationUnit.AST_SKIP_IF_NO_BUILD_INFO;
 		}
 		IASTTranslationUnit ast= tu.getAST(null, options);
-		if (ast == null)
-			return;
-		System.out.println(path.toOSString());
-		index.acquireWriteLock(0);
-		
-		try {
-			// Remove the old symbols in the tu
-			IIndexFragmentFile file = (IIndexFragmentFile) index.getFile(path);
-			if (file != null)
-				index.clearFile(file);
-
-			// Clear out the symbols in the includes
-			IASTPreprocessorIncludeStatement[] includes = ast.getIncludeDirectives();
-			for (int i = 0; i < includes.length; ++i) {
-				String incname = includes[i].getPath();
-				IIndexFragmentFile incfile = (IIndexFragmentFile) index.getFile(new Path(incname));
-				if (incfile != null) {
-					index.clearFile(incfile);
-				}
-			}
-			
-			addSymbols(ast);
-		} finally {
-			index.releaseWriteLock(0);
-		}
+		if (ast != null)
+			addSymbols(ast, pm);
 	}
 	
-	protected void addSymbols(IASTTranslationUnit ast) throws InterruptedException, CoreException {
+	protected void addSymbols(IASTTranslationUnit ast, IProgressMonitor pm) throws InterruptedException, CoreException {
 		// Add in the includes
 		final LinkedHashMap symbolMap= new LinkedHashMap(); // makes bugs reproducible
 		
@@ -206,6 +184,9 @@ abstract class PDOMFullIndexerJob extends PDOMIndexerTask implements IPDOMIndexe
 		});
 
 		for (Iterator iter = symbolMap.values().iterator(); iter.hasNext();) {
+			if (pm.isCanceled()) {
+				return;
+			}
 			// resolve the names
 			ArrayList names= ((ArrayList[]) iter.next())[2];
 			for (int i=0; i<names.size(); i++) {
@@ -213,15 +194,23 @@ abstract class PDOMFullIndexerJob extends PDOMIndexerTask implements IPDOMIndexe
 			}
 		}
 
-		for (Iterator iter = symbolMap.entrySet().iterator(); iter.hasNext();) {
-			Map.Entry entry = (Map.Entry) iter.next();
-			String path= (String) entry.getKey();
-			addToIndex(path, (ArrayList[]) entry.getValue());
+		index.acquireWriteLock(0);
+		try {
+			for (Iterator iter = symbolMap.entrySet().iterator(); iter.hasNext();) {
+				if (pm.isCanceled()) {
+					return;
+				}
+				Map.Entry entry = (Map.Entry) iter.next();
+				String path= (String) entry.getKey();
+				addToIndex(path, (ArrayList[]) entry.getValue());
+			}
+		} finally {
+			index.releaseWriteLock(0);
 		}
 	}
 
 	private void addToMap(HashMap map, int idx, String path, Object thing) {
-		if (filePathsToParse.contains(path)) {
+		if (filePathsToParse.get(path) != null) {
 			List[] lists= (List[]) map.get(path);
 			if (lists == null) {
 				lists= new ArrayList[]{new ArrayList(), new ArrayList(), new ArrayList()};
@@ -232,10 +221,13 @@ abstract class PDOMFullIndexerJob extends PDOMIndexerTask implements IPDOMIndexe
 	}		
 
 	private void addToIndex(String location, ArrayList[] lists) throws CoreException {
-		if (!filePathsToParse.remove(location)) {
+		Boolean required= (Boolean) filePathsToParse.remove(location);
+		if (required == null) {
 			return;
 		}
-		fFilesToIndex--;
+		if (!required.booleanValue()) {
+			fTotalTasks++;
+		}
 
 		// Remove the old symbols in the tu
 		Path path= new Path(location);
@@ -267,9 +259,6 @@ abstract class PDOMFullIndexerJob extends PDOMIndexerTask implements IPDOMIndexe
 		for (int i = 0; i < list.size(); i++) {
 			index.addName(file, (IASTName) list.get(i));
 		}		
-	}
-	
-	final public int getFilesToIndexCount() {
-		return fFilesToIndex;
+		fCompletedTasks++;
 	}
 }

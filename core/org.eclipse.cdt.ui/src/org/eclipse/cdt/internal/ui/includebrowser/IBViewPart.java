@@ -284,6 +284,7 @@ public class IBViewPart extends ViewPart
         fContentProvider= new IBContentProvider(display); 
         fLabelProvider= new IBLabelProvider(display, fContentProvider);
         fTreeViewer= new ExtendedTreeViewer(fViewerPage);
+        fTreeViewer.setUseHashlookup(true);
         fTreeViewer.setContentProvider(fContentProvider);
         fTreeViewer.setLabelProvider(fLabelProvider);
         fTreeViewer.setAutoExpandLevel(2);     

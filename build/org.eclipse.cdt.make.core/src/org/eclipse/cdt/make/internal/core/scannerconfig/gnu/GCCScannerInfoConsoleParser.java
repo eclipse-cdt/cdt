@@ -25,6 +25,7 @@ import org.eclipse.cdt.make.internal.core.scannerconfig.util.TraceUtil;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
 
 /**
  * Parses gcc and g++ output for -I and -D parameters.
@@ -126,6 +127,10 @@ public class GCCScannerInfoConsoleParser extends AbstractGCCBOPConsoleParser {
 				}
 			}
 			
+			if (fileName != null && fileName.startsWith("/cygdrive/")) { //$NON-NLS-1$
+				fileName= AbstractGCCBOPConsoleParserUtility.convertCygpath(new Path(fileName)).toOSString();
+			}
+			
 			IProject project = getProject();   
 			IFile file = null;
 			List translatedIncludes = includes;
@@ -221,7 +226,7 @@ public class GCCScannerInfoConsoleParser extends AbstractGCCBOPConsoleParser {
 			if (postfix.charAt(0) == '-') {	// empty -I
 				continue;
 			}
-			if (postfix.startsWith(SINGLE_QUOTE_STRING) || postfix.startsWith(DOUBLE_QUOTE_STRING)) { //$NON-NLS-1$ //$NON-NLS-2$
+			if (postfix.startsWith(SINGLE_QUOTE_STRING) || postfix.startsWith(DOUBLE_QUOTE_STRING)) {
 				delimiter = postfix.substring(0, 1);
 			}
 			String[] tokens = postfix.split(delimiter);

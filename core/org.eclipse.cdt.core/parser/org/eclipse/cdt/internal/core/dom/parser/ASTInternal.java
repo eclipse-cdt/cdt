@@ -36,7 +36,6 @@ public class ASTInternal {
 		if (scope instanceof IASTInternalScope) {
 			return ((IASTInternalScope) scope).getPhysicalNode();
 		}
-		assert false;
 		return null;
 	}
 

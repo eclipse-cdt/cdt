@@ -23,7 +23,9 @@ import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.core.index.IIndexFile;
 import org.eclipse.cdt.core.index.IIndexInclude;
 import org.eclipse.cdt.core.index.IndexFilter;
+import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.core.model.IPathEntry;
 import org.eclipse.cdt.core.testplugin.CProjectHelper;
 import org.eclipse.cdt.core.testplugin.TestScannerProvider;
 import org.eclipse.cdt.core.testplugin.util.TestSourceReader;
@@ -56,6 +58,10 @@ public class IndexIncludeTest extends IndexTestBase {
 		super.setUp();
 		if (fProject == null) {
 			fProject= createProject(true, "resources/indexTests/includes");
+			IPathEntry[] entries= new IPathEntry[] {
+					CoreModel.newIncludeEntry(fProject.getPath(),
+							null, fProject.getResource().getLocation())};
+			fProject.setRawPathEntries(entries, NPM);
 		}
 		fIndex= CCorePlugin.getIndexManager().getIndex(fProject);
 	}

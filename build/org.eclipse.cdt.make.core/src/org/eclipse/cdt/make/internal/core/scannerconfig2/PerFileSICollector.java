@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2005 IBM Corporation and others.
+ * Copyright (c) 2004, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  * IBM - Initial API and implementation
+ * Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.make.internal.core.scannerconfig2;
 
@@ -83,22 +84,22 @@ public class PerFileSICollector implements IScannerInfoCollector2, IScannerInfoC
                 Integer commandId = (Integer) i.next();
                 CCommandDSC command = (CCommandDSC) commandIdCommandMap.get(commandId);
                 
-                Element cmdElem = doc.createElement(CC_ELEM); //$NON-NLS-1$
+                Element cmdElem = doc.createElement(CC_ELEM); 
                 collectorElem.appendChild(cmdElem);
-                cmdElem.setAttribute(ID_ATTR, commandId.toString()); //$NON-NLS-1$
+                cmdElem.setAttribute(ID_ATTR, commandId.toString()); 
                 cmdElem.setAttribute(FILE_TYPE_ATTR, command.appliesToCPPFileType() ? "c++" : "c"); //$NON-NLS-1$ //$NON-NLS-2$
                 // write command and scanner info
                 command.serialize(cmdElem);
                 // write files command applies to
-                Element filesElem = doc.createElement(APPLIES_TO_ATTR); //$NON-NLS-1$
+                Element filesElem = doc.createElement(APPLIES_TO_ATTR); 
                 cmdElem.appendChild(filesElem);
                 Set files = (Set) commandIdToFilesMap.get(commandId);
                 if (files != null) {
                     for (Iterator j = files.iterator(); j.hasNext(); ) {
-                        Element fileElem = doc.createElement(FILE_ELEM); //$NON-NLS-1$
+                        Element fileElem = doc.createElement(FILE_ELEM); 
                         IFile file = (IFile) j.next();
                         IPath path = file.getProjectRelativePath();
-                        fileElem.setAttribute(PATH_ATTR, path.toString()); //$NON-NLS-1$
+                        fileElem.setAttribute(PATH_ATTR, path.toString()); 
                         filesElem.appendChild(fileElem);
                     }
                 }
@@ -110,7 +111,7 @@ public class PerFileSICollector implements IScannerInfoCollector2, IScannerInfoC
          */
         public void deserialize(Element collectorElem) {
             for (Node child = collectorElem.getFirstChild(); child != null; child = child.getNextSibling()) {
-                if (child.getNodeName().equals(CC_ELEM)) { //$NON-NLS-1$
+                if (child.getNodeName().equals(CC_ELEM)) { 
                     Element cmdElem = (Element) child;
                     boolean cppFileType = cmdElem.getAttribute(FILE_TYPE_ATTR).equals("c++"); //$NON-NLS-1$
                     CCommandDSC command = new CCommandDSC(cppFileType);

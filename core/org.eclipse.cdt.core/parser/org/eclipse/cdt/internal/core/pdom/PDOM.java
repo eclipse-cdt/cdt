@@ -79,6 +79,9 @@ public class PDOM extends PlatformObject implements IIndexFragment, IPDOM {
 	// 11 - changed how members work
 	// 12 - one more change for members (is-a list -> has-a list)
 	// 13 - CV-qualifiers, storage class specifiers, function/method annotations
+	// 14 - added timestamps for files (bug 149571)
+	// 15 - fixed offsets for pointer types and qualifier types and PDOMCPPVariable (bug 160540). 
+
 
 	public static final int LINKAGES = Database.DATA_AREA;
 	public static final int FILE_INDEX = Database.DATA_AREA + 4;

@@ -1132,7 +1132,6 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
             			break;
             		}
             		if (subC instanceof _CompositeContext) {
-            			assert !subC.containsInContext(globalOffset);
             			externalCount+= subC.getContextLength();
             		}
             	}

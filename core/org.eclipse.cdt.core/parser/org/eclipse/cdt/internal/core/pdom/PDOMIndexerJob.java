@@ -11,6 +11,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom;
 
+import java.text.MessageFormat;
+
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.IPDOMIndexer;
 import org.eclipse.cdt.core.dom.IPDOMIndexerTask;
@@ -27,12 +29,14 @@ import org.eclipse.core.runtime.jobs.Job;
 public class PDOMIndexerJob extends Job {
 
 	private final PDOMManager pdomManager;
-	
+	private int fCompletedSubtaskCount= 0;
 	private IPDOMIndexerTask currentTask;
 	private boolean cancelledByManager= false;
 	private Object taskMutex = new Object();
 	
 	private IProgressMonitor monitor;
+
+	private Job fMonitorJob;
 
 	public PDOMIndexerJob(PDOMManager manager) {
 		super(CCorePlugin.getResourceString("pdom.indexer.name")); //$NON-NLS-1$
@@ -46,10 +50,13 @@ public class PDOMIndexerJob extends Job {
 
 		String taskName = CCorePlugin.getResourceString("pdom.indexer.task"); //$NON-NLS-1$
 		monitor.beginTask(taskName, IProgressMonitor.UNKNOWN);
-
+		startMonitorJob(monitor);
 		try {
 			do {
 				synchronized(taskMutex) {
+					if (currentTask != null) {
+						fCompletedSubtaskCount+= currentTask.getCompletedSubtaskCount();
+					}
 					currentTask= null;
 					taskMutex.notify();
 
@@ -69,7 +76,7 @@ public class PDOMIndexerJob extends Job {
 					}
 					catch (Exception e) {
 						CCorePlugin.log(e);
-					}
+					}					
 				}
 			}
 			while (currentTask != null);
@@ -99,8 +106,50 @@ public class PDOMIndexerJob extends Job {
 			}
 			throw e;
 		}
+		finally {
+			stopMonitorJob();
+		}
 	}
 		
+	private void stopMonitorJob() {
+		if (fMonitorJob != null) {
+			fMonitorJob.cancel();
+		}
+	}
+
+	private void startMonitorJob(final IProgressMonitor monitor) {
+		fMonitorJob= new Job("cdt indexer monitor job") { //$NON-NLS-1$
+			protected IStatus run(IProgressMonitor m) {
+				while(!m.isCanceled()) {
+					updateMonitor(monitor);
+					try {
+						Thread.sleep(350);
+					} catch (InterruptedException e) {
+						return Status.CANCEL_STATUS;
+					}
+				}
+				return Status.OK_STATUS;
+			}
+		};
+		fMonitorJob.setSystem(true);
+		fMonitorJob.schedule();
+	}
+
+	protected void updateMonitor(IProgressMonitor monitor) {
+		String detail= null;
+		synchronized(taskMutex) {
+			if (currentTask != null) {
+				detail= currentTask.getMonitorMessageDetail();
+			}
+		}
+		String msg= pdomManager.getMonitorMessage();
+		if (detail != null) {
+			msg= MessageFormat.format("{0}: {1}", new Object[] {msg, detail}); //$NON-NLS-1$
+		}
+
+		monitor.subTask(msg);
+	}
+
 	public void cancelJobs(IPDOMIndexer indexer) {
 		synchronized (taskMutex) {
 			if (currentTask != null && currentTask.getIndexer() == indexer) {
@@ -115,5 +164,14 @@ public class PDOMIndexerJob extends Job {
 				}
 			}
 		}
+	}
+
+	public int getCompletedSubtaskCount() {
+		synchronized (taskMutex) {
+			if (currentTask != null) {
+				return currentTask.getCompletedSubtaskCount() + fCompletedSubtaskCount;
+			}
+		}
+		return fCompletedSubtaskCount;
 	}
 }

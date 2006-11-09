@@ -92,10 +92,10 @@ public class PDOMManager implements IPDOMManager, IWritableIndexManager, IListen
 	/**
 	 * Protects indexerJob, currentTask and taskQueue.
 	 */
-    private Object taskQueueMutex = new Object();
-    private PDOMIndexerJob indexerJob;
-	private IPDOMIndexerTask currentTask;
-	private LinkedList taskQueue = new LinkedList();
+    private Object fTaskQueueMutex = new Object();
+    private PDOMIndexerJob fIndexerJob;
+	private IPDOMIndexerTask fCurrentTask;
+	private LinkedList fTaskQueue = new LinkedList();
 	
     /**
      * Stores mapping from pdom to project, used to serialize\ creation of new pdoms.
@@ -420,11 +420,11 @@ public class PDOMManager implements IPDOMManager, IWritableIndexManager, IListen
 
     public void enqueue(IPDOMIndexerTask subjob) {
     	boolean notifyBusy= false;
-    	synchronized (taskQueueMutex) {
-    		taskQueue.addLast(subjob);
-			if (indexerJob == null) {
-				indexerJob = new PDOMIndexerJob(this);
-				indexerJob.schedule();
+    	synchronized (fTaskQueueMutex) {
+    		fTaskQueue.addLast(subjob);
+			if (fIndexerJob == null) {
+				fIndexerJob = new PDOMIndexerJob(this);
+				fIndexerJob.schedule();
 				notifyBusy= true;
 			}
 		}
@@ -436,14 +436,14 @@ public class PDOMManager implements IPDOMManager, IWritableIndexManager, IListen
 	IPDOMIndexerTask getNextTask() {
 		boolean idle= false;
 		IPDOMIndexerTask result= null;
-    	synchronized (taskQueueMutex) {
-    		if (taskQueue.isEmpty()) {
-    			currentTask= null;
-        		indexerJob= null;
+    	synchronized (fTaskQueueMutex) {
+    		if (fTaskQueue.isEmpty()) {
+    			fCurrentTask= null;
+        		fIndexerJob= null;
         		idle= true;
     		}
     		else {
-    			result= currentTask= (IPDOMIndexerTask)taskQueue.removeFirst();
+    			result= fCurrentTask= (IPDOMIndexerTask)fTaskQueue.removeFirst();
     		}
 		}
     	if (idle) {
@@ -454,18 +454,18 @@ public class PDOMManager implements IPDOMManager, IWritableIndexManager, IListen
     
     void cancelledJob(boolean byManager) {
     	boolean idle= false;
-    	synchronized (taskQueueMutex) {
-    		currentTask= null;
+    	synchronized (fTaskQueueMutex) {
+    		fCurrentTask= null;
     		if (!byManager) {
-    			taskQueue.clear();
+    			fTaskQueue.clear();
     		}
-    		idle= taskQueue.isEmpty();
+    		idle= fTaskQueue.isEmpty();
     		if (idle) {
-        		indexerJob= null;
+        		fIndexerJob= null;
     		}
     		else {
-    			indexerJob = new PDOMIndexerJob(this);
-    			indexerJob.schedule();
+    			fIndexerJob = new PDOMIndexerJob(this);
+    			fIndexerJob.schedule();
     		}
     	}
     	if (idle) {
@@ -474,25 +474,11 @@ public class PDOMManager implements IPDOMManager, IWritableIndexManager, IListen
     }
         
     private boolean isIndexerIdle() {
-    	synchronized (taskQueueMutex) {
-    		return currentTask == null && taskQueue.isEmpty();
+    	synchronized (fTaskQueueMutex) {
+    		return fCurrentTask == null && fTaskQueue.isEmpty();
     	}
     }
     
-	private int getFilesToIndexCount() {
-		int count= 0;
-		synchronized (taskQueueMutex) {
-			if (currentTask != null) {
-				count= currentTask.getFilesToIndexCount();
-			}
-			for (Iterator iter = taskQueue.iterator(); iter.hasNext();) {
-				IPDOMIndexerTask task= (IPDOMIndexerTask) iter.next();
-				count+= task.getFilesToIndexCount();
-			}
-		}
-		return count;
-	}
-
 	public void addProject(ICProject project, ICElementDelta delta) {
 		getIndexer(project, true); // if the indexer is new this triggers a rebuild
 	}
@@ -551,18 +537,18 @@ public class PDOMManager implements IPDOMManager, IWritableIndexManager, IListen
 			}
 		}
 		PDOMIndexerJob jobToCancel= null;
-		synchronized (taskQueueMutex) {
-			for (Iterator iter = taskQueue.iterator(); iter.hasNext();) {
+		synchronized (fTaskQueueMutex) {
+			for (Iterator iter = fTaskQueue.iterator(); iter.hasNext();) {
 				IPDOMIndexerTask task= (IPDOMIndexerTask) iter.next();
 				if (task.getIndexer() == indexer) {
 					iter.remove();
 				}
 			}
-			jobToCancel= indexerJob;
+			jobToCancel= fIndexerJob;
 		}
 		
 		if (jobToCancel != null) {
-			assert !Thread.holdsLock(taskQueueMutex);
+			assert !Thread.holdsLock(fTaskQueueMutex);
 			jobToCancel.cancelJobs(indexer);
 		}
 	}    
@@ -584,10 +570,10 @@ public class PDOMManager implements IPDOMManager, IWritableIndexManager, IListen
 	}
 
     private void notifyState(final int state) {
-    	assert !Thread.holdsLock(taskQueueMutex);
+    	assert !Thread.holdsLock(fTaskQueueMutex);
     	if (state == IndexerStateEvent.STATE_IDLE) {
-    		synchronized(taskQueueMutex) {
-    			taskQueueMutex.notifyAll();
+    		synchronized(fTaskQueueMutex) {
+    			fTaskQueueMutex.notifyAll();
     		}
     	}
     	
@@ -665,7 +651,8 @@ public class PDOMManager implements IPDOMManager, IWritableIndexManager, IListen
 				if (monitor.isCanceled()) {
 					return false;
 				}
-				synchronized(taskQueueMutex) {
+				monitor.subTask(getMonitorMessage());
+				synchronized(fTaskQueueMutex) {
 					if (isIndexerIdle()) {
 						return true;
 					}
@@ -680,9 +667,8 @@ public class PDOMManager implements IPDOMManager, IWritableIndexManager, IListen
 						}
 					}
 
-					monitor.subTask(MessageFormat.format(Messages.PDOMManager_FilesToIndexSubtask, new Object[] {new Integer(getFilesToIndexCount())}));
 					try {
-						taskQueueMutex.wait(wait);
+						fTaskQueueMutex.wait(wait);
 					} catch (InterruptedException e) {
 						return false;
 					}
@@ -693,6 +679,32 @@ public class PDOMManager implements IPDOMManager, IWritableIndexManager, IListen
 			monitor.done();
 		}
 	}
+	
+	String getMonitorMessage() {
+		assert !Thread.holdsLock(fTaskQueueMutex);
+		int remainingCount= 0;
+		int completedCount= 0;
+		IPDOMIndexerTask currentTask= null;
+		PDOMIndexerJob currentJob= null;
+		synchronized (fTaskQueueMutex) {
+			for (Iterator iter = fTaskQueue.iterator(); iter.hasNext();) {
+				IPDOMIndexerTask task = (IPDOMIndexerTask) iter.next();
+				remainingCount+= task.getRemainingSubtaskCount();
+			}
+			currentTask= fCurrentTask;
+			currentJob= fIndexerJob;
+		}
+		if (currentTask != null) {
+			remainingCount += currentTask.getRemainingSubtaskCount();
+		}
+		if (currentJob != null) {
+			completedCount= currentJob.getCompletedSubtaskCount();
+		}
+		return MessageFormat.format("{0}/{1}", new Object[] { //$NON-NLS-1$
+				new Integer(completedCount), new Integer(remainingCount+completedCount)
+			});
+	}
+
 
 	public IWritableIndex getWritableIndex(ICProject project) throws CoreException {
 		return fIndexFactory.getWritableIndex(project);

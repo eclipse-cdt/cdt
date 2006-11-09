@@ -11,6 +11,7 @@
 
 package org.eclipse.cdt.internal.core.pdom.indexer;
 
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -34,14 +35,18 @@ import org.eclipse.cdt.internal.core.index.IWritableIndex;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
 
 public abstract class PDOMIndexerTask implements IPDOMIndexerTask {
 	private static final Object NO_CONTEXT = new Object();
 	protected static final int MAX_ERRORS = 10;
 
+	protected volatile int fTotalTasks= 0;
+	protected volatile int fCompletedTasks= 0;
 	protected int fErrorCount;
 	protected Map fContextMap= new HashMap();
+	protected volatile String fMessage;
 	
 	protected void processDelta(ICElementDelta delta, Collection added, Collection changed, Collection removed) throws CoreException {
 		int flags = delta.getFlags();
@@ -75,16 +80,19 @@ public abstract class PDOMIndexerTask implements IPDOMIndexerTask {
 		}
 	}
 	
-	protected void collectSources(ICProject project, final Collection sources, final Collection headers) throws CoreException {
+	protected void collectSources(ICProject project, final Collection sources, final Collection headers, final boolean allFiles) throws CoreException {
+		fMessage= Messages.PDOMIndexerTask_collectingFilesTask;
 		project.accept(new ICElementVisitor() {
 			public boolean visit(ICElement element) throws CoreException {
 				switch (element.getElementType()) {
 				case ICElement.C_UNIT:
 					ITranslationUnit tu = (ITranslationUnit)element;
 					if (tu.isSourceUnit()) {
-						sources.add(tu);
+						if (allFiles || !CoreModel.isScannerInformationEmpty(tu.getResource())) {
+							sources.add(tu);
+						}
 					}
-					else if (tu.isHeaderUnit()) {
+					else if (headers != null && tu.isHeaderUnit()) {
 						headers.add(tu);
 					}
 					return false;
@@ -109,9 +117,12 @@ public abstract class PDOMIndexerTask implements IPDOMIndexerTask {
 		}
 	}
 	
-	protected void parseTU(ITranslationUnit tu) throws CoreException, InterruptedException {
+	protected void parseTU(ITranslationUnit tu, IProgressMonitor pm) throws CoreException, InterruptedException {
 		try {
-			doParseTU(tu);
+			IPath path= tu.getPath();
+			fMessage= MessageFormat.format(Messages.PDOMIndexerTask_parsingFileTask,
+					new Object[]{path.lastSegment(), path.removeLastSegments(1).toString()});
+			doParseTU(tu, pm);
 		}
 		catch (CoreException e) {
 			if (++fErrorCount <= MAX_ERRORS) {
@@ -123,7 +134,7 @@ public abstract class PDOMIndexerTask implements IPDOMIndexerTask {
 		}
 	}
 
-	abstract protected void doParseTU(ITranslationUnit tu) throws CoreException, InterruptedException;
+	abstract protected void doParseTU(ITranslationUnit tu, IProgressMonitor pm) throws CoreException, InterruptedException;
 	
 	protected void clearIndex(IWritableIndex index) throws InterruptedException, CoreException {
 		// reset error count
@@ -182,5 +193,17 @@ public abstract class PDOMIndexerTask implements IPDOMIndexerTask {
 			CCorePlugin.log(e);
 		}
 		return null;
+	}
+	
+	public String getMonitorMessageDetail() {
+		return fMessage;
+	}
+
+	final public int getRemainingSubtaskCount() {
+		return fTotalTasks-fCompletedTasks;
+	}
+
+	final public int getCompletedSubtaskCount() {
+		return fCompletedTasks;
 	}
 }

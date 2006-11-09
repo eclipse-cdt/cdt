@@ -92,6 +92,7 @@ public class CProjectHelper {
 				}
 				newProject[0] = CCorePlugin.getDefault().getCoreModel().create(project);
 				if (indexerID != null) {
+					CCoreInternals.getPDOMManager().setIndexAllFiles(newProject[0], true);
 					CCoreInternals.getPDOMManager().setIndexerId(newProject[0], indexerID);
 				}
 			}

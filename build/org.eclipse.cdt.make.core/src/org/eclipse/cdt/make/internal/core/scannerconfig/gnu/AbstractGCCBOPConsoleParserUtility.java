@@ -99,7 +99,7 @@ public abstract class AbstractGCCBOPConsoleParserUtility {
         }
     }
 
-    protected IPath convertCygpath(IPath path) {
+    public static IPath convertCygpath(IPath path) {
     	if (path.segmentCount() > 1 && path.segment(0).equals("cygdrive")) { //$NON-NLS-1$
             StringBuffer buf = new StringBuffer(2);
             buf.append(Character.toUpperCase(path.segment(1).charAt(0)));

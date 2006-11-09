@@ -31,7 +31,7 @@ class PDOMFastHandleDelta extends PDOMFastIndexerJob {
 	public PDOMFastHandleDelta(PDOMFastIndexer indexer, ICElementDelta delta) throws CoreException {
 		super(indexer);
 		processDelta(delta, changed, changed, removed);
-		fFilesToIndex= changed.size() + removed.size();
+		fTotalTasks= changed.size() + removed.size();
 	}
 
 	public void run(IProgressMonitor monitor) {
@@ -41,20 +41,20 @@ class PDOMFastHandleDelta extends PDOMFastIndexerJob {
 			setupIndexAndReaderFactory();
 			registerTUsInReaderFactory(changed);
 			
-			parseTUs(changed, monitor);
-			if (monitor.isCanceled()) {
-				return;
-			}
-			
 			Iterator i= removed.iterator();
 			while (i.hasNext()) {
 				if (monitor.isCanceled())
 					return;
 				ITranslationUnit tu = (ITranslationUnit)i.next();
 				removeTU(index, tu);
-				fFilesToIndex--;
+				fCompletedTasks++;
 			}
-			
+
+			parseTUs(changed, monitor);
+			if (monitor.isCanceled()) {
+				return;
+			}		
+
 			String showTimings = Platform.getDebugOption(CCorePlugin.PLUGIN_ID + "/debug/pdomtimings"); //$NON-NLS-1$
 			if (showTimings != null && showTimings.equalsIgnoreCase("true")) //$NON-NLS-1$
 				System.out.println("PDOM Fast Delta Time: " + (System.currentTimeMillis() - start)); //$NON-NLS-1$

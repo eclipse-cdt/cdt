@@ -9,17 +9,14 @@
  *    Markus Schorn - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.cdt.internal.core.pdom;
+package org.eclipse.cdt.internal.core.pdom.indexer;
 
 import org.eclipse.osgi.util.NLS;
 
 public class Messages extends NLS {
-	private static final String BUNDLE_NAME = "org.eclipse.cdt.internal.core.pdom.messages"; //$NON-NLS-1$
-	public static String PDOMManager_JoinIndexerTask;
-	public static String PDOMManager_notifyJob_label;
-	public static String PDOMManager_notifyTask_message;
-	public static String PDOMManager_savePrefsJob;
-	public static String WritablePDOM_error_unknownLinkage;
+	private static final String BUNDLE_NAME = "org.eclipse.cdt.internal.core.pdom.indexer.messages"; //$NON-NLS-1$
+	public static String PDOMIndexerTask_collectingFilesTask;
+	public static String PDOMIndexerTask_parsingFileTask;
 	static {
 		// initialize resource bundle
 		NLS.initializeMessages(BUNDLE_NAME, Messages.class);

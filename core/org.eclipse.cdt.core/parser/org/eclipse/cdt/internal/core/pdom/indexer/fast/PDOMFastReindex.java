@@ -13,6 +13,7 @@
 package org.eclipse.cdt.internal.core.pdom.indexer.fast;
 
 import java.util.ArrayList;
+import java.util.Collection;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.core.runtime.CoreException;
@@ -28,23 +29,27 @@ class PDOMFastReindex extends PDOMFastIndexerJob {
 	
 	public PDOMFastReindex(PDOMFastIndexer indexer) throws CoreException {
 		super(indexer);
-		fFilesToIndex= 1;
+		fTotalTasks= 1;
 	}
 		
 	public void run(final IProgressMonitor monitor) {
 		try {
 			long start = System.currentTimeMillis();
-			collectSources(indexer.getProject(), fTUs, fTUs);
-			fFilesToIndex= fTUs.size()+1;
+			boolean allFiles= getIndexAllFiles();
+			Collection headers= allFiles ? fTUs : null;
+			collectSources(indexer.getProject(), fTUs, headers, allFiles);
+			fTotalTasks+= fTUs.size()+1;
+			fCompletedTasks+= 1;
 
-			if (fFilesToIndex == 1 || monitor.isCanceled()) {
+			setupIndexAndReaderFactory();
+			clearIndex(index);
+
+			if (getRemainingSubtaskCount() == 1 || monitor.isCanceled()) {
 				return;
 			}
 			
-			setupIndexAndReaderFactory();
-			clearIndex(index);
 			registerTUsInReaderFactory(fTUs);
-			fFilesToIndex--;
+			fCompletedTasks++;
 
 			parseTUs(fTUs, monitor);
 

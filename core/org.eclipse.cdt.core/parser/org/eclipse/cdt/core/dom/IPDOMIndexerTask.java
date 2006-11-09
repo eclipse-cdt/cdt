@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     QNX Software Systems - initial API and implementation
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 /**
  * 
@@ -31,6 +32,23 @@ public interface IPDOMIndexerTask {
 	
 	public IPDOMIndexer getIndexer();
 
-	public int getFilesToIndexCount();
-	
+	/**
+	 * Returns the remaining subtasks. The count may increase over the time.
+	 * Used by the framework to report progress.
+	 * @since 4.0
+	 */
+	public int getRemainingSubtaskCount();
+
+	/**
+	 * Used by the framework to report progress.
+	 * @since 4.0
+	 */
+	public int getCompletedSubtaskCount();
+
+	/**
+	 * Returns information about the current subtask. 
+	 * Used by the framework to report progress.
+	 * @since 4.0
+	 */
+	public String getMonitorMessageDetail();
 }

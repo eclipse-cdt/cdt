@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2002, 2006 IBM Corporation. All rights reserved.
+ * Copyright (c) 2002, 2006 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -11,7 +11,7 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * Martin Oberhuber (Wind River) - Fix 154874 - handle files with space or $ in the name 
  ********************************************************************************/
 
 package org.eclipse.rse.shells.ui;
@@ -25,6 +25,7 @@ import org.eclipse.rse.core.model.ISystemRegistry;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.internal.subsystems.shells.subsystems.RemoteCmdSubSystem;
 import org.eclipse.rse.internal.subsystems.shells.subsystems.RemoteCommandShell;
+import org.eclipse.rse.services.clientserver.PathUtility;
 import org.eclipse.rse.shells.ui.view.SystemCommandsUI;
 import org.eclipse.rse.shells.ui.view.SystemCommandsViewPart;
 import org.eclipse.rse.subsystems.files.core.model.RemoteFileUtility;
@@ -139,19 +140,14 @@ public class RemoteCommandHelpers
 					 IRemoteFile pwd = ((RemoteCommandShell)defaultShell).getWorkingDirectory();
 	                if (pwd == null || !pwd.getAbsolutePath().equals(path))
 	                {
-	                    if (path.indexOf(' ') > 0)
-	                    {
-	                        path = "\"" + path + "\""; //$NON-NLS-1$  //$NON-NLS-2$
-	                    }
-	                    
-						 String cdCmd = "cd " + path; //$NON-NLS-1$
+						 String cdCmd = "cd " + PathUtility.enQuoteUnix(path); //$NON-NLS-1$
 	                	 if (!fileSSF.isUnixStyle())
 	                	 {                	 
 	                	 	if (path.endsWith(":")) //$NON-NLS-1$
 	                	 	{
 	                	 		path += "\\"; //$NON-NLS-1$
 	                	 	}
-	                   		 cdCmd = "cd /d " + path; //$NON-NLS-1$                  		                    		 
+	                   		cdCmd = "cd /d \"" + path + '\"'; //$NON-NLS-1$                  		                    		 
 	                	 }	 
 	                            
 						cmdSubSystem.sendCommandToShell(cdCmd, defaultShell);				   
@@ -162,7 +158,7 @@ public class RemoteCommandHelpers
               }
               catch (Exception e)
               {
-                SystemBasePlugin.logError("Run Remote Command failed", e);
+                SystemBasePlugin.logError("Run Remote Command failed", e); //$NON-NLS-1$
                 SystemMessageDialog.displayExceptionMessage(shell, e);
                 ok = false;
               } 

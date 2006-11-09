@@ -24,7 +24,6 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
-import java.util.regex.Pattern;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
@@ -43,6 +42,7 @@ import org.eclipse.rse.services.Mutex;
 import org.eclipse.rse.services.clientserver.FileTypeMatcher;
 import org.eclipse.rse.services.clientserver.IMatcher;
 import org.eclipse.rse.services.clientserver.NamePatternMatcher;
+import org.eclipse.rse.services.clientserver.PathUtility;
 import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
 import org.eclipse.rse.services.files.AbstractFileService;
 import org.eclipse.rse.services.files.IFileService;
@@ -583,7 +583,7 @@ public class SftpFileService extends AbstractFileService implements IFileService
 						if(e.id==ChannelSftp.SSH_FX_FAILURE) {
 							//Bug 153649: Recursive directory delete
 							//throw new RemoteFolderNotEmptyException();
-							String fullPathQuoted = enQuote(fullPath);
+							String fullPathQuoted = PathUtility.enQuoteUnix(fullPath);
 							int rv = runCommand(monitor, "rm -rf "+fullPathQuoted); //$NON-NLS-1$
 							ok = (rv==0);
 						} else {
@@ -694,55 +694,6 @@ public class SftpFileService extends AbstractFileService implements IFileService
 		return result;
 	}
 	
-	/**
-	 * Quotes a string such that it can be used in a remote UNIX shell.
-	 * On Windows, special characters likes quotes and dollar sign. and
-	 * - most importantly - the backslash will not be quoted correctly.
-	 * 
-	 * Newline is only quoted correctly in tcsh. But since this is mainly
-	 * intended for file names, it should work OK in almost every case.
-	 * 
-	 * @param s String to be quoted
-	 * @return quoted string, or original if no quoting was necessary.
-	 */
-	public static String enQuote(String s) {
-		if(fValidShellPattern.matcher(s).matches()) {
-			return s;
-		} else {
-			StringBuffer buf = new StringBuffer(s.length()+16);
-			buf.append('"');
-			for(int i=0; i<s.length(); i++) {
-				char c=s.charAt(i);
-				switch(c) {
-				case '$':
-					//Need to treat specially to work in both bash and tcsh:
-					//close the quote, insert quoted $, reopen the quote
-					buf.append('"');
-					buf.append('\\');
-					buf.append('$');
-					buf.append('"');
-					break;
-				case '"':
-				case '\\':
-				case '\'':
-				case '`':
-				case '\n':
-					//just quote it. The newline will work in tcsh only -
-					//bash replaces it by the empty string. But newlines
-					//in filenames are an academic issue, hopefully.
-					buf.append('\\');
-					buf.append(c);
-					break;
-				default:
-					buf.append(c);
-				}
-			}
-			buf.append('"');
-			return buf.toString();
-		}
-	}
-	private static Pattern fValidShellPattern = Pattern.compile("[a-zA-Z0-9._/]*"); //$NON-NLS-1$
-	
 	public boolean move(IProgressMonitor monitor, String srcParent, String srcName, String tgtParent, String tgtName) throws SystemMessageException
 	{
 		// move is not supported by sftp directly. Use the ssh shell instead.
@@ -750,8 +701,8 @@ public class SftpFileService extends AbstractFileService implements IFileService
 		// TODO Interpret some error messages like "command not found" (use ren instead of mv on windows)
 		// TODO mimic by copy if the remote does not support copying between file systems?
 		Activator.trace("SftpFileService.move "+srcName); //$NON-NLS-1$
-		String fullPathOld = enQuote(srcParent + '/' + srcName);
-		String fullPathNew = enQuote(tgtParent + '/' + tgtName);
+		String fullPathOld = PathUtility.enQuoteUnix(srcParent + '/' + srcName);
+		String fullPathNew = PathUtility.enQuoteUnix(tgtParent + '/' + tgtName);
 		int rv = runCommand(monitor, "mv "+fullPathOld+' '+fullPathNew); //$NON-NLS-1$
 		return (rv==0);
 	}
@@ -761,8 +712,8 @@ public class SftpFileService extends AbstractFileService implements IFileService
 		// TODO check if newer versions of sftp support copy directly
 		// TODO Interpret some error messages like "command not found" (use (x)copy instead of cp on windows)
 		Activator.trace("SftpFileService.copy "+srcName); //$NON-NLS-1$
-		String fullPathOld = enQuote(srcParent + '/' + srcName);
-		String fullPathNew = enQuote(tgtParent + '/' + tgtName);
+		String fullPathOld = PathUtility.enQuoteUnix(srcParent + '/' + srcName);
+		String fullPathNew = PathUtility.enQuoteUnix(tgtParent + '/' + tgtName);
 		int rv = runCommand(monitor, "cp -Rp "+fullPathOld+' '+fullPathNew); //$NON-NLS-1$
 		return (rv==0);
 	}

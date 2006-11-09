@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2006 IBM Corporation and Wind River Systems, Inc. All rights reserved.
+ * Copyright (c) 2006 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -14,6 +14,7 @@
  * Martin Oberhuber (Wind River) - Fix 161844 - regex matching backslashes
  * Martin Oberhuber (Wind River) - Fix 162781 - normalize without replaceAll()
  * Martin Oberhuber (Wind River) - Use pre-compiled regex Pattern
+ * Martin Oberhuber (Wind River) - Fix 154874 - handle files with space or $ in the name 
  ********************************************************************************/
 
 package org.eclipse.rse.services.clientserver;
@@ -150,4 +151,56 @@ public class PathUtility
 			return "/"; //$NON-NLS-1$
 		}
 	}
+
+	/**
+	 * Quotes a string such that it can be used in a remote UNIX shell.
+	 * 
+	 * This has been tested with sh, bash and tcsh shells.
+	 * On Windows, special characters likes quotes and dollar sign. and
+	 * - most importantly - the backslash will not be quoted correctly.
+	 * 
+	 * Newline is only quoted correctly in tcsh. But since this is mainly
+	 * intended for file names, it should work OK in almost every case.
+	 * 
+	 * @param s String to be quoted
+	 * @return quoted string, or original if no quoting was necessary.
+	 */
+	public static String enQuoteUnix(String s) {
+		if(fValidShellPattern.matcher(s).matches()) {
+			return s;
+		} else {
+			StringBuffer buf = new StringBuffer(s.length()+16);
+			buf.append('"');
+			for(int i=0; i<s.length(); i++) {
+				char c=s.charAt(i);
+				switch(c) {
+				case '$':
+					//Need to treat specially to work in both bash and tcsh:
+					//close the quote, insert quoted $, reopen the quote
+					buf.append('"');
+					buf.append('\\');
+					buf.append('$');
+					buf.append('"');
+					break;
+				case '"':
+				case '\\':
+				case '\'':
+				case '`':
+				case '\n':
+					//just quote it. The newline will work in tcsh only -
+					//bash replaces it by the empty string. But newlines
+					//in filenames are an academic issue, hopefully.
+					buf.append('\\');
+					buf.append(c);
+					break;
+				default:
+					buf.append(c);
+				}
+			}
+			buf.append('"');
+			return buf.toString();
+		}
+	}
+	private static Pattern fValidShellPattern = Pattern.compile("[a-zA-Z0-9._/]*"); //$NON-NLS-1$
+
 }

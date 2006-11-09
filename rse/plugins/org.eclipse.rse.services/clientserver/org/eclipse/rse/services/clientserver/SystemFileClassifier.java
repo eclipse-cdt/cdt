@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2006 IBM Corporation. All rights reserved.
+ * Copyright (c) 2006 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -11,7 +11,7 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * Martin Oberhuber (Wind River) - Fix 154874 - handle files with space or $ in the name 
  ********************************************************************************/
 
 package org.eclipse.rse.services.clientserver;
@@ -151,7 +151,7 @@ public class SystemFileClassifier {
     	String args[] = new String[3];
     	args[0] = "sh"; //$NON-NLS-1$
     	args[1] = "-c"; //$NON-NLS-1$
-    	args[2] = "file \"" + absolutePath + "\""; //$NON-NLS-1$ //$NON-NLS-2$
+    	args[2] = "file " + PathUtility.enQuoteUnix(absolutePath); //$NON-NLS-1$
     		
     	BufferedReader poutReader = null;
     	

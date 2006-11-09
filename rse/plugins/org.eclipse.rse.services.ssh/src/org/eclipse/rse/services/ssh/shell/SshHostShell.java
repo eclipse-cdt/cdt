@@ -29,6 +29,7 @@ import com.jcraft.jsch.Channel;
 import com.jcraft.jsch.ChannelShell;
 import com.jcraft.jsch.Session;
 
+import org.eclipse.rse.services.clientserver.PathUtility;
 import org.eclipse.rse.services.shells.AbstractHostShell;
 import org.eclipse.rse.services.shells.IHostShell;
 import org.eclipse.rse.services.shells.IHostShellOutputReader;
@@ -93,7 +94,7 @@ public class SshHostShell extends AbstractHostShell implements IHostShell {
 		    	&& !initialWorkingDirectory.equals(".") //$NON-NLS-1$
 		    	&& !initialWorkingDirectory.equals("Command Shell") //$NON-NLS-1$ //FIXME workaround for bug 153047
 		    ) { 
-			    writeToShell("cd "+initialWorkingDirectory); //$NON-NLS-1$
+			    writeToShell("cd "+PathUtility.enQuoteUnix(initialWorkingDirectory)); //$NON-NLS-1$
 		    } else if (SHELL_INVOCATION.equals(commandToRun)) {
 		    	writeToShell(getPromptCommand());
 		    } else if(commandToRun!=null && commandToRun.length()>0) {

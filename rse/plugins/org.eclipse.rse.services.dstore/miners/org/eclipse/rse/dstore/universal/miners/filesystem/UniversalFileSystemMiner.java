@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2002, 2006 IBM Corporation. All rights reserved.
+ * Copyright (c) 2002, 2006 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -11,7 +11,7 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * Martin Oberhuber (Wind River) - Fix 154874 - handle files with space or $ in the name 
  ********************************************************************************/
 
 package org.eclipse.rse.dstore.universal.miners.filesystem;
@@ -35,6 +35,7 @@ import org.eclipse.rse.dstore.universal.miners.ICancellableHandler;
 import org.eclipse.rse.dstore.universal.miners.IUniversalDataStoreConstants;
 import org.eclipse.rse.dstore.universal.miners.UniversalServerUtilities;
 import org.eclipse.rse.services.clientserver.IClientServerConstants;
+import org.eclipse.rse.services.clientserver.PathUtility;
 import org.eclipse.rse.services.clientserver.SystemFileClassifier;
 import org.eclipse.rse.services.clientserver.SystemSearchString;
 import org.eclipse.rse.services.clientserver.archiveutils.AbsoluteVirtualPath;
@@ -74,14 +75,14 @@ public class UniversalFileSystemMiner extends Miner implements
 	private DataElement deUniversalArchiveFileObject;
 	
 
-	protected String filterString = "*";
+	protected String filterString = "*"; //$NON-NLS-1$
 
 	protected ArchiveHandlerManager _archiveHandlerManager;
 
 	protected boolean showHidden = false;
 
 
-	public static final String CLASSNAME = "UniversalFileSystemMiner";
+	public static final String CLASSNAME = "UniversalFileSystemMiner"; //$NON-NLS-1$
 
 	protected HashMap _cancellableThreads;
 
@@ -89,11 +90,11 @@ public class UniversalFileSystemMiner extends Miner implements
 
 	public UniversalFileSystemMiner() {
 		_cancellableThreads = new HashMap();
-		_isWindows = System.getProperty("os.name").toLowerCase().startsWith("windows");
+		_isWindows = System.getProperty("os.name").toLowerCase().startsWith("windows"); //$NON-NLS-1$ //$NON-NLS-2$
 		_archiveHandlerManager = ArchiveHandlerManager.getInstance();
-		_archiveHandlerManager.setRegisteredHandler("zip", SystemZipHandler.class);
-		_archiveHandlerManager.setRegisteredHandler("jar", SystemJarHandler.class);
-		_archiveHandlerManager.setRegisteredHandler("tar", SystemTarHandler.class);
+		_archiveHandlerManager.setRegisteredHandler("zip", SystemZipHandler.class); //$NON-NLS-1$
+		_archiveHandlerManager.setRegisteredHandler("jar", SystemJarHandler.class); //$NON-NLS-1$
+		_archiveHandlerManager.setRegisteredHandler("tar", SystemTarHandler.class); //$NON-NLS-1$
 	}
 
 	protected FileClassifier getFileClassifier(DataElement subject)
@@ -113,17 +114,17 @@ public class UniversalFileSystemMiner extends Miner implements
 		DataElement status = getCommandStatus(theElement);
 		DataElement subject = getCommandArgument(theElement, 0);
 		
-		UniversalServerUtilities.logInfo(getName(), name + ":" + subject);
+		UniversalServerUtilities.logInfo(getName(), name + ":" + subject); //$NON-NLS-1$
 		
 		String queryType = (String) subject.getElementProperty(DE.P_TYPE);
 		boolean caseSensitive = !_isWindows;
 		// TODO: test on WINDOWS!
 
-		if ("C_QUERY_VIEW_ALL".equals(name)) {
+		if ("C_QUERY_VIEW_ALL".equals(name)) { //$NON-NLS-1$
 			if (subject != null)
 			{
 			    DataElement attributes = getCommandArgument(theElement, 1);
-			    if (attributes != null && attributes.getType().equals("attributes"))
+			    if (attributes != null && attributes.getType().equals("attributes")) //$NON-NLS-1$
 			    {
 			        return handleQueryAll(subject, attributes, status, queryType,
 							caseSensitive);
@@ -136,12 +137,12 @@ public class UniversalFileSystemMiner extends Miner implements
 			}
 			else
 				UniversalServerUtilities.logError(CLASSNAME,
-						"C_QUERY_VIEW_ALL - subject is null", null);
-		} else if ("C_QUERY_VIEW_FILES".equals(name)) {
+						"C_QUERY_VIEW_ALL - subject is null", null); //$NON-NLS-1$
+		} else if ("C_QUERY_VIEW_FILES".equals(name)) { //$NON-NLS-1$
 			if (subject != null)
 			{
 			    DataElement attributes = getCommandArgument(theElement, 1);
-			    if (attributes != null && attributes.getType().equals("attributes"))
+			    if (attributes != null && attributes.getType().equals("attributes")) //$NON-NLS-1$
 			    {
 			        return handleQueryFiles(subject, attributes, status, queryType,
 							caseSensitive);			        
@@ -154,12 +155,12 @@ public class UniversalFileSystemMiner extends Miner implements
 			}
 			else
 				UniversalServerUtilities.logError(CLASSNAME,
-						"C_QUERY_VIEW_FILES - subject is null", null);
-		} else if ("C_QUERY_VIEW_FOLDERS".equals(name)) {
+						"C_QUERY_VIEW_FILES - subject is null", null); //$NON-NLS-1$
+		} else if ("C_QUERY_VIEW_FOLDERS".equals(name)) { //$NON-NLS-1$
 			if (subject != null)
 			{
 			    DataElement attributes = getCommandArgument(theElement, 1);
-			    if (attributes != null && attributes.getType().equals("attributes"))
+			    if (attributes != null && attributes.getType().equals("attributes")) //$NON-NLS-1$
 			    {
 			        return handleQueryFolders(subject, attributes, status, queryType,
 							caseSensitive);
@@ -172,134 +173,134 @@ public class UniversalFileSystemMiner extends Miner implements
 			}
 			else
 				UniversalServerUtilities.logError(CLASSNAME,
-						"C_QUERY_VIEW_FOLDERS - subject is null", null);
-		} else if ("C_QUERY_ROOTS".equals(name)) {
+						"C_QUERY_VIEW_FOLDERS - subject is null", null); //$NON-NLS-1$
+		} else if ("C_QUERY_ROOTS".equals(name)) { //$NON-NLS-1$
 			if (subject != null)
 				return handleQueryRoots(subject, status);
 			else
 				UniversalServerUtilities.logError(CLASSNAME,
-						"C_QUERY_ROOTS - subject is null", null);
-		} else if ("C_SEARCH".equals(name)) {
+						"C_QUERY_ROOTS - subject is null", null); //$NON-NLS-1$
+		} else if ("C_SEARCH".equals(name)) { //$NON-NLS-1$
 			if (subject != null)
 				return handleSearch(theElement, status, queryType,
 						caseSensitive);
 			else
 				UniversalServerUtilities.logError(CLASSNAME,
-						"C_SEARCH - subject is null", null);
-		} else if ("C_CANCEL".equals(name)) {
+						"C_SEARCH - subject is null", null); //$NON-NLS-1$
+		} else if ("C_CANCEL".equals(name)) { //$NON-NLS-1$
 			if (subject != null) {
 //				String commandToCancel = subject.getName();
 				subject.getName();
 				return handleCancel(subject, status);
 			} else
 				UniversalServerUtilities.logError(CLASSNAME,
-						"C_CANCEL - subject is null", null);
-		} else if ("C_RENAME".equals(name)) {
+						"C_CANCEL - subject is null", null); //$NON-NLS-1$
+		} else if ("C_RENAME".equals(name)) { //$NON-NLS-1$
 			if (subject != null)
 				return handleRename(subject, status);
 			else
 				UniversalServerUtilities.logError(CLASSNAME,
-						"C_RENAME - subject is null", null);
-		} else if ("C_DELETE".equals(name)) {
+						"C_RENAME - subject is null", null); //$NON-NLS-1$
+		} else if ("C_DELETE".equals(name)) { //$NON-NLS-1$
 			if (subject != null)
 				return handleDelete(subject, status, true);
 			else
 				UniversalServerUtilities.logError(CLASSNAME,
-						"C_DELETE - subject is null", null);
-		} else if ("C_DELETE_BATCH".equals(name)) {
+						"C_DELETE - subject is null", null); //$NON-NLS-1$
+		} else if ("C_DELETE_BATCH".equals(name)) { //$NON-NLS-1$
 			if (subject != null)
 				return handleDeleteBatch(theElement, status);
 			else
 				UniversalServerUtilities.logError(CLASSNAME,
-						"C_DELETE_BATCH - subject is null", null);
-		} else if ("C_COPY".equals(name)) {
+						"C_DELETE_BATCH - subject is null", null); //$NON-NLS-1$
+		} else if ("C_COPY".equals(name)) { //$NON-NLS-1$
 			if (subject != null)
 				return handleCopy(subject, getCommandArgument(theElement, 1),
 						getCommandArgument(theElement, 2), status);
 			else
 				UniversalServerUtilities.logError(CLASSNAME,
-						"C_COPY - subject is null", null);
-		} else if ("C_COPY_BATCH".equals(name)) {
+						"C_COPY - subject is null", null); //$NON-NLS-1$
+		} else if ("C_COPY_BATCH".equals(name)) { //$NON-NLS-1$
 			if (subject != null)
 				return handleCopyBatch(subject, theElement, status);
 			else
 				UniversalServerUtilities.logError(CLASSNAME,
-						"C_COPY_BATCH - subject is null", null);
-		} else if ("C_CREATE_FILE".equals(name)) {
+						"C_COPY_BATCH - subject is null", null); //$NON-NLS-1$
+		} else if ("C_CREATE_FILE".equals(name)) { //$NON-NLS-1$
 			if (subject != null)
 				return handleCreateFile(subject, status, queryType);
 			else
 				UniversalServerUtilities.logError(CLASSNAME,
-						"C_CREATE_FILE - subject is null", null);
-		} else if ("C_CREATE_FOLDER".equals(name)) {
+						"C_CREATE_FILE - subject is null", null); //$NON-NLS-1$
+		} else if ("C_CREATE_FOLDER".equals(name)) { //$NON-NLS-1$
 			if (subject != null)
 				return handleCreateFolder(subject, status, queryType);
 			else
 				UniversalServerUtilities.logError(CLASSNAME,
-						"C_CREATE_FOLDERS - subject is null", null);
-		} else if ("C_SET_READONLY".equals(name)) {
+						"C_CREATE_FOLDERS - subject is null", null); //$NON-NLS-1$
+		} else if ("C_SET_READONLY".equals(name)) { //$NON-NLS-1$
 			if (subject != null)
 				return handleSetReadOnly(subject, status);
 			else
 				UniversalServerUtilities.logError(CLASSNAME,
-						"C_SET_READONLY - subject is null", null);
-		} else if ("C_SET_LASTMODIFIED".equals(name)) {
+						"C_SET_READONLY - subject is null", null); //$NON-NLS-1$
+		} else if ("C_SET_LASTMODIFIED".equals(name)) { //$NON-NLS-1$
 			if (subject != null)
 				return handleSetLastModified(subject, status);
 			else
 				UniversalServerUtilities.logError(CLASSNAME,
-						"C_SET_LASTMODIFIED - subject is null", null);
-		} else if ("C_QUERY_BASIC_PROPERTY".equals(name)) {
+						"C_SET_LASTMODIFIED - subject is null", null); //$NON-NLS-1$
+		} else if ("C_QUERY_BASIC_PROPERTY".equals(name)) { //$NON-NLS-1$
 			if (subject != null)
 				return handleQueryBasicProperty(subject, status);
 			else
 				UniversalServerUtilities.logError(CLASSNAME,
-						"C_QUERY_BASIC_PROPERTY - subject is null", null);
-		} else if ("C_QUERY_CAN_WRITE_PROPERTY".equals(name)) {
+						"C_QUERY_BASIC_PROPERTY - subject is null", null); //$NON-NLS-1$
+		} else if ("C_QUERY_CAN_WRITE_PROPERTY".equals(name)) { //$NON-NLS-1$
 			if (subject != null)
 				return handleQuerycanWriteProperty(subject, status);
 			else
 				UniversalServerUtilities.logError(CLASSNAME,
-						"C_QUERY_CAN_WRITE_PROPERTY - subject is null", null);
-		} else if ("C_QUERY_ADVANCE_PROPERTY".equals(name)) {
+						"C_QUERY_CAN_WRITE_PROPERTY - subject is null", null); //$NON-NLS-1$
+		} else if ("C_QUERY_ADVANCE_PROPERTY".equals(name)) { //$NON-NLS-1$
 			if (subject != null)
 				return handleQueryAdvanceProperty(subject, status);
 			else
 				UniversalServerUtilities.logError(CLASSNAME,
-						"C_QUERY_ADVANCE_PROPERTY - subject is null", null);
-		} else if ("C_QUERY_FILE_CLASSIFICATIONS".equals(name)) {
+						"C_QUERY_ADVANCE_PROPERTY - subject is null", null); //$NON-NLS-1$
+		} else if ("C_QUERY_FILE_CLASSIFICATIONS".equals(name)) { //$NON-NLS-1$
 			if (subject != null)
 				return handleQueryFileClassification(subject, status);
 			else
 				UniversalServerUtilities.logError(CLASSNAME,
-						"C_QUERY_FILE_CLASSIFICATION - subject is null", null);
-		} else if ("C_QUERY_FILE_CLASSIFICATION".equals(name)) {
+						"C_QUERY_FILE_CLASSIFICATION - subject is null", null); //$NON-NLS-1$
+		} else if ("C_QUERY_FILE_CLASSIFICATION".equals(name)) { //$NON-NLS-1$
 			if (subject != null)
 				return handleQueryFileClassification(subject, status);
 			else
 				UniversalServerUtilities
 						.logError(
 								CLASSNAME,
-								"C_QUERY_FOLDER_CLASSIFICATION - subject is null",
+								"C_QUERY_FOLDER_CLASSIFICATION - subject is null", //$NON-NLS-1$
 								null);
-		} else if ("C_QUERY_EXISTS".equals(name)) {
+		} else if ("C_QUERY_EXISTS".equals(name)) { //$NON-NLS-1$
 			if (subject != null)
 				return handleQueryExists(subject, status, queryType);
 			else
 				UniversalServerUtilities.logError(CLASSNAME,
-						"C_QUERY_EXISTS - subject is null", null);
-		} else if ("C_QUERY_GET_REMOTE_OBJECT".equals(name)) {
+						"C_QUERY_EXISTS - subject is null", null); //$NON-NLS-1$
+		} else if ("C_QUERY_GET_REMOTE_OBJECT".equals(name)) { //$NON-NLS-1$
 			if (subject != null)
 				return handleQueryGetRemoteObject(subject, status, queryType);
 			else
 				UniversalServerUtilities.logError(CLASSNAME,
-						"C_QUERY_GET_REMOTE_OBJECT- subject is null", null);
-		} else if ("C_GET_OSTYPE".equals(name)) {
+						"C_QUERY_GET_REMOTE_OBJECT- subject is null", null); //$NON-NLS-1$
+		} else if ("C_GET_OSTYPE".equals(name)) { //$NON-NLS-1$
 			if (subject != null)
 				return handleGetOSType(subject, status);
 			else
 				UniversalServerUtilities.logError(CLASSNAME,
-						"C_GET_OSTYPE - subject is null", null);
+						"C_GET_OSTYPE - subject is null", null); //$NON-NLS-1$
 		} else if (C_DOWNLOAD_FILE.equals(name)) {
 			if (subject != null)
 			{ 
@@ -307,35 +308,35 @@ public class UniversalFileSystemMiner extends Miner implements
 			}
 			else
 				UniversalServerUtilities.logError(CLASSNAME, C_DOWNLOAD_FILE
-						+ " - subject is null", null);
+						+ " - subject is null", null); //$NON-NLS-1$
 		} else if (C_SYSTEM_ENCODING.equals(name)) {
 			if (subject != null)
 				return handleQueryEncoding(subject, status);
 			else
 				UniversalServerUtilities.logError(CLASSNAME, C_SYSTEM_ENCODING
-						+ " - subject is null", null);
+						+ " - subject is null", null); //$NON-NLS-1$
 		} else if (C_QUERY_UNUSED_PORT.equals(name)) {
 			if (subject != null)
 				return handleQueryUnusedPort(subject, status);
 			else
 				UniversalServerUtilities.logError(CLASSNAME, C_QUERY_UNUSED_PORT
-						+ " - subject is null", null);
-		} else if ("C_QUERY_CLASSNAME".equals(name)) {
+						+ " - subject is null", null); //$NON-NLS-1$
+		} else if ("C_QUERY_CLASSNAME".equals(name)) { //$NON-NLS-1$
 			if (subject != null)
 				return handleQueryClassName(subject, status);
 			else
 				UniversalServerUtilities.logError(CLASSNAME,
-						"C_QUERY_CLASSNAME- subject is null", null);
+						"C_QUERY_CLASSNAME- subject is null", null); //$NON-NLS-1$
 		} else if (C_QUERY_QUALIFIED_CLASSNAME.equals(name)) {
 			if (subject != null)
 				return handleQueryQualifiedClassName(subject, status);
 			else
 				UniversalServerUtilities.logError(CLASSNAME,
-						C_QUERY_QUALIFIED_CLASSNAME + " - subject is null",
+						C_QUERY_QUALIFIED_CLASSNAME + " - subject is null", //$NON-NLS-1$
 						null);
 		} else {
 			UniversalServerUtilities.logError(CLASSNAME,
-					"Invalid query to handlecommand", null);
+					"Invalid query to handlecommand", null); //$NON-NLS-1$
 		}
 		return statusDone(status);
 	}
@@ -387,7 +388,7 @@ public class UniversalFileSystemMiner extends Miner implements
 					srcFiles[i] = child.getExtractedFile();
 				}
 			}
-			String virtualContainer = "";
+			String virtualContainer = ""; //$NON-NLS-1$
 			
 			if (targetType.equals(UNIVERSAL_VIRTUAL_FOLDER_DESCRIPTOR)) 
 			{
@@ -407,11 +408,8 @@ public class UniversalFileSystemMiner extends Miner implements
 		else // target is a regular folder
 		{
 			boolean folderCopy = false;
-			String source = "";
-			String tgt = tgtFolder.getAbsolutePath();
-			StringBuffer tgtBuf = new StringBuffer(tgt);
-			handleSpecialChars(tgtBuf);
-			tgt = "\"" + tgtBuf.toString() + "\"";
+			String source = ""; //$NON-NLS-1$
+			String tgt = enQuote(tgtFolder.getAbsolutePath());
 
 			int numOfNonVirtualSources = 0;
 			for (int i = 0; i < numOfSources; i++)
@@ -452,9 +450,7 @@ public class UniversalFileSystemMiner extends Miner implements
 					String src = srcFile.getAbsolutePath();
 				
 					// handle special characters in source and target strings 
-					StringBuffer srcBuf = new StringBuffer(src);
-					handleSpecialChars(srcBuf);
-					src = "\"" + srcBuf.toString() + "\"";
+					src = enQuote(src);
 	
 					if (numOfNonVirtualSources == 0)
 					{
@@ -462,7 +458,7 @@ public class UniversalFileSystemMiner extends Miner implements
 					}
 					else
 					{
-						source = source + " " + src;
+						source = source + " " + src; //$NON-NLS-1$
 					}
 					numOfNonVirtualSources++;
 				} 
@@ -482,19 +478,20 @@ public class UniversalFileSystemMiner extends Miner implements
 		if (_isWindows) {
 			
 			if (folderCopy) {
-				command = "xcopy " + source + " " + tgt
-					+ " /S /E /K /O /Q /H /I";
+				command = "xcopy " + source //$NON-NLS-1$
+					+ " " + tgt //$NON-NLS-1$
+					+ " /S /E /K /O /Q /H /I"; //$NON-NLS-1$
 			}
 			else {
-				command = "copy " + source + " " + tgt;
+				command = "copy " + source + " " + tgt; //$NON-NLS-1$ //$NON-NLS-2$
 			}
 		}
 		else {
 			if (folderCopy) {
-				command = "cp  -r " + source + " " + tgt;
+				command = "cp  -r " + source + " " + tgt; //$NON-NLS-1$ //$NON-NLS-2$
 			}
 			else {
-				command = "cp " + source + " " + tgt;
+				command = "cp " + source + " " + tgt; //$NON-NLS-1$ //$NON-NLS-2$
 			}
 		}
 
@@ -506,15 +503,15 @@ public class UniversalFileSystemMiner extends Miner implements
 				
 			if (_isWindows)
 			{
-				String theShell = "cmd /C ";
+				String theShell = "cmd /C "; //$NON-NLS-1$
 				p = runtime.exec(theShell + command);	
 			}
 			else
 			{
-				String theShell = "sh";
+				String theShell = "sh"; //$NON-NLS-1$
 				String args[] = new String[3];
 				args[0] = theShell;					
-				args[1] = "-c";
+				args[1] = "-c"; //$NON-NLS-1$
 				args[2] = command;
 												
 				p = runtime.exec(args);
@@ -566,7 +563,7 @@ public class UniversalFileSystemMiner extends Miner implements
 					// omit new line if there is one at the end because datastore does not
 					// handle new line in the attributes
 					// TODO: what to do if newline occurs in the middle of the string?
-					String newLine = System.getProperty("line.separator");
+					String newLine = System.getProperty("line.separator"); //$NON-NLS-1$
 					
 					if (newLine != null && err.endsWith(newLine)) {
 					    err = err.substring(0, err.length() - newLine.length());
@@ -598,7 +595,7 @@ public class UniversalFileSystemMiner extends Miner implements
 		}
 		catch (Exception e)
 		{
-			UniversalServerUtilities.logError(CLASSNAME, "Exception is handleCopy", e);
+			UniversalServerUtilities.logError(CLASSNAME, "Exception is handleCopy", e); //$NON-NLS-1$
 			status.setAttribute(DE.A_SOURCE, FAILED);
 			status.setAttribute(DE.A_VALUE, e.getMessage());
 		}	
@@ -616,14 +613,14 @@ public class UniversalFileSystemMiner extends Miner implements
 					if (!(list[i].delete())) {
 						status.setAttribute(DE.A_SOURCE, FAILED);
 						UniversalServerUtilities.logWarning(CLASSNAME,
-								"Deletion of dir failed");
+								"Deletion of dir failed"); //$NON-NLS-1$
 					}
 				} else {
 					deleteDir(list[i], status);
 					if (!(list[i].delete())) {
 						status.setAttribute(DE.A_SOURCE, FAILED);
 						UniversalServerUtilities.logWarning(CLASSNAME,
-								"Deletion of dir failed");
+								"Deletion of dir failed"); //$NON-NLS-1$
 					}
 				}
 			}
@@ -631,7 +628,7 @@ public class UniversalFileSystemMiner extends Miner implements
 			status.setAttribute(DE.A_SOURCE, FAILED_WITH_EXCEPTION);
 			status.setAttribute(DE.A_VALUE, e.getLocalizedMessage());
 			UniversalServerUtilities.logError(CLASSNAME,
-					"Deletion of dir failed", e);
+					"Deletion of dir failed", e); //$NON-NLS-1$
 		}
 	}
 
@@ -655,7 +652,7 @@ public class UniversalFileSystemMiner extends Miner implements
 		}
 		// otherwise log error, and return as done
 		else {
-			UniversalServerUtilities.logError(CLASSNAME, "Invalid query type to handleSearch", null);
+			UniversalServerUtilities.logError(CLASSNAME, "Invalid query type to handleSearch", null); //$NON-NLS-1$
 			return statusDone(status);
 		}
 
@@ -748,7 +745,7 @@ public class UniversalFileSystemMiner extends Miner implements
 		else
 		{
 			UniversalServerUtilities.logError(CLASSNAME,
-					"Invalid query type to handleQueryAll", null);
+					"Invalid query type to handleQueryAll", null); //$NON-NLS-1$
 		}
 
 		if (fileobj != null)
@@ -774,9 +771,9 @@ public class UniversalFileSystemMiner extends Miner implements
 			boolean filterFolders = (inclusion == INCLUDE_ALL) || (inclusion == INCLUDE_FOLDERS_ONLY);
 			
 			UniversalFileSystemFilter filefilter = new UniversalFileSystemFilter(filter,filterFiles, filterFolders, caseSensitive);
-			String theOS = System.getProperty("os.name");
+			String theOS = System.getProperty("os.name"); //$NON-NLS-1$
 			File[] list = null;
-			if (theOS.equals("z/OS")) 
+			if (theOS.equals("z/OS")) //$NON-NLS-1$ 
 			{
 				// filters not supported with z/OS jvm
 				File[] tempList = fileobj.listFiles();
@@ -801,7 +798,7 @@ public class UniversalFileSystemMiner extends Miner implements
 			{
 				createDataElement(_dataStore, subject, list, queryType, filter,inclusion);
 				String folderProperties = setProperties(fileobj);
-				if (subject.getSource() == null || subject.getSource().equals(""))
+				if (subject.getSource() == null || subject.getSource().equals("")) //$NON-NLS-1$
 					subject.setAttribute(DE.A_SOURCE, folderProperties);
 		
 				FileClassifier clsfy = getFileClassifier(subject);
@@ -969,7 +966,7 @@ private DataElement createDataElementFromLSString(DataElement subject,
 					+ File.separatorChar + subject.getName());
 		else
 			UniversalServerUtilities.logError(CLASSNAME,
-					"Invalid query type to handleQueryFiles", null);
+					"Invalid query type to handleQueryFiles", null); //$NON-NLS-1$
 
 
 		internalQueryAll(subject, fileobj, queryType, filter, caseSensitive, INCLUDE_FILES_ONLY);
@@ -1010,7 +1007,7 @@ private DataElement createDataElementFromLSString(DataElement subject,
 					+ File.separatorChar + subject.getName());
 		else
 			UniversalServerUtilities.logError(CLASSNAME,
-					"Invalid query type to handleQueryFolders", null);
+					"Invalid query type to handleQueryFolders", null); //$NON-NLS-1$
 
 		internalQueryAll(subject, fileobj, queryType, filter, caseSensitive, INCLUDE_FOLDERS_ONLY);
 
@@ -1026,11 +1023,11 @@ private DataElement createDataElementFromLSString(DataElement subject,
 		new File(subject.getName());
 		DataElement deObj = null;
 
-		if (System.getProperty("os.name").toLowerCase().startsWith("windows")) {
-			String[] ALLDRIVES = { "c:\\", "d:\\", "e:\\", "f:\\", "g:\\",
-					"h:\\", "i:\\", "j:\\", "k:\\", "l:\\", "m:\\", "n:\\",
-					"o:\\", "p:\\", "q:\\", "r:\\", "s:\\", "t:\\", "u:\\",
-					"v:\\", "w:\\", "x:\\", "y:\\", "z:\\" };
+		if (System.getProperty("os.name").toLowerCase().startsWith("windows")) { //$NON-NLS-1$ //$NON-NLS-2$
+			String[] ALLDRIVES = { "c:\\", "d:\\", "e:\\", "f:\\", "g:\\", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
+					"h:\\", "i:\\", "j:\\", "k:\\", "l:\\", "m:\\", "n:\\", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$
+					"o:\\", "p:\\", "q:\\", "r:\\", "s:\\", "t:\\", "u:\\", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$
+					"v:\\", "w:\\", "x:\\", "y:\\", "z:\\" }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
 			for (int idx = 0; idx < ALLDRIVES.length; idx++) {
 				File drive = new File(ALLDRIVES[idx]);
 				if (drive.exists()) {
@@ -1039,7 +1036,7 @@ private DataElement createDataElementFromLSString(DataElement subject,
 						deObj = _dataStore.createObject(subject,
 								UNIVERSAL_FOLDER_DESCRIPTOR, path);
 						deObj.setAttribute(DE.A_SOURCE, setProperties(drive));
-						deObj.setAttribute(DE.A_NAME, "");
+						deObj.setAttribute(DE.A_NAME, ""); //$NON-NLS-1$
 						deObj.setAttribute(DE.A_VALUE, path);
 					} catch (IOException e) {
 						return statusDone(status);
@@ -1053,7 +1050,7 @@ private DataElement createDataElementFromLSString(DataElement subject,
 				deObj = _dataStore.createObject(subject,
 						UNIVERSAL_FOLDER_DESCRIPTOR, list[i].getAbsolutePath());
 				deObj.setAttribute(DE.A_SOURCE, setProperties(list[i]));
-				deObj.setAttribute(DE.A_NAME, "");
+				deObj.setAttribute(DE.A_NAME, ""); //$NON-NLS-1$
 				deObj.setAttribute(DE.A_VALUE, list[i].getAbsolutePath());
 			}
 		}
@@ -1075,21 +1072,21 @@ private DataElement createDataElementFromLSString(DataElement subject,
 				+ File.separatorChar + subject.getName());
 		DataElement deObj = null;
 		if (!deleteObj.exists()) {
-			status.setAttribute(DE.A_SOURCE, FAILED_WITH_DOES_NOT_EXIST + "|" + deleteObj.getAbsolutePath());
+			status.setAttribute(DE.A_SOURCE, FAILED_WITH_DOES_NOT_EXIST + "|" + deleteObj.getAbsolutePath()); //$NON-NLS-1$
 			UniversalServerUtilities.logError(CLASSNAME,
-					"The object to delete does not exist", null);
+					"The object to delete does not exist", null); //$NON-NLS-1$
 		} else {
 			try {
 				if (deleteObj.isFile()) {
 					if (deleteObj.delete() == false) {
-						status.setAttribute(DE.A_SOURCE, FAILED + "|" + deleteObj.getAbsolutePath());
+						status.setAttribute(DE.A_SOURCE, FAILED + "|" + deleteObj.getAbsolutePath()); //$NON-NLS-1$
 					} else {
 						// delete was successful and delete the object from the
 						// datastore
 						deObj = _dataStore.find(subject, DE.A_NAME, subject
 								.getName(), 1);
 						_dataStore.deleteObject(subject, deObj);
-						status.setAttribute(DE.A_SOURCE, SUCCESS + "|" + deleteObj.getAbsolutePath());
+						status.setAttribute(DE.A_SOURCE, SUCCESS + "|" + deleteObj.getAbsolutePath()); //$NON-NLS-1$
 					}
 					_dataStore.refresh(subject);
 				} else if (deleteObj.isDirectory()) { // it is directory and
@@ -1098,9 +1095,9 @@ private DataElement createDataElementFromLSString(DataElement subject,
 					// children
 					deleteDir(deleteObj, status);
 					if (deleteObj.delete() == false) {
-						status.setAttribute(DE.A_SOURCE, FAILED + "|" + deleteObj.getAbsolutePath());
+						status.setAttribute(DE.A_SOURCE, FAILED + "|" + deleteObj.getAbsolutePath()); //$NON-NLS-1$
 						UniversalServerUtilities.logError(CLASSNAME,
-								"Deletion of dir fialed", null);
+								"Deletion of dir fialed", null); //$NON-NLS-1$
 					} else {
 						_dataStore.deleteObjects(subject);
 						DataElement parent = subject.getParent();
@@ -1115,7 +1112,7 @@ private DataElement createDataElementFromLSString(DataElement subject,
 									null);
 				}
 			} catch (Exception e) {
-				status.setAttribute(DE.A_SOURCE, FAILED_WITH_EXCEPTION + "|" + deleteObj.getAbsolutePath());
+				status.setAttribute(DE.A_SOURCE, FAILED_WITH_EXCEPTION + "|" + deleteObj.getAbsolutePath()); //$NON-NLS-1$
 				status.setAttribute(DE.A_VALUE, e.getLocalizedMessage());
 				UniversalServerUtilities.logError(CLASSNAME,
 						"Delete of the object failed", e);
@@ -1127,7 +1124,7 @@ private DataElement createDataElementFromLSString(DataElement subject,
 	
 	private DataElement handleDeleteBatch(DataElement theElement, DataElement status)
 	{
-		DataElement substatus = _dataStore.createObject(null, "status", "substatus");
+		DataElement substatus = _dataStore.createObject(null, "status", "substatus"); //$NON-NLS-1$ //$NON-NLS-2$
 		int numOfSources = theElement.getNestedSize() - 2;
 		for (int i = 0; i < numOfSources; i++)
 		{
@@ -1482,10 +1479,10 @@ private DataElement createDataElementFromLSString(DataElement subject,
 				VirtualChild child = _archiveHandlerManager
 						.getVirtualObject(subject.getName());
 				if (child.exists()) {
-					status.setAttribute(DE.A_SOURCE, "true");
+					status.setAttribute(DE.A_SOURCE, "true"); //$NON-NLS-1$
 					return statusDone(status);
 				} else {
-					status.setAttribute(DE.A_SOURCE, "false");
+					status.setAttribute(DE.A_SOURCE, "false"); //$NON-NLS-1$
 					return statusDone(status);
 				}
 			} else {
@@ -1504,21 +1501,21 @@ private DataElement createDataElementFromLSString(DataElement subject,
 					.getRegisteredHandler(new File(vpath
 							.getContainingArchiveString()));
 			if (handler == null) {
-				status.setAttribute(DE.A_SOURCE, "false");
+				status.setAttribute(DE.A_SOURCE, "false"); //$NON-NLS-1$
 				return statusDone(status);
 			}
 			VirtualChild child = handler.getVirtualFile(vpath.getVirtualPart());
 			if (child.exists()) {
-				status.setAttribute(DE.A_SOURCE, "true");
+				status.setAttribute(DE.A_SOURCE, "true"); //$NON-NLS-1$
 				return statusDone(status);
 			}
 
 		}
 
 		if (fileobj.exists())
-			status.setAttribute(DE.A_SOURCE, "true");
+			status.setAttribute(DE.A_SOURCE, "true"); //$NON-NLS-1$
 		else
-			status.setAttribute(DE.A_SOURCE, "false");
+			status.setAttribute(DE.A_SOURCE, "false"); //$NON-NLS-1$
 		return statusDone(status);
 	}
 
@@ -3099,55 +3096,28 @@ private DataElement createDataElementFromLSString(DataElement subject,
 			    tgt =  tgtFolder.getAbsolutePath();
 			}
 			
-			// handle special characters in source and target strings 
-			StringBuffer srcBuf = new StringBuffer(src);
-			StringBuffer tgtBuf = new StringBuffer(tgt);
-			handleSpecialChars(srcBuf);
-			handleSpecialChars(tgtBuf);
-
-			src = "\"" + srcBuf.toString() + "\"";
-			tgt = "\"" + tgtBuf.toString() + "\"";
-
-			doCopyCommand(src, tgt, folderCopy, status);
+			doCopyCommand(enQuote(src), enQuote(tgt), folderCopy, status);
 		}
 		
 		return statusDone(status);
 	}
 	
-	protected void handleSpecialChars(StringBuffer buf)
-	{
-		for (int i = 0; i < buf.length(); i++)
-		{
-			char c = buf.charAt(i);
-		
-			boolean isSpecialChar = isSpecialChar(c);
-		
-			if (isSpecialChar)
-			{
-				buf.insert(i, "\\");
-				i++;
-			}
-		}
-	}
-	
 	/**
-	 * Checks whether the given character is a special character in the shell. A special character is
-	 * '$', '`', '"' and '\'.
-	 * @param c the character to check.
-	 * @return <code>true</code> if the character is a special character, <code>false</code> otherwise.
+	 * Quote a file name such that it is valid in a shell
+	 * @param s file name to quote
+	 * @return quoted file name
 	 */
-	protected boolean isSpecialChar(char c)  {
-		   
-		if ((c == '$') || (c == '`') || (c == '"') || (c == '\\')) {
-			return true;
-		}
-		else {
-			return false;
+	protected String enQuote(String s)
+	{
+		if(_isWindows) {
+			return '"' + s + '"';
+		} else {
+			return PathUtility.enQuoteUnix(s);
 		}
 	}
-	
+
 	public String getVersion()
 	{
-		return "7.0.0";
+		return "7.0.0"; //$NON-NLS-1$
 	}
 }

@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2002, 2006 IBM Corporation. All rights reserved.
+ * Copyright (c) 2002, 2006 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -11,7 +11,7 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * Martin Oberhuber (Wind River) - Fix 154874 - handle files with space or $ in the name 
  ********************************************************************************/
 
 package org.eclipse.rse.shells.ui.view;
@@ -30,6 +30,7 @@ import org.eclipse.jface.viewers.TableLayout;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.internal.subsystems.shells.subsystems.RemoteOutput;
 import org.eclipse.rse.model.ISystemRegistryUI;
+import org.eclipse.rse.services.clientserver.PathUtility;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.shells.ui.ShellResources;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile;
@@ -187,7 +188,7 @@ FocusListener
 		 _tabFolderPage.setFont(font);
 		 // dummy title so that sizings work
 		 // fix for 138311
-		 String dummyTitle = ShellResources.RESID_SHELLS_COMMAND_SHELL_LABEL;
+		 // String dummyTitle = ShellResources.RESID_SHELLS_COMMAND_SHELL_LABEL;
 		 
 //		 _tabFolderPage.setText(dummyTitle);
 		GridLayout gridLayout = new GridLayout();
@@ -281,7 +282,7 @@ FocusListener
 		});
 
 		
-		SystemWidgetHelpers.setHelp(_viewer.getControl(), RSEUIPlugin.HELPPREFIX + "ucmd0000");
+		SystemWidgetHelpers.setHelp(_viewer.getControl(), RSEUIPlugin.HELPPREFIX + "ucmd0000"); //$NON-NLS-1$
 
 		TableLayout layout = new TableLayout();
 		table.setLayout(layout);
@@ -298,7 +299,7 @@ FocusListener
 		Label label = new Label(_inputContainer, SWT.NONE);
 		label.setText(ShellResources.RESID_COMMANDSVIEW_COMMAND_LABEL);
 
-		_inputEntry = new SystemCommandEditor(_viewPart.getViewSite(), _inputContainer, SWT.SINGLE | SWT.BORDER, 50, _entryViewerConfiguration, "", SystemResources.ACTION_CONTENT_ASSIST);
+		_inputEntry = new SystemCommandEditor(_viewPart.getViewSite(), _inputContainer, SWT.SINGLE | SWT.BORDER, 50, _entryViewerConfiguration, "", SystemResources.ACTION_CONTENT_ASSIST); //$NON-NLS-1$
 		_inputEntry.getTextWidget().setToolTipText(ShellResources.RESID_COMMANDSVIEW_COMMAND_TOOLTIP);
 		
 			
@@ -368,12 +369,12 @@ FocusListener
 						String path = folder.getAbsolutePath();
 						ISubSystem cmdSubSystem = adapter.getSubSystem(element);
 
-						String cdCmd = "cd " + "\"" + path + "\"";
-						if (cmdSubSystem.getHost().getSystemType().equals("Local")
-							&& System.getProperty("os.name").toLowerCase().startsWith("win")
-							|| cmdSubSystem.getHost().getSystemType().equals("Windows"))
+						String cdCmd = "cd " + PathUtility.enQuoteUnix(path); //$NON-NLS-1$
+						if (cmdSubSystem.getHost().getSystemType().equals("Local") //$NON-NLS-1$
+							&& System.getProperty("os.name").toLowerCase().startsWith("win") //$NON-NLS-1$ //$NON-NLS-2$
+							|| cmdSubSystem.getHost().getSystemType().equals("Windows")) //$NON-NLS-1$
 						{
-							cdCmd = "cd /d " + path;
+							cdCmd = "cd /d \"" + path + '\"'; //$NON-NLS-1$
 						}
 						sendInput(cdCmd);
 					}
@@ -382,17 +383,17 @@ FocusListener
 			else if (element instanceof RemoteOutput)
 			{
 				RemoteOutput out = (RemoteOutput)element;
-				if (out.getType().equals("directory"))
+				if (out.getType().equals("directory")) //$NON-NLS-1$
 				{
 					String path = out.getAbsolutePath();
 					ISubSystem cmdSubSystem = adapter.getSubSystem(element);
 
-					String cdCmd = "cd " + "\"" + path + "\"";
-					if (cmdSubSystem.getHost().getSystemType().equals("Local")
-						&& System.getProperty("os.name").toLowerCase().startsWith("win")
-						|| cmdSubSystem.getHost().getSystemType().equals("Windows"))
+					String cdCmd = "cd " + PathUtility.enQuoteUnix(path);  //$NON-NLS-1$
+					if (cmdSubSystem.getHost().getSystemType().equals("Local") //$NON-NLS-1$
+						&& System.getProperty("os.name").toLowerCase().startsWith("win") //$NON-NLS-1$ //$NON-NLS-2$
+						|| cmdSubSystem.getHost().getSystemType().equals("Windows")) //$NON-NLS-1$
 					{
-						cdCmd = "cd /d " + path;
+						cdCmd = "cd /d \"" + path + '\"'; //$NON-NLS-1$
 					}
 					sendInput(cdCmd);
 				}
@@ -450,7 +451,7 @@ FocusListener
 			}
 		}
 
-		_inputEntry.getTextWidget().setText("");
+		_inputEntry.getTextWidget().setText(""); //$NON-NLS-1$
 		_inputEntry.getTextWidget().setFocus();
 	}
 
@@ -463,7 +464,7 @@ FocusListener
 			IRemoteCmdSubSystem commandSubSystem = remoteCommand.getCommandSubSystem();
 			try
 			{
-				commandSubSystem.sendCommandToShell("#break", remoteCommand);
+				commandSubSystem.sendCommandToShell("#break", remoteCommand); //$NON-NLS-1$
 			}
 			catch (Exception e)
 			{
@@ -637,7 +638,7 @@ FocusListener
 		if (_commandHistoryOffset >= getCommandHistory().length)
 		{
 			_commandHistoryOffset = getCommandHistory().length;
-			_inputEntry.getTextWidget().setText("");
+			_inputEntry.getTextWidget().setText(""); //$NON-NLS-1$
 		}
 		else
 		{

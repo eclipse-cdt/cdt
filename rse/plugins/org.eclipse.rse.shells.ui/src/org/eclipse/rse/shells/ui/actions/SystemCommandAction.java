@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2002, 2006 IBM Corporation. All rights reserved.
+ * Copyright (c) 2002, 2006 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -11,7 +11,7 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * Martin Oberhuber (Wind River) - Fix 154874 - handle files with space or $ in the name 
  ********************************************************************************/
 
 package org.eclipse.rse.shells.ui.actions;
@@ -25,6 +25,7 @@ import org.eclipse.jface.window.Window;
 import org.eclipse.rse.core.filters.ISystemFilterReference;
 import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.subsystems.ISubSystem;
+import org.eclipse.rse.services.clientserver.PathUtility;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.shells.ui.RemoteCommandHelpers;
 import org.eclipse.rse.shells.ui.ShellResources;
@@ -418,11 +419,11 @@ public class SystemCommandAction extends SystemBaseAction
 							showInView(defaultShell);
 						}
 
-						String cdCmd = "cd " + path; //$NON-NLS-1$
+						String cdCmd = "cd " + PathUtility.enQuoteUnix(path); //$NON-NLS-1$
 						if ((cmdSubSystem.getHost().getSystemType().equals("Local") && System.getProperty("os.name").toLowerCase().startsWith("win")) //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 							|| cmdSubSystem.getHost().getSystemType().equals("Windows")) //$NON-NLS-1$
 						{
-							cdCmd = "cd /d " + path; //$NON-NLS-1$
+							cdCmd = "cd /d \"" + path + '\"'; //$NON-NLS-1$
 						}
 						cmdSubSystem.sendCommandToShell(cdCmd, defaultShell);
 						cmdSubSystem.sendCommandToShell(cmd, defaultShell);

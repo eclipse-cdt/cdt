@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2006 IBM Corporation. All rights reserved.
+ * Copyright (c) 2006 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -11,7 +11,7 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * Martin Oberhuber (Wind River) - Fix 154874 - handle files with space or $ in the name 
  ********************************************************************************/
 
 package org.eclipse.rse.dstore.universal.miners.filesystem;
@@ -30,6 +30,7 @@ import org.eclipse.dstore.core.model.DataElement;
 import org.eclipse.dstore.core.model.DataStore;
 import org.eclipse.rse.dstore.universal.miners.IUniversalDataStoreConstants;
 import org.eclipse.rse.services.clientserver.IServiceConstants;
+import org.eclipse.rse.services.clientserver.PathUtility;
 import org.eclipse.rse.services.clientserver.archiveutils.AbsoluteVirtualPath;
 import org.eclipse.rse.services.clientserver.archiveutils.ArchiveHandlerManager;
 import org.eclipse.rse.services.clientserver.archiveutils.VirtualChild;
@@ -76,24 +77,24 @@ public class FileClassifier extends Thread
         }
     }
 
-    public static final String symbolicLinkStr = "symbolic link to";
+    public static final String symbolicLinkStr = "symbolic link to"; //$NON-NLS-1$
     
-    public static final String fileSep = System.getProperty("file.separator");
-    public static final String defaultType = "file";
+    public static final String fileSep = System.getProperty("file.separator"); //$NON-NLS-1$
+    public static final String defaultType = "file"; //$NON-NLS-1$
     
-    public static final String STR_SYMBOLIC_LINK = "symbolic link";
-    public static final String STR_SHARED_OBJECT="shared object";
-    public static final String STR_OBJECT_MODULE="object module";
-    public static final String STR_MODULE="module";
-    public static final String STR_ARCHIVE="archive";
-    public static final String STR_EXECUTABLE="executable";
-    public static final String STR_SCRIPT="script";
-    public static final String STR_EXECUTABLE_SCRIPT="executable(script)";
-    public static final String STR_EXECUTABLE_BINARY="executable(binary)";
-    public static final String STR_DOT_A=".a";
-    public static final String STR_DOT_SO=".so";
-    public static final String STR_DOT_SO_DOT=".so.";
-    public static final String STR_DIRECTORY="diectory";
+    public static final String STR_SYMBOLIC_LINK = "symbolic link"; //$NON-NLS-1$
+    public static final String STR_SHARED_OBJECT="shared object"; //$NON-NLS-1$
+    public static final String STR_OBJECT_MODULE="object module"; //$NON-NLS-1$
+    public static final String STR_MODULE="module"; //$NON-NLS-1$
+    public static final String STR_ARCHIVE="archive"; //$NON-NLS-1$
+    public static final String STR_EXECUTABLE="executable"; //$NON-NLS-1$
+    public static final String STR_SCRIPT="script"; //$NON-NLS-1$
+    public static final String STR_EXECUTABLE_SCRIPT="executable(script)"; //$NON-NLS-1$
+    public static final String STR_EXECUTABLE_BINARY="executable(binary)"; //$NON-NLS-1$
+    public static final String STR_DOT_A=".a"; //$NON-NLS-1$
+    public static final String STR_DOT_SO=".so"; //$NON-NLS-1$
+    public static final String STR_DOT_SO_DOT=".so."; //$NON-NLS-1$
+    public static final String STR_DIRECTORY="diectory"; //$NON-NLS-1$
 
     
     private DataElement _subject;
@@ -124,24 +125,24 @@ public class FileClassifier extends Thread
     {
         _lines = new ArrayList();
         // special encoding passed in when starting server
-        _specialEncoding = System.getProperty("dstore.stdin.encoding");
+        _specialEncoding = System.getProperty("dstore.stdin.encoding"); //$NON-NLS-1$
 
         _subject = subject;
         _dataStore = subject.getDataStore();
         _fileMap = new ArrayList();
 
         // we can resolve links on Linux
-        String osName = System.getProperty("os.name").toLowerCase();
-        if (osName.startsWith("win"))
+        String osName = System.getProperty("os.name").toLowerCase(); //$NON-NLS-1$
+        if (osName.startsWith("win")) //$NON-NLS-1$
         {
             _systemSupportsClassify = false;
         }
-        else if (osName.equals("z/OS")) {
+        else if (osName.equals("z/OS")) { //$NON-NLS-1$
         	_systemSupportsClassFilesOnly = true;
         }
         
-        _systemShell = "sh";
-        _canResolveLinks = osName.startsWith("linux");
+        _systemShell = "sh"; //$NON-NLS-1$
+        _canResolveLinks = osName.startsWith("linux"); //$NON-NLS-1$
 
         init();
     }
@@ -188,7 +189,7 @@ public class FileClassifier extends Thread
 
                     // if this file has already been classified
                     // ignore it
-                    String[] tokens = properties.split("\\" + IServiceConstants.TOKEN_SEPARATOR);
+                    String[] tokens = properties.split("\\" + IServiceConstants.TOKEN_SEPARATOR); //$NON-NLS-1$
 
                     if (tokens.length < 12)
                     {
@@ -284,7 +285,7 @@ public class FileClassifier extends Thread
                 // resolve links by default
                 if (parentFile.isDirectory() && parentFile.list().length > 0)
                 {
-                    classifyChildren(parentFile, "*", false);
+                    classifyChildren(parentFile, "*", false); //$NON-NLS-1$
                 }
             }
             else
@@ -351,7 +352,7 @@ public class FileClassifier extends Thread
         // if it's a *.class file, then we look for main method and qulaified
         // class name
         // as part of the classification
-        if (name.endsWith(".class"))
+        if (name.endsWith(".class")) //$NON-NLS-1$
         {
             // get parent path
             String parentPath = parentFile.getAbsolutePath();
@@ -393,21 +394,22 @@ public class FileClassifier extends Thread
 
                 // we assume not executable
                 isExecutable = false;
+                return type;
             }
 
             // if it is executable, then also get qualified class name
             if (isExecutable)
             {
-                type = "executable(java";
+                type = "executable(java"; //$NON-NLS-1$
 
                 String qualifiedClassName = parser.getQualifiedClassName();
 
                 if (qualifiedClassName != null)
                 {
-                    type = type + ":" + qualifiedClassName;
+                    type = type + ":" + qualifiedClassName; //$NON-NLS-1$
                 }
 
-                type = type + ")";
+                type = type + ")"; //$NON-NLS-1$
             }
             return type;
         }
@@ -476,7 +478,7 @@ public class FileClassifier extends Thread
         File refFile = new File(referencedFile);
         if (refFile.isDirectory())
         {
-        	type.append("(directory)");
+        	type.append("(directory)"); //$NON-NLS-1$
             return type.toString();
         }
 
@@ -490,8 +492,8 @@ public class FileClassifier extends Thread
 
                 String args[] = new String[3];
                 args[0] = _systemShell;
-                args[1] = "-c";
-                args[2] = "file " + referencedFile;
+                args[1] = "-c"; //$NON-NLS-1$
+                args[2] = "file " + PathUtility.enQuoteUnix(referencedFile); //$NON-NLS-1$
 
                 Process childProcess = Runtime.getRuntime().exec(args, null, parentFile);
                 BufferedReader childReader = null;
@@ -537,7 +539,7 @@ public class FileClassifier extends Thread
         {
             String referencedFile = aFile.getCanonicalPath();
 
-            String specialEncoding = System.getProperty("dstore.stdin.encoding");
+            String specialEncoding = System.getProperty("dstore.stdin.encoding"); //$NON-NLS-1$
             /*
             if (specialEncoding == null)
             {
@@ -546,9 +548,9 @@ public class FileClassifier extends Thread
 */
             specialEncoding = null;
             String args[] = new String[3];
-            args[0] = "sh";
-            args[1] = "-c";
-            args[2] = "file " + referencedFile;
+            args[0] = "sh"; //$NON-NLS-1$
+            args[1] = "-c"; //$NON-NLS-1$
+            args[2] = "file " + PathUtility.enQuoteUnix(referencedFile); //$NON-NLS-1$
 
             Process childProcess = Runtime.getRuntime().exec(args);
 
@@ -589,7 +591,7 @@ public class FileClassifier extends Thread
 
         if (encoding == null)
         {
-            encoding = System.getProperty("file.encoding");
+            encoding = System.getProperty("file.encoding"); //$NON-NLS-1$
         }
         
         
@@ -624,7 +626,7 @@ public class FileClassifier extends Thread
 	                    // tokenize the output so that we can get each line of
 	                    // output
 	                    // the delimiters are therefore set to "\n\r"
-	                    String[] tokens = fullOutput.split("\n");
+	                    String[] tokens = fullOutput.split("\n"); //$NON-NLS-1$
 	                    if (tokens.length > 0)
 	                    {
 	                        if (_lines.size() > 0)
@@ -691,21 +693,21 @@ public class FileClassifier extends Thread
             boolean hasLinks = false;
 
             String[] args = new String[3];
-            args[0] = "sh";
+            args[0] = "sh"; //$NON-NLS-1$
 
-            args[1] = "-c";
+            args[1] = "-c"; //$NON-NLS-1$
 
             // if we are asked to resolve children, and it is possible to do so
             // then use "file -L". This is slower than if we run without the
             // "-L".
             if (resolveLinks && _canResolveLinks)
             {
-                args[2] = "file -L " + files;
+                args[2] = "file -L " + files; //dont quote files to allow shell pattern matching //$NON-NLS-1$
             }
             // otherwise, don't use "-L"
             else
             {
-                args[2] = "file " + files;
+                args[2] = "file " + files; //dont quote files to allow shell pattern matching //$NON-NLS-1$
 
             }
 
@@ -746,7 +748,7 @@ public class FileClassifier extends Thread
                 if (line.length() > 0)
                 {
                     line = line.trim();
-                    if (line.indexOf("cannot open ") > 0)
+                    if (line.indexOf("cannot open ") > 0) //$NON-NLS-1$
                     {
 
                     }
@@ -849,7 +851,7 @@ public class FileClassifier extends Thread
                                     // form "link:canonicalPath"
                                     if (type.equals(STR_SYMBOLIC_LINK))
                                     {
-                                        if (type.indexOf(":") == -1)
+                                        if (type.indexOf(":") == -1) //$NON-NLS-1$
                                         {
                                         	textToWrite.append(':');
                                         	textToWrite.append(canonicalPath);
@@ -911,7 +913,7 @@ public class FileClassifier extends Thread
                 {
                     // we pass true to indicate we want to resolve links this
                     // time
-                    classifyChildren(parentFile, "*", true);
+                    classifyChildren(parentFile, "*", true); //$NON-NLS-1$
                 }
                 // otherwise, run deferred queries on parents of target files
                 // and try to resolve link
@@ -924,7 +926,7 @@ public class FileClassifier extends Thread
 
                         // we pass true to indicate we want to resolve links
                         // this time
-                        StringBuffer newPathBuf = new StringBuffer(aFile.getAbsolutePath());
+                        StringBuffer newPathBuf = new StringBuffer(PathUtility.enQuoteUnix(aFile.getAbsolutePath()));
                         newPathBuf.append(File.separatorChar);
                         newPathBuf.append('*');
                         classifyChildren(parentFile, newPathBuf.toString(), true);
@@ -977,7 +979,7 @@ public class FileClassifier extends Thread
 
                 // virtual path is "" to indicate we want the top level entries
                 // in the archive
-                virtualPath = "";
+                virtualPath = ""; //$NON-NLS-1$
             }
             // otherwise, if the parent is a virtual folder
             else

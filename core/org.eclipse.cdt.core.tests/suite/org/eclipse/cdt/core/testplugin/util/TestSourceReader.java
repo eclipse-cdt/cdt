@@ -19,12 +19,20 @@ import java.io.InputStreamReader;
 import java.io.LineNumberReader;
 import java.io.Reader;
 import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Queue;
 
 import junit.framework.Assert;
 
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.index.IIndexFile;
+import org.eclipse.cdt.core.model.CModelException;
+import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -37,6 +45,49 @@ import org.osgi.framework.Bundle;
 
 public class TestSourceReader {
 
+	/**
+	 * Returns an array of StringBuffer objects for each comment section found preceding the named
+	 * test in the source code. 
+	 * @param bundle the bundle containing the source
+	 * @param srcRoot the directory inside the bundle containing the packages
+	 * @param clazz the name of the class containing the test
+	 * @param testName the name of the test
+	 * @param sections the number of comment sections preceding the named test to return
+	 * @return an array of StringBuffer objects for each comment section found preceding the named
+	 * test in the source code. 
+	 * @throws IOException
+	 */
+	public static StringBuffer[] getContentsForTest(Bundle bundle, String srcRoot, Class clazz, final String testName, int sections) throws IOException {
+		IPath filePath= new Path(srcRoot + '/' + clazz.getName().replace('.', '/') + ".java");
+	    
+	    InputStream in= FileLocator.openStream(bundle, filePath, false);
+	    BufferedReader br = new BufferedReader(new InputStreamReader(in));
+	    
+	    final int OUT_COMMENT=0, IN_COMMENT=1;
+	    int state = OUT_COMMENT;
+	    Queue q;
+	    List contents = new ArrayList();
+	    StringBuffer content = new StringBuffer();
+	    for(String line = br.readLine(); line!=null; line = br.readLine()) {
+	    	line = line.trim();
+	    	if(line.startsWith("//")) {
+	    		content.append(line.substring(2)+"\n");
+	    	} else {
+	    		if(content.length()>0) {
+	    			contents.add(content);
+	    			if(contents.size()==sections+1)
+	    				contents.remove(0);
+	    			content = new StringBuffer();
+	    		}
+	    		if(line.contains(testName)) {
+	    			return (StringBuffer[]) contents.toArray(new StringBuffer[contents.size()]);
+	    		}
+	    	}
+	    }
+	    
+	    throw new IOException("Test data not found for "+clazz+" "+testName);	
+	}
+	
 	/**
 	 * Searches for the offset of the first occurrence of a string in a workspace file.
 	 * @param lookfor string to be searched for
@@ -211,4 +262,15 @@ public class TestSourceReader {
 		Assert.fail("Indexing " + file.getFullPath() + " did not complete in time!");
 	}
 
+    public static IASTTranslationUnit createIndexBasedAST(IIndex index, ICProject project, IFile file) throws CModelException, CoreException {
+    	ICElement elem= project.findElement(file.getFullPath());
+    	if (elem instanceof ITranslationUnit) {
+    		ITranslationUnit tu= (ITranslationUnit) elem;
+    		if (tu != null) {
+    			return tu.getAST(index, ITranslationUnit.AST_SKIP_INDEXED_HEADERS);
+    		}
+    	}
+    	Assert.fail("Could not create ast for " + file.getFullPath());
+    	return null;
+    }
 }

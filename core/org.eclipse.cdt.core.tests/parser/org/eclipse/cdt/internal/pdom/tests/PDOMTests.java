@@ -39,6 +39,9 @@ public class PDOMTests extends TestSuite {
 		suite.addTest(MethodTests.suite());
 		suite.addTest(NamespaceTests.suite());
 
+		suite.addTest(IndexCBindingResolutionTest.suite());
+		suite.addTest(IndexCPPBindingResolutionTest.suite());
+		
 		suite.addTest(CFunctionTests.suite());
 		suite.addTest(CVariableTests.suite());
 		suite.addTest(CCompositeTypeTests.suite());

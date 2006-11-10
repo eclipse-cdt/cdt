@@ -23,9 +23,7 @@ import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.index.IIndexFile;
 import org.eclipse.cdt.core.model.CModelException;
-import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICProject;
-import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
 import org.eclipse.cdt.core.testplugin.util.TestSourceReader;
 import org.eclipse.cdt.ui.testplugin.CTestPlugin;
@@ -56,15 +54,7 @@ public class BaseUITestCase extends BaseTestCase {
     }
     
     protected IASTTranslationUnit createIndexBasedAST(IIndex index, ICProject project, IFile file) throws CModelException, CoreException {
-    	ICElement elem= project.findElement(file.getFullPath());
-    	if (elem instanceof ITranslationUnit) {
-    		ITranslationUnit tu= (ITranslationUnit) elem;
-    		if (tu != null) {
-    			return tu.getAST(index, ITranslationUnit.AST_SKIP_INDEXED_HEADERS);
-    		}
-    	}
-    	fail("Could not create ast for " + file.getFullPath());
-    	return null;
+    	return TestSourceReader.createIndexBasedAST(index, project, file);
     }
 
 	protected void waitForIndexer(IIndex index, IFile file, int maxmillis) throws Exception {

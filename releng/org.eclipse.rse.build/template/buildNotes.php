@@ -30,9 +30,9 @@
     <a href="http://download.eclipse.org/dsdp/tm/signedUpdates">
     http://download.eclipse.org/dsdp/tm/signedUpdates</a>.<br/>
     When testing signed jars, we came across 
-    <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=163421">bug 163421</a>,
-    so we want to further investigate the impact of this problem before we switch
-    the main TM update site to using signed jars.</li>
+    <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=163421">bug 163421</a>.
+    We will continue with more testing and migrate the main update site to
+    use signed jars as well as soon as possible.</li>
 <li>The <b>CDT Remote Launch Integration</b> is now available as a
   download, or from the <a href="http://download.eclipse.org/dsdp/tm/updates/">Update Site</a>.
   It also works for dstore connections now
@@ -52,9 +52,9 @@
 <li>Both Windows dstore daemon and server can now be started by simply double clicking on daemon.bat.
   Documentation has been updated
   (<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=142952">Bug 142952</a>)</li>
--->
 <li>Numerous bugs have been fixed, and we consider RSE safe now for 
   all kinds of data transfer, even if it's done in multiple background sessions.</li>
+-->
 <li>Use 
   <a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced&classification=DSDP&product=Target+Management&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&resolution=FIXED&resolution=WONTFIX&resolution=INVALID&resolution=WORKSFORME&chfieldfrom=2006-11-03&chfieldto=2006-11-10&chfield=resolution&cmdtype=doit">
   <!-- <a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced&classification=DSDP&product=Target+Management&target_milestone=1.0+RC4&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&resolution=FIXED&resolution=WONTFIX&resolution=INVALID&resolution=WORKSFORME&cmdtype=doit"> -->

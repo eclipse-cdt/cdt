@@ -160,15 +160,6 @@ If not specified, a default icon will be used by RSE.
 
    <annotation>
       <appInfo>
-         <meta.section type="since"/>
-      </appInfo>
-      <documentation>
-         1.0.0
-      </documentation>
-   </annotation>
-
-   <annotation>
-      <appInfo>
          <meta.section type="examples"/>
       </appInfo>
       <documentation>

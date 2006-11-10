@@ -210,18 +210,15 @@ deliverables did not make it into this build:
   but actual Unit Tests making use of the framework do not exist yet.
   </li>
 </ul>
+<!--
 The following critical or major bugs are currently known.
 We'll strive to fix these as soon as possible.
 <ul>
   <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=162883">bug 162883</a> - maj - [shell updating] No prompt on Solaris local shell</li>
   <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=162993">bug 162993</a> - maj - ssh connection gets confused</li>
-  <!--
-  <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=163264">bug 163264</a> - maj - FTP Only can not delete first subfolder</li>
-  -->
 </ul>
-<!--
-<p>No major or critical bugs are currently known.
 -->
+<p>No major or critical bugs are known at the time of release.
 Use 
 <a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced&classification=DSDP&product=Target+Management&component=RSE&bug_status=UNCONFIRMED&bug_status=NEW&bug_status=ASSIGNED&bug_status=REOPENED&bug_severity=blocker&bug_severity=critical&bug_severity=major&cmdtype=doit">this query</a>
 for an up-to-date list of major or critical bugs.</p>

@@ -58,3 +58,20 @@ sg dsdp-tm-rse -c "rm -rf $HOME/ws/publish/*${daystamp}*/updates"
 echo "chmod -R g+w $HOME/ws/publish/*${daystamp}*"
 chmod -R g+w $HOME/ws/publish/*${daystamp}*
 
+#Check the publishing
+cd $HOME/ws/publish
+cd *${daystamp}*
+if [ -f package.count ]; then
+  #hide the release for now until it is tested
+  #mirrors will still pick it up
+  mv package.count package.count.orig
+  
+  #Update the testUpdates sites
+  sg dsdp-tm-rse -c "echo \"Refreshing update site\" "
+  cd $HOME/downloads-tm/testUpdates/bin
+  ./mkTestUpdates.sh
+  sg dsdp-tm-rse -c "echo \"Refreshing signedUpdates site\" "
+  cd $HOME/downloads-tm/signedUpdates/bin
+  ./mkTestUpdates.sh
+  cd "$curdir"
+fi

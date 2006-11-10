@@ -205,8 +205,11 @@
 		<condition property="doCopy">
 			<not><equals arg1="${publishDirectory}" arg2=""/></not>
 		</condition>
-		<condition property="dropDir" value="S-${buildId}-${mydstamp}${mytstamp}" else="${buildId}">
-			<equals arg1="${buildType}" arg2="S"/>
+		<condition property="dropDir" value="${buildType}-${buildId}-${mydstamp}${mytstamp}" else="${buildId}">
+			<or>
+				<equals arg1="${buildType}" arg2="S"/>
+				<equals arg1="${buildType}" arg2="R"/>
+			</or>
 		</condition>
 		<property name="buildUpdateSitePath" value="${packageDirectory}/${dropDir}/updates"/>
 	</target>
@@ -327,6 +330,7 @@
 		<condition property="buildTypeLong" value="Nightly"><equals arg1="${buildType}" arg2="N"/></condition>
 		<condition property="buildTypeLong" value="Integration"><equals arg1="${buildType}" arg2="I"/></condition>
 		<condition property="buildTypeLong" value="Stable"><equals arg1="${buildType}" arg2="S"/></condition>
+		<condition property="buildTypeLong" value="Release"><equals arg1="${buildType}" arg2="R"/></condition>
 		<replace file="${packageDirectory}/${dropDir}/index.php">
 			<replacefilter token="@buildTypeLong@" value="${buildTypeLong}"/>
 			<replacefilter token="@dateLong@" value="${dateLong}"/>

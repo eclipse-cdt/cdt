@@ -856,8 +856,8 @@ public abstract class SubSystem extends RSEModelObject implements IAdaptable, IS
 
  
 	// ---------------------------------------------------
-	// Methods for IBM partners to add their own 
-	//  persisted attributes to the subsystem object...
+	// Methods for ISVs to add their own 
+	// persisted attributes to the subsystem object...
 	// ---------------------------------------------------    
 	
 	/**

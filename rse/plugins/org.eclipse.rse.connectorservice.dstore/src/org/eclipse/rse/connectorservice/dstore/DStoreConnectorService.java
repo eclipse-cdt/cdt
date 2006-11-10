@@ -581,7 +581,7 @@ public class DStoreConnectorService extends AbstractConnectorService implements 
 			SystemSignonInformation info = getPasswordInformation();
 			int daemonPort = serverLauncher.getDaemonPort();
 			
-			/* String daemonPortStr = getSubSystem().getVendorAttribute("IBM", "DAEMON_PORT");
+			/* String daemonPortStr = getSubSystem().getVendorAttribute("Remote", "DAEMON_PORT");
 			if (daemonPortStr != null && daemonPortStr.length() > 0)
 			{
 				daemonPort = Integer.parseInt(daemonPortStr);

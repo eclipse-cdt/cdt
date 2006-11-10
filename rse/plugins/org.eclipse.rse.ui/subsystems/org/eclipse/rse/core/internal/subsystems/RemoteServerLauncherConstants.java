@@ -17,7 +17,7 @@
 package org.eclipse.rse.core.internal.subsystems;
 
 /**
- * This interface defines constants for IBM Server Launcher.
+ * This interface defines constants for the Remote Server Launcher.
  */
 public interface RemoteServerLauncherConstants 
 {

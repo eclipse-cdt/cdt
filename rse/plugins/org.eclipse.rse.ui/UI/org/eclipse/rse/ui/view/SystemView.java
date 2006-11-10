@@ -11,7 +11,7 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * Michael Berber (IBM) - Patch to remove non-standard expand/collapse from menu.
+ * Michael Berger (IBM) - Patch to remove non-standard expand/collapse from menu.
  ********************************************************************************/
 
 package org.eclipse.rse.ui.view;

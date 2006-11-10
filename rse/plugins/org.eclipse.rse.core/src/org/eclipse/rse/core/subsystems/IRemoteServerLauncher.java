@@ -173,7 +173,7 @@ public interface IRemoteServerLauncher extends IServerLauncherProperties{
 	 * <p>
 	 * You normally do not call this! Rather, your subsystem factory class will override
 	 * {@link org.eclipse.rse.core.subsystems.SubSystemConfiguration#supportsServerLaunchType(ServerLaunchType)}.
-	 * However, this method is needed by ISVs that re-use IBM-supplied subsystem factories,
+	 * However, this method is needed by ISVs that re-use predefined subsystem factories,
 	 * and merely supply their own IConnectorService object via the "systemClass" attribute of the
 	 * subsystemConfigurations extension point. They don't call this method directly actually, but
 	 * rather {@link AbstractConnectorService#enableServerLaunchType(SubSystem, ServerLaunchType, boolean)},

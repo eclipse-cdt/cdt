@@ -32,7 +32,7 @@ import org.eclipse.swt.widgets.Shell;
 
 
 /**
- * Base IBM server launcher form.  Extend this to provide a specialized server launcher form
+ * Base Remote server launcher form.  Extend this to provide a specialized server launcher form
  */
 public abstract class RemoteBaseServerLauncherForm extends SystemBaseForm implements IServerLauncherForm, RemoteServerLauncherConstants, ISystemConnectionWizardErrorUpdater
 {

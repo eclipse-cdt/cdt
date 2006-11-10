@@ -39,3 +39,5 @@ org.eclipse.cdt.core/debug/pdomtimings=false
 # Reports sequence of files indexed
 org.eclipse.cdt.core/debug/indexer=false
 
+# Code formatter debugging
+org.eclipse.cdt.core/debug/formatter=false

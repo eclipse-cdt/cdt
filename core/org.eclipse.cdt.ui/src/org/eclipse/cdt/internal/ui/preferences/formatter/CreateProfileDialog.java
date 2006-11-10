@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Sergey Prigogin, Google
+ *     Anton Leherbauer (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.preferences.formatter;
 
@@ -16,7 +17,10 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.core.runtime.IStatus;
-
+import org.eclipse.cdt.internal.ui.preferences.formatter.IProfileVersioner;
+import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.IDialogSettings;
+import org.eclipse.jface.dialogs.StatusDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
@@ -32,11 +36,8 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
-import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.jface.dialogs.IDialogSettings;
-import org.eclipse.jface.dialogs.StatusDialog;
-
 import org.eclipse.cdt.ui.CUIPlugin;
+
 import org.eclipse.cdt.internal.ui.dialogs.StatusInfo;
 import org.eclipse.cdt.internal.ui.preferences.formatter.ProfileManager.CustomProfile;
 import org.eclipse.cdt.internal.ui.preferences.formatter.ProfileManager.Profile;
@@ -62,10 +63,13 @@ public class CreateProfileDialog extends StatusDialog {
 	
 	private CustomProfile fCreatedProfile;
 	protected boolean fOpenEditDialog;
+
+	private final IProfileVersioner fProfileVersioner;
 	
-	public CreateProfileDialog(Shell parentShell, ProfileManager profileManager) {
+	public CreateProfileDialog(Shell parentShell, ProfileManager profileManager, IProfileVersioner profileVersioner) {
 		super(parentShell);
 		fProfileManager= profileManager;
+		fProfileVersioner= profileVersioner;
 		fSortedProfiles= fProfileManager.getSortedProfiles();
 		fSortedNames= fProfileManager.getSortedDisplayNames();
 	}
@@ -145,7 +149,7 @@ public class CreateProfileDialog extends StatusDialog {
 		fEditCheckbox.setSelection(fOpenEditDialog);
 		
 		fProfileCombo.setItems(fSortedNames);
-		fProfileCombo.setText(fProfileManager.getProfile(ProfileManager.DEFAULT_PROFILE).getName());
+		fProfileCombo.setText(fProfileManager.getDefaultProfile().getName());
 		updateStatus(fEmpty);
 		
 		applyDialogFont(composite);
@@ -182,7 +186,7 @@ public class CreateProfileDialog extends StatusDialog {
 		final Map baseSettings= new HashMap(((Profile)fSortedProfiles.get(fProfileCombo.getSelectionIndex())).getSettings());
 		final String profileName= fNameText.getText();
 		
-		fCreatedProfile= new CustomProfile(profileName, baseSettings, ProfileVersioner.CURRENT_VERSION);
+		fCreatedProfile= new CustomProfile(profileName, baseSettings, fProfileVersioner.getCurrentVersion(), fProfileVersioner.getProfileKind());
 		fProfileManager.addProfile(fCreatedProfile);
 		super.okPressed();
 	}

@@ -13,7 +13,7 @@ package org.eclipse.cdt.internal.ui.dialogs;
 
 import org.eclipse.core.runtime.IStatus;
 
-import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.ui.CUIPlugin;
 
 /**
  * A settable IStatus
@@ -22,6 +22,8 @@ import org.eclipse.cdt.core.CCorePlugin;
  */
 public class StatusInfo implements IStatus {
 	
+	public static final IStatus OK_STATUS= new StatusInfo();
+
 	private String fStatusMessage;
 	private int fSeverity;
 
@@ -71,7 +73,7 @@ public class StatusInfo implements IStatus {
 	 * @see IStatus#getPlugin()
 	 */
 	public String getPlugin() {
-		return CCorePlugin.PLUGIN_ID;
+		return CUIPlugin.PLUGIN_ID;
 	}
 	/**
 	 * @see IStatus#getSeverity()
@@ -118,5 +120,29 @@ public class StatusInfo implements IStatus {
 	public void setWarning(String warningMessage) {
 		fStatusMessage= warningMessage;
 		fSeverity= IStatus.WARNING;
+	}
+
+	/**
+	 * Returns a string representation of the status, suitable 
+	 * for debugging purposes only.
+	 */
+	public String toString() {
+		StringBuffer buf = new StringBuffer();
+		buf.append("StatusInfo "); //$NON-NLS-1$
+		if (fSeverity == OK) {
+			buf.append("OK"); //$NON-NLS-1$
+		} else if (fSeverity == ERROR) {
+			buf.append("ERROR"); //$NON-NLS-1$
+		} else if (fSeverity == WARNING) {
+			buf.append("WARNING"); //$NON-NLS-1$
+		} else if (fSeverity == INFO) {
+			buf.append("INFO"); //$NON-NLS-1$
+		} else {
+			buf.append("severity="); //$NON-NLS-1$
+			buf.append(fSeverity);
+		}
+		buf.append(": "); //$NON-NLS-1$
+		buf.append(fStatusMessage);
+		return buf.toString();
 	}
 }

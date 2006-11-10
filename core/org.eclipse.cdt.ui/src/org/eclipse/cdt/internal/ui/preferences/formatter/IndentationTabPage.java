@@ -9,17 +9,18 @@
  *     IBM Corporation - initial API and implementation
  *     istvan@benedek-home.de - 103706 [formatter] indent empty lines
  *     Sergey Prigogin, Google
+ *     Anton Leherbauer (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.preferences.formatter;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
 
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
-
-import org.eclipse.jface.text.Assert;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.formatter.DefaultCodeFormatterConstants;
@@ -27,45 +28,62 @@ import org.eclipse.cdt.core.formatter.DefaultCodeFormatterConstants;
 
 public class IndentationTabPage extends ModifyDialogTabPage {
 	
-//	private final String PREVIEW=
-//	createPreviewHeader(FormatterMessages.IndentationTabPage_preview_header) + 
-//	"class Example {" +	//$NON-NLS-1$
-//	"  int [] myArray= {1,2,3,4,5,6};" + //$NON-NLS-1$
-//	"  int theInt= 1;" + //$NON-NLS-1$
-//	"  String someString= \"Hello\";" + //$NON-NLS-1$
-//	"  double aDouble= 3.0;" + //$NON-NLS-1$
-//	"  void foo(int a, int b, int c, int d, int e, int f) {" + //$NON-NLS-1$
-//	"    switch(a) {" + //$NON-NLS-1$
-//	"    case 0: " + //$NON-NLS-1$
-//	"      Other.doFoo();" + //$NON-NLS-1$
-//	"      break;" + //$NON-NLS-1$
-//	"    default:" + //$NON-NLS-1$
-//	"      Other.doBaz();" + //$NON-NLS-1$
-//	"    }" + //$NON-NLS-1$
-//	"  }" + //$NON-NLS-1$
-//	"  void bar(List v) {" + //$NON-NLS-1$
-//	"    for (int i= 0; i < 10; i++) {" + //$NON-NLS-1$
-// 	"      v.add(new Integer(i));" + //$NON-NLS-1$
-// 	"    }" + //$NON-NLS-1$
-//	"  }" + //$NON-NLS-1$
-//	"}" + //$NON-NLS-1$
-//	"\n" + //$NON-NLS-1$
-//	"enum MyEnum {" + //$NON-NLS-1$
-//	"    UNDEFINED(0) {" + //$NON-NLS-1$
-//	"        void foo() {}" + //$NON-NLS-1$
-//	"    }" + //$NON-NLS-1$
-//	"}" + //$NON-NLS-1$
-//	"@interface MyAnnotation {" + //$NON-NLS-1$
-//	"    int count() default 1;" + //$NON-NLS-1$
-//	"}";//$NON-NLS-1$
+	/**
+	 * Some C++ source code used for preview.
+	 */
+	private final static String PREVIEW=
+		createPreviewHeader(FormatterMessages.IndentationTabPage_preview_header) + 
+		"#include <math.h>\n" + //$NON-NLS-1$
+		"class Point {" +  //$NON-NLS-1$
+		"public:" +  //$NON-NLS-1$
+		"Point(double xc, double yc) : x(xc), y(yc) {}" + //$NON-NLS-1$ 
+		"double distance(const Point& other) const;" + //$NON-NLS-1$
+		"int compareX(const Point& other) const;" + //$NON-NLS-1$
+		"double x;" +  //$NON-NLS-1$
+		"double y;" +  //$NON-NLS-1$
+		"};" +  //$NON-NLS-1$
+		"double Point::distance(const Point& other) const {" + //$NON-NLS-1$
+		"double dx = x - other.x;" + //$NON-NLS-1$
+		"double dy = y - other.y;" + //$NON-NLS-1$
+		"return sqrt(dx * dx + dy * dy);" + //$NON-NLS-1$
+		"}"+ //$NON-NLS-1$
+		"int Point::compareX(const Point& other) const {" + //$NON-NLS-1$
+		"if(x < other.x) {" + //$NON-NLS-1$
+		"return -1;" + //$NON-NLS-1$
+		"} else if(x > other.x){" + //$NON-NLS-1$
+		"return 1;" + //$NON-NLS-1$
+		"} else {" + //$NON-NLS-1$
+		"return 0;" + //$NON-NLS-1$
+		"}"+ //$NON-NLS-1$
+		"}"+ //$NON-NLS-1$
+		"namespace FOO {"+ //$NON-NLS-1$
+		"int foo(int bar) const {" + //$NON-NLS-1$
+		"switch(bar) {" + //$NON-NLS-1$
+		"case 0:" + //$NON-NLS-1$
+		"++bar;" + //$NON-NLS-1$
+		"break;" + //$NON-NLS-1$
+		"case 1:" + //$NON-NLS-1$
+		"--bar;" + //$NON-NLS-1$
+		"default: {" + //$NON-NLS-1$
+		"bar += bar;" + //$NON-NLS-1$
+		"break;" + //$NON-NLS-1$
+		"}"+ //$NON-NLS-1$
+		"}"+ //$NON-NLS-1$
+		"}"+ //$NON-NLS-1$
+		"} // end namespace FOO"; //$NON-NLS-1$
+
+	private static final String SHOW_WHITESPACE = "showWhitespace"; //$NON-NLS-1$
 	
-//	private CompilationUnitPreview fPreview;
+	private TranslationUnitPreview fPreview;
 	private String fOldTabChar= null;
 	
 	public IndentationTabPage(ModifyDialog modifyDialog, Map workingValues) {
 		super(modifyDialog, workingValues);
 	}
 
+	/*
+	 * @see org.eclipse.cdt.internal.ui.preferences.formatter.ModifyDialogTabPage#doCreatePreferences(org.eclipse.swt.widgets.Composite, int)
+	 */
 	protected void doCreatePreferences(Composite composite, int numColumns) {
 
 		final Group generalGroup= createGroup(numColumns, composite, FormatterMessages.IndentationTabPage_general_group_title); 
@@ -100,8 +118,6 @@ public class IndentationTabPage extends ModifyDialogTabPage {
 		final Group classGroup = createGroup(numColumns, composite, FormatterMessages.IndentationTabPage_indent_group_title); 
 		createCheckboxPref(classGroup, numColumns, FormatterMessages.IndentationTabPage_class_group_option_indent_access_specifiers_within_class_body, DefaultCodeFormatterConstants.FORMATTER_INDENT_ACCESS_SPECIFIER_COMPARE_TO_TYPE_HEADER, FALSE_TRUE); 
 		createCheckboxPref(classGroup, numColumns, FormatterMessages.IndentationTabPage_class_group_option_indent_declarations_compare_to_access_specifiers, DefaultCodeFormatterConstants.FORMATTER_INDENT_BODY_DECLARATIONS_COMPARE_TO_ACCESS_SPECIFIER, FALSE_TRUE); 
-		createCheckboxPref(classGroup, numColumns, FormatterMessages.IndentationTabPage_class_group_option_indent_declarations_within_enum_decl, DefaultCodeFormatterConstants.FORMATTER_INDENT_BODY_DECLARATIONS_COMPARE_TO_ENUM_DECLARATION_HEADER, FALSE_TRUE);
-		createCheckboxPref(classGroup, numColumns, FormatterMessages.IndentationTabPage_class_group_option_indent_declarations_within_enum_const, DefaultCodeFormatterConstants.FORMATTER_INDENT_BODY_DECLARATIONS_COMPARE_TO_ENUM_CONSTANT_HEADER, FALSE_TRUE); 
 
 		createCheckboxPref(classGroup, numColumns, FormatterMessages.IndentationTabPage_block_group_option_indent_statements_compare_to_body, DefaultCodeFormatterConstants.FORMATTER_INDENT_STATEMENTS_COMPARE_TO_BODY, FALSE_TRUE); 
 		createCheckboxPref(classGroup, numColumns, FormatterMessages.IndentationTabPage_block_group_option_indent_statements_compare_to_block, DefaultCodeFormatterConstants.FORMATTER_INDENT_STATEMENTS_COMPARE_TO_BLOCK, FALSE_TRUE); 
@@ -109,27 +125,51 @@ public class IndentationTabPage extends ModifyDialogTabPage {
 		createCheckboxPref(classGroup, numColumns, FormatterMessages.IndentationTabPage_switch_group_option_indent_statements_within_switch_body, DefaultCodeFormatterConstants.FORMATTER_INDENT_SWITCHSTATEMENTS_COMPARE_TO_SWITCH, FALSE_TRUE); 
 		createCheckboxPref(classGroup, numColumns, FormatterMessages.IndentationTabPage_switch_group_option_indent_statements_within_case_body, DefaultCodeFormatterConstants.FORMATTER_INDENT_SWITCHSTATEMENTS_COMPARE_TO_CASES, FALSE_TRUE); 
 		createCheckboxPref(classGroup, numColumns, FormatterMessages.IndentationTabPage_switch_group_option_indent_break_statements, DefaultCodeFormatterConstants.FORMATTER_INDENT_BREAKS_COMPARE_TO_CASES, FALSE_TRUE); 
-        createCheckboxPref(classGroup, numColumns, FormatterMessages.IndentationTabPage_indent_empty_lines, DefaultCodeFormatterConstants.FORMATTER_INDENT_EMPTY_LINES, FALSE_TRUE); 
+
+		createCheckboxPref(classGroup, numColumns, FormatterMessages.IndentationTabPage_namespace_group_option_indent_declarations_within_namespace, DefaultCodeFormatterConstants.FORMATTER_INDENT_BODY_DECLARATIONS_COMPARE_TO_NAMESPACE_HEADER, FALSE_TRUE); 
+
+		createCheckboxPref(classGroup, numColumns, FormatterMessages.IndentationTabPage_indent_empty_lines, DefaultCodeFormatterConstants.FORMATTER_INDENT_EMPTY_LINES, FALSE_TRUE); 
 	}
 	
+	/*
+	 * @see org.eclipse.cdt.internal.ui.preferences.formatter.ModifyDialogTabPage#initializePage()
+	 */
 	public void initializePage() {
-//	    fPreview.setPreviewText(PREVIEW);
+	    fPreview.setPreviewText(PREVIEW);
 	}
-	
-    /* (non-Javadoc)
+
+	/*
+	 * @see org.eclipse.cdt.internal.ui.preferences.formatter.ModifyDialogTabPage#doCreatePreviewPane(org.eclipse.swt.widgets.Composite, int)
+	 */
+	protected Composite doCreatePreviewPane(Composite composite, int numColumns) {
+		
+		super.doCreatePreviewPane(composite, numColumns);
+		
+		final Map previewPrefs= new HashMap();
+		final CheckboxPreference previewShowWhitespace= new CheckboxPreference(composite, numColumns / 2, previewPrefs, SHOW_WHITESPACE, FALSE_TRUE, 
+		    FormatterMessages.IndentationTabPage_show_whitespace_in_preview_label_text); 
+		fDefaultFocusManager.add(previewShowWhitespace);
+		previewShowWhitespace.addObserver(new Observer() {
+			public void update(Observable o, Object arg) {
+				fPreview.showWhitespace(FALSE_TRUE[1] == previewPrefs.get(SHOW_WHITESPACE));
+			}
+		});
+		return composite;
+	}
+
+    /*
      * @see org.eclipse.cdt.internal.ui.preferences.formatter.ModifyDialogTabPage#doCreateCPreview(org.eclipse.swt.widgets.Composite)
      */
     protected CPreview doCreateCPreview(Composite parent) {
-//        fPreview= new CompilationUnitPreview(fWorkingValues, parent);
-//        return fPreview;
-    	return null;
+        fPreview= new TranslationUnitPreview(fWorkingValues, parent);
+        return fPreview;
     }
 
-    /* (non-Javadoc)
+    /*
      * @see org.eclipse.cdt.internal.ui.preferences.formatter.ModifyDialogTabPage#doUpdatePreview()
      */
     protected void doUpdatePreview() {
-//        fPreview.update();
+        fPreview.update();
     }
 
 	private void updateTabPreferences(String tabPolicy, NumberPreference tabPreference, NumberPreference indentPreference, CheckboxPreference onlyForLeading) {

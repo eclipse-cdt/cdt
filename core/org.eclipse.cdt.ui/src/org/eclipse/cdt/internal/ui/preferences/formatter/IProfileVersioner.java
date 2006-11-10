@@ -7,18 +7,23 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Sergey Prigogin, Google
- *     Anton Leherbauer (Wind River Systems)
  *******************************************************************************/
+package org.eclipse.cdt.internal.ui.preferences.formatter;
 
-package org.eclipse.cdt.internal.ui.text.comment;
+import org.eclipse.cdt.internal.ui.preferences.formatter.ProfileManager.CustomProfile;
 
-import org.eclipse.jface.text.formatter.FormattingContext;
+public interface IProfileVersioner {
 
-/**
- * Formatting context for the comment formatter.
- *
- * @since 4.0
- */
-public class CommentFormattingContext extends FormattingContext {
+	public int getFirstVersion();
+
+	public int getCurrentVersion();
+	
+    public String getProfileKind();
+
+	/**
+	 * Update the <code>profile</code> to the 
+	 * current version number
+	 */
+	public void update(CustomProfile profile);
+
 }

@@ -7,18 +7,26 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Sergey Prigogin, Google
  *     Anton Leherbauer (Wind River Systems)
  *******************************************************************************/
-
-package org.eclipse.cdt.internal.ui.text.comment;
-
-import org.eclipse.jface.text.formatter.FormattingContext;
+package org.eclipse.cdt.internal.formatter;
 
 /**
- * Formatting context for the comment formatter.
- *
+ * Unchecked exception wrapping invalid input checked exception which may occur
+ * when scanning original formatted source. 
+ * 
  * @since 4.0
  */
-public class CommentFormattingContext extends FormattingContext {
+public class AbortFormatting extends RuntimeException {
+
+	private static final long serialVersionUID= -5796507276311428526L;
+	Throwable nestedException;
+	
+	public AbortFormatting(String message) {
+		super(message);
+	}
+	public AbortFormatting(Throwable nestedException) {
+		super(nestedException.getMessage());
+		this.nestedException = nestedException;
+	}
 }

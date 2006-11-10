@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Sergey Prigogin, Google
+ *     Anton Leherbauer (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.preferences.formatter;
 
@@ -20,8 +21,10 @@ import java.util.Observer;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-
+import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.events.FocusAdapter;
 import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.FocusListener;
@@ -39,12 +42,8 @@ import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
-import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.jface.dialogs.IDialogSettings;
-
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.formatter.DefaultCodeFormatterConstants;
-
 import org.eclipse.cdt.ui.CUIPlugin;
 
 import org.eclipse.cdt.internal.ui.util.Messages;
@@ -562,15 +561,11 @@ public abstract class ModifyDialogTabPage {
 		    fPixelConverter= new PixelConverter(parent);
 		}
 		
-//		final SashForm fSashForm = new SashForm(parent, SWT.HORIZONTAL);
-//		fSashForm.setFont(parent.getFont());
+		final SashForm fSashForm = new SashForm(parent, SWT.HORIZONTAL);
+		fSashForm.setFont(parent.getFont());
 		
-//		final Composite settingsPane= new Composite(fSashForm, SWT.NONE);
-//		settingsPane.setFont(fSashForm.getFont());
-		
-		final Composite settingsPane= new Composite(parent, SWT.NONE);
-		settingsPane.setFont(parent.getFont());
-		settingsPane.setLayoutData(new GridData(GridData.FILL_BOTH));
+		final Composite settingsPane= new Composite(fSashForm, SWT.NONE);
+		settingsPane.setFont(fSashForm.getFont());
 		
 		final GridLayout layout= new GridLayout(numColumns, false);
 		layout.verticalSpacing= (int)(1.5 * fPixelConverter.convertVerticalDLUsToPixels(IDialogConstants.VERTICAL_SPACING));
@@ -580,16 +575,15 @@ public abstract class ModifyDialogTabPage {
 		settingsPane.setLayout(layout);
 		doCreatePreferences(settingsPane, numColumns);
 
-		return settingsPane;
-//		final Composite previewPane= new Composite(fSashForm, SWT.NONE);
-//		previewPane.setLayout(createGridLayout(numColumns, true));
-//		previewPane.setFont(fSashForm.getFont());
-//		doCreatePreviewPane(previewPane, numColumns);
-//
-//		initializePage();
-//	
-//		fSashForm.setWeights(new int [] {3, 3});
-//		return fSashForm;
+		final Composite previewPane= new Composite(fSashForm, SWT.NONE);
+		previewPane.setLayout(createGridLayout(numColumns, true));
+		previewPane.setFont(fSashForm.getFont());
+		doCreatePreviewPane(previewPane, numColumns);
+
+		initializePage();
+	
+		fSashForm.setWeights(new int [] {3, 3});
+		return fSashForm;
 	}
 	
 	/**
@@ -797,6 +791,6 @@ public abstract class ModifyDialogTabPage {
 	 * Create a nice javadoc comment for some string.
 	 */
 	protected static String createPreviewHeader(String title) {
-		return "/**\n* " + title + "\n*/\n"; //$NON-NLS-1$ //$NON-NLS-2$
+		return "/*\n* " + title + "\n*/\n"; //$NON-NLS-1$ //$NON-NLS-2$
 	}
 }

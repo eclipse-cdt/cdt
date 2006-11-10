@@ -18,11 +18,36 @@ import java.util.Map;
 import org.eclipse.cdt.internal.ui.preferences.formatter.ProfileManager.CustomProfile;
 
 
-public class ProfileVersioner {
+public class ProfileVersioner implements IProfileVersioner {
 	
-	public static final int VERSION_1= 1; // < 20040113 (includes M6)
+	public static final String CODE_FORMATTER_PROFILE_KIND= "CodeFormatterProfile"; //$NON-NLS-1$
+	
+	public static final int VERSION_1= 1; // < 20061106 (pre CDT 4.0M3)
 	
 	public static final int CURRENT_VERSION= VERSION_1;
+	
+	
+	public int getFirstVersion() {
+	    return VERSION_1;
+    }
+
+	public int getCurrentVersion() {
+	    return CURRENT_VERSION;
+    }
+	
+	/**
+     * {@inheritDoc}
+     */
+    public String getProfileKind() {
+	    return CODE_FORMATTER_PROFILE_KIND;
+    }
+
+	public void update(CustomProfile profile) {
+		final Map oldSettings= profile.getSettings();
+		Map newSettings= updateAndComplete(oldSettings, profile.getVersion());
+		profile.setVersion(CURRENT_VERSION);
+		profile.setSettings(newSettings);
+	}
 	
 	public static int getVersionStatus(CustomProfile profile) {
 		final int version= profile.getVersion();
@@ -42,7 +67,7 @@ public class ProfileVersioner {
 	}
 	
 	public static Map updateAndComplete(Map oldSettings, int version) {
-		final Map newSettings= ProfileManager.getDefaultSettings();
+		final Map newSettings= FormatterProfileManager.getDefaultSettings();
 		
 		switch (version) {
 		    

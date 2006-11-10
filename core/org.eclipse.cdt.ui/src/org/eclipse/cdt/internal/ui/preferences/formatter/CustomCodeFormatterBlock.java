@@ -8,6 +8,7 @@
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
  *     Sergey Prigogin, Google
+ *     Anton Leherbauer (Wind River Systems)
  *******************************************************************************/
 
 package org.eclipse.cdt.internal.ui.preferences.formatter;
@@ -15,59 +16,61 @@ package org.eclipse.cdt.internal.ui.preferences.formatter;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Observable;
 
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.Preferences;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences;
+import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.PlatformUI;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.CCorePreferenceConstants;
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.utils.ui.controls.ControlFactory;
 
 import org.eclipse.cdt.internal.ui.ICHelpContextIds;
+import org.eclipse.cdt.internal.ui.preferences.PreferencesAccess;
 
 /**
- * 
+ * Allows to choose the formatter in a combo box.
+ * If no formatter is contributed, nothing is shown.
  */
-public class CustomCodeFormatterBlock {
+public class CustomCodeFormatterBlock extends Observable {
 
 	private HashMap idMap = new HashMap();
-	Preferences fPrefs;
-	protected Combo fFormatterCombo;
+	private IEclipsePreferences fPrefs;
+	private String fDefaultFormatterId;
+	private Combo fFormatterCombo;
 	private static final String ATTR_NAME = "name"; //$NON-NLS-1$
 	private static final String ATTR_ID = "id"; //$NON-NLS-1$
-	// This is a hack until we have a default Formatter.
-	// For now it is comment out in the plugin.xml
-	private static final String NONE = FormatterMessages.CustomCodeFormatterBlock_no_formatter;
+	private static final String DEFAULT = FormatterMessages.CustomCodeFormatterBlock_default_formatter;
 
+	public CustomCodeFormatterBlock(PreferencesAccess access) {
+		fPrefs = access.getInstanceScope().getNode(CUIPlugin.PLUGIN_ID);
+		IEclipsePreferences defaults= access.getDefaultScope().getNode(CUIPlugin.PLUGIN_ID);
+		fDefaultFormatterId= defaults.get(CCorePreferenceConstants.CODE_FORMATTER, null);
 
-	public CustomCodeFormatterBlock(Preferences prefs) {
-		fPrefs = prefs;
 		initializeFormatters();
 	}
 
 	public void performOk() {
+		if (fFormatterCombo == null) {
+			return;
+		}
 		String text = fFormatterCombo.getText();
-		String selection = (String)idMap.get(text);
-		if (selection != null && selection.length() > 0) {
-			HashMap options = CCorePlugin.getOptions();
-			String formatterID = (String)options.get(CCorePreferenceConstants.CODE_FORMATTER);
-			if (formatterID == null || !formatterID.equals(selection)) {
-				options.put(CCorePreferenceConstants.CODE_FORMATTER, selection);
-				CCorePlugin.setOptions(options);
-			}
+		String formatterId = (String)idMap.get(text);
+		if (formatterId != null && formatterId.length() > 0) {
+			fPrefs.put(CCorePreferenceConstants.CODE_FORMATTER, formatterId);
 		} else {
 			// simply reset to the default one.
 			performDefaults();
@@ -75,37 +78,54 @@ public class CustomCodeFormatterBlock {
 	}
 
 	public void performDefaults() {
-		HashMap optionsDefault = CCorePlugin.getDefaultOptions();
-		HashMap options = CCorePlugin.getOptions();
-		String formatterID = (String)optionsDefault.get(CCorePreferenceConstants.CODE_FORMATTER);
-		options.put(CCorePreferenceConstants.CODE_FORMATTER, formatterID);
-		CCorePlugin.setOptions(options);
+		if (fDefaultFormatterId != null) {
+			fPrefs.put(CCorePreferenceConstants.CODE_FORMATTER, fDefaultFormatterId);
+		} else {
+			fPrefs.remove(CCorePreferenceConstants.CODE_FORMATTER);
+		}
 
+		if (fFormatterCombo == null) {
+			return;
+		}
 		fFormatterCombo.clearSelection();
-		fFormatterCombo.setText(NONE);
+		fFormatterCombo.setText(DEFAULT);
 		Iterator iterator = idMap.entrySet().iterator();
 		while (iterator.hasNext()) {
 			Map.Entry entry = (Map.Entry)iterator.next();
 			String val = (String)entry.getValue();
-			if (val != null && val.equals(formatterID)) {
+			if (val != null && val.equals(fDefaultFormatterId)) {
 				fFormatterCombo.setText((String)entry.getKey());
 			}
 		}
+		handleFormatterChanged();
+	}
+
+
+	/**
+	 * Get the currently selected formatter id.
+	 * 
+	 * @return the selected formatter id or <code>null</code> if the default is selected.
+	 */
+	public String getFormatterId() {
+		if (fFormatterCombo == null) {
+			return fPrefs.get(CCorePreferenceConstants.CODE_FORMATTER, fDefaultFormatterId);
+		}
+		String formatterId= (String)idMap.get(fFormatterCombo.getText());
+		return formatterId;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.IDialogPage#createControl(org.eclipse.swt.widgets.Composite)
 	 */
 	public Control createContents(Composite parent) {
-		Composite composite = ControlFactory.createComposite(parent, 1);
-		((GridLayout)composite.getLayout()).marginWidth = 0;
-		((GridData)composite.getLayoutData()).horizontalSpan = 2;
+		if (getNumberOfAvailableFormatters() == 0) {
+			return parent;
+		}
+		Composite composite = ControlFactory.createGroup(parent, FormatterMessages.CustomCodeFormatterBlock_formatter_name, 1);
+		((GridData)composite.getLayoutData()).horizontalSpan = 5;
 
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(composite, ICHelpContextIds.CODEFORMATTER_PREFERENCE_PAGE);
 
-		ControlFactory.createEmptySpace(composite, 1);
-
-		Label label = ControlFactory.createLabel(composite, FormatterMessages.CustomCodeFormatterBlock_formatter_name);
 		fFormatterCombo = new Combo(composite, SWT.DROP_DOWN | SWT.READ_ONLY);
 		fFormatterCombo.setFont(parent.getFont());
 		fFormatterCombo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
@@ -119,45 +139,44 @@ public class CustomCodeFormatterBlock {
 			fFormatterCombo.add((String) items.next());
 		}
 
-		label = ControlFactory.createLabel(parent, FormatterMessages.CustomCodeFormatterBlock_contributed_formatter_warning);
-		((GridData)label.getLayoutData()).horizontalSpan = 5;
+		final String noteTitle= FormatterMessages.CustomCodeFormatterBlock_formatter_note;
+		final String noteMessage= FormatterMessages.CustomCodeFormatterBlock_contributed_formatter_warning;
+		ControlFactory.createNoteComposite(JFaceResources.getDialogFont(), composite, noteTitle, noteMessage);
 		
 		initDefault();
-		handleFormatterChanged();
 		
-		if (getNumberOfAvailableFormatters() == 0) {
-			composite.setVisible(false);
-			label.setVisible(false);
-		}
 		return composite;
 	}
 
-	private void handleFormatterChanged() {	
-		// TODO: UI part.
+	private void handleFormatterChanged() {
+		setChanged();
+		String formatterId= getFormatterId();
+		notifyObservers(formatterId);
 	}
 
 	private void initDefault() {
 		boolean init = false;
-		String selection = CCorePlugin.getOption(CCorePreferenceConstants.CODE_FORMATTER);
-		if (selection != null) {
+		String formatterID= fPrefs.get(CCorePreferenceConstants.CODE_FORMATTER, fDefaultFormatterId);
+		if (formatterID != null) {
 			Iterator iterator = idMap.entrySet().iterator();
 			while (iterator.hasNext()) {
 				Map.Entry entry = (Map.Entry)iterator.next();
 				String val = (String)entry.getValue();
-				if (val != null && val.equals(selection)) {
+				if (val != null && val.equals(formatterID)) {
 					fFormatterCombo.setText((String)entry.getKey());
 					init = true;
 				}
 			}
 		}
 		if (!init) {
-			fFormatterCombo.setText(NONE);
+			formatterID= null;
+			fFormatterCombo.setText(DEFAULT);
 		}
 	}
 
 	private void initializeFormatters() {
 		idMap = new HashMap();
-		idMap.put(NONE, null);
+		idMap.put(DEFAULT, null);
 		IExtensionPoint point = Platform.getExtensionRegistry().getExtensionPoint(CCorePlugin.PLUGIN_ID, CCorePlugin.FORMATTER_EXTPOINT_ID);
 		if (point != null) {
 			IExtension[] exts = point.getExtensions();
@@ -165,7 +184,8 @@ public class CustomCodeFormatterBlock {
 		 		IConfigurationElement[] elements = exts[i].getConfigurationElements();
 		 		for (int j = 0; j < elements.length; ++j) {
 		 			String name = elements[j].getAttribute(ATTR_NAME);
-		 			idMap.put(name, elements[j].getAttribute(ATTR_ID));
+		 			String id= elements[j].getAttribute(ATTR_ID);
+		 			idMap.put(name, id);
 		 		}
 			}
 		}

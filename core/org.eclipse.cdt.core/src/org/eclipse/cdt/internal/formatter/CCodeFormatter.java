@@ -8,89 +8,168 @@
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
  *     Sergey Prigogin, Google
+ *     Anton Leherbauer (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.formatter;
 
 import java.util.Map;
 
+import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.dom.ICodeReaderFactory;
+import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
+import org.eclipse.cdt.core.dom.ast.gnu.cpp.GPPLanguage;
 import org.eclipse.cdt.core.formatter.CodeFormatter;
 import org.eclipse.cdt.core.formatter.DefaultCodeFormatterConstants;
+import org.eclipse.cdt.core.index.IIndex;
+import org.eclipse.cdt.core.model.CoreModel;
+import org.eclipse.cdt.core.model.ILanguage;
+import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.cdt.core.parser.CodeReader;
+import org.eclipse.cdt.core.parser.IScannerInfo;
+import org.eclipse.cdt.core.parser.ScannerInfo;
+import org.eclipse.cdt.internal.core.dom.SavedCodeReaderFactory;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.text.edits.TextEdit;
 
-
 public class CCodeFormatter extends CodeFormatter {
-  
-  private DefaultCodeFormatterOptions preferences;
-  
-  public CCodeFormatter() {
-    this(new DefaultCodeFormatterOptions(DefaultCodeFormatterConstants.getEclipseDefaultSettings()), null);
-  }
-  
-  public CCodeFormatter(DefaultCodeFormatterOptions preferences) {
-    this(preferences, null);
-  }
 
-  public CCodeFormatter(DefaultCodeFormatterOptions defaultCodeFormatterOptions, Map options) {
-    setOptions(options);
-    if (defaultCodeFormatterOptions != null) {
-      preferences.set(defaultCodeFormatterOptions.getMap());
-    }
-  }
+	private DefaultCodeFormatterOptions preferences;
+	private Map options;
 
-  public CCodeFormatter(Map options) {
-    this(null, options);
-  }
-  
-  public String createIndentationString(final int indentationLevel) {
-    if (indentationLevel < 0) {
-      throw new IllegalArgumentException();
-    }
-    
-    int tabs = 0;
-    int spaces = 0;
-    switch (preferences.tab_char) {
-      case DefaultCodeFormatterOptions.SPACE :
-        spaces = indentationLevel * preferences.tab_size;
-        break;
-        
-      case DefaultCodeFormatterOptions.TAB :
-        tabs = indentationLevel;
-        break;
-        
-      case DefaultCodeFormatterOptions.MIXED :
-        int tabSize = preferences.tab_size;
-        int spaceEquivalents = indentationLevel * preferences.indentation_size;
-        tabs = spaceEquivalents / tabSize;
-        spaces = spaceEquivalents % tabSize;
-        break;
-        
-      default:
-        return EMPTY_STRING;
-    }
-    
-    if (tabs == 0 && spaces == 0) {
-      return EMPTY_STRING;
-    }
-    StringBuffer buffer = new StringBuffer(tabs + spaces);
-    for (int i = 0; i < tabs; i++) {
-      buffer.append('\t');
-    }
-    for(int i = 0; i < spaces; i++) {
-      buffer.append(' ');
-    }
-    return buffer.toString();
-  }
+	public CCodeFormatter() {
+		this(DefaultCodeFormatterOptions.getDefaultSettings());
+	}
 
-  public void setOptions(Map options) {
-    if (options != null) {
-      preferences = new DefaultCodeFormatterOptions(options);
-    } else {
-      preferences = new DefaultCodeFormatterOptions(DefaultCodeFormatterConstants.getEclipseDefaultSettings());
-    }
-  }
+	public CCodeFormatter(DefaultCodeFormatterOptions preferences) {
+		this(preferences, null);
+	}
 
-  public TextEdit format(int kind, String source, int offset, int length, int indentationLevel, String lineSeparator) {
-    // TODO Not implemented yet
-    return null;
-  }
+	public CCodeFormatter(DefaultCodeFormatterOptions defaultCodeFormatterOptions, Map options) {
+		setOptions(options);
+		if (defaultCodeFormatterOptions != null) {
+			preferences.set(defaultCodeFormatterOptions.getMap());
+		}
+	}
+
+	public CCodeFormatter(Map options) {
+		this(null, options);
+	}
+
+	public String createIndentationString(final int indentationLevel) {
+		if (indentationLevel < 0) {
+			throw new IllegalArgumentException();
+		}
+
+		int tabs= 0;
+		int spaces= 0;
+		switch (preferences.tab_char) {
+		case DefaultCodeFormatterOptions.SPACE:
+			spaces= indentationLevel * preferences.tab_size;
+			break;
+
+		case DefaultCodeFormatterOptions.TAB:
+			tabs= indentationLevel;
+			break;
+
+		case DefaultCodeFormatterOptions.MIXED:
+			int tabSize= preferences.tab_size;
+			int spaceEquivalents= indentationLevel
+					* preferences.indentation_size;
+			tabs= spaceEquivalents / tabSize;
+			spaces= spaceEquivalents % tabSize;
+			break;
+
+		default:
+			return EMPTY_STRING;
+		}
+
+		if (tabs == 0 && spaces == 0) {
+			return EMPTY_STRING;
+		}
+		StringBuffer buffer= new StringBuffer(tabs + spaces);
+		for (int i= 0; i < tabs; i++) {
+			buffer.append('\t');
+		}
+		for (int i= 0; i < spaces; i++) {
+			buffer.append(' ');
+		}
+		return buffer.toString();
+	}
+
+	public void setOptions(Map options) {
+		if (options != null) {
+			this.options= options;
+			preferences= new DefaultCodeFormatterOptions(options);
+		} else {
+			this.options= CCorePlugin.getOptions();
+			preferences= DefaultCodeFormatterOptions.getDefaultSettings();
+		}
+	}
+
+	/*
+	 * @see org.eclipse.cdt.core.formatter.CodeFormatter#format(int, java.lang.String, int, int, int, java.lang.String)
+	 */
+	public TextEdit format(int kind, String source, int offset, int length, int indentationLevel, String lineSeparator) {
+		TextEdit edit= null;
+		ITranslationUnit tu= (ITranslationUnit)options.get(DefaultCodeFormatterConstants.FORMATTER_TRANSLATION_UNIT);
+		if (tu == null) {
+			IFile file= (IFile)options.get(DefaultCodeFormatterConstants.FORMATTER_CURRENT_FILE);
+			if (file != null) {
+				tu= (ITranslationUnit)CoreModel.getDefault().create(file);
+			}
+		}
+		if (lineSeparator != null) {
+			this.preferences.line_separator = lineSeparator;
+		} else {
+			this.preferences.line_separator = System.getProperty("line.separator");
+		}
+		this.preferences.initial_indentation_level = indentationLevel;
+
+		if (tu != null) {
+			IIndex index;
+			try {
+				index = CCorePlugin.getIndexManager().getIndex(tu.getCProject());
+				index.acquireReadLock();
+			} catch (CoreException e) {
+				throw new AbortFormatting(e);
+			} catch (InterruptedException e) {
+				return null;
+			}
+			IASTTranslationUnit ast;
+			try {
+				try {
+					ast= tu.getAST(index, ITranslationUnit.AST_SKIP_ALL_HEADERS);
+				} catch (CoreException exc) {
+					throw new AbortFormatting(exc);
+				}
+				CodeFormatterVisitor codeFormatter = new CodeFormatterVisitor(this.preferences, this.options, offset, length);
+				edit= codeFormatter.format(source, ast);
+			} finally {
+				index.releaseReadLock();
+			}
+		} else {
+			ICodeReaderFactory codeReaderFactory;
+			codeReaderFactory = SavedCodeReaderFactory.getInstance();
+			
+			IScannerInfo scanInfo = new ScannerInfo();
+			
+			CodeReader reader;
+			reader= new CodeReader(source.toCharArray());
+			
+			ILanguage language= (ILanguage)options.get(DefaultCodeFormatterConstants.FORMATTER_LANGUAGE);
+			if (language == null) {
+				language= GPPLanguage.getDefault();
+			}
+			IASTTranslationUnit ast;
+			try {
+				ast= language.getASTTranslationUnit(reader, scanInfo, codeReaderFactory, null);
+				CodeFormatterVisitor codeFormatter = new CodeFormatterVisitor(this.preferences, this.options, offset, length);
+				edit= codeFormatter.format(source, ast);
+			} catch (CoreException exc) {
+				throw new AbortFormatting(exc);
+			}
+		}
+		return edit;
+	}
 }

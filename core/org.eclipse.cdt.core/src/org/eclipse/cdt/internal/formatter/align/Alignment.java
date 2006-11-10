@@ -10,9 +10,14 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.formatter.align;
 
+import org.eclipse.cdt.internal.formatter.Location;
+import org.eclipse.cdt.internal.formatter.Scribe;
+
 
 /**
  * Alignment management
+ * 
+ * @since 4.0
  */
 public class Alignment {
 
@@ -22,6 +27,9 @@ public class Alignment {
 	// link to enclosing alignment
 	public Alignment enclosing;
 	 
+	// start location of this alignment
+	public Location location;
+	
 	// indentation management
 	public int fragmentIndex;
 	public int fragmentCount;
@@ -39,6 +47,8 @@ public class Alignment {
 	public int[] fragmentBreaks;
 	public boolean wasSplit;
 
+	public Scribe scribe;
+	
 	/* 
 	 * Alignment modes
 	 */
@@ -56,7 +66,7 @@ public class Alignment {
 
 	/** foobar(<ul>
 	 * <li>    #fragment1, #fragment2,  </li>
-	 * <li>     #fragment5, #fragment4, </li>
+	 * <li>    #fragment5, #fragment4, </li>
 	 * </ul>
 	 */
 	public static final int M_COMPACT_FIRST_BREAK_SPLIT = 32; //  compact mode, but will first try to break before first fragment
@@ -72,10 +82,10 @@ public class Alignment {
 
 	/** 
 	 * foobar(<ul>
-	 * <li>     #fragment1,  </li>
-	 * <li>        #fragment2,  </li>
-	 * <li>        #fragment3 </li>
-	 * <li>        #fragment4,  </li>
+	 * <li>     #fragment1, </li>
+	 * <li>     #fragment2, </li>
+	 * <li>     #fragment3, </li>
+	 * <li>     #fragment4, </li>
 	 * </ul>
 	 */ 
 	public static final int M_NEXT_SHIFTED_SPLIT = 64; // one fragment per line, subsequent are indented further
@@ -121,4 +131,288 @@ public class Alignment {
 	public static final int CHUNK_METHOD = 2;
 	public static final int CHUNK_TYPE = 3;
 	public static final int CHUNK_ENUM = 4;
+
+	// location to align and break on.
+	public Alignment(String name, int mode, int tieBreakRule, Scribe scribe, int fragmentCount, int sourceRestart, int continuationIndent){
+		
+		this.name = name;
+		this.location = new Location(scribe, sourceRestart);
+		this.mode = mode;
+		this.tieBreakRule = tieBreakRule;
+		this.fragmentCount = fragmentCount;
+		this.scribe = scribe;
+		this.originalIndentationLevel = this.scribe.indentationLevel;
+		this.wasSplit = false;
+		
+		// initialize the break indentation level, using modes and continuationIndentationLevel preference
+		final int indentSize = this.scribe.indentationSize;
+		int currentColumn = this.location.outputColumn;
+		if (currentColumn == 1) {
+		    currentColumn = this.location.outputIndentationLevel + 1;
+		}
+		
+		if ((mode & M_INDENT_ON_COLUMN) != 0) {
+			// indent broken fragments at next indentation level, based on current column
+			this.breakIndentationLevel = this.scribe.getNextIndentationLevel(currentColumn);
+			if (this.breakIndentationLevel == this.location.outputIndentationLevel) {
+				this.breakIndentationLevel += (continuationIndent * indentSize);
+			}
+		} else if ((mode & M_INDENT_BY_ONE) != 0) {
+			// indent broken fragments exactly one level deeper than current indentation
+			this.breakIndentationLevel = this.location.outputIndentationLevel + indentSize;
+		} else {
+			this.breakIndentationLevel = this.location.outputIndentationLevel + continuationIndent * indentSize;
+		}
+		this.shiftBreakIndentationLevel = this.breakIndentationLevel + indentSize;
+
+		this.fragmentIndentations = new int[this.fragmentCount];
+		this.fragmentBreaks = new int[this.fragmentCount];
+
+		// check for forced alignments
+		if ((this.mode & M_FORCE) != 0) {
+			couldBreak();
+		}					
+	}
+	
+	public boolean checkChunkStart(int kind, int startIndex, int sourceRestart) {
+		if (this.chunkKind != kind) {
+			this.chunkKind = kind;
+			
+			// when redoing same chunk alignment, must not reset
+			if (startIndex != this.chunkStartIndex) {
+				this.chunkStartIndex = startIndex;
+				this.location.update(this.scribe, sourceRestart);
+				reset();
+			}
+			return true;
+		}
+		return false;
+	}
+
+	public void checkColumn() {
+		if ((this.mode & M_MULTICOLUMN) != 0) {
+			int currentIndentation = this.scribe.getNextIndentationLevel(this.scribe.column+(this.scribe.needSpace ? 1 : 0));
+			int fragmentIndentation = this.fragmentIndentations[this.fragmentIndex];
+			if (currentIndentation > fragmentIndentation) {
+				this.fragmentIndentations[this.fragmentIndex] =  currentIndentation;
+				if (fragmentIndentation != 0) {
+					for (int i = this.fragmentIndex+1; i < this.fragmentCount; i++) {
+						this.fragmentIndentations[i] = 0;
+					}
+					this.needRedoColumnAlignment = true;
+				}
+			}
+			// backtrack only once all fragments got checked
+			if (this.needRedoColumnAlignment && this.fragmentIndex == this.fragmentCount-1) { // alignment too small
+
+//				if (CodeFormatterVisitor.DEBUG){
+//					System.out.println("ALIGNMENT TOO SMALL");
+//					System.out.println(this);
+//				}
+				this.needRedoColumnAlignment = false;
+				int relativeDepth = 0;
+				Alignment targetAlignment = this.scribe.memberAlignment;
+				while (targetAlignment != null){
+					if (targetAlignment == this){
+						throw new AlignmentException(AlignmentException.ALIGN_TOO_SMALL, relativeDepth);
+					}
+					targetAlignment = targetAlignment.enclosing;
+					relativeDepth++;
+				}
+			}
+		}
+	}
+		
+	public boolean couldBreak(){
+		int i;
+		switch(mode & SPLIT_MASK){
+
+			/*  # aligned fragment
+			 *  foo(
+			 *     #AAAAA, #BBBBB,
+			 *     #CCCC);
+			 */
+			case M_COMPACT_FIRST_BREAK_SPLIT : 
+				if (this.fragmentBreaks[0] == NONE) {
+					this.fragmentBreaks[0] = BREAK;
+					this.fragmentIndentations[0] = this.breakIndentationLevel;
+					return wasSplit = true;
+				}
+				i = this.fragmentIndex;
+				do {
+					if (this.fragmentBreaks[i] == NONE) {
+						this.fragmentBreaks[i] = BREAK;
+						this.fragmentIndentations[i] = this.breakIndentationLevel;
+						return wasSplit = true;
+					}
+				} while (--i >= 0);
+				break;
+			/*  # aligned fragment
+			 *  foo(#AAAAA, #BBBBB,
+			 *     #CCCC);
+			 */
+			case M_COMPACT_SPLIT : 
+				i = this.fragmentIndex;
+				do {
+					if (this.fragmentBreaks[i] == NONE) {
+						this.fragmentBreaks[i] = BREAK;
+						this.fragmentIndentations[i] = this.breakIndentationLevel;						
+						return wasSplit = true;
+					}
+				} while (--i >= 0);
+				break;
+
+			/*  # aligned fragment
+			 *  foo(
+			 *      #AAAAA,
+			 *          #BBBBB,
+			 *          #CCCC);
+			 */
+			case M_NEXT_SHIFTED_SPLIT :
+				if (this.fragmentBreaks[0] == NONE) {
+					this.fragmentBreaks[0] = BREAK;					
+					this.fragmentIndentations[0] = this.breakIndentationLevel;
+					for (i = 1; i < this.fragmentCount; i++){
+						this.fragmentBreaks[i] = BREAK;
+						this.fragmentIndentations[i] = this.shiftBreakIndentationLevel;
+					}
+					return wasSplit = true;
+				}
+				break;
+				
+			/*  # aligned fragment
+			 *  foo(
+			 *      #AAAAA,
+			 *      #BBBBB,
+			 *      #CCCC);
+			 */
+			case M_ONE_PER_LINE_SPLIT :
+				if (this.fragmentBreaks[0] == NONE) {
+					for (i = 0; i < this.fragmentCount; i++){
+						this.fragmentBreaks[i] = BREAK;
+						this.fragmentIndentations[i] = this.breakIndentationLevel;
+					}
+					return wasSplit = true;
+				}
+			/*  # aligned fragment
+			 *  foo(#AAAAA,
+			 *      #BBBBB,
+			 *      #CCCC);
+			 */
+			case M_NEXT_PER_LINE_SPLIT : 
+				if (this.fragmentBreaks[0] == NONE) {
+					if (this.fragmentCount > 1
+							&& this.fragmentBreaks[1] == NONE) {
+						if ((this.mode & M_INDENT_ON_COLUMN) != 0) {
+							this.fragmentIndentations[0] = this.breakIndentationLevel;
+						}
+						for (i = 1; i < this.fragmentCount; i++) {
+							this.fragmentBreaks[i] = BREAK;
+							this.fragmentIndentations[i] = this.breakIndentationLevel;
+						}
+						return wasSplit = true;
+					}
+				}
+				break;
+		}		
+		return false; // cannot split better
+	}
+	
+	public Alignment getAlignment(String targetName) {
+
+		if (targetName.equals(this.name)) return this;
+		if (this.enclosing == null) return null;
+		
+		return this.enclosing.getAlignment(targetName);
+	}
+		
+	// perform alignment effect for current fragment
+	public void performFragmentEffect(){
+		if ((this.mode & M_MULTICOLUMN) == 0) {
+			switch(this.mode & SPLIT_MASK) {
+				case Alignment.M_COMPACT_SPLIT :
+				case Alignment.M_COMPACT_FIRST_BREAK_SPLIT :
+				case Alignment.M_NEXT_PER_LINE_SPLIT :
+				case Alignment.M_NEXT_SHIFTED_SPLIT :
+				case Alignment.M_ONE_PER_LINE_SPLIT :
+					break;
+				default:
+					return;
+			}
+		}
+		
+		if (this.fragmentBreaks[this.fragmentIndex] == BREAK) {
+			this.scribe.printNewLine();
+		}
+		if (this.fragmentIndentations[this.fragmentIndex] > 0) {
+			this.scribe.indentationLevel = this.fragmentIndentations[this.fragmentIndex];
+		}
+	}					
+
+	// reset fragment indentation/break status	
+	public void reset() {
+
+		if (fragmentCount > 0){
+			this.fragmentIndentations = new int[this.fragmentCount];
+			this.fragmentBreaks = new int[this.fragmentCount];
+		}
+
+		// check for forced alignments
+		if ((mode & M_FORCE) != 0) {
+			couldBreak();
+		}		
+	}		
+
+	public void toFragmentsString(StringBuffer buffer){
+		// default implementation
+	}
+	
+	public String toString() {
+		StringBuffer buffer = new StringBuffer(10);
+		buffer
+			.append(getClass().getName())
+			.append(':')
+			.append("<name: ")	//$NON-NLS-1$
+			.append(this.name)
+			.append(">");	//$NON-NLS-1$
+		if (this.enclosing != null) {
+			buffer
+				.append("<enclosingName: ")	//$NON-NLS-1$
+				.append(this.enclosing.name)
+				.append('>');
+		}
+		buffer.append('\n');	
+
+		for (int i = 0; i < this.fragmentCount; i++){
+			buffer
+				.append(" - fragment ")	//$NON-NLS-1$
+				.append(i)
+				.append(": ")	//$NON-NLS-1$
+				.append("<break: ")	//$NON-NLS-1$
+				.append(this.fragmentBreaks[i] > 0 ? "YES" : "NO")	//$NON-NLS-1$	//$NON-NLS-2$
+				.append(">")	//$NON-NLS-1$
+				.append("<indent: ")	//$NON-NLS-1$
+				.append(this.fragmentIndentations[i])
+				.append(">\n");	//$NON-NLS-1$
+		}
+		buffer.append('\n');	
+		return buffer.toString();
+	}
+	
+	public void update() {
+		for (int i = 1; i < this.fragmentCount; i++){
+		    if (this.fragmentBreaks[i] == BREAK) {
+		        this.fragmentIndentations[i] = this.breakIndentationLevel;
+		    }
+		}
+	}
+
+	public boolean isWrapped() {
+		for (int i = 0, max = this.fragmentCount; i < max; i++) {
+			if (this.fragmentBreaks[i] == BREAK) {
+				return true;
+			}
+		}
+		return false;
+	}
 }

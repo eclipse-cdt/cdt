@@ -14,9 +14,7 @@ package org.eclipse.cdt.internal.ui.text;
 
 import java.util.Arrays;
 
-import org.eclipse.cdt.ui.text.ICPartitions;
-
-import org.eclipse.jface.text.Assert;
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
@@ -24,6 +22,8 @@ import org.eclipse.jface.text.ITypedRegion;
 import org.eclipse.jface.text.Region;
 import org.eclipse.jface.text.TextUtilities;
 import org.eclipse.jface.text.TypedRegion;
+
+import org.eclipse.cdt.ui.text.ICPartitions;
 
 /**
  * Utility methods for heuristic based C manipulations in an incomplete C source file.

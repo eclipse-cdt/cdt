@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Sergey Prigogin, Google
+ *     Anton Leherbauer (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.preferences.formatter;
 
@@ -24,6 +25,14 @@ final class FormatterMessages extends NLS {
 		// Do not instantiate
 	}
 
+	public static String ModifyDialog_BuiltIn_Status;
+	public static String ModifyDialog_Duplicate_Status;
+	public static String ModifyDialog_EmptyName_Status;
+	public static String ModifyDialog_Export_Button;
+	public static String ModifyDialog_NewCreated_Status;
+	public static String ModifyDialog_ProfileName_Label;
+	public static String ModifyDialog_Shared_Status;
+	public static String ProfileConfigurationBlock_load_profile_wrong_profile_message;
 //	public static String WhiteSpaceTabPage_assignments;
 //	public static String WhiteSpaceTabPage_assignments_before_assignment_operator;
 //	public static String WhiteSpaceTabPage_assignments_after_assignment_operator;
@@ -252,46 +261,46 @@ final class FormatterMessages extends NLS {
 //	public static String LineWrappingTabPage_enum_constant_arguments;
 //	public static String LineWrappingTabPage_enum_constants;
 //	public static String LineWrappingTabPage_implements_clause;
-//	public static String LineWrappingTabPage_parameters;
-//	public static String LineWrappingTabPage_arguments;
+	public static String LineWrappingTabPage_parameters;
+	public static String LineWrappingTabPage_arguments;
 //	public static String LineWrappingTabPage_qualified_invocations;
 //	public static String LineWrappingTabPage_throws_clause;
 //	public static String LineWrappingTabPage_object_allocation;
 //	public static String LineWrappingTabPage_qualified_object_allocation;
-//	public static String LineWrappingTabPage_array_init;
+	public static String LineWrappingTabPage_array_init;
 //	public static String LineWrappingTabPage_explicit_constructor_invocations;
-//	public static String LineWrappingTabPage_conditionals;
+	public static String LineWrappingTabPage_conditionals;
 //	public static String LineWrappingTabPage_binary_exprs;
-//	public static String LineWrappingTabPage_indentation_default;
-//	public static String LineWrappingTabPage_indentation_on_column;
-//	public static String LineWrappingTabPage_indentation_by_one;
+	public static String LineWrappingTabPage_indentation_default;
+	public static String LineWrappingTabPage_indentation_on_column;
+	public static String LineWrappingTabPage_indentation_by_one;
 //	public static String LineWrappingTabPage_class_decls;
-//	public static String LineWrappingTabPage_method_decls;
+	public static String LineWrappingTabPage_method_decls;
 //	public static String LineWrappingTabPage_constructor_decls;
-//	public static String LineWrappingTabPage_function_calls;
-//	public static String LineWrappingTabPage_expressions;
+	public static String LineWrappingTabPage_function_calls;
+	public static String LineWrappingTabPage_expressions;
 //	public static String LineWrappingTabPage_statements;
 //	public static String LineWrappingTabPage_enum_decls;
-//	public static String LineWrappingTabPage_wrapping_policy_label_text;
-//	public static String LineWrappingTabPage_indentation_policy_label_text;
-//	public static String LineWrappingTabPage_force_split_checkbox_text;
-//	public static String LineWrappingTabPage_force_split_checkbox_multi_text;
-//	public static String LineWrappingTabPage_line_width_for_preview_label_text;
-//	public static String LineWrappingTabPage_group;
-//	public static String LineWrappingTabPage_multi_group;
-//	public static String LineWrappingTabPage_multiple_selections;
-//	public static String LineWrappingTabPage_occurences;
-//	public static String LineWrappingTabPage_splitting_do_not_split;
-//	public static String LineWrappingTabPage_splitting_wrap_when_necessary;
-//	public static String LineWrappingTabPage_splitting_always_wrap_first_others_when_necessary;
-//	public static String LineWrappingTabPage_splitting_wrap_always;
-//	public static String LineWrappingTabPage_splitting_wrap_always_indent_all_but_first;
-//	public static String LineWrappingTabPage_splitting_wrap_always_except_first_only_if_necessary;
-//	public static String LineWrappingTabPage_width_indent;
-//	public static String LineWrappingTabPage_width_indent_option_max_line_width;
-//	public static String LineWrappingTabPage_width_indent_option_default_indent_wrapped;
+	public static String LineWrappingTabPage_wrapping_policy_label_text;
+	public static String LineWrappingTabPage_indentation_policy_label_text;
+	public static String LineWrappingTabPage_force_split_checkbox_text;
+	public static String LineWrappingTabPage_force_split_checkbox_multi_text;
+	public static String LineWrappingTabPage_line_width_for_preview_label_text;
+	public static String LineWrappingTabPage_group;
+	public static String LineWrappingTabPage_multi_group;
+	public static String LineWrappingTabPage_multiple_selections;
+	public static String LineWrappingTabPage_occurences;
+	public static String LineWrappingTabPage_splitting_do_not_split;
+	public static String LineWrappingTabPage_splitting_wrap_when_necessary;
+	public static String LineWrappingTabPage_splitting_always_wrap_first_others_when_necessary;
+	public static String LineWrappingTabPage_splitting_wrap_always;
+	public static String LineWrappingTabPage_splitting_wrap_always_indent_all_but_first;
+	public static String LineWrappingTabPage_splitting_wrap_always_except_first_only_if_necessary;
+	public static String LineWrappingTabPage_width_indent;
+	public static String LineWrappingTabPage_width_indent_option_max_line_width;
+	public static String LineWrappingTabPage_width_indent_option_default_indent_wrapped;
 //	public static String LineWrappingTabPage_width_indent_option_default_indent_array;
-//	public static String LineWrappingTabPage_error_invalid_value;
+	public static String LineWrappingTabPage_error_invalid_value;
 //	public static String LineWrappingTabPage_enum_superinterfaces;
 //	public static String LineWrappingTabPage_assignment_alignment;
 	public static String AlreadyExistsDialog_message_profile_already_exists;
@@ -316,19 +325,19 @@ final class FormatterMessages extends NLS {
 //	public static String BlankLinesTabPage_class_option_at_beginning_of_method_body;
 //	public static String BlankLinesTabPage_blank_lines_group_title;
 //	public static String BlankLinesTabPage_blank_lines_option_empty_lines_to_preserve;
-//	public static String BracesTabPage_preview_header;
-//	public static String BracesTabPage_position_same_line;
-//	public static String BracesTabPage_position_next_line;
-//	public static String BracesTabPage_position_next_line_indented;
-//	public static String BracesTabPage_position_next_line_on_wrap;
-//	public static String BracesTabPage_group_brace_positions_title;
-//	public static String BracesTabPage_option_class_declaration;
+	public static String BracesTabPage_preview_header;
+	public static String BracesTabPage_position_same_line;
+	public static String BracesTabPage_position_next_line;
+	public static String BracesTabPage_position_next_line_indented;
+	public static String BracesTabPage_position_next_line_on_wrap;
+	public static String BracesTabPage_group_brace_positions_title;
+	public static String BracesTabPage_option_class_declaration;
 //	public static String BracesTabPage_option_anonymous_class_declaration;
-//	public static String BracesTabPage_option_method_declaration;
+	public static String BracesTabPage_option_method_declaration;
 //	public static String BracesTabPage_option_constructor_declaration;
-//	public static String BracesTabPage_option_blocks;
-//	public static String BracesTabPage_option_blocks_in_case;
-//	public static String BracesTabPage_option_switch_case;
+	public static String BracesTabPage_option_blocks;
+	public static String BracesTabPage_option_blocks_in_case;
+	public static String BracesTabPage_option_switch_case;
 //	public static String BracesTabPage_option_array_initializer;
 //	public static String BracesTabPage_option_keep_empty_array_initializer_on_one_line;
 //	public static String BracesTabPage_option_enum_declaration;
@@ -358,7 +367,8 @@ final class FormatterMessages extends NLS {
 	public static String CodingStyleConfigurationBlock_delete_confirmation_title;
 	public static String CodingStyleConfigurationBlock_delete_confirmation_question;
 	public static String CustomCodeFormatterBlock_formatter_name;
-	public static String CustomCodeFormatterBlock_no_formatter;
+	public static String CustomCodeFormatterBlock_default_formatter;
+	public static String CustomCodeFormatterBlock_formatter_note;
 	public static String CustomCodeFormatterBlock_contributed_formatter_warning;
 //	public static String CommentsTabPage_group1_title;
 //	public static String CommentsTabPage_enable_comment_formatting;
@@ -397,8 +407,8 @@ final class FormatterMessages extends NLS {
 	public static String IndentationTabPage_general_group_option_tab_policy_MIXED;
 	public static String IndentationTabPage_general_group_option_tab_size;
 	public static String IndentationTabPage_general_group_option_indent_size;
-	public static String IndentationTabPage_field_alignment_group_title;
-	public static String IndentationTabPage_field_alignment_group_align_fields_in_columns;
+//	public static String IndentationTabPage_field_alignment_group_title;
+//	public static String IndentationTabPage_field_alignment_group_align_fields_in_columns;
 	public static String IndentationTabPage_indent_group_title;
 	public static String IndentationTabPage_class_group_option_indent_access_specifiers_within_class_body;
 	public static String IndentationTabPage_class_group_option_indent_declarations_compare_to_access_specifiers;
@@ -409,20 +419,20 @@ final class FormatterMessages extends NLS {
 	public static String IndentationTabPage_switch_group_option_indent_statements_within_switch_body;
 	public static String IndentationTabPage_switch_group_option_indent_statements_within_case_body;
 	public static String IndentationTabPage_switch_group_option_indent_break_statements;
+	public static String IndentationTabPage_namespace_group_option_indent_declarations_within_namespace;
     public static String IndentationTabPage_indent_empty_lines;
 	public static String IndentationTabPage_use_tabs_only_for_leading_indentations;
+	public static String IndentationTabPage_show_whitespace_in_preview_label_text;
 	public static String ModifyDialog_dialog_title;
 	public static String ModifyDialog_apply_button;
-	public static String ModifyDialog_dialog_show_title;
-	public static String ModifyDialog_dialog_show_warning_builtin;
 	public static String ModifyDialog_tabpage_braces_title;
 	public static String ModifyDialog_tabpage_indentation_title;
-	public static String ModifyDialog_tabpage_whitespace_title;
-	public static String ModifyDialog_tabpage_blank_lines_title;
-	public static String ModifyDialog_tabpage_new_lines_title;
-	public static String ModifyDialog_tabpage_control_statements_title;
+//	public static String ModifyDialog_tabpage_whitespace_title;
+//	public static String ModifyDialog_tabpage_blank_lines_title;
+//	public static String ModifyDialog_tabpage_new_lines_title;
+//	public static String ModifyDialog_tabpage_control_statements_title;
 	public static String ModifyDialog_tabpage_line_wrapping_title;
-	public static String ModifyDialog_tabpage_comments_title;
+//	public static String ModifyDialog_tabpage_comments_title;
 	public static String ModifyDialogTabPage_preview_label_text;
 	public static String ModifyDialogTabPage_error_msg_values_text_unassigned;
 	public static String ModifyDialogTabPage_error_msg_values_items_text_unassigned;
@@ -445,13 +455,12 @@ final class FormatterMessages extends NLS {
 //	public static String NewLinesTabPage_array_group_option_before_closing_brace_of_array_initializer;
 //	public static String NewLinesTabPage_annotations_group_title;
 //	public static String NewLinesTabPage_annotations_group_option_after_annotation;
-	public static String ProfileManager_default_profile_name;
+	public static String ProfileManager_kandr_profile_name;
+	public static String ProfileManager_allman_profile_name;
+	public static String ProfileManager_gnu_profile_name;
+	public static String ProfileManager_whitesmiths_profile_name;
 	public static String ProfileManager_unmanaged_profile;
 	public static String ProfileManager_unmanaged_profile_with_name;
-	public static String RenameProfileDialog_status_message_profile_with_this_name_already_exists;
-	public static String RenameProfileDialog_status_message_profile_name_empty;
-	public static String RenameProfileDialog_dialog_title;
-	public static String RenameProfileDialog_dialog_label_enter_a_new_name;
 
 	public static String CPreview_formatter_exception;
 

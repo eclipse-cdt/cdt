@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,38 +8,56 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Sergey Prigogin, Google
+ *     Anton Leherbauer (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.preferences.formatter;
 
+import java.io.File;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
-
+import org.eclipse.core.runtime.content.IContentType;
+import org.eclipse.cdt.internal.ui.preferences.formatter.ModifyDialogTabPage;
+import org.eclipse.cdt.internal.ui.preferences.formatter.ProfileManager.CustomProfile;
+import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.IDialogSettings;
+import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.dialogs.StatusDialog;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
-
-import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.jface.dialogs.IDialogSettings;
-import org.eclipse.jface.dialogs.StatusDialog;
-import org.eclipse.jface.window.Window;
-
-import org.eclipse.cdt.internal.ui.util.Messages;
+import org.eclipse.swt.widgets.TabFolder;
+import org.eclipse.swt.widgets.TabItem;
 
 import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.cdt.internal.ui.preferences.formatter.ProfileManager.Profile;
 
-public class ModifyDialog extends StatusDialog {
+import org.eclipse.cdt.internal.ui.dialogs.StatusInfo;
+import org.eclipse.cdt.internal.ui.preferences.formatter.ProfileManager.Profile;
+import org.eclipse.cdt.internal.ui.util.ExceptionHandler;
+import org.eclipse.cdt.internal.ui.util.Messages;
+import org.eclipse.cdt.internal.ui.wizards.dialogfields.DialogField;
+import org.eclipse.cdt.internal.ui.wizards.dialogfields.IDialogFieldListener;
+import org.eclipse.cdt.internal.ui.wizards.dialogfields.StringDialogField;
+
+public abstract class ModifyDialog extends StatusDialog {
     
     /**
      * The keys to retrieve the preferred area from the dialog settings.
@@ -54,49 +72,59 @@ public class ModifyDialog extends StatusDialog {
      * focus last time.
      */
     private static final String DS_KEY_LAST_FOCUS= CUIPlugin.PLUGIN_ID + "formatter_page.modify_dialog.last_focus"; //$NON-NLS-1$ 
+    
+    private static final int APPLAY_BUTTON_ID= IDialogConstants.CLIENT_ID;
+    private static final int SAVE_BUTTON_ID= IDialogConstants.CLIENT_ID + 1;
 
-	private final String fTitle;
-	
+	private final String fKeyPreferredWidth;
+	private final String fKeyPreferredHight;
+	private final String fKeyPreferredX;
+	private final String fKeyPreferredY;
+	private final String fKeyLastFocus;
+	private final String fLastSaveLoadPathKey;
+	private final ProfileStore fProfileStore;
 	private final boolean fNewProfile;
-
 	private Profile fProfile;
 	private final Map fWorkingValues;
-	
-	private IStatus fStandardStatus;
-	
-	protected final List fTabPages;
-	
-	final IDialogSettings fDialogSettings;
-//	private TabFolder fTabFolder;
-	private ProfileManager fProfileManager;
-//	private Button fApplyButton;
-		
-	protected ModifyDialog(Shell parentShell, Profile profile, ProfileManager profileManager, boolean newProfile) {
+	private final List fTabPages;
+	private final IDialogSettings fDialogSettings;
+	private TabFolder fTabFolder;
+	private final ProfileManager fProfileManager;
+	private Button fApplyButton;
+	private Button fSaveButton;
+	private StringDialogField fProfileNameField;
+
+	protected ModifyDialog(Shell parentShell, Profile profile, ProfileManager profileManager, ProfileStore profileStore, boolean newProfile, String dialogPreferencesKey, String lastSavePathKey) {
 		super(parentShell);
+		
+		fProfileStore= profileStore;
+		fLastSaveLoadPathKey= lastSavePathKey;
+
+		fKeyPreferredWidth= CUIPlugin.PLUGIN_ID + dialogPreferencesKey + DS_KEY_PREFERRED_WIDTH;
+		fKeyPreferredHight= CUIPlugin.PLUGIN_ID + dialogPreferencesKey + DS_KEY_PREFERRED_HEIGHT;
+		fKeyPreferredX= CUIPlugin.PLUGIN_ID + dialogPreferencesKey + DS_KEY_PREFERRED_X;
+		fKeyPreferredY= CUIPlugin.PLUGIN_ID + dialogPreferencesKey + DS_KEY_PREFERRED_Y;
+		fKeyLastFocus= CUIPlugin.PLUGIN_ID + dialogPreferencesKey + DS_KEY_LAST_FOCUS;
+
 		fProfileManager= profileManager;
 		fNewProfile= newProfile;
 		setShellStyle(getShellStyle() | SWT.RESIZE | SWT.MAX );
 				
 		fProfile= profile;
-		if (fProfile.isBuiltInProfile()) {
-		    fStandardStatus= new Status(IStatus.INFO, CUIPlugin.getPluginId(), IStatus.OK, FormatterMessages.ModifyDialog_dialog_show_warning_builtin, null); 
-		    fTitle= Messages.format(FormatterMessages.ModifyDialog_dialog_show_title, profile.getName()); 
-		} else {
-		    fStandardStatus= new Status(IStatus.OK, CUIPlugin.getPluginId(), IStatus.OK, "", null); //$NON-NLS-1$
-		    fTitle= Messages.format(FormatterMessages.ModifyDialog_dialog_title, profile.getName()); 
-		}
+		setTitle(Messages.format(FormatterMessages.ModifyDialog_dialog_title, profile.getName()));
 		fWorkingValues= new HashMap(fProfile.getSettings());
-		updateStatus(fStandardStatus);
 		setStatusLineAboveButtons(false);
 		fTabPages= new ArrayList();
 		fDialogSettings= CUIPlugin.getDefault().getDialogSettings();	
 	}
+
+	protected abstract void addPages(Map values);
 	
 	public void create() {
 		super.create();
 		int lastFocusNr= 0;
 		try {
-			lastFocusNr= fDialogSettings.getInt(DS_KEY_LAST_FOCUS);
+			lastFocusNr= fDialogSettings.getInt(fKeyLastFocus);
 			if (lastFocusNr < 0) lastFocusNr= 0;
 			if (lastFocusNr > fTabPages.size() - 1) lastFocusNr= fTabPages.size() - 1;
 		} catch (NumberFormatException x) {
@@ -104,90 +132,100 @@ public class ModifyDialog extends StatusDialog {
 		}
 		
 		if (!fNewProfile) {
-//			fTabFolder.setSelection(lastFocusNr);
-//			((ModifyDialogTabPage)fTabFolder.getSelection()[0].getData()).setInitialFocus();
+			fTabFolder.setSelection(lastFocusNr);
+			((ModifyDialogTabPage)fTabFolder.getSelection()[0].getData()).setInitialFocus();
 		}
 	}
 	
-	protected void configureShell(Shell shell) {
-		super.configureShell(shell);
-		shell.setText(fTitle);
-	}
-
 	protected Control createDialogArea(Composite parent) {
 		
 		final Composite composite= (Composite)super.createDialogArea(parent);
-
-		ModifyDialogTabPage tabPage = new IndentationTabPage(this, fWorkingValues);
-		tabPage.createContents(composite);
-//		fTabFolder = new TabFolder(composite, SWT.NONE);
-//		fTabFolder.setFont(composite.getFont());
-//		fTabFolder.setLayoutData(new GridData(GridData.FILL_BOTH));
-//
-//		addTabPage(fTabFolder, FormatterMessages.ModifyDialog_tabpage_indentation_title, new IndentationTabPage(this, fWorkingValues)); 
-//		addTabPage(fTabFolder, FormatterMessages.ModifyDialog_tabpage_braces_title, new BracesTabPage(this, fWorkingValues)); 
-//		addTabPage(fTabFolder, FormatterMessages.ModifyDialog_tabpage_whitespace_title, new WhiteSpaceTabPage(this, fWorkingValues)); 
-//		addTabPage(fTabFolder, FormatterMessages.ModifyDialog_tabpage_blank_lines_title, new BlankLinesTabPage(this, fWorkingValues)); 
-//		addTabPage(fTabFolder, FormatterMessages.ModifyDialog_tabpage_new_lines_title, new NewLinesTabPage(this, fWorkingValues)); 
-//		addTabPage(fTabFolder, FormatterMessages.ModifyDialog_tabpage_control_statements_title, new ControlStatementsTabPage(this, fWorkingValues)); 
-//		addTabPage(fTabFolder, FormatterMessages.ModifyDialog_tabpage_line_wrapping_title, new LineWrappingTabPage(this, fWorkingValues)); 
-//		addTabPage(fTabFolder, FormatterMessages.ModifyDialog_tabpage_comments_title, new CommentsTabPage(this, fWorkingValues)); 
 		
+		Composite nameComposite= new Composite(composite, SWT.NONE);
+		nameComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
+		nameComposite.setLayout(new GridLayout(3, false));
+		
+		fProfileNameField= new StringDialogField();
+		fProfileNameField.setLabelText(FormatterMessages.ModifyDialog_ProfileName_Label);
+		fProfileNameField.setText(fProfile.getName());
+		fProfileNameField.getLabelControl(nameComposite).setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false));
+		fProfileNameField.getTextControl(nameComposite).setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
+		fProfileNameField.setDialogFieldListener(new IDialogFieldListener() {
+			public void dialogFieldChanged(DialogField field) {
+				doValidate();
+            }
+		});
+		
+		fSaveButton= createButton(nameComposite, SAVE_BUTTON_ID, FormatterMessages.ModifyDialog_Export_Button, false);
+		
+		fTabFolder = new TabFolder(composite, SWT.NONE);
+		fTabFolder.setFont(composite.getFont());
+		fTabFolder.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+
+		addPages(fWorkingValues); 
+
 		applyDialogFont(composite);
 		
-//		fTabFolder.addSelectionListener(new SelectionListener() {
-//			public void widgetDefaultSelected(SelectionEvent e) {}
-//			public void widgetSelected(SelectionEvent e) {
-//				final TabItem tabItem= (TabItem)e.item;
-//				final ModifyDialogTabPage page= (ModifyDialogTabPage)tabItem.getData();
-////				page.fSashForm.setWeights();
-//				fDialogSettings.put(DS_KEY_LAST_FOCUS, fTabPages.indexOf(page));
-//				page.makeVisible();
-//			}
-//		});
+		fTabFolder.addSelectionListener(new SelectionListener() {
+			public void widgetDefaultSelected(SelectionEvent e) {}
+			public void widgetSelected(SelectionEvent e) {
+				final TabItem tabItem= (TabItem)e.item;
+				final ModifyDialogTabPage page= (ModifyDialogTabPage)tabItem.getData();
+				//				page.fSashForm.setWeights();
+				fDialogSettings.put(fKeyLastFocus, fTabPages.indexOf(page));
+				page.makeVisible();
+			}
+		});
+		
+		doValidate();
+		
 		return composite;
 	}
 	
 	public void updateStatus(IStatus status) {
-	    super.updateStatus(status != null ? status : fStandardStatus);    
+		if (status == null) {
+			doValidate();
+		} else {
+	    	super.updateStatus(status);
+		}
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.window.Window#getInitialSize()
 	 */
 	protected Point getInitialSize() {
-    	Point initialSize= super.getInitialSize();
-        try {
-        	int lastWidth= fDialogSettings.getInt(DS_KEY_PREFERRED_WIDTH);
-        	if (initialSize.x > lastWidth)
-        		lastWidth= initialSize.x;
-        	int lastHeight= fDialogSettings.getInt(DS_KEY_PREFERRED_HEIGHT);
-        	if (initialSize.y > lastHeight)
-        		lastHeight= initialSize.x;
-       		return new Point(lastWidth, lastHeight);
-        } catch (NumberFormatException ex) {
-        }
-        return initialSize;
+		Point initialSize= super.getInitialSize();
+		try {
+			int lastWidth= fDialogSettings.getInt(fKeyPreferredWidth);
+			if (initialSize.x > lastWidth)
+				lastWidth= initialSize.x;
+			int lastHeight= fDialogSettings.getInt(fKeyPreferredHight);
+			if (initialSize.y > lastHeight)
+				lastHeight= initialSize.x;
+			return new Point(lastWidth, lastHeight);
+		} catch (NumberFormatException ex) {
+		}
+		return initialSize;
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.window.Window#getInitialLocation(org.eclipse.swt.graphics.Point)
 	 */
 	protected Point getInitialLocation(Point initialSize) {
-        try {
-        	return new Point(fDialogSettings.getInt(DS_KEY_PREFERRED_X), fDialogSettings.getInt(DS_KEY_PREFERRED_Y));
-        } catch (NumberFormatException ex) {
-        	return super.getInitialLocation(initialSize);
-        }
+		try {
+			return new Point(fDialogSettings.getInt(fKeyPreferredX), fDialogSettings.getInt(fKeyPreferredY));
+		} catch (NumberFormatException ex) {
+			return super.getInitialLocation(initialSize);
+		}
 	}
 	    
 	public boolean close() {
 		final Rectangle shell= getShell().getBounds();
 		
-		fDialogSettings.put(DS_KEY_PREFERRED_WIDTH, shell.width);
-		fDialogSettings.put(DS_KEY_PREFERRED_HEIGHT, shell.height);
-		fDialogSettings.put(DS_KEY_PREFERRED_X, shell.x);
-		fDialogSettings.put(DS_KEY_PREFERRED_Y, shell.y);
+		fDialogSettings.put(fKeyPreferredWidth, shell.width);
+		fDialogSettings.put(fKeyPreferredHight, shell.height);
+		fDialogSettings.put(fKeyPreferredX, shell.x);
+		fDialogSettings.put(fKeyPreferredY, shell.y);
 		
 		return super.close();
 	}
@@ -201,32 +239,64 @@ public class ModifyDialog extends StatusDialog {
 	}
 	
     protected void buttonPressed(int buttonId) {
-		if (buttonId == IDialogConstants.CLIENT_ID) {
+		if (buttonId == APPLAY_BUTTON_ID) {
 			applyPressed();
+			setTitle(Messages.format(FormatterMessages.ModifyDialog_dialog_title, fProfile.getName()));
+		} else if (buttonId == SAVE_BUTTON_ID) {
+			saveButtonPressed();
 		} else {
 			super.buttonPressed(buttonId);
 		}
     }
 	
 	private void applyPressed() {
-		 if (fProfile.isBuiltInProfile() || fProfile.isSharedProfile()) {
-		 	RenameProfileDialog dialog= new RenameProfileDialog(getShell(), fProfile, fProfileManager);
-		 	if (dialog.open() != Window.OK) {
-		 		return;
-		 	}
+		if (!fProfile.getName().equals(fProfileNameField.getText())) {
+			fProfile= fProfile.rename(fProfileNameField.getText(), fProfileManager);
+		}
+		fProfile.setSettings(new HashMap(fWorkingValues));
+		fProfileManager.setSelected(fProfile);
+		doValidate();
+	}
 
-			fProfile= dialog.getRenamedProfile();
-			
-		    fStandardStatus= new Status(IStatus.OK, CUIPlugin.getPluginId(), IStatus.OK, "", null); //$NON-NLS-1$
-			updateStatus(fStandardStatus);
-		 }
-		 fProfile.setSettings(new HashMap(fWorkingValues));
-//		 fApplyButton.setEnabled(false);
+	private void saveButtonPressed() {
+		Profile selected= new CustomProfile(fProfileNameField.getText(), new HashMap(fWorkingValues), fProfile.getVersion(), fProfileManager.getProfileVersioner().getProfileKind());
+		
+		final FileDialog dialog= new FileDialog(getShell(), SWT.SAVE);
+		dialog.setText(FormatterMessages.CodingStyleConfigurationBlock_save_profile_dialog_title); 
+		dialog.setFilterExtensions(new String [] {"*.xml"}); //$NON-NLS-1$
+
+		final String lastPath= CUIPlugin.getDefault().getDialogSettings().get(fLastSaveLoadPathKey + ".savepath"); //$NON-NLS-1$
+		if (lastPath != null) {
+			dialog.setFilterPath(lastPath);
+		}
+		final String path= dialog.open();
+		if (path == null) 
+			return;
+
+		CUIPlugin.getDefault().getDialogSettings().put(fLastSaveLoadPathKey + ".savepath", dialog.getFilterPath()); //$NON-NLS-1$
+
+		final File file= new File(path);
+		if (file.exists() && !MessageDialog.openQuestion(getShell(), FormatterMessages.CodingStyleConfigurationBlock_save_profile_overwrite_title, Messages.format(FormatterMessages.CodingStyleConfigurationBlock_save_profile_overwrite_message, path))) { 
+			return;
+		}
+		String encoding= ProfileStore.ENCODING;
+		final IContentType type= Platform.getContentTypeManager().getContentType("org.eclipse.core.runtime.xml"); //$NON-NLS-1$
+		if (type != null)
+			encoding= type.getDefaultCharset();
+		final Collection profiles= new ArrayList();
+		profiles.add(selected);
+		try {
+			fProfileStore.writeProfilesToFile(profiles, file, encoding);
+		} catch (CoreException e) {
+			final String title= FormatterMessages.CodingStyleConfigurationBlock_save_profile_error_title;
+			final String message= FormatterMessages.CodingStyleConfigurationBlock_save_profile_error_message;
+			ExceptionHandler.handle(e, getShell(), title, message);
+		}
 	}
     
     protected void createButtonsForButtonBar(Composite parent) {
-//	    fApplyButton= createButton(parent, IDialogConstants.CLIENT_ID, FormatterMessages.ModifyDialog_apply_button, false); 
-//		fApplyButton.setEnabled(false);
+	    fApplyButton= createButton(parent, APPLAY_BUTTON_ID, FormatterMessages.ModifyDialog_apply_button, false); 
+		fApplyButton.setEnabled(false);
 		
 		GridLayout layout= (GridLayout) parent.getLayout();
 		layout.numColumns++;
@@ -239,29 +309,85 @@ public class ModifyDialog extends StatusDialog {
     }
     
 	
-//	private final void addTabPage(TabFolder tabFolder, String title, ModifyDialogTabPage tabPage) {
-//		final TabItem tabItem= new TabItem(tabFolder, SWT.NONE);
-//		applyDialogFont(tabItem.getControl());
-//		tabItem.setText(title);
-//		tabItem.setData(tabPage);
-//		tabItem.setControl(tabPage.createContents(tabFolder));
-//		fTabPages.add(tabPage);
-//	}
-
-	public void valuesModified() {
-//		if (fApplyButton != null && !fApplyButton.isDisposed()) {
-//			fApplyButton.setEnabled(hasChanges());
-//		}
+	protected final void addTabPage(String title, ModifyDialogTabPage tabPage) {
+		final TabItem tabItem= new TabItem(fTabFolder, SWT.NONE);
+		applyDialogFont(tabItem.getControl());
+		tabItem.setText(title);
+		tabItem.setData(tabPage);
+		tabItem.setControl(tabPage.createContents(fTabFolder));
+		fTabPages.add(tabPage);
 	}
 
-//	private boolean hasChanges() {
-//		Iterator iter= fProfile.getSettings().entrySet().iterator();
-//		for (;iter.hasNext();) {
-//			Map.Entry curr= (Map.Entry) iter.next();
-//			if (!fWorkingValues.get(curr.getKey()).equals(curr.getValue())) {
-//				return true;
-//			}
-//		}
-//		return false;
-//	}
+	public void valuesModified() {
+		doValidate();
+	}
+
+	protected void updateButtonsEnableState(IStatus status) {
+	    super.updateButtonsEnableState(status);
+	    if (fApplyButton != null && !fApplyButton.isDisposed()) {
+			fApplyButton.setEnabled(!status.matches(IStatus.ERROR));
+		}
+	    if (fSaveButton != null && !fSaveButton.isDisposed()) {
+	    	fSaveButton.setEnabled(!validateProfileName().matches(IStatus.ERROR));
+	    }
+	}
+
+	private void doValidate() {
+    	if (!hasChanges()) {
+    		updateStatus(new Status(IStatus.ERROR, CUIPlugin.PLUGIN_ID, "")); //$NON-NLS-1$
+    		return;
+    	}
+    	
+    	IStatus status= validateProfileName();
+    	if (status.matches(IStatus.ERROR)) {
+    		updateStatus(status);
+    		return;
+    	}
+    	
+    	String name= fProfileNameField.getText().trim();
+		if (!name.equals(fProfile.getName()) && fProfileManager.containsName(name)) {
+			updateStatus(new Status(IStatus.ERROR, CUIPlugin.PLUGIN_ID, FormatterMessages.ModifyDialog_Duplicate_Status));
+			return;
+		}
+		
+		if (fProfile.isBuiltInProfile() || fProfile.isSharedProfile()) {
+			updateStatus(new Status(IStatus.INFO, CUIPlugin.PLUGIN_ID, FormatterMessages.ModifyDialog_NewCreated_Status));
+			return;
+		}
+
+	    updateStatus(StatusInfo.OK_STATUS);
+    }
+
+    private IStatus validateProfileName() {
+    	final String name= fProfileNameField.getText().trim();
+    	
+	    if (fProfile.isBuiltInProfile()) {
+			if (fProfile.getName().equals(name)) { 
+				return new Status(IStatus.ERROR, CUIPlugin.PLUGIN_ID, FormatterMessages.ModifyDialog_BuiltIn_Status);
+			}	
+    	}
+    	
+    	if (fProfile.isSharedProfile()) {
+			if (fProfile.getName().equals(name)) { 
+				return new Status(IStatus.ERROR, CUIPlugin.PLUGIN_ID, FormatterMessages.ModifyDialog_Shared_Status);
+			}
+    	}
+		
+		if (name.length() == 0) {
+			return new Status(IStatus.ERROR, CUIPlugin.PLUGIN_ID, FormatterMessages.ModifyDialog_EmptyName_Status);
+		}
+		
+		return StatusInfo.OK_STATUS;
+    }
+
+	private boolean hasChanges() {
+		Iterator iter= fProfile.getSettings().entrySet().iterator();
+		for (;iter.hasNext();) {
+			Map.Entry curr= (Map.Entry) iter.next();
+			if (!fWorkingValues.get(curr.getKey()).equals(curr.getValue())) {
+				return true;
+			}
+		}
+		return false;
+	}
 }

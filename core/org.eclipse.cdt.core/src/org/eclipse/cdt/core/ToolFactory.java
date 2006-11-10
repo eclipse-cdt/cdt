@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 QNX Software Systems and others.
+ * Copyright (c) 2000, 2006 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
+ *     Anton Leherbauer (Wind River Systems)
  *******************************************************************************/
 
 package org.eclipse.cdt.core;
@@ -26,12 +27,15 @@ import org.eclipse.core.runtime.Platform;
 public class ToolFactory {
 
 	/**
-	 * Create an instance of the built-in code formatter. 
-	 * @param options - the options map to use for formatting with the default code formatter. Recognized options
-	 * 	are documented on <code>CCorePlugin#getDefaultOptions()</code>. If set to <code>null</code>, then use 
-	 * 	the current settings from <code>CCorePlugin#getOptions</code>.
-	 * @return an instance of the built-in code formatter
+	 * Create an instance of a code formatter. A code formatter implementation can be contributed via the 
+	 * extension point "org.eclipse.cdt.core.CodeFormatter". If unable to find a registered extension, the factory 
+	 * will default to using the default code formatter.
+	 * @param options - the options map to use for formatting with the code formatter. Recognized options
+	 * 	are documented on <code>DefaultCodeFormatterConstants</code>. If set to <code>null</code>, then use 
+	 * 	the current settings from <code>CCorePlugin.getOptions()</code>.
+	 * @return an instance of either a contributed the built-in code formatter
 	 * @see CodeFormatter
+	 * @see DefaultCodeFormatterConstants
 	 * @see CCorePlugin#getOptions()
 	 */
 	public static CodeFormatter createCodeFormatter(Map options){
@@ -55,21 +59,30 @@ public class ToolFactory {
 								return formatter;
 							}
 						} catch(CoreException e) {
-							//TODO: add more reasonable error processing
-							e.printStackTrace();
+							CCorePlugin.log(e.getStatus());
 							break;
 						}
 					}
 				}
-			}	
-		}		
-		// TODO: open this code later 
-		// return new DefaultCodeFormatter(options);
-		return null;
+			}
+		}
+		return createDefaultCodeFormatter(options);
 	}
 
-  public static CodeFormatter createDefaultCodeFormatter(Map options){
-    if (options == null) options = CCorePlugin.getOptions();
-    return new CCodeFormatter(options);
-  }
+	/**
+	 * Create an instance of the built-in code formatter.
+	 * 
+	 * @param options - the options map to use for formatting with the default code formatter. Recognized options
+	 * 	are documented on <code>DefaultCodeFormatterConstants</code>. If set to <code>null</code>, then use 
+	 * 	the current settings from <code>CCorePlugin.getOptions()</code>.
+	 * @return an instance of the built-in code formatter
+	 * @see CodeFormatter
+	 * @see DefaultCodeFormatterConstants
+	 * @see CCorePlugin#getOptions()
+	 */
+	public static CodeFormatter createDefaultCodeFormatter(Map options){
+		if (options == null) 
+			options = CCorePlugin.getOptions();
+		return new CCodeFormatter(options);
+	}
 }

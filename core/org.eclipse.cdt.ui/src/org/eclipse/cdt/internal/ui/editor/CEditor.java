@@ -151,13 +151,16 @@ import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.CCorePreferenceConstants;
 import org.eclipse.cdt.core.IPositionConverter;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
+import org.eclipse.cdt.core.dom.ast.gnu.cpp.GPPLanguage;
 import org.eclipse.cdt.core.formatter.DefaultCodeFormatterConstants;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.core.model.ILanguage;
 import org.eclipse.cdt.core.model.ISourceRange;
 import org.eclipse.cdt.core.model.ISourceReference;
+import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.refactoring.actions.CRefactoringActionGroup;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.IWorkingCopyManager;
@@ -296,6 +299,19 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IR
 			else
 				preferences= new HashMap(cProject.getOptions(true));
 
+			if (inputCElement instanceof ITranslationUnit) {
+				ITranslationUnit tu= (ITranslationUnit)inputCElement;
+				ILanguage language= null;
+				try {
+					language= tu.getLanguage();
+				} catch (CoreException exc) {
+					// use fallback CPP
+					language= GPPLanguage.getDefault();
+				}
+				preferences.put(DefaultCodeFormatterConstants.FORMATTER_TRANSLATION_UNIT, tu);
+		        preferences.put(DefaultCodeFormatterConstants.FORMATTER_LANGUAGE, language);
+				preferences.put(DefaultCodeFormatterConstants.FORMATTER_CURRENT_FILE, tu.getResource());
+			}
 			context.setProperty(FormattingContextProperties.CONTEXT_PREFERENCES, preferences);
 
 			return context;

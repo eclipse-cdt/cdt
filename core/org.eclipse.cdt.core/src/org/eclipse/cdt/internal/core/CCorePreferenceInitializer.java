@@ -36,7 +36,7 @@ public class CCorePreferenceInitializer extends AbstractPreferenceInitializer {
         HashSet optionNames = CModelManager.OptionNames;
     
 		// Formatter settings
-		Map defaultOptionsMap = DefaultCodeFormatterConstants.getEclipseDefaultSettings(); // code formatter defaults
+		Map defaultOptionsMap = DefaultCodeFormatterConstants.getDefaultSettings(); // code formatter defaults
 
 		// Compiler settings
 		defaultOptionsMap.put(CCorePreferenceConstants.TRANSLATION_TASK_TAGS, CCorePreferenceConstants.DEFAULT_TASK_TAG); 

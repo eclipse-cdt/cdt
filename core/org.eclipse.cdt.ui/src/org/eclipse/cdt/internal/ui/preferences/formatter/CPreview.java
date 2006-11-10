@@ -14,6 +14,15 @@ package org.eclipse.cdt.internal.ui.preferences.formatter;
 
 import java.util.Map;
 
+import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.preference.PreferenceConverter;
+import org.eclipse.jface.preference.PreferenceStore;
+import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.jface.text.Document;
+import org.eclipse.jface.text.MarginPainter;
+import org.eclipse.jface.text.source.SourceViewer;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.DisposeEvent;
@@ -22,34 +31,25 @@ import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-
-import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.jface.preference.PreferenceConverter;
-import org.eclipse.jface.preference.PreferenceStore;
-import org.eclipse.jface.resource.JFaceResources;
-import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.jface.util.PropertyChangeEvent;
-
-import org.eclipse.jface.text.Document;
-import org.eclipse.jface.text.MarginPainter;
-import org.eclipse.jface.text.source.SourceViewer;
-
 import org.eclipse.ui.texteditor.AbstractDecoratedTextEditorPreferenceConstants;
 import org.eclipse.ui.texteditor.ChainedPreferenceStore;
 
 import org.eclipse.cdt.core.formatter.DefaultCodeFormatterConstants;
-
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.PreferenceConstants;
 import org.eclipse.cdt.ui.text.ICPartitions;
 
-import org.eclipse.cdt.ui.CUIPlugin;
-
+import org.eclipse.cdt.internal.ui.InvisibleCharacterPainter;
 import org.eclipse.cdt.internal.ui.editor.CSourceViewer;
 import org.eclipse.cdt.internal.ui.text.CSourceViewerConfiguration;
 import org.eclipse.cdt.internal.ui.text.CTextTools;
 import org.eclipse.cdt.internal.ui.text.SimpleCSourceViewerConfiguration;
 
-
+/**
+ * Abstract previewer for C/C++ source code formatting.
+ * 
+ * @since 4.0
+ */
 public abstract class CPreview {
     
 	private final class CSourcePreviewerUpdater {
@@ -99,6 +99,7 @@ public abstract class CPreview {
 	protected Map fWorkingValues;
 
 	private int fTabSize= 0;
+	private InvisibleCharacterPainter fWhitespacePainter;
 	
 	/**
 	 * Create a new C preview
@@ -124,7 +125,9 @@ public abstract class CPreview {
 		final RGB rgb= PreferenceConverter.getColor(fPreferenceStore, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_PRINT_MARGIN_COLOR);
 		fMarginPainter.setMarginRulerColor(tools.getColorManager().getColor(rgb));
 		fSourceViewer.addPainter(fMarginPainter);
-		
+
+		fWhitespacePainter= new InvisibleCharacterPainter(fSourceViewer);
+
 		new CSourcePreviewerUpdater();
 		fSourceViewer.setDocument(fPreviewDocument);
 	}
@@ -195,5 +198,18 @@ public abstract class CPreview {
 	
 	public final void setWorkingValues(Map workingValues) {
 		fWorkingValues= workingValues;
+	}
+	
+	/**
+	 * Enable/disable display of whitespace characters.
+	 * 
+	 * @param show  flag, whether to display whitespace
+	 */
+	public void showWhitespace(boolean show) {
+		if (show) {
+			fSourceViewer.addPainter(fWhitespacePainter);
+		} else {
+			fSourceViewer.removePainter(fWhitespacePainter);
+		}
 	}
 }

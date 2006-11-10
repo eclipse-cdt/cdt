@@ -111,11 +111,11 @@ elif [ `basename $SITE` = signedUpdates ]; then
         mkdir -p ${STAGING}/updates.${stamp}/plugins
         cp ${SITE}/../testUpdates/plugins/*.jar ${STAGING}/updates.${stamp}/plugins
         cd ${STAGING}/updates.${stamp}/plugins
-        #WORKAROUND: Repack nested jars
-        for x in `ls org.apache.oro_*.jar org.apache.commons.net_*.jar` ; do
-          echo "pack200 -r -E4 $x"
-          pack200 -r -E4 $x
-        done
+        #WORKAROUND: Repack nested jars - doesnt work
+        #for x in `ls org.apache.oro_*.jar org.apache.commons.net_*.jar` ; do
+        #  echo "pack200 -r -E4 $x"
+        #  pack200 -r -E4 $x
+        #done
         for x in `ls *.jar`; do
           echo "signing plugin: ${x}"
           sign ${x} nomail >/dev/null
@@ -216,8 +216,8 @@ for x in $JARS ; do
   if [ -f $x.pack.gz ]; then
     rm -f $x.pack.gz
   fi
-  echo "WORKAROUND - pack200 $x"
-  pack200 -E4 $x.pack.gz $x
+  echo "WORKAROUND - remove $x.pack.gz"
+  #pack200 -E4 $x.pack.gz $x
 done
 
 #Create the digest

@@ -25,10 +25,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.core.runtime.IExtension;
-import org.eclipse.core.runtime.IExtensionPoint;
-import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.rse.core.model.SystemSignonInformation;
@@ -48,9 +44,9 @@ public class PasswordPersistenceManager {
 	// Keys used for using the Platform authorization methods
 	// The server url is generic so we can lookup all registered user IDs / passwords
 	// to display to the user in the password information preference page
-	private static final String SERVER_URL = "file://rse";
+	private static final String SERVER_URL = "file://rse"; //$NON-NLS-1$
 
-	private static final String AUTH_SCHEME = "";	// no authorization scheme specified for apis
+	private static final String AUTH_SCHEME = "";	// no authorization scheme specified for apis  //$NON-NLS-1$
 	
 	// Add return codes
 	public static final int RC_OK = 0;
@@ -59,10 +55,10 @@ public class PasswordPersistenceManager {
 	
 	// Default System Type, on a lookup if the specified system type and hostname is not found
 	// then the call will automatically lookup the default system type and hostname
-	public static final String DEFAULT_SYSTEM_TYPE = "DEFAULT";
+	public static final String DEFAULT_SYSTEM_TYPE = "DEFAULT"; //$NON-NLS-1$
 	
 	// Default user name
-	public static final String DEFAULT_USER_NAME = "DEFAULT_USER";
+	public static final String DEFAULT_USER_NAME = "DEFAULT_USER"; //$NON-NLS-1$
 	
 	// New URL to store password map
 	private String newURL = null;
@@ -110,7 +106,7 @@ public class PasswordPersistenceManager {
 	 * Singleton so private constructor
 	 */
 	private PasswordPersistenceManager(){
-		String userName = System.getProperty("user.name");
+		String userName = System.getProperty("user.name"); //$NON-NLS-1$
 		
 		if (userName == null) {
 			userName = DEFAULT_USER_NAME;
@@ -203,11 +199,9 @@ public class PasswordPersistenceManager {
 	 * and userid.
 	 * 
 	 * @param systemtype The system type to check for.
-	 * @param hotname The hostname to check for.
+	 * @param hname The hostname to check for.
 	 * @param userid The user ID to check for.
 	 * @param checkDefault Whether or not to check for a default system type if the specified system type is not found.
-	 * 
-	 * @since RSE 6.2
 	 */
 	public boolean passwordExists(String systemtype, String hname, String userid, boolean checkDefault)
 	{
@@ -347,7 +341,7 @@ public class PasswordPersistenceManager {
 			}
 		}
 		catch (MalformedURLException e) {
-			SystemBasePlugin.logError("PasswordPersistenceManager.getPasswordMap", e);
+			SystemBasePlugin.logError("PasswordPersistenceManager.getPasswordMap", e); //$NON-NLS-1$
 		}
 		
 		return passwords; 
@@ -365,10 +359,10 @@ public class PasswordPersistenceManager {
 			Platform.addAuthorizationInfo(serverURL, systemType, AUTH_SCHEME, passwords);
 		}
 		catch (MalformedURLException e) {
-			SystemBasePlugin.logError("PasswordPersistenceManager.savePasswordMap", e);
+			SystemBasePlugin.logError("PasswordPersistenceManager.savePasswordMap", e); //$NON-NLS-1$
 		}
 		catch (CoreException e) {
-			SystemBasePlugin.logError("PasswordPersistenceManager.savePasswordMap", e);
+			SystemBasePlugin.logError("PasswordPersistenceManager.savePasswordMap", e); //$NON-NLS-1$
 		}		
 	}
 
@@ -484,11 +478,9 @@ public class PasswordPersistenceManager {
 	 * Find the persisted password for the specified systemtype, hostname and userid.
 	 *  
 	 * @param systemtype The system type to check for.
-	 * @param hotname The hostname to check for.
+	 * @param hname The hostname to check for.
 	 * @param userid The user ID to check for.
 	 * @param checkDefault Whether or not to check for a default system type if the specified system type is not found.
-	 * 
-	 * @since RSE 6.2
 	 */
 	public SystemSignonInformation find(String systemtype, String hname, String userid, boolean checkDefault)
 	{
@@ -528,20 +520,20 @@ public class PasswordPersistenceManager {
 	{
 		String hostname = hname;//RSEUIPlugin.getQualifiedHostName(hname);
 		StringBuffer buffer = new StringBuffer(hostname);
-		buffer.append("//");
+		buffer.append("//"); //$NON-NLS-1$
 		buffer.append(userid);
 		return buffer.toString();
 	}
 	
 	private static String getHostnameFromPasswordKey(String passwordKey)
 	{
-		int sepIndex = passwordKey.indexOf("//");
+		int sepIndex = passwordKey.indexOf("//"); //$NON-NLS-1$
 		return passwordKey.substring(0,sepIndex);
 	}
 	
 	private static String getUserIdFromPasswordKey(String passwordKey)
 	{
-		int sepIndex = passwordKey.indexOf("//");
+		int sepIndex = passwordKey.indexOf("//"); //$NON-NLS-1$
 		return passwordKey.substring(sepIndex + 2, passwordKey.length());
 	}
 	
@@ -609,7 +601,7 @@ public class PasswordPersistenceManager {
 				while (keys.hasNext())
 				{
 					key = (String) keys.next();
-					separator = key.indexOf("//");
+					separator = key.indexOf("//"); //$NON-NLS-1$
 					savedUserIDs.add(new SystemSignonInformation(key.substring(0, separator),		// hostname 
 																 key.substring(separator + 2),		// userid
 																 systemTypes[i].getSystemType())); 	// system type
@@ -625,7 +617,7 @@ public class PasswordPersistenceManager {
 			while (keys.hasNext())
 			{
 				key = (String) keys.next();
-				separator = key.indexOf("//");
+				separator = key.indexOf("//"); //$NON-NLS-1$
 				savedUserIDs.add(new SystemSignonInformation(key.substring(0, separator),		// hostname 
 															 key.substring(separator + 2),		// userid
 															 DEFAULT_SYSTEM_TYPE)); 	// system type

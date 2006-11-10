@@ -90,15 +90,6 @@
 
    <annotation>
       <appInfo>
-         <meta.section type="since"/>
-      </appInfo>
-      <documentation>
-         5.1.2
-      </documentation>
-   </annotation>
-
-   <annotation>
-      <appInfo>
          <meta.section type="examples"/>
       </appInfo>
       <documentation>

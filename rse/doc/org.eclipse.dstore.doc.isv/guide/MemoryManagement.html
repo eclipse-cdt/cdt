@@ -11,7 +11,7 @@
 <body>
 <h1><a name="dataelements">Memory Management in DataStore</a></h1>
 <p>
-Since RSE version 7.0 a substantial design change has been made to the DataStore that significantly reduces the memory footprint of the
+A Memory Management scheme has been implemented for the DataStore that significantly reduces the memory footprint of the
 DataElements in high-use, long up-time situations. A problem that was identified was that in the DataStore, DataElements were
 rarely being destroyed - only when the files they represented were themselves deleted. When directories in the file system were explored,
 DataElements were being created to represent the files in the directories, but these DataElements were cached and never

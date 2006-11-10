@@ -32,7 +32,6 @@ import org.eclipse.swt.widgets.Shell;
  * Action for switching RSE Connections offline
  * 
  * @author yantzi
- * @since Artemis 6.0
  */
 public class SystemWorkOfflineAction extends SystemBaseAction 
 {
@@ -96,7 +95,7 @@ public class SystemWorkOfflineAction extends SystemBaseAction
 						// user cancelled disconnect
 						cancelled = true;
 					} catch (Exception e) {
-						SystemBasePlugin.logError("SystemWorkOfflineAction.run", e);
+						SystemBasePlugin.logError("SystemWorkOfflineAction.run", e); //$NON-NLS-1$
 					}
 				}
 			}

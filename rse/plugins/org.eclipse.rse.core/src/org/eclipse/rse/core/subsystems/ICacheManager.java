@@ -18,8 +18,6 @@ package org.eclipse.rse.core.subsystems;
 
 /**
  * Interface for a cache manager that can optionally associated with a SubSystem.
- * 
- * @since RSE 6.0
  */
 public interface ICacheManager {
 	

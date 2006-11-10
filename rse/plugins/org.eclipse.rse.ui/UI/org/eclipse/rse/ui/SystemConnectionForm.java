@@ -497,8 +497,6 @@ public class SystemConnectionForm
 
 	/**
 	 * Check if this system type is enabled for offline support
-	 * 
-	 * @since RSE 6.0 
 	 */
 	private boolean enableOfflineCB()
 	{
@@ -1229,7 +1227,7 @@ public class SystemConnectionForm
 		  else
 		    msgLine.clearErrorMessage();
 		else
-		  SystemBasePlugin.logDebugMessage(this.getClass().getName(), "MSGLINE NULL. TRYING TO WRITE MSG " + msg);
+		  SystemBasePlugin.logDebugMessage(this.getClass().getName(), "MSGLINE NULL. TRYING TO WRITE MSG " + msg); //$NON-NLS-1$
 	}
     
     // ---------------------------------------------------------------

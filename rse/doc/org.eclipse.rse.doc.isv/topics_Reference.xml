@@ -5,7 +5,7 @@
 <!-- ============================================================================= -->
 <toc label="Reference">
 
-	<topic label="Extension Points Reference">
+	<topic label="Extension Points Reference" href="provisional_api.html">
 		<topic label="org.eclipse.rse.core.systemTypes" href="reference/extension-points/org_eclipse_rse_core_systemTypes.html" />
 		<topic label="org.eclipse.rse.ui.archivehandlers" href="reference/extension-points/org_eclipse_rse_ui_archivehandlers.html" />
 		<!-- TODODeferred after RSE 1.0
@@ -23,24 +23,24 @@
 		<anchor id="rse-extension-points-ref" />
 	</topic>
 	
-	<topic label="Other reference information">
+	<topic label="Other reference information" href="provisional_api.html">
 		<topic label="Runtime options" href="reference/misc/runtime-options.html" />
 	</topic>
 	
-	<topic label="Remote Systems API Reference By Topic">
-		<topic label="Core">
+	<topic label="Remote Systems API Reference By Topic" href="provisional_api.html">
+		<topic label="Core" href="provisional_api.html">
 			<topic label="org.eclipse.rse.core" href="reference/api/org/eclipse/rse/core/package-summary.html" />
 			<topic label="org.eclipse.rse.core.comm" href="reference/api/org/eclipse/rse/core/comm/package-summary.html" />
 			<topic label="org.eclipse.rse.core.servicessubsystem" href="reference/api/org/eclipse/rse/core/servicessubsystem/package-summary.html" />
 			<topic label="org.eclipse.rse.core.subsystems" href="reference/api/org/eclipse/rse/core/subsystems/package-summary.html" />
 			<topic label="org.eclipse.rse.core.subsystems.util" href="reference/api/org/eclipse/rse/core/subsystems/util/package-summary.html" />
 	    </topic>
-	    <topic label="Logging">
+	    <topic label="Logging" href="provisional_api.html">
 	    	<topic label="org.eclipse.rse.logging" href="reference/api/org/eclipse/rse/logging/package-summary.html"/>
 			<topic label="org.eclipse.rse.logging.ui" href="reference/api/org/eclipse/rse/logging/ui/package-summary.html"/>
 			<topic label="org.eclipse.rse.logging.performance" href="reference/api/org/eclipse/rse/logging/performance/package-summary.html"/>
 	    </topic>
-		<topic label="Model and Persistence">
+		<topic label="Model and Persistence" href="provisional_api.html">
 			<topic label="org.eclipse.rse.core.model" href="reference/api/org/eclipse/rse/core/model/package-summary.html"/>
 			<topic label="org.eclipse.rse.model" href="reference/api/org/eclipse/rse/model/package-summary.html"/>
 			<topic label="org.eclipse.rse.core.filters" href="reference/api/org/eclipse/rse/core/filters/package-summary.html"/>
@@ -48,7 +48,7 @@
 			<topic label="org.eclipse.rse.persistence" href="reference/api/org/eclipse/rse/persistence/package-summary.html"/>
 			<topic label="org.eclipse.rse.persistence.dom" href="reference/api/org/eclipse/rse/persistence/dom/package-summary.html"/>
 		</topic>
-		<topic label="Common Client and Server Helpers">
+		<topic label="Common Client and Server Helpers" href="provisional_api.html">
 			<topic label="org.eclipse.rse.services.clientserver" href="reference/api/org/eclipse/rse/services/clientserver/package-summary.html"/>
 			<topic label="org.eclipse.rse.services.clientserver.java" href="reference/api/org/eclipse/rse/services/clientserver/java/package-summary.html"/>
 			<topic label="org.eclipse.rse.services.clientserver.messages" href="reference/api/org/eclipse/rse/services/clientserver/messages/package-summary.html"/>
@@ -58,7 +58,7 @@
 			<topic label="org.eclipse.rse.services.clientserver.archiveutils" href="reference/api/org/eclipse/rse/services/clientserver/archiveutils/package-summary.html"/>
 			<topic label="org.eclipse.rse.services.clientserver.util.tar" href="reference/api/org/eclipse/rse/services/clientserver/util/tar/package-summary.html"/>
 		</topic>
-		<topic label="Basic Services Layer">
+		<topic label="Basic Services Layer" href="provisional_api.html">
 			<topic label="org.eclipse.rse.services" href="reference/api/org/eclipse/rse/services/package-summary.html"/>
 			<topic label="org.eclipse.rse.services.files" href="reference/api/org/eclipse/rse/services/files/package-summary.html"/>
 			<topic label="org.eclipse.rse.services.files.ftp" href="reference/api/org/eclipse/rse/services/files/ftp/package-summary.html"/>
@@ -66,7 +66,7 @@
 			<topic label="org.eclipse.rse.services.search" href="reference/api/org/eclipse/rse/services/search/package-summary.html"/>
 			<topic label="org.eclipse.rse.services.shells" href="reference/api/org/eclipse/rse/services/shells/package-summary.html"/>
 		</topic>
-		<topic label="Services Implementations">
+		<topic label="Services Implementations" href="provisional_api.html">
 			<topic label="org.eclipse.rse.services.local" href="reference/api/org/eclipse/rse/services/local/package-summary.html"/>
 			<topic label="org.eclipse.rse.services.local.files" href="reference/api/org/eclipse/rse/services/local/files/package-summary.html"/>
 			<topic label="org.eclipse.rse.services.local.processes" href="reference/api/org/eclipse/rse/services/local/processes/package-summary.html"/>
@@ -83,7 +83,7 @@
 			<topic label="org.eclipse.rse.services.ssh.files" href="reference/api/org/eclipse/rse/services/ssh/files/package-summary.html"/>
 			<topic label="org.eclipse.rse.services.ssh.shell" href="reference/api/org/eclipse/rse/services/ssh/shell/package-summary.html"/>
 		</topic>
-		<topic label="DStore Security and Miners">
+		<topic label="DStore Security and Miners" href="provisional_api.html">
 			<topic label="org.eclipse.rse.dstore.security" href="reference/api/org/eclipse/rse/dstore/security/package-summary.html"/>
 			<topic label="org.eclipse.rse.dstore.security.preference" href="reference/api/org/eclipse/rse/dstore/security/preference/package-summary.html"/>
 			<topic label="org.eclipse.rse.dstore.security.util" href="reference/api/org/eclipse/rse/dstore/security/util/package-summary.html"/>
@@ -96,13 +96,13 @@
 			<topic label="org.eclipse.rse.dstore.universal.miners" href="reference/api/org/eclipse/rse/dstore/universal/miners/package-summary.html"/>
 			<topic label="org.eclipse.rse.dstore.universal.miners.processes" href="reference/api/org/eclipse/rse/dstore/universal/miners/processes/package-summary.html"/>
 		</topic>
-		<topic label="Connector Service Implementations">
+		<topic label="Connector Service Implementations" href="provisional_api.html">
 			<topic label="org.eclipse.rse.connectorservice.dstore" href="reference/api/org/eclipse/rse/connectorservice/dstore/package-summary.html"/>
 			<topic label="org.eclipse.rse.connectorservice.dstore.util" href="reference/api/org/eclipse/rse/connectorservice/dstore/util/package-summary.html"/>
 			<topic label="org.eclipse.rse.connectorservice.local" href="reference/api/org/eclipse/rse/connectorservice/local/package-summary.html"/>
 			<topic label="org.eclipse.rse.connectorservice.ssh" href="reference/api/org/eclipse/rse/connectorservice/ssh/package-summary.html"/>
 		</topic>
-		<topic label="File Subsystem">
+		<topic label="File Subsystem" href="provisional_api.html">
 			<topic label="org.eclipse.rse.subsystems.files.core" href="reference/api/org/eclipse/rse/subsystems/files/core/package-summary.html"/>
 			<topic label="org.eclipse.rse.subsystems.files.core.model" href="reference/api/org/eclipse/rse/subsystems/files/core/model/package-summary.html"/>
 			<topic label="org.eclipse.rse.subsystems.files.core.servicesubsystem" href="reference/api/org/eclipse/rse/subsystems/files/core/servicesubsystem/package-summary.html"/>
@@ -119,7 +119,7 @@
 			<topic label="org.eclipse.rse.subsystems.files.local" href="reference/api/org/eclipse/rse/subsystems/files/local/package-summary.html"/>
 			<topic label="org.eclipse.rse.subsystems.files.ssh" href="reference/api/org/eclipse/rse/subsystems/files/ssh/package-summary.html"/>
 		</topic>
-		<topic label="Process Subsystem">
+		<topic label="Process Subsystem" href="provisional_api.html">
 			<topic label="org.eclipse.rse.subsystems.processes.core" href="reference/api/org/eclipse/rse/subsystems/processes/core/package-summary.html"/>
 			<topic label="org.eclipse.rse.subsystems.processes.core.subsystem.impl" href="reference/api/org/eclipse/rse/subsystems/processes/core/subsystem/impl/package-summary.html"/>
 			<topic label="org.eclipse.rse.subsystems.processes.core.subsystem" href="reference/api/org/eclipse/rse/subsystems/processes/core/subsystem/package-summary.html"/>
@@ -127,7 +127,7 @@
 			<topic label="org.eclipse.rse.subsystems.processes.local" href="reference/api/org/eclipse/rse/subsystems/processes/local/package-summary.html"/>
 			<topic label="org.eclipse.rse.subsystems.processes.servicesubsystem" href="reference/api/org/eclipse/rse/subsystems/processes/servicesubsystem/package-summary.html"/>
 		</topic>
-		<topic label="Shell Subsystem">
+		<topic label="Shell Subsystem" href="provisional_api.html">
 			<topic label="org.eclipse.rse.subsystems.shells.core" href="reference/api/org/eclipse/rse/subsystems/shells/core/package-summary.html"/>
 			<topic label="org.eclipse.rse.subsystems.shells.core.model" href="reference/api/org/eclipse/rse/subsystems/shells/core/model/package-summary.html"/>
 			<topic label="org.eclipse.rse.subsystems.shells.core.subsystems" href="reference/api/org/eclipse/rse/subsystems/shells/core/subsystems/package-summary.html"/>
@@ -138,7 +138,7 @@
 			<topic label="org.eclipse.rse.subsystems.shells.local" href="reference/api/org/eclipse/rse/subsystems/shells/local/package-summary.html"/>
 			<topic label="org.eclipse.rse.subsystems.shells.ssh" href="reference/api/org/eclipse/rse/subsystems/shells/ssh/package-summary.html"/>
 		</topic>
-		<topic label="User Interface">
+		<topic label="User Interface" href="provisional_api.html">
 			<topic label="org.eclipse.rse.ui" href="reference/api/org/eclipse/rse/ui/package-summary.html"/>
 			<topic label="org.eclipse.rse.ui.actions" href="reference/api/org/eclipse/rse/ui/actions/package-summary.html"/>
 			<topic label="org.eclipse.rse.ui.dialogs" href="reference/api/org/eclipse/rse/ui/dialogs/package-summary.html"/>
@@ -159,7 +159,7 @@
 			<topic label="org.eclipse.rse.ui.widgets.services" href="reference/api/org/eclipse/rse/ui/widgets/services/package-summary.html"/>
 			<topic label="org.eclipse.rse.ui.wizards" href="reference/api/org/eclipse/rse/ui/wizards/package-summary.html"/>
 		</topic>
-		<topic label="File UI">
+		<topic label="File UI" href="provisional_api.html">
 			<topic label="org.eclipse.rse.files.ui" href="reference/api/org/eclipse/rse/files/ui/package-summary.html"/>
 			<topic label="org.eclipse.rse.files.ui.actions" href="reference/api/org/eclipse/rse/files/ui/actions/package-summary.html"/>
 			<topic label="org.eclipse.rse.files.ui.compare" href="reference/api/org/eclipse/rse/files/ui/compare/package-summary.html"/>
@@ -171,14 +171,14 @@
 			<topic label="org.eclipse.rse.files.ui.widgets" href="reference/api/org/eclipse/rse/files/ui/widgets/package-summary.html"/>
 			<topic label="org.eclipse.rse.files.ui.wizards" href="reference/api/org/eclipse/rse/files/ui/wizards/package-summary.html"/>
 	    </topic>
-		<topic label="Process UI">
+		<topic label="Process UI" href="provisional_api.html">
 			<topic label="org.eclipse.rse.processes.ui" href="reference/api/org/eclipse/rse/processes/ui/package-summary.html"/>
 			<topic label="org.eclipse.rse.processes.ui.actions" href="reference/api/org/eclipse/rse/processes/ui/actions/package-summary.html"/>
 			<topic label="org.eclipse.rse.processes.ui.dialogs" href="reference/api/org/eclipse/rse/processes/ui/dialogs/package-summary.html"/>
 			<topic label="org.eclipse.rse.processes.ui.propertypages" href="reference/api/org/eclipse/rse/processes/ui/propertypages/package-summary.html"/>
 			<topic label="org.eclipse.rse.processes.ui.view" href="reference/api/org/eclipse/rse/processes/ui/view/package-summary.html"/>
 	    </topic>
-		<topic label="Shell UI">
+		<topic label="Shell UI" href="provisional_api.html">
 			<topic label="org.eclipse.rse.shells.ui" href="reference/api/org/eclipse/rse/shells/ui/package-summary.html"/>
 			<topic label="org.eclipse.rse.shells.ui.actions" href="reference/api/org/eclipse/rse/shells/ui/actions/package-summary.html"/>
 			<topic label="org.eclipse.rse.shells.ui.propertypages" href="reference/api/org/eclipse/rse/shells/ui/propertypages/package-summary.html"/>

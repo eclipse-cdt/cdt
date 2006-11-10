@@ -2,7 +2,7 @@
 <?NLS TYPE="org.eclipse.help.toc"?>
 
 <toc label="RSE DStore Developer Guide">
- 	<topic label="Guide">
+ 	<topic label="Guide" href="toc.html">
 		<topic label="DataStore Overview"  href="guide/overview.html">
 			<topic label="DataStore Artifacts" href="guide/Artifacts.html" />
 			<topic label="DataStore Communications" href="guide/Communications.html" />
@@ -16,8 +16,8 @@
 		</topic>
 		<anchor id="guide_additions"/>
 	</topic>
-	<topic label="Reference">
-		<topic label="DataStore API Reference">
+	<topic label="Reference" href="provisional_api.html">
+		<topic label="DataStore API Reference" href="provisional_api.html">
 		     <topic label="org.eclipse.dstore.core.model" href="reference/api/org/eclipse/dstore/core/model/package-summary.html" />
 		     <topic label="org.eclipse.dstore.core.client" href="reference/api/org/eclipse/dstore/core/client/package-summary.html" />
 		     <topic label="org.eclipse.dstore.core.server" href="reference/api/org/eclipse/dstore/core/server/package-summary.html" />

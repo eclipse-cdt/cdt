@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2005 IBM Corporation and others.
+ * Copyright (c) 2004, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  * IBM - Initial API and implementation
+ * Martin Oberhuber (Wind River Systems) - bug 155096
  *******************************************************************************/
 package org.eclipse.cdt.make.internal.core.scannerconfig.gnu;
 
@@ -89,7 +90,7 @@ public class GCCPerFileSIPConsoleParser implements IScannerInfoConsoleParser {
                         symbol = defineParts[1] + "=" + defineParts[2]; //$NON-NLS-1$
                         break;
                 }
-                if (symbol != null && !symbols.contains(symbol)) { //$NON-NLS-1$
+                if (symbol != null && !symbols.contains(symbol)) {
                     symbols.add(symbol);
                 }
             }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2005 IBM Corporation and others.
+ * Copyright (c) 2004, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  * IBM - Initial API and implementation
+ * Martin Oberhuber (Wind River Systems) - bug 155096
  *******************************************************************************/
 package org.eclipse.cdt.make.internal.core.scannerconfig.gnu;
 
@@ -100,7 +101,18 @@ public class GCCScannerInfoConsoleParser extends AbstractGCCBOPConsoleParser {
 					token.equals("-ansi") ||		//$NON-NLS-1$
 					token.equals("-nostdinc") ||	//$NON-NLS-1$
 					token.equals("-posix") ||		//$NON-NLS-1$
-					token.equals("-pthread")) {		//$NON-NLS-1$
+					token.equals("-pthread") ||		//$NON-NLS-1$
+					token.startsWith("-O") ||		//$NON-NLS-1$
+					token.equals("-fno-inline") ||	//$NON-NLS-1$
+					token.startsWith("-finline") ||	//$NON-NLS-1$
+					token.equals("-fno-exceptions") ||	//$NON-NLS-1$
+					token.equals("-fexceptions") ||		//$NON-NLS-1$
+					token.equals("-fshort-wchar") ||	//$NON-NLS-1$
+					token.equals("-fshort-double") ||	//$NON-NLS-1$
+					token.equals("-fno-signed-char") ||	//$NON-NLS-1$
+					token.equals("-fsigned-char") ||	//$NON-NLS-1$
+					token.startsWith("-fabi-version=")	//$NON-NLS-1$
+				) {
 					if (!targetSpecificOptions.contains(token))
 						targetSpecificOptions.add(token);
 				}

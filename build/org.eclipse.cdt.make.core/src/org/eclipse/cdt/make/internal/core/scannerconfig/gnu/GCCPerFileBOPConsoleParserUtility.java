@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2005 IBM Corporation and others.
+ * Copyright (c) 2004, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  * IBM - Initial API and implementation
+ * Martin Oberhuber (Wind River Systems) - bug 155096
  *******************************************************************************/
 package org.eclipse.cdt.make.internal.core.scannerconfig.gnu;
 
@@ -126,16 +127,37 @@ public class GCCPerFileBOPConsoleParserUtility extends AbstractGCCBOPConsolePars
 
     /**
      * @param genericLine
-     * @param cppFileType 
+     * @param cppFileType
+     * @return CCommandDSC compile command description 
      */
     public CCommandDSC getNewCCommandDSC(String genericLine, boolean cppFileType) {
         CCommandDSC command = new CCommandDSC(cppFileType);
         String[] tokens = genericLine.split("\\s+"); //$NON-NLS-1$
         command.addSCOption(new KVStringPair(SCDOptionsEnum.COMMAND.toString(), tokens[0]));
         for (int i = 1; i < tokens.length; ++i) {
+        	String token = tokens[i];
+        	//Target specific options: see GccScannerInfoConsoleParser
+			if (token.startsWith("-m") ||		//$NON-NLS-1$
+				token.equals("-ansi") ||		//$NON-NLS-1$
+				token.equals("-posix") ||		//$NON-NLS-1$
+				token.equals("-pthread") ||		//$NON-NLS-1$
+				token.startsWith("-O") ||		//$NON-NLS-1$
+				token.equals("-fno-inline") ||	//$NON-NLS-1$
+				token.startsWith("-finline") ||	//$NON-NLS-1$
+				token.equals("-fno-exceptions") ||	//$NON-NLS-1$
+				token.equals("-fexceptions") ||		//$NON-NLS-1$
+				token.equals("-fshort-wchar") ||	//$NON-NLS-1$
+				token.equals("-fshort-double") ||	//$NON-NLS-1$
+				token.equals("-fno-signed-char") ||	//$NON-NLS-1$
+				token.equals("-fsigned-char") ||	//$NON-NLS-1$
+				token.startsWith("-fabi-version=")	//$NON-NLS-1$
+			) {		
+		        command.addSCOption(new KVStringPair(SCDOptionsEnum.COMMAND.toString(), token));
+				continue;
+        	}
             for (int j = SCDOptionsEnum.MIN; j <= SCDOptionsEnum.MAX; ++j) {
-                if (tokens[i].startsWith(SCDOptionsEnum.getSCDOptionsEnum(j).toString())) {
-                    String option = tokens[i].substring(
+                if (token.startsWith(SCDOptionsEnum.getSCDOptionsEnum(j).toString())) {
+                    String option = token.substring(
                             SCDOptionsEnum.getSCDOptionsEnum(j).toString().length()).trim();
                     if (option.length() > 0) {
                         // ex. -I/dir
@@ -220,8 +242,9 @@ public class GCCPerFileBOPConsoleParserUtility extends AbstractGCCBOPConsolePars
 //    }
 
     /**
-     * Returns all CCommandDSC collected so far
-     * @return
+     * Returns all CCommandDSC collected so far.
+     * Currently this list is not filled, so it will always return an empty list.
+     * @return List of CCommandDSC
      */
     public List getCCommandDSCList() {
         return new ArrayList(commandsList2);

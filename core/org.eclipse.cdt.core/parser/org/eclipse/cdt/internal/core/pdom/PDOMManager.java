@@ -481,7 +481,7 @@ public class PDOMManager implements IPDOMManager, IWritableIndexManager, IListen
     	}
     }
         
-    private boolean isIndexerIdle() {
+    public boolean isIndexerIdle() {
     	synchronized (fTaskQueueMutex) {
     		return fCurrentTask == null && fTaskQueue.isEmpty();
     	}

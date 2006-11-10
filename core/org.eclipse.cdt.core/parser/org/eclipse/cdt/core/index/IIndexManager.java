@@ -102,4 +102,9 @@ public interface IIndexManager {
 	 * @return <code>true</code>, if the indexer went idle in the given time.
 	 */
 	boolean joinIndexer(int waitMaxMillis, IProgressMonitor monitor);
+	
+	/**
+	 * Checks whether the indexer is currently idle
+	 */
+	boolean isIndexerIdle();
 }

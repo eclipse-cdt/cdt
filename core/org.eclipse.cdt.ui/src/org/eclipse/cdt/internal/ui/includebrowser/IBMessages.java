@@ -46,6 +46,8 @@ public class IBMessages extends NLS {
 	public static String IBViewPart_showIncludesTo_label;
 	public static String IBViewPart_showIncludesTo_tooltip;
 	public static String IBViewPart_ShowInMenu_label;
+
+	public static String IBViewPart_waitingOnIndexerMessage;
 	public static String IBViewPart_workspaceScope;
 
 	static {

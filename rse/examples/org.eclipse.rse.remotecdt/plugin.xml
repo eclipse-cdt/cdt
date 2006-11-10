@@ -35,11 +35,19 @@ Martin Oberhuber (Wind River) - fix 158529: Migrate docs to HTML / TOC format
    <extension
          point="org.eclipse.debug.ui.launchConfigurationTabGroups">
       <launchConfigurationTabGroup
-            type="org.eclipse.rse.remotecdt.RemoteApplicationLaunch"
             class="org.eclipse.rse.remotecdt.RemoteLaunchConfigurationTabGroup"
-            id="org.eclipse.rse.remotecdt.RemoteLaunchTabGroup">
+            helpContextId="org.eclipse.rse.remotecdt.launchgroup"
+            id="org.eclipse.rse.remotecdt.RemoteLaunchTabGroup"
+            type="org.eclipse.rse.remotecdt.RemoteApplicationLaunch">
       </launchConfigurationTabGroup>
    </extension>
+
+	<!-- ============================================ -->
+	<!-- Define Help Context                          -->
+	<!-- ============================================ -->
+	<extension point="org.eclipse.help.contexts">
+  		<contexts file="HelpContexts.xml"/>
+	</extension>
 	<extension point="org.eclipse.help.toc">
 		<toc file="toc.xml"/>
 	</extension>

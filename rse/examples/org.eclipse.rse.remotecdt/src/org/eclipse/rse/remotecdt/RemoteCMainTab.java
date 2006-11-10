@@ -93,7 +93,10 @@ public class RemoteCMainTab extends CMainTab {
 				setLocalPathForRemotePath();
 			}
 		});
-		
+
+		LaunchUIPlugin.getDefault().getWorkbench().getHelpSystem().setHelp(getControl(),
+				"org.eclipse.rse.remotecdt.launchgroup"); //$NON-NLS-1$
+
 		LaunchUIPlugin.setDialogShell(parent.getShell());
     }
 

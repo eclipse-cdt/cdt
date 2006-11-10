@@ -16,11 +16,24 @@ import java.util.List;
 
 import org.eclipse.cdt.debug.core.CDebugCorePlugin;
 import org.eclipse.cdt.debug.core.ICDebugConfiguration;
+import org.eclipse.cdt.launch.internal.ui.LaunchUIPlugin;
 import org.eclipse.cdt.launch.ui.CDebuggerTab;
 import org.eclipse.debug.core.ILaunchConfiguration;
+import org.eclipse.swt.widgets.Composite;
 
 public class RemoteCDebuggerTab extends CDebuggerTab {
 	
+	public void createControl(Composite parent) {
+		super.createControl(parent);
+		LaunchUIPlugin.getDefault().getWorkbench().getHelpSystem().setHelp(getControl(),
+			"org.eclipse.rse.remotecdt.launchgroup"); //$NON-NLS-1$
+	}
+
+	public String getName() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 	static final private String GDBSERVER_DEBUGGER_NAME = "gdb/mi"; //$NON-NLS-1$
 	
 	public RemoteCDebuggerTab(boolean attachMode) {

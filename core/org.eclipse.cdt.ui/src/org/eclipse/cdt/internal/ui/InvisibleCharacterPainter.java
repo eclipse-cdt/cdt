@@ -141,7 +141,10 @@ public class InvisibleCharacterPainter implements IPainter, PaintListener {
 			int startOffset= fTextWidget.getOffsetAtLine(startLine);
 			int endOffset =
 				endLine < lineCount - 1 ? fTextWidget.getOffsetAtLine(endLine + 1) : fTextWidget.getCharCount();
+			int alpha= gc.getAlpha();
+			gc.setAlpha(100);
 			handleDrawRequest(gc, startOffset, endOffset);
+			gc.setAlpha(alpha);
 		}
 	}
 

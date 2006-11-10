@@ -20,7 +20,7 @@ import org.eclipse.ui.views.framelist.TreeFrame;
 import org.eclipse.ui.views.framelist.TreeViewerFrameSource;
 
 /**
- * Enables frameset for the Remote Systems Explorer view part
+ * Enables frameset for the Remote System Explorer view part
  */
 class SystemViewPartFrameSource extends TreeViewerFrameSource 
 {

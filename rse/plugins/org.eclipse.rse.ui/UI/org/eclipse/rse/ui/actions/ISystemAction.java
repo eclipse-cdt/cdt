@@ -22,7 +22,7 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.widgets.Shell;
 /**
- * Suggested interface for actions in popup menus of the remote systems explorer view.
+ * Suggested interface for actions in popup menus of the Remote System Explorer view.
  * While suggested, it is not required to implement this interface.
  * @see SystemBaseAction
  */
@@ -55,7 +55,7 @@ public interface ISystemAction extends IAction, ISelectionChangedListener
     // STATE METHODS CALLED BY VIEWER AT FILL CONTEXT MENU TIME...
     // -----------------------------------------------------------
 	/**
-	 * Set shell of parent window. Remote systems explorer will call this.
+	 * Set shell of parent window. Remote System Explorer will call this.
 	 */
 	public void setShell(Shell shell);
 	/**

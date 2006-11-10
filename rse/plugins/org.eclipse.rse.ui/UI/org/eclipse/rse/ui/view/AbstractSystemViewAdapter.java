@@ -1251,7 +1251,7 @@ public abstract class AbstractSystemViewAdapter
 	/**
      * <i><b>Overridable</b> by subclasses, but usually is not.</i><br>
 	 * Return what to save to disk to identify this element when it is the input object to a secondary
-	 *  Remote Systems Explorer perspective. Defaults to getMementoHandle(element).
+	 *  Remote System Explorer perspective. Defaults to getMementoHandle(element).
 	 */
 	public String getInputMementoHandle(Object element)
 	{

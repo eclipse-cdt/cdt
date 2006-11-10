@@ -132,7 +132,7 @@
          <meta.section type="implementation"/>
       </appInfo>
       <documentation>
-         The Remote Systems Explorer in org.eclipse.rse.files.ui provides three default implementations of this extension point, for ZIP, JAR, and TAR Archives.
+         The Remote System Explorer in org.eclipse.rse.files.ui provides three default implementations of this extension point, for ZIP, JAR, and TAR Archives.
       </documentation>
    </annotation>
 

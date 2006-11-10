@@ -621,7 +621,7 @@ Contributors:
       </contexts>
    </extension>
 <!-- ============================================ -->
-<!-- Define Remote Systems Explorer Views         -->
+<!-- Define Remote System Explorer Views         -->
 <!-- ============================================ -->
    <extension
          point="org.eclipse.ui.views">
@@ -686,7 +686,7 @@ Contributors:
    </extension>
 
 <!-- ================================================================================= -->
-<!-- Define Remote Systems Explorer view pulldown menu submenu for preferences actions -->
+<!-- Define Remote System Explorer view pulldown menu submenu for preferences actions -->
 <!-- ================================================================================= -->
 	<extension point="org.eclipse.rse.ui.remoteSystemsViewPreferencesActions">
  		<action	

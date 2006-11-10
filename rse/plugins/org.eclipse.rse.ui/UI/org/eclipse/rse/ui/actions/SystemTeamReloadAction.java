@@ -27,7 +27,7 @@ import org.eclipse.swt.widgets.Shell;
 
 
 /**
- * The action allows users to refresh the entire Remote Systems Explorer tree view,
+ * The action allows users to refresh the entire Remote System Explorer tree view,
  * by reloading it from disk. This is to be done after the user does a synchronization
  * with the repository.
  */

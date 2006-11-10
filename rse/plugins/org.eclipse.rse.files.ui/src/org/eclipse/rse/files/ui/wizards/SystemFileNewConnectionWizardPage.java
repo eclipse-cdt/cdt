@@ -123,7 +123,7 @@ public class SystemFileNewConnectionWizardPage extends AbstractSystemNewConnecti
 		text = SystemResources.RESID_NEWCONN_SUBSYSTEMPAGE_FILES_VERBAGE2;
 		//,
 		        // the following is default English text to use if the string is not found in the mri"
-		  //      "If you manually start the communications server, you will need to set the port number property for this connection. To do this, expand your newly created connection in the Remote Systems Explorer perspective. Right click on the Files subsystem and select Properties. You can specify the port to match the port you specified or were assigned for the server.");
+		  //      "If you manually start the communications server, you will need to set the port number property for this connection. To do this, expand your newly created connection in the Remote System Explorer perspective. Right click on the Files subsystem and select Properties. You can specify the port to match the port you specified or were assigned for the server.");
 		
 		SystemWidgetHelpers.createVerbiage(composite_prompts, text, span, border, widthHint);		
         

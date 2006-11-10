@@ -1347,19 +1347,19 @@ Contributors:
                           <LevelTwo>It is recommended that the client and server versions match.</LevelTwo>
                     </Message>
                      <Message ID="2310" Indicator="I">
-                          <LevelOne>Starting Remote Systems Explorer host server using REXEC</LevelOne>
+                          <LevelOne>Starting Remote System Explorer host server using REXEC</LevelOne>
                           <LevelTwo></LevelTwo>
                     </Message>
                      <Message ID="2311" Indicator="I">
-                          <LevelOne>Starting Remote Systems Explorer host server using daemon</LevelOne>
+                          <LevelOne>Starting Remote System Explorer host server using daemon</LevelOne>
                           <LevelTwo></LevelTwo>
                     </Message>
                       <Message ID="2312" Indicator="I">
-                          <LevelOne>Connecting to Remote Systems Explorer host server on port %1</LevelOne>
+                          <LevelOne>Connecting to Remote System Explorer host server on port %1</LevelOne>
                           <LevelTwo></LevelTwo>
                     </Message>
                     <Message ID="2313" Indicator="I">
-                          <LevelOne>Initializing Remote Systems Explorer host server</LevelOne>
+                          <LevelOne>Initializing Remote System Explorer host server</LevelOne>
                           <LevelTwo></LevelTwo>
                     </Message>
     

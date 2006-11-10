@@ -897,7 +897,7 @@ selected matches in that file will also be removed from the view.</description>
 
 <!-- Remote Scratchpad View -->
 <context id="scrp0000">
-<description>Drag and drop objects here from other Remote Systems Explorer views to work with them in isolation.</description>
+<description>Drag and drop objects here from other Remote System Explorer views to work with them in isolation.</description>
 </context>	
 
 <!-- Remote Error List View -->

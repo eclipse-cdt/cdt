@@ -29,7 +29,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Shell;
 
 /**
- * The action allows users to collapse the entire Remote Systems Explorer tree view.
+ * The action allows users to collapse the entire Remote System Explorer tree view.
  */
 public class SystemCollapseAllAction extends SystemBaseAction {
 	/**

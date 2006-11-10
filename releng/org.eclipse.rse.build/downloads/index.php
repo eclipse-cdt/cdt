@@ -20,7 +20,7 @@
   </tr>
   
 	<tr> <td> <p>On this
-page you can find the latest builds for the Remote Systems Explorer (RSE),
+page you can find the latest builds for the Remote System Explorer (RSE),
 produced by the 
 <a href="http://www.eclipse.org/dsdp/tm/">Target Management</a> project.
 <!--

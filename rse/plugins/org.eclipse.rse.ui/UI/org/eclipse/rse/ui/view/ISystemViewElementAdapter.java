@@ -320,7 +320,7 @@ public interface ISystemViewElementAdapter extends IPropertySource, ISystemDragD
 	public String getMementoHandle(Object element);
 	/**
 	 * Return what to save to disk to identify this element when it is the input object to a secondary
-	 *  Remote Systems Explorer perspective.
+	 *  Remote System Explorer perspective.
 	 */
 	public String getInputMementoHandle(Object element);
 	/**

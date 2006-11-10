@@ -16,7 +16,7 @@
 
 package org.eclipse.rse.ui.actions;
 /**
- * Suggested interface for actions in popup menus of the remote systems explorer view,
+ * Suggested interface for actions in popup menus of the Remote System Explorer view,
  * which put up wizards.
  * @see SystemBaseWizardAction
  */

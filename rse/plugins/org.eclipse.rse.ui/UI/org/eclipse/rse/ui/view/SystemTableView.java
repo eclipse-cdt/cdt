@@ -1343,7 +1343,7 @@ public class SystemTableView
 		return _refreshAction;
 	}
 	/*
-	 * Get the common "Open to->" action for opening a new Remote Systems Explorer view,
+	 * Get the common "Open to->" action for opening a new Remote System Explorer view,
 	 *  scoped to the currently selected object.
 	 *
 	protected SystemCascadingOpenToAction getOpenToAction()
@@ -1353,7 +1353,7 @@ public class SystemTableView
 		return openToAction;
 	} NOT USED YET */
 	/**
-	 * Get the common "Open to->" action for opening a new Remote Systems Explorer view,
+	 * Get the common "Open to->" action for opening a new Remote System Explorer view,
 	 *  scoped to the currently selected object.
 	 */
 	protected SystemOpenExplorerPerspectiveAction getOpenToPerspectiveAction()

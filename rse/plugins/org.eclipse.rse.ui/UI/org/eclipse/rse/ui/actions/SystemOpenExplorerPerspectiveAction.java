@@ -33,7 +33,7 @@ import org.eclipse.ui.actions.OpenInNewWindowAction;
 
 
 /**
- * The action allows users to open a new Remote Systems Explorer perspective, anchored
+ * The action allows users to open a new Remote System Explorer perspective, anchored
  *  by the currently selected resource.
  */
 public class SystemOpenExplorerPerspectiveAction 

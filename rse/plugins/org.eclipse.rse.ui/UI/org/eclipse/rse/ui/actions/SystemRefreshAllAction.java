@@ -30,7 +30,7 @@ import org.eclipse.swt.widgets.Shell;
 
 
 /**
- * The action allows users to refresh the entire Remote Systems Explorer tree view
+ * The action allows users to refresh the entire Remote System Explorer tree view
  */
 public class SystemRefreshAllAction extends SystemBaseAction 
                                  

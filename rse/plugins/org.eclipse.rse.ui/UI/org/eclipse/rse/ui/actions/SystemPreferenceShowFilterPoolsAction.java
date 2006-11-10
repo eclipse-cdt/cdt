@@ -24,7 +24,7 @@ import org.eclipse.swt.widgets.Shell;
 
 
 /**
- * The action allows users to decide whether or not to show filter pools in the remote systems explorer.
+ * The action allows users to decide whether or not to show filter pools in the Remote System Explorer.
  * It is a fastpath/convenience method for this option in the preferences page.
  */
 public class SystemPreferenceShowFilterPoolsAction extends SystemBaseAction 

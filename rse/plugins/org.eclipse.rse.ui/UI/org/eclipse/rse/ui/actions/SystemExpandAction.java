@@ -31,7 +31,7 @@ import org.eclipse.rse.ui.view.ISystemViewElementAdapter;
 import org.eclipse.swt.widgets.Shell;
 
 /**
- * The action allows users to expand the selected nodes in the Remote Systems Explorer tree view
+ * The action allows users to expand the selected nodes in the Remote System Explorer tree view
  */
 public class SystemExpandAction extends SystemBaseAction {
 

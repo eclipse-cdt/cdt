@@ -235,7 +235,7 @@ public class RemoteSystemsPreferencePage
 		savePreferenceStore();
 	}
     /**
-     * Return true if the user has elected to show filter pools in the remote systems explorer view
+     * Return true if the user has elected to show filter pools in the Remote System Explorer view
      */
 	public static boolean getShowFilterPoolsPreference() 
 	{
@@ -243,7 +243,7 @@ public class RemoteSystemsPreferencePage
 		return store.getBoolean(ISystemPreferencesConstants.SHOWFILTERPOOLS);
 	}
     /**
-     * Toggle whether to show filter pools in the remote systems explorer view
+     * Toggle whether to show filter pools in the Remote System Explorer view
      */
 	public static void setShowFilterPoolsPreference(boolean show) 
 	{
@@ -262,7 +262,7 @@ public class RemoteSystemsPreferencePage
 		return value;
 	}
     /**
-     * Toggle whether to show filter pools in the remote systems explorer view
+     * Toggle whether to show filter pools in the Remote System Explorer view
      */
 	public static void setShowNewConnectionPromptPreference(boolean show) 
 	{

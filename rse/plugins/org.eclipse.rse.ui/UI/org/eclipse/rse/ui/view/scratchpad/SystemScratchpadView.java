@@ -771,7 +771,7 @@ public class SystemScratchpadView
 		return _refreshAction;
 	}
 	/*
-	 * Get the common "Open to->" action for opening a new Remote Systems Explorer view,
+	 * Get the common "Open to->" action for opening a new Remote System Explorer view,
 	 *  scoped to the currently selected object.
 	 *
 	protected SystemCascadingOpenToAction getOpenToAction()
@@ -781,7 +781,7 @@ public class SystemScratchpadView
 		return openToAction;
 	} NOT USED YET */
 	/**
-	 * Get the common "Open to->" action for opening a new Remote Systems Explorer view,
+	 * Get the common "Open to->" action for opening a new Remote System Explorer view,
 	 *  scoped to the currently selected object.
 	 */
 	protected SystemOpenExplorerPerspectiveAction getOpenToPerspectiveAction()

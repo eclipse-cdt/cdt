@@ -669,7 +669,7 @@ public class SystemView extends TreeViewer implements ISystemTree, ISystemResour
 	}
 
 	/*
-	 * Get the common "Open to->" action for opening a new Remote Systems Explorer view,
+	 * Get the common "Open to->" action for opening a new Remote System Explorer view,
 	 *  scoped to the currently selected object.
 	 *
 	 protected SystemCascadingOpenToAction getOpenToAction()
@@ -680,7 +680,7 @@ public class SystemView extends TreeViewer implements ISystemTree, ISystemResour
 	 } NOT USED YET */
 
 	/**
-	 * Get the common "Open to->" action for opening a new Remote Systems Explorer view,
+	 * Get the common "Open to->" action for opening a new Remote System Explorer view,
 	 *  scoped to the currently selected object.
 	 */
 	public SystemOpenExplorerPerspectiveAction getOpenToPerspectiveAction() {
@@ -699,7 +699,7 @@ public class SystemView extends TreeViewer implements ISystemTree, ISystemResour
 	}
 
 	/**
-	 * Get the common "Go Into" action for drilling down in the Remote Systems Explorer view,
+	 * Get the common "Go Into" action for drilling down in the Remote System Explorer view,
 	 *  scoped to the currently selected object.
 	 */
 	public GoIntoAction getGoIntoAction() {

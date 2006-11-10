@@ -112,7 +112,7 @@
          <meta.section type="implementation"/>
       </appInfo>
       <documentation>
-         The Remote Systems Explorer in org.eclipse.rse.core provides a default implementation of this extension point.
+         The Remote System Explorer in org.eclipse.rse.core provides a default implementation of this extension point.
       </documentation>
    </annotation>
 

@@ -49,7 +49,7 @@ public class SystemNewConnectionAction extends SystemBaseWizardAction
 	/**
 	 * Constructor for SystemNewConnectionAction
 	 * @param shell The parent shell to host the new wizard
-	 * @param fromPopupMenu true if being launched from the remote systems explorer view directly,
+	 * @param fromPopupMenu true if being launched from the Remote System Explorer view directly,
 	 *                      false if being launched from a dialog
 	 * @param sp The selection provider that will supply the selection via getSelection, if 
 	 *            fromPopupMenu is false
@@ -61,7 +61,7 @@ public class SystemNewConnectionAction extends SystemBaseWizardAction
 	/**
 	 * Constructor for SystemNewConnectionAction when you don't want the icon. 
 	 * @param shell The parent shell to host the new wizard
-	 * @param fromPopupMenu true if being launched from the remote systems explorer view directly,
+	 * @param fromPopupMenu true if being launched from the Remote System Explorer view directly,
 	 *                      false if being launched from a dialog
 	 * @param wantIcon true if you want the icon to show beside the action, false if not
 	 * @param sp The selection provider that will supply the selection via getSelection, if 
@@ -78,7 +78,7 @@ public class SystemNewConnectionAction extends SystemBaseWizardAction
 	 * @param shell The parent shell to host the new wizard
      * @param label The label for the action
      * @param tooltip the tooltip for the action
-	 * @param fromPopupMenu true if being launched from the remote systems explorer view directly,
+	 * @param fromPopupMenu true if being launched from the Remote System Explorer view directly,
 	 *                      false if being launched from a dialog
 	 * @param wantIcon true if you want the icon to show beside the action, false if not
 	 * @param sp The selection provider that will supply the selection via getSelection, if 

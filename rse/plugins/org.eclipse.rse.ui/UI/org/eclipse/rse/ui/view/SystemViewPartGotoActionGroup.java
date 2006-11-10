@@ -30,7 +30,7 @@ import org.eclipse.ui.views.framelist.UpAction;
 
 
 /**
- * Enables typical frameset actions for Remote Systems Explorer view part
+ * Enables typical frameset actions for Remote System Explorer view part
  */
 public class SystemViewPartGotoActionGroup extends ActionGroup 
 {

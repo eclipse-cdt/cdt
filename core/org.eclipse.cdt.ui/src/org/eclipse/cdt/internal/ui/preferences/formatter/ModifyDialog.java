@@ -334,7 +334,7 @@ public abstract class ModifyDialog extends StatusDialog {
 
 	private void doValidate() {
     	if (!hasChanges()) {
-    		updateStatus(new Status(IStatus.ERROR, CUIPlugin.PLUGIN_ID, "")); //$NON-NLS-1$
+    		updateStatus(new Status(IStatus.ERROR, CUIPlugin.PLUGIN_ID, 0, "", null)); //$NON-NLS-1$
     		return;
     	}
     	
@@ -346,12 +346,12 @@ public abstract class ModifyDialog extends StatusDialog {
     	
     	String name= fProfileNameField.getText().trim();
 		if (!name.equals(fProfile.getName()) && fProfileManager.containsName(name)) {
-			updateStatus(new Status(IStatus.ERROR, CUIPlugin.PLUGIN_ID, FormatterMessages.ModifyDialog_Duplicate_Status));
+			updateStatus(new Status(IStatus.ERROR, CUIPlugin.PLUGIN_ID, 0, FormatterMessages.ModifyDialog_Duplicate_Status, null));
 			return;
 		}
 		
 		if (fProfile.isBuiltInProfile() || fProfile.isSharedProfile()) {
-			updateStatus(new Status(IStatus.INFO, CUIPlugin.PLUGIN_ID, FormatterMessages.ModifyDialog_NewCreated_Status));
+			updateStatus(new Status(IStatus.INFO, CUIPlugin.PLUGIN_ID, 0, FormatterMessages.ModifyDialog_NewCreated_Status, null));
 			return;
 		}
 
@@ -363,18 +363,18 @@ public abstract class ModifyDialog extends StatusDialog {
     	
 	    if (fProfile.isBuiltInProfile()) {
 			if (fProfile.getName().equals(name)) { 
-				return new Status(IStatus.ERROR, CUIPlugin.PLUGIN_ID, FormatterMessages.ModifyDialog_BuiltIn_Status);
+				return new Status(IStatus.ERROR, CUIPlugin.PLUGIN_ID, 0, FormatterMessages.ModifyDialog_BuiltIn_Status, null);
 			}	
     	}
     	
     	if (fProfile.isSharedProfile()) {
 			if (fProfile.getName().equals(name)) { 
-				return new Status(IStatus.ERROR, CUIPlugin.PLUGIN_ID, FormatterMessages.ModifyDialog_Shared_Status);
+				return new Status(IStatus.ERROR, CUIPlugin.PLUGIN_ID, 0, FormatterMessages.ModifyDialog_Shared_Status, null);
 			}
     	}
 		
 		if (name.length() == 0) {
-			return new Status(IStatus.ERROR, CUIPlugin.PLUGIN_ID, FormatterMessages.ModifyDialog_EmptyName_Status);
+			return new Status(IStatus.ERROR, CUIPlugin.PLUGIN_ID, 0, FormatterMessages.ModifyDialog_EmptyName_Status, null);
 		}
 		
 		return StatusInfo.OK_STATUS;

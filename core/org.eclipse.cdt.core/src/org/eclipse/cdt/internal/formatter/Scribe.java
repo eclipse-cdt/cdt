@@ -629,9 +629,6 @@ public class Scribe {
 						indent();
 					}
 					formatOpeningBrace(formatter.preferences.brace_position_for_block, hasWhitespace);
-//					print(currentToken.getLength(), hasWhitespace);
-//					printNewLine();
-//					indent();
 					break;
 				case Token.tRBRACE:
 					scanner.resetTo(scanner.getCurrentTokenStartPosition(), scannerEndPosition-1);
@@ -639,9 +636,6 @@ public class Scribe {
 						unIndent();
 					}
 					formatClosingBrace(formatter.preferences.brace_position_for_block);
-//					printNewLine(scanner.getCurrentTokenStartPosition());
-//					unIndent();
-//					print(currentToken.getLength(), hasWhitespace);
 					break;
 				case Token.tLPAREN:
 					print(currentToken.getLength(), hasWhitespace);
@@ -1606,14 +1600,14 @@ public class Scribe {
 	}
 
 	/**
-	 * Skip to the next occurrence one of the given token types.
-	 * If successful, the next token will be one of the epxected tokens,
+	 * Skip to the next occurrence of the given token type.
+	 * If successful, the next token will be the epxected token,
 	 * otherwise the scanner position is left unchanged.
 	 * 
-	 * @param expectedTokenTypes
+	 * @param expectedTokenType
 	 * @return  <code>true</code> if a matching token was skipped to
 	 */
-	public boolean skipToToken(int[] expectedTokenTypes) {
+	public boolean skipToToken(int expectedTokenType) {
 		int skipStart= scanner.getCurrentPosition();
 		int braceLevel= 0;
 		int parenLevel= 0;
@@ -1639,22 +1633,20 @@ public class Scribe {
 			case Token.tPREPROCESSOR_INCLUDE:
 				continue;
 			}
-			if (braceLevel <= 0 && parenLevel == 0) {
-				for (int i= 0; i < expectedTokenTypes.length; i++) {
-					if (currentToken.type == expectedTokenTypes[i]) {
-						printRaw(skipStart, scanner.getCurrentTokenEndPosition() - skipStart + 1);
-						scanner.resetTo(scanner.getCurrentTokenEndPosition() + 1, scannerEndPosition - 1);
-						return true;
-					}
+			if (braceLevel <= 0 && parenLevel <= 0) {
+				if (currentToken.type == expectedTokenType) {
+					int tokenStart= scanner.getCurrentTokenStartPosition();
+					printRaw(skipStart, tokenStart - skipStart);
+					scanner.resetTo(tokenStart, scannerEndPosition - 1);
+					return true;
 				}
+			}
+			if (braceLevel < 0 || parenLevel < 0) {
+				break;
 			}
 		}
 		scanner.resetTo(skipStart, scannerEndPosition - 1);
 		return false;
-	}
-
-	public boolean skipToToken(int expectedTokenType) {
-		return skipToToken(new int[] { expectedTokenType });
 	}
 
 }

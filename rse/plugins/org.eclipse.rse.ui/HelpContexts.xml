@@ -50,54 +50,54 @@ Contributors:
 <!-- TEAM VIEW -->
 <context id="teamview">
 <description>Use this view to work with the team-sharable artifacts from the Remote System Explorer: connection, filters, user actions and compile commands. These are contained in profiles. Use this view to see the sharable artifacts by profile, and share those artifacts using the popup menu of the root node. </description>
-<topic href="..com.ibm.etools.iseries.rse.doc/concepts/cprofile.htm" label="Remote System Explorer Profiles" />
+<topic href="../org.eclipse.rse.doc.user/concepts/cprofile.htm" label="Remote System Explorer Profiles" />
 </context>
 <!-- TEAM VIEW ACTION: New Profile action...   -->
 <context id="actn0003">
 <description>Open a wizard to create a new profile for partitioning your connections, filters, user actions and compile commands.</description>
-<topic href="..com.ibm.etools.iseries.rse.doc/concepts/cprofile.htm" label="Remote System Explorer Profiles" />
+<topic href="../org.eclipse.rse.doc.user/concepts/cprofile.htm" label="Remote System Explorer Profiles" />
 </context>	
 <!-- TEAM VIEW ACTION: Active profile action...   -->
 <context id="actnactp">
 <description>Toggle this profile between active and not active. The Remote Systems view only shows connections, filters, user actions and compile commands from active profiles.
 </description>
-<topic href="..com.ibm.etools.iseries.rse.doc/concepts/cprofile.htm" label="Remote System Explorer Profiles" />
+<topic href="../org.eclipse.rse.doc.user/concepts/cprofile.htm" label="Remote System Explorer Profiles" />
 </context>
 <!-- TEAM VIEW ACTION: Make Active profile action...   -->
 <context id="ActionMakeActive">
 <description>Make all the selected profiles active, such that their connections, filters, user actions and compile commands are visible in the Remote Systems view.
 </description>
-<topic href="..com.ibm.etools.iseries.rse.doc/concepts/cprofile.htm" label="Remote System Explorer Profiles" />
+<topic href="../org.eclipse.rse.doc.user/concepts/cprofile.htm" label="Remote System Explorer Profiles" />
 </context>
 <!-- TEAM VIEW ACTION: Make Inactive profile action...   -->
 <context id="ActionMakeInactive">
 <description>Make all the selected profiles inactive, such that their  connections, filters, user actions and compile commands are not visible in the Remote Systems view.
 </description>
-<topic href="..com.ibm.etools.iseries.rse.doc/concepts/cprofile.htm" label="Remote System Explorer Profiles" />
+<topic href="../org.eclipse.rse.doc.user/concepts/cprofile.htm" label="Remote System Explorer Profiles" />
 </context>
 
 <!-- TEAM VIEW ACTION: Rename profile action...   -->
 <context id="actnrnpr">
 <description>Rename selected profile.
-<topic href="..com.ibm.etools.iseries.rse.doc/concepts/cprofile.htm" label="Remote System Explorer Profiles" />
+<topic href="../org.eclipse.rse.doc.user/concepts/cprofile.htm" label="Remote System Explorer Profiles" />
 </description>
 </context>
 <!-- TEAM VIEW ACTION: Delete profiles action...   -->
 <context id="actndlpr">
 <description>Delete selected profiles, including all of their connections, filters, user actions and compile commands.</description>
-<topic href="..com.ibm.etools.iseries.rse.doc/concepts/cprofile.htm" label="Remote System Explorer Profiles" />
+<topic href="../org.eclipse.rse.doc.user/concepts/cprofile.htm" label="Remote System Explorer Profiles" />
 </context>
 <!-- TEAM VIEW ACTION: Duplicate profile action...   -->
 <context id="actndupr">
 <description>Copy selected profile, including all its connections, filters, user actions and compile commands.
 </description>
-<topic href="..com.ibm.etools.iseries.rse.doc/concepts/cprofile.htm" label="Remote System Explorer Profiles" />
+<topic href="../org.eclipse.rse.doc.user/concepts/cprofile.htm" label="Remote System Explorer Profiles" />
 </context>
 
 <!-- PULLDOWN ACTION: Work with profiles action...-->
 <context id="actnwwpr">
 <description>Switch to the Team view, where you can create, delete, copy, rename and activate profiles</description>
-<topic href="..com.ibm.etools.iseries.rse.doc/concepts/cprofile.htm" label="Remote System Explorer Profiles" />
+<topic href="../org.eclipse.rse.doc.user/concepts/cprofile.htm" label="Remote System Explorer Profiles" />
 </context>
 <!-- PULLDOWN ACTION: Qualify connections action...-->
 <context id="actn0008">
@@ -942,8 +942,10 @@ Click the <b>Clear Cached Files</b> button to remove all cached files. Clearing 
 <!-- RSE Communications daemon action -->
 <context id="dmna0000">
 <description>This action starts and stops the local Remote System Explorer (RSE) communications daemon.  This daemon is not directly used by individual RSE connections.  Instead it allows local Workbench functions to accept incoming socket requests from remote systems.  You can set the daemon to automatically start and configure the port used by the daemon in the Workbench preferences under Remote Systems->Communications.</description>
-<topic href="..com.ibm.etools.iseries.rse.doc/reference/rports.htm" label="Port information for Development Studio Client" />
-<topic href="..com.ibm.etools.iseries.rse.doc/reference/rprefcom.htm" label="Preferences: communications" />
+<!-- FIXME need to add these htm files to user doc
+<topic href="../org.eclipse.rse.doc.user/reference/rports.htm" label="Port information for Development Studio Client" />
+<topic href="../org.eclipse.rse.doc.user/reference/rprefcom.htm" label="Preferences: communications" />
+ -->
 </context>
 
 <!-- Work offline support -->

@@ -52,5 +52,14 @@ Contributors:
       </page>
    </extension>
    
+<!-- ============================================ -->
+<!-- Define Help Context                          -->
+<!-- ============================================ -->
+   <extension
+         point="org.eclipse.help.contexts">
+      <contexts
+            file="HelpContexts.xml">
+      </contexts>
+   </extension>
  
 </plugin>

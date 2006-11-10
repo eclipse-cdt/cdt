@@ -37,16 +37,26 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Platform;
 
 public abstract class PDOMIndexerTask implements IPDOMIndexerTask {
 	private static final Object NO_CONTEXT = new Object();
 	protected static final int MAX_ERRORS = 10;
 
-	protected volatile int fTotalTasks= 0;
-	protected volatile int fCompletedTasks= 0;
+	protected volatile int fTotalSourcesEstimate= 0;
+	protected volatile int fCompletedSources= 0;
+	protected volatile int fCompletedHeaders= 0;
 	protected int fErrorCount;
 	protected Map fContextMap= new HashMap();
 	protected volatile String fMessage;
+	protected boolean fTrace;
+	
+	protected PDOMIndexerTask() {
+		String trace = Platform.getDebugOption(CCorePlugin.PLUGIN_ID + "/debug/indexer"); //$NON-NLS-1$
+		if (trace != null && trace.equalsIgnoreCase("true")) { //$NON-NLS-1$
+			fTrace= true;
+		}
+	}
 	
 	protected void processDelta(ICElementDelta delta, Collection added, Collection changed, Collection removed) throws CoreException {
 		int flags = delta.getFlags();
@@ -199,11 +209,16 @@ public abstract class PDOMIndexerTask implements IPDOMIndexerTask {
 		return fMessage;
 	}
 
-	final public int getRemainingSubtaskCount() {
-		return fTotalTasks-fCompletedTasks;
+	
+	final public int estimateRemainingSources() {
+		return fTotalSourcesEstimate-fCompletedSources;
 	}
 
-	final public int getCompletedSubtaskCount() {
-		return fCompletedTasks;
+	public int getCompletedHeadersCount() {
+		return fCompletedHeaders;
+	}
+
+	public int getCompletedSourcesCount() {
+		return fCompletedSources;
 	}
 }

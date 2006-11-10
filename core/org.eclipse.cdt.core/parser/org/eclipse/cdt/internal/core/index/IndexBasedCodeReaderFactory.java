@@ -50,13 +50,21 @@ public class IndexBasedCodeReaderFactory implements ICodeReaderFactory {
 	
 	private static final char[] EMPTY_CHARS = new char[0];
 	
+	private static class NeedToParseException extends Exception {}
 	public static class FileInfo {
 		private FileInfo() {}
 		public IIndexFile fFile= null;
 		public IMacro[] fMacros= null;
-		public boolean fNeedToIndex= false;
+		private boolean fRequested= false;
+		
+		public boolean isRequested() {
+			return fRequested;
+		}
+		public void setRequested(boolean val) {
+			fRequested= val;
+		}
 	}
-	private static class NeedToParseException extends Exception {}
+	
 	
 	public IndexBasedCodeReaderFactory(IIndex index) {
 		this.index = index;
@@ -138,7 +146,7 @@ public class IndexBasedCodeReaderFactory implements ICodeReaderFactory {
 		if (!target.add(fileInfo)) {
 			return;
 		}
-		if (fileInfo.fFile == null || fileInfo.fNeedToIndex) {
+		if (fileInfo.fFile == null || fileInfo.isRequested()) {
 			throw new NeedToParseException();
 		}
 		

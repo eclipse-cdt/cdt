@@ -13,7 +13,6 @@
 package org.eclipse.cdt.internal.core.pdom.indexer.full;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
@@ -36,14 +35,26 @@ class PDOMFullHandleDelta extends PDOMFullIndexerJob {
 	public PDOMFullHandleDelta(PDOMFullIndexer indexer, ICElementDelta delta) throws CoreException {
 		super(indexer);
 		processDelta(delta, changed, changed, removed);
-		fTotalTasks= changed.size() + removed.size();
+		fTotalSourcesEstimate= changed.size() + removed.size();
 	}
 
 	public void run(IProgressMonitor monitor) {
 		try {
 			long start = System.currentTimeMillis();
 			setupIndexAndReaderFactory();
-			registerTUsInReaderFactory(changed, Collections.EMPTY_LIST);
+			
+			// separate headers
+			List headers= new ArrayList();
+			List sources= changed;
+			for (Iterator iter = changed.iterator(); iter.hasNext();) {
+				ITranslationUnit tu = (ITranslationUnit) iter.next();
+				if (!tu.isSourceUnit()) {
+					headers.add(tu);
+					iter.remove();
+				}
+			}
+
+			registerTUsInReaderFactory(sources, headers, true);
 					
 			Iterator i= removed.iterator();
 			while (i.hasNext()) {
@@ -51,13 +62,16 @@ class PDOMFullHandleDelta extends PDOMFullIndexerJob {
 					return;
 				ITranslationUnit tu = (ITranslationUnit)i.next();
 				removeTU(index, tu);
-				fCompletedTasks++;
+				if (tu.isSourceUnit()) {
+					fCompletedSources++;
+				}
+				else {
+					fTotalSourcesEstimate--;
+					fCompletedHeaders++;
+				}
 			}
 
-			parseTUs(changed, monitor);
-			if (monitor.isCanceled()) {
-				return;
-			}
+			parseTUs(sources, headers, monitor);
 				
 			String showTimings = Platform.getDebugOption(CCorePlugin.PLUGIN_ID
 						+ "/debug/pdomtimings"); //$NON-NLS-1$

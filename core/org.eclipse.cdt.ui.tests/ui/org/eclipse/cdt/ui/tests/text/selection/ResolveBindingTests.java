@@ -15,11 +15,9 @@ import junit.framework.Test;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
 
 import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.dom.IPDOMIndexer;
 import org.eclipse.cdt.core.dom.IPDOMManager;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
@@ -30,8 +28,9 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.testplugin.CProjectHelper;
-import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.tests.BaseUITestCase;
+
+import org.eclipse.cdt.internal.core.CCoreInternals;
 
 public class ResolveBindingTests extends BaseUITestCase  {
 
@@ -50,12 +49,7 @@ public class ResolveBindingTests extends BaseUITestCase  {
 	protected void setUp() throws Exception {
 		super.setUp();
 		fCProject= CProjectHelper.createCProject("ResolveBindingTests", "bin", IPDOMManager.ID_NO_INDEXER);
-		IPDOMIndexer indexer = CCorePlugin.getPDOMManager().getIndexer(fCProject);
-		try {
-			indexer.reindex();
-		} catch (CoreException e) {
-			CUIPlugin.getDefault().log(e);
-		}
+		CCoreInternals.getPDOMManager().reindex(fCProject);
 		fIndex= CCorePlugin.getIndexManager().getIndex(fCProject);
 	}
 		

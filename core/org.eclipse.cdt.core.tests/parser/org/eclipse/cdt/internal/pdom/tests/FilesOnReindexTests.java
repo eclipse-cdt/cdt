@@ -20,6 +20,7 @@ import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.index.IIndexFile;
 import org.eclipse.cdt.core.index.IndexFilter;
 import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.internal.core.CCoreInternals;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
@@ -53,7 +54,7 @@ public class FilesOnReindexTests extends PDOMTestBase {
 		IFile file = project.getProject().getFile("simple.cpp");
 		performAssertions(file);
 		pdom.releaseReadLock();
-		CCorePlugin.getPDOMManager().getIndexer(project).reindex();
+		CCoreInternals.getPDOMManager().reindex(project);
 		
 		// wait until the indexer is done
 		assertTrue(CCorePlugin.getIndexManager().joinIndexer(360000, new NullProgressMonitor()));

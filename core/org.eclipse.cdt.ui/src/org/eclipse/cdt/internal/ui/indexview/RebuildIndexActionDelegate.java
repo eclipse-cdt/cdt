@@ -1,14 +1,15 @@
 package org.eclipse.cdt.internal.ui.indexview;
-import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.dom.IPDOMIndexer;
-import org.eclipse.cdt.core.model.ICProject;
-import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.IObjectActionDelegate;
 import org.eclipse.ui.IWorkbenchPart;
+
+import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.ui.CUIPlugin;
+
+import org.eclipse.cdt.internal.core.CCoreInternals;
 
 /*******************************************************************************
  * Copyright (c) 2006 QNX Software Systems and others.
@@ -44,9 +45,8 @@ public class RebuildIndexActionDelegate implements IObjectActionDelegate {
 				continue;
 			
 			ICProject project = (ICProject)objs[i];
-			IPDOMIndexer indexer = CCorePlugin.getPDOMManager().getIndexer(project);
 			try {
-				indexer.reindex();
+				CCoreInternals.getPDOMManager().reindex(project);
 			} catch (CoreException e) {
 				CUIPlugin.getDefault().log(e);
 			}

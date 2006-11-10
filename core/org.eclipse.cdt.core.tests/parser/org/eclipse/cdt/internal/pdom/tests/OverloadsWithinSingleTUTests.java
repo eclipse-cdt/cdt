@@ -14,11 +14,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
 
-import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.IBasicType;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.internal.core.CCoreInternals;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
 import org.eclipse.core.runtime.CoreException;
@@ -35,7 +35,7 @@ public class OverloadsWithinSingleTUTests extends PDOMTestBase {
 	protected void setUp() throws Exception {
 		if (pdom == null) {
 			ICProject project = createProject("overloadsWithinSingleTU");
-			pdom = (PDOM)CCorePlugin.getPDOMManager().getPDOM(project);
+			pdom = (PDOM)CCoreInternals.getPDOMManager().getPDOM(project);
 		}
 		pdom.acquireReadLock();
 	}

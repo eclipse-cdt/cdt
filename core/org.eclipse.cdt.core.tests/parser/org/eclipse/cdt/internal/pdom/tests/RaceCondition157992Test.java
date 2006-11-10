@@ -14,9 +14,9 @@ package org.eclipse.cdt.internal.pdom.tests;
 
 import java.util.regex.Pattern;
 
-import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.internal.core.CCoreInternals;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.core.runtime.NullProgressMonitor;
 
@@ -30,7 +30,7 @@ public class RaceCondition157992Test extends PDOMTestBase {
 		
 		for(int i=0; i<noTrials; i++) {
 			ICProject project = createProject("classTests");
-			PDOM pdom = (PDOM)CCorePlugin.getPDOMManager().getPDOM(project);
+			PDOM pdom = (PDOM)CCoreInternals.getPDOMManager().getPDOM(project);
 			pdom.acquireReadLock();	
 
 			IBinding[] Bs = pdom.findBindings(Pattern.compile("B"), new NullProgressMonitor());

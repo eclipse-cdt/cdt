@@ -13,7 +13,7 @@
 package org.eclipse.cdt.internal.core.pdom.indexer.fast;
 
 import java.util.ArrayList;
-import java.util.Collection;
+import java.util.List;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.core.runtime.CoreException;
@@ -25,33 +25,29 @@ import org.eclipse.core.runtime.Platform;
  *
  */
 class PDOMFastReindex extends PDOMFastIndexerJob {
-	private ArrayList fTUs= new ArrayList();
-	
 	public PDOMFastReindex(PDOMFastIndexer indexer) throws CoreException {
 		super(indexer);
-		fTotalTasks= 1;
 	}
 		
 	public void run(final IProgressMonitor monitor) {
 		try {
 			long start = System.currentTimeMillis();
 			boolean allFiles= getIndexAllFiles();
-			Collection headers= allFiles ? fTUs : null;
-			collectSources(indexer.getProject(), fTUs, headers, allFiles);
-			fTotalTasks+= fTUs.size()+1;
-			fCompletedTasks+= 1;
+			List sources= new ArrayList();
+			List headers= new ArrayList();
+			collectSources(indexer.getProject(), sources, allFiles ? headers : null, allFiles);
 
+			fTotalSourcesEstimate= sources.size() + headers.size();
 			setupIndexAndReaderFactory();
 			clearIndex(index);
 
-			if (getRemainingSubtaskCount() == 1 || monitor.isCanceled()) {
+			if (fTotalSourcesEstimate==0 || monitor.isCanceled()) {
 				return;
 			}
 			
-			registerTUsInReaderFactory(fTUs);
-			fCompletedTasks++;
-
-			parseTUs(fTUs, monitor);
+			registerTUsInReaderFactory(sources);
+			registerTUsInReaderFactory(headers);
+			parseTUs(sources, headers, monitor);
 
 			String showTimings = Platform.getDebugOption(CCorePlugin.PLUGIN_ID
 					+ "/debug/pdomtimings"); //$NON-NLS-1$

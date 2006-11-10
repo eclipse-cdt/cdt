@@ -61,45 +61,42 @@ abstract class PDOMFullIndexerJob extends PDOMIndexerTask implements IPDOMIndexe
 		this.index = ((IWritableIndexManager) CCorePlugin.getIndexManager()).getWritableIndex(indexer.getProject());
 	}
 	
-	protected void registerTUsInReaderFactory(Collection required, Collection optional) throws CoreException {
+	protected void registerTUsInReaderFactory(Collection sources, Collection headers, 
+			boolean requireHeaders) throws CoreException {
 		filePathsToParse= new HashMap();
 		
-		for (Iterator iter = required.iterator(); iter.hasNext();) {
+		for (Iterator iter = sources.iterator(); iter.hasNext();) {
 			ITranslationUnit tu = (ITranslationUnit) iter.next();
 			filePathsToParse.put(tu.getLocation().toOSString(), Boolean.TRUE);
 		}
-		for (Iterator iter = optional.iterator(); iter.hasNext();) {
+		Boolean required= Boolean.valueOf(requireHeaders);
+		for (Iterator iter = headers.iterator(); iter.hasNext();) {
 			ITranslationUnit tu = (ITranslationUnit) iter.next();
-			filePathsToParse.put(tu.getLocation().toOSString(), Boolean.FALSE);
+			filePathsToParse.put(tu.getLocation().toOSString(), required);
 		}
 	}
 	
-	protected void parseTUs(Collection translationUnits, IProgressMonitor monitor) throws CoreException, InterruptedException {
+	protected void parseTUs(Collection sources, Collection headers, IProgressMonitor monitor) throws CoreException, InterruptedException {
 		// sources first
-		Iterator i = translationUnits.iterator();
-		while (i.hasNext()) {
+		Iterator iter;
+		for (iter = sources.iterator(); iter.hasNext();) {
 			if (monitor.isCanceled()) 
 				return;
-			ITranslationUnit tu = (ITranslationUnit)i.next();
+			ITranslationUnit tu = (ITranslationUnit) iter.next();
 			String path = tu.getLocation().toOSString();
-			if (filePathsToParse.get(path) == null) {
-				i.remove();
-			}
-			else if (tu.isSourceUnit()) {
+			if (filePathsToParse.get(path) != null) {
 				parseTU(tu, monitor);
-				i.remove();
 			}
 		}
 
 		// headers with context
-		i = translationUnits.iterator();
-		while (i.hasNext()) {
-			if (monitor.isCanceled())
+		for (iter = headers.iterator(); iter.hasNext();) {
+			if (monitor.isCanceled()) 
 				return;
-			ITranslationUnit tu = (ITranslationUnit)i.next();
+			ITranslationUnit tu = (ITranslationUnit) iter.next();
 			String path = tu.getLocation().toOSString();
 			if (filePathsToParse.get(path)==null) {
-				i.remove();
+				iter.remove();
 			}
 			else {
 				ITranslationUnit context= findContext(index, path);
@@ -111,12 +108,13 @@ abstract class PDOMFullIndexerJob extends PDOMIndexerTask implements IPDOMIndexe
 
 		// headers without context
 		if (getIndexAllFiles()) {
-			i = translationUnits.iterator();
-			while (i.hasNext()) {
-				ITranslationUnit tu = (ITranslationUnit)i.next();
+			for (iter = headers.iterator(); iter.hasNext();) {
+				if (monitor.isCanceled()) 
+					return;
+				ITranslationUnit tu = (ITranslationUnit) iter.next();
 				String path = tu.getLocation().toOSString();
 				if (filePathsToParse.get(path)==null) {
-					i.remove();
+					iter.remove();
 				}
 				else {
 					parseTU(tu, monitor);
@@ -194,19 +192,40 @@ abstract class PDOMFullIndexerJob extends PDOMIndexerTask implements IPDOMIndexe
 			}
 		}
 
+		boolean isFirstRequest= true;
+		boolean isFirstAddition= true;
 		index.acquireWriteLock(0);
 		try {
 			for (Iterator iter = symbolMap.entrySet().iterator(); iter.hasNext();) {
-				if (pm.isCanceled()) {
+				if (pm.isCanceled()) 
 					return;
-				}
+				
 				Map.Entry entry = (Map.Entry) iter.next();
 				String path= (String) entry.getKey();
-				addToIndex(path, (ArrayList[]) entry.getValue());
+				Boolean required= (Boolean) filePathsToParse.remove(path);
+				if (required != null) {
+					if (required.booleanValue()) {
+						if (isFirstRequest) 
+							isFirstRequest= false;
+						else 
+							fTotalSourcesEstimate--;
+					}
+
+					if (fTrace) 
+						System.out.println("Indexer: adding " + path); //$NON-NLS-1$
+					
+					addToIndex(path, (ArrayList[]) entry.getValue());
+					
+					if (isFirstAddition) 
+						isFirstAddition= false;
+					else
+						fCompletedHeaders++;
+				}
 			}
 		} finally {
 			index.releaseWriteLock(0);
 		}
+		fCompletedSources++;
 	}
 
 	private void addToMap(HashMap map, int idx, String path, Object thing) {
@@ -221,14 +240,6 @@ abstract class PDOMFullIndexerJob extends PDOMIndexerTask implements IPDOMIndexe
 	}		
 
 	private void addToIndex(String location, ArrayList[] lists) throws CoreException {
-		Boolean required= (Boolean) filePathsToParse.remove(location);
-		if (required == null) {
-			return;
-		}
-		if (!required.booleanValue()) {
-			fTotalTasks++;
-		}
-
 		// Remove the old symbols in the tu
 		Path path= new Path(location);
 		IIndexFragmentFile file= (IIndexFragmentFile) index.getFile(new Path(location));
@@ -259,6 +270,5 @@ abstract class PDOMFullIndexerJob extends PDOMIndexerTask implements IPDOMIndexe
 		for (int i = 0; i < list.size(); i++) {
 			index.addName(file, (IASTName) list.get(i));
 		}		
-		fCompletedTasks++;
 	}
 }

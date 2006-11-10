@@ -37,13 +37,19 @@ public interface IPDOMIndexerTask {
 	 * Used by the framework to report progress.
 	 * @since 4.0
 	 */
-	public int getRemainingSubtaskCount();
+	public int estimateRemainingSources();
 
 	/**
 	 * Used by the framework to report progress.
 	 * @since 4.0
 	 */
-	public int getCompletedSubtaskCount();
+	public int getCompletedSourcesCount();
+
+	/**
+	 * Used by the framework to report progress.
+	 * @since 4.0
+	 */
+	public int getCompletedHeadersCount();
 
 	/**
 	 * Returns information about the current subtask. 

@@ -15,7 +15,6 @@ import java.util.regex.Pattern;
 
 import junit.framework.Test;
 
-import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.IName;
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IBinding;
@@ -24,6 +23,7 @@ import org.eclipse.cdt.core.dom.ast.IEnumerator;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.index.IndexFilter;
 import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.internal.core.CCoreInternals;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.core.runtime.NullProgressMonitor;
 
@@ -42,7 +42,7 @@ public class EnumerationTests extends PDOMTestBase {
 	protected void setUp() throws Exception {
 		if (pdom == null) {
 			ICProject project = createProject("enumerationTests");
-			pdom = (PDOM)CCorePlugin.getPDOMManager().getPDOM(project);
+			pdom = (PDOM)CCoreInternals.getPDOMManager().getPDOM(project);
 		}
 		pdom.acquireReadLock();
 	}

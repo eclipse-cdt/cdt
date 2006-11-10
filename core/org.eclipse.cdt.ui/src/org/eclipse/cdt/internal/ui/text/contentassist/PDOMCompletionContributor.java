@@ -17,7 +17,6 @@ import java.util.List;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.text.ITextViewer;
 
-import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.IPDOMNode;
 import org.eclipse.cdt.core.dom.IPDOMVisitor;
 import org.eclipse.cdt.core.dom.ast.ASTCompletionNode;
@@ -34,6 +33,7 @@ import org.eclipse.cdt.core.model.IWorkingCopy;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.text.contentassist.ICompletionContributor;
 
+import org.eclipse.cdt.internal.core.CCoreInternals;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMLinkage;
@@ -61,7 +61,7 @@ public class PDOMCompletionContributor extends DOMCompletionContributor implemen
 			return;
 		
 		try {
-			PDOM pdom = (PDOM) CCorePlugin.getPDOMManager().getPDOM(workingCopy.getCProject());
+			PDOM pdom = (PDOM) CCoreInternals.getPDOMManager().getPDOM(workingCopy.getCProject());
 			IASTName[] names = completionNode.getNames();
 			for (int i = 0; i < names.length; ++i) {
 				IASTName name = names[i];

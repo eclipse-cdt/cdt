@@ -27,39 +27,35 @@ import org.eclipse.core.runtime.Status;
  */
 class PDOMFullReindex extends PDOMFullIndexerJob {
 
-	private ArrayList fTUs= new ArrayList();
-
 	public PDOMFullReindex(PDOMFullIndexer indexer) throws CoreException {
 		super(indexer);
-		fTotalTasks= 1;
 	}
 
 	public void run(final IProgressMonitor monitor) {
 		try {
 			long start = System.currentTimeMillis();	
 			boolean allfiles= getIndexAllFiles();
-			List optional= new ArrayList();
+			List headers= new ArrayList();
+			List sources= new ArrayList();
 			
-			collectSources(indexer.getProject(), fTUs, optional, allfiles);
-			if (allfiles) {
-				fTUs.addAll(optional);
-				optional.clear();
-			}
+			collectSources(indexer.getProject(), sources, headers, allfiles);
 			
-			fTotalTasks+= fTUs.size()+1;
-			fCompletedTasks++;
+			fTotalSourcesEstimate= sources.size();
+			if (allfiles) 
+				fTotalSourcesEstimate+= headers.size();
 
 			setupIndexAndReaderFactory();
 			clearIndex(index);
 
-			if (getRemainingSubtaskCount() == 1 || monitor.isCanceled()) {
+			if (fTotalSourcesEstimate == 0 || monitor.isCanceled()) {
 				return;
 			}
 
-			registerTUsInReaderFactory(fTUs, optional);	
-			fCompletedTasks++;
+			registerTUsInReaderFactory(sources, headers, allfiles);
+			if (!allfiles) 
+				headers.clear();
 			
-			parseTUs(fTUs, monitor);
+			parseTUs(sources, headers, monitor);
 
 			String showTimings = Platform.getDebugOption(CCorePlugin.PLUGIN_ID
 					+ "/debug/pdomtimings"); //$NON-NLS-1$

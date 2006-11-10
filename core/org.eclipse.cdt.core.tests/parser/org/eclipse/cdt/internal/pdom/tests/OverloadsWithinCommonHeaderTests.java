@@ -14,13 +14,13 @@ import java.util.regex.Pattern;
 
 import junit.framework.TestSuite;
 
-import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.IBasicType;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IPointerType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.index.IndexFilter;
 import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.internal.core.CCoreInternals;
 import org.eclipse.cdt.internal.core.dom.Linkage;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.core.runtime.CoreException;
@@ -41,7 +41,7 @@ public class OverloadsWithinCommonHeaderTests extends PDOMTestBase {
 	protected void setUp() throws Exception {
 		if (pdom == null) {
 			ICProject project = createProject("overloadsWithinCommonHeader", true);
-			pdom = (PDOM)CCorePlugin.getPDOMManager().getPDOM(project);
+			pdom = (PDOM)CCoreInternals.getPDOMManager().getPDOM(project);
 		}
 		pdom.acquireReadLock();
 	}

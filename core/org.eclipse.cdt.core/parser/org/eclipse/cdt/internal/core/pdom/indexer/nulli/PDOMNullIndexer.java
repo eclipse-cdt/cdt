@@ -73,11 +73,15 @@ public class PDOMNullIndexer implements IPDOMIndexer {
 			return null;
 		}
 
-		public int getCompletedSubtaskCount() {
+		public int estimateRemainingSources() {
 			return 0;
 		}
 
-		public int getRemainingSubtaskCount() {
+		public int getCompletedHeadersCount() {
+			return 0;
+		}
+
+		public int getCompletedSourcesCount() {
 			return 0;
 		}
 	}

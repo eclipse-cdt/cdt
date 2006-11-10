@@ -651,9 +651,6 @@ public class CCorePlugin extends Plugin {
 		return fCoreModel;
 	}
 
-	/** 
-	 * deprecated, use getIndexManager()
-	 */
 	public static IPDOMManager getPDOMManager() {
 		return getDefault().pdomManager;
 	}

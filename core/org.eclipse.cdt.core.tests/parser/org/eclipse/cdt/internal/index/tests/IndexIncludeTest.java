@@ -183,7 +183,7 @@ public class IndexIncludeTest extends IndexTestBase {
 			String content = "// comment \n#include \"header20061107.h\"\n";
 			IFile file= TestSourceReader.createFile(fProject.getProject(), "intermed20061107.h", content);
 			TestSourceReader.createFile(fProject.getProject(), "source20061107.cpp", "#include \"intermed20061107.h\"\n");
-			CCoreInternals.getPDOMManager().getIndexer(fProject).reindex();
+			CCoreInternals.getPDOMManager().reindex(fProject);
 			waitForIndexer();
 			
 

@@ -43,7 +43,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.core.runtime.Platform;
 
 /**
  * @author Doug Schaefer
@@ -54,14 +53,9 @@ abstract class PDOMFastIndexerJob extends PDOMIndexerTask implements IPDOMIndexe
 	protected final PDOMFastIndexer indexer;
 	protected IWritableIndex index;
 	protected IndexBasedCodeReaderFactory codeReaderFactory;
-	private boolean fTrace= false;
 
 	public PDOMFastIndexerJob(PDOMFastIndexer indexer) throws CoreException {
 		this.indexer = indexer;
-		String trace = Platform.getDebugOption(CCorePlugin.PLUGIN_ID + "/debug/indexer"); //$NON-NLS-1$
-		if (trace != null && trace.equalsIgnoreCase("true")) { //$NON-NLS-1$
-			fTrace= true;
-		}
 	}
 	
 	protected void setupIndexAndReaderFactory() throws CoreException {
@@ -69,11 +63,11 @@ abstract class PDOMFastIndexerJob extends PDOMIndexerTask implements IPDOMIndexe
 		this.codeReaderFactory = new IndexBasedCodeReaderFactory(index);
 	}		
 
-	protected void registerTUsInReaderFactory(Collection tus) throws CoreException {
-		for (Iterator iter = tus.iterator(); iter.hasNext();) {
+	protected void registerTUsInReaderFactory(Collection files) throws CoreException {
+		for (Iterator iter = files.iterator(); iter.hasNext();) {
 			ITranslationUnit tu = (ITranslationUnit) iter.next();
 			FileInfo info= codeReaderFactory.createFileInfo(tu);
-			info.fNeedToIndex= true;
+			info.setRequested(true);
 		}
 	}
 	
@@ -173,42 +167,55 @@ abstract class PDOMFastIndexerJob extends PDOMIndexerTask implements IPDOMIndexe
 			}
 			String path= (String) entry.getKey();
 			FileInfo info= codeReaderFactory.createFileInfo(path);
-			if (!info.fNeedToIndex && info.fFile != null) {
-				if (fTrace) {
-					System.out.println("Indexer: skipping " + path); //$NON-NLS-1$
-				}
-				iter.remove();
-			}
-			else {
+		
+			// file is requested or is not yet indexed.
+			if (info.isRequested() || info.fFile == null) {
 				// resolve the names
 				ArrayList names= ((ArrayList[]) entry.getValue())[2];
 				for (int i=0; i<names.size(); i++) {
 					((IASTName) names.get(i)).resolveBinding();
 				}
-			}				
+			}
+			else {
+				if (fTrace) {
+					System.out.println("Indexer: skipping " + path); //$NON-NLS-1$
+				}
+				iter.remove();
+			}
 		}
 
+		boolean isFirstRequest= true;
+		boolean isFirstAddition= true;
 		index.acquireWriteLock(1);
 		try {
 			for (Iterator iter = paths.iterator(); iter.hasNext();) {
+				if (pm.isCanceled()) 
+					return;
+				
 				String path = (String) iter.next();
 				FileInfo info= codeReaderFactory.createFileInfo(path);
-				if (!info.fNeedToIndex) {
-					fTotalTasks++;
+				if (info.isRequested()) {
+					info.setRequested(false);
+
+					if (isFirstRequest) 
+						isFirstRequest= false;
+					else 
+						fTotalSourcesEstimate--;
 				}
-				info.fNeedToIndex= false;
 				if (fTrace) {
 					System.out.println("Indexer: adding " + path); //$NON-NLS-1$
 				}
 				addToIndex(path, info, (ArrayList[]) symbolMap.get(path));
-				fCompletedTasks++;
-				if (pm.isCanceled()) {
-					return;
-				}
+
+				if (isFirstAddition) 
+					isFirstAddition= false;
+				else
+					fCompletedHeaders++;
 			}
 		} finally {
 			index.releaseWriteLock(1);
 		}
+		fCompletedSources++;
 	}
 
 	private void addToMap(HashMap map, int idx, String path, Object thing) {
@@ -264,29 +271,25 @@ abstract class PDOMFastIndexerJob extends PDOMIndexerTask implements IPDOMIndexe
 		return (IIndexFragmentFile) info.fFile;
 	}
 	
-	protected void parseTUs(List translationUnits, IProgressMonitor monitor) throws CoreException, InterruptedException {
+	protected void parseTUs(List sources, List headers, IProgressMonitor monitor) throws CoreException, InterruptedException {
 		// sources first
-		Iterator i = translationUnits.iterator();
-		while (i.hasNext()) {
+		Iterator iter;
+		for (iter= sources.iterator(); iter.hasNext();) {
 			if (monitor.isCanceled()) 
 				return;
-			ITranslationUnit tu = (ITranslationUnit)i.next();
-			if (tu.isSourceUnit()) {
-				parseTU(tu, monitor);
-				i.remove();
-				fCompletedTasks++;
-			}
+			ITranslationUnit tu = (ITranslationUnit) iter.next();
+			parseTU(tu, monitor);
 		}
 
 		// headers with context
-		i = translationUnits.iterator();
-		while (i.hasNext()) {
-			if (monitor.isCanceled())
+		for (iter= headers.iterator(); iter.hasNext();) {
+			if (monitor.isCanceled()) 
 				return;
-			ITranslationUnit tu = (ITranslationUnit)i.next();
+			ITranslationUnit tu = (ITranslationUnit) iter.next();
 			FileInfo info= codeReaderFactory.createFileInfo(tu);
-			if (!info.fNeedToIndex) {
-				i.remove();
+			// check if header was handled while parsing a source
+			if (!info.isRequested()) {
+				iter.remove();
 			}
 			else if (info.fFile != null) {
 				ITranslationUnit context= findContext(index, info.fFile.getLocation());
@@ -298,14 +301,14 @@ abstract class PDOMFastIndexerJob extends PDOMIndexerTask implements IPDOMIndexe
 
 		// headers without context
 		if (getIndexAllFiles()) {
-			i = translationUnits.iterator();
-			while (i.hasNext()) {
-				if (monitor.isCanceled())
+			for (iter= headers.iterator(); iter.hasNext();) {
+				if (monitor.isCanceled()) 
 					return;
-				ITranslationUnit tu = (ITranslationUnit)i.next();
+				ITranslationUnit tu = (ITranslationUnit) iter.next();
 				FileInfo info= codeReaderFactory.createFileInfo(tu);
-				if (!info.fNeedToIndex) {
-					i.remove();
+				// check if header was handled while parsing a source
+				if (!info.isRequested()) {
+					iter.remove();
 				}
 				else {
 					parseTU(tu, monitor);

@@ -46,7 +46,7 @@ public class PDOMFastIndexer implements IPDOMIndexer {
 	
 	public void handleDelta(ICElementDelta delta) throws CoreException {
 		PDOMFastHandleDelta fhd= new PDOMFastHandleDelta(this, delta);
-		if (fhd.getRemainingSubtaskCount() > 0) {
+		if (fhd.estimateRemainingSources() > 0) {
 			CCoreInternals.getPDOMManager().enqueue(fhd);
 		}
 	}

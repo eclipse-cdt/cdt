@@ -31,7 +31,7 @@ class PDOMFastHandleDelta extends PDOMFastIndexerJob {
 	public PDOMFastHandleDelta(PDOMFastIndexer indexer, ICElementDelta delta) throws CoreException {
 		super(indexer);
 		processDelta(delta, changed, changed, removed);
-		fTotalTasks= changed.size() + removed.size();
+		fTotalSourcesEstimate= changed.size() + removed.size();
 	}
 
 	public void run(IProgressMonitor monitor) {
@@ -47,10 +47,27 @@ class PDOMFastHandleDelta extends PDOMFastIndexerJob {
 					return;
 				ITranslationUnit tu = (ITranslationUnit)i.next();
 				removeTU(index, tu);
-				fCompletedTasks++;
+				if (tu.isSourceUnit()) {
+					fCompletedSources++;
+				}
+				else {
+					fTotalSourcesEstimate--;
+					fCompletedHeaders++;
+				}
 			}
 
-			parseTUs(changed, monitor);
+			// separate headers
+			List headers= new ArrayList();
+			List sources= changed;
+			for (Iterator iter = changed.iterator(); iter.hasNext();) {
+				ITranslationUnit tu = (ITranslationUnit) iter.next();
+				if (!tu.isSourceUnit()) {
+					headers.add(tu);
+					iter.remove();
+				}
+			}
+			
+			parseTUs(sources, headers, monitor);
 			if (monitor.isCanceled()) {
 				return;
 			}		

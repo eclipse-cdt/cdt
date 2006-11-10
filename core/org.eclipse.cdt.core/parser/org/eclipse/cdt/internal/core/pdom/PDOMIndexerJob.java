@@ -11,8 +11,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom;
 
-import java.text.MessageFormat;
-
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.IPDOMIndexer;
 import org.eclipse.cdt.core.dom.IPDOMIndexerTask;
@@ -29,7 +27,6 @@ import org.eclipse.core.runtime.jobs.Job;
 public class PDOMIndexerJob extends Job {
 
 	private final PDOMManager pdomManager;
-	private int fCompletedSubtaskCount= 0;
 	private IPDOMIndexerTask currentTask;
 	private boolean cancelledByManager= false;
 	private Object taskMutex = new Object();
@@ -48,15 +45,10 @@ public class PDOMIndexerJob extends Job {
 		this.monitor = monitor;
 		long start = System.currentTimeMillis();
 
-		String taskName = CCorePlugin.getResourceString("pdom.indexer.task"); //$NON-NLS-1$
-		monitor.beginTask(taskName, IProgressMonitor.UNKNOWN);
 		startMonitorJob(monitor);
 		try {
 			do {
 				synchronized(taskMutex) {
-					if (currentTask != null) {
-						fCompletedSubtaskCount+= currentTask.getCompletedSubtaskCount();
-					}
 					currentTask= null;
 					taskMutex.notify();
 
@@ -118,10 +110,13 @@ public class PDOMIndexerJob extends Job {
 	}
 
 	private void startMonitorJob(final IProgressMonitor monitor) {
-		fMonitorJob= new Job("cdt indexer monitor job") { //$NON-NLS-1$
+		fMonitorJob= new Job(CCorePlugin.getResourceString("PDOMIndexerJob.updateMonitorJob")) {  //$NON-NLS-1$
 			protected IStatus run(IProgressMonitor m) {
+				String taskName = CCorePlugin.getResourceString("pdom.indexer.task"); //$NON-NLS-1$
+				monitor.beginTask(taskName, 1000);
+				int currentTick= 0;
 				while(!m.isCanceled()) {
-					updateMonitor(monitor);
+					currentTick= pdomManager.getMonitorMessage(monitor, currentTick, 1000);
 					try {
 						Thread.sleep(350);
 					} catch (InterruptedException e) {
@@ -133,21 +128,6 @@ public class PDOMIndexerJob extends Job {
 		};
 		fMonitorJob.setSystem(true);
 		fMonitorJob.schedule();
-	}
-
-	protected void updateMonitor(IProgressMonitor monitor) {
-		String detail= null;
-		synchronized(taskMutex) {
-			if (currentTask != null) {
-				detail= currentTask.getMonitorMessageDetail();
-			}
-		}
-		String msg= pdomManager.getMonitorMessage();
-		if (detail != null) {
-			msg= MessageFormat.format("{0}: {1}", new Object[] {msg, detail}); //$NON-NLS-1$
-		}
-
-		monitor.subTask(msg);
 	}
 
 	public void cancelJobs(IPDOMIndexer indexer) {
@@ -164,14 +144,5 @@ public class PDOMIndexerJob extends Job {
 				}
 			}
 		}
-	}
-
-	public int getCompletedSubtaskCount() {
-		synchronized (taskMutex) {
-			if (currentTask != null) {
-				return currentTask.getCompletedSubtaskCount() + fCompletedSubtaskCount;
-			}
-		}
-		return fCompletedSubtaskCount;
 	}
 }

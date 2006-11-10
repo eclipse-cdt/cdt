@@ -13,7 +13,6 @@ package org.eclipse.cdt.internal.pdom.tests;
 
 import junit.framework.Test;
 
-import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IBasicType;
 import org.eclipse.cdt.core.dom.ast.IBinding;
@@ -23,6 +22,7 @@ import org.eclipse.cdt.core.dom.ast.IParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBasicType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.internal.core.CCoreInternals;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.core.runtime.CoreException;
 
@@ -42,7 +42,7 @@ public class CPPFunctionTests extends PDOMTestBase {
 
 	protected void setUp() throws Exception {
 		project = createProject("functionTests");
-		pdom = (PDOM) CCorePlugin.getPDOMManager().getPDOM(project);
+		pdom = (PDOM) CCoreInternals.getPDOMManager().getPDOM(project);
 		pdom.acquireReadLock();
 	}
 

@@ -17,7 +17,6 @@ import java.util.regex.Pattern;
 import junit.framework.AssertionFailedError;
 import junit.framework.Test;
 
-import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.IName;
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IBinding;
@@ -27,6 +26,7 @@ import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.index.IndexFilter;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.testplugin.util.TestSourceReader;
+import org.eclipse.cdt.internal.core.CCoreInternals;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
@@ -53,7 +53,7 @@ public class DefDeclTests extends PDOMTestBase {
 		String requiredName = "defDeclTests";
 		ICProject cproject = createProject(requiredName);
 		this.projectName = cproject.getElementName();
-		pdom = (PDOM) CCorePlugin.getPDOMManager().getPDOM(cproject);
+		pdom = (PDOM) CCoreInternals.getPDOMManager().getPDOM(cproject);
 		pdom.acquireReadLock();
 	}
 

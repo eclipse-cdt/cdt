@@ -42,7 +42,7 @@ public class PDOMFullIndexer implements IPDOMIndexer {
 	
 	public void handleDelta(ICElementDelta delta) throws CoreException {
 		PDOMFullHandleDelta task = new PDOMFullHandleDelta(this, delta);
-		if (task.getRemainingSubtaskCount() > 0) {
+		if (task.estimateRemainingSources() > 0) {
 			CCoreInternals.getPDOMManager().enqueue(task);
 		}
 	}

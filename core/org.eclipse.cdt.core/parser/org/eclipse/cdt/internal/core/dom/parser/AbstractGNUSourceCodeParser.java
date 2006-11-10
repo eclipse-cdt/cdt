@@ -371,7 +371,7 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
     }
 
     public String toString() {
-        return scanner.toString(); //$NON-NLS-1$
+        return scanner.toString(); 
     }
 
     /**
@@ -415,7 +415,7 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
         resolveAmbiguities();
         log.traceLog("Ambiguity resolution : " //$NON-NLS-1$
                 + (System.currentTimeMillis() - startTime) + "ms" //$NON-NLS-1$
-        ); //$NON-NLS-1$ //$NON-NLS-2$
+        ); 
         IASTTranslationUnit result = getTranslationUnit();
         nullifyTranslationUnit();
         return result;

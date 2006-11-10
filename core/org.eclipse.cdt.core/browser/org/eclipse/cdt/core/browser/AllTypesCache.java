@@ -15,7 +15,6 @@ import java.util.List;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ILinkage;
-import org.eclipse.cdt.core.dom.IPDOMManager;
 import org.eclipse.cdt.core.dom.IPDOMNode;
 import org.eclipse.cdt.core.dom.IPDOMVisitor;
 import org.eclipse.cdt.core.dom.ast.DOMException;
@@ -28,7 +27,9 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespaceAlias;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.internal.core.CCoreInternals;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
+import org.eclipse.cdt.internal.core.pdom.PDOMManager;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMLinkage;
 import org.eclipse.cdt.internal.core.pdom.dom.c.PDOMCStructure;
@@ -144,7 +145,7 @@ public class AllTypesCache {
 	
 	private static ITypeInfo[] getTypes(ICProject[] projects, int[] kinds) throws CoreException {
 		List types = new ArrayList();
-		IPDOMManager pdomManager = CCorePlugin.getPDOMManager();
+		PDOMManager pdomManager = CCoreInternals.getPDOMManager();
 		
 		for (int i = 0; i < projects.length; ++i) {
 			ICProject project = projects[i];

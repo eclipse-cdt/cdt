@@ -10,22 +10,24 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.indexview;
 
-import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.TreeViewer;
+
 import org.eclipse.cdt.core.dom.IPDOMNode;
 import org.eclipse.cdt.core.dom.IPDOMVisitor;
 import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.ui.CUIPlugin;
+
+import org.eclipse.cdt.internal.core.CCoreInternals;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.db.IBTreeVisitor;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMFile;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMMacro;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMName;
-import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.TreeViewer;
 
 /**
  * @author dschaefer
@@ -69,7 +71,7 @@ public class CountNodeAction extends IndexAction {
 					continue;
 
 				ICProject project = (ICProject)objs[i];
-				final PDOM pdom = (PDOM)CCorePlugin.getPDOMManager().getPDOM(project);
+				final PDOM pdom = (PDOM)CCoreInternals.getPDOMManager().getPDOM(project);
 				//pdom.getDB().reportFreeBlocks();
 
 				pdom.getFileIndex().accept(new IBTreeVisitor() {

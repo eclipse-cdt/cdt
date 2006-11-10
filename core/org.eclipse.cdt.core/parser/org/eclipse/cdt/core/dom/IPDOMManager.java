@@ -23,15 +23,13 @@ public interface IPDOMManager {
 	public static final String ID_NO_INDEXER= "org.eclipse.cdt.core.nullindexer"; //$NON-NLS-1$
 	public static final String ID_FAST_INDEXER= "org.eclipse.cdt.core.fastIndexer"; //$NON-NLS-1$
 	public static final String ID_FULL_INDEXER= "org.eclipse.cdt.core.domsourceindexer"; //$NON-NLS-1$
-	
-	// Getting the PDOM
+
 	/**
-	 * mstodo deprecate: use CCorePlugin.getIndexManager().getIndex(...).
+	 * Clears the entire index of the project and schedules the indexer.
+	 * @throws CoreException
+	 * @since 4.0
 	 */
-	public IPDOM getPDOM(ICProject project) throws CoreException;
-	
-	// Get the indexer for a given project
-	public IPDOMIndexer getIndexer(ICProject project);
+	public void reindex(ICProject project) throws CoreException;
 
 	// Getting and setting indexer Ids
 	public String getDefaultIndexerId();

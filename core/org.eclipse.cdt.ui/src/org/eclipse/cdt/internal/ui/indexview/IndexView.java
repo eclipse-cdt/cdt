@@ -14,24 +14,6 @@ package org.eclipse.cdt.internal.ui.indexview;
 import java.util.Arrays;
 import java.util.Comparator;
 
-import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.dom.IPDOMNode;
-import org.eclipse.cdt.core.dom.IPDOMVisitor;
-import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
-import org.eclipse.cdt.core.model.CModelException;
-import org.eclipse.cdt.core.model.CoreModel;
-import org.eclipse.cdt.core.model.ElementChangedEvent;
-import org.eclipse.cdt.core.model.ICElement;
-import org.eclipse.cdt.core.model.ICElementDelta;
-import org.eclipse.cdt.core.model.ICModel;
-import org.eclipse.cdt.core.model.ICProject;
-import org.eclipse.cdt.core.model.IElementChangedListener;
-import org.eclipse.cdt.internal.core.pdom.PDOM;
-import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
-import org.eclipse.cdt.internal.core.pdom.dom.PDOMLinkage;
-import org.eclipse.cdt.internal.core.pdom.dom.PDOMName;
-import org.eclipse.cdt.internal.ui.IndexLabelProvider;
-import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
@@ -56,6 +38,27 @@ import org.eclipse.swt.widgets.Menu;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.part.ViewPart;
+
+import org.eclipse.cdt.core.dom.IPDOMNode;
+import org.eclipse.cdt.core.dom.IPDOMVisitor;
+import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
+import org.eclipse.cdt.core.model.CModelException;
+import org.eclipse.cdt.core.model.CoreModel;
+import org.eclipse.cdt.core.model.ElementChangedEvent;
+import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.model.ICElementDelta;
+import org.eclipse.cdt.core.model.ICModel;
+import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.core.model.IElementChangedListener;
+import org.eclipse.cdt.ui.CUIPlugin;
+
+import org.eclipse.cdt.internal.core.CCoreInternals;
+import org.eclipse.cdt.internal.core.pdom.PDOM;
+import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
+import org.eclipse.cdt.internal.core.pdom.dom.PDOMLinkage;
+import org.eclipse.cdt.internal.core.pdom.dom.PDOMName;
+
+import org.eclipse.cdt.internal.ui.IndexLabelProvider;
 
 /**
  * @author Doug Schaefer
@@ -182,7 +185,7 @@ public class IndexView extends ViewPart implements PDOM.IListener, IElementChang
 		public Object[] getChildren(Object parentElement) {
 			try {
 				if (parentElement instanceof ICProject) {
-					PDOM pdom = (PDOM)CCorePlugin.getPDOMManager().getPDOM((ICProject)parentElement);
+					PDOM pdom = (PDOM)CCoreInternals.getPDOMManager().getPDOM((ICProject)parentElement);
 					PDOMLinkage[] linkages= pdom.getLinkages();
 					if (linkages.length == 1) {
 						// Skip linkages in hierarchy if there is only one
@@ -212,7 +215,7 @@ public class IndexView extends ViewPart implements PDOM.IListener, IElementChang
 		public boolean hasChildren(Object element) {
 			try {
 				if (element instanceof ICProject) {
-					PDOM pdom = (PDOM)CCorePlugin.getPDOMManager().getPDOM((ICProject)element);
+					PDOM pdom = (PDOM)CCoreInternals.getPDOMManager().getPDOM((ICProject)element);
 					PDOMLinkage[] linkages = pdom.getLinkages();
 					if (linkages.length == 0)
 						return false;
@@ -278,7 +281,7 @@ public class IndexView extends ViewPart implements PDOM.IListener, IElementChang
 		try {
 			ICProject[] projects = model.getCProjects();
 			for (int i = 0; i < projects.length; ++i) {
-				PDOM pdom = (PDOM)CCorePlugin.getPDOMManager().getPDOM(projects[i]); 
+				PDOM pdom = (PDOM)CCoreInternals.getPDOMManager().getPDOM(projects[i]); 
 					pdom.addListener(this);
 			}
 			viewer.setChildCount(model, projects.length);
@@ -322,7 +325,7 @@ public class IndexView extends ViewPart implements PDOM.IListener, IElementChang
 		try {
 			ICProject[] projects = model.getCProjects();
 			for (int i = 0; i < projects.length; ++i) {
-				PDOM pdom = (PDOM)CCorePlugin.getPDOMManager().getPDOM(projects[i]); 
+				PDOM pdom = (PDOM)CCoreInternals.getPDOMManager().getPDOM(projects[i]); 
 					pdom.removeListener(this);
 			}
 			viewer.setChildCount(model, projects.length);
@@ -424,7 +427,7 @@ public class IndexView extends ViewPart implements PDOM.IListener, IElementChang
 			switch (delta.getKind()) {
 			case ICElementDelta.ADDED:
 				try {
-					PDOM pdom = ((PDOM)CCorePlugin.getPDOMManager().getPDOM((ICProject)delta.getElement()));
+					PDOM pdom = ((PDOM)CCoreInternals.getPDOMManager().getPDOM((ICProject)delta.getElement()));
 					pdom.addListener(this);
 					handleChange(pdom);
 				} catch (CoreException e) {

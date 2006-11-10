@@ -18,7 +18,6 @@ import junit.framework.TestSuite;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.IName;
-import org.eclipse.cdt.core.dom.IPDOMIndexer;
 import org.eclipse.cdt.core.dom.IPDOMManager;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
@@ -57,8 +56,7 @@ public class IndexBugsTests extends BaseTestCase {
 
 	protected void setUp() throws CoreException {
 		fCProject= CProjectHelper.createCCProject("__bugsTest__", "bin", IPDOMManager.ID_FAST_INDEXER);
-		IPDOMIndexer indexer = CCoreInternals.getPDOMManager().getIndexer(fCProject);
-		indexer.reindex();
+		CCoreInternals.getPDOMManager().reindex(fCProject);
 		fIndex= CCorePlugin.getIndexManager().getIndex(fCProject);
 	}
 	

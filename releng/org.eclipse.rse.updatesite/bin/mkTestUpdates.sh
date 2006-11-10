@@ -112,7 +112,8 @@ elif [ `basename $SITE` = signedUpdates ]; then
         cp ${SITE}/../testUpdates/plugins/*.jar ${STAGING}/updates.${stamp}/plugins
         cd ${STAGING}/updates.${stamp}/plugins
         #WORKAROUND: Repack nested jars
-        fox x in `ls org.apache.oro_*.jar org.apache.commons.net_*.jar`; do
+        for x in `ls org.apache.oro_*.jar org.apache.commons.net_*.jar` ; do
+          echo "pack200 -r -E4 $x"
           pack200 -r -E4 $x
         done
         for x in `ls *.jar`; do

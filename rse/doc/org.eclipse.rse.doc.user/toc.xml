@@ -57,5 +57,6 @@
    -->
    <topic label="Accessing Remote System Explorer preferences" href="ref/rrsepref.html"/>
    <topic label="Saving User IDs and passwords" href="tasks/tbeginpass.html"/>
+   <anchor id="rse_user_extensions" />
 <topic label="Legal" href="notices.html"/>
 </toc>

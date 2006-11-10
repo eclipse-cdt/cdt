@@ -61,10 +61,13 @@ if [ "$FILES" != "" ]; then
   mv -f RSE-SDK-I${daystamp}*.zip RSE-SDK-latest.zip
 fi
 
-#Update the testUpdates site
+#Update the testUpdates sites
 if [ "$FILES" != "" ]; then
   sg dsdp-tm-rse -c "echo \"Refreshing update site\" "
   cd $HOME/downloads-tm/testUpdates/bin
+  ./mkTestUpdates.sh
+  sg dsdp-tm-rse -c "echo \"Refreshing signedUpdates site\" "
+  cd $HOME/downloads-tm/signedUpdates/bin
   ./mkTestUpdates.sh
   cd "$curdir"
 fi

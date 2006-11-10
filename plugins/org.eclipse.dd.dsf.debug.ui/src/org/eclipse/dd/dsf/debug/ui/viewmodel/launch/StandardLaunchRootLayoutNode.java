@@ -8,7 +8,7 @@
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
-package org.eclipse.dd.dsf.debug.ui.viewmodel;
+package org.eclipse.dd.dsf.debug.ui.viewmodel.launch;
 
 import org.eclipse.dd.dsf.concurrent.DoneCollector;
 import org.eclipse.dd.dsf.concurrent.DsfExecutor;
@@ -87,7 +87,7 @@ public class StandardLaunchRootLayoutNode extends AbstractVMRootLayoutNode
          */
         final DoneCollector doneCollector = new DoneCollector(getExecutor()) { 
             public void run() {
-                if (propagateError(getExecutor(), done, "Failed to generate child deltas.")) return;
+                if (propagateError(getExecutor(), done, "Failed to generate child deltas.")) return; //$NON-NLS-1$
                 done.setData(delta);
                 getExecutor().execute(done);                                
             }

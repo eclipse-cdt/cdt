@@ -10,17 +10,29 @@
  *******************************************************************************/
 package org.eclipse.dd.dsf.ui.viewmodel;
 
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.dd.dsf.concurrent.Done;
 import org.eclipse.dd.dsf.concurrent.DoneCollector;
+import org.eclipse.dd.dsf.concurrent.GetDataDone;
 import org.eclipse.dd.dsf.concurrent.Immutable;
 import org.eclipse.dd.dsf.datamodel.DMContexts;
 import org.eclipse.dd.dsf.datamodel.IDMContext;
+import org.eclipse.dd.dsf.datamodel.IDMData;
 import org.eclipse.dd.dsf.datamodel.IDMEvent;
+import org.eclipse.dd.dsf.datamodel.IDMService;
 import org.eclipse.dd.dsf.service.DsfServicesTracker;
 import org.eclipse.dd.dsf.service.DsfSession;
+import org.eclipse.dd.dsf.service.IDsfService;
 import org.eclipse.dd.dsf.ui.DsfUIPlugin;
 import org.eclipse.dd.dsf.ui.viewmodel.IVMRootLayoutNode.IRootVMC;
+import org.eclipse.debug.internal.ui.viewers.provisional.IAsynchronousLabelAdapter;
+import org.eclipse.debug.internal.ui.viewers.provisional.IColumnPresentationFactoryAdapter;
+import org.eclipse.debug.internal.ui.viewers.provisional.ILabelRequestMonitor;
 import org.eclipse.debug.internal.ui.viewers.provisional.IModelDelta;
+import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.swt.graphics.FontData;
+import org.eclipse.swt.graphics.RGB;
 
 
 /**
@@ -30,7 +42,7 @@ import org.eclipse.debug.internal.ui.viewers.provisional.IModelDelta;
  * are of the same class type.   
  */
 @SuppressWarnings("restriction")
-abstract public class DMContextVMLayoutNode extends AbstractVMLayoutNode {
+abstract public class DMContextVMLayoutNode<V extends IDMData> extends AbstractVMLayoutNode {
 
     /**
      * IVMContext implementation used for this schema node.
@@ -38,25 +50,33 @@ abstract public class DMContextVMLayoutNode extends AbstractVMLayoutNode {
     @Immutable
     public class DMContextVMContext implements IVMContext {
         private final IVMContext fParent;
-        private final IDMContext<?> fDmc;
+        private final IDMContext<V> fDmc;
         
-        public DMContextVMContext(IVMContext parent, IDMContext<?> dmc) {
+        public DMContextVMContext(IVMContext parent, IDMContext<V> dmc) {
             fParent = parent;
             fDmc = dmc;
         }
         
-        public IDMContext<?> getDMC() { return fDmc; }
+        public IDMContext<V> getDMC() { return fDmc; }
         public IVMContext getParent() { return fParent; }
         public IVMLayoutNode getLayoutNode() { return DMContextVMLayoutNode.this; }
         
+        /**
+         * The IAdaptable implementation.  If the adapter is the DM context, 
+         * return the context, otherwise delegate to IDMContext.getAdapter().
+         */
         @SuppressWarnings("unchecked")
         public Object getAdapter(Class adapter) {
-            return fDmc.getAdapter(adapter);
+            if (adapter.isInstance(fDmc)) {
+                return fDmc;
+            } else {
+                return fDmc.getAdapter(adapter);
+            }
         }
         
         public boolean equals(Object other) {
-            if (!(other instanceof DMContextVMContext)) return false;
-            DMContextVMContext otherVmc = (DMContextVMContext)other;
+            if (!(other instanceof DMContextVMLayoutNode<?>.DMContextVMContext)) return false;
+            DMContextVMLayoutNode<?>.DMContextVMContext otherVmc = (DMContextVMLayoutNode<?>.DMContextVMContext)other;
             return DMContextVMLayoutNode.this.equals(otherVmc.getLayoutNode()) &&
                    fParent.equals(otherVmc.fParent) && 
                    fDmc.equals(otherVmc.fDmc);
@@ -75,8 +95,13 @@ abstract public class DMContextVMLayoutNode extends AbstractVMLayoutNode {
     private DsfServicesTracker fServices;
     
     
-    /** Class type that the elements of this schema node are based on. */
-    private Class<? extends IDMContext<?>> fDMCClassType;
+    /** 
+     * Concrete class type that the elements of this schema node are based on.  
+     * Even though the data model type is a parameter the DMContextVMLayoutNode, 
+     * this type is erased at runtime, so a concrete class typs of the DMC
+     * is needed for instanceof chacks.  
+     */
+    private Class<? extends IDMContext<V>> fDMCClassType;
 
     /** 
      * Constructor initializes instance data, except for the child nodes.  
@@ -85,19 +110,122 @@ abstract public class DMContextVMLayoutNode extends AbstractVMLayoutNode {
      * @param dmcClassType
      * @see #setChildNodes(IVMLayoutNode[])
      */
-    public DMContextVMLayoutNode(DsfSession session, Class<? extends IDMContext<?>> dmcClassType) {
+    public DMContextVMLayoutNode(DsfSession session, Class<? extends IDMContext<V>> dmcClassType) {
         super(session.getExecutor());
         fServices = new DsfServicesTracker(DsfUIPlugin.getBundleContext(), session.getId());        
         fDMCClassType = dmcClassType;
     }
-    
-
-    
+        
     /**
      * Returns the services tracker for sub-class use.
      */
     protected DsfServicesTracker getServicesTracker() {
         return fServices;
+    }
+
+    /**
+     * The default implementation of the retrieve label method.  It acquires 
+     * the service, using parameters in the DMC, then it fetches the model 
+     * data from the service, and then it calls the protected method 
+     * fillColumnLabel() for each column.  The deriving classes should override
+     * this method if a different method of computing the label is needed.
+     * 
+     * @see #fillColumnLabel(IDMData, String, int, String[], ImageDescriptor[], FontData[], RGB[], RGB[])
+     */
+    @SuppressWarnings("unchecked")
+    public void retrieveLabel(IVMContext vmc, final ILabelRequestMonitor result, final String[] columns) {
+        /*
+         *  Extract the DMContext from the VMContext, see DMContextVMContext.getAdapter().
+         *  Since the VMContext is supplied by this node, the DMContext should never be null.
+         *  Note: had to suppress type cast warnings here, because getAdapter() does not support 
+         *  generics, and even if it did, I'm not sure it would help.
+         */
+        final IDMContext<V> dmc = (IDMContext<V>)(vmc).getAdapter(IDMContext.class);
+        if (dmc == null) {
+            assert false;
+            result.setStatus(new Status(IStatus.ERROR, DsfUIPlugin.PLUGIN_ID, IDsfService.INTERNAL_ERROR, "Invalid VMC type", null)); //$NON-NLS-1$
+            result.done();
+            return;
+        }
+        
+        /* 
+         * Get the instance of the service using the service filter in the DMContext
+         * If null it could mean that the service already shut down, and the view 
+         * is holding stale elements which will be cleaned up shortly.
+         */
+        IDMService dmService  = (IDMService)getServicesTracker().getService(null, dmc.getServiceFilter());
+        if (dmService == null) {
+            handleFailedRetrieveLabel(result);
+            return;
+        }
+        
+        dmService.getModelData(
+            dmc, 
+            new GetDataDone<V>() { 
+                public void run() {
+                    /*
+                     * Check that the request was evaluated and data is still
+                     * valid.  The request could fail if the state of the 
+                     * service changed during the request, but the view model
+                     * has not been updated yet.
+                     */ 
+                    if (!getStatus().isOK() || !getData().isValid()) {
+                        assert getStatus().isOK() || 
+                               getStatus().getCode() != IDsfService.INTERNAL_ERROR || 
+                               getStatus().getCode() != IDsfService.NOT_SUPPORTED; 
+                        handleFailedRetrieveLabel(result);
+                        return;
+                    }
+                    
+                    /*
+                     * If columns are configured, call the protected methods to 
+                     * fill in column values.  
+                     */
+                    String[] localColumns = columns;
+                    if (localColumns == null) localColumns = new String[] { null };
+                    
+                    String[] text = new String[localColumns.length];
+                    ImageDescriptor[] image = new ImageDescriptor[localColumns.length];
+                    FontData[] fontData = new FontData[localColumns.length];
+                    RGB[] foreground = new RGB[localColumns.length];
+                    RGB[] background = new RGB[localColumns.length];
+                    for (int i = 0; i < localColumns.length; i++) {
+                        fillColumnLabel(dmc, getData(), localColumns[i], i, text, image, fontData, foreground, background);
+                    }
+                    result.setLabels(text);
+                    result.setImageDescriptors(image);
+                    result.setFontDatas(fontData);
+                    result.setBackgrounds(background);
+                    result.setForegrounds(foreground);
+                    result.done();
+                }
+            });
+    }
+
+    /**
+     * Fills in label information for given column.  This method is intended to 
+     * be overriden by deriving classes, to supply label information specific
+     * to the node. <br>  
+     * The implementation should fill in the correct value in each array at the 
+     * given index.
+     * @param dmContext Data Model Context object for which the label is generated.
+     * @param dmData Data Model Data object retrieved from the model service.
+     * for the DM Context supplied to the retrieveLabel() call.
+     * @param columnId Name of the column to fill in, null if no columns specified.
+     * @param idx Index to fill in in the label arrays.
+     * @param text 
+     * @param image
+     * @param fontData
+     * @param foreground
+     * @param background
+     * 
+     * @see IAsynchronousLabelAdapter
+     * @see IColumnPresentationFactoryAdapter
+     */
+    protected void fillColumnLabel(IDMContext<V> dmContext, V dmData, String columnId, int idx, String[] text, 
+                                   ImageDescriptor[] image, FontData[] fontData, RGB[] foreground, RGB[] background ) 
+    {
+        text[idx] = ""; //$NON-NLS-1$
     }
 
     @Override
@@ -139,7 +267,7 @@ abstract public class DMContextVMLayoutNode extends AbstractVMLayoutNode {
          * behavior and generate a IModelDelta for every element in this schema 
          * node. 
          */
-        IDMContext<?> dmc = DMContexts.getAncestorOfType(e.getDMContext(), fDMCClassType);
+        IDMContext<V> dmc = DMContexts.getAncestorOfType(e.getDMContext(), fDMCClassType);
         if (dmc != null) {
             IVMLayoutNode[] childNodes = getChildNodesWithDeltas(e);
             if (childNodes.length == 0) {
@@ -180,7 +308,7 @@ abstract public class DMContextVMLayoutNode extends AbstractVMLayoutNode {
      * @param dmcs Array of DMC objects to build return array on.
      * @return Array of IVMContext objects.
      */
-    protected IVMContext[] dmcs2vmcs(IVMContext parent, IDMContext<?>[] dmcs) {
+    protected IVMContext[] dmcs2vmcs(IVMContext parent, IDMContext<V>[] dmcs) {
         IVMContext[] vmContexts = new IVMContext[dmcs.length];
         for (int i = 0; i < dmcs.length; i++) {
             vmContexts[i] = new DMContextVMContext(parent, dmcs[i]);
@@ -216,8 +344,8 @@ abstract public class DMContextVMLayoutNode extends AbstractVMLayoutNode {
         return null;
     }
     
-    public void sessionDispose() {
+    public void dispose() {
         fServices.dispose();
-        super.sessionDispose();
+        super.dispose();
     }
 }

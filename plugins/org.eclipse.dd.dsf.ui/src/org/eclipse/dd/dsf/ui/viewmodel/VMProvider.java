@@ -27,11 +27,13 @@ import org.eclipse.debug.internal.ui.viewers.provisional.AbstractModelProxy;
 import org.eclipse.debug.internal.ui.viewers.provisional.IAsynchronousContentAdapter;
 import org.eclipse.debug.internal.ui.viewers.provisional.IAsynchronousLabelAdapter;
 import org.eclipse.debug.internal.ui.viewers.provisional.IChildrenRequestMonitor;
+import org.eclipse.debug.internal.ui.viewers.provisional.IColumnEditorFactoryAdapter;
+import org.eclipse.debug.internal.ui.viewers.provisional.IColumnPresentation;
 import org.eclipse.debug.internal.ui.viewers.provisional.IContainerRequestMonitor;
 import org.eclipse.debug.internal.ui.viewers.provisional.ILabelRequestMonitor;
-import org.eclipse.debug.internal.ui.viewers.provisional.IModelChangedListener;
 import org.eclipse.debug.internal.ui.viewers.provisional.IModelDelta;
 import org.eclipse.debug.internal.ui.viewers.provisional.IModelProxy;
+import org.eclipse.debug.internal.ui.viewers.provisional.IPresentationContext;
 
 /**
  * View model provider implements the asynchronous view model functionality for 
@@ -52,83 +54,48 @@ import org.eclipse.debug.internal.ui.viewers.provisional.IModelProxy;
 @SuppressWarnings("restriction")
 public class VMProvider 
 {
-    @ThreadSafe
-    public class ModelProxy extends AbstractModelProxy {
-        /**
-         * Counter for whether the model proxy is currently installed in the viewer.
-         * Data model events are processed only if the model proxy is active.   
-         */
-        private int fProxyActive = 0;
-        
-        /** 
-         * Scheduling rule for running the update jobs.  
-         */
-        private ISchedulingRule fModelChangeRule = new ISchedulingRule() {
-            public boolean contains(ISchedulingRule rule) { return this == rule; }
-            public boolean isConflicting(ISchedulingRule rule) { return rule == this; }
-        };
-
-        public void installed() {
-            fProxyActive++;
-        }
-        
-        public void dispose() {
-            fProxyActive--;
-            super.dispose();
-        }
-        
-        @Override
-        public void removeModelChangedListener(IModelChangedListener listener) {
-            // TODO Auto-generated method stub
-            super.removeModelChangedListener(listener);
-        }
-        
-        @Override
-        public void addModelChangedListener(IModelChangedListener listener) {
-            // TODO Auto-generated method stub
-            super.addModelChangedListener(listener);
-        }
-
-        /**
-         * Fires given delta using a job.  Processing the delta on the dispatch
-         * thread can lead to dead-locks.
-         * @param delta
-         */
-        public void fireModelChangedNonDispatch(final IModelDelta delta) {
-            if (fProxyActive <= 0) return;
-            
-            Job job = new Job("Processing view model delta.") { //$NON-NLS-1$
-                protected IStatus run(IProgressMonitor monitor) {
-                    fireModelChanged(delta);
-                    return Status.OK_STATUS;
-                }
-            };
-            job.setPriority(Job.INTERACTIVE);
-            job.setRule(fModelChangeRule);
-            job.schedule();
-        }
-
-    }
-    
     private final DsfSession fSession;
     private final ModelProxy fModelProxy = new ModelProxy(); 
 
+    /**
+     * It is theoretically possible for a VMProvider to be disposed before it 
+     * has a chance to register itself as event listener.  This flag is used
+     * to avoid removing itself as listener in such situation.
+     */
+    private boolean fRegisteredAsEventListener = false;
+
+    /**
+     * The root node for this model provider.  The root layout node could be 
+     * null when first created, to allow sub-classes to prorperly configure the 
+     * root node in the sub-class constructor.
+     */
     private IVMRootLayoutNode fRootLayoutNode;
     
     /**
-     * Constructs the view model provider for given DSF session.
+     * Constructs the view model provider for given DSF session.  The 
+     * constructor is thread-safe to allow VM provider to be constructed
+     * synchronously when a call to getAdapter() is made on an element 
+     * in a view.
      */
+    @ThreadSafe
     public VMProvider(DsfSession session, IVMRootLayoutNode rootLayoutNode) {
         fSession = session;
-        setRootLayoutNode(rootLayoutNode);
+        fRootLayoutNode = rootLayoutNode;
         // Add ourselves as listener for DM events events.
-        session.addServiceEventListener(this, null);
+        session.getExecutor().execute(new Runnable() {
+            public void run() {
+                if (DsfSession.isSessionActive(getSession().getId())) {
+                    getSession().addServiceEventListener(VMProvider.this, null);
+                    fRegisteredAsEventListener = true;
+                }
+            }
+        });
     }    
 
     /** Sets the layout nodes */
     public void setRootLayoutNode(IVMRootLayoutNode rootLayoutNode) {
         if (fRootLayoutNode != null) {
-            fRootLayoutNode.sessionDispose();
+            fRootLayoutNode.dispose();
         }
         fRootLayoutNode = rootLayoutNode;
     }
@@ -138,9 +105,13 @@ public class VMProvider
     }
     
     /** Called to dispose the provider. */ 
-    public void sessionDispose() {
-        fSession.removeServiceEventListener(this);
-        fRootLayoutNode.sessionDispose();
+    public void dispose() {
+        if (fRegisteredAsEventListener) {
+            fSession.removeServiceEventListener(this);
+        }
+        if (fRootLayoutNode != null) {
+            fRootLayoutNode.dispose();
+        }
     }
 
     protected DsfSession getSession() { return fSession; }
@@ -249,6 +220,71 @@ public class VMProvider
     }
 
     /**
+     * Retrieves the label information for given object.  
+     * The implementation converts the object into a VM-Context, then delegates 
+     * to the context's layout node.
+     * Note: this method must be called on the provider's dispatch thread.
+
+     * @see IAsynchronousLabelAdapter#retrieveLabel(Object, org.eclipse.debug.internal.ui.viewers.provisional.IPresentationContext, ILabelRequestMonitor)
+     */
+    public void retrieveLabel(Object object, ILabelRequestMonitor result, String[] columns) 
+    {
+        IVMContext vmc = getVmcForObject(object);
+        if (vmc == null) {
+            result.done();
+            return;
+        }        
+
+        vmc.getLayoutNode().retrieveLabel(vmc, result, columns);
+    }
+
+    public ModelProxy getModelProxy() {
+        return fModelProxy;
+    }
+
+    
+    /**
+     * Creates the column presentation for the given object.  This method is meant
+     * to be overriden by deriving class to provide view-specific functionality.
+     * The default is to return null, meaning no columns. 
+     * <p>
+     * The viewer only reads the column presentation for the root/input element of 
+     * the tree/table, so the VMProvider must be configured to own the root element 
+     * in the view in order for this setting to be effective.   
+     * <p>
+     * Note: since the IColumnEditorFactoryAdapter interface is synchronous, and since
+     * column info is fairly static, this method is thread-safe, and it will
+     * not be called on the executor thread.
+     * 
+     * @see IColumnEditorFactoryAdapter#createColumnEditor(IPresentationContext, Object)
+     */
+    @ThreadSafe
+    public IColumnPresentation createColumnPresentation(Object element) {
+        return null;
+    }
+    
+    /**
+     * Returns the ID of the column presentation for the given object.  This method 
+     * is meant to be overriden by deriving class to provide view-specific 
+     * functionality. The default is to return null, meaning no columns. 
+     * <p>
+     * The viewer only reads the column presentation for the root/input element of 
+     * the tree/table, so the VMProvider must be configured to own the root element 
+     * in the view in order for this setting to be effective.   
+     * <p>
+     * Note: since the IColumnEditorFactoryAdapter interface is synchronous, and since
+     * column info is fairly static, this method is thread-safe, and it will
+     * not be called on the executor thread.
+     * 
+     * @see IColumnEditorFactoryAdapter#getColumnEditorId(IPresentationContext, Object)
+     */
+    @ThreadSafe
+    public String getColumnPresentationId(Object element) {
+        return null;
+    }
+
+    
+    /**
      * Convenience method that finds the VMC corresponding to given parent 
      * argument given to isContainer() or retrieveChildren().  
      * @param object Object to find the VMC for.
@@ -293,28 +329,7 @@ public class VMProvider
         }
         return false;
     }
-    
-
-    /**
-     * Retrieves the label information for given VMC.
-     * Note: this method must be called on the provider's dispatch thread.
-     * @see IAsynchronousLabelAdapter#retrieveLabel(Object, org.eclipse.debug.internal.ui.viewers.provisional.IPresentationContext, ILabelRequestMonitor)
-     */
-    public void retrieveLabel(Object object, final ILabelRequestMonitor result) 
-    {
-        IVMContext vmc = getVmcForObject(object);
-        if (vmc == null) {
-            result.done();
-            return;
-        }        
-
-        vmc.getLayoutNode().retrieveLabel(vmc, result);
-    }
-
-    public ModelProxy getModelProxy() {
-        return fModelProxy;
-    }
-    
+        
     /**
      * Handle "data model changed" event by generating a delta object for each 
      * view and passing it to the corresponding view model provider.  The view
@@ -336,5 +351,51 @@ public class VMProvider
                 }
             });
         }
+    }
+    
+    @ThreadSafe
+    public class ModelProxy extends AbstractModelProxy {
+        /**
+         * Counter for whether the model proxy is currently installed in the viewer.
+         * Data model events are processed only if the model proxy is active.   
+         */
+        private int fProxyActive = 0;
+        
+        /** 
+         * Scheduling rule for running the update jobs.  
+         */
+        private ISchedulingRule fModelChangeRule = new ISchedulingRule() {
+            public boolean contains(ISchedulingRule rule) { return this == rule; }
+            public boolean isConflicting(ISchedulingRule rule) { return rule == this; }
+        };
+
+        public void installed() {
+            fProxyActive++;
+        }
+        
+        public void dispose() {
+            fProxyActive--;
+            super.dispose();
+        }
+        
+        /**
+         * Fires given delta using a job.  Processing the delta on the dispatch
+         * thread can lead to dead-locks.
+         * @param delta
+         */
+        public void fireModelChangedNonDispatch(final IModelDelta delta) {
+            if (fProxyActive <= 0) return;
+            
+            Job job = new Job("Processing view model delta.") { //$NON-NLS-1$
+                protected IStatus run(IProgressMonitor monitor) {
+                    fireModelChanged(delta);
+                    return Status.OK_STATUS;
+                }
+            };
+            job.setPriority(Job.INTERACTIVE);
+            job.setRule(fModelChangeRule);
+            job.schedule();
+        }
+
     }
 }

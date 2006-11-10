@@ -8,7 +8,7 @@
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
-package org.eclipse.dd.dsf.debug.ui.viewmodel;
+package org.eclipse.dd.dsf.debug.ui.viewmodel.register;
 
 import org.eclipse.dd.dsf.concurrent.Done;
 import org.eclipse.dd.dsf.concurrent.GetDataDone;
@@ -27,7 +27,7 @@ import org.eclipse.debug.internal.ui.viewers.provisional.ILabelRequestMonitor;
 import org.eclipse.debug.internal.ui.viewers.provisional.IModelDelta;
 
 @SuppressWarnings("restriction")
-public class RegisterLayoutNode extends DMContextVMLayoutNode {
+public class RegisterLayoutNode extends DMContextVMLayoutNode<IRegisterDMData> {
 
     public IVMContext[] fCachedRegisterVMCs;
     
@@ -48,7 +48,7 @@ public class RegisterLayoutNode extends DMContextVMLayoutNode {
             registerGroupDmc,
             new GetDataDone<IRegisterDMContext[]>() { 
                 public void run() {
-                    if (propagateError(getExecutor(), done, "Failed to retrieve registers")) return;
+                    if (propagateError(getExecutor(), done, "Failed to retrieve registers")) return; //$NON-NLS-1$
                     done.setData(getData().length != 0);
                     getExecutor().execute(done);
                 }
@@ -66,13 +66,13 @@ public class RegisterLayoutNode extends DMContextVMLayoutNode {
         getServicesTracker().getService( IRegisters.class ).getRegisters(
             execDmc,
             new GetDataDone<IRegisterDMContext[]>() { public void run() {
-                if (propagateError(getExecutor(), done, "Failed to retrieve registers")) return;
+                if (propagateError(getExecutor(), done, "Failed to retrieve registers")) return; //$NON-NLS-1$
             	done.setData( dmcs2vmcs( parentVmc, getData()) );
                 getExecutor().execute(done);
             }});            
     }
     
-    public void retrieveLabel( final IVMContext vmc , final ILabelRequestMonitor result ) {
+    public void retrieveLabel(final IVMContext vmc , final ILabelRequestMonitor result, String[] columns) {
    
         if ( getServicesTracker().getService( IRegisters.class ) == null ) {
             result.done();
@@ -88,11 +88,11 @@ public class RegisterLayoutNode extends DMContextVMLayoutNode {
                     if ( !getStatus().isOK() ) {
                         assert getStatus().getCode() == IDsfService.INVALID_STATE || getStatus().getCode() == IDsfService.INVALID_HANDLE : getStatus().toString(); 
                         // Some error conditions are expected.
-                        result.setLabels( new String[] { "...", "...", "..." } ) ;
+                        result.setLabels( new String[] { "...", "...", "..." } ) ; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
                     } else {  
                     	String size = getData().getDescription();
                         String value = getData().getHexValue();
-                    	if ("".equals(size)) {
+                    	if ("".equals(size)) { //$NON-NLS-1$
                         	if ( value.contains( "uint64" ) ) {          //$NON-NLS-1$
                         		size = "64 bit register" ;               //$NON-NLS-1$
                         	} else if ( value.contains( "v4_float" ) ) { //$NON-NLS-1$
@@ -110,17 +110,19 @@ public class RegisterLayoutNode extends DMContextVMLayoutNode {
         ) ;
     }
     
-    public boolean hasDeltaFlagsForDMEvent( IDMEvent e ) {
+    public boolean hasDeltaFlagsForDMEvent( IDMEvent<?> e ) {
         return (e instanceof IRunControl.ISuspendedDMEvent) || super.hasDeltaFlagsForDMEvent(e) ;
     }
 
-    public void buildDeltaForDMEvent( final IDMEvent e, final VMDelta parent, final Done done ) {
+    public void buildDeltaForDMEvent( final IDMEvent<?> e, final VMDelta parent, final Done done ) {
         if (e instanceof IRunControl.ISuspendedDMEvent) {
             // Create a delta that the whole register group has changed.
             parent.addFlags(IModelDelta.CONTENT);
         } 
         if (e instanceof IRegisters.IRegisterChangedDMEvent) {
-            parent.addNode(new DMContextVMContext(parent.getVMC(), e.getDMContext()), IModelDelta.STATE);
+            parent.addNode(
+                new DMContextVMContext(parent.getVMC(), ((IRegisters.IRegisterChangedDMEvent)e).getDMContext()), 
+                IModelDelta.STATE);
         } 
 
         super.buildDeltaForDMEvent(e, parent, done);

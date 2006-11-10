@@ -15,6 +15,7 @@ import org.eclipse.dd.dsf.concurrent.Done;
 import org.eclipse.dd.dsf.concurrent.GetDataDone;
 import org.eclipse.debug.internal.ui.viewers.provisional.ILabelRequestMonitor;
 import org.eclipse.debug.internal.ui.viewers.provisional.IModelDelta;
+import org.eclipse.debug.internal.ui.viewers.provisional.IPresentationContext;
 
 /**
  * View model layout nodes are combined together into a tree, to collectively 
@@ -52,8 +53,10 @@ public interface IVMLayoutNode {
      * Retrieves the label for the given element. 
      * @param vmc Element for which to retrieve label information.
      * @param result Monitor which accepts the data.
+     * @param columns Currently configured columns in view.
+     * @see IPresentationContext
      */
-    public void retrieveLabel(IVMContext vmc, ILabelRequestMonitor result);
+    public void retrieveLabel(IVMContext vmc, ILabelRequestMonitor result, String[] columns);
 
     /**
      * Configures the child layout nodes for this node.
@@ -89,5 +92,5 @@ public interface IVMLayoutNode {
     /**
      * Disposes the resources held by this node.
      */
-    public void sessionDispose();
+    public void dispose();
 }

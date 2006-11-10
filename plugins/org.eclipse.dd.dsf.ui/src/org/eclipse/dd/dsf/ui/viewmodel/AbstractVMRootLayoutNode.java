@@ -88,7 +88,7 @@ abstract public class AbstractVMRootLayoutNode extends AbstractVMLayoutNode impl
      * There is no use case for a root node implementing this method, but its 
      * easier to just impelemnt it for sake of uniformity of model.
      */
-    public void retrieveLabel(IVMContext vmc, ILabelRequestMonitor result) {
+    public void retrieveLabel(IVMContext vmc, ILabelRequestMonitor result, String[] columns) {
         result.done();
     }
     

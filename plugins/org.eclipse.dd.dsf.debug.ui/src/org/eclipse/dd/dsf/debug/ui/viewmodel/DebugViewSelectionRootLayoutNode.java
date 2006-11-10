@@ -47,9 +47,9 @@ public class DebugViewSelectionRootLayoutNode extends AbstractVMRootLayoutNode
     }
 
     @Override
-    public void sessionDispose() {
+    public void dispose() {
         DebugUITools.getDebugContextManager().removeDebugContextListener(this);
-        super.sessionDispose();
+        super.dispose();
     }
     
     /**

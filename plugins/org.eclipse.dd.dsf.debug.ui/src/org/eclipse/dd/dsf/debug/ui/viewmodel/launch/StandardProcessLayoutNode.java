@@ -8,7 +8,7 @@
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
-package org.eclipse.dd.dsf.debug.ui.viewmodel;
+package org.eclipse.dd.dsf.debug.ui.viewmodel.launch;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -54,9 +54,9 @@ public class StandardProcessLayoutNode extends AbstractVMLayoutNode {
         }
         
         public IVMContext getParent() { return fParentVmc; }
-        public IVMLayoutNode getLayoutNode() { return StandardProcessLayoutNode.this; }
-        public Object getAdapter(Class adapter) { return fProcess.getAdapter(adapter); }
-        public String toString() { return "IProcess " + fProcess.toString(); }
+        public IVMLayoutNode getLayoutNode() { return StandardProcessLayoutNode.this; }        
+        @SuppressWarnings("unchecked") public Object getAdapter(Class adapter) { return fProcess.getAdapter(adapter); }
+        public String toString() { return "IProcess " + fProcess.toString(); } //$NON-NLS-1$
 
         public String getAttribute(String key) { return fProcess.getAttribute(key); }
         public int getExitValue() throws DebugException { return fProcess.getExitValue(); }
@@ -85,7 +85,7 @@ public class StandardProcessLayoutNode extends AbstractVMLayoutNode {
              * layout is misconfigured.  
              */
             assert false; 
-            done.setStatus(new Status(IStatus.ERROR, DsfDebugUIPlugin.PLUGIN_ID, IDsfService.INTERNAL_ERROR, "Can't get list of processes, because there is no launch.", null));
+            done.setStatus(new Status(IStatus.ERROR, DsfDebugUIPlugin.PLUGIN_ID, IDsfService.INTERNAL_ERROR, "Can't get list of processes, because there is no launch.", null)); //$NON-NLS-1$
             getExecutor().execute(done);
             return;
         }
@@ -108,7 +108,7 @@ public class StandardProcessLayoutNode extends AbstractVMLayoutNode {
         ILaunch launch = findLaunch(parentVmc);
         if (launch == null) {
             assert false; 
-            done.setStatus(new Status(IStatus.ERROR, DsfDebugUIPlugin.PLUGIN_ID, IDsfService.INTERNAL_ERROR, "Can't get list of processes, because there is no launch.", null));
+            done.setStatus(new Status(IStatus.ERROR, DsfDebugUIPlugin.PLUGIN_ID, IDsfService.INTERNAL_ERROR, "Can't get list of processes, because there is no launch.", null)); //$NON-NLS-1$
             getExecutor().execute(done);
             return;
         }
@@ -118,7 +118,7 @@ public class StandardProcessLayoutNode extends AbstractVMLayoutNode {
     }
 
     // @see org.eclipse.dd.dsf.ui.viewmodel.IViewModelLayoutNode#retrieveLabel(org.eclipse.dd.dsf.ui.viewmodel.IVMContext, org.eclipse.debug.internal.ui.viewers.provisional.ILabelRequestMonitor)
-    public void retrieveLabel(IVMContext vmc, ILabelRequestMonitor result) {
+    public void retrieveLabel(IVMContext vmc, ILabelRequestMonitor result, String[] columns) {
         
         /*
          * The implementation of IAdapterFactory that uses this node should not

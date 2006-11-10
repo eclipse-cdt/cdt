@@ -48,23 +48,24 @@ public class DsfServicesTracker {
 
     private static class ServiceKey 
     {
-        String fClassString;
+        String fClassName;
         String fFilter;
-        public ServiceKey(String classString, String filter) {
-            fClassString = classString;
+        public ServiceKey(Class<?> clazz, String filter) {
+            fClassName = clazz != null ? clazz.getName() : null;
             fFilter = filter;
         }
         
         public boolean equals(Object other) {
             // I guess this doesn't have to assume fFilter can be null, but oh well.
-            return other instanceof ServiceKey && 
-                   ((ServiceKey)other).fClassString.equals(fClassString) &&
+            return other instanceof ServiceKey &&
+                   ((fClassName == null && ((ServiceKey)other).fClassName == null) || 
+                    (fClassName != null && fClassName.equals(((ServiceKey)other).fClassName))) &&
                    ((fFilter == null && ((ServiceKey)other).fFilter == null) || 
                     (fFilter != null && fFilter.equals(((ServiceKey)other).fFilter))); 
         }
         
         public int hashCode() {
-            return fClassString.hashCode() + (fFilter == null ? 0 : fFilter.hashCode());
+            return (fClassName == null ? 0 : fClassName.hashCode()) + (fFilter == null ? 0 : fFilter.hashCode());
         }
     }
     
@@ -95,13 +96,13 @@ public class DsfServicesTracker {
      */
     @SuppressWarnings("unchecked")
     public ServiceReference getServiceReference(Class serviceClass, String filter) {
-        ServiceKey key = new ServiceKey(serviceClass.getName().intern(), filter != null ? filter : fServiceFilter);
+        ServiceKey key = new ServiceKey(serviceClass, filter != null ? filter : fServiceFilter);
         if (fServiceReferences.containsKey(key)) {
             return fServiceReferences.get(key);
         }
         
         try {
-            ServiceReference[] references = fBundleContext.getServiceReferences(key.fClassString, key.fFilter);
+            ServiceReference[] references = fBundleContext.getServiceReferences(key.fClassName, key.fFilter);
             assert references == null || references.length <= 1;
             if (references == null || references.length == 0) {
                 return null;

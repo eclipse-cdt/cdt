@@ -17,5 +17,7 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.dd.dsf.debug
 Eclipse-LazyStart: true
 Export-Package: 
- org.eclipse.dd.dsf.debug.ui.viewmodel
+ org.eclipse.dd.dsf.debug.ui.viewmodel,
+ org.eclipse.dd.dsf.debug.ui.viewmodel.register,
+ org.eclipse.dd.dsf.debug.ui.viewmodel.launch
 Bundle-RequiredExecutionEnvironment: J2SE-1.5

@@ -8,24 +8,26 @@
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
-package org.eclipse.dd.dsf.debug.ui.viewmodel;
+package org.eclipse.dd.dsf.debug.ui.viewmodel.register;
 
 import org.eclipse.dd.dsf.concurrent.Done;
 import org.eclipse.dd.dsf.concurrent.GetDataDone;
+import org.eclipse.dd.dsf.datamodel.IDMContext;
 import org.eclipse.dd.dsf.datamodel.IDMEvent;
 import org.eclipse.dd.dsf.debug.service.IRegisters;
 import org.eclipse.dd.dsf.debug.service.IRegisters.IRegisterGroupDMContext;
 import org.eclipse.dd.dsf.debug.service.IRegisters.IRegisterGroupData;
 import org.eclipse.dd.dsf.debug.service.IRunControl.IExecutionDMContext;
 import org.eclipse.dd.dsf.service.DsfSession;
-import org.eclipse.dd.dsf.service.IDsfService;
 import org.eclipse.dd.dsf.ui.viewmodel.DMContextVMLayoutNode;
 import org.eclipse.dd.dsf.ui.viewmodel.IVMContext;
 import org.eclipse.dd.dsf.ui.viewmodel.VMDelta;
-import org.eclipse.debug.internal.ui.viewers.provisional.ILabelRequestMonitor;
+import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.swt.graphics.FontData;
+import org.eclipse.swt.graphics.RGB;
 
 @SuppressWarnings("restriction")
-public class RegisterGroupLayoutNode extends DMContextVMLayoutNode {
+public class RegisterGroupLayoutNode extends DMContextVMLayoutNode<IRegisterGroupData> {
 
     public RegisterGroupLayoutNode(DsfSession session) {
         super(session, IRegisters.IRegisterGroupDMContext.class);
@@ -43,7 +45,7 @@ public class RegisterGroupLayoutNode extends DMContextVMLayoutNode {
         getServicesTracker().getService(IRegisters.class).getRegisterGroups(
             execDmc, null,
             new GetDataDone<IRegisterGroupDMContext[]>() { public void run() {
-                if (propagateError(getExecutor(), done, "Failed to retrieve register groups")) return;
+                if (propagateError(getExecutor(), done, "Failed to retrieve register groups")) return; //$NON-NLS-1$
                 done.setData(getData().length != 0);
                 getExecutor().execute(done);
             }});
@@ -61,43 +63,31 @@ public class RegisterGroupLayoutNode extends DMContextVMLayoutNode {
         getServicesTracker().getService(IRegisters.class).getRegisterGroups(
             execDmc, null,
             new GetDataDone<IRegisterGroupDMContext[]>() { public void run() {
-                if (propagateError(getExecutor(), done, "Failed to retrieve register groups")) return;
+                if (propagateError(getExecutor(), done, "Failed to retrieve register groups")) return; //$NON-NLS-1$
             	done.setData(dmcs2vmcs(parentVmc, getData()));
                 getExecutor().execute(done);
             }}); 
     }
     
-    public void retrieveLabel( final IVMContext vmc , final ILabelRequestMonitor result ) {
-        if (getServicesTracker().getService(IRegisters.class) == null) {
-            result.done();
-            return;
-        }          
-        
-        final IRegisterGroupDMContext registerGroupDmc = (IRegisterGroupDMContext) ( (DMContextVMContext) vmc ).getDMC() ;
-        
-        getServicesTracker().getService( IRegisters.class ).getModelData(
-            registerGroupDmc, 
-            new GetDataDone<IRegisterGroupData>() { 
-                public void run() {
-                    if (!getStatus().isOK()) {
-                        // Some error conditions are expected.
-                        assert getStatus().getCode() == IDsfService.INVALID_STATE || getStatus().getCode() == IDsfService.INVALID_HANDLE : getStatus().toString(); 
-                        result.setLabels( new String[] { "...", "...", "..." } ) ;
-                    } else {
-                        result.setLabels(new String[] { getData().getName(), "", getData().getDescription() }); //$NON-NLS-1$
-                    }
-                    result.done();
-                    return;
-                }
-            }
-        ) ;
+    @Override
+    protected void fillColumnLabel(IDMContext<IRegisterGroupData> dmContext, IRegisterGroupData dmData, 
+                                   String columnId, int idx, String[] text, ImageDescriptor[] image, 
+                                   FontData[] fontData, RGB[] foreground, RGB[] background) 
+    {
+        if (RegisterColumnPresentation.COL_NAME.equals(columnId)) {
+            text[idx] = dmData.getName();
+        } else if (RegisterColumnPresentation.COL_VALUE.equals(columnId)) {
+            text[idx] = ""; //$NON-NLS-1$
+        } else if (RegisterColumnPresentation.COL_DESCRIPTION.equals(columnId)) {
+            text[idx] = dmData.getDescription();
+        }
     }
     
-    public boolean hasDeltaFlagsForDMEvent(IDMEvent e) {
+    public boolean hasDeltaFlagsForDMEvent(IDMEvent<?> e) {
         return super.hasDeltaFlagsForDMEvent(e);
     }
 
-    public void buildDeltaForDMEvent(final IDMEvent e, final VMDelta parent, final Done done) {
+    public void buildDeltaForDMEvent(final IDMEvent<?> e, final VMDelta parent, final Done done) {
         super.buildDeltaForDMEvent(e, parent, done);
     }
 }

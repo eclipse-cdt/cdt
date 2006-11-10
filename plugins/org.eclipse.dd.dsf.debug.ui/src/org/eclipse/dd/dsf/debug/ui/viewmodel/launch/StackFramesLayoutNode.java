@@ -8,7 +8,7 @@
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
-package org.eclipse.dd.dsf.debug.ui.viewmodel;
+package org.eclipse.dd.dsf.debug.ui.viewmodel.launch;
 
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.dd.dsf.concurrent.Done;
@@ -34,7 +34,7 @@ import org.eclipse.jface.resource.ImageDescriptor;
 
 
 @SuppressWarnings("restriction")
-public class StackFramesLayoutNode extends DMContextVMLayoutNode {
+public class StackFramesLayoutNode extends DMContextVMLayoutNode<IStack.IFrameDMData> {
     
     public IVMContext[] fCachedOldFramesVMCs;
     
@@ -72,7 +72,7 @@ public class StackFramesLayoutNode extends DMContextVMLayoutNode {
                     if (getServicesTracker().getService(IRunControl.class).isStepping(execDmc)) {
                         getElementsTopStackFrameOnly(parentVmc, done);
                     } else {
-                        propagateError(getExecutor(), done, "Failed retrieving stack frames");
+                        propagateError(getExecutor(), done, "Failed retrieving stack frames"); //$NON-NLS-1$
                     }
                     return;
                 }
@@ -95,7 +95,7 @@ public class StackFramesLayoutNode extends DMContextVMLayoutNode {
         getServicesTracker().getService(IStack.class).getTopFrame(
             execDmc, 
             new GetDataDone<IFrameDMContext>() { public void run() {
-                if (propagateError(getExecutor(), done, "Failed retrieving top stack frame")) return;
+                if (propagateError(getExecutor(), done, "Failed retrieving top stack frame")) return; //$NON-NLS-1$
                 IVMContext topFrameVmc = new DMContextVMContext(parentVmc, getData());
                 
                 // If there are old frames cached, use them and only substitute the top frame object. Otherwise, create
@@ -110,7 +110,7 @@ public class StackFramesLayoutNode extends DMContextVMLayoutNode {
             }});
     }
     
-    public void retrieveLabel(IVMContext vmc, final ILabelRequestMonitor result) {
+    public void retrieveLabel(IVMContext vmc, final ILabelRequestMonitor result, String[] columns) {
         final IExecutionDMContext execDmc = findDmcInVmc(vmc, IExecutionDMContext.class);
         if (execDmc == null || getServicesTracker().getService(IStack.class) == null || getServicesTracker().getService(IRunControl.class) == null) {
             result.done();
@@ -142,9 +142,9 @@ public class StackFramesLayoutNode extends DMContextVMLayoutNode {
                     // If failed set a dummy label, and only propagate the 
                     // error if we are not stepping, since that would be a 
                     // common cause of failure.
-                    result.setLabels(new String[] { "..." });
+                    result.setLabels(new String[] { "..." }); //$NON-NLS-1$
                     if (!getServicesTracker().getService(IRunControl.class).isStepping(execDmc)) {
-                        MultiStatus status = new MultiStatus(DsfDebugUIPlugin.PLUGIN_ID, 0, "Failed to retrieve stack frame label", null);
+                        MultiStatus status = new MultiStatus(DsfDebugUIPlugin.PLUGIN_ID, 0, "Failed to retrieve stack frame label", null); //$NON-NLS-1$
                         status.add(getStatus());
                         result.setStatus(status);
                     }
@@ -164,22 +164,22 @@ public class StackFramesLayoutNode extends DMContextVMLayoutNode {
                 
                 // Add the function name
                 if (getData().getFunction() != null && getData().getFunction().length() != 0) { 
-                    label.append(" ");
+                    label.append(" "); //$NON-NLS-1$
                     label.append(getData().getFunction());
-                    label.append("()");
+                    label.append("()"); //$NON-NLS-1$
                 }
                 
                 // Add full file name
                 if (getData().getFile() != null && getData().getFile().length() != 0) {
-                    label.append(" at ");
+                    label.append(" at "); //$NON-NLS-1$
                     label.append(getData().getFile());
                 }
                 
                 // Add line number 
                 if (getData().getLine() >= 0) {
-                    label.append(":");
+                    label.append(":"); //$NON-NLS-1$
                     label.append(getData().getLine());
-                    label.append(" ");
+                    label.append(" "); //$NON-NLS-1$
                 }
                 
                 // Add the address
@@ -191,7 +191,7 @@ public class StackFramesLayoutNode extends DMContextVMLayoutNode {
             }});
     }
 
-    public boolean hasDeltaFlagsForDMEvent(IDMEvent e) {
+    public boolean hasDeltaFlagsForDMEvent(IDMEvent<?> e) {
         // This node generates delta if the timers have changed, or if the 
         // label has changed.
         return e instanceof IRunControl.ISuspendedDMEvent || 
@@ -200,7 +200,7 @@ public class StackFramesLayoutNode extends DMContextVMLayoutNode {
                super.hasDeltaFlagsForDMEvent(e);
     }
 
-    public void buildDeltaForDMEvent(final IDMEvent e, final VMDelta parent, final Done done) {
+    public void buildDeltaForDMEvent(final IDMEvent<?> e, final VMDelta parent, final Done done) {
         if (getServicesTracker().getService(IStack.class) == null || getServicesTracker().getService(IRunControl.class) == null) {
             // Required services have not initialized yet.  Ignore the event.
             super.buildDeltaForDMEvent(e, parent, done);

@@ -8,10 +8,11 @@
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
-package org.eclipse.dd.dsf.debug.ui.viewmodel;
+package org.eclipse.dd.dsf.debug.ui.viewmodel.launch;
 
 import org.eclipse.dd.dsf.concurrent.DsfRunnable;
 import org.eclipse.dd.dsf.concurrent.GetDataDone;
+import org.eclipse.dd.dsf.concurrent.ThreadSafe;
 import org.eclipse.dd.dsf.service.DsfSession;
 import org.eclipse.dd.dsf.ui.viewmodel.IVMRootLayoutNode;
 import org.eclipse.dd.dsf.ui.viewmodel.VMProvider;
@@ -25,11 +26,11 @@ import org.eclipse.debug.internal.ui.viewers.provisional.IModelDelta;
  * 
  */
 @SuppressWarnings("restriction")
-public class DebugViewModelProvider extends VMProvider 
+public class LaunchViewModelProvider extends VMProvider 
     implements IDebugEventSetListener
 {
-    
-    public DebugViewModelProvider(DsfSession session, IVMRootLayoutNode rootLayoutNode) {
+    @ThreadSafe
+    public LaunchViewModelProvider(DsfSession session, IVMRootLayoutNode rootLayoutNode) {
         super(session, rootLayoutNode);
         DebugPlugin.getDefault().addDebugEventListener(this);
     }
@@ -50,7 +51,7 @@ public class DebugViewModelProvider extends VMProvider
          * Just like with DMC events, go through all the layout nodes and 
          * collect delta information for the received event.
          */
-        if (getRootLayoutNode().hasDeltaFlags(event)) {
+        if (getRootLayoutNode() != null && getRootLayoutNode().hasDeltaFlags(event)) {
             getRootLayoutNode().createDelta(event, new GetDataDone<IModelDelta>() {
                 public void run() {
                     if (getStatus().isOK()) {
@@ -61,10 +62,9 @@ public class DebugViewModelProvider extends VMProvider
         }
     }
     
-    
     @Override
-    public void sessionDispose() {
+    public void dispose() {
         DebugPlugin.getDefault().removeDebugEventListener(this);
-        super.sessionDispose();
+        super.dispose();
     }
 }

@@ -51,9 +51,9 @@ abstract public class AbstractVMLayoutNode implements IVMLayoutNode {
         return fChildNodes;
     }
 
-    public void sessionDispose() {
+    public void dispose() {
         for (IVMLayoutNode childNode : getChildLayoutNodes()) {
-            childNode.sessionDispose();
+            childNode.dispose();
         }
     }
     
@@ -122,7 +122,7 @@ abstract public class AbstractVMLayoutNode implements IVMLayoutNode {
                 }
             });
     }
-
+    
     /**
      * Convenience method that returns the child layout nodes which return
      * <code>true</code> to the <code>hasDeltaFlags()</code> test for the given
@@ -164,6 +164,5 @@ abstract public class AbstractVMLayoutNode implements IVMLayoutNode {
         result.setLabels(new String[] { "..."} ); //$NON-NLS-1$
         result.done();
     }
-    
     
 }

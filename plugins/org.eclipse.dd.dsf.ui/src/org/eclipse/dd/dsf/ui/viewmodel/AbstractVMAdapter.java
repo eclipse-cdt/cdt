@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.dd.dsf.ui.viewmodel;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.RejectedExecutionException;
@@ -25,6 +26,8 @@ import org.eclipse.dd.dsf.ui.DsfUIPlugin;
 import org.eclipse.debug.internal.ui.viewers.provisional.IAsynchronousContentAdapter;
 import org.eclipse.debug.internal.ui.viewers.provisional.IAsynchronousLabelAdapter;
 import org.eclipse.debug.internal.ui.viewers.provisional.IChildrenRequestMonitor;
+import org.eclipse.debug.internal.ui.viewers.provisional.IColumnPresentation;
+import org.eclipse.debug.internal.ui.viewers.provisional.IColumnPresentationFactoryAdapter;
 import org.eclipse.debug.internal.ui.viewers.provisional.IContainerRequestMonitor;
 import org.eclipse.debug.internal.ui.viewers.provisional.ILabelRequestMonitor;
 import org.eclipse.debug.internal.ui.viewers.provisional.IModelProxy;
@@ -39,37 +42,46 @@ import org.eclipse.debug.internal.ui.viewers.provisional.IPresentationContext;
 abstract public class AbstractVMAdapter
     implements IAsynchronousLabelAdapter,
                IAsynchronousContentAdapter,
-               IModelProxyFactoryAdapter
+               IModelProxyFactoryAdapter,
+               IColumnPresentationFactoryAdapter
 {
     private final DsfSession fSession;
 
     @ConfinedToDsfExecutor("getSession().getExecutor()")
-    private Map<IPresentationContext, VMProvider> fViewModelProviders = 
-        new HashMap<IPresentationContext, VMProvider>(); 
+    private final Map<IPresentationContext, VMProvider> fViewModelProviders = 
+        Collections.synchronizedMap( new HashMap<IPresentationContext, VMProvider>() ); 
 
+    /**
+     * Constructor for the View Model session.  It is tempting to have the 
+     * adapter register itself here with the session as the model adapter, but
+     * that would mean that the adapter might get accessed on another thread
+     * even before the deriving class is fully constructed.  So it it better
+     * to have the owner of this object register it with the session.
+     * @param session
+     */
     public AbstractVMAdapter(DsfSession session) {
         fSession = session;
-        // regieterModelAdapter() is thread safe, so we're OK calling it from here.
-        fSession.registerModelAdapter(IAsynchronousLabelAdapter.class, this);
-        fSession.registerModelAdapter(IAsynchronousContentAdapter.class, this);
-        fSession.registerModelAdapter(IModelProxyFactoryAdapter.class, this);
     }    
 
-    @ConfinedToDsfExecutor("getSession().getExecutor()")    
+    @ThreadSafe    
     abstract protected VMProvider createViewModelProvider(IPresentationContext context);
             
     protected DsfSession getSession() { return fSession; }
     
-    @ConfinedToDsfExecutor("getSession().getExecutor()")
+    @ThreadSafe
     private VMProvider getViewModelProvider(IPresentationContext context) {
-        VMProvider provider = fViewModelProviders.get(context);
-        if (provider == null) {
-            provider = createViewModelProvider(context);
-            if (provider != null) {
-                fViewModelProviders.put(context, provider);
+        assert DsfSession.isSessionActive(getSession().getId());
+        
+        synchronized(fViewModelProviders) {
+            VMProvider provider = fViewModelProviders.get(context);
+            if (provider == null) {
+                provider = createViewModelProvider(context);
+                if (provider != null) {
+                    fViewModelProviders.put(context, provider);
+                }
             }
+            return provider;
         }
-        return provider;
     }
 
     @ConfinedToDsfExecutor("getSession().getExecutor()")
@@ -80,12 +92,8 @@ abstract public class AbstractVMAdapter
     public void dispose() {
         assert getSession().getExecutor().isInExecutorThread();
         
-        fSession.unregisterModelAdapter(IAsynchronousLabelAdapter.class);
-        fSession.unregisterModelAdapter(IAsynchronousContentAdapter.class);
-        fSession.unregisterModelAdapter(IModelProxyFactoryAdapter.class);
-        
         for (VMProvider provider : fViewModelProviders.values()) {
-            provider.sessionDispose();
+            provider.dispose();
         }
         fViewModelProviders.clear();
     }
@@ -101,7 +109,7 @@ abstract public class AbstractVMAdapter
                         result.setStatus(new Status(IStatus.ERROR, DsfUIPlugin.PLUGIN_ID, IDsfService.INTERNAL_ERROR, "No model provider for object: " + object.toString(), null)); //$NON-NLS-1$
                         result.done();
                     }
-                    provider.retrieveLabel(object, result);
+                    provider.retrieveLabel(object, result, context.getColumns());
                 }
                 @Override
                 public String toString() { return "Switch to dispatch thread to execute retrieveLabel()"; } //$NON-NLS-1$
@@ -161,8 +169,27 @@ abstract public class AbstractVMAdapter
          * create a proxy for the root element of the tree.
          */
         VMProvider provider = getViewModelProvider(context);
-        if (provider != null && element.equals(provider.getRootLayoutNode().getRootVMC().getInputObject())) {
+        if (provider != null &&
+            provider.getRootLayoutNode() != null && 
+            element.equals(provider.getRootLayoutNode().getRootVMC().getInputObject()))
+        {
             return provider.getModelProxy();
+        }
+        return null;
+    }
+    
+    public String getColumnPresentationId(IPresentationContext context, Object element) {
+        VMProvider provider = getViewModelProvider(context);
+        if (provider != null) {
+            return provider.getColumnPresentationId(element);
+        }
+        return null;
+    }
+    
+    public IColumnPresentation createColumnPresentation(IPresentationContext context, Object element) {
+        VMProvider provider = getViewModelProvider(context);
+        if (provider != null) {
+            return provider.createColumnPresentation(element);
         }
         return null;
     }

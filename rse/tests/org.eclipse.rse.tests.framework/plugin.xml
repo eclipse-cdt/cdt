@@ -81,7 +81,7 @@
    </extension>
    
    <extension point="org.eclipse.help.toc">
-      <toc primary="true" file="toc.xml"/>
+      <toc primary="true" file="toc.xml" category="DSDP.TM"/>
    </extension>
    <!--
    <extension

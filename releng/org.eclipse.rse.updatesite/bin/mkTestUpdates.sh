@@ -111,11 +111,11 @@ elif [ `basename $SITE` = signedUpdates ]; then
         mkdir -p ${STAGING}/updates.${stamp}/plugins
         cp ${SITE}/../testUpdates/plugins/*.jar ${STAGING}/updates.${stamp}/plugins
         cd ${STAGING}/updates.${stamp}/plugins
-        #WORKAROUND: Repack nested jars - doesnt work
-        #for x in `ls org.apache.oro_*.jar org.apache.commons.net_*.jar` ; do
-        #  echo "pack200 -r -E4 $x"
-        #  pack200 -r -E4 $x
-        #done
+        #WORKAROUND: Repack jars
+        for x in `ls *.jar` ; do
+          echo "pack200 -r -E4 $x"
+          pack200 -r -E4 $x
+        done
         for x in `ls *.jar`; do
           echo "signing plugin: ${x}"
           sign ${x} nomail >/dev/null
@@ -202,11 +202,27 @@ done
 # Workaround for downgrading effort of pack200 to avoid VM bug
 # See https://bugs.eclipse.org/bugs/show_bug.cgi?id=154069
 echo "Packing the site... $SITE"
-java -Dorg.eclipse.update.jarprocessor.pack200=$mydir \
-    -jar $HOME/ws/eclipse/startup.jar \
-    -application org.eclipse.update.core.siteOptimizer \
-    -jarProcessor -outputDir $SITE \
-    -processAll -pack $SITE
+#java -Dorg.eclipse.update.jarprocessor.pack200=$mydir \
+#    -jar $HOME/ws/eclipse/startup.jar \
+#    -application org.eclipse.update.core.siteOptimizer \
+#    -jarProcessor -outputDir $SITE \
+#    -processAll -pack $SITE
+cd $SITE/features
+for x in `ls *.jar` ; do
+  if [ -f $x.pack.gz ]; then
+    rm -f $x.pack.gz
+  fi
+  echo "pack200 -E4 $x.pack.gz $x"
+  pack200 -E4 $x.pack.gz $x
+done
+cd $SITE/plugins
+for x in `ls *.jar` ; do
+  if [ -f $x.pack.gz ]; then
+    rm -f $x.pack.gz
+  fi
+  echo "pack200 -E4 $x.pack.gz $x"
+  pack200 -E4 $x.pack.gz $x
+done
 
 # Workaround nested jarfiles in org.apache*
 # These don't work with signed jars, so do not recursively pack them

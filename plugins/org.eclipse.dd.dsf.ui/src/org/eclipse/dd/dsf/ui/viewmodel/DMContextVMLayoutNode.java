@@ -94,6 +94,7 @@ abstract public class DMContextVMLayoutNode<V extends IDMData> extends AbstractV
     /** Service tracker to be used by sub-classes */
     private DsfServicesTracker fServices;
     
+    private DsfSession fSession;
     
     /** 
      * Concrete class type that the elements of this schema node are based on.  
@@ -112,10 +113,18 @@ abstract public class DMContextVMLayoutNode<V extends IDMData> extends AbstractV
      */
     public DMContextVMLayoutNode(DsfSession session, Class<? extends IDMContext<V>> dmcClassType) {
         super(session.getExecutor());
+        fSession = session;
         fServices = new DsfServicesTracker(DsfUIPlugin.getBundleContext(), session.getId());        
         fDMCClassType = dmcClassType;
     }
-        
+     
+    /** 
+     * Returns the session for use by sub-classes.
+     */
+    protected DsfSession getSession() {
+        return fSession;
+    }
+    
     /**
      * Returns the services tracker for sub-class use.
      */

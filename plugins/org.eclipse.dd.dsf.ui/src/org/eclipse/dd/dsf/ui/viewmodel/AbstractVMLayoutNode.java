@@ -17,8 +17,11 @@ import org.eclipse.dd.dsf.concurrent.Done;
 import org.eclipse.dd.dsf.concurrent.DoneCollector;
 import org.eclipse.dd.dsf.concurrent.DsfExecutor;
 import org.eclipse.dd.dsf.concurrent.GetDataDone;
+import org.eclipse.debug.internal.ui.viewers.provisional.IColumnEditor;
+import org.eclipse.debug.internal.ui.viewers.provisional.IColumnEditorFactoryAdapter;
 import org.eclipse.debug.internal.ui.viewers.provisional.ILabelRequestMonitor;
 import org.eclipse.debug.internal.ui.viewers.provisional.IModelDelta;
+import org.eclipse.debug.internal.ui.viewers.provisional.IPresentationContext;
 
 /**
  * 
@@ -121,6 +124,24 @@ abstract public class AbstractVMLayoutNode implements IVMLayoutNode {
                     }
                 }
             });
+    }
+    
+    /**
+     * Default implementation of the IColumnEditorFactoryAdapter delegate.  It 
+     * returns null, which means that no cell editor is configured. 
+     * @see IColumnEditorFactoryAdapter#createColumnEditor(IPresentationContext, Object)
+     */
+    public IColumnEditor createColumnEditor(IVMContext vmc) {
+        return null;
+    }
+
+    /**
+     * Default implementation of the IColumnEditorFactoryAdapter delegate.  It 
+     * returns null, which means that no cell editor is configured. 
+     * @see IColumnEditorFactoryAdapter#getColumnEditorId(IPresentationContext, Object)
+     */
+    public String getColumnEditorId(IVMContext vmc) {
+        return null;
     }
     
     /**

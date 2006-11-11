@@ -13,6 +13,9 @@ package org.eclipse.dd.dsf.ui.viewmodel;
 import org.eclipse.dd.dsf.concurrent.ConfinedToDsfExecutor;
 import org.eclipse.dd.dsf.concurrent.Done;
 import org.eclipse.dd.dsf.concurrent.GetDataDone;
+import org.eclipse.dd.dsf.concurrent.ThreadSafeAndProhibitedFromDsfExecutor;
+import org.eclipse.debug.internal.ui.viewers.provisional.IColumnEditor;
+import org.eclipse.debug.internal.ui.viewers.provisional.IColumnEditorFactoryAdapter;
 import org.eclipse.debug.internal.ui.viewers.provisional.ILabelRequestMonitor;
 import org.eclipse.debug.internal.ui.viewers.provisional.IModelDelta;
 import org.eclipse.debug.internal.ui.viewers.provisional.IPresentationContext;
@@ -88,6 +91,30 @@ public interface IVMLayoutNode {
      * complete.
      */
     public void buildDelta(Object event, VMDelta parent, Done done);
+    
+    /**
+     * Creates a column editor for the given element.  The interface that this 
+     * method is delegated to is synchronous, therefore it also needs to be thread
+     * safe.  
+     * 
+     * @see IColumnEditorFactoryAdapter#createColumnEditor(IPresentationContext, Object)
+     * @param vmc VM Context to return the editor for
+     * @return
+     */
+    @ThreadSafeAndProhibitedFromDsfExecutor("")
+    public IColumnEditor createColumnEditor(IVMContext vmc);
+
+    /**
+     * Returns the ID of the editor for the given element.  The interface that this 
+     * method is delegated to is synchronous, therefore it also needs to be thread
+     * safe.  
+     * 
+     * @see IColumnEditorFactoryAdapter#getColumnEditorId(IPresentationContext, Object)
+     * @param vmc VM Context to return the editor ID for
+     * @return
+     */
+    @ThreadSafeAndProhibitedFromDsfExecutor("")
+    public String getColumnEditorId(IVMContext vmc);
     
     /**
      * Disposes the resources held by this node.

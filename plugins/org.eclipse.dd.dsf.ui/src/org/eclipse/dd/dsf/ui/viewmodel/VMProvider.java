@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.dd.dsf.ui.viewmodel;
 
+import java.util.concurrent.atomic.AtomicReference;
+
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -27,8 +29,10 @@ import org.eclipse.debug.internal.ui.viewers.provisional.AbstractModelProxy;
 import org.eclipse.debug.internal.ui.viewers.provisional.IAsynchronousContentAdapter;
 import org.eclipse.debug.internal.ui.viewers.provisional.IAsynchronousLabelAdapter;
 import org.eclipse.debug.internal.ui.viewers.provisional.IChildrenRequestMonitor;
+import org.eclipse.debug.internal.ui.viewers.provisional.IColumnEditor;
 import org.eclipse.debug.internal.ui.viewers.provisional.IColumnEditorFactoryAdapter;
 import org.eclipse.debug.internal.ui.viewers.provisional.IColumnPresentation;
+import org.eclipse.debug.internal.ui.viewers.provisional.IColumnPresentationFactoryAdapter;
 import org.eclipse.debug.internal.ui.viewers.provisional.IContainerRequestMonitor;
 import org.eclipse.debug.internal.ui.viewers.provisional.ILabelRequestMonitor;
 import org.eclipse.debug.internal.ui.viewers.provisional.IModelDelta;
@@ -67,9 +71,9 @@ public class VMProvider
     /**
      * The root node for this model provider.  The root layout node could be 
      * null when first created, to allow sub-classes to prorperly configure the 
-     * root node in the sub-class constructor.
+     * root node in the sub-class constructor.  
      */
-    private IVMRootLayoutNode fRootLayoutNode;
+    private AtomicReference<IVMRootLayoutNode> fRootLayoutNodeRef = new AtomicReference<IVMRootLayoutNode>();
     
     /**
      * Constructs the view model provider for given DSF session.  The 
@@ -80,7 +84,7 @@ public class VMProvider
     @ThreadSafe
     public VMProvider(DsfSession session, IVMRootLayoutNode rootLayoutNode) {
         fSession = session;
-        fRootLayoutNode = rootLayoutNode;
+        fRootLayoutNodeRef.set(rootLayoutNode);
         // Add ourselves as listener for DM events events.
         session.getExecutor().execute(new Runnable() {
             public void run() {
@@ -92,16 +96,25 @@ public class VMProvider
         });
     }    
 
-    /** Sets the layout nodes */
+    /** 
+     * Sets the layout nodes.  This method is thread-safe, because it might
+     * be called fromthe constructor, which itself is thread-safe. 
+     */
+    @ThreadSafe
     public void setRootLayoutNode(IVMRootLayoutNode rootLayoutNode) {
-        if (fRootLayoutNode != null) {
-            fRootLayoutNode.dispose();
+        final IVMRootLayoutNode oldRootLayoutNode = fRootLayoutNodeRef.getAndSet(rootLayoutNode); 
+        if (oldRootLayoutNode != null) {
+            // IVMLayoutNode has to be called on dispatch thread... for now at least.
+            getSession().getExecutor().execute( new Runnable() {
+                public void run() {
+                    oldRootLayoutNode.dispose();
+                }
+            });
         }
-        fRootLayoutNode = rootLayoutNode;
     }
     
     public IVMRootLayoutNode getRootLayoutNode() {
-        return fRootLayoutNode;
+        return fRootLayoutNodeRef.get();
     }
     
     /** Called to dispose the provider. */ 
@@ -109,8 +122,8 @@ public class VMProvider
         if (fRegisteredAsEventListener) {
             fSession.removeServiceEventListener(this);
         }
-        if (fRootLayoutNode != null) {
-            fRootLayoutNode.dispose();
+        if (fRootLayoutNodeRef != null) {
+            fRootLayoutNodeRef.get().dispose();
         }
     }
 
@@ -256,7 +269,7 @@ public class VMProvider
      * column info is fairly static, this method is thread-safe, and it will
      * not be called on the executor thread.
      * 
-     * @see IColumnEditorFactoryAdapter#createColumnEditor(IPresentationContext, Object)
+     * @see IColumnPresentationFactoryAdapter#createColumnPresentation(IPresentationContext, Object)
      */
     @ThreadSafe
     public IColumnPresentation createColumnPresentation(Object element) {
@@ -283,6 +296,24 @@ public class VMProvider
         return null;
     }
 
+    public IColumnEditor createColumnEditor(Object element) {
+        IVMContext vmc = getVmcForObject(element);
+        if (vmc == null) {
+            return null;
+        }        
+
+        return vmc.getLayoutNode().createColumnEditor(vmc);
+    }
+    
+    public String getColumnEditorId(Object element) {
+        IVMContext vmc = getVmcForObject(element);
+        if (vmc == null) {
+            return null;
+        }        
+
+        return vmc.getLayoutNode().getColumnEditorId(vmc);
+    }
+
     
     /**
      * Convenience method that finds the VMC corresponding to given parent 
@@ -298,9 +329,14 @@ public class VMProvider
          * root VMC from the root node, and pass this root vmc to the root's 
          * child layout nodes.
          */
-        if (parent.equals(fRootLayoutNode.getRootVMC().getInputObject())) {
-            return fRootLayoutNode.getRootVMC();
-        } else if (parent instanceof IVMContext){
+        IVMRootLayoutNode rootLayoutNode = getRootLayoutNode();
+        if (rootLayoutNode == null) {
+            return null;
+        } 
+        else if (parent.equals(rootLayoutNode.getRootVMC().getInputObject())) {
+            return rootLayoutNode.getRootVMC();
+        } 
+        else if (parent instanceof IVMContext){
             /*
              * The parent is a VMC.  Check to make sure that the VMC 
              * originated from a node in this ViewModelProvider.  If it didn't
@@ -308,7 +344,7 @@ public class VMProvider
              * request is a stale request.  So just ignore it.
              */
             if (isOurLayoutNode( ((IVMContext)parent).getLayoutNode(), 
-                                 new IVMLayoutNode[] { fRootLayoutNode } )) 
+                                 new IVMLayoutNode[] { rootLayoutNode } )) 
             {
                 return (IVMContext)parent;
             }
@@ -339,8 +375,10 @@ public class VMProvider
      */
     @DsfServiceEventHandler
     public void eventDispatched(final IDMEvent<?> event) {
-        if (fRootLayoutNode.hasDeltaFlags(event)) {
-            fRootLayoutNode.createDelta(event, new GetDataDone<IModelDelta>() {
+        IVMRootLayoutNode rootLayoutNode = getRootLayoutNode();
+        
+        if (rootLayoutNode != null && rootLayoutNode.hasDeltaFlags(event)) {
+            rootLayoutNode.createDelta(event, new GetDataDone<IModelDelta>() {
                 public void run() {
                     if (getStatus().isOK()) {
                         fModelProxy.fireModelChangedNonDispatch(getData());

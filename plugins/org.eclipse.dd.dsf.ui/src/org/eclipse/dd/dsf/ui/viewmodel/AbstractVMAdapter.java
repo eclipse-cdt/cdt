@@ -26,6 +26,8 @@ import org.eclipse.dd.dsf.ui.DsfUIPlugin;
 import org.eclipse.debug.internal.ui.viewers.provisional.IAsynchronousContentAdapter;
 import org.eclipse.debug.internal.ui.viewers.provisional.IAsynchronousLabelAdapter;
 import org.eclipse.debug.internal.ui.viewers.provisional.IChildrenRequestMonitor;
+import org.eclipse.debug.internal.ui.viewers.provisional.IColumnEditor;
+import org.eclipse.debug.internal.ui.viewers.provisional.IColumnEditorFactoryAdapter;
 import org.eclipse.debug.internal.ui.viewers.provisional.IColumnPresentation;
 import org.eclipse.debug.internal.ui.viewers.provisional.IColumnPresentationFactoryAdapter;
 import org.eclipse.debug.internal.ui.viewers.provisional.IContainerRequestMonitor;
@@ -43,7 +45,8 @@ abstract public class AbstractVMAdapter
     implements IAsynchronousLabelAdapter,
                IAsynchronousContentAdapter,
                IModelProxyFactoryAdapter,
-               IColumnPresentationFactoryAdapter
+               IColumnPresentationFactoryAdapter,
+               IColumnEditorFactoryAdapter               
 {
     private final DsfSession fSession;
 
@@ -190,6 +193,22 @@ abstract public class AbstractVMAdapter
         VMProvider provider = getViewModelProvider(context);
         if (provider != null) {
             return provider.createColumnPresentation(element);
+        }
+        return null;
+    }
+    
+    public IColumnEditor createColumnEditor(IPresentationContext context, Object element) {
+        VMProvider provider = getViewModelProvider(context);
+        if (provider != null) {
+            return provider.createColumnEditor(element);
+        }
+        return null;
+    }
+    
+    public String getColumnEditorId(IPresentationContext context, Object element) {
+        VMProvider provider = getViewModelProvider(context);
+        if (provider != null) {
+            return provider.getColumnEditorId(element);
         }
         return null;
     }

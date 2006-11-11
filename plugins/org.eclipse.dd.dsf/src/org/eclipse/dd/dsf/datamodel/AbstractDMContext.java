@@ -22,7 +22,7 @@ import org.eclipse.dd.dsf.service.DsfSession;
  * @param <V> Data Model data type that this context is for.
  */
 @Immutable
-public class AbstractDMContext<V extends IDMData> extends PlatformObject 
+abstract public class AbstractDMContext<V extends IDMData> extends PlatformObject 
     implements IDMContext<V>     
 {
     private final String fSessionId;

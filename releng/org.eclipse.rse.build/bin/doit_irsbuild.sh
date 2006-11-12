@@ -39,7 +39,7 @@ case x$buildType in
   *) ok=0 ;;
 esac
 if [ $ok != 1 ]; then
-  grep '^#:#' $0 | grep -v grep | sed -e 's,^#:# ,,'
+  grep '^#:#' $0 | grep -v grep | sed -e 's,^#:#,,'
   exit 0
 fi
 

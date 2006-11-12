@@ -25,10 +25,7 @@ import org.eclipse.cdt.utils.Addr32Factory;
 import org.eclipse.cdt.utils.Addr64;
 import org.eclipse.cdt.utils.Addr64Factory;
 import org.eclipse.cdt.utils.ERandomAccessFile;
-import org.eclipse.cdt.utils.coff.Coff.SectionHeader;
-import org.eclipse.cdt.utils.coff.PE.Attribute;
 import org.eclipse.cdt.utils.debug.dwarf.DwarfReader;
-import org.eclipse.cdt.utils.debug.stabs.StabsReader;
 
 // test checkin
 public class Elf {
@@ -120,6 +117,7 @@ public class Elf {
 		public final static int EM_MN10300 = 89;
 		public final static int EM_MN10200 = 90;
 		public final static int EM_MSP430 = 105;
+		public final static int EM_BLACKFIN = 106;
 		public final static int EM_EXCESS = 111;
 		public final static int EM_NIOSII = 113;
 		public final static int EM_C166 = 116;
@@ -842,6 +840,9 @@ public class Elf {
 				break;
 			case Elf.ELFhdr.EM_M16C:
 				attrib.cpu = "M16C"; //$NON-NLS-1$
+				break;
+			case Elf.ELFhdr.EM_BLACKFIN :
+				attrib.cpu = "bfin"; //$NON-NLS-1$
 				break;
 			case Elf.ELFhdr.EM_NONE :
 			default :

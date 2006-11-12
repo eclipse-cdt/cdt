@@ -43,6 +43,10 @@ if [ $ok != 1 ]; then
   exit 0
 fi
 
+#get mydir
+cd `dirname $0`
+mydir=`pwd`
+
 #Remove old logs and builds
 echo "Removing old logs and builds..."
 cd $HOME/ws
@@ -81,6 +85,11 @@ if [ -f package.count -a "$FILES" != "" ]; then
     #hide the release for now until it is tested
     #mirrors will still pick it up
     mv package.count package.count.orig
+    #DO_SIGN=1
+  fi
+  if [ "$DO_SIGN" = "1" ]; then
+    #sign the zipfiles
+    ${mydir}/batch_sign.sh `pwd`
   fi
 
   #update the doc server

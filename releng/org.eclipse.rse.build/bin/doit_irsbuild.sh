@@ -65,7 +65,7 @@ stamp=`date +'%Y%m%d-%H%M'`
 log=$HOME/ws/log-${buildType}$stamp.txt
 sg dsdp-tm-rse -c "touch $log"
 sg dsdp-tm-rse -c "cvs -q update -RPd >> $log 2>&1"
-daystamp=`date +'%Y%m%d-%H'`
+daystamp=`date +'%Y%m%d*%H'`
 
 echo "Running the builder..."
 sg dsdp-tm-rse -c "./nightly.sh HEAD ${buildType} ${buildId} >> $log 2>&1"

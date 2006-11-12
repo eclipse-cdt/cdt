@@ -59,21 +59,22 @@ done
 echo "Waiting for signature..."
 sleep 300
 TRIES=20
-do
-  MISSING=""
+MISSING="$ZIPS"
+while [ "$MISSING" != "" -a ${TRIES} -gt 0 ]; do
+  MISSING_NEW=""
   sleep 60
-  for x in $ZIPS ; do
+  for x in $MISSING ; do
     if [ -f ${STDIR}/out/$x ]; then
       echo "Done: TRIES=${TRIES}, $x"
       sg dsdp-tm-rse -c "cp -f ${STDIR}/out/$x ${RDIR}/signed/$x"
     else
-      MISSING="${MISSING} $x"
+      MISSING_NEW="${MISSING_NEW} $x"
     fi
   done
-  echo "Signed: TRIES=${TRIES}, Missing ${MISSING}"
-  ZIPS="${MISSING}"
+  echo "Signed: TRIES=${TRIES}, Missing ${MISSING_NEW}"
+  MISSING="${MISSING_NEW}"
   TRIES=`expr $TRIES - 1`
-while [ "$MISSING" != "" -a ${TRIES} -gt 0 ]
+done
 rm -rf ${STDIR}
 
 cd "$curdir"

@@ -22,35 +22,63 @@ import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.IIncludeReference;
 import org.eclipse.cdt.core.model.ILibraryReference;
+import org.eclipse.cdt.internal.ui.util.RemoteTreeContentManager;
+import org.eclipse.cdt.internal.ui.util.RemoteTreeViewer;
 import org.eclipse.cdt.ui.CElementContentProvider;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.jface.viewers.TreeViewer;
+import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.ui.IWorkbenchPartSite;
 
 /**
  * CViewContentProvider
  */
 public class CViewContentProvider extends CElementContentProvider {
+	private RemoteTreeContentManager fManager;
+
 	/**
 	 * 
 	 */
-	public CViewContentProvider() {
+	public CViewContentProvider(TreeViewer viewer, IWorkbenchPartSite site) {
 		super();
+		fManager = createContentManager(viewer, site);
 	}
 
 	/**
 	 * @param provideMembers
 	 * @param provideWorkingCopy
 	 */
-	public CViewContentProvider(boolean provideMembers, boolean provideWorkingCopy) {
+	public CViewContentProvider(TreeViewer viewer, IWorkbenchPartSite site, boolean provideMembers, boolean provideWorkingCopy) {
 		super(provideMembers, provideWorkingCopy);
+		fManager = createContentManager(viewer, site);
 	}
 
-	
+	protected RemoteTreeContentManager createContentManager(TreeViewer viewer, IWorkbenchPartSite site) {
+		if (site == null) {
+			return new RemoteTreeContentManager(this, (RemoteTreeViewer)viewer, null);
+		}
+		return new RemoteTreeContentManager(this, (RemoteTreeViewer)viewer, site);
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.ITreeContentProvider#getChildren(java.lang.Object)
 	 */
 	public Object[] getChildren(Object element) {
-		Object[] objs = super.getChildren(element);
+		Object[] objs = null;
+
+		// use the the deferred manager for some cases
+		if (element instanceof IBinary) {
+			// It takes sometimes to parse binaries deferred it
+			objs = fManager.getChildren(element);
+		} else if (element instanceof IArchive) {
+			// It takes sometimes to parse archives deferred it
+			objs = fManager.getChildren(element);
+		}
+
+		if (objs == null) {
+			objs = super.getChildren(element);
+		}
 		Object[] extras = null;
 		try {
 			if (element instanceof ICProject) {
@@ -170,7 +198,11 @@ public class CViewContentProvider extends CElementContentProvider {
 	 * @see org.eclipse.jface.viewers.ITreeContentProvider#hasChildren(java.lang.Object)
 	 */
 	public boolean hasChildren(Object element) {
-		if (element instanceof IBinaryContainer) {
+		if (element instanceof IBinary) {
+			return fManager.mayHaveChildren(element);
+		} else if (element instanceof IArchive) {
+			return fManager.mayHaveChildren(element);
+		} else if (element instanceof IBinaryContainer) {
 			try {
 				IBinaryContainer cont = (IBinaryContainer)element;
 				IBinary[] bins = getBinaries(cont);
@@ -199,4 +231,23 @@ public class CViewContentProvider extends CElementContentProvider {
 		}
 		return super.hasChildren(element);
 	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.viewers.IContentProvider#dispose()
+	 */
+	public void dispose() {
+		if (fManager != null) {
+			fManager.cancel();
+		}
+		super.dispose();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.viewers.IContentProvider#inputChanged(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
+	 */
+	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
+		fManager.cancel();
+		super.inputChanged(viewer, oldInput, newInput);
+	}
+	
 }

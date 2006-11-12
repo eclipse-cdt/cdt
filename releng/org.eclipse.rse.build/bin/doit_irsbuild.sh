@@ -32,8 +32,8 @@ export PATH=/shared/webtools/apps/IBMJava2-ppc64-142/bin:$PATH
 curdir=`pwd`
 
 #Get parameters
-buildType=$0
-buildId=$1
+buildType=$1
+buildId=$2
 case x$buildType in
   xP|xN|xI|xS|xR|xM) ok=1 ;;
   *) ok=0 ;;

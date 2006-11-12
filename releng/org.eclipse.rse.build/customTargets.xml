@@ -386,7 +386,7 @@
 	<target name="mailPass" unless="hasErrors">
 		<copy file="${builder}/${messagefile}" tofile="${buildDirectory}/message.txt" overwrite="true"/>
 		<replace file="${buildDirectory}/message.txt">
-			<replacefilter token="@buildId@" value="${buildId}"/>
+			<replacefilter token="@dropDir@" value="${dropDir}"/>
 		</replace>
 		<mail subject="RSE Build ${buildId} completed"
  			tolist="${mailto}" from="martin.oberhuber@windriver.com">

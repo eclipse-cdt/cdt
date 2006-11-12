@@ -270,7 +270,13 @@
 	<!-- Steps to do before running the build.xmls for the elements being built. -->
 	<!-- ===================================================================== -->
 	<target name="preProcess">
-		<replace dir="${buildDirectory}/plugins" value="${buildId}" token="@build@">
+		<condition property="buildIdForMappings" value="${buildId} (${mydstamp}-${mytstamp})" else="${buildId}">
+			<or>
+				<equals arg1="${buildType}" arg2="S"/>
+				<equals arg1="${buildType}" arg2="R"/>
+			</or>
+		</condition>
+		<replace dir="${buildDirectory}/plugins" value="${buildIdForMappings}" token="@build@">
 			<include name="**/about.mappings" />
 		</replace>
 	</target>

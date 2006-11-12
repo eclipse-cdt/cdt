@@ -9,8 +9,10 @@
 # Contributors: 
 # Martin Oberhuber - initial API and implementation 
 #*******************************************************************************
+#:#
 #:# Bootstrapping script to perform S-builds and R-builds on build.eclipse.org
 #:# Will build based on HEAD of all mapfiles, and update the testUpdates as well
+#:#
 #:# Usage:
 #:#    doit_irsbuild.sh {buildType} [buildId]
 #:# Examples:
@@ -37,7 +39,7 @@ case x$buildType in
   *) ok=0 ;;
 esac
 if [ $ok != 1 ]; then
-  grep '^#:#' $0 | grep -v grep
+  grep '^#:#' $0 | grep -v grep | sed -e 's,^#:# ,,'
   exit 0
 fi
 

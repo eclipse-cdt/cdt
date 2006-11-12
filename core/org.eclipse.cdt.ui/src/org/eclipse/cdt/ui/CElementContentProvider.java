@@ -162,6 +162,7 @@ public class CElementContentProvider extends BaseCElementContentProvider impleme
 		// handle open and closing of a project
 		if (((flags & ICElementDelta.F_CLOSED) != 0) || ((flags & ICElementDelta.F_OPENED) != 0)) {
 			postRefresh(element);
+			return;
 		}
 
 		// We do not care about changes in Working copies

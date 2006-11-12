@@ -37,6 +37,10 @@ import org.eclipse.ui.IWorkbenchPartSite;
 public class CViewContentProvider extends CElementContentProvider {
 	private RemoteTreeContentManager fManager;
 
+	public CViewContentProvider() {
+		super();
+	}
+
 	/**
 	 * 
 	 */

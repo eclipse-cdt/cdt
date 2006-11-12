@@ -45,7 +45,6 @@ public class RemoteTreeViewer extends ProblemTreeViewer {
         /**
          * Constucts a job to expand the given element.
          * 
-         * @param target the element to expand
          */
         public ExpansionJob() {
             super("Expansion"); //$NON-NLS-1$
@@ -114,7 +113,6 @@ public class RemoteTreeViewer extends ProblemTreeViewer {
         /**
          * Constucts a job to select the given element.
          * 
-         * @param target the element to select
          */
         public SelectionJob() {
             super("Selection"); //$NON-NLS-1$

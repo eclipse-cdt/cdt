@@ -109,6 +109,7 @@ import org.eclipse.cdt.internal.ui.editor.ITranslationUnitEditorInput;
 import org.eclipse.cdt.internal.ui.preferences.CPluginPreferencePage;
 import org.eclipse.cdt.internal.ui.util.EditorUtility;
 import org.eclipse.cdt.internal.ui.util.ProblemTreeViewer;
+import org.eclipse.cdt.internal.ui.util.RemoteTreeViewer;
 import org.eclipse.cdt.internal.ui.viewsupport.AppearanceAwareLabelProvider;
 import org.eclipse.cdt.internal.ui.viewsupport.CElementImageProvider;
 import org.eclipse.cdt.internal.ui.viewsupport.CUILabelProvider;
@@ -578,13 +579,13 @@ public class CView extends ViewPart implements ISetSelectionTarget, IPropertyCha
 	}
 
 	protected ProblemTreeViewer createViewer(Composite parent) {
-		return new ProblemTreeViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
+		return new RemoteTreeViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
 	}
 
 	protected IContentProvider createContentProvider() {
 		boolean showCUChildren = PreferenceConstants.getPreferenceStore().getBoolean(PreferenceConstants.PREF_SHOW_CU_CHILDREN);
 		boolean groupIncludes = PreferenceConstants.getPreferenceStore().getBoolean(PreferenceConstants.CVIEW_GROUP_INCLUDES);
-		CViewContentProvider provider = new CViewContentProvider(showCUChildren, true);
+		CViewContentProvider provider = new CViewContentProvider(viewer, getSite(), showCUChildren, true);
 		provider.setIncludesGrouping(groupIncludes);
 		return provider;
 	}

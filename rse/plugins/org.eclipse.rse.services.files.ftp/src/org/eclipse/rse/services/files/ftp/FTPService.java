@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2006 IBM Corporation. All rights reserved.
+ * Copyright (c) 2006 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -12,15 +12,12 @@
  * 
  * Contributors:
  * Michael Berger (IBM) - Fixing 140408 - FTP upload does not work
- * Javier Montalvo Orus (Symbian) - Fixing 140323 - provided implementation for 
- *    delete, move and rename.
+ * Javier Montalvo Orus (Symbian) - Fixing 140323 - provided implementation for delete, move and rename.
  * Javier Montalvo Orus (Symbian) - Bug 140348 - FTP did not use port number
  * Michael Berger (IBM) - Fixing 140404 - FTP new file creation does not work
  * Javier Montalvo Orus (Symbian) - Migrate to jakarta commons net FTP client
- * Javier Montalvo Orus (Symbian) - Fixing 161211 - Cannot expand /pub folder as 
- *    anonymous on ftp.wacom.com
- * Javier Montalvo Orus (Symbian) - Fixing 161238 - [ftp] expand "My Home" node on 
- *    ftp.ibiblio.org as anonymous fails
+ * Javier Montalvo Orus (Symbian) - Fixing 161211 - Cannot expand /pub folder as anonymous on ftp.wacom.com
+ * Javier Montalvo Orus (Symbian) - Fixing 161238 - [ftp] expand "My Home" node on ftp.ibiblio.org as anonymous fails
  * Javier Montalvo Orus (Symbian) - Fixing 160922 - create folder/file fails for FTP service
  * David Dykstal (IBM) - Fixing 162511 - FTP file service does not process filter strings correctly
  * Javier Montalvo Orus (Symbian) - Fixing 162511 - FTP file service does not process filter strings correctly
@@ -29,6 +26,8 @@
  * Javier Montalvo Orus (Symbian) - Fixing 162585 - [FTP] fetch children cannot be canceled
  * Javier Montalvo Orus (Symbian) - Fixing 161209 - Need a Log of ftp commands
  * Javier Montalvo Orus (Symbian) - Fixing 163264 - FTP Only can not delete first subfolder
+ * Michael Scharf (Wind River) - Fix 164223 - Wrong call for setting binary transfer mode
+ * Martin Oberhuber (Wind River) - Add Javadoc for getFTPClient(), modify move() to use single connected session
  ********************************************************************************/
 
 package org.eclipse.rse.services.files.ftp;
@@ -157,6 +156,15 @@ public class FTPService extends AbstractFileService implements IFileService, IFT
 		}
 	}
 	
+	/**
+	 * Returns the commons.net FTPClient for this session.
+	 * 
+	 * As a side effect, it also checks the connection 
+	 * by sending a NOOP to the remote side, and initiates
+	 * a connect in case the NOOP throws an exception.
+	 * 
+	 * @return The commons.net FTPClient.
+	 */
 	public FTPClient getFTPClient()
 	{
 		if (_ftpClient == null)
@@ -334,20 +342,21 @@ public class FTPService extends AbstractFileService implements IFileService, IFT
 			ftpClient.changeWorkingDirectory(remoteParent);
 				
 			if (isBinary)
-				ftpClient.setFileTransferMode(FTP.BINARY_FILE_TYPE);			
+				ftpClient.setFileType(FTP.BINARY_FILE_TYPE);			
 			else
-				ftpClient.setFileTransferMode(FTP.ASCII_FILE_TYPE);
+				ftpClient.setFileType(FTP.ASCII_FILE_TYPE);
 			
 			FileInputStream input =  new FileInputStream(localFile);
 			OutputStream output = ftpClient.storeFileStream(remoteFile);
 			
 			progressMonitor.init(0, localFile.getName(), remoteFile, localFile.length());
-			
+			long bytes=0;
 			byte[] buffer = new byte[4096];
 			
 			int readCount;
 			while((readCount = input.read(buffer)) > 0)
 			{
+				bytes+=readCount;
 				output.write(buffer, 0, readCount);
 				progressMonitor.count(readCount);
 				if (monitor!=null){
@@ -446,9 +455,9 @@ public class FTPService extends AbstractFileService implements IFileService, IFT
 			ftpClient.changeWorkingDirectory(remoteParent);
 			
 			if (isBinary)
-				ftpClient.setFileTransferMode(FTP.BINARY_FILE_TYPE);			
+				ftpClient.setFileType(FTP.BINARY_FILE_TYPE);			
 			else
-				ftpClient.setFileTransferMode(FTP.ASCII_FILE_TYPE);
+				ftpClient.setFileType(FTP.ASCII_FILE_TYPE);
 			
 			if (!localFile.exists())
 			{
@@ -625,19 +634,21 @@ public class FTPService extends AbstractFileService implements IFileService, IFT
 		FTPClient ftpClient = getFTPClient(); 
 		
 		try {
-						
-			int returnedValue = getFTPClient().sendCommand("RNFR " + srcParent + getSeparator() + srcName);  //$NON-NLS-1$
+			//MOB: Use ftpClient instead of getFTPClient, since the RNFR/RNTO operation
+			//needs to be performed in a single connected session
+			//it makes no sense to send a NOOP and reconnect in case of an exception here
+			int returnedValue = ftpClient.sendCommand("RNFR " + srcParent + getSeparator() + srcName);  //$NON-NLS-1$
 			
 			//350: origin file exits, ready for destination
 			if (FTPReply.CODE_350 == returnedValue) {
-				returnedValue = getFTPClient().sendCommand("RNTO " + tgtParent + getSeparator() + tgtName);  //$NON-NLS-1$
+				returnedValue = ftpClient.sendCommand("RNTO " + tgtParent + getSeparator() + tgtName);  //$NON-NLS-1$
 			}
 		
 			success = FTPReply.isPositiveCompletion(returnedValue);
 
 			if(!success)
 			{
-				throw new Exception(getFTPClient().getReplyString());
+				throw new Exception(ftpClient.getReplyString());
 			}
 		
 		}catch (Exception e) {

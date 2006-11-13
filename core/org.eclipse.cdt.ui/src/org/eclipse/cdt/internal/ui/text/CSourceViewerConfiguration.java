@@ -261,7 +261,7 @@ public class CSourceViewerConfiguration extends TextSourceViewerConfiguration {
 	private void initializeScanners() {
 		Assert.isTrue(isNewSetup());
 		fCppCodeScanner= new CppCodeScanner(getColorManager(), fPreferenceStore);
-		fCCodeScanner= new CppCodeScanner(getColorManager(), fPreferenceStore);
+		fCCodeScanner= new CCodeScanner(getColorManager(), fPreferenceStore);
 		fMultilineCommentScanner= new CCommentScanner(getColorManager(), fPreferenceStore, ICColorConstants.C_MULTI_LINE_COMMENT);
 		fSinglelineCommentScanner= new CCommentScanner(getColorManager(), fPreferenceStore, ICColorConstants.C_SINGLE_LINE_COMMENT);
 		fStringScanner= new SingleTokenCScanner(getColorManager(), fPreferenceStore, ICColorConstants.C_STRING);

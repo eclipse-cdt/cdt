@@ -20,8 +20,8 @@ import java.io.LineNumberReader;
 import java.io.Reader;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
-import java.util.Queue;
 
 import junit.framework.Assert;
 
@@ -65,7 +65,7 @@ public class TestSourceReader {
 	    
 	    final int OUT_COMMENT=0, IN_COMMENT=1;
 	    int state = OUT_COMMENT;
-	    Queue q;
+	    LinkedList q;
 	    List contents = new ArrayList();
 	    StringBuffer content = new StringBuffer();
 	    for(String line = br.readLine(); line!=null; line = br.readLine()) {
@@ -79,7 +79,7 @@ public class TestSourceReader {
 	    				contents.remove(0);
 	    			content = new StringBuffer();
 	    		}
-	    		if(line.contains(testName)) {
+	    		if(line.indexOf(testName) != -1) {
 	    			return (StringBuffer[]) contents.toArray(new StringBuffer[contents.size()]);
 	    		}
 	    	}

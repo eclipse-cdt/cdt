@@ -36,6 +36,7 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 
@@ -128,20 +129,37 @@ public abstract class PDOMIndexerTask implements IPDOMIndexerTask {
 	}
 	
 	protected void parseTU(ITranslationUnit tu, IProgressMonitor pm) throws CoreException, InterruptedException {
+		IPath path= tu.getPath();
 		try {
-			IPath path= tu.getPath();
+			if (fTrace) {
+				System.out.println("Indexer: parsing " + path.toOSString()); //$NON-NLS-1$
+			}
 			fMessage= MessageFormat.format(Messages.PDOMIndexerTask_parsingFileTask,
 					new Object[]{path.lastSegment(), path.removeLastSegments(1).toString()});
 			doParseTU(tu, pm);
 		}
 		catch (CoreException e) {
-			if (++fErrorCount <= MAX_ERRORS) {
-				CCorePlugin.log(e);
-			}
-			else {
+			if (!swallowError(path, e)) 
 				throw e;
-			}
 		}
+		catch (RuntimeException e) {
+			if (!swallowError(path, e)) 
+				throw e;
+		}
+		catch (Error e) {
+			if (!swallowError(path, e)) 
+				throw e;
+		}
+	}
+
+	private boolean swallowError(IPath file, Throwable e) {
+		if (++fErrorCount <= MAX_ERRORS) { 
+			IStatus status= CCorePlugin.createStatus(
+				MessageFormat.format(Messages.PDOMIndexerTask_errorWhileParsing, new Object[]{file}), e);
+			CCorePlugin.log(status);
+			return true;
+		}
+		return false;
 	}
 
 	abstract protected void doParseTU(ITranslationUnit tu, IProgressMonitor pm) throws CoreException, InterruptedException;

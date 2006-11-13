@@ -34,7 +34,7 @@ import org.eclipse.ui.dialogs.ElementTreeSelectionDialog;
 import org.eclipse.ui.dialogs.ISelectionStatusValidator;
 import org.eclipse.ui.model.WorkbenchContentProvider;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
-import org.eclipse.ui.views.navigator.ResourceComparator;
+import org.eclipse.ui.views.navigator.ResourceSorter;
 
 import org.eclipse.cdt.internal.ui.dialogs.StatusDialog;
 import org.eclipse.cdt.internal.ui.dialogs.StatusInfo;
@@ -215,7 +215,7 @@ public class ExclusionPatternEntryDialog extends StatusDialog {
 		dialog.addFilter(filter);
 		dialog.setInput(fCurrSourceFolder);
 		dialog.setInitialSelection(initialElement);
-		dialog.setComparator(new ResourceComparator(ResourceComparator.NAME));
+		dialog.setComparator(new ResourceSorter(ResourceSorter.NAME));
 
 		if (dialog.open() == Window.OK) {
 			IResource res = (IResource) dialog.getFirstResult();

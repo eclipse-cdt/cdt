@@ -42,7 +42,7 @@ import org.eclipse.ui.dialogs.ElementTreeSelectionDialog;
 import org.eclipse.ui.dialogs.ISelectionStatusValidator;
 import org.eclipse.ui.model.WorkbenchContentProvider;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
-import org.eclipse.ui.views.navigator.ResourceComparator;
+import org.eclipse.ui.views.navigator.ResourceSorter;
 
 import org.eclipse.cdt.core.CCProjectNature;
 import org.eclipse.cdt.core.CProjectNature;
@@ -455,7 +455,7 @@ public class NewSourceFolderWizardPage extends NewElementWizardPage {
 		dialog.setMessage(message);
 		dialog.addFilter(filter);
 		dialog.setInput(currProject);
-		dialog.setComparator(new ResourceComparator(ResourceComparator.NAME));
+		dialog.setComparator(new ResourceSorter(ResourceSorter.NAME));
 		IResource res= currProject.findMember(initialPath);
 		if (res != null) {
 			dialog.setInitialSelection(res);

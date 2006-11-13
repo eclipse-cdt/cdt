@@ -67,6 +67,7 @@ while [ "$MISSING" != "" -a ${TRIES} -gt 0 ]; do
     if [ -f ${STDIR}/out/$x ]; then
       echo "Done: TRIES=${TRIES}, $x"
       sg dsdp-tm-rse -c "cp -f ${STDIR}/out/$x ${RDIR}/signed/$x"
+      sg dsdp-tm-rse -c "chmod ugo+r ${RDIR}/signed/$x"
     else
       MISSING_NEW="${MISSING_NEW} $x"
     fi

@@ -692,9 +692,13 @@ public class SemanticHighlightingPresenter implements ITextPresentationListener,
 	 * Invalidate text presentation of all positions.
 	 */
 	private void invalidateTextPresentation() {
-		for (int i= 0, n= fPositions.size(); i < n; i++) {
-			Position position= (Position) fPositions.get(i);
-			fSourceViewer.invalidateTextPresentation(position.getOffset(), position.getLength());
+		if (fPositions.size() > 1000) {
+			fSourceViewer.invalidateTextPresentation();
+		} else {
+			for (int i= 0, n= fPositions.size(); i < n; i++) {
+				Position position= (Position) fPositions.get(i);
+				fSourceViewer.invalidateTextPresentation(position.getOffset(), position.getLength());
+			}
 		}
 	}
 

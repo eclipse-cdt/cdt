@@ -64,7 +64,6 @@ public class FoldingTest extends TestCase {
 
 		IPreferenceStore store= CUIPlugin.getDefault().getPreferenceStore();
 		store.setValue(PreferenceConstants.EDITOR_FOLDING_ENABLED, true);
-		store.setValue(PreferenceConstants.EDITOR_FOLDING_COMMENTS_ENABLED, true);
 		store.setValue(PreferenceConstants.EDITOR_FOLDING_PREPROCESSOR_BRANCHES_ENABLED, true);
 		store.setValue(PreferenceConstants.EDITOR_FOLDING_INACTIVE_CODE, false);
 		store.setValue(PreferenceConstants.EDITOR_FOLDING_HEADERS, false);
@@ -82,7 +81,6 @@ public class FoldingTest extends TestCase {
 		
 		IPreferenceStore store= CUIPlugin.getDefault().getPreferenceStore();
 		store.setToDefault(PreferenceConstants.EDITOR_FOLDING_ENABLED);
-		store.setToDefault(PreferenceConstants.EDITOR_FOLDING_COMMENTS_ENABLED);
 		store.setToDefault(PreferenceConstants.EDITOR_FOLDING_PREPROCESSOR_BRANCHES_ENABLED);
 		store.setToDefault(PreferenceConstants.EDITOR_FOLDING_INACTIVE_CODE);
 		store.setToDefault(PreferenceConstants.EDITOR_FOLDING_HEADERS);

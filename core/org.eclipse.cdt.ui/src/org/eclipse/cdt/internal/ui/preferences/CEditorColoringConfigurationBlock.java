@@ -26,6 +26,7 @@ import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.viewers.IColorProvider;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITreeContentProvider;
@@ -40,6 +41,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.FontMetrics;
 import org.eclipse.swt.graphics.GC;
@@ -49,6 +51,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Link;
 import org.eclipse.swt.widgets.ScrollBar;
@@ -187,7 +190,7 @@ class CEditorColoringConfigurationBlock extends AbstractConfigurationBlock {
 	/**
 	 * Color list label provider.
 	 */
-	private class ColorListLabelProvider extends LabelProvider {
+	private class ColorListLabelProvider extends LabelProvider implements IColorProvider {
 		/*
 		 * @see org.eclipse.jface.viewers.ILabelProvider#getText(java.lang.Object)
 		 */
@@ -195,6 +198,25 @@ class CEditorColoringConfigurationBlock extends AbstractConfigurationBlock {
 			if (element instanceof String)
 				return (String) element;
 			return ((HighlightingColorListItem)element).getDisplayName();
+		}
+
+		/*
+		 * @see org.eclipse.jface.viewers.IColorProvider#getBackground(java.lang.Object)
+		 */
+		public Color getBackground(Object element) {
+			return null;
+		}
+
+		/*
+		 * @see org.eclipse.jface.viewers.IColorProvider#getForeground(java.lang.Object)
+		 */
+		public Color getForeground(Object element) {
+			if (element instanceof SemanticHighlightingColorListItem) {
+				if (!getPreferenceStore().getBoolean(PreferenceConstants.EDITOR_SEMANTIC_HIGHLIGHTING_ENABLED)) {
+					return Display.getDefault().getSystemColor(SWT.COLOR_GRAY);
+				}
+			}
+			return null;
 		}
 	}
 
@@ -294,6 +316,7 @@ class CEditorColoringConfigurationBlock extends AbstractConfigurationBlock {
 	
 	private ColorSelector fSyntaxForegroundColorEditor;
 	private Label fColorEditorLabel;
+	private Button fEnableSemanticHighlightingCheckbox;
 	private Button fBoldCheckBox;
 	private Button fEnableCheckbox;
 	/**
@@ -451,6 +474,9 @@ class CEditorColoringConfigurationBlock extends AbstractConfigurationBlock {
 	public void performDefaults() {
 		super.performDefaults();
 		
+		fEnableSemanticHighlightingCheckbox.setSelection(getPreferenceStore().getBoolean(PreferenceConstants.EDITOR_SEMANTIC_HIGHLIGHTING_ENABLED));
+		fListViewer.refresh();
+
 		handleSyntaxColorListSelection();
 
 		uninstallSemanticHighlighting();
@@ -488,8 +514,9 @@ class CEditorColoringConfigurationBlock extends AbstractConfigurationBlock {
 		fStrikethroughCheckBox.setSelection(getPreferenceStore().getBoolean(item.getStrikethroughKey()));
 		fUnderlineCheckBox.setSelection(getPreferenceStore().getBoolean(item.getUnderlineKey()));
 		if (item instanceof SemanticHighlightingColorListItem) {
-			fEnableCheckbox.setEnabled(true);
-			boolean enable= getPreferenceStore().getBoolean(((SemanticHighlightingColorListItem) item).getEnableKey());
+			boolean semanticHighlightingEnabled= getPreferenceStore().getBoolean(PreferenceConstants.EDITOR_SEMANTIC_HIGHLIGHTING_ENABLED);
+			fEnableCheckbox.setEnabled(semanticHighlightingEnabled);
+			boolean enable= semanticHighlightingEnabled && getPreferenceStore().getBoolean(((SemanticHighlightingColorListItem) item).getEnableKey());
 			fEnableCheckbox.setSelection(enable);
 			fSyntaxForegroundColorEditor.getButton().setEnabled(enable);
 			fColorEditorLabel.setEnabled(enable);
@@ -534,6 +561,13 @@ class CEditorColoringConfigurationBlock extends AbstractConfigurationBlock {
 		link.setLayoutData(gridData);
 
 		addFiller(colorComposite, 1);
+
+		fEnableSemanticHighlightingCheckbox= new Button(colorComposite, SWT.CHECK);
+		fEnableSemanticHighlightingCheckbox.setText(PreferencesMessages.CEditorColoringConfigurationBlock_enable_semantic_highlighting); 
+		gridData= new GridData(GridData.FILL_HORIZONTAL);
+		gridData.horizontalAlignment= GridData.BEGINNING;
+		gridData.horizontalSpan= 1;
+		fEnableSemanticHighlightingCheckbox.setLayoutData(gridData);
 		
 		Label label;
 		label= new Label(colorComposite, SWT.LEFT);
@@ -716,6 +750,23 @@ class CEditorColoringConfigurationBlock extends AbstractConfigurationBlock {
 					fItalicCheckBox.setEnabled(enable);
 					fStrikethroughCheckBox.setEnabled(enable);
 					fUnderlineCheckBox.setEnabled(enable);
+					uninstallSemanticHighlighting();
+					installSemanticHighlighting();
+				}
+			}
+		});
+		
+		fEnableSemanticHighlightingCheckbox.addSelectionListener(new SelectionListener() {
+			public void widgetDefaultSelected(SelectionEvent e) {
+				// do nothing
+			}
+			public void widgetSelected(SelectionEvent e) {
+				HighlightingColorListItem item= getHighlightingColorListItem();
+				if (item instanceof SemanticHighlightingColorListItem) {
+					boolean enable= fEnableSemanticHighlightingCheckbox.getSelection();
+					getPreferenceStore().setValue(PreferenceConstants.EDITOR_SEMANTIC_HIGHLIGHTING_ENABLED, enable);
+					fListViewer.refresh();
+					handleSyntaxColorListSelection();
 					uninstallSemanticHighlighting();
 					installSemanticHighlighting();
 				}

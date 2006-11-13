@@ -16,16 +16,10 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-import org.eclipse.cdt.internal.ui.text.folding.CFoldingStructureProviderDescriptor;
-import org.eclipse.cdt.internal.ui.text.folding.CFoldingStructureProviderRegistry;
-import org.eclipse.cdt.internal.ui.util.PixelConverter;
-import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.cdt.ui.PreferenceConstants;
-import org.eclipse.cdt.ui.text.folding.ICFoldingPreferenceBlock;
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.jface.text.Assert;
 import org.eclipse.jface.viewers.ComboViewer;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
@@ -48,12 +42,20 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 
+import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.PreferenceConstants;
+import org.eclipse.cdt.ui.text.folding.ICFoldingPreferenceBlock;
+
+import org.eclipse.cdt.internal.ui.text.folding.CFoldingStructureProviderDescriptor;
+import org.eclipse.cdt.internal.ui.text.folding.CFoldingStructureProviderRegistry;
+import org.eclipse.cdt.internal.ui.util.PixelConverter;
+
 /**
  * Configures C Editor folding preferences.
  * 
  * @since 3.0
  */
-class FoldingConfigurationBlock {
+class FoldingConfigurationBlock implements IPreferenceConfigurationBlock {
 	
 	private static class ErrorPreferences implements ICFoldingPreferenceBlock {
 		private String fMessage;
@@ -135,13 +137,10 @@ class FoldingConfigurationBlock {
 		return keys;
 	}
 
-	/**
-	 * Creates page for folding preferences.
-	 * 
-	 * @param parent the parent composite
-	 * @return the control for the preference page
+	/*
+	 * @see org.eclipse.cdt.internal.ui.preferences.IPreferenceConfigurationBlock#createControl(org.eclipse.swt.widgets.Composite)
 	 */
-	Control createControl(Composite parent) {
+	public Control createControl(Composite parent) {
 
 		Composite composite= new Composite(parent, SWT.NULL);
 		// assume parent page uses griddata
@@ -307,18 +306,27 @@ class FoldingConfigurationBlock {
 		prefs.initialize();
 	}
 
-	void initialize() {
+	/*
+	 * @see org.eclipse.cdt.internal.ui.preferences.IPreferenceConfigurationBlock#initialize()
+	 */
+	public void initialize() {
 		restoreFromPreferences();
 	}
 
-	void performOk() {
+	/*
+	 * @see org.eclipse.cdt.internal.ui.preferences.IPreferenceConfigurationBlock#performOk()
+	 */
+	public void performOk() {
 		for (Iterator it= fProviderPreferences.values().iterator(); it.hasNext();) {
 			ICFoldingPreferenceBlock prefs= (ICFoldingPreferenceBlock) it.next();
 			prefs.performOk();
 		}
 	}
 	
-	void performDefaults() {
+	/*
+	 * @see org.eclipse.cdt.internal.ui.preferences.IPreferenceConfigurationBlock#performDefaults()
+	 */
+	public void performDefaults() {
 		restoreFromPreferences();
 		for (Iterator it= fProviderPreferences.values().iterator(); it.hasNext();) {
 			ICFoldingPreferenceBlock prefs= (ICFoldingPreferenceBlock) it.next();
@@ -326,7 +334,10 @@ class FoldingConfigurationBlock {
 		}
 	}
 	
-	void dispose() {
+	/*
+	 * @see org.eclipse.cdt.internal.ui.preferences.IPreferenceConfigurationBlock#dispose()
+	 */
+	public void dispose() {
 		for (Iterator it= fProviderPreferences.values().iterator(); it.hasNext();) {
 			ICFoldingPreferenceBlock prefs= (ICFoldingPreferenceBlock) it.next();
 			prefs.dispose();

@@ -2915,10 +2915,12 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IR
 	protected String[] collectContextMenuPreferencePages() {
 		// Add C/C++ Editor relevant pages
 		String[] parentPrefPageIds = super.collectContextMenuPreferencePages();
-		String[] prefPageIds = new String[parentPrefPageIds.length + 6];
+		String[] prefPageIds = new String[parentPrefPageIds.length + 8];
 		int nIds = 0;
 		prefPageIds[nIds++] = "org.eclipse.cdt.ui.preferences.CEditorPreferencePage"; //$NON-NLS-1$
 		prefPageIds[nIds++] = "org.eclipse.cdt.ui.preferences.CodeAssistPreferencePage"; //$NON-NLS-1$
+		prefPageIds[nIds++] = "org.eclipse.cdt.ui.preferences.HoverPreferencePage"; //$NON-NLS-1$
+		prefPageIds[nIds++] = "org.eclipse.cdt.ui.preferences.FoldingPreferencePage"; //$NON-NLS-1$
 		prefPageIds[nIds++] = "org.eclipse.cdt.ui.preferences.CodeColoringPreferencePage"; //$NON-NLS-1$
 		prefPageIds[nIds++] = "org.eclipse.cdt.ui.preferences.TemplatePreferencePage"; //$NON-NLS-1$
 		prefPageIds[nIds++] = "org.eclipse.cdt.ui.preferences.SmartTypingPreferencePage"; //$NON-NLS-1$

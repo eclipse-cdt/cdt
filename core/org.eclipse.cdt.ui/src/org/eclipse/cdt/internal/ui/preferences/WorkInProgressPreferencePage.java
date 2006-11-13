@@ -29,7 +29,6 @@ import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.PlatformUI;
 
 import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.cdt.ui.PreferenceConstants;
 
 /**
  * Preference page for work in progress.
@@ -84,10 +83,7 @@ public class WorkInProgressPreferencePage extends PreferencePage implements IWor
 		result.setLayout(layout);
 
 		// Add your controls here
-		addCheckBox(result, "Enable semantic highlighting", PreferenceConstants.EDITOR_SEMANTIC_HIGHLIGHTING_ENABLED); //$NON-NLS-1$	
-		addCheckBox(result, "Enable folding of preprocessor branches (#if/#endif)", PreferenceConstants.EDITOR_FOLDING_PREPROCESSOR_BRANCHES_ENABLED); //$NON-NLS-1$	
-		addCheckBox(result, "Enable comment folding", PreferenceConstants.EDITOR_FOLDING_COMMENTS_ENABLED); //$NON-NLS-1$	
-		
+
 		applyDialogFont(result);
 		return result;
 	}

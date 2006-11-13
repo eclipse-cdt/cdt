@@ -873,16 +873,6 @@ public class PreferenceConstants {
 	public static final String EDITOR_FOLDING_PREPROCESSOR_BRANCHES_ENABLED= "editor_folding_preprocessor_enabled"; //$NON-NLS-1$
 	
 	/**
-	 * A named preference that controls whether folding of comments is enabled.
-	 * <p>
-	 * Value is of type <code>Boolean</code>.
-	 * </p>
-	 * 
-	 * @since 4.0
-	 */
-	public static final String EDITOR_FOLDING_COMMENTS_ENABLED= "editor_folding_comments_enabled"; //$NON-NLS-1$
-	
-	/**
 	 * A named preference that controls if templates are formatted when applied.
 	 * <p>
 	 * Value is of type <code>Boolean</code>.
@@ -1087,7 +1077,6 @@ public class PreferenceConstants {
 		store.setDefault(PreferenceConstants.EDITOR_FOLDING_COMMENTS, false);
 		store.setDefault(PreferenceConstants.EDITOR_FOLDING_HEADERS, true);
 		store.setDefault(PreferenceConstants.EDITOR_FOLDING_INACTIVE_CODE, true);
-		store.setDefault(PreferenceConstants.EDITOR_FOLDING_COMMENTS_ENABLED, false);
 		store.setDefault(PreferenceConstants.EDITOR_FOLDING_PREPROCESSOR_BRANCHES_ENABLED, false);
 
 		store.setDefault(PreferenceConstants.EDITOR_CLOSE_STRINGS, true);

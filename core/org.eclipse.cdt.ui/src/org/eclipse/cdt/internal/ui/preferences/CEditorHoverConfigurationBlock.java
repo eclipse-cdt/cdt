@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2005 QNX Software Systems and others.
+ * Copyright (c) 2002, 2006 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  * QNX Software Systems - Initial API and implementation
+ * Anton Leherbauer (Wind River Systems)
  *******************************************************************************/
 
 package org.eclipse.cdt.internal.ui.preferences;
@@ -15,19 +16,11 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.StringTokenizer;
 
-import org.eclipse.cdt.internal.ui.ICHelpContextIds;
-import org.eclipse.cdt.internal.ui.dialogs.StatusInfo;
-import org.eclipse.cdt.internal.ui.dialogs.StatusUtil;
-import org.eclipse.cdt.internal.ui.text.c.hover.CEditorTextHoverDescriptor;
-import org.eclipse.cdt.internal.ui.util.PixelConverter;
-import org.eclipse.cdt.internal.ui.util.SWTUtil;
-import org.eclipse.cdt.internal.ui.util.TableLayoutComposite;
-import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.cdt.ui.PreferenceConstants;
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.text.Assert;
+import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
 import org.eclipse.jface.viewers.ColumnWeightData;
@@ -60,10 +53,21 @@ import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.PlatformUI;
 
+import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.PreferenceConstants;
+
+import org.eclipse.cdt.internal.ui.ICHelpContextIds;
+import org.eclipse.cdt.internal.ui.dialogs.StatusInfo;
+import org.eclipse.cdt.internal.ui.dialogs.StatusUtil;
+import org.eclipse.cdt.internal.ui.text.c.hover.CEditorTextHoverDescriptor;
+import org.eclipse.cdt.internal.ui.util.PixelConverter;
+import org.eclipse.cdt.internal.ui.util.SWTUtil;
+import org.eclipse.cdt.internal.ui.util.TableLayoutComposite;
+
 /**
  * CEditorHoverConfigurationBlock
  */
-public class CEditorHoverConfigurationBlock {
+public class CEditorHoverConfigurationBlock implements IPreferenceConfigurationBlock {
 	static final String DELIMITER= PreferencesMessages.CEditorHoverConfigurationBlock_delimiter; 
 
 	private static final int ENABLED_PROP= 0;
@@ -152,11 +156,11 @@ public class CEditorHoverConfigurationBlock {
 	//private Button fShowHoverAffordanceCheckbox;
 	private Button fShowEditorAnnotationCheckbox;
 	
-	private CEditorPreferencePage fMainPreferencePage;
+	private PreferencePage fMainPreferencePage;
 
 	private StatusInfo fStatus;
 	
-	public CEditorHoverConfigurationBlock(CEditorPreferencePage mainPreferencePage, OverlayPreferenceStore store) {
+	public CEditorHoverConfigurationBlock(PreferencePage mainPreferencePage, OverlayPreferenceStore store) {
 		Assert.isNotNull(mainPreferencePage);
 		Assert.isNotNull(store);
 		fMainPreferencePage= mainPreferencePage;
@@ -180,11 +184,8 @@ public class CEditorHoverConfigurationBlock {
 		return keys;
 	}
 
-	/**
-	 * Creates page for hover preferences.
-	 * 
-	 * @param parent the parent composite
-	 * @return the control for the preference page
+	/*
+	 * @see org.eclipse.cdt.internal.ui.preferences.IPreferenceConfigurationBlock#createControl(org.eclipse.swt.widgets.Composite)
 	 */
 	public Control createControl(Composite parent) {
 
@@ -380,7 +381,10 @@ public class CEditorHoverConfigurationBlock {
 		return CUIPlugin.getDefault().getCEditorTextHoverDescriptors();
 	}
 
-	void initialize() {
+	/*
+	 * @see org.eclipse.cdt.internal.ui.preferences.IPreferenceConfigurationBlock#initialize()
+	 */
+	public void initialize() {
 		CEditorTextHoverDescriptor[] hoverDescs= getContributedHovers();
 		fHoverConfigs= new HoverConfig[hoverDescs.length];
 		for (int i= 0; i < hoverDescs.length; i++)
@@ -403,7 +407,10 @@ public class CEditorHoverConfigurationBlock {
 		fHoverTableViewer.refresh();
 	}
 
-	void performOk() {
+	/*
+	 * @see org.eclipse.cdt.internal.ui.preferences.IPreferenceConfigurationBlock#performOk()
+	 */
+	public void performOk() {
 		StringBuffer buf= new StringBuffer();
 		StringBuffer maskBuf= new StringBuffer();
 		for (int i= 0; i < fHoverConfigs.length; i++) {
@@ -430,7 +437,10 @@ public class CEditorHoverConfigurationBlock {
 		CUIPlugin.getDefault().resetCEditorTextHoverDescriptors();
 	}
 
-	void performDefaults() {
+	/*
+	 * @see org.eclipse.cdt.internal.ui.preferences.IPreferenceConfigurationBlock#performDefaults()
+	 */
+	public void performDefaults() {
 		fStatus= new StatusInfo();
 		restoreFromPreferences();
 		initializeFields();
@@ -553,12 +563,8 @@ public class CEditorHoverConfigurationBlock {
 			i++;
 		}
 
-		if (fStatus.isOK())
-			fMainPreferencePage.updateStatus(fStatus);
-		else {
-			fMainPreferencePage.setValid(false);
-			StatusUtil.applyToStatusLine(fMainPreferencePage, fStatus);
-		}
+		fMainPreferencePage.setValid(fStatus.isOK());
+		StatusUtil.applyToStatusLine(fMainPreferencePage, fStatus);
 	}
 	
 	

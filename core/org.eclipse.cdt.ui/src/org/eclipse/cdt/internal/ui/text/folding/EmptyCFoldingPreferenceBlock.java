@@ -40,7 +40,7 @@ public class EmptyCFoldingPreferenceBlock implements ICFoldingPreferenceBlock {
 		label.setLayoutData(gd);
 		
 		label= new Label(inner, SWT.CENTER);
-		label.setText(FoldingMessages.getString("EmptyCFoldingPreferenceBlock.emptyCaption")); //$NON-NLS-1$
+		label.setText(FoldingMessages.EmptyCFoldingPreferenceBlock_emptyCaption); 
 		gd= new GridData(GridData.CENTER);
 		label.setLayoutData(gd);
 

@@ -11,11 +11,12 @@
 
 package org.eclipse.cdt.internal.ui.text.folding;
 
-import org.eclipse.cdt.ui.text.folding.ICFoldingPreferenceBlock;
-import org.eclipse.cdt.ui.text.folding.ICFoldingStructureProvider;
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.jface.text.Assert;
+
+import org.eclipse.cdt.ui.text.folding.ICFoldingPreferenceBlock;
+import org.eclipse.cdt.ui.text.folding.ICFoldingStructureProvider;
 
 /**
  * Describes a contribution to the folding provider extension point.

@@ -128,6 +128,16 @@
    <topic href="reference/cdt_u_c_editor_hov.htm"
    	label="Editor Hovers Preferences"/>
 </context>
+<context id ="c_editor_typing">
+   <description>Click below to see help.</description>
+   <topic href="reference/cdt_u_c_pref.htm"
+   	label="C/C++ Preferences"/>
+</context>
+<context id ="c_editor_folding">
+   <description>Click below to see help.</description>
+   <topic href="reference/cdt_u_c_pref.htm"
+   	label="C/C++ Preferences"/>
+</context>
 <context id ="c_editor_navigation">
    <description>Click below to see help.</description>
    <topic href="reference/cdt_u_c_editor_navigation.htm"

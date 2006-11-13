@@ -60,7 +60,7 @@ public final class PreferencesMessages extends NLS {
 	public static String TodoTaskInputDialog_error_entryExists;
 	public static String TodoTaskInputDialog_error_noSpace;
 	public static String CEditorPreferencePage_link;
-	public static String CEditorPreferencePage_generalTabTitle;
+	public static String CEditorPreferencePage_link_tooltip;
 	public static String CEditorPreferencePage_colors;
 	public static String CEditorPreferencePage_invalid_input;
 	public static String CEditorPreferencePage_empty_input;
@@ -99,6 +99,7 @@ public final class PreferencesMessages extends NLS {
 	public static String CEditorColoringConfigurationBlock_coloring_category_preprocessor;
 	public static String CEditorColoringConfigurationBlock_coloring_element;
 	public static String CEditorColoringConfigurationBlock_link;
+	public static String CEditorColoringConfigurationBlock_enable_semantic_highlighting;
 	public static String CEditorColoringConfigurationBlock_enable;
 	public static String CEditorColoringConfigurationBlock_preview;
 	public static String CEditorColoringConfigurationBlock_color;
@@ -136,7 +137,7 @@ public final class PreferencesMessages extends NLS {
 	public static String CFileTypeDialog_title;
 	public static String CFileTypeDialog_patternLabel;
 	public static String CFileTypeDialog_typeLabel;
-	public static String CEditorPreferencePage_hoverTab_title;
+	public static String CEditorPreferencePage_hover_title;
 	public static String CEditorHoverConfigurationBlock_hoverPreferences;
 	public static String CEditorHoverConfigurationBlock_keyModifier;
 	public static String CEditorHoverConfigurationBlock_description;

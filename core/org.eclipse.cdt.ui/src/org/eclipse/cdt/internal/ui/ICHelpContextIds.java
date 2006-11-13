@@ -54,6 +54,7 @@ public interface ICHelpContextIds {
 	public static final String C_EDITOR_NAVIGATION_PAGE = PREFIX + "c_editor_navigation"; //$NON-NLS-1$
 	public static final String C_EDITOR_HOVERS_PAGE = PREFIX + "c_editor_hov"; //$NON-NLS-1$
 	public static final String C_EDITOR_TYPING_PAGE = PREFIX + "c_editor_typing"; //$NON-NLS-1$;
+	public static final String C_EDITOR_FOLDING_PAGE = PREFIX + "c_editor_folding"; //$NON-NLS-1$;
 	public static final String FILE_TYPES_STD_PAGE = PREFIX + "std_prop_file_types"; //$NON-NLS-1$
 	public static final String FILE_TYPES_MAN_PAGE = PREFIX + "std_prop_file_types"; //$NON-NLS-1$
 	public static final String FILE_TYPES_PREF_PAGE = PREFIX + "c_file_types"; //$NON-NLS-1$

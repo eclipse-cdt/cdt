@@ -32,16 +32,12 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Link;
 import org.eclipse.swt.widgets.List;
 import org.eclipse.swt.widgets.Listener;
-import org.eclipse.swt.widgets.TabFolder;
-import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.PreferencesUtil;
 import org.eclipse.ui.texteditor.AbstractTextEditor;
 
-import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.PreferenceConstants;
-import org.eclipse.cdt.utils.ui.controls.TabFolderLayout;
 
 import org.eclipse.cdt.internal.ui.ICHelpContextIds;
 import org.eclipse.cdt.internal.ui.editor.CEditor;
@@ -56,23 +52,13 @@ public class CEditorPreferencePage extends AbstractPreferencePage implements IWo
 			{PreferencesMessages.CEditorPreferencePage_behaviorPage_inactiveCodeColor, CEditor.INACTIVE_CODE_COLOR, null }, 
 	};
 
-	protected List fList;
-	protected ColorSelector fForegroundColorEditor;
-	protected Button fBoldCheckBox;
-
-	private CEditorHoverConfigurationBlock fCEditorHoverConfigurationBlock;
-	private FoldingConfigurationBlock fFoldingConfigurationBlock;
-
 	private List fAppearanceColorList;
-
 	private ColorSelector fAppearanceColorEditor;
-
 	private Button fAppearanceColorDefault;
 
 
 	public CEditorPreferencePage() {
 		super();
-		setDescription(CUIPlugin.getResourceString("CEditorPreferencePage.description")); //$NON-NLS-1$
 	}
 
 	protected OverlayPreferenceStore.OverlayKey[] createOverlayStoreKeys() {
@@ -265,6 +251,9 @@ public class CEditorPreferencePage extends AbstractPreferencePage implements IWo
 				PreferencesUtil.createPreferenceDialogOn(getShell(), u, null, null);
 			}
 		});
+		// TODO replace by link-specific tooltips when
+		// bug https://bugs.eclipse.org/bugs/show_bug.cgi?id=88866 gets fixed
+		link.setToolTipText(PreferencesMessages.CEditorPreferencePage_link_tooltip); 
 
 		GridData gridData= new GridData(SWT.FILL, SWT.BEGINNING, true, false);
 		gridData.widthHint= 150; // only expand further if anyone else requires it
@@ -277,33 +266,16 @@ public class CEditorPreferencePage extends AbstractPreferencePage implements IWo
 	 */
 	protected Control createContents(Composite parent) {
 
-		fCEditorHoverConfigurationBlock= new CEditorHoverConfigurationBlock(this, fOverlayStore);
-		fFoldingConfigurationBlock= new FoldingConfigurationBlock(fOverlayStore);
-
 		fOverlayStore.load();
 		fOverlayStore.start();
 
 		createHeader(parent);
 
-		TabFolder folder = new TabFolder(parent, SWT.NONE);
-		folder.setLayout(new TabFolderLayout());
-		folder.setLayoutData(new GridData(GridData.FILL_BOTH));
-
-		TabItem item = new TabItem(folder, SWT.NONE);
-		item.setText(PreferencesMessages.CEditorPreferencePage_generalTabTitle); 
-		item.setControl(createAppearancePage(folder));
-
-		item= new TabItem(folder, SWT.NONE);
-		item.setText(PreferencesMessages.CEditorPreferencePage_hoverTab_title); 
-		item.setControl(fCEditorHoverConfigurationBlock.createControl(folder));
-
-		item= new TabItem(folder, SWT.NONE);
-		item.setText(PreferencesMessages.CEditorPreferencePage_folding_title); 
-		item.setControl(fFoldingConfigurationBlock.createControl(folder));
+		createAppearancePage(parent);
 
 		initialize();
 
-		return folder;
+		return parent;
 	}
 
 	private void initialize() {
@@ -320,45 +292,28 @@ public class CEditorPreferencePage extends AbstractPreferencePage implements IWo
 			}
 		});
 
-		fFoldingConfigurationBlock.initialize();
-
 	}
 
 	/*
-	 * @see PreferencePage#performOk()
+	 * @see org.eclipse.cdt.internal.ui.preferences.AbstractPreferencePage#performOk()
 	 */
 	public boolean performOk() {
-		fCEditorHoverConfigurationBlock.performOk();
-		fFoldingConfigurationBlock.performOk();
 		return super.performOk();
 	}
 
 	/*
-	 * @see PreferencePage#performDefaults()
+	 * @see org.eclipse.cdt.internal.ui.preferences.AbstractPreferencePage#performDefaults()
 	 */
 	protected void performDefaults() {
-
 		super.performDefaults();
 
 		handleAppearanceColorListSelection();
-
-		fCEditorHoverConfigurationBlock.performDefaults();
-		fFoldingConfigurationBlock.performDefaults();
-
 	}
 
 	/*
-	 * @see DialogPage#dispose()
+	 * @see org.eclipse.cdt.internal.ui.preferences.AbstractPreferencePage#dispose()
 	 */
 	public void dispose() {
-
-		fFoldingConfigurationBlock.dispose();
-
-		if (fOverlayStore != null) {
-			fOverlayStore.stop();
-			fOverlayStore = null;
-		}
-
 		super.dispose();
 	}
 

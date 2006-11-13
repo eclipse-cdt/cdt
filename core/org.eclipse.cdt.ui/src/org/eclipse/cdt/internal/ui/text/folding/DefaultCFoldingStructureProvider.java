@@ -24,12 +24,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Stack;
 
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.jface.text.Assert;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
@@ -849,7 +849,7 @@ public class DefaultCFoldingStructureProvider implements ICFoldingStructureProvi
 		fCollapseComments= store.getBoolean(PreferenceConstants.EDITOR_FOLDING_COMMENTS);
 		fCollapseInactiveCode= store.getBoolean(PreferenceConstants.EDITOR_FOLDING_INACTIVE_CODE);
 		fPreprocessorBranchFoldingEnabled= store.getBoolean(PreferenceConstants.EDITOR_FOLDING_PREPROCESSOR_BRANCHES_ENABLED);
-		fCommentFoldingEnabled= store.getBoolean(PreferenceConstants.EDITOR_FOLDING_COMMENTS_ENABLED);
+		fCommentFoldingEnabled= true;
 	}
 
 	private void update(FoldingStructureComputationContext ctx) {

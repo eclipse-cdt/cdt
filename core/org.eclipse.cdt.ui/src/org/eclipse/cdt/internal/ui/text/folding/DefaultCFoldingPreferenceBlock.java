@@ -17,11 +17,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-import org.eclipse.cdt.internal.ui.preferences.OverlayPreferenceStore;
-import org.eclipse.cdt.internal.ui.preferences.OverlayPreferenceStore.OverlayKey;
-import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.cdt.ui.PreferenceConstants;
-import org.eclipse.cdt.ui.text.folding.ICFoldingPreferenceBlock;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionEvent;
@@ -31,7 +26,14 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Label;
+
+import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.PreferenceConstants;
+import org.eclipse.cdt.ui.text.folding.ICFoldingPreferenceBlock;
+import org.eclipse.cdt.utils.ui.controls.ControlFactory;
+
+import org.eclipse.cdt.internal.ui.preferences.OverlayPreferenceStore;
+import org.eclipse.cdt.internal.ui.preferences.OverlayPreferenceStore.OverlayKey;
 
 /**
  */
@@ -47,9 +49,12 @@ public class DefaultCFoldingPreferenceBlock implements ICFoldingPreferenceBlock 
 		}
 		public void widgetSelected(SelectionEvent e) {
 			Button button= (Button) e.widget;
-			fOverlayStore.setValue((String) fCheckBoxes.get(button), button.getSelection());
+			String key= (String) fCheckBoxes.get(button);
+			fOverlayStore.setValue(key, button.getSelection());
+			updateEnablement(key);
 		}
 	};
+	private Button fInactiveCodeFoldingCheckBox;
 	
 
 	public DefaultCFoldingPreferenceBlock() {
@@ -68,6 +73,7 @@ public class DefaultCFoldingPreferenceBlock implements ICFoldingPreferenceBlock 
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, PreferenceConstants.EDITOR_FOLDING_COMMENTS));
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, PreferenceConstants.EDITOR_FOLDING_HEADERS));
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, PreferenceConstants.EDITOR_FOLDING_INACTIVE_CODE));
+		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, PreferenceConstants.EDITOR_FOLDING_PREPROCESSOR_BRANCHES_ENABLED));
 		
 		return (OverlayKey[]) overlayKeys.toArray(new OverlayKey[overlayKeys.size()]);
 	}
@@ -84,17 +90,19 @@ public class DefaultCFoldingPreferenceBlock implements ICFoldingPreferenceBlock 
 		layout.verticalSpacing= 3;
 		layout.marginWidth= 0;
 		inner.setLayout(layout);
-		
-		Label label= new Label(inner, SWT.LEFT);
-		label.setText(FoldingMessages.getString("DefaultCFoldingPreferenceBlock.title")); //$NON-NLS-1$
-		
-		addCheckBox(inner, FoldingMessages.getString("DefaultCFoldingPreferenceBlock.macros"), PreferenceConstants.EDITOR_FOLDING_MACROS, 0); //$NON-NLS-1$
-		addCheckBox(inner, FoldingMessages.getString("DefaultCFoldingPreferenceBlock.functions"), PreferenceConstants.EDITOR_FOLDING_FUNCTIONS, 0); //$NON-NLS-1$
-		addCheckBox(inner, FoldingMessages.getString("DefaultCFoldingPreferenceBlock.methods"), PreferenceConstants.EDITOR_FOLDING_METHODS, 0); //$NON-NLS-1$
-		addCheckBox(inner, FoldingMessages.getString("DefaultCFoldingPreferenceBlock.structures"), PreferenceConstants.EDITOR_FOLDING_STRUCTURES, 0); //$NON-NLS-1$
-		addCheckBox(inner, FoldingMessages.getString("DefaultCFoldingPreferenceBlock.comments"), PreferenceConstants.EDITOR_FOLDING_COMMENTS, 0); //$NON-NLS-1$
-		addCheckBox(inner, FoldingMessages.getString("DefaultCFoldingPreferenceBlock.headers"), PreferenceConstants.EDITOR_FOLDING_HEADERS, 0); //$NON-NLS-1$
-		addCheckBox(inner, FoldingMessages.getString("DefaultCFoldingPreferenceBlock.inactive_code"), PreferenceConstants.EDITOR_FOLDING_INACTIVE_CODE, 0); //$NON-NLS-1$
+
+		addCheckBox(inner, FoldingMessages.DefaultCFoldingPreferenceBlock_preprocessor_enabled, PreferenceConstants.EDITOR_FOLDING_PREPROCESSOR_BRANCHES_ENABLED, 1);
+		ControlFactory.createEmptySpace(inner);
+
+		Composite group= ControlFactory.createGroup(inner, FoldingMessages.DefaultCFoldingPreferenceBlock_title, 1);
+
+		addCheckBox(group, FoldingMessages.DefaultCFoldingPreferenceBlock_macros, PreferenceConstants.EDITOR_FOLDING_MACROS, 0); 
+		addCheckBox(group, FoldingMessages.DefaultCFoldingPreferenceBlock_functions, PreferenceConstants.EDITOR_FOLDING_FUNCTIONS, 0); 
+		addCheckBox(group, FoldingMessages.DefaultCFoldingPreferenceBlock_methods, PreferenceConstants.EDITOR_FOLDING_METHODS, 0); 
+		addCheckBox(group, FoldingMessages.DefaultCFoldingPreferenceBlock_structures, PreferenceConstants.EDITOR_FOLDING_STRUCTURES, 0); 
+		addCheckBox(group, FoldingMessages.DefaultCFoldingPreferenceBlock_comments, PreferenceConstants.EDITOR_FOLDING_COMMENTS, 0); 
+		addCheckBox(group, FoldingMessages.DefaultCFoldingPreferenceBlock_headers, PreferenceConstants.EDITOR_FOLDING_HEADERS, 0); 
+		fInactiveCodeFoldingCheckBox= addCheckBox(group, FoldingMessages.DefaultCFoldingPreferenceBlock_inactive_code, PreferenceConstants.EDITOR_FOLDING_INACTIVE_CODE, 0); 
 		
 		return inner;
 	}
@@ -121,9 +129,16 @@ public class DefaultCFoldingPreferenceBlock implements ICFoldingPreferenceBlock 
 			Button b= (Button) it.next();
 			String key= (String) fCheckBoxes.get(b);
 			b.setSelection(fOverlayStore.getBoolean(key));
+			updateEnablement(key);
 		}
 	}
-	
+
+	protected void updateEnablement(String key) {
+		if (PreferenceConstants.EDITOR_FOLDING_PREPROCESSOR_BRANCHES_ENABLED.equals(key)) {
+			fInactiveCodeFoldingCheckBox.setEnabled(fOverlayStore.getBoolean(key));
+		}
+	}
+
 	/*
 	 * @see org.eclipse.cdt.internal.ui.text.folding.AbstractCFoldingPreferences#performOk()
 	 */

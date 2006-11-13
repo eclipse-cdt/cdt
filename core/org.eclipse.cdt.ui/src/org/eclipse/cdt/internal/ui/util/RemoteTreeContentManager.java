@@ -39,7 +39,6 @@ import org.eclipse.ui.progress.WorkbenchJob;
 public class RemoteTreeContentManager {
     private RemoteTreeViewer fViewer;
     private IWorkbenchSiteProgressService progressService;
-    private ITreeContentProvider fProvider;
     
     /**
      * Job to fetch children
@@ -228,7 +227,6 @@ public class RemoteTreeContentManager {
      * @param parent the parent for which children should be pruned
      * @param offset the offset at which children should be pruned. All children at and after
      *  this index will be removed from the tree. 
-     * @param monitor
      */
     protected void prune(final Object parent, final int offset) {
         WorkbenchJob updateJob = new WorkbenchJob("DeferredTree") { //$NON-NLS-1$

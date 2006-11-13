@@ -143,4 +143,40 @@ public class IndexBugsTests extends BaseTestCase {
 			fIndex.releaseReadLock();
 		}
     }
+    
+    public void testBug150906() throws Exception {
+    	String fileName= "bug150906.c";
+    	String varName= "arrayDataSize";
+    	StringBuffer content= new StringBuffer();
+    	content.append("unsigned char arrayData[] = {\n");
+    	for(int i=0; i<1024*500-1; i++) {
+    		content.append("0x00,");
+    	}
+    	content.append("0x00};\n"); 
+    	content.append("unsigned int arrayDataSize = sizeof(arrayData);\n");
+		int indexOfDecl = content.indexOf(varName);
+
+		assertTrue(CCorePlugin.getIndexManager().joinIndexer(80000, NPM));
+		long time= System.currentTimeMillis();
+		IFile file= createFile(getProject(), fileName, content.toString());
+		// must be done in a reasonable amount of time
+		waitUntilFileIsIndexed(file, 10000);
+		System.out.println((System.currentTimeMillis() -time));
+		fIndex.acquireReadLock();
+		try {
+			IIndexBinding[] bindings= fIndex.findBindings(getPattern("arrayDataSize"), true, IndexFilter.ALL, NPM);
+			assertEquals(1, bindings.length);
+			
+			IIndexBinding binding= bindings[0];
+			
+			// check if we have the definition
+			IIndexName[] decls= fIndex.findNames(binding, IIndex.FIND_DEFINITIONS);
+			assertEquals(1, decls.length);
+			assertEquals(indexOfDecl, decls[0].getNodeOffset());
+		}
+		finally {
+			fIndex.releaseReadLock();
+		}
+    }
+
 }

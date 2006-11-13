@@ -474,7 +474,6 @@ class CEditorColoringConfigurationBlock extends AbstractConfigurationBlock {
 	public void performDefaults() {
 		super.performDefaults();
 		
-		fEnableSemanticHighlightingCheckbox.setSelection(getPreferenceStore().getBoolean(PreferenceConstants.EDITOR_SEMANTIC_HIGHLIGHTING_ENABLED));
 		fListViewer.refresh();
 
 		handleSyntaxColorListSelection();
@@ -562,12 +561,9 @@ class CEditorColoringConfigurationBlock extends AbstractConfigurationBlock {
 
 		addFiller(colorComposite, 1);
 
-		fEnableSemanticHighlightingCheckbox= new Button(colorComposite, SWT.CHECK);
-		fEnableSemanticHighlightingCheckbox.setText(PreferencesMessages.CEditorColoringConfigurationBlock_enable_semantic_highlighting); 
-		gridData= new GridData(GridData.FILL_HORIZONTAL);
-		gridData.horizontalAlignment= GridData.BEGINNING;
-		gridData.horizontalSpan= 1;
-		fEnableSemanticHighlightingCheckbox.setLayoutData(gridData);
+		fEnableSemanticHighlightingCheckbox= addCheckBox(colorComposite, 
+				PreferencesMessages.CEditorColoringConfigurationBlock_enable_semantic_highlighting,
+				PreferenceConstants.EDITOR_SEMANTIC_HIGHLIGHTING_ENABLED, 0);
 		
 		Label label;
 		label= new Label(colorComposite, SWT.LEFT);
@@ -763,8 +759,6 @@ class CEditorColoringConfigurationBlock extends AbstractConfigurationBlock {
 			public void widgetSelected(SelectionEvent e) {
 				HighlightingColorListItem item= getHighlightingColorListItem();
 				if (item instanceof SemanticHighlightingColorListItem) {
-					boolean enable= fEnableSemanticHighlightingCheckbox.getSelection();
-					getPreferenceStore().setValue(PreferenceConstants.EDITOR_SEMANTIC_HIGHLIGHTING_ENABLED, enable);
 					fListViewer.refresh();
 					handleSyntaxColorListSelection();
 					uninstallSemanticHighlighting();

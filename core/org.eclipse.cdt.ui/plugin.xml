@@ -1515,10 +1515,7 @@
              id="org.eclipse.cdt.ui.navigator.actions.refactor"
              overrides="org.eclipse.ui.navigator.resources.actions.RefactorActions">
           <enablement>
-					<or>
-						<instanceof value="org.eclipse.cdt.core.model.ICElement" />	
-                        <adapt type="org.eclipse.core.resources.IResource"/>
-					</or>
+			 <instanceof value="org.eclipse.cdt.core.model.ICElement" />	
           </enablement>
        </actionProvider>
 	   <commonWizard

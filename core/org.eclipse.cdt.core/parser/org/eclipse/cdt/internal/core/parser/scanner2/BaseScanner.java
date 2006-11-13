@@ -1534,21 +1534,9 @@ abstract class BaseScanner implements IScanner {
      * @see org.eclipse.cdt.core.parser.IScanner#nextToken()
      */
     public IToken nextToken() throws EndOfFileException {
-        boolean exception = false;
         if (nextToken == null && !finished) {
-            try {
-                nextToken = fetchToken();
-            } catch (Exception e) {
-                if (e instanceof OffsetLimitReachedException)
-                    throw (OffsetLimitReachedException) e;
-                if (e instanceof ArrayIndexOutOfBoundsException && isCancelled)
-                    throw new ParseError(
-                            ParseError.ParseErrorKind.TIMEOUT_OR_CANCELLED);
-
-                exception = true;
-                errorHandle();
-            }
-            if (nextToken == null && !exception) {
+            nextToken= doFetchToken();
+            if (nextToken == null) {
                 finished = true;
             }
         }
@@ -1578,25 +1566,15 @@ abstract class BaseScanner implements IScanner {
         IToken oldToken = lastToken;
         lastToken = nextToken;
 
-        try {
-            nextToken = fetchToken();
-        } catch (Exception e) {
-            if (e instanceof OffsetLimitReachedException)
-                throw (OffsetLimitReachedException) e;
-
-            nextToken = null;
-            exception = true;
-            errorHandle();
-        }
+        nextToken = doFetchToken();
 
         if (nextToken == null) {
-            if (!exception)
-                finished = true;
+        	finished = true;
         } else if (nextToken.getType() == IToken.tCOMPLETION) {
         	finished = true;
         } else if (nextToken.getType() == IToken.tPOUNDPOUND) {
             // time for a pasting
-            IToken token2 = fetchToken();
+            IToken token2 = doFetchToken();
             if (token2 == null) {
                 nextToken = null;
                 finished = true;
@@ -1623,12 +1601,32 @@ abstract class BaseScanner implements IScanner {
                         .getCharImage(), nextToken.getCharImage()));
                 if (oldToken != null)
                     oldToken.setNext(lastToken);
-                nextToken = fetchToken();
+                nextToken = doFetchToken();
             }
         }
 
         return lastToken;
     }
+
+	private IToken doFetchToken() throws EndOfFileException {
+		IToken result= null;
+		try {
+		    result = fetchToken();
+		} catch (ArrayIndexOutOfBoundsException e) {
+			if (isCancelled) {
+		        throw new ParseError(ParseError.ParseErrorKind.TIMEOUT_OR_CANCELLED);
+			}
+			errorHandle();
+			throw e;
+		} catch (RuntimeException e) {
+			errorHandle();
+			throw e;
+		} catch (Error e) {
+			errorHandle();
+			throw e;
+		}
+		return result;
+	}
 
     /**
      * @throws EndOfFileException

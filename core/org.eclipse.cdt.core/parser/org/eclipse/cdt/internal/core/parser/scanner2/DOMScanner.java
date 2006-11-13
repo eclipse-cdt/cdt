@@ -179,6 +179,14 @@ public class DOMScanner extends BaseScanner {
         return codeReaderFactory.createCodeReaderForInclusion(this, finalPath);
     }
 
+    protected void pushContext(char[] buffer) {
+    	// called before the constructor, so check for bufferDelta to be
+    	// initialized.
+        if (bufferDelta != null) {
+        	initBufferDelta(bufferStackPos + 1);
+        }
+        super.pushContext(buffer);
+    }
     /*
      * (non-Javadoc)
      * 
@@ -186,13 +194,7 @@ public class DOMScanner extends BaseScanner {
      *      java.lang.Object)
      */
     protected void pushContext(char[] buffer, Object data) {
-        if (bufferStackPos + 1 == bufferDelta.length) {
-            int size = bufferDelta.length * 2;
-            int[] oldBufferDelta = bufferDelta;
-            bufferDelta = new int[size];
-            System.arraycopy(oldBufferDelta, 0, bufferDelta, 0,
-                    oldBufferDelta.length);
-        }
+        initBufferDelta(bufferStackPos + 1);
 
         if (data instanceof InclusionData) {
 
@@ -237,6 +239,16 @@ public class DOMScanner extends BaseScanner {
 
         super.pushContext(buffer, data);
     }
+
+	private void initBufferDelta(int size) {
+		if (size >= bufferDelta.length) {
+            size = Math.max(bufferDelta.length * 2, size);
+            int[] oldBufferDelta = bufferDelta;
+            bufferDelta = new int[size];
+            System.arraycopy(oldBufferDelta, 0, bufferDelta, 0,
+                    oldBufferDelta.length);
+        }
+	}
 
     protected int fsmCount = 0;
 

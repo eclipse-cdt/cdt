@@ -210,6 +210,9 @@ public class CNavigatorDropAdapterAssistant extends CommonDropAdapterAssistant {
 			ISelection selection = LocalSelectionTransfer.getTransfer().getSelection();
 			ICElement[] cElements= getCElements(selection);
 			
+			if (cElements == null || cElements.length == 0) {
+				return Status.CANCEL_STATUS;	
+			}
 			if (!canCopyElements(cElements))
 				return Status.CANCEL_STATUS;	
 	
@@ -226,7 +229,10 @@ public class CNavigatorDropAdapterAssistant extends CommonDropAdapterAssistant {
 
 			ISelection selection = LocalSelectionTransfer.getTransfer().getSelection();
 			ICElement[] cElements= getCElements(selection);
-			
+
+			if (cElements == null || cElements.length == 0) {
+				return Status.CANCEL_STATUS;	
+			}
 			if (Arrays.asList(cElements).contains(target)) {
 				return Status.CANCEL_STATUS;	
 			}

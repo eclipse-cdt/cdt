@@ -7,12 +7,13 @@
  *
  * Contributors:
  * IBM Rational Software - Initial API and implementation
+ * Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.parser;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.ICLogConstants;
-import org.eclipse.cdt.core.parser.IParserLogService;
+import org.eclipse.cdt.core.parser.AbstractParserLogService;
 import org.eclipse.cdt.internal.core.model.Util;
 import org.eclipse.cdt.internal.core.model.IDebugLogConstants.DebugLogConstant;
 
@@ -20,15 +21,25 @@ import org.eclipse.cdt.internal.core.model.IDebugLogConstants.DebugLogConstant;
  * @author jcamelon
  *
  */
-public class ParserLogService implements IParserLogService
+public class ParserLogService extends AbstractParserLogService
 {
 
-	final DebugLogConstant topic; 
+	final DebugLogConstant topic;
+	final boolean fIsTracing;
+	final boolean fIsTracingExceptions;
+	
 	/**
 	 * @param constant
 	 */
 	public ParserLogService(DebugLogConstant constant) {
 		topic = constant;
+		if (CCorePlugin.getDefault() == null) {
+			fIsTracing= fIsTracingExceptions= false;
+		}
+		else {
+			fIsTracingExceptions= Util.PARSER_EXCEPTIONS;
+			fIsTracing= Util.isActive(topic);
+		}
 	}
 
 	/* (non-Javadoc)

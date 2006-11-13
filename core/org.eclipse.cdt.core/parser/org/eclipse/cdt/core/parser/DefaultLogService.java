@@ -14,27 +14,6 @@ package org.eclipse.cdt.core.parser;
  * @author jcamelon
  *
  */
-public class DefaultLogService implements IParserLogService
+public class DefaultLogService extends AbstractParserLogService
 {
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.parser.IParserLogService#traceLog(java.lang.String)
-	 */
-	public void traceLog(String message)
-	{
-		// do nothing
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.parser.IParserLogService#errorLog(java.lang.String)
-	 */
-	public void errorLog(String message)
-	{
-		// do nothing
-	}
-	
-	public boolean isTracing(){
-		return false;
-	}
-
 }

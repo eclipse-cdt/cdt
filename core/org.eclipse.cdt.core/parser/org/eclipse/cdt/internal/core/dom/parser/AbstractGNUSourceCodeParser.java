@@ -7,6 +7,7 @@
  *
  * Contributors:
  * IBM Rational Software - Initial API and implementation
+ * Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser;
 
@@ -58,6 +59,7 @@ import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier.IASTEnumerator;
 import org.eclipse.cdt.core.dom.ast.gnu.IGNUASTCompoundStatementExpression;
 import org.eclipse.cdt.core.dom.ast.gnu.IGNUASTTypeIdExpression;
 import org.eclipse.cdt.core.dom.ast.gnu.IGNUASTUnaryExpression;
+import org.eclipse.cdt.core.parser.AbstractParserLogService;
 import org.eclipse.cdt.core.parser.EndOfFileException;
 import org.eclipse.cdt.core.parser.IGCCToken;
 import org.eclipse.cdt.core.parser.IParserLogService;
@@ -72,7 +74,7 @@ import org.eclipse.cdt.core.parser.ParserMode;
  */
 public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
 
-    protected final IParserLogService log;
+    protected final AbstractParserLogService log;
 
     protected final IScanner scanner;
 
@@ -97,7 +99,7 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
             boolean supportKnRC, boolean supportGCCOtherBuiltinSymbols,
             boolean supportAttributeSpecifiers) {
         this.scanner = scanner;
-        this.log = logService;
+        this.log = wrapLogService(logService);
         this.mode = parserMode;
         this.supportStatementsInExpressions = supportStatementsInExpressions;
         this.supportTypeOfUnaries = supportTypeOfUnaries;
@@ -107,11 +109,20 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
         this.supportAttributeSpecifiers = supportAttributeSpecifiers;
     }
 
-    protected boolean parsePassed = true;
+	protected boolean parsePassed = true;
 
     protected BacktrackException backtrack = new BacktrackException();
 
     protected int backtrackCount = 0;
+
+    private AbstractParserLogService wrapLogService(IParserLogService logService) {
+		if (logService instanceof AbstractParserLogService) {
+			return (AbstractParserLogService) logService;
+		}
+		else {
+			return new ParserLogServiceWrapper(logService);
+		}
+	}
 
     protected final void throwBacktrack(int offset, int length)
             throws BacktrackException {
@@ -355,18 +366,20 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
      * @param e
      */
     protected void logThrowable(String methodName, Throwable e) {
-        if (e != null && log.isTracing()) {
-            StringBuffer buffer = new StringBuffer();
-            buffer.append("Parser: Unexpected throwable in "); //$NON-NLS-1$
-            buffer.append(methodName);
-            buffer.append(":"); //$NON-NLS-1$
-            buffer.append(e.getClass().getName());
-            buffer.append("::"); //$NON-NLS-1$
-            buffer.append(e.getMessage());
-            buffer.append(". w/"); //$NON-NLS-1$
-            buffer.append(scanner.toString());
-            log.traceLog(buffer.toString());
-            // log.errorLog( buffer.toString() );
+        if (e != null) {
+        	if (log.isTracing()) {
+        		StringBuffer buffer = new StringBuffer();
+        		buffer.append("Parser: Unexpected throwable in "); //$NON-NLS-1$
+        		buffer.append(methodName);
+        		buffer.append(":"); //$NON-NLS-1$
+        		buffer.append(e.getClass().getName());
+        		buffer.append("::"); //$NON-NLS-1$
+        		buffer.append(e.getMessage());
+        		buffer.append(". w/"); //$NON-NLS-1$
+        		buffer.append(scanner.toString());
+        		log.traceLog(buffer.toString());
+        	}
+        	log.traceException(e);
         }
     }
 
@@ -379,18 +392,21 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
      * @param e
      */
     protected void logException(String methodName, Exception e) {
-        if (!(e instanceof EndOfFileException) && e != null && log.isTracing()) {
-            StringBuffer buffer = new StringBuffer();
-            buffer.append("Parser: Unexpected exception in "); //$NON-NLS-1$
-            buffer.append(methodName);
-            buffer.append(":"); //$NON-NLS-1$
-            buffer.append(e.getClass().getName());
-            buffer.append("::"); //$NON-NLS-1$
-            buffer.append(e.getMessage());
-            buffer.append(". w/"); //$NON-NLS-1$
-            buffer.append(scanner.toString());
-            log.traceLog(buffer.toString());
-            // log.errorLog(buffer.toString());
+        if (!(e instanceof EndOfFileException) && e != null) {
+        	if (log.isTracing()) {
+        		StringBuffer buffer = new StringBuffer();
+        		buffer.append("Parser: Unexpected exception in "); //$NON-NLS-1$
+        		buffer.append(methodName);
+        		buffer.append(":"); //$NON-NLS-1$
+        		buffer.append(e.getClass().getName());
+        		buffer.append("::"); //$NON-NLS-1$
+        		buffer.append(e.getMessage());
+        		buffer.append(". w/"); //$NON-NLS-1$
+        		buffer.append(scanner.toString());
+        		log.traceLog(buffer.toString());
+        		// log.errorLog(buffer.toString());
+        	}
+        	log.traceException(e);
         }
     }
 

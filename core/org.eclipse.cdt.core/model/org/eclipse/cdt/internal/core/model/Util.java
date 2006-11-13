@@ -7,6 +7,7 @@
  *
  * Contributors:
  * Rational Software - Initial API and implementation
+ * Markus Schorn (Wind River Systems)
  *******************************************************************************/
 
 package org.eclipse.cdt.internal.core.model;
@@ -33,6 +34,7 @@ public class Util implements ICLogConstants {
 	public static boolean VERBOSE_PARSER = false;
 	public static boolean VERBOSE_SCANNER = false;
 	public static boolean VERBOSE_MODEL = false;
+	public static boolean PARSER_EXCEPTIONS= false;
 
 	public static String LINE_SEPARATOR = System.getProperty("line.separator"); //$NON-NLS-1$
 
@@ -207,7 +209,7 @@ public class Util implements ICLogConstants {
 			// Time stamp
 			if (addTimeStamp)
 				message = MessageFormat.format("[{0}] {1}", new Object[]{ //$NON-NLS-1$
-						new Long(System.currentTimeMillis()), message}); //$NON-NLS-1$
+						new Long(System.currentTimeMillis()), message}); 
 			while (message.length() > 100) {
 				String partial = message.substring(0, 100);
 				message = message.substring(100);

@@ -13,21 +13,5 @@ package org.eclipse.cdt.core.parser;
 /**
  * @author jcamelon
  */
-public class NullLogService implements IParserLogService {
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.parser.IParserLogService#traceLog(java.lang.String)
-	 */
-	public void traceLog(String message) {
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.parser.IParserLogService#errorLog(java.lang.String)
-	 */
-	public void errorLog(String message) {
-	}
-
-	public boolean isTracing(){
-		return false;
-	}
+public class NullLogService extends AbstractParserLogService {
 }

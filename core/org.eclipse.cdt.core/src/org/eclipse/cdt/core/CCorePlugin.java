@@ -947,6 +947,7 @@ public class CCorePlugin extends Plugin {
 
 	private static final String MODEL = CCorePlugin.PLUGIN_ID + "/debug/model" ; //$NON-NLS-1$
 	private static final String PARSER = CCorePlugin.PLUGIN_ID + "/debug/parser" ; //$NON-NLS-1$
+	private static final String PARSER_EXCEPTIONS = CCorePlugin.PLUGIN_ID + "/debug/parser/exceptions" ; //$NON-NLS-1$
 	private static final String SCANNER = CCorePlugin.PLUGIN_ID + "/debug/scanner"; //$NON-NLS-1$
 	private static final String DELTA = CCorePlugin.PLUGIN_ID + "/debug/deltaprocessor" ; //$NON-NLS-1$
 	//private static final String CONTENTASSIST = CCorePlugin.PLUGIN_ID + "/debug/contentassist" ; //$NON-NLS-1$
@@ -959,7 +960,10 @@ public class CCorePlugin extends Plugin {
 		if(CCorePlugin.getDefault().isDebugging()) {
 			String option = Platform.getDebugOption(PARSER);
 			if(option != null) Util.VERBOSE_PARSER = option.equalsIgnoreCase("true") ; //$NON-NLS-1$
-		
+
+			option = Platform.getDebugOption(PARSER_EXCEPTIONS);
+			if( option != null ) Util.PARSER_EXCEPTIONS = option.equalsIgnoreCase("true"); //$NON-NLS-1$
+
 			option = Platform.getDebugOption(SCANNER);
 			if( option != null ) Util.VERBOSE_SCANNER = option.equalsIgnoreCase("true"); //$NON-NLS-1$
 			

@@ -16,6 +16,7 @@ import org.eclipse.osgi.util.NLS;
 public class Messages extends NLS {
 	private static final String BUNDLE_NAME = "org.eclipse.cdt.internal.core.pdom.indexer.messages"; //$NON-NLS-1$
 	public static String PDOMIndexerTask_collectingFilesTask;
+	public static String PDOMIndexerTask_errorWhileParsing;
 	public static String PDOMIndexerTask_parsingFileTask;
 	static {
 		// initialize resource bundle

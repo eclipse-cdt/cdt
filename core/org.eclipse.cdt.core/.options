@@ -6,6 +6,9 @@ org.eclipse.cdt.core/debug/model=false
 # Reports parser activity
 org.eclipse.cdt.core/debug/parser=false
 
+# Prints parser stack traces
+org.eclipse.cdt.core/debug/parser/exceptions=false
+
 # Reports scanner activity
 org.eclipse.cdt.core/debug/scanner=false
 

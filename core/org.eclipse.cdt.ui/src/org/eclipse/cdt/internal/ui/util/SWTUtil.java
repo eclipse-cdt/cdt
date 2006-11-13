@@ -27,7 +27,7 @@ import org.eclipse.swt.widgets.Widget;
 
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.resource.JFaceResources;
-import org.eclipse.jface.util.Assert;
+import org.eclipse.core.runtime.Assert;
 
 /**
  * Utility class to simplify access to some SWT resources. 

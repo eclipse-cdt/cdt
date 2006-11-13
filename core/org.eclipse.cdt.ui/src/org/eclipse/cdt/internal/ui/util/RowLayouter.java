@@ -13,7 +13,7 @@ package org.eclipse.cdt.internal.ui.util;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Control;
 
-import org.eclipse.jface.util.Assert;
+import org.eclipse.core.runtime.Assert;
 
 /**
  * Helper class to layout a number of children if the composite uses a <code>GridLayout</code>. 

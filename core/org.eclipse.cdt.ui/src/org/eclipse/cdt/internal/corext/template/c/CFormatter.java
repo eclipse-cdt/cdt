@@ -28,7 +28,7 @@ import org.eclipse.cdt.internal.ui.editor.IndentUtil;
 import org.eclipse.cdt.internal.ui.text.FastCPartitionScanner;
 import org.eclipse.cdt.ui.text.ICPartitions;
 
-import org.eclipse.jface.text.Assert;
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.BadPositionCategoryException;
 import org.eclipse.jface.text.Document;

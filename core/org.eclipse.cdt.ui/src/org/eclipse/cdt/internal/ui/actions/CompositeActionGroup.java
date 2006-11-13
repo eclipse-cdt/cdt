@@ -11,7 +11,7 @@
 package org.eclipse.cdt.internal.ui.actions;
 
 import org.eclipse.jface.action.IMenuManager;
-import org.eclipse.jface.util.Assert;
+import org.eclipse.core.runtime.Assert;
 
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.actions.ActionContext;

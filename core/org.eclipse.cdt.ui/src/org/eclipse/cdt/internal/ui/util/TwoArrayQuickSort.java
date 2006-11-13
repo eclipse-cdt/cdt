@@ -11,7 +11,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.util;
 
-import org.eclipse.jface.util.Assert;
+import org.eclipse.core.runtime.Assert;
 
 
 /**

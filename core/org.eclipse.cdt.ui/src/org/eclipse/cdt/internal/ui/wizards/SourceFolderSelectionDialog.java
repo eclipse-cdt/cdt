@@ -41,7 +41,7 @@ public class SourceFolderSelectionDialog extends ElementTreeSelectionDialog {
     public SourceFolderSelectionDialog(Shell parent) {
         super(parent, fLabelProvider, fContentProvider);
         setValidator(fValidator);
-        setSorter(fSorter);
+        setComparator(fSorter);
         addFilter(fFilter);
         setTitle(NewWizardMessages.getString("SourceFolderSelectionDialog.title")); //$NON-NLS-1$
         setMessage(NewWizardMessages.getString("SourceFolderSelectionDialog.description")); //$NON-NLS-1$

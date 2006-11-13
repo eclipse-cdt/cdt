@@ -18,7 +18,7 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.cdt.internal.ui.CPluginImages;
 import org.eclipse.jface.resource.CompositeImageDescriptor;
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.jface.util.Assert;
+import org.eclipse.core.runtime.Assert;
 
 
 /**

@@ -30,7 +30,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.dialogs.ElementTreeSelectionDialog;
 import org.eclipse.ui.dialogs.NewFolderDialog;
-import org.eclipse.ui.views.navigator.ResourceSorter;
+import org.eclipse.ui.views.navigator.ResourceComparator;
 
 import org.eclipse.cdt.internal.ui.util.SWTUtil;
 
@@ -44,7 +44,7 @@ public class FolderSelectionDialog extends ElementTreeSelectionDialog implements
 
 	public FolderSelectionDialog(Shell parent, ILabelProvider labelProvider, ITreeContentProvider contentProvider) {
 		super(parent, labelProvider, contentProvider);
-		setSorter(new ResourceSorter(ResourceSorter.NAME));
+		setComparator(new ResourceComparator(ResourceComparator.NAME));
 	}
 
 	/* (non-Javadoc)

@@ -226,7 +226,7 @@ public class CElementSorter extends ViewerSorter {
 		if (cat1 == PROJECTS) {
 			IWorkbenchAdapter a1= (IWorkbenchAdapter)((IAdaptable)e1).getAdapter(IWorkbenchAdapter.class);
 			IWorkbenchAdapter a2= (IWorkbenchAdapter)((IAdaptable)e2).getAdapter(IWorkbenchAdapter.class);
-			return getCollator().compare(a1.getLabel(e1), a2.getLabel(e2));
+			return getComparator().compare(a1.getLabel(e1), a2.getLabel(e2));
 		}
 
 		if (cat1 == SOURCEROOTS) {
@@ -289,7 +289,7 @@ public class CElementSorter extends ViewerSorter {
 		} else {
 			name2 = e2.toString();
 		}
-		int result = getCollator().compare(name1, name2);
+		int result = getComparator().compare(name1, name2);
 		if (result == 0 && (e1destructor != e2destructor)) {
 		    result = e1destructor ? 1 : -1;
 		}
@@ -312,7 +312,7 @@ public class CElementSorter extends ViewerSorter {
 				String name1 = lprov.getText(e1);
 				String name2 = lprov.getText(e2);
 				if (name1 != null && name2 != null) {
-					return getCollator().compare(name1, name2);
+					return getComparator().compare(name1, name2);
 				}
 			}
 		}

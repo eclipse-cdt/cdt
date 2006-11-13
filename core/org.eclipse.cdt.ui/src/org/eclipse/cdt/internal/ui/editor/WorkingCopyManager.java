@@ -19,7 +19,7 @@ import org.eclipse.cdt.core.model.IWorkingCopy;
 import org.eclipse.cdt.ui.IWorkingCopyManager;
 import org.eclipse.cdt.ui.IWorkingCopyManagerExtension;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.jface.text.Assert;
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.ui.IEditorInput;
 
 

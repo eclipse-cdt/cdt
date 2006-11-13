@@ -12,7 +12,7 @@
 package org.eclipse.cdt.internal.ui.editor;
 
 import org.eclipse.jface.action.Action;
-import org.eclipse.jface.text.Assert;
+import org.eclipse.core.runtime.Assert;
 
 import org.eclipse.ui.PlatformUI;
 

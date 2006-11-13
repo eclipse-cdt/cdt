@@ -71,15 +71,17 @@ public class CViewContentProvider extends CElementContentProvider {
 	public Object[] getChildren(Object element) {
 		Object[] objs = null;
 
-		// use the the deferred manager for some cases
-		if (element instanceof IBinary) {
-			// It takes sometimes to parse binaries deferred it
-			objs = fManager.getChildren(element);
-		} else if (element instanceof IArchive) {
-			// It takes sometimes to parse archives deferred it
-			objs = fManager.getChildren(element);
+		if (fManager != null) {
+			// use the the deferred manager for some cases
+			if (element instanceof IBinary) {
+				// It takes sometimes to parse binaries deferred it
+				objs = fManager.getChildren(element);
+			} else if (element instanceof IArchive) {
+				// It takes sometimes to parse archives deferred it
+				objs = fManager.getChildren(element);
+			}
 		}
-
+		
 		if (objs == null) {
 			objs = super.getChildren(element);
 		}
@@ -202,11 +204,14 @@ public class CViewContentProvider extends CElementContentProvider {
 	 * @see org.eclipse.jface.viewers.ITreeContentProvider#hasChildren(java.lang.Object)
 	 */
 	public boolean hasChildren(Object element) {
-		if (element instanceof IBinary) {
-			return fManager.mayHaveChildren(element);
-		} else if (element instanceof IArchive) {
-			return fManager.mayHaveChildren(element);
-		} else if (element instanceof IBinaryContainer) {
+		if (fManager != null) {
+			if (element instanceof IBinary) {
+				return fManager.mayHaveChildren(element);
+			} else if (element instanceof IArchive) {
+				return fManager.mayHaveChildren(element);
+			}
+		}
+		if (element instanceof IBinaryContainer) {
 			try {
 				IBinaryContainer cont = (IBinaryContainer)element;
 				IBinary[] bins = getBinaries(cont);
@@ -250,7 +255,9 @@ public class CViewContentProvider extends CElementContentProvider {
 	 * @see org.eclipse.jface.viewers.IContentProvider#inputChanged(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
 	 */
 	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
-		fManager.cancel();
+		if (fManager != null) {
+			fManager.cancel();
+		}
 		super.inputChanged(viewer, oldInput, newInput);
 	}
 	

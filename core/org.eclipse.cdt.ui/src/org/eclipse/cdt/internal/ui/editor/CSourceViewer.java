@@ -399,7 +399,6 @@ public class CSourceViewer extends ProjectionViewer implements IPropertyChangeLi
 	 * This is a performance optimization to reduce the computation of
 	 * the text presentation triggered by {@link #setVisibleDocument(IDocument)}
 	 * </p>
-	 * @see #prepareDelayedProjection()
 	 * @since 4.0
 	 */
 	protected void setVisibleDocument(IDocument document) {

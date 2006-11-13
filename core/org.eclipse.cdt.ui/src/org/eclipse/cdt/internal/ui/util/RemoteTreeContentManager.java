@@ -141,7 +141,6 @@ public class RemoteTreeContentManager {
      */
     public RemoteTreeContentManager(ITreeContentProvider provider, RemoteTreeViewer viewer, IWorkbenchPartSite site) {
         fViewer = viewer;
-        fProvider = provider;
         if (site != null) {
         	Object siteService = site.getAdapter(IWorkbenchSiteProgressService.class);
         	if (siteService != null) {

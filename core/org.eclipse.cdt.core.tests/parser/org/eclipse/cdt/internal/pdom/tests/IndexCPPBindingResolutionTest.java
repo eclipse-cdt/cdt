@@ -47,33 +47,34 @@ public class IndexCPPBindingResolutionTest extends IndexBindingResolutionTestBas
 	// // header file
 	//	class C {
 	//	public:
-	//	int field;
-	//	struct CS { long* l; C *method(CS *); };
-	//	CS cs;
-	//	long * CS::* ouch;
-	//	long * CS::* autsch;
-	//  C * CS:: method(CS *);
+	//	   int field;
+	//	   struct CS { long* l; C *method(CS **); };
+	//	   CS cs;
+	//     CS **cspp;
+	//	   long * CS::* ouch;
+	//	   long * CS::* autsch;
+	//     C * CS::* method(CS **);
 	//	};
 
 	// // referencing file
 	//  #include "header.h"
 	//	void references() {
-	//	C *cp = new C();
-	//	long l = 5, *lp;
-	//	lp = &l;
-	//	cp->cs.*cp->ouch = lp = cp->cs.*cp->autsch;
-	//	&(cp->cs)->*cp->autsch = lp = &(cp->cs)->*cp->ouch;
-	//  cp->cs.*method(cp);/*1*/ &(cp->cs)->*method(cp);/*2*/
+	//	   C *cp = new C();
+	//	   long l = 5, *lp;
+	//	   lp = &l;
+	//	   cp->cs.*cp->ouch = lp = cp->cs.*cp->autsch;
+	//	   &(cp->cs)->*cp->autsch = lp = &(cp->cs)->*cp->ouch;
+	//     cp->cs.*method(cp->cspp);/*1*/ &(cp->cs)->*method(cp->cspp);/*2*/
 	//	}
-	public void _testPointerToMemberFields() throws IOException {
+	public void testPointerToMemberFields() throws IOException {
 		IBinding b0 = getBindingFromASTName("cs.*cp->o", 2);
-		IBinding b1 = getBindingFromASTName("ouch = lp;", 4);
+		IBinding b1 = getBindingFromASTName("ouch = lp", 4);
 		IBinding b2 = getBindingFromASTName("autsch;", 6);
-		IBinding b3 = getBindingFromASTName("cs)->*c->a", 2);
+		IBinding b3 = getBindingFromASTName("cs)->*cp->a", 2);
 		IBinding b4 = getBindingFromASTName("autsch = lp", 6);
 		IBinding b5 = getBindingFromASTName("ouch;", 4);
-		IBinding b6 = getBindingFromASTName("method(cp);/*1*/", 6);
-		IBinding b7 = getBindingFromASTName("method(cp);/*2*/", 6);
+		IBinding b6 = getBindingFromASTName("method(cp->cspp);/*1*/", 6);
+		IBinding b7 = getBindingFromASTName("method(cp->cspp);/*2*/", 6);
 	}
 
 	// // header file
@@ -81,7 +82,7 @@ public class IndexCPPBindingResolutionTest extends IndexBindingResolutionTestBas
 	// int var1; C var2; S *var3; void func(E); void func(C);
 	// namespace ns {}
 	// typedef int Int; typedef int *IntPtr;
-
+	// void func(int*); void func(int);
 	// // referencing file
 	// #include "header.h"
 	// void references() {
@@ -94,7 +95,6 @@ public class IndexCPPBindingResolutionTest extends IndexBindingResolutionTestBas
 	// }
 	// class C2 : public C {}; /*base*/
 	// struct S2 : public S {}; /*base*/
-	// union U2 : public U {}; /*base*/
 	public void testSimpleGlobalBindings() throws IOException {
 		IBinding b0 = getBindingFromASTName("C c; ", 1);
 		IBinding b1 = getBindingFromASTName("c; ", 1);
@@ -102,32 +102,26 @@ public class IndexCPPBindingResolutionTest extends IndexBindingResolutionTestBas
 		IBinding b3 = getBindingFromASTName("s;", 1);
 		IBinding b4 = getBindingFromASTName("U u;", 1);
 		IBinding b5 = getBindingFromASTName("u; ", 1);
+		IBinding b6 = getBindingFromASTName("E e; ", 1);
 		IBinding b7 = getBindingFromASTName("e; ", 1);
 		IBinding b8 = getBindingFromASTName("var1 = 1;", 4);
 		IBinding b9 = getBindingFromASTName("var2 = c;", 4);
 		IBinding b10 = getBindingFromASTName("var3 = &s;", 4);
 		IBinding b11 = getBindingFromASTName("func(e);", 4);
+		IBinding b12 = getBindingFromASTName("func(var1);", 4);
 		IBinding b13 = getBindingFromASTName("func(c);", 4);
+		IBinding b14 = getBindingFromASTName("Int a; ", 3);
 		IBinding b15 = getBindingFromASTName("a; ", 1);
+		IBinding b16 = getBindingFromASTName("IntPtr b = &a; ", 6);
 		IBinding b17 = getBindingFromASTName("b = &a; /*b*/", 1);
+		IBinding b18 = getBindingFromASTName("func(*b);", 4);
 		IBinding b19 = getBindingFromASTName("b); /*func4*/", 1);
 		IBinding b20 = getBindingFromASTName("func(a);", 4);
 		IBinding b21 = getBindingFromASTName("a); /*func5*/", 1);
 		IBinding b22 = getBindingFromASTName("C2 : public", 2);
-		IBinding b24 = getBindingFromASTName("S2 : public", 2);
-		IBinding b26 = getBindingFromASTName("U2 : public", 2);
-	}
-	
-	public void _testSimpleGlobalBindings() throws IOException {
-		/* note the test data from above follows through to this test */
-		IBinding b6 = getBindingFromASTName("E e; ", 1);
-		IBinding b12 = getBindingFromASTName("func(var1);", 4);
-		IBinding b14 = getBindingFromASTName("Int a; ", 3);
-		IBinding b16 = getBindingFromASTName("IntPtr b = &a; ", 6);
-		IBinding b18 = getBindingFromASTName("func(*b);", 4);
 		IBinding b23 = getBindingFromASTName("C {}; /*base*/", 1);		
-		IBinding b25 = getBindingFromASTName("S {}; /*base*/", 1);
-		IBinding b27 = getBindingFromASTName("U {}; /*base*/", 1);
+		IBinding b24 = getBindingFromASTName("S2 : public", 2);
+		IBinding b25 = getBindingFromASTName("S {}; /*base*/", 1);		
 	}
 	
 	
@@ -148,7 +142,7 @@ public class IndexCPPBindingResolutionTest extends IndexBindingResolutionTestBas
 	//      } 
 	//   };
 	//}
-	public void _testSingletonQualifiedName() {
+	public void testSingletonQualifiedName() {
 		IBinding b0 = getBindingFromASTName("TopC c", 4);
 		IBinding b1 = getBindingFromASTName("TopS s", 4);
 		IBinding b2 = getBindingFromASTName("TopU u", 4);
@@ -169,98 +163,98 @@ public class IndexCPPBindingResolutionTest extends IndexBindingResolutionTestBas
 	
 	//	// header content
 	// namespace n1 { namespace n2 { struct S {}; } }
-	// class c1 { class c2 { struct S {}; };
+	// class c1 { public: class c2 { public: struct S {}; }; };
 	// struct s1 { struct s2 { struct S {}; }; };
 	// union u1 { struct u2 { struct S {}; }; };
-	// namespace n3 { class c3 { struct s3 { union u3 { struct S {}; }; }; }; }
+	// namespace n3 { class c3 { public: struct s3 { union u3 { struct S {}; }; }; }; }
 	
 	// // reference content
 	// void reference() {
-	//  ::n1::n2::S s0; n1::n2::S s1;
-	//  ::c1::c2::S s2; c1::c2::S s3;
-	//  ::s1::s2::S s4; s1::s2::S s5;
-	//  ::u1::u2::S s6; u1::u2::S s7;
-	//  ::n3::c3::s3::u3::S s8;
-	//    n3::c3::s3::u3::S s9;
+	//  ::n1::n2::S _s0; n1::n2::S _s1;
+	//  ::c1::c2::S _s2; c1::c2::S _s3;
+	//  ::s1::s2::S _s4; s1::s2::S _s5;
+	//  ::u1::u2::S _s6; u1::u2::S _s7;
+	//  ::n3::c3::s3::u3::S _s8;
+	//    n3::c3::s3::u3::S _s9;
 	// }
-	// namespace n3 { c3::s3::u3::S s10; }
-	// namespace n1 { n2::S s11; }
-	// namespace n1 { namespace n2 { S s12; }} 
-	public void _testQualifiedNamesForStruct() throws DOMException {
-		IBinding b0 = getBindingFromASTName("S s0;", 1);
+	// namespace n3 { c3::s3::u3::S _s10; }
+	// namespace n1 { n2::S _s11; }
+	// namespace n1 { namespace n2 { S _s12; }} 
+	public void testQualifiedNamesForStruct() throws DOMException {
+		IBinding b0 = getBindingFromASTName("S _s0;", 1);
 		assertQNEquals("n1::n2::S", b0);
-		IBinding b1 = getBindingFromASTName("S s1;", 1);
+		IBinding b1 = getBindingFromASTName("S _s1;", 1);
 		assertQNEquals("n1::n2::S", b1);
-		IBinding b2 = getBindingFromASTName("S s2;", 1);
+		IBinding b2 = getBindingFromASTName("S _s2;", 1);
 		assertQNEquals("c1::c2::S", b2);
-		IBinding b3 = getBindingFromASTName("S s3;", 1);
+		IBinding b3 = getBindingFromASTName("S _s3;", 1);
 		assertQNEquals("c1::c2::S", b3);
-		IBinding b4 = getBindingFromASTName("S s4;", 1);
+		IBinding b4 = getBindingFromASTName("S _s4;", 1);
 		assertQNEquals("s1::s2::S", b4);
-		IBinding b5 = getBindingFromASTName("S s5;", 1);
+		IBinding b5 = getBindingFromASTName("S _s5;", 1);
 		assertQNEquals("s1::s2::S", b5);
-		IBinding b6 = getBindingFromASTName("S s6;", 1);
+		IBinding b6 = getBindingFromASTName("S _s6;", 1);
 		assertQNEquals("u1::u2::S", b6);
-		IBinding b7 = getBindingFromASTName("S s7;", 1);
+		IBinding b7 = getBindingFromASTName("S _s7;", 1);
 		assertQNEquals("u1::u2::S", b7);
-		IBinding b8 = getBindingFromASTName("S s8;", 1);
+		IBinding b8 = getBindingFromASTName("S _s8;", 1);
 		assertQNEquals("n3::c3::s3::u3::S", b8);
-		IBinding b9 = getBindingFromASTName("S s9;", 1);
+		IBinding b9 = getBindingFromASTName("S _s9;", 1);
 		assertQNEquals("n3::c3::s3::u3::S", b9);
-		IBinding b10 = getBindingFromASTName("S s10;", 1);
+		IBinding b10 = getBindingFromASTName("S _s10;", 1);
 		assertQNEquals("n3::c3::s3::u3::S", b10);
-		IBinding b11 = getBindingFromASTName("S s11;", 1);
+		IBinding b11 = getBindingFromASTName("S _s11;", 1);
 		assertQNEquals("n1::n2::S", b11);
-		IBinding b12 = getBindingFromASTName("S s12;", 1);
+		IBinding b12 = getBindingFromASTName("S _s12;", 1);
 		assertQNEquals("n1::n2::S", b12);
 	}
 	
 	// // header content
 	// namespace n1 { namespace n2 { union U {}; } }
-	// class c1 { class c2 { union U {}; };
+	// class c1 { public: class c2 { public: union U {}; }; }; 
 	// struct s1 { struct s2 { union U {}; }; };
 	// union u1 { struct u2 { union U {}; }; };
-	// namespace n3 { class c3 { struct s3 { union u3 { union U {}; }; }; }; }
+	// namespace n3 { class c3 { public: struct s3 { union u3 { union U {}; }; }; }; }
 	
 	// // reference content
 	// void reference() {
-	//  ::n1::n2::U u0; n1::n2::U u1;
-	//  ::c1::c2::U u2; c1::c2::U u3;
-	//  ::s1::s2::U u4; s1::s2::U u5;
-	//  ::u1::u2::U u6; u1::u2::U u7;
-	//  ::n3::c3::s3::u3::U u8;
-	//    n3::c3::s3::u3::U u9;
+	//  ::n1::n2::U _u0; n1::n2::U _u1;
+	//  ::c1::c2::U _u2; c1::c2::U _u3;
+	//  ::s1::s2::U _u4; s1::s2::U _u5;
+	//  ::u1::u2::U _u6; u1::u2::U _u7;
+	//  ::n3::c3::s3::u3::U _u8;
+	//    n3::c3::s3::u3::U _u9;
 	// }
-	// namespace n3 { c3::s3::u3::U u10; }
-	// namespace n1 { n2::U u11; }
-	// namespace n1 { namespace n2 { U u12; }} 
-	public void _testQualifiedNamesForUnion() throws DOMException {
-		IBinding b0 = getBindingFromASTName("S s0;", 1);
-		assertQNEquals("n1::n2::S", b0);
-		IBinding b1 = getBindingFromASTName("S s1;", 1);
-		assertQNEquals("n1::n2::S", b1);
-		IBinding b2 = getBindingFromASTName("S s2;", 1);
-		assertQNEquals("c1::c2::S", b2);
-		IBinding b3 = getBindingFromASTName("S s3;", 1);
-		assertQNEquals("c1::c2::S", b3);
-		IBinding b4 = getBindingFromASTName("S s4;", 1);
-		assertQNEquals("s1::s2::S", b4);
-		IBinding b5 = getBindingFromASTName("S s5;", 1);
-		assertQNEquals("s1::s2::S", b5);
-		IBinding b6 = getBindingFromASTName("S s6;", 1);
-		assertQNEquals("u1::u2::S", b6);
-		IBinding b7 = getBindingFromASTName("S s7;", 1);
-		assertQNEquals("u1::u2::S", b7);
-		IBinding b8 = getBindingFromASTName("S s8;", 1);
-		assertQNEquals("n3::c3::s3::u3::S", b8);
-		IBinding b9 = getBindingFromASTName("S s9;", 1);
-		assertQNEquals("n3::c3::s3::u3::S", b9);
-		IBinding b10 = getBindingFromASTName("S s10;", 1);
-		assertQNEquals("n3::c3::s3::u3::S", b10);
-		IBinding b11 = getBindingFromASTName("S s11;", 1);
-		assertQNEquals("n1::n2::S", b11);
-		IBinding b12 = getBindingFromASTName("C s12;", 1);
-		assertQNEquals("n1::n2::S", b12);
+	// namespace n3 { c3::s3::u3::U _u10; }
+	// namespace n1 { n2::U _u11; }
+	// namespace n1 { namespace n2 { U _u12; }} 
+	public void testQualifiedNamesForUnion() throws DOMException {
+		IBinding b0 = getBindingFromASTName("U _u0;", 1);
+		assertQNEquals("n1::n2::U", b0);
+		IBinding b1 = getBindingFromASTName("U _u1;", 1);
+		assertQNEquals("n1::n2::U", b1);
+		IBinding b2 = getBindingFromASTName("U _u2;", 1);
+		assertQNEquals("c1::c2::U", b2);
+		IBinding b3 = getBindingFromASTName("U _u3;", 1);
+		assertQNEquals("c1::c2::U", b3);
+		IBinding b4 = getBindingFromASTName("U _u4;", 1);
+		assertQNEquals("s1::s2::U", b4);
+		IBinding b5 = getBindingFromASTName("U _u5;", 1);
+		assertQNEquals("s1::s2::U", b5);
+		IBinding b6 = getBindingFromASTName("U _u6;", 1);
+		assertQNEquals("u1::u2::U", b6);
+		IBinding b7 = getBindingFromASTName("U _u7;", 1);
+		assertQNEquals("u1::u2::U", b7);
+		IBinding b8 = getBindingFromASTName("U _u8;", 1);
+		assertQNEquals("n3::c3::s3::u3::U", b8);
+		IBinding b9 = getBindingFromASTName("U _u9;", 1);
+		assertQNEquals("n3::c3::s3::u3::U", b9);
+		IBinding b10 = getBindingFromASTName("U _u10;", 1);
+		assertQNEquals("n3::c3::s3::u3::U", b10);
+		IBinding b11 = getBindingFromASTName("U _u11;", 1);
+		assertQNEquals("n1::n2::U", b11);
+		IBinding b12 = getBindingFromASTName("U _u12;", 1);
+		assertQNEquals("n1::n2::U", b12);
 	}
 	
 	// // header content
@@ -269,45 +263,45 @@ public class IndexCPPBindingResolutionTest extends IndexBindingResolutionTestBas
 	// struct s1 { struct s2 { class C {}; }; };
 	// union u1 { union u2 { class C {}; }; };
 	// namespace n3 { class c3 { public: struct s3 { union u3 { class C {}; }; }; }; }
-	//
+
 	// // reference content
 	// void reference() {
-	//  ::n1::n2::C c0; n1::n2::C c1;
-	//  ::c1::c2::C c2; c1::c2::C c3;
-	//  ::s1::s2::C c4; s1::s2::C c5;
-	//  ::u1::u2::C c6; u1::u2::C c7;
-	//  ::n3::c3::s3::u3::C c8;
-	//    n3::c3::s3::u3::C c9;
+	//  ::n1::n2::C _c0; n1::n2::C _c1;
+	//  ::c1::c2::C _c2; c1::c2::C _c3;
+	//  ::s1::s2::C _c4; s1::s2::C _c5;
+	//  ::u1::u2::C _c6; u1::u2::C _c7;
+	//  ::n3::c3::s3::u3::C _c8;
+	//    n3::c3::s3::u3::C _c9;
 	// }
-	// namespace n3 { c3::s3::u3::C c10; }
-	// namespace n1 { n2::C c11; }
-	// namespace n1 { namespace n2 { C c12; }} 
-	public void _testQualifiedNamesForClass() throws DOMException {
-		IBinding b0 = getBindingFromASTName("C c0;", 1);
+	// namespace n3 { c3::s3::u3::C _c10; }
+	// namespace n1 { n2::C _c11; }
+	// namespace n1 { namespace n2 { C _c12; }} 
+	public void testQualifiedNamesForClass() throws DOMException {
+		IBinding b0 = getBindingFromASTName("C _c0;", 1);
 		assertQNEquals("n1::n2::C", b0);
-		IBinding b1 = getBindingFromASTName("C c1;", 1);
+		IBinding b1 = getBindingFromASTName("C _c1;", 1);
 		assertQNEquals("n1::n2::C", b1);
-		IBinding b2 = getBindingFromASTName("C c2;", 1);
+		IBinding b2 = getBindingFromASTName("C _c2;", 1);
 		assertQNEquals("c1::c2::C", b2);
-		IBinding b3 = getBindingFromASTName("C c3;", 1);
+		IBinding b3 = getBindingFromASTName("C _c3;", 1);
 		assertQNEquals("c1::c2::C", b3);
-		IBinding b4 = getBindingFromASTName("C c4;", 1);
+		IBinding b4 = getBindingFromASTName("C _c4;", 1);
 		assertQNEquals("s1::s2::C", b4);
-		IBinding b5 = getBindingFromASTName("C c5;", 1);
+		IBinding b5 = getBindingFromASTName("C _c5;", 1);
 		assertQNEquals("s1::s2::C", b5);
-		IBinding b6 = getBindingFromASTName("C c6;", 1);
+		IBinding b6 = getBindingFromASTName("C _c6;", 1);
 		assertQNEquals("u1::u2::C", b6);
-		IBinding b7 = getBindingFromASTName("C c7;", 1);
+		IBinding b7 = getBindingFromASTName("C _c7;", 1);
 		assertQNEquals("u1::u2::C", b7);
-		IBinding b8 = getBindingFromASTName("C c8;", 1);
+		IBinding b8 = getBindingFromASTName("C _c8;", 1);
 		assertQNEquals("n3::c3::s3::u3::C", b8);
-		IBinding b9 = getBindingFromASTName("C c9;", 1);
+		IBinding b9 = getBindingFromASTName("C _c9;", 1);
 		assertQNEquals("n3::c3::s3::u3::C", b9);
-		IBinding b10 = getBindingFromASTName("C c10;", 1);
+		IBinding b10 = getBindingFromASTName("C _c10;", 1);
 		assertQNEquals("n3::c3::s3::u3::C", b10);
-		IBinding b11 = getBindingFromASTName("C c11;", 1);
+		IBinding b11 = getBindingFromASTName("C _c11;", 1);
 		assertQNEquals("n1::n2::C", b11);
-		IBinding b12 = getBindingFromASTName("C c12;", 1);
+		IBinding b12 = getBindingFromASTName("C _c12;", 1);
 		assertQNEquals("n1::n2::C", b12);
 	}
 	
@@ -389,10 +383,10 @@ public class IndexCPPBindingResolutionTest extends IndexBindingResolutionTestBas
 	//	 void m1() { e1 = ER1; }
 	//	 static void m2() { e2 = ER2; }
 	// };
-	public void _testEnumeratorInStructScope() {
+	public void testEnumeratorInStructScope() {
 		IBinding b0 = getBindingFromASTName("E e1", 1);
-		IBinding b1 = getBindingFromASTName("ER1; }", 1);
-		IBinding b2 = getBindingFromASTName("ER2; }", 1);
+		IBinding b1 = getBindingFromASTName("ER1; }", 3);
+		IBinding b2 = getBindingFromASTName("ER2; }", 3);
 	}
 	
 	//	 // header content
@@ -405,10 +399,10 @@ public class IndexCPPBindingResolutionTest extends IndexBindingResolutionTestBas
 	//	 void m1() { e1 = ER1; }
 	//	 static void m2() { e2 = ER2; }
 	// };
-	public void _testEnumeratorInUnionScope() {
+	public void testEnumeratorInUnionScope() {
 		IBinding b0 = getBindingFromASTName("E e1", 1);
-		IBinding b1 = getBindingFromASTName("ER1; }", 1);
-		IBinding b2 = getBindingFromASTName("ER2; }", 1);
+		IBinding b1 = getBindingFromASTName("ER1; }", 3);
+		IBinding b2 = getBindingFromASTName("ER2; }", 3);
 	}
 	
 	//	 // header content
@@ -421,10 +415,10 @@ public class IndexCPPBindingResolutionTest extends IndexBindingResolutionTestBas
 	//	 void f1() { e1 = ER1; }
 	//	 static void f2() { e2 = ER2; }
 	// };
-	public void _testEnumeratorInNamespaceScope() {
+	public void testEnumeratorInNamespaceScope() {
 		IBinding b0 = getBindingFromASTName("E e1", 1);
-		IBinding b1 = getBindingFromASTName("ER1; }", 1);
-		IBinding b2 = getBindingFromASTName("ER2; }", 1);
+		IBinding b1 = getBindingFromASTName("ER1; }", 3);
+		IBinding b2 = getBindingFromASTName("ER2; }", 3);
 	}
 	
 	// // teh header
@@ -537,13 +531,14 @@ public class IndexCPPBindingResolutionTest extends IndexBindingResolutionTestBas
 	
 	
 	// // header file
-	//	class C {C* cp;};
+	//	class C {public: C* cp;};
 	//	C foo(C c);
 	//	C* foo(C* c);
 	//	int foo(int i);
 	//	int foo(int i, C c);
 	
 	// // referencing content
+	// #include "header.h"
 	//	void references() {
 	//		C c, *cp;
 	//		foo/*a*/(cp[1]);                        // IASTArraySubscriptExpression
@@ -653,7 +648,7 @@ public class IndexCPPBindingResolutionTest extends IndexBindingResolutionTestBas
 	//		         fni4 = &f;/*20*/ fnlp4 = &f;/*21*/ fnS4 = &f;/*22*/ fnU4 = &f;/*23*/ fnE4 = &f;/*24*/
 	//		fE = &f;/*25*/
 	//	}	
-	public void _testAddressOfOverloadedFunction() throws DOMException {
+	public void testAddressOfOverloadedFunction() throws DOMException {
 		IBinding b0 = getBindingFromASTName("f;/*0*/", 1);
 		IBinding b1 = getBindingFromASTName("f;/*1*/", 1);
 		IBinding b2 = getBindingFromASTName("f;/*2*/", 1);

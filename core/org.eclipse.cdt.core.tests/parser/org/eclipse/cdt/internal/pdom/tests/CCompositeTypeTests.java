@@ -22,6 +22,7 @@ import org.eclipse.cdt.core.index.IndexFilter;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.internal.core.CCoreInternals;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.NullProgressMonitor;
 
 /**
@@ -47,6 +48,9 @@ public class CCompositeTypeTests extends PDOMTestBase {
 	
 	protected void tearDown() throws Exception {
 		pdom.releaseReadLock();
+		if (project != null) {
+			project.getProject().delete(IResource.FORCE | IResource.ALWAYS_DELETE_PROJECT_CONTENT, new NullProgressMonitor());
+		}
 	}
 	
 	//TODO PDOM does not distinguish between a struct or union in C

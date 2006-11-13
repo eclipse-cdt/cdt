@@ -41,7 +41,7 @@ class PDOMCPPVariable extends PDOMCPPBinding implements ICPPVariable {
 	 * Offset of annotation information (relative to the beginning of the
 	 * record).
 	 */
-	private static final int ANNOTATIONS = PDOMBinding.RECORD_SIZE + 4; // byte
+	protected static final int ANNOTATIONS = PDOMBinding.RECORD_SIZE + 4; // byte
 	
 	/**
 	 * The size in bytes of a PDOMCPPVariable record in the database.

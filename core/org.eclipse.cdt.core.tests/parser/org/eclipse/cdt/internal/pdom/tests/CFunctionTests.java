@@ -18,6 +18,8 @@ import org.eclipse.cdt.core.dom.ast.IFunction;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.internal.core.CCoreInternals;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.NullProgressMonitor;
 
 /**
  * Tests for verifying whether the PDOM correctly stores information about
@@ -40,6 +42,9 @@ public class CFunctionTests extends PDOMTestBase {
 
 	protected void tearDown() throws Exception {
 		pdom.releaseReadLock();
+		if (project != null) {
+			project.getProject().delete(IResource.FORCE | IResource.ALWAYS_DELETE_PROJECT_CONTENT, new NullProgressMonitor());
+		}
 	}
 
 	public void testExternCFunction() throws Exception {

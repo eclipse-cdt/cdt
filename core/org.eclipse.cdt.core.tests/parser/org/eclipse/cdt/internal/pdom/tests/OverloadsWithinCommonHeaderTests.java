@@ -50,8 +50,6 @@ public class OverloadsWithinCommonHeaderTests extends PDOMTestBase {
 		pdom.releaseReadLock();
 	}
 	
-	public void testDummy() {}
-	
 	public void testOverloadedInCommonHeader_ClassScope() throws CoreException {
 		Pattern[] ManyOverloadedQuxPath = makePatternArray(new String[] {"ManyOverloaded","qux"});
 		IBinding[] ManyOverloadedQux = pdom.findBindings(ManyOverloadedQuxPath, new NullProgressMonitor());

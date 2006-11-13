@@ -42,43 +42,41 @@ public class IndexCBindingResolutionTest extends IndexBindingResolutionTestBase 
 	
 	// // header file
 	// struct S {}; union U {}; enum E {ER1,ER2,ER3};
-	// int var1; C var2; S *var3; void func1(E); void func2(S);
+	// int var1; S var2; S *var3; void func1(E); void func2(S);
 	// typedef int Int; typedef int *IntPtr;
+	// void func3(int** ppi); void func4(int);
 
 	// // referencing file
 	// #include "header.h"
 	// void references() {
 	// 	struct S s; /*s*/ union U u; /*u*/ E e; /*e*/
-	//  var1 = 1; /*var1*/ var2 = c; /*var2*/ var3 = &s; /*var3*/
-	//  func(e); /*func1*/ func(var1); /*func2*/ func(c); /*func3*/
+	//  var1 = 1; /*var1*/ var2 = s; /*var2*/ var3 = &s; /*var3*/
+	//  func1(e); /*func1*/ func1(var1); /*func2*/ func2(s); /*func3*/
 	//  Int a; /*a*/
 	//  IntPtr b = &a; /*b*/
-	//  func(*b); /*func4*/ func(a); /*func5*/
+	//  func3(*b); /*func4*/ func4(a); /*func5*/
 	// }
 	public void testSimpleGlobalBindings() throws IOException {
 		IBinding b2 = getBindingFromASTName("S s;", 1);
 		IBinding b3 = getBindingFromASTName("s;", 1);
 		IBinding b4 = getBindingFromASTName("U u;", 1);
 		IBinding b5 = getBindingFromASTName("u; ", 1);
+		IBinding b6 = getBindingFromASTName("E e; ", 1);
 		IBinding b7 = getBindingFromASTName("e; ", 1);
 		IBinding b8 = getBindingFromASTName("var1 = 1;", 4);
-		IBinding b9 = getBindingFromASTName("var2 = c;", 4);
+		IBinding b9 = getBindingFromASTName("var2 = s;", 4);
 		IBinding b10 = getBindingFromASTName("var3 = &s;", 4);
-		IBinding b11 = getBindingFromASTName("func(e);", 4);
-		IBinding b13 = getBindingFromASTName("func(c);", 4);
-		IBinding b15 = getBindingFromASTName("a; ", 1);
-		IBinding b17 = getBindingFromASTName("b = &a; /*b*/", 1);
-		IBinding b19 = getBindingFromASTName("b); /*func4*/", 1);
-		IBinding b20 = getBindingFromASTName("func(a);", 4);
-		IBinding b21 = getBindingFromASTName("a); /*func5*/", 1);
-	}
-	
-	public void _testSimpleGlobalBindings() throws IOException {
-		IBinding b6 = getBindingFromASTName("E e; ", 1);
-		IBinding b12 = getBindingFromASTName("func1(var1);", 4);
+		IBinding b11 = getBindingFromASTName("func1(e);", 5);
+		IBinding b12 = getBindingFromASTName("func1(var1);", 5);
+		IBinding b13 = getBindingFromASTName("func2(s);", 5);
 		IBinding b14 = getBindingFromASTName("Int a; ", 3);
+		IBinding b15 = getBindingFromASTName("a; ", 1);
 		IBinding b16 = getBindingFromASTName("IntPtr b = &a; ", 6);
-		IBinding b18 = getBindingFromASTName("func2(*b);", 4);	
+		IBinding b17 = getBindingFromASTName("b = &a; /*b*/", 1);
+		IBinding b18 = getBindingFromASTName("func3(*b);", 5);	
+		IBinding b19 = getBindingFromASTName("b); /*func4*/", 1);
+		IBinding b20 = getBindingFromASTName("func4(a);", 5);
+		IBinding b21 = getBindingFromASTName("a); /*func5*/", 1);
 	}
 
 	public void _testEnumeratorInFileScope() {fail("todo");}

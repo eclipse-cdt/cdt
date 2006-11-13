@@ -23,6 +23,7 @@ import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.internal.core.CCoreInternals;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
 
@@ -48,6 +49,9 @@ public class FilesOnReindexTests extends PDOMTestBase {
 
 	protected void tearDown() throws Exception {
 		pdom.releaseReadLock();
+		if (project != null) {
+			project.getProject().delete(IResource.FORCE | IResource.ALWAYS_DELETE_PROJECT_CONTENT, new NullProgressMonitor());
+		}
 	}
 	
 	public void testFilesOnReindex() throws CoreException, InterruptedException {

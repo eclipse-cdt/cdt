@@ -35,7 +35,7 @@ abstract public class PDOMCPPBinding extends PDOMBinding implements ICPPBinding 
 	}
 		
 	// TODO: performance?
-	public String[] getQualifiedName() throws DOMException {
+	final public String[] getQualifiedName() throws DOMException {
 		List result = new ArrayList();
 		try {
 			PDOMNode node = this;
@@ -53,7 +53,7 @@ abstract public class PDOMCPPBinding extends PDOMBinding implements ICPPBinding 
 	}
 
 	// TODO: performance?
-	public char[][] getQualifiedNameCharArray() throws DOMException {
+	final public char[][] getQualifiedNameCharArray() throws DOMException {
 		String[] preResult = getQualifiedName();
 		char[][] result = new char[preResult.length][];
 		for(int i=0; i<preResult.length; i++) {

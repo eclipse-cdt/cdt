@@ -878,7 +878,9 @@ public class CPPSemantics {
 			    }
 		    }
 		} else if( t instanceof IEnumeration ){
-		    namespaces.put( getContainingNamespaceScope( (IBinding) t ) );
+			IScope scope = getContainingNamespaceScope( (IBinding) t );
+			if(scope!=null)
+				namespaces.put(scope);
 		} else if( t instanceof IFunctionType ){
 		    IFunctionType ft = (IFunctionType) t;
 		    
@@ -2767,7 +2769,7 @@ public class CPPSemantics {
 		return cost;
 	}
 
-	static protected IType getUltimateType( IType type, boolean stopAtPointerToMember ){
+	public static IType getUltimateType( IType type, boolean stopAtPointerToMember ){
 	    try {
 	        while( true ){
 				if( type instanceof ITypedef )

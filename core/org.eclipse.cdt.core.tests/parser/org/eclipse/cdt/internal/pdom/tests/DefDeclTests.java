@@ -28,6 +28,7 @@ import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.testplugin.util.TestSourceReader;
 import org.eclipse.cdt.internal.core.CCoreInternals;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
@@ -44,14 +45,15 @@ public class DefDeclTests extends PDOMTestBase {
 	private String projectName = null;
 
 	protected PDOM pdom;
-
+	protected ICProject cproject;
+	
 	public static Test suite() {
 		return suite(DefDeclTests.class);
 	}
 
 	protected void setUp() throws Exception {
 		String requiredName = "defDeclTests";
-		ICProject cproject = createProject(requiredName);
+		cproject = createProject(requiredName);
 		this.projectName = cproject.getElementName();
 		pdom = (PDOM) CCoreInternals.getPDOMManager().getPDOM(cproject);
 		pdom.acquireReadLock();
@@ -59,6 +61,9 @@ public class DefDeclTests extends PDOMTestBase {
 
 	protected void tearDown() throws Exception {
 		pdom.releaseReadLock();
+		if (cproject != null) {
+			cproject.getProject().delete(IResource.FORCE | IResource.ALWAYS_DELETE_PROJECT_CONTENT, new NullProgressMonitor());
+		}
 	}
 
 	private IBinding findSingleBinding(String elName) throws CoreException {

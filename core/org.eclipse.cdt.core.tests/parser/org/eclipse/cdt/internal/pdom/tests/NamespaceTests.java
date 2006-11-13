@@ -27,6 +27,7 @@ import org.eclipse.cdt.core.index.IndexFilter;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.internal.core.CCoreInternals;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 
@@ -48,7 +49,7 @@ public class NamespaceTests extends PDOMTestBase {
 	
 	protected void setUp() throws Exception {
 		if (pdom == null) {
-			ICProject project = createProject("namespaceTests", true);
+			project = createProject("namespaceTests", true);
 			pdom = (PDOM)CCoreInternals.getPDOMManager().getPDOM(project);
 		}
 		pdom.acquireReadLock();
@@ -56,6 +57,9 @@ public class NamespaceTests extends PDOMTestBase {
 	
 	protected void tearDown() throws Exception {
 		pdom.releaseReadLock();
+		if (project != null) {
+			project.getProject().delete(IResource.FORCE | IResource.ALWAYS_DELETE_PROJECT_CONTENT, new NullProgressMonitor());
+		}
 	}
 	
 	public void _testAlias() throws Exception {

@@ -18,6 +18,7 @@ import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionCallExpression;
 import org.eclipse.cdt.core.dom.ast.IASTIdExpression;
 import org.eclipse.cdt.core.dom.ast.IASTName;
+import org.eclipse.cdt.core.dom.ast.IASTNamedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.ICompositeType;
@@ -247,6 +248,21 @@ class PDOMCLinkage extends PDOMLinkage {
 			}
 		} else if (parent instanceof ICASTElaboratedTypeSpecifier) {
 			constant = CSTRUCTURE;
+		} else if (parent instanceof IASTNamedTypeSpecifier){
+			FindBindingByLinkageConstant finder = new FindBindingByLinkageConstant(this, name.toCharArray(), CSTRUCTURE);
+			getIndex().accept(finder);
+			PDOMBinding result = finder.getResult();
+			if(result==null) {
+				finder = new FindBindingByLinkageConstant(this, name.toCharArray(), CENUMERATION);
+				getIndex().accept(finder);
+				result = finder.getResult();
+			}
+			if(result==null) {
+				finder = new FindBindingByLinkageConstant(this, name.toCharArray(), CTYPEDEF);
+				getIndex().accept(finder);
+				result = finder.getResult();
+			}
+			return result;
 		} else {
 			return null;
 		}

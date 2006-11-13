@@ -235,13 +235,4 @@ class PDOMCPPMethod extends PDOMCPPBinding implements ICPPMethod, ICPPFunctionTy
 		// TODO further analysis to compare with DOM objects
 		return false;
 	}
-	
-	public IScope getScope() throws DOMException {
-		try {
-			return (IScope)getParentNode();
-		} catch(CoreException ce) {
-			CCorePlugin.log(ce);
-			return null;
-		}
-	}
 }

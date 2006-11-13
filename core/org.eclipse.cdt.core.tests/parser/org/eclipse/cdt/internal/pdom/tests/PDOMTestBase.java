@@ -28,6 +28,7 @@ import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IFunction;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMember;
+import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.index.IndexFilter;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.testplugin.CProjectHelper;
@@ -185,7 +186,7 @@ public class PDOMTestBase extends BaseTestCase {
 	public static final void assertFunctionRefCount(PDOM pdom, Class[] args, IBinding[] bindingPool, int refCount) throws CoreException {
 		IBinding[] bindings = findIFunctions(args, bindingPool);
 		assertEquals(1, bindings.length);
-		IName[] refs = pdom.getReferences(bindings[0]);
+		IName[] refs = pdom.findNames(bindings[0], IIndex.FIND_REFERENCES);
 		assertEquals(refCount, refs.length);
 	}
 

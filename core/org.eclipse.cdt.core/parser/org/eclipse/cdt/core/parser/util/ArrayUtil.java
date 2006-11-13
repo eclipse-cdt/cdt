@@ -185,11 +185,34 @@ public class ArrayUtil {
         return temp;
     }
     
+    /**
+     * Returns whether the specified array contains the specified object. Comparison is by
+     * object identity.
+     * @param array the array to search
+     * @param obj the object to search for
+     * @return true if the specified array contains the specified object, or the specified array is null
+     */
     public static boolean contains( Object [] array, Object obj ){
-        if( array == null ) return false;
-        for( int i = 0; i < array.length; i++ )
-            if( array[i] == obj ) return true;
-        return false;
+    	return indexOf(array, obj)!=-1;
+    }
+    
+    /**
+     * Returns the index into the specified array of the specified object, or -1 if the array does not
+     * contain the object, or if the array is null.  Comparison is by object identity.
+     * @param array the array to search
+     * @param obj the object to search for
+     * @return the index into the specified array of the specified object, or -1 if the array does not
+     * contain the object, or if the array is null
+     */
+    public static int indexOf(Object[] array, Object obj) {
+    	int result = -1;
+    	if(array!=null) {
+    		for(int i=0; i<array.length; i++) {
+    			if(array[i] == obj)
+    				return i;
+    		}
+    	}
+    	return result;
     }
 	
 	/**

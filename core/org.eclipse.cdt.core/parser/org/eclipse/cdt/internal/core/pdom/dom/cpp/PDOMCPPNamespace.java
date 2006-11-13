@@ -28,14 +28,17 @@ import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespaceScope;
+import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.internal.core.dom.bid.ILocalBindingIdentity;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.db.BTree;
 import org.eclipse.cdt.internal.core.pdom.db.IBTreeVisitor;
+import org.eclipse.cdt.internal.core.pdom.dom.FindBindingByLinkageConstant;
 import org.eclipse.cdt.internal.core.pdom.dom.FindBindingsInBTree;
 import org.eclipse.cdt.internal.core.pdom.dom.FindEquivalentBinding;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
+import org.eclipse.cdt.internal.core.pdom.dom.PDOMNotImplementedError;
 import org.eclipse.core.runtime.CoreException;
 
 /**
@@ -123,17 +126,31 @@ class PDOMCPPNamespace extends PDOMCPPBinding
 			IASTNode parent = name.getParent();
 			if (parent instanceof ICPPASTQualifiedName) {
 				IASTName[] names = ((ICPPASTQualifiedName)parent).getNames();
-				if (name == names[names.length - 1]) {
+				int index = ArrayUtil.indexOf(names, name);
+				
+				if (index == names.length - 1) { // tip of qn
 					parent = parent.getParent();
 				} else {
-					IASTName nsname = null;
-					for (int i = 0; i < names.length - 2; ++i) {
-						if (name != names[i])
-							nsname = names[i];
+					{ // bail out if this is not the outerscope of the name being resolved
+						if(index==-1) {
+							throw new PDOMNotImplementedError();
+						} else {
+							if(index>0) {
+								// make sure we're the namespace they're talking about
+								PDOMBinding binding = (PDOMBinding) pdom.findBinding(names[index-1]); // index == 0 ?
+								if(binding instanceof PDOMCPPNamespaceAlias) {
+									// aftodo - this needs a review - do we want to assign to binding
+									// or just check against this?
+									binding = (PDOMBinding) ((PDOMCPPNamespaceAlias) binding).getBinding();
+								}
+								if(!equals(binding)) {
+									return null;
+								}
+							} else {
+								// ok - just search us and return null if there is nothing in here
+							}
+						}
 					}
-					// make sure we're the namespace they're talking about
-					if (nsname != null && !equals(pdom.findBinding(nsname)))
-						return null;
 					
 					// Look up the name
 					FindBindingsInBTree visitor = new FindBindingsInBTree(getLinkageImpl(), name.toCharArray(),
@@ -167,15 +184,22 @@ class PDOMCPPNamespace extends PDOMCPPBinding
 						}
 					}
 				} else {
-					FindBindingsInBTree visitor = new FindBindingsInBTree(getLinkageImpl(), name.toCharArray(), 
-							(name.getParent() instanceof ICPPASTQualifiedName
-									&& ((ICPPASTQualifiedName)name.getParent()).getLastName() != name)
-								? PDOMCPPLinkage.CPPNAMESPACE : PDOMCPPLinkage.CPPVARIABLE);
-					getIndex().accept(visitor);
-					IBinding[] bindings = visitor.getBinding();
-					return bindings.length > 0
-								? bindings[0]
-					           : null;
+					int desiredType = ((name.getParent() instanceof ICPPASTQualifiedName)
+							&& ((ICPPASTQualifiedName)name.getParent()).getLastName() != name)
+							? PDOMCPPLinkage.CPPNAMESPACE : PDOMCPPLinkage.CPPVARIABLE;
+					FindBindingByLinkageConstant visitor2 = new FindBindingByLinkageConstant(getLinkageImpl(), name.toCharArray(), desiredType);
+					getIndex().accept(visitor2);
+					if(visitor2.getResult()!=null) {
+						return visitor2.getResult();
+					}
+					
+						visitor2 = new FindBindingByLinkageConstant(getLinkageImpl(), name.toCharArray(), PDOMCPPLinkage.CPPTYPEDEF);
+						getIndex().accept(visitor2);
+						if(visitor2.getResult()!=null) {
+							return visitor2.getResult();
+						}
+					
+					return null;
 				}
 			} else if (parent instanceof IASTNamedTypeSpecifier) {
 				FindBindingsInBTree visitor = new FindBindingsInBTree(getLinkageImpl(), name.toCharArray(), PDOMCPPLinkage.CPPCLASSTYPE);

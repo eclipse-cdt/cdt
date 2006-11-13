@@ -14,6 +14,7 @@ package org.eclipse.cdt.internal.core.pdom.dom;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.DOMException;
+import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.internal.core.index.IIndexFragment;
@@ -150,8 +151,27 @@ public abstract class PDOMBinding extends PDOMNamedNode implements IIndexFragmen
 		return new char[0];
 	}
 	
-	public IScope getScope() throws DOMException {
-		// TODO implement this
+	public IScope getParent() throws DOMException {
+		try {
+			IBinding parent = getParentBinding();
+			if(parent instanceof IScope) {
+				return (IScope) parent;
+			}
+		} catch(CoreException ce) {
+			CCorePlugin.log(ce);
+		}
+		return null;
+	}
+	
+	public final IScope getScope() throws DOMException {
+		try {
+			IBinding parent = getParentBinding(); 
+			if(parent instanceof IScope) {
+				return (IScope) parent;
+			}
+		} catch(CoreException ce) {
+			CCorePlugin.log(ce);
+		}
 		return null;
 	}
 	
@@ -181,7 +201,7 @@ public abstract class PDOMBinding extends PDOMNamedNode implements IIndexFragmen
 	/**
      * Convenience method to shorten subclass file length
      */
-	protected void fail() { throw new PDOMNotImplementedError(); }
+	protected final void fail() { throw new PDOMNotImplementedError(); }
 
 	public boolean mayHaveChildren() {
 		return false;

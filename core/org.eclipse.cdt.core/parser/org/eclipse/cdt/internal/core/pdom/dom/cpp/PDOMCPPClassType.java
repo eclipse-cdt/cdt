@@ -22,27 +22,40 @@ import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.IName;
 import org.eclipse.cdt.core.dom.IPDOMNode;
 import org.eclipse.cdt.core.dom.IPDOMVisitor;
+import org.eclipse.cdt.core.dom.ast.ASTNodeProperty;
 import org.eclipse.cdt.core.dom.ast.DOMException;
+import org.eclipse.cdt.core.dom.ast.IASTFieldReference;
+import org.eclipse.cdt.core.dom.ast.IASTFunctionCallExpression;
+import org.eclipse.cdt.core.dom.ast.IASTIdExpression;
 import org.eclipse.cdt.core.dom.ast.IASTName;
+import org.eclipse.cdt.core.dom.ast.IASTNamedTypeSpecifier;
+import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IField;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBase;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
+import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.internal.core.Util;
+import org.eclipse.cdt.internal.core.dom.bid.ILocalBindingIdentity;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.db.PDOMNodeLinkedList;
+import org.eclipse.cdt.internal.core.pdom.dom.FindBindingByLinkageConstant;
+import org.eclipse.cdt.internal.core.pdom.dom.FindEquivalentBinding;
 import org.eclipse.cdt.internal.core.pdom.dom.IPDOMMemberOwner;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMLinkage;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMName;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
+import org.eclipse.cdt.internal.core.pdom.dom.PDOMNotImplementedError;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.Status;
 
 /**
  * @author Doug Schaefer
@@ -52,16 +65,16 @@ import org.eclipse.core.runtime.CoreException;
  * aftodo - contract get Methods/Fields not honoured?
  */
 class PDOMCPPClassType extends PDOMCPPBinding implements ICPPClassType,
-		ICPPClassScope, IPDOMMemberOwner {
+ICPPClassScope, IPDOMMemberOwner {
 
 	private static final int FIRSTBASE = PDOMCPPBinding.RECORD_SIZE + 0;
 	private static final int KEY = PDOMCPPBinding.RECORD_SIZE + 4; // byte
 	private static final int MEMBERLIST = PDOMCPPBinding.RECORD_SIZE + 8;
-	
+
 	protected static final int RECORD_SIZE = PDOMCPPBinding.RECORD_SIZE + 12;
 
 	public PDOMCPPClassType(PDOM pdom, PDOMNode parent, ICPPClassType classType)
-			throws CoreException {
+	throws CoreException {
 		super(pdom, parent, classType.getName().toCharArray());
 
 		try {
@@ -71,11 +84,11 @@ class PDOMCPPClassType extends PDOMCPPBinding implements ICPPClassType,
 		}
 		// linked list is initialized by storage being zero'd by malloc
 	}
-	
+
 	public PDOMCPPClassType(PDOM pdom, int bindingRecord) {
 		super(pdom, bindingRecord);
 	}
-	
+
 	public void addMember(PDOMNode member) throws CoreException {
 		PDOMNodeLinkedList list = new PDOMNodeLinkedList(pdom, record + MEMBERLIST, getLinkageImpl());
 		list.addMember(member);
@@ -98,21 +111,20 @@ class PDOMCPPClassType extends PDOMCPPBinding implements ICPPClassType,
 		int rec = base != null ? base.getRecord() : 0;
 		pdom.getDB().putInt(record + FIRSTBASE, rec);
 	}
-	
+
 	public void addBase(PDOMCPPBase base) throws CoreException {
 		PDOMCPPBase firstBase = getFirstBase();
 		base.setNextBase(firstBase);
 		setFirstBase(base);
 	}
-	
+
 	public boolean isSameType(IType type) {
 		if (type instanceof PDOMBinding)
 			return record == ((PDOMBinding)type).getRecord();
 		else
-			// TODO - should we check for real?
-			return false;
+			throw new PDOMNotImplementedError();
 	}
-	
+
 	public ICPPBase[] getBases() throws DOMException {
 		try {
 			List list = new ArrayList();
@@ -132,7 +144,7 @@ class PDOMCPPClassType extends PDOMCPPBinding implements ICPPClassType,
 		PDOMNodeLinkedList list = new PDOMNodeLinkedList(pdom, record + MEMBERLIST, getLinkageImpl());
 		list.accept(visitor);
 	}
-	
+
 	private static class GetMethods implements IPDOMVisitor {
 		private final List methods;
 		public GetMethods(List methods) {
@@ -152,7 +164,7 @@ class PDOMCPPClassType extends PDOMCPPBinding implements ICPPClassType,
 			return (ICPPMethod[])methods.toArray(new ICPPMethod[methods.size()]); 
 		}
 	}
-	
+
 	public ICPPMethod[] getDeclaredMethods() throws DOMException {
 		try {
 			GetMethods methods = new GetMethods();
@@ -167,11 +179,11 @@ class PDOMCPPClassType extends PDOMCPPBinding implements ICPPClassType,
 		if (visited.contains(this))
 			return;
 		visited.add(this);
-		
+
 		// Get my members
 		GetMethods myMethods = new GetMethods(methods);
 		accept(myMethods);
-		
+
 		// Visit my base classes
 		for (PDOMCPPBase base = getFirstBase(); base != null; base = base.getNextBase()) {
 			try {
@@ -183,7 +195,7 @@ class PDOMCPPClassType extends PDOMCPPBinding implements ICPPClassType,
 			}
 		}
 	}
-	
+
 	public ICPPMethod[] getAllDeclaredMethods() throws DOMException {
 		List methods = new ArrayList();
 		Set visited = new HashSet();
@@ -214,7 +226,7 @@ class PDOMCPPClassType extends PDOMCPPBinding implements ICPPClassType,
 			return (IField[])fields.toArray(new IField[fields.size()]);
 		}
 	}
-	
+
 	public IField[] getFields() throws DOMException {
 		try {
 			GetFields visitor = new GetFields();
@@ -241,7 +253,7 @@ class PDOMCPPClassType extends PDOMCPPBinding implements ICPPClassType,
 			return (ICPPClassType[])nestedClasses.toArray(new ICPPClassType[nestedClasses.size()]);
 		}
 	}
-	
+
 	public ICPPClassType[] getNestedClasses() throws DOMException {
 		try {
 			GetNestedClasses visitor = new GetNestedClasses();
@@ -265,7 +277,7 @@ class PDOMCPPClassType extends PDOMCPPBinding implements ICPPClassType,
 			return ICPPClassType.k_class; // or something
 		}
 	}
-	
+
 	public boolean isGloballyQualified() throws DOMException {
 		try {
 			return getParentNode() instanceof PDOMLinkage;
@@ -291,40 +303,216 @@ class PDOMCPPClassType extends PDOMCPPBinding implements ICPPClassType,
 	}
 
 	public void addChild(PDOMNode member) throws CoreException {addMember(member);}
-	
+
 	public ICPPConstructor[] getConstructors() throws DOMException {
 		// TODO
 		return new ICPPConstructor[0];
 	}
-	
+
 	public boolean isFullyCached() throws DOMException {return true;}
-	
+
 	public IBinding getBinding(IASTName name, boolean resolve) throws DOMException {
+		IASTNode parent = name.getParent();
+		
+		ASTNodeProperty prop = name.getPropertyInParent();
+
+		PDOMLinkage linkage;
+		try {
+			linkage = getLinkageImpl();
+
+			if (name instanceof ICPPASTQualifiedName) {
+				IASTName lastName = ((ICPPASTQualifiedName)name).getLastName();
+				return lastName != null ? lastName.resolveBinding() : null;
+			}
+			
+			if(parent instanceof ICPPASTQualifiedName) {
+				IASTName[] names = ((ICPPASTQualifiedName)parent).getNames();
+				int index = ArrayUtil.indexOf(names, name);
+				
+				if (index == names.length - 1) { // tip of qn
+					parent = parent.getParent();
+				} else {
+					{ // bail out if this is not the outerscope of the name being resolved
+						if(index==-1) {
+							throw new PDOMNotImplementedError();
+						} else {
+							if(index>0) {
+								// make sure we're the class they're talking about
+								PDOMBinding binding = (PDOMBinding) pdom.findBinding(names[index-1]);
+								if(!equals(binding)) {
+									return null;
+								}
+							} else {
+								// ok - just search us and return null if there is nothing in here
+							}
+						}
+					}
+					
+					FindBindingByLinkageConstant visitor = new FindBindingByLinkageConstant(linkage, name.toCharArray(), PDOMCPPLinkage.CPPCLASSTYPE);
+					try {
+						accept(visitor);
+					} catch(CoreException e) {
+						if (e.getStatus().equals(Status.OK_STATUS)) {
+							return visitor.getResult();
+						} else {
+							CCorePlugin.log(e);
+						}
+					}
+					visitor = new FindBindingByLinkageConstant(linkage, name.toCharArray(), PDOMCPPLinkage.CPPMETHOD);
+					try {
+						accept(visitor);
+					} catch(CoreException e) {
+						if (e.getStatus().equals(Status.OK_STATUS)) {
+							return visitor.getResult();
+						} else {
+							CCorePlugin.log(e);
+						}
+					}
+					visitor = new FindBindingByLinkageConstant(linkage, name.toCharArray(), PDOMCPPLinkage.CPPFIELD);
+					try {
+						accept(visitor);
+					} catch(CoreException e) {
+						if (e.getStatus().equals(Status.OK_STATUS)) {
+							return visitor.getResult();
+						} else {
+							CCorePlugin.log(e);
+						}
+					}
+					visitor = new FindBindingByLinkageConstant(linkage, name.toCharArray(), PDOMCPPLinkage.CPPENUMERATION);
+					try {
+						accept(visitor);
+					} catch(CoreException e) {
+						if (e.getStatus().equals(Status.OK_STATUS)) {
+							return visitor.getResult();
+						} else {
+							CCorePlugin.log(e);
+						}
+					}
+					visitor = new FindBindingByLinkageConstant(linkage, name.toCharArray(), PDOMCPPLinkage.CPPENUMERATOR);
+					try {
+						accept(visitor);
+					} catch(CoreException e) {
+						if (e.getStatus().equals(Status.OK_STATUS)) {
+							return visitor.getResult();
+						} else {
+							CCorePlugin.log(e);
+						}
+					}
+					return null; // not found in this scope
+				}
+			}
+			
+			IASTNode eParent = parent.getParent();
+			if(parent instanceof IASTIdExpression) {
+				FindBindingByLinkageConstant visitor = new FindBindingByLinkageConstant(linkage, name.toCharArray(), PDOMCPPLinkage.CPPENUMERATOR);
+				try {
+					accept(visitor);
+				} catch(CoreException e) {
+					if (e.getStatus().equals(Status.OK_STATUS)) {
+						return visitor.getResult();
+					} else {
+						CCorePlugin.log(e);
+					}
+				}
+			} else if(eParent instanceof IASTFunctionCallExpression) {
+				if(parent.getPropertyInParent().equals(IASTFunctionCallExpression.FUNCTION_NAME)) {
+					IType[] types = ((PDOMCPPLinkage)linkage).getTypes(
+							((IASTFunctionCallExpression)eParent).getParameterExpression()
+					);
+					if(types!=null) {
+						ILocalBindingIdentity bid = new CPPBindingIdentity.Holder(
+								new String(name.toCharArray()),
+								PDOMCPPLinkage.CPPFUNCTION,
+								types);
+						FindEquivalentBinding feb = new FindEquivalentBinding(linkage, bid);
+						try {
+							accept(feb);
+						} catch(CoreException e) {
+							if (e.getStatus().equals(Status.OK_STATUS)) {
+								return feb.getResult();
+							} else {
+								CCorePlugin.log(e);
+							}
+						}
+						return feb.getResult();
+					}
+				} else if(parent.getPropertyInParent().equals(IASTFunctionCallExpression.PARAMETERS)) {
+					if(parent instanceof IASTFieldReference) {
+						FindBindingByLinkageConstant visitor = new FindBindingByLinkageConstant(linkage, name.toCharArray(), PDOMCPPLinkage.CPPFIELD);
+						try {
+							accept(visitor);
+						} catch(CoreException e) {
+							if (e.getStatus().equals(Status.OK_STATUS)) {
+								return visitor.getResult();
+							} else {
+								CCorePlugin.log(e);
+							}
+						}						
+					}
+				}
+			} else if(prop.equals(IASTFieldReference.FIELD_NAME)) {
+				FindBindingByLinkageConstant visitor = new FindBindingByLinkageConstant(linkage, name.toCharArray(), PDOMCPPLinkage.CPPFIELD);
+				try {
+					accept(visitor);
+				} catch(CoreException e) {
+					if (e.getStatus().equals(Status.OK_STATUS)) {
+						return visitor.getResult();
+					} else {
+						CCorePlugin.log(e);
+					}
+				}
+			} else if (parent instanceof IASTNamedTypeSpecifier) {
+				FindBindingByLinkageConstant visitor = new FindBindingByLinkageConstant(linkage, name.toCharArray(), PDOMCPPLinkage.CPPCLASSTYPE);
+				try {
+					accept(visitor);
+				} catch(CoreException e) {
+					if (e.getStatus().equals(Status.OK_STATUS)) {
+						return visitor.getResult();
+					} else {
+						CCorePlugin.log(e);
+					}
+				}
+				visitor = new FindBindingByLinkageConstant(linkage, name.toCharArray(), PDOMCPPLinkage.CPPENUMERATION);
+				try {
+					accept(visitor);
+				} catch(CoreException e) {
+					if (e.getStatus().equals(Status.OK_STATUS)) {
+						return visitor.getResult();
+					} else {
+						CCorePlugin.log(e);
+					}
+				}
+			}
+		} catch(CoreException e) {
+			CCorePlugin.log(e);
+			return null;
+		}
+
 		return null;
 	}
 
-	public IScope getParent() throws DOMException {
-		return null;
-	}
-	
 	// Not implemented
-	
+
 	public Object clone() {fail();return null;}
 	public IField findField(String name) throws DOMException {fail();return null;}
 	public IBinding[] getFriends() throws DOMException {fail();return null;}
 	public ICPPMethod[] getImplicitMethods() {fail(); return null;}
 	public IBinding[] find(String name) throws DOMException {fail();return null;}
 	public ICPPField[] getDeclaredFields() throws DOMException {fail();return null;}
-	
-	public IScope getScope() throws DOMException {
+
+	public IScope getParent() throws DOMException {
 		try {
-			return (IScope)getParentNode();
+			IBinding parent = getParentBinding();
+			if(parent instanceof IScope) {
+				return (IScope) parent;
+			}
 		} catch(CoreException ce) {
 			CCorePlugin.log(ce);
-			return null;
 		}
+
+		return null;
 	}
-	
+
 	public boolean mayHaveChildren() {
 		return true;
 	}

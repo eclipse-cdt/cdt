@@ -64,7 +64,7 @@ public class PDOM extends PlatformObject implements IIndexFragment, IPDOM {
 
 	private Database db;
 
-	public static final int VERSION = 15;
+	public static final int VERSION = 16;
 	// 0 - the beginning of it all
 	// 1 - first change to kick off upgrades
 	// 2 - added file inclusions
@@ -81,7 +81,7 @@ public class PDOM extends PlatformObject implements IIndexFragment, IPDOM {
 	// 13 - CV-qualifiers, storage class specifiers, function/method annotations
 	// 14 - added timestamps for files (bug 149571)
 	// 15 - fixed offsets for pointer types and qualifier types and PDOMCPPVariable (bug 160540). 
-
+	// 16 - have PDOMCPPField store type information, and PDOMCPPNamespaceAlias store what it is aliasing
 
 	public static final int LINKAGES = Database.DATA_AREA;
 	public static final int FILE_INDEX = Database.DATA_AREA + 4;

@@ -16,6 +16,7 @@ import org.eclipse.cdt.core.dom.ast.c.ICBasicType;
 import org.eclipse.cdt.core.dom.ast.c.ICPointerType;
 import org.eclipse.cdt.core.dom.ast.c.ICQualifierType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBasicType;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPReferenceType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateTypeParameter;
@@ -196,7 +197,16 @@ public class ASTTypeUtil {
 //				}
 //			} catch (DOMException e) {}
 //			result.append(SPACE);
-			result.append(((ICompositeType)type).getName());
+			if(type instanceof ICPPClassType) {
+				try {
+					String qn = CPPVisitor.renderQualifiedName(((ICPPClassType)type).getQualifiedName());
+					result.append(qn);
+				} catch(DOMException de) {
+					result.append(((ICompositeType)type).getName());
+				}
+			} else {
+				result.append(((ICompositeType)type).getName());
+			}
 		} else if (type instanceof ICPPReferenceType) {
 			result.append(Keywords.cpAMPER);
 		} else if (type instanceof ICPPTemplateTypeParameter) {

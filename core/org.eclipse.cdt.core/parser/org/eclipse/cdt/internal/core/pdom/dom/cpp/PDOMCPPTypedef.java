@@ -17,16 +17,16 @@ import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.internal.core.Util;
+import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
-import org.eclipse.cdt.internal.core.pdom.dom.PDOMNotImplementedError;
 import org.eclipse.core.runtime.CoreException;
 
 /**
  * @author Doug Schaefer
  */
-class PDOMCPPTypedef extends PDOMBinding implements ITypedef {
+class PDOMCPPTypedef extends PDOMBinding implements ITypedef, ITypeContainer {
 
 	private static final int TYPE = PDOMBinding.RECORD_SIZE + 0;
 	
@@ -67,12 +67,30 @@ class PDOMCPPTypedef extends PDOMBinding implements ITypedef {
 		}
 	}
 
-	public boolean isSameType(IType type) {
-		throw new PDOMNotImplementedError();
+	public boolean isSameType(IType o) {
+		if( o == this )
+            return true;
+	    if( o instanceof ITypedef )
+            try {
+                IType t = getType();
+                if( t != null )
+                    return t.isSameType( ((ITypedef)o).getType());
+                return false;
+            } catch ( DOMException e ) {
+                return false;
+            }
+	        
+        try {
+        	IType t = getType();
+        	if( t != null )
+        		return t.isSameType( o );
+        } catch(DOMException de) {
+        	CCorePlugin.log(de);
+        }
+	    
+	    return false;
 	}
 
-	public Object clone() {
-		throw new PDOMNotImplementedError();
-	}
-	
+	public Object clone() { fail(); return null; }
+	public void setType(IType type) { fail(); }
 }

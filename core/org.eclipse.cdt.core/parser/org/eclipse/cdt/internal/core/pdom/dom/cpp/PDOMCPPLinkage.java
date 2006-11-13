@@ -13,24 +13,29 @@
 
 package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 
+import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.DOMException;
+import org.eclipse.cdt.core.dom.ast.IASTBinaryExpression;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTExpressionList;
 import org.eclipse.cdt.core.dom.ast.IASTFieldReference;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionCallExpression;
 import org.eclipse.cdt.core.dom.ast.IASTIdExpression;
-import org.eclipse.cdt.core.dom.ast.IASTLiteralExpression;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNamedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
+import org.eclipse.cdt.core.dom.ast.IASTUnaryExpression;
 import org.eclipse.cdt.core.dom.ast.IBinding;
+import org.eclipse.cdt.core.dom.ast.ICompositeType;
 import org.eclipse.cdt.core.dom.ast.IEnumeration;
 import org.eclipse.cdt.core.dom.ast.IEnumerator;
+import org.eclipse.cdt.core.dom.ast.IFunctionType;
 import org.eclipse.cdt.core.dom.ast.IParameter;
 import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTBinaryExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFieldReference;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceAlias;
@@ -43,19 +48,21 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespaceAlias;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespaceScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPVariable;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier;
 import org.eclipse.cdt.core.dom.ast.gnu.cpp.GPPLanguage;
 import org.eclipse.cdt.core.model.ILanguage;
+import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.internal.core.Util;
 import org.eclipse.cdt.internal.core.dom.bid.IBindingIdentityFactory;
 import org.eclipse.cdt.internal.core.dom.bid.ILocalBindingIdentity;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTIdExpression;
+import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPBlockScope;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPImplicitMethod;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPPointerType;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPVariable;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPSemantics;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.dom.FindBindingByLinkageConstant;
 import org.eclipse.cdt.internal.core.pdom.dom.FindEquivalentBinding;
@@ -65,6 +72,7 @@ import org.eclipse.cdt.internal.core.pdom.dom.PDOMFile;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMLinkage;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMName;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
+import org.eclipse.cdt.internal.core.pdom.dom.PDOMNotImplementedError;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Status;
 
@@ -123,9 +131,10 @@ class PDOMCPPLinkage extends PDOMLinkage {
 
 		IBinding binding = name.resolveBinding();
 
-		if (binding == null || binding instanceof IProblemBinding)
+		if (binding == null || binding instanceof IProblemBinding) {
 			// Can't tell what it is
 			return null;
+		}
 
 		if (binding instanceof IParameter)
 			// Skip parameters (TODO and others I'm sure)
@@ -288,6 +297,7 @@ class PDOMCPPLinkage extends PDOMLinkage {
 
 	private PDOMBinding _resolveBinding(IASTName name) throws CoreException, DOMException {
 		// mstodo revisit
+
 		IBinding origBinding = name.getBinding();	
 		if (origBinding != null)
 			return adaptBinding(origBinding);
@@ -298,6 +308,7 @@ class PDOMCPPLinkage extends PDOMLinkage {
 				return resolveBinding(names[0]);
 			IASTName lastName = names[names.length - 1];
 			PDOMBinding nsBinding = adaptBinding(names[names.length - 2].resolveBinding());
+			// aftodo - namespace aliases?
 			if (nsBinding instanceof IScope) {
 				return (PDOMBinding) ((IScope)nsBinding).getBinding(lastName, true);
 			}
@@ -319,21 +330,68 @@ class PDOMCPPLinkage extends PDOMLinkage {
 			// reference
 			IASTNode eParent = parent.getParent();
 			if (eParent instanceof IASTFunctionCallExpression) {
-				if(parent.getPropertyInParent().equals(IASTFunctionCallExpression.FUNCTION_NAME)) {
-					return resolveFunctionCall((IASTFunctionCallExpression) eParent, (IASTIdExpression) parent, name);
+				if (parent.getPropertyInParent().equals(IASTFunctionCallExpression.FUNCTION_NAME)) {
+					return resolveFunctionCall(
+							(IASTFunctionCallExpression) eParent,
+							(IASTIdExpression) parent, name);
+				} else if (parent.getPropertyInParent().equals(IASTFunctionCallExpression.PARAMETERS)) {
+					int constant = (name.getParent() instanceof ICPPASTQualifiedName
+							&& ((ICPPASTQualifiedName) name.getParent()).getLastName() != name)
+							? CPPNAMESPACE : CPPVARIABLE;
+					FindBindingByLinkageConstant finder = new FindBindingByLinkageConstant(
+							this, name.toCharArray(), constant);
+					getIndex().accept(finder);
+					return finder.getResult();
 				}
 			} else {
-				int constant = (name.getParent() instanceof ICPPASTQualifiedName
-						&& ((ICPPASTQualifiedName)name.getParent()).getLastName() != name)
-						? CPPNAMESPACE : CPPVARIABLE; 
-				FindBindingByLinkageConstant finder = new FindBindingByLinkageConstant(this, name.toCharArray(), constant);
+				// if the address of me is taken, and assigned to something,
+				// find out the type of the thing I'm assigned to
+				if (eParent instanceof IASTUnaryExpression) {
+					IASTUnaryExpression unaryExp = (IASTUnaryExpression) eParent;
+					if (unaryExp.getOperator() == IASTUnaryExpression.op_amper) {
+						IASTNode epParent = eParent.getParent();
+						if (epParent instanceof IASTBinaryExpression) {
+							if (((IASTBinaryExpression) epParent).getOperator() == IASTBinaryExpression.op_assign) {
+								IASTExpression left = ((IASTBinaryExpression) epParent).getOperand1();
+								IType type = CPPSemantics.getUltimateType(left.getExpressionType(), false);
+								if (type instanceof IFunctionType) {
+									ILocalBindingIdentity lbi = new CPPBindingIdentity.Holder(
+											new String(name.toCharArray()),
+											CPPFUNCTION,
+											((IFunctionType) type).getParameterTypes());
+									FindEquivalentBinding feb = new FindEquivalentBinding(this, lbi);
+									getIndex().accept(feb);
+									return feb.getResult();
+								}
+							}
+						}
+					}
+				}
+
+				FindBindingByLinkageConstant finder = new FindBindingByLinkageConstant(this, name.toCharArray(), CPPVARIABLE);
 				getIndex().accept(finder);
+
+				if (finder.getResult() == null) {
+					finder = new FindBindingByLinkageConstant(this, name
+							.toCharArray(), CPPENUMERATOR);
+					getIndex().accept(finder);
+				}
 				return finder.getResult();
 			}
 		} else if (parent instanceof IASTNamedTypeSpecifier) {
 			FindBindingByLinkageConstant finder = new FindBindingByLinkageConstant(this, name.toCharArray(), CPPCLASSTYPE);
 			getIndex().accept(finder);
 			PDOMBinding result = finder.getResult();
+			if(result==null) {
+				finder = new FindBindingByLinkageConstant(this, name.toCharArray(), CPPENUMERATION);
+				getIndex().accept(finder);
+				result = finder.getResult();
+			}
+			if(result==null) {
+				finder = new FindBindingByLinkageConstant(this, name.toCharArray(), CPPTYPEDEF);
+				getIndex().accept(finder);
+				result = finder.getResult();
+			}
 			return result;
 		} else if (parent instanceof ICPPASTNamespaceAlias) {
 			FindBindingByLinkageConstant finder = new FindBindingByLinkageConstant(this, name.toCharArray(), CPPNAMESPACE);
@@ -349,8 +407,31 @@ class PDOMCPPLinkage extends PDOMLinkage {
 					if(name.getPropertyInParent().equals(IASTFieldReference.FIELD_NAME)) {
 						return resolveFunctionCall((IASTFunctionCallExpression) eParent, fieldOwner, name);
 					}
+				} else {
+					IBinding fieldOwnerBinding = fieldOwner.getName().getBinding();
+					if(fieldOwnerBinding instanceof ICPPVariable) { 
+						IType type = ((ICPPVariable)fieldOwnerBinding).getType();
+						if(type instanceof ICompositeType) {
+							PDOMBinding pdomFOB = adaptBinding( (ICompositeType)  type);
+							FindBindingByLinkageConstant visitor = new FindBindingByLinkageConstant(this, name.toCharArray(), PDOMCPPLinkage.CPPFIELD);
+							try {
+								((PDOMBinding)pdomFOB).accept(visitor);
+							} catch (CoreException e) {
+								if (e.getStatus().equals(Status.OK_STATUS)) {
+									return visitor.getResult();
+								}
+								else {
+									throw e;
+								}
+							}
+						}
+					}
 				}
 			}
+		} else if(parent instanceof ICPPASTBaseSpecifier) {
+			FindBindingByLinkageConstant finder = new FindBindingByLinkageConstant(this, name.toCharArray(), CPPCLASSTYPE);
+			getIndex().accept(finder);
+			return finder.getResult();
 		}
 
 		return null;
@@ -361,11 +442,17 @@ class PDOMCPPLinkage extends PDOMLinkage {
 	 * @param paramExp the parameter expression to get types for (null indicates void function/method)
 	 * @return an array of types or null if types could not be determined (because of missing semantic information in the AST)
 	 */
-	public IType[] getTypes(IASTExpression paramExp) {
+	public IType[] getTypes(IASTExpression paramExp) throws DOMException {
 		IType[] types = null;
 		
 		if(paramExp==null) { // void function/method
 			types = new IType[0]; 
+		} else if(paramExp instanceof ICPPASTNewExpression) {
+			// aftodo - I'm not 100% sure why a new expression doesn't
+			// have a pointer type already
+			ICPPASTNewExpression exp3 = (ICPPASTNewExpression) paramExp;
+			IType type = exp3.getExpressionType();
+			types = new IType[] {new CPPPointerType(type)};
 		} else {
 			if(paramExp instanceof IASTExpressionList) {
 				IASTExpressionList list = (IASTExpressionList) paramExp;
@@ -374,21 +461,22 @@ class PDOMCPPLinkage extends PDOMLinkage {
 				for(int i=0; i<paramExps.length; i++) {
 					types[i] = paramExps[i].getExpressionType();
 				}
-			} else if(paramExp instanceof IASTLiteralExpression) {
-				IASTLiteralExpression litExp = (IASTLiteralExpression) paramExp;
-				types = new IType[] {litExp.getExpressionType()};
-			} else if(paramExp instanceof ICPPASTNewExpression) {
-				ICPPASTNewExpression exp3 = (ICPPASTNewExpression) paramExp;
-				IType type = exp3.getExpressionType();
-				types = new IType[] {new CPPPointerType(type)};
-			} else if(paramExp instanceof CPPASTIdExpression) {
-				IBinding nameBinding = ((CPPASTIdExpression)paramExp).getName().resolveBinding();
-				if(nameBinding instanceof CPPVariable) {
-					types =  new IType[] {((CPPVariable)nameBinding).getType()};
-				}
+			} else {
+				types = new IType[] {paramExp.getExpressionType()};
 			}
 		}
 		
+		if(types!=null) { // aftodo - unit test coverage of this is low
+			for(int i=0; i<types.length; i++) {
+				// aftodo - assumed this always terminates
+				while(types[i] instanceof ITypedef) {
+					types[i] = ((ITypedef)types[i]).getType();
+		 		}
+				if(types[i] instanceof ProblemBinding)
+					return null; 
+			}
+		}
+
 		return types;
 	}
 
@@ -397,40 +485,70 @@ class PDOMCPPLinkage extends PDOMLinkage {
 	 * 
 	 * (It does work though)
 	 */
-	public PDOMBinding resolveFunctionCall(IASTFunctionCallExpression callExp, IASTIdExpression id, IASTName name) throws CoreException, DOMException {
+	public PDOMBinding resolveFunctionCall(IASTFunctionCallExpression callExp,
+			IASTIdExpression id, IASTName name) throws CoreException,
+			DOMException {
 		IASTExpression paramExp = callExp.getParameterExpression();
 
 		IType[] types = getTypes(paramExp);
-		if(types!=null) {
+		if (types != null) {
 			IBinding parentBinding = id.getName().getBinding();
 			ILocalBindingIdentity bid = null;
-			if(parentBinding == null) { // filescope
-				bid = new CPPBindingIdentity.Holder(
-						new String(name.toCharArray()),
-						CPPFUNCTION,
-						types);
-				FindEquivalentBinding feb = new FindEquivalentBinding(this, bid);
-				getIndex().accept(feb);
-				return feb.getResult();
-			} else if(parentBinding instanceof ICPPVariable) {
+
+			if (parentBinding instanceof ICPPVariable) {
+
 				ICPPVariable v = (ICPPVariable) parentBinding;
 				IType type = v.getType();
-				if(type instanceof PDOMBinding) {
-					bid = new CPPBindingIdentity.Holder(
-							new String(name.toCharArray()),
-							CPPMETHOD,
-							types);
-					FindEquivalentBinding feb = new FindEquivalentBinding(this, bid);
+				if (type instanceof PDOMBinding) {
+					bid = new CPPBindingIdentity.Holder(new String(name
+							.toCharArray()), CPPMETHOD, types);
+					FindEquivalentBinding feb = new FindEquivalentBinding(this,
+							bid);
 					try {
-						((PDOMBinding)type).accept(feb);
+						((PDOMBinding) type).accept(feb);
 					} catch (CoreException e) {
 						if (e.getStatus().equals(Status.OK_STATUS)) {
 							return feb.getResult();
-						}
-						else {
+						} else {
 							throw e;
 						}
 					}
+				}
+			} else {
+				IASTNode expPNode = callExp.getParent();
+				if (expPNode instanceof IASTBinaryExpression) {
+					IASTBinaryExpression bExp = (IASTBinaryExpression) expPNode;
+					switch (bExp.getOperator()) {
+					case ICPPASTBinaryExpression.op_pmarrow: /* fall through */
+					case ICPPASTBinaryExpression.op_pmdot:
+						IASTExpression left = bExp.getOperand1();
+						IType t = CPPSemantics.getUltimateType(left.getExpressionType(), false);
+						if (t instanceof PDOMCPPClassType) {
+							bid = new CPPBindingIdentity.Holder(
+									new String(name.toCharArray()),
+									CPPMETHOD,
+									types);
+							FindEquivalentBinding feb = new FindEquivalentBinding(this, bid);
+							try {
+								((PDOMCPPClassType) t).accept(feb);
+							} catch (CoreException e) {
+								if (e.getStatus().equals(Status.OK_STATUS)) {
+									return feb.getResult();
+								} else {
+									throw e;
+								}
+							}
+							return null;
+						}
+					}
+				} else { // filescope
+					bid = new CPPBindingIdentity.Holder(
+							new String(name.toCharArray()),
+							CPPFUNCTION,
+							types);
+					FindEquivalentBinding feb = new FindEquivalentBinding(this,bid);
+					getIndex().accept(feb);
+					return feb.getResult();
 				}
 			}
 		}
@@ -443,29 +561,44 @@ class PDOMCPPLinkage extends PDOMLinkage {
 
 		// Must be a namespace or a class
 		IASTName[] names = qualName.getNames();
-		IASTName nsName = null;
-		for (int i = 0; i < names.length; ++i) {
-			if (names[i] == name)
-				break;
-			else
-				nsName = names[i];
-		}
-		if (nsName == names[names.length - 1])
-			// didn't find our name here, weird...
-			return null;
+		int index = ArrayUtil.indexOf(names, name);
+		if(index!=-1) {
+			if (index == 0) {
+				// we are at the root
+				FindBindingByLinkageConstant finder = new FindBindingByLinkageConstant(
+						this, name.toCharArray(), CPPNAMESPACE);
 
-		if (nsName == null) {
-			// we are at the root
-
-			FindBindingByLinkageConstant finder = new FindBindingByLinkageConstant(this, name.toCharArray(), CPPNAMESPACE);
-			getIndex().accept(finder);
-			if(finder.getResult()==null) {
-				finder = new FindBindingByLinkageConstant(this, name.toCharArray(), CPPCLASSTYPE);
 				getIndex().accept(finder);
+				if (finder.getResult() == null) {
+					finder = new FindBindingByLinkageConstant(this, name.toCharArray(), CPPCLASSTYPE);
+					getIndex().accept(finder);
+				}
+				if (finder.getResult() == null) {
+					finder = new FindBindingByLinkageConstant(this, name.toCharArray(), CPPNAMESPACEALIAS);
+					getIndex().accept(finder);
+				}
+				return finder.getResult();
+			} else {
+				try {
+					PDOMBinding binding = adaptBinding(names[index-1].getBinding());
+					if(binding instanceof PDOMCPPClassType) {
+						// TODO - a test case for this..
+						return (PDOMBinding) ((PDOMCPPClassType)binding).getBinding(name, true);
+					} else if(binding instanceof PDOMCPPNamespaceAlias) {
+						PDOMCPPNamespace pns = (PDOMCPPNamespace) ((PDOMCPPNamespaceAlias) binding).getBinding();
+						return (PDOMBinding) ((ICPPNamespaceScope) pns).getBinding(name, true);
+					} else if(binding instanceof PDOMCPPNamespace) {
+						return (PDOMBinding) ((ICPPNamespaceScope)binding).getBinding(name, true);
+					} else {
+						throw new PDOMNotImplementedError(); // aftodo - again I think we can't get here
+					}
+				} catch(DOMException de) {
+					throw new CoreException(CCorePlugin.createStatus(de.getMessage())); // aftodo
+				}
 			}
-			return finder.getResult();
 		} else {
-			// TODO we are in another namespace
+			// aftodo - I don't believe this can happen.. 
+			// didn't find our name here, weird...
 			return null;
 		}
 	}
@@ -477,6 +610,11 @@ class PDOMCPPLinkage extends PDOMLinkage {
 			// aftodo: please review, the binding may be nested in a namespace bug 162011
 			//   it might be necessary to create the binding for the class here.
 			PDOMBinding binding= adaptBinding((ICPPClassType) type);
+			if (binding != null) {
+				return binding;
+			}
+		} else if(type instanceof IEnumeration) {
+			PDOMBinding binding= adaptBinding((IEnumeration) type);
 			if (binding != null) {
 				return binding;
 			}

@@ -22,7 +22,9 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPMember;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.internal.core.CCoreInternals;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.NullProgressMonitor;
 
 /**
  * Tests for verifying whether the PDOM correctly stores information about
@@ -45,6 +47,9 @@ public class CPPFieldTests extends PDOMTestBase {
 
 	protected void tearDown() throws Exception {
 		pdom.releaseReadLock();
+		if (project != null) {
+			project.getProject().delete(IResource.FORCE | IResource.ALWAYS_DELETE_PROJECT_CONTENT, new NullProgressMonitor());
+		}
 	}
 
 	public void testFieldDeclarations() throws Exception {
@@ -101,23 +106,19 @@ public class CPPFieldTests extends PDOMTestBase {
 		assertTrue(field.isStatic());
 	}
 	
-	public void _testIntField() throws Exception {
-		// Type information not yet stored in PDOM.
+	public void testIntField() throws Exception {
 		assertFieldType(pdom, "Class1::c1a", IBasicType.t_int);
 	}
 
-	public void _testDoubleField() throws Exception {
-		// Type information not yet stored in PDOM.
+	public void testDoubleField() throws Exception {
 		assertFieldType(pdom, "Class1::c1b", IBasicType.t_double);
 	}
 
-	public void _testCharField() throws Exception {
-		// Type information not yet stored in PDOM.
+	public void testCharField() throws Exception {
 		assertFieldType(pdom, "Class2::c2a", IBasicType.t_char);
 	}
 
-	public void _testFloatField() throws Exception {
-		// Type information not yet stored in PDOM.
+	public void testFloatField() throws Exception {
 		assertFieldType(pdom, "Class2::c2b", IBasicType.t_float);
 	}
 

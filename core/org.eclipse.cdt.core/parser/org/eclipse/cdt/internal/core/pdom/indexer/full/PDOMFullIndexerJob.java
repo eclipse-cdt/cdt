@@ -140,6 +140,7 @@ abstract class PDOMFullIndexerJob extends PDOMIndexerTask implements IPDOMIndexe
 	protected void addSymbols(IASTTranslationUnit ast, IProgressMonitor pm) throws InterruptedException, CoreException {
 		// Add in the includes
 		final LinkedHashMap symbolMap= new LinkedHashMap(); // makes bugs reproducible
+		prepareInMap(symbolMap, ast.getFilePath());
 		
 		// includes
 		IASTPreprocessorIncludeStatement[] includes = ast.getIncludeDirectives();
@@ -148,6 +149,10 @@ abstract class PDOMFullIndexerJob extends PDOMIndexerTask implements IPDOMIndexe
 			IASTFileLocation sourceLoc = include.getFileLocation();
 			String path= sourceLoc != null ? sourceLoc.getFileName() : ast.getFilePath(); // command-line includes
 			addToMap(symbolMap, 0, path, include);
+			path= include.getPath();
+			if (path != null) {
+				prepareInMap(symbolMap, include.getPath());
+			}
 		}
 	
 		// macros
@@ -228,13 +233,18 @@ abstract class PDOMFullIndexerJob extends PDOMIndexerTask implements IPDOMIndexe
 		fCompletedSources++;
 	}
 
-	private void addToMap(HashMap map, int idx, String path, Object thing) {
+	private void prepareInMap(Map map, String path) {
 		if (filePathsToParse.get(path) != null) {
-			List[] lists= (List[]) map.get(path);
-			if (lists == null) {
-				lists= new ArrayList[]{new ArrayList(), new ArrayList(), new ArrayList()};
+			if (map.get(path) == null) {
+				Object lists= new ArrayList[]{new ArrayList(), new ArrayList(), new ArrayList()};
 				map.put(path, lists);
 			}
+		}
+	}
+			
+	private void addToMap(HashMap map, int idx, String path, Object thing) {
+		List[] lists= (List[]) map.get(path);
+		if (lists != null) {
 			lists[idx].add(thing);
 		}
 	}		

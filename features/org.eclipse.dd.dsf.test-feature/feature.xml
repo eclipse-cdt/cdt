@@ -2,7 +2,7 @@
 <feature
       id="org.eclipse.dd.dsf.test"
       label="DSF Test Feature"
-      version="1.0.0">
+      version="0.9.0">
 
    <description url="http://www.example.com/description">
       [Enter Feature Description here.]
@@ -17,8 +17,8 @@
    </license>
 
    <requires>
-      <import feature="org.eclipse.dd.dsf.mi" version="1.0.0"/>
-      <import feature="org.eclipse.dd.dsf.sdk" version="1.0.0"/>
+      <import feature="org.eclipse.dd.dsf.mi" version="0.9.0"/>
+      <import feature="org.eclipse.dd.dsf.sdk" version="0.9.0"/>
    </requires>
 
    <plugin

@@ -28,6 +28,8 @@
  * Javier Montalvo Orus (Symbian) - Fixing 163264 - FTP Only can not delete first subfolder
  * Michael Scharf (Wind River) - Fix 164223 - Wrong call for setting binary transfer mode
  * Martin Oberhuber (Wind River) - Add Javadoc for getFTPClient(), modify move() to use single connected session
+ * Javier Montalvo Orus (Symbian) - Fixing 164009 - FTP connection shows as connected when login fails
+ * Javier Montalvo Orus (Symbian) - Fixing 164306 - [ftp] FTP console shows plaintext passwords
  ********************************************************************************/
 
 package org.eclipse.rse.services.files.ftp;
@@ -138,7 +140,39 @@ public class FTPService extends AbstractFileService implements IFileService, IFT
 		} else {
 			_ftpClient.connect(_hostName, _portNumber);
 		}
-		_ftpClient.login(_userId, _password);
+		
+		int userReply = _ftpClient.user(_userId);
+		
+		if(FTPReply.isPositiveIntermediate(userReply))
+		{
+			//intermediate response, provide password and hide it from the console
+			
+			String newLine = System.getProperty("line.separator"); //$NON-NLS-1$
+			
+			_ftpClient.registerSpyStream(null);
+			
+			_ftpLoggingOutputStream.write(("PASS ******"+newLine).getBytes()); //$NON-NLS-1$
+			int passReply = _ftpClient.pass(_password);
+			_ftpLoggingOutputStream.write((_ftpClient.getReplyString()+newLine).getBytes());
+			
+			if(_ftpLoggingOutputStream!=null)
+			{
+				_ftpClient.registerSpyStream(_ftpLoggingOutputStream);
+			}
+			
+			if(!FTPReply.isPositiveCompletion(passReply))
+			{
+				String lastMessage = _ftpClient.getReplyString();
+				disconnect();
+				throw new Exception(lastMessage);
+			}
+		}
+		else if(!FTPReply.isPositiveCompletion(userReply))
+		{
+			String lastMessage = _ftpClient.getReplyString();
+			disconnect();
+			throw new Exception(lastMessage);
+		}
 		
 		_userHome = _ftpClient.printWorkingDirectory();
 	}

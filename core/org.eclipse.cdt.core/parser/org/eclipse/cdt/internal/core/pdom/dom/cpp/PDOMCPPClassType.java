@@ -44,6 +44,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.internal.core.Util;
 import org.eclipse.cdt.internal.core.dom.bid.ILocalBindingIdentity;
+import org.eclipse.cdt.internal.core.index.IIndexProxyBinding;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.db.PDOMNodeLinkedList;
 import org.eclipse.cdt.internal.core.pdom.dom.FindBindingByLinkageConstant;
@@ -119,10 +120,23 @@ ICPPClassScope, IPDOMMemberOwner {
 	}
 
 	public boolean isSameType(IType type) {
-		if (type instanceof PDOMBinding)
+		if (type instanceof PDOMBinding) {
 			return record == ((PDOMBinding)type).getRecord();
-		else
-			throw new PDOMNotImplementedError();
+		} else if (type instanceof ICPPClassType) {
+			try {
+				IIndexProxyBinding pdomType = pdom.adaptBinding((ICPPClassType)type);
+				if (pdomType == null)
+					return false;
+				else if (pdomType instanceof PDOMBinding)
+					return record == ((PDOMBinding)pdomType).getRecord();
+				else
+					throw new PDOMNotImplementedError();
+			} catch (CoreException e) {
+				CCorePlugin.log(e);
+				return false;
+			}
+		} else
+			return false;
 	}
 
 	public ICPPBase[] getBases() throws DOMException {

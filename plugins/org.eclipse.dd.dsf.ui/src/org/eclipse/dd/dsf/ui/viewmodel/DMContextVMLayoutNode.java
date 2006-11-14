@@ -76,7 +76,7 @@ abstract public class DMContextVMLayoutNode<V extends IDMData> extends AbstractV
         
         public boolean equals(Object other) {
             if (!(other instanceof DMContextVMLayoutNode<?>.DMContextVMContext)) return false;
-            DMContextVMLayoutNode<?>.DMContextVMContext otherVmc = (DMContextVMLayoutNode.DMContextVMContext)other;
+            DMContextVMLayoutNode<?>.DMContextVMContext otherVmc = (DMContextVMLayoutNode<V>.DMContextVMContext)other;
             return DMContextVMLayoutNode.this.equals(otherVmc.getLayoutNode()) &&
                    fParent.equals(otherVmc.fParent) && 
                    fDmc.equals(otherVmc.fDmc);

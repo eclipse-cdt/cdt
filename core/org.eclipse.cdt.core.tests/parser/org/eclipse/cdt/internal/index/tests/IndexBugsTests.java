@@ -26,6 +26,7 @@ import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.core.index.IIndexFile;
 import org.eclipse.cdt.core.index.IIndexInclude;
+import org.eclipse.cdt.core.index.IIndexMacro;
 import org.eclipse.cdt.core.index.IIndexName;
 import org.eclipse.cdt.core.index.IndexFilter;
 import org.eclipse.cdt.core.model.ICProject;
@@ -243,6 +244,36 @@ public class IndexBugsTests extends BaseTestCase {
 		}
 		finally {
 			TestScannerProvider.sMacroFiles= null;
+		}
+	}
+
+	// {test164500}
+	// #define macro164500 1
+	// #undef macro164500
+	// #define macro164500 2
+	public void _test164500() throws Exception {
+		waitForIndexer();
+		String content= readTaggedComment("test164500");
+
+		IFile file= TestSourceReader.createFile(fCProject.getProject(), "test164500.cpp", content);
+		TestSourceReader.waitUntilFileIsIndexed(fIndex, file, 4000);
+
+		fIndex.acquireReadLock();
+		try {
+			IIndexFile ifile= fIndex.getFile(file.getLocation());
+			assertNotNull(ifile);
+			IIndexMacro[] macros= ifile.getMacros();
+			assertEquals(2, macros.length);
+			IIndexMacro m= macros[0];
+			assertEquals("1", new String(m.getExpansion()));
+			assertEquals("macro164500", new String(m.getName()));
+
+			m= macros[1];
+			assertEquals("2", new String(m.getExpansion()));
+			assertEquals("macro164500", new String(m.getName()));
+		}
+		finally {
+			fIndex.releaseReadLock();
 		}
 	}
 

@@ -14,20 +14,34 @@ package org.eclipse.cdt.core.testplugin;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.eclipse.cdt.core.parser.IScannerInfo;
+import org.eclipse.cdt.core.parser.IExtendedScannerInfo;
 
-public class TestScannerInfo implements IScannerInfo {
-	private Map emptyMap = new HashMap(0);
+public class TestScannerInfo implements IExtendedScannerInfo {
+	private static final String[] EMPTY = new String[0];
+	private static final Map EMPTY_MAP = new HashMap(0);
 	private String[] fIncludes;
+	private String[] fIncludeFiles;
+	private String[] fMacroFiles;
 
-	public TestScannerInfo(String[] includes) {
+	public TestScannerInfo(String[] includes, String[] includeFiles, String[] macroFiles) {
 		fIncludes= includes;
+		fIncludeFiles= includeFiles;
+		fMacroFiles= macroFiles;
 	}
 	public Map getDefinedSymbols() {
-		return emptyMap;
+		return EMPTY_MAP;
 	}
 
 	public String[] getIncludePaths() {
-		return fIncludes == null ? new String[0] : fIncludes;
+		return fIncludes == null ? EMPTY : fIncludes;
+	}
+	public String[] getIncludeFiles() {
+		return fIncludeFiles == null ? EMPTY: fIncludeFiles;
+	}
+	public String[] getLocalIncludePath() {
+		return null;
+	}
+	public String[] getMacroFiles() {
+		return fMacroFiles == null ? EMPTY: fMacroFiles;
 	}
 }

@@ -234,7 +234,7 @@ public class DOMScanner extends BaseScanner {
         {
             int resolved = getGlobalOffset(0, 0);
             CodeReader codeReader = (CodeReader) data;
-			locationMap.startInclusion( codeReader, resolved, resolved, resolved, resolved, CharArrayUtils.EMPTY, false);
+			locationMap.startInclusion( codeReader, resolved, resolved, resolved, resolved, CharArrayUtils.EMPTY, true);
         }
 
         super.pushContext(buffer, data);

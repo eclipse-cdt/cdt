@@ -20,10 +20,12 @@ import org.eclipse.core.resources.IResource;
 public class TestScannerProvider extends AbstractCExtension implements IScannerInfoProvider {
 
 	public static String[] sIncludes= null;
+	public static String[] sIncludeFiles= null;
+	public static String[] sMacroFiles= null;
 	public final static String SCANNER_ID = CTestPlugin.PLUGIN_ID + ".TestScanner";
 	
 	public IScannerInfo getScannerInformation(IResource resource) {
-		return new TestScannerInfo(sIncludes);
+		return new TestScannerInfo(sIncludes, sIncludeFiles, sMacroFiles);
 	}
 
 	public void subscribe(IResource resource, IScannerInfoChangeListener listener) {

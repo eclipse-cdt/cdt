@@ -24,12 +24,15 @@ import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.index.IIndexBinding;
+import org.eclipse.cdt.core.index.IIndexFile;
+import org.eclipse.cdt.core.index.IIndexInclude;
 import org.eclipse.cdt.core.index.IIndexName;
 import org.eclipse.cdt.core.index.IndexFilter;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.testplugin.CProjectHelper;
 import org.eclipse.cdt.core.testplugin.CTestPlugin;
+import org.eclipse.cdt.core.testplugin.TestScannerProvider;
 import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
 import org.eclipse.cdt.core.testplugin.util.TestSourceReader;
 import org.eclipse.cdt.internal.core.CCoreInternals;
@@ -77,6 +80,10 @@ public class IndexBugsTests extends BaseTestCase {
     protected IFile createFile(IContainer container, String fileName, String contents) throws Exception {
     	return TestSourceReader.createFile(container, new Path(fileName), contents);
     }
+
+	private void waitForIndexer() {
+		assertTrue(CCorePlugin.getIndexManager().joinIndexer(10000, NPM));
+	}
 
 	protected Pattern[] getPattern(String qname) {
 		String[] parts= qname.split("::");
@@ -178,5 +185,65 @@ public class IndexBugsTests extends BaseTestCase {
 			fIndex.releaseReadLock();
 		}
     }
+
+	public void test164360_1() throws Exception {
+		waitForIndexer();
+		try {
+			IFile include= TestSourceReader.createFile(fCProject.getProject(), "test164360.h", "");
+			TestScannerProvider.sIncludeFiles= new String[]{include.getLocation().toOSString()};
+			IFile file= TestSourceReader.createFile(fCProject.getProject(), "test164360.cpp", "");
+			TestSourceReader.waitUntilFileIsIndexed(fIndex, file, 4000);
+
+			fIndex.acquireReadLock();
+			try {
+				IIndexFile ifile= fIndex.getFile(file.getLocation());
+				assertNotNull(ifile);
+				IIndexInclude[] includes= ifile.getIncludes();
+				assertEquals(1, includes.length);
+				IIndexInclude i= includes[0];
+				assertEquals(file.getLocation().toOSString(), i.getIncludedByLocation());
+				assertEquals(include.getLocation().toOSString(), i.getIncludesLocation());
+				assertEquals(true, i.isSystemInclude());
+				assertEquals(0, i.getNameOffset());
+				assertEquals(0, i.getNameLength());
+			}
+			finally {
+				fIndex.releaseReadLock();
+			}
+		}
+		finally {
+			TestScannerProvider.sIncludeFiles= null;
+		}
+	}
+
+	public void test164360_2() throws Exception {
+		waitForIndexer();
+		try {
+			IFile include= TestSourceReader.createFile(fCProject.getProject(), "test164360.h", "");
+			TestScannerProvider.sMacroFiles= new String[]{include.getLocation().toOSString()};
+			IFile file= TestSourceReader.createFile(fCProject.getProject(), "test164360.cpp", "");
+			TestSourceReader.waitUntilFileIsIndexed(fIndex, file, 4000);
+
+			fIndex.acquireReadLock();
+			try {
+				IIndexFile ifile= fIndex.getFile(file.getLocation());
+				assertNotNull(ifile);
+				IIndexInclude[] includes= ifile.getIncludes();
+				assertEquals(1, includes.length);
+				IIndexInclude i= includes[0];
+				assertEquals(file.getLocation().toOSString(), i.getIncludedByLocation());
+				assertEquals(include.getLocation().toOSString(), i.getIncludesLocation());
+				assertEquals(true, i.isSystemInclude());
+				assertEquals(0, i.getNameOffset());
+				assertEquals(0, i.getNameLength());
+			}
+			finally {
+				fIndex.releaseReadLock();
+			}
+		}
+		finally {
+			TestScannerProvider.sMacroFiles= null;
+		}
+	}
 
 }

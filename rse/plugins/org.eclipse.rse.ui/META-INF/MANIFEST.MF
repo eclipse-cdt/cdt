@@ -14,7 +14,6 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.ui.views,
  org.eclipse.ui.forms,
  org.eclipse.ui.ide,
- org.eclipse.debug.ui,
  org.eclipse.ui.workbench.texteditor,
  org.eclipse.rse.core
 Eclipse-LazyStart: true

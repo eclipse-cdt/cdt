@@ -7,7 +7,7 @@
  *
  * Contributors:
  * QNX Software Systems - Initial API and implementation
- * Anton Leherbauer (Wind River Systems) - Fixed bug 141295
+ * Anton Leherbauer (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.editor;
 
@@ -19,6 +19,7 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceRuleFactory;
+import org.eclipse.core.resources.IStorage;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -31,6 +32,7 @@ import org.eclipse.jface.text.ILineTracker;
 import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.TextUtilities;
 import org.eclipse.jface.text.source.Annotation;
+import org.eclipse.jface.text.source.AnnotationModel;
 import org.eclipse.jface.text.source.AnnotationModelEvent;
 import org.eclipse.jface.text.source.IAnnotationAccessExtension;
 import org.eclipse.jface.text.source.IAnnotationModel;
@@ -46,10 +48,13 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.ui.IFileEditorInput;
+import org.eclipse.ui.IStorageEditorInput;
 import org.eclipse.ui.editors.text.EditorsUI;
+import org.eclipse.ui.editors.text.ForwardingDocumentProvider;
 import org.eclipse.ui.editors.text.TextFileDocumentProvider;
 import org.eclipse.ui.texteditor.AnnotationPreference;
 import org.eclipse.ui.texteditor.AnnotationPreferenceLookup;
+import org.eclipse.ui.texteditor.IDocumentProvider;
 import org.eclipse.ui.texteditor.MarkerAnnotation;
 import org.eclipse.ui.texteditor.MarkerUtilities;
 import org.eclipse.ui.texteditor.ResourceMarkerAnnotationModel;
@@ -61,6 +66,7 @@ import org.eclipse.cdt.core.model.IWorkingCopy;
 import org.eclipse.cdt.core.parser.IProblem;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.PreferenceConstants;
+import org.eclipse.cdt.ui.text.ICPartitions;
 
 import org.eclipse.cdt.internal.core.model.IBufferFactory;
 
@@ -775,7 +781,9 @@ public class CDocumentProvider extends TextFileDocumentProvider {
 	 */
 	public CDocumentProvider() {
 		super();
-		setParentDocumentProvider(new TextFileDocumentProvider(new CStorageDocumentProvider()));
+		IDocumentProvider parentProvider= new ExternalSearchDocumentProvider();
+		parentProvider= new ForwardingDocumentProvider(ICPartitions.C_PARTITIONING, new CDocumentSetupParticipant(), parentProvider);
+		setParentDocumentProvider(parentProvider);
 		fGlobalAnnotationModelListener= new GlobalAnnotationModelListener();
 		fPropertyListener= new IPropertyChangeListener() {
 			public void propertyChange(PropertyChangeEvent event) {
@@ -811,7 +819,6 @@ public class CDocumentProvider extends TextFileDocumentProvider {
 	 * @see org.eclipse.ui.editors.text.TextFileDocumentProvider#createAnnotationModel(org.eclipse.core.resources.IFile)
 	 */
 	protected IAnnotationModel createAnnotationModel(IFile file) {
-		//return new CMarkerAnnotationModel(file);
 		return new TranslationUnitAnnotationModel(file);
 	}
 
@@ -848,6 +855,15 @@ public class CDocumentProvider extends TextFileDocumentProvider {
 		}
 		tuInfo.fCopy = copy;
 
+		if (tuInfo.fModel == null && element instanceof IStorageEditorInput) {
+			IStorage storage= ((IStorageEditorInput)element).getStorage();
+			IResource markerResource= original.getCProject().getProject();
+			tuInfo.fModel= new ExternalSearchAnnotationModel(markerResource, storage);
+			IAnnotationModel fileBufferAnnotationModel= tuInfo.fTextFileBuffer.getAnnotationModel();
+			if (fileBufferAnnotationModel != null) {
+				((AnnotationModel)tuInfo.fModel).addAnnotationModel("secondaryModel", fileBufferAnnotationModel); //$NON-NLS-1$
+			}
+		}
 		if (tuInfo.fModel instanceof TranslationUnitAnnotationModel) {
 			TranslationUnitAnnotationModel model= (TranslationUnitAnnotationModel) tuInfo.fModel;
 			model.setTranslationUnit(tuInfo.fCopy);

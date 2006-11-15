@@ -142,27 +142,24 @@ public abstract class PDOMIndexerTask implements IPDOMIndexerTask {
 			doParseTU(tu, pm);
 		}
 		catch (CoreException e) {
-			if (!swallowError(path, e)) 
-				throw e;
+			swallowError(path, e); 
 		}
 		catch (RuntimeException e) {
-			if (!swallowError(path, e)) 
-				throw e;
+			swallowError(path, e); 
 		}
 		catch (Error e) {
-			if (!swallowError(path, e)) 
-				throw e;
+			swallowError(path, e); 
 		}
 	}
 
-	private boolean swallowError(IPath file, Throwable e) {
-		if (++fErrorCount <= MAX_ERRORS) { 
-			IStatus status= CCorePlugin.createStatus(
+	private void swallowError(IPath file, Throwable e) throws CoreException {
+		IStatus status= CCorePlugin.createStatus(
 				MessageFormat.format(Messages.PDOMIndexerTask_errorWhileParsing, new Object[]{file}), e);
 			CCorePlugin.log(status);
-			return true;
+		if (++fErrorCount > MAX_ERRORS) {
+			throw new CoreException(CCorePlugin.createStatus(
+				MessageFormat.format(Messages.PDOMIndexerTask_tooManyIndexProblems, new Object[]{getIndexer().getProject().getElementName()})));
 		}
-		return false;
 	}
 
 	abstract protected void doParseTU(ITranslationUnit tu, IProgressMonitor pm) throws CoreException, InterruptedException;

@@ -26,14 +26,13 @@ import org.eclipse.core.runtime.jobs.Job;
  */
 public class PDOMIndexerJob extends Job {
 
+	private static final int TOTAL_MONITOR_WORK = 1000;
 	private final PDOMManager pdomManager;
 	private IPDOMIndexerTask currentTask;
 	private boolean cancelledByManager= false;
 	private Object taskMutex = new Object();
 	
-	private IProgressMonitor monitor;
-
-	private Job fMonitorJob;
+	private IProgressMonitor fMonitor;
 
 	public PDOMIndexerJob(PDOMManager manager) {
 		super(CCorePlugin.getResourceString("pdom.indexer.name")); //$NON-NLS-1$
@@ -42,10 +41,12 @@ public class PDOMIndexerJob extends Job {
 	}
 
 	protected IStatus run(IProgressMonitor monitor) {
-		this.monitor = monitor;
 		long start = System.currentTimeMillis();
 
-		startMonitorJob(monitor);
+		fMonitor = monitor;
+		String taskName = CCorePlugin.getResourceString("pdom.indexer.task"); //$NON-NLS-1$
+		monitor.beginTask(taskName, TOTAL_MONITOR_WORK);
+		Job monitorJob= startMonitorJob(monitor);
 		try {
 			do {
 				synchronized(taskMutex) {
@@ -63,12 +64,7 @@ public class PDOMIndexerJob extends Job {
 				}
 
 				if (currentTask != null) {
-					try {
-						currentTask.run(monitor);
-					}
-					catch (Exception e) {
-						CCorePlugin.log(e);
-					}					
+					currentTask.run(monitor);
 				}
 			}
 			while (currentTask != null);
@@ -99,46 +95,35 @@ public class PDOMIndexerJob extends Job {
 			throw e;
 		}
 		finally {
-			stopMonitorJob();
+			monitorJob.cancel();
+			monitor.done();
 		}
 	}
 		
-	private void stopMonitorJob() {
-		if (fMonitorJob != null) {
-			fMonitorJob.cancel();
-		}
-	}
-
-	private void startMonitorJob(final IProgressMonitor monitor) {
-		fMonitorJob= new Job(CCorePlugin.getResourceString("PDOMIndexerJob.updateMonitorJob")) {  //$NON-NLS-1$
+	private Job startMonitorJob(final IProgressMonitor targetMonitor) {
+		Job monitorJob= new Job(CCorePlugin.getResourceString("PDOMIndexerJob.updateMonitorJob")) {  //$NON-NLS-1$
 			protected IStatus run(IProgressMonitor m) {
-				String taskName = CCorePlugin.getResourceString("pdom.indexer.task"); //$NON-NLS-1$
-				monitor.beginTask(taskName, 1000);
-				try {
-					int currentTick= 0;
-					while(!m.isCanceled()) {
-						currentTick= pdomManager.getMonitorMessage(monitor, currentTick, 1000);
-						try {
-							Thread.sleep(350);
-						} catch (InterruptedException e) {
-							return Status.CANCEL_STATUS;
-						}
+				int currentTick= 0;
+				while(!m.isCanceled() && !targetMonitor.isCanceled()) {
+					currentTick= pdomManager.getMonitorMessage(targetMonitor, currentTick, TOTAL_MONITOR_WORK);
+					try {
+						Thread.sleep(350);
+					} catch (InterruptedException e) {
+						return Status.CANCEL_STATUS;
 					}
-					return Status.OK_STATUS;
 				}
-				finally {
-					monitor.done();
-				}
+				return Status.OK_STATUS;
 			}
 		};
-		fMonitorJob.setSystem(true);
-		fMonitorJob.schedule();
+		monitorJob.setSystem(true);
+		monitorJob.schedule();
+		return monitorJob;
 	}
 
 	public void cancelJobs(IPDOMIndexer indexer) {
 		synchronized (taskMutex) {
 			if (currentTask != null && currentTask.getIndexer() == indexer) {
-				monitor.setCanceled(true);
+				fMonitor.setCanceled(true);
 				cancelledByManager = true;
 				while (currentTask != null && currentTask.getIndexer() == indexer) {
 					try {

@@ -11,6 +11,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.parser.tests.ast2;
 
+import java.io.File;
 import java.util.Collections;
 
 import junit.framework.Test;
@@ -608,5 +609,41 @@ public class DOMLocationInclusionTests extends AST2FileBasePluginTest {
 			assertEquals("incs.h", incName.toString());
 			assertFileLocation(incName, filename, code.lastIndexOf("TARG"), "TARG".length());
         }
+    }
+    
+    // #define NAME test.h
+    // #define MAKE_INCLUDE(path, header) <path/header>
+    // #include MAKE_INCLUDE(test_bug164644, NAME)
+    public void testBug164644() throws Exception {
+    	String tmpDir= System.getProperty("java.io.tmpdir");
+    	File tmpFile= new File(tmpDir + "/test_bug164644/test.h").getCanonicalFile();
+    	tmpFile.getParentFile().mkdirs();
+    	tmpFile.createNewFile();
+    	try {
+    		String code= getContents(1)[0].toString();
+    		IExtendedScannerInfo scannerInfo = new ExtendedScannerInfo(
+    				Collections.EMPTY_MAP, new String[] {tmpDir}, null, null);
+
+    		for (ParserLanguage p = ParserLanguage.C; p != null; p = (p == ParserLanguage.C) ? ParserLanguage.CPP
+    				: null) {
+    			String filename = (p == ParserLanguage.CPP) ? "main.cc" : "main.c"; 
+    			IFile sfile = importFile(filename, code); 
+    			IASTTranslationUnit tu = parse(sfile, scannerInfo); 
+
+    			IASTPreprocessorIncludeStatement[] incs = tu.getIncludeDirectives();
+    			assertNotNull(incs);
+    			assertEquals(1, incs.length);
+
+    			assertEquals(tmpFile.getAbsolutePath(), incs[0].getPath());
+    			assertFileLocation(incs[0], filename, code.indexOf("#include MAKE_INCLUDE(test_bug164644, NAME)"), "#include MAKE_INCLUDE(test_bug164644, NAME)".length());
+    			IASTPreprocessorIncludeStatement inc = incs[0];
+    			IASTName incName= inc.getName();
+    			assertEquals(true, inc.isSystemInclude());
+    		}
+    	}
+    	finally {
+    		tmpFile.delete();
+    		tmpFile.getParentFile().delete();
+    	}
     }
 }

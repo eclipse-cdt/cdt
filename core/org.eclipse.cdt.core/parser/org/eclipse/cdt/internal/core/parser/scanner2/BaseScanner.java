@@ -4397,9 +4397,10 @@ abstract class BaseScanner implements IScanner {
             } else if (c == '/' && pos + 1 < limit) {
 
                 // less than obvious, comments are whitespace
-                c = expansion[++pos];
+                c = expansion[pos+1];
                 if (c == '/') {
                     // copy up to here or before the last whitespace
+                	++pos;
                     ++lastcopy;
                     int n = wsstart < 0 ? pos - 1 - lastcopy : wsstart
                             - lastcopy;
@@ -4412,6 +4413,7 @@ abstract class BaseScanner implements IScanner {
                     // skip the rest
                     lastcopy = expansion.length - 1;
                 } else if (c == '*') {
+                	++pos;
                     if (wsstart < 1)
                         wsstart = pos - 1;
                     while (++pos < limit) {

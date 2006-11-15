@@ -15,6 +15,7 @@
 package org.eclipse.cdt.core.parser.tests.ast2;
 
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 
 import junit.framework.TestCase;
@@ -23,7 +24,9 @@ import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.IPDOMManager;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.testplugin.CProjectHelper;
+import org.eclipse.cdt.core.testplugin.CTestPlugin;
 import org.eclipse.cdt.core.testplugin.FileManager;
+import org.eclipse.cdt.core.testplugin.util.TestSourceReader;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
@@ -136,4 +139,9 @@ public class AST2FileBasePluginTest extends TestCase {
 		return file;
 	}
     
+	protected StringBuffer[] getContents(int sections) throws IOException {
+		return TestSourceReader.getContentsForTest(
+				CTestPlugin.getDefault().getBundle(), "parser", getClass(), getName(), sections);
+	}
+
 }

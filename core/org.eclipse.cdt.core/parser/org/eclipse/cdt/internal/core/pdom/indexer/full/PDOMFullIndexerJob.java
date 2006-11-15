@@ -30,14 +30,12 @@ import org.eclipse.cdt.core.dom.ast.IASTPreprocessorIncludeStatement;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorMacroDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.model.ITranslationUnit;
-import org.eclipse.cdt.internal.core.index.IIndexFragmentFile;
 import org.eclipse.cdt.internal.core.index.IWritableIndex;
 import org.eclipse.cdt.internal.core.index.IWritableIndexManager;
 import org.eclipse.cdt.internal.core.pdom.indexer.PDOMIndexerTask;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.Path;
 
 /**
  * @author Doug Schaefer
@@ -219,7 +217,7 @@ abstract class PDOMFullIndexerJob extends PDOMIndexerTask implements IPDOMIndexe
 					if (fTrace) 
 						System.out.println("Indexer: adding " + path); //$NON-NLS-1$
 					
-					addToIndex(path, (ArrayList[]) entry.getValue());
+					addToIndex(index, path, (ArrayList[]) entry.getValue());
 					
 					if (isFirstAddition) 
 						isFirstAddition= false;
@@ -248,37 +246,4 @@ abstract class PDOMFullIndexerJob extends PDOMIndexerTask implements IPDOMIndexe
 			lists[idx].add(thing);
 		}
 	}		
-
-	private void addToIndex(String location, ArrayList[] lists) throws CoreException {
-		// Remove the old symbols in the tu
-		Path path= new Path(location);
-		IIndexFragmentFile file= (IIndexFragmentFile) index.getFile(new Path(location));
-		if (file != null) {
-			index.clearFile(file);
-		}
-		else {
-			file= index.addFile(path);
-		}
-		file.setTimestamp(path.toFile().lastModified());
-		
-		// includes
-		ArrayList list= lists[0];
-		for (int i = 0; i < list.size(); i++) {
-			IASTPreprocessorIncludeStatement include= (IASTPreprocessorIncludeStatement) list.get(i);
-			IIndexFragmentFile destFile= index.addFile(new Path(include.getPath()));
-			index.addInclude(file, destFile, include);
-		}
-
-		// macros
-		list= lists[1];
-		for (int i = 0; i < list.size(); i++) {
-			index.addMacro(file, (IASTPreprocessorMacroDefinition) list.get(i));
-		}
-
-		// symbols
-		list= lists[2];
-		for (int i = 0; i < list.size(); i++) {
-			index.addName(file, (IASTName) list.get(i));
-		}		
-	}
 }

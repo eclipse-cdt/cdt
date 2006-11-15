@@ -12,7 +12,6 @@
 package org.eclipse.cdt.internal.core.pdom.dom;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorIncludeStatement;
@@ -21,6 +20,7 @@ import org.eclipse.cdt.core.index.IIndexInclude;
 import org.eclipse.cdt.core.index.IIndexMacro;
 import org.eclipse.cdt.internal.core.index.IIndexFragment;
 import org.eclipse.cdt.internal.core.index.IIndexFragmentFile;
+import org.eclipse.cdt.internal.core.index.IWritableIndexFragment;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.db.Database;
 import org.eclipse.cdt.internal.core.pdom.db.IBTreeComparator;
@@ -188,23 +188,21 @@ public class PDOMFile implements IIndexFragmentFile {
 		pdom.getDB().putInt(record + FIRST_MACRO, rec);
 	}
 	
-	public void addMacro(IASTPreprocessorMacroDefinition macro) throws CoreException {
-		PDOMMacro firstMacro = getFirstMacro();
-		
-		// mstodo revisit: this can probably be done more efficiently
-		// Make sure we don't already have one
-		char[] name = macro.getName().toCharArray();
-		PDOMMacro pdomMacro = firstMacro;
-		while (pdomMacro != null) {
-			if (pdomMacro.getNameInDB().equals(name))
-				return;
-			pdomMacro = pdomMacro.getNextMacro();
+	public void addMacros(IASTPreprocessorMacroDefinition[] macros) throws CoreException {
+		assert getFirstMacro() == null;
+				
+		PDOMMacro lastMacro= null;
+		for (int i = 0; i < macros.length; i++) {
+			IASTPreprocessorMacroDefinition macro = macros[i];
+			PDOMMacro pdomMacro = new PDOMMacro(pdom, macro);
+			if (lastMacro == null) {
+				setFirstMacro(pdomMacro);
+			}
+			else {
+				lastMacro.setNextMacro(pdomMacro);
+			}
+			lastMacro= pdomMacro;
 		}
-		
-		// Nope, add it in
-		pdomMacro = new PDOMMacro(pdom, macro);
-		pdomMacro.setNextMacro(getFirstMacro());
-		setFirstMacro(pdomMacro);
 	}
 	
 	public void clear() throws CoreException {
@@ -236,19 +234,29 @@ public class PDOMFile implements IIndexFragmentFile {
 		setFirstName(null);
 	}
 	
-	public PDOMInclude addIncludeTo(PDOMFile file, IASTPreprocessorIncludeStatement include) throws CoreException {
-		PDOMInclude pdomInclude = new PDOMInclude(pdom, include);
-		pdomInclude.setIncludedBy(this);
-		pdomInclude.setIncludes(file);
+	public void addIncludesTo(IIndexFragmentFile[] files, IASTPreprocessorIncludeStatement[] includes) throws CoreException {
+		assert files.length == includes.length;
+		assert getFirstInclude() == null;
 		
-		PDOMInclude firstInclude = getFirstInclude();
-		if (firstInclude != null) {
-			pdomInclude.setNextInIncludes(firstInclude);
+		PDOMInclude lastInclude= null;
+		for (int i = 0; i < includes.length; i++) {
+			IASTPreprocessorIncludeStatement statement = includes[i];
+			PDOMFile file= (PDOMFile) files[i];
+			assert file.getIndexFragment() instanceof IWritableIndexFragment;
+			
+			PDOMInclude pdomInclude = new PDOMInclude(pdom, statement);
+			pdomInclude.setIncludedBy(this);
+			pdomInclude.setIncludes(file);
+			
+			file.addIncludedBy(pdomInclude);
+			if (lastInclude == null) {
+				setFirstInclude(pdomInclude);
+			}
+			else {
+				lastInclude.setNextInIncludes(pdomInclude);
+			}
+			lastInclude= pdomInclude;
 		}
-		setFirstInclude(pdomInclude);
-		
-		file.addIncludedBy(pdomInclude);
-		return pdomInclude;
 	}
 	
 	public void addIncludedBy(PDOMInclude include) throws CoreException {
@@ -269,7 +277,6 @@ public class PDOMFile implements IIndexFragmentFile {
 			result.add(include);
 			include = include.getNextInIncludes();
 		}
-		Collections.reverse(result);
 		return (IIndexInclude[]) result.toArray(new IIndexInclude[result.size()]);
 	}
 

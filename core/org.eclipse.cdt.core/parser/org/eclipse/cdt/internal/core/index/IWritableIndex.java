@@ -31,19 +31,11 @@ public interface IWritableIndex extends IIndex {
 	IIndexFragmentFile addFile(IPath fileLocation) throws CoreException;
 
 	/**
-	 * Adds an AST name to the given file.
+	 * Adds content to the given file.
 	 */
-	void addName(IIndexFragmentFile sourceFile, IASTName name) throws CoreException;
-
-	/**
-	 * Adds a AST macro to the given file.
-	 */
-	void addMacro(IIndexFragmentFile sourceFile, IASTPreprocessorMacroDefinition macro) throws CoreException;
-
-	/**
-	 * Adds an include to the given file.
-	 */
-	void addInclude(IIndexFragmentFile sourceFile, IIndexFragmentFile destFile, IASTPreprocessorIncludeStatement directive) throws CoreException;
+	void setFileContent(IIndexFragmentFile sourceFile, 
+			IASTPreprocessorIncludeStatement[] includes, 
+			IASTPreprocessorMacroDefinition[] macros, IASTName[] names) throws CoreException;
 
 	/**
 	 * Clears the entire index.

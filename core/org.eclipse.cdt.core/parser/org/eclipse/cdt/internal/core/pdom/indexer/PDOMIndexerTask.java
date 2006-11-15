@@ -20,6 +20,9 @@ import java.util.Map;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.IPDOMIndexerTask;
+import org.eclipse.cdt.core.dom.ast.IASTName;
+import org.eclipse.cdt.core.dom.ast.IASTPreprocessorIncludeStatement;
+import org.eclipse.cdt.core.dom.ast.IASTPreprocessorMacroDefinition;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.index.IIndexFile;
 import org.eclipse.cdt.core.index.IIndexInclude;
@@ -42,7 +45,7 @@ import org.eclipse.core.runtime.Platform;
 
 public abstract class PDOMIndexerTask implements IPDOMIndexerTask {
 	private static final Object NO_CONTEXT = new Object();
-	protected static final int MAX_ERRORS = 10;
+	protected static final int MAX_ERRORS = 500;
 
 	protected volatile int fTotalSourcesEstimate= 0;
 	protected volatile int fCompletedSources= 0;
@@ -92,7 +95,7 @@ public abstract class PDOMIndexerTask implements IPDOMIndexerTask {
 	}
 	
 	protected void collectSources(ICProject project, final Collection sources, final Collection headers, final boolean allFiles) throws CoreException {
-		fMessage= Messages.PDOMIndexerTask_collectingFilesTask;
+		fMessage= MessageFormat.format(Messages.PDOMIndexerTask_collectingFilesTask, new Object[]{project.getElementName()});
 		project.accept(new ICElementVisitor() {
 			public boolean visit(ICElement element) throws CoreException {
 				switch (element.getElementType()) {
@@ -238,5 +241,29 @@ public abstract class PDOMIndexerTask implements IPDOMIndexerTask {
 
 	public int getCompletedSourcesCount() {
 		return fCompletedSources;
+	}
+	
+	protected IIndexFragmentFile addToIndex(IWritableIndex index, String location, ArrayList[] lists) throws CoreException {
+		// Remove the old symbols in the tu
+		Path path= new Path(location);
+		IIndexFragmentFile file= (IIndexFragmentFile) index.getFile(path);
+		if (file != null) {
+			index.clearFile(file);
+		}
+		else {
+			file= index.addFile(path);
+		}
+		file.setTimestamp(path.toFile().lastModified());
+		if (lists != null) {
+			ArrayList list= lists[0];
+			IASTPreprocessorIncludeStatement[] includes= (IASTPreprocessorIncludeStatement[]) list.toArray(new IASTPreprocessorIncludeStatement[list.size()]);
+			list= lists[1];
+			IASTPreprocessorMacroDefinition[] macros= (IASTPreprocessorMacroDefinition[]) list.toArray(new IASTPreprocessorMacroDefinition[list.size()]);
+			list= lists[2];
+			IASTName[] names= (IASTName[]) list.toArray(new IASTName[list.size()]);
+
+			index.setFileContent(file, includes, macros, names);
+		}
+		return file;
 	}
 }

@@ -114,16 +114,21 @@ public class PDOMIndexerJob extends Job {
 			protected IStatus run(IProgressMonitor m) {
 				String taskName = CCorePlugin.getResourceString("pdom.indexer.task"); //$NON-NLS-1$
 				monitor.beginTask(taskName, 1000);
-				int currentTick= 0;
-				while(!m.isCanceled()) {
-					currentTick= pdomManager.getMonitorMessage(monitor, currentTick, 1000);
-					try {
-						Thread.sleep(350);
-					} catch (InterruptedException e) {
-						return Status.CANCEL_STATUS;
+				try {
+					int currentTick= 0;
+					while(!m.isCanceled()) {
+						currentTick= pdomManager.getMonitorMessage(monitor, currentTick, 1000);
+						try {
+							Thread.sleep(350);
+						} catch (InterruptedException e) {
+							return Status.CANCEL_STATUS;
+						}
 					}
+					return Status.OK_STATUS;
 				}
-				return Status.OK_STATUS;
+				finally {
+					monitor.done();
+				}
 			}
 		};
 		fMonitorJob.setSystem(true);

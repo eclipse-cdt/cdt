@@ -33,26 +33,23 @@ public class WritablePDOM extends PDOM implements IWritableIndexFragment {
 		return super.addFile(filename);
 	}
 
-	public void addInclude(IIndexFragmentFile sourceFile, IIndexFragmentFile destFile,
-			IASTPreprocessorIncludeStatement include) throws CoreException {
+	public void addFileContent(IIndexFragmentFile sourceFile, 
+			IASTPreprocessorIncludeStatement[] includes, IIndexFragmentFile[] destFiles,
+			IASTPreprocessorMacroDefinition[] macros, IASTName[] names) throws CoreException {
 		assert sourceFile.getIndexFragment() == this;
-		assert destFile.getIndexFragment() == this;
-		((PDOMFile) sourceFile).addIncludeTo((PDOMFile) destFile, include);
-	}
-
-	public void addMacro(IIndexFragmentFile sourceFile, IASTPreprocessorMacroDefinition macro) throws CoreException {
-		assert sourceFile.getIndexFragment() == this;
-		((PDOMFile) sourceFile).addMacro(macro);
-	}
-
-	public void addName(IIndexFragmentFile sourceFile, IASTName name) throws CoreException {
-		assert sourceFile.getIndexFragment() == this;
-		PDOMLinkage linkage= createLinkage(name.getLinkage().getID());
-		if (linkage == null) {
-			CCorePlugin.log(MessageFormat.format(Messages.WritablePDOM_error_unknownLinkage, new Object[]{name.getLinkage()}));
-		}
-		else {
-			linkage.addName(name, (PDOMFile) sourceFile);
+		
+		PDOMFile pdomFile = (PDOMFile) sourceFile;
+		pdomFile.addIncludesTo(destFiles, includes);
+		pdomFile.addMacros(macros);
+		for (int i = 0; i < names.length; i++) {
+			IASTName name= names[i];
+			PDOMLinkage linkage= createLinkage(name.getLinkage().getID());
+			if (linkage == null) {
+				CCorePlugin.log(MessageFormat.format(Messages.WritablePDOM_error_unknownLinkage, new Object[]{name.getLinkage()}));
+			}
+			else {
+				linkage.addName(name, pdomFile);
+			}
 		}
 	}
 

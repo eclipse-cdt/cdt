@@ -251,7 +251,7 @@ public class IndexBugsTests extends BaseTestCase {
 	// #define macro164500 1
 	// #undef macro164500
 	// #define macro164500 2
-	public void _test164500() throws Exception {
+	public void test164500() throws Exception {
 		waitForIndexer();
 		String content= readTaggedComment("test164500");
 

@@ -337,6 +337,7 @@
 		<condition property="buildTypeLong" value="Integration"><equals arg1="${buildType}" arg2="I"/></condition>
 		<condition property="buildTypeLong" value="Stable"><equals arg1="${buildType}" arg2="S"/></condition>
 		<condition property="buildTypeLong" value="Release"><equals arg1="${buildType}" arg2="R"/></condition>
+		<condition property="buildTypeLong" value="Maintenance"><equals arg1="${buildType}" arg2="M"/></condition>
 		<replace file="${packageDirectory}/${dropDir}/index.php">
 			<replacefilter token="@buildTypeLong@" value="${buildTypeLong}"/>
 			<replacefilter token="@dateLong@" value="${dateLong}"/>

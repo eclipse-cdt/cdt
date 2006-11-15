@@ -43,7 +43,7 @@ sg dsdp-tm-rse -c "touch $log"
 sg dsdp-tm-rse -c "cvs -q update -RPd"
 daystamp=`date +'%Y%m%d*%H'`
 echo "Enter tag to fetch from CVS (default is HEAD):"
-echo "Enter build type (P,N,I,S,R):"
+echo "Enter build type (P,N,I,S,R,M):"
 echo "Enter the build id (default is x$stamp):"
 sg dsdp-tm-rse -c "perl ./build.pl >> $log 2>&1"
 #tail -50 $log

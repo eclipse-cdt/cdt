@@ -46,10 +46,10 @@ import org.eclipse.core.runtime.CoreException;
  *
  */
 class PDOMCPPNamespace extends PDOMCPPBinding
-		implements ICPPNamespace, ICPPNamespaceScope {
+implements ICPPNamespace, ICPPNamespaceScope {
 
 	private static final int INDEX_OFFSET = PDOMBinding.RECORD_SIZE + 0;
-	
+
 	protected static final int RECORD_SIZE = PDOMBinding.RECORD_SIZE + 4;
 
 	public PDOMCPPNamespace(PDOM pdom, PDOMNode parent, ICPPNamespace namespace) throws CoreException {
@@ -63,11 +63,11 @@ class PDOMCPPNamespace extends PDOMCPPBinding
 	protected int getRecordSize() {
 		return RECORD_SIZE;
 	}
-	
+
 	public int getNodeType() {
 		return PDOMCPPLinkage.CPPNAMESPACE;
 	}
-	
+
 	public BTree getIndex() throws CoreException {
 		return new BTree(pdom.getDB(), record + INDEX_OFFSET, getLinkageImpl().getIndexComparator());
 	}
@@ -89,7 +89,7 @@ class PDOMCPPNamespace extends PDOMCPPBinding
 			}
 		});
 	}
-	
+
 	public void addChild(PDOMNode child) throws CoreException {
 		getIndex().insert(child.getRecord());
 	}
@@ -118,16 +118,18 @@ class PDOMCPPNamespace extends PDOMCPPBinding
 	}
 
 	public IBinding getBinding(IASTName name, boolean resolve) throws DOMException {
+		IASTNode parent = name.getParent();
+		
 		try {
 			if (name instanceof ICPPASTQualifiedName) {
 				IASTName lastName = ((ICPPASTQualifiedName)name).getLastName();
 				return lastName != null ? lastName.resolveBinding() : null;
 			}
-			IASTNode parent = name.getParent();
+			
 			if (parent instanceof ICPPASTQualifiedName) {
 				IASTName[] names = ((ICPPASTQualifiedName)parent).getNames();
 				int index = ArrayUtil.indexOf(names, name);
-				
+
 				if (index == names.length - 1) { // tip of qn
 					parent = parent.getParent();
 				} else {
@@ -151,70 +153,82 @@ class PDOMCPPNamespace extends PDOMCPPBinding
 							}
 						}
 					}
-					
-					// Look up the name
-					FindBindingsInBTree visitor = new FindBindingsInBTree(getLinkageImpl(), name.toCharArray(),
-							new int[] {
-								PDOMCPPLinkage.CPPCLASSTYPE,
-								PDOMCPPLinkage.CPPNAMESPACE,
-								PDOMCPPLinkage.CPPFUNCTION,
-								PDOMCPPLinkage.CPPVARIABLE
-							});
-					getIndex().accept(visitor);
-					IBinding[] bindings = visitor.getBinding();
-					return bindings.length > 0 ? bindings[0] : null;
+
+					// aftodo - do we even need specify the type - we should
+					// expect only one name here anyway?
+					return searchCurrentScope(name.toCharArray(), new int[] {
+						PDOMCPPLinkage.CPPCLASSTYPE,
+						PDOMCPPLinkage.CPPNAMESPACE,
+						PDOMCPPLinkage.CPPFUNCTION,
+						PDOMCPPLinkage.CPPVARIABLE,
+						PDOMCPPLinkage.CPPENUMERATION,
+						PDOMCPPLinkage.CPPENUMERATOR
+					});
 				}
 			}
+
+			IASTNode eParent = parent.getParent();
 			if (parent instanceof IASTIdExpression) {
-				// reference
-				IASTNode eParent = parent.getParent();
 				if (eParent instanceof IASTFunctionCallExpression) {
 					if(parent.getPropertyInParent().equals(IASTFunctionCallExpression.FUNCTION_NAME)) {
-						IType[] types = ((PDOMCPPLinkage)getLinkage()).getTypes(
-								((IASTFunctionCallExpression)eParent).getParameterExpression()
-						);
-						if(types!=null) {
-							ILocalBindingIdentity bid = new CPPBindingIdentity.Holder(
-									new String(name.toCharArray()),
-									PDOMCPPLinkage.CPPFUNCTION,
-									types);
-							FindEquivalentBinding feb = new FindEquivalentBinding(getLinkageImpl(), bid);
-							getIndex().accept(feb);
-							return feb.getResult();
-						}
+						return searchCurrentScopeForFunction((IASTFunctionCallExpression)eParent, name);
 					}
 				} else {
 					int desiredType = ((name.getParent() instanceof ICPPASTQualifiedName)
 							&& ((ICPPASTQualifiedName)name.getParent()).getLastName() != name)
 							? PDOMCPPLinkage.CPPNAMESPACE : PDOMCPPLinkage.CPPVARIABLE;
-					FindBindingByLinkageConstant visitor2 = new FindBindingByLinkageConstant(getLinkageImpl(), name.toCharArray(), desiredType);
-					getIndex().accept(visitor2);
-					if(visitor2.getResult()!=null) {
-						return visitor2.getResult();
-					}
-					
-						visitor2 = new FindBindingByLinkageConstant(getLinkageImpl(), name.toCharArray(), PDOMCPPLinkage.CPPTYPEDEF);
-						getIndex().accept(visitor2);
-						if(visitor2.getResult()!=null) {
-							return visitor2.getResult();
-						}
-					
-					return null;
+
+					IBinding result = searchCurrentScope(name.toCharArray(), desiredType);
+					if(result!=null)
+						return result;
+					return searchCurrentScope(name.toCharArray(), PDOMCPPLinkage.CPPTYPEDEF);
 				}
 			} else if (parent instanceof IASTNamedTypeSpecifier) {
-				FindBindingsInBTree visitor = new FindBindingsInBTree(getLinkageImpl(), name.toCharArray(), PDOMCPPLinkage.CPPCLASSTYPE);
-				getIndex().accept(visitor);
-				IBinding[] bindings = visitor.getBinding();
-				return bindings.length > 0
-					? bindings[0]
-					: null;
+				return searchCurrentScope(name.toCharArray(), new int[] {
+					PDOMCPPLinkage.CPPCLASSTYPE,
+					PDOMCPPLinkage.CPPENUMERATION,
+					PDOMCPPLinkage.CPPTYPEDEF
+				});
 			}
-			return null;
 		} catch (CoreException e) {
 			CCorePlugin.log(e);
-			return null;
 		}
+
+		return null;
 	}
+
+
+	private PDOMBinding searchCurrentScopeForFunction(IASTFunctionCallExpression fce, IASTName name) throws CoreException {
+		try {
+			IType[] types = PDOMCPPLinkage.getTypes(fce.getParameterExpression());
+			if(types!=null) {
+				ILocalBindingIdentity bid = new CPPBindingIdentity.Holder(
+						new String(name.toCharArray()),
+						PDOMCPPLinkage.CPPFUNCTION,
+						types);
+				FindEquivalentBinding feb = new FindEquivalentBinding(getLinkageImpl(), bid);
+				getIndex().accept(feb);
+				return feb.getResult();
+			}
+		} catch(DOMException de) {
+			CCorePlugin.log(de);
+		}
+		return null;
+	}
+
+	private PDOMBinding searchCurrentScope(char[] name, int[] constants) throws CoreException {
+		PDOMBinding result = null;
+		for(int i=0; result==null && i<constants.length; i++)
+			result = searchCurrentScope(name, constants[i]);
+		return result;
+	}
+
+	private PDOMBinding searchCurrentScope(char[] name, int constant) throws CoreException {
+		FindBindingByLinkageConstant visitor = new FindBindingByLinkageConstant(getLinkageImpl(), name, constant);
+		getIndex().accept(visitor);
+		return visitor.getResult();
+	}
+
 
 	public IScope getParent() throws DOMException {
 		// TODO

@@ -62,6 +62,8 @@ public abstract class IndexBindingResolutionTestBase extends PDOMTestBase {
 		IFile file = TestSourceReader.createFile(cproject.getProject(), header, testData[0].toString());
 		CCoreInternals.getPDOMManager().setIndexerId(cproject, IPDOMManager.ID_FAST_INDEXER);
 		assertTrue(CCorePlugin.getIndexManager().joinIndexer(360000, new NullProgressMonitor()));
+				
+		/* ((PDOM)CCoreInternals.getPDOMManager().getPDOM(cproject)).accept(new PDOMPrettyPrinter()); */
 		
 		IFile cppfile= TestSourceReader.createFile(cproject.getProject(), references, testData[1].toString());
 		assertTrue(CCorePlugin.getIndexManager().joinIndexer(360000, new NullProgressMonitor()));

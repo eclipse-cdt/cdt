@@ -18,6 +18,7 @@ import org.eclipse.cdt.core.dom.ast.IASTInitializer;
 import org.eclipse.cdt.core.dom.ast.IParameter;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
+import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.internal.core.Util;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.db.Database;
@@ -52,6 +53,8 @@ class PDOMCParameter extends PDOMNamedNode implements IParameter {
 		db.putInt(record + NEXT_PARAM, 0);
 		try {
 			IType type = param.getType();
+			while(type instanceof ITypedef)
+				type = ((ITypedef)type).getType();
 			if (type != null) {
 				PDOMNode typeNode = getLinkageImpl().addType(this, type);
 				db.putInt(record + TYPE, typeNode != null ? typeNode.getRecord() : 0);

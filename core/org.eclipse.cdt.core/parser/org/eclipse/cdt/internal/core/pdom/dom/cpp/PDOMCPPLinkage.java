@@ -15,6 +15,7 @@ package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.DOMException;
+import org.eclipse.cdt.core.dom.ast.IASTArraySubscriptExpression;
 import org.eclipse.cdt.core.dom.ast.IASTBinaryExpression;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTExpressionList;
@@ -335,13 +336,10 @@ class PDOMCPPLinkage extends PDOMLinkage {
 							(IASTFunctionCallExpression) eParent,
 							(IASTIdExpression) parent, name);
 				} else if (parent.getPropertyInParent().equals(IASTFunctionCallExpression.PARAMETERS)) {
-					int constant = (name.getParent() instanceof ICPPASTQualifiedName
+					int desiredType = (name.getParent() instanceof ICPPASTQualifiedName
 							&& ((ICPPASTQualifiedName) name.getParent()).getLastName() != name)
 							? CPPNAMESPACE : CPPVARIABLE;
-					FindBindingByLinkageConstant finder = new FindBindingByLinkageConstant(
-							this, name.toCharArray(), constant);
-					getIndex().accept(finder);
-					return finder.getResult();
+					return searchCurrentScope(name.toCharArray(), desiredType);
 				}
 			} else {
 				// if the address of me is taken, and assigned to something,
@@ -368,42 +366,27 @@ class PDOMCPPLinkage extends PDOMLinkage {
 					}
 				}
 
-				FindBindingByLinkageConstant finder = new FindBindingByLinkageConstant(this, name.toCharArray(), CPPVARIABLE);
-				getIndex().accept(finder);
-
-				if (finder.getResult() == null) {
-					finder = new FindBindingByLinkageConstant(this, name
-							.toCharArray(), CPPENUMERATOR);
-					getIndex().accept(finder);
-				}
-				return finder.getResult();
+				return searchCurrentScope(name.toCharArray(), new int[]{
+					CPPVARIABLE,
+					CPPENUMERATOR
+				});
 			}
 		} else if (parent instanceof IASTNamedTypeSpecifier) {
-			FindBindingByLinkageConstant finder = new FindBindingByLinkageConstant(this, name.toCharArray(), CPPCLASSTYPE);
-			getIndex().accept(finder);
-			PDOMBinding result = finder.getResult();
-			if(result==null) {
-				finder = new FindBindingByLinkageConstant(this, name.toCharArray(), CPPENUMERATION);
-				getIndex().accept(finder);
-				result = finder.getResult();
-			}
-			if(result==null) {
-				finder = new FindBindingByLinkageConstant(this, name.toCharArray(), CPPTYPEDEF);
-				getIndex().accept(finder);
-				result = finder.getResult();
-			}
-			return result;
+			return searchCurrentScope(name.toCharArray(), new int[] {
+				CPPCLASSTYPE,
+				CPPENUMERATION,
+				CPPTYPEDEF
+			});
 		} else if (parent instanceof ICPPASTNamespaceAlias) {
-			FindBindingByLinkageConstant finder = new FindBindingByLinkageConstant(this, name.toCharArray(), CPPNAMESPACE);
-			getIndex().accept(finder);
-			return finder.getResult();
+			return searchCurrentScope(name.toCharArray(), CPPNAMESPACE);
 		} else if(parent instanceof ICPPASTFieldReference) {
 			ICPPASTFieldReference ref = (ICPPASTFieldReference) parent;
 			IASTExpression exp = ref.getFieldOwner();
 			if(exp instanceof IASTIdExpression) {
 				IASTIdExpression fieldOwner = (IASTIdExpression) exp;
 				IASTNode eParent = parent.getParent();
-				if (eParent instanceof IASTFunctionCallExpression) {
+				if (eParent instanceof IASTFunctionCallExpression &&
+						parent.getPropertyInParent().equals(IASTFunctionCallExpression.FUNCTION_NAME)) {
 					if(name.getPropertyInParent().equals(IASTFieldReference.FIELD_NAME)) {
 						return resolveFunctionCall((IASTFunctionCallExpression) eParent, fieldOwner, name);
 					}
@@ -429,22 +412,34 @@ class PDOMCPPLinkage extends PDOMLinkage {
 				}
 			}
 		} else if(parent instanceof ICPPASTBaseSpecifier) {
-			FindBindingByLinkageConstant finder = new FindBindingByLinkageConstant(this, name.toCharArray(), CPPCLASSTYPE);
-			getIndex().accept(finder);
-			return finder.getResult();
+			return searchCurrentScope(name.toCharArray(), PDOMCPPLinkage.CPPCLASSTYPE);
 		}
 
 		return null;
 	}
 
+	private PDOMBinding searchCurrentScope(char[] name, int[] constants) throws CoreException {
+		PDOMBinding result = null;
+		for(int i=0; result==null && i<constants.length; i++)
+			result = searchCurrentScope(name, constants[i]);
+		return result;
+	}
+
+	private PDOMBinding searchCurrentScope(char[] name, int constant) throws CoreException {
+		FindBindingByLinkageConstant visitor = new FindBindingByLinkageConstant(getLinkageImpl(), name, constant);
+		getIndex().accept(visitor);
+		return visitor.getResult();
+	}
+
+	
 	/**
 	 * Read type information from the AST or null if the types could not be determined
 	 * @param paramExp the parameter expression to get types for (null indicates void function/method)
 	 * @return an array of types or null if types could not be determined (because of missing semantic information in the AST)
 	 */
-	public IType[] getTypes(IASTExpression paramExp) throws DOMException {
+	public static IType[] getTypes(IASTExpression paramExp) throws DOMException {
 		IType[] types = null;
-		
+
 		if(paramExp==null) { // void function/method
 			types = new IType[0]; 
 		} else if(paramExp instanceof ICPPASTNewExpression) {
@@ -453,25 +448,23 @@ class PDOMCPPLinkage extends PDOMLinkage {
 			ICPPASTNewExpression exp3 = (ICPPASTNewExpression) paramExp;
 			IType type = exp3.getExpressionType();
 			types = new IType[] {new CPPPointerType(type)};
-		} else {
-			if(paramExp instanceof IASTExpressionList) {
-				IASTExpressionList list = (IASTExpressionList) paramExp;
-				IASTExpression[] paramExps = list.getExpressions();
-				types = new IType[paramExps.length];
-				for(int i=0; i<paramExps.length; i++) {
-					types[i] = paramExps[i].getExpressionType();
-				}
-			} else {
-				types = new IType[] {paramExp.getExpressionType()};
+		} else if(paramExp instanceof IASTExpressionList) {
+			IASTExpressionList list = (IASTExpressionList) paramExp;
+			IASTExpression[] paramExps = list.getExpressions();
+			types = new IType[paramExps.length];
+			for(int i=0; i<paramExps.length; i++) {
+				types[i] = paramExps[i].getExpressionType();
 			}
+		} else {
+			types = new IType[] {paramExp.getExpressionType()};
 		}
-		
+
 		if(types!=null) { // aftodo - unit test coverage of this is low
 			for(int i=0; i<types.length; i++) {
 				// aftodo - assumed this always terminates
 				while(types[i] instanceof ITypedef) {
 					types[i] = ((ITypedef)types[i]).getType();
-		 		}
+				}
 				if(types[i] instanceof ProblemBinding)
 					return null; 
 			}

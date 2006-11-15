@@ -26,7 +26,7 @@ import org.eclipse.core.runtime.CoreException;
 /**
  * @author Doug Schaefer
  */
-class PDOMCPPTypedef extends PDOMBinding implements ITypedef, ITypeContainer {
+class PDOMCPPTypedef extends PDOMCPPBinding implements ITypedef, ITypeContainer {
 
 	private static final int TYPE = PDOMBinding.RECORD_SIZE + 0;
 	

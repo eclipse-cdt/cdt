@@ -324,7 +324,7 @@ public class IndexCPPBindingResolutionTest extends IndexBindingResolutionTestBas
 	 // namespace n3 { c3::s3::u3::Int i10; }
 	 // namespace n1 { n2::Int i11; }
 	 // namespace n1 { namespace n2 { Int i12; }} 
-	public void _testQualifiedNamesForTypedef() throws DOMException {
+	public void testQualifiedNamesForTypedef() throws DOMException {
 		IBinding b0 = getBindingFromASTName("Int i0;", 3);
 		assertQNEquals("n1::n2::Int", b0);
 		IBinding b1= getBindingFromASTName("Int i1;", 3);
@@ -675,4 +675,6 @@ public class IndexCPPBindingResolutionTest extends IndexBindingResolutionTestBas
 		IBinding b23 = getBindingFromASTName("f;/*23*/", 1);
 		IBinding b24 = getBindingFromASTName("f;/*24*/", 1);
 	}
+	
+	public void _testAddressOfOverloadedMethod() throws DOMException { fail("aftodo"); }
 }

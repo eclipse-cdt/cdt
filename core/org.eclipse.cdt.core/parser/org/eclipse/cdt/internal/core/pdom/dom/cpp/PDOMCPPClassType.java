@@ -8,6 +8,7 @@
  * Contributors:
  * QNX - Initial API and implementation
  * Markus Schorn (Wind River Systems)
+ * Andrew Ferguson (Symbian)
  *******************************************************************************/
 
 package org.eclipse.cdt.internal.core.pdom.dom.cpp;
@@ -22,7 +23,6 @@ import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.IName;
 import org.eclipse.cdt.core.dom.IPDOMNode;
 import org.eclipse.cdt.core.dom.IPDOMVisitor;
-import org.eclipse.cdt.core.dom.ast.ASTNodeProperty;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTFieldReference;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionCallExpression;
@@ -328,18 +328,13 @@ ICPPClassScope, IPDOMMemberOwner {
 	public IBinding getBinding(IASTName name, boolean resolve) throws DOMException {
 		IASTNode parent = name.getParent();
 		
-		ASTNodeProperty prop = name.getPropertyInParent();
-
-		PDOMLinkage linkage;
 		try {
-			linkage = getLinkageImpl();
-
 			if (name instanceof ICPPASTQualifiedName) {
 				IASTName lastName = ((ICPPASTQualifiedName)name).getLastName();
 				return lastName != null ? lastName.resolveBinding() : null;
 			}
 			
-			if(parent instanceof ICPPASTQualifiedName) {
+			if (parent instanceof ICPPASTQualifiedName) {
 				IASTName[] names = ((ICPPASTQualifiedName)parent).getNames();
 				int index = ArrayUtil.indexOf(names, name);
 				
@@ -362,149 +357,93 @@ ICPPClassScope, IPDOMMemberOwner {
 						}
 					}
 					
-					FindBindingByLinkageConstant visitor = new FindBindingByLinkageConstant(linkage, name.toCharArray(), PDOMCPPLinkage.CPPCLASSTYPE);
-					try {
-						accept(visitor);
-					} catch(CoreException e) {
-						if (e.getStatus().equals(Status.OK_STATUS)) {
-							return visitor.getResult();
-						} else {
-							CCorePlugin.log(e);
-						}
-					}
-					visitor = new FindBindingByLinkageConstant(linkage, name.toCharArray(), PDOMCPPLinkage.CPPMETHOD);
-					try {
-						accept(visitor);
-					} catch(CoreException e) {
-						if (e.getStatus().equals(Status.OK_STATUS)) {
-							return visitor.getResult();
-						} else {
-							CCorePlugin.log(e);
-						}
-					}
-					visitor = new FindBindingByLinkageConstant(linkage, name.toCharArray(), PDOMCPPLinkage.CPPFIELD);
-					try {
-						accept(visitor);
-					} catch(CoreException e) {
-						if (e.getStatus().equals(Status.OK_STATUS)) {
-							return visitor.getResult();
-						} else {
-							CCorePlugin.log(e);
-						}
-					}
-					visitor = new FindBindingByLinkageConstant(linkage, name.toCharArray(), PDOMCPPLinkage.CPPENUMERATION);
-					try {
-						accept(visitor);
-					} catch(CoreException e) {
-						if (e.getStatus().equals(Status.OK_STATUS)) {
-							return visitor.getResult();
-						} else {
-							CCorePlugin.log(e);
-						}
-					}
-					visitor = new FindBindingByLinkageConstant(linkage, name.toCharArray(), PDOMCPPLinkage.CPPENUMERATOR);
-					try {
-						accept(visitor);
-					} catch(CoreException e) {
-						if (e.getStatus().equals(Status.OK_STATUS)) {
-							return visitor.getResult();
-						} else {
-							CCorePlugin.log(e);
-						}
-					}
-					return null; // not found in this scope
+					// aftodo - do we even need specify the type - we should
+					// expect only one name here anyway?
+					return searchCurrentScope(name.toCharArray(), new int[] {
+						PDOMCPPLinkage.CPPCLASSTYPE,
+						PDOMCPPLinkage.CPPMETHOD,
+						PDOMCPPLinkage.CPPFIELD,
+						PDOMCPPLinkage.CPPENUMERATION,
+						PDOMCPPLinkage.CPPENUMERATOR
+					});
 				}
 			}
 			
 			IASTNode eParent = parent.getParent();
-			if(parent instanceof IASTIdExpression) {
-				FindBindingByLinkageConstant visitor = new FindBindingByLinkageConstant(linkage, name.toCharArray(), PDOMCPPLinkage.CPPENUMERATOR);
-				try {
-					accept(visitor);
-				} catch(CoreException e) {
-					if (e.getStatus().equals(Status.OK_STATUS)) {
-						return visitor.getResult();
-					} else {
-						CCorePlugin.log(e);
-					}
-				}
+			if (parent instanceof IASTIdExpression) {
+				return searchCurrentScope(name.toCharArray(),  PDOMCPPLinkage.CPPENUMERATOR);
 			} else if(eParent instanceof IASTFunctionCallExpression) {
 				if(parent.getPropertyInParent().equals(IASTFunctionCallExpression.FUNCTION_NAME)) {
-					IType[] types = ((PDOMCPPLinkage)linkage).getTypes(
-							((IASTFunctionCallExpression)eParent).getParameterExpression()
-					);
-					if(types!=null) {
-						ILocalBindingIdentity bid = new CPPBindingIdentity.Holder(
-								new String(name.toCharArray()),
-								PDOMCPPLinkage.CPPFUNCTION,
-								types);
-						FindEquivalentBinding feb = new FindEquivalentBinding(linkage, bid);
-						try {
-							accept(feb);
-						} catch(CoreException e) {
-							if (e.getStatus().equals(Status.OK_STATUS)) {
-								return feb.getResult();
-							} else {
-								CCorePlugin.log(e);
-							}
-						}
-						return feb.getResult();
-					}
+					return searchCurrentScopeForFunction((IASTFunctionCallExpression)eParent, name);
 				} else if(parent.getPropertyInParent().equals(IASTFunctionCallExpression.PARAMETERS)) {
 					if(parent instanceof IASTFieldReference) {
-						FindBindingByLinkageConstant visitor = new FindBindingByLinkageConstant(linkage, name.toCharArray(), PDOMCPPLinkage.CPPFIELD);
-						try {
-							accept(visitor);
-						} catch(CoreException e) {
-							if (e.getStatus().equals(Status.OK_STATUS)) {
-								return visitor.getResult();
-							} else {
-								CCorePlugin.log(e);
-							}
-						}						
+						return searchCurrentScope(name.toCharArray(),  PDOMCPPLinkage.CPPFIELD);				
 					}
 				}
-			} else if(prop.equals(IASTFieldReference.FIELD_NAME)) {
-				FindBindingByLinkageConstant visitor = new FindBindingByLinkageConstant(linkage, name.toCharArray(), PDOMCPPLinkage.CPPFIELD);
-				try {
-					accept(visitor);
-				} catch(CoreException e) {
-					if (e.getStatus().equals(Status.OK_STATUS)) {
-						return visitor.getResult();
-					} else {
-						CCorePlugin.log(e);
-					}
-				}
+			} else if(name.getPropertyInParent().equals(IASTFieldReference.FIELD_NAME)) {
+				return searchCurrentScope(name.toCharArray(),  PDOMCPPLinkage.CPPFIELD);
 			} else if (parent instanceof IASTNamedTypeSpecifier) {
-				FindBindingByLinkageConstant visitor = new FindBindingByLinkageConstant(linkage, name.toCharArray(), PDOMCPPLinkage.CPPCLASSTYPE);
-				try {
-					accept(visitor);
-				} catch(CoreException e) {
-					if (e.getStatus().equals(Status.OK_STATUS)) {
-						return visitor.getResult();
-					} else {
-						CCorePlugin.log(e);
-					}
-				}
-				visitor = new FindBindingByLinkageConstant(linkage, name.toCharArray(), PDOMCPPLinkage.CPPENUMERATION);
-				try {
-					accept(visitor);
-				} catch(CoreException e) {
-					if (e.getStatus().equals(Status.OK_STATUS)) {
-						return visitor.getResult();
-					} else {
-						CCorePlugin.log(e);
-					}
-				}
+				return searchCurrentScope(name.toCharArray(), new int[] {
+					PDOMCPPLinkage.CPPCLASSTYPE,
+					PDOMCPPLinkage.CPPENUMERATION,
+					PDOMCPPLinkage.CPPTYPEDEF
+				});
 			}
 		} catch(CoreException e) {
 			CCorePlugin.log(e);
-			return null;
 		}
 
 		return null;
 	}
 
+	private PDOMBinding searchCurrentScopeForFunction(IASTFunctionCallExpression fce, IASTName name) throws CoreException {
+		try {
+			IType[] types = PDOMCPPLinkage.getTypes(fce.getParameterExpression());
+			if(types!=null) {
+				ILocalBindingIdentity bid = new CPPBindingIdentity.Holder(
+						new String(name.toCharArray()),
+						PDOMCPPLinkage.CPPFUNCTION,
+						types);
+				FindEquivalentBinding feb = new FindEquivalentBinding(getLinkageImpl(), bid);
+				try {
+					accept(feb);
+				} catch(CoreException e) {
+					if (e.getStatus().equals(Status.OK_STATUS)) {
+						return feb.getResult();
+					} else {
+						CCorePlugin.log(e);
+					}
+				}
+				return feb.getResult();
+			}
+		} catch(DOMException de) {
+			CCorePlugin.log(de);
+		}
+		return null;
+	}
+
+	
+	private IBinding searchCurrentScope(char[] name, int[] constants) throws CoreException {
+		IBinding result = null;
+		for(int i=0; result==null && i<constants.length; i++)
+			result = searchCurrentScope(name, constants[i]);
+		return result;
+	}
+	
+	private IBinding searchCurrentScope(char[] name, int constant) throws CoreException {
+		FindBindingByLinkageConstant visitor = new FindBindingByLinkageConstant(getLinkageImpl(), name, constant);
+		try {
+			accept(visitor);
+		} catch(CoreException e) {
+			if (e.getStatus().equals(Status.OK_STATUS)) {
+				return visitor.getResult();
+			} else {
+				CCorePlugin.log(e);
+			}
+		}
+		return null;
+	}
+	
 	// Not implemented
 
 	public Object clone() {fail();return null;}

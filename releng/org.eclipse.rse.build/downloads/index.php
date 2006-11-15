@@ -20,22 +20,46 @@
   </tr>
   
 	<tr> <td> <p>On this
-page you can find the latest builds for the Remote System Explorer (RSE),
-produced by the 
+page you can find the latest 
+<a href="build_types.html">builds</a> for the Remote System Explorer (RSE),
+provided by the 
 <a href="http://www.eclipse.org/dsdp/tm/">Target Management</a> project.
 <!--
 To get started run the program and go through the
 user and developer documentation provided in the online help system.
 -->
-To get started, see the build notes provided with each drop.
+To get started, see the build notes provided with each drop, run the
+program and go through the online user and developer documentation,
+or take a look at the project's online
+<a href="http://www.eclipse.org/dsdp/tm/tutorial/index.php">getting started</a>
+pages.
 
 If you have problems downloading the drops, contact the 
 <font face="arial,helvetica,geneva" size="-1"><a href="mailto:webmaster@eclipse.org">webmaster</a></font>.
+If you have problems installing or getting the workbench to run, 
+check out the 
+<a href="http://wiki.eclipse.org/index.php/TM_and_RSE_FAQ">Target Management FAQ</a>,
+or try posting a question to the 
+<a href="http://www.eclipse.org/newsgroups">newsgroup</a>,
+<a href="news://news.eclipse.org/eclipse.dsdp.tm">eclipse.dsdp.tm</a>.
 All downloads are provided under the terms and conditions of the 
 <a href="http://www.eclipse.org/legal/epl/notice.php">Eclipse.org
 Software User Agreement</a> unless otherwise specified. </p>
-<p> For information
-about different kinds of builds read our <a href="build_types.html">build types</a> page.</p>
+
+<p>
+<b>Other eclipse.org project</b> downloads are available
+<a href="http://www.eclipse.org/downloads/index.php">here</a>.</p>
+
+<p>
+For information about different kinds of builds look
+<a href="build_types.html" target="_top">here</a>.
+<!--
+<img src="http://www.eclipse.org/images/new.gif">
+For access to archived builds, look 
+<a href="http://archive.eclipse.org/dsdp/tm/downloads/index.php" target="_top">here</a>.
+-->
+</p>
+
 <p/>
 <!--
 <p>Builds can also be installed via Update Manager, from an existing installation of Eclipse, by following these  

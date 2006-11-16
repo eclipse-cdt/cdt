@@ -84,6 +84,10 @@ IHostShellOutputListener {
 		if(hostShell.isActive())
 			throw new IllegalThreadStateException();
 		// No way to tell what the exit value was.
+		// TODO it would be possible to get the exit value
+		// when the remote process is started like this:
+		//   sh -c 'remotecmd ; echo "-->RSETAG<-- $?\"'
+		// Then the output steram could be examined for -->RSETAG<-- to get the exit value.
 		return 0;
 	}
 

@@ -19,6 +19,7 @@ import org.eclipse.cdt.core.dom.ast.IASTPreprocessorIncludeStatement;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorMacroDefinition;
 import org.eclipse.cdt.internal.core.index.IIndexFragmentFile;
 import org.eclipse.cdt.internal.core.index.IWritableIndexFragment;
+import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMFile;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMLinkage;
 import org.eclipse.core.runtime.CoreException;
@@ -35,22 +36,14 @@ public class WritablePDOM extends PDOM implements IWritableIndexFragment {
 
 	public void addFileContent(IIndexFragmentFile sourceFile, 
 			IASTPreprocessorIncludeStatement[] includes, IIndexFragmentFile[] destFiles,
-			IASTPreprocessorMacroDefinition[] macros, IASTName[] names) throws CoreException {
+			IASTPreprocessorMacroDefinition[] macros, IASTName[][] names) throws CoreException {
 		assert sourceFile.getIndexFragment() == this;
+		assert includes.length == destFiles.length;
 		
 		PDOMFile pdomFile = (PDOMFile) sourceFile;
 		pdomFile.addIncludesTo(destFiles, includes);
 		pdomFile.addMacros(macros);
-		for (int i = 0; i < names.length; i++) {
-			IASTName name= names[i];
-			PDOMLinkage linkage= createLinkage(name.getLinkage().getID());
-			if (linkage == null) {
-				CCorePlugin.log(MessageFormat.format(Messages.WritablePDOM_error_unknownLinkage, new Object[]{name.getLinkage()}));
-			}
-			else {
-				linkage.addName(name, pdomFile);
-			}
-		}
+		pdomFile.addNames(names);
 	}
 
 	public void clearFile(IIndexFragmentFile file) throws CoreException {
@@ -60,5 +53,17 @@ public class WritablePDOM extends PDOM implements IWritableIndexFragment {
 	
 	public void clear() throws CoreException {
 		super.clear();
+	}
+	
+	public PDOMBinding addBinding(IASTName name) throws CoreException {
+		PDOMBinding result= null;
+		PDOMLinkage linkage= createLinkage(name.getLinkage().getID());
+		if (linkage == null) {
+			CCorePlugin.log(MessageFormat.format(Messages.WritablePDOM_error_unknownLinkage, new Object[]{name.getLinkage()}));
+		}
+		else {
+			result= linkage.addBinding(name);
+		}
+		return result;
 	}
 }

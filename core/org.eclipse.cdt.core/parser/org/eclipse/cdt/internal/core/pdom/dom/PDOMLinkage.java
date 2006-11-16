@@ -168,7 +168,7 @@ public abstract class PDOMLinkage extends PDOMNamedNode implements IBindingIdent
 		};
 	}
 	
-	public abstract PDOMBinding addName(IASTName name, PDOMFile file) throws CoreException;
+	public abstract PDOMBinding addBinding(IASTName name) throws CoreException;
 	
 	public abstract PDOMBinding adaptBinding(IBinding binding) throws CoreException;
 	

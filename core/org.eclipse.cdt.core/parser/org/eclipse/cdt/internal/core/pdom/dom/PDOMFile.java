@@ -12,8 +12,10 @@
 package org.eclipse.cdt.internal.core.pdom.dom;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
+import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorIncludeStatement;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorMacroDefinition;
 import org.eclipse.cdt.core.index.IIndexInclude;
@@ -22,6 +24,7 @@ import org.eclipse.cdt.internal.core.index.IIndexFragment;
 import org.eclipse.cdt.internal.core.index.IIndexFragmentFile;
 import org.eclipse.cdt.internal.core.index.IWritableIndexFragment;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
+import org.eclipse.cdt.internal.core.pdom.WritablePDOM;
 import org.eclipse.cdt.internal.core.pdom.db.Database;
 import org.eclipse.cdt.internal.core.pdom.db.IBTreeComparator;
 import org.eclipse.cdt.internal.core.pdom.db.IBTreeVisitor;
@@ -149,15 +152,6 @@ public class PDOMFile implements IIndexFragmentFile {
 		pdom.getDB().putInt(record + FIRST_NAME, namerec);
 	}
 	
-	public void addName(PDOMName name) throws CoreException {
-		PDOMName firstName = getFirstName();
-		if (firstName != null) {
-			name.setNextInFile(firstName);
-			firstName.setPrevInFile(name);
-		}
-		setFirstName(name);
-	}
-	
 	public PDOMInclude getFirstInclude() throws CoreException {
 		int increc = pdom.getDB().getInt(record + FIRST_INCLUDE);
 		return increc != 0 ? new PDOMInclude(pdom, increc) : null;
@@ -205,6 +199,36 @@ public class PDOMFile implements IIndexFragmentFile {
 		}
 	}
 	
+	public void addNames(IASTName[][] names) throws CoreException {
+		assert getFirstName() == null;
+		HashMap nameCache= new HashMap();
+		PDOMName lastName= null;
+		for (int i = 0; i < names.length; i++) {
+			IASTName[] name = names[i];
+			PDOMName caller= (PDOMName) nameCache.get(name[1]);
+			PDOMName pdomName = createPDOMName(name[0], caller);
+			if (pdomName != null) {
+				nameCache.put(name[0], pdomName);
+				if (lastName == null) {
+					setFirstName(pdomName);
+				}
+				else {
+					lastName.setNextInFile(pdomName);
+				}
+				lastName= pdomName;
+			}
+		}
+	}
+	
+	private PDOMName createPDOMName(IASTName name, PDOMName caller) throws CoreException {
+		PDOMName result= null;
+		PDOMBinding binding= ((WritablePDOM) pdom).addBinding(name);
+		if (binding != null) {
+			result= new PDOMName(pdom, name, this, binding, caller);
+		}
+		return result;
+	}
+
 	public void clear() throws CoreException {
 		// Remove the includes
 		PDOMInclude include = getFirstInclude();

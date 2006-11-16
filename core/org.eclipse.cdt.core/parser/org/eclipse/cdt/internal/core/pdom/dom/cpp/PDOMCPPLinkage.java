@@ -15,7 +15,6 @@ package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.DOMException;
-import org.eclipse.cdt.core.dom.ast.IASTArraySubscriptExpression;
 import org.eclipse.cdt.core.dom.ast.IASTBinaryExpression;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTExpressionList;
@@ -69,9 +68,7 @@ import org.eclipse.cdt.internal.core.pdom.dom.FindBindingByLinkageConstant;
 import org.eclipse.cdt.internal.core.pdom.dom.FindEquivalentBinding;
 import org.eclipse.cdt.internal.core.pdom.dom.IPDOMMemberOwner;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
-import org.eclipse.cdt.internal.core.pdom.dom.PDOMFile;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMLinkage;
-import org.eclipse.cdt.internal.core.pdom.dom.PDOMName;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNotImplementedError;
 import org.eclipse.core.runtime.CoreException;
@@ -120,8 +117,7 @@ class PDOMCPPLinkage extends PDOMLinkage {
 		return new GPPLanguage();
 	}
 
-
-	public PDOMBinding addName(IASTName name, PDOMFile file) throws CoreException {
+	public PDOMBinding addBinding(IASTName name) throws CoreException {
 		if (name == null || name instanceof ICPPASTQualifiedName)
 			return null;
 
@@ -198,9 +194,6 @@ class PDOMCPPLinkage extends PDOMLinkage {
 
 		// final processing
 		if (pdomBinding != null) {
-			// Add in the name
-			new PDOMName(pdom, name, file, pdomBinding);
-
 			// Check if is a base specifier
 			if (pdomBinding instanceof ICPPClassType && name.getParent() instanceof ICPPASTBaseSpecifier) {
 				ICPPASTBaseSpecifier baseNode = (ICPPASTBaseSpecifier)name.getParent();
@@ -297,8 +290,6 @@ class PDOMCPPLinkage extends PDOMLinkage {
 	}
 
 	private PDOMBinding _resolveBinding(IASTName name) throws CoreException, DOMException {
-		// mstodo revisit
-
 		IBinding origBinding = name.getBinding();	
 		if (origBinding != null)
 			return adaptBinding(origBinding);
@@ -398,7 +389,7 @@ class PDOMCPPLinkage extends PDOMLinkage {
 							PDOMBinding pdomFOB = adaptBinding( (ICompositeType)  type);
 							FindBindingByLinkageConstant visitor = new FindBindingByLinkageConstant(this, name.toCharArray(), PDOMCPPLinkage.CPPFIELD);
 							try {
-								((PDOMBinding)pdomFOB).accept(visitor);
+								pdomFOB.accept(visitor);
 							} catch (CoreException e) {
 								if (e.getStatus().equals(Status.OK_STATUS)) {
 									return visitor.getResult();

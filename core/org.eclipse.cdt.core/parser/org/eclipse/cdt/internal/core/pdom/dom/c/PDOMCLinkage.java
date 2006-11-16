@@ -43,9 +43,7 @@ import org.eclipse.cdt.internal.core.pdom.dom.FindBindingByLinkageConstant;
 import org.eclipse.cdt.internal.core.pdom.dom.FindEquivalentBinding;
 import org.eclipse.cdt.internal.core.pdom.dom.IPDOMMemberOwner;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
-import org.eclipse.cdt.internal.core.pdom.dom.PDOMFile;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMLinkage;
-import org.eclipse.cdt.internal.core.pdom.dom.PDOMName;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Status;
@@ -85,9 +83,7 @@ class PDOMCLinkage extends PDOMLinkage {
 		return new GCCLanguage();
 	}
 
-		
-
-	public PDOMBinding addName(IASTName name, PDOMFile file) throws CoreException {
+	public PDOMBinding addBinding(IASTName name) throws CoreException {
 		if (name == null)
 			return null;
 
@@ -149,10 +145,6 @@ class PDOMCLinkage extends PDOMLinkage {
 		} catch (DOMException e) {
 			throw new CoreException(Util.createStatus(e));
 		}
-
-		if (pdomBinding != null)
-			new PDOMName(pdom, name, file, pdomBinding);
-
 		return pdomBinding;
 	}
 

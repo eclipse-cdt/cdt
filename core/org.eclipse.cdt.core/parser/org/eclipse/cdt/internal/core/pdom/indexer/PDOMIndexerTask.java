@@ -14,15 +14,21 @@ package org.eclipse.cdt.internal.core.pdom.indexer;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.IPDOMIndexerTask;
+import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorIncludeStatement;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorMacroDefinition;
+import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.index.IIndexFile;
 import org.eclipse.cdt.core.index.IIndexInclude;
@@ -240,7 +246,90 @@ public abstract class PDOMIndexerTask implements IPDOMIndexerTask {
 		return fCompletedSources;
 	}
 	
-	protected IIndexFragmentFile addToIndex(IWritableIndex index, String location, ArrayList[] lists) throws CoreException {
+	/**
+	 * Extracts a map of names from the ast and returns an array defining the order in
+	 * which the symbols should be added to the index.
+	 * @since 4.0
+	 */
+	protected String[] extractSymbols(IASTTranslationUnit ast, Set legalPaths, final LinkedHashMap symbolMap) {
+		// includes
+		final String astFilePath = ast.getFilePath();
+		IASTPreprocessorIncludeStatement[] includes = ast.getIncludeDirectives();
+		for (int i = includes.length-1; i >= 0; --i) {
+			IASTPreprocessorIncludeStatement include = includes[i];
+			IASTFileLocation sourceLoc = include.getFileLocation();
+			String path= sourceLoc != null ? sourceLoc.getFileName() : astFilePath; // command-line includes
+			if (legalPaths.contains(path)) {
+				prepareInMap(symbolMap, path);
+				addToMap(symbolMap, 0, path, include);
+			}
+			path= include.getPath();
+			if (legalPaths.contains(path)) {
+				prepareInMap(symbolMap, path);
+			}
+		}
+		if (legalPaths.contains(astFilePath)) {
+			prepareInMap(symbolMap, ast.getFilePath());
+		}
+	
+		// macros
+		IASTPreprocessorMacroDefinition[] macros = ast.getMacroDefinitions();
+		for (int i = 0; i < macros.length; ++i) {
+			IASTPreprocessorMacroDefinition macro = macros[i];
+			IASTFileLocation sourceLoc = macro.getFileLocation();
+			if (sourceLoc != null) { // skip built-ins and command line macros
+				String path = sourceLoc.getFileName();
+				addToMap(symbolMap, 1, path, macro);
+			}
+		}
+			
+		// names
+		ast.accept(new IndexerASTVisitor() {
+			public void visit(IASTName name, IASTName caller) {
+				IASTFileLocation nameLoc = name.getFileLocation();
+				if (nameLoc != null) {
+					addToMap(symbolMap, 2, nameLoc.getFileName(), new IASTName[]{name, caller});
+				}
+			}
+		});
+		
+		Collection temp= symbolMap.keySet();
+		int size= temp.size();
+		String[] result= new String[temp.size()];
+		for (Iterator iter = temp.iterator(); iter.hasNext();) {
+			result[--size]= (String) iter.next();
+		}
+		return result;
+	}
+
+	private void addToMap(HashMap map, int idx, String path, Object thing) {
+		List[] lists= (List[]) map.get(path);
+		if (lists != null) 
+			lists[idx].add(thing);
+	}		
+
+	private boolean prepareInMap(Map map, String path) {
+		if (map.get(path) == null) {
+			Object lists= new ArrayList[]{new ArrayList(), new ArrayList(), new ArrayList()};
+			map.put(path, lists);
+		}
+		return false;
+	}
+
+	protected void prepareIndexInsertion(String path, Map symbolMap) {
+		ArrayList[] arrayLists = ((ArrayList[]) symbolMap.get(path));
+
+		// reverse the includes
+		Collections.reverse(arrayLists[0]);
+		
+		// resolve the names
+		ArrayList names= arrayLists[2];
+		for (int j=0; j<names.size(); j++) {
+			((IASTName[]) names.get(j))[0].resolveBinding();
+		}
+	}
+
+	protected IIndexFragmentFile addToIndex(IWritableIndex index, String location, Map symbolMap) throws CoreException {
 		// Remove the old symbols in the tu
 		Path path= new Path(location);
 		IIndexFragmentFile file= (IIndexFragmentFile) index.getFile(path);
@@ -251,13 +340,14 @@ public abstract class PDOMIndexerTask implements IPDOMIndexerTask {
 			file= index.addFile(path);
 		}
 		file.setTimestamp(path.toFile().lastModified());
+		ArrayList[] lists= (ArrayList[]) symbolMap.get(location);
 		if (lists != null) {
 			ArrayList list= lists[0];
 			IASTPreprocessorIncludeStatement[] includes= (IASTPreprocessorIncludeStatement[]) list.toArray(new IASTPreprocessorIncludeStatement[list.size()]);
 			list= lists[1];
 			IASTPreprocessorMacroDefinition[] macros= (IASTPreprocessorMacroDefinition[]) list.toArray(new IASTPreprocessorMacroDefinition[list.size()]);
 			list= lists[2];
-			IASTName[] names= (IASTName[]) list.toArray(new IASTName[list.size()]);
+			IASTName[][] names= (IASTName[][]) list.toArray(new IASTName[list.size()][]);
 
 			index.setFileContent(file, includes, macros, names);
 		}

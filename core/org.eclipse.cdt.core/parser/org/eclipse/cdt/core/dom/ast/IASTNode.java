@@ -7,6 +7,7 @@
  *
  * Contributors:
  * IBM - Initial API and implementation
+ * Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.ast;
 
@@ -108,4 +109,12 @@ public interface IASTNode {
      */
     public String getRawSignature();
 
+    /**
+     * Returns whether this node contains the given one. The decision is made
+     * purly on location information and therefore the method is fast.
+     * @param node the node to check
+     * @return whether this node contains the given one.
+     * @since 4.0
+     */
+	public boolean contains(IASTNode node);
 }

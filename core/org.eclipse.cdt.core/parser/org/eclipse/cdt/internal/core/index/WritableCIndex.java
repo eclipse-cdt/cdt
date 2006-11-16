@@ -57,7 +57,7 @@ public class WritableCIndex extends CIndex implements IWritableIndex {
 
 	public void setFileContent(IIndexFragmentFile file, 
 			IASTPreprocessorIncludeStatement[] includes,
-			IASTPreprocessorMacroDefinition[] macros, IASTName[] names) throws CoreException {
+			IASTPreprocessorMacroDefinition[] macros, IASTName[][] names) throws CoreException {
 
 		IIndexFragment indexFragment = file.getIndexFragment();
 		assert isWritableFragment(indexFragment);

@@ -316,7 +316,9 @@ ICPPClassScope, IPDOMMemberOwner {
 		}
 	}
 
-	public void addChild(PDOMNode member) throws CoreException {addMember(member);}
+	public void addChild(PDOMNode member) throws CoreException {
+		addMember(member);
+	}
 
 	public ICPPConstructor[] getConstructors() throws DOMException {
 		// TODO

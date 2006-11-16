@@ -41,7 +41,7 @@ public interface IWritableIndexFragment extends IIndexFragment {
 	 */
 	void addFileContent(IIndexFragmentFile sourceFile, 
 			IASTPreprocessorIncludeStatement[] includes, IIndexFragmentFile[] destFiles, 
-			IASTPreprocessorMacroDefinition[] macros, IASTName[] names) throws CoreException;
+			IASTPreprocessorMacroDefinition[] macros, IASTName[][] names) throws CoreException;
 
 	/**
 	 * Acquires a write lock, while giving up a certain amount of read locks.

@@ -51,4 +51,20 @@ public interface IIndexName extends IName {
 	 * Returns the length of the name.
 	 */
 	public int getNodeLength();
+	
+	/**
+	 * Returns the name of the definition that contains this name. 
+	 * May return <code>null</code>.
+	 * Currently this is implemented for function and method definitions, only.
+	 */
+	public IIndexName getEnclosingDefinition() throws CoreException;
+	
+	/**
+	 * Returns the names of the references contained in this definition. 
+	 * Returns <code>null</code>, if the name is not a definition.
+	 * 
+	 * Currently the method works with function definitions, only.
+	 */
+	public IIndexName[] getEnclosedNames() throws CoreException;
+
 }

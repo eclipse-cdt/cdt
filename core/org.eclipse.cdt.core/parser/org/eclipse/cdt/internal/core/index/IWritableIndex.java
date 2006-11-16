@@ -35,7 +35,7 @@ public interface IWritableIndex extends IIndex {
 	 */
 	void setFileContent(IIndexFragmentFile sourceFile, 
 			IASTPreprocessorIncludeStatement[] includes, 
-			IASTPreprocessorMacroDefinition[] macros, IASTName[] names) throws CoreException;
+			IASTPreprocessorMacroDefinition[] macros, IASTName[][] names) throws CoreException;
 
 	/**
 	 * Clears the entire index.

@@ -74,8 +74,9 @@ public class IndexBugsTests extends BaseTestCase {
 		return fCProject.getProject();
 	}
 	
-    protected String readTaggedComment(final String tag) throws IOException {
-    	return TestSourceReader.readTaggedComment(CTestPlugin.getDefault().getBundle(), "parser", getClass(), tag);
+    protected StringBuffer[] getContentsForTest(int blocks) throws IOException {
+    	return TestSourceReader.getContentsForTest(
+    			CTestPlugin.getDefault().getBundle(), "parser", getClass(), getName(), blocks);
     }
     
     protected IFile createFile(IContainer container, String fileName, String contents) throws Exception {
@@ -99,7 +100,6 @@ public class IndexBugsTests extends BaseTestCase {
 		TestSourceReader.waitUntilFileIsIndexed(fIndex, file, time);
 	}
 
-    // {bug162011}
     //  namespace ns162011 {
     //    class Class162011 {
     //      friend void function162011(Class162011); 
@@ -107,7 +107,7 @@ public class IndexBugsTests extends BaseTestCase {
     //    void function162011(Class162011 x){};
     //  }
     public void testBug162011() throws Exception {
-		String content = readTaggedComment("bug162011");
+		String content = getContentsForTest(1)[0].toString();
 		String fileName = "bug162011.cpp";
 		String funcName = "function162011";
 		String nsName = "ns162011";
@@ -247,13 +247,12 @@ public class IndexBugsTests extends BaseTestCase {
 		}
 	}
 
-	// {test164500}
 	// #define macro164500 1
 	// #undef macro164500
 	// #define macro164500 2
 	public void test164500() throws Exception {
 		waitForIndexer();
-		String content= readTaggedComment("test164500");
+		String content= getContentsForTest(1)[0].toString();
 
 		IFile file= TestSourceReader.createFile(fCProject.getProject(), "test164500.cpp", content);
 		TestSourceReader.waitUntilFileIsIndexed(fIndex, file, 4000);

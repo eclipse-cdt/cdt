@@ -7,6 +7,7 @@
  *
  * Contributors:
  * IBM Rational Software - Initial API and implementation
+ * Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser;
 
@@ -112,4 +113,12 @@ public abstract class ASTNode implements IASTNode {
     	return true;
     }
     
+    public boolean contains(IASTNode node) {
+    	if (node instanceof ASTNode) {
+    		ASTNode astNode= (ASTNode) node;
+    		return offset <= astNode.offset && 
+    			astNode.offset+astNode.length <= offset+length;
+    	}
+    	return false;
+    }
 }

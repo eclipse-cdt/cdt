@@ -11,10 +11,13 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom.dom;
 
+import java.util.ArrayList;
+
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.index.IIndexFile;
+import org.eclipse.cdt.core.index.IIndexName;
 import org.eclipse.cdt.internal.core.index.IIndexFragment;
 import org.eclipse.cdt.internal.core.index.IIndexFragmentName;
 import org.eclipse.cdt.internal.core.index.IIndexProxyBinding;
@@ -32,23 +35,23 @@ public class PDOMName implements IIndexFragmentName, IASTFileLocation {
 	private final int record;
 	
 	private static final int FILE_REC_OFFSET     = 0;
-	private static final int FILE_PREV_OFFSET 	 = 4;
-	private static final int FILE_NEXT_OFFSET	 = 8;
+	private static final int FILE_NEXT_OFFSET	 = 4;
+	private static final int CALLER_REC_OFFSET   = 8;
 	private static final int BINDING_REC_OFFSET  = 12;
 	private static final int BINDING_PREV_OFFSET = 16;
 	private static final int BINDING_NEXT_OFFSET = 20;
 	private static final int NODE_OFFSET_OFFSET  = 24;
-	private static final int NODE_LENGTH_OFFSET  = 28;
-	private static final int FLAGS 				 = 32;
+	private static final int NODE_LENGTH_OFFSET  = 28; // short
+	private static final int FLAGS 				 = 30; // byte
 
-	private static final int RECORD_SIZE = 33;
+	private static final int RECORD_SIZE = 31;
 
 	private static final int IS_DECLARATION = 1;
 	private static final int IS_DEFINITION = 2;
 	private static final int IS_REFERENCE = 3;
 	
 
-	public PDOMName(PDOM pdom, IASTName name, PDOMFile file, PDOMBinding binding) throws CoreException {
+	public PDOMName(PDOM pdom, IASTName name, PDOMFile file, PDOMBinding binding, PDOMName caller) throws CoreException {
 		this.pdom = pdom;
 		Database db = pdom.getDB();
 		record = db.malloc(RECORD_SIZE);
@@ -80,14 +83,15 @@ public class PDOMName implements IIndexFragmentName, IASTFileLocation {
 			db.putInt(record + BINDING_REC_OFFSET, binding.getRecord());
 		}
 		
-		// Hook us up the the liked name list from file
 		db.putInt(record + FILE_REC_OFFSET, file.getRecord());
-		file.addName(this);
+		if (caller != null) {
+			db.putInt(record + CALLER_REC_OFFSET, caller.getRecord());
+		}
 
 		// Record our location in the file
 		IASTFileLocation fileloc = name.getFileLocation();
 		db.putInt(record + NODE_OFFSET_OFFSET, fileloc.getNodeOffset());
-		db.putInt(record + NODE_LENGTH_OFFSET, fileloc.getNodeLength());
+		db.putShort(record + NODE_LENGTH_OFFSET, (short) fileloc.getNodeLength());
 	}
 	
 	public PDOMName(PDOM pdom, int nameRecord) {
@@ -147,6 +151,15 @@ public class PDOMName implements IIndexFragmentName, IASTFileLocation {
 		int filerec = pdom.getDB().getInt(record + FILE_REC_OFFSET);
 		return filerec != 0 ? new PDOMFile(pdom, filerec) : null;
 	}
+
+	public IIndexName getEnclosingDefinition() throws CoreException {
+		int namerec = getEnclosingDefinitionRecord();
+		return namerec != 0 ? new PDOMName(pdom, namerec) : null;
+	}
+
+	private int getEnclosingDefinitionRecord() throws CoreException {
+		return pdom.getDB().getInt(record + CALLER_REC_OFFSET);
+	}
 	
 	public PDOMName getNextInFile() throws CoreException {
 		return getNameField(FILE_NEXT_OFFSET);
@@ -155,15 +168,7 @@ public class PDOMName implements IIndexFragmentName, IASTFileLocation {
 	public void setNextInFile(PDOMName name) throws CoreException {
 		setNameField(FILE_NEXT_OFFSET, name);
 	}
-	
-	public PDOMName getPrevInFile() throws CoreException {
-		return getNameField(FILE_PREV_OFFSET);
-	}
-
-	public void setPrevInFile(PDOMName name) throws CoreException {
-		setNameField(FILE_PREV_OFFSET, name);
-	}
-	
+		
 	public PDOMBinding resolveBinding() {
 		try {
 			int bindingRecord = pdom.getDB().getInt(record + BINDING_REC_OFFSET);
@@ -248,7 +253,7 @@ public class PDOMName implements IIndexFragmentName, IASTFileLocation {
 
 	public int getNodeLength() {
 		try {
-			return pdom.getDB().getInt(record + NODE_LENGTH_OFFSET);
+			return pdom.getDB().getShort(record + NODE_LENGTH_OFFSET);
 		} catch (CoreException e) {
 			CCorePlugin.log(e);
 			return 0;
@@ -297,5 +302,17 @@ public class PDOMName implements IIndexFragmentName, IASTFileLocation {
 	
 	public IIndexProxyBinding getBinding() throws CoreException {
 		return getPDOMBinding();
+	}
+
+	public IIndexName[] getEnclosedNames() throws CoreException {
+		ArrayList result= new ArrayList();
+		PDOMName name= getNextInFile();
+		while (name != null) {
+			if (name.getEnclosingDefinitionRecord() == record) {
+				result.add(name);
+			}
+			name= name.getNextInFile();
+		}
+		return (IIndexName[]) result.toArray(new IIndexName[result.size()]);
 	}
 }

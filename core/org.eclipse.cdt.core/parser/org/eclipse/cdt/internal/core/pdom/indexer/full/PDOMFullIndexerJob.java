@@ -12,22 +12,15 @@
 
 package org.eclipse.cdt.internal.core.pdom.indexer.full;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.IPDOMIndexer;
 import org.eclipse.cdt.core.dom.IPDOMIndexerTask;
-import org.eclipse.cdt.core.dom.ast.ASTVisitor;
-import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
-import org.eclipse.cdt.core.dom.ast.IASTName;
-import org.eclipse.cdt.core.dom.ast.IASTPreprocessorIncludeStatement;
-import org.eclipse.cdt.core.dom.ast.IASTPreprocessorMacroDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.internal.core.index.IWritableIndex;
@@ -137,74 +130,26 @@ abstract class PDOMFullIndexerJob extends PDOMIndexerTask implements IPDOMIndexe
 	
 	protected void addSymbols(IASTTranslationUnit ast, IProgressMonitor pm) throws InterruptedException, CoreException {
 		// Add in the includes
-		final LinkedHashMap symbolMap= new LinkedHashMap(); // makes bugs reproducible
-		prepareInMap(symbolMap, ast.getFilePath());
+		final LinkedHashMap symbolMap= new LinkedHashMap(); 
+		String[] orderedPaths= extractSymbols(ast, filePathsToParse.keySet(), symbolMap);
 		
-		// includes
-		IASTPreprocessorIncludeStatement[] includes = ast.getIncludeDirectives();
-		for (int i = 0; i < includes.length; ++i) {
-			IASTPreprocessorIncludeStatement include = includes[i];
-			IASTFileLocation sourceLoc = include.getFileLocation();
-			String path= sourceLoc != null ? sourceLoc.getFileName() : ast.getFilePath(); // command-line includes
-			addToMap(symbolMap, 0, path, include);
-			path= include.getPath();
-			if (path != null) {
-				prepareInMap(symbolMap, include.getPath());
-			}
-		}
-	
-		// macros
-		IASTPreprocessorMacroDefinition[] macros = ast.getMacroDefinitions();
-		for (int i = 0; i < macros.length; ++i) {
-			IASTPreprocessorMacroDefinition macro = macros[i];
-			IASTFileLocation sourceLoc = macro.getFileLocation();
-			if (sourceLoc != null) { // skip built-ins and command line macros
-				String path = sourceLoc.getFileName();
-				addToMap(symbolMap, 1, path, macro);
-			}
-		}
-			
-		// names
-		ast.accept(new ASTVisitor() {
-			{
-				shouldVisitNames = true;
-				shouldVisitDeclarations = true;
-			}
-			public int visit(IASTName name) {
-				try {
-					IASTFileLocation nameLoc = name.getFileLocation();
-					if (nameLoc != null) {
-						addToMap(symbolMap, 2, nameLoc.getFileName(), name);
-					}
-					return PROCESS_CONTINUE;
-				} catch (Throwable e) {
-					CCorePlugin.log(e);
-					return ++fErrorCount > MAX_ERRORS ? PROCESS_ABORT : PROCESS_CONTINUE;
-				}
-			}
-		});
-
-		for (Iterator iter = symbolMap.values().iterator(); iter.hasNext();) {
+		for (int i=0; i<orderedPaths.length; i++) {
 			if (pm.isCanceled()) {
 				return;
 			}
-			// resolve the names
-			ArrayList names= ((ArrayList[]) iter.next())[2];
-			for (int i=0; i<names.size(); i++) {
-				((IASTName) names.get(i)).resolveBinding();
-			}
+			String path= orderedPaths[i];
+			prepareIndexInsertion(path, symbolMap);
 		}
 
 		boolean isFirstRequest= true;
 		boolean isFirstAddition= true;
 		index.acquireWriteLock(0);
 		try {
-			for (Iterator iter = symbolMap.entrySet().iterator(); iter.hasNext();) {
+			for (int i=0; i<orderedPaths.length; i++) {
 				if (pm.isCanceled()) 
 					return;
 				
-				Map.Entry entry = (Map.Entry) iter.next();
-				String path= (String) entry.getKey();
+				String path = orderedPaths[i];
 				Boolean required= (Boolean) filePathsToParse.remove(path);
 				if (required != null) {
 					if (required.booleanValue()) {
@@ -217,7 +162,7 @@ abstract class PDOMFullIndexerJob extends PDOMIndexerTask implements IPDOMIndexe
 					if (fTrace) 
 						System.out.println("Indexer: adding " + path); //$NON-NLS-1$
 					
-					addToIndex(index, path, (ArrayList[]) entry.getValue());
+					addToIndex(index, path, symbolMap);
 					
 					if (isFirstAddition) 
 						isFirstAddition= false;
@@ -230,20 +175,4 @@ abstract class PDOMFullIndexerJob extends PDOMIndexerTask implements IPDOMIndexe
 		}
 		fCompletedSources++;
 	}
-
-	private void prepareInMap(Map map, String path) {
-		if (filePathsToParse.get(path) != null) {
-			if (map.get(path) == null) {
-				Object lists= new ArrayList[]{new ArrayList(), new ArrayList(), new ArrayList()};
-				map.put(path, lists);
-			}
-		}
-	}
-			
-	private void addToMap(HashMap map, int idx, String path, Object thing) {
-		List[] lists= (List[]) map.get(path);
-		if (lists != null) {
-			lists[idx].add(thing);
-		}
-	}		
 }

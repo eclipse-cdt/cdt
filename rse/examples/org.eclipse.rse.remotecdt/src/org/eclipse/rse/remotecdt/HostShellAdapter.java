@@ -23,6 +23,14 @@ import org.eclipse.rse.services.shells.IHostShell;
 import org.eclipse.rse.services.shells.IHostShellChangeEvent;
 import org.eclipse.rse.services.shells.IHostShellOutputListener;
 
+/**
+ * This class represents a host shell process. It does not 
+ * represent one process running in the shell.  This means 
+ * that the output of multiple shell commands will be returned
+ * until the shell exits. 
+ * @author Ewa Matejska
+ *
+ */
 public class HostShellAdapter extends Process implements
 IHostShellOutputListener {
 
@@ -34,7 +42,11 @@ IHostShellOutputListener {
 	private PipedOutputStream hostShellInput = null;
 	private PipedOutputStream hostShellError = null;
 	
-	
+	/**
+	 * 
+	 * @param hostShell  An instance of the IHostShell class.
+	 * @throws java.io.IOException
+	 */
 	public HostShellAdapter(IHostShell hostShell) throws java.io.IOException {
 		this.hostShell = hostShell;
 		hostShellInput = new PipedOutputStream();
@@ -46,6 +58,9 @@ IHostShellOutputListener {
 		this.hostShell.getStandardErrorReader().addOutputListener(this);
 	}
 	
+	/**
+	 *  Exits the shell.
+	 */
 	public synchronized void destroy() {
 		hostShell.exit();
 		notifyAll();
@@ -60,6 +75,10 @@ IHostShellOutputListener {
 		}	
 	}
 
+	/**
+	 *  There is no relevant exit value to return when the shell exits.
+	 *  This always returns 0.
+	 */
 	public synchronized int exitValue() {
 		if(hostShell.isActive())
 			throw new IllegalThreadStateException();
@@ -67,18 +86,30 @@ IHostShellOutputListener {
 		return 0;
 	}
 
+	/**
+	 *  Returns the error stream of the shell.
+	 */
 	public InputStream getErrorStream() {
 		return errorStream;
 	}
 
+	/**
+	 * Returns the input stream for the shell.
+	 */
 	public InputStream getInputStream() {
 		return inputStream;
 	}
 
+	/**
+	 * Returns the output stream for the shell.
+	 */
 	public OutputStream getOutputStream() {
 		return outputStream;
 	}
 
+	/**
+	 *  Waits for the shell to exit.
+	 */
 	public synchronized int waitFor() throws InterruptedException {
 		
 		while(hostShell.isActive()) {

@@ -44,7 +44,7 @@ import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.services.IService;
 import org.eclipse.rse.services.files.IFileService;
-import org.eclipse.rse.services.shells.HostShellAdapter;
+import org.eclipse.rse.services.shells.HostShellProcessAdapter;
 import org.eclipse.rse.services.shells.IHostShell;
 import org.eclipse.rse.services.shells.IShellService;
 import org.eclipse.rse.subsystems.files.core.servicesubsystem.IFileServiceSubSystem;
@@ -277,7 +277,7 @@ public class RemoteRunLaunchDelegate extends AbstractCLaunchDelegate {
 		
 		Process p = null;
 		try {
-			p = new HostShellAdapter(hostShell);
+			p = new HostShellProcessAdapter(hostShell);
 		} catch (Exception e) {
 			if (p != null) {
 				p.destroy();

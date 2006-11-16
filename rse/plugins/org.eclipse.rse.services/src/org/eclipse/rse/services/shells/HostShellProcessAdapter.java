@@ -9,6 +9,7 @@
  * Ewa Matejska (PalmSource) - initial version
  * Martin Oberhuber (Wind River) - adapt to IHostOutput API (bug 161773, 158312)
  * Martin Oberhuber (Wind River) - moved from org.eclipse.rse.remotecdt (bug 161777)
+ * Martin Oberhuber (Wind River) - renamed from HostShellAdapter (bug 161777)
  *******************************************************************************/
 
 package org.eclipse.rse.services.shells;
@@ -28,7 +29,7 @@ import java.io.PipedOutputStream;
  * @author Ewa Matejska
  *
  */
-public class HostShellAdapter extends Process implements
+public class HostShellProcessAdapter extends Process implements
 IHostShellOutputListener {
 
 	private IHostShell hostShell;
@@ -44,7 +45,7 @@ IHostShellOutputListener {
 	 * @param hostShell  An instance of the IHostShell class.
 	 * @throws java.io.IOException
 	 */
-	public HostShellAdapter(IHostShell hostShell) throws java.io.IOException {
+	public HostShellProcessAdapter(IHostShell hostShell) throws java.io.IOException {
 		this.hostShell = hostShell;
 		hostShellInput = new PipedOutputStream();
 		hostShellError = new PipedOutputStream();

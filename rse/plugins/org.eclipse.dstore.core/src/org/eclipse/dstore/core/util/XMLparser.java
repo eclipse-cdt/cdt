@@ -763,7 +763,6 @@ public class XMLparser
 				if ((nextQuote >= 0) && (nextnextQuote > nextQuote) && (fullTag.length() > nextnextQuote))
 				{
 					String attribute = fullTag.substring(nextQuote + 1, nextnextQuote);
-
 					attributes[index] = convertStringFromXML(attribute);
 					index++;
 				}
@@ -919,8 +918,6 @@ public class XMLparser
 							if (_dataStore.isVirtual() && parent != null) 
 							{
 								result = _dataStore.find(parent, DE.A_NAME, attributes[DE.A_NAME], 1);
-								if (result != null && result.getValue().equals(attributes[DE.A_VALUE]) && result.isSpirit())
-									_dataStore.deleteObject(parent, result);
 							}
 							if (isSpirit)
 							{

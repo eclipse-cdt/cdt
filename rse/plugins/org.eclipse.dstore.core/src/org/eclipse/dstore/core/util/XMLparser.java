@@ -21,6 +21,8 @@ import java.io.IOException;
 import java.io.InterruptedIOException;
 import java.net.Socket;
 import java.net.SocketException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Stack;
 
 import org.eclipse.dstore.core.model.DE;
@@ -522,6 +524,42 @@ public class XMLparser
 								_dataStore.stopWaiting(parent);
 								parent.notifyUpdate();
 							}
+						}
+					}
+					
+					if (parent != null && parent.getNestedSize() > 0 && _dataStore.isVirtual())
+					{
+						// end of children of parent
+						// find all spirits that match non-spirits
+						List toDelete = new ArrayList();
+						for (int s= 0; s < parent.getNestedSize(); s++)
+						{
+							DataElement element = parent.get(s);
+							if (element.isSpirit())
+							{
+								String name = element.getName();
+								String value = element.getValue();
+								
+								// delete this element if there's another one with the same name and value
+								for (int n = 0; n < parent.getNestedSize(); n++)
+								{
+									if (n != s)
+									{
+										DataElement compare = parent.get(n);
+										String cname = compare.getName();
+										String cvalue = compare.getValue();
+										if (!compare.isSpirit() &&  cname.equals(name) && cvalue.equals(value))
+											toDelete.add(compare);
+									}
+								}
+							}
+						}
+						
+						// delete elements
+						for (int d = 0; d < toDelete.size(); d++)
+						{
+							DataElement delement = (DataElement)toDelete.get(d);
+							_dataStore.deleteObject(parent,delement);
 						}
 					}
 

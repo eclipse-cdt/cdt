@@ -8,6 +8,7 @@
  * Contributors: 
  * Ewa Matejska (PalmSource)
  * Martin Oberhuber (Wind River) - moved from org.eclipse.rse.remotecdt (bug 161777)
+ * Martin Oberhuber (Wind River) - improved Javadoc
  *******************************************************************************/
 
 package org.eclipse.rse.services.shells;
@@ -27,6 +28,7 @@ public class HostShellOutputStream extends OutputStream {
 	private IHostShell hostShell;
 	
 	/**
+	 * Constructor.
 	 * @param hostShell  An instance of the IHostShell class.  
 	 * The output will be sent to this instance.
 	 */
@@ -36,6 +38,7 @@ public class HostShellOutputStream extends OutputStream {
 	
 	/**
 	 * Writes one byte to the shell.
+	 * @see java.io.OutputStream#write(byte[])
 	 */
 	public void write(byte[] b) {
 		if(hostShell != null && b != null)
@@ -44,7 +47,8 @@ public class HostShellOutputStream extends OutputStream {
 	
     /**
      * Writes multiple bytes to the shell.
-     */
+	 * @see java.io.OutputStream#write(byte[], int, int)
+	 */
 	public void write(byte[] b, int off, int len)  {
 		if(hostShell != null && b != null)
 			hostShell.writeToShell(new String(b, off, len)); 
@@ -52,6 +56,7 @@ public class HostShellOutputStream extends OutputStream {
 
 	/**
 	 * Writes one character to the shell.
+	 * @see java.io.OutputStream#write(int)
 	 */
 	public void write(int b) throws IOException {
 		char[] array = { (char) b };

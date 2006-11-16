@@ -10,6 +10,7 @@
  * Martin Oberhuber (Wind River) - adapt to IHostOutput API (bug 161773, 158312)
  * Martin Oberhuber (Wind River) - moved from org.eclipse.rse.remotecdt (bug 161777)
  * Martin Oberhuber (Wind River) - renamed from HostShellAdapter (bug 161777)
+ * Martin Oberhuber (Wind River) - improved Javadoc
  *******************************************************************************/
 
 package org.eclipse.rse.services.shells;
@@ -25,9 +26,9 @@ import java.io.PipedOutputStream;
  * This class represents a host shell process. It does not 
  * represent one process running in the shell.  This means 
  * that the output of multiple shell commands will be returned
- * until the shell exits. 
+ * until the shell exits.
+ * 
  * @author Ewa Matejska
- *
  */
 public class HostShellProcessAdapter extends Process implements
 IHostShellOutputListener {
@@ -41,7 +42,7 @@ IHostShellOutputListener {
 	private PipedOutputStream hostShellError = null;
 	
 	/**
-	 * 
+	 * Constructor.
 	 * @param hostShell  An instance of the IHostShell class.
 	 * @throws java.io.IOException
 	 */
@@ -57,7 +58,8 @@ IHostShellOutputListener {
 	}
 	
 	/**
-	 *  Exits the shell.
+	 * Exits the shell.
+	 * @see java.lang.Process#destroy()
 	 */
 	public synchronized void destroy() {
 		hostShell.exit();
@@ -69,13 +71,14 @@ IHostShellOutputListener {
 			errorStream.close();
 			outputStream.close();
 		} catch (IOException e) {
+			//FIXME IOException when closing one of the streams will leave others open
 			// Ignore
 		}	
 	}
 
 	/**
-	 *  There is no relevant exit value to return when the shell exits.
-	 *  This always returns 0.
+	 * There is no relevant exit value to return when the shell exits.
+	 * This always returns 0.
 	 */
 	public synchronized int exitValue() {
 		if(hostShell.isActive())
@@ -85,7 +88,8 @@ IHostShellOutputListener {
 	}
 
 	/**
-	 *  Returns the error stream of the shell.
+	 * Returns the error stream of the shell.
+	 * @see java.lang.Process#getErrorStream()
 	 */
 	public InputStream getErrorStream() {
 		return errorStream;
@@ -93,6 +97,7 @@ IHostShellOutputListener {
 
 	/**
 	 * Returns the input stream for the shell.
+	 * @see java.lang.Process#getInputStream()
 	 */
 	public InputStream getInputStream() {
 		return inputStream;
@@ -100,13 +105,15 @@ IHostShellOutputListener {
 
 	/**
 	 * Returns the output stream for the shell.
+	 * @see java.lang.Process#getOutputStream()
 	 */
 	public OutputStream getOutputStream() {
 		return outputStream;
 	}
 
 	/**
-	 *  Waits for the shell to exit.
+	 * Waits for the shell to exit.
+	 * @see java.lang.Process#waitFor()
 	 */
 	public synchronized int waitFor() throws InterruptedException {
 		
@@ -136,6 +143,11 @@ IHostShellOutputListener {
 		return 0;
 	}
 	
+	/**
+	 * Process an RSE Shell event, by writing the lines of text contained
+	 * in the event into the adapter's streams.
+	 * @see org.eclipse.rse.services.shells.IHostShellOutputListener#shellOutputChanged(org.eclipse.rse.services.shells.IHostShellChangeEvent)
+	 */
 	public void shellOutputChanged(IHostShellChangeEvent event) {
 		IHostOutput[] input = event.getLines();
 		OutputStream outputStream = event.isError() ? hostShellError : hostShellInput;

@@ -7,14 +7,14 @@
  * 
  * Contributors: 
  * Ewa Matejska (PalmSource)
+ * Martin Oberhuber (Wind River) - moved from org.eclipse.rse.remotecdt (bug 161777)
  *******************************************************************************/
 
-package org.eclipse.rse.remotecdt;
+package org.eclipse.rse.services.shells;
 
 import java.io.IOException;
 import java.io.OutputStream;
 
-import org.eclipse.rse.services.shells.IHostShell;
 
 /**
  * An adapter between the OutputStream and the IHostShell objects.

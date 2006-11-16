@@ -8,9 +8,10 @@
  * Contributors: 
  * Ewa Matejska (PalmSource) - initial version
  * Martin Oberhuber (Wind River) - adapt to IHostOutput API (bug 161773, 158312)
+ * Martin Oberhuber (Wind River) - moved from org.eclipse.rse.remotecdt (bug 161777)
  *******************************************************************************/
 
-package org.eclipse.rse.remotecdt;
+package org.eclipse.rse.services.shells;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -18,10 +19,6 @@ import java.io.OutputStream;
 import java.io.PipedInputStream;
 import java.io.PipedOutputStream;
 
-import org.eclipse.rse.services.shells.IHostOutput;
-import org.eclipse.rse.services.shells.IHostShell;
-import org.eclipse.rse.services.shells.IHostShellChangeEvent;
-import org.eclipse.rse.services.shells.IHostShellOutputListener;
 
 /**
  * This class represents a host shell process. It does not 

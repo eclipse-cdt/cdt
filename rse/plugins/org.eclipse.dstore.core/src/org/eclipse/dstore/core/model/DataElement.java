@@ -757,7 +757,8 @@ public final class DataElement implements IDataElement
 	 */
 	public void setAttribute(int attributeIndex, String attribute)
 	{
-		if ((attributeIndex == DE.A_NAME) && (getAttribute(DE.A_NAME).equals(getAttribute(DE.A_VALUE))))
+		String nameAttribute = getAttribute(DE.A_NAME);
+		if ((attributeIndex == DE.A_NAME) && (nameAttribute != null && nameAttribute.equals(getAttribute(DE.A_VALUE))))
 		{
 			_attributes[DE.A_VALUE] = attribute;
 		}

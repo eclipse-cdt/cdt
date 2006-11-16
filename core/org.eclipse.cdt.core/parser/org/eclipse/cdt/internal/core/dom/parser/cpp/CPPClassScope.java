@@ -232,7 +232,7 @@ public class CPPClassScope extends CPPScope implements ICPPClassScope {
 	    }
 	    if( CharArrayUtils.equals( c, compName.toCharArray() ) ){
 	        if( isConstructorReference( name ) ){
-	            return CPPSemantics.resolveAmbiguities( name, getConstructors( bindings, resolve ) );
+	            return CPPSemantics.resolveAmbiguities( name, getConstructors( bindings, resolve, name ) );
 	        }
             //9.2 ... The class-name is also inserted into the scope of the class itself
             return compName.resolveBinding();
@@ -240,10 +240,23 @@ public class CPPClassScope extends CPPScope implements ICPPClassScope {
 	    return super.getBinding( name, resolve );
 	}
 
-	protected ICPPConstructor [] getConstructors( boolean forceResolve ){
-		return getConstructors( bindings, forceResolve );
+	static protected boolean shouldResolve(boolean force, IASTName candidate, IASTName forName) {
+		if(!force || candidate == forName)
+			return false;
+		if(forName == null)
+			return true;
+		if(!forName.isReference() && !CPPSemantics.declaredBefore(candidate, forName))
+			return false;
+		return true;
 	}
-	static protected ICPPConstructor [] getConstructors( CharArrayObjectMap bindings, boolean forceResolve ){
+	
+	protected ICPPConstructor [] getConstructors( boolean forceResolve ){
+		return getConstructors( bindings, forceResolve, null );
+	}
+	static protected ICPPConstructor [] getConstructors( CharArrayObjectMap bindings, boolean forceResolve ) {
+		return getConstructors(bindings, forceResolve, null);
+	}
+	static protected ICPPConstructor [] getConstructors( CharArrayObjectMap bindings, boolean forceResolve, IASTName forName ){
 		if( bindings == null )
 			return ICPPConstructor.EMPTY_CONSTRUCTOR_ARRAY;
 		
@@ -256,8 +269,8 @@ public class CPPClassScope extends CPPScope implements ICPPClassScope {
         		for( int i = 0; i < set.size(); i++ ){
         			Object obj = set.keyAt( i );
         			if( obj instanceof IASTName ){
-        				IASTName n = (IASTName) obj;
-        				binding = forceResolve ? n.resolveBinding() : n.getBinding();
+        				IASTName n = (IASTName) obj;        				
+        				binding = shouldResolve(forceResolve, n, forName) ? n.resolveBinding() : n.getBinding();
         				if( binding != null ) {
         					set.remove( n );
         					set.put( binding );
@@ -269,7 +282,7 @@ public class CPPClassScope extends CPPScope implements ICPPClassScope {
         		}	    
         		return (ICPPConstructor[]) ArrayUtil.trim( ICPPConstructor.class, bs );
 	        } else if( o instanceof IASTName ){
-	        	if( forceResolve || ((IASTName)o).getBinding() != null ){
+	        	if( shouldResolve(forceResolve, (IASTName) o, forName) || ((IASTName)o).getBinding() != null ){
 	        		binding = ((IASTName)o).resolveBinding();
 	        		bindings.put( CONSTRUCTOR_KEY, binding );
 	        	}

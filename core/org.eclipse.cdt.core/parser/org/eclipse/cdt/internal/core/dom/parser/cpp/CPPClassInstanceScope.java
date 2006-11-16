@@ -96,7 +96,7 @@ public class CPPClassInstanceScope implements ICPPClassScope, IASTInternalScope 
 	    			if( instanceMap.containsKey( n ) ){
 	    				binding = (IBinding) instanceMap.get( n );
 	    			} else {
-		    			binding = forceResolve ? n.resolveBinding() : n.getBinding();
+		    			binding = CPPClassScope.shouldResolve(forceResolve, n, name) ? n.resolveBinding() : n.getBinding();
 		    			if (binding instanceof ICPPClassTemplatePartialSpecialization ){
 		    			    binding = null;
 		    			}

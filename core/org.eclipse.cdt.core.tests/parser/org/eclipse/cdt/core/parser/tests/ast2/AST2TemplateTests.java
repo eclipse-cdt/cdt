@@ -44,6 +44,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateNonTypeParameter;
@@ -1941,5 +1942,48 @@ public class AST2TemplateTests extends AST2BaseTest {
         
         ICPPVariable c = (ICPPVariable) col.getName(13).resolveBinding();
         assertSame( c, col.getName(4).resolveBinding() );
+    }
+    
+    public void testBug162230() throws Exception {
+    	StringBuffer buffer = new StringBuffer();
+    	buffer.append("template< class T > class C {                   \n"); //$NON-NLS-1$
+    	buffer.append("   public: void * blah;                         \n"); //$NON-NLS-1$
+    	buffer.append("   template<typename G> C(G* g) : blah(g) {}    \n"); //$NON-NLS-1$
+    	buffer.append("   template <> C(char * c) : blah(c) {}         \n"); //$NON-NLS-1$
+    	buffer.append("   template <> C(wchar_t * c) : blah(c) {}      \n"); //$NON-NLS-1$
+    	buffer.append("};                                              \n"); //$NON-NLS-1$
+    	
+    	IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP, true, true );
+    	CPPNameCollector col = new CPPNameCollector();
+        tu.accept(  col );
+        
+        ICPPTemplateParameter T = (ICPPTemplateParameter) col.getName(0).resolveBinding();
+        ICPPClassTemplate C = (ICPPClassTemplate) col.getName(1).resolveBinding();
+        ICPPField blah = (ICPPField) col.getName(2).resolveBinding();
+        ICPPTemplateTypeParameter G = (ICPPTemplateTypeParameter) col.getName(3).resolveBinding();
+        ICPPFunctionTemplate ctor = (ICPPFunctionTemplate) col.getName(4).resolveBinding();
+        
+        assertSame(G, col.getName(5).resolveBinding());
+        ICPPParameter g = (ICPPParameter) col.getName(6).resolveBinding();
+        assertSame(blah, col.getName(7).resolveBinding());
+        assertSame(g, col.getName(8).resolveBinding());
+        
+        ICPPSpecialization spec = (ICPPSpecialization) col.getName(9).resolveBinding();
+        assertSame(spec.getSpecializedBinding(), ctor);
+        
+        ICPPSpecialization c = (ICPPSpecialization) col.getName(10).resolveBinding();
+        assertSame(c.getSpecializedBinding(), g);
+        
+        assertSame(blah, col.getName(11).resolveBinding());
+        assertSame(c, col.getName(12).resolveBinding());
+        
+        ICPPSpecialization spec2 = (ICPPSpecialization) col.getName(13).resolveBinding();
+        assertSame(spec.getSpecializedBinding(), ctor);
+        
+        ICPPSpecialization c2 = (ICPPSpecialization) col.getName(14).resolveBinding();
+        assertSame(c2.getSpecializedBinding(), g);
+        
+        assertSame(blah, col.getName(15).resolveBinding());
+        assertSame(c2, col.getName(16).resolveBinding());
     }
 }

@@ -198,7 +198,7 @@ public class CMemoryBlockRetrievalExtension extends PlatformObject implements IM
 	public IMemoryBlock getMemoryBlock( long startAddress, long length ) throws DebugException {
 		String expression = Long.toHexString(startAddress);
 		BigInteger address = new BigInteger(expression, 16);
-		expression += "0x"; //$NON-NLS-1$
+		expression = "0x" + expression; //$NON-NLS-1$
 		return new CMemoryBlockExtension( getDebugTarget(), expression, address );
 	}
 

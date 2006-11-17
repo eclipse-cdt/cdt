@@ -317,8 +317,10 @@ public class DStoreConnectorService extends AbstractConnectorService implements 
 				{
 					dataStore.getDomainNotifier().removeDomainListener(_connectionStatusListener);
 				}
-
-				clientConnection.disconnect();
+				if (clientConnection != null)
+				{
+					clientConnection.disconnect();
+				}
 				
 //				 Fire comm event to signal state changed
 				notifyDisconnection();

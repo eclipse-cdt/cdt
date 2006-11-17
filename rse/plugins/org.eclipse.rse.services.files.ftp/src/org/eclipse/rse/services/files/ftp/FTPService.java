@@ -30,6 +30,7 @@
  * Martin Oberhuber (Wind River) - Add Javadoc for getFTPClient(), modify move() to use single connected session
  * Javier Montalvo Orus (Symbian) - Fixing 164009 - FTP connection shows as connected when login fails
  * Javier Montalvo Orus (Symbian) - Fixing 164306 - [ftp] FTP console shows plaintext passwords
+ * Javier Montalvo Orus (Symbian) - Fixing 161238 - [ftp] connections to VMS servers are not usable
  ********************************************************************************/
 
 package org.eclipse.rse.services.files.ftp;
@@ -48,6 +49,7 @@ import java.util.List;
 
 import org.apache.commons.net.ftp.FTP;
 import org.apache.commons.net.ftp.FTPClient;
+import org.apache.commons.net.ftp.FTPClientConfig;
 import org.apache.commons.net.ftp.FTPFile;
 import org.apache.commons.net.ftp.FTPReply;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -71,6 +73,7 @@ public class FTPService extends AbstractFileService implements IFileService, IFT
 	private FTPClient _ftpClient;
 	private FTPFile[] _ftpFiles;
 	
+	private String _systemName;
 	private String    _userHome;
 	private transient String _hostName;
 	private transient String _userId;
@@ -174,6 +177,49 @@ public class FTPService extends AbstractFileService implements IFileService, IFT
 			throw new Exception(lastMessage);
 		}
 		
+		//SYSTEM PARSER 
+		
+		FTPClientConfig ftpClientConfig;
+		
+		_systemName = _ftpClient.getSystemName();
+		if(_systemName.indexOf(' ')!=-1)
+		{
+			_systemName = _systemName.substring(0,_systemName.indexOf(' '));
+		}
+		
+		//FTPClientConfig.SYST_NT = "WINDOWS"
+		if(_systemName.equals(FTPClientConfig.SYST_NT))
+		{
+			ftpClientConfig = new FTPClientConfig(FTPClientConfig.SYST_NT);
+		}else 
+		//FTPClientConfig.SYST_MVS = "MVS" 	
+		if(_systemName.equals(FTPClientConfig.SYST_MVS))
+		{
+			ftpClientConfig = new FTPClientConfig(FTPClientConfig.SYST_MVS);
+		}else
+		//FTPClientConfig.SYST_OS2 = "OS/2" 	
+		if(_systemName.equals(FTPClientConfig.SYST_OS2))
+		{
+			ftpClientConfig = new FTPClientConfig(FTPClientConfig.SYST_OS2);
+		}else
+		//FTPClientConfig.SYST_OS400 = "OS/400"   	
+		if(_systemName.equals(FTPClientConfig.SYST_OS400))
+		{
+			ftpClientConfig = new FTPClientConfig(FTPClientConfig.SYST_OS400);
+		}else
+		//FTPClientConfig.SYST_VMS = "VMS"   	
+		if(_systemName.equals(FTPClientConfig.SYST_VMS))
+		{
+			ftpClientConfig = new FTPClientConfig(FTPClientConfig.SYST_VMS);
+		}else
+		//Default UNIX-like parsing	
+		//FTPClientConfig.SYST_UNIX = "UNIX"	
+		{
+			ftpClientConfig = new FTPClientConfig(FTPClientConfig.SYST_UNIX);
+		}
+		
+		_ftpClient.configure(ftpClientConfig);
+		
 		_userHome = _ftpClient.printWorkingDirectory();
 	}
 	
@@ -246,8 +292,6 @@ public class FTPService extends AbstractFileService implements IFileService, IFT
 				return null;
 			}
 			
-			String systemName = _ftpClient.getSystemName();
-			
 			if(!listFiles(monitor))
 			{
 				return null;
@@ -257,7 +301,7 @@ public class FTPService extends AbstractFileService implements IFileService, IFT
 			{
 				if(_ftpFiles[i].getName().equalsIgnoreCase(fileName))
 				{
-					file = new FTPHostFile(remoteParent,_ftpFiles[i],systemName);
+					file = new FTPHostFile(remoteParent,_ftpFiles[i],_systemName);
 					break;
 				}
 			}
@@ -317,24 +361,32 @@ public class FTPService extends AbstractFileService implements IFileService, IFT
 		{
 			_ftpClient = getFTPClient();
 			
+			// VMS path requires some preprocessing
+			if(_systemName.equals(FTPClientConfig.SYST_VMS) && !parentPath.endsWith("]")) //"VMS" //$NON-NLS-1$
+			{
+				parentPath = parentPath.substring(0,parentPath.indexOf(".DIR")); //$NON-NLS-1$
+				parentPath = parentPath.replace(']', '.');
+				parentPath+="]"; //$NON-NLS-1$
+			}
+			
 			if(!_ftpClient.changeWorkingDirectory(parentPath))
 			{
 				return null;
 			}
+			
+			
 			
 			if(!listFiles(monitor))
 			{
 				return null;
 			}
 			
-			String systemName = _ftpClient.getSystemName();
-			
 			for(int i=0; i<_ftpFiles.length; i++)
 			{
 				FTPFile f = _ftpFiles[i];
 				if(filematcher.matches(f.getName()) || f.isDirectory())
 				{
-					results.add(new FTPHostFile(parentPath,_ftpFiles[i],systemName));
+					results.add(new FTPHostFile(parentPath,_ftpFiles[i],_systemName));
 				}
 			}
 		}
@@ -545,19 +597,7 @@ public class FTPService extends AbstractFileService implements IFileService, IFT
 	 */
 	public IHostFile getUserHome()
 	{
-		
-		int lastSlash = _userHome.lastIndexOf('/'); 
-		String name = _userHome.substring(lastSlash + 1);	
-		String parent = _userHome.substring(0, lastSlash);
-		
-		// if home is root
-		if(parent.equals(""))  //$NON-NLS-1$
-		{
-			parent = "/";  //$NON-NLS-1$
-		}
-		
-		return new FTPHostFile(parent,name,true,true,0,0,true);
-		
+		return new FTPHostFile("",_userHome,true,true,0,0,true); //$NON-NLS-1$
 	}
 
 	/*
@@ -566,7 +606,7 @@ public class FTPService extends AbstractFileService implements IFileService, IFT
 	 */
 	public IHostFile[] getRoots(IProgressMonitor monitor) 
 	{	
-		return new IHostFile[]{new FTPHostFile(null, "/", true, true, 0, 0, true)};  //$NON-NLS-1$
+		return new IHostFile[]{new FTPHostFile(null, _userHome, true, true, 0, 0, true)};  //$NON-NLS-1$
 	}
 
 	/* (non-Javadoc)
@@ -630,16 +670,15 @@ public class FTPService extends AbstractFileService implements IFileService, IFT
 		
 		try {
 			
-			if(newName.startsWith("/"))  //$NON-NLS-1$
+			if(remoteParent.endsWith("/") || remoteParent.endsWith("\\")) //$NON-NLS-1$ //$NON-NLS-2$
 			{
-				ftpClient.rename(remoteParent + getSeparator() + oldName, newName);
+				ftpClient.rename(remoteParent + oldName, newName);
 			}
 			else
 			{
-				ftpClient.rename(remoteParent + getSeparator() + oldName, remoteParent + getSeparator() + newName);
+				ftpClient.rename(remoteParent + getSeparator() + oldName, newName);
 			}
 			
-		
 		} catch (Exception e) {
 			throw new RemoteFileIOException(e);
 		}
@@ -667,20 +706,11 @@ public class FTPService extends AbstractFileService implements IFileService, IFT
 
 		FTPClient ftpClient = getFTPClient(); 
 		
-		try {
-			//MOB: Use ftpClient instead of getFTPClient, since the RNFR/RNTO operation
-			//needs to be performed in a single connected session
-			//it makes no sense to send a NOOP and reconnect in case of an exception here
-			int returnedValue = ftpClient.sendCommand("RNFR " + srcParent + getSeparator() + srcName);  //$NON-NLS-1$
-			
-			//350: origin file exits, ready for destination
-			if (FTPReply.CODE_350 == returnedValue) {
-				returnedValue = ftpClient.sendCommand("RNTO " + tgtParent + getSeparator() + tgtName);  //$NON-NLS-1$
-			}
+		try{
 		
-			success = FTPReply.isPositiveCompletion(returnedValue);
-
-			if(!success)
+		success = ftpClient.rename(srcParent + getSeparator() + srcName, tgtParent + getSeparator() + tgtName);
+		
+		if(!success)
 			{
 				throw new Exception(ftpClient.getReplyString());
 			}

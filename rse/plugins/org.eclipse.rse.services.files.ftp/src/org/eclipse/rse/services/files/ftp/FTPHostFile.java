@@ -15,6 +15,7 @@
  * Javier Montalvo Orús (Symbian) - Migrate to jakarta commons net FTP client
  * Javier Montalvo Orus (Symbian) - Fixing 161211 - Cannot expand /pub folder as 
  *    anonymous on ftp.wacom.com
+ * Javier Montalvo Orus (Symbian) - Fixing 161238 - [ftp] connections to VMS servers are not usable   
  ********************************************************************************/
 
 package org.eclipse.rse.services.files.ftp;
@@ -22,6 +23,7 @@ package org.eclipse.rse.services.files.ftp;
 
 import java.io.File;
 
+import org.apache.commons.net.ftp.FTPClientConfig;
 import org.apache.commons.net.ftp.FTPFile;
 import org.eclipse.rse.services.clientserver.archiveutils.ArchiveHandlerManager;
 import org.eclipse.rse.services.files.IHostFile;
@@ -39,6 +41,7 @@ public class FTPHostFile implements IHostFile
 	private boolean _canWrite = true;
 	private boolean _isRoot;
 	private boolean _exists;
+	private String _systemName;
 	
 	public FTPHostFile(String parentPath, String name, boolean isDirectory, boolean isRoot, long lastModified, long size, boolean exists)
 	{
@@ -56,6 +59,7 @@ public class FTPHostFile implements IHostFile
 	
 	public FTPHostFile(String parentPath, FTPFile ftpFile, String systemName)
 	{
+		_systemName = systemName;
 		_parentPath = parentPath;
 		_name = ftpFile.getName();
 		_isDirectory = ftpFile.isDirectory();
@@ -63,7 +67,7 @@ public class FTPHostFile implements IHostFile
 		_size = ftpFile.getSize();
 		_isArchive = internalIsArchive();
 		
-		if(!systemName.toUpperCase().startsWith("WINDOWS")) //$NON-NLS-1$
+		if(!systemName.equals(FTPClientConfig.SYST_NT)) //"WINDOWS"
 		{
 			_canRead = ftpFile.hasPermission(FTPFile.USER_ACCESS, FTPFile.READ_PERMISSION);
 			_canWrite = ftpFile.hasPermission(FTPFile.USER_ACCESS, FTPFile.WRITE_PERMISSION);
@@ -107,16 +111,29 @@ public class FTPHostFile implements IHostFile
 
 	public String getAbsolutePath()
 	{
-		if (isRoot()) {
+		if(_systemName==null)
 			return getName();
-		} else {
-			StringBuffer path = new StringBuffer(getParentPath());
-			if (!_parentPath.endsWith("/")) //$NON-NLS-1$
-			{
-				path.append('/');
+		
+		if(_systemName.equals(FTPClientConfig.SYST_VMS)) //"VMS"
+		{
+			if (isRoot()) 
+				return getName();
+			else
+				return getParentPath()+getName();
+		}
+		else
+		{
+			if (isRoot()) {
+				return getName();
+			} else {
+				StringBuffer path = new StringBuffer(getParentPath());
+				if (!_parentPath.endsWith("/") && !_parentPath.endsWith("\\"))//$NON-NLS-1$ //$NON-NLS-2$
+				{
+					path.append('/');
+				}
+				path.append(getName());
+				return path.toString();
 			}
-			path.append(getName());
-			return path.toString();
 		}
 	}
 

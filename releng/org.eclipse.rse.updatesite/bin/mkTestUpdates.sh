@@ -65,9 +65,18 @@ if [ `basename $SITE` = testUpdates ]; then
     sed -e 's,Project Update,Project Test Update,g' \
     	web/site.xsl > web/site.xsl.new
     mv -f web/site.xsl.new web/site.xsl
+    echo "Conditioning the site... $SITE"
+    #java -Dorg.eclipse.update.jarprocessor.pack200=$mydir \
+    #    -jar $HOME/ws/eclipse/startup.jar \
+    #    -application org.eclipse.update.core.siteOptimizer \
+    #    -jarProcessor -outputDir $SITE \
+    #    -processAll -repack $SITE
+    java -Dorg.eclipse.update.jarprocessor.pack200=$mydir \
+    	$HOME/ws/jarprocessor/jarprocessor.jar \
+		-outputDir $SITE -processAll -repack $SITE
 elif [ `basename $SITE` = signedUpdates ]; then
     echo "Working on signed update site"
-    echo "Signing jars from test update site..."
+    echo "Signing jars from test update site (expecting conditioned jars)..."
     STAGING=/home/data/httpd/download-staging.priv/dsdp/tm
     stamp=`date +'%Y%m%d-%H%M'`
     if [ -d ${STAGING} -a -d ${SITE}/../testUpdates ]; then
@@ -111,11 +120,6 @@ elif [ `basename $SITE` = signedUpdates ]; then
         mkdir -p ${STAGING}/updates.${stamp}/plugins
         cp ${SITE}/../testUpdates/plugins/*.jar ${STAGING}/updates.${stamp}/plugins
         cd ${STAGING}/updates.${stamp}/plugins
-        #WORKAROUND: Repack jars
-        for x in `ls *.jar` ; do
-          echo "pack200 -r -E4 $x"
-          pack200 -r -E4 $x
-        done
         for x in `ls *.jar`; do
           echo "signing plugin: ${x}"
           sign ${x} nomail >/dev/null
@@ -207,34 +211,21 @@ echo "Packing the site... $SITE"
 #    -application org.eclipse.update.core.siteOptimizer \
 #    -jarProcessor -outputDir $SITE \
 #    -processAll -pack $SITE
-cd $SITE/features
-for x in `ls *.jar` ; do
-  if [ -f $x.pack.gz ]; then
-    rm -f $x.pack.gz
-  fi
-  echo "pack200 -E4 $x.pack.gz $x"
-  pack200 -E4 $x.pack.gz $x
-done
-cd $SITE/plugins
-for x in `ls *.jar` ; do
-  if [ -f $x.pack.gz ]; then
-    rm -f $x.pack.gz
-  fi
-  echo "pack200 -E4 $x.pack.gz $x"
-  pack200 -E4 $x.pack.gz $x
-done
+java -Dorg.eclipse.update.jarprocessor.pack200=$mydir \
+    $HOME/ws/jarprocessor/jarprocessor.jar \
+    -outputDir $SITE -processAll -pack $SITE
 
-# Workaround nested jarfiles in org.apache*
-# These don't work with signed jars, so do not recursively pack them
-cd $SITE/plugins
-JARS=`ls org.apache.oro_*.jar org.apache.commons.net_*.jar`
-for x in $JARS ; do
-  if [ -f $x.pack.gz ]; then
-    rm -f $x.pack.gz
-  fi
-  echo "WORKAROUND - remove $x.pack.gz"
-  #pack200 -E4 $x.pack.gz $x
-done
+## Workaround nested jarfiles in org.apache*
+## These don't work with signed jars, so do not recursively pack them
+#cd $SITE/plugins
+#JARS=`ls org.apache.oro_*.jar org.apache.commons.net_*.jar`
+#for x in $JARS ; do
+#  if [ -f $x.pack.gz ]; then
+#    rm -f $x.pack.gz
+#  fi
+#  echo "WORKAROUND - remove $x.pack.gz"
+#  #pack200 -E4 $x.pack.gz $x
+#done
 
 #Create the digest
 echo "Creating digest..."

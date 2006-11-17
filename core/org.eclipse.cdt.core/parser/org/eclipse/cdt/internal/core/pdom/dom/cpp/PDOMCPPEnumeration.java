@@ -18,6 +18,7 @@ import org.eclipse.cdt.core.dom.ast.IEnumeration;
 import org.eclipse.cdt.core.dom.ast.IEnumerator;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBinding;
+import org.eclipse.cdt.internal.core.index.IIndexProxyBinding;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
@@ -88,7 +89,23 @@ class PDOMCPPEnumeration extends PDOMCPPBinding implements IEnumeration, ICPPBin
 	}
 	
 	public boolean isSameType(IType type) {
-		throw new PDOMNotImplementedError();
+		if (type instanceof PDOMBinding)
+			return record == ((PDOMBinding)type).getRecord();
+		else if (type instanceof IEnumeration) { 
+			try {
+				IIndexProxyBinding pdomType = pdom.adaptBinding((IEnumeration)type);
+				if (pdomType == null)
+					return false;
+				else if (pdomType instanceof PDOMBinding)
+					return record == ((PDOMBinding)pdomType).getRecord();
+				else
+					throw new PDOMNotImplementedError();
+			} catch (CoreException e) {
+				CCorePlugin.log(e);
+				return false;
+			}
+		} else
+			return false;
 	}
 
 	public Object clone() {

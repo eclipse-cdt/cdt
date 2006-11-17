@@ -11,19 +11,12 @@
 package org.eclipse.cdt.debug.ui.importexecutable;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.List;
 
 import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.model.IBinary;
-import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.ICDescriptor;
+import org.eclipse.cdt.core.ICDescriptorOperation;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
-import org.eclipse.cdt.debug.core.sourcelookup.ICSourceLocator;
-import org.eclipse.cdt.debug.internal.core.sourcelookup.CSourceLookupDirector;
-import org.eclipse.cdt.internal.core.model.ExternalTranslationUnit;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -37,15 +30,8 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.debug.core.DebugPlugin;
-import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
-import org.eclipse.debug.core.ILaunchManager;
-import org.eclipse.debug.core.model.ISourceLocator;
-import org.eclipse.debug.core.sourcelookup.AbstractSourceLookupDirector;
-import org.eclipse.debug.core.sourcelookup.ISourceContainer;
-import org.eclipse.debug.core.sourcelookup.containers.DirectorySourceContainer;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
@@ -71,12 +57,16 @@ public abstract class AbstractImportExecutableWizard extends Wizard implements I
 
 	protected ImportExecutablePageTwo pageTwo;
 	
-	/**
-	 * Override this method to add the correct binary parsers to the project.
-	 * @param newProject - the project created by the wizard
-	 * @throws CoreException
-	 */
-	public abstract void addBinaryParsers(IProject newProject) throws CoreException;
+	public void addBinaryParsers(IProject newProject) throws CoreException {
+		ICDescriptorOperation op = new ICDescriptorOperation() {
+
+			public void execute(ICDescriptor descriptor, IProgressMonitor monitor) throws CoreException {
+				descriptor.remove(CCorePlugin.BINARY_PARSER_UNIQ_ID);
+				descriptor.create(CCorePlugin.BINARY_PARSER_UNIQ_ID, pageOne.getSelectedBinaryParserId());
+			}
+		};
+		CCorePlugin.getDefault().getCDescriptorManager().runDescriptorOperation(newProject.getProject(), op, null);
+	}
 	
 	/**
 	 * Adds the executables to a new or existing project. The executables are
@@ -108,82 +98,6 @@ public abstract class AbstractImportExecutableWizard extends Wizard implements I
 		addPage(pageTwo);
 	}
 
-	private void addSourceLocation(ISourceLocator locator, AbstractSourceLookupDirector director, IPath unitLocation)
-	{
-		if (unitLocation.toFile().exists()) {
-			boolean found = false;
-			String unitLocationPathString = unitLocation.toOSString();
-			if (locator instanceof ICSourceLocator)
-				found = (((ICSourceLocator) locator).findSourceElement(unitLocationPathString) != null);
-			else if (locator instanceof CSourceLookupDirector)
-				found = ((CSourceLookupDirector) locator).contains(unitLocationPathString);
-
-			if (!found) {
-
-				DirectorySourceContainer directoryContainer = new DirectorySourceContainer(
-						unitLocation.removeLastSegments(1), false);
-				ArrayList containerList = new ArrayList(Arrays.asList(director
-						.getSourceContainers()));
-				containerList.add(directoryContainer);
-				director.setSourceContainers((ISourceContainer[]) containerList
-						.toArray(new ISourceContainer[containerList.size()]));
-			}
-		}
-	}
-
-	protected void addSourceLocations(IBinary[] binaries, ILaunchConfigurationWorkingCopy configuration) {
-
-		String memento = null;
-		String type = null;
-		try {
-			memento = configuration.getAttribute(ILaunchConfiguration.ATTR_SOURCE_LOCATOR_MEMENTO, (String) null);
-			type = configuration.getAttribute(ILaunchConfiguration.ATTR_SOURCE_LOCATOR_ID, (String) null);
-			if (type == null) {
-				type = configuration.getType().getSourceLocatorId();
-			}
-
-			ILaunchManager launchManager = DebugPlugin.getDefault().getLaunchManager();
-			ISourceLocator locator = launchManager.newSourceLocator(type);
-			if (locator instanceof AbstractSourceLookupDirector) {
-				AbstractSourceLookupDirector director = (AbstractSourceLookupDirector) locator;
-				if (memento == null) {
-					director.initializeDefaults(configuration);
-				} else {
-					director.initializeFromMemento(memento, configuration);
-				}
-
-				for (int i = 0; i < binaries.length; i++) {
-					IBinary binary = binaries[i];
-					if (!binary.getPath().lastSegment().startsWith(".")) {
-						addSourceLocation(locator, director, binary.getUnderlyingResource().getLocation());
-						List sourceFiles;
-						sourceFiles = binary.getChildrenOfType(ICElement.C_UNIT);
-						if (sourceFiles.size() == 0)
-						{
-							sourceFiles = binary.getChildrenOfType(ICElement.C_UNIT);							
-						}
-						for (Iterator iter = sourceFiles.iterator(); iter.hasNext();) {
-							Object element = (Object) iter.next();
-							if (element instanceof ExternalTranslationUnit) {
-								ExternalTranslationUnit unit = (ExternalTranslationUnit) element;
-								IPath unitLocation = unit.getLocation();
-								addSourceLocation(locator, director, unitLocation);
-							}
-
-						}
-
-					}
-				}
-				configuration.setAttribute(ILaunchConfiguration.ATTR_SOURCE_LOCATOR_MEMENTO, director.getMemento());
-				configuration.setAttribute(ILaunchConfiguration.ATTR_SOURCE_LOCATOR_ID, director.getId());
-
-			}
-		} catch (CoreException e) {
-			return;
-		}
-
-	}
-
 	public IProject createCProjectForExecutable(String projectName) throws OperationCanceledException, CoreException {
 
 		IWorkspace workspace = ResourcesPlugin.getWorkspace();
@@ -207,7 +121,6 @@ public abstract class AbstractImportExecutableWizard extends Wizard implements I
 		wc.setAttribute(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_NAME, new File(getImportExecutablePage()
 				.getSelectedExecutables()[0]).getName());
 
-		addSourceLocations(targetProject.getBinaryContainer().getBinaries(), wc);
 		setConfigurationDefaults(wc);
 
 		final IStructuredSelection selection = new StructuredSelection(wc.doSave());
@@ -256,8 +169,6 @@ public abstract class AbstractImportExecutableWizard extends Wizard implements I
 		setWindowTitle(getDefaultWindowTitle());
 		setNeedsProgressMonitor(true);
 	}
-
-	public abstract boolean isExecutableFile(File file);
 	
 	public boolean performFinish() {
 
@@ -313,5 +224,29 @@ public abstract class AbstractImportExecutableWizard extends Wizard implements I
 	 */
 	public abstract boolean supportsConfigurationType(
 			ILaunchConfigurationType type);
+
+	/**
+	 * Return true if you want the wizard to ask the user to select
+	 * the binary parser. Otherwise it will only use the default one.
+	 * A subclass can specify the default parser by overriding 
+	 * getDefaultBinaryParserID.
+	 * @return - If the binary parser selection combo should be displayed.
+	 */
+	public boolean userSelectsBinaryParser() {
+		return true;
+	}
+
+	/** Get the default binary parser the wizard will use to determine if
+	 * single file selections are valid and to filter the list for multi
+	 * file selection.
+	 * @return
+	 */
+	public String getDefaultBinaryParserID() {
+		String defaultBinaryParserId = CCorePlugin.getDefault().getPluginPreferences().getDefaultString(CCorePlugin.PREF_BINARY_PARSER);
+		if (defaultBinaryParserId == null || defaultBinaryParserId.length() == 0) {
+			defaultBinaryParserId = CCorePlugin.DEFAULT_BINARY_PARSER_UNIQ_ID;
+		}
+		return defaultBinaryParserId;
+	}
 
 }

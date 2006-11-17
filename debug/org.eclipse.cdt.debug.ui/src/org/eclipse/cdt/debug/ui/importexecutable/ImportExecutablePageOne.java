@@ -90,6 +90,10 @@ public class ImportExecutablePageOne extends WizardPage {
 
 	private String selectedBinaryParserId;
 	private IBinaryParser selectedBinaryParser;
+
+	private IExtension[] binaryParserExtensions;
+
+	private Combo binaryParserCombo;
 	
 	public ImportExecutablePageOne(AbstractImportExecutableWizard wizard) {
 		super("ImportApplicationPageOne");
@@ -98,10 +102,7 @@ public class ImportExecutablePageOne extends WizardPage {
 		setTitle(wizard.getPageOneTitle());
 		setDescription(wizard.getPageOneDescription());
 		
-		selectedBinaryParserId = CCorePlugin.getDefault().getPluginPreferences().getDefaultString(CCorePlugin.PREF_BINARY_PARSER);
-		if (selectedBinaryParserId == null || selectedBinaryParserId.length() == 0) {
-			selectedBinaryParserId = CCorePlugin.DEFAULT_BINARY_PARSER_UNIQ_ID;
-		}
+		selectedBinaryParserId = wizard.getDefaultBinaryParserID();
 		
 		try {
 			// should return the parser for the above id
@@ -109,6 +110,23 @@ public class ImportExecutablePageOne extends WizardPage {
 		} catch (CoreException e) {
 			CDebugUIPlugin.log(e);
 		}
+		
+		IExtensionPoint point = Platform.getExtensionRegistry().getExtensionPoint(CCorePlugin.PLUGIN_ID, CCorePlugin.BINARY_PARSER_SIMPLE_ID);
+		if (point != null)
+		{
+			IExtension[] exts = point.getExtensions();
+			ArrayList extensionsInUse = new ArrayList();
+			for (int i = 0; i < exts.length; i++) {
+				if (isExtensionVisible(exts[i])) {
+					extensionsInUse.add(exts[i]);
+					if (exts[i].getUniqueIdentifier().equals(selectedBinaryParserId))
+						selectedBinaryParser = instantiateBinaryParser(exts[i]);
+				}
+			}
+			binaryParserExtensions = (IExtension[]) extensionsInUse.toArray(new IExtension[extensionsInUse.size()]);
+		}
+		
+
 	}
 
 	public String getSelectedBinaryParserId() {
@@ -134,15 +152,13 @@ public class ImportExecutablePageOne extends WizardPage {
 			return false;
 		monitor.subTask(directory.getPath());
 		File[] contents = directory.listFiles();
-		// first look for project description files
 
 		for (int i = 0; i < contents.length; i++) {
 			File file = contents[i];
-			if (file.isFile() && isBinary(file)) {
+			if (file.isFile() && isBinary(file, selectedBinaryParser)) {
 				files.add(file);
 			}
 		}
-		// no project description found, so recurse into sub-directories
 		for (int i = 0; i < contents.length; i++) {
 			if (contents[i].isDirectory())
 				collectExecutableFiles(files, contents[i], monitor);
@@ -170,7 +186,8 @@ public class ImportExecutablePageOne extends WizardPage {
 		selectExecutableGroup.setLayoutData(new GridData(
 				GridData.FILL_HORIZONTAL));
 
-		createSelectBinaryParser(selectExecutableGroup);
+		if (wizard.userSelectsBinaryParser())
+			createSelectBinaryParser(selectExecutableGroup);
 		createSelectExecutable(selectExecutableGroup);
 		createExecutablesRoot(selectExecutableGroup);
 		createExecutablesList(workArea);
@@ -289,31 +306,27 @@ public class ImportExecutablePageOne extends WizardPage {
 	}
 
 	private void createSelectBinaryParser(Composite workArea) {
-		IExtensionPoint point = Platform.getExtensionRegistry().getExtensionPoint(CCorePlugin.PLUGIN_ID, CCorePlugin.BINARY_PARSER_SIMPLE_ID);
-		if (point == null)
+
+		if (binaryParserExtensions.length == 0)
 			return;
 		
 		Label label = new Label(workArea, SWT.NONE);
 		label.setText(Messages.ImportExecutablePageOne_SelectBinaryParser);
 		
-		final Combo combo = new Combo(workArea, SWT.READ_ONLY);
-		
-		final IExtension[] exts = point.getExtensions();
-		for (int i = 0, j = 0; i < exts.length; i++) {
-			if (isExtensionVisible(exts[i])) {
-				exts[j] = exts[i];
-				combo.add(exts[j].getLabel());
-				if (selectedBinaryParserId.equals(exts[j].getUniqueIdentifier()))
-					combo.select(j);
-				++j;
+		binaryParserCombo = new Combo(workArea, SWT.READ_ONLY);
+		final IExtension[] exts = binaryParserExtensions;
+		for (int i = 0; i < exts.length; i++) {
+				binaryParserCombo.add(exts[i].getLabel());
+				if (selectedBinaryParserId.equals(exts[i].getUniqueIdentifier()))
+					binaryParserCombo.select(i);
 			}
-		}
 		
-		combo.addSelectionListener(new SelectionListener() {
+		
+		binaryParserCombo.addSelectionListener(new SelectionListener() {
 			public void widgetDefaultSelected(SelectionEvent e) {
 			}
 			public void widgetSelected(SelectionEvent e) {
-				instantiateBinaryParser(exts[combo.getSelectionIndex()]);
+				selectedBinaryParser = instantiateBinaryParser(exts[binaryParserCombo.getSelectionIndex()]);
 				if (selectSingleFile) {
 					String path = singleExecutablePathField.getText();
 					if (path.length() > 0)
@@ -324,8 +337,6 @@ public class ImportExecutablePageOne extends WizardPage {
 				}
 			}
 		});
-		
-		combo.select(0);
 		
 		// Dummy to fill out the third column
 		new Label(workArea, SWT.NONE);
@@ -349,20 +360,20 @@ public class ImportExecutablePageOne extends WizardPage {
 		return false; // invalid extension definition (must have at least cextension elements)
 	}
 
-	private void instantiateBinaryParser(IExtension ext) {
+	private IBinaryParser instantiateBinaryParser(IExtension ext) {
+		IBinaryParser parser = null;
  		IConfigurationElement[] elements = ext.getConfigurationElements();
 		for (int i = 0; i < elements.length; i++) {
 			IConfigurationElement[] children = elements[i].getChildren("run"); //$NON-NLS-1$
 			for (int j = 0; j < children.length; j++) {
 				try {
-					selectedBinaryParser = (IBinaryParser)children[j].createExecutableExtension("class");
+					parser = (IBinaryParser)children[j].createExecutableExtension("class");
 				} catch (CoreException e) {
 					CDebugUIPlugin.log(e);
 				}
-				if (selectedBinaryParser != null)
-					return;
 			}
 		}
+		return parser;
 	}
 	
 	private void createSelectExecutable(Composite workArea) {
@@ -555,14 +566,50 @@ public class ImportExecutablePageOne extends WizardPage {
 		executablesViewer.setCheckedElements(executables);
 		setPageComplete(executables.length > 0);
 	}
-	
-	private boolean isBinary(File file) {
-		if (selectedBinaryParser != null) {
+
+	private boolean isBinary(File file, IBinaryParser parser) {
+		if (parser != null) {
 			try {
-				IBinaryParser.IBinaryFile bin = selectedBinaryParser.getBinary(new Path(file.getAbsolutePath()));
+				IBinaryParser.IBinaryFile bin = parser.getBinary(new Path(file.getAbsolutePath()));
 				return bin.getType() == IBinaryParser.IBinaryFile.EXECUTABLE
 					|| bin.getType() == IBinaryParser.IBinaryFile.SHARED;
 			} catch (IOException e) {
+				return false;
+			}
+		} else
+			return false;
+	}
+
+	/**
+	 * Checks to see if the file is a valid binary recognized by any of the
+	 * available binary parsers. If the currently selected parser doesn't work
+	 * it checks the other parsers. If another recognizes the file then the
+	 * selected binary parser is changed accordingly.
+	 * The effect is to allow the user's file choice to trump the binary
+	 * parser selection since most people will have a better idea of what
+	 * file they want to select and may not know which binary parser to try.
+	 * @param file - the executable file.
+	 * @return - is it recognized by any of the binary parsers?
+	 */
+	private boolean isBinary(File file) {
+		if (selectedBinaryParser != null) {
+			if (isBinary(file, selectedBinaryParser))
+				return true;
+			else
+			{
+				// See if any of the other parsers will work with this file.
+				// If so, pick the first one that will.
+				for (int i = 0; i < binaryParserExtensions.length; i++) {
+					IBinaryParser parser = instantiateBinaryParser(binaryParserExtensions[i]);
+					if (isBinary(file, parser))
+					{
+						selectedBinaryParserId = binaryParserExtensions[i].getUniqueIdentifier();
+						selectedBinaryParser = parser;
+						if (binaryParserCombo != null)
+							binaryParserCombo.select(i);
+						return true;
+					}
+				}
 				return false;
 			}
 		} else

@@ -10,15 +10,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.debug.ui.importexecutable;
 
-import java.io.File;
-
-import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.ICDescriptor;
-import org.eclipse.cdt.core.ICDescriptorOperation;
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.swt.widgets.FileDialog;
 
@@ -49,36 +40,11 @@ public class ImportExecutableWizard extends AbstractImportExecutableWizard {
 		dialog.setFilterNames(new String[] { Messages.ImportExecutableWizard_AllFiles, Messages.ImportExecutableWizard_Applications, Messages.ImportExecutableWizard_LIbaries });
 	}
 
-	public void addBinaryParsers(IProject newProject) throws CoreException {
-		ICDescriptorOperation op = new ICDescriptorOperation() {
-
-			public void execute(ICDescriptor descriptor, IProgressMonitor monitor) throws CoreException {
-				descriptor.remove(CCorePlugin.BINARY_PARSER_UNIQ_ID);
-				descriptor.create(CCorePlugin.BINARY_PARSER_UNIQ_ID, pageOne.getSelectedBinaryParserId());
-			}
-		};
-		CCorePlugin.getDefault().getCDescriptorManager().runDescriptorOperation(newProject.getProject(), op, null);
-	}
-
 	public boolean supportsConfigurationType(ILaunchConfigurationType type) {
 		return type.getIdentifier().startsWith("org.eclipse.cdt.launch")
 			// Just for fun, lets support QNX launches too.
 			// Really points at something missing, no?
 			|| type.getIdentifier().startsWith("com.qnx");
-	}
-
-	/**
-	 * @deprecated this has been replaced by a check of the binary
-	 * parser down in the Wizard page.
-	 */
-	public boolean isExecutableFile(File file) {
-		String filename = file.getName().toLowerCase();
-		if (Platform.getOS().equals(Platform.OS_MACOSX))
-			return true; // File extension not needed on Mac OS.
-		if (filename.endsWith(".exe") || filename.endsWith(".dll")
-				|| filename.endsWith(".elf"))
-			return true;
-		return false;
 	}
 
 }

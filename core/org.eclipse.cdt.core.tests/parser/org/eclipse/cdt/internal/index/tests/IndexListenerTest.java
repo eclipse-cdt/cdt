@@ -77,14 +77,16 @@ public class IndexListenerTest extends BaseTestCase {
 		try {
 			IFile file= TestSourceReader.createFile(fProject1.getProject(), "test.cpp", "int a;");
 			synchronized (mutex) {
-				mutex.wait(8000);
 				if (state[0]+state[1] < 2) {
-					mutex.wait(1000);
+					mutex.wait(8000);
+					if (state[0]+state[1] < 2) {
+						mutex.wait(2000);
+					}
 				}
+				assertEquals(1, state[0]);
+				assertEquals(1, state[1]);
+				assertEquals(0, state[2]);
 			}
-			assertEquals(1, state[0]);
-			assertEquals(1, state[1]);
-			assertEquals(0, state[2]);
 		}
 		finally {
 			im.removeIndexerStateListener(listener);

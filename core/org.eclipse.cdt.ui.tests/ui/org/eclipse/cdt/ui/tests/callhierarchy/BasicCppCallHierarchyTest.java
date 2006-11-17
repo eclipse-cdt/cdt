@@ -65,58 +65,58 @@ public class BasicCppCallHierarchyTest extends CallHierarchyBaseTest {
 		openCallHierarchy(editor);
 		Tree tree = getCHTree(page);
 		checkTreeNode(tree, 0, "MyClass::method()");
-		checkTreeNode(tree, 0, 0, "MyClass::inline_method()");
-		checkTreeNode(tree, 0, 1, "MyClass::method()");
-		checkTreeNode(tree, 0, 2, "func()");
+		checkTreeNode(tree, 0, 0, "func()");
+		checkTreeNode(tree, 0, 1, "MyClass::inline_method()");
+		checkTreeNode(tree, 0, 2, "MyClass::method()");
 
 		editor.selectAndReveal(content.indexOf("inline_method"), 2);
 		openCallHierarchy(editor);
 		checkTreeNode(tree, 0, "MyClass::inline_method()");
-		checkTreeNode(tree, 0, 0, "MyClass::inline_method()");
-		checkTreeNode(tree, 0, 1, "MyClass::method()");
-		checkTreeNode(tree, 0, 2, "func()");
+		checkTreeNode(tree, 0, 0, "func()");
+		checkTreeNode(tree, 0, 1, "MyClass::inline_method()");
+		checkTreeNode(tree, 0, 2, "MyClass::method()");
 
 		editor.selectAndReveal(content.indexOf("method(); // r1"), 2);
 		openCallHierarchy(editor);
 		checkTreeNode(tree, 0, "MyClass::method()");
-		checkTreeNode(tree, 0, 0, "MyClass::inline_method()");
-		checkTreeNode(tree, 0, 1, "MyClass::method()");
-		checkTreeNode(tree, 0, 2, "func()");
+		checkTreeNode(tree, 0, 0, "func()");
+		checkTreeNode(tree, 0, 1, "MyClass::inline_method()");
+		checkTreeNode(tree, 0, 2, "MyClass::method()");
 
 		editor.selectAndReveal(content.indexOf("inline_method(); // r1"), 2);
 		openCallHierarchy(editor);
 		checkTreeNode(tree, 0, "MyClass::inline_method()");
-		checkTreeNode(tree, 0, 0, "MyClass::inline_method()");
-		checkTreeNode(tree, 0, 1, "MyClass::method()");
-		checkTreeNode(tree, 0, 2, "func()");
+		checkTreeNode(tree, 0, 0, "func()");
+		checkTreeNode(tree, 0, 1, "MyClass::inline_method()");
+		checkTreeNode(tree, 0, 2, "MyClass::method()");
 
 		editor.selectAndReveal(content.indexOf("method(); // r2"), 2);
 		openCallHierarchy(editor);
 		checkTreeNode(tree, 0, "MyClass::method()");
-		checkTreeNode(tree, 0, 0, "MyClass::inline_method()");
-		checkTreeNode(tree, 0, 1, "MyClass::method()");
-		checkTreeNode(tree, 0, 2, "func()");
+		checkTreeNode(tree, 0, 0, "func()");
+		checkTreeNode(tree, 0, 1, "MyClass::inline_method()");
+		checkTreeNode(tree, 0, 2, "MyClass::method()");
 
 		editor.selectAndReveal(content.indexOf("inline_method(); // r2"), 2);
 		openCallHierarchy(editor);
 		checkTreeNode(tree, 0, "MyClass::inline_method()");
-		checkTreeNode(tree, 0, 0, "MyClass::inline_method()");
-		checkTreeNode(tree, 0, 1, "MyClass::method()");
-		checkTreeNode(tree, 0, 2, "func()");
+		checkTreeNode(tree, 0, 0, "func()");
+		checkTreeNode(tree, 0, 1, "MyClass::inline_method()");
+		checkTreeNode(tree, 0, 2, "MyClass::method()");
 
 		editor.selectAndReveal(content.indexOf("method(); // r3"), 2);
 		openCallHierarchy(editor);
 		checkTreeNode(tree, 0, "MyClass::method()");
-		checkTreeNode(tree, 0, 0, "MyClass::inline_method()");
-		checkTreeNode(tree, 0, 1, "MyClass::method()");
-		checkTreeNode(tree, 0, 2, "func()");
+		checkTreeNode(tree, 0, 0, "func()");
+		checkTreeNode(tree, 0, 1, "MyClass::inline_method()");
+		checkTreeNode(tree, 0, 2, "MyClass::method()");
 
 		editor.selectAndReveal(content.indexOf("inline_method(); // r3"), 2);
 		openCallHierarchy(editor);
 		checkTreeNode(tree, 0, "MyClass::inline_method()");
-		checkTreeNode(tree, 0, 0, "MyClass::inline_method()");
-		checkTreeNode(tree, 0, 1, "MyClass::method()");
-		checkTreeNode(tree, 0, 2, "func()");
+		checkTreeNode(tree, 0, 0, "func()");
+		checkTreeNode(tree, 0, 1, "MyClass::inline_method()");
+		checkTreeNode(tree, 0, 2, "MyClass::method()");
 	}
 	
 	// {testStaticMethods}
@@ -149,58 +149,58 @@ public class BasicCppCallHierarchyTest extends CallHierarchyBaseTest {
 		openCallHierarchy(editor);
 		Tree tree = getCHTree(page);
 		checkTreeNode(tree, 0, "MyClass::method()");
-		checkTreeNode(tree, 0, 0, "MyClass::inline_method()");
-		checkTreeNode(tree, 0, 1, "MyClass::method()");
-		checkTreeNode(tree, 0, 2, "func()");
+		checkTreeNode(tree, 0, 0, "func()");
+		checkTreeNode(tree, 0, 1, "MyClass::inline_method()");
+		checkTreeNode(tree, 0, 2, "MyClass::method()");
 
 		editor.selectAndReveal(content.indexOf("inline_method"), 2);
 		openCallHierarchy(editor);
 		checkTreeNode(tree, 0, "MyClass::inline_method()");
-		checkTreeNode(tree, 0, 0, "MyClass::inline_method()");
-		checkTreeNode(tree, 0, 1, "MyClass::method()");
-		checkTreeNode(tree, 0, 2, "func()");
+		checkTreeNode(tree, 0, 0, "func()");
+		checkTreeNode(tree, 0, 1, "MyClass::inline_method()");
+		checkTreeNode(tree, 0, 2, "MyClass::method()");
 
 		editor.selectAndReveal(content.indexOf("method(); // r1"), 2);
 		openCallHierarchy(editor);
 		checkTreeNode(tree, 0, "MyClass::method()");
-		checkTreeNode(tree, 0, 0, "MyClass::inline_method()");
-		checkTreeNode(tree, 0, 1, "MyClass::method()");
-		checkTreeNode(tree, 0, 2, "func()");
+		checkTreeNode(tree, 0, 0, "func()");
+		checkTreeNode(tree, 0, 1, "MyClass::inline_method()");
+		checkTreeNode(tree, 0, 2, "MyClass::method()");
 
 		editor.selectAndReveal(content.indexOf("inline_method(); // r1"), 2);
 		openCallHierarchy(editor);
 		checkTreeNode(tree, 0, "MyClass::inline_method()");
-		checkTreeNode(tree, 0, 0, "MyClass::inline_method()");
-		checkTreeNode(tree, 0, 1, "MyClass::method()");
-		checkTreeNode(tree, 0, 2, "func()");
+		checkTreeNode(tree, 0, 0, "func()");
+		checkTreeNode(tree, 0, 1, "MyClass::inline_method()");
+		checkTreeNode(tree, 0, 2, "MyClass::method()");
 
 		editor.selectAndReveal(content.indexOf("method(); // r2"), 2);
 		openCallHierarchy(editor);
 		checkTreeNode(tree, 0, "MyClass::method()");
-		checkTreeNode(tree, 0, 0, "MyClass::inline_method()");
-		checkTreeNode(tree, 0, 1, "MyClass::method()");
-		checkTreeNode(tree, 0, 2, "func()");
+		checkTreeNode(tree, 0, 0, "func()");
+		checkTreeNode(tree, 0, 1, "MyClass::inline_method()");
+		checkTreeNode(tree, 0, 2, "MyClass::method()");
 
 		editor.selectAndReveal(content.indexOf("inline_method(); // r2"), 2);
 		openCallHierarchy(editor);
 		checkTreeNode(tree, 0, "MyClass::inline_method()");
-		checkTreeNode(tree, 0, 0, "MyClass::inline_method()");
-		checkTreeNode(tree, 0, 1, "MyClass::method()");
-		checkTreeNode(tree, 0, 2, "func()");
+		checkTreeNode(tree, 0, 0, "func()");
+		checkTreeNode(tree, 0, 1, "MyClass::inline_method()");
+		checkTreeNode(tree, 0, 2, "MyClass::method()");
 
 		editor.selectAndReveal(content.indexOf("method(); // r3"), 2);
 		openCallHierarchy(editor);
 		checkTreeNode(tree, 0, "MyClass::method()");
-		checkTreeNode(tree, 0, 0, "MyClass::inline_method()");
-		checkTreeNode(tree, 0, 1, "MyClass::method()");
-		checkTreeNode(tree, 0, 2, "func()");
+		checkTreeNode(tree, 0, 0, "func()");
+		checkTreeNode(tree, 0, 1, "MyClass::inline_method()");
+		checkTreeNode(tree, 0, 2, "MyClass::method()");
 
 		editor.selectAndReveal(content.indexOf("inline_method(); // r3"), 2);
 		openCallHierarchy(editor);
 		checkTreeNode(tree, 0, "MyClass::inline_method()");
-		checkTreeNode(tree, 0, 0, "MyClass::inline_method()");
-		checkTreeNode(tree, 0, 1, "MyClass::method()");
-		checkTreeNode(tree, 0, 2, "func()");
+		checkTreeNode(tree, 0, 0, "func()");
+		checkTreeNode(tree, 0, 1, "MyClass::inline_method()");
+		checkTreeNode(tree, 0, 2, "MyClass::method()");
 	}
 	
 	
@@ -238,58 +238,58 @@ public class BasicCppCallHierarchyTest extends CallHierarchyBaseTest {
 		openCallHierarchy(editor);
 		Tree tree = getCHTree(page);
 		checkTreeNode(tree, 0, "MyClass::field");
-		checkTreeNode(tree, 0, 0, "MyClass::inline_method()");
-		checkTreeNode(tree, 0, 1, "MyClass::method()");
-		checkTreeNode(tree, 0, 2, "func()");
+		checkTreeNode(tree, 0, 0, "func()");
+		checkTreeNode(tree, 0, 1, "MyClass::inline_method()");
+		checkTreeNode(tree, 0, 2, "MyClass::method()");
 
 		editor.selectAndReveal(content.indexOf("static_field"), 2);
 		openCallHierarchy(editor);
 		checkTreeNode(tree, 0, "MyClass::static_field");
-		checkTreeNode(tree, 0, 0, "MyClass::inline_method()");
-		checkTreeNode(tree, 0, 1, "MyClass::method()");
-		checkTreeNode(tree, 0, 2, "func()");
+		checkTreeNode(tree, 0, 0, "func()");
+		checkTreeNode(tree, 0, 1, "MyClass::inline_method()");
+		checkTreeNode(tree, 0, 2, "MyClass::method()");
 
 		editor.selectAndReveal(content.indexOf("field; // r1"), 2);
 		openCallHierarchy(editor);
 		checkTreeNode(tree, 0, "MyClass::field");
-		checkTreeNode(tree, 0, 0, "MyClass::inline_method()");
-		checkTreeNode(tree, 0, 1, "MyClass::method()");
-		checkTreeNode(tree, 0, 2, "func()");
+		checkTreeNode(tree, 0, 0, "func()");
+		checkTreeNode(tree, 0, 1, "MyClass::inline_method()");
+		checkTreeNode(tree, 0, 2, "MyClass::method()");
 
 		editor.selectAndReveal(content.indexOf("static_field; // r1"), 2);
 		openCallHierarchy(editor);
 		checkTreeNode(tree, 0, "MyClass::static_field");
-		checkTreeNode(tree, 0, 0, "MyClass::inline_method()");
-		checkTreeNode(tree, 0, 1, "MyClass::method()");
-		checkTreeNode(tree, 0, 2, "func()");
+		checkTreeNode(tree, 0, 0, "func()");
+		checkTreeNode(tree, 0, 1, "MyClass::inline_method()");
+		checkTreeNode(tree, 0, 2, "MyClass::method()");
 
 		editor.selectAndReveal(content.indexOf("field; // r2"), 2);
 		openCallHierarchy(editor);
 		checkTreeNode(tree, 0, "MyClass::field");
-		checkTreeNode(tree, 0, 0, "MyClass::inline_method()");
-		checkTreeNode(tree, 0, 1, "MyClass::method()");
-		checkTreeNode(tree, 0, 2, "func()");
+		checkTreeNode(tree, 0, 0, "func()");
+		checkTreeNode(tree, 0, 1, "MyClass::inline_method()");
+		checkTreeNode(tree, 0, 2, "MyClass::method()");
 
 		editor.selectAndReveal(content.indexOf("static_field; // r2"), 2);
 		openCallHierarchy(editor);
 		checkTreeNode(tree, 0, "MyClass::static_field");
-		checkTreeNode(tree, 0, 0, "MyClass::inline_method()");
-		checkTreeNode(tree, 0, 1, "MyClass::method()");
-		checkTreeNode(tree, 0, 2, "func()");
+		checkTreeNode(tree, 0, 0, "func()");
+		checkTreeNode(tree, 0, 1, "MyClass::inline_method()");
+		checkTreeNode(tree, 0, 2, "MyClass::method()");
 
 		editor.selectAndReveal(content.indexOf("field; // r3"), 2);
 		openCallHierarchy(editor);
 		checkTreeNode(tree, 0, "MyClass::field");
-		checkTreeNode(tree, 0, 0, "MyClass::inline_method()");
-		checkTreeNode(tree, 0, 1, "MyClass::method()");
-		checkTreeNode(tree, 0, 2, "func()");
+		checkTreeNode(tree, 0, 0, "func()");
+		checkTreeNode(tree, 0, 1, "MyClass::inline_method()");
+		checkTreeNode(tree, 0, 2, "MyClass::method()");
 
 		editor.selectAndReveal(content.indexOf("static_field; // r3"), 2);
 		openCallHierarchy(editor);
 		checkTreeNode(tree, 0, "MyClass::static_field");
-		checkTreeNode(tree, 0, 0, "MyClass::inline_method()");
-		checkTreeNode(tree, 0, 1, "MyClass::method()");
-		checkTreeNode(tree, 0, 2, "func()");
+		checkTreeNode(tree, 0, 0, "func()");
+		checkTreeNode(tree, 0, 1, "MyClass::inline_method()");
+		checkTreeNode(tree, 0, 2, "MyClass::method()");
 	}
 
 	// 	{testAutomaticConstructor}

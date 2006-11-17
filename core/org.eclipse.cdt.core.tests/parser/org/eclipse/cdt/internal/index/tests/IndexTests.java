@@ -24,6 +24,7 @@ public class IndexTests extends TestSuite {
 		suite.addTest(IndexSearchTest.suite());
 		suite.addTest(IndexIncludeTest.suite());
 		suite.addTest(IndexBugsTests.suite());
+		suite.addTest(EnclosingNamesTest.suite());
 		return suite;
 	}
 	

@@ -126,6 +126,7 @@ public class IndexIncludeTest extends IndexTestBase {
 		ResourcesPlugin.getWorkspace().run(new IWorkspaceRunnable() {
 			public void run(IProgressMonitor monitor) throws CoreException {
 				file.setContents(new ByteArrayInputStream( "int included; int CONTEXT;\n".getBytes()), false, false, NPM);
+				file.setLocalTimeStamp(timestamp+1000); 
 			}
 		}, NPM);
 		assertTrue("Timestamp was not increased", file.getLocalTimeStamp() >= timestamp);

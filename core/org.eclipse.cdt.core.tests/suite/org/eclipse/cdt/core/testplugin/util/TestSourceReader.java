@@ -35,10 +35,13 @@ import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IWorkspace;
+import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.osgi.framework.Bundle;
@@ -201,19 +204,25 @@ public class TestSourceReader {
 	 * @throws Exception
 	 * @since 4.0
 	 */    
-	public static IFile createFile(IContainer container, IPath filePath, String contents) throws CoreException {
-		//Obtain file handle
-		IFile file = container.getFile(filePath);
-	
-		InputStream stream = new ByteArrayInputStream(contents.getBytes());
-		//Create file input stream
-		if (file.exists()) {
-			file.setContents(stream, false, false, new NullProgressMonitor());
-		} 
-		else {
-			file.create(stream, false, new NullProgressMonitor());
-		}
-		return file;
+	public static IFile createFile(final IContainer container, final IPath filePath, final String contents) throws CoreException {
+		final IWorkspace ws = ResourcesPlugin.getWorkspace();
+		final IFile result[] = new IFile[1];
+		ws.run(new IWorkspaceRunnable() {
+			public void run(IProgressMonitor monitor) throws CoreException {
+				//Obtain file handle
+				IFile file = container.getFile(filePath);
+				InputStream stream = new ByteArrayInputStream(contents.getBytes());
+				//Create file input stream
+				if (file.exists()) {
+					file.setContents(stream, false, false, new NullProgressMonitor());
+				} 
+				else {
+					file.create(stream, false, new NullProgressMonitor());
+				}
+				result[0]= file;
+			}
+		}, null);
+		return result[0];
 	}
 
 	/**

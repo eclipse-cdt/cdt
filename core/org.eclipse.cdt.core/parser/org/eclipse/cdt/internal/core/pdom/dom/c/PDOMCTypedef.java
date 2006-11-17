@@ -68,7 +68,25 @@ class PDOMCTypedef extends PDOMBinding implements ITypedef, ITypeContainer {
 		}
 	}
 
+	public boolean isSameType(IType type) {
+		try {
+			if (type instanceof PDOMBinding)
+				return record == ((PDOMBinding)type).getRecord();
+			
+			IType myrtype = getType();
+			if (myrtype == null)
+				return false;
+			
+			if (type instanceof ITypedef) {
+				IType rtype = ((ITypedef)type).getType();
+				return rtype != null ? myrtype.isSameType(rtype) : false;
+			}
+		} catch (DOMException e) {
+			CCorePlugin.log(e);
+		}
+		return false;
+	}
+
 	public void setType(IType type) {fail();}		
-	public boolean isSameType(IType type) {fail(); return false;}
 	public Object clone() {fail(); return null;}
 }

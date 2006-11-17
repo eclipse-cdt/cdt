@@ -368,11 +368,14 @@ public class CPPFunction extends PlatformObject implements ICPPFunction, ICPPInt
     	binding = new CPPParameter( name );
     	IASTParameterDeclaration temp = null;
     	if( definition != null ){
-    		temp = definition.getParameters()[i];
-    		IASTName n = temp.getDeclarator().getName();
-    		if( n != name ) {
-    		    n.setBinding( binding );
-    		    ((CPPParameter)binding).addDeclaration( n );
+    		IASTParameterDeclaration[] paramDecls = definition.getParameters();
+    		if (paramDecls.length > i) { // This will be less than i if we have a void parameter
+	    		temp = paramDecls[i];
+	    		IASTName n = temp.getDeclarator().getName();
+	    		if( n != name ) {
+	    		    n.setBinding( binding );
+	    		    ((CPPParameter)binding).addDeclaration( n );
+	    		}
     		}
     	}
     	if( declarations != null ){

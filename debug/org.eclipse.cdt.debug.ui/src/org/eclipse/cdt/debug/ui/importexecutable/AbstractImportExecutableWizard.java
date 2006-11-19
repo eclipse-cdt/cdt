@@ -117,11 +117,7 @@ public abstract class AbstractImportExecutableWizard extends Wizard implements I
 		ILaunchConfigurationWorkingCopy wc = this.getSelectedLaunchConfigurationType().newInstance(null,
 				this.getImportExecutablePage2().getNewConfigurationName());
 
-		wc.setAttribute(ICDTLaunchConfigurationConstants.ATTR_PROJECT_NAME, targetProject.getProject().getName());
-		wc.setAttribute(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_NAME, new File(getImportExecutablePage()
-				.getSelectedExecutables()[0]).getName());
-
-		setConfigurationDefaults(wc);
+		setConfigurationDefaults(wc, targetProject);
 
 		final IStructuredSelection selection = new StructuredSelection(wc.doSave());
 		final String identifier = new String("org.eclipse.debug.ui.launchGroup.debug");
@@ -202,10 +198,16 @@ public abstract class AbstractImportExecutableWizard extends Wizard implements I
 	
 	/**
 	 * Subclasses should override this method to modify the launch configuration
-	 * created by the wizard. The default implementation does nothing.
+	 * created by the wizard. The default implementation sets up the project
+	 * and program names.
 	 * @param config the launch configuration created by the wizard
+	 * @param targetProject 
 	 */
-	public void setConfigurationDefaults(ILaunchConfigurationWorkingCopy config) {
+	public void setConfigurationDefaults(ILaunchConfigurationWorkingCopy config, ICProject project) {
+
+		config.setAttribute(ICDTLaunchConfigurationConstants.ATTR_PROJECT_NAME, project.getProject().getName());
+		config.setAttribute(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_NAME, new File(getImportExecutablePage()
+				.getSelectedExecutables()[0]).getName());
 
 	}
 

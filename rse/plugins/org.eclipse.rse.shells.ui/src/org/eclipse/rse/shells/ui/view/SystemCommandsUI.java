@@ -83,7 +83,7 @@ public class SystemCommandsUI
         catch (PartInitException e)
         {
         	e.printStackTrace();
-           	SystemBasePlugin.logError("Can not open commands view", e);
+           	SystemBasePlugin.logError("Can not open remote shell view", e);
         }
 
         return _viewPart;

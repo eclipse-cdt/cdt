@@ -971,8 +971,8 @@ Contributors:
                         - the folder name is not valid </LevelTwo>
                     </Message>
                     <Message ID="1305" Indicator="E">
-                        <LevelOne>The operation did not complete successfully. See additional messages in the Commands view</LevelOne>
-                        <LevelTwo>The operation requested failed. Look in the Commands view to see additional messages indicating the cause of the failure</LevelTwo>
+                        <LevelOne>The operation did not complete successfully. See additional messages in the Remote Shell view</LevelOne>
+                        <LevelTwo>The operation requested failed. Look in the Remote Shell view to see additional messages indicating the cause of the failure</LevelTwo>
                     </Message>
                     <Message ID="1306" Indicator="E">
                         <LevelOne>Copy of the file or folder %1 failed</LevelOne>

@@ -27,11 +27,11 @@ public interface ISystemThemeConstants {
 	public static final String MESSAGE_WARNING_COLOR = "MESSAGE_WARNING_COLOR" ;
 	public static final String MESSAGE_INFORMATION_COLOR = "MESSAGE_INFORMATION_COLOR";
 
-	// color constants used by Remote Commnds view
+	// color constants used by Remote Shell view
 	public static final String REMOTE_COMMANDS_VIEW_BG_COLOR = "REMOTE_COMMANDS_VIEW_BG_COLOR";
 	public static final String REMOTE_COMMANDS_VIEW_FG_COLOR = "REMOTE_COMMANDS_VIEW_FG_COLOR";
 	public static final String REMOTE_COMMANDS_VIEW_PROMPT_COLOR = "REMOTE_COMMANDS_VIEW_PROMPT_COLOR";
 		
-	// font constant used by Remote Commands view
+	// font constant used by Remote Shell view
 	public static final String REMOTE_COMMANDS_VIEW_FONT = "REMOTE_COMMANDS_VIEW_FONT";
 }

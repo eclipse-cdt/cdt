@@ -532,7 +532,7 @@ Contributors:
 <description>Select the target filter within a profile and filter pool.
 </description>
 </context>
-<!-- Commands View...   -->
+<!-- Remote Shell View...   -->
 <context id="cmdv0000">
 <description>This view shows the commands that have been run on remote systems, along with the resulting messages.
 </description>

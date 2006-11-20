@@ -221,18 +221,18 @@ public interface ISystemResourceChangeEvents
 	 */
 	public static final int EVENT_COMPILE_COMMAND_RUN = 125;
 	/**
-	 * The event is to update the command history drop-down in the Commands view
+	 * The event is to update the command history drop-down in the remote shell view
 	 */
 	public static final int EVENT_COMMAND_HISTORY_UPDATE = 130;
 
 	/**
-	 * The event is to update the commands view when a command is finished
+	 * The event is to update the remote shell view when a command is finished
 	 * @deprecated use EVENT_COMMAND_SHELL_FINISHED
 	 */
 	public static final int EVENT_COMMAND_FINISHED = 140;
 	
 	/**
-	 * The event is to update the commands view when a command is finished
+	 * The event is to update the remote shell view when a command is finished
 	 */
 	public static final int EVENT_COMMAND_SHELL_FINISHED = 140;
 	public static final int EVENT_COMMAND_SHELL_REMOVED = 141;

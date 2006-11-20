@@ -33,7 +33,7 @@
       <topic label="Working with profiles and team support" href="tasks/tteamsup1.html"/>
    </topic>
    <topic label="Shells and commands in the Remote Systems view" href="concepts/crunremcmds.html">
-      <topic label="Running and viewing commands and shells using the Remote Commands view" href="tasks/truncmdsview.html"/>
+      <topic label="Running and viewing commands using the Remote Shell view" href="tasks/truncmdsview.html"/>
       <topic label="Working with command shells" href="tasks/twrkcmdshl.html"/>
    </topic>
    <!-- TODODeferred after RSE 1.0

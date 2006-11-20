@@ -64,7 +64,7 @@ public class SystemMonitorUI
         }
         catch (PartInitException e)
         {
-           	SystemBasePlugin.logError("Can not open commands view", e);
+           	SystemBasePlugin.logError("Can not open remote shell view", e);
         }
 
         return _viewPart;

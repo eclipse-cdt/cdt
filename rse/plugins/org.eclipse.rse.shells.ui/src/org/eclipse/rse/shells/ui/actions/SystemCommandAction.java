@@ -55,7 +55,7 @@ import org.eclipse.swt.widgets.Shell;
 
 /**
  * Launches a shell and/or runs a shell command, displaying the output
- * in the Remote Systems Commands view. 
+ * in the Remote Shell view. 
  */
 public class SystemCommandAction extends SystemBaseAction
 {
@@ -301,7 +301,7 @@ public class SystemCommandAction extends SystemBaseAction
 	
 	/**
 	 * Runs the command action.  If the action is for launching a shell, the shell is launched
-	 * and the commands view shows it's output.  If the action is for running a command, a
+	 * and the remote shell view shows it's output.  If the action is for running a command, a
 	 * dialog pops up prompting for the invocation.
 	 */
 	public void run()
@@ -511,7 +511,7 @@ public class SystemCommandAction extends SystemBaseAction
 	}
 
 	/**
-	 * shows the command in the commands view
+	 * shows the command in the remote shell view
 	 */
 	private void showInView(IRemoteCommandShell cmd)
 	{

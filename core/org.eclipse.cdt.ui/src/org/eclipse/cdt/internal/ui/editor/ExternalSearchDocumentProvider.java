@@ -16,6 +16,7 @@ import org.eclipse.cdt.internal.ui.util.ExternalEditorInput;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IStorage;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.text.IDocument;
@@ -54,26 +55,31 @@ public class ExternalSearchDocumentProvider extends FileDocumentProvider {
 	
 		IStorage storage = externalInput.getStorage();
 		
-		IProject projectToUseForMarker = null;
+		IResource resourceToUseForMarker = null;
 		
 		IFile resourceFile = CUIPlugin.getWorkspace().getRoot().getFileForLocation(storage.getFullPath());
-		
+
 		if (resourceFile == null){
-			IProject[] proj = CUIPlugin.getWorkspace().getRoot().getProjects();
 			
-			for (int i=0; i<proj.length; i++){
-				if (proj[i].isOpen()){
-					projectToUseForMarker = proj[i];
-					break;
+			resourceToUseForMarker = externalInput.getMarkerResource();
+			
+			if (null==resourceToUseForMarker) {
+				IProject[] proj = CUIPlugin.getWorkspace().getRoot()
+						.getProjects();
+				for (int i = 0; i < proj.length; i++) {
+					if (proj[i].isOpen()) {
+						resourceToUseForMarker = proj[i];
+						break;
+					}
 				}
-			}
+			}			
 		}
 		else {
-			projectToUseForMarker = resourceFile.getProject();
+			resourceToUseForMarker = resourceFile.getProject();
 		}
 		
-		if (projectToUseForMarker != null){
-			ExternalSearchAnnotationModel model = new ExternalSearchAnnotationModel(projectToUseForMarker);
+		if (resourceToUseForMarker != null){
+			ExternalSearchAnnotationModel model = new ExternalSearchAnnotationModel(resourceToUseForMarker, storage);
 			return model;
 		}
 		return null;

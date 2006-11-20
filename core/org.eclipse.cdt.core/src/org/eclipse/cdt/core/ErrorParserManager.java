@@ -334,33 +334,24 @@ public class ErrorParserManager extends OutputStream {
 		return (file != null && file.exists()) ? file : null;
 	}
 
-	protected class Problem {
-		protected IResource file;
-		protected int lineNumber;
-		protected String description;
-		protected int severity;
-		protected String variableName;
-
-		public Problem(IResource file, int lineNumber, String desciption, int severity, String variableName) {
-			this.file = file;
-			this.lineNumber = lineNumber;
-			this.description = desciption;
-			this.severity = severity;
-			this.variableName = variableName;
-		}
-	}
-
 	/**
 	 * Called by the error parsers.
 	 */
 	public void generateMarker(IResource file, int lineNumber, String desc, int severity, String varName) {
-		Problem problem = new Problem(file, lineNumber, desc, severity, varName);
-		fErrors.add(problem);
-		
+		generateExternalMarker(file, lineNumber, desc, severity, varName, null);
+	}
+
+	/**
+	 * Called by the error parsers for external problem markers
+	 */
+	public void generateExternalMarker(IResource file, int lineNumber, String desc, int severity, String varName, IPath externalPath) {
+		ProblemMarkerInfo problemMarkerInfo = new ProblemMarkerInfo(file, lineNumber, desc, severity, varName, externalPath);
+		fErrors.add(problemMarkerInfo);
 		if (severity == IMarkerGenerator.SEVERITY_ERROR_RESOURCE)
 			hasErrors = true;
 	}
 
+	
 	/**
 	 * Called by the error parsers.  Return the previous line, save in the working buffer.
 	 */
@@ -456,25 +447,11 @@ public class ErrorParserManager extends OutputStream {
 		if (nOpens == 0) {
 			Iterator iter = fErrors.iterator();
 			while (iter.hasNext()) {
-				Problem problem = (Problem) iter.next();
-				if (problem.severity == IMarkerGenerator.SEVERITY_ERROR_BUILD) {
+				ProblemMarkerInfo problemMarkerInfo = (ProblemMarkerInfo) iter.next();
+				if (problemMarkerInfo.severity == IMarkerGenerator.SEVERITY_ERROR_BUILD) {
 					reset = true;
 				}
-				if (problem.file == null) {
-					fMarkerGenerator.addMarker(
-						fProject,
-						problem.lineNumber,
-						problem.description,
-						problem.severity,
-						problem.variableName);
-				} else {
-					fMarkerGenerator.addMarker(
-						problem.file,
-						problem.lineNumber,
-						problem.description,
-						problem.severity,
-						problem.variableName);
-				}
+				fMarkerGenerator.addMarker(problemMarkerInfo);
 			}
 			fErrors.clear();
 		}

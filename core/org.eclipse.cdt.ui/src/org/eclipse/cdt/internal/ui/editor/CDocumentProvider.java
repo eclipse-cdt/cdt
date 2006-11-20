@@ -19,6 +19,7 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceRuleFactory;
+import org.eclipse.core.resources.IStorage;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -31,6 +32,7 @@ import org.eclipse.jface.text.ILineTracker;
 import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.TextUtilities;
 import org.eclipse.jface.text.source.Annotation;
+import org.eclipse.jface.text.source.AnnotationModel;
 import org.eclipse.jface.text.source.AnnotationModelEvent;
 import org.eclipse.jface.text.source.IAnnotationAccessExtension;
 import org.eclipse.jface.text.source.IAnnotationModel;
@@ -854,13 +856,13 @@ public class CDocumentProvider extends TextFileDocumentProvider {
 		tuInfo.fCopy = copy;
 
 		if (tuInfo.fModel == null && element instanceof IStorageEditorInput) {
-//			IStorage storage= ((IStorageEditorInput)element).getStorage();
-//			IResource markerResource= original.getCProject().getProject();
-//			tuInfo.fModel= new ExternalSearchAnnotationModel(markerResource, storage);
-//			IAnnotationModel fileBufferAnnotationModel= tuInfo.fTextFileBuffer.getAnnotationModel();
-//			if (fileBufferAnnotationModel != null) {
-//				((AnnotationModel)tuInfo.fModel).addAnnotationModel("secondaryModel", fileBufferAnnotationModel); //$NON-NLS-1$
-//			}
+			IStorage storage= ((IStorageEditorInput)element).getStorage();
+			IResource markerResource= original.getCProject().getProject();
+			tuInfo.fModel= new ExternalSearchAnnotationModel(markerResource, storage);
+			IAnnotationModel fileBufferAnnotationModel= tuInfo.fTextFileBuffer.getAnnotationModel();
+			if (fileBufferAnnotationModel != null) {
+				((AnnotationModel)tuInfo.fModel).addAnnotationModel("secondaryModel", fileBufferAnnotationModel); //$NON-NLS-1$
+			}
 		}
 		if (tuInfo.fModel instanceof TranslationUnitAnnotationModel) {
 			TranslationUnitAnnotationModel model= (TranslationUnitAnnotationModel) tuInfo.fModel;

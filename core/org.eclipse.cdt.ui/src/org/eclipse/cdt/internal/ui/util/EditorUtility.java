@@ -240,7 +240,7 @@ public class EditorUtility {
 			}
                         
 			if (element instanceof IBinary) {
-				return new ExternalEditorInput(getStorage((IBinary)element), null);
+				return new ExternalEditorInput(getStorage((IBinary)element), (IPath)null);
 			}
                         
 			element= element.getParent();

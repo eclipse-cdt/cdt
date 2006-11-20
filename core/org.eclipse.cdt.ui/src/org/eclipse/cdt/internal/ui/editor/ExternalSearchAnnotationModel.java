@@ -15,43 +15,64 @@ import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceChangeEvent;
 import org.eclipse.core.resources.IResourceChangeListener;
+import org.eclipse.core.resources.IStorage;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.ui.texteditor.AbstractMarkerAnnotationModel;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.ui.texteditor.ResourceMarkerAnnotationModel;
 
+import org.eclipse.cdt.core.model.ICModelMarker;
 
 public class ExternalSearchAnnotationModel extends
-		AbstractMarkerAnnotationModel implements IResourceChangeListener {
+		ResourceMarkerAnnotationModel implements IResourceChangeListener {
 
 	protected IWorkspace fWorkspace;
-	protected IResource fMarkerResource;
+	protected IStorage fStorage;
 	protected boolean fChangesApplied;
-	
+
 	/**
 	 * @param resource
 	 */
-	public ExternalSearchAnnotationModel(IResource resource) {
-		this.fMarkerResource = resource;
+	public ExternalSearchAnnotationModel(IResource resource, IStorage storage) {
+		super(resource);
 		this.fWorkspace = resource.getWorkspace();
+		this.fStorage = storage;
 	}
 
 	protected IMarker[] retrieveMarkers() throws CoreException {
-		if (fMarkerResource != null)
-			return fMarkerResource.findMarkers(IMarker.MARKER, true, IResource.DEPTH_INFINITE);
-		return null;
-	}
-
-	protected void deleteMarkers(IMarker[] markers) throws CoreException {		
-	}
-	
-	protected void listenToMarkerChanges(boolean listen) {
+		IMarker[] markers = null;
+		if (getResource() != null) {
+			markers = getResource().findMarkers(IMarker.MARKER, true,
+					IResource.DEPTH_ZERO);
+		}
+		return markers;
 	}
 
 	protected boolean isAcceptable(IMarker marker) {
-		return false;
+		boolean acceptable = false;
+		String externalFileName = marker.getAttribute(
+				ICModelMarker.C_MODEL_MARKER_EXTERNAL_LOCATION, null);
+		if (externalFileName != null) { // Only accept markers with external
+										// paths set
+			IPath externalPath = new Path(externalFileName);
+			IPath storagePath = fStorage.getFullPath();
+			acceptable = externalPath.equals(storagePath); // Only accept
+															// markers for this
+															// annotation
+															// model's external
+															// editor
+		}
+		return acceptable;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.core.resources.IResourceChangeListener#resourceChanged(org.eclipse.core.resources.IResourceChangeEvent)
+	 */
 	public void resourceChanged(IResourceChangeEvent event) {
+
 	}
 
 }

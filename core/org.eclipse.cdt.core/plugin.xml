@@ -192,6 +192,7 @@
       <persistent
             value="true">
       </persistent>
+      <attribute name="externalLocation"/>
    </extension>
 <!-- =================================================================================== -->
 <!-- CDT C Nature                                                                        -->

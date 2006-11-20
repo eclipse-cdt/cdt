@@ -21,5 +21,10 @@ public interface IMarkerGenerator {
 	int SEVERITY_ERROR_RESOURCE = 2;
 	int SEVERITY_ERROR_BUILD = 3;
 
+	/**
+	 * callback from Output Parser
+	 * @deprecated Use 	public void addMarker(org.eclipse.cdt.core.ProblemMarkerInfo problem) instead.
+	 */
 	void addMarker(IResource file, int lineNumber, String errorDesc, int severity, String errorVar);
+	void addMarker(ProblemMarkerInfo problemMarkerInfo);
 }

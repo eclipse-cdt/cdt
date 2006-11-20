@@ -15,6 +15,7 @@ import java.util.List;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.IMarkerGenerator;
+import org.eclipse.cdt.core.ProblemMarkerInfo;
 import org.eclipse.cdt.core.model.ICModelMarker;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
@@ -39,8 +40,18 @@ public class SCMarkerGenerator implements IMarkerGenerator {
      * @see org.eclipse.cdt.core.IMarkerGenerator#addMarker(org.eclipse.core.resources.IResource, int, java.lang.String, int, java.lang.String)
      */
     public void addMarker(IResource file, int lineNumber, String errorDesc, int severity, String errorVar) {
+    	ProblemMarkerInfo info = new ProblemMarkerInfo(file, lineNumber, errorDesc, severity, errorVar);
+    	addMarker(info);
+    }
+    
+    
+
+    /* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.IMarkerGenerator#addMarker(org.eclipse.cdt.core.ProblemMarkerInfo)
+	 */
+	public void addMarker(ProblemMarkerInfo problemMarkerInfo) {
         try {
-            IMarker[] cur = file.findMarkers(ICModelMarker.C_MODEL_PROBLEM_MARKER, false, IResource.DEPTH_ONE);
+            IMarker[] cur = problemMarkerInfo.file.findMarkers(ICModelMarker.C_MODEL_PROBLEM_MARKER, false, IResource.DEPTH_ONE);
             /*
              * Try to find matching markers and don't put in duplicates
              */
@@ -49,29 +60,33 @@ public class SCMarkerGenerator implements IMarkerGenerator {
                     int line = ((Integer) cur[i].getAttribute(IMarker.LOCATION)).intValue();
                     int sev = ((Integer) cur[i].getAttribute(IMarker.SEVERITY)).intValue();
                     String mesg = (String) cur[i].getAttribute(IMarker.MESSAGE);
-                    if (line == lineNumber && sev == mapMarkerSeverity(severity) && mesg.equals(errorDesc)) {
+                    if (line == problemMarkerInfo.lineNumber && sev == mapMarkerSeverity(problemMarkerInfo.severity) && mesg.equals(problemMarkerInfo.description)) {
                         return;
                     }
                 }
             }
 
-            IMarker marker = file.createMarker(ICModelMarker.C_MODEL_PROBLEM_MARKER);
-            marker.setAttribute(IMarker.LOCATION, lineNumber);
-            marker.setAttribute(IMarker.MESSAGE, errorDesc);
-            marker.setAttribute(IMarker.SEVERITY, mapMarkerSeverity(severity));
-            marker.setAttribute(IMarker.LINE_NUMBER, lineNumber);
+            IMarker marker = problemMarkerInfo.file.createMarker(ICModelMarker.C_MODEL_PROBLEM_MARKER);
+            marker.setAttribute(IMarker.LOCATION, problemMarkerInfo.lineNumber);
+            marker.setAttribute(IMarker.MESSAGE, problemMarkerInfo.description);
+            marker.setAttribute(IMarker.SEVERITY, mapMarkerSeverity(problemMarkerInfo.severity));
+            marker.setAttribute(IMarker.LINE_NUMBER, problemMarkerInfo.lineNumber);
             marker.setAttribute(IMarker.CHAR_START, -1);
             marker.setAttribute(IMarker.CHAR_END, -1);
-            if (errorVar != null) {
-                marker.setAttribute(ICModelMarker.C_MODEL_MARKER_VARIABLE, errorVar);
+            if (problemMarkerInfo.variableName != null) {
+                marker.setAttribute(ICModelMarker.C_MODEL_MARKER_VARIABLE, problemMarkerInfo.variableName);
+            }
+            if (problemMarkerInfo.externalPath != null) {
+                marker.setAttribute(ICModelMarker.C_MODEL_MARKER_EXTERNAL_LOCATION, problemMarkerInfo.externalPath.toOSString());
             }
         }
         catch (CoreException e) {
             CCorePlugin.log(e.getStatus());
         }
-    }
+ 		
+	}
 
-    public void removeMarker(IResource file, int lineNumber, String errorDesc, int severity, String errorVar) {
+	public void removeMarker(IResource file, int lineNumber, String errorDesc, int severity, String errorVar) {
         IWorkspace workspace = file.getWorkspace();
         // remove specific marker
         try {

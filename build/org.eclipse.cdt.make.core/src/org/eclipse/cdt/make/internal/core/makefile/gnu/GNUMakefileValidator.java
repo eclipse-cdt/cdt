@@ -16,6 +16,7 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 
 import org.eclipse.cdt.core.IMarkerGenerator;
+import org.eclipse.cdt.core.ProblemMarkerInfo;
 import org.eclipse.cdt.make.core.makefile.IBadDirective;
 import org.eclipse.cdt.make.core.makefile.IDirective;
 import org.eclipse.cdt.make.core.makefile.IMakefileValidator;
@@ -49,21 +50,37 @@ public class GNUMakefileValidator implements IMakefileValidator {
 			reporter = new IMarkerGenerator() {
 
 				public void addMarker(IResource file, int lineNumber, String errorDesc, int severity, String errorVar) {
+					ProblemMarkerInfo problemMarkerInfo = new ProblemMarkerInfo(file, lineNumber, errorDesc, severity, errorVar, null);
+					addMarker(problemMarkerInfo);
+				}
+				
+				
+
+				/* (non-Javadoc)
+				 * @see org.eclipse.cdt.core.IMarkerGenerator#addMarker(org.eclipse.cdt.core.ProblemMarkerInfo)
+				 */
+				public void addMarker(ProblemMarkerInfo problemMarkerInfo) {
 					String name = "Makefile"; //$NON-NLS-1$
-					if (file != null) {
-						name = file.getName();
+					if (problemMarkerInfo.file != null) {
+						name = problemMarkerInfo.file.getName();
 					}
 					StringBuffer sb = new StringBuffer(name);
-					sb.append(':').append(lineNumber).append(':').append(getSeverity(severity));
-					if (errorDesc != null) {
-						sb.append(':').append(errorDesc);
+					sb.append(':').append(problemMarkerInfo.lineNumber).append(':').append(getSeverity(problemMarkerInfo.severity));
+					if (problemMarkerInfo.description != null) {
+						sb.append(':').append(problemMarkerInfo.description);
 					}
-					if (errorVar != null ) {
-						sb.append(':').append(errorVar);
+					if (problemMarkerInfo.variableName != null ) {
+						sb.append(':').append(problemMarkerInfo.variableName);
+					}
+					if (problemMarkerInfo.externalPath != null ) {
+						sb.append(':').append(problemMarkerInfo.externalPath);
 					}
 					sb.append('\n');
 					System.out.println(sb.toString());				
+					
 				}
+
+
 
 				public String getSeverity(int severity) {
 					if (severity == IMarkerGenerator.SEVERITY_ERROR_BUILD) {

@@ -15,6 +15,8 @@ import org.eclipse.jface.resource.ImageDescriptor;
 
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.internal.ui.editor.ITranslationUnitEditorInput;
+
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IStorage;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Platform;
@@ -31,6 +33,7 @@ import org.eclipse.ui.editors.text.ILocationProvider;
 public class ExternalEditorInput implements ITranslationUnitEditorInput {
            
 	private IStorage externalFile;
+	private IResource markerResource;
 	private ITranslationUnit unit;
 	private IPath location;
 
@@ -123,7 +126,9 @@ public class ExternalEditorInput implements ITranslationUnitEditorInput {
 	 * @see org.eclipse.ui.editors.text.ILocationProvider#getPath(java.lang.Object)
 	 */
 	public IPath getPath(Object element) {
-		return location;
+		if (location!=null)
+			return location ;
+		return externalFile.getFullPath();
 	}
 
 	public ExternalEditorInput(ITranslationUnit unit, IStorage exFile) {
@@ -139,5 +144,23 @@ public class ExternalEditorInput implements ITranslationUnitEditorInput {
 		externalFile = exFile;
 		this.location = location;
 	}
+	
+	/**
+	 * This constructor accepts the storage for the editor
+	 * and a reference to a resource which holds the markers for the external file.
+	 */
+	public ExternalEditorInput(IStorage exFile, IResource markerResource)  {
+		this.externalFile = exFile ;
+		this.markerResource = markerResource ;
+	}
+
+	/**
+	 * Return the resource where markers for this external editor input are stored
+	 */
+	public IResource getMarkerResource() {
+		return markerResource;
+	}
+	
+	
 
 }

@@ -11,11 +11,18 @@
 
 package org.eclipse.cdt.internal.errorparsers;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.eclipse.cdt.core.ErrorParserManager;
+import org.eclipse.cdt.utils.CygPath;
+import org.eclipse.cdt.utils.DefaultCygwinToolFactory;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
 
 /**
  * @author Doug Schaefer
@@ -121,8 +128,9 @@ public class ErrorPattern {
 		int lineNum = getLineNum(matcher);
 		String desc = getDesc(matcher);
 		String varName = getVarName(matcher);
+		IPath externalPath = null ;
 		
-		IFile file = null;
+		IResource file = null;
 		if (fileName != null) {
 			file = eoParser.findFileName(fileName);
 			if (file == null || eoParser.isConflictingName(fileName)) {
@@ -130,11 +138,40 @@ public class ErrorPattern {
 			}
 			
 			if (file == null) {
+				// If the file is not found in the workspace we attach the problem to the project
+				// and add the external path to the file.
 				desc = fileName + " " + desc; //$NON-NLS-1$
+				file = eoParser.getProject();
+				externalPath = getLocation(fileName);
 			}
 		}
 		
-		eoParser.generateMarker(file, lineNum, desc, severity, varName);
+		eoParser.generateExternalMarker(file, lineNum, desc, severity, varName, externalPath);
 		return true;
 	}
+	
+	/**
+	 * If the file designated by filename exists, return the IPath representation of the filename
+	 * If it does not exist, try cygpath translation
+	 */
+	protected IPath getLocation(String filename)  {
+		IPath path = new Path(filename);
+		File file = path.toFile() ;
+		if (!file.exists())  {
+			CygPath cygpath = null ;
+			try {
+				cygpath = new CygPath("cygpath");
+				String cygfilename = cygpath.getFileName(filename);
+				path = new Path(cygfilename);
+			} catch (IOException e) {
+			}
+			finally  {
+				if (null!=cygpath)  {
+					cygpath.dispose();
+				}
+			}
+		}
+		return path ;
+	}
+
 }

@@ -38,6 +38,12 @@ public interface ICModelMarker {
 	public static final String C_MODEL_MARKER_VARIABLE = "problem.variable"; //$NON-NLS-1$
 	
 	/**
+	 * C model extension to the marker problem markers which may hold 
+	 * the path to the workspace external location of the file containing the problem 
+	 */
+	public static final String C_MODEL_MARKER_EXTERNAL_LOCATION = "problem.externalLocation"; //$NON-NLS-1$
+	
+	/**
 	 * C model task marker type (value <code>"org.eclipse.cdt.core.task"</code>).
 	 * This can be used to recognize task markers in the workspace that correspond to tasks
 	 * specified in C/C++ source comments and detected during translation (for example, 'TO-DO: ...').

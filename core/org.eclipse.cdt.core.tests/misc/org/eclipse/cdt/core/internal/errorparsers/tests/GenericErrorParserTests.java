@@ -22,6 +22,7 @@ import junit.framework.TestCase;
 
 import org.eclipse.cdt.core.ErrorParserManager;
 import org.eclipse.cdt.core.IMarkerGenerator;
+import org.eclipse.cdt.core.ProblemMarkerInfo;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -181,20 +182,30 @@ public class GenericErrorParserTests extends TestCase {
 		private Comparator fFileNameComparator;
 
 		public void addMarker(IResource file, int lineNumber, String errorDesc, int severity, String errorVar) {
-			int index = Collections.binarySearch(uniqFiles, file, fFileNameComparator);
+			ProblemMarkerInfo problemMarkerInfo = new ProblemMarkerInfo(file, lineNumber, errorDesc, severity, errorVar, null);
+			addMarker(problemMarkerInfo);
+		}
+
+		
+		/* (non-Javadoc)
+		 * @see org.eclipse.cdt.core.IMarkerGenerator#addMarker(org.eclipse.cdt.core.ProblemMarkerInfo)
+		 */
+		public void addMarker(ProblemMarkerInfo problemMarkerInfo) {
+			int index = Collections.binarySearch(uniqFiles, problemMarkerInfo.file, fFileNameComparator);
 			if (index < 0) {
-				uniqFiles.add(-1 * (index + 1), file);
+				uniqFiles.add(-1 * (index + 1), problemMarkerInfo.file);
 			}
 
-			if (severity == SEVERITY_WARNING) {
+			if (problemMarkerInfo.severity == SEVERITY_WARNING) {
 				numWarnings++;
-			} else if (severity == SEVERITY_ERROR_BUILD || severity == SEVERITY_ERROR_RESOURCE) {
+			} else if (problemMarkerInfo.severity == SEVERITY_ERROR_BUILD || problemMarkerInfo.severity == SEVERITY_ERROR_RESOURCE) {
 				numErrors++;
 			}
 
-			lastDescription = errorDesc;
+			lastDescription = problemMarkerInfo.description;
 			numMarkers++;
 		}
+
 
 		public CountingMarkerGenerator() {
 			numErrors = 0;

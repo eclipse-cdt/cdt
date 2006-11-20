@@ -54,10 +54,7 @@ import org.apache.commons.net.ftp.FTPClientConfig;
 import org.apache.commons.net.ftp.FTPFile;
 import org.apache.commons.net.ftp.FTPReply;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.rse.services.clientserver.FileTypeMatcher;
 import org.eclipse.rse.services.clientserver.IMatcher;
 import org.eclipse.rse.services.clientserver.NamePatternMatcher;
@@ -65,6 +62,7 @@ import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
 import org.eclipse.rse.services.files.AbstractFileService;
 import org.eclipse.rse.services.files.IFileService;
 import org.eclipse.rse.services.files.IHostFile;
+import org.eclipse.rse.services.files.RemoteFileCancelledException;
 import org.eclipse.rse.services.files.RemoteFileIOException;
 import org.eclipse.rse.services.files.RemoteFolderNotEmptyException;
 
@@ -83,6 +81,7 @@ public class FTPService extends AbstractFileService implements IFileService, IFT
 	
 	private OutputStream _ftpLoggingOutputStream;
 	
+	private Exception _exception;
 	
 	/*
 	 * (non-Javadoc)
@@ -299,12 +298,12 @@ public class FTPService extends AbstractFileService implements IFileService, IFT
 			
 			if(!_ftpClient.changeWorkingDirectory(remoteParent))
 			{
-				return null;
+				throw new RemoteFileIOException(new Exception(_ftpClient.getReplyString()));
 			}
 			
 			if(!listFiles(monitor))
 			{
-				return null;
+				throw new RemoteFileCancelledException();
 			}
 			
 			for (int i = 0; i < _ftpFiles.length; i++) 
@@ -375,12 +374,12 @@ public class FTPService extends AbstractFileService implements IFileService, IFT
 			
 			if(!_ftpClient.changeWorkingDirectory(parentPath))
 			{
-				return null;
+				throw new RemoteFileIOException(new Exception(_ftpClient.getReplyString()));
 			}
 			
 			if(!listFiles(monitor))
 			{
-				return null;
+				throw new RemoteFileCancelledException();
 			}
 			
 			for(int i=0; i<_ftpFiles.length; i++)
@@ -823,66 +822,60 @@ public class FTPService extends AbstractFileService implements IFileService, IFT
 	}
 	
 	
-	private boolean listFiles(IProgressMonitor monitor) throws Exception
+	private synchronized boolean listFiles(IProgressMonitor monitor) throws Exception
 	{
 		boolean result = true;
 		
-		Job fetchJob = new Job(FTPServiceResources.FTP_File_Service_Listing_Job){ 
-			protected IStatus run(IProgressMonitor monitor) {
+		_exception = null;
+		
+		Thread listThread = new Thread(new Runnable(){
+
+			public void run() {
 				try {
 					_ftpFiles = _ftpClient.listFiles();
 				} catch (IOException e) {
-					return new Status(IStatus.ERROR, "org.eclipse.rse.services.files.ftp",IStatus.ERROR,e.getMessage(),e);  //$NON-NLS-1$
+					_exception = e;
 				}
-				return new Status(IStatus.OK,"org.eclipse.rse.services.files.ftp",IStatus.OK,FTPServiceResources.FTP_File_Service_Listing_Job_Success,null);  //$NON-NLS-1$ 
-			}};
+			}});
 		
-		IStatus fetchResult = null;	
-		
-		if(monitor!=null)
+		if(monitor != null)
 		{
 			if(!monitor.isCanceled())
-				fetchJob.schedule();
+				listThread.start();
 			else
 				return false;
-		}
-		else
-		{
-			fetchJob.schedule();	
-		}
-		
-		if(monitor!=null)
-		{
-			while(!monitor.isCanceled() && (fetchResult = fetchJob.getResult())==null)		
+			
+			//wait
+			
+			while(!monitor.isCanceled() && listThread.isAlive())		
 			{
 				try {
-					Thread.sleep(500);
+					Thread.sleep(100);
 				} catch (InterruptedException e) {}
 			}
 			
-			if(monitor.isCanceled() && fetchJob.getState()!=Job.NONE)
+			//evaluate result
+			
+			if(monitor.isCanceled() && listThread.isAlive())
 			{
-				fetchJob.cancel();
+				Thread killThread = listThread;
+				listThread = null;
+				killThread.interrupt();
+					
 				_ftpClient.completePendingCommand();
-				result = false;
+				
+				throw new RemoteFileIOException(_exception);
 			}
-		}
-		else
-		{
-			fetchJob.join();
-			fetchResult = fetchJob.getResult();
-		}
 		
-		if(fetchResult==null)
-		{
-			result = false;
 		}
 		else
 		{
-			if(fetchResult.getSeverity()==IStatus.ERROR)
+			listThread.join();
+			if(_exception!=null)
 			{
-				throw new RemoteFileIOException(new Exception(fetchResult.getException()));
+				throw new RemoteFileIOException(_exception);
 			}
+				
 		}
 		
 		return result;

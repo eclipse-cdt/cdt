@@ -61,13 +61,32 @@ public class FTPHostFile implements IHostFile
 	{
 		_systemName = systemName;
 		_parentPath = parentPath;
-		_name = ftpFile.getName();
+		
+		if(systemName.equals(FTPClientConfig.SYST_VMS))
+		{
+			_name = ftpFile.getName();
+			if(_name.indexOf(".DIR")!=-1) //$NON-NLS-1$
+			{
+				_name = _name.substring(0,_name.indexOf(".DIR")); //$NON-NLS-1$
+			}
+			else
+			{
+				_name = _name.substring(0,_name.indexOf(";")); //$NON-NLS-1$
+			}
+		}
+		else
+		{
+			_name = ftpFile.getName();
+		}
+		
 		_isDirectory = ftpFile.isDirectory();
 		_lastModified = ftpFile.getTimestamp().getTimeInMillis();
 		_size = ftpFile.getSize();
 		_isArchive = internalIsArchive();
 		
-		if(!systemName.equals(FTPClientConfig.SYST_NT)) //"WINDOWS"
+		//In Windows r/w is not listed
+		//In VMS it is not implemented in the Jakarta parser
+		if(!systemName.equals(FTPClientConfig.SYST_NT) && !systemName.equals(FTPClientConfig.SYST_VMS)) 
 		{
 			_canRead = ftpFile.hasPermission(FTPFile.USER_ACCESS, FTPFile.READ_PERMISSION);
 			_canWrite = ftpFile.hasPermission(FTPFile.USER_ACCESS, FTPFile.WRITE_PERMISSION);
@@ -111,30 +130,18 @@ public class FTPHostFile implements IHostFile
 
 	public String getAbsolutePath()
 	{
-		if(_systemName==null)
+		if (isRoot() || _parentPath==null) {
 			return getName();
-		
-		if(_systemName.equals(FTPClientConfig.SYST_VMS)) //"VMS"
-		{
-			if (isRoot()) 
-				return getName();
-			else
-				return getParentPath()+getName();
-		}
-		else
-		{
-			if (isRoot()) {
-				return getName();
-			} else {
-				StringBuffer path = new StringBuffer(getParentPath());
-				if (!_parentPath.endsWith("/") && !_parentPath.endsWith("\\"))//$NON-NLS-1$ //$NON-NLS-2$
-				{
-					path.append('/');
-				}
-				path.append(getName());
-				return path.toString();
+		} else {
+			StringBuffer path = new StringBuffer(getParentPath());
+			if (!_parentPath.endsWith("/") && !_parentPath.endsWith("\\"))//$NON-NLS-1$ //$NON-NLS-2$
+			{
+				path.append('/');
 			}
+			path.append(getName());
+			return path.toString();
 		}
+		
 	}
 
 	public long getModifiedDate()
@@ -155,7 +162,7 @@ public class FTPHostFile implements IHostFile
 	}
 
 	public boolean isRoot() {
-		return _parentPath==null;
+		return _isRoot;
 		
 	}
 

@@ -221,6 +221,15 @@ public class FTPService extends AbstractFileService implements IFileService, IFT
 		_ftpClient.configure(ftpClientConfig);
 		
 		_userHome = _ftpClient.printWorkingDirectory();
+		
+		//For VMS, normalize the home location
+		if(_systemName.equals(FTPClientConfig.SYST_VMS))
+		{
+			String name = getName();
+			_userHome = _userHome.replaceAll(":\\[", "/"); //$NON-NLS-1$ //$NON-NLS-2$
+			_userHome = "/"+_userHome.substring(0,_userHome.lastIndexOf(']')); //$NON-NLS-1$
+		}
+		
 	}
 	
 	public void disconnect()
@@ -361,20 +370,10 @@ public class FTPService extends AbstractFileService implements IFileService, IFT
 		{
 			_ftpClient = getFTPClient();
 			
-			// VMS path requires some preprocessing
-			if(_systemName.equals(FTPClientConfig.SYST_VMS) && !parentPath.endsWith("]")) //"VMS" //$NON-NLS-1$
-			{
-				parentPath = parentPath.substring(0,parentPath.indexOf(".DIR")); //$NON-NLS-1$
-				parentPath = parentPath.replace(']', '.');
-				parentPath+="]"; //$NON-NLS-1$
-			}
-			
 			if(!_ftpClient.changeWorkingDirectory(parentPath))
 			{
 				return null;
 			}
-			
-			
 			
 			if(!listFiles(monitor))
 			{
@@ -383,10 +382,10 @@ public class FTPService extends AbstractFileService implements IFileService, IFT
 			
 			for(int i=0; i<_ftpFiles.length; i++)
 			{
-				FTPFile f = _ftpFiles[i];
+				FTPHostFile f = new FTPHostFile(parentPath,_ftpFiles[i],_systemName);
 				if(filematcher.matches(f.getName()) || f.isDirectory())
 				{
-					results.add(new FTPHostFile(parentPath,_ftpFiles[i],_systemName));
+					results.add(f);
 				}
 			}
 		}

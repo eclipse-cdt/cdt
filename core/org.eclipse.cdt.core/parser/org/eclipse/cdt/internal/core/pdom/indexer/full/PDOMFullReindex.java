@@ -34,15 +34,12 @@ class PDOMFullReindex extends PDOMFullIndexerJob {
 	public void run(final IProgressMonitor monitor) {
 		try {
 			long start = System.currentTimeMillis();	
-			boolean allfiles= getIndexAllFiles();
-			List headers= new ArrayList();
+			boolean allFiles= getIndexAllFiles();
 			List sources= new ArrayList();
+			List headers= new ArrayList();
 			
-			collectSources(indexer.getProject(), sources, headers, allfiles);
-			
-			fTotalSourcesEstimate= sources.size();
-			if (allfiles) 
-				fTotalSourcesEstimate+= headers.size();
+			collectSources(indexer.getProject(), sources, allFiles ? headers : null, allFiles);
+			fTotalSourcesEstimate= sources.size() + headers.size();
 
 			setupIndexAndReaderFactory();
 			clearIndex(index);
@@ -51,10 +48,7 @@ class PDOMFullReindex extends PDOMFullIndexerJob {
 				return;
 			}
 
-			registerTUsInReaderFactory(sources, headers, allfiles);
-			if (!allfiles) 
-				headers.clear();
-			
+			registerTUsInReaderFactory(sources);
 			parseTUs(sources, headers, monitor);
 
 			String showTimings = Platform.getDebugOption(CCorePlugin.PLUGIN_ID

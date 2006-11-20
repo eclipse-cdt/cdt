@@ -14,7 +14,6 @@ package org.eclipse.cdt.internal.core.index;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
@@ -26,6 +25,7 @@ import org.eclipse.cdt.core.dom.ICodeReaderFactory;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.index.IIndexFile;
 import org.eclipse.cdt.core.index.IIndexInclude;
+import org.eclipse.cdt.core.index.IIndexMacro;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.parser.CodeReader;
 import org.eclipse.cdt.core.parser.ICodeReaderCache;
@@ -33,6 +33,7 @@ import org.eclipse.cdt.core.parser.IMacro;
 import org.eclipse.cdt.core.parser.IScanner;
 import org.eclipse.cdt.core.parser.ParserUtil;
 import org.eclipse.cdt.internal.core.parser.scanner2.ObjectStyleMacro;
+import org.eclipse.cdt.internal.core.pdom.dom.PDOMMacro;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Path;
 
@@ -46,7 +47,6 @@ public class IndexBasedCodeReaderFactory implements ICodeReaderFactory {
 	private final IIndex index;
 	private Map fileInfoCache = new HashMap(); // filename, fileInfo
 	private List usedMacros = new ArrayList();
-	private Collection fPathCollector;
 	
 	private static final char[] EMPTY_CHARS = new char[0];
 	
@@ -55,6 +55,7 @@ public class IndexBasedCodeReaderFactory implements ICodeReaderFactory {
 		private FileInfo() {}
 		public IIndexFile fFile= null;
 		public IMacro[] fMacros= null;
+//		public FileInfo[] fFileInfos= null;
 		private boolean fRequested= false;
 		
 		public boolean isRequested() {
@@ -75,9 +76,6 @@ public class IndexBasedCodeReaderFactory implements ICodeReaderFactory {
 	}
 
 	public CodeReader createCodeReaderForTranslationUnit(String path) {
-		if (fPathCollector != null) {
-			fPathCollector.add(path);
-		}
 		return ParserUtil.createReader(path, null);
 	}
 	
@@ -108,7 +106,13 @@ public class IndexBasedCodeReaderFactory implements ICodeReaderFactory {
 						FileInfo fi = (FileInfo) iter.next();
 						if (fi.fMacros == null) {
 							assert fi.fFile != null;
-							fi.fMacros= fi.fFile.getMacros();
+							IIndexMacro[] macros= fi.fFile.getMacros();
+							IMacro[] converted= new IMacro[macros.length];
+							for (int i = 0; i < macros.length; i++) {
+								IIndexMacro macro = macros[i];
+								converted[i]= ((PDOMMacro)macro).getMacro();
+							}
+							fi.fMacros= converted;
 						}
 						for (int i = 0; i < fi.fMacros.length; ++i) {
 							scanner.addDefinition(fi.fMacros[i]);
@@ -126,9 +130,6 @@ public class IndexBasedCodeReaderFactory implements ICodeReaderFactory {
 			// still try to parse the file.
 		}
 
-		if (fPathCollector != null) {
-			fPathCollector.add(canonicalPath);
-		}
 		return ParserUtil.createReader(canonicalPath, null);
 	}
 
@@ -186,9 +187,5 @@ public class IndexBasedCodeReaderFactory implements ICodeReaderFactory {
 
 	public FileInfo createFileInfo(ITranslationUnit tu) throws CoreException {
 		return createInfo(tu.getLocation().toOSString(), null);
-	}
-
-	public void setPathCollector(Collection paths) {
-		fPathCollector= paths;
 	}
 }

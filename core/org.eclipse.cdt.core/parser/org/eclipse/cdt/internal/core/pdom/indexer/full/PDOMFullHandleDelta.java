@@ -54,7 +54,8 @@ class PDOMFullHandleDelta extends PDOMFullIndexerJob {
 				}
 			}
 
-			registerTUsInReaderFactory(sources, headers, true);
+			registerTUsInReaderFactory(sources);
+			registerTUsInReaderFactory(headers);
 					
 			Iterator i= removed.iterator();
 			while (i.hasNext()) {

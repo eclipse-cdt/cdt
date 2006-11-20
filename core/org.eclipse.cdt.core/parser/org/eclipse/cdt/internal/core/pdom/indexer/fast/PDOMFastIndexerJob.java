@@ -13,15 +13,13 @@
 package org.eclipse.cdt.internal.core.pdom.indexer.fast;
 
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.List;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.IPDOMIndexer;
 import org.eclipse.cdt.core.dom.IPDOMIndexerTask;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
+import org.eclipse.cdt.core.index.IIndexFile;
 import org.eclipse.cdt.core.model.ILanguage;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.parser.CodeReader;
@@ -85,9 +83,6 @@ abstract class PDOMFastIndexerJob extends PDOMIndexerTask implements IPDOMIndexe
 			return;
 		}
 
-		HashSet paths= new HashSet();
-		paths.add(path.toOSString());
-		codeReaderFactory.setPathCollector(paths);
 		index.acquireReadLock();
 		try {
 			// get the AST in a "Fast" way
@@ -99,118 +94,34 @@ abstract class PDOMFastIndexerJob extends PDOMIndexerTask implements IPDOMIndexe
 			codeReaderFactory.clearMacroAttachements();
 				
 			// Add the new symbols
-			addSymbols(paths, ast, pm);
+			addSymbols(ast, pm);
 		}
 		finally {
 			index.releaseReadLock();
-			codeReaderFactory.setPathCollector(null);
 		}
 	}
 
-	protected void addSymbols(HashSet paths, IASTTranslationUnit ast, IProgressMonitor pm) throws InterruptedException, CoreException {
-		// Add in the includes
-		final LinkedHashMap symbolMap= new LinkedHashMap();
-		String[] orderedPaths= extractSymbols(ast, paths, symbolMap);
-		
-		for (int i=0; i<orderedPaths.length; i++) {
-			if (pm.isCanceled()) {
-				return;
-			}
-			String path= orderedPaths[i];
-			FileInfo info= codeReaderFactory.createFileInfo(path);
-		
-			// file is requested or is not yet indexed.
-			if (info.isRequested() || info.fFile == null) {
-				prepareIndexInsertion(path, symbolMap);
-			}
-			else {
-				if (fTrace) {
-					System.out.println("Indexer: skipping " + path); //$NON-NLS-1$
-				}
-				orderedPaths[i]= null;
-			}
-		}
-
-		boolean isFirstRequest= true;
-		boolean isFirstAddition= true;
-		index.acquireWriteLock(1);
-		try {
-			for (int i=0; i<orderedPaths.length; i++) {
-				if (pm.isCanceled()) 
-					return;
-				
-				String path = orderedPaths[i];
-				if (path != null) {
-					FileInfo info= codeReaderFactory.createFileInfo(path);
-					if (info.isRequested()) {
-						info.setRequested(false);
-
-						if (isFirstRequest) 
-							isFirstRequest= false;
-						else 
-							fTotalSourcesEstimate--;
-					}
-					if (fTrace) {
-						System.out.println("Indexer: adding " + path); //$NON-NLS-1$
-					}
-					info.fFile= addToIndex(index, path, symbolMap);
-
-					if (isFirstAddition) 
-						isFirstAddition= false;
-					else
-						fCompletedHeaders++;
-				}
-			}
-		} finally {
-			index.releaseWriteLock(1);
-		}
-		fCompletedSources++;
+	protected IWritableIndex getIndex() {
+		return index;
 	}
 
+	protected int getReadlockCount() {
+		return 1;
+	}
 
-	protected void parseTUs(List sources, List headers, IProgressMonitor monitor) throws CoreException, InterruptedException {
-		// sources first
-		Iterator iter;
-		for (iter= sources.iterator(); iter.hasNext();) {
-			if (monitor.isCanceled()) 
-				return;
-			ITranslationUnit tu = (ITranslationUnit) iter.next();
-			parseTU(tu, monitor);
-		}
+	protected boolean needToUpdate(String path) throws CoreException {
+		// file is requested or is not yet indexed.
+		FileInfo info= codeReaderFactory.createFileInfo(path);
+		return info.isRequested() || info.fFile == null;
+	}
 
-		// headers with context
-		for (iter= headers.iterator(); iter.hasNext();) {
-			if (monitor.isCanceled()) 
-				return;
-			ITranslationUnit tu = (ITranslationUnit) iter.next();
-			FileInfo info= codeReaderFactory.createFileInfo(tu);
-			// check if header was handled while parsing a source
-			if (!info.isRequested()) {
-				iter.remove();
-			}
-			else if (info.fFile != null) {
-				ITranslationUnit context= findContext(index, info.fFile.getLocation());
-				if (context != null) {
-					parseTU(context, monitor);
-				}
-			}
+	protected boolean postAddToIndex(String path, IIndexFile file) throws CoreException {
+		FileInfo info= codeReaderFactory.createFileInfo(path);
+		info.fFile= file;
+		if (info.isRequested()) {
+			info.setRequested(false);
+			return true;
 		}
-
-		// headers without context
-		if (getIndexAllFiles()) {
-			for (iter= headers.iterator(); iter.hasNext();) {
-				if (monitor.isCanceled()) 
-					return;
-				ITranslationUnit tu = (ITranslationUnit) iter.next();
-				FileInfo info= codeReaderFactory.createFileInfo(tu);
-				// check if header was handled while parsing a source
-				if (!info.isRequested()) {
-					iter.remove();
-				}
-				else {
-					parseTU(tu, monitor);
-				}
-			}
-		}
+		return false;
 	}
 }

@@ -15,13 +15,13 @@ package org.eclipse.cdt.internal.core.pdom.indexer.full;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.IPDOMIndexer;
 import org.eclipse.cdt.core.dom.IPDOMIndexerTask;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
+import org.eclipse.cdt.core.index.IIndexFile;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.internal.core.index.IWritableIndex;
 import org.eclipse.cdt.internal.core.index.IWritableIndexManager;
@@ -35,10 +35,13 @@ import org.eclipse.core.runtime.IProgressMonitor;
  *
  */
 abstract class PDOMFullIndexerJob extends PDOMIndexerTask implements IPDOMIndexerTask {
-
+	final static Object REQUIRED= new Object();
+	final static Object MISSING = new Object();
+	final static Object SKIP=     new Object();
+	
 	protected final PDOMFullIndexer indexer;
 	protected IWritableIndex index= null;
-	private Map filePathsToParse= null;
+	private Map filePathsToParse= new HashMap();
 
 	public PDOMFullIndexerJob(PDOMFullIndexer indexer) throws CoreException {
 		this.indexer = indexer;
@@ -52,68 +55,15 @@ abstract class PDOMFullIndexerJob extends PDOMIndexerTask implements IPDOMIndexe
 		this.index = ((IWritableIndexManager) CCorePlugin.getIndexManager()).getWritableIndex(indexer.getProject());
 	}
 	
-	protected void registerTUsInReaderFactory(Collection sources, Collection headers, 
-			boolean requireHeaders) throws CoreException {
+	protected void registerTUsInReaderFactory(Collection sources) throws CoreException {
 		filePathsToParse= new HashMap();
 		
 		for (Iterator iter = sources.iterator(); iter.hasNext();) {
 			ITranslationUnit tu = (ITranslationUnit) iter.next();
-			filePathsToParse.put(tu.getLocation().toOSString(), Boolean.TRUE);
-		}
-		Boolean required= Boolean.valueOf(requireHeaders);
-		for (Iterator iter = headers.iterator(); iter.hasNext();) {
-			ITranslationUnit tu = (ITranslationUnit) iter.next();
-			filePathsToParse.put(tu.getLocation().toOSString(), required);
+			filePathsToParse.put(tu.getLocation().toOSString(), REQUIRED);
 		}
 	}
 	
-	protected void parseTUs(Collection sources, Collection headers, IProgressMonitor monitor) throws CoreException, InterruptedException {
-		// sources first
-		Iterator iter;
-		for (iter = sources.iterator(); iter.hasNext();) {
-			if (monitor.isCanceled()) 
-				return;
-			ITranslationUnit tu = (ITranslationUnit) iter.next();
-			String path = tu.getLocation().toOSString();
-			if (filePathsToParse.get(path) != null) {
-				parseTU(tu, monitor);
-			}
-		}
-
-		// headers with context
-		for (iter = headers.iterator(); iter.hasNext();) {
-			if (monitor.isCanceled()) 
-				return;
-			ITranslationUnit tu = (ITranslationUnit) iter.next();
-			String path = tu.getLocation().toOSString();
-			if (filePathsToParse.get(path)==null) {
-				iter.remove();
-			}
-			else {
-				ITranslationUnit context= findContext(index, path);
-				if (context != null) {
-					parseTU(context, monitor);
-				}
-			}
-		}
-
-		// headers without context
-		if (getIndexAllFiles()) {
-			for (iter = headers.iterator(); iter.hasNext();) {
-				if (monitor.isCanceled()) 
-					return;
-				ITranslationUnit tu = (ITranslationUnit) iter.next();
-				String path = tu.getLocation().toOSString();
-				if (filePathsToParse.get(path)==null) {
-					iter.remove();
-				}
-				else {
-					parseTU(tu, monitor);
-				}
-			}
-		}
-	}
-
 	protected void doParseTU(ITranslationUnit tu, IProgressMonitor pm) throws CoreException, InterruptedException {
 		IPath path = tu.getLocation();
 		if (path == null) {
@@ -128,51 +78,27 @@ abstract class PDOMFullIndexerJob extends PDOMIndexerTask implements IPDOMIndexe
 			addSymbols(ast, pm);
 	}
 	
-	protected void addSymbols(IASTTranslationUnit ast, IProgressMonitor pm) throws InterruptedException, CoreException {
-		// Add in the includes
-		final LinkedHashMap symbolMap= new LinkedHashMap(); 
-		String[] orderedPaths= extractSymbols(ast, filePathsToParse.keySet(), symbolMap);
-		
-		for (int i=0; i<orderedPaths.length; i++) {
-			if (pm.isCanceled()) {
-				return;
-			}
-			String path= orderedPaths[i];
-			prepareIndexInsertion(path, symbolMap);
-		}
+	
+	protected IWritableIndex getIndex() {
+		return index;
+	}
 
-		boolean isFirstRequest= true;
-		boolean isFirstAddition= true;
-		index.acquireWriteLock(0);
-		try {
-			for (int i=0; i<orderedPaths.length; i++) {
-				if (pm.isCanceled()) 
-					return;
-				
-				String path = orderedPaths[i];
-				Boolean required= (Boolean) filePathsToParse.remove(path);
-				if (required != null) {
-					if (required.booleanValue()) {
-						if (isFirstRequest) 
-							isFirstRequest= false;
-						else 
-							fTotalSourcesEstimate--;
-					}
+	protected int getReadlockCount() {
+		return 0;
+	}
 
-					if (fTrace) 
-						System.out.println("Indexer: adding " + path); //$NON-NLS-1$
-					
-					addToIndex(index, path, symbolMap);
-					
-					if (isFirstAddition) 
-						isFirstAddition= false;
-					else
-						fCompletedHeaders++;
-				}
-			}
-		} finally {
-			index.releaseWriteLock(0);
+	protected boolean needToUpdate(String path) throws CoreException {
+		Object required= filePathsToParse.get(path);
+		if (required == null) {
+			required= MISSING;
+			filePathsToParse.put(path, required);
 		}
-		fCompletedSources++;
+		return required != SKIP;
+	}
+
+	protected boolean postAddToIndex(String path, IIndexFile file) throws CoreException {
+		Object required= filePathsToParse.get(path);
+		filePathsToParse.put(path, SKIP);
+		return required == REQUIRED;
 	}
 }

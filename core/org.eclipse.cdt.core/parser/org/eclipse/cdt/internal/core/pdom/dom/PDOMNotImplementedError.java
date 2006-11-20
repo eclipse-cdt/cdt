@@ -18,4 +18,11 @@ public class PDOMNotImplementedError extends Error {
 
 	public static final long serialVersionUID = 0;
 
+	public PDOMNotImplementedError() {
+		super();
+	}
+	
+	public PDOMNotImplementedError(String message) {
+		super(message);
+	}
 }

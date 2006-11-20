@@ -31,6 +31,7 @@
  * Javier Montalvo Orus (Symbian) - Fixing 164009 - FTP connection shows as connected when login fails
  * Javier Montalvo Orus (Symbian) - Fixing 164306 - [ftp] FTP console shows plaintext passwords
  * Javier Montalvo Orus (Symbian) - Fixing 161238 - [ftp] connections to VMS servers are not usable
+ * Javier Montalvo Orus (Symbian) - Fixing 164304 - [ftp] cannot connect to wftpd server on Windows
  ********************************************************************************/
 
 package org.eclipse.rse.services.files.ftp;
@@ -308,9 +309,11 @@ public class FTPService extends AbstractFileService implements IFileService, IFT
 			
 			for (int i = 0; i < _ftpFiles.length; i++) 
 			{
-				if(_ftpFiles[i].getName().equalsIgnoreCase(fileName))
+				FTPHostFile tempFile = new FTPHostFile(remoteParent,_ftpFiles[i],_systemName);
+				
+				if(tempFile.getName().equalsIgnoreCase(fileName))
 				{
-					file = new FTPHostFile(remoteParent,_ftpFiles[i],_systemName);
+					file = tempFile;
 					break;
 				}
 			}
@@ -400,7 +403,15 @@ public class FTPService extends AbstractFileService implements IFileService, IFT
 	
 	public String getSeparator()
 	{
-		return "/";  //$NON-NLS-1$
+		String separator =  "/";  //$NON-NLS-1$
+		
+		if(_systemName.equals(FTPClientConfig.SYST_NT))
+		{
+			separator = "\\";  //$NON-NLS-1$
+		}
+		
+		return separator;
+		
 	}
 	
 	/*
@@ -665,24 +676,26 @@ public class FTPService extends AbstractFileService implements IFileService, IFT
 	 */
 	public boolean rename(IProgressMonitor monitor, String remoteParent, String oldName, String newName) throws SystemMessageException {
 
+		boolean success = false;
+		
 		FTPClient ftpClient = getFTPClient(); 
 		
 		try {
 			
-			if(remoteParent.endsWith("/") || remoteParent.endsWith("\\")) //$NON-NLS-1$ //$NON-NLS-2$
+			String source = remoteParent.endsWith(getSeparator()) ? remoteParent + oldName : remoteParent + getSeparator() + oldName;
+			
+			success = ftpClient.rename(source, newName);
+			
+			if(!success)
 			{
-				ftpClient.rename(remoteParent + oldName, newName);
-			}
-			else
-			{
-				ftpClient.rename(remoteParent + getSeparator() + oldName, newName);
+				throw new Exception(ftpClient.getReplyString());
 			}
 			
 		} catch (Exception e) {
 			throw new RemoteFileIOException(e);
 		}
 
-		return true;
+		return success;
 	}
 	
 	/* (non-Javadoc)
@@ -707,9 +720,12 @@ public class FTPService extends AbstractFileService implements IFileService, IFT
 		
 		try{
 		
-		success = ftpClient.rename(srcParent + getSeparator() + srcName, tgtParent + getSeparator() + tgtName);
-		
-		if(!success)
+			String source = srcParent.endsWith(getSeparator()) ?  srcParent + srcName : srcParent + getSeparator() + srcName;
+			String target = tgtParent.endsWith(getSeparator()) ?  tgtParent + tgtName : tgtParent + getSeparator() + tgtName;
+				
+			success = ftpClient.rename(source, target);
+			
+			if(!success)
 			{
 				throw new Exception(ftpClient.getReplyString());
 			}

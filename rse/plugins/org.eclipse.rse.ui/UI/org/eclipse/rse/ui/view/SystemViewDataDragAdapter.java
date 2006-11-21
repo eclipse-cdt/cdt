@@ -323,6 +323,7 @@ public class SystemViewDataDragAdapter extends DragSourceAdapter
 				}
 				else
 				{
+					event.data = new EditorInputTransfer.EditorInputData[0];
 					event.detail = DND.DROP_NONE;
 				}
 			}

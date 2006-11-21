@@ -637,109 +637,6 @@ public class PreferenceConstants {
 	 */
 	public static final String ID_BESTMATCH_HOVER= "org.eclipse.cdt.ui.BestMatchHover"; //$NON-NLS-1$
 
-
-    public static final String REFACTOR_ERROR_PAGE_SEVERITY_THRESHOLD= "Refactoring.ErrorPage.severityThreshold"; //$NON-NLS-1$
-    public static final String REFACTOR_FATAL_SEVERITY= "4"; //$NON-NLS-1$
-    public static final String REFACTOR_ERROR_SEVERITY= "3"; //$NON-NLS-1$
-    public static final String REFACTOR_WARNING_SEVERITY= "2"; //$NON-NLS-1$
-    public static final String REFACTOR_INFO_SEVERITY= "1"; //$NON-NLS-1$
-    public static final String REFACTOR_OK_SEVERITY= "0"; //$NON-NLS-1$
-    public static final String REFACTOR_SAVE_ALL_EDITORS= "Refactoring.savealleditors"; //$NON-NLS-1$
-    
-    
-	/**
-	 * A named preference that controls if the C Browsing views are linked to the active editor.
-	 * <p>
-	 * Value is of type <code>Boolean</code>.
-	 * </p>
-	 */
-	public static final String BROWSING_LINK_VIEW_TO_EDITOR= "org.eclipse.cdt.ui.browsing.linktoeditor"; //$NON-NLS-1$
-
-	/**
-	 * A named preference that controls the layout of the C Browsing views vertically. Boolean value.
-	 * <p>
-	 * Value is of type <code>Boolean</code>. If <code>true<code> the views are stacked vertical.
-	 * If <code>false</code> they are stacked horizontal.
-	 * </p>
-	 */
-	public static final String BROWSING_STACK_VERTICALLY= "org.eclipse.cdt.ui.browsing.stackVertically"; //$NON-NLS-1$
-
-	/**
-	 * A named preference that controls whether the hierarchy view's selection is linked to the active editor.
-	 * <p>
-	 * Value is of type <code>Boolean</code>.
-	 * </p>
-	 */
-	public static final String LINK_TYPEHIERARCHY_TO_EDITOR= "org.eclipse.cdt.ui.packages.linktypehierarchytoeditor"; //$NON-NLS-1$
-
-	/**
-	 * A named preference that controls whether the projects view's selection is
-	 * linked to the active editor.
-	 * <p>
-	 * Value is of type <code>Boolean</code>.
-	 * </p>
-	 * @since 2.1
-	 */
-	public static final String LINK_BROWSING_PROJECTS_TO_EDITOR= "org.eclipse.cdt.ui.browsing.projectstoeditor"; //$NON-NLS-1$
-
-	/**
-	 * A named preference that controls whether the namespace view's selection is
-	 * linked to the active editor.
-	 * <p>
-	 * Value is of type <code>Boolean</code>.
-	 * </p>
-	 * @since 2.1
-	 */
-	public static final String LINK_BROWSING_PACKAGES_TO_EDITOR= "org.eclipse.cdt.ui.browsing.packagestoeditor"; //$NON-NLS-1$
-
-	/**
-	 * A named preference that controls whether the types view's selection is
-	 * linked to the active editor.
-	 * <p>
-	 * Value is of type <code>Boolean</code>.
-	 * </p>
-	 * @since 2.1
-	 */
-	public static final String LINK_BROWSING_TYPES_TO_EDITOR= "org.eclipse.cdt.ui.browsing.typestoeditor"; //$NON-NLS-1$
-
-	/**
-	 * A named preference that controls whether the members view's selection is
-	 * linked to the active editor.
-	 * <p>
-	 * Value is of type <code>Boolean</code>.
-	 * </p>
-	 * @since 2.1
-	 */
-	public static final String LINK_BROWSING_MEMBERS_TO_EDITOR= "org.eclipse.cdt.ui.browsing.memberstoeditor"; //$NON-NLS-1$
-    
-	/**
-	 * A named preference that controls if a new type hierarchy gets opened in a 
-	 * new type hierarchy perspective or inside the type hierarchy view part.
-	 * <p>
-	 * Value is of type <code>String</code>: possible values are <code>
-	 * OPEN_TYPE_HIERARCHY_IN_PERSPECTIVE</code> or <code>
-	 * OPEN_TYPE_HIERARCHY_IN_VIEW_PART</code>.
-	 * </p>
-	 * 
-	 * @see #OPEN_TYPE_HIERARCHY_IN_PERSPECTIVE
-	 * @see #OPEN_TYPE_HIERARCHY_IN_VIEW_PART
-	 */
-	public static final String OPEN_TYPE_HIERARCHY= "org.eclipse.cdt.ui.openTypeHierarchy"; //$NON-NLS-1$
-
-	/**
-	 * A string value used by the named preference <code>OPEN_TYPE_HIERARCHY</code>.
-	 * 
-	 * @see #OPEN_TYPE_HIERARCHY
-	 */
-	public static final String OPEN_TYPE_HIERARCHY_IN_PERSPECTIVE= "perspective"; //$NON-NLS-1$
-
-	/**
-	 * A string value used by the named preference <code>OPEN_TYPE_HIERARCHY</code>.
-	 * 
-	 * @see #OPEN_TYPE_HIERARCHY
-	 */
-	public static final String OPEN_TYPE_HIERARCHY_IN_VIEW_PART= "viewPart"; //$NON-NLS-1$
-
 	/**
 	 * A named preference that controls if the Outline view.
 	 * <p>
@@ -900,15 +797,6 @@ public class PreferenceConstants {
 	public final static String ENSURE_NEWLINE_AT_EOF = "ensureNewlineAtEOF"; //$NON-NLS-1$	
 
 	/**
-	 * Returns the CDT-UI preference store.
-	 * 
-	 * @return the CDT-UI preference store
-	 */
-	public static IPreferenceStore getPreferenceStore() {
-		return CUIPlugin.getDefault().getPreferenceStore();
-	}
-
-	/**
 	 * A named preference that defines whether the hint to make hover sticky should be shown.
 	 *
 	 * @since 3.1.1
@@ -995,6 +883,14 @@ public class PreferenceConstants {
 	 */
 	public static final String EDITOR_SEMANTIC_HIGHLIGHTING_ENABLED= "semanticHighlighting.enabled"; //$NON-NLS-1$
 
+	/**
+	 * Returns the CDT-UI preference store.
+	 * 
+	 * @return the CDT-UI preference store
+	 */
+	public static IPreferenceStore getPreferenceStore() {
+		return CUIPlugin.getDefault().getPreferenceStore();
+	}
 
     /**
      * Initializes the given preference store with the default values.

@@ -502,14 +502,14 @@ public class LineBackgroundPainter implements IPainter, LineBackgroundListener {
 	 */
 	private void updateCursorLine() {
 		try {
-
 			IDocument document= fTextViewer.getDocument();
-			int lineNumber= document.getLineOfOffset(getDocumentOffset(fTextWidget.getCaretOffset()));
-
-			fCursorLine.isDeleted= false;
-			fCursorLine.offset= document.getLineOffset(lineNumber);
-			fCursorLine.length= 0;
-
+			if (document != null) {
+				int lineNumber= document.getLineOfOffset(getDocumentOffset(fTextWidget.getCaretOffset()));
+	
+				fCursorLine.isDeleted= false;
+				fCursorLine.offset= document.getLineOffset(lineNumber);
+				fCursorLine.length= 0;
+			}
 		} catch (BadLocationException e) {
 			// gracefully ignored
 		}

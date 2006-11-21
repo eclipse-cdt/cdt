@@ -44,7 +44,7 @@ public class ExternalSearchDocumentProvider extends FileDocumentProvider {
 			FileInfo info= new FileInfo(d, m, null);
 			return info;
 		}
-		return null;
+		return super.createElementInfo(element);
 	}
 	
 	/**

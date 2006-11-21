@@ -74,11 +74,7 @@ public class ShortString implements IString {
 		Chunk chunk = db.getChunk(record);
 		int length = chunk.getInt(record + LENGTH);
 		char[] chars = new char[length];
-		int p = record + CHARS;
-		for (int i = 0; i < length; ++i) {
-			chars[i] = chunk.getChar(p);
-			p += 2;
-		}
+		chunk.getCharArray(record+CHARS, chars);
 		return chars;
 	}
 	

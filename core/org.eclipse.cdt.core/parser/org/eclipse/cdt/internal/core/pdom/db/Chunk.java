@@ -90,6 +90,11 @@ public class Chunk {
 	public char getChar(int offset) {
 		return buffer.getChar(offset % Database.CHUNK_SIZE);
 	}
+
+	public void getCharArray(int offset, char[] result) {
+		buffer.position(offset % Database.CHUNK_SIZE);
+		buffer.asCharBuffer().get(result);
+	}
 	
 	void clear(int offset, int length) {
 		buffer.position(offset % Database.CHUNK_SIZE);

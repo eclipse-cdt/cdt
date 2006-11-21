@@ -78,6 +78,7 @@ import org.eclipse.rse.ui.SystemResources;
 import org.eclipse.rse.ui.actions.ISystemAction;
 import org.eclipse.rse.ui.actions.SystemCollapseAllAction;
 import org.eclipse.rse.ui.actions.SystemCommonDeleteAction;
+import org.eclipse.rse.ui.actions.SystemCommonRenameAction;
 import org.eclipse.rse.ui.actions.SystemCommonSelectAllAction;
 import org.eclipse.rse.ui.actions.SystemNewProfileAction;
 import org.eclipse.rse.ui.actions.SystemSubMenuManager;
@@ -783,6 +784,13 @@ public class SystemTeamViewPart
 		actionBars.getToolBarManager().add(refreshAllAction);	    
 
 		actionBars.setGlobalActionHandler(ActionFactory.DELETE.getId(), getDeleteAction(selection));
+		
+		// add rename action
+		SystemCommonRenameAction renameAction = new SystemCommonRenameAction(getShell(), this);
+	  	renameAction.setViewer(getViewer());
+	  	// renameAction.setSelection(selection);
+		actionBars.setGlobalActionHandler(ActionFactory.RENAME.getId(), renameAction);
+		
 		SystemCommonSelectAllAction selAllAction = new SystemCommonSelectAllAction(getShell(), treeViewer, treeViewer);
 		actionBars.setGlobalActionHandler(ActionFactory.SELECT_ALL.getId(), selAllAction);
 

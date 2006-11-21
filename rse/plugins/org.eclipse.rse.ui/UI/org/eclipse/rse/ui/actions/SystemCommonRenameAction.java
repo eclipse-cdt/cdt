@@ -66,6 +66,7 @@ public class SystemCommonRenameAction extends SystemBaseDialogAction
 	{
 		super(SystemResources.ACTION_RENAME_LABEL, SystemResources.ACTION_RENAME_TOOLTIP, 
 		      RSEUIPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_RENAME_ID), parent);
+		setSelectionProvider(target);
 		allowOnMultipleSelection(true);
 		setProcessAllSelections(true);
 		renameTarget = target;

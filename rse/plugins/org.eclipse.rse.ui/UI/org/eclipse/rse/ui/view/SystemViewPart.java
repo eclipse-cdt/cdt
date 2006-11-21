@@ -383,6 +383,7 @@ public class SystemViewPart
 			// added by Phil in 3.0 ...
 			//actionBars.setGlobalActionHandler(IWorkbenchActionConstants.PROPERTIES, systemView.getPropertyDialogAction(); hmm, different one for local vs remote objects
 			actionBars.setGlobalActionHandler(ActionFactory.REFRESH.getId(), systemView.getRefreshAction());
+			actionBars.setGlobalActionHandler(ActionFactory.RENAME.getId(), systemView.getRenameAction());
 
 			statusLine = actionBars.getStatusLineManager();
 		}

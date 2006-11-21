@@ -64,6 +64,7 @@ import org.eclipse.rse.ui.SystemPropertyResources;
 import org.eclipse.rse.ui.SystemResources;
 import org.eclipse.rse.ui.SystemWidgetHelpers;
 import org.eclipse.rse.ui.actions.SystemCommonDeleteAction;
+import org.eclipse.rse.ui.actions.SystemCommonRenameAction;
 import org.eclipse.rse.ui.actions.SystemCopyToClipboardAction;
 import org.eclipse.rse.ui.actions.SystemPasteFromClipboardAction;
 import org.eclipse.rse.ui.actions.SystemRefreshAction;
@@ -1069,6 +1070,7 @@ public class SystemTableViewPart extends ViewPart implements ISelectionListener,
 	private SystemCopyToClipboardAction _copyAction;
 	private SystemPasteFromClipboardAction _pasteAction;
 	private SystemCommonDeleteAction _deleteAction;
+	private SystemCommonRenameAction _renameAction;
 
 	private IMemento _memento = null;
 	private IAdaptable _mementoInput = null;
@@ -1160,11 +1162,15 @@ public class SystemTableViewPart extends ViewPart implements ISelectionListener,
 		_copyAction = new SystemCopyToClipboardAction(_viewer.getShell(), clipboard);
 		_pasteAction = new SystemPasteFromClipboardAction(_viewer.getShell(), clipboard);
 		_deleteAction = new SystemCommonDeleteAction(_viewer.getShell(), _viewer);
+		_renameAction = new SystemCommonRenameAction(_viewer.getShell(), _viewer);
 
 		editorActionHandler.setCopyAction(_copyAction);
 		editorActionHandler.setPasteAction(_pasteAction);
 		editorActionHandler.setDeleteAction(_deleteAction);
 		editorActionHandler.setSelectAllAction(new SelectAllAction());
+		
+		// register rename action as a global handler
+		getViewSite().getActionBars().setGlobalActionHandler(ActionFactory.RENAME.getId(), _renameAction);
 
 		registry.addSystemResourceChangeListener(this);
 		registry.addSystemRemoteChangeListener(this);

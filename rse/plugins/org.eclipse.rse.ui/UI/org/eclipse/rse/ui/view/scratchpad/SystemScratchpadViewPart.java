@@ -37,6 +37,7 @@ import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemWidgetHelpers;
 import org.eclipse.rse.ui.actions.SystemCommonDeleteAction;
+import org.eclipse.rse.ui.actions.SystemCommonRenameAction;
 import org.eclipse.rse.ui.actions.SystemCopyToClipboardAction;
 import org.eclipse.rse.ui.actions.SystemPasteFromClipboardAction;
 import org.eclipse.rse.ui.actions.SystemRefreshAction;
@@ -71,6 +72,7 @@ public class SystemScratchpadViewPart extends ViewPart implements ISelectionList
 	private SystemCopyToClipboardAction _copyAction;
 	private SystemPasteFromClipboardAction _pasteAction;
 	private SystemCommonDeleteAction _deleteAction;
+	private SystemCommonRenameAction _renameAction;
 	private ClearAction _clearAction;
 	private ClearSelectedAction _clearSelectionAction;
 
@@ -128,6 +130,10 @@ public class SystemScratchpadViewPart extends ViewPart implements ISelectionList
 		_copyAction = new SystemCopyToClipboardAction(_viewer.getShell(), clipboard);
 		_pasteAction = new SystemPasteFromClipboardAction(_viewer.getShell(), clipboard);
 		_deleteAction = new SystemCommonDeleteAction(_viewer.getShell(), _viewer);
+		_renameAction = new SystemCommonRenameAction(_viewer.getShell(), _viewer);
+		
+		// register rename action as a global handler
+		getViewSite().getActionBars().setGlobalActionHandler(ActionFactory.RENAME.getId(), _renameAction);
 		
 		editorActionHandler.setCopyAction(_copyAction);
 		editorActionHandler.setPasteAction(_pasteAction);

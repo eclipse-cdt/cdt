@@ -1,0 +1,17 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: RSE Core Tests
+Bundle-SymbolicName: org.eclipse.rse.tests.core;singleton:=true
+Bundle-Version: 1.0.0
+Bundle-Activator: org.eclipse.rse.tests.systems.core.SystemTestPlugin
+Bundle-Vendor: Eclipse.org
+Bundle-Localization: plugin
+Require-Bundle: org.junit,
+ org.eclipse.core.runtime,
+ org.eclipse.ui,
+ org.eclipse.rse.core,
+ org.eclipse.rse.ui,
+ org.eclipse.rse.subsystems.files.core,
+ org.eclipse.rse.subsystems.shells.core,
+ org.eclipse.rse.tests.framework
+Eclipse-LazyStart: true

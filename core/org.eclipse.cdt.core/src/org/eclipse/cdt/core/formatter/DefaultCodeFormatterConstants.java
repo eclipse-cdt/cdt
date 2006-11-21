@@ -654,6 +654,17 @@ public class DefaultCodeFormatterConstants {
 	public static final String FORMATTER_INDENT_EMPTY_LINES = CCorePlugin.PLUGIN_ID + ".formatter.indent_empty_lines"; //$NON-NLS-1$	
 	/**
 	 * <pre>
+	 * FORMATTER / Option to indent inside line comments at column 0
+	 *     - option id:         "org.eclipse.cdt.core.formatter.indent_inside_line_comments"
+	 *     - possible values:   { TRUE, FALSE }
+	 *     - default:           FALSE
+	 * </pre>
+	 * @see #TRUE
+	 * @see #FALSE
+	 */
+	public static final String FORMATTER_INDENT_INSIDE_LINE_COMMENTS = CCorePlugin.PLUGIN_ID + ".formatter.indent_inside_line_comments"; //$NON-NLS-1$	
+	/**
+	 * <pre>
 	 * FORMATTER / Option to indent statements inside a block
 	 *     - option id:         "org.eclipse.cdt.core.formatter.indent_statements_compare_to_block"
 	 *     - possible values:   { TRUE, FALSE }

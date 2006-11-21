@@ -570,6 +570,7 @@ public class CAutoIndentStrategy extends DefaultIndentLineAutoEditStrategy {
 			int first= document.computeNumberOfLines(prefix) + firstLine; // don't format first line
 			int lines= temp.getNumberOfLines();
 			boolean changed= false;
+			boolean indentInsideLineComments= IndentUtil.indentInsideLineComments(fProject);
 
 			for (int l= first; l < lines; l++) { // we don't change the number of lines while adding indents
 				IRegion r= temp.getLineInformation(l);
@@ -581,7 +582,7 @@ public class CAutoIndentStrategy extends DefaultIndentLineAutoEditStrategy {
 
 				if (!isIndentDetected) {
 					// indent the first pasted line
-					String current= getCurrentIndent(temp, l);
+					String current= IndentUtil.getCurrentIndent(temp, l, indentInsideLineComments);
 					StringBuffer correct= new StringBuffer(IndentUtil.computeIndent(temp, l, indenter, scanner));
 					if (correct == null)
 						return; // bail out
@@ -608,9 +609,9 @@ public class CAutoIndentStrategy extends DefaultIndentLineAutoEditStrategy {
 
 				// relatively indent all pasted lines
 				if (insertLength > 0)
-					addIndent(temp, l, addition);
+					addIndent(temp, l, addition, indentInsideLineComments);
 				else if (insertLength < 0)
-					cutIndent(temp, l, -insertLength);
+					cutIndent(temp, l, -insertLength, indentInsideLineComments);
 			}
 
 			temp.stopRewriteSession(session);
@@ -622,44 +623,6 @@ public class CAutoIndentStrategy extends DefaultIndentLineAutoEditStrategy {
 		} catch (BadLocationException e) {
 			CUIPlugin.getDefault().log(e);
 		}
-	}
-
-	/**
-	 * Returns the indentation of the line <code>line</code> in <code>document</code>.
-	 * The returned string may contain pairs of leading slashes that are considered
-	 * part of the indentation. The space before the asterix in a javadoc-like
-	 * comment is not considered part of the indentation.
-	 *
-	 * @param document the document
-	 * @param line the line
-	 * @return the indentation of <code>line</code> in <code>document</code>
-	 * @throws BadLocationException if the document is changed concurrently
-	 */
-	private static String getCurrentIndent(Document document, int line) throws BadLocationException {
-		IRegion region= document.getLineInformation(line);
-		int from= region.getOffset();
-		int endOffset= region.getOffset() + region.getLength();
-
-		// go behind line comments
-		int to= from;
-		while (to < endOffset - 2 && document.get(to, 2).equals(LINE_COMMENT))
-			to += 2;
-
-		while (to < endOffset) {
-			char ch= document.getChar(to);
-			if (!Character.isWhitespace(ch))
-				break;
-			to++;
-		}
-
-		// don't count the space before javadoc like, asterix-style comment lines
-		if (to > from && to < endOffset - 1 && document.get(to - 1, 2).equals(" *")) { //$NON-NLS-1$
-			String type= TextUtilities.getContentType(document, ICPartitions.C_PARTITIONING, to, true);
-			if (type.equals(ICPartitions.C_MULTI_LINE_COMMENT))
-				to--;
-		}
-
-		return document.get(from, to - from);
 	}
 
 	/**
@@ -697,16 +660,19 @@ public class CAutoIndentStrategy extends DefaultIndentLineAutoEditStrategy {
 	 * @param document the document
 	 * @param line the line
 	 * @param indent the indentation to insert
+	 * @param indentInsideLineComments option whether to indent inside line comments starting at column 0
 	 * @throws BadLocationException on concurrent document modification
 	 */
-	private static void addIndent(Document document, int line, CharSequence indent) throws BadLocationException {
+	private static void addIndent(Document document, int line, CharSequence indent, boolean indentInsideLineComments) throws BadLocationException {
 		IRegion region= document.getLineInformation(line);
 		int insert= region.getOffset();
 		int endOffset= region.getOffset() + region.getLength();
 
-		// go behind line comments
-		while (insert < endOffset - 2 && document.get(insert, 2).equals(LINE_COMMENT))
-			insert += 2;
+		if (indentInsideLineComments) {
+			// go behind line comments
+			while (insert < endOffset - 2 && document.get(insert, 2).equals(LINE_COMMENT))
+				insert += 2;
+		}
 
 		// insert indent
 		document.replace(insert, 0, indent.toString());
@@ -720,16 +686,19 @@ public class CAutoIndentStrategy extends DefaultIndentLineAutoEditStrategy {
 	 * @param document the document
 	 * @param line the line
 	 * @param toDelete the number of space equivalents to delete.
+	 * @param indentInsideLineComments option whether to indent inside line comments starting at column 0
 	 * @throws BadLocationException on concurrent document modification
 	 */
-	private void cutIndent(Document document, int line, int toDelete) throws BadLocationException {
+	private void cutIndent(Document document, int line, int toDelete, boolean indentInsideLineComments) throws BadLocationException {
 		IRegion region= document.getLineInformation(line);
 		int from= region.getOffset();
 		int endOffset= region.getOffset() + region.getLength();
 
-		// go behind line comments
-		while (from < endOffset - 2 && document.get(from, 2).equals(LINE_COMMENT))
-			from += 2;
+		if (indentInsideLineComments) {
+			// go behind line comments
+			while (from < endOffset - 2 && document.get(from, 2).equals(LINE_COMMENT))
+				from += 2;
+		}
 
 		int to= from;
 		while (toDelete > 0 && to < endOffset) {

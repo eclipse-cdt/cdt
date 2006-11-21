@@ -36,11 +36,12 @@ const OtherStruct array[] =
 		}
 };
 
+//          single line outside scope
 
 void SimpleStruct_construct( 
 		struct SimpleStruct * const this )
 {
-//	single line
+	// single line
 	this->num = 1;
 	this->name = "boo";
 	this->floatNum = 1.5;

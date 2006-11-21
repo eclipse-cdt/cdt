@@ -374,4 +374,26 @@ public class CAutoIndentTest extends TestCase {
 		assertEquals("\t}", tester.getLine(1));
 	}
 
+	public void testPasteBlockCommentAutoIndent() throws BadLocationException {
+		AutoEditTester tester = createAutoEditTester(); //$NON-NLS-1$
+		tester.type("class A {\n};"); //$NON-NLS-1$
+		tester.goTo(1, 0);
+		tester.paste("/*\n" +
+				     " * block comment\n" +
+				     " */\n");
+		tester.goTo(1, 0);
+		assertEquals("\t/*", tester.getLine(0)); //$NON-NLS-1$
+		assertEquals("\t * block comment", tester.getLine(1)); //$NON-NLS-1$
+		assertEquals("\t */", tester.getLine(2)); //$NON-NLS-1$
+	}
+
+	public void testPasteLineCommentAutoIndent() throws BadLocationException {
+		AutoEditTester tester = createAutoEditTester(); //$NON-NLS-1$
+		tester.type("class A {\n};"); //$NON-NLS-1$
+		tester.goTo(1, 0);
+		tester.paste("// int f;\n");
+		tester.goTo(1, 0);
+		assertEquals("\t// int f;", tester.getLine(0)); //$NON-NLS-1$
+	}
+
 }

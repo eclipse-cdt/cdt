@@ -213,34 +213,36 @@ public class IndentAction extends TextEditorAction {
 				indent= computePreprocessorIndent(document, line, startingPartition);
 			} else if (!fIsTabAction && startingPartition.getOffset() == offset && startingPartition.getType().equals(ICPartitions.C_SINGLE_LINE_COMMENT)) {
 				// line comment starting at position 0 -> indent inside
-				int max= document.getLength() - offset;
-				int slashes= 2;
-				while (slashes < max - 1 && document.get(offset + slashes, 2).equals("//")) //$NON-NLS-1$
-					slashes+= 2;
-				
-				wsStart= offset + slashes;
-				
-				StringBuffer computed= indenter.computeIndentation(offset);
-				if (computed == null)
-					computed= new StringBuffer(0);
-				int tabSize= getTabSize();
-				while (slashes > 0 && computed.length() > 0) {
-					char c= computed.charAt(0);
-					if (c == '\t') {
-						if (slashes > tabSize)
-							slashes-= tabSize;
-						else
+				if (indentInsideLineComments()) {
+					int max= document.getLength() - offset;
+					int slashes= 2;
+					while (slashes < max - 1 && document.get(offset + slashes, 2).equals("//")) //$NON-NLS-1$
+						slashes+= 2;
+					
+					wsStart= offset + slashes;
+					
+					StringBuffer computed= indenter.computeIndentation(offset);
+					if (computed == null)
+						computed= new StringBuffer(0);
+					int tabSize= getTabSize();
+					while (slashes > 0 && computed.length() > 0) {
+						char c= computed.charAt(0);
+						if (c == '\t') {
+							if (slashes > tabSize)
+								slashes-= tabSize;
+							else
+								break;
+						} else if (c == ' ') {
+							slashes--;
+						} else {
 							break;
-					} else if (c == ' ') {
-						slashes--;
-					} else {
-						break;
+						}
+						
+						computed.deleteCharAt(0);
 					}
 					
-					computed.deleteCharAt(0);
+					indent= document.get(offset, wsStart - offset) + computed;
 				}
-				
-				indent= document.get(offset, wsStart - offset) + computed;
 			}
 		} 
 		
@@ -291,7 +293,7 @@ public class IndentAction extends TextEditorAction {
 	}
 
 	/**
-	 * Computes and returns the indentation for a comment line.
+	 * Computes and returns the indentation for a block comment line.
 	 * 
 	 * @param document the document
 	 * @param line the line in document
@@ -370,12 +372,21 @@ public class IndentAction extends TextEditorAction {
 	}
 
 	/**
-	 * Returns <code>true</code> if empty lines should be indented, false otherwise.
+	 * Returns <code>true</code> if empty lines should be indented, <code>false</code> otherwise.
 	 * 
-	 * @return <code>true</code> if empty lines should be indented, false otherwise
+	 * @return <code>true</code> if empty lines should be indented, <code>false</code> otherwise
 	 */
 	private boolean indentEmptyLines() {
 		return DefaultCodeFormatterConstants.TRUE.equals(getCoreFormatterOption(DefaultCodeFormatterConstants.FORMATTER_INDENT_EMPTY_LINES));
+	}
+	
+	/**
+	 * Returns <code>true</code> if line comments at column 0 should be indented inside, <code>false</code> otherwise.
+	 * 
+	 * @return <code>true</code> if line comments at column 0 should be indented inside, <code>false</code> otherwise.
+	 */
+	private boolean indentInsideLineComments() {
+		return DefaultCodeFormatterConstants.TRUE.equals(getCoreFormatterOption(DefaultCodeFormatterConstants.FORMATTER_INDENT_INSIDE_LINE_COMMENTS));
 	}
 	
 	/**

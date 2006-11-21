@@ -168,7 +168,7 @@ Contributors:
             icon="icons/full/obj16/system_search.gif"
             class="org.eclipse.rse.files.ui.search.SystemSearchPage"
             sizeHint="250,160"
-            id="org.eclipse.rse.core.search.searchPage">
+            id="org.eclipse.rse.files.ui.search.searchPage">
       </page>
    </extension>
 

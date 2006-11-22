@@ -570,9 +570,11 @@ public class ImportExecutablePageOne extends WizardPage {
 	private boolean isBinary(File file, IBinaryParser parser) {
 		if (parser != null) {
 			try {
-				IBinaryParser.IBinaryFile bin = parser.getBinary(new Path(file.getAbsolutePath()));
-				return bin.getType() == IBinaryParser.IBinaryFile.EXECUTABLE
-					|| bin.getType() == IBinaryParser.IBinaryFile.SHARED;
+				IBinaryParser.IBinaryFile bin = parser.getBinary(new Path(file
+						.getAbsolutePath()));
+				return bin != null
+						&& (bin.getType() == IBinaryParser.IBinaryFile.EXECUTABLE || bin
+								.getType() == IBinaryParser.IBinaryFile.SHARED);
 			} catch (IOException e) {
 				return false;
 			}

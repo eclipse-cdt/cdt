@@ -21,7 +21,6 @@ import org.eclipse.cdt.core.index.IIndexFile;
 import org.eclipse.cdt.core.index.IIndexInclude;
 import org.eclipse.cdt.core.index.IIndexName;
 import org.eclipse.cdt.core.index.IndexFilter;
-import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -32,10 +31,6 @@ final public class EmptyCIndex implements IIndex {
 	private EmptyCIndex() {
 	}
 	
-	public IIndexBinding findBinding(ICElement element) {
-		return null;
-	}
-
 	public IIndexName[] findDeclarations(IBinding binding) {
 		return IIndexFragmentName.EMPTY_NAME_ARRAY;
 	}
@@ -96,5 +91,9 @@ final public class EmptyCIndex implements IIndex {
 
 	public IIndexBinding[] findBindings(Pattern[] pattern, boolean isFullyQualified, IndexFilter filter, IProgressMonitor monitor) throws CoreException {
 		return IIndexFragmentBinding.EMPTY_INDEX_BINDING_ARRAY;
+	}
+
+	public IIndexBinding adaptBinding(IBinding binding) throws CoreException {
+		return null;
 	}
 }

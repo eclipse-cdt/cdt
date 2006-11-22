@@ -20,6 +20,7 @@ import org.eclipse.cdt.core.dom.ast.IASTPreprocessorIncludeStatement;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorMacroDefinition;
 import org.eclipse.cdt.core.index.IIndexInclude;
 import org.eclipse.cdt.core.index.IIndexMacro;
+import org.eclipse.cdt.core.index.IIndexName;
 import org.eclipse.cdt.internal.core.index.IIndexFragment;
 import org.eclipse.cdt.internal.core.index.IIndexFragmentFile;
 import org.eclipse.cdt.internal.core.index.IWritableIndexFragment;
@@ -320,5 +321,26 @@ public class PDOMFile implements IIndexFragmentFile {
 	
 	public IIndexFragment getIndexFragment() {
 		return pdom;
+	}
+
+	public IIndexName[] findNames(int offset, int length) throws CoreException {
+		ArrayList result= new ArrayList();
+		for (PDOMName name= getFirstName(); name != null; name= name.getNextInFile()) {
+			int nameOffset=  name.getNodeOffset();
+			if (nameOffset >= offset) {
+				if (nameOffset == offset) {
+					if (name.getNodeLength() == length) {
+						result.add(name);
+					}
+				}
+				else if (name.isReference()) { 
+					// names are ordered, but callers are inserted before
+					// their references
+					break;
+				}
+			}
+					
+		}
+		return (IIndexName[]) result.toArray(new IIndexName[result.size()]);
 	}
 }

@@ -57,4 +57,9 @@ public interface IIndexFile {
 	 * @throws CoreException 
 	 */
 	long getTimestamp() throws CoreException;
+
+	/**
+	 * Find all names within the given range.
+	 */
+	IIndexName[] findNames(int offset, int length) throws CoreException;
 }

@@ -29,7 +29,6 @@ import org.eclipse.cdt.core.index.IIndexFile;
 import org.eclipse.cdt.core.index.IIndexInclude;
 import org.eclipse.cdt.core.index.IIndexName;
 import org.eclipse.cdt.core.index.IndexFilter;
-import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -55,8 +54,20 @@ public class CIndex implements IIndex {
 		return result;
 	}
 	
-	public IIndexBinding findBinding(ICElement element) throws CoreException {
-		// mstodo ICElement to IBinding
+	public IIndexBinding adaptBinding(IBinding binding) throws CoreException {
+		if (binding instanceof IIndexFragmentBinding) {
+			IIndexFragmentBinding fragBinding= (IIndexFragmentBinding) binding;
+			if (isFragment(fragBinding.getFragment())) {
+				return fragBinding;
+			}
+		}
+		
+		for (int i = 0; i < fFragments.length; i++) {
+			IIndexProxyBinding result= fFragments[i].adaptBinding(binding);
+			if (result instanceof IIndexFragmentBinding) {
+				return (IIndexFragmentBinding) result;
+			}
+		}
 		return null;
 	}
 	

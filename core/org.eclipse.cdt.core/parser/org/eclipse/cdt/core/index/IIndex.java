@@ -15,7 +15,6 @@ import java.util.regex.Pattern;
 
 import org.eclipse.cdt.core.dom.IName;
 import org.eclipse.cdt.core.dom.ast.IBinding;
-import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -183,14 +182,6 @@ public interface IIndex {
 	 * @since 4.0
 	 */
 	public IIndexFile resolveInclude(IIndexInclude include) throws CoreException;
-
-	/**
-	 * Looks for a binding for the given ICElement. May return <code>null</code>.
-	 * @param element an element a binding is searched for
-	 * @return a binding for the element or <code>null</code>
-	 * @throws CoreException
-	 */
-	public IIndexBinding findBinding(ICElement element) throws CoreException;
 	
 	/**
 	 * Searches for the binding of a name. The name may be originated by

@@ -20,10 +20,14 @@ import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.IPDOMNode;
 import org.eclipse.cdt.core.dom.IPDOMVisitor;
 import org.eclipse.cdt.core.dom.ast.DOMException;
+import org.eclipse.cdt.core.dom.ast.IASTName;
+import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.ICompositeType;
 import org.eclipse.cdt.core.dom.ast.IField;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
+import org.eclipse.cdt.core.dom.ast.c.ICCompositeTypeScope;
+import org.eclipse.cdt.internal.core.Util;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.db.PDOMNodeLinkedList;
 import org.eclipse.cdt.internal.core.pdom.dom.IPDOMMemberOwner;
@@ -37,13 +41,19 @@ import org.eclipse.core.runtime.Status;
  * @author Doug Schaefer
  *
  */
-public class PDOMCStructure extends PDOMBinding implements ICompositeType, IPDOMMemberOwner {
+public class PDOMCStructure extends PDOMBinding implements ICompositeType, ICCompositeTypeScope, IPDOMMemberOwner {
 	private static final int MEMBERLIST = PDOMBinding.RECORD_SIZE;
-	protected static final int RECORD_SIZE = PDOMBinding.RECORD_SIZE + 4;
+	private static final int KEY = MEMBERLIST + 4; // byte
+	protected static final int RECORD_SIZE = PDOMBinding.RECORD_SIZE + 8;
 	
 	public PDOMCStructure(PDOM pdom, PDOMNode parent, ICompositeType compType) throws CoreException {
 		super(pdom, parent, compType.getNameCharArray());
 		// linked list is initialized by malloc zeroing allocated storage
+		try {
+			pdom.getDB().putByte(record + KEY, (byte) compType.getKey());
+		} catch (DOMException e) {
+			throw new CoreException(Util.createStatus(e));
+		}
 	}
 
 	public PDOMCStructure(PDOM pdom, int record) {
@@ -68,7 +78,12 @@ public class PDOMCStructure extends PDOMBinding implements ICompositeType, IPDOM
 	}
 	
 	public int getKey() throws DOMException {
-		throw new PDOMNotImplementedError();
+		try {
+			return pdom.getDB().getByte(record + KEY);
+		} catch (CoreException e) {
+			CCorePlugin.log(e);
+			return ICompositeType.k_struct; // or something
+		}
 	}
 
 	private static class GetFields implements IPDOMVisitor {
@@ -154,5 +169,21 @@ public class PDOMCStructure extends PDOMBinding implements ICompositeType, IPDOM
 	
 	public boolean mayHaveChildren() {
 		return true;
+	}
+
+	public ICompositeType getCompositeType() {
+		return this;
+	}
+
+	public IBinding getBinding(char[] name) throws DOMException {
+		fail(); return null;
+	}
+
+	public IBinding[] find(String name) throws DOMException {
+		fail(); return null;
+	}
+
+	public IBinding getBinding(IASTName name, boolean resolve) throws DOMException {
+		fail(); return null;
 	}
 }

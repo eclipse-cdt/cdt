@@ -13,6 +13,7 @@
 package org.eclipse.cdt.internal.core.pdom.dom;
 
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.dom.IName;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
@@ -205,5 +206,17 @@ public abstract class PDOMBinding extends PDOMNamedNode implements IIndexFragmen
 
 	public boolean mayHaveChildren() {
 		return false;
+	}
+	
+	public IName getScopeName() throws DOMException {
+		try {
+			PDOMName name = getFirstDefinition();
+			if (name == null)
+				name = getFirstDeclaration();
+			return name;
+		} catch (CoreException e) {
+			CCorePlugin.log(e);
+			return null;
+		}
 	}
 }

@@ -421,7 +421,6 @@ public class PDOMManager implements IPDOMManager, IWritableIndexManager, IListen
     }
 
     public void enqueue(IPDOMIndexerTask subjob) {
-    	boolean notifyBusy= false;
     	synchronized (fTaskQueueMutex) {
     		fTaskQueue.addLast(subjob);
 			if (fIndexerJob == null) {
@@ -429,22 +428,18 @@ public class PDOMManager implements IPDOMManager, IWritableIndexManager, IListen
 				fCompletedHeaders= 0;
 				fIndexerJob = new PDOMIndexerJob(this);
 				fIndexerJob.schedule();
-				notifyBusy= true;
+	    		notifyState(IndexerStateEvent.STATE_BUSY);
 			}
 		}
-    	if (notifyBusy) {
-    		notifyState(IndexerStateEvent.STATE_BUSY);
-    	}
     }
     
 	IPDOMIndexerTask getNextTask() {
-		boolean idle= false;
 		IPDOMIndexerTask result= null;
     	synchronized (fTaskQueueMutex) {
     		if (fTaskQueue.isEmpty()) {
     			fCurrentTask= null;
         		fIndexerJob= null;
-        		idle= true;
+        		notifyState(IndexerStateEvent.STATE_IDLE);
     		}
     		else {
     			if (fCurrentTask != null) {
@@ -454,30 +449,23 @@ public class PDOMManager implements IPDOMManager, IWritableIndexManager, IListen
     			result= fCurrentTask= (IPDOMIndexerTask)fTaskQueue.removeFirst();
     		}
 		}
-    	if (idle) {
-    		notifyState(IndexerStateEvent.STATE_IDLE);
-    	}
     	return result;
     }
     
     void cancelledJob(boolean byManager) {
-    	boolean idle= false;
     	synchronized (fTaskQueueMutex) {
     		fCurrentTask= null;
     		if (!byManager) {
     			fTaskQueue.clear();
     		}
-    		idle= fTaskQueue.isEmpty();
-    		if (idle) {
+    		if (fTaskQueue.isEmpty()) {
         		fIndexerJob= null;
+        		notifyState(IndexerStateEvent.STATE_IDLE);
     		}
     		else {
     			fIndexerJob = new PDOMIndexerJob(this);
     			fIndexerJob.schedule();
     		}
-    	}
-    	if (idle) {
-    		notifyState(IndexerStateEvent.STATE_IDLE);
     	}
     }
         
@@ -599,7 +587,6 @@ public class PDOMManager implements IPDOMManager, IWritableIndexManager, IListen
 	}
 
     private void notifyState(final int state) {
-    	assert !Thread.holdsLock(fTaskQueueMutex);
     	if (state == IndexerStateEvent.STATE_IDLE) {
     		synchronized(fTaskQueueMutex) {
     			fTaskQueueMutex.notifyAll();

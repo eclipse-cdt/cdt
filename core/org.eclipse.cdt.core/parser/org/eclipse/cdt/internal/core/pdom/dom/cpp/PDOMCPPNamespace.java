@@ -14,7 +14,6 @@
 package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 
 import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.dom.IName;
 import org.eclipse.cdt.core.dom.IPDOMVisitor;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionCallExpression;
@@ -23,7 +22,6 @@ import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNamedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IBinding;
-import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
@@ -229,12 +227,6 @@ implements ICPPNamespace, ICPPNamespaceScope {
 		return visitor.getResult();
 	}
 
-
-	public IScope getParent() throws DOMException {
-		// TODO
-		return null;
-	}
-
 	public boolean isFullyCached() throws DOMException {
 		return true;
 	}
@@ -244,6 +236,5 @@ implements ICPPNamespace, ICPPNamespaceScope {
 	}
 
 	public IBinding[] getMemberBindings() throws DOMException {fail(); return null;}
-	public IName getScopeName() throws DOMException {fail(); return null;}
 	public void addUsingDirective(IASTNode directive) throws DOMException {fail();}
 }

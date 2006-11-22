@@ -20,7 +20,6 @@ import java.util.List;
 import java.util.Set;
 
 import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.dom.IName;
 import org.eclipse.cdt.core.dom.IPDOMNode;
 import org.eclipse.cdt.core.dom.IPDOMVisitor;
 import org.eclipse.cdt.core.dom.ast.DOMException;
@@ -52,7 +51,6 @@ import org.eclipse.cdt.internal.core.pdom.dom.FindEquivalentBinding;
 import org.eclipse.cdt.internal.core.pdom.dom.IPDOMMemberOwner;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMLinkage;
-import org.eclipse.cdt.internal.core.pdom.dom.PDOMName;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNotImplementedError;
 import org.eclipse.core.runtime.CoreException;
@@ -302,18 +300,6 @@ ICPPClassScope, IPDOMMemberOwner {
 
 	public ICPPClassType getClassType() {
 		return this;
-	}
-
-	public IName getScopeName() throws DOMException {
-		try {
-			PDOMName name = getFirstDefinition();
-			if (name == null)
-				name = getFirstDefinition();
-			return name;
-		} catch (CoreException e) {
-			CCorePlugin.log(e);
-			return null;
-		}
 	}
 
 	public void addChild(PDOMNode member) throws CoreException {

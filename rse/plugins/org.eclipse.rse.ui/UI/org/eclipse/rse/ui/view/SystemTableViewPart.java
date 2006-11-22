@@ -584,7 +584,6 @@ public class SystemTableViewPart extends ViewPart implements ISelectionListener,
 				String[] filters = subsetDialog.getFilters();
 				_currentItem.setFilters(filters);
 				_viewer.setViewFilters(filters);
-
 			}
 		}
 	}
@@ -618,16 +617,16 @@ public class SystemTableViewPart extends ViewPart implements ISelectionListener,
 
 	class RestoreStateRunnable extends UIJob
 	{
-		private IMemento _memento;
+		private IMemento _rmemento;
 		public RestoreStateRunnable(IMemento memento)
 		{
 			super("Restore RSE Table");
-			_memento = memento;
+			_rmemento = memento;
 		}
 
 		public IStatus runInUIThread(IProgressMonitor monitor)
 		{
-			IMemento memento = _memento;
+			IMemento memento = _rmemento;
 			String profileId = memento.getString(TAG_TABLE_VIEW_PROFILE_ID);
 			String connectionId = memento.getString(TAG_TABLE_VIEW_CONNECTION_ID);
 			String subsystemId = memento.getString(TAG_TABLE_VIEW_SUBSYSTEM_ID);
@@ -936,8 +935,7 @@ public class SystemTableViewPart extends ViewPart implements ISelectionListener,
 			{
 				Composite main = SystemWidgetHelpers.createComposite(parent, 1);
 				
-				Label label = SystemWidgetHelpers.createLabel(main, SystemResources.RESID_TABLE_SELECT_COLUMNS_DESCRIPTION_LABEL);
-				
+
 				Composite c = SystemWidgetHelpers.createComposite(main, 4);
 				c.setLayoutData(new GridData(GridData.FILL_BOTH));
 				_availableList = SystemWidgetHelpers.createListBox(c, SystemResources.RESID_TABLE_SELECT_COLUMNS_AVAILABLE_LABEL, this, true);
@@ -1396,7 +1394,23 @@ public class SystemTableViewPart extends ViewPart implements ISelectionListener,
 
 	public void setInput(IAdaptable object)
 	{
-		setInput(object, null, _isLocked);
+		String[] filters = null;
+		if (_currentItem != null)
+		{
+			IAdaptable item = _currentItem.getObject();
+			
+			ISystemViewElementAdapter adapter1 = (ISystemViewElementAdapter)object.getAdapter(ISystemViewElementAdapter.class);
+			ISystemViewElementAdapter adapter2 = (ISystemViewElementAdapter)item.getAdapter(ISystemViewElementAdapter.class);
+			if (adapter1 == adapter2)
+			{
+				filters = _currentItem.getFilters();
+			}
+			else
+			{
+				_viewer.setViewFilters(null);
+			}
+		}
+		setInput(object, filters, _isLocked);
 
 		if (!_isLocked)
 		{
@@ -1407,7 +1421,9 @@ public class SystemTableViewPart extends ViewPart implements ISelectionListener,
 	public void setInput(HistoryItem historyItem)
 	{
 		setInput(historyItem.getObject(), historyItem.getFilters(), false);
+
 		_currentItem = historyItem;
+
 	}
 
 	public void setInput(IAdaptable object, String[] filters, boolean updateHistory)
@@ -1434,6 +1450,7 @@ public class SystemTableViewPart extends ViewPart implements ISelectionListener,
 				}
 
 				_currentItem = new HistoryItem(object, filters);
+				
 
 				_browseHistory.add(_currentItem);
 				_browsePosition = _browseHistory.lastIndexOf(_currentItem);
@@ -1547,7 +1564,6 @@ public class SystemTableViewPart extends ViewPart implements ISelectionListener,
 	public void systemRemoteResourceChanged(ISystemRemoteChangeEvent event)
 	{
 		int eventType = event.getEventType();
-		Object remoteResourceParent = event.getResourceParent();
 		Object remoteResource = event.getResource();
 	
 		Vector remoteResourceNames = null;

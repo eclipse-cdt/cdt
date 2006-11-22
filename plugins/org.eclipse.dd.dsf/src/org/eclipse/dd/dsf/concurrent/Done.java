@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.dd.dsf.concurrent;
 
+import java.util.concurrent.Executor;
+
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Status;
@@ -53,7 +55,7 @@ abstract public class Done extends DsfRunnable {
      * @return Returns true if there was an error that was propagated and 
      * the caller can stop processing result.
      */
-    protected boolean propagateError(DsfExecutor executor, Done clientDone, String message) {
+    protected boolean propagateError(Executor executor, Done clientDone, String message) {
         if (clientDone.getStatus().getSeverity() == IStatus.CANCEL) {
             return true;
         }

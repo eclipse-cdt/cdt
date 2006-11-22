@@ -7,6 +7,7 @@
  *
  * Contributors:
  * Rational Software - Initial API and implementation
+ * Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.model;
 
@@ -111,16 +112,20 @@ public class MethodDeclaration extends FunctionDeclaration implements IMethodDec
 		return (MethodInfo) getElementInfo();
 	}
 	
-	/*
-	 * See if we need anything else to put in equals here
-	 */
 	public boolean equals(Object other) {
-		// Two methods are equal if
-		// their parents, names, parameter types and return types are equal and 
-		return ( super.equals(other)
-		// their constant directive is the same
-		&& isConst() == ((MethodDeclaration)other).isConst()
-		);
+		if (other instanceof IMethodDeclaration) {
+			return equals(this, (IMethodDeclaration) other);
+		}
+		return false;
+	}
+
+	public static boolean equals(IMethodDeclaration lhs, IMethodDeclaration rhs) {
+		try {
+			return lhs.isConst() == rhs.isConst() &&
+					FunctionDeclaration.equals(lhs, rhs);
+		} catch (CModelException e) {
+			return false;
+		}
 	}
 		
 

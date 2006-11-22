@@ -20,6 +20,7 @@ import java.util.TreeMap;
 
 import org.eclipse.cdt.core.IPositionConverter;
 import org.eclipse.cdt.core.IPositionTrackerManager;
+import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.core.filebuffers.FileBuffers;
 import org.eclipse.core.filebuffers.IFileBuffer;
 import org.eclipse.core.filebuffers.IFileBufferListener;
@@ -188,5 +189,20 @@ public class PositionTrackerManager implements IPositionTrackerManager, IFileBuf
             return chain.findTrackerAt(timestamp);
         }
         return null;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public synchronized IPositionConverter findPositionConverter(ITranslationUnit tu, long timestamp) {
+    	IFile file= (IFile) tu.getResource();
+    	if (file != null) {
+    		return findPositionConverter(file, timestamp);
+    	}
+    	IPath location= tu.getLocation();
+    	if (location != null) {
+    		return findPositionConverter(location, timestamp);
+    	}
+    	return null;
     }
 }

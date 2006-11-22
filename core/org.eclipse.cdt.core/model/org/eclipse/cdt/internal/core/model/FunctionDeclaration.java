@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2005 IBM Corporation and others.
+ * Copyright (c) 2002, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  * Rational Software - Initial API and implementation
+ * Markus Schorn (Wind River Systems)
  *******************************************************************************/
 
 package org.eclipse.cdt.internal.core.model;
@@ -53,22 +54,32 @@ public class FunctionDeclaration extends SourceManipulation implements IFunction
 	}		
 		
 	public String getSignature() throws CModelException{
-		StringBuffer sig = new StringBuffer(getElementName());
-		sig.append(getParameterClause());
-		if(isConst())
-			sig.append(" const"); //$NON-NLS-1$
-		if(isVolatile()) {
-			sig.append(" volatile"); //$NON-NLS-1$
-		}
+		return getSignature(this);
+	}
+	
+	public static String getSignature(IFunctionDeclaration func) {
+		StringBuffer sig = new StringBuffer(func.getElementName());
+		sig.append(getParameterClause(func.getParameterTypes()));
+		try {
+			if(func.isConst())
+				sig.append(" const"); //$NON-NLS-1$
+			if(func.isVolatile()) {
+				sig.append(" volatile"); //$NON-NLS-1$
+			}
+		} catch (CModelException e) {
+		} 
 		return sig.toString();
 	}
 	
-	public String getParameterClause(){
+	public String getParameterClause() {
+		return getParameterClause(getParameterTypes());
+	}
+	
+	public static String getParameterClause(String[] paramTypes){
 		StringBuffer sig = new StringBuffer();
 		
-		if(getNumberOfParameters() > 0){
+		if(paramTypes.length > 0){
 			sig.append("("); //$NON-NLS-1$
-			String[] paramTypes = getParameterTypes();
 			int i = 0;
 			sig.append(paramTypes[i++]);
 			while (i < paramTypes.length){
@@ -100,14 +111,16 @@ public class FunctionDeclaration extends SourceManipulation implements IFunction
 	}
 	
 	public boolean equals(Object other) {
-		// Two function declarations are equal if
-		// Their parents and names are equal and
-		return ( super.equals(other) 
-		// their parameter types are equal and 
-		&& Util.equalArraysOrNull(fParameterTypes, ((FunctionDeclaration)other).fParameterTypes)
-		// their return types are equal
-		&& getReturnType().equals(((FunctionDeclaration)other).getReturnType())
-		);
+		if (other instanceof IFunctionDeclaration) {
+			return equals(this, (IFunctionDeclaration) other);
+		}
+		return false;
+	}
+	
+	public static boolean equals(IFunctionDeclaration lhs, IFunctionDeclaration rhs) {
+		return CElement.equals(lhs, rhs) && 
+			Util.equalArraysOrNull(lhs.getParameterTypes(), rhs.getParameterTypes()) &&
+			lhs.getReturnType().equals(rhs.getReturnType());
 	}
 	
 	/**

@@ -11,6 +11,7 @@
 
 package org.eclipse.cdt.core;
 
+import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IPath;
 
@@ -30,6 +31,15 @@ import org.eclipse.core.runtime.IPath;
  * @since 4.0
  */
 public interface IPositionTrackerManager {
+    /**
+     * Returns the position converter suitable for mapping character offsets of the
+     * given translation unit to the current version of it.
+     * 
+     * @param file a file for which the position adapter is requested.
+     * @param timestamp identifies the version of the file stored on disk.
+     * @return the requested position converter or <code>null</code>.
+     */
+    public IPositionConverter findPositionConverter(ITranslationUnit tu, long timestamp);
     /**
      * Returns the position converter suitable for mapping character offsets of the
      * given file/timestamp to the current version of it.

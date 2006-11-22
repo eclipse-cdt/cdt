@@ -234,23 +234,30 @@ public abstract class CElement extends PlatformObject implements ICElement {
 	public boolean equals (Object o) {
 		if (this == o)
 			return true;
-		if (o instanceof CElement) {
-			CElement other = (CElement) o;
-			if( fName == null  || other.fName == null ) 
-				return false;
-			if( fName.length() == 0  || other.fName.length() == 0 ) 
-				return false;
-			if (fType != other.fType)
-				return false;
-			if (fName.equals(other.fName)) {
-				if (fParent != null && fParent.equals(other.fParent)) {
-					return true;
-				}
-				if (fParent == null && other.fParent == null)
-					return true;
-			}
+		if (o instanceof ICElement) {
+			return equals(this, (ICElement) o);
 		}
 		return false;
+	}
+	
+	public static boolean equals(ICElement lhs, ICElement rhs) {
+		if (lhs.getElementType() != rhs.getElementType()) {
+			return false;
+		}
+		String lhsName= lhs.getElementName();
+		String rhsName= rhs.getElementName();
+		if( lhsName == null || rhsName == null || lhsName.length() == 0 ||
+				!lhsName.equals(rhsName)) {
+			return false;
+		}
+			
+		ICElement lhsParent= lhs.getParent();
+		ICElement rhsParent= rhs.getParent();
+		if (lhsParent == rhsParent) {
+			return true;
+		}
+		
+		return lhsParent != null && lhsParent.equals(rhsParent);
 	}
 
 	public CElementInfo getElementInfo() throws CModelException {
@@ -453,15 +460,22 @@ public abstract class CElement extends PlatformObject implements ICElement {
 	// CHECKPOINT: making not equal objects seem equal
 	// What elements should override this?
 	public int hashCode() {
-		if (fParent == null) return super.hashCode();
-		return Util.combineHashCodes(fName.hashCode(), fParent.hashCode());
+		return hashCode(this);
+	}
+	
+	public static int hashCode(ICElement elem) {
+		ICElement parent= elem.getParent();
+		if (parent == null) {
+			return System.identityHashCode(elem);
+		}
+		return Util.combineHashCodes(elem.getElementName().hashCode(), parent.hashCode());
 	}
 	
 	/*
 	 * Test to see if two objects are identical
 	 * Subclasses should override accordingly
 	 */
-	public boolean isIdentical( CElement otherElement){
+	public boolean isIdentical(CElement otherElement){
 		return this.equals(otherElement);
 	}
 	

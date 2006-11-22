@@ -192,15 +192,15 @@ public class AsyncViewerTest extends BaseUITestCase {
         
         // + a
         // + b
-        dlg.fViewer.setInput(root); runEventQueue(50);
-        assertEquals(2, countVisibleItems(dlg.fViewer));
+        dlg.fViewer.setInput(root); 
+        waitForItems(dlg.fViewer, 2);
 
         // - a
         //   - ...
         // + b
-        dlg.fViewer.setExpandedState(a, true); runEventQueue(50);
+        dlg.fViewer.setExpandedState(a, true);
+        waitForItems(dlg.fViewer, 3);
         assertEquals("...", dlg.fViewer.getTree().getItem(0).getItem(0).getText());
-        assertEquals(3, countVisibleItems(dlg.fViewer));
         
         // - a
         // + b
@@ -211,14 +211,15 @@ public class AsyncViewerTest extends BaseUITestCase {
         // + a
         // + b
         dlg.fViewer.setInput(null); 
-        dlg.fViewer.setInput(root); runEventQueue(50);
+        dlg.fViewer.setInput(root); 
+        waitForItems(dlg.fViewer, 2);
         
         // expand async with two children
-        dlg.fViewer.setExpandedState(b, true); runEventQueue(50);
         // + a
         // - b
         //   - ...
-        assertEquals(3, countVisibleItems(dlg.fViewer));
+        dlg.fViewer.setExpandedState(b, true); 
+        waitForItems(dlg.fViewer, 3);
         assertEquals("...", dlg.fViewer.getTree().getItem(1).getItem(0).getText());
 
         // - a
@@ -231,16 +232,24 @@ public class AsyncViewerTest extends BaseUITestCase {
         // + a
         // + b
         dlg.fViewer.setInput(null); 
-        dlg.fViewer.setInput(root); runEventQueue(50);
+        dlg.fViewer.setInput(root); 
+        waitForItems(dlg.fViewer, 2);
 
         // wait until children are computed (for the sake of the +-sign)
         runEventQueue(800); 
         assertEquals(2, countVisibleItems(dlg.fViewer));
         dlg.fViewer.setExpandedState(a, true); 
-        assertEquals(2, countVisibleItems(dlg.fViewer));
+        waitForItems(dlg.fViewer, 2);
         dlg.fViewer.setExpandedState(b, true); 
-        assertEquals(4, countVisibleItems(dlg.fViewer));
+        waitForItems(dlg.fViewer, 4);
     }
+
+	private void waitForItems(TreeViewer viewer, int count) {
+		for (int i=0; i<100 && countVisibleItems(viewer) < count; i++) {
+        	runEventQueue(10);
+        }
+        assertEquals(count, countVisibleItems(viewer));
+	}
 
     public void testRecompute() throws InterruptedException {        
         TestDialog dlg = createTestDialog(true);

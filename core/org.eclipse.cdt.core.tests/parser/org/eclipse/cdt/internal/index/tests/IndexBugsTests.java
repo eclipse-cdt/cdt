@@ -157,7 +157,7 @@ public class IndexBugsTests extends BaseTestCase {
     	String varName= "arrayDataSize";
     	StringBuffer content= new StringBuffer();
     	content.append("unsigned char arrayData[] = {\n");
-    	for(int i=0; i<1024*500-1; i++) {
+    	for(int i=0; i<1024*250-1; i++) {
     		content.append("0x00,");
     	}
     	content.append("0x00};\n"); 
@@ -165,11 +165,9 @@ public class IndexBugsTests extends BaseTestCase {
 		int indexOfDecl = content.indexOf(varName);
 
 		assertTrue(CCorePlugin.getIndexManager().joinIndexer(80000, NPM));
-		long time= System.currentTimeMillis();
 		IFile file= createFile(getProject(), fileName, content.toString());
 		// must be done in a reasonable amount of time
 		waitUntilFileIsIndexed(file, 10000);
-		System.out.println((System.currentTimeMillis() -time));
 		fIndex.acquireReadLock();
 		try {
 			IIndexBinding[] bindings= fIndex.findBindings(getPattern("arrayDataSize"), true, IndexFilter.ALL, NPM);

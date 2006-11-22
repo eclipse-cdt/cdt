@@ -69,14 +69,14 @@ public class CharArrayUtils {
 		if (str1 == str2)
 			return 0;
 		
-		if (str1.length != str2.length)
-			return str1.length < str2.length ? -1 : 1;
+		int end= Math.min(str1.length, str2.length);
+		for (int i = 0; i < end; ++i) {
+			int diff= str1[i] - str2[i];
+			if (diff != 0)
+				return diff;
+		}
 		
-		for (int i = 0; i < str1.length; ++i)
-			if (str1[i] != str2[i])
-				return str1[i] < str2[i] ? -1 : 1;
-		
-		return 0;
+		return str1.length - str2.length;
 	}
 	
 	public static final boolean equals(char[] str1, int start1, int length1, char[] str2) {

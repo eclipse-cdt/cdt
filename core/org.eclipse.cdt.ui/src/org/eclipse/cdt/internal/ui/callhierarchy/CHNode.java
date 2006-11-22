@@ -167,4 +167,10 @@ public class CHNode implements IAdaptable {
 	public void setInitializer(boolean isInitializer) {
 		fIsInitializer = isInitializer;
 	}
+
+	public void sortReferencesByOffset() {
+		if (fReferences.size() > 1) {
+			Collections.sort(fReferences, CHReferenceInfo.COMPARE_OFFSET);
+		}
+	}
 }

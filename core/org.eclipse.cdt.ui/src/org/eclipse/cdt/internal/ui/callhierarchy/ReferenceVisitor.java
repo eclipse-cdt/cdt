@@ -9,7 +9,7 @@
  *    Markus Schorn - initial API and implementation
  *******************************************************************************/ 
 
-package org.eclipse.cdt.internal.ui.missingapi;
+package org.eclipse.cdt.internal.ui.callhierarchy;
 
 import java.util.ArrayList;
 

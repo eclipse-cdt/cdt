@@ -37,7 +37,7 @@ public class InitializersInCallHierarchyTest extends CallHierarchyBaseTest {
 	public void testCIntVarInitializer() throws Exception {
 		String content = readTaggedComment("intvar");
 		IFile file= createFile(getProject(), "intvar.c", content);
-		waitForIndexer(fIndex, file, 1000);
+		waitForIndexer(fIndex, file, INDEXER_WAIT_TIME);
 		IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
 		CEditor editor= (CEditor) IDE.openEditor(page, file);
 

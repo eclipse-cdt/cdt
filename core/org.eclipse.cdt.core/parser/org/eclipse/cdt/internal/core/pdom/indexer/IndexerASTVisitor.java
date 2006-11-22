@@ -13,7 +13,9 @@ package org.eclipse.cdt.internal.core.pdom.indexer;
 
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
+import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
+import org.eclipse.cdt.core.dom.ast.IASTInitializer;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
@@ -23,8 +25,9 @@ abstract public class IndexerASTVisitor extends ASTVisitor {
 	private IASTNode fDefinition;
 
 	public IndexerASTVisitor() {
-		shouldVisitNames = true;
-		shouldVisitDeclarations = true;
+		shouldVisitNames= true;
+		shouldVisitDeclarations= true;
+		shouldVisitInitializers= true;
 	}
 
 	abstract public void visit(IASTName name, IASTName definitionName);
@@ -53,6 +56,17 @@ abstract public class IndexerASTVisitor extends ASTVisitor {
 				fDefinitionName= ((ICPPASTQualifiedName) fDefinitionName).getLastName();
 			}
 			visit(fDefinitionName, null);
+		}
+		return PROCESS_CONTINUE;
+	}
+	
+	public int visit(IASTInitializer initializer) {
+		if (fDefinition == null) {
+			IASTNode cand= initializer.getParent();
+			if (cand instanceof IASTDeclarator) {
+				fDefinition= cand;
+				fDefinitionName= ((IASTDeclarator) fDefinition).getName();
+			}
 		}
 		return PROCESS_CONTINUE;
 	}

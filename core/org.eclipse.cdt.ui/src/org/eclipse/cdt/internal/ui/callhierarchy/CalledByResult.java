@@ -9,7 +9,7 @@
  *    Markus Schorn - initial API and implementation
  *******************************************************************************/ 
 
-package org.eclipse.cdt.internal.ui.missingapi;
+package org.eclipse.cdt.internal.ui.callhierarchy;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.eclipse.cdt.core.index.IIndexName;
 import org.eclipse.cdt.core.model.ICElement;
 
 public class CalledByResult {
@@ -27,12 +28,12 @@ public class CalledByResult {
 		return (ICElement[]) elements.toArray(new ICElement[elements.size()]);
 	}
 	
-	public CIndexReference[] getReferences(ICElement calledElement) {
+	public IIndexName[] getReferences(ICElement calledElement) {
 		List references= (List) fElementToReferences.get(calledElement);
-		return (CIndexReference[]) references.toArray(new CIndexReference[references.size()]);
+		return (IIndexName[]) references.toArray(new IIndexName[references.size()]);
 	}
 
-	public void add(ICElement elem, CIndexReference ref) {
+	public void add(ICElement elem, IIndexName ref) {
 		List list= (List) fElementToReferences.get(elem);
 		if (list == null) {
 			list= new ArrayList();

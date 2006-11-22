@@ -33,7 +33,8 @@ import org.eclipse.cdt.internal.ui.callhierarchy.CallHierarchyUI;
 import org.eclipse.cdt.internal.ui.editor.CEditor;
 
 public class CallHierarchyBaseTest extends BaseUITestCase {
-	
+	protected static final int INDEXER_WAIT_TIME = 8000;
+
 	private ICProject fCProject;
 	protected IIndex fIndex;
 

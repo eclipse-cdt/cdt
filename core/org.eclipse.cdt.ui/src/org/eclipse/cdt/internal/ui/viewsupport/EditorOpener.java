@@ -33,6 +33,8 @@ import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.resources.FileStorage;
 import org.eclipse.cdt.ui.CUIPlugin;
 
+import org.eclipse.cdt.internal.core.model.ext.ICElementHandle;
+
 import org.eclipse.cdt.internal.ui.util.ExternalEditorInput;
 
 /**
@@ -96,7 +98,7 @@ public class EditorOpener {
 			ITranslationUnit tu= sr.getTranslationUnit();
 			ISourceRange range= sr.getSourceRange();
 			long timestamp= 0; // last modified of file.
-			if (tu.isWorkingCopy()) {
+			if (tu.isWorkingCopy() || element instanceof ICElementHandle) {
 				timestamp= -1; 
 			}
 			open(page, tu, new Region(range.getIdStartPos(), range.getIdLength()), timestamp);

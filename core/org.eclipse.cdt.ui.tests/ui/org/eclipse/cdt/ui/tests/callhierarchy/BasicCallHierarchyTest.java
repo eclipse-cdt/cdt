@@ -54,7 +54,7 @@ public class BasicCallHierarchyTest extends CallHierarchyBaseTest {
 	private void doTestFunctions(String filename) throws IOException, Exception, PartInitException {
 		String content = readTaggedComment("testFunctions");
 		IFile file= createFile(getProject(), filename, content);
-		waitForIndexer(fIndex, file, 1000);
+		waitForIndexer(fIndex, file, INDEXER_WAIT_TIME);
 		IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
 		CEditor editor= (CEditor) IDE.openEditor(page, file);
 

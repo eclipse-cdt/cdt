@@ -11,7 +11,16 @@
 
 package org.eclipse.cdt.internal.ui.callhierarchy;
 
+import java.util.Comparator;
+
 public class CHReferenceInfo {
+	public static final Comparator COMPARE_OFFSET = new Comparator() {
+		public int compare(Object o1, Object o2) {
+			CHReferenceInfo r1= (CHReferenceInfo) o1;
+			CHReferenceInfo r2= (CHReferenceInfo) o2;
+			return r1.fOffset - r2.fOffset;
+		}
+	};
 	private int fOffset;
 	private int fLength;
 

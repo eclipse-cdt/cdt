@@ -23,9 +23,14 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IBinding;
+import org.eclipse.cdt.core.dom.ast.IEnumerator;
+import org.eclipse.cdt.core.dom.ast.IFunction;
+import org.eclipse.cdt.core.dom.ast.IVariable;
+import org.eclipse.cdt.core.dom.ast.c.ICExternalBinding;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.index.IIndexManager;
 import org.eclipse.cdt.core.model.ICElement;
@@ -36,7 +41,6 @@ import org.eclipse.cdt.ui.CUIPlugin;
 
 import org.eclipse.cdt.internal.ui.actions.OpenActionUtil;
 import org.eclipse.cdt.internal.ui.editor.CEditor;
-import org.eclipse.cdt.internal.ui.missingapi.CIndexQueries;
 import org.eclipse.cdt.internal.ui.util.ExceptionHandler;
 import org.eclipse.cdt.internal.ui.viewsupport.CElementLabels;
 import org.eclipse.cdt.internal.ui.viewsupport.FindNameForSelectionVisitor;
@@ -120,7 +124,6 @@ public class CallHierarchyUI {
     
 	private static ICElement[] findDefinitions(ICProject project, IEditorInput editorInput, ITextSelection sel) throws CoreException {
 		try {
-			CIndexQueries indexq= CIndexQueries.getInstance();
 			IIndex index= CCorePlugin.getIndexManager().getIndex(project, IIndexManager.ADD_DEPENDENCIES | IIndexManager.ADD_DEPENDENT);
 
 			index.acquireReadLock();
@@ -128,19 +131,19 @@ public class CallHierarchyUI {
 				IASTName name= getSelectedName(index, editorInput, sel);
 				if (name != null) {
 					IBinding binding= name.resolveBinding();
-					if (CIndexQueries.isRelevantForCallHierarchy(binding)) {
+					if (CallHierarchyUI.isRelevantForCallHierarchy(binding)) {
 						if (name.isDefinition()) {
-							ICElement elem= indexq.getCElementForName(project, name);
+							ICElement elem= CHQueries.getCElementForName(project, index, name);
 							if (elem != null) {
 								return new ICElement[]{elem};
 							}
 						}
 						else {
-							ICElement[] elems= indexq.findAllDefinitions(index, name);
+							ICElement[] elems= CHQueries.findAllDefinitions(index, binding);
 							if (elems.length == 0) {
-								elems= indexq.findAllDefinitions(index, name);
+								elems= CHQueries.findAllDefinitions(index, binding);
 								if (elems.length == 0) {
-									ICElement elem= indexq.findAnyDeclaration(index, project, name);
+									ICElement elem= CHQueries.findAnyDeclaration(index, project, binding);
 									if (elems != null) {
 										elems= new ICElement[]{elem};
 									}
@@ -158,6 +161,9 @@ public class CallHierarchyUI {
 			}
 		}
 		catch (CoreException e) {
+			CUIPlugin.getDefault().log(e);
+		} 
+		catch (DOMException e) {
 			CUIPlugin.getDefault().log(e);
 		} 
 		catch (InterruptedException e) {
@@ -178,5 +184,40 @@ public class CallHierarchyUI {
 		FindNameForSelectionVisitor finder= new FindNameForSelectionVisitor(ast.getFilePath(), selectionStart, selectionLength);
 		ast.accept(finder);
 		return finder.getSelectedName();
+	}
+
+	public static boolean isRelevantForCallHierarchy(IBinding binding) {
+		if (binding instanceof ICExternalBinding ||
+				binding instanceof IEnumerator ||
+				binding instanceof IFunction ||
+				binding instanceof IVariable) {
+			return true;
+		}
+		return false;
+	}
+
+	public static boolean isRelevantForCallHierarchy(ICElement elem) {
+		if (elem == null) {
+			return false;
+		}
+		switch (elem.getElementType()) {
+		case ICElement.C_CLASS_CTOR:
+		case ICElement.C_CLASS_DTOR:
+		case ICElement.C_ENUMERATOR:
+		case ICElement.C_FIELD:
+		case ICElement.C_FUNCTION:
+		case ICElement.C_FUNCTION_DECLARATION:
+		case ICElement.C_METHOD:
+		case ICElement.C_METHOD_DECLARATION:
+		case ICElement.C_TEMPLATE_FUNCTION:
+		case ICElement.C_TEMPLATE_FUNCTION_DECLARATION:
+		case ICElement.C_TEMPLATE_METHOD:
+		case ICElement.C_TEMPLATE_METHOD_DECLARATION:
+		case ICElement.C_TEMPLATE_VARIABLE:
+		case ICElement.C_VARIABLE:
+		case ICElement.C_VARIABLE_DECLARATION:
+			return true;
+		}
+		return false;
 	}
 }

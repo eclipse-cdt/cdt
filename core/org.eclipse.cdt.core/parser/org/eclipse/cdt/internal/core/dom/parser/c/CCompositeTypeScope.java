@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2005 IBM Corporation and others.
+ * Copyright (c) 2004, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 
 /*
@@ -17,6 +18,8 @@ package org.eclipse.cdt.internal.core.dom.parser.c;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IBinding;
+import org.eclipse.cdt.core.dom.ast.ICompositeType;
+import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.c.ICASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.c.ICCompositeTypeScope;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
@@ -57,4 +60,13 @@ public class CCompositeTypeScope extends CScope implements ICCompositeTypeScope 
             
         return (IBinding[]) ArrayUtil.trim( IBinding.class, result );
     }
+
+	public ICompositeType getCompositeType() {
+		ICASTCompositeTypeSpecifier compSpec = (ICASTCompositeTypeSpecifier) getPhysicalNode();
+		IBinding binding = compSpec.getName().resolveBinding();
+		if (binding instanceof ICompositeType)
+			return (ICompositeType) binding;
+
+		return new CStructure.CStructureProblem( compSpec.getName(), IProblemBinding.SEMANTIC_BAD_SCOPE, compSpec.getName().toCharArray() );
+	}
 }

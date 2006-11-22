@@ -35,6 +35,7 @@ import org.eclipse.cdt.core.dom.ast.c.ICCompositeTypeScope;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.internal.core.dom.Linkage;
 import org.eclipse.cdt.internal.core.dom.parser.ASTInternal;
+import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
 import org.eclipse.core.runtime.PlatformObject;
 
 /**
@@ -42,6 +43,25 @@ import org.eclipse.core.runtime.PlatformObject;
  * @author aniefer
  */
 public class CStructure extends PlatformObject implements ICompositeType, ICInternalBinding {
+	
+	public static class CStructureProblem extends ProblemBinding implements ICompositeType {
+		public CStructureProblem(IASTNode node, int id, char[] arg) {
+			super(node, id, arg);
+		}
+		public IField findField(String name) throws DOMException {
+			throw new DOMException( this );
+		}
+		public IScope getCompositeScope() throws DOMException {
+			throw new DOMException( this );
+		}
+		public IField[] getFields() throws DOMException {
+			throw new DOMException( this );
+		}
+		public int getKey() throws DOMException {
+			throw new DOMException( this );
+		}
+	}
+
 	private IASTName [] declarations = null;
 	private IASTName definition;
 	

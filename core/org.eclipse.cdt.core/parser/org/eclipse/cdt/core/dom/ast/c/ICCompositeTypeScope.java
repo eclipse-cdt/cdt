@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2005 IBM Corporation and others.
+ * Copyright (c) 2004, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 
 /*
@@ -16,6 +17,7 @@ package org.eclipse.cdt.core.dom.ast.c;
 
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IBinding;
+import org.eclipse.cdt.core.dom.ast.ICompositeType;
 
 /**
  * @author aniefer
@@ -30,4 +32,10 @@ public interface ICCompositeTypeScope extends ICScope {
 	 * @throws DOMException
 	 */
 	public IBinding getBinding(char[] name) throws DOMException;
+
+	/**
+	 * Get the type this scope is associated with
+	 * @since 4.0
+	 */
+	public ICompositeType getCompositeType();
 }

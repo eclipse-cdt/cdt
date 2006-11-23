@@ -172,7 +172,7 @@ public class BTreeTests extends BaseTestCase {
 		btree.accept(new IBTreeVisitor(){
 			int k;
 			public int compare(int record) throws CoreException {
-				return 1;
+				return 0;
 			}
 			public boolean visit(int record) throws CoreException {
 				if(record!=0) {

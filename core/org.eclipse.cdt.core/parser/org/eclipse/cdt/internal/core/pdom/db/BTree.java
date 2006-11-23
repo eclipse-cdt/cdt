@@ -8,6 +8,7 @@
  * Contributors:
  * QNX - Initial API and implementation
  * Andrew Ferguson (Symbian) - Provide B-tree deletion routine
+ * Markus Schorn (Wind River Systems)
  *******************************************************************************/
 
 package org.eclipse.cdt.internal.core.pdom.db;
@@ -520,16 +521,17 @@ public class BTree {
 	 * @param visitor
 	 */
 	public void accept(IBTreeVisitor visitor) throws CoreException {
-		accept(db.getInt(rootPointer), visitor, false);
+		accept(db.getInt(rootPointer), visitor);
 	}
 
-	private boolean accept(int node, IBTreeVisitor visitor, boolean found) throws CoreException {
+	private boolean accept(int node, IBTreeVisitor visitor) throws CoreException {
 		// if found is false, we are still in search mode
 		// once found is true visit everything
 		// return false when ready to quit
-		if (node == 0)
-			return visitor.visit(0);
 
+		if (node == 0) {
+			return true;
+		}
 		if(visitor instanceof IBTreeVisitor2) {
 			((IBTreeVisitor2)visitor).preNode(node);
 		}
@@ -537,49 +539,25 @@ public class BTree {
 		try {
 			Chunk chunk = db.getChunk(node);
 
-			if (found) {
-				int child = getChild(chunk, node, 0);
-				if (child != 0)
-					if (!accept(child, visitor, true))
-						return false;
-			}
-
-			int i;
-			for (i = 0; i < MAX_RECORDS; ++i) {
+			int i= 0;
+			for (; i < MAX_RECORDS; ++i) {
 				int record = getRecord(chunk, node, i);
-				if (record == 0)
+				if (record == 0) 
 					break;
 
-				if (found) {
+				int compare = visitor.compare(record);
+				if (compare > 0) {
+					// 	start point is to the left
+					return accept(getChild(chunk, node, i), visitor);
+				} 
+				else if (compare == 0) {
+					if (!accept(getChild(chunk, node, i), visitor)) 
+						return false;
 					if (!visitor.visit(record))
 						return false;
-					if (!accept(getChild(chunk, node, i + 1), visitor, true))
-						return false;
-				} else {
-					int compare = visitor.compare(record);
-					if (compare > 0) {
-						// 	start point is to the left
-						if (!accept(getChild(chunk, node, i), visitor, false))
-							return false;
-						if (!visitor.visit(record))
-							return false;
-						if (!accept(getChild(chunk, node, i + 1), visitor, true))
-							return false;
-						found = true;
-					} else if (compare == 0) {
-						if (!visitor.visit(record))
-							return false;
-						if (!accept(getChild(chunk, node, i + 1), visitor, true))
-							return false;
-						found = true;
-					}
 				}
 			}
-
-			if (!found)
-				return accept(getChild(chunk, node, i), visitor, false);
-
-			return true;
+			return accept(getChild(chunk, node, i), visitor);
 		} finally {
 			if(visitor instanceof IBTreeVisitor2) {
 				((IBTreeVisitor2)visitor).postNode(node);
@@ -621,7 +599,7 @@ public class BTree {
 		public String getMsg() { return msg; }
 		public boolean isValid() { return valid; }
 		public void postNode(int node) throws CoreException { depth--; }
-		public int compare(int record) throws CoreException { return 1; }
+		public int compare(int record) throws CoreException { return 0; }
 		public boolean visit(int record) throws CoreException { return true; }
 
 		public void preNode(int node) throws CoreException {

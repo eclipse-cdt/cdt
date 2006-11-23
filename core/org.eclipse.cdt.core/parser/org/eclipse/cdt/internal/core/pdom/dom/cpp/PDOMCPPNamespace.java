@@ -74,7 +74,7 @@ implements ICPPNamespace, ICPPNamespaceScope {
 		super.accept(visitor);
 		getIndex().accept(new IBTreeVisitor() {
 			public int compare(int record) throws CoreException {
-				return 1;
+				return 0;
 			}
 			public boolean visit(int record) throws CoreException {
 				PDOMBinding binding = pdom.getBinding(record);

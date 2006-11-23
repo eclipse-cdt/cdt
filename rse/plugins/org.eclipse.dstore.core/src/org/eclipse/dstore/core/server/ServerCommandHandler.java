@@ -197,8 +197,7 @@ public class ServerCommandHandler extends CommandHandler
 
 			String commandSource = command.getSource();
 			String commandName = command.getName();
-			_dataStore.trace("command: " + commandName);
-			//System.out.println(commandName);
+			System.out.println(commandName);
 
 
 			if (commandName.equals(DataStoreSchema.C_VALIDATE_TICKET))
@@ -207,7 +206,8 @@ public class ServerCommandHandler extends CommandHandler
 				DataElement clientTicket = command.get(0);
 				String st = serverTicket.getName();
 				String ct = clientTicket.getName();
-				if (ct.equals(st))
+
+				if (st == null || st.equals("null") || ct.equals(st))
 				{
 					serverTicket.setAttribute(DE.A_VALUE,DataStoreResources.model_valid);
 					clientTicket.setAttribute(DE.A_VALUE,DataStoreResources.model_valid);
@@ -230,7 +230,7 @@ public class ServerCommandHandler extends CommandHandler
 			}
 			else if (commandName.equals(DataStoreSchema.C_SET))
 			{
-				DataElement dataObject = command.get(0);
+				//DataElement dataObject = command.get(0);
 				status.setAttribute(DE.A_NAME,DataStoreResources.model_done);
 			}
 			else if (commandName.equals(DataStoreSchema.C_MODIFY))

@@ -328,7 +328,8 @@ public abstract class SystemBaseCopyAction extends SystemBaseDialogAction
            runException = new java.lang.reflect.InvocationTargetException(exc);
            throw (java.lang.reflect.InvocationTargetException)runException;
         }
-        copyComplete();
+        if (copiedOk)
+        	copyComplete();
 	}
 	
 	protected abstract String checkForCollision(Shell shell, IProgressMonitor monitor, Object targetContainer, Object oldObject, String oldName);

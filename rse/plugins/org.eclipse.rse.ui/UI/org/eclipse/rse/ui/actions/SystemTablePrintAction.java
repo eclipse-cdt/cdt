@@ -21,8 +21,8 @@ import java.util.Date;
 
 import org.eclipse.rse.ui.SystemPropertyResources;
 import org.eclipse.rse.ui.SystemResources;
+import org.eclipse.rse.ui.view.SystemDecoratingLabelProvider;
 import org.eclipse.rse.ui.view.SystemTableView;
-import org.eclipse.rse.ui.view.SystemTableViewProvider;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Rectangle;
@@ -471,7 +471,8 @@ public class SystemTablePrintAction extends SystemBaseAction
 	{
 		StringBuffer line = new StringBuffer("");
 
-		SystemTableViewProvider lprovider = (SystemTableViewProvider) _viewer.getLabelProvider();
+		//SystemTableViewProvider lprovider = (SystemTableViewProvider) _viewer.getLabelProvider();
+		SystemDecoratingLabelProvider lprovider = (SystemDecoratingLabelProvider)_viewer.getLabelProvider();
 		if (_hasColumns)
 		{
 			line.append(getBlankLine());

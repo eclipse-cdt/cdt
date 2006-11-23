@@ -19,25 +19,18 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IMarker;
-import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.debug.core.sourcelookup.ISourceLookupDirector;
-import org.eclipse.debug.core.sourcelookup.containers.ProjectSourceContainer;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.rse.core.SystemBasePlugin;
 import org.eclipse.rse.core.subsystems.IRemoteLineReference;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.core.subsystems.util.ISubSystemConfigurationAdapter;
 import org.eclipse.rse.files.ui.actions.SystemRemoteFileLineOpenWithMenu;
-import org.eclipse.rse.files.ui.resources.RemoteSourceLookupDirector;
 import org.eclipse.rse.files.ui.resources.SystemEditableRemoteFile;
 import org.eclipse.rse.files.ui.resources.SystemIFileProperties;
 import org.eclipse.rse.shells.ui.ShellResources;
@@ -50,7 +43,6 @@ import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFileSubSystem;
 import org.eclipse.rse.subsystems.shells.core.model.ISystemOutputRemoteTypes;
 import org.eclipse.rse.subsystems.shells.core.subsystems.IRemoteCmdSubSystemConfiguration;
 import org.eclipse.rse.subsystems.shells.core.subsystems.IRemoteCommandShell;
-import org.eclipse.rse.subsystems.shells.core.subsystems.IRemoteError;
 import org.eclipse.rse.subsystems.shells.core.subsystems.IRemoteOutput;
 import org.eclipse.rse.ui.ISystemContextMenuConstants;
 import org.eclipse.rse.ui.ISystemIconConstants;
@@ -78,8 +70,6 @@ import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.ide.IDE;
-import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
 
 
@@ -290,17 +280,8 @@ implements  ISystemViewElementAdapter, ISystemRemoteElementAdapter, ISystemOutpu
 		    StringBuffer untabbedBuf = new StringBuffer();
 		    for (int i = 0; i < tabbedString.length();i++)
 		    {
-		        char p = '\0';
 		        char c = tabbedString.charAt(i);
-		        char n = '\0';
-		        if (i+1 <tabbedString.length())
-		        {
-		         n = tabbedString.charAt(i + 1);
-		        }
-		        if (i - 1 > -1)
-		        {
-		         p = tabbedString.charAt(i - 1);
-		        }
+
 		        if (c == '\t')
 		        {
 		            untabbedBuf.append(' ');
@@ -443,103 +424,105 @@ implements  ISystemViewElementAdapter, ISystemRemoteElementAdapter, ISystemOutpu
 	 * @param output
 	 * @return
 	 */
-	protected boolean openWorkspaceFile(IRemoteFile remoteFile, IRemoteOutput output)
-	{
-		IRemoteCommandShell cmd = (IRemoteCommandShell)(output.getParent());
-		IProject associatedProject = cmd.getAssociatedProject();
-		if (associatedProject != null)
-		{
-			ProjectSourceContainer container = new ProjectSourceContainer(associatedProject, false);
-			ISourceLookupDirector director = new RemoteSourceLookupDirector(); 
-			container.init(director);
-			try
-			{
-				Object[] matches = container.findSourceElements(remoteFile.getName());
-				for (int i = 0; i < matches.length; i++)
-				{
-					//System.out.println("match="+matches[i]);
-				}
-				
-				if (matches.length == 1)
-				{
-					IFile localMatch = (IFile)matches[0];
-				
-					
-					
-					IWorkbenchPage activePage = SystemBasePlugin.getActiveWorkbenchWindow().getActivePage();
-	
-					FileEditorInput finput = new FileEditorInput(localMatch);						
-				
-				
-					IEditorDescriptor desc = PlatformUI.getWorkbench().getEditorRegistry().getDefaultEditor(remoteFile.getName());
-					if (desc == null)
-					{
-						desc = getDefaultTextEditor();
-					}
-					String editorid = desc.getId();
-					IEditorPart editor = activePage.openEditor(finput, editorid);
-					
-					int line = output.getLine();
-					int charStart = output.getCharStart();
-					int charEnd = output.getCharEnd();
-					
-					try
-					{
-						IMarker marker = null;
-						
-						// DKM - should we?  this will populate the Problems view..but resources are actually remote
-						if (output instanceof IRemoteError)
-						{
-							IRemoteError error = (IRemoteError)output;
-							String type = error.getType();
-							
-							marker = localMatch.createMarker(IMarker.TEXT);
-					
-							if (type.equals("error"))
-							{
-								marker.setAttribute(IMarker.SEVERITY, IMarker.SEVERITY_ERROR);
-							}
-							else if (type.equals("warning"))
-							{
-								marker.setAttribute(IMarker.SEVERITY, IMarker.SEVERITY_WARNING);
-							}
-							else if (type.equals("informational"))
-							{
-								marker.setAttribute(IMarker.SEVERITY, IMarker.SEVERITY_INFO);
-							}
-							
-							marker.setAttribute(IMarker.MESSAGE, output.getText());
-							marker.setAttribute(IMarker.LINE_NUMBER, line);
-							marker.setAttribute(IMarker.CHAR_START, charStart);
-							marker.setAttribute(IMarker.CHAR_END, charEnd);
-							
-						}
-						else
-						{
-							marker = localMatch.createMarker(IMarker.TEXT);						
-							marker.setAttribute(IMarker.LINE_NUMBER, line);
-							marker.setAttribute(IMarker.CHAR_START, charStart);
-							marker.setAttribute(IMarker.CHAR_END, charEnd);
-						}
-						IDE.gotoMarker(editor, marker);
-					
-						
-					}
-					catch (CoreException e)
-					{
-						e.printStackTrace();
-					}
-					return true;
-				}
-			}
-			catch(Exception e)
-			{				
-				e.printStackTrace();
-			}
-		}	
-		
-		return false;
-	}
+	// DKM - this is should no longer used.  Used to be for opening corresponding workspace IFile from remote error
+	//       but remote error as is will not be the project integration point for this.
+//	protected boolean openWorkspaceFile(IRemoteFile remoteFile, IRemoteOutput output)
+//	{
+//		IRemoteCommandShell cmd = (IRemoteCommandShell)(output.getParent());
+//		IProject associatedProject = cmd.getAssociatedProject();
+//		if (associatedProject != null)
+//		{
+//			ProjectSourceContainer container = new ProjectSourceContainer(associatedProject, false);
+//			ISourceLookupDirector director = new RemoteSourceLookupDirector(); 
+//			container.init(director);
+//			try
+//			{
+//				Object[] matches = container.findSourceElements(remoteFile.getName());
+//				for (int i = 0; i < matches.length; i++)
+//				{
+//					//System.out.println("match="+matches[i]);
+//				}
+//				
+//				if (matches.length == 1)
+//				{
+//					IFile localMatch = (IFile)matches[0];
+//				
+//					
+//					
+//					IWorkbenchPage activePage = SystemBasePlugin.getActiveWorkbenchWindow().getActivePage();
+//	
+//					FileEditorInput finput = new FileEditorInput(localMatch);						
+//				
+//				
+//					IEditorDescriptor desc = PlatformUI.getWorkbench().getEditorRegistry().getDefaultEditor(remoteFile.getName());
+//					if (desc == null)
+//					{
+//						desc = getDefaultTextEditor();
+//					}
+//					String editorid = desc.getId();
+//					IEditorPart editor = activePage.openEditor(finput, editorid);
+//					
+//					int line = output.getLine();
+//					int charStart = output.getCharStart();
+//					int charEnd = output.getCharEnd();
+//					
+//					try
+//					{
+//						IMarker marker = null;
+//						
+//						// DKM - should we?  this will populate the Problems view..but resources are actually remote
+//						if (output instanceof IRemoteError)
+//						{
+//							IRemoteError error = (IRemoteError)output;
+//							String type = error.getType();
+//							
+//							marker = localMatch.createMarker(IMarker.TEXT);
+//					
+//							if (type.equals("error"))
+//							{
+//								marker.setAttribute(IMarker.SEVERITY, IMarker.SEVERITY_ERROR);
+//							}
+//							else if (type.equals("warning"))
+//							{
+//								marker.setAttribute(IMarker.SEVERITY, IMarker.SEVERITY_WARNING);
+//							}
+//							else if (type.equals("informational"))
+//							{
+//								marker.setAttribute(IMarker.SEVERITY, IMarker.SEVERITY_INFO);
+//							}
+//							
+//							marker.setAttribute(IMarker.MESSAGE, output.getText());
+//							marker.setAttribute(IMarker.LINE_NUMBER, line);
+//							marker.setAttribute(IMarker.CHAR_START, charStart);
+//							marker.setAttribute(IMarker.CHAR_END, charEnd);
+//							
+//						}
+//						else
+//						{
+//							marker = localMatch.createMarker(IMarker.TEXT);						
+//							marker.setAttribute(IMarker.LINE_NUMBER, line);
+//							marker.setAttribute(IMarker.CHAR_START, charStart);
+//							marker.setAttribute(IMarker.CHAR_END, charEnd);
+//						}
+//						IDE.gotoMarker(editor, marker);
+//					
+//						
+//					}
+//					catch (CoreException e)
+//					{
+//						e.printStackTrace();
+//					}
+//					return true;
+//				}
+//			}
+//			catch(Exception e)
+//			{				
+//				e.printStackTrace();
+//			}
+//		}	
+//		
+//		return false;
+//	}
 
 	/**
 	 * Opens the appropriate editor for a remote output object
@@ -554,7 +537,8 @@ implements  ISystemViewElementAdapter, ISystemRemoteElementAdapter, ISystemOutpu
 			IRemoteFile file = outputToFile(output);
 			if (file != null && file.isFile())
 			{									
-				if (!openWorkspaceFile(file, output))
+				// no longer doing opening of workspace files here
+				//if (!openWorkspaceFile(file, output))
 				{
 					ISystemViewElementAdapter adapter = (ISystemViewElementAdapter) ((IAdaptable) file).getAdapter(ISystemViewElementAdapter.class);
 					result = adapter.handleDoubleClick(file);
@@ -619,7 +603,6 @@ implements  ISystemViewElementAdapter, ISystemRemoteElementAdapter, ISystemOutpu
 		{
 			IWorkbench desktop = PlatformUI.getWorkbench();
 			IWorkbenchPage persp = desktop.getActiveWorkbenchWindow().getActivePage();
-			IEditorPart editor = null;
 			String fileName = _file.getAbsolutePath();
 			IEditorReference[] editors = persp.getEditorReferences();
 			for (int i = 0; i < editors.length; i++)
@@ -1211,10 +1194,7 @@ implements  ISystemViewElementAdapter, ISystemRemoteElementAdapter, ISystemOutpu
 			    if (context instanceof IRemoteFile)
 			    {			        
 			        IRemoteFile cwd = (IRemoteFile)context;
-			        if (cwd != null)
-			        {	
-			        	return cwd.getAbsolutePath();			        
-			        }	
+			        return cwd.getAbsolutePath();			        	
 			    }
 			    else
 			     {

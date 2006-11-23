@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Anton Leherbauer (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.text;
 
@@ -106,10 +107,16 @@ public class CCommentScanner extends AbstractCScanner
     protected List createRules() {
         List list= new ArrayList();
         
-        if (fCorePreferenceStore != null) {
+        String tasks= null;
+        if (getPreferenceStore().contains(TRANSLATION_TASK_TAGS)) {
+            tasks= getPreferenceStore().getString(TRANSLATION_TASK_TAGS);
+        } else if (fCorePreferenceStore != null) {
+            tasks= fCorePreferenceStore.getString(TRANSLATION_TASK_TAGS);
+        }
+        
+        if (tasks != null) {
             // Add rule for Task Tags.
             fTaskTagRule= new TaskTagRule(getToken(TASK_TAG));
-            String tasks= fCorePreferenceStore.getString(TRANSLATION_TASK_TAGS);
             fTaskTagRule.addTaskTags(tasks);
             list.add(fTaskTagRule);
         }

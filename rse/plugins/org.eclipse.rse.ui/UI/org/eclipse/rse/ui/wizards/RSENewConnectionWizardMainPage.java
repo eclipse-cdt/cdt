@@ -82,6 +82,8 @@ public class RSENewConnectionWizardMainPage extends AbstractSystemWizardPage imp
 			textSystemType = SystemWidgetHelpers.createSystemTypeListBox(parent, null, systemTypeNames);
 		}
 		
+		textSystemType.addListener(SWT.MouseDoubleClick, this);
+		
 		textSystemType.setToolTipText(SystemResources.RESID_CONNECTION_SYSTEMTYPE_TIP);
 		SystemWidgetHelpers.setHelp(textSystemType, RSEUIPlugin.HELPPREFIX + "ccon0003");
 		
@@ -149,7 +151,7 @@ public class RSENewConnectionWizardMainPage extends AbstractSystemWizardPage imp
 	 */
 	public void handleEvent(Event event) {
 		
-		if (event.type == SWT.Selection && event.widget == textSystemType) {
+		if (((event.type == SWT.Selection) || (event.type == SWT.MouseDoubleClick)) && event.widget == textSystemType) {
 			
 			IWizard wizard = getWizard();
 		
@@ -160,6 +162,10 @@ public class RSENewConnectionWizardMainPage extends AbstractSystemWizardPage imp
 				IRSESystemType systemType = RSECorePlugin.getDefault().getRegistry().getSystemType(systemTypeStr);
 				newConnWizard.setSelectedSystemType(systemType);
 				descriptionSystemType.setText(systemType.getDescription());
+				
+				if (event.type == SWT.MouseDoubleClick) {
+					newConnWizard.getContainer().showPage(getNextPage());
+				}
 			}
 		}
 	}

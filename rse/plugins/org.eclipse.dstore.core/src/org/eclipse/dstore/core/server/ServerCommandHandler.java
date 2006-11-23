@@ -207,7 +207,7 @@ public class ServerCommandHandler extends CommandHandler
 				String st = serverTicket.getName();
 				String ct = clientTicket.getName();
 
-				if (st == null || st.equals("null") || ct.equals(st))
+				if (st == null || ct.equals(st))
 				{
 					serverTicket.setAttribute(DE.A_VALUE,DataStoreResources.model_valid);
 					clientTicket.setAttribute(DE.A_VALUE,DataStoreResources.model_valid);

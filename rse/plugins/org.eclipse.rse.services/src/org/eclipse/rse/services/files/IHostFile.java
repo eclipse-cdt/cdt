@@ -21,8 +21,9 @@ package org.eclipse.rse.services.files;
  * These objects are meant to represent objects that are files or file-like objects on a 
  * remote system. These would include files, folders, directories, archives and the like.
  * <p>
- * These objects are typically handle objects and can be created even though their corresponding
- * remote resources do not exist.
+ * These objects are typically "handle" objects and can be created even though their corresponding
+ * remote resources do not exist - in this case, the {@link #exists()} method will return 
+ * <code>false</code>.
  * <p>
  * @see IFileService
  */
@@ -36,9 +37,9 @@ public interface IHostFile {
 
 	/**
 	 * Gets the absolute path name of the parent object of this object on the remote file system.
-	 * @return The fully qualified path of any parent object for this file. This would typically the
+	 * @return The fully qualified path of any parent object for this file. This would typically be the
 	 * string representation of the absolute path as interpreted by the remote file system. Returns 
-	 * null if isRoot() is true.
+	 * <code>null</code> if {@link #isRoot()} is true.
 	 */
 	public String getParentPath();
 
@@ -79,7 +80,7 @@ public interface IHostFile {
 	 * Determines if the file system object is a file on the remote file system.
 	 * @return true if and only if the object on the remote system can be considered to have "contents" that
 	 * have the potential to be read and written as a byte or character stream. A return value of true 
-	 * does not necessarily imply that isDirectory() returns false.
+	 * does not necessarily imply that {@link #isDirectory()} returns false.
 	 */
 	public boolean isFile();
 
@@ -105,7 +106,9 @@ public interface IHostFile {
 
 	/**
 	 * Determines if the file system object exists on the remote file system.
-	 * @return true if and only if the remote object represented by this object exists in the remote file system.
+	 * @return true if and only if the remote object represented by this object exists
+	 * in the remote file system. Symbolic links on a UNIX file system exist even if
+	 * the target they point to does not exist.
 	 */
 	public boolean exists();
 
@@ -122,7 +125,7 @@ public interface IHostFile {
 	 * Gets the size of the file system object on the remote file system in bytes if isFile() is true.
 	 * If the storage unit on the remote system is not bytes then the file service creating this must
 	 * convert the remote value to bytes. 
-	 * @return the size of the file if isFile() is true, 0 if isFile() is false.
+	 * @return the size in bytes of the file if {@link #isFile()} is true, 0L otherwise.
 	 */
 	public long getSize();
 
@@ -137,8 +140,17 @@ public interface IHostFile {
 	public long getModifiedDate();
 
 	/**
-	 * Renames a file on the remote file system if this file exists.
-	 * @param newAbsolutePath The new path on the remote file system that this file will be renamed to.
+	 * Renames this abstract file handle.
+	 * 
+     * This does not physically rename the corresponding file on the 
+     * remote system, it merely updates internal bookkeeping for a 
+     * rename operation that needs to be performed separately through
+     * an instance of @see IFileService. 
+     *  
+     * Therefore, this method cannot fail and no return value is given.
+     * 
+	 * @param newAbsolutePath The new path on the remote file system that
+	 * this file will be renamed to.
 	 */
 	public void renameTo(String newAbsolutePath);
 }

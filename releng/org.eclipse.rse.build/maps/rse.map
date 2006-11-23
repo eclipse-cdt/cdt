@@ -43,4 +43,4 @@ plugin@org.eclipse.rse.subsystems.shells.core=v20061031,:pserver:anonymous:none@
 plugin@org.eclipse.rse.subsystems.shells.dstore=v20061031,:pserver:anonymous:none@dev.eclipse.org:/cvsroot/dsdp,,org.eclipse.tm.rse/plugins/org.eclipse.rse.subsystems.shells.dstore
 plugin@org.eclipse.rse.subsystems.shells.local=v20061109,:pserver:anonymous:none@dev.eclipse.org:/cvsroot/dsdp,,org.eclipse.tm.rse/plugins/org.eclipse.rse.subsystems.shells.local
 plugin@org.eclipse.rse.subsystems.shells.ssh=v20061110,:pserver:anonymous:none@dev.eclipse.org:/cvsroot/dsdp,,org.eclipse.tm.rse/plugins/org.eclipse.rse.subsystems.shells.ssh
-plugin@org.eclipse.rse.ui=v20061122,:pserver:anonymous:none@dev.eclipse.org:/cvsroot/dsdp,,org.eclipse.tm.rse/plugins/org.eclipse.rse.ui
+plugin@org.eclipse.rse.ui=v20061123,:pserver:anonymous:none@dev.eclipse.org:/cvsroot/dsdp,,org.eclipse.tm.rse/plugins/org.eclipse.rse.ui

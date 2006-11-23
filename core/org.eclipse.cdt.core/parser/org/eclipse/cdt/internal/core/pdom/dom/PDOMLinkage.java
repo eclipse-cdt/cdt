@@ -31,8 +31,6 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespaceScope;
 import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.core.index.IIndexLinkage;
 import org.eclipse.cdt.internal.core.Util;
-import org.eclipse.cdt.internal.core.dom.bid.CLocalBindingIdentityComparator;
-import org.eclipse.cdt.internal.core.dom.bid.IBindingIdentityFactory;
 import org.eclipse.cdt.internal.core.dom.parser.ASTInternal;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.db.BTree;
@@ -48,7 +46,7 @@ import org.eclipse.core.runtime.CoreException;
  * This class represents a collection of symbols that can be linked together at
  * link time. These are generally global symbols specific to a given language.
  */
-public abstract class PDOMLinkage extends PDOMNamedNode implements IBindingIdentityFactory, IIndexLinkage {
+public abstract class PDOMLinkage extends PDOMNamedNode implements IIndexLinkage {
 
 	// record offsets
 	private static final int ID_OFFSET   = PDOMNamedNode.RECORD_SIZE + 0;
@@ -157,16 +155,7 @@ public abstract class PDOMLinkage extends PDOMNamedNode implements IBindingIdent
 		return node;
 	}
 
-	public final IBTreeComparator getIndexComparator() {
-		return new IBTreeComparator() {
-			CLocalBindingIdentityComparator cmp = new CLocalBindingIdentityComparator(PDOMLinkage.this);
-			public final int compare(int record1, int record2) throws CoreException {
-				PDOMNode node1 = getNode(record1);
-				PDOMNode node2 = getNode(record2);
-				return cmp.compare((IBinding)node1,(IBinding)node2);
-			}
-		};
-	}
+	public abstract IBTreeComparator getIndexComparator();
 	
 	public abstract PDOMBinding addBinding(IASTName name) throws CoreException;
 	
@@ -227,5 +216,5 @@ public abstract class PDOMLinkage extends PDOMNamedNode implements IBindingIdent
 		return null;
 	}
 	
-	public abstract IBindingIdentityFactory getBindingIdentityFactory();
+	public abstract int getBindingType(IBinding binding);
 }

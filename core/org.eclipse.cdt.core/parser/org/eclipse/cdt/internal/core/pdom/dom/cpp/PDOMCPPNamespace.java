@@ -27,13 +27,11 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespaceScope;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
-import org.eclipse.cdt.internal.core.dom.bid.ILocalBindingIdentity;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.db.BTree;
 import org.eclipse.cdt.internal.core.pdom.db.IBTreeVisitor;
-import org.eclipse.cdt.internal.core.pdom.dom.FindBindingByLinkageConstant;
+import org.eclipse.cdt.internal.core.pdom.dom.FindBinding;
 import org.eclipse.cdt.internal.core.pdom.dom.FindBindingsInBTree;
-import org.eclipse.cdt.internal.core.pdom.dom.FindEquivalentBinding;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNotImplementedError;
@@ -176,10 +174,10 @@ implements ICPPNamespace, ICPPNamespaceScope {
 							&& ((ICPPASTQualifiedName)name.getParent()).getLastName() != name)
 							? PDOMCPPLinkage.CPPNAMESPACE : PDOMCPPLinkage.CPPVARIABLE;
 
-					IBinding result = searchCurrentScope(name.toCharArray(), desiredType);
+					IBinding result = searchCurrentScope(name.toCharArray(), new int[] {desiredType});
 					if(result!=null)
 						return result;
-					return searchCurrentScope(name.toCharArray(), PDOMCPPLinkage.CPPTYPEDEF);
+					return searchCurrentScope(name.toCharArray(), new int[] {PDOMCPPLinkage.CPPTYPEDEF});
 				}
 			} else if (parent instanceof IASTNamedTypeSpecifier) {
 				return searchCurrentScope(name.toCharArray(), new int[] {
@@ -200,13 +198,7 @@ implements ICPPNamespace, ICPPNamespaceScope {
 		try {
 			IType[] types = PDOMCPPLinkage.getTypes(fce.getParameterExpression());
 			if(types!=null) {
-				ILocalBindingIdentity bid = new CPPBindingIdentity.Holder(
-						new String(name.toCharArray()),
-						PDOMCPPLinkage.CPPFUNCTION,
-						types);
-				FindEquivalentBinding feb = new FindEquivalentBinding(getLinkageImpl(), bid);
-				getIndex().accept(feb);
-				return feb.getResult();
+				return CPPFindBinding.findBinding(getIndex(), getPDOM(), name.toCharArray(), PDOMCPPLinkage.CPPFUNCTION, types);
 			}
 		} catch(DOMException de) {
 			CCorePlugin.log(de);
@@ -215,16 +207,7 @@ implements ICPPNamespace, ICPPNamespaceScope {
 	}
 
 	private PDOMBinding searchCurrentScope(char[] name, int[] constants) throws CoreException {
-		PDOMBinding result = null;
-		for(int i=0; result==null && i<constants.length; i++)
-			result = searchCurrentScope(name, constants[i]);
-		return result;
-	}
-
-	private PDOMBinding searchCurrentScope(char[] name, int constant) throws CoreException {
-		FindBindingByLinkageConstant visitor = new FindBindingByLinkageConstant(getLinkageImpl(), name, constant);
-		getIndex().accept(visitor);
-		return visitor.getResult();
+		return FindBinding.findBinding(getIndex(), getPDOM(), name, constants);
 	}
 
 	public boolean isFullyCached() throws DOMException {

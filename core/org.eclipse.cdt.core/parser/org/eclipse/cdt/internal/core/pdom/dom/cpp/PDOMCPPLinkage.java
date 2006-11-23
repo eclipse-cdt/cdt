@@ -56,29 +56,26 @@ import org.eclipse.cdt.core.dom.ast.gnu.cpp.GPPLanguage;
 import org.eclipse.cdt.core.model.ILanguage;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.internal.core.Util;
-import org.eclipse.cdt.internal.core.dom.bid.IBindingIdentityFactory;
-import org.eclipse.cdt.internal.core.dom.bid.ILocalBindingIdentity;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPBlockScope;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPImplicitMethod;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPPointerType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPSemantics;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
-import org.eclipse.cdt.internal.core.pdom.dom.FindBindingByLinkageConstant;
-import org.eclipse.cdt.internal.core.pdom.dom.FindEquivalentBinding;
+import org.eclipse.cdt.internal.core.pdom.db.IBTreeComparator;
+import org.eclipse.cdt.internal.core.pdom.dom.FindBinding;
 import org.eclipse.cdt.internal.core.pdom.dom.IPDOMMemberOwner;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMLinkage;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNotImplementedError;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.Status;
 
 /**
  * @author Doug Schaefer
  *
  */
-class PDOMCPPLinkage extends PDOMLinkage {
+public class PDOMCPPLinkage extends PDOMLinkage {
 	public PDOMCPPLinkage(PDOM pdom, int record) {
 		super(pdom, record);
 	}
@@ -211,7 +208,7 @@ class PDOMCPPLinkage extends PDOMLinkage {
 		return pdomBinding;
 	}
 
-	protected int getBindingType(IBinding binding) {
+	public int getBindingType(IBinding binding) {
 		if (binding instanceof ICPPTemplateDefinition)
 			// this must be before class type
 			return 0;
@@ -257,25 +254,14 @@ class PDOMCPPLinkage extends PDOMLinkage {
 			// so if the binding is from another pdom it has to be adapted. 
 		}
 
-		FindEquivalentBinding visitor = new FindEquivalentBinding(this, binding);
 		PDOMNode parent = getAdaptedParent(binding);
 
 		if (parent == this) {
-			getIndex().accept(visitor);
-			return visitor.getResult();
+			return CPPFindBinding.findBinding(getIndex(), this, binding);
 		} else if (parent instanceof IPDOMMemberOwner) {
-			IPDOMMemberOwner owner = (IPDOMMemberOwner)parent;
-			try {
-				owner.accept(visitor);
-			} catch (CoreException e) {
-				if (e.getStatus().equals(Status.OK_STATUS))
-					return visitor.getResult();
-				else
-					throw e;
-			}
+			return CPPFindBinding.findBinding(parent, this, binding);
 		} else if (parent instanceof PDOMCPPNamespace) {
-			((PDOMCPPNamespace)parent).getIndex().accept(visitor);
-			return visitor.getResult();
+			return CPPFindBinding.findBinding(((PDOMCPPNamespace)parent).getIndex(), this, binding);
 		}
 
 		return null;
@@ -344,13 +330,12 @@ class PDOMCPPLinkage extends PDOMLinkage {
 								IASTExpression left = ((IASTBinaryExpression) epParent).getOperand1();
 								IType type = CPPSemantics.getUltimateType(left.getExpressionType(), false);
 								if (type instanceof IFunctionType) {
-									ILocalBindingIdentity lbi = new CPPBindingIdentity.Holder(
-											new String(name.toCharArray()),
+									return CPPFindBinding.findBinding(getIndex(),
+											getPDOM(),
+											name.toCharArray(),
 											CPPFUNCTION,
-											((IFunctionType) type).getParameterTypes());
-									FindEquivalentBinding feb = new FindEquivalentBinding(this, lbi);
-									getIndex().accept(feb);
-									return feb.getResult();
+											((IFunctionType) type).getParameterTypes()
+									);
 								}
 							}
 						}
@@ -387,17 +372,7 @@ class PDOMCPPLinkage extends PDOMLinkage {
 						IType type = ((ICPPVariable)fieldOwnerBinding).getType();
 						if(type instanceof ICompositeType) {
 							PDOMBinding pdomFOB = adaptBinding( (ICompositeType)  type);
-							FindBindingByLinkageConstant visitor = new FindBindingByLinkageConstant(this, name.toCharArray(), PDOMCPPLinkage.CPPFIELD);
-							try {
-								pdomFOB.accept(visitor);
-							} catch (CoreException e) {
-								if (e.getStatus().equals(Status.OK_STATUS)) {
-									return visitor.getResult();
-								}
-								else {
-									throw e;
-								}
-							}
+							return FindBinding.findBinding(pdomFOB, getPDOM(), name.toCharArray(), new int [] {PDOMCPPLinkage.CPPFIELD});
 						}
 					}
 				}
@@ -417,12 +392,10 @@ class PDOMCPPLinkage extends PDOMLinkage {
 	}
 
 	private PDOMBinding searchCurrentScope(char[] name, int constant) throws CoreException {
-		FindBindingByLinkageConstant visitor = new FindBindingByLinkageConstant(getLinkageImpl(), name, constant);
-		getIndex().accept(visitor);
-		return visitor.getResult();
+		return FindBinding.findBinding(getIndex(), getPDOM(), name, new int [] {constant});
 	}
 
-	
+
 	/**
 	 * Read type information from the AST or null if the types could not be determined
 	 * @param paramExp the parameter expression to get types for (null indicates void function/method)
@@ -477,26 +450,19 @@ class PDOMCPPLinkage extends PDOMLinkage {
 		IType[] types = getTypes(paramExp);
 		if (types != null) {
 			IBinding parentBinding = id.getName().getBinding();
-			ILocalBindingIdentity bid = null;
 
 			if (parentBinding instanceof ICPPVariable) {
 
 				ICPPVariable v = (ICPPVariable) parentBinding;
 				IType type = v.getType();
 				if (type instanceof PDOMBinding) {
-					bid = new CPPBindingIdentity.Holder(new String(name
-							.toCharArray()), CPPMETHOD, types);
-					FindEquivalentBinding feb = new FindEquivalentBinding(this,
-							bid);
-					try {
-						((PDOMBinding) type).accept(feb);
-					} catch (CoreException e) {
-						if (e.getStatus().equals(Status.OK_STATUS)) {
-							return feb.getResult();
-						} else {
-							throw e;
-						}
-					}
+					return CPPFindBinding.findBinding(
+							((PDOMBinding) type),
+							getPDOM(),
+							name.toCharArray(),
+							CPPMETHOD,
+							types
+					);
 				}
 			} else {
 				IASTNode expPNode = callExp.getParent();
@@ -508,31 +474,23 @@ class PDOMCPPLinkage extends PDOMLinkage {
 						IASTExpression left = bExp.getOperand1();
 						IType t = CPPSemantics.getUltimateType(left.getExpressionType(), false);
 						if (t instanceof PDOMCPPClassType) {
-							bid = new CPPBindingIdentity.Holder(
-									new String(name.toCharArray()),
+							return CPPFindBinding.findBinding(
+									((PDOMCPPClassType) t),
+									getPDOM(),
+									name.toCharArray(),
 									CPPMETHOD,
-									types);
-							FindEquivalentBinding feb = new FindEquivalentBinding(this, bid);
-							try {
-								((PDOMCPPClassType) t).accept(feb);
-							} catch (CoreException e) {
-								if (e.getStatus().equals(Status.OK_STATUS)) {
-									return feb.getResult();
-								} else {
-									throw e;
-								}
-							}
-							return null;
+									types
+							);
 						}
 					}
 				} else { // filescope
-					bid = new CPPBindingIdentity.Holder(
-							new String(name.toCharArray()),
+					return CPPFindBinding.findBinding(
+							getIndex(),
+							getPDOM(),
+							name.toCharArray(),
 							CPPFUNCTION,
-							types);
-					FindEquivalentBinding feb = new FindEquivalentBinding(this,bid);
-					getIndex().accept(feb);
-					return feb.getResult();
+							types
+					);
 				}
 			}
 		}
@@ -549,19 +507,9 @@ class PDOMCPPLinkage extends PDOMLinkage {
 		if(index!=-1) {
 			if (index == 0) {
 				// we are at the root
-				FindBindingByLinkageConstant finder = new FindBindingByLinkageConstant(
-						this, name.toCharArray(), CPPNAMESPACE);
-
-				getIndex().accept(finder);
-				if (finder.getResult() == null) {
-					finder = new FindBindingByLinkageConstant(this, name.toCharArray(), CPPCLASSTYPE);
-					getIndex().accept(finder);
-				}
-				if (finder.getResult() == null) {
-					finder = new FindBindingByLinkageConstant(this, name.toCharArray(), CPPNAMESPACEALIAS);
-					getIndex().accept(finder);
-				}
-				return finder.getResult();
+				return FindBinding.findBinding(getIndex(), getPDOM(), name.toCharArray(), new int[]{
+					CPPNAMESPACE, CPPCLASSTYPE, CPPNAMESPACEALIAS
+				});
 			} else {
 				try {
 					PDOMBinding binding = adaptBinding(names[index-1].getBinding());
@@ -638,11 +586,7 @@ class PDOMCPPLinkage extends PDOMLinkage {
 		}
 	}
 
-	public ILocalBindingIdentity getLocalBindingIdentity(IBinding b) throws CoreException {
-		return new CPPBindingIdentity(b, this);
-	}
-
-	public IBindingIdentityFactory getBindingIdentityFactory() {
-		return this;
+	public IBTreeComparator getIndexComparator() {
+		return new CPPFindBinding.CPPBindingBTreeComparator(pdom);
 	}
 }

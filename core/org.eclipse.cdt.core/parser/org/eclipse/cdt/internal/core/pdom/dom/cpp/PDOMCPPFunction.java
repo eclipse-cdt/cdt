@@ -13,7 +13,9 @@
 package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
 import org.eclipse.cdt.core.dom.ast.DOMException;
+import org.eclipse.cdt.core.dom.ast.IBasicType;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IFunctionType;
 import org.eclipse.cdt.core.dom.ast.IParameter;
@@ -49,15 +51,20 @@ class PDOMCPPFunction extends PDOMCPPBinding implements ICPPFunction, ICPPFuncti
 	private static final int FIRST_PARAM = PDOMBinding.RECORD_SIZE + 4;
 
 	/**
+	 * Offset of hash of parameter information to allow fast comparison
+	 */
+	private static final int SIGNATURE_MEMENTO = PDOMBinding.RECORD_SIZE + 8;
+	
+	/**
 	 * Offset of annotation information (relative to the beginning of the
 	 * record).
 	 */
-	private static final int ANNOTATION = PDOMBinding.RECORD_SIZE + 8; // byte
+	protected static final int ANNOTATION = PDOMBinding.RECORD_SIZE + 12; // byte
 	
 	/**
 	 * The size in bytes of a PDOMCPPFunction record in the database.
 	 */
-	protected static final int RECORD_SIZE = PDOMBinding.RECORD_SIZE + 9;
+	protected static final int RECORD_SIZE = PDOMBinding.RECORD_SIZE + 13;
 	
 	public PDOMCPPFunction(PDOM pdom, PDOMNode parent, ICPPFunction function) throws CoreException {
 		super(pdom, parent, function.getNameCharArray());
@@ -72,6 +79,8 @@ class PDOMCPPFunction extends PDOMCPPBinding implements ICPPFunction, ICPPFuncti
 				setFirstParameter(new PDOMCPPParameter(pdom, this, params[i]));
 			}
 			db.putByte(record + ANNOTATION, PDOMCPPAnnotation.encodeAnnotation(binding));
+			IFunctionType ftype = function.getType();
+			db.putInt(record + SIGNATURE_MEMENTO, getSignatureMemento(ftype.getParameterTypes()));
 		} catch (DOMException e) {
 			throw new CoreException(Util.createStatus(e));
 		}
@@ -81,6 +90,14 @@ class PDOMCPPFunction extends PDOMCPPBinding implements ICPPFunction, ICPPFuncti
 		super(pdom, bindingRecord);
 	}
 
+	public int getSignatureMemento() throws CoreException {
+		return pdom.getDB().getInt(record + SIGNATURE_MEMENTO);
+	}
+	
+	public static int getSignatureMemento(PDOM pdom, int record) throws CoreException {
+		return pdom.getDB().getInt(record + SIGNATURE_MEMENTO);
+	}
+	
 	protected int getRecordSize() {
 		return RECORD_SIZE;
 	}
@@ -201,4 +218,29 @@ class PDOMCPPFunction extends PDOMCPPBinding implements ICPPFunction, ICPPFuncti
 		throw new PDOMNotImplementedError();
 	}
 
+	public static int getSignatureMemento(IType[] types) throws DOMException {
+		if(types.length==1) {
+			if(types[0] instanceof IBasicType) {
+				if(((IBasicType)types[0]).getType()==IBasicType.t_void) {
+					types = new IType[0];
+				}
+			}
+		}
+	
+		StringBuffer result = new StringBuffer();
+		result.append('(');
+		for(int i=0; i<types.length; i++) {
+			if (i>0) {
+				result.append(',');
+			}
+			result.append(ASTTypeUtil.getType(types[i]));
+		}
+		result.append(')');
+		return result.toString().hashCode();
+	}
+
+	public static int getSignatureMemento(IFunctionType type) throws DOMException {
+		IType[] params = type.getParameterTypes();	
+		return getSignatureMemento(params);
+	}
 }

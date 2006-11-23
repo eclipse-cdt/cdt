@@ -36,17 +36,14 @@ import org.eclipse.cdt.core.dom.ast.c.ICBasicType;
 import org.eclipse.cdt.core.dom.ast.gnu.c.GCCLanguage;
 import org.eclipse.cdt.core.model.ILanguage;
 import org.eclipse.cdt.internal.core.Util;
-import org.eclipse.cdt.internal.core.dom.bid.IBindingIdentityFactory;
-import org.eclipse.cdt.internal.core.dom.bid.ILocalBindingIdentity;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
-import org.eclipse.cdt.internal.core.pdom.dom.FindBindingByLinkageConstant;
-import org.eclipse.cdt.internal.core.pdom.dom.FindEquivalentBinding;
+import org.eclipse.cdt.internal.core.pdom.db.IBTreeComparator;
+import org.eclipse.cdt.internal.core.pdom.dom.FindBinding;
 import org.eclipse.cdt.internal.core.pdom.dom.IPDOMMemberOwner;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMLinkage;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.Status;
 
 /**
  * @author Doug Schaefer
@@ -148,7 +145,7 @@ class PDOMCLinkage extends PDOMLinkage {
 		return pdomBinding;
 	}
 
-	protected int getBindingType(IBinding binding) {
+	public int getBindingType(IBinding binding) {
 		if (binding instanceof IField)
 			// This needs to be before variable
 			return CFIELD;
@@ -178,23 +175,12 @@ class PDOMCLinkage extends PDOMLinkage {
 			// so if the binding is from another pdom it has to be adapted. 
 		}
 
-		
-		FindEquivalentBinding visitor = new FindEquivalentBinding(this, binding);
 		PDOMNode parent = getAdaptedParent(binding);
 
 		if (parent == this) {
-			getIndex().accept(visitor);
-			return visitor.getResult();
+			return FindBinding.findBinding(getIndex(), getPDOM(), binding.getNameCharArray(), new int[] {getBindingType(binding)});
 		} else if (parent instanceof IPDOMMemberOwner) {
-			IPDOMMemberOwner owner = (IPDOMMemberOwner)parent;
-			try {
-				owner.accept(visitor);
-			} catch (CoreException e) {
-				if (e.getStatus().equals(Status.OK_STATUS))
-					return visitor.getResult();
-				else
-					throw e;
-			}
+			return FindBinding.findBinding(parent, getPDOM(), binding.getNameCharArray(), new int[] {getBindingType(binding)});
 		}
 		
 		return null;
@@ -241,47 +227,25 @@ class PDOMCLinkage extends PDOMLinkage {
 		} else if (parent instanceof ICASTElaboratedTypeSpecifier) {
 			constant = CSTRUCTURE;
 		} else if (parent instanceof IASTNamedTypeSpecifier){
-			FindBindingByLinkageConstant finder = new FindBindingByLinkageConstant(this, name.toCharArray(), CSTRUCTURE);
-			getIndex().accept(finder);
-			PDOMBinding result = finder.getResult();
-			if(result==null) {
-				finder = new FindBindingByLinkageConstant(this, name.toCharArray(), CENUMERATION);
-				getIndex().accept(finder);
-				result = finder.getResult();
-			}
-			if(result==null) {
-				finder = new FindBindingByLinkageConstant(this, name.toCharArray(), CTYPEDEF);
-				getIndex().accept(finder);
-				result = finder.getResult();
-			}
-			return result;
+			return FindBinding.findBinding(getIndex(), getPDOM(), name.toCharArray(), new int [] {CSTRUCTURE, CENUMERATION, CTYPEDEF});
 		} else {
 			return null;
 		}
 		
-		FindBindingByLinkageConstant finder = new FindBindingByLinkageConstant(this, name.toCharArray(), constant);
-		getIndex().accept(finder);
-		return finder.getResult();
+		return FindBinding.findBinding(getIndex(), getPDOM(), name.toCharArray(), new int[] {constant});
 	}
 
 	public PDOMNode addType(PDOMNode parent, IType type) throws CoreException {
 		if (type instanceof ICBasicType) {
 			return new PDOMCBasicType(pdom, parent, (ICBasicType)type);
 		} else if (type instanceof ICompositeType) {
-			FindEquivalentBinding feb = new FindEquivalentBinding(this,(ICompositeType)type);
-			getIndex().accept(feb);
-			if(feb.getResult()!=null) {
-				return feb.getResult();
-			}
+			ICompositeType ctype = (ICompositeType) type;
+			return FindBinding.findBinding(getIndex(), getPDOM(), ctype.getNameCharArray(), new int[] {getBindingType(ctype)});  
 		}
 		return super.addType(parent, type); 
 	}
 	
-	public ILocalBindingIdentity getLocalBindingIdentity(IBinding b) throws CoreException {
-		return new CBindingIdentity(b, this);
-	}
-	
-	public IBindingIdentityFactory getBindingIdentityFactory() {
-		return this;
+	public IBTreeComparator getIndexComparator() {
+		return new FindBinding.DefaultBindingBTreeComparator(getPDOM());
 	}
 }

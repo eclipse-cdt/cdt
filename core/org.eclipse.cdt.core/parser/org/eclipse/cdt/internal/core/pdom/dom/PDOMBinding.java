@@ -191,12 +191,7 @@ public abstract class PDOMBinding extends PDOMNamedNode implements IIndexFragmen
 	abstract protected int getRecordSize(); // superclass's implementation is no longer valid
 	
 	public String toString() {
-		try {
-			return getLinkageImpl().getLocalBindingIdentity(this).toString();
-		} catch(CoreException ce) {
-			CCorePlugin.log(ce);
-			return super.toString();
-		}
+		return getName() + " " + getNodeType();  //$NON-NLS-1$
 	}
 	
 	/**

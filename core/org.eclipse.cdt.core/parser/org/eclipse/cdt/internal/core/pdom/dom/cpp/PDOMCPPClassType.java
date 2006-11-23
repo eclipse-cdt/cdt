@@ -42,19 +42,16 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.internal.core.Util;
-import org.eclipse.cdt.internal.core.dom.bid.ILocalBindingIdentity;
 import org.eclipse.cdt.internal.core.index.IIndexProxyBinding;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.db.PDOMNodeLinkedList;
-import org.eclipse.cdt.internal.core.pdom.dom.FindBindingByLinkageConstant;
-import org.eclipse.cdt.internal.core.pdom.dom.FindEquivalentBinding;
+import org.eclipse.cdt.internal.core.pdom.dom.FindBinding;
 import org.eclipse.cdt.internal.core.pdom.dom.IPDOMMemberOwner;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMLinkage;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNotImplementedError;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.Status;
 
 /**
  * @author Doug Schaefer
@@ -388,21 +385,7 @@ ICPPClassScope, IPDOMMemberOwner {
 		try {
 			IType[] types = PDOMCPPLinkage.getTypes(fce.getParameterExpression());
 			if(types!=null) {
-				ILocalBindingIdentity bid = new CPPBindingIdentity.Holder(
-						new String(name.toCharArray()),
-						PDOMCPPLinkage.CPPFUNCTION,
-						types);
-				FindEquivalentBinding feb = new FindEquivalentBinding(getLinkageImpl(), bid);
-				try {
-					accept(feb);
-				} catch(CoreException e) {
-					if (e.getStatus().equals(Status.OK_STATUS)) {
-						return feb.getResult();
-					} else {
-						CCorePlugin.log(e);
-					}
-				}
-				return feb.getResult();
+				return CPPFindBinding.findBinding(this, getPDOM(), name.toCharArray(), PDOMCPPLinkage.CPPFUNCTION, types);
 			}
 		} catch(DOMException de) {
 			CCorePlugin.log(de);
@@ -419,17 +402,7 @@ ICPPClassScope, IPDOMMemberOwner {
 	}
 	
 	private IBinding searchCurrentScope(char[] name, int constant) throws CoreException {
-		FindBindingByLinkageConstant visitor = new FindBindingByLinkageConstant(getLinkageImpl(), name, constant);
-		try {
-			accept(visitor);
-		} catch(CoreException e) {
-			if (e.getStatus().equals(Status.OK_STATUS)) {
-				return visitor.getResult();
-			} else {
-				CCorePlugin.log(e);
-			}
-		}
-		return null;
+		return FindBinding.findBinding(this, getPDOM(), name, new int [] {constant});
 	}
 	
 	// Not implemented

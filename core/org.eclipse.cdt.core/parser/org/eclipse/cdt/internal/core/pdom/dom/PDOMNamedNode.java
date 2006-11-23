@@ -54,6 +54,12 @@ public abstract class PDOMNamedNode extends PDOMNode {
 		return db.getString(namerec);
 	}
 	
+	public static IString getDBName(PDOM pdom, int record) throws CoreException {
+		Database db = pdom.getDB();
+		int namerec = db.getInt(record + NAME);
+		return db.getString(namerec);
+	}
+	
 	public char[] getNameCharArray() throws CoreException {
 		return getDBName().getChars(); 
 	}
@@ -87,5 +93,4 @@ public abstract class PDOMNamedNode extends PDOMNode {
 		int mask = 1 << offset;
 		return (bitVector & mask) == mask;
 	}
-
 }

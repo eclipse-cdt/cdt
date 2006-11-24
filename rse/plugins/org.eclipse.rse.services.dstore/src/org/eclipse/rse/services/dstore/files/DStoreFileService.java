@@ -596,6 +596,10 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 			de = hostFile._element;
 		}
 		long fileLength = DStoreHostFile.getFileLength(de.getSource());
+		if (monitor != null)
+		{
+			monitor.beginTask(remotePath, (int)fileLength);
+		}
 		
 		
 		DataElement remoteElement = ds.createObject(universaltemp, de.getType(), remotePath, String.valueOf(mode));

@@ -7,93 +7,98 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Norbert Ploett (Siemens AG)
+ *     Anton Leherbauer (Wind River Systems)
  *******************************************************************************/
 
 package org.eclipse.cdt.internal.ui.editor;
 
-import org.eclipse.cdt.internal.ui.text.CTextTools;
-import org.eclipse.cdt.internal.ui.util.ExternalEditorInput;
-import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IStorage;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.jface.text.IDocument;
+import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.jface.text.source.AnnotationModel;
 import org.eclipse.jface.text.source.IAnnotationModel;
-import org.eclipse.ui.editors.text.FileDocumentProvider;
+import org.eclipse.ui.IPathEditorInput;
+import org.eclipse.ui.IStorageEditorInput;
+import org.eclipse.ui.editors.text.ILocationProvider;
 
-public class ExternalSearchDocumentProvider extends FileDocumentProvider {
+import org.eclipse.cdt.core.resources.FileStorage;
+import org.eclipse.cdt.ui.CUIPlugin;
+
+import org.eclipse.cdt.internal.ui.util.ExternalEditorInput;
+
+public class ExternalSearchDocumentProvider extends CStorageDocumentProvider {
 	
+	/** Location attribute for breakpoints. See <code>ICBreakpoint.SOURCE_HANDLE</code> */
+	private static final String DEBUG_SOURCE_HANDLE = "org.eclipse.cdt.debug.core.sourceHandle"; //$NON-NLS-1$	
+
 	public ExternalSearchDocumentProvider(){
 		super();
 	}
 
 	/*
-	 * @see AbstractDocumentProvider#createElementInfo(Object)
+	 * @see org.eclipse.ui.editors.text.StorageDocumentProvider#createAnnotationModel(java.lang.Object)
 	 */
-	protected ElementInfo createElementInfo(Object element) throws CoreException {
-		
+	protected IAnnotationModel createAnnotationModel(Object element) throws CoreException {
 		if (element instanceof ExternalEditorInput) {
-		
-			ExternalEditorInput externalInput = (ExternalEditorInput) element;
-			
-			IDocument d = createDocument(externalInput);
-			IAnnotationModel m= createExternalSearchAnnotationModel(externalInput);
-
-			FileInfo info= new FileInfo(d, m, null);
-			return info;
+			return createExternalSearchAnnotationModel((ExternalEditorInput)element);
 		}
-		return super.createElementInfo(element);
+		if (element instanceof IStorageEditorInput) {
+			IStorage storage= ((IStorageEditorInput)element).getStorage();
+			if (storage.getFullPath() != null) {
+				return createExternalSearchAnnotationModel(storage, null);
+			}
+		}
+		if (element instanceof IPathEditorInput) {
+			IPath path= ((IPathEditorInput)element).getPath();
+			IStorage storage= new FileStorage(path);
+			return createExternalSearchAnnotationModel(storage, null);
+		}
+		if (element instanceof IAdaptable) {
+			IAdaptable adaptable= (IAdaptable) element;
+			ILocationProvider provider= (ILocationProvider) adaptable.getAdapter(ILocationProvider.class);
+			if (provider != null) {
+				IPath path= provider.getPath(element);
+				IStorage storage= new FileStorage(path);
+				return createExternalSearchAnnotationModel(storage, null);
+			}
+		}
+		return super.createAnnotationModel(element);
+	}
+
+	/**
+	 * Create an annotation model for the given {@link ExternalEditorInput}.
+	 * 
+	 * @param externalInput
+	 * @return  a new annotation model for the external editor input
+	 */
+	private IAnnotationModel createExternalSearchAnnotationModel(ExternalEditorInput externalInput) {
+		IStorage storage = externalInput.getStorage();
+		IResource markerResource = externalInput.getMarkerResource();
+		return createExternalSearchAnnotationModel(storage, markerResource);
 	}
 	
 	/**
-	 * @param externalInput
-	 * @return  a new annotation model for the editor input
+	 * Create an annotation model for the given file and associated resource marker.
+	 * 
+	 * @param storage  the file in the form of a <code>IStorage</code>
+	 * @param markerResource  the resource to retrieve markers from, may be <code>null</code>
+	 * @return  a new annotation model for the file
 	 */
-	private IAnnotationModel createExternalSearchAnnotationModel(ExternalEditorInput externalInput) {
-	
-		IStorage storage = externalInput.getStorage();
-		
-		IResource resourceToUseForMarker = null;
-		
-		IFile resourceFile = CUIPlugin.getWorkspace().getRoot().getFileForLocation(storage.getFullPath());
-
-		if (resourceFile == null){
-			
-			resourceToUseForMarker = externalInput.getMarkerResource();
-			
-			if (null==resourceToUseForMarker) {
-				IProject[] proj = CUIPlugin.getWorkspace().getRoot()
-						.getProjects();
-				for (int i = 0; i < proj.length; i++) {
-					if (proj[i].isOpen()) {
-						resourceToUseForMarker = proj[i];
-						break;
-					}
-				}
-			}			
+	private IAnnotationModel createExternalSearchAnnotationModel(IStorage storage, IResource markerResource) {
+		AnnotationModel model= null;
+		if (markerResource != null){
+			model = new ExternalSearchAnnotationModel(markerResource, storage);
+		} else {
+			// no marker resource available - search workspace root and all project resources (depth one)
+			markerResource= CUIPlugin.getWorkspace().getRoot();
+			model = new ExternalSearchAnnotationModel(markerResource, storage, IResource.DEPTH_ONE);
 		}
-		else {
-			resourceToUseForMarker = resourceFile.getProject();
-		}
-		
-		if (resourceToUseForMarker != null){
-			ExternalSearchAnnotationModel model = new ExternalSearchAnnotationModel(resourceToUseForMarker, storage);
-			return model;
-		}
-		return null;
+		// attach annotation model for C breakpoints
+		model.addAnnotationModel("debugMarkerModel", new ExternalSearchAnnotationModel(markerResource, storage, IResource.DEPTH_ZERO, DEBUG_SOURCE_HANDLE)); //$NON-NLS-1$
+		return model;
 	}
 
-	/*
-	 * @see AbstractDocumentProvider#createDocument(Object)
-	 */
-	protected IDocument createDocument(Object element) throws CoreException {
-		IDocument document= super.createDocument(element);
-		if (document != null){
-			CTextTools textTools = CUIPlugin.getDefault().getTextTools();
-			textTools.setupCDocument(document);
-		}
-		return document;
-	}
 }

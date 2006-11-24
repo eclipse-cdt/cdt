@@ -6,8 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * QNX Software Systems - Initial API and implementation
- * Anton Leherbauer (Wind River Systems)
+ *     QNX Software Systems - Initial API and implementation
+ *     Anton Leherbauer (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.editor;
 
@@ -73,6 +73,7 @@ import org.eclipse.cdt.internal.core.model.IBufferFactory;
 import org.eclipse.cdt.internal.ui.CFileElementWorkingCopy;
 import org.eclipse.cdt.internal.ui.CPluginImages;
 import org.eclipse.cdt.internal.ui.text.IProblemRequestorExtension;
+import org.eclipse.cdt.internal.ui.util.ExternalEditorInput;
 
 /**
  * CDocumentProvider2
@@ -863,6 +864,7 @@ public class CDocumentProvider extends TextFileDocumentProvider {
 			if (fileBufferAnnotationModel != null) {
 				((AnnotationModel)tuInfo.fModel).addAnnotationModel("secondaryModel", fileBufferAnnotationModel); //$NON-NLS-1$
 			}
+			tuInfo.fCachedReadOnlyState= true;
 		}
 		if (tuInfo.fModel instanceof TranslationUnitAnnotationModel) {
 			TranslationUnitAnnotationModel model= (TranslationUnitAnnotationModel) tuInfo.fModel;
@@ -875,6 +877,30 @@ public class CDocumentProvider extends TextFileDocumentProvider {
 			extension.setIsActive(isHandlingTemporaryProblems());
 		}
 		return tuInfo;
+	}
+
+	/*
+	 * @see org.eclipse.ui.editors.text.TextFileDocumentProvider#isReadOnly(java.lang.Object)
+	 */
+	public boolean isReadOnly(Object element) {
+		// external editor input must not be modified
+		// because of missing functionality in CFileElementWorkingCopy
+		if (element instanceof ExternalEditorInput) {
+			return true;
+		}
+		return super.isReadOnly(element);
+	}
+
+	/*
+	 * @see org.eclipse.ui.editors.text.TextFileDocumentProvider#isModifiable(java.lang.Object)
+	 */
+	public boolean isModifiable(Object element) {
+		// external editor input must not be modified
+		// because of missing functionality in CFileElementWorkingCopy
+		if (element instanceof ExternalEditorInput) {
+			return false;
+		}
+		return super.isModifiable(element);
 	}
 
 	/*
@@ -1051,20 +1077,6 @@ public class CDocumentProvider extends TextFileDocumentProvider {
 		Iterator e = getConnectedElementsIterator();
 		while (e.hasNext())
 			disconnect(e.next());
-	}
-
-	/**
-	 * Returns the underlying resource for the given element.
-	 * 
-	 * @param element  the element
-	 * @return the underlying resource of the given element
-	 */
-	public IResource getUnderlyingResource(Object element) {
-		if (element instanceof IFileEditorInput) {
-			IFileEditorInput input= (IFileEditorInput) element;
-			return input.getFile();
-		}
-		return null;
 	}
 
 	public ILineTracker createLineTracker(Object element) {

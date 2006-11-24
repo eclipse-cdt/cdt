@@ -1,12 +1,13 @@
 /*******************************************************************************
- * Copyright (c) 2006 Siemens AG.
+ * Copyright (c) 2006 Siemens AG and others.
  * All rights reserved. This content and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * Norbert Ploett - Initial implementation
+ *     Norbert Ploett (Siemens AG)
+ *     Anton Leherbauer (Wind River Systems)
  *******************************************************************************/
 
 package org.eclipse.cdt.internal.ui.util;
@@ -17,31 +18,22 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.text.BadLocationException;
-import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.widgets.Event;
-import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IObjectActionDelegate;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.actions.ActionDelegate;
-import org.eclipse.ui.texteditor.ITextEditor;
+import org.eclipse.ui.ide.IDE;
 
-import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICModelMarker;
 import org.eclipse.cdt.core.model.ICProject;
-import org.eclipse.cdt.core.model.ITranslationUnit;
-import org.eclipse.cdt.core.resources.FileStorage;
 import org.eclipse.cdt.ui.CUIPlugin;
 
 import org.eclipse.cdt.internal.core.model.CModelManager;
 
-import org.eclipse.cdt.internal.ui.editor.ExternalSearchEditor;
-
-public class OpenExternalProblemAction extends ActionDelegate implements IObjectActionDelegate  
- {
+public class OpenExternalProblemAction extends ActionDelegate implements IObjectActionDelegate {
 	
 	IStructuredSelection selection ;
 
@@ -59,38 +51,16 @@ public class OpenExternalProblemAction extends ActionDelegate implements IObject
 				IMarker marker = (IMarker) object;
 				Object attributeObject = marker.getAttribute(ICModelMarker.C_MODEL_MARKER_EXTERNAL_LOCATION);
 				if (attributeObject instanceof String)  {
-					String externalLocation = (String) attributeObject ;
+					String externalLocation = (String) attributeObject;
 					IPath externalPath = new Path(externalLocation);
-					IEditorPart editor = null ;
-					// Try to open a C editor with the project and the path
-					ICProject cproject = getCProject(marker);
-					if (null!=cproject) {
-						ITranslationUnit tu = CoreModel.getDefault()
-								.createTranslationUnitFrom(cproject,
-										externalPath);
-						if (null!=tu)  {
-							editor = EditorUtility.openInEditor(tu);
-						}
-					}  else  {
-						// Open in plain external editor
-						IEditorInput input = new ExternalEditorInput(new FileStorage(externalPath), marker.getResource());
-						editor = CUIPlugin.getActivePage().openEditor(input, ExternalSearchEditor.EDITOR_ID);
-					}
-					if (editor instanceof ITextEditor) {
-						int lineNumber = marker.getAttribute(IMarker.LINE_NUMBER, 0);
-						int currentOffset = 0 ;
-						int currentLength = 0;
-						ITextEditor textEditor = (ITextEditor) editor;
-						IEditorInput ediinput = textEditor.getEditorInput();
-						IDocument document = textEditor.getDocumentProvider().getDocument(ediinput);
-						try {
-							currentOffset = document.getLineOffset(lineNumber-1);
-						} catch (BadLocationException e) {
-						}
-						textEditor.selectAndReveal(currentOffset, currentLength);
+
+					IEditorPart editor = EditorUtility.openInEditor(externalPath, getCProject(marker));
+					if (editor != null) {
+						IDE.gotoMarker(editor, marker);
 					}
 				}
 			} catch (CoreException e) {
+				CUIPlugin.getDefault().log(e.getStatus());
 			}
 		}
 	}
@@ -123,6 +93,5 @@ public class OpenExternalProblemAction extends ActionDelegate implements IObject
 			}
 		}
 	}
-
 	
 }

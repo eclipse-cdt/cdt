@@ -17,20 +17,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 
-import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.model.CModelException;
-import org.eclipse.cdt.core.model.CoreModel;
-import org.eclipse.cdt.core.model.ICElement;
-import org.eclipse.cdt.core.model.ICProject;
-import org.eclipse.cdt.core.model.ITranslationUnit;
-import org.eclipse.cdt.core.parser.IScannerInfo;
-import org.eclipse.cdt.core.parser.IScannerInfoProvider;
-import org.eclipse.cdt.internal.ui.CPluginImages;
-import org.eclipse.cdt.internal.ui.dialogs.ElementListSelectionDialog;
-import org.eclipse.cdt.internal.ui.util.EditorUtility;
-import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.resources.IContainer;
-import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceProxy;
@@ -51,6 +38,17 @@ import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.ui.IEditorDescriptor;
 import org.eclipse.ui.IEditorRegistry;
 import org.eclipse.ui.PlatformUI;
+
+import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.model.CModelException;
+import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.parser.IScannerInfo;
+import org.eclipse.cdt.core.parser.IScannerInfoProvider;
+import org.eclipse.cdt.ui.CUIPlugin;
+
+import org.eclipse.cdt.internal.ui.CPluginImages;
+import org.eclipse.cdt.internal.ui.dialogs.ElementListSelectionDialog;
+import org.eclipse.cdt.internal.ui.util.EditorUtility;
 
 
 public class OpenIncludeAction extends Action {
@@ -117,25 +115,7 @@ public class OpenIncludeAction extends Action {
 			}
 			
 			if (fileToOpen != null) {
-				IFile file = ResourcesPlugin.getWorkspace().getRoot().getFileForLocation(fileToOpen);
-				if (file != null) {
-					EditorUtility.openInEditor(file);
-				}  else {
-					ICProject cproject = include.getCProject();
-					ITranslationUnit unit = CoreModel.getDefault().createTranslationUnitFrom(cproject, fileToOpen);
-					if (unit != null) {
-						EditorUtility.openInEditor(unit);
-					} else {
-						// try linked files
-						IFile[] files = ResourcesPlugin.getWorkspace().getRoot().findFilesForLocation(fileToOpen);
-						for(int i=0; i<files.length; i++) {
-							if (files[i].isAccessible()) {
-								EditorUtility.openInEditor(files[i]);
-								break;
-							}
-						}
-					}
-				}
+				EditorUtility.openInEditor(fileToOpen, include);
 			} 
 		} catch (CModelException e) {
 			CUIPlugin.getDefault().log(e.getStatus());

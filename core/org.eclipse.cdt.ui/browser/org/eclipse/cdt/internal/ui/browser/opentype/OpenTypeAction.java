@@ -10,16 +10,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.browser.opentype;
 
-import org.eclipse.cdt.core.browser.AllTypesCache;
-import org.eclipse.cdt.core.browser.ITypeInfo;
-import org.eclipse.cdt.core.browser.ITypeReference;
-import org.eclipse.cdt.core.model.CModelException;
-import org.eclipse.cdt.core.model.ITranslationUnit;
-import org.eclipse.cdt.core.resources.FileStorage;
-import org.eclipse.cdt.internal.ui.util.EditorUtility;
-import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.core.resources.IStorage;
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -32,6 +22,15 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowActionDelegate;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.texteditor.ITextEditor;
+
+import org.eclipse.cdt.core.browser.AllTypesCache;
+import org.eclipse.cdt.core.browser.ITypeInfo;
+import org.eclipse.cdt.core.browser.ITypeReference;
+import org.eclipse.cdt.core.model.CModelException;
+import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.cdt.ui.CUIPlugin;
+
+import org.eclipse.cdt.internal.ui.util.EditorUtility;
 
 public class OpenTypeAction implements IWorkbenchWindowActionDelegate {
 
@@ -96,11 +95,7 @@ public class OpenTypeAction implements IWorkbenchWindowActionDelegate {
 				editorPart = EditorUtility.openInEditor(unit);
 			if (editorPart == null) {
 				// open as external file
-				IPath path = location.getLocation();
-				if (path != null) {
-					IStorage storage = new FileStorage(path);
-					editorPart = EditorUtility.openInEditor(storage);
-				}
+				editorPart = EditorUtility.openInEditor(location.getLocation(), null);
 			}
 
 			// highlight the type in the editor

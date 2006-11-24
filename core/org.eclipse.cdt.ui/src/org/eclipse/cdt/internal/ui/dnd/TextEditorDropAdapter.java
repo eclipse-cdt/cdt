@@ -38,8 +38,6 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Caret;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.ui.IEditorDescriptor;
-import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PartInitException;
@@ -360,10 +358,7 @@ public class TextEditorDropAdapter extends DropTargetAdapter implements
 						null));
 			}
 			if (file.canRead()) {
-				IEditorInput editorInput= EditorUtility.getEditorInputForLocation(path);
-				IEditorDescriptor desc= IDE.getEditorDescriptor(file.getName());
-				String editorId= desc.getId();
-				IDE.openEditor(getPage(), editorInput, editorId);
+				EditorUtility.openInEditor(path, null);
 			} else {
 				throw new CoreException(new Status(IStatus.ERROR, CUIPlugin
 						.getPluginId(), 0, CUIMessages.getFormattedString(

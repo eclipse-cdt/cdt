@@ -134,6 +134,7 @@ public class ExternalEditorInput implements ITranslationUnitEditorInput {
 	public ExternalEditorInput(ITranslationUnit unit, IStorage exFile) {
 		this(exFile, exFile.getFullPath());
 		this.unit = unit;
+		markerResource= unit.getCProject().getProject();
 	}
 
 	public ExternalEditorInput(IStorage exFile) {

@@ -8,28 +8,15 @@
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
  *     Markus Schorn (Wind River Systems)
+ *     Norbert Ploett (Siemens AG)
+ *     Anton Leherbauer (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.util;
-
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.text.MessageFormat;
-
-import org.eclipse.cdt.core.model.CModelException;
-import org.eclipse.cdt.core.model.CoreModel;
-import org.eclipse.cdt.core.model.IBinary;
-import org.eclipse.cdt.core.model.IBuffer;
-import org.eclipse.cdt.core.model.ICElement;
-import org.eclipse.cdt.core.model.ISourceReference;
-import org.eclipse.cdt.core.model.ITranslationUnit;
-import org.eclipse.cdt.core.model.IWorkingCopy;
-import org.eclipse.cdt.core.resources.FileStorage;
-import org.eclipse.cdt.internal.ui.editor.CEditor;
-import org.eclipse.cdt.internal.ui.editor.CEditorMessages;
-import org.eclipse.cdt.internal.ui.editor.ITranslationUnitEditorInput;
-import org.eclipse.cdt.ui.CUIPlugin;
 
 import org.eclipse.core.filebuffers.FileBuffers;
 import org.eclipse.core.resources.IContainer;
@@ -41,6 +28,8 @@ import org.eclipse.core.resources.IStorage;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.content.IContentType;
 import org.eclipse.jface.action.Action;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.MessageBox;
@@ -52,15 +41,31 @@ import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.editors.text.EditorsUI;
 import org.eclipse.ui.part.FileEditorInput;
-import org.eclipse.ui.texteditor.ITextEditor;
+
+import org.eclipse.cdt.core.model.CModelException;
+import org.eclipse.cdt.core.model.CoreModel;
+import org.eclipse.cdt.core.model.IBinary;
+import org.eclipse.cdt.core.model.IBuffer;
+import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.core.model.ISourceReference;
+import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.cdt.core.model.IWorkingCopy;
+import org.eclipse.cdt.core.resources.FileStorage;
+import org.eclipse.cdt.ui.CUIPlugin;
+
+import org.eclipse.cdt.internal.ui.editor.CEditor;
+import org.eclipse.cdt.internal.ui.editor.CEditorMessages;
+import org.eclipse.cdt.internal.ui.editor.ITranslationUnitEditorInput;
 
 public class EditorUtility {
 
 	/**
 	 * The ID of the default text editor
 	 */
-	public static final String DEFAULT_TEXT_EDITOR_ID = "org.eclipse.ui.DefaultTextEditor"; //$NON-NLS-1$
+	public static final String DEFAULT_TEXT_EDITOR_ID = EditorsUI.DEFAULT_TEXT_EDITOR_ID;
 
 	private EditorUtility () {
 	}
@@ -88,18 +93,18 @@ public class EditorUtility {
 		return null;
 	}
 
-
 	/**
-	 * Opens a Java editor for an element such as <code>IJavaElement</code>, <code>IFile</code>, or <code>IStorage</code>.
+	 * Opens an editor for an element such as <code>ICElement</code>, 
+	 * <code>IFile</code>, or <code>IStorage</code>.
 	 * The editor is activated by default.
 	 * @return the IEditorPart or null if wrong element type or opening failed
 	 */
 	public static IEditorPart openInEditor(Object inputElement) throws CModelException, PartInitException {
 		return openInEditor(inputElement, true);
 	}
-                
+
 	/**
-	 * Opens a Java editor for an element (IJavaElement, IFile, IStorage...)
+	 * Opens an editor for an element (ICElement, IFile, IStorage...)
 	 * @return the IEditorPart or null if wrong element type or opening failed
 	 */
 	public static IEditorPart openInEditor(Object inputElement, boolean activate) throws CModelException, PartInitException {
@@ -109,15 +114,11 @@ public class EditorUtility {
 		}
                 
 		IEditorInput input = getEditorInput(inputElement);
-		//if (input instanceof IFileEditorInput) {
-		//	IFileEditorInput fileInput= (IFileEditorInput) input;
-		//	return openInEditor(fileInput.getFile(), activate);
-		//}
                 
 		if (input != null) {
 			return openInEditor(input, getEditorID(input, inputElement), activate);
 		}
-                        
+		
 		return null;
 	}
 
@@ -184,8 +185,8 @@ public class EditorUtility {
 	}
 
 	/**
+	 * Open error dialog about closed project.
 	 * @param project
-	 * 
 	 */
 	private static void closedProject(IProject project) {
 		MessageBox errorMsg = new MessageBox(CUIPlugin.getActiveWorkbenchShell(), SWT.ICON_ERROR | SWT.OK);
@@ -201,21 +202,10 @@ public class EditorUtility {
 			IWorkbenchPage p= CUIPlugin.getActivePage();
 			if (p != null) {
 				IEditorPart editorPart= p.openEditor(input, editorID, activate);
-				initializeHighlightRange(editorPart);
 				return editorPart;
 			}
 		}
 		return null;
-	}
-
-	private static void initializeHighlightRange(IEditorPart editorPart) {
-		if (editorPart instanceof ITextEditor) {
-			//TogglePresentationAction toggleAction= new TogglePresentationAction();
-			// Initialize editor
-			//toggleAction.setEditor((ITextEditor)editorPart);
-			// Reset action
-			//toggleAction.setEditor(null);
-		}
 	}
 
 	private static IEditorInput getEditorInput(ICElement element) throws CModelException {
@@ -253,11 +243,9 @@ public class EditorUtility {
 		if (input instanceof ICElement) {
 			return getEditorInput((ICElement) input);
 		}
-                        
 		if (input instanceof IFile) { 
 			return new FileEditorInput((IFile) input);
 		}
-
 		if (input instanceof IStorage) { 
 			return new ExternalEditorInput((IStorage)input);
 		}
@@ -270,16 +258,65 @@ public class EditorUtility {
 	 * is returned, otherwise, the input is an <code>IStorageEditorInput</code>
 	 * assuming the location points to an existing file in the file system.
 	 * 
-	 * @param location a valid file system location
+	 * @param location  a valid file system location
 	 * @return an editor input
+	 * @deprecated Use {@link #getEditorInputForLocation(IPath, ICElement)} instead
 	 */
 	public static IEditorInput getEditorInputForLocation(IPath location) {
+		return getEditorInputForLocation(location, null);
+	}
+
+	/**
+	 * Utility method to open an editor for the given file system location
+	 * using {@link #getEditorInputForLocation(IPath, ICElement)} to create
+	 * the editor input.
+	 * 
+	 * @param location  a file system location
+	 * @param element  an element related to the target file, may be <code>null</code>
+	 * @throws PartInitException 
+	 */
+	public static IEditorPart openInEditor(IPath location, ICElement element) throws PartInitException {
+		IEditorInput input= getEditorInputForLocation(location, element);
+		return EditorUtility.openInEditor(input, getEditorID(input, element), true);		
+	}
+
+	/**
+	 * Utility method to get an editor input for the given file system location.
+	 * If the location denotes a workspace file, a <code>FileEditorInput</code>
+	 * is returned, otherwise, the input is an <code>IStorageEditorInput</code>
+	 * assuming the location points to an existing file in the file system.
+	 * The <code>ICElement</code> is used to determine the associated project
+	 * in case the location can not be resolved to a workspace <code>IFile</code>.
+	 * 
+	 * @param location  a valid file system location
+	 * @param element  an element related to the target file, may be <code>null</code>
+	 * @return an editor input
+	 */
+	public static IEditorInput getEditorInputForLocation(IPath location, ICElement element) {
 		IFile resource= FileBuffers.getWorkspaceFileAtLocation(location);
 		if (resource != null) {
 			return new FileEditorInput(resource);
-		} else {
-			return new ExternalEditorInput(new FileStorage(location));
+		} else if (element != null) {
+			// try to get a translation unit from the location and associated element
+			ICProject cproject= element.getCProject();
+			if (cproject != null) {
+				ITranslationUnit unit = CoreModel.getDefault().createTranslationUnitFrom(cproject, location);
+				if (unit != null) {
+					return new ExternalEditorInput(unit, new FileStorage(location));
+				}
+			}
+			// no translation unit - still try to get a sensible marker resource
+			// from the associated element
+			if (element instanceof IWorkingCopy && ((IWorkingCopy) element).isWorkingCopy()) {
+				element= ((IWorkingCopy) element).getOriginalElement();
+			}
+			IResource markerResource= null;
+			if (element != null) {
+				markerResource= element.getUnderlyingResource();
+			}
+			return new ExternalEditorInput(new FileStorage(location), markerResource);
 		}
+		return new ExternalEditorInput(new FileStorage(location));
 	}
 
 
@@ -316,30 +353,13 @@ public class EditorUtility {
 		return cu.findSharedWorkingCopy(CUIPlugin.getDefault().getBufferFactory());
 	}
 
-
-//	/**
-//	 * Returns the translation unit for the given c element.
-//	 * @param element the c element whose compilation unit is searched for
-//	 * @return the compilation unit of the given java element
-//	 */
-//	private static ITranslationUnit getTranslationUnit(ICElement element) {
-//                
-//		if (element == null)
-//			return null;
-//
-//		int type= element.getElementType();
-//		if (ICElement.C_UNIT == type) {
-//			return (ITranslationUnit) element;
-//		}
-//		if (ICElement.C_BINARY == type) {
-//			return null;
-//		}
-//		if (element instanceof ISourceReference) {
-//			return ((ISourceReference) element).getTranslationUnit();
-//		}
-//		return getTranslationUnit(element.getParent());
-//	}
-
+	/**
+	 * Determine the editor id from the given file name using
+	 * the workspace-wide content-type definitions.
+	 * 
+	 * @param name  the file name
+	 * @return a valid editor id, never <code>null</code>
+	 */
 	public static String getEditorID(String name) {
 		IEditorRegistry registry = PlatformUI.getWorkbench().getEditorRegistry();
 		if (registry != null) {
@@ -347,27 +367,27 @@ public class EditorUtility {
 			if (descriptor != null) {
 				return descriptor.getId();
 			}
-			return registry.findEditor(DEFAULT_TEXT_EDITOR_ID).getId();
 		}
-		return null;
+		return DEFAULT_TEXT_EDITOR_ID;
 	}
 
+	/**
+	 * Determine the editor id from the given editor input and optional input object.
+	 * When a translation unit can be obtained, the project-specific content-type
+	 * mechanism is used to determine the correct editor id.
+	 * If that fails, the editor id is determined by file name and extension using
+	 * the workspace-wide content-type definitions.
+	 * 
+	 * @param input  the editor input
+	 * @param inputObject  the input object (used to create the editor input) or <code>null</code>
+	 * @return a valid editor id, never <code>null</code>
+	 */
 	public static String getEditorID(IEditorInput input, Object inputObject) {
-		String ID =  getEditorID(input.getName());
-
-		if (!"org.eclipse.ui.DefaultTextEditor".equals(ID)) { //$NON-NLS-1$
-			return ID;
-		}
-
-		// TODO:FIXME:HACK etc ...
-		// Unfortunately unless specifying all of possible headers in the plugin.xml
-		// and it is not possible(for example filenames: iostream, cstdlib, etc ...
-		// We try this hack here.  This is to be remove when the Eclipse Platform
-		// implement there contentious IContentType
 
 		ITranslationUnit tunit = null;
-
-		if (input instanceof IFileEditorInput) {
+		if (inputObject instanceof ITranslationUnit) {
+			tunit= (ITranslationUnit)inputObject;
+		} else if (input instanceof IFileEditorInput) {
 			IFileEditorInput editorInput = (IFileEditorInput)input;
 			IFile file = editorInput.getFile();
 			ICElement celement = CoreModel.getDefault().create(file);
@@ -379,20 +399,31 @@ public class EditorUtility {
 			tunit = editorInput.getTranslationUnit();
 		}
 
-		// Choose an a file base on the extension.
 		if (tunit != null) {
+			// Choose an editor based on the content type
+			String contentTypeId= tunit.getContentTypeId();
+			if (contentTypeId != null) {
+				IContentType contentType= Platform.getContentTypeManager().getContentType(contentTypeId);
+				IEditorRegistry registry = PlatformUI.getWorkbench().getEditorRegistry();
+				IEditorDescriptor desc= registry.getDefaultEditor(input.getName(), contentType);
+				if (desc != null) {
+					return desc.getId();
+				}
+			}
+			// Choose an editor based on the language (obsolete?)
 			if (tunit.isCLanguage()) {
-				return "org.eclipse.cdt.ui.editor.CEditor"; //$NON-NLS-1$
-				//return getEditorID("No_ExIsTeNt_FiLe.c");//$NON-NLS-1$
+				return CUIPlugin.EDITOR_ID;
 			} else if (tunit.isCXXLanguage()) {
-				return "org.eclipse.cdt.ui.editor.CEditor"; //$NON-NLS-1$
-				//return getEditorID("No_ExIsTeNt_FiLe.cpp");//$NON-NLS-1$
+				return CUIPlugin.EDITOR_ID;
 			} else if (tunit.isASMLanguage()) {
 				return "org.eclipse.cdt.ui.editor.asm.AsmEditor"; //$NON-NLS-1$
 			}
 		}
 
-		return ID;
+		// Choose an editor based on filename/extension
+		String editorId = getEditorID(input.getName());
+
+		return editorId;
 	}
 
 	/**

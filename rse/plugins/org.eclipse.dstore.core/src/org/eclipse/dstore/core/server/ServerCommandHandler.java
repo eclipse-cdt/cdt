@@ -197,7 +197,6 @@ public class ServerCommandHandler extends CommandHandler
 
 			String commandSource = command.getSource();
 			String commandName = command.getName();
-			System.out.println(commandName);
 
 
 			if (commandName.equals(DataStoreSchema.C_VALIDATE_TICKET))

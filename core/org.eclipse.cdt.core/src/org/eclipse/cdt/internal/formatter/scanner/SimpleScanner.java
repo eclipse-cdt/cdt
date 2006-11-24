@@ -729,7 +729,9 @@ public class SimpleScanner {
 	    while (c != '\n' && c != EOFCHAR) {
 	        c = getChar();
 	    }
-	    ungetChar(c);
+	    if (c == EOFCHAR) {
+	    	ungetChar(c);
+	    }
 	}
 
 	private boolean matchMultilineComment() {

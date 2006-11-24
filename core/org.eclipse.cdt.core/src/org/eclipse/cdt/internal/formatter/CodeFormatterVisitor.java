@@ -1274,6 +1274,10 @@ public class CodeFormatterVisitor extends CPPASTVisitor {
 			scribe.printNextToken(Token.tIDENTIFIER, false);
 			scribe.printNextToken(Token.tCOLONCOLON);
 		}
+		if (peekNextToken() == Token.tCOMPL) {
+			// destructor
+			scribe.printNextToken(Token.tCOMPL, false);
+		}
 		scribe.printNextToken(Token.tIDENTIFIER, false);
 		return PROCESS_SKIP;
 	}

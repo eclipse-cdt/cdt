@@ -603,6 +603,10 @@ public class Scribe {
 	}
 
 	public void printRaw(int startOffset, int length) {
+		if (startOffset + length < scanner.getCurrentPosition()) {
+			// safeguard: don't move backwards
+			return;
+		}
 		boolean savedPreserveWS= preserveWhitespace;
 		boolean savedPreserveNL= preserveNewlines;
 		boolean savedSkipOverInactive= skipOverInactive;
@@ -1353,10 +1357,10 @@ public class Scribe {
 		boolean hasWhitespaces= false;
 		boolean hasComment= false;
 		boolean hasLineComment= false;
+		int count= 0;
 		while ((currentToken= scanner.nextToken()) != null) {
 			switch (currentToken.type) {
 			case Token.tWHITESPACE:
-				int count= 0;
 				char[] whiteSpaces= scanner.getCurrentTokenSource();
 				for (int i= 0, max= whiteSpaces.length; i < max; i++) {
 					switch (whiteSpaces[i]) {

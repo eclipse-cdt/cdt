@@ -8,6 +8,7 @@
  * Contributors:
  * QNX - Initial API and implementation
  * Markus Schorn (Wind River Systems)
+ * IBM Corporation
  *******************************************************************************/
 
 package org.eclipse.cdt.core.dom.ast.gnu.cpp;
@@ -30,6 +31,7 @@ import org.eclipse.cdt.core.model.IContributedModelBuilder;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.model.IWorkingCopy;
 import org.eclipse.cdt.core.parser.CodeReader;
+import org.eclipse.cdt.core.parser.IParserLogService;
 import org.eclipse.cdt.core.parser.IScanner;
 import org.eclipse.cdt.core.parser.IScannerInfo;
 import org.eclipse.cdt.core.parser.IScannerInfoProvider;
@@ -78,12 +80,12 @@ public class GPPLanguage extends AbstractLanguage {
 	
 	
 	public IASTTranslationUnit getASTTranslationUnit(CodeReader reader, IScannerInfo scanInfo,
-			ICodeReaderFactory codeReaderFactory, IIndex index) throws CoreException {
+			ICodeReaderFactory codeReaderFactory, IIndex index, IParserLogService log) throws CoreException {
 	    IScannerExtensionConfiguration scannerExtensionConfiguration= CPP_GNU_SCANNER_EXTENSION;
 		IScanner scanner = new DOMScanner(reader, scanInfo, ParserMode.COMPLETE_PARSE,
                 ParserLanguage.CPP, ParserFactory.createDefaultLogService(), scannerExtensionConfiguration, codeReaderFactory);
 	    //assume GCC
-		ISourceCodeParser parser = new GNUCPPSourceParser( scanner, ParserMode.COMPLETE_PARSE, ParserUtil.getParserLogService(),
+		ISourceCodeParser parser = new GNUCPPSourceParser( scanner, ParserMode.COMPLETE_PARSE, log,
 				new GPPParserExtensionConfiguration()  );
 
 	    // Parse

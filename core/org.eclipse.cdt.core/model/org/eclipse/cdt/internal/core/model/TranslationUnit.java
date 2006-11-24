@@ -8,6 +8,7 @@
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
  *     Markus Schorn (Wind River Systems)
+ *     IBM Corporation
  *******************************************************************************/
 
 package org.eclipse.cdt.internal.core.model;
@@ -770,7 +771,7 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 		
 		ILanguage language= getLanguage();
 		if (language != null) {
-			return language.getASTTranslationUnit(reader, scanInfo, codeReaderFactory, index);
+			return language.getASTTranslationUnit(reader, scanInfo, codeReaderFactory, index, ParserUtil.getParserLogService());
 		}
 		return null;
 	}

@@ -9,6 +9,7 @@
  *     QNX Software Systems - Initial API and implementation
  *     Sergey Prigogin, Google
  *     Anton Leherbauer (Wind River Systems)
+ *     IBM Corporation
  *******************************************************************************/
 package org.eclipse.cdt.internal.formatter;
 
@@ -26,6 +27,7 @@ import org.eclipse.cdt.core.model.ILanguage;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.parser.CodeReader;
 import org.eclipse.cdt.core.parser.IScannerInfo;
+import org.eclipse.cdt.core.parser.ParserUtil;
 import org.eclipse.cdt.core.parser.ScannerInfo;
 import org.eclipse.cdt.internal.core.dom.SavedCodeReaderFactory;
 import org.eclipse.core.resources.IFile;
@@ -163,7 +165,7 @@ public class CCodeFormatter extends CodeFormatter {
 			}
 			IASTTranslationUnit ast;
 			try {
-				ast= language.getASTTranslationUnit(reader, scanInfo, codeReaderFactory, null);
+				ast= language.getASTTranslationUnit(reader, scanInfo, codeReaderFactory, null, ParserUtil.getParserLogService());
 				CodeFormatterVisitor codeFormatter = new CodeFormatterVisitor(this.preferences, this.options, offset, length);
 				edit= codeFormatter.format(source, ast);
 			} catch (CoreException exc) {

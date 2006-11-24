@@ -8,6 +8,7 @@
  * Contributors:
  * QNX - Initial API and implementation
  * Markus Schorn (Wind River Systems)
+ * IBM Corporation
  *******************************************************************************/
 
 package org.eclipse.cdt.core.model;
@@ -18,6 +19,7 @@ import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.parser.CodeReader;
+import org.eclipse.cdt.core.parser.IParserLogService;
 import org.eclipse.cdt.core.parser.IScannerInfo;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
@@ -107,6 +109,17 @@ public interface ILanguage extends IAdaptable {
 	 */
 	public IContributedModelBuilder createModelBuilder(ITranslationUnit tu);
 
-	// mstodo javadoc
-	public IASTTranslationUnit getASTTranslationUnit(CodeReader reader, IScannerInfo scanInfo, ICodeReaderFactory fileCreator, IIndex index) throws CoreException;
+	/**
+	 * Construct an AST for the source code provided by <code>reader</code>.
+	 * @param reader source code to be parsed.
+	 * @param scanInfo provides include paths and defined symbols.
+	 * @param fileCreator factory that provides CodeReaders for files included
+	 *                    by the source code being parsed.
+	 * @param index (optional) index to use to provide support for ambiguity
+	 *              resolution.
+	 * @param log logger
+	 * @return an AST for the source code provided by reader.
+	 * @throws CoreException
+	 */
+	public IASTTranslationUnit getASTTranslationUnit(CodeReader reader, IScannerInfo scanInfo, ICodeReaderFactory fileCreator, IIndex index, IParserLogService log) throws CoreException;
 }

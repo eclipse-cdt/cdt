@@ -2704,7 +2704,9 @@ public class SystemViewRemoteFileAdapter
 
 		names = new String[children.length];
 		for (int idx = 0; idx < names.length; idx++)
+		{
 			names[idx] = ((IRemoteFile) children[idx]).getName();
+		}
 
 		return names;
 	}

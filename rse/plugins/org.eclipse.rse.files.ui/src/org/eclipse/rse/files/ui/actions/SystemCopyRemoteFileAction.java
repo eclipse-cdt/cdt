@@ -24,6 +24,9 @@ import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.rse.core.SystemBasePlugin;
+import org.eclipse.rse.core.filters.ISystemFilter;
+import org.eclipse.rse.core.filters.ISystemFilterPool;
+import org.eclipse.rse.core.filters.ISystemFilterPoolReferenceManager;
 import org.eclipse.rse.core.filters.ISystemFilterReference;
 import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.subsystems.ISubSystem;
@@ -387,6 +390,39 @@ public class SystemCopyRemoteFileAction extends SystemBaseCopyAction
 		}
 	    return targetContainer;
 	}
+	
+	private void invalidateFilterReferences(IRemoteFile targetFolder)
+	{		
+		String path = targetFolder.getAbsolutePath();
+		IRemoteFileSubSystem fileSS = targetFolder.getParentRemoteFileSubSystem();
+		ISystemFilterPoolReferenceManager mgr = fileSS.getSystemFilterPoolReferenceManager();
+		ISystemFilterPool[] pools = mgr.getReferencedSystemFilterPools();
+		for (int i = 0; i < pools.length; i++)
+		{
+			ISystemFilterPool pool = pools[i];
+			ISystemFilter[] filters = pool.getSystemFilters();
+			for (int f = 0; f < filters.length; f++)
+			{
+				String[] strs = filters[f].getFilterStrings();
+				for (int s = 0; s < strs.length; s++)
+				{
+					String str = strs[s];
+					int lastSep = str.lastIndexOf(fileSS.getSeparator());
+					if (lastSep > 0)
+					{
+						str = str.substring(0, lastSep);
+					}
+
+					//if (StringCompare.compare(str, path, true))
+					if (str.equals(path))	
+					{
+						ISystemFilterReference ref = mgr.getSystemFilterReference(fileSS, filters[f]);
+						ref.markStale(true);
+					}
+				}
+			}			
+		}
+	}
 
 	/**
 	 * Called after all the copy/move operations end, be it successfully or not.
@@ -408,13 +444,21 @@ public class SystemCopyRemoteFileAction extends SystemBaseCopyAction
           	  //  after it is refreshed via the remote_resource_created event.
           	  if (originatingViewer instanceof SystemView)
           	  {
-                 boolean selectedOk = ((SystemView)originatingViewer).selectRemoteObjects(targetFolder.getAbsolutePath(), fileSS, null);
+                // boolean selectedOk = ((SystemView)originatingViewer).selectRemoteObjects(targetFolder.getAbsolutePath(), fileSS, null);
                  //System.out.println(targetFolder.getAbsolutePath()+" selectedOK? " + selectedOk);
                  //if (selectedOk)
                  //  return;
           	  }
           }
 		}
+		
+		
+		targetFolder.markStale(true);	
+
+		// invalidate filters
+		invalidateFilterReferences(targetFolder);
+		
+		
 		RSEUIPlugin.getTheSystemRegistry().fireRemoteResourceChangeEvent(
 		   ISystemRemoteChangeEvents.SYSTEM_REMOTE_RESOURCE_CREATED, copiedFiles, targetFolder.getAbsolutePath(), fileSS, null, originatingViewer);
 		

@@ -48,11 +48,11 @@ import org.eclipse.swt.widgets.Label;
  *      if no title specified in the constructor.
  *  <li>Supports a {@link #setHelp(String)} method to set the wizard page's overall contextual help
  *  <li>Implements {@link org.eclipse.rse.ui.messages.ISystemMessageLine} so supports setting error messages as
- *       either strings or, preferably, {@link org.eclipse.rse.ui.messages.SystemMessage} objects.
+ *       either strings or, preferably, {@link SystemMessage} objects.
  *  <li>Supports an {@link #setInputObject(Object) input-object}, as passed from the wizard, which in turn is passed from the action.
  *  <li>Supports automatic assignment of unique mnemonics for all input-capable controls on the page, to add in accessibility.
  *  <li>Supports setting a default-focus control, which gets initial focus when the page is shown.
- *  <li>Supports helper methods to aid in population of the client area: {@link #addSeparatorLine(Composite,int)}, 
+ *  <li>Supports helper methods to aid in population of the client area: {@link #addSeparatorLine(Composite, int)}, 
  *      {@link #addFillerLine(Composite,int)} and {@link #addGrowableFillerLine(Composite,int)}.
  *  <li>Supports a simple {@link #setBusyCursor(boolean)} method to toggle the cursor between busy and normal
  * </ul>

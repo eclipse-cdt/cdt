@@ -336,6 +336,15 @@ public class BracketInserterTest extends TestCase {
 		assertSingleLinkedPosition(INCLUDE_OFFSET + 1);
 	}
 
+	public void testAngleBrackets_165837() throws Exception {
+		setCaret(BODY_OFFSET);
+		type("cout << \n\"aaa\" ");
+		type('<');
+		int caretOffset= getCaret();
+		assertFalse(">".equals(fDocument.get(caretOffset, 1)));
+		assertFalse(LinkedModeModel.hasInstalledModel(fDocument));
+	}
+
 	/* utilities */
 
 	private void assertSingleLinkedPosition(int offset) {

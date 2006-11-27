@@ -17,9 +17,11 @@ package org.eclipse.cdt.internal.ui.editor;
 
 import java.text.CharacterIterator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.ResourceBundle;
+import java.util.Set;
 import java.util.Stack;
 
 import org.eclipse.core.resources.IFile;
@@ -560,21 +562,8 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IR
 		private boolean isAngularIntroducer(String identifier) {
 			return identifier.length() > 0
 				&& (Character.isUpperCase(identifier.charAt(0))
-					|| identifier.equals("template") //$NON-NLS-1$
-					|| identifier.equals("vector") //$NON-NLS-1$
-					|| identifier.equals("list") //$NON-NLS-1$
-					|| identifier.equals("slist") //$NON-NLS-1$
-					|| identifier.equals("map") //$NON-NLS-1$
-					|| identifier.equals("set") //$NON-NLS-1$
-					|| identifier.equals("multimap") //$NON-NLS-1$
-					|| identifier.equals("multiset") //$NON-NLS-1$
-					|| identifier.equals("hash_map") //$NON-NLS-1$
-					|| identifier.equals("hash_set") //$NON-NLS-1$
-					|| identifier.equals("hash_multimap") //$NON-NLS-1$
-					|| identifier.equals("hash_multiset") //$NON-NLS-1$
-					|| identifier.equals("pair") //$NON-NLS-1$
-					|| identifier.endsWith("_ptr") //$NON-NLS-1$
-					|| identifier.endsWith("include")); //$NON-NLS-1$
+					|| angularIntroducers.contains(identifier)
+					|| identifier.endsWith("_ptr")); //$NON-NLS-1$
 		}
 
 		/*
@@ -607,7 +596,13 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IR
 				IRegion startLine = document.getLineInformationOfOffset(offset);
 				IRegion endLine = document.getLineInformationOfOffset(offset + length);
 
-				CHeuristicScanner scanner = new CHeuristicScanner(document);
+				ITypedRegion partition = TextUtilities.getPartition(document, ICPartitions.C_PARTITIONING, offset, true);
+				if (!IDocument.DEFAULT_CONTENT_TYPE.equals(partition.getType()) 
+						&& !ICPartitions.C_PREPROCESSOR.equals(partition.getType())) {
+					return;
+				}
+
+				CHeuristicScanner scanner = new CHeuristicScanner(document, ICPartitions.C_PARTITIONING, partition.getType());
 				int nextToken = scanner.nextToken(offset + length, endLine.getOffset() + endLine.getLength());
 				String next = nextToken == Symbols.TokenEOF ? null : document.get(offset, scanner.getPosition() - offset).trim();
 				int prevToken = scanner.previousToken(offset - 1, startLine.getOffset());
@@ -626,12 +621,7 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IR
 					case '<':
 						if (!(fCloseAngularBrackets && fCloseBrackets)
 								|| nextToken == Symbols.TokenLESSTHAN
-								|| 		   prevToken != Symbols.TokenLBRACE
-										&& prevToken != Symbols.TokenRBRACE
-										&& prevToken != Symbols.TokenSEMICOLON
-										&& prevToken != Symbols.TokenSTATIC
-										&& (prevToken != Symbols.TokenIDENT || !isAngularIntroducer(previous))
-										&& prevToken != Symbols.TokenEOF)
+								|| prevToken != Symbols.TokenIDENT || !isAngularIntroducer(previous))
 							return;
 						break;
 
@@ -656,11 +646,6 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IR
 					default:
 						return;
 				}
-
-				ITypedRegion partition = TextUtilities.getPartition(document, ICPartitions.C_PARTITIONING, offset, true);
-				if (!IDocument.DEFAULT_CONTENT_TYPE.equals(partition.getType()) 
-						&& !ICPartitions.C_PREPROCESSOR.equals(partition.getType()))
-					return;
 
 				if (!validateEditorInputState())
 					return;
@@ -1555,6 +1540,25 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IR
 	 */
 	private SemanticHighlightingManager fSemanticManager;
 
+	private static final Set angularIntroducers = new HashSet();
+	static {
+		angularIntroducers.add("template"); //$NON-NLS-1$
+		angularIntroducers.add("vector"); //$NON-NLS-1$
+		angularIntroducers.add("deque"); //$NON-NLS-1$
+		angularIntroducers.add("list"); //$NON-NLS-1$
+		angularIntroducers.add("slist"); //$NON-NLS-1$
+		angularIntroducers.add("map"); //$NON-NLS-1$
+		angularIntroducers.add("set"); //$NON-NLS-1$
+		angularIntroducers.add("multimap"); //$NON-NLS-1$
+		angularIntroducers.add("multiset"); //$NON-NLS-1$
+		angularIntroducers.add("hash_map"); //$NON-NLS-1$
+		angularIntroducers.add("hash_set"); //$NON-NLS-1$
+		angularIntroducers.add("hash_multimap"); //$NON-NLS-1$
+		angularIntroducers.add("hash_multiset"); //$NON-NLS-1$
+		angularIntroducers.add("pair"); //$NON-NLS-1$
+		angularIntroducers.add("include"); //$NON-NLS-1$
+	}
+	
 
 	/**
 	 * Default constructor.

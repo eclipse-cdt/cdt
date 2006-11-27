@@ -860,8 +860,10 @@ public abstract class RemoteFile implements IRemoteFile,  IAdaptable, Comparable
 		if (filter == null) {
 			filter = "*"; //$NON-NLS-1$
 		}
-		
-		if (con != null && con.length > 0) 
+	
+	// DKM - consider all containers so that we can tell if an empty one
+	// has been queried before (i.e. via IRemoteFile[0] as it's contents vs null)	
+//		if (con != null && con.length > 0) 
 		{
 			isContainer = true;
 		}

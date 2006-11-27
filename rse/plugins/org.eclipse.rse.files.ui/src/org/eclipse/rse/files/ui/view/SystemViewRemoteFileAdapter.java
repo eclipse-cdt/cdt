@@ -45,6 +45,7 @@ import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.model.ISystemMessageObject;
 import org.eclipse.rse.core.model.ISystemRegistry;
 import org.eclipse.rse.core.model.ISystemResourceSet;
+import org.eclipse.rse.core.model.SystemChildrenContentsType;
 import org.eclipse.rse.core.model.SystemMessageObject;
 import org.eclipse.rse.core.model.SystemWorkspaceResourceSet;
 import org.eclipse.rse.core.subsystems.ISubSystem;
@@ -522,6 +523,11 @@ public class SystemViewRemoteFileAdapter
 			{
 				AbstractTreeViewer atv = (AbstractTreeViewer) getViewer();
 				isOpen = atv.getExpandedState(element);
+				if (!isOpen)
+				{
+					if (!hasChildren(element))
+						isOpen = true;
+				}
 			}
 			if (file.isRoot())
 				return RSEUIPlugin.getDefault().getImageDescriptor(isOpen ? ISystemIconConstants.ICON_SYSTEM_ROOTDRIVEOPEN_ID : ISystemIconConstants.ICON_SYSTEM_ROOTDRIVE_ID);
@@ -783,6 +789,13 @@ public class SystemViewRemoteFileAdapter
 		    else {
 		        hasChildren = file.hasContents(RemoteChildrenContentsType.getInstance());
 		    }
+		}
+		else
+		{
+			// check that the children are actually there			
+			Object[] contents = file.getContents(RemoteChildrenContentsType.getInstance());
+			if (!file.isStale() && contents != null && contents.length == 0 )
+				hasChildren = false;
 		}
 
 		return hasChildren;

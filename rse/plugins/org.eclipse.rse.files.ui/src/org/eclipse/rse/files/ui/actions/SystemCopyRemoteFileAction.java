@@ -412,6 +412,16 @@ public class SystemCopyRemoteFileAction extends SystemBaseCopyAction
 					{
 						str = str.substring(0, lastSep);
 					}
+					IRemoteFile par = null;
+					try
+					{
+						par = fileSS.getRemoteFileObject(str);
+					}
+					catch (Exception e)
+					{			
+					}
+
+					str = par.getAbsolutePath();
 
 					//if (StringCompare.compare(str, path, true))
 					if (str.equals(path))	

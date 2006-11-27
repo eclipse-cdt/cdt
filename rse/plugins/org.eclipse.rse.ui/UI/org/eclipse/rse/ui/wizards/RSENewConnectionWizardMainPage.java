@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation. All rights reserved.
+ * Copyright (c) 2000, 2006 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -11,7 +11,8 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * Javier Montalvo Orús (Symbian) - Bug 149151: New Connection first page should use a Listbox for systemtype
+ * Javier Montalvo Orús (Symbian) - Bug 149151: Use a Listbox for systemtype
+ * Martin Oberhuber (Wind River) - Use SelectionListener instead of SWT Listener
  ********************************************************************************/
 
 package org.eclipse.rse.ui.wizards;
@@ -23,19 +24,18 @@ import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemResources;
 import org.eclipse.rse.ui.SystemWidgetHelpers;
-import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.List;
-import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Text;
 
 /**
  * The New Connection Wizard main page that allows selection of system type.
  */
-public class RSENewConnectionWizardMainPage extends AbstractSystemWizardPage implements Listener {
+public class RSENewConnectionWizardMainPage extends AbstractSystemWizardPage implements SelectionListener {
 	
 	protected String parentHelpId;
 	protected List textSystemType;
@@ -50,8 +50,8 @@ public class RSENewConnectionWizardMainPage extends AbstractSystemWizardPage imp
 	 * @param description the description of the wizard page.
 	 */
 	public RSENewConnectionWizardMainPage(IRSENewConnectionWizard wizard, String title, String description) {
-		super(wizard, "NewConnectionSystemType", title, description);
-        parentHelpId = RSEUIPlugin.HELPPREFIX + "wncc0000";
+		super(wizard, "NewConnectionSystemType", title, description); //$NON-NLS-1$
+        parentHelpId = RSEUIPlugin.HELPPREFIX + "wncc0000"; //$NON-NLS-1$
 	    setHelp(parentHelpId);
 	}
 
@@ -82,12 +82,10 @@ public class RSENewConnectionWizardMainPage extends AbstractSystemWizardPage imp
 			textSystemType = SystemWidgetHelpers.createSystemTypeListBox(parent, null, systemTypeNames);
 		}
 		
-		textSystemType.addListener(SWT.MouseDoubleClick, this);
-		
 		textSystemType.setToolTipText(SystemResources.RESID_CONNECTION_SYSTEMTYPE_TIP);
-		SystemWidgetHelpers.setHelp(textSystemType, RSEUIPlugin.HELPPREFIX + "ccon0003");
+		SystemWidgetHelpers.setHelp(textSystemType, RSEUIPlugin.HELPPREFIX + "ccon0003"); //$NON-NLS-1$
 		
-		textSystemType.addListener(SWT.Selection, this);
+		textSystemType.addSelectionListener(this);
 		
 		descriptionSystemType = SystemWidgetHelpers.createMultiLineTextField(parent,null,30);
 		descriptionSystemType.setEditable(false);
@@ -147,26 +145,30 @@ public class RSENewConnectionWizardMainPage extends AbstractSystemWizardPage imp
 	}
 
 	/**
-	 * @see org.eclipse.swt.widgets.Listener#handleEvent(org.eclipse.swt.widgets.Event)
+	 * Handle single-click on list
+	 * @see org.eclipse.swt.events.SelectionListener#widgetSelected(org.eclipse.swt.events.SelectionEvent)
 	 */
-	public void handleEvent(Event event) {
-		
-		if (((event.type == SWT.Selection) || (event.type == SWT.MouseDoubleClick)) && event.widget == textSystemType) {
+	public void widgetSelected(SelectionEvent e) {
+		IWizard wizard = getWizard();
+		if (wizard instanceof IRSENewConnectionWizard) {
+			String systemTypeStr = textSystemType.getSelection()[0];
+			IRSENewConnectionWizard newConnWizard = (IRSENewConnectionWizard)wizard;
 			
-			IWizard wizard = getWizard();
-		
-			if (wizard instanceof IRSENewConnectionWizard) {
-				String systemTypeStr = textSystemType.getSelection()[0];
-				IRSENewConnectionWizard newConnWizard = (IRSENewConnectionWizard)wizard;
-				
-				IRSESystemType systemType = RSECorePlugin.getDefault().getRegistry().getSystemType(systemTypeStr);
-				newConnWizard.setSelectedSystemType(systemType);
-				descriptionSystemType.setText(systemType.getDescription());
-				
-				if (event.type == SWT.MouseDoubleClick) {
-					newConnWizard.getContainer().showPage(getNextPage());
-				}
-			}
+			IRSESystemType systemType = RSECorePlugin.getDefault().getRegistry().getSystemType(systemTypeStr);
+			newConnWizard.setSelectedSystemType(systemType);
+			descriptionSystemType.setText(systemType.getDescription());
 		}
 	}
+
+	/**
+	 * Handle dbl-click on list: select, then go to next page
+	 * @see org.eclipse.swt.events.SelectionListener#widgetDefaultSelected(org.eclipse.swt.events.SelectionEvent)
+	 */
+	public void widgetDefaultSelected(SelectionEvent e) {
+		widgetSelected(e);
+		if (canFlipToNextPage()) {
+			getWizard().getContainer().showPage(getNextPage());
+		}
+	}
+
 }

@@ -125,7 +125,7 @@ implements  ISystemViewElementAdapter, ISystemRemoteElementAdapter, ISystemOutpu
 					{
 						IRemoteOutput result = (IRemoteOutput) firstSelection;
 						String type = result.getType();
-						if (type.equals("prompt"))
+						if (type.equals("prompt")) //$NON-NLS-1$
 						{
 						    if (_pasteToPromptAction == null)
 							{
@@ -134,7 +134,7 @@ implements  ISystemViewElementAdapter, ISystemRemoteElementAdapter, ISystemOutpu
 							
 							menu.add(menuGroup, _pasteToPromptAction);
 						}
-						else if (type.equals("directory"))
+						else if (type.equals("directory")) //$NON-NLS-1$
 						{
 							IRemoteOutput output = (IRemoteOutput)firstSelection;
 							if (output.getAbsolutePath() != null)
@@ -250,10 +250,10 @@ implements  ISystemViewElementAdapter, ISystemRemoteElementAdapter, ISystemOutpu
 			    text = translateTabs(text);
 			}
 			
-			int tagIndex = text.indexOf("BEGIN-END-TAG");
+			int tagIndex = text.indexOf("BEGIN-END-TAG"); //$NON-NLS-1$
 			if (tagIndex == 0)
 			{
-			    return "";
+			    return ""; //$NON-NLS-1$
 			}
 			else if (tagIndex > 0)
 			{
@@ -414,7 +414,7 @@ implements  ISystemViewElementAdapter, ISystemRemoteElementAdapter, ISystemOutpu
 	protected IEditorDescriptor getDefaultTextEditor()
 	{
 		IEditorRegistry registry = getEditorRegistry();
-		return registry.findEditor("org.eclipse.ui.DefaultTextEditor");
+		return registry.findEditor("org.eclipse.ui.DefaultTextEditor"); //$NON-NLS-1$
 	}
 	
 	/**
@@ -669,7 +669,7 @@ implements  ISystemViewElementAdapter, ISystemRemoteElementAdapter, ISystemOutpu
 		{
 			IRemoteOutput out = (IRemoteOutput) element;
 			String str = getAbsoluteParentName(element);
-			return str + ":" + out.getIndex();
+			return str + ":" + out.getIndex(); //$NON-NLS-1$
 		}
 		return null;
 	}
@@ -1072,8 +1072,9 @@ implements  ISystemViewElementAdapter, ISystemRemoteElementAdapter, ISystemOutpu
 	 * @param src the object to be copied.  If the target and source are not on the same system, then this is a
 	 * temporary object produced by the doDrag.
 	 * @param target the object to be copied to.
-	 * @param sameSystem an indication whether the target and source reside on the same type of system
-	 * @param indicates the type of source
+	 * @param sameSystemType an indication whether the target and source reside on the same type of system
+	 * @param sameSystem an indication whether the target and source reside on the same system
+	 * @param srcType the type of source
 	 * @param monitor the progress monitor
 	 * @return an indication whether the operation was successful or not.
 	 */
@@ -1202,7 +1203,7 @@ implements  ISystemViewElementAdapter, ISystemRemoteElementAdapter, ISystemOutpu
 			     }
 			}
 		}
-		return "";
+		return ""; //$NON-NLS-1$
 	}
 	
 

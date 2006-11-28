@@ -99,7 +99,7 @@ public class LocalFileSubSystemConfiguration extends FileServiceSubSystemConfigu
 		  pool = mgr.createSystemFilterPool(getDefaultFilterPoolName(mgr.getName(), getId()), true); // true=>is deletable by user
 		  if (pool == null) // hmmm, why would this happen?
 		  {
-			SystemBasePlugin.logError("Creating default filter pool "+getDefaultFilterPoolName(mgr.getName(), getId())+" for mgr "+mgr.getName()+" failed.",null);
+			SystemBasePlugin.logError("Creating default filter pool "+getDefaultFilterPoolName(mgr.getName(), getId())+" for mgr "+mgr.getName()+" failed.",null); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			return null;
 		  }
 		  //System.out.println("Pool created");
@@ -132,7 +132,7 @@ public class LocalFileSubSystemConfiguration extends FileServiceSubSystemConfigu
 		  }
 		} catch (Exception exc)
 		{
-			SystemBasePlugin.logError("Error creating default filter pool",exc);
+			SystemBasePlugin.logError("Error creating default filter pool",exc); //$NON-NLS-1$
 		}
 		return pool;
 	}

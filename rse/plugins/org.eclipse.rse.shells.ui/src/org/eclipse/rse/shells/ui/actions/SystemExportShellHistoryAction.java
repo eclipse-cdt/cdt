@@ -20,7 +20,6 @@ import java.io.FileWriter;
 
 import org.eclipse.rse.shells.ui.ShellResources;
 import org.eclipse.rse.shells.ui.view.SystemCommandsUI;
-import org.eclipse.rse.shells.ui.view.SystemCommandsViewPart;
 import org.eclipse.rse.subsystems.files.core.SystemFileResources;
 import org.eclipse.rse.subsystems.shells.core.subsystems.IRemoteCommandShell;
 import org.eclipse.rse.ui.ISystemIconConstants;
@@ -51,7 +50,8 @@ public class SystemExportShellHistoryAction extends SystemBaseShellAction
 	 */
 	public void run()
 	{
-		SystemCommandsViewPart viewPart = SystemCommandsUI.getInstance().activateCommandsView();
+		//SystemCommandsViewPart viewPart = \ 
+		SystemCommandsUI.getInstance().activateCommandsView();
 		for (int i = 0; i < _selected.size(); i++)
 		{
 		    IRemoteCommandShell cmdShell = (IRemoteCommandShell)_selected.get(i);
@@ -59,8 +59,8 @@ public class SystemExportShellHistoryAction extends SystemBaseShellAction
 		    
 			FileDialog fdlg = new FileDialog(getShell(), SWT.SAVE);
 			fdlg.setText(SystemFileResources.RESID_ENTER_OR_SELECT_FILE_TITLE);
-				fdlg.setFileName(cmdShell.getId() + "-history.txt");
-			fdlg.setFilterExtensions(new String[] {"*.txt"});
+				fdlg.setFileName(cmdShell.getId() + "-history.txt"); //$NON-NLS-1$
+			fdlg.setFilterExtensions(new String[] {"*.txt"}); //$NON-NLS-1$
 			String fileName = fdlg.open();
 			try
 			{
@@ -73,7 +73,7 @@ public class SystemExportShellHistoryAction extends SystemBaseShellAction
 			    {
 			        String cmd = cmds[o];
 			        writer.write(cmd);
-			        writer.write("\r\n");
+			        writer.write("\r\n"); //$NON-NLS-1$
 			       
 			    }
 			    writer.close();

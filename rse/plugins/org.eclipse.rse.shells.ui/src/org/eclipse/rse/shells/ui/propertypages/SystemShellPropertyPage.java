@@ -58,16 +58,16 @@ public class SystemShellPropertyPage extends SystemBasePropertyPage
 			}
 		}
 				
-		RSEUIPlugin.getDefault().getPreferenceStore().setValue("shell.encodingDefaults", history.toString());
+		RSEUIPlugin.getDefault().getPreferenceStore().setValue("shell.encodingDefaults", history.toString()); //$NON-NLS-1$
 	}
 	
 	public List getShellEncodingDefaults()
 	{
 		List result = new ArrayList();
-		String attribute = RSEUIPlugin.getDefault().getPreferenceStore().getString("shell.encodingDefaults");
+		String attribute = RSEUIPlugin.getDefault().getPreferenceStore().getString("shell.encodingDefaults"); //$NON-NLS-1$
 		if (attribute != null && attribute.length() > 0)
 		{
-			String[] list = attribute.split(",");
+			String[] list = attribute.split(","); //$NON-NLS-1$
 			for (int i = 0; i < list.length; i++)
 			{
 				result.add(list[i]);
@@ -75,12 +75,12 @@ public class SystemShellPropertyPage extends SystemBasePropertyPage
 		}
 		else
 		{			
-			result.add("UTF-8");
-			result.add("UTF-16");
-			result.add("US-ASCII");
-			result.add("ISO-8859-1");
-			result.add("Cp1252");
-			result.add("Cp1256");
+			result.add("UTF-8"); //$NON-NLS-1$
+			result.add("UTF-16"); //$NON-NLS-1$
+			result.add("US-ASCII"); //$NON-NLS-1$
+			result.add("ISO-8859-1"); //$NON-NLS-1$
+			result.add("Cp1252"); //$NON-NLS-1$
+			result.add("Cp1256"); //$NON-NLS-1$
 		}
 		return result;
 	}

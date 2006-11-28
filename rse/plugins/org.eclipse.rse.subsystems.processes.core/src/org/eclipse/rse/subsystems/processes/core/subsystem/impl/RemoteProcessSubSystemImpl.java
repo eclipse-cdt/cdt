@@ -153,7 +153,7 @@ public abstract class RemoteProcessSubSystemImpl extends SubSystem implements
 		}
 		catch (SystemMessageException e)
 		{
-			SystemBasePlugin.logError("Exception resolving roots", e);
+			SystemBasePlugin.logError("Exception resolving roots", e); //$NON-NLS-1$
 		}
 		return roots;
 	}

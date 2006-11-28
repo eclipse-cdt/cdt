@@ -18,7 +18,6 @@ package org.eclipse.rse.shells.ui.view;
 
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.action.Action;
-import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IStatusLineManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -27,7 +26,6 @@ import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
-import org.eclipse.rse.core.model.ISystemRegistry;
 import org.eclipse.rse.core.subsystems.IRemoteLineReference;
 import org.eclipse.rse.model.ISystemResourceChangeEvent;
 import org.eclipse.rse.model.ISystemResourceChangeEvents;
@@ -144,7 +142,7 @@ public class SystemBuildErrorViewPart extends ViewPart implements ISelectionList
    
    
    // constants			
-   public static final String ID = "org.eclipse.rse.shells.ui.view.buildErrorView";
+   public static final String ID = "org.eclipse.rse.shells.ui.view.buildErrorView"; //$NON-NLS-1$
    // matches id in plugin.xml, view tag	
 	
 	private SystemBuildErrorView _viewer;
@@ -186,7 +184,7 @@ public class SystemBuildErrorViewPart extends ViewPart implements ISelectionList
 
 		if (firstCall)
 		{
-			IMenuManager menuManager = actionBars.getMenuManager();
+			//IMenuManager menuManager = actionBars.getMenuManager();
 			_statusLine = actionBars.getStatusLineManager();
 			//addMenuItems(menuManager);
 		}
@@ -220,7 +218,7 @@ public class SystemBuildErrorViewPart extends ViewPart implements ISelectionList
 					handleDoubleClick(event);
 				}
 			});
-		SystemWidgetHelpers.setHelp(_viewer.getControl(), RSEUIPlugin.HELPPREFIX + "uerr0000");
+		SystemWidgetHelpers.setHelp(_viewer.getControl(), RSEUIPlugin.HELPPREFIX + "uerr0000"); //$NON-NLS-1$
 		fillLocalToolBar();
 	}
 
@@ -351,7 +349,7 @@ public class SystemBuildErrorViewPart extends ViewPart implements ISelectionList
 			Object source = event.getSource();
 			if (source instanceof IRemoteCmdSubSystem)
 			{
-				Shell shell = RSEUIPlugin.getTheSystemRegistry().getShell();
+				//Shell shell = RSEUIPlugin.getTheSystemRegistry().getShell();
 				//shell.getDisplay().asyncExec(new CommandSubSystemDisconnectedRunnable((RemoteCmdSubSystem) source));
 			}
 			else

@@ -21,7 +21,6 @@ import java.io.FileWriter;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.rse.shells.ui.ShellResources;
 import org.eclipse.rse.shells.ui.view.SystemCommandsUI;
-import org.eclipse.rse.shells.ui.view.SystemCommandsViewPart;
 import org.eclipse.rse.subsystems.files.core.SystemFileResources;
 import org.eclipse.rse.subsystems.shells.core.subsystems.IRemoteCommandShell;
 import org.eclipse.rse.ui.ISystemIconConstants;
@@ -53,15 +52,16 @@ public class SystemExportShellOutputAction extends SystemBaseShellAction
 	 */
 	public void run()
 	{
-		SystemCommandsViewPart viewPart = SystemCommandsUI.getInstance().activateCommandsView();
+		//SystemCommandsViewPart viewPart = \ 
+		SystemCommandsUI.getInstance().activateCommandsView();
 		for (int i = 0; i < _selected.size(); i++)
 		{
 		    IRemoteCommandShell cmdShell = (IRemoteCommandShell)_selected.get(i);
 
 			FileDialog fdlg = new FileDialog(getShell(),SWT.SAVE);
 			fdlg.setText(SystemFileResources.RESID_ENTER_OR_SELECT_FILE_TITLE);
-			fdlg.setFileName(cmdShell.getId() + "-output.txt");
-			fdlg.setFilterExtensions(new String[] {"*.txt"});
+			fdlg.setFileName(cmdShell.getId() + "-output.txt"); //$NON-NLS-1$
+			fdlg.setFilterExtensions(new String[] {"*.txt"}); //$NON-NLS-1$
 			String fileName = fdlg.open();
 			try
 			{
@@ -79,7 +79,7 @@ public class SystemExportShellOutputAction extends SystemBaseShellAction
 			        if (adapter != null)
 			        {
 			            writer.write(adapter.getText(output));
-			            writer.write("\r\n");
+			            writer.write("\r\n"); //$NON-NLS-1$
 			        }
 			    }
 			    writer.close();

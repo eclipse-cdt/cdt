@@ -97,7 +97,7 @@ public class SshServiceCommandShell extends ServiceCommandShell implements ISyst
 				try {
 					
 					// Bug 160202: Remote shell dies.
-					if ((_curCommand == null) || (!_curCommand.trim().equals("ls"))) {
+					if ((_curCommand == null) || (!_curCommand.trim().equals("ls"))) { //$NON-NLS-1$
 						parsedMsg = _patterns.matchLine(line);
 						
 						// Bug 160202: Remote shell dies.
@@ -109,8 +109,8 @@ public class SshServiceCommandShell extends ServiceCommandShell implements ISyst
 								String token1 = tokenizer.nextToken();
 								String token2 = tokenizer.nextToken();
 								
-								if ((token1.equals("ls")) && (token2.indexOf('-') == 0) && (token2.indexOf('l') > 0)) {
-									if (line.startsWith("total")) {
+								if ((token1.equals("ls")) && (token2.indexOf('-') == 0) && (token2.indexOf('l') > 0)) { //$NON-NLS-1$
+									if (line.startsWith("total")) { //$NON-NLS-1$
 										parsedMsg = null;
 									}
 								}

@@ -169,7 +169,7 @@ public abstract class RemoteProcessSubSystemConfiguration extends
 		      // ----------------------
 		      filterStrings = new Vector();
 		      HostProcessFilterImpl myProcessesFilterString = new HostProcessFilterImpl();
-		      myProcessesFilterString.setUsername("${user.id}");
+		      myProcessesFilterString.setUsername("${user.id}"); //$NON-NLS-1$
 		      
 		      filterStrings.add(myProcessesFilterString.toString());
 		      filter = mgr.createSystemFilter(pool, SystemProcessesCoreResources.RESID_PROPERTY_PROCESS_MYPROCESSESFILTER_LABEL,filterStrings);
@@ -178,7 +178,7 @@ public abstract class RemoteProcessSubSystemConfiguration extends
 		  }
 		} catch (Exception exc)
 		{
-			SystemBasePlugin.logError("Error creating default filter pool",exc);
+			SystemBasePlugin.logError("Error creating default filter pool",exc); //$NON-NLS-1$
 		}
 		return pool;
 	}

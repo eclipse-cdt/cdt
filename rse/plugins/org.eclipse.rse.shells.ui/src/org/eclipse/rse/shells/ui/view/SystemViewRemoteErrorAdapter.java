@@ -18,7 +18,6 @@ package org.eclipse.rse.shells.ui.view;
 
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.rse.subsystems.shells.core.subsystems.IRemoteError;
-import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemMenuManager;
 import org.eclipse.rse.ui.view.SystemViewResources;
 import org.eclipse.swt.widgets.Shell;
@@ -54,7 +53,7 @@ public class SystemViewRemoteErrorAdapter extends SystemViewRemoteOutputAdapter
 					int i = -1;
 
 					// add our unique property descriptors...
-					RSEUIPlugin plugin = RSEUIPlugin.getDefault();
+					//RSEUIPlugin plugin = RSEUIPlugin.getDefault();
 
 					// path
 					_uniquePropertyDescriptorArray[++i] = createSimplePropertyDescriptor(P_ERROR_FILENAME, SystemViewResources.RESID_PROPERTY_ERROR_FILENAME_LABEL, SystemViewResources.RESID_PROPERTY_ERROR_FILENAME_TOOLTIP);

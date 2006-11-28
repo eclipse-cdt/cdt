@@ -30,7 +30,7 @@ public class SystemShowInShellViewAction extends SystemBaseShellAction
 {
 	/**
 	 * Constructor.
-	 * @param shell  Shell of parent window, used as the parent for the dialog.
+	 * @param parent Shell of parent window, used as the parent for the dialog.
 	 *               Can be null, but be sure to call setParent before the action is used (ie, run).
 	 */
 	public SystemShowInShellViewAction(Shell parent)

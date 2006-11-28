@@ -354,7 +354,7 @@ public class SystemCommandAction extends SystemBaseAction
 			{
 				try
 				{
-					Shell shell = getShell();
+					//Shell shell = getShell();
 					IRemoteCmdSubSystem cmdSubSystem = RemoteCommandHelpers.getCmdSubSystem(currSubSystem.getHost());
 					return cmdSubSystem;
 				}
@@ -377,7 +377,7 @@ public class SystemCommandAction extends SystemBaseAction
 
 			try
 			{
-				Shell shell = getShell();
+				//Shell shell = getShell();
 				
 				if (_selectedFilterRef != null)
 				{
@@ -459,7 +459,7 @@ public class SystemCommandAction extends SystemBaseAction
 	{
 		try
 		{
-			Shell shell = getShell();
+			//Shell shell = getShell();
 			if (_selectedFilterRef != null)
 			{
 				ISystemViewElementAdapter adapter = (ISystemViewElementAdapter)((IAdaptable)_selectedFilterRef).getAdapter(ISystemViewElementAdapter.class);

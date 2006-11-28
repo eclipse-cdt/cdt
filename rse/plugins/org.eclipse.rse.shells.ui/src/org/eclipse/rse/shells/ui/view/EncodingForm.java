@@ -130,7 +130,7 @@ public class EncodingForm extends SystemBaseForm
 	{		
 		if (usingDefault())
 		{
-			return "";
+			return ""; //$NON-NLS-1$
 		}
 		return _encodingCombo.getText();
 	}

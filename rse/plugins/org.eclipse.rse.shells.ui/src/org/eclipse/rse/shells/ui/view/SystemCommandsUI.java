@@ -66,7 +66,7 @@ public class SystemCommandsUI
 		   }
 		   catch (PartInitException e)
 		   {
-			   SystemBasePlugin.logError("Can not open build error view", e);
+			   SystemBasePlugin.logError("Can not open build error view", e); //$NON-NLS-1$
 		   }
 
 		   return _errorPart;
@@ -83,7 +83,7 @@ public class SystemCommandsUI
         catch (PartInitException e)
         {
         	e.printStackTrace();
-           	SystemBasePlugin.logError("Can not open remote shell view", e);
+           	SystemBasePlugin.logError("Can not open remote shell view", e); //$NON-NLS-1$
         }
 
         return _viewPart;

@@ -26,8 +26,6 @@ import org.eclipse.rse.services.clientserver.processes.ISystemProcessRemoteConst
 import org.eclipse.rse.subsystems.processes.core.subsystem.IRemoteProcess;
 import org.eclipse.rse.subsystems.processes.core.subsystem.IRemoteProcessContext;
 import org.eclipse.rse.subsystems.processes.core.subsystem.IRemoteProcessSubSystem;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Shell;
 
 
 /**
@@ -131,7 +129,7 @@ public class RemoteProcessImpl implements IRemoteProcess, ISystemProcessRemoteCo
 	    			} 
 	    			catch (SystemMessageException e) 
 	    			{
-	    				SystemBasePlugin.logError("UniversalProcessImpl.getParentRemoteProcess()", e);
+	    				SystemBasePlugin.logError("UniversalProcessImpl.getParentRemoteProcess()", e); //$NON-NLS-1$
 	    			}
 	    			
 	    		}

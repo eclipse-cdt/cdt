@@ -152,7 +152,7 @@ public class SystemRemoteCommandEntryForm extends Composite
 					}
 					catch ( Exception e )
 					{
-						SystemBasePlugin.logInfo("Exception invoking command "+cmd+" on " + sysConn.getAliasName() );
+						SystemBasePlugin.logInfo("Exception invoking command "+cmd+" on " + sysConn.getAliasName() ); //$NON-NLS-1$ //$NON-NLS-2$
 					}
 				}
 			}
@@ -243,7 +243,7 @@ public class SystemRemoteCommandEntryForm extends Composite
     {
 		int type = event.getType();    	   
 		Object src = event.getSource();
-		Object parent = event.getParent();
+		//Object parent = event.getParent();
 		switch ( type )
 		{
 			case ISystemResourceChangeEvents.EVENT_COMMAND_RUN:

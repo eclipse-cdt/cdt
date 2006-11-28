@@ -56,7 +56,7 @@ public class LocalJavaLanguageUtility extends AbstractJavaLanguageUtility {
 			}
 		}
 		catch (IOException e) {
-			SystemBasePlugin.logError("Error occurred trying to get qualified class name", e);
+			SystemBasePlugin.logError("Error occurred trying to get qualified class name", e); //$NON-NLS-1$
 			return null;
 		}
 	}

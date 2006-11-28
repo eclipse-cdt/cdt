@@ -118,7 +118,7 @@ public class EnvironmentVariablesPropertyPage extends SystemBasePropertyPage
 		else
 		{
 			SystemBasePlugin.logError(
-				"EnvironmentVariablesPropertyPage.getCmdSubSystem:  input element for property page is not an instanceof SubSystem: "
+				"EnvironmentVariablesPropertyPage.getCmdSubSystem:  input element for property page is not an instanceof SubSystem: " //$NON-NLS-1$
 					+ subsystem);
 			return null;
 		}

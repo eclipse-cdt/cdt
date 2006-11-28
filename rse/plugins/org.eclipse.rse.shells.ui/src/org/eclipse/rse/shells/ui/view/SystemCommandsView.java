@@ -47,7 +47,7 @@ public class SystemCommandsView extends SystemTableView implements ISystemThemeC
 			if (element instanceof IRemoteOutput)
 			{
 				IRemoteOutput remoteOutput = (IRemoteOutput) element;
-				if (remoteOutput.getText().indexOf("BEGIN-END-TAG:") > -1)
+				if (remoteOutput.getText().indexOf("BEGIN-END-TAG:") > -1) //$NON-NLS-1$
 				{
 					return false;
 				}
@@ -210,16 +210,16 @@ public class SystemCommandsView extends SystemTableView implements ISystemThemeC
 		{
 			IRemoteOutput rmtOutput = (IRemoteOutput) child;
 			String type = rmtOutput.getType();
-			if (type.equals("stderr") || type.equals("error"))
+			if (type.equals("stderr") || type.equals("error")) //$NON-NLS-1$ //$NON-NLS-2$
 			{
 				newItem.setForeground(_errColor);
-			} else if (type.equals("warning"))
+			} else if (type.equals("warning")) //$NON-NLS-1$
 			{
 				newItem.setForeground(_warColor);
-			} else if (type.equals("informational"))
+			} else if (type.equals("informational")) //$NON-NLS-1$
 			{
 				newItem.setForeground(_infColor);
-			} else if (type.equals("prompt"))
+			} else if (type.equals("prompt")) //$NON-NLS-1$
 			{
 				newItem.setForeground(_prmColor);
 			} else

@@ -21,7 +21,7 @@ import org.eclipse.osgi.util.NLS;
 
 public class SystemProcessesCoreResources extends NLS
 {
-	private static String BUNDLE_NAME = "org.eclipse.rse.subsystems.processes.core.subsystem.SystemProcessesCoreResources"; 
+	private static String BUNDLE_NAME = "org.eclipse.rse.subsystems.processes.core.subsystem.SystemProcessesCoreResources"; //$NON-NLS-1$ 
 	
 	// PROCESS PROPERTIES
 	public static String RESID_PROPERTY_PROCESS_DEFAULTFILTER_LABEL;

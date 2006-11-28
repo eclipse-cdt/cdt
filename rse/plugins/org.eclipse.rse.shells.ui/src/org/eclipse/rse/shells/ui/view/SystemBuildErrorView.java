@@ -130,7 +130,7 @@ public class SystemBuildErrorView extends SystemTableView
 		table.setRedraw(false);
 		synchronized (table)
 		{
-			int count = table.getItemCount();
+			//int count = table.getItemCount();
 			table.remove(0, items);
 		
 		}

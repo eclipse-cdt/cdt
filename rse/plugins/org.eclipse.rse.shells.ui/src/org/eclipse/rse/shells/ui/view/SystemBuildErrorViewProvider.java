@@ -59,13 +59,13 @@ public class SystemBuildErrorViewProvider extends SystemTableViewProvider
 		else if (newInput instanceof IRemoteOutput)
 		{
 		    IRemoteOutput output = (IRemoteOutput)newInput;
-		    IRemoteCommandShell cmd = (IRemoteCommandShell)output.getParent();		    
+		    //IRemoteCommandShell cmd = (IRemoteCommandShell)output.getParent();		    
 		    setOffset(output.getIndex());
 		}
 		else if (newInput instanceof IRemoteLineReference)
 		{
-		    IRemoteLineReference output = (IRemoteLineReference)newInput;
-		    IRemoteCommandShell cmd = (IRemoteCommandShell)output.getParent();		    
+		    //IRemoteLineReference output = (IRemoteLineReference)newInput;
+		    //IRemoteCommandShell cmd = (IRemoteCommandShell)output.getParent();		    
 		    //setOffset(output.getIndex());
 		}
 	}

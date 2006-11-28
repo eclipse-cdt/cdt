@@ -255,8 +255,8 @@ public class SystemCommandEditor extends SourceViewer
 		menu.appendToGroup(
 			ITextEditorActionConstants.GROUP_EDIT,
 			(IAction) fGlobalActions.get(ITextEditorActionConstants.SELECT_ALL));
-		menu.add(new Separator("group.generate"));
-		menu.appendToGroup("group.generate", (IAction) fGlobalActions.get("ContentAssistProposal")); //$NON-NLS-1$
+		menu.add(new Separator("group.generate")); //$NON-NLS-1$
+		menu.appendToGroup("group.generate", (IAction) fGlobalActions.get("ContentAssistProposal")); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 	private IActionBars getActionBars()
 	{

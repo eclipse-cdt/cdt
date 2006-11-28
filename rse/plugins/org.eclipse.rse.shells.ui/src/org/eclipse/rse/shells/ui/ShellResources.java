@@ -20,7 +20,7 @@ import org.eclipse.osgi.util.NLS;
 
 public class ShellResources extends NLS 
 {
-	private static String BUNDLE_NAME = "org.eclipse.rse.shells.ui.ShellResources";
+	private static String BUNDLE_NAME = "org.eclipse.rse.shells.ui.ShellResources"; //$NON-NLS-1$
 
 	public static String RESID_SHELL_PROPERTYPAGE_TITLE;
 	public static String RESID_SHELL_PROPERTYPAGE_DESCRIPTION;

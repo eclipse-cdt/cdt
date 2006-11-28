@@ -21,3 +21,4 @@ Eclipse-LazyStart: true
 Bundle-Vendor: %providerName
 Export-Package: org.eclipse.rse.subsystems.shells.dstore,
  org.eclipse.rse.subsystems.shells.dstore.model
+Bundle-RequiredExecutionEnvironment: J2SE-1.4

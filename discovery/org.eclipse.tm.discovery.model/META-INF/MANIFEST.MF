@@ -14,3 +14,4 @@ Export-Package: org.eclipse.tm.discovery.model,
  org.eclipse.tm.discovery.model.impl,
  org.eclipse.tm.discovery.model.util
 Bundle-Vendor: %providerName
+Bundle-RequiredExecutionEnvironment: J2SE-1.4

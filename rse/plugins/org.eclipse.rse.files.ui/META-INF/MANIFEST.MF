@@ -31,3 +31,4 @@ Export-Package: org.eclipse.rse.files.ui,
  org.eclipse.rse.files.ui.widgets,
  org.eclipse.rse.files.ui.wizards
 Bundle-Vendor: %providerName
+Bundle-RequiredExecutionEnvironment: J2SE-1.4

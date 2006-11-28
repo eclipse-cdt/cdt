@@ -12,3 +12,4 @@ Export-Package: org.eclipse.rse.logging,
  org.eclipse.rse.logging.performance,
  org.eclipse.rse.logging.ui
 Bundle-Vendor: %providerName
+Bundle-RequiredExecutionEnvironment: J2SE-1.4

@@ -19,3 +19,4 @@ Export-Package: org.eclipse.dstore.core,
  org.eclipse.dstore.core.util,
  org.eclipse.dstore.core.util.ssl
 Bundle-Vendor: %providerName
+Bundle-RequiredExecutionEnvironment: J2SE-1.4

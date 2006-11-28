@@ -19,3 +19,4 @@ Eclipse-LazyStart: true
 Export-Package: org.eclipse.rse.subsystems.files.ftp,
  org.eclipse.rse.subsystems.files.ftp.connectorservice,
  org.eclipse.rse.subsystems.files.ftp.model
+Bundle-RequiredExecutionEnvironment: J2SE-1.4

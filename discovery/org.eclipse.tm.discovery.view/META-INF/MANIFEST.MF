@@ -22,3 +22,4 @@ Import-Package: org.eclipse.emf.common.ui,
  org.eclipse.tm.discovery.model.util
 Export-Package: org.eclipse.tm.discovery.view
 Bundle-Vendor: %providerName
+Bundle-RequiredExecutionEnvironment: J2SE-1.4

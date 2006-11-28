@@ -18,3 +18,4 @@ Eclipse-LazyStart: true
 Bundle-Vendor: %providerName
 Export-Package: org.eclipse.rse.subsystems.files.local,
  org.eclipse.rse.subsystems.files.local.model
+Bundle-RequiredExecutionEnvironment: J2SE-1.4

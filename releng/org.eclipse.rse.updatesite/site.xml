@@ -5,34 +5,34 @@
    <description url="http://download.eclipse.org/dsdp/tm/updates/">
       This is the Target Management Project Update Site for the Remote System Explorer (RSE).
    </description>
-   <feature url="features/org.eclipse.rse.core_1.0.0.qualifier.jar" id="org.eclipse.rse.core" version="1.0.0.qualifier">
+   <feature url="features/org.eclipse.rse.core_1.0.1.qualifier.jar" id="org.eclipse.rse.core" version="1.0.1.qualifier">
       <category name="RSE Runtime only"/>
    </feature>
-   <feature url="features/org.eclipse.rse.dstore_1.0.0.qualifier.jar" id="org.eclipse.rse.dstore" version="1.0.0.qualifier">
+   <feature url="features/org.eclipse.rse.dstore_1.0.1.qualifier.jar" id="org.eclipse.rse.dstore" version="1.0.1.qualifier">
       <category name="RSE Runtime only"/>
    </feature>
-   <feature url="features/org.eclipse.rse.ftp_1.0.0.qualifier.jar" id="org.eclipse.rse.ftp" version="1.0.0.qualifier">
+   <feature url="features/org.eclipse.rse.ftp_1.0.1.qualifier.jar" id="org.eclipse.rse.ftp" version="1.0.1.qualifier">
       <category name="RSE Runtime only"/>
    </feature>
-   <feature url="features/org.eclipse.rse.local_1.0.0.qualifier.jar" id="org.eclipse.rse.local" version="1.0.0.qualifier">
+   <feature url="features/org.eclipse.rse.local_1.0.1.qualifier.jar" id="org.eclipse.rse.local" version="1.0.1.qualifier">
       <category name="RSE Runtime only"/>
    </feature>
-   <feature url="features/org.eclipse.rse.sdk_1.0.0.qualifier.jar" id="org.eclipse.rse.sdk" version="1.0.0.qualifier">
+   <feature url="features/org.eclipse.rse.sdk_1.0.1.qualifier.jar" id="org.eclipse.rse.sdk" version="1.0.1.qualifier">
       <category name="Remote System Explorer (RSE) SDK"/>
    </feature>
-   <feature url="features/org.eclipse.rse.ssh_1.0.0.qualifier.jar" id="org.eclipse.rse.ssh" version="1.0.0.qualifier">
+   <feature url="features/org.eclipse.rse.ssh_1.0.1.qualifier.jar" id="org.eclipse.rse.ssh" version="1.0.1.qualifier">
       <category name="RSE Runtime only"/>
    </feature>
-   <feature url="features/org.eclipse.rse.examples_1.0.0.qualifier.jar" id="org.eclipse.rse.examples" version="1.0.0.qualifier">
+   <feature url="features/org.eclipse.rse.examples_1.0.1.qualifier.jar" id="org.eclipse.rse.examples" version="1.0.1.qualifier">
       <category name="Remote System Explorer (RSE) SDK"/>
    </feature>
-   <feature url="features/org.eclipse.rse.remotecdt_1.0.0.qualifier.jar" id="org.eclipse.rse.remotecdt" version="1.0.0.qualifier">
+   <feature url="features/org.eclipse.rse.remotecdt_1.0.1.qualifier.jar" id="org.eclipse.rse.remotecdt" version="1.0.1.qualifier">
       <category name="RSE Runtime only"/>
    </feature>
-   <feature url="features/org.eclipse.rse.efs_1.0.0.qualifier.jar" id="org.eclipse.rse.efs" version="1.0.0.qualifier">
+   <feature url="features/org.eclipse.rse.efs_1.0.1.qualifier.jar" id="org.eclipse.rse.efs" version="1.0.1.qualifier">
       <category name="RSE Experimental Add-ons"/>
    </feature>
-   <feature url="features/org.eclipse.tm.discovery_1.0.0.qualifier.jar" id="org.eclipse.tm.discovery" version="1.0.0.qualifier">
+   <feature url="features/org.eclipse.tm.discovery_1.0.1.qualifier.jar" id="org.eclipse.tm.discovery" version="1.0.1.qualifier">
       <category name="RSE Experimental Add-ons"/>
    </feature>
    <feature url="features/org.apache.commons.net_1.4.1.qualifier.jar" id="org.apache.commons.net" version="1.4.1.qualifier">

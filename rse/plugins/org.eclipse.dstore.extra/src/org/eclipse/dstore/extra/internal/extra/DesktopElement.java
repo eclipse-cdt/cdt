@@ -51,7 +51,7 @@ public class DesktopElement implements org.eclipse.ui.model.IWorkbenchAdapter
     IDataElement element = toElement(o);
     
    
-    List objs = element.getAssociated("contents");
+    List objs = element.getAssociated("contents"); //$NON-NLS-1$
     return objs.toArray();
   }
 
@@ -62,7 +62,7 @@ public class DesktopElement implements org.eclipse.ui.model.IWorkbenchAdapter
 
   public String getLabel(Object o) 
   {
-    return (String)_element.getElementProperty("value");
+    return (String)_element.getElementProperty("value"); //$NON-NLS-1$
   }
 
   public Object getParent(Object o) 

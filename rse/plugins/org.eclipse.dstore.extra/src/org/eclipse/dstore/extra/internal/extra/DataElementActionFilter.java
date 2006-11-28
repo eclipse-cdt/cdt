@@ -20,8 +20,8 @@ public class DataElementActionFilter implements org.eclipse.ui.IActionFilter {
 
 
 	// constants to be used by Eclipse Filtering and Enablement Support.
-	private static String _type = "type";
-	private static String _name = "name";
+	private static String _type = "type"; //$NON-NLS-1$
+	private static String _name = "name"; //$NON-NLS-1$
 	private static DataElementActionFilter _instance;
 
 	public static DataElementActionFilter getInstance() {
@@ -66,7 +66,7 @@ public class DataElementActionFilter implements org.eclipse.ui.IActionFilter {
 		} else if (name.equals(_name) && target instanceof IDataElement) {
 			// support for "name" filter.
 			IDataElement le = (IDataElement) target;
-			if (value.endsWith("*")) {
+			if (value.endsWith("*")) {  //$NON-NLS-1$
 				// we have a wild card test, and * is the last character in the value
 				if (le
 					.getName()

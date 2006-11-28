@@ -36,30 +36,30 @@ public class PropertySource implements IPropertySource
     
     _properties = new HashMap();
     
-    IDataElement descriptor = (IDataElement)element.getElementProperty("descriptor");
+    IDataElement descriptor = (IDataElement)element.getElementProperty("descriptor"); //$NON-NLS-1$
     
     List attributes = null;
     int attributesSize = 0;
     if (descriptor != null)
 	{
-	    attributes = descriptor.getAssociated("attributes");
+	    attributes = descriptor.getAssociated("attributes"); //$NON-NLS-1$
 	    attributesSize = attributes.size();
 	}
 	
 	_descriptors = new IPropertyDescriptor[attributesSize + 2];
-	_descriptors[0] = new TextPropertyDescriptor("type", "type");
-	_descriptors[1] = new TextPropertyDescriptor("name", "name");
+	_descriptors[0] = new TextPropertyDescriptor("type", "type"); //$NON-NLS-1$ //$NON-NLS-2$
+	_descriptors[1] = new TextPropertyDescriptor("name", "name"); //$NON-NLS-1$ //$NON-NLS-2$
 	
 	for (int i = 0; i < attributesSize; i++)
     {
 		IDataElement attribute = (IDataElement)attributes.get(i);
-		List types = attribute.getAssociated("attributes");
+		List types = attribute.getAssociated("attributes"); //$NON-NLS-1$
 		    
 		String type = null;
 		if (types.size() > 0)
 		  type = ((IDataElement)types.get(0)).getName();
 		else
-		  type = "String";
+		  type = "String"; //$NON-NLS-1$
 		
 		_properties.put(attribute.getName(), type);
 		_descriptors[i+2] = new TextPropertyDescriptor(attribute.getName(), attribute.getName());
@@ -93,13 +93,13 @@ public class PropertySource implements IPropertySource
       Object result = null;
             
       // find the appropriate attribute
-      List attributes = _dataElement.getAssociated("attributes");
+      List attributes = _dataElement.getAssociated("attributes"); //$NON-NLS-1$
       for (int i = 0; i < attributes.size(); i++)
 	  {
 	      IDataElement attribute = (IDataElement)attributes.get(i);
 	      if (attribute.getType().equals(name))
 		  {
-		      result = attribute.getElementProperty("value");
+		      result = attribute.getElementProperty("value"); //$NON-NLS-1$
 		  }
 	  }
 	  
@@ -107,10 +107,10 @@ public class PropertySource implements IPropertySource
 	  {
 	  	String type = (String)_properties.get(name);
 	  	
-	  	if (type != null && type.equals("Integer"))
-	  	  result = "0";
-	  	else if (type != null && type.equals("Float"))
-	  	  result = "0.0";
+	  	if (type != null && type.equals("Integer")) //$NON-NLS-1$
+	  	  result = "0"; //$NON-NLS-1$
+	  	else if (type != null && type.equals("Float")) //$NON-NLS-1$
+	  	  result = "0.0"; //$NON-NLS-1$
 	  	else
 	  	  result = _dataElement.getElementProperty(name);
 	  }

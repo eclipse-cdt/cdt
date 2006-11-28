@@ -96,7 +96,7 @@ public class DStoreHostFile implements IHostFile
 			String name = _element.getName();
 			String parentPath = getParentPath();
 			if (name.length() == 0 && 
-					(parentPath.equals("/")  || parentPath.endsWith(":\\")))
+					(parentPath.equals("/")  || parentPath.endsWith(":\\"))) //$NON-NLS-1$ //$NON-NLS-2$
 			{
 				
 				return parentPath;
@@ -166,7 +166,7 @@ public class DStoreHostFile implements IHostFile
 			else
 			{
 				String str = getAttribute(_element.getSource(), ATTRIBUTE_IS_HIDDEN);
-				return(str.equals("true"));
+				return(str.equals("true")); //$NON-NLS-1$
 			}
 		}			
 	}
@@ -188,7 +188,7 @@ public class DStoreHostFile implements IHostFile
 		String parentPath = _element.getValue();
 		String name = _element.getName();
 		if (parentPath == null || parentPath.length() == 0 || 
-				(name.length() == 0 && (parentPath.equals("/") || parentPath.endsWith(":\\")))
+				(name.length() == 0 && (parentPath.equals("/") || parentPath.endsWith(":\\"))) //$NON-NLS-1$ //$NON-NLS-2$
 				)
 						
 		{
@@ -254,7 +254,7 @@ public class DStoreHostFile implements IHostFile
 		}
 		else
 		{
-			return PathUtility.normalizeUnknown(parentPath + "/" + name);
+			return PathUtility.normalizeUnknown(parentPath + "/" + name); //$NON-NLS-1$
 		}
 	}
 
@@ -276,11 +276,11 @@ public class DStoreHostFile implements IHostFile
 		{
 			if (isFile())
 			{
-				classification = "file";
+				classification = "file"; //$NON-NLS-1$
 			}
 			else
 			{
-				classification = "directory";
+				classification = "directory"; //$NON-NLS-1$
 			}
 		}
 		return classification;
@@ -305,7 +305,7 @@ public class DStoreHostFile implements IHostFile
 	
 	protected static String getAttribute(String attributes, int index)
 	{
-		String[] str = attributes.split("\\"+IServiceConstants.TOKEN_SEPARATOR);
+		String[] str = attributes.split("\\"+IServiceConstants.TOKEN_SEPARATOR); //$NON-NLS-1$
 		if (str.length > index)
 		{
 			return str[index];
@@ -351,12 +351,12 @@ public class DStoreHostFile implements IHostFile
 
 	public boolean canRead() {
 		String str = getAttribute(_element.getSource(), ATTRIBUTE_CAN_READ);
-		return(str.equals("true"));
+		return(str.equals("true")); //$NON-NLS-1$
 	}
 
 	public boolean canWrite() {
 		String str = getAttribute(_element.getSource(), ATTRIBUTE_CAN_WRITE);
-		return(str.equals("true"));
+		return(str.equals("true")); //$NON-NLS-1$
 	}
 	
 }

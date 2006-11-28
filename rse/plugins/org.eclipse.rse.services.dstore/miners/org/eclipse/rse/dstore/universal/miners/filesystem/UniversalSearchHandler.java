@@ -75,7 +75,7 @@ public class UniversalSearchHandler extends Thread implements ICancellableHandle
 		_fsCaseSensitive = fsCaseSensitive;
 		_alreadySearched = new HashSet();
 		
-		_deGrep = _dataStore.findObjectDescriptor("grep");
+		_deGrep = _dataStore.findObjectDescriptor("grep"); //$NON-NLS-1$
 		_deFile = _dataStore.findObjectDescriptor(IUniversalDataStoreConstants.UNIVERSAL_FILE_DESCRIPTOR);
 		_deFolder = _dataStore.findObjectDescriptor(IUniversalDataStoreConstants.UNIVERSAL_FOLDER_DESCRIPTOR);
 		_deArchiveFile = _dataStore.findObjectDescriptor(IUniversalDataStoreConstants.UNIVERSAL_ARCHIVE_FILE_DESCRIPTOR);
@@ -113,7 +113,7 @@ public class UniversalSearchHandler extends Thread implements ICancellableHandle
 			internalSearch(_rootFile, _depth);
 		}
 		catch (Exception e) {
-			UniversalServerUtilities.logError(_miner.getName(), "Error occured when calling internal search", e);
+			UniversalServerUtilities.logError(_miner.getName(), "Error occured when calling internal search", e); //$NON-NLS-1$
 		}
 		
 		_isDone = true;
@@ -128,7 +128,7 @@ public class UniversalSearchHandler extends Thread implements ICancellableHandle
 			// to status refresh. As a result client thinks
 			// search isn't finished.
 			// _miner.statusDone(_status); 
-	        _status.setAttribute(DE.A_NAME, "done");
+	        _status.setAttribute(DE.A_NAME, "done"); //$NON-NLS-1$
 	        _dataStore.refresh(_status, true);	// true indicates refresh immediately
 		}
 	}
@@ -200,7 +200,7 @@ public class UniversalSearchHandler extends Thread implements ICancellableHandle
 					deObj = _dataStore.createObject(null, _deVirtualFile, compareStr);
 					
 					// if parent of virtual child is archive, then create it this way
-					if (vc.path.equals("")) {
+					if (vc.path.equals("")) { //$NON-NLS-1$
 						deObj.setAttribute(DE.A_VALUE, vc.getContainingArchive().getAbsolutePath());						
 					}
 					else {
@@ -291,7 +291,7 @@ public class UniversalSearchHandler extends Thread implements ICancellableHandle
 							virtualchildren = ArchiveHandlerManager.getInstance().getContents(archive, virtualPath);
 						}
 						catch (IOException e) {
-							UniversalServerUtilities.logError(_miner.getName(), "Error occured trying to get the canonical file", e);				
+							UniversalServerUtilities.logError(_miner.getName(), "Error occured trying to get the canonical file", e);				 //$NON-NLS-1$
 						}
 							
 						if (virtualchildren != null) {
@@ -354,7 +354,7 @@ public class UniversalSearchHandler extends Thread implements ICancellableHandle
 			return foundMatches;
 		}
 		catch (Exception e) {
-			UniversalServerUtilities.logError(_miner.getName(), "Error occured when trying to locate matches", e);
+			UniversalServerUtilities.logError(_miner.getName(), "Error occured when trying to locate matches", e); //$NON-NLS-1$
 			remoteFile.setAttribute(DE.A_VALUE, e.getMessage());
 			return false;
 		}
@@ -371,7 +371,7 @@ public class UniversalSearchHandler extends Thread implements ICancellableHandle
 	 */
 	protected boolean doesClassificationMatch(String absolutePath) {
 		
-		if (_classificationString == null || _classificationString.equals("")) {
+		if (_classificationString == null || _classificationString.equals("")) { //$NON-NLS-1$
 			return true;
 		}
 		else {

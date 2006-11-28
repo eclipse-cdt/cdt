@@ -64,10 +64,10 @@ public class DStoreShellThread
 	protected void init()
 	{
 		// make this subsystem a communications listener
-		DataElement contextDir = _dataStore.createObject(null, "directory", (new File(_cwd)).getName(), _cwd);
+		DataElement contextDir = _dataStore.createObject(null, "directory", (new File(_cwd)).getName(), _cwd); //$NON-NLS-1$
 		_dataStore.setObject(contextDir);
 		setRemoteEnvironment(contextDir);
-		if (_invocation== null || _invocation.equals(">"))
+		if (_invocation== null || _invocation.equals(">")) //$NON-NLS-1$
 		{
 			sendShellToMiner(contextDir);
 		}
@@ -92,7 +92,7 @@ public class DStoreShellThread
 			String encoding = _encoding;
 			if (encoding != null && encoding.length() > 0)
 			{			
-				DataElement arg = _dataStore.createObject(null, "shell.encoding", encoding);
+				DataElement arg = _dataStore.createObject(null, "shell.encoding", encoding); //$NON-NLS-1$
 				_status = _dataStore.command(cmdD, arg, contextDir);
 			}
 			else
@@ -111,7 +111,7 @@ public class DStoreShellThread
 
 			if (invocation != null && invocation.length() > 0)
 			{			
-				DataElement arg = _dataStore.createObject(null, "command", invocation);
+				DataElement arg = _dataStore.createObject(null, "command", invocation); //$NON-NLS-1$
 				_status = _dataStore.command(cmdD, arg, contextDir);
 			}
 			else
@@ -130,15 +130,15 @@ public class DStoreShellThread
 		
 		if (_envVars != null && _envVars.length > 0)
 		{
-			DataElement theEnvironment = _dataStore.createObject(null, "Environment Variable", theObject.getName());
+			DataElement theEnvironment = _dataStore.createObject(null, "Environment Variable", theObject.getName()); //$NON-NLS-1$
 			for (int i = 0; i < _envVars.length; i++)
 			{
 				String var = _envVars[i];
-				_dataStore.createObject(theEnvironment, "Environment Variable", var, var);
+				_dataStore.createObject(theEnvironment, "Environment Variable", var, var); //$NON-NLS-1$
 			}
 	
 			theEnvironment.setAttribute(DE.A_NAME, theObject.getId());
-			DataElement contObj = _dataStore.findObjectDescriptor("Container Object");
+			DataElement contObj = _dataStore.findObjectDescriptor("Container Object"); //$NON-NLS-1$
 			DataElement setD = getSetEnvironmentDescriptor(contObj);
 			if (setD != null)
 			{
@@ -222,17 +222,17 @@ public class DStoreShellThread
 	
 	protected String getRunShellId()
 	{
-		return "C_SHELL";
+		return "C_SHELL"; //$NON-NLS-1$
 	}
 
 	protected String getRunCommandId()
 	{
-		return "C_COMMAND";
+		return "C_COMMAND"; //$NON-NLS-1$
 	}
 
 	protected String getSetEnvironmentId()
 	{
-		return "C_SET_ENVIRONMENT_VARIABLES";
+		return "C_SET_ENVIRONMENT_VARIABLES"; //$NON-NLS-1$
 	}
 
 	
@@ -241,21 +241,21 @@ public class DStoreShellThread
 		DataElement commandElement = _status.getParent();
 		DataStore dataStore = commandElement.getDataStore();
 
-		if (command.equals("") || command.equals("#break"))
+		if (command.equals("") || command.equals("#break")) //$NON-NLS-1$ //$NON-NLS-2$
 		{
 		    String cmd = command;
-		    if (cmd.equals(""))
-		        cmd = "#enter";
+		    if (cmd.equals("")) //$NON-NLS-1$
+		        cmd = "#enter"; //$NON-NLS-1$
 			DataElement commandDescriptor = getSendInputDescriptor(commandElement);
 			if (commandDescriptor != null)
 			{
-				DataElement in = dataStore.createObject(null, "input", cmd);
+				DataElement in = dataStore.createObject(null, "input", cmd); //$NON-NLS-1$
 				dataStore.command(commandDescriptor, in, commandElement);
 			}
 		}
 		else
 		{
-		    String[] tokens = command.split("\n\r");
+		    String[] tokens = command.split("\n\r"); //$NON-NLS-1$
 			for (int i = 0; i <tokens.length; i++)
 			{
 			    String cmd = tokens[i];
@@ -265,7 +265,7 @@ public class DStoreShellThread
 				    DataElement commandDescriptor = getSendInputDescriptor(commandElement);
 					if (commandDescriptor != null)
 					{
-						DataElement in = dataStore.createObject(null, "input", cmd);
+						DataElement in = dataStore.createObject(null, "input", cmd); //$NON-NLS-1$
 						dataStore.command(commandDescriptor, in, commandElement);
 					}
 				}

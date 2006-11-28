@@ -77,7 +77,7 @@ public class DStoreHostProcess implements IHostProcess, org.eclipse.rse.dstore.u
 	{
 		setProcess(dataElementObj);
 		String name = dataElementObj.getName();
-		_fullyQualifiedProcess = "/proc/" + name;
+		_fullyQualifiedProcess = "/proc/" + name; //$NON-NLS-1$
 					
 		// if we already have retrieved file properties
 		// set them now
@@ -119,7 +119,7 @@ public class DStoreHostProcess implements IHostProcess, org.eclipse.rse.dstore.u
 		
 		if (s != null && s.length() > 0)
 		{
-		    String[] str = s.split("\\"+TOKEN_SEPARATOR);
+		    String[] str = s.split("\\"+TOKEN_SEPARATOR); //$NON-NLS-1$
 		    int tokens = str.length;
 		    if (tokens > 1)
 			{
@@ -159,7 +159,7 @@ public class DStoreHostProcess implements IHostProcess, org.eclipse.rse.dstore.u
 	 */
 	public void setProcess(Object dataElementObj)
 	{
-		_remoteObj = (DataElement) dataElementObj;
+		_remoteObj = dataElementObj;
 	}
 
 	/**
@@ -196,7 +196,7 @@ public class DStoreHostProcess implements IHostProcess, org.eclipse.rse.dstore.u
 		if (state == null) 
 		{
 			//SystemPlugin.logError("Error in UniversalProcessImpl.getAttributes(): status of process " + getPid() + " is not given.");
-			return " ";
+			return " "; //$NON-NLS-1$
 		}
 		else return state;
 	}
@@ -436,7 +436,7 @@ public class DStoreHostProcess implements IHostProcess, org.eclipse.rse.dstore.u
 	 */
 	protected void setVmSizeInKB(long size)
 	{
-		String sizeStr = "";
+		String sizeStr = ""; //$NON-NLS-1$
 		sizeStr = sizeStr + size;
 		setSubAttribute(PROCESS_ATTRIBUTES_INDEX_VMSIZE, sizeStr);
 	}
@@ -446,7 +446,7 @@ public class DStoreHostProcess implements IHostProcess, org.eclipse.rse.dstore.u
 	 */
 	protected void setVmRSSInKB(long size)
 	{
-		String sizeStr = "";
+		String sizeStr = ""; //$NON-NLS-1$
 		sizeStr = sizeStr + size;
 		setSubAttribute(PROCESS_ATTRIBUTES_INDEX_VMRSS, sizeStr);
 	}
@@ -468,9 +468,9 @@ public class DStoreHostProcess implements IHostProcess, org.eclipse.rse.dstore.u
 		
 		if (s != null && s.length() > 0)
 		{
-		    String[] str = s.split("\\"+TOKEN_SEPARATOR);
+		    String[] str = s.split("\\"+TOKEN_SEPARATOR); //$NON-NLS-1$
 		    if (attIndex >= str.length) return null;
-		    if (str[attIndex] == null || str[attIndex].equals("")) return null;
+		    if (str[attIndex] == null || str[attIndex].equals("")) return null; //$NON-NLS-1$
 		    else return str[attIndex];
 		}
 		else return null;
@@ -493,13 +493,13 @@ public class DStoreHostProcess implements IHostProcess, org.eclipse.rse.dstore.u
 		
 		if (s != null && s.length() > 0)
 		{
-		    String[] str = s.split("\\"+TOKEN_SEPARATOR);
+		    String[] str = s.split("\\"+TOKEN_SEPARATOR); //$NON-NLS-1$
 		    if (attIndex >= str.length)
 		    {
 				// SystemPlugin.logError("Error in UniversalProcessImpl.setSubAttribute: Attribute index out of bounds.");		    	
 				return;
 		    }
-		    s = "";
+		    s = ""; //$NON-NLS-1$
 		    str[attIndex] = newSubAttribute;
 		    for (int i = 0; i < str.length; i++)
 		    {

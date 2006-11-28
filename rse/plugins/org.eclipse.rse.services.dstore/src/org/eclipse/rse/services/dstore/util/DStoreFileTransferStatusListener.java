@@ -44,7 +44,7 @@ public class DStoreFileTransferStatusListener extends StatusChangeListener
 		_log = uploadLog;
 		if (_log == null) 
 		{
-			throw new Exception("Could not find log in DataStore.");
+			throw new Exception("Could not find log in DataStore."); //$NON-NLS-1$
 		}
 		setStatus(findOrCreateUploadStatus(ds)); 
 	}
@@ -57,9 +57,9 @@ public class DStoreFileTransferStatusListener extends StatusChangeListener
 		// but also need to handle case where it's been uploaded before in the sessoin (i.e. for reseting values)
 		if (result == null) 
 		{
-			result = _log.getDataStore().createObject(_log, "uploadstatus", _remotePath);
-			result.setAttribute(DE.A_SOURCE, "running");
-			result.setAttribute(DE.A_VALUE, "");
+			result = _log.getDataStore().createObject(_log, "uploadstatus", _remotePath); //$NON-NLS-1$
+			result.setAttribute(DE.A_SOURCE, "running"); //$NON-NLS-1$
+			result.setAttribute(DE.A_VALUE, ""); //$NON-NLS-1$
 			
 			DataElement cmd = ds.findCommandDescriptor(DataStoreSchema.C_SET);
 			
@@ -82,8 +82,8 @@ public class DStoreFileTransferStatusListener extends StatusChangeListener
 		else
 		{
 		   
-			result.setAttribute(DE.A_SOURCE, "running");
-			result.setAttribute(DE.A_VALUE, "");
+			result.setAttribute(DE.A_SOURCE, "running"); //$NON-NLS-1$
+			result.setAttribute(DE.A_VALUE, ""); //$NON-NLS-1$
 		}
 		_statusElement = result;
 		return result;

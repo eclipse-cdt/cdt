@@ -26,54 +26,54 @@ public interface IUniversalDataStoreConstants extends IServiceConstants
 	/*
 	 * Miner names, used for logging
 	 */
-	public static final String UNIVERSAL_FILESYSTEM_MINER = "UniversalFileSystemMiner";
+	public static final String UNIVERSAL_FILESYSTEM_MINER = "UniversalFileSystemMiner"; //$NON-NLS-1$
 	
 	//
 	// Universal File descriptors for DataStore DataElements
 	//
-	public static final String MESSAGE_DESCRIPTOR = "universal.message";
+	public static final String MESSAGE_DESCRIPTOR = "universal.message"; //$NON-NLS-1$
 
-    public static final String UNIVERSAL_NODE_DESCRIPTOR = "universal.node";
-    public static final String UNIVERSAL_TEMP_DESCRIPTOR = "universal.temp";
-	public static final String UNIVERSAL_FILTER_DESCRIPTOR = "universal.FilterObject";
-	public static final String UNIVERSAL_FILE_DESCRIPTOR = "universal.FileObject";
-	public static final String UNIVERSAL_FOLDER_DESCRIPTOR = "universal.FolderObject";
+    public static final String UNIVERSAL_NODE_DESCRIPTOR = "universal.node"; //$NON-NLS-1$
+    public static final String UNIVERSAL_TEMP_DESCRIPTOR = "universal.temp"; //$NON-NLS-1$
+	public static final String UNIVERSAL_FILTER_DESCRIPTOR = "universal.FilterObject"; //$NON-NLS-1$
+	public static final String UNIVERSAL_FILE_DESCRIPTOR = "universal.FileObject"; //$NON-NLS-1$
+	public static final String UNIVERSAL_FOLDER_DESCRIPTOR = "universal.FolderObject"; //$NON-NLS-1$
 	
-	public static final String UNIVERSAL_ARCHIVE_FILE_DESCRIPTOR = "universal.ArchiveFileObject";
-	public static final String UNIVERSAL_VIRTUAL_FILE_DESCRIPTOR = "universal.VirtualFileObject";
-	public static final String UNIVERSAL_VIRTUAL_FOLDER_DESCRIPTOR = "universal.VirtualFolderObject";
+	public static final String UNIVERSAL_ARCHIVE_FILE_DESCRIPTOR = "universal.ArchiveFileObject"; //$NON-NLS-1$
+	public static final String UNIVERSAL_VIRTUAL_FILE_DESCRIPTOR = "universal.VirtualFileObject"; //$NON-NLS-1$
+	public static final String UNIVERSAL_VIRTUAL_FOLDER_DESCRIPTOR = "universal.VirtualFolderObject"; //$NON-NLS-1$
 
 	
 	//
 	// Universal File Miner Commands
 	//
 
-	public static final String C_QUERY_ROOTS = "C_QUERY_ROOTS";
-	public static final String C_QUERY_VIEW_ALL = "C_QUERY_VIEW_ALL";
-	public static final String C_QUERY_VIEW_FILES = "C_QUERY_VIEW_FILES";
-	public static final String C_QUERY_VIEW_FOLDERS = "C_QUERY_VIEW_FOLDERS";
-	public static final String C_CREATE_FILE = "C_CREATE_FILE";
-	public static final String C_CREATE_FOLDER = "C_CREATE_FOLDER";
-	public static final String C_QUERY_GET_REMOTE_OBJECT="C_QUERY_GET_REMOTE_OBJECT";
+	public static final String C_QUERY_ROOTS = "C_QUERY_ROOTS"; //$NON-NLS-1$
+	public static final String C_QUERY_VIEW_ALL = "C_QUERY_VIEW_ALL"; //$NON-NLS-1$
+	public static final String C_QUERY_VIEW_FILES = "C_QUERY_VIEW_FILES"; //$NON-NLS-1$
+	public static final String C_QUERY_VIEW_FOLDERS = "C_QUERY_VIEW_FOLDERS"; //$NON-NLS-1$
+	public static final String C_CREATE_FILE = "C_CREATE_FILE"; //$NON-NLS-1$
+	public static final String C_CREATE_FOLDER = "C_CREATE_FOLDER"; //$NON-NLS-1$
+	public static final String C_QUERY_GET_REMOTE_OBJECT="C_QUERY_GET_REMOTE_OBJECT"; //$NON-NLS-1$
 	
-	public static final String C_DELETE = "C_DELETE";
-	public static final String C_DELETE_BATCH = "C_DELETE_BATCH";
-	public static final String C_RENAME = "C_RENAME";
-	public static final String C_COPY = "C_COPY";
-	public static final String C_COPY_BATCH = "C_COPY_BATCH";
+	public static final String C_DELETE = "C_DELETE"; //$NON-NLS-1$
+	public static final String C_DELETE_BATCH = "C_DELETE_BATCH"; //$NON-NLS-1$
+	public static final String C_RENAME = "C_RENAME"; //$NON-NLS-1$
+	public static final String C_COPY = "C_COPY"; //$NON-NLS-1$
+	public static final String C_COPY_BATCH = "C_COPY_BATCH"; //$NON-NLS-1$
 	
 	// Download file command
-	public static final String C_DOWNLOAD_FILE = "C_DOWNLOAD_FILE";
+	public static final String C_DOWNLOAD_FILE = "C_DOWNLOAD_FILE"; //$NON-NLS-1$
 	
 	// Query system encoding command
-	public static final String C_SYSTEM_ENCODING = "C_SYSTEM_ENCODING";
+	public static final String C_SYSTEM_ENCODING = "C_SYSTEM_ENCODING"; //$NON-NLS-1$
 	
 	// Query unused port
-	public static final String C_QUERY_UNUSED_PORT = "C_QUERY_UNUSED_PORT";
+	public static final String C_QUERY_UNUSED_PORT = "C_QUERY_UNUSED_PORT"; //$NON-NLS-1$
 	
 	// Qualified class name command and return type
-	public static final String C_QUERY_QUALIFIED_CLASSNAME = "C_QUERY_QUALIFIED_CLASSNAME";
-	public static final String TYPE_QUALIFIED_CLASSNAME = "fullClassName";
+	public static final String C_QUERY_QUALIFIED_CLASSNAME = "C_QUERY_QUALIFIED_CLASSNAME"; //$NON-NLS-1$
+	public static final String TYPE_QUALIFIED_CLASSNAME = "fullClassName"; //$NON-NLS-1$
 	
 
     	
@@ -83,13 +83,13 @@ public interface IUniversalDataStoreConstants extends IServiceConstants
 	
 	
 	// Download result types and download messages
-	public static final String DOWNLOAD_RESULT_SUCCESS_TYPE = "universal.download.success";
-	public static final String DOWNLOAD_RESULT_SUCCESS_MESSAGE = "successful";
-	public static final String DOWNLOAD_RESULT_FILE_NOT_FOUND_EXCEPTION = "FileNotFoundException";
-	public static final String DOWNLOAD_RESULT_UNSUPPORTED_ENCODING_EXCEPTION = "UnsupportedEncodingException";
-	public static final String DOWNLOAD_RESULT_IO_EXCEPTION = "IOException";
-	public static final String DOWNLOAD_RESULT_EXCEPTION = "Exception";
-	public static final String DOWNLOAD_RESULT_UNEXPECTED_ERROR = "UnexpectedError";
+	public static final String DOWNLOAD_RESULT_SUCCESS_TYPE = "universal.download.success"; //$NON-NLS-1$
+	public static final String DOWNLOAD_RESULT_SUCCESS_MESSAGE = "successful"; //$NON-NLS-1$
+	public static final String DOWNLOAD_RESULT_FILE_NOT_FOUND_EXCEPTION = "FileNotFoundException"; //$NON-NLS-1$
+	public static final String DOWNLOAD_RESULT_UNSUPPORTED_ENCODING_EXCEPTION = "UnsupportedEncodingException"; //$NON-NLS-1$
+	public static final String DOWNLOAD_RESULT_IO_EXCEPTION = "IOException"; //$NON-NLS-1$
+	public static final String DOWNLOAD_RESULT_EXCEPTION = "Exception"; //$NON-NLS-1$
+	public static final String DOWNLOAD_RESULT_UNEXPECTED_ERROR = "UnexpectedError"; //$NON-NLS-1$
 	
 	
 	// Number of bytes in a kilobyte

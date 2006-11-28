@@ -106,8 +106,8 @@ public class UniversalByteStreamHandler extends ByteStreamHandler
 					String bufferString = new String(buffer, 0, size, SystemEncodingUtil.ENCODING_UTF_8);
 
 					// hack for zOS
-					String theOS = System.getProperty("os.name");
-					if (theOS.toLowerCase().startsWith("z"))
+					String theOS = System.getProperty("os.name"); //$NON-NLS-1$
+					if (theOS.toLowerCase().startsWith("z")) //$NON-NLS-1$
 					{
 						bufferString = bufferString.replace('\r', ' ');
 					}
@@ -221,8 +221,8 @@ public class UniversalByteStreamHandler extends ByteStreamHandler
 						String bufferString = new String(buffer, 0, size, SystemEncodingUtil.ENCODING_UTF_8);
 
 						//						hack for zOS
-						String theOS = System.getProperty("os.name");
-						if (theOS.toLowerCase().startsWith("z"))
+						String theOS = System.getProperty("os.name"); //$NON-NLS-1$
+						if (theOS.toLowerCase().startsWith("z")) //$NON-NLS-1$
 						{
 							bufferString = bufferString.replace('\r', ' ');
 						}
@@ -249,7 +249,7 @@ public class UniversalByteStreamHandler extends ByteStreamHandler
 					// divide appendedBuffer into chunks
 					// at > 50M this kills Eclipse
 					File oldFile = new File(fileName);
-					File newFile = new File(fileName + ".new");
+					File newFile = new File(fileName + ".new"); //$NON-NLS-1$
 					newFile.createNewFile();
 
 					FileInputStream oldFileStream = new FileInputStream(oldFile);
@@ -290,8 +290,8 @@ public class UniversalByteStreamHandler extends ByteStreamHandler
 						String bufferString = new String(buffer, 0, size, SystemEncodingUtil.ENCODING_UTF_8);
 
 						// hack for zOS
-						String theOS = System.getProperty("os.name");
-						if (theOS.toLowerCase().startsWith("z"))
+						String theOS = System.getProperty("os.name"); //$NON-NLS-1$
+						if (theOS.toLowerCase().startsWith("z")) //$NON-NLS-1$
 						{
 							bufferString = bufferString.replace('\r', ' ');
 						}

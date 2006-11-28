@@ -48,7 +48,7 @@ public class EnvironmentMiner extends Miner
     {
     	if (_system == null)
     	{
-    		_system = _dataStore.createObject(_minerData, "Environment Variable", "System Environment");	
+    		_system = _dataStore.createObject(_minerData, "Environment Variable", "System Environment");	 //$NON-NLS-1$ //$NON-NLS-2$
     		_dataStore.refresh(_minerData);
     	}
     	return _system;
@@ -56,17 +56,17 @@ public class EnvironmentMiner extends Miner
 	
     public void extendSchema(DataElement schemaRoot) 
     { 
-		DataElement envVar = _dataStore.createObjectDescriptor(schemaRoot, "Environment Variable");
-		_dataStore.createReference(envVar, _dataStore.createRelationDescriptor(schemaRoot,"Parent Environment"));
-	 	DataElement containerObjectD = _dataStore.findObjectDescriptor("Container Object");
-		_dataStore.createReference(containerObjectD, envVar, "abstracts", "abstracted by");
+		DataElement envVar = _dataStore.createObjectDescriptor(schemaRoot, "Environment Variable"); //$NON-NLS-1$
+		_dataStore.createReference(envVar, _dataStore.createRelationDescriptor(schemaRoot,"Parent Environment")); //$NON-NLS-1$
+	 	DataElement containerObjectD = _dataStore.findObjectDescriptor("Container Object"); //$NON-NLS-1$
+		_dataStore.createReference(containerObjectD, envVar, "abstracts", "abstracted by"); //$NON-NLS-1$ //$NON-NLS-2$
 		
-		createCommandDescriptor(containerObjectD, "Set Environment Variables", "C_SET_ENVIRONMENT_VARIABLES", false);
-		createCommandDescriptor(containerObjectD, "Set Environment Variables", "C_SET_ENVIRONMENT_VARIABLES_NO_SYSTEM", false);
+		createCommandDescriptor(containerObjectD, "Set Environment Variables", "C_SET_ENVIRONMENT_VARIABLES", false); //$NON-NLS-1$ //$NON-NLS-2$
+		createCommandDescriptor(containerObjectD, "Set Environment Variables", "C_SET_ENVIRONMENT_VARIABLES_NO_SYSTEM", false); //$NON-NLS-1$ //$NON-NLS-2$
 	
-		DataElement fsObj = _dataStore.findObjectDescriptor("Filesystem Objects");
-		DataElement inhabits = _dataStore.createRelationDescriptor(schemaRoot, "inhabits");
-		DataElement sustains = _dataStore.createRelationDescriptor(schemaRoot, "sustains");
+		DataElement fsObj = _dataStore.findObjectDescriptor("Filesystem Objects"); //$NON-NLS-1$
+		DataElement inhabits = _dataStore.createRelationDescriptor(schemaRoot, "inhabits"); //$NON-NLS-1$
+		DataElement sustains = _dataStore.createRelationDescriptor(schemaRoot, "sustains"); //$NON-NLS-1$
 		
 		_dataStore.createReference(envVar, sustains);
 		_dataStore.createReference(fsObj, inhabits);
@@ -77,13 +77,13 @@ public class EnvironmentMiner extends Miner
 		 *  - temp directory	(user.temp)
 		 *  - user's home directory  (user.home)
 		 */
-		DataElement systemInfo = _dataStore.createObject(_minerData, "dstore.structureNode", "systemInfo");
+		DataElement systemInfo = _dataStore.createObject(_minerData, "dstore.structureNode", "systemInfo"); //$NON-NLS-1$ //$NON-NLS-2$
 
-		_dataStore.createObject(systemInfo, "system.property", "user.home", System.getProperty("user.home"));
-		_dataStore.createObject(systemInfo, "system.property", "temp.dir", System.getProperty("java.io.tmpdir"));
+		_dataStore.createObject(systemInfo, "system.property", "user.home", System.getProperty("user.home")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		_dataStore.createObject(systemInfo, "system.property", "temp.dir", System.getProperty("java.io.tmpdir")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		
-		_dataStore.createObject(systemInfo, "system.property", "os.name", System.getProperty("os.name"));
-		_dataStore.createObject(systemInfo, "system.property", "os.version", System.getProperty("os.version"));
+		_dataStore.createObject(systemInfo, "system.property", "os.name", System.getProperty("os.name")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		_dataStore.createObject(systemInfo, "system.property", "os.version", System.getProperty("os.version")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		
     	getSystemNode();
     	_dataStore.refresh(_minerData);
@@ -98,7 +98,7 @@ public class EnvironmentMiner extends Miner
 	DataElement     env = getCommandArgument(theElement, 1);
 	
 	
-	if (name.equals("C_SET_ENVIRONMENT_VARIABLES"))
+	if (name.equals("C_SET_ENVIRONMENT_VARIABLES")) //$NON-NLS-1$
 	{
 		if (_system.getNestedSize() == 0)
 		{
@@ -106,18 +106,18 @@ public class EnvironmentMiner extends Miner
 		}
 	    handleSetEnvironment(subject, env);
 	}
-	else if (name.equals("C_SET_ENVIRONMENT_VARIABLES_NO_SYSTEM"))
+	else if (name.equals("C_SET_ENVIRONMENT_VARIABLES_NO_SYSTEM")) //$NON-NLS-1$
 	{
 	    handleSetEnvironment(subject, env);
 	}	
 	
-	status.setAttribute(DE.A_NAME, "done");
+	status.setAttribute(DE.A_NAME, "done"); //$NON-NLS-1$
 	return status;
     }
     
     public void handleSetEnvironment(DataElement theElement, DataElement environment)
     {
-	String envName = theElement.getValue() + ".env";
+	String envName = theElement.getValue() + ".env"; //$NON-NLS-1$
 	
 	//First check to see if we already have an Environment for theElement..and get rid of it if we do.
 	DataElement envRoot = _dataStore.find(_minerData, DE.A_NAME, envName, 1);
@@ -125,7 +125,7 @@ public class EnvironmentMiner extends Miner
 	    {
 		_dataStore.deleteObject(_minerData, envRoot);
 		_dataStore.refresh(_minerData);
-		List theReferences = theElement.getAssociated("inhabits");
+		List theReferences = theElement.getAssociated("inhabits"); //$NON-NLS-1$
 		if (theReferences.size() > 0)
 		    {
 			_dataStore.deleteObject(theElement, (DataElement)theReferences.get(0));
@@ -139,7 +139,7 @@ public class EnvironmentMiner extends Miner
 	_minerData.addNestedData(environment, false);
 	environment.setParent(_minerData);
 	_dataStore.refresh(_minerData);
-	_dataStore.createReference(theElement, environment, "inhabits", "sustains");
+	_dataStore.createReference(theElement, environment, "inhabits", "sustains"); //$NON-NLS-1$ //$NON-NLS-2$
 	_dataStore.refresh(environment);
 	_dataStore.refresh(theElement);
     }
@@ -150,19 +150,19 @@ public class EnvironmentMiner extends Miner
     private void getSystemEnvironment()
     {
 
-	String envCommand  = "sh -c env";
+	String envCommand  = "sh -c env"; //$NON-NLS-1$
 
-	String theOS = System.getProperty("os.name").toLowerCase();
+	String theOS = System.getProperty("os.name").toLowerCase(); //$NON-NLS-1$
 	//If we're on windows, change the envCommand. 
-	if (theOS.startsWith("win"))
-	    envCommand = "cmd /C set"; 
+	if (theOS.startsWith("win")) //$NON-NLS-1$
+	    envCommand = "cmd /C set";  //$NON-NLS-1$
 	
-	if (theOS.startsWith("os/400"))
+	if (theOS.startsWith("os/400")) //$NON-NLS-1$
 	{
-	    envCommand = "/QOpenSys/usr/bin/sh -c env";
+	    envCommand = "/QOpenSys/usr/bin/sh -c env"; //$NON-NLS-1$
 	}
 	
-	String specialEncoding= System.getProperty("dstore.stdin.encoding");
+	String specialEncoding= System.getProperty("dstore.stdin.encoding"); //$NON-NLS-1$
 	try
 	    {
 		Process        _process = Runtime.getRuntime().exec(envCommand);
@@ -180,14 +180,14 @@ public class EnvironmentMiner extends Miner
 		String curLine;
 		while ( (curLine = _output.readLine()) != null)
 		{
-			int eqIndex = curLine.indexOf("=");
+			int eqIndex = curLine.indexOf("="); //$NON-NLS-1$
 			if (eqIndex > 0)
 			{
-				if (curLine.indexOf("=()") > 0)
+				if (curLine.indexOf("=()") > 0) //$NON-NLS-1$
 				{
 					String multiLine =new String(curLine);
 					
-					if (!curLine.endsWith("}"))
+					if (!curLine.endsWith("}")) //$NON-NLS-1$
 					{
 						boolean complete = false;
 						String subLine = null;
@@ -202,16 +202,16 @@ public class EnvironmentMiner extends Miner
 					}
 				
 					//String name = curLine.substring(0, eqIndex);
-					DataElement var = _dataStore.createObject(_system, "Environment Variable", curLine, multiLine);
+					DataElement var = _dataStore.createObject(_system, "Environment Variable", curLine, multiLine); //$NON-NLS-1$
 					var.setAttribute(DE.A_VALUE, multiLine);
 				}
 				else
 				{
-				    if (curLine.startsWith("PATH="))
+				    if (curLine.startsWith("PATH=")) //$NON-NLS-1$
 				    {
-				        curLine += ":.";
+				        curLine += ":."; //$NON-NLS-1$
 				    }
-					_dataStore.createObject(_system, "Environment Variable", curLine, curLine);
+					_dataStore.createObject(_system, "Environment Variable", curLine, curLine); //$NON-NLS-1$
 				}
 				
 			}
@@ -221,12 +221,12 @@ public class EnvironmentMiner extends Miner
 	    }
 	catch (IOException e) 
 	    {
-		System.err.println("Error getting System Environment Variables\n" + e.getMessage());
+		System.err.println("Error getting System Environment Variables\n" + e.getMessage()); //$NON-NLS-1$
 	    }
     }
     
 	public String getVersion()
 	{
-		return "6.4.0";
+		return "6.4.0"; //$NON-NLS-1$
 	}
 }

@@ -47,11 +47,11 @@ public class Patterns
 	private boolean _isTerminal = false;
 	private String _pluginPath;
 
-	private static String MINERS_PACKAGE = "org.eclipse.rse.services.dstore";
-	private static String PATTERNS_FILE = "patterns.dat";
+	private static String MINERS_PACKAGE = "org.eclipse.rse.services.dstore"; //$NON-NLS-1$
+	private static String PATTERNS_FILE = "patterns.dat"; //$NON-NLS-1$
 
 	// HACK - too late in cycle to deal with version properly - for now this has to be fixed
-	private String _version = "8.0.0";
+	private String _version = "8.0.0"; //$NON-NLS-1$
 
 	public Patterns(DataStore ds)
 	{
@@ -81,17 +81,17 @@ public class Patterns
 		String result = theCommand;
 
 		// for multi commands
-		int semiIndex = result.indexOf(";");
+		int semiIndex = result.indexOf(";"); //$NON-NLS-1$
 		if (semiIndex > 0)
 		{ 
 			result = result.substring(0, semiIndex);
 		}
 		
 		// for qualified commands
-		int spaceIndex = result.indexOf(" ");
+		int spaceIndex = result.indexOf(" "); //$NON-NLS-1$
 		if (spaceIndex > -1)
 		{
-			int slashIndex = result.lastIndexOf("/", spaceIndex);
+			int slashIndex = result.lastIndexOf("/", spaceIndex); //$NON-NLS-1$
 			if ((slashIndex > 0))
 			{
 				result = result.substring(slashIndex + 1, result.length());
@@ -99,7 +99,7 @@ public class Patterns
 		}
 		else
 		{
-			int slashIndex = result.lastIndexOf("/");
+			int slashIndex = result.lastIndexOf("/"); //$NON-NLS-1$
 			if ((slashIndex > 0))
 			{
 				result = result.substring(slashIndex + 1, result.length());
@@ -131,13 +131,13 @@ public class Patterns
 		if (_thePatternsFile == null)
 		{
 
-			File thePatternsFile = new File(_pluginPath + "/" + MINERS_PACKAGE + "/" + PATTERNS_FILE);
+			File thePatternsFile = new File(_pluginPath + "/" + MINERS_PACKAGE + "/" + PATTERNS_FILE); //$NON-NLS-1$ //$NON-NLS-2$
 			if (!thePatternsFile.exists())
 			{
-				thePatternsFile = new File(_pluginPath + "/" + PATTERNS_FILE);
+				thePatternsFile = new File(_pluginPath + "/" + PATTERNS_FILE); //$NON-NLS-1$
 				if (!thePatternsFile.exists())
 				{
-					thePatternsFile = new File(_pluginPath + "/" + MINERS_PACKAGE + "_" + _version + "/" + PATTERNS_FILE);
+					thePatternsFile = new File(_pluginPath + "/" + MINERS_PACKAGE + "_" + _version + "/" + PATTERNS_FILE); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 
 					if (!thePatternsFile.exists())
 					{
@@ -187,7 +187,7 @@ public class Patterns
 		catch (Exception e)
 		{
 			_dataStore.trace(e);
-			_dataStore.trace("failed to load patterns.dat with UTF-8.  Trying with native encoding");
+			_dataStore.trace("failed to load patterns.dat with UTF-8.  Trying with native encoding"); //$NON-NLS-1$
 
 			try
 			{
@@ -228,9 +228,9 @@ public class Patterns
 				continue;
 
 			//Check if this line is the start of a new command section
-			if (curLine.startsWith("command"))
+			if (curLine.startsWith("command")) //$NON-NLS-1$
 			{
-				int colon = curLine.indexOf(":");
+				int colon = curLine.indexOf(":"); //$NON-NLS-1$
 				//Check that there is something after the colon
 				if (colon == (curLine.length() - 1))
 					continue;
@@ -244,9 +244,9 @@ public class Patterns
 			//If we get here, the line must be an output pattern 
 			else
 			{
-				int firstSpace = curLine.indexOf(" ");
-				int patternWord = curLine.indexOf("pattern");
-				int firstEquals = curLine.indexOf("=");
+				int firstSpace = curLine.indexOf(" "); //$NON-NLS-1$
+				int patternWord = curLine.indexOf("pattern"); //$NON-NLS-1$
+				int firstEquals = curLine.indexOf("="); //$NON-NLS-1$
 				if ((firstEquals == -1) || (firstEquals == (curLine.length() - 1)))
 					continue;
 				String objType = curLine.substring(0, firstSpace);
@@ -294,7 +294,7 @@ public class Patterns
 						
 			if (curCommand.matchCommand(_currentCommand))
 			{
-				if (_currentCommand.equals("ls") && _isTerminal && !curCommand.getPattern().equals(".*"))
+				if (_currentCommand.equals("ls") && _isTerminal && !curCommand.getPattern().equals(".*")) //$NON-NLS-1$ //$NON-NLS-2$
 				{
 				}
 				else

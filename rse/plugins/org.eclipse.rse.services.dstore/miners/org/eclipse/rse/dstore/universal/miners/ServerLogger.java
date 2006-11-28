@@ -28,14 +28,14 @@ public class ServerLogger {
 	
 	
 	// Constants for logging - for use in rsecomm.properties
-	private static final String DEBUG_LEVEL = "debug_level";
-	private static final String LOG_LOCATION = "log_location";
+	private static final String DEBUG_LEVEL = "debug_level"; //$NON-NLS-1$
+	private static final String LOG_LOCATION = "log_location"; //$NON-NLS-1$
 	
 	private static final int LOG_WARNING = 1;
 	private static final int LOG_INFO = 2;
 	private static final int LOG_DEBUG = 3;
 	
-	private static final String LOG_TO_STDOUT = "Log_To_StdOut";
+	private static final String LOG_TO_STDOUT = "Log_To_StdOut"; //$NON-NLS-1$
 
 	private static Object writeLock = new Object();
 	private static PrintWriter _logFileStream = null;
@@ -52,7 +52,7 @@ public class ServerLogger {
 			boolean logToFile = true;
 			
 			try { 
-				ResourceBundle properties = ResourceBundle.getBundle("rsecomm");
+				ResourceBundle properties = ResourceBundle.getBundle("rsecomm"); //$NON-NLS-1$
 				String debug_level = properties.getString(DEBUG_LEVEL).trim();
 				log_level = Integer.parseInt(debug_level);				
 				String log_location = properties.getString(LOG_LOCATION).trim();
@@ -67,7 +67,7 @@ public class ServerLogger {
 				
 			if (logToFile) {
 				try {
-			  		File _logFile = new File(logPathName, "rsecomm.log");
+			  		File _logFile = new File(logPathName, "rsecomm.log"); //$NON-NLS-1$
 	 	 		
 	 	 			if (!_logFile.exists()) {
 	  					_logFile.createNewFile();
@@ -76,7 +76,7 @@ public class ServerLogger {
 	  				_logFileStream = new PrintWriter(new FileOutputStream(_logFile));
 	  		
 				} catch (IOException e) {
-					System.out.println("Error opening log file " + logPathName + "rsecomm.log");		
+					System.out.println("Error opening log file " + logPathName + "rsecomm.log");		 //$NON-NLS-1$ //$NON-NLS-2$
 				}
 			}
 		}
@@ -96,8 +96,8 @@ public class ServerLogger {
 				synchronized(writeLock) {
 					try {
 						_logFileStream.println(new Date());
-						_logFileStream.println("INFO " + minerName + ": " + message);
-						_logFileStream.println("---------------------------------------------------------------");
+						_logFileStream.println("INFO " + minerName + ": " + message); //$NON-NLS-1$ //$NON-NLS-2$
+						_logFileStream.println("---------------------------------------------------------------"); //$NON-NLS-1$
 						_logFileStream.flush();
 					}catch (Exception e) {}
 				}
@@ -119,8 +119,8 @@ public class ServerLogger {
 				synchronized(writeLock) {
 					try {
 						_logFileStream.println(new Date());
-						_logFileStream.println("WARNING " + minerName + ": " + message);
-						_logFileStream.println("---------------------------------------------------------------");
+						_logFileStream.println("WARNING " + minerName + ": " + message); //$NON-NLS-1$ //$NON-NLS-2$
+						_logFileStream.println("---------------------------------------------------------------"); //$NON-NLS-1$
 						_logFileStream.flush();
 					}catch (Exception e) {}
 				}
@@ -143,11 +143,11 @@ public class ServerLogger {
 			synchronized(writeLock) {
 				try {
 					_logFileStream.println(new Date());
-					_logFileStream.println("ERROR " + minerName + ": " + message);
+					_logFileStream.println("ERROR " + minerName + ": " + message); //$NON-NLS-1$ //$NON-NLS-2$
 					if (exception != null) {
 						exception.printStackTrace(_logFileStream);
 					}
-					_logFileStream.println("---------------------------------------------------------------");
+					_logFileStream.println("---------------------------------------------------------------"); //$NON-NLS-1$
 					_logFileStream.flush();
 				}catch (Exception e) {}
 			}
@@ -168,8 +168,8 @@ public class ServerLogger {
 				synchronized(writeLock) {
 					try {
 						_logFileStream.println(new Date());
-						_logFileStream.println("DEBUG " + minerName + ": " + message);
-						_logFileStream.println("---------------------------------------------------------------");
+						_logFileStream.println("DEBUG " + minerName + ": " + message); //$NON-NLS-1$ //$NON-NLS-2$
+						_logFileStream.println("---------------------------------------------------------------"); //$NON-NLS-1$
 						_logFileStream.flush();
 					}catch (Exception e) {}
 				}

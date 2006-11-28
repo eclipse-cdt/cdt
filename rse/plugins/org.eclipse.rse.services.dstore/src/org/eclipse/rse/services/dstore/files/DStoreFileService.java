@@ -62,17 +62,17 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 	private int _bufferDownloadSize = IUniversalDataStoreConstants.BUFFER_SIZE;
 	protected ISystemFileTypes _fileTypeRegistry;
 	
-	private static String _percentMsg = SystemMessage.sub(SystemMessage.sub(SystemMessage.sub(ServiceResources.DStore_Service_Percent_Complete_Message, "&0", "{0}"), "&1", "{1}"), "&2", "{2}");	
+	private static String _percentMsg = SystemMessage.sub(SystemMessage.sub(SystemMessage.sub(ServiceResources.DStore_Service_Percent_Complete_Message, "&0", "{0}"), "&1", "{1}"), "&2", "{2}");	 //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$
 
 	private static String[] _filterAttributes =  {
-		"attributes", 
-		"filter",
-		"filter.id",
-		"doc",
-		"",
-		"",
+		"attributes",  //$NON-NLS-1$
+		"filter", //$NON-NLS-1$
+		"filter.id", //$NON-NLS-1$
+		"doc", //$NON-NLS-1$
+		"", //$NON-NLS-1$
+		"", //$NON-NLS-1$
 		DataStoreResources.FALSE,
-		"2"};
+		"2"}; //$NON-NLS-1$
 	
 	public DStoreFileService(IDataStoreProvider dataStoreProvider, ISystemFileTypes fileTypeRegistry, ISystemMessageProvider msgProvider)
 	{
@@ -144,8 +144,8 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 
 		String dataStoreLocalPath = localPath.substring(index + 1);
 
-		if (!dataStoreLocalPath.startsWith("/"))
-			dataStoreLocalPath = "/" + dataStoreLocalPath;
+		if (!dataStoreLocalPath.startsWith("/")) //$NON-NLS-1$
+			dataStoreLocalPath = "/" + dataStoreLocalPath; //$NON-NLS-1$
 
 		return dataStoreLocalPath;
 	}
@@ -160,7 +160,7 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 	    DataElement minerInfo = getMinerElement();
 		if (_uploadLogElement ==  null || _uploadLogElement.getDataStore() != getDataStore())
 		{
-		    _uploadLogElement = getDataStore().find(minerInfo, DE.A_NAME, "universal.uploadlog", 2);
+		    _uploadLogElement = getDataStore().find(minerInfo, DE.A_NAME, "universal.uploadlog", 2); //$NON-NLS-1$
 		}
 		return _uploadLogElement;
 	}
@@ -170,7 +170,7 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 		DataElement attributes = getDataStore().createTransientObject(_filterAttributes);
 		String version = VERSION_1;
 		StringBuffer buffer = new StringBuffer();
-		String filter = ((fileNameFilter == null) ? "*" : fileNameFilter);
+		String filter = ((fileNameFilter == null) ? "*" : fileNameFilter); //$NON-NLS-1$
 		buffer.append(version).append(TOKEN_SEPARATOR).append(filter).append(TOKEN_SEPARATOR).append(showHidden);
 		attributes.setAttribute(DE.A_SOURCE, buffer.toString());
 		return attributes;
@@ -440,15 +440,15 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 			
 					StringBuffer totalSentBuf = new StringBuffer();
 					totalSentBuf.append((totalSent / KB_IN_BYTES));
-					totalSentBuf.append(" KB");
+					totalSentBuf.append(" KB"); //$NON-NLS-1$
 					
 					StringBuffer totalBuf = new StringBuffer();
 					totalBuf.append(totalBytes / KB_IN_BYTES);
-					totalBuf.append(" KB");
+					totalBuf.append(" KB"); //$NON-NLS-1$
 					
 					StringBuffer percentBuf = new StringBuffer();
 					percentBuf.append(percent);
-					percentBuf.append("%");
+					percentBuf.append("%"); //$NON-NLS-1$
 								
 					monitor.worked(bytesRead);
 					
@@ -609,7 +609,7 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 				
 		DataElement localElement = ds.createObject(universaltemp, de.getType(), localFile.getAbsolutePath(), encoding);
 		
-		DataElement bufferSizeElement = ds.createObject(universaltemp, "buffer_size", "" + getBufferDownloadSize(), "");
+		DataElement bufferSizeElement = ds.createObject(universaltemp, "buffer_size", "" + getBufferDownloadSize(), ""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		DataElement queryCmd = getCommandDescriptor(de,C_DOWNLOAD_FILE);
 
 		ArrayList argList = new ArrayList();
@@ -622,7 +622,7 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 		DataElement status = ds.command(queryCmd, argList, subject);
 		if (status == null)
 		{
-			System.out.println("no download descriptor for "+remoteElement);
+			System.out.println("no download descriptor for "+remoteElement); //$NON-NLS-1$
 		}
 		try
 		{
@@ -675,7 +675,7 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 			else if (resultChild.getType().equals(DOWNLOAD_RESULT_FILE_NOT_FOUND_EXCEPTION))
 			{
 				localFile.delete();
-				SystemMessage msg = getMessage("RSEF1001").makeSubstitution(DOWNLOAD_RESULT_FILE_NOT_FOUND_EXCEPTION);
+				SystemMessage msg = getMessage("RSEF1001").makeSubstitution(DOWNLOAD_RESULT_FILE_NOT_FOUND_EXCEPTION); //$NON-NLS-1$
 				throw new SystemMessageException(msg);
 			}
 			else if (resultChild.getType().equals(DOWNLOAD_RESULT_UNSUPPORTED_ENCODING_EXCEPTION))
@@ -690,7 +690,7 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 			else if (resultChild.getType().equals(DOWNLOAD_RESULT_IO_EXCEPTION))
 			{
 				localFile.delete();
-				SystemMessage msg = getMessage("RSEF1001").makeSubstitution(DOWNLOAD_RESULT_IO_EXCEPTION);
+				SystemMessage msg = getMessage("RSEF1001").makeSubstitution(DOWNLOAD_RESULT_IO_EXCEPTION); //$NON-NLS-1$
 				throw new SystemMessageException(msg);
 				//IOException e = new IOException(resultChild.getName());
 				//UniversalSystemPlugin.logError(CLASSNAME + "." + "copy: " + "error reading file " + remotePath, e);
@@ -759,7 +759,7 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 	public IHostFile getFile(IProgressMonitor monitor, String remoteParent, String name)
 	{
 		DataElement de = null;
-		if (name.equals(".") && name.equals(remoteParent))
+		if (name.equals(".") && name.equals(remoteParent)) //$NON-NLS-1$
 		{
 			de = getElementFor(name);
 		}
@@ -782,30 +782,30 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 	 */
 	protected String getSeparator(String parentPath)
 	{
-		if (parentPath == null || parentPath.length() < 2) return "/";
+		if (parentPath == null || parentPath.length() < 2) return "/"; //$NON-NLS-1$
 		if (parentPath.endsWith(ArchiveHandlerManager.VIRTUAL_SEPARATOR))
-			return "";
+			return ""; //$NON-NLS-1$
 		if (parentPath.endsWith(ArchiveHandlerManager.VIRTUAL_CANONICAL_SEPARATOR))
-			return "/";
+			return "/"; //$NON-NLS-1$
 		if (parentPath.charAt(1) == ':') //Windows path
 			if (parentPath.indexOf(ArchiveHandlerManager.VIRTUAL_CANONICAL_SEPARATOR) != -1)
-				if (parentPath.endsWith("/"))
-					return ""; //already ends in separator
-				else return "/";
+				if (parentPath.endsWith("/")) //$NON-NLS-1$
+					return ""; //already ends in separator //$NON-NLS-1$
+				else return "/"; //$NON-NLS-1$
 			else if (ArchiveHandlerManager.getInstance().isArchive(new File(parentPath)))
 				return ArchiveHandlerManager.VIRTUAL_SEPARATOR;
 			else
-				if (parentPath.endsWith("\\"))
-					return ""; //already ends in separator
-				else return "\\";
+				if (parentPath.endsWith("\\")) //$NON-NLS-1$
+					return ""; //already ends in separator //$NON-NLS-1$
+				else return "\\"; //$NON-NLS-1$
 		else if (parentPath.charAt(0) == '/') //UNIX path
 			if (ArchiveHandlerManager.getInstance().isArchive(new File(parentPath)))
 				return ArchiveHandlerManager.VIRTUAL_SEPARATOR;
 			else
-				if (parentPath.endsWith("/"))
-					return ""; //already ends in separator
-				else return "/";
-		else return "/"; //unrecognized path
+				if (parentPath.endsWith("/")) //$NON-NLS-1$
+					return ""; //already ends in separator //$NON-NLS-1$
+				else return "/"; //$NON-NLS-1$
+		else return "/"; //unrecognized path //$NON-NLS-1$
 	}
 	
 	protected IHostFile convertToHostFile(DataElement element)
@@ -839,7 +839,7 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 
 	public IHostFile getUserHome()
 	{
-		return getFile(null, ".",".");
+		return getFile(null, ".","."); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	public IHostFile createFile(IProgressMonitor monitor, String remoteParent, String fileName) throws SystemMessageException
@@ -855,7 +855,7 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 			return new DStoreHostFile(de);
 		else
 		{
-			throw new SystemMessageException(getMessage("RSEF1302").makeSubstitution(remotePath));
+			throw new SystemMessageException(getMessage("RSEF1302").makeSubstitution(remotePath)); //$NON-NLS-1$
 		}	
 	}
 
@@ -871,7 +871,7 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 			return new DStoreHostFile(de);
 		else
 		{
-			throw new SystemMessageException(getMessage("RSEF1304").makeSubstitution(remotePath));
+			throw new SystemMessageException(getMessage("RSEF1304").makeSubstitution(remotePath)); //$NON-NLS-1$
 		}	
 
 	}
@@ -885,7 +885,7 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 		if (de.getType().equals(IUniversalDataStoreConstants.UNIVERSAL_FILE_DESCRIPTOR))
 		{
 			if (FileSystemMessageUtil.getSourceMessage(status).equals(IServiceConstants.SUCCESS)) return true;
-			else throw new SystemMessageException(getMessage("RSEF1300").makeSubstitution(FileSystemMessageUtil.getSourceLocation(status)));	
+			else throw new SystemMessageException(getMessage("RSEF1300").makeSubstitution(FileSystemMessageUtil.getSourceLocation(status)));	 //$NON-NLS-1$
 		}
 		else
 		{
@@ -908,7 +908,7 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 		DataElement status = dsStatusCommand(monitor, (DataElement) dataElements.get(0), dataElements, C_DELETE_BATCH);
 		if (status == null) return false;
 		if (FileSystemMessageUtil.getSourceMessage(status).startsWith(IServiceConstants.FAILED))
-			throw new SystemMessageException(getMessage("RSEF1300").makeSubstitution(FileSystemMessageUtil.getSourceLocation(status)));
+			throw new SystemMessageException(getMessage("RSEF1300").makeSubstitution(FileSystemMessageUtil.getSourceLocation(status))); //$NON-NLS-1$
 		else return true;
 	}
 
@@ -925,7 +925,7 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 			return true;
 		else
 		{
-			throw new SystemMessageException(getMessage("RSEF1301").makeSubstitution(FileSystemMessageUtil.getSourceLocation(status)));
+			throw new SystemMessageException(getMessage("RSEF1301").makeSubstitution(FileSystemMessageUtil.getSourceLocation(status))); //$NON-NLS-1$
 		}	
 	}
 	
@@ -1069,7 +1069,7 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 		{
 			ArrayList args = new ArrayList();
 			args.add(srcDE);
-			DataElement nameObj = ds.createObject(null, "name", tgtName);
+			DataElement nameObj = ds.createObject(null, "name", tgtName); //$NON-NLS-1$
 			args.add(nameObj);
 			DataElement status = ds.command(cpCmd, args, tgtDE, true);
 			
@@ -1080,7 +1080,7 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 				
 				if (status.getAttribute(DE.A_SOURCE).equals(FAILED)) {
 
-					throw new SystemMessageException(getMessage("RSEF1306").makeSubstitution(srcName));
+					throw new SystemMessageException(getMessage("RSEF1306").makeSubstitution(srcName)); //$NON-NLS-1$
 					/*
 					// for an unexpected error, we don't have an error message from the server
 					if (errMsg.equals(UNEXPECTED_ERROR)) {
@@ -1128,7 +1128,7 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 				getStatusMonitor(ds).waitForUpdate(status, monitor);
 				
 				if (status.getAttribute(DE.A_SOURCE).equals(FAILED)) {
-					throw new SystemMessageException(getMessage("RSEF1306").makeSubstitution(srcNames[0]));
+					throw new SystemMessageException(getMessage("RSEF1306").makeSubstitution(srcNames[0])); //$NON-NLS-1$
 				}
 			}
 			catch (InterruptedException e)
@@ -1154,7 +1154,7 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 		DataElement universaltemp = getMinerElement();
 	
 		// create filter descriptor
-		DataElement deObj = ds.createObject(universaltemp, UNIVERSAL_FILTER_DESCRIPTOR, "", "", "", false);
+		DataElement deObj = ds.createObject(universaltemp, UNIVERSAL_FILTER_DESCRIPTOR, "", "", "", false); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		DataElement[] results = dsQueryCommand(monitor, deObj, C_QUERY_ROOTS);
 		
 		return convertToHostFiles(results);
@@ -1196,7 +1196,7 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 		if (element == null || element.isDeleted())
 		{
 			DataElement universaltemp = getMinerElement();
-			element = getDataStore().createObject(universaltemp, UNIVERSAL_FILTER_DESCRIPTOR, normalizedPath, normalizedPath, "", false);
+			element = getDataStore().createObject(universaltemp, UNIVERSAL_FILTER_DESCRIPTOR, normalizedPath, normalizedPath, "", false); //$NON-NLS-1$
 		}
 		return element;
 	}
@@ -1211,7 +1211,7 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 		if (deObj == null)
 		{
 			DataElement universaltemp = getMinerElement();
-			ds.createObject(universaltemp, UNIVERSAL_FILTER_DESCRIPTOR, remoteParent, remoteParent, "", false);
+			ds.createObject(universaltemp, UNIVERSAL_FILTER_DESCRIPTOR, remoteParent, remoteParent, "", false); //$NON-NLS-1$
 		}
 		
 		DataElement attributes = getAttributes(fileFilter, true);

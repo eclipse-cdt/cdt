@@ -778,7 +778,7 @@ public class CommandMinerThread extends MinerThread
 			{
 				String theKey = (String) e.nextElement();
 				if (matchString.equals(theKey.toUpperCase()))
-					theValue = (String) theTable.get(theKey);
+					theValue =  theTable.get(theKey);
 			}
 		}
 		if (theValue == null)
@@ -890,7 +890,7 @@ public class CommandMinerThread extends MinerThread
 					else
 					{
 						exitcode = _theProcess.exitValue();
-						createObject("prompt", "> Shell Completed (exit code = " + exitcode + ")"); //$NON-NLS-1$ //$NON-NLS-3$
+						createObject("prompt", "> Shell Completed (exit code = " + exitcode + ")"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 					}
 				}
 				catch (IllegalThreadStateException e)
@@ -1089,7 +1089,7 @@ public class CommandMinerThread extends MinerThread
 				expectedPath = file;
 				_cwdStr = file.replaceAll("//", "/"); //$NON-NLS-1$ //$NON-NLS-2$
 			 }
-			 else if (aFile != null && aFile.exists())
+			 else if (aFile.exists())
 			 {
 			   expectedPath = aFile.getAbsolutePath();
 			   file = expectedPath;

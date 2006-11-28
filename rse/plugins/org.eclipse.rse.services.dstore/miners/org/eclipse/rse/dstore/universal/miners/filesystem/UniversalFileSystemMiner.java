@@ -121,8 +121,6 @@ public class UniversalFileSystemMiner extends Miner implements
 		// TODO: test on WINDOWS!
 
 		if ("C_QUERY_VIEW_ALL".equals(name)) { //$NON-NLS-1$
-			if (subject != null)
-			{
 			    DataElement attributes = getCommandArgument(theElement, 1);
 			    if (attributes != null && attributes.getType().equals("attributes")) //$NON-NLS-1$
 			    {
@@ -134,13 +132,7 @@ public class UniversalFileSystemMiner extends Miner implements
 			        return handleQueryAll(subject, null, status, queryType,
 						caseSensitive);
 			    }
-			}
-			else
-				UniversalServerUtilities.logError(CLASSNAME,
-						"C_QUERY_VIEW_ALL - subject is null", null); //$NON-NLS-1$
 		} else if ("C_QUERY_VIEW_FILES".equals(name)) { //$NON-NLS-1$
-			if (subject != null)
-			{
 			    DataElement attributes = getCommandArgument(theElement, 1);
 			    if (attributes != null && attributes.getType().equals("attributes")) //$NON-NLS-1$
 			    {
@@ -152,13 +144,7 @@ public class UniversalFileSystemMiner extends Miner implements
 			        return handleQueryFiles(subject, null, status, queryType,
 						caseSensitive);
 			    }
-			}
-			else
-				UniversalServerUtilities.logError(CLASSNAME,
-						"C_QUERY_VIEW_FILES - subject is null", null); //$NON-NLS-1$
 		} else if ("C_QUERY_VIEW_FOLDERS".equals(name)) { //$NON-NLS-1$
-			if (subject != null)
-			{
 			    DataElement attributes = getCommandArgument(theElement, 1);
 			    if (attributes != null && attributes.getType().equals("attributes")) //$NON-NLS-1$
 			    {
@@ -170,170 +156,59 @@ public class UniversalFileSystemMiner extends Miner implements
 			        return handleQueryFolders(subject, null, status, queryType,
 						caseSensitive);
 			    }
-			}
-			else
-				UniversalServerUtilities.logError(CLASSNAME,
-						"C_QUERY_VIEW_FOLDERS - subject is null", null); //$NON-NLS-1$
 		} else if ("C_QUERY_ROOTS".equals(name)) { //$NON-NLS-1$
-			if (subject != null)
 				return handleQueryRoots(subject, status);
-			else
-				UniversalServerUtilities.logError(CLASSNAME,
-						"C_QUERY_ROOTS - subject is null", null); //$NON-NLS-1$
 		} else if ("C_SEARCH".equals(name)) { //$NON-NLS-1$
-			if (subject != null)
 				return handleSearch(theElement, status, queryType,
 						caseSensitive);
-			else
-				UniversalServerUtilities.logError(CLASSNAME,
-						"C_SEARCH - subject is null", null); //$NON-NLS-1$
 		} else if ("C_CANCEL".equals(name)) { //$NON-NLS-1$
-			if (subject != null) {
-//				String commandToCancel = subject.getName();
 				subject.getName();
 				return handleCancel(subject, status);
-			} else
-				UniversalServerUtilities.logError(CLASSNAME,
-						"C_CANCEL - subject is null", null); //$NON-NLS-1$
 		} else if ("C_RENAME".equals(name)) { //$NON-NLS-1$
-			if (subject != null)
 				return handleRename(subject, status);
-			else
-				UniversalServerUtilities.logError(CLASSNAME,
-						"C_RENAME - subject is null", null); //$NON-NLS-1$
 		} else if ("C_DELETE".equals(name)) { //$NON-NLS-1$
-			if (subject != null)
 				return handleDelete(subject, status, true);
-			else
-				UniversalServerUtilities.logError(CLASSNAME,
-						"C_DELETE - subject is null", null); //$NON-NLS-1$
 		} else if ("C_DELETE_BATCH".equals(name)) { //$NON-NLS-1$
-			if (subject != null)
 				return handleDeleteBatch(theElement, status);
-			else
-				UniversalServerUtilities.logError(CLASSNAME,
-						"C_DELETE_BATCH - subject is null", null); //$NON-NLS-1$
 		} else if ("C_COPY".equals(name)) { //$NON-NLS-1$
-			if (subject != null)
 				return handleCopy(subject, getCommandArgument(theElement, 1),
 						getCommandArgument(theElement, 2), status);
-			else
-				UniversalServerUtilities.logError(CLASSNAME,
-						"C_COPY - subject is null", null); //$NON-NLS-1$
 		} else if ("C_COPY_BATCH".equals(name)) { //$NON-NLS-1$
-			if (subject != null)
 				return handleCopyBatch(subject, theElement, status);
-			else
-				UniversalServerUtilities.logError(CLASSNAME,
-						"C_COPY_BATCH - subject is null", null); //$NON-NLS-1$
 		} else if ("C_CREATE_FILE".equals(name)) { //$NON-NLS-1$
-			if (subject != null)
 				return handleCreateFile(subject, status, queryType);
-			else
-				UniversalServerUtilities.logError(CLASSNAME,
-						"C_CREATE_FILE - subject is null", null); //$NON-NLS-1$
 		} else if ("C_CREATE_FOLDER".equals(name)) { //$NON-NLS-1$
-			if (subject != null)
 				return handleCreateFolder(subject, status, queryType);
-			else
-				UniversalServerUtilities.logError(CLASSNAME,
-						"C_CREATE_FOLDERS - subject is null", null); //$NON-NLS-1$
 		} else if ("C_SET_READONLY".equals(name)) { //$NON-NLS-1$
-			if (subject != null)
 				return handleSetReadOnly(subject, status);
-			else
-				UniversalServerUtilities.logError(CLASSNAME,
-						"C_SET_READONLY - subject is null", null); //$NON-NLS-1$
 		} else if ("C_SET_LASTMODIFIED".equals(name)) { //$NON-NLS-1$
-			if (subject != null)
 				return handleSetLastModified(subject, status);
-			else
-				UniversalServerUtilities.logError(CLASSNAME,
-						"C_SET_LASTMODIFIED - subject is null", null); //$NON-NLS-1$
 		} else if ("C_QUERY_BASIC_PROPERTY".equals(name)) { //$NON-NLS-1$
-			if (subject != null)
 				return handleQueryBasicProperty(subject, status);
-			else
-				UniversalServerUtilities.logError(CLASSNAME,
-						"C_QUERY_BASIC_PROPERTY - subject is null", null); //$NON-NLS-1$
 		} else if ("C_QUERY_CAN_WRITE_PROPERTY".equals(name)) { //$NON-NLS-1$
-			if (subject != null)
 				return handleQuerycanWriteProperty(subject, status);
-			else
-				UniversalServerUtilities.logError(CLASSNAME,
-						"C_QUERY_CAN_WRITE_PROPERTY - subject is null", null); //$NON-NLS-1$
 		} else if ("C_QUERY_ADVANCE_PROPERTY".equals(name)) { //$NON-NLS-1$
-			if (subject != null)
 				return handleQueryAdvanceProperty(subject, status);
-			else
-				UniversalServerUtilities.logError(CLASSNAME,
-						"C_QUERY_ADVANCE_PROPERTY - subject is null", null); //$NON-NLS-1$
 		} else if ("C_QUERY_FILE_CLASSIFICATIONS".equals(name)) { //$NON-NLS-1$
-			if (subject != null)
 				return handleQueryFileClassification(subject, status);
-			else
-				UniversalServerUtilities.logError(CLASSNAME,
-						"C_QUERY_FILE_CLASSIFICATION - subject is null", null); //$NON-NLS-1$
 		} else if ("C_QUERY_FILE_CLASSIFICATION".equals(name)) { //$NON-NLS-1$
-			if (subject != null)
 				return handleQueryFileClassification(subject, status);
-			else
-				UniversalServerUtilities
-						.logError(
-								CLASSNAME,
-								"C_QUERY_FOLDER_CLASSIFICATION - subject is null", //$NON-NLS-1$
-								null);
 		} else if ("C_QUERY_EXISTS".equals(name)) { //$NON-NLS-1$
-			if (subject != null)
 				return handleQueryExists(subject, status, queryType);
-			else
-				UniversalServerUtilities.logError(CLASSNAME,
-						"C_QUERY_EXISTS - subject is null", null); //$NON-NLS-1$
 		} else if ("C_QUERY_GET_REMOTE_OBJECT".equals(name)) { //$NON-NLS-1$
-			if (subject != null)
 				return handleQueryGetRemoteObject(subject, status, queryType);
-			else
-				UniversalServerUtilities.logError(CLASSNAME,
-						"C_QUERY_GET_REMOTE_OBJECT- subject is null", null); //$NON-NLS-1$
 		} else if ("C_GET_OSTYPE".equals(name)) { //$NON-NLS-1$
-			if (subject != null)
 				return handleGetOSType(subject, status);
-			else
-				UniversalServerUtilities.logError(CLASSNAME,
-						"C_GET_OSTYPE - subject is null", null); //$NON-NLS-1$
 		} else if (C_DOWNLOAD_FILE.equals(name)) {
-			if (subject != null)
-			{ 
 				return handleDownload(theElement, status);
-			}
-			else
-				UniversalServerUtilities.logError(CLASSNAME, C_DOWNLOAD_FILE
-						+ " - subject is null", null); //$NON-NLS-1$
 		} else if (C_SYSTEM_ENCODING.equals(name)) {
-			if (subject != null)
 				return handleQueryEncoding(subject, status);
-			else
-				UniversalServerUtilities.logError(CLASSNAME, C_SYSTEM_ENCODING
-						+ " - subject is null", null); //$NON-NLS-1$
 		} else if (C_QUERY_UNUSED_PORT.equals(name)) {
-			if (subject != null)
 				return handleQueryUnusedPort(subject, status);
-			else
-				UniversalServerUtilities.logError(CLASSNAME, C_QUERY_UNUSED_PORT
-						+ " - subject is null", null); //$NON-NLS-1$
 		} else if ("C_QUERY_CLASSNAME".equals(name)) { //$NON-NLS-1$
-			if (subject != null)
 				return handleQueryClassName(subject, status);
-			else
-				UniversalServerUtilities.logError(CLASSNAME,
-						"C_QUERY_CLASSNAME- subject is null", null); //$NON-NLS-1$
 		} else if (C_QUERY_QUALIFIED_CLASSNAME.equals(name)) {
-			if (subject != null)
 				return handleQueryQualifiedClassName(subject, status);
-			else
-				UniversalServerUtilities.logError(CLASSNAME,
-						C_QUERY_QUALIFIED_CLASSNAME + " - subject is null", //$NON-NLS-1$
-						null);
 		} else {
 			UniversalServerUtilities.logError(CLASSNAME,
 					"Invalid query to handlecommand", null); //$NON-NLS-1$
@@ -1108,14 +983,14 @@ private DataElement createDataElementFromLSString(DataElement subject,
 					UniversalServerUtilities
 							.logError(
 									CLASSNAME,
-									"The object to delete is neither a File or Folder! in handleDelete",
+									"The object to delete is neither a File or Folder! in handleDelete", //$NON-NLS-1$
 									null);
 				}
 			} catch (Exception e) {
 				status.setAttribute(DE.A_SOURCE, FAILED_WITH_EXCEPTION + "|" + deleteObj.getAbsolutePath()); //$NON-NLS-1$
 				status.setAttribute(DE.A_VALUE, e.getLocalizedMessage());
 				UniversalServerUtilities.logError(CLASSNAME,
-						"Delete of the object failed", e);
+						"Delete of the object failed", e); //$NON-NLS-1$
 			}
 		}
 		_dataStore.refresh(subject);
@@ -1164,7 +1039,7 @@ private DataElement createDataElementFromLSString(DataElement subject,
 			boolean success = !(handler == null)
 					&& handler.fullRename(oldAbsPath.getVirtualPart(),
 							newAbsPath.getVirtualPart());
-			if (success) {
+			if (success && handler != null) {
 				subject.setAttribute(DE.A_NAME, filerename.getName());
 				subject.setAttribute(DE.A_SOURCE, setProperties(handler
 						.getVirtualFile(newAbsPath.getVirtualPart())));
@@ -1198,7 +1073,7 @@ private DataElement createDataElementFromLSString(DataElement subject,
 			} catch (Exception e) {
 				status.setAttribute(DE.A_SOURCE, FAILED);
 				UniversalServerUtilities.logError(CLASSNAME,
-						"handleRename failed", e);
+						"handleRename failed", e); //$NON-NLS-1$
 			}
 		}
 		_dataStore.refresh(subject);
@@ -1248,45 +1123,48 @@ private DataElement createDataElementFromLSString(DataElement subject,
 					+ File.separatorChar + subject.getName());
 		else
 			UniversalServerUtilities.logError(CLASSNAME,
-					"Invalid query type to handleCreateFile", null);
+					"Invalid query type to handleCreateFile", null); //$NON-NLS-1$
 
-		if (filename.exists())
-			status.setAttribute(DE.A_SOURCE, FAILED_WITH_EXIST);
-		else {
-			try {
-				boolean done = filename.createNewFile();
-				if (ArchiveHandlerManager.getInstance().isArchive(filename)) {
-					done = ArchiveHandlerManager.getInstance()
-							.createEmptyArchive(filename);
-					if (done)
-						subject.setAttribute(DE.A_TYPE,
-								UNIVERSAL_ARCHIVE_FILE_DESCRIPTOR);
-				} else {
-					if (done)
-					{
-						subject.setAttribute(DE.A_TYPE,
-								UNIVERSAL_FILE_DESCRIPTOR);
+		if (filename != null)
+		{
+			if (filename.exists())
+				status.setAttribute(DE.A_SOURCE, FAILED_WITH_EXIST);
+			else {
+				try {
+					boolean done = filename.createNewFile();
+					if (ArchiveHandlerManager.getInstance().isArchive(filename)) {
+						done = ArchiveHandlerManager.getInstance()
+								.createEmptyArchive(filename);
+						if (done)
+							subject.setAttribute(DE.A_TYPE,
+									UNIVERSAL_ARCHIVE_FILE_DESCRIPTOR);
+					} else {
+						if (done)
+						{
+							subject.setAttribute(DE.A_TYPE,
+									UNIVERSAL_FILE_DESCRIPTOR);
+						}
 					}
-				}
-				subject.setAttribute(DE.A_SOURCE, setProperties(filename));
-				if (done) {
-					status.setAttribute(DE.A_SOURCE, SUCCESS);
-					if (wasFilter) {
-						String fullName = subject.getValue();
-						String name = fullName.substring(fullName
-								.lastIndexOf(File.separatorChar) + 1, fullName
-								.length());
-						String path = fullName.substring(0, fullName
-								.lastIndexOf(File.separatorChar));
-						subject.setAttribute(DE.A_NAME, name);
-						subject.setAttribute(DE.A_VALUE, path);
-					}
-				} else
+					subject.setAttribute(DE.A_SOURCE, setProperties(filename));
+					if (done) {
+						status.setAttribute(DE.A_SOURCE, SUCCESS);
+						if (wasFilter) {
+							String fullName = subject.getValue();
+							String name = fullName.substring(fullName
+									.lastIndexOf(File.separatorChar) + 1, fullName
+									.length());
+							String path = fullName.substring(0, fullName
+									.lastIndexOf(File.separatorChar));
+							subject.setAttribute(DE.A_NAME, name);
+							subject.setAttribute(DE.A_VALUE, path);
+						}
+					} else
+						status.setAttribute(DE.A_SOURCE, FAILED);
+				} catch (Exception e) {
+					UniversalServerUtilities.logError(CLASSNAME,
+							"handleCreateFile failed", e); //$NON-NLS-1$
 					status.setAttribute(DE.A_SOURCE, FAILED);
-			} catch (Exception e) {
-				UniversalServerUtilities.logError(CLASSNAME,
-						"handleCreateFile failed", e);
-				status.setAttribute(DE.A_SOURCE, FAILED);
+				}
 			}
 		}
 		_dataStore.refresh(subject);
@@ -1325,31 +1203,34 @@ private DataElement createDataElementFromLSString(DataElement subject,
 		}
 		else
 			UniversalServerUtilities.logError(CLASSNAME,
-					"Invalid query type to handleCreateFolder", null);
+					"Invalid query type to handleCreateFolder", null); //$NON-NLS-1$
 
-		if (filename.exists())
-			status.setAttribute(DE.A_SOURCE, FAILED_WITH_EXIST);
-		else 
+		if (filename != null)
 		{
-			try {
-				boolean done = filename.mkdirs();
-				if (done) 
-				{
-					status.setAttribute(DE.A_SOURCE, SUCCESS);
-					subject.setAttribute(DE.A_SOURCE, setProperties(filename));
-					subject.setAttribute(DE.A_TYPE,UNIVERSAL_FOLDER_DESCRIPTOR);
-					subject.setAttribute(DE.A_NAME, filename.getName());
-					subject.setAttribute(DE.A_VALUE, filename.getParentFile().getAbsolutePath());
-				} 
-				else
-				{
+			if (filename.exists())
+				status.setAttribute(DE.A_SOURCE, FAILED_WITH_EXIST);
+			else 
+			{
+				try {
+					boolean done = filename.mkdirs();
+					if (done) 
+					{
+						status.setAttribute(DE.A_SOURCE, SUCCESS);
+						subject.setAttribute(DE.A_SOURCE, setProperties(filename));
+						subject.setAttribute(DE.A_TYPE,UNIVERSAL_FOLDER_DESCRIPTOR);
+						subject.setAttribute(DE.A_NAME, filename.getName());
+						subject.setAttribute(DE.A_VALUE, filename.getParentFile().getAbsolutePath());
+					} 
+					else
+					{
+						status.setAttribute(DE.A_SOURCE, FAILED);
+					}
+					
+				} catch (Exception e) {
+					UniversalServerUtilities.logError(CLASSNAME,
+							"handleCreateFolder failed", e); //$NON-NLS-1$
 					status.setAttribute(DE.A_SOURCE, FAILED);
 				}
-				
-			} catch (Exception e) {
-				UniversalServerUtilities.logError(CLASSNAME,
-						"handleCreateFolder failed", e);
-				status.setAttribute(DE.A_SOURCE, FAILED);
 			}
 		}
 		_dataStore.refresh(subject);
@@ -1377,7 +1258,7 @@ private DataElement createDataElementFromLSString(DataElement subject,
 				}
 			} catch (Exception e) {
 				UniversalServerUtilities.logError(CLASSNAME,
-						"handleSetreadOnly", e);
+						"handleSetreadOnly", e); //$NON-NLS-1$
 			}
 		}
 		_dataStore.refresh(subject);
@@ -1409,7 +1290,7 @@ private DataElement createDataElementFromLSString(DataElement subject,
 					status.setAttribute(DE.A_SOURCE, FAILED);
 			} catch (Exception e) {
 				UniversalServerUtilities.logError(CLASSNAME,
-						"handleSetLastModified", e);
+						"handleSetLastModified", e); //$NON-NLS-1$
 			}
 		}
 		_dataStore.refresh(subject);
@@ -1512,7 +1393,7 @@ private DataElement createDataElementFromLSString(DataElement subject,
 
 		}
 
-		if (fileobj.exists())
+		if (fileobj != null && fileobj.exists())
 			status.setAttribute(DE.A_SOURCE, "true"); //$NON-NLS-1$
 		else
 			status.setAttribute(DE.A_SOURCE, "false"); //$NON-NLS-1$
@@ -1532,9 +1413,9 @@ private DataElement createDataElementFromLSString(DataElement subject,
 			isVirtual = ArchiveHandlerManager.isVirtual(fullName);
 			String filterValue = subject.getValue();
 			// . translates to home dir
-			if (filterValue.equals(".")) 
+			if (filterValue.equals("."))  //$NON-NLS-1$
 			{
-				filterValue = System.getProperty("user.home");
+				filterValue = System.getProperty("user.home"); //$NON-NLS-1$
 				subject.setAttribute(DE.A_VALUE, filterValue);
 			}
 			if (!isVirtual)
@@ -1561,11 +1442,11 @@ private DataElement createDataElementFromLSString(DataElement subject,
 		}
 		else {
 			UniversalServerUtilities.logError(CLASSNAME,
-					"Invalid query type to handleQueryGetRemoteObject", null);
+					"Invalid query type to handleQueryGetRemoteObject", null); //$NON-NLS-1$
 			return statusDone(status);
 		}
 
-		if (!isVirtual && fileobj.exists()) {
+		if (!isVirtual && fileobj != null && fileobj.exists()) {
 
 			// Get the canonical path name so that we preserve case for Windows
 			// systems.
@@ -1597,7 +1478,7 @@ private DataElement createDataElementFromLSString(DataElement subject,
 			} 
 			else { // directory
 				subject.setAttribute(DE.A_TYPE, UNIVERSAL_FOLDER_DESCRIPTOR);
-				subject.setAttribute(DE.A_NAME, "");
+				subject.setAttribute(DE.A_NAME, ""); //$NON-NLS-1$
 				subject.setAttribute(DE.A_VALUE, fullName);
 			}
 
@@ -1628,7 +1509,7 @@ private DataElement createDataElementFromLSString(DataElement subject,
 						subject.setAttribute(DE.A_TYPE,
 								UNIVERSAL_VIRTUAL_FOLDER_DESCRIPTOR);
 						subject.setAttribute(DE.A_NAME, child.name);
-						if (child.path.equals("")) {
+						if (child.path.equals("")) { //$NON-NLS-1$
 							subject.setAttribute(DE.A_VALUE, avp
 									.getContainingArchiveString());
 						} else {
@@ -1643,7 +1524,7 @@ private DataElement createDataElementFromLSString(DataElement subject,
 								UNIVERSAL_VIRTUAL_FILE_DESCRIPTOR);
 						String name = child.name;
 						String path = avp.getContainingArchiveString();
-						if (!child.path.equals("")) {
+						if (!child.path.equals("")) { //$NON-NLS-1$
 							path = path
 									+ ArchiveHandlerManager.VIRTUAL_SEPARATOR
 									+ child.path;
@@ -1657,7 +1538,7 @@ private DataElement createDataElementFromLSString(DataElement subject,
 					status.setAttribute(DE.A_SOURCE, SUCCESS);
 				} else {
 					UniversalServerUtilities.logWarning(CLASSNAME,
-							"object does not exist");
+							"object does not exist"); //$NON-NLS-1$
 					subject.setAttribute(DE.A_SOURCE, setProperties(child));
 					status
 							.setAttribute(DE.A_SOURCE,
@@ -1786,7 +1667,7 @@ private DataElement createDataElementFromLSString(DataElement subject,
 				} catch (Exception e) {
 					e.printStackTrace();
 					UniversalServerUtilities.logError(CLASSNAME,
-							"createDataElement failed with exception - isFile ", e);
+							"createDataElement failed with exception - isFile ", e); //$NON-NLS-1$
 				}
 			} // end currentObj not 0
 		}
@@ -1795,18 +1676,7 @@ private DataElement createDataElementFromLSString(DataElement subject,
 		// then check if
 		// it is already in datastore. If so do not recreate it.
 
-		if (list != null) 
-		{
 
-			/*
-			 * DKM: I've commented out this as we shouldn't need it any more
-			 * with the above code working
-			 * 
-			 * if (subject.getNestedData().size() != 0) {
-			 * _dataStore.deleteObjects(subject); // subject.removeNestedData();
-			 * //System.out.println("removing nested data"); }
-			 */
-		    
 			 
 			// DKM - test - dummy object
 			//ds.createObject(subject,UNIVERSAL_FILE_DESCRIPTOR,"I'm not really here!");
@@ -1890,70 +1760,73 @@ private DataElement createDataElementFromLSString(DataElement subject,
 								}
 							}
 
-							if (queryType.equals(UNIVERSAL_FILTER_DESCRIPTOR))
+							if (deObj != null)
 							{
-								deObj.setAttribute(DE.A_VALUE, subject.getAttribute(DE.A_VALUE));
-							}
-							else 
-							{
-							
-								if (subject.getName().length() > 0) 
+								if (queryType.equals(UNIVERSAL_FILTER_DESCRIPTOR))
 								{
-									String valueStr = subject.getAttribute(DE.A_VALUE);
-									//String valueStr = list[i].getParentFile().getAbsolutePath();
-									StringBuffer valueBuffer = new StringBuffer(valueStr);
-									if ((_isWindows && valueStr.endsWith("\\"))|| valueStr.endsWith("/") || subject.getName().startsWith("/")) 
+									deObj.setAttribute(DE.A_VALUE, subject.getAttribute(DE.A_VALUE));
+								}
+								else 
+								{
+								
+									if (subject.getName().length() > 0) 
 									{
-										valueBuffer.append(subject.getName());
-										deObj.setAttribute(DE.A_VALUE,valueBuffer.toString());
+										String valueStr = subject.getAttribute(DE.A_VALUE);
+										//String valueStr = list[i].getParentFile().getAbsolutePath();
+										StringBuffer valueBuffer = new StringBuffer(valueStr);
+										if ((_isWindows && valueStr.endsWith("\\"))|| valueStr.endsWith("/") || subject.getName().startsWith("/"))  //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+										{
+											valueBuffer.append(subject.getName());
+											deObj.setAttribute(DE.A_VALUE,valueBuffer.toString());
+										} 
+										else 
+										{
+											valueBuffer.append(File.separatorChar);
+											valueBuffer.append(subject.getName());
+											deObj.setAttribute(DE.A_VALUE,valueBuffer.toString());
+										}
 									} 
 									else 
 									{
-										valueBuffer.append(File.separatorChar);
-										valueBuffer.append(subject.getName());
-										deObj.setAttribute(DE.A_VALUE,valueBuffer.toString());
+										String valueStr = list[i].getParentFile().getAbsolutePath();
+										deObj.setAttribute(DE.A_VALUE, valueStr);
 									}
-								} 
-								else 
-								{
-									String valueStr = list[i].getParentFile().getAbsolutePath();
-									deObj.setAttribute(DE.A_VALUE, valueStr);
 								}
 							}
 						}
 						// DKM - do basic property stuff here
 						String properties = setProperties(file);
-						
-						if (types != null)
+						if (deObj != null)
 						{
-						    /*
-						    String oldClassification = getClassificationString(deObj.getAttribute(DE.A_SOURCE));
-						    if (oldClassification != null && !oldClassification.equals(types[i]))
-						    {
-						        deObj.setAttribute(DE.A_SOURCE, properties + "|" + oldClassification + " " + types[i]);
-						    }
-						    else
-						    */
-						    {
-						        deObj.setAttribute(DE.A_SOURCE, properties + "|" + types[i]);
-						    }
+							if (types != null)
+							{
+							    /*
+							    String oldClassification = getClassificationString(deObj.getAttribute(DE.A_SOURCE));
+							    if (oldClassification != null && !oldClassification.equals(types[i]))
+							    {
+							        deObj.setAttribute(DE.A_SOURCE, properties + "|" + oldClassification + " " + types[i]);
+							    }
+							    else
+							    */
+							    {
+							        deObj.setAttribute(DE.A_SOURCE, properties + "|" + types[i]); //$NON-NLS-1$
+							    }
+							}
+							else
+							{
+								deObj.setAttribute(DE.A_SOURCE, properties);
+							}
 						}
-						else
-						{
-							deObj.setAttribute(DE.A_SOURCE, properties);
-						}
-				
 					}
 				} catch (Exception e) 
 				{
 					UniversalServerUtilities
 							.logError(
 									CLASSNAME,
-									"createDataElement failed with exception - isHidden ",
+									"createDataElement failed with exception - isHidden ", //$NON-NLS-1$
 									e);
 				}
 			} // end for
-		} // if list !=null
 		//*/
 
 	}
@@ -2034,7 +1907,7 @@ private DataElement createDataElementFromLSString(DataElement subject,
 				} catch (Exception e) {
 					e.printStackTrace();
 					UniversalServerUtilities.logError(CLASSNAME,
-							"createDataElement failed with exception - isFile ", e);
+							"createDataElement failed with exception - isFile ", e); //$NON-NLS-1$
 				}
 			} // end currentObj not 0
 		}
@@ -2108,10 +1981,10 @@ private DataElement createDataElementFromLSString(DataElement subject,
 		if (isArchive)
 			comment = ArchiveHandlerManager.getInstance().getComment(fileObj);
 		else
-			comment = " ";
+			comment = " "; //$NON-NLS-1$
 
 		long compressedSize = size;
-		String compressionMethod = " ";
+		String compressionMethod = " "; //$NON-NLS-1$
 		double compressionRatio = 0;
 
 		long expandedSize;
@@ -2152,13 +2025,13 @@ private DataElement createDataElementFromLSString(DataElement subject,
 		// These extra properties here might cause problems for older clients,
 		// ie: a IndexOutOfBounds in UniversalFileImpl.
 		String comment = fileObj.getComment();
-		if (comment.equals(""))
-			comment = " "; // make sure this is still a
+		if (comment.equals("")) //$NON-NLS-1$
+			comment = " "; // make sure this is still a //$NON-NLS-1$
 		// token
 		long compressedSize = fileObj.getCompressedSize();
 		String compressionMethod = fileObj.getCompressionMethod();
-		if (compressionMethod.equals(""))
-			compressionMethod = " ";
+		if (compressionMethod.equals("")) //$NON-NLS-1$
+			compressionMethod = " "; //$NON-NLS-1$
 		double compressionRatio = fileObj.getCompressionRatio();
 		long expandedSize = size;
 
@@ -2183,7 +2056,7 @@ private DataElement createDataElementFromLSString(DataElement subject,
 	protected String getClassificationString(String s) {
 
 		//StringTokenizer tokenizer = new StringTokenizer(s, TOKEN_SEPARATOR);
-		String[] str = s.split("\\"+TOKEN_SEPARATOR);
+		String[] str = s.split("\\"+TOKEN_SEPARATOR); //$NON-NLS-1$
 		int tokens = str.length;
 		if (tokens < 10)
 		    return null;
@@ -2207,7 +2080,7 @@ private DataElement createDataElementFromLSString(DataElement subject,
 	protected String getFilterString(String s) {
 
 		//StringTokenizer tokenizer = new StringTokenizer(s, TOKEN_SEPARATOR);
-		String[] str = s.split("\\"+TOKEN_SEPARATOR);
+		String[] str = s.split("\\"+TOKEN_SEPARATOR); //$NON-NLS-1$
 		int tokens = str.length;
 
 		/*
@@ -2224,8 +2097,8 @@ private DataElement createDataElementFromLSString(DataElement subject,
 		}
 		else
 		{
-		    System.out.println("problem with properties:"+s);
-		    return "*";
+		    System.out.println("problem with properties:"+s); //$NON-NLS-1$
+		    return "*"; //$NON-NLS-1$
 		}
 	}
 
@@ -2235,7 +2108,7 @@ private DataElement createDataElementFromLSString(DataElement subject,
 	protected boolean getShowHiddenFlag(String s) {
 
 		//StringTokenizer tokenizer = new StringTokenizer(s, TOKEN_SEPARATOR);
-		String[] str = s.split("\\"+TOKEN_SEPARATOR);
+		String[] str = s.split("\\"+TOKEN_SEPARATOR); //$NON-NLS-1$
 		int tokens = str.length;
 		/*
 		int tokens = tokenizer.countTokens();
@@ -2251,7 +2124,7 @@ private DataElement createDataElementFromLSString(DataElement subject,
 		}
 		else
 		{
-		    System.out.println("show hidden flag problem:"+s);
+		    System.out.println("show hidden flag problem:"+s); //$NON-NLS-1$
 		    return true;
 		}
 	}
@@ -2261,7 +2134,7 @@ private DataElement createDataElementFromLSString(DataElement subject,
 	 */
 	protected int getDepth(String s) 
 	{
-		String[] str = s.split("\\"+TOKEN_SEPARATOR);
+		String[] str = s.split("\\"+TOKEN_SEPARATOR); //$NON-NLS-1$
 		int tokens = str.length;
 	    /*
 		StringTokenizer tokenizer = new StringTokenizer(s, TOKEN_SEPARATOR);
@@ -2399,7 +2272,7 @@ private DataElement createDataElementFromLSString(DataElement subject,
 	 */
 	protected DataElement handleQueryEncoding(DataElement subject, DataElement status) {
 
-		String encoding = System.getProperty("file.encoding");
+		String encoding = System.getProperty("file.encoding"); //$NON-NLS-1$
 
 		subject.setAttribute(DE.A_VALUE, encoding);
 		_dataStore.refresh(subject);
@@ -2421,7 +2294,7 @@ private DataElement createDataElementFromLSString(DataElement subject,
 			socket.close();
 		}
 		catch (IOException e) {
-			UniversalServerUtilities.logError(CLASSNAME, "Can not get unused port", e);
+			UniversalServerUtilities.logError(CLASSNAME, "Can not get unused port", e); //$NON-NLS-1$
 			port = -1;
 		}
 		
@@ -2445,7 +2318,7 @@ private DataElement createDataElementFromLSString(DataElement subject,
 	 * Cancel status.
 	 */
 	public DataElement statusCancelled(DataElement status) {
-		status.setAttribute(DE.A_NAME, "cancelled");
+		status.setAttribute(DE.A_NAME, "cancelled"); //$NON-NLS-1$
 		_dataStore.refresh(status);
 		return status;
 	}
@@ -2455,12 +2328,12 @@ private DataElement createDataElementFromLSString(DataElement subject,
 	 */
 	public void load() {
 		// Create datastore tree structure for UniversalFileSystemMiner
-		deUFSnode = _dataStore.createObject(_minerData, UNIVERSAL_NODE_DESCRIPTOR, "universal.node");
+		deUFSnode = _dataStore.createObject(_minerData, UNIVERSAL_NODE_DESCRIPTOR, "universal.node"); //$NON-NLS-1$
 //		deUFStemp = _dataStore.createObject(deUFSnode, UNIVERSAL_NODE_DESCRIPTOR, "universal.temp");
-		_dataStore.createObject(deUFSnode, UNIVERSAL_NODE_DESCRIPTOR, "universal.temp");
+		_dataStore.createObject(deUFSnode, UNIVERSAL_NODE_DESCRIPTOR, "universal.temp"); //$NON-NLS-1$
 //		deUFSfilters = _dataStore.createObject(deUFSnode, UNIVERSAL_NODE_DESCRIPTOR, "universal.filters");
-		_dataStore.createObject(deUFSnode, UNIVERSAL_NODE_DESCRIPTOR, "universal.filters");
-		deUFSuploadlog = _dataStore.createObject(deUFSnode, UNIVERSAL_NODE_DESCRIPTOR, "universal.uploadlog");
+		_dataStore.createObject(deUFSnode, UNIVERSAL_NODE_DESCRIPTOR, "universal.filters"); //$NON-NLS-1$
+		deUFSuploadlog = _dataStore.createObject(deUFSnode, UNIVERSAL_NODE_DESCRIPTOR, "universal.uploadlog"); //$NON-NLS-1$
 
 		UniversalByteStreamHandler universalHandler = new UniversalByteStreamHandler(_dataStore, deUFSuploadlog);		
 		
@@ -2491,12 +2364,12 @@ private DataElement createDataElementFromLSString(DataElement subject,
 					getInputStreamForFile(filename));
 			String name = parser.getPackageName();
 			if (name != null) {
-				_dataStore.createObject(status, "qualifiedClassName", name);
+				_dataStore.createObject(status, "qualifiedClassName", name); //$NON-NLS-1$
 			} else {
-				_dataStore.createObject(status, "qualifiedClassName", "null");
+				_dataStore.createObject(status, "qualifiedClassName", "null"); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 		} catch (java.io.IOException e) {
-			_dataStore.createObject(status, "qualifiedClassName", "null");
+			_dataStore.createObject(status, "qualifiedClassName", "null"); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 
 		return statusDone(status);
@@ -2520,7 +2393,7 @@ private DataElement createDataElementFromLSString(DataElement subject,
 		
 		// parent is virtual folder, so make separator "/"
 		if (isParentVirtual) {
-			sep = "/";
+			sep = "/"; //$NON-NLS-1$
 		}
 		
 		// file path
@@ -2554,13 +2427,13 @@ private DataElement createDataElementFromLSString(DataElement subject,
 			// otherwise, file is a virtual file
 			else {
 				String classification = SystemFileClassifier.getInstance().classifyFile(filePath);
-				String execJava = "executable(java:";
+				String execJava = "executable(java:"; //$NON-NLS-1$
 				
 				int idx = classification.indexOf(execJava);
 				
 				if (idx != -1) {
 					idx = idx + execJava.length(); 
-					int jdx = classification.indexOf(")", idx);
+					int jdx = classification.indexOf(")", idx); //$NON-NLS-1$
 					
 					if (jdx != -1) {
 						
@@ -2568,7 +2441,7 @@ private DataElement createDataElementFromLSString(DataElement subject,
 							className = classification.substring(idx, jdx);
 						}
 						else if (jdx == idx) {
-							className = "";
+							className = ""; //$NON-NLS-1$
 						}
 					}
 				}
@@ -2577,14 +2450,14 @@ private DataElement createDataElementFromLSString(DataElement subject,
 			if (className != null) {
 				_dataStore.createObject(status, TYPE_QUALIFIED_CLASSNAME, className);
 			} else {
-				_dataStore.createObject(status, TYPE_QUALIFIED_CLASSNAME, "null");
+				_dataStore.createObject(status, TYPE_QUALIFIED_CLASSNAME, "null"); //$NON-NLS-1$
 			}
 		} catch (IOException e) {
 			UniversalServerUtilities.logError(CLASSNAME,
-					"I/O error occured trying to read class file " + filePath,
+					"I/O error occured trying to read class file " + filePath, //$NON-NLS-1$
 					null);
 			
-			_dataStore.createObject(status, TYPE_QUALIFIED_CLASSNAME, "null");
+			_dataStore.createObject(status, TYPE_QUALIFIED_CLASSNAME, "null"); //$NON-NLS-1$
 		}
 
 		return statusDone(status);
@@ -2594,7 +2467,7 @@ private DataElement createDataElementFromLSString(DataElement subject,
 	 * Method to retrieve the OS that the miner is running.
 	 */
 	public DataElement handleGetOSType(DataElement subject, DataElement status) {
-		String osType = System.getProperty("os.name").toLowerCase();
+		String osType = System.getProperty("os.name").toLowerCase(); //$NON-NLS-1$
 		status.setAttribute(DE.A_SOURCE, osType);
 		_dataStore.refresh(subject);
 		return statusDone(status);
@@ -2635,129 +2508,129 @@ private DataElement createDataElementFromLSString(DataElement subject,
 		_dataStore.refresh(schemaRoot);
 
 		// Define command descriptors
-		createCommandDescriptor(UniversalFilter, "Filter", "C_QUERY_VIEW_ALL");
-		createCommandDescriptor(UniversalFilter, "Filter", "C_QUERY_VIEW_FILES");
-		createCommandDescriptor(UniversalFilter, "Filter",
-				"C_QUERY_VIEW_FOLDERS");
-		createCommandDescriptor(UniversalFilter, "Filter", "C_QUERY_ROOTS");
+		createCommandDescriptor(UniversalFilter, "Filter", "C_QUERY_VIEW_ALL"); //$NON-NLS-1$ //$NON-NLS-2$
+		createCommandDescriptor(UniversalFilter, "Filter", "C_QUERY_VIEW_FILES"); //$NON-NLS-1$ //$NON-NLS-2$
+		createCommandDescriptor(UniversalFilter, "Filter", //$NON-NLS-1$
+				"C_QUERY_VIEW_FOLDERS"); //$NON-NLS-1$
+		createCommandDescriptor(UniversalFilter, "Filter", "C_QUERY_ROOTS"); //$NON-NLS-1$ //$NON-NLS-2$
 
-		createCommandDescriptor(UniversalFilter, "GetOSType", "C_GET_OSTYPE");
-		createCommandDescriptor(UniversalFilter, "Exists", "C_QUERY_EXISTS");
-		createCommandDescriptor(UniversalFilter, "GetRemoteObject",
-				"C_QUERY_GET_REMOTE_OBJECT");
-		createCommandDescriptor(UniversalFilter, "CreateNewFile",
-				"C_CREATE_FILE");
-		createCommandDescriptor(UniversalFilter, "CreateNewFolder",
-				"C_CREATE_FOLDER");
-		createCommandDescriptor(deUniversalFolderObject, "Filter",
-				"C_QUERY_VIEW_ALL");
-		createCommandDescriptor(deUniversalFolderObject, "Filter",
-				"C_QUERY_VIEW_FILES");
-		createCommandDescriptor(deUniversalFolderObject, "Filter",
-				"C_QUERY_VIEW_FOLDERS");
-		createCommandDescriptor(deUniversalArchiveFileObject, "Filter",
-				"C_QUERY_VIEW_ALL");
-		createCommandDescriptor(deUniversalArchiveFileObject, "Filter",
-				"C_QUERY_VIEW_FILES");
-		createCommandDescriptor(deUniversalArchiveFileObject, "Filter",
-				"C_QUERY_VIEW_FOLDERS");
+		createCommandDescriptor(UniversalFilter, "GetOSType", "C_GET_OSTYPE"); //$NON-NLS-1$ //$NON-NLS-2$
+		createCommandDescriptor(UniversalFilter, "Exists", "C_QUERY_EXISTS"); //$NON-NLS-1$ //$NON-NLS-2$
+		createCommandDescriptor(UniversalFilter, "GetRemoteObject", //$NON-NLS-1$
+				"C_QUERY_GET_REMOTE_OBJECT"); //$NON-NLS-1$
+		createCommandDescriptor(UniversalFilter, "CreateNewFile", //$NON-NLS-1$
+				"C_CREATE_FILE"); //$NON-NLS-1$
+		createCommandDescriptor(UniversalFilter, "CreateNewFolder", //$NON-NLS-1$
+				"C_CREATE_FOLDER"); //$NON-NLS-1$
+		createCommandDescriptor(deUniversalFolderObject, "Filter", //$NON-NLS-1$
+				"C_QUERY_VIEW_ALL"); //$NON-NLS-1$
+		createCommandDescriptor(deUniversalFolderObject, "Filter", //$NON-NLS-1$
+				"C_QUERY_VIEW_FILES"); //$NON-NLS-1$
+		createCommandDescriptor(deUniversalFolderObject, "Filter", //$NON-NLS-1$
+				"C_QUERY_VIEW_FOLDERS"); //$NON-NLS-1$
+		createCommandDescriptor(deUniversalArchiveFileObject, "Filter", //$NON-NLS-1$
+				"C_QUERY_VIEW_ALL"); //$NON-NLS-1$
+		createCommandDescriptor(deUniversalArchiveFileObject, "Filter", //$NON-NLS-1$
+				"C_QUERY_VIEW_FILES"); //$NON-NLS-1$
+		createCommandDescriptor(deUniversalArchiveFileObject, "Filter", //$NON-NLS-1$
+				"C_QUERY_VIEW_FOLDERS"); //$NON-NLS-1$
 
 		_dataStore.createReference(deUniversalFileObject,
-				deUniversalArchiveFileObject, "abstracts", "abstracted by");
+				deUniversalArchiveFileObject, "abstracts", "abstracted by"); //$NON-NLS-1$ //$NON-NLS-2$
 		_dataStore.createReference(deUniversalFolderObject,
-				deUniversalArchiveFileObject, "abstracts", "abstracted by");
+				deUniversalArchiveFileObject, "abstracts", "abstracted by"); //$NON-NLS-1$ //$NON-NLS-2$
 		_dataStore.createReference(deUniversalFileObject,
-				deUniversalVirtualFileObject, "abstracts", "abstracted by");
+				deUniversalVirtualFileObject, "abstracts", "abstracted by"); //$NON-NLS-1$ //$NON-NLS-2$
 		_dataStore.createReference(deUniversalFolderObject,
-				deUniversalVirtualFolderObject, "abstracts", "abstracted by");
+				deUniversalVirtualFolderObject, "abstracts", "abstracted by"); //$NON-NLS-1$ //$NON-NLS-2$
 
 		// create the search descriptor and make it cacnellable
 		DataElement searchDescriptor = createCommandDescriptor(
-				deUniversalFolderObject, "Search", "C_SEARCH");
+				deUniversalFolderObject, "Search", "C_SEARCH"); //$NON-NLS-1$ //$NON-NLS-2$
 		DataElement cancellable = _dataStore.find(schemaRoot, DE.A_NAME,
 				DataStoreResources.model_Cancellable, 1);
-		_dataStore.createReference(cancellable, searchDescriptor, "abstracts",
-				"abstracted by");
+		_dataStore.createReference(cancellable, searchDescriptor, "abstracts", //$NON-NLS-1$
+				"abstracted by"); //$NON-NLS-1$
 
-		createCommandDescriptor(deUniversalFolderObject, "GetAdvanceProperty",
-				"C_QUERY_ADVANCE_PROPERTY");
-		createCommandDescriptor(tempnode, "Filter", "C_CREATE_TEMP");
-		createCommandDescriptor(deUniversalFileObject, "Delete", "C_DELETE");
-		createCommandDescriptor(deUniversalFileObject, "DeleteBatch", "C_DELETE_BATCH");
-		createCommandDescriptor(deUniversalFileObject, "CreateNewFile",
-				"C_CREATE_FILE");
-		createCommandDescriptor(deUniversalFileObject, "CreateNewFolder",
-				"C_CREATE_FOLDER");
-		createCommandDescriptor(deUniversalFileObject, "Rename", "C_RENAME");
-		createCommandDescriptor(deUniversalFileObject, "SetReadOnly",
-				"C_SET_READONLY");
-		createCommandDescriptor(deUniversalFileObject, "SetLastModified",
-				"C_SET_LASTMODIFIED");
-		createCommandDescriptor(deUniversalFileObject, "GetAdvanceProperty",
-				"C_QUERY_ADVANCE_PROPERTY");
+		createCommandDescriptor(deUniversalFolderObject, "GetAdvanceProperty", //$NON-NLS-1$
+				"C_QUERY_ADVANCE_PROPERTY"); //$NON-NLS-1$
+		createCommandDescriptor(tempnode, "Filter", "C_CREATE_TEMP"); //$NON-NLS-1$ //$NON-NLS-2$
+		createCommandDescriptor(deUniversalFileObject, "Delete", "C_DELETE"); //$NON-NLS-1$ //$NON-NLS-2$
+		createCommandDescriptor(deUniversalFileObject, "DeleteBatch", "C_DELETE_BATCH"); //$NON-NLS-1$ //$NON-NLS-2$
+		createCommandDescriptor(deUniversalFileObject, "CreateNewFile", //$NON-NLS-1$
+				"C_CREATE_FILE"); //$NON-NLS-1$
+		createCommandDescriptor(deUniversalFileObject, "CreateNewFolder", //$NON-NLS-1$
+				"C_CREATE_FOLDER"); //$NON-NLS-1$
+		createCommandDescriptor(deUniversalFileObject, "Rename", "C_RENAME"); //$NON-NLS-1$ //$NON-NLS-2$
+		createCommandDescriptor(deUniversalFileObject, "SetReadOnly", //$NON-NLS-1$
+				"C_SET_READONLY"); //$NON-NLS-1$
+		createCommandDescriptor(deUniversalFileObject, "SetLastModified", //$NON-NLS-1$
+				"C_SET_LASTMODIFIED"); //$NON-NLS-1$
+		createCommandDescriptor(deUniversalFileObject, "GetAdvanceProperty", //$NON-NLS-1$
+				"C_QUERY_ADVANCE_PROPERTY"); //$NON-NLS-1$
 //		dePropertyQuery = createCommandDescriptor(deUniversalFileObject, "GetBasicProperty", "C_QUERY_BASIC_PROPERTY");
-		createCommandDescriptor(deUniversalFileObject, "GetBasicProperty", "C_QUERY_BASIC_PROPERTY");
+		createCommandDescriptor(deUniversalFileObject, "GetBasicProperty", "C_QUERY_BASIC_PROPERTY"); //$NON-NLS-1$ //$NON-NLS-2$
 
-		createCommandDescriptor(deUniversalFileObject, "GetcanWriteProperty",
-				"C_QUERY_CAN_WRITE_PROPERTY");
-		createCommandDescriptor(deUniversalFileObject, "Exists", "C_QUERY_EXISTS");
+		createCommandDescriptor(deUniversalFileObject, "GetcanWriteProperty", //$NON-NLS-1$
+				"C_QUERY_CAN_WRITE_PROPERTY"); //$NON-NLS-1$
+		createCommandDescriptor(deUniversalFileObject, "Exists", "C_QUERY_EXISTS"); //$NON-NLS-1$ //$NON-NLS-2$
 
-		createCommandDescriptor(deUniversalFolderObject, "Delete", "C_DELETE");
-		createCommandDescriptor(deUniversalFolderObject, "DeleteBatch", "C_DELETE_BATCH");
-		createCommandDescriptor(deUniversalFolderObject, "Rename", "C_RENAME");
-		createCommandDescriptor(deUniversalFolderObject, "Copy", "C_COPY");
-		createCommandDescriptor(deUniversalFolderObject, "CopyBatch", "C_COPY_BATCH");
-		createCommandDescriptor(deUniversalFolderObject, "CreateNewFolder",
-				"C_CREATE_FOLDER");
-		createCommandDescriptor(deUniversalFolderObject, "SetReadOnly",
-				"C_SET_READONLY");
-		createCommandDescriptor(deUniversalFolderObject, "SetLastModified",
-				"C_SET_LASTMODIFIED");
-		createCommandDescriptor(deUniversalFolderObject, "GetBasicProperty",
-				"C_QUERY_BASIC_PROPERTY");
-		createCommandDescriptor(deUniversalFolderObject, "GetcanWriteProperty",
-				"C_QUERY_CAN_WRITE_PROPERTY");
+		createCommandDescriptor(deUniversalFolderObject, "Delete", "C_DELETE"); //$NON-NLS-1$ //$NON-NLS-2$
+		createCommandDescriptor(deUniversalFolderObject, "DeleteBatch", "C_DELETE_BATCH"); //$NON-NLS-1$ //$NON-NLS-2$
+		createCommandDescriptor(deUniversalFolderObject, "Rename", "C_RENAME"); //$NON-NLS-1$ //$NON-NLS-2$
+		createCommandDescriptor(deUniversalFolderObject, "Copy", "C_COPY"); //$NON-NLS-1$ //$NON-NLS-2$
+		createCommandDescriptor(deUniversalFolderObject, "CopyBatch", "C_COPY_BATCH"); //$NON-NLS-1$ //$NON-NLS-2$
+		createCommandDescriptor(deUniversalFolderObject, "CreateNewFolder", //$NON-NLS-1$
+				"C_CREATE_FOLDER"); //$NON-NLS-1$
+		createCommandDescriptor(deUniversalFolderObject, "SetReadOnly", //$NON-NLS-1$
+				"C_SET_READONLY"); //$NON-NLS-1$
+		createCommandDescriptor(deUniversalFolderObject, "SetLastModified", //$NON-NLS-1$
+				"C_SET_LASTMODIFIED"); //$NON-NLS-1$
+		createCommandDescriptor(deUniversalFolderObject, "GetBasicProperty", //$NON-NLS-1$
+				"C_QUERY_BASIC_PROPERTY"); //$NON-NLS-1$
+		createCommandDescriptor(deUniversalFolderObject, "GetcanWriteProperty", //$NON-NLS-1$
+				"C_QUERY_CAN_WRITE_PROPERTY"); //$NON-NLS-1$
 
 //		deFileClassificationQuery = createCommandDescriptor(deUniversalFileObject, "GetFileClassifications", "C_QUERY_FILE_CLASSIFICATIONS");
-		createCommandDescriptor(deUniversalFileObject, "GetFileClassifications", "C_QUERY_FILE_CLASSIFICATIONS");
+		createCommandDescriptor(deUniversalFileObject, "GetFileClassifications", "C_QUERY_FILE_CLASSIFICATIONS"); //$NON-NLS-1$ //$NON-NLS-2$
 //		deFolderClassificationQuery = createCommandDescriptor(deUniversalFolderObject, "GetFolderClassifications", "C_QUERY_FILE_CLASSIFICATION");
-		createCommandDescriptor(deUniversalFolderObject, "GetFolderClassifications", "C_QUERY_FILE_CLASSIFICATION");
-		createCommandDescriptor(deUniversalFolderObject, "Exists",
-				"C_QUERY_EXISTS");
-		createCommandDescriptor(deUniversalFolderObject, "CreateNewFile",
-				"C_CREATE_FILE");
-		createCommandDescriptor(deUniversalFolderObject, "CreateNewFolder",
-				"C_CREATE_FOLDER");
-		createCommandDescriptor(deUniversalFolderObject, "GetOSType",
-				"C_GET_OSTYPE");
-		createCommandDescriptor(deUniversalFileObject, "GetOSType",
-				"C_GET_OSTYPE");
+		createCommandDescriptor(deUniversalFolderObject, "GetFolderClassifications", "C_QUERY_FILE_CLASSIFICATION"); //$NON-NLS-1$ //$NON-NLS-2$
+		createCommandDescriptor(deUniversalFolderObject, "Exists", //$NON-NLS-1$
+				"C_QUERY_EXISTS"); //$NON-NLS-1$
+		createCommandDescriptor(deUniversalFolderObject, "CreateNewFile", //$NON-NLS-1$
+				"C_CREATE_FILE"); //$NON-NLS-1$
+		createCommandDescriptor(deUniversalFolderObject, "CreateNewFolder", //$NON-NLS-1$
+				"C_CREATE_FOLDER"); //$NON-NLS-1$
+		createCommandDescriptor(deUniversalFolderObject, "GetOSType", //$NON-NLS-1$
+				"C_GET_OSTYPE"); //$NON-NLS-1$
+		createCommandDescriptor(deUniversalFileObject, "GetOSType", //$NON-NLS-1$
+				"C_GET_OSTYPE"); //$NON-NLS-1$
 
 		// create a download command descriptor and make it cancellable
 		DataElement downloadDescriptor = createCommandDescriptor(
-				deUniversalFileObject, "DownloadFile", C_DOWNLOAD_FILE);
+				deUniversalFileObject, "DownloadFile", C_DOWNLOAD_FILE); //$NON-NLS-1$
 		_dataStore.createReference(cancellable, downloadDescriptor,
-				"abstracts", "abstracted by");
+				"abstracts", "abstracted by"); //$NON-NLS-1$ //$NON-NLS-2$
 		_dataStore.createReference(cancellable, downloadDescriptor,
-				"abstracts", "abstracted by");
+				"abstracts", "abstracted by"); //$NON-NLS-1$ //$NON-NLS-2$
 
 		DataElement adownloadDescriptor = createCommandDescriptor(
-				deUniversalArchiveFileObject, "DownloadFile", C_DOWNLOAD_FILE);
+				deUniversalArchiveFileObject, "DownloadFile", C_DOWNLOAD_FILE); //$NON-NLS-1$
 		_dataStore.createReference(cancellable, adownloadDescriptor,
-				"abstracts", "abstracted by");
+				"abstracts", "abstracted by"); //$NON-NLS-1$ //$NON-NLS-2$
 		_dataStore.createReference(cancellable, adownloadDescriptor,
-				"abstracts", "abstracted by");
+				"abstracts", "abstracted by"); //$NON-NLS-1$ //$NON-NLS-2$
 		
-		createCommandDescriptor(tempnode, "SystemEncoding", C_SYSTEM_ENCODING);
+		createCommandDescriptor(tempnode, "SystemEncoding", C_SYSTEM_ENCODING); //$NON-NLS-1$
 		
-		createCommandDescriptor(tempnode, "UnusedPort", C_QUERY_UNUSED_PORT);
+		createCommandDescriptor(tempnode, "UnusedPort", C_QUERY_UNUSED_PORT); //$NON-NLS-1$
 
 		// command descriptor to retrieve package name for a class file
-		createCommandDescriptor(deUniversalFileObject, "GetQualifiedClassName",
-				"C_QUERY_CLASSNAME");
+		createCommandDescriptor(deUniversalFileObject, "GetQualifiedClassName", //$NON-NLS-1$
+				"C_QUERY_CLASSNAME"); //$NON-NLS-1$
 
 		// command descriptor to retrieve qualified class name for class file
-		createCommandDescriptor(deUniversalFileObject, "GetFullClassName",
+		createCommandDescriptor(deUniversalFileObject, "GetFullClassName", //$NON-NLS-1$
 				C_QUERY_QUALIFIED_CLASSNAME);
 	}
 
@@ -2825,7 +2698,7 @@ private DataElement createDataElementFromLSString(DataElement subject,
 			String path = subject.getAttribute(DE.A_VALUE) + separatorChar
 					+ subject.getName();
 			String rootPath = path;
-			String virtualPath = "";
+			String virtualPath = ""; //$NON-NLS-1$
 
 			VirtualChild[] children = null;
 
@@ -2835,9 +2708,9 @@ private DataElement createDataElementFromLSString(DataElement subject,
 				subject.setAttribute(DE.A_SOURCE, setProperties(fileobj, true));
 				
 				if (foldersOnly) {
-					children = mgr.getFolderContents(fileobj, "");
+					children = mgr.getFolderContents(fileobj, ""); //$NON-NLS-1$
 				} else {
-					children = mgr.getContents(fileobj, "");
+					children = mgr.getContents(fileobj, ""); //$NON-NLS-1$
 				}
 				
 			} else if (subject.getType().equals(
@@ -2859,13 +2732,13 @@ private DataElement createDataElementFromLSString(DataElement subject,
 					
 					subject.setAttribute(DE.A_SOURCE, setProperties(mgr.getVirtualObject(virtualPath)));
 					if (children == null || children.length == 0) {
-						_dataStore.trace("problem with virtual:" + virtualPath);
+						_dataStore.trace("problem with virtual:" + virtualPath); //$NON-NLS-1$
 					}
 				} else {
-					_dataStore.trace("problem with File:" + rootPath);
+					_dataStore.trace("problem with File:" + rootPath); //$NON-NLS-1$
 				}
 			}
-			createDataElement(_dataStore, subject, children, "*", rootPath, virtualPath);
+			createDataElement(_dataStore, subject, children, "*", rootPath, virtualPath); //$NON-NLS-1$
 			
 			_dataStore.refresh(subject);
 			
@@ -3043,7 +2916,7 @@ private DataElement createDataElementFromLSString(DataElement subject,
 				srcFile = child.getExtractedFile();
 			}
 
-			String virtualContainer = "";
+			String virtualContainer = ""; //$NON-NLS-1$
 			
 			if (targetType.equals(UNIVERSAL_VIRTUAL_FOLDER_DESCRIPTOR)) {
 				virtualContainer = vpath.getVirtualPart();

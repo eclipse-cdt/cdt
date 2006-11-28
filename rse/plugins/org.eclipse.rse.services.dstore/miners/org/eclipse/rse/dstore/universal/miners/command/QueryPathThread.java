@@ -56,13 +56,13 @@ public class QueryPathThread extends Thread
 		DataElement envMinerData = _dataStore.findMinerInformation(EnvironmentMiner.MINER_ID);
 		if (envMinerData != null)
 		{
-			DataElement systemEnvironment = _dataStore.find(envMinerData, DE.A_NAME, "System Environment", 1);
+			DataElement systemEnvironment = _dataStore.find(envMinerData, DE.A_NAME, "System Environment", 1); //$NON-NLS-1$
 			if (systemEnvironment != null)
 			{
 				// d54675
 				// for Windows, ignore the case sensitiveness of PATH variable
-				boolean isIgnoreCase = System.getProperty("os.name").toLowerCase().startsWith("win");
-				ArrayList vars = _dataStore.searchForPattern(systemEnvironment, DE.A_NAME, "PATH=*", isIgnoreCase);
+				boolean isIgnoreCase = System.getProperty("os.name").toLowerCase().startsWith("win"); //$NON-NLS-1$ //$NON-NLS-2$
+				ArrayList vars = _dataStore.searchForPattern(systemEnvironment, DE.A_NAME, "PATH=*", isIgnoreCase); //$NON-NLS-1$
 				
 				if (vars == null || vars.size() == 0) {
 					return new ArrayList();
@@ -72,7 +72,7 @@ public class QueryPathThread extends Thread
 				if (pathVariable != null)
 				{
 					String varStr = pathVariable.getValue();
-					int separatorIndex = varStr.indexOf("=");
+					int separatorIndex = varStr.indexOf("="); //$NON-NLS-1$
 					if (separatorIndex > 0)
 					{
 						varStr = varStr.substring(separatorIndex + 1, varStr.length());
@@ -90,9 +90,9 @@ public class QueryPathThread extends Thread
 		ArrayList addedPaths = new ArrayList();
 		ArrayList addedFolders = new ArrayList();
 
-		boolean isWindows = System.getProperty("os.name").toLowerCase().startsWith("win");
+		boolean isWindows = System.getProperty("os.name").toLowerCase().startsWith("win"); //$NON-NLS-1$ //$NON-NLS-2$
 		char separator = isWindows ? ';' : ':';
-		StringTokenizer tokenizer = new StringTokenizer(path, separator + "");
+		StringTokenizer tokenizer = new StringTokenizer(path, separator + ""); //$NON-NLS-1$
 		while (tokenizer.hasMoreTokens())
 		{
 			String token = tokenizer.nextToken();
@@ -124,7 +124,7 @@ public class QueryPathThread extends Thread
 				resolvedPaths.add(abspath);
 			}
 		}
-		status.setAttribute(DE.A_NAME, "done");
+		status.setAttribute(DE.A_NAME, "done"); //$NON-NLS-1$
 		_dataStore.refresh(status);
 		_dataStore.disconnectObjects(status);
 	}
@@ -140,7 +140,7 @@ public class QueryPathThread extends Thread
 				if (afile.isFile() && !afile.isHidden())
 				{
 					String name = afile.getName();
-					DataElement fileObj = _dataStore.createObject(status, "file", name);
+					DataElement fileObj = _dataStore.createObject(status, "file", name); //$NON-NLS-1$
 					fileObj.setAttribute(DE.A_SOURCE, afile.getAbsolutePath());
 				}
 			}

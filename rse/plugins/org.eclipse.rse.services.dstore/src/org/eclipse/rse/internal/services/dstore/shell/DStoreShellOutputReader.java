@@ -34,7 +34,7 @@ public class DStoreShellOutputReader extends AbstractHostShellOutputReader imple
 	public DStoreShellOutputReader(IHostShell hostShell, DataElement status, boolean isErrorReader)
 	{
 		super(hostShell, isErrorReader);
-		 setName("DStoreShellOutputReader"+getName());
+		 setName("DStoreShellOutputReader"+getName()); //$NON-NLS-1$
 		_status = status;
 		if (status != null)
 		{
@@ -61,7 +61,7 @@ public class DStoreShellOutputReader extends AbstractHostShellOutputReader imple
 			
 				
 				String type = line.getType();
-				boolean isError =  type.equals("error") || type.equals("stderr");
+				boolean isError =  type.equals("error") || type.equals("stderr"); //$NON-NLS-1$ //$NON-NLS-2$
 				if (_isErrorReader && isError)
 				{
 					return new DStoreHostOutput(line);
@@ -83,11 +83,11 @@ public class DStoreShellOutputReader extends AbstractHostShellOutputReader imple
 				e.printStackTrace();
 			}
 		}
-		if (_status.getValue().equals("done"))
+		if (_status.getValue().equals("done")) //$NON-NLS-1$
 		{
 			if (!_isErrorReader)
 			{
-				DataElement dummyLine = _status.getDataStore().createObject(_status, "stdout", "");
+				DataElement dummyLine = _status.getDataStore().createObject(_status, "stdout", ""); //$NON-NLS-1$ //$NON-NLS-2$
 				return new DStoreHostOutput(dummyLine);
 			}
 			else
@@ -95,7 +95,7 @@ public class DStoreShellOutputReader extends AbstractHostShellOutputReader imple
 				return null;
 			}
 		}
-		return new SimpleHostOutput("");
+		return new SimpleHostOutput(""); //$NON-NLS-1$
 	}
 
 	public boolean listeningTo(DomainEvent e)
@@ -105,7 +105,7 @@ public class DStoreShellOutputReader extends AbstractHostShellOutputReader imple
 
 	public void domainChanged(DomainEvent event)
 	{
-		  if (_status.getValue().equals("done"))
+		  if (_status.getValue().equals("done")) //$NON-NLS-1$
 	        {
 
 	            if (_status == event.getParent())

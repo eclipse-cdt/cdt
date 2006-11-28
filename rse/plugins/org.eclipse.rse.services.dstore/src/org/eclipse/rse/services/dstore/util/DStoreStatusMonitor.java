@@ -173,7 +173,7 @@ public class DStoreStatusMonitor implements IDomainListener
      */
     public boolean determineStatusDone(DataElement status) 
     {        
-        return status.getAttribute(DE.A_VALUE).equals("done") ||  status.getAttribute(DE.A_NAME).equals("done");
+        return status.getAttribute(DE.A_VALUE).equals("done") ||  status.getAttribute(DE.A_NAME).equals("done"); //$NON-NLS-1$ //$NON-NLS-2$
     }
 	
 	/**

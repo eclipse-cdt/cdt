@@ -34,12 +34,12 @@ public class UniversalServerUtilities {
 	{
 		if (_userPreferencesDirectory == null) {
 			
-			_userPreferencesDirectory = System.getProperty("user.home");
+			_userPreferencesDirectory = System.getProperty("user.home"); //$NON-NLS-1$
 			
-			String clientUserID = System.getProperty("client.username");
-			if (clientUserID == null || clientUserID.equals(""))
+			String clientUserID = System.getProperty("client.username"); //$NON-NLS-1$
+			if (clientUserID == null || clientUserID.equals("")) //$NON-NLS-1$
 			{
-				clientUserID = "";
+				clientUserID = ""; //$NON-NLS-1$
 			}
 			else
 			{
@@ -53,8 +53,8 @@ public class UniversalServerUtilities {
 				_userPreferencesDirectory = _userPreferencesDirectory + File.separator;
 		    }
   		
-  			_userPreferencesDirectory = _userPreferencesDirectory + ".eclipse" + File.separator + 
-  			         												"RSE" + File.separator + clientUserID;
+  			_userPreferencesDirectory = _userPreferencesDirectory + ".eclipse" + File.separator +  //$NON-NLS-1$
+  			         												"RSE" + File.separator + clientUserID; //$NON-NLS-1$
 	  		File dirFile = new File(_userPreferencesDirectory);
 	  		if (!dirFile.exists()) {
 	 	 		dirFile.mkdirs();

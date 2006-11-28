@@ -43,7 +43,7 @@ public class OutputPattern
 		int nextSpace = 0;
 		//Walk the matchOrder string parsing out words and adding them to _matchOrder...Could use StringTokenizer
 		//but this seem much simpler.
-		while ((nextSpace = matchOrder.indexOf(" ", index)) > 0)
+		while ((nextSpace = matchOrder.indexOf(" ", index)) > 0) //$NON-NLS-1$
 		{
 			_matchOrder.add(matchOrder.substring(index, nextSpace).toLowerCase());
 			index = nextSpace;
@@ -71,18 +71,18 @@ public class OutputPattern
 			return null;
 		}
 
-		String fileString = "";
-		String lineString = "";
+		String fileString = ""; //$NON-NLS-1$
+		String lineString = ""; //$NON-NLS-1$
 
 		//Groups start at 1 (group 0 is the entire match).
 		for (int i = 1; i < _matchOrder.size(); i++)
 		{
 			String mStr = (String)_matchOrder.get(i);
-			if (mStr.equals("file"))
+			if (mStr.equals("file")) //$NON-NLS-1$
 			{
 				fileString = matcher.group(i);
 			}
-			else if (mStr.equals("line"))
+			else if (mStr.equals("line")) //$NON-NLS-1$
 			{
 				lineString = matcher.group(i);
 			}

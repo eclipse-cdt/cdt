@@ -539,14 +539,14 @@ public class FileClassifier extends Thread
         {
             String referencedFile = aFile.getCanonicalPath();
 
-            String specialEncoding = System.getProperty("dstore.stdin.encoding"); //$NON-NLS-1$
+            // DKM - not sure why this was commented out but keeping it that way for now
+            String specialEncoding = null;//System.getProperty("dstore.stdin.encoding");
             /*
             if (specialEncoding == null)
             {
                 specialEncoding = System.getProperty("file.encoding");
             }
 */
-            specialEncoding = null;
             String args[] = new String[3];
             args[0] = "sh"; //$NON-NLS-1$
             args[1] = "-c"; //$NON-NLS-1$
@@ -556,11 +556,13 @@ public class FileClassifier extends Thread
 
             BufferedReader childReader = null;
 
+            /*
             if (specialEncoding != null && specialEncoding.length() > 0)
             {
                 childReader = new BufferedReader(new InputStreamReader(childProcess.getInputStream(), specialEncoding));
             }
             else
+            */
             {
                 childReader = new BufferedReader(new InputStreamReader(childProcess.getInputStream()));
             }
@@ -621,8 +623,6 @@ public class FileClassifier extends Thread
 	
 	                // if output is not null, we assume the encoding was correct and
 	                // process the output
-	                if (fullOutput != null /* && fullOutput.length() == numRead */)
-	                {
 	                    // tokenize the output so that we can get each line of
 	                    // output
 	                    // the delimiters are therefore set to "\n\r"
@@ -641,7 +641,6 @@ public class FileClassifier extends Thread
 	                    	}
 	                    }
 	                }
-	            }
 	         catch (Exception e)
 	         {
 	           e.printStackTrace();

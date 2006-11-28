@@ -305,7 +305,7 @@ public class StatusChangeListener implements IDomainListener
      * @return <code>true</code> if status done, <code>false</code> otherwise.
      */
     protected boolean determineStatusDone() {
-        return getStatus().getAttribute(DE.A_VALUE).equals("done") ||  getStatus().getAttribute(DE.A_NAME).equals("done");
+        return getStatus().getAttribute(DE.A_VALUE).equals("done") ||  getStatus().getAttribute(DE.A_NAME).equals("done"); //$NON-NLS-1$ //$NON-NLS-2$
     }
 	
 	/**

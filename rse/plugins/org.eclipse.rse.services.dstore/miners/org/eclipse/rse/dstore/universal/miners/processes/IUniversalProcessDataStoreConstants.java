@@ -22,22 +22,22 @@ public interface IUniversalProcessDataStoreConstants
 	/*
 	 * Miner name, used for logging
 	 */
-	public static final String UNIVERSAL_PROCESS_MINER = "UniversalProcessMiner";
+	public static final String UNIVERSAL_PROCESS_MINER = "UniversalProcessMiner"; //$NON-NLS-1$
 
 	//
 	// Universal Process descriptors for DataStore DataElements
 	//
-	public static final String UNIVERSAL_PROCESS_ROOT = "universal.process.root";
-	public static final String UNIVERSAL_PROCESS_FILTER = "universal.process.filter";
-	public static final String UNIVERSAL_PROCESS_DESCRIPTOR = "universal.process.descriptor";
-	public static final String UNIVERSAL_PROCESS_TEMP = "universal.process.temp";
+	public static final String UNIVERSAL_PROCESS_ROOT = "universal.process.root"; //$NON-NLS-1$
+	public static final String UNIVERSAL_PROCESS_FILTER = "universal.process.filter"; //$NON-NLS-1$
+	public static final String UNIVERSAL_PROCESS_DESCRIPTOR = "universal.process.descriptor"; //$NON-NLS-1$
+	public static final String UNIVERSAL_PROCESS_TEMP = "universal.process.temp"; //$NON-NLS-1$
 
 	//
 	// Universal Process Miner Commands
 	//
-	public static final String C_PROCESS_FILTER_QUERY_ALL  = "C_PROCESS_FILTER_QUERY_ALL";
-	public static final String C_PROCESS_KILL = "C_PROCESS_KILL";
-	public static final String C_PROCESS_QUERY_ALL_PROPERTIES = "C_PROCESS_QUERY_ALL_PROPERTIES";
-	public static final String C_PROCESS_QUERY_USERNAME  = "C_PROCESS_QUERY_USERNAME";
+	public static final String C_PROCESS_FILTER_QUERY_ALL  = "C_PROCESS_FILTER_QUERY_ALL"; //$NON-NLS-1$
+	public static final String C_PROCESS_KILL = "C_PROCESS_KILL"; //$NON-NLS-1$
+	public static final String C_PROCESS_QUERY_ALL_PROPERTIES = "C_PROCESS_QUERY_ALL_PROPERTIES"; //$NON-NLS-1$
+	public static final String C_PROCESS_QUERY_USERNAME  = "C_PROCESS_QUERY_USERNAME"; //$NON-NLS-1$
 	
 }

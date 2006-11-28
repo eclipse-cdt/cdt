@@ -73,7 +73,7 @@ public class DStoreShellService extends AbstractDStoreService implements IShellS
 		{
 			waitForInitialize(null);
 		}
-		return new DStoreHostShell(getStatusMonitor(getDataStore()), getDataStore(), initialWorkingDirectory, ">", encoding, environment);
+		return new DStoreHostShell(getStatusMonitor(getDataStore()), getDataStore(), initialWorkingDirectory, ">", encoding, environment); //$NON-NLS-1$
 	}
 
 	public IHostShell runCommand(IProgressMonitor monitor, String initialWorkingDirectory, String command,
@@ -105,7 +105,7 @@ public class DStoreShellService extends AbstractDStoreService implements IShellS
 			DataElement envMinerData = ds.findMinerInformation(getEnvSystemMinerId());
 			if (envMinerData != null)
 			{
-				DataElement systemEnvironment = ds.find(envMinerData, DE.A_NAME, "System Environment", 1);
+				DataElement systemEnvironment = ds.find(envMinerData, DE.A_NAME, "System Environment", 1); //$NON-NLS-1$
 				if (systemEnvironment != null && systemEnvironment.getNestedSize() > 0)
 				{
 					for (int i = 0; i < systemEnvironment.getNestedSize(); i++)
@@ -172,7 +172,7 @@ public class DStoreShellService extends AbstractDStoreService implements IShellS
 			if (getServerVersion() >= 8)
 			{
 				String minerId = getEnvSystemMinerId();		
-				String message = SystemMessage.sub(ServiceResources.DStore_Service_ProgMon_Initializing_Message, "&1", minerId);
+				String message = SystemMessage.sub(ServiceResources.DStore_Service_ProgMon_Initializing_Message, "&1", minerId); //$NON-NLS-1$
 				monitor.beginTask(message, IProgressMonitor.UNKNOWN);
 				DataStore ds = getDataStore();
 				if (_envMinerElement == null || _envMinerElement.getDataStore() != ds)

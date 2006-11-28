@@ -52,11 +52,11 @@ public class OutputHandler extends Handler
 		_commandThread = commandThread;
 		_isShell = isShell;
 		_encodings = new ArrayList();
-		String system = System.getProperty("os.name").toLowerCase();
+		String system = System.getProperty("os.name").toLowerCase(); //$NON-NLS-1$
 		
-		if (system.startsWith("z"))
+		if (system.startsWith("z")) //$NON-NLS-1$
 		{
-			_encodings.add("IBM-1047");
+			_encodings.add("IBM-1047"); //$NON-NLS-1$
 			/*
 		    _encodings.add("Cp1047");
 		    _encodings.add("Cp037");
@@ -65,12 +65,12 @@ public class OutputHandler extends Handler
 		}
 		else
 		{
-		String specialEncoding = System.getProperty("dstore.stdin.encoding");
+		String specialEncoding = System.getProperty("dstore.stdin.encoding"); //$NON-NLS-1$
 		if (specialEncoding != null)
 		{
 		    _encodings.add(specialEncoding);		    
 		}
-		_encodings.add(System.getProperty("file.encoding"));
+		_encodings.add(System.getProperty("file.encoding")); //$NON-NLS-1$
 		}
 	
 	}
@@ -230,11 +230,10 @@ public class OutputHandler extends Handler
 	    String fullOutput = new String(readBytes, 0, numRead, encoding);
 	    
 	    // if output is not null, we assume the encoding was correct and process the output
-	    if (fullOutput != null /*&& fullOutput.length() == numRead*/) 
-	    {   
+ 
 	     // tokenize the output so that we can get each line of output
 	     // the delimiters are therefore set to "\n\r"
-	     StringTokenizer tokenizer = new StringTokenizer(fullOutput, "\n\r");
+	     StringTokenizer tokenizer = new StringTokenizer(fullOutput, "\n\r"); //$NON-NLS-1$
 	     int numTokens = tokenizer.countTokens();
 	     output = new String[numTokens];
 	     int index = 0;
@@ -246,7 +245,6 @@ public class OutputHandler extends Handler
 		 
 		 
 	     return output;
-	    }
 	    }
 	    catch (Exception e)
 	    {	        

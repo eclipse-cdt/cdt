@@ -24,8 +24,8 @@ public class FileSystemMessageUtil
 	{
 		String source = element.getSource();
 		if (source == null) return null;
-		if (source.equals("")) return "";
-		int sepIndex = source.indexOf("|");
+		if (source.equals("")) return ""; //$NON-NLS-1$ //$NON-NLS-2$
+		int sepIndex = source.indexOf("|"); //$NON-NLS-1$
 		if (sepIndex == -1) return source;
 		else return source.substring(0, sepIndex);
 	}
@@ -39,9 +39,9 @@ public class FileSystemMessageUtil
 	{
 		String source = element.getSource();
 		if (source == null) return null;
-		if (source.equals("")) return "";
-		int sepIndex = source.indexOf("|");
-		if (sepIndex == -1) return "";
+		if (source.equals("")) return ""; //$NON-NLS-1$ //$NON-NLS-2$
+		int sepIndex = source.indexOf("|"); //$NON-NLS-1$
+		if (sepIndex == -1) return ""; //$NON-NLS-1$
 		else return source.substring(sepIndex+1);
 	}
 }

@@ -57,43 +57,43 @@ public class CommandMiner extends Miner
         public DataElement getDescriptorFor(String type)
         {
             DataElement descriptor = null;
-            if (type.equals("stdout"))
+            if (type.equals("stdout")) //$NON-NLS-1$
             {
                 descriptor = _stdout;
             }
-            else if  (type.equals("pathenvvar"))
+            else if  (type.equals("pathenvvar")) //$NON-NLS-1$
             {
                 descriptor = _pathenvvar;
             }
-            else if (type.equals("envvar"))
+            else if (type.equals("envvar")) //$NON-NLS-1$
             {
                 descriptor = _envvar;
             }
-            else if  (type.equals("libenvvar"))
+            else if  (type.equals("libenvvar")) //$NON-NLS-1$
             {
                 descriptor = _libenvvar;
             }
-            else if (type.equals("error"))
+            else if (type.equals("error")) //$NON-NLS-1$
             {
                 descriptor = _error;
             }
-            else if  (type.equals("warning"))
+            else if  (type.equals("warning")) //$NON-NLS-1$
             {
                 descriptor = _warning;
             }
-            else if (type.equals("informational"))
+            else if (type.equals("informational")) //$NON-NLS-1$
             {
                 descriptor = _informational;
             }
-            else if  (type.equals("process"))
+            else if  (type.equals("process")) //$NON-NLS-1$
             {
                 descriptor = _process;
             }
-            else if (type.equals("grep"))
+            else if (type.equals("grep")) //$NON-NLS-1$
             {
                 descriptor = _grep;
             }
-            else if (type.equals("stderr"))
+            else if (type.equals("stderr")) //$NON-NLS-1$
             {
                 descriptor = _stderr;
             }
@@ -128,33 +128,33 @@ public class CommandMiner extends Miner
 		DataElement fsD= _dataStore.findObjectDescriptor(DataStoreResources.model_directory);
 		DataElement cancellable = _dataStore.findObjectDescriptor(DataStoreResources.model_Cancellable);
 
-		DataElement cmdD = createCommandDescriptor(fsD, "Command", "C_COMMAND", false);
-		_dataStore.createReference(cancellable, cmdD, "abstracts", "abstracted by");
+		DataElement cmdD = createCommandDescriptor(fsD, "Command", "C_COMMAND", false); //$NON-NLS-1$ //$NON-NLS-2$
+		_dataStore.createReference(cancellable, cmdD, "abstracts", "abstracted by"); //$NON-NLS-1$ //$NON-NLS-2$
 
-		DataElement shellD = createCommandDescriptor(fsD, "Shell", "C_SHELL", false);
-		_dataStore.createReference(cancellable, shellD, "abstracts", "abstracted by");
+		DataElement shellD = createCommandDescriptor(fsD, "Shell", "C_SHELL", false); //$NON-NLS-1$ //$NON-NLS-2$
+		_dataStore.createReference(cancellable, shellD, "abstracts", "abstracted by"); //$NON-NLS-1$ //$NON-NLS-2$
 
 //		DataElement inputD = _dataStore.createObject(cmdD, "input", "Enter command");
-		_dataStore.createObject(cmdD, "input", "Enter command");
+		_dataStore.createObject(cmdD, "input", "Enter command"); //$NON-NLS-1$ //$NON-NLS-2$
 //		DataElement outputD = _dataStore.createObject(cmdD, "output", "Command Output");
-		_dataStore.createObject(cmdD, "output", "Command Output");
+		_dataStore.createObject(cmdD, "output", "Command Output"); //$NON-NLS-1$ //$NON-NLS-2$
 		
 		_descriptors = new CommandMinerDescriptors();
-		_descriptors._stdout = _dataStore.createObjectDescriptor(schemaRoot, "stdout");
-		_descriptors._stderr = _dataStore.createObjectDescriptor(schemaRoot, "stderr");
-		_descriptors._prompt = _dataStore.createObjectDescriptor(schemaRoot, "prompt");
-		_descriptors._grep = _dataStore.createObjectDescriptor(schemaRoot, "grep");
-		_descriptors._pathenvvar = _dataStore.createObjectDescriptor(schemaRoot, "pathenvvar");
-		_descriptors._envvar = _dataStore.createObjectDescriptor(schemaRoot, "envvar");
-		_descriptors._libenvvar = _dataStore.createObjectDescriptor(schemaRoot, "libenvvar");
-		_descriptors._error = _dataStore.createObjectDescriptor(schemaRoot, "error");
-		_descriptors._warning = _dataStore.createObjectDescriptor(schemaRoot, "warning");
-		_descriptors._informational = _dataStore.createObjectDescriptor(schemaRoot, "informational");
-		_descriptors._process =_dataStore.createObjectDescriptor(schemaRoot, "process");
+		_descriptors._stdout = _dataStore.createObjectDescriptor(schemaRoot, "stdout"); //$NON-NLS-1$
+		_descriptors._stderr = _dataStore.createObjectDescriptor(schemaRoot, "stderr"); //$NON-NLS-1$
+		_descriptors._prompt = _dataStore.createObjectDescriptor(schemaRoot, "prompt"); //$NON-NLS-1$
+		_descriptors._grep = _dataStore.createObjectDescriptor(schemaRoot, "grep"); //$NON-NLS-1$
+		_descriptors._pathenvvar = _dataStore.createObjectDescriptor(schemaRoot, "pathenvvar"); //$NON-NLS-1$
+		_descriptors._envvar = _dataStore.createObjectDescriptor(schemaRoot, "envvar"); //$NON-NLS-1$
+		_descriptors._libenvvar = _dataStore.createObjectDescriptor(schemaRoot, "libenvvar"); //$NON-NLS-1$
+		_descriptors._error = _dataStore.createObjectDescriptor(schemaRoot, "error"); //$NON-NLS-1$
+		_descriptors._warning = _dataStore.createObjectDescriptor(schemaRoot, "warning"); //$NON-NLS-1$
+		_descriptors._informational = _dataStore.createObjectDescriptor(schemaRoot, "informational"); //$NON-NLS-1$
+		_descriptors._process =_dataStore.createObjectDescriptor(schemaRoot, "process"); //$NON-NLS-1$
 		
 
 //		DataElement getPossibleCmds = createCommandDescriptor(fsD, "Get Commands", "C_GET_POSSIBLE_COMMANDS", false);
-		createCommandDescriptor(fsD, "Get Commands", "C_GET_POSSIBLE_COMMANDS", false);
+		createCommandDescriptor(fsD, "Get Commands", "C_GET_POSSIBLE_COMMANDS", false); //$NON-NLS-1$ //$NON-NLS-2$
 		_dataStore.refresh(schemaRoot);
 	}
 
@@ -164,7 +164,7 @@ public class CommandMiner extends Miner
 		DataElement status = getCommandStatus(theElement);
 		DataElement subject = getCommandArgument(theElement, 0);
 
-		if (name.equals("C_COMMAND"))
+		if (name.equals("C_COMMAND")) //$NON-NLS-1$
 		{
 			DataElement invArg = getCommandArgument(theElement, 1);
 			if (invArg != null)
@@ -173,37 +173,37 @@ public class CommandMiner extends Miner
 				//Remove All extra whitespace from the command
 				if (invocation.trim().length() > 0)
 				{
-					if (invocation.equals("?") || invocation.equals("help"))
-						invocation = "cat " + theElement.getDataStore().getAttribute(DataStoreAttributes.A_PLUGIN_PATH) + "/org.eclipse.rse.services.dstore/patterns.dat";
+					if (invocation.equals("?") || invocation.equals("help")) //$NON-NLS-1$ //$NON-NLS-2$
+						invocation = "cat " + theElement.getDataStore().getAttribute(DataStoreAttributes.A_PLUGIN_PATH) + "/org.eclipse.rse.services.dstore/patterns.dat"; //$NON-NLS-1$ //$NON-NLS-2$
 					launchCommand(subject, invocation, status);
 				}
 				return status;
 			}
 			else
 			{
-				status.setAttribute(DE.A_NAME, "done");
+				status.setAttribute(DE.A_NAME, "done"); //$NON-NLS-1$
 			}
 		}
-		else if (name.equals("C_SHELL"))
+		else if (name.equals("C_SHELL")) //$NON-NLS-1$
 		{
-			String invocation = ">";
+			String invocation = ">"; //$NON-NLS-1$
 			launchCommand(subject, invocation, status);
 		}
-		else if (name.equals("C_SEND_INPUT"))
+		else if (name.equals("C_SEND_INPUT")) //$NON-NLS-1$
 		{
 			DataElement input = getCommandArgument(theElement, 1);
 //			DataElement de = (DataElement) subject.dereference().get(1);
 			subject.dereference().get(1);
 			sendInputToCommand(input.getName(), getCommandStatus(subject));
 		}
-		else if (name.equals("C_CANCEL"))
+		else if (name.equals("C_CANCEL")) //$NON-NLS-1$
 		{
 			DataElement de = subject.dereference().get(1);
 			DataElement cancelStatus = getCommandStatus(subject);
 			cancelCommand(de.getName().trim(), cancelStatus);
 			return status;
 		}
-		else if (name.equals("C_GET_POSSIBLE_COMMANDS"))
+		else if (name.equals("C_GET_POSSIBLE_COMMANDS")) //$NON-NLS-1$
 		{
 			getPossibleCommands(status);
 			return status;
@@ -265,14 +265,14 @@ public class CommandMiner extends Miner
 			while (!done)
 				if ((!theThread.isAlive()) || (stopIn < System.currentTimeMillis()))
 					done = true;
-			_dataStore.createObject(status, "stdout", "Command Cancelled by User Request");
+			_dataStore.createObject(status, "stdout", "Command Cancelled by User Request"); //$NON-NLS-1$ //$NON-NLS-2$
 			_dataStore.refresh(status);
 		}
 	}
 
 	public String getVersion()
 	{
-		return "6.4.0";
+		return "6.4.0"; //$NON-NLS-1$
 	}
 
 }

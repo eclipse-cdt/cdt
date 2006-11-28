@@ -70,7 +70,7 @@ public class DStoreSearchService extends AbstractDStoreService implements ISearc
 		DataElement deObj = searchTarget.getDataElement();
 		DataStore ds = getDataStore();
 
-		DataElement queryCmd = ds.localDescriptorQuery(deObj.getDescriptor(), "C_SEARCH");
+		DataElement queryCmd = ds.localDescriptorQuery(deObj.getDescriptor(), "C_SEARCH"); //$NON-NLS-1$
 
 		if (queryCmd != null)
 		{
@@ -131,7 +131,7 @@ public class DStoreSearchService extends AbstractDStoreService implements ISearc
 			DataElement command = status.getParent();
 			DataStore dataStore = command.getDataStore();
 			DataElement cmdDescriptor = command.getDescriptor();
-			DataElement cancelDescriptor = dataStore.localDescriptorQuery(cmdDescriptor, "C_CANCEL");
+			DataElement cancelDescriptor = dataStore.localDescriptorQuery(cmdDescriptor, "C_CANCEL"); //$NON-NLS-1$
 
 			if (cancelDescriptor != null)
 			{

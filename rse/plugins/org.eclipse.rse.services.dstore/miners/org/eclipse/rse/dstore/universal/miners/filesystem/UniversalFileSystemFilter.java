@@ -96,9 +96,9 @@ public class UniversalFileSystemFilter implements java.io.FilenameFilter, IUnive
     protected void setListValues(int includeFilesOrFolders, String nameFilter)
     {
     	this.includeFilesOrFolders = includeFilesOrFolders;
-    	if ((nameFilter!=null) && !nameFilter.equals("*"))
+    	if ((nameFilter!=null) && !nameFilter.equals("*")) //$NON-NLS-1$
     	{
-    	  if (nameFilter.endsWith(","))
+    	  if (nameFilter.endsWith(",")) //$NON-NLS-1$
     	    matcher = new FileTypeMatcher(FileTypeMatcher.parseTypes(nameFilter), true);
     	  else
     	    matcher = new NamePatternMatcher(nameFilter, true, caseSensitive);
@@ -117,7 +117,7 @@ public class UniversalFileSystemFilter implements java.io.FilenameFilter, IUnive
     protected void setListValues(int includeFilesOrFolders, String folderNameFilter, String fileNameFilter)
     {
     	setListValues(includeFilesOrFolders, fileNameFilter);
-    	if ((folderNameFilter!=null) && !folderNameFilter.equals("*"))
+    	if ((folderNameFilter!=null) && !folderNameFilter.equals("*")) //$NON-NLS-1$
     	  folderNameMatcher = new NamePatternMatcher(folderNameFilter, true, caseSensitive);
     }
    

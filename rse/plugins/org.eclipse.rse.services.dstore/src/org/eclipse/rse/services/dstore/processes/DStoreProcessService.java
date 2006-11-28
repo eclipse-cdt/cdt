@@ -75,7 +75,7 @@ public class DStoreProcessService extends AbstractProcessService implements IPro
 		// create filter descriptor
 		DataElement deObj;
 		deObj = ds.find(universaltemp, DE.A_NAME, UNIVERSAL_PROCESS_ROOT, 1);
-		if (deObj == null) deObj = ds.createObject(universaltemp, UNIVERSAL_PROCESS_FILTER, UNIVERSAL_PROCESS_ROOT, "", "", false);
+		if (deObj == null) deObj = ds.createObject(universaltemp, UNIVERSAL_PROCESS_FILTER, UNIVERSAL_PROCESS_ROOT, "", "", false); //$NON-NLS-1$ //$NON-NLS-2$
 		deObj.setAttribute(DE.A_SOURCE, filter.toString());		
 
 		// query
@@ -92,7 +92,7 @@ public class DStoreProcessService extends AbstractProcessService implements IPro
 			}
 			catch (InterruptedException e)
 			{
-				throw new SystemMessageException(getMessage("RSEG1067"));
+				throw new SystemMessageException(getMessage("RSEG1067")); //$NON-NLS-1$
 			}
 			// get results
 			List nested = deObj.getNestedData();
@@ -103,12 +103,12 @@ public class DStoreProcessService extends AbstractProcessService implements IPro
 				String message = status.getAttribute(DE.A_VALUE);
 				if (!message.equals(PROCESS_MINER_SUCCESS))
 				{
-					throw new SystemMessageException(getMessage("RSEPG1301"));
+					throw new SystemMessageException(getMessage("RSEPG1301")); //$NON-NLS-1$
 				}
 						
 				// convert objects to remote files
 				String userName = getRemoteUserName();
-				if (userName != null && filter.getUsername().equals("${user.id}"))
+				if (userName != null && filter.getUsername().equals("${user.id}")) //$NON-NLS-1$
 					filter.setUsername(getRemoteUserName());
 				processes = convertObjsToHostProcesses(filter, results);
 			}
@@ -169,7 +169,7 @@ public class DStoreProcessService extends AbstractProcessService implements IPro
 	    {
 	        _minerElement = getDataStore()
 				.findMinerInformation(
-						"org.eclipse.rse.dstore.universal.miners.processes.UniversalProcessMiner");
+						"org.eclipse.rse.dstore.universal.miners.processes.UniversalProcessMiner"); //$NON-NLS-1$
 	    }
 	    return _minerElement;
 	}
@@ -213,8 +213,8 @@ public class DStoreProcessService extends AbstractProcessService implements IPro
 				if (message.equals(PROCESS_MINER_SUCCESS)) return true;
 				else
 				{
-					SystemMessage msg = getMessage("RSEPG1300");
-					msg.makeSubstitution(process.getName() + " (" + process.getPid() + ")", message);
+					SystemMessage msg = getMessage("RSEPG1300"); //$NON-NLS-1$
+					msg.makeSubstitution(process.getName() + " (" + process.getPid() + ")", message); //$NON-NLS-1$ //$NON-NLS-2$
 					throw new SystemMessageException(msg);
 				}
 			}
@@ -225,7 +225,7 @@ public class DStoreProcessService extends AbstractProcessService implements IPro
 		}
 		catch (InterruptedException e)
 		{
-			throw new SystemMessageException(getMessage("RSEG1067"));
+			throw new SystemMessageException(getMessage("RSEG1067")); //$NON-NLS-1$
 		}
 		return false;	
 	}
@@ -254,7 +254,7 @@ public class DStoreProcessService extends AbstractProcessService implements IPro
 		{
 			DataElement sigTypesElement = getSignalTypesMinerElement();
 			String sigTypesOutput = sigTypesElement.getValue();
-			String[] lines = sigTypesOutput.trim().split("\\s+");
+			String[] lines = sigTypesOutput.trim().split("\\s+"); //$NON-NLS-1$
 			if (lines == null) throw new Exception();
 			return lines;
 		}
@@ -267,7 +267,7 @@ public class DStoreProcessService extends AbstractProcessService implements IPro
 	
 	protected DataElement getSignalTypesMinerElement()
 	{
-		return getDataStore().find(_minerElement, DE.A_NAME, "universal.killinfo");
+		return getDataStore().find(_minerElement, DE.A_NAME, "universal.killinfo"); //$NON-NLS-1$
 	}
 
 	public void initService(IProgressMonitor monitor)
@@ -316,7 +316,7 @@ public class DStoreProcessService extends AbstractProcessService implements IPro
 			if (getServerVersion() >= 8)
 			{
 				String minerId = getMinerId();		
-				String message = SystemMessage.sub(ServiceResources.DStore_Service_ProgMon_Initializing_Message, "&1", minerId);
+				String message = SystemMessage.sub(ServiceResources.DStore_Service_ProgMon_Initializing_Message, "&1", minerId); //$NON-NLS-1$
 				monitor.beginTask(message, IProgressMonitor.UNKNOWN);
 				DataStore ds = getDataStore();
 				if (_minerElement == null || _minerElement.getDataStore() != ds)
@@ -341,7 +341,7 @@ public class DStoreProcessService extends AbstractProcessService implements IPro
 		{		
 			DataStore ds = getDataStore();
 
-			DataElement encodingElement = ds.createObject(null, UNIVERSAL_PROCESS_TEMP, "");
+			DataElement encodingElement = ds.createObject(null, UNIVERSAL_PROCESS_TEMP, ""); //$NON-NLS-1$
 
 			DataElement queryCmd = ds.localDescriptorQuery(encodingElement.getDescriptor(), C_PROCESS_QUERY_USERNAME);
 			DStoreStatusMonitor monitor = getStatusMonitor(ds);

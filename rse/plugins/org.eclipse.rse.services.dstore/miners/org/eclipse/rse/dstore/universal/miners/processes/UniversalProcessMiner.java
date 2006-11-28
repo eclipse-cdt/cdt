@@ -50,7 +50,7 @@ public class UniversalProcessMiner extends Miner implements IUniversalProcessDat
 	
 	private ProcessHandler handler;
 	
-	private static final String _minerVersion = "7.0.0";
+	private static final String _minerVersion = "7.0.0"; //$NON-NLS-1$
 	
 	private DataElement deUniversalProcessObject, deUniversalProcessFilter, deKillInfoNode;
 	private ProcessDEComparator _processDEcomparator;
@@ -91,8 +91,8 @@ public class UniversalProcessMiner extends Miner implements IUniversalProcessDat
 				
 		if (subject == null) {
 
-			UniversalServerUtilities.logError(UNIVERSAL_PROCESS_MINER, "Subject for UniversalProcessMiner command " + name + " is null", null);
-			status.setAttribute(DE.A_NAME, "done");
+			UniversalServerUtilities.logError(UNIVERSAL_PROCESS_MINER, "Subject for UniversalProcessMiner command " + name + " is null", null); //$NON-NLS-1$ //$NON-NLS-2$
+			status.setAttribute(DE.A_NAME, "done"); //$NON-NLS-1$
 			return status;
 		}
 		
@@ -111,8 +111,8 @@ public class UniversalProcessMiner extends Miner implements IUniversalProcessDat
 			} 
 			else 
 			{
-				UniversalServerUtilities.logError(UNIVERSAL_PROCESS_MINER, "Unknown filter command: " + name, null);
-				status.setAttribute(DE.A_NAME, "done");
+				UniversalServerUtilities.logError(UNIVERSAL_PROCESS_MINER, "Unknown filter command: " + name, null); //$NON-NLS-1$
+				status.setAttribute(DE.A_NAME, "done"); //$NON-NLS-1$
 			}
 		}
 		else if (subjectType.equals(UNIVERSAL_PROCESS_DESCRIPTOR)) 
@@ -127,14 +127,14 @@ public class UniversalProcessMiner extends Miner implements IUniversalProcessDat
 			}
 			else 
 			{
-				UniversalServerUtilities.logError(UNIVERSAL_PROCESS_MINER, "Unsupported process command: " + name, null);
-				status.setAttribute(DE.A_NAME, "done");
+				UniversalServerUtilities.logError(UNIVERSAL_PROCESS_MINER, "Unsupported process command: " + name, null); //$NON-NLS-1$
+				status.setAttribute(DE.A_NAME, "done"); //$NON-NLS-1$
 			}
 		}
 		else 
 		{
-			UniversalServerUtilities.logError(UNIVERSAL_PROCESS_MINER, "Unsupported subject for command: " + subject, null);
-			status.setAttribute(DE.A_NAME, "done");
+			UniversalServerUtilities.logError(UNIVERSAL_PROCESS_MINER, "Unsupported subject for command: " + subject, null); //$NON-NLS-1$
+			status.setAttribute(DE.A_NAME, "done"); //$NON-NLS-1$
 		}
 		
 		return status;
@@ -145,12 +145,12 @@ public class UniversalProcessMiner extends Miner implements IUniversalProcessDat
 	 */
 	protected DataElement handleQueryUserName(DataElement subject, DataElement status) {
 
-		String encoding = System.getProperty("user.name");
+		String encoding = System.getProperty("user.name"); //$NON-NLS-1$
 
 		subject.setAttribute(DE.A_VALUE, encoding);
 		_dataStore.refresh(subject);
 
-		status.setAttribute(DE.A_NAME, "done");
+		status.setAttribute(DE.A_NAME, "done"); //$NON-NLS-1$
 		_dataStore.refresh(status);
 		return status;
 	}
@@ -166,17 +166,17 @@ public class UniversalProcessMiner extends Miner implements IUniversalProcessDat
 		DataElement tempnode = createObjectDescriptor(schemaRoot, UNIVERSAL_PROCESS_TEMP);
 		
         // define command descriptors
-		createCommandDescriptor(deUniversalProcessFilter, "Filter", C_PROCESS_FILTER_QUERY_ALL);
-		createCommandDescriptor(deUniversalProcessObject, "Kill", C_PROCESS_KILL);
-		createCommandDescriptor(deUniversalProcessObject, "ProcessQueryAllProperties", C_PROCESS_QUERY_ALL_PROPERTIES);
-		createCommandDescriptor(tempnode, "QueryUsername", C_PROCESS_QUERY_USERNAME);
+		createCommandDescriptor(deUniversalProcessFilter, "Filter", C_PROCESS_FILTER_QUERY_ALL); //$NON-NLS-1$
+		createCommandDescriptor(deUniversalProcessObject, "Kill", C_PROCESS_KILL); //$NON-NLS-1$
+		createCommandDescriptor(deUniversalProcessObject, "ProcessQueryAllProperties", C_PROCESS_QUERY_ALL_PROPERTIES); //$NON-NLS-1$
+		createCommandDescriptor(tempnode, "QueryUsername", C_PROCESS_QUERY_USERNAME); //$NON-NLS-1$
 
 		_dataStore.refresh(schemaRoot);
 	}
 
 	public void load()
 	{
-		deKillInfoNode = _dataStore.createObject(_minerData, UNIVERSAL_NODE_DESCRIPTOR, "universal.killinfo");
+		deKillInfoNode = _dataStore.createObject(_minerData, UNIVERSAL_NODE_DESCRIPTOR, "universal.killinfo"); //$NON-NLS-1$
 		deKillInfoNode.setAttribute(DE.A_VALUE, getSignalTypes());
 		_dataStore.refresh(_minerData);
 	
@@ -190,16 +190,14 @@ public class UniversalProcessMiner extends Miner implements IUniversalProcessDat
 	{
 		try
 		{
-			Process kill = Runtime.getRuntime().exec("kill -l");
+			Process kill = Runtime.getRuntime().exec("kill -l"); //$NON-NLS-1$
 			InputStreamReader isr = new InputStreamReader(kill.getInputStream());
-			if (isr == null) return "";
 			BufferedReader reader = new BufferedReader(isr);
-			if (reader == null) return "";
 			String nextLine = reader.readLine();
-			String output = "";
+			String output = ""; //$NON-NLS-1$
 			while (nextLine != null)
 			{
-				output = output + nextLine + "\n";
+				output = output + nextLine + "\n"; //$NON-NLS-1$
 				nextLine = reader.readLine();
 			}
 			reader.close();
@@ -208,7 +206,7 @@ public class UniversalProcessMiner extends Miner implements IUniversalProcessDat
 		}
 		catch (Exception e)
 		{
-			return "";
+			return ""; //$NON-NLS-1$
 		}
 	}
 	
@@ -223,15 +221,15 @@ public class UniversalProcessMiner extends Miner implements IUniversalProcessDat
 			lookupProcesses(pfs, subject);
 		} catch (Exception e) {
 			e.printStackTrace();
-			UniversalServerUtilities.logError("UniversalProcessMiner", "handleQuery()", e);
+			UniversalServerUtilities.logError("UniversalProcessMiner", "handleQuery()", e); //$NON-NLS-1$ //$NON-NLS-2$
 			status.setAttribute(DE.A_VALUE, e.getMessage());
-			status.setAttribute(DE.A_NAME, "done");
+			status.setAttribute(DE.A_NAME, "done"); //$NON-NLS-1$
 			_dataStore.refresh(status);
 			return status;
 		}
 
 		_dataStore.refresh(subject);
-		status.setAttribute(DE.A_NAME, "done");
+		status.setAttribute(DE.A_NAME, "done"); //$NON-NLS-1$
 		status.setAttribute(DE.A_VALUE, PROCESS_MINER_SUCCESS);
 
 		return status;
@@ -371,7 +369,7 @@ public class UniversalProcessMiner extends Miner implements IUniversalProcessDat
 	private void createDataElement(IRemoteServerProcess process, DataElement subject)
 	{
 		DataElement dsObj = null;
-		dsObj = _dataStore.createObject(subject, deUniversalProcessObject, "" + process.getPid());
+		dsObj = _dataStore.createObject(subject, deUniversalProcessObject, "" + process.getPid()); //$NON-NLS-1$
 		dsObj.setAttribute(DE.A_VALUE, process.getAllProperties());			
 	}
 	/**
@@ -396,19 +394,19 @@ public class UniversalProcessMiner extends Miner implements IUniversalProcessDat
 			if (result == null) _dataStore.deleteObject(subject.getParent(), subject);
 			else
 			{
-				subject.setAttribute(DE.A_SOURCE, "");
+				subject.setAttribute(DE.A_SOURCE, ""); //$NON-NLS-1$
 				subject.setAttribute(DE.A_VALUE, result.getAllProperties());
 			}	
 		} catch (Exception e) {
-			UniversalServerUtilities.logError("UniversalProcessMiner", "handleQuery()", e);
+			UniversalServerUtilities.logError("UniversalProcessMiner", "handleQuery()", e); //$NON-NLS-1$ //$NON-NLS-2$
 			status.setAttribute(DE.A_VALUE, e.getMessage());
-			status.setAttribute(DE.A_NAME, "done");
+			status.setAttribute(DE.A_NAME, "done"); //$NON-NLS-1$
 			_dataStore.refresh(status);
 			return status;
 		}
 
 		_dataStore.refresh(subject.getParent());
-		status.setAttribute(DE.A_NAME, "done");
+		status.setAttribute(DE.A_NAME, "done"); //$NON-NLS-1$
 		status.setAttribute(DE.A_VALUE, PROCESS_MINER_SUCCESS);
 		return status;		
 	}

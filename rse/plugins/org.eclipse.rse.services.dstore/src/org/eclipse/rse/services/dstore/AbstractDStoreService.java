@@ -100,8 +100,13 @@ public abstract class AbstractDStoreService implements IDStoreService
 				}
 			}
 			catch (Exception e)
-			{				
+			{			
+				e.printStackTrace();
 			}			
+		}
+		else
+		{
+			System.out.println("no query command for "+ subject); //$NON-NLS-1$
 		}
 		return new DataElement[0];
 	}
@@ -274,7 +279,7 @@ public abstract class AbstractDStoreService implements IDStoreService
 			if (getServerVersion() >= 8)
 			{
 				String minerId = getMinerId();
-				String message = SystemMessage.sub(ServiceResources.DStore_Service_ProgMon_Initializing_Message, "&1", minerId);
+				String message = SystemMessage.sub(ServiceResources.DStore_Service_ProgMon_Initializing_Message, "&1", minerId); //$NON-NLS-1$
 				monitor.beginTask(message, IProgressMonitor.UNKNOWN);
 				DataStore ds = getDataStore();
 				if (_minerElement == null || _minerElement.getDataStore() != ds)
@@ -307,7 +312,7 @@ public abstract class AbstractDStoreService implements IDStoreService
 	/**
 	 * For now just a dummy method
 	 * @param messageID
-	 * @return
+	 * @return the message
 	 */
 	public SystemMessage getMessage(String messageID)
 	{

@@ -47,7 +47,7 @@ public class DownloadListener implements IDomainListener,IUniversalDataStoreCons
 	private long _totalBytesNotified = 0;
 	private long _totalLength;
 
-	private static String _percentMsg = SystemMessage.sub(SystemMessage.sub(SystemMessage.sub(ServiceResources.DStore_Service_Percent_Complete_Message, "&0", "{0}"), "&1", "{1}"), "&2", "{2}");	
+	private static String _percentMsg = SystemMessage.sub(SystemMessage.sub(SystemMessage.sub(ServiceResources.DStore_Service_Percent_Complete_Message, "&0", "{0}"), "&1", "{1}"), "&2", "{2}");	 //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$
 
 	public DownloadListener(IProgressMonitor monitor, DataElement status, File localFile, String remotePath, long totalLength)
 	{
@@ -58,7 +58,7 @@ public class DownloadListener implements IDomainListener,IUniversalDataStoreCons
 
 		if (_status == null)
 		{
-		    System.out.println("Status is null!");
+		    System.out.println("Status is null!"); //$NON-NLS-1$
 		}
 		
 		_dataStore = _status.getDataStore();
@@ -72,7 +72,7 @@ public class DownloadListener implements IDomainListener,IUniversalDataStoreCons
 				//Process everything on event queue
 			}
 		}
-		if (_status.getValue().equals("done"))
+		if (_status.getValue().equals("done")) //$NON-NLS-1$
 		{
 			updateDownloadState();
 			setDone(true);
@@ -112,7 +112,7 @@ public class DownloadListener implements IDomainListener,IUniversalDataStoreCons
 	 */
 	public void domainChanged(DomainEvent event)
 	{
-		if (_status.getValue().equals("done"))
+		if (_status.getValue().equals("done")) //$NON-NLS-1$
 		{
 			if (_status == event.getParent())
 			{
@@ -144,15 +144,15 @@ public class DownloadListener implements IDomainListener,IUniversalDataStoreCons
 						
 					StringBuffer current = new StringBuffer();
 					current.append(currentLength /KB_IN_BYTES);
-					current.append(" KB");
+					current.append(" KB"); //$NON-NLS-1$
 					
 					StringBuffer total = new StringBuffer();
 					total.append(_totalLength / KB_IN_BYTES);
-					total.append(" KB");
+					total.append(" KB"); //$NON-NLS-1$
 					
 					StringBuffer percentBuf = new StringBuffer();
 					percentBuf.append(percent);
-					percentBuf.append("%");
+					percentBuf.append("%"); //$NON-NLS-1$
 					
 					String str = MessageFormat.format(_percentMsg, new Object[] {current, total, percentBuf});
 					
@@ -169,7 +169,7 @@ public class DownloadListener implements IDomainListener,IUniversalDataStoreCons
 			}
 		}
 		
-		if (!_status.getDataStore().getStatus().getName().equals("okay"))
+		if (!_status.getDataStore().getStatus().getName().equals("okay")) //$NON-NLS-1$
 		{
 			_networkDown = true;
 		}
@@ -257,7 +257,7 @@ public class DownloadListener implements IDomainListener,IUniversalDataStoreCons
 					throw new InterruptedException();
 				}
 
-				if (getStatus().getAttribute(DE.A_NAME).equals("done"))
+				if (getStatus().getAttribute(DE.A_NAME).equals("done")) //$NON-NLS-1$
 				{
 					setDone(true);
 				}
@@ -286,7 +286,7 @@ public class DownloadListener implements IDomainListener,IUniversalDataStoreCons
 					setDone(true);
 					throw new InterruptedException();
 				}
-				if (getStatus().getAttribute(DE.A_NAME).equals("done"))
+				if (getStatus().getAttribute(DE.A_NAME).equals("done")) //$NON-NLS-1$
 				{
 					setDone(true); 
 				}
@@ -308,7 +308,7 @@ public class DownloadListener implements IDomainListener,IUniversalDataStoreCons
 				DataElement command = status.getParent();
 				DataStore dataStore = command.getDataStore();
 				DataElement cmdDescriptor = command.getDescriptor();
-				DataElement cancelDescriptor = dataStore.localDescriptorQuery(cmdDescriptor, "C_CANCEL");
+				DataElement cancelDescriptor = dataStore.localDescriptorQuery(cmdDescriptor, "C_CANCEL"); //$NON-NLS-1$
 				if (cancelDescriptor != null)
 				{
 					dataStore.command(cancelDescriptor, command);

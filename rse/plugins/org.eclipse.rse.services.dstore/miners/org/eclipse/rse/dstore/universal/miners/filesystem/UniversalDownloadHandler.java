@@ -73,7 +73,7 @@ public class UniversalDownloadHandler extends Thread implements ICancellableHand
 	
 	public void cancel()
 	{
-		_dataStore.trace("cancelling download");
+		_dataStore.trace("cancelling download"); //$NON-NLS-1$
 		_isCancelled = true;
 	}
 
@@ -85,7 +85,7 @@ public class UniversalDownloadHandler extends Thread implements ICancellableHand
 		String remotePath = arg1.getName();
 
 		int buffer_size = IUniversalDataStoreConstants.BUFFER_SIZE;
-		DataElement bufferSizeElement = _dataStore.find(theElement, DE.A_TYPE, "buffer_size", 1);
+		DataElement bufferSizeElement = _dataStore.find(theElement, DE.A_TYPE, "buffer_size", 1); //$NON-NLS-1$
 		if (bufferSizeElement != null)
 		{
 		    try
@@ -110,7 +110,7 @@ public class UniversalDownloadHandler extends Thread implements ICancellableHand
 			if (elementType.equals(IUniversalDataStoreConstants.UNIVERSAL_FILE_DESCRIPTOR) || elementType.equals(IUniversalDataStoreConstants.UNIVERSAL_ARCHIVE_FILE_DESCRIPTOR) || elementType.equals(IUniversalDataStoreConstants.UNIVERSAL_VIRTUAL_FILE_DESCRIPTOR))
 			{
 
-				_dataStore.trace("download:" + remotePath + "," + elementType);
+				_dataStore.trace("download:" + remotePath + "," + elementType); //$NON-NLS-1$ //$NON-NLS-2$
 
 				File file = new File(remotePath);
 
@@ -124,7 +124,7 @@ public class UniversalDownloadHandler extends Thread implements ICancellableHand
 					{
 						status.setAttribute(DE.A_SOURCE, IServiceConstants.FAILED);
 						resultType = IUniversalDataStoreConstants.DOWNLOAD_RESULT_IO_EXCEPTION;
-						resultMessage = "Corrupted archive.";
+						resultMessage = "Corrupted archive."; //$NON-NLS-1$
 						_isDone = true;
 						_dataStore.createObject(arg1, resultType, resultMessage);
 						_dataStore.refresh(arg1);
@@ -207,7 +207,7 @@ public class UniversalDownloadHandler extends Thread implements ICancellableHand
 						totalWritten +=bytesRead;
 					}
 
-					status.setAttribute(DE.A_SOURCE, "sent "+totalWritten + " of "+totalBytes);
+					status.setAttribute(DE.A_SOURCE, "sent "+totalWritten + " of "+totalBytes); //$NON-NLS-1$ //$NON-NLS-2$
 					_dataStore.refresh(status);
 					available = bufInputStream.available();
 				}
@@ -219,25 +219,25 @@ public class UniversalDownloadHandler extends Thread implements ICancellableHand
 		}
 		catch (FileNotFoundException e)
 		{
-			UniversalServerUtilities.logError(UniversalFileSystemMiner.CLASSNAME, "handleDownload: error reading file " + remotePath, e);
+			UniversalServerUtilities.logError(UniversalFileSystemMiner.CLASSNAME, "handleDownload: error reading file " + remotePath, e); //$NON-NLS-1$
 			resultType = IUniversalDataStoreConstants.DOWNLOAD_RESULT_FILE_NOT_FOUND_EXCEPTION;
 			resultMessage = e.getLocalizedMessage();
 		}
 		catch (UnsupportedEncodingException e)
 		{
-			UniversalServerUtilities.logError(UniversalFileSystemMiner.CLASSNAME, "handleDownload: error reading file " + remotePath, e);
+			UniversalServerUtilities.logError(UniversalFileSystemMiner.CLASSNAME, "handleDownload: error reading file " + remotePath, e); //$NON-NLS-1$
 			resultType = IUniversalDataStoreConstants.DOWNLOAD_RESULT_UNSUPPORTED_ENCODING_EXCEPTION;
 			resultMessage = e.getLocalizedMessage();
 		}
 		catch (IOException e)
 		{
-			UniversalServerUtilities.logError(UniversalFileSystemMiner.CLASSNAME, "handleDownload: error reading file " + remotePath, e);
+			UniversalServerUtilities.logError(UniversalFileSystemMiner.CLASSNAME, "handleDownload: error reading file " + remotePath, e); //$NON-NLS-1$
 			resultType = IUniversalDataStoreConstants.DOWNLOAD_RESULT_IO_EXCEPTION;
 			resultMessage = e.getLocalizedMessage();
 		}
 		catch (Exception e)
 		{
-			UniversalServerUtilities.logError(UniversalFileSystemMiner.CLASSNAME, "handleDownload: error reading file " + remotePath, e);
+			UniversalServerUtilities.logError(UniversalFileSystemMiner.CLASSNAME, "handleDownload: error reading file " + remotePath, e); //$NON-NLS-1$
 			resultType = IUniversalDataStoreConstants.DOWNLOAD_RESULT_EXCEPTION;
 			resultMessage = e.getLocalizedMessage();
 		}
@@ -253,7 +253,7 @@ public class UniversalDownloadHandler extends Thread implements ICancellableHand
 			}
 			catch (IOException e)
 			{
-				UniversalServerUtilities.logError(UniversalFileSystemMiner.CLASSNAME, "handleDownload: error closing reader on " + remotePath, e);
+				UniversalServerUtilities.logError(UniversalFileSystemMiner.CLASSNAME, "handleDownload: error closing reader on " + remotePath, e); //$NON-NLS-1$
 				resultType = IUniversalDataStoreConstants.DOWNLOAD_RESULT_IO_EXCEPTION;
 				resultMessage = e.getMessage();
 			}

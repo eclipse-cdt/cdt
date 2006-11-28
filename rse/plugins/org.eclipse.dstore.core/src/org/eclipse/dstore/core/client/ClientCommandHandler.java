@@ -42,73 +42,73 @@ public class ClientCommandHandler extends CommandHandler
 
 	private static String[] _docAttributes =  { 
 		DataStoreResources.DOCUMENT_TYPE, 
-		"client.doc.root.id",
-		"client.document",
-		"doc",
-		"",
-		"",
+		"client.doc.root.id", //$NON-NLS-1$
+		"client.document", //$NON-NLS-1$
+		"doc", //$NON-NLS-1$
+		"", //$NON-NLS-1$
+		"", //$NON-NLS-1$
 		DataStoreResources.FALSE,
-		"2"};
+		"2"}; //$NON-NLS-1$
 	
 	private static String[] _fileAttributes =  {
 		DataStoreResources.FILE_TYPE, 
-		"client.file.root.id",
-		"client.file",
-		"doc",
-		"",
-		"",
+		"client.file.root.id", //$NON-NLS-1$
+		"client.file", //$NON-NLS-1$
+		"doc", //$NON-NLS-1$
+		"", //$NON-NLS-1$
+		"", //$NON-NLS-1$
 		DataStoreResources.FALSE,
-		"2"};
+		"2"}; //$NON-NLS-1$
 	
 	private static String[] _classAttributes =  {
 		DataStoreResources.CLASS_TYPE, 
-		"client.class.root.id",
-		"client.class",
-		"doc",
-		"",
-		"",
+		"client.class.root.id", //$NON-NLS-1$
+		"client.class", //$NON-NLS-1$
+		"doc", //$NON-NLS-1$
+		"", //$NON-NLS-1$
+		"", //$NON-NLS-1$
 		DataStoreResources.FALSE,
-		"2"};
+		"2"}; //$NON-NLS-1$
 	
 	private static String[] _serializeAttributes =  {
 		DataStoreResources.SERIALIZED_TYPE, 
-		"client.serialized.root.id",
-		"client.serialized",
-		"doc",
-		"",
-		"",
+		"client.serialized.root.id", //$NON-NLS-1$
+		"client.serialized", //$NON-NLS-1$
+		"doc", //$NON-NLS-1$
+		"", //$NON-NLS-1$
+		"", //$NON-NLS-1$
 		DataStoreResources.FALSE,
-		"2"};
+		"2"}; //$NON-NLS-1$
 	
 	private static String[] _requestClassAttributes =  {
 		DataStoreResources.REQUEST_CLASS_TYPE, 
-		"client.requestclass.root.id",
-		"client.requestclass",
-		"doc",
-		"",
-		"",
+		"client.requestclass.root.id", //$NON-NLS-1$
+		"client.requestclass", //$NON-NLS-1$
+		"doc", //$NON-NLS-1$
+		"", //$NON-NLS-1$
+		"", //$NON-NLS-1$
 		DataStoreResources.FALSE,
-		"2"};
+		"2"}; //$NON-NLS-1$
 	
 	private static String[] _keepAliveAttributes =  {
 		DataStoreResources.KEEPALIVE_TYPE, 
-		"client.keepalive.root.id",
-		"server.keepalive",
-		"doc",
-		"",
-		"",
+		"client.keepalive.root.id", //$NON-NLS-1$
+		"server.keepalive", //$NON-NLS-1$
+		"doc", //$NON-NLS-1$
+		"", //$NON-NLS-1$
+		"", //$NON-NLS-1$
 		DataStoreResources.FALSE,
-		"2"};
+		"2"}; //$NON-NLS-1$
 		
 	private static String[] _confirmKeepAliveAttributes =  {
 		DataStoreResources.KEEPALIVECONFIRM_TYPE, 
-		"client.keepalive.confirm.root.id",
-		"server.confirmkeepalive",
-		"doc",
-		"",
-		"",
+		"client.keepalive.confirm.root.id", //$NON-NLS-1$
+		"server.confirmkeepalive", //$NON-NLS-1$
+		"doc", //$NON-NLS-1$
+		"", //$NON-NLS-1$
+		"", //$NON-NLS-1$
 		DataStoreResources.FALSE,
-		"2"};
+		"2"}; //$NON-NLS-1$
 		
 	
 	protected DataElement _fileDocumentElement;
@@ -170,7 +170,7 @@ public class ClientCommandHandler extends CommandHandler
 	 */
 	public synchronized void sendFile(String fileName, byte[] bytes, int size, boolean binary)
 	{
-		sendFile(fileName, bytes, size, binary, "default");
+		sendFile(fileName, bytes, size, binary, "default"); //$NON-NLS-1$
 	}
 
 	/**
@@ -206,7 +206,7 @@ public class ClientCommandHandler extends CommandHandler
 	 */
 	public synchronized void sendAppendFile(String fileName, byte[] bytes, int size, boolean binary)
 	{
-		sendAppendFile(fileName, bytes, size, binary, "default");
+		sendAppendFile(fileName, bytes, size, binary, "default"); //$NON-NLS-1$
 	}
 	
 	/**
@@ -295,7 +295,7 @@ public class ClientCommandHandler extends CommandHandler
 	 */
 	public synchronized void sendClass(String className)
 	{
-		sendClass(className, "default");
+		sendClass(className, "default"); //$NON-NLS-1$
 	}
 
 	/**
@@ -353,8 +353,8 @@ public class ClientCommandHandler extends CommandHandler
 	{
 		DataElement document = _confirmKeepAliveDocumentElement;
 		document.setPendingTransfer(true);
-		document.setAttribute(DE.A_NAME, "confirm");
-		document.setAttribute(DE.A_VALUE, "confirm");
+		document.setAttribute(DE.A_NAME, "confirm"); //$NON-NLS-1$
+		document.setAttribute(DE.A_VALUE, "confirm"); //$NON-NLS-1$
 		document.setParent(null);
 		_pendingKeepAliveConfirmation = document;
 		notifyInput();
@@ -364,8 +364,8 @@ public class ClientCommandHandler extends CommandHandler
 	{
 		DataElement document = _keepAliveDocumentElement;
 		document.setPendingTransfer(true);
-		document.setAttribute(DE.A_NAME, "request");
-		document.setAttribute(DE.A_VALUE, "request");
+		document.setAttribute(DE.A_NAME, "request"); //$NON-NLS-1$
+		document.setAttribute(DE.A_VALUE, "request"); //$NON-NLS-1$
 		document.setParent(null);
 		_pendingKeepAliveRequest = document;
 		notifyInput();

@@ -111,12 +111,12 @@ public class ClientConnection implements IDataStoreConstants
 	private static final int VERSION_INDEX_PROTOCOL = 0;
 	private static final int VERSION_INDEX_VERSION  = 1;
 	private static final int VERSION_INDEX_MINOR    = 2;
-	public static String INCOMPATIBLE_SERVER_UPDATE = "Incompatible DataStore.";
-	public static String INCOMPATIBLE_CLIENT_UPDATE = "Incompatible DataStore.";
-	public static String SERVER_OLDER = "Older DataStore Server.";
-	public static String CLIENT_OLDER = "Older DataStore Client.";
-	public static String INCOMPATIBLE_PROTOCOL = "Incompatible Protocol.";
-	public static String CANNOT_CONNECT = "Cannot connect to server.";
+	public static String INCOMPATIBLE_SERVER_UPDATE = "Incompatible DataStore."; //$NON-NLS-1$
+	public static String INCOMPATIBLE_CLIENT_UPDATE = "Incompatible DataStore."; //$NON-NLS-1$
+	public static String SERVER_OLDER = "Older DataStore Server."; //$NON-NLS-1$
+	public static String CLIENT_OLDER = "Older DataStore Client."; //$NON-NLS-1$
+	public static String INCOMPATIBLE_PROTOCOL = "Incompatible Protocol."; //$NON-NLS-1$
+	public static String CANNOT_CONNECT = "Cannot connect to server."; //$NON-NLS-1$
 
 	/**
 	 * Creates a new ClientConnection instance
@@ -242,7 +242,7 @@ public class ClientConnection implements IDataStoreConstants
 	{
 		if (port == null || port.length() == 0)
 		{
-			port = "0";
+			port = "0"; //$NON-NLS-1$
 		}
 
 		_port = port;
@@ -317,7 +317,7 @@ public class ClientConnection implements IDataStoreConstants
 			if (_isRemote)
 			{
 				_commandHandler.command(
-					_dataStore.find(_dataStore.getRoot(), DE.A_NAME, "Exit"),
+					_dataStore.find(_dataStore.getRoot(), DE.A_NAME, "Exit"), //$NON-NLS-1$
 					_dataStore.getHostRoot(),
 					false);
 				_receiver.finish();
@@ -354,7 +354,7 @@ public class ClientConnection implements IDataStoreConstants
 		if (_loaders == null)
 		{
 			_loaders = new ArrayList();
-			_loaders.add(new ExternalLoader(getClass().getClassLoader(), "*"));
+			_loaders.add(new ExternalLoader(getClass().getClassLoader(), "*")); //$NON-NLS-1$
 		}
 
 		_commandHandler = new ServerCommandHandler(_loaders);
@@ -380,7 +380,7 @@ public class ClientConnection implements IDataStoreConstants
 		_isConnected = true;
 
 		DataElement ticket = _dataStore.getTicket();
-		ticket.setAttribute(DE.A_NAME, "null");
+		ticket.setAttribute(DE.A_NAME, "null"); //$NON-NLS-1$
 
 		ConnectionStatus result = new ConnectionStatus(_isConnected);
 		result.setTicket(ticket.getName());
@@ -411,7 +411,7 @@ public class ClientConnection implements IDataStoreConstants
 		else
 		{
 			launchStatus = new ConnectionStatus(true);
-			launchStatus.setTicket("null");
+			launchStatus.setTicket("null"); //$NON-NLS-1$
 		}
 
 		return connect(launchStatus.getTicket());
@@ -472,7 +472,7 @@ public class ClientConnection implements IDataStoreConstants
 				{
 
 					((SSLSocket) _theSocket).startHandshake();
-					SSLSession session = ((SSLSocket) _theSocket).getSession();
+					((SSLSocket) _theSocket).getSession();
 
 				}
 				catch (SSLHandshakeException e)
@@ -507,44 +507,44 @@ public class ClientConnection implements IDataStoreConstants
 			case HANDSHAKE_SERVER_NEWER:
 			{
 				msg = INCOMPATIBLE_CLIENT_UPDATE;
-				msg += "\nThe server running on "
+				msg += "\nThe server running on " //$NON-NLS-1$
 					+ _host
-					+ " under port "
+					+ " under port " //$NON-NLS-1$
 					+ _port
-					+ " is a newer DataStore server.";
+					+ " is a newer DataStore server."; //$NON-NLS-1$
 				break;
 			}
 			case HANDSHAKE_SERVER_OLDER:
 			{
 				msg = INCOMPATIBLE_SERVER_UPDATE;
-				msg += "\nThe server running on "
+				msg += "\nThe server running on " //$NON-NLS-1$
 					+ _host
-					+ " under port "
+					+ " under port " //$NON-NLS-1$
 					+ _port
-					+ " is an older DataStore server.";
+					+ " is an older DataStore server."; //$NON-NLS-1$
 				break;
 			}
 			case HANDSHAKE_INCORRECT:
 			{
 				msg = CANNOT_CONNECT;
 				msg += INCOMPATIBLE_PROTOCOL;
-				msg += "\nThe server running on "
+				msg += "\nThe server running on " //$NON-NLS-1$
 					+ _host
-					+ " under port "
+					+ " under port " //$NON-NLS-1$
 					+ _port
-					+ " is not a valid DataStore server.";
+					+ " is not a valid DataStore server."; //$NON-NLS-1$
 				break;
 			}
 			case HANDSHAKE_UNEXPECTED:
 			{
 				msg = CANNOT_CONNECT;
-				msg += "Unexpected exception.";
+				msg += "Unexpected exception."; //$NON-NLS-1$
 				break;
 			}
 			case HANDSHAKE_TIMEOUT:
 			{
 				msg = CANNOT_CONNECT;
-				msg += "Timeout waiting for socket activity.";
+				msg += "Timeout waiting for socket activity."; //$NON-NLS-1$
 				break;
 			}	
 			default:
@@ -560,8 +560,8 @@ public class ClientConnection implements IDataStoreConstants
 		}
 		catch (java.net.ConnectException e)
 		{
-			String msg = "Connection Refused.";
-			msg += "\nMake sure that the DataStore server is running on " + _host + " under port " + _port + ".";
+			String msg = "Connection Refused."; //$NON-NLS-1$
+			msg += "\nMake sure that the DataStore server is running on " + _host + " under port " + _port + "."; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			result = new ConnectionStatus(false, msg);
 		}
 		catch (UnknownHostException uhe)
@@ -673,7 +673,7 @@ public class ClientConnection implements IDataStoreConstants
 				}
 				else if (status == null)
 				{
-					Exception e = new Exception("no status returned");
+					Exception e = new Exception("no status returned"); //$NON-NLS-1$
 					result = new ConnectionStatus(false, e);
 				}
 				else
@@ -771,8 +771,8 @@ public class ClientConnection implements IDataStoreConstants
 		}
 		catch (java.net.ConnectException e)
 		{
-			String msg = "Connection Refused.";
-			msg += "\nMake sure that the DataStore daemon is running on " + _host + ".";
+			String msg = "Connection Refused."; //$NON-NLS-1$
+			msg += "\nMake sure that the DataStore daemon is running on " + _host + "."; //$NON-NLS-1$ //$NON-NLS-2$
 			result = new ConnectionStatus(false, msg);
 		}
 		catch (UnknownHostException uhe)
@@ -825,18 +825,6 @@ public class ClientConnection implements IDataStoreConstants
 		_port = _clientAttributes.getAttribute(DataStoreAttributes.A_HOST_PORT);
 	}
 
-	private void flush(DataElement object)
-	{
-		_dataStore.flush(object);
-	}
-
-	private void flush()
-	{
-		_dataStore.flush(_dataStore.getHostRoot());
-		_dataStore.flush(_dataStore.getLogRoot());
-		_dataStore.flush(_dataStore.getDescriptorRoot());
-		_dataStore.createRoot();
-	}
 	
 	private int doHandShake()
 	{
@@ -844,9 +832,9 @@ public class ClientConnection implements IDataStoreConstants
 		{
 			BufferedReader reader = new BufferedReader(new InputStreamReader(_theSocket.getInputStream(), DE.ENCODING_UTF_8));
 			PrintWriter writer = new PrintWriter(new OutputStreamWriter(_theSocket.getOutputStream(), DE.ENCODING_UTF_8));
-			writer.println("");
-			writer.println("");
-			writer.println("");
+			writer.println(""); //$NON-NLS-1$
+			writer.println(""); //$NON-NLS-1$
+			writer.println(""); //$NON-NLS-1$
 			writer.flush();
 			
 			String handshake = null;
@@ -860,8 +848,8 @@ public class ClientConnection implements IDataStoreConstants
 			}
 			_theSocket.setSoTimeout(0);
 
-			String[] clientVersionStr = DataStoreAttributes.DATASTORE_VERSION.split("\\.");			
-			String[] serverVersionStr = handshake.split("\\.");
+			String[] clientVersionStr = DataStoreAttributes.DATASTORE_VERSION.split("\\.");			 //$NON-NLS-1$
+			String[] serverVersionStr = handshake.split("\\."); //$NON-NLS-1$
 
 			_dataStore.setServerVersion(Integer.parseInt(serverVersionStr[VERSION_INDEX_VERSION]));
 			_dataStore.setServerMinor(Integer.parseInt(serverVersionStr[VERSION_INDEX_MINOR]));
@@ -873,7 +861,7 @@ public class ClientConnection implements IDataStoreConstants
 			}
 			else
 			{
-				if (handshake.startsWith("<DataElement"))
+				if (handshake.startsWith("<DataElement")) //$NON-NLS-1$
 				{
 					return HANDSHAKE_SERVER_OLDER;
 				}

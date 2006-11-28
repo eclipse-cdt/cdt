@@ -81,27 +81,27 @@ public class XMLparser
 	private KeepAliveRequestThread _kart = null;
 	private KeepAliveRequestThread _initialKart = null;
 	
-	public static String STR_DATAELEMENT = "DataElement";
+	public static String STR_DATAELEMENT = "DataElement"; //$NON-NLS-1$
 
-	public static String STR_BUFFER_START = "<Buffer>";
-	public static String STR_BUFFER_END   = "</Buffer>";
-	public static String STR_BUFFER       = "Buffer";
+	public static String STR_BUFFER_START = "<Buffer>"; //$NON-NLS-1$
+	public static String STR_BUFFER_END   = "</Buffer>"; //$NON-NLS-1$
+	public static String STR_BUFFER       = "Buffer"; //$NON-NLS-1$
 
-	public static String STR_STATUS       = "status";
-	public static String STR_STATUS_DONE  = "done";
-	public static String STR_STATUS_ALMOST_DONE = "almost done";
+	public static String STR_STATUS       = "status"; //$NON-NLS-1$
+	public static String STR_STATUS_DONE  = "done"; //$NON-NLS-1$
+	public static String STR_STATUS_ALMOST_DONE = "almost done"; //$NON-NLS-1$
 	
-	public static String STR_FILE         = "File";
-	public static String STR_CLASS		   = "Class";
-	public static String STR_REQUEST_CLASS= "RequestClass";
-	public static String STR_SERIALIZED   = "Serialized";
+	public static String STR_FILE         = "File"; //$NON-NLS-1$
+	public static String STR_CLASS		   = "Class"; //$NON-NLS-1$
+	public static String STR_REQUEST_CLASS= "RequestClass"; //$NON-NLS-1$
+	public static String STR_SERIALIZED   = "Serialized"; //$NON-NLS-1$
 	
-	public static String STR_AMP = "&amp;";
-	public static String STR_QUOTE = "&quot;";
-	public static String STR_APOS = "&apos;";
-	public static String STR_LT = "&lt;";
-	public static String STR_GT = "&gt;";
-	public static String STR_SEMI = "&#59;";
+	public static String STR_AMP = "&amp;"; //$NON-NLS-1$
+	public static String STR_QUOTE = "&quot;"; //$NON-NLS-1$
+	public static String STR_APOS = "&apos;"; //$NON-NLS-1$
+	public static String STR_LT = "&lt;"; //$NON-NLS-1$
+	public static String STR_GT = "&gt;"; //$NON-NLS-1$
+	public static String STR_SEMI = "&#59;"; //$NON-NLS-1$
 	
 	
 	/**
@@ -196,19 +196,19 @@ public class XMLparser
 			}
 			catch (Error err)
 			{
-				System.out.println("error!"); 
+				System.out.println("error!");  //$NON-NLS-1$
 				handlePanic(err);
 			}
 		}
 
-		if (_tagType.startsWith("File.Append"))
+		if (_tagType.startsWith("File.Append")) //$NON-NLS-1$
 		{
-			boolean binary = _tagType.equals("File.Append.Binary");
+			boolean binary = _tagType.equals("File.Append.Binary"); //$NON-NLS-1$
 			_dataStore.appendToFile(path, _fileByteBuffer, size, binary, byteStreamHandlerId);
 		}
 		else
 		{
-			boolean binary = _tagType.equals("File.Binary");
+			boolean binary = _tagType.equals("File.Binary"); //$NON-NLS-1$
 			_dataStore.saveFile(path, _fileByteBuffer, size, binary, byteStreamHandlerId);
 		}
 	}
@@ -302,9 +302,9 @@ public class XMLparser
 
 				if (_firstTime)
 				{
-					_initialKart = new KeepAliveRequestThread(KEEPALIVE_RESPONSE_TIMEOUT, _dataStore);
+					_initialKart = new KeepAliveRequestThread(KEEPALIVE_RESPONSE_TIMEOUT);
 					_firstTime = false;
-					if (VERBOSE_KEEPALIVE) System.out.println("Starting initial KeepAlive thread.");
+					if (VERBOSE_KEEPALIVE) System.out.println("Starting initial KeepAlive thread."); //$NON-NLS-1$
 					_initialKart.start();
 					continue;
 				}
@@ -313,13 +313,13 @@ public class XMLparser
 					if (!_initialKart.failed())
 					{
 						_isKeepAliveCompatible = true;
-						if (VERBOSE_KEEPALIVE) System.out.println("KeepAlive compatible.");
+						if (VERBOSE_KEEPALIVE) System.out.println("KeepAlive compatible."); //$NON-NLS-1$
 						_initialKart = null;
 					}			
 					else
 					{
 						_isKeepAliveCompatible = false;
-						if (VERBOSE_KEEPALIVE) System.out.println("KeepAlive incompatible.");
+						if (VERBOSE_KEEPALIVE) System.out.println("KeepAlive incompatible."); //$NON-NLS-1$
 						_initialKart = null;
 					}
 				}
@@ -338,14 +338,14 @@ public class XMLparser
 						if ((_kart != null) && _kart.failed())
 						{
 							done = true;
-							if (_dataStore.isVirtual()) handlePanic(new Exception("KeepAlive request to server wasnt answered in time."));
-							else handlePanic(new Exception("KeepAlive request to client wasnt answered in time."));
+							if (_dataStore.isVirtual()) handlePanic(new Exception("KeepAlive request to server wasnt answered in time.")); //$NON-NLS-1$
+							else handlePanic(new Exception("KeepAlive request to client wasnt answered in time.")); //$NON-NLS-1$
 							continue;
 						}
 						else
 						{
-							_kart = new KeepAliveRequestThread(KEEPALIVE_RESPONSE_TIMEOUT, _dataStore);
-							if (VERBOSE_KEEPALIVE) System.out.println("No activity on socket. KeepAlive thread started.");
+							_kart = new KeepAliveRequestThread(KEEPALIVE_RESPONSE_TIMEOUT);
+							if (VERBOSE_KEEPALIVE) System.out.println("No activity on socket. KeepAlive thread started."); //$NON-NLS-1$
 							_kart.start();
 							continue;
 						}
@@ -359,7 +359,7 @@ public class XMLparser
 				if (in == -1)
 				{
 					done = true;
-					Exception e = new Exception("The connection to the server has been lost.");
+					Exception e = new Exception("The connection to the server has been lost."); //$NON-NLS-1$
 					handlePanic(e);
 				}
 				else
@@ -484,8 +484,8 @@ public class XMLparser
 				
 				if (_dataStore.getReferenceTag() == null)
 				{
-					if (trimmedTag.indexOf(DE.P_ISREF + "=") > -1) _dataStore.setReferenceTag(DE.P_ISREF);
-					else if (trimmedTag.indexOf(DE.P_REF_TYPE + "=") > -1) _dataStore.setReferenceTag(DE.P_REF_TYPE);
+					if (trimmedTag.indexOf(DE.P_ISREF + "=") > -1) _dataStore.setReferenceTag(DE.P_ISREF); //$NON-NLS-1$
+					else if (trimmedTag.indexOf(DE.P_REF_TYPE + "=") > -1) _dataStore.setReferenceTag(DE.P_REF_TYPE); //$NON-NLS-1$
 				}
 
 				if (!_tagStack.empty())
@@ -505,11 +505,12 @@ public class XMLparser
 				else if (_tagType.equals(STR_BUFFER))
 				{
 					String buffer = convertStringFromXML(xmlTag);
-					parent.appendToBuffer(buffer);
+					if (parent != null)
+						parent.appendToBuffer(buffer);
 				}
 				else if ((matchTag != null) && trimmedTag.equals(matchTag))
 				{
-					if (parent.getType().equals(STR_STATUS))
+					if (parent != null && parent.getType().equals(STR_STATUS))
 					{
 						if (parent.getName().equals(STR_STATUS_ALMOST_DONE))
 						{
@@ -617,7 +618,7 @@ public class XMLparser
 
 								parent = result;
 
-								if (_isFile && (result != null))
+								if (_isFile)
 								{
 									int size = result.depth();
 									String path = result.getSource();
@@ -628,14 +629,12 @@ public class XMLparser
 									    // older client or server, fall back to default
 									    byteStreamHandler = DataStoreResources.DEFAULT_BYTESTREAMHANDLER;
 									}
-									if (path != null)
-									{
-										readFile(reader, size, path, byteStreamHandler);
-									}
+									readFile(reader, size, path, byteStreamHandler);
+									
 									_isFile = false;
 									//_dataStore.deleteObject(parent, result);
 								}
-								else if (_isClass && (result != null))
+								else if (_isClass)
 								{
 									int size = result.depth();
 									
@@ -643,39 +642,39 @@ public class XMLparser
 
 									if (result.getName() != null)
 									{
-										boolean success = readClass(reader, size, result.getName(), classbyteStreamHandler);
+										readClass(reader, size, result.getName(), classbyteStreamHandler);
 									}
 									_isClass = false;
 								}
-								else if (_isRequestClass && (result != null))
+								else if (_isRequestClass)
 								{
 									result.getDataStore().sendClass(result.getName());
 									_isRequestClass = false;
 								}
-								else if (_isKeepAlive && (result != null))
+								else if (_isKeepAlive)
 								{
-									if (VERBOSE_KEEPALIVE) System.out.println("KeepAlive request received, sending confirmation.");
+									if (VERBOSE_KEEPALIVE) System.out.println("KeepAlive request received, sending confirmation."); //$NON-NLS-1$
 									result.getDataStore().sendKeepAliveConfirmation();
 									_isKeepAlive = false;
 								}
-								else if (_isKeepAliveConfirm && (result != null))
+								else if (_isKeepAliveConfirm )
 								{
-									if (VERBOSE_KEEPALIVE) System.out.println("KeepAlive confirmation received.");
+									if (VERBOSE_KEEPALIVE) System.out.println("KeepAlive confirmation received."); //$NON-NLS-1$
 									if (_initialKart != null) _initialKart.interrupt();
 									_isKeepAliveConfirm = false;
 								}
-								else if (_isSerialized && (result != null))
+								else if (_isSerialized)
 								{
 									int size = result.depth();
 									String classbyteStreamHandler = result.getSource();
 									if (result.getName() != null)
 									{
-										boolean success = readInstance(reader, size, classbyteStreamHandler);
+										readInstance(reader, size, classbyteStreamHandler);
 									}
 									_isSerialized = false;
 								}
 
-								StringBuffer endTag = new StringBuffer("</");
+								StringBuffer endTag = new StringBuffer("</"); //$NON-NLS-1$
 								endTag.append(_tagType);
 								endTag.append('>');
 								_tagStack.push(endTag.toString());
@@ -711,7 +710,7 @@ public class XMLparser
 	 */
 	protected synchronized DataElement parseTag(String fullTag, DataElement parent)
 	{
-		if (!fullTag.startsWith("<"))
+		if (!fullTag.startsWith("<")) //$NON-NLS-1$
 			return null;
 
 		try
@@ -815,15 +814,7 @@ public class XMLparser
 						{
 
 							DataElement to = _dataStore.find(origId);
-							if (parent != null)
-							{
-								result = _dataStore.createReference(parent, to, attributes[DE.A_TYPE], false);
-
-							}
-							else
-							{
-								_dataStore.trace("NULL2!");
-							}
+							result = _dataStore.createReference(parent, to, attributes[DE.A_TYPE], false);
 						}
 						else
 						{
@@ -840,7 +831,7 @@ public class XMLparser
 							return null;
 						}
 	
-						if (parent != null && _dataStore.contains(id))
+						if (_dataStore.contains(id))
 						{
 							result = _dataStore.find(id);
 	
@@ -871,11 +862,7 @@ public class XMLparser
 								result.setAttributes(attributes);
 							}
 	
-							if (parent == null)
-							{
-								return result;
-							}
-							else if (parent == _rootDataElement)
+							if (parent == _rootDataElement)
 							{
 								DataElement rParent = result.getParent();
 								parent = rParent;
@@ -901,7 +888,7 @@ public class XMLparser
 							{
 								if (result != _dataStore.getRoot())
 								{
-									_dataStore.trace("parent of " + result.getName() + " is NULL!");
+									_dataStore.trace("parent of " + result.getName() + " is NULL!"); //$NON-NLS-1$ //$NON-NLS-2$
 								}
 								else
 								{
@@ -915,7 +902,7 @@ public class XMLparser
 						else
 						{
 							// new object
-							if (_dataStore.isVirtual() && parent != null) 
+							if (_dataStore.isVirtual()) 
 							{
 								result = _dataStore.find(parent, DE.A_NAME, attributes[DE.A_NAME], 1);
 							}
@@ -956,12 +943,12 @@ public class XMLparser
 		int indexOfSemi = input.indexOf(';');
 		if (indexOfAmp >= 0 && indexOfSemi > indexOfAmp)
 		{
-			String converted = input.replaceAll(STR_AMP, "&")
-									.replaceAll(STR_SEMI, ";")
-									.replaceAll(STR_QUOTE, "\"")
-									.replaceAll(STR_APOS, "\'")
-									.replaceAll(STR_LT, "<")
-									.replaceAll(STR_GT, ">");
+			String converted = input.replaceAll(STR_AMP, "&") //$NON-NLS-1$
+									.replaceAll(STR_SEMI, ";") //$NON-NLS-1$
+									.replaceAll(STR_QUOTE, "\"") //$NON-NLS-1$
+									.replaceAll(STR_APOS, "\'") //$NON-NLS-1$
+									.replaceAll(STR_LT, "<") //$NON-NLS-1$
+									.replaceAll(STR_GT, ">"); //$NON-NLS-1$
 			return converted;						
 		}
 		else
@@ -1028,13 +1015,11 @@ public class XMLparser
 	public class KeepAliveRequestThread extends Thread
 	{
 		private long _timeout;
-		private DataStore _dataStore;
 		private boolean _failed;
 		
-		public KeepAliveRequestThread(long timeout, DataStore datastore)
+		public KeepAliveRequestThread(long timeout)
 		{
 			_timeout = timeout;
-			_dataStore = datastore;
 			_failed = false;
 		}
 		
@@ -1047,10 +1032,10 @@ public class XMLparser
 			}
 			catch (InterruptedException e)
 			{
-				if (VERBOSE_KEEPALIVE) System.out.println("KeepAlive thread interrupted.");
+				if (VERBOSE_KEEPALIVE) System.out.println("KeepAlive thread interrupted."); //$NON-NLS-1$
 				return;
 			}
-			if (VERBOSE_KEEPALIVE) System.out.println("KeepAlive thread failed to be interrupted.");
+			if (VERBOSE_KEEPALIVE) System.out.println("KeepAlive thread failed to be interrupted."); //$NON-NLS-1$
 			_failed = true;			
 		}
 		

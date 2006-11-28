@@ -302,7 +302,7 @@ public final class DataElement implements IDataElement
 		String depthStr = getAttribute(DE.A_DEPTH);
 		if (depthStr != null && depthStr.length() > 0)
 		{
-			if (!depthStr.equals("2"))
+			if (!depthStr.equals("2")) //$NON-NLS-1$
 			{
 				try
 				{
@@ -902,7 +902,7 @@ public final class DataElement implements IDataElement
 	public void setDepth(int depth)
 	{
 		_depth = depth;
-		setAttribute(DE.A_DEPTH, "" + _depth);
+		setAttribute(DE.A_DEPTH, "" + _depth); //$NON-NLS-1$
 		_isUpdated = false;
 		//_dataStore.refresh(this);
 	}
@@ -975,7 +975,7 @@ public final class DataElement implements IDataElement
 			String typeName = type.getName();
 			if (typeType.equals(DE.T_OBJECT_DESCRIPTOR) || typeType.equals(DE.T_ABSTRACT_OBJECT_DESCRIPTOR))
 			{
-				if (descriptor.getName().equals(typeName) || (typeName.equals("all")))
+				if (descriptor.getName().equals(typeName) || (typeName.equals("all"))) //$NON-NLS-1$
 				{
 					result = true;
 					return result;
@@ -989,12 +989,13 @@ public final class DataElement implements IDataElement
 			{
 				abstracted = descriptor.getAssociated(relationship);
 			}
-
-			for (int i = 0;(i < abstracted.size()) && !result; i++)
+			if (abstracted != null)
 			{
-				DataElement superDescriptor = (DataElement) abstracted.get(i);
-
-				result = superDescriptor.isOfType(type, true);
+				for (int i = 0;(i < abstracted.size()) && !result; i++)
+				{
+					DataElement superDescriptor = (DataElement) abstracted.get(i);
+					result = superDescriptor.isOfType(type, true);
+				}
 			}
 		}
 
@@ -1120,7 +1121,7 @@ public final class DataElement implements IDataElement
 										}
 									}
 								}
-								else if (type.equals("contents"))
+								else if (type.equals("contents")) //$NON-NLS-1$
 								{
 									if (nestedObject == object)
 									{
@@ -1415,23 +1416,23 @@ public final class DataElement implements IDataElement
 	 */
 	public String toString()
 	{
-		return "DataElement "
-			+ (_isReference ? "reference" : "")
-			+ "\n{\n\tType:\t"
+		return "DataElement " //$NON-NLS-1$
+			+ (_isReference ? "reference" : "") //$NON-NLS-1$ //$NON-NLS-2$
+			+ "\n{\n\tType:\t" //$NON-NLS-1$
 			+ getType()
-			+ "\n\tName:\t"
+			+ "\n\tName:\t" //$NON-NLS-1$
 			+ getName()
-			+ "\n\tValue:\t"
+			+ "\n\tValue:\t" //$NON-NLS-1$
 			+ getValue()
-			+ "\n\tID:\t"
+			+ "\n\tID:\t" //$NON-NLS-1$
 			+ getId()
-			+ "\n\tSource:\t"
+			+ "\n\tSource:\t" //$NON-NLS-1$
 			+ getSource()
-			+ "\n\tDepth:\t"
+			+ "\n\tDepth:\t" //$NON-NLS-1$
 			+ _depth
-			+ "\n\tDataStore:\t"
+			+ "\n\tDataStore:\t" //$NON-NLS-1$
 			+ _dataStore.getName()
-			+ "\n}\n";
+			+ "\n}\n"; //$NON-NLS-1$
 	}
 
 	/**
@@ -1501,7 +1502,7 @@ public final class DataElement implements IDataElement
 			else if (DE.P_SOURCE_NAME.equals(name))
 			{
 				String source = getAttribute(DE.A_SOURCE);
-				int locationIndex = source.lastIndexOf(":");
+				int locationIndex = source.lastIndexOf(":"); //$NON-NLS-1$
 				if (locationIndex > 3)
 				{
 					return source.substring(0, locationIndex);
@@ -1556,7 +1557,7 @@ public final class DataElement implements IDataElement
 		String depthStr = getAttribute(DE.A_DEPTH);
 		if (depthStr != null && depthStr.length() > 0)
 		{
-			if (!depthStr.equals("2"))
+			if (!depthStr.equals("2")) //$NON-NLS-1$
 			{
 				try
 				{

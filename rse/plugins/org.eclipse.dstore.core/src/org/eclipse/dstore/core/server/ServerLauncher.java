@@ -303,6 +303,7 @@ public class ServerLauncher extends Thread {
 							{
 								"java", //$NON-NLS-1$
 								"-DA_PLUGIN_PATH=" + _path, //$NON-NLS-1$
+								"-DDSTORE_SPIRIT_ON=true", //$NON-NLS-1$
 								"org.eclipse.dstore.core.server.Server", //$NON-NLS-1$
 								_port,
 								timeout,
@@ -415,12 +416,14 @@ public class ServerLauncher extends Thread {
 			System.out.println("A_PLUGIN_PATH is not defined"); //$NON-NLS-1$
 			System.exit(-1);
 		}
+		else
+		{
+			_path = pluginPath.trim();
 
-		_path = pluginPath.trim();
+			_connections = new ArrayList();
 
-		_connections = new ArrayList();
-
-		init(DEFAULT_DAEMON_PORT + ""); //$NON-NLS-1$
+			init(DEFAULT_DAEMON_PORT + ""); //$NON-NLS-1$
+		}
 	}
 
 	/**
@@ -435,11 +438,13 @@ public class ServerLauncher extends Thread {
 			System.out.println("A_PLUGIN_PATH is not defined"); //$NON-NLS-1$
 			System.exit(-1);
 		}
+		else
+		{
+			_path = pluginPath.trim();
 
-		_path = pluginPath.trim();
-
-		_connections = new ArrayList();
-		init(portStr);
+			_connections = new ArrayList();
+			init(portStr);
+		}
 	}
 
 	/**
@@ -456,12 +461,14 @@ public class ServerLauncher extends Thread {
 			System.out.println("A_PLUGIN_PATH is not defined"); //$NON-NLS-1$
 			System.exit(-1);
 		}
+		else
+		{
+			_path = pluginPath.trim();
 
-		_path = pluginPath.trim();
-
-		_serverPortRange = serverPortRange;
-		_connections = new ArrayList();
-		init(portStr);
+			_serverPortRange = serverPortRange;
+			_connections = new ArrayList();
+			init(portStr);
+		}
 	}
 
 	private String getKeyStoreLocation() {
@@ -522,14 +529,14 @@ public class ServerLauncher extends Thread {
 					}
 				} catch (UnknownHostException e) {
 					System.err
-							.println("Networking problem, can't resolve local host");
+							.println("Networking problem, can't resolve local host"); //$NON-NLS-1$
 					e.printStackTrace();
 					System.exit(-1);
 				} catch (BindException e) {
 					System.err.println("socket taken on " + i); //$NON-NLS-1$
 					// keep going
 				} catch (IOException e) {
-					System.err.println("Failure to create ServerSocket");
+					System.err.println("Failure to create ServerSocket"); //$NON-NLS-1$
 					e.printStackTrace();
 					System.exit(-1);
 				}
@@ -560,11 +567,11 @@ public class ServerLauncher extends Thread {
 						+ port);
 			} catch (UnknownHostException e) {
 				System.err
-						.println("Networking problem, can't resolve local host");
+						.println("Networking problem, can't resolve local host"); //$NON-NLS-1$
 				e.printStackTrace();
 				System.exit(-1);
 			} catch (IOException e) {
-				System.err.println("Failure to create ServerSocket");
+				System.err.println("Failure to create ServerSocket"); //$NON-NLS-1$
 				e.printStackTrace();
 				System.exit(-1);
 			}
@@ -625,7 +632,7 @@ public class ServerLauncher extends Thread {
 					_connections.add(listener);
 				}
 			} catch (IOException ioe) {
-				System.err.println("Server: error initializing socket: " + ioe);
+				System.err.println("Server: error initializing socket: " + ioe); //$NON-NLS-1$
 				System.exit(-1);
 			}
 		}

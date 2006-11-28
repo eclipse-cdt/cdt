@@ -48,8 +48,6 @@ public class StringCompare
 			compareStr = compareStr.toUpperCase();
 		}
 
-		String currentMatch = new String("");
-
 		int iText = 0;
 		int iPattern = 0;
 		int lastStar = 0;

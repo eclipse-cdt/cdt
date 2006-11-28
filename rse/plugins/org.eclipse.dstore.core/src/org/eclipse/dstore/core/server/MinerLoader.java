@@ -76,7 +76,7 @@ public class MinerLoader implements ISchemaRegistry
 		String pluginDir = _dataStore.getAttribute(DataStoreAttributes.A_PLUGIN_PATH);
 
 		// default location
-		String defaultMinerFile = pluginDir + File.separator + "minerFile.dat";
+		String defaultMinerFile = pluginDir + File.separator + "minerFile.dat"; //$NON-NLS-1$
 		File defaultMF = new File(defaultMinerFile);
 		if (defaultMF.exists())
 		{
@@ -86,7 +86,7 @@ public class MinerLoader implements ISchemaRegistry
 			}
 			catch (Exception e)
 			{
-				_dataStore.trace("failed to load minerFile.data with UTF-8.  Trying with native encoding");
+				_dataStore.trace("failed to load minerFile.data with UTF-8.  Trying with native encoding"); //$NON-NLS-1$
 
 				try
 				{
@@ -106,13 +106,13 @@ public class MinerLoader implements ISchemaRegistry
 		{
 			String minersDir = (String) minerLocations.get(i);
 			String minerFile = null;
-			if (minersDir.endsWith(".dat"))
+			if (minersDir.endsWith(".dat")) //$NON-NLS-1$
 			{
 				minerFile = pluginDir + File.separator + minersDir;
 			}
 			else
 			{
-				minerFile = pluginDir + File.separator + minersDir + File.separator + "minerFile.dat";
+				minerFile = pluginDir + File.separator + minersDir + File.separator + "minerFile.dat"; //$NON-NLS-1$
 			}
 			//_dataStore.trace("load miners for " + minerFile);
 			if (!_minerFileList.contains(minerFile))
@@ -123,7 +123,7 @@ public class MinerLoader implements ISchemaRegistry
 				}
 				catch (Exception e)
 				{
-					_dataStore.trace("failed to load minerFile.data with UTF-8.  Trying with native encoding");
+					_dataStore.trace("failed to load minerFile.data with UTF-8.  Trying with native encoding"); //$NON-NLS-1$
 					try
 					{
 						loadMiners(minerFile, null);
@@ -166,7 +166,7 @@ public class MinerLoader implements ISchemaRegistry
 			// check name
 			name = name.trim();
 
-			if (!name.startsWith("#") && (name.length() > 5))
+			if (!name.startsWith("#") && (name.length() > 5)) //$NON-NLS-1$
 			{
 				Miner miner = loadMiner(name);
 				if (miner != null)
@@ -254,7 +254,7 @@ public class MinerLoader implements ISchemaRegistry
 			unconnectedMiners.remove(miner);
 			if (connectMiner(miner))
 			{
-				_dataStore.trace("connected " + miner.getMinerName());
+				_dataStore.trace("connected " + miner.getMinerName()); //$NON-NLS-1$
 			}
 			else
 			{
@@ -317,7 +317,7 @@ public class MinerLoader implements ISchemaRegistry
 	{
 		if (_externalRemoteLoader == null)
 		{
-			_externalRemoteLoader = new ExternalLoader(getRemoteLoader(), "*");
+			_externalRemoteLoader = new ExternalLoader(getRemoteLoader(), "*"); //$NON-NLS-1$
 		}
 		return _externalRemoteLoader;
 	}

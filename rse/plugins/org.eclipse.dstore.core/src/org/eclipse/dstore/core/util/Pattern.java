@@ -67,7 +67,7 @@ public class Pattern
 		}
 		else
 		{
-			return new String("null");
+			return new String("null"); //$NON-NLS-1$
 		}
 	}
 
@@ -78,7 +78,7 @@ public class Pattern
 	 */
 	public boolean matches(String compareStr)
 	{
-		String currentMatch = new String("");
+		String currentMatch = new String(""); //$NON-NLS-1$
 		_subMatches = new ArrayList();
 
 		int iText = 0;
@@ -97,7 +97,7 @@ public class Pattern
 				{
 					_subMatches.add(new String(currentMatch));
 				}
-				currentMatch = new String("");
+				currentMatch = new String(""); //$NON-NLS-1$
 
 				if (iPattern >= patternLen)
 				{

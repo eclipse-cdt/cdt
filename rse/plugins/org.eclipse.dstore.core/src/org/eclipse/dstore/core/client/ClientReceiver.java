@@ -44,7 +44,7 @@ public class ClientReceiver extends Receiver
 	 */
 	public void handleDocument(DataElement documentObject)
 	{
-		if (documentObject.getName().equals("exit"))
+		if (documentObject.getName().equals("exit")) //$NON-NLS-1$
 		{
 			_canExit = true;
 		}

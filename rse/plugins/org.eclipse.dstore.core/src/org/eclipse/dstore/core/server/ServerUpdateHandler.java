@@ -46,73 +46,73 @@ public class ServerUpdateHandler extends UpdateHandler
 	
 	private static String[] _keepAliveAttributes =  {
 			DataStoreResources.KEEPALIVE_TYPE, 
-			"server.keepalive.root.id",
-			"server.keepalive",
-			"doc",
-			"",
-			"",
+			"server.keepalive.root.id", //$NON-NLS-1$
+			"server.keepalive", //$NON-NLS-1$
+			"doc", //$NON-NLS-1$
+			"", //$NON-NLS-1$
+			"", //$NON-NLS-1$
 			DataStoreResources.FALSE,
-			"2"};
+			"2"}; //$NON-NLS-1$
 	
 	private static String[] _confirmKeepAliveAttributes =  {
 		DataStoreResources.KEEPALIVECONFIRM_TYPE, 
-		"server.keepalive.confirm.root.id",
-		"server.confirmkeepalive",
-		"doc",
-		"",
-		"",
+		"server.keepalive.confirm.root.id", //$NON-NLS-1$
+		"server.confirmkeepalive", //$NON-NLS-1$
+		"doc", //$NON-NLS-1$
+		"", //$NON-NLS-1$
+		"", //$NON-NLS-1$
 		DataStoreResources.FALSE,
-		"2"};
+		"2"}; //$NON-NLS-1$
 	
 	private static String[] _docAttributes =  { 
 		DataStoreResources.DOCUMENT_TYPE, 
-		"server.doc.root.id",
-		"server.document",
-		"doc",
-		"",
-		"",
+		"server.doc.root.id", //$NON-NLS-1$
+		"server.document", //$NON-NLS-1$
+		"doc", //$NON-NLS-1$
+		"", //$NON-NLS-1$
+		"", //$NON-NLS-1$
 		DataStoreResources.FALSE,
-		"2"};
+		"2"}; //$NON-NLS-1$
 	
 	private static String[] _fileAttributes =  {
 		DataStoreResources.FILE_TYPE, 
-		"server.file.root.id",
-		"server.file",
-		"doc",
-		"",
-		"",
+		"server.file.root.id", //$NON-NLS-1$
+		"server.file", //$NON-NLS-1$
+		"doc", //$NON-NLS-1$
+		"", //$NON-NLS-1$
+		"", //$NON-NLS-1$
 		DataStoreResources.FALSE,
-		"2"};
+		"2"}; //$NON-NLS-1$
 	
 	private static String[] _classAttributes =  {
 		DataStoreResources.CLASS_TYPE, 
-		"server.class.root.id",
-		"server.class",
-		"doc",
-		"",
-		"",
+		"server.class.root.id", //$NON-NLS-1$
+		"server.class", //$NON-NLS-1$
+		"doc", //$NON-NLS-1$
+		"", //$NON-NLS-1$
+		"", //$NON-NLS-1$
 		DataStoreResources.FALSE,
-		"2"};
+		"2"}; //$NON-NLS-1$
 	
 	private static String[] _requestClassAttributes =  {
 		DataStoreResources.REQUEST_CLASS_TYPE, 
-		"server.requestclass.root.id",
-		"server.requestclass",
-		"doc",
-		"",
-		"",
+		"server.requestclass.root.id", //$NON-NLS-1$
+		"server.requestclass", //$NON-NLS-1$
+		"doc", //$NON-NLS-1$
+		"", //$NON-NLS-1$
+		"", //$NON-NLS-1$
 		DataStoreResources.FALSE,
-		"2"};
+		"2"}; //$NON-NLS-1$
 	
 	private static String[] _serializeAttributes =  {
 		DataStoreResources.SERIALIZED_TYPE, 
-		"server.serialized.root.id",
-		"server.serialized",
-		"doc",
-		"",
-		"",
+		"server.serialized.root.id", //$NON-NLS-1$
+		"server.serialized", //$NON-NLS-1$
+		"doc", //$NON-NLS-1$
+		"", //$NON-NLS-1$
+		"", //$NON-NLS-1$
 		DataStoreResources.FALSE,
-		"2"};
+		"2"}; //$NON-NLS-1$
 	
 	protected DataElement _fileDocumentElement;
 	protected DataElement _docDocumentElement;
@@ -276,7 +276,7 @@ public class ServerUpdateHandler extends UpdateHandler
 			document.setUpdated(true);
 			document.setParent(null);
 			
-			DataElement response = _commandGenerator.generateResponse(document, _dataObjects);
+			_commandGenerator.generateResponse(document, _dataObjects);
 
 			for (int j = 0; j < _senders.size(); j++)
 			{
@@ -337,7 +337,7 @@ public class ServerUpdateHandler extends UpdateHandler
 			if (sender.socket() == socket)
 			{
 				// sender sends last ack before death
-				DataElement document = _dataStore.createObject(null, DataStoreResources.DOCUMENT_TYPE, "exit", "exit");
+				DataElement document = _dataStore.createObject(null, DataStoreResources.DOCUMENT_TYPE, "exit", "exit"); //$NON-NLS-1$ //$NON-NLS-2$
 				sender.sendDocument(document, 2);
 				removeSender(sender);
 			}
@@ -427,15 +427,15 @@ public class ServerUpdateHandler extends UpdateHandler
 	 */
 	public synchronized void sendClass(String className) 
 	{
-		sendClass(className, "default");
+		sendClass(className, "default"); //$NON-NLS-1$
 	}
 
 	public void sendKeepAliveRequest() 
 	{
 		DataElement document = _keepAliveDocumentElement;
 		document.setPendingTransfer(true);
-		document.setAttribute(DE.A_NAME, "request");
-		document.setAttribute(DE.A_VALUE, "request");
+		document.setAttribute(DE.A_NAME, "request"); //$NON-NLS-1$
+		document.setAttribute(DE.A_VALUE, "request"); //$NON-NLS-1$
 		document.setParent(null);
 		_pendingKeepAliveRequest = document;
 		notifyInput();
@@ -445,8 +445,8 @@ public class ServerUpdateHandler extends UpdateHandler
 	{
 		DataElement document = _confirmKeepAliveDocumentElement;
 		document.setPendingTransfer(true);
-		document.setAttribute(DE.A_NAME, "confirm");
-		document.setAttribute(DE.A_VALUE, "confirm");
+		document.setAttribute(DE.A_NAME, "confirm"); //$NON-NLS-1$
+		document.setAttribute(DE.A_VALUE, "confirm"); //$NON-NLS-1$
 		document.setParent(null);
 		_pendingKeepAliveConfirmation = document;
 		notifyInput();

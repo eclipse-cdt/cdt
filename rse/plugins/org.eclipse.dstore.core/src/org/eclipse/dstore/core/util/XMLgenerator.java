@@ -234,7 +234,7 @@ public class XMLgenerator
 		{
 			if (top == name)
 			{
-				append("/>");
+				append("/>"); //$NON-NLS-1$
 				if (_tagStack.empty())
 				{
 					_state = CLOSE;
@@ -252,7 +252,7 @@ public class XMLgenerator
 				nextLine();
 				_indent--;
 				indent();
-				append("</");
+				append("</"); //$NON-NLS-1$
 				append(name);
 				append('>');
 				if (_tagStack.empty())
@@ -276,7 +276,7 @@ public class XMLgenerator
 
 			append(' ');
 			append(name);
-			append("=\"");
+			append("=\""); //$NON-NLS-1$
 			append(niceValue);
 			append('"');
 		}
@@ -284,7 +284,7 @@ public class XMLgenerator
 		{
 			append(' ');
 			append(name);
-			append("=\"\"");
+			append("=\"\""); //$NON-NLS-1$
 		}
 
 	}
@@ -368,18 +368,18 @@ public class XMLgenerator
 				{
 					nextLine();
 					indent();
-					append("<Buffer>");
+					append("<Buffer>"); //$NON-NLS-1$
 					nextLine();
 					indent();
 					append(text.toString());
 					nextLine();
 					indent();
-					append("</Buffer>");
+					append("</Buffer>"); //$NON-NLS-1$
 				}
 			}
 			else
 			{
-				append("");
+				append(""); //$NON-NLS-1$
 			}
 		}
 		else if (_state == EMPTY)
@@ -504,11 +504,11 @@ public class XMLgenerator
 		String tagType = XMLparser.STR_FILE;
 		if (isAppend)
 		{
-			tagType += ".Append";
+			tagType += ".Append"; //$NON-NLS-1$
 		}
 		if (binary)
 		{
-			tagType += ".Binary";
+			tagType += ".Binary"; //$NON-NLS-1$
 		}
 
 		if (object != null)
@@ -523,7 +523,7 @@ public class XMLgenerator
 
 			addReferenceTypeAttribute(object);
 
-			addAttribute(DE.P_DEPTH, "" + size);
+			addAttribute(DE.P_DEPTH, "" + size); //$NON-NLS-1$
 			addFile(bytes, size, binary);
 
 			endTag(tagType);
@@ -553,7 +553,7 @@ public class XMLgenerator
 
 			addReferenceTypeAttribute(object);
 
-			addAttribute(DE.P_DEPTH, "" + size);
+			addAttribute(DE.P_DEPTH, "" + size); //$NON-NLS-1$
 			addFile(bytes, size, true);
 
 			endTag(tagType);
@@ -594,7 +594,7 @@ public class XMLgenerator
 
 					addReferenceTypeAttribute(object);
 
-					addAttribute(DE.P_DEPTH, "" + object.depth());
+					addAttribute(DE.P_DEPTH, "" + object.depth()); //$NON-NLS-1$
 					addData(object.getBuffer());
 					object.setUpdated(true);
 
@@ -659,7 +659,7 @@ public class XMLgenerator
 				int size = pin.available();
 				byte[] bytes = new byte[size];
 				int nRead = pin.read(bytes, 0, size);
-				addAttribute(DE.P_DEPTH, "" + nRead);
+				addAttribute(DE.P_DEPTH, "" + nRead); //$NON-NLS-1$
 				addFile(bytes, nRead, true);
 				
 				outStream.close();

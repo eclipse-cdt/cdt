@@ -38,146 +38,146 @@ public class DE
     /*
      * The nested data (children) property identifier of a <code>DataElement</code>.
      */
-    public static final String P_CHILDREN = "children";
+    public static final String P_CHILDREN = "children"; //$NON-NLS-1$
 
     /*
      * The image property identifier of a <code>DataElement</code>.  This is the same
      * as the value property identifier
      */
-    public static final String P_LABEL = "label";
+    public static final String P_LABEL = "label"; //$NON-NLS-1$
 
     /*
      * The notifier property identifier of a <code>DataElement</code>.
      */
-    public static final String P_NOTIFIER = "notifier";
+    public static final String P_NOTIFIER = "notifier"; //$NON-NLS-1$
 
     /*
      * The <code>DataStore</code> property identifier of a <code>DataElement</code>.
      */
-    public static final String P_DATASTORE       = "dataStore";
+    public static final String P_DATASTORE       = "dataStore"; //$NON-NLS-1$
 
     /*
      * The source name property identifier of a <code>DataElement</code>.  This is the
      * name of a source location if one exists.
      */
-    public static final String P_SOURCE_NAME     = "source";
+    public static final String P_SOURCE_NAME     = "source"; //$NON-NLS-1$
 
     /*
      * The source file property identifier of a <code>DataElement</code>.
      */
-    public static final String P_SOURCE          = "sourcefile";
+    public static final String P_SOURCE          = "sourcefile"; //$NON-NLS-1$
 
     /*
      * The source location property identifier of a <code>DataElement</code>.
      */
-    public static final String P_SOURCE_LOCATION = "sourcelocation";
+    public static final String P_SOURCE_LOCATION = "sourcelocation"; //$NON-NLS-1$
 
-    public static final String P_SOURCE_LOCATION_COLUMN = "sourcelocationcolumn";
+    public static final String P_SOURCE_LOCATION_COLUMN = "sourcelocationcolumn"; //$NON-NLS-1$
 
     /*
      * The nested data (children) property identifier of a <code>DataElement</code>.  Same as <code>P_CHILDREN</code>.
      */
-    public static final String P_NESTED          = "nested";
+    public static final String P_NESTED          = "nested"; //$NON-NLS-1$
 
     /*
      * The buffer property identifier of a <code>DataElement</code>.  
      */
-    public static final String P_BUFFER          = "buffer";
+    public static final String P_BUFFER          = "buffer"; //$NON-NLS-1$
 
     /*
      * The type property identifier of a <code>DataElement</code>.  
      */
-    public static final String P_TYPE            = "type";
+    public static final String P_TYPE            = "type"; //$NON-NLS-1$
 
     /*
      * The id property identifier of a <code>DataElement</code>.  
      */
-    public static final String P_ID              = "id";
+    public static final String P_ID              = "id"; //$NON-NLS-1$
 
     /*
      * The name property identifier of a <code>DataElement</code>.  
      */
-    public static final String P_NAME            = "name";
+    public static final String P_NAME            = "name"; //$NON-NLS-1$
 
     /*
      * The value property identifier of a <code>DataElement</code>.  
      */
-    public static final String P_VALUE           = "value";
+    public static final String P_VALUE           = "value"; //$NON-NLS-1$
 
     /*
      * The <I>is reference?</I> property identifier of a <code>DataElement</code>. Deprecated. Use P_REF_TYPE.  
      */
-    public static final String P_ISREF           = "isRef";
+    public static final String P_ISREF           = "isRef"; //$NON-NLS-1$
     
     /*
      * The <I>is reference?</I> property identifier of a <code>DataElement</code>.  
      */
-    public static final String P_REF_TYPE           = "refType";
+    public static final String P_REF_TYPE           = "refType"; //$NON-NLS-1$
 
     /*
      * The visibility property identifier of a <code>DataElement</code>.  
      */
-    public static final String P_DEPTH           = "depth";
+    public static final String P_DEPTH           = "depth"; //$NON-NLS-1$
 
     /*
      * The attributes property identifier of a <code>DataElement</code>.  
      */
-    public static final String P_ATTRIBUTES      = "attribute";
+    public static final String P_ATTRIBUTES      = "attribute"; //$NON-NLS-1$
 
     /*
      * The file property identifier of a <code>DataElement</code>.  
      */
-    public static final String P_FILE            = "file";
+    public static final String P_FILE            = "file"; //$NON-NLS-1$
 
     /*
      * The file property identifier of a <code>DataElement</code>.  
      */
-    public static final String P_DESCRIPTOR      = "descriptor";
+    public static final String P_DESCRIPTOR      = "descriptor"; //$NON-NLS-1$
 
     /*
      * Reference type.  
      */
-    public static final String T_REFERENCE          = "reference";
+    public static final String T_REFERENCE          = "reference"; //$NON-NLS-1$
 
     /*
      * Command type.  
      */
-    public static final String T_COMMAND            = "command";
+    public static final String T_COMMAND            = "command"; //$NON-NLS-1$
 
     /*
      * UI Command Descriptor type.  
      */
-    public static final String T_UI_COMMAND_DESCRIPTOR  = "ui_commanddescriptor";
+    public static final String T_UI_COMMAND_DESCRIPTOR  = "ui_commanddescriptor"; //$NON-NLS-1$
 
     /*
      * Object Descriptor type.  
      */
-    public static final String T_OBJECT_DESCRIPTOR  = "objectdescriptor";
+    public static final String T_OBJECT_DESCRIPTOR  = "objectdescriptor"; //$NON-NLS-1$
 
     /*
      * Command Descriptor type.  
      */
-    public static final String T_COMMAND_DESCRIPTOR = "commanddescriptor";
+    public static final String T_COMMAND_DESCRIPTOR = "commanddescriptor"; //$NON-NLS-1$
 
     /*
      * Relation Descriptor type.  
      */
-    public static final String T_RELATION_DESCRIPTOR = "relationdescriptor";
+    public static final String T_RELATION_DESCRIPTOR = "relationdescriptor"; //$NON-NLS-1$
 
     /*
      * Abstract Object Descriptor type.  
      */
-    public static final String T_ABSTRACT_OBJECT_DESCRIPTOR = "abstractobjectdescriptor";
+    public static final String T_ABSTRACT_OBJECT_DESCRIPTOR = "abstractobjectdescriptor"; //$NON-NLS-1$
 
     /*
      * Abstract Command Descriptor type.  
      */
-    public static final String T_ABSTRACT_COMMAND_DESCRIPTOR = "abstractcommanddescriptor";
+    public static final String T_ABSTRACT_COMMAND_DESCRIPTOR = "abstractcommanddescriptor"; //$NON-NLS-1$
 
     /*
      * Abstract Relation Descriptor type.  
      */
-    public static final String T_ABSTRACT_RELATION_DESCRIPTOR = "abstractrelationdescriptor";
+    public static final String T_ABSTRACT_RELATION_DESCRIPTOR = "abstractrelationdescriptor"; //$NON-NLS-1$
 
 
     /*
@@ -231,5 +231,5 @@ public class DE
      */
     public static final int    A_SIZE       = 8;
     
-    public static final  String ENCODING_UTF_8 = "UTF-8";
+    public static final  String ENCODING_UTF_8 = "UTF-8"; //$NON-NLS-1$
 }

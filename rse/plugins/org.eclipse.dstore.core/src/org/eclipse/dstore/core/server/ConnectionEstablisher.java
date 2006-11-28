@@ -174,7 +174,7 @@ public class ConnectionEstablisher
 
 					if (session == null)
 					{
-						System.out.println("handshake failed");
+						System.out.println("handshake failed"); //$NON-NLS-1$
 						sslSocket.close();
 						return;
 					}
@@ -208,7 +208,7 @@ public class ConnectionEstablisher
 			catch (IOException ioe)
 			{
 				System.err.println(ServerReturnCodes.RC_CONNECTION_ERROR);
-				System.err.println("Server: error initializing socket: " + ioe);
+				System.err.println("Server: error initializing socket: " + ioe); //$NON-NLS-1$
 				_continue = false;
 			}
 		}
@@ -240,7 +240,7 @@ public class ConnectionEstablisher
 		}
 
 		// determine if portStr is a port range or just a port
-		String[] range = portStr.split("-");
+		String[] range = portStr.split("-"); //$NON-NLS-1$
 		if (range.length == 2)
 		{
 			int lPort = 0;
@@ -259,7 +259,7 @@ public class ConnectionEstablisher
 				// create server socket from port
 				try
 				{
-					if (_dataStore.usingSSL())
+					if (_dataStore.usingSSL() && sslContext != null)
 					{
 						try
 						{
@@ -291,7 +291,7 @@ public class ConnectionEstablisher
 	
 			
 			// create server socket from port
-			if (_dataStore.usingSSL())
+			if (_dataStore.usingSSL() && sslContext != null)
 			{
 				try
 				{
@@ -330,17 +330,17 @@ public class ConnectionEstablisher
 
 
 		ArrayList loaders = new ArrayList();
-		loaders.add(new ExternalLoader(getClass().getClassLoader(), "*"));
+		loaders.add(new ExternalLoader(getClass().getClassLoader(), "*")); //$NON-NLS-1$
 		_commandHandler = new ServerCommandHandler(loaders);
 		_updateHandler = new ServerUpdateHandler();
 
-		String pluginPath = System.getProperty("A_PLUGIN_PATH");
 		ISSLProperties sslProperties = new ServerSSLProperties();
 		
 		_dataStore = new DataStore(_serverAttributes, _commandHandler, _updateHandler, null);
 		_dataStore.setSSLProperties(sslProperties);
 		
 		DataElement ticket = _dataStore.getTicket();
+		System.out.println("ticket="+ticketStr); //$NON-NLS-1$
 		ticket.setAttribute(DE.A_NAME, ticketStr);
 
 		_updateHandler.setDataStore(_dataStore);
@@ -379,7 +379,7 @@ public class ConnectionEstablisher
 				System.err.println(_serverSocket.getLocalPort());
 				try
 				{
-					System.err.println("Server running on: " + InetAddress.getLocalHost().getHostName());
+					System.err.println("Server running on: " + InetAddress.getLocalHost().getHostName()); //$NON-NLS-1$
 				}
 				catch (UnknownHostException e)
 				{

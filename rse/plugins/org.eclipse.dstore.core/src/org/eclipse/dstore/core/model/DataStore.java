@@ -134,8 +134,8 @@ public final class DataStore
 	
 	private HashMap _classReqRepository;
 	private File _cacheJar;
-	public static final String REMOTE_CLASS_CACHE_JARFILE_NAME = "rmt_classloader_cache";
-	public static final String JARFILE_EXTENSION = ".jar";	
+	public static final String REMOTE_CLASS_CACHE_JARFILE_NAME = "rmt_classloader_cache"; //$NON-NLS-1$
+	public static final String JARFILE_EXTENSION = ".jar";	 //$NON-NLS-1$
 	private DataElementRemover _deRemover;
 	public static final int SPIRIT_ON_INITIAL_SIZE = 1000;
 	private String referenceTag = null;
@@ -232,8 +232,8 @@ public final class DataStore
 		if (isVirtual()) _spiritModeOn = true;
 		else
 		{
-			String doSpirit = System.getProperty("DSTORE_SPIRIT_ON");
-			_spiritModeOn = (doSpirit != null && doSpirit.equals("true"));
+			String doSpirit = System.getProperty("DSTORE_SPIRIT_ON"); //$NON-NLS-1$
+			_spiritModeOn = (doSpirit != null && doSpirit.equals("true")); //$NON-NLS-1$
 		}
 	}
 	
@@ -357,7 +357,7 @@ public final class DataStore
 
 			if (isVirtual())
 			{
-				DataElement location = createObject(_tempRoot, "location", minersLocation);
+				DataElement location = createObject(_tempRoot, "location", minersLocation); //$NON-NLS-1$
 				DataElement cmd = findCommandDescriptor(DataStoreSchema.C_ADD_MINERS);//localDescriptorQuery(_root.getDescriptor(), DataStoreSchema.C_ADD_MINERS, 1);
 				ArrayList args = new ArrayList();
 				args.add(location);
@@ -807,12 +807,12 @@ public final class DataStore
 				DataStoreResources.model_root,
 				_dataStoreAttributes.getAttribute(DataStoreAttributes.A_ROOT_NAME),
 				_dataStoreAttributes.getAttribute(DataStoreAttributes.A_ROOT_PATH),
-				"rootID");
+				"rootID"); //$NON-NLS-1$
 	
 
-		_descriptorRoot = createObject(_root, DE.T_OBJECT_DESCRIPTOR, DataStoreResources.model_descriptors, "", "schemaID");
+		_descriptorRoot = createObject(_root, DE.T_OBJECT_DESCRIPTOR, DataStoreResources.model_descriptors, "", "schemaID"); //$NON-NLS-1$ //$NON-NLS-2$
 
-		_ticket = createObject(_root, DataStoreResources.model_ticket, "null", "", "ticketID");
+		_ticket = createObject(_root, DataStoreResources.model_ticket, "null", "", "ticketID"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 
 		createRoots();
 		initializeDescriptors();
@@ -1114,7 +1114,7 @@ public final class DataStore
 	 */
 	public DataElement createObject(DataElement parent, DataElement type, String name)
 	{
-		return createObject(parent, type, name, "");
+		return createObject(parent, type, name, ""); //$NON-NLS-1$
 	}
 
 	/**
@@ -1127,7 +1127,7 @@ public final class DataStore
 	 */
 	public DataElement createObject(DataElement parent, String type, String name)
 	{
-		return createObject(parent, type, name, "");
+		return createObject(parent, type, name, ""); //$NON-NLS-1$
 	}
 
 	/**
@@ -1333,7 +1333,7 @@ public final class DataStore
 	 */
 	public DataElement createAbstractObjectDescriptor(DataElement parent, String name)
 	{
-		DataElement descriptor = createObject(parent, DE.T_ABSTRACT_OBJECT_DESCRIPTOR, name, "org.eclipse.rse.dstore.core", name);
+		DataElement descriptor = createObject(parent, DE.T_ABSTRACT_OBJECT_DESCRIPTOR, name, "org.eclipse.rse.dstore.core", name); //$NON-NLS-1$
 		_objDescriptorMap.put(name, descriptor);
 		return descriptor;
 	}
@@ -1366,11 +1366,11 @@ public final class DataStore
 	    DataElement descriptor = null;
 	    if (parentDescriptor != null)
 	    {
-	    	descriptor = createObject(parent, parentDescriptor, name, "org.eclipse.rse.dstore.core", name);
+	    	descriptor = createObject(parent, parentDescriptor, name, "org.eclipse.rse.dstore.core", name); //$NON-NLS-1$
 	    }
 	    else
 	    {
-			descriptor = createObject(parent, DE.T_OBJECT_DESCRIPTOR, name, "org.eclipse.rse.dstore.core", name);
+			descriptor = createObject(parent, DE.T_OBJECT_DESCRIPTOR, name, "org.eclipse.rse.dstore.core", name); //$NON-NLS-1$
 	    }
 		_objDescriptorMap.put(name, descriptor);
 		return descriptor;
@@ -1409,7 +1409,7 @@ public final class DataStore
 	 */
 	public DataElement createAbstractRelationDescriptor(DataElement parent, String name)
 	{
-		DataElement descriptor = createObject(parent, DE.T_ABSTRACT_RELATION_DESCRIPTOR, name, "org.eclipse.rse.dstore.core", name);
+		DataElement descriptor = createObject(parent, DE.T_ABSTRACT_RELATION_DESCRIPTOR, name, "org.eclipse.rse.dstore.core", name); //$NON-NLS-1$
 		_relDescriptorMap.put(name, descriptor);
 		return descriptor;
 	}
@@ -1438,7 +1438,7 @@ public final class DataStore
 	 */
 	public DataElement createRelationDescriptor(DataElement parent, String name)
 	{
-		DataElement descriptor = createObject(parent, DE.T_RELATION_DESCRIPTOR, name, "org.eclipse.rse.dstore.core", name);
+		DataElement descriptor = createObject(parent, DE.T_RELATION_DESCRIPTOR, name, "org.eclipse.rse.dstore.core", name); //$NON-NLS-1$
 		_relDescriptorMap.put(name, descriptor);
 		return descriptor;
 	}
@@ -1482,7 +1482,7 @@ public final class DataStore
 	 */
 	public DataElement createAbstractCommandDescriptor(DataElement parent, String name, String value)
 	{
-		DataElement cmd = createObject(parent, DE.T_ABSTRACT_COMMAND_DESCRIPTOR, name, "org.eclipse.rse.dstore.core", name);
+		DataElement cmd = createObject(parent, DE.T_ABSTRACT_COMMAND_DESCRIPTOR, name, "org.eclipse.rse.dstore.core", name); //$NON-NLS-1$
 		cmd.setAttribute(DE.A_VALUE, value);
 		_cmdDescriptorMap.put(value, cmd);
 		return cmd;
@@ -1533,11 +1533,11 @@ public final class DataStore
 	    DataElement cmd = null;
 	    if (parentDescriptor != null)
 	    {
-	    	cmd = createObject(parent, parentDescriptor, name, "org.eclipse.rse.dstore.core", name);
+	    	cmd = createObject(parent, parentDescriptor, name, "org.eclipse.rse.dstore.core", name); //$NON-NLS-1$
 	    }
 	    else
 	    {
-	        cmd = createObject(parent, DE.T_COMMAND_DESCRIPTOR, name, "org.eclipse.rse.dstore.core", name);
+	        cmd = createObject(parent, DE.T_COMMAND_DESCRIPTOR, name, "org.eclipse.rse.dstore.core", name); //$NON-NLS-1$
 	    }
 		cmd.setAttribute(DE.A_VALUE, value);
 		_cmdDescriptorMap.put(value, cmd);
@@ -2049,7 +2049,7 @@ public final class DataStore
 			DataElement cmd = findCommandDescriptor(DataStoreSchema.C_SET_PREFERENCE);
 			if (cmd != null)
 			{
-				DataElement prefObj = createObject(null, "preference", property);
+				DataElement prefObj = createObject(null, "preference", property); //$NON-NLS-1$
 				prefObj.setAttribute(DE.A_VALUE, value);
 				command(cmd, prefObj, true);
 			}
@@ -2169,7 +2169,7 @@ public final class DataStore
 	{
 		if (ticketStr == null)
 		{
-			ticketStr = "null";
+			ticketStr = "null"; //$NON-NLS-1$
 		}
 		return createObject(_tempRoot, DataStoreResources.model_ticket, ticketStr);
 	}
@@ -2179,7 +2179,7 @@ public final class DataStore
 		DataElement cmd = findCommandDescriptor(DataStoreSchema.C_VALIDATE_TICKET);
 		DataElement status = _commandHandler.command(cmd, ticket, false);
 
-		if (ticket.getName().equals("null"))
+		if (ticket.getName().equals("null")) //$NON-NLS-1$
 		{
 			return null;
 		}
@@ -2240,7 +2240,7 @@ public final class DataStore
 		startWaiting(status);
 
 		while ((status != null)
-			&& (_status == null || _status.getName().equals("okay"))
+			&& (_status == null || _status.getName().equals("okay")) //$NON-NLS-1$
 			&& !status.getName().equals(state)
 			&& !status.getValue().equals(state)
 			&& !status.getName().equals(DataStoreResources.model_incomplete)
@@ -2268,7 +2268,8 @@ public final class DataStore
 
 		if (timedOut)
 		{
-			status.setAttribute(DE.A_NAME, DataStoreResources.model_timeout);
+			if (status != null)
+				status.setAttribute(DE.A_NAME, DataStoreResources.model_timeout);
 		}
 
 	}
@@ -3402,12 +3403,12 @@ public final class DataStore
 	{
 		if (_userPreferencesDirectory == null) {
 			
-			_userPreferencesDirectory = System.getProperty("user.home");
+			_userPreferencesDirectory = System.getProperty("user.home"); //$NON-NLS-1$
 			
-			String clientUserID = System.getProperty("client.username");
-			if (clientUserID == null || clientUserID.equals(""))
+			String clientUserID = System.getProperty("client.username"); //$NON-NLS-1$
+			if (clientUserID == null || clientUserID.equals("")) //$NON-NLS-1$
 			{
-				clientUserID = "";
+				clientUserID = ""; //$NON-NLS-1$
 			}
 			else
 			{
@@ -3421,8 +3422,8 @@ public final class DataStore
 				_userPreferencesDirectory = _userPreferencesDirectory + File.separator;
 		    }
   		
-  			_userPreferencesDirectory = _userPreferencesDirectory + ".eclipse" + File.separator + 
-  			         												"RSE" + File.separator + clientUserID;
+  			_userPreferencesDirectory = _userPreferencesDirectory + ".eclipse" + File.separator +  //$NON-NLS-1$
+  			         												"RSE" + File.separator + clientUserID; //$NON-NLS-1$
 	  		File dirFile = new File(_userPreferencesDirectory);
 	  		if (!dirFile.exists()) {
 	 	 		dirFile.mkdirs();
@@ -3453,8 +3454,8 @@ public final class DataStore
 
 		_dataStoreSchema = new DataStoreSchema(this);
 
-		String tracingProperty = System.getProperty("DSTORE_TRACING_ON");
-		if (tracingProperty != null && tracingProperty.equals("true"))
+		String tracingProperty = System.getProperty("DSTORE_TRACING_ON"); //$NON-NLS-1$
+		if (tracingProperty != null && tracingProperty.equals("true")) //$NON-NLS-1$
 		{
 			_tracingOn = true;
 		}
@@ -3465,11 +3466,11 @@ public final class DataStore
 		if (_tracingOn)
 		{
 			String logDir = getUserPreferencesDirectory();
-			_traceFileHandle = new File(logDir, ".dstoreTrace");
+			_traceFileHandle = new File(logDir, ".dstoreTrace"); //$NON-NLS-1$
 
 			try
 			{
-				_traceFile = new RandomAccessFile(_traceFileHandle, "rw");
+				_traceFile = new RandomAccessFile(_traceFileHandle, "rw"); //$NON-NLS-1$
 				startTracing();
 			}
 			catch (IOException e)
@@ -3496,17 +3497,17 @@ public final class DataStore
 	{
 		if (!isVirtual() && _deRemover == null)
 		{
-			String memLogging = System.getProperty("DSTORE_MEMLOGGING_ON");
-			_memLoggingOn = (memLogging != null && memLogging.equals("true"));
+			String memLogging = System.getProperty("DSTORE_MEMLOGGING_ON"); //$NON-NLS-1$
+			_memLoggingOn = (memLogging != null && memLogging.equals("true")); //$NON-NLS-1$
 			
 			if (_memLoggingOn)
 			{
 				String logDir = getUserPreferencesDirectory();
-				_memLoggingFileHandle = new File(logDir, ".dstoreMemLogging");
+				_memLoggingFileHandle = new File(logDir, ".dstoreMemLogging"); //$NON-NLS-1$
 	
 				try
 				{
-					_memLogFile = new RandomAccessFile(_memLoggingFileHandle, "rw");
+					_memLogFile = new RandomAccessFile(_memLoggingFileHandle, "rw"); //$NON-NLS-1$
 					startMemLogging();
 				}
 				catch (IOException e)
@@ -3722,13 +3723,13 @@ public final class DataStore
 
 	private void createRoots()
 	{
-		_externalRoot = createObject(_root, DataStoreResources.model_host, "External DataStores", "", "extID");
+		_externalRoot = createObject(_root, DataStoreResources.model_host, "External DataStores", "", "extID"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 
-		_tempRoot = createObject(_root, "temp", "Temp Root", "", "tempID");
-		_dummy = createObject(_root, "temp", "dummy");
-		_logRoot = createObject(_root, DataStoreResources.model_log, DataStoreResources.model_Log_Root, "", "logID");
+		_tempRoot = createObject(_root, "temp", "Temp Root", "", "tempID"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+		_dummy = createObject(_root, "temp", "dummy"); //$NON-NLS-1$ //$NON-NLS-2$
+		_logRoot = createObject(_root, DataStoreResources.model_log, DataStoreResources.model_Log_Root, "", "logID"); //$NON-NLS-1$ //$NON-NLS-2$
 
-		_minerRoot = createObject(_root, DataStoreResources.model_miners, DataStoreResources.model_Tool_Root, "", "minersID");
+		_minerRoot = createObject(_root, DataStoreResources.model_miners, DataStoreResources.model_Tool_Root, "", "minersID"); //$NON-NLS-1$ //$NON-NLS-2$
 
 		_hostRoot =
 			createObject(
@@ -3736,9 +3737,9 @@ public final class DataStore
 				DataStoreResources.model_host,
 				_dataStoreAttributes.getAttribute(DataStoreAttributes.A_HOST_NAME),
 				_dataStoreAttributes.getAttribute(DataStoreAttributes.A_HOST_PATH),
-				"hostID");
+				"hostID"); //$NON-NLS-1$
 
-		_status = createObject(_root, DataStoreResources.model_status, "okay", "", "statusID");
+		_status = createObject(_root, DataStoreResources.model_status, "okay", "", "statusID"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	}
 
 	private void deleteObjectHelper(DataElement from, DataElement toDelete, int depth)
@@ -3841,8 +3842,8 @@ public final class DataStore
 			{
 			}
 
-			trace("-----------------------------------------");
-			trace("Start Tracing at " + System.currentTimeMillis());
+			trace("-----------------------------------------"); //$NON-NLS-1$
+			trace("Start Tracing at " + System.currentTimeMillis()); //$NON-NLS-1$
 		}
 	}
 	
@@ -3858,8 +3859,8 @@ public final class DataStore
 			{
 			}
 
-			memLog("-----------------------------------------");
-			memLog("Start Memory Logging at " + System.currentTimeMillis());
+			memLog("-----------------------------------------"); //$NON-NLS-1$
+			memLog("Start Memory Logging at " + System.currentTimeMillis()); //$NON-NLS-1$
 		}
 	}
 	
@@ -3889,9 +3890,9 @@ public final class DataStore
 				for (int i = 0;i<stack.length;i++)
 				{
 					_traceFile.writeBytes(stack[i].toString());
-					_traceFile.writeBytes(System.getProperty("line.separator"));
+					_traceFile.writeBytes(System.getProperty("line.separator")); //$NON-NLS-1$
 				}
-				_traceFile.writeBytes(System.getProperty("line.separator"));
+				_traceFile.writeBytes(System.getProperty("line.separator")); //$NON-NLS-1$
 			}
 			catch (IOException ex)
 			{
@@ -3906,7 +3907,7 @@ public final class DataStore
 			try
 			{
 				_traceFile.writeBytes(message);
-				_traceFile.writeBytes(System.getProperty("line.separator"));
+				_traceFile.writeBytes(System.getProperty("line.separator")); //$NON-NLS-1$
 			}
 			catch (IOException e)
 			{
@@ -3920,9 +3921,9 @@ public final class DataStore
 		{
 			try
 			{
-				_memLogFile.writeBytes((new Date()).toString() + ": ");
+				_memLogFile.writeBytes((new Date()).toString() + ": "); //$NON-NLS-1$
 				_memLogFile.writeBytes(message);
-				_memLogFile.writeBytes(System.getProperty("line.separator"));
+				_memLogFile.writeBytes(System.getProperty("line.separator")); //$NON-NLS-1$
 			}
 			catch (IOException e)
 			{
@@ -3940,8 +3941,8 @@ public final class DataStore
 		{
 			try
 			{
-				_traceFile.writeBytes("Finished Tracing");
-				_traceFile.writeBytes(System.getProperty("line.separator"));
+				_traceFile.writeBytes("Finished Tracing"); //$NON-NLS-1$
+				_traceFile.writeBytes(System.getProperty("line.separator")); //$NON-NLS-1$
 				_traceFile.close();
 			}
 			catch (IOException e)
@@ -4032,8 +4033,8 @@ public final class DataStore
 		catch (IOException e)
 		{
 			// the jar must be corrupted, so we must erase it.
-			System.out.println("Cache jarfile corrupted... erasing it.");
-			if (!_cacheJar.delete()) System.out.println("Couldn't erase corrupted jarfile!");
+			System.out.println("Cache jarfile corrupted... erasing it."); //$NON-NLS-1$
+			if (!_cacheJar.delete()) System.out.println("Couldn't erase corrupted jarfile!"); //$NON-NLS-1$
 			// try to make a new one again.
 			assignCacheJar();
 			return;
@@ -4041,7 +4042,7 @@ public final class DataStore
 		oldEntries = oldJarFile.entries();
 			
 		// create a new cache file to store the new class in
-		File newJarFile = new File(getCacheDirectory() + REMOTE_CLASS_CACHE_JARFILE_NAME + "_next" + JARFILE_EXTENSION);
+		File newJarFile = new File(getCacheDirectory() + REMOTE_CLASS_CACHE_JARFILE_NAME + "_next" + JARFILE_EXTENSION); //$NON-NLS-1$
 		JarOutputStream newJarOutput = null;
 		
 		try
@@ -4050,7 +4051,7 @@ public final class DataStore
 		}
 		catch (IOException e)
 		{
-			System.out.println("Class caching failed. Could not create new cache jarfile.");
+			System.out.println("Class caching failed. Could not create new cache jarfile."); //$NON-NLS-1$
 			return;
 		}
 			
@@ -4086,14 +4087,14 @@ public final class DataStore
 			}
 			catch (IOException e)
 			{
-				System.out.println("Class caching failed. Could not recopy entry from old jar. Cleaning...");
+				System.out.println("Class caching failed. Could not recopy entry from old jar. Cleaning..."); //$NON-NLS-1$
 				try { newJarOutput.close(); } catch (IOException ee) { }
-				if (!newJarFile.delete()) System.out.println("Couldn't erase new jarfile!");
+				if (!newJarFile.delete()) System.out.println("Couldn't erase new jarfile!"); //$NON-NLS-1$
 			}
 		}
 			
 		// add the new class file
-		JarEntry newEntry = new JarEntry(className.replace('.', '/') + ".class");
+		JarEntry newEntry = new JarEntry(className.replace('.', '/') + ".class"); //$NON-NLS-1$
 		newEntry.setCompressedSize(-1);
 		
 		try
@@ -4105,17 +4106,17 @@ public final class DataStore
 		}
 		catch (IOException e)
 		{
-			System.out.println("Class caching failed. Could not cache new class into new jar. Cleaning...");
+			System.out.println("Class caching failed. Could not cache new class into new jar. Cleaning..."); //$NON-NLS-1$
 			try { newJarOutput.close(); } catch (IOException ee) { }
-			if (!newJarFile.delete()) System.out.println("Couldn't erase new jarfile!");
+			if (!newJarFile.delete()) System.out.println("Couldn't erase new jarfile!"); //$NON-NLS-1$
 		}
 
 		// get rid of the old jar file
 		try { oldJarFile.close(); } catch (IOException ee) { }
-		if (!_cacheJar.delete()) System.out.println("Could not delete old cache jar.");
-		if (!newJarFile.renameTo(_cacheJar)) System.out.println("Could not rename new cache jar.");
+		if (!_cacheJar.delete()) System.out.println("Could not delete old cache jar."); //$NON-NLS-1$
+		if (!newJarFile.renameTo(_cacheJar)) System.out.println("Could not rename new cache jar."); //$NON-NLS-1$
 		
-		System.out.println(className + " cached in " + _cacheJar.getAbsolutePath());
+		System.out.println(className + " cached in " + _cacheJar.getAbsolutePath()); //$NON-NLS-1$
 	}
 	
 	protected JarOutputStream createNewCacheJar(File newJar) throws IOException
@@ -4131,14 +4132,14 @@ public final class DataStore
 	{
 		String cacheDirectory = getCacheDirectory();
 		File cacheJar = new File(cacheDirectory + REMOTE_CLASS_CACHE_JARFILE_NAME + JARFILE_EXTENSION);
-		File nextCacheJar = new File(cacheDirectory + REMOTE_CLASS_CACHE_JARFILE_NAME + "_next" + JARFILE_EXTENSION);
+		File nextCacheJar = new File(cacheDirectory + REMOTE_CLASS_CACHE_JARFILE_NAME + "_next" + JARFILE_EXTENSION); //$NON-NLS-1$
 		if (nextCacheJar.exists()) nextCacheJar.renameTo(cacheJar);
 		if (!cacheJar.exists())
 		{
 			try
 			{
 				JarOutputStream cacheOut = createNewCacheJar(cacheJar);
-				cacheOut.putNextEntry(new JarEntry("/"));
+				cacheOut.putNextEntry(new JarEntry("/")); //$NON-NLS-1$
 				cacheOut.closeEntry();
 				cacheOut.close();
 			}

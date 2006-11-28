@@ -88,7 +88,6 @@ public class ClientUpdateHandler extends UpdateHandler
 	{
 		if (_dataStore != null && !isFinished())
 		{
-			IDomainNotifier notifier = _dataStore.getDomainNotifier();
 			while (_dataObjects.size() > 0)
 			{
 				DataElement object = null;

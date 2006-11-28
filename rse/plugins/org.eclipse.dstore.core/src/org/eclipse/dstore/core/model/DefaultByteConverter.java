@@ -28,7 +28,7 @@ import java.io.UnsupportedEncodingException;
 public class DefaultByteConverter implements IByteConverter
 {	
 	private String _clientEncoding = DE.ENCODING_UTF_8;
-	private String _hostEncoding = System.getProperty("file.encoding");
+	private String _hostEncoding = System.getProperty("file.encoding"); //$NON-NLS-1$
 	public void setContext(File file)
 	{
 	}

@@ -47,7 +47,7 @@ public abstract class CommandHandler extends Handler
 	public CommandHandler()
 	{
 		super();
-		 setName("DStore CommandHandler"+getName());
+		 setName("DStore CommandHandler"+getName()); //$NON-NLS-1$
 		_commands = new ArrayList();
 		_classesToSend = new ArrayList();
 		_commandGenerator = new CommandGenerator();

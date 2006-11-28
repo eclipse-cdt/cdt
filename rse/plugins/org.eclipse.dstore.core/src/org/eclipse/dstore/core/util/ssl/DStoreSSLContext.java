@@ -37,7 +37,7 @@ public class DStoreSSLContext
 			KeyManagerFactory kmf = KeyManagerFactory.getInstance(keymgrAlgorithm);
 			kmf.init(ks, password.toCharArray());				
 
-			serverContext = SSLContext.getInstance("SSL");
+			serverContext = SSLContext.getInstance("SSL"); //$NON-NLS-1$
 			serverContext.init(kmf.getKeyManagers(), null, null);
 		}
 		catch (Exception e)
@@ -55,7 +55,7 @@ public class DStoreSSLContext
 		try
 		{
 			trustManager.setKeystore(filePath, password);			
-			clientContext = SSLContext.getInstance("SSL");
+			clientContext = SSLContext.getInstance("SSL"); //$NON-NLS-1$
 			TrustManager[] mgrs = new TrustManager[1];
 			mgrs[0] = trustManager;
 			

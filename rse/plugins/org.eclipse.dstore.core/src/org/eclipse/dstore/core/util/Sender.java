@@ -170,7 +170,7 @@ public class Sender implements ISender
 		
 		InputStream classInStream = null;
 		className = className.replace('.', '/');
-		className = className + ".class";
+		className = className + ".class"; //$NON-NLS-1$
 		URL classLocation = null;
 		for (int i = 0; i < loaders.size(); i++)
 		{
@@ -189,11 +189,7 @@ public class Sender implements ISender
 		
 		// got a stream to read the classfile. Now read the class into a buffer.
 		BufferedInputStream bufInputStream = new BufferedInputStream(classInStream);
-		if (bufInputStream == null) 
-		{
-			generateEmptyClass(classElement);
-			return; // throw new IOException("BufferedInputStream could not be instantiated on " + className);
-		}
+
 		try
 		{
 			int classSize = bufInputStream.available();

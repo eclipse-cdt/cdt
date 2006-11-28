@@ -38,7 +38,7 @@ public class ByteStreamHandler implements IByteStreamHandler
 
 	protected DataStore _dataStore;
 	protected DataElement _log;
-	protected static final String FILEMSG_REMOTE_SAVE_FAILED = "RSEF5006";
+	protected static final String FILEMSG_REMOTE_SAVE_FAILED = "RSEF5006"; //$NON-NLS-1$
 
 	/**
 	 * Contructor
@@ -118,7 +118,7 @@ public class ByteStreamHandler implements IByteStreamHandler
 				fileStream.close();
 				if (status == null)
 					return;
-				status.setAttribute(DE.A_SOURCE, "success");
+				status.setAttribute(DE.A_SOURCE, "success"); //$NON-NLS-1$
 				_dataStore.refresh(status.getParent());
 			}
 			catch (IOException e)
@@ -127,7 +127,7 @@ public class ByteStreamHandler implements IByteStreamHandler
 				if (status == null)
 					return;
 				status.setAttribute(DE.A_VALUE, FILEMSG_REMOTE_SAVE_FAILED);
-				status.setAttribute(DE.A_SOURCE, "failed");
+				status.setAttribute(DE.A_SOURCE, "failed"); //$NON-NLS-1$
 				_dataStore.refresh(status.getParent());
 			}
 			catch (Exception e)
@@ -136,7 +136,7 @@ public class ByteStreamHandler implements IByteStreamHandler
 				if (status == null)
 					return;
 				status.setAttribute(DE.A_VALUE, FILEMSG_REMOTE_SAVE_FAILED);
-				status.setAttribute(DE.A_SOURCE, "failed");
+				status.setAttribute(DE.A_SOURCE, "failed"); //$NON-NLS-1$
 				_dataStore.refresh(status.getParent());
 			}
 		}
@@ -214,7 +214,7 @@ public class ByteStreamHandler implements IByteStreamHandler
 				}
 				if (status == null)
 					return;
-				status.setAttribute(DE.A_SOURCE, "success");
+				status.setAttribute(DE.A_SOURCE, "success"); //$NON-NLS-1$
 				_dataStore.refresh(status.getParent());
 			}
 			catch (IOException e)
@@ -223,7 +223,7 @@ public class ByteStreamHandler implements IByteStreamHandler
 				if (status == null)
 					return;
 				status.setAttribute(DE.A_VALUE, FILEMSG_REMOTE_SAVE_FAILED);
-				status.setAttribute(DE.A_SOURCE, "failed");
+				status.setAttribute(DE.A_SOURCE, "failed"); //$NON-NLS-1$
 				_dataStore.refresh(status.getParent());
 			}
 		}

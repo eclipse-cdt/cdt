@@ -190,7 +190,7 @@ implements ISchemaExtender
 		if (_value == null)
 		{
 			String name = getMinerName();
-			int indexOfValue = name.lastIndexOf(".");
+			int indexOfValue = name.lastIndexOf("."); //$NON-NLS-1$
 			_value = name.substring(indexOfValue + 1, name.length());
 		}
 		return _value;
@@ -256,17 +256,16 @@ implements ISchemaExtender
 	{
 		String name = getCommandName(command);
 		DataElement status = getCommandStatus(command);
-		long startTime = System.currentTimeMillis();
 
 		if (status == null)
 		{
-			_dataStore.trace("bad command: ");
-			_dataStore.trace("\tcmd=" + command);
-			_dataStore.trace("\tparent=" + command.getParent());
+			_dataStore.trace("bad command: "); //$NON-NLS-1$
+			_dataStore.trace("\tcmd=" + command); //$NON-NLS-1$
+			_dataStore.trace("\tparent=" + command.getParent()); //$NON-NLS-1$
 			return null;
 		}
 
-		if (status.getAttribute(DE.A_NAME).equals("start"))
+		if (status.getAttribute(DE.A_NAME).equals("start")) //$NON-NLS-1$
 		{
 			status.setAttribute(DE.A_NAME, DataStoreResources.model_working);
 		}
@@ -285,7 +284,7 @@ implements ISchemaExtender
 			{
 				//e.printStackTrace();
 				_dataStore.trace(e);
-				status.setAttribute(DE.A_VALUE, "Failed with Exception:"+getStack(e));
+				status.setAttribute(DE.A_VALUE, "Failed with Exception:"+getStack(e)); //$NON-NLS-1$
 				status.setAttribute(DE.A_NAME, DataStoreResources.model_done);
 				//status.setAttribute(DE.A_SOURCE, getStack(e));
 				_dataStore.refresh(status);
@@ -294,8 +293,8 @@ implements ISchemaExtender
 				if (e.getMessage() != null)
 					exc = e.getMessage();
 				else
-					exc = "Exception";
-				DataElement exception = _dataStore.createObject(status, DataStoreResources.model_error, exc);
+					exc = "Exception"; //$NON-NLS-1$
+				_dataStore.createObject(status, DataStoreResources.model_error, exc);
 			}
 			catch (Error er)
 			{
@@ -316,8 +315,8 @@ implements ISchemaExtender
 		StackTraceElement[] stack = e.getStackTrace();
 		for (int i = 0; i < stack.length; i++)
 		{
-			buf.append(stack[i].getClassName() + ":" + stack[i].getMethodName() + ":" + stack[i].getLineNumber());
-			buf.append(",");
+			buf.append(stack[i].getClassName() + ":" + stack[i].getMethodName() + ":" + stack[i].getLineNumber()); //$NON-NLS-1$ //$NON-NLS-2$
+			buf.append(","); //$NON-NLS-1$
 		}
 		return buf.toString();
 	}
@@ -501,7 +500,7 @@ implements ISchemaExtender
 	 */
 	public final DataElement createAbstractRelationship(DataElement from, DataElement to)
 	{
-		return _dataStore.createReference(from, to, "abstracts", "abstracted by");
+		return _dataStore.createReference(from, to, "abstracts", "abstracted by"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	/**

@@ -59,7 +59,7 @@ public class ServerReceiver extends Receiver
 			DataElement log = _dataStore.getLogRoot();
 			log.addNestedData(rootOutput, false);
 
-			if (rootOutput.getName().equals("C_EXIT"))
+			if (rootOutput.getName().equals("C_EXIT")) //$NON-NLS-1$
 			{
 				finish();
 				
@@ -82,7 +82,7 @@ public class ServerReceiver extends Receiver
 	 */
 	public void handleError(Throwable e)
 	{
-		System.out.println("RECEIVER ERROR");
+		System.out.println("RECEIVER ERROR"); //$NON-NLS-1$
 	//	e.printStackTrace();
 		System.out.println(e);
 		_connection.finished(this);

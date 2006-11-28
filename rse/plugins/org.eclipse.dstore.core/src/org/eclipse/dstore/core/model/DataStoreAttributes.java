@@ -25,7 +25,7 @@ package org.eclipse.dstore.core.model;
 public class DataStoreAttributes
 {
 
-	public static final String DATASTORE_VERSION = "DataStore.8.0.0";
+	public static final String DATASTORE_VERSION = "DataStore.8.0.0"; //$NON-NLS-1$
 
 	public static final int A_PLUGIN_PATH = 0;
 	public static final int A_ROOT_NAME = 1;
@@ -49,21 +49,21 @@ public class DataStoreAttributes
 		_attributes = new String[A_SIZE];
 
 		// root
-		_attributes[A_ROOT_NAME] = new String("Local");
-		_attributes[A_ROOT_PATH] = new String("");
+		_attributes[A_ROOT_NAME] = new String("Local"); //$NON-NLS-1$
+		_attributes[A_ROOT_PATH] = new String(""); //$NON-NLS-1$
 
 		// log
-		_attributes[A_LOG_NAME] = new String("log");
-		_attributes[A_LOG_PATH] = new String("log.xml");
+		_attributes[A_LOG_NAME] = new String("log"); //$NON-NLS-1$
+		_attributes[A_LOG_PATH] = new String("log.xml"); //$NON-NLS-1$
 
 		// host
-		_attributes[A_HOST_NAME] = new String("");
-		_attributes[A_HOST_PATH] = new String("");
-		_attributes[A_HOST_PORT] = new String("4033");
+		_attributes[A_HOST_NAME] = new String(""); //$NON-NLS-1$
+		_attributes[A_HOST_PATH] = new String(""); //$NON-NLS-1$
+		_attributes[A_HOST_PORT] = new String("4033"); //$NON-NLS-1$
 
 		// local
-		_attributes[A_LOCAL_NAME] = new String("");
-		_attributes[A_LOCAL_PATH] = new String("");
+		_attributes[A_LOCAL_NAME] = new String(""); //$NON-NLS-1$
+		_attributes[A_LOCAL_PATH] = new String(""); //$NON-NLS-1$
 	}
 
 	/**

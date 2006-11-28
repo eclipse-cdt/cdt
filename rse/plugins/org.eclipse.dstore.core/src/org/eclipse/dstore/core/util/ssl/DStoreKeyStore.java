@@ -64,7 +64,7 @@ public class DStoreKeyStore
 			/* Do not stomp an existing file */
 			if(!keyStoreFile.exists()) 
 			{
-				keyStore =  KeyStore.getInstance("JKS");
+				keyStore =  KeyStore.getInstance("JKS"); //$NON-NLS-1$
 				keyStore.load(null, password.toCharArray());
 				persistKeyStore(keyStore, filePath, password);
 			}
@@ -89,7 +89,7 @@ public class DStoreKeyStore
 		
 		/* Do not stomp an existing file */
 		if(file.exists()) {
-			ks=KeyStore.getInstance("JKS");
+			ks=KeyStore.getInstance("JKS"); //$NON-NLS-1$
 			/* Initialize the keystore with no information */
 			FileInputStream is=new FileInputStream(file);
 			ks.load(is, password.toCharArray());
@@ -102,7 +102,7 @@ public class DStoreKeyStore
 	   throws CertificateException,
 	           FileNotFoundException {
 		
-		CertificateFactory factory=CertificateFactory.getInstance("X.509");
+		CertificateFactory factory=CertificateFactory.getInstance("X.509"); //$NON-NLS-1$
 		
 		return factory.generateCertificate(new FileInputStream(certFilename));
 	}

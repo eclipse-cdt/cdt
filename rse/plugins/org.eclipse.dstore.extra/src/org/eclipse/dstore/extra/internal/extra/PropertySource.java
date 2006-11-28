@@ -49,21 +49,23 @@ public class PropertySource implements IPropertySource
 	_descriptors = new IPropertyDescriptor[attributesSize + 2];
 	_descriptors[0] = new TextPropertyDescriptor("type", "type"); //$NON-NLS-1$ //$NON-NLS-2$
 	_descriptors[1] = new TextPropertyDescriptor("name", "name"); //$NON-NLS-1$ //$NON-NLS-2$
-	
-	for (int i = 0; i < attributesSize; i++)
-    {
-		IDataElement attribute = (IDataElement)attributes.get(i);
-		List types = attribute.getAssociated("attributes"); //$NON-NLS-1$
-		    
-		String type = null;
-		if (types.size() > 0)
-		  type = ((IDataElement)types.get(0)).getName();
-		else
-		  type = "String"; //$NON-NLS-1$
-		
-		_properties.put(attribute.getName(), type);
-		_descriptors[i+2] = new TextPropertyDescriptor(attribute.getName(), attribute.getName());
-    }
+	if (attributes != null)
+	{
+		for (int i = 0; i < attributesSize; i++)
+	    {
+			IDataElement attribute = (IDataElement)attributes.get(i);
+			List types = attribute.getAssociated("attributes"); //$NON-NLS-1$
+			    
+			String type = null;
+			if (types.size() > 0)
+			  type = ((IDataElement)types.get(0)).getName();
+			else
+			  type = "String"; //$NON-NLS-1$
+			
+			_properties.put(attribute.getName(), type);
+			_descriptors[i+2] = new TextPropertyDescriptor(attribute.getName(), attribute.getName());
+	    }
+	}
     
   }
 

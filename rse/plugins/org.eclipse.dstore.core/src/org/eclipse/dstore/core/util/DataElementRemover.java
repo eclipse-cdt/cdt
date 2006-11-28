@@ -39,8 +39,8 @@ public class DataElementRemover extends Handler
 	public static final int DEFAULT_INTERVAL_TIME = 60; // in seconds
 	private int _intervalTime = DEFAULT_INTERVAL_TIME * 1000;
 	private int _expiryTime = DEFAULT_EXPIRY_TIME * 1000;
-	public static final String EXPIRY_TIME_PROPERTY_NAME = "SPIRIT_EXPIRY_TIME";
-	public static final String INTERVAL_TIME_PROPERTY_NAME = "SPIRIT_INTERVAL_TIME";
+	public static final String EXPIRY_TIME_PROPERTY_NAME = "SPIRIT_EXPIRY_TIME"; //$NON-NLS-1$
+	public static final String INTERVAL_TIME_PROPERTY_NAME = "SPIRIT_INTERVAL_TIME"; //$NON-NLS-1$
 	
 	public DataElementRemover(DataStore dataStore)
 	{
@@ -50,7 +50,7 @@ public class DataElementRemover extends Handler
 		getTimes();
 		setWaitTime(_intervalTime);
 		DataElement spiritnode = _dataStore.createObjectDescriptor(_dataStore.getDescriptorRoot(), IDataStoreConstants.DATASTORE_SPIRIT_DESCRIPTOR);
-		_dataStore.createCommandDescriptor(spiritnode, "StartSpirit", "DataElementRemover", IDataStoreConstants.C_START_SPIRIT);
+		_dataStore.createCommandDescriptor(spiritnode, "StartSpirit", "DataElementRemover", IDataStoreConstants.C_START_SPIRIT); //$NON-NLS-1$ //$NON-NLS-2$
 		_dataStore.refresh(_dataStore.getDescriptorRoot());
 	}
 	
@@ -59,21 +59,21 @@ public class DataElementRemover extends Handler
 		try
 		{
 			String expiryTime = System.getProperty(EXPIRY_TIME_PROPERTY_NAME);
-			if (expiryTime != null && !expiryTime.equals("")) _expiryTime = Integer.parseInt(expiryTime) * 1000;			
+			if (expiryTime != null && !expiryTime.equals("")) _expiryTime = Integer.parseInt(expiryTime) * 1000;			 //$NON-NLS-1$
 		}
 		catch (Exception e)
 		{
-			System.out.println("Invalid spirit expiry time property, using default.");
+			System.out.println("Invalid spirit expiry time property, using default."); //$NON-NLS-1$
 			_expiryTime = DEFAULT_EXPIRY_TIME;
 		}
 		try
 		{
 			String intervalTime = System.getProperty(INTERVAL_TIME_PROPERTY_NAME);
-			if (intervalTime != null && !intervalTime.equals("")) _intervalTime = Integer.parseInt(intervalTime) * 1000;			
+			if (intervalTime != null && !intervalTime.equals("")) _intervalTime = Integer.parseInt(intervalTime) * 1000;			 //$NON-NLS-1$
 		}
 		catch (Exception e)
 		{
-			System.out.println("Invalid spirit interval time property, using default.");
+			System.out.println("Invalid spirit interval time property, using default."); //$NON-NLS-1$
 			_intervalTime = DEFAULT_INTERVAL_TIME;
 		}
 	}
@@ -114,25 +114,25 @@ public class DataElementRemover extends Handler
 	{
 		synchronized (_queue)
 		{
-			_dataStore.memLog("           ");
+			_dataStore.memLog("           "); //$NON-NLS-1$
 			int disconnected = 0;
 			if (!_dataStore.isDoSpirit())
 			{
 				if (_queue.size() > 0) 
 				{
-					_dataStore.memLog("Clearing queue of size " + _queue.size() + ". DSTORE_SPIRIT_ON not set or set to false.");
+					_dataStore.memLog("Clearing queue of size " + _queue.size() + ". DSTORE_SPIRIT_ON not set or set to false."); //$NON-NLS-1$ //$NON-NLS-2$
 					_queue.clear();
 				}
-				_dataStore.memLog("Total heap size: " + Runtime.getRuntime().totalMemory());
-				_dataStore.memLog("Elements created so far: " + numCreated);
-				_dataStore.memLog("Elements disconnected so far: " + numDisconnected);
-				_dataStore.memLog("Spirit elements cleaned so far: " + numRemoved);
-				_dataStore.memLog("DataElements GCed so far: " + numGCed);
+				_dataStore.memLog("Total heap size: " + Runtime.getRuntime().totalMemory()); //$NON-NLS-1$
+				_dataStore.memLog("Elements created so far: " + numCreated); //$NON-NLS-1$
+				_dataStore.memLog("Elements disconnected so far: " + numDisconnected); //$NON-NLS-1$
+				_dataStore.memLog("Spirit elements cleaned so far: " + numRemoved); //$NON-NLS-1$
+				_dataStore.memLog("DataElements GCed so far: " + numGCed); //$NON-NLS-1$
 				return;
 			}
-			_dataStore.memLog("Total heap size before disconnection: " + Runtime.getRuntime().totalMemory());
+			_dataStore.memLog("Total heap size before disconnection: " + Runtime.getRuntime().totalMemory()); //$NON-NLS-1$
 			
-			_dataStore.memLog("Size of queue: " + _queue.size());
+			_dataStore.memLog("Size of queue: " + _queue.size()); //$NON-NLS-1$
 			
 			while (_queue.size() > 0 && System.currentTimeMillis() - ((QueueItem) _queue.getFirst()).timeStamp > _expiryTime)
 			{
@@ -150,11 +150,11 @@ public class DataElementRemover extends Handler
 				}
 				_dataStore.getHashMap().remove(toBeDisconnected.getId());
 			}
-			_dataStore.memLog("Disconnected " + disconnected + " DataElements.");
-			_dataStore.memLog("Elements created so far: " + numCreated);
-			_dataStore.memLog("Elements disconnected so far: " + numDisconnected);
-			_dataStore.memLog("Spirit elements cleaned so far: " + numRemoved);
-			_dataStore.memLog("DataElements GCed so far: " + numGCed);
+			_dataStore.memLog("Disconnected " + disconnected + " DataElements."); //$NON-NLS-1$ //$NON-NLS-2$
+			_dataStore.memLog("Elements created so far: " + numCreated); //$NON-NLS-1$
+			_dataStore.memLog("Elements disconnected so far: " + numDisconnected); //$NON-NLS-1$
+			_dataStore.memLog("Spirit elements cleaned so far: " + numRemoved); //$NON-NLS-1$
+			_dataStore.memLog("DataElements GCed so far: " + numGCed); //$NON-NLS-1$
 		}
 	}
 	

@@ -38,16 +38,16 @@ public class ClientAttributes extends DataStoreAttributes
 
 		try
 		{
-			String pluginPath = System.getProperty("A_PLUGIN_PATH");
+			String pluginPath = System.getProperty("A_PLUGIN_PATH"); //$NON-NLS-1$
 			if ((pluginPath != null) && (pluginPath.length() > 0))
 			{
 				setAttribute(A_PLUGIN_PATH, pluginPath + File.separator);
 			}
 
 			setAttribute(A_LOCAL_NAME, InetAddress.getLocalHost().getHostName());
-			setAttribute(A_LOCAL_PATH, "/tmp/");
-			setAttribute(A_HOST_NAME, "local");
-			setAttribute(A_HOST_PATH, "/");
+			setAttribute(A_LOCAL_PATH, "/tmp/"); //$NON-NLS-1$
+			setAttribute(A_HOST_NAME, "local"); //$NON-NLS-1$
+			setAttribute(A_HOST_PATH, "/"); //$NON-NLS-1$
 		}
 
 		catch (UnknownHostException e)

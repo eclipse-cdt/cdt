@@ -48,7 +48,7 @@ public abstract class Receiver extends Thread
 	 */
 	public Receiver(Socket socket, DataStore dataStore)
 	{
-		 setName("DStore Receiver"+getName());
+		 setName("DStore Receiver"+getName()); //$NON-NLS-1$
 		_socket = socket;
 		_dataStore = dataStore;
 		_canExit = false;
@@ -118,7 +118,7 @@ public abstract class Receiver extends Thread
 			if (rootObject != null)
 			{
 				String type = rootObject.getType();
-				if (!type.equals("FILE"))
+				if (!type.equals("FILE")) //$NON-NLS-1$
 				{
 
 					handleDocument(rootObject);

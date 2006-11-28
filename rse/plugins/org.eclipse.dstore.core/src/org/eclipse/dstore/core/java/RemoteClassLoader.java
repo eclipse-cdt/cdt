@@ -93,7 +93,7 @@ import org.eclipse.dstore.core.model.DataStore;
  */
 public class RemoteClassLoader extends ClassLoader
 { 
-	public static String CACHING_PREFERENCE = "Class.Caching";
+	public static String CACHING_PREFERENCE = "Class.Caching"; //$NON-NLS-1$
 	private DataStore _dataStore;
 	private boolean _useCaching = false;
 	private CacheClassLoader _urlClassLoader;
@@ -128,7 +128,7 @@ public class RemoteClassLoader extends ClassLoader
 	{
 		boolean useCaching = false;
 		String pref = _dataStore.getPreference(CACHING_PREFERENCE);
-		if (pref != null && pref.equals("true"))
+		if (pref != null && pref.equals("true")) //$NON-NLS-1$
 		{
 			useCaching = true;
 		}
@@ -287,7 +287,8 @@ public class RemoteClassLoader extends ClassLoader
 			// this is the signal that the class could not be found on the client
 		//	System.out.println("Empty class/class not found: "+className);
 		//	System.out.println("notifying requester");
-			request.notifyResponse(); // wake up the threads waiting for the class
+			if (request != null)
+				request.notifyResponse(); // wake up the threads waiting for the class
 			return;
 		}
 		Class receivedClass = null;
@@ -308,7 +309,8 @@ public class RemoteClassLoader extends ClassLoader
 			// (even after requesting it from the client). We must fail,
 			// but wake up the threads waiting for this class.
 			e.printStackTrace();
-			request.notifyResponse();
+			if (request != null)
+				request.notifyResponse();
 			return;
 		}
 		catch (LinkageError e)
@@ -327,13 +329,15 @@ public class RemoteClassLoader extends ClassLoader
 				// so we might as well just fail here and notify threads waiting
 				// for this class to load.
 				err.printStackTrace();
-				request.notifyResponse();
+				if (request != null)
+					request.notifyResponse();
 				return;				
 			}
 			catch (ClassNotFoundException ee)
 			{
 				// we definitely shouldnt get here
-				request.notifyResponse();
+				if (request != null)
+					request.notifyResponse();
 				return;
 			}
 			
@@ -341,7 +345,8 @@ public class RemoteClassLoader extends ClassLoader
 			// we still dont have it, notify the threads and fail.
 			if (receivedClass == null) 
 			{
-				request.notifyResponse();
+				if (request != null)
+					request.notifyResponse();
 				return;
 			}
 		}

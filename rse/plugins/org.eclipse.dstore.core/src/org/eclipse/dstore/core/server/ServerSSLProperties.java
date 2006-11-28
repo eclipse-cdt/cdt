@@ -33,27 +33,27 @@ public class ServerSSLProperties implements ISSLProperties
 	private String _serverKeyStorePassword;
 
 	
-	private static final String ENABLE_SSL    = "enable_ssl";	
-	private static final String DISABLE_SERVER_SSL = "disable_server_ssl";
+	private static final String ENABLE_SSL    = "enable_ssl";	 //$NON-NLS-1$
+	private static final String DISABLE_SERVER_SSL = "disable_server_ssl"; //$NON-NLS-1$
 	
-	private static final String DAEMON_KEYSTORE_FILE = "daemon_keystore_file";
-	private static final String DAEMON_KEYSTORE_PASSWORD = "daemon_keystore_password";
+	private static final String DAEMON_KEYSTORE_FILE = "daemon_keystore_file"; //$NON-NLS-1$
+	private static final String DAEMON_KEYSTORE_PASSWORD = "daemon_keystore_password"; //$NON-NLS-1$
 
-	private static final String SERVER_KEYSTORE_FILE = "server_keystore_file";
-	private static final String SERVER_KEYSTORE_PASSWORD = "server_keystore_password";
+	private static final String SERVER_KEYSTORE_FILE = "server_keystore_file"; //$NON-NLS-1$
+	private static final String SERVER_KEYSTORE_PASSWORD = "server_keystore_password"; //$NON-NLS-1$
 		
 	
 	public ServerSSLProperties() 
 	{
 		try 
 		{ 
-			ResourceBundle properties = ResourceBundle.getBundle("ssl");
-			_enableSSL = properties.getString(ENABLE_SSL).trim().equals("true");
+			ResourceBundle properties = ResourceBundle.getBundle("ssl"); //$NON-NLS-1$
+			_enableSSL = properties.getString(ENABLE_SSL).trim().equals("true"); //$NON-NLS-1$
 			if (_enableSSL)
 			{
 				try
 				{
-					_disableServerSSL = properties.getString(DISABLE_SERVER_SSL).trim().equals("true");
+					_disableServerSSL = properties.getString(DISABLE_SERVER_SSL).trim().equals("true"); //$NON-NLS-1$
 				}
 				catch (Exception e)
 				{
@@ -96,13 +96,13 @@ public class ServerSSLProperties implements ISSLProperties
 			
 			if (_enableSSL)
 			{
-				System.out.println("SSL Settings");
-				System.out.println("[daemon keystore:\t"+_daemonKeyStorePath+"]");
-				System.out.println("[daemon keystore pw:\t"+_daemonKeyStorePassword+"]");
+				System.out.println("SSL Settings"); //$NON-NLS-1$
+				System.out.println("[daemon keystore:\t"+_daemonKeyStorePath+"]"); //$NON-NLS-1$ //$NON-NLS-2$
+				System.out.println("[daemon keystore pw:\t"+_daemonKeyStorePassword+"]"); //$NON-NLS-1$ //$NON-NLS-2$
 				if (!_disableServerSSL)
 				{
-					System.out.println("[server keystore:\t"+_serverKeyStorePath+"]");
-					System.out.println("[server keystore pw:\t"+_serverKeyStorePassword+"]");					
+					System.out.println("[server keystore:\t"+_serverKeyStorePath+"]"); //$NON-NLS-1$ //$NON-NLS-2$
+					System.out.println("[server keystore pw:\t"+_serverKeyStorePassword+"]");					 //$NON-NLS-1$ //$NON-NLS-2$
 				}
 			}
 		} 

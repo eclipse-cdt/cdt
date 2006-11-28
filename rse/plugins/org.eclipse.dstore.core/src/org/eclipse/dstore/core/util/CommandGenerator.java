@@ -62,25 +62,17 @@ public class CommandGenerator
     public DataElement logCommand(DataElement commandObject)
     {
         try
-        {
-            // prevent duplicate queries
-            String name = commandObject.getAttribute(DE.A_NAME);
- 
+        { 
             // create time and status objects
-            DataElement status = null;
-  
-            if (status == null)
-            {
-            	StringBuffer id = new StringBuffer(commandObject.getId());
-            	id.append(DataStoreResources.model_status);
-                status =
-                    _dataStore.createObject(
-                        commandObject,
-                       DataStoreResources.model_status,
-                       DataStoreResources.model_start,
-                        "",
-                       	id.toString());
-            }
+        	StringBuffer id = new StringBuffer(commandObject.getId());
+        	id.append(DataStoreResources.model_status);
+            _dataStore.createObject(
+                    commandObject,
+                   DataStoreResources.model_status,
+                   DataStoreResources.model_start,
+                    "", //$NON-NLS-1$
+                   	id.toString());
+            
             _log.addNestedData(commandObject, false);
 
         }
@@ -109,7 +101,7 @@ public class CommandGenerator
             }
             else
             {
-                System.out.println("not cd -> " + commandDescriptor);
+                System.out.println("not cd -> " + commandDescriptor); //$NON-NLS-1$
                 return null;
             }
         }
@@ -147,7 +139,6 @@ public class CommandGenerator
         if (commandObject != null)
         {
         	clearDeleted(dataObject);
-            DataElement tempRoot = _dataStore.getTempRoot();
 
             commandObject.setAttribute(DE.A_VALUE, commandDescriptor.getName());
 
@@ -174,7 +165,7 @@ public class CommandGenerator
                         }
                         else
                         {
-                            _dataStore.createReference(commandObject, arg, "argument");
+                            _dataStore.createReference(commandObject, arg, "argument"); //$NON-NLS-1$
                         }
                     }
                 }
@@ -205,7 +196,6 @@ public class CommandGenerator
         DataElement commandObject = createCommand(commandDescriptor);
         if (commandObject != null)
         {
-            DataElement tempRoot = _dataStore.getTempRoot();
             commandObject.setAttribute(DE.A_VALUE, commandDescriptor.getName());
 			clearDeleted(dataObject);
             if ((refArg || dataObject.isUpdated()) && !dataObject.isSpirit())
@@ -224,7 +214,7 @@ public class CommandGenerator
             }
             else
             {
-                _dataStore.createReference(commandObject, arg, "argument");
+                _dataStore.createReference(commandObject, arg, "argument"); //$NON-NLS-1$
             }
      
 
@@ -296,7 +286,7 @@ public class CommandGenerator
     {
         if (dataObject != null)
         {
-            DataElement commandObject = _dataStore.createObject(null, "RESPONSE", responseType);
+            DataElement commandObject = _dataStore.createObject(null, "RESPONSE", responseType); //$NON-NLS-1$
             commandObject.addNestedData(dataObject, true);
             return commandObject;
         }
@@ -314,7 +304,7 @@ public class CommandGenerator
 	 */
     public DataElement generateResponse(String responseType)
     {
-        DataElement commandObject = _dataStore.createObject(null, "RESPONSE", responseType);
+        DataElement commandObject = _dataStore.createObject(null, "RESPONSE", responseType); //$NON-NLS-1$
         return commandObject;
     }
 }

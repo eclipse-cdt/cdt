@@ -43,7 +43,7 @@ public class ClassByteStreamHandler implements IClassByteStreamHandler
 
 	protected DataStore _dataStore;
 	protected DataElement _log;
-	protected static final String FILEMSG_REMOTE_SAVE_FAILED = "RSEF5006";
+	protected static final String FILEMSG_REMOTE_SAVE_FAILED = "RSEF5006"; //$NON-NLS-1$
 
 	/**
 	 * Contructor

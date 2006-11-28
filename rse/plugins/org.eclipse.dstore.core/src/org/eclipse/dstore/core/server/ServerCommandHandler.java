@@ -213,7 +213,7 @@ public class ServerCommandHandler extends CommandHandler
 
 					DataElement host = _dataStore.getHostRoot();
 					_dataStore.getHashMap().remove(host.getId());
-					host.setAttribute(DE.A_ID, "host." + serverTicket.getName());
+					host.setAttribute(DE.A_ID, "host." + serverTicket.getName()); //$NON-NLS-1$
 
 					_dataStore.getHashMap().put(host.getId(), host);
 					_dataStore.update(host);
@@ -312,9 +312,9 @@ public class ServerCommandHandler extends CommandHandler
 				{
 					DataElement element = (DataElement)lastCreated.get(i);
 					statsBuffer.append(element.getName());
-					statsBuffer.append(":");
-					statsBuffer.append("id="+element.getId());
-					statsBuffer.append(";");
+					statsBuffer.append(":"); //$NON-NLS-1$
+					statsBuffer.append("id="+element.getId()); //$NON-NLS-1$
+					statsBuffer.append(";"); //$NON-NLS-1$
 				}
 			
 				
@@ -346,7 +346,7 @@ public class ServerCommandHandler extends CommandHandler
 					{
 						Miner miner = (Miner) miners.get(j);
 					
-						if (commandSource.equals("*") || commandSource.equals(miner.getClass().getName()))
+						if (commandSource.equals("*") || commandSource.equals(miner.getClass().getName())) //$NON-NLS-1$
 						{
 							if (_dataStore.isAutoRefreshOn())
 							{
@@ -404,7 +404,7 @@ public class ServerCommandHandler extends CommandHandler
 	 */
 	public void sendFile(String fileName, byte[] bytes, int size, boolean binary)
 	{
-		sendFile(fileName, bytes, size, binary, "default");
+		sendFile(fileName, bytes, size, binary, "default"); //$NON-NLS-1$
 	}
 	
 /**
@@ -429,7 +429,7 @@ public class ServerCommandHandler extends CommandHandler
 	 */
 	public void sendAppendFile(String fileName, byte[] bytes, int size, boolean binary)
 	{
-		sendAppendFile(fileName, bytes, size, binary, "default");
+		sendAppendFile(fileName, bytes, size, binary, "default"); //$NON-NLS-1$
 	}
 
 	/**
@@ -452,7 +452,7 @@ public class ServerCommandHandler extends CommandHandler
 	 */
 	public synchronized void sendClass(String className)
 	{
-		sendClass(className, "default");
+		sendClass(className, "default"); //$NON-NLS-1$
 	}
 	
 	/**

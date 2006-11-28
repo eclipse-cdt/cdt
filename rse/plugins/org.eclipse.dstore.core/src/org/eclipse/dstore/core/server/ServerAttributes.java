@@ -38,7 +38,7 @@ public class ServerAttributes extends DataStoreAttributes
 
 		try
 		{
-			String pluginPath = System.getProperty("A_PLUGIN_PATH");
+			String pluginPath = System.getProperty("A_PLUGIN_PATH"); //$NON-NLS-1$
 			if (pluginPath != null) pluginPath = pluginPath.trim();
 			if ((pluginPath != null) && (pluginPath.length() > 0))
 			{
@@ -56,13 +56,13 @@ public class ServerAttributes extends DataStoreAttributes
 			}
 			else
 			{
-				setAttribute(A_PLUGIN_PATH, "/home/");
+				setAttribute(A_PLUGIN_PATH, "/home/"); //$NON-NLS-1$
 			}
 
 			setAttribute(A_LOCAL_NAME, InetAddress.getLocalHost().getHostName());
 
-			setAttribute(A_HOST_NAME, "server_host");
-			setAttribute(A_HOST_PATH, "/home/");
+			setAttribute(A_HOST_NAME, "server_host"); //$NON-NLS-1$
+			setAttribute(A_HOST_PATH, "/home/"); //$NON-NLS-1$
 		}
 		catch (UnknownHostException e)
 		{

@@ -40,9 +40,9 @@ public class Server
 		//Tell the Launcher that we are starting
 		System.err.println(ServerReturnCodes.RC_DSTORE_SERVER_MAGIC);
 
-		String jversion = System.getProperty("java.version");
+		String jversion = System.getProperty("java.version"); //$NON-NLS-1$
 
-		StringTokenizer tokenizer = new StringTokenizer(jversion, ".");
+		StringTokenizer tokenizer = new StringTokenizer(jversion, "."); //$NON-NLS-1$
 		try
 		{
 			String[] vers = new String[3];

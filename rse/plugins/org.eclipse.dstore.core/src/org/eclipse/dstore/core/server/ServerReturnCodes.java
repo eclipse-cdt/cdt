@@ -24,16 +24,16 @@ public class ServerReturnCodes
 {
 	public static final String RC_DSTORE_SERVER_MAGIC = "Dstore Server Starting..."; //$NON-NLS-1$
 
-	public static final String RC_SUCCESS = "Server Started Successfully";
+	public static final String RC_SUCCESS = "Server Started Successfully"; //$NON-NLS-1$
 
-	public static final String RC_UNKNOWN_HOST_ERROR = "Unknown host error";
-	public static final String RC_BIND_ERROR = "Error binding socket";
-	public static final String RC_GENERAL_IO_ERROR = "General IO error creating socket";
-	public static final String RC_CONNECTION_ERROR = "Connection error";
+	public static final String RC_UNKNOWN_HOST_ERROR = "Unknown host error"; //$NON-NLS-1$
+	public static final String RC_BIND_ERROR = "Error binding socket"; //$NON-NLS-1$
+	public static final String RC_GENERAL_IO_ERROR = "General IO error creating socket"; //$NON-NLS-1$
+	public static final String RC_CONNECTION_ERROR = "Connection error"; //$NON-NLS-1$
 
-	public static final String RC_SECURITY_ERROR = "Security error creating socket";
+	public static final String RC_SECURITY_ERROR = "Security error creating socket"; //$NON-NLS-1$
 
-	public static final String RC_FINISHED = "Server Finished";
+	public static final String RC_FINISHED = "Server Finished"; //$NON-NLS-1$
 	
-	public static final String RC_JRE_VERSION_ERROR = "JRE 1.4 or higher required";
+	public static final String RC_JRE_VERSION_ERROR = "JRE 1.4 or higher required"; //$NON-NLS-1$
 }

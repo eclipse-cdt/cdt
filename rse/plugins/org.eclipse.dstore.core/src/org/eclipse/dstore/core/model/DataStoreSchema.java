@@ -42,26 +42,26 @@ public class DataStoreSchema
 	private DataElement _abstractRelationDescriptor;
 
 
-	public static final String C_VALIDATE_TICKET = "C_VALIDATE_TICKET";
-	public static final String C_SET             = "C_SET";
-	public static final String C_MODIFY          = "C_MODIFY";
-	public static final String C_SET_HOST        = "C_SET_HOST";
-	public static final String C_SCHEMA          = "C_SCHEMA";
-	public static final String C_SET_PREFERENCE  = "C_SET_PREFERENCE";
-	public static final String C_ADD_MINERS      = "C_ADD_MINERS";
-	public static final String C_ACTIVATE_MINER  = "C_ACTIVATE_MINER";
-	public static final String C_INIT_MINERS     = "C_INIT_MINERS";
-	public static final String C_OPEN	           = "C_OPEN";
-	public static final String C_CANCEL          = "C_CANCEL";
-	public static final String C_SEND_INPUT      = "C_SEND_INPUT";
-	public static final String C_QUERY           = "C_QUERY";
-	public static final String C_REFRESH         = "C_REFRESH";
-	public static final String C_EXIT            = "C_EXIT";
-	public static final String C_CLOSE           = "C_CLOSE";
-	public static final String C_NOTIFICATION    = "C_NOTIFICATION";
-	public static final String C_QUERY_INSTALL   = "C_QUERY_INSTALL";
-	public static final String C_QUERY_CLIENT_IP = "C_QUERY_CLIENT_IP";
-	public static final String C_QUERY_JVM	   = "C_QUERY_JVM";
+	public static final String C_VALIDATE_TICKET = "C_VALIDATE_TICKET"; //$NON-NLS-1$
+	public static final String C_SET             = "C_SET"; //$NON-NLS-1$
+	public static final String C_MODIFY          = "C_MODIFY"; //$NON-NLS-1$
+	public static final String C_SET_HOST        = "C_SET_HOST"; //$NON-NLS-1$
+	public static final String C_SCHEMA          = "C_SCHEMA"; //$NON-NLS-1$
+	public static final String C_SET_PREFERENCE  = "C_SET_PREFERENCE"; //$NON-NLS-1$
+	public static final String C_ADD_MINERS      = "C_ADD_MINERS"; //$NON-NLS-1$
+	public static final String C_ACTIVATE_MINER  = "C_ACTIVATE_MINER"; //$NON-NLS-1$
+	public static final String C_INIT_MINERS     = "C_INIT_MINERS"; //$NON-NLS-1$
+	public static final String C_OPEN	           = "C_OPEN"; //$NON-NLS-1$
+	public static final String C_CANCEL          = "C_CANCEL"; //$NON-NLS-1$
+	public static final String C_SEND_INPUT      = "C_SEND_INPUT"; //$NON-NLS-1$
+	public static final String C_QUERY           = "C_QUERY"; //$NON-NLS-1$
+	public static final String C_REFRESH         = "C_REFRESH"; //$NON-NLS-1$
+	public static final String C_EXIT            = "C_EXIT"; //$NON-NLS-1$
+	public static final String C_CLOSE           = "C_CLOSE"; //$NON-NLS-1$
+	public static final String C_NOTIFICATION    = "C_NOTIFICATION"; //$NON-NLS-1$
+	public static final String C_QUERY_INSTALL   = "C_QUERY_INSTALL"; //$NON-NLS-1$
+	public static final String C_QUERY_CLIENT_IP = "C_QUERY_CLIENT_IP"; //$NON-NLS-1$
+	public static final String C_QUERY_JVM	   = "C_QUERY_JVM"; //$NON-NLS-1$
 
 	
 	/**
@@ -234,7 +234,7 @@ public class DataStoreSchema
 		DataElement parentD = _dataStore.createRelationDescriptor(schemaRoot, DataStoreResources.model_parent);
 		parentD.setDepth(1);
 
-		_attributes = _dataStore.createRelationDescriptor(schemaRoot, "attributes");
+		_attributes = _dataStore.createRelationDescriptor(schemaRoot, "attributes"); //$NON-NLS-1$
 		_attributes.setDepth(0);
 
 		DataElement argsD = _dataStore.createRelationDescriptor(schemaRoot, DataStoreResources.model_arguments);
@@ -271,7 +271,7 @@ public class DataStoreSchema
 
 		//Base Container Object
 		_container = _dataStore.createAbstractObjectDescriptor(schemaRoot, DataStoreResources.model_Container_Object);
-		_dataStore.createCommandDescriptor(_container, DataStoreResources.model_Query, "*", C_QUERY, false);
+		_dataStore.createCommandDescriptor(_container, DataStoreResources.model_Query, "*", C_QUERY, false); //$NON-NLS-1$
 		_dataStore.createReference(_container, _contents, _contents);
 
 		// file objects
@@ -312,23 +312,23 @@ public class DataStoreSchema
 	
 
 		// basic commands
-		_dataStore.createCommandDescriptor(cancellable, DataStoreResources.model_Cancel, "*", C_CANCEL);
-		_dataStore.createCommandDescriptor(rootD, DataStoreResources.model_Set, "-", C_SET, false);
-		_dataStore.createCommandDescriptor(rootD, DataStoreResources.model_Set_Host, "-", C_SET_HOST, false);
-		_dataStore.createCommandDescriptor(rootD, DataStoreResources.model_Init_Miners, "*", C_INIT_MINERS, false);
-		_dataStore.createCommandDescriptor(rootD, "Add Miners", "-", C_ADD_MINERS, false);
-		_dataStore.createCommandDescriptor(rootD, "Activate Miner", "-", C_ACTIVATE_MINER, false);
-		_dataStore.createCommandDescriptor(rootD, "Set Preference", "-", C_SET_PREFERENCE, false);
+		_dataStore.createCommandDescriptor(cancellable, DataStoreResources.model_Cancel, "*", C_CANCEL); //$NON-NLS-1$
+		_dataStore.createCommandDescriptor(rootD, DataStoreResources.model_Set, "-", C_SET, false); //$NON-NLS-1$
+		_dataStore.createCommandDescriptor(rootD, DataStoreResources.model_Set_Host, "-", C_SET_HOST, false); //$NON-NLS-1$
+		_dataStore.createCommandDescriptor(rootD, DataStoreResources.model_Init_Miners, "*", C_INIT_MINERS, false); //$NON-NLS-1$
+		_dataStore.createCommandDescriptor(rootD, "Add Miners", "-", C_ADD_MINERS, false); //$NON-NLS-1$ //$NON-NLS-2$
+		_dataStore.createCommandDescriptor(rootD, "Activate Miner", "-", C_ACTIVATE_MINER, false); //$NON-NLS-1$ //$NON-NLS-2$
+		_dataStore.createCommandDescriptor(rootD, "Set Preference", "-", C_SET_PREFERENCE, false); //$NON-NLS-1$ //$NON-NLS-2$
 	
-		_dataStore.createCommandDescriptor(rootD, DataStoreResources.model_Show_Ticket, "-", C_VALIDATE_TICKET, false);
-		_dataStore.createCommandDescriptor(rootD, DataStoreResources.model_Get_Schema, "*", C_SCHEMA, false);
-		_dataStore.createCommandDescriptor(rootD, DataStoreResources.model_Exit, "*", C_EXIT, false);
-		_dataStore.createCommandDescriptor(rootD, "Query Install", "*", C_QUERY_INSTALL, false);
-		_dataStore.createCommandDescriptor(rootD, "Query Client IP", "*", C_QUERY_CLIENT_IP, false);
-		_dataStore.createCommandDescriptor(rootD, "Query JVM", "*", C_QUERY_JVM, false);
+		_dataStore.createCommandDescriptor(rootD, DataStoreResources.model_Show_Ticket, "-", C_VALIDATE_TICKET, false); //$NON-NLS-1$
+		_dataStore.createCommandDescriptor(rootD, DataStoreResources.model_Get_Schema, "*", C_SCHEMA, false); //$NON-NLS-1$
+		_dataStore.createCommandDescriptor(rootD, DataStoreResources.model_Exit, "*", C_EXIT, false); //$NON-NLS-1$
+		_dataStore.createCommandDescriptor(rootD, "Query Install", "*", C_QUERY_INSTALL, false); //$NON-NLS-1$ //$NON-NLS-2$
+		_dataStore.createCommandDescriptor(rootD, "Query Client IP", "*", C_QUERY_CLIENT_IP, false); //$NON-NLS-1$ //$NON-NLS-2$
+		_dataStore.createCommandDescriptor(rootD, "Query JVM", "*", C_QUERY_JVM, false); //$NON-NLS-1$ //$NON-NLS-2$
 		
-		_dataStore.createCommandDescriptor(rootD, "Notification", "*", C_NOTIFICATION, false);
-		_dataStore.createCommandDescriptor(rootD, "Send Input", "*", C_SEND_INPUT, false);
+		_dataStore.createCommandDescriptor(rootD, "Notification", "*", C_NOTIFICATION, false); //$NON-NLS-1$ //$NON-NLS-2$
+		_dataStore.createCommandDescriptor(rootD, "Send Input", "*", C_SEND_INPUT, false); //$NON-NLS-1$ //$NON-NLS-2$
 		
 		
 		// both ends have this base schema, so mark each descriptor as updated

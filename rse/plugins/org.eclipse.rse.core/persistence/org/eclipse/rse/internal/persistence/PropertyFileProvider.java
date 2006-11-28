@@ -55,8 +55,8 @@ import org.eclipse.rse.persistence.dom.RSEDOMNodeAttribute;
  */
 public class PropertyFileProvider implements IRSEPersistenceProvider {
 	
-	private static final String NULL_VALUE_STRING = "null";
-	private static final String PROPERTIES_FILE_NAME = "node.properties";
+	private static final String NULL_VALUE_STRING = "null"; //$NON-NLS-1$
+	private static final String PROPERTIES_FILE_NAME = "node.properties"; //$NON-NLS-1$
 
 	/* 
 	 * Metatype names 
@@ -65,27 +65,30 @@ public class PropertyFileProvider implements IRSEPersistenceProvider {
 	 * Names must not contain periods or whitespace.
 	 * Lowercase letters, numbers and dashes (-) are preferred.
 	 */
-	private static final String[] MT_ATTRIBUTE_TYPE = new String[] {"04-attr-type", "attr-type"};
-	private static final String[] MT_ATTRIBUTE = new String[] {"03-attr", "attr"};
-	private static final String[] MT_CHILD = new String[] {"06-child", "child"};
-	private static final String[] MT_NODE_TYPE = new String[] {"01-type", "01-node-type", "n-type"};
-	private static final String[] MT_NODE_NAME = new String[] {"00-name", "00-node-name", "n-name"};
-	private static final String[] MT_REFERENCE = new String[] {"05-ref", "ref"};
+	private static final String[] MT_ATTRIBUTE_TYPE = new String[] {"04-attr-type", "attr-type"}; //$NON-NLS-1$ //$NON-NLS-2$
+	private static final String[] MT_ATTRIBUTE = new String[] {"03-attr", "attr"}; //$NON-NLS-1$ //$NON-NLS-2$
+	private static final String[] MT_CHILD = new String[] {"06-child", "child"}; //$NON-NLS-1$ //$NON-NLS-2$
+	private static final String[] MT_NODE_TYPE = new String[] {"01-type", "01-node-type", "n-type"}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+	private static final String[] MT_NODE_NAME = new String[] {"00-name", "00-node-name", "n-name"}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+	private static final String[] MT_REFERENCE = new String[] {"05-ref", "ref"}; //$NON-NLS-1$ //$NON-NLS-2$
 
 	/* Type abbreviations */
-	private static final String AB_SUBSYSTEM = "SS";
-	private static final String AB_SERVICE_LAUNCHER = "SL";
-	private static final String AB_PROPERTY_SET = "PS";
-	private static final String AB_PROPERTY = "P";
-	private static final String AB_HOST = "H";
-	private static final String AB_FILTER_STRING = "FS";
-	private static final String AB_FILTER_POOL_REFERENCE = "FPR";
-	private static final String AB_FILTER_POOL = "FP";
-	private static final String AB_FILTER = "F";
-	private static final String AB_CONNECTOR_SERVICE = "CS";
-	private static final String AB_PROFILE = "PRF";
+	private static final String AB_SUBSYSTEM = "SS"; //$NON-NLS-1$
+	private static final String AB_SERVICE_LAUNCHER = "SL"; //$NON-NLS-1$
+	private static final String AB_PROPERTY_SET = "PS"; //$NON-NLS-1$
+	private static final String AB_PROPERTY = "P"; //$NON-NLS-1$
+	private static final String AB_HOST = "H"; //$NON-NLS-1$
+	private static final String AB_FILTER_STRING = "FS"; //$NON-NLS-1$
+	private static final String AB_FILTER_POOL_REFERENCE = "FPR"; //$NON-NLS-1$
+	private static final String AB_FILTER_POOL = "FP"; //$NON-NLS-1$
+	private static final String AB_FILTER = "F"; //$NON-NLS-1$
+	private static final String AB_CONNECTOR_SERVICE = "CS"; //$NON-NLS-1$
+	private static final String AB_PROFILE = "PRF"; //$NON-NLS-1$
 	
-	private Pattern period = Pattern.compile("\\.");
+	private Pattern period = Pattern.compile("\\."); //$NON-NLS-1$
+	private Pattern suffixPattern = Pattern.compile("_(\\d+)$"); //$NON-NLS-1$
+	private Pattern unicodePattern = Pattern.compile("#(\\p{XDigit}+)#"); //$NON-NLS-1$
+
 	private Map typeQualifiers = getTypeQualifiers();
 
 	/* (non-Javadoc)
@@ -180,7 +183,7 @@ public class PropertyFileProvider implements IRSEPersistenceProvider {
 		removeFolders(nodeFolder, childFolderNames);
 		String propertiesFileName = PROPERTIES_FILE_NAME;
 		IFile propertiesFile = nodeFolder.getFile(propertiesFileName);
-		writeProperties(properties, "RSE DOM Node", propertiesFile);
+		writeProperties(properties, "RSE DOM Node", propertiesFile); //$NON-NLS-1$
 		return nodeFolderName;
 	}
 	
@@ -226,8 +229,8 @@ public class PropertyFileProvider implements IRSEPersistenceProvider {
 		return result;
 	}
 	
-	private static final String VALID = "abcdefghijklmnopqrstuvwxyz0123456789-._";
-	private static final String UPPER = "ABCDEFGHIJKLMNOPQRTSUVWXYZ";
+	private static final String VALID = "abcdefghijklmnopqrstuvwxyz0123456789-._"; //$NON-NLS-1$
+	private static final String UPPER = "ABCDEFGHIJKLMNOPQRTSUVWXYZ"; //$NON-NLS-1$
 	/**
 	 * Transforms an arbitrary name into one that can be used in any file system
 	 * that supports long names. The transformation appends a number to the name
@@ -263,10 +266,10 @@ public class PropertyFileProvider implements IRSEPersistenceProvider {
 				buf.append('#');
 			}			
 		}
-		name = buf.toString() + "_" + Long.toString(suffix);
+		name = buf.toString() + "_" + Long.toString(suffix); //$NON-NLS-1$
 		return name;
 	}
-	
+
 	/**
 	 * Recovers an arbitrary name from its frozen counterpart.
 	 * @param name The name to be transformed
@@ -275,7 +278,6 @@ public class PropertyFileProvider implements IRSEPersistenceProvider {
 	 */
 	private String thaw(String name) {
 		String result = name;
-		Pattern suffixPattern = Pattern.compile("_(\\d+)$");
 		Matcher m = suffixPattern.matcher(name);
 		if (m.find()) {
 			String root = name.substring(0, m.start());
@@ -287,9 +289,8 @@ public class PropertyFileProvider implements IRSEPersistenceProvider {
 		}
 		return result;
 	}
-	
+
 	private String thawUnicode(String name) {
-		Pattern unicodePattern = Pattern.compile("#(\\p{XDigit}+)#");
 		Matcher m = unicodePattern.matcher(name);
 		StringBuffer b = new StringBuffer();
 		int p0 = 0;
@@ -352,14 +353,14 @@ public class PropertyFileProvider implements IRSEPersistenceProvider {
 //		System.out.println("writing "+file.getFullPath()+"...");
 		ByteArrayOutputStream outStream = new ByteArrayOutputStream(500);
 		PrintWriter out = new PrintWriter(outStream);
-		out.println("# " + header);
+		out.println("# " + header); //$NON-NLS-1$
 		Map map = new TreeMap(properties);
 		Set keys = map.keySet();
 		
 		for (Iterator z = keys.iterator(); z.hasNext();) {
 			String key = (String) z.next();
 			String value = (String)map.get(key);
-			String keyvalue = key + "=" + escapeValue(value);
+			String keyvalue = key + "=" + escapeValue(value); //$NON-NLS-1$
 //			System.out.println("writing "+keyvalue);
 			out.println(keyvalue);
 		}
@@ -401,7 +402,7 @@ public class PropertyFileProvider implements IRSEPersistenceProvider {
 	 */
 	private String getIndexString(int i) {
 		if (i < 0 || i > 99999) throw new IllegalArgumentException("Argument must be between 0 and 99999");
-		String index = "00000" + Integer.toString(i);
+		String index = "00000" + Integer.toString(i); //$NON-NLS-1$
 		index = index.substring(index.length() - 5);
 		return index;
 	}
@@ -429,21 +430,21 @@ public class PropertyFileProvider implements IRSEPersistenceProvider {
 		for (int i = 0; i < characters.length; i++) {
 			char c = characters[i];
 			if (c == '\\') {
-				buffer.append("\\\\");
+				buffer.append("\\\\"); //$NON-NLS-1$
 			} else if (c == '\t') {
-				buffer.append("\\t");
+				buffer.append("\\t"); //$NON-NLS-1$
 			} else if (c == '\f') {
-				buffer.append("\\f");
+				buffer.append("\\f"); //$NON-NLS-1$
 			} else if (c == '\n') {
-				buffer.append("\\n");
+				buffer.append("\\n"); //$NON-NLS-1$
 			} else if (c == '\r') {
-				buffer.append("\\r");
+				buffer.append("\\r"); //$NON-NLS-1$
 			} else if ((c < '\u0020' && c > '\u007E')) {
-				String cString = "0000" + Integer.toHexString(c);
+				String cString = "0000" + Integer.toHexString(c); //$NON-NLS-1$
 				cString = cString.substring(cString.length() - 4);
-				cString = "\\u" + cString;
+				cString = "\\u" + cString; //$NON-NLS-1$
 				buffer.append(cString);
-			} else if ("=!#:".indexOf(c) >= 0) {
+			} else if ("=!#:".indexOf(c) >= 0) { //$NON-NLS-1$
 				buffer.append('\\');
 				buffer.append(c);
 			} else {
@@ -753,7 +754,7 @@ public class PropertyFileProvider implements IRSEPersistenceProvider {
 		} catch (Exception e) {
 		}
 		//IFolder providerFolder = getFolder(project, "org.eclipse.rse.dom.properties");
-		IFolder providerFolder = getFolder(project, "dom.properties");
+		IFolder providerFolder = getFolder(project, "dom.properties"); //$NON-NLS-1$
 		return providerFolder;
 	}
 	

@@ -28,7 +28,6 @@ import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.filters.ISystemFilter;
@@ -68,7 +67,7 @@ public class RSEPersistenceManager implements IRSEPersistenceManager {
 	private RSEDOMImporter _importer;
 	
 	private static IProject remoteSystemsProject = null;
-    public static final String RESOURCE_PROJECT_NAME = "RemoteSystemsConnections";
+    public static final String RESOURCE_PROJECT_NAME = "RemoteSystemsConnections"; //$NON-NLS-1$
 
     private ISystemRegistry _registry;
     private ISystemProfileManager _profileManager;
@@ -111,15 +110,15 @@ public class RSEPersistenceManager implements IRSEPersistenceManager {
 		IRSEPersistenceProvider provider = (IRSEPersistenceProvider) loadedProviders.get(id);
 		if (provider == null) {
 			IExtensionRegistry registry = Platform.getExtensionRegistry();
-			IConfigurationElement[] providerCandidates = registry.getConfigurationElementsFor("org.eclipse.rse.core", "persistenceProviders");
+			IConfigurationElement[] providerCandidates = registry.getConfigurationElementsFor("org.eclipse.rse.core", "persistenceProviders"); //$NON-NLS-1$ //$NON-NLS-2$
 			for (int j = 0; j < providerCandidates.length; j++) {
 				IConfigurationElement providerCandidate = providerCandidates[j];
-				if (providerCandidate.getName().equals("persistenceProvider")) {
-					String candidateId = providerCandidate.getAttribute("id");
+				if (providerCandidate.getName().equals("persistenceProvider")) { //$NON-NLS-1$
+					String candidateId = providerCandidate.getAttribute("id"); //$NON-NLS-1$
 					if (candidateId != null) {
 						if (candidateId.equals(id)) {
 							try {
-								provider = (IRSEPersistenceProvider) providerCandidate.createExecutableExtension("class");
+								provider = (IRSEPersistenceProvider) providerCandidate.createExecutableExtension("class"); //$NON-NLS-1$
 							} catch (CoreException e) {
 								logger.logError("Exception loading persistence provider", e); // DWD nls
 							}
@@ -144,7 +143,7 @@ public class RSEPersistenceManager implements IRSEPersistenceManager {
 	 * TODO: need to determine what this is. Having more than one is problematic.
 	 */
 	public IRSEPersistenceProvider getRSEPersistenceProvider() {
-		IRSEPersistenceProvider provider = getRSEPersistenceProvider("org.eclipse.rse.persistence.PropertyFileProvider");
+		IRSEPersistenceProvider provider = getRSEPersistenceProvider("org.eclipse.rse.persistence.PropertyFileProvider"); //$NON-NLS-1$
 		return provider;
 	}
 
@@ -178,7 +177,7 @@ public class RSEPersistenceManager implements IRSEPersistenceManager {
 				commit(profiles[idx]);
 			} catch (Exception exc) {
 				exc.printStackTrace();
-				System.out.println("Error saving profile " + profiles[idx] + ": " + exc.getClass().getName() + " " + exc.getMessage());
+				System.out.println("Error saving profile " + profiles[idx] + ": " + exc.getClass().getName() + " " + exc.getMessage()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 				return false;
 			}
 		}

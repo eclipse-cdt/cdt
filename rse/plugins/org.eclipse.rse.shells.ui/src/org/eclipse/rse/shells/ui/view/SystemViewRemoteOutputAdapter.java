@@ -125,7 +125,7 @@ implements  ISystemViewElementAdapter, ISystemRemoteElementAdapter, ISystemOutpu
 					{
 						IRemoteOutput result = (IRemoteOutput) firstSelection;
 						String type = result.getType();
-						if (type.equals("prompt")) //$NON-NLS-1$
+						if (type.equals(ISystemOutputRemoteTypes.TYPE_PROMPT))
 						{
 						    if (_pasteToPromptAction == null)
 							{
@@ -134,7 +134,7 @@ implements  ISystemViewElementAdapter, ISystemRemoteElementAdapter, ISystemOutpu
 							
 							menu.add(menuGroup, _pasteToPromptAction);
 						}
-						else if (type.equals("directory")) //$NON-NLS-1$
+						else if (type.equals(ISystemOutputRemoteTypes.TYPE_DIRECTORY))
 						{
 							IRemoteOutput output = (IRemoteOutput)firstSelection;
 							if (output.getAbsolutePath() != null)
@@ -478,15 +478,15 @@ implements  ISystemViewElementAdapter, ISystemRemoteElementAdapter, ISystemOutpu
 //							
 //							marker = localMatch.createMarker(IMarker.TEXT);
 //					
-//							if (type.equals("error"))
+//							if (type.equals(ISystemOutputRemoteTypes.TYPE_ERROR))
 //							{
 //								marker.setAttribute(IMarker.SEVERITY, IMarker.SEVERITY_ERROR);
 //							}
-//							else if (type.equals("warning"))
+//							else if (type.equals(ISystemOutputRemoteTypes.TYPE_WARNING))
 //							{
 //								marker.setAttribute(IMarker.SEVERITY, IMarker.SEVERITY_WARNING);
 //							}
-//							else if (type.equals("informational"))
+//							else if (type.equals(ISystemOutputRemoteTypes.TYPE_INFORMATIONAL))
 //							{
 //								marker.setAttribute(IMarker.SEVERITY, IMarker.SEVERITY_INFO);
 //							}

@@ -142,7 +142,7 @@ public class SshServiceCommandShell extends ServiceCommandShell implements ISyst
 			if (parsedMsg != null)
 			{		
 				String file = parsedMsg.file;
-				if (type.equals("prompt")) //$NON-NLS-1$
+				if (type.equals(ISystemOutputRemoteTypes.TYPE_PROMPT))
 				{
 					_workingDir = file;
 					output.setAbsolutePath(_workingDir);

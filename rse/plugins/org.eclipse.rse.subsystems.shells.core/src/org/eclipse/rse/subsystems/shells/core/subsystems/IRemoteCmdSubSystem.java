@@ -43,11 +43,11 @@ public interface IRemoteCmdSubSystem extends ISubSystem{
 	 * Execute a remote command. This is only applicable if the subsystem factory reports
 	 *  true for supportsCommands().
 	 * @param command Command to be executed remotely.
-	 * @param Object context context of a command (i.e. working directory).  Null is valid and means to run the 
+	 * @param context context of a command (i.e. working directory).  Null is valid and means to run the 
 	 * 			command as a shell command in the default shell.
 	 * @return Array of objects that are the result of running this command. Typically, these
 	 *   are messages logged by the command.
-     * @see org.eclipse.rse.core.subsystems.shells.ui.RemoteCommandHelpers
+     * @see org.eclipse.rse.shells.ui.RemoteCommandHelpers
 	 */
 	public Object[] runCommand(String command, Object context) throws Exception;
 	
@@ -55,12 +55,12 @@ public interface IRemoteCmdSubSystem extends ISubSystem{
 	 * Execute a remote command. This is only applicable if the subsystem factory reports
 	 *  true for supportsCommands().
 	 * @param command Command to be executed remotely.
-	 * @param Object context context of a command (i.e. working directory).  Null is valid and means to run the 
+	 * @param context context of a command (i.e. working directory).  Null is valid and means to run the 
 	 * 			command as a shell command in the default shell.
 	 * @param interpretOutput whether to interpret the output or not
 	 * @return Array of objects that are the result of running this command. Typically, these
 	 *   are messages logged by the command.
-     * @see org.eclipse.rse.core.subsystems.shells.ui.RemoteCommandHelpers
+     * @see org.eclipse.rse.shells.ui.RemoteCommandHelpers
 	 */
 	public Object[] runCommand(String command, Object context, boolean interpretOutput) throws Exception;
 
@@ -68,30 +68,30 @@ public interface IRemoteCmdSubSystem extends ISubSystem{
 	/**
 	 * Launch a new command shell. This is only applicable if the subsystem factory reports
 	 *  true for supportsCommands().
-	 * @param Object context context of a shell (i.e. working directory).  Null is valid and means to use the default context.
+	 * @param context context of a shell (i.e. working directory).  Null is valid and means to use the default context.
 	 * @return An object that represents the command and it's output.
-     * @see org.eclipse.rse.core.subsystems.shells.ui.RemoteCommandHelpers
+     * @see org.eclipse.rse.shells.ui.RemoteCommandHelpers
 	 */
 	public IRemoteCommandShell runShell(Object context) throws Exception;
 
 
 	/**
 	 * Send a command as input to a running command shell. 
-	 * @param String input the command to invoke in the shell.
-	 * @param Object commandObject the shell or command to send the invocation to.
-     * @see org.eclipse.rse.core.subsystems.shells.ui.RemoteCommandHelpers
+	 * @param input the command to invoke in the shell.
+	 * @param commandObject the shell or command to send the invocation to.
+     * @see org.eclipse.rse.shells.ui.RemoteCommandHelpers
 	 */
 	public void sendCommandToShell(String input, Object commandObject) throws Exception;
 
 	/**
 	 * Cancel a shell or running command.
-		 * @param Object commandObject the shell or command to cancel.
+	 * @param commandObject the shell or command to cancel.
 	 */
 	public void cancelShell(Object commandObject) throws Exception;
 
 	/**
 	 * Remove a shell.  If the shell is running cancel it first.
-	 * @param Object commandObject the shell or command to cancel & remove.
+	 * @param commandObject the shell or command to cancel & remove.
 	 */
 	public void removeShell(Object commandObject) throws Exception;
 

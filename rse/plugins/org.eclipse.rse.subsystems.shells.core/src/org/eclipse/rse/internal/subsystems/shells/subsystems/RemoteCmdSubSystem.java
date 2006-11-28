@@ -29,7 +29,6 @@ import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.rse.core.SystemBasePlugin;
 import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.model.IPropertySet;
-import org.eclipse.rse.core.model.ISystemRegistry;
 import org.eclipse.rse.core.subsystems.CommunicationsEvent;
 import org.eclipse.rse.core.subsystems.ICommunicationsListener;
 import org.eclipse.rse.core.subsystems.IConnectorService;
@@ -172,7 +171,7 @@ public abstract class RemoteCmdSubSystem extends SubSystem implements IRemoteCmd
 		}
 		catch (Exception exc)
 		{
-			SystemBasePlugin.logError("Error saving command subsystem after setting env var entries", exc);
+			SystemBasePlugin.logError("Error saving command subsystem after setting env var entries", exc); //$NON-NLS-1$
 		}
 	}
 
@@ -206,7 +205,7 @@ public abstract class RemoteCmdSubSystem extends SubSystem implements IRemoteCmd
 		}
 		catch (Exception exc)
 		{
-			SystemBasePlugin.logError("Error saving command subsystem after adding env var entry", exc);
+			SystemBasePlugin.logError("Error saving command subsystem after adding env var entry", exc); //$NON-NLS-1$
 		}
 	}
 
@@ -222,7 +221,7 @@ public abstract class RemoteCmdSubSystem extends SubSystem implements IRemoteCmd
 		}
 		catch (Exception exc)
 		{
-			SystemBasePlugin.logError("Error saving command subsystem after removing env var entry", exc);
+			SystemBasePlugin.logError("Error saving command subsystem after removing env var entry", exc); //$NON-NLS-1$
 		}
 	}
 
@@ -486,7 +485,6 @@ public abstract class RemoteCmdSubSystem extends SubSystem implements IRemoteCmd
 	 * Get the default running command shell for this command subsystem. If no
 	 * such shell exists or is running, a new one is launched.
 	 * 
-	 * @param shell the window used for notification
 	 * @return the default running command shell
 	 */
 	public IRemoteCommandShell getDefaultShell() throws Exception
@@ -940,7 +938,7 @@ public abstract class RemoteCmdSubSystem extends SubSystem implements IRemoteCmd
 		}
 		else
 			SystemBasePlugin.logDebugMessage(this.getClass().getName(),
-					"in SubSystemImpl.sendCommandToShell: isConnected() returning false!");
+					"in SubSystemImpl.sendCommandToShell: isConnected() returning false!"); //$NON-NLS-1$
 
 	}
 
@@ -978,15 +976,13 @@ public abstract class RemoteCmdSubSystem extends SubSystem implements IRemoteCmd
 			}
 			else
 				SystemBasePlugin.logDebugMessage(this.getClass().getName(),
-						"in SubSystemImpl.cancelShell: isConnected() returning false!");
+						"in SubSystemImpl.cancelShell: isConnected() returning false!"); //$NON-NLS-1$
 		}
 	}
 
 	/**
 	 * Remove and Cancel a shell or running command.
 	 * 
-	 * @param shell parent shell used to show error message. Null means you will
-	 *            handle showing the error message.
 	 * @param commandObject the shell or command to cancel.
 	 */
 	public void removeShell(Object commandObject) throws Exception
@@ -1018,7 +1014,7 @@ public abstract class RemoteCmdSubSystem extends SubSystem implements IRemoteCmd
 			}
 			else
 				SystemBasePlugin.logDebugMessage(this.getClass().getName(),
-						"in SubSystemImpl.removeShell: isConnected() returning false!");
+						"in SubSystemImpl.removeShell: isConnected() returning false!"); //$NON-NLS-1$
 		}
 	}
 

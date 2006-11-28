@@ -74,7 +74,7 @@ public abstract class RemoteCommandShellOperation implements ISystemResourceChan
 	
 	private Stack _commandStack;
 	private int _outputOffset = 0;
-	private String _cmdSeparator = ";";
+	private String _cmdSeparator = ";"; //$NON-NLS-1$
 	
 	private Random _random;
 	
@@ -147,12 +147,12 @@ public abstract class RemoteCommandShellOperation implements ISystemResourceChan
 
 	private String getEchoCmd(CommandAlias alias)
 	{
-		return "echo " + getEchoResult(alias);
+		return "echo " + getEchoResult(alias); //$NON-NLS-1$
 	}
 	
 	private String getEchoResult(CommandAlias alias)
 	{
-		return "BEGIN-END-TAG:" + alias.getAlias() + " done";
+		return "BEGIN-END-TAG:" + alias.getAlias() + " done"; //$NON-NLS-1$ //$NON-NLS-2$
 	}
 	
 	public String getCurrentCommand()
@@ -319,7 +319,7 @@ public abstract class RemoteCommandShellOperation implements ISystemResourceChan
 	        int index = outputEcho.indexOf(expected);
 	        if (index > 0)
 	        {
-	            if (outputEcho.charAt(index - 1) != ';' && (outputEcho.indexOf("echo") == -1))
+	            if (outputEcho.charAt(index - 1) != ';' && (outputEcho.indexOf("echo") == -1)) //$NON-NLS-1$
 	            {
 	                return true;
 	            }

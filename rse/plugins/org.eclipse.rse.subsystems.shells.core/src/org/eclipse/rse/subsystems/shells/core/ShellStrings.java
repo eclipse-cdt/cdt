@@ -20,7 +20,7 @@ import org.eclipse.osgi.util.NLS;
 
 public class ShellStrings extends NLS 
 {
-	private static String BUNDLE_NAME = "org.eclipse.rse.subsystems.shells.core.ShellStrings";
+	private static String BUNDLE_NAME = "org.eclipse.rse.subsystems.shells.core.ShellStrings"; //$NON-NLS-1$
 
 	public static String RESID_SHELLS_COMMAND_SHELL_LABEL;
 	public static String RSESubSystemOperation_Cancel_Shell_message;

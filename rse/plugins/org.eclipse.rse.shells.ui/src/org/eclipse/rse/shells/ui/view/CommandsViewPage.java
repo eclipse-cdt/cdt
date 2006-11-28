@@ -34,6 +34,7 @@ import org.eclipse.rse.services.clientserver.PathUtility;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.shells.ui.ShellResources;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile;
+import org.eclipse.rse.subsystems.shells.core.model.ISystemOutputRemoteTypes;
 import org.eclipse.rse.subsystems.shells.core.subsystems.IRemoteCmdSubSystem;
 import org.eclipse.rse.subsystems.shells.core.subsystems.IRemoteCommandShell;
 import org.eclipse.rse.ui.ISystemMessages;
@@ -383,7 +384,7 @@ FocusListener
 			else if (element instanceof RemoteOutput)
 			{
 				RemoteOutput out = (RemoteOutput)element;
-				if (out.getType().equals("directory")) //$NON-NLS-1$
+				if (out.getType().equals(ISystemOutputRemoteTypes.TYPE_DIRECTORY))
 				{
 					String path = out.getAbsolutePath();
 					ISubSystem cmdSubSystem = adapter.getSubSystem(element);

@@ -22,6 +22,7 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.rse.model.ISystemResourceChangeEvent;
 import org.eclipse.rse.model.ISystemResourceChangeEvents;
+import org.eclipse.rse.subsystems.shells.core.model.ISystemOutputRemoteTypes;
 import org.eclipse.rse.subsystems.shells.core.subsystems.IRemoteCommandShell;
 import org.eclipse.rse.subsystems.shells.core.subsystems.IRemoteOutput;
 import org.eclipse.rse.ui.ISystemThemeConstants;
@@ -210,16 +211,16 @@ public class SystemCommandsView extends SystemTableView implements ISystemThemeC
 		{
 			IRemoteOutput rmtOutput = (IRemoteOutput) child;
 			String type = rmtOutput.getType();
-			if (type.equals("stderr") || type.equals("error")) //$NON-NLS-1$ //$NON-NLS-2$
+			if (type.equals("stderr") || type.equals(ISystemOutputRemoteTypes.TYPE_ERROR)) //$NON-NLS-1$
 			{
 				newItem.setForeground(_errColor);
-			} else if (type.equals("warning")) //$NON-NLS-1$
+			} else if (type.equals(ISystemOutputRemoteTypes.TYPE_WARNING))
 			{
 				newItem.setForeground(_warColor);
-			} else if (type.equals("informational")) //$NON-NLS-1$
+			} else if (type.equals(ISystemOutputRemoteTypes.TYPE_INFORMATIONAL))
 			{
 				newItem.setForeground(_infColor);
-			} else if (type.equals("prompt")) //$NON-NLS-1$
+			} else if (type.equals(ISystemOutputRemoteTypes.TYPE_PROMPT))
 			{
 				newItem.setForeground(_prmColor);
 			} else

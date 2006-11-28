@@ -30,7 +30,7 @@ public interface ISystemOutputRemoteTypes
 	 * There is only one type category for remote output.
 	 * It is "output".
 	 */
-    public static final String TYPECATEGORY = "output";
+    public static final String TYPECATEGORY = "output"; //$NON-NLS-1$
 
 
     // -----------
@@ -40,62 +40,62 @@ public interface ISystemOutputRemoteTypes
     /**
 	 * A folder object
 	 */
-    public static final String TYPE_DIRECTORY = "directory";
+    public static final String TYPE_DIRECTORY = "directory"; //$NON-NLS-1$
   
     /**
 	 * A file object
 	 */
-    public static final String TYPE_FILE = "file";
+    public static final String TYPE_FILE = "file"; //$NON-NLS-1$
   
     /**
 	 * A command object
 	 */
-    public static final String TYPE_COMMAND = "command";
+    public static final String TYPE_COMMAND = "command"; //$NON-NLS-1$
  
    /**
 	 * A prompt object
 	 */
-    public static final String TYPE_PROMPT = "prompt";
+    public static final String TYPE_PROMPT = "prompt"; //$NON-NLS-1$
 
  	/**
 	 * An error object
 	 */
-    public static final String TYPE_ERROR = "error";
+    public static final String TYPE_ERROR = "error"; //$NON-NLS-1$
 
     /**
 	 * A warning object
 	 */
-    public static final String TYPE_WARNING = "warning";
+    public static final String TYPE_WARNING = "warning"; //$NON-NLS-1$
 
     /**
 	 * An informational object
 	 */
-    public static final String TYPE_INFORMATIONAL = "informational";
+    public static final String TYPE_INFORMATIONAL = "informational"; //$NON-NLS-1$
 
     /**
 	 * A grep object
 	 */
-    public static final String TYPE_GREP = "grep";
+    public static final String TYPE_GREP = "grep"; //$NON-NLS-1$
     
     
     /**
      *  An environment variable object
      */
-    public static final String TYPE_ENVVAR = "envvar";
+    public static final String TYPE_ENVVAR = "envvar"; //$NON-NLS-1$
 
 	/**
 	 *  A libpath environment variable object
 	 */
-	public static final String TYPE_ENVVAR_LIBPATH = "libpathenvvar";
+	public static final String TYPE_ENVVAR_LIBPATH = "libpathenvvar"; //$NON-NLS-1$
 
 	/**
 	  *  The path environment variable object
 	  */
-    public static final String TYPE_ENVVAR_PATH = "pathenvvar";
+    public static final String TYPE_ENVVAR_PATH = "pathenvvar"; //$NON-NLS-1$
     
 	/**
 	  *  A process object
 	  */
-	public static final String TYPE_PROCESS = "process";
+	public static final String TYPE_PROCESS = "process"; //$NON-NLS-1$
     
 }

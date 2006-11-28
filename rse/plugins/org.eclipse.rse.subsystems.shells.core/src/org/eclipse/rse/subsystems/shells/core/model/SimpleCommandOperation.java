@@ -128,7 +128,7 @@ public class SimpleCommandOperation
 			
 			}
 		}
-		return "";
+		return ""; //$NON-NLS-1$
 	}
 
 }

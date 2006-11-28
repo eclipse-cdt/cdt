@@ -182,7 +182,7 @@ public class SystemViewPromptableAdapter
 	 */
 	public String getMementoHandleKey(Object element)
 	{
-		return "Prompt";
+		return "Prompt"; //$NON-NLS-1$
 	}
 
     /**

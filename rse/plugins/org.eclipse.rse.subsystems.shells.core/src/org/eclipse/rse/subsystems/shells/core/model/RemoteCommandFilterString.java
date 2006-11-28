@@ -55,7 +55,7 @@ public class RemoteCommandFilterString implements Cloneable
 	 */
 	public RemoteCommandFilterString()
 	{
-		shellStr = "*";
+		shellStr = "*"; //$NON-NLS-1$
 	}
 	/**
 	 * Constructor to use when there is no existing filter string.
@@ -67,7 +67,7 @@ public class RemoteCommandFilterString implements Cloneable
 	 */
 	public RemoteCommandFilterString(IRemoteCmdSubSystemConfiguration subsysFactory)
 	{
-		shellStr = "*";    	
+		shellStr = "*"; //$NON-NLS-1$    	
 	}
 	/**
 	 * Constructor to use when an absolute filter string already exists.
@@ -106,9 +106,9 @@ public class RemoteCommandFilterString implements Cloneable
      */
     public static String getTypesString(String[] typesArray)
     {
-    	StringBuffer typesBuffer = new StringBuffer("");
+    	StringBuffer typesBuffer = new StringBuffer(""); //$NON-NLS-1$
     	for (int idx=0; idx<typesArray.length; idx++)
-    	   typesBuffer.append(typesArray[idx]+",");
+    	   typesBuffer.append(typesArray[idx]+","); //$NON-NLS-1$
     	return typesBuffer.toString();
     }
     /**

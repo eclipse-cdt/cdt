@@ -29,6 +29,7 @@ import org.eclipse.rse.services.shells.IHostShellChangeEvent;
 import org.eclipse.rse.services.shells.ParsedOutput;
 import org.eclipse.rse.services.shells.Patterns;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFileSubSystem;
+import org.eclipse.rse.subsystems.shells.core.model.ISystemOutputRemoteTypes;
 import org.eclipse.rse.subsystems.shells.core.subsystems.IRemoteCmdSubSystem;
 import org.eclipse.rse.subsystems.shells.core.subsystems.IRemoteOutput;
 import org.eclipse.rse.subsystems.shells.core.subsystems.servicesubsystem.ServiceCommandShell;
@@ -114,13 +115,13 @@ public class LocalServiceCommandShell extends ServiceCommandShell
 			if (parsedMsg != null)
 			{		
 				String file = parsedMsg.file;
-				if (type.equals("prompt")) //$NON-NLS-1$
+				if (type.equals(ISystemOutputRemoteTypes.TYPE_PROMPT))
 				{
 					_workingDir = file;
 					output.setAbsolutePath(_workingDir);
 				}
 				/*
-				else if (type.equals("file") || type.equals("directory"))
+				else if (type.equals(ISystemOutputRemoteTypes.TYPE_FILE) || type.equals(ISystemOutputRemoteTypes.TYPE_DIRECTORY))
 				{
 					output.setAbsolutePath(parsedMsg.file);
 				}

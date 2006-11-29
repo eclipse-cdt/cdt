@@ -16,6 +16,7 @@
 
 package org.eclipse.rse.ui.actions;
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.jface.action.Action;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.rse.core.filters.ISystemFilterReference;
 import org.eclipse.rse.model.ISystemPromptableObject;
@@ -23,12 +24,8 @@ import org.eclipse.rse.ui.ISystemContextMenuConstants;
 import org.eclipse.rse.ui.ISystemIconConstants;
 import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemResources;
-import org.eclipse.rse.ui.view.SystemPerspectiveLayout;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.IPerspectiveDescriptor;
-import org.eclipse.ui.IPerspectiveRegistry;
 import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.OpenInNewWindowAction;
 
 
@@ -42,8 +39,6 @@ public class SystemOpenExplorerPerspectiveAction
 {
 	//private boolean replaceEnabled = true;
 	private IWorkbenchWindow window;
-	private IPerspectiveRegistry reg;
-	private IPerspectiveDescriptor desc = null;
 	
 	/**
 	 * Constructor 
@@ -54,12 +49,10 @@ public class SystemOpenExplorerPerspectiveAction
 				RSEUIPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_PERSPECTIVE_ID),
 				parent);
 		this.window = currentWorkbenchWindow;
-		this.reg = PlatformUI.getWorkbench().getPerspectiveRegistry();
-	    this.desc = reg.findPerspectiveWithId(SystemPerspectiveLayout.ID);
 		
         allowOnMultipleSelection(false);
 		setContextMenuGroup(ISystemContextMenuConstants.GROUP_OPEN);  
-  	    setHelp(RSEUIPlugin.HELPPREFIX+"actn0016"); 
+  	    setHelp(RSEUIPlugin.HELPPREFIX+"actn0016");  //$NON-NLS-1$
 	}
 
 	/**

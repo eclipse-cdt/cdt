@@ -57,8 +57,8 @@ import org.eclipse.swt.widgets.Text;
 public class InheritableEntryField extends Composite implements KeyListener {
 	private InheritButton toggleButton = null;
 	private Text entryField = null;
-	private String inheritValue = "";
-	private String localValue = "";
+	private String inheritValue = ""; //$NON-NLS-1$
+	private String localValue = ""; //$NON-NLS-1$
 	private boolean isLocal = true;
 	private boolean allowEditOfInherited = false;
 	private List listeners;
@@ -76,8 +76,8 @@ public class InheritableEntryField extends Composite implements KeyListener {
 	 * Constructor when you want to set the style of the toggle button and entry field too.
 	 * @param parent The parent composite to hold this widget
 	 * @param style the SWT style for this overall widget (eg, SWT.BORDER or SWT.NULL)
-	 * @param style the SWT style for the toggle button widget
-	 * @param style the SWT style for the entry field widget
+	 * @param buttonStyle the SWT style for the toggle button widget
+	 * @param textStyle the SWT style for the entry field widget
 	 */
 	public InheritableEntryField(Composite parent, int style, int buttonStyle, int textStyle) {
 		this(parent, style, buttonStyle, textStyle, true);
@@ -87,8 +87,8 @@ public class InheritableEntryField extends Composite implements KeyListener {
 	 * Constructor when you want to hide the toggle button
 	 * @param parent The parent composite to hold this widget
 	 * @param style the SWT style for this overall widget (eg, SWT.BORDER or SWT.NULL)
-	 * @param style the SWT style for the toggle button widget
-	 * @param style the SWT style for the entry field widget
+	 * @param buttonStyle the SWT style for the toggle button widget
+	 * @param textStyle the SWT style for the entry field widget
 	 * @param showToggleButton true to show the toggle button, false not to
 	 */
 	public InheritableEntryField(Composite parent, int style, int buttonStyle, int textStyle, boolean showToggleButton) {
@@ -150,7 +150,7 @@ public class InheritableEntryField extends Composite implements KeyListener {
 	 * Set the entry field's inherited text value
 	 */
 	public void setInheritedText(String text) {
-		if (text == null) text = "";
+		if (text == null) text = ""; //$NON-NLS-1$
 		this.inheritValue = text;
 	}
 
@@ -169,7 +169,7 @@ public class InheritableEntryField extends Composite implements KeyListener {
 	 * Set the entry field's local text value
 	 */
 	public void setLocalText(String text) {
-		if (text == null) text = "";
+		if (text == null) text = ""; //$NON-NLS-1$
 		this.localValue = text;
 	}
 
@@ -181,7 +181,7 @@ public class InheritableEntryField extends Composite implements KeyListener {
 		if (isLocal)
 			return entryField.getText();
 		else
-			return "";
+			return ""; //$NON-NLS-1$
 	}
 
 	/**
@@ -291,8 +291,8 @@ public class InheritableEntryField extends Composite implements KeyListener {
 	// INTERNAL-USE METHODS...
 	// -----------------------
 	/**
-	 * Prepares this composite control and sets the default layout data.
-	 * @param Number of columns the new group will contain.     
+	 * Prepares the given composite control and sets the default layout data.
+	 * @param numColumns the number of columns in the composite layout.
 	 */
 	protected Composite prepareComposite(int numColumns) {
 		Composite composite = this;
@@ -313,9 +313,9 @@ public class InheritableEntryField extends Composite implements KeyListener {
 	}
 
 	/**
-	 * Create our text field and insert it into a GridLayout.
-	 * Assign the listener to the passed in implementer of Listener.
-	 * @param GridLayout composite to put the field into.
+	 * Creates a text field with a given style.
+	 * @param parent the parent composite.
+	 * @param textStyle the style of the text field.
 	 */
 	protected void createTextField(Composite parent, int textStyle) {
 		entryField = new Text(parent, textStyle);

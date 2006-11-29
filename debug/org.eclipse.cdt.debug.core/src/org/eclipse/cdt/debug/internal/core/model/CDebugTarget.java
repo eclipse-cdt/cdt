@@ -436,7 +436,7 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 	 * 
 	 * @param name the name of this debug target
 	 */
-	protected void setName( String name ) {
+	public void setName( String name ) {
 		fName = name;
 	}
 

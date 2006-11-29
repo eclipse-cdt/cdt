@@ -35,6 +35,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.rse.core.SystemBasePlugin;
 import org.eclipse.rse.core.model.IHost;
@@ -92,7 +93,7 @@ public class SystemEditableRemoteFile implements ISystemEditableRemoteObject, IP
 	/**
 	 * Internal class for downloading file
 	 */
-	private class InternalDownloadFileRunnable extends UIJob
+	private class InternalDownloadFileRunnable extends Job
 	//extends WorkspaceModifyOperation
 	{
 
@@ -165,7 +166,7 @@ public class SystemEditableRemoteFile implements ISystemEditableRemoteObject, IP
 			}
 		}
 		
-		public IStatus runInUIThread(IProgressMonitor monitor) {
+		public IStatus run(IProgressMonitor monitor) {
 			try
 			{
 				execute(monitor);

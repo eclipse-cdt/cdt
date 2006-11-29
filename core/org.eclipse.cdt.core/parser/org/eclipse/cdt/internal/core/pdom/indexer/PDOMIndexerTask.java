@@ -27,6 +27,8 @@ import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorIncludeStatement;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorMacroDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
+import org.eclipse.cdt.core.dom.ast.IBinding;
+import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.index.IIndexFile;
 import org.eclipse.cdt.core.index.IIndexInclude;
@@ -54,16 +56,27 @@ public abstract class PDOMIndexerTask implements IPDOMIndexerTask {
 	protected volatile int fTotalSourcesEstimate= 0;
 	protected volatile int fCompletedSources= 0;
 	protected volatile int fCompletedHeaders= 0;
-	protected int fErrorCount;
 	protected Map fContextMap= new HashMap();
 	protected volatile String fMessage;
-	protected boolean fTrace;
+	
+	private boolean fTrace;
+	private boolean fShowStatistics;
+	private int fResolutionTime;
+	private int fParsingTime;
+	private int fAddToIndexTime;
+	private int fErrorCount;
+	private int fReferenceCount= 0;
+	private int fDeclarationCount= 0;
+	private int fProblemBindingCount= 0;
 	
 	protected PDOMIndexerTask() {
-		String trace = Platform.getDebugOption(CCorePlugin.PLUGIN_ID + "/debug/indexer"); //$NON-NLS-1$
-		if (trace != null && trace.equalsIgnoreCase("true")) { //$NON-NLS-1$
-			fTrace= true;
-		}
+		fTrace= checkDebugOption("indexer", "true");  //$NON-NLS-1$//$NON-NLS-2$
+		fShowStatistics= checkDebugOption("pdomtimings", "true");  //$NON-NLS-1$//$NON-NLS-2$
+	}
+	
+	private boolean checkDebugOption(String option, String value) {
+		String trace = Platform.getDebugOption(CCorePlugin.PLUGIN_ID + "/debug/" + option);  //$NON-NLS-1$
+		return (trace != null && trace.equalsIgnoreCase(value));
 	}
 	
 	protected void processDelta(ICElementDelta delta, Collection added, Collection changed, Collection removed) throws CoreException {
@@ -190,7 +203,9 @@ public abstract class PDOMIndexerTask implements IPDOMIndexerTask {
 			}
 			fMessage= MessageFormat.format(Messages.PDOMIndexerTask_parsingFileTask,
 					new Object[]{path.lastSegment(), path.removeLastSegments(1).toString()});
+			long start= System.currentTimeMillis();
 			doParseTU(tu, pm);
+			fParsingTime += System.currentTimeMillis()-start;
 		}
 		catch (CoreException e) {
 			swallowError(path, e); 
@@ -304,16 +319,28 @@ public abstract class PDOMIndexerTask implements IPDOMIndexerTask {
 			ArrayList[] arrayLists = ((ArrayList[]) symbolMap.get(path));
 						
 			// resolve the names
+			long start= System.currentTimeMillis();
 			ArrayList names= arrayLists[2];
 			for (int j=0; j<names.size(); j++) {
-				((IASTName[]) names.get(j))[0].resolveBinding();
+				final IASTName name = ((IASTName[]) names.get(j))[0];
+				final IBinding binding= name.resolveBinding();
+				if (fShowStatistics) {
+					if (binding instanceof IProblemBinding)
+						fProblemBindingCount++;
+					else if (name.isReference()) 
+						fReferenceCount++;
+					else 
+						fDeclarationCount++;
+				}
 			}
+			fResolutionTime += System.currentTimeMillis()-start;
 		}
 
 		boolean isFirstRequest= true;
 		boolean isFirstAddition= true;
 		IWritableIndex index= getIndex();
 		index.acquireWriteLock(getReadlockCount());
+		long start= System.currentTimeMillis();
 		try {
 			for (int i=0; i<orderedPaths.length; i++) {
 				if (pm.isCanceled()) 
@@ -340,6 +367,7 @@ public abstract class PDOMIndexerTask implements IPDOMIndexerTask {
 		} finally {
 			index.releaseWriteLock(getReadlockCount());
 		}
+		fAddToIndexTime+= System.currentTimeMillis()-start;
 		fCompletedSources++;
 	}
 
@@ -444,5 +472,27 @@ public abstract class PDOMIndexerTask implements IPDOMIndexerTask {
 			index.setFileContent(file, includes, macros, names);
 		}
 		return file;
+	}
+	
+	protected void traceEnd(long start) {
+		if (fShowStatistics) {
+			String name= getClass().getName();
+			name= name.substring(name.lastIndexOf('.')+1);
+
+			System.out.println(name + " " + getIndexer().getProject().getElementName()  //$NON-NLS-1$
+					+ " (" + fCompletedSources + " sources, "  //$NON-NLS-1$ //$NON-NLS-2$
+					+ fCompletedHeaders + " headers)"); //$NON-NLS-1$
+
+			System.out.println(name + " Timings: "  //$NON-NLS-1$
+					+ (System.currentTimeMillis() - start) + " total, " //$NON-NLS-1$
+					+ fParsingTime + " parser, " //$NON-NLS-1$
+					+ fResolutionTime + " resolution, " //$NON-NLS-1$
+					+ fAddToIndexTime + " index update."); //$NON-NLS-1$
+			System.out.println(name + " Result: " //$NON-NLS-1$
+					+ fDeclarationCount + " declarations, " //$NON-NLS-1$
+					+ fReferenceCount + " references, " //$NON-NLS-1$
+					+ fErrorCount + " errors, " //$NON-NLS-1$
+					+ fProblemBindingCount + " problems.");  //$NON-NLS-1$
+		}
 	}
 }

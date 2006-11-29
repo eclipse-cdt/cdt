@@ -18,7 +18,6 @@ import java.util.List;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 
 /**
@@ -32,8 +31,8 @@ class PDOMFullReindex extends PDOMFullIndexerJob {
 	}
 
 	public void run(final IProgressMonitor monitor) {
+		long start = System.currentTimeMillis();	
 		try {
-			long start = System.currentTimeMillis();	
 			boolean allFiles= getIndexAllFiles();
 			List sources= new ArrayList();
 			List headers= new ArrayList();
@@ -50,16 +49,11 @@ class PDOMFullReindex extends PDOMFullIndexerJob {
 
 			registerTUsInReaderFactory(sources);
 			parseTUs(sources, headers, monitor);
-
-			String showTimings = Platform.getDebugOption(CCorePlugin.PLUGIN_ID
-					+ "/debug/pdomtimings"); //$NON-NLS-1$
-			if (showTimings != null && showTimings.equalsIgnoreCase("true")) //$NON-NLS-1$
-				System.out.println(indexer.getID()+" indexing time: " + (System.currentTimeMillis() - start) //$NON-NLS-1$
-						+ " " + indexer.getProject().getElementName()); //$NON-NLS-1$
 		} catch (CoreException e) {
 			if (e.getStatus() != Status.CANCEL_STATUS)
 				CCorePlugin.log(e);
 		} catch (InterruptedException e) {
 		}
+		traceEnd(start);
 	}
 }

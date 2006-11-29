@@ -21,7 +21,6 @@ import org.eclipse.cdt.core.model.ICElementDelta;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.Platform;
 
 class PDOMFastHandleDelta extends PDOMFastIndexerJob {
 
@@ -35,9 +34,8 @@ class PDOMFastHandleDelta extends PDOMFastIndexerJob {
 	}
 
 	public void run(IProgressMonitor monitor) {
+		long start = System.currentTimeMillis();
 		try {
-			long start = System.currentTimeMillis();
-
 			setupIndexAndReaderFactory();
 			registerTUsInReaderFactory(changed);
 			
@@ -71,14 +69,10 @@ class PDOMFastHandleDelta extends PDOMFastIndexerJob {
 			if (monitor.isCanceled()) {
 				return;
 			}		
-
-			String showTimings = Platform.getDebugOption(CCorePlugin.PLUGIN_ID + "/debug/pdomtimings"); //$NON-NLS-1$
-			if (showTimings != null && showTimings.equalsIgnoreCase("true")) //$NON-NLS-1$
-				System.out.println("PDOM Fast Delta Time: " + (System.currentTimeMillis() - start)); //$NON-NLS-1$
-
 		} catch (CoreException e) {
 			CCorePlugin.log(e);
 		} catch (InterruptedException e) {
 		}
+		traceEnd(start);
 	}
 }

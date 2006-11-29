@@ -49,15 +49,13 @@ import org.eclipse.swt.widgets.Shell;
  * <p>
  * Your subclass <b>must supply</b> a method like the following:</p>
  * <pre><code>
- * public static AbstractSystemManager <b>getTheSystemManager</b>()
+ * public static MyConnectorServiceManager <b>getTheMyConnectorServiceManager</b>()
  *  {
  *  	if (inst == null)
- *  	  inst = new AbstractSystemManager();
+ *  	  inst = new MyConnectorServiceManager();
  *  	return inst;
  *  }
  * </code></pre>
- * Your {@link org.eclipse.rse.core.servicesubsystem.ServiceSubSystem SubSystem} class 
- * should then call this factory method in its {@link org.eclipse.rse.core.servicesubsystem.ServiceSubSystem#getSystemManager() getSystemManager()} method.
  */
 public abstract class AbstractConnectorServiceManager implements IConnectorServiceManager
 {
@@ -185,7 +183,7 @@ public abstract class AbstractConnectorServiceManager implements IConnectorServi
      *  subsystems in this SystemConnection, that share a single IConnectorService,
      *  so we keep them all in synch in terms of these two properties used
      *  by all ISystems.
-     * @see org.eclipse.rse.core.subsystems.SubSystemConfiguration#updateSubSystem(Shell,ISubSystem,boolean,String,boolean,Integer)
+     * @see org.eclipse.rse.core.subsystems.SubSystemConfiguration#updateSubSystem(ISubSystem, boolean, String, boolean, int)
      */    
     public void updateSubSystems(Shell shell, ISubSystem subsystem, boolean updateUserId, String userId, boolean updatePort, int port)
     {

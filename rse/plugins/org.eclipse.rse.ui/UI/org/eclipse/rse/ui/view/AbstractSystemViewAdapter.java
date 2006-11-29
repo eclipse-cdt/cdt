@@ -575,7 +575,7 @@ public abstract class AbstractSystemViewAdapter
 	 * 
 	 * @return an array containing all descriptors to be added to the default set of descriptors, or null
 	 *   if no additional properties desired.
-	 * @see #createSimplePropertyDescriptor(String,ResourceBundle,String)
+	 * @see #createSimplePropertyDescriptor(String, String, String)
 	 */
 	protected abstract IPropertyDescriptor[] internalGetPropertyDescriptors();	
 	
@@ -1105,9 +1105,8 @@ public abstract class AbstractSystemViewAdapter
 	 * set.  For optimal performance, this should be overridden.
 	 * 
 	 * @param set the set of objects to copy
-	 * @param sameSystemType indication of whether the source and target reside on the same type of system
 	 * @param monitor the progress monitor
-	 * @return a temporary workspace copies of the object that was copied
+	 * @return the set of objects as a result of the drag
 	 * 
 	 */
 	public ISystemResourceSet doDrag(SystemRemoteResourceSet set, IProgressMonitor monitor)

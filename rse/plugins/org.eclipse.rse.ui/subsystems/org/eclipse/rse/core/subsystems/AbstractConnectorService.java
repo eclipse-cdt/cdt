@@ -1044,7 +1044,7 @@ public abstract class AbstractConnectorService extends RSEModelObject implements
 //	}
 	/**
 	 * This methods returns the enablement state per server launch type.
-	 * If {@link #enableServerLaunchType(ServerLaunchType,boolean)} has not been
+	 * If {@link RemoteServerLauncher#enableServerLaunchType(ServerLaunchType, boolean)} has not been
 	 *  called for this server launch type, then it is enabled by default.
 	 * @see org.eclipse.rse.core.subsystems.ServerLaunchType
 	 */
@@ -1144,7 +1144,7 @@ public abstract class AbstractConnectorService extends RSEModelObject implements
 	
 	private void logException(Throwable t) {
 		Logger log = LoggerFactory.getLogger(RSEUIPlugin.getDefault());
-		log.logError("Unexpected exception", t);
+		log.logError("Unexpected exception", t); //$NON-NLS-1$
 	}
 	
 	protected NewPasswordInfo promptForNewPassword(SystemMessage prompt) throws InterruptedException

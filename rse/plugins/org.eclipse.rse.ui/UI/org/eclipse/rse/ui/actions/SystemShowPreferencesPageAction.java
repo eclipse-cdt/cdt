@@ -24,6 +24,7 @@ import org.eclipse.jface.preference.IPreferenceNode;
 import org.eclipse.jface.preference.PreferenceDialog;
 import org.eclipse.jface.preference.PreferenceManager;
 import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.ui.IViewActionDelegate;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.PlatformUI;
@@ -40,6 +41,10 @@ import org.eclipse.ui.internal.dialogs.WorkbenchPreferenceDialog;
  *  extension point.
  * @see org.eclipse.rse.ui.actions.SystemCascadingPreferencesAction 
  */
+/**
+ * @author kmunir
+ *
+ */
 public class SystemShowPreferencesPageAction extends SystemBaseAction implements IViewActionDelegate                                  
 {
 	
@@ -48,12 +53,12 @@ public class SystemShowPreferencesPageAction extends SystemBaseAction implements
 	private String preferencePageCategory;
 	
 	/**
-	 * Constructor. We are instantiated inside {@link RSEUIPlugin#getPreferencePageActionPlugins()}
+	 * Constructor. We are instantiated inside {@link RSEUIPlugin#getShowPreferencePageActions()}
 	 *  for each extension of our extension point <code>org.eclipse.rse.core.remoteSystemsViewPreferencesActions</code>
 	 */
 	public SystemShowPreferencesPageAction()
 	{
-		super("temp label", null);
+		super("temp label", null); //$NON-NLS-1$
 	}
     
 	/**
@@ -94,17 +99,17 @@ public class SystemShowPreferencesPageAction extends SystemBaseAction implements
 	}
 
 
+
 	/**
-	 * @see IActionDelegate#run(IAction)
+	 * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
 	 */
 	public void run(IAction action) 
 	{
 		run();
 	}
 
-
 	/**
-	 * @see IActionDelegate#selectionChanged(IAction, ISelection)
+	 * @see org.eclipse.ui.IActionDelegate#selectionChanged(org.eclipse.jface.action.IAction, org.eclipse.jface.viewers.ISelection)
 	 */
 	public void selectionChanged(IAction action, ISelection selection) 
 	{
@@ -130,7 +135,7 @@ public class SystemShowPreferencesPageAction extends SystemBaseAction implements
 			PreferenceDialog d = new WorkbenchPreferenceDialog(shell, pm);
 			d.create();
 			// TODO - hack to make this work in  3.1
-			String id = PlatformUI.PLUGIN_ID + ".preference_dialog_context";
+			String id = PlatformUI.PLUGIN_ID + ".preference_dialog_context"; //$NON-NLS-1$
 		
 			PlatformUI.getWorkbench().getHelpSystem().setHelp(d.getShell(), id);
 			d.open();	

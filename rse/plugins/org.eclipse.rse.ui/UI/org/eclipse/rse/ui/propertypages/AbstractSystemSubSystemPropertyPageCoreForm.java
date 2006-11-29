@@ -21,7 +21,6 @@ import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
-import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemResources;
 import org.eclipse.rse.ui.SystemWidgetHelpers;
 import org.eclipse.rse.ui.dialogs.SystemPromptDialog;
@@ -65,7 +64,6 @@ public abstract class AbstractSystemSubSystemPropertyPageCoreForm
 		callerInstanceOfWizardPage         = (caller instanceof WizardPage);
 		callerInstanceOfSystemPromptDialog = (caller instanceof SystemPromptDialog);		
 		callerInstanceOfPropertyPage       = (caller instanceof PropertyPage);
-		RSEUIPlugin sp = RSEUIPlugin.getDefault();
 	}
 	/**
 	 * Get the input element
@@ -103,22 +101,22 @@ public abstract class AbstractSystemSubSystemPropertyPageCoreForm
 		// Vendor display
 		labelText = SystemWidgetHelpers.appendColon(SystemResources.RESID_SUBSYSTEM_VENDOR_LABEL);
 		labelVendorPrompt = SystemWidgetHelpers.createLabel(composite_prompts, labelText);
-		labelVendor = SystemWidgetHelpers.createLabel(composite_prompts, " ");
+		labelVendor = SystemWidgetHelpers.createLabel(composite_prompts, " "); //$NON-NLS-1$
 
 		// Name display
 		labelText = SystemWidgetHelpers.appendColon(SystemResources.RESID_SUBSYSTEM_NAME_LABEL);
 		labelNamePrompt = SystemWidgetHelpers.createLabel(composite_prompts, labelText);
-		labelName = SystemWidgetHelpers.createLabel(composite_prompts, " ");
+		labelName = SystemWidgetHelpers.createLabel(composite_prompts, " "); //$NON-NLS-1$
 
 		// Connection display
 		labelText = SystemWidgetHelpers.appendColon(SystemResources.RESID_SUBSYSTEM_CONNECTION_LABEL);
 		labelConnectionPrompt = SystemWidgetHelpers.createLabel(composite_prompts, labelText);
-		labelConnection = SystemWidgetHelpers.createLabel(composite_prompts, " ");
+		labelConnection = SystemWidgetHelpers.createLabel(composite_prompts, " "); //$NON-NLS-1$
 
 		// Profile display
 		labelText = SystemWidgetHelpers.appendColon(SystemResources.RESID_SUBSYSTEM_PROFILE_LABEL);
 		labelProfilePrompt = SystemWidgetHelpers.createLabel(composite_prompts, labelText);
-		labelProfile = SystemWidgetHelpers.createLabel(composite_prompts, " ");
+		labelProfile = SystemWidgetHelpers.createLabel(composite_prompts, " "); //$NON-NLS-1$
 
 		createInner(composite_prompts, inputElement, shell);
 	

@@ -2596,6 +2596,9 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
 	public String getContainingFilename(int offset) {
 		_Context c = findContextForOffset(offset);
 		if( c == null ) return EMPTY_STRING;
+		if (c instanceof _Inclusion && c.containsInDirective(offset, 1)) {
+			c = c.getParent();
+		}
 		_CompositeFileContext file = c.getContainingFileContext();
 		if( file == null ) return EMPTY_STRING;
 		return file.reader.getPath();

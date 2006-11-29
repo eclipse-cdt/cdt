@@ -226,6 +226,8 @@ public class DOMLocationInclusionTests extends AST2FileBasePluginTest {
             assertNotNull(incs);
             assertEquals(incs.length, 1);
             assertSoleFileLocation(incs[0], filename, code.indexOf("#inc"), "#include \"foo.h\"".length());
+            // test bug 166026
+            assertEquals(tu.getFilePath(), incs[0].getContainingFilename());
             
             checkInclude(incs[0], filename, code, "foo.h", false);
         }

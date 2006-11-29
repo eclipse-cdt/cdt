@@ -372,6 +372,9 @@ public class MIPlugin extends Plugin {
 				session.getMIInferior().setConnected();
 			}
 		} catch (MIException e) {
+			if(session != null)
+				session.terminate();
+			
 			pgdb.destroy();
 			throw e;
 		}

@@ -228,7 +228,7 @@ public final class FileServiceSubSystem extends RemoteFileSubSystem implements I
 				if (parentPath.length() == 0) parentPath = "/"; //$NON-NLS-1$
 				String name = fofName.substring(lastSep + 1, fofName.length());
 			
-				IHostFile node = getFile(null, parentPath, name);
+				IHostFile node = getFile(new NullProgressMonitor(), parentPath, name);
 				if (node != null)
 				{
 					IRemoteFile parent = null;
@@ -339,11 +339,11 @@ public final class FileServiceSubSystem extends RemoteFileSubSystem implements I
 			throw new SystemMessageException(msg);
 		}
 		
-		IHostFile[] results = getFilesAndFolders(monitor, parentPath, fileNameFilter); 
+			IHostFile[] results = getFilesAndFolders(monitor, parentPath, fileNameFilter); 
 
-		IRemoteFile[] farr = getHostFileToRemoteFileAdapter().convertToRemoteFiles(this, context, parent, results);
-		parent.setContents(RemoteChildrenContentsType.getInstance(), fileNameFilter, farr);
-		return farr;
+			IRemoteFile[] farr = getHostFileToRemoteFileAdapter().convertToRemoteFiles(this, context, parent, results);
+			parent.setContents(RemoteChildrenContentsType.getInstance(), fileNameFilter, farr);
+			return farr;
 	}
 
 	/**

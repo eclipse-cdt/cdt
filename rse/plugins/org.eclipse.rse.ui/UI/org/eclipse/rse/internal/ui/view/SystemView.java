@@ -22,6 +22,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Vector;
 
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -5059,7 +5060,42 @@ public class SystemView extends TreeViewer implements ISystemTree, ISystemResour
 		Vector matches = new Vector();
 		matches = findAllRemoteItemReferences(parentElementOrTreePath, parentElementOrTreePath, matches);
 
-		
+		// get rid of references to items for different connection
+		if (parentElementOrTreePath instanceof IAdaptable)
+		{			
+			List invalidMatches = new ArrayList();
+			ISystemViewElementAdapter adapter = (ISystemViewElementAdapter)((IAdaptable)parentElementOrTreePath).getAdapter(ISystemViewElementAdapter.class);
+			if (adapter != null)
+			{
+				IHost parentHost = adapter.getSubSystem(parentElementOrTreePath).getHost();
+				for (int i = 0; i < matches.size(); i++)
+				{
+					Widget match = (Widget) matches.get(i);
+					Object data = match.getData();
+					if (data instanceof IAdaptable)
+					{
+						ISystemViewElementAdapter madapter = (ISystemViewElementAdapter)((IAdaptable)data).getAdapter(ISystemViewElementAdapter.class);
+						if (madapter != null)
+						{
+							IHost mHost = madapter.getSubSystem(data).getHost();
+							if (mHost != parentHost)
+							{
+								invalidMatches.add(match);
+							}
+						}
+					}
+				}
+			}
+			
+			if (invalidMatches.size() > 0)
+			{
+				for (int m = invalidMatches.size() - 1; m >= 0 ; m--)
+				{
+					Object match = invalidMatches.get(m);
+					matches.remove(match);
+				}
+			}
+		}
 		
 		//Widget[] widgets = internalFindItems(parentElementOrTreePath);
 		// If parent hasn't been realized yet, just ignore the add.

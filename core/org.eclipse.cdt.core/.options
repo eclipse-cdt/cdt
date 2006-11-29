@@ -12,26 +12,14 @@ org.eclipse.cdt.core/debug/parser/exceptions=false
 # Reports scanner activity
 org.eclipse.cdt.core/debug/scanner=false
 
-# Reports background indexer activity: indexing, saving index file, index queries
-org.eclipse.cdt.core/debug/indexmanager=false
-
 # Reports search activity
 org.eclipse.cdt.core/debug/search=false
-
-# Reports encoded index entries
-org.eclipse.cdt.core/debug/indexer=false
-
-# Reports time taken for an index
-org.eclipse.cdt.core/debug/indextimes=false
 
 # Reports search matches
 org.eclipse.cdt.core/debug/matchlocator=false
 
 # Reports delta processor tree activity
 org.eclipse.cdt.core/debug/deltaprocessor=false
-
-# Reports file type resolver activity
-org.eclipse.cdt.core/debug/typeresolver=false
 
 # Reports file type resolver activity
 org.eclipse.cdt.core/debug/typeresolver=false

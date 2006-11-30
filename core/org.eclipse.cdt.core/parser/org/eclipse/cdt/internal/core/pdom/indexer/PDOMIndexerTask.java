@@ -34,6 +34,7 @@ import org.eclipse.cdt.core.index.IIndexFile;
 import org.eclipse.cdt.core.index.IIndexInclude;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.CoreModelUtil;
+import org.eclipse.cdt.core.model.ICContainer;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICElementDelta;
 import org.eclipse.cdt.core.model.ICElementVisitor;
@@ -50,6 +51,38 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 
 public abstract class PDOMIndexerTask implements IPDOMIndexerTask {
+	private static final class TranslationUnitCollector implements ICElementVisitor {
+		private final Collection fHeaders;
+		private final boolean fAllFiles;
+		private final Collection fSources;
+
+		private TranslationUnitCollector(Collection sources, Collection headers, boolean allFiles) {
+			fHeaders = headers;
+			fAllFiles = allFiles;
+			fSources = sources;
+		}
+
+		public boolean visit(ICElement element) throws CoreException {
+			switch (element.getElementType()) {
+			case ICElement.C_UNIT:
+				ITranslationUnit tu = (ITranslationUnit)element;
+				if (tu.isSourceUnit()) {
+					if (fAllFiles || !CoreModel.isScannerInformationEmpty(tu.getResource())) {
+						fSources.add(tu);
+					}
+				}
+				else if (fHeaders != null && tu.isHeaderUnit()) {
+					fHeaders.add(tu);
+				}
+				return false;
+			case ICElement.C_CCONTAINER:
+			case ICElement.C_PROJECT:
+				return true;
+			}
+			return false;
+		}
+	}
+
 	private static final Object NO_CONTEXT = new Object();
 	protected static final int MAX_ERRORS = 500;
 
@@ -80,6 +113,7 @@ public abstract class PDOMIndexerTask implements IPDOMIndexerTask {
 	}
 	
 	protected void processDelta(ICElementDelta delta, Collection added, Collection changed, Collection removed) throws CoreException {
+		boolean allFiles= getIndexAllFiles();
 		int flags = delta.getFlags();
 		
 		if ((flags & ICElementDelta.F_CHILDREN) != 0) {
@@ -95,12 +129,16 @@ public abstract class PDOMIndexerTask implements IPDOMIndexerTask {
 			ITranslationUnit tu = (ITranslationUnit)element;
 			switch (delta.getKind()) {
 			case ICElementDelta.CHANGED:
-				if ((flags & ICElementDelta.F_CONTENT) != 0)
+				if ((flags & ICElementDelta.F_CONTENT) != 0 &&
+						(allFiles || !CoreModel.isScannerInformationEmpty(tu.getResource()))) {
 					changed.add(tu);
+				}
 				break;
 			case ICElementDelta.ADDED:
-				if (!tu.isWorkingCopy())
+				if (!tu.isWorkingCopy() &&
+						(allFiles || !CoreModel.isScannerInformationEmpty(tu.getResource()))) {
 					added.add(tu);
+				}
 				break;
 			case ICElementDelta.REMOVED:
 				if (!tu.isWorkingCopy())
@@ -108,32 +146,21 @@ public abstract class PDOMIndexerTask implements IPDOMIndexerTask {
 				break;
 			}
 			break;
+		case ICElement.C_CCONTAINER:
+			ICContainer folder= (ICContainer) element;
+			collectSources(folder, added, added, allFiles);
+			break;
 		}
+			
 	}
 	
+	private void collectSources(ICContainer container, final Collection sources, final Collection headers, final boolean allFiles) throws CoreException {
+		container.accept(new TranslationUnitCollector(sources, headers, allFiles));
+	}
+
 	protected void collectSources(ICProject project, final Collection sources, final Collection headers, final boolean allFiles) throws CoreException {
 		fMessage= MessageFormat.format(Messages.PDOMIndexerTask_collectingFilesTask, new Object[]{project.getElementName()});
-		project.accept(new ICElementVisitor() {
-			public boolean visit(ICElement element) throws CoreException {
-				switch (element.getElementType()) {
-				case ICElement.C_UNIT:
-					ITranslationUnit tu = (ITranslationUnit)element;
-					if (tu.isSourceUnit()) {
-						if (allFiles || !CoreModel.isScannerInformationEmpty(tu.getResource())) {
-							sources.add(tu);
-						}
-					}
-					else if (headers != null && tu.isHeaderUnit()) {
-						headers.add(tu);
-					}
-					return false;
-				case ICElement.C_CCONTAINER:
-				case ICElement.C_PROJECT:
-					return true;
-				}
-				return false;
-			}
-		});
+		project.accept(new TranslationUnitCollector(sources, headers, allFiles));
 	}
 
 	protected void removeTU(IWritableIndex index, ITranslationUnit tu) throws CoreException, InterruptedException {

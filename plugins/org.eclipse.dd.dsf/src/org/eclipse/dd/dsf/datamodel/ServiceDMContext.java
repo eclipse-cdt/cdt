@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.dd.dsf.datamodel;
 
-import org.eclipse.dd.dsf.service.AbstractDsfService;
 
 /**
  * The Data Model Context representing the owner service.  The service DM Context
@@ -22,8 +21,8 @@ import org.eclipse.dd.dsf.service.AbstractDsfService;
 public class ServiceDMContext<V extends IDMService> extends AbstractDMContext<V> {
     String fServiceDMID;
     
-    public ServiceDMContext(AbstractDsfService service, String serviceDMID) {
-        super(service, null);
+    public ServiceDMContext(IDMService service, String serviceDMID) {
+        super(service, new IDMContext<?>[0]);
         fServiceDMID = serviceDMID; 
     }
     

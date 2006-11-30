@@ -11,7 +11,7 @@
 package org.eclipse.dd.dsf.ui.viewmodel;
 
 import org.eclipse.dd.dsf.concurrent.GetDataDone;
-import org.eclipse.debug.internal.ui.viewers.provisional.IModelDelta;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelDelta;
 
 /**
  * Special type of the view model layout node, which can be used as a root node
@@ -22,27 +22,12 @@ import org.eclipse.debug.internal.ui.viewers.provisional.IModelDelta;
 public interface IVMRootLayoutNode extends IVMLayoutNode{
     
     /**
-     * The root VMC object of this root layout node.  There can be only element 
-     * in the root node at a time, and this element must implement this 
-     * interface.    
-     */
-    public interface IRootVMC extends IVMContext {
-        /**
-         * Returns the view's "input" object.  This could be the actual input
-         * object for the whole view, if this view model hierarchy fills the 
-         * whole view. Or this could an element in the tree from which this 
-         * hierarchy starts.  This is the case 
-         */
-        Object getInputObject();
-    }
-
-    /**
      * Returns the single element of this node.  Root layout node can only have
      * one element, and this is a convenience method to access this element.
      * Alternatively getElements() could be used.  
      * @return
      */
-    public IRootVMC getRootVMC();
+    public Object getRootObject();
     
     /**
      * Version of the {@link IVMLayoutNode#buildDelta(Object, ViewModelDelta, org.eclipse.dd.dsf.concurrent.Done)}

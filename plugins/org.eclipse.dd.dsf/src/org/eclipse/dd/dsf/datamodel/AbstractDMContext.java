@@ -12,7 +12,6 @@ package org.eclipse.dd.dsf.datamodel;
 
 import org.eclipse.core.runtime.PlatformObject;
 import org.eclipse.dd.dsf.concurrent.Immutable;
-import org.eclipse.dd.dsf.service.AbstractDsfService;
 import org.eclipse.dd.dsf.service.DsfSession;
 
 /**
@@ -40,12 +39,10 @@ abstract public class AbstractDMContext<V extends IDMData> extends PlatformObjec
     }
 
     /** Convenience constructor */
-    public AbstractDMContext(AbstractDsfService service, IDMContext<?> parent) {
-        this(service.getSession().getId(), 
-             service.getServiceFilter(), 
-             parent == null ? new IDMContext[] {} : new IDMContext[] { parent });
+    public AbstractDMContext(IDMService service, IDMContext<?>[] parents) {
+        this(service.getSession().getId(), service.getServiceFilter(), parents);
     }
-    
+
     /** 
      * Should be used by the deriving class to compare the basic context object
      * information.

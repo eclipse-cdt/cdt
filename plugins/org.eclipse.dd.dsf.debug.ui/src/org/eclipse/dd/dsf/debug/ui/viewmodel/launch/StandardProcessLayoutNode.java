@@ -10,25 +10,23 @@
  *******************************************************************************/
 package org.eclipse.dd.dsf.debug.ui.viewmodel.launch;
 
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.dd.dsf.concurrent.Done;
-import org.eclipse.dd.dsf.concurrent.DsfExecutor;
-import org.eclipse.dd.dsf.concurrent.GetDataDone;
-import org.eclipse.dd.dsf.debug.ui.DsfDebugUIPlugin;
-import org.eclipse.dd.dsf.service.IDsfService;
 import org.eclipse.dd.dsf.ui.viewmodel.AbstractVMLayoutNode;
+import org.eclipse.dd.dsf.ui.viewmodel.AbstractVMProvider;
 import org.eclipse.dd.dsf.ui.viewmodel.IVMContext;
 import org.eclipse.dd.dsf.ui.viewmodel.IVMLayoutNode;
 import org.eclipse.dd.dsf.ui.viewmodel.VMDelta;
-import org.eclipse.dd.dsf.ui.viewmodel.IVMRootLayoutNode.IRootVMC;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.core.model.IStreamsProxy;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.IChildrenCountUpdate;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.IChildrenUpdate;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.IHasChildrenUpdate;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelDelta;
 import org.eclipse.debug.internal.ui.viewers.provisional.ILabelRequestMonitor;
-import org.eclipse.debug.internal.ui.viewers.provisional.IModelDelta;
+import org.eclipse.jface.viewers.TreePath;
 
 /**
  * Layout node for the standard platform debug model IProcess object. This 
@@ -43,19 +41,20 @@ public class StandardProcessLayoutNode extends AbstractVMLayoutNode {
      * VMC element implementation, it is a proxy for the IProcess class, to 
      * allow the standard label adapter to be used with this object. 
      */
-    private class VMC implements IVMContext, IProcess
+    private class VMC extends AbstractVMContext
+        implements IProcess 
     {
-        private final IVMContext fParentVmc;
         private final IProcess fProcess;
         
-        VMC(IVMContext parentVmc, IProcess process) {
-            fParentVmc = parentVmc;
+        VMC(IProcess process) {
+            super(getVMProvider().getVMAdapter(), StandardProcessLayoutNode.this);
             fProcess = process;
         }
         
-        public IVMContext getParent() { return fParentVmc; }
         public IVMLayoutNode getLayoutNode() { return StandardProcessLayoutNode.this; }        
-        @SuppressWarnings("unchecked") public Object getAdapter(Class adapter) { return fProcess.getAdapter(adapter); }
+        @SuppressWarnings("unchecked") public Object getAdapter(Class adapter) { 
+            return fProcess.getAdapter(adapter); 
+        }
         public String toString() { return "IProcess " + fProcess.toString(); } //$NON-NLS-1$
 
         public String getAttribute(String key) { return fProcess.getAttribute(key); }
@@ -72,21 +71,17 @@ public class StandardProcessLayoutNode extends AbstractVMLayoutNode {
         public int hashCode() { return fProcess.hashCode(); }
     }
 
-    public StandardProcessLayoutNode(DsfExecutor executor) {
-        super(executor);
+    public StandardProcessLayoutNode(AbstractVMProvider provider) {
+        super(provider);
     }
 
-    // @see org.eclipse.dd.dsf.ui.viewmodel.IViewModelLayoutNode#getElements(org.eclipse.dd.dsf.ui.viewmodel.IVMContext, org.eclipse.dd.dsf.concurrent.GetDataDone)
-    public void getElements(IVMContext parentVmc, GetDataDone<IVMContext[]> done) {
-        ILaunch launch = findLaunch(parentVmc);
+    public void updateElements(IChildrenUpdate update) {
+        ILaunch launch = findLaunch(update.getElementPath());
         if (launch == null) {
-            /*
-             * There is no launch in the parent of this node.  This means that the 
-             * layout is misconfigured.  
-             */
+            // There is no launch in the parent of this node.  This means that the 
+            // layout is misconfigured.  
             assert false; 
-            done.setStatus(new Status(IStatus.ERROR, DsfDebugUIPlugin.PLUGIN_ID, IDsfService.INTERNAL_ERROR, "Can't get list of processes, because there is no launch.", null)); //$NON-NLS-1$
-            getExecutor().execute(done);
+            update.done();
             return;
         }
         
@@ -95,30 +90,43 @@ public class StandardProcessLayoutNode extends AbstractVMLayoutNode {
          * retrieve them on dispatch thread.  
          */
         IProcess[] processes = launch.getProcesses();
-        IVMContext[] processVmcs = new IVMContext[processes.length];
         for (int i = 0; i < processes.length; i++) {
-            processVmcs[i] = new VMC(parentVmc, processes[i]);
+            update.setChild(new VMC(processes[i]), i);
         }
-        done.setData(processVmcs);
-        getExecutor().execute(done);
+        update.done();
     }
-
-    // @see org.eclipse.dd.dsf.ui.viewmodel.IViewModelLayoutNode#hasElements(org.eclipse.dd.dsf.ui.viewmodel.IVMContext, org.eclipse.dd.dsf.concurrent.GetDataDone)
-    public void hasElements(IVMContext parentVmc, GetDataDone<Boolean> done) {
-        ILaunch launch = findLaunch(parentVmc);
+    
+    public void updateElementCount(IChildrenCountUpdate update) {
+        ILaunch launch = findLaunch(update.getElementPath());
         if (launch == null) {
-            assert false; 
-            done.setStatus(new Status(IStatus.ERROR, DsfDebugUIPlugin.PLUGIN_ID, IDsfService.INTERNAL_ERROR, "Can't get list of processes, because there is no launch.", null)); //$NON-NLS-1$
-            getExecutor().execute(done);
+            assert false;
+            update.setChildCount(0);
+            update.done();
             return;
         }
 
-        done.setData(launch.getProcesses().length != 0);
-        getExecutor().execute(done);
+        update.setChildCount(launch.getProcesses().length);
+        update.done();
+    }
+
+    // @see org.eclipse.dd.dsf.ui.viewmodel.IViewModelLayoutNode#hasElements(org.eclipse.dd.dsf.ui.viewmodel.IVMContext, org.eclipse.dd.dsf.concurrent.GetDataDone)
+    public void updateHasElements(IHasChildrenUpdate[] updates) {
+        for (IHasChildrenUpdate update : updates) {
+            ILaunch launch = findLaunch(update.getElementPath());
+            if (launch == null) {
+                assert false;
+                update.setHasChilren(false);
+                update.done();
+                return;
+            }
+    
+            update.setHasChilren(launch.getProcesses().length != 0);
+            update.done();
+        }
     }
 
     // @see org.eclipse.dd.dsf.ui.viewmodel.IViewModelLayoutNode#retrieveLabel(org.eclipse.dd.dsf.ui.viewmodel.IVMContext, org.eclipse.debug.internal.ui.viewers.provisional.ILabelRequestMonitor)
-    public void retrieveLabel(IVMContext vmc, ILabelRequestMonitor result, String[] columns) {
+    public void updateLabel(IVMContext vmc, ILabelRequestMonitor result, String[] columns) {
         
         /*
          * The implementation of IAdapterFactory that uses this node should not
@@ -134,30 +142,33 @@ public class StandardProcessLayoutNode extends AbstractVMLayoutNode {
      * Recursively searches the VMC for Launch VMC, and returns its ILaunch.  
      * Returns null if an ILaunch is not found.
      */
-    private ILaunch findLaunch(IVMContext vmc) {
-        if (vmc == null) {
-            return null;
-        } else if (vmc instanceof IRootVMC || ((IRootVMC)vmc).getInputObject() instanceof ILaunch) {
-            return (ILaunch)(((IRootVMC)vmc)).getInputObject();
-        } else {
-            return findLaunch(vmc.getParent());
+    private ILaunch findLaunch(TreePath path) {
+        for (int i = path.getSegmentCount() - 1; i >= 0; i--) {
+            if (path.getSegment(i) instanceof ILaunch) {
+                return (ILaunch)path.getSegment(i);
+            }
         }
+        return null;
     }
     
     @Override
-    public boolean hasDeltaFlags(Object e) {
+    public int getDeltaFlags(Object e) {
+        int myFlags = 0;
         if (e instanceof DebugEvent) {
             DebugEvent de = (DebugEvent)e;
-            return de.getSource() instanceof IProcess && 
-                   (de.getKind() == DebugEvent.CHANGE || 
-                    de.getKind() == DebugEvent.CREATE || 
-                    de.getKind() == DebugEvent.TERMINATE);  
+            if ( de.getSource() instanceof IProcess && 
+                 (de.getKind() == DebugEvent.CHANGE || 
+                  de.getKind() == DebugEvent.CREATE || 
+                  de.getKind() == DebugEvent.TERMINATE) )
+            {
+                myFlags = IModelDelta.STATE;
+            }
         }
-        return super.hasDeltaFlags(e);
+        return myFlags | super.getDeltaFlags(e);
     }
     
     @Override
-    public void buildDelta(Object e, VMDelta parent, Done done) {
+    public void buildDelta(Object e, VMDelta parent, int nodeOffset, Done done) {
         if (e instanceof DebugEvent && ((DebugEvent)e).getSource() instanceof IProcess) {
             DebugEvent de = (DebugEvent)e;
             if (de.getKind() == DebugEvent.CHANGE) {
@@ -173,12 +184,12 @@ public class StandardProcessLayoutNode extends AbstractVMLayoutNode {
              */
             getExecutor().execute(done);
         } else {
-            super.buildDelta(e, parent, done);
+            super.buildDelta(e, parent, nodeOffset, done);
         }
     }
     
     protected void handleChange(DebugEvent event, VMDelta parent) {
-        parent.addNode(new VMC(parent.getVMC(), (IProcess)event.getSource()), IModelDelta.STATE);
+        parent.addNode(new VMC((IProcess)event.getSource()), IModelDelta.STATE);
     }
 
     protected void handleCreate(DebugEvent event, VMDelta parent) {

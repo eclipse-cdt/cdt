@@ -14,7 +14,7 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.dd.dsf.concurrent.Immutable;
 
 /**
- * View model element which is stored as the data object of nodes in the viewer.
+ * View Model element which is stored as the data object of nodes in the viewer.
  */
 @Immutable
 public interface IVMContext extends IAdaptable {
@@ -23,10 +23,4 @@ public interface IVMContext extends IAdaptable {
      * Returns the layout node that originated this element.
      */
     public IVMLayoutNode getLayoutNode();
-    
-    /**
-     * Returns the parent of this element in the viewer layout.
-     * @return
-     */
-    public IVMContext getParent();
 }

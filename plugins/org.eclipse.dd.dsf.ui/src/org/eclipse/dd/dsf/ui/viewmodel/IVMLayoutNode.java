@@ -12,55 +12,67 @@ package org.eclipse.dd.dsf.ui.viewmodel;
 
 import org.eclipse.dd.dsf.concurrent.ConfinedToDsfExecutor;
 import org.eclipse.dd.dsf.concurrent.Done;
-import org.eclipse.dd.dsf.concurrent.GetDataDone;
-import org.eclipse.dd.dsf.concurrent.ThreadSafeAndProhibitedFromDsfExecutor;
-import org.eclipse.debug.internal.ui.viewers.provisional.IColumnEditor;
-import org.eclipse.debug.internal.ui.viewers.provisional.IColumnEditorFactoryAdapter;
-import org.eclipse.debug.internal.ui.viewers.provisional.ILabelRequestMonitor;
-import org.eclipse.debug.internal.ui.viewers.provisional.IModelDelta;
-import org.eclipse.debug.internal.ui.viewers.provisional.IPresentationContext;
+import org.eclipse.dd.dsf.ui.viewmodel.dm.AbstractDMVMProvider;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.IChildrenCountUpdate;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.IChildrenUpdate;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.IHasChildrenUpdate;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelDelta;
 
 /**
  * View model layout nodes are combined together into a tree, to collectively 
- * define the layout of a view.  Each schema node generates elements of type 
- * IVMContext, and provide label information about these elements.
+ * define the layout of a view.  Each layout node generates elements of type 
+ * IVMContext which are then stored in the viewer.
  * <p>
  * Besides the standard Data Model Context based implementation, this 
  * node could be implemented to present data from any source, not necessarily
  * DSF services.  It could also define a static node which operates on basis
  * of other data in the view tree.   
- * @see VMProvider
+ * @see AbstractDMVMProvider
  */
 @ConfinedToDsfExecutor("")
 @SuppressWarnings("restriction")
-public interface IVMLayoutNode {
+public interface IVMLayoutNode 
+{
     
     /**
-     * Retrieves information whether for the given parent node, there are any elements
-     * available.
-     * @param parentVmc Parent node, for which to calculate elements at the
-     * current level.
-     * @param done The data return token.
+     * Retrieves information whether for a given path in the viewer, 
+     * there are any elements available in this node.
+     * 
+     * @param updates The update objects which need to be filled in with results 
+     * calculated by this method.  
+     * Even though the "children" interface is reused, the updates refer to the 
+     * elements of this layout node, and not it's children.
      */
-    public void hasElements(IVMContext parentVmc, GetDataDone<Boolean> done);
-    
-    /**
-     * Retrieves the list of elements.
-     * @param parentVmc Parent node, for which to calculate elements at the
-     * current level.
-     * @param done The data return token.
-     */
-    public void getElements(IVMContext parentVmc, GetDataDone<IVMContext[]> done);
-    
-    /**
-     * Retrieves the label for the given element. 
-     * @param vmc Element for which to retrieve label information.
-     * @param result Monitor which accepts the data.
-     * @param columns Currently configured columns in view.
-     * @see IPresentationContext
-     */
-    public void retrieveLabel(IVMContext vmc, ILabelRequestMonitor result, String[] columns);
+    public void updateHasElements(IHasChildrenUpdate[] updates);
 
+    /**
+     * Retrieves the number of available elements in this node for the given 
+     * path in the viewer.
+     * 
+     * @param updates The update object which needs to be filled in with result 
+     * calculated by this method.  
+     * Even though the "children" interface is reused, the updates refer to the 
+     * elements of this layout node, and not it's children.
+     */
+    public void updateElementCount(IChildrenCountUpdate update);
+    
+    
+    /**
+     * Retrieves the element objects of this node for the given path in the 
+     * viewer, and for the given range of indexes. <br> 
+     * Note: the range of children, denoted by ILabelUpdate.getOffset() 
+     * and ILabelUpdate.getLength(), may not be specified, in which case these 
+     * methods may return -1. This means that all the elements should be 
+     * retrieved for this node.<br>
+     * 
+     * @param updates The update object which needs to be filled in with result 
+     * calculated by this method.  
+     * Even though the "children" interface is reused, the updates refer to the 
+     * elements of this layout node, and not it's children.
+     */
+    public void updateElements(IChildrenUpdate update);
+
+    
     /**
      * Configures the child layout nodes for this node.
      * @param childNodes
@@ -73,51 +85,28 @@ public interface IVMLayoutNode {
     public IVMLayoutNode[] getChildLayoutNodes();
     
     /**
-     * Returns true/false indicating whether the given even will cause this 
-     * schema node to generate a model delta.
+     * Returns the potential delta flags that would be generated by this node 
+     * for the given event.  
      * @param event Event to process.
-     * @return True if this node (or its children) would generate delta data
-     * due to this event. 
+     * @return IModelDelta flags
      * @see IModelDelta
      */
-    public boolean hasDeltaFlags(Object event);
+    public int getDeltaFlags(Object event);
     
     /**
      * Builds model delta information based on the given event.
      * @param event Event to process.
      * @param parent Parent model delta node that this object should add delta
      * data to.
+     * @param nodeOffset The offset of the first element in this node.  This offset
+     * depends on the elements returned by the siblings of this layout node.
      * @param done Return token, which notifies the caller that the calculation is
      * complete.
      */
-    public void buildDelta(Object event, VMDelta parent, Done done);
+    public void buildDelta(Object event, VMDelta parent, int nodeOffset, Done done);
     
     /**
-     * Creates a column editor for the given element.  The interface that this 
-     * method is delegated to is synchronous, therefore it also needs to be thread
-     * safe.  
-     * 
-     * @see IColumnEditorFactoryAdapter#createColumnEditor(IPresentationContext, Object)
-     * @param vmc VM Context to return the editor for
-     * @return
-     */
-    @ThreadSafeAndProhibitedFromDsfExecutor("")
-    public IColumnEditor createColumnEditor(IVMContext vmc);
-
-    /**
-     * Returns the ID of the editor for the given element.  The interface that this 
-     * method is delegated to is synchronous, therefore it also needs to be thread
-     * safe.  
-     * 
-     * @see IColumnEditorFactoryAdapter#getColumnEditorId(IPresentationContext, Object)
-     * @param vmc VM Context to return the editor ID for
-     * @return
-     */
-    @ThreadSafeAndProhibitedFromDsfExecutor("")
-    public String getColumnEditorId(IVMContext vmc);
-    
-    /**
-     * Disposes the resources held by this node.
+     * Releases the resources held by this node.
      */
     public void dispose();
 }

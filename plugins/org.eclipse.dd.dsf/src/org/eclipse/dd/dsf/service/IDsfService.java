@@ -74,10 +74,14 @@ public interface IDsfService {
      */
     final static int INTERNAL_ERROR = 10005;
     
+    /** 
+     * Returns the DSF Session that this service belongs to.
+     */
+    DsfSession getSession();
     
     /**
      * Returns the executor that should be used to call methods of this service.
-     * @return 
+     * This method is equivalent to calling getSession().getExecutor()
      */
     DsfExecutor getExecutor();
     

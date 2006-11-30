@@ -86,7 +86,10 @@ public class DefaultDsfExecutor extends ScheduledThreadPoolExecutor
     }
     
     static void logException(Throwable t) {
-        ILog log = DsfPlugin.getDefault().getLog();
+        DsfPlugin plugin = DsfPlugin.getDefault();
+        if (plugin == null) return;
+        
+        ILog log = plugin.getLog();
         if (log != null) {
             log.log(new Status(
                 IStatus.ERROR, DsfPlugin.PLUGIN_ID, -1, "Uncaught exception in DSF executor thread", t)); //$NON-NLS-1$
@@ -222,6 +225,12 @@ public class DefaultDsfExecutor extends ScheduledThreadPoolExecutor
         public TracingWrapperRunnable(Runnable runnable, int offset) {
             super(offset);
             fRunnable = runnable;
+
+            // Check if executable wasn't executed already.
+            if (DEBUG_EXECUTOR && fRunnable instanceof DsfExecutable) {
+                assert !((DsfExecutable)fRunnable).getSubmitted() : "Executable was previously executed."; //$NON-NLS-1$
+                ((DsfExecutable)fRunnable).setSubmitted();
+            }
         }
 
         protected Object getExecutable() { return fRunnable; }
@@ -229,11 +238,6 @@ public class DefaultDsfExecutor extends ScheduledThreadPoolExecutor
         public void run() {
             traceExecution();
 
-            // If debugging a DSF exeutable, mark that it was executed.
-            if (DEBUG_EXECUTOR && fRunnable instanceof DsfExecutable) {
-                ((DsfExecutable)fRunnable).setExecuted();
-            }
-            
             // Finally invoke the runnable code.
             fRunnable.run(); 
         }
@@ -251,11 +255,6 @@ public class DefaultDsfExecutor extends ScheduledThreadPoolExecutor
         public T call() throws Exception {
             traceExecution();
             
-            // If debugging a DSF exeutable, mark that it was executed.
-            if (DEBUG_EXECUTOR && fCallable instanceof DsfExecutable) {
-                ((DsfExecutable)fCallable).setExecuted();
-            }
-
             // Finally invoke the runnable code.
             return fCallable.call();
         }

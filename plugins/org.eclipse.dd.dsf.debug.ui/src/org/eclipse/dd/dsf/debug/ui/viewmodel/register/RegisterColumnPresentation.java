@@ -11,8 +11,8 @@
 package org.eclipse.dd.dsf.debug.ui.viewmodel.register;
 
 import org.eclipse.dd.dsf.debug.ui.DsfDebugUIPlugin;
-import org.eclipse.debug.internal.ui.viewers.provisional.IColumnPresentation;
-import org.eclipse.debug.internal.ui.viewers.provisional.IPresentationContext;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.IColumnPresentation;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
 import org.eclipse.jface.resource.ImageDescriptor;
 
 /**

@@ -62,7 +62,7 @@ public class DsfExecutable {
      * Flag indicating whether this executable was ever executed by an 
      * executor.  Used for tracing only.
      */
-    private boolean fExecuted = false;
+    private boolean fSubmitted = false;
     
     @SuppressWarnings("unchecked")
     public DsfExecutable() {
@@ -97,17 +97,31 @@ public class DsfExecutable {
         }
     }        
     
+    boolean getSubmitted() {
+        return fSubmitted;
+    }
+    
     /**
      * Marks this executable to indicate that it has been executed by the 
      * executor.  To be invoked only by DsfExecutor.
      */
-    void setExecuted() {
-        fExecuted = true;
+    void setSubmitted() {
+        fSubmitted = true;
+    }
+    
+    /**
+     * Returns whether the runnable/callable is expected to be always executed.  
+     * Overriding classes can implement this method and return false, to avoid
+     * unnecessary trace output. 
+     * @return true if this runnable is expected to run. 
+     */
+    protected boolean isExecutionRequired() {
+        return true;
     }
     
     @Override
     protected void finalize() {
-        if (DEBUG_EXECUTOR && !fExecuted) {
+        if (DEBUG_EXECUTOR && !fSubmitted && isExecutionRequired()) {
             StringBuilder traceBuilder = new StringBuilder();
 
             // Record the time

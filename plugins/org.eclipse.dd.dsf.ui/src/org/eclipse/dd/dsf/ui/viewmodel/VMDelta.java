@@ -11,8 +11,9 @@
  *******************************************************************************/
 package org.eclipse.dd.dsf.ui.viewmodel;
 
-import org.eclipse.debug.internal.ui.viewers.provisional.IModelDelta;
-import org.eclipse.debug.internal.ui.viewers.provisional.ModelDelta;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelDelta;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelDeltaVisitor;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.ModelDelta;
 
 /**
  * This delta class mostly just duplicates the ModelDelta implemention, but
@@ -25,13 +26,13 @@ import org.eclipse.debug.internal.ui.viewers.provisional.ModelDelta;
 public class VMDelta extends ModelDelta {
 
 	private VMDelta fParent;
-	private IVMContext fVmcElement;
     private Object fElement;
 	private int fFlags;
 	private VMDelta[] fNodes = EMPTY_NODES;
 	private Object fReplacement;
 	private int fIndex;
 	private static final VMDelta[] EMPTY_NODES = new VMDelta[0];
+    private int fChildCount = -1;
 
 	/**
 	 * Constructs a new delta for the given element.
@@ -39,9 +40,9 @@ public class VMDelta extends ModelDelta {
 	 * @param vmcElement model element
 	 * @param flags change flags
 	 */
-	public VMDelta(IVMContext vmcElement, int flags) {
-        super(vmcElement, flags);
-		fVmcElement = vmcElement;
+	public VMDelta(Object element, int flags) {
+        super(element, flags);
+        fElement = element;
 		fFlags = flags;
 	}
 
@@ -53,9 +54,9 @@ public class VMDelta extends ModelDelta {
 	 * @param replacement replacement element
 	 * @param flags change flags
 	 */
-	public VMDelta(IVMContext vmcElement, Object replacement, int flags) {
-        super(vmcElement, replacement, flags);
-        fVmcElement = vmcElement;
+	public VMDelta(Object element, Object replacement, int flags) {
+        super(element, replacement, flags);
+        fElement = element;
         fReplacement = replacement;
         fFlags = flags;
     }
@@ -68,40 +69,44 @@ public class VMDelta extends ModelDelta {
 	 * @param index insertion position
 	 * @param flags change flags
 	 */
-    public VMDelta(IVMContext vmcElement, int index, int flags) {
-        super(vmcElement, index, flags);
-        fVmcElement = vmcElement;
+    public VMDelta(Object element, int index, int flags) {
+        super(element, index, flags);
+        fElement = element;
         fIndex = index;
         fFlags = flags;
     }
     
     /**
-     * Constructor for model delta based on non-VMC element.  This delta is 
-     * only needed for creating delta nodes for parent elements in the tree
-     * if the VMC elements are not at the root of the tree.
-     * @param element Element to create the delta for.
-     * @param vmcElement Optional VMC element for this node, it can be used
-     * by other nodes in the delta to set their VMC parent element correctly.
+     * Constructs a new delta for the given element at the specified index
+     * relative to its parent with the given number of children.
+     * 
+     * @param element model element
+     * @param index insertion position
+     * @param flags change flags
+     * @param childCount number of children this node has
      */
-    public VMDelta(Object element, IVMContext vmcElement) {
-        super(element, IModelDelta.NO_CHANGE);
+    public VMDelta(Object element, int index, int flags, int childCount) {
+        super(element, index, flags, childCount);
         fElement = element;
-        fVmcElement = vmcElement;
+        fIndex = index;
+        fFlags = flags;
+        fChildCount = childCount;
     }
-        
 
     /** 
      * Returns the non-VMC element if one is set, otherwise returns the VMC
      * element of this delta node.
      * @see org.eclipse.debug.internal.ui.viewers.IModelDelta#getElement()
      */
+    @Override
     public Object getElement() {
-		return fElement != null ? fElement : fVmcElement;
+		return fElement;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.viewers.IModelDelta#getFlags()
 	 */
+    @Override
 	public int getFlags() {
 		return fFlags;
 	}
@@ -110,7 +115,9 @@ public class VMDelta extends ModelDelta {
         fFlags |= flags;
     }
     
-    public IVMContext getVMC() { return fVmcElement; }
+    public void setChildCount(int count) {
+        fChildCount = count;
+    }
     
 	/**
 	 * Adds a child node to this delta with the given element and change flags,
@@ -120,7 +127,7 @@ public class VMDelta extends ModelDelta {
 	 * @param flags change flags for child
 	 * @return newly created child delta
 	 */
-	public VMDelta addNode(IVMContext element, int flags) {
+	public VMDelta addNode(Object element, int flags) {
 		VMDelta node = new VMDelta(element, flags);
 		node.setParent(this);
 		addDelta(node);
@@ -137,7 +144,7 @@ public class VMDelta extends ModelDelta {
 	 * @param flags change flags
 	 * @return newly created child delta
 	 */
-    public VMDelta addNode(IVMContext element, Object replacement, int flags) {
+    public VMDelta addNode(Object element, Object replacement, int flags) {
         VMDelta node = new VMDelta(element, replacement, flags);
         node.setParent(this);
         addDelta(node);
@@ -153,7 +160,7 @@ public class VMDelta extends ModelDelta {
      * @param flags change flags
      * @return newly created child delta
      */
-    public VMDelta addNode(IVMContext element, int index, int flags) {
+    public VMDelta addNode(Object element, int index, int flags) {
         VMDelta node = new VMDelta(element, index, flags);
         node.setParent(this);
         addDelta(node);
@@ -161,21 +168,22 @@ public class VMDelta extends ModelDelta {
     }
     
     /**
-     * Adds a node to the delta for a non-VMC element.  This is used to 
-     * construct the root branch of the delta before it is handed off to 
-     * ViewModelProvider.handleDataModelEvent() 
-     * @param element Element in the asynchronous view to create the new node for.
-     * @param vmcElement Optional VMC element for this node, it can be used
-     * by other nodes in the delta to set their VMC parent element correctly.
-     * @return Returns the added delta node.
+     * Adds a child delta to this delta at the specified index with the
+     * given number of children, and returns the newly created child delta.
+     * 
+     * @param element child element in insert
+     * @param index index of the element relative to parent
+     * @param flags change flags
+     * @param numChildren the number of children the element has
+     * @return newly created child delta
      */
-    public VMDelta addNode(Object element, IVMContext vmcElement) {
-        VMDelta node = new VMDelta(element, vmcElement);
+    public ModelDelta addNode(Object element, int index, int flags, int numChildren) {
+        VMDelta node = new VMDelta(element, index, flags, numChildren);
         node.setParent(this);
         addDelta(node);
         return node;
     }
-    
+
     /**
      * Sets the parent delta of this delta
      * 
@@ -184,17 +192,19 @@ public class VMDelta extends ModelDelta {
 	void setParent(VMDelta node) {
 		fParent = node;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.viewers.IModelDelta#getParent()
 	 */
-	public IModelDelta getParent() {
+    @Override
+	public IModelDelta getParentDelta() {
 		return fParent;
 	}
 
     /* (non-Javadoc)
      * @see org.eclipse.debug.internal.ui.viewers.IModelDelta#getReplacementElement()
      */
+    @Override
     public Object getReplacementElement() {
         return fReplacement;
     }
@@ -202,6 +212,7 @@ public class VMDelta extends ModelDelta {
     /* (non-Javadoc)
      * @see org.eclipse.debug.internal.ui.viewers.IModelDelta#getIndex()
      */
+    @Override
     public int getIndex() {
         return fIndex;
     }
@@ -209,7 +220,8 @@ public class VMDelta extends ModelDelta {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.viewers.IModelDelta#getNodes()
 	 */
-	public VMDelta[] getNodes() {
+    @Override
+	public VMDelta[] getChildDeltas() {
 		return fNodes;
 	}
 	
@@ -224,6 +236,7 @@ public class VMDelta extends ModelDelta {
 		}
 	}
 	
+    @Override
 	public String toString() {
 		StringBuffer buf = new StringBuffer();
 		buf.append("Model Delta Start\n"); //$NON-NLS-1$
@@ -233,43 +246,78 @@ public class VMDelta extends ModelDelta {
 	}
 	
 	private void appendDetail(StringBuffer buf, VMDelta delta) {
-		buf.append("\tElement: "); //$NON-NLS-1$
-		buf.append(delta.getElement());
-		buf.append('\n');
-		buf.append("\t\tFlags: "); //$NON-NLS-1$
-		int flags = delta.getFlags();
-		if (flags == 0) {
-			buf.append("NO_CHANGE"); //$NON-NLS-1$
-		} else {
-			if ((flags & IModelDelta.ADDED) > 0) {
-				buf.append("ADDED | "); //$NON-NLS-1$
-			}
-			if ((flags & IModelDelta.CONTENT) > 0) {
-				buf.append("CONTENT | "); //$NON-NLS-1$
-			}
-			if ((flags & IModelDelta.EXPAND) > 0) {
-				buf.append("EXPAND | "); //$NON-NLS-1$
-			}
-			if ((flags & IModelDelta.INSERTED) > 0) {
-				buf.append("INSERTED | "); //$NON-NLS-1$
-			}
-			if ((flags & IModelDelta.REMOVED) > 0) {
-				buf.append("REMOVED | "); //$NON-NLS-1$
-			}
-			if ((flags & IModelDelta.REPLACED) > 0) {
-				buf.append("REPLACED | "); //$NON-NLS-1$
-			}
-			if ((flags & IModelDelta.SELECT) > 0) {
-				buf.append("SELECT | "); //$NON-NLS-1$
-			}
-			if ((flags & IModelDelta.STATE) > 0) {
-				buf.append("STATE | "); //$NON-NLS-1$
-			}
-		}
-		buf.append('\n');
-		VMDelta[] nodes = delta.getNodes();
-		for (int i = 0; i < nodes.length; i++) {
-			appendDetail(buf, nodes[i]);
-		}
+        buf.append("\tElement: "); //$NON-NLS-1$
+        buf.append(delta.getElement());
+        buf.append('\n');
+        buf.append("\t\tFlags: "); //$NON-NLS-1$
+        int flags = delta.getFlags();
+        if (flags == 0) {
+            buf.append("NO_CHANGE"); //$NON-NLS-1$
+        } else {
+            if ((flags & IModelDelta.ADDED) > 0) {
+                buf.append("ADDED | "); //$NON-NLS-1$
+            }
+            if ((flags & IModelDelta.CONTENT) > 0) {
+                buf.append("CONTENT | "); //$NON-NLS-1$
+            }
+            if ((flags & IModelDelta.EXPAND) > 0) {
+                buf.append("EXPAND | "); //$NON-NLS-1$
+            }
+            if ((flags & IModelDelta.INSERTED) > 0) {
+                buf.append("INSERTED | "); //$NON-NLS-1$
+            }
+            if ((flags & IModelDelta.REMOVED) > 0) {
+                buf.append("REMOVED | "); //$NON-NLS-1$
+            }
+            if ((flags & IModelDelta.REPLACED) > 0) {
+                buf.append("REPLACED | "); //$NON-NLS-1$
+            }
+            if ((flags & IModelDelta.SELECT) > 0) {
+                buf.append("SELECT | "); //$NON-NLS-1$
+            }
+            if ((flags & IModelDelta.STATE) > 0) {
+                buf.append("STATE | "); //$NON-NLS-1$
+            }
+            if ((flags & IModelDelta.INSTALL) > 0) {
+                buf.append("INSTALL | "); //$NON-NLS-1$
+            }
+            if ((flags & IModelDelta.UNINSTALL) > 0) {
+                buf.append("UNINSTALL | "); //$NON-NLS-1$
+            }
+        }
+        buf.append('\n');
+        buf.append("\t\tIndex: "); //$NON-NLS-1$
+        buf.append(delta.fIndex);
+        buf.append(" Child Count: "); //$NON-NLS-1$
+        buf.append(delta.fChildCount);
+        buf.append('\n');
+        IModelDelta[] nodes = delta.getChildDeltas();
+        for (int i = 0; i < nodes.length; i++) {
+            appendDetail(buf, (VMDelta)nodes[i]);
+        }
 	}
+    
+    /* (non-Javadoc)
+     * @see org.eclipse.debug.internal.ui.viewers.provisional.IModelDelta#getChildCount()
+     */
+    public int getChildCount() {
+        return fChildCount;
+    }
+    
+    /* (non-Javadoc)
+     * @see org.eclipse.debug.internal.ui.viewers.provisional.IModelDelta#accept(org.eclipse.debug.internal.ui.viewers.provisional.IModelDeltaVisitor)
+     */
+    public void accept(IModelDeltaVisitor visitor) {
+        doAccept(visitor, 0);
+    }
+    
+    protected void doAccept(IModelDeltaVisitor visitor, int depth) {
+        if (visitor.visit(this, depth)) {
+            ModelDelta[] childDeltas = getChildDeltas();
+            for (int i = 0; i < childDeltas.length; i++) {
+                ((VMDelta)childDeltas[i]).doAccept(visitor, depth+1);
+            }
+        }
+    }
+
 }

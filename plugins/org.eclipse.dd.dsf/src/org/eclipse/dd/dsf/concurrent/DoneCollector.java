@@ -35,9 +35,8 @@ import org.eclipse.dd.dsf.DsfPlugin;
  *     }
  * </pre>
  */
-public abstract class DoneCollector extends Done {
-    private final DsfExecutor fExecutor;
-    private Map<Done,Boolean> fDones = new HashMap<Done,Boolean>();
+public abstract class DoneCollector<V extends Done> extends Done {
+    private Map<V,Boolean> fDones = new HashMap<V,Boolean>();
     private int fDoneCounter;
 
     /**
@@ -47,39 +46,25 @@ public abstract class DoneCollector extends Done {
      * execution of the last done, and in the same dispatch loop. 
      *
      */
-    public DoneCollector(DsfExecutor executor) {
+    public DoneCollector() {
         setStatus(new MultiStatus(DsfPlugin.PLUGIN_ID, 0, "Collective status for set of sub-operations.", null)); //$NON-NLS-1$
-        fExecutor = executor;
     }
     
     /** 
      * Adds a new Done callback to this tracker's list. 
-     * @param <V> Service-specific class of the Done callback, to avoid an 
-     * unnecessary cast. 
+     * @param <T> Client-specific class of the Done callback, it's used here to avoid an 
+     * unnecessary cast by the client.
      * @param done callback object to add to the tracker
      * @return the done that was just added, it allows this method to be used 
      * inlined in service method calls
      */
-    public <V extends Done> V add(V done) {
+    public <T extends V> T add(T done) {
         assert !fDones.containsKey(done);
         fDones.put(done, false);
         fDoneCounter++;
         return done;
     }
     
-    /** 
-     * Adds a Done which performs no actions.  This is useful if all work
-     * is performed inside DoneCollector.run().
-     * @return Done which is to be passed as an argument to a service method.
-     */ 
-    public Done addNoActionDone() {
-        return add(new Done() { 
-            public void run() { 
-                doneDone(this);
-            }
-        });
-    }
-            
     /**
      * Marks the given Done callback as completed.  Client implementations of 
      * the Done callback have to call this method in order for the tracker
@@ -88,13 +73,15 @@ public abstract class DoneCollector extends Done {
      * Note: funniest method signature ever! 
      * @param done
      */
-    public void doneDone(Done done) {
+    public void doneDone(V done) {
         ((MultiStatus)getStatus()).merge(done.getStatus());
+        assert fDones.containsKey(done);
         fDones.put(done, true);
+        assert fDoneCounter > 0;
         fDoneCounter--;
         if (fDoneCounter == 0) {
             assert !fDones.containsValue(false);
-            fExecutor.execute(this);
+            run();
         }
     }    
     
@@ -104,10 +91,15 @@ public abstract class DoneCollector extends Done {
      * done callbacks.
      * @return map of the done callbacks.
      */
-    public Map<Done,Boolean> getDones() { return fDones; }
+    public Map<V,Boolean> getDones() { return fDones; }
     
     @Override
     public String toString() {
         return "Done Collector: " + getStatus().toString(); //$NON-NLS-1$
+    }
+    
+    @Override
+    protected boolean isExecutionRequired() {
+        return false;
     }
 }

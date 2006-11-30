@@ -10,9 +10,11 @@
  *******************************************************************************/
 package org.eclipse.dd.dsf.debug.ui.viewmodel.launch;
 
-import org.eclipse.core.runtime.MultiStatus;
+import java.util.List;
+
 import org.eclipse.dd.dsf.concurrent.Done;
 import org.eclipse.dd.dsf.concurrent.GetDataDone;
+import org.eclipse.dd.dsf.datamodel.IDMContext;
 import org.eclipse.dd.dsf.datamodel.IDMEvent;
 import org.eclipse.dd.dsf.debug.service.IRunControl;
 import org.eclipse.dd.dsf.debug.service.IStack;
@@ -21,66 +23,77 @@ import org.eclipse.dd.dsf.debug.service.IRunControl.IExecutionDMContext;
 import org.eclipse.dd.dsf.debug.service.IRunControl.StateChangeReason;
 import org.eclipse.dd.dsf.debug.service.IStack.IFrameDMContext;
 import org.eclipse.dd.dsf.debug.service.IStack.IFrameDMData;
-import org.eclipse.dd.dsf.debug.ui.DsfDebugUIPlugin;
 import org.eclipse.dd.dsf.service.DsfSession;
-import org.eclipse.dd.dsf.ui.viewmodel.DMContextVMLayoutNode;
+import org.eclipse.dd.dsf.ui.viewmodel.AbstractVMProvider;
 import org.eclipse.dd.dsf.ui.viewmodel.IVMContext;
 import org.eclipse.dd.dsf.ui.viewmodel.VMDelta;
-import org.eclipse.debug.internal.ui.viewers.provisional.ILabelRequestMonitor;
-import org.eclipse.debug.internal.ui.viewers.provisional.IModelDelta;
+import org.eclipse.dd.dsf.ui.viewmodel.dm.AbstractDMVMLayoutNode;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.IChildrenUpdate;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.IHasChildrenUpdate;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.ILabelUpdate;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelDelta;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdate;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugUIConstants;
-import org.eclipse.jface.resource.ImageDescriptor;
-
 
 @SuppressWarnings("restriction")
-public class StackFramesLayoutNode extends DMContextVMLayoutNode<IStack.IFrameDMData> {
+public class StackFramesLayoutNode extends AbstractDMVMLayoutNode<IStack.IFrameDMData> {
     
-    public IVMContext[] fCachedOldFramesVMCs;
+    public IVMContext[] fCachedOldFrameVMCs;
     
-    public StackFramesLayoutNode(DsfSession session) {
-        super(session, IStack.IFrameDMContext.class);
+    public StackFramesLayoutNode(AbstractVMProvider provider, DsfSession session) {
+        super(provider, session, IStack.IFrameDMContext.class);
     }
     
-    public void hasElements(IVMContext parentVmc, final GetDataDone<Boolean> done) {
-        IExecutionDMContext execDmc = findDmcInVmc(parentVmc, IExecutionDMContext.class);
-        if (execDmc == null || getServicesTracker().getService(IStack.class) == null || getServicesTracker().getService(IRunControl.class) == null) {
-            done.setData(false);
-            getExecutor().execute(done);
-            return;
-        }          
+    @Override
+    protected void updateHasElementsInSessionThread(IHasChildrenUpdate[] updates) {
         
-        done.setData(getServicesTracker().getService(IStack.class).isStackAvailable(execDmc)); 
-        getExecutor().execute(done);
+        for (IHasChildrenUpdate update : updates) {
+            if (!checkService(IStack.class, null, update)) return;
+            
+            IExecutionDMContext execDmc = findDmcInPath(update.getElementPath(), IExecutionDMContext.class);
+            if (execDmc == null) {
+                handleFailedUpdate(update);
+                return;
+            }          
+            
+            update.setHasChilren(getServicesTracker().getService(IStack.class).isStackAvailable(execDmc));
+            update.done();
+        }
     }
 
-    public void getElements(final IVMContext parentVmc, final GetDataDone<IVMContext[]> done) {
-        final IExecutionDMContext execDmc = findDmcInVmc(parentVmc, IExecutionDMContext.class);
-        if (execDmc == null || getServicesTracker().getService(IStack.class) == null || getServicesTracker().getService(IRunControl.class) == null) {
-            done.setData(new IVMContext[0]);
-            getExecutor().execute(done);
+    @Override
+    protected void updateElementsInSessionThread(final IChildrenUpdate update) {
+        if (!checkService(IStack.class, null, update)) return;
+        
+        final IExecutionDMContext execDmc = findDmcInPath(update.getElementPath(), IExecutionDMContext.class);
+        if (execDmc == null) {
+            handleFailedUpdate(update);
             return;
         }          
         
         getServicesTracker().getService(IStack.class).getFrames(
             execDmc, 
-            new GetDataDone<IFrameDMContext[]>() { public void run() {
-                if (!getStatus().isOK()) {
-                    // Failed to retrieve frames.  If we are stepping, we 
-                    // might still be able to retrieve just the top stack 
-                    // frame, which would still be useful in Debug View.
-                    if (getServicesTracker().getService(IRunControl.class).isStepping(execDmc)) {
-                        getElementsTopStackFrameOnly(parentVmc, done);
-                    } else {
-                        propagateError(getExecutor(), done, "Failed retrieving stack frames"); //$NON-NLS-1$
+            new GetDataDone<IFrameDMContext[]>() { 
+                public void run() {
+                    if (!getStatus().isOK()) {
+                        // Failed to retrieve frames.  If we are stepping, we 
+                        // might still be able to retrieve just the top stack 
+                        // frame, which would still be useful in Debug View.
+                        if (!checkService(IRunControl.class, null, update)) return;                        
+                        if (getServicesTracker().getService(IRunControl.class).isStepping(execDmc)) {
+                            getElementsTopStackFrameOnly(update);
+                        } else {
+                            update.done();
+                        }
+                        return;
                     }
-                    return;
+                    // Store the VMC element array, in case we need to use it when 
+                    fCachedOldFrameVMCs = dmcs2vmcs(getData());
+                    for (int i = 0; i < fCachedOldFrameVMCs.length; i++) update.setChild(fCachedOldFrameVMCs[i], i);
+                    update.done();
                 }
-                // Store the VMC element array, in case we need to use it when 
-                fCachedOldFramesVMCs = dmcs2vmcs(parentVmc, getData());
-                done.setData(fCachedOldFramesVMCs);
-                getExecutor().execute(done);
-            }});
+            });
     }
     
     /**
@@ -89,184 +102,197 @@ public class StackFramesLayoutNode extends DMContextVMLayoutNode<IStack.IFrameDM
      * frames are retrieved from the cache or omitted.  
      * @see #getElements(IVMContext, GetDataDone)
      */
-    private void getElementsTopStackFrameOnly(final IVMContext parentVmc, final GetDataDone<IVMContext[]> done) {
-        final IExecutionDMContext execDmc = findDmcInVmc(parentVmc, IExecutionDMContext.class);
+    private void getElementsTopStackFrameOnly(final IChildrenUpdate update) {
+        final IExecutionDMContext execDmc = findDmcInPath(update.getElementPath(), IExecutionDMContext.class);
+        if (execDmc == null) {
+            handleFailedUpdate(update);
+            return;
+        }          
 
         getServicesTracker().getService(IStack.class).getTopFrame(
             execDmc, 
             new GetDataDone<IFrameDMContext>() { public void run() {
-                if (propagateError(getExecutor(), done, "Failed retrieving top stack frame")) return; //$NON-NLS-1$
-                IVMContext topFrameVmc = new DMContextVMContext(parentVmc, getData());
+                if (!getStatus().isOK()) {
+                    handleFailedUpdate(update);
+                    return;
+                }
                 
+                IVMContext topFrameVmc = new DMVMContext(getData());
+                
+                update.setChild(topFrameVmc, 0);
                 // If there are old frames cached, use them and only substitute the top frame object. Otherwise, create
                 // an array of VMCs with just the top frame.
-                if (fCachedOldFramesVMCs != null && fCachedOldFramesVMCs.length >= 1) {
-                    fCachedOldFramesVMCs[0] = topFrameVmc;
-                    done.setData(fCachedOldFramesVMCs);
+                if (fCachedOldFrameVMCs != null && fCachedOldFrameVMCs.length >= 1) {
+                    fCachedOldFrameVMCs[0] = topFrameVmc;
+                    for (int i = 0; i < fCachedOldFrameVMCs.length; i++) update.setChild(fCachedOldFrameVMCs[i], i);
                 } else {
-                    done.setData(new IVMContext[] { topFrameVmc });
+                    update.setChild(topFrameVmc, 0);
                 }
-                getExecutor().execute(done);
+                update.done();
             }});
     }
     
-    public void retrieveLabel(IVMContext vmc, final ILabelRequestMonitor result, String[] columns) {
-        final IExecutionDMContext execDmc = findDmcInVmc(vmc, IExecutionDMContext.class);
-        if (execDmc == null || getServicesTracker().getService(IStack.class) == null || getServicesTracker().getService(IRunControl.class) == null) {
-            result.done();
-            return;
-        }          
-
+    @Override
+    protected void fillColumnLabel(IDMContext<IFrameDMData> dmContext, IFrameDMData dmData, String columnId, int idx,
+                                   ILabelUpdate update) 
+    {
+        if (idx != 0) return;
+        
+        final IExecutionDMContext execDmc = findDmcInPath(update.getElementPath(), IExecutionDMContext.class);
+        IRunControl runControlService = getServicesTracker().getService(IRunControl.class); 
+        IStepQueueManager stepQueueMgrService = getServicesTracker().getService(IStepQueueManager.class); 
+        if (execDmc == null || runControlService == null || stepQueueMgrService == null) return;
+        
         String imageKey = null;
-        IRunControl rc = getServicesTracker().getService(IRunControl.class);
-        if (rc.isSuspended(execDmc) || 
-            (rc.isStepping(execDmc) && !getServicesTracker().getService(IStepQueueManager.class).isSteppingTimedOut(execDmc)))
+        if (runControlService.isSuspended(execDmc) || 
+            (runControlService.isStepping(execDmc) && !stepQueueMgrService.isSteppingTimedOut(execDmc)))
         {
             imageKey = IDebugUIConstants.IMG_OBJS_STACKFRAME;
         } else {
             imageKey = IDebugUIConstants.IMG_OBJS_STACKFRAME_RUNNING;
         }            
-        result.setImageDescriptors(new ImageDescriptor[] { DebugUITools.getImageDescriptor(imageKey) });
+        update.setImageDescriptor(DebugUITools.getImageDescriptor(imageKey), 0);
         
-        IFrameDMContext frameDmc = (IFrameDMContext)((DMContextVMContext)vmc).getDMC();
-        getServicesTracker().getService(IStack.class).getModelData(
-            frameDmc, 
-            new GetDataDone<IFrameDMData>() { public void run() {
-                // Check if services are still available.
-                if (getServicesTracker().getService(IRunControl.class) == null) {
-                    result.done();
-                    return;
-                }
-
-                if (!getStatus().isOK()) {
-                    // If failed set a dummy label, and only propagate the 
-                    // error if we are not stepping, since that would be a 
-                    // common cause of failure.
-                    result.setLabels(new String[] { "..." }); //$NON-NLS-1$
-                    if (!getServicesTracker().getService(IRunControl.class).isStepping(execDmc)) {
-                        MultiStatus status = new MultiStatus(DsfDebugUIPlugin.PLUGIN_ID, 0, "Failed to retrieve stack frame label", null); //$NON-NLS-1$
-                        status.add(getStatus());
-                        result.setStatus(status);
-                    }
-                    result.done();
-                    return;
-                }
-                
-                //
-                // Finally, if all goes well, set the label.
-                //
-                StringBuilder label = new StringBuilder();
-                
-                // Add frame number (if total number of frames in known)
-                if (fCachedOldFramesVMCs != null) {
-                    label.append(fCachedOldFramesVMCs.length - getData().getLevel());
-                }
-                
-                // Add the function name
-                if (getData().getFunction() != null && getData().getFunction().length() != 0) { 
-                    label.append(" "); //$NON-NLS-1$
-                    label.append(getData().getFunction());
-                    label.append("()"); //$NON-NLS-1$
-                }
-                
-                // Add full file name
-                if (getData().getFile() != null && getData().getFile().length() != 0) {
-                    label.append(" at "); //$NON-NLS-1$
-                    label.append(getData().getFile());
-                }
-                
-                // Add line number 
-                if (getData().getLine() >= 0) {
-                    label.append(":"); //$NON-NLS-1$
-                    label.append(getData().getLine());
-                    label.append(" "); //$NON-NLS-1$
-                }
-                
-                // Add the address
-                label.append(getData().getAddress());
-                    
-                // Set the label to the result listener
-                result.setLabels(new String[] { label.toString() });
-                result.done();
-            }});
+        //
+        // Finally, if all goes well, set the label.
+        //
+        StringBuilder label = new StringBuilder();
+        
+        // Add frame number (if total number of frames in known)
+        if (fCachedOldFrameVMCs != null) {
+            label.append(fCachedOldFrameVMCs.length - dmData.getLevel());
+        }
+        
+        // Add the function name
+        if (dmData.getFunction() != null && dmData.getFunction().length() != 0) { 
+            label.append(" "); //$NON-NLS-1$
+            label.append(dmData.getFunction());
+            label.append("()"); //$NON-NLS-1$
+        }
+        
+        // Add full file name
+        if (dmData.getFile() != null && dmData.getFile().length() != 0) {
+            label.append(" at "); //$NON-NLS-1$
+            label.append(dmData.getFile());
+        }
+        
+        // Add line number 
+        if (dmData.getLine() >= 0) {
+            label.append(":"); //$NON-NLS-1$
+            label.append(dmData.getLine());
+            label.append(" "); //$NON-NLS-1$
+        }
+        
+        // Add the address
+        label.append(dmData.getAddress());
+            
+        // Set the label to the result listener
+        update.setLabel(label.toString(), 0);
     }
 
-    public boolean hasDeltaFlagsForDMEvent(IDMEvent<?> e) {
+    protected void handleFailedUpdate(IViewerUpdate update) {
+        if (update instanceof ILabelUpdate) {
+            // Avoid repainting the label if it's not available.  This only slows
+            // down the display.
+        } else {
+            super.handleFailedUpdate(update);
+        }
+    }
+
+    
+    @Override
+    protected int getNodeDeltaFlagsForDMEvent(org.eclipse.dd.dsf.datamodel.IDMEvent<?> e) {
         // This node generates delta if the timers have changed, or if the 
         // label has changed.
-        return e instanceof IRunControl.ISuspendedDMEvent || 
-               e instanceof IRunControl.IResumedDMEvent ||
-               e instanceof IStepQueueManager.ISteppingTimedOutEvent ||
-               super.hasDeltaFlagsForDMEvent(e);
+        if (e instanceof IRunControl.ISuspendedDMEvent) {
+            return IModelDelta.CONTENT | IModelDelta.EXPAND | IModelDelta.SELECT;
+        } else if (e instanceof IRunControl.IResumedDMEvent) {
+            if (((IRunControl.IResumedDMEvent)e).getReason() == StateChangeReason.STEP) {
+                return IModelDelta.STATE;
+            } else {
+                return IModelDelta.CONTENT;
+            }
+        } else if (e instanceof IStepQueueManager.ISteppingTimedOutEvent) {
+            return IModelDelta.CONTENT;
+        }
+        return 0;
     }
 
-    public void buildDeltaForDMEvent(final IDMEvent<?> e, final VMDelta parent, final Done done) {
-        if (getServicesTracker().getService(IStack.class) == null || getServicesTracker().getService(IRunControl.class) == null) {
+    @Override
+    protected void buildDeltaForDMEvent(final IDMEvent<?> e, final VMDelta parent, final int nodeOffset, final Done done) {
+        if (e instanceof IRunControl.ISuspendedDMEvent) {
+            buildDeltaForSuspendedEvent((IRunControl.ISuspendedDMEvent)e, parent, nodeOffset, done);
+        } else if (e instanceof IRunControl.IResumedDMEvent) {
+            buildDeltaForResumedEvent((IRunControl.IResumedDMEvent)e, parent, nodeOffset, done);
+        } else if (e instanceof IStepQueueManager.ISteppingTimedOutEvent) {
+            buildDeltaForSteppingTimedOutEvent((IStepQueueManager.ISteppingTimedOutEvent)e, parent, nodeOffset, done);
+        } else {
+            // Call super-class to build sub-node delta's.
+            super.buildDeltaForDMEvent(e, parent, nodeOffset, done);
+        }
+    }
+    
+    private void buildDeltaForSuspendedEvent(final IRunControl.ISuspendedDMEvent e, final VMDelta parent, final int nodeOffset, final Done done) {
+        IRunControl runControlService = getServicesTracker().getService(IRunControl.class); 
+        IStack stackService = getServicesTracker().getService(IStack.class);
+        if (stackService == null || runControlService == null) {
             // Required services have not initialized yet.  Ignore the event.
-            super.buildDeltaForDMEvent(e, parent, done);
+            super.buildDeltaForDMEvent(e, parent, nodeOffset, done);
             return;
         }          
         
-        if (e instanceof IRunControl.ISuspendedDMEvent) {
-            IRunControl.ISuspendedDMEvent suspendedEvent = (IRunControl.ISuspendedDMEvent)e; 
-
-            // Refresh the whole list of stack frames unless the target is already stepping the next command.  In 
-            // which case, the refresh will occur when the stepping sequence slows down or stops.  Trying to
-            // refresh the whole stack trace with every step would slow down stepping too much.
-            if (!getServicesTracker().getService(IRunControl.class).isStepping(suspendedEvent.getDMContext())) {
-                parent.addFlags(IModelDelta.CONTENT);
-            }
-            
-            // Always expand the thread node to show the stack frames.
-            parent.addFlags(IModelDelta.EXPAND);
-
-            // Retrieve the list of stack frames, and mark the top frame to be selected.  
-            getElementsTopStackFrameOnly(
-                parent.getVMC(), 
-                new GetDataDone<IVMContext[]>() { public void run() {
-                    if (getStatus().isOK() && getData().length != 0) {
-                        parent.addNode( getData()[0], IModelDelta.SELECT | IModelDelta.STATE);
-                        // If second frame is available repaint it, so that a "..." appears.  This gives a better
-                        // impression that the frames are not up-to date.
-                        if (getData().length >= 2) {
-                            parent.addNode( getData()[1], IModelDelta.STATE);
-                        }
-                    }                        
-                    // Even in case of errors, call super-class to complete building of the delta.
-                    StackFramesLayoutNode.super.buildDeltaForDMEvent(e, parent, done);
-                }});
-
-        } else if (e instanceof IRunControl.IResumedDMEvent) {
-            IRunControl.IResumedDMEvent resumedEvent = (IRunControl.IResumedDMEvent)e; 
-            getExecutor().execute(done);
-            if (resumedEvent.getReason() == StateChangeReason.STEP) {
-                // TODO: Refreshing the state of the top stack frame is only necessary to re-enable the step button.  
-                // This is because platform disables the step action every time after it is invoked.  Need to file
-                // a bug on this.
-                getServicesTracker().getService(IStack.class).getTopFrame(
-                    resumedEvent.getDMContext(), 
-                    new GetDataDone<IFrameDMContext>() { public void run() {
-                        if (getStatus().isOK()) {
-                            parent.addNode(new DMContextVMContext(parent.getVMC(), getData()), IModelDelta.STATE);
-                        }
-                        StackFramesLayoutNode.super.buildDeltaForDMEvent(e, parent, done);
-                    }});
-                StackFramesLayoutNode.super.buildDeltaForDMEvent(e, parent, done);
-            } else {
-                // Refresh the list of stack frames only if the run operation is not a step.  Also, clear the list
-                // of cached frames.
-                parent.addFlags(IModelDelta.CONTENT);
-                fCachedOldFramesVMCs = null;
-                // Call super-class to build sub-node delta's.
-                super.buildDeltaForDMEvent(e, parent, done);
-            }
-        } else if (e instanceof IStepQueueManager.ISteppingTimedOutEvent) {
-            // Repaint the stack frame images to have the running symbol.
+        // Refresh the whole list of stack frames unless the target is already stepping the next command.  In 
+        // which case, the refresh will occur when the stepping sequence slows down or stops.  Trying to
+        // refresh the whole stack trace with every step would slow down stepping too much.
+        if (!runControlService.isStepping(e.getDMContext())) {
             parent.addFlags(IModelDelta.CONTENT);
-            super.buildDeltaForDMEvent(e, parent, done);
-        } else {
-            // Call super-class to build sub-node delta's.
-            super.buildDeltaForDMEvent(e, parent, done);
         }
+        
+        // Always expand the thread node to show the stack frames.
+        parent.addFlags(IModelDelta.EXPAND);
+
+        // Retrieve the list of stack frames, and mark the top frame to be selected.  
+        getElementsTopStackFrameOnly(
+            new ElementsUpdate(
+                new GetDataDone<List<Object>>() { 
+                    public void run() {
+                        if (getStatus().isOK() && getData().size() != 0) {
+                            parent.addNode( getData().get(0), IModelDelta.SELECT | IModelDelta.STATE);
+                            // If second frame is available repaint it, so that a "..." appears.  This gives a better
+                            // impression that the frames are not up-to date.
+                            if (getData().size() >= 2) {
+                                parent.addNode( getData().get(1), IModelDelta.STATE);
+                            }
+                        }                        
+                        // Even in case of errors, call super-class to complete building of the delta.
+                        StackFramesLayoutNode.super.buildDeltaForDMEvent(e, parent, nodeOffset, done);
+                    }
+                },
+                parent)
+            );
+    }
+    
+    private void buildDeltaForResumedEvent(final IRunControl.IResumedDMEvent e, final VMDelta parent, final int nodeOffset, final Done done) {
+        IStack stackService = getServicesTracker().getService(IStack.class);
+        if (stackService == null) {
+            // Required services have not initialized yet.  Ignore the event.
+            super.buildDeltaForDMEvent(e, parent, nodeOffset, done);
+            return;
+        }          
+
+        IRunControl.IResumedDMEvent resumedEvent = (IRunControl.IResumedDMEvent)e; 
+        if (resumedEvent.getReason() != StateChangeReason.STEP) {
+            // Refresh the list of stack frames only if the run operation is not a step.  Also, clear the list
+            // of cached frames.
+            parent.addFlags(IModelDelta.CONTENT);
+            fCachedOldFrameVMCs = null;
+        }
+        super.buildDeltaForDMEvent(e, parent, nodeOffset, done);
+    }
+
+    private void buildDeltaForSteppingTimedOutEvent(final IStepQueueManager.ISteppingTimedOutEvent e, final VMDelta parent, final int nodeOffset, final Done done) {
+        // Repaint the stack frame images to have the running symbol.
+        parent.addFlags(IModelDelta.CONTENT);
+        super.buildDeltaForDMEvent(e, parent, nodeOffset, done);
     }
 }

@@ -8,6 +8,7 @@
  * Contributors:
  * QNX - Initial API and implementation
  * Markus Schorn (Wind River Systems)
+ * IBM Corporation
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom;
 
@@ -174,7 +175,7 @@ public class PDOM extends PlatformObject implements IIndexFragment, IPDOM {
 	protected void clear() throws CoreException {
 		Database db = getDB();
 		// Clear out the database
-		db.clear();
+		db.clear(0);
 
 		// Zero out the File Index and Linkages
 		db.putInt(FILE_INDEX, 0);

@@ -9,12 +9,16 @@
  * QNX - Initial API and implementation
  * Symbian - Add some non-javadoc implementation notes
  * Markus Schorn (Wind River Systems)
+ * IBM Corporation
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom.db;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
+import java.lang.ref.ReferenceQueue;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.core.runtime.CoreException;
@@ -106,14 +110,72 @@ public class Database {
 	 * Empty the contents of the Database, make it ready to start again
 	 * @throws CoreException
 	 */
-	public void clear() throws CoreException {
+	public void clear(long timeout) throws CoreException {
 		// Clear out the memory headers
 		toc[0].clear(4, DATA_AREA - 4);
-		// Add the remainder of the chunks backwards
-		for (int block = (toc.length - 1) * CHUNK_SIZE; block > 0; block -= CHUNK_SIZE) {
-			addBlock(getChunk(block), CHUNK_SIZE, block); 
+		
+		if (!truncate(timeout)) {
+			// Truncation timed out so the database size couldn't be changed.
+			// The best we can do is mark all chunks as unallocated blocks.
+
+			// Since the block list grows at the head, add all non-header
+			// chunks backwards to ensure list of blocks is ordered first
+			// to last.
+			for (int block = (toc.length - 1) * CHUNK_SIZE; block > 0; block -= CHUNK_SIZE) {
+				addBlock(getChunk(block), CHUNK_SIZE, block); 
+			}
 		}
 		malloced = freed = 0;
+	}
+	
+	/**
+	 * Truncate the database as small as possible to reclaim disk space.
+	 * This method returns false if truncation does not succeed within the
+	 * given timeout period (in milliseconds).  A timeout of 0 will cause
+	 * this method to block until the database is successfully truncated.
+	 *  
+	 * @param timeout maximum amount of milliseconds to wait before giving up;
+	 *                0 means wait indefinitely.
+	 * @return true if truncation succeeds; false if the operation times out.
+	 * @throws CoreException if an IO error occurs during truncation
+	 */
+	private boolean truncate(long timeout) throws CoreException {
+		// Queue all the chunks to be reclaimed.  
+		ReferenceQueue queue = new ReferenceQueue();
+		Set references = new HashSet();
+		for (int i = 0; i < toc.length; i++) {
+			if (toc[i] != null) {
+				toc[i].reclaim(queue, references);
+				toc[i] = null;
+			}
+		}
+		
+		System.gc();
+		try {
+			// Wait for each chunk to be reclaimed.
+			int totalReclaimed = references.size();
+			while (totalReclaimed > 0) {
+				queue.remove(timeout);
+				totalReclaimed--;
+			}
+			
+			// Truncate everything but the header chunk.
+			try {
+				file.getChannel().truncate(CHUNK_SIZE);
+			} catch (IOException e) {
+				throw new CoreException(new DBStatus(e));
+			}
+			// Reinitialize header chunk.
+			toc = new Chunk[] { new Chunk(file, 0) }; 
+			return true;
+		}
+		catch (InterruptedException e) {
+			// Truncation took longer than we wanted, so we'll
+			// reinitialize the header chunk and leave the file
+			// size alone.
+			toc[0] = new Chunk(file, 0);
+			return false;
+		}
 	}
 	
 	/**

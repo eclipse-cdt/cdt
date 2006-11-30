@@ -8,13 +8,17 @@
  * Contributors:
  * QNX - Initial API and implementation
  * Markus Schorn (Wind River Systems)
+ * IBM Corporation
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom.db;
 
 import java.io.IOException;
 import java.io.RandomAccessFile;
+import java.lang.ref.ReferenceQueue;
+import java.lang.ref.WeakReference;
 import java.nio.MappedByteBuffer;
 import java.nio.channels.FileChannel.MapMode;
+import java.util.Set;
 
 import org.eclipse.core.runtime.CoreException;
 
@@ -101,8 +105,21 @@ public class Chunk {
 		buffer.put(new byte[length]);
 	}
 	
-	void free() {
-		db.toc[index] = null;
+	/**
+	 * Allow this Chunk to be reclaimed.  Objects allocated by thus Chunk
+	 * may be registered with a ReferenceQueue to allow for notification
+	 * on deallocation.  References registered with the queue are added to
+	 * the Set references.
+	 * 
+	 * @param queue ReferenceQueue to register allocated objects with, or
+	 *              null if notification is not required.
+	 * @param references Populated with references which were registered
+	 *                   with the queue.
+	 */
+	void reclaim(ReferenceQueue queue, Set references) {
+		if (queue != null) {
+			references.add(new WeakReference(buffer, queue));
+		}
+		buffer = null;
 	}
-	
 }

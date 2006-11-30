@@ -82,6 +82,7 @@ public class CCorePlugin extends Plugin {
 	public final static String DEFAULT_BINARY_PARSER_SIMPLE_ID = "ELF"; //$NON-NLS-1$
 	public final static String DEFAULT_BINARY_PARSER_UNIQ_ID = PLUGIN_ID + "." + DEFAULT_BINARY_PARSER_SIMPLE_ID; //$NON-NLS-1$
 	public final static String PREF_USE_STRUCTURAL_PARSE_MODE = "useStructualParseMode"; //$NON-NLS-1$
+	public final static String PREF_USE_NEW_MODEL_BUILDER = "useNewModelBuilder"; //$NON-NLS-1$
 	
 	public static final String INDEXER_SIMPLE_ID = "CIndexer"; //$NON-NLS-1$
 	public static final String INDEXER_UNIQ_ID = PLUGIN_ID + "." + INDEXER_SIMPLE_ID; //$NON-NLS-1$
@@ -318,7 +319,7 @@ public class CCorePlugin extends Plugin {
 		cdtLog = new CDTLogWriter(CCorePlugin.getDefault().getStateLocation().append(".log").toFile()); //$NON-NLS-1$
 		
 		//Set debug tracing options
-		CCorePlugin.getDefault().configurePluginDebugOptions();
+		configurePluginDebugOptions();
 		
 		fDescriptorManager.startup();
 
@@ -332,6 +333,8 @@ public class CCorePlugin extends Plugin {
 
 		// Set the default for using the structual parse mode to build the CModel
 		getPluginPreferences().setDefault(PREF_USE_STRUCTURAL_PARSE_MODE, false);
+		// Set the default for using the new model builder to build the CModel
+		getPluginPreferences().setDefault(PREF_USE_NEW_MODEL_BUILDER, true);
 
         PositionTrackerManager.getInstance().install();
 	}
@@ -984,6 +987,16 @@ public class CCorePlugin extends Plugin {
 
 	public boolean useStructuralParseMode() {
 		return getPluginPreferences().getBoolean(PREF_USE_STRUCTURAL_PARSE_MODE);
+	}
+	
+	// Preference to turn on/off the use of the new model builder to build the CModel
+	public void setUseNewModelBuilder(boolean useNewModelBuilder) {
+		getPluginPreferences().setValue(PREF_USE_NEW_MODEL_BUILDER, useNewModelBuilder);
+		savePluginPreferences();
+	}
+
+	public boolean useNewModelBuilder() {
+		return getPluginPreferences().getBoolean(PREF_USE_NEW_MODEL_BUILDER);
 	}
 	
 	public CDOM getDOM() {

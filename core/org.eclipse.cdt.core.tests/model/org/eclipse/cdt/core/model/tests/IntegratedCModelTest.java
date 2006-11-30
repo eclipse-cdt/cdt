@@ -42,6 +42,7 @@ public abstract class IntegratedCModelTest extends TestCase {
 	private IFile sourceFile;
 	private NullProgressMonitor monitor;
 	private boolean structuralParse = false;
+	private boolean fUseNewModelBuilder= true;
 
 	/**
 	 * 
@@ -91,16 +92,14 @@ public abstract class IntegratedCModelTest extends TestCase {
 
 	protected ITranslationUnit getTU() throws CModelException {
 		ITranslationUnit tu = (ITranslationUnit)CoreModel.getDefault().create(sourceFile);
-		if(isStructuralParse()) {
-			CCorePlugin.getDefault().setStructuralParseMode(true);
-		} else {
-			CCorePlugin.getDefault().setStructuralParseMode(false);
-		}
+		CCorePlugin.getDefault().setUseNewModelBuilder(useNewModelBuilder());
+		CCorePlugin.getDefault().setStructuralParseMode(isStructuralParse());
 		// parse the translation unit to get the elements tree		
 		// Force the parsing now to do this in the right ParseMode.
 		tu.close();
 		tu.open(new NullProgressMonitor());
 		CCorePlugin.getDefault().setStructuralParseMode(false);
+		CCorePlugin.getDefault().setUseNewModelBuilder(false);
 		return tu;
 	}
 	/**
@@ -114,5 +113,21 @@ public abstract class IntegratedCModelTest extends TestCase {
 	 */
 	public void setStructuralParse(boolean structuralParse) {
 		this.structuralParse = structuralParse;
+	}
+
+	/**
+	 * @return  whether to use the new model builder or not
+	 */
+	public boolean useNewModelBuilder() {
+		return fUseNewModelBuilder;
+	}
+
+	/**
+	 * Set whether to use the new model builder.
+	 * @param useNewModelBuilder
+	 */
+	public TestCase setUseNewModelBuilder(boolean useNewModelBuilder) {
+		fUseNewModelBuilder = useNewModelBuilder;
+		return this;
 	}
 }

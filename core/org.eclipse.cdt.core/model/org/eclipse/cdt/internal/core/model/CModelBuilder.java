@@ -183,7 +183,7 @@ public class CModelBuilder {
 				language, 
 				ParserUtil.getParserLogService() );
 		} catch(ParserFactoryError pfe) {
-			throw new ParserException( CCorePlugin.getResourceString("CModelBuilder.Parser_Construction_Failure")); //$NON-NLS-1$
+			throw new ParserException( ""); //$NON-NLS-1$
 		}
 		// call parse
 		if (problemRequestor != null) {
@@ -194,7 +194,7 @@ public class CModelBuilder {
 			problemRequestor.endReporting();
 		}
 		if( (!hasNoErrors)  && throwExceptionOnError )
-			throw new ParserException(CCorePlugin.getResourceString("CModelBuilder.Parse_Failure")); //$NON-NLS-1$
+			throw new ParserException(""); //$NON-NLS-1$
 		return quickParseCallback.getCompilationUnit(); 
 	}
 	
@@ -207,7 +207,11 @@ public class CModelBuilder {
 			Util.debugLog( "Parse Exception in CModelBuilder", IDebugLogConstants.MODEL );  //$NON-NLS-1$
 			//e.printStackTrace();
 		}
-		Util.debugLog("CModel parsing: "+ ( System.currentTimeMillis() - startTime ) + "ms", IDebugLogConstants.MODEL); //$NON-NLS-1$ //$NON-NLS-2$
+		Util.debugLog("CModelBuilder: parsing " //$NON-NLS-1$
+				+ translationUnit.getElementName()
+				+ " mode="+ (quickParseMode ? "quick " : "structural ") //$NON-NLS-1$ //$NON-NLS-2$
+				+ " time="+ ( System.currentTimeMillis() - startTime ) + "ms", //$NON-NLS-1$ //$NON-NLS-2$
+				IDebugLogConstants.MODEL, false);
 		
 		startTime = System.currentTimeMillis();
 		try { 
@@ -217,11 +221,14 @@ public class CModelBuilder {
 		} catch( NullPointerException npe ) {
 			Util.debugLog( "NullPointer exception in CModelBuilder", IDebugLogConstants.MODEL);  //$NON-NLS-1$
 		}
-				 
+
 		// For the debuglog to take place, you have to call
 		// Util.setDebugging(true);
 		// Or set debug to true in the core plugin preference 
-		Util.debugLog("CModel building: "+ ( System.currentTimeMillis() - startTime ) + "ms", IDebugLogConstants.MODEL); //$NON-NLS-1$ //$NON-NLS-2$
+		Util.debugLog("CModelBuilder: building " //$NON-NLS-1$
+				+"children="+ translationUnit.getElementInfo().internalGetChildren().size() //$NON-NLS-1$
+				+" time="+ (System.currentTimeMillis() - startTime) + "ms", //$NON-NLS-1$ //$NON-NLS-2$
+				IDebugLogConstants.MODEL, false);
 		return this.newElements;
 		
 	}	
@@ -303,7 +310,7 @@ public class CModelBuilder {
 	private void generateModelElements (Parent parent, IASTAbstractTypeSpecifierDeclaration abstractDeclaration) throws CModelException, ASTNotImplementedException
 	{
 		// IASTAbstractTypeSpecifierDeclaration 
-		CElement element = createAbstractElement(parent, abstractDeclaration, false, true);
+		createAbstractElement(parent, abstractDeclaration, false, true);
 	}
 
 	private void generateModelElements (Parent parent, IASTTemplateDeclaration templateDeclaration) throws CModelException, ASTNotImplementedException
@@ -320,7 +327,7 @@ public class CModelBuilder {
 				// set the template parameters				
 				StructureTemplate classTemplate = (StructureTemplate) element;
 				classTemplate.setTemplateParameterTypes(parameterTypes);				
-			} else if (element instanceof StructureTemplate) {
+			} else if (element instanceof StructureTemplateDeclaration) {
 				// set the template parameters				
 				StructureTemplateDeclaration classTemplate = (StructureTemplateDeclaration) element;
 				classTemplate.setTemplateParameterTypes(parameterTypes);				
@@ -335,7 +342,7 @@ public class CModelBuilder {
 				// set the template parameters				
 				StructureTemplate classTemplate = (StructureTemplate) element;
 				classTemplate.setTemplateParameterTypes(parameterTypes);				
-			} else if (element instanceof StructureTemplate) {
+			} else if (element instanceof StructureTemplateDeclaration) {
 				// set the template parameters				
 				StructureTemplateDeclaration classTemplate = (StructureTemplateDeclaration) element;
 				classTemplate.setTemplateParameterTypes(parameterTypes);				
@@ -377,9 +384,9 @@ public class CModelBuilder {
 
 	private void generateModelElements (Parent parent, IASTTypedefDeclaration declaration) throws CModelException, ASTNotImplementedException
 	{
-		TypeDef typeDef = createTypeDef(parent, declaration);
+		createTypeDef(parent, declaration);
 		IASTAbstractDeclaration abstractDeclaration = declaration.getAbstractDeclarator();
-		CElement element = createAbstractElement(parent, abstractDeclaration, false, true);
+		createAbstractElement(parent, abstractDeclaration, false, true);
 	}
 		
 	private CElement createClassSpecifierElement(Parent parent, IASTClassSpecifier classSpecifier, boolean isTemplate)throws ASTNotImplementedException, CModelException{
@@ -634,7 +641,7 @@ public class CModelBuilder {
 		}
 		
 		IASTAbstractDeclaration abstractDeclaration = varDeclaration.getAbstractDeclaration();
-    	CElement abstractElement = createAbstractElement (parent, abstractDeclaration , isTemplate, false);
+    	createAbstractElement (parent, abstractDeclaration , isTemplate, false);
 
 		VariableDeclaration element = null;
 		if(varDeclaration instanceof IASTField){

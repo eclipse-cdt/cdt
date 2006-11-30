@@ -392,28 +392,18 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 		return (WorkingCopy) perFactoryWorkingCopies.get(this);
 	}
 
-	/**
-	 * To be removed with the new model builder in place
-	 * @param newElements
-	 * @param element
+	/*
+	 * @see org.eclipse.cdt.internal.core.model.Openable#isOpen()
 	 */
-	private void getNewElements(Map mapping, CElement element) {
-		Object info = null;
-		try {
-			info = element.getElementInfo();
-		} catch (CModelException e) {
-		}
-		if (info != null) {
-			if (element instanceof IParent) {
-				ICElement[] children = ((CElementInfo) info).getChildren();
-				int size = children.length;
-				for (int i = 0; i < size; ++i) {
-					CElement child = (CElement) children[i];
-					getNewElements(mapping, child);
-				}
-			}
-		}
-		mapping.put(element, info);
+	public synchronized boolean isOpen() {
+		return super.isOpen();
+	}
+
+	/*
+	 * @see org.eclipse.cdt.internal.core.model.CElement#getElementInfo(org.eclipse.core.runtime.IProgressMonitor)
+	 */
+	public synchronized CElementInfo getElementInfo(IProgressMonitor monitor) throws CModelException {
+		return super.getElementInfo(monitor);
 	}
 
 	/* (non-Javadoc)
@@ -582,13 +572,11 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 		return buffer;
 	}
 
+	/*
+	 * @see org.eclipse.cdt.core.model.ITranslationUnit#parse()
+	 */
 	public Map parse() {
-		Map map = new HashMap();
-		try {
-			getNewElements(map, this);
-		} catch (Exception e) {
-		}
-		return map;
+		throw new UnsupportedOperationException("Deprecated method"); //$NON-NLS-1$
 	}
 
 	/**
@@ -609,8 +597,12 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 	 */
 	private void parseUsingCModelBuilder(Map newElements, boolean quickParseMode) {
 		try {
-			CModelBuilder modelBuilder = new CModelBuilder(this, newElements);
-			modelBuilder.parse(quickParseMode);
+			boolean useNewModelBuilder= CCorePlugin.getDefault().useNewModelBuilder();
+			if (useNewModelBuilder) {
+				new CModelBuilder2(this).parse(quickParseMode);
+			} else {
+				new CModelBuilder(this, newElements).parse(quickParseMode);
+			}
 		} catch (Exception e) {
 			// use the debug log for this exception.
 			Util.debugLog( "Exception in CModelBuilder", IDebugLogConstants.MODEL);  //$NON-NLS-1$
@@ -748,10 +740,16 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 		}
 	}
 
+	/*
+	 * @see org.eclipse.cdt.core.model.ITranslationUnit#getAST()
+	 */
 	public IASTTranslationUnit getAST() throws CoreException {
 		return getAST(null, 0);
 	}
 
+	/*
+	 * @see org.eclipse.cdt.core.model.ITranslationUnit#getAST(org.eclipse.cdt.core.index.IIndex, int)
+	 */
 	public IASTTranslationUnit getAST(IIndex index, int style) throws CoreException {
 		ICodeReaderFactory codeReaderFactory;
 		if (index != null && (style & (ITranslationUnit.AST_SKIP_INDEXED_HEADERS | ITranslationUnit.AST_SKIP_ALL_HEADERS)) != 0) {

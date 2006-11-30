@@ -53,7 +53,7 @@ public class FailedMacroTests extends IntegratedCModelTest
 	 * @see org.eclipse.cdt.internal.core.model.IntegratedCModelTest
 	 */
 	public String getSourcefileResource() {
-		return "MacroTests.c";
+		return "MacroTests.cpp";
 	}
 	
 	private final static boolean failedTest = true;

@@ -14,11 +14,18 @@
  */
 package org.eclipse.cdt.core.model.tests;
 
-import org.eclipse.cdt.core.model.*;
-
-import junit.framework.*;
 import java.util.ArrayList;
 import java.util.List;
+
+import junit.framework.Test;
+import junit.framework.TestSuite;
+
+import org.eclipse.cdt.core.model.CModelException;
+import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.model.IStructure;
+import org.eclipse.cdt.core.model.ITemplate;
+import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.cdt.core.model.IVariable;
 
 
 
@@ -143,9 +150,30 @@ public class ITemplateTests extends IntegratedCModelTest {
 		{
 			// Check the template function
 			List arrayElements = tu.getChildrenOfType(ICElement.C_TEMPLATE_FUNCTION);
+			// actually, none of the two are function templates, but method templates
+			String[] myExpectedValues = {
+//					"nonVector<T>::first",
+					"Foo::fum",
+				};
+				assertEquals(myExpectedValues.length, arrayElements.size());
+				// This test is no correct there is no guaranty on the order
+				// for this particular case
+				for(int i=0; i<myExpectedValues.length; i++) {
+					ICElement celement = (ICElement) arrayElements.get(i);
+					ITemplate myITemplate = (ITemplate)celement;
+					assertNotNull( "Failed on "+i, myITemplate);
+					assertEquals("Failed on "+i, myExpectedValues[i], celement.getElementName());
+				}
+
+		}
+		{
+			// Check the template method
+			List arrayElements = tu.getChildrenOfType(ICElement.C_TEMPLATE_METHOD);
+			// actually, both of the two are method templates, but Foo is not resolved
+			// to a cpp class
 			String[] myExpectedValues = {
 					"nonVector<T>::first",
-					"Foo::fum",
+//					"Foo::fum",
 				};
 				assertEquals(myExpectedValues.length, arrayElements.size());
 				// This test is no correct there is no guaranty on the order
@@ -198,21 +226,20 @@ public class ITemplateTests extends IntegratedCModelTest {
 //				assertEquals("Failed on "+i, myExpectedValues[i], celement.getElementName());
 //			}
 		}
-/*
- 		// TEMPLATE_VARIABLE moved to failed tests
+
  		{
-			ArrayList arrayElements = tu.getChildrenOfType(ICElement.C_TEMPLATE_VARIABLE);
+			List arrayElements = tu.getChildrenOfType(ICElement.C_TEMPLATE_VARIABLE);
 			String[] myExpectedValues = {
 				"default_alloc_template<threads,inst>::S_start_free"
 			};
 			assertEquals(myExpectedValues.length, arrayElements.size());
 			for(int i=0; i<myExpectedValues.length; i++) {
-				ITemplate myITemplate = (ITemplate) arrayElements.get(i);
+				IVariable myITemplate = (IVariable) arrayElements.get(i);
 				assertNotNull( "Failed on "+i, myITemplate);
 				assertEquals("Failed on "+i, myExpectedValues[i], myITemplate.getElementName());
 			}
 		}
-*/	}
+	}
 
 
 	public void testGetNumberOfTemplateParameters() throws CModelException
@@ -224,13 +251,12 @@ public class ITemplateTests extends IntegratedCModelTest {
 		arrayElements.addAll( tu.getChildrenOfType(ICElement.C_TEMPLATE_UNION ) );
 		arrayElements.addAll( getTemplateMethods(tu) );
 		arrayElements.addAll( tu.getChildrenOfType(ICElement.C_TEMPLATE_FUNCTION ) );
+		arrayElements.addAll( tu.getChildrenOfType(ICElement.C_TEMPLATE_METHOD ) );
 		arrayElements.addAll( tu.getChildrenOfType(ICElement.C_TEMPLATE_FUNCTION_DECLARATION ) );
-		// TEMPLATE_VARIABLE moved to failed tests
-		//arrayElements.addAll( tu.getChildrenOfType(ICElement.C_TEMPLATE_VARIABLE ) );
+		arrayElements.addAll( tu.getChildrenOfType(ICElement.C_TEMPLATE_VARIABLE ) );
 		
 		int[] myExpectedNumbers = {
-//			3,1,3,1,1,3
-			3,1,3,1,1,1,1,1/*,2*/
+			3,1,3,1,1,1,1,1,2
 		};
 		assertEquals(myExpectedNumbers.length, arrayElements.size());
 		for(int i=0; i<myExpectedNumbers.length; i++) {
@@ -248,10 +274,10 @@ public class ITemplateTests extends IntegratedCModelTest {
 		arrayElements.addAll( tu.getChildrenOfType(ICElement.C_TEMPLATE_CLASS ) );
 		arrayElements.addAll( tu.getChildrenOfType(ICElement.C_TEMPLATE_UNION ) );
 		arrayElements.addAll( getTemplateMethods(tu) );
+		arrayElements.addAll( tu.getChildrenOfType(ICElement.C_TEMPLATE_METHOD ) );
 		arrayElements.addAll( tu.getChildrenOfType(ICElement.C_TEMPLATE_FUNCTION ) );
 		arrayElements.addAll( tu.getChildrenOfType(ICElement.C_TEMPLATE_FUNCTION_DECLARATION ) );
-		// TEMPLATE_VARIABLE moved to failed tests
-		//arrayElements.addAll( tu.getChildrenOfType(ICElement.C_VARIABLE_TEMPLATE ) );
+		arrayElements.addAll( tu.getChildrenOfType(ICElement.C_TEMPLATE_VARIABLE ) );
 		
 		String[][] myExpectedValues = {
 			//"Map"
@@ -270,9 +296,8 @@ public class ITemplateTests extends IntegratedCModelTest {
 			{"Bar"},
 			//"IsGreaterThan"
 			{"X"},
-			/*
 			//"default_alloc_template::S_start_free"
-			{"bool", "int"},*/
+			{"bool", "int"},
 		};
 		assertEquals(myExpectedValues.length, arrayElements.size());
 		for(int i=0; i<myExpectedValues.length; i++) {
@@ -294,10 +319,11 @@ public class ITemplateTests extends IntegratedCModelTest {
 		arrayElements.addAll( tu.getChildrenOfType(ICElement.C_TEMPLATE_CLASS ) );
 		arrayElements.addAll( tu.getChildrenOfType(ICElement.C_TEMPLATE_UNION ) );
 		arrayElements.addAll( getTemplateMethods(tu) );
+		arrayElements.addAll( tu.getChildrenOfType(ICElement.C_TEMPLATE_METHOD ) );
 		arrayElements.addAll( tu.getChildrenOfType(ICElement.C_TEMPLATE_FUNCTION ) );
 		arrayElements.addAll( tu.getChildrenOfType(ICElement.C_TEMPLATE_FUNCTION_DECLARATION ) );
 		// TEMPLATE_VARIABLE moved to failed tests
-		//arrayElements.addAll( tu.getChildrenOfType(ICElement.C_TEMPLATE_VARIABLE ) );
+		arrayElements.addAll( tu.getChildrenOfType(ICElement.C_TEMPLATE_VARIABLE ) );
 		
 		String[] myExpectedValues = {
 			"Map<Key, Value, SortAlgorithm>",
@@ -305,11 +331,11 @@ public class ITemplateTests extends IntegratedCModelTest {
 			"ArrayOverlay<X, Y, int=16>",
 			"fum<Bar>(int) : void",
 			"scrum<int>(void) : void", // TODO: deduce the rules of () versus (void), compare below.
-			"nonVector<T>::first<T>() : const T&", // TODO: where should <T> be?
+			"nonVector<T>::first<T>() const : const T&", // TODO: where should <T> be?
 			"Foo::fum<Bar>(int) : void",
 			// TODO: shouldn't signature indicate const function as well?
 			"IsGreaterThan<X>(X, X) : bool",
-			/*"default_alloc_template<threads,inst>::S_start_free<bool, int> : char*",*/
+			"default_alloc_template<threads,inst>::S_start_free<bool, int> : char*",
 		};
 		assertEquals(myExpectedValues.length, arrayElements.size());
 		for(int i=0; i<myExpectedValues.length; i++) {

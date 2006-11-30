@@ -69,6 +69,10 @@ class CElementInfo {
 		}
 	}
 
+	List internalGetChildren() {
+		return fChildren;
+	}
+
 
 	/**
 	 * Returns <code>true</code> if this child is in my children collection

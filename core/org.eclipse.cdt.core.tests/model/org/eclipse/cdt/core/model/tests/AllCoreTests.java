@@ -13,6 +13,8 @@ package org.eclipse.cdt.core.model.tests;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
+import org.eclipse.cdt.core.model.failedTests.FailedDeclaratorsTest;
+
 
 /**
  *
@@ -41,6 +43,7 @@ public class AllCoreTests {
         suite.addTest(ArchiveTests.suite());
         suite.addTest(TranslationUnitTests.suite());
 		suite.addTest(DeclaratorsTests.suite());
+		suite.addTest(FailedDeclaratorsTest.suite());
 		suite.addTest(CPathEntryTest.suite());
 
         return suite;

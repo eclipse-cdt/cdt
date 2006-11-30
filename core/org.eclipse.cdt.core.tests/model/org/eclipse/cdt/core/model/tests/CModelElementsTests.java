@@ -329,7 +329,7 @@ public class CModelElementsTests extends TestCase {
 		IVariable vDecl2 = (IVariable) nsVars.get(3);
 		assertEquals(vDecl2.getElementName(), new String("orig_malloc_hook"));
 		checkElementOffset(vDecl2);
-		assertEquals(vDecl2.getTypeName(), new String ("void*(*)(const char*, int, size_t)"));
+		assertEquals(vDecl2.getTypeName(), new String ("void*(*)(const char*, int, int)"));
 		checkLineNumbers(vDecl2, 81, 81);
 	}
 
@@ -416,7 +416,7 @@ public class CModelElementsTests extends TestCase {
 		ITypeDef td2 = (ITypeDef) nsTypeDefs.get(1);
 		assertEquals(td2.getElementName(), new String ("myTypedef"));
 		checkElementOffset(td2);
-		assertEquals(td2.getTypeName(), new String (""));
+		assertEquals(td2.getTypeName(), new String ("struct"));
 		checkLineNumbers(td2, 101, 103);
 
 		// union

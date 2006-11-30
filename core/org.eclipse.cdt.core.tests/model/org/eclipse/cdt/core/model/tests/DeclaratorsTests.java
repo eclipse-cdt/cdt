@@ -71,18 +71,6 @@ public class DeclaratorsTests extends IntegratedCModelTest {
         assertEquals(decl.getReturnType(), "void");
     }
 
-    public void testDeclarators_0002() throws CModelException {
-        ITranslationUnit tu = getTU();
-        ICElement element = tu.getElement("decl_0002");
-        assertNotNull(element);
-        assertEquals(element.getElementType(), ICElement.C_FUNCTION_DECLARATION);
-        IFunctionDeclaration decl = (IFunctionDeclaration)element;
-        assertEquals(decl.getSignature(), "decl_0002(char)");
-        assertEquals(decl.getReturnType(), "void");
-    }
-
-  
-
     public void testDeclarators_0004() throws CModelException {
         ITranslationUnit tu = getTU();
         ICElement element = tu.getElement("decl_0004");
@@ -103,11 +91,21 @@ public class DeclaratorsTests extends IntegratedCModelTest {
     }
 
     public void testDeclarators_0015() throws CModelException {
-        ITranslationUnit tu = getTU();
-        ICElement element = tu.getElement("decl_0015");
-        assertNotNull(element);
-        assertEquals(element.getElementType(), ICElement.C_TYPEDEF);
-        ITypeDef decl = (ITypeDef)element;
-        assertEquals(decl.getTypeName(), "void(*)(char)");
+    	ITranslationUnit tu = getTU();
+    	ICElement element = tu.getElement("decl_0015");
+    	assertNotNull(element);
+    	assertEquals(element.getElementType(), ICElement.C_TYPEDEF);
+    	ITypeDef decl = (ITypeDef)element;
+    	assertEquals(decl.getTypeName(), "void(*)(char)");
     }
+
+    public void testDeclarators_0031() throws CModelException {
+    	ITranslationUnit tu = getTU();
+    	ICElement element = tu.getElement("decl_0031");
+    	assertNotNull(element);
+    	assertEquals(element.getElementType(), ICElement.C_VARIABLE);
+    	IVariable decl = (IVariable)element;
+    	assertEquals(decl.getTypeName(), "int(*)(char(*)(bool))");
+    }
+
 }

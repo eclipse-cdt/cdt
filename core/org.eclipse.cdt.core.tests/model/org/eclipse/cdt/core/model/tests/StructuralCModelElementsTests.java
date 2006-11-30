@@ -421,7 +421,7 @@ public class StructuralCModelElementsTests extends TestCase {
 		ITypeDef td2 = (ITypeDef) nsTypeDefs.get(1);
 		assertEquals(td2.getElementName(), new String ("myTypedef")); //$NON-NLS-1$
 		checkElementOffset(td2);
-		assertEquals(td2.getTypeName(), new String ("")); //$NON-NLS-1$
+		assertEquals(td2.getTypeName(), new String ("struct")); //$NON-NLS-1$
 		checkLineNumbers(td2, 101, 103);
 
 		// union

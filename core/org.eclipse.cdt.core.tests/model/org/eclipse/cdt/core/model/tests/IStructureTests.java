@@ -44,7 +44,7 @@ public class IStructureTests extends IntegratedCModelTest {
 	 * @see org.eclipse.cdt.internal.core.model.IntegratedCModelTest
 	 */
 	public String getSourcefileResource() {
-		return "IStructure.c";
+		return "IStructure.cpp";
 	}
 	
 	/**

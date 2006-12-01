@@ -45,12 +45,12 @@ import org.eclipse.tm.terminal.ITerminalConnector;
 import org.eclipse.tm.terminal.ITerminalControl;
 import org.eclipse.tm.terminal.Logger;
 import org.eclipse.tm.terminal.TerminalState;
+import org.eclipse.tm.terminal.control.ITerminalListener;
+import org.eclipse.tm.terminal.control.ITerminalViewControl;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.contexts.IContextActivation;
 import org.eclipse.ui.contexts.IContextService;
 import org.eclipse.ui.keys.IBindingService;
-import org.eclipse.tm.terminal.control.ITerminalListener;
-import org.eclipse.tm.terminal.control.ITerminalViewControl;
 
 /**
  *

@@ -1595,7 +1595,7 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 	{
 		if (subsystem.isConnected())
 		{
-			try
+			try 
 			{
 				subsystem.disconnect(); // just in case.
 			}

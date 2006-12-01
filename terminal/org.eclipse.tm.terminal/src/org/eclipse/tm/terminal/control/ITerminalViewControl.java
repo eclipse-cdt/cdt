@@ -12,9 +12,9 @@
 package org.eclipse.tm.terminal.control;
 
 import org.eclipse.swt.custom.StyledText;
-import org.eclipse.tm.terminal.TerminalState;
 import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.tm.terminal.ITerminalConnector;
+import org.eclipse.tm.terminal.TerminalState;
 
 /**
  * @author Michael Scharf

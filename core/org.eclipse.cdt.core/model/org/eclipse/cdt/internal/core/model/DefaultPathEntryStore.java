@@ -93,7 +93,7 @@ public class DefaultPathEntryStore implements IPathEntryStore, ICDescriptorListe
 			NodeList list = element.getChildNodes();
 			for (int i = 0; i < list.getLength(); i++) {
 				Node childNode = list.item(i);
-				if (childNode.getNodeType() == Node.ELEMENT_NODE) {
+				if (childNode != null && childNode.getNodeType() == Node.ELEMENT_NODE) {
 					if (childNode.getNodeName().equals(PATH_ENTRY)) {
 						pathEntries.add(decodePathEntry(fProject, (Element) childNode));
 					}

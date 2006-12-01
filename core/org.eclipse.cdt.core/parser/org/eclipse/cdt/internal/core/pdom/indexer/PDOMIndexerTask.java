@@ -148,7 +148,9 @@ public abstract class PDOMIndexerTask implements IPDOMIndexerTask {
 			break;
 		case ICElement.C_CCONTAINER:
 			ICContainer folder= (ICContainer) element;
-			collectSources(folder, added, added, allFiles);
+			if (delta.getKind() == ICElementDelta.ADDED) {
+				collectSources(folder, added, added, allFiles);
+			}
 			break;
 		}
 			

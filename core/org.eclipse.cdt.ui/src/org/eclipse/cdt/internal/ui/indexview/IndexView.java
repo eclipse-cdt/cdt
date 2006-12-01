@@ -185,7 +185,11 @@ public class IndexView extends ViewPart implements PDOM.IListener, IElementChang
 		public Object[] getChildren(Object parentElement) {
 			try {
 				if (parentElement instanceof ICProject) {
-					PDOM pdom = (PDOM)CCoreInternals.getPDOMManager().getPDOM((ICProject)parentElement);
+					ICProject cproject= (ICProject)parentElement;
+					if (!cproject.getProject().isOpen()) {
+						return new Object[0];
+					}
+					PDOM pdom = (PDOM)CCoreInternals.getPDOMManager().getPDOM(cproject);
 					PDOMLinkage[] linkages= pdom.getLinkages();
 					if (linkages.length == 1) {
 						// Skip linkages in hierarchy if there is only one
@@ -215,7 +219,11 @@ public class IndexView extends ViewPart implements PDOM.IListener, IElementChang
 		public boolean hasChildren(Object element) {
 			try {
 				if (element instanceof ICProject) {
-					PDOM pdom = (PDOM)CCoreInternals.getPDOMManager().getPDOM((ICProject)element);
+					ICProject cproject= (ICProject)element;
+					if (!cproject.getProject().isOpen()) {
+						return false;
+					}
+					PDOM pdom = (PDOM)CCoreInternals.getPDOMManager().getPDOM(cproject);
 					PDOMLinkage[] linkages = pdom.getLinkages();
 					if (linkages.length == 0)
 						return false;
@@ -328,7 +336,6 @@ public class IndexView extends ViewPart implements PDOM.IListener, IElementChang
 				PDOM pdom = (PDOM)CCoreInternals.getPDOMManager().getPDOM(projects[i]); 
 					pdom.removeListener(this);
 			}
-			viewer.setChildCount(model, projects.length);
 		} catch (CoreException e) {
 			CUIPlugin.getDefault().log(e);
 		}

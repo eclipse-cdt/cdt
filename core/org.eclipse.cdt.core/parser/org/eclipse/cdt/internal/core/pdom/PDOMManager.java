@@ -76,7 +76,6 @@ public class PDOMManager implements IPDOMManager, IWritableIndexManager, IListen
 
 	private static final QualifiedName indexerProperty= new QualifiedName(CCorePlugin.PLUGIN_ID, "pdomIndexer"); //$NON-NLS-1$
 	private static final QualifiedName dbNameProperty= new QualifiedName(CCorePlugin.PLUGIN_ID, "pdomName"); //$NON-NLS-1$
-	private static final QualifiedName pdomProperty= new QualifiedName(CCorePlugin.PLUGIN_ID, "pdom"); //$NON-NLS-1$
 
 	public static final String INDEXER_ID_KEY = "indexerId"; //$NON-NLS-1$
 	public static final String INDEX_ALL_FILES = "indexAllFiles"; //$NON-NLS-1$
@@ -102,7 +101,8 @@ public class PDOMManager implements IPDOMManager, IWritableIndexManager, IListen
     /**
      * Stores mapping from pdom to project, used to serialize\ creation of new pdoms.
      */
-    private Map fPDOMs= new HashMap();
+    private Map fProjectToPDOM= new HashMap();
+    private Map fLocationToCProject= new HashMap();
 	private ListenerList fChangeListeners= new ListenerList();
 	private ListenerList fStateListeners= new ListenerList();
 	
@@ -145,48 +145,44 @@ public class PDOMManager implements IPDOMManager, IWritableIndexManager, IListen
 	}
 
 	public IPDOM getPDOM(ICProject project) throws CoreException {
-		synchronized (fPDOMs) {
+		synchronized (fProjectToPDOM) {
 			IProject rproject = project.getProject();
-			WritablePDOM pdom = (WritablePDOM)rproject.getSessionProperty(pdomProperty);
+			WritablePDOM pdom = (WritablePDOM) fProjectToPDOM.get(rproject);
 			if (pdom != null) {
-				ICProject oldProject= (ICProject) fPDOMs.get(pdom);
-				if (project.equals(oldProject)) {
-					return pdom;
-				}
+				return pdom;
+			}
 
-				if (oldProject != null && oldProject.getProject().exists()) {
-					// old project exists, don't use pdom
-					String dbName= getDefaultName(project);
-					rproject.setPersistentProperty(dbNameProperty, dbName);
-				}
-				else {
-					// pdom can be reused, as the other project has gone
-					fPDOMs.put(pdom, project);
-					return pdom;
-				}
-			}		
-
-			// make sure we get a unique name.
 			String dbName= rproject.getPersistentProperty(dbNameProperty);
+			IPath dbPath= null;
 			if (dbName != null) {
-				IPath dbPath= CCorePlugin.getDefault().getStateLocation().append(dbName);
-				for (Iterator iter = fPDOMs.keySet().iterator(); dbName != null && iter.hasNext();) {
-					PDOM existingPDOM = (PDOM) iter.next();
-					if (existingPDOM.getPath().equals(dbPath)) {
+				dbPath= CCorePlugin.getDefault().getStateLocation().append(dbName);
+				ICProject currentCOwner= (ICProject) fLocationToCProject.get(dbPath);
+				if (currentCOwner != null) {
+					IProject currentOwner= currentCOwner.getProject();
+					if (currentOwner.exists()) {
 						dbName= null;
+						dbPath= null;
+					}
+					else {
+						pdom= (WritablePDOM) fProjectToPDOM.remove(currentOwner);
+						fLocationToCProject.remove(dbPath);
 					}
 				}
 			}
+
+			if (pdom == null) {
+				if (dbName == null) {
+					dbName= getDefaultName(project);
+					rproject.setPersistentProperty(dbNameProperty, dbName);
+					dbPath= CCorePlugin.getDefault().getStateLocation().append(dbName);
+				}
 			
-			if (dbName == null) {
-				dbName = getDefaultName(project); 
-				rproject.setPersistentProperty(dbNameProperty, dbName);
+				pdom = new WritablePDOM(dbPath);
+				pdom.addListener(this);
 			}
-			IPath dbPath = CCorePlugin.getDefault().getStateLocation().append(dbName);
-			pdom = new WritablePDOM(dbPath);
-			pdom.addListener(this);
-			rproject.setSessionProperty(pdomProperty, pdom);
-			fPDOMs.put(pdom, project);
+			
+			fLocationToCProject.put(dbPath, project);
+			fProjectToPDOM.put(rproject, pdom);
 			return pdom;
 		}
 	}
@@ -330,7 +326,7 @@ public class PDOMManager implements IPDOMManager, IWritableIndexManager, IListen
 	}
 
 	private void changeIndexer(ICProject cproject) throws CoreException {
-		assert !Thread.holdsLock(fPDOMs);
+		assert !Thread.holdsLock(fProjectToPDOM);
 		IPDOMIndexer oldIndexer= null;
 		String newid= getIndexerId(cproject);
 		boolean allFiles= getIndexAllFiles(cproject);
@@ -351,7 +347,7 @@ public class PDOMManager implements IPDOMManager, IWritableIndexManager, IListen
 	}
 
 	public IPDOMIndexer getIndexer(ICProject project, boolean create) {
-		assert !Thread.holdsLock(fPDOMs);
+		assert !Thread.holdsLock(fProjectToPDOM);
 		synchronized (fIndexerMutex) {
 			IProject rproject = project.getProject();
 			if (!rproject.isOpen()) {
@@ -500,7 +496,7 @@ public class PDOMManager implements IPDOMManager, IWritableIndexManager, IListen
 
 	}
 
-	public void removeProject(ICProject project) throws CoreException {
+	public void removeProject(ICProject project) {
 		IPDOMIndexer indexer= getIndexer(project, false);
 		if (indexer != null) {
 			stopIndexer(indexer);
@@ -554,7 +550,7 @@ public class PDOMManager implements IPDOMManager, IWritableIndexManager, IListen
 	}    
 
 	public void reindex(ICProject project) throws CoreException {
-		assert !Thread.holdsLock(fPDOMs);
+		assert !Thread.holdsLock(fProjectToPDOM);
 		IPDOMIndexer indexer= null;
 		synchronized (fIndexerMutex) {
 			indexer= getIndexer(project, false);
@@ -627,8 +623,8 @@ public class PDOMManager implements IPDOMManager, IWritableIndexManager, IListen
 		}
 		
 		ICProject project;
-		synchronized (fPDOMs) {
-			project = (ICProject) fPDOMs.get(pdom);
+		synchronized (fProjectToPDOM) {
+			project = (ICProject) fLocationToCProject.get(pdom.getPath());
 		}		
 		
 		if (project != null) {

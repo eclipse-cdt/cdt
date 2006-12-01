@@ -65,6 +65,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.core.runtime.content.IContentTypeManager.ContentTypeChangeEvent;
 import org.eclipse.core.runtime.content.IContentTypeManager.IContentTypeChangeListener;
 
@@ -745,10 +746,20 @@ public class CModelManager implements IResourceChangeListener, ICDescriptorListe
 			switch (event.getType()) {
 				case IResourceChangeEvent.PRE_DELETE :
 					try {
-					if (resource.getType() == IResource.PROJECT && 	
-					    ( ((IProject)resource).hasNature(CProjectNature.C_NATURE_ID) ||
-					      ((IProject)resource).hasNature(CCProjectNature.CC_NATURE_ID) )){
-						this.deleting((IProject) resource, delta);}
+						if (resource.getType() == IResource.PROJECT && 	
+								( ((IProject)resource).hasNature(CProjectNature.C_NATURE_ID) ||
+										((IProject)resource).hasNature(CCProjectNature.CC_NATURE_ID) )){
+							this.deleting((IProject) resource, delta);}
+					} catch (CoreException e) {
+					}
+					break;
+
+				case IResourceChangeEvent.PRE_CLOSE :
+					try {
+						if (resource.getType() == IResource.PROJECT && 	
+						    ( ((IProject)resource).hasNature(CProjectNature.C_NATURE_ID) ||
+						      ((IProject)resource).hasNature(CCProjectNature.CC_NATURE_ID) )){
+							this.closing((IProject) resource, delta);}
 					} catch (CoreException e) {
 					}
 					break;
@@ -934,7 +945,7 @@ public class CModelManager implements IResourceChangeListener, ICDescriptorListe
 					start = System.currentTimeMillis();
 				}
 				// wrap callbacks with Safe runnable for subsequent listeners to be called when some are causing grief
-				Platform.run(new ISafeRunnable() {
+				SafeRunner.run(new ISafeRunnable() {
 
 					public void handleException(Throwable exception) {
 						//CCorePlugin.log(exception, "Exception occurred in listener of C element change notification"); //$NON-NLS-1$
@@ -1151,6 +1162,13 @@ public class CModelManager implements IResourceChangeListener, ICDescriptorListe
 		removeBinaryRunner(project);
 		// stop indexing jobs for this project
 		CCoreInternals.getPDOMManager().deleteProject(create(project), delta);
+	}
+
+	private void closing(IProject project, IResourceDelta delta) {
+		// stop the binary runner for this project
+		removeBinaryRunner(project);
+		// stop indexing jobs for this project
+		CCoreInternals.getPDOMManager().removeProject(create(project));
 	}
 
 }

@@ -8,6 +8,7 @@
  * Contributors:
  * IBM - Initial API and implementation
  * Markus Schorn (Wind River Systems)
+ * Anton Leherbauer (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.parser.scanner2;
 
@@ -1143,7 +1144,9 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
 
     protected static class _CompositeFileContext extends _CompositeContext {
         public CodeReader reader;
-
+        private int[] lineOffsetCache;
+        private int numberOfLines;
+        
         public _CompositeFileContext(_CompositeContext parent, int startOffset,
                 int endOffset, CodeReader reader) {
             super(parent, startOffset, endOffset);
@@ -1155,18 +1158,58 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
             super(parent, startOffset, endOffset);
         }
         
-
         public int getLineNumber(int nodeOffset) {
-            if( nodeOffset >= reader.buffer.length )
-                return 1;
-            int lineNumber = 1;
-            for( int i = 0; i < nodeOffset; ++i )
-            {
-                if( reader.buffer[i] == '\n')
-                    ++lineNumber;
-            }
-            return lineNumber;
+        	if( nodeOffset >= reader.buffer.length )
+        		return 1;
+        	if (lineOffsetCache == null) {
+        		createLineOffsetCache();
+        	}
+    		int left= 0;
+    		int right= numberOfLines - 1;
+    		int mid= 0;
+
+    		while (left < right) {
+    			mid= (left + right) / 2;
+    			int lineOffset= lineOffsetCache[mid];
+    			if (nodeOffset < lineOffset) {
+    				if (left == mid)
+    					right= mid;
+    				else
+    					right= mid - 1;
+    			} else if (nodeOffset > lineOffset) {
+    				if (right == mid)
+    					left= mid;
+    				else
+    					left= mid + 1;
+    			} else if (nodeOffset == lineOffset) {
+    				left= right= mid;
+    			}
+    		}
+    		if (nodeOffset < lineOffsetCache[left])
+    			--left;
+    		return left + 1;
         }
+
+		private void createLineOffsetCache() {
+			final char[] buffer= reader.buffer;
+			int[] lineOffsets= new int[buffer.length / 30 + 1];
+			int lines= 1;
+			lineOffsets[0]= 0;
+			for (int i = 0; i < buffer.length; ++i) {
+				// TODO consider '\r' line endings?
+				if (buffer[i] == '\n') {
+					if (lineOffsets.length == lines) {
+						final int ratio= Math.min(i / lines, 20);
+						int[] tmp= new int[lines + (buffer.length - i) / ratio + 1];
+						System.arraycopy(lineOffsets, 0, tmp, 0, lines);
+						lineOffsets= tmp;
+					}
+					lineOffsets[lines++]= i + 1;
+				}
+			}
+			lineOffsetCache= lineOffsets;
+			numberOfLines= lines;
+		}
     }
 
     protected static class _Inclusion extends _CompositeFileContext implements

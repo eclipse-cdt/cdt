@@ -7,7 +7,7 @@ Bundle-Localization: plugin
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
  org.eclipse.tm.terminal
-Eclipse-LazyStart: false
+Eclipse-LazyStart: true
 Bundle-Vendor: %providerName
 Bundle-RequiredExecutionEnvironment: J2SE-1.4
 Bundle-ClassPath: .

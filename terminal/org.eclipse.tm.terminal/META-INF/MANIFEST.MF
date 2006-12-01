@@ -2,17 +2,15 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
 Bundle-SymbolicName: org.eclipse.tm.terminal; singleton:=true
-Bundle-Version: 2.6.0
-Bundle-Activator: org.eclipse.tm.terminal.TerminalPlugin
+Bundle-Version: 2.7.0
+Bundle-Activator: org.eclipse.tm.terminal.internal.control.TerminalPlugin
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin
 Require-Bundle: org.eclipse.core.runtime,
- org.eclipse.ui.ide,
- org.eclipse.ui.views,
- org.eclipse.ui.workbench.texteditor,
- org.eclipse.ui.editors,
- org.eclipse.core.resources,
  org.eclipse.ui,
  org.eclipse.jface.text
 Eclipse-LazyStart: true
 Bundle-RequiredExecutionEnvironment: J2SE-1.4
+Bundle-ClassPath: .
+Export-Package: org.eclipse.tm.terminal,
+ org.eclipse.tm.terminal.control

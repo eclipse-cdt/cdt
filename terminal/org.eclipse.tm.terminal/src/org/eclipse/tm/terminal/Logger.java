@@ -16,102 +16,98 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.PrintStream;
 
-
 /**
- * A simple logger class.  Every method in this class is static, so they can be called
- * from both class and instance methods.  To use this class, write code like this: <p>
- *
+ * A simple logger class. Every method in this class is static, so they can be
+ * called from both class and instance methods. To use this class, write code
+ * like this:
+ * <p>
+ * 
  * <pre>
- *      Logger.log("something has happened");
- *      Logger.log("counter is " + counter);
+ * Logger.log(&quot;something has happened&quot;);
+ * Logger.log(&quot;counter is &quot; + counter);
  * </pre>
- *
+ * 
  * @author Fran Litterio <francis.litterio@windriver.com>
  */
-public final class Logger
-{
-    /**
-     * UNDER CONSTRUCTION
-     */
+public final class Logger {
+    public static final String  TRACE_DEBUG_LOG                = "org.eclipse.tm.terminal/debug/log"; //$NON-NLS-1$
+    public static final String  TRACE_DEBUG_LOG_ERROR          = "org.eclipse.tm.terminal/debug/log/error"; //$NON-NLS-1$
+    public static final String  TRACE_DEBUG_LOG_INFO           = "org.eclipse.tm.terminal/debug/log/info"; //$NON-NLS-1$
+    public static final String  TRACE_DEBUG_LOG_CHAR           = "org.eclipse.tm.terminal/debug/log/char"; //$NON-NLS-1$
+    public static final String  TRACE_DEBUG_LOG_BUFFER_SIZE    = "org.eclipse.tm.terminal/debug/log/buffer/size"; //$NON-NLS-1$
+
     private static PrintStream logStream;
 
-    static
-    {
-        String logFile = null;
-        File logDirWindows = new File("C:\\wblogs"); //$NON-NLS-1$
-        File logDirUNIX = new File("/tmp/wblogs"); //$NON-NLS-1$
+	static {
+		String logFile = null;
+		File logDirWindows = new File("C:\\wblogs"); //$NON-NLS-1$
+		File logDirUNIX = new File("/tmp/wblogs"); //$NON-NLS-1$
 
-        if (logDirWindows.isDirectory())
-        {
-            logFile = logDirWindows + "\\wbterminal.log"; //$NON-NLS-1$
-        }
-        else if (logDirUNIX.isDirectory())
-        {
-            logFile = logDirUNIX + "/wbterminal.log"; //$NON-NLS-1$
-        }
+		if (logDirWindows.isDirectory()) {
+			logFile = logDirWindows + "\\wbterminal.log"; //$NON-NLS-1$
+		} else if (logDirUNIX.isDirectory()) {
+			logFile = logDirUNIX + "/wbterminal.log"; //$NON-NLS-1$
+		}
 
-        if (logFile != null)
-        {
-            try
-            {
-                logStream = new PrintStream(new FileOutputStream(logFile, true));
-            }
-            catch (Exception ex)
-            {
-                logStream = System.err;
-                logStream.println("Exception when opening log file -- logging to stderr!"); //$NON-NLS-1$
-                ex.printStackTrace(logStream);
-            }
-        }
-    }
+		if (logFile != null) {
+			try {
+				logStream = new PrintStream(new FileOutputStream(logFile, true));
+			} catch (Exception ex) {
+				logStream = System.err;
+				logStream
+						.println("Exception when opening log file -- logging to stderr!"); //$NON-NLS-1$
+				ex.printStackTrace(logStream);
+			}
+		}
+	}
 
-    /**
-     * Logs the specified message.  Do not append a newline to parameter
-     * <i>message</i>.  This method does that for you.
-     *
+	/**
+	 * Logs the specified message. Do not append a newline to parameter
+	 * <i>message</i>. This method does that for you.
+	 * 
      * @param message           A String containing the message to log.
-     */
-    public static final void log(String message)
-    {
-        if (logStream != null)
-        {
-            // Read my own stack to get the class name, method name, and line number of
-            // where this method was called.
+	 */
+	public static final void log(String message) {
+		if (logStream != null) {
+			// Read my own stack to get the class name, method name, and line
+			// number of
+			// where this method was called.
 
-            StackTraceElement caller = new Throwable().getStackTrace()[1];
-            int lineNumber = caller.getLineNumber();
-            String className = caller.getClassName();
-            String methodName = caller.getMethodName();
-            className = className.substring(className.lastIndexOf('.') + 1);
+			StackTraceElement caller = new Throwable().getStackTrace()[1];
+			int lineNumber = caller.getLineNumber();
+			String className = caller.getClassName();
+			String methodName = caller.getMethodName();
+			className = className.substring(className.lastIndexOf('.') + 1);
 
             logStream.println(className + "." + methodName + ":" + lineNumber + ": " + message);   //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
-            logStream.flush();
-        }
-    }
+			logStream.flush();
+		}
+	}
 
-    /**
-     * Writes a stack trace for an exception to both Standard Error and to the log file.
-     */
-    public static final void logException(Exception ex)
-    {
-        // Read my own stack to get the class name, method name, and line number of
-        // where this method was called.
+	/**
+	 * Writes a stack trace for an exception to both Standard Error and to the
+	 * log file.
+	 */
+	public static final void logException(Exception ex) {
+		// Read my own stack to get the class name, method name, and line number
+		// of
+		// where this method was called.
 
-        StackTraceElement caller = new Throwable().getStackTrace()[1];
-        int lineNumber = caller.getLineNumber();
-        String className = caller.getClassName();
-        String methodName = caller.getMethodName();
-        className = className.substring(className.lastIndexOf('.') + 1);
+		StackTraceElement caller = new Throwable().getStackTrace()[1];
+		int lineNumber = caller.getLineNumber();
+		String className = caller.getClassName();
+		String methodName = caller.getMethodName();
+		className = className.substring(className.lastIndexOf('.') + 1);
 
-        PrintStream tmpStream = System.err;
+		PrintStream tmpStream = System.err;
 
-        if (logStream != null)
-        {
-            tmpStream = logStream;
-        }
+		if (logStream != null) {
+			tmpStream = logStream;
+		}
 
-        tmpStream.println(className + "." + methodName + ":" + lineNumber + ": " +  //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
-                          "Caught exception: " + ex); //$NON-NLS-1$
-        ex.printStackTrace(tmpStream);
-    }
+		tmpStream.println(className
+				+ "." + methodName + ":" + lineNumber + ": " + //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
+				"Caught exception: " + ex); //$NON-NLS-1$
+		ex.printStackTrace(tmpStream);
+	}
 }

@@ -933,12 +933,15 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 		//System.out.println("in deleteSubSystemsByConnection. Nbr subsystems = " + subsystems.length);
 		for (int idx = 0; idx < subsystems.length; idx++)
 		{
-			try
+			if (subsystems[idx].isConnected())
 			{
-				subsystems[idx].disconnect(); // be nice if we had a shell to pass!
-			}
-			catch (Exception exc)
-			{
+				try
+				{
+					subsystems[idx].disconnect(); // be nice if we had a shell to pass!
+				}
+				catch (Exception exc)
+				{
+				}
 			}
 			subsystems[idx].deletingConnection(); // let subsystem do any clean up needed prior to death
 			deleteSubSystem(subsystems[idx]);
@@ -1590,12 +1593,15 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 	 */
 	public boolean deleteSubSystem(ISubSystem subsystem)
 	{
-		try
+		if (subsystem.isConnected())
 		{
-			subsystem.disconnect(); // just in case.
-		}
-		catch (Exception exc)
-		{
+			try
+			{
+				subsystem.disconnect(); // just in case.
+			}
+			catch (Exception exc)
+			{
+			}
 		}
 		removeSubSystem(subsystem); // remove from our in-memory cache 	
 		ISystemFilterPoolReferenceManager fpRefMgr = subsystem.getSystemFilterPoolReferenceManager();

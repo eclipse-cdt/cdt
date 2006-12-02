@@ -2,7 +2,7 @@
 <feature
       id="org.eclipse.tm.terminal.serial"
       label="Terminal Serial Feature"
-      version="0.9.0">
+      version="0.9.0.qualifier">
 
    <description url="http://www.example.com/description">
       [Enter Feature Description here.]

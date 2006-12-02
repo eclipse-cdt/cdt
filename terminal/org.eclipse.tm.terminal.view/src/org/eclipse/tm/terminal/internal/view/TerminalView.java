@@ -185,9 +185,12 @@ public class TerminalView extends ViewPart implements ITerminalView, ITerminalLi
 	}
 
 	public void onTerminalSettings() {
-		setConnector(showSettingsDialog());
+		ITerminalConnector c=showSettingsDialog();
+		if(c!=null) {
+			setConnector(c);
 
-		onTerminalConnect();
+			onTerminalConnect();
+		}
 	}
 
 	private ITerminalConnector showSettingsDialog() {

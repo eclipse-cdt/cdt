@@ -5,7 +5,7 @@
  * available at http://www.eclipse.org/legal/epl-v10.html
  * 
  * Contributors:
- *   Javier Montalvo Orús (Symbian) - initial API and implementation
+ *   Javier Montalvo Orus (Symbian) - initial API and implementation
  ********************************************************************************/
 
 package org.eclipse.rse.discovery;
@@ -22,6 +22,7 @@ import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.model.IPropertySet;
+import org.eclipse.rse.core.subsystems.IConnectorService;
 import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.actions.SystemRefreshAllAction;
 import org.eclipse.tm.discovery.model.Pair;
@@ -96,21 +97,34 @@ public class ServiceDiscoveryWizard extends Wizard {
 				String sysTypeString = ((ServiceType) service.eContainer()).getName();
 
 				try {
-					conn = RSEUIPlugin.getDefault().getSystemRegistry().createHost(sysTypeString, service.getName() + "@" + hostName, hostName, "Discovered "+sysTypeString+" server in "+hostName); //$NON-NLS-1$ //$NON-NLS-2$
+					conn = RSEUIPlugin.getDefault().getSystemRegistry().createHost(sysTypeString, service.getName() + "@" + hostName, hostName, "Discovered "+sysTypeString+" server in "+hostName); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 				
 					if (conn != null) {
-						//copy discovered properties to RSE model
-						IPropertySet ps = conn.getConnectorServices()[0].createPropertySet(Messages.ServiceDiscoveryWizard_DiscoveryPropertySet);
+						//copy discovered properties to RSE models
+						
 						Iterator pairIterator = service.getPair().iterator();
+						IConnectorService[] services = conn.getConnectorServices();
+						IPropertySet ps;
+						
 						while (pairIterator.hasNext()) {
+							
 							Pair pair = (Pair) pairIterator.next();
-							ps.addProperty(pair.getKey(), pair.getValue());
-	
-							//add port to the RSE connection
-							if (pair.getKey().equalsIgnoreCase(Messages.ServiceDiscoveryWizard_Port)) {
-								conn.getConnectorServices()[0].setPort(Integer.parseInt(pair.getValue()));
+							
+							for(int j=0; j<services.length; j++)
+							{
+									if((ps = services[j].getPropertySet(sysTypeString))==null)
+									{
+										ps = services[j].createPropertySet(sysTypeString);
+									}
+									ps.addProperty(pair.getKey(), pair.getValue());
+									
+									if (pair.getKey().equalsIgnoreCase(Messages.ServiceDiscoveryWizard_Port)) {
+										int port = Integer.parseInt(pair.getValue());
+										services[j].setPort(port);
+									}
 							}
 						}
+						
 						RSEUIPlugin.getDefault().getSystemRegistry().expandHost(conn);
 					}
 				} catch (Exception e) {
@@ -121,15 +135,6 @@ public class ServiceDiscoveryWizard extends Wizard {
 					systemRefreshAllAction.run();
 				}
 			}
-
-			(new Job(Messages.ServiceDiscoveryWizard_SavingMessage) {
-
-				protected IStatus run(IProgressMonitor monitor) {
-					RSEUIPlugin.getDefault().getSystemRegistry().save();
-					return new Status(IStatus.OK, Messages.ServiceDiscoveryWizard_StatusId, IStatus.OK, Messages.ServiceDiscoveryWizard_StatusMessage, null);
-				}
-			}).schedule(5000);
-
 		}
 		return true;
 	}

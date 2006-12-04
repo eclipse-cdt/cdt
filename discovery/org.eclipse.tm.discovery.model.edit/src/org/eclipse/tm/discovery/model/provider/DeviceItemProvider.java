@@ -5,7 +5,7 @@
  * available at http://www.eclipse.org/legal/epl-v10.html
  * 
  * Contributors:
- *   Javier Montalvo Orús (Symbian) - initial API and implementation
+ *   Javier Montalvo Orus (Symbian) - initial API and implementation
  ********************************************************************************/
 
 package org.eclipse.tm.discovery.model.provider;
@@ -80,8 +80,8 @@ public class DeviceItemProvider
 			(createItemPropertyDescriptor
 				(((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
 				 getResourceLocator(),
-				 getString("_UI_Device_address_feature"),
-				 getString("_UI_PropertyDescriptor_description", "_UI_Device_address_feature", "_UI_Device_type"),
+				 getString("_UI_Device_address_feature"), //$NON-NLS-1$
+				 getString("_UI_PropertyDescriptor_description", "_UI_Device_address_feature", "_UI_Device_type"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 				 ModelPackage.Literals.DEVICE__ADDRESS,
 				 true,
 				 false,
@@ -101,8 +101,8 @@ public class DeviceItemProvider
 			(createItemPropertyDescriptor
 				(((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
 				 getResourceLocator(),
-				 getString("_UI_Device_name_feature"),
-				 getString("_UI_PropertyDescriptor_description", "_UI_Device_name_feature", "_UI_Device_type"),
+				 getString("_UI_Device_name_feature"), //$NON-NLS-1$
+				 getString("_UI_PropertyDescriptor_description", "_UI_Device_name_feature", "_UI_Device_type"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 				 ModelPackage.Literals.DEVICE__NAME,
 				 true,
 				 false,
@@ -133,7 +133,7 @@ public class DeviceItemProvider
 	 * @generated NOT
 	 */
 	public Object getImage(Object object) {
-		return getResourceLocator().getImage("full/obj16/device");
+		return getResourceLocator().getImage("full/obj16/device"); //$NON-NLS-1$
 		//return null;
 	}
 
@@ -152,7 +152,7 @@ public class DeviceItemProvider
 			result.append(address);
 		
 		if(name != null)
-			result.append(" ("+name+")");
+			result.append(" ("+name+")"); //$NON-NLS-1$ //$NON-NLS-2$
 		
 		return result.toString();
 	}

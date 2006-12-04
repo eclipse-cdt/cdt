@@ -5,7 +5,7 @@
  * available at http://www.eclipse.org/legal/epl-v10.html
  * 
  * Contributors:
- *   Javier Montalvo Orús (Symbian) - initial API and implementation
+ *   Javier Montalvo Orus (Symbian) - initial API and implementation
  ********************************************************************************/
 
 package org.eclipse.tm.discovery.transport.udp;
@@ -19,7 +19,7 @@ import org.osgi.framework.BundleContext;
 public class Activator extends AbstractUIPlugin {
 
 	// The plug-in ID
-	public static final String PLUGIN_ID = "org.eclipse.tm.discovery.transport.udp";
+	public static final String PLUGIN_ID = "org.eclipse.tm.discovery.transport.udp"; //$NON-NLS-1$
 
 	// The shared instance
 	private static Activator plugin;

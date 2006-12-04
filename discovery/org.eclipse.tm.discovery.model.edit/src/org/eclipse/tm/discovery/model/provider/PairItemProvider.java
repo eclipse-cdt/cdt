@@ -5,7 +5,7 @@
  * available at http://www.eclipse.org/legal/epl-v10.html
  * 
  * Contributors:
- *   Javier Montalvo Orús (Symbian) - initial API and implementation
+ *   Javier Montalvo Orus (Symbian) - initial API and implementation
  ********************************************************************************/
 
 package org.eclipse.tm.discovery.model.provider;
@@ -79,8 +79,8 @@ public class PairItemProvider
 			(createItemPropertyDescriptor
 				(((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
 				 getResourceLocator(),
-				 getString("_UI_Pair_key_feature"),
-				 getString("_UI_PropertyDescriptor_description", "_UI_Pair_key_feature", "_UI_Pair_type"),
+				 getString("_UI_Pair_key_feature"), //$NON-NLS-1$
+				 getString("_UI_PropertyDescriptor_description", "_UI_Pair_key_feature", "_UI_Pair_type"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 				 ModelPackage.Literals.PAIR__KEY,
 				 true,
 				 false,
@@ -100,8 +100,8 @@ public class PairItemProvider
 			(createItemPropertyDescriptor
 				(((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
 				 getResourceLocator(),
-				 getString("_UI_Pair_value_feature"),
-				 getString("_UI_PropertyDescriptor_description", "_UI_Pair_value_feature", "_UI_Pair_type"),
+				 getString("_UI_Pair_value_feature"), //$NON-NLS-1$
+				 getString("_UI_PropertyDescriptor_description", "_UI_Pair_value_feature", "_UI_Pair_type"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 				 ModelPackage.Literals.PAIR__VALUE,
 				 true,
 				 false,

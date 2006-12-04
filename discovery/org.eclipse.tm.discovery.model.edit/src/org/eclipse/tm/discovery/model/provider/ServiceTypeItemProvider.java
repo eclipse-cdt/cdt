@@ -77,8 +77,8 @@ public class ServiceTypeItemProvider
 			(createItemPropertyDescriptor
 				(((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
 				 getResourceLocator(),
-				 getString("_UI_ServiceType_name_feature"),
-				 getString("_UI_PropertyDescriptor_description", "_UI_ServiceType_name_feature", "_UI_ServiceType_type"),
+				 getString("_UI_ServiceType_name_feature"), //$NON-NLS-1$
+				 getString("_UI_PropertyDescriptor_description", "_UI_ServiceType_name_feature", "_UI_ServiceType_type"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 				 ModelPackage.Literals.SERVICE_TYPE__NAME,
 				 true,
 				 false,
@@ -109,7 +109,7 @@ public class ServiceTypeItemProvider
 	 * @generated
 	 */
 	public Object getImage(Object object) {
-		return overlayImage(object, getResourceLocator().getImage("full/obj16/serviceType"));
+		return overlayImage(object, getResourceLocator().getImage("full/obj16/serviceType")); //$NON-NLS-1$
 	}
 
 	/**
@@ -119,7 +119,7 @@ public class ServiceTypeItemProvider
 	 */
 	public String getText(Object object) {
 		String label = ((ServiceType)object).getName();
-		return label == null || label.length() == 0 ? "": label;
+		return label == null || label.length() == 0 ? "": label; //$NON-NLS-1$
 	}
 
 	/**

@@ -5,7 +5,7 @@
  * available at http://www.eclipse.org/legal/epl-v10.html
  * 
  * Contributors:
- *   Javier Montalvo Orús (Symbian) - initial API and implementation
+ *   Javier Montalvo Orus (Symbian) - initial API and implementation
  ********************************************************************************/
 
 package org.eclipse.tm.discovery.wizard;
@@ -133,12 +133,12 @@ public class ServiceDiscoveryWizardDisplayPage extends WizardPage {
 		setDescription(Messages.getString("ServiceDiscoveryWizardDisplayPage.WizardPageDescription")); //$NON-NLS-1$
 		
 		//load all service id's from the extension point registry
-		//this id will be used to filter the supported services in the view
+		//this id will be used to filter the supported sytem types
 		
-		IExtensionPoint ep = Platform.getExtensionRegistry().getExtensionPoint("org.eclipse.rse.ui","subsystemConfigurations"); //$NON-NLS-1$ //$NON-NLS-2$
+		IExtensionPoint ep = Platform.getExtensionRegistry().getExtensionPoint("org.eclipse.rse.core","systemTypes"); //$NON-NLS-1$ //$NON-NLS-2$
 		IConfigurationElement[] ce = ep.getConfigurationElements();
 		for (int i = 0; i < ce.length; i++) {
-			String id = ce[i].getAttribute("id"); //$NON-NLS-1$
+			String id = ce[i].getAttribute("name"); //$NON-NLS-1$
 			if(id!=null)
 				supportedServicesType.add(id);
 		}

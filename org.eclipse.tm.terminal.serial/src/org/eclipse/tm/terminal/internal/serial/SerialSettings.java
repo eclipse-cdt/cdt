@@ -163,7 +163,7 @@ public class SerialSettings implements ISerialSettings {
 		fStopBits = store.get("StopBits", fProperties.getDefaultStopBits());//$NON-NLS-1$
 		fParity = store.get("Parity", fProperties.getDefaultParity());//$NON-NLS-1$
 		fFlowControl = store.get("FlowControl", fProperties.getDefaultFlowControl());//$NON-NLS-1$
-		fTimeout = store.get("Timeout",fProperties.getDefaultTimeout());
+		fTimeout = store.get("Timeout",fProperties.getDefaultTimeout()); //$NON-NLS-1$
 	}
 
 	public void save(ISettingsStore store) {

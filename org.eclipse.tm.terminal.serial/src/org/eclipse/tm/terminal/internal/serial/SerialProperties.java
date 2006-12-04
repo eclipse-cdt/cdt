@@ -88,7 +88,7 @@ public class SerialProperties {
 		return fDefaultFlowControl;
 	}
 	public String getDefaultTimeout() {
-		return "5";
+		return "5"; //$NON-NLS-1$
 	}
 	protected void setupProperties() {
 		fSerialPortTable = new Vector();
@@ -140,7 +140,7 @@ public class SerialProperties {
 		fDefaultParity = (String) fParityTable.get(0);
 		fDefaultFlowControl = (String) fFlowControlTable.get(0);
 
-		Enumeration portIdEnum= CommPortIdentifier.getPortIdentifiers();;
+		Enumeration portIdEnum= CommPortIdentifier.getPortIdentifiers();
 		while (portIdEnum.hasMoreElements()) {
 			CommPortIdentifier identifier = (CommPortIdentifier) portIdEnum.nextElement();
 			String strName = identifier.getName();

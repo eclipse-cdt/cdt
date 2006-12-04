@@ -1,0 +1,8 @@
+org.eclipse.tm.terminal/debug = true
+org.eclipse.tm.terminal/debug/flag = true
+org.eclipse.tm.terminal/debug/filter = *
+org.eclipse.tm.terminal/debug/log = true
+org.eclipse.tm.terminal/debug/log/error = true
+org.eclipse.tm.terminal/debug/log/info = false
+org.eclipse.tm.terminal/debug/log/char = false
+org.eclipse.tm.terminal/debug/log/buffer/size = false

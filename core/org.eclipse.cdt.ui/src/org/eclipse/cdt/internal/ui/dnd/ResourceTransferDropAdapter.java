@@ -1,12 +1,13 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2005 QNX Software Systems and others.
+ * Copyright (c) 2002, 2006 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * QNX Software Systems - Initial API and implementation
+ *     QNX Software Systems - Initial API and implementation
+ *     Anton Leherbauer (Wind River Systems) - 151571 DND move on GTK
  *******************************************************************************/
 
 package org.eclipse.cdt.internal.ui.dnd;
@@ -78,7 +79,7 @@ public class ResourceTransferDropAdapter extends CDTViewerDropAdapter implements
 				} else {
 					MoveFilesAndFoldersOperation operation = new MoveFilesAndFoldersOperation(getShell());
 					if (operation.validateDestination(destination, selectedResources) == null) {
-						event.detail = op;
+						event.detail = DND.DROP_MOVE;
 					}
 				}
 			}

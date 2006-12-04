@@ -4955,6 +4955,7 @@ public class SystemView extends TreeViewer implements ISystemTree, ISystemResour
 		if (w == null)
 			return 0;
 
+		// modified patch initially provided by Tobias Schwarz
 		if (w instanceof TreeItem) {
 			TreeItem ti = (TreeItem) w;
 			int count = getItemCount((Item) w);

@@ -105,7 +105,7 @@ public class SerialSettingsPage implements ISettingsPage {
 		composite.setLayout(gridLayout);
 		composite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
-		fSerialPortCombo=addLabeledCombo(composite, SerialMessages.PORT + ":");
+		fSerialPortCombo=addLabeledCombo(composite, SerialMessages.PORT + ":"); //$NON-NLS-1$
 		fBaudRateCombo=addLabeledCombo(composite, SerialMessages.BAUDRATE + ":"); //$NON-NLS-1$
 		fDataBitsCombo=addLabeledCombo(composite, SerialMessages.DATABITS + ":"); //$NON-NLS-1$
 		fStopBitsCombo=addLabeledCombo(composite, SerialMessages.STOPBITS + ":"); //$NON-NLS-1$

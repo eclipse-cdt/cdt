@@ -31,6 +31,7 @@ public class TextTestSuite extends TestSuite {
 		addTest(CHeuristicScannerTest.suite());
 		addTest(BracketInserterTest.suite());
 		addTest(IndentActionTest.suite());
+		addTest(FormatActionTest.suite());
 
 		// Break iterator tests.
 		addTest(CBreakIteratorTest.suite());

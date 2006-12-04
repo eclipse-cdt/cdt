@@ -1529,7 +1529,6 @@ public class Scribe {
 	/**
 	 */
 	public void printModifiers() {
-		int modifiersIndex= 0;
 		boolean isFirstModifier= true;
 		int currentTokenStartPosition= scanner.getCurrentPosition();
 		boolean hasComment= false;
@@ -1541,16 +1540,18 @@ public class Scribe {
 			case Token.t_auto:
 			case Token.t_register:
 			case Token.t_const:
+			case Token.t_signed:
+			case Token.t_unsigned:
 			case Token.t_volatile:
 			case Token.t_virtual:
 			case Token.t_mutable:
 			case Token.t_explicit:
 			case Token.t_friend:
 			case Token.t_inline:
+			case Token.t_restrict:
 				print(currentToken.getLength(), !isFirstModifier);
 				isFirstModifier= false;
 				currentTokenStartPosition= scanner.getCurrentPosition();
-				modifiersIndex++;
 				break;
 			case Token.tBLOCKCOMMENT:
 				printBlockComment(false);

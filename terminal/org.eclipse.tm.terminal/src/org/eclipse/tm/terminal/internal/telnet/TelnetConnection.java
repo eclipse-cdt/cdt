@@ -158,11 +158,11 @@ public class TelnetConnection extends Thread implements TelnetCodes {
 	protected byte[] receivedSubnegotiation = new byte[128];
 
 	/**
-	 * This field holds the index into array {@link receivedSubnegotiation} of
+	 * This field holds the index into array {@link #receivedSubnegotiation} of
 	 * the next unused byte. This is used by method
 	 * {@link #processTelnetProtocol(int)} when the state machine is in states
 	 * {@link #STATE_SUBNEGOTIATION_STARTED} and {@link
-	 * STATE_RECEIVING_SUBNEGOTIATION}.
+	 * #STATE_RECEIVING_SUBNEGOTIATION}.
 	 */
 	protected int nextSubnegotiationByteIndex = 0;
 

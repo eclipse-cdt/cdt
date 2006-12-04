@@ -425,7 +425,7 @@ public interface ISystemMessages
 	public static final String MSG_DOWNLOAD_ALREADY_OPEN_IN_EDITOR = "RSEF5009"; //$NON-NLS-1$
 	public static final String MSG_UPLOAD_FILE_EXISTS = "RSEF5012"; //$NON-NLS-1$
 	
-	public static final String MSG_FOLDER_UNREADABLE = "RSEF5020";
+	public static final String MSG_FOLDER_UNREADABLE = "RSEF5020"; //$NON-NLS-1$
 	
 	// General error message
 	public static final String MSG_ERROR_GENERAL = "RSEO1002"; //$NON-NLS-1$

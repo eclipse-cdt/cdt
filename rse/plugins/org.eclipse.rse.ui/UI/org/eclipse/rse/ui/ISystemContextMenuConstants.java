@@ -55,15 +55,15 @@ public interface ISystemContextMenuConstants
 	 * </ul>
 	 * </p>
 	 */
-	public static final String GROUP_GOTO=		"group.goto";
+	public static final String GROUP_GOTO=		"group.goto"; //$NON-NLS-1$
 	/**
 	 * ID of the submenu for "Go To->"
 	 */
-	public static final String MENU_GOTO= "menu.goto";
+	public static final String MENU_GOTO= "menu.goto"; //$NON-NLS-1$
 	/**
 	 * ID of the submenu for "Preferences->"
 	 */
-	public static final String MENU_PREFERENCES= "menu.preferences";
+	public static final String MENU_PREFERENCES= "menu.preferences"; //$NON-NLS-1$
 		
 	/**
 	 * Pop-up menu: name of group for open-with actions (value <code>"group.openwith"</code>).
@@ -75,55 +75,55 @@ public interface ISystemContextMenuConstants
 	 * </ul>
 	 * </p>
 	 */
-	public static final String GROUP_OPENWITH=		"group.openwith";
+	public static final String GROUP_OPENWITH=		"group.openwith"; //$NON-NLS-1$
 	/**
 	 * ID of the submenu for "Open With->"
 	 */
-	public static final String MENU_OPENWITH= "menu.openwith";
+	public static final String MENU_OPENWITH= "menu.openwith"; //$NON-NLS-1$
 
 	/**
 	 * Group name for the "Browse With" submenu
 	 */
-	public static final String GROUP_BROWSEWITH=	"group.browsewith";
+	public static final String GROUP_BROWSEWITH=	"group.browsewith"; //$NON-NLS-1$
 	
 	/**
 	 * Group name for the "Compare With" submenu
 	 */
-	public static final String GROUP_COMPAREWITH=	"group.comparewith";
+	public static final String GROUP_COMPAREWITH=	"group.comparewith"; //$NON-NLS-1$
 	
 	/**
 	 * Group name for the "Replace With" submenu
 	 */
-	public static final String GROUP_REPLACEWITH=	"group.replacewith";
+	public static final String GROUP_REPLACEWITH=	"group.replacewith"; //$NON-NLS-1$
 
 	/**
 	 * ID for "Browse With" submenu
 	 */
-	public static final String MENU_BROWSEWITH = 	"menu.browsewith";
+	public static final String MENU_BROWSEWITH = 	"menu.browsewith"; //$NON-NLS-1$
 
 	/**
 	 * ID for "Compare With" submenu
 	 */
-	public static final String MENU_COMPAREWITH = 	"menu.comparewith";
+	public static final String MENU_COMPAREWITH = 	"menu.comparewith"; //$NON-NLS-1$
 
 	/**
 	 * ID for "Compare With" submenu
      */
-	public static final String MENU_REPLACEWITH = 	"menu.replacewith";
+	public static final String MENU_REPLACEWITH = 	"menu.replacewith"; //$NON-NLS-1$
 
 	/**
 	 * Pop-up menu: name of group for expand actions (value <code>"group.expand"</code>).
 	 */
-	public static final String GROUP_EXPAND =		"group.expand";
+	public static final String GROUP_EXPAND =		"group.expand"; //$NON-NLS-1$
 
 	/**
 	 * Pop-up menu: name of group for expand-to cascading actions (value <code>"group.expandto"</code>).
 	 */
-	public static final String GROUP_EXPANDTO=		"group.expandto";
+	public static final String GROUP_EXPANDTO=		"group.expandto"; //$NON-NLS-1$
 	/**
 	 * ID of the submenu for "Expand to->"
 	 */
-	public static final String MENU_EXPANDTO= "menu.expandto";
+	public static final String MENU_EXPANDTO= "menu.expandto"; //$NON-NLS-1$
 
 	/**
 	 * Pop-up menu: name of group for open-to actions (value <code>"group.opento"</code>).
@@ -135,11 +135,11 @@ public interface ISystemContextMenuConstants
 	 * </ul>
 	 * </p>
 	 */
-	public static final String GROUP_OPENTO=		"group.opento";
+	public static final String GROUP_OPENTO=		"group.opento"; //$NON-NLS-1$
 	/**
 	 * ID of the submenu for "Open To->"
 	 */
-	public static final String MENU_OPENTO= "menu.opento";
+	public static final String MENU_OPENTO= "menu.opento"; //$NON-NLS-1$
 	
 	/**
 	 * Pop-up menu: name of group for work-with actions (value <code>"group.workwith"</code>).
@@ -152,11 +152,11 @@ public interface ISystemContextMenuConstants
 	 * </ul>
 	 * </p>
 	 */
-	public static final String GROUP_WORKWITH=		"group.workwith";
+	public static final String GROUP_WORKWITH=		"group.workwith"; //$NON-NLS-1$
 	/**
 	 * ID of the submenu for "Work Work->"
 	 */
-	public static final String MENU_WORKWITH= "menu.workwith";
+	public static final String MENU_WORKWITH= "menu.workwith"; //$NON-NLS-1$
 	/**
 	 * Pop-up menu: name of group for open actions (value <code>"group.open"</code>).
 	 * <p>
@@ -167,7 +167,7 @@ public interface ISystemContextMenuConstants
 	 * </ul>
 	 * </p>
 	 */
-	public static final String GROUP_OPEN=		"group.open";
+	public static final String GROUP_OPEN=		"group.open"; //$NON-NLS-1$
 	/**
 	 * Pop-up menu: name of group for show actions (value <code>"group.show"</code>).
 	 * <p>
@@ -178,7 +178,7 @@ public interface ISystemContextMenuConstants
 	 * </ul>
 	 * </p>
 	 */
-	public static final String GROUP_SHOW=		"group.show";
+	public static final String GROUP_SHOW=		"group.show"; //$NON-NLS-1$
 	
 	/**
 	 * Pop-up menu: name of group for new actions (value <code>"group.new"</code>).
@@ -191,11 +191,11 @@ public interface ISystemContextMenuConstants
 	 * </ul>
 	 * </p>
 	 */
-	public static final String GROUP_NEW=		"group.new";
+	public static final String GROUP_NEW=		"group.new"; //$NON-NLS-1$
 	/**
 	 * ID of the submenu for "New->"
 	 */
-	public static final String MENU_NEW= "menu.new";
+	public static final String MENU_NEW= "menu.new"; //$NON-NLS-1$
 
 	/**
 	 * Pop-up menu: name of group for new actions (value <code>"group.new.noncascade"</code>).
@@ -204,21 +204,21 @@ public interface ISystemContextMenuConstants
 	 * This is used in the Team view
 	 * </p>
 	 */
-	public static final String GROUP_NEW_NONCASCADING="group.new.noncascade";
+	public static final String GROUP_NEW_NONCASCADING="group.new.noncascade"; //$NON-NLS-1$
 		
 	/**
 	 * Pop-up menu: name of group for build actions (value <code>"group.build"</code>).
 	 */
-	public static final String GROUP_BUILD=		"group.build";
+	public static final String GROUP_BUILD=		"group.build"; //$NON-NLS-1$
 	
 	/**
 	 * Pop-up menu: name of group for reorganize actions (value <code>"group.reorganize"</code>).
 	 */	
-	public static final String GROUP_REORGANIZE=	"group.reorganize";	
+	public static final String GROUP_REORGANIZE=	"group.reorganize";	 //$NON-NLS-1$
 	/**
 	 * Pop-up menu: name of group for reorder actions like move up/down(value <code>"group.reorder"</code>).
 	 */	
-	public static final String GROUP_REORDER=	"group.reorder";	
+	public static final String GROUP_REORDER=	"group.reorder";	 //$NON-NLS-1$
 	/**
 	 * Pop-up menu: name of group for CHANGE actions. (value <code>"group.change"</code>).
 	 * <p>
@@ -230,18 +230,18 @@ public interface ISystemContextMenuConstants
 	 * SHould you even have a change action? Maybe it should be a PropertyPage instead!
 	 * </p>
 	 */
-	public static final String GROUP_CHANGE = "group.change";
+	public static final String GROUP_CHANGE = "group.change"; //$NON-NLS-1$
 		
 	/**
 	 * Pop-up menu: name of group for code generation or refactoring actions (
 	 * value <code>"group.generate"</code>).
 	 */	
-	public static final String GROUP_GENERATE=	"group.generate";
+	public static final String GROUP_GENERATE=	"group.generate"; //$NON-NLS-1$
 
 	/**
 	 * Pop-up menu: name of group for search actions (value <code>"group.search"</code>).
 	 */	
-	public static final String GROUP_SEARCH=		"group.search";
+	public static final String GROUP_SEARCH=		"group.search"; //$NON-NLS-1$
 	
 	/**
 	 * Pop-up menu: name of group for additional actions (value <code>"group.additions"</code>).
@@ -251,46 +251,46 @@ public interface ISystemContextMenuConstants
 	/**
 	 * Pop-up menu: name of group for viewer setup actions (value <code>"group.viewerSetup"</code>).
 	 */	
-	public static final String GROUP_VIEWER_SETUP=	"group.viewerSetup";
+	public static final String GROUP_VIEWER_SETUP=	"group.viewerSetup"; //$NON-NLS-1$
 
 	/**
 	 * Pop-up menu: name of group for properties actions (value <code>"group.properties"</code>).
 	 */	
-	public static final String GROUP_PROPERTIES=	"group.properties";	
+	public static final String GROUP_PROPERTIES=	"group.properties";	 //$NON-NLS-1$
 	/**
 	 * Pop-up menu: name of group for actions contributed by the adaptors for the selected object, which
 	 *  are related to the live connection.
 	 */
-	public static final String GROUP_CONNECTION= "group.connection";	
+	public static final String GROUP_CONNECTION= "group.connection";	 //$NON-NLS-1$
 	/**
 	 * Pop-up menu: name of group for actions related to getting and putting the selected object.
 	 */
-	public static final String GROUP_IMPORTEXPORT= "group.importexport";	
+	public static final String GROUP_IMPORTEXPORT= "group.importexport";	 //$NON-NLS-1$
 	/**
 	 * Pop-up menu: name of group for actions contributed by the adaptors for the selected object
 	 */
-	public static final String GROUP_ADAPTERS= "group.adapters";
+	public static final String GROUP_ADAPTERS= "group.adapters"; //$NON-NLS-1$
 	/**
 	 * Pop-up menu: name of group for team actions
 	 */
-	public static final String GROUP_TEAM= "group.team";
+	public static final String GROUP_TEAM= "group.team"; //$NON-NLS-1$
 
 
 	/**
 	 * ID of the submenu for "Compile->"
 	 */
-	public static final String MENU_COMPILE= "menu.compile";
+	public static final String MENU_COMPILE= "menu.compile"; //$NON-NLS-1$
 	/**
 	 * ID of the submenu for "User Actions->"
 	 */
-	public static final String MENU_USERACTIONS= "menu.useractions";
+	public static final String MENU_USERACTIONS= "menu.useractions"; //$NON-NLS-1$
 
 	/**
 	 * Group for "Start Server->"
 	 */
-	public static final String GROUP_STARTSERVER= "group.remoteservers";	
+	public static final String GROUP_STARTSERVER= "group.remoteservers";	 //$NON-NLS-1$
 	/**
 	 * ID of the submenu for "Start Server->"
 	 */
-	public static final String MENU_STARTSERVER= "menu.remoteservers";
+	public static final String MENU_STARTSERVER= "menu.remoteservers"; //$NON-NLS-1$
 }

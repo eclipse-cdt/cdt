@@ -37,22 +37,22 @@ import org.eclipse.swt.widgets.Text;
 public class Mnemonics 
 {
 	private static final String[] TransparentEndings = { // endings that should appear after a mnemonic
-		"...",  // ellipsis
-		">>", // standard "more" 
-		"<<", // standard "less"
-		">", // "more" -- non-standard usage, must appear in list after >> 
-		"<", // "less" -- non-standard usage, must appear in list after <<
-		":", // colon
-		"\uff0e\uff0e\uff0e", // wide ellipsis
-		"\uff1e\uff1e", // wide standard "more"
-		"\uff1c\uff1c", // wide standard "less"
-		"\uff1e", // wide non-standard "more"
-		"\uff1c", // wide non-standard "less"
-		"\uff1a" // wide colon
+		"...",  // ellipsis //$NON-NLS-1$
+		">>", // standard "more"  //$NON-NLS-1$
+		"<<", // standard "less" //$NON-NLS-1$
+		">", // "more" -- non-standard usage, must appear in list after >>  //$NON-NLS-1$
+		"<", // "less" -- non-standard usage, must appear in list after << //$NON-NLS-1$
+		":", // colon //$NON-NLS-1$
+		"\uff0e\uff0e\uff0e", // wide ellipsis //$NON-NLS-1$
+		"\uff1e\uff1e", // wide standard "more" //$NON-NLS-1$
+		"\uff1c\uff1c", // wide standard "less" //$NON-NLS-1$
+		"\uff1e", // wide non-standard "more" //$NON-NLS-1$
+		"\uff1c", // wide non-standard "less" //$NON-NLS-1$
+		"\uff1a" // wide colon //$NON-NLS-1$
 	};
 	
 	private StringBuffer mnemonics = new StringBuffer(); // mnemonics used so far
-	private static final String candidateChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+	private static final String candidateChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"; //$NON-NLS-1$
 	private String preferencePageMnemonics = null;    // mnemonics used by Eclipse on preference pages
 	private String wizardPageMnemonics = null;    // mnemonics used by Eclipse on wizard pages
 	// private static String preferencePageMnemonics = "AD";    // mnemonics used by Eclipse on preference pages
@@ -127,7 +127,7 @@ public class Mnemonics
 		int labelLen = label.length();
 		if (labelLen == 0)
 		  return label;
-		else if ((labelLen == 1) && label.equals("?"))
+		else if ((labelLen == 1) && label.equals("?")) //$NON-NLS-1$
 		  return label;
 		StringBuffer newLabel = new StringBuffer(label);        
 		int mcharPos = findUniqueMnemonic(label);          
@@ -140,7 +140,7 @@ public class Mnemonics
 		  mcharPos = findUniqueMnemonic(candidateChars);
 		  if (mcharPos != -1)
 		  {
-		  	String addedMnemonic = "(" + MNEMONIC_CHAR + candidateChars.charAt(mcharPos) + ")";
+		  	String addedMnemonic = "(" + MNEMONIC_CHAR + candidateChars.charAt(mcharPos) + ")"; //$NON-NLS-1$ //$NON-NLS-2$
 		  	insertMnemonic(newLabel, addedMnemonic);
 		  }
 		}
@@ -165,7 +165,7 @@ public class Mnemonics
 		  newLabel.insert(mcharPos,MNEMONIC_CHAR);
 		else
 		{
-		  	String addedMnemonic = new String("("+MNEMONIC_CHAR + mnemonicChar + ")");
+		  	String addedMnemonic = new String("("+MNEMONIC_CHAR + mnemonicChar + ")"); //$NON-NLS-1$ //$NON-NLS-2$
 			insertMnemonic(newLabel, addedMnemonic);
 		}
 		return newLabel.toString();
@@ -197,7 +197,6 @@ public class Mnemonics
 	 * Find a uniqe mnemonic char in given string.
 	 * Note if one is found, it is added to the list of currently used mnemonics!
 	 *
-	 * @param string to search each char for unique candidate
 	 * @return index position of unique character in input string, or -1 if none found.
 	 */
 	public int findUniqueMnemonic(String label)
@@ -252,7 +251,7 @@ public class Mnemonics
 	 * @return the mnemonics.
 	 */
 	private String getPreferencePageMnemonics() {
-		String[] labels = JFaceResources.getStrings(new String[] { "defaults", "apply" });
+		String[] labels = JFaceResources.getStrings(new String[] { "defaults", "apply" }); //$NON-NLS-1$ //$NON-NLS-2$
 		return getMnemonicsFromStrings(labels).toUpperCase();
 	}
 	
@@ -332,7 +331,6 @@ public class Mnemonics
 		if (idx >= 0)
 		{
 		   StringBuffer buffer = new StringBuffer(text);
-		   char mchar = buffer.charAt(idx+1); // the char after the &
 		   buffer.deleteCharAt(idx);  // delete the &
 	
 		   // in case of already appended (&X), remove the remaining (X)

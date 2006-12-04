@@ -77,7 +77,7 @@ public class EnvironmentVariablesPromptDialog extends SystemPromptDialog impleme
 		SystemWidgetHelpers.createLabel(page, SystemResources.RESID_SUBSYSTEM_ENVVAR_NAME_LABEL);
 		nameTextField = SystemWidgetHelpers.createTextField(page, null);
 		nameTextField.setToolTipText(SystemResources.RESID_SUBSYSTEM_ENVVAR_NAME_TOOLTIP);
-		if (name != null && !name.trim().equals(""))
+		if (name != null && !name.trim().equals("")) //$NON-NLS-1$
 		{
 			nameTextField.setText(name);
 			setInitialOKButtonEnabledState(true);
@@ -98,27 +98,27 @@ public class EnvironmentVariablesPromptDialog extends SystemPromptDialog impleme
 		}
 		
 		if (!change)		
-			SystemWidgetHelpers.setCompositeHelp(parent, RSEUIPlugin.HELPPREFIX + "envv0001");
+			SystemWidgetHelpers.setCompositeHelp(parent, RSEUIPlugin.HELPPREFIX + "envv0001"); //$NON-NLS-1$
 		else
-			SystemWidgetHelpers.setCompositeHelp(parent, RSEUIPlugin.HELPPREFIX + "envv0002");
+			SystemWidgetHelpers.setCompositeHelp(parent, RSEUIPlugin.HELPPREFIX + "envv0002"); //$NON-NLS-1$
 		
 		
 		// Set name and value limits for known system types
 		if (systemType != null)
 		{
-			if (systemType.equals("iSeries"))
+			if (systemType.equals("iSeries")) //$NON-NLS-1$
 			{
 				nameTextField.setTextLimit(128);
 				valueTextField.setTextLimit(1024);
 			}
-			else if (systemType.equals("Windows"))
+			else if (systemType.equals("Windows")) //$NON-NLS-1$
 			{
 				nameTextField.setTextLimit(300);
 				valueTextField.setTextLimit(1024);
 			}
-			else if (systemType.equals("Local"))
+			else if (systemType.equals("Local")) //$NON-NLS-1$
 			{
-		        if (System.getProperty("os.name").toLowerCase().indexOf("win") != -1)
+		        if (System.getProperty("os.name").toLowerCase().indexOf("win") != -1) //$NON-NLS-1$ //$NON-NLS-2$
 		        {
 					nameTextField.setTextLimit(300);
 					valueTextField.setTextLimit(1024);
@@ -172,7 +172,7 @@ public class EnvironmentVariablesPromptDialog extends SystemPromptDialog impleme
 	 * @see org.eclipse.rse.ui.dialogs.SystemPromptDialog#processOK()
 	 */
 	protected boolean processOK() {
-		if (nameTextField.getText() != null && !nameTextField.getText().trim().equals("")) 
+		if (nameTextField.getText() != null && !nameTextField.getText().trim().equals(""))  //$NON-NLS-1$
 		{
 			String nameStr;
 			if (invalidNameChars != null && invalidNameChars.indexOf(' ') != -1)
@@ -234,7 +234,7 @@ public class EnvironmentVariablesPromptDialog extends SystemPromptDialog impleme
 	 * @see org.eclipse.swt.events.ModifyListener#modifyText(ModifyEvent)
 	 */
 	public void modifyText(ModifyEvent e) {
-		if (nameTextField.getText().trim().equals(""))
+		if (nameTextField.getText().trim().equals("")) //$NON-NLS-1$
 		{
 			enableOkButton(false);
 		}

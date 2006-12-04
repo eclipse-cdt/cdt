@@ -38,11 +38,11 @@ public class RemoteSystemsProject extends PlatformObject
 	/**
 	 * ID of the nature for the remote system explorer project: "org.eclipse.rse.ui.remotesystemsnature"
 	 */
-	public static final String ID = "org.eclipse.rse.ui.remotesystemsnature";
+	public static final String ID = "org.eclipse.rse.ui.remotesystemsnature"; //$NON-NLS-1$
 	/**
 	 * Name of the nature for the remote system explorer project: "Remote Systems Nature"
 	 */
-	public static final String NAME = "Remote Systems Nature";
+	public static final String NAME = "Remote Systems Nature"; //$NON-NLS-1$
 	/**
 	 * An empty array of strings indicating that a project doesn't have any prerequesite projects.
 	 */
@@ -70,7 +70,7 @@ public class RemoteSystemsProject extends PlatformObject
 	
 	public void setProject(IProject project) 
 	{
-		SystemBasePlugin.logInfo("Inside setProject");
+		SystemBasePlugin.logInfo("Inside setProject"); //$NON-NLS-1$
 		fProject= project;
 	}
 	/**
@@ -78,7 +78,7 @@ public class RemoteSystemsProject extends PlatformObject
 	 */
 	public void configure() throws CoreException 
 	{
-		SystemBasePlugin.logInfo("Inside configure");		
+		SystemBasePlugin.logInfo("Inside configure");		 //$NON-NLS-1$
 	}
 	/**
 	 * Removes the Java nature from the project.

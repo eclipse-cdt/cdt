@@ -674,7 +674,7 @@ public class Host extends RSEModelObject implements IHost, IAdaptable
 		if (myPool != null && flag) {
 			myPool.setDirty(true);
 		}
-	};
+	}
 	
 	public boolean commit() 
 	{

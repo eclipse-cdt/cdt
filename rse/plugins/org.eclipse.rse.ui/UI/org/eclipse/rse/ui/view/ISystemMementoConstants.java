@@ -21,30 +21,30 @@ public interface ISystemMementoConstants
 	/**
 	 * Memento ID for profiles
 	 */
-	public static final String MEMENTO_KEY_PROFILE = "Profile";
+	public static final String MEMENTO_KEY_PROFILE = "Profile"; //$NON-NLS-1$
 	/**
 	 * Memento ID for connections
 	 */
-	public static final String MEMENTO_KEY_CONNECTION = "Conn";
+	public static final String MEMENTO_KEY_CONNECTION = "Conn"; //$NON-NLS-1$
 	/**
 	 * Memento ID for subsystems
 	 */
-	public static final String MEMENTO_KEY_SUBSYSTEM = "Subs";
+	public static final String MEMENTO_KEY_SUBSYSTEM = "Subs"; //$NON-NLS-1$
 	/**
 	 * Memento ID for filter pool references
 	 */
-	public static final String MEMENTO_KEY_FILTERPOOLREFERENCE = "FPoolRef";
+	public static final String MEMENTO_KEY_FILTERPOOLREFERENCE = "FPoolRef"; //$NON-NLS-1$
 	/**
 	 * Memento ID for filter references
 	 */
-	public static final String MEMENTO_KEY_FILTERREFERENCE = "FRef";
+	public static final String MEMENTO_KEY_FILTERREFERENCE = "FRef"; //$NON-NLS-1$
 	/**
 	 * Memento ID for filter string references
 	 */
-	public static final String MEMENTO_KEY_FILTERSTRINGREFERENCE = "FSRef";
+	public static final String MEMENTO_KEY_FILTERSTRINGREFERENCE = "FSRef"; //$NON-NLS-1$
 	/**
 	 * Memento ID for remote objects
 	 */
-	public static final String MEMENTO_KEY_REMOTE = "Remote";
+	public static final String MEMENTO_KEY_REMOTE = "Remote"; //$NON-NLS-1$
 
 }

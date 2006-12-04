@@ -54,8 +54,8 @@ public interface IServerLauncherForm
 	public boolean updateValues(IServerLauncherProperties launcher);
 	
 	/**
-	 * Did anythign change?
-	 * @return
+	 * Returns whether anything has changed in the server launcher form.
+	 * @return <code>true</code> if the server launcher form has changed, <code>false</code> otherwise.
 	 */
 	public boolean isDirty();
 }

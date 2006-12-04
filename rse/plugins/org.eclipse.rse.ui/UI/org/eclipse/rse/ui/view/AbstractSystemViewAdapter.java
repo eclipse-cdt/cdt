@@ -18,7 +18,6 @@ package org.eclipse.rse.ui.view;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
-import java.util.ResourceBundle;
 import java.util.StringTokenizer;
 import java.util.Vector;
 
@@ -124,15 +123,15 @@ public abstract class AbstractSystemViewAdapter
     /**
      * Message substitution prefix: "&"
      */
-	protected static final String MSG_SUB_PREFIX = "&";
+	protected static final String MSG_SUB_PREFIX = "&"; //$NON-NLS-1$
     /**
      * Message substitution variable 1: "&1"
      */
-	protected static final String MSG_SUB1       = MSG_SUB_PREFIX+"1";
+	protected static final String MSG_SUB1       = MSG_SUB_PREFIX+"1"; //$NON-NLS-1$
     /**
      * Message substitution variable 2: "&2"
      */
-	protected static final String MSG_SUB2       = MSG_SUB_PREFIX+"2";
+	protected static final String MSG_SUB2       = MSG_SUB_PREFIX+"2"; //$NON-NLS-1$
 
     /**
      * Delimiter for each object's key in a memento, used to persist tree view expansion state: "///"
@@ -435,7 +434,7 @@ public abstract class AbstractSystemViewAdapter
 	 */
 	public String getStatusLineText(Object element)
 	{
-		return getType(element) + ": " + getName(element);
+		return getType(element) + ": " + getName(element); //$NON-NLS-1$
 	}
 		
 	/**
@@ -680,7 +679,7 @@ public abstract class AbstractSystemViewAdapter
 			  	if ((viewer != null) && (viewer instanceof TreeViewer))
 			    	return Integer.toString(getChildCount((TreeViewer)viewer, propertySourceInput));
 			  	else
-			    	return "0";
+			    	return "0"; //$NON-NLS-1$
 			}
 		}
 		else
@@ -1333,9 +1332,9 @@ public abstract class AbstractSystemViewAdapter
 	public boolean testAttribute(Object target, String name, String value)
 	{
 		//System.out.println("Inside testAttribute: name = " + name + ", value = " + value);
-		if (name.equalsIgnoreCase("name"))
+		if (name.equalsIgnoreCase("name")) //$NON-NLS-1$
 		{
-			if (value.endsWith("*")) 
+			if (value.endsWith("*"))  //$NON-NLS-1$
 			{
 				// we have a wild card test, and * is the last character in the value
 				if (getName(target).startsWith(value.substring(0, value.length() - 1)))
@@ -1344,29 +1343,29 @@ public abstract class AbstractSystemViewAdapter
 			else
 				return value.equals(getName(target));
 		}
-		else if (name.equalsIgnoreCase("type"))
+		else if (name.equalsIgnoreCase("type")) //$NON-NLS-1$
 		  return value.equals(getType(target));
-		else if (name.equalsIgnoreCase("hasChildren"))
+		else if (name.equalsIgnoreCase("hasChildren")) //$NON-NLS-1$
 		{
-			return hasChildren(target) ? value.equals("true") : value.equals("false");
+			return hasChildren(target) ? value.equals("true") : value.equals("false"); //$NON-NLS-1$ //$NON-NLS-2$
 		}
-		else if (name.equalsIgnoreCase("connected"))
+		else if (name.equalsIgnoreCase("connected")) //$NON-NLS-1$
 		{
 			ISubSystem ss = getSubSystem(target);
 			if (ss != null)
-			  return ss.isConnected() ? value.equals("true") : value.equals("false");
+			  return ss.isConnected() ? value.equals("true") : value.equals("false"); //$NON-NLS-1$ //$NON-NLS-2$
 			else
 			  return false;
 		} 
-		else if (name.equalsIgnoreCase("offline"))
+		else if (name.equalsIgnoreCase("offline")) //$NON-NLS-1$
 		{ 
 			ISubSystem ss = getSubSystem(target);
 			if (ss != null)
-			  return ss.isOffline() ? value.equals("true") : value.equals("false");
+			  return ss.isOffline() ? value.equals("true") : value.equals("false"); //$NON-NLS-1$ //$NON-NLS-2$
 			else
 			  return false;		    				
 		}
-		else if (name.equalsIgnoreCase("systemType"))
+		else if (name.equalsIgnoreCase("systemType")) //$NON-NLS-1$
 		{
 			ISubSystem ss = getSubSystem(target);
 			String[] values = tokenize(value);
@@ -1389,7 +1388,7 @@ public abstract class AbstractSystemViewAdapter
 			}
 			return false;
 		}
-		else if (name.equalsIgnoreCase("subsystemFactoryId"))
+		else if (name.equalsIgnoreCase("subsystemFactoryId")) //$NON-NLS-1$
 		{
 			ISubSystem ss = getSubSystem(target);
 			//System.out.println("ss null? " + (ss == null));
@@ -1407,7 +1406,7 @@ public abstract class AbstractSystemViewAdapter
 			//System.out.println("Returning: " + ok);
 			return ok;
 		}
-		else if (name.equalsIgnoreCase("subsystemFactoryCategory"))
+		else if (name.equalsIgnoreCase("subsystemFactoryCategory")) //$NON-NLS-1$
 		{
 			ISubSystem ss = getSubSystem(target);
 			if (ss == null)
@@ -1428,7 +1427,7 @@ public abstract class AbstractSystemViewAdapter
 	 */
 	private String[] tokenize(String input)
 	{
-          	StringTokenizer tokens = new StringTokenizer(input,";");
+          	StringTokenizer tokens = new StringTokenizer(input,";"); //$NON-NLS-1$
             Vector v = new Vector();
             while (tokens.hasMoreTokens())
               v.addElement(tokens.nextToken());

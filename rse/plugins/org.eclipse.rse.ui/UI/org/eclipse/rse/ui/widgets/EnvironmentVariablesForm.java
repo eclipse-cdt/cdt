@@ -64,8 +64,8 @@ public class EnvironmentVariablesForm extends SystemBaseForm implements Selectio
 
 
 	// constants
-	private static final String VAR_NAME = "NAME";
-	private static final String VAR_VALUE = "VALUE";
+	private static final String VAR_NAME = "NAME"; //$NON-NLS-1$
+	private static final String VAR_VALUE = "VALUE"; //$NON-NLS-1$
 	private static final String[] COLUMN_PROPERTIES = {VAR_NAME, VAR_VALUE};
 
 	// instance variables
@@ -328,7 +328,7 @@ public class EnvironmentVariablesForm extends SystemBaseForm implements Selectio
 		moveDownButton.addSelectionListener(this);
 		moveDownButton.setEnabled(false);
 
-		SystemWidgetHelpers.setCompositeHelp(parent, RSEUIPlugin.HELPPREFIX + "envv0000");
+		SystemWidgetHelpers.setCompositeHelp(parent, RSEUIPlugin.HELPPREFIX + "envv0000"); //$NON-NLS-1$
 		
 		return parent;
 	}
@@ -563,7 +563,7 @@ public class EnvironmentVariablesForm extends SystemBaseForm implements Selectio
 	{
 		SystemMessage msg = null;
 		String name = value;
-		if (name == null || name.trim().equals(""))
+		if (name == null || name.trim().equals("")) //$NON-NLS-1$
 		{
 			msg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_COMM_ENVVAR_NONAME);					
 		}

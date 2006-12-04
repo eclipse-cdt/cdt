@@ -23,9 +23,7 @@ public interface ISystemCollapsableSectionListener {
 
 
 	/**
-	 * Notify listeners of a section collapsed or expanded.  
-	 * 
-	 * @return true if the section was collapsed, false if the section was expanded.
+	 * Notifies listeners of a section collapsed or expanded.
 	 */
 	public void sectionCollapsed(boolean collapsed);
 }

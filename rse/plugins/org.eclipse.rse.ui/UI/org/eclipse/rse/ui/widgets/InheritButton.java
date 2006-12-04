@@ -75,7 +75,7 @@ public class InheritButton extends Composite {
 	 */
 	public InheritButton(Composite parent) {
 		super(parent, SWT.NONE);
-		isDrawn = System.getProperty("os.name").toLowerCase().startsWith("win");
+		isDrawn = System.getProperty("os.name").toLowerCase().startsWith("win"); //$NON-NLS-1$ //$NON-NLS-2$
 		GridData data = new GridData(SWT.CENTER, SWT.CENTER, false, false);
 		data.widthHint = DEFAULT_WIDTH;
 		data.heightHint = DEFAULT_HEIGHT;
@@ -101,7 +101,7 @@ public class InheritButton extends Composite {
 		}
 		toggle.getAccessible().addAccessibleListener(new AccessibleAdapter() {
 			public void getHelp(AccessibleEvent e) { // this is the one that should supply the text heard.
-				e.result = "";
+				e.result = ""; //$NON-NLS-1$
 			}
 			public void getName(AccessibleEvent e) { // this is the one that apparently does supply the text heard.
 				e.result = toggle.getToolTipText();
@@ -115,7 +115,7 @@ public class InheritButton extends Composite {
 					parent = parent.getParent();
 				}
 				if (prefix != null) {
-					e.result = prefix + " " + e.result;
+					e.result = prefix + " " + e.result; //$NON-NLS-1$
 				}
 			}
 		});

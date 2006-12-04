@@ -52,7 +52,7 @@ public class ConnectorServicesForm extends SystemBaseForm
 	
 	public ConnectorServicesForm(ISystemMessageLine msgLine)
 	{
-		super(msgLine);
+		super(null, msgLine);
 	}
 	
 	public Control createContents(Composite parent)

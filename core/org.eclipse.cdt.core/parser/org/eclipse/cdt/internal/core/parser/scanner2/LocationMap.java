@@ -1199,7 +1199,7 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
 				// TODO consider '\r' line endings?
 				if (buffer[i] == '\n') {
 					if (lineOffsets.length == lines) {
-						final int ratio= Math.min(i / lines, 20);
+						final int ratio= Math.min(Math.max(i / lines, 1), 20);
 						int[] tmp= new int[lines + (buffer.length - i) / ratio + 1];
 						System.arraycopy(lineOffsets, 0, tmp, 0, lines);
 						lineOffsets= tmp;

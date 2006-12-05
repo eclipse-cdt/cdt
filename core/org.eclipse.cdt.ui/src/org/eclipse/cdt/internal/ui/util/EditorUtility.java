@@ -18,13 +18,13 @@ import java.io.File;
 import java.io.IOException;
 import java.text.MessageFormat;
 
-import org.eclipse.core.filebuffers.FileBuffers;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IStorage;
+import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
@@ -289,16 +289,16 @@ public class EditorUtility {
 	 * in case the location can not be resolved to a workspace <code>IFile</code>.
 	 * 
 	 * @param location  a valid file system location
-	 * @param element  an element related to the target file, may be <code>null</code>
+	 * @param context  an element related to the target file, may be <code>null</code>
 	 * @return an editor input
 	 */
-	public static IEditorInput getEditorInputForLocation(IPath location, ICElement element) {
-		IFile resource= FileBuffers.getWorkspaceFileAtLocation(location);
+	public static IEditorInput getEditorInputForLocation(IPath location, ICElement context) {
+		IFile resource= getWorkspaceFileAtLocation(location, context);
 		if (resource != null) {
 			return new FileEditorInput(resource);
-		} else if (element != null) {
+		} else if (context != null) {
 			// try to get a translation unit from the location and associated element
-			ICProject cproject= element.getCProject();
+			ICProject cproject= context.getCProject();
 			if (cproject != null) {
 				ITranslationUnit unit = CoreModel.getDefault().createTranslationUnitFrom(cproject, location);
 				if (unit != null) {
@@ -307,18 +307,61 @@ public class EditorUtility {
 			}
 			// no translation unit - still try to get a sensible marker resource
 			// from the associated element
-			if (element instanceof IWorkingCopy && ((IWorkingCopy) element).isWorkingCopy()) {
-				element= ((IWorkingCopy) element).getOriginalElement();
+			if (context instanceof IWorkingCopy && ((IWorkingCopy) context).isWorkingCopy()) {
+				context= ((IWorkingCopy) context).getOriginalElement();
 			}
 			IResource markerResource= null;
-			if (element != null) {
-				markerResource= element.getUnderlyingResource();
+			if (context != null) {
+				markerResource= context.getUnderlyingResource();
 			}
 			return new ExternalEditorInput(new FileStorage(location), markerResource);
 		}
 		return new ExternalEditorInput(new FileStorage(location));
 	}
 
+
+	/**
+	 * Utility method to resolve a file system location to a workspace resource.
+	 * If a context element is given and there are multiple matches in the workspace,
+	 * a resource with the same project of the context element are preferred.
+	 * 
+	 * @param location  a valid file system location
+	 * @param context  an element related to the target file, may be <code>null</code>
+	 * @return an <code>IFile</code> or <code>null</code>
+	 */
+	private static IFile getWorkspaceFileAtLocation(IPath location, ICElement context) {
+		IProject project= null;
+		if (context != null) {
+			ICProject cProject= context.getCProject();
+			if (cProject != null) {
+				project= cProject.getProject();
+			}
+		}
+		IWorkspaceRoot root= ResourcesPlugin.getWorkspace().getRoot();
+		IFile file= root.getFileForLocation(location);
+		if (file == null) {
+			// try to find a linked resource
+			IFile bestMatch= null;
+			IFile[] files= root.findFilesForLocation(location);
+			for (int i= 0; i < files.length; i++) {
+				file= files[i];
+				if (file.isAccessible()) {
+					if (project != null && file.getProject() == project) {
+						bestMatch= file;
+						break;
+					}
+					if (bestMatch == null) {
+						bestMatch= file;
+						if (project == null) {
+							break;
+						}
+					}
+				}
+			}
+			return bestMatch;
+		}
+		return file;
+	}
 
 	/**
 	 * If the current active editor edits a c element return it, else

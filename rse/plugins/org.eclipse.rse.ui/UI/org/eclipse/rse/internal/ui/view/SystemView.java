@@ -2788,16 +2788,16 @@ public class SystemView extends TreeViewer implements ISystemTree, ISystemResour
 			if (!isTreeItemSelected(widget)) // it is one of our kids that is selected
 			{
 				clearSelection(); // there is nothing much else we can do. Calling code will restore it anyway hopefully
-				doOurInternalRefresh(fWidget, fElement, fDoStruct, doTimings);
+				doOurInternalRefresh(fWidget, fElement, fDoStruct, doTimings, true);
 			} else // it is us that is selected. This might be a refresh selected operation. TreeItem address won't change
 			{
-				doOurInternalRefresh(fWidget, fElement, fDoStruct, doTimings);
+				doOurInternalRefresh(fWidget, fElement, fDoStruct, doTimings, true);
 			}
 		} else {
 			final boolean finalDoTimings = doTimings;
 			preservingSelection(new Runnable() {
 				public void run() {
-					doOurInternalRefresh(fWidget, fElement, fDoStruct, finalDoTimings);
+					doOurInternalRefresh(fWidget, fElement, fDoStruct, finalDoTimings, true);
 				}
 			});
 		}
@@ -2813,7 +2813,7 @@ public class SystemView extends TreeViewer implements ISystemTree, ISystemResour
 		return false;
 	}
 
-	protected void doOurInternalRefresh(Widget widget, Object element, boolean doStruct, boolean doTimings) {
+	protected void doOurInternalRefresh(Widget widget, Object element, boolean doStruct, boolean doTimings, boolean firstCall) {
 		if (debug) {
 			logDebugMsg("in doOurInternalRefresh on " + getAdapter(element).getName(element)); //$NON-NLS-1$
 			logDebugMsg("...current selection is " + getFirstSelectionName(getSelection())); //$NON-NLS-1$
@@ -2846,9 +2846,9 @@ public class SystemView extends TreeViewer implements ISystemTree, ISystemResour
 			// DKM - without the else we get duplicate queries on expanded folder
 			// uncommented - seems new results after query aren't showing up
 			//else
-			{
-				internalRefresh(element);
-			}
+//			{
+//				internalRefresh(element);
+//			}
 
 			if (doTimings && timer != null) {
 				System.out.println("doOurInternalRefresh timer 3: time to updateChildren:" + timer.setEndTime()); //$NON-NLS-1$
@@ -2865,7 +2865,7 @@ public class SystemView extends TreeViewer implements ISystemTree, ISystemResour
 			for (int i = 0; i < children.length; i++) {
 				Widget item = children[i];
 				Object data = item.getData();
-				if (data != null) doOurInternalRefresh(item, data, doStruct, false);
+				if (data != null) doOurInternalRefresh(item, data, doStruct, false, false);
 				/*
 				 if (doTimings)
 				 {
@@ -2878,6 +2878,10 @@ public class SystemView extends TreeViewer implements ISystemTree, ISystemResour
 				 }
 				 }*/
 			}
+		}
+		if (firstCall)
+		{
+			internalRefresh(element);
 		}
 		if (doTimings && timer != null) {
 			System.out.println("doOurInternalRefresh timer 4: time to recurse children:" + timer.setEndTime()); //$NON-NLS-1$

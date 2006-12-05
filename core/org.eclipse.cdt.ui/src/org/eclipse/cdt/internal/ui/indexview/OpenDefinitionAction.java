@@ -11,7 +11,6 @@
 
 package org.eclipse.cdt.internal.ui.indexview;
 
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
@@ -30,7 +29,6 @@ import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.core.index.IIndexName;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.CoreModel;
-import org.eclipse.cdt.core.resources.FileStorage;
 import org.eclipse.cdt.ui.CUIPlugin;
 
 import org.eclipse.cdt.internal.ui.util.EditorUtility;
@@ -79,11 +77,7 @@ public class OpenDefinitionAction extends IndexAction {
 
 	private void showInEditor(IIndexName name) throws CModelException, PartInitException {
 		IPath path = new Path(name.getFileName());
-		Object input = ResourcesPlugin.getWorkspace().getRoot().getFileForLocation(path);
-		if (input == null)
-			input = new FileStorage(path);
-
-		IEditorPart editor = EditorUtility.openInEditor(input);
+		IEditorPart editor = EditorUtility.openInEditor(path, null);
 		if (editor != null && editor instanceof ITextEditor) {
 			ITextEditor textEditor = (ITextEditor)editor;
 			int nodeOffset = name.getNodeOffset();

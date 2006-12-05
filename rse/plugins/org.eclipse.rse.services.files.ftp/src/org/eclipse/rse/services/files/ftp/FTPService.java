@@ -32,6 +32,8 @@
  * Javier Montalvo Orus (Symbian) - Fixing 164306 - [ftp] FTP console shows plaintext passwords
  * Javier Montalvo Orus (Symbian) - Fixing 161238 - [ftp] connections to VMS servers are not usable
  * Javier Montalvo Orus (Symbian) - Fixing 164304 - [ftp] cannot connect to wftpd server on Windows
+ * Javier Montalvo Orus (Symbian) - Fixing 165471 - [ftp] On wftpd-2.0, "." and ".." directory entries should be hidden
+ * Javier Montalvo Orus (Symbian) - Fixing 165476 - [ftp] On warftpd-1.65 in MSDOS mode, cannot expand drives
  ********************************************************************************/
 
 package org.eclipse.rse.services.files.ftp;
@@ -47,6 +49,8 @@ import java.io.OutputStream;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.commons.net.ftp.FTP;
 import org.apache.commons.net.ftp.FTPClient;
@@ -181,40 +185,46 @@ public class FTPService extends AbstractFileService implements IFileService, IFT
 		
 		FTPClientConfig ftpClientConfig;
 		
-		_systemName = _ftpClient.getSystemName();
+		_systemName = _ftpClient.getSystemName().toUpperCase();
 		if(_systemName.indexOf(' ')!=-1)
 		{
 			_systemName = _systemName.substring(0,_systemName.indexOf(' '));
 		}
 		
 		//FTPClientConfig.SYST_NT = "WINDOWS"
-		if(_systemName.equals(FTPClientConfig.SYST_NT))
+		if(_systemName.startsWith(FTPClientConfig.SYST_NT))
 		{
+			_systemName = FTPClientConfig.SYST_NT;
 			ftpClientConfig = new FTPClientConfig(FTPClientConfig.SYST_NT);
 		}else 
 		//FTPClientConfig.SYST_MVS = "MVS" 	
-		if(_systemName.equals(FTPClientConfig.SYST_MVS))
+		if(_systemName.startsWith(FTPClientConfig.SYST_MVS))
 		{
+			_systemName = FTPClientConfig.SYST_MVS;
 			ftpClientConfig = new FTPClientConfig(FTPClientConfig.SYST_MVS);
 		}else
 		//FTPClientConfig.SYST_OS2 = "OS/2" 	
-		if(_systemName.equals(FTPClientConfig.SYST_OS2))
+		if(_systemName.startsWith(FTPClientConfig.SYST_OS2))
 		{
+			_systemName = FTPClientConfig.SYST_OS2;
 			ftpClientConfig = new FTPClientConfig(FTPClientConfig.SYST_OS2);
 		}else
 		//FTPClientConfig.SYST_OS400 = "OS/400"   	
-		if(_systemName.equals(FTPClientConfig.SYST_OS400))
+		if(_systemName.startsWith(FTPClientConfig.SYST_OS400))
 		{
+			_systemName = FTPClientConfig.SYST_OS400;
 			ftpClientConfig = new FTPClientConfig(FTPClientConfig.SYST_OS400);
 		}else
 		//FTPClientConfig.SYST_VMS = "VMS"   	
-		if(_systemName.equals(FTPClientConfig.SYST_VMS))
+		if(_systemName.startsWith(FTPClientConfig.SYST_VMS))
 		{
+			_systemName = FTPClientConfig.SYST_VMS;
 			ftpClientConfig = new FTPClientConfig(FTPClientConfig.SYST_VMS);
 		}else
 		//Default UNIX-like parsing	
 		//FTPClientConfig.SYST_UNIX = "UNIX"	
 		{
+			_systemName = FTPClientConfig.SYST_UNIX;
 			ftpClientConfig = new FTPClientConfig(FTPClientConfig.SYST_UNIX);
 		}
 		
@@ -227,7 +237,7 @@ public class FTPService extends AbstractFileService implements IFileService, IFT
 		{
 			String name = getName();
 			_userHome = _userHome.replaceAll(":\\[", "/"); //$NON-NLS-1$ //$NON-NLS-2$
-			_userHome = "/"+_userHome.substring(0,_userHome.lastIndexOf(']')); //$NON-NLS-1$
+			_userHome = '/'+_userHome.substring(0,_userHome.lastIndexOf(']'));
 		}
 		
 	}
@@ -295,6 +305,8 @@ public class FTPService extends AbstractFileService implements IFileService, IFT
 		
 			//try to retrieve the file
 			_ftpClient = getFTPClient();
+			
+			remoteParent = adaptPath(remoteParent);
 			
 			if(!_ftpClient.changeWorkingDirectory(remoteParent))
 			{
@@ -372,6 +384,8 @@ public class FTPService extends AbstractFileService implements IFileService, IFT
 		{
 			_ftpClient = getFTPClient();
 			
+			parentPath = adaptPath(parentPath);
+			
 			if(!_ftpClient.changeWorkingDirectory(parentPath))
 			{
 				throw new RemoteFileIOException(new Exception(_ftpClient.getReplyString()));
@@ -385,7 +399,7 @@ public class FTPService extends AbstractFileService implements IFileService, IFT
 			for(int i=0; i<_ftpFiles.length; i++)
 			{
 				FTPHostFile f = new FTPHostFile(parentPath,_ftpFiles[i],_systemName);
-				if(filematcher.matches(f.getName()) || f.isDirectory())
+				if((filematcher.matches(f.getName()) || f.isDirectory()) && !(f.getName().equals(".") || f.getName().equals(".."))) //$NON-NLS-1$ //$NON-NLS-2$
 				{
 					results.add(f);
 				}
@@ -400,13 +414,13 @@ public class FTPService extends AbstractFileService implements IFileService, IFT
 	}
 	
 	
-	public String getSeparator()
+	private char getSeparator()
 	{
-		String separator =  "/";  //$NON-NLS-1$
+		char separator =  '/'; 
 		
-		if(_systemName.equals(FTPClientConfig.SYST_NT))
+		if(_systemName.equals(FTPClientConfig.SYST_NT) || _userHome.indexOf('\\')!=-1) 
 		{
-			separator = "\\";  //$NON-NLS-1$
+			separator = '\\';  
 		}
 		
 		return separator;
@@ -433,6 +447,8 @@ public class FTPService extends AbstractFileService implements IFileService, IFT
 		
 		try
 		{
+			
+			remoteParent = adaptPath(remoteParent);
 			
 			ftpClient.changeWorkingDirectory(remoteParent);
 				
@@ -546,6 +562,7 @@ public class FTPService extends AbstractFileService implements IFileService, IFT
 		
 		try
 		{
+			remoteParent = adaptPath(remoteParent);
 			
 			ftpClient.changeWorkingDirectory(remoteParent);
 			
@@ -615,7 +632,7 @@ public class FTPService extends AbstractFileService implements IFileService, IFT
 	 */
 	public IHostFile[] getRoots(IProgressMonitor monitor) 
 	{	
-		return new IHostFile[]{new FTPHostFile(null, _userHome, true, true, 0, 0, true)};  //$NON-NLS-1$
+		return new IHostFile[]{new FTPHostFile(null, _userHome, true, true, 0, 0, true)}; 
 	}
 
 	/* (non-Javadoc)
@@ -681,7 +698,7 @@ public class FTPService extends AbstractFileService implements IFileService, IFT
 		
 		try {
 			
-			String source = remoteParent.endsWith(getSeparator()) ? remoteParent + oldName : remoteParent + getSeparator() + oldName;
+			String source = remoteParent.endsWith(String.valueOf(getSeparator())) ? remoteParent + oldName : remoteParent + getSeparator() + oldName;
 			
 			success = ftpClient.rename(source, newName);
 			
@@ -719,8 +736,8 @@ public class FTPService extends AbstractFileService implements IFileService, IFT
 		
 		try{
 		
-			String source = srcParent.endsWith(getSeparator()) ?  srcParent + srcName : srcParent + getSeparator() + srcName;
-			String target = tgtParent.endsWith(getSeparator()) ?  tgtParent + tgtName : tgtParent + getSeparator() + tgtName;
+			String source = srcParent.endsWith(String.valueOf(getSeparator())) ?  srcParent + srcName : srcParent + getSeparator() + srcName;
+			String target = tgtParent.endsWith(String.valueOf(getSeparator())) ?  tgtParent + tgtName : tgtParent + getSeparator() + tgtName;
 				
 			success = ftpClient.rename(source, target);
 			
@@ -746,6 +763,8 @@ public class FTPService extends AbstractFileService implements IFileService, IFT
 		
 		try
 		{
+		
+			remoteParent = adaptPath(remoteParent);
 			
 			if(!ftpClient.changeWorkingDirectory(remoteParent))
 			{
@@ -879,6 +898,24 @@ public class FTPService extends AbstractFileService implements IFileService, IFT
 		}
 		
 		return result;
+	}
+	
+	private String adaptPath(String path)
+	{
+		Matcher matcher = Pattern.compile("[\\\\/](\\w:.*)").matcher(path); //$NON-NLS-1$
+		
+		if(matcher.matches())
+		{
+			path = matcher.group(1);
+		}
+		
+		
+		if(path.length()>1)
+		{
+			path = getSeparator() == '/' ? path.replace('\\', getSeparator()) : path.replace('/', getSeparator());
+		}
+		
+		return path;
 	}
 	
 	

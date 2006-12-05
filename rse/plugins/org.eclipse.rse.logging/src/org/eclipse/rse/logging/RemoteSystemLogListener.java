@@ -42,7 +42,7 @@ class RemoteSystemLogListener implements ILogListener, IPropertyChangeListener {
 	 * @param plugin The plugin for which to create a log listener.
 	 */
 	public RemoteSystemLogListener(Plugin plugin) {
-		IPath path = plugin.getStateLocation().addTrailingSeparator().append(".log");
+		IPath path = plugin.getStateLocation().addTrailingSeparator().append(".log"); //$NON-NLS-1$
 		outputFile = path.toFile();
 		if ((outputFile != null) && (outputFile.exists())) {
 			outputFile.delete();
@@ -60,7 +60,7 @@ class RemoteSystemLogListener implements ILogListener, IPropertyChangeListener {
 			log = new PrintWriter(new BufferedWriter(new FileWriter(outputFile.toString(), true)), true);
 		} catch (Exception e) {
 			log = null;
-			System.err.println("Exception in RemoteSystemLogListener.initialize(): " + e.getMessage());
+			System.err.println("Exception in RemoteSystemLogListener.initialize(): " + e.getMessage());  //$NON-NLS-1$
 			e.printStackTrace();
 		}
 	}
@@ -74,18 +74,18 @@ class RemoteSystemLogListener implements ILogListener, IPropertyChangeListener {
 			log.println(date);
 			int severity = status.getSeverity();
 			if (severity == IStatus.ERROR) {
-				log.print("ERROR");
+				log.print("ERROR"); //$NON-NLS-1$
 			} else if (severity == IStatus.WARNING) {
-				log.print("WARNING");
+				log.print("WARNING"); //$NON-NLS-1$
 			} else if (severity == IStatus.INFO) {
-				log.print("INFO");
+				log.print("INFO"); //$NON-NLS-1$
 			} else if (severity == IStatus.OK) {
-				log.print("DEBUG");
+				log.print("DEBUG"); //$NON-NLS-1$
 			}
 
-			log.print(" ");
+			log.print(" "); //$NON-NLS-1$
 			log.print(status.getPlugin());
-			log.print("  ");
+			log.print("  "); //$NON-NLS-1$
 			log.println(status.getMessage());
 			if (status.getException() != null) status.getException().printStackTrace(log);
 			if (status.isMultiStatus()) {
@@ -94,7 +94,7 @@ class RemoteSystemLogListener implements ILogListener, IPropertyChangeListener {
 					loggingChild(children[i]);
 				}
 			}
-			log.println("--------------------------------------------");
+			log.println("--------------------------------------------"); //$NON-NLS-1$
 		}
 
 	}
@@ -110,7 +110,7 @@ class RemoteSystemLogListener implements ILogListener, IPropertyChangeListener {
 		if (log == null)
 			return;
 		else {
-			log.print("\t\t");
+			log.print("\t\t"); //$NON-NLS-1$
 			log.println(status.getMessage());
 			if (status.getException() != null) status.getException().printStackTrace(log);
 			if (status.isMultiStatus()) {

@@ -146,7 +146,7 @@ public class Logger implements IPropertyChangeListener {
 	 */
 	public synchronized void logError(String message, Throwable ex) {
 		if (debug_level >= IRemoteSystemsLogging.LOG_ERROR) {
-			if (message == null) message = "";
+			if (message == null) message = ""; //$NON-NLS-1$
 			Status errorStatus = new Status(IStatus.ERROR, pluginId, IStatus.OK, message, ex);
 			systemsPluginLog.log(errorStatus);
 		}
@@ -168,7 +168,7 @@ public class Logger implements IPropertyChangeListener {
 	 */
 	public synchronized void logInfo(String message, Throwable ex) {
 		if (debug_level >= IRemoteSystemsLogging.LOG_INFO) {
-			if (message == null) message = "";
+			if (message == null) message = ""; //$NON-NLS-1$
 			Status infoStatus = new Status(IStatus.INFO, pluginId, IStatus.OK, message, ex);
 			systemsPluginLog.log(infoStatus);
 		}
@@ -190,7 +190,7 @@ public class Logger implements IPropertyChangeListener {
 	 */
 	public synchronized void logWarning(String message, Throwable ex) {
 		if (debug_level >= IRemoteSystemsLogging.LOG_WARNING) {
-			if (message == null) message = "";
+			if (message == null) message = ""; //$NON-NLS-1$
 			Status warningStatus = new Status(IStatus.WARNING, pluginId, IStatus.OK, message, ex);
 			systemsPluginLog.log(warningStatus);
 		}

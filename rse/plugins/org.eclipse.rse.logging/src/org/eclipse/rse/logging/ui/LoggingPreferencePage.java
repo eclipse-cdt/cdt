@@ -17,7 +17,6 @@
 
 package org.eclipse.rse.logging.ui;
 
-import java.text.MessageFormat;
 import java.util.Set;
 
 import org.eclipse.core.runtime.Plugin;
@@ -33,7 +32,6 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Group;
-import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.PlatformUI;
@@ -116,15 +114,15 @@ public abstract class LoggingPreferencePage extends PreferencePage implements IW
 	 * @param text  the text for the new label
 	 * @return the new label
 	 */
-	private Label createLabel(Composite parent, int span, String text) {
-		Label label = new Label(parent, SWT.LEFT);
-		label.setText(text);
-		GridData data = new GridData();
-		data.horizontalSpan = span;
-		data.horizontalAlignment = GridData.FILL;
-		label.setLayoutData(data);
-		return label;
-	}
+//	private Label createLabel(Composite parent, int span, String text) {
+//		Label label = new Label(parent, SWT.LEFT);
+//		label.setText(text);
+//		GridData data = new GridData();
+//		data.horizontalSpan = span;
+//		data.horizontalAlignment = GridData.FILL;
+//		label.setLayoutData(data);
+//		return label;
+//	}
 
 	/** 
 	 * Method declared on PreferencePage
@@ -137,7 +135,7 @@ public abstract class LoggingPreferencePage extends PreferencePage implements IW
 //		createLabel(composite_tab, 1, topLabel1);
 		String topLabel2 = LoggingPreferenceLabels.LOGGING_PREFERENCE_PAGE_TOPLABEL2;
 		Group group1 = createGroup(composite_tab, 1, 1, topLabel2);
-		Set used = LabelUtil.usedFromString("ad"); // the mnemonics already used on preference page (in English)
+		Set used = LabelUtil.usedFromString("ad");  //$NON-NLS-1$ // the mnemonics already used on preference page (in English)
 		String text = LoggingPreferenceLabels.LOGGING_PREFERENCE_PAGE_ERRORS_ONLY;
 		radioButton0 = createRadioButton(group1, LabelUtil.assignMnemonic(text, used));
 		text = LoggingPreferenceLabels.LOGGING_PREFERENCE_PAGE_WARNINGS_ERRORS;
@@ -149,7 +147,7 @@ public abstract class LoggingPreferencePage extends PreferencePage implements IW
 			radioButton3 = createRadioButton(group1, LabelUtil.assignMnemonic(text, used));
 		}
 		initializeValues();
-		PlatformUI.getWorkbench().getHelpSystem().setHelp(parent, "org.eclipse.rse.logging.rsel0000");		
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(parent, "org.eclipse.rse.logging.rsel0000");  //$NON-NLS-1$
 		return composite_tab;
 	}
 

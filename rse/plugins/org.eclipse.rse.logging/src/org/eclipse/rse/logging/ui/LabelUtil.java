@@ -25,8 +25,8 @@ import java.util.Set;
  */
 public class LabelUtil {
 	
-	private final static String upperLetters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-	private final static String lowerLetters = "abcdefghijklmnopqrstuvwxyz";
+	private final static String upperLetters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"; //$NON-NLS-1$
+	private final static String lowerLetters = "abcdefghijklmnopqrstuvwxyz"; //$NON-NLS-1$
 	private final static char lpar = '(';
 	private final static char rpar = ')';
 	private final static char trigger = '&';

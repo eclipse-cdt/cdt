@@ -24,13 +24,13 @@ public interface IRemoteSystemsLogging {
 	/**
 	 * Name of the key that controls the logging level.<br>
 	 */
-	public static final String PLUGIN_ID = "org.eclipse.rse.logging";
+	public static final String PLUGIN_ID = "org.eclipse.rse.logging"; //$NON-NLS-1$
 
 	/**
 	 * Name of the key that controls the logging level.<br>
 	 * (value is "debug_level").
 	 */
-	public static final String DEBUG_LEVEL = "debug_level";
+	public static final String DEBUG_LEVEL = "debug_level"; //$NON-NLS-1$
 
 	/**
 	 * Set debug_level to this value to get Error messages.<br>

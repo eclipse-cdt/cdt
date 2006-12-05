@@ -34,7 +34,7 @@ public class ModelFactoryImpl extends EFactoryImpl implements ModelFactory {
 	 */
 	public static ModelFactory init() {
 		try {
-			ModelFactory theModelFactory = (ModelFactory)EPackage.Registry.INSTANCE.getEFactory("http://www.eclipse.org/tm/discovery/model"); 
+			ModelFactory theModelFactory = (ModelFactory)EPackage.Registry.INSTANCE.getEFactory("http://www.eclipse.org/tm/discovery/model");  //$NON-NLS-1$
 			if (theModelFactory != null) {
 				return theModelFactory;
 			}
@@ -66,7 +66,7 @@ public class ModelFactoryImpl extends EFactoryImpl implements ModelFactory {
 			case ModelPackage.SERVICE: return createService();
 			case ModelPackage.SERVICE_TYPE: return createServiceType();
 			default:
-				throw new IllegalArgumentException("The class '" + eClass.getName() + "' is not a valid classifier");
+				throw new IllegalArgumentException("The class '" + eClass.getName() + "' is not a valid classifier");  //$NON-NLS-1$//$NON-NLS-2$
 		}
 	}
 

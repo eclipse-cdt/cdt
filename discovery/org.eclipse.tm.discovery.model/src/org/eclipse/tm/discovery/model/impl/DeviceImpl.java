@@ -247,9 +247,9 @@ public class DeviceImpl extends EObjectImpl implements Device {
 		if (eIsProxy()) return super.toString();
 
 		StringBuffer result = new StringBuffer(super.toString());
-		result.append(" (address: ");
+		result.append(" (address: "); //$NON-NLS-1$
 		result.append(address);
-		result.append(", name: ");
+		result.append(", name: "); //$NON-NLS-1$
 		result.append(name);
 		result.append(')');
 		return result.toString();

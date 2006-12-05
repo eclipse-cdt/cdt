@@ -325,25 +325,25 @@ public class ModelPackageImpl extends EPackageImpl implements ModelPackage {
 		// Add supertypes to classes
 
 		// Initialize classes and features; add operations and parameters
-		initEClass(deviceEClass, Device.class, "Device", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-		initEReference(getDevice_ServiceType(), this.getServiceType(), null, "serviceType", null, 1, -1, Device.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEAttribute(getDevice_Address(), theXMLTypePackage.getString(), "address", null, 0, 1, Device.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, !IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEAttribute(getDevice_Name(), theXMLTypePackage.getString(), "name", null, 0, 1, Device.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, !IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEClass(deviceEClass, Device.class, "Device", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
+		initEReference(getDevice_ServiceType(), this.getServiceType(), null, "serviceType", null, 1, -1, Device.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
+		initEAttribute(getDevice_Address(), theXMLTypePackage.getString(), "address", null, 0, 1, Device.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, !IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
+		initEAttribute(getDevice_Name(), theXMLTypePackage.getString(), "name", null, 0, 1, Device.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, !IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
 
-		initEClass(networkEClass, Network.class, "Network", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-		initEReference(getNetwork_Device(), this.getDevice(), null, "device", null, 1, -1, Network.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEClass(networkEClass, Network.class, "Network", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
+		initEReference(getNetwork_Device(), this.getDevice(), null, "device", null, 1, -1, Network.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
 
-		initEClass(pairEClass, Pair.class, "Pair", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-		initEAttribute(getPair_Key(), theXMLTypePackage.getString(), "key", null, 0, 1, Pair.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, !IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEAttribute(getPair_Value(), theXMLTypePackage.getString(), "value", null, 0, 1, Pair.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, !IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEClass(pairEClass, Pair.class, "Pair", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
+		initEAttribute(getPair_Key(), theXMLTypePackage.getString(), "key", null, 0, 1, Pair.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, !IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
+		initEAttribute(getPair_Value(), theXMLTypePackage.getString(), "value", null, 0, 1, Pair.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, !IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
 
-		initEClass(serviceEClass, Service.class, "Service", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-		initEReference(getService_Pair(), this.getPair(), null, "pair", null, 0, -1, Service.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEAttribute(getService_Name(), theXMLTypePackage.getString(), "name", null, 0, 1, Service.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, !IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEClass(serviceEClass, Service.class, "Service", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
+		initEReference(getService_Pair(), this.getPair(), null, "pair", null, 0, -1, Service.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
+		initEAttribute(getService_Name(), theXMLTypePackage.getString(), "name", null, 0, 1, Service.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, !IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
 
-		initEClass(serviceTypeEClass, ServiceType.class, "ServiceType", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-		initEReference(getServiceType_Service(), this.getService(), null, "service", null, 1, -1, ServiceType.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEAttribute(getServiceType_Name(), theXMLTypePackage.getString(), "name", null, 0, 1, ServiceType.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, !IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEClass(serviceTypeEClass, ServiceType.class, "ServiceType", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
+		initEReference(getServiceType_Service(), this.getService(), null, "service", null, 1, -1, ServiceType.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
+		initEAttribute(getServiceType_Name(), theXMLTypePackage.getString(), "name", null, 0, 1, ServiceType.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, !IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
 
 		// Create resource
 		createResource(eNS_URI);
@@ -359,111 +359,111 @@ public class ModelPackageImpl extends EPackageImpl implements ModelPackage {
 	 * @generated
 	 */
 	protected void createExtendedMetaDataAnnotations() {
-		String source = "http:///org/eclipse/emf/ecore/util/ExtendedMetaData";		
+		String source = "http:///org/eclipse/emf/ecore/util/ExtendedMetaData";		 //$NON-NLS-1$
 		addAnnotation
 		  (deviceEClass, 
 		   source, 
 		   new String[] {
-			 "name", "Device",
-			 "kind", "elementOnly"
+			 "name", "Device", //$NON-NLS-1$ //$NON-NLS-2$
+			 "kind", "elementOnly" //$NON-NLS-1$ //$NON-NLS-2$
 		   });		
 		addAnnotation
 		  (getDevice_ServiceType(), 
 		   source, 
 		   new String[] {
-			 "kind", "element",
-			 "name", "ServiceType"
+			 "kind", "element", //$NON-NLS-1$ //$NON-NLS-2$
+			 "name", "ServiceType" //$NON-NLS-1$ //$NON-NLS-2$
 		   });		
 		addAnnotation
 		  (getDevice_Address(), 
 		   source, 
 		   new String[] {
-			 "kind", "attribute",
-			 "name", "address"
+			 "kind", "attribute", //$NON-NLS-1$ //$NON-NLS-2$
+			 "name", "address" //$NON-NLS-1$ //$NON-NLS-2$
 		   });		
 		addAnnotation
 		  (getDevice_Name(), 
 		   source, 
 		   new String[] {
-			 "kind", "attribute",
-			 "name", "name"
+			 "kind", "attribute", //$NON-NLS-1$ //$NON-NLS-2$
+			 "name", "name" //$NON-NLS-1$ //$NON-NLS-2$
 		   });		
 		addAnnotation
 		  (networkEClass, 
 		   source, 
 		   new String[] {
-			 "name", "Network",
-			 "kind", "elementOnly"
+			 "name", "Network", //$NON-NLS-1$ //$NON-NLS-2$
+			 "kind", "elementOnly" //$NON-NLS-1$ //$NON-NLS-2$
 		   });		
 		addAnnotation
 		  (getNetwork_Device(), 
 		   source, 
 		   new String[] {
-			 "kind", "element",
-			 "name", "Device"
+			 "kind", "element", //$NON-NLS-1$ //$NON-NLS-2$
+			 "name", "Device" //$NON-NLS-1$ //$NON-NLS-2$
 		   });		
 		addAnnotation
 		  (pairEClass, 
 		   source, 
 		   new String[] {
-			 "name", "Pair",
-			 "kind", "empty"
+			 "name", "Pair", //$NON-NLS-1$ //$NON-NLS-2$
+			 "kind", "empty" //$NON-NLS-1$ //$NON-NLS-2$
 		   });		
 		addAnnotation
 		  (getPair_Key(), 
 		   source, 
 		   new String[] {
-			 "kind", "attribute",
-			 "name", "key"
+			 "kind", "attribute", //$NON-NLS-1$ //$NON-NLS-2$
+			 "name", "key" //$NON-NLS-1$ //$NON-NLS-2$
 		   });		
 		addAnnotation
 		  (getPair_Value(), 
 		   source, 
 		   new String[] {
-			 "kind", "attribute",
-			 "name", "value"
+			 "kind", "attribute", //$NON-NLS-1$ //$NON-NLS-2$
+			 "name", "value" //$NON-NLS-1$ //$NON-NLS-2$
 		   });		
 		addAnnotation
 		  (serviceEClass, 
 		   source, 
 		   new String[] {
-			 "name", "Service",
-			 "kind", "elementOnly"
+			 "name", "Service", //$NON-NLS-1$ //$NON-NLS-2$
+			 "kind", "elementOnly" //$NON-NLS-1$ //$NON-NLS-2$
 		   });		
 		addAnnotation
 		  (getService_Pair(), 
 		   source, 
 		   new String[] {
-			 "kind", "element",
-			 "name", "Pair"
+			 "kind", "element", //$NON-NLS-1$ //$NON-NLS-2$
+			 "name", "Pair" //$NON-NLS-1$ //$NON-NLS-2$
 		   });		
 		addAnnotation
 		  (getService_Name(), 
 		   source, 
 		   new String[] {
-			 "kind", "attribute",
-			 "name", "name"
+			 "kind", "attribute", //$NON-NLS-1$ //$NON-NLS-2$
+			 "name", "name" //$NON-NLS-1$ //$NON-NLS-2$
 		   });		
 		addAnnotation
 		  (serviceTypeEClass, 
 		   source, 
 		   new String[] {
-			 "name", "ServiceType",
-			 "kind", "elementOnly"
+			 "name", "ServiceType", //$NON-NLS-1$ //$NON-NLS-2$
+			 "kind", "elementOnly" //$NON-NLS-1$ //$NON-NLS-2$
 		   });		
 		addAnnotation
 		  (getServiceType_Service(), 
 		   source, 
 		   new String[] {
-			 "kind", "element",
-			 "name", "Service"
+			 "kind", "element", //$NON-NLS-1$ //$NON-NLS-2$
+			 "name", "Service" //$NON-NLS-1$ //$NON-NLS-2$
 		   });		
 		addAnnotation
 		  (getServiceType_Name(), 
 		   source, 
 		   new String[] {
-			 "kind", "attribute",
-			 "name", "name"
+			 "kind", "attribute", //$NON-NLS-1$ //$NON-NLS-2$
+			 "name", "name" //$NON-NLS-1$ //$NON-NLS-2$
 		   });
 	}
 

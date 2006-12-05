@@ -193,9 +193,9 @@ public class PairImpl extends EObjectImpl implements Pair {
 		if (eIsProxy()) return super.toString();
 
 		StringBuffer result = new StringBuffer(super.toString());
-		result.append(" (key: ");
+		result.append(" (key: "); //$NON-NLS-1$
 		result.append(key);
-		result.append(", value: ");
+		result.append(", value: "); //$NON-NLS-1$
 		result.append(value);
 		result.append(')');
 		return result.toString();

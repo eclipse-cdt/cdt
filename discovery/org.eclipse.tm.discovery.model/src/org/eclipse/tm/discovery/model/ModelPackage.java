@@ -35,21 +35,21 @@ public interface ModelPackage extends EPackage {
 	 * 
 	 * @generated
 	 */
-	String eNAME = "model";
+	String eNAME = "model"; //$NON-NLS-1$
 
 	/**
 	 * The package namespace URI.
 	 * 
 	 * @generated
 	 */
-	String eNS_URI = "http://www.eclipse.org/tm/discovery/model";
+	String eNS_URI = "http://www.eclipse.org/tm/discovery/model"; //$NON-NLS-1$
 
 	/**
 	 * The package namespace name.
 	 * 
 	 * @generated
 	 */
-	String eNS_PREFIX = "model";
+	String eNS_PREFIX = "model"; //$NON-NLS-1$
 
 	/**
 	 * The singleton instance of the package.

@@ -607,7 +607,7 @@ public class SystemViewPart
 		refreshAction.setSelectionProvider(systemView);
 		toolBarMgr.add(refreshAction);
 
-		toolBarMgr.add(new Separator("Navigate"));
+		toolBarMgr.add(new Separator("Navigate")); //$NON-NLS-1$
 		SystemViewPartGotoActionGroup gotoActions = new SystemViewPartGotoActionGroup(this);
 		gotoActions.fillActionBars(actionBars);
 
@@ -1533,7 +1533,7 @@ public class SystemViewPart
 		protected IMemento _memento;
 		public RestoreStateRunnable(IMemento memento)
 		{
-			super("Restore RSE Tree");
+			super("Restore RSE Tree"); //$NON-NLS-1$
 			_memento = memento;
 			
 		}

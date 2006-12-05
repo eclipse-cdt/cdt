@@ -152,7 +152,7 @@ public class SystemDNDTransferRunnable extends Job
 		
 		String targetPath = targetAdapter.getAbsoluteName(target);
 	    boolean sameSubSystemType = true;
-	    String targetType = "";
+	    String targetType = ""; //$NON-NLS-1$
 	    if (targetSubSystem != null)
 	    {
 	        targetType = targetSubSystem.getName();																		
@@ -604,7 +604,7 @@ public class SystemDNDTransferRunnable extends Job
 		private ISubSystem _targetSubSystem;
 		public RefreshJob(Object target, ISubSystem targetSubSystem)
 		{
-			super("Refresh");
+			super("Refresh"); //$NON-NLS-1$
 			_target = target;
 			_targetSubSystem = targetSubSystem;
 		}

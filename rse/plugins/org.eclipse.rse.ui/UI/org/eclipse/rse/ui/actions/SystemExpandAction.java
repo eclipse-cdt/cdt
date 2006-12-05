@@ -44,7 +44,7 @@ public class SystemExpandAction extends SystemBaseAction {
 		allowOnMultipleSelection(true);
 		setContextMenuGroup(ISystemContextMenuConstants.GROUP_EXPAND);
 		setAccelerator('+');
-		setHelp(RSEUIPlugin.HELPPREFIX + "actn0025");
+		setHelp(RSEUIPlugin.HELPPREFIX + "actn0025"); //$NON-NLS-1$
 		setAvailableOffline(true);
 	}
 
@@ -79,8 +79,8 @@ public class SystemExpandAction extends SystemBaseAction {
 		//System.out.println("Inside run of SystemRefreshAction");
 		SystemRegistry sr = RSEUIPlugin.getTheSystemRegistry();
 		if ((viewer != null) && (viewer instanceof ISystemResourceChangeListener)) {
-			sr.fireEvent((ISystemResourceChangeListener) viewer, new SystemResourceChangeEvent("dummy", ISystemResourceChangeEvents.EVENT_EXPAND_SELECTED, null));
+			sr.fireEvent((ISystemResourceChangeListener) viewer, new SystemResourceChangeEvent("dummy", ISystemResourceChangeEvents.EVENT_EXPAND_SELECTED, null)); //$NON-NLS-1$
 		} else
-			sr.fireEvent(new SystemResourceChangeEvent("dummy", ISystemResourceChangeEvents.EVENT_EXPAND_SELECTED, null));
+			sr.fireEvent(new SystemResourceChangeEvent("dummy", ISystemResourceChangeEvents.EVENT_EXPAND_SELECTED, null)); //$NON-NLS-1$
 	}
 }

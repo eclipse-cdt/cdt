@@ -40,7 +40,7 @@ public class SystemDisconnectAction extends SystemBaseAction
 	    super(SystemResources.ACTION_DISCONNECT_LABEL, SystemResources.ACTION_DISCONNECT_TOOLTIP, shell);
 	    allowOnMultipleSelection(false);
 	    setContextMenuGroup(ISystemContextMenuConstants.GROUP_CONNECTION);
-    	setHelp(RSEUIPlugin.HELPPREFIX+"actn0048");
+    	setHelp(RSEUIPlugin.HELPPREFIX+"actn0048"); //$NON-NLS-1$
 	}
 	/**
 	 * Override of parent. Called when testing if action should be enabled based on current

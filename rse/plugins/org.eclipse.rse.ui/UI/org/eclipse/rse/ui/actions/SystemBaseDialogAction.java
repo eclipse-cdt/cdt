@@ -264,7 +264,7 @@ public abstract class SystemBaseDialogAction extends SystemBaseAction
 	{		
         Shell shell = getShell();
         if (shell == null)
-          SystemBasePlugin.logDebugMessage(this.getClass().getName(),"Warning: shell is null!");
+          SystemBasePlugin.logDebugMessage(this.getClass().getName(),"Warning: shell is null!"); //$NON-NLS-1$
 		Object currentSelection = null;
 		if (!getProcessAllSelections())
 		  currentSelection = getFirstSelection();		

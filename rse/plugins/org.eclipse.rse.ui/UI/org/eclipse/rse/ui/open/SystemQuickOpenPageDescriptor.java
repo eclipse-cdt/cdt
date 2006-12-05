@@ -31,13 +31,13 @@ import org.osgi.framework.Bundle;
 
 public class SystemQuickOpenPageDescriptor implements Comparable {
 	
-	public final static String PAGE_TAG = "page";
-	private final static String ID_ATTRIBUTE = "id";
-	private final static String ICON_ATTRIBUTE = "icon";
-	private final static String CLASS_ATTRIBUTE = "class";
-	private final static String LABEL_ATTRIBUTE = "label";
-	private final static String SIZE_ATTRIBUTE = "sizeHint";
-	private final static String TAB_POSITION_ATTRIBUTE = "tabPosition";
+	public final static String PAGE_TAG = "page"; //$NON-NLS-1$
+	private final static String ID_ATTRIBUTE = "id"; //$NON-NLS-1$
+	private final static String ICON_ATTRIBUTE = "icon"; //$NON-NLS-1$
+	private final static String CLASS_ATTRIBUTE = "class"; //$NON-NLS-1$
+	private final static String LABEL_ATTRIBUTE = "label"; //$NON-NLS-1$
+	private final static String SIZE_ATTRIBUTE = "sizeHint"; //$NON-NLS-1$
+	private final static String TAB_POSITION_ATTRIBUTE = "tabPosition"; //$NON-NLS-1$
 	// private final static String SSF_ID = "ssfid";
 	
 	public final static Point UNKNOWN_SIZE = new Point(SWT.DEFAULT, SWT.DEFAULT);
@@ -62,11 +62,11 @@ public class SystemQuickOpenPageDescriptor implements Comparable {
 			result = (ISystemQuickOpenPage)(element.createExecutableExtension(CLASS_ATTRIBUTE));
 		}
 		catch (CoreException e) {
-			SystemBasePlugin.logError("Error trying to create a quick open page from configuration element", e);
+			SystemBasePlugin.logError("Error trying to create a quick open page from configuration element", e); //$NON-NLS-1$
 			return null;
 		}
 		catch (ClassCastException e) {
-			SystemBasePlugin.logError("Error trying to create a quick open page from configuration element", e);
+			SystemBasePlugin.logError("Error trying to create a quick open page from configuration element", e); //$NON-NLS-1$
 			return null;
 		}
 		
@@ -113,10 +113,10 @@ public class SystemQuickOpenPageDescriptor implements Comparable {
 		try {
 		    String nameSpace = element.getDeclaringExtension().getNamespace();
 		    Bundle bundle = Platform.getBundle(nameSpace);
-			url = new URL(bundle.getEntry("/"), imageName);
+			url = new URL(bundle.getEntry("/"), imageName); //$NON-NLS-1$
 		}
 		catch (java.net.MalformedURLException e) {
-			SystemBasePlugin.logError("Error trying to get image", e);
+			SystemBasePlugin.logError("Error trying to get image", e); //$NON-NLS-1$
 			return null;
 		}
 		
@@ -148,7 +148,7 @@ public class SystemQuickOpenPageDescriptor implements Comparable {
 				position = Integer.parseInt(str);
 			}
 			catch (NumberFormatException e) {
-				SystemBasePlugin.logError("Error trying to get tab position", e);			
+				SystemBasePlugin.logError("Error trying to get tab position", e);			 //$NON-NLS-1$
 			}
 		}
 		

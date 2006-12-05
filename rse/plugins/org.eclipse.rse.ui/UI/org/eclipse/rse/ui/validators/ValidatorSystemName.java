@@ -91,7 +91,7 @@ public class ValidatorSystemName
 
 	public String toString()
 	{
-		return "SystemNameValidator class";
+		return "SystemNameValidator class"; //$NON-NLS-1$
 	}
 
     // -------------------

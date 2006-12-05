@@ -154,7 +154,7 @@ public class SystemRemotePropertiesAction
 		
 		
 		// TODO - hack to make this work in  3.1
-		String id = PlatformUI.PLUGIN_ID + ".property_dialog_context";
+		String id = PlatformUI.PLUGIN_ID + ".property_dialog_context"; //$NON-NLS-1$
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(propertyDialog.getShell(), id);
 		
 		propertyDialog.open();

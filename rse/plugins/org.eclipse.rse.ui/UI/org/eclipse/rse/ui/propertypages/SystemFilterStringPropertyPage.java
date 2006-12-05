@@ -275,14 +275,14 @@ public class SystemFilterStringPropertyPage extends SystemBasePropertyPage imple
 		}
 		catch (SystemMessageException e)
 		{
-			SystemBasePlugin.logError("Error updating filter string from property page", e);
+			SystemBasePlugin.logError("Error updating filter string from property page", e); //$NON-NLS-1$
 			e.printStackTrace();
 			SystemMessageDialog.displayMessage(getShell(), e);
 			ok = false;
 		}
 		catch (Exception e)
 		{
-			SystemBasePlugin.logError("Error updating filter string from property page", e);
+			SystemBasePlugin.logError("Error updating filter string from property page", e); //$NON-NLS-1$
 			e.printStackTrace();
 			SystemMessageDialog.displayExceptionMessage(getShell(), e);
 			ok = false;

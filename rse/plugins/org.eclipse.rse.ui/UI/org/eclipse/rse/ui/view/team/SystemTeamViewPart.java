@@ -123,7 +123,7 @@ public class SystemTeamViewPart
 {
 
 	private boolean menuListenerAdded;
-	public static final String ID = "org.eclipse.rse.ui.view.teamView";
+	public static final String ID = "org.eclipse.rse.ui.view.teamView"; //$NON-NLS-1$
 	
 	private SystemTeamViewInputProvider input = null;
 	private SystemTeamView treeViewer = null;
@@ -149,16 +149,16 @@ public class SystemTeamViewPart
 	// remember-state variables...	
 	private IMemento                 fMemento;
 	// state...
-	static final String TAG_RELEASE= "release"; 
-	static final String TAG_SELECTION= "selection"; 
-	static final String TAG_EXPANDED_TO= "expandedTo"; 
-	static final String TAG_EXPANDED= "expanded"; 
-	static final String TAG_ELEMENT= "element"; 
-	static final String TAG_PATH= "path";  
-	static final String TAG_INPUT= "svInput"; 
-	static final String TAG_VERTICAL_POSITION= "verticalPosition"; 
-	static final String TAG_HORIZONTAL_POSITION= "horizontalPosition";	
-	static final String MEMENTO_DELIM = "///";
+	static final String TAG_RELEASE= "release";  //$NON-NLS-1$
+	static final String TAG_SELECTION= "selection";  //$NON-NLS-1$
+	static final String TAG_EXPANDED_TO= "expandedTo";  //$NON-NLS-1$
+	static final String TAG_EXPANDED= "expanded";  //$NON-NLS-1$
+	static final String TAG_ELEMENT= "element";  //$NON-NLS-1$
+	static final String TAG_PATH= "path";   //$NON-NLS-1$
+	static final String TAG_INPUT= "svInput";  //$NON-NLS-1$
+	static final String TAG_VERTICAL_POSITION= "verticalPosition";  //$NON-NLS-1$
+	static final String TAG_HORIZONTAL_POSITION= "horizontalPosition";	 //$NON-NLS-1$
+	static final String MEMENTO_DELIM = "///"; //$NON-NLS-1$
 		
 	/**
 	 * Remove a selection change listener
@@ -520,8 +520,8 @@ public class SystemTeamViewPart
 			   item.setInputs(getShell(), getViewer(), selection);
 			 } catch (Exception e)
 			 {
-			   SystemBasePlugin.logError("Error configuring action " + item.getClass().getName(),e);	      	   	      	   	
-			   System.err.println("Error configuring action " + item.getClass().getName());
+			   SystemBasePlugin.logError("Error configuring action " + item.getClass().getName(),e);	      	   	      	   	 //$NON-NLS-1$
+			   System.err.println("Error configuring action " + item.getClass().getName()); //$NON-NLS-1$
 			 }
 		   }
 		   else if (items[idx] instanceof SystemSubMenuManager)
@@ -573,8 +573,8 @@ public class SystemTeamViewPart
 			   		item.setInputs(getShell(), treeViewer, selection);
 			 	} catch (Exception e)
 			 	{
-			   		SystemBasePlugin.logError("Error configuring action " + item.getClass().getName(),e);	      	   	      	   	
-			   		System.out.println("Error configuring action " + item.getClass().getName());
+			   		SystemBasePlugin.logError("Error configuring action " + item.getClass().getName(),e);	      	   	      	   	 //$NON-NLS-1$
+			   		System.out.println("Error configuring action " + item.getClass().getName()); //$NON-NLS-1$
 			 	}
 		   }
 		   else if (items[idx] instanceof SystemSubMenuManager)
@@ -703,8 +703,8 @@ public class SystemTeamViewPart
 		{
 		  	deleteAction = new SystemCommonDeleteAction(getShell(),this);
 		  	deleteAction.setViewer(getViewer());
-		  	deleteAction.setHelp(RSEUIPlugin.HELPPREFIX+"actndlpr");
-		  	deleteAction.setDialogHelp(RSEUIPlugin.HELPPREFIX+"ddltprfl");
+		  	deleteAction.setHelp(RSEUIPlugin.HELPPREFIX+"actndlpr"); //$NON-NLS-1$
+		  	deleteAction.setDialogHelp(RSEUIPlugin.HELPPREFIX+"ddltprfl"); //$NON-NLS-1$
 		  	deleteAction.setPromptLabel(SystemResources.RESID_DELETE_PROFILES_PROMPT);
 		}
 		deleteAction.setSelection(selection);
@@ -724,7 +724,7 @@ public class SystemTeamViewPart
 				for (int idx = 0; idx < items.length; idx++) {
 					IContributionItem item = items[idx];
 					if (item.getId() != null) {
-						if (!item.getId().equals("team.main") || privateProfileStillExists) menuMgr.remove(item);
+						if (!item.getId().equals("team.main") || privateProfileStillExists) menuMgr.remove(item); //$NON-NLS-1$
 					}
 				}
 			}
@@ -754,7 +754,7 @@ public class SystemTeamViewPart
 //		Object input = getTreeViewer().getInput();
 //		String viewName = getConfigurationElement().getAttribute("name");
 	    setPartName(getTitle());
-		setTitleToolTip("");
+		setTitleToolTip(""); //$NON-NLS-1$
 	}
 
 	/** 
@@ -842,12 +842,12 @@ public class SystemTeamViewPart
  		  	getTreeViewer().refresh();
  		  	treeViewer.updatePropertySheet();
  		  	if (testMode && (resourceType == ISystemModelChangeEvents.SYSTEM_RESOURCETYPE_PROFILE))
-				System.out.println("Profile change event of type: " + event.getEventType());
+				System.out.println("Profile change event of type: " + event.getEventType()); //$NON-NLS-1$
 		}
  		else if (resourceType == ISystemModelChangeEvents.SYSTEM_RESOURCETYPE_FILTER)
  		{
 			if (testMode)
-				System.out.println("Filter change event of type: " + event.getEventType());
+				System.out.println("Filter change event of type: " + event.getEventType()); //$NON-NLS-1$
 			ISystemFilter filter = (ISystemFilter)event.getResource();
 			ISystemFilterPool pool = filter.getParentFilterPool();
 			if (pool == null) // maybe for transient filters? 
@@ -858,7 +858,7 @@ public class SystemTeamViewPart
 		else if (resourceType == ISystemModelChangeEvents.SYSTEM_RESOURCETYPE_FILTERPOOL)
 		{
 			if (testMode)
-				System.out.println("Filter Pool change event of type: " + event.getEventType());
+				System.out.println("Filter Pool change event of type: " + event.getEventType()); //$NON-NLS-1$
 			ISystemFilterPool pool = (ISystemFilterPool)event.getResource();
 			ISystemProfile profile = ((ISubSystemConfiguration)pool.getProvider()).getSystemProfile(pool);
 			TreeItem filterCategoryItem = getCategoryNodeTreeItem(profile, SystemTeamViewCategoryNode.MEMENTO_FILTERPOOLS);
@@ -868,7 +868,7 @@ public class SystemTeamViewPart
 		else if (resourceType == ISystemModelChangeEvents.SYSTEM_RESOURCETYPE_CONNECTION)
 		{
 			if (testMode)
-				System.out.println("Connection change event of type: " + event.getEventType());
+				System.out.println("Connection change event of type: " + event.getEventType()); //$NON-NLS-1$
 			IHost conn = (IHost)event.getResource();
 			ISystemProfile profile = conn.getSystemProfile();
 			
@@ -881,7 +881,7 @@ public class SystemTeamViewPart
 		else if (resourceType == ISystemModelChangeEvents.SYSTEM_RESOURCETYPE_SUBSYSTEM)
 		{
 			if (testMode)
-				System.out.println("SubSystem change event of type: " + event.getEventType());
+				System.out.println("SubSystem change event of type: " + event.getEventType()); //$NON-NLS-1$
 		}
     	
 // FIXME - user actions separate now
@@ -927,7 +927,7 @@ public class SystemTeamViewPart
 		else if (resourceType == ISystemModelChangeEvents.SYSTEM_RESOURCETYPE_NAMEDTYPE)
 		{
 			if (testMode)
-				System.out.println("Named Type change event of type: " + event.getEventType());
+				System.out.println("Named Type change event of type: " + event.getEventType()); //$NON-NLS-1$
 		}
     	
 // compile actions separate now
@@ -1030,7 +1030,7 @@ public class SystemTeamViewPart
 			  ok = profileAdapter.doDelete(getShell(), currObj, monitor);
 			} catch (Exception exc)
 			{
-				String msg = "Exception deleting profile "+((ISystemProfile)currObj).getName();
+				String msg = "Exception deleting profile "+((ISystemProfile)currObj).getName(); //$NON-NLS-1$
 				SystemBasePlugin.logError(msg, exc);
 				SystemMessageDialog.displayExceptionMessage(getShell(),exc);
 				ok = false;				
@@ -1090,7 +1090,7 @@ public class SystemTeamViewPart
 			}
 			catch (Exception exc)
 			{
-			  	String msg = "Exception renaming profile ";
+			  	String msg = "Exception renaming profile "; //$NON-NLS-1$
 			  	SystemBasePlugin.logError(msg, exc);
 			  	//System.out.println(msg + exc.getMessage() + ": " + exc.getClass().getName());
 			  	SystemMessageDialog.displayExceptionMessage(getShell(),exc);
@@ -1107,7 +1107,7 @@ public class SystemTeamViewPart
 		String iconPath = "icons/full/"; //$NON-NLS-1$
 		try {
 			Bundle bundle = Platform.getBundle(PlatformUI.PLUGIN_ID);
-			URL installURL = bundle.getEntry("");
+			URL installURL = bundle.getEntry(""); //$NON-NLS-1$
 			URL url = new URL(installURL, iconPath + relativePath);
 			return ImageDescriptor.createFromURL(url);
 		} catch (MalformedURLException e) {
@@ -1226,14 +1226,14 @@ public class SystemTeamViewPart
 		else if (o instanceof IResource)
 		{
 			if (o instanceof IProject)
-				handle = "Project";
+				handle = "Project"; //$NON-NLS-1$
 			else if (o instanceof IFolder)
-				handle = "Folder";
+				handle = "Folder"; //$NON-NLS-1$
 			else 
-				handle = "File";
+				handle = "File"; //$NON-NLS-1$
 		}
 		else if (o instanceof ISystemProfile)
-			handle = "Profile";
+			handle = "Profile"; //$NON-NLS-1$
 		else if (o instanceof SystemTeamViewCategoryNode)
 			//handle = "Category";
 			handle = null; // decided not to re-expand past profiles 
@@ -1366,7 +1366,7 @@ public class SystemTeamViewPart
 		ISystemProfile  profile = null;
 		IProject       project = null; 
 		SystemTeamViewCategoryNode category = null;
-		String elementType = "";
+		String elementType = ""; //$NON-NLS-1$
 
 		//System.out.println("PARSING MEMENTO: " + memento);
         	
@@ -1399,7 +1399,7 @@ public class SystemTeamViewPart
 			}
 		}
     	
-		if (elementType.equals("Project"))
+		if (elementType.equals("Project")) //$NON-NLS-1$
 		{
 			//System.out.println("...PARSED INTO A PROJECT: " + project.getName());
 		  	return project;
@@ -1409,7 +1409,7 @@ public class SystemTeamViewPart
 			//System.out.println("...PARSED INTO A PROFILE: " + profile.getName());
 			return profile;
 		}
-		if (elementType.equals("Category"))
+		if (elementType.equals("Category")) //$NON-NLS-1$
 		{
 			//System.out.println("...PARSED INTO A CATEGORY: " + category.getLabel());
 			return category;

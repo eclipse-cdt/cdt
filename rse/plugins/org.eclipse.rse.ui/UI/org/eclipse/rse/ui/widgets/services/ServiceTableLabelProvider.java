@@ -78,11 +78,11 @@ public class ServiceTableLabelProvider
 	
 			default:
 			{
-				return "";
+				return ""; //$NON-NLS-1$
 			}
 			}
 		}
-		return "";
+		return ""; //$NON-NLS-1$
 	}
 
 	

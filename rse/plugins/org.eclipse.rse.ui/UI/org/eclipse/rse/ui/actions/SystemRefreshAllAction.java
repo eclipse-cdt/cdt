@@ -52,7 +52,7 @@ public class SystemRefreshAllAction extends SystemBaseAction
         //setSelectionSensitive(false);
         setSelectionSensitive(true);// use selection to decide what to invalidate
         
-		setHelp(RSEUIPlugin.HELPPREFIX+"actn0009");
+		setHelp(RSEUIPlugin.HELPPREFIX+"actn0009"); //$NON-NLS-1$
 	}
 
 	public void setRootObject(Object object)

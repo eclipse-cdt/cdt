@@ -54,7 +54,7 @@ public class SystemNewFilterWizardConfigurator
 		this.page1Description = SystemResources.RESID_NEWFILTER_PAGE1_DESCRIPTION;
 		this.page3Tip1 = SystemResources.RESID_NEWFILTER_PAGE3_STRINGS_VERBAGE;
 		this.page3Tip2 = SystemResources.RESID_NEWFILTER_PAGE3_POOLS_VERBAGE;
-		this.page2Help = RSEUIPlugin.HELPPREFIX + "nfp20000";
+		this.page2Help = RSEUIPlugin.HELPPREFIX + "nfp20000"; //$NON-NLS-1$
 	}
 	
 	/**

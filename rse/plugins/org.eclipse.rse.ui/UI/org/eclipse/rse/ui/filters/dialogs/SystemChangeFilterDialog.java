@@ -69,7 +69,7 @@ public class SystemChangeFilterDialog extends SystemPromptDialog
 	 */
 	protected void setHelp()
 	{
-       setHelp(RSEUIPlugin.HELPPREFIX+"dufr0000");
+       setHelp(RSEUIPlugin.HELPPREFIX+"dufr0000"); //$NON-NLS-1$
 	}
 
 	// INPUT/CONFIGURATION

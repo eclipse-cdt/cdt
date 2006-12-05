@@ -69,7 +69,7 @@ public class ValidatorUserTypeName extends ValidatorUniqueString
 	
 	public String toString()
 	{
-		return "UserTypeNameValidator class";
+		return "UserTypeNameValidator class"; //$NON-NLS-1$
 	}
 
     // ---------------------------

@@ -74,7 +74,7 @@ public class SystemViewScratchpadAdapter extends AbstractSystemViewAdapter imple
 	public String getText(Object element)
 	{
 		//return SystemResources.RESID_SYSTEMREGISTRY_CONNECTIONS); 
-		return "Remote Scratchpad";
+		return "Remote Scratchpad"; //$NON-NLS-1$
 	}
 	/**
 	 * Return the absolute name, versus just display name, of this object. 

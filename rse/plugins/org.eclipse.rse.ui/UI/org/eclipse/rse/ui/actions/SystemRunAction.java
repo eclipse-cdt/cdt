@@ -63,7 +63,7 @@ public class SystemRunAction extends SystemBaseAction
 	protected void init() {
         allowOnMultipleSelection(false);
 		setContextMenuGroup(ISystemContextMenuConstants.GROUP_OPEN);
-		setHelp(RSEUIPlugin.HELPPREFIX+"actn0100");		
+		setHelp(RSEUIPlugin.HELPPREFIX+"actn0100");		 //$NON-NLS-1$
 	}
 
 

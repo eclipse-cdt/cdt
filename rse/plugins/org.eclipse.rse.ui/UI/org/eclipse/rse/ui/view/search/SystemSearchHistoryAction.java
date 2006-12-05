@@ -42,7 +42,7 @@ public class SystemSearchHistoryAction extends Action {
 		setToolTipText(text);
 		this.searchView = searchView;
 		this.index = index;
-		RSEUIPlugin.getDefault().getWorkbench().getHelpSystem().setHelp(this, RSEUIPlugin.HELPPREFIX + "search_history");
+		RSEUIPlugin.getDefault().getWorkbench().getHelpSystem().setHelp(this, RSEUIPlugin.HELPPREFIX + "search_history"); //$NON-NLS-1$
 	}
 	
 	/**

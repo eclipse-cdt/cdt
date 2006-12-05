@@ -75,7 +75,7 @@ public class ValidatorProfileName
 	   super.isSyntaxOk(newText);
 	   if (currentMessage == null)
 	   {
-	   	  if (newText.equalsIgnoreCase("private")) {
+	   	  if (newText.equalsIgnoreCase("private")) { //$NON-NLS-1$
 	   	    currentMessage = getReservedNameMessage();
 	   	  }
 	   	  else if (newText.indexOf('.') != -1) {

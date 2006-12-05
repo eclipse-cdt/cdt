@@ -193,8 +193,8 @@ public class SystemTeamViewProfileAdapter
 	{
 		ISystemProfile profile = (ISystemProfile)element;
 		boolean active = RSEUIPlugin.getTheSystemRegistry().getSystemProfileManager().isSystemProfileActive(profile.getName());
-		return getType(element) + ": " + profile.getName() + ", " +
-		       SystemViewResources.RESID_PROPERTY_PROFILESTATUS_LABEL + ": " +
+		return getType(element) + ": " + profile.getName() + ", " + //$NON-NLS-1$ //$NON-NLS-2$
+		       SystemViewResources.RESID_PROPERTY_PROFILESTATUS_LABEL + ": " + //$NON-NLS-1$
 		       (active ? SystemViewResources.RESID_PROPERTY_PROFILESTATUS_ACTIVE_LABEL : SystemViewResources.RESID_PROPERTY_PROFILESTATUS_NOTACTIVE_LABEL);
 	}
 			

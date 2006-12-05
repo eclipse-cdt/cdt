@@ -72,11 +72,11 @@ public class SystemStringFieldEditor extends FieldEditor
 	 */
 	public SystemStringFieldEditor(String name, ResourceBundle rb, String rbKey, Composite parent) 
 	{
-		super(name, rb.getString(rbKey+"label"), parent);
-		this.oldValue = "";
+		super(name, rb.getString(rbKey+"label"), parent); //$NON-NLS-1$
+		this.oldValue = ""; //$NON-NLS-1$
 	    //createControl(parent);				
 	    doOurFillIntoGrid();
-	    setToolTipText(rb.getString(rbKey+"tooltip"));
+	    setToolTipText(rb.getString(rbKey+"tooltip")); //$NON-NLS-1$
 	}
 	
 	/**
@@ -160,7 +160,7 @@ public class SystemStringFieldEditor extends FieldEditor
 		  ignoreSelection = false;		  
 		}		
 		else
-		  oldValue = "";
+		  oldValue = ""; //$NON-NLS-1$
 	}
 	
 	/**

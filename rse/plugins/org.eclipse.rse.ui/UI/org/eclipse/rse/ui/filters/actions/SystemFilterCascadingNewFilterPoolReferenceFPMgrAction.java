@@ -71,7 +71,7 @@ public class SystemFilterCascadingNewFilterPoolReferenceFPMgrAction
 		menu.addMenuListener(this);
 		menu.setRemoveAllWhenShown(true);
 		//menu.setEnabled(true);
-		menu.add(new SystemBaseAction("dummy",null));
+		menu.add(new SystemBaseAction("dummy",null)); //$NON-NLS-1$
 		return menu;
 	}
 	

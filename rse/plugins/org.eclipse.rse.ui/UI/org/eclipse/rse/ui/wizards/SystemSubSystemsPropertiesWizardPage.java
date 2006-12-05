@@ -269,9 +269,9 @@ public class SystemSubSystemsPropertiesWizardPage
 						ISystemConnectionWizardErrorUpdater page =
 							(ISystemConnectionWizardErrorUpdater) _folder.getItem(i).getData();
 						String error = page.getTheErrorMessage();
-						if (error != null && !error.equals(""))
+						if (error != null && !error.equals("")) //$NON-NLS-1$
 						{
-							setErrorMessage(_folder.getItem(i).getText() + ": " + page.getTheErrorMessage());
+							setErrorMessage(_folder.getItem(i).getText() + ": " + page.getTheErrorMessage()); //$NON-NLS-1$
 						}
 					}
 				}

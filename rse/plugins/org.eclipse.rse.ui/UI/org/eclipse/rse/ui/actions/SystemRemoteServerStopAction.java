@@ -42,7 +42,7 @@ public class SystemRemoteServerStopAction extends SystemBaseAction
 	  	this.parentAction = parentAction;
 	  	allowOnMultipleSelection(false);
 	  	//setContextMenuGroup(ISystemContextMenuConstants.GROUP_CONNECTION);
-    	setHelp(RSEUIPlugin.HELPPREFIX+"actnspsv");
+    	setHelp(RSEUIPlugin.HELPPREFIX+"actnspsv"); //$NON-NLS-1$
 	}
 	
 	/**

@@ -209,7 +209,7 @@ public class SystemViewRootInputAdapter extends AbstractSystemViewAdapter implem
 	 */
 	public String getMementoHandle(Object element)
 	{
-		return "Connections"; // this is what getName() returns, but if we xlate the name we want this to remain in english. 
+		return "Connections"; // this is what getName() returns, but if we xlate the name we want this to remain in english.  //$NON-NLS-1$
 	}
 	/**
 	 * Return a short string to uniquely identify the type of resource. Eg "conn" for connection.

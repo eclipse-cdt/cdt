@@ -110,7 +110,7 @@ public class SystemFilterContainerCommonMethods
         boolean exists = getSystemFilter(filters, aliasName) != null;
         if (exists)
         {
-          String msg = "Error creating filter: aliasName " + aliasName + " is not unique"; // no need to xlate, internal only
+          String msg = "Error creating filter: aliasName " + aliasName + " is not unique"; // no need to xlate, internal only //$NON-NLS-1$ //$NON-NLS-2$
 		  SystemBasePlugin.logError(msg);
           return null;
         }
@@ -148,8 +148,8 @@ public class SystemFilterContainerCommonMethods
           //}
         } catch (Exception e)
         {
-			SystemBasePlugin.logError("Error creating filter: " + e.getClass().getName() + ": " + e.getMessage());
-           SystemBasePlugin.logError("...Alias name.: " + aliasName);
+			SystemBasePlugin.logError("Error creating filter: " + e.getClass().getName() + ": " + e.getMessage()); //$NON-NLS-1$ //$NON-NLS-2$
+           SystemBasePlugin.logError("...Alias name.: " + aliasName); //$NON-NLS-1$
 		  
            //e.printStackTrace();
         }    	

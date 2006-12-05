@@ -146,7 +146,7 @@ public class SystemFilterTableDialog extends SystemPromptDialog implements KeyLi
 			inputC.setLayoutData(igd);
 			
 			// input
-			Label objFilterLabel= SystemWidgetHelpers.createLabel(inputC, "Input");			
+			Label objFilterLabel= SystemWidgetHelpers.createLabel(inputC, "Input");			 //$NON-NLS-1$
 			_inputText = new Combo(inputC, SWT.DROP_DOWN | SWT.READ_ONLY);
 			_inputText.addListener(SWT.Selection, this);		
 
@@ -257,8 +257,8 @@ public class SystemFilterTableDialog extends SystemPromptDialog implements KeyLi
 		String typeFilter = _typeCombo.getText().toUpperCase();
 		
 		vfilters[0] = _filterCombo.getText().toUpperCase();	
-		if (!vfilters[0].endsWith("*"))
-			vfilters[0] += "*";
+		if (!vfilters[0].endsWith("*")) //$NON-NLS-1$
+			vfilters[0] += "*"; //$NON-NLS-1$
 		
 		if (_lastFilter != vfilters[0])
 		{
@@ -315,7 +315,7 @@ public class SystemFilterTableDialog extends SystemPromptDialog implements KeyLi
 	    }
 	    else if (source == _filterCombo)
 	    {
-	    	if (_lastFilter == null || !_lastFilter.equals(_filterCombo.getText() + "*"))
+	    	if (_lastFilter == null || !_lastFilter.equals(_filterCombo.getText() + "*")) //$NON-NLS-1$
 			{
 				applyViewFilter(true);
 			}		
@@ -372,8 +372,8 @@ public class SystemFilterTableDialog extends SystemPromptDialog implements KeyLi
 		if (e.widget == _filterCombo)
 		{
 			String vfilter = _filterCombo.getText();	
-			if (!vfilter.endsWith("*"))
-				vfilter += "*";
+			if (!vfilter.endsWith("*")) //$NON-NLS-1$
+				vfilter += "*"; //$NON-NLS-1$
 			if (_lastFilter == null || !_lastFilter.equals(vfilter))
 			{
 			    //System.out.println("handling event");

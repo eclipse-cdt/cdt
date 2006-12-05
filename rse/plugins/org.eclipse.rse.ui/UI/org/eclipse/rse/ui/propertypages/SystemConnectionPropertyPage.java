@@ -124,7 +124,7 @@ public class SystemConnectionPropertyPage extends SystemBasePropertyPage
 							  // user cancelled disconnect
 							  cancelled = true;
 						  } catch (Exception e) {
-							  SystemBasePlugin.logError("SystemConnectionPropertyPage.performOk", e);
+							  SystemBasePlugin.logError("SystemConnectionPropertyPage.performOk", e); //$NON-NLS-1$
 						  }
 					  }
 				  }

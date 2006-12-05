@@ -28,13 +28,13 @@ import org.eclipse.swt.widgets.Composite;
  */
 public class SystemIntegerFieldEditor extends IntegerFieldEditor {
 
-   public static final String Copyright = "(C) Copyright IBM Corp. 2003  All Rights Reserved.";
+   public static final String Copyright = "(C) Copyright IBM Corp. 2003  All Rights Reserved."; //$NON-NLS-1$
 
 
 	/**
 	 * the message for an empty field
 	 */
-   private static final String RANGE_MESSAGE = "RSEG0402";
+   private static final String RANGE_MESSAGE = "RSEG0402"; //$NON-NLS-1$
 	
 	protected Composite composite_parent = null;
 	

@@ -30,7 +30,7 @@ public class SystemSeparatorAction extends SystemBaseAction
 	 */
 	public SystemSeparatorAction(Shell parent) 
 	{
-		super("_separator_",(ImageDescriptor)null,parent);
+		super("_separator_",(ImageDescriptor)null,parent); //$NON-NLS-1$
 		realAction = true;
 	}
 	/**
@@ -38,7 +38,7 @@ public class SystemSeparatorAction extends SystemBaseAction
 	 */
 	public SystemSeparatorAction() 
 	{
-		super("_separator_",(ImageDescriptor)null,null);
+		super("_separator_",(ImageDescriptor)null,null); //$NON-NLS-1$
 		realAction = false;
 	}
 

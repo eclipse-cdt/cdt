@@ -44,7 +44,7 @@ public class SystemCollapseAllAction extends SystemBaseAction {
 		setContextMenuGroup(ISystemContextMenuConstants.GROUP_EXPAND); // should never be used       
 		setSelectionSensitive(false);
 
-		setHelp(RSEUIPlugin.HELPPREFIX + "actn0023");
+		setHelp(RSEUIPlugin.HELPPREFIX + "actn0023"); //$NON-NLS-1$
 		setAccelerator(SWT.CTRL | '-');
 	}
 
@@ -62,8 +62,8 @@ public class SystemCollapseAllAction extends SystemBaseAction {
 	public void run() {
 		SystemRegistry sr = RSEUIPlugin.getTheSystemRegistry();
 		if ((viewer != null) && (viewer instanceof ISystemResourceChangeListener)) {
-			sr.fireEvent((ISystemResourceChangeListener) viewer, new SystemResourceChangeEvent("false", ISystemResourceChangeEvents.EVENT_COLLAPSE_ALL, null));
+			sr.fireEvent((ISystemResourceChangeListener) viewer, new SystemResourceChangeEvent("false", ISystemResourceChangeEvents.EVENT_COLLAPSE_ALL, null)); //$NON-NLS-1$
 		} else
-			sr.fireEvent(new SystemResourceChangeEvent("false", ISystemResourceChangeEvents.EVENT_COLLAPSE_ALL, null));
+			sr.fireEvent(new SystemResourceChangeEvent("false", ISystemResourceChangeEvents.EVENT_COLLAPSE_ALL, null)); //$NON-NLS-1$
 	}
 }

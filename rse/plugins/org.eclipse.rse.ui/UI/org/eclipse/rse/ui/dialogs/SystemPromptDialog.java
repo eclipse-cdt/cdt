@@ -1590,7 +1590,7 @@ public abstract class SystemPromptDialog
     		
     		// Set the cancel button label to "Cancel" if it isn't already
     		if (labelCancel != null)
-    		  cancelButton.setText("&" + IDialogConstants.CANCEL_LABEL);                		
+    		  cancelButton.setText("&" + IDialogConstants.CANCEL_LABEL);                		 //$NON-NLS-1$
 
     		// Deactivate shell
     		savedState = saveUIState(needsProgressMonitor && enableCancelButton);
@@ -1697,12 +1697,12 @@ public abstract class SystemPromptDialog
     protected void restoreUIState(Map state) 
     {
 	    //protected Button  okButton, cancelButton, testButton, browseButton, addButton, detailsButton;
-    	restoreEnableState(okButton,     state, "ok");
-    	restoreEnableState(testButton,   state, "test");
-    	restoreEnableState(browseButton, state, "browse");
-    	restoreEnableState(cancelButton, state, "cancel");
-    	restoreEnableState(addButton,    state, "add");
-    	restoreEnableState(detailsButton,state, "details");
+    	restoreEnableState(okButton,     state, "ok"); //$NON-NLS-1$
+    	restoreEnableState(testButton,   state, "test"); //$NON-NLS-1$
+    	restoreEnableState(browseButton, state, "browse"); //$NON-NLS-1$
+    	restoreEnableState(cancelButton, state, "cancel"); //$NON-NLS-1$
+    	restoreEnableState(addButton,    state, "add"); //$NON-NLS-1$
+    	restoreEnableState(detailsButton,state, "details"); //$NON-NLS-1$
     	SystemControlEnableState pageState = (SystemControlEnableState) state.get("page");//$NON-NLS-1$
     	pageState.restore();
     }
@@ -1722,14 +1722,14 @@ public abstract class SystemPromptDialog
     protected Map saveUIState(boolean keepCancelEnabled) 
     {
     	Map savedState= new HashMap(10);
-    	saveEnableStateAndSet(okButton,     savedState, "ok",     false);
-    	saveEnableStateAndSet(testButton,   savedState, "test",   false);
-    	saveEnableStateAndSet(browseButton, savedState, "browse", false);
-    	saveEnableStateAndSet(cancelButton, savedState, "cancel", keepCancelEnabled);
-    	saveEnableStateAndSet(addButton,    savedState, "add",    false);
-    	saveEnableStateAndSet(detailsButton,savedState, "details",false);
+    	saveEnableStateAndSet(okButton,     savedState, "ok",     false); //$NON-NLS-1$
+    	saveEnableStateAndSet(testButton,   savedState, "test",   false); //$NON-NLS-1$
+    	saveEnableStateAndSet(browseButton, savedState, "browse", false); //$NON-NLS-1$
+    	saveEnableStateAndSet(cancelButton, savedState, "cancel", keepCancelEnabled); //$NON-NLS-1$
+    	saveEnableStateAndSet(addButton,    savedState, "add",    false); //$NON-NLS-1$
+    	saveEnableStateAndSet(detailsButton,savedState, "details",false); //$NON-NLS-1$
     	//savedState.put("page", ControlEnableState.disable(getControl()));
-    	savedState.put("page", SystemControlEnableState.disable(dialogAreaComposite));    	
+    	savedState.put("page", SystemControlEnableState.disable(dialogAreaComposite));    	 //$NON-NLS-1$
     	return savedState;
     }
     

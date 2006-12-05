@@ -325,7 +325,7 @@ public class SystemFilterStringEditPane implements SelectionListener
 	 */
 	public void processTest(Shell shell)
 	{
-		System.out.println("Someone forgot to override processTest in SystemFilterStringEditPane!");
+		System.out.println("Someone forgot to override processTest in SystemFilterStringEditPane!"); //$NON-NLS-1$
 	}
 
 	/*
@@ -494,7 +494,7 @@ public class SystemFilterStringEditPane implements SelectionListener
 	{
 		if (textString != null)
 		{
-		    textString.setText("");		
+		    textString.setText("");		 //$NON-NLS-1$
 		}
 	}
 	/**

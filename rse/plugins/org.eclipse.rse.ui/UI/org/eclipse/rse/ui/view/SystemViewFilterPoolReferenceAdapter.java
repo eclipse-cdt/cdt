@@ -144,7 +144,7 @@ public class SystemViewFilterPoolReferenceAdapter
 	 * @return the label for this filter pool reference.
 	 */
 	public String getText(Object element) {
-		String result = "unknown"; // $NON-NLS-1$
+		String result = "unknown"; // $NON-NLS-1$ //$NON-NLS-1$
 		ISystemFilterPool pool = getFilterPool(element);
 		if (pool != null) {
 			result = pool.getName();
@@ -172,7 +172,7 @@ public class SystemViewFilterPoolReferenceAdapter
 	public String getAbsoluteName(Object element)
 	{
 		ISystemFilterPoolReference filterPoolRef = (ISystemFilterPoolReference)element;
-		return filterPoolRef.getReferencedFilterPool().getSystemFilterPoolManager().getName() + "." + filterPoolRef.getName();
+		return filterPoolRef.getReferencedFilterPool().getSystemFilterPoolManager().getName() + "." + filterPoolRef.getName(); //$NON-NLS-1$
 	}			
 	/**
 	 * Return the type label for this object
@@ -341,7 +341,7 @@ public class SystemViewFilterPoolReferenceAdapter
     public String getCanonicalNewName(Object element, String newName)
     {
     	String mgrName = ((ISystemFilterPoolReference)element).getReferencedFilterPoolManagerName();
-    	return (mgrName + "." + newName).toUpperCase();
+    	return (mgrName + "." + newName).toUpperCase(); //$NON-NLS-1$
     }
 
 	// ------------------------------------------------------------

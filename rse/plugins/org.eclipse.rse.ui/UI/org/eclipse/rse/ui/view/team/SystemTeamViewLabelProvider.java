@@ -46,7 +46,7 @@ public class SystemTeamViewLabelProvider extends LabelProvider
 {
 
 	public static final String Copyright =
-		"(C) Copyright IBM Corp. 2002, 2003.  All Rights Reserved.";
+		"(C) Copyright IBM Corp. 2002, 2003.  All Rights Reserved."; //$NON-NLS-1$
 
 	// Used to grab Workbench standard icons.
 	private WorkbenchLabelProvider aWorkbenchLabelProvider = new WorkbenchLabelProvider();	
@@ -180,7 +180,7 @@ public class SystemTeamViewLabelProvider extends LabelProvider
 		ISystemViewElementAdapter adapter = null;    	
 		if (o == null)
 		{
-			SystemBasePlugin.logWarning("ERROR: null passed to getAdapter in SystemTeamViewLabelProvider");
+			SystemBasePlugin.logWarning("ERROR: null passed to getAdapter in SystemTeamViewLabelProvider"); //$NON-NLS-1$
 			return null;    	  
 		}
 		if (!(o instanceof IAdaptable)) 
@@ -206,7 +206,7 @@ public class SystemTeamViewLabelProvider extends LabelProvider
 			}
 		}
 		else if (viewer == null)
-			SystemBasePlugin.logWarning("VIEWER IS NULL FOR SystemTeamViewLabelProvider");    	
+			SystemBasePlugin.logWarning("VIEWER IS NULL FOR SystemTeamViewLabelProvider");    	 //$NON-NLS-1$
 		return adapter;
 	}
 }

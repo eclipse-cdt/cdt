@@ -22,8 +22,8 @@ import org.eclipse.rse.ui.SystemPropertyResources;
  */
 public class SystemInheritablePropertyData
 {
-	private String localValue="";
-	private String inheritedValue="";
+	private String localValue=""; //$NON-NLS-1$
+	private String inheritedValue=""; //$NON-NLS-1$
 	private boolean isLocal;
 	private boolean notApplicable = false;
 
@@ -66,7 +66,7 @@ public class SystemInheritablePropertyData
 	public void setLocalValue(String localValue)
 	{
 		if (localValue == null)
-		  localValue = ""; // to prevent equals() from crashing
+		  localValue = ""; // to prevent equals() from crashing //$NON-NLS-1$
 		this.localValue = localValue;
 	}
 
@@ -85,7 +85,7 @@ public class SystemInheritablePropertyData
 	public void setInheritedValue(String inheritedValue)
 	{
 		if (inheritedValue == null)
-		  inheritedValue = ""; // to prevent equals() from crashing
+		  inheritedValue = ""; // to prevent equals() from crashing //$NON-NLS-1$
 		this.inheritedValue = inheritedValue;
 	}
 
@@ -127,7 +127,7 @@ public class SystemInheritablePropertyData
     	  value = localValue;
     	else
     	  //value = " (*INHERITED)";
-    	  value = inheritedValue + " " + inheritedXlatedString;
+    	  value = inheritedValue + " " + inheritedXlatedString; //$NON-NLS-1$
     	return value;
     }
     
@@ -165,9 +165,9 @@ public class SystemInheritablePropertyData
      */
     public void printDetails()
     {
-    	System.out.println("SystemInheritablePropertyData: ");
-    	System.out.println("...localValue = "+localValue);
-    	System.out.println("...inheritedValue = "+inheritedValue);
-    	System.out.println("...isLocal = "+isLocal);    	
+    	System.out.println("SystemInheritablePropertyData: "); //$NON-NLS-1$
+    	System.out.println("...localValue = "+localValue); //$NON-NLS-1$
+    	System.out.println("...inheritedValue = "+inheritedValue); //$NON-NLS-1$
+    	System.out.println("...isLocal = "+isLocal);    	 //$NON-NLS-1$
     }
 }

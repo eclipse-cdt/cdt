@@ -42,7 +42,7 @@ public class SystemRemoteServerStartAction extends SystemBaseAction
 	  	this.parentAction = parentAction;
 	  	allowOnMultipleSelection(false);
 	  	//setContextMenuGroup(ISystemContextMenuConstants.GROUP_CONNECTION);
-    	setHelp(RSEUIPlugin.HELPPREFIX+"actnstsv");
+    	setHelp(RSEUIPlugin.HELPPREFIX+"actnstsv"); //$NON-NLS-1$
 	}
 	
 	/**

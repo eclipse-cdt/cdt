@@ -57,7 +57,7 @@ public class SystemCommunicationsPreferencePage extends FieldEditorPreferencePag
 	public void createControl(Composite parent) 
 	{
 		super.createControl(parent);
-		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), RSEUIPlugin.HELPPREFIX + "cmmp0000");
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), RSEUIPlugin.HELPPREFIX + "cmmp0000"); //$NON-NLS-1$
 	}
 	
 	
@@ -89,7 +89,7 @@ public class SystemCommunicationsPreferencePage extends FieldEditorPreferencePag
 		addField(portEditor);
 		portEditor.getTextControl(parent).setToolTipText(SystemResources.RESID_PREF_DAEMON_PORT_TOOLTIP);
 
-		SystemWidgetHelpers.setHelp(portEditor.getTextControl(parent), RSEUIPlugin.HELPPREFIX + "cmmp0000");
+		SystemWidgetHelpers.setHelp(portEditor.getTextControl(parent), RSEUIPlugin.HELPPREFIX + "cmmp0000"); //$NON-NLS-1$
 
 		
         (new Mnemonics()).setOnPreferencePage(true).setMnemonics(parent);	

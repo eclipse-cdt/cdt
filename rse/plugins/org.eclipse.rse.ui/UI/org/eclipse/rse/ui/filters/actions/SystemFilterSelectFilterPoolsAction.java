@@ -83,8 +83,8 @@ public class SystemFilterSelectFilterPoolsAction
 		      SystemResources.ACTION_SELECTFILTERPOOLS_LABEL, SystemResources.ACTION_SELECTFILTERPOOLS_TOOLTIP);
 		setContextMenuGroup(ISystemContextMenuConstants.GROUP_CHANGE);        		
 		// set default help for action and dialog
-		setHelp(RSEUIPlugin.HELPPREFIX + "actn0043");
-		setDialogHelp(RSEUIPlugin.HELPPREFIX + "dsfp0000");
+		setHelp(RSEUIPlugin.HELPPREFIX + "actn0043"); //$NON-NLS-1$
+		setDialogHelp(RSEUIPlugin.HELPPREFIX + "dsfp0000"); //$NON-NLS-1$
 	}	
 	/**
 	 * Constructor when given the translated action label
@@ -94,8 +94,8 @@ public class SystemFilterSelectFilterPoolsAction
 		super(parent, title);
 		setContextMenuGroup(ISystemContextMenuConstants.GROUP_CHANGE);        		
 		// set default help for action and dialog
-		setHelp(RSEUIPlugin.HELPPREFIX + "actn0043");
-		setDialogHelp(RSEUIPlugin.HELPPREFIX + "dsfp0000");
+		setHelp(RSEUIPlugin.HELPPREFIX + "actn0043"); //$NON-NLS-1$
+		setDialogHelp(RSEUIPlugin.HELPPREFIX + "dsfp0000"); //$NON-NLS-1$
 	}
 	
 	
@@ -107,8 +107,8 @@ public class SystemFilterSelectFilterPoolsAction
 		super(parent, title, tooltip);
 		setContextMenuGroup(ISystemContextMenuConstants.GROUP_CHANGE);        		
 		// set default help for action and dialog
-		setHelp(RSEUIPlugin.HELPPREFIX + "actn0043");
-		setDialogHelp(RSEUIPlugin.HELPPREFIX + "dsfp0000");
+		setHelp(RSEUIPlugin.HELPPREFIX + "actn0043"); //$NON-NLS-1$
+		setDialogHelp(RSEUIPlugin.HELPPREFIX + "dsfp0000"); //$NON-NLS-1$
 	}
 	
 

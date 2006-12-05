@@ -109,7 +109,7 @@ public class SystemTestFilterStringAPIProviderImpl
 		     initMsgObjects();
 		   msgList[0] = errorObject;
 		   children = msgList;			
-		   SystemBasePlugin.logError("Error in SystemTestFilterStringAPIProviderImpl#getSystemViewRoots()",exc);
+		   SystemBasePlugin.logError("Error in SystemTestFilterStringAPIProviderImpl#getSystemViewRoots()",exc); //$NON-NLS-1$
 		}
 		return children;
 	}

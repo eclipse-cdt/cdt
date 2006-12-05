@@ -52,10 +52,10 @@ public class SystemUIMessageFile extends SystemMessageFile {
 						messageFileStream, dtdStream);
 				dtdStream.close();
 			} catch (IOException e) {
-				SystemBasePlugin.logError("Could not open message file DTD.", e);
+				SystemBasePlugin.logError("Could not open message file DTD.", e); //$NON-NLS-1$
 			}
 		} else {
-			SystemBasePlugin.logError("Could not find mesage file DTD.");
+			SystemBasePlugin.logError("Could not find mesage file DTD."); //$NON-NLS-1$
 		}
 		return result;
 	}

@@ -49,7 +49,7 @@ public class SystemRefreshAction extends SystemBaseAction
 		      	parent);
         allowOnMultipleSelection(true);
 		setContextMenuGroup(ISystemContextMenuConstants.GROUP_BUILD);
-		setHelp(RSEUIPlugin.HELPPREFIX+"actn0017");
+		setHelp(RSEUIPlugin.HELPPREFIX+"actn0017"); //$NON-NLS-1$
 		setAvailableOffline(true);
 	}
 

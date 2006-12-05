@@ -604,11 +604,11 @@ public class SystemRenameDialog extends SystemPromptDialog
 			if (uniqueNameValidator != null)
 			{
 			  if (debug)
-		        System.out.println("Existing name list found for parent " + parentName);
+		        System.out.println("Existing name list found for parent " + parentName); //$NON-NLS-1$
 		      return uniqueNameValidator;
 			}
 		    else if (debug)
-		      System.out.println("No existing name list found for parent " + parentName);
+		      System.out.println("No existing name list found for parent " + parentName); //$NON-NLS-1$
 		}
 		if ((ra != null) && (parentName != null))
 		{			
@@ -626,7 +626,7 @@ public class SystemRenameDialog extends SystemPromptDialog
     		  super.setBusyCursor(true);
 		  	  try {		  	   	 
 		  	         names = ra.getRemoteParentNamesInUse(getShell(), inputElement);
-		  	  } catch (Exception exc) {SystemBasePlugin.logError("Exception getting parent's child names in rename dialog",exc);}		  			
+		  	  } catch (Exception exc) {SystemBasePlugin.logError("Exception getting parent's child names in rename dialog",exc);}		  			 //$NON-NLS-1$
 		  	  if ((names != null) && (names.length>0))
 		  	  {
 		  		    uniqueNameValidator = new ValidatorUniqueString(names,caseSensitive);
@@ -635,9 +635,9 @@ public class SystemRenameDialog extends SystemPromptDialog
 		            uniqueNameValidatorPerParent.put(parentName, uniqueNameValidator);
 		            if (debug)
 		            {
-		  		      System.out.println("Name validator set. Names = ");
+		  		      System.out.println("Name validator set. Names = "); //$NON-NLS-1$
 		  		      for (int idx=0; idx<names.length; idx++)
-		  		         System.out.println("..."+idx+": "+names[idx]);
+		  		         System.out.println("..."+idx+": "+names[idx]); //$NON-NLS-1$ //$NON-NLS-2$
 		            }
 		  	  }
     		  // Restore cursor

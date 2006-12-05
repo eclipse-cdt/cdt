@@ -123,7 +123,7 @@ public class SystemViewFilterPoolAdapter extends AbstractSystemViewAdapter imple
 	public String getAbsoluteName(Object element)
 	{
 		ISystemFilterPool filterPool = (ISystemFilterPool)element;
-		return filterPool.getSystemFilterPoolManager().getName() + "." + filterPool.getName();
+		return filterPool.getSystemFilterPoolManager().getName() + "." + filterPool.getName(); //$NON-NLS-1$
 	}		
 	/**
 	 * Return the type label for this object
@@ -280,7 +280,7 @@ public class SystemViewFilterPoolAdapter extends AbstractSystemViewAdapter imple
     public String getCanonicalNewName(Object element, String newName)
     {
     	String mgrName = ((ISystemFilterPool)element).getSystemFilterPoolManager().getName();
-    	return (mgrName + "." + newName).toUpperCase();
+    	return (mgrName + "." + newName).toUpperCase(); //$NON-NLS-1$
     }
 
 }

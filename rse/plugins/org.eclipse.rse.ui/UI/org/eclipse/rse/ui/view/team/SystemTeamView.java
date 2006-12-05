@@ -53,7 +53,7 @@ public class SystemTeamView extends TreeViewer implements ISystemSelectAllTarget
 	{
 		super(parent);
 		this.teamViewPart = teamViewPart;
-		SystemWidgetHelpers.setHelp(getTree(), RSEUIPlugin.HELPPREFIX+"teamview");
+		SystemWidgetHelpers.setHelp(getTree(), RSEUIPlugin.HELPPREFIX+"teamview"); //$NON-NLS-1$
 	}
 
 	/**
@@ -64,7 +64,7 @@ public class SystemTeamView extends TreeViewer implements ISystemSelectAllTarget
 	{
 		super(parent, style);
 		this.teamViewPart = teamViewPart;
-		SystemWidgetHelpers.setHelp(getTree(), RSEUIPlugin.HELPPREFIX+"teamview");
+		SystemWidgetHelpers.setHelp(getTree(), RSEUIPlugin.HELPPREFIX+"teamview"); //$NON-NLS-1$
 	}
 
 	/**
@@ -74,7 +74,7 @@ public class SystemTeamView extends TreeViewer implements ISystemSelectAllTarget
 	{
 		super(tree);
 		this.teamViewPart = teamViewPart;
-		SystemWidgetHelpers.setHelp(getTree(), RSEUIPlugin.HELPPREFIX+"teamview");		
+		SystemWidgetHelpers.setHelp(getTree(), RSEUIPlugin.HELPPREFIX+"teamview");		 //$NON-NLS-1$
 	}
 	
 	/**

@@ -177,11 +177,11 @@ public class SystemNewConnectionPromptObject
 			  if (hasChildren())
 			     newConnText = SystemResources.RESID_NEWCONN_PROMPT_LABEL;
 			  else
-			     newConnText = SystemResources.RESID_NEWCONN_PROMPT_LABEL+"...";
+			     newConnText = SystemResources.RESID_NEWCONN_PROMPT_LABEL+"..."; //$NON-NLS-1$
 		   }
 		   else
 		   {
-		   	  newConnText = systemTypes[0]+"...";
+		   	  newConnText = systemTypes[0]+"..."; //$NON-NLS-1$
 		   }
 		}
 		return newConnText;

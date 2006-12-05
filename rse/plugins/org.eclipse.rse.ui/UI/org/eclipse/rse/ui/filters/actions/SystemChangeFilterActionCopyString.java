@@ -46,7 +46,7 @@ public class SystemChangeFilterActionCopyString extends SystemBaseAction
         allowOnMultipleSelection(false);
         this.parentDialog = parentDialog;
 		setContextMenuGroup(ISystemContextMenuConstants.GROUP_REORGANIZE);  
-		setHelp(RSEUIPlugin.HELPPREFIX+"dufr2000");      
+		setHelp(RSEUIPlugin.HELPPREFIX+"dufr2000");       //$NON-NLS-1$
 	}
 
 	/**

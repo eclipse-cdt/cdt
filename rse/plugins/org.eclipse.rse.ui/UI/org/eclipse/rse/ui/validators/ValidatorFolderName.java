@@ -102,7 +102,7 @@ public class ValidatorFolderName
 	
 	public String toString()
 	{
-		return "FolderNameValidator class";
+		return "FolderNameValidator class"; //$NON-NLS-1$
 	}
 
     // ---------------------------

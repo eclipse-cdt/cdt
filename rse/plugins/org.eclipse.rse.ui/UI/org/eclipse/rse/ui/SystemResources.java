@@ -34,7 +34,7 @@ public class SystemResources extends NLS
 	/**
 	 * Current release as a string.
 	 */
-	public static final String CURRENT_RELEASE_NAME = "1.0.0"; 
+	public static final String CURRENT_RELEASE_NAME = "1.0.0";  //$NON-NLS-1$
 
 
 	// Buttons

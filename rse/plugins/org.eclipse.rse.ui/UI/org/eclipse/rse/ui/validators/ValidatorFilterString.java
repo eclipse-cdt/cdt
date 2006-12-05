@@ -122,7 +122,7 @@ public class ValidatorFilterString
 
 	public String toString()
 	{
-		return "ValidatorFilterString class";
+		return "ValidatorFilterString class"; //$NON-NLS-1$
 	}
 
     // ---------------------------

@@ -60,7 +60,7 @@ public class SystemNewFilterWizardMainPage
 	public SystemNewFilterWizardMainPage(SystemNewFilterWizard wizard, ISystemNewFilterWizardConfigurator data)
 
 	{
-		super(wizard,"NewFilterPage1", data.getPage1Title(), data.getPage1Description()); 	
+		super(wizard,"NewFilterPage1", data.getPage1Title(), data.getPage1Description()); 	 //$NON-NLS-1$
 	  	editPane = getEditPane(wizard.getShell());	
 		//setHelp(data.getPage1HelpID()); not used as it comes from wizard help
 	}
@@ -75,7 +75,7 @@ public class SystemNewFilterWizardMainPage
 	public SystemNewFilterWizardMainPage(SystemNewFilterWizard wizard, SystemFilterStringEditPane editPane, ISystemNewFilterWizardConfigurator data)
 
 	{
-		super(wizard,"NewFilterPage1", data.getPage1Title(), data.getPage1Description()); 	
+		super(wizard,"NewFilterPage1", data.getPage1Title(), data.getPage1Description()); 	 //$NON-NLS-1$
 	  	this.editPane = editPane;
 		editPane.addChangeListener(this);
 		//setHelp(data.getPage1HelpID()); not used as it comes from wizard help

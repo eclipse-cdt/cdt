@@ -142,7 +142,7 @@ public class SystemViewFilterAdapter extends AbstractSystemViewAdapter implement
 	public String getAbsoluteName(Object element)
 	{
 		ISystemFilter filter = getFilter(element);
-		return filter.getSystemFilterPoolManager().getName() + "." + filter.getParentFilterPool().getName() + "." + filter.getName();
+		return filter.getSystemFilterPoolManager().getName() + "." + filter.getParentFilterPool().getName() + "." + filter.getName(); //$NON-NLS-1$ //$NON-NLS-2$
 	}	
 	/**
 	 * Return the type label for this object
@@ -242,7 +242,7 @@ public class SystemViewFilterAdapter extends AbstractSystemViewAdapter implement
 		     catch (Exception exc)
 		     {
 		     	children = getFailedMessageObject();
-		     	SystemBasePlugin.logError("Exception resolving filters' strings ",exc);
+		     	SystemBasePlugin.logError("Exception resolving filters' strings ",exc); //$NON-NLS-1$
 		     } // message already issued
 
     	   	 return children;                   
@@ -314,7 +314,7 @@ public class SystemViewFilterAdapter extends AbstractSystemViewAdapter implement
     	  } catch (Exception exc)     	
     	  {
 		        children = getFailedMessageObject();
-		     	SystemBasePlugin.logError("Exception prompting for filter ",exc);          
+		     	SystemBasePlugin.logError("Exception prompting for filter ",exc);           //$NON-NLS-1$
      	  }
 		}
     	//RSEUIPlugin.logDebugMessage(this.getClass().getName(),"returning children");
@@ -374,7 +374,7 @@ public class SystemViewFilterAdapter extends AbstractSystemViewAdapter implement
 		   if ((filterStrings != null) && (filterStrings.length>0))
 			 return filterStrings[0];
 		   else
-			 return "null";
+			 return "null"; //$NON-NLS-1$
 		}
 		else if (name.equals(ISystemPropertyConstants.P_FILTERSTRINGS_COUNT))
 		{
@@ -503,7 +503,7 @@ public class SystemViewFilterAdapter extends AbstractSystemViewAdapter implement
     	if (!filter.isTransient())
     	{
     	  String mgrName = filter.getSystemFilterPoolManager().getName();
-    	  return (mgrName + "." + filter.getParentFilterPool().getName() + "." + newName).toUpperCase();
+    	  return (mgrName + "." + filter.getParentFilterPool().getName() + "." + newName).toUpperCase(); //$NON-NLS-1$ //$NON-NLS-2$
     	}
     	else
     	  return newName.toUpperCase();
@@ -536,7 +536,7 @@ public class SystemViewFilterAdapter extends AbstractSystemViewAdapter implement
 	 */
 	public boolean testAttribute(Object target, String name, String value)
 	{
-		if (name.equalsIgnoreCase("filterType"))
+		if (name.equalsIgnoreCase("filterType")) //$NON-NLS-1$
 		{
 			ISystemFilter filter = getFilter(target);
 			String type = filter.getType();
@@ -545,11 +545,11 @@ public class SystemViewFilterAdapter extends AbstractSystemViewAdapter implement
 			else
 				return value.equals(type);
 		}
-		else if (name.equalsIgnoreCase("showChangeFilterStringPropertyPage"))
+		else if (name.equalsIgnoreCase("showChangeFilterStringPropertyPage")) //$NON-NLS-1$
 		{			
 			ISystemFilter filter = getFilter(target);
 			ISubSystemConfiguration ssf = SubSystemHelpers.getParentSubSystemConfiguration(filter);
-			if (value.equals("true"))
+			if (value.equals("true")) //$NON-NLS-1$
 				return ssf.showChangeFilterStringsPropertyPage(filter);
 			else
 				return !ssf.showChangeFilterStringsPropertyPage(filter);			 	

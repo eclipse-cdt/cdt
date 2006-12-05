@@ -56,10 +56,10 @@ public class SystemElapsedTimer
 		long hours  = (int)(deltaMillis   / (60 * 60 * 1000));
 		long minutes= (int)(deltaMinutes - (hours*60) );
 		long seconds= (int)(deltaSeconds - (hours*60*60) - (minutes*60));
-		String result = "Elapsed time: " + hours   + " hours, " +
-										   minutes + " minutes, " +
-										   seconds + " seconds, " +
-										   millis  + " milliseconds";
+		String result = "Elapsed time: " + hours   + " hours, " + //$NON-NLS-1$ //$NON-NLS-2$
+										   minutes + " minutes, " + //$NON-NLS-1$
+										   seconds + " seconds, " + //$NON-NLS-1$
+										   millis  + " milliseconds"; //$NON-NLS-1$
 		return result;
 	}
 	public void writeElapsedTime(PrintWriter writer, String header)

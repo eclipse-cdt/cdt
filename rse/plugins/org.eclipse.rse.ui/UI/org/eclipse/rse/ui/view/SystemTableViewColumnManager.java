@@ -92,7 +92,7 @@ public class SystemTableViewColumnManager
 	{
 	    String adapterName = adapter.getClass().getName();
 	    String viewName = _viewer.getClass().getName();
-	    return adapterName + ":" + viewName;
+	    return adapterName + ":" + viewName; //$NON-NLS-1$
 	}
 	
 	protected IPropertyDescriptor[] getCustomDescriptors(ISystemViewElementAdapter adapter)

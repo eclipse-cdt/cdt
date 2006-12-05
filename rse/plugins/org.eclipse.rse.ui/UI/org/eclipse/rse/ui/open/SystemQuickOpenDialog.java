@@ -169,7 +169,7 @@ public class SystemQuickOpenDialog extends Dialog implements ISystemQuickOpenPag
 	 */
 	protected void configureShell(Shell shell) {
 		super.configureShell(shell);
-		shell.setText("Open");
+		shell.setText("Open"); //$NON-NLS-1$
 		// TODO: add image and F1 help
 	}
 	
@@ -628,7 +628,7 @@ public class SystemQuickOpenDialog extends Dialog implements ISystemQuickOpenPag
 			
 			// save focus control
 			if (focusControl != null) {
-				savedState.put("focusControl", focusControl);
+				savedState.put("focusControl", focusControl); //$NON-NLS-1$
 			}
 				
 			// attach the progress monitor part to the cancel button and make it visible
@@ -662,7 +662,7 @@ public class SystemQuickOpenDialog extends Dialog implements ISystemQuickOpenPag
 			waitCursor = null;
 			arrowCursor.dispose();
 			arrowCursor = null;
-			Control focusControl = (Control)(state.get("focusControl"));
+			Control focusControl = (Control)(state.get("focusControl")); //$NON-NLS-1$
 			
 			if (focusControl != null && ! focusControl.isDisposed()) {
 				focusControl.setFocus();
@@ -692,9 +692,9 @@ public class SystemQuickOpenDialog extends Dialog implements ISystemQuickOpenPag
 	 * @param state the hashmap that contains the enable state of the UI.
 	 */
 	private void restoreUIState(HashMap state) {
-		restoreEnableState(cancelButton, state, "cancel");
-		restoreEnableState(openButton, state, "open");
-		ControlEnableState pageState = (ControlEnableState)state.get("tabForm");
+		restoreEnableState(cancelButton, state, "cancel"); //$NON-NLS-1$
+		restoreEnableState(openButton, state, "open"); //$NON-NLS-1$
+		ControlEnableState pageState = (ControlEnableState)state.get("tabForm"); //$NON-NLS-1$
 		pageState.restore();
 	}
 	
@@ -723,9 +723,9 @@ public class SystemQuickOpenDialog extends Dialog implements ISystemQuickOpenPag
 	private HashMap saveUIState(boolean keepCancelEnabled) {
 		HashMap savedState = new HashMap();
 		
-		saveEnableStateAndSet(cancelButton, savedState, "cancel", keepCancelEnabled);
-		saveEnableStateAndSet(openButton, savedState, "open", false);
-		savedState.put("tabForm", ControlEnableState.disable(contents));
+		saveEnableStateAndSet(cancelButton, savedState, "cancel", keepCancelEnabled); //$NON-NLS-1$
+		saveEnableStateAndSet(openButton, savedState, "open", false); //$NON-NLS-1$
+		savedState.put("tabForm", ControlEnableState.disable(contents)); //$NON-NLS-1$
 		
 		return savedState;
 	}
@@ -793,8 +793,8 @@ public class SystemQuickOpenDialog extends Dialog implements ISystemQuickOpenPag
 	 * @return the message dialog.
 	 */
 	private MessageDialog createClosingDialog() {
-		MessageDialog result = new MessageDialog(getShell(), JFaceResources.getString("WizardClosingDialog.title"),
-												 null, JFaceResources.getString("WizardClosingDialog.message"),
+		MessageDialog result = new MessageDialog(getShell(), JFaceResources.getString("WizardClosingDialog.title"), //$NON-NLS-1$
+												 null, JFaceResources.getString("WizardClosingDialog.message"), //$NON-NLS-1$
 												 MessageDialog.QUESTION, new String[] {IDialogConstants.OK_LABEL}, 0); 
 		return result;		
 	}

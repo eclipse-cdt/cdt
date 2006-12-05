@@ -36,6 +36,6 @@ public class SystemNewConnectionFromExistingConnectionAction extends SystemNewCo
 	{
 		super(shell, SystemResources.ACTION_ANOTHERCONN_LABEL, SystemResources.ACTION_ANOTHERCONN_TOOLTIP, false, true, null);
 		setContextMenuGroup(ISystemContextMenuConstants.GROUP_NEW);
-		setHelp(RSEUIPlugin.HELPPREFIX+"actn0015");
+		setHelp(RSEUIPlugin.HELPPREFIX+"actn0015"); //$NON-NLS-1$
 	}
 }

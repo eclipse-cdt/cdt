@@ -207,7 +207,7 @@ public class SystemSelectRemoteObjectAPIProviderImpl
 		if (filterSuffix != null)
 		  filterString = null;
 		
-		SystemBasePlugin.logDebugMessage(this.getClass().getName(), "*** FILTER SUFFIX = '" + filterSuffix + "' ***");
+		SystemBasePlugin.logDebugMessage(this.getClass().getName(), "*** FILTER SUFFIX = '" + filterSuffix + "' ***"); //$NON-NLS-1$ //$NON-NLS-2$
 	}    
 
 	/**
@@ -269,7 +269,7 @@ public class SystemSelectRemoteObjectAPIProviderImpl
 		  return inputFilterString; 
 		else if ((filterSuffix != null) && (inputFilterString.indexOf(filterSuffix)==-1))
 		{
-		  SystemBasePlugin.logDebugMessage(this.getClass().getName(), "*** INPUT FILTER = '" + inputFilterString + "' ***");
+		  SystemBasePlugin.logDebugMessage(this.getClass().getName(), "*** INPUT FILTER = '" + inputFilterString + "' ***"); //$NON-NLS-1$ //$NON-NLS-2$
 		  String result = inputFilterString;
 		  if (filterSuffix.equals(" /nf")) //$NON-NLS-1$
 		    result = inputFilterString + filterSuffix;
@@ -283,7 +283,7 @@ public class SystemSelectRemoteObjectAPIProviderImpl
 		  	*/
 			  result = inputFilterString;
 		  }
-		  SystemBasePlugin.logDebugMessage(this.getClass().getName(), "*** ADORNED FILTER = '" + result + "' ***");
+		  SystemBasePlugin.logDebugMessage(this.getClass().getName(), "*** ADORNED FILTER = '" + result + "' ***"); //$NON-NLS-1$ //$NON-NLS-2$
 		  return result;
 		}
 		else
@@ -392,7 +392,7 @@ public class SystemSelectRemoteObjectAPIProviderImpl
  				ISubSystem subsystem = subsystems[0]; // always just use first. Hopefully never a problem!
  				
  				if (subsystems.length > 1)
- 				  SystemBasePlugin.logWarning(this.getClass().getName() + ": More than one subsystem meeting criteria. SSFID = "+subsystemFactoryId+", SSFCat = "+subsystemFactoryCategory);
+ 				  SystemBasePlugin.logWarning(this.getClass().getName() + ": More than one subsystem meeting criteria. SSFID = "+subsystemFactoryId+", SSFCat = "+subsystemFactoryCategory); //$NON-NLS-1$ //$NON-NLS-2$
  				  
  				if (quickFilters != null)
  				{
@@ -587,7 +587,7 @@ public class SystemSelectRemoteObjectAPIProviderImpl
 		} catch (Exception exc)
 		{
 		     children = getFailedMessageObject();			
-		     SystemBasePlugin.logError("Error in SystemTestFilterStringAPIProviderImpl#getSystemViewRoots()",exc);
+		     SystemBasePlugin.logError("Error in SystemTestFilterStringAPIProviderImpl#getSystemViewRoots()",exc); //$NON-NLS-1$
 		}
 		return children;
 	}

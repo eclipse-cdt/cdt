@@ -320,7 +320,7 @@ public class SystemBaseAction extends Action implements ISystemAction
     	{
     		String className = this.getClass().getName();
     		if ((traceTarget==null) || (className.indexOf(traceTarget)>=0))
-              SystemBasePlugin.logInfo(this.getClass().getName()+": "+getText()+": "+msg);
+              SystemBasePlugin.logInfo(this.getClass().getName()+": "+getText()+": "+msg); //$NON-NLS-1$ //$NON-NLS-2$
     	}
     }
 
@@ -352,7 +352,7 @@ public class SystemBaseAction extends Action implements ISystemAction
     public void setInputs(Shell shell, Viewer v, ISelection selection)
     {
 		if (traceSelections)
-		  issueTraceMessage(" INSIDE SETINPUTS IN BASE ACTION CLASS");
+		  issueTraceMessage(" INSIDE SETINPUTS IN BASE ACTION CLASS"); //$NON-NLS-1$
     	setShell(shell);
     	setViewer(v);
     	setSelection(selection);
@@ -371,7 +371,7 @@ public class SystemBaseAction extends Action implements ISystemAction
 		this.previousShells.add(this.shell); 
 		this.shell = shell;
 		if (traceSelections)
-		  issueTraceMessage(" INSIDE SETSHELL. shell = " + shell);
+		  issueTraceMessage(" INSIDE SETSHELL. shell = " + shell); //$NON-NLS-1$
 	}
 	/**
 	 * Set the Viewer that called this action. It is good practice for viewers to call this
@@ -382,7 +382,7 @@ public class SystemBaseAction extends Action implements ISystemAction
 		this.previousViewers.add(this.viewer); // see comment in setShell
 		this.viewer = v;
 		if (traceSelections)
-		  issueTraceMessage(" INSIDE SETVIEWER. viewer = " + viewer);
+		  issueTraceMessage(" INSIDE SETVIEWER. viewer = " + viewer); //$NON-NLS-1$
 	}
 	/**
 	 * This is called when the user selects something in the tree.
@@ -399,7 +399,7 @@ public class SystemBaseAction extends Action implements ISystemAction
 	{	
 		  ISelection selection = event.getSelection();	
 		  if (traceSelections)
-		    issueTraceMessage("INSIDE SELECTIONCHANGED. Selection null? " + (selection==null));
+		    issueTraceMessage("INSIDE SELECTIONCHANGED. Selection null? " + (selection==null)); //$NON-NLS-1$
 		  setSelection(selection);			    
 	}
 	/**
@@ -410,13 +410,13 @@ public class SystemBaseAction extends Action implements ISystemAction
 	public void setSelection(ISelection selection) 
 	{	
 		if (traceSelections)
-		  issueTraceMessage(" INSIDE SETSELECTION. Selection null? " + (selection==null));
+		  issueTraceMessage(" INSIDE SETSELECTION. Selection null? " + (selection==null)); //$NON-NLS-1$
 		if ( !(selection instanceof IStructuredSelection) )
 		{
 		  if (selectionSensitive)
 		    setEnabled(false);
 		  if (traceSelections)
-		  System.out.println(this.getClass().getName() + ". Returning false in setSelection. selection= " + selection);
+		  System.out.println(this.getClass().getName() + ". Returning false in setSelection. selection= " + selection); //$NON-NLS-1$
 		  return;
 		}
         if (selectionSensitive)
@@ -428,7 +428,7 @@ public class SystemBaseAction extends Action implements ISystemAction
 		if (!selectionSensitive || (selection == null))
 		{
 		  if (traceSelections)
-		  System.out.println(this.getClass().getName() + ". Returning. selectionSensitive = " + selectionSensitive);
+		  System.out.println(this.getClass().getName() + ". Returning. selectionSensitive = " + selectionSensitive); //$NON-NLS-1$
 		  return;
 		}
 		boolean multiSelect = (sSelection.size() > 1);
@@ -436,7 +436,7 @@ public class SystemBaseAction extends Action implements ISystemAction
 		{
           setEnabled(false);
 		  if (traceSelections)
-		  System.out.println(this.getClass().getName() + ". Returning false in setSelection. #selected = " + sSelection.size());
+		  System.out.println(this.getClass().getName() + ". Returning false in setSelection. #selected = " + sSelection.size()); //$NON-NLS-1$
 		}
         else
         {
@@ -464,7 +464,7 @@ public class SystemBaseAction extends Action implements ISystemAction
 			
 		fSelectionProvider = provider;
 		if (traceSelections)
-		  issueTraceMessage(" INSIDE SETSELECTIONPROVIDER. fSelectionProvider = " + fSelectionProvider);
+		  issueTraceMessage(" INSIDE SETSELECTIONPROVIDER. fSelectionProvider = " + fSelectionProvider); //$NON-NLS-1$
 
 		
 		if (fSelectionProvider != null)
@@ -629,8 +629,8 @@ public class SystemBaseAction extends Action implements ISystemAction
         }
         if (doTest && (shell == null))
         {
-        	System.out.println("Inside getShell for " + this.getClass().getName() + " and the shell is null! This needs to be investigated");
-        	SystemBasePlugin.logDebugMessage("SystemBaseAction", "Inside getShell for " + this.getClass().getName() + " and the shell is null! This needs to be investigated");        	
+        	System.out.println("Inside getShell for " + this.getClass().getName() + " and the shell is null! This needs to be investigated"); //$NON-NLS-1$ //$NON-NLS-2$
+        	SystemBasePlugin.logDebugMessage("SystemBaseAction", "Inside getShell for " + this.getClass().getName() + " and the shell is null! This needs to be investigated");        	 //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
         }
     	return shell;
     }
@@ -704,7 +704,7 @@ public class SystemBaseAction extends Action implements ISystemAction
 	public IStructuredSelection getSelection()
 	{
 		if (traceSelections)
-		  issueTraceMessage(" INSIDE GETSELECTION. sSelection null? " + (sSelection==null));
+		  issueTraceMessage(" INSIDE GETSELECTION. sSelection null? " + (sSelection==null)); //$NON-NLS-1$
 		return sSelection;
 	}	
 	

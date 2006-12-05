@@ -68,7 +68,7 @@ public abstract class RemoteBaseServerLauncherForm extends SystemBaseForm implem
 		createLauncherControls(group);
 
 		// help
-		SystemWidgetHelpers.setCompositeHelp(parent, RSEUIPlugin.HELPPREFIX + "srln0000");
+		SystemWidgetHelpers.setCompositeHelp(parent, RSEUIPlugin.HELPPREFIX + "srln0000"); //$NON-NLS-1$
 
 		// initialization
 		initDefaults();

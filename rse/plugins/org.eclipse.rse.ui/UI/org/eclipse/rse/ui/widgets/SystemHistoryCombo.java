@@ -440,7 +440,7 @@ public class SystemHistoryCombo extends Composite implements ISystemCombo, Trave
 	{
 		String textValue = historyCombo.getText().trim();		 
 		if (autoUppercase)
-		  if (!(textValue.startsWith("\"")&& textValue.endsWith("\""))) 	 
+		  if (!(textValue.startsWith("\"")&& textValue.endsWith("\""))) 	  //$NON-NLS-1$ //$NON-NLS-2$
 		    textValue = textValue.toUpperCase(); 
 		boolean alreadyThere = false;
 		String[] newHistory = null;
@@ -613,7 +613,7 @@ public class SystemHistoryCombo extends Composite implements ISystemCombo, Trave
 		scheme used an SWT.ARROW button style which was not tab enabled and could not provide a focus rectangle.  
 		Changes: made the control a push button, programmatically drew the arrow on the button, and provided accessibility information. 
 		*/
-	    boolean isDrawn = System.getProperty("os.name").toLowerCase().startsWith("win");
+	    boolean isDrawn = System.getProperty("os.name").toLowerCase().startsWith("win"); //$NON-NLS-1$ //$NON-NLS-2$
 	    if (isDrawn) {
 		    historyButton = new Button(this, SWT.PUSH);
 			Display display = this.getDisplay();
@@ -642,7 +642,7 @@ public class SystemHistoryCombo extends Composite implements ISystemCombo, Trave
 	    historyButton.setToolTipText(SystemResources.RESID_WORKWITHHISTORY_BUTTON_TIP);
 		historyButton.getAccessible().addAccessibleListener(new AccessibleAdapter() {
 			public void getHelp(AccessibleEvent e) { // this is the one that should supply the text heard.
-				e.result = "";
+				e.result = ""; //$NON-NLS-1$
 			}
 			public void getName(AccessibleEvent e) { // this is the one that apparently does supply the text heard.
 				e.result = historyButton.getToolTipText();
@@ -656,7 +656,7 @@ public class SystemHistoryCombo extends Composite implements ISystemCombo, Trave
 					parent = parent.getParent();
 				}
 				if (prefix != null) {
-					e.result = prefix + " " + e.result;
+					e.result = prefix + " " + e.result; //$NON-NLS-1$
 				}
 			}
 		});
@@ -682,22 +682,22 @@ public class SystemHistoryCombo extends Composite implements ISystemCombo, Trave
     public void keyTraversed(TraverseEvent e)
     {
     	int detail = e.detail;
-    	String s = "unknown";
+    	String s = "unknown"; //$NON-NLS-1$
     	switch (detail)
     	{
-    		case SWT.TRAVERSE_ARROW_NEXT:     s="Arrow Next";     break;
-    		case SWT.TRAVERSE_ARROW_PREVIOUS: s="Arrow Previous"; break;
-    		case SWT.TRAVERSE_ESCAPE:         s="Escape";         break;
-    		case SWT.TRAVERSE_RETURN:         s="Return";         break;
+    		case SWT.TRAVERSE_ARROW_NEXT:     s="Arrow Next";     break; //$NON-NLS-1$
+    		case SWT.TRAVERSE_ARROW_PREVIOUS: s="Arrow Previous"; break; //$NON-NLS-1$
+    		case SWT.TRAVERSE_ESCAPE:         s="Escape";         break; //$NON-NLS-1$
+    		case SWT.TRAVERSE_RETURN:         s="Return";         break; //$NON-NLS-1$
     		case SWT.TRAVERSE_TAB_NEXT:       
-    		    s="Tab Next"; 
+    		    s="Tab Next";  //$NON-NLS-1$
     		    //historyButton.setFocus(); 
     		    historyButton.forceFocus();
     		    //e.doit=false; 
     		    break;
-    		case SWT.TRAVERSE_TAB_PREVIOUS:   s="Tab Previous";   break;
+    		case SWT.TRAVERSE_TAB_PREVIOUS:   s="Tab Previous";   break; //$NON-NLS-1$
     	}
-    	System.out.println("keyTraversed: "+s);
+    	System.out.println("keyTraversed: "+s); //$NON-NLS-1$
     }
     
     public void keyPressed(KeyEvent e)

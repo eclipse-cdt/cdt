@@ -27,7 +27,6 @@ import org.eclipse.rse.ui.SystemWidgetHelpers;
 import org.eclipse.rse.ui.messages.ISystemMessageLine;
 import org.eclipse.rse.ui.validators.SystemNumericVerifyListener;
 import org.eclipse.rse.ui.validators.ValidatorPortInput;
-import org.eclipse.rse.ui.validators.ValidatorServerPortInput;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -54,7 +53,6 @@ public class RemoteServerLauncherForm extends RemoteBaseServerLauncherForm
 
 	private Composite _daemonControls, _rexecControls, _noneControls;
 
-	private ValidatorServerPortInput _serverPortValidator;
 	private ValidatorPortInput       _daemonPortValidator;
 	private ValidatorPortInput       _rexecPortValidator;
 	
@@ -75,7 +73,6 @@ public class RemoteServerLauncherForm extends RemoteBaseServerLauncherForm
 	{
 		super(shell, msgLine);
 		_daemonPortValidator = new ValidatorPortInput();
-		_serverPortValidator = new ValidatorServerPortInput();
 		_rexecPortValidator = new ValidatorPortInput();
 	}
 
@@ -126,7 +123,7 @@ public class RemoteServerLauncherForm extends RemoteBaseServerLauncherForm
 
 		GridData dd = new GridData();
 		dd.widthHint = 30;
-		String portRange = " (1-" + ValidatorPortInput.MAXIMUM_PORT_NUMBER + ")";
+		String portRange = " (1-" + ValidatorPortInput.MAXIMUM_PORT_NUMBER + ")"; //$NON-NLS-1$ //$NON-NLS-2$
 		_labelDaemonPort =
 			SystemWidgetHelpers.createLabel(
 				_daemonControls,
@@ -213,11 +210,11 @@ public class RemoteServerLauncherForm extends RemoteBaseServerLauncherForm
 		_noneControls.setLayoutData(ndata);
 
 		// help
-		SystemWidgetHelpers.setHelp(_radioDaemon, RSEUIPlugin.HELPPREFIX + "srln0001");
-		SystemWidgetHelpers.setHelp(_radioRexec, RSEUIPlugin.HELPPREFIX + "srln0002");
-		SystemWidgetHelpers.setHelp(_radioNone, RSEUIPlugin.HELPPREFIX + "srln0003");
-		SystemWidgetHelpers.setHelp(_fieldRexecPath, RSEUIPlugin.HELPPREFIX + "srln0004");
-		SystemWidgetHelpers.setHelp(_fieldRexecInvocation, RSEUIPlugin.HELPPREFIX + "srln0005");
+		SystemWidgetHelpers.setHelp(_radioDaemon, RSEUIPlugin.HELPPREFIX + "srln0001"); //$NON-NLS-1$
+		SystemWidgetHelpers.setHelp(_radioRexec, RSEUIPlugin.HELPPREFIX + "srln0002"); //$NON-NLS-1$
+		SystemWidgetHelpers.setHelp(_radioNone, RSEUIPlugin.HELPPREFIX + "srln0003"); //$NON-NLS-1$
+		SystemWidgetHelpers.setHelp(_fieldRexecPath, RSEUIPlugin.HELPPREFIX + "srln0004"); //$NON-NLS-1$
+		SystemWidgetHelpers.setHelp(_fieldRexecInvocation, RSEUIPlugin.HELPPREFIX + "srln0005"); //$NON-NLS-1$
 	}
 
 	protected void initDefaults()

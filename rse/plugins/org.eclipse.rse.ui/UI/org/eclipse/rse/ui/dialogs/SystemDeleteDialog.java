@@ -67,7 +67,7 @@ public class SystemDeleteDialog extends SystemPromptDialog
     
     // column headers
 	private String columnHeaders[] = {
-		"",
+		"", //$NON-NLS-1$
 		SystemResources.RESID_DELETE_COLHDG_OLDNAME,
 		SystemResources.RESID_DELETE_COLHDG_TYPE
 	};
@@ -95,7 +95,7 @@ public class SystemDeleteDialog extends SystemPromptDialog
 	{
 		super(shell, SystemResources.RESID_DELETE_TITLE);				
 		super.setOkButtonLabel(SystemResources.RESID_DELETE_BUTTON);
-		setHelp(RSEUIPlugin.HELPPREFIX+"ddlt0000");
+		setHelp(RSEUIPlugin.HELPPREFIX+"ddlt0000"); //$NON-NLS-1$
 	}
 
 	/**
@@ -169,7 +169,7 @@ public class SystemDeleteDialog extends SystemPromptDialog
         if (warningMessage != null)
         {
           // filler line
-          SystemWidgetHelpers.createLabel(composite, "", nbrColumns);
+          SystemWidgetHelpers.createLabel(composite, "", nbrColumns); //$NON-NLS-1$
 		  // create image
 		  Image image = getShell().getDisplay().getSystemImage(SWT.ICON_WARNING);
 		  Label imageLabel = null;
@@ -191,7 +191,7 @@ public class SystemDeleteDialog extends SystemPromptDialog
           	}
           }
           // filler line
-          SystemWidgetHelpers.createLabel(composite, "", nbrColumns);
+          SystemWidgetHelpers.createLabel(composite, "", nbrColumns); //$NON-NLS-1$
         }
 			        		   
         // TABLE

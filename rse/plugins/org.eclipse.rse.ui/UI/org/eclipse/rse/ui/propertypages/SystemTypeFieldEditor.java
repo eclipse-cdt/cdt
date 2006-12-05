@@ -75,10 +75,10 @@ public class SystemTypeFieldEditor extends FieldEditor
 	private static final int COLUMN_NAME = 0;
 	private static final int COLUMN_ENABLED = 1;
 	private static final int COLUMN_USERID = 2;
-	private static final String P_NAME = "name";
-	private static final String P_ENABLED = "enabled";
-	private static final String P_DESC = "desc";
-	private static final String P_USERID = "userid";
+	private static final String P_NAME = "name"; //$NON-NLS-1$
+	private static final String P_ENABLED = "enabled"; //$NON-NLS-1$
+	private static final String P_DESC = "desc"; //$NON-NLS-1$
+	private static final String P_USERID = "userid"; //$NON-NLS-1$
 	private static final String columnHeaders[] = 
 	{
 		   SystemResources.RESID_PREF_SYSTYPE_COLHDG_NAME,
@@ -233,7 +233,7 @@ public class SystemTypeFieldEditor extends FieldEditor
 	   tableData.grabExcessVerticalSpace = true;
 	   table.setLayoutData(tableData);
 	   
-	   SystemWidgetHelpers.setHelp(table, RSEUIPlugin.HELPPREFIX+"systype_preferences");
+	   SystemWidgetHelpers.setHelp(table, RSEUIPlugin.HELPPREFIX+"systype_preferences"); //$NON-NLS-1$
 	   return table;
     }
 	
@@ -358,16 +358,16 @@ public class SystemTypeFieldEditor extends FieldEditor
 	{
 		IRSESystemType row = (IRSESystemType)element;
 		RSESystemTypeAdapter adapter = (RSESystemTypeAdapter)(row.getAdapter(IRSESystemType.class));
-		Object value = "";
+		Object value = ""; //$NON-NLS-1$
 		
 		if (property.equals(P_NAME))
 			value = row.getName();
 		else if (property.equals(P_ENABLED))
 			value = (adapter.isEnabled(row) ? new Integer(0) : new Integer(1));
 		else if (property.equals(P_USERID))
-			value = (adapter.getDefaultUserId(row) == null) ? "" : adapter.getDefaultUserId(row);
+			value = (adapter.getDefaultUserId(row) == null) ? "" : adapter.getDefaultUserId(row); //$NON-NLS-1$
 		else
-			value = (row.getDescription() == null) ? "" : row.getDescription();
+			value = (row.getDescription() == null) ? "" : row.getDescription(); //$NON-NLS-1$
 
 		return value;
 	}
@@ -398,7 +398,7 @@ public class SystemTypeFieldEditor extends FieldEditor
 		else
 			return;
 		
-		keyValues.put(row.getName(), "");		
+		keyValues.put(row.getName(), "");		 //$NON-NLS-1$
 		tableViewer.update(row, null);
 	}
 
@@ -427,9 +427,9 @@ public class SystemTypeFieldEditor extends FieldEditor
 		else if (columnIndex == COLUMN_ENABLED)
 			return Boolean.toString(adapter.isEnabled(currType));
 		else if (columnIndex == COLUMN_USERID)
-			return (adapter.getDefaultUserId(currType)==null ? "" : adapter.getDefaultUserId(currType));
+			return (adapter.getDefaultUserId(currType)==null ? "" : adapter.getDefaultUserId(currType)); //$NON-NLS-1$
 		else 
-			return (currType.getDescription()==null ? "" : currType.getDescription());
+			return (currType.getDescription()==null ? "" : currType.getDescription()); //$NON-NLS-1$
 	}
 
 	/* (non-Javadoc)
@@ -506,7 +506,7 @@ public class SystemTypeFieldEditor extends FieldEditor
 			{
 				String key = (String)keys.nextElement();
 				String attributes = (String)keyValues.get(key);
-				String attr1="true", attr2="";
+				String attr1="true", attr2=""; //$NON-NLS-1$ //$NON-NLS-2$
 				if ((attributes != null) && (attributes.length()>0))
 				{
 					StringTokenizer tokens = new StringTokenizer(attributes, Character.toString(EACHVALUE_DELIMITER));
@@ -519,7 +519,7 @@ public class SystemTypeFieldEditor extends FieldEditor
 						}
 						else
 						{
-							attr2 = "null";
+							attr2 = "null"; //$NON-NLS-1$
 						}
 					}
 				}
@@ -530,8 +530,8 @@ public class SystemTypeFieldEditor extends FieldEditor
 				// update this system type's attributes as per preferences...
 				if (matchingType!=null)
 				{
-					adapter.setIsEnabled(matchingType, attr1.equals("true"));
-					if (!attr2.equals("null"))
+					adapter.setIsEnabled(matchingType, attr1.equals("true")); //$NON-NLS-1$
+					if (!attr2.equals("null")) //$NON-NLS-1$
 						adapter.setDefaultUserId(matchingType, attr2);
 				}
 			}	    		    	

@@ -60,7 +60,7 @@ public class SystemResourceChangeEvent
 	 */
 	public SystemResourceChangeEvent(Object[] source, int type, Object parent)
 	{
-		super(((source!=null) && (source.length>0)) ? source[0] : "nada"); // defect 42112
+		super(((source!=null) && (source.length>0)) ? source[0] : "nada"); // defect 42112 //$NON-NLS-1$
 		this.multiSource = source;
 		this.type = type;
 		this.parent = parent;

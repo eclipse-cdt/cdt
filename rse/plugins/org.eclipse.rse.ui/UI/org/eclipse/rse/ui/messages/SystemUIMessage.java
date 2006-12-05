@@ -43,11 +43,11 @@ public class SystemUIMessage extends SystemMessage
 	public String getSubValue(Object sub) 
 	{
 	    if (sub == null)
-	      return "";
+	      return ""; //$NON-NLS-1$
 	      
 		if (sub instanceof IStatus)
 	    {
-	    	return populateList("", (IStatus)sub);
+	    	return populateList("", (IStatus)sub); //$NON-NLS-1$
 	    }
 	    else
 	    {
@@ -82,7 +82,7 @@ public class SystemUIMessage extends SystemMessage
 		}
 		sb.append(status.getMessage());
 		//list.add(sb.toString());
-		list = list + sb.toString() + "\n";
+		list = list + sb.toString() + "\n"; //$NON-NLS-1$
 		IStatus[] children = status.getChildren();
 		for (int i = 0; i < children.length; i++) {
 			list = populateList(list, children[i], nesting + 1);

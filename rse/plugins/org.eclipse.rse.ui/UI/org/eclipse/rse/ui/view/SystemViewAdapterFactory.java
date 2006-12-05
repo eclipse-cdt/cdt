@@ -148,7 +148,7 @@ public class SystemViewAdapterFactory implements IAdapterFactory {
 		if ((adapter != null) && (adapterType == IPropertySource.class)) {
 			((ISystemViewElementAdapter) adapter).setPropertySourceInput(adaptableObject);
 		} else if (adapter == null) {
-			SystemBasePlugin.logWarning("No adapter found for object of type: " + adaptableObject.getClass().getName());
+			SystemBasePlugin.logWarning("No adapter found for object of type: " + adaptableObject.getClass().getName()); //$NON-NLS-1$
 		}
 		return adapter;
 	}

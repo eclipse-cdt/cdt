@@ -85,7 +85,7 @@ public class InheritControl
 		 */
 	   } catch (Throwable ex) 
 	   {
-		 System.out.println ("failed to load images");
+		 System.out.println ("failed to load images"); //$NON-NLS-1$
 		 ex.printStackTrace();
 	   }
 	   button=new Button(this,style);

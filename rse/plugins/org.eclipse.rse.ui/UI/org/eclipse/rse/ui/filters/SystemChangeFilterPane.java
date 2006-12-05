@@ -369,7 +369,7 @@ public class SystemChangeFilterPane extends SystemBaseForm
 	 */
 	public Control createContents(Composite parent)
 	{
-		SystemWidgetHelpers.setHelp(parent, RSEUIPlugin.HELPPREFIX+"dufr0000");
+		SystemWidgetHelpers.setHelp(parent, RSEUIPlugin.HELPPREFIX+"dufr0000"); //$NON-NLS-1$
 		
 		if (getShell()==null)
 			setShell(parent.getShell());
@@ -388,12 +388,12 @@ public class SystemChangeFilterPane extends SystemBaseForm
 		Composite topComposite = composite;		
 		// filter name
 		SystemWidgetHelpers.createLabel(topComposite, namePromptLabel);
-		filterNameLabel = SystemWidgetHelpers.createLabel(topComposite, "");
+		filterNameLabel = SystemWidgetHelpers.createLabel(topComposite, ""); //$NON-NLS-1$
 		filterNameLabel.setToolTipText(namePromptTip);
 		filterNameLabel.setText(inputFilter.getName());
 		// filter pool
 		SystemWidgetHelpers.createLabel(topComposite, poolPromptLabel);
-		filterPoolNameLabel = SystemWidgetHelpers.createLabel(topComposite, "");
+		filterPoolNameLabel = SystemWidgetHelpers.createLabel(topComposite, ""); //$NON-NLS-1$
 		filterPoolNameLabel.setToolTipText(namePromptTip);
 		ISystemFilterPool parentPool = inputFilter.getParentFilterPool();
 		filterPoolNameLabel.setText(parentPool.getName());
@@ -440,7 +440,7 @@ public class SystemChangeFilterPane extends SystemBaseForm
 		if (listView != null)
 		{		
 			addFillerLine(rightSideComposite, 1);
-			fsLabel = SystemWidgetHelpers.createLabel(rightSideComposite, "");
+			fsLabel = SystemWidgetHelpers.createLabel(rightSideComposite, ""); //$NON-NLS-1$
 			addSeparatorLine(rightSideComposite,1);
 		}
 	
@@ -467,7 +467,7 @@ public class SystemChangeFilterPane extends SystemBaseForm
         {
 		    ((GridData)applyResetButtonComposite.getLayoutData()).horizontalIndent = 200; // shift buttons to the right
 		    // now populate the buttons composite with apply and revert buttons
-		    Label filler = SystemWidgetHelpers.createLabel(applyResetButtonComposite, "");
+		    Label filler = SystemWidgetHelpers.createLabel(applyResetButtonComposite, ""); //$NON-NLS-1$
 		    ((GridData)filler.getLayoutData()).grabExcessHorizontalSpace = true;
 		    ((GridData)filler.getLayoutData()).horizontalAlignment = GridData.FILL;
         }
@@ -527,7 +527,7 @@ public class SystemChangeFilterPane extends SystemBaseForm
 		// -----------------------------
 		if (listView != null)
 		{
-			menuMgr = new MenuManager("#ChangeFilterPopupMenu");
+			menuMgr = new MenuManager("#ChangeFilterPopupMenu"); //$NON-NLS-1$
 			menuMgr.setRemoveAllWhenShown(true);
 			menuMgr.addMenuListener(this);
 			Menu menu = menuMgr.createContextMenu(listView); 

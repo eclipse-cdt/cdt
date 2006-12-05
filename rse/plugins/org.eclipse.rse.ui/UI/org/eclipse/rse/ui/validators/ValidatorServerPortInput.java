@@ -37,7 +37,7 @@ public class ValidatorServerPortInput extends ValidatorPortInput
 		  	if (number == 4035)
 		  	{
 		  		currentMessage = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_COMM_PORT_WARNING);
-		  		currentMessage.makeSubstitution("4035", "RSE daemon");
+		  		currentMessage.makeSubstitution("4035", "RSE daemon"); //$NON-NLS-1$ //$NON-NLS-2$
 		  		msg = currentMessage.getLevelOneText();
 		  	}
 		}
@@ -55,7 +55,7 @@ public class ValidatorServerPortInput extends ValidatorPortInput
 		  	if (number == 4035)
 		  	{
 		  		currentMessage = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_COMM_PORT_WARNING);
-		  		currentMessage.makeSubstitution("4035", "RSE daemon");
+		  		currentMessage.makeSubstitution("4035", "RSE daemon"); //$NON-NLS-1$ //$NON-NLS-2$
 		  		msg = currentMessage.getLevelOneText();
 		  	}
 		}

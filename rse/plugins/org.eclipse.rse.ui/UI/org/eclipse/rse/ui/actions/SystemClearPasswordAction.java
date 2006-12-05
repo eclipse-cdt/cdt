@@ -43,7 +43,7 @@ public class SystemClearPasswordAction extends SystemBaseAction
 		super(SystemResources.ACTION_CLEARPASSWORD_LABEL, SystemResources.ACTION_CLEARPASSWORD_TOOLTIP, shell);
 		allowOnMultipleSelection(false);
 		setContextMenuGroup(ISystemContextMenuConstants.GROUP_CONNECTION);
-		setHelp(RSEUIPlugin.HELPPREFIX+"actn0049");
+		setHelp(RSEUIPlugin.HELPPREFIX+"actn0049"); //$NON-NLS-1$
 	}
 	
 	/**

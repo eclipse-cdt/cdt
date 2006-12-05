@@ -211,7 +211,7 @@ public class SystemProfileForm
 		  else
 		    msgLine.clearErrorMessage();
 		else
-		  System.out.println("MSGLINE NULL. TRYING TO WRITE MSG " + msg);
+		  System.out.println("MSGLINE NULL. TRYING TO WRITE MSG " + msg); //$NON-NLS-1$
 	}
     
 	// ---------------------------------------------

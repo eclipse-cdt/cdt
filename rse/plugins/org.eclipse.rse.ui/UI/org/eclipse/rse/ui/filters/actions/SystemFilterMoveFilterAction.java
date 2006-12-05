@@ -306,7 +306,7 @@ public class SystemFilterMoveFilterAction extends SystemBaseCopyAction
                                                              ISystemFilterPool pool)
     {
     	SystemSimpleContentElement veryRootElement = 
-    	   new SystemSimpleContentElement("Root",
+    	   new SystemSimpleContentElement("Root", //$NON-NLS-1$
     	                                  null, null, (Vector)null);	    	
     	veryRootElement.setRenamable(false);
     	veryRootElement.setDeletable(false);

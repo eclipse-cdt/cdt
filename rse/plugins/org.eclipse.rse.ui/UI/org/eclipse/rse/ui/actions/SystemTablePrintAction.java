@@ -231,7 +231,7 @@ public class SystemTablePrintAction extends SystemBaseAction
 			printLine(line);
 		}
 
-		printLine(" ");
+		printLine(" "); //$NON-NLS-1$
 		printLine(sEndOfListing);
 
 		/*=======================*/
@@ -359,7 +359,7 @@ public class SystemTablePrintAction extends SystemBaseAction
 
 	private String getColumnHeader()
 	{
-		StringBuffer sbColumnHeader = new StringBuffer("");
+		StringBuffer sbColumnHeader = new StringBuffer(""); //$NON-NLS-1$
 		sbColumnHeader.append(getBlankLine());
 
 		if (_hasColumns)
@@ -368,7 +368,7 @@ public class SystemTablePrintAction extends SystemBaseAction
 			sbColumnHeader.insert(0, SystemPropertyResources.RESID_PROPERTY_NAME_LABEL);
 
 			int offset = _columnWidths[0];
-			sbColumnHeader.insert(offset, " ");
+			sbColumnHeader.insert(offset, " "); //$NON-NLS-1$
 			offset++;
 
 			for (int i = 0; i < descriptors.length; i++)
@@ -382,7 +382,7 @@ public class SystemTablePrintAction extends SystemBaseAction
 					if (labelWidth > columnWidth)
 					{
 						label = label.substring(0, columnWidth - 3);
-						label += "...";
+						label += "..."; //$NON-NLS-1$
 					}
 					sbColumnHeader.insert(offset, label);
 				}
@@ -395,7 +395,7 @@ public class SystemTablePrintAction extends SystemBaseAction
 					{
 						int delta = (offset - rightOffset) - 3;
 						label = label.substring(0, delta);
-						label += "...";
+						label += "..."; //$NON-NLS-1$
 						rightOffset = offset;
 					}
 
@@ -403,7 +403,7 @@ public class SystemTablePrintAction extends SystemBaseAction
 				}
 
 				offset += columnWidth;
-				sbColumnHeader.insert(offset, " ");
+				sbColumnHeader.insert(offset, " "); //$NON-NLS-1$
 				offset++;
 			}
 		}
@@ -412,7 +412,7 @@ public class SystemTablePrintAction extends SystemBaseAction
 
 	private String getHeaderSeparator()
 	{
-		StringBuffer separator = new StringBuffer("");
+		StringBuffer separator = new StringBuffer(""); //$NON-NLS-1$
 		if (_hasColumns)
 		{
 			for (int i = 0; i < _columnWidths.length; i++)
@@ -420,10 +420,10 @@ public class SystemTablePrintAction extends SystemBaseAction
 				int width = _columnWidths[i];
 				for (int t = 0; t < width; t++)
 				{
-					separator.append("-");
+					separator.append("-"); //$NON-NLS-1$
 				}
 
-				separator.append(" ");
+				separator.append(" "); //$NON-NLS-1$
 			}
 		}
 
@@ -432,7 +432,7 @@ public class SystemTablePrintAction extends SystemBaseAction
 
 	private String getTableFooter()
 	{
-		String footer = "           * * * * *   E N D   O F   L I S T I N G   * * * * *";
+		String footer = "           * * * * *   E N D   O F   L I S T I N G   * * * * *"; //$NON-NLS-1$
 		return footer;
 	}
 
@@ -461,7 +461,7 @@ public class SystemTablePrintAction extends SystemBaseAction
 		int totalWidth = getTotalWidth();
 		for (int b = 0; b < totalWidth; b++)
 		{
-			blankLine.append(" ");
+			blankLine.append(" "); //$NON-NLS-1$
 		}
 
 		return blankLine.toString();
@@ -469,7 +469,7 @@ public class SystemTablePrintAction extends SystemBaseAction
 
 	private String getLine(Object object, int numColumns)
 	{
-		StringBuffer line = new StringBuffer("");
+		StringBuffer line = new StringBuffer(""); //$NON-NLS-1$
 
 		//SystemTableViewProvider lprovider = (SystemTableViewProvider) _viewer.getLabelProvider();
 		SystemDecoratingLabelProvider lprovider = (SystemDecoratingLabelProvider)_viewer.getLabelProvider();
@@ -488,7 +488,7 @@ public class SystemTablePrintAction extends SystemBaseAction
 					if (labelWidth > columnWidth)
 					{
 						columnText = columnText.substring(0, columnWidth - 3);
-						columnText += "...";
+						columnText += "..."; //$NON-NLS-1$
 					}
 
 					line.insert(offset, columnText);
@@ -501,7 +501,7 @@ public class SystemTablePrintAction extends SystemBaseAction
 					{
 						int delta = (offset - rightOffset) + 3;
 						columnText = columnText.substring(0, labelWidth - delta);
-						columnText += "...";
+						columnText += "..."; //$NON-NLS-1$
 						rightOffset = offset;
 					}
 
@@ -509,7 +509,7 @@ public class SystemTablePrintAction extends SystemBaseAction
 				}
 
 				offset += columnWidth;
-				line.insert(offset, " ");
+				line.insert(offset, " "); //$NON-NLS-1$
 				offset++;
 			}
 		}

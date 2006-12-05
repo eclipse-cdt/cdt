@@ -43,7 +43,7 @@ public class SystemCollapsableSection extends Composite implements MouseListener
 {
 
 	public static final String Copyright =
-		"(C) Copyright IBM Corp. 2002, 2003.  All Rights Reserved.";
+		"(C) Copyright IBM Corp. 2002, 2003.  All Rights Reserved."; //$NON-NLS-1$
 
 	protected boolean _bCollapsed = false;
 	protected boolean _bMouseOver = false;
@@ -175,7 +175,7 @@ public class SystemCollapsableSection extends Composite implements MouseListener
 
 		if (strText == null || strText.length() == 0)
 		{
-			strText = "MMMMMMMMMMMM";
+			strText = "MMMMMMMMMMMM"; //$NON-NLS-1$
 		}
 
 		GC gc = new GC(this);

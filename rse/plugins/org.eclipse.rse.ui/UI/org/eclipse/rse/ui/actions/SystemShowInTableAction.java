@@ -61,7 +61,7 @@ public class SystemShowInTableAction extends SystemBaseAction
 		IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
 		try
 		{
-			viewPart = (SystemTableViewPart) page.showView("org.eclipse.rse.ui.view.systemTableView", null, IWorkbenchPage.VIEW_CREATE);
+			viewPart = (SystemTableViewPart) page.showView("org.eclipse.rse.ui.view.systemTableView", null, IWorkbenchPage.VIEW_CREATE); //$NON-NLS-1$
 		}
 		catch (PartInitException e)
 		{

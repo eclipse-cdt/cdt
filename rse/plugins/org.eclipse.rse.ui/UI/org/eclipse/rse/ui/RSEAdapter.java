@@ -36,7 +36,7 @@ public abstract class RSEAdapter extends WorkbenchAdapter implements IRSEAdapter
 	 * @see org.eclipse.rse.ui.IRSEAdapter#getDescription(java.lang.Object)
 	 */
 	public String getDescription(Object object) {
-		return "";
+		return ""; //$NON-NLS-1$
 	}
 
 	/**

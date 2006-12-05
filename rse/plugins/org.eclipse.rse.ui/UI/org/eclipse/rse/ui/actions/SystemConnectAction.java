@@ -41,7 +41,7 @@ public class SystemConnectAction extends SystemBaseAction
 	  super(SystemResources.ACTION_CONNECT_LABEL,SystemResources.ACTION_CONNECT_TOOLTIP, shell);
 	  allowOnMultipleSelection(false);
 	  setContextMenuGroup(ISystemContextMenuConstants.GROUP_CONNECTION);
-    	setHelp(RSEUIPlugin.HELPPREFIX+"actn0047");
+    	setHelp(RSEUIPlugin.HELPPREFIX+"actn0047"); //$NON-NLS-1$
 	}
 	/**
 	 * Override of parent. Called when testing if action should be enabled base on current

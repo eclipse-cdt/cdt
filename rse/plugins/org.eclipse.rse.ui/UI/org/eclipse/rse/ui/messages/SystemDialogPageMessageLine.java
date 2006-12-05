@@ -273,7 +273,7 @@ public class SystemDialogPageMessageLine implements ISystemMessageLine, MouseLis
 	private void logMessage(SystemMessage message) {
 		Object[] subList = message.getSubVariables();
 		for (int i = 0; subList != null && i < subList.length; i++) {
-			String msg = message.getFullMessageID() + ": SUB#" + new Integer(i).toString() + ":" + message.getSubValue(subList[i]);
+			String msg = message.getFullMessageID() + ": SUB#" + new Integer(i).toString() + ":" + message.getSubValue(subList[i]); //$NON-NLS-1$ //$NON-NLS-2$
 			if (message.getIndicator() == SystemMessage.INFORMATION || message.getIndicator() == SystemMessage.INQUIRY || message.getIndicator() == SystemMessage.COMPLETION)
 				SystemBasePlugin.logInfo(msg);
 			else if (message.getIndicator() == SystemMessage.WARNING)
@@ -368,11 +368,11 @@ public class SystemDialogPageMessageLine implements ISystemMessageLine, MouseLis
 	 */
 	private void setIconToolTipText() {
 		SystemMessage msg = getCurrentMessage();
-		String tip = "";
+		String tip = ""; //$NON-NLS-1$
 		if (msg != null) {
 			//String levelTwo = msg.getLevelTwoText();
 			//if ((levelTwo!=null) && (levelTwo.length()>0))
-			tip = msg.getFullMessageID() + " " + SystemResources.RESID_MSGLINE_TIP;
+			tip = msg.getFullMessageID() + " " + SystemResources.RESID_MSGLINE_TIP; //$NON-NLS-1$
 		}
 		if (msgIconLabel != null) msgIconLabel.setToolTipText(tip);
 		if (msgTextLabel != null)

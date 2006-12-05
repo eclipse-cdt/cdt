@@ -76,7 +76,7 @@ public abstract class ServerLauncher extends RSEModelObject implements IServerLa
 		IPropertySet set = getPropertySet(vendorName);
 		if (set == null)
 		{
-			set = createPropertySet(vendorName, "");
+			set = createPropertySet(vendorName, ""); //$NON-NLS-1$
 		}
 		set.addProperty(attributeName, attributeValue);
 	}

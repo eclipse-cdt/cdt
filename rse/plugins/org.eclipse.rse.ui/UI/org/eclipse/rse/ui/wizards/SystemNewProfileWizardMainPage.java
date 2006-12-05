@@ -51,18 +51,18 @@ public class SystemNewProfileWizardMainPage
 	private boolean makeActive;
 	private SystemMessage errorMessage;
 	protected ISystemValidator nameValidator;
-	private static final String HELPID_PREFIX = RSEUIPlugin.HELPPREFIX + "wnpr";
+	private static final String HELPID_PREFIX = RSEUIPlugin.HELPPREFIX + "wnpr"; //$NON-NLS-1$
 		  
 	/**
 	 * Constructor.
 	 */
 	public SystemNewProfileWizardMainPage(Wizard wizard)
 	{
-		super(wizard, "NewProfile", 
+		super(wizard, "NewProfile",  //$NON-NLS-1$
 		      SystemResources.RESID_NEWPROFILE_PAGE1_TITLE, 
 		      SystemResources.RESID_NEWPROFILE_PAGE1_DESCRIPTION);
 		nameValidator = new ValidatorProfileName(RSEUIPlugin.getTheSystemRegistry().getAllSystemProfileNamesVector());
-		setHelp(HELPID_PREFIX+"0000");	
+		setHelp(HELPID_PREFIX+"0000");	 //$NON-NLS-1$
 	}
 
 	/**
@@ -81,14 +81,14 @@ public class SystemNewProfileWizardMainPage
 			composite_prompts, null, SystemResources.RESID_NEWPROFILE_NAME_LABEL, SystemResources.RESID_NEWPROFILE_NAME_TOOLTIP);
         textName.setTextLimit(ValidatorProfileName.MAX_PROFILENAME_LENGTH); // defect 41816			
 		//SystemWidgetHelpers.setHelp(textName, HELPID_PREFIX+"0001", HELPID_PREFIX+"0000");
-		SystemWidgetHelpers.setHelp(textName, HELPID_PREFIX+"0001");
+		SystemWidgetHelpers.setHelp(textName, HELPID_PREFIX+"0001"); //$NON-NLS-1$
 		
 		// Make active
 		makeActiveCB = SystemWidgetHelpers.createCheckBox(
 			composite_prompts, nbrColumns, null, SystemResources.RESID_NEWPROFILE_MAKEACTIVE_LABEL, SystemResources.RESID_NEWPROFILE_MAKEACTIVE_TOOLTIP);
 	    makeActiveCB.setSelection(true);
 		//SystemWidgetHelpers.setHelp(makeActiveCB, HELPID_PREFIX+"0002", HELPID_PREFIX+"0000");
-		SystemWidgetHelpers.setHelp(makeActiveCB, HELPID_PREFIX+"0002");
+		SystemWidgetHelpers.setHelp(makeActiveCB, HELPID_PREFIX+"0002"); //$NON-NLS-1$
 		
 		// Verbage
 		addGrowableFillerLine(composite_prompts, nbrColumns);

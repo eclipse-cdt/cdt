@@ -59,7 +59,7 @@ public class RSENewConnectionWizardDefaultDelegateMainPage
 													String title,
 													String description)
 	{
-		super(wizard, "NewConnection", title, description);
+		super(wizard, "NewConnection", title, description); //$NON-NLS-1$
         parentHelpId = RSEUIPlugin.HELPPREFIX + "wncc0000"; //$NON-NLS-1$
 	    setHelp(parentHelpId);
 	    this.delegate = delegate;

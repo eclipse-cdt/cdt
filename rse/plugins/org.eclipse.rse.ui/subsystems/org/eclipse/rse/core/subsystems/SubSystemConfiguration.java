@@ -164,7 +164,7 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 	{
 		super();
 		//initSubSystems();
-		SystemBasePlugin.logDebugMessage(this.getClass().getName(), "STARTED SSFACTORY");
+		SystemBasePlugin.logDebugMessage(this.getClass().getName(), "STARTED SSFACTORY"); //$NON-NLS-1$
 	}
 	
 
@@ -497,13 +497,13 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 
 		// Get configured property page extenders
 		IConfigurationElement[] propertyPageExtensions =
-			registry.getConfigurationElementsFor("org.eclipse.ui", "propertyPages");
+			registry.getConfigurationElementsFor("org.eclipse.ui", "propertyPages"); //$NON-NLS-1$ //$NON-NLS-2$
 			
 		for (int i = 0; i < propertyPageExtensions.length; i++)
 		{
 			IConfigurationElement configurationElement = propertyPageExtensions[i];
-			String objectClass = configurationElement.getAttribute("objectClass");
-			String name = configurationElement.getAttribute("name");
+			String objectClass = configurationElement.getAttribute("objectClass"); //$NON-NLS-1$
+			String name = configurationElement.getAttribute("name"); //$NON-NLS-1$
 			Class objCls = null;
 			try
 			{
@@ -519,7 +519,7 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 			{
 				try
 				{
-					PropertyPage page = (PropertyPage) configurationElement.createExecutableExtension("class");
+					PropertyPage page = (PropertyPage) configurationElement.createExecutableExtension("class"); //$NON-NLS-1$
 					page.setTitle(name);
 					propertyPages.add(page);
 				}
@@ -826,7 +826,7 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 	{
 		ISystemValidator userIdValidator =
 			new ValidatorSpecialChar(
-				"=;",
+				"=;", //$NON-NLS-1$
 				false,
 				RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_VALIDATE_USERID_NOTVALID),
 				RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_VALIDATE_USERID_EMPTY));
@@ -1215,7 +1215,7 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 			}
 			catch (Exception exc)
 			{
-				SystemBasePlugin.logError("Error saving new subsystem " + subsys.getName(), exc);
+				SystemBasePlugin.logError("Error saving new subsystem " + subsys.getName(), exc); //$NON-NLS-1$
 			}
 				  	    	
 			addSubSystem(subsys); // only add to list even if save was not successful.   
@@ -1336,7 +1336,7 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 			catch (Exception exc)
 			{
 				lastExc = exc;
-				SystemBasePlugin.logError("Error saving cloned subsystem " + subsys.getName(), exc);
+				SystemBasePlugin.logError("Error saving cloned subsystem " + subsys.getName(), exc); //$NON-NLS-1$
 			}
 			addSubSystem(subsys); // only add to list even if save was not successful.   	  	    	        	      	
 			if (lastExc != null)
@@ -1670,7 +1670,7 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 			ISystemFilterPoolReferenceManager refMgr = selectedSubSystem.getSystemFilterPoolReferenceManager();
 			ISystemFilterPool[] refdPools = refMgr.getReferencedSystemFilterPools();
 			if (refdPools.length == 0)
-				SystemBasePlugin.logInfo("SubSystemConfigurationImpl::getSubSystemActions - getReferencedSystemFilterPools returned array of length zero.");
+				SystemBasePlugin.logInfo("SubSystemConfigurationImpl::getSubSystemActions - getReferencedSystemFilterPools returned array of length zero."); //$NON-NLS-1$
 			// so there already exists references to more than one filter pool, but it might simply be a reference
 			//  to the default filter pool in the user's profile and another to reference to the default filter pool in
 			//  the team profile... let's see...
@@ -1773,7 +1773,7 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 		//return name.equalsIgnoreCase("private");
 		ISystemProfile profile = getSystemProfile(mgr);
 		//System.out.println("Testing for user private profile for mgr " + mgr.getName() + ": " + profile.isDefaultPrivate());;
-		return profile.isDefaultPrivate() || mgr.getName().equalsIgnoreCase("private");
+		return profile.isDefaultPrivate() || mgr.getName().equalsIgnoreCase("private"); //$NON-NLS-1$
 	}
 
 	/**
@@ -1867,7 +1867,7 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 			}
 			catch (Exception exc)
 			{
-				SystemBasePlugin.logError("Restore/Creation of SystemFilterPoolManager " + getFilterPoolManagerName(profile) + " failed!", exc);
+				SystemBasePlugin.logError("Restore/Creation of SystemFilterPoolManager " + getFilterPoolManagerName(profile) + " failed!", exc); //$NON-NLS-1$ //$NON-NLS-2$
 				SystemMessageDialog.displayExceptionMessage(null, exc);
 				return null; // something very bad happend!           	  
 			}
@@ -2015,10 +2015,10 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 			if (ss.getSystemProfile() != profile) // if restoring subsystem's profile != found pool's profile
 			{
 				IHost conn = ss.getHost();
-				String connectionName = conn.getSystemProfileName() + "." + conn.getAliasName();
+				String connectionName = conn.getSystemProfileName() + "." + conn.getAliasName(); //$NON-NLS-1$
 				SystemMessage sysMsg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_LOADING_PROFILE_SHOULDBE_ACTIVATED);
 				sysMsg.makeSubstitution(missingPoolMgrName, connectionName);
-				SystemBasePlugin.logWarning(sysMsg.getFullMessageID() + ": " + sysMsg.getLevelOneText());
+				SystemBasePlugin.logWarning(sysMsg.getFullMessageID() + ": " + sysMsg.getLevelOneText()); //$NON-NLS-1$
 				if (brokenReferenceWarningsIssued.get(missingPoolMgrName) == null)
 				{
 					SystemMessageDialog msgDlg = new SystemMessageDialog(null, sysMsg);
@@ -2644,7 +2644,7 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 	 */
 	public IServerLauncherProperties createServerLauncher(IConnectorService connectorService)
 	{
-		IRemoteServerLauncher sl = new RemoteServerLauncher("Remote Server Launcher", connectorService);
+		IRemoteServerLauncher sl = new RemoteServerLauncher("Remote Server Launcher", connectorService); //$NON-NLS-1$
 		String systemType = connectorService.getHostType();
 		
 		if (systemType.equals(IRSESystemType.SYSTEMTYPE_LINUX) ||
@@ -2803,7 +2803,7 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 		}
 		catch (Exception exc)
 		{
-			handleException("Exception saving filter pools for manager " + mgr.getName(), exc);
+			handleException("Exception saving filter pools for manager " + mgr.getName(), exc); //$NON-NLS-1$
 			throw exc;
 		}
 	}
@@ -2833,7 +2833,7 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 			}
 			catch (Exception exc)
 			{
-				SystemBasePlugin.logError("Error saving new subsystem " + subsys.getName(), exc);
+				SystemBasePlugin.logError("Error saving new subsystem " + subsys.getName(), exc); //$NON-NLS-1$
 			}
 			addSubSystem(subsys); // only add to list even if save was not successful.   	  	    	        	      	
 			//if (lastExc != null)
@@ -2942,7 +2942,7 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 	{
 		StringBuffer nameBuf = new StringBuffer();
 		nameBuf.append(profileName);
-		nameBuf.append(":");
+		nameBuf.append(":"); //$NON-NLS-1$
 		nameBuf.append(factoryId);
 		/*
 		String name = SystemResources.RESID_DEFAULT_FILTERPOOL;

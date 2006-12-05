@@ -66,7 +66,7 @@ public class SystemCascadingRemoteServersAction extends SystemBaseSubMenuAction 
 		IStructuredSelection selection = getSelection();
 		if( selection == null )
 		{
-			subMenu.add(new SystemBaseAction("Programming error. Selection is null! ", null));
+			subMenu.add(new SystemBaseAction("Programming error. Selection is null! ", null)); //$NON-NLS-1$
 			return;
 		} // end if(nothing is selected)
 		Object firstSelection = selection.getFirstElement();

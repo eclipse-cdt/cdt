@@ -180,7 +180,7 @@ public class SystemViewLabelAndContentProvider extends LabelProvider
     	ISystemViewElementAdapter adapter = null;    	
     	if (o == null)
     	{
-    	  	SystemBasePlugin.logWarning("ERROR: null passed to getAdapter in SystemViewLabelAndContentProvider");    	  
+    	  	SystemBasePlugin.logWarning("ERROR: null passed to getAdapter in SystemViewLabelAndContentProvider");    	   //$NON-NLS-1$
     	}
     	else
     	{
@@ -196,7 +196,7 @@ public class SystemViewLabelAndContentProvider extends LabelProvider
     	  	{
     	  		if (!(o instanceof PendingUpdateAdapter))
     	  		{
-        	    	SystemBasePlugin.logWarning("ADAPTER IS NULL FOR ELEMENT OF TYPE: " + o.getClass().getName());
+        	    	SystemBasePlugin.logWarning("ADAPTER IS NULL FOR ELEMENT OF TYPE: " + o.getClass().getName()); //$NON-NLS-1$
     	  		}
     	  	}
     	}
@@ -218,7 +218,7 @@ public class SystemViewLabelAndContentProvider extends LabelProvider
     	  	}
     	}
     	else if (viewer == null)
-    	  	SystemBasePlugin.logWarning("VIEWER IS NULL FOR SYSTEMVIEWLABELANDCONTENTPROVIDER");    	
+    	  	SystemBasePlugin.logWarning("VIEWER IS NULL FOR SYSTEMVIEWLABELANDCONTENTPROVIDER");    	 //$NON-NLS-1$
     	return adapter;
     }
     

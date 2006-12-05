@@ -181,14 +181,14 @@ public class SystemPortPrompt
 	    {
 	      String localPort = null;
 
-		  localPort = "" + port;		  
+		  localPort = "" + port;		   //$NON-NLS-1$
 		  int iPort = port;
 		  if (!portEditable) // applicable but not editable
 		    labelPort.setText(localPort);
 		  else // editable 
 		  {
 		    textPort.setLocalText(localPort);
-		    textPort.setInheritedText("0 "+SystemPropertyResources.RESID_PORT_DYNAMICSELECT);
+		    textPort.setInheritedText("0 "+SystemPropertyResources.RESID_PORT_DYNAMICSELECT); //$NON-NLS-1$
 		    textPort.setLocal(iPort != 0);	    
 		  }
 	    }
@@ -244,7 +244,7 @@ public class SystemPortPrompt
 	      }
 		  if (portValidator != null)
 	        errorMessage= portValidator.validate(textPort.getText().trim());
-	      else if (internalGetPort().equals(""))
+	      else if (internalGetPort().equals("")) //$NON-NLS-1$
 		    errorMessage = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_VALIDATE_USERID_EMPTY);
 	    }
 	    if (errorMessage == null)
@@ -311,7 +311,7 @@ public class SystemPortPrompt
 	protected void createPortPrompt(Composite composite_prompts, boolean wantLabel)
 	{
 		// Port prompt
-		String portRange = " (1-" + ValidatorPortInput.MAXIMUM_PORT_NUMBER + ")";
+		String portRange = " (1-" + ValidatorPortInput.MAXIMUM_PORT_NUMBER + ")"; //$NON-NLS-1$ //$NON-NLS-2$
 		if (wantLabel) {
 			String labelText = SystemWidgetHelpers.appendColon(SystemResources.RESID_SUBSYSTEM_PORT_LABEL + portRange);
 			/*labelPortPrompt =*/ SystemWidgetHelpers.createLabel(composite_prompts, labelText);
@@ -326,7 +326,7 @@ public class SystemPortPrompt
 	    }
 	    else
 	    {
-	      String labelValue = " ";
+	      String labelValue = " "; //$NON-NLS-1$
 	      if (!portApplicable)
 	        labelValue = getTranslatedNotApplicable();
 	      labelPort = SystemWidgetHelpers.createLabel(composite_prompts, labelValue);

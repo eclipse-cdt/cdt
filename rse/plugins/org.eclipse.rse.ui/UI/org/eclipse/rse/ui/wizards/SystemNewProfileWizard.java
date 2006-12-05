@@ -53,7 +53,7 @@ public class      SystemNewProfileWizard
 	      //super.addPages();
 	   } catch (Exception exc)
 	   {
-	   	 SystemBasePlugin.logError("New connection: Error in createPages: ",exc);
+	   	 SystemBasePlugin.logError("New connection: Error in createPages: ",exc); //$NON-NLS-1$
 	   }
 	}
 
@@ -88,7 +88,7 @@ public class      SystemNewProfileWizard
                  sr.createSystemProfile(name,makeActive);
             } catch (Exception exc)
             {
-               	 String msg = "Exception creating profile ";
+               	 String msg = "Exception creating profile "; //$NON-NLS-1$
                	 SystemBasePlugin.logError(msg,exc);
                	 //System.out.println(msg + exc.getMessage() + ": " + exc.getClass().getName());
                	 SystemMessageDialog.displayExceptionMessage(getShell(),exc);

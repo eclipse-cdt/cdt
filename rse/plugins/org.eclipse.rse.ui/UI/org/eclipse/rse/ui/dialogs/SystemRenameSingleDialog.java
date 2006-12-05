@@ -107,7 +107,7 @@ public class SystemRenameSingleDialog extends SystemPromptDialog
 	{
 		this(shell, SystemResources.RESID_RENAME_TITLE);	
 		String singleTitle = SystemResources.RESID_RENAME_SINGLE_TITLE;
-		if (!singleTitle.startsWith("Missing")) // TODO: remove test after next mri rev         	
+		if (!singleTitle.startsWith("Missing")) // TODO: remove test after next mri rev         	 //$NON-NLS-1$
 			setTitle(singleTitle);							
 	}
 	/**
@@ -170,7 +170,7 @@ public class SystemRenameSingleDialog extends SystemPromptDialog
 		{
   	      	setHelp(RSEUIPlugin.HELPPREFIX+"drns0000"); //$NON-NLS-1$
 			String singleTitle = SystemResources.RESID_RENAME_SINGLE_TITLE;
-			if (!singleTitle.startsWith("Missing")) // TODO: remove test after next mri rev         	
+			if (!singleTitle.startsWith("Missing")) // TODO: remove test after next mri rev         	 //$NON-NLS-1$
 				setTitle(singleTitle);							
 			else
   	      		setTitle(SystemResources.RESID_RENAME_TITLE); // older string we know exists			
@@ -337,7 +337,7 @@ public class SystemRenameSingleDialog extends SystemPromptDialog
 
 		  if (copyCollisionMode)
 		  {
-            verbageLabel.setText(SystemMessage.sub(SystemResources.RESID_COLLISION_RENAME_VERBAGE, "&1", inputName));
+            verbageLabel.setText(SystemMessage.sub(SystemResources.RESID_COLLISION_RENAME_VERBAGE, "&1", inputName)); //$NON-NLS-1$
 		  }
 		 
 		  
@@ -420,7 +420,7 @@ public class SystemRenameSingleDialog extends SystemPromptDialog
 					RSEUIPlugin.getTheSystemRegistry().clearRunnableContext();
 		  	        names = ra.getRemoteParentNamesInUse(shell, inputElement);
 					RSEUIPlugin.getTheSystemRegistry().setRunnableContext(shell, irc);		  	        
-		  	  } catch (Exception exc) {SystemBasePlugin.logError("Exception getting parent's child names in rename dialog",exc);}		  			
+		  	  } catch (Exception exc) {SystemBasePlugin.logError("Exception getting parent's child names in rename dialog",exc);}		  			 //$NON-NLS-1$
 		  	  if ((names != null) && (names.length>0))
 		  	  {
 		  		    uniqueNameValidator = new ValidatorUniqueString(names,caseSensitive);
@@ -428,9 +428,9 @@ public class SystemRenameSingleDialog extends SystemPromptDialog
 		                                                 RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_VALIDATE_NAME_NOTUNIQUE));
 		            if (debug)
 		            {
-		  		      System.out.println("Name validator set. Names = ");
+		  		      System.out.println("Name validator set. Names = "); //$NON-NLS-1$
 		  		      for (int idx=0; idx<names.length; idx++)
-		  		         System.out.println("..."+idx+": "+names[idx]);
+		  		         System.out.println("..."+idx+": "+names[idx]); //$NON-NLS-1$ //$NON-NLS-2$
 		            }
 		  	  }
     		  // Restore cursor

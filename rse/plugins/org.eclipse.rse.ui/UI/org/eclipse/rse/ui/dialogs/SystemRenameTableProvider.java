@@ -108,7 +108,7 @@ public class SystemRenameTableProvider implements ITableLabelProvider, IStructur
 	 */
 	public String getColumnText(Object element, int column) 
 	{
-		String text = "";
+		String text = ""; //$NON-NLS-1$
 		if (column == COLUMN_OLDNAME)
 		  text = getTableRow(element).getName();
 		else if (column == COLUMN_NEWNAME)

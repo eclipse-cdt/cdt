@@ -31,7 +31,7 @@ public class SystemSearchUI {
 	private static SystemSearchUI instance;
 	
 	// search view id
-	public static final String SEARCH_RESULT_VIEW_ID = "org.eclipse.rse.ui.view.SystemSearchView";
+	public static final String SEARCH_RESULT_VIEW_ID = "org.eclipse.rse.ui.view.SystemSearchView"; //$NON-NLS-1$
 	
 	/**
 	 * Constructor for SystemSearchUI.
@@ -65,7 +65,7 @@ public class SystemSearchUI {
 			searchView = (SystemSearchViewPart)(SystemBasePlugin.getActiveWorkbenchWindow().getActivePage().showView(SystemSearchUI.SEARCH_RESULT_VIEW_ID));
 		}
 		catch (PartInitException e) {
-			SystemBasePlugin.logError("Can not open search result view", e);
+			SystemBasePlugin.logError("Can not open search result view", e); //$NON-NLS-1$
 		}
 		
 		return searchView;

@@ -610,7 +610,7 @@ public class SubSystemConfigurationAdapter implements ISubSystemConfigurationAda
 				ISystemFilterPoolReferenceManager refMgr = selectedSubSystem.getSystemFilterPoolReferenceManager();
 				ISystemFilterPool[] refdPools = refMgr.getReferencedSystemFilterPools();
 				if (refdPools.length == 0)
-					SystemBasePlugin.logInfo("SubSystemConfigurationImpl::getSubSystemActions - getReferencedSystemFilterPools returned array of length zero.");
+					SystemBasePlugin.logInfo("SubSystemConfigurationImpl::getSubSystemActions - getReferencedSystemFilterPools returned array of length zero."); //$NON-NLS-1$
 				// so there already exists references to more than one filter pool, but it might simply be a reference
 				//  to the default filter pool in the user's profile and another to reference to the default filter pool in
 				//  the team profile... let's see...
@@ -1436,8 +1436,8 @@ public class SubSystemConfigurationAdapter implements ISubSystemConfigurationAda
 					}
 					catch (Exception exc)
 					{
-						SystemBasePlugin.logError("Unexpected error renaming default filter pool " + SubSystemConfiguration.getDefaultFilterPoolName(newProfileName, factory.getId()), exc);
-						System.out.println("Unexpected error renaming default filter pool " + SubSystemConfiguration.getDefaultFilterPoolName(newProfileName, factory.getId()) + ": " + exc);
+						SystemBasePlugin.logError("Unexpected error renaming default filter pool " + SubSystemConfiguration.getDefaultFilterPoolName(newProfileName, factory.getId()), exc); //$NON-NLS-1$
+						System.out.println("Unexpected error renaming default filter pool " + SubSystemConfiguration.getDefaultFilterPoolName(newProfileName, factory.getId()) + ": " + exc); //$NON-NLS-1$ //$NON-NLS-2$
 					}
 			}					
 		}

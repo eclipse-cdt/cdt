@@ -64,7 +64,7 @@ public class SystemChangeFilterPropertyPage extends SystemBasePropertyPage
 		RSEUIPlugin sp = RSEUIPlugin.getDefault();
 		changeFilterPane = new SystemChangeFilterPane(null, this, this);
 		changeFilterPane.addPageCompleteListener(this);
-		setHelp(RSEUIPlugin.HELPPREFIX+"dufr0000");	
+		setHelp(RSEUIPlugin.HELPPREFIX+"dufr0000");	 //$NON-NLS-1$
 	}
 
 	// INPUT/CONFIGURATION
@@ -195,7 +195,7 @@ public class SystemChangeFilterPropertyPage extends SystemBasePropertyPage
 		Shell shell = getShell();
 		if (shell == null)
 		{
-			System.out.println("Damn, shell is still null!");
+			System.out.println("Damn, shell is still null!"); //$NON-NLS-1$
 			
 		}
 		changeFilterPane.setShell(shell);

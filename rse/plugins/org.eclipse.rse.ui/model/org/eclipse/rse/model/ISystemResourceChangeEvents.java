@@ -246,5 +246,5 @@ public interface ISystemResourceChangeEvents
      * Predefined event object for a property sheet update.
      */
     public static final ISystemResourceChangeEvent PROPERTYSHEET_UPDATE_EVENT = 
-      new SystemResourceChangeEvent("dummy",EVENT_PROPERTYSHEET_UPDATE,null);
+      new SystemResourceChangeEvent("dummy",EVENT_PROPERTYSHEET_UPDATE,null); //$NON-NLS-1$
 }

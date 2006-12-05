@@ -230,13 +230,13 @@ public class SystemViewConnectionAdapter
 		if (translatedDescription == null)
 		  translatedDescription = SystemViewResources.RESID_PROPERTY_CONNDESCRIPTION_LABEL;
 		String statusText = 
-		        getType(element)   + ": " + conn.getAliasName() + "  -  " + 
-		        translatedHostname + ": " + conn.getHostName();
+		        getType(element)   + ": " + conn.getAliasName() + "  -  " +  //$NON-NLS-1$ //$NON-NLS-2$
+		        translatedHostname + ": " + conn.getHostName(); //$NON-NLS-1$
 		String text = conn.getDescription();
 		if ((text==null) || (text.length()==0))
 		   return statusText;
 		else 
-		   return statusText + "  -  " + translatedDescription + ": " + text;
+		   return statusText + "  -  " + translatedDescription + ": " + text; //$NON-NLS-1$ //$NON-NLS-2$
 	}
 			
 	/**
@@ -280,7 +280,7 @@ public class SystemViewConnectionAdapter
 		}
 		else
 		{
-		    System.out.println("SystemViewConnection.getChildren(): adapter has no input!");
+		    System.out.println("SystemViewConnection.getChildren(): adapter has no input!"); //$NON-NLS-1$
 		    return null;
 		}
 	}

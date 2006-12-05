@@ -67,7 +67,7 @@ public class ValidatorFilterName
 
 	public String toString()
 	{
-		return "FilterNameValidator class";
+		return "FilterNameValidator class"; //$NON-NLS-1$
 	}
  
     // ---------------------------

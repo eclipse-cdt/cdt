@@ -31,12 +31,9 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.rse.core.model.ISystemContainer;
 import org.eclipse.rse.core.subsystems.ISubSystem;
-import org.eclipse.rse.core.subsystems.SubSystem;
 import org.eclipse.rse.model.ISystemRegistryUI;
-import org.eclipse.rse.model.ISystemRemoteChangeEvents;
 import org.eclipse.rse.model.ISystemResourceChangeEvents;
 import org.eclipse.rse.model.SystemRegistry;
-import org.eclipse.rse.model.SystemRemoteChangeEvent;
 import org.eclipse.rse.model.SystemResourceChangeEvent;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.ui.ISystemMessages;
@@ -66,7 +63,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Group;
-import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Scale;
 import org.eclipse.swt.widgets.Text;
@@ -93,7 +89,7 @@ FocusListener
 		private Object _inputObject;
 		private SystemTableTreeView _viewer;
 		
-			public PollingThread()
+		public PollingThread()
 		{	
 			_viewer = getViewer();
 			_inputObject = _viewer.getInput();
@@ -327,7 +323,6 @@ FocusListener
 		{
 			Tree tree = _viewer.getTree();
 
-			Display display = _viewer.getShell().getDisplay();
 			Color bgcolour = _tabFolderPage.getBackground();
 
 			tree.setBackground(bgcolour);
@@ -351,7 +346,7 @@ FocusListener
 		_pollCheckbox.setLayoutData(pg);
 		
 		_pollingInterval = 100;
-		Label label = SystemWidgetHelpers.createLabel(inputContainer, SystemResources.RESID_MONITOR_POLL_INTERVAL_LABEL);
+		SystemWidgetHelpers.createLabel(inputContainer, SystemResources.RESID_MONITOR_POLL_INTERVAL_LABEL);
 
 		_scale = new Scale(inputContainer, SWT.NULL);
 		_scale.setMaximum(200);
@@ -370,7 +365,7 @@ FocusListener
 					public void widgetSelected(SelectionEvent e)
 					{						
 						_pollingInterval = _scale.getSelection();						
-						_scaleValue.setText(_pollingInterval + "s");
+						_scaleValue.setText(_pollingInterval + "s"); //$NON-NLS-1$
 						
 						if (_pollingThread != null)
 							_pollingThread.interrupt();
@@ -386,7 +381,7 @@ FocusListener
 		_scaleValue.setTextLimit(5);
 		GridData scgd = new GridData(GridData.HORIZONTAL_ALIGN_END);
 		_scaleValue.setLayoutData(scgd);
-		_scaleValue.setText(_pollingInterval + "s");
+		_scaleValue.setText(_pollingInterval + "s"); //$NON-NLS-1$
 				
 	
 	
@@ -441,7 +436,7 @@ FocusListener
 		});
 
 		
-		SystemWidgetHelpers.setHelp(_viewer.getControl(), RSEUIPlugin.HELPPREFIX + "ucmd0000");
+		SystemWidgetHelpers.setHelp(_viewer.getControl(), RSEUIPlugin.HELPPREFIX + "ucmd0000"); //$NON-NLS-1$
 
 		//TableLayout layout = new TableLayout();
 		//tree.setLayout(layout);
@@ -468,10 +463,10 @@ FocusListener
 			return;
 
 		ISystemViewElementAdapter adapter = (ISystemViewElementAdapter) ((IAdaptable) element).getAdapter(ISystemViewElementAdapter.class);
-		boolean alreadyHandled = false;
+
 		if (adapter != null)
 		{
-			alreadyHandled = adapter.handleDoubleClick(element);
+			adapter.handleDoubleClick(element);
 		}
 	}
 
@@ -534,7 +529,6 @@ FocusListener
 
 	public void updateActionStates()
 	{
-		Object input = _viewer.getInput();
 	}
 
 	public void widgetDefaultSelected(SelectionEvent e)

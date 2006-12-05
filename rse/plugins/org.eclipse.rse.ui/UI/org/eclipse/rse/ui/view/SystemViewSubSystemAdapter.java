@@ -111,7 +111,7 @@ public class SystemViewSubSystemAdapter extends AbstractSystemViewAdapter
 		}
 		else
 		{
-	      SystemBasePlugin.logWarning("Unexpected error: ssFactory is null for ss " + ss.getName());
+	      SystemBasePlugin.logWarning("Unexpected error: ssFactory is null for ss " + ss.getName()); //$NON-NLS-1$
 	      return null;
 		}
 	}
@@ -139,7 +139,7 @@ public class SystemViewSubSystemAdapter extends AbstractSystemViewAdapter
 	public String getAbsoluteName(Object element)
 	{
 		ISubSystem ss = (ISubSystem)element;
-		return ss.getSystemProfileName() + "." + ss.getHostAliasName() + "." + ss.getName();
+		return ss.getSystemProfileName() + "." + ss.getHostAliasName() + "." + ss.getName(); //$NON-NLS-1$ //$NON-NLS-2$
 	}		
 	/**
 	 * Return the type label for this object
@@ -373,8 +373,8 @@ public class SystemViewSubSystemAdapter extends AbstractSystemViewAdapter
 			boolean connected = false;
 			if (system == null)
 			{
-			  System.out.println("SystemViewSubSystemAdapter: Error! system is null for subsystem "+ss.getClass().getName());
-			  SystemBasePlugin.logError("SystemViewSubSystemAdapter: Error! system is null for subsystem "+ss.getClass().getName(), null);
+			  System.out.println("SystemViewSubSystemAdapter: Error! system is null for subsystem "+ss.getClass().getName()); //$NON-NLS-1$
+			  SystemBasePlugin.logError("SystemViewSubSystemAdapter: Error! system is null for subsystem "+ss.getClass().getName(), null); //$NON-NLS-1$
 			}
 			else  
 			  connected = system.isConnected();
@@ -575,13 +575,13 @@ public class SystemViewSubSystemAdapter extends AbstractSystemViewAdapter
 	{
 		if (target instanceof ISubSystem)
 		{
-			if (name.equalsIgnoreCase("serverLaunchPP"))
+			if (name.equalsIgnoreCase("serverLaunchPP")) //$NON-NLS-1$
 			{
 				ISubSystem ss = (ISubSystem)target;
 				boolean supports = ss.getSubSystemConfiguration().supportsServerLaunchProperties(ss.getHost());
-				return supports ? value.equals("true") : value.equals("false");
+				return supports ? value.equals("true") : value.equals("false"); //$NON-NLS-1$ //$NON-NLS-2$
 			}
-			else if (name.equalsIgnoreCase("envVarPP"))
+			else if (name.equalsIgnoreCase("envVarPP")) //$NON-NLS-1$
 			{
 				/** FIXME can't access specific subsystems from core anymore
 				boolean supports = false;
@@ -591,13 +591,13 @@ public class SystemViewSubSystemAdapter extends AbstractSystemViewAdapter
 					supports = ((IRemoteCmdSubSystemConfiguration)ss.getParentSubSystemConfiguration()).supportsEnvironmentVariablesPropertyPage();
 				*/
 				boolean supports = false;
-				return supports ? value.equals("true") : value.equals("false");
+				return supports ? value.equals("true") : value.equals("false"); //$NON-NLS-1$ //$NON-NLS-2$
 			}
-			else if (name.equalsIgnoreCase("isConnectionError"))
+			else if (name.equalsIgnoreCase("isConnectionError")) //$NON-NLS-1$
 			{
 				ISubSystem ss = (ISubSystem) target;
 				boolean error = ss.isConnectionError();
-				return error ? value.equals("true") : value.equals("false");
+				return error ? value.equals("true") : value.equals("false"); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 		}
 		return super.testAttribute(target, name, value);
@@ -710,7 +710,7 @@ public class SystemViewSubSystemAdapter extends AbstractSystemViewAdapter
 	{
 		ISubSystem ss = (ISubSystem)element;
 		ISubSystemConfiguration ssf = ss.getSubSystemConfiguration();
-		return ssf.getId()+"="+ss.getName();
+		return ssf.getId()+"="+ss.getName(); //$NON-NLS-1$
 	}
 	/**
 	 * Return what to save to disk to identify this element when it is the input object to a secondary

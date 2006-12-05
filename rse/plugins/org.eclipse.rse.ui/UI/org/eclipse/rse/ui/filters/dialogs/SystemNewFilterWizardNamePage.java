@@ -70,7 +70,7 @@ public class SystemNewFilterWizardNamePage
 	 */
 	public SystemNewFilterWizardNamePage(SystemNewFilterWizard wizard, ISystemFilterPool parentPool, ISystemNewFilterWizardConfigurator data)
 	{
-		super(wizard, "SetNewFilterName", data.getPage2Title(), data.getPage2Description());	          
+		super(wizard, "SetNewFilterName", data.getPage2Title(), data.getPage2Description());	           //$NON-NLS-1$
 	    this.parentPool = parentPool;
 	    this.configurator = data;
 		setHelp(data.getPage2HelpID());
@@ -185,7 +185,7 @@ public class SystemNewFilterWizardNamePage
            	  	ISystemFilterPool pool = poolsToSelectFrom[idx];
            	  	if (pool == parentPool)
            	    	filterPoolSelectionIndex = idx;
-              	poolNames[idx] = pool.getSystemFilterPoolManager().getName()+"."+pool.getName();
+              	poolNames[idx] = pool.getSystemFilterPoolManager().getName()+"."+pool.getName(); //$NON-NLS-1$
            	}
            	if ((nameValidator == null) && (nameValidators!=null))
              	nameValidator = nameValidators[filterPoolSelectionIndex];

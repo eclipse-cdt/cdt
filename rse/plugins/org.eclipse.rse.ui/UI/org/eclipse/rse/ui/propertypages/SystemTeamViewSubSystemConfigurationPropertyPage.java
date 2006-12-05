@@ -112,7 +112,7 @@ public class SystemTeamViewSubSystemConfigurationPropertyPage extends SystemBase
 		labelName.setText(ssf.getName());
 		labelId.setText(proxy.getId());
 		labelVendor.setText(proxy.getVendor());
-		String systypes = "";
+		String systypes = ""; //$NON-NLS-1$
 		String[] types = ssf.getSystemTypes();
 		if (ssf.getSubSystemConfigurationProxy().supportsAllSystemTypes())
 		{
@@ -125,7 +125,7 @@ public class SystemTeamViewSubSystemConfigurationPropertyPage extends SystemBase
 				if (idx==0)
 					systypes += types[idx];
 				else
-					systypes += ", " + types[idx];
+					systypes += ", " + types[idx]; //$NON-NLS-1$
 			}
 		}
 		labelTypes.setText(systypes);		

@@ -45,11 +45,11 @@ public class SystemNewConnectionWizardRenameProfilePage
 	 */
 	public SystemNewConnectionWizardRenameProfilePage(Wizard wizard)
 	{
-		super(wizard, "RenamePrivateProfile", 
+		super(wizard, "RenamePrivateProfile",  //$NON-NLS-1$
 	          SystemResources.RESID_RENAMEDEFAULTPROFILE_PAGE1_TITLE,
 	          SystemResources.RESID_RENAMEDEFAULTPROFILE_PAGE1_DESCRIPTION);
 		form = getForm();
-		setHelp(RSEUIPlugin.HELPPREFIX + "wncp0000");
+		setHelp(RSEUIPlugin.HELPPREFIX + "wncp0000"); //$NON-NLS-1$
 	}
 
     /**

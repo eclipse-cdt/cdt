@@ -72,7 +72,7 @@ public class SystemRenameTableRow extends SystemDeleteTableRow
      */
     public static String trimTrailing(String text)
     {
-    	return ("."+text).trim().substring(1);
+    	return ("."+text).trim().substring(1); //$NON-NLS-1$
     }
     
     /**

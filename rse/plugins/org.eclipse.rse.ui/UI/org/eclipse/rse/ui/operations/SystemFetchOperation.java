@@ -211,7 +211,7 @@ public class SystemFetchOperation extends JobChangeAdapter implements IRunnableW
     	{
     	  String excMsg = exc.getMessage();
     	  if ((excMsg == null) || (excMsg.length()==0))
-    	    excMsg = "Exception " + exc.getClass().getName();
+    	    excMsg = "Exception " + exc.getClass().getName(); //$NON-NLS-1$
           sysMsg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_OPERATION_FAILED);
           sysMsg.makeSubstitution(excMsg);
     	

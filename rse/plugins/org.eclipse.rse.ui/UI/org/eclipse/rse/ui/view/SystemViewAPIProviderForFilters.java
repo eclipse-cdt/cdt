@@ -165,7 +165,7 @@ public class SystemViewAPIProviderForFilters
     	   } catch (Exception exc) {
 		        children[0] = new SystemMessageObject(RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_EXPAND_FAILED),
 		                                              ISystemMessageObject.MSGTYPE_ERROR, element);
-		     	SystemBasePlugin.logError("Exception prompting for filter ",exc);          
+		     	SystemBasePlugin.logError("Exception prompting for filter ",exc);           //$NON-NLS-1$
     	   }
     	   //RSEUIPlugin.logDebugMessage(this.getClass().getName(),"returning children");
     	   return children;
@@ -196,14 +196,14 @@ public class SystemViewAPIProviderForFilters
 		     	children = new SystemMessageObject[1];
 		        children[0] = new SystemMessageObject(RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_EXPAND_CANCELLED),
 		                                              ISystemMessageObject.MSGTYPE_CANCEL,element);
-		     	SystemBasePlugin.logDebugMessage(this.getClass().getName(),"Filter resolving canceled by user.");
+		     	SystemBasePlugin.logDebugMessage(this.getClass().getName(),"Filter resolving canceled by user."); //$NON-NLS-1$
 		     }
 		     catch (Exception exc)
 		     {
 		     	children = new SystemMessageObject[1];
 		        children[0] = new SystemMessageObject(RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_EXPAND_FAILED),
 		                                              ISystemMessageObject.MSGTYPE_ERROR, element);
-		     	SystemBasePlugin.logError("Exception resolving filters' strings ",exc);
+		     	SystemBasePlugin.logError("Exception resolving filters' strings ",exc); //$NON-NLS-1$
 		     } // message already issued
 
 			 if ((children == null) || (children.length==0))

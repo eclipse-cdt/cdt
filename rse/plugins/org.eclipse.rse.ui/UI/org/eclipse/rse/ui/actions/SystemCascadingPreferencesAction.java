@@ -44,7 +44,7 @@ public class SystemCascadingPreferencesAction
         setPopulateMenuEachTime(false);
         setSelectionSensitive(false);
                 
-		setHelp(RSEUIPlugin.HELPPREFIX+"actnpref");
+		setHelp(RSEUIPlugin.HELPPREFIX+"actnpref"); //$NON-NLS-1$
 	}
 
 	/**
@@ -58,7 +58,7 @@ public class SystemCascadingPreferencesAction
 		ourSubMenu.addMenuListener(this);
 		ourSubMenu.setRemoveAllWhenShown(true);
 		//menu.setEnabled(true);
-		ourSubMenu.add(new SystemBaseAction("dummy",null));
+		ourSubMenu.add(new SystemBaseAction("dummy",null)); //$NON-NLS-1$
 		
 		return ourSubMenu;
 	}

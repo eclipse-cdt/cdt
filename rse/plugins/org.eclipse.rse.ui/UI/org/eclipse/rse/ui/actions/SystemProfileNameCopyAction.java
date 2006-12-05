@@ -202,7 +202,7 @@ public class SystemProfileNameCopyAction extends SystemBaseDialogAction
     {
     	SystemMessageDialog msgDlg = new SystemMessageDialog(shell, RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_OPERATION_FAILED).makeSubstitution(exc.getMessage()));
     	msgDlg.open();
-        SystemBasePlugin.logError("Copy profile operation failed",exc);
+        SystemBasePlugin.logError("Copy profile operation failed",exc); //$NON-NLS-1$
     }	
     /**
      * Show an error message when the user cancels the operation.

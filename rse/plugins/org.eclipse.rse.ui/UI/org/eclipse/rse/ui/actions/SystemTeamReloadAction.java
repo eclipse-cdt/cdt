@@ -47,7 +47,7 @@ public class SystemTeamReloadAction extends SystemBaseAction
         allowOnMultipleSelection(false);
 		setContextMenuGroup(ISystemContextMenuConstants.GROUP_BUILD);        
         //setSelectionSensitive(false);        
-		setHelp(RSEUIPlugin.HELPPREFIX+"actn0009");
+		setHelp(RSEUIPlugin.HELPPREFIX+"actn0009"); //$NON-NLS-1$
 	}
 
 	/**

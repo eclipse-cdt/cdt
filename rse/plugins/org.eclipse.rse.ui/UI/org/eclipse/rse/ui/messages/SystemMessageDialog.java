@@ -171,9 +171,9 @@ public class SystemMessageDialog extends ErrorDialog implements Listener {
 		this(parentShell,
 			message.getFullMessageID(),
 			message.getLevelOneText(),
-			(new MultiStatus(SystemBasePlugin.getBaseDefault().getSymbolicName(), IStatus.OK, "", new Exception(""))),
+			(new MultiStatus(SystemBasePlugin.getBaseDefault().getSymbolicName(), IStatus.OK, "", new Exception(""))), //$NON-NLS-1$ //$NON-NLS-2$
 			 		0xFFFFF);
-		((MultiStatus)this.status).add(new Status(IStatus.INFO, SystemBasePlugin.getBaseDefault().getSymbolicName(), IStatus.OK, message.getLevelTwoText(),  new Exception("")));
+		((MultiStatus)this.status).add(new Status(IStatus.INFO, SystemBasePlugin.getBaseDefault().getSymbolicName(), IStatus.OK, message.getLevelTwoText(),  new Exception(""))); //$NON-NLS-1$
 		statusList = Arrays.asList(status.getChildren());
 		this.message=message;	
 	    initImage(message);
@@ -366,14 +366,14 @@ public class SystemMessageDialog extends ErrorDialog implements Listener {
 		Object[] subList=message.getSubVariables();
 		for (int i=0; subList!=null && i<subList.length; i++) 
 		{
-			String msg=message.getFullMessageID()+": SUB#"+new Integer(i).toString()+":"+message.getSubValue(subList[i]);
+			String msg=message.getFullMessageID()+": SUB#"+new Integer(i).toString()+":"+message.getSubValue(subList[i]); //$NON-NLS-1$ //$NON-NLS-2$
 			if (message.getIndicator()==SystemMessage.INFORMATION ||
 				message.getIndicator()==SystemMessage.COMPLETION ||
 				message.getIndicator()==SystemMessage.INQUIRY) 
 		    {
 				SystemBasePlugin.logInfo(msg);
 				if (i==subList.length-1 && message.getIndicator()==SystemMessage.INQUIRY)
-					SystemBasePlugin.logInfo(message.getFullMessageID()+" :Button ID Pressed:"+buttonIdPressed);
+					SystemBasePlugin.logInfo(message.getFullMessageID()+" :Button ID Pressed:"+buttonIdPressed); //$NON-NLS-1$
 			}			
 			else if (message.getIndicator()==SystemMessage.WARNING)
 				SystemBasePlugin.logWarning(msg);
@@ -443,7 +443,7 @@ public class SystemMessageDialog extends ErrorDialog implements Listener {
 	public boolean openQuestion() throws IndicatorException 
 	{
 		if (message.getIndicator()!=SystemMessage.INQUIRY)
-			throw new IndicatorException("Message "+message.getFullMessageID()+" is not an inquiry message.");
+			throw new IndicatorException("Message "+message.getFullMessageID()+" is not an inquiry message."); //$NON-NLS-1$ //$NON-NLS-2$
 		yesNoButtons=true;	
 		open();
 		return (buttonIdPressed==IDialogConstants.YES_ID);
@@ -528,14 +528,14 @@ public class SystemMessageDialog extends ErrorDialog implements Listener {
 		StringBuffer sb = new StringBuffer();
 		for (int i = 0; i < nesting; i++) 
 		{
-			sb.append("  ");
+			sb.append("  "); //$NON-NLS-1$
 		}
 		sb.append(status.getMessage());
 		list.append(sb.toString());
 		IStatus[] children = status.getChildren();
 		for (int i = 0; i < children.length; i++) 
 		{
-			list.append("\n");
+			list.append("\n"); //$NON-NLS-1$
 			populateList(list, children[i], nesting + 1);
 		}
 	}

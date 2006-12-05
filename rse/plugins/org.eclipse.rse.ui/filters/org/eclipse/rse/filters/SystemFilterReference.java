@@ -289,7 +289,7 @@ public class SystemFilterReference extends SystemReferencingObject implements IA
 		if (filter != null)
 		  return filter.getName();
 		else
-		  return "";
+		  return ""; //$NON-NLS-1$
 	}
 	
 	/**

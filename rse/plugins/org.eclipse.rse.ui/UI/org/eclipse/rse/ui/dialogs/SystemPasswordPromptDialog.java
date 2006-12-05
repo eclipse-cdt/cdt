@@ -69,7 +69,7 @@ public final class SystemPasswordPromptDialog extends SystemPromptDialog impleme
 	 */
 	public SystemPasswordPromptDialog(Shell shell) {
 		super(shell, SystemResources.RESID_PASSWORD_TITLE);
-		setHelp(RSEUIPlugin.HELPPREFIX + "pwdp0000");
+		setHelp(RSEUIPlugin.HELPPREFIX + "pwdp0000"); //$NON-NLS-1$
 	}
 
 	/**
@@ -192,7 +192,7 @@ public final class SystemPasswordPromptDialog extends SystemPromptDialog impleme
 		// DY:  align user ID checkbox with entry fields
 		// yantzi:5.1 move checkboxes to be below entry fields
 		if (connectorService.supportsUserId()) {
-			SystemWidgetHelpers.createLabel(composite_prompts, "");
+			SystemWidgetHelpers.createLabel(composite_prompts, ""); //$NON-NLS-1$
 			userIdPermanentCB = SystemWidgetHelpers.createCheckBox(composite_prompts, 1, this, SystemResources.RESID_PASSWORD_USERID_ISPERMANENT_LABEL,
 					SystemResources.RESID_PASSWORD_USERID_ISPERMANENT_TIP);
 			userIdPermanentCB.setEnabled(false);
@@ -201,7 +201,7 @@ public final class SystemPasswordPromptDialog extends SystemPromptDialog impleme
 		// Save signon information checkbox
 		// DY:  align password checkbox with entry fields
 		if (connectorService.supportsPassword()) {
-			SystemWidgetHelpers.createLabel(composite_prompts, "");
+			SystemWidgetHelpers.createLabel(composite_prompts, ""); //$NON-NLS-1$
 			savePasswordCB = SystemWidgetHelpers.createCheckBox(composite_prompts, 1, this, SystemResources.RESID_PASSWORD_SAVE_LABEL, SystemResources.RESID_PASSWORD_SAVE_TOOLTIP);
 			savePasswordCB.setSelection(savePassword);
 		}

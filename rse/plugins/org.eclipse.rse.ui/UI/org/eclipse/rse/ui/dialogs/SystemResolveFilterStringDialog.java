@@ -89,7 +89,7 @@ public class SystemResolveFilterStringDialog extends SystemTestFilterStringDialo
         String label = filterString;
 
         if ( label.length() > 30)
-           label = label.substring(0,30) + " ...";   // Use ... to show that not entire string is displayed
+           label = label.substring(0,30) + " ...";   // Use ... to show that not entire string is displayed //$NON-NLS-1$
         promptValue.setText(label);
 
 	    GridData data = new GridData();	

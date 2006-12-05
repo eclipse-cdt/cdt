@@ -44,7 +44,7 @@ import org.eclipse.swt.widgets.Display;
 public class SystemCommunicationsDaemon extends Thread {
 
 	
-	private static final String THREAD_NAME = "RSE daemon";	
+	private static final String THREAD_NAME = "RSE daemon";	 //$NON-NLS-1$
 
 	// Communication Daemon Request Handlers
 	private static Map handlers = new Hashtable(50);
@@ -130,12 +130,12 @@ public class SystemCommunicationsDaemon extends Thread {
 			} 
 			catch (IOException e) 
 			{
-				SystemBasePlugin.logError("RSE Communications daemon: Unable to close socket", e);
+				SystemBasePlugin.logError("RSE Communications daemon: Unable to close socket", e); //$NON-NLS-1$
 			} 
 			catch (InterruptedException e)
 			{
 				// some other thread interrupted this one (which should not happen
-				SystemBasePlugin.logError("SystemCommunicationsDaemon.halt", e);
+				SystemBasePlugin.logError("SystemCommunicationsDaemon.halt", e); //$NON-NLS-1$
 			}
 		}
 	}	
@@ -188,14 +188,14 @@ public class SystemCommunicationsDaemon extends Thread {
 				else
 				{
 					// handler not found
-					SystemBasePlugin.logWarning("SystemCommunicationsDaemon: Handler not found for key " + requestKey);
+					SystemBasePlugin.logWarning("SystemCommunicationsDaemon: Handler not found for key " + requestKey); //$NON-NLS-1$
 					socket.close();
 				}
 			}
 		} catch (IOException e) {
 			if (!halt) 
 			{
-				SystemBasePlugin.logError("CommunicationsDaemon, IOException occured during communications daemon request",e);
+				SystemBasePlugin.logError("CommunicationsDaemon, IOException occured during communications daemon request",e); //$NON-NLS-1$
 
 				fireStateChangeEvent(SystemCommunicationsDaemonEvent.STOPPED_IN_ERROR);			
 				
@@ -241,7 +241,7 @@ public class SystemCommunicationsDaemon extends Thread {
 	public synchronized void startDaemon(boolean displayErrors) {
 		if (!isRunning())
 		{
-			SystemBasePlugin.logDebugMessage("CommunicationsDaemon.startDaemon()", "Starting iSeries Communications Daemon");
+			SystemBasePlugin.logDebugMessage("CommunicationsDaemon.startDaemon()", "Starting iSeries Communications Daemon"); //$NON-NLS-1$ //$NON-NLS-2$
 
 			//yantzi:2.1.2 added boolean to suppress error messages when workbench is first being started
 			
@@ -257,7 +257,7 @@ public class SystemCommunicationsDaemon extends Thread {
 		}
 		else 
 		{
-			SystemBasePlugin.logDebugMessage("CommunicationsDaemon.startDaemon()",  "Daemon already started");
+			SystemBasePlugin.logDebugMessage("CommunicationsDaemon.startDaemon()",  "Daemon already started"); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}
 
@@ -273,7 +273,7 @@ public class SystemCommunicationsDaemon extends Thread {
 				_startAction.setActionLabelToStart();
 			}
 			
-			SystemBasePlugin.logDebugMessage("RSE CommunicationsDaemon.stopDaemon()", "Stopping iSeries Communications Daemon");
+			SystemBasePlugin.logDebugMessage("RSE CommunicationsDaemon.stopDaemon()", "Stopping iSeries Communications Daemon"); //$NON-NLS-1$ //$NON-NLS-2$
 			getInstance().halt();
 			
 			// Need to get rid of the old Thread object and create a new
@@ -284,7 +284,7 @@ public class SystemCommunicationsDaemon extends Thread {
 		}
 		else 
 		{
-			SystemBasePlugin.logDebugMessage("RSE CommunicationsDaemon.stopDaemon()",  "Daemon already stopped");
+			SystemBasePlugin.logDebugMessage("RSE CommunicationsDaemon.stopDaemon()",  "Daemon already stopped"); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}
 	

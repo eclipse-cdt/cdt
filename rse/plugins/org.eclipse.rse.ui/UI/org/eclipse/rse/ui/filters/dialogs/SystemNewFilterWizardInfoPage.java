@@ -35,7 +35,7 @@ public class SystemNewFilterWizardInfoPage
 	 */
 	public SystemNewFilterWizardInfoPage(SystemNewFilterWizard wizard, boolean filterPoolsShowing, ISystemNewFilterWizardConfigurator data)
 	{
-		super(wizard, "NewFilterPage3", data.getPage3Title(), data.getPage3Description());
+		super(wizard, "NewFilterPage3", data.getPage3Title(), data.getPage3Description()); //$NON-NLS-1$
 	    this.configurator = data;
 		//setHelp(data.getPage3HelpID());
 	}

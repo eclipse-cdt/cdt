@@ -42,7 +42,7 @@ public class SystemFilterPoolReference extends SystemPersistableReferencingObjec
 	
 	private SystemFilterContainerReferenceCommonMethods containerHelper = null;
 	private ISystemFilterPoolManager filterPoolManager = null;
-	public static final String DELIMITER = "___";
+	public static final String DELIMITER = "___"; //$NON-NLS-1$
 	public static final int DELIMITER_LENGTH = 3;
 
 	/**
@@ -150,7 +150,7 @@ public class SystemFilterPoolReference extends SystemPersistableReferencingObjec
 			String filterPoolName = getReferencedFilterPoolName();
 			filterPool = filterPoolManager.getSystemFilterPool(filterPoolName);
 			if (filterPool == null) {
-				Pattern p = Pattern.compile("(^.*):");
+				Pattern p = Pattern.compile("(^.*):"); //$NON-NLS-1$
 				Matcher m = p.matcher(filterPoolName);
 				if (m.find()) {
 					String profileName = m.group(1);

@@ -37,7 +37,7 @@ public class ValidatorUserId
 	 */
 	public ValidatorUserId(boolean isEmptyAllowed)
 	{
-		super("=;", isEmptyAllowed, RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_VALIDATE_USERID_NOTVALID), RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_VALIDATE_USERID_EMPTY));
+		super("=;", isEmptyAllowed, RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_VALIDATE_USERID_NOTVALID), RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_VALIDATE_USERID_EMPTY)); //$NON-NLS-1$
 	}
 
 	/**

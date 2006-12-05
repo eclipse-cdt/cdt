@@ -53,8 +53,8 @@ public class SystemFilterWorkWithFilterPoolsAction
 		setContextMenuGroup(ISystemContextMenuConstants.GROUP_WORKWITH);
 		allowOnMultipleSelection(false);
 		// set default action and dialog help 
-		setHelp(RSEUIPlugin.HELPPREFIX + "actn0044");
-		setDialogHelp(RSEUIPlugin.HELPPREFIX + "dwfp0000");		
+		setHelp(RSEUIPlugin.HELPPREFIX + "actn0044"); //$NON-NLS-1$
+		setDialogHelp(RSEUIPlugin.HELPPREFIX + "dwfp0000");		 //$NON-NLS-1$
 	}	
 	/**
 	 * Constructor when default label desired, and you want to choose between
@@ -73,8 +73,8 @@ public class SystemFilterWorkWithFilterPoolsAction
 			setContextMenuGroup(ISystemContextMenuConstants.GROUP_REORGANIZE);
 		allowOnMultipleSelection(false);
 		// set default action and dialog help 
-		setHelp(RSEUIPlugin.HELPPREFIX + "actn0044");
-		setDialogHelp(RSEUIPlugin.HELPPREFIX + "dwfp0000");		
+		setHelp(RSEUIPlugin.HELPPREFIX + "actn0044"); //$NON-NLS-1$
+		setDialogHelp(RSEUIPlugin.HELPPREFIX + "dwfp0000");		 //$NON-NLS-1$
 	}		
 	/**
 	 * Constructor when given the translated action label
@@ -85,8 +85,8 @@ public class SystemFilterWorkWithFilterPoolsAction
 		setContextMenuGroup(ISystemContextMenuConstants.GROUP_REORGANIZE); 
 		allowOnMultipleSelection(false);
 		// set default action and dialog help 
-		setHelp(RSEUIPlugin.HELPPREFIX + "actn0044");
-		setDialogHelp(RSEUIPlugin.HELPPREFIX + "dwfp0000");		
+		setHelp(RSEUIPlugin.HELPPREFIX + "actn0044"); //$NON-NLS-1$
+		setDialogHelp(RSEUIPlugin.HELPPREFIX + "dwfp0000");		 //$NON-NLS-1$
 	}
 
 

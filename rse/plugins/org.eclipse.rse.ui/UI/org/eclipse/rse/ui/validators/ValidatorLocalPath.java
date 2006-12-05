@@ -31,7 +31,7 @@ public class ValidatorLocalPath extends ValidatorPathName
 {
 
 
-    public static final boolean WINDOWS = System.getProperty("os.name").toLowerCase().indexOf("windows") >= 0;
+    public static final boolean WINDOWS = System.getProperty("os.name").toLowerCase().indexOf("windows") >= 0; //$NON-NLS-1$ //$NON-NLS-2$
     public static final char SEPCHAR = File.separatorChar;
     
 	/**

@@ -125,7 +125,7 @@ public final class SystemPasswordPersistencePrompt extends SystemPromptDialog im
 	protected boolean processOK() {
 		// Check for blank fields
 		String sHostName = hostname.getText();
-		if (sHostName == null || sHostName.trim().equals(""))
+		if (sHostName == null || sHostName.trim().equals("")) //$NON-NLS-1$
 		{
 			setErrorMessage(RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_COMM_PWD_BLANKFIELD));
 			okButton.setEnabled(false);
@@ -134,7 +134,7 @@ public final class SystemPasswordPersistencePrompt extends SystemPromptDialog im
 		}
 
 		String sSystemType = systemType.getText();
-		if (sSystemType == null || sSystemType.trim().equals(""))
+		if (sSystemType == null || sSystemType.trim().equals("")) //$NON-NLS-1$
 		{
 			setErrorMessage(RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_COMM_PWD_BLANKFIELD));
 			okButton.setEnabled(false);
@@ -143,7 +143,7 @@ public final class SystemPasswordPersistencePrompt extends SystemPromptDialog im
 		}
 		
 		String sUserID = userid.getText();
-		if (sUserID == null || sUserID.trim().equals(""))
+		if (sUserID == null || sUserID.trim().equals("")) //$NON-NLS-1$
 		{
 			setErrorMessage(RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_COMM_PWD_BLANKFIELD));
 			okButton.setEnabled(false);
@@ -152,7 +152,7 @@ public final class SystemPasswordPersistencePrompt extends SystemPromptDialog im
 		}
 
 		String sPwd1 = password.getText();
-		if (sPwd1 == null || sPwd1.trim().equals(""))
+		if (sPwd1 == null || sPwd1.trim().equals("")) //$NON-NLS-1$
 		{
 			setErrorMessage(RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_COMM_PWD_BLANKFIELD));
 			okButton.setEnabled(false);
@@ -161,7 +161,7 @@ public final class SystemPasswordPersistencePrompt extends SystemPromptDialog im
 		}
 
 		String sPwd2 = passwordVerify.getText();
-		if (sPwd2 == null || sPwd2.trim().equals(""))
+		if (sPwd2 == null || sPwd2.trim().equals("")) //$NON-NLS-1$
 		{
 			setErrorMessage(RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_COMM_PWD_BLANKFIELD));
 			okButton.setEnabled(false);
@@ -253,12 +253,12 @@ public final class SystemPasswordPersistencePrompt extends SystemPromptDialog im
 		super.createControl(parent);
 		if (change)
 		{
-			SystemWidgetHelpers.setCompositeHelp(parent, RSEUIPlugin.HELPPREFIX + "pwdi0002");
+			SystemWidgetHelpers.setCompositeHelp(parent, RSEUIPlugin.HELPPREFIX + "pwdi0002"); //$NON-NLS-1$
 			password.setFocus();
 		}
 		else
 		{
-			SystemWidgetHelpers.setCompositeHelp(parent, RSEUIPlugin.HELPPREFIX + "pwdi0001");
+			SystemWidgetHelpers.setCompositeHelp(parent, RSEUIPlugin.HELPPREFIX + "pwdi0001"); //$NON-NLS-1$
 			hostname.setFocus();
 		}
 	}
@@ -276,31 +276,31 @@ public final class SystemPasswordPersistencePrompt extends SystemPromptDialog im
 	 * @see org.eclipse.swt.events.ModifyListener#modifyText(ModifyEvent)
 	 */
 	public void modifyText(ModifyEvent e) {
-		if (e.getSource() == hostname && hostname.getText().trim().equals(""))
+		if (e.getSource() == hostname && hostname.getText().trim().equals("")) //$NON-NLS-1$
 		{
 			setErrorMessage(RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_COMM_PWD_BLANKFIELD));
 			hostname.setFocus();
 			okButton.setEnabled(false);
 		}
-		else if (e.getSource() == userid && userid.getText().trim().equals(""))
+		else if (e.getSource() == userid && userid.getText().trim().equals("")) //$NON-NLS-1$
 		{
 			setErrorMessage(RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_COMM_PWD_BLANKFIELD));
 			userid.setFocus();
 			okButton.setEnabled(false);
 		}
-		else if (e.getSource() == systemType && systemType.getText().trim().equals(""))
+		else if (e.getSource() == systemType && systemType.getText().trim().equals("")) //$NON-NLS-1$
 		{
 			setErrorMessage(RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_COMM_PWD_BLANKFIELD));
 			systemType.setFocus();
 			okButton.setEnabled(false);
 		}
-		else if (e.getSource() == password && password.getText().trim().equals(""))
+		else if (e.getSource() == password && password.getText().trim().equals("")) //$NON-NLS-1$
 		{
 			setErrorMessage(RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_COMM_PWD_BLANKFIELD));
 			password.setFocus();
 			okButton.setEnabled(false);
 		}
-		else if (e.getSource() == passwordVerify && passwordVerify.getText().trim().equals(""))
+		else if (e.getSource() == passwordVerify && passwordVerify.getText().trim().equals("")) //$NON-NLS-1$
 		{
 			setErrorMessage(RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_COMM_PWD_BLANKFIELD));
 			passwordVerify.setFocus();
@@ -310,11 +310,11 @@ public final class SystemPasswordPersistencePrompt extends SystemPromptDialog im
 		{
 			clearErrorMessage();
 
-			if (hostname.getText().trim().equals("") || 
-				userid.getText().trim().equals("") ||
-				systemType.getText().trim().equals("") ||
-				password.getText().trim().equals("") ||
-				passwordVerify.getText().trim().equals(""))
+			if (hostname.getText().trim().equals("") ||  //$NON-NLS-1$
+				userid.getText().trim().equals("") || //$NON-NLS-1$
+				systemType.getText().trim().equals("") || //$NON-NLS-1$
+				password.getText().trim().equals("") || //$NON-NLS-1$
+				passwordVerify.getText().trim().equals("")) //$NON-NLS-1$
 			{
 				// clear error messages but button stays disabled
 				okButton.setEnabled(false);

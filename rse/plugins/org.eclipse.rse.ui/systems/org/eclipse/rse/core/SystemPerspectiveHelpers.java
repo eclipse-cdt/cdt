@@ -91,7 +91,7 @@ public class SystemPerspectiveHelpers
 			window.getWorkbench().showPerspective(perspID, window);
 			ok = true;
 		} catch (WorkbenchException e) {
-		   	SystemBasePlugin.logError("Error opening perspective "+perspID, e);
+		   	SystemBasePlugin.logError("Error opening perspective "+perspID, e); //$NON-NLS-1$
 		}
 		return ok;
 	}
@@ -180,7 +180,7 @@ public class SystemPerspectiveHelpers
 			   } 
 			   catch (PartInitException pie) 
 			   {
-			   	  SystemBasePlugin.logError("Error opening view " + viewID, pie);
+			   	  SystemBasePlugin.logError("Error opening view " + viewID, pie); //$NON-NLS-1$
 			   }
 		    } //end if page != null
 		} // end if window != null

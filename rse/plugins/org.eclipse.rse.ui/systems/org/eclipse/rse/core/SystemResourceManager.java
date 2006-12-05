@@ -189,7 +189,7 @@ public class SystemResourceManager implements SystemResourceConstants
 		    firstTime = true;
 	      } catch (Exception e)
 	      {
-	      	SystemBasePlugin.logError("error creating remote systems project",e);
+	      	SystemBasePlugin.logError("error creating remote systems project",e); //$NON-NLS-1$
 	      	//throw e;
 	      }
 	    }	
@@ -199,7 +199,7 @@ public class SystemResourceManager implements SystemResourceConstants
     	    proj.open(null);
     	  } catch (Exception e)
     	  {
-	      	SystemBasePlugin.logError("error opening remote systems project",e);
+	      	SystemBasePlugin.logError("error opening remote systems project",e); //$NON-NLS-1$
 	      	//throw e;
     	  }
     	}	
@@ -208,7 +208,7 @@ public class SystemResourceManager implements SystemResourceConstants
     	  IFolder folder = getResourceHelpers().getOrCreateFolder(proj,RESOURCE_TYPE_FILTERS_FOLDER_NAME);
     	} catch (Exception e)
     	{
-	      	SystemBasePlugin.logError("error opening/creating types folder",e);
+	      	SystemBasePlugin.logError("error opening/creating types folder",e); //$NON-NLS-1$
     	}
     	initDone = true;
 	    return proj;

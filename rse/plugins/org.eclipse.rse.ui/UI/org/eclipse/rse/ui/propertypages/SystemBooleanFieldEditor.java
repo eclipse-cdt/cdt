@@ -77,8 +77,8 @@ public class SystemBooleanFieldEditor extends BooleanFieldEditor
 	 */
 	public SystemBooleanFieldEditor(String name, ResourceBundle rb, String labelKey, Composite parent) 
 	{
-		super(name, rb.getString(labelKey+"label"), parent);
-		setToolTipText(rb.getString(labelKey+"tooltip"));
+		super(name, rb.getString(labelKey+"label"), parent); //$NON-NLS-1$
+		setToolTipText(rb.getString(labelKey+"tooltip")); //$NON-NLS-1$
 		this.parent = parent;
 	}	
 	

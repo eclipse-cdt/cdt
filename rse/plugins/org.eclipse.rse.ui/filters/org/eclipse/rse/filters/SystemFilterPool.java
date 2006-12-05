@@ -1044,7 +1044,7 @@ public class SystemFilterPool extends SystemPersistableReferencedObject
     	if (filterList.size() <= 1) // not enough to sort?
     	  return; // outa here!
     	if (debug)
-    	  printFilterList("Before sorting");
+    	  printFilterList("Before sorting"); //$NON-NLS-1$
         helpers.invalidateCache(); // force re-gen of array from java.util.List on next getSystemFilters() request
     	ISystemFilter[] filters = getSystemFilters(); // convert java.util.List to array    	
     	boolean[] processed = new boolean[filters.length];
@@ -1096,7 +1096,7 @@ public class SystemFilterPool extends SystemPersistableReferencedObject
     	}
         helpers.invalidateCache(); // force re-gen of array from java.util.List on next getSystemFilters() request
         if (debug)
-    	  printFilterList("After sorting");
+    	  printFilterList("After sorting"); //$NON-NLS-1$
     }
     
     private void printFilterList(String tagLine)
@@ -1104,10 +1104,10 @@ public class SystemFilterPool extends SystemPersistableReferencedObject
     	ISystemFilter[] filters = getSystemFilters();
     	if (filters.length == 0)
     	  return;
-    	System.out.println(tagLine+" for filter pool " + getName());
+    	System.out.println(tagLine+" for filter pool " + getName()); //$NON-NLS-1$
     	for (int idx=0; idx<filters.length; idx++)
     	{
-    	   System.out.println("  "+filters[idx].getName()+" "+filters[idx].getRelativeOrder());
+    	   System.out.println("  "+filters[idx].getName()+" "+filters[idx].getRelativeOrder()); //$NON-NLS-1$ //$NON-NLS-2$
     	}
     	System.out.println();
     }

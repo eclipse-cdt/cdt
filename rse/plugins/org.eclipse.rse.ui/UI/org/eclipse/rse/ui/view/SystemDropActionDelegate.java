@@ -42,7 +42,7 @@ import org.eclipse.ui.part.IDropActionDelegate;
 public class SystemDropActionDelegate implements IDropActionDelegate
 {
 
-	public static final String ID = "org.eclipse.rse.ui.view.DropActions"; //ID fixed, by Phil
+	public static final String ID = "org.eclipse.rse.ui.view.DropActions"; //ID fixed, by Phil //$NON-NLS-1$
 	
 
 	/** (non-Javadoc)
@@ -85,7 +85,7 @@ public class SystemDropActionDelegate implements IDropActionDelegate
 
 				// get the sources	
 				//StringTokenizer tokenizer = new StringTokenizer(new String(result), SystemViewDataDropAdapter.RESOURCE_SEPARATOR);
-				String[] tokens = (new String(result)).split("\\"+SystemViewDataDropAdapter.RESOURCE_SEPARATOR);
+				String[] tokens = (new String(result)).split("\\"+SystemViewDataDropAdapter.RESOURCE_SEPARATOR); //$NON-NLS-1$
 				ArrayList srcObjects = new ArrayList();
 				ArrayList rulesList = new ArrayList();
 				int j = 0;

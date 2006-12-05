@@ -67,7 +67,7 @@ public class SystemFilterNewFilterPoolWizardDefaultMainPage
 													String title,
 													String description)
 	{
-		super(wizard, "NewFilterPool", title, description);
+		super(wizard, "NewFilterPool", title, description); //$NON-NLS-1$
 		this.parentWizardAction = ((SystemFilterNewFilterPoolWizard)wizard).getFilterPoolDialogActionCaller();
 	}
     

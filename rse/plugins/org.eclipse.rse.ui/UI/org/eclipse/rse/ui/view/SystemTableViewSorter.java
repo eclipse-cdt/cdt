@@ -164,7 +164,7 @@ public class SystemTableViewSorter extends ViewerSorter
 			}
 		}
 
-		return "";
+		return ""; //$NON-NLS-1$
 	}
 
 	private ISystemViewElementAdapter getAdapterFor(Object object)

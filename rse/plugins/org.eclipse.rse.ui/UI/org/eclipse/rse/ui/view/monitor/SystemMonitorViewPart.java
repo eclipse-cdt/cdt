@@ -141,7 +141,7 @@ public class SystemMonitorViewPart
 				_cbName = SystemWidgetHelpers.createCombo(c, null);
 				GridData textData = new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.GRAB_HORIZONTAL);
 				_cbName.setLayoutData(textData);
-				_cbName.setText("*");
+				_cbName.setText("*"); //$NON-NLS-1$
 				_cbName.setToolTipText(SystemResources.RESID_TABLE_POSITIONTO_ENTRY_TOOLTIP);
 
 				this.getShell().setText(SystemResources.RESID_TABLE_POSITIONTO_LABEL);
@@ -151,7 +151,7 @@ public class SystemMonitorViewPart
 
 			private void setHelp()
 			{
-				setHelp(RSEUIPlugin.HELPPREFIX + "gnpt0000");
+				setHelp(RSEUIPlugin.HELPPREFIX + "gnpt0000"); //$NON-NLS-1$
 			}
 		}
 
@@ -226,7 +226,7 @@ class SubSetAction extends BrowseAction
 				_controls[0] = SystemWidgetHelpers.createTextField(c, null);
 				GridData textData = new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.GRAB_HORIZONTAL);
 				_controls[0].setLayoutData(textData);
-				_controls[0].setText("*");
+				_controls[0].setText("*"); //$NON-NLS-1$
 				_controls[0].setToolTipText(SystemResources.RESID_TABLE_SUBSET_ENTRY_TOOLTIP);
 
 
@@ -241,7 +241,7 @@ class SubSetAction extends BrowseAction
 					_controls[i + 1] = SystemWidgetHelpers.createTextField(c, null);
 					GridData textData3 = new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.GRAB_HORIZONTAL);
 					_controls[i + 1].setLayoutData(textData3);
-					_controls[i + 1].setText("*");
+					_controls[i + 1].setText("*"); //$NON-NLS-1$
 				}
 
 				setHelp();
@@ -250,7 +250,7 @@ class SubSetAction extends BrowseAction
 
 			private void setHelp()
 			{
-				setHelp(RSEUIPlugin.HELPPREFIX + "gnss0000");
+				setHelp(RSEUIPlugin.HELPPREFIX + "gnss0000"); //$NON-NLS-1$
 			}
 		}
 
@@ -567,7 +567,7 @@ class SubSetAction extends BrowseAction
 			
 			private void setHelp()
 			{
-				setHelp(RSEUIPlugin.HELPPREFIX + "gntc0000");
+				setHelp(RSEUIPlugin.HELPPREFIX + "gntc0000"); //$NON-NLS-1$
 			}
 		}
 	    
@@ -623,7 +623,7 @@ class SubSetAction extends BrowseAction
 	private PositionToAction _positionToAction = null;
 	
 	// constants			
-	public static final String ID = "org.eclipse.rse.ui.view.monitorView";
+	public static final String ID = "org.eclipse.rse.ui.view.monitorView"; //$NON-NLS-1$
 	// matches id in plugin.xml, view tag	
 
 	public void setFocus()
@@ -664,7 +664,7 @@ class SubSetAction extends BrowseAction
 		selectionService.addSelectionListener(this);
 		
 
-		SystemWidgetHelpers.setHelp(_folder, RSEUIPlugin.HELPPREFIX + "ucmd0000");
+		SystemWidgetHelpers.setHelp(_folder, RSEUIPlugin.HELPPREFIX + "ucmd0000"); //$NON-NLS-1$
 
 		SystemRegistry registry = RSEUIPlugin.getTheSystemRegistry();
 		registry.addSystemResourceChangeListener(this);
@@ -1030,7 +1030,7 @@ class SubSetAction extends BrowseAction
 	{
 		menuManager.removeAll();
 		menuManager.add(_selectColumnsAction);
-		menuManager.add(new Separator("Filter"));
+		menuManager.add(new Separator("Filter")); //$NON-NLS-1$
 		menuManager.add(_positionToAction);
 		menuManager.add(_subsetAction);		
 	}

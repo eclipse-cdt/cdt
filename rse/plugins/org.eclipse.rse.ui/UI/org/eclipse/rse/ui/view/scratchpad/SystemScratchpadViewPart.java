@@ -82,7 +82,7 @@ public class SystemScratchpadViewPart extends ViewPart implements ISelectionList
 	private IStatusLineManager _statusLine = null;
 
 	// constants			
-	public static final String ID = "org.eclipse.rse.ui.view.scratchpad.SystemScratchpadViewPart"; // matches id in plugin.xml, view tag	
+	public static final String ID = "org.eclipse.rse.ui.view.scratchpad.SystemScratchpadViewPart"; // matches id in plugin.xml, view tag	 //$NON-NLS-1$
 
 	public void setFocus()
 	{
@@ -142,7 +142,7 @@ public class SystemScratchpadViewPart extends ViewPart implements ISelectionList
 
 		registry.addSystemResourceChangeListener(this);
 
-		SystemWidgetHelpers.setHelp(_viewer.getControl(), RSEUIPlugin.HELPPREFIX + "scrp0000");
+		SystemWidgetHelpers.setHelp(_viewer.getControl(), RSEUIPlugin.HELPPREFIX + "scrp0000"); //$NON-NLS-1$
 
 		setInput(registry.getSystemScratchPad());
 		

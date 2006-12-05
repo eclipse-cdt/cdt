@@ -71,23 +71,23 @@ public class SystemPropertyPageExtension implements IPropertyPageContributor
     public SystemPropertyPageExtension(IConfigurationElement element)
     {
     	this.element = element;
-    	this.id = element.getAttribute("id");
-    	this.name = element.getAttribute("name"); 
-    	this.image = getPluginImage(element, element.getAttribute("icon"));
-    	String sAtTop = element.getAttribute("first");
-    	if ((sAtTop != null) && sAtTop.equals("1"))
+    	this.id = element.getAttribute("id"); //$NON-NLS-1$
+    	this.name = element.getAttribute("name");  //$NON-NLS-1$
+    	this.image = getPluginImage(element, element.getAttribute("icon")); //$NON-NLS-1$
+    	String sAtTop = element.getAttribute("first"); //$NON-NLS-1$
+    	if ((sAtTop != null) && sAtTop.equals("1")) //$NON-NLS-1$
     	  atTop = true;
         
         String subsystemfilter,subsystemCategoryFilter,systypes,categoryfilter,namefilter,typefilter,subtypefilter,subsubtypefilter;
 
-    	categoryfilter = element.getAttribute("typecategoryfilter");
-    	namefilter = element.getAttribute("namefilter");
-    	typefilter = element.getAttribute("typefilter");
-    	subtypefilter = element.getAttribute("subtypefilter");
-    	subsubtypefilter = element.getAttribute("subsubtypefilter");
-    	subsystemfilter = element.getAttribute("subsystemconfigurationid");    	
-    	subsystemCategoryFilter = element.getAttribute("subsystemconfigurationCategory");    
- 	    systypes = element.getAttribute("systemTypes");    
+    	categoryfilter = element.getAttribute("typecategoryfilter"); //$NON-NLS-1$
+    	namefilter = element.getAttribute("namefilter"); //$NON-NLS-1$
+    	typefilter = element.getAttribute("typefilter"); //$NON-NLS-1$
+    	subtypefilter = element.getAttribute("subtypefilter"); //$NON-NLS-1$
+    	subsubtypefilter = element.getAttribute("subsubtypefilter"); //$NON-NLS-1$
+    	subsystemfilter = element.getAttribute("subsystemconfigurationid");    	 //$NON-NLS-1$
+    	subsystemCategoryFilter = element.getAttribute("subsystemconfigurationCategory");     //$NON-NLS-1$
+ 	    systypes = element.getAttribute("systemTypes");     //$NON-NLS-1$
     	    	
 	    filterProperties = null;
    		IConfigurationElement[] children = element.getChildren();
@@ -108,8 +108,8 @@ public class SystemPropertyPageExtension implements IPropertyPageContributor
     	String tag = element.getName();
     	if (tag.equals(TAG_FILTER)) 
     	{
-    		String key = element.getAttribute("name");
-    		String value = element.getAttribute("value");
+    		String key = element.getAttribute("name"); //$NON-NLS-1$
+    		String value = element.getAttribute("value"); //$NON-NLS-1$
     		if ((key == null) || (value == null))
     		   return;
     		if (filterProperties==null) 
@@ -227,7 +227,7 @@ public class SystemPropertyPageExtension implements IPropertyPageContributor
      */
     protected ImageDescriptor getPluginImage(IConfigurationElement element, String fileName)
     {
-	   URL path = getBundle(element).getEntry("/");
+	   URL path = getBundle(element).getEntry("/"); //$NON-NLS-1$
 	   URL fullPathString = null;
 	   try {
 		   fullPathString = new URL(path,fileName);
@@ -305,10 +305,10 @@ public class SystemPropertyPageExtension implements IPropertyPageContributor
     	//{
    	       try
    	       {
-   	   	     object = (IWorkbenchPropertyPage)element.createExecutableExtension("class");
+   	   	     object = (IWorkbenchPropertyPage)element.createExecutableExtension("class"); //$NON-NLS-1$
    	       } catch (Exception exc)
    	       {
-   	         SystemBasePlugin.logError("Unable to start remote property page extension "+id,exc);
+   	         SystemBasePlugin.logError("Unable to start remote property page extension "+id,exc); //$NON-NLS-1$
    	       }
     	//}
     	return object;    		

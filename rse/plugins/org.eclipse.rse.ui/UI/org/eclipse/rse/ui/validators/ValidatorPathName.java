@@ -74,7 +74,7 @@ public class ValidatorPathName
 		                       RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_VALIDATE_PATH_NOTUNIQUE));  		
 		fUnique = true;		
 		msg_Invalid = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_VALIDATE_PATH_NOTVALID);				
-		specialChars = new StringBuffer("*?;'<>|");
+		specialChars = new StringBuffer("*?;'<>|"); //$NON-NLS-1$
 	    nbrSpecialChars = specialChars.length();
 	}
 	/**
@@ -120,6 +120,6 @@ public class ValidatorPathName
 	
 	public String toString()
 	{
-		return "PathValidator class";
+		return "PathValidator class"; //$NON-NLS-1$
 	}
 }

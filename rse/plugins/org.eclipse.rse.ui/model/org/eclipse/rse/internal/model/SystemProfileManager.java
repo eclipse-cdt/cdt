@@ -195,10 +195,10 @@ public class SystemProfileManager implements ISystemProfileManager {
 				// If Team is the only profile - then put a message in the log - do not make Team to be default
 				if (profiles.size() == 1 && ((ISystemProfile) profiles.get(0)).getName().equalsIgnoreCase("Team")) //$NON-NLS-1$  
 				{
-					SystemBasePlugin.logWarning("Only one Profile Team exists - there is no Default Profile");
+					SystemBasePlugin.logWarning("Only one Profile Team exists - there is no Default Profile"); //$NON-NLS-1$
 				} else {
 					// sonething must have gone wrong - it should not come here
-					SystemBasePlugin.logWarning("Something went wrong and the default profile is not set");
+					SystemBasePlugin.logWarning("Something went wrong and the default profile is not set"); //$NON-NLS-1$
 				}
 			}
 		}

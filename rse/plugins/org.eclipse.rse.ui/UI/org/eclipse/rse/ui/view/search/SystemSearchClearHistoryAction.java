@@ -40,7 +40,7 @@ public class SystemSearchClearHistoryAction extends SystemBaseAction {
 			  RSEUIPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SEARCH_CLEAR_HISTORY_ID), shell);
 			  
 		this.searchView = searchView;
-		RSEUIPlugin.getDefault().getWorkbench().getHelpSystem().setHelp(this, RSEUIPlugin.HELPPREFIX + "search_clear_history");
+		RSEUIPlugin.getDefault().getWorkbench().getHelpSystem().setHelp(this, RSEUIPlugin.HELPPREFIX + "search_clear_history"); //$NON-NLS-1$
 	}
 	
 	/**

@@ -64,7 +64,7 @@ public class SystemChangeFilterAction extends SystemBaseDialogAction
 		super(label, tooltip, image, parent);
         allowOnMultipleSelection(false);        
 		setContextMenuGroup(ISystemContextMenuConstants.GROUP_CHANGE);
-		setHelp(RSEUIPlugin.HELPPREFIX+"acfr0000");
+		setHelp(RSEUIPlugin.HELPPREFIX+"acfr0000"); //$NON-NLS-1$
 	}
 
 

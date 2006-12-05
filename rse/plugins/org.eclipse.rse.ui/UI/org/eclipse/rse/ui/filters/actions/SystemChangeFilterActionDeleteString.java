@@ -47,7 +47,7 @@ public class SystemChangeFilterActionDeleteString extends SystemBaseAction
         allowOnMultipleSelection(false);
         this.parentDialog = parentDialog;
 		setContextMenuGroup(ISystemContextMenuConstants.GROUP_REORGANIZE);  
-		setHelp(RSEUIPlugin.HELPPREFIX+"dufr1000");      
+		setHelp(RSEUIPlugin.HELPPREFIX+"dufr1000");       //$NON-NLS-1$
 	}
 
 	/**

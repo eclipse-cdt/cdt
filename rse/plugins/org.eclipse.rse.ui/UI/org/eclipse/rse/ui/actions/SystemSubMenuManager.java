@@ -130,7 +130,7 @@ public class SystemSubMenuManager
     public void setInputs(Shell shell, Viewer v, ISelection selection)
     {
 		if (traceSelections)
-		  issueTraceMessage(" INSIDE SETINPUTS FOR SUBMENUMGR FOR '"+label+"'");
+		  issueTraceMessage(" INSIDE SETINPUTS FOR SUBMENUMGR FOR '"+label+"'"); //$NON-NLS-1$ //$NON-NLS-2$
     	this.shell = shell;
     	this.viewer = v;
         this.selection = selection;  
@@ -164,7 +164,7 @@ public class SystemSubMenuManager
 	    }
     	if (traceSelections)
     	{
-    	  issueTraceMessage("*** INSIDE SETSHELL FOR SUBMENUMGR "+label+". #ITEMS = "+items.length);
+    	  issueTraceMessage("*** INSIDE SETSHELL FOR SUBMENUMGR "+label+". #ITEMS = "+items.length); //$NON-NLS-1$ //$NON-NLS-2$
     	}
 
 	}
@@ -193,7 +193,7 @@ public class SystemSubMenuManager
 	    }
     	if (traceSelections)
     	{
-    	  issueTraceMessage("*** INSIDE SETSELECTION FOR SUBMENUMGR"+label+". #ITEMS = "+items.length);
+    	  issueTraceMessage("*** INSIDE SETSELECTION FOR SUBMENUMGR"+label+". #ITEMS = "+items.length); //$NON-NLS-1$ //$NON-NLS-2$
     	}
 
 	}	
@@ -309,7 +309,7 @@ public class SystemSubMenuManager
 	    IContributionItem[] items = getItems();
     	if (traceSelections)
     	{
-    		issueTraceMessage("INSIDE CASCADEALLINPUTS FOR SUBMENUMGR FOR "+label+". NBR ITEMS = "+items.length);
+    		issueTraceMessage("INSIDE CASCADEALLINPUTS FOR SUBMENUMGR FOR "+label+". NBR ITEMS = "+items.length); //$NON-NLS-1$ //$NON-NLS-2$
     	}
 
 	    for (int idx=0; idx < items.length; idx++)
@@ -395,7 +395,7 @@ public class SystemSubMenuManager
     		if ((traceTarget==null) || (className.indexOf(traceTarget)>=0))
     		{
     		  className = className.substring(className.lastIndexOf('.'));
-              SystemBasePlugin.logInfo(className+": "+msg);
+              SystemBasePlugin.logInfo(className+": "+msg); //$NON-NLS-1$
     		}
     	}
     }

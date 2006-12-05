@@ -233,7 +233,7 @@ public class SystemSimpleSelectDialog extends SystemPromptDialog
 		if (inputObject instanceof SystemSimpleContentElement)
 		  setInputObject((SystemSimpleContentElement)inputObject);
 		else
-		  System.out.println("UNEXPECTED INPUT IN SYSTEMSELECTINPUTDIALOG: "+inputObject);
+		  System.out.println("UNEXPECTED INPUT IN SYSTEMSELECTINPUTDIALOG: "+inputObject); //$NON-NLS-1$
 	}
 
 	/**

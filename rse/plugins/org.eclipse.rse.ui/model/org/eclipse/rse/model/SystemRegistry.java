@@ -961,7 +961,7 @@ public class SystemRegistry implements ISystemRegistryUI, ISystemModelChangeEven
 			for (int idx = 0; idx < factories.size(); idx++)
 			{
 				ISubSystemConfiguration factory = (ISubSystemConfiguration) factories.elementAt(idx);
-				msg = "Copying filterPools for factory " + factory.getName();
+				msg = "Copying filterPools for factory " + factory.getName(); //$NON-NLS-1$
 				//monitor.subTask(msg);
 				SystemBasePlugin.logDebugMessage(this.getClass().getName(), msg);
 				factory.copyFilterPoolManager(profile, newProfile);
@@ -980,7 +980,7 @@ public class SystemRegistry implements ISystemRegistryUI, ISystemModelChangeEven
 				ISubSystemConfiguration factory = null;
 				for (int idx = 0; idx < conns.length; idx++)
 				{
-					msg = "Copying subsystems for connection " + conns[idx].getAliasName();
+					msg = "Copying subsystems for connection " + conns[idx].getAliasName(); //$NON-NLS-1$
 					//monitor.subTask(msg);
 					SystemBasePlugin.logDebugMessage(this.getClass().getName(), msg);
 					subsystems = getSubSystems(conns[idx]); // get old subsystems for this connection
@@ -988,7 +988,7 @@ public class SystemRegistry implements ISystemRegistryUI, ISystemModelChangeEven
 					{
 						for (int jdx = 0; jdx < subsystems.length; jdx++)
 						{
-							msg += ": subsystem " + subsystems[jdx].getName();
+							msg += ": subsystem " + subsystems[jdx].getName(); //$NON-NLS-1$
 							//monitor.subTask(msg);
 							SystemBasePlugin.logDebugMessage(this.getClass().getName(), msg);
 							factory = subsystems[jdx].getSubSystemConfiguration();
@@ -1024,7 +1024,7 @@ public class SystemRegistry implements ISystemRegistryUI, ISystemModelChangeEven
 			}
 			catch (Exception exc)
 			{
-				SystemBasePlugin.logError("Exception (ignored) cleaning up from copy-profile exception.", exc);
+				SystemBasePlugin.logError("Exception (ignored) cleaning up from copy-profile exception.", exc); //$NON-NLS-1$
 			}
 			throw (lastExc);
 		}
@@ -1035,7 +1035,7 @@ public class SystemRegistry implements ISystemRegistryUI, ISystemModelChangeEven
 
 		fireModelChangeEvent(SYSTEM_RESOURCE_ADDED, SYSTEM_RESOURCETYPE_PROFILE, newProfile, null);
 
-		SystemBasePlugin.logDebugMessage(this.getClass().getName(), "Copy of system profile " + oldName + " to " + newName + " successful");
+		SystemBasePlugin.logDebugMessage(this.getClass().getName(), "Copy of system profile " + oldName + " to " + newName + " successful"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		return newProfile;
 	}
 
@@ -1108,20 +1108,20 @@ public class SystemRegistry implements ISystemRegistryUI, ISystemModelChangeEven
 		{
 			SystemBasePlugin.logWarning(
 				ISystemMessages.MSG_LOADING_PROFILE_SHOULDNOTBE_DEACTIVATED
-					+ ": De-Activativing profile "
+					+ ": De-Activativing profile " //$NON-NLS-1$
 					+ profile.getName()
-					+ " for which there are subsystems containing references to filter pools:");
+					+ " for which there are subsystems containing references to filter pools:"); //$NON-NLS-1$
 			for (int idx = 0; idx < activeReferenceVector.size(); idx++)
 			{
 				ISubSystem activeReference = (ISubSystem) activeReferenceVector.elementAt(idx);
 				SystemBasePlugin.logWarning(
-					"  " + activeReference.getName() + " in connection " + activeReference.getHost().getAliasName() + " in profile " + activeReference.getSystemProfileName());
+					"  " + activeReference.getName() + " in connection " + activeReference.getHost().getAliasName() + " in profile " + activeReference.getSystemProfileName()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			}
 			ISubSystem firstSubSystem = (ISubSystem) activeReferenceVector.elementAt(0);
-			String connectionName = firstSubSystem.getHost().getSystemProfileName() + "." + firstSubSystem.getHost().getAliasName();
+			String connectionName = firstSubSystem.getHost().getSystemProfileName() + "." + firstSubSystem.getHost().getAliasName(); //$NON-NLS-1$
 			SystemMessage sysMsg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_LOADING_PROFILE_SHOULDNOTBE_DEACTIVATED);
 			sysMsg.makeSubstitution(profile.getName(), connectionName);
-			SystemBasePlugin.logWarning(sysMsg.getFullMessageID() + ": " + sysMsg.getLevelOneText());
+			SystemBasePlugin.logWarning(sysMsg.getFullMessageID() + ": " + sysMsg.getLevelOneText()); //$NON-NLS-1$
 			SystemMessageDialog msgDlg = new SystemMessageDialog(null, sysMsg);
 			msgDlg.open();
 		}
@@ -1266,8 +1266,8 @@ public class SystemRegistry implements ISystemRegistryUI, ISystemModelChangeEven
 	public ISubSystem getSubSystem(String absoluteSubSystemName)
 	{
 		// first extract subsystem id
-		int profileDelim = absoluteSubSystemName.indexOf(".");
-		int connectionDelim = absoluteSubSystemName.indexOf(":", profileDelim + 1);
+		int profileDelim = absoluteSubSystemName.indexOf("."); //$NON-NLS-1$
+		int connectionDelim = absoluteSubSystemName.indexOf(":", profileDelim + 1); //$NON-NLS-1$
 
 		if (profileDelim > 0 && connectionDelim > profileDelim)
 		{
@@ -1346,9 +1346,9 @@ public class SystemRegistry implements ISystemRegistryUI, ISystemModelChangeEven
 		String factoryId = subSystem.getConfigurationId();
 
 		dataStream.append(profileName);
-		dataStream.append(".");
+		dataStream.append("."); //$NON-NLS-1$
 		dataStream.append(connectionName);
-		dataStream.append(":");
+		dataStream.append(":"); //$NON-NLS-1$
 		dataStream.append(factoryId);
 		return dataStream.toString();
 	}
@@ -1366,7 +1366,7 @@ public class SystemRegistry implements ISystemRegistryUI, ISystemModelChangeEven
 		String connectionName = connection.getAliasName();  
 		
 		dataStream.append(profileName);
-		dataStream.append(".");
+		dataStream.append("."); //$NON-NLS-1$
 		dataStream.append(connectionName);
 		return dataStream.toString();
 	 }
@@ -1587,12 +1587,12 @@ public class SystemRegistry implements ISystemRegistryUI, ISystemModelChangeEven
 		}
 		catch (Exception exc)
 		{
-			SystemBasePlugin.logError("Exception in getConnectionPool for " + profile.getName(), exc);
+			SystemBasePlugin.logError("Exception in getConnectionPool for " + profile.getName(), exc); //$NON-NLS-1$
 			lastException = exc;
 		}
 		catch (Throwable t)
 		{
-			SystemBasePlugin.logError("Exception in getConnectionPool for " + profile.getName(), t);
+			SystemBasePlugin.logError("Exception in getConnectionPool for " + profile.getName(), t); //$NON-NLS-1$
 		}
 		return null;
 	}
@@ -1924,7 +1924,7 @@ public class SystemRegistry implements ISystemRegistryUI, ISystemModelChangeEven
 			}
 		}
 		if ((systemType != null) && (systemType.equals(IRSESystemType.SYSTEMTYPE_LOCAL) && (v.size() == 0)))
-			v.addElement("localhost");
+			v.addElement("localhost"); //$NON-NLS-1$
 		String[] names = new String[v.size()];
 		for (int idx = 0; idx < names.length; idx++)
 			names[idx] = (String) v.elementAt(idx);
@@ -1964,8 +1964,8 @@ public class SystemRegistry implements ISystemRegistryUI, ISystemModelChangeEven
 	private Object getObjectFor(String str)
 	{
 		// first extract subsystem id
-		int connectionDelim = str.indexOf(":");
-		int subsystemDelim = str.indexOf(":", connectionDelim + 1);
+		int connectionDelim = str.indexOf(":"); //$NON-NLS-1$
+		int subsystemDelim = str.indexOf(":", connectionDelim + 1); //$NON-NLS-1$
 
 		String subSystemId = str.substring(0, subsystemDelim);
 		String srcKey = str.substring(subsystemDelim + 1, str.length());
@@ -2024,7 +2024,7 @@ public class SystemRegistry implements ISystemRegistryUI, ISystemModelChangeEven
 				byte[] result = data.getData();
 
 				//StringTokenizer tokenizer = new StringTokenizer(new String(result), SystemViewDataDropAdapter.RESOURCE_SEPARATOR);
-				String[] tokens = (new String(result)).split("\\"+SystemViewDataDropAdapter.RESOURCE_SEPARATOR);
+				String[] tokens = (new String(result)).split("\\"+SystemViewDataDropAdapter.RESOURCE_SEPARATOR); //$NON-NLS-1$
 				
 				for (int i = 0;i < tokens.length; i++)
 				{
@@ -2117,8 +2117,8 @@ public class SystemRegistry implements ISystemRegistryUI, ISystemModelChangeEven
 	  	 	localConn = createHost(
 		  			profile.getName(), IRSESystemType.SYSTEMTYPE_LOCAL,
 		  			name, // connection name
-		  			"localhost", // hostname
-		  			"", // description
+		  			"localhost", // hostname //$NON-NLS-1$
+		  			"", // description //$NON-NLS-1$
 		  			// DY:  defect 42101, description cannot be null
 		  			// null, // description
 		  			userId, // default user Id
@@ -2127,7 +2127,7 @@ public class SystemRegistry implements ISystemRegistryUI, ISystemModelChangeEven
 		}
 		catch (Exception exc)
 		{
-			SystemBasePlugin.logError("Error creating local connection", exc);
+			SystemBasePlugin.logError("Error creating local connection", exc); //$NON-NLS-1$
 		}
 		return localConn;
 	}
@@ -2190,7 +2190,7 @@ public class SystemRegistry implements ISystemRegistryUI, ISystemModelChangeEven
 		catch (Exception exc)
 		{
 			lastException = exc;
-			SystemBasePlugin.logError("Exception in createConnection for " + connectionName, exc);
+			SystemBasePlugin.logError("Exception in createConnection for " + connectionName, exc); //$NON-NLS-1$
 			throw exc;
 		}
 		if ((lastException == null) && !promptable)
@@ -2369,13 +2369,13 @@ public class SystemRegistry implements ISystemRegistryUI, ISystemModelChangeEven
 		}
 		catch (SystemMessageException exc)
 		{
-			SystemBasePlugin.logError("Exception in updateConnection for " + connectionName, exc);
+			SystemBasePlugin.logError("Exception in updateConnection for " + connectionName, exc); //$NON-NLS-1$
 			lastException = exc;
 			return;
 		}
 		catch (Exception exc)
 		{
-			SystemBasePlugin.logError("Exception in updateConnection for " + connectionName, exc);
+			SystemBasePlugin.logError("Exception in updateConnection for " + connectionName, exc); //$NON-NLS-1$
 			lastException = exc;
 			return;
 		}
@@ -2519,7 +2519,7 @@ public class SystemRegistry implements ISystemRegistryUI, ISystemModelChangeEven
 		ISystemHostPool targetPool = getHostPool(targetProfile);
 		IHost newConn = null;
 
-		SystemBasePlugin.logDebugMessage(this.getClass().getName(), "Start of system connection copy. From: " + oldName + " to: " + newName);
+		SystemBasePlugin.logDebugMessage(this.getClass().getName(), "Start of system connection copy. From: " + oldName + " to: " + newName); //$NON-NLS-1$ //$NON-NLS-2$
 
 		// STEP 0: BRING ALL IMPACTED SUBSYSTEM FACTORIES TO LIFE NOW, BEFORE DOING THE CLONE.
 		getSubSystemFactories(conn);
@@ -2538,7 +2538,7 @@ public class SystemRegistry implements ISystemRegistryUI, ISystemModelChangeEven
 
 			ISubSystem[] subsystems = null;
 			ISubSystemConfiguration factory = null;
-			msg = "Copying subsystems for connection " + conn.getAliasName();
+			msg = "Copying subsystems for connection " + conn.getAliasName(); //$NON-NLS-1$
 			//monitor.subTask(msg);
 			SystemBasePlugin.logDebugMessage(this.getClass().getName(), msg);
 			subsystems = getSubSystems(conn); // get old subsystems for this connection
@@ -2546,7 +2546,7 @@ public class SystemRegistry implements ISystemRegistryUI, ISystemModelChangeEven
 			{
 				for (int jdx = 0; jdx < subsystems.length; jdx++)
 				{
-					msg += ": subsystem " + subsystems[jdx].getName();
+					msg += ": subsystem " + subsystems[jdx].getName(); //$NON-NLS-1$
 					//monitor.subTask(msg);
 					SystemBasePlugin.logDebugMessage(this.getClass().getName(), msg);
 					factory = subsystems[jdx].getSubSystemConfiguration();
@@ -2571,11 +2571,11 @@ public class SystemRegistry implements ISystemRegistryUI, ISystemModelChangeEven
 			}
 			catch (Exception exc)
 			{
-				SystemBasePlugin.logError("Exception (ignored) cleaning up from copy-connection exception.", exc);
+				SystemBasePlugin.logError("Exception (ignored) cleaning up from copy-connection exception.", exc); //$NON-NLS-1$
 			}
 			throw (lastExc);
 		}
-		SystemBasePlugin.logDebugMessage(this.getClass().getName(), "Copy of system connection " + oldName + " to " + newName + " successful");
+		SystemBasePlugin.logDebugMessage(this.getClass().getName(), "Copy of system connection " + oldName + " to " + newName + " successful"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		if (getSystemProfileManager().isSystemProfileActive(targetProfile.getName()))
 		{
 			int eventType = ISystemResourceChangeEvents.EVENT_ADD_RELATIVE;
@@ -2608,7 +2608,7 @@ public class SystemRegistry implements ISystemRegistryUI, ISystemModelChangeEven
 			if (newConn != null)
 			{
 				deleteHost(conn); // delete old connection now that new one created successfully
-				SystemBasePlugin.logDebugMessage(this.getClass().getName(), "Move of system connection " + conn.getAliasName() + " to profile " + targetProfile.getName() + " successful");
+				SystemBasePlugin.logDebugMessage(this.getClass().getName(), "Move of system connection " + conn.getAliasName() + " to profile " + targetProfile.getName() + " successful"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 				fireEvent(new SystemResourceChangeEvent(conn, ISystemResourceChangeEvents.EVENT_DELETE, this));
 			}
 		}
@@ -2710,7 +2710,7 @@ public class SystemRegistry implements ISystemRegistryUI, ISystemModelChangeEven
 				}
 				catch (InterruptedException exc)
 				{
-					System.out.println("Cacnelled");
+					System.out.println("Cacnelled"); //$NON-NLS-1$
 					cancelled = true;
 				}
 				catch (Exception exc)

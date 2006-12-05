@@ -155,7 +155,7 @@ public abstract class SystemBasePlugin extends AbstractUIPlugin
 	 */
 	public static ImageDescriptor getPluginImage(Bundle bundle, String fileName)
 	{
-	   URL path = bundle.getEntry("/" + fileName);
+	   URL path = bundle.getEntry("/" + fileName); //$NON-NLS-1$
 	   ImageDescriptor descriptor = ImageDescriptor.createFromURL(path);
 	   return descriptor;
 	}
@@ -360,11 +360,11 @@ public abstract class SystemBasePlugin extends AbstractUIPlugin
 		Locale locale = Locale.getDefault();
 		String language = locale.getLanguage();
 		String country = locale.getCountry();
-		candidates.push("/" + name);
+		candidates.push("/" + name); //$NON-NLS-1$
 		if (language.length() > 0) {
-			candidates.push("/" + language + "/" + name);
+			candidates.push("/" + language + "/" + name); //$NON-NLS-1$ //$NON-NLS-2$
 			if (country.length() > 0) {
-				candidates.push("/" + language + "/" + country + "/" + name);
+				candidates.push("/" + language + "/" + country + "/" + name); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			}
 		}
 		while (!candidates.isEmpty() && result == null) {
@@ -398,19 +398,19 @@ public abstract class SystemBasePlugin extends AbstractUIPlugin
 				ok = true;
 			}
 		} catch (Throwable t) {
-			logError("Error loading message file "
+			logError("Error loading message file " //$NON-NLS-1$
 					+ fileName
-					+ " in "
+					+ " in " //$NON-NLS-1$
 					+ bundle.getHeaders().get(
 							org.osgi.framework.Constants.BUNDLE_NAME), t);
 			ok = false; // DY
 		}
 		if (!ok) {
 			MessageBox mb = new MessageBox(getActiveWorkbenchShell());
-			mb.setText("Unexpected Error");
-			mb.setMessage("Unable to load message file "
+			mb.setText("Unexpected Error"); //$NON-NLS-1$
+			mb.setMessage("Unable to load message file " //$NON-NLS-1$
 					+ fileName
-					+ " in "
+					+ " in " //$NON-NLS-1$
 					+ bundle.getHeaders().get(
 							org.osgi.framework.Constants.BUNDLE_NAME));
 			mb.open();
@@ -434,7 +434,7 @@ public abstract class SystemBasePlugin extends AbstractUIPlugin
 		SystemMessageFile mf = null;
 		boolean ok = false;
 		try {
-			URL url = bundle.getEntry("/"+fileName);
+			URL url = bundle.getEntry("/"+fileName); //$NON-NLS-1$
 			if (url != null) {
 				InputStream messageFileStream = url.openStream();
 				mf = SystemUIMessageFile.getMessageFile(fileName, messageFileStream);
@@ -442,9 +442,9 @@ public abstract class SystemBasePlugin extends AbstractUIPlugin
 				ok = true;
 			}
 		} catch (Throwable t) {
-			logError("Error loading message file "
+			logError("Error loading message file " //$NON-NLS-1$
 					+ fileName
-					+ " in "
+					+ " in " //$NON-NLS-1$
 					+ bundle.getHeaders().get(
 							org.osgi.framework.Constants.BUNDLE_NAME), t);
 			ok = false; // DY
@@ -465,10 +465,10 @@ public abstract class SystemBasePlugin extends AbstractUIPlugin
 			}
 			if (s != null) {
 				MessageBox mb = new MessageBox(s);
-				mb.setText("Unexpected Error");
-				mb.setMessage("Unable to load message file "
+				mb.setText("Unexpected Error"); //$NON-NLS-1$
+				mb.setMessage("Unable to load message file " //$NON-NLS-1$
 						+ fileName
-						+ " in "
+						+ " in " //$NON-NLS-1$
 						+ bundle.getHeaders().get(
 								org.osgi.framework.Constants.BUNDLE_NAME));
 				mb.open();
@@ -495,10 +495,10 @@ public abstract class SystemBasePlugin extends AbstractUIPlugin
 	   if ( msgFile != null )
 	   	 msg = msgFile.getMessage(msgId);
 	   else
-	     logWarning("No message file set.");
+	     logWarning("No message file set."); //$NON-NLS-1$
 	
 	   if ( msg == null )
-	     logWarning("Unable to find message ID: " + msgId);
+	     logWarning("Unable to find message ID: " + msgId); //$NON-NLS-1$
 	   return msg;  	
 	}
 
@@ -709,7 +709,7 @@ public abstract class SystemBasePlugin extends AbstractUIPlugin
 		// logger
 	    if (log == null) {
 	    	log = LoggerFactory.getLogger(this);
-	    	log.logInfo("Loading " + this.getClass());
+	    	log.logInfo("Loading " + this.getClass()); //$NON-NLS-1$
 	    }
     }
     
@@ -717,7 +717,7 @@ public abstract class SystemBasePlugin extends AbstractUIPlugin
      * @see org.osgi.framework.BundleActivator#stop(org.osgi.framework.BundleContext)
      */
     public void stop(BundleContext context) throws Exception {
-    	logDebugMessage(this.getClass().getName(), "SHUTDOWN");
+    	logDebugMessage(this.getClass().getName(), "SHUTDOWN"); //$NON-NLS-1$
    	    LoggerFactory.freeLogger(this);
         super.stop(context);
     }
@@ -820,7 +820,7 @@ public abstract class SystemBasePlugin extends AbstractUIPlugin
 				imageRegistry.put(key, descriptor);
 				image = imageRegistry.get(key);
 			} else {
-				logError("...error retrieving image for key: " + key);
+				logError("...error retrieving image for key: " + key); //$NON-NLS-1$
 			}
 		}
 		return image;
@@ -862,7 +862,7 @@ public abstract class SystemBasePlugin extends AbstractUIPlugin
 		if (descriptor == null) {
 			String iconPath = "icons/full/"; //$NON-NLS-1$
 			String key = iconPath + relativePath;
-			String[] bundleNames = new String[] {"org.eclipse.ui", "org.eclipse.ui.ide"};
+			String[] bundleNames = new String[] {"org.eclipse.ui", "org.eclipse.ui.ide"}; //$NON-NLS-1$ //$NON-NLS-2$
 			for (int i = 0; (i < bundleNames.length) && (descriptor == null); i++) {
 				String bundleName = bundleNames[i];
 			    Bundle bundle = Platform.getBundle(bundleName);

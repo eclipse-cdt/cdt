@@ -317,7 +317,7 @@ public class SystemInheritableTextCellEditor
 	{
 		String value = text.getText();
 		if (value == null)
-			value = "";
+			value = ""; //$NON-NLS-1$
 		Object typedValue = value;
 		boolean oldValidState = isValueValid();
 		boolean newValidState = isCorrect(typedValue);
@@ -456,7 +456,7 @@ public class SystemInheritableTextCellEditor
 	{
 		if (text.getSelectionCount() > 0)
 			// remove the contents of the current selection
-			text.insert("");
+			text.insert(""); //$NON-NLS-1$
 		else 
 		{
 			// remove the next character
@@ -464,7 +464,7 @@ public class SystemInheritableTextCellEditor
 			if (pos < text.getCharCount()) 
 			{
 				text.setSelection(pos, pos + 1);
-				text.insert("");
+				text.insert(""); //$NON-NLS-1$
 			}
 		}
 		checkSelection(); 

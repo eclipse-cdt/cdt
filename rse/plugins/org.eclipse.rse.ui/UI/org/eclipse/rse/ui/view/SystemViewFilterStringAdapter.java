@@ -120,7 +120,7 @@ public class SystemViewFilterStringAdapter extends AbstractSystemViewAdapter imp
 	{
 		ISystemFilterString filterString = getFilterString(element);
 		ISystemFilter filter = filterString.getParentSystemFilter();
-		return filter.getSystemFilterPoolManager().getName() + "." + filter.getParentFilterPool().getName() + "." + filter.getName() + "." + filterString.getString();
+		return filter.getSystemFilterPoolManager().getName() + "." + filter.getParentFilterPool().getName() + "." + filter.getName() + "." + filterString.getString(); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	}	
 	/**
 	 * Return the type label for this object

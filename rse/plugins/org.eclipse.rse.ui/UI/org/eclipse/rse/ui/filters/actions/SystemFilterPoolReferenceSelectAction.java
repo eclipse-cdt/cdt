@@ -79,7 +79,7 @@ public class SystemFilterPoolReferenceSelectAction extends SystemBaseAction
             refMgr.addReferenceToSystemFilterPool(pool);
         } catch (Exception exc)
         {
-        	SystemBasePlugin.logError("Unexpected error adding filter pool reference",exc);
+        	SystemBasePlugin.logError("Unexpected error adding filter pool reference",exc); //$NON-NLS-1$
         }
 	}		
 }

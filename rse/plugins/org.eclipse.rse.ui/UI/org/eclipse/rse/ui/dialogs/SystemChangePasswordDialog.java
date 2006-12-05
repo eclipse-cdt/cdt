@@ -43,7 +43,7 @@ public class SystemChangePasswordDialog extends SystemPromptDialog
 {
 	private String _hostname;
 	private String _user;
-	private String _newPassword = "";
+	private String _newPassword = ""; //$NON-NLS-1$
 	
 	private Text _txtNewPassword;
 	private Text _txtConfirmPassword;
@@ -185,7 +185,7 @@ public class SystemChangePasswordDialog extends SystemPromptDialog
 		{
 			return RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_COMM_PWD_MISMATCH);
 		}
-		else if (newPassword.equals(""))
+		else if (newPassword.equals("")) //$NON-NLS-1$
 		{
 			return RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_COMM_PWD_BLANKFIELD);
 		}

@@ -269,11 +269,11 @@ public class SystemFilterString extends RSEModelObject implements ISystemFilterS
 		
 
 		StringBuffer result = new StringBuffer(super.toString());
-		result.append(" (string: ");
+		result.append(" (string: "); //$NON-NLS-1$
 		result.append(string);
-		result.append(", type: ");
+		result.append(", type: "); //$NON-NLS-1$
 		result.append(type);
-		result.append(", default: ");
+		result.append(", default: "); //$NON-NLS-1$
 		result.append(default_);
 		result.append(')');
 		return result.toString();

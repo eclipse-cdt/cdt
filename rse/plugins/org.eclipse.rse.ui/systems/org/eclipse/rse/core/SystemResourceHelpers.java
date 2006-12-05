@@ -82,7 +82,7 @@ public class SystemResourceHelpers implements FileFilter
     	    deleteFolder((IFolder)fileOrFolder);
     	} catch (Exception exc)
     	{
-    	   logException("Exception deleting resource " + fileOrFolder.getName(), exc);
+    	   logException("Exception deleting resource " + fileOrFolder.getName(), exc); //$NON-NLS-1$
     	}
     }
     /**
@@ -94,7 +94,7 @@ public class SystemResourceHelpers implements FileFilter
     	if (fileOrFolder.getName().equals(newName))
     	{
     		//System.out.println("same name! ");
-    		Exception exc = new Exception("Rename to same name: " + newName);
+    		Exception exc = new Exception("Rename to same name: " + newName); //$NON-NLS-1$
     		exc.fillInStackTrace();
     		exc.printStackTrace();
     		return;
@@ -106,7 +106,7 @@ public class SystemResourceHelpers implements FileFilter
     	    renameFolder((IFolder)fileOrFolder, newName);
     	} catch (Exception exc) 
     	{
-    	   logException("Exception rename resource " + fileOrFolder.getName() + " to " + newName, exc);
+    	   logException("Exception rename resource " + fileOrFolder.getName() + " to " + newName, exc); //$NON-NLS-1$ //$NON-NLS-2$
     	}
     }    
     
@@ -272,7 +272,7 @@ public class SystemResourceHelpers implements FileFilter
 	         int code = status.getCode();
 	         if (code != IResourceStatus.RESOURCE_EXISTS)
 	         {
-	           logException("error creating folder "+folder.getName(),e);	    	
+	           logException("error creating folder "+folder.getName(),e);	    	 //$NON-NLS-1$
 	           ok = false;	
 	         }
 	       }
@@ -294,7 +294,7 @@ public class SystemResourceHelpers implements FileFilter
     	boolean existsInWorkSpace = folder.exists();
     	if (existsInFileSystem && !existsInWorkSpace)
     	{
-          logMessage("...deleteFolder error: folder "+folder.getLocation().toOSString()+" exists in file system but not in workspace! Cannot delete it.");
+          logMessage("...deleteFolder error: folder "+folder.getLocation().toOSString()+" exists in file system but not in workspace! Cannot delete it."); //$NON-NLS-1$ //$NON-NLS-2$
           existsInWorkSpace = folder.exists(); // for debugging. set breakpoint here
     	}
     	boolean ok = true;    	
@@ -375,7 +375,7 @@ public class SystemResourceHelpers implements FileFilter
                    folders.addElement(members[idx]);
     	} catch (Exception exc)
     	{
-    		logException("Error retrieving folder list",exc);
+    		logException("Error retrieving folder list",exc); //$NON-NLS-1$
     	}
 
         SystemResourceManager.turnOnResourceEventListening();           
@@ -420,7 +420,7 @@ public class SystemResourceHelpers implements FileFilter
             }
     	} catch (Exception exc)
     	{
-    		logException("Error retrieving folder list",exc);
+    		logException("Error retrieving folder list",exc); //$NON-NLS-1$
     	}
     	
         SystemResourceManager.turnOnResourceEventListening();           
@@ -593,7 +593,7 @@ public class SystemResourceHelpers implements FileFilter
                    files.addElement(members[idx]);
     	} catch (Exception exc)
     	{
-    		logException("Error retrieving file list",exc);
+    		logException("Error retrieving file list",exc); //$NON-NLS-1$
     	}
 
         SystemResourceManager.turnOnResourceEventListening();           

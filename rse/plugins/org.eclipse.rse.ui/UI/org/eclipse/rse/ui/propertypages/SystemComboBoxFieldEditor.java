@@ -79,7 +79,7 @@ public class SystemComboBoxFieldEditor extends FieldEditor
 	{
 		super(name, labelText, parent);
 		this.readOnly = readOnly;
-		this.oldValue = "";
+		this.oldValue = ""; //$NON-NLS-1$
 		contentArray = new String[contents.size()];
 		for (int idx=0; idx<contentArray.length; idx++)
 		   contentArray[idx] = contents.elementAt(idx).toString();	
@@ -98,7 +98,7 @@ public class SystemComboBoxFieldEditor extends FieldEditor
 	{
 		super(name, labelText, parent);
 		this.readOnly = readOnly;
-		this.oldValue = "";
+		this.oldValue = ""; //$NON-NLS-1$
 		contentArray = contents;				
 	    doOurFillIntoGrid();
 	    initContents();
@@ -116,12 +116,12 @@ public class SystemComboBoxFieldEditor extends FieldEditor
 	 */
 	public SystemComboBoxFieldEditor(String name, ResourceBundle rb, String rbKey, String[] contents, boolean readOnly, Composite parent) 
 	{
-		super(name, rb.getString(rbKey+"label"), parent);
+		super(name, rb.getString(rbKey+"label"), parent); //$NON-NLS-1$
 		this.readOnly = readOnly;
-		this.oldValue = "";
+		this.oldValue = ""; //$NON-NLS-1$
 		contentArray = contents;				
 	    doOurFillIntoGrid();
-	    setToolTipText(rb.getString(rbKey+"tooltip"));
+	    setToolTipText(rb.getString(rbKey+"tooltip")); //$NON-NLS-1$
 	    initContents();
 	}
 	
@@ -203,7 +203,7 @@ public class SystemComboBoxFieldEditor extends FieldEditor
 		  ignoreSelection = false;		  
 		}		
 		else
-		  oldValue = "";
+		  oldValue = ""; //$NON-NLS-1$
 	}
 	
 	private void initContents()

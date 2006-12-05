@@ -44,7 +44,7 @@ public class SystemPreferenceQualifyConnectionNamesAction extends SystemBaseActi
         sr = RSEUIPlugin.getTheSystemRegistry();	        
         setChecked(sr.getQualifiedHostNames());
 
-		setHelp(RSEUIPlugin.HELPPREFIX+"actn0008");
+		setHelp(RSEUIPlugin.HELPPREFIX+"actn0008"); //$NON-NLS-1$
 	}
 
 	/**

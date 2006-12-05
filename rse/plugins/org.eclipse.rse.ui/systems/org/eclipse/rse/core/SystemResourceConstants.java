@@ -24,13 +24,13 @@ import org.eclipse.rse.ui.ISystemPreferencesConstants;
 public interface SystemResourceConstants 
 {
 	
-    public static final String RESOURCE_PROJECT_NAME = "RemoteSystemsConnections";
-    public static final String RESOURCE_TEMPFILES_PROJECT_NAME= "RemoteSystemsTempFiles";
-    public static final String RESOURCE_CONNECTIONS_FOLDER_NAME = "Connections";
-    public static final String RESOURCE_FILTERS_FOLDER_NAME = "Filters";    
-    public static final String RESOURCE_TYPE_FILTERS_FOLDER_NAME = "TypeFilters";        
-    public static final String RESOURCE_USERACTIONS_FOLDER_NAME = "UserActions";
-    public static final String RESOURCE_COMPILECOMMANDS_FOLDER_NAME = "CompileCommands";
+    public static final String RESOURCE_PROJECT_NAME = "RemoteSystemsConnections"; //$NON-NLS-1$
+    public static final String RESOURCE_TEMPFILES_PROJECT_NAME= "RemoteSystemsTempFiles"; //$NON-NLS-1$
+    public static final String RESOURCE_CONNECTIONS_FOLDER_NAME = "Connections"; //$NON-NLS-1$
+    public static final String RESOURCE_FILTERS_FOLDER_NAME = "Filters";     //$NON-NLS-1$
+    public static final String RESOURCE_TYPE_FILTERS_FOLDER_NAME = "TypeFilters";         //$NON-NLS-1$
+    public static final String RESOURCE_USERACTIONS_FOLDER_NAME = "UserActions"; //$NON-NLS-1$
+    public static final String RESOURCE_COMPILECOMMANDS_FOLDER_NAME = "CompileCommands"; //$NON-NLS-1$
     
     public static final String RESOURCE_TEAMPROFILE_NAME = ISystemPreferencesConstants.DEFAULT_TEAMPROFILE;
 }

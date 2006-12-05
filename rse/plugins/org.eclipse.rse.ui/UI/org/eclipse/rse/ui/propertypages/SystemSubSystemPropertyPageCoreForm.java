@@ -188,7 +188,7 @@ public class SystemSubSystemPropertyPageCoreForm extends AbstractSystemSubSystem
 		  String localUserId = ss.getLocalUserId();
 		  textUserId.setLocalText(localUserId);
 		  String parentUserId = ss.getHost().getDefaultUserId();
-		  textUserId.setInheritedText(parentUserId+" "+SystemPropertyResources.RESID_PROPERTY_INHERITED);
+		  textUserId.setInheritedText(parentUserId+" "+SystemPropertyResources.RESID_PROPERTY_INHERITED); //$NON-NLS-1$
 		  textUserId.setLocal((localUserId!=null)&&(localUserId.length()>0));	    
 	    }
 	}
@@ -208,7 +208,7 @@ public class SystemSubSystemPropertyPageCoreForm extends AbstractSystemSubSystem
 		  String localUserId = ss.getLocalUserId();
 		  textUserId.setLocalText(localUserId);
 		  String parentUserId = ss.getHost().getDefaultUserId();
-		  textUserId.setInheritedText(parentUserId+" "+SystemPropertyResources.RESID_PROPERTY_INHERITED);
+		  textUserId.setInheritedText(parentUserId+" "+SystemPropertyResources.RESID_PROPERTY_INHERITED); //$NON-NLS-1$
 		  textUserId.setLocal((localUserId!=null)&&(localUserId.length()>0));	    
 	    }	    
 	}
@@ -225,7 +225,7 @@ public class SystemSubSystemPropertyPageCoreForm extends AbstractSystemSubSystem
 	        return null;
 		  if (userIdValidator != null)
 	        errorMessage= userIdValidator.validate(textUserId.getText());
-	      else if (getUserId().equals(""))
+	      else if (getUserId().equals("")) //$NON-NLS-1$
 		    errorMessage = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_VALIDATE_USERID_EMPTY);
 	    }
 		setErrorMessage(errorMessage);		

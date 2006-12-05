@@ -377,7 +377,7 @@ public class SystemFilterMoveFilterStringAction extends SystemBaseCopyAction
                                                              ISystemFilter[] filtersToExclude)
     {
     	SystemSimpleContentElement veryRootElement = 
-    	   new SystemSimpleContentElement("Root",
+    	   new SystemSimpleContentElement("Root", //$NON-NLS-1$
     	                                  null, null, (Vector)null);	    	
     	veryRootElement.setRenamable(false);
     	veryRootElement.setDeletable(false);

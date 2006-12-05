@@ -567,7 +567,7 @@ public class SystemFilterWorkWithFilterPoolsDialog
    	    {
    	    	ISubSystem ss = (ISubSystem)inputObj;
    	        SystemMessage msg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_FILTERPOOL_CREATED);
-   	        msg.makeSubstitution("'"+pool.getName()+"'", "'"+ss.getName()+"'");
+   	        msg.makeSubstitution("'"+pool.getName()+"'", "'"+ss.getName()+"'"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
    	        if (shell.isDisposed() || !shell.isVisible())
    	          shell = getShell();
    	        SystemMessageDialog msgdlg = new SystemMessageDialog(shell, msg);

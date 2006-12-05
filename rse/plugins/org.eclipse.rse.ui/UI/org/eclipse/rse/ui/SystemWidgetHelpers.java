@@ -1398,7 +1398,7 @@ public class SystemWidgetHelpers {
 		//ViewContextComputer comp = new ViewContextComputer(view, id);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(c, id.toString());
 		if (traceHelpIDs)
-			SystemBasePlugin.logInfo("Setting help id: " + id);
+			SystemBasePlugin.logInfo("Setting help id: " + id); //$NON-NLS-1$
 	}
 
 	/**
@@ -1442,7 +1442,7 @@ public class SystemWidgetHelpers {
 		boolean strip = false;
 		Locale currentLocale = Locale.getDefault();
 		String language = currentLocale.getLanguage();
-		boolean cjk = language.equals("zh") || language.equals("ja") || language.equals("ko"); //$NON-NLS-1$  //$NON-NLS-2$
+		boolean cjk = language.equals("zh") || language.equals("ja") || language.equals("ko"); //$NON-NLS-1$  //$NON-NLS-2$ //$NON-NLS-3$
 		int n = result.length();
 		if (n > 0) {
 			char lastCharacter = label.charAt(n - 1);

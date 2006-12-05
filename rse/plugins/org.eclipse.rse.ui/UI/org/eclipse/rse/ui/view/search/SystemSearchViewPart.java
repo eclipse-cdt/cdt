@@ -94,8 +94,8 @@ public class SystemSearchViewPart extends ViewPart
 	private IToolBarManager tbMgr;
 	//private IStatusLineManager slMgr;
 	
-	private static final String MENU_HISTORY_GROUP_NAME = "historyGroup";
-	private static final String MENU_CLEAR_HISTORY_GROUP_NAME = "clearHistoryGroup";
+	private static final String MENU_HISTORY_GROUP_NAME = "historyGroup"; //$NON-NLS-1$
+	private static final String MENU_CLEAR_HISTORY_GROUP_NAME = "clearHistoryGroup"; //$NON-NLS-1$
 
 	private ArrayList viewers = new ArrayList();
 	private ArrayList historyActions = new ArrayList();
@@ -156,7 +156,7 @@ public class SystemSearchViewPart extends ViewPart
 		public CancelAction() {
 			super(SystemResources.ACTION_CANCEL_SEARCH_LABEL, RSEUIPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_STOP_ID));
 			setToolTipText(SystemResources.ACTION_CANCEL_SEARCH_TOOLTIP);
-			RSEUIPlugin.getDefault().getWorkbench().getHelpSystem().setHelp(this, RSEUIPlugin.HELPPREFIX + "search_cancel");
+			RSEUIPlugin.getDefault().getWorkbench().getHelpSystem().setHelp(this, RSEUIPlugin.HELPPREFIX + "search_cancel"); //$NON-NLS-1$
 		}
 
 		public void run() {
@@ -251,7 +251,7 @@ public class SystemSearchViewPart extends ViewPart
 		RSEUIPlugin.getTheSystemRegistry().addSystemResourceChangeListener(this);
 
 		// set help
-		SystemWidgetHelpers.setHelp(pageBook, RSEUIPlugin.HELPPREFIX + "srch0000");
+		SystemWidgetHelpers.setHelp(pageBook, RSEUIPlugin.HELPPREFIX + "srch0000"); //$NON-NLS-1$
 	}
 
 	private void initToolBarActions(IToolBarManager tbMgr) {
@@ -421,7 +421,7 @@ public class SystemSearchViewPart extends ViewPart
 			currentViewer = createSearchResultsTree(resultSet, adapter);
 			
 			TreeViewer treeViewer = (TreeViewer)currentViewer;
-			MenuManager menuMgr = new MenuManager("#PopupMenu");
+			MenuManager menuMgr = new MenuManager("#PopupMenu"); //$NON-NLS-1$
 			menuMgr.setRemoveAllWhenShown(true);
 			menuMgr.addMenuListener(this);
 			Tree tree = (Tree)treeViewer.getControl();
@@ -442,7 +442,7 @@ public class SystemSearchViewPart extends ViewPart
 		currentViewer.addDoubleClickListener(new SystemSearchDoubleClickListener());
 
 		// set help for control
-		SystemWidgetHelpers.setHelp(currentViewer.getControl(), RSEUIPlugin.HELPPREFIX + "srch0000");
+		SystemWidgetHelpers.setHelp(currentViewer.getControl(), RSEUIPlugin.HELPPREFIX + "srch0000"); //$NON-NLS-1$
 
 		// add current viewer to viewer list
 		viewers.add(currentViewer);
@@ -792,7 +792,7 @@ public class SystemSearchViewPart extends ViewPart
 		actionBars.updateActionBars();
 		
 		// clear the content description
-		setContentDescription("");
+		setContentDescription(""); //$NON-NLS-1$
 				
 		return true;
 	}

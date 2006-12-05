@@ -23,7 +23,7 @@ import org.eclipse.rse.core.model.ISystemContentsType;
  */
 public class SystemFilterStringContentsType implements ISystemContentsType
 {
-    public static String CONTENTS_TYPE_CHILDREN_PARENTS = "contents_children_parents";
+    public static String CONTENTS_TYPE_CHILDREN_PARENTS = "contents_children_parents"; //$NON-NLS-1$
     public static SystemFilterStringContentsType _instance = new SystemFilterStringContentsType();
     
     public static SystemFilterStringContentsType getInstance()

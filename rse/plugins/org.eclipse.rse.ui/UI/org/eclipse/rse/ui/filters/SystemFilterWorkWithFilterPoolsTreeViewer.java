@@ -88,7 +88,7 @@ public class SystemFilterWorkWithFilterPoolsTreeViewer
 		// -----------------------------
 		// Enable right-click popup menu
 		// -----------------------------
-		menuMgr = new MenuManager("#PopupMenu");
+		menuMgr = new MenuManager("#PopupMenu"); //$NON-NLS-1$
 	    menuMgr.setRemoveAllWhenShown(true);
 	    menuMgr.addMenuListener(this);
 		Menu menu = menuMgr.createContextMenu(getTree());

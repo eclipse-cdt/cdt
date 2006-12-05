@@ -72,7 +72,7 @@ public class SystemCommonDeleteAction
 		allowOnMultipleSelection(true);
 		setProcessAllSelections(true);
 		setContextMenuGroup(ISystemContextMenuConstants.GROUP_REORGANIZE);		
-  	    setHelp(RSEUIPlugin.HELPPREFIX+"actn0021");
+  	    setHelp(RSEUIPlugin.HELPPREFIX+"actn0021"); //$NON-NLS-1$
 	}
 	
 	/**

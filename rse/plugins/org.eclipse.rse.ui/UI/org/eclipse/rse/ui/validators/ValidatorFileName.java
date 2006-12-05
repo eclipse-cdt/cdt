@@ -103,7 +103,7 @@ public class ValidatorFileName
 	
 	public String toString()
 	{
-		return "FileNameValidator class";
+		return "FileNameValidator class"; //$NON-NLS-1$
 	}
 
     // ---------------------------

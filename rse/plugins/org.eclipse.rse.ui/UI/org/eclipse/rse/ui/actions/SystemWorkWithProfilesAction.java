@@ -40,7 +40,7 @@ public class SystemWorkWithProfilesAction extends SystemBaseAction
         setSelectionSensitive(false);
         allowOnMultipleSelection(true);
         //sr = RSEUIPlugin.getTheSystemRegistry();	        
-		setHelp(RSEUIPlugin.HELPPREFIX+"actnwwpr");
+		setHelp(RSEUIPlugin.HELPPREFIX+"actnwwpr"); //$NON-NLS-1$
 	}
 
 	/**

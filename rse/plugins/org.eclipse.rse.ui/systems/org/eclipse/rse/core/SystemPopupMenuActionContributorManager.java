@@ -96,7 +96,7 @@ public class SystemPopupMenuActionContributorManager {
 					else 
 					{
 						//TODO: add a warning message for this
-						SystemBasePlugin.logWarning("Invalid Tag found: " + popupMenuChild.getName()); 
+						SystemBasePlugin.logWarning("Invalid Tag found: " + popupMenuChild.getName());  //$NON-NLS-1$
 					}
 				}
 			}

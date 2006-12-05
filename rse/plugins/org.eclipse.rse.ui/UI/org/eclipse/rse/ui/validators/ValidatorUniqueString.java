@@ -230,7 +230,7 @@ public class ValidatorUniqueString
 
 	public String toString()
 	{
-		return "UniqueNameValidator class";
+		return "UniqueNameValidator class"; //$NON-NLS-1$
 	}
 
     // --------------------------

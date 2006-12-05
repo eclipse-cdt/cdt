@@ -184,7 +184,7 @@ public abstract class SystemBaseSubMenuAction
     	  populateSubMenu(subMenu);
     	  if (traceSelections)
     	  {
-    	    issueTraceMessage("*** INSIDE GETSUBMENU for "+actionLabel+". createMenuEachTime = " + createMenuEachTime);
+    	    issueTraceMessage("*** INSIDE GETSUBMENU for "+actionLabel+". createMenuEachTime = " + createMenuEachTime); //$NON-NLS-1$ //$NON-NLS-2$
     	  }
     	  subMenu.setToolTipText(getToolTipText());
     	  //cascadeAllInputs(); no point in doing in now, setInputs will be called later by SV
@@ -197,7 +197,7 @@ public abstract class SystemBaseSubMenuAction
     	  populateSubMenu(subMenu);
     	  if (traceSelections)
     	  {
-    	    issueTraceMessage("*** INSIDE GETSUBMENU for "+actionLabel+". populateMenuEachTime = " + populateMenuEachTime);
+    	    issueTraceMessage("*** INSIDE GETSUBMENU for "+actionLabel+". populateMenuEachTime = " + populateMenuEachTime); //$NON-NLS-1$ //$NON-NLS-2$
     	  }
     	  //cascadeAllInputs(); no point in doing in now, setInputs will be called later by SV
 		  //Menu m = subMenu.getMenu();
@@ -207,7 +207,7 @@ public abstract class SystemBaseSubMenuAction
     	} 
     	else if (traceSelections)
     	{
-    	  issueTraceMessage("*** INSIDE GETSUBMENU for "+actionLabel+". SUBMENU ALREADY CREATED. ");
+    	  issueTraceMessage("*** INSIDE GETSUBMENU for "+actionLabel+". SUBMENU ALREADY CREATED. "); //$NON-NLS-1$ //$NON-NLS-2$
     	}
     	
     	return subMenu;
@@ -362,7 +362,7 @@ public abstract class SystemBaseSubMenuAction
     	super.setInputs(shell, v, selection); // calls setSelection+Shell+Viewer
     	dontCascade = false;
 		if (traceSelections)
-		  issueTraceMessage(" INSIDE SETINPUTS IN BASE ACTION CLASS");
+		  issueTraceMessage(" INSIDE SETINPUTS IN BASE ACTION CLASS"); //$NON-NLS-1$
 		cascadeAllInputs();
     }
 	
@@ -373,9 +373,9 @@ public abstract class SystemBaseSubMenuAction
     {
     	if (traceSelections)
     	{
-    	  issueTraceMessage("*** INSIDE CASCADESELECTION ***");
-    	  issueTraceMessage("  subMenu = " + subMenu);
-    	  issueTraceMessage("  selection = " + selection);
+    	  issueTraceMessage("*** INSIDE CASCADESELECTION ***"); //$NON-NLS-1$
+    	  issueTraceMessage("  subMenu = " + subMenu); //$NON-NLS-1$
+    	  issueTraceMessage("  selection = " + selection); //$NON-NLS-1$
     	}
         if (subMenu == null)
           return;

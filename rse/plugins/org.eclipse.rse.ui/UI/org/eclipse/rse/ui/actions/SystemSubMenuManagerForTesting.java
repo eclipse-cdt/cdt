@@ -40,7 +40,7 @@ public class SystemSubMenuManagerForTesting
        //implements ISelectionChangedListener
        //implements ISystemAction
 {
-	private String prefix = "";
+	private String prefix = ""; //$NON-NLS-1$
     
 	/**
 	 * Constructor
@@ -55,7 +55,7 @@ public class SystemSubMenuManagerForTesting
 	public SystemSubMenuManagerForTesting(SystemBaseSubMenuAction parentAction, String text)
 	{
 		super(parentAction, text);
-		System.out.println("SUBMENUMGR CTOR " + text);
+		System.out.println("SUBMENUMGR CTOR " + text); //$NON-NLS-1$
 	}
 	/**
 	 * Constructor 
@@ -63,7 +63,7 @@ public class SystemSubMenuManagerForTesting
 	public SystemSubMenuManagerForTesting(SystemBaseSubMenuAction parentAction, String text, String id)
 	{
 		super(parentAction, text, id);
-		System.out.println("SUBMENUMGR CTOR " + text);
+		System.out.println("SUBMENUMGR CTOR " + text); //$NON-NLS-1$
 	}
 	/**
 	 * Constructor
@@ -79,7 +79,7 @@ public class SystemSubMenuManagerForTesting
      */
     public void setInputs(Shell shell, Viewer v, ISelection selection)
     {
-		System.out.println(" INSIDE SETINPUTS FOR SUBMENUMGR '"+label+"': selection = "+selection);
+		System.out.println(" INSIDE SETINPUTS FOR SUBMENUMGR '"+label+"': selection = "+selection); //$NON-NLS-1$ //$NON-NLS-2$
 		super.setInputs(shell, v, selection);
     }
        
@@ -98,20 +98,20 @@ public class SystemSubMenuManagerForTesting
      */
     public void appendToGroup(String groupName, IAction action)     
 	{
-	 	  System.out.println("INSIDE APPENDTOGROUP OF ISYSTEMACTION FOR SUBMENUMGR FOR '"+label+"'");
-		  prefix = "  ";
+	 	  System.out.println("INSIDE APPENDTOGROUP OF ISYSTEMACTION FOR SUBMENUMGR FOR '"+label+"'"); //$NON-NLS-1$ //$NON-NLS-2$
+		  prefix = "  "; //$NON-NLS-1$
     	  super.appendToGroup(groupName, action);
-		  prefix = "";
+		  prefix = ""; //$NON-NLS-1$
 	}
     /**
      * Intercept so we can cascade the selection, viewer and shell down
      */
 	public void appendToGroup(String groupName, IContributionItem item) 
 	{
-		  System.out.println("INSIDE APPENDTOGROUP OF SYSTEMSUBMENUMGR FOR SUBMENUMGR FOR '"+label+"'");
-		  prefix = "  ";
+		  System.out.println("INSIDE APPENDTOGROUP OF SYSTEMSUBMENUMGR FOR SUBMENUMGR FOR '"+label+"'"); //$NON-NLS-1$ //$NON-NLS-2$
+		  prefix = "  "; //$NON-NLS-1$
 		  super.appendToGroup(groupName, item);
-	      prefix = "";	      
+	      prefix = "";	       //$NON-NLS-1$
 	}
     /**
      * Intercept so we can cascade the selection, viewer and shell down
@@ -129,20 +129,20 @@ public class SystemSubMenuManagerForTesting
      */
 	public void add(IContributionItem item) 
 	{
-		prefix = "  ";
+		prefix = "  "; //$NON-NLS-1$
 		if (item instanceof ActionContributionItem) 
 		{
 			IAction action = ((ActionContributionItem)item).getAction();
 			if (action instanceof ISystemAction)
-               System.out.println("INSIDE ADD OF ISYSTEMACTION(action="+action.getText()+") FOR THIS MNUMGR: "+label);
+               System.out.println("INSIDE ADD OF ISYSTEMACTION(action="+action.getText()+") FOR THIS MNUMGR: "+label); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		else if (item instanceof SystemSubMenuManager)
 		{
 			SystemSubMenuManager submenu = (SystemSubMenuManager)item;
-            System.out.println("INSIDE ADD OF SUBMENUMGR(submenu="+submenu.getLabel()+") FOR THIS MNUMGR: "+label);
+            System.out.println("INSIDE ADD OF SUBMENUMGR(submenu="+submenu.getLabel()+") FOR THIS MNUMGR: "+label); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		super.add(item);
-	    prefix = "";	      
+	    prefix = "";	       //$NON-NLS-1$
 	}
 
 	/**
@@ -152,10 +152,10 @@ public class SystemSubMenuManagerForTesting
     {
     	//super.menuAboutToShow(ourSubMenu);
 	    IContributionItem[] items = getItems();
-        System.out.println(prefix+"INSIDE CASCADEALLINPUTS TO ALL ITEMS FOR SUBMENUMGR FOR "+label+". NBR ITEMS = "+items.length);
-        System.out.println(prefix+"...shell = "+shell+", viewer = "+viewer+", selection = "+selection);
+        System.out.println(prefix+"INSIDE CASCADEALLINPUTS TO ALL ITEMS FOR SUBMENUMGR FOR "+label+". NBR ITEMS = "+items.length); //$NON-NLS-1$ //$NON-NLS-2$
+        System.out.println(prefix+"...shell = "+shell+", viewer = "+viewer+", selection = "+selection); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
         String oldPrefix = prefix;
-        prefix += "  ";
+        prefix += "  "; //$NON-NLS-1$
         super.cascadeAllInputs();
 	    prefix = oldPrefix;
     }
@@ -164,8 +164,8 @@ public class SystemSubMenuManagerForTesting
 	 */
 	protected void cascadeAllInputs(ISystemAction action)
     {
-        System.out.println(prefix+"INSIDE CASCADEALLINPUTS TO ISYSTEMACTION(action="+action.getText()+") FOR THIS MNUMGR: "+label);
-        System.out.println(prefix+"...shell = "+shell+", viewer = "+viewer+", selection = "+selection);
+        System.out.println(prefix+"INSIDE CASCADEALLINPUTS TO ISYSTEMACTION(action="+action.getText()+") FOR THIS MNUMGR: "+label); //$NON-NLS-1$ //$NON-NLS-2$
+        System.out.println(prefix+"...shell = "+shell+", viewer = "+viewer+", selection = "+selection); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
         super.cascadeAllInputs(action);
     }
 	/**
@@ -173,8 +173,8 @@ public class SystemSubMenuManagerForTesting
 	 */
 	protected void cascadeAllInputs(SystemSubMenuManager submenu)
     {
-        System.out.println("INSIDE CASCADEALLINPUTS TO SUBMENUMGR(submenu="+submenu.getLabel()+") FOR THIS MNUMGR: "+label);
-        System.out.println("...shell = "+shell+", viewer = "+viewer+", selection = "+selection);
+        System.out.println("INSIDE CASCADEALLINPUTS TO SUBMENUMGR(submenu="+submenu.getLabel()+") FOR THIS MNUMGR: "+label); //$NON-NLS-1$ //$NON-NLS-2$
+        System.out.println("...shell = "+shell+", viewer = "+viewer+", selection = "+selection); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
         super.cascadeAllInputs(submenu);        
     }
 }

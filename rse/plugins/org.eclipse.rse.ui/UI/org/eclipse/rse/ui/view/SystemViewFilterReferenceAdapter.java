@@ -180,7 +180,7 @@ public class SystemViewFilterReferenceAdapter
 	public String getAbsoluteName(Object element)
 	{
 		ISystemFilter filter = getFilter(element);
-		return filter.getSystemFilterPoolManager().getName() + "." + filter.getParentFilterPool().getName() + "." + filter.getName();
+		return filter.getSystemFilterPoolManager().getName() + "." + filter.getParentFilterPool().getName() + "." + filter.getName(); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	/**
@@ -292,7 +292,7 @@ public class SystemViewFilterReferenceAdapter
 			catch (Exception exc)
 			{
 				children[0] = new SystemMessageObject(RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_EXPAND_FAILED), ISystemMessageObject.MSGTYPE_ERROR, element);
-				SystemBasePlugin.logError("Exception prompting for filter ", exc);
+				SystemBasePlugin.logError("Exception prompting for filter ", exc); //$NON-NLS-1$
 			}
 			//RSEUIPlugin.logDebugMessage(this.getClass().getName(),"returning children");
 			return children;
@@ -387,7 +387,7 @@ public class SystemViewFilterReferenceAdapter
 						
 						if (allChildren == null)
 						{
-						    System.out.println("filter children == null!");
+						    System.out.println("filter children == null!"); //$NON-NLS-1$
 						}
 						else
 						{
@@ -412,13 +412,13 @@ public class SystemViewFilterReferenceAdapter
 				{
 					children = new SystemMessageObject[1];
 					children[0] = new SystemMessageObject(RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_EXPAND_CANCELLED), ISystemMessageObject.MSGTYPE_CANCEL, element);
-					SystemBasePlugin.logDebugMessage(this.getClass().getName(), "Filter resolving canceled by user.");
+					SystemBasePlugin.logDebugMessage(this.getClass().getName(), "Filter resolving canceled by user."); //$NON-NLS-1$
 				}
 				catch (Exception exc)
 				{
 					children = new SystemMessageObject[1];
 					children[0] = new SystemMessageObject(RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_EXPAND_FAILED), ISystemMessageObject.MSGTYPE_ERROR, element);
-					SystemBasePlugin.logError("Exception resolving filters' strings ", exc);
+					SystemBasePlugin.logError("Exception resolving filters' strings ", exc); //$NON-NLS-1$
 				} // message already issued
 
 				if ((children == null) || (children.length == 0))
@@ -488,7 +488,7 @@ public class SystemViewFilterReferenceAdapter
 	 */
 	public boolean testAttribute(Object target, String name, String value)
 	{
-		if (name.equalsIgnoreCase("filterType"))
+		if (name.equalsIgnoreCase("filterType")) //$NON-NLS-1$
 		{
 			ISystemFilterReference ref = getFilterReference(target);
 			String type = ref.getReferencedFilter().getType();
@@ -497,11 +497,11 @@ public class SystemViewFilterReferenceAdapter
 			else
 				return value.equals(type);
 		}
-		else if (name.equalsIgnoreCase("showChangeFilterStringPropertyPage"))
+		else if (name.equalsIgnoreCase("showChangeFilterStringPropertyPage")) //$NON-NLS-1$
 		{
 			ISystemFilterReference ref = getFilterReference(target);
 			ISubSystemConfiguration ssf = SubSystemHelpers.getParentSubSystemConfiguration(ref.getReferencedFilter());
-			if (value.equals("true"))
+			if (value.equals("true")) //$NON-NLS-1$
 				return ssf.showChangeFilterStringsPropertyPage(ref.getReferencedFilter());
 			else
 				return !ssf.showChangeFilterStringsPropertyPage(ref.getReferencedFilter());			 	
@@ -681,7 +681,7 @@ public class SystemViewFilterReferenceAdapter
 		ISystemFilterReference fRef = (ISystemFilterReference) element;
 		ISystemFilter filter = fRef.getReferencedFilter();
 		String mgrName = filter.getSystemFilterPoolManager().getName();
-		return (mgrName + "." + filter.getParentFilterPool().getName() + "." + newName).toUpperCase();
+		return (mgrName + "." + filter.getParentFilterPool().getName() + "." + newName).toUpperCase(); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	/**
@@ -727,11 +727,11 @@ public class SystemViewFilterReferenceAdapter
 		ISystemFilterReference fRef = getFilterReference(element);
 		ISystemFilter referencedFilter = fRef.getReferencedFilter();
 		ISystemFilterPool pool = referencedFilter.getParentFilterPool();
-		String handle = pool.getReferenceName() + "=";
+		String handle = pool.getReferenceName() + "="; //$NON-NLS-1$
 		ISystemFilter parentFilter = referencedFilter.getParentFilter();
 		while (parentFilter != null)
 		{
-			handle += parentFilter.getName() + ";";
+			handle += parentFilter.getName() + ";"; //$NON-NLS-1$
 			parentFilter = parentFilter.getParentFilter();
 		}
 		handle += referencedFilter.getName();

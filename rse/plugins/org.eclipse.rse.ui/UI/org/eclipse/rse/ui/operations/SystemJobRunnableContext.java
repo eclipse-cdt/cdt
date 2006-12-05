@@ -216,7 +216,7 @@ public final class SystemJobRunnableContext implements ISystemRunnableContext {
 		}
 		catch (InvocationTargetException e) {
 			Throwable target = e.getTargetException();
-			String msg = "";
+			String msg = ""; //$NON-NLS-1$
 			
 			if (target != null) {
 				msg = target.getMessage();

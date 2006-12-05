@@ -60,16 +60,16 @@ public class SubSystemConfigurationProxy implements ISubSystemConfigurationProxy
 	 */
 	public SubSystemConfigurationProxy(IConfigurationElement element) {
 		this.element = element;
-		this.id = element.getAttribute("id");
-		this.name = element.getAttribute("name").trim();
-		this.description = element.getAttribute("description").trim();
-		this.types = element.getAttribute("systemTypes");
-		this.vendor = element.getAttribute("vendor");
-		this.category = element.getAttribute("category");
+		this.id = element.getAttribute("id"); //$NON-NLS-1$
+		this.name = element.getAttribute("name").trim(); //$NON-NLS-1$
+		this.description = element.getAttribute("description").trim(); //$NON-NLS-1$
+		this.types = element.getAttribute("systemTypes"); //$NON-NLS-1$
+		this.vendor = element.getAttribute("vendor"); //$NON-NLS-1$
+		this.category = element.getAttribute("category"); //$NON-NLS-1$
 //		this.systemClassName = element.getAttribute("systemClass");
 		this.priority = Integer.MAX_VALUE;
 		
-		String priorityStr = element.getAttribute("priority");
+		String priorityStr = element.getAttribute("priority"); //$NON-NLS-1$
 		
 		try {
 			
@@ -79,17 +79,17 @@ public class SubSystemConfigurationProxy implements ISubSystemConfigurationProxy
 		}
 		catch (NumberFormatException e) {
 			priority = Integer.MAX_VALUE;
-			SystemBasePlugin.logError("Exception reading priority for subsystem configuration " + name + " defined in plugin " + element.getDeclaringExtension().getNamespaceIdentifier(), e);
+			SystemBasePlugin.logError("Exception reading priority for subsystem configuration " + name + " defined in plugin " + element.getDeclaringExtension().getNamespaceIdentifier(), e); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		
-		String className = element.getAttribute("class");
-		if (vendor == null) vendor = "Unknown";
-		if (category == null) category = "Unknown";
-		if (types == null) types = "*";
-		this.allTypes = types.equals("*");
-		this.image = getPluginImage(element, element.getAttribute("icon"));
+		String className = element.getAttribute("class"); //$NON-NLS-1$
+		if (vendor == null) vendor = "Unknown"; //$NON-NLS-1$
+		if (category == null) category = "Unknown"; //$NON-NLS-1$
+		if (types == null) types = "*"; //$NON-NLS-1$
+		this.allTypes = types.equals("*"); //$NON-NLS-1$
+		this.image = getPluginImage(element, element.getAttribute("icon")); //$NON-NLS-1$
 		if (this.image == null) this.image = RSEUIPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_CONNECTION_ID);
-		this.liveImage = getPluginImage(element, element.getAttribute("iconlive"));
+		this.liveImage = getPluginImage(element, element.getAttribute("iconlive")); //$NON-NLS-1$
 		if (this.liveImage == null) this.liveImage = RSEUIPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_CONNECTIONLIVE_ID);
 		//createFolderTree();
 	}
@@ -132,7 +132,7 @@ public class SubSystemConfigurationProxy implements ISubSystemConfigurationProxy
             systemTypes = RSECorePlugin.getDefault().getRegistry().getSystemTypeNames();
           else
           {
-          	StringTokenizer tokens = new StringTokenizer(types,";");
+          	StringTokenizer tokens = new StringTokenizer(types,";"); //$NON-NLS-1$
             Vector v = new Vector();
             while (tokens.hasMoreTokens())
               v.addElement(tokens.nextToken());
@@ -201,7 +201,7 @@ public class SubSystemConfigurationProxy implements ISubSystemConfigurationProxy
     	if (typesArray == null)
     	{
     		typesArray = new ArrayList();
-    		StringTokenizer tokenizer = new StringTokenizer(types,";");
+    		StringTokenizer tokenizer = new StringTokenizer(types,";"); //$NON-NLS-1$
 			while (tokenizer.hasMoreTokens())
 			{
 				String type = tokenizer.nextToken();
@@ -217,7 +217,7 @@ public class SubSystemConfigurationProxy implements ISubSystemConfigurationProxy
      */
     protected ImageDescriptor getPluginImage(IConfigurationElement element, String fileName)
     {
-	   URL path = getBundle().getEntry("/");
+	   URL path = getBundle().getEntry("/"); //$NON-NLS-1$
 	   URL fullPathString = null;
 	   try {
 		   fullPathString = new URL(path,fileName);
@@ -248,7 +248,7 @@ public class SubSystemConfigurationProxy implements ISubSystemConfigurationProxy
    	       {
 //   	    	 get the name space of the declaring extension
 			    String nameSpace = element.getDeclaringExtension().getNamespace();
-			    String extensionType = element.getAttribute("class");
+			    String extensionType = element.getAttribute("class"); //$NON-NLS-1$
 			    
 				// use the name space to get the bundle
 			    Bundle bundle = Platform.getBundle(nameSpace);
@@ -268,10 +268,10 @@ public class SubSystemConfigurationProxy implements ISubSystemConfigurationProxy
    	       } catch (Exception exc)
    	       {
    	    	   exc.printStackTrace();
-   	         SystemBasePlugin.logError("Unable to start subsystem factory "+id,exc);
+   	         SystemBasePlugin.logError("Unable to start subsystem factory "+id,exc); //$NON-NLS-1$
 	         org.eclipse.swt.widgets.MessageBox mb = new org.eclipse.swt.widgets.MessageBox(SystemBasePlugin.getActiveWorkbenchShell());
-	         mb.setText("Unexpected Error");
-	         String errmsg = "Unable to start subsystem factory "+getName()+". See log file for details";
+	         mb.setText("Unexpected Error"); //$NON-NLS-1$
+	         String errmsg = "Unable to start subsystem factory "+getName()+". See log file for details"; //$NON-NLS-1$ //$NON-NLS-2$
 	         mb.setMessage(errmsg);	
 	         mb.open();   	         
    	       }    		
@@ -286,7 +286,7 @@ public class SubSystemConfigurationProxy implements ISubSystemConfigurationProxy
     	   	   }
    	         } catch (Exception exc)
    	         {
-   	           SystemBasePlugin.logError("Error restoring subsystem for factory "+getName(),exc);
+   	           SystemBasePlugin.logError("Error restoring subsystem for factory "+getName(),exc); //$NON-NLS-1$
    	         }    		
    	       }
    	       firstSubSystemQuery = false;
@@ -342,7 +342,7 @@ public class SubSystemConfigurationProxy implements ISubSystemConfigurationProxy
     	   	   }
    	         } catch (Exception exc)
    	         {
-   	           SystemBasePlugin.logError("Error restoring subsystem for factory "+getName(),exc);
+   	           SystemBasePlugin.logError("Error restoring subsystem for factory "+getName(),exc); //$NON-NLS-1$
    	         }    				
 	}
 
@@ -380,7 +380,7 @@ public class SubSystemConfigurationProxy implements ISubSystemConfigurationProxy
     
     public String toString()
     {
-    	return id+"."+name;
+    	return id+"."+name; //$NON-NLS-1$
     }
         
 }

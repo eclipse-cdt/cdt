@@ -41,7 +41,7 @@ public class SystemSearchRemoveAllMatchesAction extends SystemBaseAction {
 			  shell);
 			  
 		this.searchView = searchView;
-		RSEUIPlugin.getDefault().getWorkbench().getHelpSystem().setHelp(this, RSEUIPlugin.HELPPREFIX + "search_remove_all");
+		RSEUIPlugin.getDefault().getWorkbench().getHelpSystem().setHelp(this, RSEUIPlugin.HELPPREFIX + "search_remove_all"); //$NON-NLS-1$
 	}
 	
 	/**

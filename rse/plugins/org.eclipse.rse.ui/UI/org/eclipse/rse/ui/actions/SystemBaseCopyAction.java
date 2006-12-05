@@ -131,7 +131,7 @@ public abstract class SystemBaseCopyAction extends SystemBaseDialogAction
 			else
 				singleTitle = SystemResources.RESID_MOVE_SINGLE_TITLE;
 			//System.out.println("..."+singleTitle);
-			if (!singleTitle.startsWith("Missing")) // TODO: remove test after next mri rev         	
+			if (!singleTitle.startsWith("Missing")) // TODO: remove test after next mri rev         	 //$NON-NLS-1$
 				copyDlg.setTitle(singleTitle);
 		}									
 		

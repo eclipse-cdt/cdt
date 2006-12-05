@@ -32,7 +32,7 @@ public class SystemMonitorUI
     private static SystemMonitorUI instance;
     private static SystemMonitorViewPart _viewPart;
 
-    public static final String MONITOR_VIEW_ID = "org.eclipse.rse.ui.view.monitorView";
+    public static final String MONITOR_VIEW_ID = "org.eclipse.rse.ui.view.monitorView"; //$NON-NLS-1$
 
     private SystemMonitorUI()
     {
@@ -64,7 +64,7 @@ public class SystemMonitorUI
         }
         catch (PartInitException e)
         {
-           	SystemBasePlugin.logError("Can not open remote shell view", e);
+           	SystemBasePlugin.logError("Can not open remote shell view", e); //$NON-NLS-1$
         }
 
         return _viewPart;

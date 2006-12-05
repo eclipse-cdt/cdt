@@ -58,8 +58,7 @@ public class RSEDefaultNewConnectionWizardDelegate extends RSENewConnectionWizar
     private ISystemProfile                              privateProfile = null;
     private IHost                           currentlySelectedConnection = null;
     private String[]                                   restrictSystemTypesTo;
-    private static String                              lastProfile = null;    
-    private boolean									   showProfilePageInitially = true;
+    private static String                              lastProfile = null;
     private IHost _dummyHost;
 
 	/**
@@ -129,9 +128,9 @@ public class RSEDefaultNewConnectionWizardDelegate extends RSENewConnectionWizar
 	      if (restrictSystemTypesTo != null)
 	        mainPage.restrictSystemTypes(restrictSystemTypesTo);
 	      
-	      ISystemProfile defaultProfile = SystemStartHere.getSystemProfileManager().getDefaultPrivateSystemProfile();
+	      SystemStartHere.getSystemProfileManager().getDefaultPrivateSystemProfile();
 	      
-	      showProfilePageInitially = RSEUIPlugin.getDefault().getShowProfilePageInitially();
+	      RSEUIPlugin.getDefault().getShowProfilePageInitially();
 	      /* DKM - I don't think we should force profiles into the faces of users
 	       *     we no longer default to "private" so hopefully this would never be
 	       *     desirable
@@ -197,7 +196,7 @@ public class RSEDefaultNewConnectionWizardDelegate extends RSENewConnectionWizar
 	      
 	   } catch (Exception exc)
 	   {
-	   	 SystemBasePlugin.logError("New connection: Error in createPages: ",exc);
+	   	 SystemBasePlugin.logError("New connection: Error in createPages: ",exc); //$NON-NLS-1$
 	   }
 	}
 
@@ -230,7 +229,7 @@ public class RSEDefaultNewConnectionWizardDelegate extends RSENewConnectionWizar
 			}
 			else {
 				pageTitle = SystemResources.RESID_NEWCONN_PAGE1_REMOTE_TITLE;
-				pageTitle = SystemMessage.sub(pageTitle, "&1", onlySystemType);
+				pageTitle = SystemMessage.sub(pageTitle, "&1", onlySystemType); //$NON-NLS-1$
 			}
 		}
 		
@@ -323,7 +322,7 @@ public class RSEDefaultNewConnectionWizardDelegate extends RSENewConnectionWizar
                {
                	 getWizard().setBusyCursor(false); 
                	 cursorSet = false;
-               	 String msg = "Exception renaming profile ";
+               	 String msg = "Exception renaming profile "; //$NON-NLS-1$
                	 SystemBasePlugin.logError(msg, exc);
                	 SystemMessageDialog.displayExceptionMessage(getWizard().getShell(),exc);
                	 ok = false;
@@ -367,7 +366,7 @@ public class RSEDefaultNewConnectionWizardDelegate extends RSENewConnectionWizar
                	 if (cursorSet)
                	   getWizard().setBusyCursor(false); 
                	 cursorSet = false;
-               	 String msg = "Exception creating connection ";
+               	 String msg = "Exception creating connection "; //$NON-NLS-1$
                	 SystemBasePlugin.logError(msg, exc);
                	 SystemMessageDialog.displayExceptionMessage(getWizard().getShell(),exc);
                	 ok = false;

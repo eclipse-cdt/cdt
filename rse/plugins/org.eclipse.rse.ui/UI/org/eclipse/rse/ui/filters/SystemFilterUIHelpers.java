@@ -62,7 +62,7 @@ public class SystemFilterUIHelpers
                                                                 ISystemFilterPoolManager mgrs[])
     {
     	SystemSimpleContentElement veryRootElement = 
-    	   new SystemSimpleContentElement("Filter pools",
+    	   new SystemSimpleContentElement("Filter pools", //$NON-NLS-1$
     	                                  null, null, (Vector)null);	    	
     	veryRootElement.setRenamable(false);
     	veryRootElement.setDeletable(false);

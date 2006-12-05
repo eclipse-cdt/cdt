@@ -195,7 +195,7 @@ public class      SystemNewConnectionWizard
 	      
 	   } catch (Exception exc)
 	   {
-	   	 SystemBasePlugin.logError("New connection: Error in createPages: ",exc);
+	   	 SystemBasePlugin.logError("New connection: Error in createPages: ",exc); //$NON-NLS-1$
 	   }
 	}
 
@@ -216,7 +216,7 @@ public class      SystemNewConnectionWizard
 			else
 			{
 			  pageTitle =SystemResources.RESID_NEWCONN_PAGE1_REMOTE_TITLE;				
-			  pageTitle = SystemMessage.sub(pageTitle, "&1", onlySystemType);
+			  pageTitle = SystemMessage.sub(pageTitle, "&1", onlySystemType); //$NON-NLS-1$
 			}
 		}
 	    mainPage = new SystemNewConnectionWizardDefaultMainPage(this,
@@ -311,7 +311,7 @@ public class      SystemNewConnectionWizard
                {
                	 setBusyCursor(false); 
                	 cursorSet = false;
-               	 String msg = "Exception renaming profile ";
+               	 String msg = "Exception renaming profile "; //$NON-NLS-1$
                	 SystemBasePlugin.logError(msg, exc);
                	 SystemMessageDialog.displayExceptionMessage(getShell(),exc);
                	 ok = false;
@@ -355,7 +355,7 @@ public class      SystemNewConnectionWizard
                	 if (cursorSet)
                	   setBusyCursor(false); 
                	 cursorSet = false;
-               	 String msg = "Exception creating connection ";
+               	 String msg = "Exception creating connection "; //$NON-NLS-1$
                	 SystemBasePlugin.logError(msg, exc);
                	 SystemMessageDialog.displayExceptionMessage(getShell(),exc);
                	 ok = false;

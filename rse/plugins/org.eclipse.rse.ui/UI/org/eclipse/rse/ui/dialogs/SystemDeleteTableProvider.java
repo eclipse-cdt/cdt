@@ -83,7 +83,7 @@ public class SystemDeleteTableProvider implements ITableLabelProvider, IStructur
 	 */
 	public String getColumnText(Object element, int column) 
 	{
-		String text = "";
+		String text = ""; //$NON-NLS-1$
 		if (column == COLUMN_NAME)
 		  	text = getTableRow(element).getName();
 		else if (column == COLUMN_TYPE)

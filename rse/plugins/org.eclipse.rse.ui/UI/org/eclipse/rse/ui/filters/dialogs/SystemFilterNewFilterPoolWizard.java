@@ -83,7 +83,7 @@ public class      SystemFilterNewFilterPoolWizard
 	      //super.addPages();
 	   } catch (Exception exc)
 	   {
-	   	 System.out.println("Unexpected error in addPages of NewFilterPoolWizard: "+exc.getMessage() + ", " + exc.getClass().getName());
+	   	 System.out.println("Unexpected error in addPages of NewFilterPoolWizard: "+exc.getMessage() + ", " + exc.getClass().getName()); //$NON-NLS-1$ //$NON-NLS-2$
 	   }
 	}
 
@@ -129,7 +129,7 @@ public class      SystemFilterNewFilterPoolWizard
 		   	  }
 		   	  if (mgr == null)
 		   	  {
-		   	  	System.out.println("Unexpected problem in performFinish of filter pool wizard: no match for selected profile name " + mgrName);
+		   	  	System.out.println("Unexpected problem in performFinish of filter pool wizard: no match for selected profile name " + mgrName); //$NON-NLS-1$
 		   	  	return false;
 		   	  }
 		  	  String poolName = mainPage.getPoolName();

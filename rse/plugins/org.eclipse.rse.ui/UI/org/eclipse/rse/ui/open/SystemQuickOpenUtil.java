@@ -32,7 +32,7 @@ import org.eclipse.rse.ui.RSEUIPlugin;
  */
 public class SystemQuickOpenUtil {
 	
-	public static final String QUICK_OPEN_PAGE_EXTENSION_POINT= "quickOpenPages";
+	public static final String QUICK_OPEN_PAGE_EXTENSION_POINT= "quickOpenPages"; //$NON-NLS-1$
 	
 	// singleton instance
 	private static SystemQuickOpenUtil instance;

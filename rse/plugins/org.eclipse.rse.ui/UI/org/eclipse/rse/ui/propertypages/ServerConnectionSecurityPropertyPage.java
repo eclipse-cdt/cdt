@@ -34,7 +34,6 @@ public class ServerConnectionSecurityPropertyPage extends SystemBasePropertyPage
 
 
 	private ServerConnectionSecurityForm _form;
-	private IConnectorService _connectorService;
 
 	public ServerConnectionSecurityPropertyPage()
 	{
@@ -51,7 +50,7 @@ public class ServerConnectionSecurityPropertyPage extends SystemBasePropertyPage
 		_form.createContents(parent);
 
 		initialize();
-		SystemWidgetHelpers.setCompositeHelp(parent, RSEUIPlugin.HELPPREFIX + "ssls0001");
+		SystemWidgetHelpers.setCompositeHelp(parent, RSEUIPlugin.HELPPREFIX + "ssls0001"); //$NON-NLS-1$
 		
 		return parent;
 	}

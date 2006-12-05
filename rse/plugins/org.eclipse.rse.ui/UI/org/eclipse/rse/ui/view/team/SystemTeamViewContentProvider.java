@@ -201,7 +201,7 @@ public class SystemTeamViewContentProvider extends WorkbenchContentProvider
 		ISystemViewElementAdapter adapter = null;    	
 		if (o == null)
 		{
-			SystemBasePlugin.logWarning("ERROR: null passed to getAdapter in SystemTeamViewContentProvider");
+			SystemBasePlugin.logWarning("ERROR: null passed to getAdapter in SystemTeamViewContentProvider"); //$NON-NLS-1$
 			return null;    	  
 		}
 		if (!(o instanceof IAdaptable)) 
@@ -227,7 +227,7 @@ public class SystemTeamViewContentProvider extends WorkbenchContentProvider
 			}
 		}
 		else if (viewer == null)
-			SystemBasePlugin.logWarning("VIEWER IS NULL FOR SystemTeamViewContentProvider");    	
+			SystemBasePlugin.logWarning("VIEWER IS NULL FOR SystemTeamViewContentProvider");    	 //$NON-NLS-1$
 		return adapter;
 	}
 }

@@ -104,7 +104,7 @@ public class SystemSelectFileTypesDialog
 	    setInstruction(GenericMessages.TypesFiltering_message); 
 	    
 	    // TODO - hack to make this work in  3.1
-	    String id = PlatformUI.PLUGIN_ID + ".type_filtering_dialog_context";
+	    String id = PlatformUI.PLUGIN_ID + ".type_filtering_dialog_context"; //$NON-NLS-1$
 	    setHelp(id);
 	}
 
@@ -244,7 +244,7 @@ public class SystemSelectFileTypesDialog
 		while (tokenizer.hasMoreTokens()) 
 		{
 			String currentExtension = tokenizer.nextToken().trim();
-			if (!currentExtension.equals("")) 
+			if (!currentExtension.equals(""))  //$NON-NLS-1$
 			{ 
 				if (currentExtension.startsWith("*."))//$NON-NLS-1$
 					result.add(currentExtension.substring(2));
@@ -427,7 +427,7 @@ public class SystemSelectFileTypesDialog
 		}
 
         int startScan = 0;		
-		if (filename.startsWith("*."))
+		if (filename.startsWith("*.")) //$NON-NLS-1$
 		  startScan = 2;
 
 		// check for characters before * 

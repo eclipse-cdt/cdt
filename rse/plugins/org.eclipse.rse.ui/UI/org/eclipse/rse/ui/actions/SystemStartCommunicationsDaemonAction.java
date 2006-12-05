@@ -40,7 +40,7 @@ public class SystemStartCommunicationsDaemonAction extends SystemBaseAction impl
 			  SystemResources.ACTION_DAEMON_STOP_TOOLTIP,
 			  shell);
 			  	
-		setHelp(RSEUIPlugin.HELPPREFIX + "dmna0000");
+		setHelp(RSEUIPlugin.HELPPREFIX + "dmna0000"); //$NON-NLS-1$
 					  	
 		if (!SystemCommunicationsDaemon.isAutoStart() || !SystemCommunicationsDaemon.getInstance().isRunning())
 		{

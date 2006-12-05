@@ -69,7 +69,7 @@ public class SystemWorkWithHistoryDialog extends SystemPromptDialog implements I
 		historyInput = history;
 
 		//pack();
-        setHelp(RSEUIPlugin.HELPPREFIX+"dwwh0000");
+        setHelp(RSEUIPlugin.HELPPREFIX+"dwwh0000"); //$NON-NLS-1$
         setInitialOKButtonEnabledState(false);     //d41471
 	}
 

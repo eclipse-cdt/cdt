@@ -209,7 +209,7 @@ public abstract class ServiceSubSystemConfiguration extends SubSystemConfigurati
 		  pool = mgr.createSystemFilterPool(getDefaultFilterPoolName(mgr.getName(), getId()), true); // true=>is deletable by user
 		} catch (Exception exc)
 		{
-			SystemBasePlugin.logError("Error creating default filter pool in default subsystem factory",exc);
+			SystemBasePlugin.logError("Error creating default filter pool in default subsystem factory",exc); //$NON-NLS-1$
 		}
 		return pool;
 	}

@@ -130,7 +130,7 @@ public class SystemTableView
 			Object value = adapter.getPropertyValue(property);
 			if (value == null)
 			{
-				value = "";
+				value = ""; //$NON-NLS-1$
 			}
 			return value;
 		}
@@ -300,7 +300,7 @@ public class SystemTableView
 		_charWidth = table.getFont().getFontData()[0].getHeight() / 2;
 		computeLayout();
 
-		_menuManager = new MenuManager("#PopupMenu");
+		_menuManager = new MenuManager("#PopupMenu"); //$NON-NLS-1$
 		_menuManager.setRemoveAllWhenShown(true);
 		_menuManager.addMenuListener(this);
 		Menu menu = _menuManager.createContextMenu(table);

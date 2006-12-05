@@ -73,7 +73,7 @@ public class ValidatorSourceType extends ValidatorUniqueString
 	
 	public String toString()
 	{
-		return "ValidatorSourceType class";
+		return "ValidatorSourceType class"; //$NON-NLS-1$
 	}
 
     // ---------------------------

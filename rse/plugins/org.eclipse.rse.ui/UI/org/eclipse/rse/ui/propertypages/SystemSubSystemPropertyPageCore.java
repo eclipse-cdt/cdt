@@ -60,7 +60,7 @@ public class SystemSubSystemPropertyPageCore extends SystemBasePropertyPage
 	        form = new SystemSubSystemPropertyPageCoreForm(this, this);
 	    }
 		Control c = form.createContents(parent, getElement(), getShell());
-		SystemWidgetHelpers.setCompositeHelp(parent, RSEUIPlugin.HELPPREFIX + "psubs0000");		
+		SystemWidgetHelpers.setCompositeHelp(parent, RSEUIPlugin.HELPPREFIX + "psubs0000");		 //$NON-NLS-1$
         return c;
 	}
 	

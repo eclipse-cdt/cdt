@@ -44,7 +44,7 @@ public class SystemCommonSelectAllAction
 	public SystemCommonSelectAllAction(Shell parent, ISelectionProvider selProvider, ISystemSelectAllTarget target)
 	{
 		//super(RSEUIPlugin.getResourceBundle(), ISystemConstants.ACTION_SELECTALL, null, parent); TODO: XLATE!
-		super("Select All", (ImageDescriptor)null, parent);
+		super("Select All", (ImageDescriptor)null, parent); //$NON-NLS-1$
 		setSelectionProvider(selProvider);
 		this.target = target;
 		allowOnMultipleSelection(false);

@@ -203,7 +203,7 @@ public class SystemFilterPoolReferenceManager extends SystemPersistableReference
 			if (pool != null) {
 				ISystemFilterPoolManager mgr = pool.getSystemFilterPoolManager();
 				if (!managerExists(poolMgrs, mgr) && !v.contains(mgr)) {
-					System.out.println("Found unmatched manager: " + mgr.getName());
+					System.out.println("Found unmatched manager: " + mgr.getName()); //$NON-NLS-1$
 					v.addElement(mgr);
 				}
 			}

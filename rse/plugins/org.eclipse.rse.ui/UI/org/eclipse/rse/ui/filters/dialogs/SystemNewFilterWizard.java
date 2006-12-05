@@ -409,7 +409,7 @@ public class SystemNewFilterWizard
 		   }
 		} catch (Exception exc)
 		{
-	   	   SystemBasePlugin.logError("Error in createPageControls of SystemNewFilterWizard", exc);
+	   	   SystemBasePlugin.logError("Error in createPageControls of SystemNewFilterWizard", exc); //$NON-NLS-1$
 	   	   //System.out.println("Error in createPageControls of SystemNewFilterWizard"); // temp
 	   	   //exc.printStackTrace(); // temp
 		}

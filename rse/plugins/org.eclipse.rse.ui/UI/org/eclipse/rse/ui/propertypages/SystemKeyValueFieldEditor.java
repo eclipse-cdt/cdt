@@ -153,7 +153,7 @@ public class SystemKeyValueFieldEditor extends FieldEditor
 		      keyValues = parseString(value);
 		    else
 		      keyValues = new Hashtable();
-		    valueField.setText("");		    
+		    valueField.setText("");		     //$NON-NLS-1$
 		    keysField.select(0);		    
 			clearButton.setEnabled(false);		    
 			setButton.setEnabled(false);	
@@ -558,7 +558,7 @@ boxComposite = SystemWidgetHelpers.createGroupComposite(parent, 2, getLabelText(
           String value = (String)keyValues.get(key);
           if (value == null)
           {
-            valueField.setText("");
+            valueField.setText(""); //$NON-NLS-1$
             clearButton.setEnabled(false);            
           }
           else

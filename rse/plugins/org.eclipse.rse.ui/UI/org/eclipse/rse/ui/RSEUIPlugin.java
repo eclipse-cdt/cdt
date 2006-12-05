@@ -129,28 +129,28 @@ public class RSEUIPlugin extends SystemBasePlugin implements ISystemMessageProvi
 	    dontShowLocalConnection = false;
 	    dontShowProfilePageInitially = false;
 	    
-	    String showNewConn = System.getProperty("rse.showNewConnectionPrompt");
+	    String showNewConn = System.getProperty("rse.showNewConnectionPrompt"); //$NON-NLS-1$
 		
 	    if (showNewConn != null) {
-	    	showNewConnPromptPref = showNewConn.equals("true");
+	    	showNewConnPromptPref = showNewConn.equals("true"); //$NON-NLS-1$
 	    }
 	    
-	    String showLocalConn = System.getProperty("rse.showLocalConnection");
+	    String showLocalConn = System.getProperty("rse.showLocalConnection"); //$NON-NLS-1$
 	    
 		if (showLocalConn != null) {
-			dontShowLocalConnection = showNewConn.equals("false");
+			dontShowLocalConnection = showLocalConn.equals("false"); //$NON-NLS-1$
 		}
 		
-		enabledSystemTypes = System.getProperty("rse.enableSystemTypes");
+		enabledSystemTypes = System.getProperty("rse.enableSystemTypes"); //$NON-NLS-1$
 		
 		if ((enabledSystemTypes != null) && (enabledSystemTypes.length() == 0)) {
 			enabledSystemTypes = null;
 		}
 		
-		String showProfileInitially = System.getProperty("rse.showProfilePage");
+		String showProfileInitially = System.getProperty("rse.showProfilePage"); //$NON-NLS-1$
 		
 		if (showProfileInitially != null) {
-			dontShowProfilePageInitially = showProfileInitially.equals("false");
+			dontShowProfilePageInitially = showProfileInitially.equals("false"); //$NON-NLS-1$
 		}
 	    
 		RemoteSystemsPreferencePage.initDefaults(getPreferenceStore(), showNewConnPromptPref);
@@ -687,7 +687,7 @@ public class RSEUIPlugin extends SystemBasePlugin implements ISystemMessageProvi
     	  	        ssf.disconnectAllSubSystems();
     	  	   	 } catch(Exception exc)
     	  	   	 {
-    	  	   	 	logError("Error disconnecting for "+ssf.getId(),exc);
+    	  	   	 	logError("Error disconnecting for "+ssf.getId(),exc); //$NON-NLS-1$
     	  	   	 }
     	  	   	 if (doSave)
     	  	   	 {
@@ -697,7 +697,7 @@ public class RSEUIPlugin extends SystemBasePlugin implements ISystemMessageProvi
     	  	   		 // ssf.commit();
     	  	   	   } catch(Exception exc)
     	  	   	   {
-    	  	   	 	  logError("Error saving subsystems for "+ssf.getId(),exc);
+    	  	   	 	  logError("Error saving subsystems for "+ssf.getId(),exc); //$NON-NLS-1$
     	  	   	   }
     	  	   	 }
     	  	   }
@@ -1108,7 +1108,7 @@ public class RSEUIPlugin extends SystemBasePlugin implements ISystemMessageProvi
 		IExtensionRegistry registry = Platform.getExtensionRegistry();
 		
 		// Get configured extenders
-		IConfigurationElement[] systemTypeExtensions = registry.getConfigurationElementsFor("org.eclipse.rse.ui", "archivehandlers"); //$NON-NLS-1$
+		IConfigurationElement[] systemTypeExtensions = registry.getConfigurationElementsFor("org.eclipse.rse.ui", "archivehandlers"); //$NON-NLS-1$ //$NON-NLS-2$
 		     	
 		for (int i = 0; i < systemTypeExtensions.length; i++) {
 			String ext = systemTypeExtensions[i].getAttribute("fileNameExtension"); //$NON-NLS-1$
@@ -1132,7 +1132,7 @@ public class RSEUIPlugin extends SystemBasePlugin implements ISystemMessageProvi
 			}
 			catch (ClassNotFoundException e)
 			{
-				logError("Cound not find archive handler class", e);
+				logError("Cound not find archive handler class", e); //$NON-NLS-1$
 			}
 		}
 	}

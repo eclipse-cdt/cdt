@@ -84,7 +84,7 @@ public class RemoteSystemsPreferencePage
 	public void createControl(Composite parent) 
 	{
 		super.createControl(parent);
-		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), RSEUIPlugin.HELPPREFIX+"rsep0000");		
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), RSEUIPlugin.HELPPREFIX+"rsep0000");		 //$NON-NLS-1$
 	}
 	
 	/**
@@ -391,7 +391,7 @@ public class RemoteSystemsPreferencePage
 	    String defaultUserId = sysTypeAdapter.getDefaultUserId(sysType);
 	    
 	    if (defaultUserId == null) {
-	    	defaultUserId = "null";
+	    	defaultUserId = "null"; //$NON-NLS-1$
 	    }
 	    
 	    keyValues.put(sysType.getName(), "" + sysTypeAdapter.isEnabled(sysType) + SystemTypeFieldEditor.EACHVALUE_DELIMITER + defaultUserId); //$NON-NLS-1$

@@ -71,7 +71,7 @@ public class SystemCommonRenameAction extends SystemBaseDialogAction
 		setProcessAllSelections(true);
 		renameTarget = target;
 		setContextMenuGroup(ISystemContextMenuConstants.GROUP_REORGANIZE);		
-  	    setHelp(RSEUIPlugin.HELPPREFIX+"actn0018");
+  	    setHelp(RSEUIPlugin.HELPPREFIX+"actn0018"); //$NON-NLS-1$
 	}
 	
 	/**

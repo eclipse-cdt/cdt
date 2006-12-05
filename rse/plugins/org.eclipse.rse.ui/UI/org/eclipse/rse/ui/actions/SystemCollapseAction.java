@@ -43,7 +43,7 @@ public class SystemCollapseAction extends SystemBaseAction {
 		allowOnMultipleSelection(true);
 		setContextMenuGroup(ISystemContextMenuConstants.GROUP_EXPAND);
 		setAccelerator('-');
-		setHelp(RSEUIPlugin.HELPPREFIX + "actn0024");
+		setHelp(RSEUIPlugin.HELPPREFIX + "actn0024"); //$NON-NLS-1$
 		setAvailableOffline(true);
 	}
 
@@ -76,8 +76,8 @@ public class SystemCollapseAction extends SystemBaseAction {
 		//System.out.println("Inside run of SystemRefreshAction");
 		SystemRegistry sr = RSEUIPlugin.getTheSystemRegistry();
 		if ((viewer != null) && (viewer instanceof ISystemResourceChangeListener)) {
-			sr.fireEvent((ISystemResourceChangeListener) viewer, new SystemResourceChangeEvent("dummy", ISystemResourceChangeEvents.EVENT_COLLAPSE_SELECTED, null));
+			sr.fireEvent((ISystemResourceChangeListener) viewer, new SystemResourceChangeEvent("dummy", ISystemResourceChangeEvents.EVENT_COLLAPSE_SELECTED, null)); //$NON-NLS-1$
 		} else
-			sr.fireEvent(new SystemResourceChangeEvent("dummy", ISystemResourceChangeEvents.EVENT_COLLAPSE_SELECTED, null));
+			sr.fireEvent(new SystemResourceChangeEvent("dummy", ISystemResourceChangeEvents.EVENT_COLLAPSE_SELECTED, null)); //$NON-NLS-1$
 	}
 }

@@ -116,7 +116,7 @@ public class RSENewConnectionWizard extends AbstractSystemWizard implements IRSE
 					}
 				}
 				catch (CoreException e) {
-					SystemBasePlugin.logError("Class " + obj + " is not executable extension", e);
+					SystemBasePlugin.logError("Class " + obj + " is not executable extension", e); //$NON-NLS-1$ //$NON-NLS-2$
 					continue;
 				}
 			}

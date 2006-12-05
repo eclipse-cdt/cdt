@@ -88,14 +88,16 @@ public class PasswordPersistenceManager {
 		}		
 		
 		/**
-		 * @return
+		 * Returns the system type.
+		 * @return the system type.
 		 */
 		public String getSystemType() {
 			return _systemType;
 		}
 
 		/**
-		 * @return
+		 * Returns whether the user ID is case sensitive.
+		 * @return <code>true</code> if the user ID is case sensitive, <code>false</code> otherwise.
 		 */
 		public boolean isUserIDCaseSensitive() {
 			return _userIDCaseSensitive;

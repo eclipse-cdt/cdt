@@ -591,7 +591,7 @@ public class RSEUIPlugin extends SystemBasePlugin implements ISystemMessageProvi
           // rebuild profiles
     	  SystemStartHere.getSystemProfileManager(); // create folders per profile
           // clear in-memory settings for all connections, then restore from disk
-          ((SystemRegistry)_systemRegistry).reset();
+          _systemRegistry.reset();
           // restore in-memory settings for all filter pools and subsystems
     	  if (proxies != null)
     	  	for (int idx=0; idx < proxies.length; idx++)
@@ -808,7 +808,7 @@ public class RSEUIPlugin extends SystemBasePlugin implements ISystemMessageProvi
           }
           
         }
-    	return (SystemRegistry)_systemRegistry;
+    	return _systemRegistry;
     }
 
     /**
@@ -1065,7 +1065,8 @@ public class RSEUIPlugin extends SystemBasePlugin implements ISystemMessageProvi
 	 * @param msgId - the ID of the message to retrieve. This is the concatenation of the
 	 *   message's component abbreviation, subcomponent abbreviation, and message ID as declared
 	 *   in the message xml file.
-	 * @param subsVars - an array of objects to substitute in for %1, %2, etc
+	 * @param subsVar - an array of objects to substitute in for %1, %2, etc.
+	 * @return the message.
 	 */
 	public static SystemMessage getPluginMessage(String msgId, Object subsVar)
 	{

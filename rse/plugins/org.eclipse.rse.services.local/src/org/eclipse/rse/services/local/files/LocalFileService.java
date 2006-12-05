@@ -185,14 +185,16 @@ public class LocalFileService extends AbstractFileService implements IFileServic
 				ISystemArchiveHandler handler = child.getHandler();
 				if (handler == null)
 					throwCorruptArchiveException(this.getClass() + ".upload()"); //$NON-NLS-1$
-				return handler.add(stream, child.path, remoteFile, SystemEncodingUtil.ENCODING_UTF_8, hostEncoding, !isBinary);
+				else 
+					return handler.add(stream, child.path, remoteFile, SystemEncodingUtil.ENCODING_UTF_8, hostEncoding, !isBinary);
 			}
 			if (ArchiveHandlerManager.getInstance().isArchive(destinationFile))
 			{
 				ISystemArchiveHandler handler = ArchiveHandlerManager.getInstance().getRegisteredHandler(destinationFile);
 				if (handler == null)
 					throwCorruptArchiveException(this.getClass() + ".copyToArchive()"); //$NON-NLS-1$
-				return handler.add(stream, "", remoteFile, SystemEncodingUtil.ENCODING_UTF_8, hostEncoding, !isBinary); //$NON-NLS-1$
+				else 
+					return handler.add(stream, "", remoteFile, SystemEncodingUtil.ENCODING_UTF_8, hostEncoding, !isBinary); //$NON-NLS-1$
 			}
 			
 			File destinationParent = destinationFile.getParentFile();
@@ -220,17 +222,15 @@ public class LocalFileService extends AbstractFileService implements IFileServic
 			
 			byte[] buffer = new byte[512000];
 			int readCount = 0;
-			
-			int available = bufInputStream.available();
-	
+
 			 while( (readCount = bufInputStream.read(buffer)) > 0 && !isCancelled) 
 			 {
-			      if (isEncodingConversionRequired) 
+			      if (isEncodingConversionRequired && bufWriter != null) 
 			      {
 						String s = new String(buffer, 0, readCount, hostEncoding);
 						bufWriter.write(s);
 			      }
-			      else 
+			      else if (bufOutputStream != null)
 			      {
 						bufOutputStream.write(buffer, 0,readCount);
 			      }
@@ -353,12 +353,12 @@ public class LocalFileService extends AbstractFileService implements IFileServic
 				// need to convert encoding, i.e. text file, but not xml
 				// ensure we read in file using the encoding for the file system
 				// which can be specified by user as text file encoding in preferences
-				if (isEncodingConversionRequired) 
+				if (isEncodingConversionRequired && bufWriter != null) 
 				{
 					String s = new String(buffer, 0, bytesRead, hostEncoding);
 					bufWriter.write(s);
 				}
-				else 
+				else if (bufOutputStream != null)
 				{
 					bufOutputStream.write(buffer, 0, bytesRead);					
 				}
@@ -408,13 +408,13 @@ public class LocalFileService extends AbstractFileService implements IFileServic
 				{
 			//		throw new RemoteFileCancelledException();
 					return false;
-				} else if (destinationFile!=null && file.exists()) {
+				} else if (file.exists()) {
 					destinationFile.setLastModified(file.lastModified());
 					//TODO check if we want to preserve permissions
 					//if(!file.canWrite()) destinationFile.setReadOnly();
 					if (destinationFile.length() != file.length()) {
 						//	throw new RemoteFileCancelledException();
-						System.err.println("local.upload: size mismach on "+destinationFile.getAbsolutePath());
+						System.err.println("local.upload: size mismach on "+destinationFile.getAbsolutePath()); //$NON-NLS-1$
 						return false;
 					}
 				}
@@ -442,13 +442,16 @@ public class LocalFileService extends AbstractFileService implements IFileServic
 			ISystemArchiveHandler handler = virtualChild.getHandler();
 			if (handler == null)
 				throwCorruptArchiveException(this.getClass() + ".copyToArchive()"); //$NON-NLS-1$
-			if (file.isDirectory())
-			{
-			    ok = handler.add(file, path, newName, sourceEncoding, targetEncoding, _fileTypeRegistry);
-			}
 			else
 			{
-				ok = handler.add(file, path, newName, sourceEncoding, targetEncoding, isText);
+				if (file.isDirectory())
+				{
+				    ok = handler.add(file, path, newName, sourceEncoding, targetEncoding, _fileTypeRegistry);
+				}
+				else
+				{
+					ok = handler.add(file, path, newName, sourceEncoding, targetEncoding, isText);
+				}
 			}
 		}
 		else if (ArchiveHandlerManager.getInstance().isArchive(destination))
@@ -456,14 +459,17 @@ public class LocalFileService extends AbstractFileService implements IFileServic
 			ISystemArchiveHandler handler = ArchiveHandlerManager.getInstance().getRegisteredHandler(destination);
 			if (handler == null)
 				throwCorruptArchiveException(this.getClass() + ".copyToArchive()"); //$NON-NLS-1$
-			if (file.isDirectory())
-			{
-			    ok = handler.add(file, "", newName, sourceEncoding, targetEncoding, _fileTypeRegistry); //$NON-NLS-1$			    
-			}
 			else
 			{
-				ok = handler.add(file, "", newName, sourceEncoding, targetEncoding, isText); //$NON-NLS-1$
-			}			    
+				if (file.isDirectory())
+				{
+				    ok = handler.add(file, "", newName, sourceEncoding, targetEncoding, _fileTypeRegistry); //$NON-NLS-1$			    
+				}
+				else
+				{
+					ok = handler.add(file, "", newName, sourceEncoding, targetEncoding, isText); //$NON-NLS-1$
+				}
+			}
 		}
 		if (!ok)
 		{
@@ -540,11 +546,12 @@ public class LocalFileService extends AbstractFileService implements IFileServic
 					break;
 				}
 
-				if (isEncodingConversionRequired) {
+				if (isEncodingConversionRequired && bufWriter != null) {
 					String s = new String(buffer, 0, bytesRead, srcEncoding);
 					bufWriter.write(s);
 				}
-				else {
+				else if (bufOutputStream != null)
+				{
 					bufOutputStream.write(buffer, 0, bytesRead);
 				}
 
@@ -589,7 +596,7 @@ public class LocalFileService extends AbstractFileService implements IFileServic
 					//if(!localFile.canWrite()) destinationFile.setReadOnly();
 					if (destinationFile.length() != localFile.length()) {
 						//	throw new RemoteFileCancelledException();
-						System.err.println("local.upload: size mismach on "+destinationFile.getAbsolutePath());
+						System.err.println("local.upload: size mismach on "+destinationFile.getAbsolutePath()); //$NON-NLS-1$
 						return false;
 					}
 				}
@@ -610,7 +617,7 @@ public class LocalFileService extends AbstractFileService implements IFileServic
 			try {
 				localParent = localParent.getCanonicalFile();
 			} catch (IOException e) {
-				System.out.println("Can not get canonical path: " + localParent.getAbsolutePath());
+				System.out.println("Can not get canonical path: " + localParent.getAbsolutePath()); //$NON-NLS-1$
 			}
 		}
 		if (remoteParent.endsWith(ArchiveHandlerManager.VIRTUAL_SEPARATOR)) {
@@ -754,7 +761,6 @@ public class LocalFileService extends AbstractFileService implements IFileServic
 			{
 				file = new File(remoteParent, name);
 			}
-			File parent = file.getParentFile();
 			return new LocalHostFile(file);
 		}
 		else
@@ -819,10 +825,13 @@ public class LocalFileService extends AbstractFileService implements IFileServic
 		ISystemArchiveHandler handler = child.getHandler();
 		if (handler == null)
 			throwCorruptArchiveException(this.getClass() + ".createFileInArchive()"); //$NON-NLS-1$
-		if (!handler.createFile(child.fullName))
+		else
 		{
-			//SystemPlugin.logError("LocalFileSubSystemImpl.createFileInArchive(): Archive Handler's createFile method returned false. Couldn't create virtual object.");
-			throw new SystemMessageException(getMessage("RSEG1124").makeSubstitution(newFile)); //$NON-NLS-1$
+			if (!handler.createFile(child.fullName))
+			{
+				//SystemPlugin.logError("LocalFileSubSystemImpl.createFileInArchive(): Archive Handler's createFile method returned false. Couldn't create virtual object.");
+				throw new SystemMessageException(getMessage("RSEG1124").makeSubstitution(newFile)); //$NON-NLS-1$
+			}
 		}
 		return new LocalVirtualHostFile(child);
 	}
@@ -869,7 +878,7 @@ public class LocalFileService extends AbstractFileService implements IFileServic
 		ISystemArchiveHandler handler = child.getHandler();
 		if (handler == null)
 			throwCorruptArchiveException(this.getClass() + ".createFolderInArchive()"); //$NON-NLS-1$
-		if (!handler.createFolder(child.fullName))
+		else if (!handler.createFolder(child.fullName))
 		{
 			// SystemPlugin.logError("LocalFileSubSystemImpl.createFolderInArchive(): Archive Handler's createFolder method returned false. Couldn't create virtual object.");
 			throw new SystemMessageException(getMessage("RSEG1124").makeSubstitution(newFolder)); //$NON-NLS-1$
@@ -936,7 +945,7 @@ public class LocalFileService extends AbstractFileService implements IFileServic
 		ISystemArchiveHandler handler = child.getHandler();
 		if (handler == null)
 			throwCorruptArchiveException(this.getClass() + ".deleteFromArchive()"); //$NON-NLS-1$
-		if (!handler.delete(child.fullName))
+		else if (!handler.delete(child.fullName))
 		{
 			// SystemPlugin.logError("LocalFileSubSystemImpl.deleteFromArchive(): Archive Handler's delete method returned false. Couldn't delete virtual object.");
 			throw new SystemMessageException(getMessage("RSEG1125").makeSubstitution(destination)); //$NON-NLS-1$
@@ -974,21 +983,27 @@ public class LocalFileService extends AbstractFileService implements IFileServic
 	 * 
 	 * @param destination virtual file to rename
 	 * @param newName the new name of the virtual file
-	 * @return
+	 * @return whether the operation was successful or not
 	 */
 	protected boolean renameVirtualFile(File destination, String newName) throws SystemMessageException
 	{
 		VirtualChild child = ArchiveHandlerManager.getInstance().getVirtualObject(destination.getAbsolutePath());
 		ISystemArchiveHandler handler = child.getHandler();
 		if (handler == null)
-			throwCorruptArchiveException(this.getClass() + ".renameVirtualFile()"); //$NON-NLS-1$
-		boolean retval = handler.rename(child.fullName, newName);
-		if (!retval)
 		{
-			// SystemPlugin.logError("LocalFileSubSystemImpl.renameVirtualFile(): Archive Handler's rename method returned false. Couldn't rename virtual object.");
-			throw new SystemMessageException(getMessage("RSEG1127").makeSubstitution(child.fullName)); //$NON-NLS-1$
+			throwCorruptArchiveException(this.getClass() + ".renameVirtualFile()"); //$NON-NLS-1$
 		}
-		else return retval;
+		else
+		{
+			boolean retval = handler.rename(child.fullName, newName);
+			if (!retval)
+			{
+				// SystemPlugin.logError("LocalFileSubSystemImpl.renameVirtualFile(): Archive Handler's rename method returned false. Couldn't rename virtual object.");
+				throw new SystemMessageException(getMessage("RSEG1127").makeSubstitution(child.fullName)); //$NON-NLS-1$
+			}
+			return retval;
+		}
+		return false;
 	}
 
 	public boolean move(IProgressMonitor monitor, String srcParent, String srcName, String tgtParent, String tgtName) throws SystemMessageException 
@@ -1069,7 +1084,23 @@ public class LocalFileService extends AbstractFileService implements IFileServic
 				command = "xcopy " + src + " " + target + " /S /E /K /Q /H /I"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			}
 			else
-				command = _osCmdShell + "copy " + src + " " + target; //$NON-NLS-1$ //$NON-NLS-2$
+			{
+				//command = _osCmdShell + "copy " + src + " " + target; //$NON-NLS-1$ //$NON-NLS-2$
+				// create target first so that not prompted
+				File targetFile = new File(tgtBuf.toString());
+				if (!targetFile.exists())
+				{
+					// create file so as to avoid ambiguity
+					try
+					{
+						targetFile.createNewFile();
+					}
+					catch (Exception e)
+					{
+					}
+				}				
+				command = _osCmdShell + "xcopy " + src + " " + target + " /Y /K /O /Q /H"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			}			
 		}
 		else
 		{
@@ -1091,7 +1122,7 @@ public class LocalFileService extends AbstractFileService implements IFileServic
 			if (isWindows)
 			{
 				String theShell = "cmd /C "; //$NON-NLS-1$
-				p = runtime.exec(theShell + command);	
+				p = runtime.exec(theShell + command);		
 			}
 			else
 			{
@@ -1189,7 +1220,7 @@ public class LocalFileService extends AbstractFileService implements IFileServic
 			catch (IOException e)
 			{
 				// SystemPlugin.logError("LocalFileSubSystemImpl.copy(): Could not create temp file.", e);
-				throw new SystemMessageException(getMessage("Copy failed"));
+				throw new SystemMessageException(getMessage("Copy failed")); //$NON-NLS-1$
 			}
 			tempSource.delete();
 			if (!tempSource.mkdir())
@@ -1200,7 +1231,8 @@ public class LocalFileService extends AbstractFileService implements IFileServic
 			ISystemArchiveHandler handler = child.getHandler();
 			if (handler == null)
 				throwCorruptArchiveException(this.getClass() + ".copy()"); //$NON-NLS-1$
-			handler.extractVirtualDirectory(child.fullName, tempSource, sourceEncoding, isText);
+			else 
+				handler.extractVirtualDirectory(child.fullName, tempSource, sourceEncoding, isText);
 			src = tempSource.getAbsolutePath() + File.separatorChar + child.name;
 		}
 		if (ArchiveHandlerManager.isVirtual(targetFolder.getAbsolutePath()) || ArchiveHandlerManager.getInstance().isArchive(targetFolder))

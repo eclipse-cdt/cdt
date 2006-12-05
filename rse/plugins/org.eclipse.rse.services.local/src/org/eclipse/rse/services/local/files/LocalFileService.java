@@ -1107,11 +1107,11 @@ public class LocalFileService extends AbstractFileService implements IFileServic
 			
 			if (folderCopy)
 			{
-				command = "cp  -r " + src + " " + target; //$NON-NLS-1$ //$NON-NLS-2$
+				command = "cp  -Rp " + src + " " + target; //$NON-NLS-1$ //$NON-NLS-2$
 			}
 			else // it is a file 	 
 			{
-				command = "cp " + src + " " + target; //$NON-NLS-1$ //$NON-NLS-2$
+				command = "cp -p " + src + " " + target; //$NON-NLS-1$ //$NON-NLS-2$
 			}
 		}
 		int rc = -1;

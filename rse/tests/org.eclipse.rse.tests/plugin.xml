@@ -1,19 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.0"?>
 <plugin>
-   <extension
-         point="org.eclipse.rse.tests.framework.suites">
-      <suite type="generated" name="Connection Test Suite">
-            <arg name="class" value="org.eclipse.rse.tests.systems.connection.ConnectionTestSuite"/>
-      </suite>
-      <suite type="generated" name="Persistence Test Suite (Creation)">
-            <arg name="class" value="org.eclipse.rse.tests.systems.persistence.PersistenceTestSuite"/>
-            <arg name="argument" value="create"/>
-      </suite>
-      <suite type="generated" name="Persistence Test Suite (Deletion)">
-            <arg name="class" value="org.eclipse.rse.tests.systems.persistence.PersistenceTestSuite"/>
-            <arg name="argument" value="delete"/>
-      </suite>
-   </extension>
-   
 </plugin>

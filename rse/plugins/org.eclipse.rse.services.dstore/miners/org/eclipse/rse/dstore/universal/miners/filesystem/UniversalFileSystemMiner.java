@@ -377,10 +377,10 @@ public class UniversalFileSystemMiner extends Miner implements
 		}
 		else {
 			if (folderCopy) {
-				command = "cp  -r " + source + " " + tgt; //$NON-NLS-1$ //$NON-NLS-2$
+				command = "cp  -Rp " + source + " " + tgt; //$NON-NLS-1$ //$NON-NLS-2$
 			}
 			else {
-				command = "cp " + source + " " + tgt; //$NON-NLS-1$ //$NON-NLS-2$
+				command = "cp -p " + source + " " + tgt; //$NON-NLS-1$ //$NON-NLS-2$
 			}
 		}
 

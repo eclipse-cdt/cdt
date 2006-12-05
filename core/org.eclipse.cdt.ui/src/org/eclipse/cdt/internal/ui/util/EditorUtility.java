@@ -210,23 +210,22 @@ public class EditorUtility {
 
 	private static IEditorInput getEditorInput(ICElement element) throws CModelException {
 		while (element != null) {
-			if (element instanceof IWorkingCopy && ((IWorkingCopy) element).isWorkingCopy()) 
-				element= ((IWorkingCopy) element).getOriginalElement();
- 
  			if (element instanceof ISourceReference) {
  				ITranslationUnit tu = ((ISourceReference)element).getTranslationUnit();
  				if (tu != null) {
  					element = tu;                    
  				}
  			}
-
+			if (element instanceof IWorkingCopy && ((IWorkingCopy) element).isWorkingCopy()) 
+				element= ((IWorkingCopy) element).getOriginalElement();
+ 
 			if (element instanceof ITranslationUnit) {
 				ITranslationUnit unit= (ITranslationUnit) element;
 				IResource resource= unit.getResource();
 				if (resource instanceof IFile) {
 					return new FileEditorInput((IFile) resource);
 				}
-				return new ExternalEditorInput(unit, getStorage(unit));					
+				return new ExternalEditorInput(unit, new FileStorage(unit.getPath()));
 			}
                         
 			if (element instanceof IBinary) {

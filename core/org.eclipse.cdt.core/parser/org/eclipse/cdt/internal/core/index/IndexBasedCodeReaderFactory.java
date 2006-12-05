@@ -8,6 +8,7 @@
  * Contributors:
  * QNX - Initial API and implementation
  * Markus Schorn (Wind River Systems)
+ * Andrew Ferguson (Symbian)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.index;
 
@@ -24,9 +25,10 @@ import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ICodeReaderFactory;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.index.IIndexFile;
+import org.eclipse.cdt.core.index.IIndexFileLocation;
 import org.eclipse.cdt.core.index.IIndexInclude;
 import org.eclipse.cdt.core.index.IIndexMacro;
-import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.cdt.core.index.IndexLocationFactory;
 import org.eclipse.cdt.core.parser.CodeReader;
 import org.eclipse.cdt.core.parser.ICodeReaderCache;
 import org.eclipse.cdt.core.parser.IMacro;
@@ -35,7 +37,6 @@ import org.eclipse.cdt.core.parser.ParserUtil;
 import org.eclipse.cdt.internal.core.parser.scanner2.ObjectStyleMacro;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMMacro;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.Path;
 
 /**
  * @author Doug Schaefer
@@ -45,12 +46,15 @@ public class IndexBasedCodeReaderFactory implements ICodeReaderFactory {
 
 	private final static boolean CASE_SENSITIVE_FILES= !new File("a").equals(new File("A"));  //$NON-NLS-1$//$NON-NLS-2$
 	private final IIndex index;
-	private Map fileInfoCache = new HashMap(); // filename, fileInfo
+	private Map/*<IIndexFileLocation,FileInfo>*/ fileInfoCache;
+	private Map/*<String,IIndexFileLocation>*/ iflCache;
 	private List usedMacros = new ArrayList();
 	
 	private static final char[] EMPTY_CHARS = new char[0];
 	
-	private static class NeedToParseException extends Exception {}
+	private static class NeedToParseException extends Exception {
+		private static final long serialVersionUID = 1L;
+	}
 	public static class FileInfo {
 		private FileInfo() {}
 		public IIndexFile fFile= null;
@@ -66,9 +70,14 @@ public class IndexBasedCodeReaderFactory implements ICodeReaderFactory {
 		}
 	}
 	
-	
 	public IndexBasedCodeReaderFactory(IIndex index) {
+		this(index, new HashMap/*<String,IIndexFileLocation>*/());
+	}
+	
+	public IndexBasedCodeReaderFactory(IIndex index, Map iflCache) {
 		this.index = index;
+		this.fileInfoCache = new HashMap/*<IIndexFileLocation,FileInfo>*/();
+		this.iflCache = iflCache;
 	}
 	
 	public int getUniqueIdentifier() {
@@ -95,7 +104,8 @@ public class IndexBasedCodeReaderFactory implements ICodeReaderFactory {
 			}
 		}
 		try {
-			FileInfo info= createInfo(canonicalPath, null);
+			IIndexFileLocation incLocation = findLocation(canonicalPath);
+			FileInfo info= createInfo(incLocation, null);
 
 			// try to build macro dictionary off index
 			if (info.fFile != null) {
@@ -133,17 +143,17 @@ public class IndexBasedCodeReaderFactory implements ICodeReaderFactory {
 		return ParserUtil.createReader(canonicalPath, null);
 	}
 
-	private FileInfo createInfo(String location, IIndexFile file) throws CoreException {
+	private FileInfo createInfo(IIndexFileLocation location, IIndexFile file) throws CoreException {
 		FileInfo info= (FileInfo) fileInfoCache.get(location);
 		if (info == null) {
 			info= new FileInfo();			
-			info.fFile= file == null ? index.getFile(new Path(location)) : file;
+			info.fFile= file == null ? index.getFile(location) : file;
 			fileInfoCache.put(location, info);
 		}
 		return info;
 	}
 	
-	private void getInfosForMacroDictionary(FileInfo fileInfo, LinkedHashSet target) throws CoreException, NeedToParseException {
+	private void getInfosForMacroDictionary(FileInfo fileInfo, LinkedHashSet/*<FileInfo>*/ target) throws CoreException, NeedToParseException {
 		if (!target.add(fileInfo)) {
 			return;
 		}
@@ -181,11 +191,14 @@ public class IndexBasedCodeReaderFactory implements ICodeReaderFactory {
 		return null;
 	}
 	
-	public FileInfo createFileInfo(String location) throws CoreException {
+	public FileInfo createFileInfo(IIndexFileLocation location) throws CoreException {
 		return createInfo(location, null);
 	}
-
-	public FileInfo createFileInfo(ITranslationUnit tu) throws CoreException {
-		return createInfo(tu.getLocation().toOSString(), null);
+	
+	public IIndexFileLocation findLocation(String absolutePath) {
+		if(!iflCache.containsKey(absolutePath)) {
+			iflCache.put(absolutePath, IndexLocationFactory.getIFLExpensive(absolutePath));
+		}
+		return (IIndexFileLocation) iflCache.get(absolutePath);
 	}
 }

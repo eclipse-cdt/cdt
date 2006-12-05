@@ -22,6 +22,7 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.index.IIndexFile;
+import org.eclipse.cdt.core.index.IndexLocationFactory;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
@@ -62,7 +63,7 @@ public class BaseUITestCase extends BaseTestCase {
 		do {
 			index.acquireReadLock();
 			try {
-				IIndexFile pfile= index.getFile(file.getLocation());
+				IIndexFile pfile= index.getFile(IndexLocationFactory.getWorkspaceIFL(file));
 				if (pfile != null && pfile.getTimestamp() >= file.getLocalTimeStamp()) {
 					return;
 				}

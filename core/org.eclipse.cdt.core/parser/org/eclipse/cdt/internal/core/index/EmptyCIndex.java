@@ -18,11 +18,11 @@ import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.core.index.IIndexFile;
+import org.eclipse.cdt.core.index.IIndexFileLocation;
 import org.eclipse.cdt.core.index.IIndexInclude;
 import org.eclipse.cdt.core.index.IIndexName;
 import org.eclipse.cdt.core.index.IndexFilter;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 
 final public class EmptyCIndex implements IIndex {
@@ -47,7 +47,7 @@ final public class EmptyCIndex implements IIndex {
 		return IIndexFragmentName.EMPTY_NAME_ARRAY;
 	}
 
-	public IIndexFile getFile(IPath location) {
+	public IIndexFile getFile(IIndexFileLocation location) {
 		return null;
 	}
 

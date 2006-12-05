@@ -26,11 +26,11 @@ import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.core.index.IIndexFile;
+import org.eclipse.cdt.core.index.IIndexFileLocation;
 import org.eclipse.cdt.core.index.IIndexInclude;
 import org.eclipse.cdt.core.index.IIndexName;
 import org.eclipse.cdt.core.index.IndexFilter;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.SubProgressMonitor;
 
@@ -177,11 +177,10 @@ public class CIndex implements IIndex {
 		return findNames(binding, FIND_REFERENCES);
 	}
 
-	public IIndexFile getFile(IPath location) throws CoreException {
+	public IIndexFile getFile(IIndexFileLocation location) throws CoreException {
 		IIndexFile result= null;
-		String path= location.toOSString();
 		for (int i = 0; result==null && i < fPrimaryFragmentCount; i++) {
-			result= fFragments[i].getFile(path);
+			result= fFragments[i].getFile(location);
 		}
 		return result;
 	}
@@ -195,7 +194,8 @@ public class CIndex implements IIndex {
 				return result;
 			}
 		}
-		String location= include.getIncludesLocation();
+		
+		IIndexFileLocation location= include.getIncludesLocation();
 		for (int i = 0; i < fPrimaryFragmentCount; i++) {
 			IIndexFragment otherFrag = fFragments[i];
 			if (otherFrag != frag) {

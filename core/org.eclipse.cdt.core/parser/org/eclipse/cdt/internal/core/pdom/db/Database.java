@@ -78,10 +78,10 @@ public class Database {
 	
 	public static final int MAX_SIZE = CHUNK_SIZE - 4; // Room for overhead
 		
-	public Database(String filename) throws CoreException {
+	public Database(File location) throws CoreException {
 		try {
-			location = new File(filename);
-			file = new RandomAccessFile(filename, "rw"); //$NON-NLS-1$
+			this.location = location;
+			this.file = new RandomAccessFile(location, "rw"); //$NON-NLS-1$
 			
 			// Allocate chunk table, make sure we have at least one
 			long nChunks = file.length() / CHUNK_SIZE;

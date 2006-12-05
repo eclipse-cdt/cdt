@@ -187,7 +187,7 @@ public class AddIncludeOnSelectionAction extends Action implements IUpdate {
 			try {				
 				if (binding != null)
 				{
-					return getBindingQualifiedName(binding) + " - " + name.getFileName(); //$NON-NLS-1$
+					return getBindingQualifiedName(binding) + " - " + name.getFileLocation().getFileName(); //$NON-NLS-1$
 				}
 				else
 					return null;
@@ -284,7 +284,7 @@ public class AddIncludeOnSelectionAction extends Action implements IUpdate {
 						fRequiredIncludes = new IRequiredInclude[selects.length];
 						List usings = new ArrayList(selects.length);
 						for (int i = 0; i < fRequiredIncludes.length; i++) {
-							IRequiredInclude include = getRequiredInclude(((DisplayName)selects[i]).getName().getFileName(), getTranslationUnit());
+							IRequiredInclude include = getRequiredInclude(((DisplayName)selects[i]).getName().getFileLocation().getFileName(), getTranslationUnit());
 							if (include != null) {
 								fRequiredIncludes[i] = include;
 								IIndexBinding binding = ((DisplayName)selects[i]).getBinding();
@@ -309,8 +309,9 @@ public class AddIncludeOnSelectionAction extends Action implements IUpdate {
 					}
 				}
 				else if (pdomNames.size() == 1)
-				{					
-					String fileName = ((DisplayName)pdomNames.get(0)).getName().getFileName();
+				{	
+					// we should use the IIndexName.getLocation here rather than getFileLocation
+					String fileName = ((DisplayName)pdomNames.get(0)).getName().getFileLocation().getFileName();
 					fRequiredIncludes = new IRequiredInclude[] {getRequiredInclude(fileName, getTranslationUnit())};
 					IIndexBinding binding = ((DisplayName)pdomNames.get(0)).getBinding();
 

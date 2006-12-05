@@ -7,6 +7,7 @@
  *
  * Contributors:
  *    Markus Schorn - initial API and implementation
+ *    Andrew Ferguson (Symbian)
  *******************************************************************************/ 
 
 package org.eclipse.cdt.core.index;
@@ -16,7 +17,6 @@ import java.util.regex.Pattern;
 import org.eclipse.cdt.core.dom.IName;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 
 /**
@@ -125,12 +125,13 @@ public interface IIndex {
 	public long getLastWriteAccess();
 	
 	/**
-	 * Looks for a file with the given location. May return <code>null</code>.
-	 * @param location absolute path of the file location
+	 * Looks for a file with the given location. Will return <code>null</code> if there
+     * is no entry in the index for the given location.
+	 * @param location an IIndexFileLocation representing the location of the file
 	 * @return the file in the index or <code>null</code>
 	 * @throws CoreException
 	 */
-	public IIndexFile getFile(IPath location) throws CoreException;
+	public IIndexFile getFile(IIndexFileLocation location) throws CoreException;
 
 	/**
 	 * Looks for include relations originated by the given file.

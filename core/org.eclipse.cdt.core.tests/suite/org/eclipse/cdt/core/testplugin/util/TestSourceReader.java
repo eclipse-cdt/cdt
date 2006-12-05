@@ -29,6 +29,7 @@ import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.index.IIndexFile;
+import org.eclipse.cdt.core.index.IndexLocationFactory;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICProject;
@@ -209,18 +210,19 @@ public class TestSourceReader {
 		final IFile result[] = new IFile[1];
 		ws.run(new IWorkspaceRunnable() {
 			public void run(IProgressMonitor monitor) throws CoreException {
-				//Obtain file handle
-				IFile file = container.getFile(filePath);
-				InputStream stream = new ByteArrayInputStream(contents.getBytes());
-				//Create file input stream
-				if (file.exists()) {
-					file.setContents(stream, false, false, new NullProgressMonitor());
-				} 
-				else {
-					file.create(stream, false, new NullProgressMonitor());
-				}
+		//Obtain file handle
+		IFile file = container.getFile(filePath);
+	
+		InputStream stream = new ByteArrayInputStream(contents.getBytes());
+		//Create file input stream
+		if (file.exists()) {
+			file.setContents(stream, false, false, new NullProgressMonitor());
+		} 
+		else {
+			file.create(stream, false, new NullProgressMonitor());
+		}
 				result[0]= file;
-			}
+	}
 		}, null);
 		return result[0];
 	}
@@ -256,7 +258,7 @@ public class TestSourceReader {
 			Assert.assertTrue(CCorePlugin.getIndexManager().joinIndexer(timeLeft, new NullProgressMonitor()));
 			index.acquireReadLock();
 			try {
-				IIndexFile pfile= index.getFile(file.getLocation());
+				IIndexFile pfile= index.getFile(IndexLocationFactory.getWorkspaceIFL(file));
 				if (pfile != null && pfile.getTimestamp() >= file.getLocalTimeStamp()) {
 					return;
 				}

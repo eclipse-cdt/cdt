@@ -23,6 +23,7 @@ import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.core.index.IIndexFile;
 import org.eclipse.cdt.core.index.IIndexInclude;
 import org.eclipse.cdt.core.index.IndexFilter;
+import org.eclipse.cdt.core.index.IndexLocationFactory;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.IPathEntry;
@@ -133,7 +134,7 @@ public class IndexIncludeTest extends IndexTestBase {
 		TestSourceReader.waitUntilFileIsIndexed(fIndex, file, 4000);
 		fIndex.acquireReadLock();
 		try {
-			IIndexFile ifile= fIndex.getFile(file.getLocation());
+			IIndexFile ifile= fIndex.getFile(IndexLocationFactory.getWorkspaceIFL(file));
 			assertNotNull("Can't find " + file.getLocation(), ifile);
 			assertTrue("timestamp not ok", ifile.getTimestamp() >= timestamp);
 
@@ -160,7 +161,7 @@ public class IndexIncludeTest extends IndexTestBase {
 
 			fIndex.acquireReadLock();
 			try {
-				IIndexFile ifile= fIndex.getFile(file.getLocation());
+				IIndexFile ifile= fIndex.getFile(IndexLocationFactory.getWorkspaceIFL(file));
 				assertNotNull(ifile);
 				IIndexInclude[] includes= ifile.getIncludes();
 				assertEquals(2, includes.length);
@@ -190,7 +191,7 @@ public class IndexIncludeTest extends IndexTestBase {
 
 			fIndex.acquireReadLock();
 			try {
-				IIndexFile ifile= fIndex.getFile(file.getLocation());
+				IIndexFile ifile= fIndex.getFile(IndexLocationFactory.getWorkspaceIFL(file));
 				assertNotNull(ifile);
 				IIndexInclude[] includes= ifile.getIncludes();
 				assertEquals(1, includes.length);
@@ -205,7 +206,7 @@ public class IndexIncludeTest extends IndexTestBase {
 			TestScannerProvider.sIncludes= null;
 		}
 	}
-
+	
 	private void checkInclude(IIndexInclude include, String content, String includeName, boolean isSystem) throws CoreException {
 		int offset= content.indexOf(includeName);
 		assertEquals(offset, include.getNameOffset());

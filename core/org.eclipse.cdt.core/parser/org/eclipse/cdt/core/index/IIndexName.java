@@ -7,6 +7,7 @@
  *
  * Contributors:
  *    Markus Schorn - initial API and implementation
+ *    Andrew Ferguson (Symbian)
  *******************************************************************************/ 
 
 package org.eclipse.cdt.core.index;
@@ -31,11 +32,6 @@ import org.eclipse.core.runtime.CoreException;
  * @since 4.0
  */
 public interface IIndexName extends IName {
-	/**
-	 * Returns the location of the file the name resides in.
-	 */
-	public String getFileName();
-
 	/**
 	 * Returns the file the name belongs to.
 	 * @throws CoreException 

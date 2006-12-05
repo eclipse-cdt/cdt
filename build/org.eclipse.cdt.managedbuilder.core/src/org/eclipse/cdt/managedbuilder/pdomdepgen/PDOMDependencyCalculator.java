@@ -19,19 +19,18 @@ import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.index.IIndexFile;
 import org.eclipse.cdt.core.index.IIndexInclude;
 import org.eclipse.cdt.core.index.IIndexManager;
+import org.eclipse.cdt.core.index.IndexLocationFactory;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICProject;
-import org.eclipse.cdt.internal.core.pdom.PDOM;
-import org.eclipse.cdt.internal.core.pdom.dom.PDOMFile;
 import org.eclipse.cdt.managedbuilder.core.IBuildObject;
 import org.eclipse.cdt.managedbuilder.core.ITool;
 import org.eclipse.cdt.managedbuilder.makegen.IManagedDependencyCalculator;
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
 
-/**
+/** 
  * @author Doug Schaefer
  */
 public class PDOMDependencyCalculator implements IManagedDependencyCalculator {
@@ -44,7 +43,7 @@ public class PDOMDependencyCalculator implements IManagedDependencyCalculator {
 	private IPath[] dependencies;
 	
 	public PDOMDependencyCalculator(IPath source, IResource resource, IBuildObject buildContext, ITool tool, IPath topBuildDirectory) {
-		this.source = source;
+		this.source = source; 
 		this.resource = resource;
 		this.buildContext = buildContext;
 		this.tool = tool;
@@ -60,16 +59,16 @@ public class PDOMDependencyCalculator implements IManagedDependencyCalculator {
 			if (resource != null) {
 				ICProject project = CoreModel.getDefault().create(resource.getProject());
 				try {
-					IIndex index= CCorePlugin.getIndexManager().getIndex(project, IIndexManager.ADD_DEPENDENCIES);
+					IIndex index = CCorePlugin.getIndexManager().getIndex(project, IIndexManager.ADD_DEPENDENCIES);
 					index.acquireReadLock();
 					try {
-						IIndexFile file = index.getFile(resource.getLocation());
+						IIndexFile file = index.getFile(IndexLocationFactory.getWorkspaceIFL((IFile)resource));
 						if (file != null) {
 							IIndexInclude[] includes = index.findIncludes(file, IIndex.DEPTH_INFINITE);
 
 							List/*<IPath>*/ list = new ArrayList/*<IPath>*/();
 							for (int i = 0; i < includes.length; ++i)
-								list.add(new Path(includes[i].getIncludesLocation()));
+								list.add(IndexLocationFactory.getAbsolutePath(includes[i].getIncludesLocation()));
 
 							dependencies = (IPath[])list.toArray(new IPath[list.size()]);
 						} else

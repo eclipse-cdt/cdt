@@ -17,14 +17,15 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.swt.widgets.Display;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.index.IIndexFile;
+import org.eclipse.cdt.core.index.IIndexFileLocation;
 import org.eclipse.cdt.core.index.IIndexInclude;
 import org.eclipse.cdt.core.index.IIndexManager;
+import org.eclipse.cdt.core.index.IndexLocationFactory;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.ui.CUIPlugin;
 
@@ -104,9 +105,9 @@ public class IBContentProvider extends AsyncTreeContentProvider {
 					for (int i = 0; i < includes.length; i++) {
 						IIndexInclude include = includes[i];
 						try {
-							Path includesPath = new Path(include.getIncludesLocation());
+							IPath includesPath = IndexLocationFactory.getAbsolutePath(include.getIncludesLocation());
 							if (fComputeIncludedBy) {
-								directiveFile= targetFile= new IBFile(tu.getCProject(), new Path(include.getIncludedByLocation()));
+								directiveFile= targetFile= new IBFile(tu.getCProject(), IndexLocationFactory.getAbsolutePath(include.getIncludesLocation()));
 							}
 							else {
 								targetFile= new IBFile(tu.getCProject(), includesPath);
@@ -147,7 +148,7 @@ public class IBContentProvider extends AsyncTreeContentProvider {
 	
 	private IIndexInclude[] findIncludedBy(IIndex index, ITranslationUnit tu, IProgressMonitor pm) {
 		try {
-			IPath location= tu.getLocation();
+			IIndexFileLocation location= IndexLocationFactory.getIFL(tu);
 			if (location != null) {
 				IIndexFile file= index.getFile(location);
 				if (file != null) {
@@ -163,7 +164,7 @@ public class IBContentProvider extends AsyncTreeContentProvider {
 
 	public IIndexInclude[] findIncludesTo(IIndex index, ITranslationUnit tu, IProgressMonitor pm) {
 		try {
-			IPath location= tu.getLocation();
+			IIndexFileLocation location= IndexLocationFactory.getIFL(tu);
 			if (location != null) {
 				IIndexFile file= index.getFile(location);
 				if (file != null) {

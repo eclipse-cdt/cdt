@@ -7,6 +7,7 @@
  *
  * Contributors:
  *    Markus Schorn - initial API and implementation
+ *    Andrew Ferguson (Symbian)
  *******************************************************************************/ 
 
 package org.eclipse.cdt.internal.core.index;
@@ -14,6 +15,7 @@ package org.eclipse.cdt.internal.core.index;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorIncludeStatement;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorMacroDefinition;
+import org.eclipse.cdt.core.index.IIndexFileLocation;
 import org.eclipse.core.runtime.CoreException;
 
 /**
@@ -33,8 +35,11 @@ public interface IWritableIndexFragment extends IIndexFragment {
 
 	/**
 	 * Creates a file object for the given location or returns an existing one.
+	 * @param fileLocation an IIndexFileLocation representing the location of the file
+	 * @return the existing IIndexFragmentFile for this location, or a newly created one 
+	 * @throws CoreException
 	 */
-	IIndexFragmentFile addFile(String fileLocation) throws CoreException;
+	IIndexFragmentFile addFile(IIndexFileLocation fileLocation) throws CoreException;
 
 	/**
 	 * Adds an include to the given file.

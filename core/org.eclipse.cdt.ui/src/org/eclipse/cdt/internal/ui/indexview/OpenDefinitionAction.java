@@ -13,7 +13,6 @@ package org.eclipse.cdt.internal.ui.indexview;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.viewers.ISelection;
@@ -27,6 +26,7 @@ import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.core.index.IIndexName;
+import org.eclipse.cdt.core.index.IndexLocationFactory;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.ui.CUIPlugin;
@@ -75,23 +75,25 @@ public class OpenDefinitionAction extends IndexAction {
 		}
 	}
 
-	private void showInEditor(IIndexName name) throws CModelException, PartInitException {
-		IPath path = new Path(name.getFileName());
-		IEditorPart editor = EditorUtility.openInEditor(path, null);
-		if (editor != null && editor instanceof ITextEditor) {
-			ITextEditor textEditor = (ITextEditor)editor;
-			int nodeOffset = name.getNodeOffset();
-			int nodeLength = name.getNodeLength();
-			try {
-				if (nodeLength == -1) {
-					// This means the offset is actually a line number
-					IDocument document = textEditor.getDocumentProvider().getDocument(editor.getEditorInput());
-					nodeOffset = document.getLineOffset(nodeOffset);
-					nodeLength = document.getLineLength(nodeOffset);
-				} 
-				textEditor.selectAndReveal(nodeOffset, nodeLength);
-			} catch (BadLocationException e) {
-				CUIPlugin.getDefault().log(e);
+	private void showInEditor(IIndexName name) throws CModelException, PartInitException, CoreException {
+		IPath path = IndexLocationFactory.getPath(name.getFile().getLocation());
+		if(path!=null) {
+			IEditorPart editor = EditorUtility.openInEditor(path, null);
+			if (editor != null && editor instanceof ITextEditor) {
+				ITextEditor textEditor = (ITextEditor)editor;
+				int nodeOffset = name.getNodeOffset();
+				int nodeLength = name.getNodeLength();
+				try {
+					if (nodeLength == -1) {
+						// This means the offset is actually a line number
+						IDocument document = textEditor.getDocumentProvider().getDocument(editor.getEditorInput());
+						nodeOffset = document.getLineOffset(nodeOffset);
+						nodeLength = document.getLineLength(nodeOffset);
+					} 
+					textEditor.selectAndReveal(nodeOffset, nodeLength);
+				} catch (BadLocationException e) {
+					CUIPlugin.getDefault().log(e);
+				}
 			}
 		}
 	}

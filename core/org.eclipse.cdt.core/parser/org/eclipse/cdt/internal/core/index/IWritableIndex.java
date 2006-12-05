@@ -7,6 +7,7 @@
  *
  * Contributors:
  *    Markus Schorn - initial API and implementation
+ *    Andrew Ferguson (Symbian)
  *******************************************************************************/ 
 
 package org.eclipse.cdt.internal.core.index;
@@ -15,8 +16,8 @@ import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorIncludeStatement;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorMacroDefinition;
 import org.eclipse.cdt.core.index.IIndex;
+import org.eclipse.cdt.core.index.IIndexFileLocation;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
 
 /**
  * Interface used by the indexer to write to the index. 
@@ -28,13 +29,14 @@ public interface IWritableIndex extends IIndex {
 	/**
 	 * Creates a file object for the given location or returns an existing one.
 	 */
-	IIndexFragmentFile addFile(IPath fileLocation) throws CoreException;
+	IIndexFragmentFile addFile(IIndexFileLocation fileLocation) throws CoreException;
 
 	/**
 	 * Adds content to the given file.
 	 */
 	void setFileContent(IIndexFragmentFile sourceFile, 
 			IASTPreprocessorIncludeStatement[] includes, 
+			IIndexFileLocation[] includeLocations,
 			IASTPreprocessorMacroDefinition[] macros, IASTName[][] names) throws CoreException;
 
 	/**

@@ -18,7 +18,6 @@ import java.util.List;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.search.ui.ISearchQuery;
@@ -30,6 +29,7 @@ import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.part.FileEditorInput;
 
+import org.eclipse.cdt.core.index.IIndexFileLocation;
 import org.eclipse.cdt.core.index.IIndexName;
 import org.eclipse.cdt.ui.CUIPlugin;
 
@@ -121,14 +121,14 @@ public class PDOMSearchResult extends AbstractTextSearchResult implements IEdito
 	public IFile getFile(Object element) {
 		if (element instanceof IIndexName) {
 			IIndexName name = (IIndexName)element;
-			IPath path = new Path(name.getFileName());
-			IFile[] files = ResourcesPlugin.getWorkspace().getRoot().findFilesForLocation(path);
-			if (files.length > 0)
-				return files[0];
-			else
-				return null;
-		} else
-			return null;
+			try {
+				IIndexFileLocation location = name.getFile().getLocation();
+				if(location.getFullPath()!=null) {
+					return ResourcesPlugin.getWorkspace().getRoot().getFile(new Path(location.getFullPath()));
+				}
+			} catch(CoreException ce) { /* fall-through to return null */ }
+		}
+		return null;
 	}
 
 	public String getLabel() {

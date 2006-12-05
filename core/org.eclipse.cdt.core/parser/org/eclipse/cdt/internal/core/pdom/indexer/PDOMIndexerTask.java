@@ -31,7 +31,9 @@ import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.index.IIndexFile;
+import org.eclipse.cdt.core.index.IIndexFileLocation;
 import org.eclipse.cdt.core.index.IIndexInclude;
+import org.eclipse.cdt.core.index.IndexLocationFactory;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.CoreModelUtil;
 import org.eclipse.cdt.core.model.ICContainer;
@@ -42,12 +44,12 @@ import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.internal.core.index.IIndexFragmentFile;
 import org.eclipse.cdt.internal.core.index.IWritableIndex;
+import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 
 public abstract class PDOMIndexerTask implements IPDOMIndexerTask {
@@ -89,7 +91,7 @@ public abstract class PDOMIndexerTask implements IPDOMIndexerTask {
 	protected volatile int fTotalSourcesEstimate= 0;
 	protected volatile int fCompletedSources= 0;
 	protected volatile int fCompletedHeaders= 0;
-	protected Map fContextMap= new HashMap();
+	protected Map/*<IIndexFileLocation, Object>*/ fContextMap = new HashMap/*<IIndexFileLocation, Object>*/();
 	protected volatile String fMessage;
 	
 	private boolean fTrace;
@@ -105,7 +107,7 @@ public abstract class PDOMIndexerTask implements IPDOMIndexerTask {
 	protected PDOMIndexerTask() {
 		fTrace= checkDebugOption("indexer", "true");  //$NON-NLS-1$//$NON-NLS-2$
 		fShowStatistics= checkDebugOption("pdomtimings", "true");  //$NON-NLS-1$//$NON-NLS-2$
-	}
+		}
 	
 	private boolean checkDebugOption(String option, String value) {
 		String trace = Platform.getDebugOption(CCorePlugin.PLUGIN_ID + "/debug/" + option);  //$NON-NLS-1$
@@ -168,8 +170,7 @@ public abstract class PDOMIndexerTask implements IPDOMIndexerTask {
 	protected void removeTU(IWritableIndex index, ITranslationUnit tu) throws CoreException, InterruptedException {
 		index.acquireWriteLock(0);
 		try {
-			IPath path = ((IFile)tu.getResource()).getLocation();
-			IIndexFragmentFile file = (IIndexFragmentFile) index.getFile(path);
+			IIndexFragmentFile file = (IIndexFragmentFile) index.getFile(getIndexFileLocation(tu));
 			if (file != null)
 				index.clearFile(file);
 		} finally {
@@ -179,29 +180,26 @@ public abstract class PDOMIndexerTask implements IPDOMIndexerTask {
 	
 	protected void parseTUs(Collection sources, Collection headers, IProgressMonitor monitor) throws CoreException, InterruptedException {
 		// sources first
-		Iterator iter;
-		for (iter = sources.iterator(); iter.hasNext();) {
+		for (Iterator iter = sources.iterator(); iter.hasNext();) {
 			if (monitor.isCanceled()) 
 				return;
 			ITranslationUnit tu = (ITranslationUnit) iter.next();
-			String path = tu.getLocation().toOSString();
-			if (needToUpdate(path)) {
+			if (needToUpdate(getIndexFileLocation(tu))) {
 				parseTU(tu, monitor);
 			}
 		}
 
 		// headers with context
-		for (iter = headers.iterator(); iter.hasNext();) {
+		for (Iterator iter = headers.iterator(); iter.hasNext();) {
 			if (monitor.isCanceled()) 
 				return;
 			ITranslationUnit tu = (ITranslationUnit) iter.next();
-			String path = tu.getLocation().toOSString();
-			if (!needToUpdate(path)) {
+			IIndexFileLocation location = getIndexFileLocation(tu);
+			if (!needToUpdate(location)) {
 				iter.remove();
-			}
-			else {
-				ITranslationUnit context= findContext(getIndex(), path);
-				if (context != null) {
+			} else {
+				ITranslationUnit context= findContext(getIndex(), location);
+			 	if (context != null) {
 					parseTU(context, monitor);
 				}
 			}
@@ -209,12 +207,11 @@ public abstract class PDOMIndexerTask implements IPDOMIndexerTask {
 
 		// headers without context
 		if (getIndexAllFiles()) {
-			for (iter = headers.iterator(); iter.hasNext();) {
+			for (Iterator iter = headers.iterator(); iter.hasNext();) {
 				if (monitor.isCanceled()) 
 					return;
 				ITranslationUnit tu = (ITranslationUnit) iter.next();
-				String path = tu.getLocation().toOSString();
-				if (!needToUpdate(path)) {
+				if (!needToUpdate(getIndexFileLocation(tu))) {
 					iter.remove();
 				}
 				else {
@@ -276,38 +273,37 @@ public abstract class PDOMIndexerTask implements IPDOMIndexerTask {
 		return getIndexer().getIndexAllFiles();
 	}
 	
-	protected ITranslationUnit findContext(IIndex index, String path) {
-		Object cachedContext= fContextMap.get(path);
+	protected ITranslationUnit findContext(IIndex index, IIndexFileLocation location) {
+		Object cachedContext= fContextMap.get(location);
 		if (cachedContext != null) {
 			return cachedContext == NO_CONTEXT ? null : (ITranslationUnit) cachedContext;
 		}
 		
-		ITranslationUnit context= null;
-		fContextMap.put(path, NO_CONTEXT); // prevent recursion
+		fContextMap.put(location, NO_CONTEXT); // prevent recursion
 		IIndexFile pdomFile;
 		try {
-			pdomFile = index.getFile(new Path(path));
+			pdomFile = index.getFile(location);
 			if (pdomFile != null) {
 				ICProject project= getIndexer().getProject();
 				IIndexInclude[] includedBy = index.findIncludedBy(pdomFile, IIndex.DEPTH_ZERO);
-				ArrayList paths= new ArrayList(includedBy.length);
+				ArrayList/*<IIndexFileLocation>*/ paths= new ArrayList/*<IIndexFileLocation>*/(includedBy.length);
 				for (int i = 0; i < includedBy.length; i++) {
 					IIndexInclude include = includedBy[i];
-					String incfilename = include.getIncludedByLocation();
-					if (CoreModel.isValidSourceUnitName(project.getProject(), incfilename)) {
-						context= CoreModelUtil.findTranslationUnitForLocation(new Path(incfilename), project);
+					IIndexFileLocation incLocation = include.getIncludedByLocation();
+					if (CoreModel.isValidSourceUnitName(project.getProject(), incLocation.getURI().toString())) { // FIXME - is this ok?
+						ITranslationUnit context = CoreModelUtil.findTranslationUnitForLocation(IndexLocationFactory.getAbsolutePath(incLocation), project);
 						if (context != null) {
-							fContextMap.put(path, context);
+							fContextMap.put(location, context);
 							return context;
 						}
 					}
-					paths.add(incfilename);
+					paths.add(incLocation);
 				}
-				for (Iterator iter = paths.iterator(); iter.hasNext();) {
-					String nextLevel = (String) iter.next();
-					context= findContext(index, nextLevel);
+				for (Iterator/*<IIndexFileLocation>*/ iter = paths.iterator(); iter.hasNext();) {
+					IIndexFileLocation nextLevel = (IIndexFileLocation) iter.next();
+					ITranslationUnit context = findContext(index, nextLevel);
 					if (context != null) {
-						fContextMap.put(path, context);
+						fContextMap.put(location, context);
 						return context;
 					}
 				}
@@ -339,12 +335,12 @@ public abstract class PDOMIndexerTask implements IPDOMIndexerTask {
 	protected void addSymbols(IASTTranslationUnit ast, IProgressMonitor pm) throws InterruptedException, CoreException {
 		final Map symbolMap= new HashMap();
 		try {
-			String[] orderedPaths= extractSymbols(ast, symbolMap);
+			IIndexFileLocation[] orderedPaths= extractSymbols(ast, symbolMap);
 			for (int i=0; i<orderedPaths.length; i++) {
 				if (pm.isCanceled()) {
 					return;
 				}
-				String path= orderedPaths[i];
+				IIndexFileLocation path= orderedPaths[i];
 				ArrayList[] arrayLists = ((ArrayList[]) symbolMap.get(path));
 
 				// resolve the names
@@ -360,8 +356,8 @@ public abstract class PDOMIndexerTask implements IPDOMIndexerTask {
 							fReferenceCount++;
 						else 
 							fDeclarationCount++;
-					}
 				}
+		}
 				fResolutionTime += System.currentTimeMillis()-start;
 			}
 
@@ -375,7 +371,7 @@ public abstract class PDOMIndexerTask implements IPDOMIndexerTask {
 					if (pm.isCanceled()) 
 						return;
 
-					String path = orderedPaths[i];
+				IIndexFileLocation path = orderedPaths[i];
 					if (path != null) {
 						if (fTrace) {
 							System.out.println("Indexer: adding " + path); //$NON-NLS-1$
@@ -403,35 +399,36 @@ public abstract class PDOMIndexerTask implements IPDOMIndexerTask {
 		}
 	}
 
-	private String[] extractSymbols(IASTTranslationUnit ast, final Map symbolMap) throws CoreException {
-		LinkedHashSet orderedIncludes= new LinkedHashSet();
-		ArrayList stack= new ArrayList();
+	private IIndexFileLocation[] extractSymbols(IASTTranslationUnit ast, final Map symbolMap) throws CoreException {
+		LinkedHashSet/*<IIndexFileLocation>*/ orderedIncludes= new LinkedHashSet/*<IIndexFileLocation>*/();
+		ArrayList/*<IIndexFileLocation>*/ stack= new ArrayList/*<IIndexFileLocation>*/();
 
-		final String astFilePath = ast.getFilePath();
-		String currentPath= astFilePath;
+
+		final IIndexFileLocation astLocation = findLocation(ast.getFilePath());
+		IIndexFileLocation currentPath = astLocation;
 
 		IASTPreprocessorIncludeStatement[] includes = ast.getIncludeDirectives();
 		for (int i= 0; i < includes.length; i++) {
 			IASTPreprocessorIncludeStatement include = includes[i];
 			IASTFileLocation sourceLoc = include.getFileLocation();
-			String newPath= sourceLoc != null ? sourceLoc.getFileName() : astFilePath; // command-line includes
+			IIndexFileLocation newPath= sourceLoc != null ? findLocation(sourceLoc.getFileName()) : astLocation; // command-line includes
 			while (!stack.isEmpty() && !currentPath.equals(newPath)) {
 				if (needToUpdate(currentPath)) {
 					prepareInMap(symbolMap, currentPath);
 					orderedIncludes.add(currentPath);
 				}
-				currentPath= (String) stack.remove(stack.size()-1);
+				currentPath= (IIndexFileLocation) stack.remove(stack.size()-1);
 			}
 			if (needToUpdate(newPath)) {
 				prepareInMap(symbolMap, newPath);
 				addToMap(symbolMap, 0, newPath, include);
 			}
 			stack.add(currentPath);
-			currentPath= include.getPath();
+			currentPath= findLocation(include.getPath());
 		}
 		stack.add(currentPath);
 		while (!stack.isEmpty()) {
-			currentPath= (String) stack.remove(stack.size()-1);
+			currentPath= (IIndexFileLocation) stack.remove(stack.size()-1);
 			if (needToUpdate(currentPath)) {
 				prepareInMap(symbolMap, currentPath);
 				orderedIncludes.add(currentPath);
@@ -444,7 +441,7 @@ public abstract class PDOMIndexerTask implements IPDOMIndexerTask {
 			IASTPreprocessorMacroDefinition macro = macros[i2];
 			IASTFileLocation sourceLoc = macro.getFileLocation();
 			if (sourceLoc != null) { // skip built-ins and command line macros
-				String path2 = sourceLoc.getFileName();
+				IIndexFileLocation path2 = findLocation(sourceLoc.getFileName());
 				addToMap(symbolMap, 1, path2, macro);
 			}
 		}
@@ -454,44 +451,41 @@ public abstract class PDOMIndexerTask implements IPDOMIndexerTask {
 			public void visit(IASTName name, IASTName caller) {
 				IASTFileLocation nameLoc = name.getFileLocation();
 				if (nameLoc != null) {
-					addToMap(symbolMap, 2, nameLoc.getFileName(), new IASTName[]{name, caller});
+					IIndexFileLocation location = findLocation(nameLoc.getFileName());
+					addToMap(symbolMap, 2, location, new IASTName[]{name, caller});
 				}
 			}
 		});
-		return (String[]) orderedIncludes.toArray(new String[orderedIncludes.size()]);
+		return (IIndexFileLocation[]) orderedIncludes.toArray(new IIndexFileLocation[orderedIncludes.size()]);
 	}
 
 	protected abstract IWritableIndex getIndex();
 	protected abstract int getReadlockCount();
-	protected abstract boolean needToUpdate(String path) throws CoreException;
-	protected abstract boolean postAddToIndex(String path, IIndexFile file) throws CoreException;
+	protected abstract boolean needToUpdate(IIndexFileLocation location) throws CoreException;
+	protected abstract boolean postAddToIndex(IIndexFileLocation location, IIndexFile file) throws CoreException;
 
-
-	private void addToMap(Map map, int idx, String path, Object thing) {
-		List[] lists= (List[]) map.get(path);
+	private void addToMap(Map map, int idx, IIndexFileLocation location, Object thing) {
+		List[] lists= (List[]) map.get(location);
 		if (lists != null) 
 			lists[idx].add(thing);
 	}		
 
-	private boolean prepareInMap(Map map, String path) {
-		if (map.get(path) == null) {
+	private boolean prepareInMap(Map map, IIndexFileLocation location) {
+		if (map.get(location) == null) {
 			Object lists= new ArrayList[]{new ArrayList(), new ArrayList(), new ArrayList()};
-			map.put(path, lists);
+			map.put(location, lists);
 		}
 		return false;
 	}
 
-	private IIndexFragmentFile addToIndex(IWritableIndex index, String location, Map symbolMap) throws CoreException {
-		// Remove the old symbols in the tu
-		Path path= new Path(location);
-		IIndexFragmentFile file= (IIndexFragmentFile) index.getFile(path);
+	private IIndexFragmentFile addToIndex(IWritableIndex index, IIndexFileLocation location, Map symbolMap) throws CoreException {
+		IIndexFragmentFile file= (IIndexFragmentFile) index.getFile(location);
 		if (file != null) {
 			index.clearFile(file);
+		} else {
+			file= index.addFile(location);
 		}
-		else {
-			file= index.addFile(path);
-		}
-		file.setTimestamp(path.toFile().lastModified());
+		file.setTimestamp(EFS.getStore(location.getURI()).fetchInfo().getLastModified());
 		ArrayList[] lists= (ArrayList[]) symbolMap.get(location);
 		if (lists != null) {
 			ArrayList list= lists[0];
@@ -501,7 +495,11 @@ public abstract class PDOMIndexerTask implements IPDOMIndexerTask {
 			list= lists[2];
 			IASTName[][] names= (IASTName[][]) list.toArray(new IASTName[list.size()][]);
 
-			index.setFileContent(file, includes, macros, names);
+			IIndexFileLocation[] includeLocations = new IIndexFileLocation[includes.length];
+			for(int i=0; i<includes.length; i++) {
+				includeLocations[i] = findLocation(includes[i].getPath());
+			}
+			index.setFileContent(file, includes, includeLocations, macros, names);
 		}
 		return file;
 	}
@@ -527,4 +525,13 @@ public abstract class PDOMIndexerTask implements IPDOMIndexerTask {
 					+ fProblemBindingCount + " problems.");  //$NON-NLS-1$
 		}
 	}
+	
+	protected IIndexFileLocation getIndexFileLocation(ITranslationUnit tu) {
+		if(tu.getResource()!=null)
+			return IndexLocationFactory.getWorkspaceIFL((IFile)tu.getResource());
+		else
+			return IndexLocationFactory.getExternalIFL(tu.getLocation());
+	}
+	
+	protected abstract IIndexFileLocation findLocation(String absolutePath);
 }

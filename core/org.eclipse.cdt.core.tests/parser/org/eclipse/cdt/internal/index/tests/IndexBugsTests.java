@@ -29,6 +29,7 @@ import org.eclipse.cdt.core.index.IIndexInclude;
 import org.eclipse.cdt.core.index.IIndexMacro;
 import org.eclipse.cdt.core.index.IIndexName;
 import org.eclipse.cdt.core.index.IndexFilter;
+import org.eclipse.cdt.core.index.IndexLocationFactory;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.testplugin.CProjectHelper;
@@ -195,13 +196,13 @@ public class IndexBugsTests extends BaseTestCase {
 
 			fIndex.acquireReadLock();
 			try {
-				IIndexFile ifile= fIndex.getFile(file.getLocation());
+				IIndexFile ifile= fIndex.getFile(IndexLocationFactory.getWorkspaceIFL(file));
 				assertNotNull(ifile);
 				IIndexInclude[] includes= ifile.getIncludes();
 				assertEquals(1, includes.length);
 				IIndexInclude i= includes[0];
-				assertEquals(file.getLocation().toOSString(), i.getIncludedByLocation());
-				assertEquals(include.getLocation().toOSString(), i.getIncludesLocation());
+				assertEquals(file.getLocationURI(), i.getIncludedByLocation().getURI());
+				assertEquals(include.getLocationURI(), i.getIncludesLocation().getURI());
 				assertEquals(true, i.isSystemInclude());
 				assertEquals(0, i.getNameOffset());
 				assertEquals(0, i.getNameLength());
@@ -225,13 +226,13 @@ public class IndexBugsTests extends BaseTestCase {
 
 			fIndex.acquireReadLock();
 			try {
-				IIndexFile ifile= fIndex.getFile(file.getLocation());
+				IIndexFile ifile= fIndex.getFile(IndexLocationFactory.getWorkspaceIFL(file));
 				assertNotNull(ifile);
 				IIndexInclude[] includes= ifile.getIncludes();
 				assertEquals(1, includes.length);
 				IIndexInclude i= includes[0];
-				assertEquals(file.getLocation().toOSString(), i.getIncludedByLocation());
-				assertEquals(include.getLocation().toOSString(), i.getIncludesLocation());
+				assertEquals(file.getLocationURI(), i.getIncludedByLocation().getURI());
+				assertEquals(include.getLocationURI(), i.getIncludesLocation().getURI());
 				assertEquals(true, i.isSystemInclude());
 				assertEquals(0, i.getNameOffset());
 				assertEquals(0, i.getNameLength());
@@ -257,7 +258,7 @@ public class IndexBugsTests extends BaseTestCase {
 
 		fIndex.acquireReadLock();
 		try {
-			IIndexFile ifile= fIndex.getFile(file.getLocation());
+			IIndexFile ifile= fIndex.getFile(IndexLocationFactory.getWorkspaceIFL(file));
 			assertNotNull(ifile);
 			IIndexMacro[] macros= ifile.getMacros();
 			assertEquals(2, macros.length);

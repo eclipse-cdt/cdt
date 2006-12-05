@@ -7,6 +7,7 @@
  *
  * Contributors:
  *    Markus Schorn - initial API and implementation
+ *    Andrew Ferguson (Symbian)
  *******************************************************************************/
 
 package org.eclipse.cdt.core.index;
@@ -38,18 +39,18 @@ public interface IIndexInclude {
 	IIndexFile getIncludedBy() throws CoreException;
 
 	/**
-	 * Returns the absolute path of the location of the file that contains this directive.
-	 * @return the absolute path of the location of the file performing the include
+	 * Returns the IIndexFileLocation of the file that contains this directive.
+	 * @return the IIndexFileLocation of the file performing the include
 	 * @throws CoreException
 	 */
-	String getIncludedByLocation() throws CoreException;
+	IIndexFileLocation getIncludedByLocation() throws CoreException;
 	
 	/**
-	 * Returns the absolute path of the location of the file that is included by this directive.
-	 * @return the absolute path of the location of the file that is included by this directive
+	 * Returns the IIndexFileLocation of the file that is included by this directive.
+	 * @return the IIndexFileLocation of the file that is included by this directive
 	 * @throws CoreException
 	 */
-	String getIncludesLocation() throws CoreException;
+	IIndexFileLocation getIncludesLocation() throws CoreException;
 
 	/**
 	 * Returns the character offset of the name of the include in its source file. The name does

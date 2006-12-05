@@ -2005,7 +2005,7 @@ public class CPPVisitor {
 	}
 	
 	public static String [] getQualifiedName( IBinding binding ){
-	    IASTName [] ns = null;
+		IName [] ns = null;
 	    try {
             ICPPScope scope = (ICPPScope) binding.getScope();
             while( scope != null ){
@@ -2020,12 +2020,12 @@ public class CPPVisitor {
                 if( scope instanceof ICPPNamespaceScope && scope.getScopeName().toCharArray().length == 0 )
                     break;
             
-                ns = (IASTName[]) ArrayUtil.append( IASTName.class, ns, n );
+                ns = (IName[]) ArrayUtil.append( IName.class, ns, n );
                 scope = (ICPPScope) scope.getParent();
             }
         } catch ( DOMException e ) {
         }
-        ns = (IASTName[]) ArrayUtil.trim( IASTName.class, ns );
+        ns = (IName[]) ArrayUtil.trim( IName.class, ns );
         String [] result = new String[ ns.length + 1 ];
         for( int i = ns.length - 1; i >= 0; i-- ){
             result[ ns.length - i - 1 ] = ns[i].toString();

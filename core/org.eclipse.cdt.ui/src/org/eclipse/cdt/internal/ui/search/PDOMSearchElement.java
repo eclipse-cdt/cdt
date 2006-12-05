@@ -31,7 +31,7 @@ public class PDOMSearchElement {
 	public PDOMSearchElement(IIndexName name, IIndexBinding binding) throws CoreException {
 		this.binding= binding;
 		this.name = binding.getName();
-		filename = name.getFileName();
+		filename = name.getFileLocation().getFileName();
 	}
 	
 	public int hashCode() {

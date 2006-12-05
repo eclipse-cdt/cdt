@@ -11,6 +11,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom.dom;
 
+import java.net.URI;
 import java.util.ArrayList;
 
 import org.eclipse.cdt.core.CCorePlugin;
@@ -106,16 +107,16 @@ public class PDOMName implements IIndexFragmentName, IASTFileLocation {
 	private int getRecField(int offset) throws CoreException {
 		return pdom.getDB().getInt(record + offset);
 	}
-	
+
 	private void setRecField(int offset, int fieldrec) throws CoreException {
 		pdom.getDB().putInt(record + offset, fieldrec);
 	}
-	
+
 	public PDOMBinding getPDOMBinding() throws CoreException {
 		int bindingrec = getRecField(BINDING_REC_OFFSET);
 		return pdom.getBinding(bindingrec);
 	}
-	
+
 	public void setBinding(PDOMBinding binding) throws CoreException {
 		int bindingrec = binding != null ? binding.getRecord() : 0;
 		setRecField(BINDING_REC_OFFSET, bindingrec);
@@ -125,16 +126,16 @@ public class PDOMName implements IIndexFragmentName, IASTFileLocation {
 		int namerec = getRecField(offset);
 		return namerec != 0 ? new PDOMName(pdom, namerec) : null;
 	}
-	
+
 	private void setNameField(int offset, PDOMName name) throws CoreException {
 		int namerec = name != null ? name.getRecord() : 0;
 		setRecField(offset, namerec);
 	}
-	
+
 	public PDOMName getPrevInBinding() throws CoreException {
 		return getNameField(BINDING_PREV_OFFSET);
 	}
-	
+
 	public void setPrevInBinding(PDOMName name) throws CoreException {
 		setNameField(BINDING_PREV_OFFSET, name);
 	}
@@ -194,7 +195,7 @@ public class PDOMName implements IIndexFragmentName, IASTFileLocation {
 	private byte getFlags() throws CoreException {
 		return pdom.getDB().getByte(record + FLAGS);
 	}
-	
+
 	public boolean isDeclaration() {
 		try {
 			byte flags = getFlags();
@@ -232,11 +233,20 @@ public class PDOMName implements IIndexFragmentName, IASTFileLocation {
 	public String getFileName() {
 		try {
 			PDOMFile file = (PDOMFile) getFile();
-			return file != null ? file.getFileName().getString() : null;
+			if(file!=null) {
+				/*
+				 * We need to spec. what this method can return to know
+				 * how to implement this. Existing implmentations return
+				 * the absolute path, so here we attempt to do the same.
+				 */
+				URI uri = file.getLocation().getURI();
+				if ("file".equals(uri.getScheme())) //$NON-NLS-1$
+					return uri.getSchemeSpecificPart();
+			}
 		} catch (CoreException e) {
 			CCorePlugin.log(e);
-			return null;
 		}
+		return null;
 	}
 
 	public int getStartingLineNumber() {
@@ -288,10 +298,10 @@ public class PDOMName implements IIndexFragmentName, IASTFileLocation {
 				break;
 			}
 		}
-		
+
 		if (nextName != null)
 			nextName.setPrevInBinding(prevName);
-		
+
 		// Delete our record
 		pdom.getDB().free(record);
 	}
@@ -299,7 +309,7 @@ public class PDOMName implements IIndexFragmentName, IASTFileLocation {
 	public IIndexFragment getIndexFragment() {
 		return pdom;
 	}
-	
+
 	public IIndexProxyBinding getBinding() throws CoreException {
 		return getPDOMBinding();
 	}

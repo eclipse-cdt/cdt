@@ -31,7 +31,9 @@ import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.core.index.IIndexFile;
+import org.eclipse.cdt.core.index.IIndexFileLocation;
 import org.eclipse.cdt.core.index.IIndexName;
+import org.eclipse.cdt.core.index.IndexLocationFactory;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICProject;
@@ -84,7 +86,7 @@ public class CHQueries {
 			ISourceReference sf = ((ISourceReference)element);
 			ITranslationUnit tu= sf.getTranslationUnit();
 			if (tu != null) {
-				IPath location= tu.getLocation();
+				IIndexFileLocation location= IndexLocationFactory.getIFL(tu);
 				if (location != null) {
 					IIndexFile file= index.getFile(location);
 					if (file != null) {

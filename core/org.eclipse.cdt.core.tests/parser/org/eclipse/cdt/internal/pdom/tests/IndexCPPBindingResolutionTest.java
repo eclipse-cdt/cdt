@@ -78,11 +78,37 @@ public class IndexCPPBindingResolutionTest extends IndexBindingResolutionTestBas
 	}
 
 	// // header file
+	// class C {public: class Base {}; static Base b; };
+	// C::Base C::b = *(new C::Base());
+	// namespace N { class Base2 {}; Base2 b2; };
+	
+	// // references
+	// void foo(C::Base b) {}
+	// void foo2(N::Base2 b2) {}
+	// class D : public C::Base {};
+	// class E : public N::Base2 {};
+	// void bar() { foo(C::b); foo2(N::b2); }
+	public void _testSomeMore() {
+		IBinding b0 = getBindingFromASTName("Base {}", 4);
+		IBinding b1 = getBindingFromASTName("Base2 {}", 5);
+		IBinding b2 = getBindingFromASTName("foo(C::Base b)", 3);
+		IBinding b3 = getBindingFromASTName("foo2(N::Base2 b2)", 4);
+		IBinding b4 = getBindingFromASTName("C::b", 1);
+		IBinding b5 = getBindingFromASTName("N::b2", 1);
+		IBinding b6 = getBindingFromASTName("b); f", 1);
+		IBinding b7 = getBindingFromASTName("b2); }", 2);
+		IBinding b8 = getBindingFromASTName("foo(C::b)", 3);
+		IBinding b9 = getBindingFromASTName("foo2(N::b2)", 4);
+	}
+	
+	
+	// // header file
 	// class C {}; struct S {}; union U {}; enum E {ER1,ER2,ER3};
 	// int var1; C var2; S *var3; void func(E); void func(C);
 	// namespace ns {}
 	// typedef int Int; typedef int *IntPtr;
 	// void func(int*); void func(int);
+	
 	// // referencing file
 	// #include "header.h"
 	// void references() {

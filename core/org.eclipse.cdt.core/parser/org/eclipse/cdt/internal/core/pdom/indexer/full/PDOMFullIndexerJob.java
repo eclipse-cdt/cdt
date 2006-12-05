@@ -22,6 +22,8 @@ import org.eclipse.cdt.core.dom.IPDOMIndexer;
 import org.eclipse.cdt.core.dom.IPDOMIndexerTask;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.index.IIndexFile;
+import org.eclipse.cdt.core.index.IIndexFileLocation;
+import org.eclipse.cdt.core.index.IndexLocationFactory;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.internal.core.index.IWritableIndex;
 import org.eclipse.cdt.internal.core.index.IWritableIndexManager;
@@ -41,8 +43,9 @@ abstract class PDOMFullIndexerJob extends PDOMIndexerTask implements IPDOMIndexe
 	
 	protected final PDOMFullIndexer indexer;
 	protected IWritableIndex index= null;
-	private Map filePathsToParse= new HashMap();
-
+	private Map/*<IIndexFileLocation, Object>*/ filePathsToParse= new HashMap/*<IIndexFileLocation, Object>*/();
+	private Map/*<String, IIndexFileLocation>*/ iflCache = new HashMap/*<String, IIndexFileLocation>*/();
+	
 	public PDOMFullIndexerJob(PDOMFullIndexer indexer) throws CoreException {
 		this.indexer = indexer;
 	}
@@ -55,13 +58,21 @@ abstract class PDOMFullIndexerJob extends PDOMIndexerTask implements IPDOMIndexe
 		this.index = ((IWritableIndexManager) CCorePlugin.getIndexManager()).getWritableIndex(indexer.getProject());
 	}
 	
-	protected void registerTUsInReaderFactory(Collection sources) throws CoreException {
-		filePathsToParse= new HashMap();
-		
+	protected void registerTUsInReaderFactory(Collection/*<ITranslationUnit>*/ sources) throws CoreException {
+		filePathsToParse= new HashMap/*<IIndexFileLocation, Object>*/();
 		for (Iterator iter = sources.iterator(); iter.hasNext();) {
 			ITranslationUnit tu = (ITranslationUnit) iter.next();
-			filePathsToParse.put(tu.getLocation().toOSString(), REQUIRED);
+			filePathsToParse.put(getIndexFileLocation(tu), REQUIRED);
 		}
+	}
+	
+	protected IIndexFileLocation findLocation(String absolutePath) {
+		IIndexFileLocation result = (IIndexFileLocation) iflCache.get(absolutePath);
+		if(result==null) {
+			result = IndexLocationFactory.getIFLExpensive(absolutePath);
+			iflCache.put(absolutePath, result);
+		}
+		return result;
 	}
 	
 	protected void doParseTU(ITranslationUnit tu, IProgressMonitor pm) throws CoreException, InterruptedException {
@@ -87,18 +98,18 @@ abstract class PDOMFullIndexerJob extends PDOMIndexerTask implements IPDOMIndexe
 		return 0;
 	}
 
-	protected boolean needToUpdate(String path) throws CoreException {
-		Object required= filePathsToParse.get(path);
+	protected boolean needToUpdate(IIndexFileLocation location) throws CoreException {
+		Object required= filePathsToParse.get(location);
 		if (required == null) {
 			required= MISSING;
-			filePathsToParse.put(path, required);
+			filePathsToParse.put(location, required);
 		}
 		return required != SKIP;
 	}
 
-	protected boolean postAddToIndex(String path, IIndexFile file) throws CoreException {
-		Object required= filePathsToParse.get(path);
-		filePathsToParse.put(path, SKIP);
+	protected boolean postAddToIndex(IIndexFileLocation location, IIndexFile file) throws CoreException {
+		Object required= filePathsToParse.get(location);
+		filePathsToParse.put(location, SKIP);
 		return required == REQUIRED;
 	}
 }

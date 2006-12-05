@@ -16,6 +16,7 @@ import java.util.regex.Pattern;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.index.IIndex;
+import org.eclipse.cdt.core.index.IIndexFileLocation;
 import org.eclipse.cdt.core.index.IndexFilter;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -50,11 +51,11 @@ public interface IIndexFragment {
 	/**
 	 * Returns the file for the given location. May return <code>null</code>, if no such file exists.
 	 * This method may only return files that are actually managed by this fragement.
-	 * @param location absolute path to the location of the file
+	 * @param location the IIndexFileLocation representing the location of the file
 	 * @return the file for the location
 	 * @throws CoreException
 	 */
-	IIndexFragmentFile getFile(String location) throws CoreException;
+	IIndexFragmentFile getFile(IIndexFileLocation location) throws CoreException;
 
 	/**
 	 * Returns all include directives that point to the given file. The input file may belong to 

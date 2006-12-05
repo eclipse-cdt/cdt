@@ -124,7 +124,7 @@ public class CCodeFormatter extends CodeFormatter {
 		if (lineSeparator != null) {
 			this.preferences.line_separator = lineSeparator;
 		} else {
-			this.preferences.line_separator = System.getProperty("line.separator");
+			this.preferences.line_separator = System.getProperty("line.separator"); //$NON-NLS-1$
 		}
 		this.preferences.initial_indentation_level = indentationLevel;
 

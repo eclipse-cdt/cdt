@@ -7,6 +7,7 @@
  *
  * Contributors:
  *    Markus Schorn - initial API and implementation
+ *    Andrew Ferguson (Symbian)
  *******************************************************************************/ 
 
 package org.eclipse.cdt.core.index;
@@ -29,13 +30,12 @@ import org.eclipse.core.runtime.CoreException;
  * @since 4.0
  */
 public interface IIndexFile {
-
 	/**
-	 * Returns the absolute path of the location of the file.
-	 * @return the absolute path of the location of the file
+	 * Returns an IIndexFileLocation representing the location of this file
+	 * @return an IIndexFileLocation representing the location of this file
 	 * @throws CoreException
 	 */
-	String getLocation() throws CoreException;
+	IIndexFileLocation getLocation() throws CoreException;
 
 	/**
 	 * Returns all includes found in this file.

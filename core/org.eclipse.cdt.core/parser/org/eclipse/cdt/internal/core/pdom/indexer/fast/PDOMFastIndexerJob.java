@@ -14,13 +14,17 @@
 package org.eclipse.cdt.internal.core.pdom.indexer.fast;
 
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.IPDOMIndexer;
 import org.eclipse.cdt.core.dom.IPDOMIndexerTask;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.index.IIndexFile;
+import org.eclipse.cdt.core.index.IIndexFileLocation;
+import org.eclipse.cdt.core.index.IndexLocationFactory;
 import org.eclipse.cdt.core.model.ILanguage;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.parser.CodeReader;
@@ -44,6 +48,7 @@ abstract class PDOMFastIndexerJob extends PDOMIndexerTask implements IPDOMIndexe
 	protected final PDOMFastIndexer indexer;
 	protected IWritableIndex index;
 	protected IndexBasedCodeReaderFactory codeReaderFactory;
+	private Map/*<String,IIndexFileLocation>*/ iflCache;
 
 	public PDOMFastIndexerJob(PDOMFastIndexer indexer) throws CoreException {
 		this.indexer = indexer;
@@ -51,13 +56,24 @@ abstract class PDOMFastIndexerJob extends PDOMIndexerTask implements IPDOMIndexe
 	
 	protected void setupIndexAndReaderFactory() throws CoreException {
 		this.index= ((IWritableIndexManager) CCorePlugin.getIndexManager()).getWritableIndex(indexer.getProject());
-		this.codeReaderFactory = new IndexBasedCodeReaderFactory(index);
-	}		
+		this.iflCache = new HashMap/*<String,IIndexFileLocation>*/();
+		this.codeReaderFactory = new IndexBasedCodeReaderFactory(index, iflCache);
+	}
+	
+	protected IIndexFileLocation findLocation(String absolutePath) {
+		IIndexFileLocation result = (IIndexFileLocation) iflCache.get(absolutePath); 
+		if(result==null) {
+			result = IndexLocationFactory.getIFLExpensive(absolutePath);
+			iflCache.put(absolutePath, result);
+		}
+		return result;
+	}
 
 	protected void registerTUsInReaderFactory(Collection files) throws CoreException {
 		for (Iterator iter = files.iterator(); iter.hasNext();) {
 			ITranslationUnit tu = (ITranslationUnit) iter.next();
-			FileInfo info= codeReaderFactory.createFileInfo(tu);
+			IIndexFileLocation location = getIndexFileLocation(tu);
+			FileInfo info= codeReaderFactory.createFileInfo(location);
 			info.setRequested(true);
 		}
 	}
@@ -111,13 +127,13 @@ abstract class PDOMFastIndexerJob extends PDOMIndexerTask implements IPDOMIndexe
 		return 1;
 	}
 
-	protected boolean needToUpdate(String path) throws CoreException {
+	protected boolean needToUpdate(IIndexFileLocation location) throws CoreException {
 		// file is requested or is not yet indexed.
-		FileInfo info= codeReaderFactory.createFileInfo(path);
+		FileInfo info= codeReaderFactory.createFileInfo(location);
 		return info.isRequested() || info.fFile == null;
 	}
 
-	protected boolean postAddToIndex(String path, IIndexFile file) throws CoreException {
+	protected boolean postAddToIndex(IIndexFileLocation path, IIndexFile file) throws CoreException {
 		FileInfo info= codeReaderFactory.createFileInfo(path);
 		info.fFile= file;
 		if (info.isRequested()) {

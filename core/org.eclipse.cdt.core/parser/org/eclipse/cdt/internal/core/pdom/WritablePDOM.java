@@ -11,27 +11,29 @@
 
 package org.eclipse.cdt.internal.core.pdom;
 
+import java.io.File;
 import java.text.MessageFormat;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorIncludeStatement;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorMacroDefinition;
+import org.eclipse.cdt.core.index.IIndexFileLocation;
 import org.eclipse.cdt.internal.core.index.IIndexFragmentFile;
 import org.eclipse.cdt.internal.core.index.IWritableIndexFragment;
+import org.eclipse.cdt.internal.core.pdom.dom.IIndexLocationConverter;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMFile;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMLinkage;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
 
 public class WritablePDOM extends PDOM implements IWritableIndexFragment {
 
-	public WritablePDOM(IPath dbPath) throws CoreException {
-		super(dbPath);
+	public WritablePDOM(File dbPath, IIndexLocationConverter locationConverter) throws CoreException {
+		super(dbPath, locationConverter);
 	}
-	public IIndexFragmentFile addFile(String filename) throws CoreException {
-		return super.addFile(filename);
+	public IIndexFragmentFile addFile(IIndexFileLocation location) throws CoreException {
+		return super.addFile(location);
 	}
 
 	public void addFileContent(IIndexFragmentFile sourceFile, 

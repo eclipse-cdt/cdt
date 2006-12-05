@@ -7,6 +7,7 @@
  *
  * Contributors:
  *    Markus Schorn - initial API and implementation
+ *    Andrew Ferguson (Symbian)
  *******************************************************************************/ 
 
 package org.eclipse.cdt.internal.core.index;
@@ -14,9 +15,8 @@ package org.eclipse.cdt.internal.core.index;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorIncludeStatement;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorMacroDefinition;
+import org.eclipse.cdt.core.index.IIndexFileLocation;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
 
 public class WritableCIndex extends CIndex implements IWritableIndex {
 
@@ -35,12 +35,12 @@ public class WritableCIndex extends CIndex implements IWritableIndex {
 		return result;
 	}
 
-	public IIndexFragmentFile addFile(IPath fileLocation) throws CoreException {
+	public IIndexFragmentFile addFile(IIndexFileLocation fileLocation) throws CoreException {
 		IWritableIndexFragment frag= selectFragment(fileLocation);
-		return frag.addFile(fileLocation.toOSString());
+		return frag.addFile(fileLocation);
 	}
 
-	private IWritableIndexFragment selectFragment(IPath fileLocation) {
+	private IWritableIndexFragment selectFragment(IIndexFileLocation fileLocation) {
 		// todo handling of multiple writable indices
 		assert fWritableFragments.length == 1;
 		return fWritableFragments[0];
@@ -57,6 +57,7 @@ public class WritableCIndex extends CIndex implements IWritableIndex {
 
 	public void setFileContent(IIndexFragmentFile file, 
 			IASTPreprocessorIncludeStatement[] includes,
+			IIndexFileLocation[] includeLocations,
 			IASTPreprocessorMacroDefinition[] macros, IASTName[][] names) throws CoreException {
 
 		IIndexFragment indexFragment = file.getIndexFragment();
@@ -64,8 +65,7 @@ public class WritableCIndex extends CIndex implements IWritableIndex {
 		
 		IIndexFragmentFile[] destFiles= new IIndexFragmentFile[includes.length];
 		for (int i = 0; i < includes.length; i++) {
-			IASTPreprocessorIncludeStatement statement = includes[i];
-			destFiles[i]= addFile(new Path(statement.getPath()));
+			destFiles[i]= addFile(includeLocations[i]);
 		}
 		((IWritableIndexFragment) indexFragment).addFileContent(file, 
 				includes, destFiles, macros, names);

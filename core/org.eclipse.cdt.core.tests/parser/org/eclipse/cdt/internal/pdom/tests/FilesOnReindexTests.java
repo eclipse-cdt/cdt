@@ -19,6 +19,7 @@ import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.index.IIndexFile;
 import org.eclipse.cdt.core.index.IndexFilter;
+import org.eclipse.cdt.core.index.IndexLocationFactory;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.internal.core.CCoreInternals;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
@@ -68,13 +69,13 @@ public class FilesOnReindexTests extends PDOMTestBase {
 	
 	void performAssertions(IFile file) throws CoreException {
 		IIndex index = CCorePlugin.getIndexManager().getIndex(project);
-		assertNotNull(index.getFile(file.getLocation()));
+		assertNotNull(index.getFile(IndexLocationFactory.getWorkspaceIFL(file)));
 		
 		IBinding[] bs = index.findBindings(Pattern.compile("C"), true, new IndexFilter(), new NullProgressMonitor());
 		assertEquals(1, bs.length);
 		
 		PDOMBinding binding = (PDOMBinding) bs[0];
 		IIndexFile file2 = binding.getFirstDefinition().getFile();
-		assertEquals(file.getLocation().toOSString(), file2.getLocation());
+		assertEquals(file.getLocationURI(), file2.getLocation().getURI());
 	}
 }

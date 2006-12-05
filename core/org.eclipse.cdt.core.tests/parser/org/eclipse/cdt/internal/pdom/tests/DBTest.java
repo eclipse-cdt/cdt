@@ -37,7 +37,7 @@ public class DBTest extends TestCase {
 		// Tests block size and simple first block
 		File f = getTestDir().append("test1.dat").toFile();
 		f.delete();
-		Database db = new Database(f.getCanonicalPath());
+		Database db = new Database(f);
 		assertEquals(0, db.getVersion());
 
 		final int realsize = 42;
@@ -55,7 +55,7 @@ public class DBTest extends TestCase {
 		// Tests free block linking
 		File f = getTestDir().append("test2.dat").toFile();
 		f.delete();
-		Database db = new Database(f.getCanonicalPath());
+		Database db = new Database(f);
 		
 		final int realsize = 42;
 		final int blocksize = (realsize / Database.MIN_SIZE + 1) * Database.MIN_SIZE;
@@ -75,7 +75,7 @@ public class DBTest extends TestCase {
 		// 
 		File f = getTestDir().append("test2.dat").toFile();
 		f.delete();
-		Database db = new Database(f.getCanonicalPath());
+		Database db = new Database(f);
 		
 		int mem1 = db.malloc(42);
 		db.free(mem1);
@@ -112,7 +112,7 @@ public class DBTest extends TestCase {
 		// Tests inserting and retrieving strings
 		File f = getTestDir().append("testStrings.dat").toFile();
 		f.delete();
-		final Database db = new Database(f.getCanonicalPath());
+		final Database db = new Database(f);
 
 		String[] names = {
 				"ARLENE",

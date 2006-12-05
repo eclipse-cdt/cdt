@@ -16,6 +16,7 @@ import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorIncludeStatement;
 import org.eclipse.cdt.core.index.IIndexFile;
+import org.eclipse.cdt.core.index.IIndexFileLocation;
 import org.eclipse.cdt.internal.core.index.IIndexFragment;
 import org.eclipse.cdt.internal.core.index.IIndexFragmentFile;
 import org.eclipse.cdt.internal.core.index.IIndexFragmentInclude;
@@ -139,11 +140,11 @@ public class PDOMInclude implements IIndexFragmentInclude {
 		pdom.getDB().putInt(record + INCLUDED_BY_PREV, rec);
 	}
 
-	public String getIncludedByLocation() throws CoreException {
+	public IIndexFileLocation getIncludedByLocation() throws CoreException {
 		return getIncludedBy().getLocation();
 	}
 
-	public String getIncludesLocation() throws CoreException {
+	public IIndexFileLocation getIncludesLocation() throws CoreException {
 		return getIncludes().getLocation();
 	}
 

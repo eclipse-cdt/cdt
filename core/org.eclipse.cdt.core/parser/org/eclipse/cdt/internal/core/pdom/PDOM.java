@@ -12,6 +12,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.BitSet;
 import java.util.Collection;
@@ -29,8 +30,9 @@ import org.eclipse.cdt.core.dom.IPDOMNode;
 import org.eclipse.cdt.core.dom.IPDOMVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IBinding;
-import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.index.IIndexBinding;
+import org.eclipse.cdt.core.index.IIndex;
+import org.eclipse.cdt.core.index.IIndexFileLocation;
 import org.eclipse.cdt.core.index.IIndexName;
 import org.eclipse.cdt.core.index.IndexFilter;
 import org.eclipse.cdt.core.model.LanguageManager;
@@ -42,6 +44,7 @@ import org.eclipse.cdt.internal.core.index.IIndexFragmentName;
 import org.eclipse.cdt.internal.core.index.IIndexProxyBinding;
 import org.eclipse.cdt.internal.core.pdom.db.BTree;
 import org.eclipse.cdt.internal.core.pdom.db.Database;
+import org.eclipse.cdt.internal.core.pdom.dom.IIndexLocationConverter;
 import org.eclipse.cdt.internal.core.pdom.dom.IPDOMLinkageFactory;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMFile;
@@ -49,9 +52,7 @@ import org.eclipse.cdt.internal.core.pdom.dom.PDOMInclude;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMLinkage;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMName;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
-import org.eclipse.cdt.internal.core.pdom.dom.PDOMFile.Finder;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.PlatformObject;
 import org.eclipse.core.runtime.Status;
@@ -85,6 +86,7 @@ public class PDOM extends PlatformObject implements IIndexFragment, IPDOM {
 	// 16 - have PDOMCPPField store type information, and PDOMCPPNamespaceAlias store what it is aliasing
 	// 17 - use single linked list for names in file, adds a link to enclosing defintion name.
 	// 18 - distinction between c-unions and c-structs.
+    // 19 - alter representation of paths in the pdom (162172)
 
 	public static final int LINKAGES = Database.DATA_AREA;
 	public static final int FILE_INDEX = Database.DATA_AREA + 4;
@@ -92,16 +94,23 @@ public class PDOM extends PlatformObject implements IIndexFragment, IPDOM {
 	// Local caches
 	private BTree fileIndex;
 	private Map fLinkageIDCache = new HashMap();
-	private IPath fPath;
-	
-	public PDOM(IPath dbPath) throws CoreException {
+	private File fPath;
+	private IIndexLocationConverter locationConverter;
+
+	public PDOM(File dbPath, IIndexLocationConverter locationConverter) throws CoreException {
 		// Load up the database
 		fPath= dbPath;
-		db = new Database(dbPath.toOSString());
+		db = new Database(fPath);
 
 		if (db.getVersion() == VERSION) {
 			readLinkages();
 		}
+
+		this.locationConverter = locationConverter;
+	}
+
+	public IIndexLocationConverter getLocationConverter() {
+		return locationConverter;
 	}
 
 	public boolean versionMismatch() {
@@ -155,17 +164,14 @@ public class PDOM extends PlatformObject implements IIndexFragment, IPDOM {
 		return fileIndex;
 	}
 
-	public IIndexFragmentFile getFile(String path) throws CoreException {
-		Finder finder = new Finder(db, path);
-		getFileIndex().accept(finder);
-		int record = finder.getRecord();
-		return record != 0 ? new PDOMFile(this, record) : null;
+	public IIndexFragmentFile getFile(IIndexFileLocation location) throws CoreException {
+		return PDOMFile.findFile(this, getFileIndex(), location, locationConverter);
 	}
 
-	protected IIndexFragmentFile addFile(String path) throws CoreException {
-		IIndexFragmentFile file = getFile(path);
+	protected IIndexFragmentFile addFile(IIndexFileLocation location) throws CoreException {
+		IIndexFragmentFile file = getFile(location);
 		if (file == null) {
-			PDOMFile pdomFile = new PDOMFile(this, path);
+			PDOMFile pdomFile = new PDOMFile(this, location);
 			getFileIndex().insert(pdomFile.getRecord());
 			file= pdomFile;
 		}
@@ -571,7 +577,7 @@ public class PDOM extends PlatformObject implements IIndexFragment, IPDOM {
 		return (PDOMFile) getFile(file.getLocation());
 	}
 
-	public IPath getPath() {
+	public File getPath() {
 		return fPath;
 	}
 }

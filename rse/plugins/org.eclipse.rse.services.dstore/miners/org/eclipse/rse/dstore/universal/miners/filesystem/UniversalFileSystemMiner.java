@@ -358,7 +358,21 @@ public class UniversalFileSystemMiner extends Miner implements
 					+ " /S /E /K /O /Q /H /I"; //$NON-NLS-1$
 			}
 			else {
-				command = "copy " + source + " " + tgt; //$NON-NLS-1$ //$NON-NLS-2$
+				String unquotedTgt = tgt.substring(1, tgt.length() - 1);
+				
+				File targetFile = new File(unquotedTgt);
+				if (!targetFile.exists())
+				{
+					// create file so as to avoid ambiguity
+					try
+					{
+						targetFile.createNewFile();
+					}
+					catch (Exception e)
+					{
+					}
+				}				
+				command = "xcopy " + source + " " + tgt + " /Y /K /O /Q /H"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ 
 			}
 		}
 		else {

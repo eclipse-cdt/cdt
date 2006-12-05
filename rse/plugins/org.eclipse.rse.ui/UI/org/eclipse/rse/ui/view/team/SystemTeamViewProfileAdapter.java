@@ -291,7 +291,6 @@ public class SystemTeamViewProfileAdapter
 		if (propertyDescriptorArray == null)
 		{
 		  	propertyDescriptorArray = new PropertyDescriptor[1];
-		 	RSEUIPlugin plugin = RSEUIPlugin.getDefault();
 		 	int idx = 0;
 		  	// status
 			propertyDescriptorArray[idx++] = createSimplePropertyDescriptor(ISystemPropertyConstants.P_IS_ACTIVE,SystemViewResources.RESID_PROPERTY_PROFILESTATUS_LABEL, SystemViewResources.RESID_PROPERTY_PROFILESTATUS_TOOLTIP);	      

@@ -177,7 +177,6 @@ public class SystemScratchpadViewPart extends ViewPart implements ISelectionList
 			return;
 
 		ISystemViewElementAdapter adapter = (ISystemViewElementAdapter) ((IAdaptable) element).getAdapter(ISystemViewElementAdapter.class);
-		boolean alreadyHandled = false;
 		
 		if (adapter != null)
 		{
@@ -187,7 +186,7 @@ public class SystemScratchpadViewPart extends ViewPart implements ISelectionList
 			}
 			else
 			{
-				alreadyHandled = adapter.handleDoubleClick(element);
+				adapter.handleDoubleClick(element);
 			}
 		}
 	}
@@ -276,9 +275,7 @@ public class SystemScratchpadViewPart extends ViewPart implements ISelectionList
 	   */
 	public void systemResourceChanged(ISystemResourceChangeEvent event)
 	{
-		Object child = event.getSource();
 		Object parent = event.getParent();
-		Object input = _viewer.getInput();
 		
 		if (event.getType() == ISystemResourceChangeEvents.EVENT_RENAME)
 		{

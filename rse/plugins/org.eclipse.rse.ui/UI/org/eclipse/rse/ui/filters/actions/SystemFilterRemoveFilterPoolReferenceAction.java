@@ -81,7 +81,6 @@ public class SystemFilterRemoveFilterPoolReferenceAction
 	public void run() 
 	{
 		IStructuredSelection selections = getSelection();
-		ISystemFilterPoolReference poolReferences[] = new ISystemFilterPoolReference[selections.size()];
 		Iterator i = selections.iterator();
 		ISystemFilterPoolReferenceManager fprMgr = null;
 		while (i.hasNext())		

@@ -146,7 +146,7 @@ public class SystemFilterTableDialog extends SystemPromptDialog implements KeyLi
 			inputC.setLayoutData(igd);
 			
 			// input
-			Label objFilterLabel= SystemWidgetHelpers.createLabel(inputC, "Input");			 //$NON-NLS-1$
+			SystemWidgetHelpers.createLabel(inputC, "Input");			 //$NON-NLS-1$
 			_inputText = new Combo(inputC, SWT.DROP_DOWN | SWT.READ_ONLY);
 			_inputText.addListener(SWT.Selection, this);		
 
@@ -175,7 +175,7 @@ public class SystemFilterTableDialog extends SystemPromptDialog implements KeyLi
 			filterC.setLayoutData(fgd);
 			
 			// type filter strings
-			Label typeFilterLabel= SystemWidgetHelpers.createLabel(filterC, SystemPropertyResources.RESID_PROPERTY_TYPE_LABEL);			
+			SystemWidgetHelpers.createLabel(filterC, SystemPropertyResources.RESID_PROPERTY_TYPE_LABEL);			
 			_typeCombo = new Combo(filterC, SWT.DROP_DOWN | SWT.READ_ONLY);
 			for (int i = 0; i < _typeFilterStrings.length; i++)
 			{
@@ -189,7 +189,7 @@ public class SystemFilterTableDialog extends SystemPromptDialog implements KeyLi
 			_typeCombo.addListener(SWT.Selection, this);
 			
 			// view filter strings
-			Label viewFilterLabel= SystemWidgetHelpers.createLabel(filterC, SystemResources.RESID_FILTERSTRING_STRING_LABEL);			
+			SystemWidgetHelpers.createLabel(filterC, SystemResources.RESID_FILTERSTRING_STRING_LABEL);			
 			_filterCombo = SystemWidgetHelpers.createCombo(filterC, this);
 			_filterCombo.setText(_viewFilterStrings[0]);
 			for (int i = 0; i < _viewFilterStrings.length; i++)
@@ -350,7 +350,6 @@ public class SystemFilterTableDialog extends SystemPromptDialog implements KeyLi
 		        if (input != _currentInput)
 		        {	            
 		            _currentInput = input;
-		        	ISystemViewElementAdapter adapter = getAdatperFor(_currentInput);
 					_inputText.setText(inputStr);
 					applyViewFilter(false);
 					_viewer.setInput(_currentInput);

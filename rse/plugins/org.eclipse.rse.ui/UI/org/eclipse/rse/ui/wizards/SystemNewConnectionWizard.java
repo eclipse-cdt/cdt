@@ -127,7 +127,7 @@ public class      SystemNewConnectionWizard
 	      if (restrictSystemTypesTo != null)
 	        mainPage.restrictSystemTypes(restrictSystemTypesTo);
 	      
-	      ISystemProfile defaultProfile = SystemStartHere.getSystemProfileManager().getDefaultPrivateSystemProfile();
+	      SystemStartHere.getSystemProfileManager().getDefaultPrivateSystemProfile();
 	      
 	      showProfilePageInitially = RSEUIPlugin.getDefault().getShowProfilePageInitially();
 	      /* DKM - I don't think we should force profiles into the faces of users

@@ -492,7 +492,7 @@ class SubSetAction extends BrowseAction
 			{
 				Composite main = SystemWidgetHelpers.createComposite(parent, 1);
 				
-				Label label = SystemWidgetHelpers.createLabel(main, SystemResources.RESID_TABLE_SELECT_COLUMNS_DESCRIPTION_LABEL);
+				SystemWidgetHelpers.createLabel(main, SystemResources.RESID_TABLE_SELECT_COLUMNS_DESCRIPTION_LABEL);
 				
 				Composite c = SystemWidgetHelpers.createComposite(main, 4);
 				c.setLayoutData(new GridData(GridData.FILL_BOTH));
@@ -845,7 +845,6 @@ class SubSetAction extends BrowseAction
 	public void systemRemoteResourceChanged(ISystemRemoteChangeEvent event)
 	{
 		int eventType = event.getEventType();
-		Object remoteResourceParent = event.getResourceParent();
 		Object remoteResource = event.getResource();
 	
 		Vector remoteResourceNames = null;
@@ -884,12 +883,12 @@ class SubSetAction extends BrowseAction
 						{				    
 					    	if (child instanceof Vector)
 					    	{
-					    	    Vector vec = (Vector)child;
+					    	    /*Vector vec = (Vector)child;
 					    	    for (int v = 0; v < vec.size(); v++)
 					    	    {
 					    	        Object c = vec.get(v);
 					    	     
-					    	    }
+					    	    }*/
 					    	}
 					    	else
 					    	{

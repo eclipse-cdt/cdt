@@ -964,7 +964,6 @@ public class SystemTableView
 		int eventType = event.getEventType();
 		Object remoteResourceParent = event.getResourceParent();
 		Object remoteResource = event.getResource();
-		boolean originatedHere = (event.getOriginatingViewer() == this);
 		Vector remoteResourceNames = null;
 		if (remoteResource instanceof Vector)
 		{
@@ -1507,7 +1506,6 @@ public class SystemTableView
 		SystemRegistry sr = RSEUIPlugin.getDefault().getSystemRegistry();
 		IStructuredSelection selection = (IStructuredSelection) getSelection();
 		Iterator elements = selection.iterator();
-		int selectedCount = selection.size();
 		Object element = null;
 
 		ISystemViewElementAdapter adapter = null;
@@ -1651,7 +1649,6 @@ public class SystemTableView
 	public void fillContextMenu(IMenuManager menu)
 	{
 		IStructuredSelection selection = (IStructuredSelection) getSelection();
-		int selectionCount = selection.size();
 
 		{
 

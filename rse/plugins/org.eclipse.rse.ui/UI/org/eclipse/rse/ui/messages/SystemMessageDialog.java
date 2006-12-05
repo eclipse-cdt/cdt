@@ -25,7 +25,6 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.rse.core.SystemBasePlugin;
 import org.eclipse.rse.services.clientserver.messages.IndicatorException;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
@@ -63,10 +62,6 @@ public class SystemMessageDialog extends ErrorDialog implements Listener {
 	 * The Details button.
 	 */
 	private Button detailsButton=null;
-	/**
-	 * The title of the dialog.
-	 */
-	private String title;
 	
 	/**
 	 * The message to display.
@@ -183,8 +178,6 @@ public class SystemMessageDialog extends ErrorDialog implements Listener {
                                 IStatus status, int displayMask) 
     {
 	    super(parentShell, dialogTitle, message, status, displayMask);
-	    this.title = (dialogTitle == null) ? JFaceResources.getString("Problem_Occurred"): //$NON-NLS-1$
-		dialogTitle;
 		this.status = status;
 		statusList = Arrays.asList(status.getChildren());
 		this.displayMask = displayMask;
@@ -547,7 +540,7 @@ public class SystemMessageDialog extends ErrorDialog implements Listener {
 	private void toggleDetailsArea() 
 	{
 		Point windowSize = getShell().getSize();
-		Point oldSize = getContents().computeSize(SWT.DEFAULT, SWT.DEFAULT);
+		getContents().computeSize(SWT.DEFAULT, SWT.DEFAULT);
 	
 		if (listCreated) 
 		{
@@ -575,11 +568,11 @@ public class SystemMessageDialog extends ErrorDialog implements Listener {
 	private void toggleDetailsArea2(Composite composite) 
 	{
 		Point windowSize = getShell().computeSize(SWT.DEFAULT, SWT.DEFAULT);
-		Point oldSize = getDialogArea().computeSize(SWT.DEFAULT, SWT.DEFAULT);
+		getDialogArea().computeSize(SWT.DEFAULT, SWT.DEFAULT);
 		list = createDropDownList2(composite.getParent());
 		detailsButton.setText(IDialogConstants.HIDE_DETAILS_LABEL);
 		Point newSize = composite.getParent().computeSize(SWT.DEFAULT, SWT.DEFAULT);
-		Point buttonSize=composite.computeSize(SWT.DEFAULT, SWT.DEFAULT);
+		composite.computeSize(SWT.DEFAULT, SWT.DEFAULT);
 
 		// yantzi:5.1.2 this leaves a gap at the bottom of the dialog when opened with details,
 		// why not just set it to the newSize.y?

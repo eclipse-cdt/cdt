@@ -107,7 +107,6 @@ public class SystemViewDataDragAdapter extends DragSourceAdapter
 	public void dragStart(DragSourceEvent event)
 	{
 		ISelection selection = _selectionProvider.getSelection();
-		ISystemRegistry registry = RSEUIPlugin.getTheSystemRegistry();
 		if (selection instanceof IStructuredSelection)
 		{
 			IStructuredSelection ss = (IStructuredSelection) selection;
@@ -170,7 +169,6 @@ public class SystemViewDataDragAdapter extends DragSourceAdapter
 	public void dragSetData(DragSourceEvent event)
 	{
 		ISelection selection = _selectionProvider.getSelection();
-		ISystemRegistry registry = RSEUIPlugin.getTheSystemRegistry();
 		if (selection instanceof IStructuredSelection)
 		{
 			IStructuredSelection ss = (IStructuredSelection) selection;
@@ -220,9 +218,9 @@ public class SystemViewDataDragAdapter extends DragSourceAdapter
 				String[] fileNames = new String[ss.size()];
 				Iterator iterator = ss.iterator();
 				int i = 0;
-				while (iterator.hasNext())
-				{
-					Object dragObject = iterator.next();
+				//while (iterator.hasNext())
+				//{
+					iterator.next();
 					/** FIXME - IREmoteFile is systems.core independent now
 					if (dragObject instanceof IRemoteFile)
 					{
@@ -236,7 +234,7 @@ public class SystemViewDataDragAdapter extends DragSourceAdapter
 						}
 					}
 					*/
-				}
+				//}
 				if (i > 0)
 				{
 					event.data = fileNames;

@@ -61,7 +61,6 @@ public class SystemChangeFilterPropertyPage extends SystemBasePropertyPage
 	public SystemChangeFilterPropertyPage()
 	{
 		super();
-		RSEUIPlugin sp = RSEUIPlugin.getDefault();
 		changeFilterPane = new SystemChangeFilterPane(null, this, this);
 		changeFilterPane.addPageCompleteListener(this);
 		setHelp(RSEUIPlugin.HELPPREFIX+"dufr0000");	 //$NON-NLS-1$

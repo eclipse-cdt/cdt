@@ -191,10 +191,9 @@ public class SystemResourceHelpers implements FileFilter
     		RSEUIPlugin.logError(msg, e);
     	}
     	*/
-    	boolean ok = true;
 		IFolder folder = getFolder(parentFolder, folderName);
 		if (!exists(folder))
-		  ok = createFolder(folder);    	
+			createFolder(folder);    	
     	return folder;
     }
     /**
@@ -503,8 +502,7 @@ public class SystemResourceHelpers implements FileFilter
     	   file.refreshLocal(IResource.DEPTH_INFINITE, null);
         } catch (Exception exc) {}
 
-    	boolean ok = true;    	
-    	String name = file.getName();
+    	boolean ok = true;
      	file.delete(true,false,null); // force-yes, keep-history-no, no progress monitor
         SystemResourceManager.turnOnResourceEventListening();
     	return ok;    	

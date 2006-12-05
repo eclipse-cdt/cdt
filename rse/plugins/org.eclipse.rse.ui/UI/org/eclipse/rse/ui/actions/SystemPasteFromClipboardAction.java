@@ -97,7 +97,6 @@ public class SystemPasteFromClipboardAction extends SystemBaseAction implements 
 
 				if (targetAdapter != null)
 				{
-					ISubSystem targetSubSystem = targetAdapter.getSubSystem(target);
 					List rulesList = new ArrayList();
 					int j = 0;
 					for (int i = 0; i < srcObjects.size(); i++)

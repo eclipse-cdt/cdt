@@ -168,9 +168,7 @@ public class SystemTeamView extends TreeViewer implements ISystemSelectAllTarget
 	 */
 	public void systemResourceChanged(ISystemResourceChangeEvent event)
 	{
-		   int type = event.getType();    	   
-		   Object src = event.getSource();
-		   Object parent = event.getParent();
+		   int type = event.getType();
 		   switch(type)
 		   {
 				case ISystemResourceChangeEvents.EVENT_COLLAPSE_ALL:

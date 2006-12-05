@@ -71,7 +71,6 @@ public class SystemFilterStringPropertyPage extends SystemBasePropertyPage imple
 	public SystemFilterStringPropertyPage()
 	{
 		super();
-		RSEUIPlugin sp = RSEUIPlugin.getDefault();
 	}
 	
 	// configuration methods, called by customizeFilterStringPropertyPage in SubSystemConfigurationImpl...

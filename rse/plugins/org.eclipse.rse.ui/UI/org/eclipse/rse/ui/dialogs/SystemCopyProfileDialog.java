@@ -83,7 +83,7 @@ public class SystemCopyProfileDialog extends SystemPromptDialog
 	 */
 	protected ISystemMessageLine createMessageLine(Composite c)
 	{
-		ISystemMessageLine msgLine = super.createMessageLine(c);
+		super.createMessageLine(c);
 		//form.setMessageLine(msgLine);
 		return fMessageLine;
 	}

@@ -178,18 +178,17 @@ public class SystemPropertySheetForm extends Composite
 	protected void addOurSelectionListener()
 	{
 	   // Add the button listener
-	   SelectionListener selectionListener = new SelectionListener() 
+/*	   SelectionListener selectionListener = new SelectionListener() 
 	   {
 		  public void widgetDefaultSelected(SelectionEvent event) 
 		  {
-		  };
+		  }
 		  public void widgetSelected(SelectionEvent event) 
 		  {
 			  if (!enabledMode)
 				return;
-		  	  Object src = event.getSource();
-		  };
-	   };
+		  }
+	   };*/
 	   //tree.getControl().addSelectionListener(selectionListener);
 	}
 

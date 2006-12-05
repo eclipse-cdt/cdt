@@ -45,7 +45,6 @@ public class SystemFilterPropertyPage extends SystemBasePropertyPage
 	public SystemFilterPropertyPage()
 	{
 		super();
-		RSEUIPlugin sp = RSEUIPlugin.getDefault();
 	}
 	/**
 	 * Create the page's GUI contents.

@@ -47,8 +47,6 @@ public class SystemConnectionPropertyPage extends SystemBasePropertyPage
 	public SystemConnectionPropertyPage()
 	{
 		super();
-		RSEUIPlugin sp = RSEUIPlugin.getDefault();
-
 		parentHelpId = RSEUIPlugin.HELPPREFIX + "pcon0000"; //$NON-NLS-1$
 		form = new SystemConnectionForm(this, this);
 	}

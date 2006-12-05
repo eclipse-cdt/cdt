@@ -191,7 +191,7 @@ public class SystemTestFilterStringDialog
     }
     public void widgetSelected(SelectionEvent event)
     {
-    	Object src = event.getSource();
+
     	//if (src == connectionCombo.getCombo())
     	{
     		//System.out.println("connection changed");

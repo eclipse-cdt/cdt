@@ -87,8 +87,7 @@ public class SystemDropActionDelegate implements IDropActionDelegate
 				//StringTokenizer tokenizer = new StringTokenizer(new String(result), SystemViewDataDropAdapter.RESOURCE_SEPARATOR);
 				String[] tokens = (new String(result)).split("\\"+SystemViewDataDropAdapter.RESOURCE_SEPARATOR); //$NON-NLS-1$
 				ArrayList srcObjects = new ArrayList();
-				ArrayList rulesList = new ArrayList();
-				int j = 0;
+
 				//while (tokenizer.hasMoreTokens())
 				for (int i = 0; i <tokens.length; i++)  
 				{

@@ -141,7 +141,7 @@ public class SystemCommunicationsDaemon extends Thread {
 	}	
 	
 	/**
-	 * @see Thread.run()
+	 * @see Thread#run()
 	 */
 	public void run() {
 		byte[] buffer;

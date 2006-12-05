@@ -61,8 +61,7 @@ public class SystemCopyConnectionAction extends SystemBaseCopyAction
 	 */
 	public boolean updateSelection(IStructuredSelection selection)
 	{
-		boolean enable = true;
-		ISystemRegistry sr = RSEUIPlugin.getDefault().getSystemRegistry();		
+		boolean enable = true;		
 		ISystemProfile prevProfile = null;
 		Iterator e= selection.iterator();		
 		while (enable && e.hasNext())

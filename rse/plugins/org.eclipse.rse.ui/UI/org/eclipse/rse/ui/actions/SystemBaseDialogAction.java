@@ -298,7 +298,7 @@ public abstract class SystemBaseDialogAction extends SystemBaseAction
 		       ((SystemPromptDialog)dlg).setNeedsProgressMonitor(needsProgressMonitor);
 		  }
 		  
-		  int rc = dlg.open();
+		  dlg.open();
 		  
 		  // if (rc != 0) NOT RELIABLE!
 		  if (dlg instanceof SystemWizardDialog)

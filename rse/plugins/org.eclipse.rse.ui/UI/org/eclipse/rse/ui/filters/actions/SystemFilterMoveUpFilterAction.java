@@ -100,7 +100,6 @@ public class SystemFilterMoveUpFilterAction extends SystemBaseAction
 		      (selectedObject instanceof ISystemFilterReference)))
 		  return false;
 		ISystemFilter filter = getSystemFilter(selectedObject);
-		ISystemFilterPoolManager fpMgr = filter.getSystemFilterPoolManager();
 		ISystemFilterContainer fpContainer = filter.getParentFilterContainer();
 		int pos = fpContainer.getSystemFilterPosition(filter);
 		return (pos>0);		

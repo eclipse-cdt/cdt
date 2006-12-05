@@ -45,7 +45,6 @@ public class SystemFilterPoolReferencePropertyPage extends SystemBasePropertyPag
 	public SystemFilterPoolReferencePropertyPage()
 	{
 		super();
-		RSEUIPlugin sp = RSEUIPlugin.getDefault();
 	}
 	/**
 	 * Create the page's GUI contents.
@@ -101,8 +100,7 @@ public class SystemFilterPoolReferencePropertyPage extends SystemBasePropertyPag
 		initDone = true;
 		ISystemFilterPoolReference poolRef = getFilterPoolReference();
 	    ISystemFilterPool pool = poolRef.getReferencedFilterPool();
-	    ISubSystem ss = (ISubSystem)poolRef.getProvider();
-	    ISubSystemConfiguration ssFactory = ss.getSubSystemConfiguration();	    
+	    ISubSystem ss = (ISubSystem)poolRef.getProvider();	    
 
 	    // name    
 	    labelName.setText(pool.getName());

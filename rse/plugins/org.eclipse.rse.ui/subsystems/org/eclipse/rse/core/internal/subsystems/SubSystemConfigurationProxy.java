@@ -82,7 +82,6 @@ public class SubSystemConfigurationProxy implements ISubSystemConfigurationProxy
 			SystemBasePlugin.logError("Exception reading priority for subsystem configuration " + name + " defined in plugin " + element.getDeclaringExtension().getNamespaceIdentifier(), e); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		
-		String className = element.getAttribute("class"); //$NON-NLS-1$
 		if (vendor == null) vendor = "Unknown"; //$NON-NLS-1$
 		if (category == null) category = "Unknown"; //$NON-NLS-1$
 		if (types == null) types = "*"; //$NON-NLS-1$

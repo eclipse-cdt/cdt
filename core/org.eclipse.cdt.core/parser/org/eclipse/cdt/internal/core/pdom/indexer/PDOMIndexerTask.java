@@ -338,66 +338,69 @@ public abstract class PDOMIndexerTask implements IPDOMIndexerTask {
 	
 	protected void addSymbols(IASTTranslationUnit ast, IProgressMonitor pm) throws InterruptedException, CoreException {
 		final Map symbolMap= new HashMap();
-
-		String[] orderedPaths= extractSymbols(ast, symbolMap);
-		for (int i=0; i<orderedPaths.length; i++) {
-			if (pm.isCanceled()) {
-				return;
-			}
-			String path= orderedPaths[i];
-			ArrayList[] arrayLists = ((ArrayList[]) symbolMap.get(path));
-						
-			// resolve the names
-			long start= System.currentTimeMillis();
-			ArrayList names= arrayLists[2];
-			for (int j=0; j<names.size(); j++) {
-				final IASTName name = ((IASTName[]) names.get(j))[0];
-				final IBinding binding= name.resolveBinding();
-				if (fShowStatistics) {
-					if (binding instanceof IProblemBinding)
-						fProblemBindingCount++;
-					else if (name.isReference()) 
-						fReferenceCount++;
-					else 
-						fDeclarationCount++;
-				}
-			}
-			fResolutionTime += System.currentTimeMillis()-start;
-		}
-
-		boolean isFirstRequest= true;
-		boolean isFirstAddition= true;
-		IWritableIndex index= getIndex();
-		index.acquireWriteLock(getReadlockCount());
-		long start= System.currentTimeMillis();
 		try {
+			String[] orderedPaths= extractSymbols(ast, symbolMap);
 			for (int i=0; i<orderedPaths.length; i++) {
-				if (pm.isCanceled()) 
+				if (pm.isCanceled()) {
 					return;
-				
-				String path = orderedPaths[i];
-				if (path != null) {
-					if (fTrace) {
-						System.out.println("Indexer: adding " + path); //$NON-NLS-1$
-					}
-					IIndexFile file= addToIndex(index, path, symbolMap);
-					if (postAddToIndex(path, file)) {
-						if (isFirstRequest) 
-							isFirstRequest= false;
-						else 
-							fTotalSourcesEstimate--;
-					}
-					if (isFirstAddition) 
-						isFirstAddition= false;
-					else
-						fCompletedHeaders++;
 				}
+				String path= orderedPaths[i];
+				ArrayList[] arrayLists = ((ArrayList[]) symbolMap.get(path));
+
+				// resolve the names
+				long start= System.currentTimeMillis();
+				ArrayList names= arrayLists[2];
+				for (int j=0; j<names.size(); j++) {
+					final IASTName name = ((IASTName[]) names.get(j))[0];
+					final IBinding binding= name.resolveBinding();
+					if (fShowStatistics) {
+						if (binding instanceof IProblemBinding)
+							fProblemBindingCount++;
+						else if (name.isReference()) 
+							fReferenceCount++;
+						else 
+							fDeclarationCount++;
+					}
+				}
+				fResolutionTime += System.currentTimeMillis()-start;
 			}
-		} finally {
-			index.releaseWriteLock(getReadlockCount());
+
+			boolean isFirstRequest= true;
+			boolean isFirstAddition= true;
+			IWritableIndex index= getIndex();
+			index.acquireWriteLock(getReadlockCount());
+			long start= System.currentTimeMillis();
+			try {
+				for (int i=0; i<orderedPaths.length; i++) {
+					if (pm.isCanceled()) 
+						return;
+
+					String path = orderedPaths[i];
+					if (path != null) {
+						if (fTrace) {
+							System.out.println("Indexer: adding " + path); //$NON-NLS-1$
+						}
+						IIndexFile file= addToIndex(index, path, symbolMap);
+						if (postAddToIndex(path, file)) {
+							if (isFirstRequest) 
+								isFirstRequest= false;
+							else 
+								fTotalSourcesEstimate--;
+						}
+						if (isFirstAddition) 
+							isFirstAddition= false;
+						else
+							fCompletedHeaders++;
+					}
+				}
+			} finally {
+				index.releaseWriteLock(getReadlockCount());
+			}
+			fAddToIndexTime+= System.currentTimeMillis()-start;
 		}
-		fAddToIndexTime+= System.currentTimeMillis()-start;
-		fCompletedSources++;
+		finally {
+			fCompletedSources++;
+		}
 	}
 
 	private String[] extractSymbols(IASTTranslationUnit ast, final Map symbolMap) throws CoreException {
@@ -514,7 +517,7 @@ public abstract class PDOMIndexerTask implements IPDOMIndexerTask {
 
 			System.out.println(name + " Timings: "  //$NON-NLS-1$
 					+ (System.currentTimeMillis() - start) + " total, " //$NON-NLS-1$
-					+ fParsingTime + " parser, " //$NON-NLS-1$
+					+ (fParsingTime-fResolutionTime-fAddToIndexTime) + " parser, " //$NON-NLS-1$
 					+ fResolutionTime + " resolution, " //$NON-NLS-1$
 					+ fAddToIndexTime + " index update."); //$NON-NLS-1$
 			System.out.println(name + " Result: " //$NON-NLS-1$

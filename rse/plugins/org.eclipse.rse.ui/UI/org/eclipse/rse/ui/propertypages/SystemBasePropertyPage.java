@@ -30,6 +30,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.dialogs.PropertyPage;
 
@@ -132,7 +133,7 @@ public abstract class SystemBasePropertyPage extends PropertyPage
 
 	/**
 	 * For setting the default overall help for the dialog.
-	 * This can be overridden per control by calling {@link #setHelp(Control, String)}.
+	 * This can be overridden per control by calling {@link SystemWidgetHelpers#setHelp(Control, String)}
 	 */
 	public void setHelp(String helpId)
 	{
@@ -241,7 +242,7 @@ public abstract class SystemBasePropertyPage extends PropertyPage
 	 * <p>
 	 * Subclasses should override to do full error checking on all the widgets on the page. Recommendation:<br>
 	 * <ul>
-	 * <li>If an error is detected, issue a {@link org.eclipse.rse.ui.messages.SystemMessage} via {@link #setErrorMessage(SystemMessage)} or text message via {@link #setErrorMessage(String)}.
+	 * <li>If an error is detected, issue a {@link SystemMessage} via {@link #setErrorMessage(SystemMessage)} or text message via {@link #setErrorMessage(String)}.
 	 * <li>If no errors detected, clear the message line via {@link #clearErrorMessage()}
 	 * </ul>
 	 * 
@@ -362,7 +363,7 @@ public abstract class SystemBasePropertyPage extends PropertyPage
 	/**
 	 * Create a labeled label, where the label on the right grabs excess space and has an indent so it 
 	 *   isn't smashed up against the prompt on the left.
-	 * @see SystemWidgetHelpers#createLabeledLabel(Composite, ResourceBundle, String, boolean)
+	 * @see SystemWidgetHelpers#createLabeledLabel(Composite, String, String, boolean)
 	 * @see #grabExcessSpace(Control)
 	 */
 	protected Label createLabeledLabel(Composite c, String label, String tooltip)
@@ -379,7 +380,7 @@ public abstract class SystemBasePropertyPage extends PropertyPage
 	/**
 	 * Create a labeled combo, where the combo on the right grabs excess space and has an indent so it 
 	 *   isn't smashed up against the prompt on the left.
-	 * @see SystemWidgetHelpers#createLabeledCombo(Composite, Listener, ResourceBundle, String)
+	 * @see SystemWidgetHelpers#createLabeledCombo(Composite, Listener, String, String)
 	 * @see #grabExcessSpace(Control)
 	 */
 	protected Combo createLabeledCombo(Composite c, String label, String tooltip)
@@ -396,7 +397,7 @@ public abstract class SystemBasePropertyPage extends PropertyPage
 	/**
 	 * Create a labeled entry field, where the field on the right grabs excess space and has an indent so it 
 	 *   isn't smashed up against the prompt on the left.
-	 * @see SystemWidgetHelpers#createLabeledTextField(Composite, Listener, ResourceBundle, String)
+	 * @see SystemWidgetHelpers#createLabeledTextField(Composite, Listener, String, String)
 	 * @see #grabExcessSpace(Control)
 	 */
 	protected Text createLabeledText(Composite c, String label, String tooltip)
@@ -413,7 +414,7 @@ public abstract class SystemBasePropertyPage extends PropertyPage
 	/**
 	 * Create a labeled verbage field, where the field on the right grabs excess space and has an indent so it 
 	 *   isn't smashed up against the prompt on the left.
-	 * @see SystemWidgetHelpers#createLabeledTextField(Composite, Listener, ResourceBundle, String)
+	 * @see SystemWidgetHelpers#createLabeledTextField(Composite, Listener, String, String)
 	 * @see #grabExcessSpace(Control)
 	 */
 	protected Label createLabeledVerbage(Composite c, String label, String tooltip)

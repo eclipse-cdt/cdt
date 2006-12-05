@@ -26,9 +26,9 @@ public interface ISystemViewDropDestination
 {
 
 	/**
-	 * ask source adapter if it supports drop of its type on this target
-	 * @param resource (type) in question
-	 * @return true if copy/move/drop is supported
+	 * Asks source adapter whether it supports dropping it on the given target.
+	 * @param target the target to drop to.
+	 * @return <code>true</code> if the drop destination is supported, <code>false</code> otherwise.
 	 */
 	public boolean supportDropDestination(Object target);
 }

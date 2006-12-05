@@ -53,7 +53,7 @@ public abstract class SystemBaseSubMenuAction
 	 * @param label
 	 * @param tooltip
 	 * @param image The image to display for this action
-	 * @param shell The owning shell. If you pass null now, be sure to call setShell later
+	 * @param shell the parent shell. If you pass <code>null</code> now, be sure to call {@link #setShell(Shell)} later.
 	 * 
 	 * @deprecated use fields from resource class directly now instead of via ResourceBundle
 	 */	
@@ -67,8 +67,8 @@ public abstract class SystemBaseSubMenuAction
 
 	/**
 	 * Constructor for SystemBaseSubMenuAction when there is just a string
-	 * @param label The label to display
-	 * @param parent The owning shell. If you pass null now, be sure to call setShell later
+	 * @param label the label to display.
+	 * @param shell the parent shell. If you pass <code>null</code> now, be sure to call {@link #setShell(Shell)} later.
 	 */
 	protected SystemBaseSubMenuAction(String label, Shell shell) 
 	{
@@ -78,9 +78,9 @@ public abstract class SystemBaseSubMenuAction
 	}
 	/**
 	 * Constructor for SystemBaseSubMenuAction when there is just a string
-	 * @param label The label to display
-	 * @param tooltip The tooltip to display
-	 * @param parent The owning shell. If you pass null now, be sure to call setShell later
+	 * @param label the label to display.
+	 * @param tooltip the tooltip to display.
+	 * @param shell the parent shell. If you pass <code>null</code> now, be sure to call {@link #setShell(Shell)} later.
 	 */
 	protected SystemBaseSubMenuAction(String label, String tooltip, Shell shell) 
 	{
@@ -90,8 +90,9 @@ public abstract class SystemBaseSubMenuAction
 	}
 	/**
 	 * Constructor for SystemBaseSubMenuAction when there is just a string and image
-	 * @param label The label to display
-	 * @param parent The owning shell. If you pass null now, be sure to call setShell later
+	 * @param label the label to display.
+	 * @param image the image descriptor for the action.
+	 * @param shell the parent shell. If you pass <code>null</code> now, be sure to call {@link #setShell(Shell)} later.
 	 */
 	protected SystemBaseSubMenuAction(String label, ImageDescriptor image, Shell shell) 
 	{
@@ -102,9 +103,10 @@ public abstract class SystemBaseSubMenuAction
 	
 	/**
 	 * Constructor for SystemBaseSubMenuAction when there is just a string and image
-	 * @param label The label to display
-	 * @param tooltip the tooltip to display
-	 * @param parent The owning shell. If you pass null now, be sure to call setShell later
+	 * @param label the label to display.
+	 * @param tooltip the tooltip to display.
+	 * @param image the image descriptor for the action.
+	 * @param shell the parent shell. If you pass <code>null</code> now, be sure to call {@link #setShell(Shell)} later.
 	 */
 	protected SystemBaseSubMenuAction(String label, String tooltip, ImageDescriptor image, Shell shell) 
 	{

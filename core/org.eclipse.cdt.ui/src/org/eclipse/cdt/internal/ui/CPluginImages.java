@@ -306,6 +306,28 @@ public class CPluginImages {
 	}
 	
 	/**
+	 * Sets the three image descriptors for enabled, disabled, and hovered to an action. The actions
+	 * are retrieved from the *tool16 folders.
+	 * 
+	 * @param action	the action
+	 * @param iconName	the icon name
+	 */
+	public static void setToolImageDescriptors(IAction action, String iconName) {
+		setImageDescriptors(action, T_TOOL, iconName);
+	}
+	
+	/**
+	 * Sets the three image descriptors for enabled, disabled, and hovered to an action. The actions
+	 * are retrieved from the *lcl16 folders.
+	 * 
+	 * @param action	the action
+	 * @param iconName	the icon name
+	 */
+	public static void setLocalImageDescriptors(IAction action, String iconName) {
+		setImageDescriptors(action, T_LCL, iconName);
+	}
+
+	/**
 	 * Sets all available image descriptors for the given action.
 	 */	
 	public static void setImageDescriptors(IAction action, String type, String relPath) {

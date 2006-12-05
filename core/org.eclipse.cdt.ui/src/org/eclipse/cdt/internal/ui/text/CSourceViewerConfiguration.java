@@ -19,8 +19,8 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.content.IContentType;
-import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.text.AbstractInformationControlManager;
 import org.eclipse.jface.text.DefaultInformationControl;
 import org.eclipse.jface.text.IAutoEditStrategy;
 import org.eclipse.jface.text.IDocument;
@@ -240,18 +240,18 @@ public class CSourceViewerConfiguration extends TextSourceViewerConfiguration {
      * @return Presenter with outline view.
      */
     public IInformationPresenter getOutlinePresenter(ISourceViewer sourceViewer) {
-        final IInformationControlCreator outlineControlCreator = getOutlineContolCreator();
+        final IInformationControlCreator outlineControlCreator = getOutlineControlCreator();
         final InformationPresenter presenter = new InformationPresenter(outlineControlCreator);
         presenter.setDocumentPartitioning(getConfiguredDocumentPartitioning(sourceViewer));
-        final IInformationProvider provider = new CElementContentProvider(getEditor());
+		presenter.setAnchor(AbstractInformationControlManager.ANCHOR_GLOBAL);
+		final IInformationProvider provider = new CElementContentProvider(getEditor());
         presenter.setInformationProvider(provider, IDocument.DEFAULT_CONTENT_TYPE);
         presenter.setInformationProvider(provider, ICPartitions.C_MULTI_LINE_COMMENT);
         presenter.setInformationProvider(provider, ICPartitions.C_SINGLE_LINE_COMMENT);
         presenter.setInformationProvider(provider, ICPartitions.C_STRING);
         presenter.setInformationProvider(provider, ICPartitions.C_CHARACTER);
         presenter.setInformationProvider(provider, ICPartitions.C_PREPROCESSOR);
-        presenter.setSizeConstraints(20, 20, true, false);
-        presenter.setRestoreInformationControlBounds(getSettings("outline_presenter_bounds"), true, true); //$NON-NLS-1$        
+        presenter.setSizeConstraints(50, 20, true, false);
         return presenter;
     }
 
@@ -686,7 +686,7 @@ public class CSourceViewerConfiguration extends TextSourceViewerConfiguration {
      * Creates control for outline presentation in editor.
      * @return Control.
      */
-    private IInformationControlCreator getOutlineContolCreator() {
+    private IInformationControlCreator getOutlineControlCreator() {
         final IInformationControlCreator conrolCreator = new IInformationControlCreator() {
             /**
              * @see org.eclipse.jface.text.IInformationControlCreator#createInformationControl(org.eclipse.swt.widgets.Shell)
@@ -698,21 +698,6 @@ public class CSourceViewerConfiguration extends TextSourceViewerConfiguration {
             }
         };
         return conrolCreator;
-    }
-
-    /**
-     * Returns the settings for the given section.
-     *
-     * @param sectionName the section name
-     * @return the settings
-     */
-    private IDialogSettings getSettings(String sectionName) {
-        IDialogSettings settings= CUIPlugin.getDefault().getDialogSettings().getSection(sectionName);
-        if (settings == null) {
-            settings= CUIPlugin.getDefault().getDialogSettings().addNewSection(sectionName);
-        }
-        
-        return settings;
     }
     
 	protected ILanguage getLanguage() {

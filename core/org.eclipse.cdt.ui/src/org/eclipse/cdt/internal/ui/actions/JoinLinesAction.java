@@ -7,6 +7,7 @@
  *
  * Contributors:
  *    Todd Papaioannou  - initial API and implementation
+ *    Anton Leherbauer (Wind River Systems)
  *******************************************************************************/
 
 package org.eclipse.cdt.internal.ui.actions;
@@ -27,7 +28,7 @@ import org.eclipse.ui.texteditor.TextEditorAction;
  * that, when invoked, will join the current and next line together. 
  * 
  * @author Todd Papaioannou (toddp@acm.org)
- * @version $Date$
+ * @version $Date: 2005/11/10 15:20:17 $
  * @see org.eclipse.ui.texteditor.TextEditorAction
  */
 public class JoinLinesAction extends TextEditorAction {
@@ -91,15 +92,16 @@ public class JoinLinesAction extends TextEditorAction {
 						// What delimeter do we have?
 						String delim = theDocument.getLineDelimiter(currentLine);
 						
-						// How long is it?
-						int delimLength = delim.length();
-						
-						// Now back track to the last real char in the line
-						int newLineEnd = lineOffset + lineLength - delimLength;
-						
-						// Replace the delimter char(s) with nothing
-						theDocument.replace(newLineEnd, delimLength, null);
-						
+						if (delim != null) {
+							// How long is it?
+							int delimLength = delim.length();
+							
+							// Now back track to the last real char in the line
+							int newLineEnd = lineOffset + lineLength - delimLength;
+							
+							// Replace the delimter char(s) with nothing
+							theDocument.replace(newLineEnd, delimLength, null);
+						}
 					}
 					
 				}

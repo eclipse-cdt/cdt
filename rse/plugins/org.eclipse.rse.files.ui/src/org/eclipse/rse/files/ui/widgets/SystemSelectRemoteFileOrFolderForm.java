@@ -380,13 +380,13 @@ public class SystemSelectRemoteFileOrFolderForm
 	 */
 	public void setPreSelection(IRemoteFile selection)
 	{
-		SystemBasePlugin.logInfo("given: '" + selection.getAbsolutePath()+"'");
+		SystemBasePlugin.logInfo("given: '" + selection.getAbsolutePath()+"'"); //$NON-NLS-1$ //$NON-NLS-2$
 		IRemoteFile parentFolder = selection.getParentRemoteFile();
 		/**/
 		if (parentFolder != null)
-		  SystemBasePlugin.logInfo("parent of given: '" + parentFolder.getAbsolutePath() + "'");
+		  SystemBasePlugin.logInfo("parent of given: '" + parentFolder.getAbsolutePath() + "'"); //$NON-NLS-1$ //$NON-NLS-2$
 		else
-		  SystemBasePlugin.logInfo("parent of given is null");
+		  SystemBasePlugin.logInfo("parent of given is null"); //$NON-NLS-1$
 		/**/
 		// it might be a bug, bug when asking for the parent of '/', I get back '/'!!!
 		if ((parentFolder != null) && 
@@ -406,7 +406,7 @@ public class SystemSelectRemoteFileOrFolderForm
 		}
 		else
 		{
-		   SystemBasePlugin.logInfo("preSelectRoot is true");
+		   SystemBasePlugin.logInfo("preSelectRoot is true"); //$NON-NLS-1$
 		   preSelectRoot = true;
 		   setRestrictFolders(false);
 		   setRootFolder(selection);

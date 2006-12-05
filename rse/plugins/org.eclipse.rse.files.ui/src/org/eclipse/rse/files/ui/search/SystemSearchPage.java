@@ -33,7 +33,7 @@ import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.model.ISystemProfile;
 import org.eclipse.rse.core.model.ISystemRegistry;
 import org.eclipse.rse.files.ui.FileResources;
-import org.eclipse.rse.files.ui.actions.SystemSelectRemoteFolderAction;
+import org.eclipse.rse.files.ui.internal.search.SystemSearchRemoteFolderAction;
 import org.eclipse.rse.services.clientserver.SystemSearchString;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
@@ -363,7 +363,7 @@ public class SystemSearchPage extends DialogPage implements ISearchPage {
 			Shell shell = SystemSearchPage.this.getShell();
 			
 			// create select folder action which opens the select folder dialog 
-			SystemSelectRemoteFolderAction selectFolderAction = new SystemSelectRemoteFolderAction(shell);
+			SystemSearchRemoteFolderAction selectFolderAction = new SystemSearchRemoteFolderAction(shell);
 			selectFolderAction.setShowNewConnectionPrompt(true);
 			selectFolderAction.setShowPropertySheet(true, false);
 			selectFolderAction.setNeedsProgressMonitor(true);

@@ -1,0 +1,97 @@
+/********************************************************************************
+ * Copyright (c) 2002, 2006 IBM Corporation. All rights reserved.
+ * This program and the accompanying materials are made available under the terms
+ * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
+ * available at http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Initial Contributors:
+ * The following IBM employees contributed to the Remote System Explorer
+ * component that contains this file: David McKnight, Kushal Munir, 
+ * Michael Berger, David Dykstal, Phil Coulthard, Don Yantzi, Eric Simpson, 
+ * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
+ * 
+ * Contributors:
+ * {Name} (company) - description of contribution.
+ ********************************************************************************/
+
+package org.eclipse.rse.files.ui.internal.search;
+
+import java.util.List;
+import java.util.Vector;
+
+import org.eclipse.rse.core.model.IHost;
+import org.eclipse.rse.core.subsystems.ISubSystem;
+import org.eclipse.rse.services.search.ISearchService;
+import org.eclipse.rse.subsystems.files.core.servicesubsystem.FileServiceSubSystem;
+import org.eclipse.rse.ui.view.SystemSelectRemoteObjectAPIProviderImpl;
+
+/**
+ * This is the input provider for selection dialogs related to search.
+ */
+public class SystemSearchRemoteObjectAPIProvider extends SystemSelectRemoteObjectAPIProviderImpl {
+
+	/**
+	 * Constructor.
+	 * @param factoryId the subsystem factory id.
+	 * @param factoryCategory the subsystem facory category.
+	 * @param showNewConnectionPrompt whether to show new connection prompt.
+	 * @param systemTypes the system types to restrict to.
+	 */
+	public SystemSearchRemoteObjectAPIProvider(String factoryId, String factoryCategory, boolean showNewConnectionPrompt, String[] systemTypes) {
+		super(factoryId, factoryCategory, showNewConnectionPrompt, systemTypes);
+	}
+
+	/**
+	 * Constructor.
+	 * @param subsystem the subsystem.
+	 */
+	public SystemSearchRemoteObjectAPIProvider(ISubSystem subsystem) {
+		super(subsystem);
+	}
+
+	/**
+	 * Contrcutor.
+	 */
+	public SystemSearchRemoteObjectAPIProvider() {
+		super();
+	}
+
+	/**
+	 * @see org.eclipse.rse.ui.view.SystemSelectRemoteObjectAPIProviderImpl#getConnections()
+	 */
+	protected Object[] getConnections() {
+		
+		Object[] objs = super.getConnections();
+		List l = new Vector();
+		
+		for (int i = 0; i < objs.length; i++) {
+			Object obj = objs[i];
+			
+			if (obj instanceof IHost) {
+				IHost host = (IHost)obj;
+				
+				ISubSystem[] subsystems = sr.getSubSystems(host);
+				
+				for (int j = 0; j < subsystems.length; j++) {
+					ISubSystem subsystem = subsystems[j];
+					
+					if (subsystem instanceof FileServiceSubSystem) {
+						FileServiceSubSystem fileSubSystem = (FileServiceSubSystem)subsystem;
+						
+						ISearchService searchService = fileSubSystem.getSearchService();
+						
+						if (searchService != null) {
+							l.add(obj);
+							break;
+						}
+					}
+				}
+			}
+			else {
+				l.add(obj);
+			}
+		}
+		
+		return l.toArray();
+	}
+}

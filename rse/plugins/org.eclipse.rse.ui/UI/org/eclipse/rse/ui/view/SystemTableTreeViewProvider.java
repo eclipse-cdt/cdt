@@ -24,9 +24,9 @@ import java.util.Hashtable;
 import java.util.Map;
 
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.jface.util.ListenerList;
 import org.eclipse.jface.viewers.AbstractTreeViewer;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ILabelProviderListener;
@@ -196,7 +196,7 @@ public class SystemTableTreeViewProvider implements ILabelProvider, ITableLabelP
 				
 		
 				
-				if (adapter != null && adapter.hasChildren(object))
+				if (adapter.hasChildren(object))
 				{
 					if (supportsDeferredQueries())
 			    	{
@@ -217,7 +217,7 @@ public class SystemTableTreeViewProvider implements ILabelProvider, ITableLabelP
 					{
 						results = adapter.getChildren(object);
 					}
-					if (adapter instanceof SystemViewRootInputAdapter)
+					if (adapter instanceof SystemViewRootInputAdapter && results != null)
 					{
 						ArrayList filterredResults = new ArrayList();
 						for (int i = 0; i < results.length; i++)
@@ -263,10 +263,17 @@ public class SystemTableTreeViewProvider implements ILabelProvider, ITableLabelP
 			}
 			return wadapter.getLabel(object);
 		}
-		int len = result.length();
-		if (len > _maxCharsInColumnZero)
+		if (result != null)
 		{
-			_maxCharsInColumnZero = len;
+			int len = result.length();
+			if (len > _maxCharsInColumnZero)
+			{
+				_maxCharsInColumnZero = len;
+			}
+		}
+		else
+		{
+			result = ""; //$NON-NLS-1$
 		}
 		return result;
 	}

@@ -13,7 +13,6 @@
 package org.eclipse.tm.terminal.internal.telnet;
 
 import org.eclipse.tm.terminal.ISettingsStore;
-import org.eclipse.tm.terminal.ITerminalConnector;
 
 public class TelnetSettings implements ITelnetSettings {
     protected String fHost;
@@ -50,12 +49,6 @@ public class TelnetSettings implements ITelnetSettings {
 			getNetworkPortString() + " - " + //$NON-NLS-1$
 			strConnected + ")"; //$NON-NLS-1$
 	}
-
-
-	public ITerminalConnector makeConnector() {
-		return new TelnetConnector(this);
-	}
-
 
 	public void load(ISettingsStore store) {
 		fHost = store.get("Host", fProperties.getDefaultHost());//$NON-NLS-1$

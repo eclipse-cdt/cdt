@@ -228,6 +228,9 @@ public class CModelBuilder2 implements IContributedModelBuilder {
 			}
 			long startTime= System.currentTimeMillis();
 			final IASTTranslationUnit ast= fTranslationUnit.getAST(index, quickParseMode ? ITranslationUnit.AST_SKIP_ALL_HEADERS : 0);
+			if (ast == null) {
+				return;
+			}
 			Util.debugLog("CModelBuilder2: parsing " //$NON-NLS-1$
 					+ fTranslationUnit.getElementName()
 					+ " mode="+ (quickParseMode ? "fast " : "full ") //$NON-NLS-1$ //$NON-NLS-2$
@@ -372,7 +375,7 @@ public class CModelBuilder2 implements IContributedModelBuilder {
 			final IASTFileLocation problemLocation= problem.getFileLocation();
 			if (problemLocation != null) {
 				final int startOffset= problemLocation.getNodeOffset();
-				element.setIdPos(startOffset + nameIdx - 1, name.length() + 2);
+				element.setIdPos(startOffset + nameIdx, name.length());
 			}
 		} else {
 			setIdentifierPosition(element, problem);

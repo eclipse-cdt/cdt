@@ -46,6 +46,7 @@ import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
 import org.eclipse.rse.services.files.AbstractFileService;
 import org.eclipse.rse.services.files.IFileService;
 import org.eclipse.rse.services.files.IHostFile;
+import org.eclipse.rse.services.files.RemoteFileException;
 import org.eclipse.rse.services.local.ILocalService;
 
 public class LocalFileService extends AbstractFileService implements IFileService, ILocalService
@@ -1097,6 +1098,7 @@ public class LocalFileService extends AbstractFileService implements IFileServic
 					}
 					catch (Exception e)
 					{
+						throw new RemoteFileException(e.getMessage(), e);
 					}
 				}				
 				command = _osCmdShell + "xcopy " + src + " " + target + " /Y /K /O /Q /H"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
@@ -1142,7 +1144,7 @@ public class LocalFileService extends AbstractFileService implements IFileServic
 		}
 		catch (Exception e)
 		{
-			
+			throw new RemoteFileException(e.getMessage(), e);
 		}
 		return (rc == 0);
 	}

@@ -53,11 +53,10 @@ Software User Agreement</a> unless otherwise specified. </p>
 <p>
 For information about different kinds of builds look
 <a href="build_types.html" target="_top">here</a>.
-<!--
+
 <img src="http://www.eclipse.org/images/new.gif">
 For access to archived builds, look 
 <a href="http://archive.eclipse.org/dsdp/tm/downloads/index.php" target="_top">here</a>.
--->
 </p>
 
 <p/>

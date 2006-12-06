@@ -448,16 +448,19 @@ public abstract class AbstractInformationControl extends PopupDialog implements 
 	private ICElement findElement(TreeItem[] items) {
 		ILabelProvider labelProvider= (ILabelProvider)fTreeViewer.getLabelProvider();
 		for (int i= 0; i < items.length; i++) {
-			ICElement element= (ICElement)items[i].getData();
-			if (fStringMatcher == null)
-				return element;
-
-			if (element != null) {
-				String label= labelProvider.getText(element);
-				if (fStringMatcher.match(label))
+			Object item= items[i].getData();
+			ICElement element= null;
+			if (item instanceof ICElement) {
+				element= (ICElement)item;
+				if (fStringMatcher == null)
 					return element;
+	
+				if (element != null) {
+					String label= labelProvider.getText(element);
+					if (fStringMatcher.match(label))
+						return element;
+				}
 			}
-
 			element= findElement(items[i].getItems());
 			if (element != null)
 				return element;

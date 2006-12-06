@@ -1,10 +1,10 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: RSE Core Tests
+Bundle-Name: %pluginName
 Bundle-SymbolicName: org.eclipse.rse.tests;singleton:=true
 Bundle-Version: 1.0.1.qualifier
 Bundle-Activator: org.eclipse.rse.tests.RSETestsPlugin
-Bundle-Vendor: Eclipse.org
+Bundle-Vendor: %providerName
 Bundle-Localization: plugin
 Require-Bundle: org.junit,
  org.eclipse.core.runtime,

@@ -96,7 +96,7 @@ public class SystemCollapsableSection extends Composite implements MouseListener
 		protected void layout(Composite composite, boolean flushCache)
 		{
 			Point ptTitleSize = getTitleSize(_strText);
-			Point ptLocation = getLocation();
+			getLocation();
 
 			if (_bCollapsed == true)
 			{
@@ -398,9 +398,9 @@ public class SystemCollapsableSection extends Composite implements MouseListener
 	}
 	
 	/**
-	 * Set the two tooltips used in expanded state and collapsed state
-	 * @param String - tooltip for the expanded state. e.g. Click line to collapse the section
-	 * @param String - tooltip for the collapsed state. e.g. Click line to expand the section  
+	 * Sets tooltips used in expanded and collapsed states.
+	 * @param strExpandedToolTip tooltip for the expanded state. For example, "click line to collapse the section".
+	 * @param strCollapsedToolTip tooltip for the collapsed state. For example, "click line to expand the section".  
 	 */
 	public void setToolTips(String strExpandedToolTip, String strCollapsedToolTip)
 	{

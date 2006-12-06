@@ -313,7 +313,7 @@ public class CPPClassScope extends CPPScope implements ICPPClassScope {
 	    return super.find( name );
 	}
 	
-	static protected boolean isConstructorReference( IASTName name ){
+	public static boolean isConstructorReference( IASTName name ){
 	    if( name.getPropertyInParent() == CPPSemantics.STRING_LOOKUP_PROPERTY ) return false;
 	    IASTNode node = name.getParent();
 	    if( node instanceof ICPPASTTemplateId )

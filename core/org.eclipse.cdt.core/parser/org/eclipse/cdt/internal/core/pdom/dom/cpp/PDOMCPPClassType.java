@@ -37,6 +37,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.internal.core.Util;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPClassScope;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPSemantics;
 import org.eclipse.cdt.internal.core.index.IIndexType;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
@@ -378,6 +379,14 @@ ICPPClassScope, IPDOMMemberOwner, IIndexType {
 
 	public IBinding getBinding(IASTName name, boolean resolve) throws DOMException {
 		try {
+		    if (getDBName().equals(name.toCharArray())) {
+		        if (CPPClassScope.isConstructorReference(name)){
+		            return CPPSemantics.resolveAmbiguities(name, getConstructors());
+		        }
+	            //9.2 ... The class-name is also inserted into the scope of the class itself
+	            return this;
+		    }
+			
 			BindingCollector visitor= new BindingCollector(name.toCharArray());
 			accept(visitor);
 			return CPPSemantics.resolveAmbiguities(name, visitor.getBindings());

@@ -21,6 +21,7 @@ public class IndexTests extends TestSuite {
 	public static Test suite() {
 		TestSuite suite = new IndexTests();
 		suite.addTest(IndexListenerTest.suite());
+		suite.addTest(IndexLocationTest.suite());
 		suite.addTest(IndexSearchTest.suite());
 		suite.addTest(IndexIncludeTest.suite());
 		suite.addTest(IndexBugsTests.suite());

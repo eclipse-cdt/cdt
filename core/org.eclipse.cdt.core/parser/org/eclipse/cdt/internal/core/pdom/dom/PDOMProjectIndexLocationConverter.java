@@ -16,6 +16,7 @@ import java.net.URISyntaxException;
 import org.eclipse.cdt.core.index.IIndexFileLocation;
 import org.eclipse.cdt.internal.core.index.IndexFileLocation;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.Path;
@@ -46,7 +47,9 @@ public class PDOMProjectIndexLocationConverter implements IIndexLocationConverte
 				uri = null;
 			}
 		} else {
-			uri = project.findMember(raw).getLocationURI();
+			fullPath = "/"+project.getName()+"/"+raw;  //$NON-NLS-1$//$NON-NLS-2$
+			IResource member = project.findMember(raw);
+			uri = member == null ? null : member.getLocationURI();
 		}		
 		return new IndexFileLocation(uri, fullPath);
 	}

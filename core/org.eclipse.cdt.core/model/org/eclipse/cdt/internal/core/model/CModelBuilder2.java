@@ -840,8 +840,8 @@ public class CModelBuilder2 implements IContributedModelBuilder {
 			if (specifier instanceof ICPPASTDeclSpecifier) {
 				final ICPPASTDeclSpecifier cppSpecifier= (ICPPASTDeclSpecifier)specifier;
 				newElement.setMutable(cppSpecifier.getStorageClass() == ICPPASTDeclSpecifier.sc_mutable);
-				newElement.setVisibility(getCurrentVisibility());
 			}
+			newElement.setVisibility(getCurrentVisibility());
 			element= newElement;
 		} else {
 			if (isTemplate) {

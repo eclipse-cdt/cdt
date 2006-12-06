@@ -23,34 +23,28 @@ import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.IPDOMNode;
 import org.eclipse.cdt.core.dom.IPDOMVisitor;
 import org.eclipse.cdt.core.dom.ast.DOMException;
-import org.eclipse.cdt.core.dom.ast.IASTFieldReference;
-import org.eclipse.cdt.core.dom.ast.IASTFunctionCallExpression;
-import org.eclipse.cdt.core.dom.ast.IASTIdExpression;
 import org.eclipse.cdt.core.dom.ast.IASTName;
-import org.eclipse.cdt.core.dom.ast.IASTNamedTypeSpecifier;
-import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IField;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
+import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBase;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
-import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.internal.core.Util;
-import org.eclipse.cdt.internal.core.index.IIndexProxyBinding;
+import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPSemantics;
+import org.eclipse.cdt.internal.core.index.IIndexType;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.db.PDOMNodeLinkedList;
-import org.eclipse.cdt.internal.core.pdom.dom.FindBinding;
 import org.eclipse.cdt.internal.core.pdom.dom.IPDOMMemberOwner;
-import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMLinkage;
+import org.eclipse.cdt.internal.core.pdom.dom.PDOMNamedNode;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
-import org.eclipse.cdt.internal.core.pdom.dom.PDOMNotImplementedError;
 import org.eclipse.core.runtime.CoreException;
 
 /**
@@ -61,7 +55,7 @@ import org.eclipse.core.runtime.CoreException;
  * aftodo - contract get Methods/Fields not honoured?
  */
 class PDOMCPPClassType extends PDOMCPPBinding implements ICPPClassType,
-ICPPClassScope, IPDOMMemberOwner {
+ICPPClassScope, IPDOMMemberOwner, IIndexType {
 
 	private static final int FIRSTBASE = PDOMCPPBinding.RECORD_SIZE + 0;
 	private static final int KEY = PDOMCPPBinding.RECORD_SIZE + 4; // byte
@@ -70,7 +64,7 @@ ICPPClassScope, IPDOMMemberOwner {
 	protected static final int RECORD_SIZE = PDOMCPPBinding.RECORD_SIZE + 12;
 
 	public PDOMCPPClassType(PDOM pdom, PDOMNode parent, ICPPClassType classType)
-	throws CoreException {
+			throws CoreException {
 		super(pdom, parent, classType.getName().toCharArray());
 
 		try {
@@ -115,23 +109,29 @@ ICPPClassScope, IPDOMMemberOwner {
 	}
 
 	public boolean isSameType(IType type) {
-		if (type instanceof PDOMBinding) {
-			return record == ((PDOMBinding)type).getRecord();
-		} else if (type instanceof ICPPClassType) {
-			try {
-				IIndexProxyBinding pdomType = pdom.adaptBinding((ICPPClassType)type);
-				if (pdomType == null)
-					return false;
-				else if (pdomType instanceof PDOMBinding)
-					return record == ((PDOMBinding)pdomType).getRecord();
-				else
-					throw new PDOMNotImplementedError();
-			} catch (CoreException e) {
-				CCorePlugin.log(e);
-				return false;
+		if (type instanceof PDOMNode) {
+			PDOMNode node= (PDOMNode) type;
+			if (node.getPDOM() == getPDOM()) {
+				return node.getRecord() == getRecord();
 			}
-		} else
-			return false;
+		}
+
+		if (type instanceof ITypedef) {
+			return type.isSameType(this);
+		}
+		
+		if (type instanceof ICPPClassType && !(type instanceof ProblemBinding)) {
+			ICPPClassType ctype= (ICPPClassType) type;
+			try {
+				if (ctype.getKey() == getKey()) {
+					char[][] qname= ctype.getQualifiedNameCharArray();
+					return hasQualifiedName(qname, qname.length-1);
+				}
+			} catch (DOMException e) {
+				CCorePlugin.log(e);
+			}
+		}
+		return false;
 	}
 
 	public ICPPBase[] getBases() throws DOMException {
@@ -154,17 +154,24 @@ ICPPClassScope, IPDOMMemberOwner {
 		list.accept(visitor);
 	}
 
-	private static class GetMethods implements IPDOMVisitor {
+	private static class MethodCollector implements IPDOMVisitor {
 		private final List methods;
-		public GetMethods(List methods) {
-			this.methods = methods;
+		private final boolean acceptImplicit;
+		private final boolean acceptAll;
+		public MethodCollector(List methods, boolean acceptImplicit) {
+			this(methods, acceptImplicit, true);
 		}
-		public GetMethods() {
-			this.methods = new ArrayList();
+		public MethodCollector(List methods, boolean acceptImplicit, boolean acceptExplicit) {
+			this.methods = methods == null ? new ArrayList() : methods;
+			this.acceptImplicit= acceptImplicit;
+			this.acceptAll= acceptImplicit && acceptExplicit;
 		}
 		public boolean visit(IPDOMNode node) throws CoreException {
-			if (node instanceof ICPPMethod)
-				methods.add(node);
+			if (node instanceof ICPPMethod) {
+				if (acceptAll || ((ICPPMethod) node).isImplicit() == acceptImplicit) {
+					methods.add(node);
+				}
+			}
 			return false; // don't visit the method
 		}
 		public void leave(IPDOMNode node) throws CoreException {
@@ -176,7 +183,27 @@ ICPPClassScope, IPDOMMemberOwner {
 
 	public ICPPMethod[] getDeclaredMethods() throws DOMException {
 		try {
-			GetMethods methods = new GetMethods();
+			MethodCollector methods = new MethodCollector(null, false);
+			accept(methods);
+			return methods.getMethods();
+		} catch (CoreException e) {
+			return new ICPPMethod[0];
+		}
+	}
+
+	public ICPPMethod[] getMethods() throws DOMException {
+		try {
+			MethodCollector methods = new MethodCollector(null, true);
+			accept(methods);
+			return methods.getMethods();
+		} catch (CoreException e) {
+			return new ICPPMethod[0];
+		}
+	}
+
+	public ICPPMethod[] getImplicitMethods() {
+		try {
+			MethodCollector methods = new MethodCollector(null, true, false);
 			accept(methods);
 			return methods.getMethods();
 		} catch (CoreException e) {
@@ -190,7 +217,7 @@ ICPPClassScope, IPDOMMemberOwner {
 		visited.add(this);
 
 		// Get my members
-		GetMethods myMethods = new GetMethods(methods);
+		MethodCollector myMethods = new MethodCollector(methods, false, true);
 		accept(myMethods);
 
 		// Visit my base classes
@@ -216,13 +243,8 @@ ICPPClassScope, IPDOMMemberOwner {
 			return new ICPPMethod[0];
 		}
 	}
-
-	public ICPPMethod[] getMethods() throws DOMException {
-		// TODO Should really include implicit methods too
-		return getDeclaredMethods();
-	}
-
-	private static class GetFields implements IPDOMVisitor {
+	
+	private static class FieldCollector implements IPDOMVisitor {
 		private List fields = new ArrayList();
 		public boolean visit(IPDOMNode node) throws CoreException {
 			if (node instanceof IField)
@@ -238,7 +260,7 @@ ICPPClassScope, IPDOMMemberOwner {
 
 	public IField[] getFields() throws DOMException {
 		try {
-			GetFields visitor = new GetFields();
+			FieldCollector visitor = new FieldCollector();
 			accept(visitor);
 			return visitor.getFields();
 		} catch (CoreException e) {
@@ -247,9 +269,7 @@ ICPPClassScope, IPDOMMemberOwner {
 		}
 	}
 
-
-
-	private static class GetNestedClasses implements IPDOMVisitor {
+	private static class NestedClassCollector implements IPDOMVisitor {
 		private List nestedClasses = new ArrayList();
 		public boolean visit(IPDOMNode node) throws CoreException {
 			if (node instanceof ICPPClassType)
@@ -265,7 +285,7 @@ ICPPClassScope, IPDOMMemberOwner {
 
 	public ICPPClassType[] getNestedClasses() throws DOMException {
 		try {
-			GetNestedClasses visitor = new GetNestedClasses();
+			NestedClassCollector visitor = new NestedClassCollector();
 			accept(visitor);
 			return visitor.getNestedClasses();
 		} catch (CoreException e) {
@@ -303,114 +323,75 @@ ICPPClassScope, IPDOMMemberOwner {
 		addMember(member);
 	}
 
-	public ICPPConstructor[] getConstructors() throws DOMException {
-		// TODO
-		return new ICPPConstructor[0];
+	private static class ConstructorCollector implements IPDOMVisitor {
+		private List fConstructors = new ArrayList();
+		public boolean visit(IPDOMNode node) throws CoreException {
+			if (node instanceof ICPPConstructor)
+				fConstructors.add(node);
+			return false;
+		}
+		public void leave(IPDOMNode node) throws CoreException {
+		}
+		public ICPPConstructor[] getConstructors() {
+			return (ICPPConstructor[])fConstructors.toArray(new ICPPConstructor[fConstructors.size()]);
+		}
 	}
 
-	public boolean isFullyCached() throws DOMException {return true;}
-
-	public IBinding getBinding(IASTName name, boolean resolve) throws DOMException {
-		IASTNode parent = name.getParent();
-		
+	public ICPPConstructor[] getConstructors() throws DOMException {
+		ConstructorCollector visitor= new ConstructorCollector();
 		try {
-			if (name instanceof ICPPASTQualifiedName) {
-				IASTName lastName = ((ICPPASTQualifiedName)name).getLastName();
-				return lastName != null ? lastName.resolveBinding() : null;
-			}
-			
-			if (parent instanceof ICPPASTQualifiedName) {
-				IASTName[] names = ((ICPPASTQualifiedName)parent).getNames();
-				int index = ArrayUtil.indexOf(names, name);
-				
-				if (index == names.length - 1) { // tip of qn
-					parent = parent.getParent();
-				} else {
-					{ // bail out if this is not the outerscope of the name being resolved
-						if(index==-1) {
-							throw new PDOMNotImplementedError();
-						} else {
-							if(index>0) {
-								// make sure we're the class they're talking about
-								PDOMBinding binding = (PDOMBinding) pdom.findBinding(names[index-1]);
-								if(!equals(binding)) {
-									return null;
-								}
-							} else {
-								// ok - just search us and return null if there is nothing in here
-							}
-						}
-					}
-					
-					// aftodo - do we even need specify the type - we should
-					// expect only one name here anyway?
-					return searchCurrentScope(name.toCharArray(), new int[] {
-						PDOMCPPLinkage.CPPCLASSTYPE,
-						PDOMCPPLinkage.CPPMETHOD,
-						PDOMCPPLinkage.CPPFIELD,
-						PDOMCPPLinkage.CPPENUMERATION,
-						PDOMCPPLinkage.CPPENUMERATOR
-					});
-				}
-			}
-			
-			IASTNode eParent = parent.getParent();
-			if (parent instanceof IASTIdExpression) {
-				return searchCurrentScope(name.toCharArray(),  PDOMCPPLinkage.CPPENUMERATOR);
-			} else if(eParent instanceof IASTFunctionCallExpression) {
-				if(parent.getPropertyInParent().equals(IASTFunctionCallExpression.FUNCTION_NAME)) {
-					return searchCurrentScopeForFunction((IASTFunctionCallExpression)eParent, name);
-				} else if(parent.getPropertyInParent().equals(IASTFunctionCallExpression.PARAMETERS)) {
-					if(parent instanceof IASTFieldReference) {
-						return searchCurrentScope(name.toCharArray(),  PDOMCPPLinkage.CPPFIELD);				
-					}
-				}
-			} else if(name.getPropertyInParent().equals(IASTFieldReference.FIELD_NAME)) {
-				return searchCurrentScope(name.toCharArray(),  PDOMCPPLinkage.CPPFIELD);
-			} else if (parent instanceof IASTNamedTypeSpecifier) {
-				return searchCurrentScope(name.toCharArray(), new int[] {
-					PDOMCPPLinkage.CPPCLASSTYPE,
-					PDOMCPPLinkage.CPPENUMERATION,
-					PDOMCPPLinkage.CPPTYPEDEF
-				});
-			}
-		} catch(CoreException e) {
+			accept(visitor);
+		} catch (CoreException e) {
 			CCorePlugin.log(e);
 		}
-
-		return null;
+		return visitor.getConstructors();
 	}
 
-	private PDOMBinding searchCurrentScopeForFunction(IASTFunctionCallExpression fce, IASTName name) throws CoreException {
-		try {
-			IType[] types = PDOMCPPLinkage.getTypes(fce.getParameterExpression());
-			if(types!=null) {
-				return CPPFindBinding.findBinding(this, getPDOM(), name.toCharArray(), PDOMCPPLinkage.CPPFUNCTION, types);
+	
+	public boolean isFullyCached()  {
+		return true;
+	}
+
+	private static class BindingCollector implements IPDOMVisitor {
+		private List fBindings = new ArrayList();
+		private char[] fName;
+		
+		public BindingCollector(char[] name) {
+			fName= name;
+		}
+		
+		public boolean visit(IPDOMNode node) throws CoreException {
+			if (node instanceof PDOMNamedNode && node instanceof IBinding) {
+				PDOMNamedNode nn= (PDOMNamedNode) node;
+				if (nn.getDBName().equals(fName)) {
+					fBindings.add(node);
+				}
 			}
-		} catch(DOMException de) {
-			CCorePlugin.log(de);
+			return false;
+		}
+		public void leave(IPDOMNode node) throws CoreException {
+		}
+		public IBinding[] getBindings() {
+			return (IBinding[])fBindings.toArray(new IBinding[fBindings.size()]);
+		}
+	}
+
+	public IBinding getBinding(IASTName name, boolean resolve) throws DOMException {
+		try {
+			BindingCollector visitor= new BindingCollector(name.toCharArray());
+			accept(visitor);
+			return CPPSemantics.resolveAmbiguities(name, visitor.getBindings());
+		} catch (CoreException e) {
+			CCorePlugin.log(e);
 		}
 		return null;
 	}
 
-	
-	private IBinding searchCurrentScope(char[] name, int[] constants) throws CoreException {
-		IBinding result = null;
-		for(int i=0; result==null && i<constants.length; i++)
-			result = searchCurrentScope(name, constants[i]);
-		return result;
-	}
-	
-	private IBinding searchCurrentScope(char[] name, int constant) throws CoreException {
-		return FindBinding.findBinding(this, getPDOM(), name, new int [] {constant});
-	}
-	
 	// Not implemented
 
 	public Object clone() {fail();return null;}
 	public IField findField(String name) throws DOMException {fail();return null;}
 	public IBinding[] getFriends() throws DOMException {fail();return null;}
-	public ICPPMethod[] getImplicitMethods() {fail(); return null;}
 	public IBinding[] find(String name) throws DOMException {fail();return null;}
 	public ICPPField[] getDeclaredFields() throws DOMException {fail();return null;}
 

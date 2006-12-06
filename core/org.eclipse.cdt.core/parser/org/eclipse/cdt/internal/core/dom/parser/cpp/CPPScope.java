@@ -14,10 +14,10 @@
  */
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
-import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
+import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceDefinition;
@@ -28,9 +28,9 @@ import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.core.parser.util.CharArrayObjectMap;
 import org.eclipse.cdt.core.parser.util.ObjectSet;
+import org.eclipse.cdt.internal.core.dom.Linkage;
 import org.eclipse.cdt.internal.core.dom.parser.IASTInternalScope;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
-import org.eclipse.core.runtime.CoreException;
 
 /**
  * @author aniefer
@@ -84,6 +84,30 @@ abstract public class CPPScope implements ICPPScope, IASTInternalScope {
 	}
 
 	public IBinding getBinding(IASTName name, boolean forceResolve) throws DOMException {
+		IBinding binding= getBindingInAST(name, forceResolve);
+		if (binding == null) {
+			IIndex index = name.getTranslationUnit().getIndex();
+			if (index != null) {
+				// Try looking this up in the PDOM
+				if (physicalNode instanceof IASTTranslationUnit) {
+					IBinding[] bindings= index.findInGlobalScope(Linkage.CPP_LINKAGE, name.toCharArray());
+					binding= CPPSemantics.resolveAmbiguities(name, bindings);
+				}
+				else if (physicalNode instanceof ICPPASTNamespaceDefinition) {
+					ICPPASTNamespaceDefinition nsdef = (ICPPASTNamespaceDefinition)physicalNode;
+					IASTName nsname = nsdef.getName();
+					IBinding nsbinding= nsname.resolveBinding();
+					if (nsbinding != null) {
+						IBinding[] bindings= index.findInNamespace(nsbinding, name.toCharArray());
+						binding= CPPSemantics.resolveAmbiguities(name, bindings);
+					}
+				}
+			}
+		}
+		return binding;
+	}
+	
+	public IBinding getBindingInAST(IASTName name, boolean forceResolve) throws DOMException {
 	    char [] c = name.toCharArray();
 	    //can't look up bindings that don't have a name
 	    if( c.length == 0 )
@@ -127,27 +151,10 @@ abstract public class CPPScope implements ICPPScope, IASTInternalScope {
 	        	return binding;
 	        }
 	        return (IBinding) obj;
-	    } else {
-	    	IIndex index = name.getTranslationUnit().getIndex();
-	    	if (index != null) {
-	    		// Try looking this up in the PDOM
-	    		if (physicalNode instanceof ICPPASTNamespaceDefinition) {
-	    			ICPPASTNamespaceDefinition nsdef = (ICPPASTNamespaceDefinition)physicalNode;
-	    			IASTName nsname = nsdef.getName();
-	    			IBinding nsbinding= null;
-					try {
-						nsbinding = index.findBinding(nsname);
-					} catch (CoreException e) {
-						CCorePlugin.log(e);
-					}
-		    		if (nsbinding instanceof ICPPScope)
-		    			return ((ICPPScope)nsbinding).getBinding(name, forceResolve);
-	    		}
-	    	}
-	    }
-		return null;
+	    } 
+	    return null;
 	}
-	
+
 	private boolean isfull = false;
 	public void setFullyCached( boolean full ){
 		isfull = full;

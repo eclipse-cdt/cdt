@@ -60,8 +60,8 @@ public class CPPParameter extends PlatformObject implements ICPPParameter, ICPPI
         public boolean isMutable() {
             return false;
         }
-		public IASTInitializer getDefaultValue() {
-			return ((ICPPParameter)getBinding()).getDefaultValue();
+		public boolean hasDefaultValue() {
+			return ((ICPPParameter)getBinding()).hasDefaultValue();
 		}
     }
     
@@ -274,6 +274,10 @@ public class CPPParameter extends PlatformObject implements ICPPParameter, ICPPI
 				return init;
 		}
 		return null;
+	}
+	
+	public boolean hasDefaultValue() {
+		return getDefaultValue() != null;
 	}
 	
 	public ILinkage getLinkage() {

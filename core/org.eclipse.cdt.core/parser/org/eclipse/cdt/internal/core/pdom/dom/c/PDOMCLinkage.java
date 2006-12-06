@@ -248,4 +248,8 @@ class PDOMCLinkage extends PDOMLinkage {
 	public IBTreeComparator getIndexComparator() {
 		return new FindBinding.DefaultBindingBTreeComparator(getPDOM());
 	}
+
+	public IBinding findInGlobalScope(String filePath, IASTName name) throws CoreException {
+		return null;
+	}
 }

@@ -13,11 +13,11 @@ package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.DOMException;
-import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.internal.core.Util;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
+import org.eclipse.cdt.internal.core.index.IIndexType;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
@@ -26,15 +26,15 @@ import org.eclipse.core.runtime.CoreException;
 /**
  * @author Doug Schaefer
  */
-class PDOMCPPTypedef extends PDOMCPPBinding implements ITypedef, ITypeContainer {
+class PDOMCPPTypedef extends PDOMCPPBinding implements ITypedef, ITypeContainer, IIndexType {
 
 	private static final int TYPE = PDOMBinding.RECORD_SIZE + 0;
 	
 	protected static final int RECORD_SIZE = PDOMBinding.RECORD_SIZE + 4;
 	
-	public PDOMCPPTypedef(PDOM pdom, PDOMNode parent, IASTName name, ITypedef typedef)
+	public PDOMCPPTypedef(PDOM pdom, PDOMNode parent, ITypedef typedef)
 			throws CoreException {
-		super(pdom, parent, name.toCharArray());
+		super(pdom, parent, typedef.getNameCharArray());
 		try {
 			IType type = typedef.getType();
 			PDOMNode typeNode = parent.getLinkageImpl().addType(this, type);
@@ -57,7 +57,7 @@ class PDOMCPPTypedef extends PDOMCPPBinding implements ITypedef, ITypeContainer 
 		return PDOMCPPLinkage.CPPTYPEDEF;
 	}
 
-	public IType getType() throws DOMException {
+	public IType getType() {
 		try {
 			PDOMNode node = getLinkageImpl().getNode(pdom.getDB().getInt(record + TYPE));
 			return node instanceof IType ? (IType)node : null;
@@ -67,28 +67,19 @@ class PDOMCPPTypedef extends PDOMCPPBinding implements ITypedef, ITypeContainer 
 		}
 	}
 
-	public boolean isSameType(IType o) {
-		if( o == this )
-            return true;
-	    if( o instanceof ITypedef )
-            try {
-                IType t = getType();
-                if( t != null )
-                    return t.isSameType( ((ITypedef)o).getType());
-                return false;
-            } catch ( DOMException e ) {
-                return false;
-            }
-	        
-        try {
-        	IType t = getType();
-        	if( t != null )
-        		return t.isSameType( o );
-        } catch(DOMException de) {
-        	CCorePlugin.log(de);
-        }
-	    
-	    return false;
+	public boolean isSameType(IType type) {
+		try {
+			IType myrtype = getType();
+			if (myrtype == null)
+				return false;
+			
+			if (type instanceof ITypedef) {
+				type= ((ITypedef)type).getType();
+			}
+			return myrtype.isSameType(type);
+		} catch (DOMException e) {
+		}
+		return false;
 	}
 
 	public Object clone() { fail(); return null; }

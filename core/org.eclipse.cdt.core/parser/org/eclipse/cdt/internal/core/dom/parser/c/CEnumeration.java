@@ -31,6 +31,7 @@ import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.c.ICASTElaboratedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.c.ICASTEnumerationSpecifier;
 import org.eclipse.cdt.internal.core.dom.Linkage;
+import org.eclipse.cdt.internal.core.index.IIndexType;
 import org.eclipse.core.runtime.PlatformObject;
 
 /**
@@ -154,7 +155,7 @@ public class CEnumeration extends PlatformObject implements IEnumeration {
     public boolean isSameType( IType type ) {
         if( type == this )
             return true;
-        if( type instanceof ITypedef )
+        if( type instanceof ITypedef || type instanceof IIndexType)
             return type.isSameType( this );
 
         return false;

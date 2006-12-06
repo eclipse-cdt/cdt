@@ -8,6 +8,7 @@
  * Contributors:
  * QNX - Initial API and implementation
  * IBM Corporation
+ * Markus Schorn (Wind River Systems)
  *******************************************************************************/
 
 package org.eclipse.cdt.internal.core.pdom.dom.cpp;
@@ -21,9 +22,11 @@ import org.eclipse.cdt.core.dom.ast.IFunctionType;
 import org.eclipse.cdt.core.dom.ast.IParameter;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
+import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionType;
 import org.eclipse.cdt.internal.core.Util;
+import org.eclipse.cdt.internal.core.index.IIndexType;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.db.Database;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
@@ -36,7 +39,7 @@ import org.eclipse.core.runtime.CoreException;
  * @author Doug Schaefer
  *
  */
-class PDOMCPPFunction extends PDOMCPPBinding implements ICPPFunction, ICPPFunctionType {
+class PDOMCPPFunction extends PDOMCPPBinding implements IIndexType, ICPPFunction, ICPPFunctionType {
 
 	/**
 	 * Offset of total number of function parameters (relative to the
@@ -49,22 +52,28 @@ class PDOMCPPFunction extends PDOMCPPBinding implements ICPPFunction, ICPPFuncti
 	 * the beginning of the record).
 	 */
 	private static final int FIRST_PARAM = PDOMBinding.RECORD_SIZE + 4;
-
+	
 	/**
 	 * Offset of hash of parameter information to allow fast comparison
 	 */
 	private static final int SIGNATURE_MEMENTO = PDOMBinding.RECORD_SIZE + 8;
-	
+
+	/**
+	 * Offset for return type of this function (relative to
+	 * the beginning of the record).
+	 */
+	private static final int RETURN_TYPE = PDOMBinding.RECORD_SIZE + 12;	
+
 	/**
 	 * Offset of annotation information (relative to the beginning of the
 	 * record).
 	 */
-	protected static final int ANNOTATION = PDOMBinding.RECORD_SIZE + 12; // byte
+	protected static final int ANNOTATION = PDOMBinding.RECORD_SIZE + 16; // byte
 	
 	/**
 	 * The size in bytes of a PDOMCPPFunction record in the database.
 	 */
-	protected static final int RECORD_SIZE = PDOMBinding.RECORD_SIZE + 13;
+	protected static final int RECORD_SIZE = PDOMBinding.RECORD_SIZE + 17;
 	
 	public PDOMCPPFunction(PDOM pdom, PDOMNode parent, ICPPFunction function) throws CoreException {
 		super(pdom, parent, function.getNameCharArray());
@@ -72,6 +81,14 @@ class PDOMCPPFunction extends PDOMCPPBinding implements ICPPFunction, ICPPFuncti
 		Database db = pdom.getDB();
 		IBinding binding = function;
 		try {
+			IType rt= function.getType().getReturnType();
+			if (rt != null) {
+				PDOMNode typeNode = getLinkageImpl().addType(this, rt);
+				if (typeNode != null) {
+					db.putInt(record + RETURN_TYPE, typeNode.getRecord());
+				}
+			}
+
 			IParameter[] params = function.getParameters();
 			db.putInt(record + NUM_PARAMS, params.length);
 			
@@ -189,8 +206,15 @@ class PDOMCPPFunction extends PDOMCPPBinding implements ICPPFunction, ICPPFuncti
 	}
 
 	public IType getReturnType() throws DOMException {
+		try {
+			PDOMNode node = getLinkageImpl().getNode(pdom.getDB().getInt(record + RETURN_TYPE));
+			if (node instanceof IType) {
+				return (IType) node;
+			}
+		} catch (CoreException e) {
+			CCorePlugin.log(e);
+		}
 		return null;
-//		TODO throw new PDOMNotImplementedError();
 	}
 
 	public boolean isConst() {
@@ -205,13 +229,48 @@ class PDOMCPPFunction extends PDOMCPPBinding implements ICPPFunction, ICPPFuncti
 		return false; 
 	}
 
-	public boolean isSameType(IType type) {
-		if (type instanceof PDOMCPPFunction) {
-			return record == ((PDOMCPPFunction)type).getRecord();
-		} else {
-			// TODO check the other type for matching name, params
-			return false;
+	public boolean isSameType(IType type) {		
+		if (type instanceof ITypedef) {
+			return type.isSameType(this);
 		}
+
+		try {
+	        if (type instanceof ICPPFunctionType) {
+	            ICPPFunctionType ft = (ICPPFunctionType) type;
+	            IType rt1= getReturnType();
+	            IType rt2= ft.getReturnType();
+	            if (rt1 != rt2) {
+	                if (rt1 == null || !rt1.isSameType(rt2)) {
+	                	return false;
+	                }
+	            }
+	            
+	            IType[] params1= getParameterTypes();
+	            IType[] params2= ft.getParameterTypes();
+	            if( params1.length == 1 && params2.length == 0 ){
+	            	if( !(params1[0] instanceof IBasicType) || ((IBasicType)params1[0]).getType() != IBasicType.t_void )
+	            		return false;
+	            } else if( params2.length == 1 && params1.length == 0 ){
+	            	if( !(params2[0] instanceof IBasicType) || ((IBasicType)params2[0]).getType() != IBasicType.t_void )
+	            		return false;
+	            } else if( params1.length != params2.length ){
+	            	return false;
+	            } else {
+	            	for( int i = 0; i < params1.length; i++ ){
+	            		if (params1[i] == null || ! params1[i].isSameType( params2[i] ) )
+	            			return false;
+	            	}
+	            }
+	           
+	            if( isConst() != ft.isConst() || isVolatile() != ft.isVolatile() )
+	                return false;
+	                
+	            return true;
+	        }
+	        return false;
+		} catch (DOMException e) {
+		}
+		return false;
 	}
 
 	public Object clone() {
@@ -223,10 +282,9 @@ class PDOMCPPFunction extends PDOMCPPBinding implements ICPPFunction, ICPPFuncti
 			if(types[0] instanceof IBasicType) {
 				if(((IBasicType)types[0]).getType()==IBasicType.t_void) {
 					types = new IType[0];
-				}
+}
 			}
 		}
-	
 		StringBuffer result = new StringBuffer();
 		result.append('(');
 		for(int i=0; i<types.length; i++) {

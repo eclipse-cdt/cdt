@@ -22,6 +22,7 @@ import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
+import org.eclipse.cdt.core.dom.ast.IBasicType;
 import org.eclipse.cdt.core.dom.ast.IFunctionType;
 import org.eclipse.cdt.core.dom.ast.IParameter;
 import org.eclipse.cdt.core.dom.ast.IType;
@@ -87,6 +88,9 @@ public class CPPImplicitMethod extends CPPImplicitFunction implements ICPPMethod
 		IType [] params = ftype.getParameterTypes();
 		
 		ICPPASTCompositeTypeSpecifier compSpec = (ICPPASTCompositeTypeSpecifier) ASTInternal.getPhysicalNodeOfScope(getScope());
+		if (compSpec == null) {
+			return null; 
+		}
 		IASTDeclaration [] members = compSpec.getMembers();
 		for( int i = 0; i < members.length; i++ ){
 			IASTDeclarator dtor = null;
@@ -113,21 +117,28 @@ public class CPPImplicitMethod extends CPPImplicitFunction implements ICPPMethod
 				{
 					IFunctionType t = (IFunctionType) CPPVisitor.createType( dtor );
 					IType [] ps = t.getParameterTypes();
+					boolean ok= false;
 					if( ps.length == params.length ){
 						int idx = 0;
 						for( ; idx < ps.length && ps[idx] != null; idx++ ){
 							if( !ps[idx].isSameType(params[idx]) )
 								break;
 						}
-						if( idx == ps.length ){
-							name.setBinding( this );
-							if( member instanceof IASTSimpleDeclaration )
-							    addDeclaration( dtor );
-							else if( member instanceof IASTFunctionDefinition )
-							    addDefinition( dtor );
-							return members[i];
+						ok= idx == ps.length;
+					}
+					else if (ps.length == 0) {
+						if (params.length == 1) {
+							IType t1= params[0];
+							ok = (t1 instanceof IBasicType) && ((IBasicType) t1).getType() == IBasicType.t_void;
 						}
-							
+					}
+					if (ok) {
+						name.setBinding( this );
+						if( member instanceof IASTSimpleDeclaration )
+						    addDeclaration( dtor );
+						else if( member instanceof IASTFunctionDefinition )
+						    addDefinition( dtor );
+						return members[i];
 					}
 				}
 				dtor = ( di > -1 && ++ di < ds.length ) ? ds[di] : null;
@@ -145,5 +156,13 @@ public class CPPImplicitMethod extends CPPImplicitFunction implements ICPPMethod
 		if( n != null && n.length > 0 )
 			return n[0] == '~';
 		return false;
+	}
+
+	public boolean isImplicit() {
+		try {
+			return getPrimaryDeclaration() == null;
+		} catch (DOMException e) {
+		}
+		return true;
 	}
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005 IBM Corporation and others.
+ * Copyright (c) 2005, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  * IBM Rational Software - Initial API and implementation 
+ * Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.c;
 
@@ -16,6 +17,7 @@ import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.c.ICASTSimpleDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.c.ICBasicType;
+import org.eclipse.cdt.internal.core.index.IIndexType;
 
 /**
  * @author dsteffle
@@ -116,7 +118,7 @@ public class CBasicType implements ICBasicType {
 	public boolean isSameType(IType obj) {
 	    if( obj == this )
 	        return true;
-	    if( obj instanceof ITypedef )
+	    if( obj instanceof ITypedef || obj instanceof IIndexType)
 	        return obj.isSameType( this );
 	    
 		if (!(obj instanceof CBasicType)) return false;

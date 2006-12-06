@@ -7,12 +7,10 @@
  *
  * Contributors:
  * Symbian - Initial API and implementation
+ * Markus Schorn (Wind River Systems)
  *******************************************************************************/
 
 package org.eclipse.cdt.internal.core.pdom.dom.cpp;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.DOMException;
@@ -33,23 +31,22 @@ abstract public class PDOMCPPBinding extends PDOMBinding implements ICPPBinding 
 	public PDOMCPPBinding(PDOM pdom, PDOMNode parent, char[] name) throws CoreException {
 		super(pdom, parent, name);
 	}
-		
-	// TODO: performance?
-	final public String[] getQualifiedName() throws DOMException {
-		List result = new ArrayList();
+			
+	protected boolean hasQualifiedName(char[][] qname, int idx) {
 		try {
-			PDOMNode node = this;
-			while (node != null) {
-				if (node instanceof PDOMBinding) {							
-					result.add(0, ((PDOMBinding)node).getName());
+			if (getDBName().equals(qname[idx])) {
+				PDOMNode parent= getParentNode(); 
+				if (--idx < 0) {
+					return parent == null;
 				}
-				node = node.getParentNode();
+				if (parent instanceof PDOMCPPBinding) {
+					return ((PDOMCPPBinding) parent).hasQualifiedName(qname, idx);
+				}
 			}
-			return (String[]) result.toArray(new String[result.size()]);
-		} catch(CoreException ce) {
-			CCorePlugin.log(ce);
-			return null;
+		} catch (CoreException e) {
+			CCorePlugin.log(e);
 		}
+		return false;
 	}
 
 	// TODO: performance?

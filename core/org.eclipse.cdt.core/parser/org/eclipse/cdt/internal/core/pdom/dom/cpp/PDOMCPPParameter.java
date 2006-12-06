@@ -15,11 +15,11 @@ package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.DOMException;
-import org.eclipse.cdt.core.dom.ast.IASTInitializer;
 import org.eclipse.cdt.core.dom.ast.IParameter;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPParameter;
 import org.eclipse.cdt.internal.core.Util;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.db.Database;
@@ -33,7 +33,7 @@ import org.eclipse.core.runtime.CoreException;
  * 
  * @author Doug Schaefer
  */
-class PDOMCPPParameter extends PDOMNamedNode implements IParameter {
+class PDOMCPPParameter extends PDOMNamedNode implements ICPPParameter {
 
 	/**
 	 * Offset of pointer to the next parameter (relative to the
@@ -46,11 +46,20 @@ class PDOMCPPParameter extends PDOMNamedNode implements IParameter {
 	 * (relative to the beginning of the record).
 	 */
 	private static final int TYPE = PDOMNamedNode.RECORD_SIZE + 4;
+
+	/**
+	 * Offset of flags
+	 * (relative to the beginning of the record).
+	 */
+	private static final int FLAGS = PDOMNamedNode.RECORD_SIZE + 8;
+
 	
 	/**
 	 * The size in bytes of a PDOMCPPParameter record in the database.
 	 */
-	protected static final int RECORD_SIZE = PDOMNamedNode.RECORD_SIZE + 8;
+	protected static final int RECORD_SIZE = PDOMNamedNode.RECORD_SIZE + 9;
+
+	private static final byte FLAG_DEFAULT_VALUE = 0x1;
 
 	public PDOMCPPParameter(PDOM pdom, int record) {
 		super(pdom, record);
@@ -63,6 +72,8 @@ class PDOMCPPParameter extends PDOMNamedNode implements IParameter {
 		Database db = pdom.getDB();
 
 		db.putInt(record + NEXT_PARAM, 0);
+		byte flags= encodeFlags(param);
+		db.putByte(record + FLAGS, flags);
 		
 		try {
 			IType type = param.getType();
@@ -75,6 +86,15 @@ class PDOMCPPParameter extends PDOMNamedNode implements IParameter {
 		} catch (DOMException e) {
 			throw new CoreException(Util.createStatus(e));
 		}
+	}
+
+	private byte encodeFlags(IParameter param) {
+		byte flags= 0;
+		if (param instanceof ICPPParameter && 
+				((ICPPParameter) param).hasDefaultValue()) {
+			flags |= FLAG_DEFAULT_VALUE;
+		}
+		return flags;
 	}
 
 	protected int getRecordSize() {
@@ -95,11 +115,6 @@ class PDOMCPPParameter extends PDOMNamedNode implements IParameter {
 		return rec != 0 ? new PDOMCPPParameter(pdom, rec) : null;
 	}
 	
-	public IASTInitializer getDefaultValue() {
-		return null;
-//		TODO throw new PDOMNotImplementedError();
-	}
-
 	public String[] getQualifiedName() throws DOMException {
 		throw new PDOMNotImplementedError();
 	}
@@ -164,5 +179,19 @@ class PDOMCPPParameter extends PDOMNamedNode implements IParameter {
 			CCorePlugin.log(e);
 			return new char[0];
 		}
+	}
+
+	public boolean hasDefaultValue() {
+		return hasFlag(FLAG_DEFAULT_VALUE, false);
+	}
+
+	private boolean hasFlag(byte flag, boolean defValue) {
+		try {
+			byte myflags= pdom.getDB().getByte(record + FLAGS);
+			return (myflags & flag) == flag;
+		} catch (CoreException e) {
+			CCorePlugin.log(e);
+		}
+		return defValue;
 	}
 }

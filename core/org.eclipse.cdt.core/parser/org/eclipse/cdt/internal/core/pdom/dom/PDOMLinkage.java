@@ -22,6 +22,7 @@ import org.eclipse.cdt.core.dom.ast.IASTCompoundStatement;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
+import org.eclipse.cdt.core.dom.ast.IArrayType;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IPointerType;
 import org.eclipse.cdt.core.dom.ast.IQualifierType;
@@ -58,7 +59,8 @@ public abstract class PDOMLinkage extends PDOMNamedNode implements IIndexLinkage
 	// node types
 	protected static final int LINKAGE = 0; // special one for myself
 	static final int POINTER_TYPE = 1;
-	static final int QUALIFIER_TYPE = 2;
+	static final int ARRAY_TYPE = 2;
+	static final int QUALIFIER_TYPE = 3;
 	
 	protected static final int LAST_NODE_TYPE = QUALIFIER_TYPE;
 	
@@ -132,6 +134,8 @@ public abstract class PDOMLinkage extends PDOMNamedNode implements IIndexLinkage
 		switch (PDOMNode.getNodeType(pdom, record)) {
 		case POINTER_TYPE:
 			return new PDOMPointerType(pdom, record);
+		case ARRAY_TYPE:
+			return new PDOMArrayType(pdom, record);
 		case QUALIFIER_TYPE:
 			return new PDOMQualifierType(pdom, record);
 		}
@@ -143,6 +147,8 @@ public abstract class PDOMLinkage extends PDOMNamedNode implements IIndexLinkage
 		
 		if (type instanceof IPointerType)
 			node = new PDOMPointerType(pdom, parent, (IPointerType)type);
+		else if (type instanceof IArrayType) 
+			node= new PDOMArrayType(pdom, parent, (IArrayType) type);
 		else if (type instanceof IQualifierType)
 			node = new PDOMQualifierType(pdom, parent, (IQualifierType)type);
 		else
@@ -180,11 +186,7 @@ public abstract class PDOMLinkage extends PDOMNamedNode implements IIndexLinkage
 		}
 		
 		if (scope instanceof IIndexBinding) {
-			IIndexBinding parent= ((IIndexBinding) scope).getParentBinding();
-			if (parent == null) {
-				return this;
-			}
-			return adaptBinding(parent);
+			return adaptBinding((IBinding) scope);
 		}
 			
 		// the scope is from the ast
@@ -217,4 +219,11 @@ public abstract class PDOMLinkage extends PDOMNamedNode implements IIndexLinkage
 	}
 	
 	public abstract int getBindingType(IBinding binding);
+
+	public IBinding[] findInGlobalScope(char[] name) throws CoreException {
+		FindBindingsInBTree visitor= new FindBindingsInBTree(this, name);
+		getIndex().accept(visitor);
+		
+		return visitor.getBinding();
+	}
 }

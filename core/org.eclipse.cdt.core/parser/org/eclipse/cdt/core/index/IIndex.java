@@ -14,6 +14,7 @@ package org.eclipse.cdt.core.index;
 
 import java.util.regex.Pattern;
 
+import org.eclipse.cdt.core.dom.ILinkage;
 import org.eclipse.cdt.core.dom.IName;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.core.runtime.CoreException;
@@ -222,6 +223,24 @@ public interface IIndex {
 	 */
 	public IIndexBinding[] findBindings(Pattern[] patterns, boolean isFullyQualified, IndexFilter filter, IProgressMonitor monitor) throws CoreException;
 	
+	/**
+	 * Searches the global scope for all bindings of a given name and linkage. 
+	 * In case a binding exists in multiple projects, no duplicate bindings are returned.
+	 * @param linkage the linkage to be searched
+	 * @param name a simple (unqualified) name.
+	 * @return an array of bindings
+	 */
+	public IBinding[] findInGlobalScope(ILinkage linkage, char[] name);
+
+	/**
+	 * Searches the given namespace for all bindings of a given name. 
+	 * In case a binding exists in multiple projects, no duplicate bindings are returned.
+	 * @param nsbinding the namespace to be searched.
+	 * @param name a simple (unqualified) name.
+	 * @return an array of bindings
+	 */
+	public IBinding[] findInNamespace(IBinding nsbinding, char[] name);
+
 	/**
 	 * Searches for all names that resolve to the given binding. You can limit the result to references, declarations
 	 * or definitions, or a combination of those.

@@ -13,6 +13,7 @@ package org.eclipse.cdt.internal.core.index;
 
 import java.util.regex.Pattern;
 
+import org.eclipse.cdt.core.dom.ILinkage;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.index.IIndex;
@@ -133,5 +134,13 @@ public interface IIndexFragment {
 	 */
 	long getLastWriteAccess();
 
+	/**
+	 * Returns all bindings with the given name in the given linkage
+	 */
+	IBinding[] findInGlobalScope(ILinkage linkage, char[] name) throws CoreException;
 
+	/**
+	 * Returns all bindings with the given name in the given namespace
+	 */
+	IBinding[] findInNamespace(IBinding nsbinding, char[] name) throws CoreException;
 }

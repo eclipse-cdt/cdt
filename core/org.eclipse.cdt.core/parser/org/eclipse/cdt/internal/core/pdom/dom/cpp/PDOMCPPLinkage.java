@@ -18,18 +18,13 @@ import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTBinaryExpression;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTExpressionList;
-import org.eclipse.cdt.core.dom.ast.IASTFieldReference;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionCallExpression;
 import org.eclipse.cdt.core.dom.ast.IASTIdExpression;
 import org.eclipse.cdt.core.dom.ast.IASTName;
-import org.eclipse.cdt.core.dom.ast.IASTNamedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
-import org.eclipse.cdt.core.dom.ast.IASTUnaryExpression;
 import org.eclipse.cdt.core.dom.ast.IBinding;
-import org.eclipse.cdt.core.dom.ast.ICompositeType;
 import org.eclipse.cdt.core.dom.ast.IEnumeration;
 import org.eclipse.cdt.core.dom.ast.IEnumerator;
-import org.eclipse.cdt.core.dom.ast.IFunctionType;
 import org.eclipse.cdt.core.dom.ast.IParameter;
 import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
@@ -37,38 +32,34 @@ import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTBinaryExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFieldReference;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceAlias;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNewExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBasicType;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespaceAlias;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespaceScope;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPPointerToMemberType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPVariable;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier;
 import org.eclipse.cdt.core.dom.ast.gnu.cpp.GPPLanguage;
 import org.eclipse.cdt.core.model.ILanguage;
-import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.internal.core.Util;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPBlockScope;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPImplicitMethod;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPPointerType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPSemantics;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.db.IBTreeComparator;
-import org.eclipse.cdt.internal.core.pdom.dom.FindBinding;
 import org.eclipse.cdt.internal.core.pdom.dom.IPDOMMemberOwner;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMLinkage;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
-import org.eclipse.cdt.internal.core.pdom.dom.PDOMNotImplementedError;
 import org.eclipse.core.runtime.CoreException;
 
 /**
@@ -109,6 +100,9 @@ public class PDOMCPPLinkage extends PDOMLinkage {
 	public static final int CPPENUMERATION = PDOMLinkage.LAST_NODE_TYPE + 10;
 	public static final int CPPENUMERATOR = PDOMLinkage.LAST_NODE_TYPE + 11;
 	public static final int CPPTYPEDEF = PDOMLinkage.LAST_NODE_TYPE + 12;
+	public static final int CPP_POINTER_TO_MEMBER_TYPE= PDOMLinkage.LAST_NODE_TYPE + 13;
+	public static final int CPP_CONSTRUCTOR= PDOMLinkage.LAST_NODE_TYPE + 14;
+	public static final int CPP_REFERENCE_TYPE= PDOMLinkage.LAST_NODE_TYPE + 15;
 
 	public ILanguage getLanguage() {
 		return new GPPLanguage();
@@ -140,72 +134,94 @@ public class PDOMCPPLinkage extends PDOMLinkage {
 				PDOMNode parent = getAdaptedParent(binding);
 				if (parent == null)
 					return null;
-
-				if (binding instanceof ICPPField && parent instanceof PDOMCPPClassType)
-					pdomBinding = new PDOMCPPField(pdom, (PDOMCPPClassType)parent, (ICPPField) binding);
-				else if (binding instanceof ICPPVariable && !(binding.getScope() instanceof CPPBlockScope)) {
-					if (!(binding.getScope() instanceof CPPBlockScope)) {
-						ICPPVariable var= (ICPPVariable) binding;
-						if (!var.isStatic()) {  // bug 161216
-							pdomBinding = new PDOMCPPVariable(pdom, parent, var);
-						}
-					}
-				} else if (parent instanceof PDOMCPPClassType && binding instanceof ICPPMethod) {
-					pdomBinding = new PDOMCPPMethod(pdom, parent, (ICPPMethod)binding);
-				} else if (binding instanceof CPPImplicitMethod && parent instanceof PDOMCPPClassType) {
-					if(!name.isReference()) {
-						//because we got the implicit method off of an IASTName that is not a reference,
-						//it is no longer completly implicit and it should be treated as a normal method.						
-						pdomBinding = new PDOMCPPMethod(pdom, parent, (ICPPMethod)binding);
-					}
-				} else if (binding instanceof ICPPFunction) {
-					ICPPFunction func= (ICPPFunction) binding;
-					if (!func.isStatic()) {  // bug 161216
-						pdomBinding = new PDOMCPPFunction(pdom, parent, func);
-					}
-				} else if (binding instanceof ICPPClassType) {
-					pdomBinding = new PDOMCPPClassType(pdom, parent, (ICPPClassType) binding);
-				} else if (binding instanceof ICPPNamespaceAlias) {
-					pdomBinding = new PDOMCPPNamespaceAlias(pdom, parent, (ICPPNamespaceAlias) binding);
-				} else if (binding instanceof ICPPNamespace) {
-					pdomBinding = new PDOMCPPNamespace(pdom, parent, (ICPPNamespace) binding);
-				} else if (binding instanceof IEnumeration) {
-					pdomBinding = new PDOMCPPEnumeration(pdom, parent, (IEnumeration) binding);
-				} else if (binding instanceof IEnumerator) {
-					IEnumeration enumeration = (IEnumeration)((IEnumerator)binding).getType();
-					PDOMBinding pdomEnumeration = adaptBinding(enumeration);
-					if (pdomEnumeration instanceof PDOMCPPEnumeration)
-						pdomBinding = new PDOMCPPEnumerator(pdom, parent, (IEnumerator) binding,
-								(PDOMCPPEnumeration)pdomEnumeration);
-				} else if (binding instanceof ITypedef) {
-					pdomBinding = new PDOMCPPTypedef(pdom, parent, name, (ITypedef)binding);
-				}
-
-				if(pdomBinding!=null) {
-					parent.addChild(pdomBinding);
-				}
+				pdomBinding = addBinding(parent, binding);
 			}
 		} catch(DOMException e) {
 			throw new CoreException(Util.createStatus(e));
 		}
 
-		// final processing
-		if (pdomBinding != null) {
-			// Check if is a base specifier
-			if (pdomBinding instanceof ICPPClassType && name.getParent() instanceof ICPPASTBaseSpecifier) {
-				ICPPASTBaseSpecifier baseNode = (ICPPASTBaseSpecifier)name.getParent();
-				ICPPASTCompositeTypeSpecifier ownerNode = (ICPPASTCompositeTypeSpecifier)baseNode.getParent();
-				IBinding ownerBinding = adaptBinding(ownerNode.getName().resolveBinding());
-				if (ownerBinding != null && ownerBinding instanceof PDOMCPPClassType) {
-					PDOMCPPClassType ownerClass = (PDOMCPPClassType)ownerBinding;
-					PDOMCPPBase pdomBase = new PDOMCPPBase(pdom, (PDOMCPPClassType)pdomBinding,
-							baseNode.isVirtual(), baseNode.getVisibility());
-					ownerClass.addBase(pdomBase);
-				}
+		if (pdomBinding instanceof PDOMCPPClassType) {
+			PDOMCPPClassType pdomClassType= (PDOMCPPClassType) pdomBinding;
+			IASTNode baseNode= name.getParent();
+			if (baseNode instanceof ICPPASTBaseSpecifier) 
+				addBaseClasses(pdomClassType, (ICPPASTBaseSpecifier) baseNode);
+			
+			if (binding instanceof ICPPClassType && name.isDefinition()) {
+				addImplicitMethods(pdomClassType, (ICPPClassType) binding);
 			}
 		}
-
 		return pdomBinding;
+	}
+
+	private void addBaseClasses(PDOMCPPClassType pdomBinding, ICPPASTBaseSpecifier baseNode) throws CoreException {
+		ICPPASTCompositeTypeSpecifier ownerNode = (ICPPASTCompositeTypeSpecifier)baseNode.getParent();
+		IBinding ownerBinding = adaptBinding(ownerNode.getName().resolveBinding());
+		if (ownerBinding != null && ownerBinding instanceof PDOMCPPClassType) {
+			PDOMCPPClassType ownerClass = (PDOMCPPClassType)ownerBinding;
+			PDOMCPPBase pdomBase = new PDOMCPPBase(pdom, pdomBinding,
+					baseNode.isVirtual(), baseNode.getVisibility());
+			ownerClass.addBase(pdomBase);
+		}
+	}
+
+	private PDOMBinding addBinding(PDOMNode parent, IBinding binding) throws CoreException, DOMException {
+		PDOMBinding pdomBinding= null;
+		
+		if (binding instanceof ICPPField && parent instanceof PDOMCPPClassType)
+			pdomBinding = new PDOMCPPField(pdom, (PDOMCPPClassType)parent, (ICPPField) binding);
+		else if (binding instanceof ICPPVariable && !(binding.getScope() instanceof CPPBlockScope)) {
+			if (!(binding.getScope() instanceof CPPBlockScope)) {
+				ICPPVariable var= (ICPPVariable) binding;
+				if (!var.isStatic()) {  // bug 161216
+					pdomBinding = new PDOMCPPVariable(pdom, parent, var);
+				}
+			}
+		} else if (binding instanceof ICPPConstructor && parent instanceof PDOMCPPClassType) {
+			pdomBinding = new PDOMCPPConstructor(pdom, parent, (ICPPConstructor)binding);
+		} else if (binding instanceof ICPPMethod && parent instanceof PDOMCPPClassType) {
+			pdomBinding = new PDOMCPPMethod(pdom, parent, (ICPPMethod)binding);
+		} else if (binding instanceof ICPPFunction) {
+			ICPPFunction func= (ICPPFunction) binding;
+			if (!func.isStatic()) {  // bug 161216
+				pdomBinding = new PDOMCPPFunction(pdom, parent, func);
+			}
+		} else if (binding instanceof ICPPClassType) {
+			pdomBinding= new PDOMCPPClassType(pdom, parent, (ICPPClassType) binding);
+		} else if (binding instanceof ICPPNamespaceAlias) {
+			pdomBinding = new PDOMCPPNamespaceAlias(pdom, parent, (ICPPNamespaceAlias) binding);
+		} else if (binding instanceof ICPPNamespace) {
+			pdomBinding = new PDOMCPPNamespace(pdom, parent, (ICPPNamespace) binding);
+		} else if (binding instanceof IEnumeration) {
+			pdomBinding = new PDOMCPPEnumeration(pdom, parent, (IEnumeration) binding);
+		} else if (binding instanceof IEnumerator) {
+			IEnumeration enumeration = (IEnumeration)((IEnumerator)binding).getType();
+			PDOMBinding pdomEnumeration = adaptBinding(enumeration);
+			if (pdomEnumeration instanceof PDOMCPPEnumeration)
+				pdomBinding = new PDOMCPPEnumerator(pdom, parent, (IEnumerator) binding,
+						(PDOMCPPEnumeration)pdomEnumeration);
+		} else if (binding instanceof ITypedef) {
+			pdomBinding = new PDOMCPPTypedef(pdom, parent, (ITypedef)binding);
+		}
+
+		if(pdomBinding!=null) {
+			parent.addChild(pdomBinding);
+		}
+		return pdomBinding;
+	}
+
+	private void addImplicitMethods(PDOMCPPClassType type, ICPPClassType binding) throws CoreException {
+		try {
+			IScope scope = binding.getCompositeScope();
+			if (scope instanceof ICPPClassScope) {
+				ICPPMethod[] implicit= ((ICPPClassScope) scope).getImplicitMethods();
+				for (int i = 0; i < implicit.length; i++) {
+					ICPPMethod method = implicit[i];
+					addBinding(type, method);
+				}
+			}
+		} catch (DOMException e) {
+			CCorePlugin.log(e);
+		}
 	}
 
 	public int getBindingType(IBinding binding) {
@@ -217,6 +233,9 @@ public class PDOMCPPLinkage extends PDOMLinkage {
 			return CPPFIELD;
 		else if (binding instanceof ICPPVariable)
 			return CPPVARIABLE;
+		else if (binding instanceof ICPPConstructor)
+			// before methods
+			return CPP_CONSTRUCTOR;
 		else if (binding instanceof ICPPMethod)
 			// this must be before functions
 			return CPPMETHOD;
@@ -268,133 +287,12 @@ public class PDOMCPPLinkage extends PDOMLinkage {
 	}
 
 	public PDOMBinding resolveBinding(IASTName name) throws CoreException {
-		try {
-			return _resolveBinding(name);
-		} catch(DOMException e) {
-			throw new CoreException(Util.createStatus(e));
+		IBinding binding= name.resolveBinding();
+		if (binding != null) {
+			return adaptBinding(binding);
 		}
-	}
-
-	private PDOMBinding _resolveBinding(IASTName name) throws CoreException, DOMException {
-		IBinding origBinding = name.getBinding();	
-		if (origBinding != null)
-			return adaptBinding(origBinding);
-
-		if (name instanceof ICPPASTQualifiedName) {
-			IASTName[] names = ((ICPPASTQualifiedName)name).getNames();
-			if (names.length == 1)
-				return resolveBinding(names[0]);
-			IASTName lastName = names[names.length - 1];
-			PDOMBinding nsBinding = adaptBinding(names[names.length - 2].resolveBinding());
-			// aftodo - namespace aliases?
-			if (nsBinding instanceof IScope) {
-				return (PDOMBinding) ((IScope)nsBinding).getBinding(lastName, true);
-			}
-		}
-		IASTNode parent = name.getParent();
-		if (parent instanceof ICPPASTQualifiedName) {
-			ICPPASTQualifiedName qualName = (ICPPASTQualifiedName)parent;
-			IASTName lastName = qualName.getLastName();
-			if (name != lastName) {
-				return resolveInQualifiedName(name);
-			} else {
-				// Drop down to the rest of the resolution procedure
-				// with the parent of the qualified name
-				parent = parent.getParent();
-			}
-		}
-
-		if (parent instanceof IASTIdExpression) {
-			// reference
-			IASTNode eParent = parent.getParent();
-			if (eParent instanceof IASTFunctionCallExpression) {
-				if (parent.getPropertyInParent().equals(IASTFunctionCallExpression.FUNCTION_NAME)) {
-					return resolveFunctionCall(
-							(IASTFunctionCallExpression) eParent,
-							(IASTIdExpression) parent, name);
-				} else if (parent.getPropertyInParent().equals(IASTFunctionCallExpression.PARAMETERS)) {
-					int desiredType = (name.getParent() instanceof ICPPASTQualifiedName
-							&& ((ICPPASTQualifiedName) name.getParent()).getLastName() != name)
-							? CPPNAMESPACE : CPPVARIABLE;
-					return searchCurrentScope(name.toCharArray(), desiredType);
-				}
-			} else {
-				// if the address of me is taken, and assigned to something,
-				// find out the type of the thing I'm assigned to
-				if (eParent instanceof IASTUnaryExpression) {
-					IASTUnaryExpression unaryExp = (IASTUnaryExpression) eParent;
-					if (unaryExp.getOperator() == IASTUnaryExpression.op_amper) {
-						IASTNode epParent = eParent.getParent();
-						if (epParent instanceof IASTBinaryExpression) {
-							if (((IASTBinaryExpression) epParent).getOperator() == IASTBinaryExpression.op_assign) {
-								IASTExpression left = ((IASTBinaryExpression) epParent).getOperand1();
-								IType type = CPPSemantics.getUltimateType(left.getExpressionType(), false);
-								if (type instanceof IFunctionType) {
-									return CPPFindBinding.findBinding(getIndex(),
-											getPDOM(),
-											name.toCharArray(),
-											CPPFUNCTION,
-											((IFunctionType) type).getParameterTypes()
-									);
-								}
-							}
-						}
-					}
-				}
-
-				return searchCurrentScope(name.toCharArray(), new int[]{
-					CPPVARIABLE,
-					CPPENUMERATOR
-				});
-			}
-		} else if (parent instanceof IASTNamedTypeSpecifier) {
-			return searchCurrentScope(name.toCharArray(), new int[] {
-				CPPCLASSTYPE,
-				CPPENUMERATION,
-				CPPTYPEDEF
-			});
-		} else if (parent instanceof ICPPASTNamespaceAlias) {
-			return searchCurrentScope(name.toCharArray(), CPPNAMESPACE);
-		} else if(parent instanceof ICPPASTFieldReference) {
-			ICPPASTFieldReference ref = (ICPPASTFieldReference) parent;
-			IASTExpression exp = ref.getFieldOwner();
-			if(exp instanceof IASTIdExpression) {
-				IASTIdExpression fieldOwner = (IASTIdExpression) exp;
-				IASTNode eParent = parent.getParent();
-				if (eParent instanceof IASTFunctionCallExpression &&
-						parent.getPropertyInParent().equals(IASTFunctionCallExpression.FUNCTION_NAME)) {
-					if(name.getPropertyInParent().equals(IASTFieldReference.FIELD_NAME)) {
-						return resolveFunctionCall((IASTFunctionCallExpression) eParent, fieldOwner, name);
-					}
-				} else {
-					IBinding fieldOwnerBinding = fieldOwner.getName().getBinding();
-					if(fieldOwnerBinding instanceof ICPPVariable) { 
-						IType type = ((ICPPVariable)fieldOwnerBinding).getType();
-						if(type instanceof ICompositeType) {
-							PDOMBinding pdomFOB = adaptBinding( (ICompositeType)  type);
-							return FindBinding.findBinding(pdomFOB, getPDOM(), name.toCharArray(), new int [] {PDOMCPPLinkage.CPPFIELD});
-						}
-					}
-				}
-			}
-		} else if(parent instanceof ICPPASTBaseSpecifier) {
-			return searchCurrentScope(name.toCharArray(), PDOMCPPLinkage.CPPCLASSTYPE);
-		}
-
 		return null;
 	}
-
-	private PDOMBinding searchCurrentScope(char[] name, int[] constants) throws CoreException {
-		PDOMBinding result = null;
-		for(int i=0; result==null && i<constants.length; i++)
-			result = searchCurrentScope(name, constants[i]);
-		return result;
-	}
-
-	private PDOMBinding searchCurrentScope(char[] name, int constant) throws CoreException {
-		return FindBinding.findBinding(getIndex(), getPDOM(), name, new int [] {constant});
-	}
-
 
 	/**
 	 * Read type information from the AST or null if the types could not be determined
@@ -498,43 +396,6 @@ public class PDOMCPPLinkage extends PDOMLinkage {
 		return null;
 	}
 
-	private PDOMBinding resolveInQualifiedName(IASTName name) throws CoreException {
-		ICPPASTQualifiedName qualName = (ICPPASTQualifiedName)name.getParent();
-
-		// Must be a namespace or a class
-		IASTName[] names = qualName.getNames();
-		int index = ArrayUtil.indexOf(names, name);
-		if(index!=-1) {
-			if (index == 0) {
-				// we are at the root
-				return FindBinding.findBinding(getIndex(), getPDOM(), name.toCharArray(), new int[]{
-					CPPNAMESPACE, CPPCLASSTYPE, CPPNAMESPACEALIAS
-				});
-			} else {
-				try {
-					PDOMBinding binding = adaptBinding(names[index-1].getBinding());
-					if(binding instanceof PDOMCPPClassType) {
-						// TODO - a test case for this..
-						return (PDOMBinding) ((PDOMCPPClassType)binding).getBinding(name, true);
-					} else if(binding instanceof PDOMCPPNamespaceAlias) {
-						PDOMCPPNamespace pns = (PDOMCPPNamespace) ((PDOMCPPNamespaceAlias) binding).getBinding();
-						return (PDOMBinding) ((ICPPNamespaceScope) pns).getBinding(name, true);
-					} else if(binding instanceof PDOMCPPNamespace) {
-						return (PDOMBinding) ((ICPPNamespaceScope)binding).getBinding(name, true);
-					} else {
-						throw new PDOMNotImplementedError(); // aftodo - again I think we can't get here
-					}
-				} catch(DOMException de) {
-					throw new CoreException(CCorePlugin.createStatus(de.getMessage())); // aftodo
-				}
-			}
-		} else {
-			// aftodo - I don't believe this can happen.. 
-			// didn't find our name here, weird...
-			return null;
-		}
-	}
-
 	public PDOMNode addType(PDOMNode parent, IType type) throws CoreException {
 		if (type instanceof ICPPBasicType) {
 			return new PDOMCPPBasicType(pdom, parent, (ICPPBasicType)type);
@@ -550,7 +411,10 @@ public class PDOMCPPLinkage extends PDOMLinkage {
 			if (binding != null) {
 				return binding;
 			}
+		} else if (type instanceof ICPPPointerToMemberType) {
+			return new PDOMCPPPointerToMemberType(pdom, parent, (ICPPPointerToMemberType)type);
 		}
+
 		return super.addType(parent, type); 
 	}
 
@@ -567,6 +431,8 @@ public class PDOMCPPLinkage extends PDOMLinkage {
 			return new PDOMCPPClassType(pdom, record);
 		case CPPFIELD:
 			return new PDOMCPPField(pdom, record);
+		case CPP_CONSTRUCTOR:
+			return new PDOMCPPConstructor(pdom, record);
 		case CPPMETHOD:
 			return new PDOMCPPMethod(pdom, record);
 		case CPPNAMESPACE:
@@ -581,6 +447,11 @@ public class PDOMCPPLinkage extends PDOMLinkage {
 			return new PDOMCPPEnumerator(pdom, record);
 		case CPPTYPEDEF:
 			return new PDOMCPPTypedef(pdom, record);
+		case CPP_POINTER_TO_MEMBER_TYPE:
+			return new PDOMCPPPointerToMemberType(pdom, record);
+		case CPP_REFERENCE_TYPE:
+			return new PDOMCPPReferenceType(pdom, record);
+
 		default:
 			return super.getNode(record);
 		}

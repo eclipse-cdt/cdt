@@ -14,7 +14,6 @@
  */
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
-import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.ASTNodeProperty;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTArraySubscriptExpression;
@@ -117,7 +116,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateTypeParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier;
-import org.eclipse.cdt.core.index.IIndex;
+import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.core.parser.util.CharArrayObjectMap;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
@@ -128,8 +127,6 @@ import org.eclipse.cdt.internal.core.dom.parser.ASTInternal;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
-import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
-import org.eclipse.core.runtime.CoreException;
 
 /**
  * @author aniefer
@@ -750,24 +747,12 @@ public class CPPSemantics {
 		        addDefinition( binding, data.astName );
 		    } 
 		}
-		if( binding == null || binding instanceof IProblemBinding ){
-			// Let's try the pdom
-			IIndex index = name.getTranslationUnit().getIndex();
-			if (index != null) {
-				try {
-					binding = index.findBinding(name);
-				} catch (CoreException e) {
-					CCorePlugin.log(e);
-				}
-			}
-			
-			// If we're still null...
-			if (binding == null) {
-			    if( name instanceof ICPPASTQualifiedName && data.forDefinition() )
-			        binding = new ProblemBinding( data.astName, IProblemBinding.SEMANTIC_MEMBER_DECLARATION_NOT_FOUND, data.name() );
-			    else
-			        binding = new ProblemBinding( data.astName, IProblemBinding.SEMANTIC_NAME_NOT_FOUND, data.name() );
-			}
+		// If we're still null...
+		if (binding == null) {
+			if( name instanceof ICPPASTQualifiedName && data.forDefinition() )
+				binding = new ProblemBinding( data.astName, IProblemBinding.SEMANTIC_MEMBER_DECLARATION_NOT_FOUND, data.name() );
+			else
+				binding = new ProblemBinding( data.astName, IProblemBinding.SEMANTIC_NAME_NOT_FOUND, data.name() );
 		}
         return binding;
     }
@@ -1033,14 +1018,21 @@ public class CPPSemantics {
 						mergeResults( data, binding, true );	
 					}
 				} else {
+					IBinding b= null;
 					if (!data.prefixLookup && data.astName != null ) {
-						IBinding b = scope.getBinding( data.astName, false );
-						if (b instanceof CPPImplicitFunction || b instanceof CPPImplicitTypedef
-								|| b instanceof PDOMBinding)
-							// TODO the PDOMBinding thing is a kludge
+						b= scope.getBinding( data.astName, false );
+						if (b instanceof CPPImplicitFunction || b instanceof CPPImplicitTypedef) 
 							mergeResults( data, b, true );
 					}
-				    mergeResults( data, lookupInScope( data, scope, blockItem ), true );
+				    IASTName[] inScope = lookupInScope( data, scope, blockItem );
+				    if (inScope != null) {
+				    	mergeResults( data, inScope, true );
+				    }
+				    else if (b instanceof IIndexBinding) {
+				    	// since the ast did not come up with a binding, use what
+				    	// we have found in the index.
+				    	mergeResults(data, b, true);
+				    }
 				}
 
 				if( (!data.hasResults() || data.prefixLookup) && scope instanceof ICPPNamespaceScope ){
@@ -1101,7 +1093,11 @@ public class CPPSemantics {
 				node = blockItem;
 			
 			ICPPScope parentScope = (ICPPScope) scope.getParent();
-			if( parentScope instanceof ICPPTemplateScope ){
+			// the index cannot return the translation unit as parent scope
+			if (parentScope == null && scope instanceof IIndexBinding) {
+				parentScope= (ICPPScope) node.getTranslationUnit().getScope();
+			}
+			else if( parentScope instanceof ICPPTemplateScope ){
 			    IASTNode parent = node.getParent();
 			    while( parent != null && !(parent instanceof ICPPASTTemplateDeclaration) ){
 			        node = parent;
@@ -1804,7 +1800,7 @@ public class CPPSemantics {
 		}
 	}
 
-	static protected IBinding resolveAmbiguities( IASTName name, Object[] bindings ){
+	public static IBinding resolveAmbiguities( IASTName name, Object[] bindings ){
 	    bindings = ArrayUtil.trim( Object.class, bindings );
 	    if( bindings == null || bindings.length == 0 )
 	        return null;
@@ -1908,6 +1904,7 @@ public class CPPSemantics {
 	    IBinding obj  = null;
 	    IBinding temp = null;
 	    ObjectSet fns = ObjectSet.EMPTY_SET;
+	    boolean fnsFromAST= false;
 	    ObjectSet templateFns = ObjectSet.EMPTY_SET;
 	    
 	    Object [] items = (Object[]) data.foundItems;
@@ -1938,6 +1935,28 @@ public class CPPSemantics {
 	        	mergeResults( data, bindings, false );
 	        	items = (Object[]) data.foundItems;
 	        	continue;
+	        } else if( temp instanceof IFunction ){
+	        	if( temp instanceof ICPPTemplateDefinition ){
+	        		if( templateFns == ObjectSet.EMPTY_SET )
+	        			templateFns = new ObjectSet(2);
+	        		templateFns.put( temp );
+	        	} else { 
+	        		if( fns == ObjectSet.EMPTY_SET )
+	        			fns = new ObjectSet(2);
+	        		if (temp instanceof IIndexBinding) {
+	        			// accept bindings from index only, in case we have none in the AST
+	        			if (!fnsFromAST) {
+	        				fns.put(temp);
+	        			}
+	        		}
+	        		else {
+	        			if (!fnsFromAST) {
+	        				fns.clear();
+	        				fnsFromAST= true;
+	        			}
+	        			fns.put( temp );
+	        		}
+	        	}
 	        } else if( temp instanceof IType ){
 	        	if( type == null ){
 	                type = temp;
@@ -1954,25 +1973,25 @@ public class CPPSemantics {
 				} else if( type != temp && !((IType)type).isSameType( (IType) temp )) {
 	                return new ProblemBinding( data.astName, IProblemBinding.SEMANTIC_AMBIGUOUS_LOOKUP, data.name() );
 	            }
-	        } else if( temp instanceof IFunction ){
-	        	if( temp instanceof ICPPTemplateDefinition ){
-	        		if( templateFns == ObjectSet.EMPTY_SET )
-	        			templateFns = new ObjectSet(2);
-	        		templateFns.put( temp );
-	        	} else { 
-	        		if( fns == ObjectSet.EMPTY_SET )
-	        			fns = new ObjectSet(2);
-	        		fns.put( temp );
-	        	}
 	        } else {
-	        	if( obj == null )
+	        	if( obj == null)
 	        		obj = temp;
-	        	else if( (temp instanceof ICPPDelegate && ((ICPPDelegate)temp).getBinding() == obj) ||
-	        	         (obj instanceof ICPPDelegate && ((ICPPDelegate)obj).getBinding() == temp) )
-	        	{
+	        	else if ( obj == temp ||
+	        			 (temp instanceof ICPPDelegate && ((ICPPDelegate)temp).getBinding() == obj) ||
+	        	         (obj instanceof ICPPDelegate && ((ICPPDelegate)obj).getBinding() == temp)) {
 	        	    //ok, delegates are synonyms
-	        	} else if( obj != temp ){
-	        	    return new ProblemBinding( data.astName, IProblemBinding.SEMANTIC_AMBIGUOUS_LOOKUP, data.name() );
+	        	}
+	        	else {
+	        		// ignore index stuff in case we have bindings from the ast
+	        		boolean ibobj= obj instanceof IIndexBinding;
+	        		boolean ibtemp= temp instanceof IIndexBinding;
+	        		// blame it on the index
+	        		if (ibobj != ibtemp) {
+	        			if (ibobj) 
+	        				obj= temp;
+	        		}
+	        		else 
+	        			return new ProblemBinding( data.astName, IProblemBinding.SEMANTIC_AMBIGUOUS_LOOKUP, data.name() );
 	        	}
 	        }
 	    }
@@ -2050,6 +2069,10 @@ public class CPPSemantics {
 		int size = functions.length;
 		for( int i = 0; i < size && functions[i] != null; i++ ){
 			function = (IFunction) functions[i];
+			if (function instanceof IProblemBinding) {
+				functions[i]= null;
+				continue;
+			}
 			num = function.getParameters().length;
 		
 			//if there are m arguments in the list, all candidate functions having m parameters
@@ -2087,7 +2110,7 @@ public class CPPSemantics {
 			else {
 			    IParameter [] params = function.getParameters();
 			    for( int j = num - 1; j >= numParameters; j-- ){
-					if( ((ICPPParameter)params[j]).getDefaultValue() == null ){
+					if( !((ICPPParameter)params[j]).hasDefaultValue()){
 					    functions[i] = null;
 						break;
 					}

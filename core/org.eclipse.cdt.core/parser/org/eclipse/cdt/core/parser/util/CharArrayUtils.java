@@ -52,7 +52,19 @@ public class CharArrayUtils {
 		
 		return true;
 	}
-	
+
+	public static final boolean equals(char[][] strarr1, char[][] strarr2) {
+		if (strarr1.length != strarr2.length) {
+			return false;
+		}
+		for (int i = 0; i < strarr2.length; i++) {
+			if (!equals(strarr1[i], strarr2[i])) {
+				return false;
+			}
+		}
+		return true;
+	}
+
 	/**
 	 * Implements a lexicographical comparator for char arrays. Comparison is done
 	 * on a per char basis, not a code-point basis.

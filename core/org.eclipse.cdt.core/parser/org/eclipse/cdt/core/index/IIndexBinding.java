@@ -12,7 +12,6 @@
 package org.eclipse.cdt.core.index;
 
 import org.eclipse.cdt.core.dom.ast.IBinding;
-import org.eclipse.core.runtime.CoreException;
 
 /**
  * Represents the semantics of a name in the index.
@@ -30,10 +29,10 @@ import org.eclipse.core.runtime.CoreException;
  * @since 4.0
  */
 public interface IIndexBinding extends IBinding {
+	IIndexBinding[] EMPTY_INDEX_BINDING_ARRAY = new IIndexBinding[0];
+
 	/**
-	 * Returns the enclosing binding. May return <code>null</code>. To give an example, for a member function
-	 * the parent binding would be the class defining the member.
-	 * @throws CoreException
+	 * Returns the qualified name of this binding as array of strings.
 	 */
-	IIndexBinding getParentBinding() throws CoreException;
+	String[] getQualifiedName();
 }

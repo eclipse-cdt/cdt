@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2005 IBM Corporation and others.
+ * Copyright (c) 2004, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 
 /*
@@ -27,6 +28,7 @@ import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBlockScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPDelegate;
 import org.eclipse.cdt.internal.core.dom.Linkage;
+import org.eclipse.cdt.internal.core.index.IIndexType;
 import org.eclipse.core.runtime.PlatformObject;
 
 /**
@@ -186,8 +188,8 @@ public class CPPEnumeration extends PlatformObject implements IEnumeration, ICPP
     public boolean isSameType( IType type ) {
         if( type == this )
             return true;
-        if( type instanceof ITypedef )
-            return ((ITypedef)type).isSameType( this );
+        if( type instanceof ITypedef || type instanceof IIndexType)
+            return type.isSameType( this );
         return false;
     }
     

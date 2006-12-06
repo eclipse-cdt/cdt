@@ -151,4 +151,8 @@ public class CPPMethodTemplate extends CPPFunctionTemplate implements
 		return false;
 	}
 
+	public boolean isImplicit() {
+		return false;
+	}
+
 }

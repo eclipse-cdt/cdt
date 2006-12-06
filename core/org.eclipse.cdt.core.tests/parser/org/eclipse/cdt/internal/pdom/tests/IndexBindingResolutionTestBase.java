@@ -81,7 +81,8 @@ public abstract class IndexBindingResolutionTestBase extends PDOMTestBase {
 	protected IBinding getBindingFromASTName(String section, int len) {
 		IASTName[] names= ast.getLanguage().getSelectedNames(ast, testData[1].indexOf(section), len);
 		assertEquals("<>1 name found for \""+section+"\"", 1, names.length);
-		assertNotNull("No binding for "+names[0].getRawSignature(), names[0].resolveBinding());
+		IBinding binding = names[0].resolveBinding();
+		assertNotNull("No binding for "+names[0].getRawSignature(), binding);
 		assertFalse("Binding is a ProblemBinding for name "+names[0].getRawSignature(), IProblemBinding.class.isAssignableFrom(names[0].resolveBinding().getClass()));
 		return names[0].resolveBinding();
 	}

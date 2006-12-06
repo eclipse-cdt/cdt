@@ -76,7 +76,7 @@ public class TypesTests extends PDOMTestBase {
 		IBinding [] As = pdom.findBindings(Pattern.compile("A"), false, new IndexFilter(), new NullProgressMonitor());
 		assertEquals(1, As.length);
 		ICPPClassType A = (ICPPClassType)As[0];
-		ICPPMethod[] Amethods = A.getMethods();
+		ICPPMethod[] Amethods = A.getDeclaredMethods();
 		assertEquals(1, Amethods.length);
 		ICPPMethod f = Amethods[0];
 		assertEquals("f", f.getName());

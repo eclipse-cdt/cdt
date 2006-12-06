@@ -392,7 +392,7 @@ public class CPPVisitor {
         try {
         	if( name.toCharArray().length > 0 && scope != null ) //can't lookup anonymous things
         		binding = scope.getBinding( name, false );
-            if( binding == null || !(binding instanceof ICPPClassType) ){
+            if( !(binding instanceof ICPPInternalBinding) || !(binding instanceof ICPPClassType)){
             	if( template )
             		binding = new CPPClassTemplate( name );
             	else
@@ -400,14 +400,11 @@ public class CPPVisitor {
 				if( scope != null )
 					ASTInternal.addName( scope,  compType.getName() );
     		} else {
-    			if( binding instanceof ICPPInternalBinding ){
-					ICPPInternalBinding internal = (ICPPInternalBinding) binding;
-					if( internal.getDefinition() == null )
-						internal.addDefinition( compType );
-					else
-						binding = new ProblemBinding( name, IProblemBinding.SEMANTIC_INVALID_REDEFINITION, name.toCharArray() ); 
-    			}
-    			
+    			ICPPInternalBinding internal = (ICPPInternalBinding) binding;
+    			if( internal.getDefinition() == null )
+    				internal.addDefinition( compType );
+    			else
+    				binding = new ProblemBinding( name, IProblemBinding.SEMANTIC_INVALID_REDEFINITION, name.toCharArray() ); 
     		}
         } catch ( DOMException e ) {
             binding = e.getProblem();
@@ -421,7 +418,7 @@ public class CPPVisitor {
 			IBinding binding;
             try {
                 binding = scope.getBinding( namespaceDef.getName(), false );
-                if( binding == null || binding instanceof IProblemBinding ){
+                if( !(binding instanceof ICPPInternalBinding) || binding instanceof IProblemBinding ){
     				binding = new CPPNamespace( namespaceDef );
     				ASTInternal.addName( scope,  namespaceDef.getName() );
     			}
@@ -532,21 +529,23 @@ public class CPPVisitor {
 				return CPPTemplates.createBinding( param );
 			}
 		} else if( simpleDecl != null && simpleDecl.getDeclSpecifier().getStorageClass() == IASTDeclSpecifier.sc_typedef ){
-		    if( binding != null && binding instanceof ITypedef ){
+		    if( binding instanceof ICPPInternalBinding && binding instanceof ITypedef ){
 		        try {
                     IType t1 = ((ITypedef)binding).getType();
                     IType t2 = createType( declarator );
                     if( t1 != null && t2 != null && t1.isSameType( t2 ) ){
-                        ((ICPPInternalBinding)binding).addDeclaration( name );
+        		        ICPPInternalBinding internal = (ICPPInternalBinding) binding;
+                        internal.addDeclaration(name);
                         return binding;
                     }
                 } catch ( DOMException e1 ) {
+                	return e1.getProblem();
                 }
                 return new ProblemBinding( name, IProblemBinding.SEMANTIC_INVALID_REDECLARATION, name.toCharArray() );
 		    }
 			binding = new CPPTypedef( name );
 		} else if( declarator instanceof ICPPASTFunctionDeclarator ){
-			if( binding != null && binding instanceof IFunction ){
+			if( binding instanceof ICPPInternalBinding && binding instanceof IFunction ){
 			    IFunction function = (IFunction) binding;
 			    if( CPPSemantics.isSameFunction( function, declarator ) ){
 			        ICPPInternalBinding internal = (ICPPInternalBinding) function;
@@ -554,7 +553,7 @@ public class CPPVisitor {
 			            internal.addDeclaration( name );
 			        else {
 			            if( internal.getDefinition() == null )
-			                ((ICPPInternalBinding)function).addDefinition( name );
+			                internal.addDefinition( name );
 			            else {
 			                IASTNode def = internal.getDefinition();
 			                if( def instanceof IASTDeclarator )
@@ -1588,10 +1587,10 @@ public class CPPVisitor {
 			name = ((IASTEnumerationSpecifier)declSpec).getName();
 		} else if( declSpec instanceof ICPPASTSimpleDeclSpecifier ){
 			ICPPASTSimpleDeclSpecifier spec = (ICPPASTSimpleDeclSpecifier) declSpec;
-			int bits = ( spec.isLong()     ? CPPBasicType.IS_LONG  : 0 ) |
-					   ( spec.isShort()    ? CPPBasicType.IS_SHORT : 0 ) |
-					   ( spec.isSigned()   ? CPPBasicType.IS_SIGNED: 0 ) |
-					   ( spec.isUnsigned() ? CPPBasicType.IS_UNSIGNED : 0 );
+			int bits = ( spec.isLong()     ? ICPPBasicType.IS_LONG  : 0 ) |
+					   ( spec.isShort()    ? ICPPBasicType.IS_SHORT : 0 ) |
+					   ( spec.isSigned()   ? ICPPBasicType.IS_SIGNED: 0 ) |
+					   ( spec.isUnsigned() ? ICPPBasicType.IS_UNSIGNED : 0 );
 			if( spec instanceof IGPPASTSimpleDeclSpecifier ){
 				IGPPASTSimpleDeclSpecifier gspec = (IGPPASTSimpleDeclSpecifier) spec;
 				if( gspec.getTypeofExpression() != null ){
@@ -1606,9 +1605,7 @@ public class CPPVisitor {
 		}
 		if( name != null ){
 			IBinding binding = name.resolveBinding();
-			if( binding instanceof IType )
-				type = (IType) binding;
-			else if( binding instanceof ICPPConstructor ){
+			if( binding instanceof ICPPConstructor ){
 				try {
 					ICPPClassScope scope = (ICPPClassScope) binding.getScope();
 					type = scope.getClassType();
@@ -1616,6 +1613,8 @@ public class CPPVisitor {
 				} catch (DOMException e) {
 					type = e.getProblem();
 				}
+			} else if( binding instanceof IType ) {
+				type = (IType) binding;
 			} else if( binding instanceof ICPPTemplateNonTypeParameter ){
 				//TODO workaround... is there anything better? 
 				try {
@@ -1831,7 +1830,7 @@ public class CPPVisitor {
 					}
 				} catch (DOMException e) {
 				}
-				return new CPPBasicType( IBasicType.t_int, CPPBasicType.IS_LONG | CPPBasicType.IS_UNSIGNED );
+				return new CPPBasicType( IBasicType.t_int, ICPPBasicType.IS_LONG | ICPPBasicType.IS_UNSIGNED );
 			}
 			
 			IType type = getExpressionType(((IASTUnaryExpression)expression).getOperand() );
@@ -1886,7 +1885,7 @@ public class CPPVisitor {
 					}
 				} catch (DOMException e) {
 				}
-				return new CPPBasicType( IBasicType.t_int, CPPBasicType.IS_LONG | CPPBasicType.IS_UNSIGNED );
+				return new CPPBasicType( IBasicType.t_int, ICPPBasicType.IS_LONG | ICPPBasicType.IS_UNSIGNED );
 			}
 		    return createType( typeidExp.getTypeId() );
 		} else if( expression instanceof IASTArraySubscriptExpression ){

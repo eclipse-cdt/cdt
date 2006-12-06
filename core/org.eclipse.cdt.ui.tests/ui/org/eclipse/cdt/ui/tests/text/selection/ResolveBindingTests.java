@@ -30,11 +30,9 @@ import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.testplugin.CProjectHelper;
 import org.eclipse.cdt.ui.tests.BaseUITestCase;
 
-import org.eclipse.cdt.internal.core.CCoreInternals;
-
 public class ResolveBindingTests extends BaseUITestCase  {
 
-	private static final int WAIT_FOR_INDEXER = 5000;
+	private static final int WAIT_FOR_INDEXER = 8000;
 	private ICProject fCProject;
 	private IIndex fIndex;
 
@@ -48,8 +46,7 @@ public class ResolveBindingTests extends BaseUITestCase  {
 
 	protected void setUp() throws Exception {
 		super.setUp();
-		fCProject= CProjectHelper.createCProject("ResolveBindingTests", "bin", IPDOMManager.ID_NO_INDEXER);
-		CCoreInternals.getPDOMManager().reindex(fCProject);
+		fCProject= CProjectHelper.createCCProject("ResolveBindingTests", "bin", IPDOMManager.ID_FAST_INDEXER);
 		fIndex= CCorePlugin.getIndexManager().getIndex(fCProject);
 	}
 		
@@ -151,7 +148,7 @@ public class ResolveBindingTests extends BaseUITestCase  {
     //	   m.method(); // r2
     //	   n->method(); // r3
     // }
-	public void _testMethodBinding_158735() throws Exception {
+	public void testMethodBinding_158735() throws Exception {
 		String content = readTaggedComment("testMethods.h");
 		IFile hfile= createFile(fCProject.getProject(), "testMethods.h", content);
 		content = readTaggedComment("testMethods.cpp");

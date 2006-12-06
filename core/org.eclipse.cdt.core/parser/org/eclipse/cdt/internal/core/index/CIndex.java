@@ -20,6 +20,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.regex.Pattern;
 
+import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.dom.ILinkage;
 import org.eclipse.cdt.core.dom.IName;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IBinding;
@@ -323,5 +325,47 @@ public class CIndex implements IIndex {
 			result= Math.max(result, fFragments[i].getLastWriteAccess());
 		}
 		return result;
+	}
+
+	public IBinding[] findInGlobalScope(ILinkage linkage, char[] name) {
+		ArrayList result= new ArrayList();
+		for (int i = 0; i < fFragments.length; i++) {
+			try {
+				IBinding[] part = fFragments[i].findInGlobalScope(linkage, name);
+				for (int j = 0; j < part.length; j++) {
+					IBinding binding = part[j];
+					if (binding instanceof IIndexBinding) {
+						result.add(binding);
+					}
+				}
+			} catch (CoreException e) {
+				CCorePlugin.log(e);
+			}
+		}
+		if (!result.isEmpty()) {
+			return (IIndexBinding[]) result.toArray(new IIndexBinding[result.size()]);
+		}
+		return IIndexBinding.EMPTY_INDEX_BINDING_ARRAY;
+	}
+
+	public IBinding[] findInNamespace(IBinding nsbinding, char[] name) {
+		ArrayList result= new ArrayList();
+		for (int i = 0; i < fFragments.length; i++) {
+			try {
+				IBinding[] part = fFragments[i].findInNamespace(nsbinding, name);
+				for (int j = 0; j < part.length; j++) {
+					IBinding binding = part[j];
+					if (binding instanceof IIndexBinding) {
+						result.add(binding);
+					}
+				}
+				if (!result.isEmpty()) {
+					return (IIndexBinding[]) result.toArray(new IIndexBinding[result.size()]);
+				}
+			} catch (CoreException e) {
+				CCorePlugin.log(e);
+			}
+		}
+		return IIndexBinding.EMPTY_INDEX_BINDING_ARRAY;
 	}
 }

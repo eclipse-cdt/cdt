@@ -177,7 +177,9 @@ public class CPPFunction extends PlatformObject implements ICPPFunction, ICPPInt
 	            IScope scope = getScope();
                 try {
                     IASTNode node = ASTInternal.getPhysicalNodeOfScope(scope);
-                    tu = node.getTranslationUnit();
+                    if (node != null) {
+                    	tu = node.getTranslationUnit();
+                    }
                 } catch ( DOMException e ) {
                 }
 	        }

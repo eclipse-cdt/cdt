@@ -16,33 +16,26 @@ package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.IPDOMVisitor;
 import org.eclipse.cdt.core.dom.ast.DOMException;
-import org.eclipse.cdt.core.dom.ast.IASTFunctionCallExpression;
-import org.eclipse.cdt.core.dom.ast.IASTIdExpression;
 import org.eclipse.cdt.core.dom.ast.IASTName;
-import org.eclipse.cdt.core.dom.ast.IASTNamedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IBinding;
-import org.eclipse.cdt.core.dom.ast.IType;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespaceScope;
-import org.eclipse.cdt.core.parser.util.ArrayUtil;
+import org.eclipse.cdt.core.index.IIndexBinding;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPSemantics;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.db.BTree;
 import org.eclipse.cdt.internal.core.pdom.db.IBTreeVisitor;
-import org.eclipse.cdt.internal.core.pdom.dom.FindBinding;
 import org.eclipse.cdt.internal.core.pdom.dom.FindBindingsInBTree;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
-import org.eclipse.cdt.internal.core.pdom.dom.PDOMNotImplementedError;
 import org.eclipse.core.runtime.CoreException;
 
 /**
  * @author Doug Schaefer
  *
  */
-class PDOMCPPNamespace extends PDOMCPPBinding
-implements ICPPNamespace, ICPPNamespaceScope {
+public class PDOMCPPNamespace extends PDOMCPPBinding implements ICPPNamespace, ICPPNamespaceScope {
 
 	private static final int INDEX_OFFSET = PDOMBinding.RECORD_SIZE + 0;
 
@@ -99,115 +92,28 @@ implements ICPPNamespace, ICPPNamespaceScope {
 		return new IASTNode[0];
 	}
 
-	// mstodo this method currently does not get called, we could try to remove it.
-	// an alternative an appropriate method in  CPPSemantics. This implementation is not
-	// correct for sure.
-	public IBinding[] find(String name) throws DOMException {
+	public IBinding[] find(String name) {
 		try {
 			FindBindingsInBTree visitor = new FindBindingsInBTree(getLinkageImpl(), name.toCharArray());
 			getIndex().accept(visitor);
 			return visitor.getBinding();
 		} catch (CoreException e) {
 			CCorePlugin.log(e);
-			return new IBinding[0];
 		}
+		return IIndexBinding.EMPTY_INDEX_BINDING_ARRAY;
 	}
 
 	public IBinding getBinding(IASTName name, boolean resolve) throws DOMException {
-		IASTNode parent = name.getParent();
-		
 		try {
-			if (name instanceof ICPPASTQualifiedName) {
-				IASTName lastName = ((ICPPASTQualifiedName)name).getLastName();
-				return lastName != null ? lastName.resolveBinding() : null;
-			}
+			FindBindingsInBTree visitor= new FindBindingsInBTree(getLinkageImpl(), name.toCharArray());
+			getIndex().accept(visitor);
 			
-			if (parent instanceof ICPPASTQualifiedName) {
-				IASTName[] names = ((ICPPASTQualifiedName)parent).getNames();
-				int index = ArrayUtil.indexOf(names, name);
-
-				if (index == names.length - 1) { // tip of qn
-					parent = parent.getParent();
-				} else {
-					{ // bail out if this is not the outerscope of the name being resolved
-						if(index==-1) {
-							throw new PDOMNotImplementedError();
-						} else {
-							if(index>0) {
-								// make sure we're the namespace they're talking about
-								PDOMBinding binding = (PDOMBinding) pdom.findBinding(names[index-1]); // index == 0 ?
-								if(binding instanceof PDOMCPPNamespaceAlias) {
-									// aftodo - this needs a review - do we want to assign to binding
-									// or just check against this?
-									binding = (PDOMBinding) ((PDOMCPPNamespaceAlias) binding).getBinding();
-								}
-								if(!equals(binding)) {
-									return null;
-								}
-							} else {
-								// ok - just search us and return null if there is nothing in here
-							}
-						}
-					}
-
-					// aftodo - do we even need specify the type - we should
-					// expect only one name here anyway?
-					return searchCurrentScope(name.toCharArray(), new int[] {
-						PDOMCPPLinkage.CPPCLASSTYPE,
-						PDOMCPPLinkage.CPPNAMESPACE,
-						PDOMCPPLinkage.CPPFUNCTION,
-						PDOMCPPLinkage.CPPVARIABLE,
-						PDOMCPPLinkage.CPPENUMERATION,
-						PDOMCPPLinkage.CPPENUMERATOR
-					});
-				}
-			}
-
-			IASTNode eParent = parent.getParent();
-			if (parent instanceof IASTIdExpression) {
-				if (eParent instanceof IASTFunctionCallExpression) {
-					if(parent.getPropertyInParent().equals(IASTFunctionCallExpression.FUNCTION_NAME)) {
-						return searchCurrentScopeForFunction((IASTFunctionCallExpression)eParent, name);
-					}
-				} else {
-					int desiredType = ((name.getParent() instanceof ICPPASTQualifiedName)
-							&& ((ICPPASTQualifiedName)name.getParent()).getLastName() != name)
-							? PDOMCPPLinkage.CPPNAMESPACE : PDOMCPPLinkage.CPPVARIABLE;
-
-					IBinding result = searchCurrentScope(name.toCharArray(), new int[] {desiredType});
-					if(result!=null)
-						return result;
-					return searchCurrentScope(name.toCharArray(), new int[] {PDOMCPPLinkage.CPPTYPEDEF});
-				}
-			} else if (parent instanceof IASTNamedTypeSpecifier) {
-				return searchCurrentScope(name.toCharArray(), new int[] {
-					PDOMCPPLinkage.CPPCLASSTYPE,
-					PDOMCPPLinkage.CPPENUMERATION,
-					PDOMCPPLinkage.CPPTYPEDEF
-				});
-			}
+			IBinding[] bindings= visitor.getBinding();
+			return CPPSemantics.resolveAmbiguities(name, bindings);
 		} catch (CoreException e) {
 			CCorePlugin.log(e);
 		}
-
 		return null;
-	}
-
-
-	private PDOMBinding searchCurrentScopeForFunction(IASTFunctionCallExpression fce, IASTName name) throws CoreException {
-		try {
-			IType[] types = PDOMCPPLinkage.getTypes(fce.getParameterExpression());
-			if(types!=null) {
-				return CPPFindBinding.findBinding(getIndex(), getPDOM(), name.toCharArray(), PDOMCPPLinkage.CPPFUNCTION, types);
-			}
-		} catch(DOMException de) {
-			CCorePlugin.log(de);
-		}
-		return null;
-	}
-
-	private PDOMBinding searchCurrentScope(char[] name, int[] constants) throws CoreException {
-		return FindBinding.findBinding(getIndex(), getPDOM(), name, constants);
 	}
 
 	public boolean isFullyCached() throws DOMException {

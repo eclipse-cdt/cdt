@@ -440,7 +440,7 @@ public class BasicCppCallHierarchyTest extends CallHierarchyBaseTest {
 		checkTreeNode(tree, 0, 2, "ns::func()");
 	}
 
-	public void _testNamespacePart2_156519() throws Exception {
+	public void testNamespacePart2_156519() throws Exception {
 		String content = readTaggedComment("testNamespace");
 		IFile file= createFile(getProject(), "testNamespace.cpp", content);
 		waitForIndexer(fIndex, file, MAX_TIME_INDEXER);

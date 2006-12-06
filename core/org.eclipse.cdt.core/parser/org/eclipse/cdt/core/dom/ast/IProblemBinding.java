@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2005 IBM Corporation and others.
+ * Copyright (c) 2004, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 
 /*
@@ -128,5 +129,8 @@ public interface IProblemBinding extends IBinding, IScope, IType {
     
     public static final int SEMANTIC_MEMBER_DECLARATION_NOT_FOUND = 0x00D;
     
-    public static final int LAST_PROBLEM = SEMANTIC_MEMBER_DECLARATION_NOT_FOUND;
+	public static final int SEMANTIC_RECURSION_IN_LOOKUP = 0x00E;
+
+	public static final int LAST_PROBLEM = SEMANTIC_RECURSION_IN_LOOKUP;
+
 }

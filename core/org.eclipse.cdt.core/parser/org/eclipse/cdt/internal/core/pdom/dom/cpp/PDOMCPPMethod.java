@@ -9,6 +9,7 @@
  * QNX - Initial API and implementation
  * IBM Corporation
  * Andrew Ferguson (Symbian)
+ * Markus Schorn (Wind River Systems)
  *******************************************************************************/
 
 package org.eclipse.cdt.internal.core.pdom.dom.cpp;
@@ -22,6 +23,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.internal.core.Util;
+import org.eclipse.cdt.internal.core.index.IIndexType;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.db.Database;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
@@ -33,13 +35,13 @@ import org.eclipse.core.runtime.CoreException;
  * @author Doug Schaefer
  * 
  */
-class PDOMCPPMethod extends PDOMCPPFunction implements ICPPMethod, ICPPFunctionType {
+public class PDOMCPPMethod extends PDOMCPPFunction implements IIndexType, ICPPMethod, ICPPFunctionType {
 
 	/**
 	 * Offset of remaining annotation information (relative to the beginning of
 	 * the record).
 	 */
-	private static final int ANNOTATION1 = PDOMCPPFunction.RECORD_SIZE; // byte
+	protected static final int ANNOTATION1 = PDOMCPPFunction.RECORD_SIZE; // byte
 
 	/**
 	 * The size in bytes of a PDOMCPPMethod record in the database.
@@ -49,7 +51,7 @@ class PDOMCPPMethod extends PDOMCPPFunction implements ICPPMethod, ICPPFunctionT
 	/**
 	 * The bit offset of CV qualifier flags within ANNOTATION1.
 	 */
-	private static final int CV_OFFSET = 2;
+	private static final int CV_OFFSET = PDOMCPPAnnotation.MAX_EXTRA_OFFSET + 1;
 
 	public PDOMCPPMethod(PDOM pdom, PDOMNode parent, ICPPMethod method) throws CoreException {
 		super(pdom, parent, method);
@@ -91,6 +93,10 @@ class PDOMCPPMethod extends PDOMCPPFunction implements ICPPMethod, ICPPFunctionT
 		throw new PDOMNotImplementedError();
 	}
 
+	public boolean isImplicit() {
+		return getBit(getByte(record + ANNOTATION1), PDOMCPPAnnotation.IMPLICIT_METHOD_OFFSET);
+	}
+	
 	public IScope getFunctionScope() throws DOMException {
 		throw new PDOMNotImplementedError();
 	}
@@ -144,12 +150,7 @@ class PDOMCPPMethod extends PDOMCPPFunction implements ICPPMethod, ICPPFunctionT
 		return getBit(getByte(record + ANNOTATION1), PDOMCAnnotation.VOLATILE_OFFSET + CV_OFFSET);
 	}
 
-	public boolean isSameType(IType type) {
-		if (type == this)
-			return true;
-		if (type instanceof PDOMCPPMethod)
-			return getRecord() == ((PDOMCPPMethod) type).getRecordSize();
-		// TODO further analysis to compare with DOM objects
-		return false;
+	public boolean isSameType(IType type) {	
+		return super.isSameType(type);
 	}
 }

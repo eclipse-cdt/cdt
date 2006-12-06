@@ -123,28 +123,23 @@ public class CPPFunctionTests extends PDOMTestBase {
 		assertDefinitionCount(pdom, "forwardDeclaration", 1);
 	}
 	
-	public void _testVoidFunction() throws Exception {
-		// Type information not yet stored in PDOM.
+	public void testVoidFunction() throws Exception {
 		assertReturnType(pdom, "voidCPPFunction", IBasicType.t_void);
 	}
 
-	public void _testIntFunction() throws Exception {
-		// Type information not yet stored in PDOM.
+	public void testIntFunction() throws Exception {
 		assertReturnType(pdom, "intCPPFunction", IBasicType.t_int);
 	}
 
-	public void _testDoubleFunction() throws Exception {
-		// Type information not yet stored in PDOM.
+	public void testDoubleFunction() throws Exception {
 		assertReturnType(pdom, "doubleCPPFunction", IBasicType.t_double);
 	}
 
-	public void _testCharFunction() throws Exception {
-		// Type information not yet stored in PDOM.
+	public void testCharFunction() throws Exception {
 		assertReturnType(pdom, "charCPPFunction", IBasicType.t_char);
 	}
 
-	public void _testFloatFunction() throws Exception {
-		// Type information not yet stored in PDOM.
+	public void testFloatFunction() throws Exception {
 		assertReturnType(pdom, "floatCPPFunction", IBasicType.t_float);
 	}
 

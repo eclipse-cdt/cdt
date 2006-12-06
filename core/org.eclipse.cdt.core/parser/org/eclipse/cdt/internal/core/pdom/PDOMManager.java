@@ -25,8 +25,8 @@ import org.eclipse.cdt.core.dom.IPDOM;
 import org.eclipse.cdt.core.dom.IPDOMIndexer;
 import org.eclipse.cdt.core.dom.IPDOMIndexerTask;
 import org.eclipse.cdt.core.dom.IPDOMManager;
-import org.eclipse.cdt.core.index.IIndexChangeListener;
 import org.eclipse.cdt.core.index.IIndex;
+import org.eclipse.cdt.core.index.IIndexChangeListener;
 import org.eclipse.cdt.core.index.IIndexerStateListener;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICElementDelta;
@@ -47,7 +47,6 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.IStatus;
@@ -104,7 +103,7 @@ public class PDOMManager implements IPDOMManager, IWritableIndexManager, IListen
      * Stores mapping from pdom to project, used to serialize\ creation of new pdoms.
      */
     private Map fProjectToPDOM= new HashMap();
-    private Map fLocationToCProject= new HashMap();
+    private Map fFileToProject= new HashMap();
 	private ListenerList fChangeListeners= new ListenerList();
 	private ListenerList fStateListeners= new ListenerList();
 	
@@ -155,19 +154,19 @@ public class PDOMManager implements IPDOMManager, IWritableIndexManager, IListen
 			}
 
 			String dbName= rproject.getPersistentProperty(dbNameProperty);
-			IPath dbPath= null;
+			File dbFile= null;
 			if (dbName != null) {
-				dbPath= CCorePlugin.getDefault().getStateLocation().append(dbName);
-				ICProject currentCOwner= (ICProject) fLocationToCProject.get(dbPath);
+				dbFile= CCorePlugin.getDefault().getStateLocation().append(dbName).toFile();
+				ICProject currentCOwner= (ICProject) fFileToProject.get(dbFile);
 				if (currentCOwner != null) {
 					IProject currentOwner= currentCOwner.getProject();
 					if (currentOwner.exists()) {
 						dbName= null;
-						dbPath= null;
+						dbFile= null;
 					}
 					else {
 						pdom= (WritablePDOM) fProjectToPDOM.remove(currentOwner);
-						fLocationToCProject.remove(dbPath);
+						fFileToProject.remove(dbFile);
 					}
 				}
 			}
@@ -176,14 +175,14 @@ public class PDOMManager implements IPDOMManager, IWritableIndexManager, IListen
 				if (dbName == null) {
 					dbName= getDefaultName(project);
 					rproject.setPersistentProperty(dbNameProperty, dbName);
-					dbPath= CCorePlugin.getDefault().getStateLocation().append(dbName);
+					dbFile= CCorePlugin.getDefault().getStateLocation().append(dbName).toFile();
 				}
 			
-				pdom = new WritablePDOM(new File(dbPath.toOSString()), new PDOMProjectIndexLocationConverter(rproject));
+				pdom = new WritablePDOM(dbFile, new PDOMProjectIndexLocationConverter(rproject));
 				pdom.addListener(this);
 			}
 			
-			fLocationToCProject.put(dbPath, project);
+			fFileToProject.put(dbFile, project);
 			fProjectToPDOM.put(rproject, pdom);
 			return pdom;
 		}
@@ -626,7 +625,7 @@ public class PDOMManager implements IPDOMManager, IWritableIndexManager, IListen
 		
 		ICProject project;
 		synchronized (fProjectToPDOM) {
-			project = (ICProject) fLocationToCProject.get(pdom.getPath());
+			project = (ICProject) fFileToProject.get(pdom.getPath());
 		}		
 		
 		if (project != null) {

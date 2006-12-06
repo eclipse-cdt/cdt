@@ -26,8 +26,10 @@ import org.eclipse.cdt.core.dom.ast.ICompositeType;
 import org.eclipse.cdt.core.dom.ast.IField;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
+import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.c.ICCompositeTypeScope;
 import org.eclipse.cdt.internal.core.Util;
+import org.eclipse.cdt.internal.core.index.IIndexType;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.db.PDOMNodeLinkedList;
 import org.eclipse.cdt.internal.core.pdom.dom.IPDOMMemberOwner;
@@ -41,7 +43,7 @@ import org.eclipse.core.runtime.Status;
  * @author Doug Schaefer
  *
  */
-public class PDOMCStructure extends PDOMBinding implements ICompositeType, ICCompositeTypeScope, IPDOMMemberOwner {
+public class PDOMCStructure extends PDOMBinding implements ICompositeType, ICCompositeTypeScope, IPDOMMemberOwner, IIndexType {
 	private static final int MEMBERLIST = PDOMBinding.RECORD_SIZE;
 	private static final int KEY = MEMBERLIST + 4; // byte
 	protected static final int RECORD_SIZE = PDOMBinding.RECORD_SIZE + 8;
@@ -152,11 +154,26 @@ public class PDOMCStructure extends PDOMBinding implements ICompositeType, ICCom
 	}
 
 	public boolean isSameType(IType type) {
-		if (equals(type))
-			return true;
-		else
-			// TODO - see if it matches
-			return false;
+		if (type instanceof PDOMNode) {
+			PDOMNode node= (PDOMNode) type;
+			if (node.getPDOM() == getPDOM()) {
+				return node.getRecord() == getRecord();
+			}
+		}
+
+		if (type instanceof ITypedef) {
+			return type.isSameType(this);
+		}
+		
+		if (type instanceof ICompositeType) {
+			ICompositeType etype= (ICompositeType) type;
+			try {
+				return getDBName().equals(etype.getNameCharArray());
+			} catch (CoreException e) {
+				CCorePlugin.log(e);
+			}
+		}
+		return false;
 	}
 
 	protected int getRecordSize() {

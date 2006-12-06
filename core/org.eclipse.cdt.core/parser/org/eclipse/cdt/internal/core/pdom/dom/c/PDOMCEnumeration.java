@@ -7,6 +7,7 @@
  *
  * Contributors:
  * QNX - Initial API and implementation
+ * Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom.dom.c;
 
@@ -17,6 +18,8 @@ import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IEnumeration;
 import org.eclipse.cdt.core.dom.ast.IEnumerator;
 import org.eclipse.cdt.core.dom.ast.IType;
+import org.eclipse.cdt.core.dom.ast.ITypedef;
+import org.eclipse.cdt.internal.core.index.IIndexType;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
@@ -26,7 +29,7 @@ import org.eclipse.core.runtime.CoreException;
 /**
  * @author Doug Schaefer
  */
-class PDOMCEnumeration extends PDOMBinding implements IEnumeration {
+class PDOMCEnumeration extends PDOMBinding implements IEnumeration, IIndexType {
 
 	private static final int FIRST_ENUMERATOR = PDOMBinding.RECORD_SIZE + 0;
 	
@@ -87,7 +90,26 @@ class PDOMCEnumeration extends PDOMBinding implements IEnumeration {
 	}
 	
 	public boolean isSameType(IType type) {
-		throw new PDOMNotImplementedError();
+		if (type instanceof PDOMNode) {
+			PDOMNode node= (PDOMNode) type;
+			if (node.getPDOM() == getPDOM()) {
+				return node.getRecord() == getRecord();
+			}
+		}
+
+		if (type instanceof ITypedef) {
+			return type.isSameType(this);
+		}
+		
+		if (type instanceof IEnumeration) {
+			IEnumeration etype= (IEnumeration) type;
+			try {
+				return getDBName().equals(etype.getNameCharArray());
+			} catch (CoreException e) {
+				CCorePlugin.log(e);
+			}
+		}
+		return false;
 	}
 
 	public Object clone() {

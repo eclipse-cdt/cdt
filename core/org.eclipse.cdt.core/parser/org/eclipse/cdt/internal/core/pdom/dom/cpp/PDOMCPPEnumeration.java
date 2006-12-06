@@ -7,6 +7,7 @@
  *
  * Contributors:
  * QNX - Initial API and implementation
+ * Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 
@@ -17,8 +18,9 @@ import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IEnumeration;
 import org.eclipse.cdt.core.dom.ast.IEnumerator;
 import org.eclipse.cdt.core.dom.ast.IType;
+import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBinding;
-import org.eclipse.cdt.internal.core.index.IIndexProxyBinding;
+import org.eclipse.cdt.internal.core.index.IIndexType;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
@@ -28,7 +30,7 @@ import org.eclipse.core.runtime.CoreException;
 /**
  * @author Doug Schaefer
  */
-class PDOMCPPEnumeration extends PDOMCPPBinding implements IEnumeration, ICPPBinding {
+class PDOMCPPEnumeration extends PDOMCPPBinding implements IEnumeration, IIndexType, ICPPBinding {
 
 	private static final int FIRST_ENUMERATOR = PDOMBinding.RECORD_SIZE + 0;
 	
@@ -89,23 +91,34 @@ class PDOMCPPEnumeration extends PDOMCPPBinding implements IEnumeration, ICPPBin
 	}
 	
 	public boolean isSameType(IType type) {
-		if (type instanceof PDOMBinding)
-			return record == ((PDOMBinding)type).getRecord();
-		else if (type instanceof IEnumeration) { 
-			try {
-				IIndexProxyBinding pdomType = pdom.adaptBinding((IEnumeration)type);
-				if (pdomType == null)
-					return false;
-				else if (pdomType instanceof PDOMBinding)
-					return record == ((PDOMBinding)pdomType).getRecord();
-				else
-					throw new PDOMNotImplementedError();
-			} catch (CoreException e) {
-				CCorePlugin.log(e);
-				return false;
+		if (type instanceof PDOMNode) {
+			PDOMNode node= (PDOMNode) type;
+			if (node.getPDOM() == getPDOM()) {
+				return node.getRecord() == getRecord();
 			}
-		} else
-			return false;
+		}
+
+		if (type instanceof ITypedef) {
+			return type.isSameType(this);
+		}
+		
+		try {
+			if (type instanceof IEnumeration) {
+				if (type instanceof ICPPBinding) {
+					ICPPBinding etype= (ICPPBinding) type;
+					char[][] qname = etype.getQualifiedNameCharArray();
+					return hasQualifiedName(qname, qname.length-1);
+				}
+				else if (type instanceof PDOMCPPEnumeration) {
+					PDOMCPPEnumeration etype= (PDOMCPPEnumeration) type;
+					char[][] qname= etype.getQualifiedNameCharArray();
+					return hasQualifiedName(qname, qname.length-1);
+				}
+			}
+		} catch (DOMException e) {
+			CCorePlugin.log(e);
+		}
+		return false;
 	}
 
 	public Object clone() {

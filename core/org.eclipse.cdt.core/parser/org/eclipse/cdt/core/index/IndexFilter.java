@@ -29,16 +29,6 @@ public class IndexFilter {
 	public static final IndexFilter ALL = new IndexFilter();
 
 	/**
-	 * Returns whether or not to include objects of the given linkage in the query.
-	 * @see IIndex#findBindings(java.util.regex.Pattern, boolean, IndexFilter, org.eclipse.core.runtime.IProgressMonitor)
-	 * @param linkage a linkage to be tested
-	 * @return whether to include objects of the given linkage in the query.
-	 */
-	public boolean acceptLinkage(ILinkage linkage) {
-		return true;
-	}
-	
-	/**
 	 * Get an IndexFilter that filters out bindings from linkages other than that
 	 * specified
 	 * @param target the linkage whose bindings should be retained
@@ -50,5 +40,25 @@ public class IndexFilter {
 				return linkage.getID() == target.getID();
 			}
 		};
+	}
+
+	/**
+	 * Returns whether or not to include objects of the given linkage in the query.
+	 * @see IIndex#findBindings(java.util.regex.Pattern, boolean, IndexFilter, org.eclipse.core.runtime.IProgressMonitor)
+	 * @param linkage a linkage to be tested
+	 * @return whether to include objects of the given linkage in the query.
+	 */
+	public boolean acceptLinkage(ILinkage linkage) {
+		return true;
+	}
+	
+	/**
+	 * Returns whether or not to include implicit methods in the query.
+	 * @see IIndex#findBindings(java.util.regex.Pattern, boolean, IndexFilter, org.eclipse.core.runtime.IProgressMonitor)
+	 * @return whether or not to include implicit methods in the query.
+	 * @since 4.0
+	 */
+	public boolean acceptImplicitMethods() {
+		return false;
 	}
 }

@@ -55,7 +55,7 @@ public class IndexCPPBindingResolutionTest extends IndexBindingResolutionTestBas
 	//	   long * CS::* autsch;
 	//     C * CS::* method(CS **);
 	//	};
-
+	
 	// // referencing file
 	//  #include "header.h"
 	//	void references() {
@@ -73,6 +73,32 @@ public class IndexCPPBindingResolutionTest extends IndexBindingResolutionTestBas
 		IBinding b3 = getBindingFromASTName("cs)->*cp->a", 2);
 		IBinding b4 = getBindingFromASTName("autsch = lp", 6);
 		IBinding b5 = getBindingFromASTName("ouch;", 4);
+	}
+
+	// // header file
+
+	//	class C {
+	//	public:
+	//	   int field;
+	//	   struct CS { long* l; C *method(CS **); };
+	//	   CS cs;
+	//     CS **cspp;
+	//	   long * CS::* ouch;
+	//	   long * CS::* autsch;
+	//     C * CS::* method(CS **);
+	//	};
+	// // referencing file
+	//  #include "header.h"
+	//	void references() {
+	//	   C *cp = new C();
+	//	   long l = 5, *lp;
+	//	   lp = &l;
+	//	   cp->cs.*cp->ouch = lp = cp->cs.*cp->autsch;
+	//	   &(cp->cs)->*cp->autsch = lp = &(cp->cs)->*cp->ouch;
+	//     cp->cs.*method(cp->cspp);/*1*/ &(cp->cs)->*method(cp->cspp);/*2*/
+	//	}
+	public void _testPointerToMemberFields_2() throws IOException {
+		// fails with AST parser, only (the header is empty)
 		IBinding b6 = getBindingFromASTName("method(cp->cspp);/*1*/", 6);
 		IBinding b7 = getBindingFromASTName("method(cp->cspp);/*2*/", 6);
 	}
@@ -367,10 +393,10 @@ public class IndexCPPBindingResolutionTest extends IndexBindingResolutionTestBas
 	//	 void m1() { e1 = ER1; }
 	//	 static void m2() { e2 = ER2; }
 	// };
-	public void _testEnumeratorInClassScope() {
+	public void testEnumeratorInClassScope() {
 		IBinding b0 = getBindingFromASTName("E e1", 1);
-		IBinding b1 = getBindingFromASTName("ER1; }", 1);
-		IBinding b2 = getBindingFromASTName("ER2; }", 1);
+		IBinding b1 = getBindingFromASTName("ER1; }", 3);
+		IBinding b2 = getBindingFromASTName("ER2; }", 3);
 	}
 	
 	// // header content
@@ -426,7 +452,7 @@ public class IndexCPPBindingResolutionTest extends IndexBindingResolutionTestBas
 	
 	// #include "header.h"
 	// void ref() { foo(); }
-	public void _testFunctionDefaultArguments() {
+	public void testFunctionDefaultArguments() {
 		IBinding b0 = getBindingFromASTName("foo();", 3);
 	}
 
@@ -442,7 +468,7 @@ public class IndexCPPBindingResolutionTest extends IndexBindingResolutionTestBas
 	//    d.foo(4); // also calls long version (int version is hidden)
 	//    // aftodo - does this test make sense?
 	// }
-	public void _testMethodHidingInInheritance() {
+	public void testMethodHidingInInheritance() {
 		IBinding b0 = getBindingFromASTName("d; /*d*/", 1);
 		IBinding b1 = getBindingFromASTName("foo(55L);", 3);
 		IBinding b2 = getBindingFromASTName("foo(4);", 3);
@@ -493,7 +519,7 @@ public class IndexCPPBindingResolutionTest extends IndexBindingResolutionTestBas
 	////reference content
 	//void references() {
 	//	a[0]->i/*0*/++; (*a[0]).i/*1*/++;                    // IASTArraySubscriptExpression
-	//	/* not applicable */ ??                              // IASTBinaryExpression
+	//	/* not applicable ?? */                              // IASTBinaryExpression
 	//	((S*)sp)->i/*3*/++; ((S)s).i/*4*/++; //aftodo-valid? // IASTCastExpression
 	//	(true ? sp : sp)->i/*5*/++; (true ? s : s).i/*6*/++; // IASTConditionalExpression
 	//	(sp,sp)->i/*7*/++; (s,s).i/*8*/++;                   // IASTExpressionList
@@ -507,7 +533,7 @@ public class IndexCPPBindingResolutionTest extends IndexBindingResolutionTestBas
 	//	/* not applicable */                                 // ICPPASTDeleteExpression
 	//	(new S())->i/*18*/++;                                // ICPPASTNewExpression
 	//}
-	public void _testFieldReference() {
+	public void testFieldReference() {
 		IBinding b0 = getBindingFromASTName("i/*0*/", 1);
 		IBinding b1 = getBindingFromASTName("i/*1*/", 1);
 		// IBinding b2 = getBindingFromASTName(ast, "i/*2*/", 1);
@@ -559,6 +585,7 @@ public class IndexCPPBindingResolutionTest extends IndexBindingResolutionTestBas
 	//		// foo/*p*/(MADE_UP_SYMBOL);            // ICPPASTTypenameExprssion
 	//	}
 	public void _testExpressionKindForFunctionCalls() {
+		// depends on bug 164470 because resolution takes place during parse.
 		IBinding b0 = getBindingFromASTName("foo/*a*/", 3);
 		IBinding b0a = getBindingFromASTName("cp[1]", 2);
 		// assertCompositeTypeParam(0, ICPPClassType.k_class, b0, "C");

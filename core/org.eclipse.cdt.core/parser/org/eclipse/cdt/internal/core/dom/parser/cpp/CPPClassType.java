@@ -58,6 +58,7 @@ import org.eclipse.cdt.internal.core.dom.Linkage;
 import org.eclipse.cdt.internal.core.dom.parser.ASTInternal;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
+import org.eclipse.cdt.internal.core.index.IIndexType;
 import org.eclipse.core.runtime.PlatformObject;
 
 /**
@@ -778,8 +779,8 @@ public class CPPClassType extends PlatformObject implements ICPPClassType, ICPPI
     public boolean isSameType( IType type ) {
         if( type == this )
             return true;
-        if( type instanceof ITypedef )
-            return ((ITypedef)type).isSameType( this );
+        if( type instanceof ITypedef || type instanceof IIndexType)
+            return type.isSameType( this );
         return false;
     }
 

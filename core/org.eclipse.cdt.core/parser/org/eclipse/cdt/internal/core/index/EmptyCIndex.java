@@ -13,6 +13,7 @@ package org.eclipse.cdt.internal.core.index;
 
 import java.util.regex.Pattern;
 
+import org.eclipse.cdt.core.dom.ILinkage;
 import org.eclipse.cdt.core.dom.IName;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.index.IIndex;
@@ -95,5 +96,13 @@ final public class EmptyCIndex implements IIndex {
 
 	public IIndexBinding adaptBinding(IBinding binding) throws CoreException {
 		return null;
+	}
+
+	public IBinding[] findInGlobalScope(ILinkage linkage, char[] name) {
+		return IIndexBinding.EMPTY_INDEX_BINDING_ARRAY;
+	}
+
+	public IBinding[] findInNamespace(IBinding nsbinding, char[] name) {
+		return IIndexBinding.EMPTY_INDEX_BINDING_ARRAY;
 	}
 }

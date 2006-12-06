@@ -31,4 +31,10 @@ public interface ICPPMethod extends ICPPFunction, ICPPMember {
 	 * returns true if its name starts with '~' 
 	 */
 	public boolean isDestructor() throws DOMException;
+
+	/**
+	 * Returns whether this is an implicit method (constructor, assignment operator, etc.)
+	 * @since 4.0
+	 */
+	public boolean isImplicit();
 }

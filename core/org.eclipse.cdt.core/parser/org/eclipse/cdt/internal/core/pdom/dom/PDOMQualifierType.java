@@ -17,8 +17,10 @@ import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IQualifierType;
 import org.eclipse.cdt.core.dom.ast.IType;
+import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.internal.core.Util;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
+import org.eclipse.cdt.internal.core.index.IIndexType;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.db.Database;
 import org.eclipse.core.runtime.CoreException;
@@ -28,7 +30,7 @@ import org.eclipse.core.runtime.CoreException;
  *
  */
 public class PDOMQualifierType extends PDOMNode implements IQualifierType,
-		ITypeContainer {
+		ITypeContainer, IIndexType {
 
 	private static final int FLAGS = PDOMNode.RECORD_SIZE;
 	private static final int TYPE = PDOMNode.RECORD_SIZE + 1;
@@ -111,7 +113,18 @@ public class PDOMQualifierType extends PDOMNode implements IQualifierType,
 	}
 
 	public boolean isSameType(IType type) {
-		return equals(type);
+	    if( type instanceof ITypedef )
+	        return type.isSameType( this );
+	    if( !( type instanceof IQualifierType ) ) 
+	        return false;
+	    
+	    IQualifierType pt = (IQualifierType) type;
+	    try {
+			if( isConst() == pt.isConst() && isVolatile() == pt.isVolatile() )
+			    return type.isSameType( pt.getType() );
+		} catch (DOMException e) {
+		}
+	    return false;
 	}
 
 	public void setType(IType type) {

@@ -125,7 +125,7 @@ public class PDOMSearchTest extends PDOMTestBase {
 		/** result #1 * */
 		ICPPClassType class1 = (ICPPClassType) class1s[0];
 		assertEquals("Class1", getBindingQualifiedName(pdom.getLinkages()[0].adaptBinding(class1)));
-		IBinding[] methods = class1.getMethods();
+		IBinding[] methods = class1.getDeclaredMethods();
 		assertEquals(0, methods.length);
 
 		/** result #2 * */
@@ -135,7 +135,7 @@ public class PDOMSearchTest extends PDOMTestBase {
 		/* Members in this class */
 
 		// methods
-		methods = class2.getMethods();
+		methods = class2.getDeclaredMethods();
 		assertEquals(2, methods.length);
 		assertEquals("Class1", methods[0].getName());
 		assertEquals("~Class1", methods[1].getName());
@@ -159,7 +159,7 @@ public class PDOMSearchTest extends PDOMTestBase {
 		/** result #4 * */
 		ICPPClassType class4 = (ICPPClassType) class1s[3];
 		assertEquals("namespace1::namespace2::Class1", getBindingQualifiedName(pdom.getLinkages()[0].adaptBinding(class4)));
-		methods = class4.getMethods();
+		methods = class4.getDeclaredMethods();
 		assertEquals(0, methods.length);
 
 		/* Search for "Class2" */
@@ -173,7 +173,7 @@ public class PDOMSearchTest extends PDOMTestBase {
 		/** result #1 * */
 		ICPPClassType cls1 = (ICPPClassType) class2s[0];
 		assertEquals("Class2", getBindingQualifiedName(pdom.getLinkages()[0].adaptBinding(cls1)));
-		methods = cls1.getMethods();
+		methods = cls1.getDeclaredMethods();
 		assertEquals(3, methods.length);
 		assertEquals("Class2", methods[0].getName());
 		assertEquals("~Class2", methods[1].getName());
@@ -223,7 +223,7 @@ public class PDOMSearchTest extends PDOMTestBase {
 
 	public void testMethods() throws Exception {
 
-		IBinding[] methods = pdom.findBindings(Pattern.compile("~Class2"), false, INDEX_FILTER,NULL_MONITOR);
+		IBinding[] methods = pdom.findBindings(Pattern.compile("~Class2"), false, INDEX_FILTER, NULL_MONITOR);
 		assertEquals(1, methods.length);
 		assertTrue(methods[0] instanceof ICPPMethod);
 		assertEquals("Class2::~Class2", getBindingQualifiedName(pdom.getLinkages()[0].adaptBinding(methods[0])));

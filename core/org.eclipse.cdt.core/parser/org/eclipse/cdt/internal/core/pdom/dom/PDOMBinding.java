@@ -12,6 +12,9 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom.dom;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.IName;
 import org.eclipse.cdt.core.dom.ast.DOMException;
@@ -211,6 +214,23 @@ public abstract class PDOMBinding extends PDOMNamedNode implements IIndexFragmen
 			return name;
 		} catch (CoreException e) {
 			CCorePlugin.log(e);
+			return null;
+		}
+	}
+	
+	final public String[] getQualifiedName() {
+		List result = new ArrayList();
+		try {
+			PDOMNode node = this;
+			while (node != null) {
+				if (node instanceof PDOMBinding) {							
+					result.add(0, ((PDOMBinding)node).getName());
+				}
+				node = node.getParentNode();
+			}
+			return (String[]) result.toArray(new String[result.size()]);
+		} catch(CoreException ce) {
+			CCorePlugin.log(ce);
 			return null;
 		}
 	}

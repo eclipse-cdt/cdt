@@ -374,7 +374,7 @@ public abstract class PDOMIndexerTask implements IPDOMIndexerTask {
 				IIndexFileLocation path = orderedPaths[i];
 					if (path != null) {
 						if (fTrace) {
-							System.out.println("Indexer: adding " + path); //$NON-NLS-1$
+							System.out.println("Indexer: adding " + path.getURI()); //$NON-NLS-1$
 						}
 						IIndexFile file= addToIndex(index, path, symbolMap);
 						if (postAddToIndex(path, file)) {

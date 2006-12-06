@@ -13,6 +13,7 @@ package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IBinding;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMember;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
@@ -31,6 +32,9 @@ public class PDOMCPPAnnotation {
 	// byte of annotations.
 	public static final int VIRTUAL_OFFSET = 0;
 	public static final int DESTRUCTOR_OFFSET = 1;
+	public static final int IMPLICIT_METHOD_OFFSET = 2;
+	public static final int EXPLICIT_CONSTRUCTOR_OFFSET = 3;
+	public static final int MAX_EXTRA_OFFSET= EXPLICIT_CONSTRUCTOR_OFFSET;
 	
 	/**
 	 * Encodes storage class specifiers and other annotation, including
@@ -69,6 +73,13 @@ public class PDOMCPPAnnotation {
 			ICPPMethod method = (ICPPMethod) binding;
 			modifiers |= (method.isVirtual() ? 1 : 0) << VIRTUAL_OFFSET;
 			modifiers |= (method.isDestructor() ? 1 : 0) << DESTRUCTOR_OFFSET;
+			modifiers |= (method.isImplicit() ? 1 : 0) << IMPLICIT_METHOD_OFFSET;
+		}
+		if (binding instanceof ICPPConstructor) {
+			ICPPConstructor constructor= (ICPPConstructor) binding;
+			if (constructor.isExplicit()) {
+				modifiers |= (1 << EXPLICIT_CONSTRUCTOR_OFFSET);
+			}
 		}
 		return modifiers;
 	}

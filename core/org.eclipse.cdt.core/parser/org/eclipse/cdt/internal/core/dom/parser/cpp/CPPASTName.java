@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2005 IBM Corporation and others.
+ * Copyright (c) 2004, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  * IBM - Initial API and implementation
+ * Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
@@ -15,18 +16,32 @@ import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNameOwner;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IBinding;
+import org.eclipse.cdt.core.dom.ast.IProblemBinding;
+import org.eclipse.cdt.core.parser.util.CharArrayUtils;
+import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
 
 /**
  * @author jcamelon
  */
 public class CPPASTName extends CPPASTNode implements IASTName {
+	private final static class RecursionResolvingBinding extends ProblemBinding {
+		public RecursionResolvingBinding() {
+			super(null, IProblemBinding.SEMANTIC_RECURSION_IN_LOOKUP, CharArrayUtils.EMPTY);
+		}
+		public RecursionResolvingBinding(IASTName node) {
+			super(node, IProblemBinding.SEMANTIC_RECURSION_IN_LOOKUP, node.toCharArray());
+		}
+	}
 
-    private char[] name;
+	private char[] name;
 
     private static final char[] EMPTY_CHAR_ARRAY = {};
 	private static final String EMPTY_STRING = "";  //$NON-NLS-1$
 
+	private static final int MAX_RESOLUTION_DEPTH = 3;
+
     private IBinding binding = null;
+    private int fResolutionDepth= 0;
 
     /**
      * @param name
@@ -48,9 +63,14 @@ public class CPPASTName extends CPPASTNode implements IASTName {
      * @see org.eclipse.cdt.core.dom.ast.IASTName#resolveBinding()
      */
     public IBinding resolveBinding() {
-        if (binding == null)
-            binding = CPPVisitor.createBinding(this);
-
+        if (binding == null) {
+        	if (++fResolutionDepth > MAX_RESOLUTION_DEPTH) {
+        		binding= new RecursionResolvingBinding(this);
+        	}
+        	else {
+        		binding = CPPVisitor.createBinding(this);
+        	}
+        }
         return binding;
     }
 
@@ -60,6 +80,7 @@ public class CPPASTName extends CPPASTNode implements IASTName {
 
     public void setBinding(IBinding binding) {
         this.binding = binding;
+        fResolutionDepth= 0;
     }
 
     public IBinding getBinding() {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2005 IBM Corporation and others.
+ * Copyright (c) 2004, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 
 /*
@@ -18,6 +19,7 @@ import org.eclipse.cdt.core.dom.ast.IQualifierType;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
+import org.eclipse.cdt.internal.core.index.IIndexType;
 
 /**
  * @author aniefer
@@ -34,7 +36,7 @@ public class CPPQualifierType implements IQualifierType, ITypeContainer {
     }
     
     public boolean isSameType( IType o ){
-	    if( o instanceof ITypedef )
+	    if( o instanceof ITypedef || o instanceof IIndexType)
 	        return o.isSameType( this );
 	    if( !( o instanceof CPPQualifierType ) ) 
 	        return false;

@@ -441,11 +441,13 @@ public class AddIncludeOnSelectionAction extends Action implements IUpdate {
 	 */
 	private static String getBindingQualifiedName(IIndexBinding binding) throws CoreException
 	{
-		StringBuffer buf = new StringBuffer(binding.getName());
-		binding= binding.getParentBinding();
-		while (binding != null) {
-			buf.insert(0, binding.getName() + "::"); //$NON-NLS-1$
-			binding= binding.getParentBinding();
+		StringBuffer buf = new StringBuffer();
+		String[] qname= binding.getQualifiedName();
+		for (int i = 0; i < qname.length; i++) {
+			if (i>0) {
+				buf.append("::"); //$NON-NLS-1$
+			}
+			buf.append(qname[i]);
 		}
 		return buf.toString();
 	}

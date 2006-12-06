@@ -30,8 +30,8 @@ import org.eclipse.cdt.core.dom.IPDOMNode;
 import org.eclipse.cdt.core.dom.IPDOMVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IBinding;
-import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.core.index.IIndex;
+import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.core.index.IIndexFileLocation;
 import org.eclipse.cdt.core.index.IIndexName;
 import org.eclipse.cdt.core.index.IndexFilter;
@@ -52,6 +52,8 @@ import org.eclipse.cdt.internal.core.pdom.dom.PDOMInclude;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMLinkage;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMName;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
+import org.eclipse.cdt.internal.core.pdom.dom.cpp.PDOMCPPMethod;
+import org.eclipse.cdt.internal.core.pdom.dom.cpp.PDOMCPPNamespace;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.PlatformObject;
@@ -66,7 +68,7 @@ public class PDOM extends PlatformObject implements IIndexFragment, IPDOM {
 
 	private Database db;
 
-	public static final int VERSION = 18;
+	public static final int VERSION = 20;
 	// 0 - the beginning of it all
 	// 1 - first change to kick off upgrades
 	// 2 - added file inclusions
@@ -87,6 +89,7 @@ public class PDOM extends PlatformObject implements IIndexFragment, IPDOM {
 	// 17 - use single linked list for names in file, adds a link to enclosing defintion name.
 	// 18 - distinction between c-unions and c-structs.
     // 19 - alter representation of paths in the pdom (162172)
+	// 20 - add pointer to member types, array types, return types for functions
 
 	public static final int LINKAGES = Database.DATA_AREA;
 	public static final int FILE_INDEX = Database.DATA_AREA + 4;
@@ -96,7 +99,7 @@ public class PDOM extends PlatformObject implements IIndexFragment, IPDOM {
 	private Map fLinkageIDCache = new HashMap();
 	private File fPath;
 	private IIndexLocationConverter locationConverter;
-
+	
 	public PDOM(File dbPath, IIndexLocationConverter locationConverter) throws CoreException {
 		// Load up the database
 		fPath= dbPath;
@@ -249,11 +252,13 @@ public class PDOM extends PlatformObject implements IIndexFragment, IPDOM {
 		private List bindings = new ArrayList();
 		private boolean isFullyQualified;
 		private BitSet matchesUpToLevel;
+		private boolean acceptImplicitMethods;
 
-		public BindingFinder(Pattern[] pattern, boolean isFullyQualified, IProgressMonitor monitor) {
+		public BindingFinder(Pattern[] pattern, boolean isFullyQualified, boolean acceptImplicitMethods, IProgressMonitor monitor) {
 			this.pattern = pattern;
 			this.monitor = monitor;
 			this.isFullyQualified= isFullyQualified;
+			this.acceptImplicitMethods= acceptImplicitMethods;
 			matchesUpToLevel= new BitSet();
 			matchesUpToLevel.set(0);
 			matchStack.add(matchesUpToLevel);
@@ -270,7 +275,10 @@ public class PDOM extends PlatformObject implements IIndexFragment, IPDOM {
 				// check if we have a complete match.
 				final int lastIdx = pattern.length-1;
 				if (matchesUpToLevel.get(lastIdx) && pattern[lastIdx].matcher(name).matches()) {
-					bindings.add(binding);
+					if (acceptImplicitMethods || !(binding instanceof PDOMCPPMethod) ||
+							!((PDOMCPPMethod)binding).isImplicit()) {
+						bindings.add(binding);
+					}
 				}
 
 				// check if we have a partial match
@@ -331,7 +339,7 @@ public class PDOM extends PlatformObject implements IIndexFragment, IPDOM {
 	}
 
 	public IIndexFragmentBinding[] findBindings(Pattern[] pattern, boolean isFullyQualified, IndexFilter filter, IProgressMonitor monitor) throws CoreException {
-		BindingFinder finder = new BindingFinder(pattern, isFullyQualified, monitor);
+		BindingFinder finder = new BindingFinder(pattern, isFullyQualified, filter.acceptImplicitMethods(), monitor);
 		for (Iterator iter = fLinkageIDCache.values().iterator(); iter.hasNext();) {
 			PDOMLinkage linkage = (PDOMLinkage) iter.next();
 			if (filter.acceptLinkage(linkage)) {
@@ -579,5 +587,21 @@ public class PDOM extends PlatformObject implements IIndexFragment, IPDOM {
 
 	public File getPath() {
 		return fPath;
+	}
+	
+	public IBinding[] findInGlobalScope(ILinkage linkage, char[] name) throws CoreException {
+		PDOMLinkage pdomLinkage= adaptLinkage(linkage);
+		if (pdomLinkage != null) {
+			return pdomLinkage.findInGlobalScope(name);
+		}
+		return IIndexBinding.EMPTY_INDEX_BINDING_ARRAY;
+	}
+
+	public IBinding[] findInNamespace(IBinding nsbinding, char[] name) throws CoreException {
+		IIndexProxyBinding ns= adaptBinding(nsbinding);
+		if (ns instanceof PDOMCPPNamespace) {
+			return ((PDOMCPPNamespace) ns).find(new String(name));
+		}
+		return IIndexBinding.EMPTY_INDEX_BINDING_ARRAY;
 	}
 }

@@ -18,6 +18,7 @@ import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.internal.core.Util;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
+import org.eclipse.cdt.internal.core.index.IIndexType;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
@@ -26,7 +27,7 @@ import org.eclipse.core.runtime.CoreException;
 /**
  * @author Doug Schaefer
  */
-class PDOMCTypedef extends PDOMBinding implements ITypedef, ITypeContainer {
+class PDOMCTypedef extends PDOMBinding implements ITypedef, ITypeContainer, IIndexType {
 
 	private static final int TYPE = PDOMBinding.RECORD_SIZE + 0;
 	
@@ -70,19 +71,15 @@ class PDOMCTypedef extends PDOMBinding implements ITypedef, ITypeContainer {
 
 	public boolean isSameType(IType type) {
 		try {
-			if (type instanceof PDOMBinding)
-				return record == ((PDOMBinding)type).getRecord();
-			
 			IType myrtype = getType();
 			if (myrtype == null)
 				return false;
 			
 			if (type instanceof ITypedef) {
-				IType rtype = ((ITypedef)type).getType();
-				return rtype != null ? myrtype.isSameType(rtype) : false;
+				type= ((ITypedef)type).getType();
 			}
+			return myrtype.isSameType(type);
 		} catch (DOMException e) {
-			CCorePlugin.log(e);
 		}
 		return false;
 	}

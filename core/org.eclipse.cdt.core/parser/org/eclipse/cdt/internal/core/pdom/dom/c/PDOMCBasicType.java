@@ -8,6 +8,7 @@
  * Contributors:
  * QNX - Initial API and implementation
  * Andrew Ferguson (Symbian)
+ * Markus Schorn (Wind River Systems)
  *******************************************************************************/
 
 package org.eclipse.cdt.internal.core.pdom.dom.c;
@@ -16,8 +17,10 @@ import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IType;
+import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.c.ICBasicType;
 import org.eclipse.cdt.internal.core.Util;
+import org.eclipse.cdt.internal.core.index.IIndexType;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.db.Database;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
@@ -27,7 +30,7 @@ import org.eclipse.core.runtime.CoreException;
  * @author Doug Schaefer
  *
  */
-class PDOMCBasicType extends PDOMNode implements ICBasicType {
+class PDOMCBasicType extends PDOMNode implements ICBasicType, IIndexType {
 
 	public static final int TYPE_ID = PDOMNode.RECORD_SIZE + 0; // short
 	public static final int FLAGS = PDOMNode.RECORD_SIZE + 2;   // short
@@ -77,7 +80,7 @@ class PDOMCBasicType extends PDOMNode implements ICBasicType {
 		return PDOMCLinkage.CBASICTYPE;
 	}
 
-	public int getType() throws DOMException {
+	public int getType() {
 		try {
 			return pdom.getDB().getChar(record + TYPE_ID);
 		} catch (CoreException e) {
@@ -101,9 +104,31 @@ class PDOMCBasicType extends PDOMNode implements ICBasicType {
 	public boolean isComplex() { return flagSet(IS_COMPLEX); }
 	
 		
-	public boolean isSameType(IType type) {
-		// TODO something fancier
-		return equals(type);
+	public boolean isSameType(IType rhs) {
+		if( rhs instanceof ITypedef )
+		    return rhs.isSameType( this );
+		
+		if( !(rhs instanceof ICBasicType))
+			return false;
+		
+		ICBasicType rhs1= (ICBasicType) rhs;
+		int type;
+		try {
+			type = this.getType();
+			if (type == -1 || type != rhs1.getType()) 
+				return false;
+		
+			return (rhs1.getType() == this.getType()
+					&& rhs1.isLong() == this.isLong() 
+					&& rhs1.isShort() == this.isShort() 
+					&& rhs1.isSigned() == this.isSigned() 
+					&& rhs1.isUnsigned() == this.isUnsigned()
+					&& rhs1.isLongLong() == this.isLongLong()
+					&& rhs1.isComplex() == this.isComplex() 
+					&& rhs1.isImaginary() == this.isImaginary());
+		} catch (DOMException e) {
+			return false;
+		}
 	}
 
 	public Object clone() {

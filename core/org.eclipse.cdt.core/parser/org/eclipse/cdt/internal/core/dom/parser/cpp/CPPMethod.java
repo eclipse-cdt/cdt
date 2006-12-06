@@ -64,6 +64,9 @@ public class CPPMethod extends CPPFunction implements ICPPMethod {
 			
 			return false;
 		}
+		public boolean isImplicit() {
+			return ((ICPPMethod)getBinding()).isImplicit();
+		}
     }
     
     public static class CPPMethodProblem extends CPPFunctionProblem implements ICPPMethod {
@@ -98,6 +101,10 @@ public class CPPMethod extends CPPFunction implements ICPPMethod {
 			
 			return false;
 		}
+
+		public boolean isImplicit() {
+			return false;
+		}
     }
     
 	public CPPMethod( ICPPASTFunctionDeclarator declarator ){
@@ -121,24 +128,26 @@ public class CPPMethod extends CPPFunction implements ICPPMethod {
 		
 		ICPPClassScope scope = (ICPPClassScope) getScope();
 		ICPPASTCompositeTypeSpecifier compSpec = (ICPPASTCompositeTypeSpecifier) ASTInternal.getPhysicalNodeOfScope(scope);
-		IASTDeclaration [] members = compSpec.getMembers();
-		for( int i = 0; i < members.length; i++ ){
-			if( members[i] instanceof IASTSimpleDeclaration ){
-				IASTDeclarator [] dtors = ((IASTSimpleDeclaration)members[i]).getDeclarators();
-				for( int j = 0; j < dtors.length; j++ ){
-					IASTName name = dtors[j].getName();
+		if (compSpec != null) {
+			IASTDeclaration [] members = compSpec.getMembers();
+			for( int i = 0; i < members.length; i++ ){
+				if( members[i] instanceof IASTSimpleDeclaration ){
+					IASTDeclarator [] dtors = ((IASTSimpleDeclaration)members[i]).getDeclarators();
+					for( int j = 0; j < dtors.length; j++ ){
+						IASTName name = dtors[j].getName();
+						if( CharArrayUtils.equals( name.toCharArray(), myName ) &&
+								name.resolveBinding() == this )
+						{
+							return members[i];
+						}
+					}
+				} else if( members[i] instanceof IASTFunctionDefinition ){
+					IASTName name = ((IASTFunctionDefinition) members[i]).getDeclarator().getName();
 					if( CharArrayUtils.equals( name.toCharArray(), myName ) &&
-						name.resolveBinding() == this )
+							name.resolveBinding() == this )
 					{
 						return members[i];
 					}
-				}
-			} else if( members[i] instanceof IASTFunctionDefinition ){
-				IASTName name = ((IASTFunctionDefinition) members[i]).getDeclarator().getName();
-				if( CharArrayUtils.equals( name.toCharArray(), myName ) &&
-					name.resolveBinding() == this )
-				{
-					return members[i];
 				}
 			}
 		}
@@ -276,6 +285,10 @@ public class CPPMethod extends CPPFunction implements ICPPMethod {
 		if (name.length > 1 && name[0] == '~')
 			return true;
 		
+		return false;
+	}
+
+	public boolean isImplicit() {
 		return false;
 	}
 }

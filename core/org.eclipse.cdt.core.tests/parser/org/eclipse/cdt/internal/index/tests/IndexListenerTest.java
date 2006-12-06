@@ -80,7 +80,7 @@ public class IndexListenerTest extends BaseTestCase {
 				if (state[0]+state[1] < 2) {
 					mutex.wait(8000);
 					if (state[0]+state[1] < 2) {
-						mutex.wait(2000);
+						mutex.wait(5000);
 					}
 				}
 				assertEquals(1, state[0]);
@@ -114,7 +114,7 @@ public class IndexListenerTest extends BaseTestCase {
 			IFile file= TestSourceReader.createFile(fProject1.getProject(), "test.cpp", "int a;");
 			
 			synchronized (mutex) {
-				mutex.wait(2000);
+				mutex.wait(8000);
 			}
 			assertEquals(1, projects.size());
 			assertTrue(projects.contains(fProject1));

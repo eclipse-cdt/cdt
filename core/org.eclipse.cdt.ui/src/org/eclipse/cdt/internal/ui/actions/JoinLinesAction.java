@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005 Todd Papaioannou
+ * Copyright (c) 2005, 2006 Todd Papaioannou and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,6 +16,7 @@ import java.util.ResourceBundle;
 
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionProvider;
@@ -28,7 +29,7 @@ import org.eclipse.ui.texteditor.TextEditorAction;
  * that, when invoked, will join the current and next line together. 
  * 
  * @author Todd Papaioannou (toddp@acm.org)
- * @version $Date: 2005/11/10 15:20:17 $
+ * @version $Date: 2006/12/05 09:21:59 $
  * @see org.eclipse.ui.texteditor.TextEditorAction
  */
 public class JoinLinesAction extends TextEditorAction {
@@ -59,9 +60,6 @@ public class JoinLinesAction extends TextEditorAction {
 	 * It achieves this by determining which line of the editor's document
 	 * we are on, and then replacing the delimiter at the end of the line
 	 * with nothing.
-	 * 
-	 * TODO: Currently, we don't bother to remove any excess whitespace. 
-	 *       Doing so in the future might be a nice touch.
 	 */
 	public void run() {
 		
@@ -82,25 +80,33 @@ public class JoinLinesAction extends TextEditorAction {
 					
 						// Now, figure out the end line of the selection
 						int currentLine = theSelection.getEndLine();
-						
-						// What's the offset of this line in the document?
-						int lineOffset = theDocument.getLineOffset(currentLine);
-						
-						// And the length of the line?
-						int lineLength = theDocument.getLineLength(currentLine);
-						
-						// What delimeter do we have?
-						String delim = theDocument.getLineDelimiter(currentLine);
-						
-						if (delim != null) {
-							// How long is it?
-							int delimLength = delim.length();
-							
-							// Now back track to the last real char in the line
-							int newLineEnd = lineOffset + lineLength - delimLength;
-							
-							// Replace the delimter char(s) with nothing
-							theDocument.replace(newLineEnd, delimLength, null);
+						if (currentLine < theDocument.getNumberOfLines() - 1) {
+							// compute the region of whitespace between the two adjacent lines
+							IRegion currentLineRegion= theDocument.getLineInformation(currentLine);
+							IRegion nextLineRegion= theDocument.getLineInformation(currentLine + 1);
+							int startOffset= currentLineRegion.getOffset() + currentLineRegion.getLength();
+							while (startOffset > currentLineRegion.getOffset()) {
+								if (Character.isWhitespace(theDocument.getChar(startOffset - 1))) {
+									--startOffset;
+								} else {
+									break;
+								}
+							}
+							int endOffset= nextLineRegion.getOffset();
+							while (endOffset < nextLineRegion.getOffset() + nextLineRegion.getLength()) {
+								if (Character.isWhitespace(theDocument.getChar(endOffset))) {
+									++endOffset;
+								} else {
+									break;
+								}
+							}
+							if (endOffset == nextLineRegion.getOffset() + nextLineRegion.getLength()) {
+								// special case: empty next line - don't insert trailing space
+								theDocument.replace(startOffset, endOffset - startOffset, null);
+							} else {
+								// Replace the whitespace region with a single space
+								theDocument.replace(startOffset, endOffset - startOffset, " "); //$NON-NLS-1$
+							}
 						}
 					}
 					

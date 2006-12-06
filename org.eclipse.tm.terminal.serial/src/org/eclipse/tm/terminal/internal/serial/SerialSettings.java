@@ -15,7 +15,6 @@ package org.eclipse.tm.terminal.internal.serial;
 import javax.comm.SerialPort;
 
 import org.eclipse.tm.terminal.ISettingsStore;
-import org.eclipse.tm.terminal.ITerminalConnector;
 
 public class SerialSettings implements ISerialSettings {
     protected String fSerialPort;
@@ -150,10 +149,6 @@ public class SerialSettings implements ISerialSettings {
 			getParityString() + ", " + //$NON-NLS-1$
 			getFlowControlString() + " - " + //$NON-NLS-1$
 			strConnected + ")"; //$NON-NLS-1$
-	}
-
-	public ITerminalConnector makeConnector() {
-		return new SerialConnector(this);
 	}
 
 	public void load(ISettingsStore store) {

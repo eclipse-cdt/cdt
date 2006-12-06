@@ -287,15 +287,17 @@ public class DStoreStatusMonitor implements IDomainListener
 			// Current thread is UI thread
 			while (_workingStatuses.contains(status)) 
 			{
-			//	while (display.readAndDispatch()) {
+				/*
+				while (display.readAndDispatch()) {
 					//Process everything on event queue
-			//	}
+				}
 				
 				if ((monitor != null) && (monitor.isCanceled())) 
 				{
 				    setCancelled(status);
 					throw new InterruptedException();
 				}
+				*/
 				
 				boolean statusDone = determineStatusDone(status);
 				
@@ -331,21 +333,19 @@ public class DStoreStatusMonitor implements IDomainListener
 			// Current thread is not UI thread
 			while (_workingStatuses.contains(status))
 			{
-				
-			    if ((monitor != null) && (monitor.isCanceled()))
-			    {
-					setCancelled(status);
-					throw new InterruptedException();
-				}
-
 				boolean statusDone = determineStatusDone(status);
-				
-				if (statusDone)
+				if (statusDone) 
 				{
 					setDone(status);
 				}
 				else 
 				{
+					if ((monitor != null) && (monitor.isCanceled()))
+					{
+						setCancelled(status);
+						throw new InterruptedException();
+					}								
+			
 					waitForUpdate();
                     //Thread.sleep(200);
                     

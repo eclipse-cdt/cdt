@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 QNX Software Systems and others.
+ * Copyright (c) 2000, 2006 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
+ *     Anton Leherbauer (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.model;
 
@@ -66,6 +67,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Plugin;
+import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.Job;
@@ -170,6 +172,20 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 		if (celement instanceof ITranslationUnit) {
 			return getIncludeFileEntries((ITranslationUnit)celement);
 		}
+		if (celement != null) {
+			// get project include file entries
+			List entryList = new ArrayList();
+			ICProject cproject = celement.getCProject();
+			ArrayList resolvedListEntries = getResolvedPathEntries(cproject, false);
+			for (int i = 0; i < resolvedListEntries.size(); ++i) {
+				IPathEntry entry = (IPathEntry)resolvedListEntries.get(i);
+				if ((entry.getEntryKind() & IPathEntry.CDT_INCLUDE_FILE) != 0) {
+					entryList.add(entry);
+				}
+			}
+			IIncludeFileEntry[] incFiles = (IIncludeFileEntry[]) entryList.toArray(new IIncludeFileEntry[entryList.size()]);
+			return incFiles;
+		}
 		return NO_INCLUDE_FILE_ENTRIES;
 	}
 
@@ -183,6 +199,20 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 		ICElement celement = CoreModel.getDefault().create(resPath);
 		if (celement instanceof ITranslationUnit) {
 			return getIncludeEntries((ITranslationUnit)celement);
+		}
+		if (celement != null) {
+			// get project include entries
+			List entryList = new ArrayList();
+			ICProject cproject = celement.getCProject();
+			ArrayList resolvedListEntries = getResolvedPathEntries(cproject, false);
+			for (int i = 0; i < resolvedListEntries.size(); ++i) {
+				IPathEntry entry = (IPathEntry)resolvedListEntries.get(i);
+				if ((entry.getEntryKind() & IPathEntry.CDT_INCLUDE) != 0) {
+					entryList.add(entry);
+				}
+			}
+			IIncludeEntry[] includes = (IIncludeEntry[]) entryList.toArray(new IIncludeEntry[entryList.size()]);
+			return includes;
 		}
 		return NO_INCLUDE_ENTRIES;
 	}
@@ -621,7 +651,7 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 					// wrap initializer call with Safe runnable in case
 					// initializer would be
 					// causing some grief
-					Platform.run(new ISafeRunnable() {
+					SafeRunner.run(new ISafeRunnable() {
 
 						public void handleException(Throwable exception) {
 							IStatus status = new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, IStatus.ERROR,

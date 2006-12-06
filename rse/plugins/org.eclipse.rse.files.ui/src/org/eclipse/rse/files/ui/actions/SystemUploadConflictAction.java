@@ -17,9 +17,14 @@
 package org.eclipse.rse.files.ui.actions;
 
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.window.Window;
 import org.eclipse.rse.core.SystemBasePlugin;
+import org.eclipse.rse.core.subsystems.SubSystem;
+import org.eclipse.rse.core.subsystems.SubSystem.SystemMessageDialogRunnable;
 import org.eclipse.rse.files.ui.FileResources;
 import org.eclipse.rse.files.ui.resources.ISaveAsDialog;
 import org.eclipse.rse.files.ui.resources.SaveAsDialog;
@@ -64,6 +69,132 @@ import org.eclipse.ui.part.FileEditorInput;
  */
 public class SystemUploadConflictAction extends SystemBaseAction implements Runnable
 {
+	private class BackgroundSaveasJob extends Job
+	{
+		private IRemoteFile _saveasFile;
+		public BackgroundSaveasJob(IRemoteFile saveasFile)
+		{
+			super("Save as"); // need to externalize
+			_saveasFile = saveasFile;
+		}
+		
+		public IStatus run(IProgressMonitor monitor)
+		{
+			if (_saveasFile != null)
+            {
+				IRemoteFileSubSystem fs = _saveasFile.getParentRemoteFileSubSystem();
+                try
+                {                	
+                    if (!_saveasFile.exists())
+                    {
+                        _saveasFile = fs.createFile(_saveasFile);
+                    }                        
+                }
+                catch (SystemMessageException e)
+                {
+                    SystemBasePlugin.logError("Error in performSaveAs", e); //$NON-NLS-1$
+                    SystemMessage message = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_ERROR_UNEXPECTED);
+                    SystemMessageDialog dialog = new SystemMessageDialog(SystemBasePlugin.getActiveWorkbenchShell(), message);
+                    SystemMessageDialogRunnable runnable = ((SubSystem)fs).new SystemMessageDialogRunnable(dialog);
+                    Display.getDefault().asyncExec(runnable);
+                }
+
+                try
+                {                    	
+                    // copy temp file to remote system
+                    fs.uploadUTF8(_tempFile, _saveasFile, monitor);
+                 
+                    // set original time stamp to 0 so that file will be overwritten next download
+                    SystemIFileProperties properties = new SystemIFileProperties(_tempFile);
+                    properties.setRemoteFileTimeStamp(0);
+                    properties.setDirty(false);
+                }
+                catch (SystemMessageException e)
+                {
+                    //e.printStackTrace();
+                }
+
+                ReopenAction reopen = new ReopenAction(_tempFile, _saveasFile);
+
+                Display.getDefault().asyncExec(reopen);
+            }
+			return Status.OK_STATUS;
+		}
+	}
+	
+	private class BackgroundDownloadJob extends Job
+	{
+		public BackgroundDownloadJob()
+		{
+			super("Download");	// need to externalize	
+		}
+		
+		public IStatus run(IProgressMonitor monitor)
+		{
+			 try
+             {     	
+		        IRemoteFileSubSystem fs = _remoteFile.getParentRemoteFileSubSystem();
+	            SystemIFileProperties properties = new SystemIFileProperties(_tempFile);
+	            	
+                 // download remote version
+                 fs.downloadUTF8(_remoteFile, _tempFile, monitor);
+
+                 properties.setRemoteFileTimeStamp(_remoteFile.getLastModified());
+					//properties.setRemoteFileTimeStamp(-1);                
+                 
+                 properties.setDirty(false);
+                 properties.setUsedBinaryTransfer(_remoteFile.isBinary());
+                     }
+             catch (RemoteFileSecurityException e)
+             {
+                 e.printStackTrace();
+             }
+             catch (RemoteFileIOException e)
+             {
+                 e.printStackTrace();
+             }
+             catch (Exception e)
+             {
+                 e.printStackTrace();
+             }
+             return Status.OK_STATUS;
+		}
+	}
+	
+	private class BackgroundUploadJob extends Job
+	{
+		
+		public BackgroundUploadJob()
+		{
+			super("Upload"); // need to externalize
+		}
+		
+		public IStatus run(IProgressMonitor monitor)
+		{
+            // user wants to keep the local version
+            // and user wants to overwrite the remote file with pending changes
+            try
+            {
+            	IRemoteFileSubSystem fs = _remoteFile.getParentRemoteFileSubSystem();
+            	SystemIFileProperties properties = new SystemIFileProperties(_tempFile);
+                fs.uploadUTF8(_tempFile, _remoteFile, monitor);
+                _remoteFile.markStale(true);
+                _remoteFile = fs.getRemoteFileObject(_remoteFile.getAbsolutePath());
+                properties.setRemoteFileTimeStamp(_remoteFile.getLastModified());
+                properties.setDirty(false);
+            }
+            catch (RemoteFileSecurityException e)
+            {
+            }
+            catch (RemoteFileIOException e)
+            {
+            }
+            catch (Exception e)
+            {
+            }
+            return Status.OK_STATUS;
+		}
+	}
 
 	/**
 	 * This is the default dialog used to handle upload conflicts
@@ -304,7 +435,7 @@ public class SystemUploadConflictAction extends SystemBaseAction implements Runn
 
         private void setHelp()
         {
-            setHelp(RSEUIPlugin.HELPPREFIX + "scdl0000");
+            setHelp(RSEUIPlugin.HELPPREFIX + "scdl0000"); //$NON-NLS-1$
         }
     }
 
@@ -332,12 +463,10 @@ public class SystemUploadConflictAction extends SystemBaseAction implements Runn
 	 */
     public class ReopenAction implements Runnable
     {
-        private IFile _tempFile;
         private IRemoteFile _saveasFile;
 
         public ReopenAction(IFile tempFile, IRemoteFile saveasFile)
         {
-            _tempFile = tempFile;
             _saveasFile = saveasFile;
         }
 
@@ -435,98 +564,25 @@ public class SystemUploadConflictAction extends SystemBaseAction implements Runn
         UploadConflictDialog cnfDialog = new UploadConflictDialog(SystemBasePlugin.getActiveWorkbenchShell());
         if (cnfDialog.open() == Window.OK)
         {
-            IRemoteFileSubSystem fs = _remoteFile.getParentRemoteFileSubSystem();
-
             // does user want to open local or replace local with remote?
             if (cnfDialog.getOverwriteRemote())
             {
                 // user wants to keep the local version
                 // and user wants to overwrite the remote file with pending changes
-                try
-                {
-                    fs.uploadUTF8(_tempFile, _remoteFile, new NullProgressMonitor());
-                    _remoteFile.markStale(true);
-                    _remoteFile = fs.getRemoteFileObject(_remoteFile.getAbsolutePath());
-                    properties.setRemoteFileTimeStamp(_remoteFile.getLastModified());
-                    properties.setDirty(false);
-                }
-                catch (RemoteFileSecurityException e)
-                {
-                }
-                catch (RemoteFileIOException e)
-                {
-                }
-                catch (Exception e)
-                {
-                }
+            	BackgroundUploadJob ujob = new BackgroundUploadJob();
+            	ujob.schedule();
             }
             else if (cnfDialog.getOverwriteLocal())
             {
                 // user wants to replace local copy with the remote version
-                try
-                {     	
-                    // download remote version
-                    fs.downloadUTF8(_remoteFile, _tempFile, new NullProgressMonitor());
-
-                    properties.setRemoteFileTimeStamp(_remoteFile.getLastModified());
-					//properties.setRemoteFileTimeStamp(-1);                
-                    
-                    properties.setDirty(false);
-                    properties.setUsedBinaryTransfer(_remoteFile.isBinary());
-                        }
-                catch (RemoteFileSecurityException e)
-                {
-                    e.printStackTrace();
-                }
-                catch (RemoteFileIOException e)
-                {
-                    e.printStackTrace();
-                }
-                catch (Exception e)
-                {
-                    e.printStackTrace();
-                }
+            	BackgroundDownloadJob djob = new BackgroundDownloadJob();
+            	djob.schedule();
             }
             else if (cnfDialog.getSaveas())
             {
                 IRemoteFile remoteFile = cnfDialog.getSaveasLocation();
-                if (remoteFile != null)
-                {
-                    try
-                    {
-                    	fs = remoteFile.getParentRemoteFileSubSystem();
-                        if (!remoteFile.exists())
-                        {
-                            remoteFile = fs.createFile(remoteFile);
-                        }                        
-                    }
-                    catch (SystemMessageException e)
-                    {
-                        SystemBasePlugin.logError("Error in performSaveAs", e);
-                        SystemMessage message = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_ERROR_UNEXPECTED);
-                        SystemMessageDialog dialog = new SystemMessageDialog(SystemBasePlugin.getActiveWorkbenchShell(), message);
-                        dialog.open();
-                        return;
-                    }
-
-                    try
-                    {
-                        // copy temp file to remote system
-                        fs.uploadUTF8(_tempFile, remoteFile, new NullProgressMonitor());
-                     
-                        // set original time stamp to 0 so that file will be overwritten next download
-                        properties.setRemoteFileTimeStamp(0);
-                        properties.setDirty(false);
-                    }
-                    catch (SystemMessageException e)
-                    {
-                        //e.printStackTrace();
-                    }
-
-                    ReopenAction reopen = new ReopenAction(_tempFile, remoteFile);
-
-                    Display.getDefault().asyncExec(reopen);
-                }
+                BackgroundSaveasJob sjob = new BackgroundSaveasJob(remoteFile);
+                sjob.schedule();            
             }
         }
         else

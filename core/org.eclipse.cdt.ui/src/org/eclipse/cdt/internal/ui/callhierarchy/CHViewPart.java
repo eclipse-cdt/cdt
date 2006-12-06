@@ -59,6 +59,7 @@ import org.eclipse.ui.part.ViewPart;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.IFunction;
+import org.eclipse.cdt.core.model.IMethod;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.refactoring.actions.CRefactoringActionGroup;
 import org.eclipse.cdt.ui.CUIPlugin;
@@ -167,7 +168,7 @@ public class CHViewPart extends ViewPart {
     }
 
 	private boolean allowsRefTo(ICElement element) {
-		if (element instanceof IFunction) {
+		if (element instanceof IFunction || element instanceof IMethod) {
 			return true;
 		}
 		

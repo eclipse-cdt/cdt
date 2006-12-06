@@ -359,7 +359,7 @@ public class CElementLabels {
 		//qualification
 		if( getFlag( flags, M_FULLY_QUALIFIED ) ){
 			ICElement parent = method.getParent();
-			if (parent != null && parent.exists()) {
+			if (parent != null && parent.exists() && !(parent instanceof ITranslationUnit)) {
 				getTypeLabel( parent, T_FULLY_QUALIFIED | (flags & P_COMPRESSED), buf );
 				buf.append( "::" ); //$NON-NLS-1$
 			}

@@ -92,6 +92,7 @@ import org.eclipse.cdt.core.dom.ast.gnu.IGNUASTCompoundStatementExpression;
 import org.eclipse.cdt.core.dom.ast.gnu.c.ICASTKnRFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.gnu.c.IGCCASTArrayRangeDesignator;
 import org.eclipse.cdt.core.dom.ast.gnu.c.IGCCASTSimpleDeclSpecifier;
+import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.parser.EndOfFileException;
 import org.eclipse.cdt.core.parser.IGCCToken;
 import org.eclipse.cdt.core.parser.IParserLogService;
@@ -125,6 +126,8 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
 
     private final boolean supportGCCStyleDesignators;
 
+	private IIndex index;
+
     /**
      * @param scanner
      * @param parserMode
@@ -132,6 +135,12 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
      */
     public GNUCSourceParser(IScanner scanner, ParserMode parserMode,
             IParserLogService logService, ICParserExtensionConfiguration config) {
+    	this(scanner, parserMode, logService, config, null);
+    }
+    
+    public GNUCSourceParser(IScanner scanner, ParserMode parserMode,
+            IParserLogService logService, ICParserExtensionConfiguration config,
+            IIndex index) {
         super(scanner, logService, parserMode, config
                 .supportStatementsInExpressions(), config
                 .supportTypeofUnaryExpressions(), config
@@ -139,6 +148,7 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
                 .supportKnRC(), config.supportGCCOtherBuiltinSymbols(),
                 config.supportAttributeSpecifiers());
         supportGCCStyleDesignators = config.supportGCCStyleDesignators();
+        this.index= index;
     }
 
     protected IASTInitializer optionalCInitializer() throws EndOfFileException,
@@ -577,6 +587,7 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
     protected void translationUnit() {
         try {
             translationUnit = createTranslationUnit();
+            translationUnit.setIndex(index);
 
 			// add built-in names to the scope
 			if (supportGCCOtherBuiltinSymbols) {

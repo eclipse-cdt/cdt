@@ -98,7 +98,7 @@ public class IndexCPPBindingResolutionTest extends IndexBindingResolutionTestBas
 	//     cp->cs.*method(cp->cspp);/*1*/ &(cp->cs)->*method(cp->cspp);/*2*/
 	//	}
 	public void _testPointerToMemberFields_2() throws IOException {
-		// fails with AST parser, only (the header is empty)
+		// also fails without using the index (the header is empty)
 		IBinding b6 = getBindingFromASTName("method(cp->cspp);/*1*/", 6);
 		IBinding b7 = getBindingFromASTName("method(cp->cspp);/*2*/", 6);
 	}
@@ -584,7 +584,7 @@ public class IndexCPPBindingResolutionTest extends IndexBindingResolutionTestBas
 	//		// ?? foo/*o*/();                       // ICPPASTTypenameExprssion
 	//		// foo/*p*/(MADE_UP_SYMBOL);            // ICPPASTTypenameExprssion
 	//	}
-	public void _testExpressionKindForFunctionCalls() {
+	public void testExpressionKindForFunctionCalls() {
 		// depends on bug 164470 because resolution takes place during parse.
 		IBinding b0 = getBindingFromASTName("foo/*a*/", 3);
 		IBinding b0a = getBindingFromASTName("cp[1]", 2);

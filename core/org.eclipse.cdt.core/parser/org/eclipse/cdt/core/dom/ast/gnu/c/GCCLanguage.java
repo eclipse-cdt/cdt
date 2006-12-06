@@ -86,12 +86,10 @@ public class GCCLanguage extends AbstractLanguage {
                 ParserLanguage.C, ParserFactory.createDefaultLogService(), scannerExtensionConfiguration, codeReaderFactory);
 	    //assume GCC
 		ISourceCodeParser parser = new GNUCSourceParser( scanner, ParserMode.COMPLETE_PARSE, log,
-				new GCCParserExtensionConfiguration()  );
+				new GCCParserExtensionConfiguration(), index);
 
 	    // Parse
 		IASTTranslationUnit ast = parser.parse();
-		// mstodo isn't that too late to set the index?
-		ast.setIndex(index);
 		return ast;
 	}
 	

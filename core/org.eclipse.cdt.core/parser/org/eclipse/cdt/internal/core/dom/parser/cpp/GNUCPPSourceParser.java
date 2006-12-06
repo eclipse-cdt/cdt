@@ -131,6 +131,7 @@ import org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPASTExplicitTemplateInstantiation
 import org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPASTPointer;
 import org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPASTPointerToMember;
 import org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPASTSimpleDeclSpecifier;
+import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.parser.EndOfFileException;
 import org.eclipse.cdt.core.parser.IGCCToken;
 import org.eclipse.cdt.core.parser.IParserLogService;
@@ -1956,6 +1957,8 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 
     private final boolean supportLongLong;
 
+	private final IIndex index;
+
     private static final int DEFAULT_PARM_LIST_SIZE = 4;
 
     private static final int DEFAULT_POINTEROPS_LIST_SIZE = 4;
@@ -1973,6 +1976,12 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
      */
     public GNUCPPSourceParser(IScanner scanner, ParserMode mode,
             IParserLogService log, ICPPParserExtensionConfiguration config) {
+    	this(scanner, mode, log, config, null);
+    }
+
+    public GNUCPPSourceParser(IScanner scanner, ParserMode mode,
+            IParserLogService log, ICPPParserExtensionConfiguration config,
+            IIndex index) {
         super(scanner, log, mode, config.supportStatementsInExpressions(),
                 config.supportTypeofUnaryExpressions(), config
                         .supportAlignOfUnaryExpression(), config.supportKnRC(),
@@ -1983,6 +1992,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
         supportRestrict = config.supportRestrictKeyword();
         supportComplex = config.supportComplexNumbers();
         supportLongLong = config.supportLongLongs();
+        this.index= index;
     }
 
     /**
@@ -4634,6 +4644,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
     protected void translationUnit() {
         try {
             translationUnit = createTranslationUnit();
+            translationUnit.setIndex(index);
 
             // add built-in names to the scope
             if (supportGCCOtherBuiltinSymbols) {

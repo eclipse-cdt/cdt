@@ -45,7 +45,7 @@ public class IndexBindingResolutionBugs extends IndexBindingResolutionTestBase {
 	//     cl* a;
 	//     func(a);
 	//  }
-	public void _testBug166954() {
+	public void testBug166954() {
 		IBinding b0 = getBindingFromASTName("func(a)", 4);
 	}
 }

@@ -86,12 +86,10 @@ public class GPPLanguage extends AbstractLanguage {
                 ParserLanguage.CPP, ParserFactory.createDefaultLogService(), scannerExtensionConfiguration, codeReaderFactory);
 	    //assume GCC
 		ISourceCodeParser parser = new GNUCPPSourceParser( scanner, ParserMode.COMPLETE_PARSE, log,
-				new GPPParserExtensionConfiguration()  );
+				new GPPParserExtensionConfiguration(), index  );
 
 	    // Parse
 		IASTTranslationUnit ast= parser.parse();
-		// mstodo isn't that too late to set the index?
-		ast.setIndex(index);
 		return ast;
 	}
 

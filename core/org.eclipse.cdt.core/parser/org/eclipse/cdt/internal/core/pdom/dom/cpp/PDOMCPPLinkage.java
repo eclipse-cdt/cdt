@@ -44,6 +44,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespaceAlias;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPPointerToMemberType;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPReferenceType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPVariable;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier;
@@ -128,6 +129,21 @@ public class PDOMCPPLinkage extends PDOMLinkage {
 			// Skip parameters (TODO and others I'm sure)
 			return null;
 
+		PDOMBinding pdomBinding = addBinding(binding);
+		if (pdomBinding instanceof PDOMCPPClassType) {
+			PDOMCPPClassType pdomClassType= (PDOMCPPClassType) pdomBinding;
+			IASTNode baseNode= name.getParent();
+			if (baseNode instanceof ICPPASTBaseSpecifier) 
+				addBaseClasses(pdomClassType, (ICPPASTBaseSpecifier) baseNode);
+			
+			if (binding instanceof ICPPClassType && name.isDefinition()) {
+				addImplicitMethods(pdomClassType, (ICPPClassType) binding);
+			}
+		}
+		return pdomBinding;
+	}
+
+	private PDOMBinding addBinding(IBinding binding) throws CoreException {
 		PDOMBinding pdomBinding = adaptBinding(binding);
 		try {
 			if (pdomBinding == null) {
@@ -140,16 +156,6 @@ public class PDOMCPPLinkage extends PDOMLinkage {
 			throw new CoreException(Util.createStatus(e));
 		}
 
-		if (pdomBinding instanceof PDOMCPPClassType) {
-			PDOMCPPClassType pdomClassType= (PDOMCPPClassType) pdomBinding;
-			IASTNode baseNode= name.getParent();
-			if (baseNode instanceof ICPPASTBaseSpecifier) 
-				addBaseClasses(pdomClassType, (ICPPASTBaseSpecifier) baseNode);
-			
-			if (binding instanceof ICPPClassType && name.isDefinition()) {
-				addImplicitMethods(pdomClassType, (ICPPClassType) binding);
-			}
-		}
 		return pdomBinding;
 	}
 
@@ -397,21 +403,25 @@ public class PDOMCPPLinkage extends PDOMLinkage {
 	}
 
 	public PDOMNode addType(PDOMNode parent, IType type) throws CoreException {
+		if (type instanceof IProblemBinding) {
+			return null;
+		}
 		if (type instanceof ICPPBasicType) {
 			return new PDOMCPPBasicType(pdom, parent, (ICPPBasicType)type);
-		} else if (type instanceof ICPPClassType) {
-			// aftodo: please review, the binding may be nested in a namespace bug 162011
-			//   it might be necessary to create the binding for the class here.
-			PDOMBinding binding= adaptBinding((ICPPClassType) type);
-			if (binding != null) {
-				return binding;
-			}
-		} else if(type instanceof IEnumeration) {
-			PDOMBinding binding= adaptBinding((IEnumeration) type);
-			if (binding != null) {
-				return binding;
-			}
-		} else if (type instanceof ICPPPointerToMemberType) {
+		}
+		if (type instanceof ICPPClassType) {
+			return addBinding((ICPPClassType) type);
+		} 
+		if (type instanceof IEnumeration) {
+			return addBinding((IEnumeration) type);
+		} 
+		if (type instanceof ITypedef) {
+			return addBinding((ITypedef) type);
+		}
+		if (type instanceof ICPPReferenceType) {
+			return new PDOMCPPReferenceType(pdom, parent, (ICPPReferenceType)type);
+		}
+		if (type instanceof ICPPPointerToMemberType) {
 			return new PDOMCPPPointerToMemberType(pdom, parent, (ICPPPointerToMemberType)type);
 		}
 

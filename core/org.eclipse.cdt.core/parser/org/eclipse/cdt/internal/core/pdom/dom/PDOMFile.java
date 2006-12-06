@@ -205,11 +205,15 @@ public class PDOMFile implements IIndexFragmentFile {
 		}
 	}
 
-	private PDOMName createPDOMName(IASTName name, PDOMName caller) throws CoreException {
+	private PDOMName createPDOMName(IASTName name, PDOMName caller) {
 		PDOMName result= null;
-		PDOMBinding binding= ((WritablePDOM) pdom).addBinding(name);
-		if (binding != null) {
-			result= new PDOMName(pdom, name, this, binding, caller);
+		try {
+			PDOMBinding binding = ((WritablePDOM) pdom).addBinding(name);
+			if (binding != null) {
+				result= new PDOMName(pdom, name, this, binding, caller);
+			}
+		} catch (CoreException e) {
+			CCorePlugin.log(e);
 		}
 		return result;
 	}
@@ -325,13 +329,12 @@ public class PDOMFile implements IIndexFragmentFile {
 	}
 
 	public static IIndexFragmentFile findFile(PDOM pdom, BTree btree, IIndexFileLocation location, IIndexLocationConverter strategy)
-	throws CoreException {
+			throws CoreException {
 		Finder finder = new Finder(pdom.getDB(), location, strategy);
 		btree.accept(finder);
 		int record = finder.getRecord();
 		return record != 0 ? new PDOMFile(pdom, record) : null;
 	}
-
 	private static class Finder implements IBTreeVisitor {
 		private final Database db;
 		private final String rawKey;
@@ -353,7 +356,7 @@ public class PDOMFile implements IIndexFragmentFile {
 			this.record = record;
 			return false;
 		}
-		
+
 		public int getRecord() {
 			return record;
 		}

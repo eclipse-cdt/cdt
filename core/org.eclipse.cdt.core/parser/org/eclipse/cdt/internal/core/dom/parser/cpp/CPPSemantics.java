@@ -3113,7 +3113,9 @@ public class CPPSemantics {
 			//derived class of B
 		    ICPPPointerToMemberType spm = (ICPPPointerToMemberType) s;
 		    ICPPPointerToMemberType tpm = (ICPPPointerToMemberType) t;
-		    if( spm.getType().isSameType( tpm.getType() ) ){
+		    IType st = spm.getType();
+		    IType tt = tpm.getType();
+		    if( st != null && tt != null && st.isSameType( tt ) ){
 		        temp = hasBaseClass( tpm.getMemberOfClass(), spm.getMemberOfClass(), false );
 		        cost.rank = ( temp > -1 ) ? Cost.CONVERSION_RANK : Cost.NO_MATCH_RANK;
 				cost.conversion = ( temp > -1 ) ? temp : 0;

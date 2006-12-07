@@ -90,11 +90,9 @@ public class FoldingActionGroup extends ActionGroup {
 		fViewer= (ProjectionViewer) viewer;
 		
 		fProjectionListener= new IProjectionListener() {
-
 			public void projectionEnabled() {
 				update();
 			}
-
 			public void projectionDisabled() {
 				update();
 			}
@@ -103,7 +101,6 @@ public class FoldingActionGroup extends ActionGroup {
 		fViewer.addProjectionListener(fProjectionListener);
 		
 		fToggle= new TextOperationAction(FoldingMessages.getResourceBundle(), "Projection.Toggle.", editor, ProjectionViewer.TOGGLE, true); //$NON-NLS-1$
-		fToggle.setChecked(true);
 		fToggle.setActionDefinitionId(IFoldingCommandIds.FOLDING_TOGGLE);
 		editor.setAction("FoldingToggle", fToggle); //$NON-NLS-1$
 		
@@ -164,7 +161,7 @@ public class FoldingActionGroup extends ActionGroup {
 	protected void update() {
 		if (isEnabled()) {
 			fToggle.update();
-			fToggle.setChecked(fViewer.getProjectionAnnotationModel() != null);
+			fToggle.setChecked(fViewer.isProjectionMode());
 			fExpand.update();
 			fExpandAll.update();
 			fCollapse.update();

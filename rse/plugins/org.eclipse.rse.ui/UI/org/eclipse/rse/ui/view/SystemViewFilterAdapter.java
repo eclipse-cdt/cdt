@@ -47,9 +47,9 @@ import org.eclipse.rse.ui.SystemResources;
 import org.eclipse.rse.ui.validators.ISystemValidator;
 import org.eclipse.rse.ui.validators.ValidatorFilterName;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.IActionFilter;
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
 import org.eclipse.ui.views.properties.PropertyDescriptor;
-
 
 /**
  * Default Adapter for displaying filter objects in tree views.
@@ -184,17 +184,17 @@ public class SystemViewFilterAdapter extends AbstractSystemViewAdapter implement
 			 Object[] children = null;
              SystemFilterSimple simpleFilter = (SystemFilterSimple)filter;
     	     String[] filterStrings = simpleFilter.getFilterStrings();
-    	     // 50167pc: The following was a problem, as the parent in a SimpleFilterSimpleImpl is not
-    	     //  to be trusted, since we tend to use the same instance for each connection in the list.     	   	 
+    	     // 50167pc: The following was a problem, as the parent in a SystemFilterSimpleImpl is not
+    	     // to be trusted, since we tend to use the same instance for each connection in the list.     	   	 
              ISubSystem ss = (ISubSystem)simpleFilter.getParent();
              String preSelectName = null;
 		     try
 		     {
-		     	Shell shell = getShell();
+//		     	Shell shell = getShell();
 		     	// hack to propogate type filters down from connection in select dialogs...
 		     	ISystemViewInputProvider inputProvider = getInput();
-		     	if ( (inputProvider != null) && (inputProvider instanceof SystemSelectRemoteObjectAPIProviderImpl) &&
-		     	     (filterStrings != null) && (filterStrings.length>0) )
+		     	if ((inputProvider instanceof SystemSelectRemoteObjectAPIProviderImpl) &&
+		     	     (filterStrings != null) && (filterStrings.length > 0) )
 		     	{
 		     	  SystemSelectRemoteObjectAPIProviderImpl ip = (SystemSelectRemoteObjectAPIProviderImpl)inputProvider;
 		     	  if (ip.filtersNeedDecoration(element))
@@ -232,7 +232,10 @@ public class SystemViewFilterAdapter extends AbstractSystemViewAdapter implement
                    	    match = child;
                    }
                    //if (match != null) always reset even if it is null
-                   ((SystemSelectRemoteObjectAPIProviderImpl)inputProvider).setPreSelectFilterChildObject(match);
+                   if (inputProvider instanceof SystemSelectRemoteObjectAPIProviderImpl)
+                   {
+					  ((SystemSelectRemoteObjectAPIProviderImpl) inputProvider).setPreSelectFilterChildObject(match);
+                   }
                 }
 		     }
 		     catch (InterruptedException exc)
@@ -359,8 +362,8 @@ public class SystemViewFilterAdapter extends AbstractSystemViewAdapter implement
 	/**
 	 * Return our unique property values
 	 * The parent handles P_TEXT and P_TYPE only, and we augment that here.
-	 * @param	property the name of the property as named by its property descriptor
-	 * @return	the current value of the property
+	 * @param key the name of the property as named by its property descriptor
+	 * @return the current value of the property
 	 */
 	protected Object internalGetPropertyValue(Object key)
 	{
@@ -455,8 +458,8 @@ public class SystemViewFilterAdapter extends AbstractSystemViewAdapter implement
 		return true;
 	}    	
 	/**
-	 * Return a validator for verifying the new name is correct.
-	 * @param either a filter for a rename action, or a filter pool for a "new" action.
+	 * @param element either a filter for a rename action, or a filter pool for a "new" action.
+	 * @return a validator for verifying the new name is correct.
 	 */
     public ISystemValidator getNameValidator(Object element)
     { 
@@ -524,37 +527,38 @@ public class SystemViewFilterAdapter extends AbstractSystemViewAdapter implement
 	}
 
 	/**
-	 * <i>Overide of parent method.</i><br>
-	 * From <samp>IActionFilter</samp> so the popupMenus extension point can use &lt;filter&gt;, &lt;enablement&gt;
-	 * or &lt;visibility&gt;. We add support is for the following:
+	 * Test an object to see if it has an attribute with a particular value. 
+	 * From <code>IActionFilter</code> so the popupMenus extension point can use 
+	 * &lt;filter&gt;, &lt;enablement&gt; or &lt;visibility&gt;.
+	 * We add support for the following attributes:
 	 * <ol>
-	 *   <li>name="filterType". The value is tested against the non-translated filter type. Note all subsystems
-	 *       support different types of filters.
-	 *   <li>name="showChangeFilterStringsPropertyPage". The value is tested against the call to the subsystem factory method showChangeFilterStringsPropertyPage(SystemFilter).
-	 *       Compares against "true" (default) or "false". 
+	 * <li>"filterType"
+	 * The value is tested against the non-translated filter type.
+	 * Not all subsystems support different types of filters.
+	 * <li>name="showChangeFilterStringsPropertyPage".
+	 * The value is tested against the call to the
+	 * subsystem configuration method showChangeFilterStringsPropertyPage(SystemFilter).
+	 * values should be <code>true</code> or <code>false</code>.
 	 * </ol>
+	 * @param target the object whose attribute we are testing
+	 * @param name the attribute to test.
+	 * @param value the value to test.
+	 * @return true if the attribute of the given name can be said to have the given value
+	 * @see IActionFilter#testAttribute(Object, String, String)
 	 */
-	public boolean testAttribute(Object target, String name, String value)
-	{
-		if (name.equalsIgnoreCase("filterType")) //$NON-NLS-1$
-		{
+	public boolean testAttribute(Object target, String name, String value) {
+		boolean result = false;
+		if (name.equalsIgnoreCase("filterType")) { //$NON-NLS-1$
 			ISystemFilter filter = getFilter(target);
 			String type = filter.getType();
-			if ((type == null) || (type.length() == 0))
-				return false;
-			else
-				return value.equals(type);
-		}
-		else if (name.equalsIgnoreCase("showChangeFilterStringPropertyPage")) //$NON-NLS-1$
-		{			
+			result = (type != null) && (type.length() > 0) && value.equals(type);
+		} else if (name.equalsIgnoreCase("showChangeFilterStringPropertyPage")) { //$NON-NLS-1$
 			ISystemFilter filter = getFilter(target);
 			ISubSystemConfiguration ssf = SubSystemHelpers.getParentSubSystemConfiguration(filter);
-			if (value.equals("true")) //$NON-NLS-1$
-				return ssf.showChangeFilterStringsPropertyPage(filter);
-			else
-				return !ssf.showChangeFilterStringsPropertyPage(filter);			 	
+			result = (ssf != null) && ssf.showChangeFilterStringsPropertyPage(filter) && value.equals("true"); //$NON-NLS-1$
+		} else {
+			result = super.testAttribute(target, name, value);
 		}
-		else
-			return super.testAttribute(target, name, value);
+		return result;
 	}
 }

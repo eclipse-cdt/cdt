@@ -8,6 +8,10 @@ Bundle-Localization: plugin
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
  org.eclipse.tm.terminal,
+ org.eclipse.ui,
+ org.eclipse.team.cvs.core;bundle-version="[3.2.0,4.0.0)",
+ org.eclipse.team.cvs.ssh2;bundle-version="[3.2.0,4.0.0)",
+ org.eclipse.team.cvs.ui;bundle-version="[3.2.0,4.0.0)",
  com.jcraft.jsch;bundle-version="[0.1.28,2.0.0)"
 Eclipse-LazyStart: true
 Bundle-RequiredExecutionEnvironment: J2SE-1.4

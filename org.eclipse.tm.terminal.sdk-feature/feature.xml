@@ -2,7 +2,7 @@
 <feature
       id="org.eclipse.tm.terminal.sdk"
       label="%featureName"
-      version="0.9.0"
+      version="0.9.0.qualifier"
       provider-name="%providerName">
 
    <description>

@@ -253,6 +253,9 @@ public class CodeFormatterVisitor extends CPPASTVisitor {
 				if (i < decls.length - 1) {
 					exitAlignments();
 					skipToNode(decls[i+1]);
+					while (scribe.indentationLevel < indentLevel) {
+						scribe.indent();
+					}
 					while (scribe.indentationLevel > indentLevel) {
 						scribe.unIndent();
 					}

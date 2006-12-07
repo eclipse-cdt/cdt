@@ -615,24 +615,31 @@ public class Scribe {
 		preserveNewlines= true;
 		skipOverInactive= false;
 		scannerEndPosition= startOffset + length;
+		int parenLevel= 0;
 		try {
 			scanner.resetTo(startOffset, startOffset + length - 1);
 			while (true) {
 				boolean hasWhitespace= printComment();
 				if (currentToken == null) {
+					if (hasWhitespace) {
+						space();
+					}
 					break;
 				}
 				currentToken= scanner.nextToken();
 				if (currentToken == null) {
+					if (hasWhitespace) {
+						space();
+					}
 					break;
 				}
 				switch (currentToken.type) {
 				case Token.tLBRACE:
 					scanner.resetTo(scanner.getCurrentTokenStartPosition(), scannerEndPosition-1);
+					formatOpeningBrace(formatter.preferences.brace_position_for_block, hasWhitespace);
 					if (formatter.preferences.indent_statements_compare_to_block) {
 						indent();
 					}
-					formatOpeningBrace(formatter.preferences.brace_position_for_block, hasWhitespace);
 					break;
 				case Token.tRBRACE:
 					scanner.resetTo(scanner.getCurrentTokenStartPosition(), scannerEndPosition-1);
@@ -642,21 +649,36 @@ public class Scribe {
 					formatClosingBrace(formatter.preferences.brace_position_for_block);
 					break;
 				case Token.tLPAREN:
+					++parenLevel;
 					print(currentToken.getLength(), hasWhitespace);
-					for (int i= 0; i < formatter.preferences.continuation_indentation; i++) {
-						indent();
+					if (parenLevel > 0) {
+						for (int i= 0; i < formatter.preferences.continuation_indentation; i++) {
+							indent();
+						}
+						// HACK: avoid indent in same line
+						column= indentationLevel + 1;
 					}
-					// HACK: avoid indent in same line
-					column= indentationLevel + 1;
 					break;
 				case Token.tRPAREN:
-					for (int i= 0; i < formatter.preferences.continuation_indentation; i++) {
-						unIndent();
+					--parenLevel;
+					if (parenLevel >= 0) {
+						for (int i= 0; i < formatter.preferences.continuation_indentation; i++) {
+							unIndent();
+						}
 					}
 					print(currentToken.getLength(), hasWhitespace);
 					break;
 				case Token.tSEMI:
 					print(currentToken.getLength(), formatter.preferences.insert_space_before_semicolon);
+					break;
+				case Token.t_else:
+				case Token.t_catch:
+					if (formatter.preferences.insert_new_line_before_else_in_if_statement) {
+						printNewLine(currentToken.offset);
+					} else {
+						hasWhitespace= true;
+					}
+					print(currentToken.getLength(), hasWhitespace);
 					break;
 				default:
 					if (currentToken.isVisibilityModifier()
@@ -838,119 +860,9 @@ public class Scribe {
 	}
 
 	public void printEndOfTranslationUnit() {
-		// if we have a space between two tokens we ensure it will be dumped in
-		// the formatted string
 		int currentTokenStartPosition= scanner.getCurrentPosition();
-		boolean hasComment= false;
-		boolean hasLineComment= false;
-		boolean hasWhitespace= false;
-		int count= 0;
-		while (true) {
-			currentToken= scanner.nextToken();
-			if (currentToken == null) {
-				if (count >= 1 || formatter.preferences.insert_new_line_at_end_of_file_if_missing) {
-					printNewLine(scannerEndPosition);
-				}
-				return;
-			}
-			switch (currentToken.type) {
-			case Token.tWHITESPACE:
-				char[] whiteSpaces= scanner.getCurrentTokenSource();
-				count= 0;
-				for (int i= 0, max= whiteSpaces.length; i < max; i++) {
-					switch (whiteSpaces[i]) {
-					case '\r':
-						if ((i + 1) < max) {
-							if (whiteSpaces[i + 1] == '\n') {
-								i++;
-							}
-						}
-						count++;
-						break;
-					case '\n':
-						count++;
-					}
-				}
-				if (count == 0) {
-					hasWhitespace= true;
-					addDeleteEdit(scanner.getCurrentTokenStartPosition(), scanner.getCurrentTokenEndPosition());
-				} else if (hasComment) {
-					if (count == 1) {
-						printNewLine(scanner.getCurrentTokenStartPosition());
-					} else {
-						preserveEmptyLines(count - 1, scanner.getCurrentTokenStartPosition());
-					}
-					addDeleteEdit(scanner.getCurrentTokenStartPosition(), scanner.getCurrentTokenEndPosition());
-				} else if (hasLineComment) {
-					preserveEmptyLines(count - 1, scanner.getCurrentTokenStartPosition());
-					addDeleteEdit(scanner.getCurrentTokenStartPosition(), scanner.getCurrentTokenEndPosition());
-				} else {
-					addDeleteEdit(scanner.getCurrentTokenStartPosition(), scanner.getCurrentTokenEndPosition());
-				}
-				currentTokenStartPosition= scanner.getCurrentPosition();
-				break;
-			case Token.tLINECOMMENT:
-				if (count >= 1) {
-					if (count > 1) {
-						preserveEmptyLines(count - 1, scanner.getCurrentTokenStartPosition());
-					} else if (count == 1) {
-						printNewLine(scanner.getCurrentTokenStartPosition());
-					}
-				} else if (hasWhitespace) {
-					space();
-				}
-				hasWhitespace= false;
-				printCommentLine();
-				currentTokenStartPosition= scanner.getCurrentPosition();
-				hasLineComment= true;
-				count= 0;
-				break;
-			case Token.tBLOCKCOMMENT:
-				if (count >= 1) {
-					if (count > 1) {
-						preserveEmptyLines(count - 1, scanner.getCurrentTokenStartPosition());
-					} else if (count == 1) {
-						printNewLine(scanner.getCurrentTokenStartPosition());
-					}
-				} else if (hasWhitespace) {
-					space();
-				}
-				hasWhitespace= false;
-				printBlockComment(false);
-				currentTokenStartPosition= scanner.getCurrentPosition();
-				hasLineComment= false;
-				hasComment= true;
-				count= 0;
-				break;
-			case Token.tPREPROCESSOR:
-			case Token.tPREPROCESSOR_DEFINE:
-			case Token.tPREPROCESSOR_INCLUDE:
-				if (column != 1)
-					printNewLine(scanner.getCurrentTokenStartPosition());
-				if (count >= 1) {
-					if (count > 1) {
-						preserveEmptyLines(count - 1, scanner.getCurrentTokenStartPosition());
-					} else if (count == 1) {
-						// printNewLine(scanner.getCurrentTokenStartPosition());
-					}
-				}
-				hasWhitespace= false;
-				printPreprocessorDirective();
-				printNewLine();
-				currentTokenStartPosition= scanner.getCurrentPosition();
-				hasLineComment= false;
-				hasComment= false;
-				count= 0;
-				break;
-			case Token.tSEMI:
-				print(currentToken.getLength(), formatter.preferences.insert_space_before_semicolon);
-				break;
-			default:
-				// step back one token
-				scanner.resetTo(currentTokenStartPosition, scannerEndPosition - 1);
-				return;
-			}
-		}
+		printRaw(currentTokenStartPosition, scannerEndPosition - currentTokenStartPosition + 1);
+		return;
 	}
 
 	public boolean printComment() {

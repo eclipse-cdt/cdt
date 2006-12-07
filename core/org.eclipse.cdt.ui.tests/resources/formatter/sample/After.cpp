@@ -1,7 +1,7 @@
 #include <Simple.h>
 
 const SimpleStruct simpleStruct =
-	{
+{
 	1
 	, "mySimple"
 	, 0.1232
@@ -16,8 +16,8 @@ const SimpleStruct simpleStruct =
                 }
 
 const OtherStruct array[] =
+{
 	{
-		{
 #if FOO
 		"foo"
 #  else
@@ -27,7 +27,7 @@ const OtherStruct array[] =
 		, &t_int
 		, 0
 	}
-	,	{
+	, {
 		"name"
 		, SIZEOF( simpleStruct, floatnum )
 		, &t_float
@@ -39,17 +39,17 @@ const OtherStruct array[] =
 
 void SimpleStruct_construct(
 		struct SimpleStruct * const this )
-	{
+{
 	// single line
 	this->num = 1;
 	this->name = "boo";
 	this->floatNum = 1.5;
 }
 
-int ConnectParams_doSomething(const struct SimpleStruct * const this )
-    {
-/*
- * multiline
- */
+int ConnectParams_doSomething( const struct SimpleStruct * const this )
+{
+	/*
+	 * multiline
+	 */
 	return 1;
-	}
+}

@@ -1,13 +1,13 @@
 /*******************************************************************************
- * Copyright (c) 2006 Wind River Systems, Inc. and others.
+ * Copyright (c) 2000, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
- *     Wind River Systems, Inc. - initial implementation
- *     
+ * IBM Corporation - initial API and implementation (org.eclipse.ui.part.PageBook) 
+ * Michael Scharf (Wind River) - consider all children for layout and hiding
  *******************************************************************************/
 package org.eclipse.tm.terminal.internal.view;
 
@@ -28,11 +28,12 @@ import org.eclipse.swt.widgets.Layout;
  */
 public class PageBook extends Composite {
 	private Point minimumPageSize = new Point(0, 0);
+
 	/**
 	 * Layout for the page container.
 	 *  
 	 */
-	private class PageLayout extends Layout {
+	private class PageBookLayout extends Layout {
 		public Point computeSize(Composite composite, int wHint, int hHint, boolean force) {
 			if (wHint != SWT.DEFAULT && hHint != SWT.DEFAULT)
 				return new Point(wHint, hHint);
@@ -45,10 +46,12 @@ public class PageBook extends Composite {
 				y = Math.max(y, size.y);
 			}
 			
-			if (wHint != SWT.DEFAULT)
+			if (wHint != SWT.DEFAULT) {
 				x = wHint;
-			if (hHint != SWT.DEFAULT)
+			}
+			if (hHint != SWT.DEFAULT) {
 				y = hHint;
+			}
 			return new Point(x, y);
 		}
 
@@ -60,7 +63,13 @@ public class PageBook extends Composite {
 			}
 		}
 	}
-     /**
+
+    /**
+     * The current control; <code>null</code> if none.
+     */
+    private Control currentPage = null;
+
+	/**
      * Creates a new empty pagebook.
      *
      * @param parent the parent composite
@@ -68,12 +77,8 @@ public class PageBook extends Composite {
      */
     public PageBook(Composite parent, int style) {
         super(parent, style);
-        setLayout(new PageLayout());
+        setLayout(new PageBookLayout());
     }
-    /**
-     * The current control; <code>null</code> if none.
-     */
-    private Control currentPage = null;
 
     /**
      * Shows the given page. This method has no effect if the given page is not
@@ -83,21 +88,21 @@ public class PageBook extends Composite {
      */
     public void showPage(Control page) {
 
-        if (page == currentPage)
+        if (page == currentPage) {
             return;
-        if (page.getParent() != this)
+        }
+        if (page==null || page.getParent() != this) {
             return;
+        }
 
         currentPage = page;
  
         // show new page
-        if (page != null) {
-            if (!page.isDisposed()) {
-                page.setVisible(true);
-                layout(true);
-                //				if (fRequestFocusOnShowPage)
-                //					page.setFocus();
-            }
+        if (!page.isDisposed()) {
+            page.setVisible(true);
+            layout(true);
+            //				if (fRequestFocusOnShowPage)
+            //					page.setFocus();
         }
         
         // hide old *after* new page has been made visible in order to avoid flashing

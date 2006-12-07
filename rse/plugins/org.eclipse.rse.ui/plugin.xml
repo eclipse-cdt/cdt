@@ -112,10 +112,7 @@ Contributors:
 <!--  namefilter => scalar or simple generic name to match on.                          -->
 <!--  typecategoryfilter => scalar or simple generic type category to match on.         -->
 <!--                        This is subsystem configuration defined and usually not needed if -->
-<!--                        the subsystemconfiguration id is given. However, for ibm.files400 -->
-<!--                        there are multiple categories: "LIBRARIES", "OBJECTS",      -->
-<!--                        "OBJECTFILES" and "MEMBERS". Specify "OBJECT*" to match on  -->
-<!--                        all objects including files.                                -->
+<!--                        the subsystemconfiguration id is given.                     -->
 <!--  typefilter => scalar or simple generic type to match on. This too is subsystem    -->
 <!--                configuration defined.												-->
 <!--  subtypefilter => scalar or simple generic subtype to match on.                    -->
@@ -248,11 +245,9 @@ Contributors:
 <!--           of the action in the pop-up menu. Each token in the path except the last -->
 <!--           one represents an existing submenu in the hierarchy, as defined via the  -->
 <!--           id attribute of a <menu> tag previously. The last token represents the   -->
-<!--           named separator group into which the action will be added. If no path is -->
-<!--           given, this must be an IBM-supplied group as defined in the comments     -->
-<!--           above for the path attribute of the <menu> tag. If a path is given then  -->
-<!--           this must match the name attribute of some <separator> subtag within one -->
-<!--           of your <menu> tags.                                                     -->
+<!--           named separator group into which the action will be added. If a path is  -->
+<!--           given then this must match the name attribute of some <separator> subtag -->
+<!--           within one of your <menu> tags.                                          -->
 <!--           If the path is omitted, the action will be added to the standard group   -->
 <!--           named "additions". Indeed, same if the whole menubarPath attr is omitted.-->
 <!-- enablesFor => a value indicating the selection count which must be met to enable   -->
@@ -279,7 +274,7 @@ Contributors:
 <!--   <extension point="org.eclipse.rse.ui.popupMenus">                       -->
 <!--      <objectContribution                                                           -->
 <!--            id="com.acme.displayfile.actions"                                       -->
-<!--            subsystemconfigurationid="ibm.files400"                                       -->
+<!--            subsystemconfigurationid="acme.files"                                       -->
 <!--            typecategoryfilter="OBJECT*"                                            -->
 <!--            typefilter="*FILE"                                                      -->
 <!--            subtypefilter="DSPF"                                                    -->
@@ -318,7 +313,7 @@ Contributors:
 <!--			id="com.mycomp.compileCommand1"											-->
 <!--			label="My Label 1"														-->
 <!--			commandstring="mycommand ${resource_name}"								-->
-<!--			subsystemconfigurationid="ibm.files"											-->
+<!--			subsystemconfigurationid="acme.files"											-->
 <!--			namefilter="*.java">													-->
 <!--		</compilecommand>															-->
 <!--	</extension>																	-->

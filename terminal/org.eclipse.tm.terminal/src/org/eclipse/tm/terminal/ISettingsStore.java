@@ -14,7 +14,6 @@ package org.eclipse.tm.terminal;
 /**
  * A simple interface to a store to persist the state of a connection. 
  * 
- * <p>TODO Not to be implemented.
  * @author Michael Scharf
  */
 public interface ISettingsStore {

@@ -349,7 +349,6 @@ public class SshConnectorService extends AbstractConnectorService implements ISs
 			Socket socket = null;
 			//Allows to cancel the socket creation operation if necessary.
 			//Waits for the timeout specified in CVS Preferences, maximum.
-	    	//TODO Get rid of discouraged access by copying into services plugin
 			socket = SshConnectorService.createSocket(host, port, CONNECT_DEFAULT_TIMEOUT, monitor);
 			// Null out the monitor so we don't hold onto anything
 			// (i.e. the SSH2 session will keep a handle to the socket factory around
@@ -368,7 +367,6 @@ public class SshConnectorService extends AbstractConnectorService implements ISs
 
 	protected void internalConnect(IProgressMonitor monitor) throws Exception
     {
-    	//TODO Set known hosts and identities from Preferences
     	//We could share the preferences from ssh2, or use RSE
     	//ConnectorService Properties / Server Launcher Properties
     	

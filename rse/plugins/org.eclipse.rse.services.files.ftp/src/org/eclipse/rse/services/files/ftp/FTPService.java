@@ -235,7 +235,6 @@ public class FTPService extends AbstractFileService implements IFileService, IFT
 		//For VMS, normalize the home location
 		if(_systemName.equals(FTPClientConfig.SYST_VMS))
 		{
-			String name = getName();
 			_userHome = _userHome.replaceAll(":\\[", "/"); //$NON-NLS-1$ //$NON-NLS-2$
 			_userHome = '/'+_userHome.substring(0,_userHome.lastIndexOf(']'));
 		}

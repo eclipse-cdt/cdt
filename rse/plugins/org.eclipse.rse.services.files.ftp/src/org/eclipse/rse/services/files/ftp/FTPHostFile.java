@@ -41,8 +41,7 @@ public class FTPHostFile implements IHostFile
 	private boolean _canWrite = true;
 	private boolean _isRoot;
 	private boolean _exists;
-	private String _systemName;
-	
+		
 	public FTPHostFile(String parentPath, String name, boolean isDirectory, boolean isRoot, long lastModified, long size, boolean exists)
 	{
 		_parentPath = parentPath;
@@ -59,7 +58,6 @@ public class FTPHostFile implements IHostFile
 	
 	public FTPHostFile(String parentPath, FTPFile ftpFile, String systemName)
 	{
-		_systemName = systemName;
 		_parentPath = parentPath;
 		
 		if(systemName.equals(FTPClientConfig.SYST_VMS))

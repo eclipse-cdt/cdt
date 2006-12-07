@@ -68,9 +68,11 @@ public class DownloadListener implements IDomainListener,IUniversalDataStoreCons
 
 		if (monitor != null)
 		{
+			/* DKM - DO WE NEED THIS?!!
 			while (_display!=null && _display.readAndDispatch()) {
 				//Process everything on event queue
 			}
+			*/
 		}
 		if (_status.getValue().equals("done")) //$NON-NLS-1$
 		{
@@ -158,9 +160,11 @@ public class DownloadListener implements IDomainListener,IUniversalDataStoreCons
 					
 					_monitor.subTask(str);
 					
+					/* DKM - DO WE NEED THIS?!!
 					while (_display != null && _display.readAndDispatch()) {
 						//Process everything on event queue
 					}
+					*/
 				}
 				catch (Exception e)
 				{

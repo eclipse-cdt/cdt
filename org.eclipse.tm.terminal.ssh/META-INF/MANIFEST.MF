@@ -9,4 +9,5 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
  org.eclipse.tm.terminal,
  com.jcraft.jsch
-Eclipse-LazyStart: false
+Eclipse-LazyStart: true
+Bundle-RequiredExecutionEnvironment: J2SE-1.4

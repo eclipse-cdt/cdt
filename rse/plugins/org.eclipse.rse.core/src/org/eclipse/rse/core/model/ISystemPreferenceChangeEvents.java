@@ -41,9 +41,5 @@ public interface ISystemPreferenceChangeEvents
 	 * A connection type has been enabled or disabled
 	 */
 	public static final int EVENT_ENABLED_CONNECTIONS_CHANGED = 25;
-		
-	/**
-	 * The range 10000-10999 is reserved for IBM product use. We'll find a way to 
-	 * register these eventually.
-	 */
+
 }

@@ -701,8 +701,8 @@ The list on the left shows the existing user actions:
 The list on the left shows the existing named types:
 - To <b>create</b> a new type, select the "New" node at the top of the list, enter information in the edit pane on the right, and press the <b>Create</b> button.
 - To <b>edit</b> an existing type, select the type in the list, update the information in the edit pane on the right, and press the <b>Apply</b> button.
-- To copy, paste, delete or re-order existing types, use the pop-up menu.
-IBM-supplied types cannot be edited, but you can create a new type based on them by using copy and paste.
+- To copy, paste, delete or re-order existing types, use the pop-up menu.  
+Supplied types cannot be edited, but you can create a new type based on them by using copy and paste.
 </description></context>
 <context id="wwnt0002"><description>Enter a comma-separated list of file extensions or file names. For file names that have no extension, such as "makefile", specify ".null" for the extension, as in "makefile.null".</description></context>
 
@@ -717,7 +717,7 @@ IBM-supplied types cannot be edited, but you can create a new type based on them
 <!-- USER DEFINED ACTIONS DIALOG ACTION:  Move Down  -->
 <context id="udmd0000"><description>Move the selected action or type down in the list.</description></context>
 <!-- USER DEFINED ACTIONS DIALOG ACTION:  Restore Defaults  -->
-<context id="udrd0000"><description>Restore the action or type to its values as originally supplied by IBM.</description></context>
+<context id="udrd0000"><description>Restore the action or type to its original values.</description></context>
 
 <!-- WORK WITH COMPILE COMMANDS DIALOG...   -->
 <context id="wwcc0000"><description>Use this dialog to create or edit compile commands that appear in the Compile pop-up menu for remote resources. Each active profile can contain unique compile commands, and all applicable commands from all active profiles are shown in the Compile menu.
@@ -738,7 +738,7 @@ The list on the left shows the existing compile commands:
 <!-- WORK WITH COMPILE COMMANDS DIALOG ACTION:  Move Down  -->
 <context id="wwcc5000"><description>Move the selected compile command down in the list.</description></context>
 <!-- WORK WITH COMPILE COMMANDS DIALOG ACTION:  Restore Defaults  -->
-<context id="wwcc6000"><description>Restore the compile command to its values as originally supplied by IBM.</description></context>
+<context id="wwcc6000"><description>Restore the compile command to its original values.</description></context>
 
 <!-- Save password dialogs -->
 <context id="pwdi0000">

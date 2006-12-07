@@ -28,7 +28,6 @@ public interface ISystemFileTransferModeRegistry extends ISystemFileTypes
 	
 	// Default text file names
 	public static final String[] DEFAULT_TEXT_FILE_NAMES = {"application.xml", "build.properties", "fragment.xml",
-															 "ibm-application-bnd.xmi", "ibm-application-ext.xmi",
 															 "install.xml", "plugin.xml", "server-cfg.xml", "web.xml"};
 															 
 	// Default text file types

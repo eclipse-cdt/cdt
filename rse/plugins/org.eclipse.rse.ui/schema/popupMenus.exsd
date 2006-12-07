@@ -198,19 +198,7 @@ declared defined with the specified category.
 
 &lt;p&gt;
 This category can be scalar, or it can be generic to match on
-multiple subsystem configuration categories. The
-categories of the IBM-supplied subsystem factories that display
-remote resources in the Remote
-Systems view are:
-&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;b&gt;files&lt;/b&gt;. For subsystems that list hierarchical file
-system resources, such as folders and files.
-&lt;li&gt;&lt;b&gt;nativefiles&lt;/b&gt;. For subsystems that list non-hierarchical file
-system resources, such as in the iSeries QSYS file system.
-&lt;li&gt;&lt;b&gt;commands&lt;/b&gt;. For subsystems that list remote commands.
-&lt;li&gt;&lt;b&gt;jobs&lt;/b&gt;. For subsystems that list remote jobs.
-&lt;/ul&gt;
+multiple subsystem configuration categories.
 &lt;br&gt;
                </documentation>
             </annotation>
@@ -255,28 +243,7 @@ Specify as many of these optional filters like this as needed to explicitly scop
 This filter specifies a type category. Normally the subsystemconfigurationid
 is sufficient, but some subsystems display multiple types of
 resources, and these are categorized by a type name that can
-be used to scope property pages. Here are the type categories supported by IBM-
-supplied subsystems:
-&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;b&gt;files&lt;/b&gt;. For hierarchical file systems resources.
-&lt;li&gt;&lt;b&gt;commands&lt;/b&gt;. For remote commands.
-&lt;li&gt;&lt;b&gt;jobs&lt;/b&gt;. For remote jobs.
-&lt;/ul&gt;
-&lt;br&gt;
-The IBM-supplied subsystem for iSeries native file system objects also supports 
-these type categories:
-&lt;ul&gt;
-&lt;li&gt;&lt;b&gt;LIBRARIES&lt;/b&gt;. Set for libraries.
-&lt;li&gt;&lt;b&gt;OBJECTS&lt;/b&gt;. Set for objects, excluding files.
-&lt;li&gt;&lt;b&gt;OBJECTFILES&lt;/b&gt;. Set for file objects. Use &lt;samp&gt;OBJECTS*&lt;/samp&gt;
-to match on all objects.
-&lt;li&gt;&lt;b&gt;MEMBERS&lt;/b&gt;. Set for data and source file members.
-&lt;li&gt;&lt;b&gt;RECORDS&lt;/b&gt;. Set for record formats within files.
-&lt;li&gt;&lt;b&gt;FIELDS&lt;/b&gt;. Set for fields within record formats.
-&lt;li&gt;&lt;b&gt;MESSAGE_DESCRIPTIONS&lt;/b&gt;. Set for messages within message
-files.
-&lt;/ul&gt;
+be used to scope property pages.
 &lt;br&gt;
                </documentation>
             </annotation>
@@ -291,18 +258,7 @@ all the actions defined in this objectContribution element.
 
 &lt;p&gt;
 This filter specifies a resource type, either simple or generic.
-The resource types depends on the subsystem. The types
-for IBM-supplied subsystems which support them are:
-&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;b&gt;filesXXX&lt;/b&gt;. Either &lt;i&gt;folder&lt;/i&gt; or &lt;i&gt;file&lt;/i&gt;.
-&lt;li&gt;&lt;b&gt;files400&lt;/b&gt;. This is the object&apos;s type (for objects),
-such as &lt;i&gt;*PGM&lt;/i&gt;, or member&apos;s type (for members),
-such as &lt;i&gt;RPGLE&lt;/i&gt;. Since * is a valid character in an iSeries
-object type, use %ast. instead of * to prevent wildcard matching.
-For example, to prevent matching on both *PGM and *SRVPGM, use %ast.PGM
-for the type.
-&lt;/ul&gt;
+The resource types depends on the subsystem. 
 &lt;br&gt;
                </documentation>
             </annotation>
@@ -318,16 +274,6 @@ all the actions defined in this objectContribution element.
 &lt;p&gt;
 This filter specifies a simple or generic resource subtype to
 match. Not all subsystems support subtypes for their resources.
-The IBM-supplied subsystems that do support this are:
-&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;FilesXXX. This can be either &lt;i&gt;subfolder&lt;/i&gt; for nested
-folders only, or
-&lt;i&gt;root&lt;/i&gt; for the root folder or Windows&apos; drives.
-&lt;li&gt;Files400. For iSeries objects within a library, this is the
-object&apos;s attribute. For members, it is either &lt;i&gt;DTA&lt;/i&gt; or &lt;i&gt;SRC&lt;/i&gt;. 
-For fields, it is the field&apos;s datatype (a single character).
-&lt;/ul&gt;
 &lt;br&gt;
                </documentation>
             </annotation>
@@ -341,8 +287,7 @@ Specify as many of these optional filters like this as needed to explicitly scop
 all the actions defined in this objectContribution element.
 &lt;p&gt;
 This filter specifies a simple or generic resource sub-subtype
-to match. No IBM-supplied subsystems support sub-subtypes for
-their resources today.
+to match. 
 &lt;/p&gt;
                </documentation>
             </annotation>
@@ -439,8 +384,8 @@ such as move up or move down.
 &lt;/ul&gt;
 
 &lt;p&gt;
-You may also desire to place your action in an IBM-supplied cascading menu.
-To do this, for the ID-part, specify one of the following IBM-supplied menu IDs:
+You may also desire to place your action in an supplied cascading menu.
+To do this, for the ID-part, specify one of the following supplied menu IDs:
 &lt;ul&gt;
 &lt;li&gt;&lt;b&gt;&quot;menu.new&quot;&lt;/b&gt;. This is the cascading &quot;New-&gt;&quot; menu.
 &lt;li&gt;&lt;b&gt;&quot;menu.goto&quot;&lt;/b&gt;. This is the cascading &quot;Goto-&gt;&quot; menu.
@@ -454,7 +399,7 @@ To do this, for the ID-part, specify one of the following IBM-supplied menu IDs:
                </documentation>
             </annotation>
          </attribute>
-      </complexType>
+      </complexType> 
    </element>
 
    <element name="action">
@@ -507,12 +452,12 @@ directory.
                <documentation>
                   A slash-delimited path that is used to specify the location of the the action in the popup menu. Each token
 in the path, except the last one, represents an existing submenu in the hierarchy, as defined via the &lt;samp&gt;id&lt;/samp&gt;
-attribute of a &lt;samp&gt;menu&lt;/samp&gt; element previously defined. Alternatively, the ID of an IBM-supplied cascading 
+attribute of a &lt;samp&gt;menu&lt;/samp&gt; element previously defined. Alternatively, the ID of a supplied cascading 
 menu can be specified. The last token represents the named separator group into which the action will be added.
-If no path is given, this must be an IBM-supplied group. 
+If no path is given, this must be a supplied group. 
 &lt;p&gt;
-See the comments for the path attribute of the menu element for a list of the IBM-supplied cascading menus, 
-and IBM-supplied separator groups. 
+See the comments for the path attribute of the menu element for a list of the supplied cascading menus, 
+and supplied separator groups. 
 &lt;/p&gt;
 &lt;p&gt;
 If a path is given, then this must match the name attribute of a &lt;samp&gt;separator&lt;/samp&gt; sub-element 
@@ -562,7 +507,7 @@ F1 while the menu item is highlighted will display help for the given context ID
             <annotation>
                <documentation>
                   Your action class that implements &lt;samp&gt;org.eclipse.ui.IObjectActionDelegate&lt;/samp&gt;.
-Typically you will extend one of the IBM-supplied classes, described in the API Information section.
+Typically you will extend one of the supplied classes, described in the API Information section.
                </documentation>
                <appInfo>
                   <meta.attribute kind="java" basedOn="org.eclipse.ui.IObjectActionDelegate"/>
@@ -724,8 +669,7 @@ are unrelated to each other:
 &lt;/extension&gt;
 &lt;/pre&gt;
 &lt;/p&gt;
-The following example shows how to place actions within an
-IBM-supplied cascading menu:
+The following example shows how to place actions within a supplied cascading menu:
 &lt;h3&gt;Example Five&lt;/h3&gt;
 
 &lt;p&gt;

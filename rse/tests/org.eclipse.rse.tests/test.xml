@@ -78,7 +78,7 @@ Needs to be updated and tested for org.eclipse.rse
   <!-- after all the tests have been run should go here. -->
   <target name="run" depends="init,suite,cleanup">
     <ant target="collect" antfile="${library-file}" dir="${eclipse-home}">
-      <property name="includes" value="com.ibm.etools.iseries.*.xml"/>
+      <property name="includes" value="org.eclipse.rse.*.xml"/>
       <property name="output-file" value="${plugin-name}.xml"/>
     </ant>
   </target>

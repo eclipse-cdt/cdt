@@ -393,7 +393,7 @@ public class RexecDstoreServer implements IServerLauncher
 	 * @return port number as String
 	 */
 	/*
-	 * There used to be a problem in IBM Communications Server for z/OS and 
+	 * There used to be a problem in Communications Server for z/OS and 
 	 * the message from the REXEC daemon was in EBCDIC. see APAR PQ76782.
 	 * Since this problem was fixed in Communication Server, there is no need to convert EBCDIC to ASCII
 	 */

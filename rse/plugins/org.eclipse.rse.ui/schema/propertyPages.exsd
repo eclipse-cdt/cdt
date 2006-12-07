@@ -139,7 +139,7 @@ You can specify multiple values if you comma-separate them.
             <annotation>
                <documentation>
                   a fully qualified name of the class that implements &lt;code&gt;org.eclipse.ui.IWorkbenchPropertyPage&lt;/code&gt;.
-Or better yet, extends one of the IBM-supplied base classes, described in the API Information section.
+Or better yet, extends one of the supplied base classes, described in the API Information section.
                </documentation>
                <appInfo>
                   <meta.attribute kind="java" basedOn="org.eclipse.ui.IWorkbenchPropertyPage"/>
@@ -242,28 +242,7 @@ Specify as many of these optional filters like this as needed to explicitly scop
 This filter specifies a type category. Normally the subsystemconfigurationid
 is sufficient, but some subsystems display multiple types of
 resources, and these are categorized by a type name that can
-be used to scope property pages. Here are the type categories supported by IBM-
-supplied subsystems:
-&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;b&gt;files&lt;/b&gt;. For hierarchical file systems resources.
-&lt;li&gt;&lt;b&gt;commands&lt;/b&gt;. For remote commands.
-&lt;li&gt;&lt;b&gt;jobs&lt;/b&gt;. For remote jobs.
-&lt;/ul&gt;
-&lt;br&gt;
-The IBM-supplied subsystem for iSeries native file system objects also supports 
-these type categories:
-&lt;ul&gt;
-&lt;li&gt;&lt;b&gt;LIBRARIES&lt;/b&gt;. Set for libraries.
-&lt;li&gt;&lt;b&gt;OBJECTS&lt;/b&gt;. Set for objects, excluding files.
-&lt;li&gt;&lt;b&gt;OBJECTFILES&lt;/b&gt;. Set for file objects. Use &lt;samp&gt;OBJECTS*&lt;/samp&gt;
-to match on all objects.
-&lt;li&gt;&lt;b&gt;MEMBERS&lt;/b&gt;. Set for data and source file members.
-&lt;li&gt;&lt;b&gt;RECORDS&lt;/b&gt;. Set for record formats within files.
-&lt;li&gt;&lt;b&gt;FIELDS&lt;/b&gt;. Set for fields within record formats.
-&lt;li&gt;&lt;b&gt;MESSAGE_DESCRIPTIONS&lt;/b&gt;. Set for messages within message
-files.
-&lt;/ul&gt;
+be used to scope property pages.
 &lt;br&gt;
                </documentation>
             </annotation>
@@ -278,18 +257,7 @@ this property page element.
 
 &lt;p&gt;
 This filter specifies a resource type, either simple or generic.
-The resource types depends on the subsystem. The types
-for IBM-supplied subsystems which support them are:
-&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;b&gt;filesXXX&lt;/b&gt;. Either &lt;i&gt;folder&lt;/i&gt; or &lt;i&gt;file&lt;/i&gt;.
-&lt;li&gt;&lt;b&gt;files400&lt;/b&gt;. This is the object&apos;s type (for objects),
-such as &lt;i&gt;*PGM&lt;/i&gt;, or member&apos;s type (for members),
-such as &lt;i&gt;RPGLE&lt;/i&gt;. Since * is a valid character in an iSeries
-object type, use %ast. instead of * to prevent wildcard matching.
-For example, to prevent matching on both *PGM and *SRVPGM, use %ast.PGM
-for the type. 
-&lt;/ul&gt;
+The resource types depends on the subsystem. 
 &lt;br&gt;
                </documentation>
             </annotation>
@@ -305,16 +273,6 @@ this property page element.
 &lt;p&gt;
 This filter specifies a simple or generic resource subtype to
 match. Not all subsystems support subtypes for their resources.
-The IBM-supplied subsystems that do support this are:
-&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;FilesXXX. This can be either &lt;i&gt;subfolder&lt;/i&gt; for nested
-folders only, or
-&lt;i&gt;root&lt;/i&gt; for the root folder or Windows&apos; drives.
-&lt;li&gt;Files400. For iSeries objects within a library, this is the
-object&apos;s attribute. For members, this is either &lt;i&gt;DTA&lt;/i&gt; or &lt;i&gt;SRC&lt;/i&gt;. 
-For fields, this is the field&apos;s datatype (a single character).
-&lt;/ul&gt;
 &lt;br&gt;
                </documentation>
             </annotation>
@@ -329,8 +287,7 @@ this property page element.
 
 &lt;p&gt;
 This filter specifies a simple or generic resource sub-subtype
-to match. No IBM-supplied subsystems support sub-subtypes for
-their resources today.
+to match. 
 &lt;/p&gt;
                </documentation>
             </annotation>

@@ -85,7 +85,6 @@ import org.w3c.dom.Element;
 
 public class PerformanceLogger {
 
-	public final static boolean _ENABLE_PERFORMANCE_LOGGING_IBM_INTERNAL_ = false;
 	public final static int OPTION_GET_ALL = 1;
 	public final static int OPTION_GET_FEATURE = 2;
 	public final static int OPTION_GET_VERSION = 3;

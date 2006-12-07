@@ -25,5 +25,18 @@ public class SshMessages extends NLS {
 	public static String TIMEOUT;
 	public static String WARNING;
 	public static String INFO;
+	
+	//These are from org.eclipse.team.cvs.ui.CVSUIMessages
+	public static String UserValidationDialog_required;
+	public static String UserValidationDialog_labelUser;
+	public static String UserValidationDialog_labelPassword;
+	public static String UserValidationDialog_password;
+	public static String UserValidationDialog_user;
+	public static String UserValidationDialog_5;
+	public static String UserValidationDialog_6;
+	public static String UserValidationDialog_7;
+
+	public static String KeyboardInteractiveDialog_message;
+	public static String KeyboardInteractiveDialog_labelConnection;
 
  }

@@ -13,21 +13,22 @@ package org.eclipse.tm.terminal.ssh;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.Collections;
+import java.util.Map;
 
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
-import org.eclipse.team.internal.ccvs.ssh2.CVSSSH2Plugin;
-import org.eclipse.team.internal.ccvs.ssh2.ISSHContants;
-import org.eclipse.team.internal.ccvs.ui.KeyboardInteractiveDialog;
-import org.eclipse.team.internal.ccvs.ui.UserValidationDialog;
 import org.eclipse.tm.terminal.ITerminalControl;
 import org.eclipse.tm.terminal.Logger;
 import org.eclipse.tm.terminal.TerminalState;
+import org.eclipse.ui.preferences.ScopedPreferenceStore;
 
 import com.jcraft.jsch.ChannelShell;
 import com.jcraft.jsch.JSch;
@@ -66,13 +67,29 @@ class SshConnection extends Thread {
 		}
 	}
 
+	private static IPreferenceStore fCvsSsh2PreferenceStore;
+    static IPreferenceStore getCvsSsh2PreferenceStore() {
+        if (fCvsSsh2PreferenceStore == null) {
+        	fCvsSsh2PreferenceStore = new ScopedPreferenceStore(new InstanceScope(),"org.eclipse.team.cvs.ssh2"); //$NON-NLS-1$
+        }
+        return fCvsSsh2PreferenceStore;
+    }
+
+	private static IPreferenceStore fCvsUIPreferenceStore;
+    static IPreferenceStore getCvsUIPreferenceStore() {
+        if (fCvsUIPreferenceStore == null) {
+        	fCvsUIPreferenceStore = new ScopedPreferenceStore(new InstanceScope(),"org.eclipse.team.cvs.ui"); //$NON-NLS-1$
+        }
+        return fCvsUIPreferenceStore;
+    }
+
 	// Load ssh prefs from Team/CVS for now.
 	// TODO do our own preference page.
 	static void loadSshPrefs(JSch jsch)
 	{
-		IPreferenceStore store = CVSSSH2Plugin.getDefault().getPreferenceStore();
-		String ssh_home = store.getString(ISSHContants.KEY_SSH2HOME);
-		String pkeys = store.getString(ISSHContants.KEY_PRIVATEKEY);
+		IPreferenceStore store = getCvsSsh2PreferenceStore();
+		String ssh_home = store.getString(ISshConstants.KEY_SSH2HOME);
+		String pkeys = store.getString(ISshConstants.KEY_PRIVATEKEY);
 
 		try {
 			if (ssh_home.length() == 0)
@@ -81,6 +98,7 @@ class SshConnection extends Thread {
 			if (current_ssh_home == null || !current_ssh_home.equals(ssh_home)) {
 				loadKnownHosts(jsch, ssh_home);
 				current_ssh_home = ssh_home;
+				current_pkeys = ""; //$NON-NLS-1$
 			}
 
 			if (!current_pkeys.equals(pkeys)) {
@@ -124,33 +142,47 @@ class SshConnection extends Thread {
 		} catch (Exception e) {
 		}
 	}
-    
+
+    private static final String INFO_PROXY_USER = "org.eclipse.team.cvs.core.proxy.user"; //$NON-NLS-1$ 
+    private static final String INFO_PROXY_PASS = "org.eclipse.team.cvs.core.proxy.pass"; //$NON-NLS-1$ 
+
     static Proxy loadSshProxyPrefs() {
-    	//TODO Get rid of discouraged access when bug 154100 is fixed
-		boolean useProxy = CVSProviderPlugin.getPlugin().isUseProxy();
+    	//TODO Use official Platform prefs when bug 154100 is fixed
+    	IPreferenceStore store = getCvsUIPreferenceStore();
+		boolean useProxy = store.getBoolean(ISshConstants.PREF_USE_PROXY);
         Proxy proxy = null;
 		if (useProxy) {
-			String _type = CVSProviderPlugin.getPlugin().getProxyType();
-			String _host = CVSProviderPlugin.getPlugin().getProxyHost();
-			String _port = CVSProviderPlugin.getPlugin().getProxyPort();
+			String _type = store.getString(ISshConstants.PREF_PROXY_TYPE);
+			String _host = store.getString(ISshConstants.PREF_PROXY_HOST);
+			String _port = store.getString(ISshConstants.PREF_PROXY_PORT);
 
-			boolean useAuth = CVSProviderPlugin.getPlugin().isUseProxyAuth();
+			boolean useAuth = store.getBoolean(ISshConstants.PREF_PROXY_AUTH);
 			String _user = ""; //$NON-NLS-1$
 			String _pass = ""; //$NON-NLS-1$
 			
 			// Retrieve username and password from keyring.
 			if(useAuth){
-				_user=CVSProviderPlugin.getPlugin().getProxyUser();
-				_pass=CVSProviderPlugin.getPlugin().getProxyPassword();
+				Map authInfo = null;
+				try {
+				    URL FAKE_URL = new URL("http://org.eclipse.team.cvs.proxy.auth");//$NON-NLS-1$ 
+					authInfo = Platform.getAuthorizationInfo(FAKE_URL, "proxy", ""); //$NON-NLS-1$ //$NON-NLS-2$
+				} catch(MalformedURLException e) {
+					//should never happen
+				}
+				if (authInfo==null) authInfo=Collections.EMPTY_MAP;
+				_user=(String)authInfo.get(INFO_PROXY_USER);
+				_pass=(String)authInfo.get(INFO_PROXY_PASS);
+				if (_user==null) _user=""; //$NON-NLS-1$
+				if (_pass==null) _pass=""; //$NON-NLS-1$
 			}
 
 			String proxyhost = _host + ":" + _port; //$NON-NLS-1$
-			if (_type.equals(CVSProviderPlugin.PROXY_TYPE_HTTP)) {
+			if (_type.equals(ISshConstants.PROXY_TYPE_HTTP)) {
 				proxy = new ProxyHTTP(proxyhost);
 				if (useAuth) {
 					((ProxyHTTP) proxy).setUserPasswd(_user, _pass);
 				}
-			} else if (_type.equals(CVSProviderPlugin.PROXY_TYPE_SOCKS5)) {
+			} else if (_type.equals(ISshConstants.PROXY_TYPE_SOCKS5)) {
 				proxy = new ProxySOCKS5(proxyhost);
 				if (useAuth) {
 					((ProxySOCKS5) proxy).setUserPasswd(_user, _pass);
@@ -181,7 +213,14 @@ class SshConnection extends Thread {
 	        session.setTimeout(0); //never time out once connected
 			
 			session.setPassword(password);
-			UserInfo ui=new MyUserInfo(user, password);
+			////Giving a connectionId could be the index into a local
+			////Store where passwords are stored
+			//String connectionId = host;
+			//if (port!=22) {
+			//	connectionId += ':' + port;
+			//}
+			//UserInfo ui=new MyUserInfo(connectionId, user, password);
+			UserInfo ui=new MyUserInfo(null, user, password);
 			session.setUserInfo(ui);
 
 //			java.util.Hashtable config=new java.util.Hashtable();
@@ -232,12 +271,14 @@ class SshConnection extends Thread {
     }
     
     private static class MyUserInfo implements UserInfo {
+    	private final String fConnectionId;
+    	private final String fUser;
     	private String fPassword;
     	private String fPassphrase;
     	private int fAttemptCount;
-    	private final String fUser;
 
-		public MyUserInfo(String user, String password) {
+		public MyUserInfo(String connectionId, String user, String password) {
+			fConnectionId = connectionId;
 			fUser = user;
 			fPassword = password;
 		}
@@ -256,12 +297,9 @@ class SshConnection extends Thread {
 		}
 		private String promptSecret(final String message) {
 			final String[] retval = new String[1];
-			final String finUser = fUser;
 			getStandardDisplay().syncExec(new Runnable() {
 				public void run() {
-					//TODO discouraged access: Write our own UserValidationDialog
-					UserValidationDialog uvd = new UserValidationDialog(null, null,
-							finUser, message);
+					UserValidationDialog uvd = new UserValidationDialog(null, fConnectionId, fUser, message);
 					uvd.setUsernameMutable(false);
 					if (uvd.open() == Window.OK) {
 						retval[0] = uvd.getPassword();
@@ -311,9 +349,8 @@ class SshConnection extends Thread {
 			    final String[][] finResult = new String[1][];
 			    getStandardDisplay().syncExec(new Runnable() {
 			    	public void run() {
-			    		//TODO discouraged access: write our own KeyboardInteractiveDialog
 			    		KeyboardInteractiveDialog dialog = new KeyboardInteractiveDialog(null, 
-			    			null, destination, name, instruction, prompt, echo);
+			    			fConnectionId, destination, name, instruction, prompt, echo);
 			    		dialog.open();
 			    		finResult[0]=dialog.getResult();
 		    		}

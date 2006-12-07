@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,22 +8,19 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     QNX Software System
+ *     Anton Leherbauer (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.ui;
 
-import org.eclipse.cdt.core.model.CModelException;
-import org.eclipse.cdt.core.model.IBinary;
-import org.eclipse.cdt.core.model.ICElement;
-import org.eclipse.cdt.core.model.IFunctionDeclaration;
-import org.eclipse.cdt.core.model.INamespace;
-import org.eclipse.cdt.core.model.ITemplate;
-import org.eclipse.cdt.core.model.ITypeDef;
-import org.eclipse.cdt.core.model.IVariableDeclaration;
-import org.eclipse.cdt.internal.ui.viewsupport.CElementImageProvider;
-import org.eclipse.cdt.internal.ui.viewsupport.CElementLabels;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
+
+import org.eclipse.cdt.core.model.ICElement;
+
+import org.eclipse.cdt.internal.ui.viewsupport.CElementImageProvider;
+import org.eclipse.cdt.internal.ui.viewsupport.CElementLabels;
+import org.eclipse.cdt.internal.ui.viewsupport.CUILabelProvider;
 
 /**
  * The label provider for the c model elements.
@@ -87,101 +84,27 @@ public class CElementLabelProvider extends LabelProvider {
 	
 	private WorkbenchLabelProvider fWorkbenchLabelProvider;
 	protected CElementImageProvider fImageLabelProvider;
+	private CUILabelProvider fCElementLabelProvider;
 
 	private int fFlags;
 	private int fImageFlags;
 	private int fTextFlags;
-	
+
 	public CElementLabelProvider() {
 		this(SHOW_DEFAULT);
 	}
 
 	public CElementLabelProvider(int flags) {
 		fWorkbenchLabelProvider= new WorkbenchLabelProvider();
-		
 		fImageLabelProvider= new CElementImageProvider();
 
 		fFlags = flags;
+		fCElementLabelProvider= new CUILabelProvider(getTextFlags() | CElementLabels.TEMPLATE_PARAMETERS, getImageFlags());
 	}
 
 	public String getText(Object element) {
 		if (element instanceof ICElement) {
-			try {
-				ICElement celem= (ICElement)element;
-				
-				StringBuffer name = new StringBuffer();
-				switch(celem.getElementType()){
-					case ICElement.C_FIELD:
-					case ICElement.C_VARIABLE:
-					case ICElement.C_VARIABLE_DECLARATION:
-						IVariableDeclaration vDecl = (IVariableDeclaration) celem;
-					name.append(vDecl.getElementName());
-					if((vDecl.getTypeName() != null) &&(vDecl.getTypeName().length() > 0)){
-						name.append(" : "); //$NON-NLS-1$
-						name.append(vDecl.getTypeName());
-					}
-					break;
-					case ICElement.C_FUNCTION:
-					case ICElement.C_FUNCTION_DECLARATION:
-					case ICElement.C_METHOD:
-					case ICElement.C_METHOD_DECLARATION:
-						IFunctionDeclaration fDecl = (IFunctionDeclaration) celem;
-					name.append(fDecl.getSignature());
-					if((fDecl.getReturnType() != null) &&(fDecl.getReturnType().length() > 0)){
-						name.append(" : "); //$NON-NLS-1$
-						name.append(fDecl.getReturnType());
-					}
-					break;
-					case ICElement.C_STRUCT:
-					case ICElement.C_UNION:
-					case ICElement.C_ENUMERATION:
-						if((celem.getElementName() != null) && (celem.getElementName().length() > 0)){
-							name.append(celem.getElementName());
-						} else if (celem instanceof IVariableDeclaration) {
-							IVariableDeclaration varDecl = (IVariableDeclaration) celem;
-							name.append(varDecl.getTypeName());				
-						}
-					break;
-					case ICElement.C_TYPEDEF:
-						ITypeDef tDecl = (ITypeDef) celem;
-					name.append(tDecl.getElementName());
-					if((tDecl.getTypeName() != null) &&(tDecl.getTypeName().length() > 0)){
-						name.append(" : "); //$NON-NLS-1$
-						name.append(tDecl.getTypeName());				
-					}
-					break;
-					case ICElement.C_NAMESPACE:
-						if((celem.getElementName() != null) && (celem.getElementName().length() > 0)){
-							name.append(celem.getElementName());
-						} else if (celem instanceof INamespace) {
-							INamespace nDecl = (INamespace) celem;
-							name.append(nDecl.getTypeName());				
-						}
-					break;
-					case ICElement.C_TEMPLATE_CLASS:
-					case ICElement.C_TEMPLATE_FUNCTION:
-					case ICElement.C_TEMPLATE_METHOD:
-					case ICElement.C_TEMPLATE_STRUCT:
-					case ICElement.C_TEMPLATE_UNION:
-					case ICElement.C_TEMPLATE_VARIABLE:
-						ITemplate template = (ITemplate) celem;
-					String signature = template.getTemplateSignature();
-					name.append(signature);
-					break;
-					default:
-						name.append(celem.getElementName());
-					break;				
-				}
-				
-				if (celem instanceof IBinary) {
-					IBinary bin = (IBinary)celem;
-					name.append(" - [" + bin.getCPU() + (bin.isLittleEndian() ? "le" : "be") + "]"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
-				}
-				
-				return name.toString();
-			} catch (CModelException e) {
-				CUIPlugin.getDefault().log(e);
-			}
+			return fCElementLabelProvider.getText(element);
 		}
 		return fWorkbenchLabelProvider.getText(element);
 	}
@@ -191,6 +114,10 @@ public class CElementLabelProvider extends LabelProvider {
 	}
 	
 	public void dispose() {
+		if (fCElementLabelProvider != null) {
+			fCElementLabelProvider.dispose();
+			fCElementLabelProvider= null;
+		}
 		if (fWorkbenchLabelProvider != null) {
 			fWorkbenchLabelProvider.dispose();
 			fWorkbenchLabelProvider= null;

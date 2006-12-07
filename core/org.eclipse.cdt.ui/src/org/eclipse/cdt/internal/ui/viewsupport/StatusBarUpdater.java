@@ -28,7 +28,7 @@ import org.eclipse.jface.viewers.SelectionChangedEvent;
 public class StatusBarUpdater implements ISelectionChangedListener {
 	
 	private final int LABEL_FLAGS= CElementLabels.DEFAULT_QUALIFIED | CElementLabels.ROOT_POST_QUALIFIED | CElementLabels.APPEND_ROOT_PATH |
-			CElementLabels.M_PARAMETER_TYPES | CElementLabels.M_PARAMETER_NAMES | CElementLabels.M_APP_RETURNTYPE | CElementLabels.M_EXCEPTIONS | 
+			CElementLabels.M_PARAMETER_TYPES | CElementLabels.M_APP_RETURNTYPE | CElementLabels.M_EXCEPTIONS | 
 		 	CElementLabels.F_APP_TYPE_SIGNATURE;
 
 	private IStatusLineManager fStatusLineManager;

@@ -56,7 +56,6 @@ import org.eclipse.cdt.internal.ui.CPluginImages;
 import org.eclipse.cdt.internal.ui.actions.SelectionConverter;
 import org.eclipse.cdt.internal.ui.viewsupport.AppearanceAwareLabelProvider;
 import org.eclipse.cdt.internal.ui.viewsupport.CElementImageProvider;
-import org.eclipse.cdt.internal.ui.viewsupport.CElementLabels;
 import org.eclipse.cdt.internal.ui.viewsupport.DecoratingCLabelProvider;
 
 /**
@@ -133,7 +132,7 @@ public class CElementWorkingSetPage extends WizardPage implements IWorkingSetPag
 
 		AppearanceAwareLabelProvider cElementLabelProvider= 
 			new AppearanceAwareLabelProvider(
-				AppearanceAwareLabelProvider.DEFAULT_TEXTFLAGS | CElementLabels.P_COMPRESSED,
+				AppearanceAwareLabelProvider.DEFAULT_TEXTFLAGS,
 				AppearanceAwareLabelProvider.DEFAULT_IMAGEFLAGS | CElementImageProvider.SMALL_ICONS
 			);
 		

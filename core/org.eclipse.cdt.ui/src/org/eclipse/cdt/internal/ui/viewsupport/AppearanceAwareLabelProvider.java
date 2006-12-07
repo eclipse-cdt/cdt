@@ -16,12 +16,12 @@ import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 
 /**
- * JavaUILabelProvider that respects settings from the Appearance preference page.
+ * CUILabelProvider that respects settings from the Appearance preference page.
  * Triggers a viewer update when a preference changes.
  */
 public class AppearanceAwareLabelProvider extends CUILabelProvider implements IPropertyChangeListener {
 
-	public final static int DEFAULT_TEXTFLAGS= CElementLabels.ROOT_VARIABLE | CElementLabels.M_PARAMETER_TYPES | CElementLabels.REFERENCED_ROOT_POST_QUALIFIED;
+	public final static int DEFAULT_TEXTFLAGS= CElementLabels.M_PARAMETER_TYPES | CElementLabels.PROJECT_POST_QUALIFIED;
 	public final static int DEFAULT_IMAGEFLAGS= CElementImageProvider.OVERLAY_ICONS;
 	
 	private int fTextFlagMask;

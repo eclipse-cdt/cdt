@@ -620,6 +620,7 @@ public class ASTStringUtil {
 					final IASTExpression expression= (IASTExpression)argument;
 					appendExpressionString(buffer, expression);
 				}
+				trimRight(buffer);
 			}
 			buffer.append(Keywords.cpGT);
 		} else if (name != null) {

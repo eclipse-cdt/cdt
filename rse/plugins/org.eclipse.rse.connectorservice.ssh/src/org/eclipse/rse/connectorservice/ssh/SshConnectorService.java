@@ -13,31 +13,33 @@ package org.eclipse.rse.connectorservice.ssh;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InterruptedIOException;
 import java.io.OutputStream;
 import java.lang.reflect.InvocationTargetException;
+import java.net.MalformedURLException;
 import java.net.Socket;
+import java.net.URL;
 import java.net.UnknownHostException;
+import java.util.Collections;
+import java.util.Map;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.window.Window;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
-import org.eclipse.team.internal.ccvs.core.util.Util;
-import org.eclipse.team.internal.ccvs.ssh2.CVSSSH2Plugin;
-import org.eclipse.team.internal.ccvs.ssh2.ISSHContants;
-import org.eclipse.team.internal.ccvs.ui.KeyboardInteractiveDialog;
-import org.eclipse.team.internal.ccvs.ui.UserValidationDialog;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.preferences.ScopedPreferenceStore;
 
 import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.JSchException;
@@ -69,6 +71,7 @@ import org.eclipse.rse.ui.messages.SystemMessageDialog;
 public class SshConnectorService extends AbstractConnectorService implements ISshSessionProvider
 {
 	private static final int SSH_DEFAULT_PORT = 22;
+	private static final int CONNECT_DEFAULT_TIMEOUT = 60; //seconds
 	private static JSch jsch=new JSch();
     private Session session;
     private SessionLostHandler fSessionLostHandler;
@@ -83,18 +86,101 @@ public class SshConnectorService extends AbstractConnectorService implements ISs
 	}
 
 	//----------------------------------------------------------------------
+	// <copied from org.eclipse.team.cvs>
+	//----------------------------------------------------------------------
+
+	/**
+	 * Progress Monitor Helper: from team.cvs.core.Policy
+	 * @param monitor
+	 */
+	public static void checkCanceled(IProgressMonitor monitor) {
+		if (monitor.isCanceled())
+			throw new OperationCanceledException();
+	}
+
+	/**
+	 * Helper method that will time out when making a socket connection.
+	 * This is required because there is no way to provide a timeout value
+	 * when creating a socket and in some instances, they don't seem to
+	 * timeout at all.
+	 * @param host inetaddress to connect to
+	 * @param port port to connect to
+	 * @param timeout number of seconds for timeout (default=60)
+	 * @param monitor progress monitor
+	 */
+	public static Socket createSocket(final String host, final int port, int timeout, IProgressMonitor monitor) throws UnknownHostException, IOException {
+		
+		// Start a thread to open a socket
+		final Socket[] socket = new Socket[] { null };
+		final Exception[] exception = new Exception[] {null };
+		final Thread thread = new Thread(new Runnable() {
+			public void run() {
+				try {
+					Socket newSocket = new Socket(host, port);
+					synchronized (socket) {
+						if (Thread.interrupted()) {
+							// we we're either cancelled or timed out so just close the socket
+							newSocket.close();
+						} else {
+							socket[0] = newSocket;
+						}
+					}
+				} catch (UnknownHostException e) {
+					exception[0] = e;
+				} catch (IOException e) {
+					exception[0] = e;
+				}
+			}
+		});
+		thread.start();
+		
+		// Wait the appropriate number of seconds
+		if (timeout <= 0) timeout = 60;
+		for (int i = 0; i < timeout; i++) {
+			try {
+				// wait for the thread to complete or 1 second, which ever comes first
+				thread.join(1000);
+			} catch (InterruptedException e) {
+				// I think this means the thread was interupted but not necessarily timed out
+				// so we don't need to do anything
+			}
+			synchronized (socket) {
+				// if the user cancelled, clean up before preempting the operation
+				if (monitor.isCanceled()) {
+					if (thread.isAlive()) {
+						thread.interrupt();
+					}
+					if (socket[0] != null) {
+						socket[0].close();
+					}
+					// this method will throw the proper exception
+					checkCanceled(monitor);
+				}
+			}
+		}
+		// If the thread is still running (i.e. we timed out) signal that it is too late
+		synchronized (socket) {
+			if (thread.isAlive()) {
+				thread.interrupt();
+			}
+		}
+		if (exception[0] != null) {
+			if (exception[0] instanceof UnknownHostException)
+				throw (UnknownHostException)exception[0];
+			else
+				throw (IOException)exception[0];
+		}
+		if (socket[0] == null) {
+			throw new InterruptedIOException(NLS.bind(SshConnectorResources.Socket_timeout, new String[] { host })); 
+		}
+		return socket[0];
+	}
+	
+	//----------------------------------------------------------------------
 	// <copied from org.eclipse.team.cvs.ssh2>
 	//----------------------------------------------------------------------
 	private static String current_ssh_home = null;
 	private static String current_pkeys = ""; //$NON-NLS-1$
-    protected static int getSshTimeoutInMillis() {
-        //return CVSProviderPlugin.getPlugin().getTimeout() * 1000;
-    	// TODO Hard-code the timeout for now since Jsch doesn't respect CVS timeout
-    	// See bug 92887
-    	return 60000;
-    }
-    
-
 	static String SSH_HOME_DEFAULT = null;
 	static {
 		String ssh_dir_name = ".ssh"; //$NON-NLS-1$
@@ -109,21 +195,38 @@ public class SshConnectorService extends AbstractConnectorService implements ISs
 		}
 	}
 
+	private static IPreferenceStore fCvsSsh2PreferenceStore;
+    static IPreferenceStore getCvsSsh2PreferenceStore() {
+        if (fCvsSsh2PreferenceStore == null) {
+        	fCvsSsh2PreferenceStore = new ScopedPreferenceStore(new InstanceScope(),"org.eclipse.team.cvs.ssh2"); //$NON-NLS-1$
+        }
+        return fCvsSsh2PreferenceStore;
+    }
+
+	private static IPreferenceStore fCvsUIPreferenceStore;
+    static IPreferenceStore getCvsUIPreferenceStore() {
+        if (fCvsUIPreferenceStore == null) {
+        	fCvsUIPreferenceStore = new ScopedPreferenceStore(new InstanceScope(),"org.eclipse.team.cvs.ui"); //$NON-NLS-1$
+        }
+        return fCvsUIPreferenceStore;
+    }
+
 	// Load ssh prefs from Team/CVS for now.
 	// TODO do our own preference page.
-	static void loadSshPrefs()
+	static void loadSshPrefs(JSch jsch)
 	{
-		IPreferenceStore store = CVSSSH2Plugin.getDefault().getPreferenceStore();
-		String ssh_home = store.getString(ISSHContants.KEY_SSH2HOME);
-		String pkeys = store.getString(ISSHContants.KEY_PRIVATEKEY);
+		IPreferenceStore store = getCvsSsh2PreferenceStore();
+		String ssh_home = store.getString(ISshConstants.KEY_SSH2HOME);
+		String pkeys = store.getString(ISshConstants.KEY_PRIVATEKEY);
 
 		try {
 			if (ssh_home.length() == 0)
 				ssh_home = SSH_HOME_DEFAULT;
 
 			if (current_ssh_home == null || !current_ssh_home.equals(ssh_home)) {
-				loadKnownHosts(ssh_home);
+				loadKnownHosts(jsch, ssh_home);
 				current_ssh_home = ssh_home;
+				current_pkeys = ""; //$NON-NLS-1$
 			}
 
 			if (!current_pkeys.equals(pkeys)) {
@@ -159,7 +262,7 @@ public class SshConnectorService extends AbstractConnectorService implements ISs
 
 	}
 
-    static void loadKnownHosts(String ssh_home){
+    static void loadKnownHosts(JSch jsch, String ssh_home){
 		try {
 		  java.io.File file;
 		  file=new java.io.File(ssh_home, "known_hosts"); //$NON-NLS-1$
@@ -168,32 +271,46 @@ public class SshConnectorService extends AbstractConnectorService implements ISs
 		}
 	}
     
+    private static final String INFO_PROXY_USER = "org.eclipse.team.cvs.core.proxy.user"; //$NON-NLS-1$ 
+    private static final String INFO_PROXY_PASS = "org.eclipse.team.cvs.core.proxy.pass"; //$NON-NLS-1$ 
+
     static Proxy loadSshProxyPrefs() {
-    	//TODO Get rid of discouraged access when bug 154100 is fixed
-		boolean useProxy = CVSProviderPlugin.getPlugin().isUseProxy();
+    	//TODO Use official Platform prefs when bug 154100 is fixed
+    	IPreferenceStore store = getCvsUIPreferenceStore();
+		boolean useProxy = store.getBoolean(ISshConstants.PREF_USE_PROXY);
         Proxy proxy = null;
 		if (useProxy) {
-			String _type = CVSProviderPlugin.getPlugin().getProxyType();
-			String _host = CVSProviderPlugin.getPlugin().getProxyHost();
-			String _port = CVSProviderPlugin.getPlugin().getProxyPort();
+			String _type = store.getString(ISshConstants.PREF_PROXY_TYPE);
+			String _host = store.getString(ISshConstants.PREF_PROXY_HOST);
+			String _port = store.getString(ISshConstants.PREF_PROXY_PORT);
 
-			boolean useAuth = CVSProviderPlugin.getPlugin().isUseProxyAuth();
+			boolean useAuth = store.getBoolean(ISshConstants.PREF_PROXY_AUTH);
 			String _user = ""; //$NON-NLS-1$
 			String _pass = ""; //$NON-NLS-1$
 			
 			// Retrieve username and password from keyring.
 			if(useAuth){
-				_user=CVSProviderPlugin.getPlugin().getProxyUser();
-				_pass=CVSProviderPlugin.getPlugin().getProxyPassword();
+				Map authInfo = null;
+				try {
+				    URL FAKE_URL = new URL("http://org.eclipse.team.cvs.proxy.auth");//$NON-NLS-1$ 
+					authInfo = Platform.getAuthorizationInfo(FAKE_URL, "proxy", ""); //$NON-NLS-1$ //$NON-NLS-2$
+				} catch(MalformedURLException e) {
+					//should never happen
+			}
+				if (authInfo==null) authInfo=Collections.EMPTY_MAP;
+				_user=(String)authInfo.get(INFO_PROXY_USER);
+				_pass=(String)authInfo.get(INFO_PROXY_PASS);
+				if (_user==null) _user=""; //$NON-NLS-1$
+				if (_pass==null) _pass=""; //$NON-NLS-1$
 			}
 
 			String proxyhost = _host + ":" + _port; //$NON-NLS-1$
-			if (_type.equals(CVSProviderPlugin.PROXY_TYPE_HTTP)) {
+			if (_type.equals(ISshConstants.PROXY_TYPE_HTTP)) {
 				proxy = new ProxyHTTP(proxyhost);
 				if (useAuth) {
 					((ProxyHTTP) proxy).setUserPasswd(_user, _pass);
 				}
-			} else if (_type.equals(CVSProviderPlugin.PROXY_TYPE_SOCKS5)) {
+			} else if (_type.equals(ISshConstants.PROXY_TYPE_SOCKS5)) {
 				proxy = new ProxySOCKS5(proxyhost);
 				if (useAuth) {
 					((ProxySOCKS5) proxy).setUserPasswd(_user, _pass);
@@ -233,7 +350,7 @@ public class SshConnectorService extends AbstractConnectorService implements ISs
 			//Allows to cancel the socket creation operation if necessary.
 			//Waits for the timeout specified in CVS Preferences, maximum.
 	    	//TODO Get rid of discouraged access by copying into services plugin
-			socket = Util.createSocket(host, port, monitor);
+			socket = SshConnectorService.createSocket(host, port, CONNECT_DEFAULT_TIMEOUT, monitor);
 			// Null out the monitor so we don't hold onto anything
 			// (i.e. the SSH2 session will keep a handle to the socket factory around
 			monitor = new NullProgressMonitor();
@@ -256,7 +373,7 @@ public class SshConnectorService extends AbstractConnectorService implements ISs
     	//ConnectorService Properties / Server Launcher Properties
     	
         //jsch.setKnownHosts("/home/foo/.ssh/known_hosts");
-		loadSshPrefs();
+		loadSshPrefs(jsch);
         String host = getHostName();
         String user = getUserId();
 
@@ -284,7 +401,7 @@ public class SshConnectorService extends AbstractConnectorService implements ISs
         try {
         	Activator.trace("SshConnectorService.connecting..."); //$NON-NLS-1$
         	//wait for 60 sec maximum during connect
-            session.connect(60000);
+            session.connect(CONNECT_DEFAULT_TIMEOUT * 1000);
         	Activator.trace("SshConnectorService.connected"); //$NON-NLS-1$
         } catch (JSchException e) {
         	Activator.trace("SshConnectorService.connect failed: "+e.toString()); //$NON-NLS-1$
@@ -583,7 +700,6 @@ public class SshConnectorService extends AbstractConnectorService implements ISs
 			final String finUser = fUser;
 			getStandardDisplay().syncExec(new Runnable() {
 				public void run() {
-					//TODO discouraged access: Write our own UserValidationDialog
 					UserValidationDialog uvd = new UserValidationDialog(null, null,
 							finUser, message);
 					uvd.setUsernameMutable(false);
@@ -635,7 +751,6 @@ public class SshConnectorService extends AbstractConnectorService implements ISs
 			    final String[][] finResult = new String[1][];
 			    getStandardDisplay().syncExec(new Runnable() {
 			    	public void run() {
-			    		//TODO discouraged access: write our own KeyboardInteractiveDialog
 			    		KeyboardInteractiveDialog dialog = new KeyboardInteractiveDialog(null, 
 			    			null, destination, name, instruction, prompt, echo);
 			    		dialog.open();

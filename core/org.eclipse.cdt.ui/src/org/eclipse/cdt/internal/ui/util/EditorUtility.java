@@ -18,6 +18,7 @@ import java.io.File;
 import java.io.IOException;
 import java.text.MessageFormat;
 
+import org.eclipse.core.filebuffers.FileBuffers;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
@@ -329,18 +330,18 @@ public class EditorUtility {
 	 * @return an <code>IFile</code> or <code>null</code>
 	 */
 	private static IFile getWorkspaceFileAtLocation(IPath location, ICElement context) {
-		IProject project= null;
-		if (context != null) {
-			ICProject cProject= context.getCProject();
-			if (cProject != null) {
-				project= cProject.getProject();
-			}
-		}
-		IWorkspaceRoot root= ResourcesPlugin.getWorkspace().getRoot();
-		IFile file= root.getFileForLocation(location);
+		IFile file= FileBuffers.getWorkspaceFileAtLocation(location);
 		if (file == null) {
 			// try to find a linked resource
+			IProject project= null;
+			if (context != null) {
+				ICProject cProject= context.getCProject();
+				if (cProject != null) {
+					project= cProject.getProject();
+				}
+			}
 			IFile bestMatch= null;
+			IWorkspaceRoot root= ResourcesPlugin.getWorkspace().getRoot();
 			IFile[] files= root.findFilesForLocation(location);
 			for (int i= 0; i < files.length; i++) {
 				file= files[i];

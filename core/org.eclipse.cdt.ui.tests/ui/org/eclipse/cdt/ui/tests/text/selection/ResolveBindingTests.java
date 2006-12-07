@@ -109,7 +109,7 @@ public class ResolveBindingTests extends BaseUITestCase  {
 		}			
 	}
 
-	public void _testNamespaceVarBinding_156519() throws Exception {
+	public void testNamespaceVarBinding_156519() throws Exception {
 		String content = readTaggedComment("namespace-var-test");
 		IFile file= createFile(fCProject.getProject(), "nsvar.cpp", content);
 		waitForIndexer(fIndex, file, WAIT_FOR_INDEXER);

@@ -64,19 +64,23 @@ public class TelnetSettingsPage implements ISettingsPage {
 		
 	}
 	private void setNetworkPort(String strNetworkPort) {
-		String strPortName = getNetworkPortMap().findPortName(strNetworkPort);
-		if(strPortName==null)
-			strPortName=""; //$NON-NLS-1$
-		int nIndex = fNetworkPortCombo.indexOf(strPortName);
+		if (strNetworkPort!=null) {
+			String strPortName = getNetworkPortMap().findPortName(strNetworkPort);
+			if(strPortName==null)
+				strPortName=""; //$NON-NLS-1$
+			int nIndex = fNetworkPortCombo.indexOf(strPortName);
 
-		if (nIndex == -1) {
-			fNetworkPortCombo.setText(strNetworkPort);
-		} else {
-			fNetworkPortCombo.select(nIndex);
+			if (nIndex == -1) {
+				fNetworkPortCombo.setText(strNetworkPort);
+			} else {
+				fNetworkPortCombo.select(nIndex);
+			}
 		}
 	}
 	private String getNetworkPort() {
-		return getNetworkPortMap().findPort(fNetworkPortCombo.getText());
+		String portText = fNetworkPortCombo.getText();
+		String mappedPort = getNetworkPortMap().findPort(portText);
+		return mappedPort!=null ? mappedPort : portText;
 	}
 	private NetworkPortMap getNetworkPortMap() {
 		return fTerminalSettings.getProperties().getNetworkPortMap();

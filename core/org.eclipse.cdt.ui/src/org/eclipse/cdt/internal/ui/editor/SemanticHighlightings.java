@@ -19,10 +19,13 @@ import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.graphics.RGB;
 
 import org.eclipse.cdt.core.dom.ast.DOMException;
+import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
+import org.eclipse.cdt.core.dom.ast.IASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTMacroExpansion;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTNodeLocation;
+import org.eclipse.cdt.core.dom.ast.IASTProblem;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IEnumeration;
 import org.eclipse.cdt.core.dom.ast.IEnumerator;
@@ -35,6 +38,8 @@ import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.core.dom.ast.c.ICFunctionScope;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBlockScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
@@ -373,7 +378,7 @@ public class SemanticHighlightings {
 		 */
 		public boolean consumes(SemanticToken token) {
 			IBinding binding= token.getBinding();
-			if (binding instanceof IField && !(binding instanceof IProblemBinding)) {
+			if (binding instanceof IField) {
 				return true;
 			}
 			return false;
@@ -436,8 +441,32 @@ public class SemanticHighlightings {
 				IASTName name= (IASTName)node;
 				if (name.isDeclaration() || name.isDefinition()) {
 					IBinding binding= token.getBinding();
-					if (binding instanceof ICPPMethod && !(binding instanceof IProblemBinding)) {
+					if (binding instanceof ICPPMethod) {
 						return true;
+					} else if (binding instanceof IProblemBinding) {
+						// try to be derive from AST
+						node= name.getParent();
+						while (node instanceof IASTName) {
+							node= node.getParent();
+						}
+						if (node instanceof ICPPASTFunctionDeclarator) {
+							if (name instanceof ICPPASTQualifiedName) {
+								ICPPASTQualifiedName qName= (ICPPASTQualifiedName)name;
+								IASTName[] names= qName.getNames();
+								if (names.length > 1) {
+									if (names[names.length - 2].getBinding() instanceof ICPPClassType) {
+										return true;
+									}
+								}
+							} else {
+								while (node != token.getRoot() && !(node.getParent() instanceof IASTDeclSpecifier)) {
+									node= node.getParent();
+								}
+								if (node instanceof ICPPASTCompositeTypeSpecifier) {
+									return true;
+								}
+							}
+						}
 					}
 				}
 			}
@@ -695,57 +724,13 @@ public class SemanticHighlightings {
 			IASTNode node= token.getNode();
 			if (node instanceof IASTName) {
 				IBinding binding= token.getBinding();
-				if (binding instanceof ICPPMethod && !(binding instanceof IProblemBinding)) {
+				if (binding instanceof ICPPMethod) {
 					return true;
 				}
 			}
 			return false;
 		}
 
-		/**
-		 * Extracts the method binding from the token's simple name. The method
-		 * binding is either the token's binding (if the parent of token is a
-		 * method call or declaration) or the constructor binding of a class
-		 * instance creation if the node is the type name of a class instance
-		 * creation.
-		 *
-		 * @param token the token to extract the method binding from
-		 * @return the corresponding method binding, or <code>null</code>
-		 */
-//		private IBinding getMethodBinding(SemanticToken token) {
-//			IBinding binding= null;
-//			// work around: https://bugs.eclipse.org/bugs/show_bug.cgi?id=62605
-//			IASTNode node= token.getNode();
-//			IASTNode parent= node.getParent();
-//			while (isTypePath(node, parent)) {
-//				node= parent;
-//				parent= parent.getParent();
-//			}
-//
-//			if (parent != null && node.getLocationInParent() == ClassInstanceCreation.TYPE_PROPERTY)
-//				binding= ((ClassInstanceCreation) parent).resolveConstructorBinding();
-//			else
-//				binding= token.getBinding();
-//			return binding;
-//		}
-
-		/**
-		 * Returns <code>true</code> if the given child/parent nodes are valid
-		 * sub nodes of a <code>Type</code> IASTNode.
-		 * @param child the child node
-		 * @param parent the parent node
-		 * @return <code>true</code> if the nodes may be the sub nodes of a type node, false otherwise
-		 */
-//		private boolean isTypePath(IASTNode child, IASTNode parent) {
-//			if (parent instanceof Type) {
-//				StructuralPropertyDescriptor location= child.getLocationInParent();
-//				return location == ParameterizedType.TYPE_PROPERTY || location == SimpleType.NAME_PROPERTY;
-//			} else if (parent instanceof QualifiedName) {
-//				StructuralPropertyDescriptor location= child.getLocationInParent();
-//				return location == QualifiedName.NAME_PROPERTY;
-//			}
-//			return false;
-//		}
 	}
 
 	/**
@@ -805,9 +790,27 @@ public class SemanticHighlightings {
 				if (name.isDeclaration()) {
 					IBinding binding= token.getBinding();
 					if (binding instanceof IFunction 
-							&& !(binding instanceof ICPPMethod)
-							&& !(binding instanceof IProblemBinding)) {
+							&& !(binding instanceof ICPPMethod)) {
 						return true;
+					} else if (binding instanceof IProblemBinding) {
+						// try to derive from AST
+						if (name instanceof ICPPASTQualifiedName) {
+							return false;
+						} else {
+							node= name.getParent();
+							while (node instanceof IASTName) {
+								node= node.getParent();
+							}
+							if (node instanceof IASTFunctionDeclarator) {
+								while (node != token.getRoot() && !(node.getParent() instanceof IASTDeclSpecifier)) {
+									node= node.getParent();
+								}
+								if (node instanceof ICPPASTCompositeTypeSpecifier) {
+									return false;
+								}
+								return true;
+							}
+						}
 					}
 				}
 			}
@@ -870,8 +873,7 @@ public class SemanticHighlightings {
 			if (node instanceof IASTName) {
 				IBinding binding= token.getBinding();
 				if (binding instanceof IFunction 
-						&& !(binding instanceof ICPPMethod)
-						&& !(binding instanceof IProblemBinding)) {
+						&& !(binding instanceof ICPPMethod)) {
 					return true;
 				}
 			}
@@ -1173,7 +1175,7 @@ public class SemanticHighlightings {
 		 */
 		public boolean consumes(SemanticToken token) {
 			IBinding binding= token.getBinding();
-			if (binding instanceof IParameter && !(binding instanceof IProblemBinding)) {
+			if (binding instanceof IParameter) {
 				return true;
 			}
 			return false;
@@ -1234,15 +1236,9 @@ public class SemanticHighlightings {
 			IASTNode node= token.getNode();
 			if (node instanceof IASTName) {
 				IBinding binding= token.getBinding();
-				if (binding instanceof ICPPTemplateParameter && !(binding instanceof IProblemBinding)) {
+				if (binding instanceof ICPPTemplateParameter) {
 					return true;
 				}
-				// template parameters are resolved as problems??
-//				if (node.getParent() instanceof ICPPASTNamedTypeSpecifier) {
-//					if (binding instanceof IProblemBinding) {
-//						return true;
-//					}
-//				}
 			}
 			return false;
 		}
@@ -1302,7 +1298,7 @@ public class SemanticHighlightings {
 			IASTNode node= token.getNode();
 			if (node instanceof IASTName) {
 				IBinding binding= token.getBinding();
-				if (binding instanceof ICPPClassType && !(binding instanceof IProblemBinding)) {
+				if (binding instanceof ICPPClassType) {
 					IASTName name= (IASTName)node;
 					if (name.isReference()) {
 						if (node.getParent() instanceof ICPPASTQualifiedName) {
@@ -1374,7 +1370,7 @@ public class SemanticHighlightings {
 		 */
 		public boolean consumes(SemanticToken token) {
 			IBinding binding= token.getBinding();
-			if (binding instanceof IEnumeration && !(binding instanceof IProblemBinding)) {
+			if (binding instanceof IEnumeration) {
 				return true;
 			}
 			return false;
@@ -1611,7 +1607,7 @@ public class SemanticHighlightings {
 		 */
 		public boolean consumes(SemanticToken token) {
 			IBinding binding= token.getBinding();
-			if (binding instanceof ITypedef && !(binding instanceof IProblemBinding)) {
+			if (binding instanceof ITypedef) {
 				return true;
 			}
 			return false;
@@ -1670,7 +1666,7 @@ public class SemanticHighlightings {
 		 */
 		public boolean consumes(SemanticToken token) {
 			IBinding binding= token.getBinding();
-			if (binding instanceof ICPPNamespace && !(binding instanceof IProblemBinding)) {
+			if (binding instanceof ICPPNamespace) {
 				return true;
 			}
 			return false;
@@ -1729,7 +1725,7 @@ public class SemanticHighlightings {
 		 */
 		public boolean consumes(SemanticToken token) {
 			IBinding binding= token.getBinding();
-			if (binding instanceof ILabel && !(binding instanceof IProblemBinding)) {
+			if (binding instanceof ILabel) {
 				return true;
 			}
 			return false;
@@ -1788,7 +1784,7 @@ public class SemanticHighlightings {
 		 */
 		public boolean consumes(SemanticToken token) {
 			IBinding binding= token.getBinding();
-			if (binding instanceof IEnumerator && !(binding instanceof IProblemBinding)) {
+			if (binding instanceof IEnumerator) {
 				return true;
 			}
 			return false;
@@ -1853,6 +1849,10 @@ public class SemanticHighlightings {
 		 * @see org.eclipse.cdt.internal.ui.editor.SemanticHighlighting#consumes(org.eclipse.cdt.internal.ui.editor.SemanticToken)
 		 */
 		public boolean consumes(SemanticToken token) {
+			IASTNode node= token.getNode();
+			if (node instanceof IASTProblem) {
+				return true;
+			}
 			IBinding binding= token.getBinding();
 			if (binding instanceof IProblemBinding) {
 				return true;
@@ -1928,6 +1928,7 @@ public class SemanticHighlightings {
 		if (fgSemanticHighlightings == null)
 			fgSemanticHighlightings= new SemanticHighlighting[] {
 				new MacroSubstitutionHighlighting(),  // before all others!
+				new ProblemHighlighting(),
 				new ClassHighlighting(),
 //				new StaticConstFieldHighlighting(),
 				new StaticFieldHighlighting(),
@@ -1957,7 +1958,6 @@ public class SemanticHighlightings {
 				new NamespaceHighlighting(),
 				new LabelHighlighting(),
 				new EnumeratorHighlighting(),
-				new ProblemHighlighting(),
 			};
 		return fgSemanticHighlightings;
 	}

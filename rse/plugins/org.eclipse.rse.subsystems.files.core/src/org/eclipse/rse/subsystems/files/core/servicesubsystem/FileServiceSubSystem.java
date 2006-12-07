@@ -66,19 +66,7 @@ public final class FileServiceSubSystem extends RemoteFileSubSystem implements I
 	protected IRemoteFile _userHome;
 	
 	
-	public class SystemMessageDialogRunnable implements Runnable
-	{
-		private SystemMessageDialog _dlg;
-		public SystemMessageDialogRunnable(SystemMessageDialog dlg)
-		{
-			_dlg = dlg;
-		}
-		
-		public void run()
-		{
-			_dlg.open();
-		}
-	}
+
 	
 	public FileServiceSubSystem(IHost host, IConnectorService connectorService, IFileService hostFileService, IHostFileToRemoteFileAdapter fileAdapter, ISearchService searchService)
 	{

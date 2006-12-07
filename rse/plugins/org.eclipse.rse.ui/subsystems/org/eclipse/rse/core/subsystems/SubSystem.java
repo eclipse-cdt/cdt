@@ -152,6 +152,21 @@ public abstract class SubSystem extends RSEModelObject implements IAdaptable, IS
 	 */
 	protected ISystemFilterPoolReferenceManager filterPoolReferenceManager = null;
 
+	public class SystemMessageDialogRunnable implements Runnable
+	{
+		private SystemMessageDialog _dlg;
+		public SystemMessageDialogRunnable(SystemMessageDialog dlg)
+		{
+			_dlg = dlg;
+		}
+		
+		public void run()
+		{
+			_dlg.open();
+		}
+	}
+	
+	
 	private class NullRunnableContext implements IRunnableContext {
 		public void run(boolean fork, boolean cancelable, IRunnableWithProgress runnable) throws InvocationTargetException, InterruptedException {
 			IProgressMonitor monitor = new NullProgressMonitor();

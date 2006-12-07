@@ -30,8 +30,8 @@
 
    <plugin
          id="org.eclipse.tm.terminal.view"
-         download-size="0"
-         install-size="0"
+         download-size="48"
+         install-size="48"
          version="0.0.0"
          unpack="false"/>
 

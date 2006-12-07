@@ -44,8 +44,26 @@
 
    <plugin
          id="org.eclipse.tm.terminal.source"
-         download-size="0"
-         install-size="0"
+         download-size="56"
+         install-size="56"
+         version="0.0.0"/>
+
+   <plugin
+         id="org.eclipse.tm.terminal.serial.source"
+         download-size="12"
+         install-size="12"
+         version="0.0.0"/>
+
+   <plugin
+         id="org.eclipse.tm.terminal.ssh.source"
+         download-size="8"
+         install-size="8"
+         version="0.0.0"/>
+
+   <plugin
+         id="org.eclipse.tm.terminal.view.source"
+         download-size="23"
+         install-size="23"
          version="0.0.0"/>
 
 </feature>

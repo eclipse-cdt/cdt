@@ -13,19 +13,26 @@
 package org.eclipse.cdt.internal.ui.search.actions;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.swt.widgets.Display;
 
+import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.IName;
+import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IProblemBinding;
+import org.eclipse.cdt.core.index.IIndex;
+import org.eclipse.cdt.core.index.IIndexManager;
+import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.model.IWorkingCopy;
 import org.eclipse.cdt.ui.CUIPlugin;
 
@@ -60,56 +67,64 @@ public class OpenDeclarationsAction extends SelectionParseAction {
 				if (workingCopy == null)
 					return Status.CANCEL_STATUS;
 
-				int style = 0;
-//				IPDOM pdom = CCorePlugin.getPDOMManager().getPDOM(workingCopy.getCProject());
-//				if (!pdom.isEmpty())
-//					style |= ITranslationUnit.AST_SKIP_ALL_HEADERS;
-				IASTTranslationUnit ast = workingCopy.getAST(null, style);
-				IASTName[] selectedNames = workingCopy.getLanguage().getSelectedNames(ast, selectionStart, selectionLength);
+				IIndex index = CCorePlugin.getIndexManager().getIndex(workingCopy.getCProject(),
+						IIndexManager.ADD_DEPENDENCIES | IIndexManager.ADD_DEPENDENT);
+				
+				try {
+					index.acquireReadLock();
+				} catch (InterruptedException e) {
+					return Status.CANCEL_STATUS;
+				}
+				
+				try {
+					IASTTranslationUnit ast = workingCopy.getAST(null, ITranslationUnit.AST_SKIP_ALL_HEADERS);
+					IASTName[] selectedNames = workingCopy.getLanguage().getSelectedNames(ast, selectionStart, selectionLength);
 					
-				if (selectedNames.length > 0 && selectedNames[0] != null) { // just right, only one name selected
-					IASTName searchName = selectedNames[0];
+					if (selectedNames.length > 0 && selectedNames[0] != null) { // just right, only one name selected
+						IASTName searchName = selectedNames[0];
 		
-					IBinding binding = searchName.resolveBinding();
-					if (binding != null && !(binding instanceof IProblemBinding)) {
-						final IName[] declNames = ast.getDeclarations(binding);
-						if (declNames.length > 0) {
-							runInUIThread(new Runnable() {
-								public void run() {
-									try {
-										open(declNames[0]);
-									} catch (CoreException e) {
-										CUIPlugin.getDefault().log(e);
+						IBinding binding = searchName.resolveBinding();
+						if (binding != null && !(binding instanceof IProblemBinding)) {
+							// 1. Try definition
+							IName[] declNames = ast.getDefinitions(binding);
+							
+							if (declNames.length == 0) {
+								// 2. Try definition
+								declNames = index.findDefinitions(binding);
+							
+								if (declNames.length == 0) {
+									// 3. Try declaration in TU
+									declNames = ast.getDeclarations(binding);
+				
+									if (declNames.length == 0) {
+										// 4. Try declaration in Index
+										declNames = index.findDeclarations(binding);
 									}
 								}
-							});
-						} 
-						// mstodo revisit
-//						else if (binding instanceof IIndexBinding) {
-//							IIndexBinding pdomBinding = (IIndexBinding)binding;
-//							IName name = pdomBinding.getFirstDefinition();
-//							if (name == null)
-//								name = pdomBinding.getFirstDeclaration();
-//				    		// no source location - TODO spit out an error in the status bar
-//							if (name != null) {
-//						    	IASTFileLocation fileloc = name.getFileLocation();
-//						    	if (fileloc != null) {
-//						    		final IPath path = new Path(fileloc.getFileName());
-//						    		final int offset = fileloc.getNodeOffset();
-//						    		final int length = fileloc.getNodeLength();
-//						    		Display.getDefault().asyncExec(new Runnable() {
-//						    			public void run() {
-//						    				try {
-//						    					open(path, offset, length);
-//						    				} catch (CoreException e) {
-//						    					CUIPlugin.getDefault().log(e);
-//						    				}
-//						    			}
-//						    		});
-//						    	}
-//							}
-//						}
+							}
+							
+							if (declNames.length > 0) {
+								IASTFileLocation fileloc = declNames[0].getFileLocation();
+								if (fileloc != null) {
+									final IPath path = new Path(fileloc.getFileName());
+									final int offset = fileloc.getNodeOffset();
+									final int length = fileloc.getNodeLength();
+									
+									runInUIThread(new Runnable() {
+										public void run() {
+											try {
+												open(path, offset, length);
+											} catch (CoreException e) {
+												CUIPlugin.getDefault().log(e);
+											}
+										}
+									});
+								}
+							}
+						}
 					}
+				} catch (CoreException e) {
+					CUIPlugin.getDefault().log(e);
 				}
 					
 				return Status.OK_STATUS;

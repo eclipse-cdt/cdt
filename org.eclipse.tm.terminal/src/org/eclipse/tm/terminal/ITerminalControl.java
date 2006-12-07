@@ -1,13 +1,13 @@
 /*******************************************************************************
  * Copyright (c) 2006 Wind River Systems, Inc. and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Eclipse Public License v1.0 
+ * which accompanies this distribution, and is available at 
+ * http://www.eclipse.org/legal/epl-v10.html 
  * 
- * Contributors:
- *     Wind River Systems, Inc. - initial implementation
- *     
+ * Contributors: 
+ * Michael Scharf (Wind River) - initial API and implementation
+ * Martin Oberhuber (Wind River) - fixed copyright headers and beautified
  *******************************************************************************/
 package org.eclipse.tm.terminal;
 
@@ -18,7 +18,6 @@ import org.eclipse.swt.widgets.Shell;
  * 
  * <p> Not to be implemented by clients.
  * @author Michael Scharf
- *
  */
 public interface ITerminalControl {
 	
@@ -26,6 +25,7 @@ public interface ITerminalControl {
 	 * @return the current state of the connection
 	 */
 	TerminalState getState();
+
 	/**
 	 * @param state
 	 */
@@ -44,11 +44,13 @@ public interface ITerminalControl {
 	 * TODO: Michael Scharf: Is this really needed? (use {@link #displayTextInTerminal(String)}
 	 */
 	void displayTextInTerminal(String text);
+
 	/**
 	 * Write a string directly to the terminal.
 	 * @param txt
 	 */
 	void writeToTerminal(String txt);
+
 	/**
 	 * Set the title of the terminal view.
 	 * @param title

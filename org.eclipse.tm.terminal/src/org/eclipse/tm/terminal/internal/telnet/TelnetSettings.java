@@ -1,15 +1,14 @@
 /*******************************************************************************
  * Copyright (c) 2006 Wind River Systems, Inc. and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Eclipse Public License v1.0 
+ * which accompanies this distribution, and is available at 
+ * http://www.eclipse.org/legal/epl-v10.html 
  * 
- * Contributors:
- *     Wind River Systems, Inc. - initial implementation
- *     
+ * Contributors: 
+ * Michael Scharf (Wind River) - initial API and implementation
+ * Martin Oberhuber (Wind River) - fixed copyright headers and beautified
  *******************************************************************************/
-
 package org.eclipse.tm.terminal.internal.telnet;
 
 import org.eclipse.tm.terminal.ISettingsStore;
@@ -56,13 +55,11 @@ public class TelnetSettings implements ITelnetSettings {
 		fTimeout = store.get("Timeout","10");//$NON-NLS-1$ //$NON-NLS-2$
 	}
 
-
 	public void save(ISettingsStore store) {
 		store.put("Host", fHost);//$NON-NLS-1$
 		store.put("NetworkPort", fNetworkPort);//$NON-NLS-1$
 		store.put("Timeout", fTimeout);//$NON-NLS-1$
 	}
-
 
 	public TelnetProperties getProperties() {
 		return fProperties;

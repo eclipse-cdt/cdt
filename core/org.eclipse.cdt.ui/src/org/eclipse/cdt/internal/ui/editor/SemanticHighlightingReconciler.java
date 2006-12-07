@@ -31,8 +31,10 @@ import org.eclipse.ui.IWorkbenchPartSite;
 
 import org.eclipse.cdt.core.IPositionConverter;
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
+import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
+import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IASTMacroExpansion;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
@@ -63,6 +65,7 @@ public class SemanticHighlightingReconciler implements ICReconcilingListener {
 			shouldVisitNames= true;
 			shouldVisitDeclarations= true;
 			shouldVisitExpressions= true;
+			shouldVisitDeclSpecifiers= true;
 		}
 		
 		/** The semantic token */
@@ -86,11 +89,17 @@ public class SemanticHighlightingReconciler implements ICReconcilingListener {
 			if (!fFilePath.equals(declaration.getContainingFilename())) {
 				return PROCESS_SKIP;
 			}
-			IASTNodeLocation[] nodeLocations= declaration.getNodeLocations();
-			if (nodeLocations.length > 0 && nodeLocations[0] instanceof IASTMacroExpansion) {
-				if (visitNode(declaration)) {
-					return PROCESS_SKIP;
-				}
+			if (checkForMacro(declaration)) {
+				return PROCESS_SKIP;
+			}
+			return PROCESS_CONTINUE;
+		}
+
+		/*
+		 * @see org.eclipse.cdt.core.dom.ast.ASTVisitor#visit(org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier)
+		 */
+		public int visit(IASTDeclSpecifier declSpec) {
+			if (checkForMacro(declSpec)) {
 				return PROCESS_SKIP;
 			}
 			return PROCESS_CONTINUE;
@@ -100,14 +109,7 @@ public class SemanticHighlightingReconciler implements ICReconcilingListener {
 		 * @see org.eclipse.cdt.core.dom.ast.ASTVisitor#visit(org.eclipse.cdt.core.dom.ast.IASTExpression)
 		 */
 		public int visit(IASTExpression expression) {
-			if (!fFilePath.equals(expression.getContainingFilename())) {
-				return PROCESS_SKIP;
-			}
-			IASTNodeLocation[] nodeLocations= expression.getNodeLocations();
-			if (nodeLocations.length > 0 && nodeLocations[0] instanceof IASTMacroExpansion) {
-				if (visitNode(expression)) {
-					return PROCESS_SKIP;
-				}
+			if (checkForMacro(expression)) {
 				return PROCESS_SKIP;
 			}
 			return PROCESS_CONTINUE;
@@ -117,23 +119,25 @@ public class SemanticHighlightingReconciler implements ICReconcilingListener {
 		 * @see org.eclipse.cdt.core.dom.ast.ASTVisitor#visit(org.eclipse.cdt.core.dom.ast.IASTName)
 		 */
 		public int visit(IASTName node) {
-			if (!fFilePath.equals(node.getContainingFilename())) {
-				return PROCESS_SKIP;
-			}
 			visitNode(node);
 			return PROCESS_CONTINUE;
 		}
 		
+		private boolean checkForMacro(IASTNode node) {
+			IASTNodeLocation[] nodeLocations= node.getNodeLocations();
+			if (nodeLocations.length == 1 && nodeLocations[0] instanceof IASTMacroExpansion) {
+				return visitNode(node);
+			}
+			return false;
+		}
+
 		private boolean visitNode(IASTNode node) {
 			boolean consumed= false;
 			fToken.update(node);
 			for (int i= 0, n= fJobSemanticHighlightings.length; i < n; ++i) {
 				SemanticHighlighting semanticHighlighting= fJobSemanticHighlightings[i];
 				if (fJobHighlightings[i].isEnabled() && semanticHighlighting.consumes(fToken)) {
-					IASTNodeLocation[] nodeLocations= node.getNodeLocations();
-					if (nodeLocations.length > 0) {
-						addNodeLocations(nodeLocations, fJobHighlightings[i]);
-					}
+					addNodeLocations(node.getNodeLocations(), fJobHighlightings[i]);
 					consumed= true;
 					break;
 				}
@@ -143,34 +147,61 @@ public class SemanticHighlightingReconciler implements ICReconcilingListener {
 		}
 
 		/**
-		 * Add all node locations for the given highlighting.
+		 * Add the a location range for the given highlighting.
 		 * 
 		 * @param nodeLocations The node locations
 		 * @param highlighting The highlighting
 		 */
 		private void addNodeLocations(IASTNodeLocation[] nodeLocations, HighlightingStyle highlighting) {
-			for (int j = 0; j < nodeLocations.length; j++) {
-				IASTNodeLocation nodeLocation = nodeLocations[j];
-				if (nodeLocation instanceof IASTMacroExpansion) {
-					IASTMacroExpansion macroExpansion= (IASTMacroExpansion)nodeLocation;
-					IASTNodeLocation[] expansionLocations = macroExpansion.getExpansionLocations();
-					addNodeLocations(expansionLocations, highlighting);
-				} else {
-					int offset= nodeLocation.getNodeOffset();
-					int length= nodeLocation.getNodeLength();
-					if (fPositionTracker != null) {
-						IRegion actualPos= fPositionTracker.historicToActual(new Region(offset, length));
-						offset= actualPos.getOffset();
-						length= actualPos.getLength();
-					}
-					if (offset > -1 && length > 0) {
-						addPosition(offset, length, highlighting);
-					}
-				}
+			final IASTFileLocation minLocation= getMinFileLocation(nodeLocations);
+			if (minLocation == null) {
+				return;
+			}
+			final IASTFileLocation maxLocation= getMaxFileLocation(nodeLocations);
+			if (maxLocation == null) {
+				return;
+			}
+			int offset= minLocation.getNodeOffset();
+			int length= maxLocation.getNodeOffset() + maxLocation.getNodeLength() - offset;
+			if (fPositionTracker != null) {
+				IRegion actualPos= fPositionTracker.historicToActual(new Region(offset, length));
+				offset= actualPos.getOffset();
+				length= actualPos.getLength();
+			}
+			if (offset > -1 && length > 0) {
+				addPosition(offset, length, highlighting);
 			}
 		}
 
-	/**
+		private IASTFileLocation getMaxFileLocation(IASTNodeLocation[] locations) {
+			if (locations == null || locations.length == 0) {
+				return null;
+			}
+			final IASTNodeLocation nodeLocation= locations[locations.length-1];
+			if (nodeLocation instanceof IASTFileLocation) {
+				return (IASTFileLocation)nodeLocation;
+			} else if (nodeLocation instanceof IASTMacroExpansion) {
+				IASTNodeLocation[] macroLocations= ((IASTMacroExpansion)nodeLocation).getExpansionLocations();
+				return getMaxFileLocation(macroLocations);
+			}
+			return null;
+		}
+
+		private IASTFileLocation getMinFileLocation(IASTNodeLocation[] locations) {
+			if (locations == null || locations.length == 0) {
+				return null;
+			}
+			final IASTNodeLocation nodeLocation= locations[0];
+			if (nodeLocation instanceof IASTFileLocation) {
+				return (IASTFileLocation)nodeLocation;
+			} else if (nodeLocation instanceof IASTMacroExpansion) {
+				IASTNodeLocation[] macroLocations= ((IASTMacroExpansion)nodeLocation).getExpansionLocations();
+				return getMinFileLocation(macroLocations);
+			}
+			return null;
+		}
+
+		/**
 		 * Add a position with the given range and highlighting iff it does not exist already.
 		 * 
 		 * @param offset The range offset

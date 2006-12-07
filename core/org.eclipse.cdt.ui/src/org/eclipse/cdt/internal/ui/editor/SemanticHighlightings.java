@@ -1492,11 +1492,9 @@ public class SemanticHighlightings {
 		 */
 		public boolean consumes(SemanticToken token) {
 			IASTNode node= token.getNode();
-			if (!(node instanceof IASTName)) {
-				IASTNodeLocation[] nodeLocations= node.getNodeLocations();
-				if (nodeLocations.length == 1 && nodeLocations[0] instanceof IASTMacroExpansion) {
-					return true;
-				}
+			IASTNodeLocation[] nodeLocations= node.getNodeLocations();
+			if (nodeLocations.length == 1 && nodeLocations[0] instanceof IASTMacroExpansion) {
+				return true;
 			}
 			return false;
 		}

@@ -27,7 +27,7 @@ import org.eclipse.cdt.internal.ui.editor.SemanticHighlightings;
  */
 public class SemanticHighlightingTest extends AbstractSemanticHighlightingTest {
 	
-	private static final boolean PRINT_POSITIONS= false;
+	private static final boolean PRINT_POSITIONS= true;
 
 	private static final Class THIS= SemanticHighlightingTest.class;
 	
@@ -206,6 +206,7 @@ public class SemanticHighlightingTest extends AbstractSemanticHighlightingTest {
 		Position[] expected= new Position[] {
 				createPosition(11, 20, 1),
 				createPosition(28, 35, 3),
+				createPosition(29, 8, 19),
 				createPosition(30, 19, 3),
 				createPosition(77, 21, 4),
 				createPosition(77, 30, 4),
@@ -313,9 +314,11 @@ public class SemanticHighlightingTest extends AbstractSemanticHighlightingTest {
 				createPosition(11, 5, 10),
 				createPosition(12, 12, 16),
 				createPosition(19, 16, 10),
+				createPosition(29, 8, 19),
 				createPosition(30, 8, 10),
 				createPosition(98, 8, 13),
 				createPosition(99, 1, 16),
+				createPosition(120, 4, 17),
 			};
 		if (PRINT_POSITIONS) System.out.println(toString(actual));
 		assertEqualPositions(expected, actual);
@@ -342,6 +345,9 @@ public class SemanticHighlightingTest extends AbstractSemanticHighlightingTest {
 		Position[] actual= getSemanticHighlightingPositions();
 		Position[] expected= new Position[] {
 				createPosition(29, 8, 19),
+				createPosition(104, 0, 3),
+				createPosition(108, 0, 3),
+				createPosition(113, 0, 3),
 				createPosition(120, 4, 17),
 			};
 		if (PRINT_POSITIONS) System.out.println(toString(actual));

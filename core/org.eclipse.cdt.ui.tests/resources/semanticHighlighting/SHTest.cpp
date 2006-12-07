@@ -1,4 +1,4 @@
-#define SIMPLE_MACRO
+#define INT      int
 #define FUNCTION_MACRO(arg) globalFunc(arg)
 
 enum Enumeration {
@@ -102,16 +102,16 @@ namespace ns {
     }
 }
 
-int ClassContainer::protMethod() {
+INT ClassContainer::protMethod() {
     return protField;
 }
 
-int ClassContainer::pubMethod() {
+INT ClassContainer::pubMethod() {
     int localVar = 0;
     return pubField + localVar;
 }
 
-int ClassContainer::staticPrivMethod() {
+INT ClassContainer::staticPrivMethod() {
     CppStruct* st= new CppStruct();
     st->structField= 1;
     CppUnion un;

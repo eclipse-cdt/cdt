@@ -29,7 +29,10 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.IJobManager;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.ui.DebugUITools;
@@ -56,17 +59,45 @@ public abstract class AbstractImportExecutableWizard extends Wizard implements I
 	protected ImportExecutablePageOne pageOne;
 
 	protected ImportExecutablePageTwo pageTwo;
+
+	private String parserID;
+
 	
+	private void waitForJob(String name)
+	{
+		IJobManager jobMan = Platform.getJobManager();
+		Job[] jobs = jobMan.find(null);
+
+		for (int i = 0; i < jobs.length; i++) {
+			if (jobs[i].getName().equals(name)) {
+				try {
+					jobs[i].join();
+				} catch (InterruptedException e) {
+				}
+			}
+		}
+	}
+
+	private void waitForDescSave() {
+		String taskName = CCorePlugin.getResourceString("CDescriptorManager.async_updater"); //$NON-NLS-1$
+		waitForJob(taskName);
+	}
+
 	public void addBinaryParsers(IProject newProject) throws CoreException {
 		ICDescriptorOperation op = new ICDescriptorOperation() {
 
 			public void execute(ICDescriptor descriptor, IProgressMonitor monitor) throws CoreException {
-				descriptor.remove(CCorePlugin.BINARY_PARSER_UNIQ_ID);
-				descriptor.create(CCorePlugin.BINARY_PARSER_UNIQ_ID, pageOne.getSelectedBinaryParserId());
-			}
+				descriptor.create(CCorePlugin.BINARY_PARSER_UNIQ_ID, parserID);	
+				}
 		};
-		CCorePlugin.getDefault().getCDescriptorManager().runDescriptorOperation(newProject.getProject(), op, null);
-	}
+
+		String[] parserIDs = pageOne.getSupportedBinaryParserIds();
+		for (int i = 0; i < parserIDs.length; i++) {
+			parserID = parserIDs[i];
+			CCorePlugin.getDefault().getCDescriptorManager().runDescriptorOperation(newProject.getProject(), op, null);
+			waitForDescSave();
+			}
+		}
 	
 	/**
 	 * Adds the executables to a new or existing project. The executables are
@@ -243,12 +274,12 @@ public abstract class AbstractImportExecutableWizard extends Wizard implements I
 	 * file selection.
 	 * @return
 	 */
-	public String getDefaultBinaryParserID() {
+	public String[] getDefaultBinaryParserIDs() {
 		String defaultBinaryParserId = CCorePlugin.getDefault().getPluginPreferences().getDefaultString(CCorePlugin.PREF_BINARY_PARSER);
 		if (defaultBinaryParserId == null || defaultBinaryParserId.length() == 0) {
 			defaultBinaryParserId = CCorePlugin.DEFAULT_BINARY_PARSER_UNIQ_ID;
 		}
-		return defaultBinaryParserId;
+		return new String[] { defaultBinaryParserId };
 	}
 
 }

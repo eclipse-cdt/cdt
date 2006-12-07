@@ -15,7 +15,6 @@ import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.IBinaryParser;
@@ -27,6 +26,7 @@ import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
@@ -88,8 +88,8 @@ public class ImportExecutablePageOne extends WizardPage {
 
 	private AbstractImportExecutableWizard wizard;
 
-	private String selectedBinaryParserId;
-	private IBinaryParser selectedBinaryParser;
+	private String[] supportedBinaryParserIds;
+	private IBinaryParser[] supportedBinaryParsers;
 
 	private IExtension[] binaryParserExtensions;
 
@@ -102,14 +102,7 @@ public class ImportExecutablePageOne extends WizardPage {
 		setTitle(wizard.getPageOneTitle());
 		setDescription(wizard.getPageOneDescription());
 		
-		selectedBinaryParserId = wizard.getDefaultBinaryParserID();
-		
-		try {
-			// should return the parser for the above id
-			selectedBinaryParser = CCorePlugin.getDefault().getDefaultBinaryParser();
-		} catch (CoreException e) {
-			CDebugUIPlugin.log(e);
-		}
+		supportedBinaryParserIds = wizard.getDefaultBinaryParserIDs();
 		
 		IExtensionPoint point = Platform.getExtensionRegistry().getExtensionPoint(CCorePlugin.PLUGIN_ID, CCorePlugin.BINARY_PARSER_SIMPLE_ID);
 		if (point != null)
@@ -119,18 +112,23 @@ public class ImportExecutablePageOne extends WizardPage {
 			for (int i = 0; i < exts.length; i++) {
 				if (isExtensionVisible(exts[i])) {
 					extensionsInUse.add(exts[i]);
-					if (exts[i].getUniqueIdentifier().equals(selectedBinaryParserId))
-						selectedBinaryParser = instantiateBinaryParser(exts[i]);
 				}
 			}
 			binaryParserExtensions = (IExtension[]) extensionsInUse.toArray(new IExtension[extensionsInUse.size()]);
 		}
 		
+		supportedBinaryParsers = new IBinaryParser[supportedBinaryParserIds.length];
+		for (int i = 0; i < supportedBinaryParserIds.length; i++) {
+			for (int j = 0; j < binaryParserExtensions.length; j++) {
+				if (binaryParserExtensions[j].getUniqueIdentifier().equals(supportedBinaryParserIds[i]))
+					supportedBinaryParsers[i] = instantiateBinaryParser(binaryParserExtensions[j]);				
+			}
+		}
 
 	}
 
-	public String getSelectedBinaryParserId() {
-		return selectedBinaryParserId;
+	public String[] getSupportedBinaryParserIds() {
+		return supportedBinaryParserIds;
 	}
 	
 	private void checkControlState() {
@@ -150,19 +148,22 @@ public class ImportExecutablePageOne extends WizardPage {
 
 		if (monitor.isCanceled())
 			return false;
-		monitor.subTask(directory.getPath());
 		File[] contents = directory.listFiles();
-
+		monitor.subTask(directory.getPath());
+		SubProgressMonitor sm = new SubProgressMonitor(monitor, IProgressMonitor.UNKNOWN);
+		sm.beginTask(directory.getPath(), contents.length);
 		for (int i = 0; i < contents.length; i++) {
+			if (monitor.isCanceled())
+				return false;
 			File file = contents[i];
-			if (file.isFile() && isBinary(file, selectedBinaryParser)) {
+			sm.worked(1);
+			if (contents[i].isDirectory())
+				collectExecutableFiles(files, contents[i], monitor);
+			else if (file.isFile() && isBinary(file, false)) {
 				files.add(file);
 			}
 		}
-		for (int i = 0; i < contents.length; i++) {
-			if (contents[i].isDirectory())
-				collectExecutableFiles(files, contents[i], monitor);
-		}
+		sm.done();
 		return true;
 	}
 
@@ -270,12 +271,14 @@ public class ImportExecutablePageOne extends WizardPage {
 
 			public void widgetSelected(SelectionEvent e) {
 				checkControlState();
+				String selectedDirectory = multipleExecutablePathField
+						.getText().trim();
+				setErrorMessage(null);
 
-				if (!selectSingleFile) {
-					singleExecutablePathField.setText("");
+				if (selectedDirectory.length() == 0) {
 					noFilesSelected();
-				}
-
+				} else
+					updateExecutablesList(selectedDirectory);
 			}
 
 		});
@@ -317,7 +320,7 @@ public class ImportExecutablePageOne extends WizardPage {
 		final IExtension[] exts = binaryParserExtensions;
 		for (int i = 0; i < exts.length; i++) {
 				binaryParserCombo.add(exts[i].getLabel());
-				if (selectedBinaryParserId.equals(exts[i].getUniqueIdentifier()))
+				if (supportedBinaryParserIds[0].equals(exts[i].getUniqueIdentifier()))
 					binaryParserCombo.select(i);
 			}
 		
@@ -326,14 +329,14 @@ public class ImportExecutablePageOne extends WizardPage {
 			public void widgetDefaultSelected(SelectionEvent e) {
 			}
 			public void widgetSelected(SelectionEvent e) {
-				selectedBinaryParser = instantiateBinaryParser(exts[binaryParserCombo.getSelectionIndex()]);
+				supportedBinaryParsers[0] = instantiateBinaryParser(exts[binaryParserCombo.getSelectionIndex()]);
 				if (selectSingleFile) {
 					String path = singleExecutablePathField.getText();
 					if (path.length() > 0)
 						validateExe(path);
 				} else {
 					previouslySearchedDirectory = null;
-					updateExecutablesList(multipleExecutablePathField.getText());
+					updateExecutablesList(multipleExecutablePathField.getText().trim());
 				}
 			}
 		});
@@ -385,8 +388,10 @@ public class ImportExecutablePageOne extends WizardPage {
 			public void widgetSelected(SelectionEvent e) {
 				checkControlState();
 				if (selectSingleFile) {
-					multipleExecutablePathField.setText("");
-					noFilesSelected();
+					if (singleExecutablePathField.getText().trim().length() == 0)
+						noFilesSelected();
+					else
+						validateExe(singleExecutablePathField.getText());
 				}
 			}
 		});
@@ -444,7 +449,7 @@ public class ImportExecutablePageOne extends WizardPage {
 		selectAll.setText(Messages.ImportExecutablePageOne_SelectAll);
 		selectAll.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				executablesViewer.setCheckedElements(executables);
+				executablesViewer.setAllChecked(true);
 				setPageComplete(executables.length > 0);
 			}
 		});
@@ -456,7 +461,7 @@ public class ImportExecutablePageOne extends WizardPage {
 		deselectAll.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 
-				executablesViewer.setCheckedElements(new Object[0]);
+				executablesViewer.setAllChecked(false);
 				setPageComplete(false);
 			}
 		});
@@ -513,7 +518,7 @@ public class ImportExecutablePageOne extends WizardPage {
 	protected void noFilesSelected() {
 		executables = new File[0];
 		executablesViewer.refresh(true);
-		executablesViewer.setCheckedElements(executables);
+		executablesViewer.setAllChecked(false);
 		previouslySearchedDirectory = "";
 		setPageComplete(false);
 	}
@@ -532,27 +537,16 @@ public class ImportExecutablePageOne extends WizardPage {
 			getContainer().run(true, true, new IRunnableWithProgress() {
 				public void run(IProgressMonitor monitor) {
 
-					monitor.beginTask(Messages.ImportExecutablePageOne_Searching, 100);
+					monitor.beginTask(Messages.ImportExecutablePageOne_Searching, IProgressMonitor.UNKNOWN);
 					File directory = new File(path);
 					executables = new File[0];
-					monitor.worked(10);
 					if (directory.isDirectory()) {
 
 						Collection files = new ArrayList();
 						if (!collectExecutableFiles(files, directory, monitor))
 							return;
-						Iterator filesIterator = files.iterator();
-						executables = new File[files.size()];
-						int index = 0;
-						monitor.worked(50);
-						monitor.subTask(Messages.ImportExecutablePageOne_ProcessingResults);
-						while (filesIterator.hasNext()) {
-							File file = (File) filesIterator.next();
-							executables[index] = file;
-							index++;
-						}
-					} else
-						monitor.worked(60);
+						executables = (File[]) files.toArray(new File[files.size()]);
+					}
 					monitor.done();
 				}
 
@@ -563,7 +557,7 @@ public class ImportExecutablePageOne extends WizardPage {
 		}
 
 		executablesViewer.refresh(true);
-		executablesViewer.setCheckedElements(executables);
+		executablesViewer.setAllChecked(true);
 		setPageComplete(executables.length > 0);
 	}
 
@@ -593,29 +587,30 @@ public class ImportExecutablePageOne extends WizardPage {
 	 * @param file - the executable file.
 	 * @return - is it recognized by any of the binary parsers?
 	 */
-	private boolean isBinary(File file) {
-		if (selectedBinaryParser != null) {
-			if (isBinary(file, selectedBinaryParser))
-				return true;
-			else
-			{
-				// See if any of the other parsers will work with this file.
-				// If so, pick the first one that will.
-				for (int i = 0; i < binaryParserExtensions.length; i++) {
-					IBinaryParser parser = instantiateBinaryParser(binaryParserExtensions[i]);
-					if (isBinary(file, parser))
-					{
-						selectedBinaryParserId = binaryParserExtensions[i].getUniqueIdentifier();
-						selectedBinaryParser = parser;
-						if (binaryParserCombo != null)
-							binaryParserCombo.select(i);
-						return true;
-					}
+	private boolean isBinary(File file, boolean checkOthers) {
+		
+		for (int i = 0; i < supportedBinaryParsers.length; i++) {
+			if (isBinary(file, supportedBinaryParsers[i]))
+				return true;			
+		}
+		// See if any of the other parsers will work with this file.
+		// If so, pick the first one that will. Only do this if the user
+		// is picking the binary parser.
+		if (checkOthers && binaryParserCombo != null)
+		{
+			for (int i = 0; i < binaryParserExtensions.length; i++) {
+				IBinaryParser parser = instantiateBinaryParser(binaryParserExtensions[i]);
+				if (isBinary(file, parser))
+				{
+					supportedBinaryParserIds[0] = binaryParserExtensions[i].getUniqueIdentifier();
+					supportedBinaryParsers[0] = parser;
+					binaryParserCombo.select(i);
+					return true;
 				}
-				return false;
-			}
-		} else
-			return false;
+			}			
+		}
+
+		return false;
 	}
 	
 	private void validateExe(String path) {
@@ -624,7 +619,7 @@ public class ImportExecutablePageOne extends WizardPage {
 		if (path.length() > 0) {
 			File testFile = new File(path);
 			if (testFile.exists()) {
-				if (isBinary(testFile))
+				if (isBinary(testFile, true))
 				{
 					executables = new File[1];
 					executables[0] = testFile;

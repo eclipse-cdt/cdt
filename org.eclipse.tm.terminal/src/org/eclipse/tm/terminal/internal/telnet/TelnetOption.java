@@ -5,10 +5,12 @@
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
+ * Initial Contributors:
+ * The following Wind River employees contributed to the Terminal component
+ * that contains this file: Chris Thew, Fran Litterio, Stephen Lamb,
+ * Helmut Haigermoser and Ted Williams.
+ *
  * Contributors:
- * Fran Litterio (Wind River) - initial API and implementation 
- * Helmut Haigermoser (Wind River) - repackaged 
- * Ted Williams (Wind River) - repackaged into org.eclipse namespace 
  * Michael Scharf (Wind River) - split into core, view and connector plugins 
  * Martin Oberhuber (Wind River) - fixed copyright headers and beautified
  *******************************************************************************/

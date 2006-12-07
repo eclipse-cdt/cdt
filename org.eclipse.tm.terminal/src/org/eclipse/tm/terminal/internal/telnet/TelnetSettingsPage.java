@@ -66,8 +66,9 @@ public class TelnetSettingsPage implements ISettingsPage {
 	private void setNetworkPort(String strNetworkPort) {
 		if (strNetworkPort!=null) {
 			String strPortName = getNetworkPortMap().findPortName(strNetworkPort);
-			if(strPortName==null)
-				strPortName=""; //$NON-NLS-1$
+			if(strPortName==null) {
+				strPortName=strNetworkPort; //fallback to verbatim port if not found
+			}
 			int nIndex = fNetworkPortCombo.indexOf(strPortName);
 
 			if (nIndex == -1) {

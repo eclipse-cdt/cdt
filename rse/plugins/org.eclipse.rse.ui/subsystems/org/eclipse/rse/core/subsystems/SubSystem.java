@@ -1579,9 +1579,11 @@ public abstract class SubSystem extends RSEModelObject implements IAdaptable, IS
      */
     public class ConnectJob extends SubSystemOperationJob
     {
-    	public ConnectJob()
+    	private SubSystem _ss;
+    	public ConnectJob(SubSystem ss)
     	{
     		super(GenericMessages.RSESubSystemOperation_Connect_message);
+    		_ss = ss;
     	}
     	
     	public void performOperation(IProgressMonitor mon) throws InterruptedException, Exception
@@ -1594,6 +1596,8 @@ public abstract class SubSystem extends RSEModelObject implements IAdaptable, IS
 
     	    if (!implicitConnect(true, mon, msg, totalWorkUnits)) throw new Exception(RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_CONNECT_FAILED).makeSubstitution(getHostName()).getLevelOneText());    		
     	    internalConnect(mon);
+    	    
+			RSEUIPlugin.getTheSystemRegistry().connectedStatusChange(_ss, true, false);
     	}
     }
 
@@ -2551,12 +2555,8 @@ public abstract class SubSystem extends RSEModelObject implements IAdaptable, IS
 //dwd				((ProgressMonitorDialog) runnableContext).setCancelable(true);
 //dwd			}
 			getConnectorService().promptForPassword(forcePrompt); // prompt for userid and password    
-			ConnectJob job = new ConnectJob();
-			scheduleJob(job, null, shell != null);
-			IStatus status = job.getResult();
-			if (status != null && status.isOK()) {
-				registry.connectedStatusChange(this, true, false);
-			}
+			ConnectJob job = new ConnectJob(this);
+			scheduleJob(job, null, false);
 		}
 	}
     

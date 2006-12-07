@@ -205,17 +205,6 @@ public class CommandMinerThread extends MinerThread
 						if (_isTTY)
 						{
 						    String args[] = null;
-						    /*
-						    if (_isOS400)
-						    {
-						        args = new String[4];
-								args[0] = PSEUDO_TERMINAL;
-								args[1] = "/QOpenSys/usr/bin/sh"; //$NON-NLS-1$
-								args[2] = "-c";	 //$NON-NLS-1$
-								args[3] = "export TERMINAL_TYPE=REMOTE;export QIBM_JAVA_STDIO_CONVERT=Y;export QIBM_USE_DESCRIPTOR_STDIO=I;" + theShell; //$NON-NLS-1$
-						    }
-						    else
-						    	*/
 						    {
 						        args = new String[4];
 								args[0] = PSEUDO_TERMINAL;

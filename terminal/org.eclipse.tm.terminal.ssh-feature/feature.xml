@@ -31,8 +31,8 @@
 
    <plugin
          id="org.eclipse.tm.terminal.ssh"
-         download-size="0"
-         install-size="0"
+         download-size="13"
+         install-size="13"
          version="0.0.0"
          unpack="false"/>
 

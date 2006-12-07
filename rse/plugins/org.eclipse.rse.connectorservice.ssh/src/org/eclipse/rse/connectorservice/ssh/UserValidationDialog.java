@@ -115,8 +115,8 @@ public class UserValidationDialog extends TrayDialog {
 		main.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		
 		Label imageLabel = new Label(imageComposite, SWT.NONE);
-		//keyLockImage = TeamImages.getImageDescriptor(ITeamUIImages.IMG_KEY_LOCK).createImage();
-		//imageLabel.setImage(keyLockImage);
+		keyLockImage = Activator.getImageDescriptor(ISshConstants.IMG_KEY_LOCK).createImage();
+		imageLabel.setImage(keyLockImage);
 		GridData data = new GridData(GridData.FILL_HORIZONTAL | GridData.GRAB_HORIZONTAL);
 		imageLabel.setLayoutData(data);
 		

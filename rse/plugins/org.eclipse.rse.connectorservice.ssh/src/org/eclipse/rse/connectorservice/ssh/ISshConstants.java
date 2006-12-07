@@ -39,4 +39,7 @@ public interface ISshConstants {
 	public static final String HELP_USER_VALIDATION_DIALOG = CVSUIPREFIX + "user_validation_dialog_context"; //$NON-NLS-1$
 	public static final String HELP_KEYBOARD_INTERACTIVE_DIALOG = CVSUIPREFIX + "keyboard_interactive_dialog_context"; //$NON-NLS-1$
 
+	// These are from TeamUIImages
+	public final String IMG_KEY_LOCK = "icons/full/wizban/keylock.gif"; //$NON-NLS-1$
+
 }

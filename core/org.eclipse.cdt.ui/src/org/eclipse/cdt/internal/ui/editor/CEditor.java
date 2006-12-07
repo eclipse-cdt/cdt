@@ -163,6 +163,7 @@ import org.eclipse.cdt.core.model.ILanguage;
 import org.eclipse.cdt.core.model.ISourceRange;
 import org.eclipse.cdt.core.model.ISourceReference;
 import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.cdt.core.model.IWorkingCopy;
 import org.eclipse.cdt.refactoring.actions.CRefactoringActionGroup;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.IWorkingCopyManager;
@@ -1857,11 +1858,78 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IR
 	protected void selectionChanged() {
 		if (getSelectionProvider() == null)
 			return;
+		ISourceReference element= computeHighlightRangeSourceReference();
 		updateStatusLine();
 		synchronizeOutlinePage();
+		setSelection(element, false);
 	}
 	
-	
+	/**
+	 * Computes and returns the source reference that includes the caret and
+	 * serves as provider for the outline page selection and the editor range
+	 * indication.
+	 *
+	 * @return the computed source reference
+	 * @since 4.0
+	 */
+	protected ISourceReference computeHighlightRangeSourceReference() {
+		ISourceViewer sourceViewer= getSourceViewer();
+		if (sourceViewer == null)
+			return null;
+
+		StyledText styledText= sourceViewer.getTextWidget();
+		if (styledText == null)
+			return null;
+
+		int caret= 0;
+		if (sourceViewer instanceof ITextViewerExtension5) {
+			ITextViewerExtension5 extension= (ITextViewerExtension5)sourceViewer;
+			caret= extension.widgetOffset2ModelOffset(styledText.getCaretOffset());
+		} else {
+			int offset= sourceViewer.getVisibleRegion().getOffset();
+			caret= offset + styledText.getCaretOffset();
+		}
+
+		ICElement element= getElementAt(caret, false);
+
+		if ( !(element instanceof ISourceReference))
+			return null;
+
+		return (ISourceReference) element;
+	}
+
+	/**
+	 * Returns the most narrow element including the given offset.  If <code>reconcile</code>
+	 * is <code>true</code> the editor's input element is reconciled in advance. If it is
+	 * <code>false</code> this method only returns a result if the editor's input element
+	 * does not need to be reconciled.
+	 *
+	 * @param offset the offset included by the retrieved element
+	 * @param reconcile <code>true</code> if working copy should be reconciled
+	 * @return the most narrow element which includes the given offset
+	 */
+	protected ICElement getElementAt(int offset, boolean reconcile) {
+		ITranslationUnit unit= (ITranslationUnit)getInputCElement();
+
+		if (unit != null) {
+			try {
+				if (reconcile && unit instanceof IWorkingCopy) {
+					synchronized (unit) {
+						((IWorkingCopy) unit).reconcile();
+					}
+					return unit.getElementAtOffset(offset);
+				} else if (unit.isConsistent()) {
+					return unit.getElementAtOffset(offset);
+				}
+			} catch (CModelException x) {
+				CUIPlugin.getDefault().log(x.getStatus());
+				// nothing found, be tolerant and go on
+			}
+		}
+
+		return null;
+	}
+
 	/**
 	 * Synchronizes the outline view selection with the given element
 	 * position in the editor.

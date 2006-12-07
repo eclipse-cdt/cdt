@@ -1,25 +1,38 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
       id="org.eclipse.tm.terminal.ssh"
-      label="Ssh Terminal Connector"
+      label="%featureName"
+      provider-name="%providerName"
       version="0.9.0.qualifier">
 
-   <description url="http://www.example.com/description">
-      [Enter Feature Description here.]
+   <description>
+      %description
    </description>
 
-   <copyright url="http://www.example.com/copyright">
-      [Enter Copyright Description here.]
+   <copyright>
+      %copyright
    </copyright>
 
-   <license url="http://www.example.com/license">
-      [Enter License Description here.]
+   <license url="%licenseURL">
+      %license
    </license>
+
+   <url>
+      <update label="%updateSiteName" url="http://download.eclipse.org/dsdp/tm/updates"/>
+      <discovery label="%updateSiteName" url="http://download.eclipse.org/dsdp/tm/updates"/>
+   </url>
+
+   <requires>
+      <import plugin="org.eclipse.ui"/>
+      <import plugin="org.eclipse.core.runtime"/>
+      <import plugin="org.eclipse.tm.terminal"/>
+      <import plugin="com.jcraft.jsch"/>
+   </requires>
 
    <plugin
          id="org.eclipse.tm.terminal.ssh"
-         download-size="10000"
-         install-size="10000"
+         download-size="0"
+         install-size="0"
          version="0.0.0"
          unpack="false"/>
 

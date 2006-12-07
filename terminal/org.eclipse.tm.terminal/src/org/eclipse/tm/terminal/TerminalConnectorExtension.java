@@ -15,7 +15,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.RegistryFactory;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.tm.terminal.internal.control.TerminalPlugin;
 
 /**
  * A factory to get {@link ITerminalConnector} instances.
@@ -38,11 +41,16 @@ public class TerminalConnectorExtension {
 					if(conn.isInstalled())
 						result.add(conn);
 				}
+			} catch (NoClassDefFoundError e) {
+				log(e);
 			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				log(e);
 			}
 		}
 		return (ITerminalConnector[]) result.toArray(new ITerminalConnector[result.size()]);
+	}
+
+	private static void log(Throwable e) {
+		TerminalPlugin.getDefault().getLog().log(new Status(IStatus.ERROR, TerminalPlugin.PLUGIN_ID, IStatus.OK, e.getMessage(), e));
 	}
 }

@@ -370,6 +370,9 @@ public class UniversalFileSystemMiner extends Miner implements
 					}
 					catch (Exception e)
 					{
+						status.setAttribute(DE.A_SOURCE, FAILED);
+						status.setAttribute(DE.A_VALUE, e.getMessage());		
+						return;
 					}
 				}				
 				command = "xcopy " + source + " " + tgt + " /Y /K /O /Q /H"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ 

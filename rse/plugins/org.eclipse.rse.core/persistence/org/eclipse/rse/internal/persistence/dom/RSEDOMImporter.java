@@ -431,17 +431,18 @@ public class RSEDOMImporter implements IRSEDOMImporter
 						mgr.getPools().add(filterPool);
 					}
 				}
-				filterPool.setType(type);
-				filterPool.setDefault(isDefault);
-				filterPool.setSupportsNestedFilters(supportsNestedFilters);
-				filterPool.setStringsCaseSensitive(isSetStringsCaseSensitive);
-				filterPool.setSupportsDuplicateFilterStrings(isSetSupportsDuplicateFilterStrings);
-				filterPool.setRelease(release);
-				filterPool.setSingleFilterStringOnly(isSetSingleFilterStringOnly);
-				filterPool.setOwningParentName(owningParentName);
-				filterPool.setNonRenamable(isNonRenamable);
-			
-				filterPool.setWasRestored(true);			
+				if (filterPool != null) {
+					filterPool.setType(type);
+					filterPool.setDefault(isDefault);
+					filterPool.setSupportsNestedFilters(supportsNestedFilters);
+					filterPool.setStringsCaseSensitive(isSetStringsCaseSensitive);
+					filterPool.setSupportsDuplicateFilterStrings(isSetSupportsDuplicateFilterStrings);
+					filterPool.setRelease(release);
+					filterPool.setSingleFilterStringOnly(isSetSingleFilterStringOnly);
+					filterPool.setOwningParentName(owningParentName);
+					filterPool.setNonRenamable(isNonRenamable);
+					filterPool.setWasRestored(true);
+				}
 			}
 		}
 		catch (Exception e)

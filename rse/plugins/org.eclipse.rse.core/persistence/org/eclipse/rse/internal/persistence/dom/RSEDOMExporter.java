@@ -43,7 +43,7 @@ import org.eclipse.rse.persistence.dom.RSEDOMNode;
 public class RSEDOMExporter implements IRSEDOMExporter {
 	private static RSEDOMExporter _instance = new RSEDOMExporter();
 	private Map _domMap;
-	private ISystemRegistry _registry;
+//	private ISystemRegistry _registry;
 	
 	/**
 	 * Constructor to create a new DOM exporter.
@@ -54,7 +54,7 @@ public class RSEDOMExporter implements IRSEDOMExporter {
 
 	public void setSystemRegistry(ISystemRegistry registry)
 	{
-		_registry = registry;
+//		_registry = registry;
 	}
 	
 	/**
@@ -125,13 +125,9 @@ public class RSEDOMExporter implements IRSEDOMExporter {
 		// create hosts nodes 
 
 		// old nodes to compare with
-		RSEDOMNode[] oldHostNodes = null;
-		if (!clean) {
-			oldHostNodes = dom.getChildren(IRSEDOMConstants.TYPE_HOST);
-		}
-
 		List missingNodes = new ArrayList();
 		if (!clean) {
+			RSEDOMNode[] oldHostNodes = dom.getChildren(IRSEDOMConstants.TYPE_HOST);
 			for (int o = 0; o < oldHostNodes.length; o++) {
 				missingNodes.add(oldHostNodes[o]);
 			}
@@ -202,7 +198,7 @@ public class RSEDOMExporter implements IRSEDOMExporter {
 			node.addAttribute(IRSEDOMConstants.ATTRIBUTE_DEFAULT, getBooleanString(filterPool.isDefault()));
 			node.addAttribute(IRSEDOMConstants.ATTRIBUTE_STRING_CASE_SENSITIVE, getBooleanString(filterPool.isSetStringsCaseSensitive()));
 			node.addAttribute(IRSEDOMConstants.ATTRIBUTE_SUPPORTS_DUPLICATE_FILTER_STRINGS, getBooleanString(filterPool.supportsDuplicateFilterStrings()));
-			node.addAttribute(IRSEDOMConstants.ATTRIBUTE_RELEASE, "" + filterPool.getRelease());
+			node.addAttribute(IRSEDOMConstants.ATTRIBUTE_RELEASE, Integer.toString(filterPool.getRelease()));
 			node.addAttribute(IRSEDOMConstants.ATTRIBUTE_SINGLE_FILTER_STRING_ONLY, getBooleanString(filterPool.isSetSingleFilterStringOnly()));
 			node.addAttribute(IRSEDOMConstants.ATTRIBUTE_OWNING_PARENT_NAME, filterPool.getOwningParentName());
 			node.addAttribute(IRSEDOMConstants.ATTRIBUTE_NON_RENAMABLE, getBooleanString(filterPool.isNonRenamable()));
@@ -228,7 +224,7 @@ public class RSEDOMExporter implements IRSEDOMExporter {
 		if (clean || node.isDirty()) {
 			node.addAttribute(IRSEDOMConstants.ATTRIBUTE_ID, filter.getName());
 			node.addAttribute(IRSEDOMConstants.ATTRIBUTE_SUPPORTS_NESTED_FILTERS, getBooleanString(filter.isSupportsNestedFilters()));
-			node.addAttribute(IRSEDOMConstants.ATTRIBUTE_RELATIVE_ORDER, "" + filter.getRelativeOrder());
+			node.addAttribute(IRSEDOMConstants.ATTRIBUTE_RELATIVE_ORDER, Integer.toString(filter.getRelativeOrder()));
 			node.addAttribute(IRSEDOMConstants.ATTRIBUTE_DEFAULT, getBooleanString(filter.isDefault()));
 			node.addAttribute(IRSEDOMConstants.ATTRIBUTE_STRING_CASE_SENSITIVE, getBooleanString(filter.isSetStringsCaseSensitive()));
 			node.addAttribute(IRSEDOMConstants.ATTRIBUTE_PROMPTABLE, getBooleanString(filter.isPromptable()));
@@ -237,7 +233,7 @@ public class RSEDOMExporter implements IRSEDOMExporter {
 			node.addAttribute(IRSEDOMConstants.ATTRIBUTE_NON_RENAMABLE, getBooleanString(filter.isNonRenamable()));
 			node.addAttribute(IRSEDOMConstants.ATTRIBUTE_NON_CHANGEABLE, getBooleanString(filter.isNonChangable()));
 			node.addAttribute(IRSEDOMConstants.ATTRIBUTE_STRINGS_NON_CHANGABLE, getBooleanString(filter.isStringsNonChangable()));
-			node.addAttribute(IRSEDOMConstants.ATTRIBUTE_RELEASE, "" + filter.getRelease());
+			node.addAttribute(IRSEDOMConstants.ATTRIBUTE_RELEASE, Integer.toString(filter.getRelease()));
 			node.addAttribute(IRSEDOMConstants.ATTRIBUTE_SINGLE_FILTER_STRING_ONLY, getBooleanString(filter.isSetSingleFilterStringOnly()));
 		}
 
@@ -405,7 +401,7 @@ public class RSEDOMExporter implements IRSEDOMExporter {
 
 		if (clean || node.isDirty()) {
 			ISystemFilterPool filterPool = filterPoolReference.getReferencedFilterPool();
-			String refId = (filterPool != null) ? filterPool.getId() : "unknown";
+			String refId = (filterPool != null) ? filterPool.getId() : "unknown"; //$NON-NLS-1$
 			node.addAttribute(IRSEDOMConstants.ATTRIBUTE_REF_ID, refId);
 		}
 

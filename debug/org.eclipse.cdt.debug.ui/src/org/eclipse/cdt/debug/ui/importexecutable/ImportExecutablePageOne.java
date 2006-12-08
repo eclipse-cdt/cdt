@@ -330,6 +330,7 @@ public class ImportExecutablePageOne extends WizardPage {
 			}
 			public void widgetSelected(SelectionEvent e) {
 				supportedBinaryParsers[0] = instantiateBinaryParser(exts[binaryParserCombo.getSelectionIndex()]);
+				supportedBinaryParserIds[0] = exts[binaryParserCombo.getSelectionIndex()].getUniqueIdentifier();
 				if (selectSingleFile) {
 					String path = singleExecutablePathField.getText();
 					if (path.length() > 0)

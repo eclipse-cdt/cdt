@@ -449,7 +449,8 @@ public class SystemTableTreeViewProvider implements ILabelProvider, ITableLabelP
 	{
 		if (_disableDeferredQueries)
 			return false;
-	    IPreferenceStore store = RSEUIPlugin.getDefault().getPreferenceStore();
-	    return store.getBoolean(ISystemPreferencesConstants.USE_DEFERRED_QUERIES);
+	    //IPreferenceStore store = RSEUIPlugin.getDefault().getPreferenceStore();
+	    //return store.getBoolean(ISystemPreferencesConstants.USE_DEFERRED_QUERIES);
+		return true; // DKM now enforcing deferred queries
 	}
 }

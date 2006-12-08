@@ -235,8 +235,9 @@ public class SystemViewLabelAndContentProvider extends LabelProvider
 	
 	protected boolean supportsDeferredQueries()
 	{
-	    IPreferenceStore store = RSEUIPlugin.getDefault().getPreferenceStore();
-	    return store.getBoolean(ISystemPreferencesConstants.USE_DEFERRED_QUERIES);
+	    //IPreferenceStore store = RSEUIPlugin.getDefault().getPreferenceStore();
+	    //return store.getBoolean(ISystemPreferencesConstants.USE_DEFERRED_QUERIES);
+		return true; // DKM now enforcing deferred queries
 	}
 
     

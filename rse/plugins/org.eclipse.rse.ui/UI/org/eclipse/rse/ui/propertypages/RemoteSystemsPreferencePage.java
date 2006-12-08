@@ -176,7 +176,8 @@ public class RemoteSystemsPreferencePage
 		useDeferredQueryEditor.setEnabled(false); // disable this because we want it always to be true
 		addField(useDeferredQueryEditor);
 		useDeferredQueryEditor.setToolTipText(SystemResources.RESID_PREF_USEDEFERREDQUERIES_PREFIX_TOOLTIP);
-		lastUseDeferredQueryValue = getPreferenceStore().getBoolean(useDeferredQueryEditor.getPreferenceName());
+		lastUseDeferredQueryValue = true; // enforcing this to true now
+		//getPreferenceStore().getBoolean(useDeferredQueryEditor.getPreferenceName());
 		
 		
 		/** FIXME - UDA should not be so coupled to core

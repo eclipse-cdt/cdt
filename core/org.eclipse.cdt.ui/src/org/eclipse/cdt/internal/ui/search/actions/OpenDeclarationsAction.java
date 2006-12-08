@@ -123,10 +123,10 @@ public class OpenDeclarationsAction extends SelectionParseAction {
 							}
 						}
 					}
-				} catch (CoreException e) {
-					CUIPlugin.getDefault().log(e);
+				} finally {
+					index.releaseReadLock();
 				}
-					
+
 				return Status.OK_STATUS;
 			} catch (CoreException e) {
 				return e.getStatus();

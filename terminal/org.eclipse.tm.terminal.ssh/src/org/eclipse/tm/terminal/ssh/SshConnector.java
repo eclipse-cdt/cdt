@@ -30,7 +30,7 @@ public class SshConnector implements ITerminalConnector {
 	private ITerminalControl fControl;
 	private JSch fJsch;
 	private ChannelShell fChannel;
-
+	private SshConnection fConnection;
 	private final SshSettings fSettings;
 	public SshConnector() {
 		this(new SshSettings());
@@ -53,12 +53,12 @@ public class SshConnector implements ITerminalConnector {
 	public void connect(ITerminalControl control) {
 		Logger.log("entered."); //$NON-NLS-1$
 		fControl=control;
-		SshConnection worker = new SshConnection(this,control);
-		worker.start();
+		fConnection = new SshConnection(this,control);
+		fConnection.start();
 	}
-	public void disconnect() {
+	synchronized public void disconnect() {
 		Logger.log("entered."); //$NON-NLS-1$
-	
+		fConnection.disconnect();
 		if (getInputStream() != null) {
 			try {
 				getInputStream().close();

@@ -30,6 +30,7 @@ import org.eclipse.tm.terminal.Logger;
 import org.eclipse.tm.terminal.TerminalState;
 import org.eclipse.ui.preferences.ScopedPreferenceStore;
 
+import com.jcraft.jsch.Channel;
 import com.jcraft.jsch.ChannelShell;
 import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.JSchException;
@@ -40,9 +41,12 @@ import com.jcraft.jsch.Session;
 import com.jcraft.jsch.UserInfo;
 
 class SshConnection extends Thread {
+	private static int fgNo;
 	private final ITerminalControl fControl;
 	private final SshConnector fConn;
+	private Channel fChannel;
 	protected SshConnection(SshConnector conn,ITerminalControl control) {
+		super("SshConnection-"+fgNo++);
 		fControl = control;
 		fConn = conn;
 		fControl.setState(TerminalState.CONNECTING);
@@ -211,7 +215,7 @@ class SshConnection extends Thread {
 	            session.setProxy(proxy);
 	        }
 	        session.setTimeout(0); //never time out once connected
-			
+
 			session.setPassword(password);
 			////Giving a connectionId could be the index into a local
 			////Store where passwords are stored
@@ -238,6 +242,8 @@ class SshConnection extends Thread {
 			fControl.setState(TerminalState.CONNECTED);
 			// read data until the connection gets terminated
 			readDataForever(fConn.getInputStream());
+			// when reading is done, we set the state to closed
+			fControl.setState(TerminalState.CLOSED);
 		} catch (JSchException e) {
 			connectFailed(e.getMessage(),e.getMessage());
 		} catch (IOException e) {
@@ -246,7 +252,21 @@ class SshConnection extends Thread {
 			
 		}
 	}
-
+	synchronized void setChannel(Channel channel) {
+		fChannel = channel;
+	}
+	/**
+	 * disconnect the ssh session
+	 */
+	void disconnect() {
+		interrupt();
+		synchronized (this) {
+			if(fChannel!=null) {
+				fChannel.disconnect();
+				fChannel=null;
+			}
+		}
+	}
 	/**
 	 * Read the data from the ssh connection and display it in the terminal.
 	 * @param in
@@ -255,11 +275,26 @@ class SshConnection extends Thread {
 	private void readDataForever(InputStream in) throws IOException {
 		// read the data
 		byte bytes[]=new byte[32*1024];
-		int n;
-		while((n=in.read(bytes))!=-1) {
-			fControl.writeToTerminal(new String(bytes,0,n));
+		// read until the thread gets interrupted....
+		while(!isInterrupted()) {
+			int n;
+			// We have to poll. There seems no better way to cancel
+			// the read from ssh....
+			while(in.available()==0) {
+				try {
+					sleep(1);
+				} catch (InterruptedException e) {
+					// propagate the interrupt 
+					interrupt();
+					return;
+				}
+			}
+			// read some bytes
+			if((n=in.read(bytes))==-1)
+				return;
+			// we assume we get ASCII UTF8 bytes
+			fControl.writeToTerminal(new String(bytes,0,n,"UTF8"));
 		}
-		fControl.setState(TerminalState.CLOSED);
 	}
 
 	protected static Display getStandardDisplay() {
@@ -321,8 +356,8 @@ class SshConnection extends Thread {
 			String _password = promptSecret(message);
 			if (_password!=null) {
 				fPassword=_password;
-				return true;
-			}
+			return true;
+		}
 			return false;
 		}
 		public void showMessage(final String message) {
@@ -339,7 +374,7 @@ class SshConnection extends Thread {
 		    if (prompt.length == 0) {
 		        // No need to prompt, just return an empty String array
 		        return new String[0];
-		    }
+    }
 			try{
 			    if (fAttemptCount == 0 && fPassword != null && prompt.length == 1 && prompt[0].trim().equalsIgnoreCase("password:")) { //$NON-NLS-1$
 			        // Return the provided password the first time but always prompt on subsequent tries

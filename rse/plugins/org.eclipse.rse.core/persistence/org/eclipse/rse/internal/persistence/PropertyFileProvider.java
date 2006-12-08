@@ -126,7 +126,7 @@ public class PropertyFileProvider implements IRSEPersistenceProvider {
 		IFolder providerFolder = getProviderFolder();
 		try {
 			int n = countNodes(dom);
-			if (monitor != null) monitor.beginTask("Saving DOM", n);
+			if (monitor != null) monitor.beginTask(Messages.PropertyFileProvider_SavingTaskName, n);
 			saveNode(dom, providerFolder, monitor);
 			if (monitor != null) monitor.done();
 		} catch (Exception e) {
@@ -146,7 +146,7 @@ public class PropertyFileProvider implements IRSEPersistenceProvider {
 			try {
 				profileFolder.delete(IResource.FORCE, monitor);
 			} catch (CoreException e) {
-				result = new Status(IStatus.ERROR, null, 0, "Unexpected Exception", e);
+				result = new Status(IStatus.ERROR, null, 0, Messages.PropertyFileProvider_UnexpectedException, e);
 			}
 		}
 		return result;
@@ -401,7 +401,7 @@ public class PropertyFileProvider implements IRSEPersistenceProvider {
 	 * @return a string equivalent from "00000" to "99999"
 	 */
 	private String getIndexString(int i) {
-		if (i < 0 || i > 99999) throw new IllegalArgumentException("Argument must be between 0 and 99999");
+		assert (i >= 0 && i <=99999);
 		String index = "00000" + Integer.toString(i); //$NON-NLS-1$
 		index = index.substring(index.length() - 5);
 		return index;
@@ -541,7 +541,7 @@ public class PropertyFileProvider implements IRSEPersistenceProvider {
 		if (profileFolder.exists()) {
 			//System.out.println("loading from " + profileFolder.getFullPath().toString() + "...");
 			int n = countPropertiesFiles(profileFolder);
-			if (monitor != null) monitor.beginTask("Loading DOM", n);
+			if (monitor != null) monitor.beginTask(Messages.PropertyFileProvider_LoadingTaskName, n);
 			dom = (RSEDOM) loadNode(null, profileFolder, monitor);
 			if (monitor != null) monitor.done();
 		} else {

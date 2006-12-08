@@ -16,7 +16,6 @@
 
 package org.eclipse.rse.persistence;
 
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.rse.core.filters.ISystemFilter;
 import org.eclipse.rse.core.filters.ISystemFilterPool;
 import org.eclipse.rse.core.filters.ISystemFilterPoolManager;

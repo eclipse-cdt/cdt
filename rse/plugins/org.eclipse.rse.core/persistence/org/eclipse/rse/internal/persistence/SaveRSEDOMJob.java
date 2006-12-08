@@ -16,6 +16,8 @@
 
 package org.eclipse.rse.internal.persistence;
 
+import java.text.MessageFormat;
+
 import org.eclipse.core.resources.WorkspaceJob;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -29,7 +31,9 @@ public class SaveRSEDOMJob extends WorkspaceJob {
 	private IRSEPersistenceProvider _provider;
 
 	public SaveRSEDOMJob(RSEDOM dom, IRSEPersistenceProvider provider) {
-		super("Saving RSE Profile: " + dom.getName());
+		super("Saving Profile"); //$NON-NLS-1$
+		String title = MessageFormat.format(Messages.SaveRSEDOMJob_SavingProfileJobName, new Object[] {dom.getName()});
+		setName(title);
 		_dom = dom;
 		_provider = provider;
 	}

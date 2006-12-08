@@ -53,7 +53,7 @@ import org.eclipse.rse.persistence.dom.RSEDOM;
  * The persistence manager controls all aspects of persisting the RSE data model. It will both
  * save and restore this model. There should be only persistence manager in existence. This instance
  * can be retrieved using RSEUIPlugin.getThePersistenceManager.
- * @see RSEUIPlugin#getThePersistenceManager() 
+ * @see RSECorePlugin#getThePersistenceManager() 
  */
 public class RSEPersistenceManager implements IRSEPersistenceManager {
 
@@ -69,12 +69,12 @@ public class RSEPersistenceManager implements IRSEPersistenceManager {
 	private static IProject remoteSystemsProject = null;
     public static final String RESOURCE_PROJECT_NAME = "RemoteSystemsConnections"; //$NON-NLS-1$
 
-    private ISystemRegistry _registry;
+//  private ISystemRegistry _registry;
     private ISystemProfileManager _profileManager;
 
 	public RSEPersistenceManager(ISystemRegistry registry) 
 	{
-		_registry = registry;
+//		_registry = registry;
 		_profileManager = registry.getSystemProfileManager();
 		_exporter = RSEDOMExporter.getInstance();
 		_exporter.setSystemRegistry(registry);
@@ -120,18 +120,18 @@ public class RSEPersistenceManager implements IRSEPersistenceManager {
 							try {
 								provider = (IRSEPersistenceProvider) providerCandidate.createExecutableExtension("class"); //$NON-NLS-1$
 							} catch (CoreException e) {
-								logger.logError("Exception loading persistence provider", e); // DWD nls
+								logger.logError("Exception loading persistence provider", e); //$NON-NLS-1$
 							}
 						}
 					} else {
-						logger.logError("Missing id attribute in persistenceProvider element", null); // DWD nls
+						logger.logError("Missing id attribute in persistenceProvider element", null); //$NON-NLS-1$
 					}
 				} else {
-					logger.logError("Invalid element in persistenceProviders extension point", null); // DWD nls
+					logger.logError("Invalid element in persistenceProviders extension point", null); //$NON-NLS-1$
 				}
 			}
 			if (provider == null) {
-				logger.logError("Persistence provider not found.", null); // DWD nls
+				logger.logError("Persistence provider not found.", null); //$NON-NLS-1$
 			}
 			loadedProviders.put(id, provider); // even if provider is null
 		}
@@ -176,8 +176,10 @@ public class RSEPersistenceManager implements IRSEPersistenceManager {
 			try {
 				commit(profiles[idx]);
 			} catch (Exception exc) {
-				exc.printStackTrace();
-				System.out.println("Error saving profile " + profiles[idx] + ": " + exc.getClass().getName() + " " + exc.getMessage()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				Logger logger = RSECorePlugin.getDefault().getLogger();
+				String profileName = profiles[idx].getName();
+				String message = "Error saving profile " + profileName; //$NON-NLS-1$
+				logger.logError(message, exc);
 				return false;
 			}
 		}
@@ -304,19 +306,18 @@ public class RSEPersistenceManager implements IRSEPersistenceManager {
 	}
 
 	/**
-	 * Restore the filter pools from disk.
-	 * @param logger The logging object to log errors to
-	 * @param mgrFolder folder containing filter pool folders, or single file for that save policy
+	 * Creates a filter pool manager for a particular SubSystemConfiguration and SystemProfile. Called
+	 * "restore" for historcal reasons.
+	 * @param profile the profile that will own this ISystemFilterPoolManager. There is one of these per profile.
+	 * @param logger the logging object for logging errors. Each ISystemFilterPoolManager has one of these.
+	 * @param caller The creator/owner of this ISystemFilterPoolManager, this ends up being a SubSystemConfiguration. 
 	 * @param name the name of the manager to restore. File name is derived from it when saving to one file.
-	 * @param savePolicy How to persist filters. See SystemFilterConstants.
-	 * @param namingPolicy Naming prefix information for persisted data file names.
-	 * @return the restored manager, or null if it does not exist. If anything else went
-	 *  wrong, an exception is thrown.
+	 * @return the "restored" manager.
 	 */
 	public ISystemFilterPoolManager restoreFilterPoolManager(ISystemProfile profile, Logger logger, ISystemFilterPoolManagerProvider caller, String name) {
-		ISystemFilterPoolManager mgr = SystemFilterPoolManager.createManager(profile);
-		((SystemFilterPoolManager) mgr).initialize(logger, caller, name); // core data
-		mgr.setWasRestored(false); // DWD let's try this
+		SystemFilterPoolManager mgr = SystemFilterPoolManager.createManager(profile);
+		mgr.initialize(logger, caller, name); // core data
+		mgr.setWasRestored(false); // managers are not "restored from disk" since they are not persistent of themselves
 		return mgr;
 	}
 
@@ -399,7 +400,7 @@ public class RSEPersistenceManager implements IRSEPersistenceManager {
 	 * @see org.eclipse.rse.persistence.IRSEPersistenceManager#deleteProfile(java.lang.String)
 	 */
 	public void deleteProfile(final String profileName) {
-		Job job = new Job("delete profile") {
+		Job job = new Job(Messages.RSEPersistenceManager_DeleteProfileJobName) {
 			protected IStatus run(IProgressMonitor monitor) {
 				IRSEPersistenceProvider provider = getRSEPersistenceProvider();
 				IStatus result = provider.deleteProfile(profileName, monitor);
@@ -433,7 +434,7 @@ public class RSEPersistenceManager implements IRSEPersistenceManager {
 			dom = provider.loadRSEDOM(domName, null);
 		} else {
 			Logger logger = RSECorePlugin.getDefault().getLogger();
-			logger.logError("Persistence provider is not available.", null); // DWD NLS
+			logger.logError("Persistence provider is not available.", null); //$NON-NLS-1$
 		}
 		return dom;
 	}

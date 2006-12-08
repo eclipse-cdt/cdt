@@ -84,12 +84,8 @@ public class SerializingProvider implements IRSEPersistenceProvider
 		return result;
 	}
 	
-	/**
-	 * Restores a system profile in RSE.  This API will likely change.
-	 * 
-	 * @param profileManager
-	 * @param profileFile the file representing the profile
-	 * @return
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.persistence.IRSEPersistenceProvider#loadRSEDOM(java.lang.String, org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	public RSEDOM loadRSEDOM(String profileName, IProgressMonitor monitor)
 	{
@@ -150,11 +146,8 @@ public class SerializingProvider implements IRSEPersistenceProvider
 		return folder.getFile(domName + ".rsedom"); //$NON-NLS-1$
 	}
 	
-	/**
-	 * Saves an RSE dom to disk.  This API will likely change.
-	 * @param dom
-	 * @param profileFile
-	 * @return true if succcessful
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.persistence.IRSEPersistenceProvider#saveRSEDOM(org.eclipse.rse.persistence.dom.RSEDOM, org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	public boolean saveRSEDOM(RSEDOM dom, IProgressMonitor monitor)
 	{
@@ -186,7 +179,7 @@ public class SerializingProvider implements IRSEPersistenceProvider
 			try {
 				profileFile.delete(IResource.FORCE | IResource.KEEP_HISTORY, monitor);
 			} catch (CoreException e) {
-				result = new Status(IStatus.ERROR, null, 0, "Unexpected Exception", e);
+				result = new Status(IStatus.ERROR, null, 0, Messages.SerializingProvider_UnexpectedException, e);
 			}
 		}
 		return result;

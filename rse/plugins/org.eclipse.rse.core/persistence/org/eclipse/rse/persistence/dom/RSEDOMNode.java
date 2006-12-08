@@ -65,8 +65,7 @@ public class RSEDOMNode implements IRSEDOMConstants, Serializable
 	}
 	
 	/**
-	 * Propagate needs save indicator up to the root
-	 * @param flag
+	 * Propagates the needs save indicator up to the root
 	 */
 	public void markForSave()
 	{
@@ -102,8 +101,7 @@ public class RSEDOMNode implements IRSEDOMConstants, Serializable
 	}
 	
 	/**
-	 * Returns the name of this node
-	 * @return
+	 * @return the name of this node
 	 */
 	public String getName()
 	{
@@ -111,8 +109,7 @@ public class RSEDOMNode implements IRSEDOMConstants, Serializable
 	}
 	
 	/**
-	 * Returns the type of this node
-	 * @return
+	 * @return the type of this node
 	 */
 	public String getType()
 	{
@@ -120,8 +117,7 @@ public class RSEDOMNode implements IRSEDOMConstants, Serializable
 	}
 	
 	/**
-	 * Returns the parent of this node
-	 * @return
+	 * @return the parent of this node
 	 */
 	public RSEDOMNode getParent()
 	{
@@ -129,8 +125,7 @@ public class RSEDOMNode implements IRSEDOMConstants, Serializable
 	}
 	
 	/**
-	 * Returns all the children of this node
-	 * @return
+	 * @return all the children of this node
 	 */
 	public RSEDOMNode[] getChildren()
 	{
@@ -138,9 +133,8 @@ public class RSEDOMNode implements IRSEDOMConstants, Serializable
 	}
 	
 	/**
-	 * Returns the first attribute found that has the specified key
-	 * @param key
-	 * @return
+	 * @param key the name of this attribute
+	 * @return the first attribute found that has the specified name
 	 */
 	public RSEDOMNodeAttribute getAttribute(String key)
 	{
@@ -156,9 +150,8 @@ public class RSEDOMNode implements IRSEDOMConstants, Serializable
 	}
 	
 	/**
-	 * Returns the immediate children of this node that are of the specified type
 	 * @param type
-	 * @return
+	 * @return the immediate children of this node that are of the specified type
 	 */
 	public RSEDOMNode[] getChildren(String type)
 	{
@@ -175,10 +168,9 @@ public class RSEDOMNode implements IRSEDOMConstants, Serializable
 	}
 	
 	/**
-	 * Returns the first immediate child of this node that is of the specified type and name
 	 * @param type
 	 * @param name
-	 * @return
+	 * @return the first immediate child of this node that is of the specified type and name
 	 */
 	public RSEDOMNode getChild(String type, String name)
 	{
@@ -194,8 +186,7 @@ public class RSEDOMNode implements IRSEDOMConstants, Serializable
 	}
 	
 	/**
-	 * Returns all the attributes for this node
-	 * @return
+	 * @return all the attributes for this node
 	 */
 	public RSEDOMNodeAttribute [] getAttributes()
 	{

@@ -166,15 +166,18 @@ public class RemoteSystemsPreferencePage
 		restoreFromCache.setToolTipText(SystemResources.RESID_PREF_RESTOREFROMCACHE_PREFIX_TOOLTIP);
 //		lastRestoreFromCacheValue = getPreferenceStore().getBoolean(ISystemPreferencesConstants.RESTORE_STATE_FROM_CACHE);
 
+
 		// USE DEFERRED QUERY
 		useDeferredQueryEditor = new SystemBooleanFieldEditor(
 		        ISystemPreferencesConstants.USE_DEFERRED_QUERIES,
 		        SystemResources.RESID_PREF_USEDEFERREDQUERIES_PREFIX_LABEL,
 		        getFieldEditorParent())
 		        ;
+		useDeferredQueryEditor.setEnabled(false); // disable this because we want it always to be true
 		addField(useDeferredQueryEditor);
 		useDeferredQueryEditor.setToolTipText(SystemResources.RESID_PREF_USEDEFERREDQUERIES_PREFIX_TOOLTIP);
 		lastUseDeferredQueryValue = getPreferenceStore().getBoolean(useDeferredQueryEditor.getPreferenceName());
+		
 		
 		/** FIXME - UDA should not be so coupled to core
 		 * might need a new preference page for this

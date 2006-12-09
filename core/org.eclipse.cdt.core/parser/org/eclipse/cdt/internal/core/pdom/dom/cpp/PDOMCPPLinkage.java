@@ -188,9 +188,9 @@ public class PDOMCPPLinkage extends PDOMLinkage {
 			pdomBinding = new PDOMCPPMethod(pdom, parent, (ICPPMethod)binding);
 		} else if (binding instanceof ICPPFunction) {
 			ICPPFunction func= (ICPPFunction) binding;
-			if (!func.isStatic()) {  // bug 161216
+//			if (!func.isStatic()) {  // bug 161216
 				pdomBinding = new PDOMCPPFunction(pdom, parent, func);
-			}
+//			}
 		} else if (binding instanceof ICPPClassType) {
 			pdomBinding= new PDOMCPPClassType(pdom, parent, (ICPPClassType) binding);
 		} else if (binding instanceof ICPPNamespaceAlias) {

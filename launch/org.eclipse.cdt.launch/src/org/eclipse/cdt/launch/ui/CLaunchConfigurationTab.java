@@ -123,6 +123,7 @@ public abstract class CLaunchConfigurationTab extends AbstractLaunchConfiguratio
 		String name = null;
 		if (cProject != null && cProject.exists()) {
 			name = cProject.getElementName();
+			config.setMappedResources(new IResource[] {cProject.getProject()});
 		}
 		config.setAttribute(ICDTLaunchConfigurationConstants.ATTR_PROJECT_NAME, name);
 

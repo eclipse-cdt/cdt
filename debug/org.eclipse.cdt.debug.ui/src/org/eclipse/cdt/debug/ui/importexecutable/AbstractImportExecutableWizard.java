@@ -21,6 +21,7 @@ import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
@@ -236,6 +237,7 @@ public abstract class AbstractImportExecutableWizard extends Wizard implements I
 	 */
 	public void setConfigurationDefaults(ILaunchConfigurationWorkingCopy config, ICProject project) {
 
+		config.setMappedResources(new IResource[] {project.getProject()});
 		config.setAttribute(ICDTLaunchConfigurationConstants.ATTR_PROJECT_NAME, project.getProject().getName());
 		config.setAttribute(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_NAME, new File(getImportExecutablePage()
 				.getSelectedExecutables()[0]).getName());

@@ -85,7 +85,7 @@ public class CContainerInfo extends OpenableInfo {
 								continue;
 							}
 							if (root.isOnSourceEntry(member)) {
-								if (CModelManager.getDefault().createBinaryFile((IFile)member) != null) {
+								if (CModelManager.getDefault().createBinaryFile((IFile)member) != null && cproject.isOnOutputEntry(member)) {
 									continue;
 								}
 							}

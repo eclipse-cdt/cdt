@@ -117,7 +117,7 @@ class CProjectInfo extends OpenableInfo {
 									continue;
 								} else if (!CoreModelUtil.isExcluded(member, exclusionPatterns)) {
 									Object o = CModelManager.getDefault().createBinaryFile((IFile)member);
-									if (o != null) {
+									if (o != null && cproject.isOnOutputEntry(member)) {
 										continue;
 									}
 								}

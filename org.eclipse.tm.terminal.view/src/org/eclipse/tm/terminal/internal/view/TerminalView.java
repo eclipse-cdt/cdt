@@ -53,6 +53,8 @@ import org.eclipse.tm.terminal.internal.actions.TerminalActionPaste;
 import org.eclipse.tm.terminal.internal.actions.TerminalActionSelectAll;
 import org.eclipse.tm.terminal.internal.actions.TerminalActionSettings;
 import org.eclipse.ui.IActionBars;
+import org.eclipse.ui.IMemento;
+import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.IWorkbenchPage;
@@ -66,9 +68,6 @@ import org.eclipse.ui.part.ViewPart;
 
 public class TerminalView extends ViewPart implements ITerminalView, ITerminalListener {
     public static final String  FONT_DEFINITION = "terminal.views.view.font.definition"; //$NON-NLS-1$
-	protected static final String fSecondaryTerminalCountMutex = ""; //$NON-NLS-1$
-
-	protected static int fSecondaryTerminalCount = 0;
 
 	protected ITerminalViewControl fCtlTerminal;
 
@@ -96,7 +95,7 @@ public class TerminalView extends ViewPart implements ITerminalView, ITerminalLi
 
 	protected boolean fMenuAboutToShow;
 	
-	private ISettingsStore fStore;
+	private SettingsStore fStore;
 
 	/** Remember the item with which we contributed the shortcut to unregister them again! */
 	private IContextActivation fRememberedContextActivation;
@@ -214,7 +213,7 @@ public class TerminalView extends ViewPart implements ITerminalView, ITerminalLi
 
 		// When the settings dialog is closed, we persist the Terminal settings.
 
-		saveSettings();
+		saveSettings(dlgTerminalSettings.getConnector());
 		return dlgTerminalSettings.getConnector();
 	}
 
@@ -348,9 +347,7 @@ public class TerminalView extends ViewPart implements ITerminalView, ITerminalLi
 		IContextService ctxtService = (IContextService) getSite().getService(IContextService.class);
 		fRememberedContextActivation = ctxtService.activateContext("org.eclipse.tm.terminal.TerminalPreferencePage"); //$NON-NLS-1$
 
-		synchronized (fSecondaryTerminalCountMutex) {
-			setPartName(ViewMessages.PROP_TITLE + " " + fSecondaryTerminalCount++); //$NON-NLS-1$
-		}
+		setPartName(ViewMessages.PROP_TITLE);
 
 		setupControls(wndParent);
 		setupActions();
@@ -412,31 +409,34 @@ public class TerminalView extends ViewPart implements ITerminalView, ITerminalLi
 	protected void setupControls(Composite wndParent) {
 		ITerminalConnector[] connectors=TerminalConnectorExtension.getTerminalConnectors();
 		fCtlTerminal = TerminalViewControlFactory.makeControl(this, wndParent, connectors);
-		String connectionType=getStore().get("ConnectionType"); //$NON-NLS-1$
+		String connectionType=fStore.get("ConnectionType"); //$NON-NLS-1$
 		for (int i = 0; i < connectors.length; i++) {
 			connectors[i].load(getStore(connectors[i]));
 			if(connectors[i].getId().equals(connectionType))
 				fCtlTerminal.setConnector(connectors[i]);
 		}
 	}
-	private void saveSettings() {
+	private void saveSettings(ITerminalConnector connector) {
 		ITerminalConnector[] connectors=fCtlTerminal.getConnectors();
 		for (int i = 0; i < connectors.length; i++) {
 			connectors[i].save(getStore(connectors[i]));
 		}
-		if(fCtlTerminal.getTerminalConnection()!=null) {
-			getStore().put("ConnectionType",fCtlTerminal.getTerminalConnection().getId()); //$NON-NLS-1$
+		if(connector!=null) {
+			fStore.put("ConnectionType",connector.getId()); //$NON-NLS-1$
 		}
 	}
 	
-	private ISettingsStore getStore() {
-		if(fStore==null)
-			fStore=new SettingsStore(getPartName());
-		return fStore;
+	public void init(IViewSite site, IMemento memento) throws PartInitException {
+		super.init(site, memento);
+		fStore=new SettingsStore(memento);
 	}
-	
+
+	public void saveState(IMemento memento) {
+		super.saveState(memento);
+		fStore.saveState(memento);
+	}
 	private ISettingsStore getStore(ITerminalConnector connector) {
-		return new SettingStorePrefixDecorator(getStore(),connector.getClass().getName()+"."); //$NON-NLS-1$
+		return new SettingStorePrefixDecorator(fStore,connector.getClass().getName()+"."); //$NON-NLS-1$
 	}
 
 	protected void setupActions() {

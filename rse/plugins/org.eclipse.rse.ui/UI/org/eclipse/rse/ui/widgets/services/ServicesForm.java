@@ -123,13 +123,9 @@ public class ServicesForm extends SystemBaseForm implements ICheckStateListener
 		_descriptionVerbage = new Text(parent, SWT.BORDER | SWT.READ_ONLY | SWT.WRAP);
         _descriptionVerbage.setText(getCurrentVerbage());
         _descriptionVerbage.setEditable(false);
-		GridData gridData = new GridData();
-		gridData.horizontalAlignment = GridData.FILL;
-		gridData.grabExcessHorizontalSpace = true;
+		GridData gridData = new GridData(SWT.FILL, SWT.BEGINNING, true, true);
 		gridData.widthHint = 150;    
-		gridData.verticalAlignment = GridData.BEGINNING;
-		data.grabExcessVerticalSpace = true;
-		_descriptionVerbage.setLayoutData(data);
+		_descriptionVerbage.setLayoutData(gridData);
 		
         _factoryViewer.addSelectionChangedListener(new ISelectionChangedListener() 
         {

@@ -515,9 +515,9 @@ public class CModelBuilder2 implements IContributedModelBuilder {
 			for (int i= 0; i < declarators.length; i++) {
 				final IASTDeclarator declarator= declarators[i];
 				final CElement element= createSimpleDeclaration(parent, declSpecifier, declarator, isTemplate);
-//				if (!isTemplate && element instanceof SourceManipulation) {
-//					setBodyPosition((SourceManipulation)element, declaration);
-//				}
+				if (!isTemplate && element instanceof SourceManipulation && i > 0) {
+					setBodyPosition((SourceManipulation)element, declarator);
+				}
 				elements[i]= element;
 			}
 		} else {
@@ -874,7 +874,7 @@ public class CModelBuilder2 implements IContributedModelBuilder {
 		// set positions
 		setIdentifierPosition(element, astVariableName);
 		if (!isTemplate) {
-			setBodyPosition(element, declarator);
+			setBodyPosition(element, specifier.getParent());
 		}
 		return element;
 	}

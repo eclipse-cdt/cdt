@@ -52,9 +52,6 @@ import org.eclipse.ui.views.navigator.LocalSelectionTransfer;
 
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.ICElement;
-import org.eclipse.cdt.core.model.IParent;
-import org.eclipse.cdt.core.model.ISourceRange;
-import org.eclipse.cdt.core.model.ISourceReference;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.refactoring.actions.CRefactoringActionGroup;
 import org.eclipse.cdt.ui.CUIPlugin;
@@ -244,7 +241,7 @@ public class CContentOutlinePage extends Page implements IContentOutlinePage, IS
 	
 	
 	/**
-	 * Sets the selected element to the one at the current line in the editor.
+	 * Sets the selected element to the one at the current cursor position in the editor.
 	 */
 	public void synchronizeSelectionWithEditor() {
 		if(fInput == null || fEditor == null || fTreeViewer == null)
@@ -258,43 +255,16 @@ public class CContentOutlinePage extends Page implements IContentOutlinePage, IS
 		
 		ICElement editorElement;
 		try {
-			editorElement = getElementAtOffset(fInput, offset);
+			editorElement = fInput.getElementAtOffset(offset);
 		} catch (CModelException e) {
 			return;
 		}
 
-		IStructuredSelection selection = (editorElement == null) 
-		                                 ? StructuredSelection.EMPTY 
-		                                 : new StructuredSelection(editorElement);
-		
-		fTreeViewer.setSelection(selection, true);		
-	}
-	
-	
-	/**
-	 * Returns the smallest element at the given offset.
-	 */
-	private static ICElement getElementAtOffset(ICElement element, int offset) throws CModelException {
-		ISourceRange range = ((ISourceReference)element).getSourceRange();
-		int start = range.getStartPos();
-		int end   = start + range.getLength();
-		
-		ICElement closest = null;
-		
-		if((offset >= start && offset <= end) || element instanceof ITranslationUnit) {
-			closest = element;
-			if(element instanceof IParent) {
-				ICElement[] children = ((IParent)element).getChildren();
-				for(int i = 0; i < children.length; i++) {
-					ICElement found = getElementAtOffset(children[i], offset);
-					if(found != null)
-						closest = found;
-				}
-			}
+		if (editorElement != null) {
+			IStructuredSelection selection = new StructuredSelection(editorElement);
+			fTreeViewer.setSelection(selection, true);
 		}
-		return closest;
-	}   
-	
+	}
 	
 	/**
 	 * called to create the context menu of the outline

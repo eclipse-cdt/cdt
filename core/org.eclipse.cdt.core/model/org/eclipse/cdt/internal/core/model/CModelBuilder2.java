@@ -936,11 +936,12 @@ public class CModelBuilder2 implements IContributedModelBuilder {
 					methodElement= new Method(parent, ASTStringUtil.getQualifiedName(name));
 				}
 				element= methodElement;
-				final ICPPMethod methodBinding;
+				ICPPMethod methodBinding= null;
 				if (scope != null) {
-					methodBinding= (ICPPMethod)simpleName.getBinding();
-				} else {
-					methodBinding= null;
+					final IBinding binding= simpleName.getBinding();
+					if (binding instanceof ICPPMethod) {
+						methodBinding= (ICPPMethod)binding;
+					}
 				}
 				if (methodBinding != null) {
 					methodElement.setVirtual(methodBinding.isVirtual());

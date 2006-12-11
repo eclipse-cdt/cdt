@@ -18,21 +18,21 @@ package org.eclipse.tm.terminal;
  */
 public interface ISettingsStore {
 	/**
-	 * @param key
+	 * @param key alpha numeric key, may contain dots (.)
 	 * @return value
 	 */
 	String get(String key);
 
 	/**
-	 * @param key
+	 * @param key alpha numeric key, may contain dots (.)
 	 * @param defaultValue
-	 * @return the value or the fecaault
+	 * @return the value or the default
 	 */
 	String get(String key, String defaultValue);
 
 	/**
 	 * Save a string value
-	 * @param key
+	 * @param key alpha numeric key, may contain dots (.)
 	 * @param value
 	 */
 	void put(String key, String value);

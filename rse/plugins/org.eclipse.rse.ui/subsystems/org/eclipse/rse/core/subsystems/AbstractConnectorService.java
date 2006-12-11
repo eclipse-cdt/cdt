@@ -430,6 +430,27 @@ public abstract class AbstractConnectorService extends RSEModelObject implements
 	{
 		return true;
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.core.subsystems.IConnectorService#supportsRemoteServerLaunching()
+	 */
+	public boolean supportsRemoteServerLaunching() {
+		return false;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.core.subsystems.IConnectorService#hasRemoteServerLauncherProperties()
+	 */
+	public boolean hasRemoteServerLauncherProperties() {
+		return false;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.core.subsystems.IConnectorService#supportsServerLaunchProperties()
+	 */
+	public boolean supportsServerLaunchProperties() {
+		return false;
+	}
 
 	/**
      * Return true if this connector service can share it's uid and password

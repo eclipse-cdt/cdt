@@ -1526,6 +1526,9 @@ public class SystemEditableRemoteFile implements ISystemEditableRemoteObject, IP
 		// DY - changed editor from SystemTextEditor to IEditorPart
 		//editor = (SystemTextEditor)activePage.openEditor(file, _editorId);
 		editor = activePage.openEditor(finput, _editorId);
+		
+		SystemIFileProperties properties = new SystemIFileProperties(file);
+		properties.setRemoteFileObject(this);
 	}
 
 	/**
@@ -1539,10 +1542,15 @@ public class SystemEditableRemoteFile implements ISystemEditableRemoteObject, IP
 			activePage = SystemBasePlugin.getActiveWorkbenchWindow().getActivePage();
 		}
 		IFile file = getLocalResource();
+		
+		// set editor as preferred editor for this file
+		IDE.setDefaultEditor(file, _editorId);
 	
 		FileEditorInput fileInput = new FileEditorInput(file);
 		activePage.openEditor(fileInput, IEditorRegistry.SYSTEM_EXTERNAL_EDITOR_ID);
-
+		
+		SystemIFileProperties properties = new SystemIFileProperties(file);
+		properties.setRemoteFileObject(this);
 	}
 	
 	/**

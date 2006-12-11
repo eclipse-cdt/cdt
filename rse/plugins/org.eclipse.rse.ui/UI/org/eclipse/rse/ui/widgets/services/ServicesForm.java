@@ -123,7 +123,7 @@ public class ServicesForm extends SystemBaseForm implements ICheckStateListener
 		_descriptionVerbage = new Text(parent, SWT.BORDER | SWT.READ_ONLY | SWT.WRAP);
         _descriptionVerbage.setText(getCurrentVerbage());
         _descriptionVerbage.setEditable(false);
-		GridData gridData = new GridData(SWT.FILL, SWT.BEGINNING, true, true);
+		GridData gridData = new GridData(SWT.FILL, SWT.FILL, true, true);
 		gridData.widthHint = 150;    
 		_descriptionVerbage.setLayoutData(gridData);
 		

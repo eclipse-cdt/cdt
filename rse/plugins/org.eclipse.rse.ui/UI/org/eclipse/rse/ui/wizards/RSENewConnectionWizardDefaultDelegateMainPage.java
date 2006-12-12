@@ -320,7 +320,16 @@ public class RSENewConnectionWizardDefaultDelegateMainPage
     {
 	    //if (wizard == null)
 		  //return null;
-	    //return wizard.getNextPage(this);	
+	    //return wizard.getNextPage(this);
+    	
+    	// verify contents of page before going to main page
+    	// this is done because the main page may have input that is not valid, but can
+    	// only be verified when next is pressed since it requires a long running operation
+    	boolean verify = form.verify(true);
+    	
+    	if (!verify) {
+    		return null;
+    	}
 
     	RSEDefaultNewConnectionWizardDelegate newConnWizardDelegate = getOurWizardDelegate();
     	if (newConnWizardDelegate != null)

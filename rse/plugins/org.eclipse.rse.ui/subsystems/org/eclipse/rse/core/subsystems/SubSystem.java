@@ -71,16 +71,13 @@ import org.eclipse.ui.progress.WorkbenchJob;
  *   <li>Storing of tool-specific persistent properties per connection.
  *   <li>Accessing of an IConnectorService object to enable the subsystem's connect and disconnect actions.
  *   <li>Doing actual remote accessing. This usually just involves overriding the <code>internalResolveFilterString</code> methods to
- *         populate the remote resources shown when the subsystem's filters are expanded. It might also involve overriding the inherited
- *         <code>internalRunCommand</code> method if this subsystem supports running commands remotely... although typically such subsystems
- *         extend {@link ShellServiceSubSystem}, not this class.
+ *         populate the remote resources shown when the subsystem's filters are expanded.
  * </ol>
  * <p>
- * This is the base class that subsystem suppliers subclass, although this is usually done
- *  by subclassing the child class {@link org.eclipse.rse.core.servicesubsystem.impl.ServiceSubSystem DefaultSubSystemImpl}.<br>
+ * This is the base class that subsystem suppliers subclass.
  * Each instance of this class represents a subsystem instance for a particular connection.
  * <p>
- * When a {@link org.eclipse.rse.model.SystemConnection SystemConnection} is created, this subsystem's factory will be asked to create an
+ * When a {@link IHost} is created, this subsystem's factory will be asked to create an
  * instance of its subsystem. If desired, your GUI may also allow users to create additional
  * instances.
  * <p>
@@ -88,17 +85,17 @@ import org.eclipse.ui.progress.WorkbenchJob;
  *  are supplied as empty, so you only override those you want to support).
  * These are required:
  * <ul>
- * <li>{@link #getSystem()} or, more typically, {@link #getSystemManager()} 
+ * <li>{@link #getConnectorService()}. 
  * </ul>
  * These are optional:
  * <ul>
  * <li>{@link #getObjectWithAbsoluteName(String)}
  * <li>{@link #internalResolveFilterString(IProgressMonitor monitor, String filterString)}
  * <li>{@link #internalResolveFilterString(IProgressMonitor monitor, Object parent, String filterString)}
- * <li>{@link #internalGetProperty(IProgressMonitor monitor, String key)}
- * <li>{@link #internalSetProperty(IProgressMonitor monitor, String key, String value)}
- * <li>{@link #internalGetProperties(IProgressMonitor monitor, String[] keys)}
- * <li>{@link #internalSetProperties(IProgressMonitor monitor, String[] keys, String[] values)}
+ * <li>{@link #internalGetProperty(IProgressMonitor monitor, Object subject, String key)}
+ * <li>{@link #internalSetProperty(IProgressMonitor monitor, Object subject, String key, String value)}
+ * <li>{@link #internalGetProperties(IProgressMonitor monitor, Object subject, String[] keys)}
+ * <li>{@link #internalSetProperties(IProgressMonitor monitor, Object subject, String[] keys, String[] values)}
  * </ul>
  * 
  */
@@ -455,7 +452,6 @@ public abstract class SubSystem extends RSEModelObject implements IAdaptable, IS
 	 * @see org.eclipse.rse.core.model.IHost#getDefaultUserId()
 	 * @see #getUserId()
 	 * @see #getLocalUserId()
-	 * @see #setUserId(String)
      */
     public void clearLocalUserId()
     {
@@ -1988,7 +1984,7 @@ public abstract class SubSystem extends RSEModelObject implements IAdaptable, IS
      *  displaying for you. Just override internalResolveFilterString.</b>
      * <p>
      * @param filterString filter pattern for objects to return.
-     * @param Shell parent shell used to show error message. Null means you will handle showing the error message.
+     * @return the results of resolving the filter string. 
      */
     public Object[] resolveFilterString(String filterString)
            throws Exception
@@ -2042,8 +2038,6 @@ public abstract class SubSystem extends RSEModelObject implements IAdaptable, IS
      * After successful resolve, the sort method is called to sort the concatenated results before
      *  returning them.
      *
-     * This method should be avoided in favour of one that runs in a job.
-     * 
      * @param filterStrings array of filter patterns for objects to return.
      * @return Array of objects that are the result of resolving all the filter strings
      */

@@ -372,7 +372,6 @@ public abstract class SubSystem extends RSEModelObject implements IAdaptable, IS
      * This is transparent to callers of this method however, as this method resolves from the preferences.
      *
 	 * @see org.eclipse.rse.core.model.IHost#getDefaultUserId()
-	 * @see #setUserId(String)
 	 * @see #getLocalUserId()
 	 * @see #clearLocalUserId()
 	 * @return The value of the UserId attribute
@@ -442,7 +441,6 @@ public abstract class SubSystem extends RSEModelObject implements IAdaptable, IS
 	 * @see org.eclipse.rse.core.model.IHost#getDefaultUserId()
 	 * @see #clearLocalUserId()
 	 * @see #getUserId()
-	 * @see #setUserId(String)
      */
     public String getLocalUserId()
     {
@@ -644,7 +642,7 @@ public abstract class SubSystem extends RSEModelObject implements IAdaptable, IS
 		 * since it names a team sharable resource. Not qualified by the profile
 		 * name since that is implicit by being in a profile.
 		 */
-		String name = "CN-" + connectionName; // $NON-NLS-1$ //$NON-NLS-1$
+		String name = "CN-" + connectionName;  //$NON-NLS-1$
 		return name;
 	}
 
@@ -2036,18 +2034,17 @@ public abstract class SubSystem extends RSEModelObject implements IAdaptable, IS
      * Resolve multiple absolute filter strings. This is only applicable if the subsystem
      *  factory reports true for supportsFilters().
      * <p>
-     * This is the same as {@link #resolveFilterString(String,Shell)} but takes an array of
+     * This is the same as {@link #resolveFilterString(String)} but takes an array of
      *  filter strings versus a single filter string.
      * <p>
-     * The default implementation of this simply calls {@link #resolveFilterString(String,Shell)}
-     *  once for each filter string, and concatenates the result. The method sortResolvedFilterStringObject
-     *  is called on the concatenated result, given subclasses an opportunity to sort the result.
+     * The default implementation of this simply calls {@link #internalResolveFilterStrings(IProgressMonitor, String[])}.
      * <p>
      * After successful resolve, the sort method is called to sort the concatenated results before
      *  returning them.
      *
+     * This method should be avoided in favour of one that runs in a job.
+     * 
      * @param filterStrings array of filter patterns for objects to return.
-     * @param Shell parent shell used to show error message. Null means you will handle showing the error message.
      * @return Array of objects that are the result of resolving all the filter strings
      */
     public Object[] resolveFilterStrings(String[] filterStrings)
@@ -2451,9 +2448,9 @@ public abstract class SubSystem extends RSEModelObject implements IAdaptable, IS
      * Set multiple remote properties. Subsystems interpret as they wish. Eg, this might be to set
      *  a number of remote environment variables. This is only applicable if the subsystem factory reports
      *  true for supportsProperties().
-     * @param subject Identifies which object to get the properties of
-     * @param key Identifies property to set
-     * @param value Values to set properties to. One to one mapping to keys by index number
+     * @param subject identifies which object to get the properties of.
+     * @param keys the array of propertie keys to set.
+     * @param values the array of values to set. The value at a certain index corresponds to the property key at the same index. 
      * @return Object interpretable by subsystem. Might be a Boolean, or the might be new values for confirmation.
      */
     public Object setProperties(Object subject, String[] keys, String[] values)
@@ -2683,8 +2680,8 @@ public abstract class SubSystem extends RSEModelObject implements IAdaptable, IS
      *  a remote environment variable. This is only applicable if the subsystem factory reports
      *  true for supportsProperties().
      * @param subject Identifies which object to get the properties of
-     * @param key Identifies property to get value of
-     * @return Object The values of the requested keys.
+     * @param keys the array of property keys.
+     * @return the values for the given property keys.
      */
     public String[] getProperties(Object subject, String[] keys)
            throws Exception
@@ -2891,10 +2888,10 @@ public abstract class SubSystem extends RSEModelObject implements IAdaptable, IS
      * Resolve multiple absolute filter strings. This is only applicable if the subsystem
      *  factory reports true for supportsFilters().
      * <p>
-     * This is the same as {@link #resolveFilterString(String,Shell)} but takes an array of
+     * This is the same as {@link #internalResolveFilterString(IProgressMonitor, Object, String)} but takes an array of
      *  filter strings versus a single filter string.
      * <p>
-     * The default implementation of this simply calls {@link #resolveFilterString(String,Shell)}
+     * The default implementation of this simply calls {@link #internalResolveFilterString(IProgressMonitor, String)}
      *  once for each filter string, and concatenates the result. The method sortResolvedFilterStringObject
      *  is called on the concatenated result, given subclasses an opportunity to sort the result.
      * <p>

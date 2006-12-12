@@ -29,7 +29,8 @@ public class SystemFileNameHelper {
 	
 	
 
-	protected static final char[] array = {' ', ':', ';', '*', '?', '\'', '"', '<', '>', '|'};
+//	protected static final char[] array = {' ', ':', ';', '*', '?', '\'', '"', '<', '>', '|'};
+	protected static final char[] array = {' ', ':', '*', '?', '"', '<', '>', '|'};
 
 	
 

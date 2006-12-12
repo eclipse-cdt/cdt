@@ -13,8 +13,7 @@
 #Will ask the user for label and build ID
 
 #nothing we do should be hidden from the world
-##newgrp dsdp-tm-rse # newgrp doesnt work from shellscripts -- use sg instead
-umask 2
+umask 22
 
 #Use Java5 on build.eclipse.org
 #export PATH=/shared/common/ibm-java2-ppc64-50/bin:$PATH
@@ -39,24 +38,24 @@ echo "Updating builder from CVS..."
 cd org.eclipse.rse.build
 stamp=`date +'%Y%m%d-%H%M'`
 log=$HOME/ws/log-$stamp.txt
-sg dsdp-tm-rse -c "touch $log"
-sg dsdp-tm-rse -c "cvs -q update -RPd"
+touch $log
+cvs -q update -RPd
 daystamp=`date +'%Y%m%d*%H'`
 echo "Enter tag to fetch from CVS (default is HEAD):"
 echo "Enter build type (P,N,I,S,R,M):"
 echo "Enter the build id (default is x$stamp):"
-sg dsdp-tm-rse -c "perl ./build.pl >> $log 2>&1"
+perl ./build.pl >> $log 2>&1
 #tail -50 $log
 
 #Fixup permissions and group id on download.eclpse.org (just to be safe)
-chmod -R g+w $HOME/ws/working/package/*${daystamp}*
+#chmod -R g+w $HOME/ws/working/package/*${daystamp}*
 
 #Publish
-echo "sg dsdp-tm-rse -c \"cp -R $HOME/ws/working/package/*${daystamp}* $HOME/ws/publish\""
-sg dsdp-tm-rse -c "cp -R $HOME/ws/working/package/*${daystamp}* $HOME/ws/publish"
-sg dsdp-tm-rse -c "rm -rf $HOME/ws/publish/*${daystamp}*/updates"
-echo "chmod -R g+w $HOME/ws/publish/*${daystamp}*"
-chmod -R g+w $HOME/ws/publish/*${daystamp}*
+echo "cp -R $HOME/ws/working/package/*${daystamp}* $HOME/ws/publish"
+cp -R $HOME/ws/working/package/*${daystamp}* $HOME/ws/publish
+rm -rf $HOME/ws/publish/*${daystamp}*/updates
+#echo "chmod -R g+w $HOME/ws/publish/*${daystamp}*"
+#chmod -R g+w $HOME/ws/publish/*${daystamp}*
 
 #Check the publishing
 cd $HOME/ws/publish
@@ -67,10 +66,10 @@ if [ -f package.count ]; then
   mv package.count package.count.orig
   
   #Update the testUpdates sites
-  sg dsdp-tm-rse -c "echo \"Refreshing update site\" "
+  echo "Refreshing update site"
   cd $HOME/downloads-tm/testUpdates/bin
   ./mkTestUpdates.sh
-  sg dsdp-tm-rse -c "echo \"Refreshing signedUpdates site\" "
+  echo "Refreshing signedUpdates site"
   cd $HOME/downloads-tm/signedUpdates/bin
   ./mkTestUpdates.sh
   cd "$curdir"

@@ -18,8 +18,7 @@
 #:#    batch_sign.sh publish/S-1.0M5-200611100500
 
 #nothing we do should be hidden from the world
-##newgrp dsdp-tm-rse # newgrp doesnt work from shellscripts -- use sg instead
-umask 2
+umask 22
 
 #Use Java5 on build.eclipse.org
 #export PATH=/shared/common/ibm-java2-ppc64-50/bin:$PATH
@@ -44,7 +43,7 @@ fi
 #sign the zipfiles
 cd "$dirToSign"
 RDIR=`pwd`
-sg dsdp-tm-rse -c "mkdir -p signed"
+mkdir -p signed
 nameToSign=`basename $RDIR`
 ZIPS=`ls *.zip *.jar`
 STAGING=/home/data/httpd/download-staging.priv/dsdp/tm
@@ -66,8 +65,8 @@ while [ "$MISSING" != "" -a ${TRIES} -gt 0 ]; do
   for x in $MISSING ; do
     if [ -f ${STDIR}/out/$x ]; then
       echo "Done: TRIES=${TRIES}, $x"
-      sg dsdp-tm-rse -c "cp -f ${STDIR}/out/$x ${RDIR}/signed/$x"
-      sg dsdp-tm-rse -c "chmod ugo+r ${RDIR}/signed/$x"
+      cp -f ${STDIR}/out/$x ${RDIR}/signed/$x
+      chmod ugo+r ${RDIR}/signed/$x
     else
       MISSING_NEW="${MISSING_NEW} $x"
     fi

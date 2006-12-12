@@ -765,6 +765,7 @@ public class SystemConnectionForm
 			new ModifyListener() {
 				public void modifyText(ModifyEvent e) {
 					validateHostNameInput();
+					validateConnectionNameInput(false);
 				}
 			}
 		);		

@@ -178,6 +178,8 @@ abstract public class AbstractVMLayoutNode implements IVMLayoutNode {
 
         getChildNodesElementOffsets(delta, !calculateOffsets, new GetDataDone<Map<IVMLayoutNode, Integer>>() {
             public void run() {
+                if (isDisposed()) return;
+                
                 final DoneCollector<Done> childrenBuildDeltaDoneCollector = new DoneCollector<Done>() { 
                     public void run() {
                         if (isDisposed()) return;

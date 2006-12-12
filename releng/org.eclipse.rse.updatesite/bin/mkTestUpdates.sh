@@ -19,7 +19,7 @@ curdir=`pwd`
 cd `dirname $0`
 mydir=`pwd`
 
-umask 002
+umask 022
 
 #Use Java5 on build.eclipse.org - need JRE for pack200
 export PATH=/shared/common/ibm-java2-ppc64-50/jre/bin:/shared/common/ibm-java2-ppc64-50/bin:$PATH
@@ -235,7 +235,7 @@ java -jar $HOME/ws/eclipse/startup.jar \
     -siteXML=$SITE/site.xml
 
 cd $SITE
-chgrp -R dsdp-tm-rse .
-chmod -R g+w .
+#chgrp -R dsdp-tmadmin .
+#chmod -R g+w .
 chmod -R a+r .
 cd $curdir

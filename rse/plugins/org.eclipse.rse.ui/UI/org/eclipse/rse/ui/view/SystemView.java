@@ -4278,6 +4278,7 @@ public class SystemView extends TreeViewer implements ISystemTree, ISystemResour
 		// protected boolean selectionEnableDeleteAction;
 		// protected boolean selectionEnableRenameAction;
 
+		
 		// initial these variables to true. Then if set to false even once, leave as false always...
 		selectionShowRefreshAction = true;
 		selectionShowOpenViewActions = true;
@@ -4290,10 +4291,12 @@ public class SystemView extends TreeViewer implements ISystemTree, ISystemResour
 
 		selectionHasAncestorRelation = hasAncestorRelationSelection();
 
-		
+
 		IStructuredSelection selection = (IStructuredSelection) getSelection();
 		Iterator elements = selection.iterator();
+		SystemRemoteElementResourceSet lastSet = null;
 		while (elements.hasNext()) {
+
 			Object element = elements.next();
 			ISystemViewElementAdapter adapter = getAdapter(element);
 			if (adapter == null) continue;
@@ -4317,15 +4320,31 @@ public class SystemView extends TreeViewer implements ISystemTree, ISystemResour
 
 			if (selectionIsRemoteObject && !selectionFlagsUpdated) {
 				ISubSystem srcSubSystem = adapter.getSubSystem(element);
-				if (srcSubSystem.isConnected() || element instanceof ISystemFilterReference || element instanceof ISubSystem) {
-					SystemRemoteElementResourceSet set = getSetFor(srcSubSystem, adapter);
+				if (srcSubSystem.isConnected() || element instanceof ISystemFilterReference || element instanceof ISubSystem) 
+				{
+					SystemRemoteElementResourceSet set = null;
+					if (lastSet != null)
+					{
+						if (lastSet.getAdapter() == adapter && lastSet.getSubSystem() == srcSubSystem)
+						{
+							set = lastSet;
+						}
+					}
+					if (set == null)
+					{
+						set = getSetFor(srcSubSystem, adapter);	
+						lastSet = set;
+					}
 					set.addResource(element);
 				}
 			}
+	
 		}
+
 
 		selectionFlagsUpdated = true;
 		//System.out.println("Inside scan selections: selectionShowOpenViewActions = " + selectionShowOpenViewActions);		
+
 	}
 
 	/**
@@ -4702,18 +4721,21 @@ public class SystemView extends TreeViewer implements ISystemTree, ISystemResour
 	
 	protected boolean hasSelectedAncestor(TreeItem[] items) {
 
+		List cleanParents = new ArrayList();
+		
 		for (int j = 0; j < items.length; j++)
 		{
 			TreeItem item = items[j];
 			TreeItem parent = item.getParentItem();
-			while (parent != null)
-			{
+			while (parent != null && !cleanParents.contains(parent))
+			{			
 				if (isTreeItemSelected(parent))
 				{
 					return true;
 				}
 				else
 				{
+					cleanParents.add(parent);
 					parent = parent.getParentItem();					
 				}
 			}

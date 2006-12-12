@@ -155,8 +155,8 @@ public class CSourceNotFoundEditor extends CommonSourceNotFoundEditor {
 	protected void locateFile() {
 		FileDialog dialog = new FileDialog(getEditorSite().getShell(), SWT.NONE);
 		Path missingPath = new Path(missingFile);
-		dialog.setFilterNames(new String[] {missingPath.lastSegment()});
-		dialog.setFilterExtensions(new String[] {missingPath.getFileExtension()});
+		dialog.setFilterNames(new String[] {SourceLookupUIMessages.getString("CSourceNotFoundEditor.2")}); //$NON-NLS-1$
+		dialog.setFilterExtensions(new String[] {"*." + missingPath.getFileExtension()}); //$NON-NLS-1$
 		String res = dialog.open();
 		if (res != null) {
 			Path newPath = new Path(res);

@@ -38,10 +38,12 @@ import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.AbstractTreeViewer;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.rse.core.SystemBasePlugin;
 import org.eclipse.rse.core.filters.ISystemFilterReference;
 import org.eclipse.rse.core.model.IHost;
+import org.eclipse.rse.core.model.ISystemContainer;
 import org.eclipse.rse.core.model.ISystemMessageObject;
 import org.eclipse.rse.core.model.ISystemRegistry;
 import org.eclipse.rse.core.model.ISystemResourceSet;
@@ -121,6 +123,7 @@ import org.eclipse.rse.ui.view.ISystemEditableRemoteObject;
 import org.eclipse.rse.ui.view.ISystemMementoConstants;
 import org.eclipse.rse.ui.view.ISystemPropertyConstants;
 import org.eclipse.rse.ui.view.ISystemRemoteElementAdapter;
+import org.eclipse.rse.ui.view.ISystemTree;
 import org.eclipse.rse.ui.view.ISystemViewDropDestination;
 import org.eclipse.rse.ui.view.ISystemViewElementAdapter;
 import org.eclipse.rse.ui.view.SystemDNDTransferRunnable;
@@ -236,7 +239,7 @@ public class SystemViewRemoteFileAdapter
 	 */
 	public void setFilterString(String filterString)
 	{
-		if (filesOnly && (filterString != null) && (filterString.indexOf("/ns") == -1))
+		if (filesOnly && (filterString != null) && (filterString.indexOf("/ns") == -1)) //$NON-NLS-1$
 			filterString = filterString + " /ns";
 		else if (foldersOnly && (filterString != null) && (filterString.indexOf("/nf") == -1))
 			filterString = filterString + " /nf";
@@ -1063,6 +1066,26 @@ public class SystemViewRemoteFileAdapter
 	protected Object internalGetPropertyValue(Object key)
 	{
 		return getPropertyValue(key, true);
+	}
+	
+	
+	public Object getPropertyValue(Object key) 
+	{
+		String name = (String)key;
+		if (name.equals(P_NBRCHILDREN))
+		{
+			IRemoteFile file = (IRemoteFile) propertySourceInput;
+			if (file instanceof ISystemContainer)
+			{
+				ISystemContainer container = (ISystemContainer)file;				
+				Object[] contents = container.getContents(RemoteChildrenContentsType.getInstance());
+				if (contents == null)
+					return "0";
+				else
+					return Integer.toString(contents.length);
+			}
+		}
+ 		return super.getPropertyValue(key);	
 	}
 
 	/**

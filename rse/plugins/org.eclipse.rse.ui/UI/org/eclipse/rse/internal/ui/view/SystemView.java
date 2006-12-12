@@ -1398,33 +1398,39 @@ public class SystemView extends TreeViewer implements ISystemTree, ISystemResour
 
 	protected Item[] sortSelection(Widget parentItem, Item[] oldResult) {
 		Item[] newResult = new Item[oldResult.length];
-		for (int i = 0; i < oldResult.length; i++) {
-			Item first = removeFirstItem(parentItem, oldResult);
+		Item[] children = null;
+		if (parentItem instanceof Item) {
+			if (oldResult == null)
+				children = getItems((Item) parentItem);
+			else
+				children = oldResult;
+		} else
+			children = getChildren(parentItem);
+		/*
+		for (int i = 0; i < oldResult.length; i++) 
+		{
+			Item first = removeFirstItem(oldResult, children);
 			newResult[i] = first;
 		}
 
 		return newResult;
+		*/
+		return oldResult;
 	}
 
-	protected Item removeFirstItem(Widget parentItem, Item[] items) {
+	protected Item removeFirstItem(Item[] items, Item[] children) {
 		int firstIndex = 0;
 		Item firstItem = null;
 		int firstItemPosition = 0;
-		
-		Item[] children = null;
-		if (parentItem instanceof Item) {
-			if (items == null)
-				children = getItems((Item) parentItem);
-			else
-				children = items;
-		} else
-			children = getChildren(parentItem);
+
+	
 		if (items != null)
 		{
 			for (int i = 0; i < items.length; i++) {
-				if (items[i] != null) {
+				if (items[i] != null) 
+				{
 					Item current = items[i];
-					int position = getTreeItemPosition(parentItem, current, children);
+					int position = getTreeItemPosition(current, children);
 	
 					if (firstItem == null || position < firstItemPosition) {
 						firstItem = current;
@@ -1479,7 +1485,7 @@ public class SystemView extends TreeViewer implements ISystemTree, ISystemResour
 		
 		for (int idx = 0; idx < src.length; idx++) 
 		{
-			oldPositions[idx] = getTreeItemPosition(parentItem, oldItems[idx], children) + 1;
+			oldPositions[idx] = getTreeItemPosition(oldItems[idx], children) + 1;
 		}
 
 		if (delta > 0) // moving down, process backwards
@@ -1522,7 +1528,7 @@ public class SystemView extends TreeViewer implements ISystemTree, ISystemResour
 	/**
 	 * Get the position of a tree item within its parent
 	 */
-	protected int getTreeItemPosition(Widget parentItem, Item childItem, Item[] children) {
+	protected int getTreeItemPosition(Item childItem, Item[] children) {
 		int pos = -1;
 		for (int idx = 0; (pos == -1) && (idx < children.length); idx++) {
 			if (children[idx] == childItem) pos = idx;
@@ -3748,7 +3754,7 @@ public class SystemView extends TreeViewer implements ISystemTree, ISystemResour
 			children = getChildren(parentItem);
 		
 		for (int idx = 0; idx < src.length; idx++) {
-			oldPositions[idx] = getTreeItemPosition(parentItem, oldItems[idx], children) + 1;
+			oldPositions[idx] = getTreeItemPosition(oldItems[idx], children) + 1;
 			//logDebugMsg("::: Old position : " + oldPositions[idx]);
 		}
 
@@ -5005,6 +5011,45 @@ public class SystemView extends TreeViewer implements ISystemTree, ISystemResour
 		return getItemCount((Control) w);
 	}
 
+	protected Widget doFindItem(Object element) {
+		// compare with root
+		Object root = getRoot();
+		if (root == null) {
+			return null;
+		}
+
+		Item[] items = getChildren(getControl());
+		if (items != null) {
+			for (int i = 0; i < items.length; i++) {
+				Widget o = findExactItem(items[i], element);
+				if (o != null) {
+					return o;
+				}
+			}
+		}
+		return null;
+	}
+	private Widget findExactItem(Item parent, Object element) {
+
+		// compare with node
+		Object data = parent.getData();
+		if (data != null) {
+			if (data == element) {
+				return parent;
+			}
+		}
+		// recurse over children
+		Item[] items = getChildren(parent);
+		for (int i = 0; i < items.length; i++) {
+			Item item = items[i];
+			Widget o = findExactItem(item, element);
+			if (o != null) {
+				return o;
+			}
+		}
+		return null;
+	}
+	
 	/** 
 	 * Return the tree item of the first selected object
 	 */

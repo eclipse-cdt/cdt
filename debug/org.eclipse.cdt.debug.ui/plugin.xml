@@ -1241,5 +1241,15 @@
             id="org.eclipse.cdt.ui.import"
             name="%importCPPCategory.name"/>
    </extension>
+ <!-- Source Not Found Editor -->
+   <extension
+         point="org.eclipse.ui.editors">
+      <editor
+            name="C/C++ Source Not Found Editor"
+            icon="$nl$/icons/obj16/c_app.gif"
+            class="org.eclipse.cdt.debug.internal.ui.sourcelookup.CSourceNotFoundEditor"
+            id="org.eclipse.cdt.debug.internal.ui.sourcelookup.CSourceNotFoundEditor">
+      </editor>
+   </extension>
 
 </plugin>

@@ -8,21 +8,18 @@
  * Contributors:
  * QNX Software Systems - Initial API and implementation
  * Nokia - Added support for AbsoluteSourceContainer( 159833 ) 
+ * Nokia - Added support for CSourceNotFoundElement ( 167305 )
 *******************************************************************************/
 package org.eclipse.cdt.debug.internal.core.sourcelookup; 
 
-import java.io.File;
 import org.eclipse.cdt.debug.core.model.ICStackFrame;
 import org.eclipse.cdt.debug.core.sourcelookup.ISourceLookupChangeListener;
 import org.eclipse.cdt.debug.internal.core.ListenerList;
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.core.runtime.Path;
+import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.sourcelookup.AbstractSourceLookupParticipant;
 import org.eclipse.debug.core.sourcelookup.ISourceLookupDirector;
-import org.eclipse.debug.core.sourcelookup.containers.LocalFileStorage;
  
 /**
  * A source lookup participant that searches for C/C++ source code.
@@ -78,7 +75,10 @@ public class CSourceLookupParticipant extends AbstractSourceLookupParticipant {
 		else if ( object instanceof String ) {
 			name = (String)object;
 		}
-		return super.findSourceElements( object );
+		Object[] foundElements = super.findSourceElements( object );
+		if (foundElements.length == 0 && (object instanceof IDebugElement))
+			foundElements = new Object[] { new CSourceNotFoundElement( (IDebugElement) object ) };
+		return foundElements;
 	}
 
 	/* (non-Javadoc)

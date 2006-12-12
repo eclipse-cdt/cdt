@@ -7,12 +7,14 @@
  *
  * Contributors:
  * QNX Software Systems - Initial API and implementation
+ * Nokia - Added support for CSourceNotFoundElement ( 167305 )
  *******************************************************************************/
 package org.eclipse.cdt.debug.internal.ui;
 
 import java.io.File;
 import java.text.MessageFormat;
 import java.util.HashMap;
+
 import org.eclipse.cdt.core.IAddress;
 import org.eclipse.cdt.core.resources.FileStorage;
 import org.eclipse.cdt.debug.core.CDebugUtils;
@@ -43,6 +45,8 @@ import org.eclipse.cdt.debug.core.model.ICVariable;
 import org.eclipse.cdt.debug.core.model.ICWatchpoint;
 import org.eclipse.cdt.debug.core.model.IDummyStackFrame;
 import org.eclipse.cdt.debug.core.model.IEnableDisableTarget;
+import org.eclipse.cdt.debug.internal.core.sourcelookup.CSourceNotFoundElement;
+import org.eclipse.cdt.debug.internal.ui.sourcelookup.CSourceNotFoundEditorInput;
 import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
 import org.eclipse.cdt.internal.ui.util.ExternalEditorInput;
 import org.eclipse.cdt.ui.CUIPlugin;
@@ -163,6 +167,10 @@ public class CDebugModelPresentation extends LabelProvider implements IDebugMode
 		if ( element instanceof FileStorage || element instanceof LocalFileStorage ) {
 			return new ExternalEditorInput( (IStorage)element );
 		}
+		if (element instanceof CSourceNotFoundElement)
+		{
+			return new CSourceNotFoundEditorInput((CSourceNotFoundElement) element);
+		}
 		return null;
 	}
 
@@ -170,6 +178,8 @@ public class CDebugModelPresentation extends LabelProvider implements IDebugMode
 	 * @see org.eclipse.debug.ui.ISourcePresentation#getEditorId(org.eclipse.ui.IEditorInput, java.lang.Object)
 	 */
 	public String getEditorId( IEditorInput input, Object element ) {
+		if (element instanceof CSourceNotFoundElement)
+			return "org.eclipse.cdt.debug.internal.ui.sourcelookup.CSourceNotFoundEditor";
 		String id = null;
 		if ( input != null ) {
 			IEditorRegistry registry = PlatformUI.getWorkbench().getEditorRegistry();
@@ -368,6 +378,9 @@ public class CDebugModelPresentation extends LabelProvider implements IDebugMode
 			if ( element instanceof IStackFrame ) {
 				label.append( getStackFrameText( (IStackFrame)element, showQualified ) );
 				return label.toString();
+			}
+			if ( element instanceof CSourceNotFoundElement ) {
+				return getBaseText(((CSourceNotFoundElement)element).getElement());
 			}
 			if ( element instanceof IMarker ) {
 				IBreakpoint breakpoint = getBreakpoint( (IMarker)element );

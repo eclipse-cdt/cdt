@@ -443,14 +443,16 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 	}
 	/**
 	 * Tell us if this subsystem factory supports server launch properties, which allow the user
-	 *  to configure how the server-side code for these subsystems are started. There is a Server
-	 *  Launch Setting property page, with a pluggable composite, where users can configure these 
-	 *  properties. 
+	 * to configure how the server-side code for these subsystems are started. There is a Server
+	 * Launch Setting property page, with a pluggable composite, where users can configure these 
+	 * properties. 
 	 * <p>
 	 * If you return true here, you may also want to override {@link #supportsServerLaunchType(ServerLaunchType)}. 
 	 * <br> By default we return false here. This is overridden in UniversalFileSubSystemConfiguration though. 
 	 */
-	public abstract boolean supportsServerLaunchProperties(IHost host);
+	public boolean supportsServerLaunchProperties(IHost host) {
+		return false;
+	}
 
 	/**
 	 * If {@link #supportsServerLaunchProperties(IHost)} returns true, this method may be called by

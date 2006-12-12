@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005 IBM Corporation and others.
+ * Copyright (c) 2005, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,20 +8,22 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     QNX Software System
+ *     Sergey Prigogin, Google - https://bugs.eclipse.org/bugs/show_bug.cgi?id=13221
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.editor;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 
 import org.eclipse.core.resources.IContainer;
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceProxy;
 import org.eclipse.core.resources.IResourceProxyVisitor;
+import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
@@ -35,9 +37,6 @@ import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.MessageBox;
-import org.eclipse.ui.IEditorDescriptor;
-import org.eclipse.ui.IEditorRegistry;
-import org.eclipse.ui.PlatformUI;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.model.CModelException;
@@ -94,8 +93,7 @@ public class OpenIncludeAction extends Action {
 					}
 					if (info != null) {
 						String[] includePaths = info.getIncludePaths();
-						HashSet found = new HashSet();
-						findFile(includePaths, includeName, filesFound, found);
+						findFile(includePaths, includeName, filesFound);
 					}
 					if (filesFound.size() == 0) {
 						// Fall back and search the project
@@ -135,41 +133,53 @@ public class OpenIncludeAction extends Action {
 	}
 	
 	private boolean isInProject(IPath path) {
-		return ResourcesPlugin.getWorkspace().getRoot().getFileForLocation(path) != null;		
+		return getWorkspaceRoot().getFileForLocation(path) != null;		
 	}
 	
-	// If 'path' is not a resource in the current workspace and
-	// it is a symlink to a resource that is in the current workspace,
-	// use the symlink target instead
-	private IPath resolveIncludeLink(File file, IPath path) {
-		if (isInProject(path))
-			return path;
-		
-		try {
-			String canon = file.getCanonicalPath();
-			if (canon.equals(file.getAbsolutePath()))
-				return path;
-			
-			IPath p = Path.fromOSString(canon);
-			if (isInProject(p))
-			    return p;
-		} catch (IOException e) {
-			// Do nothing; the path is not resolved
+	/**
+	 * Returns the path as is, if it points to a workspace resource. If the path
+	 * does not point to a workspace resource, but there are linked workspace
+	 * resources pointing to it, returns the paths of these resources.
+	 * Othervise, returns the path as is. 
+	 */
+	private IPath[] resolveIncludeLink(IPath path) {
+		if (!isInProject(path)) {
+			IFile[] files = getWorkspaceRoot().findFilesForLocation(path);
+			if (files.length > 0) {
+				IPath[] paths = new IPath[files.length];
+				for (int i = 0; i < files.length; i++) {
+					paths[i] = files[i].getFullPath(); 
+				}
+				return paths;
+			}
 		}
 		
-		return path;
+		return new IPath[] { path };
+	}
+
+	private IWorkspaceRoot getWorkspaceRoot() {
+		return ResourcesPlugin.getWorkspace().getRoot();
 	}
 	
-	private void findFile(String[] includePaths,  String name, ArrayList list,
-			HashSet foundSet)  throws CoreException {
+	private void findFile(String[] includePaths, String name, ArrayList list)
+			throws CoreException {
+		// in case it is an absolute path
+		IPath includeFile= new Path(name);		
+		if (includeFile.isAbsolute() && includeFile.toFile().exists()) {
+			list.add(includeFile);
+			return;
+		}
+		HashSet foundSet = new HashSet();
 		for (int i = 0; i < includePaths.length; i++) {
-			IPath path = new Path(includePaths[i] + "/" + name); //$NON-NLS-1$
+			IPath path = new Path(includePaths[i]).append(includeFile);
 			File file = path.toFile();
 			if (file.exists()) {
-				IPath p = resolveIncludeLink(file, path);
-				if (!foundSet.contains(p)) {
-					foundSet.add(p);
-					list.add(p);
+				IPath[] paths = resolveIncludeLink(path);
+				for (int j = 0; j < paths.length; j++) {
+					IPath p = paths[j];
+					if (foundSet.add(p)) {
+						list.add(p);
+					}
 				}
 			} 
 		}
@@ -248,16 +258,4 @@ public class OpenIncludeAction extends Action {
 		return false;
 	}	
 
-
-	public static String getEditorID(String name) {
-		IEditorRegistry registry = PlatformUI.getWorkbench().getEditorRegistry();
-		if (registry != null) {
-			IEditorDescriptor descriptor = registry.getDefaultEditor(name);
-			if (descriptor != null) {
-				return descriptor.getId();
-			}
-			return IEditorRegistry.SYSTEM_EXTERNAL_EDITOR_ID;
-		}
-		return null;
-	}
 }

@@ -33,6 +33,7 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.OpenEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.jface.viewers.ViewerFilter;
@@ -45,7 +46,6 @@ import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Text;
@@ -176,7 +176,11 @@ public class IBViewPart extends ViewPart
         	fContentProvider.setComputeIncludedBy(isHeader);
         	fIncludedByAction.setChecked(isHeader);
         	fIncludesToAction.setChecked(!isHeader);
+        	fIncludedByAction.setEnabled(false);
         	updateSorter();
+        }
+        else {
+        	fIncludedByAction.setEnabled(true);
         }
         fTreeViewer.setInput(input);
         fPagebook.showPage(fViewerPage);
@@ -609,7 +613,7 @@ public class IBViewPart extends ViewPart
         }
     }
     
-    protected void onSetDirection(boolean includedBy) {
+    public void onSetDirection(boolean includedBy) {
         if (includedBy != fContentProvider.getComputeIncludedBy()) {
             Object input= fTreeViewer.getInput();
             fTreeViewer.setInput(null);
@@ -734,8 +738,9 @@ public class IBViewPart extends ViewPart
         };
     }
 
-	public Control getPageBook() {
-		return fPagebook;
+    // access for tests
+	public TreeViewer getTreeViewer() {
+		return fTreeViewer;
 	}
 
 	public ITranslationUnit[] getHistoryEntries() {

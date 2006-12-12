@@ -49,7 +49,15 @@ public class BaseUITestCase extends BaseTestCase {
     protected String readTaggedComment(final String tag) throws IOException {
     	return TestSourceReader.readTaggedComment(CTestPlugin.getDefault().getBundle(), "ui", getClass(), tag);
     }
-    
+ 
+    /**
+     * Reads multiple sections in comments from the source of the given class.
+     * @since 4.0
+     */
+	public StringBuffer[] getContentsForTest(int sections) throws IOException {
+		return TestSourceReader.getContentsForTest(CTestPlugin.getDefault().getBundle(), "ui", getClass(), getName(), sections);
+	}
+	
     protected IFile createFile(IContainer container, String fileName, String contents) throws Exception {
     	return TestSourceReader.createFile(container, new Path(fileName), contents);
     }

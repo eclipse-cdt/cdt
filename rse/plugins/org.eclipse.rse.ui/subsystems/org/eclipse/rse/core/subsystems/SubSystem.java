@@ -2415,9 +2415,20 @@ public abstract class SubSystem extends RSEModelObject implements IAdaptable, IS
      * This gets called after the corresponding {@link IConnectorService} connect method finishes.
      * This method should be overridden if any initialization for the subsystem needs
      * to occur at this time
+     * <p>
+     * The default implementation does nothing.
      */
-    public abstract void initializeSubSystem(IProgressMonitor monitor);
-
+    public void initializeSubSystem(IProgressMonitor monitor) {
+    }
+    
+    /**
+     * Called after the associated {@link IConnectorService} disconnects.
+     * Override if there is any cleanup to do in the subsystem after disconnecting.
+     * <p>
+     * The default implementation does nothing.
+     */
+    public void uninitializeSubSystem(IProgressMonitor monitor) {
+    }
 
     /**
 	 * Attempt to connect to the remote system when a Shell is not available.

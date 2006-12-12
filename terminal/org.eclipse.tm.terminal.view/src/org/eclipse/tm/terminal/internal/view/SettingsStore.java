@@ -98,7 +98,7 @@ class SettingsStore implements ISettingsStore {
 				m=child;
 			}
 			// use the last element in path as key of the child memento
-			m.putString(path[path.length], (String) fMap.get(key));
+			m.putString(path[path.length-1], (String) fMap.get(key));
 			// construct the string for the keys
 			if(i>0)
 				buffer.append(",");

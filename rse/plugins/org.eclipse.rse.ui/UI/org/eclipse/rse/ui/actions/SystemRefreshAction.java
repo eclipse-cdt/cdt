@@ -16,6 +16,7 @@
 
 package org.eclipse.rse.ui.actions;
 import java.util.Iterator;
+import java.util.Vector;
 
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.rse.core.model.ISystemContainer;
@@ -27,6 +28,7 @@ import org.eclipse.rse.ui.ISystemContextMenuConstants;
 import org.eclipse.rse.ui.ISystemIconConstants;
 import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemResources;
+import org.eclipse.rse.ui.view.ISystemViewElementAdapter;
 import org.eclipse.swt.widgets.Shell;
 
 
@@ -71,7 +73,10 @@ public class SystemRefreshAction extends SystemBaseAction
 		SystemRegistry sr = RSEUIPlugin.getTheSystemRegistry();
 		if (_selection != null)
 		{
+			Vector parents = new Vector();
+			
 			Iterator iter = _selection.iterator();
+			
 			while(iter.hasNext())
 			{
 				Object obj = iter.next();
@@ -80,7 +85,24 @@ public class SystemRefreshAction extends SystemBaseAction
 				{
 					((ISystemContainer)obj).markStale(true);
 				}
-				sr.fireEvent(new SystemResourceChangeEvent(obj, ISystemResourceChangeEvents.EVENT_REFRESH, obj));
+				
+				// get the adapter and find out if it's a leaf node. If so, refresh the parent as well.
+				ISystemViewElementAdapter adapter = getAdapter(obj);
+				
+				if (adapter != null) {
+					Object parent = adapter.getParent(obj);
+					boolean hasChildren = adapter.hasChildren(obj);
+					
+					if ((parent != null) && !hasChildren && (!parents.contains(parent))) {
+						parents.add(parent);
+						sr.fireEvent(new SystemResourceChangeEvent(parent, ISystemResourceChangeEvents.EVENT_REFRESH, parent));						
+					}
+					
+					sr.fireEvent(new SystemResourceChangeEvent(obj, ISystemResourceChangeEvents.EVENT_REFRESH, obj));
+				}
+				else {
+					sr.fireEvent(new SystemResourceChangeEvent(obj, ISystemResourceChangeEvents.EVENT_REFRESH, obj));
+				}
 			}
 		}
 		else

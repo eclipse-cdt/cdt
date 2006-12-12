@@ -165,7 +165,7 @@ public class DStoreConnectorService extends AbstractConnectorService implements 
 			}
 			catch (Exception e)
 			{
-				SystemBasePlugin.logError("UniversalSystem.getSystemInfoProperty: error during connect", e);
+				SystemBasePlugin.logError("UniversalSystem.getSystemInfoProperty: error during connect", e); //$NON-NLS-1$
 				return ""; //$NON-NLS-1$
 			}
 		}
@@ -196,8 +196,8 @@ public class DStoreConnectorService extends AbstractConnectorService implements 
 		}
 		else
 		{
-			SystemBasePlugin.logError("UniversalSystem.getSystemInfoNode:  sysInfo node not found", null);
-			SystemBasePlugin.logError("UniversalSystem.getSystemInfoNode:  miner data = " + envMinerData, null);
+			SystemBasePlugin.logError("UniversalSystem.getSystemInfoNode:  sysInfo node not found", null); //$NON-NLS-1$
+			SystemBasePlugin.logError("UniversalSystem.getSystemInfoNode:  miner data = " + envMinerData, null); //$NON-NLS-1$
 			propertyValue = ""; //$NON-NLS-1$
 		}
 
@@ -581,7 +581,9 @@ public class DStoreConnectorService extends AbstractConnectorService implements 
 			// this will be the temp remoteuser userid.
 			//launchStatus = clientConnection.launchServer(getLocalUserId(), getPassword(getPasswordInformation()));
 			SystemSignonInformation info = getPasswordInformation();
-			int daemonPort = serverLauncher.getDaemonPort();
+			int daemonPort = 0;
+			if (serverLauncher != null)
+				daemonPort = serverLauncher.getDaemonPort();
 			
 			/* String daemonPortStr = getSubSystem().getVendorAttribute("Remote", "DAEMON_PORT");
 			if (daemonPortStr != null && daemonPortStr.length() > 0)
@@ -626,7 +628,7 @@ public class DStoreConnectorService extends AbstractConnectorService implements 
 						return;
 					}
 				}
-				else if (isPortOutOfRange(launchMsg))
+				else if (launchMsg != null && isPortOutOfRange(launchMsg))
 				{
 					launchFailed = true;
 					
@@ -642,7 +644,7 @@ public class DStoreConnectorService extends AbstractConnectorService implements 
 				else
 				{
 					launchFailed = true;
-					SystemBasePlugin.logError("Error launching server: " + launchStatus.getMessage(), null);
+					SystemBasePlugin.logError("Error launching server: " + launchStatus.getMessage(), null); //$NON-NLS-1$
 				}
 			}
 			if (launchStatus.isConnected())
@@ -901,7 +903,7 @@ public class DStoreConnectorService extends AbstractConnectorService implements 
 			if (launchFailed && launchStatus != null)
 			{
 				String launchMsg = launchStatus.getMessage();
-				if (launchStatus.getException() != null)
+				if (launchStatus.getException() != null && serverLauncher != null)
 				{
 					Throwable exception = launchStatus.getException();
 					msg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_CONNECT_DAEMON_FAILED_EXCEPTION);
@@ -1005,15 +1007,15 @@ public class DStoreConnectorService extends AbstractConnectorService implements 
 			// if connect failed for unknown reason
 			else if (connectStatus == null)
 			{
-				SystemBasePlugin.logError("Failed to connect to remote system", null);
+				SystemBasePlugin.logError("Failed to connect to remote system", null); //$NON-NLS-1$
 				msg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_COMM_CONNECT_FAILED);
 				msg.makeSubstitution(getHostName());
 			}
 
 			// if, for some reason, we don't have a message
-			if (msg == null)
+			if (msg == null && connectStatus != null)
 			{
-				SystemBasePlugin.logError("Failed to connect to remote system" + connectStatus.getMessage(), null);
+				SystemBasePlugin.logError("Failed to connect to remote system" + connectStatus.getMessage(), null); //$NON-NLS-1$
 				msg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_COMM_CONNECT_FAILED);
 				msg.makeSubstitution(getHostName());
 			}
@@ -1022,7 +1024,7 @@ public class DStoreConnectorService extends AbstractConnectorService implements 
 			clientConnection = null;
 			
 			// yantzi: artemis 6.0, check for invalid login (user ID / pwd) and reprompt for signon information
-			if (msg.getFullMessageID().startsWith(ISystemMessages.MSG_COMM_INVALID_LOGIN))
+			if (msg != null && msg.getFullMessageID().startsWith(ISystemMessages.MSG_COMM_INVALID_LOGIN))
 			{
 				if (launchFailed)
 			    {

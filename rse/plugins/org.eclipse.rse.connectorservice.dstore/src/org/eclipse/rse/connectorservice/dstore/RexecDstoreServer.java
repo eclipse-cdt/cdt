@@ -48,9 +48,9 @@ public class RexecDstoreServer implements IServerLauncher
 	private int rexecPort = 512; // the port where rexecd normally listens
 	private String cmd = null;
 	//private String pwd = null;
-	private static String ASCII_TEST_STRING = "ASCII";
-	private static String PORT_LEADING_STRING = "Server Started Successfully";
-	private static final String EZYRD11E="EZYRD11E";
+	private static String ASCII_TEST_STRING = "ASCII"; //$NON-NLS-1$
+	private static String PORT_LEADING_STRING = "Server Started Successfully"; //$NON-NLS-1$
+	private static final String EZYRD11E="EZYRD11E"; //$NON-NLS-1$
 	private ClientConnection clientConnection;
 	private IServerLauncherProperties propertyInfo;
 	private boolean isModeChecked = false;
@@ -359,7 +359,7 @@ public class RexecDstoreServer implements IServerLauncher
 		this.propertyInfo = propertyInfo;
 		// set path...
 		this.cwd = ((IRemoteServerLauncher)propertyInfo).getServerPath();
-		char separatorChar = signonInfo.getSystemType().equals("Windows") ? '\\' : '/';			
+		char separatorChar = signonInfo.getSystemType().equals("Windows") ? '\\' : '/';			 //$NON-NLS-1$
 		if (cwd.length() > 0 && cwd.charAt(cwd.length() - 1) != separatorChar)
 			cwd += separatorChar;
 	    // set script...
@@ -405,15 +405,15 @@ public class RexecDstoreServer implements IServerLauncher
 		isModeChecked= false;
 		checkPort=true;
 		_errorMessage = null;
-		String port = new String("0"); // default no port
+		String port = new String("0"); // default no port //$NON-NLS-1$
 		//String hostResponse = "";	//buffer to hold all the messages, so that it can be printed out later 
-		String originalHostResponse="";
-		String convertedHostResponse="";
-		String debugOptions = System.getProperty("REXEC_DEBUG");
+		String originalHostResponse=""; //$NON-NLS-1$
+		String convertedHostResponse=""; //$NON-NLS-1$
+		String debugOptions = System.getProperty("REXEC_DEBUG"); //$NON-NLS-1$
 		if (debugOptions!= null){
-			if (debugOptions.toUpperCase().indexOf("LOG") > -1)
+			if (debugOptions.toUpperCase().indexOf("LOG") > -1) //$NON-NLS-1$
 				logInfo = true;
-			if (debugOptions.toUpperCase().indexOf("EBCDIC") > -1)
+			if (debugOptions.toUpperCase().indexOf("EBCDIC") > -1) //$NON-NLS-1$
 				isEBCDICTest=true;
 		}
 		boolean isEBCDIC = false;
@@ -452,10 +452,10 @@ public class RexecDstoreServer implements IServerLauncher
 			// this should be stored in some resource bundle later 
 			//cmd = new String ("echo USSTEST;cd ~/dstore;start_anyport");
 			//cmd = new String("echo " + ASCII_TEST_STRING + ";cd ~/rseserver;start_anyport");
-			cmd = new String("echo " + ASCII_TEST_STRING + ";cd " + this.cwd + ";" + this.invocation);
+			cmd = new String("echo " + ASCII_TEST_STRING + ";cd " + this.cwd + ";" + this.invocation); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			//cmd = new String("echo " + ASCII_TEST_STRING + ";cd " + this.cwd + ";" + this.invocation + " " + System.getProperty("user.name"));
-			logMessage("The command is " + cmd);
-			SystemBasePlugin.logInfo("RexecDstoreServer :");
+			logMessage("The command is " + cmd); //$NON-NLS-1$
+			SystemBasePlugin.logInfo("RexecDstoreServer :"); //$NON-NLS-1$
 
 			rxOut.writeBytes(cmd);
 			rxOut.writeByte(0); // send null terminator
@@ -468,7 +468,7 @@ public class RexecDstoreServer implements IServerLauncher
 			while (inBytes == 0 && timeout > 0)
 			{
 				if (monitor.isCanceled()) // Cancel button pressed?
-					return "0";
+					return "0"; //$NON-NLS-1$
 				
 				// try for more input
 				Thread.sleep(100);
@@ -478,7 +478,7 @@ public class RexecDstoreServer implements IServerLauncher
 			
 			if (timeout == 0) {
 				SystemMessage msg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_COMM_INVALID_LOGIN);
-				msg.makeSubstitution(signonInfo.getHostname(), "");
+				msg.makeSubstitution(signonInfo.getHostname(), ""); //$NON-NLS-1$
 				_errorMessage = msg;
 				return port;
 			}
@@ -488,26 +488,26 @@ public class RexecDstoreServer implements IServerLauncher
 			String maybePort=null;
 			while (true ){  
 				if (monitor.isCanceled())
-					return "0";
+					return "0"; //$NON-NLS-1$
 				byte aByte = rxIn.readByte();
 				if (isEBCDICTest)
 					aByte = convertFromASCIIToEBCDIC(aByte); // for EBCDIC Test
 				if (aByte == 0) // drop the null
 					continue;
 				originalHostResponse += (char)aByte;
-				logMessage("Host response is " + originalHostResponse);
+				logMessage("Host response is " + originalHostResponse); //$NON-NLS-1$
 				if (!isModeChecked)
 				{
 					convertedHostResponse += convertFromEBCDICToASCII(aByte);
-					logMessage("Host response is converted to " + convertedHostResponse);
+					logMessage("Host response is converted to " + convertedHostResponse); //$NON-NLS-1$
 					if (originalHostResponse.indexOf(ASCII_TEST_STRING) > -1) 
 					{  // It's ASCII mode
 						isModeChecked = true;
-						logMessage("This is the ASCII mode. ");
+						logMessage("This is the ASCII mode. "); //$NON-NLS-1$
 					}
 					else if (convertedHostResponse.indexOf(ASCII_TEST_STRING) > -1)
 					{ // It's EBCDIC mode
-						logMessage("This is the EBCDIC mode. ");
+						logMessage("This is the EBCDIC mode. "); //$NON-NLS-1$
 						isModeChecked = true;
 						isEBCDIC = true;
 					}
@@ -517,7 +517,7 @@ public class RexecDstoreServer implements IServerLauncher
 					if (isEBCDIC)
 					{
 						convertedHostResponse += convertFromEBCDICToASCII(aByte);
-						logMessage("Host response is converted to " + convertedHostResponse);
+						logMessage("Host response is converted to " + convertedHostResponse); //$NON-NLS-1$
 						if(checkPort)
 						{ // It's EBCDIC mode   
 							maybePort = extractPortNumber (convertedHostResponse);
@@ -539,7 +539,7 @@ public class RexecDstoreServer implements IServerLauncher
 			rxIn.close();
 			rxOut.close();
 			rexecCall.close();
-			logMessage("Going to return port " + port);
+			logMessage("Going to return port " + port); //$NON-NLS-1$
 			return port;
 		} 
 		catch (EOFException e) 
@@ -563,7 +563,7 @@ public class RexecDstoreServer implements IServerLauncher
 			_errorMessage = msg;
 		} else {
 			SystemMessage msg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_COMM_REXEC_NOTSTARTED);
-			msg.makeSubstitution(""+rexecPort, signonInfo.getHostname(), hostMessage);
+			msg.makeSubstitution(""+rexecPort, signonInfo.getHostname(), hostMessage); //$NON-NLS-1$
 			_errorMessage = msg;
 			
 		}
@@ -1113,21 +1113,25 @@ public class RexecDstoreServer implements IServerLauncher
 	}
 	*/
 	private String extractPortNumber (String hostResponse) {
-		String port ="0";
-		logMessage("Going to find port number. ");
+		String port ="0"; //$NON-NLS-1$
+		logMessage("Going to find port number. "); //$NON-NLS-1$
 		int index = hostResponse.indexOf(PORT_LEADING_STRING);
 		if ( index < 0 ) 
 			return null;
-		logMessage("Found the leading string. ");
+		logMessage("Found the leading string. "); //$NON-NLS-1$
 		String portString = hostResponse.substring(index + PORT_LEADING_STRING.length());
-		logMessage("Removed the leading string as " +  portString);
-		if (portString != null && portString.startsWith("\n"))
+		logMessage("Removed the leading string as " +  portString); //$NON-NLS-1$
+		if (portString != null && portString.startsWith("\n")) //$NON-NLS-1$
 			portString = portString.substring(1);
+		if (portString == null)
+			return null;
+		
 		//if (portString.length() < 4) 
 		//	return null;
 		
 		// change to support 5 digit ports
 		StringBuffer portBuffer = new StringBuffer();
+		
 		for (int i = 0; i < portString.length(); i++)
 		{
 		    char c = portString.charAt(i);
@@ -1143,17 +1147,17 @@ public class RexecDstoreServer implements IServerLauncher
 			// old code - didn't support 5 digits
 			//port = portString.substring(0,4);
 			
-			logMessage("Got the port " +  port);
+			logMessage("Got the port " +  port); //$NON-NLS-1$
 			try 
 			{
 				Integer.parseInt(port);
-				logMessage("Going to return port " +  port);
+				logMessage("Going to return port " +  port); //$NON-NLS-1$
 				return port;
 			} 
 			catch (RuntimeException e) 
 			{
 				e.printStackTrace();
-				logMessage("Got the wrong port " +  port);
+				logMessage("Got the wrong port " +  port); //$NON-NLS-1$
 				checkPort=false;
 				return null;
 			}
@@ -1187,7 +1191,7 @@ public class RexecDstoreServer implements IServerLauncher
 	}
 	private void logMessage (String message) {
 		if (logInfo)
-			SystemBasePlugin.logError("RexecDstoreServer :" + message);
+			SystemBasePlugin.logError("RexecDstoreServer :" + message); //$NON-NLS-1$
 	}
 	
 	public void setSocketTimeoutValue(int value)

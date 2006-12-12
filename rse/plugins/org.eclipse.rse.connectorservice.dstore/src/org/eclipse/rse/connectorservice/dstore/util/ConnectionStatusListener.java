@@ -137,7 +137,7 @@ public class ConnectionStatusListener implements IDomainListener, IRunnableWithP
 	    	}
 			catch (Exception e)
 			{
-				SystemBasePlugin.logError("ConnectionStatusListener:  Error disconnecting", e);
+				SystemBasePlugin.logError("ConnectionStatusListener:  Error disconnecting", e); //$NON-NLS-1$
 			}
 		}
 	}
@@ -159,7 +159,7 @@ public class ConnectionStatusListener implements IDomainListener, IRunnableWithP
 	 */
 	public void domainChanged(DomainEvent event)
 	{
-		if (!_dataStoreStatus.getName().equals("okay"))
+		if (!_dataStoreStatus.getName().equals("okay")) //$NON-NLS-1$
 		{
 			handleConnectionDown();
 		}
@@ -219,7 +219,7 @@ public class ConnectionStatusListener implements IDomainListener, IRunnableWithP
        		Shell winShell = RSEUIPlugin.getDefault().getWorkbench().getActiveWorkbenchWindow().getShell();
        		if (winShell != null && !winShell.isDisposed() && winShell.isVisible())
        		{
-       			SystemBasePlugin.logInfo("Using active workbench window as runnable context");
+       			SystemBasePlugin.logInfo("Using active workbench window as runnable context"); //$NON-NLS-1$
        			shell = winShell;
        			return win;	
        		}	
@@ -231,7 +231,7 @@ public class ConnectionStatusListener implements IDomainListener, IRunnableWithP
     
        	if (shell == null || shell.isDisposed() || !shell.isVisible()) 
        	{
-       		SystemBasePlugin.logInfo("Using progress monitor dialog with given shell as parent");
+       		SystemBasePlugin.logInfo("Using progress monitor dialog with given shell as parent"); //$NON-NLS-1$
        		shell = rshell;	
        	}
        	

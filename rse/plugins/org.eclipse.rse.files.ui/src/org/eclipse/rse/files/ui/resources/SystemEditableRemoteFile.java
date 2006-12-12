@@ -33,6 +33,7 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
@@ -478,7 +479,7 @@ public class SystemEditableRemoteFile implements ISystemEditableRemoteObject, IP
 		}
 		else
 		{
-			return download((IProgressMonitor) null);
+			return download(new NullProgressMonitor());
 		}
 	}
 	

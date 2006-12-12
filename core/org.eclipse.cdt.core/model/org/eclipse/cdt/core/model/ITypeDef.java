@@ -13,7 +13,7 @@ package org.eclipse.cdt.core.model;
 /**
  * Represents a field declared in a type.
  */
-public interface ITypeDef extends ICElement, ISourceManipulation, ISourceReference {
+public interface ITypeDef extends ICElement, ISourceManipulation, ISourceReference, IParent {
 	/**
 	 * Returns the type of the typedef item
 	 * @return String

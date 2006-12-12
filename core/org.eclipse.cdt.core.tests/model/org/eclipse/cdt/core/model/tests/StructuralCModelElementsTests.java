@@ -398,7 +398,15 @@ public class StructuralCModelElementsTests extends TestCase {
 			fail("field visibility should be public!"); //$NON-NLS-1$
 		
 		// struct no name
-		IStructure struct2 = (IStructure) nsStructs.get(1);
+		IStructure struct2;
+		if (IParent.class.isAssignableFrom(ITypeDef.class)) {
+			// nested in typedef decl
+			List nsTypeDefs = namespace.getChildrenOfType(ICElement.C_TYPEDEF);
+			ITypeDef td2 = (ITypeDef) nsTypeDefs.get(1);
+			struct2 = (IStructure) td2.getChildren()[0];
+		} else {
+			struct2 = (IStructure) nsStructs.get(1);
+		}
 		assertEquals(struct2.getElementName(), new String ("")); //$NON-NLS-1$
 		checkElementOffset(struct2);
 		checkLineNumbers(struct2, 101, 103);

@@ -69,6 +69,7 @@ import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.IContributedModelBuilder;
+import org.eclipse.cdt.core.model.IParent;
 import org.eclipse.cdt.core.model.IProblemRequestor;
 import org.eclipse.cdt.core.model.IStructure;
 import org.eclipse.cdt.core.model.ITranslationUnit;
@@ -515,7 +516,7 @@ public class CModelBuilder2 implements IContributedModelBuilder {
 			for (int i= 0; i < declarators.length; i++) {
 				final IASTDeclarator declarator= declarators[i];
 				final CElement element= createSimpleDeclaration(parent, declSpecifier, declarator, isTemplate);
-				if (!isTemplate && element instanceof SourceManipulation && i > 0) {
+				if (!isTemplate && element instanceof SourceManipulation && declarators.length > 1) {
 					setBodyPosition((SourceManipulation)element, declarator);
 				}
 				elements[i]= element;
@@ -530,10 +531,17 @@ public class CModelBuilder2 implements IContributedModelBuilder {
 
 	private CElement createSimpleDeclaration(Parent parent, IASTDeclSpecifier declSpecifier, IASTDeclarator declarator, boolean isTemplate) throws CModelException, DOMException {
 		if (declSpecifier instanceof IASTCompositeTypeSpecifier) {
-			final CElement compositeType= createCompositeType(parent, (IASTCompositeTypeSpecifier)declSpecifier, isTemplate);
 			if (declarator != null) {
-				return createTypedefOrFunctionOrVariable(parent, declSpecifier, declarator, isTemplate);
+				// create type nested
+				CElement element= createTypedefOrFunctionOrVariable(parent, declSpecifier, declarator, isTemplate);
+				if (element instanceof IParent) {
+					parent= (Parent)element;
+					if (!isTemplate) {
+						setBodyPosition((SourceManipulation)element, declSpecifier.getParent());
+					}
+				}
 			}
+			final CElement compositeType= createCompositeType(parent, (IASTCompositeTypeSpecifier)declSpecifier, isTemplate);
 			return compositeType;
 		} else if (declSpecifier instanceof IASTElaboratedTypeSpecifier) {
 			if (declarator == null) {
@@ -816,8 +824,11 @@ public class CModelBuilder2 implements IContributedModelBuilder {
 		} else {
 			setIdentifierPosition(element, declSpecifier);
 		}
-		setBodyPosition(element, declSpecifier.getParent());
-
+		if (declSpecifier instanceof IASTCompositeTypeSpecifier) {
+			setBodyPosition(element, astTypedefName);
+		} else {
+			setBodyPosition(element, declSpecifier.getParent());
+		}
 		return element;
 	}
 
@@ -874,7 +885,11 @@ public class CModelBuilder2 implements IContributedModelBuilder {
 		// set positions
 		setIdentifierPosition(element, astVariableName);
 		if (!isTemplate) {
-			setBodyPosition(element, specifier.getParent());
+			if (specifier instanceof IASTCompositeTypeSpecifier) {
+				setBodyPosition(element, astVariableName);
+			} else {
+				setBodyPosition(element, specifier.getParent());
+			}
 		}
 		return element;
 	}

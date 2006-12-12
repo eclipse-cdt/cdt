@@ -485,7 +485,8 @@ public class ASTStringUtil {
 //			break;
 //		}
 		if (declSpecifier instanceof IASTCompositeTypeSpecifier) {
-			final int key= ((IASTCompositeTypeSpecifier)declSpecifier).getKey();
+			final IASTCompositeTypeSpecifier compositeTypeSpec= (IASTCompositeTypeSpecifier)declSpecifier;
+			final int key= compositeTypeSpec.getKey();
 			switch (key) {
 			case IASTCompositeTypeSpecifier.k_struct:
 				buffer.append(Keywords.STRUCT).append(' ');
@@ -498,6 +499,7 @@ public class ASTStringUtil {
 				break;
 			default:
 			}
+			appendQualifiedNameString(buffer, compositeTypeSpec.getName());
 		} else if (declSpecifier instanceof IASTElaboratedTypeSpecifier) {
 			final IASTElaboratedTypeSpecifier elaboratedTypeSpec= (IASTElaboratedTypeSpecifier)declSpecifier;
 			switch (elaboratedTypeSpec.getKind()) {

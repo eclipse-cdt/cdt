@@ -393,7 +393,15 @@ public class CModelElementsTests extends TestCase {
 			fail("field visibility should be public!");
 		
 		// struct no name
-		IStructure struct2 = (IStructure) nsStructs.get(1);
+		IStructure struct2;
+		if (IParent.class.isAssignableFrom(ITypeDef.class)) {
+			// nested in typedef decl
+			List nsTypeDefs = namespace.getChildrenOfType(ICElement.C_TYPEDEF);
+			ITypeDef td2 = (ITypeDef) nsTypeDefs.get(1);
+			struct2 = (IStructure) td2.getChildren()[0];
+		} else {
+			struct2 = (IStructure) nsStructs.get(1);
+		}
 		assertEquals(struct2.getElementName(), new String (""));
 		checkElementOffset(struct2);
 		checkLineNumbers(struct2, 101, 103);

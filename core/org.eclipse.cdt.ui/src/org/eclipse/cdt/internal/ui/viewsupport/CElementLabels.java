@@ -25,11 +25,14 @@ import org.eclipse.cdt.core.model.ICContainer;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.IField;
 import org.eclipse.cdt.core.model.IFunctionDeclaration;
+import org.eclipse.cdt.core.model.IInheritance;
 import org.eclipse.cdt.core.model.IMethodDeclaration;
 import org.eclipse.cdt.core.model.ISourceRoot;
 import org.eclipse.cdt.core.model.ITemplate;
 import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.cdt.core.model.ITypeDef;
 import org.eclipse.cdt.core.model.IVariableDeclaration;
+import org.eclipse.cdt.core.parser.ast.ASTAccessVisibility;
 import org.eclipse.cdt.ui.CUIPlugin;
 
 import org.eclipse.cdt.internal.corext.util.CModelUtil;
@@ -115,10 +118,10 @@ public class CElementLabels {
 	public final static int T_FULLY_QUALIFIED= 1 << 13;
 
 	/**
-	 * Type names are post qualified.
-	 * e.g. <code>InnerClass - OuterClass</code>
+	 * Append base class specifications to type names.
+	 * e.g. <code>MyClass : public BaseClass</code>
 	 */
-	public final static int T_POST_QUALIFIED= 1 << 15;
+	public final static int T_INHERITANCE= 1 << 16;
 
 	/**
 	 * Translation unit names contain the full path.
@@ -178,7 +181,7 @@ public class CElementLabels {
 	/**
 	 * Post qualify all elements
 	 */
-	public final static int ALL_POST_QUALIFIED= F_POST_QUALIFIED | M_POST_QUALIFIED | T_POST_QUALIFIED | TU_POST_QUALIFIED | ROOT_POST_QUALIFIED;
+	public final static int ALL_POST_QUALIFIED= F_POST_QUALIFIED | M_POST_QUALIFIED  | TU_POST_QUALIFIED | ROOT_POST_QUALIFIED;
 
 	/**
 	 *  Default options (M_PARAMETER_TYPES enabled)
@@ -193,7 +196,7 @@ public class CElementLabels {
 	/**
 	 *  Default post qualify options (All except Root)
 	 */
-	public final static int DEFAULT_POST_QUALIFIED= F_POST_QUALIFIED | M_POST_QUALIFIED | T_POST_QUALIFIED | TU_POST_QUALIFIED;
+	public final static int DEFAULT_POST_QUALIFIED= F_POST_QUALIFIED | M_POST_QUALIFIED | TU_POST_QUALIFIED;
 
 
 	public final static String CONCAT_STRING= CUIMessages.getString("CElementLabels.concat_string"); // " - "; //$NON-NLS-1$
@@ -259,6 +262,9 @@ public class CElementLabels {
 			case ICElement.C_TEMPLATE_STRUCT_DECLARATION:
 			case ICElement.C_TEMPLATE_UNION_DECLARATION:
 				getTypeLabel( element, flags, buf );
+				break;
+			case ICElement.C_TYPEDEF:
+				getTypeDefLabel((ITypeDef)element, flags, buf);
 				break;
 			case ICElement.C_UNIT: 
 				getTranslationUnitLabel((ITranslationUnit) element, flags, buf);
@@ -548,6 +554,46 @@ public class CElementLabels {
 		}
 	}
 
+	public static void getTypeDefLabel(ITypeDef typedef, int flags, StringBuffer buf ) {
+		// type
+		if( getFlag( flags, F_PRE_TYPE_SIGNATURE ) && typedef.exists()) {
+			buf.append( typedef.getTypeName() );
+			buf.append( ' ' );
+		}
+		
+		//qualification
+		if( getFlag( flags, F_FULLY_QUALIFIED ) ){
+			ICElement parent = typedef.getParent();
+			if (parent != null && parent.exists() && parent.getElementType() == ICElement.C_NAMESPACE) {
+				getTypeLabel( parent, T_FULLY_QUALIFIED, buf );
+				buf.append( "::" ); //$NON-NLS-1$
+			}
+		}
+		
+		buf.append( typedef.getElementName() );
+				
+		if( getFlag( flags, F_APP_TYPE_SIGNATURE ) && typedef.exists()) {
+			buf.append( DECL_STRING );
+			buf.append( typedef.getTypeName() );	
+		}			
+		
+		// post qualification
+		if( getFlag(flags, F_POST_QUALIFIED)) {
+			ICElement parent = typedef.getParent();
+			if (parent != null && parent.exists() && parent.getElementType() == ICElement.C_NAMESPACE) {
+				buf.append( CONCAT_STRING );
+				getTypeLabel( typedef.getParent(), T_FULLY_QUALIFIED, buf );
+			}
+		}
+		if( getFlag(flags, MF_POST_FILE_QUALIFIED)) {
+			IPath path= typedef.getPath();
+			if (path != null) {
+				buf.append( CONCAT_STRING );
+				buf.append(path.toString());
+			}
+		}
+	}
+
 	/**
 	 * Appends the label for a source root to a StringBuffer. Considers the ROOT_* flags.
 	 */	
@@ -645,12 +691,44 @@ public class CElementLabels {
 		}
 		buf.append(typeName);
 
+		if (/*getFlag(flags, T_INHERITANCE) && */elem instanceof IInheritance) {
+			IInheritance inheritance= (IInheritance)elem;
+			String[] superclassNames= inheritance.getSuperClassesNames();
+			if (superclassNames != null && superclassNames.length > 0) {
+				buf.append(DECL_STRING);
+				for (int i = 0; i < superclassNames.length; i++) {
+					if (i> 0) {
+						buf.append(COMMA_STRING);
+					}
+					String superclass = superclassNames[i];
+					String visibility = getVisibility(inheritance.getSuperClassAccess(superclass));
+					buf.append(visibility).append(' ').append(superclass);
+				}
+			}
+		}
+
 		//template parameters
 		if (elem instanceof ITemplate) {
 			getTemplateParameters((ITemplate)elem, flags, buf);
 		}
 	}
 	
+	/**
+	 * Convert an <code>ASTAccessVisibility</code> into its string representation.
+	 * 
+	 * @param access
+	 * @return "public", "protected" or "private"
+	 */
+	private static String getVisibility(ASTAccessVisibility access) {
+		if (access == ASTAccessVisibility.PUBLIC) {
+			return "public"; //$NON-NLS-1$
+		}
+		if (access == ASTAccessVisibility.PROTECTED) {
+			return "protected"; //$NON-NLS-1$
+		}
+		return "private"; //$NON-NLS-1$
+	}
+
 	private static boolean getFlag(int flags, int flag) {
 		return (flags & flag) != 0;
 	}

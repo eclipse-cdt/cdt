@@ -47,8 +47,8 @@ public class SystemNewFileFilterAction
 
         //setHelp(RSEUIPlugin.HELPPREFIX+"anff0000");
         //setDialogHelp(RSEUIPlugin.HELPPREFIX+"wnff0000");
-		setHelp(RSEUIPlugin.HELPPREFIX+"actn0042");
-		setDialogHelp(RSEUIPlugin.HELPPREFIX+"wnfr0000");       
+		setHelp(RSEUIPlugin.HELPPREFIX+"actn0042"); //$NON-NLS-1$
+		setDialogHelp(RSEUIPlugin.HELPPREFIX+"wnfr0000"); //$NON-NLS-1$       
 	}		
 
 	/**
@@ -57,6 +57,7 @@ public class SystemNewFileFilterAction
 	public void setParentFilterPool(ISystemFilterPool parentPool)
 	{
 		this.parentPool = parentPool;
+		setValue(null); // dwd setting the parent pool negates any value from the previous run of this action
 	}
 	/**
 	 * Parent intercept.

@@ -29,12 +29,7 @@ public class RemoteCDebuggerTab extends CDebuggerTab {
 			"org.eclipse.rse.remotecdt.launchgroup"); //$NON-NLS-1$
 	}
 
-	public String getName() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	static final private String GDBSERVER_DEBUGGER_NAME = "gdb/mi"; //$NON-NLS-1$
+	static final private String REMOTE_GDB_DEBUGGER_NAME = "remote gdb/mi"; //$NON-NLS-1$
 	
 	public RemoteCDebuggerTab(boolean attachMode) {
 		super(attachMode);
@@ -46,7 +41,7 @@ public class RemoteCDebuggerTab extends CDebuggerTab {
 		List list = new ArrayList();
 		for(int i = 0; i < debugConfigs.length; i++) {
 			ICDebugConfiguration configuration = debugConfigs[i];
-			if(configuration.getName().equals(GDBSERVER_DEBUGGER_NAME))  {
+			if(configuration.getName().equals(REMOTE_GDB_DEBUGGER_NAME))  {
 				list.add(configuration);
 				// Select as default selection
 				defaultSelection = configuration.getID();

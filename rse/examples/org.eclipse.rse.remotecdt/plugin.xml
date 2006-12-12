@@ -41,6 +41,25 @@ Martin Oberhuber (Wind River) - fix 158529: Migrate docs to HTML / TOC format
             type="org.eclipse.rse.remotecdt.RemoteApplicationLaunch">
       </launchConfigurationTabGroup>
    </extension>
+   <extension
+         point="org.eclipse.cdt.debug.core.CDebugger">
+      <debugger
+            class="org.eclipse.cdt.debug.mi.core.GDBServerCDIDebugger2"
+            cpu="*"
+            id="org.eclipse.rse.remotecdt.RemoteGDBDebugger"
+            modes="run"
+            name="remote gdb/mi"
+            platform="*">
+      </debugger>
+   </extension>
+   <extension
+         point="org.eclipse.cdt.debug.ui.CDebuggerPage">
+      <debuggerPage
+            class="org.eclipse.rse.remotecdt.RemoteGDBDebuggerPage"
+            debuggerID="org.eclipse.rse.remotecdt.RemoteGDBDebugger"
+            id="org.eclipse.rse.remotecdt.RemoteGDBDebuggerPage">
+      </debuggerPage>
+   </extension>
 
 	<!-- ============================================ -->
 	<!-- Define Help Context                          -->

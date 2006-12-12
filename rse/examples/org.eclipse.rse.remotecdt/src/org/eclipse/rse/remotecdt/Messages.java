@@ -15,6 +15,14 @@ import org.eclipse.osgi.util.NLS;
 public class Messages extends NLS {
 	private static final String BUNDLE_NAME = "org.eclipse.rse.remotecdt.messages"; //$NON-NLS-1$
 
+	public static String Gdbserver_name_textfield_label;
+
+	public static String Gdbserver_Settings_Tab_Name;
+
+	public static String Port_number_textfield_label;
+
+	public static String Remote_GDB_Debugger_Options;
+
 	public static String RemoteCMainTab_Program;
 	public static String RemoteCMainTab_SkipDownload;
 	public static String RemoteCMainTab_ErrorNoProgram;

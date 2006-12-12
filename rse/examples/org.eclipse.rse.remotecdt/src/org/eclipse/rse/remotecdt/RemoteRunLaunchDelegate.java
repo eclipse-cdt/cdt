@@ -89,11 +89,15 @@ public class RemoteRunLaunchDelegate extends AbstractCLaunchDelegate {
 				
 					// Automatically start up the gdbserver.  In the future this should be expanded to launch
 					// an arbitrary remote damon.
-					String command_arguments = ":" + IRemoteConnectionConfigurationConstants.ATTR_DEFAULT_PORT + " "  //$NON-NLS-1$ //$NON-NLS-2$
+					String gdbserver_port_number = config.getAttribute(IRemoteConnectionConfigurationConstants.ATTR_GDBSERVER_PORT,
+																       IRemoteConnectionConfigurationConstants.ATTR_GDBSERVER_PORT_DEFAULT);
+					String gdbserver_command = config.getAttribute(IRemoteConnectionConfigurationConstants.ATTR_GDBSERVER_COMMAND,
+							   									   IRemoteConnectionConfigurationConstants.ATTR_GDBSERVER_COMMAND_DEFAULT);
+					String command_arguments = ":" + gdbserver_port_number + " "  //$NON-NLS-1$ //$NON-NLS-2$
 												+ spaceEscapify(remoteExePath);
 					if(arguments != null && !arguments.equals("")) //$NON-NLS-1$
 						command_arguments += " " + arguments; //$NON-NLS-1$
-					remoteShellProcess = remoteShellExec(config, IRemoteConnectionConfigurationConstants.ATTR_REMOTE_DEBUGGER_COMMAND,
+					remoteShellProcess = remoteShellExec(config, gdbserver_command,
 														 command_arguments);
 					DebugPlugin.newProcess(launch, remoteShellProcess, Messages.RemoteRunLaunchDelegate_RemoteShell);
 				
@@ -104,7 +108,7 @@ public class RemoteRunLaunchDelegate extends AbstractCLaunchDelegate {
 					wc.setAttribute(IGDBServerMILaunchConfigurationConstants.ATTR_REMOTE_TCP, true);
 					wc.setAttribute(IGDBServerMILaunchConfigurationConstants.ATTR_HOST, getRemoteHostname(config)); 
 					wc.setAttribute(IGDBServerMILaunchConfigurationConstants.ATTR_PORT, 
-						IRemoteConnectionConfigurationConstants.ATTR_DEFAULT_PORT);
+						gdbserver_port_number);
 					wc.doSave();
 
 					// Default to using the GDBServerCDIDebugger.
@@ -272,7 +276,8 @@ public class RemoteRunLaunchDelegate extends AbstractCLaunchDelegate {
 		IShellService shellService = (IShellService) getConnectedRemoteService(config, SHELL_SERVICE);
 		
 		// This is necessary because runCommand does not actually run the command right now.
-		IHostShell hostShell = shellService.launchShell(new NullProgressMonitor(), "",null); //$NON-NLS-1$
+		String env[] = new String[0];
+		IHostShell hostShell = shellService.launchShell(new NullProgressMonitor(), "",env); //$NON-NLS-1$
 		hostShell.writeToShell(remote_command);
 		
 		Process p = null;

@@ -52,6 +52,7 @@ public class RegisterLayoutNode extends AbstractDMVMLayoutNode<IRegisterDMData> 
                 public void run() {
                     if (!getStatus().isOK()) {
                         handleFailedUpdate(update);
+                        return;
                     }
                     fillUpdateWithVMCs(update, getData());
                     update.done();

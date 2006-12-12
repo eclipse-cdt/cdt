@@ -81,6 +81,7 @@ public class StandardLaunchRootLayoutNode extends AbstractVMRootLayoutNode
             childNodeDeltas, rootDelta, event, 
             new Done() { 
                 public void run() {
+                    if (isDisposed()) return;
                     if (propagateError(getExecutor(), done, "Failed to create delta.")); //$NON-NLS-1$
                     done.setData(viewRootDelta);
                     getExecutor().execute(done);

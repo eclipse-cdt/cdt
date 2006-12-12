@@ -14,7 +14,7 @@
  * Martin Oberhuber (Wind River) - 141803: Fix cpu usage 100% while connecting
  * 
  ********************************************************************************/
- 
+
 package org.eclipse.rse.core.subsystems;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Vector;
@@ -71,31 +71,35 @@ import org.eclipse.ui.progress.WorkbenchJob;
  *   <li>Storing of tool-specific persistent properties per connection.
  *   <li>Accessing of an IConnectorService object to enable the subsystem's connect and disconnect actions.
  *   <li>Doing actual remote accessing. This usually just involves overriding the <code>internalResolveFilterString</code> methods to
- *         populate the remote resources shown when the subsystem's filters are expanded.
+ *         populate the remote resources shown when the subsystem's filters are expanded. It might also involve overriding the inherited
+ *         <code>internalRunCommand</code> method if this subsystem supports running commands remotely... although typically such subsystems
+ *         extend {@link ShellServiceSubSystem}, not this class.
  * </ol>
  * <p>
- * This is the base class that subsystem suppliers subclass.
+ * This is the base class that subsystem suppliers subclass, although this is usually done
+ *  by subclassing the child class {@link org.eclipse.rse.core.servicesubsystem.impl.ServiceSubSystem DefaultSubSystemImpl}.<br>
  * Each instance of this class represents a subsystem instance for a particular connection.
  * <p>
- * When a {@link IHost} is created, this subsystem's factory will be asked to create an
+ * When a {@link org.eclipse.rse.model.SystemConnection SystemConnection} is created, this subsystem's factory will be asked to create an
  * instance of its subsystem. If desired, your GUI may also allow users to create additional
  * instances.
  * <p>
  * There are only a handleful of methods to implement in child classes (and indeed most of these
  *  are supplied as empty, so you only override those you want to support).
  * These are required:
- * <ul> 
- * <li>{@link #getConnectorService()}. 
+ * <ul>
+ * <li>{@link #getSystem()} or, more typically, {@link #getSystemManager()} 
  * </ul>
  * These are optional:
  * <ul>
  * <li>{@link #getObjectWithAbsoluteName(String)}
  * <li>{@link #internalResolveFilterString(IProgressMonitor monitor, String filterString)}
  * <li>{@link #internalResolveFilterString(IProgressMonitor monitor, Object parent, String filterString)}
- * <li>{@link #internalGetProperty(IProgressMonitor monitor, Object subject, String key)}
- * <li>{@link #internalSetProperty(IProgressMonitor monitor, Object subject, String key, String value)}
- * <li>{@link #internalGetProperties(IProgressMonitor monitor, Object subject, String[] keys)}
- * <li>{@link #internalSetProperties(IProgressMonitor monitor, Object subject, String[] keys, String[] values)}
+ * <li>{@link #internalRunCommand(IProgressMonitor monitor, String cmd, Object)}
+ * <li>{@link #internalGetProperty(IProgressMonitor monitor, String key)}
+ * <li>{@link #internalSetProperty(IProgressMonitor monitor, String key, String value)}
+ * <li>{@link #internalGetProperties(IProgressMonitor monitor, String[] keys)}
+ * <li>{@link #internalSetProperties(IProgressMonitor monitor, String[] keys, String[] values)}
  * </ul>
  * 
  */
@@ -104,7 +108,7 @@ public abstract class SubSystem extends RSEModelObject implements IAdaptable, IS
 {
 
 
-	protected static final String SUBSYSTEM_FILE_NAME = "subsystem"; //$NON-NLS-1$
+	protected static final String SUBSYSTEM_FILE_NAME = "subsystem";
 
 	//protected transient SubSystemConfiguration parentFactory = null;	
     protected static final int OPERATION_RESOLVE_ABSOLUTE = 0;
@@ -152,6 +156,14 @@ public abstract class SubSystem extends RSEModelObject implements IAdaptable, IS
 	 */
 	protected ISystemFilterPoolReferenceManager filterPoolReferenceManager = null;
 
+	private class NullRunnableContext implements IRunnableContext {
+		public void run(boolean fork, boolean cancelable, IRunnableWithProgress runnable) throws InvocationTargetException, InterruptedException {
+			IProgressMonitor monitor = new NullProgressMonitor();
+			runnable.run(monitor);
+		}
+	}
+	
+
 	public class SystemMessageDialogRunnable implements Runnable
 	{
 		private SystemMessageDialog _dlg;
@@ -163,12 +175,6 @@ public abstract class SubSystem extends RSEModelObject implements IAdaptable, IS
 		public void run()
 		{
 			_dlg.open();
-		}
-	}
-	private class NullRunnableContext implements IRunnableContext {
-		public void run(boolean fork, boolean cancelable, IRunnableWithProgress runnable) throws InvocationTargetException, InterruptedException {
-			IProgressMonitor monitor = new NullProgressMonitor();
-			runnable.run(monitor);
 		}
 	}
 
@@ -279,9 +285,9 @@ public abstract class SubSystem extends RSEModelObject implements IAdaptable, IS
 					}
 					catch (Exception exc)
 					{
-						String msg = "Unexpected error renaming connection-specific filter pool " + getConnectionOwnedFilterPoolName(newName, getHostAliasName()); //$NON-NLS-1$
+						String msg = "Unexpected error renaming connection-specific filter pool " + getConnectionOwnedFilterPoolName(newName, getHostAliasName());
 						SystemBasePlugin.logError(msg, exc);
-						System.err.println(msg + ": " + exc); //$NON-NLS-1$
+						System.err.println(msg + ": " + exc);
 					}
 				}
 			}
@@ -319,7 +325,7 @@ public abstract class SubSystem extends RSEModelObject implements IAdaptable, IS
     		}
     		catch (Exception exc)
     		{
-    			SystemBasePlugin.logError("Error renaming conection-private pool to: "+newName, exc); //$NON-NLS-1$
+    			SystemBasePlugin.logError("Error renaming conection-private pool to: "+newName, exc);
     		}
     	}
     }
@@ -352,7 +358,7 @@ public abstract class SubSystem extends RSEModelObject implements IAdaptable, IS
 			}
 			catch (Exception exc)
 			{
-				SystemBasePlugin.logError("Error deleting conection-private pool for: "+getHostAliasName(), exc); //$NON-NLS-1$
+				SystemBasePlugin.logError("Error deleting conection-private pool for: "+getHostAliasName(), exc);
 			}					
 		}
 	}
@@ -367,6 +373,7 @@ public abstract class SubSystem extends RSEModelObject implements IAdaptable, IS
      * This is transparent to callers of this method however, as this method resolves from the preferences.
      *
 	 * @see org.eclipse.rse.core.model.IHost#getDefaultUserId()
+	 * @see #setUserId(String)
 	 * @see #getLocalUserId()
 	 * @see #clearLocalUserId()
 	 * @return The value of the UserId attribute
@@ -404,7 +411,7 @@ public abstract class SubSystem extends RSEModelObject implements IAdaptable, IS
      */
     protected String getPreferencesKey(String profileName, String connectionName)
     {
-   	    String key = profileName + "." + connectionName + "." + getName(); //$NON-NLS-1$ //$NON-NLS-2$
+   	    String key = profileName + "." + connectionName + "." + getName();
    	    //System.out.println("in SubSystemImpl.getPreferencesKey(): Subsystem key name: " + key);
    	    return key;
     }
@@ -436,6 +443,7 @@ public abstract class SubSystem extends RSEModelObject implements IAdaptable, IS
 	 * @see org.eclipse.rse.core.model.IHost#getDefaultUserId()
 	 * @see #clearLocalUserId()
 	 * @see #getUserId()
+	 * @see #setUserId(String)
      */
     public String getLocalUserId()
     {
@@ -450,6 +458,7 @@ public abstract class SubSystem extends RSEModelObject implements IAdaptable, IS
 	 * @see org.eclipse.rse.core.model.IHost#getDefaultUserId()
 	 * @see #getUserId()
 	 * @see #getLocalUserId()
+	 * @see #setUserId(String)
      */
     public void clearLocalUserId()
     {
@@ -618,7 +627,7 @@ public abstract class SubSystem extends RSEModelObject implements IAdaptable, IS
 					}
 				}
 			} catch (Exception exc) {
-				SystemBasePlugin.logError("Error creating connection-private filter pool for connection: " + hostName, exc); //$NON-NLS-1$
+				SystemBasePlugin.logError("Error creating connection-private filter pool for connection: " + hostName, exc);
 			}
 		}
 		return pool;
@@ -636,7 +645,7 @@ public abstract class SubSystem extends RSEModelObject implements IAdaptable, IS
 		 * since it names a team sharable resource. Not qualified by the profile
 		 * name since that is implicit by being in a profile.
 		 */
-		String name = "CN-" + connectionName; //$NON-NLS-1$
+		String name = "CN-" + connectionName; // $NON-NLS-1$
 		return name;
 	}
 
@@ -711,9 +720,9 @@ public abstract class SubSystem extends RSEModelObject implements IAdaptable, IS
     	{
     	  for (int idx=0; !would && (idx<strings.length); idx++)
     	  {
-    	  	 if (strings[idx].equals("*")) //$NON-NLS-1$
+    	  	 if (strings[idx].equals("*"))
     	  	   would = true;
-    	  	 else if (strings[idx].equals("./*")) //$NON-NLS-1$
+    	  	 else if (strings[idx].equals("./*"))
     	  	   would = true;
     	  	 else
     	       would = doesFilterStringMatch(strings[idx], remoteObjectAbsoluteName, filter.areStringsCaseSensitive());
@@ -840,7 +849,7 @@ public abstract class SubSystem extends RSEModelObject implements IAdaptable, IS
 		IPropertySet set = getPropertySet(vendor);
 		if (set == null)
 		{
-			set = createPropertySet(vendor, ""); //$NON-NLS-1$
+			set = createPropertySet(vendor, "");
 		}
 		set.addProperty(attributeName, attributeValue);
 	}
@@ -871,10 +880,10 @@ public abstract class SubSystem extends RSEModelObject implements IAdaptable, IS
 	 */
 	public void setRemoteAttribute(String attributeName, String attributeValue)
 	{
-		IPropertySet set = getPropertySet("Remote"); //$NON-NLS-1$
+		IPropertySet set = getPropertySet("Remote");
 		if (set == null)
 		{
-			set = createPropertySet("Remote", getDescription()); //$NON-NLS-1$
+			set = createPropertySet("Remote", getDescription());
 		}
 		set.addProperty(attributeName, attributeValue);
 	}
@@ -883,7 +892,7 @@ public abstract class SubSystem extends RSEModelObject implements IAdaptable, IS
 	 */
 	public String getRemoteAttribute(String attributeName)
 	{
-		IPropertySet set = getPropertySet("Remote"); //$NON-NLS-1$
+		IPropertySet set = getPropertySet("Remote");
 		if (set != null)
 		{
 			return set.getPropertyValue(attributeName);
@@ -949,7 +958,7 @@ public abstract class SubSystem extends RSEModelObject implements IAdaptable, IS
 		 */
 		public DisplayErrorMessageJob(Shell shell, SystemMessageException msgExc)
 		{
-			super(""); //$NON-NLS-1$
+			super("");
 			this.shell = shell; //FIXME remove this
 			this.msgExc = msgExc;
 		}
@@ -1053,7 +1062,7 @@ public abstract class SubSystem extends RSEModelObject implements IAdaptable, IS
 			getSubSystemConfiguration().saveSubSystem(this);
 			RSEUIPlugin.getTheSystemRegistry().fireModelChangeEvent(ISystemModelChangeEvents.SYSTEM_RESOURCE_ADDED, ISystemModelChangeEvents.SYSTEM_RESOURCETYPE_FILTERPOOLREF, newPoolRef, null);
 		} catch (Exception exc) {
-			SystemBasePlugin.logError("Error saving subsystem " + getName(), exc); //$NON-NLS-1$
+			SystemBasePlugin.logError("Error saving subsystem " + getName(), exc);
 		}
 	}
 
@@ -1079,7 +1088,7 @@ public abstract class SubSystem extends RSEModelObject implements IAdaptable, IS
         }
         catch (Exception exc)
         {
-           SystemBasePlugin.logError("Error saving subsystem "+getName(),exc); //$NON-NLS-1$
+           SystemBasePlugin.logError("Error saving subsystem "+getName(),exc);
         }
     }
     /**
@@ -1095,7 +1104,7 @@ public abstract class SubSystem extends RSEModelObject implements IAdaptable, IS
         }
         catch (Exception exc)
         {
-           SystemBasePlugin.logError("Error saving subsystem "+getName(),exc); //$NON-NLS-1$
+           SystemBasePlugin.logError("Error saving subsystem "+getName(),exc);
         }    	
     }
     /**
@@ -1113,7 +1122,7 @@ public abstract class SubSystem extends RSEModelObject implements IAdaptable, IS
         }
         catch (Exception exc)
         {
-           	SystemBasePlugin.logError("Error saving subsystem "+getName(),exc); //$NON-NLS-1$
+           	SystemBasePlugin.logError("Error saving subsystem "+getName(),exc);
         }
     }
     /**
@@ -1134,7 +1143,7 @@ public abstract class SubSystem extends RSEModelObject implements IAdaptable, IS
         }
         catch (Exception exc)
         {
-           	SystemBasePlugin.logError("Error saving subsystem "+getName(),exc); //$NON-NLS-1$
+           	SystemBasePlugin.logError("Error saving subsystem "+getName(),exc);
         }
     }
     /**
@@ -1151,7 +1160,7 @@ public abstract class SubSystem extends RSEModelObject implements IAdaptable, IS
         }
         catch (Exception exc)
         {
-           SystemBasePlugin.logError("Error saving subsystem "+getName(),exc); //$NON-NLS-1$
+           SystemBasePlugin.logError("Error saving subsystem "+getName(),exc);
         }
     }
     // -------------------------------
@@ -1220,7 +1229,7 @@ public abstract class SubSystem extends RSEModelObject implements IAdaptable, IS
     	
     	public SubSystemOperationJob(String operationName)
     	{
-    		super(operationName + " (" + GenericMessages.RSESubSystemOperation_message + ")");    	 //$NON-NLS-1$ //$NON-NLS-2$
+    		super(operationName + " (" + GenericMessages.RSESubSystemOperation_message + ")");    	
     	}
 
     	/**
@@ -1263,7 +1272,7 @@ public abstract class SubSystem extends RSEModelObject implements IAdaptable, IS
     		{  
           	  	String excMsg = e.getMessage();
           	  	if ((excMsg == null) || (excMsg.length()==0))
-          	  		excMsg = "Exception " + e.getClass().getName(); //$NON-NLS-1$
+          	  		excMsg = "Exception " + e.getClass().getName();
           	  	SystemMessage sysMsg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_OPERATION_FAILED);
           	  	sysMsg.makeSubstitution(excMsg);
           	  	return new Status(IStatus.ERROR, RSEUIPlugin.PLUGIN_ID, IStatus.OK, sysMsg.getLevelOneText(), e);
@@ -1300,7 +1309,7 @@ public abstract class SubSystem extends RSEModelObject implements IAdaptable, IS
             	monitor.done();
           	  	String excMsg = exc.getTargetException().getMessage();
           	  	if ((excMsg == null) || (excMsg.length()==0))
-          	  		excMsg = "Exception " + exc.getTargetException().getClass().getName(); //$NON-NLS-1$
+          	  		excMsg = "Exception " + exc.getTargetException().getClass().getName();
           	  	return new Status(IStatus.ERROR, RSEUIPlugin.PLUGIN_ID, IStatus.OK, excMsg, exc.getTargetException());
             }
             catch(Exception exc)
@@ -1308,7 +1317,7 @@ public abstract class SubSystem extends RSEModelObject implements IAdaptable, IS
                 monitor.done();
           	  	String excMsg = exc.getMessage();
           	  	if ((excMsg == null) || (excMsg.length()==0))
-          	  		excMsg = "Exception " + exc.getClass().getName(); //$NON-NLS-1$
+          	  		excMsg = "Exception " + exc.getClass().getName();
           	  	SystemMessage sysMsg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_OPERATION_FAILED);
           	  	sysMsg.makeSubstitution(excMsg);
           	  	return new Status(IStatus.ERROR, RSEUIPlugin.PLUGIN_ID, IStatus.OK, sysMsg.getLevelOneText(), exc);
@@ -1405,7 +1414,7 @@ public abstract class SubSystem extends RSEModelObject implements IAdaptable, IS
     	    {
     	    	// DKM - we shouldn't be using parent context for filter strings because 
     	    	// now we have multiple contexts for the same resources
-    	    	_filterString = "*"; //$NON-NLS-1$
+    	    	_filterString = "*";
     	    }
     	    msg = getResolvingMessage(_filterString);
 
@@ -1563,7 +1572,7 @@ public abstract class SubSystem extends RSEModelObject implements IAdaptable, IS
 			} catch (Exception e) {
 				e.printStackTrace();
 				String excMsg = e.getMessage();
-				if ((excMsg == null) || (excMsg.length() == 0)) excMsg = "Exception " + e.getClass().getName(); //$NON-NLS-1$
+				if ((excMsg == null) || (excMsg.length() == 0)) excMsg = "Exception " + e.getClass().getName();
 				SystemMessage sysMsg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_CONNECT_FAILED);
 				sysMsg.makeSubstitution(getHostName(), excMsg);
 				result = new Status(IStatus.ERROR, RSEUIPlugin.PLUGIN_ID, IStatus.OK, sysMsg.getLevelOneText(), e);
@@ -1726,18 +1735,18 @@ public abstract class SubSystem extends RSEModelObject implements IAdaptable, IS
     	 SystemMessage msg = null;
     	 if (exc instanceof SystemMessageException)
     	 {
-    	 	SystemBasePlugin.logError("Connection error", exc); //$NON-NLS-1$
+    	 	SystemBasePlugin.logError("Connection error", exc);
     	 	msg = ((SystemMessageException) exc).getSystemMessage();
     	 }
     	 else if (exc instanceof java.net.UnknownHostException)
     	 {
-    	   SystemBasePlugin.logError("Connection error", exc);    	 //$NON-NLS-1$
+    	   SystemBasePlugin.logError("Connection error", exc);    	
            msg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_CONNECT_UNKNOWNHOST);
            msg.makeSubstitution(hostName);
     	 }
     	 else
     	 {
-     	   SystemBasePlugin.logError("Connection error", exc); //$NON-NLS-1$
+     	   SystemBasePlugin.logError("Connection error", exc);
            msg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_CONNECT_FAILED);
            msg.makeSubstitution(hostName, exc);
          }
@@ -1853,7 +1862,7 @@ public abstract class SubSystem extends RSEModelObject implements IAdaptable, IS
     	{
     	  String excMsg = exc.getMessage();
     	  if ((excMsg == null) || (excMsg.length()==0))
-    	    excMsg = "Exception " + exc.getClass().getName(); //$NON-NLS-1$
+    	    excMsg = "Exception " + exc.getClass().getName();
           sysMsg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_OPERATION_FAILED);
           sysMsg.makeSubstitution(excMsg);
     	
@@ -1982,7 +1991,7 @@ public abstract class SubSystem extends RSEModelObject implements IAdaptable, IS
      *  displaying for you. Just override internalResolveFilterString.</b>
      * <p>
      * @param filterString filter pattern for objects to return.
-     * @return the results of resolving the filter string. 
+     * @param Shell parent shell used to show error message. Null means you will handle showing the error message.
      */
     public Object[] resolveFilterString(String filterString)
            throws Exception
@@ -2021,22 +2030,25 @@ public abstract class SubSystem extends RSEModelObject implements IAdaptable, IS
         	}
         }
         else
-          System.out.println("in SubSystemImpl.resolveFilterString: isConnected() returning false!"); //$NON-NLS-1$
+          System.out.println("in SubSystemImpl.resolveFilterString: isConnected() returning false!");
     	return null;
     }
     /**
      * Resolve multiple absolute filter strings. This is only applicable if the subsystem
      *  factory reports true for supportsFilters().
      * <p>
-     * This is the same as {@link #resolveFilterString(String)} but takes an array of
+     * This is the same as {@link #resolveFilterString(String,Shell)} but takes an array of
      *  filter strings versus a single filter string.
      * <p>
-     * The default implementation of this simply calls {@link #internalResolveFilterStrings(IProgressMonitor, String[])}.
+     * The default implementation of this simply calls {@link #resolveFilterString(String,Shell)}
+     *  once for each filter string, and concatenates the result. The method sortResolvedFilterStringObject
+     *  is called on the concatenated result, given subclasses an opportunity to sort the result.
      * <p>
      * After successful resolve, the sort method is called to sort the concatenated results before
      *  returning them.
      *
      * @param filterStrings array of filter patterns for objects to return.
+     * @param Shell parent shell used to show error message. Null means you will handle showing the error message.
      * @return Array of objects that are the result of resolving all the filter strings
      */
     public Object[] resolveFilterStrings(String[] filterStrings)
@@ -2046,7 +2058,7 @@ public abstract class SubSystem extends RSEModelObject implements IAdaptable, IS
     	boolean ok = true;
         
         if ((filterStrings == null) || (filterStrings.length == 0)) {
-        	SystemBasePlugin.logInfo("Filter strings are null"); //$NON-NLS-1$
+        	SystemBasePlugin.logInfo("Filter strings are null");
         	return null;
         }
         
@@ -2085,7 +2097,7 @@ public abstract class SubSystem extends RSEModelObject implements IAdaptable, IS
         	}
         }
         else
-          System.out.println("in SubSystemImpl.resolveFilterString: isConnected() returning false!"); //$NON-NLS-1$
+          System.out.println("in SubSystemImpl.resolveFilterString: isConnected() returning false!");
     	return null;
     }
     
@@ -2340,7 +2352,7 @@ public abstract class SubSystem extends RSEModelObject implements IAdaptable, IS
         	}
         }
         else
-          SystemBasePlugin.logDebugMessage(this.getClass().getName(), "in SubSystemImpl.resolveFilterString: isConnected() returning false!"); //$NON-NLS-1$
+          SystemBasePlugin.logDebugMessage(this.getClass().getName(), "in SubSystemImpl.resolveFilterString: isConnected() returning false!");
     	return null;
     }
     
@@ -2393,7 +2405,7 @@ public abstract class SubSystem extends RSEModelObject implements IAdaptable, IS
     	}			
        }
        else
-         System.out.println("in SubSystemImpl.setProperty: isConnected() returning false!"); //$NON-NLS-1$
+         System.out.println("in SubSystemImpl.setProperty: isConnected() returning false!");
        return null;
     }
 
@@ -2432,7 +2444,7 @@ public abstract class SubSystem extends RSEModelObject implements IAdaptable, IS
     	}
        }
        else
-         System.out.println("in SubSystemImpl.getProperty: isConnected() returning false!"); //$NON-NLS-1$
+         System.out.println("in SubSystemImpl.getProperty: isConnected() returning false!");
        return null;
     }
 
@@ -2440,9 +2452,9 @@ public abstract class SubSystem extends RSEModelObject implements IAdaptable, IS
      * Set multiple remote properties. Subsystems interpret as they wish. Eg, this might be to set
      *  a number of remote environment variables. This is only applicable if the subsystem factory reports
      *  true for supportsProperties().
-     * @param subject identifies which object to get the properties of.
-     * @param keys the array of propertie keys to set.
-     * @param values the array of values to set. The value at a certain index corresponds to the property key at the same index. 
+     * @param subject Identifies which object to get the properties of
+     * @param key Identifies property to set
+     * @param value Values to set properties to. One to one mapping to keys by index number
      * @return Object interpretable by subsystem. Might be a Boolean, or the might be new values for confirmation.
      */
     public Object setProperties(Object subject, String[] keys, String[] values)
@@ -2471,7 +2483,7 @@ public abstract class SubSystem extends RSEModelObject implements IAdaptable, IS
     	}
        }
        else
-         System.out.println("in SubSystemImpl.setProperties: isConnected() returning false!"); //$NON-NLS-1$
+         System.out.println("in SubSystemImpl.setProperties: isConnected() returning false!");
        return null;
     }
 
@@ -2672,8 +2684,8 @@ public abstract class SubSystem extends RSEModelObject implements IAdaptable, IS
      *  a remote environment variable. This is only applicable if the subsystem factory reports
      *  true for supportsProperties().
      * @param subject Identifies which object to get the properties of
-     * @param keys the array of property keys.
-     * @return the values for the given property keys.
+     * @param key Identifies property to get value of
+     * @return Object The values of the requested keys.
      */
     public String[] getProperties(Object subject, String[] keys)
            throws Exception
@@ -2880,10 +2892,10 @@ public abstract class SubSystem extends RSEModelObject implements IAdaptable, IS
      * Resolve multiple absolute filter strings. This is only applicable if the subsystem
      *  factory reports true for supportsFilters().
      * <p>
-     * This is the same as {@link #internalResolveFilterString(IProgressMonitor, Object, String)} but takes an array of
+     * This is the same as {@link #resolveFilterString(String,Shell)} but takes an array of
      *  filter strings versus a single filter string.
      * <p>
-     * The default implementation of this simply calls {@link #internalResolveFilterString(IProgressMonitor, String)}
+     * The default implementation of this simply calls {@link #resolveFilterString(String,Shell)}
      *  once for each filter string, and concatenates the result. The method sortResolvedFilterStringObject
      *  is called on the concatenated result, given subclasses an opportunity to sort the result.
      * <p>
@@ -2978,7 +2990,7 @@ public abstract class SubSystem extends RSEModelObject implements IAdaptable, IS
      */
     protected String getFirstParentFilterString(Object parent)
     {
-    	return "*"; //$NON-NLS-1$
+    	return "*";
     }	
 
 
@@ -3073,7 +3085,7 @@ public abstract class SubSystem extends RSEModelObject implements IAdaptable, IS
 		// for wizards and dialogs use the specified context that was placed in the registry
 		IRunnableContext irc = RSEUIPlugin.getTheSystemRegistry().getRunnableContext();
 		if (irc != null) {
-			SystemBasePlugin.logInfo("Got runnable context from system registry"); //$NON-NLS-1$
+			SystemBasePlugin.logInfo("Got runnable context from system registry");
 			return irc;
 		} else {
 			// for other cases, use statusbar
@@ -3081,7 +3093,7 @@ public abstract class SubSystem extends RSEModelObject implements IAdaptable, IS
 			if (win != null) {
 				Shell winShell = getActiveWorkbenchShell();
 				if (winShell != null && !winShell.isDisposed() && winShell.isVisible()) {
-					SystemBasePlugin.logInfo("Using active workbench window as runnable context"); //$NON-NLS-1$
+					SystemBasePlugin.logInfo("Using active workbench window as runnable context");
 					shell = winShell;
 					return win;
 //dwd				} else {

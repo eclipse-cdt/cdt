@@ -69,6 +69,8 @@ import org.eclipse.ui.part.ShowInContext;
 import org.eclipse.ui.part.ViewPart;
 
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.index.IIndexFileLocation;
+import org.eclipse.cdt.core.index.IndexLocationFactory;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICElement;
@@ -684,9 +686,12 @@ public class IBViewPart extends ViewPart
                 	EditorOpener.open(page, f, region, timestamp);
                 }
                 else {
-                    IPath location= ibf.getLocation();
-                    if (location != null) {
-                    	EditorOpener.openExternalFile(page, location, region, timestamp);
+                    IIndexFileLocation ifl = ibf.getLocation();
+                    if (ifl != null) {
+                    	IPath location= IndexLocationFactory.getAbsolutePath(ifl);
+                    	if (location != null) {
+                    		EditorOpener.openExternalFile(page, location, region, timestamp);
+                    	}
                     }
                 }
             }

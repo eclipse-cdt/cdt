@@ -21,6 +21,9 @@ import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.dnd.*;
 import org.eclipse.ui.part.ResourceTransfer;
 
+import org.eclipse.cdt.core.index.IIndexFileLocation;
+import org.eclipse.cdt.core.index.IndexLocationFactory;
+
 public class IBDragSourceListener implements DragSourceListener {
 
     private TreeViewer fTreeViewer;
@@ -65,9 +68,9 @@ public class IBDragSourceListener implements DragSourceListener {
         ArrayList files= new ArrayList(fSelectedNodes.size());
         for (Iterator iter = fSelectedNodes.iterator(); iter.hasNext();) {
             IBNode node = (IBNode) iter.next();
-            IFile file= (IFile) node.getAdapter(IFile.class);
-            if (file != null) {
-                IPath location= file.getLocation();
+            IIndexFileLocation ifl= (IIndexFileLocation) node.getAdapter(IIndexFileLocation.class);
+            if (ifl != null) {
+                IPath location= IndexLocationFactory.getAbsolutePath(ifl);
                 if (location != null) {
                     files.add(location.toOSString());
                 }

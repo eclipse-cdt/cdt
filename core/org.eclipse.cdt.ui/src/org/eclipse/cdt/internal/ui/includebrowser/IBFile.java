@@ -13,8 +13,10 @@ package org.eclipse.cdt.internal.ui.includebrowser;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.resources.ResourcesPlugin;
 
+import org.eclipse.cdt.core.index.IIndexFileLocation;
+import org.eclipse.cdt.core.index.IndexLocationFactory;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.ITranslationUnit;
@@ -24,26 +26,20 @@ import org.eclipse.cdt.internal.corext.util.CModelUtil;
 import org.eclipse.cdt.internal.ui.util.CoreUtility;
 
 public class IBFile {
-	public IPath fLocation;
+	public IIndexFileLocation fLocation;
 	public ITranslationUnit fTU= null;
 
 	public IBFile(ITranslationUnit tu) {
 		fTU= tu;
-		IResource r= fTU.getResource();
-		if (r != null) {
-			fLocation= r.getLocation();
-		}
-		else {
-			fLocation= fTU.getPath();
-		}
+		fLocation= IndexLocationFactory.getIFL(tu);
 	}
 	
-	public IBFile(ICProject preferredProject, IPath location) throws CModelException {
+	public IBFile(ICProject preferredProject, IIndexFileLocation location) throws CModelException {
 		fLocation= location;
 		fTU= CModelUtil.findTranslationUnitForLocation(location, preferredProject);
 	}
 
-	public IPath getLocation() {
+	public IIndexFileLocation getLocation() {
 		return fLocation;
 	}
 
@@ -65,10 +61,13 @@ public class IBFile {
 	}
 
 	public IFile getResource() {
-		if (fTU != null) {
-			IResource r= fTU.getResource();
-			if (r instanceof IFile) {
-				return (IFile) r;
+		if (fLocation != null) {
+			String fullPath= fLocation.getFullPath();
+			if (fullPath != null) {
+				IResource file= ResourcesPlugin.getWorkspace().getRoot().findMember(fullPath);
+				if (file instanceof IFile) {
+					return (IFile) file;
+				}
 			}
 		}
 		return null;

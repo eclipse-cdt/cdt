@@ -15,6 +15,8 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IPath;
 
+import org.eclipse.cdt.core.index.IIndexFileLocation;
+import org.eclipse.cdt.core.index.IndexLocationFactory;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 
 import org.eclipse.cdt.internal.ui.util.CoreUtility;
@@ -63,9 +65,9 @@ public class IBNode implements IAdaptable {
             hashCode+= fDirectiveName.hashCode();
         }
         else if (fRepresentedFile != null) {
-            IPath path= fRepresentedFile.getLocation();
-            if (path != null) {
-                hashCode+= path.hashCode();
+            IIndexFileLocation ifl= fRepresentedFile.getLocation();
+            if (ifl != null) {
+                hashCode+= ifl.hashCode();
             }
         }
         return hashCode;
@@ -89,14 +91,14 @@ public class IBNode implements IAdaptable {
 				CoreUtility.safeEquals(fDirectiveName, rhs.fDirectiveName));
 	}
     
-    private boolean computeIsRecursive(IBNode parent, IPath path) {
-        if (parent == null || path == null) {
+    private boolean computeIsRecursive(IBNode parent, IIndexFileLocation ifl) {
+        if (parent == null || ifl == null) {
             return false;
         }
-        if (path.equals(parent.getRepresentedFile().getLocation())) {
+        if (ifl.equals(parent.getRepresentedFile().getLocation())) {
             return true;
         }
-        return computeIsRecursive(parent.fParent, path);
+        return computeIsRecursive(parent.fParent, ifl);
     }
 
 	/**
@@ -171,6 +173,9 @@ public class IBNode implements IAdaptable {
             if (adapter.isAssignableFrom(IFile.class)) {
                 return fRepresentedFile.getResource();
             }
+            if (adapter.isAssignableFrom(IIndexFileLocation.class)) {
+            	return fRepresentedFile.getLocation();
+            }
         }
         return null;
     }
@@ -183,11 +188,11 @@ public class IBNode implements IAdaptable {
 		if (fRepresentedFile == null) {
 			return null;
 		}
-		IFile file= fRepresentedFile.getResource();
-		if (file != null) {
-			return file.getFullPath();
+		IIndexFileLocation ifl= fRepresentedFile.getLocation();
+		if (ifl != null) {
+			return IndexLocationFactory.getPath(ifl);
 		}
-		return fRepresentedFile.getLocation();
+		return null;
 	}
 
 	public long getTimestamp() {

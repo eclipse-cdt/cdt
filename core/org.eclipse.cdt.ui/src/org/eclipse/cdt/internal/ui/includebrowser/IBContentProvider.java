@@ -105,15 +105,21 @@ public class IBContentProvider extends AsyncTreeContentProvider {
 					for (int i = 0; i < includes.length; i++) {
 						IIndexInclude include = includes[i];
 						try {
-							IPath includesPath = IndexLocationFactory.getAbsolutePath(include.getIncludesLocation());
+							IIndexFileLocation includesPath= include.getIncludesLocation();
 							if (fComputeIncludedBy) {
-								directiveFile= targetFile= new IBFile(tu.getCProject(), IndexLocationFactory.getAbsolutePath(include.getIncludesLocation()));
+								directiveFile= targetFile= new IBFile(tu.getCProject(), include.getIncludedByLocation());
 							}
 							else {
 								targetFile= new IBFile(tu.getCProject(), includesPath);
 							}
+							IPath fullPath= IndexLocationFactory.getPath(includesPath);
+							String name= "???";  //$NON-NLS-1$
+							if (fullPath != null && fullPath.segmentCount() > 0) {
+								name= fullPath.lastSegment();
+							}
+								
 							IBNode newnode= new IBNode(node, targetFile, directiveFile, 
-									includesPath.lastSegment(), include.getNameOffset(), 
+									name, include.getNameOffset(), 
 									include.getNameLength(), 
 									include.getIncludedBy().getTimestamp());
 							newnode.setIsActiveCode(true);

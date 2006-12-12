@@ -14,7 +14,7 @@
  * Martin Oberhuber (Wind River) - 141803: Fix cpu usage 100% while connecting
  * 
  ********************************************************************************/
-
+ 
 package org.eclipse.rse.core.subsystems;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Vector;
@@ -84,7 +84,7 @@ import org.eclipse.ui.progress.WorkbenchJob;
  * There are only a handleful of methods to implement in child classes (and indeed most of these
  *  are supplied as empty, so you only override those you want to support).
  * These are required:
- * <ul>
+ * <ul> 
  * <li>{@link #getConnectorService()}. 
  * </ul>
  * These are optional:
@@ -165,8 +165,6 @@ public abstract class SubSystem extends RSEModelObject implements IAdaptable, IS
 			_dlg.open();
 		}
 	}
-	
-	
 	private class NullRunnableContext implements IRunnableContext {
 		public void run(boolean fork, boolean cancelable, IRunnableWithProgress runnable) throws InvocationTargetException, InterruptedException {
 			IProgressMonitor monitor = new NullProgressMonitor();
@@ -1579,11 +1577,9 @@ public abstract class SubSystem extends RSEModelObject implements IAdaptable, IS
      */
     public class ConnectJob extends SubSystemOperationJob
     {
-    	private SubSystem _ss;
-    	public ConnectJob(SubSystem ss)
+    	public ConnectJob()
     	{
     		super(GenericMessages.RSESubSystemOperation_Connect_message);
-    		_ss = ss;
     	}
     	
     	public void performOperation(IProgressMonitor mon) throws InterruptedException, Exception
@@ -1596,8 +1592,6 @@ public abstract class SubSystem extends RSEModelObject implements IAdaptable, IS
 
     	    if (!implicitConnect(true, mon, msg, totalWorkUnits)) throw new Exception(RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_CONNECT_FAILED).makeSubstitution(getHostName()).getLevelOneText());    		
     	    internalConnect(mon);
-    	    
-			RSEUIPlugin.getTheSystemRegistry().connectedStatusChange(_ss, true, false);
     	}
     }
 
@@ -1987,8 +1981,6 @@ public abstract class SubSystem extends RSEModelObject implements IAdaptable, IS
      * <b>You do not need to override this, as it does the progress monitor and error message
      *  displaying for you. Just override internalResolveFilterString.</b>
      * <p>
-     * This method should be avoided in favour of one that runs in a job.
-     * 
      * @param filterString filter pattern for objects to return.
      * @return the results of resolving the filter string. 
      */
@@ -2000,7 +1992,33 @@ public abstract class SubSystem extends RSEModelObject implements IAdaptable, IS
     	  ok = promptForPassword();
         if (ok)
         {
-          	return internalResolveFilterString(new NullProgressMonitor(), filterString);
+          	Display display = Display.getCurrent();
+        	if (display != null)
+        	{
+        		return internalResolveFilterString(new NullProgressMonitor(), filterString);
+        	}
+        	else
+        	{
+    	  try
+    	  {
+//dwd   	    this.shell = shell; //FIXME remove this   	    	  	
+    	    ResolveAbsoluteJob job = new ResolveAbsoluteJob(filterString);
+    	    
+    	    IStatus status = scheduleJob(job, null, shell != null);
+    	    if (status.isOK())
+    	    {
+    	    	if (sortResults && (job.getOutputs()!=null))
+    	    		return sortResolvedFilterStringObjects(job.getOutputs());
+    	    	else
+    	    		return job.getOutputs();
+    	    }
+    	  }
+    	  catch (InterruptedException exc)
+    	  {
+    		  if (shell == null) throw exc;
+    		  else showOperationCancelledMessage(shell);
+    	  }
+        	}
         }
         else
           System.out.println("in SubSystemImpl.resolveFilterString: isConnected() returning false!"); //$NON-NLS-1$
@@ -2018,8 +2036,6 @@ public abstract class SubSystem extends RSEModelObject implements IAdaptable, IS
      * After successful resolve, the sort method is called to sort the concatenated results before
      *  returning them.
      *
-     * This method should be avoided in favour of one that runs in a job.
-     * 
      * @param filterStrings array of filter patterns for objects to return.
      * @return Array of objects that are the result of resolving all the filter strings
      */
@@ -2040,9 +2056,36 @@ public abstract class SubSystem extends RSEModelObject implements IAdaptable, IS
         
         if (ok)
         {
-        	return internalResolveFilterStrings(new NullProgressMonitor(), filterStrings);
+        	Display display = Display.getCurrent();
+        	if (display != null)
+        	{
+        		return internalResolveFilterStrings(new NullProgressMonitor(), filterStrings);
+        	}
+        	else
+        	{
+    	  try
+    	  {
+//dwd    	    this.shell = shell; //FIXME remove this	
+    	    ResolveAbsolutesJob job = new ResolveAbsolutesJob(filterStrings[0], filterStrings);
+    	      	    
+    	    IStatus status = scheduleJob(job, null, true);
+    	    if (status.isOK())
+    	    {
+        	    if (sortResults && (job.getOutputs()!=null))
+                    return sortResolvedFilterStringObjects(job.getOutputs());
+                else
+                	return job.getOutputs();
+    	    }
+    	  }
+    	  catch (InterruptedException exc)
+    	  {
+    		  if (shell == null) throw exc;
+    		  else showOperationCancelledMessage(shell);
+    	  }    	
+        	}
         }
-
+        else
+          System.out.println("in SubSystemImpl.resolveFilterString: isConnected() returning false!"); //$NON-NLS-1$
     	return null;
     }
     
@@ -2257,9 +2300,6 @@ public abstract class SubSystem extends RSEModelObject implements IAdaptable, IS
      * <b>You do not need to override this, as it does the progress monitor and error message
      *  displaying for you. Override internalResolveFilterString instead. </b>
      * <p>
-     * 
-     * This method should be avoided in favour of one that runs in a job.
-     * 
      * @param parent Object that is being expanded.
      * @param filterString filter pattern for children of parent. Typically just "*".
      */
@@ -2271,12 +2311,36 @@ public abstract class SubSystem extends RSEModelObject implements IAdaptable, IS
     	  ok = promptForPassword();
         if (ok)
         {
-        	return internalResolveFilterString(new NullProgressMonitor(), parent, filterString);
+        	Display display = Display.getCurrent();
+        	if (display != null)
+        	{
+        		return internalResolveFilterString(new NullProgressMonitor(), parent, filterString);
+        	}
+        	else
+        	{
+    	  try
+    	  {    	    	  	
+ //dwd   	    this.shell = shell; //FIXME remove this
+  		
+    	    ResolveRelativeJob job = new ResolveRelativeJob(filterString, parent);
+    	    
+    	    IStatus status = scheduleJob(job, null, true);
+    	    if (status.isOK())
+    	    {
+        	    if ((job.getOutputs()!=null) && (job.getOutputs().length>1))
+          	      return sortResolvedFilterStringObjects(job.getOutputs());           
+        	    else return job.getOutputs();
+    	    }
+    	  }
+    	  catch (InterruptedException exc)
+    	  {
+    		  if (shell == null) throw exc;
+    		  else showOperationCancelledMessage(shell);
+    	  }
+        	}
         }
         else
-        {
           SystemBasePlugin.logDebugMessage(this.getClass().getName(), "in SubSystemImpl.resolveFilterString: isConnected() returning false!"); //$NON-NLS-1$
-        }
     	return null;
     }
     
@@ -2415,20 +2479,9 @@ public abstract class SubSystem extends RSEModelObject implements IAdaptable, IS
      * This gets called after the corresponding {@link IConnectorService} connect method finishes.
      * This method should be overridden if any initialization for the subsystem needs
      * to occur at this time
-     * <p>
-     * The default implementation does nothing.
      */
-    public void initializeSubSystem(IProgressMonitor monitor) {
-    }
-    
-    /**
-     * Called after the associated {@link IConnectorService} disconnects.
-     * Override if there is any cleanup to do in the subsystem after disconnecting.
-     * <p>
-     * The default implementation does nothing.
-     */
-    public void uninitializeSubSystem(IProgressMonitor monitor) {
-    }
+    public abstract void initializeSubSystem(IProgressMonitor monitor);
+
 
     /**
 	 * Attempt to connect to the remote system when a Shell is not available.
@@ -2496,8 +2549,12 @@ public abstract class SubSystem extends RSEModelObject implements IAdaptable, IS
 //dwd				((ProgressMonitorDialog) runnableContext).setCancelable(true);
 //dwd			}
 			getConnectorService().promptForPassword(forcePrompt); // prompt for userid and password    
-			ConnectJob job = new ConnectJob(this);
-			scheduleJob(job, null, false);
+			ConnectJob job = new ConnectJob();
+			scheduleJob(job, null, shell != null);
+			IStatus status = job.getResult();
+			if (status != null && status.isOK()) {
+				registry.connectedStatusChange(this, true, false);
+			}
 		}
 	}
     

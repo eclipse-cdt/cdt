@@ -1754,15 +1754,38 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 	// ---------------------------------
 
 	/**
-	 * OVERRIDABLE METHOD FOR CHILD CLASSES TO ENABLE THEM TO CREATE A DEFAULT POOL
-	 * WHENEVER A NEW FILTER POOL MANAGER IS CREATED (EG, WHEN PROFILE CREATED).
+	 * <i>Overridable lifecycle method. Typically overridden to supply a default filter.</i><br>
+	 * When the user creates a new profile in the RSE (which is mapped to a SystemFilterPoolManager
+	 * by our parent class), each subsystem factory that supports filters is asked if it wants to 
+	 * create a default system filter pool in that profile. <br>
+	 * This is the method that is called to do that default filter pool creation in the new profile.
 	 * <p>
-	 * You should only pre-populate your default filter pool if this new manager
-	 * (eg, its really a profile) is the user's private own. Call {@link #isUserPrivateProfile(ISystemFilterPoolManager)}
-	 * to find out if it is.
+	 * By default we create an <i>empty</i> filter pool with a generated name, and no pre-defined filters.
+	 * If you don't want that behaviour, override this method and do one of the following:</p>
+	 * <ul>
+	 * <li>nothing if you don't want your subsystem factory to have a default filter pool in the new profile</li>. 
+	 * <li>call super.createDefaultFilterPool(mgr) to get the default pool, and then than call <samp>mgr.createSystemFilter(pool,...)</samp> to create 
+	 * each filter and add it to the filter pool, if you want to pre-populate the default pool with
+	 * default filters.
+	 * </ul>
 	 */
-	protected abstract ISystemFilterPool createDefaultFilterPool(ISystemFilterPoolManager mgr);
-
+	protected ISystemFilterPool createDefaultFilterPool(ISystemFilterPoolManager mgr)
+	{
+		ISystemFilterPool pool = null;
+		try {
+		  // -----------------------------------------------------
+		  // create a pool named filters
+		  // -----------------------------------------------------      			
+		  pool = mgr.createSystemFilterPool(getDefaultFilterPoolName(mgr.getName(), getId()), true); // true=>is deletable by user
+		} catch (Exception exc)
+		{
+			SystemBasePlugin.logError("Error creating default filter pool in default subsystem factory",exc); //$NON-NLS-1$
+		}
+		return pool;
+	}
+    
+	
+	
 	/**
 	 * Return true if the given filter pool manager maps to the private profile for this user.
 	 */

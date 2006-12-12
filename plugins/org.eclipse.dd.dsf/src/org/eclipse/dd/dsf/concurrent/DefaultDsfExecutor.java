@@ -16,8 +16,6 @@ import java.io.PrintStream;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.Callable;
-import java.util.concurrent.CancellationException;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
@@ -61,30 +59,6 @@ public class DefaultDsfExecutor extends ScheduledThreadPoolExecutor
         return Thread.currentThread().equals( ((DsfThreadFactory)getThreadFactory()).fThread );
     }
 
-    @Override
-    protected void afterExecute(Runnable r, Throwable t) {
-        if (r instanceof Future) {
-            Future<?> future = (Future<?>)r;
-            try {
-                /*
-                 * Try to retrieve the value, which should throw exception in 
-                 * case when exception was thrown within the Runnable/Callable.
-                 * Must call isDone(), because scheduled futures would block 
-                 * on get.
-                 */
-                if (future.isDone()) {
-                    future.get();
-                }
-            } catch (InterruptedException e) { // Ignore
-            } catch (CancellationException e) { // Ignore also
-            } catch (ExecutionException e) {
-                if (e.getCause() != null) {
-                    logException(e.getCause());
-                }
-            }
-        }
-    }
-    
     static void logException(Throwable t) {
         DsfPlugin plugin = DsfPlugin.getDefault();
         if (plugin == null) return;
@@ -224,6 +198,7 @@ public class DefaultDsfExecutor extends ScheduledThreadPoolExecutor
         final Runnable fRunnable;
         public TracingWrapperRunnable(Runnable runnable, int offset) {
             super(offset);
+            if (runnable == null) throw new NullPointerException();
             fRunnable = runnable;
 
             // Check if executable wasn't executed already.
@@ -239,7 +214,15 @@ public class DefaultDsfExecutor extends ScheduledThreadPoolExecutor
             traceExecution();
 
             // Finally invoke the runnable code.
-            fRunnable.run(); 
+            try {
+                fRunnable.run();
+            } catch (RuntimeException e) {
+                // If an exception was thrown in the Runnable, trace it.  
+                // Because there is no one else to catch it, it is a 
+                // programming error.
+                logException(e);
+                throw e;
+            }
         }
     }
     
@@ -247,6 +230,7 @@ public class DefaultDsfExecutor extends ScheduledThreadPoolExecutor
         final Callable<T> fCallable;
         public TracingWrapperCallable(Callable<T> callable, int offset) {
             super(offset);
+            if (callable == null) throw new NullPointerException();
             fCallable = callable;
         }
 
@@ -256,6 +240,8 @@ public class DefaultDsfExecutor extends ScheduledThreadPoolExecutor
             traceExecution();
             
             // Finally invoke the runnable code.
+            // Note that callables can throw exceptions that can be caught
+            // by clients that invoked them using ExecutionException.
             return fCallable.call();
         }
     }

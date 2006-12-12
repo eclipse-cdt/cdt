@@ -53,7 +53,6 @@ public class DsfPlugin extends Plugin {
 	 * @see org.eclipse.core.runtime.Plugin#stop(org.osgi.framework.BundleContext)
 	 */
 	public void stop(BundleContext context) throws Exception {
-		fgPlugin = null;
         fgBundleContext = null;
 		super.stop(context);
 	}

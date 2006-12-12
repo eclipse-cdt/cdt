@@ -228,6 +228,8 @@ public class DsfSession
     /** Returns the owner ID of this session */
     public String getOwnerId() { return fOwnerId; }    
     
+    public boolean isActive() { return DsfSession.isSessionActive(fId); }
+    
     /** Returns the ID of this session */
     public String getId() { return fId; }
     

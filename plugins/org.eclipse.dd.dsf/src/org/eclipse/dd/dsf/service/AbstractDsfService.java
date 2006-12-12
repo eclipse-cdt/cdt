@@ -48,7 +48,6 @@ abstract public class AbstractDsfService
     /** Properties that this service was registered with */
     private String fFilter;
 
-
     /** 
      * Only constructor, requires a reference to the session that this
      * service  belongs to.

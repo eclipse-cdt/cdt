@@ -112,6 +112,8 @@ public class DsfServicesTracker {
             }
         } catch(InvalidSyntaxException e) {
             assert false : "Invalid session ID syntax"; //$NON-NLS-1$
+        } catch(IllegalStateException e) {
+            // Can occur when plugin is shutting down.
         }
         return null;
     }

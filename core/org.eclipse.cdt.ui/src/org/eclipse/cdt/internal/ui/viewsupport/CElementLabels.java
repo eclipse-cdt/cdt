@@ -691,7 +691,7 @@ public class CElementLabels {
 		}
 		buf.append(typeName);
 
-		if (/*getFlag(flags, T_INHERITANCE) && */elem instanceof IInheritance) {
+		if (getFlag(flags, T_INHERITANCE) && elem instanceof IInheritance) {
 			IInheritance inheritance= (IInheritance)elem;
 			String[] superclassNames= inheritance.getSuperClassesNames();
 			if (superclassNames != null && superclassNames.length > 0) {

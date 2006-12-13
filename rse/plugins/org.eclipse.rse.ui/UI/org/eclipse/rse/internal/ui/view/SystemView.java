@@ -759,6 +759,7 @@ public class SystemView extends TreeViewer implements ISystemTree, ISystemResour
 		if (selectionCount == 0) // nothing selected
 		{
 			menu.add(getNewConnectionAction());
+			menu.add(new Separator(ISystemContextMenuConstants.GROUP_ADDITIONS)); // user or BP/ISV additions
 		} else {
 			if (selectionCount > 1) {
 				allSelectionsFromSameParent = sameParent();

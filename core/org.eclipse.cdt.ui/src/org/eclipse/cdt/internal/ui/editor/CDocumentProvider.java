@@ -73,7 +73,6 @@ import org.eclipse.cdt.internal.core.model.IBufferFactory;
 import org.eclipse.cdt.internal.ui.CFileElementWorkingCopy;
 import org.eclipse.cdt.internal.ui.CPluginImages;
 import org.eclipse.cdt.internal.ui.text.IProblemRequestorExtension;
-import org.eclipse.cdt.internal.ui.util.ExternalEditorInput;
 
 /**
  * CDocumentProvider2
@@ -862,7 +861,7 @@ public class CDocumentProvider extends TextFileDocumentProvider {
 			tuInfo.fModel= new ExternalSearchAnnotationModel(markerResource, storage);
 			IAnnotationModel fileBufferAnnotationModel= tuInfo.fTextFileBuffer.getAnnotationModel();
 			if (fileBufferAnnotationModel != null) {
-				((AnnotationModel)tuInfo.fModel).addAnnotationModel("secondaryModel", fileBufferAnnotationModel); //$NON-NLS-1$
+				((AnnotationModel)tuInfo.fModel).addAnnotationModel("fileBufferModel", fileBufferAnnotationModel); //$NON-NLS-1$
 			}
 			tuInfo.fCachedReadOnlyState= true;
 		}
@@ -883,10 +882,14 @@ public class CDocumentProvider extends TextFileDocumentProvider {
 	 * @see org.eclipse.ui.editors.text.TextFileDocumentProvider#isReadOnly(java.lang.Object)
 	 */
 	public boolean isReadOnly(Object element) {
-		// external editor input must not be modified
+		// external translation unit must not be modified
 		// because of missing functionality in CFileElementWorkingCopy
-		if (element instanceof ExternalEditorInput) {
-			return true;
+		FileInfo info= getFileInfo(element);
+		if (info instanceof TranslationUnitInfo) {
+			TranslationUnitInfo tuInfo= (TranslationUnitInfo)info;
+			if (tuInfo.fCopy instanceof CFileElementWorkingCopy) {
+				return true;
+			}
 		}
 		return super.isReadOnly(element);
 	}
@@ -895,10 +898,14 @@ public class CDocumentProvider extends TextFileDocumentProvider {
 	 * @see org.eclipse.ui.editors.text.TextFileDocumentProvider#isModifiable(java.lang.Object)
 	 */
 	public boolean isModifiable(Object element) {
-		// external editor input must not be modified
+		// external translation unit must not be modified
 		// because of missing functionality in CFileElementWorkingCopy
-		if (element instanceof ExternalEditorInput) {
-			return false;
+		FileInfo info= getFileInfo(element);
+		if (info instanceof TranslationUnitInfo) {
+			TranslationUnitInfo tuInfo= (TranslationUnitInfo)info;
+			if (tuInfo.fCopy instanceof CFileElementWorkingCopy) {
+				return false;
+			}
 		}
 		return super.isModifiable(element);
 	}

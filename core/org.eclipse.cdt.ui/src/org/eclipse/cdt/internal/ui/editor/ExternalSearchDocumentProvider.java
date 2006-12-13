@@ -23,24 +23,38 @@ import org.eclipse.jface.text.source.IAnnotationModel;
 import org.eclipse.ui.IPathEditorInput;
 import org.eclipse.ui.IStorageEditorInput;
 import org.eclipse.ui.editors.text.ILocationProvider;
+import org.eclipse.ui.editors.text.TextFileDocumentProvider;
 
 import org.eclipse.cdt.core.resources.FileStorage;
 import org.eclipse.cdt.ui.CUIPlugin;
 
 import org.eclipse.cdt.internal.ui.util.ExternalEditorInput;
 
-public class ExternalSearchDocumentProvider extends CStorageDocumentProvider {
+public class ExternalSearchDocumentProvider extends TextFileDocumentProvider {
 	
-	/** Location attribute for breakpoints. See <code>ICBreakpoint.SOURCE_HANDLE</code> */
-	private static final String DEBUG_SOURCE_HANDLE = "org.eclipse.cdt.debug.core.sourceHandle"; //$NON-NLS-1$	
-
-	public ExternalSearchDocumentProvider(){
-		super();
+	public ExternalSearchDocumentProvider() {
+		super(new CStorageDocumentProvider());
 	}
 
 	/*
-	 * @see org.eclipse.ui.editors.text.StorageDocumentProvider#createAnnotationModel(java.lang.Object)
+	 * @see org.eclipse.ui.editors.text.TextFileDocumentProvider#createFileInfo(java.lang.Object)
 	 */
+	protected FileInfo createFileInfo(Object element) throws CoreException {
+		final FileInfo info= super.createFileInfo(element);
+		if (info.fModel == null) {
+			info.fModel= createAnnotationModel(element);
+			if (info.fModel != null) {
+				IAnnotationModel fileBufferAnnotationModel= info.fTextFileBuffer.getAnnotationModel();
+				if (fileBufferAnnotationModel != null) {
+					((AnnotationModel)info.fModel).addAnnotationModel("fileBufferModel", fileBufferAnnotationModel); //$NON-NLS-1$
+				}
+				setUpSynchronization(info);
+			}
+		}
+		return info;
+	}
+
+
 	protected IAnnotationModel createAnnotationModel(Object element) throws CoreException {
 		if (element instanceof ExternalEditorInput) {
 			return createExternalSearchAnnotationModel((ExternalEditorInput)element);
@@ -65,7 +79,7 @@ public class ExternalSearchDocumentProvider extends CStorageDocumentProvider {
 				return createExternalSearchAnnotationModel(storage, null);
 			}
 		}
-		return super.createAnnotationModel(element);
+		return null;
 	}
 
 	/**
@@ -96,8 +110,6 @@ public class ExternalSearchDocumentProvider extends CStorageDocumentProvider {
 			markerResource= CUIPlugin.getWorkspace().getRoot();
 			model = new ExternalSearchAnnotationModel(markerResource, storage, IResource.DEPTH_ONE);
 		}
-		// attach annotation model for C breakpoints
-		model.addAnnotationModel("debugMarkerModel", new ExternalSearchAnnotationModel(markerResource, storage, IResource.DEPTH_ZERO, DEBUG_SOURCE_HANDLE)); //$NON-NLS-1$
 		return model;
 	}
 

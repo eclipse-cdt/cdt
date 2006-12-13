@@ -139,6 +139,7 @@ import org.eclipse.cdt.core.dom.ast.gnu.IGNUASTCompoundStatementExpression;
 import org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPASTPointer;
 import org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPASTPointerToMember;
 import org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPASTSimpleDeclSpecifier;
+import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.internal.core.dom.parser.ASTInternal;
@@ -326,7 +327,7 @@ public class CPPVisitor {
 			ICPPScope parentScope = null;
 			try {
 				template = true;
-				parentScope = (ICPPScope) scope.getParent();
+				parentScope = (ICPPScope) getParentScope(scope, elabType.getTranslationUnit());
 			} catch (DOMException e1) {
 			}
 			scope = parentScope;
@@ -337,7 +338,7 @@ public class CPPVisitor {
 			//the declaration
 			while( scope instanceof ICPPClassScope || scope instanceof ICPPFunctionScope ){
 				try {
-					scope = (ICPPScope) scope.getParent();
+					scope = (ICPPScope) getParentScope(scope, elabType.getTranslationUnit());
 				} catch (DOMException e1) {
 				}
 			}
@@ -345,7 +346,7 @@ public class CPPVisitor {
 		if( scope instanceof ICPPClassScope && isFriend && !qualified ){
 	        try {
 	            while( scope instanceof ICPPClassScope )
-	                scope = (ICPPScope) scope.getParent();
+	                scope = (ICPPScope) getParentScope(scope, elabType.getTranslationUnit());
             } catch ( DOMException e1 ) {
 		    }
 		}
@@ -380,7 +381,7 @@ public class CPPVisitor {
 			template = true;
 			ICPPScope parentScope = null;
 			try {
-				parentScope = (ICPPScope) scope.getParent();
+				parentScope = (ICPPScope) getParentScope(scope, compType.getTranslationUnit());
 			} catch (DOMException e1) {
 			}
 			scope = parentScope;
@@ -488,7 +489,7 @@ public class CPPVisitor {
 			ICPPScope parentScope = null;
 			try {
 				template = true;
-				parentScope = (ICPPScope) scope.getParent();
+				parentScope = (ICPPScope) getParentScope(scope, name.getTranslationUnit());
 			} catch (DOMException e1) {
 			}
 			scope = parentScope;
@@ -497,7 +498,7 @@ public class CPPVisitor {
 		    ICPPASTDeclSpecifier declSpec = (ICPPASTDeclSpecifier) ((IASTSimpleDeclaration)parent).getDeclSpecifier();
 		    if( declSpec.isFriend() ){
 		        try {
-                    scope = (ICPPScope) scope.getParent();
+                    scope = (ICPPScope) getParentScope(scope, name.getTranslationUnit());
                 } catch ( DOMException e1 ) {
                 }
 		    }
@@ -1655,7 +1656,7 @@ public class CPPVisitor {
 				IScope s = getContainingScope( fName );
 				ICPPASTFunctionDeclarator dtor = (ICPPASTFunctionDeclarator) def.getDeclarator();
 				if( s instanceof ICPPTemplateScope )
-					s = s.getParent();
+					s = getParentScope(s, fName.getTranslationUnit());
 				if( s instanceof ICPPClassScope ){
 					ICPPClassScope cScope = (ICPPClassScope) s;
 					IType type = cScope.getClassType();
@@ -2011,6 +2012,9 @@ public class CPPVisitor {
             	if( scope instanceof ICPPTemplateScope )
             		scope = (ICPPScope) scope.getParent();
             	
+            	if (scope == null) 
+            		break;
+            	
             	IName n = scope.getScopeName();
             	if( n == null )
             		break;
@@ -2041,6 +2045,8 @@ public class CPPVisitor {
             	if( scope instanceof ICPPTemplateScope )
             		scope = (ICPPScope) scope.getParent();
             	
+            	if (scope == null) 
+            		break;
             	IName n = scope.getScopeName();
             	if( n == null )
             		break;
@@ -2063,4 +2069,12 @@ public class CPPVisitor {
 	    return result;
 	}
 	
+	private static IScope getParentScope(IScope scope, IASTTranslationUnit unit) throws DOMException {
+		IScope parentScope= scope.getParent();
+		// the index cannot return the translation unit as parent scope
+		if (parentScope == null && scope instanceof IIndexBinding) {
+			parentScope= unit.getScope();
+		}
+		return parentScope;
+	}
 }

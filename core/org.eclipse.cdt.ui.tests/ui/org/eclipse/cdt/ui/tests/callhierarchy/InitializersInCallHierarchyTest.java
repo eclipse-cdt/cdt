@@ -15,9 +15,6 @@ import junit.framework.Test;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.swt.widgets.Tree;
-import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.ide.IDE;
 
 import org.eclipse.cdt.internal.ui.editor.CEditor;
 
@@ -38,12 +35,11 @@ public class InitializersInCallHierarchyTest extends CallHierarchyBaseTest {
 		String content = readTaggedComment("intvar");
 		IFile file= createFile(getProject(), "intvar.c", content);
 		waitForIndexer(fIndex, file, INDEXER_WAIT_TIME);
-		IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
-		CEditor editor= (CEditor) IDE.openEditor(page, file);
+		CEditor editor = openFile(file);
 
 		editor.selectAndReveal(content.indexOf("a"), 5);
 		openCallHierarchy(editor);
-		Tree tree = getCHTree(page);
+		Tree tree = getCHTreeViewer().getTree();
 		checkTreeNode(tree, 0, "a");
 		checkTreeNode(tree, 0, 0, "{init b}()");
 	}

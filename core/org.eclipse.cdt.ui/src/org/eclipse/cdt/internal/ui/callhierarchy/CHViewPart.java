@@ -645,7 +645,7 @@ public class CHViewPart extends ViewPart {
     	fContentProvider.setWorkingSetFilter(filterUI);
     }
     
-    protected void onSetShowReferencedBy(boolean showReferencedBy) {
+    public void onSetShowReferencedBy(boolean showReferencedBy) {
         if (showReferencedBy != fContentProvider.getComputeReferencedBy()) {
             Object input= fTreeViewer.getInput();
             fTreeViewer.setInput(null);

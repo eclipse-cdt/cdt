@@ -21,17 +21,44 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.IDE;
 
+import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.dom.IPDOMManager;
+import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.core.testplugin.CProjectHelper;
+import org.eclipse.cdt.core.testplugin.TestScannerProvider;
+
+import org.eclipse.cdt.internal.core.CCoreInternals;
+
 import org.eclipse.cdt.internal.ui.editor.CEditor;
 
 
-public class CppCallHierarchyTest extends CallHierarchyBaseTest {
+public class CallHierarchyAccrossProjectsTest extends CallHierarchyBaseTest {
 	
-	public CppCallHierarchyTest(String name) {
+	private ICProject fCProject2;
+
+	public CallHierarchyAccrossProjectsTest(String name) {
 		super(name);
 	}
 
 	public static Test suite() {
-		return suite(CppCallHierarchyTest.class);
+		return suite(CallHierarchyAccrossProjectsTest.class);
+	}
+	
+	protected void setUp() throws Exception {
+		super.setUp();
+
+		fCProject2= CProjectHelper.createCCProject("__chTest_2__", "bin", IPDOMManager.ID_FAST_INDEXER);
+		CCoreInternals.getPDOMManager().reindex(fCProject2);
+		fIndex= CCorePlugin.getIndexManager().getIndex(new ICProject[] {fCProject, fCProject2});
+		TestScannerProvider.sIncludes= new String[]{fCProject.getProject().getLocation().toOSString(), fCProject2.getProject().getLocation().toOSString()};
+	}
+
+	protected void tearDown() throws Exception {
+		TestScannerProvider.sIncludes= null;
+		if (fCProject2 != null) {
+			CProjectHelper.delete(fCProject2);
+		}
+		super.tearDown();
 	}
 
 	// // testMethods.h
@@ -60,14 +87,14 @@ public class CppCallHierarchyTest extends CallHierarchyBaseTest {
 		StringBuffer[] content= getContentsForTest(2);
 		String header= content[0].toString();
 		String source = content[1].toString();
-		IFile headerFile= createFile(getProject(), "testMethods.h", header);
-		IFile sourceFile= createFile(getProject(), "testMethods.cpp", source);
+		IFile headerFile= createFile(fCProject.getProject(), "testMethods.h", header);
+		IFile sourceFile= createFile(fCProject2.getProject(), "testMethods.cpp", source);
 		IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
 		CEditor editor= (CEditor) IDE.openEditor(page, sourceFile);
 		waitForIndexer(fIndex, sourceFile, CallHierarchyBaseTest.INDEXER_WAIT_TIME);
 		
 		editor.selectAndReveal(source.indexOf("method"), 2);
-		openCallHierarchy(editor);
+		openCallHierarchy(editor, true);
 		Tree tree = getCHTreeViewer().getTree();
 
 		checkTreeNode(tree, 0, "MyClass::method()");
@@ -132,9 +159,9 @@ public class CppCallHierarchyTest extends CallHierarchyBaseTest {
 		String header= content[0].toString();
 		String source1 = content[1].toString();
 		String source2 = content[2].toString();
-		IFile headerFile= createFile(getProject(), "testMethods.h", header);
-		IFile sourceFile1= createFile(getProject(), "testMethods1.cpp", source1);
-		IFile sourceFile2= createFile(getProject(), "testMethods2.cpp", source2);
+		IFile headerFile= createFile(fCProject.getProject(), "testMethods.h", header);
+		IFile sourceFile1= createFile(fCProject.getProject(), "testMethods1.cpp", source1);
+		IFile sourceFile2= createFile(fCProject2.getProject(), "testMethods2.cpp", source2);
 
 		CEditor editor= openFile(sourceFile1);
 		waitForIndexer(fIndex, sourceFile2, CallHierarchyBaseTest.INDEXER_WAIT_TIME);
@@ -183,7 +210,7 @@ public class CppCallHierarchyTest extends CallHierarchyBaseTest {
 		String source1 = content[1].toString();
 		String source2 = content[2].toString();
 		IFile headerFile= createFile(getProject(), "testMethods.h", header);
-		IFile sourceFile1= createFile(getProject(), "testMethods1.cpp", source1);
+		IFile sourceFile1= createFile(fCProject2.getProject(), "testMethods1.cpp", source1);
 		IFile sourceFile2= createFile(getProject(), "testMethods2.cpp", source2);
 
 		CEditor editor= openFile(sourceFile1);

@@ -60,7 +60,7 @@ public class BasicCallHierarchyTest extends CallHierarchyBaseTest {
 
 		editor.selectAndReveal(content.indexOf("proto"), 5);
 		openCallHierarchy(editor);
-		Tree tree = getCHTree(page);
+		Tree tree = getCHTreeViewer().getTree();
 		checkTreeNode(tree, 0, "proto()");
 		checkTreeNode(tree, 0, 0, "main()");
 
@@ -71,13 +71,11 @@ public class BasicCallHierarchyTest extends CallHierarchyBaseTest {
 
 		editor.selectAndReveal(content.indexOf("proto(); //ref"), 0);
 		openCallHierarchy(editor);
-		tree = getCHTree(page);
 		checkTreeNode(tree, 0, "proto()");
 		checkTreeNode(tree, 0, 0, "main()");
 
 		editor.selectAndReveal(content.indexOf("func(); //ref"), 7);
 		openCallHierarchy(editor);
-		tree = getCHTree(page);
 		checkTreeNode(tree, 0, "func()");
 		checkTreeNode(tree, 0, 0, "main()");
 	}
@@ -106,7 +104,7 @@ public class BasicCallHierarchyTest extends CallHierarchyBaseTest {
 
 		editor.selectAndReveal(content.indexOf("extern_var"), 0);
 		openCallHierarchy(editor);
-		Tree tree = getCHTree(page);
+		Tree tree = getCHTreeViewer().getTree();
 		checkTreeNode(tree, 0, "extern_var");
 		checkTreeNode(tree, 0, 0, "main()");
 
@@ -117,13 +115,11 @@ public class BasicCallHierarchyTest extends CallHierarchyBaseTest {
 
 		editor.selectAndReveal(content.indexOf("extern_var; //ref"), 0);
 		openCallHierarchy(editor);
-		tree = getCHTree(page);
 		checkTreeNode(tree, 0, "extern_var");
 		checkTreeNode(tree, 0, 0, "main()");
 
 		editor.selectAndReveal(content.indexOf("global_var; //ref"), 7);
 		openCallHierarchy(editor);
-		tree = getCHTree(page);
 		checkTreeNode(tree, 0, "global_var");
 		checkTreeNode(tree, 0, 0, "main()");
 	}
@@ -164,7 +160,7 @@ public class BasicCallHierarchyTest extends CallHierarchyBaseTest {
 
 		editor.selectAndReveal(content.indexOf("enumerator"), 0);
 		openCallHierarchy(editor);
-		Tree tree = getCHTree(page);
+		Tree tree = getCHTreeViewer().getTree();
 		checkTreeNode(tree, 0, "enumerator");
 		checkTreeNode(tree, 0, 0, "main()");
 
@@ -174,7 +170,6 @@ public class BasicCallHierarchyTest extends CallHierarchyBaseTest {
 
 		editor.selectAndReveal(content.indexOf("enumerator; //ref"), 0);
 		openCallHierarchy(editor);
-		tree = getCHTree(page);
 		checkTreeNode(tree, 0, "enumerator");
 		checkTreeNode(tree, 0, 0, "main()");
 
@@ -229,7 +224,7 @@ public class BasicCallHierarchyTest extends CallHierarchyBaseTest {
 
 		editor.selectAndReveal(content.indexOf("mem1"), 0);
 		openCallHierarchy(editor);
-		Tree tree = getCHTree(page);
+		Tree tree = getCHTreeViewer().getTree();
 		checkTreeNode(tree, 0, "s1::mem1");
 		checkTreeNode(tree, 0, 0, "main()");
 
@@ -253,19 +248,16 @@ public class BasicCallHierarchyTest extends CallHierarchyBaseTest {
 
 		editor.selectAndReveal(content.indexOf("mem1; //ref"), 0);
 		openCallHierarchy(editor);
-		tree = getCHTree(page);
 		checkTreeNode(tree, 0, "s1::mem1");
 		checkTreeNode(tree, 0, 0, "main()");
 
 		editor.selectAndReveal(content.indexOf("mem2; //ref"), 0);
 		openCallHierarchy(editor);
-		tree = getCHTree(page);
 		checkTreeNode(tree, 0, "s2::mem2");
 		checkTreeNode(tree, 0, 0, "main()");
 
 		editor.selectAndReveal(content.indexOf("mem4."), 0);
 		openCallHierarchy(editor);
-		tree = getCHTree(page);
 		checkTreeNode(tree, 0, "s4::mem4");
 		checkTreeNode(tree, 0, 0, "main()");
 	}
@@ -287,7 +279,7 @@ public class BasicCallHierarchyTest extends CallHierarchyBaseTest {
 
 		editor.selectAndReveal(content.indexOf("mem3"), 0);
 		openCallHierarchy(editor);
-		Tree tree = getCHTree(page);
+		Tree tree = getCHTreeViewer().getTree();
 		checkTreeNode(tree, 0, "(anon)::mem3");
 		checkTreeNode(tree, 0, 0, "main()");
 
@@ -298,13 +290,11 @@ public class BasicCallHierarchyTest extends CallHierarchyBaseTest {
 
 		editor.selectAndReveal(content.indexOf("mem3; //ref"), 0);
 		openCallHierarchy(editor);
-		tree = getCHTree(page);
 		checkTreeNode(tree, 0, "(anon)::mem3");
 		checkTreeNode(tree, 0, 0, "main()");
 
 		editor.selectAndReveal(content.indexOf("mem5; //ref"), 0);
 		openCallHierarchy(editor);
-		tree = getCHTree(page);
 		checkTreeNode(tree, 0, "s4::(anon)::mem5");
 		checkTreeNode(tree, 0, 0, "main()");
 	}
@@ -361,7 +351,7 @@ public class BasicCallHierarchyTest extends CallHierarchyBaseTest {
 
 		editor.selectAndReveal(content.indexOf("mem1"), 0);
 		openCallHierarchy(editor);
-		Tree tree = getCHTree(page);
+		Tree tree = getCHTreeViewer().getTree();
 		checkTreeNode(tree, 0, "u1::mem1");
 		checkTreeNode(tree, 0, 0, "main()");
 
@@ -385,19 +375,16 @@ public class BasicCallHierarchyTest extends CallHierarchyBaseTest {
 
 		editor.selectAndReveal(content.indexOf("mem1; //ref"), 0);
 		openCallHierarchy(editor);
-		tree = getCHTree(page);
 		checkTreeNode(tree, 0, "u1::mem1");
 		checkTreeNode(tree, 0, 0, "main()");
 
 		editor.selectAndReveal(content.indexOf("mem2; //ref"), 0);
 		openCallHierarchy(editor);
-		tree = getCHTree(page);
 		checkTreeNode(tree, 0, "u2::mem2");
 		checkTreeNode(tree, 0, 0, "main()");
 
 		editor.selectAndReveal(content.indexOf("mem4."), 0);
 		openCallHierarchy(editor);
-		tree = getCHTree(page);
 		checkTreeNode(tree, 0, "u4::mem4");
 		checkTreeNode(tree, 0, 0, "main()");
 	}
@@ -419,7 +406,7 @@ public class BasicCallHierarchyTest extends CallHierarchyBaseTest {
 
 		editor.selectAndReveal(content.indexOf("mem3"), 0);
 		openCallHierarchy(editor);
-		Tree tree = getCHTree(page);
+		Tree tree = getCHTreeViewer().getTree();
 		checkTreeNode(tree, 0, "(anon)::mem3");
 		checkTreeNode(tree, 0, 0, "main()");
 
@@ -430,13 +417,11 @@ public class BasicCallHierarchyTest extends CallHierarchyBaseTest {
 
 		editor.selectAndReveal(content.indexOf("mem3; //ref"), 0);
 		openCallHierarchy(editor);
-		tree = getCHTree(page);
 		checkTreeNode(tree, 0, "(anon)::mem3");
 		checkTreeNode(tree, 0, 0, "main()");
 
 		editor.selectAndReveal(content.indexOf("mem5; //ref"), 0);
 		openCallHierarchy(editor);
-		tree = getCHTree(page);
 		checkTreeNode(tree, 0, "u4::(anon)::mem5");
 		checkTreeNode(tree, 0, 0, "main()");
 	}

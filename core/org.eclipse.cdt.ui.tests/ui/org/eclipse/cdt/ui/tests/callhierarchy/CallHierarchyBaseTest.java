@@ -11,12 +11,17 @@
 
 package org.eclipse.cdt.ui.tests.callhierarchy;
 
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.text.ITextSelection;
+import org.eclipse.jface.viewers.TreeViewer;
+import org.eclipse.swt.SWTException;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.ide.IDE;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.IPDOMManager;
@@ -35,75 +40,135 @@ import org.eclipse.cdt.internal.ui.editor.CEditor;
 public class CallHierarchyBaseTest extends BaseUITestCase {
 	protected static final int INDEXER_WAIT_TIME = 8000;
 
-	private ICProject fCProject;
+	protected ICProject fCProject;
 	protected IIndex fIndex;
 
 	public CallHierarchyBaseTest(String name) {
 		super(name);
 	}
 
-	protected void setUp() throws CoreException {
+	protected void setUp() throws Exception {
+		super.setUp();
 		fCProject= CProjectHelper.createCCProject("__chTest__", "bin", IPDOMManager.ID_FAST_INDEXER);
 		CCoreInternals.getPDOMManager().reindex(fCProject);
 
 		fIndex= CCorePlugin.getIndexManager().getIndex(fCProject);
 	}
 	
-	protected void tearDown() throws CoreException {
+	protected void tearDown() throws Exception {
 		if (fCProject != null) {
 			CProjectHelper.delete(fCProject);
 		}
+		super.tearDown();
 	}
 	
 	protected IProject getProject() {
 		return fCProject.getProject();
 	}
 	
+	protected CEditor openFile(IFile file) throws PartInitException {
+		IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
+		CEditor editor= (CEditor) IDE.openEditor(page, file);
+		return editor;
+	}	
+
 	protected void openCallHierarchy(CEditor editor) {
 		CallHierarchyUI.setIsJUnitTest(true);
 		CallHierarchyUI.open(editor, (ITextSelection) editor.getSelectionProvider().getSelection());
 		runEventQueue(200);
 	}
 
-	protected Tree getCHTree(IWorkbenchPage page) {
+	protected void openCallHierarchy(CEditor editor, boolean showReferencedBy) {
+		CallHierarchyUI.setIsJUnitTest(true);
+		CallHierarchyUI.open(editor, (ITextSelection) editor.getSelectionProvider().getSelection());
+		runEventQueue(200);
+		CHViewPart ch= null;
+		IWorkbenchPage page = editor.getSite().getPage();
+		for (int i = 0; i < 20; i++) {
+			ch= (CHViewPart)page.findView(CUIPlugin.ID_CALL_HIERARCHY);
+			if (ch != null) 
+				break;
+			runEventQueue(200);
+		}
+		assertNotNull(ch);
+		ch.onSetShowReferencedBy(showReferencedBy);
+	}
+
+	protected TreeViewer getCHTreeViewer() {
+		IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
 		runEventQueue(0);
 		CHViewPart ch= (CHViewPart)page.findView(CUIPlugin.ID_CALL_HIERARCHY);
 		assertNotNull(ch);
-		Tree tree= ch.getTreeViewer().getTree();
-		return tree;
+		return ch.getTreeViewer();
 	}
 
-	protected void checkTreeNode(Tree tree, int i0, String label) {
+	protected TreeItem checkTreeNode(Tree tree, int i0, String label) {
 		TreeItem root= null;
 		try {
 			for (int i=0; i<20; i++) {
 				root= tree.getItem(i0);
-				if (!"...".equals(root.getText())) {
-					break;
+				try {
+					if (!"...".equals(root.getText())) {
+						break;
+					}
+				} catch (SWTException e) {
+					// in case widget was disposed, item may be replaced
 				}
 				runEventQueue(50);
 			}
 		}
 		catch (IllegalArgumentException e) {
-			assertTrue("Tree node " + label + "{" + i0 + "} does not exist!", false);
+			fail("Tree node " + label + "{" + i0 + "} does not exist!");
 		}
 		assertEquals(label, root.getText());
+		return root;
 	}
 
-	protected void checkTreeNode(Tree tree, int i0, int i1, String label) {
+	protected TreeItem checkTreeNode(Tree tree, int i0, int i1, String label) {
+		TreeItem item= null;
 		try {
 			TreeItem root= tree.getItem(i0);
-			TreeItem item= root.getItem(i1);
 			for (int i=0; i<40; i++) {
-				if (!"...".equals(item.getText())) {
-					break;
+				item= root.getItem(i1);
+				try {
+					if (!"...".equals(item.getText())) {
+						break;
+					}
+				} catch (SWTException e) {
+					// in case widget was disposed, item may be replaced
 				}
 				runEventQueue(50);
 			}
-			assertEquals(label, item.getText());
 		}
 		catch (IllegalArgumentException e) {
-			assertTrue("Tree node " + label + "{" + i0 + "," + i1 + "} does not exist!", false);
+			fail("Tree node " + label + "{" + i0 + "," + i1 + "} does not exist!");
 		}
+		assertEquals(label, item.getText());
+		return item;
 	}
+	
+	protected TreeItem checkTreeNode(TreeItem root, int i1, String label) {
+		TreeItem item= null;
+		try {
+			for (int i=0; i<40; i++) {
+				item= root.getItem(i1);
+				try {
+					if (!"...".equals(item.getText())) {
+						break;
+					}
+				} catch (SWTException e) {
+					// in case widget was disposed, item may be replaced
+				}
+				runEventQueue(50);
+			}
+		}
+		catch (IllegalArgumentException e) {
+			assertNull("Tree node " + label + " does not exist!", label);
+			return null;
+		}
+		assertNotNull("Unexpected tree node " + item.getText(), label);
+		assertEquals(label, item.getText());
+		return item;
+	}
+
 }

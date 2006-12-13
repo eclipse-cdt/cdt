@@ -24,5 +24,7 @@ public class CallHierarchyTestSuite extends TestSuite {
         addTest(BasicCallHierarchyTest.suite());
         addTest(BasicCppCallHierarchyTest.suite());
         addTest(InitializersInCallHierarchyTest.suite());
+        addTest(CppCallHierarchyTest.suite());
+        addTest(CallHierarchyAccrossProjectsTest.suite());
     }
 }

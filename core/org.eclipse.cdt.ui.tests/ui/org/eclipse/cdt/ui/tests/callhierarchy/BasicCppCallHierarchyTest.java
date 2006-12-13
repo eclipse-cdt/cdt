@@ -24,8 +24,6 @@ import org.eclipse.cdt.internal.ui.editor.CEditor;
 
 public class BasicCppCallHierarchyTest extends CallHierarchyBaseTest {
 	
-	private static final int MAX_TIME_INDEXER = 8000;
-
 	public BasicCppCallHierarchyTest(String name) {
 		super(name);
 	}
@@ -57,13 +55,13 @@ public class BasicCppCallHierarchyTest extends CallHierarchyBaseTest {
 	public void testMethods() throws Exception {
 		String content = readTaggedComment("testMethods");
 		IFile file= createFile(getProject(), "testMethods.cpp", content);
-		waitForIndexer(fIndex, file, MAX_TIME_INDEXER);
+		waitForIndexer(fIndex, file, CallHierarchyBaseTest.INDEXER_WAIT_TIME);
 		IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
 		CEditor editor= (CEditor) IDE.openEditor(page, file);
 
 		editor.selectAndReveal(content.indexOf("method"), 2);
 		openCallHierarchy(editor);
-		Tree tree = getCHTree(page);
+		Tree tree = getCHTreeViewer().getTree();
 		checkTreeNode(tree, 0, "MyClass::method()");
 		checkTreeNode(tree, 0, 0, "func()");
 		checkTreeNode(tree, 0, 1, "MyClass::inline_method()");
@@ -141,13 +139,13 @@ public class BasicCppCallHierarchyTest extends CallHierarchyBaseTest {
 	public void testStaticMethods() throws Exception {
 		String content = readTaggedComment("testStaticMethods");
 		IFile file= createFile(getProject(), "testStaticMethods.cpp", content);
-		waitForIndexer(fIndex, file, MAX_TIME_INDEXER);
+		waitForIndexer(fIndex, file, CallHierarchyBaseTest.INDEXER_WAIT_TIME);
 		IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
 		CEditor editor= (CEditor) IDE.openEditor(page, file);
 
 		editor.selectAndReveal(content.indexOf("method"), 2);
 		openCallHierarchy(editor);
-		Tree tree = getCHTree(page);
+		Tree tree = getCHTreeViewer().getTree();
 		checkTreeNode(tree, 0, "MyClass::method()");
 		checkTreeNode(tree, 0, 0, "func()");
 		checkTreeNode(tree, 0, 1, "MyClass::inline_method()");
@@ -230,13 +228,13 @@ public class BasicCppCallHierarchyTest extends CallHierarchyBaseTest {
 	public void testFields() throws Exception {
 		String content = readTaggedComment("testFields");
 		IFile file= createFile(getProject(), "testFields.cpp", content);
-		waitForIndexer(fIndex, file, MAX_TIME_INDEXER);
+		waitForIndexer(fIndex, file, CallHierarchyBaseTest.INDEXER_WAIT_TIME);
 		IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
 		CEditor editor= (CEditor) IDE.openEditor(page, file);
 
 		editor.selectAndReveal(content.indexOf("field"), 2);
 		openCallHierarchy(editor);
-		Tree tree = getCHTree(page);
+		Tree tree = getCHTreeViewer().getTree();
 		checkTreeNode(tree, 0, "MyClass::field");
 		checkTreeNode(tree, 0, 0, "func()");
 		checkTreeNode(tree, 0, 1, "MyClass::inline_method()");
@@ -305,13 +303,13 @@ public class BasicCppCallHierarchyTest extends CallHierarchyBaseTest {
 	public void _testAutomaticConstructor_156668() throws Exception {
 		String content = readTaggedComment("testAutomaticConstructor");
 		IFile file= createFile(getProject(), "testConstructor.cpp", content);
-		waitForIndexer(fIndex, file, MAX_TIME_INDEXER);
+		waitForIndexer(fIndex, file, CallHierarchyBaseTest.INDEXER_WAIT_TIME);
 		IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
 		CEditor editor= (CEditor) IDE.openEditor(page, file);
 
 		editor.selectAndReveal(content.indexOf("MyClass()"), 2);
 		openCallHierarchy(editor);
-		Tree tree = getCHTree(page);
+		Tree tree = getCHTreeViewer().getTree();
 		checkTreeNode(tree, 0, "MyClass::MyClass()");
 		checkTreeNode(tree, 0, 0, "automatic()");
 
@@ -335,13 +333,13 @@ public class BasicCppCallHierarchyTest extends CallHierarchyBaseTest {
 	public void testConstructor() throws Exception {
 		String content = readTaggedComment("testConstructor");
 		IFile file= createFile(getProject(), "testConstructor.cpp", content);
-		waitForIndexer(fIndex, file, MAX_TIME_INDEXER);
+		waitForIndexer(fIndex, file, CallHierarchyBaseTest.INDEXER_WAIT_TIME);
 		IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
 		CEditor editor= (CEditor) IDE.openEditor(page, file);
 
 		editor.selectAndReveal(content.indexOf("MyClass()"), 2);
 		openCallHierarchy(editor);
-		Tree tree = getCHTree(page);
+		Tree tree = getCHTreeViewer().getTree();
 		checkTreeNode(tree, 0, "MyClass::MyClass()");
 		checkTreeNode(tree, 0, 0, "heap()");
 	}
@@ -349,13 +347,13 @@ public class BasicCppCallHierarchyTest extends CallHierarchyBaseTest {
 	public void _testDestructor_156669() throws Exception {
 		String content = readTaggedComment("testConstructor");
 		IFile file= createFile(getProject(), "testConstructor.cpp", content);
-		waitForIndexer(fIndex, file, MAX_TIME_INDEXER);
+		waitForIndexer(fIndex, file, CallHierarchyBaseTest.INDEXER_WAIT_TIME);
 		IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
 		CEditor editor= (CEditor) IDE.openEditor(page, file);
 
 		editor.selectAndReveal(content.indexOf("~MyClass()"), 2);
 		openCallHierarchy(editor);
-		Tree tree = getCHTree(page);
+		Tree tree = getCHTreeViewer().getTree();
 		checkTreeNode(tree, 0, "MyClass::~MyClass()");
 		checkTreeNode(tree, 0, 0, "heap()");
 	}
@@ -385,13 +383,13 @@ public class BasicCppCallHierarchyTest extends CallHierarchyBaseTest {
 	public void testNamespace() throws Exception {
 		String content = readTaggedComment("testNamespace");
 		IFile file= createFile(getProject(), "testNamespace.cpp", content);
-		waitForIndexer(fIndex, file, MAX_TIME_INDEXER);
+		waitForIndexer(fIndex, file, CallHierarchyBaseTest.INDEXER_WAIT_TIME);
 		IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
 		CEditor editor= (CEditor) IDE.openEditor(page, file);
 
 		editor.selectAndReveal(content.indexOf("var"), 2);
 		openCallHierarchy(editor);
-		Tree tree = getCHTree(page);
+		Tree tree = getCHTreeViewer().getTree();
 		checkTreeNode(tree, 0, "ns::var");
 		checkTreeNode(tree, 0, 0, "gfunc1()");
 		checkTreeNode(tree, 0, 1, "gfunc2()");
@@ -443,13 +441,13 @@ public class BasicCppCallHierarchyTest extends CallHierarchyBaseTest {
 	public void testNamespacePart2_156519() throws Exception {
 		String content = readTaggedComment("testNamespace");
 		IFile file= createFile(getProject(), "testNamespace.cpp", content);
-		waitForIndexer(fIndex, file, MAX_TIME_INDEXER);
+		waitForIndexer(fIndex, file, CallHierarchyBaseTest.INDEXER_WAIT_TIME);
 		IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
 		CEditor editor= (CEditor) IDE.openEditor(page, file);
 
 		editor.selectAndReveal(content.indexOf("var; // r1"), 2);
 		openCallHierarchy(editor);
-		Tree tree = getCHTree(page);
+		Tree tree = getCHTreeViewer().getTree();
 
 		checkTreeNode(tree, 0, "ns::var");
 		checkTreeNode(tree, 0, 0, "gfunc1()");

@@ -19,6 +19,7 @@ import java.util.Iterator;
 import org.eclipse.cdt.debug.core.sourcelookup.MappingSourceContainer;
 import org.eclipse.cdt.debug.internal.core.sourcelookup.CSourceNotFoundElement;
 import org.eclipse.cdt.debug.internal.core.sourcelookup.MapEntrySourceContainer;
+import org.eclipse.cdt.debug.internal.ui.ICDebugHelpContextIds;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
@@ -44,6 +45,7 @@ import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorSite;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.PlatformUI;
 
 /**
  * Editor that lets you select a replacement for the missing source file
@@ -60,6 +62,11 @@ public class CSourceNotFoundEditor extends CommonSourceNotFoundEditor {
 
 	public CSourceNotFoundEditor() {
 		super();
+	}
+
+	public void createPartControl(Composite parent) {
+		super.createPartControl(parent);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(parent, ICDebugHelpContextIds.SOURCE_NOT_FOUND);
 	}
 
 	public void init(IEditorSite site, IEditorInput input) throws PartInitException {

@@ -785,6 +785,7 @@
          point="org.eclipse.compare.contentMergeViewers">
       <viewer
             class="org.eclipse.cdt.internal.ui.compare.CContentViewerCreator"
+            extensions="c2"
             id="org.eclipse.cdt.ui.compare.CContentViewerCreator">
       </viewer>
       <contentTypeBinding

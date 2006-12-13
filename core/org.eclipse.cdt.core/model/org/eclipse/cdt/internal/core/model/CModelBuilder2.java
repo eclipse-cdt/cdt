@@ -218,6 +218,8 @@ public class CModelBuilder2 implements IContributedModelBuilder {
 	 * @see org.eclipse.cdt.core.model.IContributedModelBuilder#parse(boolean)
 	 */
 	public void parse(boolean quickParseMode) throws Exception {
+		// always parse fast
+		quickParseMode= true;
 		IIndex index= CCorePlugin.getIndexManager().getIndex(fTranslationUnit.getCProject());
 		try {
 			if (index != null) {
@@ -541,8 +543,7 @@ public class CModelBuilder2 implements IContributedModelBuilder {
 					}
 				}
 			}
-			final CElement compositeType= createCompositeType(parent, (IASTCompositeTypeSpecifier)declSpecifier, isTemplate);
-			return compositeType;
+			return createCompositeType(parent, (IASTCompositeTypeSpecifier)declSpecifier, isTemplate);
 		} else if (declSpecifier instanceof IASTElaboratedTypeSpecifier) {
 			if (declarator == null) {
 				return createElaboratedTypeDeclaration(parent, (IASTElaboratedTypeSpecifier)declSpecifier, isTemplate);
@@ -550,6 +551,16 @@ public class CModelBuilder2 implements IContributedModelBuilder {
 				return createTypedefOrFunctionOrVariable(parent, declSpecifier, declarator, isTemplate);
 			}
 		} else if (declSpecifier instanceof IASTEnumerationSpecifier) {
+			if (declarator != null) {
+				// create type nested
+				CElement element= createTypedefOrFunctionOrVariable(parent, declSpecifier, declarator, isTemplate);
+				if (element instanceof IParent) {
+					parent= (Parent)element;
+					if (!isTemplate) {
+						setBodyPosition((SourceManipulation)element, declSpecifier.getParent());
+					}
+				}
+			}
 			return createEnumeration(parent, (IASTEnumerationSpecifier)declSpecifier);
 		} else if (declSpecifier instanceof IASTNamedTypeSpecifier) {
 			return createTypedefOrFunctionOrVariable(parent, declSpecifier, declarator, isTemplate);

@@ -533,8 +533,11 @@ public class CElementLabels {
 		}
 		
 		if( getFlag( flags, M_APP_RETURNTYPE ) && func.exists()) {
-			buf.append( DECL_STRING );
-			buf.append( func.getReturnType() );	
+			String typeName= func.getReturnType();
+			if (typeName != null && typeName.length() > 0) {
+				buf.append( DECL_STRING );
+				buf.append(typeName);
+			}
 		}			
 		
 		// post qualification
@@ -573,8 +576,11 @@ public class CElementLabels {
 		buf.append( typedef.getElementName() );
 				
 		if( getFlag( flags, F_APP_TYPE_SIGNATURE ) && typedef.exists()) {
-			buf.append( DECL_STRING );
-			buf.append( typedef.getTypeName() );	
+			String typeName= typedef.getTypeName();
+			if (typeName != null && typeName.length() > 0) {
+				buf.append( DECL_STRING );
+				buf.append(typeName);
+			}
 		}			
 		
 		// post qualification

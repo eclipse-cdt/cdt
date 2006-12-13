@@ -521,6 +521,7 @@ public class ASTStringUtil {
 			appendQualifiedNameString(buffer, elaboratedTypeSpec.getName());
 		} else if (declSpecifier instanceof IASTEnumerationSpecifier) {
 			final IASTEnumerationSpecifier enumerationSpec= (IASTEnumerationSpecifier)declSpecifier;
+			buffer.append(Keywords.ENUM).append(' ');
 			appendQualifiedNameString(buffer, enumerationSpec.getName());
 		} else if (declSpecifier instanceof IASTSimpleDeclSpecifier) {
 			final IASTSimpleDeclSpecifier simpleDeclSpec= (IASTSimpleDeclSpecifier)declSpecifier;

@@ -1884,10 +1884,10 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IR
 		int caret= 0;
 		if (sourceViewer instanceof ITextViewerExtension5) {
 			ITextViewerExtension5 extension= (ITextViewerExtension5)sourceViewer;
-			caret= extension.widgetOffset2ModelOffset(styledText.getCaretOffset());
+			caret= extension.widgetOffset2ModelOffset(styledText.getSelection().x);
 		} else {
 			int offset= sourceViewer.getVisibleRegion().getOffset();
-			caret= offset + styledText.getCaretOffset();
+			caret= offset + styledText.getSelection().x;
 		}
 
 		ICElement element= getElementAt(caret, false);

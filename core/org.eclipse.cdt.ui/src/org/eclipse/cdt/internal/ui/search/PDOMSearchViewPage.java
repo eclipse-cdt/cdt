@@ -11,26 +11,20 @@
 
 package org.eclipse.cdt.internal.ui.search;
 
-import org.eclipse.cdt.core.resources.FileStorage;
-import org.eclipse.cdt.internal.ui.editor.ExternalSearchEditor;
-import org.eclipse.cdt.internal.ui.util.ExternalEditorInput;
-import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IMarker;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TreeViewer;
-import org.eclipse.search.ui.NewSearchUI;
 import org.eclipse.search.ui.text.AbstractTextSearchViewPage;
 import org.eclipse.search.ui.text.Match;
-import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.PartInitException;
-import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.texteditor.ITextEditor;
+
+import org.eclipse.cdt.ui.CUIPlugin;
+
+import org.eclipse.cdt.internal.ui.util.EditorUtility;
 
 /**
  * @author Doug Schaefer
@@ -76,26 +70,10 @@ public class PDOMSearchViewPage extends AbstractTextSearchViewPage {
 		
 		try {
 			IPath path = new Path(((PDOMSearchMatch)match).getFileName());
-			IFile[] files = ResourcesPlugin.getWorkspace().getRoot().findFilesForLocation(path);
-			if (files.length > 0) {
-				IEditorPart editor = IDE.openEditor(CUIPlugin.getActivePage(), files[0]);
-				try {
-					IMarker marker = files[0].createMarker(NewSearchUI.SEARCH_MARKER);
-					marker.setAttribute(IMarker.CHAR_START, currentOffset);
-					marker.setAttribute(IMarker.CHAR_END, currentOffset + currentLength);
-					IDE.gotoMarker(editor, marker);
-					marker.delete();
-				} catch (CoreException e) {
-					CUIPlugin.getDefault().log(e);
-				}
-			} else {
-				// external file
-				IEditorInput input = new ExternalEditorInput(new FileStorage(path));
-				IEditorPart editor = CUIPlugin.getActivePage().openEditor(input, ExternalSearchEditor.EDITOR_ID);
-				if (editor instanceof ITextEditor) {
-					ITextEditor textEditor = (ITextEditor)editor;
-					textEditor.selectAndReveal(currentOffset, currentLength);
-				}
+			IEditorPart editor = EditorUtility.openInEditor(path, null);
+			if (editor instanceof ITextEditor) {
+				ITextEditor textEditor = (ITextEditor)editor;
+				textEditor.selectAndReveal(currentOffset, currentLength);
 			}
 		} catch (CoreException e) {
 			CUIPlugin.getDefault().log(e);

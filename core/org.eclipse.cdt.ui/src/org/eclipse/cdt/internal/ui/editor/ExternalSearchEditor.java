@@ -10,11 +10,16 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.editor;
 
-import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.jface.action.IMenuManager;
 
+import org.eclipse.cdt.ui.CUIPlugin;
+
+/** 
+ * @deprecated Use {@link org.eclipse.cdt.internal.ui.util.EditorUtility#openInEditor(org.eclipse.core.runtime.IPath, org.eclipse.cdt.core.model.ICElement) EditorUtility#openInEditor()} 
+ * to open an external file.
+ */
 public class ExternalSearchEditor extends CEditor {
 	
 	public static final String EDITOR_ID = "org.eclipse.cdt.ui.editor.ExternalSearchEditor"; //$NON-NLS-1$

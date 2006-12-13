@@ -39,7 +39,7 @@ public class OpenCallHierarchyAction extends SelectionDispatchAction {
 	public OpenCallHierarchyAction(CEditor editor) {
 		this(editor.getSite());
 		fEditor= editor;
-		setEnabled(true);
+		setEnabled(fEditor != null && fEditor.getInputCElement() != null);
 	}
 
 	public void run(ITextSelection sel) {

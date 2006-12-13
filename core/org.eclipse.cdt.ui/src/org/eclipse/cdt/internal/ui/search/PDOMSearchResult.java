@@ -16,8 +16,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IStorage;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.search.ui.ISearchQuery;
@@ -27,6 +29,9 @@ import org.eclipse.search.ui.text.IFileMatchAdapter;
 import org.eclipse.search.ui.text.Match;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IPathEditorInput;
+import org.eclipse.ui.IStorageEditorInput;
+import org.eclipse.ui.editors.text.ILocationProvider;
 import org.eclipse.ui.part.FileEditorInput;
 
 import org.eclipse.cdt.core.index.IIndexFileLocation;
@@ -64,9 +69,25 @@ public class PDOMSearchResult extends AbstractTextSearchResult implements IEdito
 		} else if (input instanceof ExternalEditorInput) {
 			ExternalEditorInput extInput = (ExternalEditorInput)input;
 			return extInput.getStorage().getFullPath().toOSString();
-		} else {
-			return null;
+		} else if (input instanceof IStorageEditorInput) {
+				try {
+					IStorage storage = ((IStorageEditorInput)input).getStorage();
+					if (storage.getFullPath() != null) {
+						return storage.getFullPath().toOSString();
+					}
+				} catch (CoreException exc) {
+					// ignore
+				}
+		} else if (input instanceof IPathEditorInput) {
+			IPath path= ((IPathEditorInput)input).getPath();
+			return path.toOSString();
 		}
+		ILocationProvider provider= (ILocationProvider) input.getAdapter(ILocationProvider.class);
+		if (provider != null) {
+			IPath path= provider.getPath(input);
+			return path.toOSString();
+		}
+		return null;
 	}
 	
 	public boolean isShownInEditor(Match match, IEditorPart editor) {

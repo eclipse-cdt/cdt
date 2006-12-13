@@ -13,6 +13,7 @@
 package org.eclipse.cdt.internal.ui.search;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.Path;
 
 import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.core.index.IIndexName;
@@ -31,7 +32,7 @@ public class PDOMSearchElement {
 	public PDOMSearchElement(IIndexName name, IIndexBinding binding) throws CoreException {
 		this.binding= binding;
 		this.name = binding.getName();
-		filename = name.getFileLocation().getFileName();
+		filename = new Path(name.getFileLocation().getFileName()).toOSString();
 	}
 	
 	public int hashCode() {

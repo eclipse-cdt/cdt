@@ -28,7 +28,7 @@ import org.eclipse.ui.editors.text.ILocationProvider;
 
 
 /**
- * An EditorInput for a JarEntryFile.
+ * An EditorInput for an external (non-workspace) file.
  */
 public class ExternalEditorInput implements ITranslationUnitEditorInput {
            
@@ -63,20 +63,6 @@ public class ExternalEditorInput implements ITranslationUnitEditorInput {
 		if (ILocationProvider.class.equals(adapter))
 			return this;
 		return Platform.getAdapterManager().getAdapter(this, adapter);
-	}
-
-	/*
-	* @see IEditorInput#getContentType()
-	*/
-	public String getContentType() {
-		return externalFile.getFullPath().getFileExtension();
-	}
-
-	/*
-	* @see IEditorInput#getFullPath()
-	*/
-	public String getFullPath() {
-		return externalFile.getFullPath().toString();
 	}
 
 	/*

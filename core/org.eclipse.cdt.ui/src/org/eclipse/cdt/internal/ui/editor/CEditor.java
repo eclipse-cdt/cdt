@@ -2335,21 +2335,29 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IR
 
 		menu.insertAfter(IContextMenuConstants.GROUP_OPEN, new GroupMarker(IContextMenuConstants.GROUP_SHOW));
 
-		addAction(menu, IContextMenuConstants.GROUP_OPEN, "OpenDeclarations"); //$NON-NLS-1$
-        addAction(menu, IContextMenuConstants.GROUP_OPEN, "OpenDefinition"); //$NON-NLS-1$
-		addAction(menu, IContextMenuConstants.GROUP_OPEN, "OpenTypeHierarchy"); //$NON-NLS-1$
-
-		addAction(menu, IContextMenuConstants.GROUP_OPEN, "OpenOutline"); //$NON-NLS-1$
-
+		final boolean hasCElement= getInputCElement() != null;
+		if (hasCElement) {
+			addAction(menu, IContextMenuConstants.GROUP_OPEN, "OpenDeclarations"); //$NON-NLS-1$
+	        addAction(menu, IContextMenuConstants.GROUP_OPEN, "OpenDefinition"); //$NON-NLS-1$
+			addAction(menu, IContextMenuConstants.GROUP_OPEN, "OpenTypeHierarchy"); //$NON-NLS-1$
+	
+			addAction(menu, IContextMenuConstants.GROUP_OPEN, "OpenOutline"); //$NON-NLS-1$
+		}
+		
 		ActionContext context= new ActionContext(getSelectionProvider().getSelection());
 		fGenerateActionGroup.setContext(context);
 		fGenerateActionGroup.fillContextMenu(menu);
 		fGenerateActionGroup.setContext(null);
 
-		fSelectionSearchGroup.fillContextMenu(menu);
+		if (hasCElement) {
+			fSelectionSearchGroup.fillContextMenu(menu);
+		}
 		fTextSearchGroup.fillContextMenu(menu);
-		fRefactoringActionGroup.fillContextMenu(menu);
-		fOpenInViewGroup.fillContextMenu(menu);
+		
+		if (hasCElement) {
+			fRefactoringActionGroup.fillContextMenu(menu);
+			fOpenInViewGroup.fillContextMenu(menu);
+		}
 	}
 
 	/*

@@ -22,13 +22,13 @@ import org.eclipse.dd.dsf.datamodel.IDMService;
 public interface IRegisters extends IDMService {
 
     /** Register group context */
-    public interface IRegisterGroupDMContext extends IDMContext<IRegisterGroupData> {}
+    public interface IRegisterGroupDMContext extends IDMContext<IRegisterGroupDMData> {}
     
     /** 
-     * Register groups only have a name.  Sub groups and registered are retrieved
+     * Register groups only have a name.  Sub groups and registers are retrieved
      * through the service interface. 
      */
-    public interface IRegisterGroupData extends IDMData {
+    public interface IRegisterGroupDMData extends IDMData {
         public String getName();
         public String getDescription();
     }

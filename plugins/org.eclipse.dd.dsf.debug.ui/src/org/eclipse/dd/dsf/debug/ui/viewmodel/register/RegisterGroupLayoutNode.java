@@ -14,7 +14,7 @@ import org.eclipse.dd.dsf.concurrent.GetDataDone;
 import org.eclipse.dd.dsf.datamodel.IDMContext;
 import org.eclipse.dd.dsf.debug.service.IRegisters;
 import org.eclipse.dd.dsf.debug.service.IRegisters.IRegisterGroupDMContext;
-import org.eclipse.dd.dsf.debug.service.IRegisters.IRegisterGroupData;
+import org.eclipse.dd.dsf.debug.service.IRegisters.IRegisterGroupDMData;
 import org.eclipse.dd.dsf.debug.service.IRunControl.IExecutionDMContext;
 import org.eclipse.dd.dsf.service.DsfSession;
 import org.eclipse.dd.dsf.ui.viewmodel.AbstractVMProvider;
@@ -23,7 +23,7 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.IChildrenUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.ILabelUpdate;
 
 @SuppressWarnings("restriction")
-public class RegisterGroupLayoutNode extends AbstractDMVMLayoutNode<IRegisterGroupData> {
+public class RegisterGroupLayoutNode extends AbstractDMVMLayoutNode<IRegisterGroupDMData> {
 
     public RegisterGroupLayoutNode(AbstractVMProvider provider, DsfSession session) {
         super(provider, session, IRegisters.IRegisterGroupDMContext.class);
@@ -53,7 +53,7 @@ public class RegisterGroupLayoutNode extends AbstractDMVMLayoutNode<IRegisterGro
     }
     
     @Override
-    protected void fillColumnLabel(IDMContext<IRegisterGroupData> dmContext, IRegisterGroupData dmData,
+    protected void fillColumnLabel(IDMContext<IRegisterGroupDMData> dmContext, IRegisterGroupDMData dmData,
                                    String columnId, int idx, ILabelUpdate update) 
     {
         if (RegisterColumnPresentation.COL_NAME.equals(columnId)) {

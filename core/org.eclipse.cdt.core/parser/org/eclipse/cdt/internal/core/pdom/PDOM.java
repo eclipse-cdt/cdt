@@ -90,6 +90,7 @@ public class PDOM extends PlatformObject implements IIndexFragment, IPDOM {
 	// 18 - distinction between c-unions and c-structs.
     // 19 - alter representation of paths in the pdom (162172)
 	// 20 - add pointer to member types, array types, return types for functions
+	// 21 - change representation of paths in the pdom (167549)
 
 	public static final int LINKAGES = Database.DATA_AREA;
 	public static final int FILE_INDEX = Database.DATA_AREA + 4;

@@ -25,12 +25,10 @@ import org.eclipse.core.runtime.Path;
  * The standard location converter used by the per-project PDOM
  */
 public class PDOMProjectIndexLocationConverter implements IIndexLocationConverter {
-	IProject project;
 	IWorkspaceRoot root;
 	private static final String EXTERNAL = "<EXT>"; //$NON-NLS-1$
 	
 	public PDOMProjectIndexLocationConverter(IProject project) {
-		this.project = project;
 		this.root = ResourcesPlugin.getWorkspace().getRoot();
 	}
 	
@@ -47,9 +45,9 @@ public class PDOMProjectIndexLocationConverter implements IIndexLocationConverte
 				uri = null;
 			}
 		} else {
-			fullPath = "/"+project.getName()+"/"+raw;  //$NON-NLS-1$//$NON-NLS-2$
-			IResource member = project.findMember(raw);
-			uri = member == null ? null : member.getLocationURI();
+			fullPath = raw;  
+			IResource member= root.getFile(new Path(raw));
+			uri = member.getLocationURI();
 		}		
 		return new IndexFileLocation(uri, fullPath);
 	}
@@ -60,7 +58,7 @@ public class PDOMProjectIndexLocationConverter implements IIndexLocationConverte
 	public String toInternalFormat(IIndexFileLocation location) {
 		String result;
 		if(location.getFullPath()!=null) {
-			result = new Path(location.getFullPath()).removeFirstSegments(1).toString();
+			result = new Path(location.getFullPath()).toString();
 		} else {
 			result = EXTERNAL+location.getURI().toString();
 		}

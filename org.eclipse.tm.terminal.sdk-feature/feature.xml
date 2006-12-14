@@ -40,7 +40,9 @@
 
    <includes
          id="org.eclipse.tm.terminal.view"
-         version="0.0.0"/>
+         version="0.0.0"
+         name="%featureNameView"
+         optional="true"/>
 
    <plugin
          id="org.eclipse.tm.terminal.source"

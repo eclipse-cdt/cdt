@@ -525,6 +525,8 @@ public class CPPVisitor {
 				} else if( temp instanceof IProblemBinding ){
 				    //problems with the function, still create binding for the parameter
 				    binding = new CPPParameter( name );
+				} else if ( temp instanceof IIndexBinding ) {
+					binding= new CPPParameter( name );
 				}
 			} else if( parent instanceof ICPPASTTemplateDeclaration ) {
 				return CPPTemplates.createBinding( param );

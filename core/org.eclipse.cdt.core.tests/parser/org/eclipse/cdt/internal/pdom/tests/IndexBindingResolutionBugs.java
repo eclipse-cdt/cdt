@@ -89,4 +89,36 @@ public class IndexBindingResolutionBugs extends IndexBindingResolutionTestBase {
 		getBindingFromASTName("fooovr('", 6);
 	}
 
+	
+	// // header
+	//	class Base { 
+	//  public: 
+	//     void foo(int i);
+	//     int  foo2(int i);
+	//  };
+	//
+	//  void func(int k);
+	//  void func2(int i);
+
+	// // references
+	// #include "header.h"
+	// void Base::foo(int i) {
+	//   i=2;
+	// }
+	// void Base::foo2(int j) {
+	//   j=2;
+	// }
+	// void func(int k) {
+	//  k=2;
+	// }
+	// void func2(int l) {
+	//  l=2;
+	// }
+	public void test168054() {
+		getBindingFromASTName("i=2", 1);
+		getBindingFromASTName("j=2", 1);
+		getBindingFromASTName("k=2", 1);
+		getBindingFromASTName("l=2", 1);
+	}
+
 }

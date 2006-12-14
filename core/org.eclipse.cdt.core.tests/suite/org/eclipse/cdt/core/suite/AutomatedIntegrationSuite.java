@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Markus Schorn (Wind River Systems)
+ *     Norbert Ploett (Siemens AG)
  *******************************************************************************/
 /*
  * Created on May 16, 2003
@@ -21,6 +22,7 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 
 import org.eclipse.cdt.core.cdescriptor.tests.CDescriptorTests;
+import org.eclipse.cdt.core.internal.errorparsers.tests.ErrorParserTests;
 import org.eclipse.cdt.core.internal.tests.PositionTrackerTests;
 import org.eclipse.cdt.core.model.tests.AllCoreTests;
 import org.eclipse.cdt.core.model.tests.BinaryTests;
@@ -60,7 +62,7 @@ public class AutomatedIntegrationSuite extends TestSuite {
 		
 		// Add all success tests
 		suite.addTest(CDescriptorTests.suite());
-		//suite.addTest(GCCErrorParserTests.suite());
+		suite.addTest(ErrorParserTests.suite());
 		suite.addTest(ParserTestSuite.suite());
 		suite.addTest(AllCoreTests.suite());
 		suite.addTest(BinaryTests.suite());

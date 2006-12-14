@@ -23,12 +23,16 @@
 #nothing we do should be hidden from the world
 umask 22
 
+curdir=`pwd`
+cd `dirname $0`
+mydir=`pwd`
+echo ${mydir}
+
 #Use Java5 on build.eclipse.org
 #export PATH=/shared/common/ibm-java2-ppc64-50/bin:$PATH
 #export PATH=/shared/webtools/apps/IBMJava2-ppc64-142/bin:$PATH
-export PATH=/shared/webtools/apps/IBMJava2-ppc-142/bin:$PATH
-
-curdir=`pwd`
+#export PATH=/shared/webtools/apps/IBMJava2-ppc-142/bin:$PATH
+export PATH=${HOME}/ws/IBMJava2-ppc-142/bin:$PATH
 
 #Get parameters
 buildType=$1
@@ -39,12 +43,9 @@ case x$buildType in
 esac
 if [ $ok != 1 ]; then
   grep '^#:#' $0 | grep -v grep | sed -e 's,^#:#,,'
+  cd ${curdir}
   exit 0
 fi
-
-#get mydir
-cd `dirname $0`
-mydir=`pwd`
 
 #Remove old logs and builds
 echo "Removing old logs and builds..."

@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2002, 2006 IBM Corporation. All rights reserved.
+ * Copyright (c) 2002, 2006 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -12,6 +12,8 @@
  * 
  * Contributors:
  * Michael Berger (IBM) - Patch to remove non-standard expand/collapse from menu.
+ * Tobias Schwarz (Wind River) - Fix 166343 getChildCount() counts invalid items
+ * Martin Oberhuber (Wind River) - Improve fix for 166343 getChildCount()
  ********************************************************************************/
 
 package org.eclipse.rse.ui.view;
@@ -3988,7 +3990,6 @@ public class SystemView extends TreeViewer implements ISystemTree, ISystemResour
 	 * @param searchString the absolute name of the remote object to which we want to find a tree item which references it.
 	 * @param elementObject the actual remote element to find, for binary matching
 	 * @param subsystem optional subsystem to search within
-	 * @param matches the vector to populate with hits
 	 * @return TreeItem hit if found
 	 */
 	protected Item internalFindFirstRemoteItemReference(String searchString, Object elementObject, ISubSystem subsystem) {

@@ -46,5 +46,8 @@ public class TextTestSuite extends TestSuite {
 
 		// folding tests
 		addTest(FoldingTest.suite());
+		
+		// basic editing tests
+		addTest(BasicCEditorTest.suite());
     }
 }

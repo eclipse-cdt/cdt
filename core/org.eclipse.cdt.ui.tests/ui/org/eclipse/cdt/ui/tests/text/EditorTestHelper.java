@@ -28,13 +28,16 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IWorkspace;
+import org.eclipse.core.resources.IWorkspaceRoot;
+import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.IJobManager;
 import org.eclipse.core.runtime.jobs.Job;
@@ -69,7 +72,9 @@ import org.eclipse.ui.wizards.datatransfer.FileSystemStructureProvider;
 import org.eclipse.ui.wizards.datatransfer.IImportStructureProvider;
 import org.eclipse.ui.wizards.datatransfer.ImportOperation;
 
+import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.IPDOMManager;
+import org.eclipse.cdt.core.index.IIndexManager;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.testplugin.CProjectHelper;
 import org.eclipse.cdt.ui.CUIPlugin;
@@ -256,7 +261,7 @@ public class EditorTestHelper {
 		boolean interrupted= true;
 		while (interrupted) {
 			try {
-				Platform.getJobManager().join(ResourcesPlugin.FAMILY_AUTO_BUILD, null);
+				Job.getJobManager().join(ResourcesPlugin.FAMILY_AUTO_BUILD, null);
 				interrupted= false;
 			} catch (InterruptedException e) {
 				interrupted= true;
@@ -264,15 +269,8 @@ public class EditorTestHelper {
 		}
 		// Join indexing
 		Logger.global.finer("join indexer");
-//		new SearchEngine().searchAllTypeNames(
-//				null,
-//				"XXXXXXXXX".toCharArray(), // make sure we search a concrete name. This is faster according to Kent 
-//				SearchPattern.R_EXACT_MATCH,
-//				IJavaSearchConstants.CLASS,
-//				SearchEngine.createJavaSearchScope(new ICElement[0]),
-//				new Requestor(),
-//				IJavaSearchConstants.WAIT_UNTIL_READY_TO_SEARCH,
-//				null);
+		IIndexManager indexManager= CCorePlugin.getIndexManager();
+		indexManager.joinIndexer(1000, new NullProgressMonitor());
 		// Join jobs
 		joinJobs(0, 0, 500);
 		Logger.global.exiting("EditorTestHelper", "joinBackgroundActivities");
@@ -301,7 +299,7 @@ public class EditorTestHelper {
 	}
 	
 	public static boolean allJobsQuiet() {
-		IJobManager jobManager= Platform.getJobManager();
+		IJobManager jobManager= Job.getJobManager();
 		Job[] jobs= jobManager.find(null);
 		for (int i= 0; i < jobs.length; i++) {
 			Job job= jobs[i];
@@ -435,7 +433,7 @@ public class EditorTestHelper {
 	}
 	
 	public static ICProject createCProject(String project, String externalSourceFolder, boolean linkSourceFolder) throws CoreException {
-		ICProject cProject= CProjectHelper.createCProject(project, "bin", IPDOMManager.ID_NO_INDEXER);
+		ICProject cProject= CProjectHelper.createCCProject(project, "bin", IPDOMManager.ID_NO_INDEXER);
 		IFolder folder;
 		if (linkSourceFolder)
 			folder= ResourceHelper.createLinkedFolder((IProject) cProject.getUnderlyingResource(), new Path("src"), CTestPlugin.getDefault(), new Path(externalSourceFolder));
@@ -447,6 +445,40 @@ public class EditorTestHelper {
 		Assert.assertTrue(folder.exists());
 		CProjectHelper.addCContainer(cProject, "src");
 		return cProject;
+	}
+
+	public static IProject createNonCProject(final String projectName, String externalSourceFolder, boolean linkSourceFolder) throws CoreException {
+		final IWorkspace ws = ResourcesPlugin.getWorkspace();
+		final IProject newProject[] = new IProject[1];
+		ws.run(new IWorkspaceRunnable() {
+			public void run(IProgressMonitor monitor) throws CoreException {
+				IWorkspaceRoot root = ws.getRoot();
+				IProject project = root.getProject(projectName);
+				if (!project.exists()) {
+					project.create(null);
+				} else {
+					project.refreshLocal(IResource.DEPTH_INFINITE, null);
+				}
+				if (!project.isOpen()) {
+					project.open(null);
+				}
+				newProject[0] = project;
+			}
+		}, null);
+
+		final IProject project= newProject[0];
+		Assert.assertNotNull(project);
+		final IFolder folder;
+		if (linkSourceFolder)
+			folder= ResourceHelper.createLinkedFolder(project, new Path("src"), CTestPlugin.getDefault(), new Path(externalSourceFolder));
+		else {
+			folder= project.getFolder("src");
+			importFilesFromDirectory(FileTool.getFileInPlugin(CTestPlugin.getDefault(), new Path(externalSourceFolder)), folder.getFullPath(), null);
+		}
+		Assert.assertNotNull(folder);
+		Assert.assertTrue(folder.exists());
+
+		return project;
 	}
 	
     public static IFile createFile(IContainer container, String fileName, String contents, IProgressMonitor monitor) throws CoreException {

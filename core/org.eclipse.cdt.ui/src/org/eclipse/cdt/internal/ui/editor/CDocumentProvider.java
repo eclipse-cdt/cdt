@@ -28,6 +28,7 @@ import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.DefaultLineTracker;
 import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.IDocumentExtension3;
 import org.eclipse.jface.text.ILineTracker;
 import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.TextUtilities;
@@ -792,6 +793,19 @@ public class CDocumentProvider extends TextFileDocumentProvider {
 			}
 		};
 		CUIPlugin.getDefault().getPreferenceStore().addPropertyChangeListener(fPropertyListener);
+	}
+
+	/*
+	 * @see org.eclipse.ui.editors.text.TextFileDocumentProvider#connect(java.lang.Object)
+	 */
+	public void connect(Object element) throws CoreException {
+		super.connect(element);
+		IDocument document= getDocument(element);
+		if (document instanceof IDocumentExtension3) {
+			IDocumentExtension3 extension= (IDocumentExtension3) document;
+			if (extension.getDocumentPartitioner(ICPartitions.C_PARTITIONING) == null)
+				new CDocumentSetupParticipant().setup(document);
+		}
 	}
 
 	/**

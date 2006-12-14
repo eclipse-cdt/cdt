@@ -542,6 +542,7 @@ public class RSECoreTestCase extends TestCase {
 				// Log the error to the error log.
 				IStatus status = new Status(IStatus.ERROR,
 				                            RSETestsPlugin.getDefault().getBundle().getSymbolicName(),
+				                            0,
 				                            "RSE JUnit test case '" + test + "' failed with error. Possible cause: " + error.getLocalizedMessage(), //$NON-NLS-1$ //$NON-NLS-2$
 				                            error
 				                           );

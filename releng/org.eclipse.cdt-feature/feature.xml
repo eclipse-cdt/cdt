@@ -87,13 +87,6 @@
          unpack="false"/>
 
    <plugin
-         id="org.eclipse.cdt.debug.mi.core"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
          id="org.eclipse.cdt.debug.ui"
          download-size="0"
          install-size="0"
@@ -127,7 +120,8 @@
          download-size="0"
          install-size="0"
          version="0.0.0"
-         fragment="true"/>
+         fragment="true"
+         unpack="false"/>
 
    <plugin
          id="org.eclipse.cdt.core.linux"
@@ -135,7 +129,8 @@
          download-size="0"
          install-size="0"
          version="0.0.0"
-         fragment="true"/>
+         fragment="true"
+         unpack="false"/>
 
    <plugin
          id="org.eclipse.cdt.core.qnx"
@@ -143,7 +138,8 @@
          download-size="0"
          install-size="0"
          version="0.0.0"
-         fragment="true"/>
+         fragment="true"
+         unpack="false"/>
 
    <plugin
          id="org.eclipse.cdt.core.solaris"
@@ -151,7 +147,8 @@
          download-size="0"
          install-size="0"
          version="0.0.0"
-         fragment="true"/>
+         fragment="true"
+         unpack="false"/>
 
    <plugin
          id="org.eclipse.cdt.core.win32"
@@ -159,7 +156,8 @@
          download-size="0"
          install-size="0"
          version="0.0.0"
-         fragment="true"/>
+         fragment="true"
+         unpack="false"/>
 
    <plugin
          id="org.eclipse.cdt.make.core"
@@ -195,7 +193,8 @@
          download-size="0"
          install-size="0"
          version="0.0.0"
-         fragment="true"/>
+         fragment="true"
+         unpack="false"/>
 
    <plugin
          id="org.eclipse.cdt.core.linux.ia64"
@@ -204,7 +203,8 @@
          download-size="0"
          install-size="0"
          version="0.0.0"
-         fragment="true"/>
+         fragment="true"
+         unpack="false"/>
 
    <plugin
          id="org.eclipse.cdt.core.linux.ppc"
@@ -213,7 +213,8 @@
          download-size="0"
          install-size="0"
          version="0.0.0"
-         fragment="true"/>
+         fragment="true"
+         unpack="false"/>
 
    <plugin
          id="org.eclipse.cdt.core.linux.x86_64"
@@ -222,7 +223,8 @@
          download-size="0"
          install-size="0"
          version="0.0.0"
-         fragment="true"/>
+         fragment="true"
+         unpack="false"/>
 
    <plugin
          id="org.eclipse.cdt.core.linux.x86"
@@ -231,7 +233,8 @@
          download-size="0"
          install-size="0"
          version="0.0.0"
-         fragment="true"/>
+         fragment="true"
+         unpack="false"/>
 
    <plugin
          id="org.eclipse.cdt.managedbuilder.gnu.ui"
@@ -242,6 +245,13 @@
 
    <plugin
          id="org.eclipse.cdt.refactoring"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.eclipse.cdt.debug.mi.core"
          download-size="0"
          install-size="0"
          version="0.0.0"

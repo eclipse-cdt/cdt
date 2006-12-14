@@ -1095,6 +1095,7 @@ public class LocalFileService extends AbstractFileService implements IFileServic
 					try
 					{
 						targetFile.createNewFile();
+				
 					}
 					catch (Exception e)
 					{
@@ -1173,7 +1174,7 @@ public class LocalFileService extends AbstractFileService implements IFileServic
 	 */
 	protected boolean isSpecialChar(char c)  {
 		   
-		if ((c == '$') || (c == '`') || (c == '"') || (c == '\\') ) {
+		if ((c == '$') || (c == '`') || (c == '"') || (!isWindows() && (c == '\\')) ) {
 						
 			return true;
 		}

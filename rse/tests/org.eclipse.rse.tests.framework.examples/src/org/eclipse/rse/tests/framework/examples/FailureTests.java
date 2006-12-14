@@ -13,17 +13,17 @@ public class FailureTests extends AbstractTest {
 
 	public void testFailure01() {
 		sleep(50);
-		fail("generic failure 01");
+		fail("generic failure 01"); //$NON-NLS-1$
 	}
 	
 	public void testFailure02() {
 		sleep(50);
-		fail("generic failure 02");
+		fail("generic failure 02"); //$NON-NLS-1$
 	}
 	
 	public void testFailure03() {
 		sleep(50);
-		fail("generic failure 03");
+		fail("generic failure 03"); //$NON-NLS-1$
 	}
 	
 }

@@ -15,7 +15,7 @@ public class AnnotatingSuite extends TestSuite {
 
 	public AnnotatingSuite() {
 		super(AnnotatingTests.class);
-		setName("annotation");
+		setName("annotation"); //$NON-NLS-1$
 	}
 	
 }

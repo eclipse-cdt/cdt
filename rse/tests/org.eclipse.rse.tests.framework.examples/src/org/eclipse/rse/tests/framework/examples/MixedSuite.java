@@ -15,25 +15,25 @@ public class MixedSuite extends TestSuite {
 
 	public MixedSuite() {
 		super();
-		setName("mixed results");
-		this.addTest(TestSuite.createTest(SuccessTests.class, "testSuccess01"));
-		this.addTest(TestSuite.createTest(SuccessTests.class, "testSuccess02"));
-		this.addTest(TestSuite.createTest(SuccessTests.class, "testSuccess03"));
-		this.addTest(TestSuite.createTest(FailureTests.class, "testFailure01"));
-		this.addTest(TestSuite.createTest(FailureTests.class, "testFailure02"));
-		this.addTest(TestSuite.createTest(FailureTests.class, "testFailure03"));
-		this.addTest(TestSuite.createTest(ErrorTests.class, "testError01"));
-		this.addTest(TestSuite.createTest(ErrorTests.class, "testError02"));
-		this.addTest(TestSuite.createTest(ErrorTests.class, "testError03"));
-		this.addTest(TestSuite.createTest(SuccessTests.class, "testSuccess01"));
-		this.addTest(TestSuite.createTest(FailureTests.class, "testFailure01"));
-		this.addTest(TestSuite.createTest(ErrorTests.class, "testError01"));
-		this.addTest(TestSuite.createTest(SuccessTests.class, "testSuccess02"));
-		this.addTest(TestSuite.createTest(FailureTests.class, "testFailure02"));
-		this.addTest(TestSuite.createTest(ErrorTests.class, "testError02"));
-		this.addTest(TestSuite.createTest(SuccessTests.class, "testSuccess03"));
-		this.addTest(TestSuite.createTest(FailureTests.class, "testFailure03"));
-		this.addTest(TestSuite.createTest(ErrorTests.class, "testError03"));
+		setName("mixed results"); //$NON-NLS-1$
+		this.addTest(TestSuite.createTest(SuccessTests.class, "testSuccess01")); //$NON-NLS-1$
+		this.addTest(TestSuite.createTest(SuccessTests.class, "testSuccess02")); //$NON-NLS-1$
+		this.addTest(TestSuite.createTest(SuccessTests.class, "testSuccess03")); //$NON-NLS-1$
+		this.addTest(TestSuite.createTest(FailureTests.class, "testFailure01")); //$NON-NLS-1$
+		this.addTest(TestSuite.createTest(FailureTests.class, "testFailure02")); //$NON-NLS-1$
+		this.addTest(TestSuite.createTest(FailureTests.class, "testFailure03")); //$NON-NLS-1$
+		this.addTest(TestSuite.createTest(ErrorTests.class, "testError01")); //$NON-NLS-1$
+		this.addTest(TestSuite.createTest(ErrorTests.class, "testError02")); //$NON-NLS-1$
+		this.addTest(TestSuite.createTest(ErrorTests.class, "testError03")); //$NON-NLS-1$
+		this.addTest(TestSuite.createTest(SuccessTests.class, "testSuccess01")); //$NON-NLS-1$
+		this.addTest(TestSuite.createTest(FailureTests.class, "testFailure01")); //$NON-NLS-1$
+		this.addTest(TestSuite.createTest(ErrorTests.class, "testError01")); //$NON-NLS-1$
+		this.addTest(TestSuite.createTest(SuccessTests.class, "testSuccess02")); //$NON-NLS-1$
+		this.addTest(TestSuite.createTest(FailureTests.class, "testFailure02")); //$NON-NLS-1$
+		this.addTest(TestSuite.createTest(ErrorTests.class, "testError02")); //$NON-NLS-1$
+		this.addTest(TestSuite.createTest(SuccessTests.class, "testSuccess03")); //$NON-NLS-1$
+		this.addTest(TestSuite.createTest(FailureTests.class, "testFailure03")); //$NON-NLS-1$
+		this.addTest(TestSuite.createTest(ErrorTests.class, "testError03")); //$NON-NLS-1$
 	}
 	
 }

@@ -15,7 +15,7 @@ public class SuccessSuite extends TestSuite {
 
 	public SuccessSuite() {
 		super(SuccessTests.class);
-		setName("successes");
+		setName("successes"); //$NON-NLS-1$
 	}
 	
 }

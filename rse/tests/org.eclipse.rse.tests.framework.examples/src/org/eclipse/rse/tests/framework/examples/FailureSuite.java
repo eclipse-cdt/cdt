@@ -15,7 +15,7 @@ public class FailureSuite extends TestSuite {
 
 	public FailureSuite() {
 		super(FailureTests.class);
-		setName("failures");
+		setName("failures"); //$NON-NLS-1$
 	}
 	
 }

@@ -15,7 +15,7 @@ public class ErrorSuite extends TestSuite {
 
 	public ErrorSuite() {
 		super(ErrorTests.class);
-		setName("errors");
+		setName("errors"); //$NON-NLS-1$
 	}
 	
 }

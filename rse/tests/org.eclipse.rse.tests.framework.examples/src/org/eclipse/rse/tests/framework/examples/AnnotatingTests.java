@@ -12,32 +12,32 @@ package org.eclipse.rse.tests.framework.examples;
 public class AnnotatingTests extends AbstractTest {
 	
 	public void testSuccess01() {
-		remark("Remark 1 for 01");
-		remark("Remark 2 for 01");
+		remark("Remark 1 for 01"); //$NON-NLS-1$
+		remark("Remark 2 for 01"); //$NON-NLS-1$
 		sleep(500);
 	}
 	
 	public void testSuccess02() {
-		remark("Remark 1 for 02");
-		remark("Remark 2 for 02");
+		remark("Remark 1 for 02"); //$NON-NLS-1$
+		remark("Remark 2 for 02"); //$NON-NLS-1$
 		sleep(500);
 	}
 	
 	public void testSuccess03() {
-		remark("Remark 1 for 03");
-		remark("Remark 2 for 03");
+		remark("Remark 1 for 03"); //$NON-NLS-1$
+		remark("Remark 2 for 03"); //$NON-NLS-1$
 		sleep(500);
 	}
 	
 	public void testSuccess04() {
-		remark("Remark 1 for 04");
-		remark("Remark 2 for 04");
+		remark("Remark 1 for 04"); //$NON-NLS-1$
+		remark("Remark 2 for 04"); //$NON-NLS-1$
 		sleep(500);
 	}
 	
 	public void testSuccess05() {
-		remark("Remark 1 for 05");
-		remark("Remark 2 for 05");
+		remark("Remark 1 for 05"); //$NON-NLS-1$
+		remark("Remark 2 for 05"); //$NON-NLS-1$
 		sleep(500);
 	}
 	

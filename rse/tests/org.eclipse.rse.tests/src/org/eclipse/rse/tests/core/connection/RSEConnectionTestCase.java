@@ -40,7 +40,6 @@ public class RSEConnectionTestCase extends RSEBaseConnectionTestCase {
 		subsystem.connect();
 		assertTrue("Subsystem not connected", subsystem.isConnected()); //$NON-NLS-1$
 		subsystem.disconnect();
-		Thread.sleep(5000); // disconnect runs as a separate job, give it some time to disconnect
 		assertFalse(subsystem.isConnected());
 	}
 

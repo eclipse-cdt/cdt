@@ -1,4 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.0"?>
 <plugin>
+   <extension point="org.eclipse.rse.tests.framework.suites">
+      <suite type="org.eclipse.rse.tests.RSECombinedTestSuite" name="RSE Combined Test Suite"/>
+      	<type name="org.eclipse.rse.tests.RSECombinedTestSuite" class="org.eclipse.rse.tests.RSECombinedTestSuite" />
+      
+      <suite type="org.eclipse.rse.tests.internal.RSEInternalFrameworkTestSuite" name="RSE Internal Framework Test Suite"/>
+      	<type name="org.eclipse.rse.tests.internal.RSEInternalFrameworkTestSuite" class="org.eclipse.rse.tests.internal.RSEInternalFrameworkTestSuite" />
+      
+      <suite type="org.eclipse.rse.tests.core.connection.RSEConnectionTestSuite" name="RSE Connection Test Suite"/>
+      	<type name="org.eclipse.rse.tests.core.connection.RSEConnectionTestSuite" class="org.eclipse.rse.tests.core.connection.RSEConnectionTestSuite" />
+      
+      <suite type="org.eclipse.rse.tests.persistence.RSEPersistenceTestSuite" name="RSE Persistence Test Suite"/>
+      	<type name="org.eclipse.rse.tests.persistence.RSEPersistenceTestSuite" class="org.eclipse.rse.tests.persistence.RSEPersistenceTestSuite" />
+   </extension>
 </plugin>

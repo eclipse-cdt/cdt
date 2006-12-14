@@ -3,10 +3,12 @@ package org.eclipse.rse.tests.persistence;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
+import org.eclipse.rse.tests.framework.DelegatingTestSuiteHolder;
+
 /**
  * Main class bundling all RSE connection test cases.
  */
-public class RSEPersistenceTestSuite {
+public class RSEPersistenceTestSuite extends DelegatingTestSuiteHolder {
 
 	/**
 	 * Standard Java application main method. Allows to launch the test
@@ -35,5 +37,12 @@ public class RSEPersistenceTestSuite {
 		suite.addTestSuite(RSEPersistenceTest.class);
 		
 		return suite;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.tests.framework.AbstractTestSuiteHolder#getTestSuite()
+	 */
+	public TestSuite getTestSuite() {
+		return (TestSuite)RSEPersistenceTestSuite.suite();
 	}
 }

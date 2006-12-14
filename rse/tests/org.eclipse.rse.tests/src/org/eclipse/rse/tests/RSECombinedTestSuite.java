@@ -13,6 +13,7 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 
 import org.eclipse.rse.tests.core.connection.RSEConnectionTestSuite;
+import org.eclipse.rse.tests.framework.DelegatingTestSuiteHolder;
 import org.eclipse.rse.tests.internal.RSEInternalFrameworkTestSuite;
 import org.eclipse.rse.tests.persistence.RSEPersistenceTestSuite;
 
@@ -20,7 +21,7 @@ import org.eclipse.rse.tests.persistence.RSEPersistenceTestSuite;
  * Main class bundling all single specialized test suites into a
  * overall complete one.
  */
-public class RSECombinedTestSuite {
+public class RSECombinedTestSuite extends DelegatingTestSuiteHolder {
 
 	/**
 	 * Standard Java application main method. Allows to launch the test
@@ -52,5 +53,12 @@ public class RSECombinedTestSuite {
 		suite.addTest(RSEPersistenceTestSuite.suite());
 		
 		return suite;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.tests.framework.AbstractTestSuiteHolder#getTestSuite()
+	 */
+	public TestSuite getTestSuite() {
+		return (TestSuite)RSECombinedTestSuite.suite();
 	}
 }

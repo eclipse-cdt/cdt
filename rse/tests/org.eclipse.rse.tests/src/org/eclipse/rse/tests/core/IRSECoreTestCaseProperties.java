@@ -20,7 +20,7 @@ public interface IRSECoreTestCaseProperties {
 	 * expanded before the test case is starting. The original view maximized
 	 * state will be restored after the test case finished.
 	 * <p>
-	 * Default value is <b><code>true</code></b>.
+	 * Default value is <b><code>false</code></b>.
 	 */
 	public static final String PROP_MAXIMIZE_REMOTE_SYSTEMS_VIEW = PROP_BASE_KEY + ".maximizeRemoteSystemsView"; //$NON-NLS-1$
 
@@ -40,4 +40,12 @@ public interface IRSECoreTestCaseProperties {
 	 * Default value is <b><code>false</code></b>.
 	 */
 	public static final String PROP_FORCE_BACKGROUND_EXECUTION = PROP_BASE_KEY + ".forceBackgroundExecution"; //$NON-NLS-1$
+	
+	/**
+	 * Boolean property controling if the printed test start, stop and delay information
+	 * includes the time consumed from calling <code>setUp</code> and <code>tearDown</code>.
+	 * <p>
+	 * Default value is <b><code>false</code></b>.
+	 */
+	public static final String PROP_PERFORMANCE_TIMING_INCLUDE_SETUP_TEARDOWN = PROP_BASE_KEY + ".timingsIncludeSetupAndTearDown"; //$NON-NLS-1$
 }

@@ -12,10 +12,12 @@ package org.eclipse.rse.tests.core.connection;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
+import org.eclipse.rse.tests.framework.DelegatingTestSuiteHolder;
+
 /**
  * Main class bundling all RSE connection test cases.
  */
-public class RSEConnectionTestSuite {
+public class RSEConnectionTestSuite extends DelegatingTestSuiteHolder {
 
 	/**
 	 * Standard Java application main method. Allows to launch the test
@@ -44,5 +46,12 @@ public class RSEConnectionTestSuite {
 		suite.addTestSuite(RSEConnectionTestCase.class);
 		
 		return suite;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.tests.framework.AbstractTestSuiteHolder#getTestSuite()
+	 */
+	public TestSuite getTestSuite() {
+		return (TestSuite)RSEConnectionTestSuite.suite();
 	}
 }

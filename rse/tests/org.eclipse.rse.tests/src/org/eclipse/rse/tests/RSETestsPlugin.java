@@ -12,10 +12,15 @@
 package org.eclipse.rse.tests;
 
 import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
+import org.eclipse.rse.tests.core.IRSETestLogCollectorDelegate;
+import org.eclipse.rse.tests.internal.RSEDefaultTestLogCollectorDelegate;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
+import org.osgi.framework.BundleContext;
 
 /**
  * Main plugin class for the RSE JUnit tests framework. This
@@ -28,6 +33,12 @@ public class RSETestsPlugin extends AbstractUIPlugin {
 	// The resource bundle associated with this plugin.
 	private ResourceBundle resourceBundle;
 
+	// Test log collector delegates storage.
+	private final List logCollectorDelegates = new ArrayList();
+	
+	// Default test log collector delegate
+	private final IRSETestLogCollectorDelegate defaultLogCollectorDelegate = new RSEDefaultTestLogCollectorDelegate();
+	
 	/**
 	 * Constructor.
 	 */
@@ -116,11 +127,27 @@ public class RSETestsPlugin extends AbstractUIPlugin {
 		assert arguments != null;
 		String resourceString = getResourceString(key);
 		if (!resourceString.startsWith("!")) { //$NON-NLS-1$
-			MessageFormat.format(resourceString, arguments);
+			return MessageFormat.format(resourceString, arguments);
 		}
 		return resourceString;
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.plugin.AbstractUIPlugin#start(org.osgi.framework.BundleContext)
+	 */
+	public void start(BundleContext context) throws Exception {
+		super.start(context);
+		addDelegate(defaultLogCollectorDelegate);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.plugin.AbstractUIPlugin#stop(org.osgi.framework.BundleContext)
+	 */
+	public void stop(BundleContext context) throws Exception {
+		removeDelegate(defaultLogCollectorDelegate);
+		super.stop(context);
+	}
+
 	/**
 	 * Checks if the test case given through the specified key is enabled for
 	 * execution. A test case is considered enabled if either<br>
@@ -136,15 +163,52 @@ public class RSETestsPlugin extends AbstractUIPlugin {
 	 */
 	public static boolean isTestCaseEnabled(String testId) {
 		assert testId != null;
+		
 		// Test first for the system property (explicit -D option).
 		String value = System.getProperty(testId);
-//		if (value != null) return Boolean.parseBoolean(value);
-		if (value != null) return value.equals("true"); //$NON-NLS-1$
-		
+		if (value != null) return Boolean.getBoolean(value);
+			
 		// If the system property is not set, check for the key in the resource bundle
 		value = getResourceString(testId);
-//		if (value != null && !value.startsWith("!")) return Boolean.parseBoolean(value); //$NON-NLS-1$
-		if (value != null && !value.startsWith("!")) return value.equals("true"); //$NON-NLS-1$ //$NON-NLS-2$
-		return false;
+		if (value != null && !value.startsWith("!")) return Boolean.valueOf(value).booleanValue(); //$NON-NLS-1$
+
+		// the test is considered enabled as well if not otherwise explicitly overriden
+		return true;
+	}
+	
+	/**
+	 * Add the specified test collector delegate to the list. If the specified
+	 * delegate had been already added to the list before, the method will return
+	 * without re-adding the test collector delegate again.
+	 * 
+	 * @param delegate The test collector delegate to add. Must be not <code>null</code>.
+	 */
+	public synchronized void addDelegate(IRSETestLogCollectorDelegate delegate) {
+		assert delegate != null;
+		if (delegate != null && !logCollectorDelegates.contains(delegate)) {
+			logCollectorDelegates.add(delegate);
+		}
+	}
+	
+	/**
+	 * Removes the specified test collector delegate from the list. If the specified
+	 * delegate had not been added to the list before, the method will return immediatelly.
+	 * 
+	 * @param delegate The test collector delegate to remove. Must be not <code>null</code>.
+	 */
+	public synchronized void removeDelegate(IRSETestLogCollectorDelegate delegate) {
+		assert delegate != null;
+		if (delegate != null) {
+			logCollectorDelegates.remove(delegate);
+		}
+	}
+
+	/**
+	 * Returns the currently list of known test log collector delegates.
+	 * 
+	 * @return The currently known list of test collector delegates.
+	 */
+	public synchronized IRSETestLogCollectorDelegate[] getTestLogCollectorDelegates() {
+		return (IRSETestLogCollectorDelegate[])logCollectorDelegates.toArray(new IRSETestLogCollectorDelegate[logCollectorDelegates.size()]);
 	}
 }

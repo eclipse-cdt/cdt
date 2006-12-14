@@ -5,7 +5,7 @@
  * available at http://www.eclipse.org/legal/epl-v10.html
  * 
  * Contributors:
- * Uwe Stieber (Wind River) - initial contribution.
+ *    Uwe Stieber (Wind River) - initial contribution.
  * *******************************************************************************/
 package org.eclipse.rse.tests.internal;
 
@@ -28,5 +28,25 @@ public class RSETestsPluginTestCase extends RSECoreTestCase {
 		
 		ResourceBundle bundle = RSETestsPlugin.getDefault().getResourceBundle();
 		assertNotNull("No resource bundle associated with RSETestsPlugin!", bundle); //$NON-NLS-1$
+		
+		// our own test id must be true here, otherwise we wouldn't had
+		// reached this point anyway.
+		assertTrue("Unexpected return value false!", RSETestsPlugin.isTestCaseEnabled("RSETestsPluginTestCase.testPluginResourceBundle")); //$NON-NLS-1$ //$NON-NLS-2$
+
+		// a test id not listed within the resources file must be always true
+		assertTrue("Unexpected return value false!", RSETestsPlugin.isTestCaseEnabled("RSETestsPluginTestCase.testNeverAddThisToTheResourceBundle")); //$NON-NLS-1$ //$NON-NLS-2$
+	
+		// this test id should be never enabled
+		assertFalse("Unexpected return value true!", RSETestsPlugin.isTestCaseEnabled("RSETestsPluginTestCase.dontRemove.testNeverEnabledThis")); //$NON-NLS-1$ //$NON-NLS-2$
+		
+		// Test the different getResourceString methods.
+		String expected = "testResolveString"; //$NON-NLS-1$
+		assertEquals("Unexpected return value!", expected, RSETestsPlugin.getResourceString("RSETestsPluginTestCase.dontRemove.testResolveString")); //$NON-NLS-1$ //$NON-NLS-2$
+
+		expected = "testResolveString, param=value"; //$NON-NLS-1$
+		assertEquals("Unexpected return value!", expected, RSETestsPlugin.getResourceString("RSETestsPluginTestCase.dontRemove.testResolveStringOneParameter", "value")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+
+		expected = "testResolveString, param=value1, param=value2"; //$NON-NLS-1$
+		assertEquals("Unexpected return value!", expected, RSETestsPlugin.getResourceString("RSETestsPluginTestCase.dontRemove.testResolveStringMultiParameter", new Object[] { "value1", "value2" })); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 	}
 }

@@ -12,11 +12,13 @@ package org.eclipse.rse.tests.internal;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
+import org.eclipse.rse.tests.framework.DelegatingTestSuiteHolder;
+
 /**
  * Main class bundling all internal test case asuring the consistent
  * functionality of the test framework itself.
  */
-public class RSEInternalFrameworkTestSuite {
+public class RSEInternalFrameworkTestSuite extends DelegatingTestSuiteHolder {
 
 	/**
 	 * Standard Java application main method. Allows to launch the test
@@ -43,7 +45,15 @@ public class RSEInternalFrameworkTestSuite {
 		TestSuite suite = new TestSuite("RSE Internal Framework Test Suite"); //$NON-NLS-1$
 		// add the single test suites to the overall one here.
 		suite.addTestSuite(RSETestsPluginTestCase.class);
+		suite.addTestSuite(RSEInternalFrameworkTestCase.class);
 		
 		return suite;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.tests.framework.AbstractTestSuiteHolder#getTestSuite()
+	 */
+	public TestSuite getTestSuite() {
+		return (TestSuite)RSEInternalFrameworkTestSuite.suite();
 	}
 }

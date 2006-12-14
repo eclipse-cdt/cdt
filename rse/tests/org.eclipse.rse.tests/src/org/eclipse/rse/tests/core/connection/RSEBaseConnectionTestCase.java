@@ -103,6 +103,7 @@ public class RSEBaseConnectionTestCase extends RSECoreTestCase {
 			if (profile == null) {
 				profile = RSEConnectionTestUtil.createProfile(profileName);
 			}
+			assertNotNull("Failed to find and create profile!", profile); //$NON-NLS-1$
 			String hostName = getHostName();
 			assertNotSame("need to change the host name in SystemConnectionInfo.properties", "unknown", hostName); //$NON-NLS-1$ //$NON-NLS-2$
 			host = RSEConnectionTestUtil.findHost(profileName, hostName);

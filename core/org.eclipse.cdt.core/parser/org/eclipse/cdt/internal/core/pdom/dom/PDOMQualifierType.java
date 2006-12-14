@@ -120,8 +120,10 @@ public class PDOMQualifierType extends PDOMNode implements IQualifierType,
 	    
 	    IQualifierType pt = (IQualifierType) type;
 	    try {
-			if( isConst() == pt.isConst() && isVolatile() == pt.isVolatile() )
-			    return type.isSameType( pt.getType() );
+			if( isConst() == pt.isConst() && isVolatile() == pt.isVolatile() ) {
+				IType myType= getType();
+			    return myType != null && myType.isSameType( pt.getType() );
+			}
 		} catch (DOMException e) {
 		}
 	    return false;

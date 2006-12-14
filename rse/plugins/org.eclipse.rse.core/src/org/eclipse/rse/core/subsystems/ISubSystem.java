@@ -33,10 +33,10 @@ import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
 
 /**
  * Interface implemented by SubSystem objects. While connections contain information to identify a 
- *   particular remote system, it is the subsystem objects within a connection that contain information
- *   unique to a particular tool, for that remote system, such as the port the tool uses and the 
- *   user ID for making the connection. There are a set of default properties, but these can be
- *   extended by subsystem providers, by extending {@link SubSystem}. 
+ * particular remote system, it is the subsystem objects within a connection that contain information
+ * unique to a particular tool, for that remote system, such as the port the tool uses and the 
+ * user ID for making the connection. There are a set of default properties, but these can be
+ * extended by subsystem providers, by extending SubSystem. 
  * <p>
  */
 public interface ISubSystem extends ISystemFilterPoolReferenceManagerProvider, IRemoteObjectResolver, ISchedulingRule, IRSEModelObject, IRSEPersistableContainer
@@ -74,12 +74,14 @@ public interface ISubSystem extends ISystemFilterPoolReferenceManagerProvider, I
 	public IHost getHost();
 	
 	/**
-	 * Called on each subsystem associated with a particular IConnectorService after it connects
+	 * Called on each subsystem associated with a particular {@link IConnectorService} after it connects. 
+	 * @param monitor A progress monitor supporting progress reporting and cancellation.
 	 */
 	public void initializeSubSystem(IProgressMonitor monitor);
 	
 	/**
-	 * Called on each subsystem associated with a particular IConnectorService after it disconnects
+	 * Called on each subsystem associated with a particular {@link IConnectorService} after it disconnects
+	 * @param monitor A progress monitor supporting progress reporting and cancellation.
 	 */
 	public void uninitializeSubSystem(IProgressMonitor monitor);
 	
@@ -187,10 +189,9 @@ public interface ISubSystem extends ISystemFilterPoolReferenceManagerProvider, I
      * To set the local user Id, simply call setUserId(String id). To clear it, call
      * {@link #clearLocalUserId()}.
      * <p>
-	 * @see org.eclipse.rse.model.IHost#getDefaultUserId()
+	 * @see IHost#getDefaultUserId()
 	 * @see #clearLocalUserId()
 	 * @see #getUserId()
-	 * @see #setUserId(String)
      */
     public String getLocalUserId();
     /**
@@ -198,10 +199,9 @@ public interface ISubSystem extends ISystemFilterPoolReferenceManagerProvider, I
      * return the parent connection's default user Id. Sets the user Id attribute for this
      * subsystem to null.
      * <p>
-	 * @see org.eclipse.rse.model.IHost#getDefaultUserId()
+	 * @see IHost#getDefaultUserId()
 	 * @see #getUserId()
 	 * @see #getLocalUserId()
-	 * @see #setUserId(String)
      */
     public void clearLocalUserId();
 	/**
@@ -277,8 +277,7 @@ public interface ISubSystem extends ISystemFilterPoolReferenceManagerProvider, I
      * user preferences, so that such things are not shared among the team on a synchronize operation.
      * This is transparent to callers of this method however, as this method resolves from the preferences.
      *
-	 * @see org.eclipse.rse.model.IHost#getDefaultUserId()
-	 * @see #setUserId(String)
+	 * @see IHost#getDefaultUserId()
 	 * @see #getLocalUserId()
 	 * @see #clearLocalUserId()
 	 * @return The value of the UserId attribute
@@ -478,11 +477,11 @@ public interface ISubSystem extends ISystemFilterPoolReferenceManagerProvider, I
      * Resolve multiple absolute filter strings. This is only applicable if the subsystem
      *  factory reports true for supportsFilters().
      * <p>
-     * This is the same as {@link #resolveFilterString(String,Shell)} but takes an array of
-     *  filter strings versus a single filter string.
+     * This is the same as {@link #resolveFilterString(String)} but takes an array of
+     * filter strings versus a single filter string.
      *
      * @param filterStrings array of filter patterns for objects to return.
-      * @return Array of objects that are the result of resolving all the filter strings
+     * @return Array of objects that are the result of resolving all the filter strings
      */
     public Object[] resolveFilterStrings(String[] filterStrings)
            throws Exception;
@@ -559,11 +558,11 @@ public interface ISubSystem extends ISystemFilterPoolReferenceManagerProvider, I
 
     /**
      * Set multiple remote properties. Subsystems interpret as they wish. Eg, this might be to set
-     *  a number of remote environment variables. This is only applicable if the subsystem factory reports
-     *  true for supportsProperties().
+     * a number of remote environment variables. This is only applicable if the subsystem factory reports
+     * true for supportsProperties().
      * @param subject Identifies which object to get the properties of
-     * @param key Identifies property to set
-     * @param value Values to set properties to. One to one mapping to keys by index number
+     * @param keys Identifies the properties to set
+     * @param values Values to set properties to. One to one mapping to keys by index number
      * @return Object interpretable by subsystem. Might be a Boolean, or the might be new values for confirmation.
      */
     public Object setProperties(Object subject, String[] keys, String[] values)
@@ -574,8 +573,8 @@ public interface ISubSystem extends ISystemFilterPoolReferenceManagerProvider, I
      *  a remote environment variable. This is only applicable if the subsystem factory reports
      *  true for supportsProperties().
      * @param subject Identifies which object to get the properties of
-     * @param key Identifies property to get value of
-     * @return Object The values of the requested keys.
+     * @param keys Identifies properties to get value of
+     * @return The values of the requested keys.
      */
     public String[] getProperties(Object subject, String[] keys)
            throws Exception;
@@ -628,7 +627,7 @@ public interface ISubSystem extends ISystemFilterPoolReferenceManagerProvider, I
 	 * Returns the parent object associated with a filter reference.  It's up to the
 	 * subsystem implementation to decide what "parent object" means for a filter reference.
 	 * @param filterRef the filter reference to determine a target object from.
-	 * @return
+	 * @return An object representing the parent
 	 */
 	Object getTargetForFilter(ISystemFilterReference filterRef);
 

@@ -2003,7 +2003,6 @@ public abstract class SubSystem extends RSEModelObject implements IAdaptable, IS
         	{
     	  try
     	  {
-//dwd   	    this.shell = shell; //FIXME remove this   	    	  	
     	    ResolveAbsoluteJob job = new ResolveAbsoluteJob(filterString);
     	    
     	    IStatus status = scheduleJob(job, null, shell != null);
@@ -2067,7 +2066,6 @@ public abstract class SubSystem extends RSEModelObject implements IAdaptable, IS
         	{
     	  try
     	  {
-//dwd    	    this.shell = shell; //FIXME remove this	
     	    ResolveAbsolutesJob job = new ResolveAbsolutesJob(filterStrings[0], filterStrings);
     	      	    
     	    IStatus status = scheduleJob(job, null, true);
@@ -2322,7 +2320,6 @@ public abstract class SubSystem extends RSEModelObject implements IAdaptable, IS
         	{
     	  try
     	  {    	    	  	
- //dwd   	    this.shell = shell; //FIXME remove this
   		
     	    ResolveRelativeJob job = new ResolveRelativeJob(filterString, parent);
     	    
@@ -2379,7 +2376,6 @@ public abstract class SubSystem extends RSEModelObject implements IAdaptable, IS
         {
     	  try
     	  {
-//dwd    	    this.shell = shell; //FIXME remove this
     	    SetPropertyJob job = new SetPropertyJob(subject, key, value);
     	    
     	    IStatus status = scheduleJob(job, null, true);
@@ -2417,7 +2413,6 @@ public abstract class SubSystem extends RSEModelObject implements IAdaptable, IS
         {
     	  try
     	  {
-//dwd    	    this.shell = shell; //FIXME remove this   	
     	    GetPropertyJob job = new GetPropertyJob(subject, key);
     	    scheduleJob(job, null, true);
     	    
@@ -2457,7 +2452,6 @@ public abstract class SubSystem extends RSEModelObject implements IAdaptable, IS
         {
     	  try
     	  {
-//dwd    	    this.shell = shell; //FIXME remove this   	
     	    SetPropertiesJob job = new SetPropertiesJob(subject, keys, values);
     	    
     	    IStatus status = scheduleJob(job, null, true);
@@ -2478,12 +2472,23 @@ public abstract class SubSystem extends RSEModelObject implements IAdaptable, IS
     }
 
     /**
-     * This gets called after the corresponding {@link IConnectorService} connect method finishes.
+     * Initialize this subsystem instance after the corresponding {@link IConnectorService} connect method finishes.
      * This method should be overridden if any initialization for the subsystem needs
      * to occur at this time
+     * <p> The default implementation currently does nothing, but overriding methods should call super.
+     * @param monitor a monitor that can be used to show progress or provide cancellation.
      */
-    public abstract void initializeSubSystem(IProgressMonitor monitor);
-
+    public void initializeSubSystem(IProgressMonitor monitor) {
+    }
+    
+    /**
+     * Uninitialize this subsystem just after disconnect.
+     * The default implementation currently does nothing.
+     * Overriding methods should call super.
+     * @param monitor a progress monitor that can be used to show uninitialization progress can provide cancellation.
+     */
+    public void uninitializeSubSystem(IProgressMonitor monitor) {
+    }
 
     /**
 	 * Attempt to connect to the remote system when a Shell is not available.
@@ -2536,7 +2541,6 @@ public abstract class SubSystem extends RSEModelObject implements IAdaptable, IS
 			msg.makeSubstitution(hostName);
 			throw new SystemMessageException(msg);
 		}
-//dwd		this.shell = shell; //FIXME remove this
 		// yantzi: artemis 6.0, offline support
 		if (isOffline()) {
 			SystemMessage msg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_OFFLINE_CANT_CONNECT);
@@ -2638,7 +2642,6 @@ public abstract class SubSystem extends RSEModelObject implements IAdaptable, IS
     public void disconnect(boolean collapseTree) throws Exception
     {
     	_disconnecting = true;
- //dwd   	this.shell = shell; //FIXME remove this
     	if (!isConnected() || !supportsConnecting)
     	{
     	    // disconnected but may not have notified viewers (i.e. network problem)
@@ -2680,7 +2683,6 @@ public abstract class SubSystem extends RSEModelObject implements IAdaptable, IS
     public String[] getProperties(Object subject, String[] keys)
            throws Exception
     {
-//dwd    	this.shell = shell; //FIXME remove this
         boolean ok = true;
        
     	if (!isConnected())

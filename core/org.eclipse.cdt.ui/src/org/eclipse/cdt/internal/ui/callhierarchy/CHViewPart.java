@@ -85,7 +85,7 @@ public class CHViewPart extends ViewPart {
     private static final String TRUE = String.valueOf(true);
     private static final String KEY_WORKING_SET_FILTER = "workingSetFilter"; //$NON-NLS-1$
     private static final String KEY_FILTER_VARIABLES = "variableFilter"; //$NON-NLS-1$
-    private static final String KEY_FILTER_MACROS = "macroFilter"; //$NON-NLS-1$
+//    private static final String KEY_FILTER_MACROS = "macroFilter"; //$NON-NLS-1$
     private static final String KEY_SHOW_FILES= "showFilesInLabels"; //$NON-NLS-1$
     
     private IMemento fMemento;
@@ -108,7 +108,7 @@ public class CHViewPart extends ViewPart {
 
     // filters, sorter
     private ViewerFilter fVariableFilter;
-    private ViewerFilter fMacroFilter;
+//    private ViewerFilter fMacroFilter;
     private ViewerComparator fSorterAlphaNumeric;
     private ViewerComparator fSorterReferencePosition;
 	private WorkingSetFilterUI fWorkingSetFilterUI;
@@ -117,7 +117,7 @@ public class CHViewPart extends ViewPart {
     private Action fReferencedByAction;
     private Action fMakesReferenceToAction;
     private Action fFilterVariablesAction;
-    private Action fFilterMacrosAction;
+//    private Action fFilterMacrosAction;
     private Action fShowFilesInLabelsAction;
     private Action fNextAction;
     private Action fPreviousAction;
@@ -215,12 +215,12 @@ public class CHViewPart extends ViewPart {
     private void initializeActionStates() {
         boolean referencedBy= true;
         boolean filterVariables= false;
-        boolean filterMacros= false;
+//        boolean filterMacros= false;
         boolean showFiles= false;
         
         if (fMemento != null) {
             filterVariables= TRUE.equals(fMemento.getString(KEY_FILTER_VARIABLES));
-            filterMacros= TRUE.equals(fMemento.getString(KEY_FILTER_MACROS));
+//            filterMacros= TRUE.equals(fMemento.getString(KEY_FILTER_MACROS));
             showFiles= TRUE.equals(fMemento.getString(KEY_SHOW_FILES));
         }
         
@@ -231,8 +231,8 @@ public class CHViewPart extends ViewPart {
         fMakesReferenceToAction.setChecked(!referencedBy);
         fContentProvider.setComputeReferencedBy(referencedBy);
         
-        fFilterMacrosAction.setChecked(filterMacros);
-        fFilterMacrosAction.run();
+//        fFilterMacrosAction.setChecked(filterMacros);
+//        fFilterMacrosAction.run();
         fFilterVariablesAction.setChecked(filterVariables);
         fFilterVariablesAction.run();
         updateSorter();
@@ -248,7 +248,7 @@ public class CHViewPart extends ViewPart {
         if (fWorkingSetFilterUI != null) {
         	fWorkingSetFilterUI.saveState(memento, KEY_WORKING_SET_FILTER);
         }
-        memento.putString(KEY_FILTER_MACROS, String.valueOf(fFilterMacrosAction.isChecked()));
+//        memento.putString(KEY_FILTER_MACROS, String.valueOf(fFilterMacrosAction.isChecked()));
         memento.putString(KEY_FILTER_VARIABLES, String.valueOf(fFilterVariablesAction.isChecked()));
         memento.putString(KEY_SHOW_FILES, String.valueOf(fShowFilesInLabelsAction.isChecked()));
         super.saveState(memento);
@@ -366,27 +366,27 @@ public class CHViewPart extends ViewPart {
         fFilterVariablesAction.setToolTipText(CHMessages.CHViewPart_FilterVariables_tooltip);
         CPluginImages.setImageDescriptors(fFilterVariablesAction, CPluginImages.T_LCL, CPluginImages.IMG_ACTION_HIDE_FIELDS);       
 
-        fMacroFilter= new ViewerFilter() {
-            public boolean select(Viewer viewer, Object parentElement, Object element) {
-                if (element instanceof CHNode) {
-                    CHNode node= (CHNode) element;
-                    return !node.isMacro();
-                }
-                return true;
-            }
-        };
-        fFilterMacrosAction= new Action(CHMessages.CHViewPart_HideMacros_label, IAction.AS_CHECK_BOX) {
-            public void run() {
-                if (isChecked()) {
-                    fTreeViewer.addFilter(fMacroFilter);
-                }
-                else {
-                    fTreeViewer.removeFilter(fMacroFilter);
-                }
-            }
-        };
-        fFilterMacrosAction.setToolTipText(CHMessages.CHViewPart_HideMacros_tooltip);
-        CPluginImages.setImageDescriptors(fFilterMacrosAction, CPluginImages.T_LCL, CPluginImages.IMG_ACTION_HIDE_MACROS);       
+//        fMacroFilter= new ViewerFilter() {
+//            public boolean select(Viewer viewer, Object parentElement, Object element) {
+//                if (element instanceof CHNode) {
+//                    CHNode node= (CHNode) element;
+//                    return !node.isMacro();
+//                }
+//                return true;
+//            }
+//        };
+//        fFilterMacrosAction= new Action(CHMessages.CHViewPart_HideMacros_label, IAction.AS_CHECK_BOX) {
+//            public void run() {
+//                if (isChecked()) {
+//                    fTreeViewer.addFilter(fMacroFilter);
+//                }
+//                else {
+//                    fTreeViewer.removeFilter(fMacroFilter);
+//                }
+//            }
+//        };
+//        fFilterMacrosAction.setToolTipText(CHMessages.CHViewPart_HideMacros_tooltip);
+//        CPluginImages.setImageDescriptors(fFilterMacrosAction, CPluginImages.T_LCL, CPluginImages.IMG_ACTION_HIDE_MACROS);       
         
         fSorterAlphaNumeric= new ViewerComparator();
         fSorterReferencePosition= new ViewerComparator() {
@@ -476,7 +476,7 @@ public class CHViewPart extends ViewPart {
         tm.add(fNextAction);
         tm.add(fPreviousAction);
         tm.add(new Separator());
-        tm.add(fFilterMacrosAction);
+//        tm.add(fFilterMacrosAction);
         tm.add(fFilterVariablesAction);
         tm.add(new Separator());
         tm.add(fReferencedByAction);
@@ -496,7 +496,7 @@ public class CHViewPart extends ViewPart {
         mm.add(new Separator());
         mm.add(fShowFilesInLabelsAction);
         mm.add(new Separator());
-        mm.add(fFilterMacrosAction);
+//        mm.add(fFilterMacrosAction);
         mm.add(fFilterVariablesAction);
     }
     
@@ -630,7 +630,6 @@ public class CHViewPart extends ViewPart {
             	message= Messages.format(format, label, scope);
             }
         }
-        message= "The Call Hierarchy is work in progress! - " + message; //$NON-NLS-1$
         setContentDescription(message);
     }
     

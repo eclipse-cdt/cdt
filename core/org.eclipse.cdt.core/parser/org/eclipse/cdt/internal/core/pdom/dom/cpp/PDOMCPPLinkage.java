@@ -222,7 +222,9 @@ public class PDOMCPPLinkage extends PDOMLinkage {
 				ICPPMethod[] implicit= ((ICPPClassScope) scope).getImplicitMethods();
 				for (int i = 0; i < implicit.length; i++) {
 					ICPPMethod method = implicit[i];
-					addBinding(type, method);
+					if (adaptBinding(method) == null) {
+						addBinding(type, method);
+					}
 				}
 			}
 		} catch (DOMException e) {

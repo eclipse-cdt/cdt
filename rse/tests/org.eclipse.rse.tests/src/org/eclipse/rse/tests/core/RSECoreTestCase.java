@@ -6,6 +6,7 @@
  * 
  * Contributors:
  * Uwe Stieber (Wind River) - initial contribution.
+ * Martin Oberhuber (Wind River) - fix build against 3.2.1, fix javadoc errors
  * *******************************************************************************/
 package org.eclipse.rse.tests.core;
 
@@ -392,9 +393,9 @@ public class RSECoreTestCase extends TestCase {
 	 * Finds the view reference for the view identified by the specified id.
 	 * 
 	 * @param viewId The unique view id. Must be not <code>null</code>.
-	 * @param prespectiveId The unique perspective id within the view should be searched. Must be not <code>null</code>.
+	 * @param perspectiveId The unique perspective id within the view should be searched. Must be not <code>null</code>.
 	 * @return The view reference instance to the view or <code>null</code> if not available.
-	 * @throws <code>WorkbenchException</code> If the specified perspective could not be shown.
+	 * @throws WorkbenchException If the specified perspective could not be shown.
 	 */
 	protected final IViewReference findView(String viewId, String perspectiveId) throws WorkbenchException {
 		assert viewId != null && perspectiveId != null;
@@ -422,9 +423,9 @@ public class RSECoreTestCase extends TestCase {
 	 * Shows and activate the view identified by the specified id.
 	 * 
 	 * @param viewId The unique view id. Must be not <code>null</code>.
-	 * @param prespectiveId The unique perspective id within the view should be activated. Must be not <code>null</code>.
+	 * @param perspectiveId The unique perspective id within the view should be activated. Must be not <code>null</code>.
 	 * @return The view part instance to the view or <code>null</code> if it cannot be shown.
-	 * @throws <code>WorkbenchException</code> If the specified perspective could not be shown.
+	 * @throws WorkbenchException If the specified perspective could not be shown.
 	 */
 	protected final IViewPart showView(String viewId, String perspectiveId) throws WorkbenchException {
 		assert viewId != null && perspectiveId != null;
@@ -452,8 +453,8 @@ public class RSECoreTestCase extends TestCase {
 	 * Hides the view identified by the specified id.
 	 * 
 	 * @param viewId The unique view id. Must be not <code>null</code>.
-	 * @param prespectiveId The unique perspective id the view should be hidden from. Must be not <code>null</code>.
-	 * @throws <code>WorkbenchException</code> If the specified perspective could not be shown.
+	 * @param perspectiveId The unique perspective id the view should be hidden from. Must be not <code>null</code>.
+	 * @throws WorkbenchException If the specified perspective could not be shown.
 	 */
 	protected final void hideView(String viewId, String perspectiveId) throws WorkbenchException {
 		assert viewId != null && perspectiveId != null;
@@ -542,7 +543,7 @@ public class RSECoreTestCase extends TestCase {
 				// Log the error to the error log.
 				IStatus status = new Status(IStatus.ERROR,
 				                            RSETestsPlugin.getDefault().getBundle().getSymbolicName(),
-				                            0,
+				                            1,
 				                            "RSE JUnit test case '" + test + "' failed with error. Possible cause: " + error.getLocalizedMessage(), //$NON-NLS-1$ //$NON-NLS-2$
 				                            error
 				                           );
@@ -561,6 +562,7 @@ public class RSECoreTestCase extends TestCase {
 				// Log the failure to the error log.
 				IStatus status = new Status(IStatus.ERROR,
 				                            RSETestsPlugin.getDefault().getBundle().getSymbolicName(),
+				                            1,
 				                            "RSE JUnit test case '" + test + "' failed. Failure: " + failure.getLocalizedMessage(), //$NON-NLS-1$ //$NON-NLS-2$
 				                            failure
 				                           );

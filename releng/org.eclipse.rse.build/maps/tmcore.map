@@ -1,4 +1,13 @@
 feature@org.apache.commons.net=v20061031,:pserver:anonymous:none@dev.eclipse.org:/cvsroot/dsdp,,org.eclipse.tm.core/thirdparty/org.apache.commons.net-feature
 feature@org.apache.oro=v20061031,:pserver:anonymous:none@dev.eclipse.org:/cvsroot/dsdp,,org.eclipse.tm.core/thirdparty/org.apache.oro-feature
+feature@org.eclipse.tm.terminal=@TAG@,:pserver:anonymous:none@dev.eclipse.org:/cvsroot/dsdp,,org.eclipse.tm.core/terminal/org.eclipse.tm.terminal-feature
+feature@org.eclipse.tm.terminal.sdk=@TAG@,:pserver:anonymous:none@dev.eclipse.org:/cvsroot/dsdp,,org.eclipse.tm.core/terminal/org.eclipse.tm.terminal.sdk-feature
+feature@org.eclipse.tm.terminal.serial=@TAG@,:pserver:anonymous:none@dev.eclipse.org:/cvsroot/dsdp,,org.eclipse.tm.core/terminal/org.eclipse.tm.terminal.serial-feature
+feature@org.eclipse.tm.terminal.ssh=@TAG@,:pserver:anonymous:none@dev.eclipse.org:/cvsroot/dsdp,,org.eclipse.tm.core/terminal/org.eclipse.tm.terminal.ssh-feature
+feature@org.eclipse.tm.terminal.view=@TAG@,:pserver:anonymous:none@dev.eclipse.org:/cvsroot/dsdp,,org.eclipse.tm.core/terminal/org.eclipse.tm.terminal.view-feature
 plugin@org.apache.commons.net=v20061128,:pserver:anonymous:none@dev.eclipse.org:/cvsroot/dsdp,,org.eclipse.tm.core/thirdparty/org.apache.commons.net
 plugin@org.apache.oro=v20061128,:pserver:anonymous:none@dev.eclipse.org:/cvsroot/dsdp,,org.eclipse.tm.core/thirdparty/org.apache.oro
+plugin@org.eclipse.tm.terminal=@TAG@,:pserver:anonymous:none@dev.eclipse.org:/cvsroot/dsdp,,org.eclipse.tm.core/terminal/org.eclipse.tm.terminal
+plugin@org.eclipse.tm.terminal.serial=@TAG@,:pserver:anonymous:none@dev.eclipse.org:/cvsroot/dsdp,,org.eclipse.tm.core/terminal/org.eclipse.tm.terminal.serial
+plugin@org.eclipse.tm.terminal.ssh=@TAG@,:pserver:anonymous:none@dev.eclipse.org:/cvsroot/dsdp,,org.eclipse.tm.core/terminal/org.eclipse.tm.terminal.ssh
+plugin@org.eclipse.tm.terminal.view=@TAG@,:pserver:anonymous:none@dev.eclipse.org:/cvsroot/dsdp,,org.eclipse.tm.core/terminal/org.eclipse.tm.terminal.view

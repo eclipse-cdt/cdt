@@ -137,11 +137,6 @@ public class PDOMCPPMethod extends PDOMCPPFunction implements IIndexType, ICPPMe
 		throw new PDOMNotImplementedError();
 	}
 
-	public IType getReturnType() throws DOMException {
-		return null;
-		// TODO throw new PDOMNotImplementedError();
-	}
-
 	public boolean isConst() {
 		return getBit(getByte(record + ANNOTATION1), PDOMCAnnotation.CONST_OFFSET + CV_OFFSET);
 	}

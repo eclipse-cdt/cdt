@@ -56,23 +56,23 @@ public class ScriptParser {
 			if (top instanceof Script) {
 				result = (Script) top;
 			} else {
-				messageList.add(new ScriptParserMessage(lineNumber, ScriptParserMessage.ERROR, "Incomplete statement"));
+				messageList.add(new ScriptParserMessage(lineNumber, ScriptParserMessage.ERROR, "Incomplete statement")); //$NON-NLS-1$
 			}
 		} else {
-			messageList.add(new ScriptParserMessage(lineNumber, ScriptParserMessage.ERROR, "Internal error"));
+			messageList.add(new ScriptParserMessage(lineNumber, ScriptParserMessage.ERROR, "Internal error")); //$NON-NLS-1$
 		}
 		return result;
 	}
 
 	private void parseStatement() {
-		if (statement.startsWith("tell"))
+		if (statement.startsWith("tell")) //$NON-NLS-1$
 			parseTell();
-		else if (statement.startsWith("show"))
+		else if (statement.startsWith("show")) //$NON-NLS-1$
 			parseShow();
-		else if (statement.startsWith("pause"))
+		else if (statement.startsWith("pause")) //$NON-NLS-1$
 			parsePause();
 		else
-			messageList.add(new ScriptParserMessage(lineNumber, ScriptParserMessage.ERROR, "Unrecognized statement"));
+			messageList.add(new ScriptParserMessage(lineNumber, ScriptParserMessage.ERROR, "Unrecognized statement")); //$NON-NLS-1$
 	}
 
 	private void parseTell() {
@@ -109,7 +109,7 @@ public class ScriptParser {
 			} else {
 				statement += line;
 			}
-			if (!statement.endsWith("+")) break;
+			if (!statement.endsWith("+")) break; //$NON-NLS-1$
 			statement = statement.substring(0, statement.length() - 1);
 			line = in.readLine();
 		}

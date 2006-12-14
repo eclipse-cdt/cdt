@@ -69,16 +69,16 @@ public class PerspectiveContext extends ScriptContext {
 	 * @param text the message to display during the pause
 	 */
 	public void pause(String text) {
-		tell("pausing");
+		tell("pausing"); //$NON-NLS-1$
 		// TODO this doesn't really pause yet. still need a way to continue.
 	}
 
 	private TestSuiteImageView findImageView() {
-		return (TestSuiteImageView) findView("org.eclipse.rse.tests.framework.ImageView");
+		return (TestSuiteImageView) findView("org.eclipse.rse.tests.framework.ImageView"); //$NON-NLS-1$
 	}
 
 	private TestSuiteConsoleView findConsoleView() {
-		return (TestSuiteConsoleView) findView("org.eclipse.rse.tests.framework.ConsoleView");
+		return (TestSuiteConsoleView) findView("org.eclipse.rse.tests.framework.ConsoleView"); //$NON-NLS-1$
 	}
 
 	private IViewPart findView(String viewId) {

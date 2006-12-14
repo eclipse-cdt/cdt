@@ -22,7 +22,7 @@ public class ScriptParserMessage {
 	public static final int ERROR = 2;
 	public static final int SEVERE = 3;
 	private int severity = 0;
-	private String text = "";
+	private String text = ""; //$NON-NLS-1$
 	private Object[] data = new Object[0];
 	private int lineNumber;
 	

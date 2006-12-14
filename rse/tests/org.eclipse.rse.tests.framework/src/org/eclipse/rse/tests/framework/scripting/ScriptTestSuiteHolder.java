@@ -30,25 +30,25 @@ public class ScriptTestSuiteHolder extends DelegatingTestSuiteHolder {
 	 */
 	public TestSuite getTestSuite() {
 		if (suite == null) {
-			String folderName = getStringValue("folder");
+			String folderName = getStringValue("folder"); //$NON-NLS-1$
 			if (folderName != null) {
-				if (!folderName.endsWith("/")) {
-					folderName += "/";
+				if (!folderName.endsWith("/")) { //$NON-NLS-1$
+					folderName += "/"; //$NON-NLS-1$
 				}
-				String scriptName = getStringValue("script");
+				String scriptName = getStringValue("script"); //$NON-NLS-1$
 				if (scriptName == null) {
-					scriptName = "script.txt";
+					scriptName = "script.txt"; //$NON-NLS-1$
 				}
 				Bundle bundle = getBundle();
 				URL resourceLocation = bundle.getEntry(folderName);
 				ScriptContext context = new ConsoleContext(System.out, resourceLocation);
 				URL scriptLocation = context.getResourceURL(scriptName);
 				ScriptTestCase test = new ScriptTestCase(context, scriptLocation);
-				String title = MessageFormat.format("Script from folder {0}", new String[] {folderName});
+				String title = MessageFormat.format("Script from folder {0}", new String[] {folderName}); //$NON-NLS-1$
 				suite = new TestSuite(title);
 				suite.addTest(test);
 			} else {
-				suite = new TestSuite("ERROR: Missing folder argument");
+				suite = new TestSuite("ERROR: Missing folder argument"); //$NON-NLS-1$
 			}
 		}
 		return suite;

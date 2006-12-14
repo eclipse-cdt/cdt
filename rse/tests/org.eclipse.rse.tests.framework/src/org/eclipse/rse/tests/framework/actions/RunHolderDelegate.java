@@ -11,13 +11,13 @@ package org.eclipse.rse.tests.framework.actions;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.Iterator;
+
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.viewers.ISelection;
@@ -76,7 +76,7 @@ public class RunHolderDelegate implements IObjectActionDelegate {
 	}
 	
 	private void runInBackground() {
-		Job job = new Job("Running JUnit Tests Suites") {
+		Job job = new Job("Running JUnit Tests Suites") { //$NON-NLS-1$
 			protected IStatus run(IProgressMonitor monitor) {
 				IStatus result = runTests(monitor);
 				return result;
@@ -108,7 +108,7 @@ public class RunHolderDelegate implements IObjectActionDelegate {
 		IStatus result = Status.OK_STATUS;
 		if (selection instanceof IStructuredSelection) {
 			IStructuredSelection ss = (IStructuredSelection) selection;
-			monitor.beginTask("", ss.size());
+			monitor.beginTask("", ss.size()); //$NON-NLS-1$
 			for (Iterator z = ss.iterator(); z.hasNext();) {
 				AbstractTestSuiteHolder holder = (AbstractTestSuiteHolder) z.next();
 				monitor.subTask(holder.getName());

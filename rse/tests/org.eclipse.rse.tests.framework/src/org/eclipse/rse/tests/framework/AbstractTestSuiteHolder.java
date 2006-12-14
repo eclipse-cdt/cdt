@@ -49,7 +49,7 @@ public abstract class AbstractTestSuiteHolder implements ITestSuiteHolder, TestL
 		stringWriter = new StringWriter(1000);
 		myCalendar = Calendar.getInstance();
 		TestSuite suite = getTestSuite();
-		monitor.beginTask("Running " + suite.getName(), suite.countTestCases());
+		monitor.beginTask("Running " + suite.getName(), suite.countTestCases()); //$NON-NLS-1$
 		setTestResult(new TestResult());
 		this.monitor = monitor;
 		testResult.addListener(this);
@@ -78,7 +78,7 @@ public abstract class AbstractTestSuiteHolder implements ITestSuiteHolder, TestL
 	 */
 	public final String getResultString() {
 		if (stringWriter == null) {
-			return "Results not available.\n";
+			return "Results not available.\n"; //$NON-NLS-1$
 		}
 		return stringWriter.toString();
 	}
@@ -162,9 +162,9 @@ public abstract class AbstractTestSuiteHolder implements ITestSuiteHolder, TestL
 		writeRemarks(test);
 		if (failure != null) {
 			stringWriter.write(failure.trace());
-			stringWriter.write("*** " + failure.toString() + "\n");
+			stringWriter.write("*** " + failure.toString() + "\n"); //$NON-NLS-1$ //$NON-NLS-2$
 		} else {
-			stringWriter.write("*** " + test.toString() + " passed\n");
+			stringWriter.write("*** " + test.toString() + " passed\n"); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		for (Iterator z = listeners.iterator(); z.hasNext();) {
 			ITestSuiteHolderListener listener = (ITestSuiteHolderListener) z.next();
@@ -183,7 +183,7 @@ public abstract class AbstractTestSuiteHolder implements ITestSuiteHolder, TestL
 	 */
 	private void writeRemarks(Test test) {
 		if (test instanceof AnnotatingTestCase) {
-			stringWriter.write("\n");
+			stringWriter.write("\n"); //$NON-NLS-1$
 			AnnotatingTestCase a = (AnnotatingTestCase) test;
 			stringWriter.write(a.getAnnotations());
 		}
@@ -196,7 +196,7 @@ public abstract class AbstractTestSuiteHolder implements ITestSuiteHolder, TestL
 	 *      java.lang.String, java.lang.String)
 	 */
 	public boolean testAttribute(Object target, String name, String value) {
-		return (target == this && name.equals("hasResult") && value.equals("true") && testResult != null);
+		return (target == this && name.equals("hasResult") && value.equals("true") && testResult != null); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	/* (non-Javadoc)

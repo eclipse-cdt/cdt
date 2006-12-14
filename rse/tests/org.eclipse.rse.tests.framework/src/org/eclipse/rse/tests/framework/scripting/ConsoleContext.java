@@ -39,28 +39,28 @@ public class ConsoleContext extends ScriptContext {
 	 * @param imageName the name of the image to resolve and show.
 	 */
 	public void show(String imageName) {
-		log("showing " + imageName);
-		String message = "image not found";
+		log("showing " + imageName); //$NON-NLS-1$
+		String message = "image not found"; //$NON-NLS-1$
 		URL imageURL = getResourceURL(imageName);
 		if (imageURL != null) {
 			ImageDescriptor descriptor = ImageDescriptor.createFromURL(imageURL);
 			ImageData data = descriptor.getImageData();
 			if (data != null) {
-				String type = "Unknown";
+				String type = "Unknown"; //$NON-NLS-1$
 				switch (data.type) {
 					case SWT.IMAGE_GIF:
-						type = "GIF";
+						type = "GIF"; //$NON-NLS-1$
 						break;
 					case SWT.IMAGE_JPEG:
-						type = "JPEG";
+						type = "JPEG"; //$NON-NLS-1$
 						break;
 					case SWT.IMAGE_PNG:
-						type = "PNG";
+						type = "PNG"; //$NON-NLS-1$
 						break;
 					default:
-						type = "Other";
+						type = "Other"; //$NON-NLS-1$
 				}
-				message = type + "(" + Integer.toString(data.width) + " x " + Integer.toString(data.height) + ")";
+				message = type + "(" + Integer.toString(data.width) + " x " + Integer.toString(data.height) + ")"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			}
 		}
 		log(message);
@@ -80,7 +80,7 @@ public class ConsoleContext extends ScriptContext {
 	 * @param text the message to display during the pause
 	 */
 	public void pause(String text) {
-		if (text.length() == 0) text = "pausing";
+		if (text.length() == 0) text = "pausing"; //$NON-NLS-1$
 		log(text);
 	}
 

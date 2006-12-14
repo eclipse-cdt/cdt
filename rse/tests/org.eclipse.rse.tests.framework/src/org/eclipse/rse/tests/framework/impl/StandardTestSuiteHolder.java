@@ -26,7 +26,7 @@ public class StandardTestSuiteHolder extends DelegatingTestSuiteHolder {
 	 */
 	public TestSuite getTestSuite() {
 		if (suite == null) {
-			suite = (TestSuite) getObjectValue("class");
+			suite = (TestSuite) getObjectValue("class"); //$NON-NLS-1$
 		}
 		return suite;
 	}

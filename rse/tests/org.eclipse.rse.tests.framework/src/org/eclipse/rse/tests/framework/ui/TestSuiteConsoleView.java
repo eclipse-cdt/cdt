@@ -46,7 +46,7 @@ public class TestSuiteConsoleView extends ViewPart {
 	public void clear() {
 		if (!(console == null || console.isDisposed())) {
 			console.setBackground(backgroundColor);
-			console.setText("");
+			console.setText(""); //$NON-NLS-1$
 		}
 	}
 	

@@ -63,7 +63,7 @@ public class TestSuiteHolderView extends ViewPart implements ITestSuiteHolderLis
 			AbstractTestSuiteHolder holder = (AbstractTestSuiteHolder) element;
 			Image columnImage = null;
 			String columnId = getColumnId(columnIndex);
-			if (columnId.equals("graphic")) {
+			if (columnId.equals("graphic")) { //$NON-NLS-1$
 				TestResult result = holder.getTestResult();
 				if (result != null) {
 					if (result.wasSuccessful()) {
@@ -82,26 +82,26 @@ public class TestSuiteHolderView extends ViewPart implements ITestSuiteHolderLis
 			AbstractTestSuiteHolder holder = (AbstractTestSuiteHolder) element;
 			String columnText = null;
 			String columnId = getColumnId(columnIndex);
-			if (columnId.equals("name")) {
+			if (columnId.equals("name")) { //$NON-NLS-1$
 				columnText = holder.getName();
-			} else if (columnId.equals("graphic")) {
-				columnText = "";
-			} else if (columnId.equals("status")) {
+			} else if (columnId.equals("graphic")) { //$NON-NLS-1$
+				columnText = ""; //$NON-NLS-1$
+			} else if (columnId.equals("status")) { //$NON-NLS-1$
 				TestResult result = holder.getTestResult();
 				if (result != null) {
 					Object[] values = { new Integer(result.runCount()), new Integer(result.failureCount()), new Integer(result.errorCount()) };
-					String template = "{0,number,integer} run, {1,number,integer} failed, {2,number,integer} errors";
+					String template = "{0,number,integer} run, {1,number,integer} failed, {2,number,integer} errors"; //$NON-NLS-1$
 					columnText = MessageFormat.format(template, values);
 				} else {
-					columnText = "";
+					columnText = ""; //$NON-NLS-1$
 				}
-			} else if (columnId.equals("stamp")) {
+			} else if (columnId.equals("stamp")) { //$NON-NLS-1$
 				Calendar stamp = holder.getLastRunTime();
 				if (stamp != null) {
 					DateFormat formatter = DateFormat.getDateTimeInstance();
 					columnText = formatter.format(stamp.getTime());
 				} else {
-					columnText = "";
+					columnText = ""; //$NON-NLS-1$
 				}
 			}
 			return columnText;
@@ -140,10 +140,10 @@ public class TestSuiteHolderView extends ViewPart implements ITestSuiteHolderLis
 		public String getKey(Object e) {
 			AbstractTestSuiteHolder h = (AbstractTestSuiteHolder) e;
 			TestResult r = h.getTestResult();
-			if (r == null) return "0" + r;
-			if (r.failureCount() > 0) return "1" + r;
-			if (r.errorCount() > 0) return "1" + r;
-			return "2" + r;
+			if (r == null) return "0" + r; //$NON-NLS-1$
+			if (r.failureCount() > 0) return "1" + r; //$NON-NLS-1$
+			if (r.errorCount() > 0) return "1" + r; //$NON-NLS-1$
+			return "2" + r; //$NON-NLS-1$
 		}
 	}
 	
@@ -155,7 +155,7 @@ public class TestSuiteHolderView extends ViewPart implements ITestSuiteHolderLis
 	
 	private class StatusSorter extends ColumnSorter {
 		public String getKey(Object e) {
-			return "";
+			return ""; //$NON-NLS-1$
 		}
 	}
 	
@@ -165,7 +165,7 @@ public class TestSuiteHolderView extends ViewPart implements ITestSuiteHolderLis
 			Calendar c = h.getLastRunTime();
 			long t = 0;
 			if (c != null) t = c.getTimeInMillis();
-			String k = "0000000000000000000000000" + Long.toString(t);
+			String k = "0000000000000000000000000" + Long.toString(t); //$NON-NLS-1$
 			k = k.substring(k.length() - 25);
 			k += h.getName();
 			return k;
@@ -199,9 +199,9 @@ public class TestSuiteHolderView extends ViewPart implements ITestSuiteHolderLis
 	private ArrayContentProvider contentProvider = new ArrayContentProvider();
 	private MyLabelProvider labelProvider = new MyLabelProvider();
 	private ITestSuiteHolder[] holders = DelegatingTestSuiteHolder.getHolders();
-	private String[] columnIds = {"graphic", "name", "status", "stamp"};
+	private String[] columnIds = {"graphic", "name", "status", "stamp"}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 	private int[] columnWidths = {20, 200, 150, 150};
-	private String[] columnTitles = {"", "Test Suite", "Summary", "Time Run"};
+	private String[] columnTitles = {"", "Test Suite", "Summary", "Time Run"}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 	private SelectionListener[] columnListeners = {graphicListener, nameListener, statusListener, stampListener};
 	private boolean[] columnResizable = {false, true, true, true};
 	private boolean[] columnMoveable = {false, true, true, true};
@@ -216,9 +216,9 @@ public class TestSuiteHolderView extends ViewPart implements ITestSuiteHolderLis
 	 */
 	public void createPartControl(Composite parent) {
 		// create images
-		graphicFailed = createImage("icons/RedX.gif");
-		graphicPassed = createImage("icons/GreenCheck.gif");
-		graphicUnknown = createImage("icons/YellowQuestion.gif");
+		graphicFailed = createImage("icons/RedX.gif"); //$NON-NLS-1$
+		graphicPassed = createImage("icons/GreenCheck.gif"); //$NON-NLS-1$
+		graphicUnknown = createImage("icons/YellowQuestion.gif"); //$NON-NLS-1$
 		
 		// holders viewer
 		Table table = new Table(parent, SWT.MULTI | SWT.V_SCROLL | SWT.H_SCROLL | SWT.FULL_SELECTION);
@@ -227,7 +227,7 @@ public class TestSuiteHolderView extends ViewPart implements ITestSuiteHolderLis
 		int n = columnIds.length;
 		for (int i = 0; i < n; i++) {
 			TableColumn column = new TableColumn(table, SWT.NONE);
-			column.setData("id", columnIds[i]);
+			column.setData("id", columnIds[i]); //$NON-NLS-1$
 			column.setText(columnTitles[i]);
 			column.setWidth(columnWidths[i]);
 			column.setResizable(columnResizable[i]);
@@ -312,7 +312,7 @@ public class TestSuiteHolderView extends ViewPart implements ITestSuiteHolderLis
 			AbstractTestSuiteHolder holder = (AbstractTestSuiteHolder)sel.getFirstElement();
 			resultsText.setText(holder.getResultString());
 		} else {
-			resultsText.setText("");
+			resultsText.setText(""); //$NON-NLS-1$
 		}
 	}
 	
@@ -354,7 +354,7 @@ public class TestSuiteHolderView extends ViewPart implements ITestSuiteHolderLis
 			if (0 <= columnIndex && columnIndex < n) {
 				TableColumn column = table.getColumn(columnIndex);
 				if (column != null) {
-					columnId = (String) column.getData("id");
+					columnId = (String) column.getData("id"); //$NON-NLS-1$
 				}
 			}
 		}
@@ -390,7 +390,7 @@ public class TestSuiteHolderView extends ViewPart implements ITestSuiteHolderLis
 					AbstractTestSuiteHolder holder = (AbstractTestSuiteHolder)sel.getFirstElement();
 					resultsText.setText(holder.getResultString());
 				} else {
-					resultsText.setText("");
+					resultsText.setText(""); //$NON-NLS-1$
 				}
 			}
 		};

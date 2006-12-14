@@ -27,8 +27,8 @@ public class TestSuiteGeneratorHolder extends DelegatingTestSuiteHolder {
 	 */
 	public TestSuite getTestSuite() {
 		if (suite == null) {
-			ITestSuiteProvider p = (ITestSuiteProvider)getObjectValue("class");
-			String arg = getStringValue("argument");
+			ITestSuiteProvider p = (ITestSuiteProvider)getObjectValue("class"); //$NON-NLS-1$
+			String arg = getStringValue("argument"); //$NON-NLS-1$
 			suite = p.getSuite(arg);
 		}
 		return suite;

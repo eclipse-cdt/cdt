@@ -24,7 +24,7 @@ public class ScriptTestCase extends AnnotatingTestCase {
 	private ScriptContext context;
 	
 	public ScriptTestCase(ScriptContext context, URL scriptLocation) {
-		super("runScript");
+		super("runScript"); //$NON-NLS-1$
 		this.context = context;
 		this.scriptLocation = scriptLocation;
 	}
@@ -37,7 +37,7 @@ public class ScriptTestCase extends AnnotatingTestCase {
 			in.close();
 			assertTrue(success);
 		} catch (IOException e) {
-			fail("error reading " + scriptLocation.getPath());
+			fail("error reading " + scriptLocation.getPath()); //$NON-NLS-1$
 		}
 	}
 }

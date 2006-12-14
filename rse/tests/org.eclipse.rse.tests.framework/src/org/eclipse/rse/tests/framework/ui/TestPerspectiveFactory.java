@@ -22,9 +22,9 @@ public class TestPerspectiveFactory implements IPerspectiveFactory {
 	 */
 	public void createInitialLayout(IPageLayout layout) {
 		layout.setEditorAreaVisible(false);
-		layout.addView("org.eclipse.rse.tests.framework.ConsoleView", IPageLayout.RIGHT, 0.30f, null);
-		layout.addView("org.eclipse.rse.tests.framework.ImageView", IPageLayout.LEFT, 0.70f, "org.eclipse.rse.tests.framework.ConsoleView");
-		layout.addView("org.eclipse.rse.tests.framework.HolderView", IPageLayout.BOTTOM, 0.70f, "org.eclipse.rse.tests.framework.ImageView");
+		layout.addView("org.eclipse.rse.tests.framework.ConsoleView", IPageLayout.RIGHT, 0.30f, null); //$NON-NLS-1$
+		layout.addView("org.eclipse.rse.tests.framework.ImageView", IPageLayout.LEFT, 0.70f, "org.eclipse.rse.tests.framework.ConsoleView"); //$NON-NLS-1$ //$NON-NLS-2$
+		layout.addView("org.eclipse.rse.tests.framework.HolderView", IPageLayout.BOTTOM, 0.70f, "org.eclipse.rse.tests.framework.ImageView"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 }

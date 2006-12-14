@@ -20,7 +20,7 @@ import org.osgi.framework.BundleContext;
  */
 public class TestFrameworkPlugin extends AbstractUIPlugin {
 	
-	public static final String PREF_RUN_IN_BACKGROUND = "org.eclipse.rse.tests.runInBackground";
+	public static final String PREF_RUN_IN_BACKGROUND = "org.eclipse.rse.tests.runInBackground"; //$NON-NLS-1$
 
 	private static TestFrameworkPlugin plugin;
 	
@@ -56,7 +56,7 @@ public class TestFrameworkPlugin extends AbstractUIPlugin {
 	public void logUnexpectedException(Exception e) {
 		e.printStackTrace();
 		String id = getBundle().getSymbolicName();
-		Status status = new Status(IStatus.ERROR, id, 0, "Unexpected Exception", e);
+		Status status = new Status(IStatus.ERROR, id, 0, "Unexpected Exception", e); //$NON-NLS-1$
 		getLog().log(status);
 	}
 	

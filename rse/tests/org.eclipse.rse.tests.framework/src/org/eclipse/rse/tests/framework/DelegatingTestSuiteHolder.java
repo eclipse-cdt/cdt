@@ -25,18 +25,18 @@ import org.osgi.framework.Bundle;
  */
 public abstract class DelegatingTestSuiteHolder extends AbstractTestSuiteHolder {
 	
-	private static final String SUITE_EXTENSION_POINT_NAME = "org.eclipse.rse.tests.framework.suites"; // $NON-NLS-1$ 
+	private static final String SUITE_EXTENSION_POINT_NAME = "org.eclipse.rse.tests.framework.suites"; //$NON-NLS-1$ 
 	
 	// elements
-	private static final String TYPE_ELEMENT = "type"; // $NON-NLS-1$ 
-	private static final String SUITE_ELEMENT = "suite"; // $NON-NLS-1$ 
-	private static final String ARGUMENT_ELEMENT = "arg"; // $NON-NLS-1$
+	private static final String TYPE_ELEMENT = "type"; //$NON-NLS-1$ 
+	private static final String SUITE_ELEMENT = "suite"; //$NON-NLS-1$ 
+	private static final String ARGUMENT_ELEMENT = "arg"; //$NON-NLS-1$
 	
 	// attributes
-	private static final String TYPE_ATTRIBUTE = "type"; // $NON-NLS-1$ 
-	private static final String NAME_ATTRIBUTE = "name"; // $NON-NLS-1$ 
-	private static final String CLASS_ATTRIBUTE = "class"; // $NON-NLS-1$
-	private static final String VALUE_ATTRIBUTE = "value"; // $NON-NLS-1$ 
+	private static final String TYPE_ATTRIBUTE = "type"; //$NON-NLS-1$ 
+	private static final String NAME_ATTRIBUTE = "name"; //$NON-NLS-1$ 
+	private static final String CLASS_ATTRIBUTE = "class"; //$NON-NLS-1$
+	private static final String VALUE_ATTRIBUTE = "value"; //$NON-NLS-1$ 
 	
 	/**
 	 * Returns a newly minted suite holder of the given type.
@@ -126,7 +126,7 @@ public abstract class DelegatingTestSuiteHolder extends AbstractTestSuiteHolder 
 		IConfigurationElement element = getArgumentElement(name);
 		if (element != null) {
 			try {
-				result = element.createExecutableExtension("value");
+				result = element.createExecutableExtension("value"); //$NON-NLS-1$
 			} catch (CoreException e) {
 			}
 		}

@@ -51,7 +51,7 @@ public abstract class ScriptContext {
 			Bundle bundle = plugin.getBundle();
 			String pluginId = bundle.getSymbolicName();
 			ILog log = plugin.getLog();
-			IStatus status = new Status(IStatus.ERROR, pluginId, IStatus.OK, "bad resource name in script", e);
+			IStatus status = new Status(IStatus.ERROR, pluginId, IStatus.OK, "bad resource name in script", e); //$NON-NLS-1$
 			log.log(status);
 		}
 		return result;

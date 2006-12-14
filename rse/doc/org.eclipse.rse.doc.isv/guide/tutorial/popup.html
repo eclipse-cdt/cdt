@@ -68,13 +68,38 @@ Press <b>Finish</b> to create the <samp><a href="ShowJarContents1.html">ShowJarC
 </li>
 <li>Edit the generated <samp>ShowJarContents.java</samp> file as follows:
 <ol>
-  <li type="i">Add import statement for <samp><b>import com.ibm.etools.systems.subsystems.*;</b></samp></li>
   <li type="i">Add the following three statements to the body of the <samp>run()</samp> method:</li>
   <pre><code>
 		IRemoteFile selectedFile = getFirstSelectedRemoteFile();
 		String cmdToRun = "jar -tvf " + selectedFile.getAbsolutePath();
 		runCommand(cmdToRun);  
   </code></pre>
+  <li type="i">Add the following two methods to find the subsystem and run the command:</li>
+  <pre><code>
+	private void runCommand(String command) {
+		IRemoteCmdSubSystem cmdss = getRemoteCmdSubSystem();
+		if (cmdss != null && cmdss.isConnected()) {
+			RemoteCommandHelpers.runUniversalCommand(getShell(), command, ".", cmdss);
+		} else {
+			MessageDialog.openError(getShell(), "No command subsystem", "Found no command subsystem");
+		}
+	}
+	
+	/**
+	 * Gets the Command subsystem associated with the current host
+	 */
+	private IRemoteCmdSubSystem getRemoteCmdSubSystem() {
+		IHost myHost = getSubSystem().getHost();
+		IRemoteCmdSubSystem[] subsys = RemoteCommandHelpers.getCmdSubSystems(myHost);
+		for (int i = 0; i < subsys.length; i++) {
+			if (subsys[i].getSubSystemConfiguration().supportsCommands()) {
+				return subsys[i];
+			}
+		}
+		return null;
+	}
+  </code></pre>
+  <li type="i">User the "Source -> Organize Imports" context menu item to add the appropriate import statements.</li>
 </ol>
 The final result after editing is shown <a href="ShowJarContents2.html">here</a>.
 </li>

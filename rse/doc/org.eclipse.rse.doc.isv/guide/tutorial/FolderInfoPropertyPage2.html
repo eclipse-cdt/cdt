@@ -15,22 +15,26 @@
 <pre><samp>
 package samples.ui.propertypages;
 
-import org.eclipse.swt.widgets.*;
-import org.eclipse.swt.events.*;
-
-import RSESamples.*;
 import org.eclipse.rse.files.ui.propertypages.SystemAbstractRemoteFilePropertyPageExtensionAction;
-import com.ibm.etools.systems.subsystems.*;
-import com.ibm.etools.systems.core.ui.*;
+import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
+import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile;
+import org.eclipse.rse.ui.SystemWidgetHelpers;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Label;
 
-import java.util.*;
+import samples.RSESamplesPlugin;
 
 /**
  * A sample property page for a remote object, which in this case is scoped via the
  *  extension point xml to only apply to folder objects.
  */
-public class <b>FolderInfoPropertyPage</b>
-	extends SystemAbstractRemoteFilePropertyPageExtensionAction 
+public class FolderInfoPropertyPage
+	extends SystemAbstractRemoteFilePropertyPageExtensionAction
 	implements SelectionListener
 {
 	// gui widgets...
@@ -47,33 +51,45 @@ public class <b>FolderInfoPropertyPage</b>
 	/**
 	 * Constructor for FolderInfoPropertyPage.
 	 */
-	public <b>FolderInfoPropertyPage</b>()
+	public FolderInfoPropertyPage()
 	{
 		super();
 	}
 
 	// --------------------------
-	// <i>Parent method overrides...</i>
+	// Parent method overrides...
 	// --------------------------
 	
-	/**
-	 * @see org.eclipse.rse.ui.propertypages.SystemBasePropertyPage#createContentArea(Composite)
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.files.ui.propertypages.SystemAbstractRemoteFilePropertyPageExtensionAction#createContentArea(org.eclipse.swt.widgets.Composite)
 	 */
-	protected Control <b>createContentArea</b>(Composite parent)
+	protected Control createContentArea(Composite parent)
 	{
 		Composite composite = SystemWidgetHelpers.createComposite(parent, 2);
-		ResourceBundle rb = RSESamplesPlugin.getDefault().getResourceBundle();
 		// draw the gui		
-		sizeLabel = SystemWidgetHelpers.createLabeledLabel(composite, rb, &quot;pp.size.&quot;, false);
-		filesLabel = SystemWidgetHelpers.createLabeledLabel(composite, rb, &quot;pp.files.&quot;, false);
-		foldersLabel = SystemWidgetHelpers.createLabeledLabel(composite, rb, &quot;pp.folders.&quot;, false);
-		stopButton = SystemWidgetHelpers.createPushButton(composite, null, rb, &quot;pp.stopButton.&quot;);
+		sizeLabel = SystemWidgetHelpers.createLabeledLabel(composite, 
+				RSESamplesPlugin.getResourceString("pp.size.label"), //$NON-NLS-1$
+				RSESamplesPlugin.getResourceString("pp.size.tooltip"), //$NON-NLS-1$
+				false);
+		filesLabel = SystemWidgetHelpers.createLabeledLabel(composite, 
+				RSESamplesPlugin.getResourceString("pp.files.label"), //$NON-NLS-1$
+				RSESamplesPlugin.getResourceString("pp.files.tooltip"), //$NON-NLS-1$
+				false);
+		foldersLabel = SystemWidgetHelpers.createLabeledLabel(composite, 
+				RSESamplesPlugin.getResourceString("pp.folders.label"), //$NON-NLS-1$
+				RSESamplesPlugin.getResourceString("pp.folders.tooltip"), //$NON-NLS-1$
+				false);
+		stopButton = SystemWidgetHelpers.createPushButton(composite, null, 
+				RSESamplesPlugin.getResourceString("pp.stopButton.label"), //$NON-NLS-1$
+				RSESamplesPlugin.getResourceString("pp.stopButton.tooltip") //$NON-NLS-1$
+				);
 		stopButton.addSelectionListener(this);
 		
 		setValid(false); // Disable OK button until thread is done
 		
-		// show &quot;Processing...&quot; message
-		setMessage(RSESamplesPlugin.getPluginMessage(&quot;RSSG1002&quot;));
+		// show "Processing..." message
+		setMessage(RSESamplesPlugin.getPluginMessage("RSSG1002")); //$NON-NLS-1$
 		
 		// create instance of Runnable to allow asynchronous GUI updates from background thread	   
 		guiUpdater = new RunnableGUIClass();
@@ -87,8 +103,9 @@ public class <b>FolderInfoPropertyPage</b>
 	/**
 	 * Intercept from PreferencePage. Called when user presses Cancel button.
 	 * We stop the background thread.
+	 * @see org.eclipse.jface.preference.PreferencePage#performCancel()
 	 */
-	public boolean <b>performCancel</b>() 
+	public boolean performCancel() 
 	{
 		killThread();
 		return true;
@@ -99,7 +116,7 @@ public class <b>FolderInfoPropertyPage</b>
 	 * If the user presses the X to close this dialog, we 
 	 *  need to stop that background thread.
 	 */
-	public void <b>dispose</b>()
+	public void dispose()
 	{
 		killThread();
 		super.dispose();
@@ -109,9 +126,9 @@ public class <b>FolderInfoPropertyPage</b>
 	 * Private method to kill our background thread.
 	 * Control doesn't return until it ends.
 	 */
-	private void <b>killThread</b>()
+	private void killThread()
 	{
-		if (!stopped &amp;&amp; workerThread.isAlive())
+		if (!stopped && workerThread.isAlive())
 		{
 		    stopped = true;
 		    try {
@@ -121,13 +138,14 @@ public class <b>FolderInfoPropertyPage</b>
 	}
 
 	// -------------------------------------------
-	// <i>Methods from SelectionListener interface...</i>
+	// Methods from SelectionListener interface...
 	// -------------------------------------------
 	
 	/**
 	 * From SelectionListener
+	 * @see SelectionListener#widgetSelected(SelectionEvent)
 	 */
-	public void <b>widgetSelected</b>(SelectionEvent event) 
+	public void widgetSelected(SelectionEvent event) 
 	{
 		if (event.getSource() == stopButton)
 		{
@@ -137,27 +155,29 @@ public class <b>FolderInfoPropertyPage</b>
 	}
 	/**
 	 * From SelectionListener
+	 * @see SelectionListener#widgetDefaultSelected(SelectionEvent)
 	 */
-	public void <b>widgetDefaultSelected</b>(SelectionEvent event) {}
-	
+	public void widgetDefaultSelected(SelectionEvent event)
+	{
+	}
 
 	// ----------------
-	// <i>Inner classes...</i>
+	// Inner classes...
 	// ----------------
 	/**
 	 * Inner class encapsulating the background work to be done, so it may be executed
 	 *  in background thread.
 	 */
-	private class <b>RunnableClass</b> extends Thread
+	private class RunnableClass extends Thread
 	{
 		IRemoteFile inputFolder;
 		
-		<b>RunnableClass</b>(IRemoteFile inputFolder)
+		RunnableClass(IRemoteFile inputFolder)
 		{
 			this.inputFolder = inputFolder;
 		}
 		
-		public void <b>run</b>()
+		public void run()
 		{
 			if (stopped)
 			  return;
@@ -174,12 +194,14 @@ public class <b>FolderInfoPropertyPage</b>
 		 * Recursively walk a folder, updating the running tallies. 
 		 * Update the GUI after processing each subfolder.
 		 */
-		private void <b>walkFolder</b>(IRemoteFile currFolder)
+		private void walkFolder(IRemoteFile currFolder)
 		{
-			IRemoteFile[] folders = currFolder.getParentRemoteFileSubSystem().listFoldersAndFiles(currFolder);
-			if ((folders != null) &amp;&amp; (folders.length&gt;0))
+			try
 			{
-				for (int idx=0; !stopped &amp;&amp; (idx&lt;folders.length); idx++)
+			IRemoteFile[] folders = currFolder.getParentRemoteFileSubSystem().listFoldersAndFiles( currFolder, null);
+			if ((folders != null) && (folders.length>0))
+			{
+				for (int idx=0; !stopped && (idx&lt;folders.length); idx++)
 				{
 					// is this a folder? 
 					if (folders[idx].isDirectory())
@@ -196,17 +218,22 @@ public class <b>FolderInfoPropertyPage</b>
 					}
 				}
 			}
-		} // <i>end of walkFolder method</i>
+			}
+			catch (SystemMessageException e)
+			{
+				
+			}
+		} // end of walkFolder method
 
-	} // <i>end of inner class</i>
+	} // end of inner class
 	
 	/**
 	 * Inner class encapsulating the GUI work to be done from the
 	 *  background thread.
 	 */
-	private class <b>RunnableGUIClass</b> implements Runnable
+	private class RunnableGUIClass implements Runnable
 	{
-		public void <b>run</b>()
+		public void run()
 		{
 			if (stopButton.isDisposed())
 			  return; 
@@ -220,7 +247,7 @@ public class <b>FolderInfoPropertyPage</b>
 			{				
 				setValid(true); // re-enable OK button								
 				stopButton.setEnabled(false); // disable Stop button				
-				clearMessage(); // clear &quot;Processing...&quot; message
+				clearMessage(); // clear "Processing..." message
 			}			  
 		}
 	}	
@@ -229,14 +256,13 @@ public class <b>FolderInfoPropertyPage</b>
 	/**
 	 * Update the GUI with the current status
 	 */
-	private void <b>updateGUI</b>()
+	private void updateGUI()
 	{
 		Display.getDefault().asyncExec(guiUpdater);
 	}
 
+
 }
-
-
 </samp></pre>
 </p>
 </body>

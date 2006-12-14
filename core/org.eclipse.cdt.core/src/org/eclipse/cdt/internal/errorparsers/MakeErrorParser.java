@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Norbert Ploett (Siemens AG) - externalized strings
  *******************************************************************************/
 
 package org.eclipse.cdt.internal.errorparsers;
@@ -20,7 +21,7 @@ import org.eclipse.core.runtime.Path;
 public class MakeErrorParser extends AbstractErrorParser {
 
 	private static final ErrorPattern[] patterns = {
-		new ErrorPattern("make\\[(.*)\\]: Entering directory `(.*)'", 0, 0) { //$NON-NLS-1
+		new ErrorPattern(Messages.MakeErrorParser_error_entering, 0, 0) { //$NON-NLS-1
 			protected boolean recordError(Matcher matcher, ErrorParserManager eoParser) {
 				int level;
 				try {
@@ -41,13 +42,13 @@ public class MakeErrorParser extends AbstractErrorParser {
 	    		return true;
 			}
 		},
-		new ErrorPattern("make\\[.*\\]: Leaving directory", 0, 0) { //$NON-NLS-1
+		new ErrorPattern(Messages.MakeErrorParser_error_leaving, 0, 0) { //$NON-NLS-1
 			protected boolean recordError(Matcher matcher, ErrorParserManager eoParser) {
 				eoParser.popDirectory();
 				return true;
 			}
 		},
-		new ErrorPattern("(make: \\*\\*\\* \\[.*\\] Error .*)", 1, IMarkerGenerator.SEVERITY_ERROR_RESOURCE) { //$NON-NLS-1
+		new ErrorPattern(Messages.MakeErrorParser_error_general, 1, IMarkerGenerator.SEVERITY_ERROR_RESOURCE) { //$NON-NLS-1
 			protected boolean recordError(Matcher matcher, ErrorParserManager eoParser) {
 				if (!eoParser.hasErrors())
 					super.recordError(matcher, eoParser);

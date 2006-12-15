@@ -28,7 +28,14 @@
 <li>An <b>Experimental RSE EFS Provider</b> is now available as a
   download, or from the <a href="http://download.eclipse.org/dsdp/tm/updates/">Update Site</a>.</li>
 -->
-<li>Fixed <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=164306">bug 164306</a> - FTP console shows plaintext passwords</li>
+<li>[<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=152826">152826</a>] Added an <b>ANSI / vt102 Terminal</b> as separate download (currently a stand-alone view not integrated with RSE; supports serial, ssh and telnet connections).</li>
+<li>[<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=158784">158784</a>] The <b>Remotecdt Launcher</b> now supports setting the gdbserver executable, port as well as gdb instance to use.</li> 
+<li>[<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=164306">164306</a>] FTP console no longer shows <b>plaintext passwords</b>.</li>
+<li>[<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=161238">161238</a>] [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=164304">164304</a>] FTP now supports VMS and some older MSDOS FTP Servers.</li> 
+<li>[<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=164292">164292</a>] Editors selection for remote files is now persistent</li> 
+<li>[<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=165891">165891</a>] <b>File permissions</b> are now consistently retained when copying inside a system.</li> 
+<li>[<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=166154">166154</a>] [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=166156">166156</a>] <b>Performance Improvements</b> in the Remote Systems Treeview (selections, deleting).</li> 
+<li>[<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=142478">142478</a>] The Preference option to <b>use deferred queries</b> is now always enabled and cannot be disabled.</li> 
 <li>Use 
   <a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced&classification=DSDP&product=Target+Management&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&resolution=FIXED&resolution=WONTFIX&resolution=INVALID&resolution=WORKSFORME&chfieldfrom=2006-11-14&chfieldto=2006-12-16&chfield=resolution&cmdtype=doit">
   <!-- <a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced&classification=DSDP&product=Target+Management&target_milestone=1.0.1&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&resolution=FIXED&resolution=WONTFIX&resolution=INVALID&resolution=WORKSFORME&cmdtype=doit"> -->
@@ -119,10 +126,16 @@ APIs better.
 </table>
 <table><tbody><tr><td>
 <ul>
-<li>[<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=161777">bug 161777</a>]:
+<li>[<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=161777">161777</a>]:
   <b>Moved</b> <b>HostShellAdapter</b> and <b>HostShellOutputStream</b> from remotecdt into 
   org.eclipse.rse.services.shells, thus making them API.</li>
-</li>
+<li>[<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=160353">160353</a>]
+  Synchronous queries (in the dispatch thread) are now deprecated everywhere. We want
+  to get rid of all nested event loops and run all queries in background jobs instead.
+  Asynchronous callbacks will be added to API in the future 
+  [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=166338">166338</a>].</li>
+<li>[<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=165891">165891</a>]
+  File permissions are now retained when copying files inside a system</li>.
 </ul>
 </td></tr></tbody></table>
 
@@ -137,7 +150,6 @@ APIs better.
 The following critical or major bugs are currently known.
 We'll strive to fix these as soon as possible.
 <ul>
-  <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=162883">bug 162883</a> - maj - [shell updating] No prompt on Solaris local shell</li>
   <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=162993">bug 162993</a> - maj - ssh connection gets confused</li>
 </ul>
 -->

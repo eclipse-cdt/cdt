@@ -52,7 +52,6 @@
        or later, e.g. 
        <a href="http://download.eclipse.org/eclipse/downloads/drops/R-3.2.1-200609210945/index.php">3.2.1</a>.
     </b></td></tr>
-    <tr><td>Earlier versions will <b>not</b> work!</td></tr>
     <tr><td>
       3.3M1, 
       3.3M2 and 
@@ -85,13 +84,66 @@
 		<tr><td><div align=left><img src = "OK.gif" width=19 height=23></div></td>
 		<td>All</td>
 		<td><a href="http://www.eclipse.org/downloads/download.php?file=/dsdp/tm/downloads/drops/@dropDir@/RSE-SDK-@buildId@.zip">RSE-SDK-@buildId@.zip</a></td>
-</tr>
-
+	</tr>
 </table>
+
 <table border="0" cellspacing="5" cellpadding="2" width="100%">
 	<tr><td colspan="2">&nbsp;</td></tr>
 </table>
+<table border="0" cellspacing="5" cellpadding="2" width="100%">
+	<tr>
+		<td align="LEFT" valign="TOP" colspan="3" bgcolor="#808080"><b>
+		<font face="Arial,Helvetica" color="#FFFFFF">Experimental add-ons (includes source, but no documentation yet)</font></b>
+		</td>
+	</tr>
+</table>
+<table border="0" cellspacing="2" cellpadding="0" width="100%">
+	<tr>
+		<td align="RIGHT" valign="TOP" width="7%">
+		   <div align="left"><b>Status</b></div>
+		</td>
+		<td width="7%"><b>Platform</b></td>
+		<td width="27%"><b>Download</b></td>
+		<td width="59%"><b>Notes</b></td>
+	</tr>
+	<tr><td><div align=left><img src = "OK.gif" width=19 height=23></div></td>
+        <td>All</td>
+        <td><a href="http://www.eclipse.org/downloads/download.php?file=/dsdp/tm/downloads/drops/@dropDir@/TM-terminal-SDK-@buildId@.zip">TM-terminal-SDK-@buildId@.zip</a></td>
+        <td>
+			An ANSI / vt102 terminal emulator widget and view (with minor 
+			  <a href="http://dev.eclipse.org/viewcvs/index.cgi/org.eclipse.tm.core/terminal/org.eclipse.tm.terminal/README.txt?root=DSDP_Project&view=co">
+			limitations</a>).
+			It runs without RSE and includes pluggable connectors 
+			for serial line (through Sun Javacomm, see the 
+			  <a href="http://dev.eclipse.org/viewcvs/index.cgi/org.eclipse.tm.core/terminal/org.eclipse.tm.terminal.serial/README.txt?root=DSDP_Project&view=co">
+			installation notes</a>), ssh and telnet.
+        </td>
+    </tr>
+	<tr><td><div align=left><img src = "OK.gif" width=19 height=23></div></td>
+        <td>All</td>
+        <td><a href="http://www.eclipse.org/downloads/download.php?file=/dsdp/tm/downloads/drops/@dropDir@/TM-discovery-@buildId@.zip">TM-discovery-@buildId@.zip</a></td>
+        <td><small>&nbsp;</small><br/>
+	    	An API and DNS-SD / Zeroconf based 
+			implementation for remote network service discovery. TM-discovery
+			requires EMF 2.2.0 or later to run. It runs stand-alone or
+			integrated with RSE.
+        </td>
+    </tr>
+	<tr><td><div align=left><img src = "OK.gif" width=19 height=23></div></td>
+        <td>All</td>
+        <td><a href="http://www.eclipse.org/downloads/download.php?file=/dsdp/tm/downloads/drops/@dropDir@/RSE-efs-@buildId@.zip">RSE-efs-@buildId@.zip</a></td>
+        <td><small>&nbsp;</small><br/>
+			An experimental Eclipse Filesystem (EFS) provider, which
+			uses RSE contributed file services. It currently works for accessing
+			remote file systems, but cannot be used to hold Projects of an 
+			Eclipse Workspace due to resource locking issues.
+        </td>
+    </tr>
+</table>
 
+<table border="0" cellspacing="5" cellpadding="2" width="100%">
+	<tr><td colspan="2">&nbsp;</td></tr>
+</table>
 <table border="0" cellspacing="5" cellpadding="2" width="100%">
 	<tr>
 		<td align="LEFT" valign="TOP" colspan="3" bgcolor="#0080C0"><b>
@@ -183,47 +235,6 @@
 		<tr><td><div align=left><img src = "OK.gif" width=19 height=23></div></td>
             <td>All</td>
             <td><a href="http://www.eclipse.org/downloads/download.php?file=/dsdp/tm/downloads/drops/@dropDir@/RSE-examples-@buildId@.zip">RSE-examples-@buildId@.zip</a></td>
-        </tr>
-	</tr>
-</table>
-
-<table border="0" cellspacing="5" cellpadding="2" width="100%">
-	<tr>
-		<td colspan="2">&nbsp;</td>
-	</tr>
-</table>
-<table border="0" cellspacing="5" cellpadding="2" width="100%">
-	<tr>
-		<td align="LEFT" valign="TOP" colspan="3" bgcolor="#808080"><b>
-		<font face="Arial,Helvetica" color="#FFFFFF">Experimental add-ons (includes source)</font></b>
-		</td>
-	</tr>
-	<tr>
-	    <td>Experimental add-ons are not yet fully supported.
-	    <ul><li>RSE-efs is an experimental Eclipse Filesystem (EFS) provider, which
-	       uses RSE contributed file services.</li>
-	    <li>TM-discovery is an experimental API and DNS-SD / Zeroconf based 
-	       implementation of remote network service discovery. TM-discovery
-	       requires EMF 2.2.0 or later to run. It can run stand-alone or
-	       integrated with RSE.</li>
-	    </ul>
-       </td>
-	</tr>
-</table>
-<table border="0" cellspacing="2" cellpadding="0" width="100%">
-	<tr>
-		<td align="RIGHT" valign="TOP" width="7%">
-		   <div align="left"><b>Status</b></div>
-		</td>
-		<td width="34%"><b>Platform</b></td>
-		<td width="59%"><b>Download</b></td>
-		<tr><td><div align=left><img src = "OK.gif" width=19 height=23></div></td>
-            <td>All</td>
-            <td><a href="http://www.eclipse.org/downloads/download.php?file=/dsdp/tm/downloads/drops/@dropDir@/RSE-efs-@buildId@.zip">RSE-efs-@buildId@.zip</a></td>
-        </tr>
-		<tr><td><div align=left><img src = "OK.gif" width=19 height=23></div></td>
-            <td>All</td>
-            <td><a href="http://www.eclipse.org/downloads/download.php?file=/dsdp/tm/downloads/drops/@dropDir@/TM-discovery-@buildId@.zip">TM-discovery-@buildId@.zip</a></td>
         </tr>
 	</tr>
 </table>

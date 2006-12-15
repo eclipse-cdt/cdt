@@ -12,7 +12,7 @@
 
 # Arguments:
 # ARGV[0] is the port number for the daemon to listen on. Default is 4035.
-# ARGV[1] is the directory that contains RSE Dstore server jar files and 
+# ARGV[1] is the directory that contains RSE DStore server jar files and 
 # installation supplied miner class files. The default is the working 
 # directory.
 #

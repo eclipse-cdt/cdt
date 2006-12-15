@@ -14,6 +14,7 @@ import java.io.FileInputStream;
 
 import junit.framework.TestCase;
 
+import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.IPDOMManager;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.testplugin.CProjectHelper;
@@ -96,7 +97,7 @@ public class TranslationUnitBaseTest extends TestCase
          * tests
          */
             
-        testProject=CProjectHelper.createCProject("filetest", "none", IPDOMManager.ID_NO_INDEXER);
+        testProject=CProjectHelper.createCProject("filetest", "none", IPDOMManager.ID_FAST_INDEXER);
         if (testProject==null)
             fail("Unable to create project");
     
@@ -140,8 +141,8 @@ public class TranslationUnitBaseTest extends TestCase
         }
         archpath=new Path(workspace.getRoot().getLocation()+"/filetest/libtestlib_g.a");
     
-    
-    }
+		CCorePlugin.getIndexManager().joinIndexer(1000, new NullProgressMonitor());
+   }
     /**
          * Tears down the test fixture.
          *

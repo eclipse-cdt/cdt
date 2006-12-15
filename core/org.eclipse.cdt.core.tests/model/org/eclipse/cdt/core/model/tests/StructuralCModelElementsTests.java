@@ -71,7 +71,7 @@ public class StructuralCModelElementsTests extends TestCase {
 		
 	protected void setUp() throws Exception {
 		monitor = new NullProgressMonitor();
-		fCProject= CProjectHelper.createCCProject("TestProject1", "bin", IPDOMManager.ID_NO_INDEXER); //$NON-NLS-1$ //$NON-NLS-2$
+		fCProject= CProjectHelper.createCCProject("TestProject1", "bin", IPDOMManager.ID_FAST_INDEXER); //$NON-NLS-1$ //$NON-NLS-2$
 		headerFile = fCProject.getProject().getFile("CModelElementsTest.h"); //$NON-NLS-1$
 		includedFile = fCProject.getProject().getFile("included.h"); //$NON-NLS-1$
 		if (!headerFile.exists()) {

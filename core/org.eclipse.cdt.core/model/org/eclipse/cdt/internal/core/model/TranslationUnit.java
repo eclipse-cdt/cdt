@@ -15,6 +15,7 @@ package org.eclipse.cdt.internal.core.model;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 import org.eclipse.cdt.core.CCorePlugin;
@@ -51,6 +52,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.content.IContentType;
 import org.eclipse.core.runtime.content.IContentTypeManager;
@@ -418,7 +420,7 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 		CModelManager.getDefault().removeChildrenInfo(this);
 
 		// generate structure
-		this.parse(newElements);
+		this.parse(newElements, pm);
 
 		// /////////////////////////////////////////////////////////////
 
@@ -530,6 +532,58 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 		return CModelManager.getDefault().getElementsOutOfSynchWithBuffers().get(this) == null;
 	}
 
+	/*
+	 * @see org.eclipse.cdt.internal.core.model.Openable#makeConsistent(org.eclipse.core.runtime.IProgressMonitor, boolean)
+	 */
+	public void makeConsistent(IProgressMonitor monitor, boolean forced) throws CModelException {
+		makeConsistent(false, monitor);
+	}
+
+	protected IASTTranslationUnit makeConsistent(boolean computeAST, IProgressMonitor monitor) throws CModelException {
+		if (isConsistent()) {
+			return null;
+		}
+		
+		// create a new info and make it the current info
+		// (this will remove the info and its children just before storing the new infos)
+		CModelManager manager = CModelManager.getDefault();
+		boolean hadTemporaryCache = manager.hasTemporaryCache();
+		final CElementInfo info;
+		if (computeAST) {
+			info= new ASTHolderTUInfo(this);
+		} else {
+			info= createElementInfo();
+		}
+		try {
+			HashMap newElements = manager.getTemporaryCache();
+			openWhenClosed(info, monitor);
+			if (newElements.get(this) == null) {
+				// close any buffer that was opened for the new elements
+				Iterator iterator = newElements.keySet().iterator();
+				while (iterator.hasNext()) {
+					ICElement element = (ICElement)iterator.next();
+					if (element instanceof Openable) {
+						((Openable)element).closeBuffer();
+					}
+				}
+				throw newNotPresentException();
+			}
+			if (!hadTemporaryCache) {
+				manager.putInfos(this, newElements);
+			}
+		} finally {
+			if (!hadTemporaryCache) {
+				manager.resetTemporaryCache();
+			}
+		}
+		if (info instanceof ASTHolderTUInfo) {
+			final IASTTranslationUnit ast= ((ASTHolderTUInfo)info).fAST;
+			((ASTHolderTUInfo)info).fAST= null;
+			return ast;
+		}
+		return null;
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.model.Openable#isSourceElement()
 	 */
@@ -582,26 +636,31 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 	/**
 	 * Parse the buffer contents of this element.
 	 */
-	private void parse(Map newElements) {
+	private void parse(Map newElements, IProgressMonitor monitor) {
 		boolean quickParseMode = ! (CCorePlugin.getDefault().useStructuralParseMode());
 		IContributedModelBuilder mb = LanguageManager.getInstance().getContributedModelBuilderFor(this);
 		if (mb == null) {
-			parseUsingCModelBuilder(newElements, quickParseMode);
+			parseUsingCModelBuilder(newElements, quickParseMode, monitor);
 		} else {
-			parseUsingContributedModelBuilder(mb, quickParseMode);
+			parseUsingContributedModelBuilder(mb, quickParseMode, monitor);
 		}
 	}
 
 	/**
 	 * Parse the buffer contents of this element.
+	 * @param monitor 
 	 */
-	private void parseUsingCModelBuilder(Map newElements, boolean quickParseMode) {
+	private void parseUsingCModelBuilder(Map newElements, boolean quickParseMode, IProgressMonitor monitor) {
 		try {
 			boolean useNewModelBuilder= CCorePlugin.getDefault().useNewModelBuilder();
 			if (useNewModelBuilder) {
-				new CModelBuilder2(this).parse(quickParseMode);
+				new CModelBuilder2(this, monitor).parse(quickParseMode);
 			} else {
 				new CModelBuilder(this, newElements).parse(quickParseMode);
+			}
+		} catch (OperationCanceledException oce) {
+			if (isWorkingCopy()) {
+				throw oce;
 			}
 		} catch (Exception e) {
 			// use the debug log for this exception.
@@ -609,7 +668,7 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 		}
 	}
 
-	private void parseUsingContributedModelBuilder(IContributedModelBuilder mb, boolean quickParseMode) {
+	private void parseUsingContributedModelBuilder(IContributedModelBuilder mb, boolean quickParseMode, IProgressMonitor monitor) {
 		try {
 			mb.parse(quickParseMode);
 		} catch (Exception e) {

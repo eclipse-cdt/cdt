@@ -12,8 +12,6 @@ package org.eclipse.cdt.internal.core.model;
 
  
 import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 
 import org.eclipse.cdt.core.model.BufferChangedEvent;
@@ -204,38 +202,8 @@ public abstract class Openable extends Parent implements IOpenable, IBufferChang
 	}
 	
 	public void makeConsistent(IProgressMonitor monitor, boolean forced) throws CModelException {
-		if (isConsistent()) {
-			return;
-		}
-		
-		// create a new info and make it the current info
-		// (this will remove the info and its children just before storing the new infos)
-		CModelManager manager = CModelManager.getDefault();
-		boolean hadTemporaryCache = manager.hasTemporaryCache();
-		try {
-			HashMap newElements = manager.getTemporaryCache();
-			CElementInfo info = createElementInfo();
-			openWhenClosed(info, monitor);
-			if (newElements.get(this) == null) {
-				// close any buffer that was opened for the new elements
-				Iterator iterator = newElements.keySet().iterator();
-				while (iterator.hasNext()) {
-					ICElement element = (ICElement)iterator.next();
-					if (element instanceof Openable) {
-						((Openable)element).closeBuffer();
-					}
-				}
-				throw newNotPresentException();
-			}
-			if (!hadTemporaryCache) {
-				manager.putInfos(this, newElements);
-			}
-		} finally {
-			if (!hadTemporaryCache) {
-				manager.resetTemporaryCache();
-			}
-		}
-
+		// only translation units can be inconsistent
+		// other openables cannot be inconsistent so default is to do nothing
 	}
 
 	/**

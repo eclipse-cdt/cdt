@@ -12,6 +12,7 @@ package org.eclipse.cdt.core.model;
 
 
 
+import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -122,10 +123,42 @@ public interface IWorkingCopy extends ITranslationUnit{
 	 * over the cached contents and the new contents, and finally firing
 	 * this delta.
 	 * <p>
-	 * The boolean argument allows to force problem detection even if the
-	 * working copy is already consistent.
+	 * @param forceProblemDetection  The boolean argument allows to force problem 
+	 * 		detection even if the working copy is already consistent.
+	 * @param monitor  a progress monitor
+	 * @throw CModelException if the contents of the original element
+	 *		cannot be accessed
 	 */
 	void reconcile(boolean forceProblemDetection, IProgressMonitor monitor) throws CModelException;
+
+	/**
+	 * Reconciles the contents of this working copy.
+	 * It performs the reconciliation by locally caching the contents of 
+	 * the working copy, updating the contents, then creating a delta 
+	 * over the cached contents and the new contents, and finally firing
+	 * this delta.
+	 * <p>
+	 * The boolean argument allows to force problem detection even if the
+	 * working copy is already consistent.
+	 * 
+	 * <p>
+	 * <strong>EXPERIMENTAL</strong>. This method has been added as
+	 * part of a work in progress. There is no guarantee that this API will work or
+	 * that it will remain the same. Please do not use this API without consulting
+	 * with the CDT team.
+	 * </p>
+	 * 
+	 * @param computeAST  flag to indicate if an AST should be returned
+	 * @param forceProblemDetection  The boolean argument allows to force problem 
+	 * 		detection even if the working copy is already consistent.
+	 * @param monitor  a progress monitor
+	 * @return the AST or <code>null</code>
+	 * @throw CModelException if the contents of the original element
+	 *		cannot be accessed
+	 * 
+	 * @since 4.0
+	 */
+	IASTTranslationUnit reconcile(boolean computeAST, boolean forceProblemDetection, IProgressMonitor monitor) throws CModelException;
 
 	/**
 	 * Restores the contents of this working copy to the current contents of

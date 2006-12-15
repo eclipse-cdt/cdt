@@ -71,7 +71,7 @@ public abstract class IntegratedCModelTest extends TestCase {
 
 	public void setUp() throws Exception {
 		monitor = new NullProgressMonitor();
-		fCProject= CProjectHelper.createCCProject("TestProject1", "bin", IPDOMManager.ID_NO_INDEXER);
+		fCProject= CProjectHelper.createCCProject("TestProject1", "bin", IPDOMManager.ID_FAST_INDEXER);
 		sourceFile = fCProject.getProject().getFile( getSourcefileResource() );
 		if (!sourceFile.exists()) {
 			try{
@@ -84,6 +84,7 @@ public abstract class IntegratedCModelTest extends TestCase {
 				e.printStackTrace();
 			}
 		}
+		CCorePlugin.getIndexManager().joinIndexer(2000, new NullProgressMonitor());
 	}
 
 	protected void tearDown() {
@@ -99,7 +100,7 @@ public abstract class IntegratedCModelTest extends TestCase {
 		tu.close();
 		tu.open(new NullProgressMonitor());
 		CCorePlugin.getDefault().setStructuralParseMode(false);
-		CCorePlugin.getDefault().setUseNewModelBuilder(false);
+		CCorePlugin.getDefault().setUseNewModelBuilder(true);
 		return tu;
 	}
 	/**

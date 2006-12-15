@@ -39,7 +39,7 @@ public class TranslationUnitTests extends TranslationUnitBaseTest {
 	 * number of places in the tests
 	 */
 	String[] expectedStringList = { "stdio.h", "unistd.h", "func2p",
-			"globalvar", "myenum", "mystruct", "mystruct_t", "myunion",
+			"globalvar", "myenum", "mystruct_t", "myunion",
 			"mytype", "func1", "func2", "main", "func3" };
 
 	int[] expectedLines = { 12, 14, 17, 20, 23, 28, 32, 35, 42, 47, 53, 58, 65,

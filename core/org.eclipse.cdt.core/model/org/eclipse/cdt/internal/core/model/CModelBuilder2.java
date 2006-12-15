@@ -12,10 +12,12 @@ package org.eclipse.cdt.internal.core.model;
 
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Stack;
 
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.dom.IPDOMManager;
 import org.eclipse.cdt.core.dom.ast.ASTSignatureUtil;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTASMDeclaration;
@@ -66,6 +68,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier;
 import org.eclipse.cdt.core.index.IIndex;
+import org.eclipse.cdt.core.index.IIndexManager;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.IContributedModelBuilder;
@@ -79,6 +82,9 @@ import org.eclipse.cdt.core.parser.ast.ASTAccessVisibility;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguousDeclaration;
 import org.eclipse.cdt.internal.core.dom.parser.IASTDeclarationAmbiguity;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPVisitor;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.OperationCanceledException;
 
 /**
  * Build TranslationUnit structure from an <code>IASTTranslationUnit</code>.
@@ -204,23 +210,31 @@ public class CModelBuilder2 implements IContributedModelBuilder {
 	private String fTranslationUnitFileName;
 	private ASTAccessVisibility fCurrentVisibility;
 	private Stack fVisibilityStack;
+	private IProgressMonitor fProgressMonitor;
 
 	/**
 	 * Create a model builder for the given translation unit.
 	 * 
 	 * @param tu  the translation unit (must be a {@link TranslationUnit}
+	 * @param monitor the progress monitor
 	 */
-	public CModelBuilder2(ITranslationUnit tu) {
+	public CModelBuilder2(ITranslationUnit tu, IProgressMonitor monitor) {
 		fTranslationUnit= (TranslationUnit)tu;
+		fProgressMonitor= monitor;
 	}
 
 	/*
 	 * @see org.eclipse.cdt.core.model.IContributedModelBuilder#parse(boolean)
 	 */
 	public void parse(boolean quickParseMode) throws Exception {
-		// always parse fast
-		quickParseMode= true;
-		IIndex index= CCorePlugin.getIndexManager().getIndex(fTranslationUnit.getCProject());
+		if (isIndexerDisabled()) {
+			// fallback to old model builder
+			new CModelBuilder(fTranslationUnit, new HashMap()).parse(true);
+			return;
+		}
+		final IIndexManager indexManager= CCorePlugin.getIndexManager();
+		IIndex index= indexManager.getIndex(fTranslationUnit.getCProject());
+		
 		try {
 			if (index != null) {
 				try {
@@ -229,20 +243,29 @@ public class CModelBuilder2 implements IContributedModelBuilder {
 					index= null;
 				}
 			}
+			checkCanceled();
 			long startTime= System.currentTimeMillis();
-			final IASTTranslationUnit ast= fTranslationUnit.getAST(index, quickParseMode ? ITranslationUnit.AST_SKIP_ALL_HEADERS : 0);
-			if (ast == null) {
-				return;
-			}
+			final IASTTranslationUnit ast= fTranslationUnit.getAST(index, ITranslationUnit.AST_SKIP_ALL_HEADERS);
 			Util.debugLog("CModelBuilder2: parsing " //$NON-NLS-1$
 					+ fTranslationUnit.getElementName()
 					+ " mode="+ (quickParseMode ? "fast " : "full ") //$NON-NLS-1$ //$NON-NLS-2$
 					+ " time="+ ( System.currentTimeMillis() - startTime ) + "ms", //$NON-NLS-1$ //$NON-NLS-2$
 					IDebugLogConstants.MODEL, false);
 
+			final CElementInfo elementInfo= fTranslationUnit.getElementInfo();
+			if (elementInfo instanceof ASTHolderTUInfo) {
+				((ASTHolderTUInfo)elementInfo).fAST= ast;
+			}
+
+			if (ast == null) {
+				checkCanceled();
+				// fallback to old model builder
+				new CModelBuilder(fTranslationUnit, new HashMap()).parse(true);
+				return;
+			}
 			startTime= System.currentTimeMillis();
 			buildModel(ast);
-			fTranslationUnit.getElementInfo().setIsStructureKnown(true);
+			elementInfo.setIsStructureKnown(true);
 			Util.debugLog("CModelBuilder2: building " //$NON-NLS-1$
 					+"children="+ fTranslationUnit.getElementInfo().internalGetChildren().size() //$NON-NLS-1$
 					+" time="+ (System.currentTimeMillis() - startTime) + "ms", //$NON-NLS-1$ //$NON-NLS-2$
@@ -252,6 +275,27 @@ public class CModelBuilder2 implements IContributedModelBuilder {
 				index.releaseReadLock();
 			}
 		}
+	}
+
+	private boolean isCanceled() {
+		return fProgressMonitor != null && fProgressMonitor.isCanceled();
+	}
+
+	private void checkCanceled() {
+		if (fProgressMonitor != null && fProgressMonitor.isCanceled()) {
+			Util.debugLog("CModelBuilder2: cancelled ", IDebugLogConstants.MODEL, false); //$NON-NLS-1$
+			throw new OperationCanceledException();
+		}
+	}
+
+	private boolean isIndexerDisabled() {
+		final IPDOMManager pdomManager= CCorePlugin.getPDOMManager();
+		try {
+			return IPDOMManager.ID_NO_INDEXER.equals(pdomManager.getIndexerId(fTranslationUnit.getCProject()));
+		} catch (CoreException exc) {
+			CCorePlugin.log(exc.getStatus());
+		}
+		return true;
 	}
 
 	/**
@@ -311,6 +355,10 @@ public class CModelBuilder2 implements IContributedModelBuilder {
 					return 0;
 				}
 			}});
+
+		if (isCanceled()) {
+			return;
+		}
 
 		// report problems
 		IProblemRequestor problemRequestor= fTranslationUnit.getProblemRequestor();

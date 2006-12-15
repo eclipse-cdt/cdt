@@ -70,7 +70,7 @@ public class CModelElementsTests extends TestCase {
 		
 	protected void setUp() throws Exception {
 		monitor = new NullProgressMonitor();
-		fCProject= CProjectHelper.createCCProject("TestProject1", "bin", IPDOMManager.ID_NO_INDEXER);
+		fCProject= CProjectHelper.createCCProject("TestProject1", "bin", IPDOMManager.ID_FAST_INDEXER);
 		headerFile = fCProject.getProject().getFile("CModelElementsTest.h");
 		includedFile = fCProject.getProject().getFile("included.h");
 		if (!headerFile.exists()) {

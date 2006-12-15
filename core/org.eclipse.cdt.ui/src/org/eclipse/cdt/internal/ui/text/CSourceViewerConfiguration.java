@@ -16,8 +16,10 @@ package org.eclipse.cdt.internal.ui.text;
 import java.util.Vector;
 
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.content.IContentType;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.AbstractInformationControlManager;
@@ -46,7 +48,6 @@ import org.eclipse.jface.text.rules.RuleBasedScanner;
 import org.eclipse.jface.text.source.IAnnotationHover;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.text.source.SourceViewerConfiguration;
-import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Shell;
@@ -81,6 +82,7 @@ import org.eclipse.cdt.internal.ui.text.c.hover.CEditorTextHoverDescriptor;
 import org.eclipse.cdt.internal.ui.text.c.hover.CEditorTextHoverProxy;
 import org.eclipse.cdt.internal.ui.text.contentassist.CCompletionProcessor2;
 import org.eclipse.cdt.internal.ui.text.contentassist.ContentAssistPreference;
+import org.eclipse.cdt.internal.ui.util.ExternalEditorInput;
 
 
 /**
@@ -353,15 +355,16 @@ public class CSourceViewerConfiguration extends TextSourceViewerConfiguration {
 		return assistant;
 	}
 	
-	
-	/**
-	 * @see SourceViewerConfiguration#getReconciler(ISourceViewer)
+	/*
+	 * @see org.eclipse.ui.editors.text.TextSourceViewerConfiguration#getReconciler(org.eclipse.jface.text.source.ISourceViewer)
 	 */
 	public IReconciler getReconciler(ISourceViewer sourceViewer) {
-		if (fTextEditor != null && fTextEditor.isEditable()) {
+		if (fTextEditor != null && (fTextEditor.isEditable() || fTextEditor.getEditorInput() instanceof ExternalEditorInput)) {
 			//Delay changed and non-incremental reconciler used due to 
 			//PR 130089
-			MonoReconciler reconciler= new MonoReconciler(new CReconcilingStrategy(fTextEditor), false);
+			MonoReconciler reconciler= new CReconciler(new CReconcilingStrategy(fTextEditor));
+			reconciler.setIsIncrementalReconciler(false);
+			reconciler.setProgressMonitor(new NullProgressMonitor());
 			reconciler.setDelay(500);
 			return reconciler;
 		}

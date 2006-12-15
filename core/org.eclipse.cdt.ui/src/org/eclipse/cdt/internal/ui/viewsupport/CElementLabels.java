@@ -353,9 +353,12 @@ public class CElementLabels {
 			}
 		}
 		
-		if( getFlag( flags, M_APP_RETURNTYPE ) && method.exists() && !method.isConstructor()) {
-			buf.append( DECL_STRING );
-			buf.append( method.getReturnType() );	
+		if( getFlag( flags, M_APP_RETURNTYPE ) && method.exists() && !method.isConstructor() && !method.isDestructor()) {
+			final String typeName= method.getReturnType();
+			if (typeName != null && typeName.length() > 0) {
+				buf.append( DECL_STRING );
+				buf.append(typeName);
+			}
 		}			
 		
 		// post qualification

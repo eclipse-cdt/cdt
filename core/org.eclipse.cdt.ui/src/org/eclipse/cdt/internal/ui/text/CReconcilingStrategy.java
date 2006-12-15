@@ -12,20 +12,28 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.text;
 
-import org.eclipse.cdt.core.model.CModelException;
-import org.eclipse.cdt.core.model.ITranslationUnit;
-import org.eclipse.cdt.core.model.IWorkingCopy;
-import org.eclipse.cdt.internal.core.model.CModelManager;
-import org.eclipse.cdt.internal.ui.editor.IReconcilingParticipant;
-import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.cdt.ui.IWorkingCopyManager;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.OperationCanceledException;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.reconciler.DirtyRegion;
 import org.eclipse.jface.text.reconciler.IReconcilingStrategy;
 import org.eclipse.jface.text.reconciler.IReconcilingStrategyExtension;
 import org.eclipse.ui.texteditor.ITextEditor;
+
+import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
+import org.eclipse.cdt.core.index.IIndex;
+import org.eclipse.cdt.core.model.CModelException;
+import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.cdt.core.model.IWorkingCopy;
+import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.IWorkingCopyManager;
+
+import org.eclipse.cdt.internal.core.model.CModelManager;
+
+import org.eclipse.cdt.internal.ui.editor.IReconcilingParticipant;
 
 
 public class CReconcilingStrategy implements IReconcilingStrategy, IReconcilingStrategyExtension {
@@ -59,7 +67,7 @@ public class CReconcilingStrategy implements IReconcilingStrategy, IReconcilingS
 	 * @see org.eclipse.jface.text.reconciler.IReconcilingStrategy#reconcile(org.eclipse.jface.text.IRegion)
 	 */
 	public void reconcile(IRegion region) {
-		reconcile();
+		reconcile(false);
 	}
 
 
@@ -101,29 +109,55 @@ public class CReconcilingStrategy implements IReconcilingStrategy, IReconcilingS
 				}
 			}
 		} 
-		if (needReconcile) reconcile();
+		if (needReconcile) reconcile(false);
 		txt = doc.get(); // save doc copy for further use
 	}
 	
-	private void reconcile() {
+	private void reconcile(final boolean initialReconcile) {
+		IASTTranslationUnit ast= null;
 		try {
 			ITranslationUnit tu = fManager.getWorkingCopy(fEditor.getEditorInput());		
 			if (tu != null && tu.isWorkingCopy()) {
 				IWorkingCopy workingCopy = (IWorkingCopy)tu;
+				final boolean computeAST= initialReconcile || CUIPlugin.getDefault().getASTProvider().isActive(tu);
 				// reconcile
 				synchronized (workingCopy) {
-					workingCopy.reconcile(true, fProgressMonitor);
+					ast= workingCopy.reconcile(computeAST, true, fProgressMonitor);
 				}
 			}
-			
-			// update participants
-			if (fEditor instanceof IReconcilingParticipant /*&& !fProgressMonitor.isCanceled()*/) {
+		} catch(OperationCanceledException oce) {
+			// document was modified while parsing
+		} catch(CModelException e) {
+			IStatus status= new Status(IStatus.ERROR, CUIPlugin.PLUGIN_ID, IStatus.OK, "Error in CDT UI during reconcile", e);  //$NON-NLS-1$
+			CUIPlugin.getDefault().log(status);
+		} finally {
+			if (fEditor instanceof ICReconcilingListener) {
+				IIndex index= null;
+				if (ast != null) {
+					index= ast.getIndex();
+					if (index != null) {
+						try {
+							index.acquireReadLock();
+						} catch (InterruptedException exc) {
+							ast= null;
+						}
+					}
+				}
+				try {
+					((ICReconcilingListener)fEditor).reconciled(ast, null, fProgressMonitor);
+				} finally {
+					if (index != null) {
+						index.releaseReadLock();
+					}
+				}
+			}
+			if (fProgressMonitor != null && fProgressMonitor.isCanceled()) {
+				return;
+			}
+			if (ast == null && fEditor instanceof IReconcilingParticipant) {
 				IReconcilingParticipant p= (IReconcilingParticipant) fEditor;
 				p.reconciled(true);
 			}
-			
-		} catch(CModelException e) {
-				
 		}
  	}
 
@@ -131,10 +165,13 @@ public class CReconcilingStrategy implements IReconcilingStrategy, IReconcilingS
 	 * @see org.eclipse.jface.text.reconciler.IReconcilingStrategyExtension#initialReconcile()
 	 */
 	public void initialReconcile() {
-		if (fEditor instanceof IReconcilingParticipant) {
-			IReconcilingParticipant p= (IReconcilingParticipant) fEditor;
-			p.reconciled(true);
-		}
+		reconcile(true);
 		fInitialProcessDone= true;
+	}
+
+	void aboutToBeReconciled() {
+		if (fEditor instanceof ICReconcilingListener) {
+			((ICReconcilingListener)fEditor).aboutToBeReconciled();
+		}
 	}	
 }

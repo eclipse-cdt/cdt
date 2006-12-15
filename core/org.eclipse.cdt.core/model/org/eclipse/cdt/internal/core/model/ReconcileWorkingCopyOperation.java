@@ -10,10 +10,12 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.model;
 
-import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.model.CModelException;
+import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICModelStatus;
 import org.eclipse.cdt.core.model.ICModelStatusConstants;
+import org.eclipse.core.runtime.OperationCanceledException;
 
 /**
  * Reconcile a working copy and signal the changes through a delta.
@@ -21,18 +23,26 @@ import org.eclipse.cdt.core.model.ICModelStatusConstants;
 public class ReconcileWorkingCopyOperation extends CModelOperation {
 		
 	boolean forceProblemDetection;
+	boolean fComputeAST;
+	IASTTranslationUnit fAST;
 	
 	public ReconcileWorkingCopyOperation(ICElement workingCopy, boolean forceProblemDetection) {
+		this(workingCopy, false, forceProblemDetection);
+	}
+	public ReconcileWorkingCopyOperation(ICElement workingCopy, boolean computeAST, boolean forceProblemDetection) {
 		super(new ICElement[] {workingCopy});
+		fComputeAST= computeAST;
 		this.forceProblemDetection = forceProblemDetection;
 	}
+
 	/**
 	 * @exception CModelException if setting the source
 	 * 	of the original compilation unit fails
 	 */
 	protected void executeOperation() throws CModelException {
 		if (fMonitor != null){
-			if (fMonitor.isCanceled()) return;
+			if (fMonitor.isCanceled())
+				throw new OperationCanceledException();
 			fMonitor.beginTask("element.reconciling", 10); //$NON-NLS-1$
 		}
 	
@@ -46,7 +56,11 @@ public class ReconcileWorkingCopyOperation extends CModelOperation {
 				deltaBuilder = new CElementDeltaBuilder(workingCopy);
 				
 				// update the element infos with the content of the working copy
-				workingCopy.makeConsistent(fMonitor);
+				if (fComputeAST) {
+					fAST= workingCopy.makeConsistent(fComputeAST, fMonitor);
+				} else {
+					workingCopy.makeConsistent(fMonitor);
+				}
 				deltaBuilder.buildDeltas();
 
 				// register the deltas

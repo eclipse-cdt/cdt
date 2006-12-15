@@ -384,9 +384,15 @@ public class CModelBuilder {
 
 	private void generateModelElements (Parent parent, IASTTypedefDeclaration declaration) throws CModelException, ASTNotImplementedException
 	{
-		createTypeDef(parent, declaration);
+		Parent typeDef= createTypeDef(parent, declaration);
+		if (typeDef instanceof IParent) {
+			// create nested
+			parent= typeDef;
+		}
 		IASTAbstractDeclaration abstractDeclaration = declaration.getAbstractDeclarator();
-		createAbstractElement(parent, abstractDeclaration, false, true);
+		if (abstractDeclaration != null && !(abstractDeclaration.getTypeSpecifier() instanceof IASTElaboratedTypeSpecifier)) {
+			createAbstractElement(parent, abstractDeclaration, false, true);
+		}
 	}
 		
 	private CElement createClassSpecifierElement(Parent parent, IASTClassSpecifier classSpecifier, boolean isTemplate)throws ASTNotImplementedException, CModelException{

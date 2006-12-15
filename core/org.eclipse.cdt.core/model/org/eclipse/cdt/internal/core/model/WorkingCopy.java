@@ -16,6 +16,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.IBuffer;
 import org.eclipse.cdt.core.model.ICElement;
@@ -119,13 +120,6 @@ public class WorkingCopy extends TranslationUnit implements IWorkingCopy {
 			}			
 	}
 	
-	/**
-	 * Returns a new element info for this element.
-	 */
-	protected CElementInfo createElementInfo() {
-		return new WorkingCopyInfo(this);
-	}
-
 	/**
 	 * @see org.eclipse.cdt.core.model.IWorkingCopy#destroy()
 	 */
@@ -351,11 +345,7 @@ public class WorkingCopy extends TranslationUnit implements IWorkingCopy {
 	 * @see org.eclipse.cdt.core.model.IWorkingCopy#reconcile(boolean, org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	public void reconcile(boolean forceProblemDetection, IProgressMonitor monitor) throws CModelException {
-		
-		if (this.useCount == 0) throw newNotPresentException(); //was destroyed
-
-        ReconcileWorkingCopyOperation op = new ReconcileWorkingCopyOperation(this, forceProblemDetection);
-        op.runOperation(monitor);
+		reconcile(false, forceProblemDetection, monitor);
 	}
 
 	/**
@@ -397,4 +387,17 @@ public class WorkingCopy extends TranslationUnit implements IWorkingCopy {
 		((TranslationUnitInfo) getElementInfo()).fTimestamp = timeStamp;
 	}
 
+	/*
+	 * @see org.eclipse.cdt.core.model.IWorkingCopy#reconcile(boolean, boolean, org.eclipse.core.runtime.IProgressMonitor)
+	 */
+	public IASTTranslationUnit reconcile(boolean computeAST, boolean forceProblemDetection, IProgressMonitor monitor)
+			throws CModelException {
+		
+		if (this.useCount == 0) throw newNotPresentException(); //was destroyed
+
+        ReconcileWorkingCopyOperation op = new ReconcileWorkingCopyOperation(this, computeAST, forceProblemDetection);
+        op.runOperation(monitor);
+		return op.fAST;
+	}
+	
 }

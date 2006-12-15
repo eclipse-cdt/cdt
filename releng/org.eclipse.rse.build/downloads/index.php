@@ -48,7 +48,9 @@ Software User Agreement</a> unless otherwise specified. </p>
 
 <p>
 <b>Other eclipse.org project</b> downloads are available
-<a href="http://www.eclipse.org/downloads/index.php">here</a>.</p>
+<a href="http://www.eclipse.org/downloads/index.php">here</a>.<br/>
+If you just want the latest drops (no dstore server), you can also get them from the 
+<a href="http://download.eclipse.org/dsdp/tm/updates">TM update site</a>.</p>
 
 <p>
 For information about different kinds of builds look

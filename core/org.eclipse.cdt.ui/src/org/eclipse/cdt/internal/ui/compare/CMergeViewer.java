@@ -27,6 +27,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.texteditor.AbstractTextEditor;
 
 import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.text.ICPartitions;
 
 import org.eclipse.cdt.internal.ui.text.CSourceViewerConfiguration;
 import org.eclipse.cdt.internal.ui.text.CTextTools;
@@ -130,7 +131,7 @@ public class CMergeViewer extends TextMergeViewer {
 		if (fSourceViewerConfiguration == null) {
 			CTextTools tools= CUIPlugin.getDefault().getTextTools();
 			IPreferenceStore store = getPreferenceStore();
-			fSourceViewerConfiguration = new CSourceViewerConfiguration(tools.getColorManager(), store, null, null);
+			fSourceViewerConfiguration = new CSourceViewerConfiguration(tools.getColorManager(), store, null, ICPartitions.C_PARTITIONING);
 		}
 		return fSourceViewerConfiguration;
 	}
@@ -139,6 +140,16 @@ public class CMergeViewer extends TextMergeViewer {
 		return CUIPlugin.getResourceString(TITLE);
 	}
 	
+	/*
+	 * @see org.eclipse.compare.contentmergeviewer.TextMergeViewer#getDocumentPartitioning()
+	 */
+	protected String getDocumentPartitioning() {
+		return ICPartitions.C_PARTITIONING;
+	}
+
+	/*
+	 * @see org.eclipse.compare.contentmergeviewer.TextMergeViewer#getDocumentPartitioner()
+	 */
 	protected IDocumentPartitioner getDocumentPartitioner() {
 		return CUIPlugin.getDefault().getTextTools().createDocumentPartitioner();
 	}

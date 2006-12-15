@@ -95,7 +95,7 @@
 <table border="0" cellspacing="5" cellpadding="2" width="100%">
 	<tr>
 		<td align="LEFT" valign="TOP" colspan="3" bgcolor="#0080C0"><b>
-		<font face="Arial,Helvetica" color="#FFFFFF">Dstore Server Runtime</font></b></td>
+		<font face="Arial,Helvetica" color="#FFFFFF">DStore Server Runtime</font></b></td>
 	</tr>
 </table>
 <table border="0" cellspacing="2" cellpadding="0" width="100%">

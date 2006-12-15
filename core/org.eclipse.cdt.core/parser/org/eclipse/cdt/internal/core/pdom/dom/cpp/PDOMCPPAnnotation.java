@@ -19,7 +19,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPMember;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.internal.core.pdom.dom.c.PDOMCAnnotation;
 
-public class PDOMCPPAnnotation {
+class PDOMCPPAnnotation {
 
 	// "Mutable" shares the same offset as "inline" because
 	// only fields can be mutable and only functions can be inline.

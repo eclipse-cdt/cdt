@@ -23,13 +23,18 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 
+import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ILinkage;
 import org.eclipse.cdt.core.dom.IName;
 import org.eclipse.cdt.core.dom.IPDOM;
 import org.eclipse.cdt.core.dom.IPDOMNode;
 import org.eclipse.cdt.core.dom.IPDOMVisitor;
+import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IBinding;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespaceScope;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.core.index.IIndexFileLocation;
@@ -52,8 +57,6 @@ import org.eclipse.cdt.internal.core.pdom.dom.PDOMInclude;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMLinkage;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMName;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
-import org.eclipse.cdt.internal.core.pdom.dom.cpp.PDOMCPPMethod;
-import org.eclipse.cdt.internal.core.pdom.dom.cpp.PDOMCPPNamespace;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.PlatformObject;
@@ -276,8 +279,8 @@ public class PDOM extends PlatformObject implements IIndexFragment, IPDOM {
 				// check if we have a complete match.
 				final int lastIdx = pattern.length-1;
 				if (matchesUpToLevel.get(lastIdx) && pattern[lastIdx].matcher(name).matches()) {
-					if (acceptImplicitMethods || !(binding instanceof PDOMCPPMethod) ||
-							!((PDOMCPPMethod)binding).isImplicit()) {
+					if (acceptImplicitMethods || !(binding instanceof ICPPMethod) ||
+							!((ICPPMethod)binding).isImplicit()) {
 						bindings.add(binding);
 					}
 				}
@@ -600,8 +603,13 @@ public class PDOM extends PlatformObject implements IIndexFragment, IPDOM {
 
 	public IBinding[] findInNamespace(IBinding nsbinding, char[] name) throws CoreException {
 		IIndexProxyBinding ns= adaptBinding(nsbinding);
-		if (ns instanceof PDOMCPPNamespace) {
-			return ((PDOMCPPNamespace) ns).find(new String(name));
+		if (ns instanceof ICPPNamespace) {
+			try {
+				ICPPNamespaceScope scope = ((ICPPNamespace)ns).getNamespaceScope();
+				return scope.find(new String(name));
+			} catch(DOMException de) {
+				CCorePlugin.log(de);
+			}
 		}
 		return IIndexBinding.EMPTY_INDEX_BINDING_ARRAY;
 	}

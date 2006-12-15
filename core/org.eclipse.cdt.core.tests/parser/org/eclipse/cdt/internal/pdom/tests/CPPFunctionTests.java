@@ -95,7 +95,8 @@ public class CPPFunctionTests extends PDOMTestBase {
 		assertTrue(((ICPPFunction) bindings[0]).isExtern());
 	}
 	
-	public void testStaticCPPFunction() throws Exception {
+	// disabled for 167311
+	public void _testStaticCPPFunction() throws Exception {
 		// static elements cannot be found on global scope, see bug 161216
 		IBinding[] bindings = findQualifiedName(pdom, "staticCPPFunction");
 		assertEquals(0, bindings.length);

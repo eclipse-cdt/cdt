@@ -21,7 +21,7 @@ import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMPointerType;
 import org.eclipse.core.runtime.CoreException;
 
-public class PDOMCPPPointerToMemberType extends PDOMPointerType 
+class PDOMCPPPointerToMemberType extends PDOMPointerType 
 implements ICPPPointerToMemberType, IIndexType {
 
 	private static final int TYPE = PDOMPointerType.RECORD_SIZE;

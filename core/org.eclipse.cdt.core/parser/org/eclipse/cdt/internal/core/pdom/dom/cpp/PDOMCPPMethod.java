@@ -35,7 +35,7 @@ import org.eclipse.core.runtime.CoreException;
  * @author Doug Schaefer
  * 
  */
-public class PDOMCPPMethod extends PDOMCPPFunction implements IIndexType, ICPPMethod, ICPPFunctionType {
+class PDOMCPPMethod extends PDOMCPPFunction implements IIndexType, ICPPMethod, ICPPFunctionType {
 
 	/**
 	 * Offset of remaining annotation information (relative to the beginning of

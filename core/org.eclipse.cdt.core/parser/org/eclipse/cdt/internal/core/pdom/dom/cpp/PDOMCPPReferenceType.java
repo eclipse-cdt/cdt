@@ -25,7 +25,7 @@ import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNotImplementedError;
 import org.eclipse.core.runtime.CoreException;
 
-public class PDOMCPPReferenceType extends PDOMNode implements ICPPReferenceType,
+class PDOMCPPReferenceType extends PDOMNode implements ICPPReferenceType,
 		ITypeContainer, IIndexType {
 
 	private static final int TYPE = PDOMNode.RECORD_SIZE + 0;

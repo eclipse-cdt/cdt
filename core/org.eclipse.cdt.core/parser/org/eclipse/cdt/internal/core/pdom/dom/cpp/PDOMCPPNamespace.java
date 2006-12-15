@@ -35,7 +35,7 @@ import org.eclipse.core.runtime.CoreException;
  * @author Doug Schaefer
  *
  */
-public class PDOMCPPNamespace extends PDOMCPPBinding implements ICPPNamespace, ICPPNamespaceScope {
+class PDOMCPPNamespace extends PDOMCPPBinding implements ICPPNamespace, ICPPNamespaceScope {
 
 	private static final int INDEX_OFFSET = PDOMBinding.RECORD_SIZE + 0;
 

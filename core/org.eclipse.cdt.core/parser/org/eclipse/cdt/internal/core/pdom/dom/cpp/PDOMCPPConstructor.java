@@ -17,7 +17,7 @@ import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
 import org.eclipse.core.runtime.CoreException;
 
-public class PDOMCPPConstructor extends PDOMCPPMethod implements ICPPConstructor {
+class PDOMCPPConstructor extends PDOMCPPMethod implements ICPPConstructor {
 
 	public PDOMCPPConstructor(PDOM pdom, PDOMNode parent, ICPPConstructor method) throws CoreException {
 		super(pdom, parent, method);

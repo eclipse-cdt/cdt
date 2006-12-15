@@ -52,9 +52,6 @@ import org.eclipse.core.runtime.CoreException;
  * @author Doug Schaefer
  * 
  */
-/*
- * aftodo - contract get Methods/Fields not honoured?
- */
 class PDOMCPPClassType extends PDOMCPPBinding implements ICPPClassType,
 ICPPClassScope, IPDOMMemberOwner, IIndexType {
 

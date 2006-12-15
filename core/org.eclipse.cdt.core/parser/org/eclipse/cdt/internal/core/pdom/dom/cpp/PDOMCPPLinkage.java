@@ -15,11 +15,6 @@ package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.DOMException;
-import org.eclipse.cdt.core.dom.ast.IASTBinaryExpression;
-import org.eclipse.cdt.core.dom.ast.IASTExpression;
-import org.eclipse.cdt.core.dom.ast.IASTExpressionList;
-import org.eclipse.cdt.core.dom.ast.IASTFunctionCallExpression;
-import org.eclipse.cdt.core.dom.ast.IASTIdExpression;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IBinding;
@@ -30,9 +25,7 @@ import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTBinaryExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNewExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBasicType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope;
@@ -51,10 +44,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBas
 import org.eclipse.cdt.core.dom.ast.gnu.cpp.GPPLanguage;
 import org.eclipse.cdt.core.model.ILanguage;
 import org.eclipse.cdt.internal.core.Util;
-import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPBlockScope;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPPointerType;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPSemantics;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.db.IBTreeComparator;
 import org.eclipse.cdt.internal.core.pdom.dom.IPDOMMemberOwner;
@@ -67,7 +57,7 @@ import org.eclipse.core.runtime.CoreException;
  * @author Doug Schaefer
  *
  */
-public class PDOMCPPLinkage extends PDOMLinkage {
+class PDOMCPPLinkage extends PDOMLinkage {
 	public PDOMCPPLinkage(PDOM pdom, int record) {
 		super(pdom, record);
 	}
@@ -299,108 +289,6 @@ public class PDOMCPPLinkage extends PDOMLinkage {
 		if (binding != null) {
 			return adaptBinding(binding);
 		}
-		return null;
-	}
-
-	/**
-	 * Read type information from the AST or null if the types could not be determined
-	 * @param paramExp the parameter expression to get types for (null indicates void function/method)
-	 * @return an array of types or null if types could not be determined (because of missing semantic information in the AST)
-	 */
-	public static IType[] getTypes(IASTExpression paramExp) throws DOMException {
-		IType[] types = null;
-
-		if(paramExp==null) { // void function/method
-			types = new IType[0]; 
-		} else if(paramExp instanceof ICPPASTNewExpression) {
-			// aftodo - I'm not 100% sure why a new expression doesn't
-			// have a pointer type already
-			ICPPASTNewExpression exp3 = (ICPPASTNewExpression) paramExp;
-			IType type = exp3.getExpressionType();
-			types = new IType[] {new CPPPointerType(type)};
-		} else if(paramExp instanceof IASTExpressionList) {
-			IASTExpressionList list = (IASTExpressionList) paramExp;
-			IASTExpression[] paramExps = list.getExpressions();
-			types = new IType[paramExps.length];
-			for(int i=0; i<paramExps.length; i++) {
-				types[i] = paramExps[i].getExpressionType();
-			}
-		} else {
-			types = new IType[] {paramExp.getExpressionType()};
-		}
-
-		if(types!=null) { // aftodo - unit test coverage of this is low
-			for(int i=0; i<types.length; i++) {
-				// aftodo - assumed this always terminates
-				while(types[i] instanceof ITypedef) {
-					types[i] = ((ITypedef)types[i]).getType();
-				}
-				if(types[i] instanceof ProblemBinding)
-					return null; 
-			}
-		}
-
-		return types;
-	}
-
-	/*
-	 * aftodo - I'm not confident I'm going through the correct AST routes here
-	 * 
-	 * (It does work though)
-	 */
-	public PDOMBinding resolveFunctionCall(IASTFunctionCallExpression callExp,
-			IASTIdExpression id, IASTName name) throws CoreException,
-			DOMException {
-		IASTExpression paramExp = callExp.getParameterExpression();
-
-		IType[] types = getTypes(paramExp);
-		if (types != null) {
-			IBinding parentBinding = id.getName().getBinding();
-
-			if (parentBinding instanceof ICPPVariable) {
-
-				ICPPVariable v = (ICPPVariable) parentBinding;
-				IType type = v.getType();
-				if (type instanceof PDOMBinding) {
-					return CPPFindBinding.findBinding(
-							((PDOMBinding) type),
-							getPDOM(),
-							name.toCharArray(),
-							CPPMETHOD,
-							types
-					);
-				}
-			} else {
-				IASTNode expPNode = callExp.getParent();
-				if (expPNode instanceof IASTBinaryExpression) {
-					IASTBinaryExpression bExp = (IASTBinaryExpression) expPNode;
-					switch (bExp.getOperator()) {
-					case ICPPASTBinaryExpression.op_pmarrow: /* fall through */
-					case ICPPASTBinaryExpression.op_pmdot:
-						IASTExpression left = bExp.getOperand1();
-						IType t = CPPSemantics.getUltimateType(left.getExpressionType(), false);
-						if (t instanceof PDOMCPPClassType) {
-							return CPPFindBinding.findBinding(
-									((PDOMCPPClassType) t),
-									getPDOM(),
-									name.toCharArray(),
-									CPPMETHOD,
-									types
-							);
-						}
-					}
-				} else { // filescope
-					return CPPFindBinding.findBinding(
-							getIndex(),
-							getPDOM(),
-							name.toCharArray(),
-							CPPFUNCTION,
-							types
-					);
-				}
-			}
-		}
-
 		return null;
 	}
 

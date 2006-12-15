@@ -24,7 +24,7 @@ import org.eclipse.core.runtime.CoreException;
 /**
  * Mirrors type-hierarchy from DOM interfaces
  */
-abstract public class PDOMCPPBinding extends PDOMBinding implements ICPPBinding {
+abstract class PDOMCPPBinding extends PDOMBinding implements ICPPBinding {
 	public PDOMCPPBinding(PDOM pdom, int record) {
 		super(pdom, record);
 	}

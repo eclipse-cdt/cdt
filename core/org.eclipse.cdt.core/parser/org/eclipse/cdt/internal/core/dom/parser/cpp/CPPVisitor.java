@@ -1382,56 +1382,28 @@ public class CPPVisitor {
 	    for( int i = 0; i < parameters.length; i++ ){
 	        try {
                 pt = parameters[i].getType();
+            
+                // remove qualifiers
+                if (pt instanceof IQualifierType) {
+                	pt= ((IQualifierType) pt).getType();
+                }
+
+                if( pt instanceof IArrayType ){
+                	pt = new CPPPointerType( ((IArrayType) pt).getType() );
+                } else if( pt instanceof IFunctionType ){
+                	pt = new CPPPointerType( pt );
+                }
             } catch ( DOMException e ) {
                 pt = e.getProblem();
             }
 	        
-	        IType [] temp = new IType[] { (IType) pt.clone() };
-	        int lastIdx = 0;
-	        while( pt instanceof ITypeContainer){
-	            try {
-                    pt = ((ITypeContainer)pt).getType();
-                } catch ( DOMException e1 ) {
-                    pt = e1.getProblem();
-                }
-	            if( pt instanceof ITypeContainer && !(pt instanceof ITypedef) ){
-		            IType t = (IType) pt.clone();
-		            ((ITypeContainer) temp[ lastIdx ]).setType( t );
-		            temp = (IType[]) ArrayUtil.append( IType.class, temp, t );
-		            lastIdx++;
-	            } else {
-	                temp = (IType[]) ArrayUtil.append( IType.class, temp, pt );
-	                lastIdx++;
-	                break;
-	            }
-	        }
-
-	        if( lastIdx > 0 && temp[ lastIdx - 1 ] instanceof IQualifierType ){
-	            temp[lastIdx - 1] = temp[lastIdx--];
-	            if( lastIdx > 0 ){
-	                ITypeContainer cont = (ITypeContainer) temp[ lastIdx - 1 ];
-	                cont.setType( temp[ lastIdx ] );
-	            }
-	        }
-	        
-	        IType lastType = temp[ 0 ];
-	        if( lastType instanceof IArrayType ){
-	            try {
-                    lastType = new CPPPointerType( ((IArrayType) lastType).getType() );
-                } catch ( DOMException e1 ) {
-                    lastType = e1.getProblem();
-                }
-	        } else if( lastType instanceof IFunctionType ){
-	            lastType = new CPPPointerType( lastType );
-	        }
-	        
-	        pTypes[i] = lastType; 
+	        pTypes[i] = pt; 
 	    }
 	    
 	    return new CPPFunctionType( returnType, pTypes );
 	}
 	
-	private static IType createType( IType returnType, ICPPASTFunctionDeclarator fnDtor ){
+	private static IType createType( IType returnType, ICPPASTFunctionDeclarator fnDtor ) {
 	    IASTParameterDeclaration [] params = fnDtor.getParameters();
 	    IType [] pTypes = new IType [ params.length ];
 	    IType pt = null;
@@ -1439,23 +1411,28 @@ public class CPPVisitor {
 	    for( int i = 0; i < params.length; i++ ){
 	        IASTDeclSpecifier pDeclSpec = params[i].getDeclSpecifier();
 	        IASTDeclarator pDtor = params[i].getDeclarator();
+	        pt = createType( pDeclSpec );
+	        pt = createType( pt, pDtor );
+
 	        //8.3.5-3 
 	        //Any cv-qualifier modifying a parameter type is deleted.
 	        //so only create the base type from the declspec and not the qualifiers
-	        pt = getBaseType( pDeclSpec );
-	        
-	        pt = createType( pt, pDtor );
-	        
-	        //any parameter of type array of T is adjusted to be pointer to T
-	        if( pt instanceof IArrayType ){
-	            IArrayType at = (IArrayType) pt;
-	            try {
+	        try {
+	        	if (pt instanceof IQualifierType) {
+	        		pt= ((IQualifierType) pt).getType();
+	        	}
+	        	if (pt instanceof CPPPointerType) {
+	        		pt= ((CPPPointerType) pt).stripQualifiers();
+	        	}
+	        	//any parameter of type array of T is adjusted to be pointer to T
+	        	if( pt instanceof IArrayType ){
+	        		IArrayType at = (IArrayType) pt;
                     pt = new CPPPointerType( at.getType() );
-                } catch ( DOMException e ) {
-                    pt = e.getProblem();
-                }
-	        }
-	        
+	        	}
+            } catch ( DOMException e ) {
+                pt = e.getProblem();
+            }
+
 	        //any parameter to type function returning T is adjusted to be pointer to function
 	        if( pt instanceof IFunctionType ){
 	            pt = new CPPPointerType( pt );

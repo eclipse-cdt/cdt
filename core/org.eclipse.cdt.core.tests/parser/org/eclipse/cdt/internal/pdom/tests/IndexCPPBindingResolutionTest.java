@@ -458,6 +458,18 @@ public class IndexCPPBindingResolutionTest extends IndexBindingResolutionTestBas
 		IBinding b0 = getBindingFromASTName("foo();", 3);
 	}
 
+	// // the header
+	// typedef int TYPE;
+	// namespace ns {
+	//    const TYPE* foo(int a);
+	// };
+	
+	// #include "header.h"
+	// const TYPE* ns::foo(int a) { return 0; }
+	public void testTypeQualifier() {
+		IBinding b0 = getBindingFromASTName("foo(", 3);
+	}
+
 	// // header
 	//	class Base { public: void foo(int i) {} };
 	//	class Derived : public Base { public: void foo(long l) {} };
@@ -839,6 +851,34 @@ public class IndexCPPBindingResolutionTest extends IndexBindingResolutionTestBas
 
 	// // the header
 	
+	// void f(int*){}		// b1
+	// void f(const int*){}	// b2
+	// void f(int const*){}	// b2, redef
+	// void f(int *const){}	// b1, redef
+	// void f(const int*const){} // b2, redef
+	// void f(int const*const){} // b2, redef
+	public void testConstIntPtrParameterInDefinitionAST() throws CoreException {
+		IBinding binding1= getBindingFromASTName("f(int*){}", 1);
+		IBinding binding2= getBindingFromASTName("f(const int*){}", 1);
+		getProblemFromASTName("f(int const*){}", 1);
+		getProblemFromASTName("f(int *const){}", 1);
+		getProblemFromASTName("f(const int*const){}", 1);
+		getProblemFromASTName("f(int const*const){}", 1);
+	}
+
+	// // the header
+	
+	// void f(int&){}		// b1
+	// void f(const int&){}	// b2
+	// void f(int const&){}	// b2, redef
+	public void testConstIntRefParameterInDefinitionAST() throws CoreException {
+		IBinding binding1= getBindingFromASTName("f(int&){}", 1);
+		IBinding binding2= getBindingFromASTName("f(const int&){}", 1);
+		getProblemFromASTName("f(int const&){}", 1);
+	}
+
+	// // the header
+
 	// void f(int*);		// b1
 	// void f(const int*);	// b2
 	// void f(int const*);	// b2
@@ -848,10 +888,6 @@ public class IndexCPPBindingResolutionTest extends IndexBindingResolutionTestBas
 	//
 	// void f(int*){}		// b1
 	// void f(const int*){}	// b2
-	// void f(int const*){}	// b2, redef
-	// void f(int *const){}	// b1, redef
-	// void f(const int*const){} // b2, redef
-	// void f(int const*const){} // b2, redef
 	//
 	// void ref() {
 	// 	 int* 			int_ptr			= 0;
@@ -868,15 +904,9 @@ public class IndexCPPBindingResolutionTest extends IndexBindingResolutionTestBas
 	//   f(const_int_ptr_const);	// b2
 	//   f(int_const_ptr_const);	// b2
     // }
-	public void _testConstIntPtrParameterInDefinitionAST() throws CoreException {
+	public void testConstIntPtrParameterInDefinitionAST2() throws CoreException {
 		IBinding binding1= getBindingFromASTName("f(int*){}", 1);
-		assertEquals(2, index.findNames(binding1, IIndex.FIND_DECLARATIONS).length);
 		IBinding binding2= getBindingFromASTName("f(const int*){}", 1);
-		assertEquals(4, index.findNames(binding2, IIndex.FIND_DECLARATIONS).length);
-		getProblemFromASTName("f(int const*){}", 1);
-		getProblemFromASTName("f(int *const){}", 1);
-		getProblemFromASTName("f(const int*const){}", 1);
-		getProblemFromASTName("f(int const*const){}", 1);
 		
 		assertEquals(binding1, getBindingFromASTName("f(int_ptr)", 1));
 		assertEquals(binding2, getBindingFromASTName("f(const_int_ptr)", 1));
@@ -885,7 +915,7 @@ public class IndexCPPBindingResolutionTest extends IndexBindingResolutionTestBas
 		assertEquals(binding2, getBindingFromASTName("f(const_int_ptr_const)", 1));
 		assertEquals(binding2, getBindingFromASTName("f(int_const_ptr_const)", 1));
 	}
-	
+
 	// // the header
 	// void f(int*);		// b1
 	// void f(const int*);	// b2
@@ -897,10 +927,6 @@ public class IndexCPPBindingResolutionTest extends IndexBindingResolutionTestBas
 	// #include "header.h"
 	// void f(int*){}		// b1
 	// void f(const int*){}	// b2
-	// void f(int const*){}	// b2, redef
-	// void f(int *const){}	// b1, redef
-	// void f(const int*const){} // b2, redef
-	// void f(int const*const){} // b2, redef
 	//
 	// void ref() {
 	// 	 int* 			int_ptr			= 0;
@@ -917,15 +943,9 @@ public class IndexCPPBindingResolutionTest extends IndexBindingResolutionTestBas
 	//   f(const_int_ptr_const);	// b2
 	//   f(int_const_ptr_const);	// b2
     // }
-	public void _testConstIntPtrParameterInDefinition() throws CoreException {
+	public void testConstIntPtrParameterInDefinition() throws CoreException {
 		IBinding binding1= getBindingFromASTName("f(int*){}", 1);
-		assertEquals(2, index.findNames(binding1, IIndex.FIND_DECLARATIONS).length);
 		IBinding binding2= getBindingFromASTName("f(const int*){}", 1);
-		assertEquals(4, index.findNames(binding2, IIndex.FIND_DECLARATIONS).length);
-		getProblemFromASTName("f(int const*){}", 1);
-		getProblemFromASTName("f(int *const){}", 1);
-		getProblemFromASTName("f(const int*const){}", 1);
-		getProblemFromASTName("f(int const*const){}", 1);
 		
 		assertEquals(binding1, getBindingFromASTName("f(int_ptr)", 1));
 		assertEquals(binding2, getBindingFromASTName("f(const_int_ptr)", 1));
@@ -933,6 +953,9 @@ public class IndexCPPBindingResolutionTest extends IndexBindingResolutionTestBas
 		assertEquals(binding1, getBindingFromASTName("f(int_ptr_const)", 1));
 		assertEquals(binding2, getBindingFromASTName("f(const_int_ptr_const)", 1));
 		assertEquals(binding2, getBindingFromASTName("f(int_const_ptr_const)", 1));
+
+		assertEquals(2, index.findNames(binding1, IIndex.FIND_DECLARATIONS).length);
+		assertEquals(4, index.findNames(binding2, IIndex.FIND_DECLARATIONS).length);
 	}
 
 }

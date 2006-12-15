@@ -65,7 +65,7 @@ class PDOMCPPParameter extends PDOMNamedNode implements ICPPParameter {
 		super(pdom, record);
 	}
 
-	public PDOMCPPParameter(PDOM pdom, PDOMNode parent, IParameter param)
+	public PDOMCPPParameter(PDOM pdom, PDOMNode parent, IParameter param, IType type)
 			throws CoreException {
 		super(pdom, parent, param.getNameCharArray());
 		
@@ -76,9 +76,8 @@ class PDOMCPPParameter extends PDOMNamedNode implements ICPPParameter {
 		db.putByte(record + FLAGS, flags);
 		
 		try {
-			IType type = param.getType();
-			while(type instanceof ITypedef)
-				type = ((ITypedef)type).getType();
+			if (type == null) 
+				type= param.getType();
 			if (type != null) {
 				PDOMNode typeNode = getLinkageImpl().addType(this, type);
 				db.putInt(record + TYPE, typeNode != null ? typeNode.getRecord() : 0);

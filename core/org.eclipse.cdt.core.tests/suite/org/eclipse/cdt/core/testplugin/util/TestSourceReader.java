@@ -83,7 +83,8 @@ public class TestSourceReader {
 	    				contents.remove(0);
 	    			content = new StringBuffer();
 	    		}
-	    		if(line.indexOf(testName) != -1) {
+	    		int idx= line.indexOf(testName);
+	    		if( idx != -1 && !Character.isJavaIdentifierPart(line.charAt(idx+testName.length()))) {
 	    			return (StringBuffer[]) contents.toArray(new StringBuffer[contents.size()]);
 	    		}
 	    	}

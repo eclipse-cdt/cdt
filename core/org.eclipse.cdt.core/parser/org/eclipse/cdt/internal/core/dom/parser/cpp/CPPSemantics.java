@@ -1916,15 +1916,22 @@ public class CPPSemantics {
 	    for( int i = 0; i < items.length && items[i] != null; i++ ){
 	        Object o = items[i];
 	        boolean declaredBefore = declaredBefore( o, name );
-	        if( !data.checkWholeClassScope && !declaredBefore )
-	        	continue;
+	        boolean checkResolvedNamesOnly= false;
+	        if( !data.checkWholeClassScope && !declaredBefore) {
+	        	if (!name.isReference()) {
+	        		checkResolvedNamesOnly= true;
+	        		declaredBefore= true;
+	        	}
+	        	else
+	        		continue;
+	        }
 	        if( o instanceof IASTName ){
-	            temp = ((IASTName) o).resolveBinding();
+	        	IASTName on= (IASTName) o;
+	            temp = checkResolvedNamesOnly ? on.getBinding() : on.resolveBinding();
 	            if( temp == null )
 	                continue;
 	        } else if( o instanceof IBinding ){
 	            temp = (IBinding) o;
-	            
 	        } else
 	            continue;
 

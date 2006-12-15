@@ -81,7 +81,8 @@ class PDOMCPPFunction extends PDOMCPPBinding implements IIndexType, ICPPFunction
 		Database db = pdom.getDB();
 		IBinding binding = function;
 		try {
-			IType rt= function.getType().getReturnType();
+			IFunctionType ft= function.getType();
+			IType rt= ft.getReturnType();
 			if (rt != null) {
 				PDOMNode typeNode = getLinkageImpl().addType(this, rt);
 				if (typeNode != null) {
@@ -89,11 +90,13 @@ class PDOMCPPFunction extends PDOMCPPBinding implements IIndexType, ICPPFunction
 				}
 			}
 
-			IParameter[] params = function.getParameters();
+			IParameter[] params= function.getParameters();
+			IType[] paramTypes= ft.getParameterTypes();
 			db.putInt(record + NUM_PARAMS, params.length);
 			
 			for (int i=0; i<params.length; ++i) {
-				setFirstParameter(new PDOMCPPParameter(pdom, this, params[i]));
+				IType pt= i<paramTypes.length ? paramTypes[i] : null;
+				setFirstParameter(new PDOMCPPParameter(pdom, this, params[i], pt));
 			}
 			db.putByte(record + ANNOTATION, PDOMCPPAnnotation.encodeAnnotation(binding));
 			IFunctionType ftype = function.getType();

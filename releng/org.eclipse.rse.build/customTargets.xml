@@ -159,7 +159,7 @@
 		</copy>
 
 		<unpackUpdateJars site="${tmpsite}/eclipse" output="${tmpsite}/new/eclipse"/>
-		<!-- <antcall target="packageLicenseFiles"/> -->
+		<antcall target="packageLicenseFiles"/>
 		<zip destfile="${buildDirectory}/${buildLabel}/${archiveName}"
 			basedir="${tmpsite}/new"
 	  	/>

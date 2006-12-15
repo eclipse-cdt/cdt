@@ -167,8 +167,8 @@
 	</target>
 
 	<target name="packageLicenseFiles">
-		<copy file="${buildRoot}/eclipse/epl-v10.html" todir="${tmpsite}/new/eclipse"/>
-		<copy file="${buildRoot}/eclipse/notice.html" todir="${tmpsite}/new/eclipse"/>
+		<copy file="${builder}/template/epl-v10.html" todir="${tmpsite}/new/eclipse"/>
+		<copy file="${builder}/template/notice.html" todir="${tmpsite}/new/eclipse"/>
 	</target>
 
 	<!-- ===================================================================== -->

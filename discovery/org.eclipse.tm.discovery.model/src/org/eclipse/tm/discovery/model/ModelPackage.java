@@ -389,6 +389,10 @@ public interface ModelPackage extends EPackage {
 	 * 
 	 * @generated
 	 */
+	
+	
+	
+	
 	interface Literals {
 		/**
 		 * The meta object literal for the '{@link org.eclipse.tm.discovery.model.impl.DeviceImpl <em>Device</em>}' class.
@@ -397,6 +401,7 @@ public interface ModelPackage extends EPackage {
 		 * @see org.eclipse.tm.discovery.model.impl.ModelPackageImpl#getDevice()
 		 * @generated
 		 */
+		
 		EClass DEVICE = eINSTANCE.getDevice();
 
 		/**

@@ -14,10 +14,6 @@ import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.Vector;
 
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.rse.core.model.IHost;
@@ -128,9 +124,7 @@ public class ServiceDiscoveryWizard extends Wizard {
 						RSEUIPlugin.getDefault().getSystemRegistry().expandHost(conn);
 					}
 				} catch (Exception e) {
-					if (conn != null) {
 						RSEUIPlugin.getDefault().getSystemRegistry().deleteHost(conn);
-					}
 				} finally {
 					systemRefreshAllAction.run();
 				}

@@ -5,7 +5,7 @@
  * available at http://www.eclipse.org/legal/epl-v10.html
  * 
  * Contributors:
- *   Javier Montalvo Orús (Symbian) - initial API and implementation
+ *   Javier Montalvo Orus (Symbian) - initial API and implementation
  ********************************************************************************/
 
 package org.eclipse.tm.discovery.model.util;
@@ -51,6 +51,7 @@ public class ModelSwitch {
 
 	/**
 	 * Calls <code>caseXXX</code> for each class of the model until one returns a non null result; it yields that result.
+	 * @param theEObject 
 	 * 
 	 * @return the first non-null result returned by a <code>caseXXX</code> call.
 	 * @generated

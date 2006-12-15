@@ -451,7 +451,9 @@ public class ServiceDiscoveryWizardDisplayPage extends WizardPage {
 															
 															//update model when pressing return
 															updatePairs(item.getText(0),item.getText(1));
-															
+															text.dispose ();
+															e.doit = false;
+															break;
 														case SWT.TRAVERSE_ESCAPE:
 															text.dispose ();
 															e.doit = false;

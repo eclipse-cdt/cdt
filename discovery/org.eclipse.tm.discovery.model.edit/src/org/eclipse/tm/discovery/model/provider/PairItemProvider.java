@@ -47,6 +47,7 @@ public class PairItemProvider
 		{
 	/**
 	 * This constructs an instance from a factory and a notifier.
+	 * @param adapterFactory 
 	 * 
 	 * @generated
 	 */

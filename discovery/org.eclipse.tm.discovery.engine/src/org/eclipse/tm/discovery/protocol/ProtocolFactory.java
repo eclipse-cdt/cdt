@@ -5,7 +5,7 @@
  * available at http://www.eclipse.org/legal/epl-v10.html
  * 
  * Contributors:
- *   Javier Montalvo Orús (Symbian) - initial API and implementation
+ *   Javier Montalvo Orus (Symbian) - initial API and implementation
  ********************************************************************************/
 
 package org.eclipse.tm.discovery.protocol;
@@ -64,6 +64,7 @@ public class ProtocolFactory {
 	public static String[] getQueryList(String protocolName) throws CoreException
 	{
 		IProtocol protocol = null;
+		String[] queries = null;
 		
 		IConfigurationElement[] ce = ep.getConfigurationElements();
 		for (int i = 0; i < ce.length; i++) {
@@ -75,11 +76,12 @@ public class ProtocolFactory {
 				}
 		}
 		
-		String[] queries = protocol.getQueries();
-		
-		if(queries==null)
-			queries = new String[]{};
-		
+		if(protocol != null)
+		{	
+			queries = protocol.getQueries();
+			if(queries==null)
+				queries = new String[]{};
+		}
 		return queries;
 		
 	}

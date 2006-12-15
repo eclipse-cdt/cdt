@@ -29,6 +29,7 @@ import org.eclipse.tm.discovery.model.*;
 public class ModelFactoryImpl extends EFactoryImpl implements ModelFactory {
 	/**
 	 * Creates the default factory implementation.
+	 * @return model factory
 	 * 
 	 * @generated
 	 */
@@ -125,6 +126,7 @@ public class ModelFactoryImpl extends EFactoryImpl implements ModelFactory {
 
 	/**
 	 * 
+	 * @return model package
 	 * @deprecated
 	 * @generated
 	 */

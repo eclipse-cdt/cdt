@@ -46,6 +46,7 @@ public class ServiceTypeItemProvider
 		{
 	/**
 	 * This constructs an instance from a factory and a notifier.
+	 * @param adapterFactory 
 	 * 
 	 * @generated
 	 */

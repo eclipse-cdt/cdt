@@ -5,7 +5,7 @@
  * available at http://www.eclipse.org/legal/epl-v10.html
  * 
  * Contributors:
- *   Javier Montalvo Orús (Symbian) - initial API and implementation
+ *   Javier Montalvo Orus (Symbian) - initial API and implementation
  ********************************************************************************/
 
 package org.eclipse.tm.discovery.model.impl;
@@ -103,6 +103,7 @@ public class ModelPackageImpl extends EPackageImpl implements ModelPackage {
 	 * those of another.
 	 * <p>Invocation of this method will not affect any packages that have
 	 * already been initialized.
+	 * @return the model package
 	 * 	 
 	 * @see #eNS_URI
 	 * @see #createPackageContents()

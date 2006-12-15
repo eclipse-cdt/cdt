@@ -5,7 +5,7 @@
  * available at http://www.eclipse.org/legal/epl-v10.html
  * 
  * Contributors:
- *   Javier Montalvo Orús (Symbian) - initial API and implementation
+ *   Javier Montalvo Orus (Symbian) - initial API and implementation
  ********************************************************************************/
 
 package org.eclipse.tm.discovery.protocol.dnssd;
@@ -369,8 +369,8 @@ public class DNSSDProtocol implements IProtocol {
 	
 	private void handlePTRRecord(ByteArrayInputStream packetInputStream, Device device, String name) {
 		
-		Service service = null;
-		ServiceType serviceType = null;
+		Service service = ModelFactory.eINSTANCE.createService();
+		ServiceType serviceType = ModelFactory.eINSTANCE.createServiceType();
 		
 		//skip dataLength
 		packetInputStream.skip(2);
@@ -442,8 +442,8 @@ public class DNSSDProtocol implements IProtocol {
 	
 	private void handleSRVRecord(ByteArrayInputStream packetInputStream, Device device, String name) {
 
-		Service service = null;
-		ServiceType serviceType = null;
+		Service service = ModelFactory.eINSTANCE.createService();
+		ServiceType serviceType = ModelFactory.eINSTANCE.createServiceType();
 		
 		//data of the packet, without bytes for priority-weight-port
 		int dataLength = (packetInputStream.read() << 8 | packetInputStream.read()) - 6;
@@ -541,8 +541,8 @@ public class DNSSDProtocol implements IProtocol {
 	}
 	
 	private void handleTXTRecord(ByteArrayInputStream packetInputStream, Device device, String recordName) {
-		ServiceType serviceType = null;
-		Service service = null;;
+		ServiceType serviceType = ModelFactory.eINSTANCE.createServiceType();
+		Service service = ModelFactory.eINSTANCE.createService();
 		int dataLength = packetInputStream.read() << 8 | packetInputStream.read();
 
 		byte [] data = new byte[dataLength];

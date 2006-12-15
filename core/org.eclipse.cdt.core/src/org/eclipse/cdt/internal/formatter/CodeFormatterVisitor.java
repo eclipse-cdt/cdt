@@ -246,6 +246,9 @@ public class CodeFormatterVisitor extends CPPASTVisitor {
 		IASTDeclaration[] decls= tu.getDeclarations();
 		for (int i = 0; i < decls.length; i++) {
 			IASTDeclaration declaration = decls[i];
+			if (!fTranslationUnitFile.equals(declaration.getContainingFilename())) {
+				continue;
+			}
 			try {
 				declaration.accept(this);
 				scribe.printNewLine();
@@ -270,9 +273,6 @@ public class CodeFormatterVisitor extends CPPASTVisitor {
 	 * @see org.eclipse.cdt.core.dom.ast.ASTVisitor#visit(org.eclipse.cdt.core.dom.ast.IASTDeclaration)
 	 */
 	public int visit(IASTDeclaration node) {
-		if (!fTranslationUnitFile.equals(node.getContainingFilename())) {
-			return PROCESS_SKIP;
-		}
 		int indentLevel= scribe.indentationLevel;
 		try {
     		if (node.getNodeLocations()[0] instanceof IASTMacroExpansion) {

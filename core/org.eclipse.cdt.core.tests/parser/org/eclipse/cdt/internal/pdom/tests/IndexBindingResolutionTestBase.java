@@ -86,7 +86,16 @@ public abstract class IndexBindingResolutionTestBase extends PDOMTestBase {
 		assertFalse("Binding is a ProblemBinding for name "+names[0].getRawSignature(), IProblemBinding.class.isAssignableFrom(names[0].resolveBinding().getClass()));
 		return names[0].resolveBinding();
 	}
-	
+
+	protected IBinding getProblemFromASTName(String section, int len) {
+		IASTName[] names= ast.getLanguage().getSelectedNames(ast, testData[1].indexOf(section), len);
+		assertEquals("<>1 name found for \""+section+"\"", 1, names.length);
+		IBinding binding = names[0].resolveBinding();
+		assertNotNull("No binding for "+names[0].getRawSignature(), binding);
+		assertTrue("Binding is not a ProblemBinding for name "+names[0].getRawSignature(), IProblemBinding.class.isAssignableFrom(names[0].resolveBinding().getClass()));
+		return names[0].resolveBinding();
+	}
+
 	protected void assertQNEquals(String expectedQn, IBinding b12) throws DOMException {
 		assertTrue(b12 instanceof ICPPBinding);
 		assertEquals(expectedQn, CPPVisitor.renderQualifiedName(((ICPPBinding)b12).getQualifiedName()));

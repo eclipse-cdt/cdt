@@ -20,7 +20,9 @@ import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPVariable;
+import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.testplugin.CProjectHelper;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Path;
 
 /**
@@ -704,4 +706,233 @@ public class IndexCPPBindingResolutionTest extends IndexBindingResolutionTestBas
 	}
 	
 	public void _testAddressOfOverloadedMethod() throws DOMException { fail("aftodo"); }
+
+	// // the header
+	// void f_int(int);
+	// void f_const_int(const int);
+	// void f_int_ptr(int*);
+
+	// #include "header.h"
+	// void ref() { 
+	// 	 int 			i				= 0;
+	//   const int 		const_int		= 0;
+	//
+	//   f_int(i);				 // ok
+	//   f_int(const int);       // ok (passed as value)
+	//   f_const_int(i);		 // ok
+	//   f_const_int(const int); // ok
+	// }
+	//
+	//  void f_const_int(const int const_int) {
+	//     f_int_ptr(&const_int); // error
+	//  }  
+	public void testConstIntParameter() {
+		getBindingFromASTName("f_int(i)", 5);
+		getBindingFromASTName("f_int(const int)", 5);
+		getBindingFromASTName("f_const_int(i)", 11);
+		getBindingFromASTName("f_const_int(const int)", 11);
+		getProblemFromASTName("f_int_ptr(&const_int)", 9);
+	}
+
+	// // the header
+	// void f_int_ptr(int*);
+	// void f_const_int_ptr(const int*);
+	// void f_int_const_ptr(int const*);
+	// void f_int_ptr_const(int *const);
+	// void f_const_int_ptr_const(const int*const);
+	// void f_int_const_ptr_const(int const*const);
+	
+	// #include "header.h"
+	// void ref() { 
+	// 	 int* 			int_ptr			= 0;
+	//   const int*		const_int_ptr   = 0;
+	// 	 int const*     int_const_ptr	= 0;
+	// 	 int *const     int_ptr_const	= 0;
+	//   const int*const		const_int_ptr_const   = 0;
+	//   int const*const		int_const_ptr_const   = 0;
+	//
+	//   f_int_ptr(int_ptr);				// ok
+	//   f_int_ptr(const_int_ptr);			// error
+	//   f_int_ptr(int_const_ptr);			// error
+	//   f_int_ptr(int_ptr_const);			// ok
+	//   f_int_ptr(const_int_ptr_const);	// error
+	//   f_int_ptr(int_const_ptr_const);	// error
+	//
+	//   f_const_int_ptr(int_ptr);				// ok
+	//   f_const_int_ptr(const_int_ptr);		// ok
+	//   f_const_int_ptr(int_const_ptr);		// ok
+	//   f_const_int_ptr(int_ptr_const);		// ok
+	//   f_const_int_ptr(const_int_ptr_const);	// ok
+	//   f_const_int_ptr(int_const_ptr_const);	// ok
+	//
+	//   f_int_const_ptr(int_ptr);				// ok
+	//   f_int_const_ptr(const_int_ptr);		// ok
+	//   f_int_const_ptr(int_const_ptr);		// ok
+	//   f_int_const_ptr(int_ptr_const);		// ok
+	//   f_int_const_ptr(const_int_ptr_const);	// ok
+	//   f_int_const_ptr(int_const_ptr_const);	// ok
+	//
+	//   f_int_ptr_const(int_ptr);				// ok
+	//   f_int_ptr_const(const_int_ptr);		// error
+	//   f_int_ptr_const(int_const_ptr);		// error
+	//   f_int_ptr_const(int_ptr_const);		// ok
+	//   f_int_ptr_const(const_int_ptr_const);	// error
+	//   f_int_ptr_const(int_const_ptr_const);	// error
+	//
+	//   f_const_int_ptr_const(int_ptr);			 // ok
+	//   f_const_int_ptr_const(const_int_ptr);		 // ok
+	//   f_const_int_ptr_const(int_const_ptr);		 // ok
+	//   f_const_int_ptr_const(int_ptr_const);		 // ok
+	//   f_const_int_ptr_const(const_int_ptr_const); // ok
+	//   f_const_int_ptr_const(int_const_ptr_const); // ok
+	//
+	//   f_int_const_ptr_const(int_ptr);				// ok
+	//   f_int_const_ptr_const(const_int_ptr);			// ok
+	//   f_int_const_ptr_const(int_const_ptr);			// ok
+	//   f_int_const_ptr_const(int_ptr_const);			// ok
+	//   f_int_const_ptr_const(const_int_ptr_const);	// ok
+	//   f_int_const_ptr_const(int_const_ptr_const);	// ok
+	// }
+	public void testConstIntPtrParameter() {
+		getBindingFromASTName("f_int_ptr(int_ptr)", 			9);
+		getProblemFromASTName("f_int_ptr(const_int_ptr)", 		9);
+		getProblemFromASTName("f_int_ptr(int_const_ptr)", 		9);
+		getBindingFromASTName("f_int_ptr(int_ptr_const)", 		9);
+		getProblemFromASTName("f_int_ptr(const_int_ptr_const)", 9);
+		getProblemFromASTName("f_int_ptr(int_const_ptr_const)", 9);
+
+		getBindingFromASTName("f_const_int_ptr(int_ptr)", 				15);
+		getBindingFromASTName("f_const_int_ptr(const_int_ptr)", 		15);
+		getBindingFromASTName("f_const_int_ptr(int_const_ptr)", 		15);
+		getBindingFromASTName("f_const_int_ptr(int_ptr_const)", 		15);
+		getBindingFromASTName("f_const_int_ptr(const_int_ptr_const)",	15);
+		getBindingFromASTName("f_const_int_ptr(int_const_ptr_const)", 	15);
+
+		getBindingFromASTName("f_int_const_ptr(int_ptr)", 				15);
+		getBindingFromASTName("f_int_const_ptr(const_int_ptr)", 		15);
+		getBindingFromASTName("f_int_const_ptr(int_const_ptr)", 		15);
+		getBindingFromASTName("f_int_const_ptr(int_ptr_const)", 		15);
+		getBindingFromASTName("f_int_const_ptr(const_int_ptr_const)",	15);
+		getBindingFromASTName("f_int_const_ptr(int_const_ptr_const)", 	15);
+
+		getBindingFromASTName("f_int_ptr_const(int_ptr)", 				15);
+		getProblemFromASTName("f_int_ptr_const(const_int_ptr)", 		15);
+		getProblemFromASTName("f_int_ptr_const(int_const_ptr)", 		15);
+		getBindingFromASTName("f_int_ptr_const(int_ptr_const)", 		15);
+		getProblemFromASTName("f_int_ptr_const(const_int_ptr_const)",	15);
+		getProblemFromASTName("f_int_ptr_const(int_const_ptr_const)", 	15);
+
+		getBindingFromASTName("f_const_int_ptr_const(int_ptr)", 			21);
+		getBindingFromASTName("f_const_int_ptr_const(const_int_ptr)", 		21);
+		getBindingFromASTName("f_const_int_ptr_const(int_const_ptr)", 		21);
+		getBindingFromASTName("f_const_int_ptr_const(int_ptr_const)", 		21);
+		getBindingFromASTName("f_const_int_ptr_const(const_int_ptr_const)",	21);
+		getBindingFromASTName("f_const_int_ptr_const(int_const_ptr_const)", 21);
+
+		getBindingFromASTName("f_int_const_ptr_const(int_ptr)", 			21);
+		getBindingFromASTName("f_int_const_ptr_const(const_int_ptr)", 		21);
+		getBindingFromASTName("f_int_const_ptr_const(int_const_ptr)", 		21);
+		getBindingFromASTName("f_int_const_ptr_const(int_ptr_const)", 		21);
+		getBindingFromASTName("f_int_const_ptr_const(const_int_ptr_const)",	21);
+		getBindingFromASTName("f_int_const_ptr_const(int_const_ptr_const)", 21);
+	}
+
+	// // the header
+	
+	// void f(int*);		// b1
+	// void f(const int*);	// b2
+	// void f(int const*);	// b2
+	// void f(int *const);	// b1
+	// void f(const int*const);	// b2
+	// void f(int const*const); // b2
+	//
+	// void f(int*){}		// b1
+	// void f(const int*){}	// b2
+	// void f(int const*){}	// b2, redef
+	// void f(int *const){}	// b1, redef
+	// void f(const int*const){} // b2, redef
+	// void f(int const*const){} // b2, redef
+	//
+	// void ref() {
+	// 	 int* 			int_ptr			= 0;
+	//   const int*		const_int_ptr   = 0;
+	// 	 int const*     int_const_ptr	= 0;
+	// 	 int *const     int_ptr_const	= 0;
+	//   const int*const		const_int_ptr_const   = 0;
+	//   int const*const		int_const_ptr_const   = 0;
+	//
+	//   f(int_ptr);				// b1
+	//   f(const_int_ptr);			// b2
+	//   f(int_const_ptr);			// b2
+	//   f(int_ptr_const);			// b1
+	//   f(const_int_ptr_const);	// b2
+	//   f(int_const_ptr_const);	// b2
+    // }
+	public void _testConstIntPtrParameterInDefinitionAST() throws CoreException {
+		IBinding binding1= getBindingFromASTName("f(int*){}", 1);
+		assertEquals(2, index.findNames(binding1, IIndex.FIND_DECLARATIONS).length);
+		IBinding binding2= getBindingFromASTName("f(const int*){}", 1);
+		assertEquals(4, index.findNames(binding2, IIndex.FIND_DECLARATIONS).length);
+		getProblemFromASTName("f(int const*){}", 1);
+		getProblemFromASTName("f(int *const){}", 1);
+		getProblemFromASTName("f(const int*const){}", 1);
+		getProblemFromASTName("f(int const*const){}", 1);
+		
+		assertEquals(binding1, getBindingFromASTName("f(int_ptr)", 1));
+		assertEquals(binding2, getBindingFromASTName("f(const_int_ptr)", 1));
+		assertEquals(binding2, getBindingFromASTName("f(int_const_ptr)", 1));
+		assertEquals(binding1, getBindingFromASTName("f(int_ptr_const)", 1));
+		assertEquals(binding2, getBindingFromASTName("f(const_int_ptr_const)", 1));
+		assertEquals(binding2, getBindingFromASTName("f(int_const_ptr_const)", 1));
+	}
+	
+	// // the header
+	// void f(int*);		// b1
+	// void f(const int*);	// b2
+	// void f(int const*);	// b2
+	// void f(int *const);	// b1
+	// void f(const int*const);	// b2
+	// void f(int const*const); // b2
+
+	// #include "header.h"
+	// void f(int*){}		// b1
+	// void f(const int*){}	// b2
+	// void f(int const*){}	// b2, redef
+	// void f(int *const){}	// b1, redef
+	// void f(const int*const){} // b2, redef
+	// void f(int const*const){} // b2, redef
+	//
+	// void ref() {
+	// 	 int* 			int_ptr			= 0;
+	//   const int*		const_int_ptr   = 0;
+	// 	 int const*     int_const_ptr	= 0;
+	// 	 int *const     int_ptr_const	= 0;
+	//   const int*const		const_int_ptr_const   = 0;
+	//   int const*const		int_const_ptr_const   = 0;
+	//
+	//   f(int_ptr);				// b1
+	//   f(const_int_ptr);			// b2
+	//   f(int_const_ptr);			// b2
+	//   f(int_ptr_const);			// b1
+	//   f(const_int_ptr_const);	// b2
+	//   f(int_const_ptr_const);	// b2
+    // }
+	public void _testConstIntPtrParameterInDefinition() throws CoreException {
+		IBinding binding1= getBindingFromASTName("f(int*){}", 1);
+		assertEquals(2, index.findNames(binding1, IIndex.FIND_DECLARATIONS).length);
+		IBinding binding2= getBindingFromASTName("f(const int*){}", 1);
+		assertEquals(4, index.findNames(binding2, IIndex.FIND_DECLARATIONS).length);
+		getProblemFromASTName("f(int const*){}", 1);
+		getProblemFromASTName("f(int *const){}", 1);
+		getProblemFromASTName("f(const int*const){}", 1);
+		getProblemFromASTName("f(int const*const){}", 1);
+		
+		assertEquals(binding1, getBindingFromASTName("f(int_ptr)", 1));
+		assertEquals(binding2, getBindingFromASTName("f(const_int_ptr)", 1));
+		assertEquals(binding2, getBindingFromASTName("f(int_const_ptr)", 1));
+		assertEquals(binding1, getBindingFromASTName("f(int_ptr_const)", 1));
+		assertEquals(binding2, getBindingFromASTName("f(const_int_ptr_const)", 1));
+		assertEquals(binding2, getBindingFromASTName("f(int_const_ptr_const)", 1));
+	}
+
 }

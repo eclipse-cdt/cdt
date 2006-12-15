@@ -102,6 +102,9 @@ public class DefaultCFoldingStructureProvider implements ICFoldingStructureProvi
 		 * @see org.eclipse.cdt.internal.ui.text.ICReconcilingListener#reconciled(org.eclipse.cdt.core.dom.ast.IASTTranslationUnit, org.eclipse.cdt.core.IPositionConverter, org.eclipse.core.runtime.IProgressMonitor)
 		 */
 		public void reconciled(IASTTranslationUnit ast, IPositionConverter positionTracker, IProgressMonitor progressMonitor) {
+			if (fInput == null) {
+				return;
+			}
 			FoldingStructureComputationContext ctx= createContext(fInitialASTReconcile);
 			fInitialASTReconcile= false;
 			if (fPreprocessorBranchFoldingEnabled) {
@@ -1336,15 +1339,20 @@ public class DefaultCFoldingStructureProvider implements ICFoldingStructureProvi
 		case ICElement.C_STRUCT:
 		case ICElement.C_CLASS:
 		case ICElement.C_UNION:
+		case ICElement.C_TEMPLATE_STRUCT:
+		case ICElement.C_TEMPLATE_CLASS:
+		case ICElement.C_TEMPLATE_UNION:
 			collapse= ctx.collapseStructures();
 			break;
 		case ICElement.C_MACRO:
 			collapse= ctx.collapseMacros();
 			break;
 		case ICElement.C_FUNCTION:
+		case ICElement.C_TEMPLATE_FUNCTION:
 			collapse= ctx.collapseFunctions();
 			break;
 		case ICElement.C_METHOD:
+		case ICElement.C_TEMPLATE_METHOD:
 			collapse= ctx.collapseMethods();
 			break;
 		default:

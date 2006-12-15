@@ -30,16 +30,19 @@
       <category name="RSE Runtime only"/>
    </feature>
    <feature url="features/org.eclipse.rse.efs_1.0.1.qualifier.jar" id="org.eclipse.rse.efs" version="1.0.1.qualifier">
-      <category name="RSE Experimental Add-ons"/>
+      <category name="Target Management Add-ons"/>
    </feature>
    <feature url="features/org.eclipse.tm.discovery_1.0.1.qualifier.jar" id="org.eclipse.tm.discovery" version="1.0.1.qualifier">
-      <category name="RSE Experimental Add-ons"/>
+      <category name="Target Management Add-ons"/>
    </feature>
    <feature url="features/org.apache.commons.net_1.4.1.qualifier.jar" id="org.apache.commons.net" version="1.4.1.qualifier">
       <category name="Enabling Features"/>
    </feature>
    <feature url="features/org.apache.oro_2.0.8.qualifier.jar" id="org.apache.oro" version="2.0.8.qualifier">
       <category name="Enabling Features"/>
+   </feature>
+   <feature url="features/org.eclipse.tm.terminal.sdk_0.9.0.qualifier.jar" id="org.eclipse.tm.terminal.sdk" version="0.9.0.qualifier">
+      <category name="Target Management Add-ons"/>
    </feature>
    <category-def name="RSE Runtime only" label="RSE_Runtime">
       <description>
@@ -51,9 +54,9 @@
          Remote System Explorer (RSE) with developer documentation and sources..
       </description>
    </category-def>
-   <category-def name="RSE Experimental Add-ons" label="RSE Experimental Add-ons">
+   <category-def name="Target Management Add-ons" label="Target Management Add-ons">
       <description>
-         Experimental add-ons for RSE
+         Target Management Core Components as well as Experimental add-ons for RSE
       </description>
    </category-def>
    <category-def name="Enabling Features" label="Enabling Features">

@@ -27,7 +27,7 @@
       <category name="Remote System Explorer (RSE) SDK"/>
    </feature>
    <feature url="features/org.eclipse.rse.remotecdt_1.0.1.qualifier.jar" id="org.eclipse.rse.remotecdt" version="1.0.1.qualifier">
-      <category name="RSE Runtime only"/>
+      <category name="Target Management Add-ons"/>
    </feature>
    <feature url="features/org.eclipse.rse.efs_1.0.1.qualifier.jar" id="org.eclipse.rse.efs" version="1.0.1.qualifier">
       <category name="Target Management Add-ons"/>

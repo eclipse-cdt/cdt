@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Ed Swartz (Nokia)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
@@ -1975,7 +1976,8 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
         super(scanner, log, mode, config.supportStatementsInExpressions(),
                 config.supportTypeofUnaryExpressions(), config
                         .supportAlignOfUnaryExpression(), config.supportKnRC(),
-                config.supportGCCOtherBuiltinSymbols(), config.supportAttributeSpecifiers());
+                config.supportGCCOtherBuiltinSymbols(), config.supportAttributeSpecifiers(),
+                config.supportDeclspecSpecifiers());
         allowCPPRestrict = config.allowRestrictPointerOperators();
         supportExtendedTemplateSyntax = config.supportExtendedTemplateSyntax();
         supportMinAndMaxOperators = config.supportMinAndMaxOperators();
@@ -3473,6 +3475,13 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
             	else
             		throwBacktrack(LA(1).getOffset(), LA(1).getLength());
             	break;
+            case IGCCToken.t__declspec: // if __declspec appears before identifier
+            	if (duple == null && supportDeclspecSpecifiers)
+                	__declspec();
+            	else
+            		throwBacktrack(LA(1).getOffset(), LA(1).getLength());
+            	break;
+            	
             default:
                 if (supportTypeOfUnaries && LT(1) == IGCCToken.t_typeof) {
                     typeofExpression = unaryTypeofExpression();
@@ -3854,6 +3863,8 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
             // if __attribute__ is after the pointer ops and before the declarator ex: void * __attribute__((__cdecl__)) foo();
             if (LT(1) == IGCCToken.t__attribute__ && supportAttributeSpecifiers) // if __attribute__ is after the parameters
             	__attribute__();
+            if (LT(1) == IGCCToken.t__declspec && supportDeclspecSpecifiers) // if __declspec occurs after struct/union/class and before the identifier
+            	__declspec();
             
             if (!pointerOps.isEmpty())
                 finalOffset = calculateEndOffset((IASTNode) pointerOps
@@ -4281,7 +4292,9 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 
         if (LT(1) == IGCCToken.t__attribute__ && supportAttributeSpecifiers) // if __attribute__ occurs after struct/union/class and before the identifier
         	__attribute__();
-        
+        if (LT(1) == IGCCToken.t__declspec && supportDeclspecSpecifiers) // if __declspec occurs after struct/union/class and before the identifier
+        	__declspec();
+
         // class name
         if (LT(1) == IToken.tIDENTIFIER)
             name = createName(name());
@@ -4290,6 +4303,8 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
         
         if (LT(1) == IGCCToken.t__attribute__ && supportAttributeSpecifiers) // if __attribute__ occurs after struct/union/class identifier and before the { or ;
         	__attribute__();
+        if (LT(1) == IGCCToken.t__declspec && supportDeclspecSpecifiers) // if __declspec occurs after struct/union/class and before the identifier
+        	__declspec();
 
         if (LT(1) != IToken.tCOLON && LT(1) != IToken.tLBRACE) {
             IToken errorPoint = LA(1);

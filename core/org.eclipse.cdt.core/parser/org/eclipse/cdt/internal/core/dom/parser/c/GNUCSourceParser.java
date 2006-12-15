@@ -7,6 +7,7 @@
  *
  * Contributors:
  * IBM Rational Software - Initial API and implementation
+ * Ed Swartz (Nokia)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.c;
 
@@ -136,7 +137,8 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
                 .supportTypeofUnaryExpressions(), config
                 .supportAlignOfUnaryExpression(), config
                 .supportKnRC(), config.supportGCCOtherBuiltinSymbols(),
-                config.supportAttributeSpecifiers());
+                config.supportAttributeSpecifiers(),
+                config.supportDeclspecSpecifiers());
         supportGCCStyleDesignators = config.supportGCCStyleDesignators();
     }
 
@@ -1605,6 +1607,12 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
 	            	else
 	            		throwBacktrack(LA(1).getOffset(), LA(1).getLength());
             	break;
+            case IGCCToken.t__declspec: // __declspec precedes the identifier
+            	if (identifier == null && supportDeclspecSpecifiers)
+            		__declspec();
+            	else
+            		throwBacktrack(LA(1).getOffset(), LA(1).getLength());
+            	break;
             default:
                 if (supportTypeOfUnaries && LT(1) == IGCCToken.t_typeof) {
                     typeofExpression = unaryTypeofExpression();
@@ -1757,6 +1765,8 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
 
         if (LT(1) == IGCCToken.t__attribute__ && supportAttributeSpecifiers) // if __attribute__ occurs after struct/union/class and before the identifier
         	__attribute__();
+        if (LT(1) == IGCCToken.t__declspec && supportDeclspecSpecifiers) // if __declspec occurs after struct/union/class and before the identifier
+        	__declspec();
         
         IToken nameToken = null;
         // class name
@@ -1766,6 +1776,8 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
 
         if (LT(1) == IGCCToken.t__attribute__ && supportAttributeSpecifiers) // if __attribute__ occurs after struct/union/class identifier and before the { or ;
         	__attribute__();
+        if (LT(1) == IGCCToken.t__declspec && supportDeclspecSpecifiers) // if __declspec occurs after struct/union/class and before the identifier
+        	__declspec();
         
         if (LT(1) != IToken.tLBRACE) {
             IToken errorPoint = LA(1);
@@ -1913,6 +1925,8 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
             // if __attribute__ is after the pointer ops and before the declarator ex: void * __attribute__((__cdecl__)) foo();
             if (LT(1) == IGCCToken.t__attribute__ && supportAttributeSpecifiers) // if __attribute__ is after the parameters
             	__attribute__();
+            if (LT(1) == IGCCToken.t__declspec && supportDeclspecSpecifiers) // if __declspec is after the parameters
+            	__declspec();
             
             if (!pointerOps.isEmpty()) {
                 finalOffset = calculateEndOffset((IASTPointerOperator) pointerOps
@@ -2081,6 +2095,13 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
                 	else
                 		throwBacktrack(LA(1).getOffset(), LA(1).getLength());
                 	break;
+                case IGCCToken.t__declspec:
+                	if(supportDeclspecSpecifiers)
+                		__declspec();
+                	else
+                		throwBacktrack(LA(1).getOffset(), LA(1).getLength());
+                	break;
+               	
                 default:
                     break;
                 }
@@ -2091,7 +2112,10 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
 
         if (LT(1) == IGCCToken.t__attribute__ && supportAttributeSpecifiers) // if __attribute__ is after the parameters
         	__attribute__();
-        
+
+        if (LT(1) == IGCCToken.t__declspec && supportDeclspecSpecifiers) // if __attribute__ is after the parameters
+        	__declspec();
+
         IASTDeclarator d = null;
         if (numKnRCParms > 0) {
             ICASTKnRFunctionDeclarator functionDecltor = createKnRFunctionDeclarator();

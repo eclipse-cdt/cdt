@@ -61,6 +61,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPReferenceType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDeclaration;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPVariable;
 import org.eclipse.cdt.core.parser.CodeReader;
 import org.eclipse.cdt.core.parser.IScanner;
 import org.eclipse.cdt.core.parser.NullLogService;
@@ -2575,6 +2576,66 @@ public class CompleteParser2Tests extends TestCase {
     	writer.write("#define A( a, b ) a ## b               \n"); //$NON-NLS-1$
     	writer.write("#define FOOBAR 1                       \n"); //$NON-NLS-1$
     	writer.write("int i = A( FOO, BAR );                 \n"); //$NON-NLS-1$
-    	parse( writer.toString() );
+    	parse( writer.toString(), true, ParserLanguage.CPP );
+    }
+    
+    public void test158192_declspec_on_class() throws Exception {
+    	Writer writer = new StringWriter();
+    	writer.write("class __declspec(foobar) Foo1 {};\n");
+    	writer.write("union __declspec(foobar) Foo2 {};\n");
+    	writer.write("struct __declspec(foobar) Foo3 {};\n");
+    	IASTTranslationUnit tu = parse( writer.toString(), true, ParserLanguage.CPP, true );
+
+    	CPPNameCollector col = new CPPNameCollector();
+    	tu.accept( col );
+
+    	assertEquals( 3, col.size());
+    	ICompositeType fooClass = (ICompositeType) col.getName(0).resolveBinding();
+    	ICompositeType fooUnion = (ICompositeType) col.getName(1).resolveBinding();
+    	ICompositeType fooStruct = (ICompositeType) col.getName(2).resolveBinding();
+
+    	assertEquals(ICPPClassType.k_class, fooClass.getKey());
+    	assertEquals(ICompositeType.k_union, fooUnion.getKey());
+    	assertEquals(ICompositeType.k_struct, fooStruct.getKey());
+
+    	assertInstances(col, fooClass, 1);
+    	assertInstances(col, fooUnion, 1);
+    	assertInstances(col, fooStruct, 1);
+    }
+
+    public void test158192_declspec_on_variable() throws Exception {
+    	Writer writer = new StringWriter();
+    	writer.write("__declspec(foobar) class Foo {} bar;\n");
+    	IASTTranslationUnit tu = parse( writer.toString(), true, ParserLanguage.CPP, true);
+
+    	CPPNameCollector col = new CPPNameCollector();
+    	tu.accept( col );
+
+    	assertEquals( 2, col.size());
+    	ICompositeType fooClass = (ICompositeType) col.getName(0).resolveBinding();
+    	ICPPVariable bar = (ICPPVariable) col.getName(1).resolveBinding();
+
+    	assertInstances(col, fooClass, 1);
+    	assertInstances(col, bar, 1);
+    }
+
+    // MSVC does not allow declspec in this position, GCC does so we test for this
+    // see https://bugs.eclipse.org/bugs/show_bug.cgi?id=158192
+    public void test158192_declspec_in_declarator() throws Exception {
+    	Writer writer = new StringWriter();
+
+    	writer.write("int * __declspec(foo) bar = 0;\n");
+    	IASTTranslationUnit tu = parse( writer.toString(), true, ParserLanguage.CPP, true);
+
+    	IASTProblem [] problems = CPPVisitor.getProblems(tu);
+    	assertFalse("__declspec rejected inside declarator", problems.length>0 );
+
+    	CPPNameCollector col = new CPPNameCollector();
+    	tu.accept( col );
+
+    	assertEquals( 1, col.size());
+    	ICPPVariable bar = (ICPPVariable) col.getName(0).resolveBinding();
+
+    	assertInstances(col, bar, 1);
     }
 }

@@ -7,6 +7,7 @@
  *
  * Contributors:
  * IBM Rational Software - Initial API and implementation
+ * Ed Swartz (Nokia)
  *******************************************************************************/
 
 package org.eclipse.cdt.core.parser;
@@ -22,5 +23,6 @@ public interface IGCCToken extends IToken {
 	public static final int tMAX = tLAST + 3;
 	public static final int tMIN = tLAST + 4;
 	public static final int t__attribute__ = tLAST + 5;
+	public static final int t__declspec = tLAST + 6;
 	
 }

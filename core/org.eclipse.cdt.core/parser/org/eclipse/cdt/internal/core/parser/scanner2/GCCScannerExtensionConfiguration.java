@@ -7,6 +7,7 @@
  *
  * Contributors:
  * IBM - Initial API and implementation
+ * Ed Swartz (Nokia)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.parser.scanner2;
 
@@ -69,6 +70,7 @@ public class GCCScannerExtensionConfiguration extends GNUScannerExtensionConfigu
 		result.put( GCCKeywords.cp__ALIGNOF__, IGCCToken.t___alignof__ );
 		result.put( GCCKeywords.cpTYPEOF, IGCCToken.t_typeof );
 		result.put( GCCKeywords.cp__ATTRIBUTE__, IGCCToken.t__attribute__ );
+		result.put( GCCKeywords.cp__DECLSPEC, IGCCToken.t__declspec );
         return result;
     }
 

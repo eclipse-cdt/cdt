@@ -7,6 +7,7 @@
  *
  * Contributors:
  * IBM Rational Software - Initial API and implementation
+ * Ed Swartz (Nokia)
  *******************************************************************************/
 
 /*
@@ -32,5 +33,6 @@ public interface ICPPParserExtensionConfiguration {
 	public boolean supportKnRC();
 	public boolean supportGCCOtherBuiltinSymbols();
 	public boolean supportAttributeSpecifiers();
+	public boolean supportDeclspecSpecifiers();
 
 }

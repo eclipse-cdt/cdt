@@ -25,23 +25,8 @@
    </url>
 
    <requires>
-      <import feature="org.eclipse.rse.core" version="1.0.0" match="equivalent"/>
-      <import feature="org.eclipse.cdt" version="3.0.0" match="greaterOrEqual"/>
-      <!--
-      <import plugin="org.eclipse.cdt.launch" version="3.0.0" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.cdt.debug.mi.core" version="3.0.0" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.cdt.debug.core" version="3.0.0" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.cdt.core" version="3.0.0" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.rse.ui" version="1.0.0" match="equivalent"/>
-      <import plugin="org.eclipse.rse.subsystems.shells.core" version="1.0.0" match="equivalent"/>
-      <import plugin="org.eclipse.rse.subsystems.files.core" version="1.0.0" match="equivalent"/>
-      <import plugin="org.eclipse.rse.services" version="1.0.0" match="equivalent"/>
-      <import plugin="org.eclipse.debug.ui"/>
-      <import plugin="org.eclipse.ui"/>
-      <import plugin="org.eclipse.debug.core"/>
-      <import plugin="org.eclipse.core.resources"/>
-      <import plugin="org.eclipse.core.runtime"/>
-      -->
+      <import feature="org.eclipse.rse.core"/>
+      <import feature="org.eclipse.cdt"/>
    </requires>
 
    <plugin
@@ -50,5 +35,11 @@
          install-size="32"
          version="0.0.0"
          unpack="false"/>
+
+   <plugin
+         id="org.eclipse.rse.remotecdt.source"
+         download-size="24"
+         install-size="29"
+         version="0.0.0"/>
 
 </feature>

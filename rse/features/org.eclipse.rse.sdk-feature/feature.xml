@@ -40,12 +40,6 @@
          version="0.0.0"/>
 
    <includes
-         id="org.eclipse.rse.remotecdt"
-         version="0.0.0"
-         name="CDT Remote Launch"
-         optional="true"/>
-
-   <includes
          id="org.eclipse.rse.ssh"
          version="0.0.0"/>
 
@@ -72,12 +66,6 @@
    <includes
          id="org.eclipse.rse.local.source"
          version="0.0.0"/>
-
-   <includes
-         id="org.eclipse.rse.remotecdt.source"
-         version="0.0.0"
-         name="CDT Remote Launch Source"
-         optional="true"/>
 
    <includes
          id="org.eclipse.rse.ssh.source"

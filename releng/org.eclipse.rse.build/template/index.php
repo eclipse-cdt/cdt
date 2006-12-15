@@ -79,8 +79,8 @@
 		<div align="left">
 			<b>Status</b></div>
 		</td>
-		<td width="34%"><b>Platform</b></td>
-		<td width="59%"><b>Download</b></td>
+		<td width="30%"><b>Platform</b></td>
+		<td width="63%"><b>Download</b></td>
 		<tr><td><div align=left><img src = "OK.gif" width=19 height=23></div></td>
 		<td>All</td>
 		<td><a href="http://www.eclipse.org/downloads/download.php?file=/dsdp/tm/downloads/drops/@dropDir@/RSE-SDK-@buildId@.zip">RSE-SDK-@buildId@.zip</a></td>
@@ -93,7 +93,7 @@
 <table border="0" cellspacing="5" cellpadding="2" width="100%">
 	<tr>
 		<td align="LEFT" valign="TOP" colspan="3" bgcolor="#808080"><b>
-		<font face="Arial,Helvetica" color="#FFFFFF">Experimental add-ons (includes source, but no documentation yet)</font></b>
+		<font face="Arial,Helvetica" color="#FFFFFF">Stand-alone Offerings, Integrations and Add-ons</font></b>
 		</td>
 	</tr>
 </table>
@@ -103,20 +103,19 @@
 		   <div align="left"><b>Status</b></div>
 		</td>
 		<td width="7%"><b>Platform</b></td>
-		<td width="27%"><b>Download</b></td>
-		<td width="59%"><b>Notes</b></td>
+		<td width="23%"><b>Download</b></td>
+		<td width="63%"><b>Notes</b></td>
 	</tr>
 	<tr><td><div align=left><img src = "OK.gif" width=19 height=23></div></td>
         <td>All</td>
-        <td><a href="http://www.eclipse.org/downloads/download.php?file=/dsdp/tm/downloads/drops/@dropDir@/TM-terminal-SDK-@buildId@.zip">TM-terminal-SDK-@buildId@.zip</a></td>
+        <td><a href="http://www.eclipse.org/downloads/download.php?file=/dsdp/tm/downloads/drops/@dropDir@/TM-terminal-@buildId@.zip">TM-terminal-@buildId@.zip</a></td>
         <td>
-			An ANSI / vt102 terminal emulator widget and view (with minor 
+			A stand-alone ANSI / vt102 terminal emulator widget and view (with minor 
 			  <a href="http://dev.eclipse.org/viewcvs/index.cgi/org.eclipse.tm.core/terminal/org.eclipse.tm.terminal/README.txt?root=DSDP_Project&view=co">
-			limitations</a>).
-			It runs without RSE and includes pluggable connectors 
+			limitations</a>). Includes pluggable connectors 
 			for serial line (through Sun Javacomm, see the 
 			  <a href="http://dev.eclipse.org/viewcvs/index.cgi/org.eclipse.tm.core/terminal/org.eclipse.tm.terminal.serial/README.txt?root=DSDP_Project&view=co">
-			installation notes</a>), ssh and telnet.
+			installation notes</a>), ssh and telnet. Includes Source.
         </td>
     </tr>
 	<tr><td><div align=left><img src = "OK.gif" width=19 height=23></div></td>
@@ -124,9 +123,19 @@
         <td><a href="http://www.eclipse.org/downloads/download.php?file=/dsdp/tm/downloads/drops/@dropDir@/TM-discovery-@buildId@.zip">TM-discovery-@buildId@.zip</a></td>
         <td><small>&nbsp;</small><br/>
 	    	An API and DNS-SD / Zeroconf based 
-			implementation for remote network service discovery. TM-discovery
-			requires EMF 2.2.0 or later to run. It runs stand-alone or
-			integrated with RSE.
+			implementation for remote network service discovery. 
+			Runs stand-alone or integrated with RSE.
+			Requires EMF 2.2.0 or later. Includes Source.
+        </td>
+    </tr>
+	<tr><td><div align=left><img src = "OK.gif" width=19 height=23></div></td>
+        <td>All</td>
+        <td><a href="http://www.eclipse.org/downloads/download.php?file=/dsdp/tm/downloads/drops/@dropDir@/RSE-remotecdt-@buildId@.zip">RSE-remotecdt-@buildId@.zip</a></td>
+        <td><small>&nbsp;</small><br/>
+			A Launch Configuration for running and debugging C/C++
+			programs on a remote host through RSE-provided shell
+			and file services, and gdbserver. Requires CDT and RSE.
+			Includes Source.
         </td>
     </tr>
 	<tr><td><div align=left><img src = "OK.gif" width=19 height=23></div></td>
@@ -136,7 +145,14 @@
 			An experimental Eclipse Filesystem (EFS) provider, which
 			uses RSE contributed file services. It currently works for accessing
 			remote file systems, but cannot be used to hold Projects of an 
-			Eclipse Workspace due to resource locking issues.
+			Eclipse Workspace due to resource locking issues. Includes Source.
+        </td>
+    </tr>
+	<tr><td><div align=left><img src = "OK.gif" width=19 height=23></div></td>
+		<td>All</td>
+		<td><a href="http://www.eclipse.org/downloads/download.php?file=/dsdp/tm/downloads/drops/@dropDir@/RSE-examples-@buildId@.zip">RSE-examples-@buildId@.zip</a></td>
+        <td><small>&nbsp;</small><br/>
+        	Tutorial code and example projects for developing against RSE SDK.
         </td>
     </tr>
 </table>
@@ -154,8 +170,8 @@
 	<tr>
 		<td align="RIGHT" valign="TOP" width="7%">
 			<div align="left"><b>Status</b></div></td>
-		<td width="34%"><b>Platform</b></td>
-		<td width="59%"><b>Download</b></td></tr>
+		<td width="30%"><b>Platform</b></td>
+		<td width="63%"><b>Download</b></td></tr>
 	<tr><td><div align=left><img src = "OK.gif" width=19 height=23></div></td>
         <td>Windows (<a href="http://www.eclipse.org/dsdp/tm/development/plan.php#OperatingEnvironments">Supported Versions</a>)</td>
         <td><a href="http://www.eclipse.org/downloads/download.php?file=/dsdp/tm/downloads/drops/@dropDir@/rseserver-@buildId@-windows.zip">rseserver-@buildId@-windows.zip</a></td></tr>
@@ -191,8 +207,8 @@
 		<td align="RIGHT" valign="TOP" width="7%">
 			<div align="left"><b>Status</b></div>
 		</td>
-		<td width="34%"><b>Platform</b></td>
-		<td width="59%"><b>Download</b></td></tr>
+		<td width="30%"><b>Platform</b></td>
+		<td width="63%"><b>Download</b></td></tr>
 	<tr><td><div align=left><img src = "OK.gif" width=19 height=23></div></td>
         <td>All</td>
         <td><a href="http://www.eclipse.org/downloads/download.php?file=/dsdp/tm/downloads/drops/@dropDir@/RSE-runtime-core-@buildId@.zip">RSE-runtime-core-@buildId@.zip</a></td></tr>
@@ -207,36 +223,7 @@
         <td><a href="http://www.eclipse.org/downloads/download.php?file=/dsdp/tm/downloads/drops/@dropDir@/RSE-runtime-local-@buildId@.zip">RSE-runtime-local-@buildId@.zip</a></td></tr>
 	<tr><td><div align=left><img src = "OK.gif" width=19 height=23></div></td>
         <td>All</td>
-        <td><a href="http://www.eclipse.org/downloads/download.php?file=/dsdp/tm/downloads/drops/@dropDir@/RSE-runtime-remotecdt-@buildId@.zip">RSE-runtime-remotecdt-@buildId@.zip</a></td></tr>
-	<tr><td><div align=left><img src = "OK.gif" width=19 height=23></div></td>
-        <td>All</td>
         <td><a href="http://www.eclipse.org/downloads/download.php?file=/dsdp/tm/downloads/drops/@dropDir@/RSE-runtime-ssh-@buildId@.zip">RSE-runtime-ssh-@buildId@.zip</a></td></tr>
-</table>
-
-<table border="0" cellspacing="5" cellpadding="2" width="100%">
-	<tr>
-		<td colspan="2">&nbsp;</td>
-	</tr>
-</table>
-<table border="0" cellspacing="5" cellpadding="2" width="100%">
-	<tr>
-		<td align="LEFT" valign="TOP" colspan="3" bgcolor="#808080"><b>
-		<font face="Arial,Helvetica" color="#FFFFFF">Examples (includes source)</font></b>
-		</td>
-	</tr>
-</table>
-<table border="0" cellspacing="2" cellpadding="0" width="100%">
-	<tr>
-		<td align="RIGHT" valign="TOP" width="7%">
-		   <div align="left"><b>Status</b></div>
-		</td>
-		<td width="34%"><b>Platform</b></td>
-		<td width="59%"><b>Download</b></td>
-		<tr><td><div align=left><img src = "OK.gif" width=19 height=23></div></td>
-            <td>All</td>
-            <td><a href="http://www.eclipse.org/downloads/download.php?file=/dsdp/tm/downloads/drops/@dropDir@/RSE-examples-@buildId@.zip">RSE-examples-@buildId@.zip</a></td>
-        </tr>
-	</tr>
 </table>
 
 <!--
@@ -257,8 +244,8 @@
 		<div align="left">
 			<b>Status</b></div>
 		</td>
-		<td width="34%"><b>Platform</b></td>
-		<td width="59%"><b>Download</b></td>
+		<td width="30%"><b>Platform</b></td>
+		<td width="63%"><b>Download</b></td>
 		<tr><td><div align=left><img src = "OK.gif" width=19 height=23></div></td>
 <td>All</td><td><a href="http://www.eclipse.org/downloads/download.php?file=/dsdp/tm/downloads/drops/@dropDir@/RSE-tests-@buildId@.zip">RSE-tests-@buildId@.zip</a></td>
 </tr>

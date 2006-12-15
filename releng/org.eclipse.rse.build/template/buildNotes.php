@@ -29,6 +29,7 @@
   download, or from the <a href="http://download.eclipse.org/dsdp/tm/updates/">Update Site</a>.</li>
 -->
 <li>[<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=152826">152826</a>] Added an <b>ANSI / vt102 Terminal</b> as separate download (currently a stand-alone view not integrated with RSE; supports serial, ssh and telnet connections).</li>
+<li>[<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=168231">168231</a>] <b>Changed packaging</b> to ship the Remotecdt Launcher separate from the RSE SDK, but with source.</li>
 <li>[<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=158784">158784</a>] The <b>Remotecdt Launcher</b> now supports setting the gdbserver executable, port as well as gdb instance to use.</li> 
 <li>[<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=164306">164306</a>] FTP console no longer shows <b>plaintext passwords</b>.</li>
 <li>[<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=161238">161238</a>] [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=164304">164304</a>] FTP now supports VMS and some older MSDOS FTP Servers.</li> 

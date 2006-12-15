@@ -5,10 +5,13 @@
  * available at http://www.eclipse.org/legal/epl-v10.html
  * 
  * Contributors:
- *   Javier Montalvo Orus (Symbian) - initial API and implementation
+ * Javier Montalvo Orus (Symbian) - initial API and implementation
+ * Martin Oberhuber (Wind River) - fix javadoc errors
  ********************************************************************************/
 
 package org.eclipse.tm.discovery.transport;
+
+import java.io.IOException;
 
 
 /**
@@ -20,11 +23,10 @@ public interface ITransport {
 	/**
 	 * Handles sending data
 	 * 
-	 * @param data
-	 * Data packet to be sent.
+	 * @param packet Data packet to be sent.
 	 * @throws IOException
 	 */
-	public abstract void send(byte[] packet) throws Exception;
+	public abstract void send(byte[] packet) throws IOException;
 
 	/**
 	 * Handles receiving data
@@ -35,7 +37,7 @@ public interface ITransport {
 	 * Address of the replying device.
 	 * @throws IOException
 	 */
-	public abstract String receive(byte[] packet) throws Exception;
+	public abstract String receive(byte[] packet) throws IOException;
 	
 	
 	/**

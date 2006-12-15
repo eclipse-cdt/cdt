@@ -107,6 +107,7 @@ import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IExpressionListener;
 import org.eclipse.debug.core.IExpressionManager;
 import org.eclipse.debug.core.ILaunch;
+import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchListener;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.core.model.IDebugTarget;
@@ -899,15 +900,19 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 		if ( !canRestart() ) {
 			return;
 		}
-		String mainSymbol = new String( ICDTLaunchConfigurationConstants.DEBUGGER_STOP_AT_MAIN_SYMBOL_DEFAULT );
 		try {
-			mainSymbol = getLaunch().getLaunchConfiguration().getAttribute( ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_STOP_AT_MAIN_SYMBOL, ICDTLaunchConfigurationConstants.DEBUGGER_STOP_AT_MAIN_SYMBOL_DEFAULT );
+			ILaunchConfiguration launchConfig = getLaunch().getLaunchConfiguration();
+			if (launchConfig.getAttribute( ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_STOP_AT_MAIN, false)) {
+				String mainSymbol = new String( ICDTLaunchConfigurationConstants.DEBUGGER_STOP_AT_MAIN_SYMBOL_DEFAULT );
+				mainSymbol = getLaunch().getLaunchConfiguration().getAttribute( ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_STOP_AT_MAIN_SYMBOL, ICDTLaunchConfigurationConstants.DEBUGGER_STOP_AT_MAIN_SYMBOL_DEFAULT );
+				ICDILocation location = getCDITarget().createFunctionLocation( "", mainSymbol ); //$NON-NLS-1$
+				setInternalTemporaryBreakpoint( location );
+			}
 		}
 		catch( CoreException e ) {
 			requestFailed( e.getMessage(), e );
 		}
-		ICDILocation location = getCDITarget().createFunctionLocation( "", mainSymbol ); //$NON-NLS-1$
-		setInternalTemporaryBreakpoint( location );
+
 		final CDebugElementState newState = CDebugElementState.RESTARTING;
 		changeState( newState );
 		try {

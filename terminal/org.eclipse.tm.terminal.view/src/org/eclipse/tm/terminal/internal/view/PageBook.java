@@ -41,7 +41,7 @@ public class PageBook extends Composite {
 			int y = minimumPageSize.y;
 			Control[] children = composite.getChildren();
 			for (int i = 0; i < children.length; i++) {
-				Point size = children[i].computeSize(SWT.DEFAULT, SWT.DEFAULT, force);
+				Point size = children[i].computeSize(wHint, hHint, force);
 				x = Math.max(x, size.x);
 				y = Math.max(y, size.y);
 			}
@@ -59,7 +59,7 @@ public class PageBook extends Composite {
 			Rectangle rect = composite.getClientArea();
 			Control[] children = composite.getChildren();
 			for (int i = 0; i < children.length; i++) {
-				children[i].setSize(rect.width, rect.height);
+                children[i].setBounds(rect);
 			}
 		}
 	}
@@ -75,8 +75,10 @@ public class PageBook extends Composite {
      * @param parent the parent composite
      * @param style the SWT style bits (use {@link SWT#NONE})
      */
-    public PageBook(Composite parent, int style) {
+    public PageBook(Composite parent, int style, int minWidth, int minHeight) {
         super(parent, style);
+        minimumPageSize.x=minWidth;
+        minimumPageSize.y=minHeight;
         setLayout(new PageBookLayout());
     }
 

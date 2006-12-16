@@ -97,9 +97,6 @@ public class TerminalView extends ViewPart implements ITerminalView, ITerminalLi
 	
 	private SettingsStore fStore;
 
-	/** Remember the item with which we contributed the shortcut to unregister them again! */
-	private IContextActivation fRememberedContextActivation;
-
 	public TerminalView() {
 		Logger
 				.log("==============================================================="); //$NON-NLS-1$
@@ -346,7 +343,6 @@ public class TerminalView extends ViewPart implements ITerminalView, ITerminalLi
 		/** Activate the sy context allowing shortcuts like F3(open declaration) in the view */
 		IContextService ctxtService = (IContextService) getSite().getService(IContextService.class);
 		// TODO define context if not existing
-		fRememberedContextActivation = ctxtService.activateContext("org.eclipse.tm.terminal.TerminalContext"); //$NON-NLS-1$
 
 		setPartName(ViewMessages.PROP_TITLE);
 
@@ -370,14 +366,6 @@ public class TerminalView extends ViewPart implements ITerminalView, ITerminalLi
 		WorkbenchWindow workbenchWindow;
 		MenuManager menuMgr;
 		Menu menu;
-
-		/** The context (for short cuts) was set above, now unset it again */
-		if (fRememberedContextActivation != null) {
-			IContextService ctxService = (IContextService) getSite()
-					.getService(IContextService.class);
-			ctxService.deactivateContext(fRememberedContextActivation);
-			fRememberedContextActivation = null;
-		}
 
 		JFaceResources.getFontRegistry().removeListener(fPropertyChangeHandler);
 		plugin = TerminalViewPlugin.getDefault();

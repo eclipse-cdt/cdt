@@ -17,6 +17,7 @@
 package org.eclipse.tm.terminal.internal.view;
 
 import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -143,5 +144,8 @@ class TerminalSettingsDlg extends Dialog {
 		fSelectedConnector=index;
 		Control[] pages=fPageBook.getChildren();
 		fPageBook.showPage(pages[fSelectedConnector]);
+	}
+	protected IDialogSettings getDialogBoundsSettings() {
+		return TerminalViewPlugin.getDefault().getDialogSettings();
 	}
 }

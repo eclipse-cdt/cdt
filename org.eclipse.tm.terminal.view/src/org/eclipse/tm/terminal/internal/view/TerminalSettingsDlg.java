@@ -37,6 +37,7 @@ class TerminalSettingsDlg extends Dialog {
 	private final ISettingsPage[] fPages;
 	private int fSelectedConnector;
 	private PageBook fPageBook;
+	private IDialogSettings fDialogSettings;
 
 	public TerminalSettingsDlg(Shell shell, ITerminalConnector[] connectors, ITerminalConnector connector) {
 		super(shell);
@@ -146,6 +147,11 @@ class TerminalSettingsDlg extends Dialog {
 		fPageBook.showPage(pages[fSelectedConnector]);
 	}
 	protected IDialogSettings getDialogBoundsSettings() {
-		return TerminalViewPlugin.getDefault().getDialogSettings();
+		IDialogSettings ds=TerminalViewPlugin.getDefault().getDialogSettings();
+		fDialogSettings = ds.getSection(getClass().getName()); 
+		if (fDialogSettings == null) {
+			fDialogSettings = ds.addNewSection(getClass().getName()); 
+		}
+		return fDialogSettings;
 	}
 }

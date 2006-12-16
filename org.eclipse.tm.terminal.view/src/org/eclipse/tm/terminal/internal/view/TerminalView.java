@@ -345,7 +345,8 @@ public class TerminalView extends ViewPart implements ITerminalView, ITerminalLi
 
 		/** Activate the sy context allowing shortcuts like F3(open declaration) in the view */
 		IContextService ctxtService = (IContextService) getSite().getService(IContextService.class);
-		fRememberedContextActivation = ctxtService.activateContext("org.eclipse.tm.terminal.TerminalPreferencePage"); //$NON-NLS-1$
+		// TODO define context if not existing
+		fRememberedContextActivation = ctxtService.activateContext("org.eclipse.tm.terminal.TerminalContext"); //$NON-NLS-1$
 
 		setPartName(ViewMessages.PROP_TITLE);
 

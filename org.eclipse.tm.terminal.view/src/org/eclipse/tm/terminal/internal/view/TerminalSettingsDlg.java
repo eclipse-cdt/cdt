@@ -116,13 +116,13 @@ class TerminalSettingsDlg extends Dialog {
 	}
 	private void setupSettingsGroup(Composite parent) {
 		Group group = new Group(parent, SWT.NONE);
-		GridLayout gridLayout = new GridLayout();
-		GridData gridData = new GridData(GridData.FILL_BOTH);
-
 		group.setText(ViewMessages.SETTINGS + ":"); //$NON-NLS-1$
-		group.setLayout(gridLayout);
-		group.setLayoutData(gridData);
-		fPageBook=new PageBook(group,SWT.NONE);
+		group.setLayout(new GridLayout());
+		group.setLayoutData(new GridData(GridData.FILL_BOTH));
+		fPageBook=new PageBook(group,SWT.NONE,230,0);
+		fPageBook.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		
+		
 		for (int i = 0; i < fPages.length; i++) {
 			fPages[i].createControl(fPageBook);
 		}

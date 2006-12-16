@@ -340,10 +340,6 @@ public class TerminalView extends ViewPart implements ITerminalView, ITerminalLi
 		// Bind plugin.xml key bindings to this plugin.  Overrides global Control-W key
 		// sequence.
 
-		/** Activate the sy context allowing shortcuts like F3(open declaration) in the view */
-		IContextService ctxtService = (IContextService) getSite().getService(IContextService.class);
-		// TODO define context if not existing
-
 		setPartName(ViewMessages.PROP_TITLE);
 
 		setupControls(wndParent);

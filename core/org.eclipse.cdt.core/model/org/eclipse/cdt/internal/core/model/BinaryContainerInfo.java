@@ -25,13 +25,6 @@ public class BinaryContainerInfo extends OpenableInfo {
 		super(element);
 	}
 
-	synchronized void sync() {
-		BinaryRunner runner = CModelManager.getDefault().getBinaryRunner(getElement().getCProject());
-		if (runner != null) {
-			runner.waitIfRunning();
-		}
-	}
-
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.model.CElementInfo#addChild(org.eclipse.cdt.core.model.ICElement)
 	 */

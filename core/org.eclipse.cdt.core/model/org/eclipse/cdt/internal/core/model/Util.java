@@ -17,6 +17,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.URI;
 import java.text.MessageFormat;
 
 import org.eclipse.cdt.core.CCorePlugin;
@@ -25,8 +26,12 @@ import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.ICModelStatusConstants;
 import org.eclipse.cdt.internal.core.model.IDebugLogConstants.DebugLogConstant;
 import org.eclipse.cdt.internal.core.util.CharArrayBuffer;
+import org.eclipse.core.filesystem.EFS;
+import org.eclipse.core.filesystem.IFileInfo;
+import org.eclipse.core.filesystem.URIUtil;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 
@@ -423,5 +428,30 @@ public class Util implements ICLogConstants {
 		return null;
 	}
 
+	/**
+	 * Return true if the file is not a directory and has length > 0
+	 * @param path
+	 * @return
+	 */
+	public static boolean isNonZeroLengthFile(IPath path) {
+		return isNonZeroLengthFile(URIUtil.toURI(path));
+	}
 
+	/**
+	 * Return true if the file is not a directory and has length > 0
+	 * @param path
+	 * @return
+	 */
+	public static boolean isNonZeroLengthFile(URI uri) {
+		try {
+			IFileInfo file = EFS.getStore(uri).fetchInfo();
+			if (file.getLength() == EFS.NONE) {
+				return false;
+			}
+			return true;
+		} catch (CoreException e) {
+			// ignore
+		}
+		return false;
+	}
 }

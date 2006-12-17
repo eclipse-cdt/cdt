@@ -13,7 +13,6 @@
 
 package org.eclipse.cdt.internal.core.model;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -408,8 +407,7 @@ public class CModelManager implements IResourceChangeListener, ICDescriptorListe
 			return null;
 		}
 		if (path.isAbsolute()) {
-			File file = path.toFile();
-			if (file == null || !file.isFile()) {
+			if (! Util.isNonZeroLengthFile(path)) {
 				return null;
 			}
 			try {
@@ -434,8 +432,7 @@ public class CModelManager implements IResourceChangeListener, ICDescriptorListe
 				IIncludeReference[] includeReferences = cproject.getIncludeReferences();
 				for (int i = 0; i < includeReferences.length; i++) {
 					IPath includePath = includeReferences[i].getPath().append(path);
-					File file = includePath.toFile();
-					if (file != null && file.isFile()) {
+					if (Util.isNonZeroLengthFile(includePath)) {
 						String id = CoreModel.getRegistedContentTypeId(cproject.getProject(), includePath.lastSegment());
 						if (id == null) {
 							// fallbakc to C Header
@@ -567,11 +564,9 @@ public class CModelManager implements IResourceChangeListener, ICDescriptorListe
 
 	public IBinaryFile createBinaryFile(IFile file) {
 		//Avoid name special devices, empty files and the like
-		File f = new File(file.getLocationURI());
-		if (!f.isFile() || f.length() == 0) {
+		if (! Util.isNonZeroLengthFile(file.getLocationURI())) {
 			return null;
 		}
-		
 		BinaryParserConfig[] parsers = getBinaryParser(file.getProject());
 		int hints = 0;
 		
@@ -659,13 +654,14 @@ public class CModelManager implements IResourceChangeListener, ICDescriptorListe
 		}
 	}
 
-	public BinaryRunner getBinaryRunner(ICProject project, boolean start) {
+	public BinaryRunner getBinaryRunner(ICProject cproject, boolean start) {
 		BinaryRunner runner = null;
 		synchronized (binaryRunners) {
-			runner = (BinaryRunner)binaryRunners.get(project.getProject());
+			IProject project = cproject.getProject();
+			runner = (BinaryRunner)binaryRunners.get(project);
 			if (runner == null) {
-				runner = new BinaryRunner(project.getProject());
-				binaryRunners.put(project.getProject(), runner);
+				runner = new BinaryRunner(project);
+				binaryRunners.put(project, runner);
 				if (start) {
 					runner.start();
 				}

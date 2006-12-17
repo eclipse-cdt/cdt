@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 QNX Software Systems and others.
+ * Copyright (c) 2000, 2005, 2006 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -83,6 +83,7 @@ public class BinaryRunner {
 
 	public void start() {
 		String taskName = CCorePlugin.getResourceString("CoreModel.BinaryRunner.Binary_Search_Thread"); //$NON-NLS-1$
+		taskName += " (" + cproject.getElementName() + ")";
 		runner = new Job(taskName) {
 
 			/*
@@ -91,29 +92,30 @@ public class BinaryRunner {
 			 * @see org.eclipse.core.runtime.jobs.Job#run(org.eclipse.core.runtime.IProgressMonitor)
 			 */
 			protected IStatus run(IProgressMonitor monitor) {
+				IStatus status = Status.OK_STATUS;
 				if (cproject == null || monitor.isCanceled()) {
-					return Status.CANCEL_STATUS;
+					status = Status.CANCEL_STATUS;
+				} else {
+					try {
+						monitor.beginTask(getName(), IProgressMonitor.UNKNOWN);
+
+						BinaryContainer vbin = (BinaryContainer) cproject.getBinaryContainer();
+						ArchiveContainer vlib = (ArchiveContainer) cproject.getArchiveContainer();
+
+						vlib.removeChildren();
+						vbin.removeChildren();
+
+						cproject.getProject().accept(new Visitor(monitor), IContainer.INCLUDE_PHANTOMS);
+
+						CModelOperation op = new BinaryRunnerOperation(cproject);
+						op.runOperation(monitor);
+
+					} catch (CoreException e) {
+						status = e.getStatus();
+					}
 				}
-				
-				try {
-					monitor.beginTask(getName(), IProgressMonitor.UNKNOWN);
-
-					BinaryContainer vbin = (BinaryContainer) cproject.getBinaryContainer();
-					ArchiveContainer vlib = (ArchiveContainer) cproject.getArchiveContainer();
-					
-					vlib.removeChildren();
-					vbin.removeChildren();
-					
-					cproject.getProject().accept(new Visitor(monitor), IContainer.INCLUDE_PHANTOMS);
-
-					CModelOperation op = new BinaryRunnerOperation(cproject);
-					op.runOperation(monitor);
-
-					monitor.done();
-				} catch (CoreException e) {
-					return e.getStatus();
-				}
-				return Status.OK_STATUS;
+				monitor.done();
+				return status;
 			}
 		};
 		runner.schedule();
@@ -172,6 +174,8 @@ public class BinaryRunner {
 			
 			// check against known content types
 			String name = proxy.getName();
+			vMonitor.subTask(name); // give a hint to the user of what we are doing
+
 			IContentType contentType = CCorePlugin.getContentType(project, name);
 			if (contentType != null && textContentType != null) {
 				if (contentType != null && contentType.isKindOf(textContentType)) {

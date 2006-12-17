@@ -25,7 +25,7 @@ public class ArchiveContainerInfo extends OpenableInfo {
 	}
 
 	synchronized void sync() {
-		BinaryRunner runner = CModelManager.getDefault().getBinaryRunner(getElement().getCProject(), true);
+		BinaryRunner runner = CModelManager.getDefault().getBinaryRunner(getElement().getCProject());
 		if (runner != null) {
 			runner.waitIfRunning();
 		}

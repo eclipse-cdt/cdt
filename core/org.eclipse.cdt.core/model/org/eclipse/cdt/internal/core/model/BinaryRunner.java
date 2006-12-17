@@ -93,10 +93,10 @@ public class BinaryRunner {
 			 */
 			protected IStatus run(IProgressMonitor monitor) {
 				IStatus status = Status.OK_STATUS;
-				if (cproject == null || monitor.isCanceled()) {
-					status = Status.CANCEL_STATUS;
-				} else {
-					try {
+				try {
+					if (cproject == null || monitor.isCanceled()) {
+						status = Status.CANCEL_STATUS;
+					} else {
 						monitor.beginTask(getName(), IProgressMonitor.UNKNOWN);
 
 						BinaryContainer vbin = (BinaryContainer) cproject.getBinaryContainer();
@@ -110,16 +110,20 @@ public class BinaryRunner {
 						CModelOperation op = new BinaryRunnerOperation(cproject);
 						op.runOperation(monitor);
 
-					} catch (CoreException e) {
-						status = e.getStatus();
 					}
+				} catch (CoreException e) {
+					// Ignore the error and just cancel the binary thread
+					//status = e.getStatus();
+					status = Status.CANCEL_STATUS;
+				} finally {
+					monitor.done();
 				}
-				monitor.done();
+				System.out.println("DONE " + cproject.getElementName()+ " :"+ status);
 				return status;
 			}
 		};
+		runner.setPriority(Job.LONG);
 		runner.schedule();
-
 	}
 
 	/**
@@ -162,7 +166,10 @@ public class BinaryRunner {
 				return false;
 			}
 			vMonitor.worked(1);
-			
+			// give a hint to the user of what we are doing
+			String name = proxy.getName();
+			vMonitor.subTask(name);
+
 			// Attempt to speed things up by rejecting up front
 			// Things we know should not be Binary files.
 			
@@ -173,8 +180,6 @@ public class BinaryRunner {
 			}
 			
 			// check against known content types
-			String name = proxy.getName();
-			vMonitor.subTask(name); // give a hint to the user of what we are doing
 
 			IContentType contentType = CCorePlugin.getContentType(project, name);
 			if (contentType != null && textContentType != null) {

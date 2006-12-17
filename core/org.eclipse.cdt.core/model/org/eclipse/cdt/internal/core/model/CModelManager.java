@@ -654,7 +654,7 @@ public class CModelManager implements IResourceChangeListener, ICDescriptorListe
 		}
 	}
 
-	public BinaryRunner getBinaryRunner(ICProject cproject, boolean start) {
+	public BinaryRunner getBinaryRunner(ICProject cproject) {
 		BinaryRunner runner = null;
 		synchronized (binaryRunners) {
 			IProject project = cproject.getProject();
@@ -662,9 +662,7 @@ public class CModelManager implements IResourceChangeListener, ICDescriptorListe
 			if (runner == null) {
 				runner = new BinaryRunner(project);
 				binaryRunners.put(project, runner);
-				if (start) {
-					runner.start();
-				}
+				runner.start();
 			}
 		}
 		return runner;

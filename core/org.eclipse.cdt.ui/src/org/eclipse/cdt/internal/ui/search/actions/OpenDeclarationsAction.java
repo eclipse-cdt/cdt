@@ -34,6 +34,7 @@ import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.index.IIndexManager;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.model.IWorkingCopy;
+import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.ui.CUIPlugin;
 
 import org.eclipse.cdt.internal.ui.editor.CEditor;
@@ -77,30 +78,23 @@ public class OpenDeclarationsAction extends SelectionParseAction {
 				}
 				
 				try {
-					IASTTranslationUnit ast = workingCopy.getAST(null, ITranslationUnit.AST_SKIP_ALL_HEADERS);
+					IASTTranslationUnit ast = workingCopy.getAST(index, ITranslationUnit.AST_SKIP_ALL_HEADERS);
 					IASTName[] selectedNames = workingCopy.getLanguage().getSelectedNames(ast, selectionStart, selectionLength);
 					
 					if (selectedNames.length > 0 && selectedNames[0] != null) { // just right, only one name selected
 						IASTName searchName = selectedNames[0];
-		
+						boolean isDefinition= searchName.isDefinition();
 						IBinding binding = searchName.resolveBinding();
 						if (binding != null && !(binding instanceof IProblemBinding)) {
 							// 1. Try definition
-							IName[] declNames = ast.getDefinitions(binding);
+							IName[] declNames= isDefinition ?
+									findDeclarations(index, ast, binding) :
+									findDefinitions(index, ast, binding);
 							
 							if (declNames.length == 0) {
-								// 2. Try definition
-								declNames = index.findDefinitions(binding);
-							
-								if (declNames.length == 0) {
-									// 3. Try declaration in TU
-									declNames = ast.getDeclarations(binding);
-				
-									if (declNames.length == 0) {
-										// 4. Try declaration in Index
-										declNames = index.findDeclarations(binding);
-									}
-								}
+								declNames= isDefinition ?
+										findDefinitions(index, ast, binding) :
+										findDeclarations(index, ast, binding);
 							}
 							
 							if (declNames.length > 0) {
@@ -131,6 +125,31 @@ public class OpenDeclarationsAction extends SelectionParseAction {
 			} catch (CoreException e) {
 				return e.getStatus();
 			}
+		}
+
+		private IName[] findDefinitions(IIndex index, IASTTranslationUnit ast,
+				IBinding binding) throws CoreException {
+			IName[] declNames= ast.getDefinitionsInAST(binding);
+			if (declNames.length == 0) {
+					// 2. Try definition in index
+				declNames = index.findDefinitions(binding);
+			}
+			return declNames;
+		}
+
+		private IName[] findDeclarations(IIndex index, IASTTranslationUnit ast,
+				IBinding binding) throws CoreException {
+			IName[] declNames= ast.getDeclarationsInAST(binding);
+			for (int i = 0; i < declNames.length; i++) {
+				IName name = declNames[i];
+				if (name.isDefinition()) 
+					declNames[i]= null;
+			}
+			declNames= (IName[]) ArrayUtil.removeNulls(IName.class, declNames);
+			if (declNames.length == 0) {
+				declNames= index.findNames(binding, IIndex.FIND_DECLARATIONS);
+			}
+			return declNames;
 		}
 	}
 

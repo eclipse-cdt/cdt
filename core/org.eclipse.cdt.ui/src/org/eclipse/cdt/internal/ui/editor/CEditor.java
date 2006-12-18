@@ -190,7 +190,6 @@ import org.eclipse.cdt.internal.ui.actions.SelectionConverter;
 import org.eclipse.cdt.internal.ui.dnd.TextEditorDropAdapter;
 import org.eclipse.cdt.internal.ui.dnd.TextViewerDragAdapter;
 import org.eclipse.cdt.internal.ui.search.actions.OpenDeclarationsAction;
-import org.eclipse.cdt.internal.ui.search.actions.OpenDefinitionAction;
 import org.eclipse.cdt.internal.ui.search.actions.SelectionSearchGroup;
 import org.eclipse.cdt.internal.ui.text.CHeuristicScanner;
 import org.eclipse.cdt.internal.ui.text.CPairMatcher;
@@ -2280,9 +2279,10 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IR
 		action.setActionDefinitionId(ICEditorActionDefinitionIds.OPEN_DECL);
 		setAction("OpenDeclarations", action); //$NON-NLS-1$
 
-        action = new OpenDefinitionAction(this);
-        action.setActionDefinitionId(ICEditorActionDefinitionIds.OPEN_DEF);
-        setAction("OpenDefinition", action); //$NON-NLS-1$
+//		  removed, see bug 167162		
+//        action = new OpenDefinitionAction(this);
+//        action.setActionDefinitionId(ICEditorActionDefinitionIds.OPEN_DEF);
+//        setAction("OpenDefinition", action); //$NON-NLS-1$
         
 //		action = new OpenTypeHierarchyAction(this);
 //		action.setActionDefinitionId(ICEditorActionDefinitionIds.OPEN_TYPE_HIERARCHY);

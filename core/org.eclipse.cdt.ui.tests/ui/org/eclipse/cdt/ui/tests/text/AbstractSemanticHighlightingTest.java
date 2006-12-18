@@ -140,8 +140,9 @@ public class AbstractSemanticHighlightingTest extends TestCase {
 		fCurrentHighlighting= semanticHighlighting;
 		enableSemanticHighlighting(semanticHighlighting);
 		EditorTestHelper.forceReconcile(fSourceViewer);
-		assertTrue(EditorTestHelper.joinReconciler(fSourceViewer, 500, 10000, 100));
-		EditorTestHelper.runEventQueue(100);
+		assertTrue(EditorTestHelper.joinReconciler(fSourceViewer, 500, 10000, 500));
+		// give enough time to finish updating the highlighting positions
+		EditorTestHelper.runEventQueue(500);
 	}
 
 	private void enableSemanticHighlighting(String preferenceKey) {

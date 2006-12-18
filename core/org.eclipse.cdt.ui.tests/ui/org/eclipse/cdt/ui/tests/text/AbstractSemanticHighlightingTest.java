@@ -57,7 +57,7 @@ public class AbstractSemanticHighlightingTest extends TestCase {
 			
 			fEditor= (CEditor) EditorTestHelper.openInEditor(ResourceTestHelper.findFile(fTestFilename), true);
 			fSourceViewer= EditorTestHelper.getSourceViewer(fEditor);
-			assertTrue(EditorTestHelper.joinReconciler(fSourceViewer, 0, 10000, 100));
+			assertTrue(EditorTestHelper.joinReconciler(fSourceViewer, 500, 10000, 100));
 		}
 
 		protected String getTestFilename() {
@@ -140,7 +140,7 @@ public class AbstractSemanticHighlightingTest extends TestCase {
 		fCurrentHighlighting= semanticHighlighting;
 		enableSemanticHighlighting(semanticHighlighting);
 		EditorTestHelper.forceReconcile(fSourceViewer);
-		assertTrue(EditorTestHelper.joinReconciler(fSourceViewer, 0, 10000, 100));
+		assertTrue(EditorTestHelper.joinReconciler(fSourceViewer, 500, 10000, 100));
 		EditorTestHelper.runEventQueue(100);
 	}
 

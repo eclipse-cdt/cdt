@@ -31,7 +31,7 @@ import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.internal.ui.contexts.DebugContextManager;
-import org.eclipse.debug.internal.ui.viewers.PresentationContext;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.PresentationContext;
 import org.eclipse.debug.ui.AbstractDebugView;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.debug.ui.contexts.DebugContextEvent;
@@ -222,7 +222,7 @@ public class ModulesView extends AbstractDebugView implements IDebugContextListe
 	 */
 	protected Viewer createViewer( Composite parent ) {
 		ModulesViewer viewer = (ModulesViewer)createTreeViewer( parent );
-		viewer.setContext( new PresentationContext( this ) );
+		viewer.setContext( new PresentationContext( ICDebugUIConstants.ID_MODULES_VIEW ) );
 
 		createDetailsViewer();
 		getSashForm().setMaximizedControl( viewer.getControl() );

@@ -12,10 +12,9 @@ package org.eclipse.cdt.debug.internal.ui.views.modules;
 
 import org.eclipse.cdt.debug.core.model.IModuleRetrieval;
 import org.eclipse.cdt.debug.ui.ICDebugUIConstants;
-import org.eclipse.debug.internal.ui.viewers.provisional.IModelProxy;
-import org.eclipse.debug.internal.ui.viewers.provisional.IModelProxyFactoryAdapter;
-import org.eclipse.debug.internal.ui.viewers.provisional.IPresentationContext;
-import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelProxy;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelProxyFactoryAdapter;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
  
 public class ModuleProxyFactory implements IModelProxyFactoryAdapter {
 
@@ -23,13 +22,9 @@ public class ModuleProxyFactory implements IModelProxyFactoryAdapter {
 	 * @see org.eclipse.debug.internal.ui.viewers.provisional.IModelProxyFactoryAdapter#createModelProxy(java.lang.Object, org.eclipse.debug.internal.ui.viewers.provisional.IPresentationContext)
 	 */
 	public IModelProxy createModelProxy( Object element, IPresentationContext context ) {
-		IWorkbenchPart part = context.getPart();
-		if ( part != null ) {
-			String id = part.getSite().getId();
-			if ( ICDebugUIConstants.ID_MODULES_VIEW.equals( id ) ) {
-				if ( element instanceof IModuleRetrieval ) {
-						return new ModulesViewModelProxy( (IModuleRetrieval)element );
-				}
+		if ( ICDebugUIConstants.ID_MODULES_VIEW.equals( context.getId() ) ) {
+			if ( element instanceof IModuleRetrieval ) {
+					return new ModulesViewModelProxy( (IModuleRetrieval)element );
 			}
 		}
 		return null;

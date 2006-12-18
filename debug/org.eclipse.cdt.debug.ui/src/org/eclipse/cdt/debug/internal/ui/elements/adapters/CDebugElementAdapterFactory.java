@@ -16,9 +16,9 @@ import org.eclipse.cdt.debug.core.model.IModuleRetrieval;
 import org.eclipse.cdt.debug.internal.ui.views.modules.ModuleContentAdapter;
 import org.eclipse.cdt.debug.internal.ui.views.modules.ModuleProxyFactory;
 import org.eclipse.core.runtime.IAdapterFactory;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelProxyFactoryAdapter;
 import org.eclipse.debug.internal.ui.viewers.provisional.IAsynchronousContentAdapter;
 import org.eclipse.debug.internal.ui.viewers.provisional.IAsynchronousLabelAdapter;
-import org.eclipse.debug.internal.ui.viewers.provisional.IModelProxyFactoryAdapter;
  
 /**
  * Comment for .

@@ -20,6 +20,7 @@ import org.eclipse.jface.preference.PreferenceStore;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.MarginPainter;
+import org.eclipse.jface.text.WhitespaceCharacterPainter;
 import org.eclipse.jface.text.source.SourceViewer;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
@@ -39,7 +40,6 @@ import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.PreferenceConstants;
 import org.eclipse.cdt.ui.text.ICPartitions;
 
-import org.eclipse.cdt.internal.ui.InvisibleCharacterPainter;
 import org.eclipse.cdt.internal.ui.editor.CSourceViewer;
 import org.eclipse.cdt.internal.ui.text.CSourceViewerConfiguration;
 import org.eclipse.cdt.internal.ui.text.CTextTools;
@@ -99,7 +99,7 @@ public abstract class CPreview {
 	protected Map fWorkingValues;
 
 	private int fTabSize= 0;
-	private InvisibleCharacterPainter fWhitespacePainter;
+	private WhitespaceCharacterPainter fWhitespacePainter;
 	
 	/**
 	 * Create a new C preview
@@ -126,7 +126,7 @@ public abstract class CPreview {
 		fMarginPainter.setMarginRulerColor(tools.getColorManager().getColor(rgb));
 		fSourceViewer.addPainter(fMarginPainter);
 
-		fWhitespacePainter= new InvisibleCharacterPainter(fSourceViewer);
+		fWhitespacePainter= new WhitespaceCharacterPainter(fSourceViewer);
 
 		new CSourcePreviewerUpdater();
 		fSourceViewer.setDocument(fPreviewDocument);

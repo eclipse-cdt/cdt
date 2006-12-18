@@ -1,5 +1,4 @@
 ! Cross platform
-
 plugin@org.eclipse.cdt.core=@cdtTag@,:pserver:anonymous@dev.eclipse.org:/cvsroot/tools,,org.eclipse.cdt/all/org.eclipse.cdt.core
 plugin@org.eclipse.cdt.ui=@cdtTag@,:pserver:anonymous@dev.eclipse.org:/cvsroot/tools,,org.eclipse.cdt/all/org.eclipse.cdt.ui
 plugin@org.eclipse.cdt.refactoring=@cdtTag@,:pserver:anonymous@dev.eclipse.org:/cvsroot/tools,,org.eclipse.cdt/all/org.eclipse.cdt.refactoring
@@ -26,7 +25,6 @@ plugin@org.eclipse.cdt=@cdtTag@,:pserver:anonymous@dev.eclipse.org:/cvsroot/tool
 feature@org.eclipse.cdt=@cdtTag@,:pserver:anonymous@dev.eclipse.org:/cvsroot/tools,,org.eclipse.cdt/all/org.eclipse.cdt-feature
 
 ! Platform specific
-
 fragment@org.eclipse.cdt.core.aix=@cdtTag@,:pserver:anonymous@dev.eclipse.org:/cvsroot/tools,,org.eclipse.cdt/all/org.eclipse.cdt.core.aix
 fragment@org.eclipse.cdt.core.linux=@cdtTag@,:pserver:anonymous@dev.eclipse.org:/cvsroot/tools,,org.eclipse.cdt/all/org.eclipse.cdt.core.linux
 fragment@org.eclipse.cdt.core.linux.ia64=@cdtTag@,:pserver:anonymous@dev.eclipse.org:/cvsroot/tools,,org.eclipse.cdt/all/org.eclipse.cdt.core.linux.ia64
@@ -39,7 +37,6 @@ fragment@org.eclipse.cdt.core.solaris=@cdtTag@,:pserver:anonymous@dev.eclipse.or
 fragment@org.eclipse.cdt.core.win32=@cdtTag@,:pserver:anonymous@dev.eclipse.org:/cvsroot/tools,,org.eclipse.cdt/all/org.eclipse.cdt.core.win32
 
 ! Testing feature
-
 plugin@org.eclipse.cdt.core.tests=@cdtTag@,:pserver:anonymous@dev.eclipse.org:/cvsroot/tools,,org.eclipse.cdt/all/org.eclipse.cdt.core.tests
 plugin@org.eclipse.cdt.ui.tests=@cdtTag@,:pserver:anonymous@dev.eclipse.org:/cvsroot/tools,,org.eclipse.cdt/all/org.eclipse.cdt.ui.tests
 plugin@org.eclipse.cdt.refactoring.tests=@cdtTag@,:pserver:anonymous@dev.eclipse.org:/cvsroot/tools,,org.eclipse.cdt/all/org.eclipse.cdt.refactoring.tests
@@ -52,6 +49,10 @@ fragment@org.eclipse.ant.optional.junit=HEAD,:pserver:anonymous@dev.eclipse.org:
 feature@org.eclipse.cdt.testing=@cdtTag@,:pserver:anonymous@dev.eclipse.org:/cvsroot/tools,,org.eclipse.cdt/all/org.eclipse.cdt.testing-feature
 
 ! SDK Feature
-
 plugin@org.eclipse.cdt.sdk=@cdtTag@,:pserver:anonymous@dev.eclipse.org:/cvsroot/tools,,org.eclipse.cdt/all/org.eclipse.cdt.sdk
 feature@org.eclipse.cdt.sdk=@cdtTag@,:pserver:anonymous@dev.eclipse.org:/cvsroot/tools,,org.eclipse.cdt/all/org.eclipse.cdt.sdk-feature
+
+! Windows Feature
+plugin@org.eclipse.cdt.windows.build=@cdtTag@,:pserver:anonymous@dev.eclipse.org:/cvsroot/tools,,org.eclipse.cdt/windows/org.eclipse.cdt.windows.build
+plugin@org.eclipse.cdt.windows=@cdtTag@,:pserver:anonymous@dev.eclipse.org:/cvsroot/tools,,org.eclipse.cdt/windows/org.eclipse.cdt.windows
+feature@org.eclipse.cdt.windows=@cdtTag@,:pserver:anonymous@dev.eclipse.org:/cvsroot/tools,,org.eclipse.cdt/windows/org.eclipse.cdt.windows-feature

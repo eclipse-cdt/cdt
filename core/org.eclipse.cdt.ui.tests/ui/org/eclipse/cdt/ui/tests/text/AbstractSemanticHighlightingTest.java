@@ -52,12 +52,11 @@ public class AbstractSemanticHighlightingTest extends TestCase {
 		protected void setUp() throws Exception {
 			super.setUp();
 			fCProject= EditorTestHelper.createCProject(PROJECT, LINKED_FOLDER);
-			
-			disableAllSemanticHighlightings();
-			
+						
 			fEditor= (CEditor) EditorTestHelper.openInEditor(ResourceTestHelper.findFile(fTestFilename), true);
 			fSourceViewer= EditorTestHelper.getSourceViewer(fEditor);
 			assertTrue(EditorTestHelper.joinReconciler(fSourceViewer, 500, 10000, 100));
+			EditorTestHelper.joinBackgroundActivities();
 		}
 
 		protected String getTestFilename() {
@@ -97,6 +96,7 @@ public class AbstractSemanticHighlightingTest extends TestCase {
 	protected void setUp() throws Exception {
 		super.setUp();
 		disableAllSemanticHighlightings();
+		EditorTestHelper.runEventQueue(1000);
 	}
 	
 	protected void assertEqualPositions(Position[] expected, Position[] actual) {
@@ -139,10 +139,10 @@ public class AbstractSemanticHighlightingTest extends TestCase {
 	protected void setUpSemanticHighlighting(String semanticHighlighting) {
 		fCurrentHighlighting= semanticHighlighting;
 		enableSemanticHighlighting(semanticHighlighting);
-		EditorTestHelper.forceReconcile(fSourceViewer);
-		assertTrue(EditorTestHelper.joinReconciler(fSourceViewer, 500, 10000, 500));
+//		EditorTestHelper.forceReconcile(fSourceViewer);
+//		assertTrue(EditorTestHelper.joinReconciler(fSourceViewer, 500, 10000, 500));
 		// give enough time to finish updating the highlighting positions
-		EditorTestHelper.runEventQueue(500);
+		EditorTestHelper.runEventQueue(1000);
 	}
 
 	private void enableSemanticHighlighting(String preferenceKey) {

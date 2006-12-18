@@ -118,7 +118,6 @@ public class BinaryRunner {
 				} finally {
 					monitor.done();
 				}
-				System.out.println("DONE " + cproject.getElementName()+ " :"+ status);
 				return status;
 			}
 		};

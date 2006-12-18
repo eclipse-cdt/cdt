@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.StringTokenizer;
+
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.IAddress;
 import org.eclipse.cdt.core.IAddressFactory;
@@ -829,7 +830,7 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 			if ( source == null && event instanceof ICDIDestroyedEvent ) {
 				handleTerminatedEvent( (ICDIDestroyedEvent)event );
 			}
-			else if ( source.getTarget().equals( getCDITarget() ) ) {
+			else if ( source != null && source.getTarget().equals( getCDITarget() ) ) {
 				if ( event instanceof ICDICreatedEvent ) {
 					if ( source instanceof ICDIThread ) {
 						handleThreadCreatedEvent( (ICDICreatedEvent)event );
@@ -902,9 +903,9 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 		}
 		try {
 			ILaunchConfiguration launchConfig = getLaunch().getLaunchConfiguration();
-			if (launchConfig.getAttribute( ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_STOP_AT_MAIN, false)) {
+			if ( launchConfig.getAttribute( ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_STOP_AT_MAIN, ICDTLaunchConfigurationConstants.DEBUGGER_STOP_AT_MAIN_DEFAULT ) ) {
 				String mainSymbol = new String( ICDTLaunchConfigurationConstants.DEBUGGER_STOP_AT_MAIN_SYMBOL_DEFAULT );
-				mainSymbol = getLaunch().getLaunchConfiguration().getAttribute( ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_STOP_AT_MAIN_SYMBOL, ICDTLaunchConfigurationConstants.DEBUGGER_STOP_AT_MAIN_SYMBOL_DEFAULT );
+				mainSymbol = launchConfig.getAttribute( ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_STOP_AT_MAIN_SYMBOL, ICDTLaunchConfigurationConstants.DEBUGGER_STOP_AT_MAIN_SYMBOL_DEFAULT );
 				ICDILocation location = getCDITarget().createFunctionLocation( "", mainSymbol ); //$NON-NLS-1$
 				setInternalTemporaryBreakpoint( location );
 			}

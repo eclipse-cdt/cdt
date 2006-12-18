@@ -50,7 +50,7 @@ import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.ui.dialogs.ElementTreeSelectionDialog;
 import org.eclipse.ui.model.WorkbenchContentProvider;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
-import org.eclipse.ui.views.navigator.ResourceSorter;
+import org.eclipse.ui.views.navigator.ResourceComparator;
 
 /**
  * CPathLibraryEntryPage
@@ -474,7 +474,7 @@ public class CPathLibraryEntryPage extends CPathBasePage {
 		dialog.setMessage(message);
 		dialog.addFilter(filter);
 		dialog.setInput(fWorkspaceRoot);
-		dialog.setComparator(new ResourceSorter(ResourceSorter.NAME));
+		dialog.setComparator(new ResourceComparator(ResourceComparator.NAME));
 		if (existing == null) {
 			dialog.setInitialSelection(fCurrCProject.getProject());		
 		} else {

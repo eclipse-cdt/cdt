@@ -17,7 +17,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.dom.CDOM;
 import org.eclipse.cdt.core.dom.ICodeReaderFactory;
 import org.eclipse.cdt.core.dom.ast.ASTCompletionNode;
 import org.eclipse.cdt.core.dom.ast.IASTName;
@@ -26,20 +25,16 @@ import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.cpp.CPPASTVisitor;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.model.AbstractLanguage;
-import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.IContributedModelBuilder;
 import org.eclipse.cdt.core.model.ITranslationUnit;
-import org.eclipse.cdt.core.model.IWorkingCopy;
 import org.eclipse.cdt.core.parser.CodeReader;
 import org.eclipse.cdt.core.parser.IParserLogService;
 import org.eclipse.cdt.core.parser.IScanner;
 import org.eclipse.cdt.core.parser.IScannerInfo;
-import org.eclipse.cdt.core.parser.IScannerInfoProvider;
 import org.eclipse.cdt.core.parser.ParserFactory;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.ParserMode;
 import org.eclipse.cdt.core.parser.ParserUtil;
-import org.eclipse.cdt.core.parser.ScannerInfo;
 import org.eclipse.cdt.internal.core.dom.parser.ISourceCodeParser;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.GNUCPPSourceParser;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.GPPParserExtensionConfiguration;
@@ -48,8 +43,6 @@ import org.eclipse.cdt.internal.core.parser.scanner2.GPPScannerExtensionConfigur
 import org.eclipse.cdt.internal.core.parser.scanner2.IScannerExtensionConfiguration;
 import org.eclipse.cdt.internal.core.pdom.dom.IPDOMLinkageFactory;
 import org.eclipse.cdt.internal.core.pdom.dom.cpp.PDOMCPPLinkageFactory;
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 
 /**
@@ -93,29 +86,7 @@ public class GPPLanguage extends AbstractLanguage {
 		return ast;
 	}
 
-	public ASTCompletionNode getCompletionNode(IWorkingCopy workingCopy, int offset) throws CoreException {
-		IResource resource = workingCopy.getResource();
-		ICProject project = workingCopy.getCProject();
-		IProject rproject = project.getProject();
-		
-		IScannerInfo scanInfo = null;
-		IScannerInfoProvider provider = CCorePlugin.getDefault().getScannerInfoProvider(rproject);
-		if (provider != null){
-			IResource infoResource = resource != null ? resource : rproject; 
-			IScannerInfo buildScanInfo = provider.getScannerInformation(infoResource);
-			if (buildScanInfo != null)
-				scanInfo = buildScanInfo;
-			else
-				scanInfo = new ScannerInfo();
-		}
-		
-		// TODO use the pdom once we get enough info into it
-//		PDOM pdom = (PDOM)CCorePlugin.getPDOMManager().getPDOM(workingCopy.getCProject()).getAdapter(PDOM.class);
-//		ICodeReaderFactory fileCreator = new PDOMCodeReaderFactory(pdom);
-	
-		ICodeReaderFactory fileCreator = CDOM.getInstance().getCodeReaderFactory(CDOM.PARSE_WORKING_COPY_WHENEVER_POSSIBLE);
-
-		CodeReader reader = new CodeReader(resource.getLocation().toOSString(), workingCopy.getContents());
+	public ASTCompletionNode getCompletionNode(CodeReader reader, IScannerInfo scanInfo, ICodeReaderFactory fileCreator, IIndex index, IParserLogService log, int offset) throws CoreException {
 	    IScannerExtensionConfiguration scannerExtensionConfiguration
 	    	= CPP_GNU_SCANNER_EXTENSION;
 		IScanner scanner = new DOMScanner(reader, scanInfo, ParserMode.COMPLETE_PARSE,

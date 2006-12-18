@@ -13,6 +13,7 @@ package org.eclipse.cdt.core.model;
 
 import java.util.Map;
 
+import org.eclipse.cdt.core.dom.ast.ASTCompletionNode;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.parser.CodeReader;
@@ -456,4 +457,15 @@ public interface ITranslationUnit extends ICElement, IParent, IOpenable, ISource
 	 * @since 4.0
 	 */
 	public IASTTranslationUnit getAST(IIndex index, int style) throws CoreException;
+	
+	/**
+	 * Return the completion node using the given index and parsing style at the given offset.
+	 * 
+	 * @param index
+	 * @param style
+	 * @param offset
+	 * @return
+	 * @throws CoreException
+	 */
+	public ASTCompletionNode getCompletionNode(IIndex index, int style, int offset) throws CoreException;	
 }

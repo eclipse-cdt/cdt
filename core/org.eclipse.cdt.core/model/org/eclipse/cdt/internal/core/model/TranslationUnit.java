@@ -20,6 +20,7 @@ import java.util.Map;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ICodeReaderFactory;
+import org.eclipse.cdt.core.dom.ast.ASTCompletionNode;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.model.CModelException;
@@ -303,47 +304,29 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.model.ISourceManipulation#copy(org.eclipse.cdt.core.model.ICElement, org.eclipse.cdt.core.model.ICElement, java.lang.String, boolean, org.eclipse.core.runtime.IProgressMonitor)
-	 */
 	public void copy(ICElement container, ICElement sibling, String rename, boolean force,
 		IProgressMonitor monitor) throws CModelException {
 		getSourceManipulationInfo().copy(container, sibling, rename, force, monitor);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.model.ISourceManipulation#delete(boolean, org.eclipse.core.runtime.IProgressMonitor)
-	 */
 	public void delete(boolean force, IProgressMonitor monitor) throws CModelException {
 		getSourceManipulationInfo().delete(force, monitor);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.model.ISourceManipulation#move(org.eclipse.cdt.core.model.ICElement, org.eclipse.cdt.core.model.ICElement, java.lang.String, boolean, org.eclipse.core.runtime.IProgressMonitor)
-	 */
 	public void move(ICElement container, ICElement sibling, String rename, boolean force,
 		IProgressMonitor monitor) throws CModelException {
 		getSourceManipulationInfo().move(container, sibling, rename, force, monitor);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.model.ISourceManipulation#rename(java.lang.String, boolean, org.eclipse.core.runtime.IProgressMonitor)
-	 */
 	public void rename(String name, boolean force, IProgressMonitor monitor)
 			throws CModelException {
 		getSourceManipulationInfo().rename(name, force, monitor);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.model.ISourceReference#getSource()
-	 */
 	public String getSource() throws CModelException {
 		return getSourceManipulationInfo().getSource();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.model.ISourceReference#getSourceRange()
-	 */
 	public ISourceRange getSourceRange() throws CModelException {
 		return getSourceManipulationInfo().getSourceRange();
 	}
@@ -376,9 +359,6 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 		return super.equals(o) && !((ITranslationUnit) o).isWorkingCopy();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.model.ITranslationUnit#findSharedWorkingCopy(org.eclipse.cdt.internal.core.model.IBufferFactory)
-	 */
 	public IWorkingCopy findSharedWorkingCopy(IBufferFactory factory) {
 
 		// if factory is null, default factory must be used
@@ -394,23 +374,14 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 		return (WorkingCopy) perFactoryWorkingCopies.get(this);
 	}
 
-	/*
-	 * @see org.eclipse.cdt.internal.core.model.Openable#isOpen()
-	 */
 	public synchronized boolean isOpen() {
 		return super.isOpen();
 	}
 
-	/*
-	 * @see org.eclipse.cdt.internal.core.model.CElement#getElementInfo(org.eclipse.core.runtime.IProgressMonitor)
-	 */
 	public synchronized CElementInfo getElementInfo(IProgressMonitor monitor) throws CModelException {
 		return super.getElementInfo(monitor);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.internal.core.model.Openable#buildStructure(org.eclipse.cdt.internal.core.model.OpenableInfo, org.eclipse.core.runtime.IProgressMonitor, java.util.Map, org.eclipse.core.resources.IResource)
-	 */
 	protected boolean buildStructure(OpenableInfo info, IProgressMonitor pm, Map newElements, IResource underlyingResource) throws CModelException {
 		TranslationUnitInfo unitInfo = (TranslationUnitInfo) info;
 
@@ -436,9 +407,6 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 		return unitInfo.isStructureKnown();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.model.ITranslationUnit#getContents()
-	 */
 	public char[] getContents() {
 		try {
 			IBuffer buffer = this.getBuffer();
@@ -448,17 +416,11 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.model.ITranslationUnit#getSharedWorkingCopy(org.eclipse.core.runtime.IProgressMonitor, org.eclipse.cdt.internal.core.model.IBufferFactory)
-	 */
 	public IWorkingCopy getSharedWorkingCopy(IProgressMonitor monitor,IBufferFactory factory)
 		throws CModelException {
 		return getSharedWorkingCopy(monitor, factory, null);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.model.ITranslationUnit#getSharedWorkingCopy(org.eclipse.core.runtime.IProgressMonitor, org.eclipse.cdt.internal.core.model.IBufferFactory, org.eclipse.cdt.core.model.IProblemRequestor)
-	 */
 	public IWorkingCopy getSharedWorkingCopy(IProgressMonitor monitor,IBufferFactory factory, IProblemRequestor requestor)
 			throws CModelException {
 
@@ -487,16 +449,10 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 		return (IWorkingCopy) op.getResultElements()[0];
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.model.ITranslationUnit#getWorkingCopy()
-	 */
 	public IWorkingCopy getWorkingCopy() throws CModelException {
 		return this.getWorkingCopy(null, null);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.model.ITranslationUnit#getWorkingCopy(org.eclipse.core.runtime.IProgressMonitor, org.eclipse.cdt.internal.core.model.IBufferFactory)
-	 */
 	public IWorkingCopy getWorkingCopy(IProgressMonitor monitor, IBufferFactory factory)throws CModelException{
 		WorkingCopy workingCopy = new WorkingCopy(getParent(), getFile(), getContentTypeId(), factory);
 		// open the working copy now to ensure contents are that of the current state of this element
@@ -511,9 +467,6 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 		return true;
 	}
 
-	/*
-	 * @see Openable#openParent
-	 */
 	protected void openParent(Object childInfo, Map newElements, IProgressMonitor pm) throws CModelException {
 		try {
 			super.openParent(childInfo, newElements, pm);
@@ -525,16 +478,10 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.model.IOpenable#isConsistent()
-	 */
 	public boolean isConsistent() throws CModelException {
 		return CModelManager.getDefault().getElementsOutOfSynchWithBuffers().get(this) == null;
 	}
 
-	/*
-	 * @see org.eclipse.cdt.internal.core.model.Openable#makeConsistent(org.eclipse.core.runtime.IProgressMonitor, boolean)
-	 */
 	public void makeConsistent(IProgressMonitor monitor, boolean forced) throws CModelException {
 		makeConsistent(false, monitor);
 	}
@@ -584,23 +531,14 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.internal.core.model.Openable#isSourceElement()
-	 */
 	protected boolean isSourceElement() {
 		return true;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.model.ITranslationUnit#isWorkingCopy()
-	 */
 	public boolean isWorkingCopy() {
 		return false;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.internal.core.model.Openable#openBuffer(org.eclipse.core.runtime.IProgressMonitor)
-	 */
 	protected IBuffer openBuffer(IProgressMonitor pm) throws CModelException {
 
 		// create buffer - translation units only use default buffer factory
@@ -626,9 +564,6 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 		return buffer;
 	}
 
-	/*
-	 * @see org.eclipse.cdt.core.model.ITranslationUnit#parse()
-	 */
 	public Map parse() {
 		throw new UnsupportedOperationException("Deprecated method"); //$NON-NLS-1$
 	}
@@ -681,9 +616,6 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 		return problemRequestor;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.model.ITranslationUnit#isHeaderUnit()
-	 */
 	public boolean isHeaderUnit() {
 		return (
 				CCorePlugin.CONTENT_TYPE_CHEADER.equals(contentTypeId)
@@ -691,9 +623,6 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 				);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.model.ITranslationUnit#isSourceUnit()
-	 */
 	public boolean isSourceUnit() {
 		if (isHeaderUnit())
 			return false;
@@ -706,9 +635,6 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 				);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.model.ITranslationUnit#isCLanguage()
-	 */
 	public boolean isCLanguage() {
 		return (
 				CCorePlugin.CONTENT_TYPE_CSOURCE.equals(contentTypeId)
@@ -716,9 +642,6 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 				);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.model.ITranslationUnit#isCXXLanguage()
-	 */
 	public boolean isCXXLanguage() {
 		return (
 				CCorePlugin.CONTENT_TYPE_CXXSOURCE.equals(contentTypeId)
@@ -726,17 +649,10 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 				);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.model.ITranslationUnit#isASMLanguage()
-	 */
 	public boolean isASMLanguage() {
 		return CCorePlugin.CONTENT_TYPE_ASMSOURCE.equals(contentTypeId);
 	}
 
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.model.ICElement#exists()
-	 */
 	public boolean exists() {
 		IResource res = getResource();
 		if (res != null)
@@ -763,9 +679,6 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.model.ITranslationUnit#getContentTypeId()
-	 */
 	public String getContentTypeId() {
 		return contentTypeId;
 	}
@@ -774,9 +687,6 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 		contentTypeId = id;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.internal.core.model.Openable#closing(java.lang.Object)
-	 */
 	protected void closing(Object info) throws CModelException {
 		IContentType cType = CCorePlugin.getContentType(getCProject().getProject(), getElementName());
 		if (cType != null) {
@@ -799,16 +709,10 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 		}
 	}
 
-	/*
-	 * @see org.eclipse.cdt.core.model.ITranslationUnit#getAST()
-	 */
 	public IASTTranslationUnit getAST() throws CoreException {
 		return getAST(null, 0);
 	}
 
-	/*
-	 * @see org.eclipse.cdt.core.model.ITranslationUnit#getAST(org.eclipse.cdt.core.index.IIndex, int)
-	 */
 	public IASTTranslationUnit getAST(IIndex index, int style) throws CoreException {
 		ICodeReaderFactory codeReaderFactory;
 		if (index != null && (style & (ITranslationUnit.AST_SKIP_INDEXED_HEADERS | ITranslationUnit.AST_SKIP_ALL_HEADERS)) != 0) {
@@ -829,6 +733,30 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 		ILanguage language= getLanguage();
 		if (language != null) {
 			return language.getASTTranslationUnit(reader, scanInfo, codeReaderFactory, index, ParserUtil.getParserLogService());
+		}
+		return null;
+	}
+
+	public ASTCompletionNode getCompletionNode(IIndex index, int style, int offset) throws CoreException {
+		ICodeReaderFactory codeReaderFactory;
+		if (index != null && (style & (ITranslationUnit.AST_SKIP_INDEXED_HEADERS | ITranslationUnit.AST_SKIP_ALL_HEADERS)) != 0) {
+			codeReaderFactory= new IndexBasedCodeReaderFactory(index);
+		}
+		else {
+			codeReaderFactory = SavedCodeReaderFactory.getInstance();
+		}
+		
+		IScannerInfo scanInfo = getScannerInfo( (style & ITranslationUnit.AST_SKIP_IF_NO_BUILD_INFO) == 0);
+		if (scanInfo == null) {
+			return null;
+		}
+		
+		CodeReader reader;
+		reader = getCodeReader();
+		
+		ILanguage language= getLanguage();
+		if (language != null) {
+			return language.getCompletionNode(reader, scanInfo, codeReaderFactory, index, ParserUtil.getParserLogService(), offset);
 		}
 		return null;
 	}

@@ -78,14 +78,19 @@ public interface ILanguage extends IAdaptable {
 			int style) throws CoreException;
 
 	/**
-	 * Return the AST Completion Node for the given working copy at the given
-	 * offset.
+	 * Return the AST completion node for the given offset.
 	 * 
-	 * @param workingCopy
+	 * @param reader
+	 * @param scanInfo
+	 * @param fileCreator
+	 * @param index
+	 * @param log
 	 * @param offset
 	 * @return
+	 * @throws CoreException
 	 */
-	public ASTCompletionNode getCompletionNode(IWorkingCopy workingCopy, int offset) throws CoreException;
+	public ASTCompletionNode getCompletionNode(CodeReader reader, IScannerInfo scanInfo, ICodeReaderFactory fileCreator, IIndex index, IParserLogService log, int offset) throws CoreException;
+
 
 	/**
 	 * Gather the list of IASTNames that appear the selection with the given start offset

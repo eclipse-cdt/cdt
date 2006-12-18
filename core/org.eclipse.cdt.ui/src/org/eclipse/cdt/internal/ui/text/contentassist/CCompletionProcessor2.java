@@ -13,15 +13,6 @@ package org.eclipse.cdt.internal.ui.text.contentassist;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.cdt.core.dom.ast.ASTCompletionNode;
-import org.eclipse.cdt.core.model.IWorkingCopy;
-import org.eclipse.cdt.internal.ui.CUIMessages;
-import org.eclipse.cdt.internal.ui.preferences.ProposalFilterPreferencesUtil;
-import org.eclipse.cdt.internal.ui.text.CParameterListValidator;
-import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.cdt.ui.text.ICCompletionProposal;
-import org.eclipse.cdt.ui.text.contentassist.ICompletionContributor;
-import org.eclipse.cdt.ui.text.contentassist.IProposalFilter;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
@@ -36,6 +27,20 @@ import org.eclipse.jface.text.contentassist.IContentAssistProcessor;
 import org.eclipse.jface.text.contentassist.IContextInformation;
 import org.eclipse.jface.text.contentassist.IContextInformationValidator;
 import org.eclipse.ui.IEditorPart;
+
+import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.dom.ast.ASTCompletionNode;
+import org.eclipse.cdt.core.index.IIndex;
+import org.eclipse.cdt.core.index.IIndexManager;
+import org.eclipse.cdt.core.model.IWorkingCopy;
+import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.text.ICCompletionProposal;
+import org.eclipse.cdt.ui.text.contentassist.ICompletionContributor;
+import org.eclipse.cdt.ui.text.contentassist.IProposalFilter;
+
+import org.eclipse.cdt.internal.ui.CUIMessages;
+import org.eclipse.cdt.internal.ui.preferences.ProposalFilterPreferencesUtil;
+import org.eclipse.cdt.internal.ui.text.CParameterListValidator;
 
 /**
  * @author Doug Schaefer
@@ -60,46 +65,61 @@ public class CCompletionProcessor2 implements IContentAssistProcessor {
 	public ICompletionProposal[] computeCompletionProposals(final ITextViewer viewer, int offset) {
 		try {
 			IWorkingCopy workingCopy = CUIPlugin.getDefault().getWorkingCopyManager().getWorkingCopy(editor.getEditorInput());
-			String prefix = null;
-
-			if (workingCopy != null) {
-				fCurrentCompletionNode = workingCopy.getLanguage().getCompletionNode(workingCopy, offset);
-
-                if (fCurrentCompletionNode != null)
-                    prefix = fCurrentCompletionNode.getPrefix();
-            }
-            
-            if (prefix == null)
-                prefix = scanPrefix(viewer.getDocument(), offset);
-            
-			errorMessage = CUIMessages.getString(noCompletions);
+			IIndex index = CCorePlugin.getIndexManager().getIndex(workingCopy.getCProject(),
+					IIndexManager.ADD_DEPENDENCIES | IIndexManager.ADD_DEPENDENT);
 			
-			List proposals = new ArrayList();
-			
-			IExtensionPoint point = Platform.getExtensionRegistry().getExtensionPoint(CUIPlugin.PLUGIN_ID, "completionContributors"); //$NON-NLS-1$
-			if (point == null)
+			try {
+				index.acquireReadLock();
+			} catch (InterruptedException e) {
 				return null;
-			IExtension[] extensions = point.getExtensions();
-			for (int i = 0; i < extensions.length; ++i) {
-				IConfigurationElement[] elements = extensions[i].getConfigurationElements();
-				for (int j = 0; j < elements.length; ++j) {
-					IConfigurationElement element = elements[j];
-					if (!"contributor".equals(element.getName())) //$NON-NLS-1$
-						continue;
-					Object contribObject = element.createExecutableExtension("class"); //$NON-NLS-1$
-					if (!(contribObject instanceof ICompletionContributor))
-						continue;
-					ICompletionContributor contributor = (ICompletionContributor)contribObject;
-					contributor.contributeCompletionProposals(viewer, offset, workingCopy, fCurrentCompletionNode, prefix, proposals);
-				}
 			}
-
-			IProposalFilter filter = getCompletionFilter();
-			ICCompletionProposal[] proposalsInput = (ICCompletionProposal[]) proposals.toArray(new ICCompletionProposal[proposals.size()]) ;
-			ICCompletionProposal[] proposalsFiltered = filter.filterProposals(proposalsInput);
 			
-			return proposalsFiltered;
-			
+			try {
+				String prefix = null;
+	
+				if (workingCopy != null) {
+					// TODO, to improve performance, we want to skip all headers
+					// But right now we're not getting any completions
+//					fCurrentCompletionNode = workingCopy.getCompletionNode(index, ITranslationUnit.AST_SKIP_ALL_HEADERS, offset);
+					fCurrentCompletionNode = workingCopy.getCompletionNode(index, 0, offset);
+	
+	                if (fCurrentCompletionNode != null)
+	                    prefix = fCurrentCompletionNode.getPrefix();
+	            }
+	            
+	            if (prefix == null)
+	                prefix = scanPrefix(viewer.getDocument(), offset);
+	            
+				errorMessage = CUIMessages.getString(noCompletions);
+				
+				List proposals = new ArrayList();
+				
+				IExtensionPoint point = Platform.getExtensionRegistry().getExtensionPoint(CUIPlugin.PLUGIN_ID, "completionContributors"); //$NON-NLS-1$
+				if (point == null)
+					return null;
+				IExtension[] extensions = point.getExtensions();
+				for (int i = 0; i < extensions.length; ++i) {
+					IConfigurationElement[] elements = extensions[i].getConfigurationElements();
+					for (int j = 0; j < elements.length; ++j) {
+						IConfigurationElement element = elements[j];
+						if (!"contributor".equals(element.getName())) //$NON-NLS-1$
+							continue;
+						Object contribObject = element.createExecutableExtension("class"); //$NON-NLS-1$
+						if (!(contribObject instanceof ICompletionContributor))
+							continue;
+						ICompletionContributor contributor = (ICompletionContributor)contribObject;
+						contributor.contributeCompletionProposals(viewer, offset, workingCopy, fCurrentCompletionNode, prefix, proposals);
+					}
+				}
+	
+				IProposalFilter filter = getCompletionFilter();
+				ICCompletionProposal[] proposalsInput = (ICCompletionProposal[]) proposals.toArray(new ICCompletionProposal[proposals.size()]) ;
+				ICCompletionProposal[] proposalsFiltered = filter.filterProposals(proposalsInput);
+				
+				return proposalsFiltered;
+			} finally {
+				index.releaseReadLock();
+			}
 		} catch (Throwable e) {
 			errorMessage = e.toString();
 		}

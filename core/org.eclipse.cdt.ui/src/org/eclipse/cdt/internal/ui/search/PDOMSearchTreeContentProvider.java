@@ -7,6 +7,7 @@
  *
  * Contributors:
  * QNX - Initial API and implementation
+ * Markus Schorn (Wind River Systems)
  *******************************************************************************/
 
 package org.eclipse.cdt.internal.ui.search;
@@ -30,6 +31,7 @@ import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.ui.PlatformUI;
 
 /**
  * @author Doug Schaefer
@@ -121,7 +123,7 @@ public class PDOMSearchTreeContentProvider implements ITreeContentProvider, IPDO
 	}
 	
 	public void elementsChanged(Object[] elements) {
-		if (elements != null)
+		if (elements != null) {
 			for (int i = 0; i < elements.length; ++i) {
 				PDOMSearchElement element = (PDOMSearchElement)elements[i];
 				if (result.getMatchCount(element) > 0)
@@ -129,10 +131,14 @@ public class PDOMSearchTreeContentProvider implements ITreeContentProvider, IPDO
 				else
 					remove(element);
 			}
+		}
 		
-		Display.getDefault().asyncExec(new Runnable() {
+		Display d= PlatformUI.getWorkbench().getDisplay();
+		d.asyncExec(new Runnable() {
 			public void run() {
-				viewer.refresh();
+				if (!viewer.getTree().isDisposed()) {
+					viewer.refresh();
+				}
 			}
 		});
 	}

@@ -50,11 +50,13 @@ public class BaseTestCase extends TestCase {
 	private static Test getFailingTests(Class clazz, String prefix) {
 		TestSuite suite= new TestSuite("Failing Tests");
 		Vector names= new Vector();
-		if (Test.class.isAssignableFrom(clazz)) {
-			Method[] methods= clazz.getDeclaredMethods();
+		Class superClass= clazz;
+		while (Test.class.isAssignableFrom(superClass) && !TestCase.class.equals(superClass)) {
+			Method[] methods= superClass.getDeclaredMethods();
 			for (int i= 0; i < methods.length; i++) {
 				addFailingMethod(suite, methods[i], clazz, prefix);
 			}
+			superClass= superClass.getSuperclass();
 		}
 		if (suite.countTestCases() == 0) {
 			return null;

@@ -20,6 +20,7 @@ import org.eclipse.cdt.ui.tests.callhierarchy.CallHierarchyTestSuite;
 import org.eclipse.cdt.ui.tests.includebrowser.IncludeBrowserTestSuite;
 import org.eclipse.cdt.ui.tests.text.TextTestSuite;
 import org.eclipse.cdt.ui.tests.text.contentassist.ContentAssistTestSuite;
+import org.eclipse.cdt.ui.tests.text.selection.SelectionTestSuite;
 import org.eclipse.cdt.ui.tests.viewsupport.ViewSupportTestSuite;
 
 /**
@@ -62,8 +63,7 @@ public class AutomatedSuite extends TestSuite {
 		// addTest(ContentAssist2TestSuite.suite());
 
 		// tests from package org.eclipse.cdt.ui.tests.text.selection
-		// commented out because they are failing pretty badly
-		// addTest(SelectionTestSuite.suite());
+		addTest(SelectionTestSuite.suite());
 	}
 	
 }

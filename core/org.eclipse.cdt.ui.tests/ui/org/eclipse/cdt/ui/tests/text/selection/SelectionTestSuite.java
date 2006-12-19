@@ -26,9 +26,9 @@ public class SelectionTestSuite extends TestSuite {
         addTest( ResolveBindingTests.suite() );
         addTest( CPPSelectionTestsNoIndexer.suite() );
 		addTest( CSelectionTestsNoIndexer.suite() );
+		addTest( CPPSelectionTestsFastIndexer.suite() );
+		addTest( CSelectionTestsFastIndexer.suite() );
 		addTest( CPPSelectionTestsDOMIndexer.suite() );
 		addTest( CSelectionTestsDOMIndexer.suite() );
-		addTest( CPPSelectionTestsCTagsIndexer.suite() );
-		addTest( CSelectionTestsCTagsIndexer.suite() );
     }
 }

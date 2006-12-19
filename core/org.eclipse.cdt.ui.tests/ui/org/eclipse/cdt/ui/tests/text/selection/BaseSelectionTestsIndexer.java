@@ -15,8 +15,6 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.InputStream;
 
-import junit.framework.TestCase;
-
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
@@ -31,6 +29,10 @@ import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.text.TextSelection;
 import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.search.ui.ISearchResult;
+import org.eclipse.search.ui.NewSearchUI;
+import org.eclipse.search.ui.text.AbstractTextSearchResult;
+import org.eclipse.search2.internal.ui.SearchView;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchPage;
@@ -48,20 +50,19 @@ import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.testplugin.FileManager;
+import org.eclipse.cdt.ui.tests.BaseUITestCase;
 
 import org.eclipse.cdt.internal.core.parser.ParserException;
 
 import org.eclipse.cdt.internal.ui.editor.ICEditorActionDefinitionIds;
 import org.eclipse.cdt.internal.ui.search.actions.OpenDeclarationsAction;
-import org.eclipse.cdt.internal.ui.search.actions.OpenDefinitionAction;
 
 /**
  * Base test class for testing Ctrl_F3/F3 with the indexers.
  *  
  * @author dsteffle
  */
-public class BaseSelectionTestsIndexer extends TestCase {
-	public static final int TIMEOUT = 50;
+public class BaseSelectionTestsIndexer extends BaseUITestCase {
 	protected boolean fileIndexed;
 	protected IProject project;
 	static FileManager fileManager = new FileManager();
@@ -72,12 +73,7 @@ public class BaseSelectionTestsIndexer extends TestCase {
 	}
 	
 	public void waitForIndex(int maxSec) throws Exception {
-		int delay = 0;
-		while (fileIndexed != true && delay < (maxSec * 1000))
-		{ 
-			Thread.sleep(TIMEOUT);
-			delay += TIMEOUT;
-		}
+		assertTrue(CCorePlugin.getIndexManager().joinIndexer(maxSec*1000, new NullProgressMonitor()));
 	}
 	
 	protected String getMessage(IStatus status) {
@@ -173,7 +169,7 @@ public class BaseSelectionTestsIndexer extends TestCase {
 		return folder;
     }
     
-	public void resetIndexState() {
+	protected void resetIndexState() {
 		fileIndexed = false;
 	}
 	
@@ -264,95 +260,7 @@ public class BaseSelectionTestsIndexer extends TestCase {
         
         return null;
     }
-    
-	protected IASTNode testCtrl_F3(IFile file, int offset) throws ParserException, CoreException {
-		return testCtrl_F3(file, offset, 0);
-	}
-	
-    protected IASTNode testCtrl_F3(IFile file, int offset, int length) throws ParserException, CoreException {
-		if (offset < 0)
-			throw new ParserException("offset can not be less than 0 and was " + offset); //$NON-NLS-1$
-		
-        IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
-        IEditorPart part = null;
-        try {
-            part = page.openEditor(new FileEditorInput(file), "org.eclipse.cdt.ui.editor.CEditor"); //$NON-NLS-1$
-        } catch (PartInitException e) {
-            assertFalse(true);
-        }
-        
-        if (part instanceof AbstractTextEditor) {
-            ((AbstractTextEditor)part).getSelectionProvider().setSelection(new TextSelection(offset,length));
             
-            final OpenDefinitionAction action = (OpenDefinitionAction) ((AbstractTextEditor)part).getAction("OpenDefinition"); //$NON-NLS-1$
-            action.runSync();
-            
-        	// update the file/part to point to the newly opened IFile/IEditorPart
-            part = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().getActiveEditor(); 
-            IEditorInput input = part.getEditorInput(); 
-            if (input instanceof FileEditorInput) {
-            	file = ((FileEditorInput)input).getFile();
-            } else {
-            	assertFalse(true); // bail!
-            }             
-        
-            // the action above should highlight the declaration, so now retrieve it and use that selection to get the IASTName selected on the TU
-            ISelection sel = ((AbstractTextEditor)part).getSelectionProvider().getSelection();
-            
-            if (sel instanceof TextSelection) {
-            	ITextSelection textSel = (ITextSelection)sel;
-            	ITranslationUnit tu = (ITranslationUnit)CoreModel.getDefault().create(file);
-            	IASTTranslationUnit ast = tu.getAST();
-                IASTName[] names = tu.getLanguage().getSelectedNames(ast, textSel.getOffset(), textSel.getLength());
-                
-                if (names == null || names.length == 0)
-                    return null;
-
-				return names[0];
-            }
-        }
-        
-        return null;
-    }
-    
-    protected ISelection testCtrl_F3Selection(IFile file, int offset) throws ParserException {
-    	return testCtrl_F3Selection(file, offset, 0);
-    }
-    
-    protected ISelection testCtrl_F3Selection(IFile file, int offset, int length) throws ParserException {
-		if (offset < 0)
-			throw new ParserException("offset can not be less than 0 and was " + offset); //$NON-NLS-1$
-		
-        IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
-        IEditorPart part = null;
-        try {
-            part = page.openEditor(new FileEditorInput(file), "org.eclipse.cdt.ui.editor.CEditor"); //$NON-NLS-1$
-        } catch (PartInitException e) {
-            assertFalse(true);
-        }
-        
-        if (part instanceof AbstractTextEditor) {
-            ((AbstractTextEditor)part).getSelectionProvider().setSelection(new TextSelection(offset,length));
-            
-            final OpenDefinitionAction action = (OpenDefinitionAction) ((AbstractTextEditor)part).getAction("OpenDefinition"); //$NON-NLS-1$
-            action.runSync();
-            
-        	// update the file/part to point to the newly opened IFile/IEditorPart
-            part = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().getActiveEditor(); 
-            IEditorInput input = part.getEditorInput(); 
-            if (input instanceof FileEditorInput) {
-            	file = ((FileEditorInput)input).getFile();
-            } else {
-            	assertFalse(true); // bail!
-            }             
-        
-            // the action above should highlight the declaration, so now retrieve it and use that selection to get the IASTName selected on the TU
-            return ((AbstractTextEditor)part).getSelectionProvider().getSelection();
-        }
-        
-        return null;
-    }
-    
     protected void testSimple_Ctrl_G_Selection(IFile file, int offset, int length, int numOccurrences) throws ParserException {
 		if (offset < 0)
 			throw new ParserException("offset can not be less than 0 and was " + offset); //$NON-NLS-1$
@@ -373,11 +281,23 @@ public class BaseSelectionTestsIndexer extends TestCase {
             action.run();
             
         	// update the file/part to point to the newly opened IFile/IEditorPart
-//            IViewPart view = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().findView("org.eclipse.search.ui.views.SearchView");
-            
-//            String title = view.getTitle();
-
-//            assertTrue( title.indexOf(numOccurrences + " Occurrences") >= 0 ); //$NON-NLS-1$
+            int occurs= 0;
+            for (int i = 0; i < 20; i++) {
+            	SearchView view = (SearchView) PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().findView("org.eclipse.search.ui.views.SearchView");
+            	if (view != null) {
+            		ISearchResult result= view.getCurrentSearchResult();
+            		if (!NewSearchUI.isQueryRunning(result.getQuery())) {
+            			if (result instanceof AbstractTextSearchResult) {
+            				AbstractTextSearchResult ar= (AbstractTextSearchResult) result;
+            				occurs= ar.getMatchCount();
+            				if (occurs > 0) 
+            					break;
+            			}
+            		}
+            	}                
+                runEventQueue(50);
+			}
+            assertEquals(numOccurrences, occurs);
         }
     }
     

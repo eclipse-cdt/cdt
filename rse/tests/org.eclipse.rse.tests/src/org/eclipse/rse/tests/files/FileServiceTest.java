@@ -72,11 +72,11 @@ public class FileServiceTest extends RSEBaseConnectionTestCase {
 	public String getTestFileName() {
 		//Return a filename for testing that exposes all characters valid on the file system
 		if (!isWindows()) {
-			//UNIX
-			return "a !@#${a}\"\' file%^&*()?_ =[]+-';:,.|<>"; //$NON-NLS-1$
+			//UNIX TODO: test embedded newlines
+			return "a !@#${a}\"\' fi\tle\b\\%^&*()?_ =[]~+-'`;:,.|<>"; //$NON-NLS-1$
 		}
-		//Fallback: Windows
-		return "a !@#${a}' file%^&()_ =[]+-;,."; //$NON-NLS-1$
+		//Fallback: Windows TODO: test unicode
+		return "a !@#${a}'` file%^&()_ =[]~+-;,."; //$NON-NLS-1$
 	}
 	
 	public void testCaseSensitive() {
@@ -86,7 +86,7 @@ public class FileServiceTest extends RSEBaseConnectionTestCase {
 			assertFalse(fs.isCaseSensitive()); //FAIL due to bug 168586
 		} else {
 			assertTrue(fss.getSubSystemConfiguration().isCaseSensitive());
-			assertTrue(fss.isCaseSensitive());
+			assertTrue(fss.isCaseSensitive()); //FAIL due to bug 168596
 			assertTrue(fs.isCaseSensitive());
 		}
 	}

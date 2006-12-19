@@ -98,9 +98,14 @@ public class FileServiceTest extends RSEBaseConnectionTestCase {
 		assertTrue(hf.canRead());
 		assertTrue(hf.canWrite());
 		assertEquals(hf.getName(), testName);
+		assertEquals(hf.getParentPath(), tempDirPath);
+		assertEquals(hf.getSize(), 0);
+		long modDate = hf.getModifiedDate();
+		assertTrue(modDate > 0);
 		
 		File theFile = new File(tempDir, testName); 
 		assertTrue(theFile.exists());
+		assertTrue(modDate == theFile.lastModified());
 	}
 	
 	public void testCreateCaseSensitive() throws SystemMessageException {
@@ -114,6 +119,7 @@ public class FileServiceTest extends RSEBaseConnectionTestCase {
 			hf2 = fs.createFolder(mon, tempDirPath, testName2);
 			assertTrue(hf2.exists());
 			assertTrue(hf2.isDirectory());
+			assertFalse(hf.equals(hf2));
 		} else {
 			//Windows: uppercase version must be the same
 			IHostFile hf2 = fs.getFile(mon, tempDirPath, testName2);
@@ -121,12 +127,17 @@ public class FileServiceTest extends RSEBaseConnectionTestCase {
 			try {
 				hf2 = fs.createFolder(mon, tempDirPath, testName2);
 			} catch(SystemMessageException e) {
+				//Windows cannot create a folder when the file is already there
 				assertNotNull(e);
 			}
 			assertTrue(hf2.exists());
 			assertFalse(hf2.isDirectory());
 			assertEquals(hf.getModifiedDate(), hf2.getModifiedDate());
 			assertEquals(hf.getSize(), hf2.getSize());
+			//Different abstract path names but denote the same file
+			//Should be equal since java.io.File treats them as equal
+			assertEquals(new File(tempDirPath, testName), new File(tempDirPath, testName2));
+			assertEquals(hf, hf2); //bug 168591: should be equal
 		}
 	}
 

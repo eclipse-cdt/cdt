@@ -45,6 +45,7 @@ import org.eclipse.cdt.core.dom.ast.gnu.cpp.GPPLanguage;
 import org.eclipse.cdt.core.model.ILanguage;
 import org.eclipse.cdt.internal.core.Util;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPBlockScope;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalFunction;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.db.IBTreeComparator;
 import org.eclipse.cdt.internal.core.pdom.dom.IPDOMMemberOwner;
@@ -177,10 +178,12 @@ class PDOMCPPLinkage extends PDOMLinkage {
 		} else if (binding instanceof ICPPMethod && parent instanceof PDOMCPPClassType) {
 			pdomBinding = new PDOMCPPMethod(pdom, parent, (ICPPMethod)binding);
 		} else if (binding instanceof ICPPFunction) {
-			ICPPFunction func= (ICPPFunction) binding;
-//			if (!func.isStatic()) {  // bug 161216
+			ICPPFunction func = (ICPPFunction)binding;
+			if (binding instanceof ICPPInternalFunction) {
+				if (!((ICPPInternalFunction)binding).isStatic(false))
+					pdomBinding = new PDOMCPPFunction(pdom, parent, func);
+			} else
 				pdomBinding = new PDOMCPPFunction(pdom, parent, func);
-//			}
 		} else if (binding instanceof ICPPClassType) {
 			pdomBinding= new PDOMCPPClassType(pdom, parent, (ICPPClassType) binding);
 		} else if (binding instanceof ICPPNamespaceAlias) {

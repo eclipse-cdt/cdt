@@ -83,7 +83,7 @@ public class CertificateForm extends SystemBaseForm
 			lblPath.setText(UniversalSecurityPlugin.getString(UniversalSecurityProperties.RESID_SECURITY_CERTIFICATE_FILE));
 			_pathField = new Text(nameGroup, SWT.BORDER);				
 			_pathField.setLayoutData(GridUtil.createHorizontalFill());
-			_pathField.setText("");
+			_pathField.setText(""); //$NON-NLS-1$
 			
 			_browseButton = new Button(nameGroup, SWT.PUSH);
 			_browseButton.setText(UniversalSecurityPlugin.getString(UniversalSecurityProperties.RESID_SECURITY_BROWSE));
@@ -93,7 +93,7 @@ public class CertificateForm extends SystemBaseForm
 			Label lblName = new Label(nameGroup, SWT.NONE);
 			lblName.setText(UniversalSecurityPlugin.getString(UniversalSecurityProperties.RESID_SECURITY_CERTIFICATE_ALIAS));
 			_aliasField = new Text(nameGroup, SWT.BORDER);
-			_aliasField.setText("");
+			_aliasField.setText(""); //$NON-NLS-1$
 
 			_aliasField.setLayoutData(GridUtil.createHorizontalFill());
 						
@@ -140,7 +140,7 @@ public class CertificateForm extends SystemBaseForm
 		FileDialog dlg = new FileDialog(_shell, SWT.OPEN);
 		
 		dlg.setFileName(currentSource);
-		dlg.setFilterExtensions(new String[]{"*.cer", "*.*"});
+		dlg.setFilterExtensions(new String[]{"*.cer", "*.*"}); //$NON-NLS-1$ //$NON-NLS-2$
 		
 		String source = dlg.open();
 

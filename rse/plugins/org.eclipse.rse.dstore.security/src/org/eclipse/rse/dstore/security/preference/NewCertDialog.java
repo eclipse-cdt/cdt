@@ -97,7 +97,7 @@ public class NewCertDialog extends SystemPromptDialog implements Listener
 		catch(FileNotFoundException e){
 
 			String text = UniversalSecurityPlugin.getString(UniversalSecurityProperties.RESID_SECURITY_KEY_IO_ERROR_);
-			text = StringModifier.change(text, "%1", _certForm.getPath());
+			text = StringModifier.change(text, "%1", _certForm.getPath()); //$NON-NLS-1$
 			String msg = UniversalSecurityPlugin.getString(UniversalSecurityProperties.RESID_SECURITY_CERTIFICATE_LOAD_EXC_);
 			
 			Status err = new Status(IStatus.ERROR,ResourcesPlugin.PI_RESOURCES,IStatus.ERROR,text,e);
@@ -108,9 +108,9 @@ public class NewCertDialog extends SystemPromptDialog implements Listener
 		catch(IOException e){
 
 			String text = UniversalSecurityPlugin.getString(UniversalSecurityProperties.RESID_SECURITY_LOAD_IO_EXC_);
-			text = StringModifier.change(text, "%1", _certForm.getPath());
+			text = StringModifier.change(text, "%1", _certForm.getPath()); //$NON-NLS-1$
 
-			text = StringModifier.change(text, "%1", UniversalSecurityPlugin.getKeyStoreLocation());
+			text = StringModifier.change(text, "%1", UniversalSecurityPlugin.getKeyStoreLocation()); //$NON-NLS-1$
 			String msg = UniversalSecurityPlugin.getString(UniversalSecurityProperties.RESID_SECURITY_CERTIFICATE_LOAD_EXC_);
 			
 			Status err = new Status(IStatus.ERROR,ResourcesPlugin.PI_RESOURCES,IStatus.ERROR,text,e);
@@ -121,7 +121,7 @@ public class NewCertDialog extends SystemPromptDialog implements Listener
 		catch(CertificateException exc){
 
 			String text = UniversalSecurityPlugin.getString(UniversalSecurityProperties.RESID_SECURITY_CERTIFICATE_EXC_);
-			text = StringModifier.change(text, "%1", _certForm.getPath());
+			text = StringModifier.change(text, "%1", _certForm.getPath()); //$NON-NLS-1$
 
 			String msg = UniversalSecurityPlugin.getString(UniversalSecurityProperties.RESID_SECURITY_CERTIFICATE_LOAD_EXC_);
 			
@@ -132,7 +132,7 @@ public class NewCertDialog extends SystemPromptDialog implements Listener
 		}
 		catch(KeyStoreException exc){
 			String text = UniversalSecurityPlugin.getString(UniversalSecurityProperties.RESID_SECURITY_KEY_STORE_ERROR_);
-			text = StringModifier.change(text, "%1", UniversalSecurityPlugin.getKeyStoreLocation());
+			text = StringModifier.change(text, "%1", UniversalSecurityPlugin.getKeyStoreLocation()); //$NON-NLS-1$
 			String msg = UniversalSecurityPlugin.getString(UniversalSecurityProperties.RESID_SECURITY_CERTIFICATE_LOAD_EXC_);
 			
 			Status err = new Status(IStatus.ERROR,ResourcesPlugin.PI_RESOURCES,IStatus.ERROR,text,exc);

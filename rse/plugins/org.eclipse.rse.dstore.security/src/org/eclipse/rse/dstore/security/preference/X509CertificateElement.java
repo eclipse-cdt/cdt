@@ -45,7 +45,7 @@ public class X509CertificateElement extends Element
 	
 	public String getVersion()
 	{
-		return "V." + _cert.getVersion();
+		return "V." + _cert.getVersion(); //$NON-NLS-1$
 	}
 	
 	private String[] parse(String full)
@@ -72,13 +72,13 @@ public class X509CertificateElement extends Element
 			}
 			result.append(c);			
 		}
-		return result.toString().split(";");
+		return result.toString().split(";"); //$NON-NLS-1$
 	}
 	
 	private String extract(String full, int index)
 	{
 		String[] pairs = parse(full);
-		String match = pairs[index].split("=")[1];
+		String match = pairs[index].split("=")[1]; //$NON-NLS-1$
 		return match;
 	}
 	

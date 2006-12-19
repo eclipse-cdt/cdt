@@ -45,7 +45,7 @@ public class ImageRegistry {
 	public static final String T_OBJ		= "obj16"; //$NON-NLS-1$
 	public static final String T_WIZBAN	= "wizban"; //$NON-NLS-1$
 
-    public static final String IMG_CERTIF_FILE 	= "certif_file.gif";
+    public static final String IMG_CERTIF_FILE 	= "certif_file.gif"; //$NON-NLS-1$
 	public static final String IMG_WZ_IMPORT_CERTIF  = "import_cert_wiz.gif";//"newjprj_wiz.gif";//$NON-NLS-1$
 			    	
     public static final ImageDescriptor DESC_IMG_CERTIF_FILE	= createManaged(T_OBJ,IMG_CERTIF_FILE);
@@ -96,7 +96,7 @@ public class ImageRegistry {
 		String relPath) {
 		try {
 			ImageDescriptor id =
-				ImageDescriptor.createFromURL(makeIconFileURL("d" + type, relPath));
+				ImageDescriptor.createFromURL(makeIconFileURL("d" + type, relPath)); //$NON-NLS-1$
 			//$NON-NLS-1$
 			if (id != null) {
 				action.setDisabledImageDescriptor(id);

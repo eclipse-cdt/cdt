@@ -22,7 +22,6 @@ import java.util.List;
 import org.eclipse.rse.core.comm.ISystemKeystoreProvider;
 import org.eclipse.rse.dstore.security.wizards.SystemImportCertAction;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Shell;
 
 
 public class UniversalKeystoreProvider implements ISystemKeystoreProvider
@@ -48,7 +47,6 @@ public class UniversalKeystoreProvider implements ISystemKeystoreProvider
 		
 		public void run()
 		{
-			Shell shell = Display.getDefault().getActiveShell();
 			SystemImportCertAction importAction = new SystemImportCertAction(_provider, _certificates, _systemName);
 			importAction.run();
 			_wasCancelled = importAction.wasCancelled();

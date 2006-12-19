@@ -32,7 +32,7 @@ import org.osgi.framework.BundleContext;
 
 public class UniversalSecurityPlugin extends AbstractUIPlugin
 {
-	private final static String KEYSTORE = "dstorekeystore.dat";
+	private final static String KEYSTORE = "dstorekeystore.dat"; //$NON-NLS-1$
 	private static UniversalSecurityPlugin inst;
 	private static ResourceBundle aResourceBundle;
 	public static final String PLUGIN_ID = "org.eclipse.rse.dstore.security"; //$NON-NLS-1$
@@ -80,7 +80,7 @@ public class UniversalSecurityPlugin extends AbstractUIPlugin
 
 	public static String getKeyStorePassword()
 	{
-		return "dstore";
+		return "dstore"; //$NON-NLS-1$
 	}
 	
 	public static String getWorkspaceName(){

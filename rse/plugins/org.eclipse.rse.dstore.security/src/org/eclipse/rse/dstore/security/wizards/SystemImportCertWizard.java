@@ -25,7 +25,6 @@ import org.eclipse.rse.core.SystemBasePlugin;
 import org.eclipse.rse.core.comm.ISystemKeystoreProvider;
 import org.eclipse.rse.dstore.security.ImageRegistry;
 import org.eclipse.rse.dstore.security.UniversalSecurityProperties;
-import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.ui.wizards.AbstractSystemWizard;
 
 public class SystemImportCertWizard 
@@ -64,7 +63,7 @@ public class SystemImportCertWizard
 	      //super.addPages();
 	   } catch (Exception exc)
 	   {
-	   	 SystemBasePlugin.logError("New File: Error in createPages: ",exc);
+	   	 SystemBasePlugin.logError("New File: Error in createPages: ",exc); //$NON-NLS-1$
 	   }
 	} 
 
@@ -74,11 +73,11 @@ public class SystemImportCertWizard
 	 */
 	protected SystemImportCertWizardMainPage createMainPage()
 	{
-		SystemMessage errMsg = null;
+	//	SystemMessage errMsg = null;
 		
    	    _mainPage = new SystemImportCertWizardMainPage(this, getCertificates()); 
-   	    if (errMsg != null)
-   	      _mainPage.setErrorMessage(errMsg);
+//   	    if (errMsg != null)
+  // 	      _mainPage.setErrorMessage(errMsg);
    	    return _mainPage;
 	}     
 	
@@ -88,11 +87,11 @@ public class SystemImportCertWizard
 	 */ 
 	protected SystemImportCertWizardAliasPage createAliasPage()
 	{
-		SystemMessage errMsg = null;
+	//	SystemMessage errMsg = null;
 		
    	    _aliasPage = new SystemImportCertWizardAliasPage(this, getCertificates(), _systemName); 
-   	    if (errMsg != null)
-   	      _aliasPage.setErrorMessage(errMsg);
+   	//    if (errMsg != null)
+   	  //    _aliasPage.setErrorMessage(errMsg);
    	    return _aliasPage;
 	} 
 

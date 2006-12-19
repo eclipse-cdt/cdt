@@ -57,7 +57,7 @@ public class SystemImportCertWizardAliasPage
 	 */
 	public SystemImportCertWizardAliasPage(Wizard wizard, List certs, String systemName)
 	{
-		super(wizard, "SpecifyAlias", 
+		super(wizard, "SpecifyAlias",  //$NON-NLS-1$
   		      UniversalSecurityProperties.RESID_SECURITY_TRUST_WIZ_ALIAS_TITLE, 
 		      UniversalSecurityProperties.RESID_SECURITY_TRUST_WIZ_ALIAS_DESC);
 		_systemName = systemName;
@@ -165,7 +165,7 @@ public class SystemImportCertWizardAliasPage
 	public String getAlias()
 	{
 		String alias = _alias.getText().trim();
-		if (alias.equals(""))
+		if (alias.equals("")) //$NON-NLS-1$
 		{
 			try
 			{

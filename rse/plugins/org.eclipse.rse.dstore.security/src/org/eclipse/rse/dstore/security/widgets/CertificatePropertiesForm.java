@@ -163,14 +163,14 @@ public class CertificatePropertiesForm extends SystemBaseForm
 		lblAlgorithmValue.setLayoutData(data);
 		
 		if(_certificate instanceof X509Certificate){
-			lblVersionValue.setText(((X509Certificate)_certificate).getType() + " V."+((X509Certificate)_certificate).getVersion());
+			lblVersionValue.setText(((X509Certificate)_certificate).getType() + " V."+((X509Certificate)_certificate).getVersion()); //$NON-NLS-1$
 			lblIssuedToValue.setText(((X509Certificate)_certificate).getSubjectDN().getName());
 			lblIssuedByValue.setText(((X509Certificate)_certificate).getIssuerDN().getName());
 			DateFormat df = DateFormat.getDateInstance(DateFormat.LONG);
 			
 			String validity = UniversalSecurityPlugin.getString(UniversalSecurityProperties.RESID_SECURITY_VALIDITY_PERIOD);
-			validity = StringModifier.change(validity,"%1", df.format(((X509Certificate)_certificate).getNotBefore()));
-			validity = StringModifier.change(validity,"%2", df.format(((X509Certificate)_certificate).getNotAfter()));
+			validity = StringModifier.change(validity,"%1", df.format(((X509Certificate)_certificate).getNotBefore())); //$NON-NLS-1$
+			validity = StringModifier.change(validity,"%2", df.format(((X509Certificate)_certificate).getNotAfter())); //$NON-NLS-1$
 
 			lblValidityValue.setText(validity);
 			lblAlgorithmValue.setText(((X509Certificate)_certificate).getSigAlgName());
@@ -270,14 +270,14 @@ public class CertificatePropertiesForm extends SystemBaseForm
 		lblAlgorithmValue.setLayoutData(data);
 		
 		if(_certificate instanceof X509Certificate){
-			lblVersionValue.setText(((X509Certificate)_certificate).getType() + " V."+((X509Certificate)_certificate).getVersion());
+			lblVersionValue.setText(((X509Certificate)_certificate).getType() + " V."+((X509Certificate)_certificate).getVersion()); //$NON-NLS-1$
 			lblIssuedToValue.setText(((X509Certificate)_certificate).getSubjectDN().getName());
 			lblIssuedByValue.setText(((X509Certificate)_certificate).getIssuerDN().getName());
 			DateFormat df = DateFormat.getDateInstance(DateFormat.LONG);
 			
 			String validity = UniversalSecurityPlugin.getString(UniversalSecurityProperties.RESID_SECURITY_VALIDITY_PERIOD);
-			validity = StringModifier.change(validity,"%1", df.format(((X509Certificate)_certificate).getNotBefore()));
-			validity = StringModifier.change(validity,"%2", df.format(((X509Certificate)_certificate).getNotAfter()));
+			validity = StringModifier.change(validity,"%1", df.format(((X509Certificate)_certificate).getNotBefore())); //$NON-NLS-1$
+			validity = StringModifier.change(validity,"%2", df.format(((X509Certificate)_certificate).getNotAfter())); //$NON-NLS-1$
 
 			lblValidityValue.setText(validity);
 			lblAlgorithmValue.setText(((X509Certificate)_certificate).getSigAlgName());

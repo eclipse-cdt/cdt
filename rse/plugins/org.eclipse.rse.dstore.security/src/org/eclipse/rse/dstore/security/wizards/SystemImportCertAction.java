@@ -24,7 +24,6 @@ import org.eclipse.rse.dstore.security.ImageRegistry;
 import org.eclipse.rse.dstore.security.UniversalSecurityProperties;
 import org.eclipse.rse.ui.actions.SystemBaseWizardAction;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Shell;
 
 public class SystemImportCertAction extends SystemBaseWizardAction
 	{
@@ -45,7 +44,6 @@ public class SystemImportCertAction extends SystemBaseWizardAction
 		
 		public IWizard createWizard()
 		{
-			Shell shell = Display.getDefault().getActiveShell();
 			SystemImportCertWizard importWiz = new SystemImportCertWizard(_provider, _systemName);
 			importWiz.setInputObject(_certificates);
 			return importWiz;

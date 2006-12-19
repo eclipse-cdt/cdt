@@ -28,8 +28,8 @@ import org.eclipse.swt.widgets.TableColumn;
 public class CertTableSorter
 extends ViewerSorter
 {
-	private final static String ASC_SYMBOL = "^";
-	private final static String DESC_SYMBOL = ".";
+	private final static String ASC_SYMBOL = "^"; //$NON-NLS-1$
+	private final static String DESC_SYMBOL = "."; //$NON-NLS-1$
 	
 	private TableViewer tableViewer;
 	private int currentColumn;

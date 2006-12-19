@@ -87,7 +87,7 @@ public class CertTableLabelProvider
 				break;
 			}
 		}
-		return "";
+		return ""; //$NON-NLS-1$
 	}
 
 	

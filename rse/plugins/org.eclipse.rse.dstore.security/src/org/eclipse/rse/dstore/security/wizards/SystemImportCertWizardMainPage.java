@@ -65,7 +65,7 @@ public class SystemImportCertWizardMainPage
 	 */
 	public SystemImportCertWizardMainPage(Wizard wizard, List certs)
 	{
-		super(wizard, "NewCertificate", 
+		super(wizard, "NewCertificate",  //$NON-NLS-1$
   		      UniversalSecurityProperties.RESID_SECURITY_TRUST_WIZ_CERTIFICATE_TITLE, 
 		      UniversalSecurityProperties.RESID_SECURITY_TRUST_WIZ_CERTIFICATE_DESC);
 		_certificates = certs;
@@ -131,7 +131,7 @@ public class SystemImportCertWizardMainPage
 		table.setLayout(tableLayout);
 
 		// Adjust the table viewer.
-		String[] properties = new String[] {"STRING", "STRING", "NUMBER"};
+		String[] properties = new String[] {"STRING", "STRING", "NUMBER"}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		_viewer.setColumnProperties(properties);
 		_viewer.setContentProvider(new CertTableContentProvider());
 		_viewer.setLabelProvider(new NewCertTableLabelProvider());

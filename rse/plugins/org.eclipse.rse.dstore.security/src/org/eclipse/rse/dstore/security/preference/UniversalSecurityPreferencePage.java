@@ -57,7 +57,6 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
@@ -119,7 +118,7 @@ public class UniversalSecurityPreferencePage extends PreferencePage implements
 		createButtons(buttons);
 		initializeValues();
 
-		SystemWidgetHelpers.setCompositeHelp(parent, RSEUIPlugin.HELPPREFIX + "ssls0000");
+		SystemWidgetHelpers.setCompositeHelp(parent, RSEUIPlugin.HELPPREFIX + "ssls0000"); //$NON-NLS-1$
 		return composite;
 	}
 
@@ -159,7 +158,7 @@ public class UniversalSecurityPreferencePage extends PreferencePage implements
 		table.setLayout(tableLayout);
 
 		// Adjust the table viewer.
-		String[] properties = new String[] {"STRING", "STRING", "STRING", "NUMBER"};
+		String[] properties = new String[] {"STRING", "STRING", "STRING", "NUMBER"}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 		_viewer.setColumnProperties(properties);
 		_viewer.setContentProvider(new CertTableContentProvider());
 		_viewer.setLabelProvider(new CertTableLabelProvider());
@@ -220,16 +219,16 @@ public class UniversalSecurityPreferencePage extends PreferencePage implements
 		{
 
 			String text = UniversalSecurityPlugin.getString(UniversalSecurityProperties.RESID_SECURITY_IO_SAVE_ERROR_);
-			text = StringModifier.change(text, "%1", storePath);
+			text = StringModifier.change(text, "%1", storePath); //$NON-NLS-1$
 
-			text = StringModifier.change(text, "%1", storePath);
+			text = StringModifier.change(text, "%1", storePath); //$NON-NLS-1$
 			String msg = UniversalSecurityPlugin.getString(UniversalSecurityProperties.RESID_SECURITY_KEYSTORE_SAVE_ERROR_);
 
 			Status err = new Status(IStatus.ERROR, ResourcesPlugin.PI_RESOURCES,
 					IStatus.ERROR, text, e);
 			ErrorDialog.openError(UniversalSecurityPlugin
 					.getActiveWorkbenchShell(), UniversalSecurityPlugin
-					.getString("SEC_MSG"), msg, err);
+					.getString("SEC_MSG"), msg, err); //$NON-NLS-1$
 			return false;
 
 		}
@@ -237,7 +236,7 @@ public class UniversalSecurityPreferencePage extends PreferencePage implements
 		{
 
 			String text = UniversalSecurityPlugin.getString(UniversalSecurityProperties.RESID_SECURITY_CERTIFICATE_STORE_ERROR_);
-			text = StringModifier.change(text, "%1", storePath);
+			text = StringModifier.change(text, "%1", storePath); //$NON-NLS-1$
 			String msg = UniversalSecurityPlugin.getString(UniversalSecurityProperties.RESID_SECURITY_KEYSTORE_SAVE_ERROR_);
 
 			Status err = new Status(IStatus.ERROR, ResourcesPlugin.PI_RESOURCES,
@@ -250,33 +249,33 @@ public class UniversalSecurityPreferencePage extends PreferencePage implements
 		catch (KeyStoreException exc)
 		{
 			String text = UniversalSecurityPlugin.getString(UniversalSecurityProperties.RESID_SECURITY_UNINIT_KEYSTORE_ERROR_);
-			text = StringModifier.change(text, "%1", UniversalSecurityPlugin
+			text = StringModifier.change(text, "%1", UniversalSecurityPlugin //$NON-NLS-1$
 					.getKeyStoreLocation());
 			String msg = UniversalSecurityPlugin
-					.getString("RESID_SECURITY_KEYSTORE_SAVE_ERROR_");
+					.getString("RESID_SECURITY_KEYSTORE_SAVE_ERROR_"); //$NON-NLS-1$
 
 			Status err = new Status(IStatus.ERROR, ResourcesPlugin.PI_RESOURCES,
 					IStatus.ERROR, text, exc);
 			ErrorDialog.openError(UniversalSecurityPlugin
 					.getActiveWorkbenchShell(), UniversalSecurityPlugin
-					.getString("SEC_MSG"), msg, err);
+					.getString("SEC_MSG"), msg, err); //$NON-NLS-1$
 			return false;
 
 		}
 		catch (NoSuchAlgorithmException exc2)
 		{
 			String text = UniversalSecurityPlugin
-					.getString("RESID_SECURITY_ALGORITHM_ERROR_");
-			text = StringModifier.change(text, "%1", UniversalSecurityPlugin
+					.getString("RESID_SECURITY_ALGORITHM_ERROR_"); //$NON-NLS-1$
+			text = StringModifier.change(text, "%1", UniversalSecurityPlugin //$NON-NLS-1$
 					.getKeyStoreLocation());
 			String msg = UniversalSecurityPlugin
-					.getString("RESID_SECURITY_KEYSTORE_SAVE_ERROR_");
+					.getString("RESID_SECURITY_KEYSTORE_SAVE_ERROR_"); //$NON-NLS-1$
 
 			Status err = new Status(IStatus.ERROR, ResourcesPlugin.PI_RESOURCES,
 					IStatus.ERROR, text, exc2);
 			ErrorDialog.openError(UniversalSecurityPlugin
 					.getActiveWorkbenchShell(), UniversalSecurityPlugin
-					.getString("SEC_MSG"), msg, err);
+					.getString("SEC_MSG"), msg, err); //$NON-NLS-1$
 			return false;
 
 		}
@@ -324,7 +323,7 @@ public class UniversalSecurityPreferencePage extends PreferencePage implements
 						Key key = _keyStore.getKey(alias, passw.toCharArray());
 						KeyElement elem = new KeyElement(alias,
 								UniversalSecurityPlugin
-										.getString("RESID_SECURITY_KEY_ENTRY"),
+										.getString("RESID_SECURITY_KEY_ENTRY"), //$NON-NLS-1$
 								key);
 						_tableItems.add(elem);
 					}
@@ -340,81 +339,81 @@ public class UniversalSecurityPreferencePage extends PreferencePage implements
 		{
 
 			String text = UniversalSecurityPlugin
-					.getString("RESID_SECURITY_LOAD_IO_EXC_");
-			text = StringModifier.change(text, "%1", storePath);
+					.getString("RESID_SECURITY_LOAD_IO_EXC_"); //$NON-NLS-1$
+			text = StringModifier.change(text, "%1", storePath); //$NON-NLS-1$
 			String msg = UniversalSecurityPlugin
-					.getString("RESID_SECURITY_LOAD_KEYSTORE_ERROR_");
+					.getString("RESID_SECURITY_LOAD_KEYSTORE_ERROR_"); //$NON-NLS-1$
 
 			Status err = new Status(IStatus.ERROR, ResourcesPlugin.PI_RESOURCES,
 					IStatus.ERROR, text, e);
 			ErrorDialog.openError(UniversalSecurityPlugin
 					.getActiveWorkbenchShell(), UniversalSecurityPlugin
-					.getString("SEC_MSG"), msg, err);
+					.getString("SEC_MSG"), msg, err); //$NON-NLS-1$
 
 		}
 		catch (CertificateException exc)
 		{
 
 			String text = UniversalSecurityPlugin
-					.getString("RESID_SECURITY_KEY_LOAD_ERROR_");
-			text = StringModifier.change(text, "%1", storePath);
+					.getString("RESID_SECURITY_KEY_LOAD_ERROR_"); //$NON-NLS-1$
+			text = StringModifier.change(text, "%1", storePath); //$NON-NLS-1$
 			String msg = UniversalSecurityPlugin
-					.getString("RESID_SECURITY_LOAD_KEYSTORE_ERROR_");
+					.getString("RESID_SECURITY_LOAD_KEYSTORE_ERROR_"); //$NON-NLS-1$
 
 			Status err = new Status(IStatus.ERROR, ResourcesPlugin.PI_RESOURCES,
 					IStatus.ERROR, text, exc);
 			ErrorDialog.openError(UniversalSecurityPlugin
 					.getActiveWorkbenchShell(), UniversalSecurityPlugin
-					.getString("SEC_MSG"), msg, err);
+					.getString("SEC_MSG"), msg, err); //$NON-NLS-1$
 
 		}
 		catch (KeyStoreException exc)
 		{
 
 			String text = UniversalSecurityPlugin
-					.getString("RESID_SECURITY_INITIALIZE_ERROR_");
-			text = StringModifier.change(text, "%1", UniversalSecurityPlugin
+					.getString("RESID_SECURITY_INITIALIZE_ERROR_"); //$NON-NLS-1$
+			text = StringModifier.change(text, "%1", UniversalSecurityPlugin //$NON-NLS-1$
 					.getKeyStoreLocation());
 			String msg = UniversalSecurityPlugin
-					.getString("RESID_SECURITY_LOAD_KEYSTORE_ERROR_");
+					.getString("RESID_SECURITY_LOAD_KEYSTORE_ERROR_"); //$NON-NLS-1$
 
 			Status err = new Status(IStatus.ERROR, ResourcesPlugin.PI_RESOURCES,
 					IStatus.ERROR, text, exc);
 			ErrorDialog.openError(UniversalSecurityPlugin
 					.getActiveWorkbenchShell(), UniversalSecurityPlugin
-					.getString("SEC_MSG"), msg, err);
+					.getString("SEC_MSG"), msg, err); //$NON-NLS-1$
 
 		}
 		catch (NoSuchProviderException exc2)
 		{
 
 			String text = UniversalSecurityPlugin
-					.getString("RESID_SECURITY_SECURITY_PROVIDER_ERROR_");
+					.getString("RESID_SECURITY_SECURITY_PROVIDER_ERROR_"); //$NON-NLS-1$
 			String msg = UniversalSecurityPlugin
-					.getString("RESID_SECURITY_INITIALIZE_ERROR_");
-			msg = StringModifier.change(msg, "%1", UniversalSecurityPlugin
+					.getString("RESID_SECURITY_INITIALIZE_ERROR_"); //$NON-NLS-1$
+			msg = StringModifier.change(msg, "%1", UniversalSecurityPlugin //$NON-NLS-1$
 					.getKeyStoreLocation());
 			Status err = new Status(IStatus.ERROR, ResourcesPlugin.PI_RESOURCES,
 					IStatus.ERROR, text, exc2);
 			ErrorDialog.openError(UniversalSecurityPlugin
 					.getActiveWorkbenchShell(), UniversalSecurityPlugin
-					.getString("SEC_MSG"), msg, err);
+					.getString("SEC_MSG"), msg, err); //$NON-NLS-1$
 
 		}
 		catch (NoSuchAlgorithmException exc2)
 		{
 			String text = UniversalSecurityPlugin
-					.getString("RESID_SECURITY_ALGORITHM_ERROR_");
-			text = StringModifier.change(text, "%1", UniversalSecurityPlugin
+					.getString("RESID_SECURITY_ALGORITHM_ERROR_"); //$NON-NLS-1$
+			text = StringModifier.change(text, "%1", UniversalSecurityPlugin //$NON-NLS-1$
 					.getKeyStoreLocation());
 			String msg = UniversalSecurityPlugin
-					.getString("RESID_SECURITY_LOAD_KEYSTORE_ERROR_");
+					.getString("RESID_SECURITY_LOAD_KEYSTORE_ERROR_"); //$NON-NLS-1$
 
 			Status err = new Status(IStatus.ERROR, ResourcesPlugin.PI_RESOURCES,
 					IStatus.ERROR, text, exc2);
 			ErrorDialog.openError(UniversalSecurityPlugin
 					.getActiveWorkbenchShell(), UniversalSecurityPlugin
-					.getString("SEC_MSG"), msg, err);
+					.getString("SEC_MSG"), msg, err); //$NON-NLS-1$
 
 		}
 

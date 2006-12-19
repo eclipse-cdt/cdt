@@ -13,6 +13,7 @@ package org.eclipse.cdt.internal.ui.navigator;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.Clipboard;
@@ -22,6 +23,7 @@ import org.eclipse.swt.widgets.Tree;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.actions.ActionContext;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.actions.ActionGroup;
 import org.eclipse.ui.actions.DeleteResourceAction;
@@ -81,9 +83,17 @@ public class CNavigatorRefactorActionGroup extends ActionGroup {
 		super.dispose();
 	}
 
+	/*
+	 * @see org.eclipse.ui.actions.ActionGroup#setContext(org.eclipse.ui.actions.ActionContext)
+	 */
+	public void setContext(ActionContext context) {
+		// convert non-IResource to IResources on the fly
+		ISelection selection = SelectionConverter.convertSelectionToResources(context.getSelection());
+		super.setContext(new ActionContext(selection));
+	}
+
 	public void fillContextMenu(IMenuManager menu) {
-		IStructuredSelection selection = SelectionConverter
-				.convertSelectionToResources(getContext().getSelection());
+		IStructuredSelection selection = (IStructuredSelection)getContext().getSelection();
 		boolean anyResourceSelected = !selection.isEmpty()
 				&& ResourceSelectionUtil.allResourcesAreOfType(selection,
 						IResource.PROJECT | IResource.FOLDER | IResource.FILE);
@@ -186,8 +196,7 @@ public class CNavigatorRefactorActionGroup extends ActionGroup {
 	}
 
 	public void updateActionBars() {
-		IStructuredSelection selection = (IStructuredSelection) getContext()
-				.getSelection();
+		IStructuredSelection selection = (IStructuredSelection) getContext().getSelection();
 
 		copyAction.selectionChanged(selection);
 		pasteAction.selectionChanged(selection);

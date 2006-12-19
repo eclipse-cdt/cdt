@@ -24,11 +24,14 @@ org.eclipse.cdt.core/debug/deltaprocessor=false
 # Reports file type resolver activity
 org.eclipse.cdt.core/debug/typeresolver=false
 
-# Reports timings for PDOM
-org.eclipse.cdt.core/debug/pdomtimings=false
-
 # Reports sequence of files indexed
-org.eclipse.cdt.core/debug/indexer=false
+org.eclipse.cdt.core/debug/indexer/activity=false
+
+# Reports statistics for indexer
+org.eclipse.cdt.core/debug/indexer/statistics=false
+
+# Reports statistics for indexer
+org.eclipse.cdt.core/debug/indexer/problems=false
 
 # Code formatter debugging
 org.eclipse.cdt.core/debug/formatter=false

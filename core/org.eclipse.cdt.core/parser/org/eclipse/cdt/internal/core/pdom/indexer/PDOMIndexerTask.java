@@ -12,6 +12,7 @@
 package org.eclipse.cdt.internal.core.pdom.indexer;
 
 import java.text.MessageFormat;
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -94,8 +95,9 @@ public abstract class PDOMIndexerTask implements IPDOMIndexerTask {
 	protected Map/*<IIndexFileLocation, Object>*/ fContextMap = new HashMap/*<IIndexFileLocation, Object>*/();
 	protected volatile String fMessage;
 	
-	private boolean fTrace;
+	private boolean fShowActivity;
 	private boolean fShowStatistics;
+	private boolean fShowProblems;
 	private int fResolutionTime;
 	private int fParsingTime;
 	private int fAddToIndexTime;
@@ -105,9 +107,10 @@ public abstract class PDOMIndexerTask implements IPDOMIndexerTask {
 	private int fProblemBindingCount= 0;
 	
 	protected PDOMIndexerTask() {
-		fTrace= checkDebugOption("indexer", "true");  //$NON-NLS-1$//$NON-NLS-2$
-		fShowStatistics= checkDebugOption("pdomtimings", "true");  //$NON-NLS-1$//$NON-NLS-2$
-		}
+		fShowActivity= checkDebugOption("indexer/activity", "true");  //$NON-NLS-1$//$NON-NLS-2$
+		fShowStatistics= checkDebugOption("indexer/statistics", "true");  //$NON-NLS-1$//$NON-NLS-2$
+		fShowProblems= checkDebugOption("indexer/problems", "true");  //$NON-NLS-1$//$NON-NLS-2$
+	}
 	
 	private boolean checkDebugOption(String option, String value) {
 		String trace = Platform.getDebugOption(CCorePlugin.PLUGIN_ID + "/debug/" + option);  //$NON-NLS-1$
@@ -224,7 +227,7 @@ public abstract class PDOMIndexerTask implements IPDOMIndexerTask {
 	protected void parseTU(ITranslationUnit tu, IProgressMonitor pm) throws CoreException, InterruptedException {
 		IPath path= tu.getPath();
 		try {
-			if (fTrace) {
+			if (fShowActivity) {
 				System.out.println("Indexer: parsing " + path.toOSString()); //$NON-NLS-1$
 			}
 			fMessage= MessageFormat.format(Messages.PDOMIndexerTask_parsingFileTask,
@@ -351,7 +354,7 @@ public abstract class PDOMIndexerTask implements IPDOMIndexerTask {
 					final IBinding binding= name.resolveBinding();
 					if (fShowStatistics) {
 						if (binding instanceof IProblemBinding)
-							fProblemBindingCount++;
+							reportProblem((IProblemBinding) binding);
 						else if (name.isReference()) 
 							fReferenceCount++;
 						else 
@@ -373,7 +376,7 @@ public abstract class PDOMIndexerTask implements IPDOMIndexerTask {
 
 				IIndexFileLocation path = orderedPaths[i];
 					if (path != null) {
-						if (fTrace) {
+						if (fShowActivity) {
 							System.out.println("Indexer: adding " + path.getURI()); //$NON-NLS-1$
 						}
 						IIndexFile file= addToIndex(index, path, symbolMap);
@@ -396,6 +399,17 @@ public abstract class PDOMIndexerTask implements IPDOMIndexerTask {
 		}
 		finally {
 			fCompletedSources++;
+		}
+	}
+
+	private void reportProblem(IProblemBinding problem) {
+		fProblemBindingCount++;
+		if (fShowProblems) {
+			String msg= "Indexer problem at "+ problem.getFileName() + ": " + problem.getLineNumber();  //$NON-NLS-1$//$NON-NLS-2$
+			String pmsg= problem.getMessage();
+			if (pmsg != null && pmsg.length() > 0) 
+				msg+= "; " + problem.getMessage(); //$NON-NLS-1$
+			System.out.println(msg);
 		}
 	}
 
@@ -518,11 +532,16 @@ public abstract class PDOMIndexerTask implements IPDOMIndexerTask {
 					+ (fParsingTime-fResolutionTime-fAddToIndexTime) + " parser, " //$NON-NLS-1$
 					+ fResolutionTime + " resolution, " //$NON-NLS-1$
 					+ fAddToIndexTime + " index update."); //$NON-NLS-1$
+			int sum= fDeclarationCount+fReferenceCount+fProblemBindingCount;
+			double problemPct= sum==0 ? 0.0 : (double) fProblemBindingCount / (double) sum;
+			NumberFormat nf= NumberFormat.getPercentInstance();
+			nf.setMaximumFractionDigits(2);
+			nf.setMinimumFractionDigits(2);
 			System.out.println(name + " Result: " //$NON-NLS-1$
 					+ fDeclarationCount + " declarations, " //$NON-NLS-1$
 					+ fReferenceCount + " references, " //$NON-NLS-1$
 					+ fErrorCount + " errors, " //$NON-NLS-1$
-					+ fProblemBindingCount + " problems.");  //$NON-NLS-1$
+					+ fProblemBindingCount + "(" + nf.format(problemPct) + ") problems.");  //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}
 	

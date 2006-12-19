@@ -52,7 +52,7 @@ public class FindNameForSelectionVisitor extends ASTVisitor {
 
 	public int visit(IASTDeclaration declaration) {
 		IASTFileLocation loc= declaration.getFileLocation();
-		if (!loc.getFileName().equals(fFilePath)) {
+		if (loc == null || !loc.getFileName().equals(fFilePath)) {
 			return PROCESS_SKIP;
 		}
 		int offset= loc.getNodeOffset();

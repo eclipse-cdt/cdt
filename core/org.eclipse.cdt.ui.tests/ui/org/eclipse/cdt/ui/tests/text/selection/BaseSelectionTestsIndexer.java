@@ -42,8 +42,6 @@ import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.texteditor.AbstractTextEditor;
 
 import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.ICDescriptor;
-import org.eclipse.cdt.core.ICDescriptorOperation;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
@@ -63,7 +61,6 @@ import org.eclipse.cdt.internal.ui.search.actions.OpenDeclarationsAction;
  * @author dsteffle
  */
 public class BaseSelectionTestsIndexer extends BaseUITestCase {
-	protected boolean fileIndexed;
 	protected IProject project;
 	static FileManager fileManager = new FileManager();
 	IProgressMonitor monitor = new NullProgressMonitor();
@@ -90,8 +87,6 @@ public class BaseSelectionTestsIndexer extends BaseUITestCase {
 	}
 
     protected IFile importFile(String fileName, String contents ) throws Exception{
-    	resetIndexState();
-    	
         //Obtain file handle
         IFile file = project.getProject().getFile(fileName);
         
@@ -169,10 +164,6 @@ public class BaseSelectionTestsIndexer extends BaseUITestCase {
 		return folder;
     }
     
-	protected void resetIndexState() {
-		fileIndexed = false;
-	}
-	
 	protected IASTNode testF3(IFile file, int offset) throws ParserException, CoreException {
 		return testF3(file, offset, 0);
 	}
@@ -299,20 +290,5 @@ public class BaseSelectionTestsIndexer extends BaseUITestCase {
 			}
             assertEquals(numOccurrences, occurs);
         }
-    }
-    
-    public void resetIndexer(final String indexerId){
-		if ( project != null) {
-			ICDescriptorOperation op = new ICDescriptorOperation() {
-
-				public void execute(ICDescriptor descriptor, IProgressMonitor monitor) throws CoreException {
-						descriptor.remove(CCorePlugin.INDEXER_UNIQ_ID);
-						descriptor.create(CCorePlugin.INDEXER_UNIQ_ID,indexerId);
-				}
-			};
-			try {
-				CCorePlugin.getDefault().getCDescriptorManager().runDescriptorOperation(project, op, new NullProgressMonitor());
-			} catch (CoreException e) {}
-		}
     }
 }

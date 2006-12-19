@@ -1,5 +1,5 @@
 /* *******************************************************************************
- * Copyright (c) 2006 IBM Corporation. All rights reserved.
+ * Copyright (c) 2006 IBM Corporation and others.. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -15,7 +15,6 @@ import junit.framework.TestSuite;
 import org.eclipse.rse.tests.core.connection.RSEConnectionTestSuite;
 import org.eclipse.rse.tests.framework.DelegatingTestSuiteHolder;
 import org.eclipse.rse.tests.internal.RSEInternalFrameworkTestSuite;
-import org.eclipse.rse.tests.persistence.RSEPersistenceTestSuite;
 
 /**
  * Main class bundling all single specialized test suites into a
@@ -50,7 +49,6 @@ public class RSECombinedTestSuite extends DelegatingTestSuiteHolder {
 		// add the single test suites to the overall one here.
 		suite.addTest(RSEInternalFrameworkTestSuite.suite());
 		suite.addTest(RSEConnectionTestSuite.suite());
-		suite.addTest(RSEPersistenceTestSuite.suite());
 		
 		return suite;
 	}

@@ -1,5 +1,5 @@
 /* *******************************************************************************
- * Copyright (c) 2006 IBM Corporation. All rights reserved.
+ * Copyright (c) 2006 IBM Corporation and others.. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -11,6 +11,7 @@ package org.eclipse.rse.tests.internal;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
@@ -21,15 +22,16 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.rse.tests.RSETestsPlugin;
 import org.eclipse.rse.tests.core.IRSECoreTestCaseProperties;
-import org.eclipse.rse.tests.core.RSECoreTestCase;
 import org.eclipse.rse.tests.core.RSEWaitAndDispatchUtil;
 import org.eclipse.rse.tests.core.RSEWaitAndDispatchUtil.IInterruptCondition;
+import org.eclipse.rse.tests.core.connection.IRSEConnectionProperties;
+import org.eclipse.rse.tests.core.connection.RSEBaseConnectionTestCase;
 import org.eclipse.ui.PlatformUI;
 
 /**
  * Tests the very core RSE test framework functionality.
  */
-public class RSEInternalFrameworkTestCase extends RSECoreTestCase {
+public class RSEInternalFrameworkTestCase extends RSEBaseConnectionTestCase {
 
 	/**
 	 * Test the properties managment and support methods of the
@@ -74,7 +76,7 @@ public class RSEInternalFrameworkTestCase extends RSECoreTestCase {
 	}
 	
 	private static class TestJob extends Job {
-		private final List params;
+		final List params;
 		public TestJob(List params) {
 			super("Test Job"); //$NON-NLS-1$
 			assert params != null;
@@ -156,5 +158,54 @@ public class RSEInternalFrameworkTestCase extends RSECoreTestCase {
 		// Delete the created pathes again
 		assertTrue("Failed to delete test data location " + path.toOSString() + "!", path.toFile().delete()); //$NON-NLS-1$ //$NON-NLS-2$
 		assertTrue("Failed to delete test data location " + root.append(relative).toOSString() + "!", root.append(relative).toFile().delete()); //$NON-NLS-1$ //$NON-NLS-2$
+	}
+	
+	/**
+	 * Test RSE connection manager and related functionality.
+	 */
+	public void testConnectionManager() {
+		if (!RSETestsPlugin.isTestCaseEnabled("RSEInternalFrameworkTestCase.testConnectionManager")) return; //$NON-NLS-1$
+		
+		// get the pure test data location root path.
+		IPath location = getTestDataLocation("testConnectionManager", false); //$NON-NLS-1$
+		assertNotNull("Cannot locate test data! Missing test data location?", location); //$NON-NLS-1$
+		location = location.append("connection.properties"); //$NON-NLS-1$
+		assertNotNull("Failed to construct location to 'connection.properties' test data file!", location); //$NON-NLS-1$
+		assertTrue("Required test data file seems to be not a file!", location.toFile().isFile()); //$NON-NLS-1$
+		assertTrue("Required test data file is not readable!", location.toFile().canRead()); //$NON-NLS-1$
+		
+		// load the test connection properties from the data file.
+		IRSEConnectionProperties properties = getConnectionManager().loadConnectionProperties(location, true);
+		assertNotNull("Failed to load test connection properties from location " + location.toOSString(), properties); //$NON-NLS-1$
+		assertEquals("Property name does not match!", "test_windows", properties.getProperty(IRSEConnectionProperties.ATTR_NAME)); //$NON-NLS-1$ //$NON-NLS-2$
+		assertEquals("Property profile name does not match!", "junit_test_profile", properties.getProperty(IRSEConnectionProperties.ATTR_PROFILE_NAME)); //$NON-NLS-1$ //$NON-NLS-2$
+		assertEquals("Property system type does not match!", "Windows", properties.getProperty(IRSEConnectionProperties.ATTR_SYSTEM_TYPE)); //$NON-NLS-1$ //$NON-NLS-2$
+		assertEquals("Property remote system address does not match!", "128.0.0.1", properties.getProperty(IRSEConnectionProperties.ATTR_ADDRESS)); //$NON-NLS-1$ //$NON-NLS-2$
+		assertEquals("Property user id does not match!", "test_user", properties.getProperty(IRSEConnectionProperties.ATTR_USERID)); //$NON-NLS-1$ //$NON-NLS-2$
+		assertEquals("Property password does not match!", "test_passwd", properties.getProperty(IRSEConnectionProperties.ATTR_PASSWORD)); //$NON-NLS-1$ //$NON-NLS-2$
+		
+		// test the loading with partial connection information (with defauls)
+		Properties props = new Properties();
+		props.setProperty(IRSEConnectionProperties.ATTR_SYSTEM_TYPE, "SSH Only"); //$NON-NLS-1$
+		props.setProperty(IRSEConnectionProperties.ATTR_USERID, "local_user"); //$NON-NLS-1$
+		props.setProperty(IRSEConnectionProperties.ATTR_PASSWORD, "local_passwd"); //$NON-NLS-1$
+		properties = getConnectionManager().loadConnectionProperties(props, true);
+		assertNotNull("Failed to load test connection properties from location " + location.toOSString(), properties); //$NON-NLS-1$
+		assertEquals("Property name does not match!", "Local", properties.getProperty(IRSEConnectionProperties.ATTR_NAME)); //$NON-NLS-1$ //$NON-NLS-2$
+		assertNull("Property profile name does not match!", properties.getProperty(IRSEConnectionProperties.ATTR_PROFILE_NAME)); //$NON-NLS-1$
+		assertEquals("Property system type does not match!", "SSH Only", properties.getProperty(IRSEConnectionProperties.ATTR_SYSTEM_TYPE)); //$NON-NLS-1$ //$NON-NLS-2$
+		assertEquals("Property remote system address does not match!", "localhost", properties.getProperty(IRSEConnectionProperties.ATTR_ADDRESS)); //$NON-NLS-1$ //$NON-NLS-2$
+		assertEquals("Property user id does not match!", "local_user", properties.getProperty(IRSEConnectionProperties.ATTR_USERID)); //$NON-NLS-1$ //$NON-NLS-2$
+		assertEquals("Property password does not match!", "local_passwd", properties.getProperty(IRSEConnectionProperties.ATTR_PASSWORD)); //$NON-NLS-1$ //$NON-NLS-2$
+
+		// test the loading with partial connection information (without defauls)
+		properties = getConnectionManager().loadConnectionProperties(props, false);
+		assertNotNull("Failed to load test connection properties from location " + location.toOSString(), properties); //$NON-NLS-1$
+		assertNull("Property name does not match!", properties.getProperty(IRSEConnectionProperties.ATTR_NAME)); //$NON-NLS-1$
+		assertNull("Property profile name does not match!", properties.getProperty(IRSEConnectionProperties.ATTR_PROFILE_NAME)); //$NON-NLS-1$
+		assertEquals("Property system type does not match!", "SSH Only", properties.getProperty(IRSEConnectionProperties.ATTR_SYSTEM_TYPE)); //$NON-NLS-1$ //$NON-NLS-2$
+		assertNull("Property remote system address does not match!", properties.getProperty(IRSEConnectionProperties.ATTR_ADDRESS)); //$NON-NLS-1$
+		assertEquals("Property user id does not match!", "local_user", properties.getProperty(IRSEConnectionProperties.ATTR_USERID)); //$NON-NLS-1$ //$NON-NLS-2$
+		assertEquals("Property password does not match!", "local_passwd", properties.getProperty(IRSEConnectionProperties.ATTR_PASSWORD)); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 }

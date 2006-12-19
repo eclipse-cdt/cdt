@@ -10,8 +10,5 @@
       
       <suite type="org.eclipse.rse.tests.core.connection.RSEConnectionTestSuite" name="RSE Connection Test Suite"/>
       	<type name="org.eclipse.rse.tests.core.connection.RSEConnectionTestSuite" class="org.eclipse.rse.tests.core.connection.RSEConnectionTestSuite" />
-      
-      <suite type="org.eclipse.rse.tests.persistence.RSEPersistenceTestSuite" name="RSE Persistence Test Suite"/>
-      	<type name="org.eclipse.rse.tests.persistence.RSEPersistenceTestSuite" class="org.eclipse.rse.tests.persistence.RSEPersistenceTestSuite" />
    </extension>
 </plugin>

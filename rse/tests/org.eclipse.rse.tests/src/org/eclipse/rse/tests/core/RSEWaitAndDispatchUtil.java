@@ -1,5 +1,5 @@
 /* *******************************************************************************
- * Copyright (c) 2006 IBM Corporation. All rights reserved.
+ * Copyright (c) 2006 IBM Corporation and others.. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -24,7 +24,9 @@ public final class RSEWaitAndDispatchUtil {
 	/**
 	 * Private constructor.
 	 */
-	private RSEWaitAndDispatchUtil() {}
+	private RSEWaitAndDispatchUtil() {
+		// nothing to do. The class cannot be instanciated.
+	}
 	
 	/**
 	 * Blocks the calling thread from execution till the specified
@@ -87,6 +89,8 @@ public final class RSEWaitAndDispatchUtil {
 	 * 
 	 * @param timeout The time to wait till the method return in milli seconds. Must be larger or equals than 0.
 	 * @param condition The interrupt condition to test. Must be not <code>null</code>.
+	 * @return <code>True</code> if the method returned because of the timeout, <code>false</code> if the
+	 *         method returned because of the condition became true.
 	 */
 	public static boolean waitAndDispatch(long timeout, IInterruptCondition condition) {
 		assert timeout >= 0 && condition != null;

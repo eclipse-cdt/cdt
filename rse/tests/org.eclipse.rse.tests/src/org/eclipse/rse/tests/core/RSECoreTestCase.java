@@ -1,5 +1,5 @@
 /* *******************************************************************************
- * Copyright (c) 2006 IBM Corporation. All rights reserved.
+ * Copyright (c) 2006 IBM Corporation and others.. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -150,9 +150,8 @@ public class RSECoreTestCase extends TestCase {
 		assert key != null;
 		if (value != null) {
 			return value.equalsIgnoreCase(properties.getProperty(key));
-		} else {
-			return !properties.containsKey(key);
 		}
+		return !properties.containsKey(key);
 	}
 
 	/**
@@ -168,13 +167,15 @@ public class RSECoreTestCase extends TestCase {
 	
 	// ***** Test case life cycle management and support methods *****
 
-	private final static QualifiedName BACKGROUND_TEST_EXECUTION_FINISHED = new QualifiedName(RSETestsPlugin.getDefault().getBundle().getSymbolicName(), "background_test_execution_finished"); //$NON-NLS-1$
+	final static QualifiedName BACKGROUND_TEST_EXECUTION_FINISHED = new QualifiedName(RSETestsPlugin.getDefault().getBundle().getSymbolicName(), "background_test_execution_finished"); //$NON-NLS-1$
 	
 	private final class RSEBackgroundTestExecutionJob extends Job {
 		private final TestResult result;
-
+		
 		/**
 		 * Constructor.
+		 * 
+		 * @param result The test result object the test is reporting failures to. Must be not <code>null</code>.
 		 */
 		public RSEBackgroundTestExecutionJob(TestResult result) {
 			super("RSE JUnit Test Case Execution Job"); //$NON-NLS-1$
@@ -194,7 +195,7 @@ public class RSECoreTestCase extends TestCase {
 
 			// Execute the test now.
 			result.addListener(TEST_LISTENER);
-			RSECoreTestCase.super.run(result);
+			invokeTestCaseRunImpl(result);
 			result.removeListener(TEST_LISTENER);
 			
 			monitor.done();
@@ -231,6 +232,16 @@ public class RSECoreTestCase extends TestCase {
 		 * @see org.eclipse.rse.tests.core.RSEWaitAndDispatchUtil.IInterruptCondition#dispose()
 		 */
 		public void dispose() { /* nothing to dispose here */ }
+	}
+	
+	/**
+	 * Internal accessor method to call the original <code>junit.
+	 * framework.TestCase.run(TestResult) implementation.
+	 * 
+	 * @param result The test result object the test is reporting failures to. Must be not <code>null</code>.
+	 */
+	final void invokeTestCaseRunImpl(TestResult result) {
+		super.run(result);
 	}
 	
 	/* (non-Javadoc)
@@ -520,19 +531,20 @@ public class RSECoreTestCase extends TestCase {
 
 	// ***** Test failures log collector management and support methods *****
 	
-	private final TestListener TEST_LISTENER = new RSETestFailureListener();
+	final TestListener TEST_LISTENER = new RSETestFailureListener();
 	
 	/**
 	 * Listens to the test executions and collect the test log files
 	 * through the known list of test log collector delegates in a test
 	 * had an error or failed.
 	 */
-	private class RSETestFailureListener implements TestListener {
+	class RSETestFailureListener implements TestListener {
 
 		/* (non-Javadoc)
 		 * @see junit.framework.TestListener#startTest(junit.framework.Test)
 		 */
 		public void startTest(Test test) {
+			// nothing to do on start test
 		}
 		
 		/* (non-Javadoc)
@@ -577,6 +589,7 @@ public class RSECoreTestCase extends TestCase {
 		 * @see junit.framework.TestListener#endTest(junit.framework.Test)
 		 */
 		public void endTest(Test test) {
+			// nothing to do on end test
 		}
 	}
 	

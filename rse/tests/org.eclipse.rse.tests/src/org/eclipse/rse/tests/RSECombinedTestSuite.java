@@ -13,6 +13,7 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 
 import org.eclipse.rse.tests.core.connection.RSEConnectionTestSuite;
+import org.eclipse.rse.tests.files.RSEFileTestSuite;
 import org.eclipse.rse.tests.framework.DelegatingTestSuiteHolder;
 import org.eclipse.rse.tests.internal.RSEInternalFrameworkTestSuite;
 
@@ -49,6 +50,7 @@ public class RSECombinedTestSuite extends DelegatingTestSuiteHolder {
 		// add the single test suites to the overall one here.
 		suite.addTest(RSEInternalFrameworkTestSuite.suite());
 		suite.addTest(RSEConnectionTestSuite.suite());
+		suite.addTest(RSEFileTestSuite.suite());
 		
 		return suite;
 	}

@@ -14,6 +14,7 @@ Require-Bundle: org.junit,
  org.eclipse.rse.ui,
  org.eclipse.rse.subsystems.files.core,
  org.eclipse.rse.subsystems.shells.core,
- org.eclipse.rse.tests.framework
+ org.eclipse.rse.tests.framework,
+ org.eclipse.rse.services
 Eclipse-LazyStart: true
 Bundle-RequiredExecutionEnvironment: J2SE-1.4

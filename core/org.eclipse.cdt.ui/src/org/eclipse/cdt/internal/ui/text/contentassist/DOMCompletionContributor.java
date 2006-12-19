@@ -216,7 +216,8 @@ public class DOMCompletionContributor implements ICompletionContributor {
 
         int repLength = completionNode.getLength();
         int repOffset = offset - repLength;
-        CCompletionProposal proposal = new CCompletionProposal(repString, repOffset, repLength, null, dispString, idString, 1, viewer);
+		Image image = getImage(variable);
+        CCompletionProposal proposal = new CCompletionProposal(repString, repOffset, repLength, image, dispString, idString, 1, viewer);
 		proposals.add(proposal);
 	}
 	

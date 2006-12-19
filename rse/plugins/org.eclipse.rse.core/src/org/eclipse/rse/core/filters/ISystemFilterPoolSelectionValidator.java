@@ -29,7 +29,7 @@ public interface ISystemFilterPoolSelectionValidator
      * Delimiter used to qualify filter names by filter pool name, when calling
      *  filter pool selection validator in new filter wizard.
      */
-    public static final String DELIMITER_FILTERPOOL_FILTER = "_____";
+    public static final String DELIMITER_FILTERPOOL_FILTER = "_____"; //$NON-NLS-1$
 
     /**
      * Validate the given selection.

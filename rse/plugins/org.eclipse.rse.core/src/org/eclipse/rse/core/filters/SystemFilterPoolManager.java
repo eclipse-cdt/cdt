@@ -718,7 +718,7 @@ public class SystemFilterPoolManager implements ISystemFilterPoolManager
         	  deleteSystemFilterPool(allPools[idx]);
         	} catch (Exception exc)
         	{
-        	  logError("Exception deleting filter pool " + name + " from mgr " + getName(),exc);
+        	  logError("Exception deleting filter pool " + name + " from mgr " + getName(),exc); //$NON-NLS-1$ //$NON-NLS-2$
         	}
         }
     }
@@ -1755,7 +1755,7 @@ public class SystemFilterPoolManager implements ISystemFilterPoolManager
     	if (logger != null)
     	  logger.logInfo(message);
     	else
-    	  System.out.println(getClass().getName() + ": INFO: " + message);
+    	  System.out.println(getClass().getName() + ": INFO: " + message); //$NON-NLS-1$
     }
 
 
@@ -1769,7 +1769,7 @@ public class SystemFilterPoolManager implements ISystemFilterPoolManager
     	if (logger != null)
     	  logger.logWarning(message);
     	else
-    	  System.out.println(getClass().getName() + ": WARNING: " + message);
+    	  System.out.println(getClass().getName() + ": WARNING: " + message); //$NON-NLS-1$
     }
     
     
@@ -1790,7 +1790,7 @@ public class SystemFilterPoolManager implements ISystemFilterPoolManager
           String msg = exception.getMessage();
           if (msg == null)
             msg = exception.getClass().getName();
-          System.out.println(getClass().getName() + ": " + message + ": " + msg);
+          System.out.println(getClass().getName() + ": " + message + ": " + msg); //$NON-NLS-1$ //$NON-NLS-2$
           exception.printStackTrace();
     	}
     }
@@ -1812,7 +1812,7 @@ public class SystemFilterPoolManager implements ISystemFilterPoolManager
 			logger.logDebugMessage(prefix, message);
 		}
     	else
-    	  System.out.println(getClass().getName() + ": DEBUG: " + message);
+    	  System.out.println(getClass().getName() + ": DEBUG: " + message); //$NON-NLS-1$
 	}
 		     
     /**
@@ -1826,7 +1826,7 @@ public class SystemFilterPoolManager implements ISystemFilterPoolManager
         if (logger != null)
     	  logger.logInfo(msg);
     	else
-    	  System.out.println(getClass().getName() + ": " + msg);
+    	  System.out.println(getClass().getName() + ": " + msg); //$NON-NLS-1$
     }
     
 

@@ -30,23 +30,23 @@ public class SystemFilterNamingPolicy implements IRSEFilterNamingPolicy, ISystem
     /**
      * Default prefix for filter pool manager persisted file: "filterPools_"
      */
-    public static final String DEFAULT_FILENAME_PREFIX_FILTERPOOLMANAGER = "filterPools_";
+    public static final String DEFAULT_FILENAME_PREFIX_FILTERPOOLMANAGER = "filterPools_"; //$NON-NLS-1$
     /**
      * Default prefix for filter pool reference manager persisted file: "filterPoolRefs_"
      */
-    public static final String DEFAULT_FILENAME_PREFIX_FILTERPOOLREFERENCEMANAGER = "filterPoolRefs_";    
+    public static final String DEFAULT_FILENAME_PREFIX_FILTERPOOLREFERENCEMANAGER = "filterPoolRefs_";     //$NON-NLS-1$
     /**
      * Default prefix for filter pool persisted file: "filterPool_"
      */
-    public static final String DEFAULT_FILENAME_PREFIX_FILTERPOOL = "filterPool_";
+    public static final String DEFAULT_FILENAME_PREFIX_FILTERPOOL = "filterPool_"; //$NON-NLS-1$
     /**
      * Default prefix for filter persisted file: "filter_"
      */
-    public static final String DEFAULT_FILENAME_PREFIX_FILTER = "filter_";    
+    public static final String DEFAULT_FILENAME_PREFIX_FILTER = "filter_";     //$NON-NLS-1$
     /**
      * Default prefix for filter pool folder: "FilterPool_"
      */
-    public static final String DEFAULT_FOLDERNAME_PREFIX_FILTERPOOL = "FilterPool_";
+    public static final String DEFAULT_FOLDERNAME_PREFIX_FILTERPOOL = "FilterPool_"; //$NON-NLS-1$
 
 
     /**

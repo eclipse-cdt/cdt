@@ -23,7 +23,7 @@ package org.eclipse.rse.core.model;
  */
 public class SystemChildrenContentsType implements ISystemContentsType
 {
-    public static String CONTENTS_TYPE_CHILDREN =	"contents_children";
+    public static String CONTENTS_TYPE_CHILDREN =	"contents_children"; //$NON-NLS-1$
     public static SystemChildrenContentsType _instance = new SystemChildrenContentsType();
     
     public static SystemChildrenContentsType getInstance()

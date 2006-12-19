@@ -32,10 +32,10 @@ public interface ISystemFilterConstants extends ISystemFilterSavePolicies
     /**
      * Suffix used when persisting data to a file.
      */
-    public static final String SAVEFILE_SUFFIX = ".xmi";    
+    public static final String SAVEFILE_SUFFIX = ".xmi";     //$NON-NLS-1$
     
     /**
      * Default value for the type attribute for filter pools, filters and filterstrings
      */
-    public static final String DEFAULT_TYPE = "default";
+    public static final String DEFAULT_TYPE = "default"; //$NON-NLS-1$
 }

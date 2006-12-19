@@ -26,14 +26,14 @@ public interface ISubSystemConfigurationCategories
 	/**
 	 * Job subsystems 
 	 */
-	public static final String SUBSYSTEM_CATEGORY_JOBS = "jobs";
+	public static final String SUBSYSTEM_CATEGORY_JOBS = "jobs"; //$NON-NLS-1$
 	/**
 	 * File subsystems 
 	 */
-	public static final String SUBSYSTEM_CATEGORY_FILES = "files";
+	public static final String SUBSYSTEM_CATEGORY_FILES = "files"; //$NON-NLS-1$
 	/**
 	 * Command subsystems 
 	 */
-	public static final String SUBSYSTEM_CATEGORY_CMDS = "commands";
+	public static final String SUBSYSTEM_CATEGORY_CMDS = "commands"; //$NON-NLS-1$
 
 }

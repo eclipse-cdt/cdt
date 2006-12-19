@@ -34,7 +34,7 @@ public interface IRemoteSystemEnvVar {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	String copyright = "(c) Copyright IBM Corporation 2002, 2004.";
+	String copyright = "(c) Copyright IBM Corporation 2002, 2004."; //$NON-NLS-1$
 
 	/**
 	 * @generated This field/method will be replaced during code generation 

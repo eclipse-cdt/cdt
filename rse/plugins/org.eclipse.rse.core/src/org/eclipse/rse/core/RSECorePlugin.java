@@ -142,7 +142,7 @@ public class RSECorePlugin extends Plugin {
 
 	private void log(Throwable t) {
 		String pluginId = this.getBundle().getSymbolicName();
-		IStatus status = new Status(IStatus.ERROR, pluginId, 0, "Unexpected Exception", t);
+		IStatus status = new Status(IStatus.ERROR, pluginId, 0, "Unexpected Exception", t); //$NON-NLS-1$
 		getLog().log(status);
 	}
 }

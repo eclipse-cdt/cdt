@@ -27,7 +27,7 @@ public interface IFileConstants
     /**
      * Unix-style folder-name separator as a string: "/"
      */
-    public static String SEPARATOR_UNIX = "/";
+    public static String SEPARATOR_UNIX = "/"; //$NON-NLS-1$
     /**
      * Unix-style folder-name separator as a char: '/'
      */
@@ -35,7 +35,7 @@ public interface IFileConstants
     /**
      * Unix-style path separator as a string: ":"
      */
-    public static String PATH_SEPARATOR_UNIX = ":";
+    public static String PATH_SEPARATOR_UNIX = ":"; //$NON-NLS-1$
     /**
      * Unix-style path separator as a char: ':'
      */
@@ -52,7 +52,7 @@ public interface IFileConstants
     /**
      * Windows-style folder-name separator as a string: "\"
      */
-    public static String SEPARATOR_WINDOWS = "\\";
+    public static String SEPARATOR_WINDOWS = "\\"; //$NON-NLS-1$
     /**
      * Windows-style folder-name separator as a char: '\'
      */
@@ -60,7 +60,7 @@ public interface IFileConstants
     /**
      * Windows-style path separator as a string: ";"
      */
-    public static String PATH_SEPARATOR_WINDOWS = ";";
+    public static String PATH_SEPARATOR_WINDOWS = ";"; //$NON-NLS-1$
     /**
      * Windows-style path separator as a char: ';'
      */

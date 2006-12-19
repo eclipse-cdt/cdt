@@ -16,7 +16,6 @@
 
 package org.eclipse.rse.internal.references;
 
-import java.text.MessageFormat;
 import java.util.Vector;
 
 import org.eclipse.rse.core.filters.ISystemFilterPool;
@@ -58,7 +57,7 @@ public class SystemReferencedObjectHelper implements IRSEBaseReferencedObject {
 	}
 
 	private String getReferencedName() {
-		String toName = "unknown";
+		String toName = "unknown"; //$NON-NLS-1$
 		if (parent instanceof ISystemFilterPool) {
 			ISystemFilterPool fp = (ISystemFilterPool) parent;
 			toName = fp.getName();
@@ -67,15 +66,15 @@ public class SystemReferencedObjectHelper implements IRSEBaseReferencedObject {
 	}
 	
 	private String getReferencingName(IRSEBaseReferencingObject object) {
-		String fromName = "unknown";
+		String fromName = "unknown"; //$NON-NLS-1$
 		if (object instanceof ISystemFilterPoolReference) {
 			ISystemFilterPoolReference fpr = (ISystemFilterPoolReference) object;
 			ISystemFilterPoolReferenceManagerProvider provider = fpr.getProvider();
-			String prefix = "unknown|unknown|unknown";
+			String prefix = "unknown|unknown|unknown"; //$NON-NLS-1$
 			if (provider instanceof ISubSystem) {
 				ISubSystem subsystem = (ISubSystem) provider;
 				IHost host = subsystem.getHost();
-				prefix = host.getAliasName() + "|" + subsystem.getName();
+				prefix = host.getAliasName() + "|" + subsystem.getName(); //$NON-NLS-1$
 				fromName = prefix + fpr.getName();
 			}
 		}

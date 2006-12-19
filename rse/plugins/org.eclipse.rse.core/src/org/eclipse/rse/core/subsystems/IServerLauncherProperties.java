@@ -32,7 +32,7 @@ public interface IServerLauncherProperties extends IRSEModelObject
 
 	/**
 	 * Returns the connector service
-	 * @return
+	 * @return the connector service
 	 */
 	public IConnectorService getConnectorService();
 	

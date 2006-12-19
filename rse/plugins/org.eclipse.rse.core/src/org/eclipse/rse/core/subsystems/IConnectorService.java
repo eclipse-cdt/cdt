@@ -128,7 +128,7 @@ public interface IConnectorService extends IRSEModelObject
     
     /**
      * Return the host
-     * @return
+     * @return the host
      */
     public IHost getHost();
     

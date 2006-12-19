@@ -24,7 +24,7 @@ import org.eclipse.rse.core.model.ISystemContentsType;
  */
 public class RemoteChildrenContentsType implements ISystemContentsType
 {
-    public static String CONTENTS_TYPE_CHILDREN = "contents_children";
+    public static String CONTENTS_TYPE_CHILDREN = "contents_children"; //$NON-NLS-1$
     public static RemoteChildrenContentsType _instance = new RemoteChildrenContentsType();
     
     public static RemoteChildrenContentsType getInstance()

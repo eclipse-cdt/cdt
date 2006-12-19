@@ -104,7 +104,7 @@ public class AbstractSystemResourceSet implements ISystemResourceSet
 			buf.append(pathFor(resource));				
 			if (i < _resourceSet.size())
 			{
-				buf.append(", ");
+				buf.append(", "); //$NON-NLS-1$
 			}
 			buf.append('\n');
 		}

@@ -36,7 +36,7 @@ public interface ISystemFilterPoolManagerProvider extends IAdaptable
 	
 	/**
 	 * Return the unique id for this provider
-	 * @return
+	 * @return the id
 	 */
 	 public String getId();
 	

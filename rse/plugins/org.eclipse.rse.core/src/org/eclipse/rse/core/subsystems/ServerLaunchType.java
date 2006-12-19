@@ -118,7 +118,7 @@ public final class ServerLaunchType
 	 * @generated
 	 * @ordered
 	 */
-	public static final ServerLaunchType DAEMON_LITERAL = new ServerLaunchType(DAEMON, "Daemon");
+	public static final ServerLaunchType DAEMON_LITERAL = new ServerLaunchType(DAEMON, "Daemon"); //$NON-NLS-1$
 
 	/**
 	 * The '<em><b>Rexec</b></em>' literal object.
@@ -131,7 +131,7 @@ public final class ServerLaunchType
 	 * @generated
 	 * @ordered
 	 */
-	public static final ServerLaunchType REXEC_LITERAL = new ServerLaunchType(REXEC, "Rexec");
+	public static final ServerLaunchType REXEC_LITERAL = new ServerLaunchType(REXEC, "Rexec"); //$NON-NLS-1$
 
 	/**
 	 * The '<em><b>Running</b></em>' literal object.
@@ -144,7 +144,7 @@ public final class ServerLaunchType
 	 * @generated
 	 * @ordered
 	 */
-	public static final ServerLaunchType RUNNING_LITERAL = new ServerLaunchType(RUNNING, "Running");
+	public static final ServerLaunchType RUNNING_LITERAL = new ServerLaunchType(RUNNING, "Running"); //$NON-NLS-1$
 
 	/**
 	 * The '<em><b>Telnet</b></em>' literal object.
@@ -157,7 +157,7 @@ public final class ServerLaunchType
 	 * @generated
 	 * @ordered
 	 */
-	public static final ServerLaunchType TELNET_LITERAL = new ServerLaunchType(TELNET, "Telnet");
+	public static final ServerLaunchType TELNET_LITERAL = new ServerLaunchType(TELNET, "Telnet"); //$NON-NLS-1$
 
 	/**
 	 * The '<em><b>SSH</b></em>' literal object.
@@ -171,7 +171,7 @@ public final class ServerLaunchType
 	 * @generated
 	 * @ordered
 	 */
-	public static final ServerLaunchType SSH_LITERAL = new ServerLaunchType(SSH, "SSH");
+	public static final ServerLaunchType SSH_LITERAL = new ServerLaunchType(SSH, "SSH"); //$NON-NLS-1$
 
 	/**
 	 * The '<em><b>FTP</b></em>' literal object.
@@ -184,7 +184,7 @@ public final class ServerLaunchType
 	 * @generated
 	 * @ordered
 	 */
-	public static final ServerLaunchType FTP_LITERAL = new ServerLaunchType(FTP, "FTP");
+	public static final ServerLaunchType FTP_LITERAL = new ServerLaunchType(FTP, "FTP"); //$NON-NLS-1$
 
 	/**
 	 * The '<em><b>HTTP</b></em>' literal object.
@@ -197,7 +197,7 @@ public final class ServerLaunchType
 	 * @generated
 	 * @ordered
 	 */
-	public static final ServerLaunchType HTTP_LITERAL = new ServerLaunchType(HTTP, "HTTP");
+	public static final ServerLaunchType HTTP_LITERAL = new ServerLaunchType(HTTP, "HTTP"); //$NON-NLS-1$
 
 	/**
 	 * An array of all the '<em><b>Server Launch Type</b></em>' enumerators.

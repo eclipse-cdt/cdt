@@ -61,6 +61,7 @@ public class CNavigatorRefactorActionProvider extends CommonActionProvider {
 	public void fillActionBars(IActionBars actionBars) {
 		undoRedoGroup.fillActionBars(actionBars);
 		resourceRefactorGroup.fillActionBars(actionBars);
+		cElementRefactorGroup.updateActionBars();
 		cElementRefactorGroup.fillActionBars(actionBars);
 	}
 

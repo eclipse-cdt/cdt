@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2006 IBM Corporation. All rights reserved.
+ * Copyright (c) 2006 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -11,7 +11,7 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * Martin Oberhuber (Wind River) - Fix [168591] LocalHostFile missing equals()
  ********************************************************************************/
 
 package org.eclipse.rse.services.local.files;
@@ -42,6 +42,19 @@ public class LocalHostFile implements IHostFile
 
 	}
 	
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	public boolean equals(Object obj) {
+		if (obj instanceof LocalHostFile) {
+			LocalHostFile other = (LocalHostFile)obj;
+			return _file.equals(other._file)
+				&& _isRoot == other._isRoot
+				&& _isArchive == other._isArchive;
+		}
+		return false;
+	}
+
 	public String getName() 
 	{
 		if (_isRoot)

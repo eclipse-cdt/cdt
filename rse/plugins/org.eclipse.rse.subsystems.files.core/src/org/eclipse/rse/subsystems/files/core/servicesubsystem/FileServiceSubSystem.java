@@ -13,6 +13,7 @@
  * Contributors:
  * Martin Oberhuber (Wind River) - Fix 158534 - NPE in upload/download after conflict
  * Martin Oberhuber (Wind River) - Fix 162962 - recursive removeCachedRemoteFile()
+ * Martin Oberhuber (Wind River) - [168596] FileServiceSubSystem.isCaseSensitive()
  ********************************************************************************/
 
 package org.eclipse.rse.subsystems.files.core.servicesubsystem;
@@ -23,7 +24,6 @@ import java.io.InputStream;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.rse.core.SystemBasePlugin;
 import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.subsystems.IConnectorService;
 import org.eclipse.rse.core.subsystems.IServiceSubSystemConfiguration;
@@ -75,6 +75,13 @@ public final class FileServiceSubSystem extends RemoteFileSubSystem implements I
 		_hostFileToRemoteFileAdapter = fileAdapter;
 		_hostSearchService = searchService;
 		
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.subsystems.files.core.subsystems.RemoteFileSubSystem#isCaseSensitive()
+	 */
+	public boolean isCaseSensitive() {
+		return getFileService().isCaseSensitive();
 	}
 	
 	public IRemoteFileContext getContextFor(IRemoteFile file)
@@ -426,8 +433,8 @@ public final class FileServiceSubSystem extends RemoteFileSubSystem implements I
 	/**
 	 * Get the remote file and save it locally. The file is saved in the encoding
 	 * specified.
-	 * @param source remote file that represents the file to be obtained
-	 * @param destination the absolute path of the local file
+	 * @param file remote file that represents the file to be obtained
+	 * @param localpath the absolute path of the local file
 	 * @param encoding the encoding of the local file
 	 * @param monitor progress monitor
 	 */
@@ -868,5 +875,5 @@ public final class FileServiceSubSystem extends RemoteFileSubSystem implements I
 		getFileService().uninitService(monitor);
 		_userHome = null;
 	}
-	
+
 } 

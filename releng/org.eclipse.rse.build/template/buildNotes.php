@@ -23,27 +23,26 @@
 </table>
 <table><tbody><tr><td>
 <ul>
+<li>RSE 2.0 milestone builds are available from a special milestone update site at
+  <a href="http://download.eclipse.org/dsdp/tm/updates/2.0milestones">http://download.eclipse.org/dsdp/tm/updates/2.0milestones</a>.
+  Update jars are currently packed but unsigned, until the fix for Platform bug 
+  <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=168594">168594</a>
+  is available as a milestone (supposedly 3.3M5).<br/>
+  Contribution to the Europa Coordinated Update Site is also packed but unsigned.
+  The official TM update site will continue serving RSE 1.0 stream updates only, 
+  which are compatible with Eclipse 3.2.x, until RSE 2.0 is released.</li>
+<li>A <b>Unit Test Package</b> is now available from the 
+  <a href="http://download.eclipse.org/dsdp/tm/downloads">downloads page.</li>
 <!--
-<li>The <a href="http://download.eclipse.org/dsdp/tm/updates/">TM Update Site</a> now uses <b>Signed Jarfiles</b>.</li>
-<li>An <b>Experimental RSE EFS Provider</b> is now available as a
-  download, or from the <a href="http://download.eclipse.org/dsdp/tm/updates/">Update Site</a>.</li>
--->
 <li>[<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=152826">152826</a>] Added an <b>ANSI / vt102 Terminal</b> as separate download (currently a stand-alone view not integrated with RSE; supports serial, ssh and telnet connections).</li>
-<li>[<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=168231">168231</a>] <b>Changed packaging</b> to ship the Remotecdt Launcher separate from the RSE SDK, but with source.</li>
-<li>[<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=158784">158784</a>] The <b>Remotecdt Launcher</b> now supports setting the gdbserver executable, port as well as gdb instance to use.</li> 
-<li>[<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=164306">164306</a>] FTP console no longer shows <b>plaintext passwords</b>.</li>
-<li>[<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=161238">161238</a>] [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=164304">164304</a>] FTP now supports VMS and some older MSDOS FTP Servers.</li> 
-<li>[<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=164292">164292</a>] Editors selection for remote files is now persistent</li> 
-<li>[<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=165891">165891</a>] <b>File permissions</b> are now consistently retained when copying inside a system.</li> 
-<li>[<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=166154">166154</a>] [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=166156">166156</a>] <b>Performance Improvements</b> in the Remote Systems Treeview (selections, deleting).</li> 
-<li>[<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=142478">142478</a>] The Preference option to <b>use deferred queries</b> is now always enabled and cannot be disabled.</li> 
+-->
 <li>Use 
-  <a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced&classification=DSDP&product=Target+Management&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&resolution=FIXED&resolution=WONTFIX&resolution=INVALID&resolution=WORKSFORME&chfieldfrom=2006-11-14&chfieldto=2006-12-16&chfield=resolution&cmdtype=doit">
-  <!-- <a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced&classification=DSDP&product=Target+Management&target_milestone=1.0.1&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&resolution=FIXED&resolution=WONTFIX&resolution=INVALID&resolution=WORKSFORME&cmdtype=doit"> -->
+  <a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced&classification=DSDP&product=Target+Management&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&resolution=FIXED&resolution=WONTFIX&resolution=INVALID&resolution=WORKSFORME&chfieldfrom=2006-12-16&chfieldto=Now&chfield=resolution&cmdtype=doit">
+  <!-- <a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced&classification=DSDP&product=Target+Management&target_milestone=2.0+M4&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&resolution=FIXED&resolution=WONTFIX&resolution=INVALID&resolution=WORKSFORME&cmdtype=doit"> -->
   this query</a> to show the list of bugs fixed since the last release,
-  <a href="http://download.eclipse.org/dsdp/tm/downloads/drops/R-1.0-200611121600/index.php">
-  RSE 1.0</a>
-  [<a href="http://download.eclipse.org/dsdp/tm/downloads/drops/R-1.0-200611121600/buildNotes.php">build notes</a>].</li>
+  <a href="http://download.eclipse.org/dsdp/tm/downloads/drops/R-1.0.1-200612151830/index.php">
+  RSE 1.0.1</a>
+  [<a href="http://download.eclipse.org/dsdp/tm/downloads/drops/R-1.0.1-200612151830/buildNotes.php">build notes</a>].</li>
 <li>For details on checkins, see the
   <a href="http://download.eclipse.org/dsdp/tm/downloads/drops/N-changelog/index.html">
   RSE CVS changelog</a>, and the
@@ -52,8 +51,8 @@
 <li>For other questions, please check the
   <a href="http://wiki.eclipse.org/index.php/TM_and_RSE_FAQ">TM and RSE FAQ</a>
   as well as the
-  <a href="http://wiki.eclipse.org/index.php/RSE_1.0_Known_Issues_and_Workarounds">
-  RSE 1.0 Known Issues and Workarounds</a>.</li>
+  <a href="http://wiki.eclipse.org/index.php/RSE_2.0_Known_Issues_and_Workarounds">
+  RSE 2.0 Known Issues and Workarounds</a>.</li>
 </ul>
 </td></tr></tbody></table>
 
@@ -95,8 +94,8 @@ Yet, due to a lack of public feedback so far we still want to
 <b>declare the APIs provisional for now</b>.</p>
 <p><b>We are committed to not introducing any incompatible
 API changes on the RSE 1.0 maintenance stream (1.0.x).</b><br/>
-But we reserve the right to change any API for the next 
-RSE major release in a not backward compatible way.<br/>
+<b>But we reserve the right to change any API for RSE 2.0</b>
+in a not backward compatible way.<br/>
 All such API changes will be voted on
 by committers on the <a href="http://dev.eclipse.org/mailman/listinfo/dsdp-tm-dev">
 dsdp-tm-dev</a> developer mailing list, and documented in a migration guide
@@ -122,22 +121,17 @@ APIs better.
 <table border="0" cellspacing="5" cellpadding="2" width="100%">
 	<tr>
 		<td align="LEFT" valign="TOP" colspan="3" bgcolor="#808080"><b>
-		<font face="Arial,Helvetica" color="#FFFFFF">API Changes since RSE 1.0 - newest changest first</font></b></td>
+		<font face="Arial,Helvetica" color="#FFFFFF">API Changes since RSE 1.0.1 - newest changest first</font></b></td>
 	</tr>
 </table>
 <table><tbody><tr><td>
+<!--
 <ul>
 <li>[<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=161777">161777</a>]:
   <b>Moved</b> <b>HostShellAdapter</b> and <b>HostShellOutputStream</b> from remotecdt into 
   org.eclipse.rse.services.shells, thus making them API.</li>
-<li>[<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=160353">160353</a>]
-  Synchronous queries (in the dispatch thread) are now deprecated everywhere. We want
-  to get rid of all nested event loops and run all queries in background jobs instead.
-  Asynchronous callbacks will be added to API in the future 
-  [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=166338">166338</a>].</li>
-<li>[<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=165891">165891</a>]
-  File permissions are now retained when copying files inside a system</li>.
 </ul>
+-->
 </td></tr></tbody></table>
 
 <table border="0" cellspacing="5" cellpadding="2" width="100%">
@@ -160,17 +154,17 @@ Use
 for an up-to-date list of major or critical bugs.</p>
 
 <p>The 
-<a href="http://wiki.eclipse.org/index.php/RSE_1.0_Known_Issues_and_Workarounds">
-RSE 1.0 Known Issues and Workarounds</a> Wiki page gives an up-to-date list
+<a href="http://wiki.eclipse.org/index.php/RSE_2.0_Known_Issues_and_Workarounds">
+RSE 2.0 Known Issues and Workarounds</a> Wiki page gives an up-to-date list
 of the most frequent and obvious problems, and describes workarounds for them.<br/>
 If you have other questions regarding RSE, please check the
 <a href="http://wiki.eclipse.org/index.php/TM_and_RSE_FAQ">TM and RSE FAQ</a>
 </p>
 
 <p>Click 
-<a href="https://bugs.eclipse.org/bugs/report.cgi?x_axis_field=bug_severity&y_axis_field=op_sys&z_axis_field=&query_format=report-table&classification=DSDP&product=Target+Management&component=RSE&bug_status=UNCONFIRMED&bug_status=NEW&bug_status=ASSIGNED&bug_status=REOPENED&format=table&action=wrap">here</a>
+<a href="https://bugs.eclipse.org/bugs/report.cgi?x_axis_field=bug_severity&y_axis_field=op_sys&z_axis_field=&query_format=report-table&classification=DSDP&product=Target+Management&bug_status=UNCONFIRMED&bug_status=NEW&bug_status=ASSIGNED&bug_status=REOPENED&format=table&action=wrap">here</a>
 for a complete up-to-date bugzilla status report, or
-<a href="https://bugs.eclipse.org/bugs/report.cgi?x_axis_field=bug_severity&y_axis_field=op_sys&z_axis_field=&query_format=report-table&classification=DSDP&product=Target+Management&component=RSE&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&format=table&action=wrap">here</a>
+<a href="https://bugs.eclipse.org/bugs/report.cgi?x_axis_field=bug_severity&y_axis_field=op_sys&z_axis_field=&query_format=report-table&classification=DSDP&product=Target+Management&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&format=table&action=wrap">here</a>
 for a report on bugs fixed so far.
 </p>
 </td></tr></tbody></table>

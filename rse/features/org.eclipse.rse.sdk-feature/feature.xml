@@ -4,7 +4,7 @@
       label="%featureName"
       version="1.0.1.qualifier"
       provider-name="%providerName"
-      plugin="org.eclipse.rse.sdk">
+      image="eclipse_update_120.jpg">
 
    <description>
       %description

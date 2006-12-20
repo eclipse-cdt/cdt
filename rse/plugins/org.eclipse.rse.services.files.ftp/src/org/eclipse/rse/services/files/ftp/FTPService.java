@@ -34,6 +34,7 @@
  * Javier Montalvo Orus (Symbian) - Fixing 164304 - [ftp] cannot connect to wftpd server on Windows
  * Javier Montalvo Orus (Symbian) - Fixing 165471 - [ftp] On wftpd-2.0, "." and ".." directory entries should be hidden
  * Javier Montalvo Orus (Symbian) - Fixing 165476 - [ftp] On warftpd-1.65 in MSDOS mode, cannot expand drives
+ * Javier Montalvo Orus (Symbian) - Fixing 168120 - [ftp] root filter resolves to home dir
  ********************************************************************************/
 
 package org.eclipse.rse.services.files.ftp;
@@ -631,7 +632,19 @@ public class FTPService extends AbstractFileService implements IFileService, IFT
 	 */
 	public IHostFile[] getRoots(IProgressMonitor monitor) 
 	{	
-		return new IHostFile[]{new FTPHostFile(null, _userHome, true, true, 0, 0, true)}; 
+		
+		IHostFile[] hostFile;
+		
+		if(_userHome.startsWith("/")) //$NON-NLS-1$
+		{
+			hostFile = new IHostFile[]{new FTPHostFile(null, "/", true, true, 0, 0, true)}; //$NON-NLS-1$
+		}
+		else
+		{
+			hostFile = new IHostFile[]{new FTPHostFile(null, _userHome, true, true, 0, 0, true)};
+		}
+		
+		return hostFile;	
 	}
 
 	/* (non-Javadoc)

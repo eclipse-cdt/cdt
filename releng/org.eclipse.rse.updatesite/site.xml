@@ -4,7 +4,7 @@
 	digestURL="http://download.eclipse.org/dsdp/tm/updates/">
 <!-- was disabled due to bug 163406 digestURL="http://download.eclipse.org/dsdp/tm/updates/" -->
    <description url="http://download.eclipse.org/dsdp/tm/updates/">
-      This is the Target Management Project Update Site for the Remote System Explorer (RSE).
+      This is the Target Management Project Update Site.
    </description>
    <feature url="features/org.eclipse.rse.core_1.0.2.qualifier.jar" id="org.eclipse.rse.core" version="1.0.1.qualifier">
       <category name="RSE Runtime only"/>

@@ -46,6 +46,14 @@ public class CASTCaseStatement extends CASTNode implements IASTCaseStatement, IA
 	        }
 		}
         if( expression != null ) if( !expression.accept( action ) ) return false;
+        if( action.shouldVisitStatements ){
+        	switch( action.leave( this ) ){
+        		case ASTVisitor.PROCESS_ABORT : return false;
+        		case ASTVisitor.PROCESS_SKIP  : return true;
+        		default : break;
+        	}
+        }      
+        
         return true;
     }
 

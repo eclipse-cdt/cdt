@@ -46,6 +46,13 @@ public class CASTFieldDesignator extends CASTNode implements
 	        }
 		}
         if( name != null ) if( !name.accept( action ) ) return false;
+        if( action instanceof CASTVisitor && ((CASTVisitor)action).shouldVisitDesignators ){
+		    switch( ((CASTVisitor)action).leave( this ) ){
+	            case ASTVisitor.PROCESS_ABORT : return false;
+	            case ASTVisitor.PROCESS_SKIP  : return true;
+	            default : break;
+	        }
+		}
         return true;
     }
 }

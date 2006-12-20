@@ -53,6 +53,14 @@ public class CASTFunctionCallExpression extends CASTNode implements
       
         if( functionName != null ) if( !functionName.accept( action ) ) return false;
         if( parameter != null )  if( !parameter.accept( action ) ) return false;
+
+        if( action.shouldVisitExpressions ){
+		    switch( action.leave( this ) ){
+	            case ASTVisitor.PROCESS_ABORT : return false;
+	            case ASTVisitor.PROCESS_SKIP  : return true;
+	            default : break;
+	        }
+		}
         return true;
     }
 

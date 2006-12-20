@@ -65,6 +65,13 @@ public class CASTElaboratedTypeSpecifier extends CASTBaseDeclSpecifier implement
 	        }
 		}
         if( name != null ) if( !name.accept( action ) ) return false;
+        if( action.shouldVisitDeclSpecifiers ){
+		    switch( action.leave( this ) ){
+	            case ASTVisitor.PROCESS_ABORT : return false;
+	            case ASTVisitor.PROCESS_SKIP  : return true;
+	            default : break;
+	        }
+		}
         return true;
     }
 

@@ -40,6 +40,14 @@ public class CASTIdExpression extends CASTNode implements IASTIdExpression {
 		}
       
         if( name != null ) if( !name.accept( action ) ) return false;
+
+        if( action.shouldVisitExpressions ){
+		    switch( action.leave( this ) ){
+	            case ASTVisitor.PROCESS_ABORT : return false;
+	            case ASTVisitor.PROCESS_SKIP  : return true;
+	            default : break;
+	        }
+		}
         return true;
     }
 

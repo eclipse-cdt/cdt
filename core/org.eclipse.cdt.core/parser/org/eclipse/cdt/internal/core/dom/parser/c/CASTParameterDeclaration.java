@@ -63,6 +63,13 @@ public class CASTParameterDeclaration extends CASTNode implements
         
         if( declSpec != null ) if( !declSpec.accept( action ) ) return false;
         if( declarator != null ) if( !declarator.accept( action ) ) return false;    
+        if( action.shouldVisitParameterDeclarations ){
+		    switch( action.leave( this ) ){
+	            case ASTVisitor.PROCESS_ABORT : return false;
+	            case ASTVisitor.PROCESS_SKIP  : return true;
+	            default : break;
+	        }
+		}
         return true;
     }
 }

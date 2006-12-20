@@ -63,6 +63,13 @@ public class CASTEnumerator extends CASTNode implements IASTEnumerator, IASTAmbi
 		}
         if( name != null ) if( !name.accept( action ) ) return false;
         if( value != null ) if( !value.accept( action ) ) return false;
+        if( action.shouldVisitEnumerators ){
+		    switch( action.leave( this ) ){
+	            case ASTVisitor.PROCESS_ABORT : return false;
+	            case ASTVisitor.PROCESS_SKIP  : return true;
+	            default : break;
+	        }
+		}
         return true;
     }
 

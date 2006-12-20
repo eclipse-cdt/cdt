@@ -72,6 +72,14 @@ public class CASTDesignatedInitializer extends CASTNode implements
             if( !ds[i].accept( action ) ) return false;
         }
         if( rhs != null ) if( !rhs.accept( action ) ) return false;
+
+        if( action.shouldVisitInitializers ){
+		    switch( action.leave( this ) ){
+	            case ASTVisitor.PROCESS_ABORT : return false;
+	            case ASTVisitor.PROCESS_SKIP  : return true;
+	            default : break;
+	        }
+		}
         return true;
     }
 

@@ -62,6 +62,14 @@ public class CASTBinaryExpression extends CASTNode implements
         
         if( operand1 != null ) if( !operand1.accept( action ) ) return false;
         if( operand2 != null ) if( !operand2.accept( action ) ) return false;
+        
+        if(action.shouldVisitExpressions ){
+        	switch( action.leave( this ) ){
+        		case ASTVisitor.PROCESS_ABORT : return false;
+        		case ASTVisitor.PROCESS_SKIP  : return true;
+        		default : break;
+        	}
+        }
         return true;
     }
     

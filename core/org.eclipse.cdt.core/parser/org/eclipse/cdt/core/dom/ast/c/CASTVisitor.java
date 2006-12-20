@@ -38,4 +38,8 @@ public abstract class CASTVisitor extends ASTVisitor {
 	public int visit(ICASTDesignator designator) {
 		return PROCESS_CONTINUE;
 	}
+	
+	public int leave(ICASTDesignator designator) {
+		return PROCESS_CONTINUE;
+	}
 }

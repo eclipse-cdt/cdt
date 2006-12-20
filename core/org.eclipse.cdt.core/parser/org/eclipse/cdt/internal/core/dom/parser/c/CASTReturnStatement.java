@@ -47,6 +47,13 @@ public class CASTReturnStatement extends CASTNode implements
 	        }
 		}
         if( retValue != null ) if( !retValue.accept( action ) ) return false;
+        if( action.shouldVisitStatements ){
+		    switch( action.leave( this ) ){
+	            case ASTVisitor.PROCESS_ABORT : return false;
+	            case ASTVisitor.PROCESS_SKIP  : return true;
+	            default : break;
+	        }
+		}
         return true;
     }
 

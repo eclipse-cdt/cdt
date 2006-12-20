@@ -523,6 +523,13 @@ public class CASTTranslationUnit extends CASTNode implements
         for( int i = 0; i < ds.length; i++ ){
             if( !ds[i].accept( action ) ) return false;
         }
+        if( action.shouldVisitTranslationUnit){
+		    switch( action.leave( this ) ){
+	            case ASTVisitor.PROCESS_ABORT : return false;
+	            case ASTVisitor.PROCESS_SKIP  : return true;
+	            default : break;
+	        }
+		}
         return true;
     }
 

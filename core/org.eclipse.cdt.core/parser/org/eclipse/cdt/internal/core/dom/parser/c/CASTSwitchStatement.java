@@ -64,6 +64,14 @@ public class CASTSwitchStatement extends CASTNode implements
 		}
         if( controller != null ) if( !controller.accept( action ) ) return false;
         if( body != null ) if( !body.accept( action ) ) return false;
+
+        if( action.shouldVisitStatements ){
+		    switch( action.leave( this ) ){
+	            case ASTVisitor.PROCESS_ABORT : return false;
+	            case ASTVisitor.PROCESS_SKIP  : return true;
+	            default : break;
+	        }
+		}
         return true;
     }
 

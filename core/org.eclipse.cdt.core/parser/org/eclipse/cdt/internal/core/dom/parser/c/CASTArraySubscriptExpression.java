@@ -53,6 +53,14 @@ public class CASTArraySubscriptExpression extends CASTNode implements
         
         if( array != null ) if( !array.accept( action ) ) return false;
         if( subscript != null ) if( !subscript.accept( action ) ) return false;
+
+        if( action.shouldVisitExpressions ){
+		    switch( action.leave( this ) ){
+	            case ASTVisitor.PROCESS_ABORT : return false;
+	            case ASTVisitor.PROCESS_SKIP  : return true;
+	            default : break;
+	        }
+		}
         return true;
     }
     

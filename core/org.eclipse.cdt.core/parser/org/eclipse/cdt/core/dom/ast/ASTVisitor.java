@@ -107,4 +107,55 @@ public abstract class ASTVisitor {
 	public int visit( IASTProblem problem ){
 		return PROCESS_CONTINUE;
 	}
+	
+	/*
+	 * leave method.
+	 */
+	public int leave(IASTTranslationUnit tu) {
+		return PROCESS_CONTINUE;
+	}
+
+	public int leave(IASTName name) {
+		return PROCESS_CONTINUE;
+	}
+
+	public int leave(IASTDeclaration declaration) {
+		return PROCESS_CONTINUE;
+	}
+
+	public int leave(IASTInitializer initializer) {
+		return PROCESS_CONTINUE;
+	}
+
+	public int leave(IASTParameterDeclaration parameterDeclaration) {
+		return PROCESS_CONTINUE;
+	}
+
+	public int leave(IASTDeclarator declarator) {
+		return PROCESS_CONTINUE;
+	}
+
+	public int leave(IASTDeclSpecifier declSpec) {
+		return PROCESS_CONTINUE;
+	}
+
+	public int leave(IASTExpression expression) {
+		return PROCESS_CONTINUE;
+	}
+
+	public int leave(IASTStatement statement) {
+		return PROCESS_CONTINUE;
+	}
+
+	public int leave(IASTTypeId typeId) {
+		return PROCESS_CONTINUE;
+	}
+
+	public int leave(IASTEnumerator enumerator) {
+		return PROCESS_CONTINUE;
+	}
+	
+	public int leave(IASTProblem problem){
+		return PROCESS_CONTINUE;
+	}
 }

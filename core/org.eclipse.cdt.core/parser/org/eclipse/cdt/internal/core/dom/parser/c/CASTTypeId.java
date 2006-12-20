@@ -63,6 +63,14 @@ public class CASTTypeId extends CASTNode implements IASTTypeId {
         
         if( declSpecifier != null ) if( !declSpecifier.accept( action ) ) return false;
         if( declarator != null ) if( !declarator.accept( action ) ) return false;
+
+        if( action.shouldVisitTypeIds ){
+		    switch( action.leave( this ) ){
+	            case ASTVisitor.PROCESS_ABORT : return false;
+	            case ASTVisitor.PROCESS_SKIP  : return true;
+	            default : break;
+	        }
+		}
         return true;
     }
 }

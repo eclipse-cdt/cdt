@@ -2,7 +2,7 @@
 <feature
       id="org.eclipse.rse.sdk"
       label="%featureName"
-      version="1.0.1.qualifier"
+      version="1.0.2.qualifier"
       provider-name="%providerName"
       image="eclipse_update_120.jpg">
 
@@ -24,23 +24,7 @@
    </url>
 
    <includes
-         id="org.eclipse.rse.core"
-         version="0.0.0"/>
-
-   <includes
-         id="org.eclipse.rse.dstore"
-         version="0.0.0"/>
-
-   <includes
-         id="org.eclipse.rse.ftp"
-         version="0.0.0"/>
-
-   <includes
-         id="org.eclipse.rse.local"
-         version="0.0.0"/>
-
-   <includes
-         id="org.eclipse.rse.ssh"
+         id="org.eclipse.rse"
          version="0.0.0"/>
 
    <includes

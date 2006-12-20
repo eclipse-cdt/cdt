@@ -226,15 +226,12 @@
         <td><a href="http://www.eclipse.org/downloads/download.php?file=/dsdp/tm/downloads/drops/@dropDir@/RSE-runtime-ssh-@buildId@.zip">RSE-runtime-ssh-@buildId@.zip</a></td></tr>
 </table>
 
-<!--
 <table border="0" cellspacing="5" cellpadding="2" width="100%">
-	<tr>
-		<td colspan="2">&nbsp;</td>
-	</tr>
+	<tr><td colspan="2">&nbsp;</td></tr>
 </table>
 <table border="0" cellspacing="5" cellpadding="2" width="100%">
 	<tr>
-		<td align="LEFT" valign="TOP" colspan="3" bgcolor="#0080C0"><b>
+		<td align="LEFT" valign="TOP" colspan="3" bgcolor="#808080"><b>
 		<font face="Arial,Helvetica" color="#FFFFFF">JUnit Plugin Tests</font></b></td>
 	</tr>
 </table>
@@ -246,16 +243,15 @@
 		</td>
 		<td width="30%"><b>Platform</b></td>
 		<td width="63%"><b>Download</b></td>
-		<tr><td><div align=left><img src = "OK.gif" width=19 height=23></div></td>
-<td>All</td><td><a href="http://www.eclipse.org/downloads/download.php?file=/dsdp/tm/downloads/drops/@dropDir@/RSE-tests-@buildId@.zip">RSE-tests-@buildId@.zip</a></td>
-</tr>
-
+	</tr>
+	<tr><td><div align=left><img src = "OK.gif" width=19 height=23></div></td>
+		<td>All</td>
+		<td><a href="http://www.eclipse.org/downloads/download.php?file=/dsdp/tm/downloads/drops/@dropDir@/RSE-tests-@buildId@.zip">RSE-tests-@buildId@.zip</a></td>
 	</tr>
 </table>
 <table border="0" cellspacing="5" cellpadding="2" width="100%">
 	<tr><td colspan="2">&nbsp;</td></tr>
 </table>
--->
 
 <p>&nbsp;</p>
 </body>

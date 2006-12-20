@@ -71,6 +71,12 @@ echo "Running the builder..."
 ./nightly.sh HEAD ${buildType} ${buildId} >> $log 2>&1
 tail -50 $log
 
+#update the main download and archive pages
+cd /home/data/httpd/download.eclipse.org/dsdp/tm/downloads
+cvs -q update -RPd >> $log 2>&1
+cd /home/data/httpd/archive.eclipse.org/dsdp/tm/downloads
+cvs -q update -RPd >> $log 2>&1
+
 #Fixup permissions and group id on download.eclpse.org (just to be safe)
 #chmod -R g+w $HOME/ws/publish/${buildType}*${daystamp}*
 
@@ -87,6 +93,7 @@ if [ -f package.count -a "$FILES" != "" ]; then
     mv package.count package.count.orig
     #DO_SIGN=1
   fi
+  
   if [ "$DO_SIGN" = "1" ]; then
     #sign the zipfiles
     ${mydir}/batch_sign.sh `pwd`

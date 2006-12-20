@@ -53,6 +53,10 @@
 		</ant>
 		<ant antfile="${genericTargets}" target="${target}">
 			<property name="type" value="feature" />
+			<property name="id" value="org.eclipse.rse.tests" />
+		</ant>
+		<ant antfile="${genericTargets}" target="${target}">
+			<property name="type" value="feature" />
 			<property name="id" value="org.eclipse.tm.discovery" />
 		</ant>
 		<ant antfile="${genericTargets}" target="${target}">
@@ -131,6 +135,12 @@
 
 	<target name="assemble.org.eclipse.rse.remotecdt">
 		<property name="archiveName" value="RSE-remotecdt-${buildId}.zip"/>
+		<ant antfile="${assembleScriptName}" dir="${buildDirectory}"/>
+		<antcall target="unpackUpdateJarsForPackaging" />
+	</target>
+
+	<target name="assemble.org.eclipse.rse.tests">
+		<property name="archiveName" value="RSE-tests-${buildId}.zip"/>
 		<ant antfile="${assembleScriptName}" dir="${buildDirectory}"/>
 		<antcall target="unpackUpdateJarsForPackaging" />
 	</target>

@@ -8,6 +8,7 @@
  * Contributors:
  * IBM Rational Software - Initial API and implementation
  * Markus Schorn (Wind River Systems)
+ * Yuan Zhang / Beth Tibbitts (IBM Research)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.c;
 
@@ -54,6 +55,13 @@ public class CASTInitializerList extends CASTNode implements
         for ( int i = 0; i < list.length; i++ ) {
             if( !list[i].accept( action ) ) return false;
         }
+        if( action.shouldVisitInitializers ){
+		    switch( action.leave( this ) ){
+	            case ASTVisitor.PROCESS_ABORT : return false;
+	            case ASTVisitor.PROCESS_SKIP  : return true;
+	            default : break;
+	        }
+		}
         return true;
     }
 

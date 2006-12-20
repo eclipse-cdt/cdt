@@ -8,6 +8,7 @@
  * Contributors:
  * IBM Rational Software - Initial API and implementation
  * Markus Schorn (Wind River Systems)
+ * Yuan Zhang / Beth Tibbitts (IBM Research)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.c;
 
@@ -80,6 +81,17 @@ public class CASTName extends CASTNode implements IASTName {
     public boolean accept(ASTVisitor action) {
         if (action.shouldVisitNames) {
             switch (action.visit(this)) {
+            case ASTVisitor.PROCESS_ABORT:
+                return false;
+            case ASTVisitor.PROCESS_SKIP:
+                return true;
+            default:
+                break;
+            }
+        }
+        
+        if (action.shouldVisitNames) {
+            switch (action.leave(this)) {
             case ASTVisitor.PROCESS_ABORT:
                 return false;
             case ASTVisitor.PROCESS_SKIP:

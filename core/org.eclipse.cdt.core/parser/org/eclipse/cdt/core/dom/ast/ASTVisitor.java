@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2005 IBM Corporation and others.
+ * Copyright (c) 2004, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Yuan Zhang / Beth Tibbitts (IBM Research)
  *******************************************************************************/
 
 /*
@@ -105,6 +106,57 @@ public abstract class ASTVisitor {
 	}
 	
 	public int visit( IASTProblem problem ){
+		return PROCESS_CONTINUE;
+	}
+	
+	/*
+	 * leave method.
+	 */
+	public int leave(IASTTranslationUnit tu) {
+		return PROCESS_CONTINUE;
+	}
+
+	public int leave(IASTName name) {
+		return PROCESS_CONTINUE;
+	}
+
+	public int leave(IASTDeclaration declaration) {
+		return PROCESS_CONTINUE;
+	}
+
+	public int leave(IASTInitializer initializer) {
+		return PROCESS_CONTINUE;
+	}
+
+	public int leave(IASTParameterDeclaration parameterDeclaration) {
+		return PROCESS_CONTINUE;
+	}
+
+	public int leave(IASTDeclarator declarator) {
+		return PROCESS_CONTINUE;
+	}
+
+	public int leave(IASTDeclSpecifier declSpec) {
+		return PROCESS_CONTINUE;
+	}
+
+	public int leave(IASTExpression expression) {
+		return PROCESS_CONTINUE;
+	}
+
+	public int leave(IASTStatement statement) {
+		return PROCESS_CONTINUE;
+	}
+
+	public int leave(IASTTypeId typeId) {
+		return PROCESS_CONTINUE;
+	}
+
+	public int leave(IASTEnumerator enumerator) {
+		return PROCESS_CONTINUE;
+	}
+	
+	public int leave(IASTProblem problem){
 		return PROCESS_CONTINUE;
 	}
 }

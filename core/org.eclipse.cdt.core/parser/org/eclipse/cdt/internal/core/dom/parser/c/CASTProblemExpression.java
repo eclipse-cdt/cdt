@@ -7,6 +7,7 @@
  *
  * Contributors:
  * IBM - Initial API and implementation
+ * Yuan Zhang / Beth Tibbitts (IBM Research)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.c;
 
@@ -23,6 +24,13 @@ public class CASTProblemExpression extends CASTProblemOwner implements
     public boolean accept( ASTVisitor action ){
         if( action.shouldVisitExpressions ){
 		    switch( action.visit( this ) ){
+	            case ASTVisitor.PROCESS_ABORT : return false;
+	            case ASTVisitor.PROCESS_SKIP  : return true;
+	            default : break;
+	        }
+		}
+        if( action.shouldVisitExpressions ){
+		    switch( action.leave( this ) ){
 	            case ASTVisitor.PROCESS_ABORT : return false;
 	            case ASTVisitor.PROCESS_SKIP  : return true;
 	            default : break;

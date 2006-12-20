@@ -8,6 +8,7 @@
  * Contributors:
  * IBM Rational Software - Initial API and implementation
  * Markus Schorn (Wind River Systems)
+ * Yuan Zhang / Beth Tibbitts (IBM Research)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.c;
 
@@ -72,6 +73,14 @@ public class CASTSimpleDeclaration extends CASTNode implements
         IASTDeclarator [] dtors = getDeclarators();
         for( int i = 0; i < dtors.length; i++ )
             if( !dtors[i].accept( action ) ) return false;
+        
+        if( action.shouldVisitDeclarations ){
+		    switch( action.leave( this ) ){
+	            case ASTVisitor.PROCESS_ABORT : return false;
+	            case ASTVisitor.PROCESS_SKIP  : return true;
+	            default : break;
+	        }
+		}
         return true;
     }
 

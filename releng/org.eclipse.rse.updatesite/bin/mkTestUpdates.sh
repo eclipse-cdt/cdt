@@ -182,6 +182,23 @@ elif [ `basename $SITE` = signedUpdates ]; then
     sed -e 's,Project Update,Project Signed Test Update,g' \
     	web/site.xsl > web/site.xsl.new
     mv -f web/site.xsl.new web/site.xsl
+elif [ `basename $SITE` = 2.0milestones ]; then
+    echo "Working on 2.0milestones update site"
+    echo "Expect that you copied your features and plugins yourself"
+    stamp=`date +'%Y%m%d-%H%M'`
+    rm index.html site.xml web/site.xsl
+    cvs -q update -dPR
+    sed -e 's,/dsdp/tm/updates,/dsdp/tm/updates/2.0milestones,g' \
+    	-e 's,Project Update,Project Signed Test Update,g' \
+    	index.html > index.html.new
+    mv -f index.html.new index.html
+    sed -e 's,/dsdp/tm/updates,/dsdp/tm/updates/2.0milestones,g' \
+        -e 's,Project Update,Project Signed Test Update,g' \
+        site.xml > site.xml.new
+    mv -f site.xml.new site.xml
+    sed -e 's,Project Update,Project 2.0 Milestone Update,g' \
+    	web/site.xsl > web/site.xsl.new
+    mv -f web/site.xsl.new web/site.xsl
 else
     echo "Working on official update site"
     echo "Expect that you copied your features and plugins yourself"
@@ -214,18 +231,6 @@ echo "Packing the site... $SITE"
 java -Dorg.eclipse.update.jarprocessor.pack200=$mydir \
     $HOME/ws/jarprocessor/jarprocessor.jar \
     -outputDir $SITE -processAll -pack $SITE
-
-## Workaround nested jarfiles in org.apache*
-## These don't work with signed jars, so do not recursively pack them
-#cd $SITE/plugins
-#JARS=`ls org.apache.oro_*.jar org.apache.commons.net_*.jar`
-#for x in $JARS ; do
-#  if [ -f $x.pack.gz ]; then
-#    rm -f $x.pack.gz
-#  fi
-#  echo "WORKAROUND - remove $x.pack.gz"
-#  #pack200 -E4 $x.pack.gz $x
-#done
 
 #Create the digest
 echo "Creating digest..."

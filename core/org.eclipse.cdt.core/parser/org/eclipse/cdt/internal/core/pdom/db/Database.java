@@ -143,6 +143,7 @@ public class Database {
 		// Queue all the chunks to be reclaimed.  
 		ReferenceQueue queue = new ReferenceQueue();
 		Set references = new HashSet();
+		int totalChunks = toc.length;
 		for (int i = 0; i < toc.length; i++) {
 			if (toc[i] != null) {
 				toc[i].reclaim(queue, references);
@@ -162,12 +163,17 @@ public class Database {
 			// Truncate everything but the header chunk.
 			try {
 				file.getChannel().truncate(CHUNK_SIZE);
+				// Reinitialize header chunk.
+				toc = new Chunk[] { new Chunk(file, 0) }; 
+				return true;
 			} catch (IOException e) {
-				throw new CoreException(new DBStatus(e));
+				// Bug 168420:
+				// Truncation failed so we'll reuse the existing
+				// file.
+				toc = new Chunk[totalChunks];
+				toc[0] = new Chunk(file, 0); 
+				return false;
 			}
-			// Reinitialize header chunk.
-			toc = new Chunk[] { new Chunk(file, 0) }; 
-			return true;
 		}
 		catch (InterruptedException e) {
 			// Truncation took longer than we wanted, so we'll

@@ -87,9 +87,13 @@ public class CNavigatorRefactorActionGroup extends ActionGroup {
 	 * @see org.eclipse.ui.actions.ActionGroup#setContext(org.eclipse.ui.actions.ActionContext)
 	 */
 	public void setContext(ActionContext context) {
-		// convert non-IResource to IResources on the fly
-		ISelection selection = SelectionConverter.convertSelectionToResources(context.getSelection());
-		super.setContext(new ActionContext(selection));
+		if (context != null) {
+			// convert non-IResource to IResources on the fly
+			ISelection selection = SelectionConverter.convertSelectionToResources(context.getSelection());
+			super.setContext(new ActionContext(selection));
+		} else {
+			super.setContext(context);
+		}
 	}
 
 	public void fillContextMenu(IMenuManager menu) {

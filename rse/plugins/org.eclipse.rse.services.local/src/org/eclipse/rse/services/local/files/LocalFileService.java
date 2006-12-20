@@ -12,6 +12,7 @@
  * 
  * Contributors:
  * Javier Montalvo Orús (Symbian) - patch for bug 163103 - NPE in filters
+ * Martin Oberhuber (Wind River) - fix 168586 - isCaseSensitive() on Windows
  ********************************************************************************/
 
 package org.eclipse.rse.services.local.files;
@@ -1190,7 +1191,9 @@ public class LocalFileService extends AbstractFileService implements IFileServic
 	 * @param sourceFolderOrFile The file or folder to copy
 	 * @param targetFolder The folder to copy to. No guarantee it is on the same system, so be sure to check getSystemConnection()!
 	 * @param newName The new name for the copied file or folder
-	 * @param encoding The encoding for the file once it is extracted from the archive
+	 * @param sourceEncoding encoding of source file
+	 * @param targetEncoding desired encoding of target file
+	 * @param isText currently unused
 	 * @return true iff the copy succeeded
 	 */
 	public boolean copyFromArchive(File sourceFolderOrFile, File targetFolder, String newName, IProgressMonitor monitor, String sourceEncoding, String targetEncoding, boolean isText) throws SystemMessageException
@@ -1294,7 +1297,7 @@ public class LocalFileService extends AbstractFileService implements IFileServic
 	
 	public boolean isCaseSensitive()
 	{
-		return true;
+		return !isWindows();
 	}
 
 	public boolean copyBatch(IProgressMonitor monitor, String[] srcParents, String[] srcNames, String tgtParent) throws SystemMessageException 

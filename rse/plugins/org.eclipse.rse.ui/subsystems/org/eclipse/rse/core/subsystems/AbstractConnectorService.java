@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.Vector;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.rse.core.IRSEUserIdConstants;
 import org.eclipse.rse.core.ISystemUserIdConstants;
 import org.eclipse.rse.core.PasswordPersistenceManager;
 import org.eclipse.rse.core.SystemBasePlugin;
@@ -666,7 +667,7 @@ public abstract class AbstractConnectorService extends RSEModelObject implements
 			ISubSystemConfiguration ssc = subsystem.getSubSystemConfiguration(); 
 			ssc.updateSubSystem(subsystem, true, userId, false, 0);
 		} else { // it seems intuitive to update the connection object. defect 42709. Phil
-			int whereToUpdate = USERID_LOCATION_CONNECTION;
+			int whereToUpdate = IRSEUserIdConstants.USERID_LOCATION_HOST;
 			IHost conn = subsystem.getHost();
 			ISystemRegistryUI sr = RSEUIPlugin.getDefault().getSystemRegistry();
 			sr.updateHost(null, conn, conn.getSystemType(), conn.getAliasName(), conn.getHostName(), conn.getDescription(), userId, whereToUpdate);

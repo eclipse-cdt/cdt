@@ -29,7 +29,7 @@ import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.rse.core.IRSESystemType;
-import org.eclipse.rse.core.ISystemUserIdConstants;
+import org.eclipse.rse.core.IRSEUserIdConstants;
 import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.SystemAdapterHelpers;
 import org.eclipse.rse.core.SystemBasePlugin;
@@ -2122,7 +2122,7 @@ public class SystemRegistry implements ISystemRegistryUI, ISystemModelChangeEven
 		  			// DY:  defect 42101, description cannot be null
 		  			// null, // description
 		  			userId, // default user Id
-		  			ISystemUserIdConstants.USERID_LOCATION_DEFAULT_SYSTEMTYPE, null);
+		  			IRSEUserIdConstants.USERID_LOCATION_DEFAULT_SYSTEMTYPE, null);
 
 		}
 		catch (Exception exc)
@@ -2152,7 +2152,7 @@ public class SystemRegistry implements ISystemRegistryUI, ISystemModelChangeEven
 	 * @param hostName ip name of host.
 	 * @param description optional description of the connection. Can be null.
 	 * @param defaultUserId userId to use as the default for the subsystems.
-	 * @param defaultUserIdLocation one of the constants in {@link org.eclipse.rse.core.ISystemUserIdConstants ISystemUserIdConstants}
+	 * @param defaultUserIdLocation one of the constants in {@link org.eclipse.rse.core.IRSEUserIdConstants}
 	 *   that tells us where to set the user Id
 	 * @param newConnectionWizardPages when called from the New Connection wizard this is union of the list of additional
 	 *          wizard pages supplied by the subsystem factories that pertain to the specified system type. Else null.
@@ -2268,7 +2268,7 @@ public class SystemRegistry implements ISystemRegistryUI, ISystemModelChangeEven
 	public IHost createHost(String profileName, String systemType, String connectionName, String hostName, String description)
 		throws Exception
 	{
-		return createHost(profileName, systemType, connectionName, hostName, description, null, ISystemUserIdConstants.USERID_LOCATION_CONNECTION, null);  
+		return createHost(profileName, systemType, connectionName, hostName, description, null, IRSEUserIdConstants.USERID_LOCATION_HOST, null);  
 	}
 	/**
 	 * Create a connection object. This is a very simplified version that defaults to the user's
@@ -2298,7 +2298,7 @@ public class SystemRegistry implements ISystemRegistryUI, ISystemModelChangeEven
 		ISystemProfile profile = getSystemProfileManager().getDefaultPrivateSystemProfile();
 		if (profile == null)
 			profile = getSystemProfileManager().getActiveSystemProfiles()[0];
-		return createHost(profile.getName(), systemType, connectionName, hostName, description, null, ISystemUserIdConstants.USERID_LOCATION_CONNECTION, null);  
+		return createHost(profile.getName(), systemType, connectionName, hostName, description, null, IRSEUserIdConstants.USERID_LOCATION_HOST, null);  
 	}
 	/**
 	 * Return the previous connection as would be shown in the view
@@ -2342,7 +2342,7 @@ public class SystemRegistry implements ISystemRegistryUI, ISystemModelChangeEven
 	 * @param hostName ip name of host.
 	 * @param description optional description of the connection. Can be null.
 	 * @param defaultUserId userId to use as the default for the subsystems.
-	 * @param defaultUserIdLocation one of the constants in {@link org.eclipse.rse.core.ISystemUserIdConstants ISystemUserIdConstants}
+	 * @param defaultUserIdLocation one of the constants in {@link org.eclipse.rse.core.IRSEUserIdConstants}
 	 *   that tells us where to set the user Id
 	 */
 	public void updateHost(Shell shell, IHost conn, String systemType, String connectionName, String hostName, String description, String defaultUserId, int defaultUserIdLocation)

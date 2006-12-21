@@ -44,7 +44,7 @@ public interface ISystemRegistryUI extends ISystemRegistry {
      * @param connectionName unique connection name.
      * @param hostName ip name of host.
      * @param description optional description of the connection. Can be null.
-     * @param defaultUserIdLocation one of the constants in {@link org.eclipse.rse.core.ISystemUserIdConstants ISystemUserIdConstants}
+     * @param defaultUserIdLocation one of the constants in {@link org.eclipse.rse.core.IRSEUserIdConstants}
      *   that tells us where to set the user Id
      * @param defaultUserId userId to use as the default for the subsystems.
      */

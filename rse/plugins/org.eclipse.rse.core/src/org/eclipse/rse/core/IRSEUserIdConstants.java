@@ -15,16 +15,37 @@
  ********************************************************************************/
 
 package org.eclipse.rse.core;
+
 /**
- * Constants for user Id management
- * @deprecated use {@link IRSEUserIdConstants} instead.
+ * Constants for user id management. Used when specifying the scope of a user id when 
+ * setting a user id.
  */
-public interface ISystemUserIdConstants
-{
-	
-	public static final int USERID_LOCATION_NOTSET = 0;	
-	public static final int USERID_LOCATION_SUBSYSTEM = 1;
-	public static final int USERID_LOCATION_CONNECTION = 2;
+public interface IRSEUserIdConstants {
+
+	/**
+	 * Value 0. Location of user id has not yet been set. Used only as a return value.
+	 */
+	public static final int USERID_LOCATION_NOTSET = 0;
+
+	/**
+	 * Value 1. Location of user id is scoped to the connector service inside the host. 
+	 */
+	public static final int USERID_LOCATION_CONNECTORSERVICE = 1;
+
+	/**
+	 * Value 2. Location of user id is scoped to the host, sometimes call "connection".
+	 */
+	public static final int USERID_LOCATION_HOST = 2;
+
+	/**
+	 * Value 3. Location of user id is scoped to system type. It will be the default
+	 * for all hosts of this system type that do not have a specified user id assigned.
+	 */
 	public static final int USERID_LOCATION_DEFAULT_SYSTEMTYPE = 3;
-	public static final int USERID_LOCATION_DEFAULT_OVERALL= 4;			
+
+	/**
+	 * Value 4. Location of user id is scoped to workspace.
+	 */
+	public static final int USERID_LOCATION_DEFAULT_OVERALL = 4;
+
 }

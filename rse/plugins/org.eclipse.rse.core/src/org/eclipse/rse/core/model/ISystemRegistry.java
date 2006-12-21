@@ -32,8 +32,7 @@ import org.eclipse.rse.core.subsystems.ISubSystemConfigurationProxy;
 /**
  * Registry or front door for all remote system connections.
  * There is a singleton of the class implementation of this interface.
- * To get it, call the {@link org.eclipse.rse.ui.RSEUIPlugin#getTheSystemRegistry() getTheSystemRegistry}
- * method in the RSEUIPlugin object.
+ * To get it, call the {@link org.eclipse.rse.core.RSECorePlugin#getSystemRegistry()}.
  * <p>
  * The idea here is that connections are grouped by system profile. At any 
  *  time, there is a user-specified number of profiles "active" and connections
@@ -259,15 +258,15 @@ public interface ISystemRegistry extends ISchedulingRule
 
 	/**
 	 * Return the absolute name for the specified subsystem
-	 * @param the subsystem
+	 * @param subsystem the subsystem to query
 	 * @return the absolute name of the subsystem
 	 */
 	 public String getAbsoluteNameForSubSystem(ISubSystem subsystem);	 
 	 
 	 /**
-	 * Return the absolute name for the specified connection
-	 * @param the connection
-	 * @return the absolute name of the connection
+	 * Return the absolute name for the specified host (connection)
+	 * @param connection the host (aka connection) object to query
+	 * @return the absolute name of the host
 	 */
 	 public String getAbsoluteNameForConnection(IHost connection);
 
@@ -419,16 +418,15 @@ public interface ISystemRegistry extends ISchedulingRule
 	public IHost createLocalHost(ISystemProfile profile, String name, String userId);
 	
     /**
-     * Create a connection object, given the connection pool and given all the possible attributes.
-     * <p>
-     * THE RESULTING CONNECTION OBJECT IS ADDED TO THE LIST OF EXISTING CONNECTIONS FOR YOU, IN
-     *  THE POOL YOU SPECIFY. THE POOL IS ALSO SAVED TO DISK.
+     * Create a host object, sometimes called a "connection", 
+     * given the containing profile and given all the possible attributes.
+     * The profile is then scheduled to be persisted.
      * <p>
      * This method:
      * <ul>
-     *  <li>creates and saves a new connection within the given profile
-     *  <li>calls all subsystem factories to give them a chance to create a subsystem instance
-     *  <li>fires an ISystemResourceChangeEvent event of type EVENT_ADD to all registered listeners
+     * <li>creates and saves a new connection within the given profile
+     * <li>calls all subsystem factories to give them a chance to create a subsystem instance
+     * <li>fires an ISystemResourceChangeEvent event of type EVENT_ADD to all registered listeners
      * </ul>
      * <p>
      * @param profileName Name of the system profile the connection is to be added to.
@@ -438,12 +436,12 @@ public interface ISystemRegistry extends ISchedulingRule
      * @param hostName ip name of host.
      * @param description optional description of the connection. Can be null.
      * @param defaultUserId userId to use as the default for the subsystems.
-     * @param defaultUserIdLocation one of the constants in {@link org.eclipse.rse.core.ISystemUserIdConstants ISystemUserIdConstants}
-     *   that tells us where to set the user Id
+     * @param defaultUserIdLocation one of the constants in {@link org.eclipse.rse.core.IRSEUserIdConstants}
+     * that tells us where to store the user Id
      * @param newConnectionWizardPages when called from the New Connection wizard this is union of the list of additional
-     *          wizard pages supplied by the subsystem factories that pertain to the specified system type. Else null.
+     * wizard pages supplied by the subsystem factories that pertain to the specified system type. Else null.
      * @return SystemConnection object, or null if it failed to create. This is typically
-     *   because the connectionName is not unique. Call getLastException() if necessary.
+     * because the connectionName is not unique. Call getLastException() if necessary.
      */
     public IHost createHost(String profileName, String systemType,
                                              String connectionName, String hostName,
@@ -541,9 +539,8 @@ public interface ISystemRegistry extends ISchedulingRule
      * <li>The connection's name must be unique in pool.
      * <li>Fires a single ISystemResourceChangeEvent event of type EVENT_MOVE, if the pool is the private pool.
      * </ul>
-     * <b>TODO PROBLEM: CAN'T RE-ORDER FOLDERS SO CAN WE SUPPORT THIS ACTION?</b>
      * @param conns Array of SystemConnections to move.
-     * @param newPosition new zero-based position for the connection
+     * @param delta new zero-based position for the connection
      */
     public void moveHosts(String profileName, IHost conns[], int delta);
     /**

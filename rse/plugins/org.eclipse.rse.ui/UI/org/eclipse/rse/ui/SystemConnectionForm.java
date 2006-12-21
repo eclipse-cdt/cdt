@@ -27,6 +27,7 @@ import org.eclipse.jface.wizard.IWizard;
 import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.rse.core.IRSESystemType;
+import org.eclipse.rse.core.IRSEUserIdConstants;
 import org.eclipse.rse.core.ISystemUserIdConstants;
 import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.SystemBasePlugin;
@@ -117,7 +118,7 @@ public class SystemConnectionForm
 	protected int descriptionLength = 100;
 	
 	// state/output
-	protected int     userIdLocation = USERID_LOCATION_CONNECTION;
+	protected int     userIdLocation = IRSEUserIdConstants.USERID_LOCATION_HOST;
 	protected boolean callerInstanceOfWizardPage, callerInstanceOfSystemPromptDialog, callerInstanceOfPropertyPage;
 	protected boolean userIdFromSystemTypeDefault;
 	protected boolean updateMode = false;
@@ -463,12 +464,12 @@ public class SystemConnectionForm
 			{
 				isLocal = textUserId.isLocal();
 				if (isLocal)
-					userIdLocation = USERID_LOCATION_CONNECTION; // edit this connection's local value
+					userIdLocation = IRSEUserIdConstants.USERID_LOCATION_HOST; // edit this connection's local value
 				else 
-					userIdLocation = USERID_LOCATION_DEFAULT_SYSTEMTYPE; // edit the preference value
+					userIdLocation = IRSEUserIdConstants.USERID_LOCATION_DEFAULT_SYSTEMTYPE; // edit the preference value
 			}
 			else
-				userIdLocation = USERID_LOCATION_NOTSET;
+				userIdLocation = IRSEUserIdConstants.USERID_LOCATION_NOTSET;
 			SystemPreferencesManager.getPreferencesManager().setVerifyConnection(verifyHostNameCB.getSelection());
 		}
 		
@@ -593,7 +594,7 @@ public class SystemConnectionForm
     	if ((textUserId != null) && (textUserId.getText().trim().length()>0))
     	  return userIdLocation;
     	else
-    	  return USERID_LOCATION_NOTSET;
+    	  return IRSEUserIdConstants.USERID_LOCATION_NOTSET;
     }
     
     // --------------------
@@ -798,7 +799,7 @@ public class SystemConnectionForm
           caller.systemTypeSelected(restrictSystemTypesTo[0], true);
               
         if (textUserId == null)
-          userIdLocation = USERID_LOCATION_NOTSET;
+          userIdLocation = IRSEUserIdConstants.USERID_LOCATION_NOTSET;
                                
 		return composite_prompts; // composite;
 	}

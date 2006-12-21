@@ -20,7 +20,7 @@ import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 
-import org.eclipse.rse.core.ISystemUserIdConstants;
+import org.eclipse.rse.core.IRSEUserIdConstants;
 import org.eclipse.rse.core.SystemPreferencesManager;
 import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.model.ISystemHostPool;
@@ -160,7 +160,7 @@ public class SystemHostPool extends RSEModelObject implements ISystemHostPool
     public IHost createHost(String systemType, String aliasName, String hostName)
         throws Exception                                                 
     {
-        return createHost(systemType,aliasName,hostName,null,null,ISystemUserIdConstants.USERID_LOCATION_CONNECTION);
+        return createHost(systemType,aliasName,hostName,null,null,IRSEUserIdConstants.USERID_LOCATION_HOST);
     }
     /**
      * Create a connection object, given all the possible attributes except default userId.
@@ -177,7 +177,7 @@ public class SystemHostPool extends RSEModelObject implements ISystemHostPool
     public IHost createHost(String systemType, String aliasName, String hostName, String description)
         throws Exception                                                 
     {
-        return createHost(systemType,aliasName,hostName,description,null,ISystemUserIdConstants.USERID_LOCATION_CONNECTION);
+        return createHost(systemType,aliasName,hostName,description,null,IRSEUserIdConstants.USERID_LOCATION_HOST);
     }
     /**
      * Create a connection object, given all the possible attributes.
@@ -211,7 +211,7 @@ public class SystemHostPool extends RSEModelObject implements ISystemHostPool
           conn.setHostPool(this);          
           conn.setAliasName(aliasName);
           // if default userID is null, and location is in the connection we should retrieve it and use it as the initial value.
-          if (defaultUserId == null && defaultUserIdLocation == ISystemUserIdConstants.USERID_LOCATION_CONNECTION) {
+          if (defaultUserId == null && defaultUserIdLocation == IRSEUserIdConstants.USERID_LOCATION_HOST) {
               defaultUserId = conn.getDefaultUserId();
           }
           updateHost(conn, systemType, aliasName, hostName, description, defaultUserId, defaultUserIdLocation);          
@@ -249,16 +249,16 @@ public class SystemHostPool extends RSEModelObject implements ISystemHostPool
     	  renameHost(conn,aliasName);
     	conn.setSystemType(systemType);
     	conn.setHostName(hostName);
-    	if (defaultUserIdLocation != ISystemUserIdConstants.USERID_LOCATION_NOTSET)
+    	if (defaultUserIdLocation != IRSEUserIdConstants.USERID_LOCATION_NOTSET)
     	{
-    	  if (defaultUserIdLocation != ISystemUserIdConstants.USERID_LOCATION_CONNECTION)
+    	  if (defaultUserIdLocation != IRSEUserIdConstants.USERID_LOCATION_HOST)
     	  {
     	    conn.setDefaultUserId(null); // clear what was there, to ensure inheritance
    	        SystemPreferencesManager prefMgr = SystemPreferencesManager.getPreferencesManager();    	
    	        boolean forceToUpperCase = conn.getForceUserIdToUpperCase();
    	        if (forceToUpperCase && (defaultUserId != null))
    	          defaultUserId = defaultUserId.toUpperCase();
-    	    if (defaultUserIdLocation == ISystemUserIdConstants.USERID_LOCATION_DEFAULT_SYSTEMTYPE)
+    	    if (defaultUserIdLocation == IRSEUserIdConstants.USERID_LOCATION_DEFAULT_SYSTEMTYPE)
     	    {
     	      prefMgr.setDefaultUserId(systemType, defaultUserId);    	      
     	    }
@@ -423,7 +423,7 @@ public class SystemHostPool extends RSEModelObject implements ISystemHostPool
     {
         IHost copy =
             targetPool.createHost(conn.getSystemType(), aliasName,
-                 conn.getHostName(), conn.getDescription(), conn.getLocalDefaultUserId(), ISystemUserIdConstants.USERID_LOCATION_CONNECTION);
+                 conn.getHostName(), conn.getDescription(), conn.getLocalDefaultUserId(), IRSEUserIdConstants.USERID_LOCATION_HOST);
         return copy;
     }
 

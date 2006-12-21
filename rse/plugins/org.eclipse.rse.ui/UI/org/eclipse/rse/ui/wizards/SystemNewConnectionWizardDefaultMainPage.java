@@ -246,7 +246,7 @@ public class SystemNewConnectionWizardDefaultMainPage
 	}
 	/**
 	 * Return location where default user id is to be set.
-	 * @see org.eclipse.rse.core.ISystemUserIdConstants
+	 * @see org.eclipse.rse.core.IRSEUserIdConstants
 	 */
 	public int getDefaultUserIdLocation()
 	{

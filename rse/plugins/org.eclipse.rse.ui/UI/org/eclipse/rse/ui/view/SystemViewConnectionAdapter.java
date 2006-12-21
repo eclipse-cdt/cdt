@@ -22,6 +22,7 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.ICellEditorValidator;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.rse.core.IRSESystemType;
+import org.eclipse.rse.core.IRSEUserIdConstants;
 import org.eclipse.rse.core.ISystemUserIdConstants;
 import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.SystemPreferencesManager;
@@ -467,12 +468,12 @@ public class SystemViewConnectionAdapter
 	    else if (property.equals(P_HOSTNAME))
 	    {
 		  sr.updateHost(null, conn, conn.getSystemType(), conn.getAliasName(),
-		                      original_hostName, conn.getDescription(), conn.getDefaultUserId(), USERID_LOCATION_NOTSET);
+		                      original_hostName, conn.getDescription(), conn.getDefaultUserId(), IRSEUserIdConstants.USERID_LOCATION_NOTSET);
 	    }
 	    else if (property.equals(P_DESCRIPTION))
 	    {
 		  sr.updateHost(null, conn, conn.getSystemType(), conn.getAliasName(),
-		                      conn.getHostName(), original_description, conn.getDefaultUserId(), USERID_LOCATION_NOTSET);
+		                      conn.getHostName(), original_description, conn.getDefaultUserId(), IRSEUserIdConstants.USERID_LOCATION_NOTSET);
 	    }
     }   
     /**
@@ -480,7 +481,7 @@ public class SystemViewConnectionAdapter
      */
     private void updateDefaultUserId(IHost conn, SystemInheritablePropertyData data)
     {
-    	int whereToUpdate = USERID_LOCATION_CONNECTION;
+    	int whereToUpdate = IRSEUserIdConstants.USERID_LOCATION_HOST;
     	//if (!data.getIsLocal())
     	  //whereToUpdate = USERID_LOCATION_DEFAULT_SYSTEMTYPE;
     	String userId = data.getLocalValue(); // will be "" if !data.getIsLocal(), which results in wiping out local override
@@ -513,7 +514,7 @@ public class SystemViewConnectionAdapter
 	    	if (!((String)value).equalsIgnoreCase(conn.getHostName()))
 	    	{
 	    		sr.updateHost(null, conn, conn.getSystemType(), conn.getAliasName(),
-		                      (String)value, conn.getDescription(), conn.getDefaultUserId(), USERID_LOCATION_NOTSET);
+		                      (String)value, conn.getDescription(), conn.getDefaultUserId(), IRSEUserIdConstants.USERID_LOCATION_NOTSET);
 	    		changed_hostName = true;
 	    	}
 	    }
@@ -524,7 +525,7 @@ public class SystemViewConnectionAdapter
 	    	if (!((String)value).equalsIgnoreCase(conn.getDescription()))
 	    	{
 			  sr.updateHost(null, conn, conn.getSystemType(), conn.getAliasName(),
-			                      conn.getHostName(), (String)value, conn.getDefaultUserId(), USERID_LOCATION_NOTSET);		  
+			                      conn.getHostName(), (String)value, conn.getDefaultUserId(), IRSEUserIdConstants.USERID_LOCATION_NOTSET);		  
 			  changed_description = true;		                      
 	    	}
 	    }

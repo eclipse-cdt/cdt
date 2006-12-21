@@ -13,7 +13,9 @@ import java.util.Properties;
 
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.rse.core.model.IHost;
-import org.eclipse.rse.core.subsystems.ISubSystem;
+import org.eclipse.rse.subsystems.files.core.servicesubsystem.FileServiceSubSystem;
+import org.eclipse.rse.subsystems.shells.core.subsystems.servicesubsystem.IShellServiceSubSystem;
+import org.eclipse.rse.tests.testsubsystem.interfaces.ITestSubSystem;
 
 /**
  * Interfaces declares public access and factory methods to deal
@@ -87,7 +89,7 @@ public interface IRSEConnectionManager {
 	 * 
 	 * @throws Exception If the file subsystem lookup fails.
 	 */
-	public ISubSystem getFileSubSystem(IHost connection, String desiredConfigurationId) throws Exception;
+	public FileServiceSubSystem getFileSubSystem(IHost connection, String desiredConfigurationId) throws Exception;
 	
 	/**
 	 * Get the shell subsystem for the specified connection.
@@ -97,6 +99,16 @@ public interface IRSEConnectionManager {
 	 * 
 	 * @throws Exception If the shell subsystem lookup fails.
 	 */
-	public ISubSystem getShellSubSystem(IHost connection) throws Exception;
+	public IShellServiceSubSystem getShellSubSystem(IHost connection) throws Exception;
 
+	
+	/**
+	 * Get the testsubsystem for the specified connection.
+	 *  
+	 * @param connection The corresponding <code>IHost</code> connection object. Must be not <code>null</code>.
+	 * @return The testsubsystem object if found or <code>null</code>.
+	 * 
+	 * @throws Exception If the testsubsystem lookup fails.
+	 */
+	public ITestSubSystem getTestSubSystem(IHost connection) throws Exception;
 }

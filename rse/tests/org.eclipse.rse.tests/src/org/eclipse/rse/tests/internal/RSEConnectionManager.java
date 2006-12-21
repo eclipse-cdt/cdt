@@ -43,6 +43,7 @@ import org.eclipse.rse.subsystems.shells.core.subsystems.servicesubsystem.IShell
 import org.eclipse.rse.tests.RSETestsPlugin;
 import org.eclipse.rse.tests.core.connection.IRSEConnectionManager;
 import org.eclipse.rse.tests.core.connection.IRSEConnectionProperties;
+import org.eclipse.rse.tests.testsubsystem.interfaces.ITestSubSystem;
 import org.eclipse.rse.ui.RSEUIPlugin;
 import org.osgi.framework.Bundle;
 
@@ -244,7 +245,7 @@ public class RSEConnectionManager implements IRSEConnectionManager {
 	/* (non-Javadoc)
 	 * @see org.eclipse.rse.tests.core.connection.IRSEConnectionManager#getFileSubSystem(org.eclipse.rse.core.model.IHost, java.lang.String)
 	 */
-	public ISubSystem getFileSubSystem(IHost connection, String desiredConfigurationId) throws Exception {
+	public FileServiceSubSystem getFileSubSystem(IHost connection, String desiredConfigurationId) throws Exception {
 		assert connection != null && desiredConfigurationId != null;
 		FileServiceSubSystem subsystem = (FileServiceSubSystem)RemoteFileUtility.getFileSubSystem(connection);
 		ISubSystemConfiguration config = subsystem.getSubSystemConfiguration();
@@ -267,15 +268,30 @@ public class RSEConnectionManager implements IRSEConnectionManager {
 	/* (non-Javadoc)
 	 * @see org.eclipse.rse.tests.core.connection.IRSEConnectionManager#getShellSubSystem(org.eclipse.rse.core.model.IHost)
 	 */
-	public ISubSystem getShellSubSystem(IHost connection) throws Exception {
+	public IShellServiceSubSystem getShellSubSystem(IHost connection) throws Exception {
 		assert connection != null;
 		ISystemRegistry registry = RSEUIPlugin.getTheSystemRegistry();
 		ISubSystem[] subSystems = registry.getSubSystems(connection);
 		for (int i = 0; i < subSystems.length; i++) {
 			ISubSystem subSystem = subSystems[i];
 			if (subSystem instanceof IShellServiceSubSystem) {
-				IShellServiceSubSystem shellSubSystem = (IShellServiceSubSystem)subSystem;
-				return shellSubSystem;
+				return (IShellServiceSubSystem)subSystem;
+			}
+		}
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.tests.core.connection.IRSEConnectionManager#getTestSubSystem(org.eclipse.rse.core.model.IHost)
+	 */
+	public ITestSubSystem getTestSubSystem(IHost connection) throws Exception {
+		assert connection != null;
+		ISystemRegistry registry = RSEUIPlugin.getTheSystemRegistry();
+		ISubSystem[] subSystems = registry.getSubSystems(connection);
+		for (int i = 0; i < subSystems.length; i++) {
+			ISubSystem subSystem = subSystems[i];
+			if (subSystem instanceof ITestSubSystem) {
+				return (ITestSubSystem)subSystem;
 			}
 		}
 		return null;

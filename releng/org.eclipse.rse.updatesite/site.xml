@@ -30,7 +30,7 @@
    <feature url="features/org.eclipse.rse.remotecdt_1.0.1.qualifier.jar" id="org.eclipse.rse.remotecdt" version="1.0.1.qualifier">
       <category name="Target Management Add-ons"/>
    </feature>
-   <feature url="features/org.eclipse.rse.efs_1.0.1.qualifier.jar" id="org.eclipse.rse.efs" version="1.0.1.qualifier">
+   <feature url="features/org.eclipse.rse.efs_1.0.2.qualifier.jar" id="org.eclipse.rse.efs" version="1.0.2.qualifier">
       <category name="Target Management Add-ons"/>
    </feature>
    <feature url="features/org.eclipse.tm.discovery_1.0.2.qualifier.jar" id="org.eclipse.tm.discovery" version="1.0.2.qualifier">

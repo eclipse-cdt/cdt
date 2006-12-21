@@ -181,8 +181,7 @@ public class MethodTests extends PDOMTestBase {
 		assertTrue(method.isInline());
 	}
 	
-	// disabled for 167311
-	public void _testStaticMethod() throws Exception {
+	public void testStaticMethod() throws Exception {
 		IBinding[] bindings = findQualifiedName(pdom, "Class1::staticMethod");
 		assertEquals(1, bindings.length);
 		ICPPMethod method = (ICPPMethod) bindings[0];

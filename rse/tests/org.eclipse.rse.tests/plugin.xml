@@ -10,5 +10,8 @@
       
       <suite type="org.eclipse.rse.tests.core.connection.RSEConnectionTestSuite" name="RSE Connection Test Suite"/>
       	<type name="org.eclipse.rse.tests.core.connection.RSEConnectionTestSuite" class="org.eclipse.rse.tests.core.connection.RSEConnectionTestSuite" />
+
+      <suite type="org.eclipse.rse.tests.files.RSEFileTestSuite" name="RSE File Test Suite"/>
+      	<type name="org.eclipse.rse.tests.files.RSEFileTestSuite" class="org.eclipse.rse.tests.files.RSEFileTestSuite" />
    </extension>
 </plugin>

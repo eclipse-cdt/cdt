@@ -248,7 +248,8 @@ public class RSECoreTestCase extends TestCase {
 	 * @see junit.framework.TestCase#run(junit.framework.TestResult)
 	 */
 	public final void run(TestResult result) {
-		if (isProperty(IRSECoreTestCaseProperties.PROP_FORCE_BACKGROUND_EXECUTION, false)) {
+		if (isProperty(IRSECoreTestCaseProperties.PROP_FORCE_BACKGROUND_EXECUTION, false)
+				|| !RSEWaitAndDispatchUtil.isDispatchThread()) {
 			// do not force test execution into background, just call super.run(result)
 			// from with the current thread.
 			result.addListener(TEST_LISTENER);
@@ -273,7 +274,8 @@ public class RSECoreTestCase extends TestCase {
 	public void runBare() throws Throwable {
 		// If PROP_PERFORMANCE_TIMING_INCLUDE_SETUP_TEARDOWN is set to true,
 		// print the timing information including the tests setUp and tearDown methods.
-		if (isProperty(IRSECoreTestCaseProperties.PROP_PERFORMANCE_TIMING_INCLUDE_SETUP_TEARDOWN, true)) {
+		if (isProperty(IRSECoreTestCaseProperties.PROP_FORCE_BACKGROUND_EXECUTION, false)
+				|| !RSEWaitAndDispatchUtil.isDispatchThread()) {
 			// Print timing information here
 			long start = printTestStartInformation(getName());
 			try {
@@ -293,7 +295,8 @@ public class RSECoreTestCase extends TestCase {
 	protected void runTest() throws Throwable {
 		// If PROP_PERFORMANCE_TIMING_INCLUDE_SETUP_TEARDOWN is set to false (default),
 		// print the timing information only the test method itself.
-		if (isProperty(IRSECoreTestCaseProperties.PROP_PERFORMANCE_TIMING_INCLUDE_SETUP_TEARDOWN, false)) {
+		if (isProperty(IRSECoreTestCaseProperties.PROP_PERFORMANCE_TIMING_INCLUDE_SETUP_TEARDOWN, false)
+				|| !RSEWaitAndDispatchUtil.isDispatchThread()) {
 			// Print timing information here and run the test.
 			long start = printTestStartInformation(getName());
 			try {

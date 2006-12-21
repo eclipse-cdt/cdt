@@ -17,9 +17,15 @@ import java.util.List;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
+import org.eclipse.core.runtime.IAdapterManager;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.rse.core.SystemBasePlugin;
 import org.eclipse.rse.tests.core.IRSETestLogCollectorDelegate;
 import org.eclipse.rse.tests.internal.RSEDefaultTestLogCollectorDelegate;
-import org.eclipse.ui.plugin.AbstractUIPlugin;
+import org.eclipse.rse.tests.internal.testsubsystem.TestSubSystemAdapterFactory;
+import org.eclipse.rse.tests.testsubsystem.interfaces.ITestSubSystem;
+import org.eclipse.rse.tests.testsubsystem.interfaces.ITestSubSystemConfiguration;
+import org.eclipse.rse.tests.testsubsystem.interfaces.ITestSubSystemNode;
 import org.osgi.framework.BundleContext;
 
 /**
@@ -27,7 +33,7 @@ import org.osgi.framework.BundleContext;
  * class provides basic infra structure for accessing externalized
  * string data.
  */
-public class RSETestsPlugin extends AbstractUIPlugin {
+public class RSETestsPlugin extends SystemBasePlugin {
 	// The shared plugin instance.
 	private static RSETestsPlugin plugin;
 	// The resource bundle associated with this plugin.
@@ -138,6 +144,12 @@ public class RSETestsPlugin extends AbstractUIPlugin {
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
 		addDelegate(defaultLogCollectorDelegate);
+
+		IAdapterManager manager = Platform.getAdapterManager();
+		TestSubSystemAdapterFactory subSystemAdapterFactory = new TestSubSystemAdapterFactory();
+		manager.registerAdapters(subSystemAdapterFactory, ITestSubSystem.class);
+		manager.registerAdapters(subSystemAdapterFactory, ITestSubSystemNode.class);
+		manager.registerAdapters(subSystemAdapterFactory, ITestSubSystemConfiguration.class);
 	}
 
 	/* (non-Javadoc)
@@ -211,4 +223,14 @@ public class RSETestsPlugin extends AbstractUIPlugin {
 	public synchronized IRSETestLogCollectorDelegate[] getTestLogCollectorDelegates() {
 		return (IRSETestLogCollectorDelegate[])logCollectorDelegates.toArray(new IRSETestLogCollectorDelegate[logCollectorDelegates.size()]);
 	}
+
+	/**
+	 * Initialize the image registry by declaring all of the required graphics.
+	 */
+	protected void initializeImageRegistry() {
+		String path = getIconPath();
+		putImageInRegistry("ICON_ID_BRANCH", path + "branch.gif"); //$NON-NLS-1$ //$NON-NLS-2$
+		putImageInRegistry("ICON_ID_LEAF", path + "leaf.gif"); //$NON-NLS-1$ //$NON-NLS-2$
+	}
 }
+

@@ -29,6 +29,15 @@ public final class RSEWaitAndDispatchUtil {
 	}
 	
 	/**
+	 * Checks if the current thread is a dispatch (UI) thread or not.
+	 * 
+	 * @return <code>True</code> if the current thread is a dispatch thread, <code>false</code> otherwise.
+	 */
+	public static boolean isDispatchThread() {
+		return Display.findDisplay(Thread.currentThread()) != null;
+	}
+	
+	/**
 	 * Blocks the calling thread from execution till the specified
 	 * time out has exceeded. If the calling thread is an display thread,
 	 * the display event dispatching will be kept going during this time.

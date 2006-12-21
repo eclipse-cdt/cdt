@@ -14,4 +14,19 @@
       <suite type="org.eclipse.rse.tests.files.RSEFileTestSuite" name="RSE File Test Suite"/>
       	<type name="org.eclipse.rse.tests.files.RSEFileTestSuite" class="org.eclipse.rse.tests.files.RSEFileTestSuite" />
    </extension>
+
+	<extension point="org.eclipse.rse.ui.subsystemConfigurations">
+		<configuration
+			id="org.eclipse.rse.tests.subsystems.TestSubSystem"
+			systemTypes="Local;Windows"
+			name="%testSubSystemName"
+			class="org.eclipse.rse.tests.internal.testsubsystem.TestSubSystemConfiguration"
+			category="users"
+			vendor="%providerName"
+			description="%testSubSystemDescription"
+			iconlive="icons/systemconnectionlive.gif"
+			icon="icons/systemconnection.gif"
+      priority="50000">
+		</configuration>
+	</extension>
 </plugin>

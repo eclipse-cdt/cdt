@@ -60,7 +60,7 @@ public class RSEConnectionManager implements IRSEConnectionManager {
 		// locate the connectionDefault.properties file.
 		Bundle bundle = RSETestsPlugin.getDefault().getBundle();
 		if (bundle != null) {
-			IPath relative = new Path ("src/org/eclipse/rse/tests/internal/connectionDefault.properties"); //$NON-NLS-1$
+			IPath relative = new Path ("test.data/connectionDefault.properties"); //$NON-NLS-1$
 			URL url = FileLocator.find(bundle, relative, null);
 			if (url != null) {
 				try {

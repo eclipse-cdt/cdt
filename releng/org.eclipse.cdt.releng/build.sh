@@ -14,7 +14,7 @@ cd `dirname $0`
 
 mkdir -p tools
 cd tools
-cvs -d:pserver:anonymous@dev.eclipse.org:/home/eclipse \
+cvs -d:pserver:anonymous@dev.eclipse.org:/cvsroot/eclipse \
 	checkout org.eclipse.releng.basebuilder
 cd ..
 

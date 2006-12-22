@@ -45,16 +45,17 @@ public class Chunk {
 		}
 	}
 
-	public boolean save() throws CoreException {
+	public void save() throws CoreException {
 		// if we're not memory mapped, write the buffer out to the file
 		if (buffer instanceof MappedByteBuffer)
-			return false;
-		try {
-			db.file.seek(index * Database.CHUNK_SIZE);
-			db.file.getChannel().write(buffer);
-			return true;
-		} catch (IOException e) {
-			throw new CoreException(new DBStatus(e));
+			((MappedByteBuffer)buffer).force();
+		else {
+			try {
+				db.file.seek(index * Database.CHUNK_SIZE);
+				db.file.getChannel().write(buffer);
+			} catch (IOException e) {
+				throw new CoreException(new DBStatus(e));
+			}
 		}
 	}
 

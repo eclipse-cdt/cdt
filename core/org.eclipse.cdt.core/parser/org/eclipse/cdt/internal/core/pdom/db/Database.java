@@ -89,13 +89,10 @@ public class Database {
 	 * and need to be saved back to disk.
 	 * @throws CoreException
 	 */
-	public boolean save() throws CoreException {
-		if (!toc[0].save())
-			return false;
-		for (int i = 1; i < toc.length; ++i)
+	public void save() throws CoreException {
+		for (int i = 0; i < toc.length; ++i)
 			if (toc[i] != null)
 				toc[i].save();
-		return true;
 	}
 	
 	/**

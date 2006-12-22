@@ -44,6 +44,7 @@ import org.eclipse.cdt.internal.core.pdom.dom.PDOMFile.Finder;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.PlatformObject;
 import org.eclipse.core.runtime.Status;
 
@@ -56,7 +57,10 @@ public class PDOM extends PlatformObject
 		implements IPDOM, IPDOMResolver, IPDOMWriter {
 
 	private Database db;
-	private boolean needSave = true;
+	
+	// On Neutrino, we need to save the database to ensure the
+	// buffer gets written to the file.
+	private static boolean needSave = Platform.getOS() == Platform.OS_QNX;
 	
 	public static final int VERSION = 11;
 	// 0 - the beginning of it all
@@ -418,12 +422,12 @@ public class PDOM extends PlatformObject
 	public void releaseWriteLock() {
 		synchronized (mutex) {
 			// save the database
-			try {
-				if (needSave)
-					needSave = db.save();
-			} catch (CoreException e) {
-				CCorePlugin.log(e);
-			}
+			if (needSave)
+				try {
+					db.save();
+				} catch (CoreException e) {
+					CCorePlugin.log(e);
+				}
 			if (lockCount < 0)
 				++lockCount;
 			mutex.notifyAll();

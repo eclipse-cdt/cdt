@@ -11,7 +11,10 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.parser.tests.ast2;
 
+import java.io.IOException;
 import java.util.Iterator;
+
+import junit.framework.TestSuite;
 
 import org.eclipse.cdt.core.dom.ast.ASTSignatureUtil;
 import org.eclipse.cdt.core.dom.ast.IASTArrayDeclarator;
@@ -94,6 +97,10 @@ import org.eclipse.cdt.internal.core.parser.ParserException;
  */
 public class AST2Tests extends AST2BaseTest {
 
+    public static TestSuite suite() {
+    	return suite(AST2Tests.class);
+    }
+    
     public void testBug75189() throws Exception {
         parseAndCheckBindings( "struct A{};typedef int (*F) (A*);" ); //$NON-NLS-1$
     }
@@ -3475,5 +3482,30 @@ public class AST2Tests extends AST2BaseTest {
         buffer.append("}\n");
 
         parse(buffer.toString(), ParserLanguage.C, true, false);
+    }
+    
+    // void func(int a) {
+    //    int z=0;
+    //    z= (a)+z;
+    //    z= (a)-z;
+    //    z= (a)*z;
+    //    z= (a)&z;
+    //    z= (a)|z;
+    //    z= (a)/z;
+    //    z= (a)%z;
+    // }
+    public void _testBracketAroundIdentifier_168924() throws IOException, ParserException {
+    	StringBuffer buf= getContents(1)[0];
+        IASTTranslationUnit tu= parse(buf.toString(), ParserLanguage.C, true, true);
+        IASTFunctionDefinition func= (IASTFunctionDefinition) tu.getDeclarations()[0];
+        IASTParameterDeclaration[] params= ((IASTStandardFunctionDeclarator) func.getDeclarator()).getParameters();
+        IBinding binding= params[0].getDeclarator().getName().resolveBinding();
+        assertEquals(7, tu.getReferences(binding).length);
+
+        tu= parse(buf.toString(), ParserLanguage.CPP, true, true);
+        func= (IASTFunctionDefinition) tu.getDeclarations()[0];
+        params= ((IASTStandardFunctionDeclarator) func.getDeclarator()).getParameters();
+        binding= params[0].getDeclarator().getName().resolveBinding();
+        assertEquals(7, tu.getReferences(binding).length);
     }
 }

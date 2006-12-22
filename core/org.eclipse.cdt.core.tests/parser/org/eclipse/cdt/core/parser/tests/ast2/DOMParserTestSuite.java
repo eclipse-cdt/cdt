@@ -25,7 +25,7 @@ public class DOMParserTestSuite extends TestCase {
 
 	public static Test suite() { 
 		TestSuite suite= new TestSuite(ParserTestSuite.class.getName());
-		suite.addTestSuite( AST2Tests.class );
+		suite.addTest( AST2Tests.suite() );
 		suite.addTestSuite( GCCTests.class );
 		suite.addTestSuite( AST2CPPTests.class );
 		suite.addTestSuite( AST2TemplateTests.class );

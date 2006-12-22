@@ -14,10 +14,9 @@
  */
 package org.eclipse.cdt.core.parser.tests.ast2;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-
-import junit.framework.TestCase;
 
 import org.eclipse.cdt.core.dom.ast.ASTSignatureUtil;
 import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
@@ -50,6 +49,9 @@ import org.eclipse.cdt.core.parser.NullLogService;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.ParserMode;
 import org.eclipse.cdt.core.parser.ScannerInfo;
+import org.eclipse.cdt.core.testplugin.CTestPlugin;
+import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
+import org.eclipse.cdt.core.testplugin.util.TestSourceReader;
 import org.eclipse.cdt.internal.core.dom.parser.ISourceCodeParser;
 import org.eclipse.cdt.internal.core.dom.parser.c.ANSICParserExtensionConfiguration;
 import org.eclipse.cdt.internal.core.dom.parser.c.CVisitor;
@@ -71,7 +73,7 @@ import org.eclipse.cdt.internal.core.parser.scanner2.IScannerExtensionConfigurat
 /**
  * @author aniefer
  */
-public class AST2BaseTest extends TestCase {
+public class AST2BaseTest extends BaseTestCase {
 	
     private static final IParserLogService NULL_LOG = new NullLogService();
 
@@ -374,5 +376,10 @@ public class AST2BaseTest extends TestCase {
 			return (IASTName) nameList.get( idx );
 		}
 		public int size() { return nameList.size(); } 
+	}
+	
+	protected StringBuffer[] getContents(int sections) throws IOException {
+		return TestSourceReader.getContentsForTest(
+				CTestPlugin.getDefault().getBundle(), "parser", getClass(), getName(), sections);
 	}
 }

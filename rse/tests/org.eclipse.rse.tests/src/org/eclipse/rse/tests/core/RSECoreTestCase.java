@@ -274,8 +274,7 @@ public class RSECoreTestCase extends TestCase {
 	public void runBare() throws Throwable {
 		// If PROP_PERFORMANCE_TIMING_INCLUDE_SETUP_TEARDOWN is set to true,
 		// print the timing information including the tests setUp and tearDown methods.
-		if (isProperty(IRSECoreTestCaseProperties.PROP_FORCE_BACKGROUND_EXECUTION, false)
-				|| !RSEWaitAndDispatchUtil.isDispatchThread()) {
+		if (isProperty(IRSECoreTestCaseProperties.PROP_PERFORMANCE_TIMING_INCLUDE_SETUP_TEARDOWN, true)) {
 			// Print timing information here
 			long start = printTestStartInformation(getName());
 			try {
@@ -295,8 +294,7 @@ public class RSECoreTestCase extends TestCase {
 	protected void runTest() throws Throwable {
 		// If PROP_PERFORMANCE_TIMING_INCLUDE_SETUP_TEARDOWN is set to false (default),
 		// print the timing information only the test method itself.
-		if (isProperty(IRSECoreTestCaseProperties.PROP_PERFORMANCE_TIMING_INCLUDE_SETUP_TEARDOWN, false)
-				|| !RSEWaitAndDispatchUtil.isDispatchThread()) {
+		if (isProperty(IRSECoreTestCaseProperties.PROP_PERFORMANCE_TIMING_INCLUDE_SETUP_TEARDOWN, false)) {
 			// Print timing information here and run the test.
 			long start = printTestStartInformation(getName());
 			try {

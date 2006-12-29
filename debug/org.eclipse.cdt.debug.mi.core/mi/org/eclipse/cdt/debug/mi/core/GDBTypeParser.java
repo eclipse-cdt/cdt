@@ -357,7 +357,9 @@ public class GDBTypeParser {
                     } else if (c == '>') {
                         count--;
                     }
-                    sb.append((char)c);
+                    if (c != ' ') {
+                    	sb.append((char)c);
+                    }
                 } while (count > 0 && c != EOF);
             } else if (c != EOF) {
 				ungetch();

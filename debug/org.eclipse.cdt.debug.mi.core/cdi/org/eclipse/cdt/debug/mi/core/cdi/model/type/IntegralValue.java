@@ -45,18 +45,18 @@ public abstract class IntegralValue extends Value implements ICDIIntegralValue {
 			valueString = valueString.substring(1);
 			int colon = valueString.indexOf(':');
 			if (colon != -1) {
-				valueString = valueString.substring(colon + 1); 
+				valueString = valueString.substring(colon + 1).trim(); 
 			}
-		} else {
-			int space = valueString.indexOf(' ');
-			if (space != -1) {
-				valueString = valueString.substring(0, space).trim();
-			}			
 		}
+		int space = valueString.indexOf(' ');
+		if (space != -1) {
+			valueString = valueString.substring(0, space).trim();
+		}			
 
 		try {
 			return MIFormat.getBigInteger(valueString);
 		} catch (NumberFormatException e) {
+			//
 		}
 		return BigInteger.ZERO;
 	}

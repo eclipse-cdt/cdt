@@ -140,7 +140,7 @@ public class GDBTypeParser {
 				gdbType = null;
 			}
 		}
-		return sb.toString();
+		return sb.toString().trim();
 
 	}
 

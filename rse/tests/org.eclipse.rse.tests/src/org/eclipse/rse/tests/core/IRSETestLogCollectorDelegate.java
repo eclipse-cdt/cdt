@@ -19,7 +19,24 @@ import org.eclipse.core.runtime.IPath;
  */
 public interface IRSETestLogCollectorDelegate {
 
+	/**
+	 * Returns the list of absolute file locations to included
+	 * within the collected logs archive file. The returned
+	 * absolute file locations must denote real existing files.
+	 * Possible dynamic content to collect can be written to
+	 * temporary files. The log collector delegate is responsible
+	 * for removing these temporary files if the <code>dispose()</code>
+	 * method is called.
+	 * 
+	 * @return An array of absolute file locations.
+	 */
 	public IPath[] getAbsoluteLogFileLocations();
 	
+	/**
+	 * Signal the RSE test log collector delegate to dispose
+	 * any resource created. Possibly created temporary files
+	 * should be deleted. Open streams or handles should be
+	 * closed.
+	 */
 	public void dispose();
 }

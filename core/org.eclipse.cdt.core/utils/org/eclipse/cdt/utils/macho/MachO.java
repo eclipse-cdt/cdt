@@ -53,6 +53,7 @@ public class MachO {
 	    /* values of magic */
 	    public final static int MH_MAGIC = 0xfeedface;      /* the mach magic number */
 	    public final static int MH_CIGAM = 0xcefaedfe;
+	    public final static int MH_UNIVERSAL = 0xcafebabe;
 
 	    /* values of cputype */
 	    public final static int CPU_TYPE_ANY = -1;
@@ -167,6 +168,31 @@ public class MachO {
 			magic = efile.readIntE();
 			if ( magic == MH_CIGAM )
 				efile.setEndian(true);
+			else
+			if ( magic == MH_UNIVERSAL)
+			{ 
+				String arch = System.getProperty("os.arch");
+				int numArchives = efile.readIntE();
+				while (numArchives-- > 0)
+				{
+					int cpuType = efile.readIntE();
+					int cpuSubType = efile.readIntE();
+					int archiveOffset = efile.readIntE();
+					int archiveSize = efile.readIntE();
+					int archiveAlignment = efile.readIntE();
+					if ((cpuType == MachO.MachOhdr.CPU_TYPE_I386 && arch.equalsIgnoreCase("i386")) || 
+							(cpuType == MachO.MachOhdr.CPU_TYPE_POWERPC && arch.equalsIgnoreCase("ppc")))
+					{
+						efile.seek(archiveOffset);
+						magic = efile.readIntE();
+						if ( magic == MH_CIGAM )
+							efile.setEndian(true);
+							else if ( magic != MH_MAGIC )
+								throw new IOException(CCorePlugin.getResourceString("Util.exception.notMACHO")); //$NON-NLS-1$
+					break;
+					}
+				}
+			}
 			else if ( magic != MH_MAGIC )
 				throw new IOException(CCorePlugin.getResourceString("Util.exception.notMACHO")); //$NON-NLS-1$
 			cputype = efile.readIntE();
@@ -183,6 +209,31 @@ public class MachO {
 			magic = makeInt(bytes, offset, isle); offset += 4;
 			if ( magic == MH_CIGAM )
 				isle = true;
+			else
+				if ( magic == MH_UNIVERSAL)
+				{ 
+					String arch = System.getProperty("os.arch");
+					int numArchives = makeInt(bytes, offset, isle); offset += 4;
+					while (numArchives-- > 0)
+					{
+						int cpuType = makeInt(bytes, offset, isle); offset += 4;
+						int cpuSubType = makeInt(bytes, offset, isle); offset += 4;
+						int archiveOffset = makeInt(bytes, offset, isle); offset += 4;
+						int archiveSize = makeInt(bytes, offset, isle); offset += 4;
+						int archiveAlignment = makeInt(bytes, offset, isle); offset += 4;
+						if ((cpuType == MachO.MachOhdr.CPU_TYPE_I386 && arch.equalsIgnoreCase("i386")) || 
+								(cpuType == MachO.MachOhdr.CPU_TYPE_POWERPC && arch.equalsIgnoreCase("ppc")))
+						{
+							offset = archiveOffset;
+							magic = makeInt(bytes, offset, isle); offset += 4;
+							if ( magic == MH_CIGAM )
+								isle = true;
+								else if ( magic != MH_MAGIC )
+									throw new IOException(CCorePlugin.getResourceString("Util.exception.notMACHO")); //$NON-NLS-1$
+						break;
+						}
+					}
+				}
 			else if ( magic != MH_MAGIC )
 				throw new IOException(CCorePlugin.getResourceString("Util.exception.notMACHO")); //$NON-NLS-1$
 			cputype = makeInt(bytes, offset, isle); offset += 4;
@@ -1043,7 +1094,7 @@ public class MachO {
 	public static boolean isMachOHeader(byte[] bytes) {
 		try {
 			int magic = makeInt(bytes, 0, false);
-			return (magic == MachO.MachOhdr.MH_MAGIC || magic == MachO.MachOhdr.MH_CIGAM);
+			return (magic == MachO.MachOhdr.MH_MAGIC || magic == MachO.MachOhdr.MH_CIGAM || magic == MachO.MachOhdr.MH_UNIVERSAL);
 		} catch (IOException e) {
 			return false;
 		}

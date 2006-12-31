@@ -47,7 +47,7 @@ public class MachOParser extends AbstractCExtension implements IBinaryParser {
 			if (hints != null && hints.length > 0) {
 				try {
 					attribute = MachO.getAttributes(hints);
-				} catch (EOFException eof) {
+				} catch (IOException eof) {
 					// continue, the array was to small.
 				}
 			}

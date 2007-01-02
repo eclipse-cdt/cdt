@@ -19,7 +19,7 @@ package org.eclipse.rse.core.model;
 
 /**
  * Constants for pre-defined subsystem factory categories.
- * Use these in calls to {@link org.eclipse.rse.model.ISystemRegistry#getHostsBySubSystemConfigurationCategory(String)}.
+ * Use these in calls to {@link org.eclipse.rse.core.model.ISystemRegistry#getHostsBySubSystemConfigurationCategory(String)}.
  */
 public interface ISubSystemConfigurationCategories
 {

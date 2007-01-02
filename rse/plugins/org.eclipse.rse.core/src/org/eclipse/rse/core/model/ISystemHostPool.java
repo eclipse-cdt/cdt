@@ -133,7 +133,7 @@ public interface ISystemHostPool extends IRSEPersistableContainer
      * Duplicates a given connection in this list within this list or another list.
      * @param targetPool The SystemConnectionPool to hold the copied connection. Can equal this connection, as long as alias name is unique
      * @param conn SystemConnection object (within our pool) to clone
-     * @param alias New, unique, alias name to give this connection. Clone will fail if this is not unique.
+     * @param aliasName New, unique, alias name to give this connection. Clone will fail if this is not unique.
      */
     public IHost cloneHost(ISystemHostPool targetPool, IHost conn, String aliasName)
        throws Exception;
@@ -148,7 +148,7 @@ public interface ISystemHostPool extends IRSEPersistableContainer
      * </ul>
      * <b>TODO PROBLEM: CAN'T RE-ORDER FOLDERS SO CAN WE SUPPORT THIS ACTION?</b>
      * @param conns Array of SystemConnections to move.
-     * @param newPosition new zero-based position for the connection
+     * @param delta the amount by which to move the hosts within this pool
      */
     public void moveHosts(IHost conns[], int delta);
    

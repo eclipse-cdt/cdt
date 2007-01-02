@@ -26,6 +26,7 @@ package org.eclipse.rse.core.model;
  * <p>
  * If you are interesting in firing model change events, see 
  * {@link org.eclipse.rse.core.model.ISystemRegistry#fireModelChangeEvent(int, int, Object, String)}.
+ * These events will typically be signalled in an implementation of ISystemRegistry. 
  */
 public interface ISystemModelChangeEvents 
 {

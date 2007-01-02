@@ -17,8 +17,6 @@
 package org.eclipse.rse.core.model;
 /**
  * This interface represents a message we wish to display as child node in the tree view.
- * <p>
- * Related adapter is {@link org.eclipse.rse.ui.view.SystemViewMessageAdapter}
  */
 public interface ISystemMessageObject 
 {

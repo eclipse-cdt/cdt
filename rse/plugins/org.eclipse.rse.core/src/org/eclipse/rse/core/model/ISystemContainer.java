@@ -52,7 +52,7 @@ public interface ISystemContainer
     /**
      * Marks the object as stale or not
      * @param isStale whether the object is to be marked stale or not
-     * @param indicates whether or not to clear the cache
+     * @param clearCache indicates whether or not to clear the cache
      */
     public void markStale(boolean isStale, boolean clearCache);
 

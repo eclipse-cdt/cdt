@@ -28,7 +28,10 @@ package org.eclipse.rse.core.model;
 public final class SystemSignonInformation {
 
 	
-	private String _hostname, _userid, _systemType, _password;
+	private String _hostname;
+	private String _userid;
+	private String _systemType;
+	private String _password;
 	
 	/**
 	 * Default no-arg constructor

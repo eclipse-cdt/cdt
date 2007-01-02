@@ -29,7 +29,7 @@ public abstract class MBSCustomPage implements IWizardPage
 	protected IWizard wizard = null;
 	
 	/**
-	 * Preferred constructor which sets the (required) pageID
+	 * Constructor which sets the (required) pageID.
 	 * @param pageID identifies this page including for accessing the page data.
 	 */
 	public MBSCustomPage(String pageID) {
@@ -37,10 +37,9 @@ public abstract class MBSCustomPage implements IWizardPage
 	}
 	
 	/**
-	 * Default constructor is not recommended; pageID must be set
-	 * so the other constructor, with pageID parameter, is preferred.
-	 * 
-	 * @deprecated
+	 * 0-argument constructor, which is generally what will be invoked by the standard, custom wizard
+	 * page system.  It is assumed that either statically, or in the constructor for your derived class,
+	 * that you will set the pageID properly.
 	 *
 	 */
 	public MBSCustomPage() {

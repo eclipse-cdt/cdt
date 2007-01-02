@@ -350,7 +350,7 @@ public class RSEPersistenceManager implements IRSEPersistenceManager {
 			try {
 				if (!project.isSynchronized(IResource.DEPTH_ONE)) project.refreshLocal(IResource.DEPTH_ONE, null);
 				IRSEPersistenceProvider persistenceProvider = getRSEPersistenceProvider();
-				String profileNames[] = persistenceProvider.getSavedProfileNames();
+				String[] profileNames = persistenceProvider.getSavedProfileNames();
 				for (int i = 0; i < profileNames.length; i++) {
 					String profileName = profileNames[i];
 					RSEDOM dom = importRSEDOM(profileName);

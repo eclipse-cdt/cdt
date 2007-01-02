@@ -341,7 +341,7 @@ public class RSEDOMImporter implements IRSEDOMImporter
 		Vector filterStrings = new Vector();
 		
 		// create the filter strings
-		RSEDOMNode filterStringNodes[] = node.getChildren(IRSEDOMConstants.TYPE_FILTER_STRING);
+		RSEDOMNode[] filterStringNodes = node.getChildren(IRSEDOMConstants.TYPE_FILTER_STRING);
 		for (int i = 0; i < filterStringNodes.length; i++)
 		{
 			RSEDOMNode filterStringNode = filterStringNodes[i];

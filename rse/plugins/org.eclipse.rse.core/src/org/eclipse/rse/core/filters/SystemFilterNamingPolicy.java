@@ -24,9 +24,12 @@ package org.eclipse.rse.core.filters;
 public class SystemFilterNamingPolicy implements IRSEFilterNamingPolicy, ISystemFilterConstants 
 {
 	
-    protected String managerFileNamePrefix, poolFolderNamePrefix, poolFolderNameSuffix, 
-                     poolFileNamePrefix, filterFileNamePrefix, 
-                     referenceManagerFileNamePrefix;
+    protected String managerFileNamePrefix;
+    protected String poolFolderNamePrefix;
+    protected String poolFolderNameSuffix;
+    protected String poolFileNamePrefix;
+    protected String filterFileNamePrefix;
+    protected String referenceManagerFileNamePrefix;
     /**
      * Default prefix for filter pool manager persisted file: "filterPools_"
      */

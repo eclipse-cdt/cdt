@@ -243,7 +243,7 @@ java -jar $HOME/ws/eclipse/startup.jar \
     -siteXML=$SITE/site.xml
 
 cd $SITE
-#chgrp -R dsdp-tmadmin .
-#chmod -R g+w .
+chgrp -R dsdp-tmadmin .
+chmod -R g+w .
 chmod -R a+r .
 cd $curdir

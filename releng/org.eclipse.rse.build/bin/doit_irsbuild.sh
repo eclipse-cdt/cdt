@@ -109,9 +109,9 @@ if [ -f package.count -a "$FILES" != "" ]; then
   echo "Refreshing update site"
   cd $HOME/downloads-tm/testUpdates/bin
   ./mkTestUpdates.sh
-  echo "Refreshing signedUpdates site"
-  cd $HOME/downloads-tm/signedUpdates/bin
-  ./mkTestUpdates.sh
+  #echo "Refreshing signedUpdates site"
+  #cd $HOME/downloads-tm/signedUpdates/bin
+  #./mkTestUpdates.sh
 
   cd "$curdir"
 else

@@ -27,8 +27,6 @@ public interface IRemoteObjectResolver
 	 * <p>
 	 * Return the remote object within the subsystem that corresponds to
 	 * the specified unique ID.
-	 * <p>
-	 * This is the functional opposite of {@link org.eclipse.rse.ui.view.ISystemRemoteElementAdapter#getAbsoluteName(Object)}.
 	 */
 	public Object getObjectWithAbsoluteName(String key) throws Exception;	
 }

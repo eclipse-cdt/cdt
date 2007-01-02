@@ -170,7 +170,6 @@ public interface IConnectorService extends IRSEModelObject
      * If not currently set in transient memory, prompts the user for a password.
      * <p>
      * Throws InterruptedException if user is prompted and user cancels that prompt.
-     * @param shell parent for the prompt dialog if needed. Can be null if know password exists.
      * @param forcePrompt forces the prompt dialog to be displayed even if the password is currently
 	 * in memory.
      */
@@ -262,7 +261,7 @@ public interface IConnectorService extends IRSEModelObject
 	
 	/**
 	 * Returns the value of the '<em><b>Remote Server Launcher</b></em>' containment reference.
-	 * It is bidirectional and its opposite is '{@link org.eclipse.rse.core.subsystems.IServerLauncherProperties#getParentSubSystem <em>Parent Sub System</em>}'.
+	 * It is bidirectional and its opposite is '{@link org.eclipse.rse.core.subsystems.IServerLauncherProperties#getConnectorService()}'.
 	 * <!-- begin-user-doc -->
 	 * <p>
 	 * Get the remote server launcher, which may be null. This an optional object containing
@@ -270,22 +269,21 @@ public interface IConnectorService extends IRSEModelObject
 	 * </p>
 	 * <!-- end-user-doc -->
 	 * @return the value of the '<em>Remote Server Launcher</em>' containment reference.
-	 * @see #setRemoteServerLauncher(IServerLauncherProperties)
-	 * @see org.eclipse.rse.core.subsystems.SubsystemsPackage#getSubSystem_RemoteServerLauncher()
-	 * @see org.eclipse.rse.core.subsystems.IServerLauncherProperties#getParentSubSystem
+	 * @see #setRemoteServerLauncherProperties(IServerLauncherProperties)
+	 * @see org.eclipse.rse.core.subsystems.IServerLauncherProperties#getConnectorService()
 	 * @model opposite="parentSubSystem" containment="true"
 	 * @generated
 	 */
 	IServerLauncherProperties getRemoteServerLauncherProperties();
 
 	/**
-	 * Sets the value of the '{@link org.eclipse.rse.core.subsystems.ISubSystem#getRemoteServerLauncher <em>Remote Server Launcher</em>}' containment reference.
+	 * Sets the value of the '{@link org.eclipse.rse.core.subsystems.IConnectorService#getRemoteServerLauncherProperties()}' containment reference.
 	 * <!-- begin-user-doc -->
 	 * Set the remote server launcher, which is an optional object containing
 	 *  properties used to launch the remote server that communicates with this subsystem.
 	 * <!-- end-user-doc -->
 	 * @param value the new value of the '<em>Remote Server Launcher</em>' containment reference.
-	 * @see #getRemoteServerLauncher()
+	 * @see #getRemoteServerLauncherProperties()
 	 * @generated
 	 */
 	void setRemoteServerLauncherProperties(IServerLauncherProperties value);

@@ -136,8 +136,6 @@ public interface ISubSystemConfiguration extends ISystemFilterPoolManagerProvide
 	/**
 	 * Return true if you support user-defined actions for the remote system objects returned from expansion of
 	 *  subsystems created by this subsystem factory
-	 * @see #getActionSubSystem(ISubSystem)
-	 * @see #supportsUserDefinedActions(ISelection)
 	 * <p>Returns false in default implementation.
 	 */
 	public boolean supportsUserDefinedActions();
@@ -145,7 +143,6 @@ public interface ISubSystemConfiguration extends ISystemFilterPoolManagerProvide
 	/**
 	 * Return true if you support compile actions for the remote system objects returned from expansion of
 	 *  subsystems created by this subsystem factory.
-	 * @see #getCompileManager()
 	 * <p>Returns false in default implementation.
 	 */
 	public boolean supportsCompileActions();
@@ -172,7 +169,6 @@ public interface ISubSystemConfiguration extends ISystemFilterPoolManagerProvide
 	 * the server launcher to decide if a given remote server launch type is supported or not.
 	 * <br> We return true by default.
 	 * @see org.eclipse.rse.core.subsystems.ServerLaunchType
-	 * @see #getServerLauncherForm(Shell, ISystemMessageLine)
 	 */
 	public boolean supportsServerLaunchType(ServerLaunchType serverLaunchType);
 				
@@ -245,7 +241,7 @@ public interface ISubSystemConfiguration extends ISystemFilterPoolManagerProvide
 
     /**
      * Return the category this subsystem factory subscribes to.
-     * @see org.eclipse.rse.model.ISubSystemConfigurationCategories
+     * @see org.eclipse.rse.core.model.ISubSystemConfigurationCategories
      */
     public String getCategory();
     /**
@@ -353,12 +349,10 @@ public interface ISubSystemConfiguration extends ISystemFilterPoolManagerProvide
     public void updateSubSystem(ISubSystem subsystem, boolean updateUserId, String userId, boolean updatePort, int port);
 	/**
 	 * Update the port for the given subsystem instance.
-	 * Shortcut to {@link #updateSubSystem(Shell, ISubSystem, boolean, String, boolean, int)}
 	 */
 	public void setSubSystemPort(ISubSystem subsystem, int port);
 	/**
 	 * Update the user ID for the given subsystem instance.
-	 * Shortcut to {@link #updateSubSystem(Shell, ISubSystem, boolean, String, boolean, int)}
 	 */
 	public void setSubSystemUserId(ISubSystem subsystem, String userId);
 

@@ -57,7 +57,7 @@ public interface IHost extends IRSEModelObject
 
 	/**
 	 * Return the subsystem instances under this connection.
-	 * Just a shortcut to {@link org.eclipse.rse.model.ISystemRegistry#getSubSystems(IHost)} 
+	 * Just a shortcut to {@link org.eclipse.rse.core.model.ISystemRegistry#getSubSystems(IHost)} 
 	 */
 	public ISubSystem[] getSubSystems();	
  
@@ -187,9 +187,6 @@ public interface IHost extends IRSEModelObject
 	 * <!-- end-user-doc -->
 	 * @return the value of the '<em>Offline</em>' attribute.
 	 * @see #setOffline(boolean)
-	 * @see org.eclipse.rse.model.ModelPackage#getSystemConnection_Offline()
-	 * @model 
-	 * @generated
 	 */
 	boolean isOffline();
 

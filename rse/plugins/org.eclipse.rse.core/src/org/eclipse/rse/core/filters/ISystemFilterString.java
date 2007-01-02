@@ -27,11 +27,6 @@ import org.eclipse.rse.core.references.IRSEBaseReferencedObject;
  *  than a string, and its up to each consumer to know what to do with it. Generally,
  *  a filter string edit pane is designed to prompt the user for the contents of the 
  *  string in a domain-friendly way.
- * @see org.eclipse.rse.ui.filters.SystemFilterStringEditPane 
- * @see org.eclipse.rse.ui.filters.dialogs.SystemChangeFilterDialog and
- * @see org.eclipse.rse.ui.filters.actions.SystemChangeFilterAction
- * @see org.eclipse.rse.ui.filters.dialogs.SystemNewFilterWizard and
- * @see org.eclipse.rse.ui.filters.actions.SystemNewFilterAction
  */
 public interface ISystemFilterString extends IRSEBaseReferencedObject, IAdaptable, IRSEModelObject
 {

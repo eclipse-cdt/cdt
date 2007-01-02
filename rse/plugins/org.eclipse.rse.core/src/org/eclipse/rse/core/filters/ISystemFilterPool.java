@@ -15,9 +15,9 @@
  ********************************************************************************/
 
 package org.eclipse.rse.core.filters;
+
 import org.eclipse.rse.core.model.IRSEModelObject;
 import org.eclipse.rse.core.references.IRSEPersistableReferencedObject;
-
 
 /**
  * This interface represents a system filter pool, which is a means of
@@ -28,88 +28,97 @@ import org.eclipse.rse.core.references.IRSEPersistableReferencedObject;
 /**
  * @lastgen interface SystemFilterPool extends SystemPersistableReferencedObject, SystemFilterContainer {}
  */
-public interface ISystemFilterPool extends IRSEPersistableReferencedObject, ISystemFilterContainer, IRSEModelObject 
-{
+public interface ISystemFilterPool extends IRSEPersistableReferencedObject, ISystemFilterContainer, IRSEModelObject {
 	// external methods
-    /**
-     * Return the caller which instantiated the filter pool manager overseeing this filter framework instance
-     */
-    public ISystemFilterPoolManagerProvider getProvider();	
-    /**
-     * Set the naming policy used when saving data to disk.
-     * @see org.eclipse.rse.core.filters.IRSEFilterNamingPolicy
-     */
-    public void setNamingPolicy(IRSEFilterNamingPolicy namingPolicy);
-    /**
-     * Get the naming policy currently used when saving data to disk.
-     * @see org.eclipse.rse.core.filters.IRSEFilterNamingPolicy
-     */
-    public IRSEFilterNamingPolicy getNamingPolicy();
-    /**
-     * Does this filter support nested filters?
-     */
-    public boolean supportsNestedFilters();
-    /**
-     * Does this support duplicate filter strings? Calls mof-generated isSupportsDuplicateFilterStrings.
-     */
-    public boolean supportsDuplicateFilterStrings();
-    /**
+	/**
+	 * Return the caller which instantiated the filter pool manager overseeing this filter framework instance
+	 */
+	public ISystemFilterPoolManagerProvider getProvider();
+
+	/**
+	 * Set the naming policy used when saving data to disk.
+	 * @see org.eclipse.rse.core.filters.IRSEFilterNamingPolicy
+	 */
+	public void setNamingPolicy(IRSEFilterNamingPolicy namingPolicy);
+
+	/**
+	 * Get the naming policy currently used when saving data to disk.
+	 * @see org.eclipse.rse.core.filters.IRSEFilterNamingPolicy
+	 */
+	public IRSEFilterNamingPolicy getNamingPolicy();
+
+	/**
+	 * Does this filter support nested filters?
+	 */
+	public boolean supportsNestedFilters();
+
+	/**
+	 * Does this support duplicate filter strings? Calls mof-generated isSupportsDuplicateFilterStrings.
+	 */
+	public boolean supportsDuplicateFilterStrings();
+
+	/**
 	 * @return The value of the StringsCaseSensitive attribute
 	 * Are filter strings in this filter case sensitive?
 	 * If not set locally, queries the parent filter pool manager's atttribute.
 	 */
 	public boolean isStringsCaseSensitive();
 
-    /**
-     * Set the filter pool manager.
-     */
-    public void setSystemFilterPoolManager(ISystemFilterPoolManager mgr);
-    /**
-     * Return the filter pool manager managing this collection of filter pools and their filters.
-     */
-    public ISystemFilterPoolManager getSystemFilterPoolManager();    
+	/**
+	 * Set the filter pool manager.
+	 */
+	public void setSystemFilterPoolManager(ISystemFilterPoolManager mgr);
+
+	/**
+	 * Return the filter pool manager managing this collection of filter pools and their filters.
+	 */
+	public ISystemFilterPoolManager getSystemFilterPoolManager();
+
 	/**
 	 * This is to set transient data that is queryable via getFilterPoolData
 	 */
 	public void setSystemFilterPoolData(Object data);
+
 	/**
 	 * Return transient data set via setFilterPoolData.
 	 */
 	public Object getSystemFilterPoolData();
-    /**
-     * Clone this filter pools' attributes and filters into another filter pool.
-     * Assumes the core attributes were already set when filter pool was created:
-     * <ul>
-     *   <li>Name
-     *   <li>Deletable
-     *   <li>Supports nested filters
-     *   <li>Manager
-     * </ul>
-     * Attributes we clone:
-     * <ul>
-     *   <li>Data
-     *   <li>Type
-     *   <li>Default
-     * </ul>
-     */
-    public void cloneSystemFilterPool(ISystemFilterPool targetPool)
-           throws Exception;
-    /**
-     * Copy a system filter to this or another filter pool.
-     */
-    public ISystemFilter copySystemFilter(ISystemFilterPool targetPool, ISystemFilter oldFilter, String newName)
-           throws Exception;
-    /**
-     * Order filters according to user preferences.
-     * <p>
-     * While the framework has all the code necessary to arrange filters and save/restore
-     * that arrangement, you may choose to use preferences instead of this support.
-     * In this case, call this method and pass in the saved and sorted filter name list.
-     * <p>
-     * Called by someone after restore.
-     */
-    public void orderSystemFilters(String[] names);
-    /**
+
+	/**
+	 * Clone this filter pools' attributes and filters into another filter pool.
+	 * Assumes the core attributes were already set when filter pool was created:
+	 * <ul>
+	 *   <li>Name
+	 *   <li>Deletable
+	 *   <li>Supports nested filters
+	 *   <li>Manager
+	 * </ul>
+	 * Attributes we clone:
+	 * <ul>
+	 *   <li>Data
+	 *   <li>Type
+	 *   <li>Default
+	 * </ul>
+	 */
+	public void cloneSystemFilterPool(ISystemFilterPool targetPool) throws Exception;
+
+	/**
+	 * Copy a system filter to this or another filter pool.
+	 */
+	public ISystemFilter copySystemFilter(ISystemFilterPool targetPool, ISystemFilter oldFilter, String newName) throws Exception;
+
+	/**
+	 * Order filters according to user preferences.
+	 * <p>
+	 * While the framework has all the code necessary to arrange filters and save/restore
+	 * that arrangement, you may choose to use preferences instead of this support.
+	 * In this case, call this method and pass in the saved and sorted filter name list.
+	 * <p>
+	 * Called by someone after restore.
+	 */
+	public void orderSystemFilters(String[] names);
+
+	/**
 	 * Set the save file policy. See constants in SystemFilterConstants. One of:
 	 * <ul>
 	 *   <li>SAVE_POLICY_ONE_FILE_PER_POOL
@@ -117,17 +126,15 @@ public interface ISystemFilterPool extends IRSEPersistableReferencedObject, ISys
 	 * </ul>
 	 * This method is called by the SystemFilterPoolManager.
 	 */
-	public void setSavePolicy(int policy);    
+	public void setSavePolicy(int policy);
 
-	
 	public String getId();
-	
+
 	/**
 	 * @generated This field/method will be replaced during code generation 
 	 * @return The value of the Name attribute
 	 */
 	String getName();
-
 
 	/**
 	 * @generated This field/method will be replaced during code generation 
@@ -247,9 +254,6 @@ public interface ISystemFilterPool extends IRSEPersistableReferencedObject, ISys
 	 * @see #isSetSingleFilterStringOnly()
 	 * @see #unsetSingleFilterStringOnly()
 	 * @see #setSingleFilterStringOnly(boolean)
-	 * @see org.eclipse.rse.filters.FiltersPackage#getSystemFilterPool_SingleFilterStringOnly()
-	 * @model unsettable="true"
-	 * @generated
 	 */
 	boolean isSingleFilterStringOnly();
 
@@ -298,9 +302,6 @@ public interface ISystemFilterPool extends IRSEPersistableReferencedObject, ISys
 	 * <!-- end-user-doc -->
 	 * @return the value of the '<em>Owning Parent Name</em>' attribute.
 	 * @see #setOwningParentName(String)
-	 * @see org.eclipse.rse.filters.FiltersPackage#getSystemFilterPool_OwningParentName()
-	 * @model 
-	 * @generated
 	 */
 	String getOwningParentName();
 
@@ -324,9 +325,6 @@ public interface ISystemFilterPool extends IRSEPersistableReferencedObject, ISys
 	 * <!-- end-user-doc -->
 	 * @return the value of the '<em>Non Renamable</em>' attribute.
 	 * @see #setNonRenamable(boolean)
-	 * @see org.eclipse.rse.filters.FiltersPackage#getSystemFilterPool_NonRenamable()
-	 * @model 
-	 * @generated
 	 */
 	boolean isNonRenamable();
 
@@ -340,9 +338,5 @@ public interface ISystemFilterPool extends IRSEPersistableReferencedObject, ISys
 	 */
 	void setNonRenamable(boolean value);
 
-	public ISystemFilterPool createSystemFilterPool(
-            String name,
-            boolean allowNestedFilters, 
-            boolean isDeletable,
-            boolean tryToRestore);
+	public ISystemFilterPool createSystemFilterPool(String name, boolean allowNestedFilters, boolean isDeletable, boolean tryToRestore);
 }

@@ -600,7 +600,7 @@ public class RSECoreTestCase extends TestCase {
 	 * 
 	 * @param test The failed test. Must be not <code>null</code>.
 	 */
-	protected synchronized void collectTestLogs(Test test) {
+	protected final synchronized void collectTestLogs(Test test) {
 		if (test != null) {
 			// get a snapshot of the currently known test log collector delegates
 			IRSETestLogCollectorDelegate[] delegates = RSETestsPlugin.getDefault().getTestLogCollectorDelegates();

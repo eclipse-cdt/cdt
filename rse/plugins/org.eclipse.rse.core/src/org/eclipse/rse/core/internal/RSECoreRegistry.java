@@ -27,7 +27,7 @@ import org.eclipse.rse.core.IRSESystemType;
 public class RSECoreRegistry implements IRSECoreRegistry {
 
 	// the singleton instance
-	private static RSECoreRegistry instance;
+	private static RSECoreRegistry instance = null;
 
 	// extension registry
 	private IExtensionRegistry registry;

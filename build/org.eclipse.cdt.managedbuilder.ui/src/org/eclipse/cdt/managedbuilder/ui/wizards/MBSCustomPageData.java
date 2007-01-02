@@ -157,6 +157,9 @@ public final class MBSCustomPageData
 	 */
 	public String[] getNatures()
 	{
+		if (natureSet == null || natureSet.size() == 0)
+			return null;
+		
 		Object[] objArray = natureSet.toArray();
 
 		String[] strArray = new String[objArray.length];

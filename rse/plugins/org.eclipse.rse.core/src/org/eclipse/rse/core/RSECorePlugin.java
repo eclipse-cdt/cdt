@@ -34,9 +34,9 @@ import org.osgi.framework.BundleContext;
  */
 public class RSECorePlugin extends Plugin {
 
-	private static RSECorePlugin plugin; // the singleton instance of this plugin
+	private static RSECorePlugin plugin = null; // the singleton instance of this plugin
 	private Logger logger = null;
-	private ISystemRegistry _registry;
+	private ISystemRegistry _registry = null;
 	private IRSEPersistenceManager _persistenceManager = null;
 
 	/**

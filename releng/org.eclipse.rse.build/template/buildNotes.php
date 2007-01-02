@@ -23,8 +23,8 @@
 </table>
 <table><tbody><tr><td>
 <ul>
-<li>RSE 2.0 milestone builds are available from a special milestone update site at
-  <a href="http://download.eclipse.org/dsdp/tm/updates/2.0milestones">http://download.eclipse.org/dsdp/tm/updates/2.0milestones</a>.
+<li>RSE 2.0 milestone builds are available from a special interim update site at
+  <a href="http://download.eclipse.org/dsdp/tm/updates/interim">http://download.eclipse.org/dsdp/tm/updates/interim</a>.
   Update jars are currently packed but unsigned, until the fix for Platform bug 
   <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=168594">168594</a>
   is available as a milestone (supposedly 3.3M5).<br/>

@@ -182,21 +182,24 @@ elif [ `basename $SITE` = signedUpdates ]; then
     sed -e 's,Project Update,Project Signed Test Update,g' \
     	web/site.xsl > web/site.xsl.new
     mv -f web/site.xsl.new web/site.xsl
-elif [ `basename $SITE` = 2.0milestones ]; then
-    echo "Working on 2.0milestones update site"
+elif [ `basename $SITE` = interim ]; then
+    echo "Working on interim update site"
     echo "Expect that you copied your features and plugins yourself"
     stamp=`date +'%Y%m%d-%H%M'`
     rm index.html site.xml web/site.xsl
     cvs -q update -dPR
-    sed -e 's,/dsdp/tm/updates,/dsdp/tm/updates/2.0milestones,g' \
-    	-e 's,Project Update,Project Signed Test Update,g' \
+    sed -e 's,/dsdp/tm/updates,/dsdp/tm/updates/interim,g' \
+    	-e 's,Project Update,Project Interim Update,g' \
+    	-e '\,</h1>,a\
+This site contains Target Management Milestones (I-, S- and M- builds) which are \
+being contributed to the Europa coordinated release train (Eclipse 3.3).' \
     	index.html > index.html.new
     mv -f index.html.new index.html
-    sed -e 's,/dsdp/tm/updates,/dsdp/tm/updates/2.0milestones,g' \
-        -e 's,Project Update,Project Signed Test Update,g' \
+    sed -e 's,/dsdp/tm/updates,/dsdp/tm/updates/interim,g' \
+        -e 's,Project Update,Project Interim Update,g' \
         site.xml > site.xml.new
     mv -f site.xml.new site.xml
-    sed -e 's,Project Update,Project 2.0 Milestone Update,g' \
+    sed -e 's,Project Update,Project Interim Update,g' \
     	web/site.xsl > web/site.xsl.new
     mv -f web/site.xsl.new web/site.xsl
 else

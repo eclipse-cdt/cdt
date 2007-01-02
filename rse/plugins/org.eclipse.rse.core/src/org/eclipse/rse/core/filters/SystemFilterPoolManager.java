@@ -210,15 +210,12 @@ public class SystemFilterPoolManager implements ISystemFilterPoolManager {
 
 	/**
 	 * Factory to create a filter pool manager.
+	 * @param profile the profile for which to create the filter pool manager.
 	 * @param logger A logging object into which to log errors as they happen in the framework
 	 * @param caller Objects which instantiate this class should implement the
 	 *   SystemFilterPoolManagerProvider interface, and pass "this" for this parameter.
 	 *   Given any filter framework object, it is possible to retrieve the caller's
 	 *   object via the getProvider method call.
-	 * @param mgrFolder the folder that will be the manager folder. This is 
-	 *   the parent of the filter pool folders the manager folder will hold, or the single
-	 *   xmi file for the save policy of one file per manager. This folder will be created
-	 *   if it does not already exist.
 	 * @param name the name of the filter pool manager. Typically this is also the name
 	 *   of the given folder, but this is not required. For the save policy of one file
 	 *   per manager, the name of the file is derived from this. For other save policies,
@@ -239,7 +236,8 @@ public class SystemFilterPoolManager implements ISystemFilterPoolManager {
 	 * @param namingPolicy The names to use for file and folders when persisting to disk. Pass
 	 *     null to just use the defaults, or if using SAVE_POLICY_NONE.
 	 */
-	public static ISystemFilterPoolManager createSystemFilterPoolManager(ISystemProfile profile, Logger logger, ISystemFilterPoolManagerProvider caller, String name, boolean allowNestedFilters,
+	public static ISystemFilterPoolManager createSystemFilterPoolManager(ISystemProfile profile, Logger logger, 
+			ISystemFilterPoolManagerProvider caller, String name, boolean allowNestedFilters,
 			int savePolicy, IRSEFilterNamingPolicy namingPolicy) {
 
 		SystemFilterPoolManager mgr = null;
@@ -1164,8 +1162,8 @@ public class SystemFilterPoolManager implements ISystemFilterPoolManager {
 	 * A filter's type is an arbitrary string that is not interpreted or used by the base framework. This
 	 * is for use entirely by tools who wish to support multiple types of filters and be able to launch unique
 	 * actions per type, say.
-	 * @param parent The parent which is either a SystemFilterPool or a SystemFilter
-	 * @param type The type of this filter
+	 * @param filter The filter to be modified
+	 * @param newType The type of this filter
 	 */
 	public void setSystemFilterType(ISystemFilter filter, String newType) throws Exception {
 		filter.setType(newType);
@@ -1231,7 +1229,7 @@ public class SystemFilterPoolManager implements ISystemFilterPoolManager {
 	 * <li>Calls back to provider to inform of this event
 	 * </ul>
 	 * @param filters Array of SystemFilters to move.
-	 * @param newPosition new zero-based position for the filters (filterEventFiltersRePositioned)
+	 * @param delta the amount by which to move the filters (filterEventFiltersRePositioned)
 	 */
 	public void moveSystemFilters(ISystemFilter filters[], int delta) throws Exception {
 		/*
@@ -1459,7 +1457,7 @@ public class SystemFilterPoolManager implements ISystemFilterPoolManager {
 	 *   <li>Calls back to provider to inform of the event (filterEventFilterStringsRePositioned)
 	 * </ul>
 	 * @param filterStrings Array of SystemFilterStrings to move.
-	 * @param newPosition new zero-based position for the filter strings
+	 * @param delta the amount by which to move the filter strings
 	 */
 	public void moveSystemFilterStrings(ISystemFilterString filterStrings[], int delta) throws Exception {
 		ISystemFilter filter = filterStrings[0].getParentSystemFilter();
@@ -1625,8 +1623,8 @@ public class SystemFilterPoolManager implements ISystemFilterPoolManager {
 	/**
 	 * Helper method for logging debug messages
 	 * 
-	 * @param classname Class issuing the debug message.  Pass in either 
-	 *                  retieved using this.getClass() (for non-static methods)
+	 * @param prefix typically the name of the class issuing the debug message.  Pass in either 
+	 *                  retrieved using this.getClass() (for non-static methods)
 	 *                  or using MyClass.class (for static methods)
 	 * 
 	 * @param message Message to be written to the log file

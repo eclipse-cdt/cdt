@@ -13,9 +13,7 @@
  * Contributors:
  * {Name} (company) - description of contribution.
  ********************************************************************************/
-
 package org.eclipse.rse.core.filters;
-//
 
 import java.util.Vector;
 
@@ -25,87 +23,105 @@ import org.eclipse.rse.core.persistance.IRSEPersistableContainer;
  * Filter containers are any objects that contain filters.
  * This includes filter pools and filters themselves.
  */
-public interface ISystemFilterContainer extends IRSEPersistableContainer 
-{
-    /**
-     * Return the filter pool manager managing this collection of filter pools and their filters.
-     */
-    public ISystemFilterPoolManager getSystemFilterPoolManager();
+public interface ISystemFilterContainer extends IRSEPersistableContainer {
+	/**
+	 * @return the filter pool manager managing this collection of filter pools and their filters.
+	 */
+	public ISystemFilterPoolManager getSystemFilterPoolManager();
+
 	/**
 	 * @return The value of the StringsCaseSensitive attribute
-	 * Are filter strings in this filter case sensitive?
+	 * Are filters in this filter container case sensitive?
 	 * If not set locally, queries the parent filter pool manager's atttribute.
 	 */
-	public boolean areStringsCaseSensitive();    
-    /**
-     * Creates a new system filter within this container (SystemFilterPool or SystemFilter)
-     * @param data Optional transient data you want stored in the created filter. Can be null.
-     * @param aliasName The name to give the new filter. Must be unique for this pool.
-     * @param filterStrings The list of String objects that represent the filter strings.
-     */    
-    public ISystemFilter createSystemFilter(String aliasName, Vector filterStrings);     
-    /**
-     * Adds given filter to the list.
-     * <p>PLEASE NOTE:
-     * <ul>
-     *  <li> createSystemFilter calls this method for you!
-     *  <li> this is a no-op if a filter with the same aliasname already exists
-     * </ul>
-     * @param filter SystemFilter object to add
-     * @return true if added, false if filter with this aliasname already existed.
-     */
-    public boolean addSystemFilter(ISystemFilter filter);
-    /**
-     * Return Vector of String objects: the names of existing filters in this container.
-     * Needed by name validators for New and Rename actions to verify new name is unique.
-     */
-    public Vector getSystemFilterNames();
-    /**
-     * Return a Vector of the filters contained in this filter container.
-     */
-    public Vector getSystemFiltersVector();
-    /**
-     * Return an array of the filters contained in this filter container.
-     */
-    public ISystemFilter[] getSystemFilters();   
-    /**
-     * Return a system filter given its name
-     */
-    public ISystemFilter getSystemFilter(String filterName);   
-    /**
-     * Return the parent pool of this container.
-     * If this is itself a pool, returns "this".
-     * Else, for a nested filter, returns the pool that is the ultimate parent of this filter.
-     */
-    public ISystemFilterPool getSystemFilterPool(); 
-    /**
-     * Return how many filters are defined in this filter container
-     */
-    public int getSystemFilterCount();
-    /**
-     * Removes a given filter from the list.
-     * @param filter SystemFilter object to remove
-     */
-    public void deleteSystemFilter(ISystemFilter filter);
-    /**
-     * Renames a given filter in the list.
-     * @param filter SystemFilter object to rename
-     * @param newName New name to assign it. Assumes unique checking already done.
-     */
-    public void renameSystemFilter(ISystemFilter filter, String newName);
-    /**
-     * Return a given filter's zero-based location
-     */
-    public int getSystemFilterPosition(ISystemFilter filter);
-    /**
-     * Move a given filter to a given zero-based location
-     */
-    public void moveSystemFilter(int pos, ISystemFilter filter);
-    /**
-     * Updates a given filter in the list.
-     * @param filter SystemFilter object to update
-     * @param newName New name to assign it. Assumes unique checking already done.
-     * @param newStrings New strings to assign it. Replaces current strings.
-     */
-    public void updateSystemFilter(ISystemFilter filter, String newName, String[] newStrings);
+	public boolean areStringsCaseSensitive();
+
+	/**
+	 * Adds a new system filter to this container (SystemFilterPool or SystemFilter) and
+	 * populates it with the filter strings created from the strings provided.
+	 * Does nothing if this filter already exists in this container.
+	 * @param aliasName The name to give the new filter. Must be unique for this pool.
+	 * @param filterStrings The list of String objects that represent the filter strings.
+	 */
+	public ISystemFilter createSystemFilter(String aliasName, Vector filterStrings);
+
+	/**
+	 * Adds given filter to the list without populating the filter strings.
+	 * @param filter SystemFilter object to add
+	 * @return true if added, false if a filter with this aliasname already existed.
+	 */
+	public boolean addSystemFilter(ISystemFilter filter);
+
+	/**
+	 * @return Vector of String objects: the names of existing filters in this container.
+	 * Typically used by name validators for New and Rename actions to verify new name is unique.
+	 */
+	public Vector getSystemFilterNames();
+
+	/**
+	 * @return a Vector of the ISystemFilter objects contained in this filter container.
+	 */
+	public Vector getSystemFiltersVector();
+
+	/**
+	 * @return an array of the ISystemFilter objects contained in this filter container.
+	 */
+	public ISystemFilter[] getSystemFilters();
+
+	/**
+	 * @return a system filter given its name. Will return null if no filter by this name is found.
+	 */
+	public ISystemFilter getSystemFilter(String filterName);
+
+	/**
+	 * @return the parent pool of this container.
+	 * If this is itself a pool, returns "this".
+	 * For a nested filter, returns the pool that is the ultimate parent of this filter.
+	 */
+	public ISystemFilterPool getSystemFilterPool();
+
+	/**
+	 * @return how many filters are directly defined in this filter container.
+	 */
+	public int getSystemFilterCount();
+
+	/**
+	 * Removes a given filter from the list. Will do nothing if the specified filter 
+	 * is not in this filter container.
+	 * @param filter SystemFilter object to remove
+	 */
+	public void deleteSystemFilter(ISystemFilter filter);
+
+	/**
+	 * Renames a given filter in the list. The new name is assumed to be valid. 
+	 * Will perform the rename whether or not the filter is contained in this
+	 * container.
+	 * @param filter SystemFilter object to rename
+	 * @param newName New name to assign it.
+	 */
+	public void renameSystemFilter(ISystemFilter filter, String newName);
+
+	/**
+	 * @return a given filter's zero-based location. Will return -1 if the filter
+	 * is not present in this container.
+	 */
+	public int getSystemFilterPosition(ISystemFilter filter);
+
+	/**
+	 * Move a given filter to a given zero-based location.
+	 * Does nothing if the filter is not in this container.
+	 * @param pos the new position of the filter.
+	 * @param filter the filter to move.
+	 */
+	public void moveSystemFilter(int pos, ISystemFilter filter);
+
+	/**
+	 * Updates a given filter.
+	 * The filter need not be present in this container but will operate on
+	 * any filter.
+	 * @param filter SystemFilter object to update
+	 * @param newName New name to assign it. Assumes unique checking already done.
+	 * @param newStrings New strings to assign it. Replaces current strings.
+	 */
+	public void updateSystemFilter(ISystemFilter filter, String newName, String[] newStrings);
 }

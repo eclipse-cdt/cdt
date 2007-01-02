@@ -28,17 +28,11 @@ package org.eclipse.rse.core.subsystems;
  * The following features are supported:
  * <ul>
  * <li>{@link org.eclipse.rse.core.subsystems.IRemoteServerLauncher#getServerLaunchType <em>Server Launch Type</em>}</li>
- * <li>{@link org.eclipse.rse.core.subsystems.IRemoteServerLauncher#getPort <em>Port</em>}</li>
  * <li>{@link org.eclipse.rse.core.subsystems.IRemoteServerLauncher#getRexecPort <em>Rexec Port</em>}</li>
  * <li>{@link org.eclipse.rse.core.subsystems.IRemoteServerLauncher#getDaemonPort <em>Daemon Port</em>}</li>
  * <li>{@link org.eclipse.rse.core.subsystems.IRemoteServerLauncher#getServerPath <em>Server Path</em>}</li>
  * <li>{@link org.eclipse.rse.core.subsystems.IRemoteServerLauncher#getServerScript <em>Server Script</em>}</li>
- * <li>{@link org.eclipse.rse.core.subsystems.IRemoteServerLauncher#getIbmAttributes <em>Ibm Attributes</em>}</li>
- * <li>{@link org.eclipse.rse.core.subsystems.IRemoteServerLauncher#getRestrictedTypes <em>Restricted Types</em>}</li>
  * </ul>
- * </p>
- *
- * @see org.eclipse.rse.core.subsystems.SubsystemsPackage#getIBMServerLauncher()
  */
 public interface IRemoteServerLauncher extends IServerLauncherProperties{
 	
@@ -53,10 +47,7 @@ public interface IRemoteServerLauncher extends IServerLauncherProperties{
 	 * <!-- end-user-doc -->
 	 * @return the value of the '<em>Server Launch Type</em>' attribute.
 	 * @see org.eclipse.rse.core.subsystems.ServerLaunchType
-	 * @see #isSetServerLaunchType()
-	 * @see #unsetServerLaunchType()
 	 * @see #setServerLaunchType(ServerLaunchType)
-	 * @see org.eclipse.rse.core.subsystems.SubsystemsPackage#getIBMServerLauncher_ServerLaunchType()
 	 * @model unsettable="true"
 	 * @generated
 	 */
@@ -70,8 +61,6 @@ public interface IRemoteServerLauncher extends IServerLauncherProperties{
 	 * <!-- end-user-doc -->
 	 * @param value the new value of the '<em>Server Launch Type</em>' attribute.
 	 * @see org.eclipse.rse.core.subsystems.ServerLaunchType
-	 * @see #isSetServerLaunchType()
-	 * @see #unsetServerLaunchType()
 	 * @see #getServerLaunchType()
 	 * @generated
 	 */
@@ -86,8 +75,7 @@ public interface IRemoteServerLauncher extends IServerLauncherProperties{
 	 * </p>
 	 * <!-- end-user-doc -->
 	 * @return the value of the '<em>Rexec Port</em>' attribute.
-	 * @see #setRexecPort(Integer)
-	 * @see org.eclipse.rse.core.subsystems.SubsystemsPackage#getIBMServerLauncher_RexecPort()
+	 * @see #setRexecPort(int)
 	 * @model 
 	 * @generated
 	 */
@@ -122,9 +110,6 @@ public interface IRemoteServerLauncher extends IServerLauncherProperties{
 	 * <!-- end-user-doc -->
 	 * @return the value of the '<em>Server Path</em>' attribute.
 	 * @see #setServerPath(String)
-	 * @see org.eclipse.rse.core.subsystems.SubsystemsPackage#getIBMServerLauncher_ServerPath()
-	 * @model 
-	 * @generated
 	 */
 	String getServerPath();
 
@@ -148,9 +133,6 @@ public interface IRemoteServerLauncher extends IServerLauncherProperties{
 	 * <!-- end-user-doc -->
 	 * @return the value of the '<em>Server Script</em>' attribute.
 	 * @see #setServerScript(String)
-	 * @see org.eclipse.rse.core.subsystems.SubsystemsPackage#getIBMServerLauncher_ServerScript()
-	 * @model 
-	 * @generated
 	 */
 	String getServerScript();
 
@@ -185,11 +167,11 @@ public interface IRemoteServerLauncher extends IServerLauncherProperties{
 
 	/**
 	 * This methods returns the enablement state per server launch type.
-	 * If {@link #enableServerLaunchType(ServerLaunchType,boolean)} has not been
+	 * If {@link #setServerLaunchType(ServerLaunchType)} has not been
 	 *  called for this server launch type, then we defer to the subsystem factory's
 	 *  method: 
-	 * {@link org.eclipse.rse.core.subsystems.SubSystemConfiguration#supportsServerLaunchType(ServerLaunchType)}.
+	 * {@link org.eclipse.rse.core.subsystems.ISubSystemConfiguration#supportsServerLaunchType(ServerLaunchType)}.
 	 * @see org.eclipse.rse.core.subsystems.ServerLaunchType
 	 */
 	public boolean isEnabledServerLaunchType(ServerLaunchType serverLaunchType);
-} // IBMServerLauncher
+}

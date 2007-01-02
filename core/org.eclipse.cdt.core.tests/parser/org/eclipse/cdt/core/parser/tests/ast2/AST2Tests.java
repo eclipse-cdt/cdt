@@ -3494,7 +3494,7 @@ public class AST2Tests extends AST2BaseTest {
     //    z= (a)/z;
     //    z= (a)%z;
     // }
-    public void _testBracketAroundIdentifier_168924() throws IOException, ParserException {
+    public void testBracketAroundIdentifier_168924() throws IOException, ParserException {
     	StringBuffer buf= getContents(1)[0];
         IASTTranslationUnit tu= parse(buf.toString(), ParserLanguage.C, true, true);
         IASTFunctionDefinition func= (IASTFunctionDefinition) tu.getDeclarations()[0];

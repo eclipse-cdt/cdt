@@ -2268,4 +2268,24 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
     		}
     	}
     }
+    
+    /**
+     * In case a cast expression is followed by +/- or & we should avoid it:
+     * (a)+1 vs. (int)+1;
+     * @since 4.0
+     */
+	protected boolean avoidCastExpressionByHeuristics() throws EndOfFileException {
+		if (LT(1) == IToken.tIDENTIFIER) {
+			if (LT(2) == IToken.tRPAREN) {
+				switch (LT(3)) {
+				case IToken.tPLUS:
+				case IToken.tMINUS:
+				case IToken.tAMPER:
+				case IToken.tSTAR:
+		    		return true;
+		    	}
+			}
+		}
+		return false;
+	}
 }

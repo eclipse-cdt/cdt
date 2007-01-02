@@ -835,7 +835,9 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
             boolean needBack = false;
             try {
                 try {
-                    typeId = typeId(false);
+                	if (!avoidCastExpressionByHeuristics()) {
+                		typeId = typeId(false);
+                	}
                     if (typeId != null) {
                     	switch (LT(1)) {
                     	case IToken.tRPAREN:
@@ -887,7 +889,6 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
      */
     protected IASTExpression unaryExpression() throws EndOfFileException,
             BacktrackException {
-        int startingOffset = LA(1).getOffset();
         switch (LT(1)) {
         case IToken.tSTAR:
             return unaryOperatorCastExpression(IASTUnaryExpression.op_star);
@@ -906,41 +907,7 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
         case IToken.tDECR:
             return unaryOperatorCastExpression(IASTUnaryExpression.op_prefixDecr);
         case IToken.t_sizeof:
-            startingOffset = consume().getOffset();
-            IToken mark = LA(1);
-            IASTExpression unaryExpression = null;
-            IASTTypeId typeId = null;
-            int lastOffset = 0;
-            if (LT(1) == IToken.tLPAREN) {
-            	boolean needBack = false;
-                consume();
-                typeId = typeId(false);
-                if (typeId != null) {
-                	switch (LT(1)) {
-                	case IToken.tRPAREN:
-                	case IToken.tEOC:
-                		lastOffset = consume().getEndOffset();
-                		break;
-                	default:
-                		needBack = true;
-                	}
-                } else {needBack = true; }
-                if (needBack) {
-                    backup(mark);
-                    typeId = null;
-                    unaryExpression = unaryExpression();
-                    lastOffset = calculateEndOffset(unaryExpression);
-                }
-            } else {
-                unaryExpression = unaryExpression();
-                lastOffset = calculateEndOffset(unaryExpression);
-            }
-            mark = null;
-            if (typeId == null && unaryExpression != null)
-                return buildUnaryExpression(IASTUnaryExpression.op_sizeof,
-                        unaryExpression, startingOffset, lastOffset);
-            return buildTypeIdExpression(IASTTypeIdExpression.op_sizeof,
-                    typeId, startingOffset, lastOffset);
+        	return parseSizeofExpression();
 
         default:
             if (LT(1) == IGCCToken.t_typeof && supportTypeOfUnaries) {
@@ -995,23 +962,28 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
         case IToken.tLPAREN:
             // ( type-name ) { initializer-list }
             // ( type-name ) { initializer-list , }
-            IToken m = mark();
-            try {
-                int offset = consume().getOffset();
-                IASTTypeId t = typeId(false);
-                if (t != null) {
-                	consume(IToken.tRPAREN).getEndOffset();
-                	IASTInitializer i = cInitializerClause(Collections.EMPTY_LIST);
-                	firstExpression = buildTypeIdInitializerExpression(t, i,
-                			offset, calculateEndOffset(i));
-                    break;                	
-                } else {backup(m); }
-            } catch (BacktrackException bt) {
-                backup(m);
-            }
-
+        	IToken m = mark();
+        	try {
+        		int offset = consume().getOffset();
+        		IASTTypeId t = typeId(false);
+        		if (t != null) {
+        			consume(IToken.tRPAREN).getEndOffset();
+                	if (LT(1) == IToken.tLBRACE) {
+        				IASTInitializer i = cInitializerClause(Collections.EMPTY_LIST);
+        				firstExpression = buildTypeIdInitializerExpression(t, i,
+        						offset, calculateEndOffset(i));
+        				break;        
+                	}
+        		}
+        	} catch (BacktrackException bt) {
+        	}
+        	backup(m); 
+        	firstExpression= primaryExpression();
+        	break;
+        	
         default:
             firstExpression = primaryExpression();
+        	break;
         }
 
         IASTExpression secondExpression = null;

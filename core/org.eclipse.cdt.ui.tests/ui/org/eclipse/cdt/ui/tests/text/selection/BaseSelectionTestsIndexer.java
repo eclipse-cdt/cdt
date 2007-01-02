@@ -46,6 +46,7 @@ import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.model.CoreModel;
+import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.testplugin.FileManager;
 import org.eclipse.cdt.ui.tests.BaseUITestCase;
@@ -61,7 +62,7 @@ import org.eclipse.cdt.internal.ui.search.actions.OpenDeclarationsAction;
  * @author dsteffle
  */
 public class BaseSelectionTestsIndexer extends BaseUITestCase {
-	protected IProject project;
+	protected ICProject fCProject;
 	static FileManager fileManager = new FileManager();
 	IProgressMonitor monitor = new NullProgressMonitor();
 	
@@ -88,7 +89,7 @@ public class BaseSelectionTestsIndexer extends BaseUITestCase {
 
     protected IFile importFile(String fileName, String contents ) throws Exception{
         //Obtain file handle
-        IFile file = project.getProject().getFile(fileName);
+        IFile file = fCProject.getProject().getFile(fileName);
         
         InputStream stream = new ByteArrayInputStream( contents.getBytes() ); 
         //Create file input stream
@@ -106,9 +107,9 @@ public class BaseSelectionTestsIndexer extends BaseUITestCase {
     
     protected IFile importFileWithLink(String fileName, String contents) throws Exception{
         //Obtain file handle
-        IFile file = project.getProject().getFile(fileName);
+        IFile file = fCProject.getProject().getFile(fileName);
         
-        IPath location = new Path(project.getLocation().removeLastSegments(1).toOSString() + File.separator + fileName); //$NON-NLS-1$
+        IPath location = new Path(fCProject.getProject().getLocation().removeLastSegments(1).toOSString() + File.separator + fileName); //$NON-NLS-1$
         
         File linkFile = new File(location.toOSString());
         if (!linkFile.exists()) {
@@ -130,6 +131,7 @@ public class BaseSelectionTestsIndexer extends BaseUITestCase {
     }
     
     protected IFile importFileInsideLinkedFolder(String fileName, String contents, String folderName ) throws Exception{
+    	IProject project= fCProject.getProject();
     	IFolder linkedFolder = project.getFolder(folderName);
     	IPath folderLocation = new Path(project.getLocation().toOSString() + File.separator + folderName + "_this_is_linked"); //$NON-NLS-1$
     	IFolder actualFolder = project.getFolder(folderName + "_this_is_linked"); //$NON-NLS-1$
@@ -155,7 +157,7 @@ public class BaseSelectionTestsIndexer extends BaseUITestCase {
     }
 
     protected IFolder importFolder(String folderName) throws Exception {
-    	IFolder folder = project.getProject().getFolder(folderName);
+    	IFolder folder = fCProject.getProject().getFolder(folderName);
 		
 		//Create file input stream
 		if( !folder.exists() )

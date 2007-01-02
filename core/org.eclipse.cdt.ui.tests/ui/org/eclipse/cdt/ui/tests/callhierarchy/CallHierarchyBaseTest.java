@@ -81,14 +81,14 @@ public class CallHierarchyBaseTest extends BaseUITestCase {
 	protected void openCallHierarchy(CEditor editor, boolean showReferencedBy) {
 		CallHierarchyUI.setIsJUnitTest(true);
 		CallHierarchyUI.open(editor, (ITextSelection) editor.getSelectionProvider().getSelection());
-		runEventQueue(200);
+		runEventQueue(0);
 		CHViewPart ch= null;
 		IWorkbenchPage page = editor.getSite().getPage();
-		for (int i = 0; i < 20; i++) {
+		for (int i = 0; i < 400; i++) {
 			ch= (CHViewPart)page.findView(CUIPlugin.ID_CALL_HIERARCHY);
 			if (ch != null) 
 				break;
-			runEventQueue(200);
+			runEventQueue(10);
 		}
 		assertNotNull(ch);
 		ch.onSetShowReferencedBy(showReferencedBy);
@@ -97,7 +97,13 @@ public class CallHierarchyBaseTest extends BaseUITestCase {
 	protected TreeViewer getCHTreeViewer() {
 		IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
 		runEventQueue(0);
-		CHViewPart ch= (CHViewPart)page.findView(CUIPlugin.ID_CALL_HIERARCHY);
+		CHViewPart ch= null;
+		for (int i=0; i<50; i++) {
+			ch= (CHViewPart)page.findView(CUIPlugin.ID_CALL_HIERARCHY);
+			if (ch != null) 
+				break;
+			runEventQueue(10);
+		}
 		assertNotNull(ch);
 		return ch.getTreeViewer();
 	}
@@ -105,7 +111,7 @@ public class CallHierarchyBaseTest extends BaseUITestCase {
 	protected TreeItem checkTreeNode(Tree tree, int i0, String label) {
 		TreeItem root= null;
 		try {
-			for (int i=0; i<20; i++) {
+			for (int i=0; i<100; i++) {
 				root= tree.getItem(i0);
 				try {
 					if (!"...".equals(root.getText())) {
@@ -114,7 +120,7 @@ public class CallHierarchyBaseTest extends BaseUITestCase {
 				} catch (SWTException e) {
 					// in case widget was disposed, item may be replaced
 				}
-				runEventQueue(50);
+				runEventQueue(10);
 			}
 		}
 		catch (IllegalArgumentException e) {

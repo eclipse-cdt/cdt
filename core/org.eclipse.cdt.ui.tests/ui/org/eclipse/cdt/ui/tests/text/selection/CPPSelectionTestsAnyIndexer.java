@@ -50,32 +50,19 @@ public abstract class CPPSelectionTestsAnyIndexer extends BaseSelectionTestsInde
 		super.setUp();
 		
 		//Create temp project
-		ICProject cproject = createProject("CPPSelectionTestsDOMIndexerProject"); //$NON-NLS-1$
-		assertNotNull("Unable to create project", cproject);
+		fCProject= createProject("CPPSelectionTestsDOMIndexerProject"); //$NON-NLS-1$
+		assertNotNull("Unable to create project", fCProject);
 //		MakeProjectNature.addNature(project, new NullProgressMonitor());
 //		ScannerConfigNature.addScannerConfigNature(project);
 //		PerProjectSICollector.calculateCompilerBuiltins(project);
 
-		CCorePlugin.getPDOMManager().setIndexerId(cproject, sourceIndexerID);
-		project= cproject.getProject();
-		index= CCorePlugin.getIndexManager().getIndex(cproject);
+		CCorePlugin.getPDOMManager().setIndexerId(fCProject, sourceIndexerID);
+		index= CCorePlugin.getIndexManager().getIndex(fCProject);
 	}
 
-	protected void tearDown() {
-		try {
-			super.tearDown();
-		} catch (Exception e1) {
-		}
-		//Delete project
-		if (project.exists()) {
-			try {
-				System.gc();
-				System.runFinalization();
-				project.delete(true, monitor);
-			} catch (CoreException e) {
-				fail(getMessage(e.getStatus()));
-			}
-		}
+	protected void tearDown() throws Exception {
+		CProjectHelper.delete(fCProject);
+		super.tearDown();
 	}
 
 	private ICProject createProject(String projectName) throws CoreException {

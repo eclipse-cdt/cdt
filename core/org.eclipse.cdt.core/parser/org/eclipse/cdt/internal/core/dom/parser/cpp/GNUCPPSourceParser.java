@@ -914,8 +914,11 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
     		boolean popped = false;
     		IASTTypeId typeId = null;
     		IToken startCastExpression=null;
+    		
     		// If this isn't a type name, then we shouldn't be here
-            typeId = typeId(false);
+    		if (!avoidCastExpressionByHeuristics()) {
+    			typeId = typeId(false);
+    		}
             if (typeId != null && LT(1) == IToken.tRPAREN) {
                 consume();
                 startCastExpression=mark();

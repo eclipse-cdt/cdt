@@ -120,7 +120,7 @@ public interface ISystemFilterPoolReferenceManager extends IRSEBasePersistableRe
 	/**
 	 * In one shot, set the filter pool references
 	 * <p> Calls back to inform provider
-	 * @param array of filter pool reference objects to set the list to.
+	 * @param filterPoolReferences of filter pool reference objects to set the list to.
 	 * @param deReference true to first de-reference all objects in the existing list.
 	 */
 	public void setSystemFilterPoolReferences(ISystemFilterPoolReference[] filterPoolReferences, boolean deReference);
@@ -138,7 +138,7 @@ public interface ISystemFilterPoolReferenceManager extends IRSEBasePersistableRe
 
 	/**
 	 * Remove a filter pool referencing object from the list.
-	 * @param filterPool Reference the reference to remove
+	 * @param filterPoolReference the reference to remove
 	 * @param deReference true if we want to dereference the referenced object (call removeReference on it)
 	 * @return the new count of referencing objects
 	 */
@@ -166,7 +166,7 @@ public interface ISystemFilterPoolReferenceManager extends IRSEBasePersistableRe
 	 * positive, they are all moved down by the given amount.<p>
 	 * <p> Calls back to inform provider
 	 * @param filterPoolRefs Array of SystemFilterPoolReferences to move.
-	 * @param newPosition new zero-based position for the filter pool references.
+	 * @param delta the amount by which to move the filter pool references.
 	 */
 	public void moveSystemFilterPoolReferences(ISystemFilterPoolReference[] filterPoolRefs, int delta);
 
@@ -223,7 +223,7 @@ public interface ISystemFilterPoolReferenceManager extends IRSEBasePersistableRe
 	/**
 	 * In one shot, set the filter pool references to new references to supplied filter pools.
 	 * <p> Calls back to inform provider
-	 * @param array of filter pool objects to create references for
+	 * @param filterPools of filter pool objects to create references for
 	 * @param deReference true to first de-reference all objects in the existing list.
 	 */
 	public void setSystemFilterPoolReferences(ISystemFilterPool[] filterPools, boolean deReference);
@@ -272,7 +272,7 @@ public interface ISystemFilterPoolReferenceManager extends IRSEBasePersistableRe
 	 *          of all referencing objects.
 	 *   <li>Set the important transient variables 
 	 * </ol>
-	 * @param relatedManagers the filter pool managers that hold filter pools we reference
+	 * @param relatedPoolMgrProvider the creator of the filter pool managers that hold filter pools we reference
 	 * @param provider the host of this reference manager, so you can later call getProvider
 	 * @return A Vector of SystemFilterPoolReferences that were not successfully resolved, or null if all
 	 *   were resolved.

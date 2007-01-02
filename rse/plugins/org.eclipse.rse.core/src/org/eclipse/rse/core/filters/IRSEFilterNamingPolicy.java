@@ -21,7 +21,7 @@ package org.eclipse.rse.core.filters;
  * <p>
  * Note that not all methods will be used for all saving policies.
  * <p>
- * @see org.eclipse.rse.internal.filters.SystemFilterNamingPolicy#getNamingPolicy()
+ * @see org.eclipse.rse.core.filters.SystemFilterNamingPolicy#getNamingPolicy()
  */
 public interface IRSEFilterNamingPolicy
 {

@@ -219,6 +219,9 @@
 		<property name="xxmailto" value="dsdp-tm-cvs-commit@eclipse.org"/>
 		<property name="mailto" value="martin.oberhuber@windriver.com"/>
 		<property name="remotedir" value="moberhuber@dev.eclipse.org:downloads-tm/downloads/drops"/>
+		<condition property="doNBuild">
+		    <equals arg1="${fetchTag}" arg2="HEAD"/>
+		</condition>
 		<condition property="doUpload">
 			<equals arg1="${publishDirectory}" arg2=""/>
 		</condition>
@@ -243,29 +246,46 @@
 	<!-- ===================================================================== -->
 	<!-- Steps to do before fetching the build elements -->
 	<!-- ===================================================================== -->
-	<target name="preFetch">
-		<!-- clean up the old driver -->
-		<!--	<delete includeEmptyDirs="true">-->
+	<target name="preFetchOrbitBundles" depends="myInit" if="doNBuild">
+		<!-- fetch Orbit stuff first in order to ensure we get      -->
+		<!-- the latest released version even in case of an N-build -->
 		<!--
-		<fileset dir="${buildDirectory}\plugins" casesensitive="yes" defaultexcludes="no">
-			<include name="org.eclipse.*/**" />
-		</fileset>
-		<fileset dir="${buildDirectory}\features" casesensitive="yes" defaultexcludes="no">
-			<include name="org.eclipse.*/**" />
-		</fileset>
-		<fileset dir="${builddest}" casesensitive="yes" defaultexcludes="yes">
-			<include name="full/eclipse/**" />
-			<include name="full/Config/**" />
-			<include name="lite/**" />
-		</fileset>
-		<fileset dir="${head}\eclipse\plugins" casesensitive="yes" defaultexcludes="yes">
-			<include name="org.eclipse.*/**" />
-		</fileset>
-		<fileset dir="${head}\eclipse\features" casesensitive="yes" defaultexcludes="no">
-			<include name="org.eclipse.*/**" />
-		</fileset>
+		<ant antfile="${genericTargets}" target="fetchElement">
+			<property name="type" value="feature" />
+			<property name="id" value="org.apache.commons.net" />
+		</ant>
 		-->
-		<!--	</delete>-->
+		<mkdir dir="${buildDirectory}/features"/>
+		<mkdir dir="${buildDirectory}/plugins"/>
+		<eclipse.fetch
+			elements="feature@org.apache.oro"
+			buildDirectory="${buildDirectory}"
+			directory="${buildDirectory}/directory.txt"
+			fetchTag=""
+			configInfo="*,*,*"
+			baseLocation="${baseLocation}"
+		/>
+		<!-- Run generated fetch script -->
+		<ant antfile="${buildDirectory}/fetch_org.apache.oro.xml">
+			<property name="featureOnly" value="true"/>
+			<property name="featureAndPlugins" value="true"/>
+		</ant>
+		<eclipse.fetch
+			elements="feature@org.apache.commons.net"
+			buildDirectory="${buildDirectory}"
+			directory="${buildDirectory}/directory.txt"
+			fetchTag=""
+			configInfo="*,*,*"
+			baseLocation="${baseLocation}"
+		/>
+		<!-- Run generated fetch script -->
+		<ant antfile="${buildDirectory}/fetch_org.apache.commons.net.xml">
+			<property name="featureOnly" value="true"/>
+			<property name="featureAndPlugins" value="true"/>
+		</ant>
+	</target>
+
+	<target name="preFetch" depends="preFetchOrbitBundles">
 	</target>
 
 	<!-- ===================================================================== -->

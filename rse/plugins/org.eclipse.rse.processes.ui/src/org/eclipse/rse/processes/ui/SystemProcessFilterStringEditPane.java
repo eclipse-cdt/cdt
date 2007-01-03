@@ -77,7 +77,7 @@ public class SystemProcessFilterStringEditPane extends
 	// validators
 	protected ValidatorLongRangeInput vmRangeValidator = new ValidatorLongRangeInput(0, vmMaxValue);	
 	protected ValidatorIntegerRangeInput gidValidator = new ValidatorIntegerRangeInput(0, gidLimit);
-	protected ValidatorSpecialChar nameValidator = new ValidatorSpecialChar(" \t|", true);
+	protected ValidatorSpecialChar nameValidator = new ValidatorSpecialChar(" \t|", true); //$NON-NLS-1$
 
 	// inputs
 	protected String[] inputFilterStrings;
@@ -158,9 +158,9 @@ public class SystemProcessFilterStringEditPane extends
 		txtExeName = SystemWidgetHelpers.createTextField(sub_prompts1, null);
 		txtExeName.setToolTipText(SystemProcessesResources.RESID_PROCESSFILTERSTRING_EXENAME_TOOLTIP);
 
-		SystemWidgetHelpers.setHelp(txtExeName, ProcessesPlugin.HELPPREFIX+"pfsd0001");
+		SystemWidgetHelpers.setHelp(txtExeName, ProcessesPlugin.HELPPREFIX+"pfsd0001"); //$NON-NLS-1$
         updateGridData(txtExeName, gridColumns-1);
-		txtExeName.setText("*");
+		txtExeName.setText("*"); //$NON-NLS-1$
 
    		// User name prompt    
 		lblUserName = SystemWidgetHelpers.createLabel(sub_prompts1, SystemProcessesResources.RESID_PROCESSFILTERSTRING_USERNAME_LABEL);
@@ -168,9 +168,9 @@ public class SystemProcessFilterStringEditPane extends
 		txtUserName = SystemWidgetHelpers.createTextField(sub_prompts1, null);
 		txtUserName.setToolTipText(SystemProcessesResources.RESID_PROCESSFILTERSTRING_USERNAME_TOOLTIP);
 
-		SystemWidgetHelpers.setHelp(txtUserName, ProcessesPlugin.HELPPREFIX+"pfsd0002");
+		SystemWidgetHelpers.setHelp(txtUserName, ProcessesPlugin.HELPPREFIX+"pfsd0002"); //$NON-NLS-1$
         updateGridData(txtUserName, gridColumns-1);
-		txtUserName.setText("*");
+		txtUserName.setText("*"); //$NON-NLS-1$
 		
    		// Group ID prompt    
 		lblGid = SystemWidgetHelpers.createLabel(sub_prompts1, SystemProcessesResources.RESID_PROCESSFILTERSTRING_GID_LABEL);
@@ -178,9 +178,9 @@ public class SystemProcessFilterStringEditPane extends
 		txtGid = SystemWidgetHelpers.createTextField(sub_prompts1, null);
 		txtGid.setToolTipText(SystemProcessesResources.RESID_PROCESSFILTERSTRING_GID_TOOLTIP);
 
-		SystemWidgetHelpers.setHelp(txtGid, ProcessesPlugin.HELPPREFIX+"pfsd0003");
+		SystemWidgetHelpers.setHelp(txtGid, ProcessesPlugin.HELPPREFIX+"pfsd0003"); //$NON-NLS-1$
         updateGridData(txtGid, gridColumns-1);
-		txtGid.setText("*");
+		txtGid.setText("*"); //$NON-NLS-1$
 		
 		// status checkbox table
 		lblStatus = SystemWidgetHelpers.createLabel(sub_prompts1, SystemProcessesResources.RESID_PROCESSFILTERSTRING_STATUS_LABEL);
@@ -192,8 +192,8 @@ public class SystemProcessFilterStringEditPane extends
 		chkStatus.getTable().setLayoutData(data);
 		chkStatus.setLabelProvider(new LabelProvider());
 
-		SystemWidgetHelpers.setHelp(chkStatus.getControl(), ProcessesPlugin.HELPPREFIX+"pfsd0004");
-	    SystemWidgetHelpers.createLabel(sub_prompts1, "      ");
+		SystemWidgetHelpers.setHelp(chkStatus.getControl(), ProcessesPlugin.HELPPREFIX+"pfsd0004"); //$NON-NLS-1$
+	    SystemWidgetHelpers.createLabel(sub_prompts1, "      "); //$NON-NLS-1$
 		addSelectionButtons(sub_prompts1);
 		
 		// Range prompt
@@ -203,22 +203,22 @@ public class SystemProcessFilterStringEditPane extends
 		txtMinVM = SystemWidgetHelpers.createTextField(subsub, null);
 		txtMinVM.setToolTipText(SystemProcessesResources.RESID_PROCESSFILTERSTRING_MINVM_TOOLTIP);
 
-		SystemWidgetHelpers.setHelp(txtMinVM, ProcessesPlugin.HELPPREFIX+"pfsd0005");
-		txtMinVM.setText("0");
-		SystemWidgetHelpers.createLabel(subsub, "      ");
+		SystemWidgetHelpers.setHelp(txtMinVM, ProcessesPlugin.HELPPREFIX+"pfsd0005"); //$NON-NLS-1$
+		txtMinVM.setText("0"); //$NON-NLS-1$
+		SystemWidgetHelpers.createLabel(subsub, "      "); //$NON-NLS-1$
 		
 		lblMaxVM = SystemWidgetHelpers.createLabel(subsub, SystemProcessesResources.RESID_PROCESSFILTERSTRING_MAXVM_LABEL);
 		lblMaxVM.setToolTipText(SystemProcessesResources.RESID_PROCESSFILTERSTRING_MAXVM_TOOLTIP);
 		txtMaxVM = SystemWidgetHelpers.createTextField(subsub, null);
 		txtMaxVM.setToolTipText(SystemProcessesResources.RESID_PROCESSFILTERSTRING_MAXVM_TOOLTIP);
 
-		SystemWidgetHelpers.setHelp(txtMaxVM, ProcessesPlugin.HELPPREFIX+"pfsd0006");
+		SystemWidgetHelpers.setHelp(txtMaxVM, ProcessesPlugin.HELPPREFIX+"pfsd0006"); //$NON-NLS-1$
         txtMaxVM.setEnabled(false);
 
 		// Unlimited check box                     
 		chkBoxUnlimitedVM = SystemWidgetHelpers.createCheckBox(subsub, 1, null,
 		                                                  SystemProcessesResources.RESID_PROCESSFILTERSTRING_UNLIMITED_LABEL,  SystemProcessesResources.RESID_PROCESSFILTERSTRING_UNLIMITED_TOOLTIP);
-        SystemWidgetHelpers.setHelp(chkBoxUnlimitedVM, ProcessesPlugin.HELPPREFIX+"pfsd0007");
+        SystemWidgetHelpers.setHelp(chkBoxUnlimitedVM, ProcessesPlugin.HELPPREFIX+"pfsd0007"); //$NON-NLS-1$
 
         txtExeName.setFocus();
 
@@ -263,7 +263,7 @@ public class SystemProcessFilterStringEditPane extends
 				public void modifyText(ModifyEvent e) {
 					if (validateMinVMInput() == null)
 					{
-						if (!chkBoxUnlimitedVM.getSelection() && !txtMaxVM.getText().trim().equals(""))
+						if (!chkBoxUnlimitedVM.getSelection() && !txtMaxVM.getText().trim().equals("")) //$NON-NLS-1$
 						{
 							SystemMessage message = validateMinLessThanMax();
 							fireChangeEvent(message);
@@ -277,7 +277,7 @@ public class SystemProcessFilterStringEditPane extends
 				public void modifyText(ModifyEvent e) {
 					if (validateMaxVMInput() == null)
 					{
-						if (!txtMinVM.getText().trim().equals(""))
+						if (!txtMinVM.getText().trim().equals("")) //$NON-NLS-1$
 						{
 							SystemMessage message = validateMinLessThanMax();
 							fireChangeEvent(message);
@@ -359,18 +359,18 @@ public class SystemProcessFilterStringEditPane extends
 		{
 			HostProcessFilterImpl rffs = new HostProcessFilterImpl(inputFilterString);
 			String defaultExeName = rffs.getName();
-			txtExeName.setText((defaultExeName==null) ? "" : defaultExeName);
+			txtExeName.setText((defaultExeName==null) ? "" : defaultExeName); //$NON-NLS-1$
 			String defaultUserName = rffs.getUsername();		  
-			txtUserName.setText((defaultUserName==null) ? "" : defaultUserName);
+			txtUserName.setText((defaultUserName==null) ? "" : defaultUserName); //$NON-NLS-1$
 			
 			String defaultGid = rffs.getGid();
-			txtGid.setText((defaultGid==null) ? "" : defaultGid);
+			txtGid.setText((defaultGid==null) ? "" : defaultGid); //$NON-NLS-1$
 			String defaultMinVM = rffs.getMinVM();		  
-			txtMinVM.setText((defaultMinVM==null) ? "" : defaultMinVM);
+			txtMinVM.setText((defaultMinVM==null) ? "" : defaultMinVM); //$NON-NLS-1$
 			String defaultMaxVM = rffs.getMaxVM();		  
-			if (defaultMaxVM.equals("-1") || defaultMaxVM == null)
+			if (defaultMaxVM.equals("-1")) //$NON-NLS-1$
 			{
-				txtMaxVM.setText("");
+				txtMaxVM.setText(""); //$NON-NLS-1$
 				txtMaxVM.setEnabled(false);
 				chkBoxUnlimitedVM.setEnabled(true);
 				chkBoxUnlimitedVM.setSelection(true);
@@ -399,11 +399,11 @@ public class SystemProcessFilterStringEditPane extends
 	{
 		if (txtExeName == null)
 		  return;
-	    txtExeName.setText("*");
-		txtUserName.setText("*");
-		txtGid.setText("");
-		txtMinVM.setText("0");
-		txtMaxVM.setText("");
+	    txtExeName.setText("*"); //$NON-NLS-1$
+		txtUserName.setText("*"); //$NON-NLS-1$
+		txtGid.setText(""); //$NON-NLS-1$
+		txtMinVM.setText("0"); //$NON-NLS-1$
+		txtMaxVM.setText(""); //$NON-NLS-1$
 		chkBoxUnlimitedVM.setSelection(true);
 		txtMaxVM.setEnabled(false);
 		chkBoxUnlimitedVM.setEnabled(true);
@@ -482,7 +482,7 @@ public class SystemProcessFilterStringEditPane extends
 
 		if (errorMessage != null)
 		{
-			if (!dontStealFocus)
+			if (!dontStealFocus && controlInError != null)
 		  	  controlInError.setFocus();
 		}
 		  		  
@@ -622,7 +622,7 @@ public class SystemProcessFilterStringEditPane extends
 		  }
 		  if (maxVM < minVM)
 		  {
-			  return ProcessesPlugin.getPluginMessage("RSEPG1001");
+			  return ProcessesPlugin.getPluginMessage("RSEPG1001"); //$NON-NLS-1$
 		  }
 		  return null;
 	}
@@ -642,25 +642,25 @@ public class SystemProcessFilterStringEditPane extends
 		HostProcessFilterImpl rpfs = new HostProcessFilterImpl();
 		
 		String exeName = txtExeName.getText().trim();
-		if (!exeName.equals("")) rpfs.setName(exeName);
+		if (!exeName.equals("")) rpfs.setName(exeName); //$NON-NLS-1$
 
 		String userName = txtUserName.getText().trim();
-		if (!userName.equals("")) rpfs.setUsername(userName);
+		if (!userName.equals("")) rpfs.setUsername(userName); //$NON-NLS-1$
 
 		String gid = txtGid.getText().trim();
-		if (!gid.equals("")) rpfs.setGid(gid);
+		if (!gid.equals("")) rpfs.setGid(gid); //$NON-NLS-1$
 
 		String minVM = txtMinVM.getText().trim();
-		if (!minVM.equals("")) rpfs.setMinVM(minVM);
+		if (!minVM.equals("")) rpfs.setMinVM(minVM); //$NON-NLS-1$
 
 		if (chkBoxUnlimitedVM.getSelection())
 		{
-			rpfs.setMaxVM("-1");
+			rpfs.setMaxVM("-1"); //$NON-NLS-1$
 		}
 		else
 		{
 			String maxVM = txtMaxVM.getText().trim();
-			if (!maxVM.equals("")) rpfs.setMaxVM(maxVM);
+			if (!maxVM.equals("")) rpfs.setMaxVM(maxVM); //$NON-NLS-1$
 		}
 		
 		String[] stateStrings = SystemProcessStatesContentProvider.getStates();
@@ -690,7 +690,7 @@ public class SystemProcessFilterStringEditPane extends
 			  txtMaxVM.setFocus();
 			  if (validateMaxVMInput() == null)
 				{
-					if (!txtMinVM.getText().trim().equals(""))
+					if (!txtMinVM.getText().trim().equals("")) //$NON-NLS-1$
 					{
 						SystemMessage message = validateMinLessThanMax();
 						fireChangeEvent(message);
@@ -709,7 +709,7 @@ public class SystemProcessFilterStringEditPane extends
 	{
 		if (refProvider == null)
 	    {
-		  SystemBasePlugin.logWarning("Programming Error: input subsystem is not set");		  
+		  SystemBasePlugin.logWarning("Programming Error: input subsystem is not set");		   //$NON-NLS-1$
 		  return;
 		}
         skipUniquenessChecking = true;            

@@ -41,7 +41,7 @@ public class AddToArchiveForm extends CombineForm
 	protected Button savePathInfoCheckBox;
 	protected Combo relativeToCombo;
 	protected String[] _relativePathList = null;
-	protected String relativePath = "";
+	protected String relativePath = ""; //$NON-NLS-1$
 	protected boolean saveFullPathInfo = false;
 
 	public AddToArchiveForm(
@@ -120,13 +120,13 @@ public class AddToArchiveForm extends CombineForm
 		 public void widgetDefaultSelected(SelectionEvent e) {
 				setPageComplete();
 				relativeToCombo.setEnabled(savePathInfoCheckBox.getSelection());
-				if (!savePathInfoCheckBox.getSelection()) relativePath = "";
+				if (!savePathInfoCheckBox.getSelection()) relativePath = ""; //$NON-NLS-1$
 				setSaveFullPathInfo();
 			}
 		 public void widgetSelected(SelectionEvent e) {
 				setPageComplete();
 				relativeToCombo.setEnabled(savePathInfoCheckBox.getSelection());
-			if (!savePathInfoCheckBox.getSelection()) relativePath = "";
+			if (!savePathInfoCheckBox.getSelection()) relativePath = ""; //$NON-NLS-1$
 				setSaveFullPathInfo();
 			}
 		});
@@ -145,7 +145,7 @@ public class AddToArchiveForm extends CombineForm
 	public boolean isPageComplete()
 	{
 		boolean pathInfoChecked = (savePathInfoCheckBox != null && savePathInfoCheckBox.getSelection());
-		boolean relPathSelectionMade = relativePath != null && !relativePath.equals("");
+		boolean relPathSelectionMade = relativePath != null && !relativePath.equals(""); //$NON-NLS-1$
 		boolean relPathComplete = savePathInfoCheckBox == null || !savePathInfoCheckBox.getEnabled();
 		if (!relPathComplete)
 		{

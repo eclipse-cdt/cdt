@@ -106,7 +106,7 @@ public class SystemEditFileLineAction extends SystemEditFileAction {
 								IDE.gotoMarker(editor, marker);
 							}
 							catch (CoreException e) {
-								SystemBasePlugin.logError("Error occured in handleGotoLine", e);
+								SystemBasePlugin.logError("Error occured in handleGotoLine", e); //$NON-NLS-1$
 							}
 						}
 					}

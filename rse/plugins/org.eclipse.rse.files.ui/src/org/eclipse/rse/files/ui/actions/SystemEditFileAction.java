@@ -19,7 +19,6 @@ package org.eclipse.rse.files.ui.actions;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.rse.core.SystemBasePlugin;
 import org.eclipse.rse.files.ui.resources.ISystemRemoteEditConstants;
 import org.eclipse.rse.files.ui.resources.SystemEditableRemoteFile;
 import org.eclipse.rse.files.ui.resources.SystemIFileProperties;
@@ -132,7 +131,6 @@ public class SystemEditFileAction extends SystemBaseAction implements ISystemRem
 		editableFile.open(SystemBasePlugin.getActiveWorkbenchShell());
 		*/
 		SystemEditableRemoteFile editable = new SystemEditableRemoteFile(remoteFile, _editorId);
-		if (editable != null)
 		{
 			try
 			{

@@ -74,7 +74,7 @@ public class SystemUploadConflictAction extends SystemBaseAction implements Runn
 		private IRemoteFile _saveasFile;
 		public BackgroundSaveasJob(IRemoteFile saveasFile)
 		{
-			super("Save as"); // need to externalize
+			super("Save as"); // need to externalize //$NON-NLS-1$
 			_saveasFile = saveasFile;
 		}
 		
@@ -126,7 +126,7 @@ public class SystemUploadConflictAction extends SystemBaseAction implements Runn
 	{
 		public BackgroundDownloadJob()
 		{
-			super("Download");	// need to externalize	
+			super("Download");	// need to externalize	 //$NON-NLS-1$
 		}
 		
 		public IStatus run(IProgressMonitor monitor)
@@ -166,7 +166,7 @@ public class SystemUploadConflictAction extends SystemBaseAction implements Runn
 		
 		public BackgroundUploadJob()
 		{
-			super("Upload"); // need to externalize
+			super("Upload"); // need to externalize //$NON-NLS-1$
 		}
 		
 		public IStatus run(IProgressMonitor monitor)

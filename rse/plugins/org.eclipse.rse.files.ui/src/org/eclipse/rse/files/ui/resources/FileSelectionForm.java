@@ -23,7 +23,7 @@ import org.eclipse.rse.ui.messages.ISystemMessageLine;
 public class FileSelectionForm extends SaveAsForm 
 {
 	public static final String Copyright =
-		"(C) Copyright IBM Corp. 2003  All Rights Reserved.";
+		"(C) Copyright IBM Corp. 2003  All Rights Reserved."; //$NON-NLS-1$
 
 	/**
 	 * Constructor for FileSelectionForm

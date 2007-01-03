@@ -28,19 +28,15 @@ public class FileSelectionDialog
 	implements ISaveAsDialog
 {
 
-	public static final String Copyright =
-		"(C) Copyright IBM Corp. 2003  All Rights Reserved.";
 
+	private FileSelectionForm form;
+	
 	/**
 	 * Constructor
 	 * 
 	 * @param shell The shell to hang the dialog off of
-	 * @param fileMode True if selecting files, false if selecting folders
 	 * 
 	 */
-
-	private FileSelectionForm form;
-
 	protected FileSelectionDialog(Shell shell)
 	{
 		super(shell, false);
@@ -50,7 +46,6 @@ public class FileSelectionDialog
 	 * 
 	 * @param shell The shell to hang the dialog off of
 	 * @param title The title to give the dialog
-	 * @param fileMode True if selecting files, false if selecting folders
 	 */
 	protected FileSelectionDialog(Shell shell, String title)
 	{

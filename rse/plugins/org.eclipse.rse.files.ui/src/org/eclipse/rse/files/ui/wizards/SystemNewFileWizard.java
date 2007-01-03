@@ -55,7 +55,7 @@ public class SystemNewFileWizard
 	//protected IRemoteFile parentFolder;
 	//protected IStructuredSelection selection;
   
-    private static final String CLASSNAME = "SystemNewFileWizard";   
+    private static final String CLASSNAME = "SystemNewFileWizard";    //$NON-NLS-1$
 
     /**
      * Constructor
@@ -81,7 +81,7 @@ public class SystemNewFileWizard
 	      //super.addPages();
 	   } catch (Exception exc)
 	   {
-	   	 SystemBasePlugin.logError("New File: Error in createPages: ",exc);
+	   	 SystemBasePlugin.logError("New File: Error in createPages: ",exc); //$NON-NLS-1$
 	   }
 	} 
 
@@ -172,19 +172,19 @@ public class SystemNewFileWizard
                 IRemoteFile newFilePath = rfss.getRemoteFileObject(absName); 
                 newFile = rfss.createFile(newFilePath);
             } catch (RemoteFileIOException exc ) {
-               SystemBasePlugin.logDebugMessage(CLASSNAME+ ":", " Creating remote file "+ absName + " failed with RemoteFileIOException " );  	
+               SystemBasePlugin.logDebugMessage(CLASSNAME+ ":", " Creating remote file "+ absName + " failed with RemoteFileIOException " );  	 //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
                msg = (RSEUIPlugin.getPluginMessage(ISystemMessages.FILEMSG_CREATE_FILE_FAILED_EXIST)).makeSubstitution(absName);
 	           mainPage.setMessage(msg);
 	           ok = false;
 //DY        } catch (Exception RemoteFileSecurityException)  {
             } catch (RemoteFileSecurityException e)  {
                msg = (RSEUIPlugin.getPluginMessage(ISystemMessages.FILEMSG_CREATE_FILE_FAILED)).makeSubstitution(absName);
-	           SystemBasePlugin.logDebugMessage(CLASSNAME+ ":", " Creating remote file "+ absName + " failed with RemoteFileSecurityException ");  	
+	           SystemBasePlugin.logDebugMessage(CLASSNAME+ ":", " Creating remote file "+ absName + " failed with RemoteFileSecurityException ");  	 //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
                //SystemMessage.displayErrorMessage(SystemMessage.getDefaultShell(), msg); 
 	           mainPage.setMessage(msg);	                                                
 	           ok = false;
             } catch (SystemMessageException e) {
-            	SystemBasePlugin.logError(CLASSNAME+ ":", e);
+            	SystemBasePlugin.logError(CLASSNAME+ ":", e); //$NON-NLS-1$
             	mainPage.setMessage(e.getSystemMessage());
             	ok = false;
             }
@@ -250,7 +250,7 @@ public class SystemNewFileWizard
 	      		
 	      	for (int idx = 0; idx < strings.length; idx++) {
 	      		
-	      		if (strings[idx].equals("*")) {
+	      		if (strings[idx].equals("*")) { //$NON-NLS-1$
 	      			return true;
 	      		}
 	      	}

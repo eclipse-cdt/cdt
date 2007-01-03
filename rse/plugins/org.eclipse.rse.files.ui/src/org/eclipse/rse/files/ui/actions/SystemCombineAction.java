@@ -45,7 +45,7 @@ public class SystemCombineAction extends SystemExtractToAction {
 	public SystemCombineAction(Shell parent)
 	{
 		super(parent, FileResources.ACTION_COMBINE_LABEL, FileResources.ACTION_COMBINE_TOOLTIP);
-		setHelp(RSEUIPlugin.HELPPREFIX + "actn0120");
+		setHelp(RSEUIPlugin.HELPPREFIX + "actn0120"); //$NON-NLS-1$
 		setImageDescriptor(RSEUIPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_COMBINE_ID));
 
 	}
@@ -58,8 +58,7 @@ public class SystemCombineAction extends SystemExtractToAction {
 			IRemoteFile firstSelection = (IRemoteFile) _selected.get(0);
 			String title = FileResources.RESID_COMBINE_TITLE;
 			CombineDialog dialog = new CombineDialog(getShell(), title);
-			if (dialog == null)
-			  return;
+
 			dialog.setNeedsProgressMonitor(false);
 	
 			dialog.setMessage(FileResources.RESID_COMBINE_PROMPT);
@@ -71,7 +70,7 @@ public class SystemCombineAction extends SystemExtractToAction {
 	
 			dialog.setBlockOnOpen(true);
 	  
-			int rc = dialog.open();
+			dialog.open();
 	  
 				// if (rc != 0) NOT RELIABLE!
 			boolean cancelled = false;
@@ -88,11 +87,7 @@ public class SystemCombineAction extends SystemExtractToAction {
 			{
 				return;
 			}
-			if (destination == null)
-			{
-				System.out.println("blah");
-			}
-			
+
 			if (ArchiveHandlerManager.isVirtual(destination.getAbsolutePath()))
 			{
 				SystemMessage msg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_COMBINETO_VIRTUAL_DEST);
@@ -120,11 +115,10 @@ public class SystemCombineAction extends SystemExtractToAction {
 			for (int i = 0; i < _selected.size(); i++)
 			{
 				IRemoteFile selection = (IRemoteFile) _selected.get(i);
-				IRemoteFileSubSystem sourceSS = selection.getParentRemoteFileSubSystem();
-				
+
 				IRunnableContext runnableContext = getRunnableContext(_parent);
 				String nextName = selection.getName();
-				int j = nextName.lastIndexOf(".");
+				int j = nextName.lastIndexOf("."); //$NON-NLS-1$
 				if (j != -1)
 				{
 					nextName = nextName.substring(0, j);
@@ -135,7 +129,7 @@ public class SystemCombineAction extends SystemExtractToAction {
 				{
 					while (destSS.getRemoteFileObject(nextDest).exists())
 					{
-						nextDest = nextDest + "1";
+						nextDest = nextDest + "1"; //$NON-NLS-1$
 					}
 					nextDestination = destSS.getRemoteFileObject(nextDest);
 					destSS.createFolder(nextDestination);

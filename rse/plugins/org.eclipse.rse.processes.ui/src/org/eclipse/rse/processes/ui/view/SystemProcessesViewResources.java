@@ -21,7 +21,7 @@ import org.eclipse.osgi.util.NLS;
 
 public class SystemProcessesViewResources extends NLS
 {
-	private static String BUNDLE_NAME = "org.eclipse.rse.processes.ui.view.SystemProcessesViewResources"; 
+	private static String BUNDLE_NAME = "org.eclipse.rse.processes.ui.view.SystemProcessesViewResources";  //$NON-NLS-1$
 	
 	// PROCESS PROPERTIES
 	public static String RESID_PROPERTY_PROCESS_PID_LABEL;

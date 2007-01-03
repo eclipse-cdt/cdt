@@ -31,7 +31,7 @@ public interface ISystemRemoteMarker {
 	/**
 	 * Remote markers extension point id.
 	 */
-	public static final String EXTENSION_POINT_ID = "remoteMarkers";
+	public static final String EXTENSION_POINT_ID = "remoteMarkers"; //$NON-NLS-1$
 	
 	/**
 	 * Deletes this marker from its associated resource. This method has no

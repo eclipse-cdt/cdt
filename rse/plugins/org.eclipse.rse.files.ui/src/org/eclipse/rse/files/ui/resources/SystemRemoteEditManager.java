@@ -57,9 +57,9 @@ import org.eclipse.ui.IWorkbenchWindow;
 
 public class SystemRemoteEditManager
 {
-	public static final String REMOTE_EDIT_PROJECT_NAME = "RemoteSystemsTempFiles";
-	public static final String REMOTE_EDIT_PROJECT_NATURE_ID = "org.eclipse.rse.ui.remoteSystemsTempNature";
-	public static final String REMOTE_EDIT_PROJECT_BUILDER_ID = "org.eclipse.rse.ui.remoteSystemsTempBuilder";
+	public static final String REMOTE_EDIT_PROJECT_NAME = "RemoteSystemsTempFiles"; //$NON-NLS-1$
+	public static final String REMOTE_EDIT_PROJECT_NATURE_ID = "org.eclipse.rse.ui.remoteSystemsTempNature"; //$NON-NLS-1$
+	public static final String REMOTE_EDIT_PROJECT_BUILDER_ID = "org.eclipse.rse.ui.remoteSystemsTempBuilder"; //$NON-NLS-1$
 
 	private static SystemRemoteEditManager inst;
 	//private RSEUIPlugin plugin;
@@ -176,13 +176,13 @@ public class SystemRemoteEditManager
 		IExtensionRegistry registry = Platform.getExtensionRegistry();
 		
 		// Get configured extenders
-		IConfigurationElement[] systemTypeExtensions = registry.getConfigurationElementsFor("org.eclipse.rse.ui", "mountPathMappers");
+		IConfigurationElement[] systemTypeExtensions = registry.getConfigurationElementsFor("org.eclipse.rse.ui", "mountPathMappers"); //$NON-NLS-1$ //$NON-NLS-2$
 
 		for (int i = 0; i < systemTypeExtensions.length; i++)
 		{
 			try
 			{
-				_mountPathMappers.add(systemTypeExtensions[i].createExecutableExtension("class"));
+				_mountPathMappers.add(systemTypeExtensions[i].createExecutableExtension("class")); //$NON-NLS-1$
 			}
 			catch (Exception e)
 			{
@@ -288,6 +288,8 @@ public class SystemRemoteEditManager
 
 		try
 		{
+			if (editProject != null)
+			{
 			if (!editProject.exists())
 				editProject.create(null);
 
@@ -317,10 +319,11 @@ public class SystemRemoteEditManager
 			
 			// add c support
 			//addCSupport(editProject);
+			}
 		}
 		catch (CoreException e)
 		{
-			SystemBasePlugin.logError("Error creating temp project", e);
+			SystemBasePlugin.logError("Error creating temp project", e); //$NON-NLS-1$
 		}
 		return editProject;
 	}
@@ -506,7 +509,7 @@ public class SystemRemoteEditManager
 					candidate = (IFile) child;
 				}
 
-				if (candidate != null && !deletedList.contains(candidate) && !candidate.getName().startsWith(".") && !isFileInUse(candidate, true))
+				if (candidate != null && !deletedList.contains(candidate) && !candidate.getName().startsWith(".") && !isFileInUse(candidate, true)) //$NON-NLS-1$
 				{
 					if (result == null)
 					{
@@ -590,7 +593,6 @@ public class SystemRemoteEditManager
 			if (!doesRemoteEditProjectExist())
 				return false;
 				
-			IProject tempFilesProject = SystemRemoteEditManager.getDefault().getRemoteEditProject();
 			IWorkbenchWindow activeWindow = SystemBasePlugin.getActiveWorkbenchWindow();
 			IWorkbenchPage activePage = activeWindow.getActivePage();
 
@@ -671,12 +673,12 @@ public class SystemRemoteEditManager
 			try {
 				String maxSize = store.getString(ISystemPreferencesConstants.MAX_CACHE_SIZE);
 				
-				if (maxSize != null && !maxSize.equals("")) {
+				if (maxSize != null && !maxSize.equals("")) { //$NON-NLS-1$
 					max = Integer.parseInt(maxSize) * 1000000;
 				}
 			}
 			catch (NumberFormatException nfe) {
-				SystemBasePlugin.logError("Could not get max cache size", nfe);
+				SystemBasePlugin.logError("Could not get max cache size", nfe); //$NON-NLS-1$
 				max = Integer.parseInt(ISystemPreferencesConstants.DEFAULT_MAX_CACHE_SIZE) * 1000000;
 			}
 			
@@ -715,7 +717,7 @@ public class SystemRemoteEditManager
 			}
 			catch (Exception e)
 			{
-				SystemBasePlugin.logError("Error occured trying to clean cache", e);
+				SystemBasePlugin.logError("Error occured trying to clean cache", e); //$NON-NLS-1$
 				// e.printStackTrace();
 			}
 		}
@@ -742,7 +744,7 @@ public class SystemRemoteEditManager
 		}
 		catch (Exception e)
 		{
-			SystemBasePlugin.logError("Error refreshing remote edit project", e);
+			SystemBasePlugin.logError("Error refreshing remote edit project", e); //$NON-NLS-1$
 		}
 	}
 
@@ -767,7 +769,7 @@ public class SystemRemoteEditManager
 		}
 		catch (Exception e)
 		{
-			SystemBasePlugin.logError("Error refreshing remote edit project", e);
+			SystemBasePlugin.logError("Error refreshing remote edit project", e); //$NON-NLS-1$
 		}
 	}
 }

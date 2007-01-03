@@ -59,7 +59,7 @@ public class SystemCompareFilesAction extends SystemBaseAction
 	public void run()
 	{
 		CompareConfiguration cc = new CompareConfiguration();
-		cc.setProperty("org.eclipse.compare.internal.CONFIRM_SAVE_PROPERTY", new Boolean(false));
+		cc.setProperty("org.eclipse.compare.internal.CONFIRM_SAVE_PROPERTY", new Boolean(false)); //$NON-NLS-1$
 		SystemCompareInput fInput = new SystemCompareInput(cc);
 
 		for (int i = 0; i < _selected.size(); i++)

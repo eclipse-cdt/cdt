@@ -138,7 +138,7 @@ private ImageDescriptor getImageDescriptor(IEditorDescriptor editorDesc) {
 	else {
 		imageDesc = editorDesc.getImageDescriptor();
 	}
-	if (imageDesc == null) {
+	if (imageDesc == null && editorDesc != null) {
 		if (editorDesc.getId().equals(IEditorRegistry.SYSTEM_EXTERNAL_EDITOR_ID))
 			imageDesc = registry.getSystemExternalEditorImageDescriptor(getFileName());
 	}
@@ -320,7 +320,7 @@ protected IEditorRegistry getEditorRegistry()
 protected IEditorDescriptor getDefaultTextEditor()
 {
 	IEditorRegistry registry = getEditorRegistry();
-	return registry.findEditor("org.eclipse.ui.DefaultTextEditor");
+	return registry.findEditor("org.eclipse.ui.DefaultTextEditor"); //$NON-NLS-1$
 }
 
 /* (non-Javadoc)
@@ -332,7 +332,7 @@ public void fill(Menu menu, int index)
 		return;
 	}
 
-	IEditorDescriptor defaultEditor = registry.findEditor("org.eclipse.ui.DefaultTextEditor"); // may be null
+	IEditorDescriptor defaultEditor = registry.findEditor("org.eclipse.ui.DefaultTextEditor"); // may be null //$NON-NLS-1$
 	IEditorDescriptor preferredEditor = getPreferredEditor(_remoteFile); // may be null
 	
 	Object[] editors = registry.getEditors(getFileName());
@@ -420,7 +420,7 @@ protected void createDefaultMenuItem(Menu menu, final IRemoteFile file)
 							openEditor(file, defaultEditor);
 						}
 						catch (PartInitException e) {
-							SystemBasePlugin.logError("Error getting default editor descriptor", e);
+							SystemBasePlugin.logError("Error getting default editor descriptor", e); //$NON-NLS-1$
 						}
 					}
 					break;

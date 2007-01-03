@@ -65,13 +65,13 @@ public class SystemKillProcessAction extends SystemBaseDialogAction implements I
 	{
 		super(SystemProcessesResources.ACTION_KILLPROCESS_LABEL, 
 			  SystemProcessesResources.ACTION_KILLPROCESS_TOOLTIP,
-			  ProcessesPlugin.getDefault().getImageDescriptorFromPath("/icons/full/elcl16/killprocessj.gif"), 
+			  ProcessesPlugin.getDefault().getImageDescriptorFromPath("/icons/full/elcl16/killprocessj.gif"),  //$NON-NLS-1$
 			  shell);
 		allowOnMultipleSelection(true);
 		setProcessAllSelections(true);
 		setContextMenuGroup(ISystemContextMenuConstants.GROUP_REORGANIZE);		
-  	    setHelp(ProcessesPlugin.HELPPREFIX+"actn0001"); 
-  	    setDialogHelp(ProcessesPlugin.HELPPREFIX+"dkrp0000"); 
+  	    setHelp(ProcessesPlugin.HELPPREFIX+"actn0001");  //$NON-NLS-1$
+  	    setDialogHelp(ProcessesPlugin.HELPPREFIX+"dkrp0000");  //$NON-NLS-1$
 	}
 	
 	/**
@@ -218,7 +218,7 @@ public class SystemKillProcessAction extends SystemBaseDialogAction implements I
 		ok = ss.kill(process, signal);
 		if (!ok)
 		{
-			  SystemMessage msg = ProcessesPlugin.getPluginMessage("RSEPG1300");
+			  SystemMessage msg = ProcessesPlugin.getPluginMessage("RSEPG1300"); //$NON-NLS-1$
 			  msg.makeSubstitution(process.getName());
 			  throw new SystemMessageException(msg); 
 		}
@@ -287,7 +287,7 @@ public class SystemKillProcessAction extends SystemBaseDialogAction implements I
     
     protected SystemMessage getKillingMessage()
     {
-		  return ProcessesPlugin.getPluginMessage("RSEPG1003"); 
+		  return ProcessesPlugin.getPluginMessage("RSEPG1003");  //$NON-NLS-1$
     }
 	/**
 	 * Get the specific "kill" message
@@ -295,7 +295,7 @@ public class SystemKillProcessAction extends SystemBaseDialogAction implements I
     protected SystemMessage getKillingMessage(String signal, String processName)
     {
     	SystemMessage msg = null;
-		msg = ProcessesPlugin.getPluginMessage("RSEPG1004"); 
+		msg = ProcessesPlugin.getPluginMessage("RSEPG1004");  //$NON-NLS-1$
 		msg.makeSubstitution(signal, processName);
 		return msg;
     }

@@ -56,7 +56,7 @@ public class SystemEnterOrSelectRemoteFileForm extends SystemSelectRemoteFileOrF
 	public SystemEnterOrSelectRemoteFileForm(ISystemMessageLine msgLine, Object caller, boolean fileMode) {
 		super(msgLine, caller, fileMode);
 		validator = new ValidatorFileName();
-		initialFileName = "";
+		initialFileName = ""; //$NON-NLS-1$
 		fileName = initialFileName;
 	}
 	

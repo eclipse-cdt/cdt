@@ -61,7 +61,6 @@ public class SystemFilePropertyPage extends SystemBasePropertyPage
 	public SystemFilePropertyPage()
 	{
 		super();
-		RSEUIPlugin sp = RSEUIPlugin.getDefault();
 	}
 	/**
 	 * Create the page's GUI contents.
@@ -78,14 +77,14 @@ public class SystemFilePropertyPage extends SystemBasePropertyPage
 		labelNamePrompt = SystemWidgetHelpers.createLabel(
 			composite_prompts, SystemFileResources.RESID_PP_FILE_NAME_LABEL, SystemFileResources.RESID_PP_FILE_NAME_TOOLTIP);
 		labelName = SystemWidgetHelpers.createLabel(
-			composite_prompts, "");
+			composite_prompts, ""); //$NON-NLS-1$
 	    labelName.setToolTipText(SystemFileResources.RESID_PP_FILE_NAME_TOOLTIP);
 
 		// Type display
 		labelTypePrompt = SystemWidgetHelpers.createLabel(
 			composite_prompts, SystemFileResources.RESID_PP_FILE_TYPE_LABEL, SystemFileResources.RESID_PP_FILE_TYPE_TOOLTIP);
 		labelType = SystemWidgetHelpers.createLabel(
-			composite_prompts, "");
+			composite_prompts, ""); //$NON-NLS-1$
 	    labelType.setToolTipText(SystemFileResources.RESID_PP_FILE_TYPE_TOOLTIP);
 
 		// Path display
@@ -94,7 +93,7 @@ public class SystemFilePropertyPage extends SystemBasePropertyPage
 		  labelPathPrompt = SystemWidgetHelpers.createLabel(
 			composite_prompts, SystemFileResources.RESID_PP_FILE_PATH_LABEL, SystemFileResources.RESID_PP_FILE_PATH_TOOLTIP);
 		  labelPath = SystemWidgetHelpers.createLabel(
-			composite_prompts, "");
+			composite_prompts, ""); //$NON-NLS-1$
 	      labelPath.setToolTipText(SystemFileResources.RESID_PP_FILE_PATH_TOOLTIP);
 		}
 
@@ -104,7 +103,7 @@ public class SystemFilePropertyPage extends SystemBasePropertyPage
 		  labelSizePrompt = SystemWidgetHelpers.createLabel(
 			composite_prompts, SystemFileResources.RESID_PP_FILE_SIZE_LABEL, SystemFileResources.RESID_PP_FILE_SIZE_TOOLTIP);
 		  labelSize = SystemWidgetHelpers.createLabel(
-			composite_prompts, "");
+			composite_prompts, ""); //$NON-NLS-1$
 	      labelSize.setToolTipText(SystemFileResources.RESID_PP_FILE_SIZE_TOOLTIP);
 		}
 
@@ -114,7 +113,7 @@ public class SystemFilePropertyPage extends SystemBasePropertyPage
 		  labelModifiedPrompt = SystemWidgetHelpers.createLabel(
 			composite_prompts, SystemFileResources.RESID_PP_FILE_MODIFIED_LABEL, SystemFileResources.RESID_PP_FILE_MODIFIED_TOOLTIP);
 		  labelModified = SystemWidgetHelpers.createLabel(
-			composite_prompts, "");
+			composite_prompts, ""); //$NON-NLS-1$
 	      labelModified.setToolTipText(SystemFileResources.RESID_PP_FILE_MODIFIED_TOOLTIP);
 		}
 
@@ -180,7 +179,7 @@ public class SystemFilePropertyPage extends SystemBasePropertyPage
 		String name = file.getName();
 		if (name.length() > 100) 
 		{
-			String shortName = name.substring(0, 97).concat("...");				
+			String shortName = name.substring(0, 97).concat("...");				 //$NON-NLS-1$
 			labelName.setText(shortName);			
 		}	
 		else

@@ -118,7 +118,6 @@ public abstract class SystemTempFileListener implements IResourceChangeListener
 		if (_isEnabled)
 		{
 
-			Object source = event.getSource();
 			IResourceDelta delta = event.getDelta();
 			if (delta != null)
 			{
@@ -347,7 +346,6 @@ public abstract class SystemTempFileListener implements IResourceChangeListener
 
 			if (resource instanceof IFile)
 			{
-				String loc = resource.getLocation().toString();
 
 				// see if this temp file has been changed
 				int ckind = child.getKind();

@@ -114,8 +114,11 @@ public class SystemViewRemoteSearchResultSetAdapter extends AbstractSystemViewAd
 				msg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_OPERATION_DISCONNECTED);
 			}
 			
-			msg.makeSubstitution(name);
-			return msg.getLevelOneText();
+			if (msg != null)
+			{
+				msg.makeSubstitution(name);
+				return msg.getLevelOneText();
+			}
 		}
 		
 		return null;

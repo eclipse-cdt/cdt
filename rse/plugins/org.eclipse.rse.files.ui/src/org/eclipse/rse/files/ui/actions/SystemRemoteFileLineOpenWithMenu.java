@@ -84,7 +84,7 @@ public class SystemRemoteFileLineOpenWithMenu extends SystemRemoteFileOpenWithMe
 	protected IEditorDescriptor getDefaultTextEditor()
 	{
 		IEditorRegistry registry = getEditorRegistry();
-		return registry.findEditor("org.eclipse.ui.DefaultTextEditor");
+		return registry.findEditor("org.eclipse.ui.DefaultTextEditor"); //$NON-NLS-1$
 	}
 	
 	

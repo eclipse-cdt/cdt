@@ -516,7 +516,7 @@ public class SystemRemoteFolderCombo extends Composite implements ISystemCombo
 	          	try {
 		          	currentFolderObject = fileSubSystem.getRemoteFileObject(currentFolder);
 	          	} catch(SystemMessageException e) {
-	          		SystemBasePlugin.logError("SystemRemoteFolderCombo.wdigetSelected", e);
+	          		SystemBasePlugin.logError("SystemRemoteFolderCombo.wdigetSelected", e); //$NON-NLS-1$
 	          	}
 	          	if (currentFolderObject != null)
 		          browseAction.setPreSelection(currentFolderObject);	          

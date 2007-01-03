@@ -251,7 +251,7 @@ public class SystemDownloadConflictAction extends SystemBaseAction implements Ru
 
 		dlg.setReplaceText(FileResources.RESID_CONFLICT_DOWNLOAD_REPLACELOCAL);
 		dlg.setOpenLocalText(FileResources.RESID_CONFLICT_DOWNLOAD_OPENWITHLOCAL);
-		dlg.setHelpId(RSEUIPlugin.HELPPREFIX + "lcdl0000");
+		dlg.setHelpId(RSEUIPlugin.HELPPREFIX + "lcdl0000"); //$NON-NLS-1$
 		return dlg;
 	}
 

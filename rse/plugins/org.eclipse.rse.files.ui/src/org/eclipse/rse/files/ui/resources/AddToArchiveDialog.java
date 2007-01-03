@@ -33,18 +33,18 @@ public class AddToArchiveDialog extends CombineDialog {
 	public AddToArchiveDialog(Shell shell) 
 	{
 		super(shell);
-		setHelp(RSEUIPlugin.HELPPREFIX + "atad0000");
+		setHelp(RSEUIPlugin.HELPPREFIX + "atad0000"); //$NON-NLS-1$
 	}
 
 	public AddToArchiveDialog(Shell shell, String title) {
 		super(shell, title);
-		setHelp(RSEUIPlugin.HELPPREFIX + "atad0000");
+		setHelp(RSEUIPlugin.HELPPREFIX + "atad0000"); //$NON-NLS-1$
 	}
 	
 	public AddToArchiveDialog(Shell shell, String title, String[] relativePaths) 
 	{
 		super(shell, title);
-		setHelp(RSEUIPlugin.HELPPREFIX + "atad0000");
+		setHelp(RSEUIPlugin.HELPPREFIX + "atad0000"); //$NON-NLS-1$
 		_relativePaths = relativePaths;
 		((AddToArchiveForm)form).setRelativePathList(_relativePaths);
 	}
@@ -55,7 +55,7 @@ public class AddToArchiveDialog extends CombineDialog {
 		boolean prePopSelection) 
 	{
 		super(shell, title, prePopSelection);
-		setHelp(RSEUIPlugin.HELPPREFIX + "atad0000");
+		setHelp(RSEUIPlugin.HELPPREFIX + "atad0000"); //$NON-NLS-1$
 	}
 	
 	public AddToArchiveDialog(
@@ -65,7 +65,7 @@ public class AddToArchiveDialog extends CombineDialog {
 		String[] relativePaths) 
 	{
 		super(shell, title, prePopSelection);
-		setHelp(RSEUIPlugin.HELPPREFIX + "atad0000");
+		setHelp(RSEUIPlugin.HELPPREFIX + "atad0000"); //$NON-NLS-1$
 		_relativePaths = relativePaths;
 		((AddToArchiveForm)form).setRelativePathList(_relativePaths);
 	}

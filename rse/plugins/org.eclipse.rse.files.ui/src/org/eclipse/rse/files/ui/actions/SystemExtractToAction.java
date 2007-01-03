@@ -79,11 +79,10 @@ public class SystemExtractToAction extends SystemExtractAction implements IValid
 			//IRemoteFileSubSystem sourceSS = selection.getParentRemoteFileSubSystem();
 			String title = FileResources.RESID_EXTRACTTO_TITLE;
 			ExtractToDialog dialog = new ExtractToDialog(getShell(), title);
-			if (dialog == null)
-			  return;
+
 			dialog.setNeedsProgressMonitor(true);
 			
-			String message = SystemMessage.sub(FileResources.RESID_EXTRACTTO_PROMPT, "&1", selection.getAbsolutePath());
+			String message = SystemMessage.sub(FileResources.RESID_EXTRACTTO_PROMPT, "&1", selection.getAbsolutePath()); //$NON-NLS-1$
 			dialog.setMessage(message);
 			dialog.setShowNewConnectionPrompt(true);
 			dialog.setShowPropertySheet(true, false);
@@ -99,7 +98,7 @@ public class SystemExtractToAction extends SystemExtractAction implements IValid
 				dialog.setHelp(dlgHelpId);
 			}*/
 		  
-			int rc = dialog.open();
+			dialog.open();
 		  
 			// if (rc != 0) NOT RELIABLE!
 			boolean cancelled = false;
@@ -116,10 +115,7 @@ public class SystemExtractToAction extends SystemExtractAction implements IValid
 			{
 				return;
 			}
-			if (destination == null)
-			{
-				System.out.println("blah");
-			}
+
 			if (selection.isAncestorOf(destination))
 			{
 				SystemMessage msg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_DEST_NOT_IN_SOURCE);

@@ -73,7 +73,7 @@ public class SystemSearchSelectFileTypesDialog extends SystemSelectFileTypesDial
 				if (!first) {
 					// if not the first entry, add a comma and a space
 					entries.append(TYPE_DELIMITER);
-					entries.append(" ");
+					entries.append(" "); //$NON-NLS-1$
 				}
 				else {
 					first = false;
@@ -95,7 +95,7 @@ public class SystemSearchSelectFileTypesDialog extends SystemSelectFileTypesDial
 		while (tokenizer.hasMoreTokens()) {
 			String currentExtension = tokenizer.nextToken().trim();
 			
-			if (!currentExtension.equals("")) {
+			if (!currentExtension.equals("")) { //$NON-NLS-1$
 				result.add(currentExtension);
 			}
 		}

@@ -115,7 +115,7 @@ public class SystemCreateEditActions
 	protected IEditorDescriptor getDefaultTextEditor()
 	{
 		IEditorRegistry registry = getEditorRegistry();
-		return registry.findEditor("org.eclipse.ui.DefaultTextEditor");
+		return registry.findEditor("org.eclipse.ui.DefaultTextEditor"); //$NON-NLS-1$
 	}
 	/**
 	 * Create actions when one file has been selected.
@@ -260,7 +260,7 @@ public class SystemCreateEditActions
 			imageDesc = editorDesc.getImageDescriptor();
 		}
 		
-		if (imageDesc == null) {
+		if (imageDesc == null && editorDesc != null) {
 			
 			if (editorDesc.getId().equals(IEditorRegistry.SYSTEM_EXTERNAL_EDITOR_ID))
 				imageDesc = registry.getSystemExternalEditorImageDescriptor(remoteFile.getName());

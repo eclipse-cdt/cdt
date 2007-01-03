@@ -142,7 +142,7 @@ public class SystemSearchEditFileLineAction extends SystemEditFileAction {
 									IDE.gotoMarker(editor, firstMarker);
 								}
 								catch (CoreException e) {
-									SystemBasePlugin.logError("Error occured trying to create a marker", e);
+									SystemBasePlugin.logError("Error occured trying to create a marker", e); //$NON-NLS-1$
 								}
 							}
 						}

@@ -33,7 +33,7 @@ public class SystemSearchAction extends SystemBaseAction {
         super(SystemResources.ACTION_SEARCH_LABEL, 
         RSEUIPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_SEARCH_ID), parent);
         setToolTipText(SystemResources.ACTION_SEARCH_TOOLTIP);
-		setHelp(RSEUIPlugin.HELPPREFIX + "rsdi0000");
+		setHelp(RSEUIPlugin.HELPPREFIX + "rsdi0000"); //$NON-NLS-1$
 		
 		allowOnMultipleSelection(false);
     }

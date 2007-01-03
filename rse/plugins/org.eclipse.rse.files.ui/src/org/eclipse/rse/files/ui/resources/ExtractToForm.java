@@ -20,7 +20,6 @@ import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.rse.core.SystemAdapterHelpers;
 import org.eclipse.rse.core.filters.ISystemFilter;
 import org.eclipse.rse.core.model.IHost;
-import org.eclipse.rse.core.model.ISystemRegistry;
 import org.eclipse.rse.files.ui.widgets.SystemSelectRemoteFileOrFolderForm;
 import org.eclipse.rse.filters.SystemFilterSimple;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
@@ -30,9 +29,7 @@ import org.eclipse.rse.subsystems.files.core.model.RemoteFileUtility;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFileSubSystem;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFileSubSystemConfiguration;
-import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.messages.ISystemMessageLine;
-import org.eclipse.rse.ui.validators.ValidatorFolderName;
 import org.eclipse.rse.ui.view.ISystemRemoteElementAdapter;
 import org.eclipse.rse.ui.view.ISystemViewElementAdapter;
 import org.eclipse.swt.widgets.Composite;
@@ -49,8 +46,7 @@ import org.eclipse.swt.widgets.Shell;
 public class ExtractToForm extends SystemSelectRemoteFileOrFolderForm 
 {
 
-	private String fileName;
-	private ValidatorFolderName validator;		 
+	private String fileName;	 
 	 
    /**
 	* Constructor for ExtractToForm
@@ -58,8 +54,6 @@ public class ExtractToForm extends SystemSelectRemoteFileOrFolderForm
    public ExtractToForm(ISystemMessageLine msgLine, Object caller, boolean fileMode) 
    {
 	   super(msgLine, caller, fileMode);
-		
-	   validator = new ValidatorFolderName();
    }
 	
    /**
@@ -132,6 +126,7 @@ public class ExtractToForm extends SystemSelectRemoteFileOrFolderForm
 
    public boolean isPageComplete()
    {
+	   /*
 	   String errMsg = null; //validator.isValid(fileName);
 		
 	   if (errMsg != null)
@@ -140,6 +135,7 @@ public class ExtractToForm extends SystemSelectRemoteFileOrFolderForm
 		   return false;			
 	   }
 	   else
+	   */
 	   {
 		   if (valid) clearErrorMessage();
 			return valid;
@@ -258,7 +254,7 @@ public class ExtractToForm extends SystemSelectRemoteFileOrFolderForm
 		setDefaultConnection(connection);
 		setShowNewConnectionPrompt(true);
 		setAutoExpandDepth(0);        
-		ISystemRegistry sr = RSEUIPlugin.getTheSystemRegistry();
+
 		IRemoteFileSubSystem ss = RemoteFileUtility.getFileSubSystem(connection);
 		IRemoteFileSubSystemConfiguration ssf = ss.getParentRemoteFileSubSystemConfiguration();
 		RemoteFileFilterString rffs = new RemoteFileFilterString(ssf);

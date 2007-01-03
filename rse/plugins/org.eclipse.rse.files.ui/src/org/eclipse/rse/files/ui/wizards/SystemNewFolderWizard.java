@@ -41,7 +41,7 @@ public class SystemNewFolderWizard
 	//protected IRemoteFile myObject;
 	//protected IStructuredSelection selection;
   
-    private static final String CLASSNAME = "SystemNewFolderWizard";   
+    private static final String CLASSNAME = "SystemNewFolderWizard";    //$NON-NLS-1$
 
     /**
      * Constructor
@@ -66,7 +66,7 @@ public class SystemNewFolderWizard
 	      //super.addPages();
 	   } catch (Exception exc)
 	   {
-	   	 SystemBasePlugin.logError("New File: Error in createPages: ",exc);
+	   	 SystemBasePlugin.logError("New File: Error in createPages: ",exc); //$NON-NLS-1$
 	   }
 	} 
 
@@ -157,7 +157,7 @@ public class SystemNewFolderWizard
 	            IRemoteFile newFolderPath = rfss.getRemoteFileObject(absName); 	              
                 newFolder = rfss.createFolder(newFolderPath);
             } catch (RemoteFileIOException exc ) {
-               SystemBasePlugin.logDebugMessage(CLASSNAME+ ":", " Creating remote folder "+ absName + " failed with RemoteFileIOException " );  	
+               SystemBasePlugin.logDebugMessage(CLASSNAME+ ":", " Creating remote folder "+ absName + " failed with RemoteFileIOException " );  	 //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
                if (exc.getRemoteException() instanceof SystemMessageException)
                {
                	msg = ((SystemMessageException)exc.getRemoteException()).getSystemMessage();
@@ -170,13 +170,13 @@ public class SystemNewFolderWizard
 	           ok = false;
 // DY       } catch (Exception RemoteFileSecurityException)  {
             } catch (RemoteFileSecurityException e)  {
-	           SystemBasePlugin.logDebugMessage(CLASSNAME+ ":", " Creating remote folder "+ absName + " failed with RemoteFileSecurityException ");  	
+	           SystemBasePlugin.logDebugMessage(CLASSNAME+ ":", " Creating remote folder "+ absName + " failed with RemoteFileSecurityException ");  	 //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
                msg = (RSEUIPlugin.getPluginMessage(ISystemMessages.FILEMSG_CREATE_FOLDER_FAILED)).makeSubstitution(absName);
                //SystemMessage.displayErrorMessage(SystemMessage.getDefaultShell(), msg); 
 	           mainPage.setMessage(msg);	                                                
 	           ok = false;
             } catch (SystemMessageException e) {
-            	SystemBasePlugin.logError(CLASSNAME+ ":", e);
+            	SystemBasePlugin.logError(CLASSNAME+ ":", e); //$NON-NLS-1$
             	mainPage.setMessage(e.getSystemMessage());
             	ok = false;
             }
@@ -204,11 +204,11 @@ public class SystemNewFolderWizard
     	  for (int idx=0; !meets && (idx<strings.length); idx++)
     	  {
     	  	String filterString = strings[idx];    	  	
-    	  	if (filterString.indexOf("/ns") == -1) // if this filter string allows folders (no /ns switch) then we have a match!
+    	  	if (filterString.indexOf("/ns") == -1) // if this filter string allows folders (no /ns switch) then we have a match! //$NON-NLS-1$
     	  	{
     	  		if (strings.length > 0 && !filterString.startsWith(parentFolder.getAbsolutePath()))
 	    	  	{
-    	  		    if (!filterString.equals("./*")) //DKM - ./ will always meet
+    	  		    if (!filterString.equals("./*")) //DKM - ./ will always meet //$NON-NLS-1$
     	  		    {
     	  		        meets = false; 	   
     	  		    }

@@ -165,7 +165,7 @@ public class SystemCopyRemoteFileAction extends SystemBaseCopyAction
 			    newName = null;
 			}
 		} catch (SystemMessageException e) {
-			SystemBasePlugin.logError("SystemCopyRemoteFileAction.checkForCollision()", e);
+			SystemBasePlugin.logError("SystemCopyRemoteFileAction.checkForCollision()", e); //$NON-NLS-1$
 		}
 		
 		return newName;
@@ -266,7 +266,7 @@ public class SystemCopyRemoteFileAction extends SystemBaseCopyAction
 	   				for (int i = 0; i < children.length; i++)
 	   				{
 	   					IRemoteFile child = children[i];
-	   					monitor.subTask("copying " + child.getName());	
+	   					monitor.subTask("copying " + child.getName());	 //$NON-NLS-1$
 	   					doCopy(monitor, newTargetFolder, child, child.getName());	
 	   					monitor.worked(1);
 	   				}	
@@ -361,7 +361,7 @@ public class SystemCopyRemoteFileAction extends SystemBaseCopyAction
 			else
 				singleTitle = SystemResources.RESID_MOVE_SINGLE_TITLE;
 			//System.out.println("..."+singleTitle);
-			if (!singleTitle.startsWith("Missing")) // TODO: remove test after next mri rev         	
+			if (!singleTitle.startsWith("Missing")) // TODO: remove test after next mri rev         	 //$NON-NLS-1$
 				dlg.setTitle(singleTitle);
 		}											
 		return dlg;
@@ -420,8 +420,9 @@ public class SystemCopyRemoteFileAction extends SystemBaseCopyAction
 					catch (Exception e)
 					{			
 					}
-
-					str = par.getAbsolutePath();
+					
+					if (par != null)
+						str = par.getAbsolutePath();
 
 					//if (StringCompare.compare(str, path, true))
 					if (str.equals(path))	

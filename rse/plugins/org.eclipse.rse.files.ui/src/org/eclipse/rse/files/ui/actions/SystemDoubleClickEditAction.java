@@ -48,7 +48,7 @@ public class SystemDoubleClickEditAction extends SystemBaseAction
 	protected IEditorDescriptor getDefaultTextEditor()
 	{
 		IEditorRegistry registry = getEditorRegistry();
-		return registry.findEditor("org.eclipse.ui.DefaultTextEditor");
+		return registry.findEditor("org.eclipse.ui.DefaultTextEditor"); //$NON-NLS-1$
 	}
 	/**
 	 * @see SystemBaseAction#run()

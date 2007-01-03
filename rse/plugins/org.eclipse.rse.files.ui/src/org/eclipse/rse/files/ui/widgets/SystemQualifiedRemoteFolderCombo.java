@@ -297,7 +297,6 @@ public class SystemQualifiedRemoteFolderCombo extends Composite
     	String[] folderStrings = folderCombo.getItems();
     	if ( (folderStrings == null) || (folderStrings.length==0) )
     	  return match;
-    	IHost conn = folder.getSystemConnection();
     	String fulldir = folder.getAbsolutePathPlusConnection();
     	for (int idx=0; (idx<folderStrings.length) && (match==-1); idx++)
     	{    		

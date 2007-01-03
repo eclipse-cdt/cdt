@@ -24,19 +24,15 @@ import org.eclipse.swt.widgets.Shell;
 
 public class SaveAsDialog extends SystemSelectRemoteFileOrFolderDialog implements ISaveAsDialog {
 
-
+	
+	private SaveAsForm form;
 
 	/**
 	 * Constructor
 	 * 
 	 * @param shell The shell to hang the dialog off of
-	 * @param fileMode True if selecting files, false if selecting folders
 	 * 
 	 */
-	
-	private SaveAsForm form;
-	
-	
 	protected SaveAsDialog(Shell shell)
 	{
 		super(shell, false);
@@ -46,7 +42,6 @@ public class SaveAsDialog extends SystemSelectRemoteFileOrFolderDialog implement
 	 * 
 	 * @param shell The shell to hang the dialog off of
 	 * @param title The title to give the dialog
-	 * @param fileMode True if selecting files, false if selecting folders
 	 */
 	protected SaveAsDialog(Shell shell, String title)
 	{

@@ -37,7 +37,7 @@ public class CombineDialog extends SystemSelectRemoteFileOrFolderDialog {
 	public CombineDialog(Shell shell)
 	{
 		super(shell, false);
-		setHelp(RSEUIPlugin.HELPPREFIX + "cmbd0000");
+		setHelp(RSEUIPlugin.HELPPREFIX + "cmbd0000"); //$NON-NLS-1$
 	}	
 	
 	/**
@@ -48,7 +48,7 @@ public class CombineDialog extends SystemSelectRemoteFileOrFolderDialog {
 	public CombineDialog(Shell shell, String title)
 	{
 		super(shell, title, false);
-		setHelp(RSEUIPlugin.HELPPREFIX + "cmbd0000");
+		setHelp(RSEUIPlugin.HELPPREFIX + "cmbd0000"); //$NON-NLS-1$
 	}
 	
 	/**
@@ -65,7 +65,7 @@ public class CombineDialog extends SystemSelectRemoteFileOrFolderDialog {
 		super(shell, title, false);
 		prePop = prePopSelection;
 		if (form != null) form.setPrePopSelection(prePop);
-		setHelp(RSEUIPlugin.HELPPREFIX + "cmbd0000");
+		setHelp(RSEUIPlugin.HELPPREFIX + "cmbd0000"); //$NON-NLS-1$
 	}
 
 	/**
@@ -84,7 +84,7 @@ public class CombineDialog extends SystemSelectRemoteFileOrFolderDialog {
 		super(shell, title, false);
 		prePop = prePopSelection;
 		if (form != null) form.setPrePopSelection(prePop);
-		setHelp(RSEUIPlugin.HELPPREFIX + "cmbd0000");
+		setHelp(RSEUIPlugin.HELPPREFIX + "cmbd0000"); //$NON-NLS-1$
 	}
 
 		

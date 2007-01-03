@@ -21,16 +21,16 @@ public interface ISystemProcessPropertyConstants
 	public static final String P_PREFIX = org.eclipse.rse.ui.ISystemIconConstants.PREFIX;
 	
 	// PROCESS PROPERTIES
-	public static String P_PROCESS_PID				= P_PREFIX+"process.pid";
-	public static String P_PROCESS_NAME				= P_PREFIX+"process.name"; 
-	public static String P_PROCESS_UID				= P_PREFIX+"process.uid";
-	public static String P_PROCESS_USERNAME			= P_PREFIX+"process.username";
-	public static String P_PROCESS_PPID				= P_PREFIX+"process.ppid";
-	public static String P_PROCESS_GID				= P_PREFIX+"process.gid";
-	public static String P_PROCESS_STATE			= P_PREFIX+"process.state";
-	public static String P_PROCESS_TGID				= P_PREFIX+"process.tgid";
-	public static String P_PROCESS_TRACERPID		= P_PREFIX+"process.tracerpid";
-	public static String P_PROCESS_VMSIZE			= P_PREFIX+"process.vmsize";
-	public static String P_PROCESS_VMRSS			= P_PREFIX+"process.vmrss";
+	public static String P_PROCESS_PID				= P_PREFIX+"process.pid"; //$NON-NLS-1$
+	public static String P_PROCESS_NAME				= P_PREFIX+"process.name";  //$NON-NLS-1$
+	public static String P_PROCESS_UID				= P_PREFIX+"process.uid"; //$NON-NLS-1$
+	public static String P_PROCESS_USERNAME			= P_PREFIX+"process.username"; //$NON-NLS-1$
+	public static String P_PROCESS_PPID				= P_PREFIX+"process.ppid"; //$NON-NLS-1$
+	public static String P_PROCESS_GID				= P_PREFIX+"process.gid"; //$NON-NLS-1$
+	public static String P_PROCESS_STATE			= P_PREFIX+"process.state"; //$NON-NLS-1$
+	public static String P_PROCESS_TGID				= P_PREFIX+"process.tgid"; //$NON-NLS-1$
+	public static String P_PROCESS_TRACERPID		= P_PREFIX+"process.tracerpid"; //$NON-NLS-1$
+	public static String P_PROCESS_VMSIZE			= P_PREFIX+"process.vmsize"; //$NON-NLS-1$
+	public static String P_PROCESS_VMRSS			= P_PREFIX+"process.vmrss"; //$NON-NLS-1$
 
 }

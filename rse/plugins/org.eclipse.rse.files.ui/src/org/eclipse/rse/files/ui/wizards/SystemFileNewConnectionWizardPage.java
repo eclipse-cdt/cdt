@@ -136,7 +136,7 @@ public class SystemFileNewConnectionWizardPage extends AbstractSystemNewConnecti
 
           textPort = SystemWidgetHelpers.createTextField(
             composite_prompts,null,SystemResources.RESID_SUBSYSTEM_PORT_TIP);
-          textPort.setText("0");
+          textPort.setText("0"); //$NON-NLS-1$
 
 		  textPort.addModifyListener(
 			new ModifyListener() {

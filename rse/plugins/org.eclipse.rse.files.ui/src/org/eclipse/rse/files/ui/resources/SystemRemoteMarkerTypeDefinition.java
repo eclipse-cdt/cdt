@@ -58,8 +58,8 @@ public class SystemRemoteMarkerTypeDefinition {
 			IConfigurationElement element = elements[i];
 			
 			// supertype
-			if (element.getName().equalsIgnoreCase("super")) {
-				String type = element.getAttribute("type");
+			if (element.getName().equalsIgnoreCase("super")) { //$NON-NLS-1$
+				String type = element.getAttribute("type"); //$NON-NLS-1$
 				
 				if (type != null) {
 					
@@ -72,8 +72,8 @@ public class SystemRemoteMarkerTypeDefinition {
 			}
 			
 			// attribute name
-			if (element.getName().equalsIgnoreCase("attribute")) {
-				String name = element.getAttribute("name");
+			if (element.getName().equalsIgnoreCase("attribute")) { //$NON-NLS-1$
+				String name = element.getAttribute("name"); //$NON-NLS-1$
 				
 				if (name != null) {
 					
@@ -86,8 +86,8 @@ public class SystemRemoteMarkerTypeDefinition {
 			}
 			
 			// persistence
-			if (element.getName().equalsIgnoreCase("persistent")) {
-				String bool = element.getAttribute("value");
+			if (element.getName().equalsIgnoreCase("persistent")) { //$NON-NLS-1$
+				String bool = element.getAttribute("value"); //$NON-NLS-1$
 				
 				if (bool != null) {
 					this.isPersistent = (new Boolean(bool)).booleanValue();

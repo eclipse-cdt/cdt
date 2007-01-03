@@ -43,7 +43,7 @@ public class ProcessesPlugin extends SystemBasePlugin {
 	private static SystemMessageFile messageFile = null;    
     private static SystemMessageFile defaultMessageFile = null;    
 	
-	public static final String HELPPREFIX = "org.eclipse.rse.processes.ui.";
+	public static final String HELPPREFIX = "org.eclipse.rse.processes.ui."; //$NON-NLS-1$
 
 	
 	/**
@@ -59,8 +59,8 @@ public class ProcessesPlugin extends SystemBasePlugin {
 	 */
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
-	   	messageFile = getMessageFile("processmessages.xml");
-	   	defaultMessageFile = getDefaultMessageFile("processmessages.xml");
+	   	messageFile = getMessageFile("processmessages.xml"); //$NON-NLS-1$
+	   	defaultMessageFile = getDefaultMessageFile("processmessages.xml"); //$NON-NLS-1$
 
 	    IAdapterManager manager = Platform.getAdapterManager();
 		svpaf = new SystemViewProcessAdapterFactory();
@@ -105,7 +105,7 @@ public class ProcessesPlugin extends SystemBasePlugin {
 	public ResourceBundle getResourceBundle() {
 		try {
 			if (resourceBundle == null)
-				resourceBundle = ResourceBundle.getBundle("org.eclipse.rse.processes.ui.SystemProcessesResources");
+				resourceBundle = ResourceBundle.getBundle("org.eclipse.rse.processes.ui.SystemProcessesResources"); //$NON-NLS-1$
 		} catch (MissingResourceException x) {
 			resourceBundle = null;
 		}
@@ -150,7 +150,7 @@ public class ProcessesPlugin extends SystemBasePlugin {
 	
 	public ImageDescriptor getImageDescriptorFromPath(String path)
 	{
-		return AbstractUIPlugin.imageDescriptorFromPlugin("org.eclipse.rse.processes.ui", path);
+		return AbstractUIPlugin.imageDescriptorFromPlugin("org.eclipse.rse.processes.ui", path); //$NON-NLS-1$
 	}
 	
     /**

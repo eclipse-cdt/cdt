@@ -52,16 +52,12 @@ import org.eclipse.rse.ui.view.SystemTableViewProvider;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.VerifyEvent;
 import org.eclipse.swt.events.VerifyListener;
-import org.eclipse.swt.graphics.Font;
-import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
@@ -105,7 +101,7 @@ public class SystemCachePreferencePage extends PreferencePage implements IWorkbe
 	public void createControl(Composite parent)
 	{
 		super.createControl(parent);
-		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), RSEUIPlugin.HELPPREFIX + "fchp0000");
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), RSEUIPlugin.HELPPREFIX + "fchp0000"); //$NON-NLS-1$
 	}
 
 	/**
@@ -197,7 +193,7 @@ public class SystemCachePreferencePage extends PreferencePage implements IWorkbe
 		
 		String maxCacheSizeStr = store.getString(ISystemPreferencesConstants.MAX_CACHE_SIZE);
 		
-		if (maxCacheSizeStr == null || maxCacheSizeStr.equals("")) {
+		if (maxCacheSizeStr == null || maxCacheSizeStr.equals("")) { //$NON-NLS-1$
 			maxCacheSizeStr = ISystemPreferencesConstants.DEFAULT_MAX_CACHE_SIZE;
 		}
 		
@@ -248,7 +244,7 @@ public class SystemCachePreferencePage extends PreferencePage implements IWorkbe
 		IPreferenceStore store = RSEUIPlugin.getDefault().getPreferenceStore();
 		String size = _maxCacheSize.getText();
 		
-		if (size == null || size.trim().equals("")) {
+		if (size == null || size.trim().equals("")) { //$NON-NLS-1$
 			size = ISystemPreferencesConstants.DEFAULT_MAX_CACHE_SIZE;
 		}
 
@@ -282,7 +278,7 @@ public class SystemCachePreferencePage extends PreferencePage implements IWorkbe
 						{
 							IResource member = members[i];
 							if ((member instanceof IFile) && 
-								member.getName().equals(".project"))
+								member.getName().equals(".project")) //$NON-NLS-1$
 							{								
 							}
 							else

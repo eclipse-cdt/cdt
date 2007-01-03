@@ -67,7 +67,7 @@ public class SystemKillDialog extends SystemPromptDialog
     
     // column headers
 	private String columnHeaders[] = {
-		"",
+		"", //$NON-NLS-1$
 		SystemProcessesResources.RESID_KILL_COLHDG_EXENAME,
 		SystemProcessesResources.RESID_KILL_COLHDG_PID
 	};
@@ -95,7 +95,7 @@ public class SystemKillDialog extends SystemPromptDialog
 	{
 		super(shell, SystemProcessesResources.RESID_KILL_TITLE);				
 		super.setOkButtonLabel(SystemProcessesResources.RESID_KILL_BUTTON);
-		setHelp(ProcessesPlugin.HELPPREFIX+"dkrp0000");
+		setHelp(ProcessesPlugin.HELPPREFIX+"dkrp0000"); //$NON-NLS-1$
 	}
 	
 	/**
@@ -151,7 +151,7 @@ public class SystemKillDialog extends SystemPromptDialog
         if (warningMessage != null)
         {
           // filler line
-          SystemWidgetHelpers.createLabel(composite, "", nbrColumns);
+          SystemWidgetHelpers.createLabel(composite, "", nbrColumns); //$NON-NLS-1$
 		  // create image
 		  Image image = getShell().getDisplay().getSystemImage(SWT.ICON_WARNING);
 		  Label imageLabel = null;
@@ -178,7 +178,7 @@ public class SystemKillDialog extends SystemPromptDialog
           warningLabel.setLayoutData(data);
           
           // filler line
-          SystemWidgetHelpers.createLabel(composite, "", nbrColumns);
+          SystemWidgetHelpers.createLabel(composite, "", nbrColumns); //$NON-NLS-1$
         }
 			        		   
         // TABLE
@@ -324,10 +324,10 @@ public class SystemKillDialog extends SystemPromptDialog
     
     public String getSignal()
     {
-    	if (cmbSignal == null) return "";
+    	if (cmbSignal == null) return ""; //$NON-NLS-1$
     	if (cmbSignal.isDisposed()) return signalType;
     	String signal = cmbSignal.getText();
-    	if (signal == null) return "";
+    	if (signal == null) return ""; //$NON-NLS-1$
     	return signal;
     }
 }

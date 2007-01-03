@@ -420,7 +420,7 @@ public class SystemSelectRemoteFilesForm extends Composite
     			String msg = exc.getMessage();
     			if ((msg == null) || (msg.length()==0))
     			{
-    			  msg = "Exception: " + exc.getClass().getName();
+    			  msg = "Exception: " + exc.getClass().getName(); //$NON-NLS-1$
     			  displayExceptionMessage(exc);
     			}
     			else

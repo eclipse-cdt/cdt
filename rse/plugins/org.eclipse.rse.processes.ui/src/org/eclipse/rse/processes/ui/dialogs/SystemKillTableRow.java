@@ -55,7 +55,7 @@ public class SystemKillTableRow extends SystemDeleteTableRow
     		  this.exename = ((IRemoteProcess)element).getName();
     	}
     	if (element instanceof IRemoteProcess)
-    		this.pid = "" + ((IRemoteProcess)element).getPid();
+    		this.pid = "" + ((IRemoteProcess)element).getPid(); //$NON-NLS-1$
     	if (adapter != null)
     	  this.imageDescriptor = adapter.getImageDescriptor(element);
     	else this.imageDescriptor = RSEUIPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_PROCESS_ID);

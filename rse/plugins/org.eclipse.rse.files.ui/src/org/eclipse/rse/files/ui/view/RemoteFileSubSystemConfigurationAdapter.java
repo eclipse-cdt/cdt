@@ -182,7 +182,7 @@ public class RemoteFileSubSystemConfigurationAdapter extends SubSystemConfigurat
 				String absoluteSubSystemName = properties.getRemoteFileSubSystem();
 				if (absoluteSubSystemName != null)
 				{
-					int profileDelim = absoluteSubSystemName.indexOf(".");
+					int profileDelim = absoluteSubSystemName.indexOf("."); //$NON-NLS-1$
 					String theRest = absoluteSubSystemName.substring(profileDelim, absoluteSubSystemName.length());										
 					properties.setRemoteFileSubSystem(newName + theRest);			
 				}

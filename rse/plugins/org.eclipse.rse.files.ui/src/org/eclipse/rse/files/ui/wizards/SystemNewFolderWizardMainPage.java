@@ -63,7 +63,7 @@ public class SystemNewFolderWizardMainPage
 	 */
 	public SystemNewFolderWizardMainPage(Wizard wizard, IRemoteFile[] parentFolders)
 	{
-		super(wizard, "NewFolder", 
+		super(wizard, "NewFolder",  //$NON-NLS-1$
 				FileResources.RESID_NEWFOLDER_PAGE1_TITLE, 
 				FileResources.RESID_NEWFOLDER_PAGE1_DESCRIPTION);
 	//	nameValidator = new ValidatorProfileName(RSEUIPlugin.getTheSystemRegistry().getAllSystemProfileNamesVector());

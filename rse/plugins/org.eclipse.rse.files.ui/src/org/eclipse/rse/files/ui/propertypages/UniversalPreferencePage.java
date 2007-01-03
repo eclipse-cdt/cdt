@@ -123,7 +123,7 @@ public class UniversalPreferencePage
 	 */
 	public void createControl(Composite parent) {
 		super.createControl(parent);
-		PlatformUI.getWorkbench().getHelpSystem().setHelp(parent, RSEUIPlugin.HELPPREFIX+"ufpf0000");
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(parent, RSEUIPlugin.HELPPREFIX+"ufpf0000"); //$NON-NLS-1$
 	}
 	
 	
@@ -291,7 +291,7 @@ public class UniversalPreferencePage
 		tgd.widthHint = 75;
 		downloadBufferSize.setLayoutData(tgd);
 		downloadBufferSize.setTextLimit(10);
-		downloadBufferSize.setText(getDownloadBufferSize() + "");
+		downloadBufferSize.setText(getDownloadBufferSize() + ""); //$NON-NLS-1$
 		downloadBufferSize.addVerifyListener(new VerifyListener()
 		    			{
 		    				public void verifyText(VerifyEvent e)
@@ -313,7 +313,7 @@ public class UniversalPreferencePage
 		tgd.widthHint = 75;
 		uploadBufferSize.setLayoutData(tgd);
 		uploadBufferSize.setTextLimit(10);
-		uploadBufferSize.setText(getUploadBufferSize() +"");
+		uploadBufferSize.setText(getUploadBufferSize() +""); //$NON-NLS-1$
 		uploadBufferSize.addVerifyListener(new VerifyListener()
 		    			{
 		    				public void verifyText(VerifyEvent e)
@@ -351,7 +351,7 @@ public class UniversalPreferencePage
 		
 		String initialArchiveType = store.getString(ISystemPreferencesConstants.SUPERTRANSFER_ARC_TYPE);
 		if (initialArchiveType == null ||
-				!ArchiveHandlerManager.getInstance().isRegisteredArchive("test." + initialArchiveType))
+				!ArchiveHandlerManager.getInstance().isRegisteredArchive("test." + initialArchiveType)) //$NON-NLS-1$
 		{
 			initialArchiveType = ISystemPreferencesConstants.DEFAULT_SUPERTRANSFER_ARCHIVE_TYPE;
 		}
@@ -412,7 +412,7 @@ public class UniversalPreferencePage
 		tableLayout.addColumnData(layoutData);
 		TableColumn tableCol = new TableColumn(resourceTypeTable, SWT.NONE);
 		tableCol.setResizable(false);
-		tableCol.setText("");
+		tableCol.setText(""); //$NON-NLS-1$
 
 		layoutData = new ColumnWeightData(40, false);
 		tableLayout.addColumnData(layoutData);
@@ -480,8 +480,8 @@ public class UniversalPreferencePage
 	
 	protected void resetBufferSizePrefs()
 	{
-	    downloadBufferSize.setText(ISystemPreferencesConstants.DEFAULT_DOWNLOAD_BUFFER_SIZE + "");
-	    uploadBufferSize.setText(ISystemPreferencesConstants.DEFAULT_DOWNLOAD_BUFFER_SIZE + "");
+	    downloadBufferSize.setText(ISystemPreferencesConstants.DEFAULT_DOWNLOAD_BUFFER_SIZE + ""); //$NON-NLS-1$
+	    uploadBufferSize.setText(ISystemPreferencesConstants.DEFAULT_DOWNLOAD_BUFFER_SIZE + ""); //$NON-NLS-1$
 	}
 	
 	/**
@@ -634,7 +634,7 @@ public class UniversalPreferencePage
 		}
 
 		if (newName == null || newName.length() < 1)
-			newName = "*";
+			newName = "*"; //$NON-NLS-1$
 		else {
 			
 			int index = newName.indexOf('*');
@@ -654,7 +654,7 @@ public class UniversalPreferencePage
 		}
 	
 		// Find the index at which to insert the new entry.
-		String newFilename = (newName + "." + newExtension).toUpperCase();
+		String newFilename = (newName + "." + newExtension).toUpperCase(); //$NON-NLS-1$
 		IFileEditorMapping resourceType;
 		boolean found = false;
 		int i = 0;

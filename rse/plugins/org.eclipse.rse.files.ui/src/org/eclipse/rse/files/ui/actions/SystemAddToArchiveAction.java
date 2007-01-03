@@ -104,7 +104,7 @@ public class SystemAddToArchiveAction extends SystemBaseAction
 			dialog.setNameAndTypePrompt(FileResources.RESID_ADDTOARCHIVE_NAMEANDTYPE);	
 	  		//dialog.setSelectionValidator(this);
 	  		
-			int rc = dialog.open();
+			dialog.open();
 	  
 				// if (rc != 0) NOT RELIABLE!
 			boolean cancelled = false;
@@ -126,11 +126,7 @@ public class SystemAddToArchiveAction extends SystemBaseAction
 			{
 				return;
 			}
-			if (destinationArchive == null)
-			{
-				System.out.println("blah");
-			}
-			
+
 			if (ArchiveHandlerManager.isVirtual(destinationArchive.getAbsolutePath()))
 			{
 				SystemMessage msg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_ADDTO_VIRTUAL_DEST);
@@ -231,8 +227,7 @@ public class SystemAddToArchiveAction extends SystemBaseAction
 				
 			}
 		}
-		IRemoteFileSubSystem sourceSS = source.getParentRemoteFileSubSystem();
-		
+
 		IRunnableContext runnableContext = getRunnableContext(_parent);
 			
 		CopyRunnable runnable = new CopyRunnable(source, destination);
@@ -279,7 +274,7 @@ public class SystemAddToArchiveAction extends SystemBaseAction
 			catch (Exception e)
 			{
 				System.out.println(e.getMessage());
-				System.out.println("SystemAddToArchiveAction: Could not drag and drop " + selection.getAbsolutePath());
+				System.out.println("SystemAddToArchiveAction: Could not drag and drop " + selection.getAbsolutePath()); //$NON-NLS-1$
 			}
 		}
 	}

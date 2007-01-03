@@ -29,8 +29,8 @@ import org.eclipse.rse.ui.RSEUIPlugin;
 public class SystemIFileProperties implements ISystemTextEditorConstants, ISystemRemoteEditConstants {
 
   
-	private static final String STRING_EMPTY = "";
-	private static final String EXPORT_KEY = "export";
+	private static final String STRING_EMPTY = ""; //$NON-NLS-1$
+	private static final String EXPORT_KEY = "export"; //$NON-NLS-1$
 
 	private static QualifiedName _nameDirty               = new QualifiedName( STRING_EMPTY, TEMP_FILE_DIRTY            );
 	private static QualifiedName _nameReadOnly            = new QualifiedName( STRING_EMPTY, TEMP_FILE_READONLY         );
@@ -147,7 +147,7 @@ public class SystemIFileProperties implements ISystemTextEditorConstants, ISyste
 			if( strValue == null )
 				return false;
 				
-			return strValue.equals( "true" );
+			return strValue.equals( "true" ); //$NON-NLS-1$
 		}
 		catch( CoreException ex ){
 			return false;
@@ -385,7 +385,7 @@ public class SystemIFileProperties implements ISystemTextEditorConstants, ISyste
 	 * Sets a boolean property given a property name, and its value.
 	 */
 	protected void setPropertyBoolean( QualifiedName name, boolean bValue ){
-		setPropertyString( name, bValue == true ? "true" : "false" );
+		setPropertyString( name, bValue == true ? "true" : "false" ); //$NON-NLS-1$ //$NON-NLS-2$
 	}	
 
 	/**
@@ -524,17 +524,17 @@ public class SystemIFileProperties implements ISystemTextEditorConstants, ISyste
 	}
 	
 	public void setModificationStampAtExport(String hostName, String destination, long modificationStamp) {
-	    QualifiedName key = new QualifiedName(STRING_EMPTY, EXPORT_KEY + ":" + hostName + ":" + destination);
+	    QualifiedName key = new QualifiedName(STRING_EMPTY, EXPORT_KEY + ":" + hostName + ":" + destination); //$NON-NLS-1$ //$NON-NLS-2$
 	    setPropertyLong(key, modificationStamp);
 	}
 	
 	public long getModificationStampAtExport(String hostName, String destination) {
-	    QualifiedName key = new QualifiedName(STRING_EMPTY, EXPORT_KEY + ":" + hostName + ":" + destination);
+	    QualifiedName key = new QualifiedName(STRING_EMPTY, EXPORT_KEY + ":" + hostName + ":" + destination); //$NON-NLS-1$ //$NON-NLS-2$
 	    return getPropertyLong(key);
 	}
 	
 	public boolean hasModificationStampAtExport(String hostName, String destination) {
-	    QualifiedName key = new QualifiedName(STRING_EMPTY, EXPORT_KEY + ":" + hostName + ":" + destination);
+	    QualifiedName key = new QualifiedName(STRING_EMPTY, EXPORT_KEY + ":" + hostName + ":" + destination); //$NON-NLS-1$ //$NON-NLS-2$
 	    String val = getPropertyString(key);
 	    
 	    if (val != null) {

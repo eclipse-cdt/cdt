@@ -86,7 +86,7 @@ public class RemoteProcessesDialog extends SystemPromptDialog implements KeyList
 		});
 
 		
-		SystemWidgetHelpers.setHelp(_viewer.getControl(), RSEUIPlugin.HELPPREFIX + "ucmd0000");
+		SystemWidgetHelpers.setHelp(_viewer.getControl(), RSEUIPlugin.HELPPREFIX + "ucmd0000"); //$NON-NLS-1$
 
 		TableLayout layout = new TableLayout();
 		_table.setLayout(layout);
@@ -148,8 +148,8 @@ public class RemoteProcessesDialog extends SystemPromptDialog implements KeyList
 	
 	protected void updateViewFilter()
 	{
-		if (_executableFilter.indexOf("*") == -1)
-			_executableFilter += "*";
+		if (_executableFilter.indexOf("*") == -1) //$NON-NLS-1$
+			_executableFilter += "*"; //$NON-NLS-1$
 		String[] viewFilters = {_executableFilter};
 		_viewer.setViewFilters(viewFilters);
 	}

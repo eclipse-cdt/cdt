@@ -104,9 +104,9 @@ public class SystemProcessStatesContentProvider implements ISystemProcessRemoteC
 	public String getStateString(String state)
 	{
 		Integer index = (Integer) strIndices.get(state);
-		if (index == null) return "";
+		if (index == null) return ""; //$NON-NLS-1$
 		String[] resources = getStates();
-		if (index.intValue() >= resources.length) return "";
+		if (index.intValue() >= resources.length) return ""; //$NON-NLS-1$
 		return resources[index.intValue()];
 	}
 	

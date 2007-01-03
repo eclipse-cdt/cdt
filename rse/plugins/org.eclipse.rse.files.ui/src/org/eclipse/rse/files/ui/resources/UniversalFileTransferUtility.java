@@ -272,7 +272,6 @@ public class UniversalFileTransferUtility
 
 		String remotePath = remoteFile.getAbsolutePath();
 
-		ISystemRegistry registry = RSEUIPlugin.getTheSystemRegistry();
 		// String subSystemId = registry.getAbsoluteNameForSubSystem(subSystem);
 		// properties.setRemoteFileSubSystem(subSystemId);
 		properties.setRemoteFilePath(remotePath);
@@ -441,7 +440,7 @@ public class UniversalFileTransferUtility
 		
 		if (!srcFileOrFolder.exists()) {
 			SystemMessage errorMessage = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_ERROR_FILE_NOTFOUND);
-			errorMessage.makeSubstitution(srcFileOrFolder.getAbsolutePath(), "LOCALHOST");
+			errorMessage.makeSubstitution(srcFileOrFolder.getAbsolutePath(), "LOCALHOST"); //$NON-NLS-1$
 			return errorMessage;
 		}
 		
@@ -474,7 +473,7 @@ public class UniversalFileTransferUtility
 			{
 				try
 				{
-					setIFileProperties(tempFile, srcFileOrFolder, "LOCALHOST");		
+					setIFileProperties(tempFile, srcFileOrFolder, "LOCALHOST");		 //$NON-NLS-1$
 				}
 				catch (Exception e)
 				{
@@ -563,7 +562,7 @@ public class UniversalFileTransferUtility
 		}
 		catch (Exception e)
 		{
-			SystemBasePlugin.logError("An exception occured " + e.getMessage(), e);
+			SystemBasePlugin.logError("An exception occured " + e.getMessage(), e); //$NON-NLS-1$
 			return null;
 		}
 
@@ -632,11 +631,13 @@ public class UniversalFileTransferUtility
 				if (isEncodingConversionRequired) 
 				{
 					String s = new String(buffer, 0, bytesRead, hostEncoding);
-					bufWriter.write(s);
+					if (bufWriter != null)
+						bufWriter.write(s);
 				}
 				else 
 				{
-					bufOutputStream.write(buffer, 0, bytesRead);					
+					if (bufOutputStream != null)
+						bufOutputStream.write(buffer, 0, bytesRead);					
 				}
 
 				totalRead += bytesRead;
@@ -794,10 +795,11 @@ public class UniversalFileTransferUtility
 				{
 					e.printStackTrace();
 				}
-				IResource[] childResources = new IResource[children.length];
+				IResource[] childResources = null;
 	
 				if (children != null)
 				{
+					childResources = new IResource[children.length];
 					if (children.length == 0)				
 					{
 						File tempFolderFile = tempFolder.getLocation().toFile();
@@ -833,7 +835,7 @@ public class UniversalFileTransferUtility
 					refreshResourceInWorkspace(tempFolder);
 	
 					// set properties of files
-					if (tempFolder.exists() && children != null)
+					if (tempFolder.exists() && children != null && childResources != null)
 					{
 						for (int i = 0; i < childResources.length; i++)
 						{
@@ -1066,6 +1068,8 @@ public class UniversalFileTransferUtility
 				// recursively copy
 				try
 				{
+					if (existingFiles != null)
+					{
 					IRemoteFile newTargetFolder = (IRemoteFile)existingFiles.get(newPath);
 					if (!newTargetFolder.exists())
 					{
@@ -1083,7 +1087,7 @@ public class UniversalFileTransferUtility
 					else
 					{
 						IResource[] children = directory.members();
-						SystemWorkspaceResourceSet childSet = new SystemWorkspaceResourceSet(directory.members());			
+						SystemWorkspaceResourceSet childSet = new SystemWorkspaceResourceSet(children);			
 						SystemRemoteResourceSet childResults = copyWorkspaceResourcesToRemote(childSet, newTargetFolder, monitor, checkForCollisions);																	
 						if (childResults == null)
 						{
@@ -1096,6 +1100,7 @@ public class UniversalFileTransferUtility
 					}	
 				
 					newFilePathList.add(newPath);
+					}
 				}
 				catch (CoreException e)
 				{
@@ -1525,8 +1530,7 @@ public class UniversalFileTransferUtility
 			
 			
 			ISystemArchiveHandler handler = ArchiveHandlerManager.getInstance().getRegisteredHandler(dest);
-			String sourceEncoding = sourceFS.getRemoteEncoding();
-
+	
 			VirtualChild[] arcContents = handler.getVirtualChildrenList();
 			Display display = Display.getCurrent();
 			monitor.beginTask(FileResources.RESID_SUPERTRANSFER_PROGMON_SUBTASK_EXTRACT, arcContents.length);
@@ -1578,14 +1582,17 @@ public class UniversalFileTransferUtility
 							SystemMessage msg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_EXTRACT_PROGRESS);
 							msg.makeSubstitution(currentSource.getName());
 							monitor.subTask(msg.getLevelOneText());
+
 							
-							boolean isText = currentSource.isText();
-							
+							/* DKM - should not be calling this
 							while (display.readAndDispatch()) {
 								//Process everything on event queue
 							}
+							*/
 							
 							boolean canWrite = true;
+							if (currentTarget != null)
+							{
 							IResource currentTargetResource = SystemBasePlugin.getWorkspaceRoot().getContainerForLocation(new Path(currentTarget.getAbsolutePath()));	
 							if (currentTargetResource != null && currentTargetResource.exists())
 							{
@@ -1608,6 +1615,7 @@ public class UniversalFileTransferUtility
 								SystemIFileProperties properties = new SystemIFileProperties(currentTargetResource);
 								properties.setRemoteFileTimeStamp(arcContents[i].getTimeStamp());
 								monitor.worked(1);
+							}
 							}
 						}
 				    }	
@@ -1746,7 +1754,7 @@ public class UniversalFileTransferUtility
 		char separator = '/';
 		StringBuffer path = new StringBuffer(editMgr.getRemoteEditProjectLocation().makeAbsolute().toOSString());
 	
-		String actualHost = "LOCALHOST";	
+		String actualHost = "LOCALHOST";	 //$NON-NLS-1$
 		path = path.append(separator + actualHost + separator);
 
 		String absolutePath = editMgr.getWorkspacePathFor(actualHost, srcFileOrFolder.getAbsolutePath());
@@ -1858,7 +1866,7 @@ public class UniversalFileTransferUtility
 	public static String getActualHostFor(ISubSystem subsystem, String remotePath)
 	{
 			String hostname = subsystem.getHost().getHostName();
-			if (subsystem != null && subsystem.getHost().getSystemType().equals("Local")) //$NON-NLS-1$
+			if (subsystem.getHost().getSystemType().equals("Local")) //$NON-NLS-1$
 			{
 				String result = SystemRemoteEditManager.getDefault().getActualHostFor(hostname, remotePath);
 				return result;
@@ -1892,7 +1900,7 @@ public class UniversalFileTransferUtility
 	protected static boolean isRemoteFileMounted(ISubSystem subsystem, String remotePath)
 	{
 		String hostname = subsystem.getHost().getHostName();
-		if (subsystem != null && subsystem.getHost().getSystemType().equals("Local")) //$NON-NLS-1$
+		if (subsystem.getHost().getSystemType().equals("Local")) //$NON-NLS-1$
 		{
 			String result = SystemRemoteEditManager.getDefault().getActualHostFor(hostname, remotePath);
 			if (!result.equals(hostname))
@@ -1916,7 +1924,7 @@ public class UniversalFileTransferUtility
 	
 	protected static String getWorkspaceRemotePath(ISubSystem subsystem, String remotePath) {
 		
-		if (subsystem != null && subsystem.getHost().getSystemType().equals("Local")) {
+		if (subsystem != null && subsystem.getHost().getSystemType().equals("Local")) { //$NON-NLS-1$
 			return SystemRemoteEditManager.getDefault().getWorkspacePathFor(subsystem.getHost().getHostName(), remotePath);
 		}
 		
@@ -1931,7 +1939,6 @@ public class UniversalFileTransferUtility
 	{
 		String newName = oldName;
 
-		IRemoteFileSubSystem ss = targetFolder.getParentRemoteFileSubSystem();
 		IRemoteFile targetFileOrFolder = (IRemoteFile) existingFiles.get(oldPath);
 
 		RenameStatus status = new RenameStatus(IStatus.OK, Activator.getDefault().getBundle().getSymbolicName(), IStatus.OK, newName, null);
@@ -1946,10 +1953,10 @@ public class UniversalFileTransferUtility
 				int state = rr.getCancelStatus();
 
 				if (state == RenameRunnable.RENAME_DIALOG_CANCELLED_ALL) {
-					status = new RenameStatus(IStatus.CANCEL, Activator.getDefault().getBundle().getSymbolicName(), RenameStatus.CANCEL_ALL, "", null);
+					status = new RenameStatus(IStatus.CANCEL, Activator.getDefault().getBundle().getSymbolicName(), RenameStatus.CANCEL_ALL, "", null); //$NON-NLS-1$
 				}
 				else if (state == RenameRunnable.RENAME_DIALOG_CANCELLED) {
-					status = new RenameStatus(IStatus.CANCEL, Activator.getDefault().getBundle().getSymbolicName(), IStatus.CANCEL, "", null);
+					status = new RenameStatus(IStatus.CANCEL, Activator.getDefault().getBundle().getSymbolicName(), IStatus.CANCEL, "", null); //$NON-NLS-1$
 				}
 			}
 			else {
@@ -2042,7 +2049,7 @@ public class UniversalFileTransferUtility
 		}
 		catch (SystemMessageException e)
 		{
-			SystemBasePlugin.logError("SystemCopyRemoteFileAction.checkForCollision()", e);
+			SystemBasePlugin.logError("SystemCopyRemoteFileAction.checkForCollision()", e); //$NON-NLS-1$
 		}
 
 		return newName[0];

@@ -523,7 +523,7 @@ public class SystemSearchPage extends DialogPage implements ISearchPage {
 		}
 		
 		// if a match has been found, modify its properties
-		if (matchFound) {
+		if (matchFound && data != null) {
 			data.searchString = searchString;
 			data.caseSensitive = caseButton.getSelection();
 			data.stringRegex = stringRegexButton.getSelection();
@@ -647,7 +647,7 @@ public class SystemSearchPage extends DialogPage implements ISearchPage {
 		}
 		catch (SystemMessageException e) {
 			// TODO: show error
-			SystemBasePlugin.logError("Error occured trying to get remote file object", e);
+			SystemBasePlugin.logError("Error occured trying to get remote file object", e); //$NON-NLS-1$
 			return false;
 		}
 		
@@ -662,7 +662,7 @@ public class SystemSearchPage extends DialogPage implements ISearchPage {
 	
 			
 			// set the name
-			String name = remoteFile.getAbsolutePath() + " - " + searchString.getFileNamesString() + "(" + searchString.getTextString() + ")";
+			String name = remoteFile.getAbsolutePath() + " - " + searchString.getFileNamesString() + "(" + searchString.getTextString() + ")"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			set.setName(name);
 			
 			FileServiceSubSystem ss = (FileServiceSubSystem)subsys;

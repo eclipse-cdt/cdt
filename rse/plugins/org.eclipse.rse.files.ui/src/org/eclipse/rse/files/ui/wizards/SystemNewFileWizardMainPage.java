@@ -62,7 +62,7 @@ public class SystemNewFileWizardMainPage
 	 */
 	public SystemNewFileWizardMainPage(Wizard wizard, IRemoteFile[] parentFolders)
 	{
-		super(wizard, "NewFile", 
+		super(wizard, "NewFile",  //$NON-NLS-1$
   		      FileResources.RESID_NEWFILE_PAGE1_TITLE,  FileResources.RESID_NEWFILE_PAGE1_DESCRIPTION);
 	    this.parentFolders = parentFolders; 
 	}

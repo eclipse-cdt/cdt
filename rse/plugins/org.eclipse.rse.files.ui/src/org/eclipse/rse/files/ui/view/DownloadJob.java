@@ -71,7 +71,7 @@ public class DownloadJob extends Job
 	 */
 	public DownloadJob(ISystemEditableRemoteObject editable, boolean systemEditor)
 	{
-		super("Download");
+		super("Download"); //$NON-NLS-1$
 		_editable = editable;
 		_systemEditor = systemEditor;
 	}

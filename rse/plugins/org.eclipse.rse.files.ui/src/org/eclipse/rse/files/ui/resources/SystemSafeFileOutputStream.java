@@ -41,7 +41,7 @@ public class SystemSafeFileOutputStream extends OutputStream {
 	protected File temp = null;
 	protected OutputStream output = null;
 	protected boolean failed = false;
-	protected static final String BACKUP_EXTENSION = ".bak";
+	protected static final String BACKUP_EXTENSION = ".bak"; //$NON-NLS-1$
 	
 	/**
 	 * Constructor for SystemSafeFileOutputStream.

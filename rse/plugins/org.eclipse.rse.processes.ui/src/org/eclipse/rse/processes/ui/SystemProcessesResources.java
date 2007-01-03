@@ -20,7 +20,7 @@ import org.eclipse.osgi.util.NLS;
 
 public class SystemProcessesResources extends NLS
 {
-	private static String BUNDLE_NAME = "org.eclipse.rse.processes.ui.SystemProcessesResources"; 
+	private static String BUNDLE_NAME = "org.eclipse.rse.processes.ui.SystemProcessesResources";  //$NON-NLS-1$
 		
 	// -------------------------
 	// ACTIONS...

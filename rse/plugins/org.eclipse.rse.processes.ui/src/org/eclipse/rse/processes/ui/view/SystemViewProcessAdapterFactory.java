@@ -53,7 +53,7 @@ public class SystemViewProcessAdapterFactory extends AbstractSystemRemoteAdapter
 	    }		
 	    else if (adapter == null)
 	    {
-	    	SystemBasePlugin.logWarning("No adapter found for object of type: " + adaptableObject.getClass().getName());
+	    	SystemBasePlugin.logWarning("No adapter found for object of type: " + adaptableObject.getClass().getName()); //$NON-NLS-1$
 	    }	      	    
 		return adapter;
 	}

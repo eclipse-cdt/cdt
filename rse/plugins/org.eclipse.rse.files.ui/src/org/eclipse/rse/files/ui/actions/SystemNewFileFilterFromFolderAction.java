@@ -45,7 +45,7 @@ public class SystemNewFileFilterFromFolderAction extends SystemNewFileFilterActi
 	{
 		// initially use null, but update based on selection
 		super(null, null, parent);
-		setHelp(RSEUIPlugin.HELPPREFIX+"actn0112");
+		setHelp(RSEUIPlugin.HELPPREFIX+"actn0112"); //$NON-NLS-1$
 	}
 	
 	

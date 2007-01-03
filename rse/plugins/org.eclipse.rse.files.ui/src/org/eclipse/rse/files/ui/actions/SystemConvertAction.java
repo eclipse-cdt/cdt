@@ -46,7 +46,7 @@ public class SystemConvertAction extends SystemExtractToAction {
 	public SystemConvertAction(Shell parent)
 	{
 		super(parent, FileResources.ACTION_CONVERT_LABEL, FileResources.ACTION_CONVERT_TOOLTIP);
-		setHelp(RSEUIPlugin.HELPPREFIX + "actn0121");
+		setHelp(RSEUIPlugin.HELPPREFIX + "actn0121"); //$NON-NLS-1$
 		setImageDescriptor(RSEUIPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_CONVERT_ID));
 
 	}
@@ -58,10 +58,9 @@ public class SystemConvertAction extends SystemExtractToAction {
 			IRemoteFile selection = (IRemoteFile) _selected.get(i);
 			String title = FileResources.RESID_CONVERT_TITLE;
 			CombineDialog dialog = new CombineDialog(getShell(), title, true);
-			if (dialog == null)
-			  return;
+	
 			dialog.setNeedsProgressMonitor(false);
-			String message = SystemMessage.sub(FileResources.RESID_CONVERT_PROMPT, "&1", selection.getAbsolutePath());
+			String message = SystemMessage.sub(FileResources.RESID_CONVERT_PROMPT, "&1", selection.getAbsolutePath()); //$NON-NLS-1$
 			dialog.setMessage(message);
 			dialog.setShowNewConnectionPrompt(true);
 			dialog.setShowPropertySheet(true, false);
@@ -70,13 +69,13 @@ public class SystemConvertAction extends SystemExtractToAction {
 			dialog.setPreSelection(selection);
 	
 			dialog.setBlockOnOpen(true);
-			dialog.setHelp(RSEUIPlugin.HELPPREFIX + "cnvd0000");
+			dialog.setHelp(RSEUIPlugin.HELPPREFIX + "cnvd0000"); //$NON-NLS-1$
 			dialog.setShowLocationPrompt(true);
 			dialog.setLocationPrompt(FileResources.RESID_CONVERT_LOCATION);
 	  		dialog.setNameAndTypePrompt(FileResources.RESID_CONVERT_NAMEANDTYPE);
 	  		dialog.setSelectionValidator(this);
 	  		
-	  		int rc = dialog.open();
+	  		dialog.open();
 	  
 					// if (rc != 0) NOT RELIABLE!
 			boolean cancelled = false;
@@ -93,10 +92,7 @@ public class SystemConvertAction extends SystemExtractToAction {
 			{
 				return;
 			}
-			if (destination == null)
-			{
-				System.out.println("blah");
-			}
+
 			
 			if (ArchiveHandlerManager.isVirtual(destination.getAbsolutePath()))
 			{
@@ -153,7 +149,6 @@ public class SystemConvertAction extends SystemExtractToAction {
 				dlg.open();
 				continue;
 			}
-			IRemoteFileSubSystem sourceSS = selection.getParentRemoteFileSubSystem();
 			
 			IRunnableContext runnableContext = getRunnableContext(_parent);
 					

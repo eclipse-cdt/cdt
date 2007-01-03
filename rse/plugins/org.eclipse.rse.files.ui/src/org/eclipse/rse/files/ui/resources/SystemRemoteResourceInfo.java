@@ -67,7 +67,6 @@ public class SystemRemoteResourceInfo implements Cloneable {
 	
 	/** 
  	 * Sets the flags for this info.
- 	 * @return the flags
  	 */
 	public void setFlags(int value) {
 		flags = value;

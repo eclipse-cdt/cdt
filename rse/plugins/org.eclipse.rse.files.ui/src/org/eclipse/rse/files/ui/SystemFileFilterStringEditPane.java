@@ -176,15 +176,15 @@ public class SystemFileFilterStringEditPane
         // directory prompt                     
         String historyKey = null;
         if (refProvider != null)
-          historyKey = ((ISubSystem)refProvider).getSubSystemConfiguration().getId()+".filterStringDialog"; // unique to us
+          historyKey = ((ISubSystem)refProvider).getSubSystemConfiguration().getId()+".filterStringDialog"; // unique to us //$NON-NLS-1$
         else
-          historyKey = "files.filterStringDialog"; // unique to us
+          historyKey = "files.filterStringDialog"; // unique to us //$NON-NLS-1$
           
         boolean readonly = false;
         folderCombo = SystemFileWidgetHelpers.createFolderCombo(composite_prompts, null, gridColumns, historyKey, readonly);        
         folderCombo.setShowNewConnectionPrompt(false);
-        SystemWidgetHelpers.setHelp(folderCombo, RSEUIPlugin.HELPPREFIX+"ffsd0001");
-        SystemWidgetHelpers.createLabel(composite_prompts," ",gridColumns); // FILLER
+        SystemWidgetHelpers.setHelp(folderCombo, RSEUIPlugin.HELPPREFIX+"ffsd0001"); //$NON-NLS-1$
+        SystemWidgetHelpers.createLabel(composite_prompts," ",gridColumns); // FILLER //$NON-NLS-1$
                 			
 		// parent folder prompt    
 		//textFolder = SystemWidgetHelpers.createLabeledTextField(composite_prompts, null, rb, RESID_FILEFILTERSTRING_FOLDER_ROOT);
@@ -192,33 +192,33 @@ public class SystemFileFilterStringEditPane
         // "Subset by file name filter" radiobutton
         subsetByFileNameRadioButton = SystemWidgetHelpers.createRadioButton(composite_prompts, null, SystemFileResources.RESID_FILEFILTERSTRING_BYFILENAME_LABEL, SystemFileResources.RESID_FILEFILTERSTRING_BYFILENAME_TOOLTIP);
         //SystemWidgetHelpers.setHelp(subsetByFileNameRadioButton, RSEUIPlugin.HELPPREFIX+"ffsd0002", RSEUIPlugin.HELPPREFIX+"ffsd0003");
-        SystemWidgetHelpers.setHelp(subsetByFileNameRadioButton, RSEUIPlugin.HELPPREFIX+"ffsd0002");
+        SystemWidgetHelpers.setHelp(subsetByFileNameRadioButton, RSEUIPlugin.HELPPREFIX+"ffsd0002"); //$NON-NLS-1$
         updateGridData(subsetByFileNameRadioButton, gridColumns);
                 
 		// File name prompt    
 		//textFile = SystemWidgetHelpers.createLabeledTextField(composite_prompts, null, rb, RESID_FILEFILTERSTRING_FILE_ROOT);
-		String indent = "       ";
+		String indent = "       "; //$NON-NLS-1$
 		String temp = SystemWidgetHelpers.appendColon(SystemFileResources.RESID_FILEFILTERSTRING_FILE_LABEL);
 		labelFile = SystemWidgetHelpers.createLabel(composite_prompts, indent+temp);
 		labelFile.setToolTipText(SystemFileResources.RESID_FILEFILTERSTRING_FILE_TOOLTIP);
 		textFile = SystemWidgetHelpers.createTextField(composite_prompts, null);
 		textFile.setToolTipText(SystemFileResources.RESID_FILEFILTERSTRING_FILE_TOOLTIP);
         //SystemWidgetHelpers.setHelp(textFile, RSEUIPlugin.HELPPREFIX+"ffsd0003",RSEUIPlugin.HELPPREFIX+"ffsd0002");
-        SystemWidgetHelpers.setHelp(textFile, RSEUIPlugin.HELPPREFIX+"ffsd0003");
+        SystemWidgetHelpers.setHelp(textFile, RSEUIPlugin.HELPPREFIX+"ffsd0003"); //$NON-NLS-1$
         updateGridData(textFile, gridColumns-1);
-		textFile.setText("*");
+		textFile.setText("*"); //$NON-NLS-1$
 
 
         // "Subset by file types filter" radiobutton
         subsetByFileTypesRadioButton = SystemWidgetHelpers.createRadioButton(composite_prompts, null, SystemFileResources.RESID_FILEFILTERSTRING_BYFILETYPES_LABEL,  SystemFileResources.RESID_FILEFILTERSTRING_BYFILETYPES_TOOLTIP);
         //SystemWidgetHelpers.setHelp(subsetByFileTypesRadioButton, RSEUIPlugin.HELPPREFIX+"ffsd0004", RSEUIPlugin.HELPPREFIX+"ffsd0005");
-        SystemWidgetHelpers.setHelp(subsetByFileTypesRadioButton, RSEUIPlugin.HELPPREFIX+"ffsd0004");
+        SystemWidgetHelpers.setHelp(subsetByFileTypesRadioButton, RSEUIPlugin.HELPPREFIX+"ffsd0004"); //$NON-NLS-1$
         updateGridData(subsetByFileTypesRadioButton, gridColumns);
 
 		// File types prompt 
 		Composite typesGroup = SystemWidgetHelpers.createComposite(composite_prompts, 3);   
         //SystemWidgetHelpers.setHelp(typesGroup, RSEUIPlugin.HELPPREFIX+"ffsd0005",RSEUIPlugin.HELPPREFIX+"ffsd0004");
-        SystemWidgetHelpers.setHelp(typesGroup, RSEUIPlugin.HELPPREFIX+"ffsd0005");
+        SystemWidgetHelpers.setHelp(typesGroup, RSEUIPlugin.HELPPREFIX+"ffsd0005"); //$NON-NLS-1$
 		GridLayout layout = (GridLayout)typesGroup.getLayout();
 		layout.marginWidth = 0;
 		layout.marginHeight = 0;		
@@ -248,10 +248,10 @@ public class SystemFileFilterStringEditPane
 		*/
 
 		// Show Files Only check box                     
-        SystemWidgetHelpers.createLabel(composite_prompts," ",gridColumns); // FILLER
+        SystemWidgetHelpers.createLabel(composite_prompts," ",gridColumns); // FILLER //$NON-NLS-1$
 		filesOnlyCheckBox = SystemWidgetHelpers.createCheckBox(composite_prompts, gridColumns, null,
 		                                                  SystemFileResources.RESID_FILEFILTERSTRING_INCFILESONLY_LABEL,  SystemFileResources.RESID_FILEFILTERSTRING_INCFILESONLY_TOOLTIP);
-        SystemWidgetHelpers.setHelp(filesOnlyCheckBox, RSEUIPlugin.HELPPREFIX+"ffsd0006");
+        SystemWidgetHelpers.setHelp(filesOnlyCheckBox, RSEUIPlugin.HELPPREFIX+"ffsd0006"); //$NON-NLS-1$
 
         // Test button
         /*
@@ -337,11 +337,11 @@ public class SystemFileFilterStringEditPane
 		{
 		  RemoteFileFilterString rffs = new RemoteFileFilterString(inputSubsystemConfiguration, inputFilterString);
 		  String defaultPath = rffs.getPath();
-		  folderCombo.setText((defaultPath==null) ? "" : defaultPath);
+		  folderCombo.setText((defaultPath==null) ? "" : defaultPath); //$NON-NLS-1$
 		  String defaultFile = rffs.getFile();		  
-		  textFile.setText((defaultFile==null) ? "" : defaultFile);
+		  textFile.setText((defaultFile==null) ? "" : defaultFile); //$NON-NLS-1$
 		  String defaultTypes = rffs.getTypesAsString();
-		  textTypes.setText((defaultTypes==null) ? "" : defaultTypes);
+		  textTypes.setText((defaultTypes==null) ? "" : defaultTypes); //$NON-NLS-1$
 		  boolean defaultIncludeFilesOnly = rffs.getShowFiles() && !rffs.getShowSubDirs();
           boolean defaultSubsetByFileName = !rffs.getFilterByTypes();
           // set appropriate radio button for subset type
@@ -359,9 +359,9 @@ public class SystemFileFilterStringEditPane
 	{
 		if (folderCombo == null)
 		  return;
-	    folderCombo.setText("");
-		textFile.setText("*");
-		textTypes.setText("");
+	    folderCombo.setText(""); //$NON-NLS-1$
+		textFile.setText("*"); //$NON-NLS-1$
+		textTypes.setText(""); //$NON-NLS-1$
         subsetByFileNameRadioButton.setSelection(true);
         subsetByFileTypesRadioButton.setSelection(false);
 		filesOnlyCheckBox.setSelection(false);
@@ -413,8 +413,8 @@ public class SystemFileFilterStringEditPane
 		  			// KM: defect 53210
 		  			// if folder path empty, only valid filter is subset by file name and it
 		  			// must be wild card
-		  			if (subsetByFileName) {
-		  				return fileNameText.equals("*");
+		  			if (subsetByFileName && fileNameText != null) {
+		  				return fileNameText.equals("*"); //$NON-NLS-1$
 		  			}
 		  			// if we are not subsetting by file name, it is not valid
 		  			else {
@@ -623,7 +623,7 @@ public class SystemFileFilterStringEditPane
 				// and that it is wild card character
 				else {
 					
-					if (!subsetByFileNameRadioButton.getSelection() || !textFile.getText().trim().equals("*")) {
+					if (!subsetByFileNameRadioButton.getSelection() || !textFile.getText().trim().equals("*")) { //$NON-NLS-1$
 						
 						// let error message come from path validator
 						if (pathValidator != null) {
@@ -733,7 +733,7 @@ public class SystemFileFilterStringEditPane
 	{
 		if (refProvider == null)
 	    {
-		  SystemBasePlugin.logWarning("Programming Error: input subsystem is not set");		  
+		  SystemBasePlugin.logWarning("Programming Error: input subsystem is not set");		   //$NON-NLS-1$
 		  return;
 		}
         skipUniquenessChecking = true;            
@@ -813,7 +813,7 @@ public class SystemFileFilterStringEditPane
 			// or subset by file type fields. KM: defect 53210
 			if (folderComboText.length() == 0 &&
 				subsetByFileNameRadioButton.getSelection() &&
-				textFile.getText().trim().equals("*")) {
+				textFile.getText().trim().equals("*")) { //$NON-NLS-1$
 				return false;
 			}
 			else {

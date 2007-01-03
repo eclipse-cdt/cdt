@@ -23,7 +23,7 @@ public class SystemRemotePath implements ISystemRemotePath {
 
 
 	
-	public static final ISystemRemotePath ROOT = new SystemRemotePath("", "", "/");
+	public static final ISystemRemotePath ROOT = new SystemRemotePath("", "", "/"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	
 	protected String profileName;
 	protected String connectionName;

@@ -1038,7 +1038,6 @@ public class SystemSelectRemoteFileOrFolderForm
 	/**
 	 * Add viewer filter.
 	 * @param filter a viewer filter.
-	 * @see SystemActionViewerFilter.
 	 */
 	public void addViewerFilter(ViewerFilter filter) {
 		viewerFilters.add(filter);

@@ -106,7 +106,7 @@ public class SystemEditableRemoteFile implements ISystemEditableRemoteObject, IP
 		 */
 		private InternalDownloadFileRunnable()
 		{
-			super("Download"); // TODO - need to externalize
+			super("Download"); // TODO - need to externalize //$NON-NLS-1$
 		}
 
 

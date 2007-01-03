@@ -29,8 +29,8 @@ public interface ISystemFileMessages
     // Messages
   	//public static final String FILEMSG_VALIDATE_PREFIX = FILEMSG_PREFIX + "Validate.";
   	
-	public static final String FILEMSG_VALIDATE_FILEFILTERSTRING_EMPTY    = "RSEF1006";
-	public static final String FILEMSG_VALIDATE_FILEFILTERSTRING_NOTUNIQUE= "RSEF1007";
-	public static final String FILEMSG_VALIDATE_FILEFILTERSTRING_NOTVALID = "RSEF1008";
-	public static final String FILEMSG_VALIDATE_FILEFILTERSTRING_NOINCLUDES = "RSEF1009";	
+	public static final String FILEMSG_VALIDATE_FILEFILTERSTRING_EMPTY    = "RSEF1006"; //$NON-NLS-1$
+	public static final String FILEMSG_VALIDATE_FILEFILTERSTRING_NOTUNIQUE= "RSEF1007"; //$NON-NLS-1$
+	public static final String FILEMSG_VALIDATE_FILEFILTERSTRING_NOTVALID = "RSEF1008"; //$NON-NLS-1$
+	public static final String FILEMSG_VALIDATE_FILEFILTERSTRING_NOINCLUDES = "RSEF1009";	 //$NON-NLS-1$
 }

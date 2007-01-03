@@ -402,8 +402,6 @@ public class SystemSelectRemoteFileAction extends SystemBaseDialogAction
     	  return (Object[])remoteObject;
     	else if (remoteObject instanceof IRemoteFile[])
     	  return (Object[])remoteObject;
-    	else if (remoteObject != null)
-    	  return new Object[] {remoteObject};
     	else
     	  return null;
     }

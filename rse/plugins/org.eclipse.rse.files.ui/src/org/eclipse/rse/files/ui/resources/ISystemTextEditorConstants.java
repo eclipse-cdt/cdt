@@ -21,30 +21,30 @@ public interface ISystemTextEditorConstants {
 
 	
 	// Editor id
-	public static final String SYSTEM_TEXT_EDITOR_ID	= "org.eclipse.rse.editor";
-	public static final String SYSTEM_TEXT_BROWSER_ID	= "org.eclipse.rse.browser";
+	public static final String SYSTEM_TEXT_EDITOR_ID	= "org.eclipse.rse.editor"; //$NON-NLS-1$
+	public static final String SYSTEM_TEXT_BROWSER_ID	= "org.eclipse.rse.browser"; //$NON-NLS-1$
 	
 	// Identifier for profile type
-	public static final String EDITOR_PROFILE_TYPE		= "editorProfileType";
+	public static final String EDITOR_PROFILE_TYPE		= "editorProfileType"; //$NON-NLS-1$
 	
 	// key to identify file has sequence numbers	
-	public static final String SEQUENCE_NUMBERS_KEY	    = "sequence_numbers_key";
+	public static final String SEQUENCE_NUMBERS_KEY	    = "sequence_numbers_key"; //$NON-NLS-1$
 	
 	// key to identify that a save limit should be set
-	public static final String MAX_LINE_LENGTH_KEY	    = "record_length_key";
+	public static final String MAX_LINE_LENGTH_KEY	    = "record_length_key"; //$NON-NLS-1$
 	
 	// key to identify that a source encoding should be set
 	// this is used to emulate the remote encoding of the file
-	public static final String SOURCE_ENCODING_KEY		= "source_encoding_key";
+	public static final String SOURCE_ENCODING_KEY		= "source_encoding_key"; //$NON-NLS-1$
 
 	// key to identify host ccsid	
-	public static final String CCSID_KEY                = "ccsid_key";
-	public static final String TEMP_CCSID_KEY           = "temp_ccsid_key";
+	public static final String CCSID_KEY                = "ccsid_key"; //$NON-NLS-1$
+	public static final String TEMP_CCSID_KEY           = "temp_ccsid_key"; //$NON-NLS-1$
 	
 	// key to identify logical or visual BIDI
-	public static final String BIDI_LOGICAL_KEY			= "bidi_logical_key";
+	public static final String BIDI_LOGICAL_KEY			= "bidi_logical_key"; //$NON-NLS-1$
 	
 	// key to identify the local encoding
 	// NOTE: DO NOT CHANGE THIS!! This is used by the IBM debugger.
-	public static final String LOCAL_ENCODING_KEY		= "encoding";
+	public static final String LOCAL_ENCODING_KEY		= "encoding"; //$NON-NLS-1$
 }

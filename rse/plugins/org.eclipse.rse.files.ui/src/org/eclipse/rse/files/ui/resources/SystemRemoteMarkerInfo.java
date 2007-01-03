@@ -33,7 +33,7 @@ public class SystemRemoteMarkerInfo implements ISystemRemoteMarkerSetElement, Cl
 	protected long id = UNDEFINED_ID;
 	
 	// marker type
-	protected String type = null;;
+	protected String type = null;
 	
 	// marker attributes
 	protected Map attributes = null;

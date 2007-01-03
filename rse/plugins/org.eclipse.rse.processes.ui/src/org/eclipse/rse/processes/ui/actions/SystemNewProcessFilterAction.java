@@ -37,8 +37,8 @@ public class SystemNewProcessFilterAction extends SystemNewFilterAction implemen
 	{
 		super(shell, parentPool, SystemProcessesResources.ACTION_NEWPROCESSFILTER_LABEL, 
 		      SystemProcessesResources.ACTION_NEWPROCESSFILTER_TOOLTIP, RSEUIPlugin.getDefault().getImageDescriptor(ICON_SYSTEM_NEWFILTER_ID));
-		setHelp(RSEUIPlugin.HELPPREFIX+"actn0042");
-		setDialogHelp(RSEUIPlugin.HELPPREFIX+"wnfr0000"); 
+		setHelp(RSEUIPlugin.HELPPREFIX+"actn0042"); //$NON-NLS-1$
+		setDialogHelp(RSEUIPlugin.HELPPREFIX+"wnfr0000");  //$NON-NLS-1$
 	}		
 
 	/**

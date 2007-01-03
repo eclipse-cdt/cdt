@@ -64,7 +64,7 @@ public class SystemExtractAction extends SystemBaseAction
 		_selected = new ArrayList();
 		_parent = parent;
 		allowOnMultipleSelection(true);
-		setHelp(RSEUIPlugin.HELPPREFIX + "actn0118");
+		setHelp(RSEUIPlugin.HELPPREFIX + "actn0118"); //$NON-NLS-1$
 		setImageDescriptor(RSEUIPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_EXTRACT_ID));
 	}
 
@@ -76,7 +76,7 @@ public class SystemExtractAction extends SystemBaseAction
 		_selected = new ArrayList();
 		_parent = parent;
 		allowOnMultipleSelection(true);
-		setHelp(RSEUIPlugin.HELPPREFIX + "actn0118");
+		setHelp(RSEUIPlugin.HELPPREFIX + "actn0118"); //$NON-NLS-1$
 		setImageDescriptor(RSEUIPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_EXTRACT_ID));
 
 	}
@@ -168,7 +168,7 @@ public class SystemExtractAction extends SystemBaseAction
 					SystemMessageDialog dlg = new SystemMessageDialog(getShell(), msg);
 					dlg.open();
 					System.out.println(e.getMessage());
-					System.out.println("Could not extract " + sources[j].getAbsolutePath());
+					System.out.println("Could not extract " + sources[j].getAbsolutePath()); //$NON-NLS-1$
 				}
 			}
 			}
@@ -236,16 +236,16 @@ public class SystemExtractAction extends SystemBaseAction
 	protected String getActionLabelForSingleSelection()
 	{
 		String msg = FileResources.ACTION_EXTRACT_SUB_LABEL;
-		return SystemMessage.sub(msg, "%1", getExtractedName((IRemoteFile)_selected.get(0)));
+		return SystemMessage.sub(msg, "%1", getExtractedName((IRemoteFile)_selected.get(0))); //$NON-NLS-1$
 	}
 	
 	protected String getExtractedName(IRemoteFile selection)
 	{
 		String newName = selection.getName();
-		int k = newName.lastIndexOf(".");
+		int k = newName.lastIndexOf("."); //$NON-NLS-1$
 		if (k == -1)
 		{
-			newName = newName + "_contents";
+			newName = newName + "_contents"; //$NON-NLS-1$
 		}
 		else
 		{

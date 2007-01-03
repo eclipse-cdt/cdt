@@ -30,7 +30,7 @@ public class SystemCompareWithEditionAction extends SystemEditionAction
 		super(parent, 
 				FileResources.ACTION_COMPAREWITH_HISTORY_LABEL,
 				FileResources.ACTION_COMPAREWITH_HISTORY_TOOLTIP, 
-			"org.eclipse.compare.internal.CompareWithEditionAction", 
+			"org.eclipse.compare.internal.CompareWithEditionAction",  //$NON-NLS-1$
 			false); 
 			
 		this.fHelpContextId= ICompareContextIds.COMPARE_WITH_EDITION_DIALOG;

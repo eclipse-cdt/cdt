@@ -89,7 +89,7 @@ public class SystemViewRemoteSearchResultAdapter extends AbstractSystemViewAdapt
 		{
 			IWorkbench desktop = PlatformUI.getWorkbench();
 			IWorkbenchPage persp = desktop.getActiveWorkbenchWindow().getActivePage();
-			IEditorPart editor = null;
+
 			String fileName = _file.getAbsolutePath();
 			IEditorReference[] editors = persp.getEditorReferences();
 			for (int i = 0; i < editors.length; i++)

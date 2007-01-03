@@ -38,7 +38,6 @@ import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.AbstractTreeViewer;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.rse.core.SystemBasePlugin;
 import org.eclipse.rse.core.filters.ISystemFilterReference;
@@ -47,7 +46,6 @@ import org.eclipse.rse.core.model.ISystemContainer;
 import org.eclipse.rse.core.model.ISystemMessageObject;
 import org.eclipse.rse.core.model.ISystemRegistry;
 import org.eclipse.rse.core.model.ISystemResourceSet;
-import org.eclipse.rse.core.model.SystemChildrenContentsType;
 import org.eclipse.rse.core.model.SystemMessageObject;
 import org.eclipse.rse.core.model.SystemWorkspaceResourceSet;
 import org.eclipse.rse.core.subsystems.ISubSystem;
@@ -123,7 +121,6 @@ import org.eclipse.rse.ui.view.ISystemEditableRemoteObject;
 import org.eclipse.rse.ui.view.ISystemMementoConstants;
 import org.eclipse.rse.ui.view.ISystemPropertyConstants;
 import org.eclipse.rse.ui.view.ISystemRemoteElementAdapter;
-import org.eclipse.rse.ui.view.ISystemTree;
 import org.eclipse.rse.ui.view.ISystemViewDropDestination;
 import org.eclipse.rse.ui.view.ISystemViewElementAdapter;
 import org.eclipse.rse.ui.view.SystemDNDTransferRunnable;
@@ -661,10 +658,6 @@ public class SystemViewRemoteFileAdapter
 				rffs.setShowFiles(true);
 				filter = rffs.toString();
 			}
-			else
-			{
-				filter = null; // this is our clue to RemoteFileSubSystemImpl to use all filter strings associated with this folder
-			}
 		}
 		else if (foldersOnly)
 		{
@@ -816,8 +809,8 @@ public class SystemViewRemoteFileAdapter
 		
 			boolean supportsArchiveManagement = file.getParentRemoteFileSubSystem().getParentRemoteFileSubSystemConfiguration().supportsArchiveManagement();
 		
-			boolean isArchive = file != null && file.isArchive() && supportsArchiveManagement;
-			boolean isVirtual = file != null && file instanceof IVirtualRemoteFile && supportsArchiveManagement;
+			boolean isArchive = file.isArchive() && supportsArchiveManagement;
+			boolean isVirtual = file instanceof IVirtualRemoteFile && supportsArchiveManagement;
 			boolean isRegular = !isArchive && !isVirtual;
 			
 			if (isRegular && uniquePropertyDescriptorArray == null ||
@@ -1160,7 +1153,8 @@ public class SystemViewRemoteFileAdapter
 		}
 		else if (name.equals(ISystemPropertyConstants.P_ARCHIVE_EXPANDEDSIZE))
 		{
-			if (!isVirtual) return new Long(0);
+			if (!isVirtual || virtualFile == null) return new Long(0);
+			
 			if (formatted)
 			{
 				return sub(xlatedExpandedSize, MSG_SUB1, Long.toString(virtualFile.getExpandedSize()));
@@ -1172,7 +1166,7 @@ public class SystemViewRemoteFileAdapter
 		}
 		else if (name.equals(ISystemPropertyConstants.P_VIRTUAL_COMPRESSEDSIZE))
 		{
-			if (!isVirtual) return new Long(0);
+			if (!isVirtual || virtualFile == null) return new Long(0);
 			if (formatted)
 			{
 				return sub(xlatedCompressedSize, MSG_SUB1, Long.toString(virtualFile.getCompressedSize()));
@@ -1220,11 +1214,13 @@ public class SystemViewRemoteFileAdapter
 		}
 		else if (name.equals(ISystemPropertyConstants.P_VIRTUAL_COMPRESSIONMETHOD))
 		{
-			if (!isVirtual) return ""; //$NON-NLS-1$
+			if (!isVirtual || virtualFile == null) return ""; //$NON-NLS-1$
 			return virtualFile.getCompressionMethod();
 		}
 		else if (name.equals(ISystemPropertyConstants.P_VIRTUAL_COMPRESSIONRATIO))
 		{
+			if (virtualFile != null)
+			{
 			Double ratio = new Double(virtualFile.getCompressionRatio());
 			if (formatted)
 			{
@@ -1234,7 +1230,9 @@ public class SystemViewRemoteFileAdapter
 			else
 			{
 				return ratio;
-			}
+			}}
+			else
+				return null;
 		}
 		else
 			return null; //super.getPropertyValue(name);
@@ -1561,7 +1559,8 @@ public class SystemViewRemoteFileAdapter
 			
 			if (config.getStatus() == IHostSearchConstants.FINISHED)
 			{			
-				submonitor.worked(1);
+				if (submonitor != null)
+					submonitor.worked(1);
 				Object[] results = config.getResults();
 				for (int m = 0; m < results.length; m++)
 				{
@@ -1764,6 +1763,8 @@ public class SystemViewRemoteFileAdapter
 							{
 							}	
 							
+							if (children != null)
+							{
 							for (int c = 0; c < children.length; c++)
 							{
 								Object child = children[c];
@@ -1787,6 +1788,7 @@ public class SystemViewRemoteFileAdapter
 										}
 									}
 								}										
+							}
 							}
 						}
 						
@@ -2040,6 +2042,8 @@ public class SystemViewRemoteFileAdapter
 						{
 						}
 
+						if (children != null)
+						{
 						for (int c = 0; c < children.length; c++)
 						{
 							Object child = children[c];
@@ -2059,6 +2063,7 @@ public class SystemViewRemoteFileAdapter
 								}
 								doDrop(newSrc, target, sameSystemType, filterSubSystem == targetFS, SystemDNDTransferRunnable.SRC_TYPE_RSE_RESOURCE, monitor);
 							}
+						}
 						}
 						return target;
 					}
@@ -2210,10 +2215,7 @@ public class SystemViewRemoteFileAdapter
 				}
 			}
 		}
-		else
-		{
-			result = null;
-		}
+
 
 		return result;
 	}
@@ -2367,8 +2369,15 @@ public class SystemViewRemoteFileAdapter
 				SystemMessageDialog.displayErrorMessage(shell, RSEUIPlugin.getPluginMessage(ISystemMessages.FILEMSG_DELETE_FILE_FAILED).makeSubstitution(file.toString()));
 			}
 		}
-		ok = ss.deleteBatch(files, monitor);
-		return ok;
+		if (ss != null)
+		{
+			ok = ss.deleteBatch(files, monitor);
+			return ok;
+		}
+		else
+		{
+			return false;
+		}
 	}
 	// FOR COMMON RENAME ACTIONS
 	/**

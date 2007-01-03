@@ -129,7 +129,7 @@ public class SystemUniversalTempFileListener extends SystemTempFileListener
 			else
 			{
 				// for mounting...
-				if (fs.getHost().getSystemType().equals("Local"))
+				if (fs.getHost().getSystemType().equals("Local")) //$NON-NLS-1$
 				{
 					boolean isMounted = properties.getRemoteFileMounted();
 					if (isMounted)

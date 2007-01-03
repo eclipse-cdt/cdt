@@ -36,11 +36,7 @@ public class SystemTestFilterStringAPIProviderImpl
 
 	protected String filterString = null;
 	protected ISubSystem subsystem = null;
-	protected Object[] emptyList = new Object[0];
-	protected Object[] msgList   = new Object[1];	
-	protected SystemMessageObject nullObject     = null;
-	protected SystemMessageObject canceledObject = null;	
-	protected SystemMessageObject errorObject    = null;	
+
 	/**
 	 * Constructor 
 	 * @param subsystem The subsystem that will resolve the filter string

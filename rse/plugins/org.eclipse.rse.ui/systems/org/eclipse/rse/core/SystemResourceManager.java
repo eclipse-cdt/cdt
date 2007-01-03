@@ -205,7 +205,7 @@ public class SystemResourceManager implements SystemResourceConstants
     	}	
     	try{
 		  // create types folder...
-    	  IFolder folder = getResourceHelpers().getOrCreateFolder(proj,RESOURCE_TYPE_FILTERS_FOLDER_NAME);
+    	  getResourceHelpers().getOrCreateFolder(proj,RESOURCE_TYPE_FILTERS_FOLDER_NAME);
     	} catch (Exception e)
     	{
 	      	SystemBasePlugin.logError("error opening/creating types folder",e); //$NON-NLS-1$

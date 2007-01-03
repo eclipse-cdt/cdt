@@ -238,7 +238,7 @@ public class SystemPropertyPageExtension implements IPropertyPageContributor
     
     protected Bundle getBundle(IConfigurationElement element)    
     {
-    	String nameSpace = element.getDeclaringExtension().getNamespace();
+    	String nameSpace = element.getDeclaringExtension().getNamespaceIdentifier();
     	return Platform.getBundle(nameSpace);
     }        
     

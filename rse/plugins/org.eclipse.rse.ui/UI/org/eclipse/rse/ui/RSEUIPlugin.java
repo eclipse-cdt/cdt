@@ -948,7 +948,7 @@ public class RSEUIPlugin extends SystemBasePlugin implements ISystemMessageProvi
 					if ((iconFile!=null)&&(iconFile.length()>0))
 					{
 					    // get namespace of extension (i.e. the id of the declaring plugin)
-					    String nameSpace = showPrefPagePlugins[idx].getDeclaringExtension().getNamespace();
+					    String nameSpace = showPrefPagePlugins[idx].getDeclaringExtension().getNamespaceIdentifier();
 					    
 					    // now get the associated bundle
 					    Bundle bundle = Platform.getBundle(nameSpace);
@@ -1118,7 +1118,7 @@ public class RSEUIPlugin extends SystemBasePlugin implements ISystemMessageProvi
 			try
 			{	
 				// get the name space of the declaring extension
-			    String nameSpace = systemTypeExtensions[i].getDeclaringExtension().getNamespace();
+			    String nameSpace = systemTypeExtensions[i].getDeclaringExtension().getNamespaceIdentifier();
 				
 				// use the name space to get the bundle
 			    Bundle bundle = Platform.getBundle(nameSpace);
@@ -1155,7 +1155,7 @@ public class RSEUIPlugin extends SystemBasePlugin implements ISystemMessageProvi
 			try
 			{
 				// get the name space of the declaring extension
-			    String nameSpace = systemTypeExtensions[i].getDeclaringExtension().getNamespace();
+			    String nameSpace = systemTypeExtensions[i].getDeclaringExtension().getNamespaceIdentifier();
 				
 			    String menuExtensionType = systemTypeExtensions[i].getAttribute("class"); //$NON-NLS-1$
 			    
@@ -1193,7 +1193,7 @@ public class RSEUIPlugin extends SystemBasePlugin implements ISystemMessageProvi
 			try
 			{
 				// get the name space of the declaring extension
-			    String nameSpace = systemTypeExtensions[i].getDeclaringExtension().getNamespace();
+			    String nameSpace = systemTypeExtensions[i].getDeclaringExtension().getNamespaceIdentifier();
 				
 			    String keystoreProviderType = systemTypeExtensions[i].getAttribute("class"); //$NON-NLS-1$
 			    

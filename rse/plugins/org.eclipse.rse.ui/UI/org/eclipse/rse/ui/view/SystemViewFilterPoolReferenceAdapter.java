@@ -276,7 +276,6 @@ public class SystemViewFilterPoolReferenceAdapter
 	 */
 	public boolean doDelete(Shell shell, Object element, IProgressMonitor monitor) throws Exception
 	{
-		ISystemFilterPoolReference fpr = getFilterPoolReference(element);
 		ISystemFilterPool fp = getFilterPool(element);
 		ISystemFilterPoolManager fpMgr = fp.getSystemFilterPoolManager();
 		fpMgr.deleteSystemFilterPool(fp);

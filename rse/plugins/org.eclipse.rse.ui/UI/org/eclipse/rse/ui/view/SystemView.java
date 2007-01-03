@@ -1400,13 +1400,13 @@ public class SystemView extends TreeViewer implements ISystemTree, ISystemResour
 	}
 
 	protected Item[] sortSelection(Widget parentItem, Item[] oldResult) {
-		Item[] newResult = new Item[oldResult.length];
 		Item[] children = null;
+		Item[] newResult = new Item[oldResult.length];
 		if (parentItem instanceof Item) {
 				children = oldResult;
 		} else
 			children = getChildren(parentItem);
-		/*
+		
 		for (int i = 0; i < oldResult.length; i++) 
 		{
 			Item first = removeFirstItem(oldResult, children);
@@ -1414,8 +1414,7 @@ public class SystemView extends TreeViewer implements ISystemTree, ISystemResour
 		}
 
 		return newResult;
-		*/
-		return oldResult;
+
 	}
 
 	protected Item removeFirstItem(Item[] items, Item[] children) {

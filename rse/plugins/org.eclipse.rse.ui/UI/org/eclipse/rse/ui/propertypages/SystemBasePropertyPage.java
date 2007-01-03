@@ -20,7 +20,7 @@ import org.eclipse.rse.ui.Mnemonics;
 import org.eclipse.rse.ui.SystemWidgetHelpers;
 import org.eclipse.rse.ui.messages.ISystemMessageLine;
 import org.eclipse.rse.ui.messages.ISystemMessageLineTarget;
-import org.eclipse.rse.ui.messages.SystemDialogPageMessageLine;
+import org.eclipse.rse.ui.messages.SystemMessageLine;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Cursor;
 import org.eclipse.swt.layout.GridData;
@@ -479,7 +479,7 @@ public abstract class SystemBasePropertyPage extends PropertyPage
 		if (wantAutomaticValidManagement())
           setValid(message == null);
         if (msgLine != null)
-          ((SystemDialogPageMessageLine)msgLine).internalSetErrorMessage(message);
+          ((SystemMessageLine)msgLine).setErrorMessage(message);
 	}
 	
 	/**
@@ -527,7 +527,7 @@ public abstract class SystemBasePropertyPage extends PropertyPage
 	{
 		super.setMessage(message);
 		if (msgLine!=null)
-          ((SystemDialogPageMessageLine)msgLine).internalSetMessage(message);
+          ((SystemMessageLine)msgLine).setMessage(message);
 	}
 
 }

@@ -111,7 +111,7 @@ public class SystemQuickOpenPageDescriptor implements Comparable {
 		URL url = null;
 		
 		try {
-		    String nameSpace = element.getDeclaringExtension().getNamespace();
+		    String nameSpace = element.getDeclaringExtension().getNamespaceIdentifier();
 		    Bundle bundle = Platform.getBundle(nameSpace);
 			url = new URL(bundle.getEntry("/"), imageName); //$NON-NLS-1$
 		}

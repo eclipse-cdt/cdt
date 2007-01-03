@@ -209,8 +209,7 @@ public class SystemSimpleCopyDialog
 	 */
 	public boolean verify() 
 	{
-		String errMsg = null;
-		Control controlInError = null;
+
 		clearErrorMessage();				
 /*
 		if (errMsg != null)

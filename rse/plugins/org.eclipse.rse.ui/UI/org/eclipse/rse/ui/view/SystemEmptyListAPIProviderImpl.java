@@ -28,8 +28,6 @@ public class SystemEmptyListAPIProviderImpl
 {
 
 
-	protected Object[] emptyList = new Object[0];
-	
 	/**
 	 * Constructor 
 	 */

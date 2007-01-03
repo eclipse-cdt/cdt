@@ -95,7 +95,6 @@ public class SystemClearAllPasswordsAction extends SystemBaseAction {
     			if (system.isPasswordCached() || system.isPasswordCached(true))
     			{
 	    			// get the user id
-	    			String userId = system.getUserId();
 	    			
 	    			// clear userid/password from memory and fire event
 	    			//DKM and disk now

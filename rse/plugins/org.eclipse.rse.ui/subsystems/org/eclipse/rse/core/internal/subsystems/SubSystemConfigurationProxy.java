@@ -246,7 +246,7 @@ public class SubSystemConfigurationProxy implements ISubSystemConfigurationProxy
    	       try
    	       {
 //   	    	 get the name space of the declaring extension
-			    String nameSpace = element.getDeclaringExtension().getNamespace();
+			    String nameSpace = element.getDeclaringExtension().getNamespaceIdentifier();
 			    String extensionType = element.getAttribute("class"); //$NON-NLS-1$
 			    
 				// use the name space to get the bundle
@@ -354,7 +354,7 @@ public class SubSystemConfigurationProxy implements ISubSystemConfigurationProxy
     
     protected Bundle getBundle()    
     {
-    	String nameSpace = element.getDeclaringExtension().getNamespace();
+    	String nameSpace = element.getDeclaringExtension().getNamespaceIdentifier();
     	return Platform.getBundle(nameSpace);
     }        
     

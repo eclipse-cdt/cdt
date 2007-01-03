@@ -458,8 +458,7 @@ public class SystemSimpleSelectDialog extends SystemPromptDialog
 	 */
 	public boolean verify() 
 	{
-		String errMsg = null;
-		Control controlInError = null;
+
 		clearErrorMessage();				
 /*
 		if (errMsg != null)

@@ -253,9 +253,7 @@ public class SystemScratchpadView
 			getTree().setVisible(true);
 			_objectInput = newObject;
 
-			SystemScratchpadViewProvider provider = (SystemScratchpadViewProvider) getContentProvider();
-			Object[] children = provider.getChildren(_objectInput);
-
+	
 			super.inputChanged(newObject, oldObject);
 		}
 		else if (newObject == null)
@@ -429,7 +427,6 @@ public class SystemScratchpadView
 			remoteResourceNames = (Vector) remoteResource;
 			remoteResource = remoteResourceNames.elementAt(0);
 		}
-		String remoteResourceParentName = getRemoteResourceAbsoluteName(remoteResourceParent);
 		String remoteResourceName = getRemoteResourceAbsoluteName(remoteResource);
 		if (remoteResourceName == null)
 			return;
@@ -524,7 +521,6 @@ public class SystemScratchpadView
 				// --------------------------
 			case ISystemRemoteChangeEvents.SYSTEM_REMOTE_RESOURCE_RENAMED :
 				{
-					String oldName = event.getOldName();
 					Object child = event.getResource();
 
 					if (provider != null)

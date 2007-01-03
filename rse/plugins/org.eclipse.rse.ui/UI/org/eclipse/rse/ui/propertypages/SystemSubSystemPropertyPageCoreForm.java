@@ -346,7 +346,6 @@ public class SystemSubSystemPropertyPageCoreForm extends AbstractSystemSubSystem
 		  // PROCESS USER ID...
 		  if (textUserId != null)
 		  {
-		    String userId = getUserId();
 		    updateUserId(ss);
 		  }
 		  ss.commit();

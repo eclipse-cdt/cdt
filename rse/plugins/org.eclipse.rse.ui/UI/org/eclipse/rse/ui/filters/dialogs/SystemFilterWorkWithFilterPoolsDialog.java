@@ -353,8 +353,7 @@ public class SystemFilterWorkWithFilterPoolsDialog
 	 */
 	public boolean verify() 
 	{
-		String errMsg = null;
-		Control controlInError = null;
+
 		clearErrorMessage();				
 /*
 		if (errMsg != null)

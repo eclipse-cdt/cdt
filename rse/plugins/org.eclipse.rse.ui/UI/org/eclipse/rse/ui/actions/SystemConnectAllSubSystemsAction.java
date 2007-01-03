@@ -75,7 +75,6 @@ public class SystemConnectAllSubSystemsAction extends SystemBaseAction
 		IHost conn = (IHost)getFirstSelection();
 		try 
 		{
-		    Shell shell = getShell();
 		    ISubSystem[] subsystems = conn.getSubSystems();
 		    for (int i = 0; i < subsystems.length; i++)
 		    {

@@ -206,7 +206,6 @@ public class SystemRenameDialog extends SystemPromptDialog
 	 */
 	protected ISystemMessageLine createMessageLine(Composite c)
 	{
-		ISystemMessageLine msgLine = super.createMessageLine(c);
 		return fMessageLine;
 	}
 
@@ -488,7 +487,6 @@ public class SystemRenameDialog extends SystemPromptDialog
     	e.doit = false;	
     	ignoreSelection = true;
     	
-    	Control focusControl = Display.getCurrent().getFocusControl();
          	
     	//System.out.println("...Key pressed. currRow = "+currRow);    	   
     	 

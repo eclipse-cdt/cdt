@@ -71,7 +71,7 @@ public class DStoreProcessSubSystemConfiguration extends ProcessServiceSubSystem
 	}
 
 	/**
-	 * @return
+	 * @return whether environment variables property page is supported
 	 */
 	public boolean supportsEnvironmentVariablesPropertyPage() {
 		return false;

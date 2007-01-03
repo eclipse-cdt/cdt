@@ -384,11 +384,24 @@ public abstract class RemoteFileSubSystemConfiguration extends SubSystemConfigur
 		      filterStrings.add(rootFilesFilterString.toString());		      
 		      mgr.createSystemFilter(pool, SystemFileResources.RESID_FILTER_ROOTFILES,filterStrings);		      
 		  }
+		  else
+		  {
+			  // create an "All"
+			  // need at least  some kind of filter predefined for any given profile
+			    // ----------------------
+		      // "Root Files" filter...
+		      // ----------------------
+		      Vector filterStrings = new Vector();
+		      RemoteFileFilterString rootFilesFilterString = new RemoteFileFilterString(this);
+		      rootFilesFilterString.setPath(getSeparator());
+		      filterStrings.add(rootFilesFilterString.toString());		      
+		      mgr.createSystemFilter(pool, SystemFileResources.RESID_FILTER_ROOTFILES,filterStrings);
+		  }
 		  //else
 		    //System.out.println("Did not create default filters because this is not the default private profile: " + mgr.getName());
 		} catch (Exception exc)
 		{
-			SystemBasePlugin.logError("Error creating default filter pool",exc);
+			SystemBasePlugin.logError("Error creating default filter pool",exc); //$NON-NLS-1$
 		}
 		return pool;
 	}

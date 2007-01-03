@@ -175,8 +175,23 @@ public abstract class RemoteProcessSubSystemConfiguration extends
 		      filter = mgr.createSystemFilter(pool, SystemProcessesCoreResources.RESID_PROPERTY_PROCESS_MYPROCESSESFILTER_LABEL,filterStrings);
 		      filter.setNonChangable(true);
 		      filter.setSingleFilterStringOnly(true);  
-		  }
-		} catch (Exception exc)
+		}
+		else
+		{
+			 Vector filterStrings = new Vector();	
+
+		      // ----------------------
+		      // "All Processes" filter...
+		      // ----------------------
+		      filterStrings = new Vector();
+		      HostProcessFilterImpl allProcessesFilterString = new HostProcessFilterImpl();
+		      filterStrings.add(allProcessesFilterString.toString());
+		      ISystemFilter filter = mgr.createSystemFilter(pool, SystemProcessesCoreResources.RESID_PROPERTY_PROCESS_DEFAULTFILTER_LABEL,filterStrings);
+		      filter.setNonChangable(true);
+		      filter.setSingleFilterStringOnly(true); 
+		}
+		}
+		catch (Exception exc)
 		{
 			SystemBasePlugin.logError("Error creating default filter pool",exc); //$NON-NLS-1$
 		}

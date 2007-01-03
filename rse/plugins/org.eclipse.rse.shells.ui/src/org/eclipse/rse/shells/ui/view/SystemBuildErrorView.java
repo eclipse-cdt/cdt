@@ -24,8 +24,6 @@ import org.eclipse.rse.subsystems.shells.core.subsystems.IRemoteError;
 import org.eclipse.rse.ui.messages.ISystemMessageLine;
 import org.eclipse.rse.ui.view.SystemTableView;
 import org.eclipse.rse.ui.view.SystemTableViewProvider;
-import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Item;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
@@ -49,11 +47,6 @@ public class SystemBuildErrorView extends SystemTableView
 	}
 
 
-	private Color _errColor;
-	private Color _outColor;
-	private Color _infColor;
-	private Color _warColor;
-	private Color _prmColor;
 
 
 	
@@ -61,13 +54,7 @@ public class SystemBuildErrorView extends SystemTableView
 	{
 		super(table, msgLine);
 
-		Display display = getControl().getDisplay();
 
-		_errColor = new Color(display, 255, 0, 0);
-		_outColor = new Color(display, 50, 50, 50);
-		_infColor = new Color(display, 0, 0, 255);
-		_warColor = new Color(display, 200, 150, 0);
-		_prmColor = new Color(display, 0, 50, 0);
 		
 		_provider = new SystemBuildErrorViewProvider();
 		setContentProvider(_provider);

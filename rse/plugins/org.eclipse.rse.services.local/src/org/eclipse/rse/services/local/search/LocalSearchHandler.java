@@ -235,7 +235,7 @@ public class LocalSearchHandler implements ISearchHandler
 
 				// if it is not a file search, then call the handler search
 				// method
-				if (!_isFileSearch)
+				if (!_isFileSearch && vc != null)
 				{
 					matches = vc.getHandler().search(vc.fullName, _stringMatcher);
 					IHostSearchResult[] results = convert(file, matches);
@@ -469,7 +469,7 @@ public class LocalSearchHandler implements ISearchHandler
 	protected boolean doesClassificationMatch(String absolutePath)
 	{
 
-		if (_classificationString == null || _classificationString.equals(""))
+		if (_classificationString == null || _classificationString.equals("")) //$NON-NLS-1$
 		{
 			return true;
 		}

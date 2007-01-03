@@ -138,7 +138,7 @@ public class SystemZipHandler implements ISystemArchiveHandler
 	protected void fillBranch(ZipEntry next)
 	{
 		VirtualChild nextChild;
-		if (next.getName().equals("/")) return; // dummy entry
+		if (next.getName().equals("/")) return; // dummy entry //$NON-NLS-1$
 		if (!next.isDirectory())
 		{
 			SystemUniversalZipEntry nextEntry = new SystemUniversalZipEntry(next);
@@ -192,18 +192,18 @@ public class SystemZipHandler implements ISystemArchiveHandler
 		_virtualFS.put(key, newValue);
 		
 		// base case 2
-		if (key.equals(""))
+		if (key.equals("")) //$NON-NLS-1$
 		{
 			return;
 		}
 		else
 		{
-			int i = key.lastIndexOf("/");
+			int i = key.lastIndexOf("/"); //$NON-NLS-1$
 			if (i == -1) // recursive last step
 			{
 				VirtualChild nextValue = new VirtualChild(this, key);
 				nextValue.isDirectory = true;
-				recursivePopulate("", nextValue);
+				recursivePopulate("", nextValue); //$NON-NLS-1$
 				return;
 			}
 			else // recursive step
@@ -285,7 +285,7 @@ public class SystemZipHandler implements ISystemArchiveHandler
 			{
 				ZipEntry next = (ZipEntry) entries.nextElement();
 				String nextName = ArchiveHandlerManager.cleanUpVirtualPath(next.getName());
-				if (nextName.startsWith(parent) && !nextName.equals(parent+"/"))
+				if (nextName.startsWith(parent) && !nextName.equals(parent+"/")) //$NON-NLS-1$
 				{
 					SystemUniversalZipEntry nextEntry = new SystemUniversalZipEntry(next);
 					VirtualChild nextChild = new VirtualChild(this, nextEntry.getFullName());
@@ -364,13 +364,13 @@ public class SystemZipHandler implements ISystemArchiveHandler
 		if (!updateVirtualFSIfNecessary()) return new VirtualChild(this, fullVirtualName);
 
 		fullVirtualName = ArchiveHandlerManager.cleanUpVirtualPath(fullVirtualName);
-		if (fullVirtualName == "" || fullVirtualName == null) return new VirtualChild(this);
-		int i = fullVirtualName.lastIndexOf("/");
+		if (fullVirtualName == "" || fullVirtualName == null) return new VirtualChild(this); //$NON-NLS-1$
+		int i = fullVirtualName.lastIndexOf("/"); //$NON-NLS-1$
 		String path;
 		String name;
 		if (i == -1)
 		{
-			path = "";
+			path = ""; //$NON-NLS-1$
 			name = fullVirtualName;
 		}
 		else
@@ -393,16 +393,16 @@ public class SystemZipHandler implements ISystemArchiveHandler
 		if (!_exists) return false;
 
 		fullVirtualName = ArchiveHandlerManager.cleanUpVirtualPath(fullVirtualName);
-		if (fullVirtualName == "" || fullVirtualName == null) return false;
+		if (fullVirtualName == "" || fullVirtualName == null) return false; //$NON-NLS-1$
 		
 		if (_vfsLastModified == _file.lastModified())
 		{
-			int i = fullVirtualName.lastIndexOf("/");
+			int i = fullVirtualName.lastIndexOf("/"); //$NON-NLS-1$
 			String path;
 			String name;
 			if (i == -1)
 			{
-				path = "";
+				path = ""; //$NON-NLS-1$
 				name = fullVirtualName;
 			}
 			else
@@ -430,7 +430,7 @@ public class SystemZipHandler implements ISystemArchiveHandler
 				{
 					try
 					{
-						safeGetEntry(fullVirtualName + "/");
+						safeGetEntry(fullVirtualName + "/"); //$NON-NLS-1$
 						retval = true;
 					}
 					catch (IOException f)
@@ -445,7 +445,7 @@ public class SystemZipHandler implements ISystemArchiveHandler
 			}
 			else
 			{
-				System.out.println("Could not open the ZipFile " + _file.toString());
+				System.out.println("Could not open the ZipFile " + _file.toString()); //$NON-NLS-1$
 				return false;
 			}
 		}
@@ -659,7 +659,7 @@ public class SystemZipHandler implements ISystemArchiveHandler
 		
 		String name;
 		int charsToTrim;
-		int j = dir.lastIndexOf("/");
+		int j = dir.lastIndexOf("/"); //$NON-NLS-1$
 		if (j == -1) 
 		{
 			charsToTrim = 0;
@@ -673,7 +673,7 @@ public class SystemZipHandler implements ISystemArchiveHandler
 
 		if (destination == null)
 		{
-			if (dir.equals(""))
+			if (dir.equals("")) //$NON-NLS-1$
 			{
 				destination = destinationParent;
 			}
@@ -689,8 +689,8 @@ public class SystemZipHandler implements ISystemArchiveHandler
 			{
 				if (!SystemArchiveUtil.delete(destination))
 				{
-					System.out.println("Could not overwrite directory " + destination);
-					System.out.println("(Could not delete old directory)");
+					System.out.println("Could not overwrite directory " + destination); //$NON-NLS-1$
+					System.out.println("(Could not delete old directory)"); //$NON-NLS-1$
 					return false;
 				}
 			}
@@ -699,8 +699,8 @@ public class SystemZipHandler implements ISystemArchiveHandler
 			{
 				if (!destination.mkdirs())
 				{
-					System.out.println("Could not overwrite directory " + destination);
-					System.out.println("(Could not create new directory)");
+					System.out.println("Could not overwrite directory " + destination); //$NON-NLS-1$
+					System.out.println("(Could not create new directory)"); //$NON-NLS-1$
 					return false;
 				}
 			}
@@ -741,7 +741,7 @@ public class SystemZipHandler implements ISystemArchiveHandler
 				{
 					if (!nextFile.mkdirs())
 					{
-						System.out.println("Could not create folder " + nextFile.toString());
+						System.out.println("Could not create folder " + nextFile.toString()); //$NON-NLS-1$
 						return false;
 					}
 				}
@@ -770,7 +770,7 @@ public class SystemZipHandler implements ISystemArchiveHandler
 		{
 			if (!file.createNewFile())
 			{
-				System.out.println("File already exists: " + file.toString()); 
+				System.out.println("File already exists: " + file.toString());  //$NON-NLS-1$
 				return false; 
 			}
 			else
@@ -786,7 +786,7 @@ public class SystemZipHandler implements ISystemArchiveHandler
 			}
 			else
 			{
-				System.out.println("Could not create " + file.toString());
+				System.out.println("Could not create " + file.toString()); //$NON-NLS-1$
 				System.out.println(e.getMessage());
 				return false;
 			}
@@ -805,10 +805,10 @@ public class SystemZipHandler implements ISystemArchiveHandler
 		if (!_exists) return false;
 		virtualPath = ArchiveHandlerManager.cleanUpVirtualPath(virtualPath);
 
-		if (exists(virtualPath + "/" + name))
+		if (exists(virtualPath + "/" + name)) //$NON-NLS-1$
 		{
 			// wrong method
-			return replace(virtualPath + "/" + name, stream, name, sourceEncoding, targetEncoding, isText);
+			return replace(virtualPath + "/" + name, stream, name, sourceEncoding, targetEncoding, isText); //$NON-NLS-1$
 		}
 		else
 		{
@@ -819,7 +819,7 @@ public class SystemZipHandler implements ISystemArchiveHandler
 				try
 				{
 					// Open a new tempfile which will be our destination for the new zip
-					outputTempFile = new File(_file.getAbsolutePath() + "temp");
+					outputTempFile = new File(_file.getAbsolutePath() + "temp"); //$NON-NLS-1$
 					ZipOutputStream  dest = new ZipOutputStream(
 									  new FileOutputStream(outputTempFile));
 
@@ -828,7 +828,7 @@ public class SystemZipHandler implements ISystemArchiveHandler
 					VirtualChild[] vcList = getVirtualChildrenList(false);
 					
 					// if it is an empty zip file, no need to recreate it
-					if (!(vcList.length == 1) || !vcList[0].fullName.equals(""))
+					if (!(vcList.length == 1) || !vcList[0].fullName.equals("")) //$NON-NLS-1$
 					{
 						recreateZipDeleteEntries(vcList, dest, null);
 					}
@@ -846,7 +846,7 @@ public class SystemZipHandler implements ISystemArchiveHandler
 				}
 				catch (IOException e)
 				{
-					System.out.println("Could not add a file.");
+					System.out.println("Could not add a file."); //$NON-NLS-1$
 					System.out.println(e.getMessage());
 					closeZipFile();
 					return false;
@@ -893,17 +893,17 @@ public class SystemZipHandler implements ISystemArchiveHandler
 			for (int i = 0; i < numFiles; i++)
 			{		
 				if (!files[i].exists() || !files[i].canRead()) return false;
-				if (exists(virtualPath + "/" + names[i]))
+				if (exists(virtualPath + "/" + names[i])) //$NON-NLS-1$
 				{
 					// sorry, wrong method buddy
-					return replace(virtualPath + "/" + names[i], files[i], names[i]);
+					return replace(virtualPath + "/" + names[i], files[i], names[i]); //$NON-NLS-1$
 				}
 			}
 			File outputTempFile;
 			try
 			{
 				// Open a new tempfile which will be our destination for the new zip
-				outputTempFile = new File(_file.getAbsolutePath() + "temp");
+				outputTempFile = new File(_file.getAbsolutePath() + "temp"); //$NON-NLS-1$
 				ZipOutputStream  dest = new ZipOutputStream(
 								  new FileOutputStream(outputTempFile));
 
@@ -912,7 +912,7 @@ public class SystemZipHandler implements ISystemArchiveHandler
 				VirtualChild[] vcList = getVirtualChildrenList(false);
 				
 				// if it is an empty zip file, no need to recreate it
-				if (!(vcList.length == 1) || !vcList[0].fullName.equals(""))
+				if (!(vcList.length == 1) || !vcList[0].fullName.equals("")) //$NON-NLS-1$
 				{
 					recreateZipDeleteEntries(vcList, dest, null);
 				}
@@ -933,7 +933,7 @@ public class SystemZipHandler implements ISystemArchiveHandler
 			}
 			catch (IOException e)
 			{
-				System.out.println("Could not add a file.");
+				System.out.println("Could not add a file."); //$NON-NLS-1$
 				System.out.println(e.getMessage());
 				if (closeZipFile) closeZipFile();
 				return false;
@@ -989,7 +989,7 @@ public class SystemZipHandler implements ISystemArchiveHandler
 		{
 			// the zip file will be empty, but it must have at least one entry,
 			// so we will put in a dummy entry.
-			ZipEntry entry = new ZipEntry("/");
+			ZipEntry entry = new ZipEntry("/"); //$NON-NLS-1$
 			dest.putNextEntry(entry);
 			dest.closeEntry();
 			return;
@@ -1002,7 +1002,7 @@ public class SystemZipHandler implements ISystemArchiveHandler
 			if (omitChildren != null && omitChildren.contains(vcList[i].fullName)) continue;
 			if (vcList[i].isDirectory)
 			{
-				ZipEntry nextEntry = safeGetEntry(vcList[i].fullName + "/");
+				ZipEntry nextEntry = safeGetEntry(vcList[i].fullName + "/"); //$NON-NLS-1$
 				dest.putNextEntry(nextEntry);
 				dest.closeEntry();
 				continue;
@@ -1096,13 +1096,13 @@ public class SystemZipHandler implements ISystemArchiveHandler
 		ZipEntry newEntry;
 		if (file.isDirectory())
 		{	
-			String fullName = virtualPath + "/" + name;
-			if (!fullName.endsWith("/")) fullName = fullName + "/";
+			String fullName = virtualPath + "/" + name; //$NON-NLS-1$
+			if (!fullName.endsWith("/")) fullName = fullName + "/"; //$NON-NLS-1$ //$NON-NLS-2$
 			newEntry = createSafeZipEntry(fullName);
 		}
 		else
 		{
-			newEntry = createSafeZipEntry(virtualPath + "/" + name);
+			newEntry = createSafeZipEntry(virtualPath + "/" + name); //$NON-NLS-1$
 		}
 		newEntry.setTime(file.lastModified());
 		dest.putNextEntry(newEntry);
@@ -1161,7 +1161,7 @@ public class SystemZipHandler implements ISystemArchiveHandler
 	protected ZipEntry appendBytes(InputStream stream, ZipOutputStream dest, String virtualPath, String name, String sourceEncoding, String targetEncoding, boolean isText) throws IOException
 	{
 		ZipEntry newEntry;
-		newEntry = createSafeZipEntry(virtualPath + "/" + name);
+		newEntry = createSafeZipEntry(virtualPath + "/" + name); //$NON-NLS-1$
 		dest.putNextEntry(newEntry);
 		BufferedInputStream source = new BufferedInputStream(stream);
 
@@ -1210,7 +1210,7 @@ public class SystemZipHandler implements ISystemArchiveHandler
 	{
 		String oldName = _file.getAbsolutePath();
 		_zipfile.close();
-		File oldFile = new File(oldName + "old");
+		File oldFile = new File(oldName + "old"); //$NON-NLS-1$
 		System.out.println(_file.renameTo(oldFile));
 		System.out.println(outputTempFile.renameTo(_file));
 		_vfsLastModified = _file.lastModified();
@@ -1255,7 +1255,7 @@ public class SystemZipHandler implements ISystemArchiveHandler
 			try
 			{
 				// Open a new tempfile which will be our destination for the new zip
-				outputTempFile = new File(_file.getAbsolutePath() + "temp");
+				outputTempFile = new File(_file.getAbsolutePath() + "temp"); //$NON-NLS-1$
 				ZipOutputStream  dest = new ZipOutputStream(
 								  new FileOutputStream(outputTempFile));
 				dest.setMethod(ZipOutputStream.DEFLATED);
@@ -1301,7 +1301,7 @@ public class SystemZipHandler implements ISystemArchiveHandler
 			catch (IOException e)
 			{
 				System.out.println(e.getMessage());
-				System.out.println("Could not delete " + fullVirtualName);
+				System.out.println("Could not delete " + fullVirtualName); //$NON-NLS-1$
 				if (!(outputTempFile == null)) outputTempFile.delete();
 				if (closeZipFile) closeZipFile();
 				return false;
@@ -1360,7 +1360,7 @@ public class SystemZipHandler implements ISystemArchiveHandler
 			try
 			{
 				// Open a new tempfile which will be our destination for the new zip
-				outputTempFile = new File(_file.getAbsolutePath() + "temp");
+				outputTempFile = new File(_file.getAbsolutePath() + "temp"); //$NON-NLS-1$
 				ZipOutputStream  dest = new ZipOutputStream(
 								  new FileOutputStream(outputTempFile));
 				dest.setMethod(ZipOutputStream.DEFLATED);
@@ -1371,17 +1371,17 @@ public class SystemZipHandler implements ISystemArchiveHandler
 				recreateZipDeleteEntries(vcList, dest, omissions);
 		
 				// Now append the additional entry to the zip file.
-				int i = fullVirtualName.lastIndexOf("/");
+				int i = fullVirtualName.lastIndexOf("/"); //$NON-NLS-1$
 				String virtualPath;
 				if (i == -1) 
 				{
-					virtualPath = "";
+					virtualPath = ""; //$NON-NLS-1$
 				}
 				else
 				{
 					virtualPath = fullVirtualName.substring(0,i);
 				}
-				ZipEntry newEntry = appendFile(file, dest, virtualPath, name, SystemEncodingUtil.ENCODING_UTF_8, SystemEncodingUtil.ENCODING_UTF_8, false);
+				appendFile(file, dest, virtualPath, name, SystemEncodingUtil.ENCODING_UTF_8, SystemEncodingUtil.ENCODING_UTF_8, false);
 				dest.close();
 		
 				// Now replace the old zip file with the new one
@@ -1390,7 +1390,7 @@ public class SystemZipHandler implements ISystemArchiveHandler
 			}
 			catch (IOException e)
 			{
-				System.out.println("Could not replace " + file.getName());
+				System.out.println("Could not replace " + file.getName()); //$NON-NLS-1$
 				if (!(outputTempFile == null)) outputTempFile.delete();
 				if (closeZipFile) closeZipFile();
 				return false;
@@ -1417,7 +1417,7 @@ public class SystemZipHandler implements ISystemArchiveHandler
 			try
 			{
 				// Open a new tempfile which will be our destination for the new zip
-				outputTempFile = new File(_file.getAbsolutePath() + "temp");
+				outputTempFile = new File(_file.getAbsolutePath() + "temp"); //$NON-NLS-1$
 				ZipOutputStream  dest = new ZipOutputStream(
 								  new FileOutputStream(outputTempFile));
 				dest.setMethod(ZipOutputStream.DEFLATED);
@@ -1428,17 +1428,17 @@ public class SystemZipHandler implements ISystemArchiveHandler
 				recreateZipDeleteEntries(vcList, dest, omissions);
 		
 				// Now append the additional entry to the zip file.
-				int i = fullVirtualName.lastIndexOf("/");
+				int i = fullVirtualName.lastIndexOf("/"); //$NON-NLS-1$
 				String virtualPath;
 				if (i == -1) 
 				{
-					virtualPath = "";
+					virtualPath = ""; //$NON-NLS-1$
 				}
 				else
 				{
 					virtualPath = fullVirtualName.substring(0,i);
 				}
-				ZipEntry newEntry = appendBytes(stream, dest, virtualPath, name, sourceEncoding, targetEncoding, isText);
+				appendBytes(stream, dest, virtualPath, name, sourceEncoding, targetEncoding, isText);
 				dest.close();
 		
 				// Now replace the old zip file with the new one
@@ -1447,7 +1447,7 @@ public class SystemZipHandler implements ISystemArchiveHandler
 			}
 			catch (IOException e)
 			{
-				System.out.println("Could not replace " + fullVirtualName);
+				System.out.println("Could not replace " + fullVirtualName); //$NON-NLS-1$
 				if (!(outputTempFile == null)) outputTempFile.delete();
 				closeZipFile();
 				return false;
@@ -1479,7 +1479,7 @@ public class SystemZipHandler implements ISystemArchiveHandler
 		VirtualChild vc = getVirtualFile(fullVirtualName);
 		if (!vc.exists())
 		{
-			System.out.println("The virtual file " + fullVirtualName + " does not exist.");
+			System.out.println("The virtual file " + fullVirtualName + " does not exist."); //$NON-NLS-1$ //$NON-NLS-2$
 			return false;
 		}
 		if (openZipFile())
@@ -1488,7 +1488,7 @@ public class SystemZipHandler implements ISystemArchiveHandler
 			try
 			{
 				// Open a new tempfile which will be our destination for the new zip
-				outputTempFile = new File(_file.getAbsolutePath() + "temp");
+				outputTempFile = new File(_file.getAbsolutePath() + "temp"); //$NON-NLS-1$
 				ZipOutputStream  dest = new ZipOutputStream(
 										new FileOutputStream(outputTempFile));
 				dest.setMethod(ZipOutputStream.DEFLATED);
@@ -1508,8 +1508,8 @@ public class SystemZipHandler implements ISystemArchiveHandler
 						String newName = newFullVirtualName + suffix;
 						if (renameList[i].isDirectory) 
 						{
-							newName = newName + "/";
-							names.put(renameList[i].fullName + "/", newName);
+							newName = newName + "/"; //$NON-NLS-1$
+							names.put(renameList[i].fullName + "/", newName); //$NON-NLS-1$
 						}
 						else
 						{
@@ -1519,7 +1519,7 @@ public class SystemZipHandler implements ISystemArchiveHandler
 					try 
 					{
 						safeGetEntry(fullVirtualName);
-						names.put(fullVirtualName + "/", newFullVirtualName + "/");
+						names.put(fullVirtualName + "/", newFullVirtualName + "/"); //$NON-NLS-1$ //$NON-NLS-2$
 					}
 					catch (IOException e) {}
 				}
@@ -1540,7 +1540,7 @@ public class SystemZipHandler implements ISystemArchiveHandler
 			}
 			catch (IOException e)
 			{
-				System.out.println("Could not rename " + fullVirtualName);
+				System.out.println("Could not rename " + fullVirtualName); //$NON-NLS-1$
 				if (!(outputTempFile == null)) outputTempFile.delete();
 				if (closeZipFile) closeZipFile();
 				return false;
@@ -1558,10 +1558,10 @@ public class SystemZipHandler implements ISystemArchiveHandler
 	{
 		fullVirtualName = ArchiveHandlerManager.cleanUpVirtualPath(fullVirtualName);
 		destinationVirtualPath = ArchiveHandlerManager.cleanUpVirtualPath(destinationVirtualPath);
-		int i = fullVirtualName.lastIndexOf("/");
+		int i = fullVirtualName.lastIndexOf("/"); //$NON-NLS-1$
 		if (i == -1)
 		{
-			return fullRename(fullVirtualName, destinationVirtualPath + "/" + fullVirtualName);
+			return fullRename(fullVirtualName, destinationVirtualPath + "/" + fullVirtualName); //$NON-NLS-1$
 		}
 		String name = fullVirtualName.substring(i);
 		return fullRename(fullVirtualName, destinationVirtualPath + name);
@@ -1573,7 +1573,7 @@ public class SystemZipHandler implements ISystemArchiveHandler
 	public boolean rename(String fullVirtualName, String newName) 
 	{
 		fullVirtualName = ArchiveHandlerManager.cleanUpVirtualPath(fullVirtualName);
-		int i = fullVirtualName.lastIndexOf("/");
+		int i = fullVirtualName.lastIndexOf("/"); //$NON-NLS-1$
 		if (i == -1)
 		{
 			return fullRename(fullVirtualName, newName);
@@ -1595,7 +1595,7 @@ public class SystemZipHandler implements ISystemArchiveHandler
 			String name;
 			String fullName = fullNames[i];
 			fullName = ArchiveHandlerManager.cleanUpVirtualPath(fullName);
-			int j = fullName.lastIndexOf("/");
+			int j = fullName.lastIndexOf("/"); //$NON-NLS-1$
 			if (j == -1)
 			{
 				name = fullName;
@@ -1606,14 +1606,14 @@ public class SystemZipHandler implements ISystemArchiveHandler
 			}
 			try
 			{	
-				files[i] = File.createTempFile(name, "virtual");
+				files[i] = File.createTempFile(name, "virtual"); //$NON-NLS-1$
 				files[i].deleteOnExit();
 				extractVirtualFile(fullNames[i], files[i]);
 			}
 			catch (IOException e)
 			{
 				System.out.println(e.getMessage());
-				System.out.println("Could not extract virtual file: " + fullNames[i]);
+				System.out.println("Could not extract virtual file: " + fullNames[i]); //$NON-NLS-1$
 				return null;
 			}
 		}
@@ -1626,7 +1626,7 @@ public class SystemZipHandler implements ISystemArchiveHandler
 	public boolean createFolder(String name)
 	{
 		name = ArchiveHandlerManager.cleanUpVirtualPath(name);
-		name = name + "/";
+		name = name + "/"; //$NON-NLS-1$
 		return createVirtualObject(name, true);
 	}
 	
@@ -1662,7 +1662,7 @@ public class SystemZipHandler implements ISystemArchiveHandler
 			try
 			{
 				// Open a new tempfile which will be our destination for the new zip
-				outputTempFile = new File(_file.getAbsolutePath() + "temp");
+				outputTempFile = new File(_file.getAbsolutePath() + "temp"); //$NON-NLS-1$
 				ZipOutputStream  dest = new ZipOutputStream(
 								  new FileOutputStream(outputTempFile));
 				dest.setMethod(ZipOutputStream.DEFLATED);
@@ -1670,7 +1670,7 @@ public class SystemZipHandler implements ISystemArchiveHandler
 				VirtualChild[] vcList = getVirtualChildrenList(false);
 				
 				// if it is an empty zip file, no need to recreate it
-				if (!(vcList.length == 1) || !vcList[0].fullName.equals(""))
+				if (!(vcList.length == 1) || !vcList[0].fullName.equals("")) //$NON-NLS-1$
 				{
 					recreateZipDeleteEntries(vcList, dest, null);
 				}
@@ -1688,7 +1688,7 @@ public class SystemZipHandler implements ISystemArchiveHandler
 			}
 			catch (IOException e)
 			{
-				System.out.println("Could not add a file.");
+				System.out.println("Could not add a file."); //$NON-NLS-1$
 				System.out.println(e.getMessage());
 				if (closeZipFile) closeZipFile();
 				return false;
@@ -1710,7 +1710,7 @@ public class SystemZipHandler implements ISystemArchiveHandler
 	 */
 	protected ZipEntry appendEmptyFile(ZipOutputStream dest, String name) throws IOException
 	{
-		boolean isDirectory = name.endsWith("/");
+		boolean isDirectory = name.endsWith("/"); //$NON-NLS-1$
 		ZipEntry newEntry;
 		newEntry = createSafeZipEntry(name);
 		dest.putNextEntry(newEntry);
@@ -1731,13 +1731,13 @@ public class SystemZipHandler implements ISystemArchiveHandler
 	 */
 	protected ZipEntry createSafeZipEntry(String name)
 	{
-		if (name.startsWith("/")) name = name.substring(1);
+		if (name.startsWith("/")) name = name.substring(1); //$NON-NLS-1$
 		return new ZipEntry(name);
 	}
 	
 	public String getStandardName(VirtualChild vc)
 	{
-		if (vc.isDirectory) return vc.fullName + "/";
+		if (vc.isDirectory) return vc.fullName + "/"; //$NON-NLS-1$
 		return vc.fullName;
 	}
 	
@@ -1754,7 +1754,7 @@ public class SystemZipHandler implements ISystemArchiveHandler
 		}
 		catch (IOException e)
 		{
-			System.out.println("Could not open zipfile: " + _file);
+			System.out.println("Could not open zipfile: " + _file); //$NON-NLS-1$
 			System.out.println(e.getMessage());
 			return false;
 		}
@@ -1769,7 +1769,7 @@ public class SystemZipHandler implements ISystemArchiveHandler
 		}
 		catch (IOException e)
 		{
-			System.out.println("Could not close zipfile: " + _file);
+			System.out.println("Could not close zipfile: " + _file); //$NON-NLS-1$
 			System.out.println(e.getMessage());
 			return false;
 		}
@@ -1806,8 +1806,8 @@ public class SystemZipHandler implements ISystemArchiveHandler
 	protected ZipEntry safeGetEntry(String name) throws IOException
 	{
 		ZipEntry entry = _zipfile.getEntry(name);
-		if (entry == null) entry = _zipfile.getEntry("/" + name);
-		if (entry == null) throw new IOException("SystemZipHandler.safeGetEntry(): The ZipEntry " + name + " cannot be found in " + _file.toString());
+		if (entry == null) entry = _zipfile.getEntry("/" + name); //$NON-NLS-1$
+		if (entry == null) throw new IOException("SystemZipHandler.safeGetEntry(): The ZipEntry " + name + " cannot be found in " + _file.toString()); //$NON-NLS-1$ //$NON-NLS-2$
 		return entry;
 	}
 	
@@ -1923,7 +1923,7 @@ public class SystemZipHandler implements ISystemArchiveHandler
 	 */
 	public String getCommentFor(String fullVirtualName, boolean closeZipFile) 
 	{
-		if (!_exists) return "";
+		if (!_exists) return ""; //$NON-NLS-1$
 
 		if (openZipFile())
 		{
@@ -1936,14 +1936,14 @@ public class SystemZipHandler implements ISystemArchiveHandler
 			catch (IOException e)
 			{ 
 				if (closeZipFile) closeZipFile();
-				return "";
+				return ""; //$NON-NLS-1$
 			}
 			if (closeZipFile) closeZipFile();
 			String comment = entry.getComment();
-			if (comment == null) return "";
+			if (comment == null) return ""; //$NON-NLS-1$
 			else return comment;
 		}
-		else return "";
+		else return ""; //$NON-NLS-1$
 	}
 
 	/* (non-Javadoc)
@@ -1995,7 +1995,7 @@ public class SystemZipHandler implements ISystemArchiveHandler
 	 */	
 	public String getCompressionMethodFor(String fullVirtualName, boolean closeZipFile) 
 	{
-		if (!_exists) return "";
+		if (!_exists) return ""; //$NON-NLS-1$
 
 		if (openZipFile())
 		{
@@ -2008,19 +2008,19 @@ public class SystemZipHandler implements ISystemArchiveHandler
 			catch (IOException e)
 			{ 
 				if (closeZipFile) closeZipFile();
-				return "";
+				return ""; //$NON-NLS-1$
 			}
 			if (closeZipFile) closeZipFile();
 			return (new Integer(entry.getMethod())).toString();
 		}
-		else return "";
+		else return ""; //$NON-NLS-1$
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.rse.core.archiveutils.ISystemArchiveHandler#getArchiveComment()
 	 */
 	public String getArchiveComment() 
 	{
-		return "";
+		return ""; //$NON-NLS-1$
 	}
 
 	/**
@@ -2038,7 +2038,7 @@ public class SystemZipHandler implements ISystemArchiveHandler
 	public String getClassification(String fullVirtualName, boolean closeZipFile) {
 		
 		// default type
-		String type = "file";
+		String type = "file"; //$NON-NLS-1$
 		
 		if (!_exists) {
 			return type;
@@ -2047,7 +2047,7 @@ public class SystemZipHandler implements ISystemArchiveHandler
 		fullVirtualName = ArchiveHandlerManager.cleanUpVirtualPath(fullVirtualName);
 		
 		// if it's not a class file, we do not classify it
-		if (!fullVirtualName.endsWith(".class")) {
+		if (!fullVirtualName.endsWith(".class")) { //$NON-NLS-1$
 			return type;
 		}
 		
@@ -2087,16 +2087,16 @@ public class SystemZipHandler implements ISystemArchiveHandler
 		}
 		
 		// if it is executable, then also get qualified class name
-		if (isExecutable) {
-			type = "executable(java";
+		if (isExecutable && parser != null) {
+			type = "executable(java"; //$NON-NLS-1$
 			
 			String qualifiedClassName = parser.getQualifiedClassName();
 			
 			if (qualifiedClassName != null) {
-    			type = type + ":" + qualifiedClassName;
+    			type = type + ":" + qualifiedClassName; //$NON-NLS-1$
 			}
 			
-			type = type + ")";
+			type = type + ")"; //$NON-NLS-1$
 		}
 		
 		return type;
@@ -2108,10 +2108,10 @@ public class SystemZipHandler implements ISystemArchiveHandler
 		virtualPath = ArchiveHandlerManager.cleanUpVirtualPath(virtualPath);
 		if (!file.isDirectory())
 		{
-			if (exists(virtualPath + "/" + name))
+			if (exists(virtualPath + "/" + name)) //$NON-NLS-1$
 			{
 				// wrong method
-				return replace(virtualPath + "/" + name, file, name);
+				return replace(virtualPath + "/" + name, file, name); //$NON-NLS-1$
 			}
 			else
 			{
@@ -2146,7 +2146,7 @@ public class SystemZipHandler implements ISystemArchiveHandler
 				sources[i] = (File) kids[i];
 				newNames[i] = sources[i].getAbsolutePath().substring(charsToTrim);
 				newNames[i] = newNames[i].replace('\\','/');
-				if (sources[i].isDirectory() && !newNames[i].endsWith("/")) newNames[i] = newNames[i] + "/";
+				if (sources[i].isDirectory() && !newNames[i].endsWith("/")) newNames[i] = newNames[i] + "/"; //$NON-NLS-1$ //$NON-NLS-2$
 			
 				// this part can be changed to allow different encodings for different files
 				sourceEncodings[i] = sourceEncoding;
@@ -2159,7 +2159,7 @@ public class SystemZipHandler implements ISystemArchiveHandler
 			targetEncodings[children.size()] = targetEncoding; 
 
 			isTexts[children.size()] = registry.isText(file);
-			if  (!newNames[children.size()].endsWith("/")) newNames[children.size()] = newNames[children.size()] + "/";
+			if  (!newNames[children.size()].endsWith("/")) newNames[children.size()] = newNames[children.size()] + "/"; //$NON-NLS-1$ //$NON-NLS-2$
 			return add(sources, virtualPath, newNames, sourceEncodings, targetEncodings, isTexts);
 		}
 	}
@@ -2170,10 +2170,10 @@ public class SystemZipHandler implements ISystemArchiveHandler
 		virtualPath = ArchiveHandlerManager.cleanUpVirtualPath(virtualPath);
 		if (!file.isDirectory())
 		{
-			if (exists(virtualPath + "/" + name))
+			if (exists(virtualPath + "/" + name)) //$NON-NLS-1$
 			{
 				// wrong method
-				return replace(virtualPath + "/" + name, file, name);
+				return replace(virtualPath + "/" + name, file, name); //$NON-NLS-1$
 			}
 			else
 			{
@@ -2192,7 +2192,6 @@ public class SystemZipHandler implements ISystemArchiveHandler
 		}
 		else
 		{
-			String sourceName = name;
 			HashSet children = new HashSet();
 			listAllFiles(file, children);
 			File[] sources = new File[children.size() + 1];
@@ -2208,7 +2207,7 @@ public class SystemZipHandler implements ISystemArchiveHandler
 				sources[i] = (File) kids[i];
 				newNames[i] = sources[i].getAbsolutePath().substring(charsToTrim);
 				newNames[i] = newNames[i].replace('\\','/');
-				if (sources[i].isDirectory() && !newNames[i].endsWith("/")) newNames[i] = newNames[i] + "/";
+				if (sources[i].isDirectory() && !newNames[i].endsWith("/")) newNames[i] = newNames[i] + "/"; //$NON-NLS-1$ //$NON-NLS-2$
 			
 				// this part can be changed to allow different encodings for different files
 				sourceEncodings[i] = sourceEncoding;
@@ -2220,7 +2219,7 @@ public class SystemZipHandler implements ISystemArchiveHandler
 			sourceEncodings[children.size()] = sourceEncoding;
 			targetEncodings[children.size()] = targetEncoding;
 			isTexts[children.size()] = isText;
-			if  (!newNames[children.size()].endsWith("/")) newNames[children.size()] = newNames[children.size()] + "/";
+			if  (!newNames[children.size()].endsWith("/")) newNames[children.size()] = newNames[children.size()] + "/"; //$NON-NLS-1$ //$NON-NLS-2$
 			return add(sources, virtualPath, newNames, sourceEncodings, targetEncodings, isTexts);
 		}
 	}

@@ -64,7 +64,7 @@ public class LocalProcessService extends AbstractProcessService implements ILoca
 		}
 		catch (Exception e)
 		{
-			throw new SystemMessageException(getMessage("RSEPG1301"));
+			throw new SystemMessageException(getMessage("RSEPG1301")); //$NON-NLS-1$
 		}
 		return processes;
 	}
@@ -86,17 +86,17 @@ public class LocalProcessService extends AbstractProcessService implements ILoca
 		}
 		catch (InterruptedException e)
 		{
-			throw new SystemMessageException(getMessage("RSEG1067"));
+			throw new SystemMessageException(getMessage("RSEG1067")); //$NON-NLS-1$
 		}
 		catch (Exception e)
 		{
-			String name = "";
+			String name = ""; //$NON-NLS-1$
 			if (process != null) name += process.getName();
-			String pid = "";
+			String pid = ""; //$NON-NLS-1$
 			if (process != null) pid += process.getPid();
 			
-			SystemMessage msg = getMessage("RSEPG1300");
-			msg.makeSubstitution(name + " (" + pid + ")", e.getMessage());
+			SystemMessage msg = getMessage("RSEPG1300"); //$NON-NLS-1$
+			msg.makeSubstitution(name + " (" + pid + ")", e.getMessage()); //$NON-NLS-1$ //$NON-NLS-2$
 			throw new SystemMessageException(msg);
 		}
 	}
@@ -124,22 +124,21 @@ public class LocalProcessService extends AbstractProcessService implements ILoca
 		try
 		{
 			// use the kill command to find out the signal types
-			Process kill = Runtime.getRuntime().exec("kill -l");
+			Process kill = Runtime.getRuntime().exec("kill -l"); //$NON-NLS-1$
 			InputStreamReader isr = new InputStreamReader(kill.getInputStream());
-			if (isr == null) return null;
 			BufferedReader reader = new BufferedReader(isr);
-			if (reader == null) return null;
+
 			String nextLine = reader.readLine();
-			String output = "";
+			String output = ""; //$NON-NLS-1$
 			while (nextLine != null)
 			{
-				output = output + nextLine + "\n";
+				output = output + nextLine + "\n"; //$NON-NLS-1$
 				nextLine = reader.readLine();
 			}
 			reader.close();
 			isr.close();
-			if (output.equals("")) throw new Exception();
-			String[] lines = output.trim().split("\\s+");
+			if (output.equals("")) throw new Exception(); //$NON-NLS-1$
+			String[] lines = output.trim().split("\\s+"); //$NON-NLS-1$
 			if (lines == null) throw new Exception();
 			return lines;
 		}

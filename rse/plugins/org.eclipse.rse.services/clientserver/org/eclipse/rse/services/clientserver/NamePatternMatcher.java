@@ -178,7 +178,7 @@ public class NamePatternMatcher implements IMatcher
 			  genericName = "*"; //$NON-NLS-1$
 		  int len = 0;
 		  // determine if given a null name
-		  if ((genericName == null) || (genericName.length()==0))
+		  if (genericName.length()==0)
 		    validName = false;
 		  else
 		    validName = true; // for now

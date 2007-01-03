@@ -71,7 +71,7 @@ public class ServiceCommandShell extends RemoteCommandShell implements IServiceC
 			{
 				SimpleHostOutput line = (SimpleHostOutput)lineObj;
 
-				String type = event.isError() ? "stderr" : "stdout";
+				String type = event.isError() ? "stderr" : "stdout"; //$NON-NLS-1$ //$NON-NLS-2$
 				if (event.isError())
 				{
 					output = new RemoteError(this, type);			

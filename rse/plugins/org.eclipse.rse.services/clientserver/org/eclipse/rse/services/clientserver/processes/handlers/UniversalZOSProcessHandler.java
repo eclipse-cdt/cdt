@@ -27,8 +27,8 @@ import org.eclipse.rse.services.clientserver.processes.HostProcessFilterImpl;
 
 public class UniversalZOSProcessHandler extends UniversalAIXProcessHandler
 {
-	private static final String[] processAttributes = {"pid","ppid","comm","uid","user","gid","vsz","state"};
-	private static final String firstColumnHeader = "PID";
+	private static final String[] processAttributes = {"pid","ppid","comm","uid","user","gid","vsz","state"}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ //$NON-NLS-8$
+	private static final String firstColumnHeader = "PID"; //$NON-NLS-1$
 	private HashMap stateMap;
 	
 	/**
@@ -53,23 +53,23 @@ public class UniversalZOSProcessHandler extends UniversalAIXProcessHandler
 		SortedSet results = new TreeSet(new ProcessComparator());
 		
 		// create the remote command with the AIX specific attributes
-		String cmdLine = "ps -A -o ";
+		String cmdLine = "ps -A -o "; //$NON-NLS-1$
 		for (int i = 0; i < processAttributes.length; i++)
 		{
 			cmdLine = cmdLine + processAttributes[i];
-			if ((processAttributes.length - i > 1)) cmdLine = cmdLine + ",";
+			if ((processAttributes.length - i > 1)) cmdLine = cmdLine + ","; //$NON-NLS-1$
 		}
 		// run the command and get output
 		Process ps = Runtime.getRuntime().exec(cmdLine);
 		InputStreamReader isr = new InputStreamReader(ps.getInputStream());
-		if (isr == null) return null;
+
 		BufferedReader reader = new BufferedReader(isr);
-		if (reader == null) return null;
+
 		String nextLine = reader.readLine();
 		if (nextLine != null && nextLine.trim().startsWith(firstColumnHeader)) nextLine = reader.readLine();
 		while (nextLine != null)
 		{
-			String statusLine = "";
+			String statusLine = ""; //$NON-NLS-1$
 			// put the details of each process into a hashmap
 			HashMap psLineContents = getPSOutput(nextLine);
 			if (psLineContents == null)
@@ -78,56 +78,56 @@ public class UniversalZOSProcessHandler extends UniversalAIXProcessHandler
 				continue;
 			}
 		
-			String pid = (String) psLineContents.get("pid");
-			statusLine = pid + "|";
+			String pid = (String) psLineContents.get("pid"); //$NON-NLS-1$
+			statusLine = pid + "|"; //$NON-NLS-1$
 			
 			// add the name to the status string
-			String name = (String) psLineContents.get("comm");
-			if (name == null) name = " ";
-			statusLine = statusLine + name + "|";
+			String name = (String) psLineContents.get("comm"); //$NON-NLS-1$
+			if (name == null) name = " "; //$NON-NLS-1$
+			statusLine = statusLine + name + "|"; //$NON-NLS-1$
 		
 			// add the status letter to the status string
-			String state = (String) psLineContents.get("state");
-			if (state == null) state = " ";
+			String state = (String) psLineContents.get("state"); //$NON-NLS-1$
+			if (state == null) state = " "; //$NON-NLS-1$
 			String stateCode = convertToStateCode(state);
-			statusLine = statusLine + stateCode + "|";
+			statusLine = statusLine + stateCode + "|"; //$NON-NLS-1$
 			
 			// add the Tgid
-			String tgid = (String) psLineContents.get("tgid");
-			if (tgid == null) tgid = " ";
-			statusLine = statusLine + tgid + "|";				
+			String tgid = (String) psLineContents.get("tgid"); //$NON-NLS-1$
+			if (tgid == null) tgid = " "; //$NON-NLS-1$
+			statusLine = statusLine + tgid + "|";				 //$NON-NLS-1$
 			
 			// add the Ppid
-			String pPid = (String) psLineContents.get("ppid");
-			if (pPid == null) pPid = " ";
-			statusLine = statusLine + pPid + "|";
+			String pPid = (String) psLineContents.get("ppid"); //$NON-NLS-1$
+			if (pPid == null) pPid = " "; //$NON-NLS-1$
+			statusLine = statusLine + pPid + "|"; //$NON-NLS-1$
 		
 			// add the TracerPid
-			String tracerpid = (String) psLineContents.get("tracerpid");
-			if (tracerpid == null) tracerpid = " ";
-			statusLine = statusLine + tracerpid + "|";
+			String tracerpid = (String) psLineContents.get("tracerpid"); //$NON-NLS-1$
+			if (tracerpid == null) tracerpid = " "; //$NON-NLS-1$
+			statusLine = statusLine + tracerpid + "|"; //$NON-NLS-1$
 			
-			String uid = (String) psLineContents.get("uid");
-			if (uid == null) uid = " ";
-			statusLine = statusLine + uid + "|"; // add the uid to the status string
+			String uid = (String) psLineContents.get("uid"); //$NON-NLS-1$
+			if (uid == null) uid = " "; //$NON-NLS-1$
+			statusLine = statusLine + uid + "|"; // add the uid to the status string //$NON-NLS-1$
 		
-			String username = (String) psLineContents.get("user");
-			if (username == null) username = " ";
-			statusLine = statusLine + username + "|"; // add the username to the status string
+			String username = (String) psLineContents.get("user"); //$NON-NLS-1$
+			if (username == null) username = " "; //$NON-NLS-1$
+			statusLine = statusLine + username + "|"; // add the username to the status string //$NON-NLS-1$
 			
 			// add the gid to the status string
-			String gid = (String) psLineContents.get("gid");
-			if (gid == null) gid = " ";
-			statusLine = statusLine + gid + "|";
+			String gid = (String) psLineContents.get("gid"); //$NON-NLS-1$
+			if (gid == null) gid = " "; //$NON-NLS-1$
+			statusLine = statusLine + gid + "|"; //$NON-NLS-1$
 			
 			// add the VmSize to the status string
-			String vmsize = (String) psLineContents.get("vsz");
-			if (vmsize == null) vmsize = " ";
-			statusLine = statusLine + vmsize +"|";
+			String vmsize = (String) psLineContents.get("vsz"); //$NON-NLS-1$
+			if (vmsize == null) vmsize = " "; //$NON-NLS-1$
+			statusLine = statusLine + vmsize +"|"; //$NON-NLS-1$
 			
 			// add a dummy vmrss to the status string
 			// vmRss is not available on ZOS
-			String vmrss = " ";
+			String vmrss = " "; //$NON-NLS-1$
 			statusLine = statusLine + vmrss;
 			
 			if (rpfs.allows(statusLine))
@@ -153,7 +153,7 @@ public class UniversalZOSProcessHandler extends UniversalAIXProcessHandler
 	protected HashMap getPSOutput(String nextLine)
 	{	
 		HashMap contents = new HashMap();
-		String[] values = nextLine.trim().split("\\s+");
+		String[] values = nextLine.trim().split("\\s+"); //$NON-NLS-1$
 		if (values == null || values.length < processAttributes.length) return null;
 		for (int i = 0; i < processAttributes.length; i++)
 		{
@@ -168,19 +168,19 @@ public class UniversalZOSProcessHandler extends UniversalAIXProcessHandler
 	 */
 	protected String convertToStateCode(String state)
 	{
-		String stateCode = " ";
+		String stateCode = " "; //$NON-NLS-1$
 		if (state == null) return stateCode;
-		if (state.trim().equals("")) return stateCode;
+		if (state.trim().equals("")) return stateCode; //$NON-NLS-1$
 		for (int i = 0; i < state.length(); i++)
 		{
 			String nextState = (String) stateMap.get(new Character(state.charAt(i)));
 			if (nextState != null)
 			{
 				stateCode = stateCode + nextState;
-				if (i < state.length() - 1) stateCode = stateCode + ",";
+				if (i < state.length() - 1) stateCode = stateCode + ","; //$NON-NLS-1$
 			}
 		}
-		if (stateCode.trim().equals("")) return " ";
+		if (stateCode.trim().equals("")) return " "; //$NON-NLS-1$ //$NON-NLS-2$
 		else return stateCode.trim();
 	}
 }

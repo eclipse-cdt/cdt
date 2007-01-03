@@ -31,18 +31,18 @@ public class UniversalServerProcessImpl implements IRemoteServerProcess, IServic
      */
     public UniversalServerProcessImpl()
     {
-    	_properties[PROCESS_ATTRIBUTES_INDEX_EXENAME] = " ";
+    	_properties[PROCESS_ATTRIBUTES_INDEX_EXENAME] = " "; //$NON-NLS-1$
     	_properties[PROCESS_ATTRIBUTES_INDEX_GID] = new Long(-1);
     	_properties[PROCESS_ATTRIBUTES_INDEX_PID] = new Long(-1);
     	_properties[PROCESS_ATTRIBUTES_INDEX_PPID] = new Long(-1);
-    	_properties[PROCESS_ATTRIBUTES_INDEX_STATUS] = new String(" ");
+    	_properties[PROCESS_ATTRIBUTES_INDEX_STATUS] = new String(" "); //$NON-NLS-1$
     	_properties[PROCESS_ATTRIBUTES_INDEX_TGID] = new Long(-1);
     	_properties[PROCESS_ATTRIBUTES_INDEX_TRACERPID] = new Long(-1);
     	_properties[PROCESS_ATTRIBUTES_INDEX_UID] = new Long(-1);
-    	_properties[PROCESS_ATTRIBUTES_INDEX_USERNAME] = " ";
+    	_properties[PROCESS_ATTRIBUTES_INDEX_USERNAME] = " "; //$NON-NLS-1$
     	_properties[PROCESS_ATTRIBUTES_INDEX_VMSIZE] = new Long(-1);
     	_properties[PROCESS_ATTRIBUTES_INDEX_VMRSS] = new Long(-1);
-    	_properties[PROCESS_ATTRIBUTES_COUNT] = " "; //set the label
+    	_properties[PROCESS_ATTRIBUTES_COUNT] = " "; //set the label //$NON-NLS-1$
     }
 
     /**
@@ -175,7 +175,7 @@ public class UniversalServerProcessImpl implements IRemoteServerProcess, IServic
 		
 		if (s != null && s.length() > 0)
 		{
-		    String[] str = s.split("\\"+TOKEN_SEPARATOR);
+		    String[] str = s.split("\\"+TOKEN_SEPARATOR); //$NON-NLS-1$
 		    int numOfExpectedTokens = PROCESS_ATTRIBUTES_COUNT;
 		    int tokens = str.length;
 			if (tokens == numOfExpectedTokens)
@@ -281,7 +281,7 @@ public class UniversalServerProcessImpl implements IRemoteServerProcess, IServic
 	 */
 	public String getAllProperties()
 	{
-		String properties = "";
+		String properties = ""; //$NON-NLS-1$
 		for (int i = 0; i < PROCESS_ATTRIBUTES_COUNT; i++)
 		{
 			properties = properties + _properties[i].toString();

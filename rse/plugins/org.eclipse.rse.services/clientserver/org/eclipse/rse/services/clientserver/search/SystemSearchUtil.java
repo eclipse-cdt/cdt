@@ -32,7 +32,7 @@ public class SystemSearchUtil {
 	
 	private static SystemSearchUtil instance;
 	
-	public static String FILE_NAMES_SEP_STRING = ",";
+	public static String FILE_NAMES_SEP_STRING = ","; //$NON-NLS-1$
 
 	/**
 	 * Constructor for the utility class.
@@ -84,7 +84,7 @@ public class SystemSearchUtil {
 			throw new NullPointerException();
 		}
 		
-		if (fileNamesString.equals("")) {
+		if (fileNamesString.equals("")) { //$NON-NLS-1$
 			return new HashSet();
 		}
 		
@@ -116,7 +116,7 @@ public class SystemSearchUtil {
 			throw new NullPointerException();
 		}
 		
-		if (fileNamesString.equals("")) {
+		if (fileNamesString.equals("")) { //$NON-NLS-1$
 			return new ArrayList();
 		}
 		
@@ -178,7 +178,7 @@ public class SystemSearchUtil {
 			// if it's not the first entry, then precede with ',' followed by space, i.e. ' '
 			if (!first) {
 				result.append(FILE_NAMES_SEP_STRING);
-				result.append(" ");
+				result.append(" "); //$NON-NLS-1$
 			}
 			// if first entry, don't do anything
 			else {

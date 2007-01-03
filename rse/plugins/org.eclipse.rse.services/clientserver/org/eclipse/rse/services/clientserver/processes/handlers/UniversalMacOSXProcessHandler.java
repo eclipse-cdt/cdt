@@ -33,12 +33,12 @@ public class UniversalMacOSXProcessHandler implements ProcessHandler {
 	
 	static {
 		String[] strings = ISystemProcessRemoteConstants.ALL_STATES_STR;
-		stateMap.put("I", strings[ISystemProcessRemoteConstants.STATE_IDLE_INDEX]);
-		stateMap.put("R", strings[ISystemProcessRemoteConstants.STATE_RUNNING_INDEX]);
-		stateMap.put("S", strings[ISystemProcessRemoteConstants.STATE_SLEEPING_INDEX]);
-		stateMap.put("T", strings[ISystemProcessRemoteConstants.STATE_NONEXISTENT_INDEX]);
-		stateMap.put("U", strings[ISystemProcessRemoteConstants.STATE_WAITING_INDEX]);
-		stateMap.put("Z", strings[ISystemProcessRemoteConstants.STATE_ZOMBIE_INDEX]);
+		stateMap.put("I", strings[ISystemProcessRemoteConstants.STATE_IDLE_INDEX]); //$NON-NLS-1$
+		stateMap.put("R", strings[ISystemProcessRemoteConstants.STATE_RUNNING_INDEX]); //$NON-NLS-1$
+		stateMap.put("S", strings[ISystemProcessRemoteConstants.STATE_SLEEPING_INDEX]); //$NON-NLS-1$
+		stateMap.put("T", strings[ISystemProcessRemoteConstants.STATE_NONEXISTENT_INDEX]); //$NON-NLS-1$
+		stateMap.put("U", strings[ISystemProcessRemoteConstants.STATE_WAITING_INDEX]); //$NON-NLS-1$
+		stateMap.put("Z", strings[ISystemProcessRemoteConstants.STATE_ZOMBIE_INDEX]); //$NON-NLS-1$
 	}
 
 	/**
@@ -53,7 +53,7 @@ public class UniversalMacOSXProcessHandler implements ProcessHandler {
 	public SortedSet lookupProcesses(IHostProcessFilter rpfs) throws Exception {
 		SortedSet results = new TreeSet(new ProcessComparator());
 		// Using -A is problematic - the command never returns! Using -a for now.
-		String command = "/bin/ps -awwo pid,ucomm,state,ppid,uid,user,gid,vsz,rss"; 
+		String command = "/bin/ps -awwo pid,ucomm,state,ppid,uid,user,gid,vsz,rss";  //$NON-NLS-1$
 		Process ps = Runtime.getRuntime().exec(command);
 		InputStreamReader isr = new InputStreamReader(ps.getInputStream());
 		BufferedReader reader = new BufferedReader(isr);
@@ -61,7 +61,7 @@ public class UniversalMacOSXProcessHandler implements ProcessHandler {
 		line = reader.readLine();
 		while (line != null) {
 			// Input line looks like "pid ucomm state ppid uid user gid vsz rss"
-			String[] words = line.trim().split("\\s+");
+			String[] words = line.trim().split("\\s+"); //$NON-NLS-1$
 			UniversalServerProcessImpl usp = new UniversalServerProcessImpl();
 			usp.setPid(words[0]);
 			usp.setName(words[1]);
@@ -72,8 +72,8 @@ public class UniversalMacOSXProcessHandler implements ProcessHandler {
 			usp.setGid(words[6]);
 			usp.setVmSizeInKB(words[7]);
 			usp.setVmRSSInKB(words[8]);
-			usp.setTgid("");
-			usp.setTracerPid("");
+			usp.setTgid(""); //$NON-NLS-1$
+			usp.setTracerPid(""); //$NON-NLS-1$
 			if (rpfs.allows(usp.getAllProperties())) {
 				results.add(usp);
 			}
@@ -89,19 +89,19 @@ public class UniversalMacOSXProcessHandler implements ProcessHandler {
 	 */
 	public IHostProcess kill(IHostProcess process, String type) throws Exception {
 		if (type.equals(ISystemProcessRemoteConstants.PROCESS_SIGNAL_TYPE_DEFAULT)) {
-			type = "";
+			type = ""; //$NON-NLS-1$
 		} else {
-			type = "-" + type;
+			type = "-" + type; //$NON-NLS-1$
 		}
 
 		// formulate command to send kill signal
-		String cmdLine = "kill " + type + " " + process.getPid();
+		String cmdLine = "kill " + type + " " + process.getPid(); //$NON-NLS-1$ //$NON-NLS-2$
 		Runtime.getRuntime().exec(cmdLine);
 
 		// after the kill command is executed, the process might have changed
 		// attributes, or might be gone, so requery
 		HostProcessFilterImpl rpfs = new HostProcessFilterImpl();
-		rpfs.setPid("" + process.getPid());
+		rpfs.setPid("" + process.getPid()); //$NON-NLS-1$
 		SortedSet results = lookupProcesses(rpfs);
 		if (results == null || results.size() == 0) {
 			return null;

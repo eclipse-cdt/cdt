@@ -84,7 +84,7 @@ public class SystemSearchStringMatcher implements ISystemSearchMatcher {
 	 * @return <code>true</code> if the search string is "*", <code>false</code> otherwise.
 	 */
 	public boolean isSearchStringAsterisk() {
-		return searchString.equals("*");
+		return searchString.equals("*"); //$NON-NLS-1$
 	}
 
 	/**

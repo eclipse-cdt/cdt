@@ -21,14 +21,14 @@ public interface IServiceConstants
     public static final String TOKEN_SEPARATOR = "|"; //$NON-NLS-1$
     
 	// Unexpected Error
-	public static final String UNEXPECTED_ERROR = "unexpectedError";
+	public static final String UNEXPECTED_ERROR = "unexpectedError"; //$NON-NLS-1$
 
     // Failure strings
-    public static final String FAILED_WITH_EXIST = "failed with exist";
-    public static final String FAILED_WITH_DOES_NOT_EXIST = "failed with does not exist";
-    public static final String FAILED_WITH_EXCEPTION = "failed with exception";
-    public static final String FAILED_WITH_SECURITY = "failed with security";
-    public static final String FAILED_TO_DELETE_DIR = "failed to delete directory";
+    public static final String FAILED_WITH_EXIST = "failed with exist"; //$NON-NLS-1$
+    public static final String FAILED_WITH_DOES_NOT_EXIST = "failed with does not exist"; //$NON-NLS-1$
+    public static final String FAILED_WITH_EXCEPTION = "failed with exception"; //$NON-NLS-1$
+    public static final String FAILED_WITH_SECURITY = "failed with security"; //$NON-NLS-1$
+    public static final String FAILED_TO_DELETE_DIR = "failed to delete directory"; //$NON-NLS-1$
 
     // Status strings for communication
     public static final String SUCCESS = "success"; //$NON-NLS-1$

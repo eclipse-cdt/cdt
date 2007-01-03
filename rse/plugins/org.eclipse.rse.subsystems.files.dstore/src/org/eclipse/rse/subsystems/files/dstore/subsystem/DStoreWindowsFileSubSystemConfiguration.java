@@ -38,7 +38,7 @@ public class DStoreWindowsFileSubSystemConfiguration extends DStoreFileSubSystem
 		  pool = mgr.createSystemFilterPool(getDefaultFilterPoolName(mgr.getName(), getId()), true); // true=>is deletable by user
 		  if (pool == null) // hmmm, why would this happen?
 		  {
-			SystemBasePlugin.logError("Creating default filter pool "+getDefaultFilterPoolName(mgr.getName(), getId())+" for mgr "+mgr.getName()+" failed.",null);
+			SystemBasePlugin.logError("Creating default filter pool "+getDefaultFilterPoolName(mgr.getName(), getId())+" for mgr "+mgr.getName()+" failed.",null); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			return null;
 		  }
 		 if (isUserPrivateProfile(mgr))
@@ -50,7 +50,7 @@ public class DStoreWindowsFileSubSystemConfiguration extends DStoreFileSubSystem
 		      Vector filterStrings = new Vector();
 		      RemoteFileFilterString myHomeFilterString = new RemoteFileFilterString(this);
 		      myHomeFilterString.setPath(getSeparator());
-		      filterStrings.add(".\\*");
+		      filterStrings.add(".\\*"); //$NON-NLS-1$
 		      ISystemFilter filter = mgr.createSystemFilter(pool, SystemFileResources.RESID_FILTER_MYHOME,filterStrings);
 		      filter.setNonChangable(true);
 		      filter.setSingleFilterStringOnly(true);
@@ -65,14 +65,14 @@ public class DStoreWindowsFileSubSystemConfiguration extends DStoreFileSubSystem
 		}
 		 catch (Exception exc)
 			{
-				SystemBasePlugin.logError("Error creating default filter pool",exc);
+				SystemBasePlugin.logError("Error creating default filter pool",exc); //$NON-NLS-1$
 			}
 			return pool;
 	}
 
 	public String getSeparator()
 	{
-		return "\\";
+		return "\\"; //$NON-NLS-1$
 	}
 
 	public char getSeparatorChar()

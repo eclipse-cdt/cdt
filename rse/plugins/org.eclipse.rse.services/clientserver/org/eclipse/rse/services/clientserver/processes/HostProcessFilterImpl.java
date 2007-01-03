@@ -40,7 +40,7 @@ import org.eclipse.rse.services.clientserver.NamePatternMatcher;
 public class HostProcessFilterImpl implements IHostProcessFilter, Cloneable, ISystemProcessRemoteConstants
 {
 
-	public static final String ALL = "*";
+	public static final String ALL = "*"; //$NON-NLS-1$
 
 	protected static final char WILDCARD = '*';
 
@@ -107,15 +107,15 @@ public class HostProcessFilterImpl implements IHostProcessFilter, Cloneable, ISy
 		maxVM = -1;
 		anystatus = true;
 		initStates();
-		status = "";
+		status = ""; //$NON-NLS-1$
 	}
 	
 	protected void initInput(String input)
 	{
 		anystatus = true;
-		StringTokenizer tz = new StringTokenizer(input, "|");
-		String strMinVM = "0";
-		String strMaxVM = "-1";
+		StringTokenizer tz = new StringTokenizer(input, "|"); //$NON-NLS-1$
+		String strMinVM = "0"; //$NON-NLS-1$
+		String strMaxVM = "-1"; //$NON-NLS-1$
 
 		if (tz.hasMoreTokens())
 		{
@@ -154,9 +154,9 @@ public class HostProcessFilterImpl implements IHostProcessFilter, Cloneable, ISy
 		
 		if (!(status == null))
 		{
-			if (!status.equals(""))
+			if (!status.equals("")) //$NON-NLS-1$
 			{
-				String[] allStates = status.split(",");
+				String[] allStates = status.split(","); //$NON-NLS-1$
 				if (!(allStates == null))
 				{
 					initStates();
@@ -169,19 +169,19 @@ public class HostProcessFilterImpl implements IHostProcessFilter, Cloneable, ISy
 			}
 		}
 		
-	    if (name == null || name.equals(""))
+	    if (name == null || name.equals("")) //$NON-NLS-1$
 	      name = ALL;
 
-	    if (username == null || username.equals(""))
+	    if (username == null || username.equals("")) //$NON-NLS-1$
 	      username = ALL;
 
-	    if (gid == null || gid.equals(""))
+	    if (gid == null || gid.equals("")) //$NON-NLS-1$
 	    	gid = ALL;
 	    
-	    if (ppid == null || ppid.equals(""))
+	    if (ppid == null || ppid.equals("")) //$NON-NLS-1$
 	    	ppid = ALL;
 
-	    if (pid == null || pid.equals(""))
+	    if (pid == null || pid.equals("")) //$NON-NLS-1$
 	    	pid = ALL;
 	    try
 	    {
@@ -227,7 +227,7 @@ public class HostProcessFilterImpl implements IHostProcessFilter, Cloneable, ISy
 	 */
 	public String getUsername()
 	{
-		if (_resolveVariables && username.equals("${user.id}"))
+		if (_resolveVariables && username.equals("${user.id}")) //$NON-NLS-1$
 		{
 			return ALL;
 		}
@@ -272,7 +272,7 @@ public class HostProcessFilterImpl implements IHostProcessFilter, Cloneable, ISy
 	 */
 	public String getMinVM()
 	{
-		return "" + minVM;
+		return "" + minVM; //$NON-NLS-1$
 	}
 
 	/**
@@ -280,7 +280,7 @@ public class HostProcessFilterImpl implements IHostProcessFilter, Cloneable, ISy
 	 */
 	public String getMaxVM()
 	{
-		return "" + maxVM;
+		return "" + maxVM; //$NON-NLS-1$
 	}
 
 
@@ -372,12 +372,12 @@ public class HostProcessFilterImpl implements IHostProcessFilter, Cloneable, ISy
      */
 	public String toString()
 	{
-		return name + "|" + username + "|" + gid + "|" + toStateString() + "|" + ppid + "|" + pid + "|" + minVM + "|" + maxVM;
+		return name + "|" + username + "|" + gid + "|" + toStateString() + "|" + ppid + "|" + pid + "|" + minVM + "|" + maxVM; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$
 	}
 	  
 	protected String toStateString()
 	{
-	    String s = " ";
+	    String s = " "; //$NON-NLS-1$
 
 	    if (!anystatus)
 	    {
@@ -385,10 +385,10 @@ public class HostProcessFilterImpl implements IHostProcessFilter, Cloneable, ISy
 	    	{
 	    		Boolean currentState = (Boolean) states.get(ALL_STATES_STR[i]);
 	    		if (currentState.booleanValue()) s = s + ALL_STATES_STR[i];
-	    		if (currentState.booleanValue()) s = s + ",";
+	    		if (currentState.booleanValue()) s = s + ","; //$NON-NLS-1$
 	    	}
-	    	if (!s.trim().equals("")) s = s.trim();
-	    	if (s.endsWith(",")) s = s.substring(0, s.length() - 1);
+	    	if (!s.trim().equals("")) s = s.trim(); //$NON-NLS-1$
+	    	if (s.endsWith(",")) s = s.substring(0, s.length() - 1); //$NON-NLS-1$
 	    }
 	    return s;
 	}
@@ -405,7 +405,7 @@ public class HostProcessFilterImpl implements IHostProcessFilter, Cloneable, ISy
 	public boolean allows(String status)
 	{
 		NamePatternMatcher matcher = null;
-		String[] tokens = status.split("\\|");
+		String[] tokens = status.split("\\|"); //$NON-NLS-1$
 		if (tokens.length < (PROCESS_ATTRIBUTES_COUNT -1)) return false;
 		
 		matcher = new NamePatternMatcher(gid, true, false);
@@ -417,7 +417,7 @@ public class HostProcessFilterImpl implements IHostProcessFilter, Cloneable, ISy
 		String state = tokens[PROCESS_ATTRIBUTES_INDEX_STATUS].trim();
 		if (!satisfiesState(state)) return false;
 		
-		if (getUsername().equals("${user.id}"))
+		if (getUsername().equals("${user.id}")) //$NON-NLS-1$
 			matcher = new NamePatternMatcher(ALL, true, false);
 		else
 			matcher = new NamePatternMatcher(getUsername(), true, false);
@@ -433,7 +433,7 @@ public class HostProcessFilterImpl implements IHostProcessFilter, Cloneable, ISy
 		}
 		catch (Exception e)
 		{
-			if (tokens[PROCESS_ATTRIBUTES_INDEX_VMSIZE].trim().equals("")) vmSize = 0;
+			if (tokens[PROCESS_ATTRIBUTES_INDEX_VMSIZE].trim().equals("")) vmSize = 0; //$NON-NLS-1$
 			else return false;
 		}
 		if (!(vmSize >= minVM)) return false;
@@ -459,7 +459,7 @@ public class HostProcessFilterImpl implements IHostProcessFilter, Cloneable, ISy
 	{
 		if (!anystatus)
 		{
-			String[] allStates = state.split(",");
+			String[] allStates = state.split(","); //$NON-NLS-1$
 			if (allStates == null) return false;
 			if (allStates.length == 0) return false;
 			boolean satisfied = false;

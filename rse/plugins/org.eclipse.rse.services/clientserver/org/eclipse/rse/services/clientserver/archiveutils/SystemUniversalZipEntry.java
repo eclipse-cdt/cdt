@@ -68,7 +68,7 @@ public class SystemUniversalZipEntry
  		{
 			_entryFullName = _entry.getName();
  		}
-		int endOfPathPosition = _entryFullName.lastIndexOf("/");
+		int endOfPathPosition = _entryFullName.lastIndexOf("/"); //$NON-NLS-1$
 		if (endOfPathPosition != -1) 
 		{
 			_entryFullPath = _entryFullName.substring(0,endOfPathPosition);
@@ -76,15 +76,15 @@ public class SystemUniversalZipEntry
 		}
 		else 
 		{
-			_entryFullPath = "";
+			_entryFullPath = ""; //$NON-NLS-1$
 			_entryName = _entryFullName;
 		}
-		int i = _entryFullName.lastIndexOf(".");
+		int i = _entryFullName.lastIndexOf("."); //$NON-NLS-1$
 		if (i == -1) 
 		{
-			_extension = "";
+			_extension = ""; //$NON-NLS-1$
 		} else _extension = _entryFullName.substring(i + 1);
-		if (_entryFullName.indexOf("/") != -1) _nested = true;
+		if (_entryFullName.indexOf("/") != -1) _nested = true; //$NON-NLS-1$
 	}
 	
 	/**

@@ -74,7 +74,7 @@ public class LocalHostShell extends AbstractHostShell implements IHostShell
 
 	public void exit()
 	{
-		writeToShell("exit");
+		writeToShell("exit"); //$NON-NLS-1$
 	}
 
 

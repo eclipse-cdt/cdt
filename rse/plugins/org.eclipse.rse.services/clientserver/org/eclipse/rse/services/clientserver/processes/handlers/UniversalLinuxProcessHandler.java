@@ -56,16 +56,16 @@ public class UniversalLinuxProcessHandler implements ProcessHandler, IServiceCon
 	 */
 	public IHostProcess kill(IHostProcess process, String type) throws Exception
 	{
-		if (type.equals(PROCESS_SIGNAL_TYPE_DEFAULT)) type = "";
-		else type = "-" + type;
+		if (type.equals(PROCESS_SIGNAL_TYPE_DEFAULT)) type = ""; //$NON-NLS-1$
+		else type = "-" + type; //$NON-NLS-1$
 		// formulate command to send kill signal
-		String cmdLine = "kill " + type + " " + process.getPid();
+		String cmdLine = "kill " + type + " " + process.getPid(); //$NON-NLS-1$ //$NON-NLS-2$
 		Runtime.getRuntime().exec(cmdLine);
 		
 		// after the kill command is executed, the process might have changed
 		// attributes, or might be gone, so requery
 		HostProcessFilterImpl rpfs = new HostProcessFilterImpl();
-		rpfs.setPid("" + process.getPid());
+		rpfs.setPid("" + process.getPid()); //$NON-NLS-1$
 		SortedSet results = lookupProcesses(rpfs);
 		if (results == null || results.size() == 0) return null;
 		else return (IHostProcess) results.first();
@@ -76,7 +76,7 @@ public class UniversalLinuxProcessHandler implements ProcessHandler, IServiceCon
 	 */
 	public SortedSet lookupProcesses(IHostProcessFilter rpfs) throws Exception
 	{
-		File procDir = new File("/proc"); 
+		File procDir = new File("/proc");  //$NON-NLS-1$
 		
 		if (!procDir.exists())
 			throw new Exception(FAILED_WITH_DOES_NOT_EXIST);
@@ -86,7 +86,7 @@ public class UniversalLinuxProcessHandler implements ProcessHandler, IServiceCon
 				
 		// list all subdirectories of /proc
 		File[] processes;
-		if (rpfs.getPid().indexOf("*") == -1)
+		if (rpfs.getPid().indexOf("*") == -1) //$NON-NLS-1$
 		{
 			processes = new File[1];
 			processes[0] = new File(procDir, rpfs.getPid());
@@ -103,72 +103,71 @@ public class UniversalLinuxProcessHandler implements ProcessHandler, IServiceCon
 			catch (NumberFormatException e)
 				{ continue; }
 			
-			String statusLine = "";
+			String statusLine = ""; //$NON-NLS-1$
 			try
 			{
 				// open the file containing the human-readable status info for the process
-				File statusFile = new File(processes[i], "status");
+				File statusFile = new File(processes[i], "status"); //$NON-NLS-1$
 				if (!statusFile.exists() || !statusFile.canRead())
 					continue;
 				
 				// read the status info from the stat file
 				FileReader fr = new FileReader(statusFile);
-				if (fr == null) continue;
 				BufferedReader reader = new BufferedReader(fr);
-				if (reader == null) continue;
+	
 				HashMap statusFileContents = getStatusFileContents(reader);
 				
-				statusLine = processes[i].getName() + "|"; // add the pid to the status string
+				statusLine = processes[i].getName() + "|"; // add the pid to the status string //$NON-NLS-1$
 	
 				// add the name to the status string
-				String name = (String) statusFileContents.get("name");
-				if (name == null) name = " ";
+				String name = (String) statusFileContents.get("name"); //$NON-NLS-1$
+				if (name == null) name = " "; //$NON-NLS-1$
 				//if (!pexematcher.matches(name)) continue;
-				statusLine = statusLine + name + "|";
+				statusLine = statusLine + name + "|"; //$NON-NLS-1$
 	
 				// add the status letter to the status string
-				String state = (String) statusFileContents.get("state");
-				if (state == null) state = " ";
+				String state = (String) statusFileContents.get("state"); //$NON-NLS-1$
+				if (state == null) state = " "; //$NON-NLS-1$
 				String stateCode = convertToStateCode(state);
-				statusLine = statusLine + stateCode + "|";
+				statusLine = statusLine + stateCode + "|"; //$NON-NLS-1$
 				
 				// add the Tgid
-				String tgid = (String) statusFileContents.get("tgid");
-				if (tgid == null) tgid = " ";
-				statusLine = statusLine + tgid + "|";				
+				String tgid = (String) statusFileContents.get("tgid"); //$NON-NLS-1$
+				if (tgid == null) tgid = " "; //$NON-NLS-1$
+				statusLine = statusLine + tgid + "|";				 //$NON-NLS-1$
 				
 				// add the Ppid
-				String pPid = (String) statusFileContents.get("ppid");
-				if (pPid == null) pPid = " ";
+				String pPid = (String) statusFileContents.get("ppid"); //$NON-NLS-1$
+				if (pPid == null) pPid = " "; //$NON-NLS-1$
 				//if (!ppidmatcher.matches(pPid)) continue;
-				statusLine = statusLine + pPid + "|";
+				statusLine = statusLine + pPid + "|"; //$NON-NLS-1$
 	
 				// add the TracerPid
-				String tracerpid = (String) statusFileContents.get("tracerpid");
-				if (tracerpid == null) tracerpid = " ";
-				statusLine = statusLine + tracerpid + "|";
+				String tracerpid = (String) statusFileContents.get("tracerpid"); //$NON-NLS-1$
+				if (tracerpid == null) tracerpid = " "; //$NON-NLS-1$
+				statusLine = statusLine + tracerpid + "|"; //$NON-NLS-1$
 				
-				String uid = (String) statusFileContents.get("uid");
-				if (uid == null) uid = " ";
-				statusLine = statusLine + uid + "|"; // add the uid to the status string
+				String uid = (String) statusFileContents.get("uid"); //$NON-NLS-1$
+				if (uid == null) uid = " "; //$NON-NLS-1$
+				statusLine = statusLine + uid + "|"; // add the uid to the status string //$NON-NLS-1$
 	
 				String username = getUsername(uid);
-				if (username == null) username = " ";
-				statusLine = statusLine + username + "|"; // add the username to the status string
+				if (username == null) username = " "; //$NON-NLS-1$
+				statusLine = statusLine + username + "|"; // add the username to the status string //$NON-NLS-1$
 				
 				// add the gid to the status string
-				String gid = (String) statusFileContents.get("gid");
-				if (gid == null) gid = " ";
-				statusLine = statusLine + gid + "|";
+				String gid = (String) statusFileContents.get("gid"); //$NON-NLS-1$
+				if (gid == null) gid = " "; //$NON-NLS-1$
+				statusLine = statusLine + gid + "|"; //$NON-NLS-1$
 				
 				// add the VmSize to the status string
-				String vmsize = (String) statusFileContents.get("vmsize");
-				if (vmsize == null) vmsize = " ";
-				statusLine = statusLine + vmsize + "|";
+				String vmsize = (String) statusFileContents.get("vmsize"); //$NON-NLS-1$
+				if (vmsize == null) vmsize = " "; //$NON-NLS-1$
+				statusLine = statusLine + vmsize + "|"; //$NON-NLS-1$
 				
 				// add the VmRSS to the status string
-				String vmrss = (String) statusFileContents.get("vmrss");
-				if (vmrss == null) vmrss = " ";
+				String vmrss = (String) statusFileContents.get("vmrss"); //$NON-NLS-1$
+				if (vmrss == null) vmrss = " "; //$NON-NLS-1$
 				statusLine = statusLine + vmrss;
 	
 				reader.close();
@@ -221,8 +220,7 @@ public class UniversalLinuxProcessHandler implements ProcessHandler, IServiceCon
 		{
 			while ((nextLine = reader.readLine()) != null)
 			{
-				if (nextLine == null) break;
-				String key = nextLine.substring(0, nextLine.indexOf(":")).trim().toLowerCase();
+				String key = nextLine.substring(0, nextLine.indexOf(":")).trim().toLowerCase(); //$NON-NLS-1$
 				String theRest = processStatusLine(nextLine, -1);
 				StringTokenizer tz = new StringTokenizer(theRest);
 				String value = null;
@@ -245,10 +243,10 @@ public class UniversalLinuxProcessHandler implements ProcessHandler, IServiceCon
 	{
 		if (length == -1)
 		{
-			return line.substring(line.indexOf(":") + 1).trim();
+			return line.substring(line.indexOf(":") + 1).trim(); //$NON-NLS-1$
 		}
 		else
-			return line.substring(line.indexOf(":") + 1).trim().substring(0, length);
+			return line.substring(line.indexOf(":") + 1).trim().substring(0, length); //$NON-NLS-1$
 	}
 	
 	/**
@@ -262,17 +260,16 @@ public class UniversalLinuxProcessHandler implements ProcessHandler, IServiceCon
 		try
 		{
 			// read the uid info using the getent command
-			Process ps = Runtime.getRuntime().exec("getent passwd");
+			Process ps = Runtime.getRuntime().exec("getent passwd"); //$NON-NLS-1$
 			InputStreamReader isr = new InputStreamReader(ps.getInputStream());
-			if (isr == null) return;
+
 			BufferedReader reader = new BufferedReader(isr);
-			if (reader == null) return;
 			
 			String nextLine;
 			
 			while ((nextLine = reader.readLine()) != null)
 			{ 
-				String[] fields = nextLine.split(":");
+				String[] fields = nextLine.split(":"); //$NON-NLS-1$
 				int length = fields.length;
 				if (length < 3) continue;
 				String uid = fields[2];
@@ -298,19 +295,19 @@ public class UniversalLinuxProcessHandler implements ProcessHandler, IServiceCon
 	 */
 	protected String convertToStateCode(String state)
 	{
-		String stateCode = " ";
+		String stateCode = " "; //$NON-NLS-1$
 		if (state == null) return stateCode;
-		if (state.trim().equals("")) return stateCode;
+		if (state.trim().equals("")) return stateCode; //$NON-NLS-1$
 		for (int i = 0; i < state.length(); i++)
 		{
 			String nextState = (String) stateMap.get(new Character(state.charAt(i)));
 			if (nextState != null)
 			{
 				stateCode = stateCode + nextState;
-				if (i < state.length() - 1) stateCode = stateCode + ",";
+				if (i < state.length() - 1) stateCode = stateCode + ","; //$NON-NLS-1$
 			}
 		}
-		if (stateCode.trim().equals("")) return " ";
+		if (stateCode.trim().equals("")) return " "; //$NON-NLS-1$ //$NON-NLS-2$
 		else return stateCode.trim();
 	}
 }

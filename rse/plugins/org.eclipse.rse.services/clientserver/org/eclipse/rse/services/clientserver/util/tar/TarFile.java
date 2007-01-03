@@ -241,7 +241,7 @@ public class TarFile implements ITarConstants {
 		
 		// if the name of the entry is an empty string, it means we have reached end of file
 		// so just return null
-		if (entry.getName().equals("")) {
+		if (entry.getName().equals("")) { //$NON-NLS-1$
 			return null;
 		}
 		else {
@@ -283,7 +283,7 @@ public class TarFile implements ITarConstants {
 			String entryName = entry.getName();
 			
 			// if name of entry matches the given name, then that is the entry we are looking for
-			if (entryName.equals(name) || entryName.equals(name + "/")) {
+			if (entryName.equals(name) || entryName.equals(name + "/")) { //$NON-NLS-1$
 				return entry;
 			}
 		}

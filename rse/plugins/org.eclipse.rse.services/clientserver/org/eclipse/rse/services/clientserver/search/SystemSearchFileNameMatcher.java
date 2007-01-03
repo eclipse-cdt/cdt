@@ -98,7 +98,7 @@ public class SystemSearchFileNameMatcher implements ISystemSearchMatcher {
 	 * @return <code>true</code> if the file names string is "*", <code>false</code> otherwise.
 	 */
 	public boolean isFileNamesStringAsterisk() {
-		return fileNamesString.equals("*");
+		return fileNamesString.equals("*"); //$NON-NLS-1$
 	}
 
 	/**

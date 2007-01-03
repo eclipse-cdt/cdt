@@ -94,7 +94,7 @@ public class SystemMessage
 	public void setIndicator(char ind) throws IndicatorException {
 		// check that a valid indicator was specified
 		if (ind != INQUIRY && ind != INFORMATION && ind != ERROR && ind != WARNING && ind != UNEXPECTED && ind != COMPLETION)
-			throw (new IndicatorException("Indicator specified not valid. Unable to set Indicator."));
+			throw (new IndicatorException("Indicator specified not valid. Unable to set Indicator.")); //$NON-NLS-1$
 		indicator = ind;
 	}
 
@@ -147,7 +147,7 @@ public class SystemMessage
 		// otherwise we need to count the substitution variables.
 		else {
 			numSubs = 0; // initial value
-			String allText = level1NS + " " + level2NS;
+			String allText = level1NS + " " + level2NS; //$NON-NLS-1$
 			String subVar = subPrefix + new Integer(numSubs + 1).toString();
 			int subLoc = allText.indexOf(subVar);
 			while (subLoc >= 0) {
@@ -426,7 +426,7 @@ public class SystemMessage
 	 * Returns string of the form: msgId + severity + ":" + first-level-text 
 	 */
 	public String toString() {
-		return getFullMessageID() + ": " + getLevelOneText();
+		return getFullMessageID() + ": " + getLevelOneText(); //$NON-NLS-1$
 	}
 
 	/**
@@ -459,7 +459,7 @@ public class SystemMessage
 		 }
 		 */
 
-		if (sub == null) return "";
+		if (sub == null) return ""; //$NON-NLS-1$
 
 		if (sub instanceof Exception) {
 			Exception exc = (Exception) sub;
@@ -468,7 +468,7 @@ public class SystemMessage
 			String msg = exc.toString();
 			//String msg = exc.getMessage();
 			if ((msg == null) || (exc instanceof ClassCastException)) msg = exc.getClass().getName();
-			return msg + "\n" + excWriter.toString();
+			return msg + "\n" + excWriter.toString(); //$NON-NLS-1$
 		}
 
 		return sub.toString();

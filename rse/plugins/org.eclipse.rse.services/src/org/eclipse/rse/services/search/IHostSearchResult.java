@@ -21,10 +21,10 @@ import org.eclipse.rse.services.clientserver.SystemSearchString;
 
 public interface IHostSearchResult
 {
-	  public static final String SEARCH_RESULT_DELIMITER = ":SEARCH";
-	   public static final String SEARCH_RESULT_OPEN_DELIMITER = "<";
-	   public static final String SEARCH_RESULT_CLOSE_DELIMITER = ">";
-	   public static final String SEARCH_RESULT_INDEX_DELIMITER = ":";
+	  public static final String SEARCH_RESULT_DELIMITER = ":SEARCH"; //$NON-NLS-1$
+	   public static final String SEARCH_RESULT_OPEN_DELIMITER = "<"; //$NON-NLS-1$
+	   public static final String SEARCH_RESULT_CLOSE_DELIMITER = ">"; //$NON-NLS-1$
+	   public static final String SEARCH_RESULT_INDEX_DELIMITER = ":"; //$NON-NLS-1$
 	   
 	public void setParent(Object parent);   
 	   

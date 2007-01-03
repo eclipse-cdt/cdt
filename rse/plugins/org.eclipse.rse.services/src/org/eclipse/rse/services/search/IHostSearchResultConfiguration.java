@@ -38,7 +38,7 @@ public interface IHostSearchResultConfiguration extends IHostSearchConstants {
 	/**
 	 * Gets the results contained within the resultContainer
 	 * @param resultContainer
-	 * @return
+	 * @return the results
 	 */
 	public IHostSearchResult[] getContainedResults(Object resultContainer);
 

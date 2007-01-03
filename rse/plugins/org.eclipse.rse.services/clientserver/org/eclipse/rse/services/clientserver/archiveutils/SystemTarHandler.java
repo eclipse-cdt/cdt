@@ -91,17 +91,17 @@ public class SystemTarHandler implements ISystemArchiveHandler {
 			
 			VirtualFileNode parentNode = rootNode;
 			
-			int idx = path.indexOf("/");
+			int idx = path.indexOf("/"); //$NON-NLS-1$
 			String name = path;
 			
-			String segPath = "";
+			String segPath = ""; //$NON-NLS-1$
 			
 			// ensure each segment exists or is created if it does not exist
 			while (idx > 0) {
 				name = path.substring(0, idx);
 				path = path.substring(idx+1);
 				
-				segPath = segPath + name + "/";
+				segPath = segPath + name + "/"; //$NON-NLS-1$
 				
 				boolean exists = parentNode.childExists(name);
 				
@@ -115,7 +115,7 @@ public class SystemTarHandler implements ISystemArchiveHandler {
 				// the new parent is the child (which may have been created)
 				parentNode = parentNode.getChild(name);
 				
-				idx = path.indexOf("/");
+				idx = path.indexOf("/"); //$NON-NLS-1$
 			}
 			
 			parentNode.addChild(path, new VirtualFileNode(entry), replace);
@@ -291,7 +291,7 @@ public class SystemTarHandler implements ISystemArchiveHandler {
 		 */
 		private VirtualFileNode getNode(String path) {
 			
-			if (path.equals("")) {
+			if (path.equals("")) { //$NON-NLS-1$
 				return rootNode;
 			}
 			
@@ -667,7 +667,7 @@ public class SystemTarHandler implements ISystemArchiveHandler {
 			// only add those entries that have names that begin with the parent name
 			// also check that the entry name isn't just the parent name + '/' (i.e. still the same
 			// as the parent)
-			if (entry.getName().startsWith(parent) && !entry.getName().equals(parent + "/")) {
+			if (entry.getName().startsWith(parent) && !entry.getName().equals(parent + "/")) { //$NON-NLS-1$
 				VirtualChild child = new VirtualChild(this, entry.getName());
 				child.isDirectory = entry.isDirectory();
 				v.add(child);
@@ -726,7 +726,7 @@ public class SystemTarHandler implements ISystemArchiveHandler {
 		
 		fullVirtualName = ArchiveHandlerManager.cleanUpVirtualPath(fullVirtualName);
 		
-		if (fullVirtualName == null || fullVirtualName.equals("")) {
+		if (fullVirtualName == null || fullVirtualName.equals("")) { //$NON-NLS-1$
 			return new VirtualChild(this);
 		}
 		
@@ -756,7 +756,7 @@ public class SystemTarHandler implements ISystemArchiveHandler {
 		
 		fullVirtualName = ArchiveHandlerManager.cleanUpVirtualPath(fullVirtualName);
 		
-		if (fullVirtualName == null || fullVirtualName.equals("")) {
+		if (fullVirtualName == null || fullVirtualName.equals("")) { //$NON-NLS-1$
 			return false;
 		}
 		
@@ -949,7 +949,7 @@ public class SystemTarHandler implements ISystemArchiveHandler {
 		
 		if (destination == null) {
 			
-			if (fullVirtualName.equals("")) {
+			if (fullVirtualName.equals("")) { //$NON-NLS-1$
 				destination = destinationParent;
 			}
 			else {
@@ -1011,8 +1011,8 @@ public class SystemTarHandler implements ISystemArchiveHandler {
 		if (!file.isDirectory()) {
 			
 			// if it exists, call replace
-			if (exists(virtualPath + "/" + name)) {
-				return replace(virtualPath + "/" + name, file, name);
+			if (exists(virtualPath + "/" + name)) { //$NON-NLS-1$
+				return replace(virtualPath + "/" + name, file, name); //$NON-NLS-1$
 			}
 			else {
 				File[] files = new File[1];
@@ -1035,16 +1035,16 @@ public class SystemTarHandler implements ISystemArchiveHandler {
 				newNames[i] = sources[i].getAbsolutePath().substring(charsToTrim);
 				newNames[i] = newNames[i].replace('\\','/');
 				
-				if (sources[i].isDirectory() && !newNames[i].endsWith("/")) {
-					newNames[i] = newNames[i] + "/";
+				if (sources[i].isDirectory() && !newNames[i].endsWith("/")) { //$NON-NLS-1$
+					newNames[i] = newNames[i] + "/"; //$NON-NLS-1$
 				}
 			}
 			
 			sources[numOfChildren] = file;
 			newNames[numOfChildren] = name;
 			
-			if  (!newNames[numOfChildren].endsWith("/")) {
-				newNames[numOfChildren] = newNames[numOfChildren] + "/";
+			if  (!newNames[numOfChildren].endsWith("/")) { //$NON-NLS-1$
+				newNames[numOfChildren] = newNames[numOfChildren] + "/"; //$NON-NLS-1$
 			}
 			 
 			return add(sources, virtualPath, newNames);
@@ -1097,15 +1097,15 @@ public class SystemTarHandler implements ISystemArchiveHandler {
 			// if the entry already exists, then we should do a replace
 			// TODO (KM): should we simply replace and return?
 			// I think we should check each entry and replace or create for each one
-			if (exists(virtualPath + "/" + names[i])) {
-				return replace(virtualPath + "/" + names[i], files[i], names[i]);
+			if (exists(virtualPath + "/" + names[i])) { //$NON-NLS-1$
+				return replace(virtualPath + "/" + names[i], files[i], names[i]); //$NON-NLS-1$
 			}
 		}
 		
 		try {
 			
 			// open a new temp file which will be our destination for the new tar file
-			File outFile = new File(file.getAbsolutePath() + "temp");
+			File outFile = new File(file.getAbsolutePath() + "temp"); //$NON-NLS-1$
 			TarOutputStream outStream = new TarOutputStream(new FileOutputStream(outFile));
 
 			// get all the entries in the current tar				  
@@ -1119,7 +1119,7 @@ public class SystemTarHandler implements ISystemArchiveHandler {
 			// for each new file to add
 			for (int i = 0; i < numFiles; i++) {
 				
-				String childVirtualPath = virtualPath + "/" + names[i];
+				String childVirtualPath = virtualPath + "/" + names[i]; //$NON-NLS-1$
 				
 				TarEntry newEntry = createTarEntry(files[i], childVirtualPath);
 				
@@ -1177,7 +1177,7 @@ public class SystemTarHandler implements ISystemArchiveHandler {
 			if (children[i].isDirectory) {
 				
 				// include a '/' at the end, since it is a directory
-				TarEntry nextEntry = tarFile.getEntry(children[i].fullName + "/");
+				TarEntry nextEntry = tarFile.getEntry(children[i].fullName + "/"); //$NON-NLS-1$
 				
 				// put the entry
 				outStream.putNextEntry(nextEntry);
@@ -1263,14 +1263,14 @@ public class SystemTarHandler implements ISystemArchiveHandler {
 		// if directory, end with a '/'
 		if (file.isDirectory()) {
 			
-			if (!fullName.endsWith("/")) {
-				 fullName = fullName + "/";
+			if (!fullName.endsWith("/")) { //$NON-NLS-1$
+				 fullName = fullName + "/"; //$NON-NLS-1$
 			}
 		}
 		
 		// strip out leading '/'
 		// TODO (KM): Why?
-		if (fullName.startsWith("/")) {
+		if (fullName.startsWith("/")) { //$NON-NLS-1$
 			fullName = fullName.substring(1); 
 		}
 		
@@ -1291,7 +1291,7 @@ public class SystemTarHandler implements ISystemArchiveHandler {
 		entry.setModificationTime(lastModified);
 		
 		// set the user name
-		String userName = System.getProperty("user.name");
+		String userName = System.getProperty("user.name"); //$NON-NLS-1$
 		
 		if (userName != null) {
 			entry.setUserName(userName);
@@ -1316,18 +1316,14 @@ public class SystemTarHandler implements ISystemArchiveHandler {
 		try {
 			
 			// if security manager successfully created, check permission
-			if (sm != null) {
-				
+
 				// create a file permission to check execute
-				FilePermission permission = new FilePermission(file.getAbsolutePath(), "execute");
+				FilePermission permission = new FilePermission(file.getAbsolutePath(), "execute"); //$NON-NLS-1$
 				
 				// this call will throw a SecurityException if permission does not exist
 				sm.checkPermission(permission);
 				canExecute = true;
-			}
-			else {
-				canExecute = false;
-			}
+	
 		}
 		catch(SecurityException e) {
 			canExecute = false;
@@ -1361,14 +1357,14 @@ public class SystemTarHandler implements ISystemArchiveHandler {
 		// if directory, end with a '/'
 		if (file.isDirectory()) {
 			
-			if (!fullName.endsWith("/")) {
-				 fullName = fullName + "/";
+			if (!fullName.endsWith("/")) { //$NON-NLS-1$
+				 fullName = fullName + "/"; //$NON-NLS-1$
 			}
 		}
 
 		// strip out leading '/'
 		// TODO (KM): Why?			
-		if (fullName.startsWith("/")) {
+		if (fullName.startsWith("/")) { //$NON-NLS-1$
 			fullName = fullName.substring(1); 
 		}
 		
@@ -1418,7 +1414,7 @@ public class SystemTarHandler implements ISystemArchiveHandler {
 		String name = file.getAbsolutePath();
 		
 		// create a temp file (in case something goes wrong)
-		File tempFile = new File(name + ".old");
+		File tempFile = new File(name + ".old"); //$NON-NLS-1$
 		
 		// rename current file to tempFile
 		file.renameTo(tempFile);
@@ -1472,7 +1468,7 @@ public class SystemTarHandler implements ISystemArchiveHandler {
 		try {
 			
 			// open a new temp file which will be our destination for the new tar file
-			File outFile = new File(getArchive().getAbsolutePath() + "temp");
+			File outFile = new File(getArchive().getAbsolutePath() + "temp"); //$NON-NLS-1$
 			
 			TarOutputStream outStream = new TarOutputStream(new FileOutputStream(outFile));
 			
@@ -1491,19 +1487,19 @@ public class SystemTarHandler implements ISystemArchiveHandler {
 			// now append the new file to the tar
 			String parentVirtualPath = null;
 
-			int i = fullVirtualName.lastIndexOf("/");
+			int i = fullVirtualName.lastIndexOf("/"); //$NON-NLS-1$
 			
 			// if the virtual name has no '/', then we will replace it with the
 			// new name
 			if (i == -1) {
-				parentVirtualPath = "";
+				parentVirtualPath = ""; //$NON-NLS-1$
 			}
 			// otherwise, we get the parent path to which the new name will be appended
 			else {
 				parentVirtualPath = fullVirtualName.substring(0, i);
 			}
 			
-			String virtualPath = parentVirtualPath + "/" + name;
+			String virtualPath = parentVirtualPath + "/" + name; //$NON-NLS-1$
 			
 			// get the existing entry for the file
 			TarFile tarFile = getTarFile();
@@ -1568,7 +1564,7 @@ public class SystemTarHandler implements ISystemArchiveHandler {
 		try {
 		
 			// open a new temp file which will be our destination for the new tar file
-			File outFile = new File(file.getAbsolutePath() + "temp");
+			File outFile = new File(file.getAbsolutePath() + "temp"); //$NON-NLS-1$
 			TarOutputStream outStream = new TarOutputStream(new FileOutputStream(outFile));
 		
 			// get all the entries in the current tar				  
@@ -1613,7 +1609,7 @@ public class SystemTarHandler implements ISystemArchiveHandler {
 	 */
 	public boolean rename(String fullVirtualName, String newName) {
 		fullVirtualName = ArchiveHandlerManager.cleanUpVirtualPath(fullVirtualName);
-		int i = fullVirtualName.lastIndexOf("/");
+		int i = fullVirtualName.lastIndexOf("/"); //$NON-NLS-1$
 		
 		// if the original does not have any separator, simply rename it.
 		if (i == -1) {
@@ -1633,11 +1629,11 @@ public class SystemTarHandler implements ISystemArchiveHandler {
 		fullVirtualName = ArchiveHandlerManager.cleanUpVirtualPath(fullVirtualName);
 		destinationVirtualPath = ArchiveHandlerManager.cleanUpVirtualPath(destinationVirtualPath);
 		
-		int i = fullVirtualName.lastIndexOf("/");
+		int i = fullVirtualName.lastIndexOf("/"); //$NON-NLS-1$
 		
 		// if the original does not have any separator, simply append it to the destination path.
 		if (i == -1) {
-			return fullRename(fullVirtualName, destinationVirtualPath + "/" + fullVirtualName);
+			return fullRename(fullVirtualName, destinationVirtualPath + "/" + fullVirtualName); //$NON-NLS-1$
 		}
 		// otherwise, get the last segment (the name) and append that to the destination path.
 		else {
@@ -1672,7 +1668,7 @@ public class SystemTarHandler implements ISystemArchiveHandler {
 		try {
 			
 			// open a new temp file which will be our destination for the new tar file
-			File outFile = new File(file.getAbsolutePath() + "temp");
+			File outFile = new File(file.getAbsolutePath() + "temp"); //$NON-NLS-1$
 			TarOutputStream outStream = new TarOutputStream(new FileOutputStream(outFile));
 			
 			// get all the entries
@@ -1689,7 +1685,7 @@ public class SystemTarHandler implements ISystemArchiveHandler {
 				
 				// add the entry itself to the rename list
 				// include '/' in both the old name and the new name since it is a directory
-				names.put(fullVirtualName + "/", newFullVirtualName + "/");
+				names.put(fullVirtualName + "/", newFullVirtualName + "/"); //$NON-NLS-1$ //$NON-NLS-2$
 				
 				// get all the children of the entry to be renamed
 				VirtualChild[] childrenArray = getVirtualChildrenList(fullVirtualName);
@@ -1709,7 +1705,7 @@ public class SystemTarHandler implements ISystemArchiveHandler {
 					// if a child is a directory, ensure that '/'s are added both for the old name
 					// and the new name
 					if (childrenArray[i].isDirectory) {
-						names.put(childrenArray[i].fullName + "/", newName + "/");
+						names.put(childrenArray[i].fullName + "/", newName + "/"); //$NON-NLS-1$ //$NON-NLS-2$
 					}
 					else {
 						names.put(childrenArray[i].fullName, newName);
@@ -1849,7 +1845,7 @@ public class SystemTarHandler implements ISystemArchiveHandler {
 			String name;
 			String fullName = fullNames[i];
 			fullName = ArchiveHandlerManager.cleanUpVirtualPath(fullName);
-			int j = fullName.lastIndexOf("/");
+			int j = fullName.lastIndexOf("/"); //$NON-NLS-1$
 			
 			if (j == -1) {
 				name = fullName;
@@ -1859,7 +1855,7 @@ public class SystemTarHandler implements ISystemArchiveHandler {
 			}
 			
 			try {	
-				files[i] = File.createTempFile(name, "virtual");
+				files[i] = File.createTempFile(name, "virtual"); //$NON-NLS-1$
 				files[i].deleteOnExit();
 				extractVirtualFile(fullNames[i], files[i]);
 			}
@@ -1877,7 +1873,7 @@ public class SystemTarHandler implements ISystemArchiveHandler {
 	 */
 	public boolean createFolder(String fullVirtualName) {
 		fullVirtualName = ArchiveHandlerManager.cleanUpVirtualPath(fullVirtualName);
-		fullVirtualName = fullVirtualName + "/";
+		fullVirtualName = fullVirtualName + "/"; //$NON-NLS-1$
 		return createVirtualObject(fullVirtualName);
 	}
 
@@ -1914,7 +1910,7 @@ public class SystemTarHandler implements ISystemArchiveHandler {
 		try {
 			
 			// open a new temp file which will be our destination for the new tar file
-			File outFile = new File(file.getAbsolutePath() + "temp");
+			File outFile = new File(file.getAbsolutePath() + "temp"); //$NON-NLS-1$
 			TarOutputStream outStream = new TarOutputStream(new FileOutputStream(outFile));
 			
 			// get all the entries
@@ -1962,7 +1958,7 @@ public class SystemTarHandler implements ISystemArchiveHandler {
 		newEntry.setModificationTime(System.currentTimeMillis());
 		
 		// set the user name
-		String userName = System.getProperty("user.name");
+		String userName = System.getProperty("user.name"); //$NON-NLS-1$
 		
 		if (userName != null) {
 			newEntry.setUserName(userName);
@@ -1987,18 +1983,14 @@ public class SystemTarHandler implements ISystemArchiveHandler {
 		try {
 			
 			// if security manager successfully created, check permission
-			if (sm != null) {
-				
+		
 				// create a file permission to check execute
-				FilePermission permission = new FilePermission(file.getAbsolutePath(), "execute");
+				FilePermission permission = new FilePermission(file.getAbsolutePath(), "execute"); //$NON-NLS-1$
 				
 				// this call will throw a SecurityException if permission does not exist
 				sm.checkPermission(permission);
 				canExecute = true;
-			}
-			else {
-				canExecute = false;
-			}
+		
 		}
 		catch(SecurityException e) {
 			canExecute = false;
@@ -2024,7 +2016,7 @@ public class SystemTarHandler implements ISystemArchiveHandler {
 	public String getStandardName(VirtualChild vc) {
 		
 		if (vc.isDirectory) {
-			return vc.fullName + "/";
+			return vc.fullName + "/"; //$NON-NLS-1$
 		}
 		
 		return vc.fullName;
@@ -2076,7 +2068,7 @@ public class SystemTarHandler implements ISystemArchiveHandler {
 		InputStream is = null;
 		
 		try {
-			tarFile.getInputStream(entry);
+			is = tarFile.getInputStream(entry);
 				
 			if (is == null) {
 				return new SystemSearchLineMatch[0];
@@ -2110,7 +2102,7 @@ public class SystemTarHandler implements ISystemArchiveHandler {
 	 */
 	public String getCommentFor(String fullVirtualName) 
 	{
-		return "";
+		return ""; //$NON-NLS-1$
 	}
 
 	/* (non-Javadoc)
@@ -2126,7 +2118,7 @@ public class SystemTarHandler implements ISystemArchiveHandler {
 	 */
 	public String getCompressionMethodFor(String fullVirtualName) 
 	{
-		return "";
+		return ""; //$NON-NLS-1$
 	}
 	
 	
@@ -2135,7 +2127,7 @@ public class SystemTarHandler implements ISystemArchiveHandler {
 	 */
 	public String getArchiveComment() 
 	{
-		return "";
+		return ""; //$NON-NLS-1$
 	}
 
 	/**
@@ -2144,7 +2136,7 @@ public class SystemTarHandler implements ISystemArchiveHandler {
 	 * @param name
 	 * @param encoding
 	 * @param registry
-	 * @return
+	 * @return whether the add was successful
 	 */
 	public boolean add(File file, String virtualPath, String name,
 			String encoding, ISystemFileTypes registry) {
@@ -2194,10 +2186,10 @@ public class SystemTarHandler implements ISystemArchiveHandler {
 		fullVirtualName = ArchiveHandlerManager.cleanUpVirtualPath(fullVirtualName);
 		
 		// default type
-		String type = "file";
+		String type = "file"; //$NON-NLS-1$
 		
 		// if it's not a class file, we do not classify it
-		if (!fullVirtualName.endsWith(".class")) {
+		if (!fullVirtualName.endsWith(".class")) { //$NON-NLS-1$
 			return type;
 		}
 		
@@ -2230,16 +2222,16 @@ public class SystemTarHandler implements ISystemArchiveHandler {
 		}
 		
 		// if it is executable, then also get qualified class name
-		if (isExecutable) {
-			type = "executable(java";
+		if (isExecutable && parser != null) {
+			type = "executable(java"; //$NON-NLS-1$
 			
 			String qualifiedClassName = parser.getQualifiedClassName();
 			
 			if (qualifiedClassName != null) {
-    			type = type + ":" + qualifiedClassName;
+    			type = type + ":" + qualifiedClassName; //$NON-NLS-1$
 			}
 			
-			type = type + ")";
+			type = type + ")"; //$NON-NLS-1$
 		}
 		
 		return type;

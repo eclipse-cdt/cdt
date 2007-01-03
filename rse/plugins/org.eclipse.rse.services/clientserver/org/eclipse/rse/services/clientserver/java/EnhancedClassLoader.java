@@ -78,7 +78,7 @@ public class EnhancedClassLoader extends ClassLoader {
 		String parentPath = rootPath;
 		
 		// system file separator
-		String fileSep = System.getProperty("file.separator");
+		String fileSep = System.getProperty("file.separator"); //$NON-NLS-1$
     	
 		// add file separator to the parent path if it does not end with it
     	if (!parentPath.endsWith(fileSep)) {
@@ -99,7 +99,7 @@ public class EnhancedClassLoader extends ClassLoader {
     		}
     	}
 		
-		String filePath = buf.append(".class").toString();
+		String filePath = buf.append(".class").toString(); //$NON-NLS-1$
 		
 		File file = new File(filePath);
 		

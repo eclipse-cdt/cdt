@@ -38,11 +38,11 @@ public class ProcessHandlerManager
 	 */
 	public ProcessHandler getNewProcessHandler()
 	{
-		String osName = System.getProperty("os.name").toLowerCase();
-		if (osName.startsWith("linux")) return new UniversalLinuxProcessHandler();
-		else if (osName.startsWith("aix")) return new UniversalAIXProcessHandler();
-		else if (osName.startsWith("z/os")) return new UniversalZOSProcessHandler();
-		else if (osName.startsWith("mac os x")) return new UniversalMacOSXProcessHandler();
+		String osName = System.getProperty("os.name").toLowerCase(); //$NON-NLS-1$
+		if (osName.startsWith("linux")) return new UniversalLinuxProcessHandler(); //$NON-NLS-1$
+		else if (osName.startsWith("aix")) return new UniversalAIXProcessHandler(); //$NON-NLS-1$
+		else if (osName.startsWith("z/os")) return new UniversalZOSProcessHandler(); //$NON-NLS-1$
+		else if (osName.startsWith("mac os x")) return new UniversalMacOSXProcessHandler(); //$NON-NLS-1$
 		else return null;
 	}
 }

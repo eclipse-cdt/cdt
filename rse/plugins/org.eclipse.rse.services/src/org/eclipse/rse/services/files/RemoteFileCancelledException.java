@@ -54,10 +54,10 @@ public class RemoteFileCancelledException extends RemoteFileIOException {
 	 * </Message>
 	 */
 	private static SystemMessage getMyMessage() {
-		String l1 = "Operation cancelled.";
-		String l2 = "";
+		String l1 = "Operation cancelled."; //$NON-NLS-1$
+		String l2 = ""; //$NON-NLS-1$
 		try {
-			myMessage = new SystemMessage("RSE", "G", "1067", SystemMessage.ERROR, l1, l2);
+			myMessage = new SystemMessage("RSE", "G", "1067", SystemMessage.ERROR, l1, l2); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		} catch (IndicatorException e) {
 		}
 		return myMessage;

@@ -43,9 +43,9 @@ public final class VirtualChild {
 	 */	
 	public VirtualChild(ISystemArchiveHandler handler) 
 	{
-		fullName = "";
-		name = "";
-		path = "";
+		fullName = ""; //$NON-NLS-1$
+		name = ""; //$NON-NLS-1$
+		path = ""; //$NON-NLS-1$
 		isDirectory = false;
 		_handler = handler;
 		_extractedFile = null;
@@ -112,7 +112,7 @@ public final class VirtualChild {
 	 */
 	public String getComment() 
 	{
-		if (_handler == null) return "";
+		if (_handler == null) return ""; //$NON-NLS-1$
 		return _handler.getCommentFor(fullName);
 	}
 
@@ -131,7 +131,7 @@ public final class VirtualChild {
 	 */
 	public String getCompressionMethod() 
 	{
-		if (_handler == null) return "";
+		if (_handler == null) return ""; //$NON-NLS-1$
 		return _handler.getCompressionMethodFor(fullName);
 	}
 
@@ -172,16 +172,16 @@ public final class VirtualChild {
 		{
 			try
 			{
-				int i = name.lastIndexOf(".");
-				String ext = "";
+				int i = name.lastIndexOf("."); //$NON-NLS-1$
+				String ext = ""; //$NON-NLS-1$
 				if (i != -1) ext = name.substring(i+1);
 				if (i < 3)
 				{
-				    _extractedFile = File.createTempFile(name + "123", "virtual." + ext);
+				    _extractedFile = File.createTempFile(name + "123", "virtual." + ext); //$NON-NLS-1$ //$NON-NLS-2$
 				}
 				else
 				{
-				    _extractedFile = File.createTempFile(name, "virtual." + ext);
+				    _extractedFile = File.createTempFile(name, "virtual." + ext); //$NON-NLS-1$
 				}
 				_extractedFile.deleteOnExit();
 				if (_handler == null) return _extractedFile;
@@ -191,7 +191,7 @@ public final class VirtualChild {
 					{
 						if (!(_extractedFile.delete() && _extractedFile.mkdirs()))
 						{
-							System.out.println("VirtualChild.getExtractedFile(): Could not create temp dir.");
+							System.out.println("VirtualChild.getExtractedFile(): Could not create temp dir."); //$NON-NLS-1$
 							return null;
 						}
 					}
@@ -204,7 +204,7 @@ public final class VirtualChild {
 			}
 			catch (IOException e)
 			{
-				System.out.println("VirtualChild.getExtractedFile(): ");
+				System.out.println("VirtualChild.getExtractedFile(): "); //$NON-NLS-1$
 				System.out.println(e.getMessage());
 			}
 		}
@@ -285,11 +285,11 @@ public final class VirtualChild {
 	{
 		newName = ArchiveHandlerManager.cleanUpVirtualPath(newName);
 		fullName = newName;
-		int i = newName.lastIndexOf("/");
+		int i = newName.lastIndexOf("/"); //$NON-NLS-1$
 		if (i == -1)
 		{
 			name = newName;
-			path = "";
+			path = ""; //$NON-NLS-1$
 		}
 		else
 		{

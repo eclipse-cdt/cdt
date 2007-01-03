@@ -22,7 +22,6 @@ import java.util.List;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.rse.core.IRSESystemType;
-import org.eclipse.rse.core.SystemBasePlugin;
 import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.subsystems.IConnectorService;
 import org.eclipse.rse.core.subsystems.IServiceSubSystemConfiguration;

@@ -115,7 +115,7 @@ public class RemoteFileException extends SystemMessageException
 		String msg = null;
 		try { msg = bundle.getString(key); } catch (Exception exc) {}
 		if (msg == null)
-		  msg = "Message with key " + key + " not found";		
+		  msg = "Message with key " + key + " not found";		 //$NON-NLS-1$ //$NON-NLS-2$
 		return msg;		
 	}
 

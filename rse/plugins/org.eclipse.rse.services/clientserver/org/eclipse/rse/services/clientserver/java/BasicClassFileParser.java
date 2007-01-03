@@ -77,7 +77,7 @@ public class BasicClassFileParser {
 			int nameIndex = info.getNameIndex();
 			String name = getString(nameIndex);
 			
-			if (name.equals("main")) {
+			if (name.equals("main")) { //$NON-NLS-1$
 				
 				// check access flags for public and static
 				int accessFlags = info.getAccessFlags();
@@ -88,7 +88,7 @@ public class BasicClassFileParser {
 					int descriptorIndex = info.getDescriptorIndex();
 					String descriptor = getString(descriptorIndex);
 				
-					if (descriptor.equals("([Ljava/lang/String;)V")) {
+					if (descriptor.equals("([Ljava/lang/String;)V")) { //$NON-NLS-1$
 						return true;
 					}
 				}

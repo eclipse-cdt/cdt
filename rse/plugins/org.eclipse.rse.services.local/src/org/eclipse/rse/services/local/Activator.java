@@ -66,7 +66,7 @@ public class Activator extends Plugin {
 	public void logException(Throwable t) {
 		ILog log = getLog();
 		String id = getBundle().getSymbolicName();
-		IStatus status = new Status(IStatus.ERROR, id, 0, "Unexpected exception", t);
+		IStatus status = new Status(IStatus.ERROR, id, 0, "Unexpected exception", t); //$NON-NLS-1$
 		log.log(status);
 	}
 }

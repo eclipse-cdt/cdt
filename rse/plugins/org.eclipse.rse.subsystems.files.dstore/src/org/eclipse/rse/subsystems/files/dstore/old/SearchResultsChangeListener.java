@@ -24,7 +24,6 @@ import org.eclipse.dstore.core.model.DataElement;
 import org.eclipse.dstore.core.model.DataStore;
 import org.eclipse.dstore.extra.internal.extra.DomainEvent;
 import org.eclipse.dstore.extra.internal.extra.IDomainListener;
-import org.eclipse.rse.core.model.ISystemRegistry;
 import org.eclipse.rse.core.subsystems.CommunicationsEvent;
 import org.eclipse.rse.core.subsystems.ICommunicationsListener;
 import org.eclipse.rse.dstore.universal.miners.IUniversalDataStoreConstants;
@@ -83,14 +82,12 @@ public class SearchResultsChangeListener implements IDomainListener, ICommunicat
 		
 		_lastUpdateTime = 0;
 
-		ISystemRegistry registry = RSEUIPlugin.getTheSystemRegistry();
-
 		//_factory = ((FileServiceSubSystem)_subsys).getRemoteFileFactory();
 
-		if (_status.getValue().equals("done")) {
+		if (_status.getValue().equals("done")) { //$NON-NLS-1$
 			setDone();
 		}
-		else if (_status.getValue().equals("cancelled")) {
+		else if (_status.getValue().equals("cancelled")) { //$NON-NLS-1$
 			_cancelled = true;
 			setDone();
 		}
@@ -137,10 +134,10 @@ public class SearchResultsChangeListener implements IDomainListener, ICommunicat
 			return;
 		}
 		
-		if (_status.getValue().equals("done")) {
+		if (_status.getValue().equals("done")) { //$NON-NLS-1$
 			setDone();
 		}
-		else if (_status.getValue().equals("cancelled")) {
+		else if (_status.getValue().equals("cancelled")) { //$NON-NLS-1$
 			_cancelled = true;
 			setDone();
 		}
@@ -180,7 +177,7 @@ public class SearchResultsChangeListener implements IDomainListener, ICommunicat
 					// for defect 47414, this code changes the context used for creating IRemoteFiles
 					char slash = '/';
 					
-					if (_subsys.getHost().getSystemType().equals("Windows")) {
+					if (_subsys.getHost().getSystemType().equals("Windows")) { //$NON-NLS-1$
 						slash = '\\';
 					}
 					
@@ -267,7 +264,7 @@ public class SearchResultsChangeListener implements IDomainListener, ICommunicat
 						
 						if (result.getNestedSize() > 0) {
 						    
-							boolean isWindows = _subsys.getHost().getSystemType().equals("Windows");
+							boolean isWindows = _subsys.getHost().getSystemType().equals("Windows"); //$NON-NLS-1$
 							char separator = isWindows ? '\\' : '/';
 							List contents = new ArrayList();
 							
@@ -283,12 +280,11 @@ public class SearchResultsChangeListener implements IDomainListener, ICommunicat
 								searchResult.setText(resultElement.getName());
 								
 								String source = resultElement.getSource().replace('\\', separator).replace('/', separator);
-								String path = source;
+							
 								String lineNumStr = null;
-								int colonIndex = source.indexOf(":");
+								int colonIndex = source.indexOf(":"); //$NON-NLS-1$
 								if (colonIndex > 2)
 								{
-									path = source.substring(0, colonIndex);
 									lineNumStr = source.substring(colonIndex);
 								}
 	

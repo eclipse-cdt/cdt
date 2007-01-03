@@ -65,7 +65,7 @@ public class TarOutputStream extends OutputStream implements ITarConstants {
 	private void ensureOpen() throws IOException {
 		
 		if (isClosed) {
-			throw new IOException("Stream closed");
+			throw new IOException("Stream closed"); //$NON-NLS-1$
 		}
 	}
 

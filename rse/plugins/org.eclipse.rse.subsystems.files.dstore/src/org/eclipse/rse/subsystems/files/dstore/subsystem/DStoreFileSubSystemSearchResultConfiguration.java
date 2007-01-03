@@ -129,7 +129,7 @@ public class DStoreFileSubSystemSearchResultConfiguration extends DStoreSearchRe
 
 	public void domainChanged(DomainEvent e)
 	{
-		if (_status.getValue().equals("done"))
+		if (_status.getValue().equals("done")) //$NON-NLS-1$
 		{
 			setStatus(FINISHED);
 			

@@ -58,10 +58,10 @@ public class RemoteFolderNotEmptyException extends RemoteFileException {
 	 */
 	private static SystemMessage getMyMessage() {
 		if (myMessage == null) {
-			String l1 = "Folder is not empty. Cannot delete";
-			String l2 = "The operation failed. One possible reason is that the folder is not empty";
+			String l1 = "Folder is not empty. Cannot delete"; //$NON-NLS-1$
+			String l2 = "The operation failed. One possible reason is that the folder is not empty"; //$NON-NLS-1$
 			try {
-				myMessage = new SystemMessage("RSE", "F", "1003", SystemMessage.ERROR, l1, l2);
+				myMessage = new SystemMessage("RSE", "F", "1003", SystemMessage.ERROR, l1, l2); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			} catch (IndicatorException e) {
 			}
 		}

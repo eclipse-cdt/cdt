@@ -32,8 +32,8 @@ import java.util.HashMap;
 public class ArchiveHandlerManager 
 {
 	//	The string that separates the virtual part of an absolute path from the real part
-	public static final String VIRTUAL_SEPARATOR = "#virtual#/";
-	public static final String VIRTUAL_CANONICAL_SEPARATOR = "#virtual#";
+	public static final String VIRTUAL_SEPARATOR = "#virtual#/"; //$NON-NLS-1$
+	public static final String VIRTUAL_CANONICAL_SEPARATOR = "#virtual#"; //$NON-NLS-1$
 	
 	//	the singleton instance
 	protected static ArchiveHandlerManager _instance = new ArchiveHandlerManager(); 
@@ -72,7 +72,7 @@ public class ArchiveHandlerManager
 	 */	
 	public VirtualChild[] getContents(File file, String virtualpath) throws IOException
 	{
-		if (virtualpath == null) virtualpath = "";
+		if (virtualpath == null) virtualpath = ""; //$NON-NLS-1$
 		ISystemArchiveHandler handler = getRegisteredHandler(file);
 		if (handler == null || !handler.exists()) throw new IOException();	
 		return handler.getVirtualChildren(virtualpath);	
@@ -90,7 +90,7 @@ public class ArchiveHandlerManager
 	 */	
 	public VirtualChild[] getFolderContents(File file, String virtualpath)
 	{
-		if (virtualpath == null) virtualpath = "";
+		if (virtualpath == null) virtualpath = ""; //$NON-NLS-1$
 		ISystemArchiveHandler handler = getRegisteredHandler(file);
 		if (handler == null) return null;
 		return handler.getVirtualChildFolders(virtualpath);	
@@ -148,8 +148,8 @@ public class ArchiveHandlerManager
 	protected String getExtension(File file)
 	{
 		String filename = file.getName();
-		int i = filename.lastIndexOf(".");
-		if (i == -1) return "";
+		int i = filename.lastIndexOf("."); //$NON-NLS-1$
+		if (i == -1) return ""; //$NON-NLS-1$
 		return filename.substring(i+1).toLowerCase();
 	}
 	
@@ -161,8 +161,8 @@ public class ArchiveHandlerManager
 	 */
 	protected String getExtension(String filename)
 	{
-		int i = filename.lastIndexOf(".");
-		if (i == -1) return "";
+		int i = filename.lastIndexOf("."); //$NON-NLS-1$
+		if (i == -1) return ""; //$NON-NLS-1$
 		return filename.substring(i+1).toLowerCase();
 	}
 	
@@ -178,7 +178,7 @@ public class ArchiveHandlerManager
 	{
 		String cleanName = cleanUpVirtualPath(fullyQualifiedName);
 		AbsoluteVirtualPath avp = new AbsoluteVirtualPath(cleanName);
-		if (!avp.isVirtual()) return new VirtualChild("", new File(avp.getContainingArchiveString()));
+		if (!avp.isVirtual()) return new VirtualChild("", new File(avp.getContainingArchiveString())); //$NON-NLS-1$
 		String zipfile = avp.getContainingArchiveString();
 		File file = new File(zipfile);
 		ISystemArchiveHandler handler = getRegisteredHandler(file);
@@ -227,14 +227,14 @@ public class ArchiveHandlerManager
 					//Throwable target = e.getCause();
 					System.out.println(e.getMessage());
 					e.printStackTrace();
-					System.out.println("Could not instantiate handler for " + file.getName());
+					System.out.println("Could not instantiate handler for " + file.getName()); //$NON-NLS-1$
 					return null;
 
 				}
 				catch (Exception e)
 				{
 					System.out.println(e.getMessage());
-					System.out.println("Could not instantiate handler for " + file.getName());
+					System.out.println("Could not instantiate handler for " + file.getName()); //$NON-NLS-1$
 					return null;
 				}
 				_handlers.put(file, handler);
@@ -272,8 +272,8 @@ public class ArchiveHandlerManager
 	{
 		if (!handlerHasProperConstructor(handlerType))
 		{
-			System.out.println("Cannot register archive handler " + handlerType);
-			System.out.println(handlerType + " does not contain a constructor whose signature is 'Constructor(File file)'");
+			System.out.println("Cannot register archive handler " + handlerType); //$NON-NLS-1$
+			System.out.println(handlerType + " does not contain a constructor whose signature is 'Constructor(File file)'"); //$NON-NLS-1$
 			return false;
 		}
 		if (handlerImplementsISystemArchiveHandler(handlerType))
@@ -284,8 +284,8 @@ public class ArchiveHandlerManager
 		}
 		else
 		{
-			System.out.println("Cannot register archive handler " + handlerType);
-			System.out.println("Neither " + handlerType + ", nor any of its superclasses implements ISystemArchiveHandler.");
+			System.out.println("Cannot register archive handler " + handlerType); //$NON-NLS-1$
+			System.out.println("Neither " + handlerType + ", nor any of its superclasses implements ISystemArchiveHandler."); //$NON-NLS-1$ //$NON-NLS-2$
 			return false;
 		}
 	}
@@ -361,8 +361,8 @@ public class ArchiveHandlerManager
 	public static String cleanUpVirtualPath(String fullVirtualName)
 	{
 		int j = fullVirtualName.indexOf(VIRTUAL_CANONICAL_SEPARATOR);
-		if (j == -1 && fullVirtualName.indexOf(":") != -1) return fullVirtualName;
-		String realPart = "";
+		if (j == -1 && fullVirtualName.indexOf(":") != -1) return fullVirtualName; //$NON-NLS-1$
+		String realPart = ""; //$NON-NLS-1$
 		String newPath = fullVirtualName;
 		if (j != -1)
 		{
@@ -373,16 +373,16 @@ public class ArchiveHandlerManager
 		newPath = newPath.replace('\\', '/');
 
 		//get rid of any double slashes
-		int i = newPath.indexOf("//");
+		int i = newPath.indexOf("//"); //$NON-NLS-1$
 		while (i != -1)
 		{
 			newPath = newPath.substring(0,i) + newPath.substring(i+1);
-			i = newPath.indexOf("//");
+			i = newPath.indexOf("//"); //$NON-NLS-1$
 		}
 		
 		// get rid of any leading or trailing slashes
-		if (j != -1 && newPath.startsWith("/")) newPath = newPath.substring(1);
-		if (newPath.endsWith("/")) newPath = newPath.substring(0, newPath.length() - 1);
+		if (j != -1 && newPath.startsWith("/")) newPath = newPath.substring(1); //$NON-NLS-1$
+		if (newPath.endsWith("/")) newPath = newPath.substring(0, newPath.length() - 1); //$NON-NLS-1$
 		return realPart + newPath;
 	}
 
@@ -398,8 +398,8 @@ public class ArchiveHandlerManager
 	{
 		if (!isRegisteredArchive(newFile.getName())) 
 		{
-			System.out.println("Could not create new archive.");
-			System.out.println(newFile + " is not a registered type of archive.");
+			System.out.println("Could not create new archive."); //$NON-NLS-1$
+			System.out.println(newFile + " is not a registered type of archive."); //$NON-NLS-1$
 			return false;
 		}
 		
@@ -407,14 +407,14 @@ public class ArchiveHandlerManager
 		{
 			if (!newFile.isFile())
 			{
-				System.out.println("Could not create new archive.");
-				System.out.println(newFile + " is not a file.");
+				System.out.println("Could not create new archive."); //$NON-NLS-1$
+				System.out.println(newFile + " is not a file."); //$NON-NLS-1$
 				return false;
 			}
 			if (!newFile.delete())
 			{
-				System.out.println("Could not create new archive.");
-				System.out.println(newFile + " could not be deleted.");
+				System.out.println("Could not create new archive."); //$NON-NLS-1$
+				System.out.println(newFile + " could not be deleted."); //$NON-NLS-1$
 				return false;
 			}
 		}
@@ -423,14 +423,14 @@ public class ArchiveHandlerManager
 		{	
 			if (!newFile.createNewFile())
 			{
-				System.out.println("Could not create new archive.");
-				System.out.println(newFile + " could not be created.");
+				System.out.println("Could not create new archive."); //$NON-NLS-1$
+				System.out.println(newFile + " could not be created."); //$NON-NLS-1$
 				return false;
 			}
 		}
 		catch (IOException e)
 		{
-			System.out.println("Could not create new archive.");
+			System.out.println("Could not create new archive."); //$NON-NLS-1$
 			System.out.println(e.getMessage());
 			return false;
 		}
@@ -457,7 +457,7 @@ public class ArchiveHandlerManager
 	public String getComment(File archive)
 	{
 		ISystemArchiveHandler handler = getRegisteredHandler(archive);
-		if (handler == null || !handler.exists()) return "";	
+		if (handler == null || !handler.exists()) return "";	 //$NON-NLS-1$
 		return handler.getArchiveComment();	
 	}
 	

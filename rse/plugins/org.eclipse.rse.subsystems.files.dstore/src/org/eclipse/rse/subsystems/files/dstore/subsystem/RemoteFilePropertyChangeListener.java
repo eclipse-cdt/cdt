@@ -88,7 +88,7 @@ public class RemoteFilePropertyChangeListener implements IDomainListener,
             catch (Exception e)
             {
                 SystemBasePlugin.logError(
-                        "StatusChangeListener.FindShell exception: ", e);
+                        "StatusChangeListener.FindShell exception: ", e); //$NON-NLS-1$
             }
         }
     }

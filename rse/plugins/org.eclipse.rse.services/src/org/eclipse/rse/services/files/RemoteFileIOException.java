@@ -59,10 +59,10 @@ public class RemoteFileIOException extends RemoteFileException {
 	 * </Message>
 	 */
 	private static SystemMessage getMyMessage() {
-        String l1 = "Operation failed. File system input or output error";
-        String l2 = "Message reported from file system: %1";
+        String l1 = "Operation failed. File system input or output error"; //$NON-NLS-1$
+        String l2 = "Message reported from file system: %1"; //$NON-NLS-1$
 		try {
-			myMessage = new SystemMessage("RSE", "F", "1002", SystemMessage.ERROR, l1, l2);
+			myMessage = new SystemMessage("RSE", "F", "1002", SystemMessage.ERROR, l1, l2); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		} catch (IndicatorException e) {
 		}
 		return myMessage;

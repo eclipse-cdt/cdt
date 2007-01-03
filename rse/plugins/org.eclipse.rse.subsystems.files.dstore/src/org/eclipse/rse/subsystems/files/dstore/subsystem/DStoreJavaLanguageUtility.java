@@ -55,8 +55,7 @@ public class DStoreJavaLanguageUtility extends AbstractJavaLanguageUtility imple
 		else {
 			return null;
 		}
-		
-		String remotePath = remoteFile.getAbsolutePath();
+
 		DataElement deObj = ((DStoreHostFile)univFile.getHostFile()).getDataElement();	
 		
 		DataStore ds = deObj.getDataStore();
@@ -66,11 +65,11 @@ public class DStoreJavaLanguageUtility extends AbstractJavaLanguageUtility imple
 			DataElement status = ds.synchronizedCommand(queryCmd, deObj, true);
 			DataElement className = ds.find(status, DE.A_TYPE, TYPE_QUALIFIED_CLASSNAME, 1);
 				
-			if (className != null && !className.equals("null")) {
+			if (className != null && !className.equals("null")) { //$NON-NLS-1$
 				return className.getName();
 			}
 			else {
-				SystemBasePlugin.logWarning("Qualified class name for " + remoteFile.getAbsolutePath() + " is null");
+				SystemBasePlugin.logWarning("Qualified class name for " + remoteFile.getAbsolutePath() + " is null"); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 		}
 		

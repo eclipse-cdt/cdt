@@ -32,7 +32,7 @@ public interface ISystemProcessRemoteTypes
 	 * There is only one type category for remote processes.
 	 * It is "processes".
 	 */
-    public static final String TYPECATEGORY = "processes";
+    public static final String TYPECATEGORY = "processes"; //$NON-NLS-1$
 
     // -----------
     // TYPES...
@@ -41,11 +41,11 @@ public interface ISystemProcessRemoteTypes
 	/**
 	 * A process object
 	 */
-    public static final String TYPE_PROCESS = "process";
+    public static final String TYPE_PROCESS = "process"; //$NON-NLS-1$
     
     /**
      * A root process object
      */
-    public static final String TYPE_ROOT = "rootprocess";    
+    public static final String TYPE_ROOT = "rootprocess";     //$NON-NLS-1$
 
 }

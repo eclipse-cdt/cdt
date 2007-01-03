@@ -24,15 +24,15 @@ public interface ISystemArchiveHandlerConstants {
 	/**
 	 * Zip archive extension, "zip".
 	 */
-	public static final String ZIP_ARCHIVE_EXTENSION = "zip";
+	public static final String ZIP_ARCHIVE_EXTENSION = "zip"; //$NON-NLS-1$
 	
 	/**
 	 * Jar archive extension, "jar".
 	 */
-	public static final String JAR_ARCHIVE_EXTENSION = "jar";
+	public static final String JAR_ARCHIVE_EXTENSION = "jar"; //$NON-NLS-1$
 	
 	/**
 	 * Tar archive extension, "tar".
 	 */
-	public static final String TAR_ARCHIVE_EXTENSION = "tar";
+	public static final String TAR_ARCHIVE_EXTENSION = "tar"; //$NON-NLS-1$
 }

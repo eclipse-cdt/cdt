@@ -57,16 +57,16 @@ public class SystemMessageFile implements ErrorHandler
 	//  caching SystemMessage objects for previously issued messages. Phil
 	private Hashtable messages = new Hashtable();
 	// XML TAG AND ELEMENT NAMES...
-	private static final String XML_TAG_COMPONENT    = "Component";
-	private static final String XML_TAG_SUBCOMPONENT = "Subcomponent";
-	private static final String XML_TAG_MESSAGeList  = "MessageList";
-	private static final String XML_TAG_MESSAGE      = "Message";
-	private static final String XML_TAG_LEVELONE     = "LevelOne";
-	private static final String XML_TAG_LEVELTWO     = "LevelTwo";
-	private static final String XML_ATTR_ABBR        = "Abbr";
-	private static final String XML_ATTR_ID          = "ID";
-	private static final String XML_ATTR_INDICATOR   = "Indicator";
-	private static final String XML_ATTR_NAME        = "Name";
+	private static final String XML_TAG_COMPONENT    = "Component"; //$NON-NLS-1$
+	private static final String XML_TAG_SUBCOMPONENT = "Subcomponent"; //$NON-NLS-1$
+	private static final String XML_TAG_MESSAGeList  = "MessageList"; //$NON-NLS-1$
+	private static final String XML_TAG_MESSAGE      = "Message"; //$NON-NLS-1$
+	private static final String XML_TAG_LEVELONE     = "LevelOne"; //$NON-NLS-1$
+	private static final String XML_TAG_LEVELTWO     = "LevelTwo"; //$NON-NLS-1$
+	private static final String XML_ATTR_ABBR        = "Abbr"; //$NON-NLS-1$
+	private static final String XML_ATTR_ID          = "ID"; //$NON-NLS-1$
+	private static final String XML_ATTR_INDICATOR   = "Indicator"; //$NON-NLS-1$
+	private static final String XML_ATTR_NAME        = "Name"; //$NON-NLS-1$
 						
 						
 						
@@ -163,13 +163,13 @@ public class SystemMessageFile implements ErrorHandler
 		// DY Defect 42605
 		if (msgFile.getXMLDocument() == null) 
 	    {
-	    	issueErrorMessage("No XML document for message file", echoErrorsToStandardOut);
+	    	issueErrorMessage("No XML document for message file", echoErrorsToStandardOut); //$NON-NLS-1$
             return null;
 	    }
 			
 	    // caching added by Phil to increase performance, and not to leave a trail of SystemMessage objects for
 	    //  the garbage collector. Hopefully, the extra memory for the cache does not defeat these benefits.
-	    SystemMessage msg = (SystemMessage)messages.get(msgFile.getMessageShortFileName()+":"+msgId);
+	    SystemMessage msg = (SystemMessage)messages.get(msgFile.getMessageShortFileName()+":"+msgId); //$NON-NLS-1$
 	    if (msg != null)
 	    {
 	    	//System.out.println("Reusing msg " + msgId);
@@ -185,7 +185,7 @@ public class SystemMessageFile implements ErrorHandler
 	    NodeList componentElementList = msgFile.getXMLDocument().getElementsByTagName(XML_TAG_COMPONENT);
 	    if ((componentElementList == null) || (componentElementList.getLength() == 0))
 	    {
-	    	issueErrorMessage("Unable to find any Component elements",echoErrorsToStandardOut);
+	    	issueErrorMessage("Unable to find any Component elements",echoErrorsToStandardOut); //$NON-NLS-1$
             return null;
 	    }
 
@@ -197,7 +197,7 @@ public class SystemMessageFile implements ErrorHandler
         
         if ((subComponentList == null) || (subComponentList.getLength() == 0))
         {
-	    	issueErrorMessage("Unable to find any Subcomponent elements",echoErrorsToStandardOut);
+	    	issueErrorMessage("Unable to find any Subcomponent elements",echoErrorsToStandardOut); //$NON-NLS-1$
             return null;
         }
           
@@ -213,8 +213,8 @@ public class SystemMessageFile implements ErrorHandler
         	//String msgPrefix=componentAbbr+subComponentAbbr;
         	String msgPrefix = (componentAbbr + subComponentAbbr).toUpperCase();
         	char msgIndicator=' ';
-        	String msgL1="";
-        	String msgL2="";
+        	String msgL1=""; //$NON-NLS-1$
+        	String msgL2=""; //$NON-NLS-1$
         		
         	// if the message prefix matches, then try to find the message
         	//if (msgPrefix.toUpperCase().equals(msgId.toUpperCase().substring(0,msgPrefix.length())) &&
@@ -242,7 +242,7 @@ public class SystemMessageFile implements ErrorHandler
         		  messageListNode = (Element)msgListNodes.item(0);
         		else
         		{
-	    	        issueWarningMessage("unable to find MessageList nodes for subComponent " + subComponentElement.getAttribute(XML_ATTR_NAME),echoErrorsToStandardOut);
+	    	        issueWarningMessage("unable to find MessageList nodes for subComponent " + subComponentElement.getAttribute(XML_ATTR_NAME),echoErrorsToStandardOut); //$NON-NLS-1$
         			continue;
         		}
         			     
@@ -252,7 +252,7 @@ public class SystemMessageFile implements ErrorHandler
         		NodeList msgNodes = messageListNode.getElementsByTagName(XML_TAG_MESSAGE);
         		if ((msgNodes==null) || (msgNodes.getLength()==0))
         		{
-	    	        issueWarningMessage("unable to find Message nodes for subComponent " + subComponentElement.getAttribute(XML_ATTR_NAME),echoErrorsToStandardOut);
+	    	        issueWarningMessage("unable to find Message nodes for subComponent " + subComponentElement.getAttribute(XML_ATTR_NAME),echoErrorsToStandardOut); //$NON-NLS-1$
         			continue;
         		}
         		boolean match = false; // I added this so we stop looping when we find what we are looking for!!! Phil.
@@ -291,7 +291,7 @@ public class SystemMessageFile implements ErrorHandler
         		try 
         		{   
 		       		msg = loadSystemMessage(componentAbbr, subComponentAbbr, msgNumber, msgIndicator, msgL1, msgL2);
-		       		messages.put(msgFile.getMessageShortFileName()+":"+msgId, msg); // add to cache so we find it immediately next time!!
+		       		messages.put(msgFile.getMessageShortFileName()+":"+msgId, msg); // add to cache so we find it immediately next time!! //$NON-NLS-1$
 		       		return msg;
         		}
         		catch (IndicatorException e) 
@@ -329,7 +329,7 @@ public class SystemMessageFile implements ErrorHandler
 	 */
 	private String getNodeText(Node msgNode)
 	{
-		String nodeText = "";
+		String nodeText = ""; //$NON-NLS-1$
 		for (Node textNode=msgNode.getFirstChild();
         	 textNode!=null; textNode=textNode.getNextSibling())  
         {
@@ -349,12 +349,12 @@ public class SystemMessageFile implements ErrorHandler
 	{
 		boolean echoErrorsToStandardOut = true;
 		if (msgFile.getXMLDocument() == null) 
-	    	return issueErrorMessage("No XML document for message file", echoErrorsToStandardOut);
+	    	return issueErrorMessage("No XML document for message file", echoErrorsToStandardOut); //$NON-NLS-1$
 			
         // parse out the Abbr attr of the first Component element
 	    NodeList componentElementList = msgFile.getXMLDocument().getElementsByTagName(XML_TAG_COMPONENT);
 	    if ((componentElementList == null) || (componentElementList.getLength() == 0))
-	    	return issueErrorMessage("Unable to find any Component elements",echoErrorsToStandardOut);
+	    	return issueErrorMessage("Unable to find any Component elements",echoErrorsToStandardOut); //$NON-NLS-1$
 
 	    Element componentElement = (Element)componentElementList.item(0);
         String componentAbbr = componentElement.getAttribute(XML_ATTR_ABBR);
@@ -363,7 +363,7 @@ public class SystemMessageFile implements ErrorHandler
         NodeList subComponentList=msgFile.getXMLDocument().getElementsByTagName(XML_TAG_SUBCOMPONENT);
         
         if ((subComponentList == null) || (subComponentList.getLength() == 0))
-	    	return issueErrorMessage("Unable to find any Subcomponent elements",echoErrorsToStandardOut);
+	    	return issueErrorMessage("Unable to find any Subcomponent elements",echoErrorsToStandardOut); //$NON-NLS-1$
                   
         // scan all subcomponents...
         boolean anyDupes = false;
@@ -381,14 +381,14 @@ public class SystemMessageFile implements ErrorHandler
         	  messageListNode = (Element)msgListNodes.item(0);
         	else
         	{
-	    	    issueWarningMessage("unable to find MessageList nodes for subComponent " + subComponentElement.getAttribute(XML_ATTR_NAME),echoErrorsToStandardOut);
+	    	    issueWarningMessage("unable to find MessageList nodes for subComponent " + subComponentElement.getAttribute(XML_ATTR_NAME),echoErrorsToStandardOut); //$NON-NLS-1$
         		continue;
         	}
         			     
         	NodeList msgNodes = messageListNode.getElementsByTagName(XML_TAG_MESSAGE);
         	if ((msgNodes==null) || (msgNodes.getLength()==0))
         	{
-	    	        issueWarningMessage("unable to find Message nodes for subComponent " + subComponentElement.getAttribute(XML_ATTR_NAME),echoErrorsToStandardOut);
+	    	        issueWarningMessage("unable to find Message nodes for subComponent " + subComponentElement.getAttribute(XML_ATTR_NAME),echoErrorsToStandardOut); //$NON-NLS-1$
         			continue;
         	}
             for (int msgIdx = 0; (msgIdx < msgNodes.getLength()); msgIdx++)
@@ -398,7 +398,7 @@ public class SystemMessageFile implements ErrorHandler
         		 if (msgsById.contains(msgId))
         		 {
         		 	anyDupes = true;
-	    	        issueWarningMessage("Warning: duplicate message " + msgId + " found", echoErrorsToStandardOut);
+	    	        issueWarningMessage("Warning: duplicate message " + msgId + " found", echoErrorsToStandardOut); //$NON-NLS-1$ //$NON-NLS-2$
         		 }
         		 else
         		   msgsById.addElement(msgId);
@@ -417,12 +417,12 @@ public class SystemMessageFile implements ErrorHandler
 	{
 		boolean echoErrorsToStandardOut = true;
 		if (msgFile.getXMLDocument() == null) 
-	    	return issueErrorMessage("No XML document for message file", echoErrorsToStandardOut);
+	    	return issueErrorMessage("No XML document for message file", echoErrorsToStandardOut); //$NON-NLS-1$
 		
         // parse out the Abbr attr of the first Component element
 	    NodeList componentElementList = msgFile.getXMLDocument().getElementsByTagName(XML_TAG_COMPONENT);
 	    if ((componentElementList == null) || (componentElementList.getLength() == 0))
-	    	return issueErrorMessage("Unable to find any Component elements",echoErrorsToStandardOut);
+	    	return issueErrorMessage("Unable to find any Component elements",echoErrorsToStandardOut); //$NON-NLS-1$
 
 	    Element componentElement = (Element)componentElementList.item(0);
         String componentAbbr = componentElement.getAttribute(XML_ATTR_ABBR);
@@ -431,29 +431,29 @@ public class SystemMessageFile implements ErrorHandler
         NodeList subComponentList=msgFile.getXMLDocument().getElementsByTagName(XML_TAG_SUBCOMPONENT);
         
         if ((subComponentList == null) || (subComponentList.getLength() == 0))
-	    	return issueErrorMessage("Unable to find any Subcomponent elements",echoErrorsToStandardOut);
+	    	return issueErrorMessage("Unable to find any Subcomponent elements",echoErrorsToStandardOut); //$NON-NLS-1$
 
 		File outFile = new File(fullFileName);
 		PrintWriter outFileStream = null;
 		try
 		{
 			outFileStream = new PrintWriter(new FileOutputStream(outFile));
-			outFileStream.println("<HTML> <HEAD> <TITLE> Message File "+msgFile.getMessageShortFileName()+" </TITLE>");
-            outFileStream.println("<style type=\"text/css\">");
-            outFileStream.println("h2 { background-color: #CCCCFF }");
-            outFileStream.println("</style>");
-			outFileStream.println("</HEAD> <BODY>");
-			outFileStream.println("<H1>"+componentElement.getAttribute(XML_ATTR_NAME)+" Messages</H1>");
-			outFileStream.println("<br>");
-			outFileStream.println("<TABLE BORDER=\"1\" CELLPADDING=\"3\" CELLSPACING=\"0\" WIDTH=\"100%\">");
-			outFileStream.println("<TR BGCOLOR=\"#CCCCFF\">");
-			outFileStream.println("<TD COLSPAN=2><FONT SIZE=\"+2\">");
-			outFileStream.println("<B>Sub-Component Summary</B></FONT></TD>");
-			outFileStream.println("</TR>");
+			outFileStream.println("<HTML> <HEAD> <TITLE> Message File "+msgFile.getMessageShortFileName()+" </TITLE>"); //$NON-NLS-1$ //$NON-NLS-2$
+            outFileStream.println("<style type=\"text/css\">"); //$NON-NLS-1$
+            outFileStream.println("h2 { background-color: #CCCCFF }"); //$NON-NLS-1$
+            outFileStream.println("</style>"); //$NON-NLS-1$
+			outFileStream.println("</HEAD> <BODY>"); //$NON-NLS-1$
+			outFileStream.println("<H1>"+componentElement.getAttribute(XML_ATTR_NAME)+" Messages</H1>"); //$NON-NLS-1$ //$NON-NLS-2$
+			outFileStream.println("<br>"); //$NON-NLS-1$
+			outFileStream.println("<TABLE BORDER=\"1\" CELLPADDING=\"3\" CELLSPACING=\"0\" WIDTH=\"100%\">"); //$NON-NLS-1$
+			outFileStream.println("<TR BGCOLOR=\"#CCCCFF\">"); //$NON-NLS-1$
+			outFileStream.println("<TD COLSPAN=2><FONT SIZE=\"+2\">"); //$NON-NLS-1$
+			outFileStream.println("<B>Sub-Component Summary</B></FONT></TD>"); //$NON-NLS-1$
+			outFileStream.println("</TR>"); //$NON-NLS-1$
 		}
 		catch (IOException exc)
 		{
-			return issueErrorMessage("Unable to open given html file in printHTML: " + exc.getMessage(), echoErrorsToStandardOut);
+			return issueErrorMessage("Unable to open given html file in printHTML: " + exc.getMessage(), echoErrorsToStandardOut); //$NON-NLS-1$
 		}
 
         // pre-scan all subcomponents...
@@ -464,12 +464,12 @@ public class SystemMessageFile implements ErrorHandler
         	String msgPrefix = (componentAbbr + subComponentAbbr).toUpperCase();
 			String scName = subComponentElement.getAttribute(XML_ATTR_NAME);
 
-			outFileStream.println("<TR BGCOLOR=\"white\">");			
-			outFileStream.println("<TD ALIGN=\"right\" VALIGN=\"top\" WIDTH=\"1%\">");
-			outFileStream.println("<A href=#"+scName+">"+scName+"</A></TD>");
-			outFileStream.println("<TD><b>Message prefix</b>="+msgPrefix+"</TD></TR>");
+			outFileStream.println("<TR BGCOLOR=\"white\">");			 //$NON-NLS-1$
+			outFileStream.println("<TD ALIGN=\"right\" VALIGN=\"top\" WIDTH=\"1%\">"); //$NON-NLS-1$
+			outFileStream.println("<A href=#"+scName+">"+scName+"</A></TD>"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			outFileStream.println("<TD><b>Message prefix</b>="+msgPrefix+"</TD></TR>"); //$NON-NLS-1$ //$NON-NLS-2$
        	}
-	    outFileStream.println("</TABLE>");
+	    outFileStream.println("</TABLE>"); //$NON-NLS-1$
 
         // scan all subcomponents...
         for (int subComponentIdx=0; subComponentIdx<subComponentList.getLength(); subComponentIdx++) 
@@ -485,41 +485,41 @@ public class SystemMessageFile implements ErrorHandler
         	  messageListNode = (Element)msgListNodes.item(0);
         	else
         	{
-	    	    issueWarningMessage("unable to find MessageList nodes for subComponent " + subComponentElement.getAttribute(XML_ATTR_NAME),echoErrorsToStandardOut);
+	    	    issueWarningMessage("unable to find MessageList nodes for subComponent " + subComponentElement.getAttribute(XML_ATTR_NAME),echoErrorsToStandardOut); //$NON-NLS-1$
         		continue;
         	}
         			     
         	NodeList msgNodes = messageListNode.getElementsByTagName(XML_TAG_MESSAGE);
         	if ((msgNodes==null) || (msgNodes.getLength()==0))
         	{
-	    	        issueWarningMessage("unable to find Message nodes for subComponent " + subComponentElement.getAttribute(XML_ATTR_NAME),echoErrorsToStandardOut);
+	    	        issueWarningMessage("unable to find Message nodes for subComponent " + subComponentElement.getAttribute(XML_ATTR_NAME),echoErrorsToStandardOut); //$NON-NLS-1$
         			continue;
         	}
         	if (subComponentIdx > 0)
-        	  outFileStream.println("<hr>");
+        	  outFileStream.println("<hr>"); //$NON-NLS-1$
 			String scName = subComponentElement.getAttribute(XML_ATTR_NAME);
-			outFileStream.println("<A NAME=\""+scName+"\"><!-- --></A><H2>"+scName+" Messages</H2>");
+			outFileStream.println("<A NAME=\""+scName+"\"><!-- --></A><H2>"+scName+" Messages</H2>"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
             for (int msgIdx = 0; (msgIdx < msgNodes.getLength()); msgIdx++)
         	{
         		 Element node = (Element)msgNodes.item(msgIdx);
         		 String msgId = msgPrefix + node.getAttribute(XML_ATTR_ID);
         		 char msgIndicator=node.getAttribute(XML_ATTR_INDICATOR).toUpperCase().charAt(0);        		 
-        		 String msgSeverity = "Unknown";
+        		 String msgSeverity = "Unknown"; //$NON-NLS-1$
         		 if (msgIndicator == SystemMessage.ERROR)
-        		   msgSeverity = "Error";
+        		   msgSeverity = "Error"; //$NON-NLS-1$
         		 else if (msgIndicator == SystemMessage.WARNING)
-        		   msgSeverity = "Warning";
+        		   msgSeverity = "Warning"; //$NON-NLS-1$
         		 else if (msgIndicator == SystemMessage.INQUIRY)
-        		   msgSeverity = "Question";
+        		   msgSeverity = "Question"; //$NON-NLS-1$
         		 else if (msgIndicator == SystemMessage.INFORMATION)
-        		   msgSeverity = "Information";
+        		   msgSeverity = "Information"; //$NON-NLS-1$
         		 else if (msgIndicator == SystemMessage.COMPLETION)
-         		   msgSeverity = "Completion";
+         		   msgSeverity = "Completion"; //$NON-NLS-1$
         		 else if (msgIndicator == SystemMessage.UNEXPECTED)
-        		   msgSeverity = "Unexpected";
+        		   msgSeverity = "Unexpected"; //$NON-NLS-1$
         		   
-        		 String msgL1 = "";
-        		 String msgL2 = "";
+        		 String msgL1 = ""; //$NON-NLS-1$
+        		 String msgL2 = ""; //$NON-NLS-1$
         		 // search for the l1 & l2 text
         		 for (Node msgNode=node.getFirstChild();
         		      msgNode!=null; msgNode=msgNode.getNextSibling()) 
@@ -531,14 +531,14 @@ public class SystemMessageFile implements ErrorHandler
         		     else if (msgNode.getNodeName().equals(XML_TAG_LEVELTWO)) 
         		      	msgL2 = getNodeText(msgNode);
         		 }
-			     outFileStream.println("<H3>"+msgId+"</H3>");
-			     outFileStream.println("<b>Severity: </b>"+msgSeverity+"<br>");
-			     outFileStream.println("<b>LevelOne: </b>"+msgL1+"<br>");
-			     outFileStream.println("<b>LevelTwo: </b>"+msgL2+"<br>");
+			     outFileStream.println("<H3>"+msgId+"</H3>"); //$NON-NLS-1$ //$NON-NLS-2$
+			     outFileStream.println("<b>Severity: </b>"+msgSeverity+"<br>"); //$NON-NLS-1$ //$NON-NLS-2$
+			     outFileStream.println("<b>LevelOne: </b>"+msgL1+"<br>"); //$NON-NLS-1$ //$NON-NLS-2$
+			     outFileStream.println("<b>LevelTwo: </b>"+msgL2+"<br>"); //$NON-NLS-1$ //$NON-NLS-2$
         	}
-        	outFileStream.println("<br>");
+        	outFileStream.println("<br>"); //$NON-NLS-1$
        	}
-	    outFileStream.println("</BODY></HTML>");
+	    outFileStream.println("</BODY></HTML>"); //$NON-NLS-1$
 	    outFileStream.close();
 		return true;
 	}
@@ -554,7 +554,7 @@ public class SystemMessageFile implements ErrorHandler
         SystemBasePlugin.logError("MessageFile error for msg file " + msgFile.getMessageShortFileName() + ": " + errormsg);        
         **/
         if (echoStandardOut)
-          System.out.println("MessageFile error for msg file " + msgFile.getMessageShortFileName() + ": " + errormsg);
+          System.out.println("MessageFile error for msg file " + msgFile.getMessageShortFileName() + ": " + errormsg); //$NON-NLS-1$ //$NON-NLS-2$
         return false;
 	}
 	/**
@@ -566,7 +566,7 @@ public class SystemMessageFile implements ErrorHandler
         SystemBasePlugin.logError("MessageFile warning for msg file " + msgFile.getMessageShortFileName() + ": " + errormsg);        
         */
         if (echoStandardOut)
-          System.out.println("MessageFile warning for msg file " + msgFile.getMessageShortFileName() + ": " + errormsg);
+          System.out.println("MessageFile warning for msg file " + msgFile.getMessageShortFileName() + ": " + errormsg); //$NON-NLS-1$ //$NON-NLS-2$
         return false;
 	}
 	
@@ -674,7 +674,7 @@ public class SystemMessageFile implements ErrorHandler
 		   //   the current parser hits a fatal exception.
 		   //   This hack prevents that exception so that the
 		   //   specified EntityResolver will get used.
-		   in.setSystemId("foo");
+		   in.setSystemId("foo"); //$NON-NLS-1$
 		   Document document = parser.parse(in); 
 		   
 		   //Document document = parser.parse(messageFile);

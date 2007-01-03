@@ -67,7 +67,7 @@ public class StatusChangeListener implements IDomainListener, ICommunicationsLis
 					}
 				}
 			} catch (Exception e) {
-				SystemBasePlugin.logError("StatusChangeListener.FindShell exception: ", e);
+				SystemBasePlugin.logError("StatusChangeListener.FindShell exception: ", e); //$NON-NLS-1$
 			}
 		}
 	}
@@ -311,7 +311,7 @@ public class StatusChangeListener implements IDomainListener, ICommunicationsLis
 	                                
 	                                if (ICommunicationsDiagnostic.CANCEL_WAIT_REQUESTED == diagnostic.diagnosticStatus()) {
 	                                    cancelled = true;
-	                                    SystemBasePlugin.logError("StatusChangeListener.waitForUpdate cancelled by user.");
+	                                    SystemBasePlugin.logError("StatusChangeListener.waitForUpdate cancelled by user."); //$NON-NLS-1$
 	                                }
 	                            }
 	                        }
@@ -366,7 +366,7 @@ public class StatusChangeListener implements IDomainListener, ICommunicationsLis
 	                                if (ICommunicationsDiagnostic.CANCEL_WAIT_REQUESTED == diagnostic.diagnosticStatus())
 	                                {
 	                                    cancelled = true;
-	                                    SystemBasePlugin.logError("StatusChangeListener.waitForUpdate cancelled by user.");
+	                                    SystemBasePlugin.logError("StatusChangeListener.waitForUpdate cancelled by user."); //$NON-NLS-1$
 	                                }
 	                            }
 	                        }
@@ -395,7 +395,7 @@ public class StatusChangeListener implements IDomainListener, ICommunicationsLis
      * @return <code>true</code> if status done, <code>false</code> otherwise.
      */
     protected boolean determineStatusDone() {
-        return getStatus().getAttribute(DE.A_VALUE).equals("done") ||  getStatus().getAttribute(DE.A_NAME).equals("done");
+        return getStatus().getAttribute(DE.A_VALUE).equals("done") ||  getStatus().getAttribute(DE.A_NAME).equals("done"); //$NON-NLS-1$ //$NON-NLS-2$
     }
 	
 	/**
@@ -423,15 +423,15 @@ public class StatusChangeListener implements IDomainListener, ICommunicationsLis
 		try {
 				 String name = getStatus().getName();  /* Get the current element status name: started/working/done */
 				 /* Log the current status */
-				 SystemBasePlugin.logError("StatusChangeListener."+name+": " + "Communications Diagnostic started");			
-		    	 SystemBasePlugin.logError("StatusChangeListener."+name +
-		    	                           ": done = " + done +
-		                                   "; cancelled = " + cancelled +
-		                                   "; _networkDown = " + _networkDown );
+				 SystemBasePlugin.logError("StatusChangeListener."+name+": " + "Communications Diagnostic started");			 //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		    	 SystemBasePlugin.logError("StatusChangeListener."+name + //$NON-NLS-1$
+		    	                           ": done = " + done + //$NON-NLS-1$
+		                                   "; cancelled = " + cancelled + //$NON-NLS-1$
+		                                   "; _networkDown = " + _networkDown ); //$NON-NLS-1$
 		
 		         ds = target.getDataStore();
 		         /* Log the status in DataStore */
-		         SystemBasePlugin.logError("StatusChangeListener."+name+"(DataStore): " + " isConnected = " + ds.isConnected() + "; isWaiting = " + ds.isWaiting(target));
+		         SystemBasePlugin.logError("StatusChangeListener."+name+"(DataStore): " + " isConnected = " + ds.isConnected() + "; isWaiting = " + ds.isWaiting(target)); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 		         		
 		         /*Log all nested DataElement's in target's parent*/
 		         List deList = target.getParent().getNestedData();
@@ -441,10 +441,10 @@ public class StatusChangeListener implements IDomainListener, ICommunicationsLis
 		             {
 		                 DataElement child = (DataElement) deList.get(i);
 		                 if (child != null) {
-		                 	SystemBasePlugin.logError("StatusChangeListener."+name+".child"+i+"(DataElement): " + child.toString());
+		                 	SystemBasePlugin.logError("StatusChangeListener."+name+".child"+i+"(DataElement): " + child.toString()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		                 	DataElement descriptor = child.getDescriptor();	
 		                 	if (descriptor != null)
-		                 		SystemBasePlugin.logError("StatusChangeListener."+name+".child"+i+"(Descriptor):  " + descriptor.toString());
+		                 		SystemBasePlugin.logError("StatusChangeListener."+name+".child"+i+"(Descriptor):  " + descriptor.toString()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		                 }
 		             }
 		         }	
@@ -462,7 +462,7 @@ public class StatusChangeListener implements IDomainListener, ICommunicationsLis
 		}
 		catch (Exception e)
 		{
-		         SystemBasePlugin.logError("StatusChangeListener.ICommunicationsDiagnostic exception: ", e);  	
+		         SystemBasePlugin.logError("StatusChangeListener.ICommunicationsDiagnostic exception: ", e);  	 //$NON-NLS-1$
 		}
 	
 	    return d;	// return the created diagnostic class instance	

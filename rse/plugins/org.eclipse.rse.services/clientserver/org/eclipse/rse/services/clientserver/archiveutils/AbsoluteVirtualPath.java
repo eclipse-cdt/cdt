@@ -48,7 +48,7 @@ public class AbsoluteVirtualPath
 		{
 			// no more nesting, this is the actual container archive.
 			_absVirtualPath = absolutePath; // fix for defect 51898 and related defects
-			_virtualPart = "";
+			_virtualPart = ""; //$NON-NLS-1$
 			_realPartName = _absVirtualPath;
 			_realPart = this;
 			_isVirtual = false;
@@ -112,7 +112,7 @@ public class AbsoluteVirtualPath
 	public void setVirtualPart(String newVirtualPart)
 	{
 		_virtualPart = newVirtualPart;
-		if (newVirtualPart == "")
+		if (newVirtualPart == "") //$NON-NLS-1$
 		{
 			int i = _absVirtualPath.lastIndexOf(ArchiveHandlerManager.VIRTUAL_SEPARATOR);
 			_absVirtualPath = _absVirtualPath.substring(0, i);
@@ -126,12 +126,12 @@ public class AbsoluteVirtualPath
 	
 	public String getName()
 	{
-		return _absVirtualPath.substring(_absVirtualPath.lastIndexOf("/") + 1);
+		return _absVirtualPath.substring(_absVirtualPath.lastIndexOf("/") + 1); //$NON-NLS-1$
 	}
 	
 	public String getPath()
 	{
-		String path = _absVirtualPath.substring(0, _absVirtualPath.lastIndexOf("/"));
+		String path = _absVirtualPath.substring(0, _absVirtualPath.lastIndexOf("/")); //$NON-NLS-1$
 		return path;
 	}
 

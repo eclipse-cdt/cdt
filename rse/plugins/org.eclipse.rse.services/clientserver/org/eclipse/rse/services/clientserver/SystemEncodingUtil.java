@@ -137,6 +137,7 @@ public class SystemEncodingUtil {
 			// determine which of UCS-4 or other supported 32-bit encodings applies. 
 
 			// UCS-4, big-endian order (1234 order)
+			/* DKM - encodingGuess can only be null
 			else if (temp[0] == 0x00 && temp[1] == 0x00 && temp[2] == 0x00 && temp[3] == 0x3C) {
 				encodingGuess = null;
 			}
@@ -152,7 +153,7 @@ public class SystemEncodingUtil {
 			else if (temp[0] == 0x00 && temp[1] == 0x3C && temp[2] == 0x00 && temp[3] == 0x00) {
 				encodingGuess = null;
 			}
-			
+			*/
 			
 			// UTF-16BE or big-endian ISO-10646-UCS-2 or other encoding with a 16-bit code unit
 			// in big-endian order and ASCII characters encoded as ASCII values (the encoding
@@ -311,9 +312,7 @@ public class SystemEncodingUtil {
 				line = bufReader.readLine();
 			}
 			
-			if (bufReader != null) {
-				bufReader.close();
-			}
+			bufReader.close();
 			
 			// if the encoding declaration was not found
 			if (encoding == null) {

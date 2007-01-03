@@ -137,7 +137,7 @@ public class LocalShellThread extends Thread
 			if (!_isWindows)
 			{
 				String[] envVars = getEnvironmentVariables(false);
-				if (theShell == null)
+
 				{
 
 					String property = "SHELL="; //$NON-NLS-1$
@@ -191,41 +191,7 @@ public class LocalShellThread extends Thread
 						_theProcess = Runtime.getRuntime().exec(args[0], envVars, theDirectory);
 				    }
 				}
-				else
-				{
-				    if (_isTTY)
-				    {
-				        if (_invocation.equals(">")) //$NON-NLS-1$
-						{
-							_invocation = theShell;
-							_isShell = true;
-						}
-			
-						String args[] = new String[4];
-						args[0] = PSEUDO_TERMINAL;
-						args[1] = theShell;
-						args[2] = "-c"; //$NON-NLS-1$
-						args[3] = _invocation;
-	
-						_theProcess = Runtime.getRuntime().exec(args, envVars, theDirectory);
-				    }
-				    else
-				    {
-					    if (_invocation.equals(">")) //$NON-NLS-1$
-						{
-							_invocation = theShell;
-							_isShell = true;
-						}
-	
-						String args[] = new String[3];
-						args[0] = theShell;
-						args[1] = "-c"; //$NON-NLS-1$
-						args[2] = _invocation;
-	
-						_theProcess = Runtime.getRuntime().exec(args, envVars, theDirectory);
-				    }
-				    
-				}
+				
 			}
 			else
 			{
@@ -353,7 +319,6 @@ public class LocalShellThread extends Thread
 	{
 		if (!_isDone)
 		{
-			byte[] intoout = input.getBytes();
 			OutputStream output = _theProcess.getOutputStream();
 
 			BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(output));
@@ -464,7 +429,7 @@ public class LocalShellThread extends Thread
 
 			if (_theProcess != null)
 			{
-				int exitcode;
+
 				try
 				{
 					if (_isCancelled)
@@ -473,13 +438,12 @@ public class LocalShellThread extends Thread
 					}
 					else
 					{
-						exitcode = _theProcess.exitValue();
+					 _theProcess.exitValue();
 					}
 				}
 				catch (IllegalThreadStateException e)
 				{
 					//e.printStackTrace();
-					exitcode = -1;
 					_theProcess.destroy();
 				}
 				_theProcess = null;

@@ -99,7 +99,7 @@ public class TarEntry implements ITarConstants, Cloneable {
 		
 		// if the name is an empty string, then don't fill in other fields,
 		// since this indicates that we have reached end of file
-		if (getName().equals("")) {
+		if (getName().equals("")) { //$NON-NLS-1$
 			return;
 		}
 
@@ -145,7 +145,7 @@ public class TarEntry implements ITarConstants, Cloneable {
 		
 		// append null characters to the name
 		for (int i = 0; i < length; i++) {
-			fileName = fileName + "\0";
+			fileName = fileName + "\0"; //$NON-NLS-1$
 		}
 		
 		name = fileName.getBytes();
@@ -181,8 +181,8 @@ public class TarEntry implements ITarConstants, Cloneable {
 			mod += 01;
 		}
 		
-		String modString = "0100" + Integer.toString(mod, 8) + "44";
-		modString = modString + "\0";
+		String modString = "0100" + Integer.toString(mod, 8) + "44"; //$NON-NLS-1$ //$NON-NLS-2$
+		modString = modString + "\0"; //$NON-NLS-1$
 		
 		mode = modString.getBytes();
 	}
@@ -227,11 +227,11 @@ public class TarEntry implements ITarConstants, Cloneable {
 		
 		// prepend the string with 0s
 		for (int i = 0; i < diff; i++) {
-			sizeString = "0" + sizeString;
+			sizeString = "0" + sizeString; //$NON-NLS-1$
 		}
 		
 		// append a space at the end
-		sizeString = sizeString + " ";
+		sizeString = sizeString + " "; //$NON-NLS-1$
 		
 		size = sizeString.getBytes();
 	}
@@ -260,11 +260,11 @@ public class TarEntry implements ITarConstants, Cloneable {
 		
 		// prepend the string with 0s
 		for (int i = 0; i < diff; i++) {
-			mtimeString = "0" + mtimeString;
+			mtimeString = "0" + mtimeString; //$NON-NLS-1$
 		}
 		
 		// append a space at the end
-		mtimeString = mtimeString + " ";
+		mtimeString = mtimeString + " "; //$NON-NLS-1$
 		
 		mtime = mtimeString.getBytes();
 	}
@@ -330,7 +330,7 @@ public class TarEntry implements ITarConstants, Cloneable {
 		
 		// append null characters to the user name
 		for (int i = 0; i < length; i++) {
-			userName = userName + "\0";
+			userName = userName + "\0"; //$NON-NLS-1$
 		}
 		
 		uname = userName.getBytes();
@@ -384,7 +384,7 @@ public class TarEntry implements ITarConstants, Cloneable {
 		
 		String entryName = getName();
 		
-		if (entryName.endsWith("/")) {
+		if (entryName.endsWith("/")) { //$NON-NLS-1$
 			return true;
 		}
 		else {
@@ -512,14 +512,14 @@ public class TarEntry implements ITarConstants, Cloneable {
 		
 		// prepend the string with 0s
 		for (int i = 0; i < diff; i++) {
-			sumString = "0" + sumString;
+			sumString = "0" + sumString; //$NON-NLS-1$
 		}
 		
 		// append a null character
-		sumString = sumString + "\0";
+		sumString = sumString + "\0"; //$NON-NLS-1$
 		
 		// append a space
-		sumString = sumString + " ";
+		sumString = sumString + " "; //$NON-NLS-1$
 		
 		// set the checksum
 		chksum = sumString.getBytes();

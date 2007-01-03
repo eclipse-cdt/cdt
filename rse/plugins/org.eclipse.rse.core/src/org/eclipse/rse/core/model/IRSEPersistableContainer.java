@@ -14,7 +14,7 @@
  * {Name} (company) - description of contribution.
  ********************************************************************************/
 
-package org.eclipse.rse.core.persistance;
+package org.eclipse.rse.core.model;
 
 public interface IRSEPersistableContainer {
 	/**

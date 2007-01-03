@@ -17,7 +17,7 @@ package org.eclipse.rse.core.filters;
 
 import java.util.Vector;
 
-import org.eclipse.rse.core.persistance.IRSEPersistableContainer;
+import org.eclipse.rse.core.model.IRSEPersistableContainer;
 
 /**
  * Filter containers are any objects that contain filters.

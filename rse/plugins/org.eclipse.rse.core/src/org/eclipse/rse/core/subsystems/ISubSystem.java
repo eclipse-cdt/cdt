@@ -25,8 +25,8 @@ import org.eclipse.rse.core.filters.ISystemFilterReference;
 import org.eclipse.rse.core.filters.ISystemFilterString;
 import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.model.IRSEModelObject;
+import org.eclipse.rse.core.model.IRSEPersistableContainer;
 import org.eclipse.rse.core.model.ISystemProfile;
-import org.eclipse.rse.core.persistance.IRSEPersistableContainer;
 import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
 
 /**

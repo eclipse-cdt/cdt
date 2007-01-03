@@ -18,8 +18,8 @@ package org.eclipse.rse.core.filters;
 
 import java.util.Vector;
 
+import org.eclipse.rse.core.model.IRSEPersistableContainer;
 import org.eclipse.rse.core.model.ISystemProfile;
-import org.eclipse.rse.core.persistance.IRSEPersistableContainer;
 
 /**
  * A filter pool manager manages filter pools.

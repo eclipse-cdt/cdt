@@ -21,9 +21,9 @@ import org.eclipse.rse.core.filters.ISystemFilterPool;
 import org.eclipse.rse.core.filters.ISystemFilterPoolManager;
 import org.eclipse.rse.core.filters.ISystemFilterPoolManagerProvider;
 import org.eclipse.rse.core.model.IHost;
+import org.eclipse.rse.core.model.IRSEPersistableContainer;
 import org.eclipse.rse.core.model.ISystemNewConnectionWizardPage;
 import org.eclipse.rse.core.model.ISystemProfile;
-import org.eclipse.rse.core.persistance.IRSEPersistableContainer;
 
 public interface ISubSystemConfiguration extends ISystemFilterPoolManagerProvider, IRSEPersistableContainer {
 	// ---------------------------------

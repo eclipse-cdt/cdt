@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 IBM Corporation and others.
+ * Copyright (c) 2005, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -57,9 +57,9 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPClassType.CPPClassTypePro
  * @author aniefer
  */
 public class CPPClassTemplate extends CPPTemplateDefinition implements
-		ICPPClassTemplate, ICPPClassType, ICPPInternalClassType {
+		ICPPClassTemplate, ICPPClassType, ICPPInternalClassType, ICPPInternalClassTemplate {
 	
-    public static class CPPClassTemplateDelegate extends CPPClassType.CPPClassTypeDelegate implements ICPPClassTemplate, ICPPInternalTemplate {
+    public static class CPPClassTemplateDelegate extends CPPClassType.CPPClassTypeDelegate implements ICPPClassTemplate, ICPPInternalClassTemplate {
         public CPPClassTemplateDelegate( IASTName name, ICPPClassType cls ) {
             super( name, cls );
         }
@@ -81,6 +81,9 @@ public class CPPClassTemplate extends CPPTemplateDefinition implements
         public ICPPSpecialization getInstance( IType[] arguments ) {
             return ((ICPPInternalTemplate)getBinding()).getInstance( arguments );
         }
+		public void addPartialSpecialization( ICPPClassTemplatePartialSpecialization spec ) {
+			((ICPPInternalClassTemplate)getBinding()).addPartialSpecialization( spec );
+		}
     }
 	private ICPPClassTemplatePartialSpecialization [] partialSpecializations = null;
 	

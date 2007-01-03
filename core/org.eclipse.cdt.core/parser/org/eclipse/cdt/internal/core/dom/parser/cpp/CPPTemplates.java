@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005 IBM Corporation and others.
+ * Copyright (c) 2005, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -358,7 +358,8 @@ public class CPPTemplates {
 		}
 		
 		spec = new CPPClassTemplatePartialSpecialization( id );
-		((CPPClassTemplate)template).addPartialSpecialization( (ICPPClassTemplatePartialSpecialization) spec );
+		if(template instanceof ICPPInternalClassTemplate)
+			((ICPPInternalClassTemplate)template).addPartialSpecialization( (ICPPClassTemplatePartialSpecialization) spec );
 		return spec;
 	}
 	
@@ -1481,8 +1482,8 @@ public class CPPTemplates {
 			}
 		}
 		
-		if( template instanceof CPPClassTemplate ){
-			return ((CPPClassTemplate)template).instantiate( args );
+		if( template instanceof ICPPInternalTemplate ){
+			return ((ICPPInternalTemplate)template).instantiate( args );
 		}
 		return template;
 	}

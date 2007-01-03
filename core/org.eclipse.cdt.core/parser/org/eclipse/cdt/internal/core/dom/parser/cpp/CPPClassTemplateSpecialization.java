@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005 IBM Corporation and others.
+ * Copyright (c) 2005, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -22,6 +22,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplatePartialSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
+import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.core.parser.util.ObjectMap;
 
 /**
@@ -29,9 +30,10 @@ import org.eclipse.cdt.core.parser.util.ObjectMap;
  *
  */
 public class CPPClassTemplateSpecialization extends CPPClassSpecialization
-		implements ICPPClassTemplate, ICPPInternalTemplate {
+		implements ICPPClassTemplate, ICPPInternalClassTemplate {
 
 	private ObjectMap instances = null;
+	private ICPPClassTemplatePartialSpecialization [] partialSpecializations = null;
 	
 	/**
 	 * @param specialized
@@ -47,9 +49,10 @@ public class CPPClassTemplateSpecialization extends CPPClassSpecialization
 	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplate#getPartialSpecializations()
 	 */
 	public ICPPClassTemplatePartialSpecialization[] getPartialSpecializations() {
-		// TODO Auto-generated method stub
-		return ICPPClassTemplatePartialSpecialization.EMPTY_PARTIAL_SPECIALIZATION_ARRAY;
+		partialSpecializations = (ICPPClassTemplatePartialSpecialization[]) ArrayUtil.trim( ICPPClassTemplatePartialSpecialization.class, partialSpecializations );
+		return partialSpecializations;
 	}
+
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateDefinition#getTemplateParameters()
@@ -98,5 +101,9 @@ public class CPPClassTemplateSpecialization extends CPPClassSpecialization
 	public ICPPSpecialization deferredInstance(IType[] arguments) {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	public void addPartialSpecialization( ICPPClassTemplatePartialSpecialization spec ){
+		partialSpecializations = (ICPPClassTemplatePartialSpecialization[]) ArrayUtil.append( ICPPClassTemplatePartialSpecialization.class, partialSpecializations, spec );
 	}
 }

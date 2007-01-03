@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2006 QNX Software Systems and others.
+ * Copyright (c) 2002, 2006, 2007 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  * QNX Software Systems - Initial API and implementation
+ * Nokia - Bug 163094
  *******************************************************************************/
 package org.eclipse.cdt.make.core;
 
@@ -41,6 +42,7 @@ import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Plugin;
 import org.eclipse.core.runtime.Preferences;
@@ -146,27 +148,26 @@ public class MakeCorePlugin extends Plugin {
 		return (String[])v.toArray(new String[v.size()]);		
 	}
 
-	public IMakefile createMakefile(IFile file) {
-		//
-		// base on a preference to chose GNU vs Posix 
+	
+	static public IMakefile createMakefile(File file, boolean isGnuStyle, String[] makefileDirs) {
 		IMakefile makefile;
-		if (isMakefileGNUStyle()) {
+		if (isGnuStyle) {
 			GNUMakefile gnu = new GNUMakefile();
 			ArrayList includeList = new ArrayList();
 			includeList.addAll(Arrays.asList(gnu.getIncludeDirectories()));
-			includeList.addAll(Arrays.asList(getMakefileDirs()));
-			includeList.add(file.getLocation().removeLastSegments(1).toOSString());
+			includeList.addAll(Arrays.asList(makefileDirs));
+			includeList.add(new Path(file.getAbsolutePath()).removeLastSegments(1).toOSString());
 			String[] includes = (String[]) includeList.toArray(new String[includeList.size()]);
 			gnu.setIncludeDirectories(includes);
 			try {
-				gnu.parse(file.getLocation().toOSString());
+				gnu.parse(file.getAbsolutePath());
 			} catch (IOException e) {
 			}
 			makefile = gnu;
 		} else {
 			PosixMakefile posix = new PosixMakefile();
 			try {
-				posix.parse(file.getLocation().toOSString());
+				posix.parse(file.getAbsolutePath());
 			} catch (IOException e) {
 			}
 			makefile = posix;
@@ -174,6 +175,11 @@ public class MakeCorePlugin extends Plugin {
 		return makefile;
 	}
 
+	public IMakefile createMakefile(IFile file) {
+		return createMakefile(file.getLocation().toFile(), isMakefileGNUStyle(),
+				getMakefileDirs());
+	}
+	
 	public void stop(BundleContext context) throws Exception {
 		try {
 			if ( fTargetManager != null) {

@@ -20,7 +20,6 @@ package org.eclipse.rse.core.subsystems;
  * Interface for a cache manager that can optionally associated with a SubSystem.
  */
 public interface ICacheManager {
-	
 
 	/**
 	 * This flag is set if the Remote System Explorer is restoring a remote object

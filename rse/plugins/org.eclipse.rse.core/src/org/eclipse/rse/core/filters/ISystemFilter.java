@@ -15,12 +15,12 @@
  ********************************************************************************/
 
 package org.eclipse.rse.core.filters;
+
 import java.util.List;
 import java.util.Vector;
 
 import org.eclipse.rse.core.model.IRSEModelObject;
 import org.eclipse.rse.core.references.IRSEReferencedObject;
-
 
 /**
  * A representation of the model object '<em><b>System Filter</b></em>'.
@@ -56,8 +56,7 @@ import org.eclipse.rse.core.references.IRSEReferencedObject;
 /**
  * @lastgen interface SystemFilterPool extends SystemReferencedObject, SystemFilterContainer {}
  */
-public interface ISystemFilter extends IRSEReferencedObject, ISystemFilterContainer, IRSEModelObject
-{
+public interface ISystemFilter extends IRSEReferencedObject, ISystemFilterContainer, IRSEModelObject {
 	/**
 	 * Returns the value of the '<em><b>Name</b></em>' attribute.
 	 * <!-- begin-user-doc -->
@@ -296,7 +295,7 @@ public interface ISystemFilter extends IRSEReferencedObject, ISystemFilterContai
 	 * A convenience method for {@link #isSupportsDuplicateFilterStrings()}.
 	 */
 	public boolean supportsDuplicateFilterStrings();
-	
+
 	/**
 	 * Sets the value of the '{@link org.eclipse.rse.core.filters.ISystemFilter#isSupportsDuplicateFilterStrings <em>Supports Duplicate Filter Strings</em>}' attribute.
 	 * <!-- begin-user-doc -->
@@ -563,7 +562,7 @@ public interface ISystemFilter extends IRSEReferencedObject, ISystemFilterContai
 	 * or a filter pool manager when adding a filter to a filter pool.
 	 * @param parentPool the filter pool that contains or will contain this filter.
 	 */
-	public void setParentFilterPool(ISystemFilterPool parentPool);	
+	public void setParentFilterPool(ISystemFilterPool parentPool);
 
 	/**
 	 * Set this filter's filter strings by giving a Vector of String objects.
@@ -577,22 +576,22 @@ public interface ISystemFilter extends IRSEReferencedObject, ISystemFilterContai
 	 * This will construct the filter strings objects.
 	 * @param strings the array of String objects.
 	 */
-	public void setFilterStrings(String[] strings);	
+	public void setFilterStrings(String[] strings);
 
 	/**
 	 * @return this filter's filter strings as a Vector of String objects
-	 */	
+	 */
 	public Vector getFilterStringsVector();
 
 	/**
 	 * @return this filter's filter strings as a Vector of IFilterString objects
-	 */	
+	 */
 	public Vector getFilterStringObjectsVector();
 
 	/**
 	 * @return this filter's filter strings as an array of String objects
 	 */
-	public String[] getFilterStrings();    
+	public String[] getFilterStrings();
 
 	/**
 	 * @return this filter's filter string objects as an array of IFilterString objects
@@ -670,7 +669,7 @@ public interface ISystemFilter extends IRSEReferencedObject, ISystemFilterContai
 	 * @param targetFilter the filter to which to copy the filter string
 	 * @param oldFilterString the filter string to copy 
 	 */
-	public ISystemFilterString copySystemFilterString(ISystemFilter targetFilter, ISystemFilterString oldFilterString);	
+	public ISystemFilterString copySystemFilterString(ISystemFilter targetFilter, ISystemFilterString oldFilterString);
 
 	/**
 	 * @return true if this filter is a nested filter or not. If not, its parent is the filter pool.
@@ -694,13 +693,13 @@ public interface ISystemFilter extends IRSEReferencedObject, ISystemFilterContai
 	/**
 	 * @return the ISystemFilterContainer parent of this filter. This will be either
 	 * an ISystemFilterPool or an ISystemFilter if this is a nested filter.
-	 */    
-	public ISystemFilterContainer getParentFilterContainer();	
+	 */
+	public ISystemFilterContainer getParentFilterContainer();
 
 	/**
 	 * @return the caller which instantiated the filter pool manager overseeing this filter framework instance.
 	 * This will typically be a subsystem configuration.
 	 */
-	public ISystemFilterPoolManagerProvider getProvider();        
+	public ISystemFilterPoolManagerProvider getProvider();
 
 }

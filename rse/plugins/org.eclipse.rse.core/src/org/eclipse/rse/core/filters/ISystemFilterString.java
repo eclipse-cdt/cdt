@@ -20,7 +20,6 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.rse.core.model.IRSEModelObject;
 import org.eclipse.rse.core.references.IRSEBaseReferencedObject;
 
-
 /**
  * A filter string is a pattern used by the server-side code to know what to return to
  *  the client. A filter contains one or more filter strings. Basically, its nothing more
@@ -28,32 +27,36 @@ import org.eclipse.rse.core.references.IRSEBaseReferencedObject;
  *  a filter string edit pane is designed to prompt the user for the contents of the 
  *  string in a domain-friendly way.
  */
-public interface ISystemFilterString extends IRSEBaseReferencedObject, IAdaptable, IRSEModelObject
-{
-    /**
-     * Return the caller which instantiated the filter pool manager overseeing this filter framework instance
-     */
-    public ISystemFilterPoolManagerProvider getProvider();
-    /**
-     * Return the filter pool manager managing this collection of filter pools and their filters and their filter strings.
-     */
-    public ISystemFilterPoolManager getSystemFilterPoolManager();    
+public interface ISystemFilterString extends IRSEBaseReferencedObject, IAdaptable, IRSEModelObject {
+	/**
+	 * Return the caller which instantiated the filter pool manager overseeing this filter framework instance
+	 */
+	public ISystemFilterPoolManagerProvider getProvider();
+
+	/**
+	 * Return the filter pool manager managing this collection of filter pools and their filters and their filter strings.
+	 */
+	public ISystemFilterPoolManager getSystemFilterPoolManager();
+
 	/**
 	 * Set the transient parent back-pointer. Called by framework at restore/create time.
 	 */
 	public void setParentSystemFilter(ISystemFilter filter);
-    /**
-     * Get the parent filter that contains this filter string.
-     */
-    public ISystemFilter getParentSystemFilter();
-    /**
-     * Clones this filter string's attributes into the given filter string
-     */
-    public void clone(ISystemFilterString targetString);    
-    /**
-     * Is this filter string changable? Depends on mof attributes of parent filter
-     */
-    public boolean isChangable();
+
+	/**
+	 * Get the parent filter that contains this filter string.
+	 */
+	public ISystemFilter getParentSystemFilter();
+
+	/**
+	 * Clones this filter string's attributes into the given filter string
+	 */
+	public void clone(ISystemFilterString targetString);
+
+	/**
+	 * Is this filter string changable? Depends on mof attributes of parent filter
+	 */
+	public boolean isChangable();
 
 	/**
 	 * @generated This field/method will be replaced during code generation 

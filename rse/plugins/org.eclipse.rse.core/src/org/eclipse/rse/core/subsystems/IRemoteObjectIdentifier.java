@@ -15,9 +15,8 @@
  ********************************************************************************/
 
 package org.eclipse.rse.core.subsystems;
-public interface IRemoteObjectIdentifier
-{
 
+public interface IRemoteObjectIdentifier {
 
 	/**
 	 * For drag and drop, and clipboard, support of remote objects.
@@ -25,6 +24,5 @@ public interface IRemoteObjectIdentifier
 	 * Return the unique ID for the given remote object within the subsystem.
 	 */
 	public String getAbsoluteName(Object object);
-	
-			
+
 }

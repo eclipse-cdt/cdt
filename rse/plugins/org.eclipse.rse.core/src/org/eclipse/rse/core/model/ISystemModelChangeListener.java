@@ -15,6 +15,7 @@
  ********************************************************************************/
 
 package org.eclipse.rse.core.model;
+
 /**
  * Interface that listeners interesting in changes to local resources in the RSE model
  *  implement, and subsequently register their interest, via SystemRegistry.
@@ -28,13 +29,12 @@ package org.eclipse.rse.core.model;
  * If you are interesting in firing model change events, see 
  * {@link org.eclipse.rse.core.model.ISystemRegistry#fireModelChangeEvent(int, int, Object, String)}.
  */
-public interface ISystemModelChangeListener 
-{
+public interface ISystemModelChangeListener {
 
 	/**
 	 * This is the method in your class that will be called when a resource in the 
 	 *  RSE model changes. You will be called after the resource is changed.
 	 * @see ISystemModelChangeEvent
 	 */
-    public void systemModelResourceChanged(ISystemModelChangeEvent event);
+	public void systemModelResourceChanged(ISystemModelChangeEvent event);
 }

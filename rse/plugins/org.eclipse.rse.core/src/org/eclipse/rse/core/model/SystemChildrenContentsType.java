@@ -14,37 +14,31 @@
  * {Name} (company) - description of contribution.
  ********************************************************************************/
 
-
 package org.eclipse.rse.core.model;
-
 
 /**
  * Represents contents that are children of a container
  */
-public class SystemChildrenContentsType implements ISystemContentsType
-{
-    public static String CONTENTS_TYPE_CHILDREN =	"contents_children"; //$NON-NLS-1$
-    public static SystemChildrenContentsType _instance = new SystemChildrenContentsType();
-    
-    public static SystemChildrenContentsType getInstance()
-    {
-        return _instance;
-    }
-    
-    /* (non-Javadoc)
-     * @see org.eclipse.rse.model.IRemoteContentsType#getType()
-     */
-    public String getType()
-    {
-        return CONTENTS_TYPE_CHILDREN;    
-    }
+public class SystemChildrenContentsType implements ISystemContentsType {
+	public static String CONTENTS_TYPE_CHILDREN = "contents_children"; //$NON-NLS-1$
+	public static SystemChildrenContentsType _instance = new SystemChildrenContentsType();
 
-    /* (non-Javadoc)
-     * @see org.eclipse.rse.model.IRemoteContentsType#isPersistent()
-     */
-    public boolean isPersistent()
-    {
-        return false;
-    }
+	public static SystemChildrenContentsType getInstance() {
+		return _instance;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.model.IRemoteContentsType#getType()
+	 */
+	public String getType() {
+		return CONTENTS_TYPE_CHILDREN;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.model.IRemoteContentsType#isPersistent()
+	 */
+	public boolean isPersistent() {
+		return false;
+	}
 
 }

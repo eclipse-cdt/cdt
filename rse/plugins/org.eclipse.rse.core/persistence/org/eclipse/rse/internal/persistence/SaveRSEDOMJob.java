@@ -26,13 +26,13 @@ import org.eclipse.rse.persistence.IRSEPersistenceProvider;
 import org.eclipse.rse.persistence.dom.RSEDOM;
 
 public class SaveRSEDOMJob extends WorkspaceJob {
-	
+
 	private RSEDOM _dom;
 	private IRSEPersistenceProvider _provider;
 
 	public SaveRSEDOMJob(RSEDOM dom, IRSEPersistenceProvider provider) {
 		super("Saving Profile"); //$NON-NLS-1$
-		String title = MessageFormat.format(Messages.SaveRSEDOMJob_SavingProfileJobName, new Object[] {dom.getName()});
+		String title = MessageFormat.format(Messages.SaveRSEDOMJob_SavingProfileJobName, new Object[] { dom.getName() });
 		setName(title);
 		_dom = dom;
 		_provider = provider;

@@ -22,64 +22,52 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-
-public class PropertySetContainer implements IPropertySetContainer 
-{
+public class PropertySetContainer implements IPropertySetContainer {
 	private Map _propertySets;
-	
-	public PropertySetContainer()
-	{
+
+	public PropertySetContainer() {
 		_propertySets = new HashMap();
 	}
-	
-	public IPropertySet[] getPropertySets() 
-	{
+
+	public IPropertySet[] getPropertySets() {
 		List sets = new ArrayList();
 		Iterator iter = _propertySets.values().iterator();
-		while (iter.hasNext())
-		{
+		while (iter.hasNext()) {
 			sets.add(iter.next());
 		}
-		return (IPropertySet[])sets.toArray(new IPropertySet[sets.size()]);
+		return (IPropertySet[]) sets.toArray(new IPropertySet[sets.size()]);
 	}
 
-	public IPropertySet getPropertySet(String name) 
-	{
-		return (IPropertySet)_propertySets.get(name);
+	public IPropertySet getPropertySet(String name) {
+		return (IPropertySet) _propertySets.get(name);
 	}
 
-	public IPropertySet createPropertySet(String name, String description) 
-	{
+	public IPropertySet createPropertySet(String name, String description) {
 		IPropertySet newSet = new PropertySet(name);
 		newSet.addProperty(IPropertySet.DESCRIPTION_KEY, description);
 		_propertySets.put(name, newSet);
 		return newSet;
 	}
-	
-	public IPropertySet createPropertySet(String name) 
-	{
+
+	public IPropertySet createPropertySet(String name) {
 		IPropertySet newSet = new PropertySet(name);
 		_propertySets.put(name, newSet);
 		return newSet;
 	}
 
-	public boolean addPropertySet(IPropertySet set) 
-	{
+	public boolean addPropertySet(IPropertySet set) {
 		_propertySets.put(set.getName(), set);
 		return true;
 	}
-	
-	public boolean addPropertySets(IPropertySet[] sets) 
-	{
-		for (int i = 0; i < sets.length; i++)
-		{
+
+	public boolean addPropertySets(IPropertySet[] sets) {
+		for (int i = 0; i < sets.length; i++) {
 			addPropertySet(sets[i]);
 		}
 		return true;
 	}
 
-	public boolean removePropertySet(String name) 
-	{
+	public boolean removePropertySet(String name) {
 		return _propertySets.remove(name) != null;
 	}
 

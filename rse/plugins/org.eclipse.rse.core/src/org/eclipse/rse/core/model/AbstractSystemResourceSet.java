@@ -21,124 +21,96 @@ import java.util.List;
 
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 
-
-
-
-public class AbstractSystemResourceSet implements ISystemResourceSet
-{
+public class AbstractSystemResourceSet implements ISystemResourceSet {
 	private List _resourceSet;
 	private SystemMessage _message;
-    private long _byteSize;   
-	
-	public AbstractSystemResourceSet()
-	{
+	private long _byteSize;
+
+	public AbstractSystemResourceSet() {
 		_resourceSet = new ArrayList();
 	}
 
-	public AbstractSystemResourceSet(Object[] set)
-	{
+	public AbstractSystemResourceSet(Object[] set) {
 		_resourceSet = new ArrayList();
-		if (set != null)
-		{
-			for (int i = 0; i < set.length; i++)
-			{
+		if (set != null) {
+			for (int i = 0; i < set.length; i++) {
 				addResource(set[i]);
 			}
 		}
 	}
-	
-	public AbstractSystemResourceSet(List set)
-	{
+
+	public AbstractSystemResourceSet(List set) {
 		_resourceSet = set;
 	}
-	
-	public int size()
-	{
+
+	public int size() {
 		return _resourceSet.size();
 	}
-	
-	public Object get(String absoluteName)
-	{
-		for (int i = 0; i < _resourceSet.size(); i++)
-		{
+
+	public Object get(String absoluteName) {
+		for (int i = 0; i < _resourceSet.size(); i++) {
 			String path = pathFor(_resourceSet.get(i));
-			if (path.equals(absoluteName))
-			{
+			if (path.equals(absoluteName)) {
 				return _resourceSet.get(i);
 			}
 		}
 		return null;
 	}
-	
-	public Object get(int index)
-	{
+
+	public Object get(int index) {
 		return _resourceSet.get(index);
 	}
-	
-	public List getResourceSet()
-	{
+
+	public List getResourceSet() {
 		return _resourceSet;
 	}
-	
-	public void addResource(Object src)
-	{
+
+	public void addResource(Object src) {
 		_resourceSet.add(src);
 	}
-	
-	public void removeResource(Object src)
-	{
+
+	public void removeResource(Object src) {
 		_resourceSet.remove(src);
 	}
-	
-	public String pathFor(Object resource)
-	{
+
+	public String pathFor(Object resource) {
 		return resource.toString();
 	}
-	
-	public String toString()
-	{
+
+	public String toString() {
 		StringBuffer buf = new StringBuffer();
-		for (int i = 0; i < _resourceSet.size(); i++)
-		{
+		for (int i = 0; i < _resourceSet.size(); i++) {
 			Object resource = _resourceSet.get(i);
-			buf.append(pathFor(resource));				
-			if (i < _resourceSet.size())
-			{
+			buf.append(pathFor(resource));
+			if (i < _resourceSet.size()) {
 				buf.append(", "); //$NON-NLS-1$
 			}
 			buf.append('\n');
 		}
 		return buf.toString();
 	}
-	
 
-	public void setMessage(SystemMessage message)
-	{
+	public void setMessage(SystemMessage message) {
 		_message = message;
 	}
 
-	public SystemMessage getMessage()
-	{
+	public SystemMessage getMessage() {
 		return _message;
 	}
-	
-	public boolean hasMessage()
-	{
+
+	public boolean hasMessage() {
 		return _message != null;
 	}
-	
-	public boolean hasByteSize()
-	{
+
+	public boolean hasByteSize() {
 		return (_byteSize > 0);
 	}
-	
-	public long byteSize()
-	{
+
+	public long byteSize() {
 		return _byteSize;
 	}
 
-	public void setByteSize(long byteSize)
-	{
+	public void setByteSize(long byteSize) {
 		_byteSize = byteSize;
 	}
 }

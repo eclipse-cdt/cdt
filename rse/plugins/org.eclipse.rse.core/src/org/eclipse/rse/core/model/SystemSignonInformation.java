@@ -16,7 +16,6 @@
 
 package org.eclipse.rse.core.model;
 
-
 /**
  * This class encapsulates the signon information required for a remote system.  This class 
  * must be secure and never disclose the password for the remote system in its unencrypted form.
@@ -27,17 +26,15 @@ package org.eclipse.rse.core.model;
  */
 public final class SystemSignonInformation {
 
-	
 	private String _hostname;
 	private String _userid;
 	private String _systemType;
 	private String _password;
-	
+
 	/**
 	 * Default no-arg constructor
 	 */
-	public SystemSignonInformation()
-	{
+	public SystemSignonInformation() {
 	}
 
 	/**
@@ -46,9 +43,9 @@ public final class SystemSignonInformation {
 	public SystemSignonInformation(String hostname, String userid, String systemType) {
 		_hostname = hostname;//RSEUIPlugin.getQualifiedHostName(hostname).toUpperCase();
 		_userid = userid;
-		_systemType = systemType;	
+		_systemType = systemType;
 	}
-	
+
 	/**
 	 * Constructor for SystemSignonInformation.
 	 */
@@ -56,7 +53,7 @@ public final class SystemSignonInformation {
 		_hostname = hostname;//RSEUIPlugin.getQualifiedHostName(hostname).toUpperCase();
 		_userid = userid;
 		_password = password;
-		_systemType = systemType;	
+		_systemType = systemType;
 	}
 
 	/**
@@ -96,7 +93,7 @@ public final class SystemSignonInformation {
 	public void setPassword(String string) {
 		_password = string;
 	}
-		
+
 	/**
 	 * Sets the hostname.
 	 * @param hostname The hostname to set

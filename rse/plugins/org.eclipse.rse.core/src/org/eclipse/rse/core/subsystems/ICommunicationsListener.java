@@ -16,14 +16,12 @@
 
 package org.eclipse.rse.core.subsystems;
 
-
 /**
  * ICommunicationsListener - listen to communication events
  * @see CommunicationsEvent
  */
 public interface ICommunicationsListener {
 
-	
 	/**
 	 * This method is invoked whenever the communications state is invoked
 	 * immediately before and after the state of the communications changes.
@@ -31,7 +29,7 @@ public interface ICommunicationsListener {
 	 * change is about to or has occured.
 	 */
 	public void communicationsStateChange(CommunicationsEvent e);
-	
+
 	/**
 	 * This method determines if the communications listener is a passive or
 	 * active listener.  Typically a passive listener registers with the communications

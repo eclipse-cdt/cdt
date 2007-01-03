@@ -15,17 +15,18 @@
  ********************************************************************************/
 
 package org.eclipse.rse.core.filters;
+
 /**
  * The system filter wizard allows callers to pass a list of wrapper objects
  *  for the user to select a filter pool
  */
-public interface ISystemFilterPoolWrapper 
-{
-	
+public interface ISystemFilterPoolWrapper {
+
 	/**
 	 * Get the name to display in the combo box for this wrapper
 	 */
 	public String getDisplayName();
+
 	/**
 	 * Get the wrappered SystemFilterPool object
 	 */

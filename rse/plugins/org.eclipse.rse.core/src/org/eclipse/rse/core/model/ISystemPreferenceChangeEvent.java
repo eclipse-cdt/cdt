@@ -15,31 +15,34 @@
  ********************************************************************************/
 
 package org.eclipse.rse.core.model;
+
 /**
  * Interface of event sent when a remote system preference changes.
  * @see org.eclipse.rse.core.model.ISystemPreferenceChangeEvents
  */
-public interface ISystemPreferenceChangeEvent
-{	
+public interface ISystemPreferenceChangeEvent {
 
-    /**
-     * Returns the type of the event.
-     * @see org.eclipse.rse.core.model.ISystemPreferenceChangeEvents
-     * @return a type that is one of the constants in this interface
-     */
-    public int getType();
-    /**
-     * Set the type
-     * @see org.eclipse.rse.core.model.ISystemPreferenceChangeEvents
-     */
-    public void setType(int type);	
+	/**
+	 * Returns the type of the event.
+	 * @see org.eclipse.rse.core.model.ISystemPreferenceChangeEvents
+	 * @return a type that is one of the constants in this interface
+	 */
+	public int getType();
+
+	/**
+	 * Set the type
+	 * @see org.eclipse.rse.core.model.ISystemPreferenceChangeEvents
+	 */
+	public void setType(int type);
+
 	/**
 	 * Get the old value. For boolean will be a Boolean object
 	 */
 	public Object getOldValue();
+
 	/**
 	 * Get the new value. For boolean will be a Boolean object
 	 */
 	public Object getNewValue();
-	
+
 }

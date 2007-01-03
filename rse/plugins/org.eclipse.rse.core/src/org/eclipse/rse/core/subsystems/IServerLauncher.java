@@ -14,52 +14,49 @@
  * {Name} (company) - description of contribution.
  ********************************************************************************/
 
-
 package org.eclipse.rse.core.subsystems;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.rse.core.model.SystemSignonInformation;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 
-
 /**
  * This interface captures the abstract lifecyle for launching the remote server,
  * and subsequently connecting to it.
  * @see org.eclipse.rse.core.subsystems.IServerLauncherProperties
  */
-public interface IServerLauncher
-{
-	
+public interface IServerLauncher {
+
 	/**
 	 * Set the remote system signon information
 	 */
 	public void setSignonInformation(SystemSignonInformation info);
-	
+
 	/**
 	 * Get the remote system signon information, as set in
 	 *  {@link #setSignonInformation(SystemSignonInformation)}
 	 */
 	public SystemSignonInformation getSignonInformation();
-	
+
 	/**
 	 * Set the object which contains the user-specified properties that 
 	 *  are used by this launcher
 	 */
 	public void setServerLauncherProperties(IServerLauncherProperties propertyInfo);
-	
+
 	/**
 	 * Get the object which contians the user-specified properties that are
 	 *  used by this launcher. As set in {@link #setServerLauncherProperties(IServerLauncherProperties)}. 
 	 */
 	public IServerLauncherProperties getServerLauncherProperties();
-	
+
 	/**
 	 * Determine if the remote server needs to be launched or not.
 	 * Generally is always false.
 	 * @return true if the remote server is already launched, false if it needs to be.
 	 */
 	public boolean isLaunched();
-		
+
 	/**
 	 * Launch the remote server. Some subclasses may not need this step,
 	 *  if the server is already running.
@@ -83,18 +80,18 @@ public interface IServerLauncher
 	 * @return Anything you want.
 	 */
 	public Object connect(IProgressMonitor monitor, int connectPort) throws Exception;
-	
+
 	/**
 	 * Disconnect from the remote server
 	 * @see #getErrorMessage()
 	 */
 	public void disconnect() throws Exception;
-	
+
 	/**
 	 * Returns the host error message if there was a problem connecting to the host.
 	 * If there was no problem, this returns null
 	 * 
 	 * @return the error message.
-	 */		
+	 */
 	public SystemMessage getErrorMessage();
 }

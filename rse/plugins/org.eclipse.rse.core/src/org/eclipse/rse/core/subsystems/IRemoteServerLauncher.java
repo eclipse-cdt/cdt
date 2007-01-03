@@ -15,6 +15,7 @@
  ********************************************************************************/
 
 package org.eclipse.rse.core.subsystems;
+
 /**
  * This is the implementation of {@link IServerLauncherProperties}. It basically allows for numerous types
  * of server connecting, as identified in {@link org.eclipse.rse.core.subsystems.ServerLaunchType}. It
@@ -34,8 +35,8 @@ package org.eclipse.rse.core.subsystems;
  * <li>{@link org.eclipse.rse.core.subsystems.IRemoteServerLauncher#getServerScript <em>Server Script</em>}</li>
  * </ul>
  */
-public interface IRemoteServerLauncher extends IServerLauncherProperties{
-	
+public interface IRemoteServerLauncher extends IServerLauncherProperties {
+
 	/**
 	 * Returns the value of the '<em><b>Server Launch Type</b></em>' attribute.
 	 * The literals are from the enumeration {@link org.eclipse.rse.core.subsystems.ServerLaunchType}.
@@ -90,16 +91,16 @@ public interface IRemoteServerLauncher extends IServerLauncherProperties{
 	 * Sets whether or not to auto-detect SSL
 	 */
 	public void setAutoDetectSSL(boolean auto);
-	
+
 	boolean getAutoDetectSSL();
-	
+
 	int getDaemonPort();
 
 	/**
 	 * Set the DAEMON port value, as an int
 	 */
 	public void setDaemonPort(int newDaemonPort);
-	
+
 	/**
 	 * Returns the value of the '<em><b>Server Path</b></em>' attribute.
 	 * <!-- begin-user-doc -->
@@ -163,8 +164,7 @@ public interface IRemoteServerLauncher extends IServerLauncherProperties{
 	 * 
 	 * @see org.eclipse.rse.core.subsystems.ServerLaunchType
 	 */
-//	public void enableServerLaunchType(ServerLaunchType serverLaunchType, boolean enable);
-
+	//	public void enableServerLaunchType(ServerLaunchType serverLaunchType, boolean enable);
 	/**
 	 * This methods returns the enablement state per server launch type.
 	 * If {@link #setServerLaunchType(ServerLaunchType)} has not been

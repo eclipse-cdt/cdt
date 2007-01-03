@@ -16,29 +16,27 @@
 
 package org.eclipse.rse.core.subsystems;
 
-
 public class CommunicationsEvent {
-	
-	
+
 	// Communications event types
 	public static final int BEFORE_CONNECT = 1;
 	public static final int AFTER_CONNECT = 2;
 	public static final int BEFORE_DISCONNECT = 3;
 	public static final int AFTER_DISCONNECT = 4;
 	public static final int CONNECTION_ERROR = 5;
-	
+
 	private IConnectorService system;
 	private int state;
-	
+
 	public CommunicationsEvent(IConnectorService system, int state) {
 		this.system = system;
 		this.state = state;
 	}
-	
+
 	public int getState() {
 		return state;
 	}
-	
+
 	public IConnectorService getSystem() {
 		return system;
 	}

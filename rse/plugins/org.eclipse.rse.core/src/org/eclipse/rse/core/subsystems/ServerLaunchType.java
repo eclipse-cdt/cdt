@@ -15,14 +15,11 @@
  ********************************************************************************/
 
 package org.eclipse.rse.core.subsystems;
+
 import java.util.Arrays;
 import java.util.List;
 
-
-
-
-public final class ServerLaunchType 
-{
+public final class ServerLaunchType {
 	/**
 	 * The '<em><b>Daemon</b></em>' literal value.
 	 * <!-- begin-user-doc -->
@@ -205,21 +202,11 @@ public final class ServerLaunchType
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	private static final ServerLaunchType[] VALUES_ARRAY =
-		new ServerLaunchType[]
-		{
-			DAEMON_LITERAL,
-			REXEC_LITERAL,
-			RUNNING_LITERAL,
-			TELNET_LITERAL,
-			SSH_LITERAL,
-			FTP_LITERAL,
-			HTTP_LITERAL,
-		};
+	private static final ServerLaunchType[] VALUES_ARRAY = new ServerLaunchType[] { DAEMON_LITERAL, REXEC_LITERAL, RUNNING_LITERAL, TELNET_LITERAL, SSH_LITERAL, FTP_LITERAL, HTTP_LITERAL, };
 
 	private String _name;
 	private int _value;
-	
+
 	/**
 	 * A public read-only list of all the '<em><b>Server Launch Type</b></em>' enumerators.
 	 * <!-- begin-user-doc -->
@@ -234,13 +221,10 @@ public final class ServerLaunchType
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public static ServerLaunchType get(String name)
-	{
-		for (int i = 0; i < VALUES_ARRAY.length; ++i)
-		{
+	public static ServerLaunchType get(String name) {
+		for (int i = 0; i < VALUES_ARRAY.length; ++i) {
 			ServerLaunchType result = VALUES_ARRAY[i];
-			if (result.getName().equals(name))
-			{
+			if (result.getName().equals(name)) {
 				return result;
 			}
 		}
@@ -253,36 +237,38 @@ public final class ServerLaunchType
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public static ServerLaunchType get(int value)
-	{
-		switch (value)
-		{
-			case DAEMON: return DAEMON_LITERAL;
-			case REXEC: return REXEC_LITERAL;
-			case RUNNING: return RUNNING_LITERAL;
-			case TELNET: return TELNET_LITERAL;
-			case SSH: return SSH_LITERAL;
-			case FTP: return FTP_LITERAL;
-			case HTTP: return HTTP_LITERAL;
+	public static ServerLaunchType get(int value) {
+		switch (value) {
+		case DAEMON:
+			return DAEMON_LITERAL;
+		case REXEC:
+			return REXEC_LITERAL;
+		case RUNNING:
+			return RUNNING_LITERAL;
+		case TELNET:
+			return TELNET_LITERAL;
+		case SSH:
+			return SSH_LITERAL;
+		case FTP:
+			return FTP_LITERAL;
+		case HTTP:
+			return HTTP_LITERAL;
 		}
-		return null;	
+		return null;
 	}
-	
-	public String getName()
-	{
+
+	public String getName() {
 		return _name;
 	}
-	
-	public int getType()
-	{
+
+	public int getType() {
 		return _value;
 	}
 
-	private ServerLaunchType(int value, String name)
-	{
+	private ServerLaunchType(int value, String name) {
 		_name = name;
 		_value = value;
-	
+
 	}
 
 } //ServerLaunchType

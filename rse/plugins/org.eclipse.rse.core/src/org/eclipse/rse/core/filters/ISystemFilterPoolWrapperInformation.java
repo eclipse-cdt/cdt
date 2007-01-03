@@ -15,6 +15,7 @@
  ********************************************************************************/
 
 package org.eclipse.rse.core.filters;
+
 /**
  * The system filter wizard allows callers to pass a list of wrapper objects
  *  for the user to select a filter pool. Effectively, this prompting for 
@@ -25,25 +26,26 @@ package org.eclipse.rse.core.filters;
  * This is all encapsulated in this interface. There is also a class offered
  *  that implements all this and is populated via setters.
  */
-public interface ISystemFilterPoolWrapperInformation 
-{
+public interface ISystemFilterPoolWrapperInformation {
 
 	/**
 	 * Get the label
 	 */
 	public String getPromptLabel();
-	
+
 	/**
 	 * Get the tooltip
 	 */
 	public String getPromptTooltip();
 
-	public String getVerbageLabel();	
+	public String getVerbageLabel();
+
 	/**
 	 * Get the list of wrappered filter pool objects to show in the combo. The wrappering allows
 	 *  each to be displayed with a different name in the list than just pool.getName()
 	 */
 	public ISystemFilterPoolWrapper[] getWrappers();
+
 	/**
 	 * Get the wrapper to preselect in the list.
 	 */

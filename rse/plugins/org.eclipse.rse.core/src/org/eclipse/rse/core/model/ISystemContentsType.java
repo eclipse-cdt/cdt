@@ -20,17 +20,16 @@ package org.eclipse.rse.core.model;
  * Common interface for representing different contents types of
  * artifacts that can be stored in an IRemoteContainer
  */
-public interface ISystemContentsType 
-{
-    /*
-     * Indicates the type of this contents
-     */
-    public String getType();
-    
-    /*
-     * Indicates whether or not the contents
-     * can be flushed or not when a container becomes
-     * stale.
-     */
-    public boolean isPersistent();
+public interface ISystemContentsType {
+	/*
+	 * Indicates the type of this contents
+	 */
+	public String getType();
+
+	/*
+	 * Indicates whether or not the contents
+	 * can be flushed or not when a container becomes
+	 * stale.
+	 */
+	public boolean isPersistent();
 }

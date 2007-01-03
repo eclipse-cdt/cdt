@@ -16,7 +16,6 @@
 
 package org.eclipse.rse.core.references;
 
-
 /**
  * A class to encapsulate the operations required of an object which
  * is merely a reference to another object, something we call a shadow.
@@ -32,6 +31,6 @@ package org.eclipse.rse.core.references;
  * @lastgen interface SystemReferencingObject  {}
  */
 
-public interface IRSEReferencingObject extends IRSEBaseReferencingObject{
+public interface IRSEReferencingObject extends IRSEBaseReferencingObject {
 
 }

@@ -24,8 +24,7 @@ import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
  * @see org.eclipse.rse.ui.wizards.AbstractSystemNewConnectionWizardPage
  * @see org.eclipse.rse.ui.view.SubSystemConfigurationAdapter#getNewConnectionWizardPages(org.eclipse.rse.core.subsystems.ISubSystemConfiguration, org.eclipse.jface.wizard.IWizard)
  */
-public interface ISystemNewConnectionWizardPage 
-{
+public interface ISystemNewConnectionWizardPage {
 
 	/**
 	 * This is called when the users presses Finish. All that should be done here is validation
@@ -40,9 +39,9 @@ public interface ISystemNewConnectionWizardPage
 	 * Return true if the page is complete and has no errors
 	 */
 	public boolean isPageComplete();
-	
+
 	/**
 	 * Return the subsystem factory that supplied this page
 	 */
-	public ISubSystemConfiguration getSubSystemConfiguration();	
+	public ISubSystemConfiguration getSubSystemConfiguration();
 }

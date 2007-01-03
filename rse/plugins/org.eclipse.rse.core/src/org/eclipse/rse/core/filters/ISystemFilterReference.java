@@ -15,11 +15,11 @@
  ********************************************************************************/
 
 package org.eclipse.rse.core.filters;
+
 import org.eclipse.rse.core.model.ISystemContainer;
 import org.eclipse.rse.core.model.ISystemContentsType;
 import org.eclipse.rse.core.references.IRSEReferencingObject;
 import org.eclipse.rse.core.subsystems.ISubSystem;
-
 
 /**
  * Represents a shadow or reference to a system filter.
@@ -28,74 +28,77 @@ import org.eclipse.rse.core.subsystems.ISubSystem;
 /**
  * @lastgen interface SystemFilterReference extends SystemReferencingObject, SystemFilterContainerReference {}
  */
-public interface ISystemFilterReference extends IRSEReferencingObject, ISystemFilterContainerReference, ISystemContainer
-{
+public interface ISystemFilterReference extends IRSEReferencingObject, ISystemFilterContainerReference, ISystemContainer {
 	/**
 	 * Return the reference manager which is managing this filter reference
 	 * framework object.
 	 */
 	public ISystemFilterPoolReferenceManager getFilterPoolReferenceManager();
-	
+
 	/**
 	 * Return the object which instantiated the pool reference manager object.
 	 * Makes it easy to get back to the point of origin, given any filter reference
 	 * framework object
 	 */
-    public ISystemFilterPoolReferenceManagerProvider getProvider();    
-    
-    /**
+	public ISystemFilterPoolReferenceManagerProvider getProvider();
+
+	/**
 	 * Gets the subsystem that contains this reference
 	 * @return the subsystem
 	 */
 	public ISubSystem getSubSystem();
-	
+
 	/**
 	 * Sets the subsystem that contains this reference
 	 * @param subSystem
 	 */
 	public void setSubSystem(ISubSystem subSystem);
-    
+
 	/**
 	 * Return the filter to which we reference...
 	 */
 	public ISystemFilter getReferencedFilter();
+
 	/**
 	 * Set the filter to which we reference...
 	 */
 	public void setReferencedFilter(ISystemFilter filter);
 
-    /**
-     * Get the parent of this reference.
-     * It will be either a SystemFilterPoolReference, or
-     *  a SystemFilterReference(if nested).
-     */
-    public ISystemFilterContainerReference getParent();
-    /**
-     * Get parent or super parent filter pool reference.
-     */
-    public ISystemFilterPoolReference getParentSystemFilterReferencePool();  
-    
-    // -------------------------------------------------
-    // Methods for returning filter string references...
-    // -------------------------------------------------
-    /**
-     * Return the number of filter strings in the referenced filter
-     */
-    public int getSystemFilterStringCount();
-    /**
-     * Get the filter strings contained by this filter. But get references to each,
-     *  not the masters.
-     */
-    public ISystemFilterStringReference[] getSystemFilterStringReferences();    
-    /**
-     * Create a single filter string refererence to a given filter string
-     */
-    public ISystemFilterStringReference getSystemFilterStringReference(ISystemFilterString filterString);
-    
-    /*
-     * Sets the cached contents for this filter reference.  If the filter changes or is refreshed, these cached
-     * items will be removed.
-     */
-    public void setContents(ISystemContentsType type, Object[] cachedContents);
+	/**
+	 * Get the parent of this reference.
+	 * It will be either a SystemFilterPoolReference, or
+	 *  a SystemFilterReference(if nested).
+	 */
+	public ISystemFilterContainerReference getParent();
+
+	/**
+	 * Get parent or super parent filter pool reference.
+	 */
+	public ISystemFilterPoolReference getParentSystemFilterReferencePool();
+
+	// -------------------------------------------------
+	// Methods for returning filter string references...
+	// -------------------------------------------------
+	/**
+	 * Return the number of filter strings in the referenced filter
+	 */
+	public int getSystemFilterStringCount();
+
+	/**
+	 * Get the filter strings contained by this filter. But get references to each,
+	 *  not the masters.
+	 */
+	public ISystemFilterStringReference[] getSystemFilterStringReferences();
+
+	/**
+	 * Create a single filter string refererence to a given filter string
+	 */
+	public ISystemFilterStringReference getSystemFilterStringReference(ISystemFilterString filterString);
+
+	/*
+	 * Sets the cached contents for this filter reference.  If the filter changes or is refreshed, these cached
+	 * items will be removed.
+	 */
+	public void setContents(ISystemContentsType type, Object[] cachedContents);
 
 }

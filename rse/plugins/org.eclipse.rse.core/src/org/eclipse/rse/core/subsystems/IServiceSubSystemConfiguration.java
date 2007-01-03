@@ -16,23 +16,23 @@
 
 package org.eclipse.rse.core.subsystems;
 
-
 import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.services.IService;
-
-
 
 /**
  * This is the interface for the class that is for subsystem-providers who desire not to use MOF.
  * 
  * @lastgen interface DefaultSubSystemConfiguration extends SubSystemConfiguration {}
  */
-public interface IServiceSubSystemConfiguration extends ISubSystemConfiguration
-{
+public interface IServiceSubSystemConfiguration extends ISubSystemConfiguration {
 	public IConnectorService getConnectorService(IHost host);
+
 	public void setConnectorService(IHost host, IConnectorService connectorService);
+
 	public Class getServiceType();
+
 	public Class getServiceImplType();
+
 	public IService getService(IHost host);
-	
+
 } //DefaultSubSystemConfiguration

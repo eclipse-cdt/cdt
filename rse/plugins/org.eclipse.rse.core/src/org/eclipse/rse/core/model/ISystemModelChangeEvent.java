@@ -20,24 +20,26 @@ package org.eclipse.rse.core.model;
  * A change event passed to you when listening for RSE model changes.
  * Note these are post-events, sent after the fact.
  */
-public interface ISystemModelChangeEvent 
-{
+public interface ISystemModelChangeEvent {
 	/**
 	 * Get the event type, such as {@link org.eclipse.rse.core.model.ISystemModelChangeEvents#SYSTEM_RESOURCE_ADDED}.
 	 * @see org.eclipse.rse.core.model.ISystemModelChangeEvents
 	 */
 	public int getEventType();
+
 	/**
 	 * Get the resource type, such as {@link org.eclipse.rse.core.model.ISystemModelChangeEvents#SYSTEM_RESOURCETYPE_CONNECTION}.
 	 * @see org.eclipse.rse.core.model.ISystemModelChangeEvents
 	 */
 	public int getResourceType();
+
 	/**
 	 * Get the resource that this event applies to
 	 */
 	public Object getResource();
+
 	/**
 	 * Get the old name of the resource, in the event of a resource rename. Null for other event types.
 	 */
-	public String getOldName();	
+	public String getOldName();
 }

@@ -48,7 +48,6 @@ import org.eclipse.rse.persistence.IRSEPersistenceManager;
 import org.eclipse.rse.persistence.IRSEPersistenceProvider;
 import org.eclipse.rse.persistence.dom.RSEDOM;
 
-
 /**
  * The persistence manager controls all aspects of persisting the RSE data model. It will both
  * save and restore this model. There should be only persistence manager in existence. This instance
@@ -65,16 +64,15 @@ public class RSEPersistenceManager implements IRSEPersistenceManager {
 	private int _currentState = STATE_NONE;
 	private RSEDOMExporter _exporter;
 	private RSEDOMImporter _importer;
-	
+
 	private static IProject remoteSystemsProject = null;
-    public static final String RESOURCE_PROJECT_NAME = "RemoteSystemsConnections"; //$NON-NLS-1$
+	public static final String RESOURCE_PROJECT_NAME = "RemoteSystemsConnections"; //$NON-NLS-1$
 
-//  private ISystemRegistry _registry;
-    private ISystemProfileManager _profileManager;
+	//  private ISystemRegistry _registry;
+	private ISystemProfileManager _profileManager;
 
-	public RSEPersistenceManager(ISystemRegistry registry) 
-	{
-//		_registry = registry;
+	public RSEPersistenceManager(ISystemRegistry registry) {
+		//		_registry = registry;
 		_profileManager = registry.getSystemProfileManager();
 		_exporter = RSEDOMExporter.getInstance();
 		_exporter.setSystemRegistry(registry);
@@ -82,19 +80,17 @@ public class RSEPersistenceManager implements IRSEPersistenceManager {
 		_importer.setSystemRegistry(registry);
 	}
 
-    /**
-     * Get the default remote systems project.
-     * @return IProject handle of the project. Use exists() to test existence.
-     */
-    public static IProject getRemoteSystemsProject()
-    {
-    	if (remoteSystemsProject == null)
-    	{
-	      remoteSystemsProject =  ResourcesPlugin.getWorkspace().getRoot().getProject(RESOURCE_PROJECT_NAME);
-    	}
-	    return remoteSystemsProject;
-    }
-    
+	/**
+	 * Get the default remote systems project.
+	 * @return IProject handle of the project. Use exists() to test existence.
+	 */
+	public static IProject getRemoteSystemsProject() {
+		if (remoteSystemsProject == null) {
+			remoteSystemsProject = ResourcesPlugin.getWorkspace().getRoot().getProject(RESOURCE_PROJECT_NAME);
+		}
+		return remoteSystemsProject;
+	}
+
 	public void registerRSEPersistenceProvider(String id, IRSEPersistenceProvider provider) {
 		loadedProviders.put(id, provider);
 	}
@@ -395,7 +391,7 @@ public class RSEPersistenceManager implements IRSEPersistenceManager {
 		}
 		return result;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.rse.persistence.IRSEPersistenceManager#deleteProfile(java.lang.String)
 	 */
@@ -418,9 +414,9 @@ public class RSEPersistenceManager implements IRSEPersistenceManager {
 		return _currentState == STATE_IMPORTING;
 	}
 
-//	public void setState(int state) {
-//		_currentState = state;
-//	}
+	//	public void setState(int state) {
+	//		_currentState = state;
+	//	}
 
 	private RSEDOM exportRSEDOM(ISystemProfile profile, boolean force) {
 		RSEDOM dom = _exporter.createRSEDOM(profile, force);

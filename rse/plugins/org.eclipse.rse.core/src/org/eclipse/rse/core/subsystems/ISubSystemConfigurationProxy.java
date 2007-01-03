@@ -20,73 +20,77 @@ package org.eclipse.rse.core.subsystems;
  * Interface to SubSystemConfigurationExtension class
  * Internal use, not likely you will ever need to use it or access it directly.
  */
-public interface ISubSystemConfigurationProxy 
-{
-    /**
-     * Return value of the <samp>name</samp> xml attribute.
-     * Return name of this factory. Matches value in name attribute in extension point xml
-     */
-    public String getName();
-    /**
-     * Return value of the <samp>description</samp> xml attribute.
-     * Return description of this factory. Matches value in description attribute in extension point xml
-     */
-    public String getDescription();
-    /**
-     * Return value of the <samp>id</samp> xml attribute.
-     * Return unique id of this configuration.
-     */
-    public String getId();
-    /**
-     * Return value of the <samp>systemTypes</samp> xml attribute.
-     * Return the system types this subsystem configuration supports.
-     */
-    public String[] getSystemTypes();
+public interface ISubSystemConfigurationProxy {
+	/**
+	 * Return value of the <samp>name</samp> xml attribute.
+	 * Return name of this factory. Matches value in name attribute in extension point xml
+	 */
+	public String getName();
+
+	/**
+	 * Return value of the <samp>description</samp> xml attribute.
+	 * Return description of this factory. Matches value in description attribute in extension point xml
+	 */
+	public String getDescription();
+
+	/**
+	 * Return value of the <samp>id</samp> xml attribute.
+	 * Return unique id of this configuration.
+	 */
+	public String getId();
+
+	/**
+	 * Return value of the <samp>systemTypes</samp> xml attribute.
+	 * Return the system types this subsystem configuration supports.
+	 */
+	public String[] getSystemTypes();
+
 	/**
 	 * Return true if this factory supports all system types
 	 */
 	public boolean supportsAllSystemTypes();
 
-    /**
-     * Return value of the <samp>vendor</samp> xml attribute.
-     * Return vendor of this configuration.
-     */
-    public String getVendor();
-    /**
-     * Return value of the <samp>category</samp> xml attribute.
-     * Return the category this subsystem configuration subscribes to.
-     * @see org.eclipse.rse.core.model.ISubSystemConfigurationCategories
-     */
-    public String getCategory();
+	/**
+	 * Return value of the <samp>vendor</samp> xml attribute.
+	 * Return vendor of this configuration.
+	 */
+	public String getVendor();
 
-    
-    /**
-     * Return true if the subsystem factory has been instantiated yet
-     */
-    public boolean isSubSystemConfigurationActive();
-    
+	/**
+	 * Return value of the <samp>category</samp> xml attribute.
+	 * Return the category this subsystem configuration subscribes to.
+	 * @see org.eclipse.rse.core.model.ISubSystemConfigurationCategories
+	 */
+	public String getCategory();
+
+	/**
+	 * Return true if the subsystem factory has been instantiated yet
+	 */
+	public boolean isSubSystemConfigurationActive();
+
 	/**
 	 * Returns the priority of the subsystem configuration.
 	 */
 	public int getPriority();
-	
-    /**
-     * Return the subsystem factory singleton instance. Will instantiate if not already.
-     */
-    public ISubSystemConfiguration getSubSystemConfiguration();
-//	/**
-//	 * Return an instance of the IConnectorService class identified by the "systemClass" attribute
-//	 * of this subsystemFactory extension point. Note each call to this method returns a
-//	 * new instance of the class, or null if no "systemClass" attribute was specified. 
-//	 */
-//	public IConnectorService getSystemObject();
-	
-    /**
-     * Test if the given system type matches one or more of the type names declared in the
-     *  <samp>systemTypes</samp> attribute of this extension.
-     */
-    public boolean appliesToSystemType(String type);    
-    
+
+	/**
+	 * Return the subsystem factory singleton instance. Will instantiate if not already.
+	 */
+	public ISubSystemConfiguration getSubSystemConfiguration();
+
+	//	/**
+	//	 * Return an instance of the IConnectorService class identified by the "systemClass" attribute
+	//	 * of this subsystemFactory extension point. Note each call to this method returns a
+	//	 * new instance of the class, or null if no "systemClass" attribute was specified. 
+	//	 */
+	//	public IConnectorService getSystemObject();
+
+	/**
+	 * Test if the given system type matches one or more of the type names declared in the
+	 *  <samp>systemTypes</samp> attribute of this extension.
+	 */
+	public boolean appliesToSystemType(String type);
+
 	/**
 	 * Reset for a full refresh from disk, such as after a team synch. 
 	 */

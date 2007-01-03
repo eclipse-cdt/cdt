@@ -19,41 +19,39 @@ package org.eclipse.rse.core.model;
 /**
  * @author dmcknigh
  */
-public interface ISystemContainer 
-{
-	
+public interface ISystemContainer {
+
 	/**
-     * Returns whether the object has contents of a particular type.
-     * @param contentsType type of contents 
-     * @return <code>true</code> if the object has contents, <code>false</code> otherwise.
-     */
-    public boolean hasContents(ISystemContentsType contentsType);
-            
-    /**
+	 * Returns whether the object has contents of a particular type.
+	 * @param contentsType type of contents 
+	 * @return <code>true</code> if the object has contents, <code>false</code> otherwise.
+	 */
+	public boolean hasContents(ISystemContentsType contentsType);
+
+	/**
 	 * Returns all the contents of the object (combining results of all filters 
 	 * @param contentsType type of contents
 	 * @return an array of contents.
 	 */
-    public Object[] getContents(ISystemContentsType contentsType);
+	public Object[] getContents(ISystemContentsType contentsType);
 
-    
-    /**
-     * Indicates whether the cached object is stale
-     * @return whether the container is stale
-     */
-    public boolean isStale();
-    
-    /**
-     * Marks the object as stale or not
-     * @param isStale whether the object is to be marked stale or not
-     */
-    public void markStale(boolean isStale);
-     
-    /**
-     * Marks the object as stale or not
-     * @param isStale whether the object is to be marked stale or not
-     * @param clearCache indicates whether or not to clear the cache
-     */
-    public void markStale(boolean isStale, boolean clearCache);
+	/**
+	 * Indicates whether the cached object is stale
+	 * @return whether the container is stale
+	 */
+	public boolean isStale();
+
+	/**
+	 * Marks the object as stale or not
+	 * @param isStale whether the object is to be marked stale or not
+	 */
+	public void markStale(boolean isStale);
+
+	/**
+	 * Marks the object as stale or not
+	 * @param isStale whether the object is to be marked stale or not
+	 * @param clearCache indicates whether or not to clear the cache
+	 */
+	public void markStale(boolean isStale, boolean clearCache);
 
 }

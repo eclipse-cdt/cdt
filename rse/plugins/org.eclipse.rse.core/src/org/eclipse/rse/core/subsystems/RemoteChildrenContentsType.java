@@ -18,34 +18,29 @@ package org.eclipse.rse.core.subsystems;
 
 import org.eclipse.rse.core.model.ISystemContentsType;
 
-
 /**
  * Represents contents that are children of a container
  */
-public class RemoteChildrenContentsType implements ISystemContentsType
-{
-    public static String CONTENTS_TYPE_CHILDREN = "contents_children"; //$NON-NLS-1$
-    public static RemoteChildrenContentsType _instance = new RemoteChildrenContentsType();
-    
-    public static RemoteChildrenContentsType getInstance()
-    {
-        return _instance;
-    }
-    
-    /* (non-Javadoc)
-     * @see org.eclipse.rse.model.IRemoteContentsType#getType()
-     */
-    public String getType()
-    {
-        return CONTENTS_TYPE_CHILDREN;    
-    }
+public class RemoteChildrenContentsType implements ISystemContentsType {
+	public static String CONTENTS_TYPE_CHILDREN = "contents_children"; //$NON-NLS-1$
+	public static RemoteChildrenContentsType _instance = new RemoteChildrenContentsType();
 
-    /* (non-Javadoc)
-     * @see org.eclipse.rse.model.IRemoteContentsType#isPersistent()
-     */
-    public boolean isPersistent()
-    {
-        return false;
-    }
+	public static RemoteChildrenContentsType getInstance() {
+		return _instance;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.model.IRemoteContentsType#getType()
+	 */
+	public String getType() {
+		return CONTENTS_TYPE_CHILDREN;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.model.IRemoteContentsType#isPersistent()
+	 */
+	public boolean isPersistent() {
+		return false;
+	}
 
 }

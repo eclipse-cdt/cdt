@@ -80,5 +80,5 @@ public class SystemReferencingObjectHelper {
 		masterObject = null;
 		return newCount;
 	}
-	
+
 }

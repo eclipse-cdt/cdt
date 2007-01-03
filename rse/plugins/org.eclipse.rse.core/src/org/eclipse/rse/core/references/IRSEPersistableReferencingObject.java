@@ -16,7 +16,6 @@
 
 package org.eclipse.rse.core.references;
 
-
 /**
  * A simple class that implements IRSEPersistableReferencingObject.
  * This is an object that is a shadow (reference) of a real master object
@@ -39,8 +38,8 @@ package org.eclipse.rse.core.references;
  * @lastgen interface SystemPersistableReferencingObject extends SystemReferencingObject {}
  */
 
-public interface IRSEPersistableReferencingObject extends IRSEReferencingObject, IRSEBasePersistableReferencingObject{
-	
+public interface IRSEPersistableReferencingObject extends IRSEReferencingObject, IRSEBasePersistableReferencingObject {
+
 	/**
 	 * @generated This field/method will be replaced during code generation 
 	 * @return The value of the ReferencedObjectName attribute

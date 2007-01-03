@@ -16,79 +16,64 @@
 
 package org.eclipse.rse.core.model;
 
-
-public class Property implements IProperty
-{
+public class Property implements IProperty {
 	protected String _name;
 	protected String _label;
 	protected String _value;
 	protected IPropertyType _type;
 	protected boolean _isEnabled;
-	
-	
-	public Property(IProperty property)
-	{
+
+	public Property(IProperty property) {
 		_name = property.getKey();
 		_label = property.getLabel();
 		_value = property.getValue();
 		_type = property.getType();
 		_isEnabled = property.isEnabled();
 	}
-	
-	public Property(String name, String value, IPropertyType type, boolean isEnabled)
-	{
+
+	public Property(String name, String value, IPropertyType type, boolean isEnabled) {
 		_name = name;
 		_value = value;
 		_type = type;
 		_isEnabled = isEnabled;
 	}
-	
-	public void setLabel(String label)
-	{
+
+	public void setLabel(String label) {
 		_label = label;
 	}
-	
-	public String getLabel()
-	{
-		if (_label == null)
-		{
+
+	public String getLabel() {
+		if (_label == null) {
 			return _name;
 		}
 		return _label;
 	}
-	
-	public String getKey()
-	{
+
+	public String getKey() {
 		return _name;
 	}
-	
-	public String getValue()
-	{
+
+	public String getValue() {
 		return _value;
 	}
 
-	public IPropertyType getType()
-	{
+	public IPropertyType getType() {
 		return _type;
 	}
 
-	public boolean isEnabled()
-	{
+	public boolean isEnabled() {
 		return _isEnabled;
 	}
-	
-	public void setValue(String value)
-	{
+
+	public void setValue(String value) {
 		_value = value;
 	}
-	
-	public void setType(IPropertyType type)
-	{
+
+	public void setType(IPropertyType type) {
 		_type = type;
 	}
-	
-	public void setEnabled(boolean flag)
-	{
+
+	public void setEnabled(boolean flag) {
 		_isEnabled = flag;
 	}
 

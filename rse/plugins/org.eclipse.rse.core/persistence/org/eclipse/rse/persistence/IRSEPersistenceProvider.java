@@ -20,7 +20,6 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.rse.persistence.dom.RSEDOM;
 
-
 /**
  * This is the interface that needs to be implemented when providing an extension
  * using the RSE persistence provider extension point. 
@@ -29,8 +28,7 @@ import org.eclipse.rse.persistence.dom.RSEDOM;
  * saving and restoring RSEDOM
  * 
  */
-public interface IRSEPersistenceProvider 
-{
+public interface IRSEPersistenceProvider {
 	/**
 	 * Restores an RSE DOM given a profileName. 
 	 * 
@@ -48,12 +46,12 @@ public interface IRSEPersistenceProvider
 	 * @return true if succcessful
 	 */
 	public boolean saveRSEDOM(RSEDOM dom, IProgressMonitor monitor);
-	
+
 	/**
 	 * @return The names of the profiles that have been saved by this persistence provider.
 	 */
 	public String[] getSavedProfileNames();
-	
+
 	/**
 	 * Removes a profile. Does nothing if the profile is not found.
 	 * @param profileName the name of the profile to remove

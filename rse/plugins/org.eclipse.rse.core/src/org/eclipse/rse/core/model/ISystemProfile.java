@@ -15,6 +15,7 @@
  ********************************************************************************/
 
 package org.eclipse.rse.core.model;
+
 import org.eclipse.rse.core.filters.ISystemFilterPool;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
 
@@ -35,24 +36,24 @@ import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
  * <p>
  * @lastgen interface SystemProfile  {}
  */
-public interface ISystemProfile extends IRSEModelObject
-{
-	
-    /**
-     * Set the in-memory pointer back to the parent system profile manager
-     */
-    public void setProfileManager(ISystemProfileManager mgr);
-    /**
-     * Get the in-memory pointer back to the parent system profile manager
-     */
-    public ISystemProfileManager getProfileManager();
+public interface ISystemProfile extends IRSEModelObject {
+
+	/**
+	 * Set the in-memory pointer back to the parent system profile manager
+	 */
+	public void setProfileManager(ISystemProfileManager mgr);
+
+	/**
+	 * Get the in-memory pointer back to the parent system profile manager
+	 */
+	public ISystemProfileManager getProfileManager();
 
 	/**
 	 * Convenience method for create a new connection within this profile.
 	 * Shortcut for {@link ISystemRegistry#createHost(String,String,String,String)}
 	 */
 	public IHost createHost(String systemType, String connectionName, String hostName, String description) throws Exception;
-	
+
 	/**
 	 * @return The value of the Name attribute
 	 */
@@ -80,14 +81,17 @@ public interface ISystemProfile extends IRSEModelObject
 	 * Return all connections for this profile
 	 */
 	public IHost[] getHosts();
+
 	/**
 	 * Return all filter pools for this profile
 	 */
 	public ISystemFilterPool[] getFilterPools();
+
 	/**
 	 * Return all filter pools for this profile, scoped by a given subsystem factory
 	 */
 	public ISystemFilterPool[] getFilterPools(ISubSystemConfiguration ssf);
+
 	/**
 	 * Return true if this profile is currently active for this user
 	 */

@@ -15,9 +15,8 @@
  ********************************************************************************/
 
 package org.eclipse.rse.core.subsystems;
+
 import org.eclipse.rse.core.model.IRSEModelObject;
-
-
 
 /**
  * Implement this interface to provide peristable properties for server launching
@@ -25,8 +24,7 @@ import org.eclipse.rse.core.model.IRSEModelObject;
  * IPropertySets
  *
  */
-public interface IServerLauncherProperties extends IRSEModelObject
-{
+public interface IServerLauncherProperties extends IRSEModelObject {
 
 	public IServerLauncherProperties cloneServerLauncher(IServerLauncherProperties newOne);
 
@@ -35,13 +33,13 @@ public interface IServerLauncherProperties extends IRSEModelObject
 	 * @return the connector service
 	 */
 	public IConnectorService getConnectorService();
-	
+
 	/**
 	 * Update cached values based on IPropertySets
 	 * 
 	 */
 	public void restoreFromProperties();
-	
+
 	/**
 	 * Store cached values based on IPropertySets
 	 *

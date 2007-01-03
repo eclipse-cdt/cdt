@@ -16,18 +16,13 @@
 
 package org.eclipse.rse.core.subsystems;
 
-
-
 //
-
 
 /**
  * @lastgen interface RemoteSystemEnvVar  {}
  */
 
 public interface IRemoteSystemEnvVar {
-
-
 
 	/**
 	 * <!-- begin-user-doc -->

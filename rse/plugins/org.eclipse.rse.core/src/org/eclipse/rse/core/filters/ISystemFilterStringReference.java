@@ -15,6 +15,7 @@
  ********************************************************************************/
 
 package org.eclipse.rse.core.filters;
+
 import org.eclipse.rse.core.references.IRSEBaseReferencingObject;
 
 /**
@@ -22,37 +23,37 @@ import org.eclipse.rse.core.references.IRSEBaseReferencingObject;
  * Needed so GUI can show the same filter string multiple times.
  * This is not modelled in MOF.
  */
-public interface ISystemFilterStringReference 
-       extends IRSEBaseReferencingObject 
-{
+public interface ISystemFilterStringReference extends IRSEBaseReferencingObject {
 	/**
 	 * Return the reference manager which is managing this filter reference
 	 * framework object.
 	 */
 	public ISystemFilterPoolReferenceManager getFilterPoolReferenceManager();
-	
+
 	/**
 	 * Return the object which instantiated the pool reference manager object.
 	 * Makes it easy to get back to the point of origin, given any filter reference
 	 * framework object
 	 */
-    public ISystemFilterPoolReferenceManagerProvider getProvider();    
-    
-    /**
-     * Get the master filter string
-     */
-    public ISystemFilterString getReferencedFilterString();    
-    /**
-     * Get the referenced filter that contains this filter string reference.
-     */
-    public ISystemFilterReference getParent();    
+	public ISystemFilterPoolReferenceManagerProvider getProvider();
+
+	/**
+	 * Get the master filter string
+	 */
+	public ISystemFilterString getReferencedFilterString();
+
+	/**
+	 * Get the referenced filter that contains this filter string reference.
+	 */
+	public ISystemFilterReference getParent();
+
 	/**
 	 * Get the actual filter that contain the actual filter string we reference
 	 */
 	public ISystemFilter getParentSystemFilter();
 
-    /**
-     * Same as getReferencedFilterString().getString()
-     */
-    public String getString();    
+	/**
+	 * Same as getReferencedFilterString().getString()
+	 */
+	public String getString();
 } //SystemFilterStringReference

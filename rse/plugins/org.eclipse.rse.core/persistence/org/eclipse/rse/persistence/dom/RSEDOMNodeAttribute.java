@@ -14,45 +14,37 @@
  * {Name} (company) - description of contribution.
  ********************************************************************************/
 
-
 package org.eclipse.rse.persistence.dom;
 
 import java.io.Serializable;
 
-public class RSEDOMNodeAttribute implements Serializable
-{
+public class RSEDOMNodeAttribute implements Serializable {
 	private static final long serialVersionUID = 1L;
 	private String _key;
 	private String _value;
 	private String _type;
-	
-	public RSEDOMNodeAttribute(String key, String value, String type)
-	{
+
+	public RSEDOMNodeAttribute(String key, String value, String type) {
 		_key = key;
 		_value = value;
 		_type = type;
 	}
-	
-	public RSEDOMNodeAttribute(String key, String value)
-	{
+
+	public RSEDOMNodeAttribute(String key, String value) {
 		_key = key;
 		_value = value;
 		_type = null;
 	}
-	
 
-	public String getKey()
-	{
+	public String getKey() {
 		return _key;
 	}
-	
-	public String getValue()
-	{
+
+	public String getValue() {
 		return _value;
 	}
-	
-	public String getType()
-	{
+
+	public String getType() {
 		return _type;
 	}
 }

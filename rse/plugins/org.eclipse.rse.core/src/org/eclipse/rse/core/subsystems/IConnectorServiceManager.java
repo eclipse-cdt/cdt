@@ -18,10 +18,8 @@ package org.eclipse.rse.core.subsystems;
 
 import org.eclipse.rse.core.model.IHost;
 
+public interface IConnectorServiceManager {
+	IConnectorService getConnectorService(IHost host, Class commonSSinterface);
 
-
-public interface IConnectorServiceManager 
-{
-	 IConnectorService getConnectorService(IHost host, Class commonSSinterface);
-	 void setConnectorService(IHost host, Class commonSSinterface, IConnectorService connectorService);
+	void setConnectorService(IHost host, Class commonSSinterface, IConnectorService connectorService);
 }

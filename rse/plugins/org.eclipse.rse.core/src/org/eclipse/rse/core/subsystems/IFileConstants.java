@@ -15,58 +15,57 @@
  ********************************************************************************/
 
 package org.eclipse.rse.core.subsystems;
+
 /**
  * Constants used in the remote file system support
  */
-public interface IFileConstants
-{
-		
-    // ---------------------------------------
-    // UNIX FILE SYSTEM ATTRIBUTE CONSTANTS...
-    // ---------------------------------------   	
-    /**
-     * Unix-style folder-name separator as a string: "/"
-     */
-    public static String SEPARATOR_UNIX = "/"; //$NON-NLS-1$
-    /**
-     * Unix-style folder-name separator as a char: '/'
-     */
-    public static char SEPARATOR_CHAR_UNIX = '/';
-    /**
-     * Unix-style path separator as a string: ":"
-     */
-    public static String PATH_SEPARATOR_UNIX = ":"; //$NON-NLS-1$
-    /**
-     * Unix-style path separator as a char: ':'
-     */
-    public static char PATH_SEPARATOR_CHAR_UNIX = ':';
+public interface IFileConstants {
+
+	// ---------------------------------------
+	// UNIX FILE SYSTEM ATTRIBUTE CONSTANTS...
+	// ---------------------------------------   	
+	/**
+	 * Unix-style folder-name separator as a string: "/"
+	 */
+	public static String SEPARATOR_UNIX = "/"; //$NON-NLS-1$
+	/**
+	 * Unix-style folder-name separator as a char: '/'
+	 */
+	public static char SEPARATOR_CHAR_UNIX = '/';
+	/**
+	 * Unix-style path separator as a string: ":"
+	 */
+	public static String PATH_SEPARATOR_UNIX = ":"; //$NON-NLS-1$
+	/**
+	 * Unix-style path separator as a char: ':'
+	 */
+	public static char PATH_SEPARATOR_CHAR_UNIX = ':';
 	/**
 	 * Unix-style line separator as a byte array: 10
 	 */
-	public static final byte[] LINE_SEPARATOR_BYTE_ARRAY_UNIX = {10};
-    
-    
-    // ------------------------------------------
-    // WINDOWS FILE SYSTEM ATTRIBUTE CONSTANTS...
-    // ------------------------------------------   	
-    /**
-     * Windows-style folder-name separator as a string: "\"
-     */
-    public static String SEPARATOR_WINDOWS = "\\"; //$NON-NLS-1$
-    /**
-     * Windows-style folder-name separator as a char: '\'
-     */
-    public static char SEPARATOR_CHAR_WINDOWS = '\\';
-    /**
-     * Windows-style path separator as a string: ";"
-     */
-    public static String PATH_SEPARATOR_WINDOWS = ";"; //$NON-NLS-1$
-    /**
-     * Windows-style path separator as a char: ';'
-     */
-    public static char PATH_SEPARATOR_CHAR_WINDOWS = ';';
+	public static final byte[] LINE_SEPARATOR_BYTE_ARRAY_UNIX = { 10 };
+
+	// ------------------------------------------
+	// WINDOWS FILE SYSTEM ATTRIBUTE CONSTANTS...
+	// ------------------------------------------   	
+	/**
+	 * Windows-style folder-name separator as a string: "\"
+	 */
+	public static String SEPARATOR_WINDOWS = "\\"; //$NON-NLS-1$
+	/**
+	 * Windows-style folder-name separator as a char: '\'
+	 */
+	public static char SEPARATOR_CHAR_WINDOWS = '\\';
+	/**
+	 * Windows-style path separator as a string: ";"
+	 */
+	public static String PATH_SEPARATOR_WINDOWS = ";"; //$NON-NLS-1$
+	/**
+	 * Windows-style path separator as a char: ';'
+	 */
+	public static char PATH_SEPARATOR_CHAR_WINDOWS = ';';
 	/**
 	 * Windows-style line separator as a byte array: 13 and 10 respectively
 	 */
-	public static final byte[] LINE_SEPARATOR_BYTE_ARRAY_WINDOWS = {13, 10};
+	public static final byte[] LINE_SEPARATOR_BYTE_ARRAY_WINDOWS = { 13, 10 };
 }

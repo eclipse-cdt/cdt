@@ -15,11 +15,11 @@
  ********************************************************************************/
 
 package org.eclipse.rse.core.filters;
+
 /**
  * A save policy dictates how filter framework artifacts are persisted to disk.
  */
-public interface ISystemFilterSavePolicies 
-{
+public interface ISystemFilterSavePolicies {
 	/**
 	 * No saving. All save/restoring handled elsewhere.
 	 */
@@ -32,15 +32,15 @@ public interface ISystemFilterSavePolicies
 	 * Save all filters in each filter pool in one file per pool, with the same name as the pool.
 	 * Each pool also has its own unique folder.
 	 */
-	public static final int SAVE_POLICY_ONE_FILEANDFOLDER_PER_POOL = 1;	
+	public static final int SAVE_POLICY_ONE_FILEANDFOLDER_PER_POOL = 1;
 	/**
 	 * Save all filters in each filter pool in one file per pool, with the same name as the pool
 	 * All pool files go into the same folder.
 	 */
-	public static final int SAVE_POLICY_ONE_FILE_PER_POOL_SAME_FOLDER = 2;		
+	public static final int SAVE_POLICY_ONE_FILE_PER_POOL_SAME_FOLDER = 2;
 	/**
 	 * Save each filter in each filter pool in its own file, with the same name as the filter
 	 */
-	public static final int SAVE_POLICY_ONE_FILE_PER_FILTER = 3;	
+	public static final int SAVE_POLICY_ONE_FILE_PER_FILTER = 3;
 
 }

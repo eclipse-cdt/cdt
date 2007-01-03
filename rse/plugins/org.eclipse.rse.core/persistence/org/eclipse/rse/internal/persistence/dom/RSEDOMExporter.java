@@ -43,8 +43,9 @@ import org.eclipse.rse.persistence.dom.RSEDOMNode;
 public class RSEDOMExporter implements IRSEDOMExporter {
 	private static RSEDOMExporter _instance = new RSEDOMExporter();
 	private Map _domMap;
-//	private ISystemRegistry _registry;
-	
+
+	//	private ISystemRegistry _registry;
+
 	/**
 	 * Constructor to create a new DOM exporter.
 	 */
@@ -52,11 +53,10 @@ public class RSEDOMExporter implements IRSEDOMExporter {
 		_domMap = new HashMap();
 	}
 
-	public void setSystemRegistry(ISystemRegistry registry)
-	{
-//		_registry = registry;
+	public void setSystemRegistry(ISystemRegistry registry) {
+		//		_registry = registry;
 	}
-	
+
 	/**
 	 * @return the singleton instance of this exporter
 	 */

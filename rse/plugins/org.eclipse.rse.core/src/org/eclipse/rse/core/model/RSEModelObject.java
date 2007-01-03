@@ -16,53 +16,42 @@
 
 package org.eclipse.rse.core.model;
 
-
 /**
  * Provides common support for local RSE model objects
  * Extenders inherit property set support
  * @author dmcknigh
  *
  */
-public abstract class RSEModelObject extends PropertySetContainer implements IRSEModelObject
-{
+public abstract class RSEModelObject extends PropertySetContainer implements IRSEModelObject {
 	protected boolean _isDirty = true;
 	protected boolean _wasRestored = false;
-	
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.rse.core.persistance.IRSEPersistableContainer#isDirty()
 	 */
-	public final boolean isDirty()
-	{
+	public final boolean isDirty() {
 		return _isDirty;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.rse.core.persistance.IRSEPersistableContainer#setDirty(boolean)
 	 */
-	public void setDirty(boolean flag)
-	{
+	public void setDirty(boolean flag) {
 		_isDirty = flag;
 	}
-	
-	
 
-
-	public final boolean wasRestored() 
-	{
+	public final boolean wasRestored() {
 		return _wasRestored;
 	}
 
-	public final void setWasRestored(boolean flag) 
-	{
+	public final void setWasRestored(boolean flag) {
 		_wasRestored = flag;
 	}
-	
-	public String getDescription()
-	{
+
+	public String getDescription() {
 		return RSEModelResources.RESID_MODELOBJECTS_MODELOBJECT_DESCRIPTION;
 	}
-	
+
 	/**
 	 * Does a null-aware string comparison. Two strings that are
 	 * <code>null</code> will compare equal. Otherwise the result is 

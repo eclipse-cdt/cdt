@@ -16,34 +16,29 @@
 
 package org.eclipse.rse.core.model;
 
-
 /**
  * Represents contents that are children of a container
  */
-public class SystemFilterStringContentsType implements ISystemContentsType
-{
-    public static String CONTENTS_TYPE_CHILDREN_PARENTS = "contents_children_parents"; //$NON-NLS-1$
-    public static SystemFilterStringContentsType _instance = new SystemFilterStringContentsType();
-    
-    public static SystemFilterStringContentsType getInstance()
-    {
-        return _instance;
-    }
-    
-    /* (non-Javadoc)
-     * @see org.eclipse.rse.model.IRemoteContentsType#getType()
-     */
-    public String getType()
-    {
-        return CONTENTS_TYPE_CHILDREN_PARENTS;    
-    }
+public class SystemFilterStringContentsType implements ISystemContentsType {
+	public static String CONTENTS_TYPE_CHILDREN_PARENTS = "contents_children_parents"; //$NON-NLS-1$
+	public static SystemFilterStringContentsType _instance = new SystemFilterStringContentsType();
 
-    /* (non-Javadoc)
-     * @see org.eclipse.rse.model.IRemoteContentsType#isPersistent()
-     */
-    public boolean isPersistent()
-    {
-        return false;
-    }
+	public static SystemFilterStringContentsType getInstance() {
+		return _instance;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.model.IRemoteContentsType#getType()
+	 */
+	public String getType() {
+		return CONTENTS_TYPE_CHILDREN_PARENTS;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.model.IRemoteContentsType#isPersistent()
+	 */
+	public boolean isPersistent() {
+		return false;
+	}
 
 }

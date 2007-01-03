@@ -15,20 +15,19 @@
  ********************************************************************************/
 
 package org.eclipse.rse.core.model;
-import java.util.EventListener;
 
+import java.util.EventListener;
 
 /**
  * Interface that listeners interesting in changes to remote
  * system preferences can implement and subsequently register 
  * their interest in via SystemRegistry.
  */
-public interface ISystemPreferenceChangeListener extends EventListener
-{
+public interface ISystemPreferenceChangeListener extends EventListener {
 	/**
 	 * This is the method in your class that will be called when a
 	 *  system resource changes.
 	 * @see ISystemPreferenceChangeEvent
 	 */
-    public void systemPreferenceChanged(ISystemPreferenceChangeEvent event);
+	public void systemPreferenceChanged(ISystemPreferenceChangeEvent event);
 }

@@ -15,15 +15,15 @@
  ********************************************************************************/
 
 package org.eclipse.rse.core.model;
+
 /**
  * Interface of event ID constants for preferences changed
  */
-public interface ISystemPreferenceChangeEvents
-{
+public interface ISystemPreferenceChangeEvents {
 	/**
 	 * The Show Filter Pools preference has changed
 	 */
-	public static final int EVENT_SHOWFILTERPOOLS = 5;	
+	public static final int EVENT_SHOWFILTERPOOLS = 5;
 	/**
 	 * The Show Filter String preference has changed
 	 */
@@ -36,7 +36,7 @@ public interface ISystemPreferenceChangeEvents
 	 * The Restore State preference has changed
 	 */
 	public static final int EVENT_RESTORESTATE = 20;
-	
+
 	/**
 	 * A connection type has been enabled or disabled
 	 */

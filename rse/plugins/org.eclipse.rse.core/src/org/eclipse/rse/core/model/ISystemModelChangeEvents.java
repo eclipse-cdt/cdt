@@ -28,23 +28,22 @@ package org.eclipse.rse.core.model;
  * {@link org.eclipse.rse.core.model.ISystemRegistry#fireModelChangeEvent(int, int, Object, String)}.
  * These events will typically be signalled in an implementation of ISystemRegistry. 
  */
-public interface ISystemModelChangeEvents 
-{
-	
+public interface ISystemModelChangeEvents {
+
 	/**
 	 * Event Type: a resource was added
 	 */
-	public static final int SYSTEM_RESOURCE_ADDED = 1;	
+	public static final int SYSTEM_RESOURCE_ADDED = 1;
 
 	/**
 	 * Event Type: a resource was removed
 	 */
-	public static final int SYSTEM_RESOURCE_REMOVED = 2;	
+	public static final int SYSTEM_RESOURCE_REMOVED = 2;
 
 	/**
 	 * Event Type: a resource was changed
 	 */
-	public static final int SYSTEM_RESOURCE_CHANGED = 4;	
+	public static final int SYSTEM_RESOURCE_CHANGED = 4;
 
 	/**
 	 * Event Type: a resource was renamed
@@ -53,53 +52,52 @@ public interface ISystemModelChangeEvents
 	/**
 	 * Event Type: a resource was reordered relative to its siblings
 	 */
-	public static final int SYSTEM_RESOURCE_REORDERED = 16;	
-	
+	public static final int SYSTEM_RESOURCE_REORDERED = 16;
+
 	/**
 	 * Event Type: all resource were reloaded from the workspace: you need to refresh your viewer!
 	 * This is fired after the user selects the Reload RSE action in the Team view, after recieving files from the repository.
 	 */
 	public static final int SYSTEM_RESOURCE_ALL_RELOADED = 128;
-	
 
 	/**
 	 * Resource Type: profile
 	 */
-	public static final int SYSTEM_RESOURCETYPE_PROFILE = 1;	
+	public static final int SYSTEM_RESOURCETYPE_PROFILE = 1;
 	/**
 	 * Resource Type: connection
 	 */
-	public static final int SYSTEM_RESOURCETYPE_CONNECTION = 2;	
+	public static final int SYSTEM_RESOURCETYPE_CONNECTION = 2;
 	/**
 	 * Resource Type: subsystem
 	 */
-	public static final int SYSTEM_RESOURCETYPE_SUBSYSTEM = 4;	
+	public static final int SYSTEM_RESOURCETYPE_SUBSYSTEM = 4;
 	/**
 	 * Resource Type: filter pool
 	 */
-	public static final int SYSTEM_RESOURCETYPE_FILTERPOOL = 8;	
+	public static final int SYSTEM_RESOURCETYPE_FILTERPOOL = 8;
 	/**
 	 * Resource Type: filter pool reference. These are what subsystems contain... references to filter pools.
 	 */
-	public static final int SYSTEM_RESOURCETYPE_FILTERPOOLREF = 16;	
+	public static final int SYSTEM_RESOURCETYPE_FILTERPOOLREF = 16;
 	/**
 	 * Resource Type: filter 
 	 */
-	public static final int SYSTEM_RESOURCETYPE_FILTER = 32;	
+	public static final int SYSTEM_RESOURCETYPE_FILTER = 32;
 	/**
 	 * Resource Type: user action
 	 */
-	public static final int SYSTEM_RESOURCETYPE_USERACTION = 128;	
+	public static final int SYSTEM_RESOURCETYPE_USERACTION = 128;
 	/**
 	 * Resource Type: named type, which are used in user actions
 	 */
-	public static final int SYSTEM_RESOURCETYPE_NAMEDTYPE = 256;	
+	public static final int SYSTEM_RESOURCETYPE_NAMEDTYPE = 256;
 	/**
 	 * Resource Type: compile command
 	 */
-	public static final int SYSTEM_RESOURCETYPE_COMPILECMD = 512;	
+	public static final int SYSTEM_RESOURCETYPE_COMPILECMD = 512;
 	/**
 	 * Resource Type: ALL. Used with SYSTEM_RESOURCE_ALL_RELOADED
 	 */
-	public static final int SYSTEM_RESOURCETYPE_ALL = 9999;	
+	public static final int SYSTEM_RESOURCETYPE_ALL = 9999;
 }

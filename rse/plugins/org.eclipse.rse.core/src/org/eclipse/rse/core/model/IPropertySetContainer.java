@@ -16,15 +16,19 @@
 
 package org.eclipse.rse.core.model;
 
-public interface IPropertySetContainer 
-{
+public interface IPropertySetContainer {
 	public IPropertySet[] getPropertySets();
+
 	public IPropertySet getPropertySet(String name);
 
 	public IPropertySet createPropertySet(String name);
+
 	public IPropertySet createPropertySet(String name, String description);
+
 	public boolean addPropertySet(IPropertySet set);
+
 	public boolean addPropertySets(IPropertySet[] sets);
+
 	public boolean removePropertySet(String name);
-	
+
 }

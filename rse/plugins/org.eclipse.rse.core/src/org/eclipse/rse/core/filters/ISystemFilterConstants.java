@@ -15,27 +15,27 @@
  ********************************************************************************/
 
 package org.eclipse.rse.core.filters;
+
 /**
  * Constants used throughout filters framework.
  */
-public interface ISystemFilterConstants extends ISystemFilterSavePolicies
-{
-    /**
-     * Parameter value on create operations when a restore should be attempted first
-     */
-    public static final boolean TRY_TO_RESTORE_YES = true;
-    /**
-     * Parameter value on create operations when no restore should be attempted first
-     */
-    public static final boolean TRY_TO_RESTORE_NO = false;
+public interface ISystemFilterConstants extends ISystemFilterSavePolicies {
+	/**
+	 * Parameter value on create operations when a restore should be attempted first
+	 */
+	public static final boolean TRY_TO_RESTORE_YES = true;
+	/**
+	 * Parameter value on create operations when no restore should be attempted first
+	 */
+	public static final boolean TRY_TO_RESTORE_NO = false;
 
-    /**
-     * Suffix used when persisting data to a file.
-     */
-    public static final String SAVEFILE_SUFFIX = ".xmi";     //$NON-NLS-1$
-    
-    /**
-     * Default value for the type attribute for filter pools, filters and filterstrings
-     */
-    public static final String DEFAULT_TYPE = "default"; //$NON-NLS-1$
+	/**
+	 * Suffix used when persisting data to a file.
+	 */
+	public static final String SAVEFILE_SUFFIX = ".xmi"; //$NON-NLS-1$
+
+	/**
+	 * Default value for the type attribute for filter pools, filters and filterstrings
+	 */
+	public static final String DEFAULT_TYPE = "default"; //$NON-NLS-1$
 }

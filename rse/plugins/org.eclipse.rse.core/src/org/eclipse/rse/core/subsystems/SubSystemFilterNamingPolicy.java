@@ -25,97 +25,92 @@ import org.eclipse.rse.core.filters.SystemFilterNamingPolicy;
  * This policy implements our naming policy for the filter files in the
  *  remote systems project.
  */
-public class SubSystemFilterNamingPolicy
-	extends SystemFilterNamingPolicy
-	implements IRSEFilterNamingPolicy 
-{
-	
+public class SubSystemFilterNamingPolicy extends SystemFilterNamingPolicy implements IRSEFilterNamingPolicy {
+
 	/**
 	 * Constructor for SubSystemFilterNamingPolicy
 	 */
-	public SubSystemFilterNamingPolicy() 
-	{
+	public SubSystemFilterNamingPolicy() {
 		super();
 	}
 
-    /**
-     * Get the unqualified save file name for the given SystemFilterPoolManager object.
-     * Do NOT include the extension, as .xmi will be added.
-     * <p>
-     * Returns "filterPools_"+managerName by default.
-     */
-    public String getManagerSaveFileName(String managerName)
-    {
-    	return super.getManagerSaveFileName(managerName);
-    }
-    /**
-     * Get the unqualified save file name for the given SystemFilterPoolReferenceManager object.
-     * Do NOT include the extension, as .xmi will be added.
-     * <p>
-     * Returns "filterPoolRefs_"+managerName by default.
-     */
-    public String getReferenceManagerSaveFileName(String managerName)
-    {
-        return super.getReferenceManagerSaveFileName(managerName);
-    }
-    /**
-     * Get the unqualified save file name for the given SystemFilterPool object.
-     * Do NOT include the extension, as .xmi will be added.
-     * <p>
-     * Returns getFilterPoolSaveFileNamePrefix()+poolName by default.
-     */
-    public String getFilterPoolSaveFileName(String poolName)
-    {
-        return super.getFilterPoolSaveFileName(poolName);
-    }
-    /**
-     * Get the file name prefix for all pool files. 
-     * Used to deduce the saved pools by examining the file system
-     * <p>
-     * By default returns "filterPool_"
-     */
-    public String getFilterPoolSaveFileNamePrefix()
-    {
-        return super.getFilterPoolSaveFileNamePrefix();
-    }
-    /**
-     * Get the folder name for the given SystemFilterPool object.
-     * <p>
-     * Returns getFilterPoolFolderNamePrefix()+poolName by default.
-     */
-    public String getFilterPoolFolderName(String poolName)
-    {
-        return super.getFilterPoolFolderName(poolName);
-    }
-    /**
-     * Get the folder name prefix for all pool folders. 
-     * Used to deduce the saved pools by examining the file system
-     * <p>
-     * By default returns "FilterPool_"
-     */
-    public String getFilterPoolFolderNamePrefix()
-    {
-        return super.getFilterPoolFolderNamePrefix();
-    }    
-    /**
-     * Get the unqualified save file name for the given SystemFilter object.
-     * Do NOT include the extension, as .xmi will be added.
-     * <p>
-     * Returns getFilterSaveFileNamePrefix()+filterName by default.
-     */
-    public String getFilterSaveFileName(String filterName)
-    {
-        return super.getFilterSaveFileName(filterName);
-    }
-    /**
-     * Get the file name prefix for all filter files. 
-     * Used to deduce the saved filters by examining the file system
-     * <p>
-     * Returns "Filter_" by default.
-     */
-    public String getFilterSaveFileNamePrefix()
-    {
-        return super.getFilterSaveFileNamePrefix();        
-    }    	
+	/**
+	 * Get the unqualified save file name for the given SystemFilterPoolManager object.
+	 * Do NOT include the extension, as .xmi will be added.
+	 * <p>
+	 * Returns "filterPools_"+managerName by default.
+	 */
+	public String getManagerSaveFileName(String managerName) {
+		return super.getManagerSaveFileName(managerName);
+	}
+
+	/**
+	 * Get the unqualified save file name for the given SystemFilterPoolReferenceManager object.
+	 * Do NOT include the extension, as .xmi will be added.
+	 * <p>
+	 * Returns "filterPoolRefs_"+managerName by default.
+	 */
+	public String getReferenceManagerSaveFileName(String managerName) {
+		return super.getReferenceManagerSaveFileName(managerName);
+	}
+
+	/**
+	 * Get the unqualified save file name for the given SystemFilterPool object.
+	 * Do NOT include the extension, as .xmi will be added.
+	 * <p>
+	 * Returns getFilterPoolSaveFileNamePrefix()+poolName by default.
+	 */
+	public String getFilterPoolSaveFileName(String poolName) {
+		return super.getFilterPoolSaveFileName(poolName);
+	}
+
+	/**
+	 * Get the file name prefix for all pool files. 
+	 * Used to deduce the saved pools by examining the file system
+	 * <p>
+	 * By default returns "filterPool_"
+	 */
+	public String getFilterPoolSaveFileNamePrefix() {
+		return super.getFilterPoolSaveFileNamePrefix();
+	}
+
+	/**
+	 * Get the folder name for the given SystemFilterPool object.
+	 * <p>
+	 * Returns getFilterPoolFolderNamePrefix()+poolName by default.
+	 */
+	public String getFilterPoolFolderName(String poolName) {
+		return super.getFilterPoolFolderName(poolName);
+	}
+
+	/**
+	 * Get the folder name prefix for all pool folders. 
+	 * Used to deduce the saved pools by examining the file system
+	 * <p>
+	 * By default returns "FilterPool_"
+	 */
+	public String getFilterPoolFolderNamePrefix() {
+		return super.getFilterPoolFolderNamePrefix();
+	}
+
+	/**
+	 * Get the unqualified save file name for the given SystemFilter object.
+	 * Do NOT include the extension, as .xmi will be added.
+	 * <p>
+	 * Returns getFilterSaveFileNamePrefix()+filterName by default.
+	 */
+	public String getFilterSaveFileName(String filterName) {
+		return super.getFilterSaveFileName(filterName);
+	}
+
+	/**
+	 * Get the file name prefix for all filter files. 
+	 * Used to deduce the saved filters by examining the file system
+	 * <p>
+	 * Returns "Filter_" by default.
+	 */
+	public String getFilterSaveFileNamePrefix() {
+		return super.getFilterSaveFileNamePrefix();
+	}
 
 }

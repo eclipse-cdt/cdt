@@ -20,79 +20,69 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-
 /**
  * A Hashmap based implementation of the {@link IPropertySet} interface.
  * 
  * Not thread-safe since the underlying {@link java.util.HashMap} is 
  * not thread-safe.
  */
-public class PropertySet implements IPropertySet 
-{
+public class PropertySet implements IPropertySet {
 	private String _name;
 	private Map _properties;
-	
-	protected static IPropertyType _defaultType =  PropertyType.getStringPropertyType();
-	
+
+	protected static IPropertyType _defaultType = PropertyType.getStringPropertyType();
+
 	/**
 	 * Construct a new PropertySet based on an existing one (i.e. clone it).
 	 * @param propertySet existing Property Set to clone
 	 */
-	public PropertySet(IPropertySet propertySet)
-	{
+	public PropertySet(IPropertySet propertySet) {
 		_name = propertySet.getName();
 		_properties = new HashMap();
-		
+
 		String[] keys = propertySet.getPropertyKeys();
-		for (int i =0; i < keys.length; i++)
-		{
+		for (int i = 0; i < keys.length; i++) {
 			String key = keys[i];
-			IProperty property = propertySet.getProperty(key);			
+			IProperty property = propertySet.getProperty(key);
 			addProperty(key, new Property(property));
 		}
 	}
-	
+
 	/**
 	 * Construct a new empty PropertySet.
 	 * @param name of the new PropertySet
 	 */
-	public PropertySet(String name)
-	{
-		_name= name;
-		_properties = new  HashMap();
-	}
-	
-	public String getName() 
-	{
-		return _name;
-	}
-	
-	public String getDescription() 
-	{
-		//FIXME it would be better to return an empty String ("") in case no description has been set.
-		return getPropertyValue(DESCRIPTION_KEY);
-	}	
-	
-	public String[] getPropertyKeys() 
-	{
-		Set set = _properties.keySet();
-		
-		return (String[])set.toArray(new String[set.size()]);
+	public PropertySet(String name) {
+		_name = name;
+		_properties = new HashMap();
 	}
 
-	public void setName(String name) 
-	{
+	public String getName() {
+		return _name;
+	}
+
+	public String getDescription() {
+		//FIXME it would be better to return an empty String ("") in case no description has been set.
+		return getPropertyValue(DESCRIPTION_KEY);
+	}
+
+	public String[] getPropertyKeys() {
+		Set set = _properties.keySet();
+
+		return (String[]) set.toArray(new String[set.size()]);
+	}
+
+	public void setName(String name) {
 		_name = name;
 	}
 
-	public void setProperties(Map map) 
-	{
+	public void setProperties(Map map) {
 		//FIXME should clone the map!!
 		//Since the extrnal map might not be writable, or it might be
 		//modified later on
 		_properties = map;
 	}
-	
+
 	/**
 	 * Add a typed Property to the set.
 	 * 
@@ -102,59 +92,47 @@ public class PropertySet implements IPropertySet
 	 * @param property The Property to add
 	 * @return The added Property
 	 */
-	public IProperty addProperty(String key, IProperty property)
-	{
+	public IProperty addProperty(String key, IProperty property) {
 		_properties.put(key, property);
 		return property;
 	}
 
-	public IProperty addProperty(String key,  String value) 
-	{
+	public IProperty addProperty(String key, String value) {
 		IProperty property = getProperty(key);
-		if (property != null)
-		{
+		if (property != null) {
 			//FIXME should throw a NumberFormatException or similar,
 			//if the value does not fit the type of the existing property.
 			property.setValue(value);
 			return property;
-		}
-		else
-		{			
+		} else {
 			return addProperty(key, value, _defaultType);
 		}
 	}
-	
-	public IProperty addProperty(String key, String value, IPropertyType type) 
-	{
+
+	public IProperty addProperty(String key, String value, IPropertyType type) {
 		IProperty property = new Property(key, value, type, true);
 		return addProperty(key, property);
 	}
 
-	public boolean removeProperty(String key) 
-	{
+	public boolean removeProperty(String key) {
 		return _properties.remove(key) != null;
 	}
 
-	public IProperty getProperty(String key)
-	{
-		return (IProperty)_properties.get(key);
+	public IProperty getProperty(String key) {
+		return (IProperty) _properties.get(key);
 	}
 
-	public String getPropertyValue(String key)
-	{
+	public String getPropertyValue(String key) {
 		IProperty property = getProperty(key);
-		if (property != null)
-		{
+		if (property != null) {
 			return property.getValue();
 		}
-		return null;		
+		return null;
 	}
-	
-	public IPropertyType getPropertyType(String key)
-	{
+
+	public IPropertyType getPropertyType(String key) {
 		IProperty property = getProperty(key);
-		if (property != null)
-		{
+		if (property != null) {
 			return property.getType();
 		}
 		return null;

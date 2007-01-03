@@ -29,8 +29,6 @@ import org.eclipse.rse.core.model.ISystemProfile;
 import org.eclipse.rse.core.persistance.IRSEPersistableContainer;
 import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
 
-
-
 /**
  * Interface implemented by SubSystem objects. While connections contain information to identify a 
  * particular remote system, it is the subsystem objects within a connection that contain information
@@ -39,98 +37,105 @@ import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
  * extended by subsystem providers, by extending SubSystem. 
  * <p>
  */
-public interface ISubSystem extends ISystemFilterPoolReferenceManagerProvider, IRemoteObjectResolver, ISchedulingRule, IRSEModelObject, IRSEPersistableContainer
-{	
+public interface ISubSystem extends ISystemFilterPoolReferenceManagerProvider, IRemoteObjectResolver, ISchedulingRule, IRSEModelObject, IRSEPersistableContainer {
 	// -------------------------------------
 	// Shortcut and helper methods...
 	// -------------------------------------
-    /**
-     * Return the parent subsystem factory that owns this subsystem.
-     */
-    public ISubSystemConfiguration getSubSystemConfiguration();
-    /**
-     * Set the parent subsystem factory that owns this subsystem.
-     */
-    public void setSubSystemConfiguration(ISubSystemConfiguration ssf);
-    /**
-     * Set the parent connection that owns this subsystem.
-     */
-    public void setHost(IHost conn);
-    
-    /**
-     * Set the connector service for this subsystem
-     * @param connectorService
-     */
+	/**
+	 * Return the parent subsystem factory that owns this subsystem.
+	 */
+	public ISubSystemConfiguration getSubSystemConfiguration();
+
+	/**
+	 * Set the parent subsystem factory that owns this subsystem.
+	 */
+	public void setSubSystemConfiguration(ISubSystemConfiguration ssf);
+
+	/**
+	 * Set the parent connection that owns this subsystem.
+	 */
+	public void setHost(IHost conn);
+
+	/**
+	 * Set the connector service for this subsystem
+	 * @param connectorService
+	 */
 	public void setConnectorService(IConnectorService connectorService);
-	
+
 	/**
 	 * Return the system profile object this subsystem is associated with.
 	 * @see #getName()
 	 */
 	public ISystemProfile getSystemProfile();
+
 	/**
 	 * Return the connection object this subsystem is associated with.
 	 */
 	public IHost getHost();
-	
+
 	/**
 	 * Called on each subsystem associated with a particular {@link IConnectorService} after it connects. 
 	 * @param monitor A progress monitor supporting progress reporting and cancellation.
 	 */
 	public void initializeSubSystem(IProgressMonitor monitor);
-	
+
 	/**
 	 * Called on each subsystem associated with a particular {@link IConnectorService} after it disconnects
 	 * @param monitor A progress monitor supporting progress reporting and cancellation.
 	 */
 	public void uninitializeSubSystem(IProgressMonitor monitor);
-	
+
 	/**
 	 * @return true if this subsystem's properties should take precedence over other subsystems that share the same IConnectorService
 	 */
 	public boolean isPrimarySubSystem();
+
 	/**
 	 * Return the primary subsystem associated with this subsystem's IConnectorService
 	 */
 	public ISubSystem getPrimarySubSystem();
-	
+
 	/**
 	 * @return The name of the connection that owns this. Same as getSystemConnection().getAliasName()
 	 */
 	public String getHostAliasName();
+
 	/**
 	 * @return The value of the profile that owns the connection that owns this subsystem. Fastpath.
 	 */
-	public String getSystemProfileName();	
+	public String getSystemProfileName();
+
 	/**
 	 * Private method called when the parent profile is being renamed, so
 	 * the subsystem can do any cleanup it needs to. Called after the profile is actually renamed.
 	 */
-	public void renamingProfile(String oldName, String newName);	
+	public void renamingProfile(String oldName, String newName);
+
 	/**
 	 * Private method called when the parent connection is being renamed, so
 	 * the subsystem can do any cleanup it needs to.
 	 */
-	public void renamingConnection(String newName);	
+	public void renamingConnection(String newName);
+
 	/**
 	 * Private method called when the parent connection is being deleted, so
 	 * the subsystem can do any pre-death cleanup it needs to.
 	 */
 	public void deletingConnection();
-    /**
-     * This is a helper method you can call when performing actions that must be certain there
-     * is a connection. If there is no connection it will attempt to connect, and if that fails
-     * will throw a SystemMessageException you can easily display to the user by using a method
-     * in it.
-     */
-    public void checkIsConnected() throws SystemMessageException;
-    
-	
+
+	/**
+	 * This is a helper method you can call when performing actions that must be certain there
+	 * is a connection. If there is no connection it will attempt to connect, and if that fails
+	 * will throw a SystemMessageException you can easily display to the user by using a method
+	 * in it.
+	 */
+	public void checkIsConnected() throws SystemMessageException;
+
 	// ---------------------------------------------------
 	// Methods for business partners to add their own 
 	//  persisted attributes to the subsystem object...
 	// ---------------------------------------------------    
-	
+
 	/**
 	 * For business partners defining their own subsystems.
 	 * This method allows an attribute to be persisted in this
@@ -153,8 +158,8 @@ public interface ISubSystem extends ISystemFilterPoolReferenceManagerProvider, I
 	 *   <li>Three semicolons (";;;")
 	 * </ul>
 	 */
-	public void setVendorAttribute(String vendorName, 
-	                                String attributeName, String attributeValue);
+	public void setVendorAttribute(String vendorName, String attributeName, String attributeValue);
+
 	/**
 	 * For business partners defining their own subsystems.
 	 * This method allows retrieval of a persisted attribute in this
@@ -167,43 +172,44 @@ public interface ISubSystem extends ISystemFilterPoolReferenceManagerProvider, I
 	 * @return value of the attribute being queried, or null if not found
 	 */
 	public String getVendorAttribute(String vendorName, String attributeName);
-    
 
-		
 	// -------------------------------------
 	// Context and attributue information...
 	// -------------------------------------
 
-    /**
-     * Return true if userId and password should be forced to uppercase.
-     * Shortcut to calling same method in parent SubSystemConfiguration.
-     */
-    public boolean forceUserIdToUpperCase();
-    /**
-     * Alternative to getUserId when we don't want to resolve it from parent connection.
-     * This is used when showing the properties.
-     * <p>
-     * Unlike getUserId() this one does not defer to the connection's default user Id if
-     * the subsystem's userId attribute is null.
-     * <p>
-     * To set the local user Id, simply call setUserId(String id). To clear it, call
-     * {@link #clearLocalUserId()}.
-     * <p>
+	/**
+	 * Return true if userId and password should be forced to uppercase.
+	 * Shortcut to calling same method in parent SubSystemConfiguration.
+	 */
+	public boolean forceUserIdToUpperCase();
+
+	/**
+	 * Alternative to getUserId when we don't want to resolve it from parent connection.
+	 * This is used when showing the properties.
+	 * <p>
+	 * Unlike getUserId() this one does not defer to the connection's default user Id if
+	 * the subsystem's userId attribute is null.
+	 * <p>
+	 * To set the local user Id, simply call setUserId(String id). To clear it, call
+	 * {@link #clearLocalUserId()}.
+	 * <p>
 	 * @see IHost#getDefaultUserId()
 	 * @see #clearLocalUserId()
 	 * @see #getUserId()
-     */
-    public String getLocalUserId();
-    /**
-     * Called to clear the local user Id such that subsequent requests to getUserId() will
-     * return the parent connection's default user Id. Sets the user Id attribute for this
-     * subsystem to null.
-     * <p>
+	 */
+	public String getLocalUserId();
+
+	/**
+	 * Called to clear the local user Id such that subsequent requests to getUserId() will
+	 * return the parent connection's default user Id. Sets the user Id attribute for this
+	 * subsystem to null.
+	 * <p>
 	 * @see IHost#getDefaultUserId()
 	 * @see #getUserId()
 	 * @see #getLocalUserId()
-     */
-    public void clearLocalUserId();
+	 */
+	public void clearLocalUserId();
+
 	/**
 	 * Return the children for this subsystem.
 	 * This is used to populate the Remote System View explorer.
@@ -214,42 +220,45 @@ public interface ISubSystem extends ISystemFilterPoolReferenceManagerProvider, I
 	 *  return null. In this case you should override this.
 	 */
 	public Object[] getChildren();
+
 	/**
 	 * Return true if this subsystem has children objects to
 	 *  be displayed in the Remote System View explorer.
 	 */
-	public boolean hasChildren();	
+	public boolean hasChildren();
 
 	/**
-     * Return true if the given filter lists the contents of the given remote object.
-     *  For example, if given a folder, return true if any of the filter strings in this filter 
-     *  lists the contents of that folder. Used in impact analysis when a remote object is 
-     *  created, deleted, renamed, copied or moved, so as to establish which filters need to be
-     *  refreshed or collapsed (if the folder is deleted, say).
-     * <p>
-     * The default algorithm calls doesFilterStringListContentsOf for each filter string.
-     */
-    public boolean doesFilterListContentsOf(ISystemFilter filter, String remoteObjectAbsoluteName);
-    /**
-     * Return true if the given filter string lists the contents of the given remote object.
-     *  For example, if given a folder, return true if the given filter string
-     *  lists the contents of that folder. Used in impact analysis when a remote object is 
-     *  created, deleted, renamed, copied or moved, so as to establish which filters need to be
-     *  refreshed or collapsed (if the folder is deleted, say).
-     */
-    public boolean doesFilterStringListContentsOf(ISystemFilterString filterString, String remoteObjectAbsoluteName);
-    
-    /**
-     * Return true if the given remote object name will pass the filtering criteria for any of 
-     *  the filter strings in this filter.
-     */
-    public boolean doesFilterMatch(ISystemFilter filter, String remoteObjectAbsoluteName);
-    /**
-     * Return true if the given remote object name will pass the filtering criteria for the 
-     *  given filter string in this filter.
-     */
-    public boolean doesFilterStringMatch(String filterString, String remoteObjectAbsoluteName, boolean caseSensitive);
-    	
+	 * Return true if the given filter lists the contents of the given remote object.
+	 *  For example, if given a folder, return true if any of the filter strings in this filter 
+	 *  lists the contents of that folder. Used in impact analysis when a remote object is 
+	 *  created, deleted, renamed, copied or moved, so as to establish which filters need to be
+	 *  refreshed or collapsed (if the folder is deleted, say).
+	 * <p>
+	 * The default algorithm calls doesFilterStringListContentsOf for each filter string.
+	 */
+	public boolean doesFilterListContentsOf(ISystemFilter filter, String remoteObjectAbsoluteName);
+
+	/**
+	 * Return true if the given filter string lists the contents of the given remote object.
+	 *  For example, if given a folder, return true if the given filter string
+	 *  lists the contents of that folder. Used in impact analysis when a remote object is 
+	 *  created, deleted, renamed, copied or moved, so as to establish which filters need to be
+	 *  refreshed or collapsed (if the folder is deleted, say).
+	 */
+	public boolean doesFilterStringListContentsOf(ISystemFilterString filterString, String remoteObjectAbsoluteName);
+
+	/**
+	 * Return true if the given remote object name will pass the filtering criteria for any of 
+	 *  the filter strings in this filter.
+	 */
+	public boolean doesFilterMatch(ISystemFilter filter, String remoteObjectAbsoluteName);
+
+	/**
+	 * Return true if the given remote object name will pass the filtering criteria for the 
+	 *  given filter string in this filter.
+	 */
+	public boolean doesFilterStringMatch(String filterString, String remoteObjectAbsoluteName, boolean caseSensitive);
+
 	// -------------------------
 	// Filter Pool References...
 	// -------------------------
@@ -272,11 +281,11 @@ public interface ISubSystem extends ISystemFilterPoolReferenceManagerProvider, I
 	/**
 	 * Returns the value of this subsystem's user id if it is not null. If it
 	 * is null, it returns the parent connection object's default user Id.
-     * <p>
-     * In fact, we now don't store the user Id in the subsystem object itself, but rather store it in the
-     * user preferences, so that such things are not shared among the team on a synchronize operation.
-     * This is transparent to callers of this method however, as this method resolves from the preferences.
-     *
+	 * <p>
+	 * In fact, we now don't store the user Id in the subsystem object itself, but rather store it in the
+	 * user preferences, so that such things are not shared among the team on a synchronize operation.
+	 * This is transparent to callers of this method however, as this method resolves from the preferences.
+	 *
 	 * @see IHost#getDefaultUserId()
 	 * @see #getLocalUserId()
 	 * @see #clearLocalUserId()
@@ -308,7 +317,7 @@ public interface ISubSystem extends ISystemFilterPoolReferenceManagerProvider, I
 	 * Check if the SubSystem supports caching.
 	 */
 	public boolean supportsCaching();
-	
+
 	/**
 	 * Return the CacheManager for this subsystem.  If the SubSystem returns true for 
 	 * supportsCaching() then it must return a valid CacheManager, otherwise it is free
@@ -322,17 +331,17 @@ public interface ISubSystem extends ISystemFilterPoolReferenceManagerProvider, I
 	 * Return true if this subsystem is currently connected to its remote system.
 	 */
 	public boolean isConnected();
-	
+
 	/**
 	 * Return true if the last attempt to connect this subsystem to its remote system failed.
 	 */
 	public boolean isConnectionError();
-	
+
 	/**
 	 * Sets whether the last attempt to connect this subsystem to its remote system failed.
 	 */
 	public void setConnectionError(boolean error);
-	
+
 	/**
 	 * Return true if this subsystem is currently being used in "offline" mode. Not necessarily supported
 	 *  by all subsystems in which case this will always return false.
@@ -342,17 +351,16 @@ public interface ISubSystem extends ISystemFilterPoolReferenceManagerProvider, I
 	/**
 	 * Connect to the remote system. Does not force a prompt for a password.
 	 */
-	public void connect() throws Exception;	
-			
+	public void connect() throws Exception;
+
 	/**
 	 * Connect to the remote system, optionally forcing a signon prompt even if the password
 	 * is cached in memory or on disk.
 	 * 
-      * @param forcePrompt forces the prompt dialog to be displayed even if the password is currently
+	 * @param forcePrompt forces the prompt dialog to be displayed even if the password is currently
 	 * in memory.
 	 */
-	public void connect(boolean forcePrompt) throws Exception;	
-	
+	public void connect(boolean forcePrompt) throws Exception;
 
 	/**
 	 * Disconnect from the remote system.
@@ -360,7 +368,7 @@ public interface ISubSystem extends ISystemFilterPoolReferenceManagerProvider, I
 	 *  event to collapse the expanded nodes in the tree under this node.
 	 */
 	public void disconnect() throws Exception;
-	 
+
 	/**
 	 * Disconnect from the remote system.
 	 * In addition to calling getSystem().disconnect(),this may fire an
@@ -368,218 +376,207 @@ public interface ISubSystem extends ISystemFilterPoolReferenceManagerProvider, I
 	 * depending on the value of collapseTree.
 	 */
 	public void disconnect(boolean collapseTree) throws Exception;
-	
-	
-	
-    /**
-     * Modal thread version of resolve filter strings
-     * Resolve an absolute filter string. This is only applicable if the subsystem
-     *  factory reports true for supportsFilters().
-     * <p>
-     * When a user expands a filter containing filter strings, this method is
-     *  invoked for each filter string.
-     * <p>
-     * The resulting objects are displayed in the remote system view tree. They
-     *  can be anything, but at a minimum must support IAdaptable in order to
-     *  drive the property sheet. You can just defer the getAdapter request to
-     *  the platform's Adapter manager if desired.
-     * <p>
-     * You should supply an adapter class for the returned object's class,
-     *  to render objects in the Remote System Explorer view. It will uses a
-     *  label and content provider that defers all requests to the adapter,
-     *  which it gets by querying the platform's adapter manager for the object
-     *  type. Be sure to register your adapter factory.
-     *
-     * @param monitor the process monitor associated with this operation
-     * @param filterString filter pattern for objects to return.
-     * @return Array of objects that are the result of this filter string
-     */
-    public Object[] resolveFilterString(IProgressMonitor monitor, String filterString)
-           throws Exception;
 
-    /**
-     * Modal thread version of resolve filter strings
-     * Resolve an absolute filter string. This is only applicable if the subsystem
-     *  factory reports true for supportsFilters().
-     * <p>
-     * When a user expands a filter containing filter strings, this method is
-     *  invoked for each filter string.
-     * <p>
-     * The resulting objects are displayed in the remote system view tree. They
-     *  can be anything, but at a minimum must support IAdaptable in order to
-     *  drive the property sheet. You can just defer the getAdapter request to
-     *  the platform's Adapter manager if desired.
-     * <p>
-     * You should supply an adapter class for the returned object's class,
-     *  to render objects in the Remote System Explorer view. It will uses a
-     *  label and content provider that defers all requests to the adapter,
-     *  which it gets by querying the platform's adapter manager for the object
-     *  type. Be sure to register your adapter factory.
-     *
-     * @param monitor the process monitor associated with this operation
-     * @param filterStrings filter patterns for objects to return.
-     * @return Array of objects that are the result of this filter string
-     */
-    public Object[] resolveFilterStrings(IProgressMonitor monitor, String[] filterStrings)
-           throws Exception;
+	/**
+	 * Modal thread version of resolve filter strings
+	 * Resolve an absolute filter string. This is only applicable if the subsystem
+	 *  factory reports true for supportsFilters().
+	 * <p>
+	 * When a user expands a filter containing filter strings, this method is
+	 *  invoked for each filter string.
+	 * <p>
+	 * The resulting objects are displayed in the remote system view tree. They
+	 *  can be anything, but at a minimum must support IAdaptable in order to
+	 *  drive the property sheet. You can just defer the getAdapter request to
+	 *  the platform's Adapter manager if desired.
+	 * <p>
+	 * You should supply an adapter class for the returned object's class,
+	 *  to render objects in the Remote System Explorer view. It will uses a
+	 *  label and content provider that defers all requests to the adapter,
+	 *  which it gets by querying the platform's adapter manager for the object
+	 *  type. Be sure to register your adapter factory.
+	 *
+	 * @param monitor the process monitor associated with this operation
+	 * @param filterString filter pattern for objects to return.
+	 * @return Array of objects that are the result of this filter string
+	 */
+	public Object[] resolveFilterString(IProgressMonitor monitor, String filterString) throws Exception;
 
-    /**
-     * Modal thread version of resolve filter strings
-     * Resolve an absolute filter string. This is only applicable if the subsystem
-     *  factory reports true for supportsFilters().
-     * <p>
-     * When a user expands a filter containing filter strings, this method is
-     *  invoked for each filter string.
-     * <p>
-     * The resulting objects are displayed in the remote system view tree. They
-     *  can be anything, but at a minimum must support IAdaptable in order to
-     *  drive the property sheet. You can just defer the getAdapter request to
-     *  the platform's Adapter manager if desired.
-     * <p>
-     * You should supply an adapter class for the returned object's class,
-     *  to render objects in the Remote System Explorer view. It will uses a
-     *  label and content provider that defers all requests to the adapter,
-     *  which it gets by querying the platform's adapter manager for the object
-     *  type. Be sure to register your adapter factory.
-     *
-     * @param monitor the process monitor associated with this operation
-     * @param parent the parent object to query
-     * @param filterString filter pattern for objects to return.
-     * @return Array of objects that are the result of this filter string
-     */
-    public Object[] resolveFilterString(IProgressMonitor monitor, Object parent, String filterString)
-           throws Exception;
-	
-    /**
-     * Resolve an absolute filter string. This is only applicable if the subsystem
-     *  factory reports true for supportsFilters().
-     * <p>
-     * When a user expands a filter containing filter strings, this method is
-     *  invoked for each filter string.
-     * <p>
-     * The resulting objects are displayed in the remote system view tree. They
-     *  can be anything, but at a minimum must support IAdaptable in order to
-     *  drive the property sheet. You can just defer the getAdapter request to
-     *  the platform's Adapter manager if desired.
-     * <p>
-     * You should supply an adapter class for the returned object's class,
-     *  to render objects in the Remote System Explorer view. It will uses a
-     *  label and content provider that defers all requests to the adapter,
-     *  which it gets by querying the platform's adapter manager for the object
-     *  type. Be sure to register your adapter factory.
-     *
-     * @param filterString filter pattern for objects to return.
-     * @return Array of objects that are the result of this filter string
-     */
-    public Object[] resolveFilterString(String filterString)
-           throws Exception;
-    /**
-     * Resolve multiple absolute filter strings. This is only applicable if the subsystem
-     *  factory reports true for supportsFilters().
-     * <p>
-     * This is the same as {@link #resolveFilterString(String)} but takes an array of
-     * filter strings versus a single filter string.
-     *
-     * @param filterStrings array of filter patterns for objects to return.
-     * @return Array of objects that are the result of resolving all the filter strings
-     */
-    public Object[] resolveFilterStrings(String[] filterStrings)
-           throws Exception;
+	/**
+	 * Modal thread version of resolve filter strings
+	 * Resolve an absolute filter string. This is only applicable if the subsystem
+	 *  factory reports true for supportsFilters().
+	 * <p>
+	 * When a user expands a filter containing filter strings, this method is
+	 *  invoked for each filter string.
+	 * <p>
+	 * The resulting objects are displayed in the remote system view tree. They
+	 *  can be anything, but at a minimum must support IAdaptable in order to
+	 *  drive the property sheet. You can just defer the getAdapter request to
+	 *  the platform's Adapter manager if desired.
+	 * <p>
+	 * You should supply an adapter class for the returned object's class,
+	 *  to render objects in the Remote System Explorer view. It will uses a
+	 *  label and content provider that defers all requests to the adapter,
+	 *  which it gets by querying the platform's adapter manager for the object
+	 *  type. Be sure to register your adapter factory.
+	 *
+	 * @param monitor the process monitor associated with this operation
+	 * @param filterStrings filter patterns for objects to return.
+	 * @return Array of objects that are the result of this filter string
+	 */
+	public Object[] resolveFilterStrings(IProgressMonitor monitor, String[] filterStrings) throws Exception;
 
-    /**
-     * Resolve an relative filter string. This is only applicable if the subsystem
-     *  factory reports true for supportsFilters().
-     * <p>
-     * When a user expands an object that came from a previous filter string expansion,
-     *  (such as expanding a folder), this method is invoked to get the children of
-     *  that object. The user can choose to expand all, or choose a pre-defined
-     *  relative filter string to subset/filter the children. In either case, the
-     *  relative filter string is passed in as well as the to-be-expanded parent object.
-     * <p>
-     * The resulting objects are displayed in the remote system view tree. They
-     *  can be anything, but at a minimum must support IAdaptable in order to
-     *  drive the property sheet. You can just defer the getAdapter request to
-     *  the platform's Adapter manager if desired.
-     * <p>
-     * You should supply an adapter class for the returned object's class,
-     *  to render objects in the Remote System Explorer view. It will uses a
-     *  label and content provider that defers all requests to the adapter,
-     *  which it gets by querying the platform's adapter manager for the object
-     *  type. Be sure to register your adapter factory.
-     *
-     * @param parent Object that is being expanded.
-     * @param filterString filter pattern for children of parent.
-     *  @return Array of objects that are the result of this filter string
-     */
-    public Object[] resolveFilterString(Object parent, String filterString)
-           throws Exception;
+	/**
+	 * Modal thread version of resolve filter strings
+	 * Resolve an absolute filter string. This is only applicable if the subsystem
+	 *  factory reports true for supportsFilters().
+	 * <p>
+	 * When a user expands a filter containing filter strings, this method is
+	 *  invoked for each filter string.
+	 * <p>
+	 * The resulting objects are displayed in the remote system view tree. They
+	 *  can be anything, but at a minimum must support IAdaptable in order to
+	 *  drive the property sheet. You can just defer the getAdapter request to
+	 *  the platform's Adapter manager if desired.
+	 * <p>
+	 * You should supply an adapter class for the returned object's class,
+	 *  to render objects in the Remote System Explorer view. It will uses a
+	 *  label and content provider that defers all requests to the adapter,
+	 *  which it gets by querying the platform's adapter manager for the object
+	 *  type. Be sure to register your adapter factory.
+	 *
+	 * @param monitor the process monitor associated with this operation
+	 * @param parent the parent object to query
+	 * @param filterString filter pattern for objects to return.
+	 * @return Array of objects that are the result of this filter string
+	 */
+	public Object[] resolveFilterString(IProgressMonitor monitor, Object parent, String filterString) throws Exception;
 
-    /*
-     * Execute a remote command. This is only applicable if the subsystem factory reports
-     *  true for supportsCommands().
-     * @param command Command to be executed remotely.
-     * @param Shell parent shell used to show error message. Null means you will handle showing the error message.
-     * @param Object context context of a command (i.e. working directory).  Null is valid and means to use the default context.
-     * @return Array of objects that are the result of running this command. Typically, these
-     *   are messages logged by the command.
-     *
-    public Object[] runCommand(String command, Shell shell, Object context)
-           throws Exception;
+	/**
+	 * Resolve an absolute filter string. This is only applicable if the subsystem
+	 *  factory reports true for supportsFilters().
+	 * <p>
+	 * When a user expands a filter containing filter strings, this method is
+	 *  invoked for each filter string.
+	 * <p>
+	 * The resulting objects are displayed in the remote system view tree. They
+	 *  can be anything, but at a minimum must support IAdaptable in order to
+	 *  drive the property sheet. You can just defer the getAdapter request to
+	 *  the platform's Adapter manager if desired.
+	 * <p>
+	 * You should supply an adapter class for the returned object's class,
+	 *  to render objects in the Remote System Explorer view. It will uses a
+	 *  label and content provider that defers all requests to the adapter,
+	 *  which it gets by querying the platform's adapter manager for the object
+	 *  type. Be sure to register your adapter factory.
+	 *
+	 * @param filterString filter pattern for objects to return.
+	 * @return Array of objects that are the result of this filter string
+	 */
+	public Object[] resolveFilterString(String filterString) throws Exception;
+
+	/**
+	 * Resolve multiple absolute filter strings. This is only applicable if the subsystem
+	 *  factory reports true for supportsFilters().
+	 * <p>
+	 * This is the same as {@link #resolveFilterString(String)} but takes an array of
+	 * filter strings versus a single filter string.
+	 *
+	 * @param filterStrings array of filter patterns for objects to return.
+	 * @return Array of objects that are the result of resolving all the filter strings
+	 */
+	public Object[] resolveFilterStrings(String[] filterStrings) throws Exception;
+
+	/**
+	 * Resolve an relative filter string. This is only applicable if the subsystem
+	 *  factory reports true for supportsFilters().
+	 * <p>
+	 * When a user expands an object that came from a previous filter string expansion,
+	 *  (such as expanding a folder), this method is invoked to get the children of
+	 *  that object. The user can choose to expand all, or choose a pre-defined
+	 *  relative filter string to subset/filter the children. In either case, the
+	 *  relative filter string is passed in as well as the to-be-expanded parent object.
+	 * <p>
+	 * The resulting objects are displayed in the remote system view tree. They
+	 *  can be anything, but at a minimum must support IAdaptable in order to
+	 *  drive the property sheet. You can just defer the getAdapter request to
+	 *  the platform's Adapter manager if desired.
+	 * <p>
+	 * You should supply an adapter class for the returned object's class,
+	 *  to render objects in the Remote System Explorer view. It will uses a
+	 *  label and content provider that defers all requests to the adapter,
+	 *  which it gets by querying the platform's adapter manager for the object
+	 *  type. Be sure to register your adapter factory.
+	 *
+	 * @param parent Object that is being expanded.
+	 * @param filterString filter pattern for children of parent.
+	 *  @return Array of objects that are the result of this filter string
+	 */
+	public Object[] resolveFilterString(Object parent, String filterString) throws Exception;
 
 	/*
-	 * Provide list of executed commands on subsystem.This is only applicable if the subsystem factory reports
-     *  true for supportsCommands().
+	 * Execute a remote command. This is only applicable if the subsystem factory reports
+	 *  true for supportsCommands().
+	 * @param command Command to be executed remotely.
+	 * @param Shell parent shell used to show error message. Null means you will handle showing the error message.
+	 * @param Object context context of a command (i.e. working directory).  Null is valid and means to use the default context.
+	 * @return Array of objects that are the result of running this command. Typically, these
+	 *   are messages logged by the command.
 	 *
-	public String[] getExecutedCommands();
-	*/
-	
-    /**
-     * Set a remote property. Subsystems interpret as they wish. Eg, this might be to set
-     *  a remote environment variable. This is only applicable if the subsystem factory reports
-     *  true for supportsProperties().
-     * @param subject Identifies which object to get the properties of
-     * @param key Identifies property to set
-     * @param value Value to set property to
-     * @return Object interpretable by subsystem. Might be a Boolean, or the might be new value for confirmation.
-     */
-    public Object setProperty(Object subject, String key, String value)
-           throws Exception;
+	 public Object[] runCommand(String command, Shell shell, Object context)
+	 throws Exception;
 
-    /**
-     * Get a remote property. Subsystems interpret as they wish. Eg, this might be to get
-     *  a remote environment variable. This is only applicable if the subsystem factory reports
-     *  true for supportsProperties().
-     * @param subject Identifies which object to get the properties of
-     * @param key Identifies property to get value of
-     * @return String The value of the requested key.
-     */
-    public String getProperty(Object subject, String key)
-           throws Exception;
+	 /*
+	 * Provide list of executed commands on subsystem.This is only applicable if the subsystem factory reports
+	 *  true for supportsCommands().
+	 *
+	 public String[] getExecutedCommands();
+	 */
 
-    /**
-     * Set multiple remote properties. Subsystems interpret as they wish. Eg, this might be to set
-     * a number of remote environment variables. This is only applicable if the subsystem factory reports
-     * true for supportsProperties().
-     * @param subject Identifies which object to get the properties of
-     * @param keys Identifies the properties to set
-     * @param values Values to set properties to. One to one mapping to keys by index number
-     * @return Object interpretable by subsystem. Might be a Boolean, or the might be new values for confirmation.
-     */
-    public Object setProperties(Object subject, String[] keys, String[] values)
-           throws Exception;
+	/**
+	 * Set a remote property. Subsystems interpret as they wish. Eg, this might be to set
+	 *  a remote environment variable. This is only applicable if the subsystem factory reports
+	 *  true for supportsProperties().
+	 * @param subject Identifies which object to get the properties of
+	 * @param key Identifies property to set
+	 * @param value Value to set property to
+	 * @return Object interpretable by subsystem. Might be a Boolean, or the might be new value for confirmation.
+	 */
+	public Object setProperty(Object subject, String key, String value) throws Exception;
 
-    /**
-     * Get a remote property. Subsystems interpret as they wish. Eg, this might be to get
-     *  a remote environment variable. This is only applicable if the subsystem factory reports
-     *  true for supportsProperties().
-     * @param subject Identifies which object to get the properties of
-     * @param keys Identifies properties to get value of
-     * @return The values of the requested keys.
-     */
-    public String[] getProperties(Object subject, String[] keys)
-           throws Exception;
-           
-  	/**
+	/**
+	 * Get a remote property. Subsystems interpret as they wish. Eg, this might be to get
+	 *  a remote environment variable. This is only applicable if the subsystem factory reports
+	 *  true for supportsProperties().
+	 * @param subject Identifies which object to get the properties of
+	 * @param key Identifies property to get value of
+	 * @return String The value of the requested key.
+	 */
+	public String getProperty(Object subject, String key) throws Exception;
+
+	/**
+	 * Set multiple remote properties. Subsystems interpret as they wish. Eg, this might be to set
+	 * a number of remote environment variables. This is only applicable if the subsystem factory reports
+	 * true for supportsProperties().
+	 * @param subject Identifies which object to get the properties of
+	 * @param keys Identifies the properties to set
+	 * @param values Values to set properties to. One to one mapping to keys by index number
+	 * @return Object interpretable by subsystem. Might be a Boolean, or the might be new values for confirmation.
+	 */
+	public Object setProperties(Object subject, String[] keys, String[] values) throws Exception;
+
+	/**
+	 * Get a remote property. Subsystems interpret as they wish. Eg, this might be to get
+	 *  a remote environment variable. This is only applicable if the subsystem factory reports
+	 *  true for supportsProperties().
+	 * @param subject Identifies which object to get the properties of
+	 * @param keys Identifies properties to get value of
+	 * @return The values of the requested keys.
+	 */
+	public String[] getProperties(Object subject, String[] keys) throws Exception;
+
+	/**
 	 * <i>Generated persistent property method</i><br>
 	 * Return true if this subsystem is to be hidden so it doesn't show in the Remote Systems
 	 * view when a connection is expanded. If so, this subsystem is for programmatic use only,
@@ -618,11 +615,6 @@ public interface ISubSystem extends ISystemFilterPoolReferenceManagerProvider, I
 	 */
 	void setFilterPoolReferenceManager(ISystemFilterPoolReferenceManager value);
 
-	
-
-	
-
-	
 	/**
 	 * Returns the parent object associated with a filter reference.  It's up to the
 	 * subsystem implementation to decide what "parent object" means for a filter reference.
@@ -631,20 +623,17 @@ public interface ISubSystem extends ISystemFilterPoolReferenceManagerProvider, I
 	 */
 	Object getTargetForFilter(ISystemFilterReference filterRef);
 
-	
-	
-	
-////	 -------------------------------------
-//	// GUI methods 
-//	// -------------------------------------
-//	/**
-//	 * Return the single property page to show in the tabbed notebook for the
-//	 *  for SubSystem property of the parent Connection. Return null if no 
-//	 *  page is to be contributed for this. You are limited to a single page,
-//	 *  so you may have to compress. It is recommended you prompt for the port
-//	 *  if applicable since the common base subsystem property page is not shown
-//	 *  To help with this you can use the SystemPortPrompt widget.
-//	 */
-//    public PropertyPage getPropertyPage(Composite parent);
+	////	 -------------------------------------
+	//	// GUI methods 
+	//	// -------------------------------------
+	//	/**
+	//	 * Return the single property page to show in the tabbed notebook for the
+	//	 *  for SubSystem property of the parent Connection. Return null if no 
+	//	 *  page is to be contributed for this. You are limited to a single page,
+	//	 *  so you may have to compress. It is recommended you prompt for the port
+	//	 *  if applicable since the common base subsystem property page is not shown
+	//	 *  To help with this you can use the SystemPortPrompt widget.
+	//	 */
+	//    public PropertyPage getPropertyPage(Composite parent);
 
 }

@@ -22,9 +22,9 @@ import org.eclipse.osgi.util.NLS;
  * This class contains bundle resources for model objects.
  */
 public class RSEModelResources extends NLS {
-	
+
 	private static String BUNDLE_NAME = "org.eclipse.rse.core.model.RSEModelResources"; //$NON-NLS-1$
-	
+
 	public static String RESID_MODELOBJECTS_MODELOBJECT_DESCRIPTION;
 	public static String RESID_MODELOBJECTS_REFERENCINGOBJECT_DESCRIPTION;
 

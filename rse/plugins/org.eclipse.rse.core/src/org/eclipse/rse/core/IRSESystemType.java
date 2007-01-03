@@ -26,75 +26,75 @@ import org.osgi.framework.Bundle;
  * This interface is not intended to be implemented by clients.
  */
 public interface IRSESystemType extends IAdaptable {
-	
+
 	/**
 	 * Linux system type, "Linux".
 	 */
 	public static final String SYSTEMTYPE_LINUX = "Linux"; //$NON-NLS-1$
-	
+
 	/**
 	 * Power Linux type, "Power Linux".
 	 */
 	public static final String SYSTEMTYPE_POWER_LINUX = "Power Linux"; //$NON-NLS-1$
-	
+
 	/**
 	 * Power Linux type, "zSeries Linux".
 	 */
 	public static final String SYSTEMTYPE_ZSERIES_LINUX = "zSeries Linux"; //$NON-NLS-1$
-	
+
 	/**
 	 * Unix system type, "Unix".
 	 */
 	public static final String SYSTEMTYPE_UNIX = "Unix"; //$NON-NLS-1$
-	
+
 	/**
 	 * AIX system type, "AIX".
 	 */
 	public static final String SYSTEMTYPE_AIX = "AIX"; //$NON-NLS-1$
-	
+
 	/**
 	 * PASE system type, "PASE".
 	 */
 	public static final String SYSTEMTYPE_PASE = "PASE"; //$NON-NLS-1$
-	
+
 	/**
 	 * iSeries system type, "iSeries".
 	 */
 	public static final String SYSTEMTYPE_ISERIES = "iSeries"; //$NON-NLS-1$
-	
+
 	/**
 	 * Local system type, "Local".
 	 */
 	public static final String SYSTEMTYPE_LOCAL = "Local"; //$NON-NLS-1$
-	
+
 	/**
 	 * z/OS system type, "z/OS".
 	 */
 	public static final String SYSTEMTYPE_ZSERIES = "z/OS"; //$NON-NLS-1$
-	
+
 	/**
 	 * Windows system type, "Windows".
 	 */
 	public static final String SYSTEMTYPE_WINDOWS = "Windows"; //$NON-NLS-1$
-	
+
 	/**
 	 * Returns the id of the system type.
 	 * @return the id of the system type
 	 */
 	public String getId();
-	
+
 	/**
 	 * Returns the name of the system type.
 	 * @return the name of the system type
 	 */
 	public String getName();
-	
+
 	/**
 	 * Returns the description of the system type.
 	 * @return the description of the system type
 	 */
 	public String getDescription();
-	
+
 	/**
 	 * Returns the property of this system type with the given key.
 	 * <code>null</code> is returned if there is no such key/value pair.
@@ -103,7 +103,7 @@ public interface IRSESystemType extends IAdaptable {
 	 * @return the value associated with the given key or <code>null</code> if none
 	 */
 	public String getProperty(String key);
-	
+
 	/**
 	 * Returns the bundle which is responsible for the definition of this system type.
 	 * Typically this is used as a base for searching for images and other files 

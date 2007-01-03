@@ -15,8 +15,8 @@
  ********************************************************************************/
 
 package org.eclipse.rse.core.references;
-import org.eclipse.core.resources.IFolder;
 
+import org.eclipse.core.resources.IFolder;
 
 /**
  * A class for managing a list of shadow objects that reference master objects.
@@ -53,65 +53,74 @@ import org.eclipse.core.resources.IFolder;
  * @lastgen interface SystemPersistableReferenceManager  {}
  */
 
-public interface IRSEBasePersistableReferenceManager 
-{
+public interface IRSEBasePersistableReferenceManager {
 
 	/**
 	 * Return an array of the referencing objects currently being managed.
 	 * @return array of the referencing objects currently in this list.
 	 */
 	public IRSEBasePersistableReferencingObject[] getReferencingObjects();
+
 	/**
 	 * Set in one shot the list of referencing objects. Replaces current list.
 	 * @param objects An array of referencing objects which is to become the new list.
-     * @param deReference true to first de-reference all objects in the existing list.
+	 * @param deReference true to first de-reference all objects in the existing list.
 	 */
 	public void setReferencingObjects(IRSEBasePersistableReferencingObject[] objects, boolean deReference);
+
 	/**
 	 * Add a referencing object to the managed list.
 	 * @return new count of referenced objects being managed.
 	 */
 	public int addReferencingObject(IRSEBasePersistableReferencingObject object);
+
 	/**
 	 * Remove a referencing object from the managed list.
 	 * <p>Does NOT call removeReference on the master referenced object.
 	 * @return new count of referenced objects being managed.
 	 */
-	public int removeReferencingObject(IRSEBasePersistableReferencingObject object);	
+	public int removeReferencingObject(IRSEBasePersistableReferencingObject object);
+
 	/**
 	 * Remove and dereferences a referencing object from the managed list.
 	 * <p>DOES call removeReference on the master referenced object.
 	 * @return new count of referenced objects being managed.
 	 */
-	public int removeAndDeReferenceReferencingObject(IRSEBasePersistableReferencingObject object);	
+	public int removeAndDeReferenceReferencingObject(IRSEBasePersistableReferencingObject object);
+
 	/**
 	 * Remove all objects from the list.
 	 * <p>Does NOT call removeReference on the master referenced objects.
 	 */
-	public void removeAllReferencingObjects();	
+	public void removeAllReferencingObjects();
+
 	/**
 	 * Remove and dereference all objects from the list.
 	 * <p>DOES call removeReference on the master referenced objects.
 	 */
-	public void removeAndDeReferenceAllReferencingObjects();	
+	public void removeAndDeReferenceAllReferencingObjects();
+
 	/**
 	 * Return how many referencing objects are currently in the list.
 	 * @return current count of referenced objects being managed.
 	 */
-	public int getReferencingObjectCount();	
+	public int getReferencingObjectCount();
+
 	/**
 	 * Return the zero-based position of the given referencing object within the list.
-     * Does a memory address comparison (==) to find the object.
+	 * Does a memory address comparison (==) to find the object.
 	 * @param object The referencing object to find position of.
 	 * @return zero-based position within the list. If not found, returns -1
 	 */
-	public int getReferencingObjectPosition(IRSEBasePersistableReferencingObject object);	
+	public int getReferencingObjectPosition(IRSEBasePersistableReferencingObject object);
+
 	/**
 	 * Move the given referencing object to a new zero-based position in the list.
 	 * @param newPosition New zero-based position
 	 * @param object The referencing object to move
 	 */
-	public void moveReferencingObjectPosition(int newPosition, IRSEBasePersistableReferencingObject object);	
+	public void moveReferencingObjectPosition(int newPosition, IRSEBasePersistableReferencingObject object);
+
 	/**
 	 * Return true if the given referencable object is indeed referenced by a referencing object
 	 * in the current list. This is done by comparing the reference names of each, not the
@@ -119,7 +128,8 @@ public interface IRSEBasePersistableReferenceManager
 	 * @param object The referencable object to which to search for a referencing object within this list
 	 * @return true if found in list, false otherwise.
 	 */
-	public boolean isReferenced(IRSEBasePersistableReferencedObject object);	
+	public boolean isReferenced(IRSEBasePersistableReferencedObject object);
+
 	/**
 	 * Search list of referencing objects to see if one of them references the given referencable object.
 	 * This is done by comparing the reference names of each, not the in-memory pointers.
@@ -127,32 +137,31 @@ public interface IRSEBasePersistableReferenceManager
 	 * @return the referencing object within this list which references the given referencable object, or
 	 * null if no reference found.
 	 */
-	public IRSEBasePersistableReferencingObject getReferencedObject(IRSEBasePersistableReferencedObject object);	
-	
-    /**
-     * Attempt to save contents of manager to disk. Only call if not doing your own save from
-     *  your own model that uses a subclass of this.
-     * @param folder The folder in which to save the manager.
-     * @param fileName The unqualified file name to save to. Should include extension, such as .xmi
-     */
-    public void save(IFolder folder, String fileName)
-       throws Exception;
-	
-    /**
-     * After restoring this from disk, there is only the referenced object name,
-     * not the referenced object pointer, for each referencing object.
-     * <p>
-     * This method is called after restore and for each restored object in the list must:
-     * <ol>
-     *   <li>Do what is necessary to find the referenced object, and set the internal reference pointer.
-     *   <li>Call addReference(this) on that object so it can maintain it's in-memory list
-     *          of all referencing objects.
-     * </ol>
-     * @return true if resolved successfully. False if some references were not found and
-     *  hence those referencing objects removed from the restored list.
-     */
-    public boolean resolveReferencesAfterRestore();
-	
+	public IRSEBasePersistableReferencingObject getReferencedObject(IRSEBasePersistableReferencedObject object);
+
+	/**
+	 * Attempt to save contents of manager to disk. Only call if not doing your own save from
+	 *  your own model that uses a subclass of this.
+	 * @param folder The folder in which to save the manager.
+	 * @param fileName The unqualified file name to save to. Should include extension, such as .xmi
+	 */
+	public void save(IFolder folder, String fileName) throws Exception;
+
+	/**
+	 * After restoring this from disk, there is only the referenced object name,
+	 * not the referenced object pointer, for each referencing object.
+	 * <p>
+	 * This method is called after restore and for each restored object in the list must:
+	 * <ol>
+	 *   <li>Do what is necessary to find the referenced object, and set the internal reference pointer.
+	 *   <li>Call addReference(this) on that object so it can maintain it's in-memory list
+	 *          of all referencing objects.
+	 * </ol>
+	 * @return true if resolved successfully. False if some references were not found and
+	 *  hence those referencing objects removed from the restored list.
+	 */
+	public boolean resolveReferencesAfterRestore();
+
 	/**
 	 * @generated This field/method will be replaced during code generation 
 	 * @return The value of the Name attribute

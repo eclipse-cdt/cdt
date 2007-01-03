@@ -54,7 +54,7 @@ import org.eclipse.rse.persistence.dom.RSEDOMNodeAttribute;
  * It stores the DOM as a tree of folders and .properties files.
  */
 public class PropertyFileProvider implements IRSEPersistenceProvider {
-	
+
 	private static final String NULL_VALUE_STRING = "null"; //$NON-NLS-1$
 	private static final String PROPERTIES_FILE_NAME = "node.properties"; //$NON-NLS-1$
 
@@ -65,12 +65,12 @@ public class PropertyFileProvider implements IRSEPersistenceProvider {
 	 * Names must not contain periods or whitespace.
 	 * Lowercase letters, numbers and dashes (-) are preferred.
 	 */
-	private static final String[] MT_ATTRIBUTE_TYPE = new String[] {"04-attr-type", "attr-type"}; //$NON-NLS-1$ //$NON-NLS-2$
-	private static final String[] MT_ATTRIBUTE = new String[] {"03-attr", "attr"}; //$NON-NLS-1$ //$NON-NLS-2$
-	private static final String[] MT_CHILD = new String[] {"06-child", "child"}; //$NON-NLS-1$ //$NON-NLS-2$
-	private static final String[] MT_NODE_TYPE = new String[] {"01-type", "01-node-type", "n-type"}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-	private static final String[] MT_NODE_NAME = new String[] {"00-name", "00-node-name", "n-name"}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-	private static final String[] MT_REFERENCE = new String[] {"05-ref", "ref"}; //$NON-NLS-1$ //$NON-NLS-2$
+	private static final String[] MT_ATTRIBUTE_TYPE = new String[] { "04-attr-type", "attr-type" }; //$NON-NLS-1$ //$NON-NLS-2$
+	private static final String[] MT_ATTRIBUTE = new String[] { "03-attr", "attr" }; //$NON-NLS-1$ //$NON-NLS-2$
+	private static final String[] MT_CHILD = new String[] { "06-child", "child" }; //$NON-NLS-1$ //$NON-NLS-2$
+	private static final String[] MT_NODE_TYPE = new String[] { "01-type", "01-node-type", "n-type" }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+	private static final String[] MT_NODE_NAME = new String[] { "00-name", "00-node-name", "n-name" }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+	private static final String[] MT_REFERENCE = new String[] { "05-ref", "ref" }; //$NON-NLS-1$ //$NON-NLS-2$
 
 	/* Type abbreviations */
 	private static final String AB_SUBSYSTEM = "SS"; //$NON-NLS-1$
@@ -84,7 +84,7 @@ public class PropertyFileProvider implements IRSEPersistenceProvider {
 	private static final String AB_FILTER = "F"; //$NON-NLS-1$
 	private static final String AB_CONNECTOR_SERVICE = "CS"; //$NON-NLS-1$
 	private static final String AB_PROFILE = "PRF"; //$NON-NLS-1$
-	
+
 	private Pattern period = Pattern.compile("\\."); //$NON-NLS-1$
 	private Pattern suffixPattern = Pattern.compile("_(\\d+)$"); //$NON-NLS-1$
 	private Pattern unicodePattern = Pattern.compile("#(\\p{XDigit}+)#"); //$NON-NLS-1$
@@ -118,7 +118,7 @@ public class PropertyFileProvider implements IRSEPersistenceProvider {
 		names.toArray(result);
 		return result;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.rse.persistence.IRSEPersistenceProvider#saveRSEDOM(org.eclipse.rse.persistence.dom.RSEDOM, org.eclipse.core.runtime.IProgressMonitor)
 	 */
@@ -135,7 +135,7 @@ public class PropertyFileProvider implements IRSEPersistenceProvider {
 		}
 		return true;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.rse.persistence.IRSEPersistenceProvider#deleteProfile(java.lang.String, org.eclipse.core.runtime.IProgressMonitor)
 	 */
@@ -152,7 +152,6 @@ public class PropertyFileProvider implements IRSEPersistenceProvider {
 		return result;
 	}
 
-	
 	/**
 	 * Saves a node from the DOM to the file system.
 	 * @param node The node to save.
@@ -186,7 +185,7 @@ public class PropertyFileProvider implements IRSEPersistenceProvider {
 		writeProperties(properties, "RSE DOM Node", propertiesFile); //$NON-NLS-1$
 		return nodeFolderName;
 	}
-	
+
 	/**
 	 * Removes childFolders from the parent folder that are not in the keep set.
 	 * Typically used to clean renamed nodes from the tree on a save operation.
@@ -228,9 +227,10 @@ public class PropertyFileProvider implements IRSEPersistenceProvider {
 		String result = combine(type, name);
 		return result;
 	}
-	
+
 	private static final String VALID = "abcdefghijklmnopqrstuvwxyz0123456789-._"; //$NON-NLS-1$
 	private static final String UPPER = "ABCDEFGHIJKLMNOPQRTSUVWXYZ"; //$NON-NLS-1$
+
 	/**
 	 * Transforms an arbitrary name into one that can be used in any file system
 	 * that supports long names. The transformation appends a number to the name
@@ -264,7 +264,7 @@ public class PropertyFileProvider implements IRSEPersistenceProvider {
 				buf.append('#');
 				buf.append(Integer.toHexString(c));
 				buf.append('#');
-			}			
+			}
 		}
 		name = buf.toString() + "_" + Long.toString(suffix); //$NON-NLS-1$
 		return name;
@@ -309,14 +309,14 @@ public class PropertyFileProvider implements IRSEPersistenceProvider {
 		String result = b.toString();
 		return result;
 	}
-	
+
 	private String thawCase(String name, long caseCode) {
 		StringBuffer b = new StringBuffer();
 		char[] chars = name.toCharArray();
 		for (int i = chars.length - 1; i >= 0; i--) {
 			char ch = chars[i];
 			boolean shift = (caseCode & 1L) == 1;
-			if (shift) { 
+			if (shift) {
 				ch = (ch == '_') ? ' ' : Character.toUpperCase(ch);
 			}
 			b.append(ch);
@@ -325,7 +325,7 @@ public class PropertyFileProvider implements IRSEPersistenceProvider {
 		String result = b.reverse().toString();
 		return result;
 	}
-	
+
 	private Map getTypeQualifiers() {
 		Map typeQualifiers = new HashMap();
 		typeQualifiers.put(IRSEDOMConstants.TYPE_CONNECTOR_SERVICE, AB_CONNECTOR_SERVICE);
@@ -350,22 +350,22 @@ public class PropertyFileProvider implements IRSEPersistenceProvider {
 	 * @param monitor The progress monitor.
 	 */
 	private void writeProperties(Properties properties, String header, IFile file) {
-//		System.out.println("writing "+file.getFullPath()+"...");
+		//		System.out.println("writing "+file.getFullPath()+"...");
 		ByteArrayOutputStream outStream = new ByteArrayOutputStream(500);
 		PrintWriter out = new PrintWriter(outStream);
 		out.println("# " + header); //$NON-NLS-1$
 		Map map = new TreeMap(properties);
 		Set keys = map.keySet();
-		
+
 		for (Iterator z = keys.iterator(); z.hasNext();) {
 			String key = (String) z.next();
-			String value = (String)map.get(key);
+			String value = (String) map.get(key);
 			String keyvalue = key + "=" + escapeValue(value); //$NON-NLS-1$
-//			System.out.println("writing "+keyvalue);
+			//			System.out.println("writing "+keyvalue);
 			out.println(keyvalue);
 		}
 		out.close();
-//		System.out.println("...wrote "+file.getFullPath());
+		//		System.out.println("...wrote "+file.getFullPath());
 		ByteArrayInputStream inStream = new ByteArrayInputStream(outStream.toByteArray());
 		try {
 			if (!file.exists()) {
@@ -401,7 +401,7 @@ public class PropertyFileProvider implements IRSEPersistenceProvider {
 	 * @return a string equivalent from "00000" to "99999"
 	 */
 	private String getIndexString(int i) {
-		assert (i >= 0 && i <=99999);
+		assert (i >= 0 && i <= 99999);
 		String index = "00000" + Integer.toString(i); //$NON-NLS-1$
 		index = index.substring(index.length() - 5);
 		return index;
@@ -477,7 +477,7 @@ public class PropertyFileProvider implements IRSEPersistenceProvider {
 			String index = getIndexString(i);
 			if (force || isNodeEmbedded(child)) {
 				String prefix = combine(MT_CHILD[0], index);
-				Properties childProperties = getProperties(child, true, monitor); 
+				Properties childProperties = getProperties(child, true, monitor);
 				Enumeration e = childProperties.keys();
 				while (e.hasMoreElements()) {
 					String key = (String) e.nextElement();
@@ -490,7 +490,7 @@ public class PropertyFileProvider implements IRSEPersistenceProvider {
 		if (monitor != null) monitor.worked(1);
 		return properties;
 	}
-	
+
 	/**
 	 * Constructs a Properties object from the attributes present in a DOM node.
 	 * @param node The node containing the attributes. Keys for attributes are of the
@@ -511,11 +511,11 @@ public class PropertyFileProvider implements IRSEPersistenceProvider {
 			if (attributeType != null) {
 				propertyKey = combine(MT_ATTRIBUTE_TYPE[0], attributeName);
 				properties.put(propertyKey, attributeType);
-			} 
+			}
 		}
 		return properties;
 	}
-	
+
 	/**
 	 * Count the number of nodes in a tree rooted in the supplied node. The
 	 * supplied node is counted so the mininum result is one.
@@ -531,7 +531,7 @@ public class PropertyFileProvider implements IRSEPersistenceProvider {
 		}
 		return result;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.rse.persistence.IRSEPersistenceProvider#loadRSEDOM(org.eclipse.rse.model.ISystemProfileManager, java.lang.String, org.eclipse.core.runtime.IProgressMonitor)
 	 */
@@ -600,7 +600,7 @@ public class PropertyFileProvider implements IRSEPersistenceProvider {
 		}
 		return node;
 	}
-	
+
 	/**
 	 * Loads the properties found in the folder. Returns null if no properties
 	 * file was found.
@@ -628,7 +628,7 @@ public class PropertyFileProvider implements IRSEPersistenceProvider {
 		}
 		return properties;
 	}
-	
+
 	/**
 	 * Makes a new RSEDOMNode from a set of properties. The properties must (at least) include
 	 * a "name" property and a "type" property. Any child nodes are created and attached as well.
@@ -668,7 +668,7 @@ public class PropertyFileProvider implements IRSEPersistenceProvider {
 				words = split(words[1], 2);
 				String childName = words[0];
 				childNames.add(childName);
-				String newKey = words[1]; 
+				String newKey = words[1];
 				Properties p = getProperties(childPropertiesMap, childName);
 				p.put(newKey, value);
 			}
@@ -695,7 +695,7 @@ public class PropertyFileProvider implements IRSEPersistenceProvider {
 		node.setRestoring(false);
 		return node;
 	}
-	
+
 	/**
 	 * Gets a property given a "multi-key"
 	 * @param properties The properties object to search
@@ -710,7 +710,7 @@ public class PropertyFileProvider implements IRSEPersistenceProvider {
 		}
 		return result;
 	}
-	
+
 	/**
 	 * Finds a key (needle) in an array of values (the haystack)
 	 * @param needle The value to look for
@@ -734,7 +734,7 @@ public class PropertyFileProvider implements IRSEPersistenceProvider {
 	 * @return a Properties object.
 	 */
 	private Properties getProperties(Map propertiesMap, String selector) {
-		Properties p = (Properties)propertiesMap.get(selector);
+		Properties p = (Properties) propertiesMap.get(selector);
 		if (p == null) {
 			p = new Properties();
 			propertiesMap.put(selector, p);
@@ -750,14 +750,13 @@ public class PropertyFileProvider implements IRSEPersistenceProvider {
 	private IFolder getProviderFolder() {
 		IProject project = RSEPersistenceManager.getRemoteSystemsProject();
 		try {
-			project.refreshLocal(IResource.DEPTH_INFINITE, null); 
+			project.refreshLocal(IResource.DEPTH_INFINITE, null);
 		} catch (Exception e) {
 		}
 		//IFolder providerFolder = getFolder(project, "org.eclipse.rse.dom.properties");
 		IFolder providerFolder = getFolder(project, "dom.properties"); //$NON-NLS-1$
 		return providerFolder;
 	}
-	
 
 	/**
 	 * Returns the IFolder in which a profile is stored. 
@@ -769,7 +768,7 @@ public class PropertyFileProvider implements IRSEPersistenceProvider {
 		IFolder profileFolder = getFolder(providerFolder, profileFolderName);
 		return profileFolder;
 	}
-	
+
 	/**
 	 * Returns the specified folder of the parent container. If the folder does
 	 * not exist it creates it.
@@ -790,7 +789,7 @@ public class PropertyFileProvider implements IRSEPersistenceProvider {
 		}
 		return folder;
 	}
-	
+
 	/**
 	 * Convenience method to combine two names into one. The individual names in the
 	 * combined name are separated by periods.
@@ -799,9 +798,9 @@ public class PropertyFileProvider implements IRSEPersistenceProvider {
 	 * @return the combined name.
 	 */
 	private String combine(String typeName, String nodeName) {
-		return combine(new String[] {typeName, nodeName});
+		return combine(new String[] { typeName, nodeName });
 	}
-	
+
 	/**
 	 * The generic method for creating a qualified name from a string of segments.
 	 * The individual names are separated by periods.
@@ -817,7 +816,7 @@ public class PropertyFileProvider implements IRSEPersistenceProvider {
 		}
 		return buf.toString();
 	}
-	
+
 	/**
 	 * Splits a combined name into its component parts. The period is used as the name 
 	 * separator. If a limit > 0 is specified the return value will contain at most that

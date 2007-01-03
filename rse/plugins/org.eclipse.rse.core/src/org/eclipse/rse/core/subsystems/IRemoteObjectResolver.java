@@ -15,12 +15,11 @@
  ********************************************************************************/
 
 package org.eclipse.rse.core.subsystems;
+
 /**
  * Interface for resolving an object in a subsystem from a unique ID
  */
-public interface IRemoteObjectResolver 
-{
-
+public interface IRemoteObjectResolver {
 
 	/**
 	 * For drag and drop, clipboard, and other object retrieval mechanisms in support of remote objects.
@@ -28,5 +27,5 @@ public interface IRemoteObjectResolver
 	 * Return the remote object within the subsystem that corresponds to
 	 * the specified unique ID.
 	 */
-	public Object getObjectWithAbsoluteName(String key) throws Exception;	
+	public Object getObjectWithAbsoluteName(String key) throws Exception;
 }

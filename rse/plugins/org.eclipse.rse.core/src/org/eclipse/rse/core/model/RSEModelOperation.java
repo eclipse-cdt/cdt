@@ -38,9 +38,9 @@ import org.eclipse.rse.persistence.IRSEPersistenceManager;
  * @since RSE 2.0
  */
 public abstract class RSEModelOperation {
-	
+
 	private static Map threads = new HashMap();
-	
+
 	/**
 	 * Checks the current thread to see if there is a model transaction in progress.
 	 * Should be used inside model objects prior to a change to a persistent property.
@@ -63,7 +63,7 @@ public abstract class RSEModelOperation {
 		int depth = ((Integer) threads.get(myThread)).intValue();
 		return depth;
 	}
-	
+
 	/**
 	 * Begins a transaction. 
 	 */
@@ -116,13 +116,13 @@ public abstract class RSEModelOperation {
 	 */
 	public RSEModelOperation() {
 	}
-	
+
 	/**
 	 * Perform the work of this operation. This is where the work of modifying several model
 	 * properties or objects can be done.
 	 */
 	public abstract void execute();
-	
+
 	/**
 	 * Runs this operation. This will cause the {@link #execute()} method to be invoked inside
 	 * a transaction boundary.

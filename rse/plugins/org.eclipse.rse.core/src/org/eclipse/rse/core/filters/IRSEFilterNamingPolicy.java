@@ -15,6 +15,7 @@
  ********************************************************************************/
 
 package org.eclipse.rse.core.filters;
+
 /**
  * Allows tool writers to specify the naming standards for the
  * persistence files and folders involved with filters.
@@ -23,46 +24,52 @@ package org.eclipse.rse.core.filters;
  * <p>
  * @see org.eclipse.rse.core.filters.SystemFilterNamingPolicy#getNamingPolicy()
  */
-public interface IRSEFilterNamingPolicy
-{
-    /**
-     * Get the unqualified save file name for the given SystemFilterPoolManager object name.
-     * Do NOT include the extension, as .xmi will be added.
-     */
-    public String getManagerSaveFileName(String managerName);
-    /**
-     * Get the unqualified save file name for the given SystemFilterPoolReferenceManager object name.
-     * Do NOT include the extension, as .xmi will be added.
-     */
-    public String getReferenceManagerSaveFileName(String managerName);    
-    /**
-     * Get the unqualified save file name for the given SystemFilterPool object name.
-     * Do NOT include the extension, as .xmi will be added.
-     */
-    public String getFilterPoolSaveFileName(String poolName);    
-    /**
-     * Get the file name prefix for all pool files. 
-     * Used to deduce the saved pools by examining the file system
-     */
-    public String getFilterPoolSaveFileNamePrefix();
-    /**
-     * Get the folder name for the given SystemFilterPool object name.
-     */
-    public String getFilterPoolFolderName(String poolName);        
-    /**
-     * Get the folder name prefix for all pool folders. 
-     * Used to deduce the saved pools by examining the file system
-     */
-    public String getFilterPoolFolderNamePrefix();
-    /**
-     * Get the unqualified save file name for the given SystemFilter object name
-     * Do NOT include the extension, as .xmi will be added.
-     */
-    public String getFilterSaveFileName(String filterName);        
-    /**
-     * Get the file name prefix for all filter files. 
-     * Used to deduce the saved pools by examining the file system
-     */
-    public String getFilterSaveFileNamePrefix();
-    
-} 
+public interface IRSEFilterNamingPolicy {
+	/**
+	 * Get the unqualified save file name for the given SystemFilterPoolManager object name.
+	 * Do NOT include the extension, as .xmi will be added.
+	 */
+	public String getManagerSaveFileName(String managerName);
+
+	/**
+	 * Get the unqualified save file name for the given SystemFilterPoolReferenceManager object name.
+	 * Do NOT include the extension, as .xmi will be added.
+	 */
+	public String getReferenceManagerSaveFileName(String managerName);
+
+	/**
+	 * Get the unqualified save file name for the given SystemFilterPool object name.
+	 * Do NOT include the extension, as .xmi will be added.
+	 */
+	public String getFilterPoolSaveFileName(String poolName);
+
+	/**
+	 * Get the file name prefix for all pool files. 
+	 * Used to deduce the saved pools by examining the file system
+	 */
+	public String getFilterPoolSaveFileNamePrefix();
+
+	/**
+	 * Get the folder name for the given SystemFilterPool object name.
+	 */
+	public String getFilterPoolFolderName(String poolName);
+
+	/**
+	 * Get the folder name prefix for all pool folders. 
+	 * Used to deduce the saved pools by examining the file system
+	 */
+	public String getFilterPoolFolderNamePrefix();
+
+	/**
+	 * Get the unqualified save file name for the given SystemFilter object name
+	 * Do NOT include the extension, as .xmi will be added.
+	 */
+	public String getFilterSaveFileName(String filterName);
+
+	/**
+	 * Get the file name prefix for all filter files. 
+	 * Used to deduce the saved pools by examining the file system
+	 */
+	public String getFilterSaveFileNamePrefix();
+
+}

@@ -20,17 +20,24 @@ import java.util.List;
 
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 
-
-public interface ISystemResourceSet
-{
+public interface ISystemResourceSet {
 	public int size();
+
 	public Object get(String absoluteName);
+
 	public String pathFor(Object obj);
+
 	public Object get(int index);
+
 	public List getResourceSet();
+
 	public SystemMessage getMessage();
+
 	public boolean hasMessage();
+
 	public boolean hasByteSize();
+
 	public long byteSize();
+
 	public void setByteSize(long byteSize);
 }

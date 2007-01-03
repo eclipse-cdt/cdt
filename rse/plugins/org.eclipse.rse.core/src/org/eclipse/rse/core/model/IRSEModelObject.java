@@ -18,8 +18,8 @@ package org.eclipse.rse.core.model;
 
 import org.eclipse.rse.core.persistance.IRSEPersistableContainer;
 
-public interface IRSEModelObject extends IPropertySetContainer, IRSEPersistableContainer
-{
+public interface IRSEModelObject extends IPropertySetContainer, IRSEPersistableContainer {
 	String getName();
+
 	String getDescription();
 }

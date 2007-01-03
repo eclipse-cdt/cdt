@@ -51,5 +51,5 @@ public interface IRSEBaseReferencingObject {
 	 * @return true if this reference is currently broken/unresolved
 	 */
 	public boolean isReferenceBroken();
-	
+
 }

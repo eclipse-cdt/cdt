@@ -22,41 +22,40 @@ import org.eclipse.rse.core.model.ISystemContentsType;
 /**
  * @author dmcknigh
  */
-public interface IRemoteContainer extends ISystemContainer
-{
-    
+public interface IRemoteContainer extends ISystemContainer {
+
 	/**
-     * Returns whether the object has contents of a particular type associated with the specified filter string. 
-     * @param contentsType type of contents
-     * @param filter criteria for contained contents 
-     * @return <code>true</code> if the object has contents, <code>false</code> otherwise.
-     */
-    public boolean hasContents(ISystemContentsType contentsType, String filter);
-                
-    /**
+	 * Returns whether the object has contents of a particular type associated with the specified filter string. 
+	 * @param contentsType type of contents
+	 * @param filter criteria for contained contents 
+	 * @return <code>true</code> if the object has contents, <code>false</code> otherwise.
+	 */
+	public boolean hasContents(ISystemContentsType contentsType, String filter);
+
+	/**
 	 * Returns the contents of the object. 
 	 * @param contentsType type of contents
 	 * @param filter criteria for contained contents.
 	 * @return an array of contents.
 	 */
-    public Object[] getContents(ISystemContentsType contentsType, String filter);
+	public Object[] getContents(ISystemContentsType contentsType, String filter);
 
-    /*
-     * Replace occurrences of cached object with new object
-     */
-    public void replaceContent(Object oldObject, Object newObject);
-     
-    /**
-     * Sets the contents of this object that match a particular filter
-     * @param contentsType type of contents
-     * @param filter matching criteria for the contained objects
-     * @param con the contained objects that match the filter
-     */
-    public void setContents(ISystemContentsType contentsType, String filter, Object[] con);
-    
-    /**
-     * Copies the persistable contents from this one to another one
-     * @param container the container to copy contents to
-     */
-    public void copyContentsTo(IRemoteContainer container);
+	/*
+	 * Replace occurrences of cached object with new object
+	 */
+	public void replaceContent(Object oldObject, Object newObject);
+
+	/**
+	 * Sets the contents of this object that match a particular filter
+	 * @param contentsType type of contents
+	 * @param filter matching criteria for the contained objects
+	 * @param con the contained objects that match the filter
+	 */
+	public void setContents(ISystemContentsType contentsType, String filter, Object[] con);
+
+	/**
+	 * Copies the persistable contents from this one to another one
+	 * @param container the container to copy contents to
+	 */
+	public void copyContentsTo(IRemoteContainer container);
 }

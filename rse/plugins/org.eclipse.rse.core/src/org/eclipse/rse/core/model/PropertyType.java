@@ -16,21 +16,17 @@
 
 package org.eclipse.rse.core.model;
 
-
-
-public  class PropertyType implements IPropertyType
-{
+public class PropertyType implements IPropertyType {
 	private int _type = 0;
 	private String[] _enumValues;
 
 	private static final String ENUMERATION_STR = "enumeration:"; //$NON-NLS-1$
-	
+
 	private static IPropertyType _booleanPropertyType = new PropertyType(TYPE_BOOLEAN);
 	private static IPropertyType _integerPropertyType = new PropertyType(TYPE_INTEGER);
 	private static IPropertyType _stringPropertyType = new PropertyType(TYPE_STRING);
 
-	private PropertyType(int type)
-	{
+	private PropertyType(int type) {
 		_type = type;
 	}
 
@@ -38,8 +34,7 @@ public  class PropertyType implements IPropertyType
 	 * Return an instance of boolean property type.
 	 * @return IPropertyType
 	 */
-	public static IPropertyType getBooleanPropertyType()
-	{
+	public static IPropertyType getBooleanPropertyType() {
 		return _booleanPropertyType;
 	}
 
@@ -47,8 +42,7 @@ public  class PropertyType implements IPropertyType
 	 * Return an instance of integer property type.
 	 * @return IPropertyType
 	 */
-	public static IPropertyType getIntegerPropertyType()
-	{
+	public static IPropertyType getIntegerPropertyType() {
 		return _integerPropertyType;
 	}
 
@@ -56,119 +50,90 @@ public  class PropertyType implements IPropertyType
 	 * Return an instance of string property type.
 	 * @return IPropertyType
 	 */
-	public static IPropertyType getStringPropertyType()
-	{
+	public static IPropertyType getStringPropertyType() {
 		return _stringPropertyType;
 	}
-	
+
 	/**
 	 * Return an instance of enum property type.
 	 * @param values String[] array of allowed enumerator values. 
 	 * @return IPropertyType
 	 */
-	public static IPropertyType getEnumPropertyType(String[] values)
-	{
+	public static IPropertyType getEnumPropertyType(String[] values) {
 		PropertyType type = new PropertyType(TYPE_ENUM);
 		type.setEnumValues(values);
 		return type;
 	}
-	
+
 	/**
 	 * Return an instance of property type based on the String specification.
 	 * This is the reverse of PropertyType.toString().
 	 * @return IPropertyType instance based on String specification.
 	 */
-	public static IPropertyType fromString(String typeStr)
-	{
-		if (typeStr.equals(String.class.toString()))
-		{
+	public static IPropertyType fromString(String typeStr) {
+		if (typeStr.equals(String.class.toString())) {
 			return getStringPropertyType();
-		}
-		else if (typeStr.equals(Integer.class.toString()))
-		{
+		} else if (typeStr.equals(Integer.class.toString())) {
 			return getIntegerPropertyType();
-		}
-		else if (typeStr.startsWith(ENUMERATION_STR))
-		{
+		} else if (typeStr.startsWith(ENUMERATION_STR)) {
 			String subString = typeStr.substring(ENUMERATION_STR.length());
 			String[] enumValues = subString.split(","); //$NON-NLS-1$
 			return getEnumPropertyType(enumValues);
-		}
-		else if (typeStr.equals(Boolean.class.toString()))
-		{
+		} else if (typeStr.equals(Boolean.class.toString())) {
 			return getBooleanPropertyType();
-		}
-		else
-		{
+		} else {
 			return getStringPropertyType();
 		}
 	}
 
-	public int getType()
-	{
+	public int getType() {
 		return _type;
 	}
-	
-	public boolean isString()
-	{
+
+	public boolean isString() {
 		return _type == TYPE_STRING;
 	}
 
-	public boolean isInteger()
-	{
+	public boolean isInteger() {
 		return _type == TYPE_INTEGER;
 	}
 
-	public boolean isEnum()
-	{
+	public boolean isEnum() {
 		return _type == TYPE_ENUM;
 	}
-	
-	public boolean isBoolean()
-	{
+
+	public boolean isBoolean() {
 		return _type == TYPE_BOOLEAN;
 	}
 
-	private void setEnumValues(String[] enumValues)
-	{
+	private void setEnumValues(String[] enumValues) {
 		_enumValues = enumValues;
 	}
-	
-	public String[] getEnumValues()
-	{
+
+	public String[] getEnumValues() {
 		return _enumValues;
 	}
-	
-	public String toString()
-	{
-		if (isString())
-		{
+
+	public String toString() {
+		if (isString()) {
 			return String.class.getName();
-		}
-		else if (isInteger())
-		{
+		} else if (isInteger()) {
 			return Integer.class.getName();
-		}
-		else if (isEnum())
-		{
+		} else if (isEnum()) {
 			StringBuffer buf = new StringBuffer();
 			buf.append(ENUMERATION_STR);
 			String[] enumValues = getEnumValues();
-			for (int i = 0; i < enumValues.length; i++)
-			{
+			for (int i = 0; i < enumValues.length; i++) {
 				buf.append(enumValues[i]);
-				if (i + 1 < enumValues.length)
-				{
+				if (i + 1 < enumValues.length) {
 					buf.append(","); //$NON-NLS-1$
-				}				
+				}
 			}
 			return buf.toString();
-		}
-		else if (isBoolean())
-		{
+		} else if (isBoolean()) {
 			return Boolean.class.getName();
 		}
 		return super.toString();
 	}
-	
+
 }

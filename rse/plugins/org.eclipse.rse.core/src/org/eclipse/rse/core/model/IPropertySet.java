@@ -30,11 +30,10 @@ import java.util.Map;
  * The key <code>"description"</code> is reserved for internal
  * use, to store the description of the Property set.
  */
-public interface IPropertySet 
-{
+public interface IPropertySet {
 	/** The key used to store the description of the Property Set. */
 	public static final String DESCRIPTION_KEY = "description"; //$NON-NLS-1$ 
-	
+
 	/** 
 	 * Return the name of this Property Set.
 	 * @return String name of the Property Set.
@@ -85,7 +84,7 @@ public interface IPropertySet
 	 * @return String array of Property keys.
 	 */
 	public String[] getPropertyKeys();
-	
+
 	/**
 	 * Return the type of the property identified by the given key.
 	 * 
@@ -100,7 +99,7 @@ public interface IPropertySet
 	 * @param name the name to set. Must not be <code>null</code>
 	 */
 	public void setName(String name);
-	
+
 	/**
 	 * Set all the Properties of this set.
 	 * 

@@ -15,11 +15,11 @@
  ********************************************************************************/
 
 package org.eclipse.rse.internal.references;
+
 import org.eclipse.rse.core.model.RSEModelObject;
 import org.eclipse.rse.core.model.RSEModelResources;
 import org.eclipse.rse.core.references.IRSEBaseReferencedObject;
 import org.eclipse.rse.core.references.IRSEReferencingObject;
-
 
 /**
  * A class to encapsulate the operations required of an object which
@@ -35,63 +35,57 @@ import org.eclipse.rse.core.references.IRSEReferencingObject;
 /** 
  * @lastgen class SystemReferencingObjectImpl Impl implements SystemReferencingObject, EObject {}
  */
-public abstract class SystemReferencingObject extends RSEModelObject implements IRSEReferencingObject 
-{
-    private SystemReferencingObjectHelper helper = null;
-    protected boolean referenceBroken = false;
-		
+public abstract class SystemReferencingObject extends RSEModelObject implements IRSEReferencingObject {
+	private SystemReferencingObjectHelper helper = null;
+	protected boolean referenceBroken = false;
+
 	/**
 	 * Default constructor. Typically called by EMF factory method.
 	 */
-	protected SystemReferencingObject() 
-	{
+	protected SystemReferencingObject() {
 		super();
-		helper = new SystemReferencingObjectHelper(this);		
+		helper = new SystemReferencingObjectHelper(this);
 	}
+
 	/**
 	 * @see org.eclipse.rse.core.references.IRSEBaseReferencingObject#setReferencedObject(IRSEBaseReferencedObject)
 	 */
-	public void setReferencedObject(IRSEBaseReferencedObject obj)
-	{
-        helper.setReferencedObject(obj);
+	public void setReferencedObject(IRSEBaseReferencedObject obj) {
+		helper.setReferencedObject(obj);
 	}
-	
+
 	/**
 	 * @see org.eclipse.rse.core.references.IRSEBaseReferencingObject#getReferencedObject()
 	 */
-	public IRSEBaseReferencedObject getReferencedObject()
-	{
-        return helper.getReferencedObject();
- 	}
-	
+	public IRSEBaseReferencedObject getReferencedObject() {
+		return helper.getReferencedObject();
+	}
+
 	/**
 	 * @see org.eclipse.rse.core.references.IRSEBaseReferencingObject#removeReference()
 	 */
-	public int removeReference()
-	{
-        return helper.removeReference();
-	}	    
+	public int removeReference() {
+		return helper.removeReference();
+	}
 
 	/**
 	 * Set to true if this reference is currently broken/unresolved
 	 */
-	public void setReferenceBroken(boolean broken)
-	{
+	public void setReferenceBroken(boolean broken) {
 		referenceBroken = broken;
 	}
+
 	/**
 	 * Return true if this reference is currently broken/unresolved
 	 */
-	public boolean isReferenceBroken()
-	{
+	public boolean isReferenceBroken() {
 		return referenceBroken;
 	}
-	
-	public String getDescription()
-	{
+
+	public String getDescription() {
 		return RSEModelResources.RESID_MODELOBJECTS_REFERENCINGOBJECT_DESCRIPTION;
 	}
-	
+
 	protected final SystemReferencingObjectHelper getHelper() {
 		return helper;
 	}

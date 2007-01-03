@@ -16,9 +16,6 @@
 
 package org.eclipse.rse.core.model;
 
-
-
-
 import org.eclipse.rse.core.subsystems.IConnectorService;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 
@@ -32,56 +29,57 @@ import org.eclipse.rse.core.subsystems.ISubSystem;
 /**
  * @lastgen interface SystemConnection  {}
  */
-public interface IHost extends IRSEModelObject
-{
+public interface IHost extends IRSEModelObject {
 	/**
-     * Return the system profile that owns this connection
-     */
-    public ISystemProfile getSystemProfile();
+	 * Return the system profile that owns this connection
+	 */
+	public ISystemProfile getSystemProfile();
 
-    /**
-     * Return the name of the system profile that owns this connection
-     */
-    public String getSystemProfileName();
-    
-    /**
-     * Set the parent connection pool this is owned by.
-     * Connection pools are internal management objects, one per profile.
-     */
-    public void setHostPool(ISystemHostPool pool);
-    /**
-     * Set the parent connection pool this is owned by.
-     * Connection pools are internal management objects, one per profile.
-     */
-    public ISystemHostPool getHostPool();    
+	/**
+	 * Return the name of the system profile that owns this connection
+	 */
+	public String getSystemProfileName();
+
+	/**
+	 * Set the parent connection pool this is owned by.
+	 * Connection pools are internal management objects, one per profile.
+	 */
+	public void setHostPool(ISystemHostPool pool);
+
+	/**
+	 * Set the parent connection pool this is owned by.
+	 * Connection pools are internal management objects, one per profile.
+	 */
+	public ISystemHostPool getHostPool();
 
 	/**
 	 * Return the subsystem instances under this connection.
 	 * Just a shortcut to {@link org.eclipse.rse.core.model.ISystemRegistry#getSubSystems(IHost)} 
 	 */
-	public ISubSystem[] getSubSystems();	
- 
-    /**
-     * Return the local default user Id without resolving up the food chain.
-     * @see #getDefaultUserId()
-     */
-    public String getLocalDefaultUserId();
-    /**
-     * Clear the local default user Id so next query will return the value from
-     * the preference store.
-     * <p>
-     * Same as calling setDefaultUserId(null)
-     * @see #setDefaultUserId(String)
-     */
-    public void clearLocalDefaultUserId();
-   
+	public ISubSystem[] getSubSystems();
+
+	/**
+	 * Return the local default user Id without resolving up the food chain.
+	 * @see #getDefaultUserId()
+	 */
+	public String getLocalDefaultUserId();
+
+	/**
+	 * Clear the local default user Id so next query will return the value from
+	 * the preference store.
+	 * <p>
+	 * Same as calling setDefaultUserId(null)
+	 * @see #setDefaultUserId(String)
+	 */
+	public void clearLocalDefaultUserId();
+
 	/**
 	 * Private method called when this connection is being deleted, so
 	 * we can do any pre-death cleanup we need.
 	 * <p>
 	 * What we need to do is delete our entry in the preference store for our default userId.
 	 */
-	public void deletingHost();   
+	public void deletingHost();
 
 	/**
 	 * Private method called when this connection's profile is being rename, so
@@ -89,57 +87,60 @@ public interface IHost extends IRSEModelObject
 	 * <p>
 	 * What we need to do is rename our entry in the preference store for our default userId.
 	 */
-	public void renamingSystemProfile(String oldName, String newName);   
-    /**
-     * Call this to query whether the default userId is to be uppercased.
-     */
-    public boolean getForceUserIdToUpperCase();     
-    /**
-     * Call this to compare two userIds taking case sensitivity
-     */
-    public boolean compareUserIds(String userId1, String userId2);        
-/**
+	public void renamingSystemProfile(String oldName, String newName);
+
+	/**
+	 * Call this to query whether the default userId is to be uppercased.
+	 */
+	public boolean getForceUserIdToUpperCase();
+
+	/**
+	 * Call this to compare two userIds taking case sensitivity
+	 */
+	public boolean compareUserIds(String userId1, String userId2);
+
+	/**
 	 * @return The value of the SystemType attribute
 	 */
 	public String getSystemType();
 
-/**
+	/**
 	 * @param value The new value of the SystemType attribute
 	 */
 	public void setSystemType(String value);
 
-/**
+	/**
 	 * @return The value of the AliasName attribute
 	 * The unique key for this object. Unique per connection pool
 	 */
 	public String getAliasName();
 
-/**
+	/**
 	 * @param value The new value of the AliasName attribute
 	 */
 	public void setAliasName(String value);
 
-/**
+	/**
 	 * @return The value of the HostName attribute
 	 */
 	public String getHostName();
 
-/**
+	/**
 	 * @param value The new value of the HostName attribute
 	 */
 	public void setHostName(String value);
 
-/**
+	/**
 	 * @return The value of the Description attribute
 	 */
 	public String getDescription();
 
-/**
+	/**
 	 * @param value The new value of the Description attribute
 	 */
 	public void setDescription(String value);
 
-/**
+	/**
 	 * We return the default user Id. Note that we don't store it directly in
 	 * the mof-modelled attribute, as we don't want the team to share it. Rather,
 	 * we store the actual user Id in the preference store keyed by this connection's
@@ -155,14 +156,14 @@ public interface IHost extends IRSEModelObject
 	 */
 	public String getDefaultUserId();
 
-/**
-     * Intercept of setDefaultUserId so we can force it to uppercase.
-     * Also, we do not store the user Id per se in the attribute, but rather
-     * we store it in the preference with a key name unique to this connection.
-     * We store that key name in this attribute. However, this is all transparent to
-     * the caller.
+	/**
+	 * Intercept of setDefaultUserId so we can force it to uppercase.
+	 * Also, we do not store the user Id per se in the attribute, but rather
+	 * we store it in the preference with a key name unique to this connection.
+	 * We store that key name in this attribute. However, this is all transparent to
+	 * the caller.
 	 * @param value The new value of the DefaultUserId attribute
-     */
+	 */
 	public void setDefaultUserId(String value);
 
 	/**
@@ -205,5 +206,5 @@ public interface IHost extends IRSEModelObject
 	 * for this host
 	 * @return the connector services
 	 */
-    IConnectorService[] getConnectorServices();
+	IConnectorService[] getConnectorServices();
 }

@@ -21,48 +21,48 @@ package org.eclipse.rse.core.subsystems;
  * that contains remote properties and (optionally) caches them.
  */
 public interface IRemotePropertyHolder {
-	
+
 	/**
 	 * Returns the value of the property with the given key.
 	 * @param key the property key.
 	 * @return the value of the property.
 	 */
 	public Object getProperty(String key);
-	
+
 	/**
 	 * Returns the value of the properties with the given keys.
 	 * @param keys the property keys.
 	 * @return the correspoding values of the properties.
 	 */
 	public Object[] getProperties(String[] keys);
-	
+
 	/**
 	 * Sets the value of the property with the given key.
 	 * @param key the property key.
 	 * @param value the value of the property.
 	 */
 	public void setProperty(String key, Object value);
-	
+
 	/**
 	 * Sets the values of the properties with the given keys.
 	 * @param keys the property keys.
 	 * @param values the corresponding values of the properties.
 	 */
 	public void setProperties(String[] keys, Object[] values);
-	
+
 	/**
 	 * Returns whether the property with the given key is stale.
 	 * @param key the property key.
 	 * @return <code>true</code> if the property is stale, <code>false</code> otherwise.
 	 */
 	public boolean isPropertyStale(String key);
-	
+
 	/**
 	 * Marks the property with the given key as stale.
 	 * @param key the property key.
 	 */
 	public void markPropertyStale(String key);
-	
+
 	/**
 	 * Marks all properties as stale.
 	 */

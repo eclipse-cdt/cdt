@@ -53,13 +53,13 @@ public class RSESystemType implements IRSESystemType {
 		description = element.getAttribute(ATTR_DESCRIPTION);
 
 		loadProperties(element);
-		
+
 		String icon = element.getAttribute(ATTR_ICON);
-		if (icon!=null) properties.put(IRSESystemTypeConstants.ICON, icon);
+		if (icon != null) properties.put(IRSESystemTypeConstants.ICON, icon);
 		String iconLive = element.getAttribute(ATTR_ICONLIVE);
-		if (iconLive!=null) properties.put(IRSESystemTypeConstants.ICON_LIVE, iconLive);
+		if (iconLive != null) properties.put(IRSESystemTypeConstants.ICON_LIVE, iconLive);
 		String enableOffline = element.getAttribute(ATTR_ENABLEOFFLINE);
-		if (enableOffline!=null) properties.put(IRSESystemTypeConstants.ENABLE_OFFLINE, enableOffline);
+		if (enableOffline != null) properties.put(IRSESystemTypeConstants.ENABLE_OFFLINE, enableOffline);
 
 		definingBundle = Platform.getBundle(element.getContributor().getName());
 	}
@@ -77,8 +77,7 @@ public class RSESystemType implements IRSESystemType {
 			String key = child.getAttribute(ATTR_NAME);
 			String value = child.getAttribute(ATTR_VALUE);
 
-			if (key != null && value != null)
-				properties.put(key, value);
+			if (key != null && value != null) properties.put(key, value);
 		}
 	}
 
@@ -111,7 +110,7 @@ public class RSESystemType implements IRSESystemType {
 	 * @see org.eclipse.rse.core.IRSESystemType#getProperty(java.lang.String)
 	 */
 	public String getProperty(String key) {
-		return (String)(properties.get(key));
+		return (String) (properties.get(key));
 	}
 
 	/**

@@ -15,137 +15,133 @@
  ********************************************************************************/
 
 package org.eclipse.rse.core.filters;
+
 /**
  * A naming policy so tool writers can override defaults used when
  *  saving filter data to disk.
  * <p>
  * Subclass this and override what you wish to change.
  */
-public class SystemFilterNamingPolicy implements IRSEFilterNamingPolicy, ISystemFilterConstants 
-{
-	
-    protected String managerFileNamePrefix;
-    protected String poolFolderNamePrefix;
-    protected String poolFolderNameSuffix;
-    protected String poolFileNamePrefix;
-    protected String filterFileNamePrefix;
-    protected String referenceManagerFileNamePrefix;
-    /**
-     * Default prefix for filter pool manager persisted file: "filterPools_"
-     */
-    public static final String DEFAULT_FILENAME_PREFIX_FILTERPOOLMANAGER = "filterPools_"; //$NON-NLS-1$
-    /**
-     * Default prefix for filter pool reference manager persisted file: "filterPoolRefs_"
-     */
-    public static final String DEFAULT_FILENAME_PREFIX_FILTERPOOLREFERENCEMANAGER = "filterPoolRefs_";     //$NON-NLS-1$
-    /**
-     * Default prefix for filter pool persisted file: "filterPool_"
-     */
-    public static final String DEFAULT_FILENAME_PREFIX_FILTERPOOL = "filterPool_"; //$NON-NLS-1$
-    /**
-     * Default prefix for filter persisted file: "filter_"
-     */
-    public static final String DEFAULT_FILENAME_PREFIX_FILTER = "filter_";     //$NON-NLS-1$
-    /**
-     * Default prefix for filter pool folder: "FilterPool_"
-     */
-    public static final String DEFAULT_FOLDERNAME_PREFIX_FILTERPOOL = "FilterPool_"; //$NON-NLS-1$
+public class SystemFilterNamingPolicy implements IRSEFilterNamingPolicy, ISystemFilterConstants {
 
+	protected String managerFileNamePrefix;
+	protected String poolFolderNamePrefix;
+	protected String poolFolderNameSuffix;
+	protected String poolFileNamePrefix;
+	protected String filterFileNamePrefix;
+	protected String referenceManagerFileNamePrefix;
+	/**
+	 * Default prefix for filter pool manager persisted file: "filterPools_"
+	 */
+	public static final String DEFAULT_FILENAME_PREFIX_FILTERPOOLMANAGER = "filterPools_"; //$NON-NLS-1$
+	/**
+	 * Default prefix for filter pool reference manager persisted file: "filterPoolRefs_"
+	 */
+	public static final String DEFAULT_FILENAME_PREFIX_FILTERPOOLREFERENCEMANAGER = "filterPoolRefs_"; //$NON-NLS-1$
+	/**
+	 * Default prefix for filter pool persisted file: "filterPool_"
+	 */
+	public static final String DEFAULT_FILENAME_PREFIX_FILTERPOOL = "filterPool_"; //$NON-NLS-1$
+	/**
+	 * Default prefix for filter persisted file: "filter_"
+	 */
+	public static final String DEFAULT_FILENAME_PREFIX_FILTER = "filter_"; //$NON-NLS-1$
+	/**
+	 * Default prefix for filter pool folder: "FilterPool_"
+	 */
+	public static final String DEFAULT_FOLDERNAME_PREFIX_FILTERPOOL = "FilterPool_"; //$NON-NLS-1$
 
-    /**
-     * Factory method to return an instance populated with defaults.
-     * Can then simply override whatever is desired.
-     */
-    public static IRSEFilterNamingPolicy getNamingPolicy()
-    {
-    	return new SystemFilterNamingPolicy();
-    }
-    
+	/**
+	 * Factory method to return an instance populated with defaults.
+	 * Can then simply override whatever is desired.
+	 */
+	public static IRSEFilterNamingPolicy getNamingPolicy() {
+		return new SystemFilterNamingPolicy();
+	}
+
 	/**
 	 * Constructor for SystemFilterNamingPolicyImpl
 	 */
-	public SystemFilterNamingPolicy() 
-	{
+	public SystemFilterNamingPolicy() {
 		super();
 	}
 
-    /**
-     * Get the unqualified save file name for the given SystemFilterPoolManager object.
-     * Do NOT include the extension, as .xmi will be added.
-     * <p>
-     * Returns "filterPools_"+managerName by default.
-     */
-    public String getManagerSaveFileName(String managerName)
-    {
-    	return DEFAULT_FILENAME_PREFIX_FILTERPOOLMANAGER+managerName;
-    }
-    /**
-     * Get the unqualified save file name for the given SystemFilterPoolReferenceManager object.
-     * Do NOT include the extension, as .xmi will be added.
-     * <p>
-     * Returns "filterPoolRefs_"+managerName by default.
-     */
-    public String getReferenceManagerSaveFileName(String managerName)
-    {
-        return DEFAULT_FILENAME_PREFIX_FILTERPOOLREFERENCEMANAGER+managerName;
-    }
-    /**
-     * Get the unqualified save file name for the given SystemFilterPool object.
-     * Do NOT include the extension, as .xmi will be added.
-     * <p>
-     * Returns getFilterPoolSaveFileNamePrefix()+poolName by default.
-     */
-    public String getFilterPoolSaveFileName(String poolName)
-    {
-        return getFilterPoolSaveFileNamePrefix()+poolName;
-    }
-    /**
-     * Get the file name prefix for all pool files. 
-     * Used to deduce the saved pools by examining the file system
-     * <p>
-     * By default returns "filterPool_"
-     */
-    public String getFilterPoolSaveFileNamePrefix()
-    {
-        return DEFAULT_FILENAME_PREFIX_FILTERPOOL;    	
-    }
-    /**
-     * Get the folder name for the given SystemFilterPool object.
-     * <p>
-     * Returns getFilterPoolFolderNamePrefix()+poolName by default.
-     */
-    public String getFilterPoolFolderName(String poolName)
-    {
-        return getFilterPoolFolderNamePrefix()+poolName;
-    }
-    /**
-     * Get the folder name prefix for all pool folders. 
-     * Used to deduce the saved pools by examining the file system
-     * <p>
-     * By default returns "FilterPool_"
-     */
-    public String getFilterPoolFolderNamePrefix()
-    {
-    	return DEFAULT_FOLDERNAME_PREFIX_FILTERPOOL;
-    }    
-    /**
-     * Get the unqualified save file name for the given SystemFilter object.
-     * Do NOT include the extension, as .xmi will be added.
-     * <p>
-     * Returns getFilterSaveFileNamePrefix()+filterName by default.
-     */
-    public String getFilterSaveFileName(String filterName)
-    {
-        return getFilterSaveFileNamePrefix()+filterName;
-    }
-    /**
-     * Get the file name prefix for all filter files. 
-     * Used to deduce the saved filters by examining the file system
-     * <p>
-     * Returns "Filter_" by default.
-     */
-    public String getFilterSaveFileNamePrefix()
-    {
-        return DEFAULT_FILENAME_PREFIX_FILTER;
-    }    	
+	/**
+	 * Get the unqualified save file name for the given SystemFilterPoolManager object.
+	 * Do NOT include the extension, as .xmi will be added.
+	 * <p>
+	 * Returns "filterPools_"+managerName by default.
+	 */
+	public String getManagerSaveFileName(String managerName) {
+		return DEFAULT_FILENAME_PREFIX_FILTERPOOLMANAGER + managerName;
+	}
+
+	/**
+	 * Get the unqualified save file name for the given SystemFilterPoolReferenceManager object.
+	 * Do NOT include the extension, as .xmi will be added.
+	 * <p>
+	 * Returns "filterPoolRefs_"+managerName by default.
+	 */
+	public String getReferenceManagerSaveFileName(String managerName) {
+		return DEFAULT_FILENAME_PREFIX_FILTERPOOLREFERENCEMANAGER + managerName;
+	}
+
+	/**
+	 * Get the unqualified save file name for the given SystemFilterPool object.
+	 * Do NOT include the extension, as .xmi will be added.
+	 * <p>
+	 * Returns getFilterPoolSaveFileNamePrefix()+poolName by default.
+	 */
+	public String getFilterPoolSaveFileName(String poolName) {
+		return getFilterPoolSaveFileNamePrefix() + poolName;
+	}
+
+	/**
+	 * Get the file name prefix for all pool files. 
+	 * Used to deduce the saved pools by examining the file system
+	 * <p>
+	 * By default returns "filterPool_"
+	 */
+	public String getFilterPoolSaveFileNamePrefix() {
+		return DEFAULT_FILENAME_PREFIX_FILTERPOOL;
+	}
+
+	/**
+	 * Get the folder name for the given SystemFilterPool object.
+	 * <p>
+	 * Returns getFilterPoolFolderNamePrefix()+poolName by default.
+	 */
+	public String getFilterPoolFolderName(String poolName) {
+		return getFilterPoolFolderNamePrefix() + poolName;
+	}
+
+	/**
+	 * Get the folder name prefix for all pool folders. 
+	 * Used to deduce the saved pools by examining the file system
+	 * <p>
+	 * By default returns "FilterPool_"
+	 */
+	public String getFilterPoolFolderNamePrefix() {
+		return DEFAULT_FOLDERNAME_PREFIX_FILTERPOOL;
+	}
+
+	/**
+	 * Get the unqualified save file name for the given SystemFilter object.
+	 * Do NOT include the extension, as .xmi will be added.
+	 * <p>
+	 * Returns getFilterSaveFileNamePrefix()+filterName by default.
+	 */
+	public String getFilterSaveFileName(String filterName) {
+		return getFilterSaveFileNamePrefix() + filterName;
+	}
+
+	/**
+	 * Get the file name prefix for all filter files. 
+	 * Used to deduce the saved filters by examining the file system
+	 * <p>
+	 * Returns "Filter_" by default.
+	 */
+	public String getFilterSaveFileNamePrefix() {
+		return DEFAULT_FILENAME_PREFIX_FILTER;
+	}
 }

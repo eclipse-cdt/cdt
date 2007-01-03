@@ -36,14 +36,12 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.rse.persistence.IRSEPersistenceProvider;
 import org.eclipse.rse.persistence.dom.RSEDOM;
 
-
 /**
  * This is class is used to restore an RSE DOM from disk and import it into RSE.
  * @author dmcknigh
  *
  */
-public class SerializingProvider implements IRSEPersistenceProvider 
-{
+public class SerializingProvider implements IRSEPersistenceProvider {
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.rse.persistence.IRSEPersistenceProvider#getSavedProfileNames()
@@ -83,95 +81,75 @@ public class SerializingProvider implements IRSEPersistenceProvider
 		names.toArray(result);
 		return result;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.rse.persistence.IRSEPersistenceProvider#loadRSEDOM(java.lang.String, org.eclipse.core.runtime.IProgressMonitor)
 	 */
-	public RSEDOM loadRSEDOM(String profileName, IProgressMonitor monitor)
-	{
+	public RSEDOM loadRSEDOM(String profileName, IProgressMonitor monitor) {
 		RSEDOM dom = null;
 		IFile profileFile = getProfileFile(profileName, monitor);
-		if (profileFile.exists())
-		{
+		if (profileFile.exists()) {
 			//System.out.println("loading "+ profileFile.getLocation().toOSString() + "..."); // DWD debugging
-			try
-			{
+			try {
 				InputStream iStream = profileFile.getContents();
-		
+
 				ObjectInputStream inStream = new ObjectInputStream(iStream);
-				dom = (RSEDOM)inStream.readObject();				
+				dom = (RSEDOM) inStream.readObject();
 				inStream.close();
-			}
-			catch (Exception e)
-			{
+			} catch (Exception e) {
 				e.printStackTrace();
-				try
-				{
+				try {
 					profileFile.delete(true, false, monitor);
-				}
-				catch (Exception e2)
-				{
+				} catch (Exception e2) {
 					e.printStackTrace();
 				}
-				
+
 			}
 		}
 		return dom;
 	}
-	
-	private IFile getProfileFile(String domName, IProgressMonitor monitor)
-	{
+
+	private IFile getProfileFile(String domName, IProgressMonitor monitor) {
 		IProject project = RSEPersistenceManager.getRemoteSystemsProject();
-		
+
 		// before loading, make sure the project is in synch
-		try
-		{
+		try {
 			project.refreshLocal(IResource.DEPTH_INFINITE, monitor);
+		} catch (Exception e) {
 		}
-		catch (Exception e)
-		{			
-		}
-		
+
 		IFolder folder = project.getFolder(domName);
-		if (!folder.exists())
-		{
-			try
-			{
+		if (!folder.exists()) {
+			try {
 				folder.create(true, true, monitor);
-			}
-			catch (Exception e)
-			{				
+			} catch (Exception e) {
 			}
 		}
 		return folder.getFile(domName + ".rsedom"); //$NON-NLS-1$
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.rse.persistence.IRSEPersistenceProvider#saveRSEDOM(org.eclipse.rse.persistence.dom.RSEDOM, org.eclipse.core.runtime.IProgressMonitor)
 	 */
-	public boolean saveRSEDOM(RSEDOM dom, IProgressMonitor monitor)
-	{
-		
+	public boolean saveRSEDOM(RSEDOM dom, IProgressMonitor monitor) {
+
 		IFile profileFile = getProfileFile(dom.getName(), monitor);
 		File osFile = profileFile.getLocation().toFile();
-	//	System.out.println("saving "+ osFile.getAbsolutePath() + "..."); // DWD debugging
-		try
-		{
+		//	System.out.println("saving "+ osFile.getAbsolutePath() + "..."); // DWD debugging
+		try {
 			OutputStream oStream = new FileOutputStream(osFile);
 			ObjectOutputStream outStream = new ObjectOutputStream(oStream);
 			outStream.writeObject(dom);
 			outStream.close();
 			profileFile.getParent().refreshLocal(IResource.DEPTH_ONE, monitor);
-		}
-		catch (Exception e)
-		{			
+		} catch (Exception e) {
 			e.printStackTrace();
 			return false;
 		}
-		
+
 		return true;
-	}    
-	
+	}
+
 	public IStatus deleteProfile(String profileName, IProgressMonitor monitor) {
 		IStatus result = Status.OK_STATUS;
 		IFile profileFile = getProfileFile(profileName, monitor);

@@ -15,12 +15,11 @@
  ********************************************************************************/
 
 package org.eclipse.rse.core.subsystems;
+
 /**
  * This interface represents an object that can be used to jump into line in source
  */
-public interface IRemoteLineReference
-{
-
+public interface IRemoteLineReference {
 
 	/**
 	 * Gets the path to the file that this output references if it references any.  It may return null if
@@ -30,7 +29,7 @@ public interface IRemoteLineReference
 	 * @return the path of the referenced file if there is one
 	 */
 	public String getAbsolutePath();
-	
+
 	/**
 	 * Gets the line number within a file that this references if it references any.  By default
 	 * 	it should return 0.  If no file association exists, it also returns 0.  This may be used to jump into
@@ -39,24 +38,24 @@ public interface IRemoteLineReference
 	 * @return the line number within a referenced file if there is one.
 	 */
 	public int getLine();
-	
+
 	/**
 	 * Get the start offset in a line corresponding to this reference.  -1 indicates there is no offset
 	 * @return the offset
 	 */
 	public int getCharStart();
-	
+
 	/**
 	 * Get the end offset in a line corresponding to this reference.  -1 indicates there is no offset
-	  * @return the offset
+	 * @return the offset
 	 */
 	public int getCharEnd();
-	
+
 	/**
 	 * Get the object that contains this object. 
 	 * 
 	 * @return the parent object
 	 */
 	public Object getParent();
-	
+
 }

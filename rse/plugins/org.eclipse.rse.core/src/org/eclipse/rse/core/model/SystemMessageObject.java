@@ -15,6 +15,7 @@
  ********************************************************************************/
 
 package org.eclipse.rse.core.model;
+
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
@@ -22,63 +23,58 @@ import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 /**
  * This class captures a message we wish to display as child node in the tree view.
  */
-public class SystemMessageObject implements ISystemMessageObject, IAdaptable, Comparable
-{
-	
-	SystemMessage systemMessage;
-    protected String message;
-    protected int    type;
-    protected Object parent;
-    
-    /**
-     * Constructor when using SystemMessage
-     * @param msgObj The system message from which to retrieve text to show in the tree viewer
-     * @param type The message severity, dictating the icon. 
-     * @param parent The parent node of this within the tree view
-     * @see org.eclipse.rse.core.model.ISystemMessageObject
-     */
-    public SystemMessageObject(SystemMessage msgObj, int type, Object parent)
-    {
-    	this.systemMessage = msgObj;
-    	this.message = msgObj.getLevelOneText();
-    	this.type = type;
-    	this.parent = parent;
-    }
-    
-    /**
-     * Get the message to display in the tree viewer
-     */
-    public String getMessage()
-    {
-    	return message;
-    }
-    
-    /**
-     * Message type. 
-     * @see org.eclipse.rse.core.model.ISystemMessageObject
-     */
-    public int getType()
-    {
-    	return type;
-    }
+public class SystemMessageObject implements ISystemMessageObject, IAdaptable, Comparable {
 
-    /**
-     * Get the parent object (within tree view)
-     */
-    public Object getParent()
-    {
-    	return parent;
-    }
-    
-    /**
+	SystemMessage systemMessage;
+	protected String message;
+	protected int type;
+	protected Object parent;
+
+	/**
+	 * Constructor when using SystemMessage
+	 * @param msgObj The system message from which to retrieve text to show in the tree viewer
+	 * @param type The message severity, dictating the icon. 
+	 * @param parent The parent node of this within the tree view
+	 * @see org.eclipse.rse.core.model.ISystemMessageObject
+	 */
+	public SystemMessageObject(SystemMessage msgObj, int type, Object parent) {
+		this.systemMessage = msgObj;
+		this.message = msgObj.getLevelOneText();
+		this.type = type;
+		this.parent = parent;
+	}
+
+	/**
+	 * Get the message to display in the tree viewer
+	 */
+	public String getMessage() {
+		return message;
+	}
+
+	/**
+	 * Message type. 
+	 * @see org.eclipse.rse.core.model.ISystemMessageObject
+	 */
+	public int getType() {
+		return type;
+	}
+
+	/**
+	 * Get the parent object (within tree view)
+	 */
+	public Object getParent() {
+		return parent;
+	}
+
+	/**
 	 * This is the method required by the IAdaptable interface.
 	 * Given an adapter class type, return an object castable to the type, or
 	 *  null if this is not possible.
 	 */
-    public Object getAdapter(Class adapterType)
-    {
-   	    return Platform.getAdapterManager().getAdapter(this, adapterType);	
-    }               
+	public Object getAdapter(Class adapterType) {
+		return Platform.getAdapterManager().getAdapter(this, adapterType);
+	}
+
 	/**
 	 * @see ISystemMessageObject#isTransient()
 	 */
@@ -89,16 +85,15 @@ public class SystemMessageObject implements ISystemMessageObject, IAdaptable, Co
 	/**
 	 * Return the SystemMessage for this SystemMessageObject.
 	 */
-	public SystemMessage getSystemMessage()
-	{
+	public SystemMessage getSystemMessage() {
 		return systemMessage;
 	}
-	
+
 	/**
 	 * @see java.lang.Comparable#compareTo(java.lang.Object)
 	 */
 	public int compareTo(Object o) {
-		ISystemMessageObject other = (ISystemMessageObject)o;
+		ISystemMessageObject other = (ISystemMessageObject) o;
 		return getMessage().compareTo(other.getMessage());
 	}
 }

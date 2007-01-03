@@ -16,9 +16,8 @@
 
 package org.eclipse.rse.core.subsystems;
 
-
-public interface IServiceSubSystem extends ISubSystem
-{
+public interface IServiceSubSystem extends ISubSystem {
 	public Class getServiceType();
+
 	public void switchServiceFactory(IServiceSubSystemConfiguration factory);
 }

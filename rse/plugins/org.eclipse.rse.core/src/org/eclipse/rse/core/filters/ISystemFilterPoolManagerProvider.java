@@ -15,6 +15,7 @@
  ********************************************************************************/
 
 package org.eclipse.rse.core.filters;
+
 import org.eclipse.core.runtime.IAdaptable;
 
 /**
@@ -31,102 +32,113 @@ import org.eclipse.core.runtime.IAdaptable;
  * callbacks that done to the provider for every interesting event. Should you 
  * not care about these, supply empty shells for these methods.
  */
-public interface ISystemFilterPoolManagerProvider extends IAdaptable
-{
-	
+public interface ISystemFilterPoolManagerProvider extends IAdaptable {
+
 	/**
 	 * Return the unique id for this provider
 	 * @return the id
 	 */
-	 public String getId();
-	
+	public String getId();
+
 	/**
 	 * Return the manager object for the given manager name.
 	 */
-    public ISystemFilterPoolManager getSystemFilterPoolManager(String managerName);
+	public ISystemFilterPoolManager getSystemFilterPoolManager(String managerName);
+
 	/**
 	 * Return all the manager objects this provider owns
 	 */
-    public ISystemFilterPoolManager[] getSystemFilterPoolManagers();
+	public ISystemFilterPoolManager[] getSystemFilterPoolManagers();
+
 	/**
 	 * Return all the manager objects this provider owns, to which it wants 
 	 *  to support referencing from the given filter reference manager.
 	 * <p>
 	 * Called by SystemFilterPoolReferenceManager.
 	 */
-    public ISystemFilterPoolManager[] getReferencableSystemFilterPoolManagers(ISystemFilterPoolReferenceManager refMgr);
-    /**
-     * Last chance call, by a filter pool reference manager, when a reference to a filter
-     * pool is found but the referenced master filter pool is not found in those the reference
-     * manager by getSystemFilterPoolManagers().
-     * <p>
-     * If this returns null, then this broken reference will be deleted
-     */
-    public ISystemFilterPool getSystemFilterPoolForBrokenReference(ISystemFilterPoolReferenceManager callingRefenceMgr,
-                                                                  String missingPoolMgrName, String missingPoolName);
+	public ISystemFilterPoolManager[] getReferencableSystemFilterPoolManagers(ISystemFilterPoolReferenceManager refMgr);
 
-    // ---------------------
-    // FILTER POOL EVENTS...
-    // ---------------------
-    /**
-     * A new filter pool has been created
-     */
-    public void filterEventFilterPoolCreated(ISystemFilterPool newPool);
-    /**
-     * A filter pool has been deleted
-     */
-    public void filterEventFilterPoolDeleted(ISystemFilterPool oldPool);
-    /**
-     * A filter pool has been renamed
-     */
-    public void filterEventFilterPoolRenamed(ISystemFilterPool pool, String oldName);
-    /**
-     * One or more filter pools have been re-ordered within their manager
-     */
-    public void filterEventFilterPoolsRePositioned(ISystemFilterPool[] pools, int delta);
+	/**
+	 * Last chance call, by a filter pool reference manager, when a reference to a filter
+	 * pool is found but the referenced master filter pool is not found in those the reference
+	 * manager by getSystemFilterPoolManagers().
+	 * <p>
+	 * If this returns null, then this broken reference will be deleted
+	 */
+	public ISystemFilterPool getSystemFilterPoolForBrokenReference(ISystemFilterPoolReferenceManager callingRefenceMgr, String missingPoolMgrName, String missingPoolName);
 
-    // ---------------------
-    // FILTER EVENTS...
-    // ---------------------
-    /**
-     * A new filter has been created
-     */
-    public void filterEventFilterCreated(ISystemFilter newFilter);
-    /**
-     * A filter has been deleted
-     */
-    public void filterEventFilterDeleted(ISystemFilter oldFilter);
-    /**
-     * A filter has been renamed
-     */
-    public void filterEventFilterRenamed(ISystemFilter filter, String oldName);
-    /**
-     * A filter's strings have been updated
-     */
-    public void filterEventFilterUpdated(ISystemFilter filter);
-    /**
-     * One or more filters have been re-ordered within their pool or filter (if nested)
-     */
-    public void filterEventFiltersRePositioned(ISystemFilter[] filters, int delta);    
+	// ---------------------
+	// FILTER POOL EVENTS...
+	// ---------------------
+	/**
+	 * A new filter pool has been created
+	 */
+	public void filterEventFilterPoolCreated(ISystemFilterPool newPool);
 
-    // -----------------------
-    // FILTER STRING EVENTS...
-    // -----------------------
-    /**
-     * A new filter string has been created
-     */
-    public void filterEventFilterStringCreated(ISystemFilterString newFilterString);
-    /**
-     * A filter string has been deleted
-     */
-    public void filterEventFilterStringDeleted(ISystemFilterString oldFilterString);
-    /**
-     * A filter string has been updated
-     */
-    public void filterEventFilterStringUpdated(ISystemFilterString filterString);
-    /**
-     * One or more filters have been re-ordered within their filter
-     */
-    public void filterEventFilterStringsRePositioned(ISystemFilterString[] filterStrings, int delta);    
+	/**
+	 * A filter pool has been deleted
+	 */
+	public void filterEventFilterPoolDeleted(ISystemFilterPool oldPool);
+
+	/**
+	 * A filter pool has been renamed
+	 */
+	public void filterEventFilterPoolRenamed(ISystemFilterPool pool, String oldName);
+
+	/**
+	 * One or more filter pools have been re-ordered within their manager
+	 */
+	public void filterEventFilterPoolsRePositioned(ISystemFilterPool[] pools, int delta);
+
+	// ---------------------
+	// FILTER EVENTS...
+	// ---------------------
+	/**
+	 * A new filter has been created
+	 */
+	public void filterEventFilterCreated(ISystemFilter newFilter);
+
+	/**
+	 * A filter has been deleted
+	 */
+	public void filterEventFilterDeleted(ISystemFilter oldFilter);
+
+	/**
+	 * A filter has been renamed
+	 */
+	public void filterEventFilterRenamed(ISystemFilter filter, String oldName);
+
+	/**
+	 * A filter's strings have been updated
+	 */
+	public void filterEventFilterUpdated(ISystemFilter filter);
+
+	/**
+	 * One or more filters have been re-ordered within their pool or filter (if nested)
+	 */
+	public void filterEventFiltersRePositioned(ISystemFilter[] filters, int delta);
+
+	// -----------------------
+	// FILTER STRING EVENTS...
+	// -----------------------
+	/**
+	 * A new filter string has been created
+	 */
+	public void filterEventFilterStringCreated(ISystemFilterString newFilterString);
+
+	/**
+	 * A filter string has been deleted
+	 */
+	public void filterEventFilterStringDeleted(ISystemFilterString oldFilterString);
+
+	/**
+	 * A filter string has been updated
+	 */
+	public void filterEventFilterStringUpdated(ISystemFilterString filterString);
+
+	/**
+	 * One or more filters have been re-ordered within their filter
+	 */
+	public void filterEventFilterStringsRePositioned(ISystemFilterString[] filterStrings, int delta);
 
 }

@@ -15,27 +15,22 @@
  ********************************************************************************/
 
 package org.eclipse.rse.core.model;
+
 import java.util.List;
 
 import org.eclipse.core.resources.IResource;
 
+public class SystemWorkspaceResourceSet extends AbstractSystemResourceSet {
 
-
-public class SystemWorkspaceResourceSet extends AbstractSystemResourceSet
-{
-	
-	public SystemWorkspaceResourceSet()
-	{
+	public SystemWorkspaceResourceSet() {
 		super();
 	}
-	
-	public SystemWorkspaceResourceSet(List resources)
-	{
+
+	public SystemWorkspaceResourceSet(List resources) {
 		super(resources);
 	}
-	
-	public SystemWorkspaceResourceSet(IResource[] resources)
-	{
+
+	public SystemWorkspaceResourceSet(IResource[] resources) {
 		super(resources);
 	}
 }

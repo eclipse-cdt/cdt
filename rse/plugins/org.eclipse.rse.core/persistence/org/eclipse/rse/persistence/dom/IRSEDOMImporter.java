@@ -16,7 +16,6 @@
 
 package org.eclipse.rse.persistence.dom;
 
-
 import org.eclipse.rse.core.filters.ISystemFilter;
 import org.eclipse.rse.core.filters.ISystemFilterPool;
 import org.eclipse.rse.core.filters.ISystemFilterPoolReference;
@@ -30,11 +29,8 @@ import org.eclipse.rse.core.subsystems.IConnectorService;
 import org.eclipse.rse.core.subsystems.IServerLauncherProperties;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 
+public interface IRSEDOMImporter {
 
-
-public interface IRSEDOMImporter
-{
-	
 	/**
 	 * Restores the profile represented by dom
 	 * @param profileManager
@@ -47,20 +43,19 @@ public interface IRSEDOMImporter
 	 * Restores the host represented by hostNode
 	 */
 	IHost restoreHost(ISystemProfile profile, RSEDOMNode hostNode);
-	
+
 	/**
 	 * Restore the connector service represented by connectorServiceNode
 	 */
 	IConnectorService restoreConnectorService(IHost host, RSEDOMNode connectorServiceNode);
-	
+
 	IServerLauncherProperties restoreServerLauncher(IConnectorService service, RSEDOMNode serverLauncherNode, IServerLauncherProperties slproperties);
-	
+
 	/**
 	 * Restores the subsystem represented by subSystemNode
 	 */
 	ISubSystem restoreSubSystem(IHost host, RSEDOMNode subSystemNode);
 
-	
 	ISystemFilter restoreFilter(ISystemFilterPool filterPool, RSEDOMNode systemFilterNode);
 
 	/**
@@ -69,8 +64,9 @@ public interface IRSEDOMImporter
 	ISystemFilterPool restoreFilterPool(ISystemProfile profile, RSEDOMNode systemFilterPoolNode);
 
 	ISystemFilterPoolReference restoreFilterPoolReference(ISubSystem subSystem, RSEDOMNode systemFilterPoolReferenceNode);
+
 	ISystemFilterString restoreFilterString(ISystemFilter filter, RSEDOMNode systemFilterStringNode);
-	
+
 	/**
 	 * Restores the property set represented by propertySetNode
 	 */

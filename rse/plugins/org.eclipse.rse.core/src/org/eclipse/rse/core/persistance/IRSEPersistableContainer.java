@@ -16,8 +16,7 @@
 
 package org.eclipse.rse.core.persistance;
 
-public interface IRSEPersistableContainer
-{
+public interface IRSEPersistableContainer {
 	/**
 	 * An object is dirty if a change has been made to it that requires
 	 * it to be persisted.
@@ -35,25 +34,25 @@ public interface IRSEPersistableContainer
 	 * @param flag true if the object must be persisted.
 	 */
 	public void setDirty(boolean flag);
-	
+
 	/**
 	 * Request a persistence manager to persist this object.
 	 * @return true if the object was persisted.
 	 */
 	public boolean commit();
-	
+
 	/**
 	 * An object was restored if it originated from a persistent form.
 	 * @return true if the object was created from its persistent form,
 	 * false if the object has never been persisted.
 	 */
 	public boolean wasRestored();
-	
+
 	/**
 	 * The the "restored" state of the object. Only persistence managers 
 	 * should do this.
 	 * @param flag true if the object was restored.
 	 */
 	public void setWasRestored(boolean flag);
-	
+
 }

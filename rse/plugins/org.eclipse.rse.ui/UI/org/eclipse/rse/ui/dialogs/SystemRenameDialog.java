@@ -99,7 +99,7 @@ public class SystemRenameDialog extends SystemPromptDialog
     private boolean ignoreSelection = false;
     private Hashtable uniqueNameValidatorPerParent = new Hashtable();
     
-    private String verbage;
+    private String verbiage;
 
     private SystemRenameTableProvider srtp;
     private Table table;
@@ -187,11 +187,11 @@ public class SystemRenameDialog extends SystemPromptDialog
 		setHelp(RSEUIPlugin.HELPPREFIX+"drnm0000"); //$NON-NLS-1$
 	}
 	/**
-	 * Set the verbage to show above the table. The default is "Enter new name for each resource"
+	 * Set the verbiage to show above the table. The default is "Enter new name for each resource"
 	 */
-	public void setVerbage(String verbage)
+	public void setVerbiage(String verbiage)
 	{
-		this.verbage = verbage;
+		this.verbiage = verbiage;
 	}	
     /**
      * Set the validator for the new name,as supplied by the adaptor for name checking.
@@ -230,10 +230,10 @@ public class SystemRenameDialog extends SystemPromptDialog
 		int nbrColumns = 1;
 		Composite composite = SystemWidgetHelpers.createComposite(parent, nbrColumns);			
 		
-		if (verbage != null)
-			SystemWidgetHelpers.createVerbiage(composite, verbage, nbrColumns, false, 200);
+		if (verbiage != null)
+			SystemWidgetHelpers.createVerbiage(composite, verbiage, nbrColumns, false, 200);
 		else
-			SystemWidgetHelpers.createVerbiage(composite, SystemResources.RESID_RENAME_VERBAGE, nbrColumns, false, 200);
+			SystemWidgetHelpers.createVerbiage(composite, SystemResources.RESID_RENAME_VERBIAGE, nbrColumns, false, 200);
 
         table = createTable(composite);        
         tableViewer = new TableViewer(table);

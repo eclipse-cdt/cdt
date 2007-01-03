@@ -69,12 +69,12 @@ public class SystemEnterOrSelectRemoteFileDialog extends SystemSelectRemoteFileO
 	}
 	
 	/**
-	 * Creates the select or enter file form. Sets the verbage of the form.
+	 * Creates the select or enter file form. Sets the verbiage of the form.
 	 * @see org.eclipse.rse.files.ui.dialogs.SystemSelectRemoteFileOrFolderDialog#getForm(boolean)
 	 */
 	protected SystemSelectRemoteFileOrFolderForm getForm(boolean fileMode) {
 		form = new SystemEnterOrSelectRemoteFileForm(getMessageLine(), this, fileMode);
-		form.setMessage(SystemFileResources.RESID_ENTER_OR_SELECT_FILE_VERBAGE_LABEL);
+		form.setMessage(SystemFileResources.RESID_ENTER_OR_SELECT_FILE_VERBIAGE_LABEL);
 		setOutputObject(null);
 		return form;
 	}

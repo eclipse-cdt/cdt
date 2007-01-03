@@ -141,7 +141,7 @@ public abstract class SystemBaseCopyAction extends SystemBaseDialogAction
 	protected abstract String[] getOldNames();	
 	protected abstract Object[] getOldObjects();	
 	/**
-	 * Get the verbage prompt to show on line one of the copy dialog
+	 * Get the verbiage prompt to show on line one of the copy dialog
 	 */	
 	protected String getPromptString()
 	{

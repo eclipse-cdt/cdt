@@ -61,7 +61,7 @@ public class SystemNewFilterAction
     protected boolean fromRSE = false;
     protected String[] defaultFilterStrings;
     protected String  type = null;
-    protected String  verbage = null;
+    protected String  verbiage = null;
     protected String  page1Description;
     protected String  namePageHelp;
     protected ISystemFilterPoolSelectionValidator filterPoolSelectionValidator; 
@@ -158,7 +158,7 @@ public class SystemNewFilterAction
      *  display name that is shown in the dropdown.
      * <p>
      * Of course, if you want to do this, then you will likely want to offer a different
-     *  label and tooltip for the prompt, and different verbage above the prompt. The 
+     *  label and tooltip for the prompt, and different verbiage above the prompt. The 
      *  object this method accepts as a parameter encapsulates all that information, and
      *  there is a default class you can use for this.
      */
@@ -223,7 +223,7 @@ public class SystemNewFilterAction
 	/**
 	 * <i>Configuration method. Do not override.</i><br>
 	 * Call in order to not show the final info-only page of the wizard. Default is true.
-	 * @see #setVerbage(String)
+	 * @see #setVerbiage(String)
 	 */
 	public void setShowInfoPage(boolean show)
 	{
@@ -231,12 +231,12 @@ public class SystemNewFilterAction
 	}
 	/**
 	 * <i>Configuration method. Do not override.</i><br>
-	 * Set the verbage to show on the final page. By default, it shows a tip about creating multiple
+	 * Set the verbiage to show on the final page. By default, it shows a tip about creating multiple
 	 *  filter strings via the Change action. Use this method to change that default.
 	 */
-	public void setVerbage(String verbage)
+	public void setVerbiage(String verbiage)
 	{
-		this.verbage = verbage;
+		this.verbiage = verbiage;
 	}
 	/**
 	 * <i>Configuration method. Do not override.</i><br>
@@ -351,8 +351,8 @@ public class SystemNewFilterAction
 		wizard.setShowNamePrompt(showNamePrompt);
 		wizard.setShowInfoPage(showInfoPage);
 		wizard.setFromRSE(fromRSE);
-		if (verbage != null)
-		  wizard.setVerbage(verbage);
+		if (verbiage != null)
+		  wizard.setVerbiage(verbiage);
 		if (page1Description != null)
 		  wizard.setPage1Description(page1Description);
 		if (filterPoolSelectionValidator != null)

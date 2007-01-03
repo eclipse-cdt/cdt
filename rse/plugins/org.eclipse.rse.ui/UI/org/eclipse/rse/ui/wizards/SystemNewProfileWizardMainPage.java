@@ -90,10 +90,10 @@ public class SystemNewProfileWizardMainPage
 		//SystemWidgetHelpers.setHelp(makeActiveCB, HELPID_PREFIX+"0002", HELPID_PREFIX+"0000");
 		SystemWidgetHelpers.setHelp(makeActiveCB, HELPID_PREFIX+"0002"); //$NON-NLS-1$
 		
-		// Verbage
+		// Verbiage
 		addGrowableFillerLine(composite_prompts, nbrColumns);
 		addSeparatorLine(composite_prompts, nbrColumns);
-		SystemWidgetHelpers.createVerbiage(composite_prompts, SystemResources.RESID_NEWPROFILE_VERBAGE, nbrColumns, false, 200);
+		SystemWidgetHelpers.createVerbiage(composite_prompts, SystemResources.RESID_NEWPROFILE_VERBIAGE, nbrColumns, false, 200);
 
 		textName.addModifyListener(
 			new ModifyListener() {

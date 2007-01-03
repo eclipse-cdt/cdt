@@ -18,13 +18,13 @@ package org.eclipse.rse.core.filters;
 
 /**
  * The system filter wizard allows callers to pass a list of wrapper objects
- *  for the user to select a filter pool. Effectively, this prompting for 
- *  euphamisms to filter pools. This requires an array of wrapper objects,
- *  and requires replacement mri for the pool prompt and tooltip text, and 
- *  the verbage above it. 
+ * for the user to select a filter pool. Effectively, this prompting for 
+ * euphemisms to filter pools. This requires an array of wrapper objects,
+ * and requires replacement text for the pool prompt and tooltip text, and 
+ * the verbiage above it. 
  * <p>
  * This is all encapsulated in this interface. There is also a class offered
- *  that implements all this and is populated via setters.
+ * that implements all this and is populated via setters.
  */
 public interface ISystemFilterPoolWrapperInformation {
 
@@ -38,7 +38,7 @@ public interface ISystemFilterPoolWrapperInformation {
 	 */
 	public String getPromptTooltip();
 
-	public String getVerbageLabel();
+	public String getVerbiageLabel();
 
 	/**
 	 * Get the list of wrappered filter pool objects to show in the combo. The wrappering allows

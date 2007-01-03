@@ -79,15 +79,15 @@ public class SystemImportCertWizardMainPage
 	public Control createContents(Composite parent)
 	{
 
-		Composite verbage = new Composite(parent, SWT.NULL);
+		Composite verbiage = new Composite(parent, SWT.NULL);
 		GridLayout vlayout = new GridLayout();
 		GridData vdata = new GridData(GridData.FILL_BOTH);
 		vlayout.numColumns = 1;
-		verbage.setLayout(vlayout);
-		verbage.setLayoutData(vdata);
+		verbiage.setLayout(vlayout);
+		verbiage.setLayoutData(vdata);
 
-		SystemWidgetHelpers.createLabel(verbage, UniversalSecurityProperties.RESID_SECURITY_CERTIFICATE_INFORMATION);
-		createTableViewer(verbage);
+		SystemWidgetHelpers.createLabel(verbiage, UniversalSecurityProperties.RESID_SECURITY_CERTIFICATE_INFORMATION);
+		createTableViewer(verbiage);
 		
 		Composite b = new Composite(parent, SWT.NULL);
 		GridLayout blayout = new GridLayout();

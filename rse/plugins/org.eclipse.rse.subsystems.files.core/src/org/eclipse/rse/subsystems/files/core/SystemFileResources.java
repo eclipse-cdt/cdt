@@ -87,19 +87,19 @@ public class SystemFileResources extends NLS
 
 	// Select Directory dialog...
 	public static String	RESID_SELECTDIRECTORY_TITLE;
-	public static String	RESID_SELECTDIRECTORY_VERBAGE;
+	public static String	RESID_SELECTDIRECTORY_VERBIAGE;
 	public static String	RESID_SELECTDIRECTORY_SELECT_LABEL;
 	public static String	RESID_SELECTDIRECTORY_SELECT_TOOLTIP;
 
 	// Select File dialog...
 	public static String	RESID_SELECTFILE_TITLE;
-	public static String	RESID_SELECTFILE_VERBAGE;
+	public static String	RESID_SELECTFILE_VERBIAGE;
 	public static String	RESID_SELECTFILE_SELECT_LABEL;
 	public static String	RESID_SELECTFILE_SELECT_TOOLTIP;
 
 	// Prompt for home folder dialog...
 	public static String	RESID_HOMEPROMPT_TITLE;
-	public static String	RESID_HOMEPROMPT_VERBAGE;
+	public static String	RESID_HOMEPROMPT_VERBIAGE;
 	public static String	RESID_HOMEPROMPT_PROMPT_LABEL;
 	public static String	RESID_HOMEPROMPT_PROMPT_TOOLTIP;
 
@@ -165,7 +165,7 @@ public class SystemFileResources extends NLS
 	// Enter or select file form
 	// -------------------------------
 	public static String	RESID_ENTER_OR_SELECT_FILE_TITLE;
-	public static String	RESID_ENTER_OR_SELECT_FILE_VERBAGE_LABEL;
+	public static String	RESID_ENTER_OR_SELECT_FILE_VERBIAGE_LABEL;
 	public static String	RESID_ENTER_OR_SELECT_FILE_ENTER_LABEL;
 	public static String	RESID_ENTER_OR_SELECT_FILE_ENTER_TOOLTIP;
 	public static String	RESID_ENTER_OR_SELECT_FILE_SELECT_TOOLTIP;

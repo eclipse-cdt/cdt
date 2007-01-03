@@ -52,8 +52,8 @@ public class SystemNewFilterWizardConfigurator
 		super();
 		this.pageTitle = pageTitle;
 		this.page1Description = SystemResources.RESID_NEWFILTER_PAGE1_DESCRIPTION;
-		this.page3Tip1 = SystemResources.RESID_NEWFILTER_PAGE3_STRINGS_VERBAGE;
-		this.page3Tip2 = SystemResources.RESID_NEWFILTER_PAGE3_POOLS_VERBAGE;
+		this.page3Tip1 = SystemResources.RESID_NEWFILTER_PAGE3_STRINGS_VERBIAGE;
+		this.page3Tip2 = SystemResources.RESID_NEWFILTER_PAGE3_POOLS_VERBIAGE;
 		this.page2Help = RSEUIPlugin.HELPPREFIX + "nfp20000"; //$NON-NLS-1$
 	}
 	
@@ -110,25 +110,25 @@ public class SystemNewFilterWizardConfigurator
 		return page2Help;
 	}
 	/**
-	 * Return the verbage for the name prompt on page 2
+	 * Return the verbiage for the name prompt on page 2
 	 */
-	public String getPage2NameVerbage()
+	public String getPage2NameVerbiage()
 	{
-		return SystemResources.RESID_NEWFILTER_PAGE2_NAME_VERBAGE;
+		return SystemResources.RESID_NEWFILTER_PAGE2_NAME_VERBIAGE;
 	}
 	/**
-	 * Return the verbage for the name prompt on page 2
+	 * Return the verbiage for the name prompt on page 2
 	 */
-	public String getPage2PoolVerbage()
+	public String getPage2PoolVerbiage()
 	{
-		return SystemResources.RESID_NEWFILTER_PAGE2_POOL_VERBAGE;
+		return SystemResources.RESID_NEWFILTER_PAGE2_POOL_VERBIAGE;
 	}
 	/**
-	 * Return the verbage tooltip for the name prompt on page 2
+	 * Return the verbiage tooltip for the name prompt on page 2
 	 */
-	public String getPage2PoolVerbageTip()
+	public String getPage2PoolVerbiageTip()
 	{
-		return SystemResources.RESID_NEWFILTER_PAGE2_POOL_VERBAGE_TIP;
+		return SystemResources.RESID_NEWFILTER_PAGE2_POOL_VERBIAGE_TIP;
 	}
 	
 	public String getPage2NamePromptLabel()

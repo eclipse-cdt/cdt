@@ -89,16 +89,16 @@ public interface ISystemFileConstants
 
 	// Select Directory dialog...
 	public static final String RESID_SELECTDIRECTORY_TITLE = RESID_PREFIX+"SelectDirectory.title"; //$NON-NLS-1$
-	public static final String RESID_SELECTDIRECTORY_VERBAGE = RESID_PREFIX+"SelectDirectory.verbage."; //$NON-NLS-1$
+	public static final String RESID_SELECTDIRECTORY_VERBIAGE = RESID_PREFIX+"SelectDirectory.verbiage."; //$NON-NLS-1$
 	public static final String RESID_SELECTDIRECTORY_SELECT  = RESID_PREFIX+"SelectDirectory.select."; //$NON-NLS-1$
 	// Select File dialog...
 	public static final String RESID_SELECTFILE_TITLE = RESID_PREFIX+"SelectFile.title"; //$NON-NLS-1$
-	public static final String RESID_SELECTFILE_VERBAGE = RESID_PREFIX+"SelectFile.verbage."; //$NON-NLS-1$
+	public static final String RESID_SELECTFILE_VERBIAGE = RESID_PREFIX+"SelectFile.verbiage."; //$NON-NLS-1$
 	public static final String RESID_SELECTFILE_SELECT  = RESID_PREFIX+"SelectFile.select."; //$NON-NLS-1$
 
 	// Prompt for home folder dialog...
 	public static final String RESID_HOMEPROMPT_TITLE   = RESID_PREFIX+"HomePrompt.title"; //$NON-NLS-1$
-	public static final String RESID_HOMEPROMPT_VERBAGE = RESID_PREFIX+"HomePrompt.verbage."; //$NON-NLS-1$
+	public static final String RESID_HOMEPROMPT_VERBIAGE = RESID_PREFIX+"HomePrompt.verbiage."; //$NON-NLS-1$
 	public static final String RESID_HOMEPROMPT_PROMPT_ROOT  = RESID_PREFIX+"HomePrompt.prompt."; //$NON-NLS-1$
 		
     // -------------------------
@@ -147,12 +147,12 @@ public interface ISystemFileConstants
     // -------------------------------
     // Enter or select file form
     // -------------------------------
-	public static final String RESID_ENTER_OR_SELECT_FILE_PREFIX = RESID_PREFIX + "EnterOrSelectFile."; //$NON-NLS-1$
-	public static final String RESID_ENTER_OR_SELECT_FILE_TITLE = RESID_ENTER_OR_SELECT_FILE_PREFIX + "title"; //$NON-NLS-1$
-	public static final String RESID_ENTER_OR_SELECT_FILE_VERBAGE_LABEL = RESID_ENTER_OR_SELECT_FILE_PREFIX + "verbage.label"; //$NON-NLS-1$
-	public static final String RESID_ENTER_OR_SELECT_FILE_ENTER_LABEL = RESID_ENTER_OR_SELECT_FILE_PREFIX + "enter.label"; //$NON-NLS-1$
-	public static final String RESID_ENTER_OR_SELECT_FILE_ENTER_TOOLTIP = RESID_ENTER_OR_SELECT_FILE_PREFIX + "enter.tooltip"; //$NON-NLS-1$
-	public static final String RESID_ENTER_OR_SELECT_FILE_SELECT_TOOLTIP = RESID_ENTER_OR_SELECT_FILE_PREFIX + "select.tooltip"; //$NON-NLS-1$
-	public static final String RESID_ENTER_OR_SELECT_FILE_FILE_LABEL = RESID_ENTER_OR_SELECT_FILE_PREFIX + "file.label"; //$NON-NLS-1$
-	public static final String RESID_ENTER_OR_SELECT_FILE_FILE_TOOLTIP = RESID_ENTER_OR_SELECT_FILE_PREFIX + "file.tooltip"; //$NON-NLS-1$
+	public static final String RESID_ENTER_OR_SELECT_FILE_PREFIX = RESID_PREFIX + "EnterOrSelectFile.";
+	public static final String RESID_ENTER_OR_SELECT_FILE_TITLE = RESID_ENTER_OR_SELECT_FILE_PREFIX + "title";
+	public static final String RESID_ENTER_OR_SELECT_FILE_VERBIAGE_LABEL = RESID_ENTER_OR_SELECT_FILE_PREFIX + "verbiage.label";
+	public static final String RESID_ENTER_OR_SELECT_FILE_ENTER_LABEL = RESID_ENTER_OR_SELECT_FILE_PREFIX + "enter.label";
+	public static final String RESID_ENTER_OR_SELECT_FILE_ENTER_TOOLTIP = RESID_ENTER_OR_SELECT_FILE_PREFIX + "enter.tooltip";
+	public static final String RESID_ENTER_OR_SELECT_FILE_SELECT_TOOLTIP = RESID_ENTER_OR_SELECT_FILE_PREFIX + "select.tooltip";
+	public static final String RESID_ENTER_OR_SELECT_FILE_FILE_LABEL = RESID_ENTER_OR_SELECT_FILE_PREFIX + "file.label";
+	public static final String RESID_ENTER_OR_SELECT_FILE_FILE_TOOLTIP = RESID_ENTER_OR_SELECT_FILE_PREFIX + "file.tooltip";
 }

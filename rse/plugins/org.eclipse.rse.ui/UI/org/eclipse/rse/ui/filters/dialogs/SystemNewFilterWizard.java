@@ -80,7 +80,7 @@ public class SystemNewFilterWizard
 	protected ISystemFilterPool[]            poolsToSelectFrom;
 	protected String                        type;
 	protected String[]                      defaultFilterStrings;
-	//protected String                        verbage;
+	//protected String                        verbiage;
 	//protected String                        page1Description;
 	protected boolean                      showFilterStrings = true;
 	protected boolean                      showNamePrompt = true;
@@ -154,7 +154,7 @@ public class SystemNewFilterWizard
      *  display name that is shown in the dropdown.
      * <p>
      * Of course, if you want to do this, then you will likely want to offer a different
-     *  label and tooltip for the prompt, and different verbage above the prompt. The 
+     *  label and tooltip for the prompt, and different verbiage above the prompt. The 
      *  object this method accepts as a parameter encapsulates all that information, and
      *  there is a default class you can use for this.
      */
@@ -262,13 +262,13 @@ public class SystemNewFilterWizard
     	//RSEUIPlugin.logDebugMessage(this.getClass().getName(),"Inside setSystemFilterPoolReferenceManagerProvider. null? " + (provider==null));
     }
 	/**
-	 * Set the verbage to show on the final page. By default, it shows a tip about creating multiple
+	 * Set the verbiage to show on the final page. By default, it shows a tip about creating multiple
 	 *  filter strings via the Change action. Use this method to change that default.
 	 */
-	public void setVerbage(String verbage)
+	public void setVerbiage(String verbiage)
 	{
 		if (configurator instanceof SystemNewFilterWizardConfigurator)
-		  ((SystemNewFilterWizardConfigurator)configurator).setPage3Tip1(verbage);
+		  ((SystemNewFilterWizardConfigurator)configurator).setPage3Tip1(verbiage);
 	}
 	/**
 	 * Set the wizard page title. Using this makes it possible to avoid subclassing.

@@ -344,7 +344,7 @@ public class SystemWidgetHelpers {
 	}
 
 	/**
-	 * Create a labeled verbage (wrappable label) field and insert it into a GridLayout, and assign tooltip text.
+	 * Create a labeled verbiage (wrappable label) field and insert it into a GridLayout, and assign tooltip text.
 	 * After calling this, you must call setText on the result to set its contents.
 	 * <p>
 	 * If you need a handle to the prompting label, immediately call {@link #getLastLabel()}
@@ -353,16 +353,16 @@ public class SystemWidgetHelpers {
 	 * @param labelText
 	 * @param tooltip
 	 * @param span Horizontal span
-	 * @param border true if you want a border around the verbage
+	 * @param border true if you want a border around the verbiage
 	 * @param widthHint number of pixels to limit width to before wrapping. 200 is a reasonable number
 	 * @return Label created.
 	 */
-	public static Label createLabeledVerbage(Composite parent, String labelText, String tooltip, int span, boolean border, int widthHint) {
+	public static Label createLabeledVerbiage(Composite parent, String labelText, String tooltip, int span, boolean border, int widthHint) {
 		previousLabel = createLabel(parent, appendColon(labelText));
-		Label verbage = createVerbiage(parent, labelText, span, border, widthHint);
+		Label verbiage = createVerbiage(parent, labelText, span, border, widthHint);
 		setToolTipText(previousLabel, tooltip);
-		setToolTipText(verbage, tooltip);
-		return verbage;
+		setToolTipText(verbiage, tooltip);
+		return verbiage;
 	}
 
 	/**

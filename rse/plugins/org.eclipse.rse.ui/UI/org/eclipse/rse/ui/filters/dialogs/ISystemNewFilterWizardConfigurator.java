@@ -56,17 +56,17 @@ public interface ISystemNewFilterWizardConfigurator
 	 */
 	public String getPage2HelpID();
 	/**
-	 * Return the verbage for the name prompt on page 2
+	 * Return the verbiage for the name prompt on page 2
 	 */
-	public String getPage2NameVerbage();
+	public String getPage2NameVerbiage();
 	/**
-	 * Return the verbage for the pool prompt on page 3
+	 * Return the verbiage for the pool prompt on page 3
 	 */
-	public String getPage2PoolVerbage();
+	public String getPage2PoolVerbiage();
 	/**
-	 * Return the verbage tooltip for the name prompt on page 2
+	 * Return the verbiage tooltip for the name prompt on page 2
 	 */
-	public String getPage2PoolVerbageTip();
+	public String getPage2PoolVerbiageTip();
 	/**
 	 * Return the label for the filter name
 	 *  prompt on page 2.

@@ -73,14 +73,14 @@ public class SystemSelectConnectionForm extends SystemBaseForm
 	protected static final int PROMPT_WIDTH = 200; // The maximum width of the dialog's prompt, in pixels.
 	
 	// GUI widgets
-    protected Label                   verbageLabel, spacer1, spacer2;
+    protected Label                   verbiageLabel, spacer1, spacer2;
 	protected Text                    nameEntryValue;
 	protected SystemViewForm          tree;
     protected SystemPropertySheetForm ps;
 	//protected ISystemMessageLine      msgLine;	
 	protected Composite               outerParent, ps_composite;	
 	// inputs
-	protected String           verbage = null;
+	protected String           verbiage = null;
 	protected String[]         systemTypes = null;
 	protected IHost defaultConn;
 	protected boolean          allowNew = true;
@@ -119,7 +119,7 @@ public class SystemSelectConnectionForm extends SystemBaseForm
 		//callerInstanceOfSystemPromptDialog = (caller instanceof SystemPromptDialog);				
 
 		// set default GUI
-		verbage = SystemResources.RESID_SELECTCONNECTION_VERBAGE;        
+		verbiage = SystemResources.RESID_SELECTCONNECTION_VERBIAGE;        
 	}
 
     // ---------------------------------
@@ -166,9 +166,9 @@ public class SystemSelectConnectionForm extends SystemBaseForm
      */
     public void setMessage(String message)
     {
-    	this.verbage = message;
-    	if (verbageLabel != null)
-    	  verbageLabel.setText(message);
+    	this.verbiage = message;
+    	if (verbiageLabel != null)
+    	  verbiageLabel.setText(message);
     }
     /**
      * Show the property sheet on the right hand side, to show the properties of the
@@ -354,9 +354,9 @@ public class SystemSelectConnectionForm extends SystemBaseForm
             //((GridLayout)composite_prompts.getLayout()).margin...
 		}
 
-        // MESSAGE/VERBAGE TEXT AT TOP
-        verbageLabel = SystemWidgetHelpers.createVerbiage(composite_prompts, verbage, gridColumns, false, PROMPT_WIDTH);
-        //verbageLabel = SystemWidgetHelpers.createLabel(composite_prompts, verbage, gridColumns);
+        // MESSAGE/VERBIAGE TEXT AT TOP
+        verbiageLabel = SystemWidgetHelpers.createVerbiage(composite_prompts, verbiage, gridColumns, false, PROMPT_WIDTH);
+        //verbiageLabel = SystemWidgetHelpers.createLabel(composite_prompts, verbiage, gridColumns);
 
         // SPACER LINE
         SystemWidgetHelpers.createLabel(composite_prompts, "", gridColumns); //$NON-NLS-1$

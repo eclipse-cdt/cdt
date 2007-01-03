@@ -72,13 +72,13 @@ public class SystemResources extends NLS
 	// GENERIC MULTI-SELECT RENAME DIALOG...
 	public static String RESID_RENAME_TITLE;
 	public static String RESID_RENAME_SINGLE_TITLE;
-	public static String RESID_RENAME_VERBAGE;
+	public static String RESID_RENAME_VERBIAGE;
 	public static String RESID_RENAME_COLHDG_OLDNAME;
 	public static String RESID_RENAME_COLHDG_NEWNAME;
 	public static String RESID_RENAME_COLHDG_TYPE;
 
 	// SPECIALIZED PROMPTS FOR GENERIC RENAME DIALOG...
-	public static String RESID_MULTI_RENAME_PROFILE_VERBAGE;
+	public static String RESID_MULTI_RENAME_PROFILE_VERBIAGE;
 
 	// GENERIC SINGLE-SELECT RENAME DIALOG...
 
@@ -145,13 +145,13 @@ public class SystemResources extends NLS
 
 	// GENERIC RESOURCE NAME COLLISION DIALOG...
 	public static String RESID_COLLISION_RENAME_TITLE;
-	public static String RESID_COLLISION_RENAME_VERBAGE;
+	public static String RESID_COLLISION_RENAME_VERBIAGE;
 	public static String RESID_COLLISION_RENAME_LABEL; 
 	public static String RESID_COLLISION_RENAME_TOOLTIP;
 
 	// GENERIC SELECT CONNECTION DIALOG...
 	public static String RESID_SELECTCONNECTION_TITLE;
-	public static String RESID_SELECTCONNECTION_VERBAGE;
+	public static String RESID_SELECTCONNECTION_VERBIAGE;
 
 	// -------------------------
 	// WIZARD AND DIALOG STRINGS
@@ -164,7 +164,7 @@ public class SystemResources extends NLS
 	public static String RESID_NEWPROFILE_NAME_TOOLTIP; 
 	public static String RESID_NEWPROFILE_MAKEACTIVE_LABEL; 
 	public static String RESID_NEWPROFILE_MAKEACTIVE_TOOLTIP;
-	public static String RESID_NEWPROFILE_VERBAGE;
+	public static String RESID_NEWPROFILE_VERBIAGE;
 
 	// RENAME DEFAULT PROFILE WIZARD PAGE...
 	public static String RESID_RENAMEDEFAULTPROFILE_PAGE1_TITLE;
@@ -173,7 +173,7 @@ public class SystemResources extends NLS
 
 	public static String RESID_PROFILE_PROFILENAME_LABEL;
 	public static String RESID_PROFILE_PROFILENAME_TIP;
-	public static String RESID_PROFILE_PROFILENAME_VERBAGE;
+	public static String RESID_PROFILE_PROFILENAME_VERBIAGE;
 
 
 	// COPY SYSTEM PROFILE DIALOG...
@@ -194,8 +194,8 @@ public class SystemResources extends NLS
 	public static String RESID_NEWCONN_PAGE1_DESCRIPTION;
 	public static String RESID_NEWCONN_SUBSYSTEMPAGE_FILES_DESCRIPTION;
 	public static String RESID_NEWCONN_SUBSYSTEMPAGE_FILES_TITLE;
-	public static String RESID_NEWCONN_SUBSYSTEMPAGE_FILES_VERBAGE1;
-	public static String RESID_NEWCONN_SUBSYSTEMPAGE_FILES_VERBAGE2;
+	public static String RESID_NEWCONN_SUBSYSTEMPAGE_FILES_VERBIAGE1;
+	public static String RESID_NEWCONN_SUBSYSTEMPAGE_FILES_VERBIAGE2;
 	public static String RESID_NEWCONN_SUBSYSTEMPAGE_DESCRIPTION;
 
 	public static String RESID_CONNECTION_TYPE_LABEL;
@@ -293,13 +293,13 @@ public class SystemResources extends NLS
 	// NAME PAGE (page 2) OF NEW FILTER WIZARD...
 	public static String RESID_NEWFILTER_PAGE2_DESCRIPTION;
 
-	public static String RESID_NEWFILTER_PAGE2_NAME_VERBAGE;
+	public static String RESID_NEWFILTER_PAGE2_NAME_VERBIAGE;
 
-	public static String RESID_NEWFILTER_PAGE2_POOL_VERBAGE;
+	public static String RESID_NEWFILTER_PAGE2_POOL_VERBIAGE;
 
-	public static String RESID_NEWFILTER_PAGE2_POOL_VERBAGE_TIP;
+	public static String RESID_NEWFILTER_PAGE2_POOL_VERBIAGE_TIP;
 
-	public static String RESID_NEWFILTER_PAGE2_PROFILE_VERBAGE;
+	public static String RESID_NEWFILTER_PAGE2_PROFILE_VERBIAGE;
 
 	public static String RESID_NEWFILTER_PAGE2_NAME_LABEL; 
 	public static String RESID_NEWFILTER_PAGE2_NAME_TOOLTIP; 
@@ -315,8 +315,8 @@ public class SystemResources extends NLS
 
 	// INFO PAGE (page 3) OF NEW FILTER WIZARD...
 	public static String RESID_NEWFILTER_PAGE3_DESCRIPTION;
-	public static String RESID_NEWFILTER_PAGE3_STRINGS_VERBAGE;
-	public static String RESID_NEWFILTER_PAGE3_POOLS_VERBAGE;
+	public static String RESID_NEWFILTER_PAGE3_STRINGS_VERBIAGE;
+	public static String RESID_NEWFILTER_PAGE3_POOLS_VERBIAGE;
 
 	public static String RESID_FILTERALIAS_LABEL;
 	public static String RESID_FILTERALIAS_TIP;
@@ -392,7 +392,7 @@ public class SystemResources extends NLS
 
 	// WORK WITH HISTORY DIALOG...
 	public static String RESID_WORKWITHHISTORY_TITLE;
-	public static String RESID_WORKWITHHISTORY_VERBAGE;
+	public static String RESID_WORKWITHHISTORY_VERBIAGE;
 	public static String RESID_WORKWITHHISTORY_PROMPT;
 	public static String RESID_WORKWITHHISTORY_BUTTON_LABEL;
 	public static String RESID_WORKWITHHISTORY_BUTTON_TIP;
@@ -647,7 +647,7 @@ public class SystemResources extends NLS
 	public static String RESID_PP_SUBSYSFACTORY_TYPES_LABEL;
 	public static String RESID_PP_SUBSYSFACTORY_TYPES_TOOLTIP;
 
-	public static String RESID_PP_SUBSYSFACTORY_VERBAGE;
+	public static String RESID_PP_SUBSYSFACTORY_VERBIAGE;
 
 	// REMOTE SERVER LAUNCH PROPERTIES PAGE...
 	public static String RESID_PROP_SERVERLAUNCHER_MEANS;

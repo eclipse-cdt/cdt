@@ -74,7 +74,7 @@ public class SystemTeamViewSubSystemConfigurationPropertyPage extends SystemBase
 		// description
 		addFillerLine(composite_prompts, nbrColumns);
 		addSeparatorLine(composite_prompts, nbrColumns);
-		SystemWidgetHelpers.createVerbiage(composite_prompts, SystemResources.RESID_PP_SUBSYSFACTORY_VERBAGE, nbrColumns, false, 200);
+		SystemWidgetHelpers.createVerbiage(composite_prompts, SystemResources.RESID_PP_SUBSYSFACTORY_VERBIAGE, nbrColumns, false, 200);
 
 	    if (!initDone)	
 	      doInitializeFields();		  

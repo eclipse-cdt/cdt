@@ -89,7 +89,7 @@ public class SystemRenameSingleDialog extends SystemPromptDialog
     private String promptLabel, promptTip;
     private String newNameString;
     private String inputName =  ""; //$NON-NLS-1$
-    private Label resourceTypePrompt, resourceTypeValue, verbageLabel, renameLabel;
+    private Label resourceTypePrompt, resourceTypeValue, verbiageLabel, renameLabel;
     private SystemMessage errorMessage;
     private ISystemValidator nameValidator;
     private ValidatorUniqueString uniqueNameValidator;    
@@ -150,7 +150,7 @@ public class SystemRenameSingleDialog extends SystemPromptDialog
 		
 	/**
 	 * Indicate this dialog is the result of a copy/move name collision.
-	 * Affects the title, verbage at the top of the dialog, and context help.
+	 * Affects the title, verbiage at the top of the dialog, and context help.
 	 */
 	public void setCopyCollisionMode(boolean copyCollisionMode)
 	{
@@ -179,7 +179,7 @@ public class SystemRenameSingleDialog extends SystemPromptDialog
 	}
 	/**
 	 * Query if this dialog is the result of a copy/move name collision.
-	 * Affects the title, verbage at the top of the dialog, and context help.
+	 * Affects the title, verbiage at the top of the dialog, and context help.
 	 */
 	public boolean getCopyCollisionMode()
 	{
@@ -229,14 +229,14 @@ public class SystemRenameSingleDialog extends SystemPromptDialog
 
         if (copyCollisionMode)
         {
-          // VERBAGE
-          verbageLabel = SystemWidgetHelpers.createLabel(composite, " ", nbrColumns); //$NON-NLS-1$
+          // VERBIAGE
+          verbiageLabel = SystemWidgetHelpers.createLabel(composite, " ", nbrColumns); //$NON-NLS-1$
           SystemWidgetHelpers.createLabel(composite, " ", nbrColumns); //filler //$NON-NLS-1$
         }
        	else if (description != null)
         {
-           // VERBAGE
-          verbageLabel = SystemWidgetHelpers.createLabel(composite, description, nbrColumns);
+           // VERBIAGE
+          verbiageLabel = SystemWidgetHelpers.createLabel(composite, description, nbrColumns);
           SystemWidgetHelpers.createLabel(composite, " ", nbrColumns); //filler //$NON-NLS-1$
         }
         
@@ -337,7 +337,7 @@ public class SystemRenameSingleDialog extends SystemPromptDialog
 
 		  if (copyCollisionMode)
 		  {
-            verbageLabel.setText(SystemMessage.sub(SystemResources.RESID_COLLISION_RENAME_VERBAGE, "&1", inputName)); //$NON-NLS-1$
+            verbiageLabel.setText(SystemMessage.sub(SystemResources.RESID_COLLISION_RENAME_VERBIAGE, "&1", inputName)); //$NON-NLS-1$
 		  }
 		 
 		  

@@ -57,9 +57,9 @@ public class SystemRemoteArchiveDialog extends SystemRemoteFileDialog
 	}
 	
 
-    public String getVerbage()
+    public String getVerbiage()
     {
-    	return SystemFileResources.RESID_SELECTFILE_VERBAGE;
+    	return SystemFileResources.RESID_SELECTFILE_VERBIAGE;
     }
     
     public String getTreeTip()

@@ -74,8 +74,8 @@ public class SystemResourceSelectionForm implements ISelectionChangedListener
 	protected Object  caller;
 	protected boolean callerInstanceOfWizardPage, callerInstanceOfSystemPromptDialog;	
 
-	protected String    _verbage = null;
-	protected Label     verbageLabel;
+	protected String    _verbiage = null;
+	protected Label     verbiageLabel;
 	private Composite _container;
 	
 	// history
@@ -87,7 +87,7 @@ public class SystemResourceSelectionForm implements ISelectionChangedListener
 	
 	
 	public SystemResourceSelectionForm(Shell shell, Composite parent, Object caller,
-			SystemResourceSelectionInputProvider inputProvider, String verbage,
+			SystemResourceSelectionInputProvider inputProvider, String verbiage,
 			boolean multipleSelection, 
 			ISystemMessageLine msgLine)
 	{
@@ -96,7 +96,7 @@ public class SystemResourceSelectionForm implements ISelectionChangedListener
 		_inputProvider = inputProvider;
 		_multipleSelection = multipleSelection;
 		_shell = shell;
-		_verbage = verbage;
+		_verbiage = verbiage;
 		this.caller = caller;
 		callerInstanceOfWizardPage = (caller instanceof WizardPage);
 		callerInstanceOfSystemPromptDialog = (caller instanceof SystemPromptDialog);
@@ -145,8 +145,8 @@ public class SystemResourceSelectionForm implements ISelectionChangedListener
 		}
 
 
-        // MESSAGE/VERBAGE TEXT AT TOP
-        verbageLabel = SystemWidgetHelpers.createVerbiage(composite_prompts, _verbage, gridColumns, false, PROMPT_WIDTH);
+        // MESSAGE/VERBIAGE TEXT AT TOP
+        verbiageLabel = SystemWidgetHelpers.createVerbiage(composite_prompts, _verbiage, gridColumns, false, PROMPT_WIDTH);
   
     	
 		boolean allowMultipleConnnections = _inputProvider.allowMultipleConnections();
@@ -297,9 +297,9 @@ public class SystemResourceSelectionForm implements ISelectionChangedListener
 		   }
 	}
 
-	public void setVerbage(String verbage)
+	public void setVerbiage(String verbiage)
 	{
-		_verbage = verbage;
+		_verbiage = verbiage;
 	}
 	
 	public boolean setPreSelection(Object selection)
@@ -600,9 +600,9 @@ public class SystemResourceSelectionForm implements ISelectionChangedListener
      */
     public void setMessage(String message)
     {
-    	this._verbage = message;
-    	if (verbageLabel != null)
-    	  verbageLabel.setText(message);
+    	this._verbiage = message;
+    	if (verbiageLabel != null)
+    	  verbiageLabel.setText(message);
     }
     /**
      * Set the tooltip text for the remote systems tree from which an item is selected.

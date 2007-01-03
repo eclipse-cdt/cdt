@@ -46,7 +46,7 @@ public class SystemProfileForm
 
 	// GUI widgets
 	protected Label profileLabel;
-	protected Control verbage;	
+	protected Control verbiage;	
 	//protected Combo profileCombo;
 	protected Text  profileName;
 	protected ISystemMessageLine msgLine;
@@ -59,7 +59,7 @@ public class SystemProfileForm
 	protected static final int profileNameLength = ValidatorProfileName.MAX_PROFILENAME_LENGTH;
 	// state
 	protected ISystemProfile profile;
-	private boolean showVerbage = true;
+	private boolean showVerbiage = true;
 	private SystemMessage errorMessage = null;
     
 	/**
@@ -67,14 +67,14 @@ public class SystemProfileForm
 	 * @param msgLine A GUI widget capable of writing error messages to.
 	 * @param caller The wizardpage or dialog hosting this form.
 	 * @param profile The existing profile being updated, or null for New action.
-	 * @param showVerbage Specify true to show first-time-user verbage.
+	 * @param showVerbiage Specify true to show first-time-user verbiage.
 	 */
-	public SystemProfileForm(ISystemMessageLine msgLine, Object caller, ISystemProfile profile, boolean showVerbage)
+	public SystemProfileForm(ISystemMessageLine msgLine, Object caller, ISystemProfile profile, boolean showVerbiage)
 	{
 		this.msgLine = msgLine;
 		this.caller = caller;
 		this.profile = profile;
-		this.showVerbage = showVerbage;
+		this.showVerbiage = showVerbiage;
 		callerInstanceOfWizardPage = (caller instanceof WizardPage);
 		callerInstanceOfSystemPromptDialog = (caller instanceof SystemPromptDialog);	
 		
@@ -121,11 +121,11 @@ public class SystemProfileForm
 		int nbrColumns = 2;
 		Composite composite_prompts = SystemWidgetHelpers.createComposite(parent, nbrColumns);
 
-		// VERBAGE LABEL
-		if (showVerbage)
+		// VERBIAGE LABEL
+		if (showVerbiage)
 		{
-		  verbage = SystemWidgetHelpers.createVerbiage(
-			 composite_prompts, SystemResources.RESID_PROFILE_PROFILENAME_VERBAGE, nbrColumns, false, 200);
+		  verbiage = SystemWidgetHelpers.createVerbiage(
+			 composite_prompts, SystemResources.RESID_PROFILE_PROFILENAME_VERBIAGE, nbrColumns, false, 200);
 	      SystemWidgetHelpers.createLabel(composite_prompts, "", nbrColumns); // dummy line for spacing //$NON-NLS-1$
 		}
    

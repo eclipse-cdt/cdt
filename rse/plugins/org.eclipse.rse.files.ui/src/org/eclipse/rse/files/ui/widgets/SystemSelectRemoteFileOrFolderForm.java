@@ -103,7 +103,7 @@ public class SystemSelectRemoteFileOrFolderForm
 	protected static final int PROMPT_WIDTH = 400; // The maximum width of the dialog's prompt, in pixels.
 	
 	// GUI widgets
-    protected Label                   verbageLabel, spacer1, spacer2;
+    protected Label                   verbiageLabel, spacer1, spacer2;
 	protected Text                    nameEntryValue;
 	protected SystemViewForm          tree;
     protected SystemPropertySheetForm ps;
@@ -111,7 +111,7 @@ public class SystemSelectRemoteFileOrFolderForm
 	protected Composite               outerParent, ps_composite;	
 	// inputs
 	protected ISystemRegistry sr = null;
-	protected String    verbage = null;
+	protected String    verbiage = null;
 	protected String    treeTip = null;	
 	protected String 	locationPrompt = ""; //$NON-NLS-1$
 	protected String    fileTypes;
@@ -171,7 +171,7 @@ public class SystemSelectRemoteFileOrFolderForm
 		sr = RSEUIPlugin.getTheSystemRegistry();
 
 		// set default GUI
-		verbage = fileMode ? SystemFileResources.RESID_SELECTFILE_VERBAGE: SystemFileResources.RESID_SELECTDIRECTORY_VERBAGE;
+		verbiage = fileMode ? SystemFileResources.RESID_SELECTFILE_VERBIAGE: SystemFileResources.RESID_SELECTDIRECTORY_VERBIAGE;
         treeTip = fileMode ? SystemFileResources.RESID_SELECTFILE_SELECT_TOOLTIP : SystemFileResources.RESID_SELECTDIRECTORY_SELECT_TOOLTIP;
 
         // create the input provider that drives the contents of the tree
@@ -256,9 +256,9 @@ public class SystemSelectRemoteFileOrFolderForm
      */
     public void setMessage(String message)
     {
-    	this.verbage = message;
-    	if (verbageLabel != null)
-    	  verbageLabel.setText(message);
+    	this.verbiage = message;
+    	if (verbiageLabel != null)
+    	  verbiageLabel.setText(message);
     }
     /**
      * Set the tooltip text for the remote systems tree from which an item is selected.
@@ -698,9 +698,9 @@ public class SystemSelectRemoteFileOrFolderForm
             //((GridLayout)composite_prompts.getLayout()).margin...
 		}
 
-        // MESSAGE/VERBAGE TEXT AT TOP
-        verbageLabel = SystemWidgetHelpers.createVerbiage(composite_prompts, verbage, gridColumns, false, PROMPT_WIDTH);
-        //verbageLabel = SystemWidgetHelpers.createLabel(composite_prompts, verbage, gridColumns);
+        // MESSAGE/VERBIAGE TEXT AT TOP
+        verbiageLabel = SystemWidgetHelpers.createVerbiage(composite_prompts, verbiage, gridColumns, false, PROMPT_WIDTH);
+        //verbiageLabel = SystemWidgetHelpers.createLabel(composite_prompts, verbiage, gridColumns);
 
         // SPACER LINE
         SystemWidgetHelpers.createLabel(composite_prompts, "", gridColumns); //$NON-NLS-1$

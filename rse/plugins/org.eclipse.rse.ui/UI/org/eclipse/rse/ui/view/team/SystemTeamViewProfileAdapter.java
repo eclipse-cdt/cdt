@@ -123,7 +123,7 @@ public class SystemTeamViewProfileAdapter
 		renameAction.setDialogMultiSelectionHelp(RSEUIPlugin.HELPPREFIX+"drnmprfl"); //$NON-NLS-1$
 		renameAction.setSingleSelectPromptLabel(SystemResources.RESID_SIMPLE_RENAME_PROFILE_PROMPT_LABEL, 
 												SystemResources.RESID_SIMPLE_RENAME_PROFILE_PROMPT_TIP);
-		renameAction.setMultiSelectVerbage(SystemResources.RESID_MULTI_RENAME_PROFILE_VERBAGE);
+		renameAction.setMultiSelectVerbiage(SystemResources.RESID_MULTI_RENAME_PROFILE_VERBIAGE);
 				
 		actionsCreated = true;		
 	}

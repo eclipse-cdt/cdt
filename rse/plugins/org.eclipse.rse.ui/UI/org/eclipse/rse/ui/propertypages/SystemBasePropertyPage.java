@@ -412,21 +412,21 @@ public abstract class SystemBasePropertyPage extends PropertyPage
 		return field;
 	}
 	/**
-	 * Create a labeled verbage field, where the field on the right grabs excess space and has an indent so it 
+	 * Create a labeled verbiage field, where the field on the right grabs excess space and has an indent so it 
 	 *   isn't smashed up against the prompt on the left.
 	 * @see SystemWidgetHelpers#createLabeledTextField(Composite, Listener, String, String)
 	 * @see #grabExcessSpace(Control)
 	 */
-	protected Label createLabeledVerbage(Composite c, String label, String tooltip)
+	protected Label createLabeledVerbiage(Composite c, String label, String tooltip)
 	{
-		Label verbage = SystemWidgetHelpers.createLabeledVerbage(c, label, tooltip, 1, false, 200);
-		GridData gd = (GridData)verbage.getLayoutData();
+		Label verbiage = SystemWidgetHelpers.createLabeledVerbiage(c, label, tooltip, 1, false, 200);
+		GridData gd = (GridData)verbiage.getLayoutData();
 		if (gd != null) 
 		{
 			gd.grabExcessHorizontalSpace = true;
 			gd.horizontalIndent = 10;
 		}
-		return verbage;
+		return verbiage;
 	}
     // -----------------------------
     // ISystemMessageLine methods...

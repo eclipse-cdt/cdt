@@ -44,7 +44,7 @@ public class ConnectorServicesForm extends SystemBaseForm
 {
 	private TreeViewer _serviceViewer;
 	private SystemPropertySheetForm _propertiesViewer;
-	private Text _descriptionVerbage;
+	private Text _descriptionVerbiage;
 	
 	private String _serviceTooltip = SystemResources.RESID_SERVICESFORM_CONNECTORSERVICES_TOOLTIP;
 	private String _propertiesTooltip = SystemResources.RESID_SERVICESFORM_PROPERTIES_TOOLTIP;
@@ -96,15 +96,15 @@ public class ConnectorServicesForm extends SystemBaseForm
         descriptionComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
 		Label descriptionLabel = new Label(descriptionComposite, SWT.NONE);
 	    descriptionLabel.setText(SystemResources.RESID_PROPERTIES_DESCRIPTION_LABEL);
-		_descriptionVerbage = new Text(descriptionComposite, SWT.BORDER | SWT.READ_ONLY | SWT.WRAP);
-        _descriptionVerbage.setText(getCurrentVerbage());
-        _descriptionVerbage.setEditable(false);
+		_descriptionVerbiage = new Text(descriptionComposite, SWT.BORDER | SWT.READ_ONLY | SWT.WRAP);
+        _descriptionVerbiage.setText(getCurrentVerbiage());
+        _descriptionVerbiage.setEditable(false);
 		GridData gridData = new GridData();
 		gridData.horizontalAlignment = GridData.FILL;
 		gridData.grabExcessHorizontalSpace = true;
 		gridData.widthHint = 150;    
 		gridData.verticalAlignment = GridData.BEGINNING;
-		_descriptionVerbage.setLayoutData(data);
+		_descriptionVerbiage.setLayoutData(data);
 
 		sashComposite.setWeights(new int[] { 20, 30, 10 });
 		
@@ -115,7 +115,7 @@ public class ConnectorServicesForm extends SystemBaseForm
                     {
                     	ISelection selection = event.getSelection();
                     	_propertiesViewer.selectionChanged(selection);
-                		_descriptionVerbage.setText(getCurrentVerbage());
+                		_descriptionVerbiage.setText(getCurrentVerbiage());
                     }
                  });
         
@@ -154,7 +154,7 @@ public class ConnectorServicesForm extends SystemBaseForm
 		return true;
 	}
 	
-	protected String getCurrentVerbage()
+	protected String getCurrentVerbiage()
 	{
 		if (_serviceViewer == null)
 			return ""; //$NON-NLS-1$

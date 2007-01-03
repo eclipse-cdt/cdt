@@ -27,7 +27,7 @@ import org.eclipse.rse.core.filters.ISystemFilterPoolWrapperInformation;
  *  for the user to select a filter pool. Effectively, this prompting for 
  *  euphamisms to filter pools. This requires an array of wrapper objects,
  *  and requires replacement mri for the pool prompt and tooltip text, and 
- *  the verbage above it. 
+ *  the verbiage above it. 
  * <p>
  * This is all encapsulated in this class. The information is set via setters
  *  or constructor parameters.
@@ -35,7 +35,7 @@ import org.eclipse.rse.core.filters.ISystemFilterPoolWrapperInformation;
 public class SystemFilterPoolWrapperInformation
 	implements ISystemFilterPoolWrapperInformation 
 {
-	private String promptLabel, promptTooltip, verbageLabel;
+	private String promptLabel, promptTooltip, verbiageLabel;
 	private Vector wrappers;
 	private ISystemFilterPoolWrapper[] wrapperArray;
 	private ISystemFilterPoolWrapper   preSelectWrapper;
@@ -43,11 +43,11 @@ public class SystemFilterPoolWrapperInformation
 	/**
 	 * Constructor for SystemFilterPoolWrapperInformation.
 	 */
-	public SystemFilterPoolWrapperInformation(String promptLabel, String promptTooltip, String verbageLabel) 
+	public SystemFilterPoolWrapperInformation(String promptLabel, String promptTooltip, String verbiageLabel) 
 	{
 		super();
 		this.promptLabel= promptLabel;
-		this.verbageLabel = verbageLabel;
+		this.verbiageLabel = verbiageLabel;
 		this.promptLabel= promptTooltip;
 		wrappers = new Vector();
 	}
@@ -89,9 +89,9 @@ public class SystemFilterPoolWrapperInformation
 		return promptTooltip;
 	}
 
-	public String getVerbageLabel() 
+	public String getVerbiageLabel() 
 	{
-		return verbageLabel;
+		return verbiageLabel;
 	}
 	
 

@@ -52,7 +52,7 @@ public class SystemWorkWithHistoryDialog extends SystemPromptDialog implements I
 	private String[] historyInput;
 	private String[] historyOutput;
 	private String[] defaultHistory;
-	//private Label verbage;
+	//private Label verbiage;
 	private List  historyList;
 	private Button rmvButton, clearButton, mupButton, mdnButton;
 	private Group group;
@@ -125,8 +125,8 @@ public class SystemWorkWithHistoryDialog extends SystemPromptDialog implements I
 		int nbrColumns = 2;
 		Composite composite = SystemWidgetHelpers.createComposite(parent, nbrColumns);
 		
-		// verbage
-		/*verbage =*/ SystemWidgetHelpers.createLabel(composite,SystemResources.RESID_WORKWITHHISTORY_VERBAGE, nbrColumns);
+		// verbiage
+		/*verbiage =*/ SystemWidgetHelpers.createLabel(composite,SystemResources.RESID_WORKWITHHISTORY_VERBIAGE, nbrColumns);
 		
 		// History list
 		init(composite, nbrColumns);

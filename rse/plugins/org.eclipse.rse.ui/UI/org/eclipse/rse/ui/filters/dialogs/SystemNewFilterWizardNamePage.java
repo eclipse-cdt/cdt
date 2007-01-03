@@ -47,7 +47,7 @@ public class SystemNewFilterWizardNamePage
 	
 	protected Text  nameText;
 	protected Button uniqueCB;
-	protected Label poolVerbage;
+	protected Label poolVerbiage;
 	protected Label poolComboLabel;	
 	protected Combo poolWrapperCombo;
 	protected Combo poolCombo;
@@ -118,7 +118,7 @@ public class SystemNewFilterWizardNamePage
      *  display name that is shown in the dropdown.
      * <p>
      * Of course, if you want to do this, then you will likely want to offer a different
-     *  label and tooltip for the prompt, and different verbage above the prompt. The 
+     *  label and tooltip for the prompt, and different verbiage above the prompt. The 
      *  object this method accepts as a parameter encapsulates all that information, and
      *  there is a default class you can use for this.
      */
@@ -152,7 +152,7 @@ public class SystemNewFilterWizardNamePage
 		int nbrColumns = 2;
 		Composite composite_prompts = SystemWidgetHelpers.createComposite(parent, nbrColumns);
 				
-		SystemWidgetHelpers.createVerbiage(composite_prompts, configurator.getPage2NameVerbage(), nbrColumns, false, 200);
+		SystemWidgetHelpers.createVerbiage(composite_prompts, configurator.getPage2NameVerbiage(), nbrColumns, false, 200);
 		nameText = SystemWidgetHelpers.createLabeledTextField(composite_prompts, null, configurator.getPage2NamePromptLabel(), configurator.getPage2NamePromptTooltip());
 		
         addSeparatorLine(composite_prompts, nbrColumns);
@@ -174,8 +174,8 @@ public class SystemNewFilterWizardNamePage
         
         if (poolsToSelectFrom != null)
         {
-		   	poolVerbage = SystemWidgetHelpers.createVerbiage(composite_prompts, configurator.getPage2PoolVerbage(), nbrColumns, false, 200);
-		   	poolVerbage.setToolTipText(configurator.getPage2PoolVerbageTip());
+		   	poolVerbiage = SystemWidgetHelpers.createVerbiage(composite_prompts, configurator.getPage2PoolVerbiage(), nbrColumns, false, 200);
+		   	poolVerbiage.setToolTipText(configurator.getPage2PoolVerbiageTip());
            	poolCombo = SystemWidgetHelpers.createLabeledReadonlyCombo(composite_prompts, null, configurator.getPage2PoolPromptLabel(), configurator.getPage2PoolPromptTooltip());
 			poolComboLabel = SystemWidgetHelpers.getLastLabel();
            	String[] poolNames = new String[poolsToSelectFrom.length];
@@ -194,14 +194,14 @@ public class SystemNewFilterWizardNamePage
            	poolCombo.addSelectionListener(this);
            	if ((uniqueCB!=null) && uniqueCB.getSelection())
            	{
-				poolVerbage.setEnabled(false);
+				poolVerbiage.setEnabled(false);
 				poolComboLabel.setEnabled(false);
            		poolCombo.setEnabled(false);
            	}
         }
         else if (poolWrapperInformation != null)
         {
-		 	poolVerbage = SystemWidgetHelpers.createVerbiage(composite_prompts, poolWrapperInformation.getVerbageLabel(), nbrColumns, false, 200);
+		 	poolVerbiage = SystemWidgetHelpers.createVerbiage(composite_prompts, poolWrapperInformation.getVerbiageLabel(), nbrColumns, false, 200);
 		   	//poolWrapperCombo = SystemWidgetHelpers.createLabeledCombo(composite_prompts, null, poolWrapperInformation.getResourceBundle(), poolWrapperInformation.getPromptRBKey()); // d47323
 		   	poolWrapperCombo = SystemWidgetHelpers.createLabeledReadonlyCombo(composite_prompts, null, poolWrapperInformation.getPromptLabel(), poolWrapperInformation.getPromptTooltip());
 			poolComboLabel = SystemWidgetHelpers.getLastLabel();
@@ -221,7 +221,7 @@ public class SystemNewFilterWizardNamePage
            	poolWrapperCombo.addSelectionListener(this);
 			if ((uniqueCB!=null) && uniqueCB.getSelection())
 			{
-				poolVerbage.setEnabled(false);
+				poolVerbiage.setEnabled(false);
 				poolComboLabel.setEnabled(false);
 				poolWrapperCombo.setEnabled(false);
 			}
@@ -317,8 +317,8 @@ public class SystemNewFilterWizardNamePage
 		else if (src == uniqueCB)
 		{
 			boolean selected = uniqueCB.getSelection();
-			if (poolVerbage != null)
-			  	poolVerbage.setEnabled(!selected);
+			if (poolVerbiage != null)
+			  	poolVerbiage.setEnabled(!selected);
 			if (poolCombo != null)
 			 	poolCombo.setEnabled(!selected);
 			if (poolWrapperCombo != null)

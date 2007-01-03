@@ -20,7 +20,7 @@ import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 
 /**
  * An interface required if you wish to be called back by the 
- *  system filter wizard, when the user selects a target filter pool.
+ * system filter wizard, when the user selects a target filter pool.
  */
 public interface ISystemFilterPoolSelectionValidator {
 

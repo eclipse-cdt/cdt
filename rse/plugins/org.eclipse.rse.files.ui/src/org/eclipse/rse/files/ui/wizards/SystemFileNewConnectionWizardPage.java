@@ -106,9 +106,9 @@ public class SystemFileNewConnectionWizardPage extends AbstractSystemNewConnecti
 		Composite composite_prompts = SystemWidgetHelpers.createComposite(parent, nbrColumns);
 		
 
-        // Instructional verbage
+        // Instructional verbiage
 		String text = null;
-		text = SystemResources.RESID_NEWCONN_SUBSYSTEMPAGE_FILES_VERBAGE1;
+		text = SystemResources.RESID_NEWCONN_SUBSYSTEMPAGE_FILES_VERBIAGE1;
 			//,
 		        // the following is default English text to use if the string is not found in the mri"
 		      //  "To connect to your remote system, you must first copy and expand the supplied Java server code jar file on that system, and either manually start that server or the supplied daemon. You will find the instructions for this in the Help perspective. ");
@@ -120,7 +120,7 @@ public class SystemFileNewConnectionWizardPage extends AbstractSystemNewConnecti
 		
 		SystemWidgetHelpers.createSpacerLine(composite_prompts, span, false);
 		
-		text = SystemResources.RESID_NEWCONN_SUBSYSTEMPAGE_FILES_VERBAGE2;
+		text = SystemResources.RESID_NEWCONN_SUBSYSTEMPAGE_FILES_VERBIAGE2;
 		//,
 		        // the following is default English text to use if the string is not found in the mri"
 		  //      "If you manually start the communications server, you will need to set the port number property for this connection. To do this, expand your newly created connection in the Remote System Explorer perspective. Right click on the Files subsystem and select Properties. You can specify the port to match the port you specified or were assigned for the server.");

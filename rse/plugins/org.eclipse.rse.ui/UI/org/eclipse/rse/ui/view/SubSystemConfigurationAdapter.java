@@ -667,7 +667,7 @@ public class SubSystemConfigurationAdapter implements ISubSystemConfigurationAda
 		protected SystemFilterPoolWrapperInformation getNewFilterWizardPoolWrapperInformation()
 		{
 			return new SystemFilterPoolWrapperInformation(SystemResources.RESID_NEWFILTER_PAGE2_PROFILE_LABEL, SystemResources.RESID_NEWFILTER_PAGE2_PROFILE_TOOLTIP, 
-					SystemResources.RESID_NEWFILTER_PAGE2_PROFILE_VERBAGE);
+					SystemResources.RESID_NEWFILTER_PAGE2_PROFILE_VERBIAGE);
 		}
 		/**
 		 * Overridable entry for child classes to supply their own "new" action(s) for creating a

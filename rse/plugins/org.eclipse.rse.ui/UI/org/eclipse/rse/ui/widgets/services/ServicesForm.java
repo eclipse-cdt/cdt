@@ -58,7 +58,7 @@ public class ServicesForm extends SystemBaseForm implements ICheckStateListener
 	private String _serviceTooltip = SystemResources.RESID_SERVICESFORM_SERVICES_TOOLTIP;
 	private String _propertiesTooltip = SystemResources.RESID_SERVICESFORM_PROPERTIES_TOOLTIP;
 	
-	private Text _descriptionVerbage;
+	private Text _descriptionVerbiage;
 	
 	public ServicesForm(Shell shell, ISystemMessageLine msgLine)
 	{
@@ -121,12 +121,12 @@ public class ServicesForm extends SystemBaseForm implements ICheckStateListener
         descriptionComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
 		Label descriptionLabel = new Label(descriptionComposite, SWT.NONE);
 	    descriptionLabel.setText(SystemResources.RESID_PROPERTIES_DESCRIPTION_LABEL);
-		_descriptionVerbage = new Text(parent, SWT.BORDER | SWT.READ_ONLY | SWT.WRAP);
-        _descriptionVerbage.setText(getCurrentVerbage());
-        _descriptionVerbage.setEditable(false);
+		_descriptionVerbiage = new Text(parent, SWT.BORDER | SWT.READ_ONLY | SWT.WRAP);
+        _descriptionVerbiage.setText(getCurrentVerbiage());
+        _descriptionVerbiage.setEditable(false);
 		GridData gridData = new GridData(SWT.FILL, SWT.FILL, true, true);
 		gridData.widthHint = 150;    
-		_descriptionVerbage.setLayoutData(gridData);
+		_descriptionVerbiage.setLayoutData(gridData);
 		
         _factoryViewer.addSelectionChangedListener(new ISelectionChangedListener() 
         {
@@ -139,7 +139,7 @@ public class ServicesForm extends SystemBaseForm implements ICheckStateListener
             		_factoryViewer.setChecked(ss.getFirstElement(), true);
             		unCheckOthers((ServiceElement) ss.getFirstElement());
             		_serviceViewer.setInput(ss.getFirstElement());
-            		_descriptionVerbage.setText(getCurrentVerbage());
+            		_descriptionVerbiage.setText(getCurrentVerbiage());
             	}
             }
          });
@@ -150,7 +150,7 @@ public class ServicesForm extends SystemBaseForm implements ICheckStateListener
                     {
                     	ISelection selection = event.getSelection();
                     	_propertiesViewer.selectionChanged(selection);
-                		_descriptionVerbage.setText(getCurrentVerbage());
+                		_descriptionVerbiage.setText(getCurrentVerbiage());
                     }
                  });
         
@@ -255,7 +255,7 @@ public class ServicesForm extends SystemBaseForm implements ICheckStateListener
 		_factoryViewer.setSelection(new StructuredSelection(element));
 		
 		unCheckOthers(element);
-		_descriptionVerbage.setText(getCurrentVerbage());
+		_descriptionVerbiage.setText(getCurrentVerbiage());
 	}
 	
 	protected void unCheckOthers(ServiceElement checkedElement)
@@ -283,7 +283,7 @@ public class ServicesForm extends SystemBaseForm implements ICheckStateListener
 		return _factoryViewer.getCheckedElements().length > 0;
 	}
 	
-	protected String getCurrentVerbage()
+	protected String getCurrentVerbiage()
 	{
 		String description = null;
 		if (_serviceViewer != null)

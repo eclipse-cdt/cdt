@@ -48,7 +48,7 @@ public abstract class SystemRemoteResourceDialog extends SystemPromptDialog
 
 	protected Control createInner(Composite parent)
 	{		
-		_form = new SystemResourceSelectionForm(getShell(), parent, this, _inputProvider, getVerbage(), _multipleSelectionMode, getMessageLine());
+		_form = new SystemResourceSelectionForm(getShell(), parent, this, _inputProvider, getVerbiage(), _multipleSelectionMode, getMessageLine());
 		initForm();
 		createMessageLine(parent);
 		return _form.getInitialFocusControl();
@@ -264,6 +264,6 @@ public abstract class SystemRemoteResourceDialog extends SystemPromptDialog
 	}	
     
 	public abstract SystemActionViewerFilter getViewerFilter();
-	public abstract String getVerbage();
+	public abstract String getVerbiage();
 	public abstract String getTreeTip();
 }

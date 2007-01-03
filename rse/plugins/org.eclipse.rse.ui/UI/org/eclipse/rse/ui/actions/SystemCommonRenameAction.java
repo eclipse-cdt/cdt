@@ -55,7 +55,7 @@ public class SystemCommonRenameAction extends SystemBaseDialogAction
 	private boolean            copyCollisionMode = false;
 	private String              newNames[];
     private ISystemValidator    nameValidator;
-    private String              singleSelectionHelp, multiSelectionHelp, promptLabel, promptTip, verbage;	
+    private String              singleSelectionHelp, multiSelectionHelp, promptLabel, promptTip, verbiage;	
     
 	/**
 	 * Constructor when using a rename target
@@ -105,11 +105,11 @@ public class SystemCommonRenameAction extends SystemBaseDialogAction
 		this.promptTip = tooltip;
 	}
 	/**
-	 * Set the verbage to show at the top of the table, used when multi things are selected. The default is "Enter a new name for each resource"
+	 * Set the verbiage to show at the top of the table, used when multi things are selected. The default is "Enter a new name for each resource"
 	 */
-	public void setMultiSelectVerbage(String verbage)
+	public void setMultiSelectVerbiage(String verbiage)
 	{
-		this.verbage = verbage;
+		this.verbiage = verbiage;
 	}
 	
     /**
@@ -123,7 +123,7 @@ public class SystemCommonRenameAction extends SystemBaseDialogAction
 
 	/**
 	 * Indicate this dialog is the result of a copy/move name collision.
-	 * Affects the title, verbage at the top of the dialog, and context help.
+	 * Affects the title, verbiage at the top of the dialog, and context help.
 	 */
 	public void setCopyCollisionMode(boolean copyCollisionMode)
 	{
@@ -131,7 +131,7 @@ public class SystemCommonRenameAction extends SystemBaseDialogAction
 	}
 	/**
 	 * Query if this dialog is the result of a copy/move name collision.
-	 * Affects the title, verbage at the top of the dialog, and context help.
+	 * Affects the title, verbiage at the top of the dialog, and context help.
 	 */
 	public boolean getCopyCollisionMode()
 	{
@@ -171,8 +171,8 @@ public class SystemCommonRenameAction extends SystemBaseDialogAction
 		    	dlg.setNameValidator(nameValidator);
 			if (multiSelectionHelp != null)
 				dlg.setHelp(multiSelectionHelp);
-		    if (verbage != null)
-		     	dlg.setVerbage(verbage);
+		    if (verbiage != null)
+		     	dlg.setVerbiage(verbiage);
 		  	return dlg;
 		}
 		// single-select

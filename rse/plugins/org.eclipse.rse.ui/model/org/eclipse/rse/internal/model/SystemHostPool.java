@@ -189,9 +189,10 @@ public class SystemHostPool extends RSEModelObject implements ISystemHostPool
      * @param hostName ip name of host.
      * @param description optional description of the connection. Can be null.
      * @param defaultUserId userId to use as the default for the subsystems.
-     * @param defaultUserIdLocation where to set the given default user Id. See ISystemUserIdConstants
+     * @param defaultUserIdLocation where to set the given default user Id. See IRSEUserIdConstants for values.
      * @return SystemConnection object, or null if it failed to create
      *   because the aliasName is not unique. All other errors throw an exception.
+     * @see IRSEUserIdConstants
      */
     public IHost createHost(String systemType, String aliasName, String hostName,
                                              String description,String defaultUserId,int defaultUserIdLocation)        
@@ -237,7 +238,8 @@ public class SystemHostPool extends RSEModelObject implements ISystemHostPool
      * @param hostName ip name of host.
      * @param description optional description of the connection. Can be null.
      * @param defaultUserId userId to use as the default for the subsystems.
-     * @param defaultUserIdLocation where to set the given default user Id. See ISystemUserIdConstants
+     * @param defaultUserIdLocation where to set the given default user Id. See IRSEUserIdConstants for values.
+     * @see IRSEUserIdConstants
      */
     public void updateHost(IHost conn, String systemType,
                                  String aliasName, String hostName,
@@ -262,7 +264,7 @@ public class SystemHostPool extends RSEModelObject implements ISystemHostPool
     	    {
     	      prefMgr.setDefaultUserId(systemType, defaultUserId);    	      
     	    }
-    	    //else if (defaultUserIdLocation == ISystemUserIdConstants.USERID_LOCATION_DEFAULT_OVERALL)
+    	    //else if (defaultUserIdLocation == IRSEUserIdConstants.USERID_LOCATION_DEFAULT_OVERALL)
     	    //{
     	      //prefMgr.setDefaultUserId(defaultUserId);    	          	    	
     	    //}

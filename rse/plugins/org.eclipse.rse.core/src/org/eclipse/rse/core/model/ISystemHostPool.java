@@ -18,6 +18,8 @@ package org.eclipse.rse.core.model;
 
 import java.util.List;
 
+import org.eclipse.rse.core.IRSEUserIdConstants;
+
 
 //
 /**
@@ -69,12 +71,13 @@ public interface ISystemHostPool extends IRSEPersistableContainer {
 	 * <p>
 	 * @param conn SystemConnection to be updated
 	 * @param systemType system type matching one of the system type names defined via the
-	 *                    systemType extension point.
+	 * systemType extension point.
 	 * @param aliasName unique connection name.
 	 * @param hostName ip name of host.
 	 * @param description optional description of the connection. Can be null.
 	 * @param defaultUserId userId to use as the default for the subsystems.
-	 * @param defaultUserIdLocation where to set the given default user Id. See ISystemUserIdConstants
+	 * @param defaultUserIdLocation where to set the given default user Id from IRSEUserIdConstants.
+	 * @see IRSEUserIdConstants
 	 */
 	public void updateHost(IHost conn, String systemType, String aliasName, String hostName, String description, String defaultUserId, int defaultUserIdLocation) throws Exception;
 

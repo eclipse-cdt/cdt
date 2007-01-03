@@ -24,7 +24,7 @@ import junit.framework.Assert;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.rse.core.ISystemUserIdConstants;
+import org.eclipse.rse.core.IRSEUserIdConstants;
 import org.eclipse.rse.core.PasswordPersistenceManager;
 import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.model.IHost;
@@ -225,7 +225,7 @@ public class RSEConnectionManager implements IRSEConnectionManager {
 				cause = null;
 				
 				try {
-					connection = systemRegistry.createHost(profileName, systemType, name, address, null, userId, ISystemUserIdConstants.USERID_LOCATION_CONNECTION, null);
+					connection = systemRegistry.createHost(profileName, systemType, name, address, null, userId, IRSEUserIdConstants.USERID_LOCATION_HOST, null);
 				} catch(Exception e) {
 					exception = e;
 					cause = e.getLocalizedMessage();

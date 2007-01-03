@@ -539,7 +539,7 @@ public class RSEUIPlugin extends SystemBasePlugin implements ISystemMessageProvi
 	      	    // DY:  defect 42101, description cannot be null
 	      	    // null, // description
 	      	    getLocalMachineName(), // userId
-	      	    ISystemUserIdConstants.USERID_LOCATION_DEFAULT_SYSTEMTYPE, null);
+	      	    IRSEUserIdConstants.USERID_LOCATION_DEFAULT_SYSTEMTYPE, null);
 	      	    */
 	      //}
 	      //catch (Exception exc)

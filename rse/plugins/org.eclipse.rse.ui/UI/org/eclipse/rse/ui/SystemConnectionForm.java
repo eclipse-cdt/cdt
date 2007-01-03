@@ -585,8 +585,10 @@ public class SystemConnectionForm
 
     /**
      * If a default userId was specified, the user may have been queried
-     *  where to put the userId. This returns one of the constants from
-     *  ISystemUserIdConstants
+     * where to put the userId. This returns one of the constants from
+     * IRSEUserIdConstants.
+     * @return the user id location
+     * @see IRSEUserIdConstants
      */
     public int getUserIdLocation()
     {

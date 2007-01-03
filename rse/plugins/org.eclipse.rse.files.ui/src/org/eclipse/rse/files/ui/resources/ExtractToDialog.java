@@ -24,21 +24,20 @@ import org.eclipse.swt.widgets.Shell;
 
 public class ExtractToDialog extends SystemSelectRemoteFileOrFolderDialog {
 
+
+	
+	private ExtractToForm form;
+	
 	/**
 	 * Constructor
 	 * 
 	 * @param shell The shell to hang the dialog off of
-	 * @param fileMode True if selecting files, false if selecting folders
 	 * 
 	 */
-	
-	private ExtractToForm form;
-	
-	
 	public ExtractToDialog(Shell shell)
 	{
 		super(shell, false);
-		setHelp(RSEUIPlugin.HELPPREFIX + "exdi0000");
+		setHelp(RSEUIPlugin.HELPPREFIX + "exdi0000"); //$NON-NLS-1$
 	}	
 	/**
 	 * Constructor when you want to supply your own title.
@@ -50,7 +49,7 @@ public class ExtractToDialog extends SystemSelectRemoteFileOrFolderDialog {
 	public ExtractToDialog(Shell shell, String title)
 	{
 		super(shell, title, false);
-		setHelp(RSEUIPlugin.HELPPREFIX + "exdi0000");
+		setHelp(RSEUIPlugin.HELPPREFIX + "exdi0000"); //$NON-NLS-1$
 	}
 		
 	protected SystemSelectRemoteFileOrFolderForm getForm(boolean fileMode)

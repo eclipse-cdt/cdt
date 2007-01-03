@@ -49,8 +49,7 @@ public abstract class AbstractLanguageUtility implements ILanguageUtility {
 	/**
 	 * Sets the language to which this utility applies. It could be one of
 	 * <code>LANGUAGE_JAVA</code>, <code>LANGUAGE_C</code>, and <code>LANGUAGE_CPP</code>, or
-	 * another language.
-	 * @return the language. 
+	 * another language. 
 	 */
 	private void setLanguage(String language) {
 		this.language = language;

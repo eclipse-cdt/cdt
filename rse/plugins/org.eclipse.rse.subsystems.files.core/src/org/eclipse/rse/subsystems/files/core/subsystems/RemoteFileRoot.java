@@ -71,7 +71,7 @@ public class RemoteFileRoot extends RemoteFile
     
 	public String getName()
 	{
-		return "dummy";
+		return "dummy"; //$NON-NLS-1$
 	}
 	
 	public int compareTo(Object o)

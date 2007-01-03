@@ -38,7 +38,7 @@ public class RemoteFileEmpty extends RemoteFile
 	
 	public String getName()
 	{
-		return "dummy";
+		return "dummy"; //$NON-NLS-1$
 	}
 
 

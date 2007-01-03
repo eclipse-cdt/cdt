@@ -27,11 +27,11 @@ public interface IRemoteFileExceptionMessages
 	//public static final String FILEMSG_PREFIX = PLUGIN_ID+".ui.filemsg.";	
 
     // Messages
-  	public static final String FILEMSG_IO_ERROR = "RSEF1001";            
-  	public static final String FILEMSG_SECURITY_ERROR = "RSEF1002";        
+  	public static final String FILEMSG_IO_ERROR = "RSEF1001";             //$NON-NLS-1$
+  	public static final String FILEMSG_SECURITY_ERROR = "RSEF1002";         //$NON-NLS-1$
     
-  	public static final String FILEMSG_FOLDER_NOTEMPTY = "RSEF1003";    
-  	public static final String FILEMSG_FOLDER_NOTFOUND = "RSEF1004";    
+  	public static final String FILEMSG_FOLDER_NOTEMPTY = "RSEF1003";     //$NON-NLS-1$
+  	public static final String FILEMSG_FOLDER_NOTFOUND = "RSEF1004";     //$NON-NLS-1$
   	
-  	public static final String FILEMSG_FILE_NOTFOUND   = "RSEF1005";  	
+  	public static final String FILEMSG_FILE_NOTFOUND   = "RSEF1005";  	 //$NON-NLS-1$
 }

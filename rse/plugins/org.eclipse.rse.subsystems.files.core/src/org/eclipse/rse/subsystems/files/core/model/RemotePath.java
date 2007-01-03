@@ -235,8 +235,7 @@ public class RemotePath implements IRemotePath {
 			remoteFile = subsys.getRemoteFileObject(absolutePath);
 		}
 		catch (SystemMessageException e) {
-			SystemBasePlugin.logError("Error occured trying to get remote file", e);
-			remoteFile = null;
+			SystemBasePlugin.logError("Error occured trying to get remote file", e); //$NON-NLS-1$
 		}
 		
 		return remoteFile;

@@ -57,7 +57,7 @@ public class RemotePathUtil {
 	 * is not available.
 	 */
 	public IPath getClientTempLocationForFile(IRemotePath remotePath) {
-		String tempDirString = System.getProperty("java.io.tmpdir");
+		String tempDirString = System.getProperty("java.io.tmpdir"); //$NON-NLS-1$
 		
 		IPath tempPath = new Path(tempDirString);
 		
@@ -69,7 +69,7 @@ public class RemotePathUtil {
 			String absolutePath = remotePath.getAbsolutePath();
 			
 			// try '/' first
-			String sep = "/";
+			String sep = "/"; //$NON-NLS-1$
 			
 			boolean isVirtual = remotePath.isVirtual();
 			
@@ -87,7 +87,7 @@ public class RemotePathUtil {
 					return null;
 				}
 				
-				sep = "\\";
+				sep = "\\"; //$NON-NLS-1$
 				
 				newPath = appendRemoteFileNameToPath(newPath, absolutePath, sep);
 				

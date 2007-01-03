@@ -159,6 +159,6 @@ public class ValidatorFileUniqueName
     
 	public String toString()
 	{
-		return "ValidatorFileFilterString class";
+		return "ValidatorFileFilterString class"; //$NON-NLS-1$
 	}
 }

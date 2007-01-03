@@ -54,9 +54,9 @@ public class RemoteFileFilterString implements Cloneable
 	//private RemoteFileSubSystemConfiguration subsysFactory;
 	protected String PATH_SEP = java.io.File.separator;
 	public static final char TYPE_SEP = ',';
-	public static final String TYPE_SEP_STRING = ",";
-	public static final String SWITCH_NOSUBDIRS = " /ns";
-	public static final String SWITCH_NOFILES = " /nf";    
+	public static final String TYPE_SEP_STRING = ","; //$NON-NLS-1$
+	public static final String SWITCH_NOSUBDIRS = " /ns"; //$NON-NLS-1$
+	public static final String SWITCH_NOFILES = " /nf";     //$NON-NLS-1$
 	
 	/**
 	 * Constructor to use for a filter to list roots when used absolutely, or list all contents
@@ -64,7 +64,7 @@ public class RemoteFileFilterString implements Cloneable
 	 */
 	public RemoteFileFilterString()
 	{
-		file = "*";
+		file = "*"; //$NON-NLS-1$
 		subdirs = true;
 		files = true;
 	}
@@ -81,7 +81,7 @@ public class RemoteFileFilterString implements Cloneable
 	public RemoteFileFilterString(IRemoteFileSubSystemConfiguration subsysFactory)
 	{
 		PATH_SEP = subsysFactory.getSeparator();
-		file = "*";    	
+		file = "*";    	 //$NON-NLS-1$
 		subdirs = true;
 		files = true;
 	}
@@ -172,9 +172,9 @@ public class RemoteFileFilterString implements Cloneable
      */
     public static String getTypesString(String[] typesArray)
     {
-    	StringBuffer typesBuffer = new StringBuffer("");
+    	StringBuffer typesBuffer = new StringBuffer(""); //$NON-NLS-1$
     	for (int idx=0; idx<typesArray.length; idx++)
-    	   typesBuffer.append(typesArray[idx]+",");
+    	   typesBuffer.append(typesArray[idx]+","); //$NON-NLS-1$
     	return typesBuffer.toString();
     }
     /**
@@ -231,7 +231,7 @@ public class RemoteFileFilterString implements Cloneable
 	public boolean listRoots()
 	{
 		//return toStringNoSwitches().equals("*");
-		return (path==null || path.equals("/"));
+		return (path==null || path.equals("/")); //$NON-NLS-1$
 	}
 
 	/**
@@ -239,7 +239,7 @@ public class RemoteFileFilterString implements Cloneable
 	 */
 	public boolean listRoot()
 	{
-		return toStringNoSwitches().equals("/*");
+		return toStringNoSwitches().equals("/*"); //$NON-NLS-1$
 	}
 	
 	
@@ -286,15 +286,15 @@ public class RemoteFileFilterString implements Cloneable
           	  //file = input.substring(1); // from the 2nd char on
           	  parseFileOrTypes(input.substring(1)); // from the 2nd char on
           	else
-          	  file = "*";
+          	  file = "*"; //$NON-NLS-1$
           }
           else if (pathidx>0)
           {
           	path = input.substring(0,pathidx);
-          	if (path.endsWith(":")) // special case: eg, given e:
+          	if (path.endsWith(":")) // special case: eg, given e: //$NON-NLS-1$
           	  path = path + PATH_SEP; // need it to be e:\ !!
           	if (pathidx == (input.length()-1))
-          	  file = "*";
+          	  file = "*"; //$NON-NLS-1$
           	else
           	  //file = input.substring(pathidx+1);
           	  parseFileOrTypes(input.substring(pathidx+1));
@@ -322,7 +322,7 @@ public class RemoteFileFilterString implements Cloneable
         types = null;        
     	if ((filter == null) || (filter.length()==0))
     	{
-    		file = "*";    		
+    		file = "*";    		 //$NON-NLS-1$
     	}
     	else if (filter.endsWith(TYPE_SEP_STRING))
     	{

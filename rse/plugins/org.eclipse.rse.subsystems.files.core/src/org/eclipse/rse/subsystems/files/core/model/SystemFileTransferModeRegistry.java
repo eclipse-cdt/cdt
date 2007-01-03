@@ -61,15 +61,15 @@ public class SystemFileTransferModeRegistry
 	private RSEUIPlugin plugin;
 	
 	// Constants for reading from and writing to xml file
-	private static final String FILENAME = "fileTransferMode.xml";
+	private static final String FILENAME = "fileTransferMode.xml"; //$NON-NLS-1$
 	private static final String ENCODING = SystemEncodingUtil.ENCODING_UTF_8;
-	private static final String ROOT_NODE = "mode";
-	private static final String INFO_NODE = "info";
-	private static final String NAME_ATTRIBUTE = "name";
-	private static final String EXTENSION_ATTRIBUTE = "extension";
-	private static final String MODE_ATTRIBUTE = "mode";
-	private static final String BINARY_VALUE = "binary"; 
-	private static final String TEXT_VALUE = "text";
+	private static final String ROOT_NODE = "mode"; //$NON-NLS-1$
+	private static final String INFO_NODE = "info"; //$NON-NLS-1$
+	private static final String NAME_ATTRIBUTE = "name"; //$NON-NLS-1$
+	private static final String EXTENSION_ATTRIBUTE = "extension"; //$NON-NLS-1$
+	private static final String MODE_ATTRIBUTE = "mode"; //$NON-NLS-1$
+	private static final String BINARY_VALUE = "binary";  //$NON-NLS-1$
+	private static final String TEXT_VALUE = "text"; //$NON-NLS-1$
 
 
 	/**
@@ -525,7 +525,7 @@ public class SystemFileTransferModeRegistry
 			result = true;
 		}
 		catch (Exception e) {
-			SystemBasePlugin.logError("Could not read transfer mode xml file", e);
+			SystemBasePlugin.logError("Could not read transfer mode xml file", e); //$NON-NLS-1$
 			result = false;
 		}
 		finally {
@@ -536,7 +536,7 @@ public class SystemFileTransferModeRegistry
 					reader.close();
 			}
 			catch (Exception e) {
-				SystemBasePlugin.logError("Could not close reader for transfer mode xml file", e);
+				SystemBasePlugin.logError("Could not close reader for transfer mode xml file", e); //$NON-NLS-1$
 			}
 		}
 		
@@ -573,7 +573,7 @@ public class SystemFileTransferModeRegistry
 			memento.save(writer);
 		}
 		catch (Exception e) {
-			SystemBasePlugin.logError("Could not write to transfer mode xml file", e);
+			SystemBasePlugin.logError("Could not write to transfer mode xml file", e); //$NON-NLS-1$
 		}
 		finally {
 			
@@ -583,7 +583,7 @@ public class SystemFileTransferModeRegistry
 					writer.close();
 			}
 			catch (Exception e) {
-				SystemBasePlugin.logError("Could not close writer for transfer mode xml file", e);
+				SystemBasePlugin.logError("Could not close writer for transfer mode xml file", e); //$NON-NLS-1$
 			}
 		}
 	}

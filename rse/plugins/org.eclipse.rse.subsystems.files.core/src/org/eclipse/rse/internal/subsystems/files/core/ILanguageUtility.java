@@ -27,17 +27,17 @@ public interface ILanguageUtility {
 	/**
 	 * Constant for Java language.
 	 */
-	public static final String LANGUAGE_JAVA = "Java";
+	public static final String LANGUAGE_JAVA = "Java"; //$NON-NLS-1$
 	
 	/**
 	 * Constant for C language.
 	 */
-	public static final String LANGUAGE_C = "C";
+	public static final String LANGUAGE_C = "C"; //$NON-NLS-1$
 	
 	/**
 	 * Constant for C++ language.
 	 */
-	public static final String LANGUAGE_CPP = "C++";
+	public static final String LANGUAGE_CPP = "C++"; //$NON-NLS-1$
 	
 	/**
 	 * Returns the subsystem with which the utility is associated.

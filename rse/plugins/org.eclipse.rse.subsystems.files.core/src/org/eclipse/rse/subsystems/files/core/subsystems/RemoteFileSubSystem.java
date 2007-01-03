@@ -295,7 +295,7 @@ public abstract class RemoteFileSubSystem extends SubSystem implements IRemoteFi
       		for (int idx = 0; !would && (idx < strings.length); idx++) {
       			
       			// for "Drives" filter on Windows, only return match if the absolute path is a drive letter
-      			if (strings[idx].equals("*")) {
+      			if (strings[idx].equals("*")) { //$NON-NLS-1$
       				IPath path = new Path(remoteObjectAbsoluteName);
       				
       				if (path.segmentCount() == 0) {
@@ -458,8 +458,8 @@ public abstract class RemoteFileSubSystem extends SubSystem implements IRemoteFi
 		boolean success = false;
 		if (filterStrings == null)
 		{
-		    System.out.println("filterStrings==null!");
-		    System.out.println("connection == "+getHostAliasName());
+		    System.out.println("filterStrings==null!"); //$NON-NLS-1$
+		    System.out.println("connection == "+getHostAliasName()); //$NON-NLS-1$
 		    return null;
 		}
 		
@@ -613,7 +613,7 @@ public abstract class RemoteFileSubSystem extends SubSystem implements IRemoteFi
 		IRemoteFileSubSystemConfiguration rfssf = getParentRemoteFileSubSystemConfiguration();
 		boolean windows = !rfssf.isUnixStyle();
 		if (debugMode)
-			SystemBasePlugin.logInfo("INTERNALRESOLVEFILTERSTRING: INPUT FILTERSTRING: " + filterString);
+			SystemBasePlugin.logInfo("INTERNALRESOLVEFILTERSTRING: INPUT FILTERSTRING: " + filterString); //$NON-NLS-1$
 		if (filterString.startsWith("/") && windows) // request to list root files? //$NON-NLS-1$
 		{ // convert to request to list drives on Windows
 			int len = filterString.length();
@@ -622,12 +622,12 @@ public abstract class RemoteFileSubSystem extends SubSystem implements IRemoteFi
 			else
 				filterString = filterString.substring(1);
 			if (debugMode)
-				SystemBasePlugin.logInfo("...FINAL FILTERSTRING: " + filterString);
+				SystemBasePlugin.logInfo("...FINAL FILTERSTRING: " + filterString); //$NON-NLS-1$
 		}
 		RemoteFileFilterString fs = new RemoteFileFilterString(rfssf, filterString);
 		currFilterString = fs;
 		if (debugMode)
-			SystemBasePlugin.logInfo("...LISTROOTS = " + fs.listRoots());
+			SystemBasePlugin.logInfo("...LISTROOTS = " + fs.listRoots()); //$NON-NLS-1$
 		if (fs.listRoots())
 			return listRoots(new RemoteFileContext(this, null, fs), monitor);
 		else
@@ -639,7 +639,7 @@ public abstract class RemoteFileSubSystem extends SubSystem implements IRemoteFi
 				path = path + rfssf.getSeparatorChar();
 			String filter = fs.getFileOrTypes();
 			if (debugMode)
-				SystemBasePlugin.logInfo("...path='" + path + "', filter='" + filter + "', showDirs=" + showDirs + ", showFiles=" + showFiles);
+				SystemBasePlugin.logInfo("...path='" + path + "', filter='" + filter + "', showDirs=" + showDirs + ", showFiles=" + showFiles); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 			
 			IRemoteFile parent = null;
 			try
@@ -656,8 +656,7 @@ public abstract class RemoteFileSubSystem extends SubSystem implements IRemoteFi
 			}
 			catch (SystemMessageException e)
 			{
-				SystemBasePlugin.logError("RemoteFileSubSystemImpl.logError()", e);
-				parent = null;
+				SystemBasePlugin.logError("RemoteFileSubSystemImpl.logError()", e); //$NON-NLS-1$
 			}
 			
 			boolean parentExists = true;
@@ -812,7 +811,7 @@ public abstract class RemoteFileSubSystem extends SubSystem implements IRemoteFi
 						addResolvedFilterStringObjects(vChildren, children, allStrings, idx);
 					}
 				}
-				if (!onlyOne)
+				if (!onlyOne && vChildren != null)
 				{
 					children = new Object[vChildren.size()];
 					for (int cdx = 0; cdx < children.length; cdx++)
@@ -836,13 +835,8 @@ public abstract class RemoteFileSubSystem extends SubSystem implements IRemoteFi
 		{
 			fs = new RemoteFileFilterString(getParentRemoteFileSubSystemConfiguration(), filterString);
 		}
-		if (fs != null)
-		{
-			return internalResolveOneFilterString(monitor, parent, fs, true);
+		return internalResolveOneFilterString(monitor, parent, fs, true);
 		}
-		else
-			return new Object[] {
-		};}
 		
 		catch (SystemMessageException e)
 		{
@@ -940,7 +934,7 @@ public abstract class RemoteFileSubSystem extends SubSystem implements IRemoteFi
 	 */
 	public IRemoteFile[] listFiles(IRemoteFile parent, String fileNameFilter, IProgressMonitor monitor) throws SystemMessageException
 	{
-		fileNameFilter = (fileNameFilter == null) ? "*" : fileNameFilter;
+		fileNameFilter = (fileNameFilter == null) ? "*" : fileNameFilter; //$NON-NLS-1$
 		String parentPath = parent.getAbsolutePath();
 		IRemoteFileSubSystemConfiguration config = getParentRemoteFileSubSystemConfiguration();
 		RemoteFileFilterString filterString = new RemoteFileFilterString(config, parentPath, fileNameFilter);
@@ -971,7 +965,7 @@ public abstract class RemoteFileSubSystem extends SubSystem implements IRemoteFi
 	public IRemoteFile[] listFoldersAndFiles(IRemoteFile parent, String fileNameFilter, IProgressMonitor monitor) throws SystemMessageException
 	{
 		String path = parent.getAbsolutePath();
-		fileNameFilter = (fileNameFilter == null) ? "*" : fileNameFilter;
+		fileNameFilter = (fileNameFilter == null) ? "*" : fileNameFilter; //$NON-NLS-1$
 		IRemoteFileSubSystemConfiguration config = getParentRemoteFileSubSystemConfiguration();
 		RemoteFileFilterString filterString = new RemoteFileFilterString(config, path, fileNameFilter);
 		filterString.setShowFiles(true);
@@ -1465,7 +1459,7 @@ public abstract class RemoteFileSubSystem extends SubSystem implements IRemoteFi
 		try
 		{
 			if (debug)
-				SystemBasePlugin.logInfo("Running local command: " + cmd);
+				SystemBasePlugin.logInfo("Running local command: " + cmd); //$NON-NLS-1$
 			process = Runtime.getRuntime().exec(cmd);
 		}
 		catch (IOException exc)
@@ -1475,7 +1469,7 @@ public abstract class RemoteFileSubSystem extends SubSystem implements IRemoteFi
 				String msg = exc.getMessage();
 				if (msg == null)
 					msg = exc.getClass().getName();
-				SystemBasePlugin.logInfo("...Unexpected error running command '" + cmd + "'. Error msg: " + msg);
+				SystemBasePlugin.logInfo("...Unexpected error running command '" + cmd + "'. Error msg: " + msg); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 			throw exc;
 		}
@@ -1487,7 +1481,7 @@ public abstract class RemoteFileSubSystem extends SubSystem implements IRemoteFi
 			while ((line = berr.readLine()) != null)
 			{
 				if (debug)
-					SystemBasePlugin.logInfo("...System.err: " + line);
+					SystemBasePlugin.logInfo("...System.err: " + line); //$NON-NLS-1$
 				if ((lines != null) && (line.trim().length() > 0))
 					lines.addElement(line);
 			}
@@ -1502,7 +1496,7 @@ public abstract class RemoteFileSubSystem extends SubSystem implements IRemoteFi
 			while ((line = bin.readLine()) != null)
 			{
 				if (debug)
-					SystemBasePlugin.logInfo("...System out: " + line);
+					SystemBasePlugin.logInfo("...System out: " + line); //$NON-NLS-1$
 				if ((lines != null) && (line.trim().length() > 0))
 					lines.addElement(line);
 			}
@@ -1570,7 +1564,8 @@ public abstract class RemoteFileSubSystem extends SubSystem implements IRemoteFi
 			}
 			
 			// preserve persistent information from old file to new
-			oldFile.copyContentsTo(file);
+			if (oldFile != null)
+				oldFile.copyContentsTo(file);
 			
 		}
 		_cachedRemoteFiles.put(path, file);
@@ -1641,8 +1636,8 @@ public abstract class RemoteFileSubSystem extends SubSystem implements IRemoteFi
 				}
 			}
 
+			_cachedRemoteFiles.remove(file.getAbsolutePath());
 		}
-		_cachedRemoteFiles.remove(file.getAbsolutePath());
 	}
 	
 	protected void removeCachedRemoteFile(String path)
@@ -1720,8 +1715,7 @@ public abstract class RemoteFileSubSystem extends SubSystem implements IRemoteFi
 			addr = InetAddress.getLocalHost();
 		}
 		catch (UnknownHostException e) {
-			SystemBasePlugin.logError("Error occured trying to get local host address", e);
-			addr = null;
+			SystemBasePlugin.logError("Error occured trying to get local host address", e); //$NON-NLS-1$
 		}
 		
 		// if the address is the loopback address 

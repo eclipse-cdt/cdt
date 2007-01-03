@@ -36,7 +36,7 @@ public class SystemFileTransferModeMapping
 	 * Constructor for SystemFileTransferModeMapping
 	 */
 	public SystemFileTransferModeMapping(String extension) {
-		this("*", extension);
+		this("*", extension); //$NON-NLS-1$
 	}
 		
 	
@@ -46,7 +46,7 @@ public class SystemFileTransferModeMapping
 	public SystemFileTransferModeMapping(String name, String extension) {
 		
 		if ((name == null) || (name.length() < 1)) {
-			setName("*");
+			setName("*"); //$NON-NLS-1$
 		}
 		else {
 			setName(name);
@@ -69,7 +69,7 @@ public class SystemFileTransferModeMapping
 	 * @see ISystemFileTransferModeMapping#getLabel()
 	 */
 	public String getLabel() {
-		return (name + "." + extension);
+		return (name + "." + extension); //$NON-NLS-1$
 	}
 
 
@@ -135,7 +135,7 @@ public class SystemFileTransferModeMapping
 	public Object clone() {
 		
 		try {
-			return ((SystemFileTransferModeMapping)(super.clone()));
+			return super.clone();
 		}
 		catch (CloneNotSupportedException e) {
 			return null;

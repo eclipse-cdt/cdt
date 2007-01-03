@@ -30,12 +30,12 @@ public interface ISystemFileRemoteTypes
 	 * There is only one type category for remote files.
 	 * It is "files".
 	 */
-    public static final String TYPECATEGORY = "files";
+    public static final String TYPECATEGORY = "files"; //$NON-NLS-1$
 	/**
 	 * There is only one type category for remote cmds.
 	 * It is "cmds".
 	 */
-    public static final String TYPECMDCATEGORY = "cmds";
+    public static final String TYPECMDCATEGORY = "cmds"; //$NON-NLS-1$
 
     // -----------
     // TYPES...
@@ -44,11 +44,11 @@ public interface ISystemFileRemoteTypes
 	/**
 	 * A folder object
 	 */
-    public static final String TYPE_FOLDER = "folder";
+    public static final String TYPE_FOLDER = "folder"; //$NON-NLS-1$
     /**
      * A file object
      */
-    public static final String TYPE_FILE = "file";    
+    public static final String TYPE_FILE = "file";     //$NON-NLS-1$
 
     // -----------
     // SUBTYPES...
@@ -57,10 +57,10 @@ public interface ISystemFileRemoteTypes
 	/**
 	 * A folder object
 	 */
-    public static final String SUBTYPE_SUBFOLDER = "subfolder";
+    public static final String SUBTYPE_SUBFOLDER = "subfolder"; //$NON-NLS-1$
     /**
      * A root object
      */
-    public static final String SUBTYPE_ROOT = "root";    
+    public static final String SUBTYPE_ROOT = "root";     //$NON-NLS-1$
 
 }

@@ -178,7 +178,7 @@ public abstract class RemoteFile implements IRemoteFile,  IAdaptable, Comparable
 //	    		_context.getParentRemoteFile();
 
 	    	String pathOnly = getParentPath();
-	    	if ((parentFile == null) && (pathOnly != null))
+	    	if (pathOnly != null)
 	    	{    	  
 	     	  IRemoteFileSubSystem ss = _context.getParentRemoteFileSubSystem();
 	    	  if (ss != null)
@@ -188,18 +188,18 @@ public abstract class RemoteFile implements IRemoteFile,  IAdaptable, Comparable
 		    	  	if (pathOnly.length() == 0)
 		    	  	  parentFile = ss.getRemoteFileObject(pathOnly);
 		    	  	else if (pathOnly.length() == 1)
-		    	  		parentFile = null;
+		    	  	{
+		    	  		// parentFile is already null
+		    	  		//parentFile = null;
+		    	  	}
 		    	  	else if (!(pathOnly.charAt(pathOnly.length()-1)==sep))
 		              parentFile = ss.getRemoteFileObject(pathOnly+sep);
 		            else
 		              parentFile = ss.getRemoteFileObject(pathOnly);
 	    	  	} catch (SystemMessageException e) {
-	    	  		SystemBasePlugin.logError("RemoteFileImpl.getParentRemoteFile()", e);
+	    	  		SystemBasePlugin.logError("RemoteFileImpl.getParentRemoteFile()", e); //$NON-NLS-1$
 	    	  	}
 	    	  }
-	    	}
-	    	else if (parentFile != null)
-	    	{
 	    	}
 	    	else
 	    	{
@@ -1124,7 +1124,7 @@ public abstract class RemoteFile implements IRemoteFile,  IAdaptable, Comparable
 		
 			String otherPath = other.getAbsolutePath();
 			String path = this.getAbsolutePath();
-			String otherHost = other.getHostName();
+			//String otherHost = other.getHostName();
 			
 			String alias1 = this.getParentRemoteFileSubSystem().getHostAliasName();
 			String alias2 = other.getParentRemoteFileSubSystem().getHostAliasName();

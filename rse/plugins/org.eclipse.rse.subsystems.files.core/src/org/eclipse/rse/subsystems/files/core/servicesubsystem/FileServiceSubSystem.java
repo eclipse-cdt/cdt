@@ -328,17 +328,18 @@ public final class FileServiceSubSystem extends RemoteFileSubSystem implements I
 			parentPath = "/"; //$NON-NLS-1$
 		}
 		
-		if (!parent.canRead())
+		if (parent != null && !parent.canRead())
 		{
 			SystemMessage msg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_FOLDER_UNREADABLE).makeSubstitution(parentPath);
 			throw new SystemMessageException(msg);
 		}
 		
-			IHostFile[] results = getFilesAndFolders(monitor, parentPath, fileNameFilter); 
+		IHostFile[] results = getFilesAndFolders(monitor, parentPath, fileNameFilter); 
 
-			IRemoteFile[] farr = getHostFileToRemoteFileAdapter().convertToRemoteFiles(this, context, parent, results);
+		IRemoteFile[] farr = getHostFileToRemoteFileAdapter().convertToRemoteFiles(this, context, parent, results);
+		if (parent != null)
 			parent.setContents(RemoteChildrenContentsType.getInstance(), fileNameFilter, farr);
-			return farr;
+		return farr;
 	}
 
 	/**
@@ -358,7 +359,7 @@ public final class FileServiceSubSystem extends RemoteFileSubSystem implements I
 			parentPath = "/"; //$NON-NLS-1$
 		}
 		
-		if (!parent.canRead())
+		if (parent != null && !parent.canRead())
 		{
 			SystemMessage msg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_FOLDER_UNREADABLE).makeSubstitution(parentPath);
 			throw new SystemMessageException(msg);
@@ -374,7 +375,8 @@ public final class FileServiceSubSystem extends RemoteFileSubSystem implements I
 			
 		}
 		IRemoteFile[] farr = getHostFileToRemoteFileAdapter().convertToRemoteFiles(this, context, parent, results);
-		parent.setContents(RemoteChildrenContentsType.getInstance(), fileNameFilter, farr);
+		if (parent != null)
+			parent.setContents(RemoteChildrenContentsType.getInstance(), fileNameFilter, farr);
 		return farr;
 	}
 
@@ -394,7 +396,7 @@ public final class FileServiceSubSystem extends RemoteFileSubSystem implements I
 			parentPath = "/"; //$NON-NLS-1$
 		}
 		
-		if (!parent.canRead())
+		if (parent != null && !parent.canRead())
 		{
 			SystemMessage msg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_FOLDER_UNREADABLE).makeSubstitution(parentPath);
 			throw new SystemMessageException(msg);
@@ -409,7 +411,8 @@ public final class FileServiceSubSystem extends RemoteFileSubSystem implements I
 		{			
 		}
 		IRemoteFile[] farr = getHostFileToRemoteFileAdapter().convertToRemoteFiles(this, context, parent, results);
-		parent.setContents(RemoteChildrenContentsType.getInstance(), fileNameFilter, farr);
+		if (parent != null)
+			parent.setContents(RemoteChildrenContentsType.getInstance(), fileNameFilter, farr);
 		return farr;
 	}
 	

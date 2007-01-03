@@ -204,7 +204,7 @@ public class ValidatorFileFilterString
     
 	public String toString()
 	{
-		return "ValidatorFileFilterString class";
+		return "ValidatorFileFilterString class"; //$NON-NLS-1$
 	}
 	
 	

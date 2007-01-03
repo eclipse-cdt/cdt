@@ -18,13 +18,8 @@ package org.eclipse.rse.internal.references;
 
 import java.util.Vector;
 
-import org.eclipse.rse.core.filters.ISystemFilterPool;
-import org.eclipse.rse.core.filters.ISystemFilterPoolReference;
-import org.eclipse.rse.core.filters.ISystemFilterPoolReferenceManagerProvider;
-import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.references.IRSEBaseReferencedObject;
 import org.eclipse.rse.core.references.IRSEBaseReferencingObject;
-import org.eclipse.rse.core.subsystems.ISubSystem;
 
 /**
  * This is a class that implements all the methods in the IRSEReferencedObject.
@@ -35,59 +30,60 @@ import org.eclipse.rse.core.subsystems.ISubSystem;
 public class SystemReferencedObjectHelper implements IRSEBaseReferencedObject {
 
 	private Vector referencingObjects = new Vector();
-	private IRSEBaseReferencedObject parent = null;
+
+	//	private IRSEBaseReferencedObject parent = null;
 
 	/**
 	 * Constructor for SystemReferencedObjectHelper
 	 * @param parent the SystemReferencedObject creating this helper
 	 */
 	public SystemReferencedObjectHelper(IRSEBaseReferencedObject parent) {
-		this.parent = parent;
+		//		this.parent = parent;
 	}
 
 	/**
 	 * @see IRSEBaseReferencedObject#addReference(IRSEBaseReferencingObject)
 	 */
 	public int addReference(IRSEBaseReferencingObject ref) {
-//		String fromName = getReferencingName(ref);
-//		String toName = getReferencedName();
-//		System.out.println(MessageFormat.format("Adding reference from {0} to {1}", new Object[] {fromName, toName}));
+		//		String fromName = getReferencingName(ref);
+		//		String toName = getReferencedName();
+		//		System.out.println(MessageFormat.format("Adding reference from {0} to {1}", new Object[] {fromName, toName}));
 		referencingObjects.addElement(ref);
 		return referencingObjects.size();
 	}
 
-	private String getReferencedName() {
-		String toName = "unknown"; //$NON-NLS-1$
-		if (parent instanceof ISystemFilterPool) {
-			ISystemFilterPool fp = (ISystemFilterPool) parent;
-			toName = fp.getName();
-		}
-		return toName;
-	}
-	
-	private String getReferencingName(IRSEBaseReferencingObject object) {
-		String fromName = "unknown"; //$NON-NLS-1$
-		if (object instanceof ISystemFilterPoolReference) {
-			ISystemFilterPoolReference fpr = (ISystemFilterPoolReference) object;
-			ISystemFilterPoolReferenceManagerProvider provider = fpr.getProvider();
-			String prefix = "unknown|unknown|unknown"; //$NON-NLS-1$
-			if (provider instanceof ISubSystem) {
-				ISubSystem subsystem = (ISubSystem) provider;
-				IHost host = subsystem.getHost();
-				prefix = host.getAliasName() + "|" + subsystem.getName(); //$NON-NLS-1$
-				fromName = prefix + fpr.getName();
-			}
-		}
-		return fromName;
-	}
+	//	private String getReferencedName() {
+	//		String toName = "unknown"; //$NON-NLS-1$
+	//		if (parent instanceof ISystemFilterPool) {
+	//			ISystemFilterPool fp = (ISystemFilterPool) parent;
+	//			toName = fp.getName();
+	//		}
+	//		return toName;
+	//	}
+
+	//	private String getReferencingName(IRSEBaseReferencingObject object) {
+	//		String fromName = "unknown"; //$NON-NLS-1$
+	//		if (object instanceof ISystemFilterPoolReference) {
+	//			ISystemFilterPoolReference fpr = (ISystemFilterPoolReference) object;
+	//			ISystemFilterPoolReferenceManagerProvider provider = fpr.getProvider();
+	//			String prefix = "unknown|unknown|unknown"; //$NON-NLS-1$
+	//			if (provider instanceof ISubSystem) {
+	//				ISubSystem subsystem = (ISubSystem) provider;
+	//				IHost host = subsystem.getHost();
+	//				prefix = host.getAliasName() + "|" + subsystem.getName(); //$NON-NLS-1$
+	//				fromName = prefix + fpr.getName();
+	//			}
+	//		}
+	//		return fromName;
+	//	}
 
 	/**
 	 * @see IRSEBaseReferencedObject#removeReference(IRSEBaseReferencingObject)
 	 */
 	public int removeReference(IRSEBaseReferencingObject ref) {
-//		String fromName = getReferencingName(ref);
-//		String toName = getReferencedName();
-//		System.out.println(MessageFormat.format("Removing reference from {0} to {1}", new Object[] {fromName, toName}));
+		//		String fromName = getReferencingName(ref);
+		//		String toName = getReferencedName();
+		//		System.out.println(MessageFormat.format("Removing reference from {0} to {1}", new Object[] {fromName, toName}));
 		boolean found = referencingObjects.removeElement(ref);
 		assertThis(!found, "removeReference failed for " + ref); //$NON-NLS-1$
 		return referencingObjects.size();
@@ -109,7 +105,7 @@ public class SystemReferencedObjectHelper implements IRSEBaseReferencedObject {
 			IRSEBaseReferencingObject reference = references[i];
 			removeReference(reference);
 		}
-//		referencingObjects.removeAllElements();
+		//		referencingObjects.removeAllElements();
 	}
 
 	/**
@@ -128,7 +124,7 @@ public class SystemReferencedObjectHelper implements IRSEBaseReferencedObject {
 	 * @param msg the message printed on System.out
 	 */
 	protected void assertThis(boolean assertion, String msg) {
-//		if (!assertion) System.out.println("ASSERTION FAILED IN SystemReferencedObject: " + msg); //$NON-NLS-1$
+		//		if (!assertion) System.out.println("ASSERTION FAILED IN SystemReferencedObject: " + msg); //$NON-NLS-1$
 	}
 
 }

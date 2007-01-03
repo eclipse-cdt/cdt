@@ -41,13 +41,14 @@ public final class Logger {
 
 	static {
 		String logFile = null;
-		File logDirWindows = new File("C:\\wblogs"); //$NON-NLS-1$
-		File logDirUNIX = new File("/tmp/wblogs"); //$NON-NLS-1$
+		//TODO I think this should go into the workspace metadata instead.
+		File logDirWindows = new File("C:\\eclipselogs"); //$NON-NLS-1$
+		File logDirUNIX = new File("/tmp/eclipselogs"); //$NON-NLS-1$
 
 		if (logDirWindows.isDirectory()) {
-			logFile = logDirWindows + "\\wbterminal.log"; //$NON-NLS-1$
+			logFile = logDirWindows + "\\tmterminal.log"; //$NON-NLS-1$
 		} else if (logDirUNIX.isDirectory()) {
-			logFile = logDirUNIX + "/wbterminal.log"; //$NON-NLS-1$
+			logFile = logDirUNIX + "/tmterminal.log"; //$NON-NLS-1$
 		}
 
 		if (logFile != null) {
@@ -60,6 +61,71 @@ public final class Logger {
 				ex.printStackTrace(logStream);
 			}
 		}
+	}
+	
+	/**
+	 * Encodes a String such that non-printable control characters are
+	 * converted into user-readable escape sequences for logging. 
+	 * @param message String to encode
+	 * @return encoded String
+	 */
+	public static final String encode(String message) {
+		boolean encoded = false;
+		StringBuffer buf = new StringBuffer(message.length()+32);
+		for (int i=0; i<message.length(); i++) {
+			char c=message.charAt(i);
+			switch(c) {
+				case '\\':
+				case '\'': 
+					buf.append('\\'); buf.append(c); encoded=true;
+					break;
+				case '\r':
+					buf.append('\\'); buf.append('r'); encoded=true; 
+					break;
+				case '\n':
+					buf.append('\\'); buf.append('n'); encoded=true; 
+					break;
+				case '\t':
+					buf.append('\\'); buf.append('t'); encoded=true; 
+					break;
+				case '\f':
+					buf.append('\\'); buf.append('f'); encoded=true; 
+					break;
+				case '\b':
+					buf.append('\\'); buf.append('b'); encoded=true; 
+					break;
+				default:
+					if (c <= '\u000f') {
+						buf.append('\\'); buf.append('x'); buf.append('0'); 
+						buf.append(Integer.toHexString(c)); 
+						encoded=true;
+					} else if (c>=' ' && c<'\u007f') {
+						buf.append(c);
+					} else {
+						buf.append('\\'); buf.append('u');
+						if (c<='\u0fff') { 
+							buf.append('0');
+							if (c<='\u00ff') {
+								buf.append('0');
+							}
+						}
+						buf.append(Integer.toHexString(c));
+						encoded=true;
+					}
+			}
+		}
+		if (encoded) {
+			return buf.toString();
+		}
+		return message;
+	}
+	
+	/**
+	 * Checks if logging is enabled.
+	 * @return true if logging is enabled.
+	 */
+	public static final boolean isLogEnabled() {
+		return (logStream!=null);
 	}
 
 	/**

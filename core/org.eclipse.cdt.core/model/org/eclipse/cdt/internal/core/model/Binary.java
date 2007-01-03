@@ -460,7 +460,7 @@ public class Binary extends Openable implements IBinary {
 		bufManager.addBuffer(buffer);
 		
 		// listen to buffer changes
-		// buffer.addBufferChangedListener(this);
+		buffer.addBufferChangedListener(this);
 		
 		return buffer;
 	}

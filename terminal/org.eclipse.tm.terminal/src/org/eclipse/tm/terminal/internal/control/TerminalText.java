@@ -371,7 +371,9 @@ public class TerminalText implements Runnable, ControlListener {
 	 *            host.
 	 */
 	public synchronized void setNewText(StringBuffer newBuffer) {
-		Logger.log("new text: '" + newBuffer + "'"); //$NON-NLS-1$ //$NON-NLS-2$
+		if (Logger.isLogEnabled()) {
+			Logger.log("new text: '" + Logger.encode(newBuffer.toString()) + "'"); //$NON-NLS-1$ //$NON-NLS-2$
+		}
 		newText = newBuffer;
 
 		// When continuous output is being processed by the Terminal view code, it

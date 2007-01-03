@@ -312,7 +312,7 @@ public class TelnetConnection extends Thread implements TelnetCodes {
 					break;
 				} else {
 					Logger.log("Received " + nRawBytes + " bytes: '" + //$NON-NLS-1$ //$NON-NLS-2$
-							new String(rawBytes, 0, nRawBytes) + "'"); //$NON-NLS-1$
+							Logger.encode(new String(rawBytes, 0, nRawBytes)) + "'"); //$NON-NLS-1$
 
 					// Process any TELNET protocol data that we receive. Don't
 					// send any TELNET protocol data until we are sure the remote

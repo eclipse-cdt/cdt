@@ -15,8 +15,8 @@
  ********************************************************************************/
 
 package org.eclipse.rse.ui.view;
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.action.IMenuManager;
-import org.eclipse.jface.util.Assert;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.actions.ActionContext;
 import org.eclipse.ui.actions.ActionGroup;

@@ -322,7 +322,8 @@ public class SystemSubSystemPropertyPageCoreForm extends AbstractSystemSubSystem
 		if (errMsg != null)
 		{
 		  ok = false;
-		  controlInError.setFocus();
+		  if (controlInError != null)
+			  controlInError.setFocus();
 		  setErrorMessage(errMsg);
 		}
 		return ok;

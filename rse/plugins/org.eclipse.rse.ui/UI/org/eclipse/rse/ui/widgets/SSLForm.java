@@ -46,7 +46,7 @@ public class SSLForm extends SystemBaseForm {
 
 	/**
 	 * Determines whether ssl is checked or not
-	 * @return
+	 * @return whether ssl alert is checked
 	 */
 	public boolean isSSLAlertChecked()
 
@@ -66,7 +66,7 @@ public class SSLForm extends SystemBaseForm {
 	
 	/**
 	 * Determines whether non-ssl is checked or not
-	 * @return
+	 * @return whether non ssl alert is checked
 	 */
 	public boolean isNonSSLAlertChecked()
 	{

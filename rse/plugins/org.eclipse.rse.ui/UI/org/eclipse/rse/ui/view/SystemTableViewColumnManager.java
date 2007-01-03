@@ -68,7 +68,7 @@ public class SystemTableViewColumnManager
 	 * Gets the property descriptors to display as columns in the table
 	 * The set of descriptors and their order may change depending on user customizations
 	 * @param adapter
-	 * @return
+	 * @return the visible descriptors
 	 */
 	public IPropertyDescriptor[] getVisibleDescriptors(ISystemViewElementAdapter adapter)
 	{			
@@ -112,6 +112,8 @@ public class SystemTableViewColumnManager
 	            len = uniqueDescriptors.length;
 	        }
 	        IPropertyDescriptor[] customDescriptors = new IPropertyDescriptor[len];
+	        if (uniqueDescriptors != null)
+	        {
 	        for (int i = 0; i < len; i++)
 	        {
 	            String propertyName = history[i];
@@ -133,6 +135,7 @@ public class SystemTableViewColumnManager
 	                setCustomDescriptors(adapter, uniqueDescriptors);
 	                return uniqueDescriptors;
 	            }
+	        }
 	        }
 	        return customDescriptors;
 	    }

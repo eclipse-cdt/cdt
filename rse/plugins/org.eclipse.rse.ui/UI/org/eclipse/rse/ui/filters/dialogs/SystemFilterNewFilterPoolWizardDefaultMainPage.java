@@ -282,7 +282,7 @@ public class SystemFilterNewFilterPoolWizardDefaultMainPage
 		errMsg = validateNameInput();
 		if (errMsg != null)
 		  controlInError = textName;
-		if (errMsg != null)
+		if (errMsg != null && controlInError != null)
 		  controlInError.setFocus();
 		return (errMsg == null);		
 	}
@@ -328,8 +328,8 @@ public class SystemFilterNewFilterPoolWizardDefaultMainPage
 		if (iiv != null)
 		{
 	      int limit = -1;
-	      if (iiv != null)
-	        limit = iiv.getMaximumNameLength();
+
+	      limit = iiv.getMaximumNameLength();
 	      if (limit == -1)
 	        limit = ValidatorFilterPoolName.MAX_FILTERPOOLNAME_LENGTH; // default is 50
 	      textName.setTextLimit(limit);

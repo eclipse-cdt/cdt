@@ -766,8 +766,8 @@ public abstract class SystemPromptDialog
 	/**
 	 * Explicitly specify if Details Button to be shown.
 	 * There is support to automatically toggle the text.
-	 * @param true if the Details button is to be shown
-	 * @param true if the button should initially be in "hide mode" versus "hide mode"
+	 * @param show if the Details button is to be shown
+	 * @param hideMode if the button should initially be in "hide mode" versus "hide mode"
 	 */
 	public void setShowDetailsButton(boolean show, boolean hideMode)
 	{

@@ -1151,7 +1151,7 @@ public class SubSystemConfigurationAdapter implements ISubSystemConfigurationAda
 
 				// we want to make sure the order is kept consistent at
 				// Copy, Paste, Move, Delete Rename
-				if (pasteIndex > -1)
+				if (pasteIndex > -1 && ourChildActions != null)
 				{
 					filterActions[fsIdx++] = (IAction) ourChildActions.elementAt(pasteIndex);
 				}
@@ -1188,7 +1188,7 @@ public class SubSystemConfigurationAdapter implements ISubSystemConfigurationAda
 			*/
 			IAction[] allFilterActions = new IAction[childActions.size() + filterActions.length];
 			int allIdx = 0;
-			if (childActions != null)
+
 				for (int idx = 0; idx < childActions.size(); idx++)
 					allFilterActions[allIdx++] = (IAction) childActions.elementAt(idx);
 			for (int idx = 0; idx < filterActions.length; idx++)

@@ -17,7 +17,7 @@
 package org.eclipse.rse.ui.view;
 import java.text.MessageFormat;
 
-import org.eclipse.jface.util.Assert;
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.rse.ui.widgets.InheritableEntryField;
 import org.eclipse.swt.SWT;

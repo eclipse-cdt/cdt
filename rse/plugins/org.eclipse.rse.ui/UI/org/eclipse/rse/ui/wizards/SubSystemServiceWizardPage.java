@@ -63,7 +63,7 @@ public class SubSystemServiceWizardPage extends AbstractSystemNewConnectionWizar
 
 	public Control createContents(Composite parent)
 	{
-		_form = new ServicesForm(getMessageLine());
+		_form = new ServicesForm(parent.getShell(), getMessageLine());
 		Control control = _form.createContents(parent);
 		
 		ServiceElement[] elements = getServiceElements();

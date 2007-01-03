@@ -40,7 +40,6 @@ import org.eclipse.swt.widgets.Shell;
 public class SystemMoveConnectionAction extends SystemBaseCopyAction
 {
 
-	private ISystemRegistry sr = null;
 	private SystemSimpleContentElement initialSelectionElement = null;
 
 	/**

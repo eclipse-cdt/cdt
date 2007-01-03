@@ -864,7 +864,9 @@ public class SystemSearchViewPart extends ViewPart
 		}
 		
 		// get title to use from adapter
-		String title = adapter.getText(input);
+		String title = null;
+		if (adapter != null)
+			title = adapter.getText(input);
 
 		// set the title of the view
 		setContentDescription(title);

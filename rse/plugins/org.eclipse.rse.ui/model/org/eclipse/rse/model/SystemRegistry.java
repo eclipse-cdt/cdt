@@ -984,7 +984,7 @@ public class SystemRegistry implements ISystemRegistryUI, ISystemModelChangeEven
 					//monitor.subTask(msg);
 					SystemBasePlugin.logDebugMessage(this.getClass().getName(), msg);
 					subsystems = getSubSystems(conns[idx]); // get old subsystems for this connection
-					if ((subsystems != null) && (subsystems.length > 0))
+					if ((subsystems != null) && (subsystems.length > 0) && newConns != null)
 					{
 						for (int jdx = 0; jdx < subsystems.length; jdx++)
 						{
@@ -1073,7 +1073,7 @@ public class SystemRegistry implements ISystemRegistryUI, ISystemModelChangeEven
 		// last step... physically blow away the profile...
 		getSystemProfileManager().deleteSystemProfile(profile, true);
 		SystemPreferencesManager.getPreferencesManager().setConnectionNamesOrder(); // update preferences order list        
-		if ((connections != null) && (connections.length > 0)) // defect 42112
+		if (connections.length > 0) // defect 42112
 			fireEvent(new org.eclipse.rse.model.SystemResourceChangeEvent(connections, ISystemResourceChangeEvents.EVENT_DELETE_MANY, this));
 
 		fireModelChangeEvent(SYSTEM_RESOURCE_REMOVED, SYSTEM_RESOURCETYPE_PROFILE, profile, null);
@@ -2058,7 +2058,6 @@ public class SystemRegistry implements ISystemRegistryUI, ISystemModelChangeEven
 			if (object != null)
 			{
 				String[] fileData = (String[]) object;
-				if (fileData != null)
 				{
 					for (int i = 0; i < fileData.length; i++)
 					{
@@ -2074,10 +2073,7 @@ public class SystemRegistry implements ISystemRegistryUI, ISystemModelChangeEven
 			if (object != null)
 			{
 				String textData = (String) object;
-				if (textData != null)
-				{
-					srcObjects.add(textData);
-				}
+				srcObjects.add(textData);
 			}
 		}
 		return srcObjects;

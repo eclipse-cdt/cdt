@@ -779,7 +779,6 @@ public abstract class SystemBasePlugin extends AbstractUIPlugin
      * @param id - an arbitrary ID to assign to this image. Used later when retrieving it.
      * @param fileName - the name of the icon file, with extension, relative to this plugin's folder.
      * @return the image descriptor for this particular id.
-     * @see SystemBasePlugin#getImage(String);
      */
     protected ImageDescriptor putImageInRegistry(String id, String fileName)
     {

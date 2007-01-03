@@ -87,11 +87,10 @@ FocusListener
 		private boolean _querying = false;
 		private ISystemViewElementAdapter _adapter;
 		private Object _inputObject;
-		private SystemTableTreeView _viewer;
+
 		
 		public PollingThread()
 		{	
-			_viewer = getViewer();
 			_inputObject = _viewer.getInput();
 			_adapter = (ISystemViewElementAdapter)((IAdaptable)_inputObject).getAdapter(ISystemViewElementAdapter.class);
 		}

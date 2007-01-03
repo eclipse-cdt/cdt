@@ -63,7 +63,6 @@ public class      SystemNewConnectionWizard
     private IHost                           currentlySelectedConnection = null;
     private String[]                                   restrictSystemTypesTo;
     private static String                              lastProfile = null;    
-    private boolean									   showProfilePageInitially = true;
     private IHost _dummyHost;
     
     /**
@@ -129,7 +128,6 @@ public class      SystemNewConnectionWizard
 	      
 	      SystemStartHere.getSystemProfileManager().getDefaultPrivateSystemProfile();
 	      
-	      showProfilePageInitially = RSEUIPlugin.getDefault().getShowProfilePageInitially();
 	      /* DKM - I don't think we should force profiles into the faces of users
 	       *     we no longer default to "private" so hopefully this would never be
 	       *     desirable

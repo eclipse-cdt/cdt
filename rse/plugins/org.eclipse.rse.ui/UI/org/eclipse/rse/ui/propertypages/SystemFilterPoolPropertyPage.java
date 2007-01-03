@@ -18,7 +18,6 @@ package org.eclipse.rse.ui.propertypages;
 import org.eclipse.rse.core.filters.ISystemFilterPool;
 import org.eclipse.rse.core.filters.ISystemFilterPoolReference;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
-import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemPropertyResources;
 import org.eclipse.rse.ui.SystemResources;
 import org.eclipse.rse.ui.SystemWidgetHelpers;

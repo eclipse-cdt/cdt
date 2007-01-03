@@ -40,6 +40,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
@@ -59,9 +60,9 @@ public class ServicesForm extends SystemBaseForm implements ICheckStateListener
 	
 	private Text _descriptionVerbage;
 	
-	public ServicesForm(ISystemMessageLine msgLine)
+	public ServicesForm(Shell shell, ISystemMessageLine msgLine)
 	{
-		super(msgLine);
+		super(shell, msgLine);
 		//_factoryTooltip = 
 	}
 	

@@ -315,7 +315,7 @@ public class SystemViewPart
 		//IAdaptable inputObj = getSite().getPage().getInput();
 		Object inputObj = getSystemView().getInput();
 		SystemBasePlugin.logInfo("Inside updateTitle. inputObject class type: " + inputObj.getClass().getName()); //$NON-NLS-1$
-		if (inputObj != null)
+
 		{
 			setTitleToolTip(getFrameToolTipText(input));
 			String viewName = getConfigurationElement().getAttribute("name"); //$NON-NLS-1$

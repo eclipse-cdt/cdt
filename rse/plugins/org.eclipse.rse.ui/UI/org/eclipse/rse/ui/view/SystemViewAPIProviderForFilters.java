@@ -150,7 +150,7 @@ public class SystemViewAPIProviderForFilters
 		        ISubSystem ss = fRef.getSubSystem();
 		        ISystemFilterReference sfr = fRef.getParentSystemFilterReferencePool().getExistingSystemFilterReference(ss, newFilter);
 		        ISystemViewInputProvider inputProvider = this;
-		        if ((sfr != null) && (inputProvider != null) && (inputProvider.getViewer()!=null))
+		        if ((sfr != null)  && (inputProvider.getViewer()!=null))
 		        {
 		          SystemRegistry sr = RSEUIPlugin.getTheSystemRegistry();
 		          SystemResourceChangeEvent event = new SystemResourceChangeEvent(sfr, ISystemResourceChangeEvents.EVENT_SELECT_EXPAND, null);
@@ -182,14 +182,17 @@ public class SystemViewAPIProviderForFilters
     	     String[] filterStrings = referencedFilter.getFilterStrings();    	   	 
 		     try
 		     {
+		    	 if (nestedFilterReferences != null)
+		    	 {
 		     	Object[] allChildren = ss.resolveFilterStrings(filterStrings);
-                int nbrNestedFilters = (nestedFilterReferences==null) ? 0: nestedFilterReferences.length;
+                int nbrNestedFilters = nestedFilterReferences.length;
                 children = new Object[nbrNestedFilters + allChildren.length];
                 int idx = 0;
                 for (idx=0; idx<nbrNestedFilters; idx++)
                    children[idx] = nestedFilterReferences[idx];
                 for (int jdx=0; jdx<allChildren.length; jdx++)
                    children[idx++] = allChildren[jdx];
+		    	 }
 		     }
 		     catch (InterruptedException exc)
 		     {

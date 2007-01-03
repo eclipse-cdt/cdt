@@ -420,7 +420,7 @@ public class SystemRenameDialog extends SystemPromptDialog
 				//newNames.addElement(newName);
 				newNames.addElement(canonicalNewName); // defect 42145
 			}
-			if ((errMsg != null) && (firstErrMsg == null))
+			if (errMsg != null)
 			{
 				firstErrMsg = errMsg;
 				firstErrRow = rows[idx];

@@ -18,10 +18,8 @@ package org.eclipse.rse.core.servicesubsystem;
 
 import java.util.Vector;
 
-import org.eclipse.rse.core.SystemBasePlugin;
 import org.eclipse.rse.core.filters.ISystemFilter;
 import org.eclipse.rse.core.filters.ISystemFilterPool;
-import org.eclipse.rse.core.filters.ISystemFilterPoolManager;
 import org.eclipse.rse.core.model.ISystemNewConnectionWizardPage;
 import org.eclipse.rse.core.subsystems.AbstractConnectorService;
 import org.eclipse.rse.core.subsystems.AbstractConnectorServiceManager;

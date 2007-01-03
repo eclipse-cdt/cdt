@@ -234,7 +234,7 @@ public class SystemDNDTransferRunnable extends Job
 			else
 			{																	
 			    // special case for filters			 
-			    if (target instanceof ISystemFilterReference)
+			    if (target instanceof ISystemFilterReference && targetSubSystem != null)
 			    {
 			        ISubSystemConfiguration factory = targetSubSystem.getSubSystemConfiguration();
 			        if (factory.supportsDropInFilters())
@@ -334,7 +334,7 @@ public class SystemDNDTransferRunnable extends Job
 		
 				  
 					// special case for filters
-				    if (target instanceof ISystemFilterReference)
+				    if (target instanceof ISystemFilterReference && targetSubSystem != null)
 				    {
 				    	
 				        ISubSystemConfiguration factory = targetSubSystem.getSubSystemConfiguration();
@@ -441,7 +441,7 @@ public class SystemDNDTransferRunnable extends Job
 										if (targetAdapter.validateDrop(tempObject, target, (targetSubSystem == srcSubSystem)))
 										{
 											//	special case for filters
-										    if (target instanceof ISystemFilterReference)
+										    if (target instanceof ISystemFilterReference && targetSubSystem != null)
 										    {
 										        ISubSystemConfiguration factory = targetSubSystem.getSubSystemConfiguration();
 										        if (factory.supportsDropInFilters() && factory.providesCustomDropInFilters())
@@ -477,7 +477,7 @@ public class SystemDNDTransferRunnable extends Job
 								{																	
 								    // special case for filters
 								 
-								    if (target instanceof ISystemFilterReference)
+								    if (target instanceof ISystemFilterReference && targetSubSystem != null)
 								    {
 								        ISubSystemConfiguration factory = targetSubSystem.getSubSystemConfiguration();
 								        if (factory.supportsDropInFilters() && factory.providesCustomDropInFilters())

@@ -528,7 +528,6 @@ public class SystemTypeFieldEditor extends FieldEditor
 				RSESystemTypeAdapter adapter = (RSESystemTypeAdapter)(matchingType.getAdapter(IRSESystemType.class));
 				
 				// update this system type's attributes as per preferences...
-				if (matchingType!=null)
 				{
 					adapter.setIsEnabled(matchingType, attr1.equals("true")); //$NON-NLS-1$
 					if (!attr2.equals("null")) //$NON-NLS-1$

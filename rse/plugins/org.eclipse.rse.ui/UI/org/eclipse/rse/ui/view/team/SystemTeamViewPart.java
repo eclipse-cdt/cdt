@@ -1235,8 +1235,10 @@ public class SystemTeamViewPart
 		else if (o instanceof ISystemProfile)
 			handle = "Profile"; //$NON-NLS-1$
 		else if (o instanceof SystemTeamViewCategoryNode)
+		{
 			//handle = "Category";
-			handle = null; // decided not to re-expand past profiles 
+			//handle = null; // decided not to re-expand past profiles 
+		}
 
 		return handle;
 	}

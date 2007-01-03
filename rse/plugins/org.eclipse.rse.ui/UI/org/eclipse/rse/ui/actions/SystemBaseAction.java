@@ -425,7 +425,7 @@ public class SystemBaseAction extends Action implements ISystemAction
         	//this.previousSelections.add(this.sSelection);
         }
 		sSelection = (IStructuredSelection)selection;
-		if (!selectionSensitive || (selection == null))
+		if (!selectionSensitive)
 		{
 		  if (traceSelections)
 		  System.out.println(this.getClass().getName() + ". Returning. selectionSensitive = " + selectionSensitive); //$NON-NLS-1$

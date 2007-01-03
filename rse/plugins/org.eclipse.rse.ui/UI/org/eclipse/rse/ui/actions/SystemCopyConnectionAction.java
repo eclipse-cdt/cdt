@@ -39,7 +39,6 @@ import org.eclipse.swt.widgets.Shell;
  */
 public class SystemCopyConnectionAction extends SystemBaseCopyAction
 {
-	private ISystemRegistry sr = null;
 	private SystemSimpleContentElement initialSelectionElement = null;
 	/**
 	 * Constructor for SystemCopyConnectionAction

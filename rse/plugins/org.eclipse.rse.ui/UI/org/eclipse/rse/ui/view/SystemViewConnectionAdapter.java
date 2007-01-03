@@ -23,7 +23,6 @@ import org.eclipse.jface.viewers.ICellEditorValidator;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.rse.core.IRSESystemType;
 import org.eclipse.rse.core.IRSEUserIdConstants;
-import org.eclipse.rse.core.ISystemUserIdConstants;
 import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.SystemPreferencesManager;
 import org.eclipse.rse.core.model.IHost;
@@ -57,7 +56,7 @@ import org.eclipse.ui.views.properties.TextPropertyDescriptor;
  */
 public class SystemViewConnectionAdapter 
        extends AbstractSystemViewAdapter 
-       implements ISystemViewElementAdapter, ISystemUserIdConstants
+       implements ISystemViewElementAdapter, IRSEUserIdConstants
 {
 	private SystemNewConnectionFromExistingConnectionAction anotherConnectionAction = null;
 	//private SystemUpdateConnectionAction updateAction = null;

@@ -476,7 +476,7 @@ public class SystemViewForm extends Composite implements  ISystemTree
 	   {
 		  public void widgetDefaultSelected(SelectionEvent event) 
 		  {
-		  };
+		  }
 		  public void widgetSelected(SelectionEvent event) 
 		  {
 		  	  Object src = event.getSource();
@@ -484,7 +484,7 @@ public class SystemViewForm extends Composite implements  ISystemTree
 		  	    processGetListButton();
 		  	  else if (src==refreshButton)
 		  	    processRefreshButton();
-		  };
+		  }
 	   };
 	   if (getListButton != null)
 	     getListButton.addSelectionListener(selectionListener);

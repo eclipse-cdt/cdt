@@ -1263,11 +1263,13 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 			}
 			
 			// server launcher
-			IServerLauncherProperties sl = oldConnectorService.getRemoteServerLauncherProperties();
+			IServerLauncherProperties sl = null;
+			if (oldConnectorService != null)
+				sl = oldConnectorService.getRemoteServerLauncherProperties();
 			if ((sl != null) && supportsServerLaunchProperties(newConnection))
 			{
 				IServerLauncherProperties newSL = createServerLauncher(newConnectorService);
-				if (newSL != null)					
+				if (newSL != null && newConnectorService != null)					
 				{
 					newConnectorService.setRemoteServerLauncherProperties(sl.cloneServerLauncher(newSL));			
 				}

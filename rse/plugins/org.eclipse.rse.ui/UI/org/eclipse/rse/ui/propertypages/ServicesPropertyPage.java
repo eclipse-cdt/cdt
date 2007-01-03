@@ -36,7 +36,7 @@ public abstract class ServicesPropertyPage extends SystemBasePropertyPage
 	
 	protected Control createContentArea(Composite parent)
 	{
-		_form = new ServicesForm(getMessageLine());
+		_form = new ServicesForm(parent.getShell(), getMessageLine());
 		_form.createContents(parent);
 		
 		// init services

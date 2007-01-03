@@ -198,8 +198,7 @@ public abstract class SystemFilterAbstractFilterPoolAction
     {
     	ISystemFilterPoolManager[] mgrs = null;
         ISystemFilterPoolManagerProvider provider = getFilterPoolManagerProvider();
-        if (mgrs == null)
-    	  mgrs = dlgInputs.poolManagers;
+        mgrs = dlgInputs.poolManagers;
 		if ((mgrs==null) && (provider != null))
 		  mgrs = provider.getSystemFilterPoolManagers(); // get it in real time.
     	if (mgrs == null)

@@ -28,7 +28,6 @@ import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.rse.core.IRSESystemType;
 import org.eclipse.rse.core.IRSEUserIdConstants;
-import org.eclipse.rse.core.ISystemUserIdConstants;
 import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.SystemBasePlugin;
 import org.eclipse.rse.core.SystemPreferencesManager;
@@ -73,7 +72,7 @@ import org.eclipse.ui.dialogs.PropertyPage;
  */
 
 public class SystemConnectionForm 
-	   implements Listener,  ISystemUserIdConstants, 
+	   implements Listener,  IRSEUserIdConstants, 
 	               SelectionListener, Runnable, IRunnableWithProgress
 {
 	
@@ -451,7 +450,7 @@ public class SystemConnectionForm
 		if (!ok || (errorMessage != null))
 		{
 			ok = false;
-			if (okPressed)
+			if (okPressed && controlInError != null)
 				controlInError.setFocus();
 			showErrorMessage(errorMessage);		  
 		}
@@ -1245,8 +1244,7 @@ public class SystemConnectionForm
 	{
 		ISystemProfile profile = conn.getSystemProfile();
     	Vector v = RSEUIPlugin.getTheSystemRegistry().getHostAliasNames(profile);
-    	if (conn != null) // hmm, line 1 of this method will crash if this is the case!
-    	  v.removeElement(conn.getAliasName());
+    	v.removeElement(conn.getAliasName());
 	    ValidatorConnectionName connNameValidator = new ValidatorConnectionName(v);		
 	    return connNameValidator;
 	}	

@@ -19,7 +19,7 @@ import java.util.Vector;
 
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.rse.core.ISystemUserIdConstants;
+import org.eclipse.rse.core.IRSEUserIdConstants;
 import org.eclipse.rse.core.model.ISystemProfile;
 import org.eclipse.rse.core.model.ISystemRegistry;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
@@ -39,7 +39,7 @@ import org.eclipse.ui.views.properties.PropertyDescriptor;
  */
 public class SystemTeamViewCategoryAdapter 
        extends AbstractSystemViewAdapter 
-       implements ISystemViewElementAdapter, ISystemUserIdConstants
+       implements ISystemViewElementAdapter, IRSEUserIdConstants
 {
 	
 	private boolean actionsCreated = false;

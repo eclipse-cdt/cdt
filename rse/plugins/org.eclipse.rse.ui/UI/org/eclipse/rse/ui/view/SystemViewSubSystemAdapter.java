@@ -19,7 +19,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.rse.core.ISystemUserIdConstants;
+import org.eclipse.rse.core.IRSEUserIdConstants;
 import org.eclipse.rse.core.SystemBasePlugin;
 import org.eclipse.rse.core.model.ISystemRegistry;
 import org.eclipse.rse.core.subsystems.IConnectorService;
@@ -43,7 +43,7 @@ import org.eclipse.ui.views.properties.TextPropertyDescriptor;
  * These are children of SystemConnection objects
  */
 public class SystemViewSubSystemAdapter extends AbstractSystemViewAdapter 
-       implements ISystemViewElementAdapter, ISystemPropertyConstants, ISystemUserIdConstants
+       implements ISystemViewElementAdapter, ISystemPropertyConstants, IRSEUserIdConstants
 {
 	protected String translatedType;
     // for reset property support

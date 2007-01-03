@@ -391,7 +391,9 @@ public class SystemViewFilterReferenceAdapter
 						}
 						else
 						{
-							int nbrNestedFilters = (nestedFilterReferences == null) ? 0 : nestedFilterReferences.length;
+							if (nestedFilterReferences != null)
+							{
+							int nbrNestedFilters = nestedFilterReferences.length;
 							children = new Object[nbrNestedFilters + allChildren.length];
 							int idx = 0;
 							for (idx = 0; idx < nbrNestedFilters; idx++)
@@ -403,6 +405,7 @@ public class SystemViewFilterReferenceAdapter
 							if (!referencedFilter.isTransient() && ssf.supportsFilterCaching())
 							{
 								fRef.setContents(SystemChildrenContentsType.getInstance(), children);
+							}
 							}
 						}
 					}

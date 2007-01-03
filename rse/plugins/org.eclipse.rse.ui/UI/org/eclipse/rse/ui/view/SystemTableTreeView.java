@@ -624,9 +624,12 @@ implements IMenuListener, ISystemDeleteTarget, ISystemRenameTarget, ISystemSelec
 			{ 
 				// this is the first column -- treat it special
 				name = SystemPropertyResources.RESID_PROPERTY_NAME_LABEL;
-				propertyId = (String) nameDescriptor.getId();
-				editor = getCellEditor(tree, nameDescriptor);
-				weight = 200;
+				if (nameDescriptor != null)
+				{
+					propertyId = (String) nameDescriptor.getId();
+					editor = getCellEditor(tree, nameDescriptor);
+					weight = 200;
+				}
 			}
 			else
 			{ // these columns come from the regular descriptors

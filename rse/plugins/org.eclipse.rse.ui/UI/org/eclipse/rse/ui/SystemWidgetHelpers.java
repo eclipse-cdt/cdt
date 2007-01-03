@@ -1089,9 +1089,12 @@ public class SystemWidgetHelpers {
 			combo = new SystemHostCombo(parent, SWT.NULL, defaultConnection, factoryId, newButton);
 		else if (factoryCategory != null)
 			combo = new SystemHostCombo(parent, SWT.NULL, defaultConnection, newButton, factoryCategory);
-		if (listener != null)
+		if (listener != null && combo != null)
 			combo.addSelectionListener(listener);
-		boolean hasGridData = (combo.getLayoutData() != null) && (combo.getLayoutData() instanceof GridData);
+		
+		boolean hasGridData = false;
+		if (combo != null)
+			hasGridData = (combo.getLayoutData() != null) && (combo.getLayoutData() instanceof GridData);
 		//System.out.println("history directory griddata non-null? " + hasGridData);
 		int minwidth = 250; // todo: tweak this?
 		if (!hasGridData) {
@@ -1102,12 +1105,16 @@ public class SystemWidgetHelpers {
 			data.verticalAlignment = GridData.CENTER;
 			data.grabExcessVerticalSpace = false;
 			data.horizontalSpan = horizontalSpan;
-			combo.setLayoutData(data);
+			if (combo != null)
+				combo.setLayoutData(data);
 		} else {
-			((GridData) combo.getLayoutData()).horizontalSpan = horizontalSpan;
-			((GridData) combo.getLayoutData()).horizontalAlignment = GridData.FILL;
-			((GridData) combo.getLayoutData()).grabExcessHorizontalSpace = true;
-			((GridData) combo.getLayoutData()).widthHint = minwidth;
+			if (combo != null)
+			{
+				((GridData) combo.getLayoutData()).horizontalSpan = horizontalSpan;
+				((GridData) combo.getLayoutData()).horizontalAlignment = GridData.FILL;
+				((GridData) combo.getLayoutData()).grabExcessHorizontalSpace = true;
+				((GridData) combo.getLayoutData()).widthHint = minwidth;
+			}
 		}
 		return combo;
 	}

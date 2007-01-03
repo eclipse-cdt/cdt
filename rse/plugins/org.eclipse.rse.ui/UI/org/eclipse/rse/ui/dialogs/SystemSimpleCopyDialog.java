@@ -212,10 +212,12 @@ public class SystemSimpleCopyDialog
 		String errMsg = null;
 		Control controlInError = null;
 		clearErrorMessage();				
-
+/*
 		if (errMsg != null)
 		  controlInError.setFocus();
 		return (errMsg == null);
+		*/
+		return true;
 	}
 	
 	/**

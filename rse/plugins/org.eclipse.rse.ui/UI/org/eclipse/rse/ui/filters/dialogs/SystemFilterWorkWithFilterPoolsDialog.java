@@ -356,10 +356,12 @@ public class SystemFilterWorkWithFilterPoolsDialog
 		String errMsg = null;
 		Control controlInError = null;
 		clearErrorMessage();				
-
+/*
 		if (errMsg != null)
 		  controlInError.setFocus();
 		return (errMsg == null);
+		*/
+		return true;
 	}
 	
 	/**
@@ -558,7 +560,8 @@ public class SystemFilterWorkWithFilterPoolsDialog
         SystemSimpleContentElement cElement = 
              new SystemSimpleContentElement(pool.getName(), pool, mgrElement, (Vector)null);
         cElement.setImageDescriptor(SystemFilterUIHelpers.getFilterPoolImage(pool.getProvider(),pool));
-    	mgrElement.addChild(cElement, 0);    	    	
+        if (mgrElement != null)
+        	mgrElement.addChild(cElement, 0);    	    	
     	tree.refresh(mgrElement); // rebuild whole thing    	
    	    tree.setSelection(new StructuredSelection(cElement),true);              	    	
    	    // defect 42503

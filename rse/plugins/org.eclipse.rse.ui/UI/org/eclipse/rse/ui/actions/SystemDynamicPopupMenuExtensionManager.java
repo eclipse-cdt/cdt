@@ -54,9 +54,8 @@ public class SystemDynamicPopupMenuExtensionManager implements
 	 * Actions are added to a contribution menu.
 	 * @param shell the shell
 	 * @param menu the menu to contribute to
-	 * @param selection(s) are processed to determine the resource source file
+	 * @param selection are processed to determine the resource source file
 	 * @param menuGroup the default menu group to add actions to
-	 * @return the menu is populated with actions 
 	 */
 	public void populateMenu(Shell shell, SystemMenuManager menu,IStructuredSelection selection, String menuGroup)
 	{

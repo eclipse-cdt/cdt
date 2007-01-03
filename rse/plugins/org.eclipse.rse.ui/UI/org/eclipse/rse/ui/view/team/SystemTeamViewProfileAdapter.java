@@ -20,7 +20,7 @@ import java.util.Hashtable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.rse.core.ISystemUserIdConstants;
+import org.eclipse.rse.core.IRSEUserIdConstants;
 import org.eclipse.rse.core.SystemResourceManager;
 import org.eclipse.rse.core.model.ISystemProfile;
 import org.eclipse.rse.model.SystemStartHere;
@@ -49,7 +49,7 @@ import org.eclipse.ui.views.properties.PropertyDescriptor;
  */
 public class SystemTeamViewProfileAdapter 
        extends AbstractSystemViewAdapter 
-       implements ISystemViewElementAdapter, ISystemUserIdConstants
+       implements ISystemViewElementAdapter, IRSEUserIdConstants
 {
 	
 	private boolean actionsCreated = false;

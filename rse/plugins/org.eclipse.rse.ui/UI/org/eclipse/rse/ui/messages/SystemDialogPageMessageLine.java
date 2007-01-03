@@ -41,7 +41,6 @@ import org.eclipse.ui.dialogs.PropertyPage;
  * It fails to do this properly and is extremely fragile since it depends on knowledge
  * of the internal structure of eclipse provided windows.
  * <p>Use SystemMessageLine instead.
- * @link org.eclipse.rse.core.ui.messages.SystemMessageLine
  *
  */
 public class SystemDialogPageMessageLine implements ISystemMessageLine, MouseListener {
@@ -65,6 +64,8 @@ public class SystemDialogPageMessageLine implements ISystemMessageLine, MouseLis
 		SystemDialogPageMessageLine msgLine = null;
 		Composite pageContainer = wizardPage.getControl().getParent();
 		Object pageContainerData = null; 
+		
+		// FIXME why does this need to be commented out?
 		//Object pageContainerData = pageContainer.getData();
 		//System.out.println("pageContainerData = " + pageContainerData);
 		if (pageContainerData == null) {

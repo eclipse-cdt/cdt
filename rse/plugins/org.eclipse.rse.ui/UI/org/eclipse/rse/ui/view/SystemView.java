@@ -1403,9 +1403,6 @@ public class SystemView extends TreeViewer implements ISystemTree, ISystemResour
 		Item[] newResult = new Item[oldResult.length];
 		Item[] children = null;
 		if (parentItem instanceof Item) {
-			if (oldResult == null)
-				children = getItems((Item) parentItem);
-			else
 				children = oldResult;
 		} else
 			children = getChildren(parentItem);

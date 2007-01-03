@@ -21,7 +21,6 @@ import java.util.Vector;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.rse.core.IRSEUserIdConstants;
-import org.eclipse.rse.core.ISystemUserIdConstants;
 import org.eclipse.rse.core.PasswordPersistenceManager;
 import org.eclipse.rse.core.SystemBasePlugin;
 import org.eclipse.rse.core.model.IHost;
@@ -76,7 +75,7 @@ import org.eclipse.ui.PlatformUI;
  * 
  * @see org.eclipse.rse.core.subsystems.AbstractConnectorServiceManager
  */ 
-public abstract class AbstractConnectorService extends RSEModelObject implements IConnectorService, ISystemUserIdConstants
+public abstract class AbstractConnectorService extends RSEModelObject implements IConnectorService, IRSEUserIdConstants
 {
 
     private ISubSystem _primarySubSystem;

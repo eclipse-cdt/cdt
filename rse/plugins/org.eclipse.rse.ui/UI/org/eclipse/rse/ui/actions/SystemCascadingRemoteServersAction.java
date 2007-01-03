@@ -84,12 +84,15 @@ public class SystemCascadingRemoteServersAction extends SystemBaseSubMenuAction 
 		{
 			if (actions[idx] instanceof SystemCascadingRemoteServerBaseAction)
 			{
+				if (conn != null)
+				{
 				SystemCascadingRemoteServerBaseAction action = (SystemCascadingRemoteServerBaseAction)actions[idx];
 				action.setHost(conn);
 				if (conn.isOffline())
 					action.setEnabled(false);
 				else
 				 	action.setEnabled(action.shouldEnable(conn));
+				}
 			}
 		}
 	}

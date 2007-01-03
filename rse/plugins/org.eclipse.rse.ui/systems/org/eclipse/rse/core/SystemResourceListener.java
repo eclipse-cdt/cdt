@@ -26,7 +26,6 @@ import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.rse.core.model.ISystemModelChangeEvents;
 import org.eclipse.rse.core.model.ISystemRegistry;
 import org.eclipse.rse.internal.model.SystemModelChangeEvent;
-import org.eclipse.rse.model.SystemRegistry;
 import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.view.SystemPerspectiveLayout;
 import org.eclipse.rse.ui.view.SystemView;
@@ -53,7 +52,6 @@ public class SystemResourceListener implements IResourceChangeListener, Runnable
     private static SystemResourceListener inst = null;
     private IProject remoteSystemsProject = null;
     private boolean ignoreEvents = true;
-    ;
     private boolean ensureEventsOnMode = false;
     private boolean sawSyncEvent = false;
     private boolean changesPending = false;
@@ -671,7 +669,7 @@ public class SystemResourceListener implements IResourceChangeListener, Runnable
         }
         else if (runAction == FIRE_EVENT)
         {
-            ((SystemRegistry)RSEUIPlugin.getTheSystemRegistry()).fireEvent(
+            RSEUIPlugin.getTheSystemRegistry().fireEvent(
               new SystemModelChangeEvent(ISystemModelChangeEvents.SYSTEM_RESOURCE_ALL_RELOADED, ISystemModelChangeEvents.SYSTEM_RESOURCETYPE_ALL, "dummy")); //$NON-NLS-1$
         }
 

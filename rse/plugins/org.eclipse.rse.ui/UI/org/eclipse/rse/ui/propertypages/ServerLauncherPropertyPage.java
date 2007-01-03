@@ -78,7 +78,7 @@ public class ServerLauncherPropertyPage extends SystemBasePropertyPage implement
 
 		// Create property page UI
 		_form.createContents(parent);
-		if (sl != null)
+		if (sl != null && connectorService != null)
 		{
 			_form.setHostname(connectorService.getHost().getHostName());
 			_form.initValues(sl);				

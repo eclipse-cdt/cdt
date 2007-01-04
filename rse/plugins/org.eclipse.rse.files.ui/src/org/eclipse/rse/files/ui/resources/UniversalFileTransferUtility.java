@@ -1274,8 +1274,11 @@ public class UniversalFileTransferUtility
 					newTargetFolder = targetFS.getRemoteFileObject(newPath);
 				}
 
-				directory.refreshLocal(IResource.DEPTH_ONE, monitor);
-				 
+	
+				if (!directory.isSynchronized(IResource.DEPTH_ONE))
+					directory.refreshLocal(IResource.DEPTH_ONE, monitor);
+		
+				
 				boolean isTargetLocal = newTargetFolder.getParentRemoteFileSubSystem().getHost().getSystemType().equals("Local"); //$NON-NLS-1$
 				boolean destInArchive = (newTargetFolder  instanceof IVirtualRemoteFile) || newTargetFolder.isArchive();
 				boolean doSuperTransferPreference = RSEUIPlugin.getDefault().getPreferenceStore().getBoolean(ISystemPreferencesConstants.DOSUPERTRANSFER);

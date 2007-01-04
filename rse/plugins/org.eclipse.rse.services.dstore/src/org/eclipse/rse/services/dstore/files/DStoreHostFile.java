@@ -238,12 +238,12 @@ public class DStoreHostFile implements IHostFile
 		if (name == null)
 		{
 			// this element is deleted
-			return "";
+			return ""; //$NON-NLS-1$
 		}
 		if (name.length() == 0)
 		{
 			return _element.getValue();
-		}
+		} 
 		String parentPath = getParentPath();
 
 		

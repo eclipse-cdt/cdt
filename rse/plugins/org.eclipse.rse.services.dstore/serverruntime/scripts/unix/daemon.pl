@@ -12,6 +12,7 @@
  
 $port = "4035";
 $helpFlag = "-h"; 
+$dir = ".";
  
 if (defined($ARGV[0]))
 {	
@@ -28,7 +29,6 @@ if ($isHelp == 0)
 }
 else
 {
-	$trace = $ENV{DSTORE_TRACING_ON};
 	$user=`whoami`; chomp($user); 
 	$match = $user cmp "root";
 
@@ -36,16 +36,27 @@ else
 	{
 	    print("WARNING: To run the server daemon, you must have root authority\n");
 	}
-	
+
+	$trace="false";
+	if (defined($ENV{DSTORE_TRACING_ON}))
 	{
+		$trace = $ENV{DSTORE_TRACING_ON};
+	}
+	
 	    $dir= $ENV{PWD};
 	    $plugins_dir=$dir;
-
+		
 	    $ENV{A_PLUGIN_PATH}="$plugins_dir/";
     
+    
 	    $oldClasspath = $ENV{CLASSPATH};
+	    
 
-		$ENV{"CLASSPATH"}="$plugins_dir:$plugins_dir/dstore_extra_server.jar:$plugins_dir/dstore_core.jar:$plugins_dir/dstore_miners.jar:$plugins_dir/clientserver.jar:$oldClasspath";
+		$ENV{CLASSPATH}="$plugins_dir:$plugins_dir/dstore_extra_server.jar:$plugins_dir/dstore_core.jar:$plugins_dir/dstore_miners.jar:$plugins_dir/clientserver.jar";
+		if (defined ($oldClasspath))
+		{
+		  $ENV{CLASSPATH}="$ENV{CLASSPATH}:$oldClasspath";
+		}
 
 		if (defined($ARGV[1]))
 		{
@@ -55,5 +66,5 @@ else
 		{
 		    system("java -DA_PLUGIN_PATH=\$A_PLUGIN_PATH -DDSTORE_TRACING_ON=$trace org.eclipse.dstore.core.server.ServerLauncher $port");
 		}
-	  }
+
 }

@@ -233,7 +233,7 @@ public class SystemView extends TreeViewer implements ISystemTree, ISystemResour
 	 * @param msgLine Where to display messages and tooltip text
 	 */
 	public SystemView(Shell shell, Composite parent, ISystemViewInputProvider inputProvider, ISystemMessageLine msgLine) {
-		super(parent);
+		super(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL); // DKM - putting style here to avoid SWT.BORDER (defect 168972)
 		this.shell = shell;
 		this.inputProvider = inputProvider;
 		this.inputProvider.setShell(shell); // DY:  defect 44544

@@ -28,6 +28,7 @@ import org.eclipse.rse.ui.actions.ISystemAction;
 import org.eclipse.rse.ui.actions.SystemSubMenuManager;
 import org.eclipse.rse.ui.filters.dialogs.SystemFilterWorkWithFilterPoolsDialog;
 import org.eclipse.rse.ui.view.SystemView;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Shell;
@@ -54,7 +55,8 @@ public class SystemFilterWorkWithFilterPoolsTreeViewer
 	 */
 	public SystemFilterWorkWithFilterPoolsTreeViewer(Shell shell, SystemFilterWorkWithFilterPoolsDialog caller, Composite arg0) 
 	{
-		super(arg0);
+		super(arg0, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL); // DKM - putting style here to avoid SWT.BORDER (defect 168972)
+
 		init(shell, caller);
 	}
 

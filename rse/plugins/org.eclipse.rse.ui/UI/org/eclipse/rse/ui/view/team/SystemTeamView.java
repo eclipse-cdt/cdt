@@ -29,6 +29,7 @@ import org.eclipse.rse.model.ISystemResourceChangeListener;
 import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemWidgetHelpers;
 import org.eclipse.rse.ui.view.ISystemSelectAllTarget;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Tree;
@@ -51,7 +52,7 @@ public class SystemTeamView extends TreeViewer implements ISystemSelectAllTarget
 	 */
 	public SystemTeamView(Composite parent, SystemTeamViewPart teamViewPart)
 	{
-		super(parent);
+		super(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL); // DKM - putting style here to avoid SWT.BORDER (defect 168972)
 		this.teamViewPart = teamViewPart;
 		SystemWidgetHelpers.setHelp(getTree(), RSEUIPlugin.HELPPREFIX+"teamview"); //$NON-NLS-1$
 	}

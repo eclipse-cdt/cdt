@@ -1068,7 +1068,6 @@ public class SystemViewRemoteFileAdapter
 		if (name.equals(P_NBRCHILDREN))
 		{
 			IRemoteFile file = (IRemoteFile) propertySourceInput;
-			System.out.println("getting children for "+ file.getAbsolutePath()); //$NON-NLS-1$
 			{
 				ISystemContainer container = file;				
 				Object[] contents = container.getContents(RemoteChildrenContentsType.getInstance());

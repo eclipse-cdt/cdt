@@ -235,6 +235,11 @@ public class DStoreHostFile implements IHostFile
 	public String getAbsolutePath()
 	{			
 		String name = _element.getName();
+		if (name == null)
+		{
+			// this element is deleted
+			return "";
+		}
 		if (name.length() == 0)
 		{
 			return _element.getValue();

@@ -1517,7 +1517,7 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IR
 	/** 
 	 * This editor's projection support 
 	 */
-	private ProjectionSupport fProjectionSupport;
+	protected ProjectionSupport fProjectionSupport;
 	/** 
 	 * This editor's projection model updater 
 	 */

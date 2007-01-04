@@ -23,22 +23,22 @@
 </table>
 <table><tbody><tr><td>
 <ul>
-<li>RSE 2.0 milestone builds are available from a special interim update site at
+<li>Added an <b>interim update site</b> for RSE 2.0 milestone builds at
   <a href="http://download.eclipse.org/dsdp/tm/updates/interim">http://download.eclipse.org/dsdp/tm/updates/interim</a>.
-  Update jars are currently packed but unsigned, until the fix for Platform bug 
+  Builds on this site are tested against the latest Eclipse Platform 3.3 Milestones
+  only. Update jars are currently packed but unsigned, until the fix for Platform bug 
   <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=168594">168594</a>
-  is available as a milestone (supposedly 3.3M5).<br/>
-  Contribution to the Europa Coordinated Update Site is also packed but unsigned.
+  is available as a milestone (supposedly 3.3M5). Contributions to the Europa 
+  coordinated release are served from this site.<br/>
   The official TM update site will continue serving RSE 1.0 stream updates only, 
   which are compatible with Eclipse 3.2.x, until RSE 2.0 is released.</li>
 <li>A <b>Unit Test Package</b> is now available from the 
-  <a href="http://download.eclipse.org/dsdp/tm/downloads">downloads page.</li>
-<!--
-<li>[<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=152826">152826</a>] Added an <b>ANSI / vt102 Terminal</b> as separate download (currently a stand-alone view not integrated with RSE; supports serial, ssh and telnet connections).</li>
--->
+  <a href="http://download.eclipse.org/dsdp/tm/downloads">downloads page</a> as well as the interim update site.</li>
+<li>Jakarta ORO and Commons Net are now consumed out of the <a href="">Orbit</a> repository.</li>
+<li><b>Terminal</b>: [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=168185">168185</a>] Increase dialog fields width, Remember dialog sizes, fix command context descriptors, move logs to "eclipselogs", improve quoting in logging.</li>
 <li>Use 
-  <a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced&classification=DSDP&product=Target+Management&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&resolution=FIXED&resolution=WONTFIX&resolution=INVALID&resolution=WORKSFORME&chfieldfrom=2006-12-16&chfieldto=Now&chfield=resolution&cmdtype=doit">
-  <!-- <a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced&classification=DSDP&product=Target+Management&target_milestone=2.0+M4&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&resolution=FIXED&resolution=WONTFIX&resolution=INVALID&resolution=WORKSFORME&cmdtype=doit"> -->
+  <!-- <a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced&classification=DSDP&product=Target+Management&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&resolution=FIXED&resolution=WONTFIX&resolution=INVALID&resolution=WORKSFORME&chfieldfrom=2006-12-16&chfieldto=Now&chfield=resolution&cmdtype=doit">  -->
+  <a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced&classification=DSDP&product=Target+Management&target_milestone=2.0+M4&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&resolution=FIXED&resolution=WONTFIX&resolution=INVALID&resolution=WORKSFORME&cmdtype=doit">
   this query</a> to show the list of bugs fixed since the last release,
   <a href="http://download.eclipse.org/dsdp/tm/downloads/drops/R-1.0.1-200612151830/index.php">
   RSE 1.0.1</a>

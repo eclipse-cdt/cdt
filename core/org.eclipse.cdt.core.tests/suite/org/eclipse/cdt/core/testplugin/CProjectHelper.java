@@ -7,9 +7,11 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Andrew Ferguson (Symbian)
  *******************************************************************************/
 package org.eclipse.cdt.core.testplugin;
 import java.io.File;
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.zip.ZipFile;
 
@@ -326,4 +328,20 @@ public class CProjectHelper {
 		}
 	}
 
+	/**
+	 * Returns the location of a newly created directory in the systems temp. area.
+	 * @return the location of a newly created directory in the systems temp. area
+	 * @throws IOException
+	 */
+	public static File freshDir() throws IOException {
+		File tempDir = new File(System.getProperty("java.io.tmpdir")).getCanonicalFile();		
+		for(int i=0; i<Integer.MAX_VALUE; i++) {
+			File candidate = new File(tempDir, "__testData/"+i);
+			if(!candidate.exists()) {
+				candidate.mkdirs();
+				return candidate;
+			}
+		}
+		return null;
+	}
 }

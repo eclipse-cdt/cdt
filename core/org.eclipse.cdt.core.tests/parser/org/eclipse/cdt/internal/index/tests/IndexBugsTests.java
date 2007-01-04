@@ -7,10 +7,12 @@
  *
  * Contributors:
  *    Markus Schorn - initial API and implementation
+ *    Andrew Ferguson (Symbian)
  *******************************************************************************/ 
 
 package org.eclipse.cdt.internal.index.tests;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.regex.Pattern;
 
@@ -41,6 +43,8 @@ import org.eclipse.cdt.internal.core.CCoreInternals;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IProjectDescription;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
@@ -111,7 +115,6 @@ public class IndexBugsTests extends BaseTestCase {
 		String content = getContentsForTest(1)[0].toString();
 		String fileName = "bug162011.cpp";
 		String funcName = "function162011";
-		String nsName = "ns162011";
 
 		int indexOfDecl = content.indexOf(funcName);
 		int indexOfDef  = content.indexOf(funcName, indexOfDecl+1);
@@ -275,4 +278,62 @@ public class IndexBugsTests extends BaseTestCase {
 		}
 	}
 
+	// class A {}; class B {}; class C {};
+	public void testIndexContentOverProjectDelete() throws Exception {
+		waitForIndexer();
+
+		/* Check that when a project is deleted, its index contents do not
+         * appear in the initial index of a newly created project of the same name */
+         
+		String pname = "deleteTest"+System.currentTimeMillis();
+		ICProject cproject = CProjectHelper.createCCProject(pname, "bin", IPDOMManager.ID_FAST_INDEXER);
+		IIndex index = CCorePlugin.getIndexManager().getIndex(cproject);
+		String content= getContentsForTest(1)[0].toString();
+		IFile file= TestSourceReader.createFile(cproject.getProject(), "content.cpp", content);
+		TestSourceReader.waitUntilFileIsIndexed(index, file, 8000);
+		CProjectHelper.delete(cproject);
+
+		cproject = CProjectHelper.createCCProject(pname, "bin", IPDOMManager.ID_FAST_INDEXER);
+		index = CCorePlugin.getIndexManager().getIndex(cproject);
+		index.acquireReadLock();
+		try {
+			IBinding[] bindings = index.findBindings(Pattern.compile(".*"), false, IndexFilter.ALL, new NullProgressMonitor());
+			assertEquals(0, bindings.length);
+		}
+		finally {
+			index.releaseReadLock();
+			CProjectHelper.delete(cproject);
+		}
+	}
+
+	// class A {}; class B {}; class C {}; class D {};
+	public void testIndexContentOverProjectMove() throws Exception {
+		waitForIndexer();
+
+		/* Check that the contents of an index is preserved over a project
+         * move operation */
+
+		ICProject cproject = CProjectHelper.createCCProject("moveTest", "bin", IPDOMManager.ID_FAST_INDEXER);
+		IIndex index = CCorePlugin.getIndexManager().getIndex(cproject);
+		String content= getContentsForTest(1)[0].toString();
+		IFile file= TestSourceReader.createFile(cproject.getProject(), "content.cpp", content);
+		TestSourceReader.waitUntilFileIsIndexed(index, file, 8000);
+
+		// move the project to a random new location
+		File newLocation = CProjectHelper.freshDir();
+		IProjectDescription description = cproject.getProject().getDescription();
+		description.setLocationURI(newLocation.toURI());
+		cproject.getProject().move(description, IResource.FORCE | IResource.SHALLOW, new NullProgressMonitor());	
+		
+		index = CCorePlugin.getIndexManager().getIndex(cproject);
+		index.acquireReadLock();
+		try {
+			IBinding[] bindings = index.findBindings(Pattern.compile(".*"), false, IndexFilter.ALL, new NullProgressMonitor());
+			assertEquals(4, bindings.length);
+		}
+		finally {
+			index.releaseReadLock();
+			CProjectHelper.delete(cproject);
+		}
+	}
 }

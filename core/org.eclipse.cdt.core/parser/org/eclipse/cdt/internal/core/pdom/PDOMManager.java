@@ -8,6 +8,7 @@
  * Contributors:
  * QNX - Initial API and implementation
  * Markus Schorn (Wind River Systems)
+ * Andrew Ferguson (Symbian)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom;
 
@@ -505,14 +506,20 @@ public class PDOMManager implements IPDOMManager, IWritableIndexManager, IListen
     	unregisterPreferenceListener(project);
 	}
 
-    public void deleteProject(ICProject project, IResourceDelta delta) {
-    	// Project is about to be deleted. Stop all indexing tasks for it
-    	IPDOMIndexer indexer = getIndexer(project, false);
-    	if (indexer != null) {
-    		stopIndexer(indexer);
-    	}
-    	unregisterPreferenceListener(project);
-    }
+	public void deleteProject(ICProject cproject, IResourceDelta delta) {
+		// Project is about to be deleted. Stop all indexing tasks for it
+		IPDOMIndexer indexer = getIndexer(cproject, false);
+		if (indexer != null) {
+			stopIndexer(indexer);
+		}
+		unregisterPreferenceListener(cproject);
+
+		// remove entry for project from PDOM map
+		synchronized (fProjectToPDOM) {
+			IProject project= cproject.getProject();
+			fProjectToPDOM.remove(project);
+		}
+	}
 
 	private void stopIndexer(IPDOMIndexer indexer) {
 		ICProject project= indexer.getProject();

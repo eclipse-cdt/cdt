@@ -53,8 +53,8 @@ public class IndexLocationTest extends BaseTestCase {
 		Bundle b = CTestPlugin.getDefault().getBundle();
 		StringBuffer[] testData = TestSourceReader.getContentsForTest(b, "parser", getClass(), getName(), 3);
 
-		movedLocation = freshDir();
-		externalHeader = new File(freshDir(),"external.h");
+		movedLocation = CProjectHelper.freshDir();
+		externalHeader = new File(CProjectHelper.freshDir(),"external.h");
 
 		IFile file1 = TestSourceReader.createFile(cproject.getProject(), "header.h", testData[0].toString());		
 		createExternalFile(externalHeader, testData[1].toString());
@@ -133,17 +133,5 @@ public class IndexLocationTest extends BaseTestCase {
 				ResourcesPlugin.getWorkspace().getRoot().getFile(new Path("LocationTests/source.cpp")).getFullPath(),
 				new Path(nms3[0].getFile().getLocation().getFullPath())
 		);
-	}
-
-	private File freshDir() throws IOException {
-		File tempDir = new File(System.getProperty("java.io.tmpdir")).getCanonicalFile();		
-		for(int i=0; i<Integer.MAX_VALUE; i++) {
-			File candidate = new File(tempDir, "__testData/"+i);
-			if(!candidate.exists()) {
-				candidate.mkdirs();
-				return candidate;
-			}
-		}
-		return null;
 	}
 }

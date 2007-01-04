@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.WorkspaceJob;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -54,7 +55,7 @@ import org.eclipse.ui.progress.UIJob;
   *  Runnable to perform actual transfer operation.
   * 
   */
-public class SystemDNDTransferRunnable extends Job
+public class SystemDNDTransferRunnable extends WorkspaceJob
 {
 
 	public static final int SRC_TYPE_RSE_RESOURCE = 0;
@@ -533,7 +534,7 @@ public class SystemDNDTransferRunnable extends Job
 		return true;
 	}
 
-	public IStatus run(IProgressMonitor monitor)
+	public IStatus runInWorkspace(IProgressMonitor monitor)
 	{
 
 		_ok = true;

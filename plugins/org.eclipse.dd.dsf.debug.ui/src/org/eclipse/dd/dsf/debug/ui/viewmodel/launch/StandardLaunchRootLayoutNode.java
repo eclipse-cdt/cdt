@@ -38,6 +38,17 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelDelta;
 public class StandardLaunchRootLayoutNode extends AbstractVMRootLayoutNode 
     implements IVMRootLayoutNode
 {
+    public static class LaunchesEvent {
+        public enum Type { ADDED, REMOVED, CHANGED, TERMINATED };
+        public final ILaunch[] fLaunches;
+        public final Type fType;
+        
+        public LaunchesEvent(ILaunch[] launches, Type type) {
+            fLaunches = launches;
+            fType = type;
+        }            
+    }
+    
     final private ILaunch fLaunch;
     
     public StandardLaunchRootLayoutNode(AbstractVMProvider provider, ILaunch launch) {
@@ -60,7 +71,21 @@ public class StandardLaunchRootLayoutNode extends AbstractVMRootLayoutNode
                 return IModelDelta.NO_CHANGE;
             }
         }
-        return super.getDeltaFlags(e);
+        int flags = 0;
+        if (e instanceof LaunchesEvent) {
+            LaunchesEvent le = (LaunchesEvent)e;
+            for (ILaunch launch : le.fLaunches) {
+                if (fLaunch == launch) {
+                    if (le.fType == LaunchesEvent.Type.CHANGED) {
+                        flags = IModelDelta.STATE | IModelDelta.CONTENT;
+                    } else if (le.fType == LaunchesEvent.Type.TERMINATED) {
+                        flags = IModelDelta.STATE | IModelDelta.CONTENT;
+                    }
+                }
+            }
+        }
+        
+        return flags | super.getDeltaFlags(e);
     }
 
     public void createDelta(Object event, final GetDataDone<IModelDelta> done) {
@@ -74,19 +99,37 @@ public class StandardLaunchRootLayoutNode extends AbstractVMRootLayoutNode
         final VMDelta viewRootDelta = new VMDelta(manager, 0, IModelDelta.NO_CHANGE, launchList.size());
         final VMDelta rootDelta = viewRootDelta.addNode(getRootObject(), launchList.indexOf(fLaunch), IModelDelta.NO_CHANGE);
 
-        final Map<IVMLayoutNode,Integer> childNodeDeltas = getChildNodesWithDeltas(event);
-        assert childNodeDeltas.size() != 0 : "Caller should make sure that there are deltas for given event."; //$NON-NLS-1$
-
-        callChildNodesToBuildDelta(
-            childNodeDeltas, rootDelta, event, 
-            new Done() { 
-                public void run() {
-                    if (isDisposed()) return;
-                    if (propagateError(getExecutor(), done, "Failed to create delta.")); //$NON-NLS-1$
-                    done.setData(viewRootDelta);
-                    getExecutor().execute(done);
+        // Generate delta for launch node.
+        if (event instanceof LaunchesEvent) {
+            LaunchesEvent le = (LaunchesEvent)event;
+            for (ILaunch launch : le.fLaunches) {
+                if (fLaunch == launch) {
+                    if (le.fType == LaunchesEvent.Type.CHANGED) {
+                        rootDelta.addFlags(IModelDelta.STATE | IModelDelta.CONTENT);
+                    } else if (le.fType == LaunchesEvent.Type.TERMINATED) {
+                        rootDelta.addFlags(IModelDelta.STATE | IModelDelta.CONTENT);
+                    }
                 }
-            });
+            }
+        } 
+        
+        // Call the child nodes to generate their delta.
+        final Map<IVMLayoutNode,Integer> childNodeDeltas = getChildNodesWithDeltas(event);
+        if (childNodeDeltas.size() != 0) {
+            callChildNodesToBuildDelta(
+                childNodeDeltas, rootDelta, event, 
+                new Done() { 
+                    public void run() {
+                        if (isDisposed()) return;
+                        if (propagateError(getExecutor(), done, "Failed to create delta.")); //$NON-NLS-1$
+                        done.setData(viewRootDelta);
+                        getExecutor().execute(done);
+                    }
+                });
+        } else {
+            done.setData(viewRootDelta);
+            getExecutor().execute(done);
+        }
     }
     
     public Object getRootObject() {

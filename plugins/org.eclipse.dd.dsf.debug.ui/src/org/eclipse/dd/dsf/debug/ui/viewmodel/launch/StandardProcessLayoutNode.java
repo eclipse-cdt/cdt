@@ -53,6 +53,10 @@ public class StandardProcessLayoutNode extends AbstractVMLayoutNode {
         
         public IVMLayoutNode getLayoutNode() { return StandardProcessLayoutNode.this; }        
         @SuppressWarnings("unchecked") public Object getAdapter(Class adapter) { 
+            Object vmcAdapter = super.getAdapter(adapter);
+            if (vmcAdapter != null) {
+                return vmcAdapter;
+            }
             return fProcess.getAdapter(adapter); 
         }
         public String toString() { return "IProcess " + fProcess.toString(); } //$NON-NLS-1$
@@ -67,7 +71,9 @@ public class StandardProcessLayoutNode extends AbstractVMLayoutNode {
         public boolean isTerminated() { return fProcess.isTerminated(); }
         public void terminate() throws DebugException { fProcess.terminate(); }
         
-        public boolean equals(Object other) { return fProcess.equals(other); }
+        public boolean equals(Object other) { 
+            return other instanceof VMC && fProcess.equals(((VMC)other).fProcess);
+        }
         public int hashCode() { return fProcess.hashCode(); }
     }
 

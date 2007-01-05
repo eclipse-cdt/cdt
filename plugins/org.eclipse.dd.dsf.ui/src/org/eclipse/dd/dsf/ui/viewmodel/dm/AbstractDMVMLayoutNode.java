@@ -175,10 +175,16 @@ abstract public class AbstractDMVMLayoutNode<V extends IDMData> extends Abstract
     }
     
     public void updateHasElements(final IHasChildrenUpdate[] updates) {
-        getSession().getExecutor().execute(new DsfRunnable() {
-            public void run() {
-                updateHasElementsInSessionThread(updates);                        
-            }});
+        try {
+            getSession().getExecutor().execute(new DsfRunnable() {
+                public void run() {
+                    updateHasElementsInSessionThread(updates);                        
+                }});
+        } catch (RejectedExecutionException e) {
+            for (IHasChildrenUpdate update : updates) {
+                handleFailedUpdate(update);
+            }
+        }
     }
 
     protected void updateHasElementsInSessionThread(IHasChildrenUpdate[] updates) {
@@ -206,12 +212,16 @@ abstract public class AbstractDMVMLayoutNode<V extends IDMData> extends Abstract
     public void updateElementCount(final IChildrenCountUpdate update) {
         if (!checkUpdate(update)) return;
 
-        getSession().getExecutor().execute(new DsfRunnable() {
-            public void run() {
-                // After every dispatch, must check if update still valid. 
-                if (!checkUpdate(update)) return;
-                updateElementCountInSessionThread(update);                        
-            }});
+        try {
+            getSession().getExecutor().execute(new DsfRunnable() {
+                public void run() {
+                    // After every dispatch, must check if update still valid. 
+                    if (!checkUpdate(update)) return;
+                    updateElementCountInSessionThread(update);                        
+                }});
+        } catch (RejectedExecutionException e) {
+            handleFailedUpdate(update);
+        }
     }
     
     protected void updateElementCountInSessionThread(final IChildrenCountUpdate update) {
@@ -235,12 +245,16 @@ abstract public class AbstractDMVMLayoutNode<V extends IDMData> extends Abstract
     public void updateElements(final IChildrenUpdate update) {
         if (!checkUpdate(update)) return;
 
-        getSession().getExecutor().execute(new DsfRunnable() {
-            public void run() {
-                // After every dispatch, must check if update still valid. 
-                if (!checkUpdate(update)) return;
-                updateElementsInSessionThread(update);                        
-            }});
+        try {
+            getSession().getExecutor().execute(new DsfRunnable() {
+                public void run() {
+                    // After every dispatch, must check if update still valid. 
+                    if (!checkUpdate(update)) return;
+                    updateElementsInSessionThread(update);                        
+                }});
+        } catch (RejectedExecutionException e) {
+            handleFailedUpdate(update);
+        }
     }
 
     abstract protected void updateElementsInSessionThread(IChildrenUpdate update);

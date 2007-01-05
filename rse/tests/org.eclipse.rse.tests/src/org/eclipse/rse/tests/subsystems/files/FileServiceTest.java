@@ -8,7 +8,7 @@
  * Contributors: 
  * Martin Oberhuber (Wind River) - initial API and implementation
  *******************************************************************************/
-package org.eclipse.rse.tests.files;
+package org.eclipse.rse.tests.subsystems.files;
 
 import java.io.File;
 import java.io.IOException;
@@ -23,6 +23,7 @@ import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
 import org.eclipse.rse.services.files.IFileService;
 import org.eclipse.rse.services.files.IHostFile;
 import org.eclipse.rse.subsystems.files.core.servicesubsystem.IFileServiceSubSystem;
+import org.eclipse.rse.tests.RSETestsPlugin;
 import org.eclipse.rse.tests.core.connection.RSEBaseConnectionTestCase;
 
 public class FileServiceTest extends RSEBaseConnectionTestCase {
@@ -80,6 +81,8 @@ public class FileServiceTest extends RSEBaseConnectionTestCase {
 	}
 	
 	public void testCaseSensitive() {
+		if (!RSETestsPlugin.isTestCaseEnabled("FileServiceTest.testCaseSensitive")) return; //$NON-NLS-1$
+		
 		if (isWindows()) {
 			assertFalse(fss.getSubSystemConfiguration().isCaseSensitive());
 			assertFalse(fss.isCaseSensitive());
@@ -92,6 +95,8 @@ public class FileServiceTest extends RSEBaseConnectionTestCase {
 	}
 	
 	public void testCreateFile() throws SystemMessageException {
+		if (!RSETestsPlugin.isTestCaseEnabled("FileServiceTest.testCreateFile")) return; //$NON-NLS-1$
+		
 		String testName = getTestFileName();
 		IHostFile hf = fs.createFile(mon, tempDirPath, testName);
 		assertTrue(hf.exists());
@@ -109,6 +114,8 @@ public class FileServiceTest extends RSEBaseConnectionTestCase {
 	}
 	
 	public void testCreateCaseSensitive() throws SystemMessageException {
+		if (!RSETestsPlugin.isTestCaseEnabled("FileServiceTest.testCreateCaseSensitive")) return; //$NON-NLS-1$
+		
 		String testName = getTestFileName();
 		String testName2 = testName.toUpperCase();
 		IHostFile hf = fs.createFile(mon, tempDirPath, testName);

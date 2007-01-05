@@ -8,14 +8,14 @@
  * Contributors: 
  * Martin Oberhuber (Wind River) - initial API and implementation
  *******************************************************************************/
-package org.eclipse.rse.tests.files;
+package org.eclipse.rse.tests.subsystems.files;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
 import org.eclipse.rse.tests.framework.DelegatingTestSuiteHolder;
 
-public class RSEFileTestSuite extends DelegatingTestSuiteHolder {
+public class RSEFileSubsystemTestSuite extends DelegatingTestSuiteHolder {
 	/**
 	 * Standard Java application main method. Allows to launch the test
 	 * suite from outside as part of nightly runs, headless runs or other.
@@ -38,9 +38,10 @@ public class RSEFileTestSuite extends DelegatingTestSuiteHolder {
 	 * @return The test suite instance.
 	 */
 	public static Test suite() {
-		TestSuite suite = new TestSuite("RSE File Test Suite"); //$NON-NLS-1$
+		TestSuite suite = new TestSuite("RSE File Subsystem Test Suite"); //$NON-NLS-1$
 		// add the single test suites to the overall one here.
 		suite.addTestSuite(FileServiceTest.class);
+		suite.addTestSuite(FTPFileSubsystemTestCase.class);
 		
 		return suite;
 	}
@@ -49,7 +50,7 @@ public class RSEFileTestSuite extends DelegatingTestSuiteHolder {
 	 * @see org.eclipse.rse.tests.framework.AbstractTestSuiteHolder#getTestSuite()
 	 */
 	public TestSuite getTestSuite() {
-		return (TestSuite)RSEFileTestSuite.suite();
+		return (TestSuite)RSEFileSubsystemTestSuite.suite();
 	}
 
 }

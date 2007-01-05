@@ -28,10 +28,10 @@ import org.eclipse.cdt.core.model.AbstractLanguage;
 import org.eclipse.cdt.core.model.IContributedModelBuilder;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.parser.CodeReader;
+import org.eclipse.cdt.core.parser.DefaultLogService;
 import org.eclipse.cdt.core.parser.IParserLogService;
 import org.eclipse.cdt.core.parser.IScanner;
 import org.eclipse.cdt.core.parser.IScannerInfo;
-import org.eclipse.cdt.core.parser.ParserFactory;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.ParserMode;
 import org.eclipse.cdt.core.parser.ParserUtil;
@@ -76,7 +76,7 @@ public class GCCLanguage extends AbstractLanguage {
 			IScannerInfo scanInfo, ICodeReaderFactory codeReaderFactory, IIndex index, IParserLogService log) throws CoreException {
 	    IScannerExtensionConfiguration scannerExtensionConfiguration= C_GNU_SCANNER_EXTENSION;
 		IScanner scanner = new DOMScanner(reader, scanInfo, ParserMode.COMPLETE_PARSE,
-                ParserLanguage.C, ParserFactory.createDefaultLogService(), scannerExtensionConfiguration, codeReaderFactory);
+                ParserLanguage.C, new DefaultLogService(), scannerExtensionConfiguration, codeReaderFactory);
 	    //assume GCC
 		ISourceCodeParser parser = new GNUCSourceParser( scanner, ParserMode.COMPLETE_PARSE, log,
 				new GCCParserExtensionConfiguration(), index);
@@ -90,7 +90,7 @@ public class GCCLanguage extends AbstractLanguage {
 	    IScannerExtensionConfiguration scannerExtensionConfiguration
 	    	= C_GNU_SCANNER_EXTENSION;
 		IScanner scanner = new DOMScanner(reader, scanInfo, ParserMode.COMPLETE_PARSE,
-                ParserLanguage.C, ParserFactory.createDefaultLogService(), scannerExtensionConfiguration, fileCreator );
+                ParserLanguage.C, new DefaultLogService(), scannerExtensionConfiguration, fileCreator );
 		scanner.setContentAssistMode(offset);
 		
 		ISourceCodeParser parser = new GNUCSourceParser(

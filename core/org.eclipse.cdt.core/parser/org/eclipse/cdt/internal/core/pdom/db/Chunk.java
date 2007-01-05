@@ -34,6 +34,16 @@ public class Chunk {
 	private Database db;
 	int index;
 	
+	/**
+	 * The index of this Chunk within the page table.
+	 */
+	int pageTableIndex;
+	
+	/**
+	 * This flag is true if this Chunk has been referenced recently.
+	 */
+	boolean referenceFlag;
+	
 	Chunk(RandomAccessFile file, int offset) throws CoreException {
 		try {
 			index = offset / Database.CHUNK_SIZE;

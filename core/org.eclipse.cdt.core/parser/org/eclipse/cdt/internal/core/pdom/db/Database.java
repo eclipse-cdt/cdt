@@ -36,6 +36,11 @@ import org.eclipse.core.runtime.Status;
  * mapping chunk index to chunk address is maintained. Chunk structure exists only conceptually -
  * its not a structure that appears in the file.
  * 
+ * Chunks are paged in one at a time as they are accessed.  Frequently used
+ * chunks remain in memory while infrequently used chunks are paged out to
+ * to the file.  The database uses the CLOCK algorithm to determine which
+ * chunk to evict from the page table on a cache miss.
+ * 
  * ===== The first chunk is used by Database itself for house-keeping purposes and has structure
  * 
  * offset            content
@@ -61,7 +66,36 @@ public class Database {
 
 	private final File location;
 	private final RandomAccessFile file;
+	
+	/**
+	 * Table of Chunks allocated by the Database.
+	 */
 	Chunk[] toc;
+	
+	/**
+	 * Table of actively used (paged-in) Chunks.
+	 */
+	int[] pageTable;
+	
+	/**
+	 * The position where the next page in or page out will occur.
+	 */
+	int pageTableIndex;
+	
+	/**
+	 * Indicates whether all slots in the page table have been allocated. 
+	 */
+	boolean pageTableIsFull;
+	
+	/**
+	 * Number of times a request for a Chunk was served from the cache.
+	 */
+	long cacheHits;
+	
+	/**
+	 * Number of times a request for a Chunk needed to be paged in.
+	 */
+	long cacheMisses;
 	
 	private long malloced;
 	private long freed;
@@ -77,8 +111,17 @@ public class Database {
 	public static final int DATA_AREA = CHUNK_SIZE / MIN_SIZE * INT_SIZE + INT_SIZE;
 	
 	public static final int MAX_SIZE = CHUNK_SIZE - 4; // Room for overhead
-		
+	
+	/**
+	 * The initial number of slots in the page table.
+	 */
+	public static final int DEFAULT_PAGE_TABLE_SIZE = 1 * 1024 * 1024 / CHUNK_SIZE;
+	
 	public Database(File location) throws CoreException {
+		this(location, DEFAULT_PAGE_TABLE_SIZE);
+	}
+	
+	public Database(File location, int pageTableSize) throws CoreException {
 		try {
 			this.location = location;
 			this.file = new RandomAccessFile(location, "rw"); //$NON-NLS-1$
@@ -93,6 +136,7 @@ public class Database {
 			
 			toc = new Chunk[(int)nChunks];
 			toc[0] = new Chunk(file, 0);
+			pageTable = new int[pageTableSize];
 		} catch (IOException e) {
 			throw new CoreException(new DBStatus(e));
 		}
@@ -126,6 +170,9 @@ public class Database {
 			}
 		}
 		malloced = freed = 0;
+		
+		// Clear the page table
+		resizePageTable(pageTable.length);
 	}
 	
 	/**
@@ -194,9 +241,13 @@ public class Database {
 		int index = offset / CHUNK_SIZE;
 		Chunk chunk = toc[index];
 		if (chunk == null) {
-			chunk = toc[index] = new Chunk(file, index * CHUNK_SIZE);
+			cacheMisses++;
+			chunk = pageIn(offset);
 		}
-		
+		else {
+			cacheHits++;
+			chunk.referenceFlag = true;
+		}
 		return chunk;
 	}
 
@@ -254,6 +305,11 @@ public class Database {
 		return freeblock + 4;
 	}
 	
+	/**
+	 * Extends the database by one chunk.
+	 * @return The index of the new chunk.
+	 * @throws CoreException
+	 */
 	private int createChunk() throws CoreException {
 		try {
 			Chunk[] oldtoc = toc;
@@ -263,7 +319,7 @@ public class Database {
 			file.write(new byte[CHUNK_SIZE]);
 			toc = new Chunk[n + 1];
 			System.arraycopy(oldtoc, 0, toc, 0, n);
-			toc[n] = new Chunk(file, offset);
+			getChunk(offset);
 			return n;
 		} catch (IOException e) {
 			throw new CoreException(new DBStatus(e));
@@ -429,5 +485,102 @@ public class Database {
      */
 	public File getLocation() {
 		return location;
+	}
+
+	/**
+	 * Clears the page table and changes it to have <code>size</code> number
+	 * of slots. 
+	 * @param size The number of slots the page table should have.
+	 */
+	public void resizePageTable(int size) {
+		// Page out everything in the chunk/page tables.
+		pageTable = new int[size];
+		for (int i = 1; i < toc.length; i++) {
+			toc[i] = null;
+		}
+		
+		pageTableIndex = 0;
+		pageTableIsFull = false;
+		cacheHits = 0;
+		cacheMisses = 0;
+	}
+	
+	/**
+	 * Returns the number of cache hits since the page table was created.
+	 * @return The number of cache hits since the page table was created.
+	 */
+	public long getCacheHits() {
+		return cacheHits;
+	}
+	
+	/**
+	 * Returns the number of cache misses since the page table was created.
+	 * @return The number of cache misses since the page table was created.
+	 */
+	public long getCacheMisses() {
+		return cacheMisses;
+	}
+	
+	/**
+	 * Adds the chunk which contains the given given offset to the page table.
+	 * This method will evict chunks from the page table as necessary to page
+	 * in the requested chunk.
+	 * 
+	 * @param offset The database offset that will be accessed.
+	 * @return The chunk which contains the given offset.
+	 * @throws CoreException
+	 */
+	private Chunk pageIn(int offset) throws CoreException {
+		int index = offset / CHUNK_SIZE;
+		if (toc[index] != null) {
+			return toc[index];
+		}
+		
+		Chunk chunk = new Chunk(file, index * CHUNK_SIZE);
+		toc[index] = chunk;
+		
+		if (pageTableIsFull) {
+			evictChunk();
+			chunk.pageTableIndex = pageTableIndex;
+			pageTable[pageTableIndex] = index;
+		}
+		else {
+			chunk.pageTableIndex = pageTableIndex;
+			pageTable[pageTableIndex] = index;
+
+			pageTableIndex++;
+			if (pageTableIndex == pageTable.length) {
+				pageTableIndex = 0;
+				pageTableIsFull = true;
+			}
+		}
+		return chunk;
+	}
+	
+	/**
+	 * Evicts a chunk from the page table and the chunk table.
+	 * After this method returns, <code>pageTableIndex</code> will contain
+	 * the index of the evicted chunk within the page table.
+	 */
+	private void evictChunk() {
+		/*
+		 * Use the CLOCK algorithm to determine which chunk to evict.
+		 * i.e., if the chunk in the current slot of the page table has been
+		 * recently referenced (i.e. the reference flag is set), unset the
+		 * reference flag and move to the next slot.  Otherwise, evict the
+		 * chunk in the current slot.
+		 */
+		while (true) {
+			int chunkIndex = pageTable[pageTableIndex];
+			Chunk chunk = toc[chunkIndex];
+			if (chunk.referenceFlag) {
+				chunk.referenceFlag = false;
+				pageTableIndex = (pageTableIndex + 1) % pageTable.length;
+			} else {
+				toc[chunkIndex] = null;
+				pageTable[pageTableIndex] = 0;
+				return;
+			}
+		}
 	}
 }

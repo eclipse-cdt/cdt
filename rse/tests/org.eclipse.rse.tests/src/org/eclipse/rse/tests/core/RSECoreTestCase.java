@@ -42,6 +42,7 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.rse.core.SystemBasePlugin;
 import org.eclipse.rse.tests.RSETestsPlugin;
 import org.eclipse.rse.tests.core.RSEWaitAndDispatchUtil.IInterruptCondition;
 import org.eclipse.ui.IViewPart;
@@ -49,6 +50,7 @@ import org.eclipse.ui.IViewReference;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.WorkbenchException;
 import org.osgi.framework.Bundle;
@@ -61,7 +63,7 @@ public class RSECoreTestCase extends TestCase {
 	private final Properties properties = new Properties();
 	
 	// Internal. Used to remember view zoom state changes.
-	private boolean rseSystemsViewZoomStateChanged = false;
+	private final String PROP_RSE_SYSTEMS_VIEW_ZOOM_STATE_CHANGED = "rseSystemsViewZoomStateChanged"; //$NON-NLS-1$
 	
 	/**
 	 * Constructor.
@@ -94,6 +96,7 @@ public class RSECoreTestCase extends TestCase {
 		setProperty(IRSECoreTestCaseProperties.PROP_SWITCH_TO_PERSPECTIVE, "org.eclipse.rse.ui.view.SystemPerspective"); //$NON-NLS-1$
 		setProperty(IRSECoreTestCaseProperties.PROP_FORCE_BACKGROUND_EXECUTION, false);
 		setProperty(IRSECoreTestCaseProperties.PROP_PERFORMANCE_TIMING_INCLUDE_SETUP_TEARDOWN, false);
+		setProperty(PROP_RSE_SYSTEMS_VIEW_ZOOM_STATE_CHANGED, false);
 	}
 	
 	/**
@@ -348,32 +351,37 @@ public class RSECoreTestCase extends TestCase {
 	protected void setUp() throws Exception {
 		super.setUp();
 		
-		String perspectiveId = getProperty(IRSECoreTestCaseProperties.PROP_SWITCH_TO_PERSPECTIVE);
+		final String perspectiveId = getProperty(IRSECoreTestCaseProperties.PROP_SWITCH_TO_PERSPECTIVE);
 		assertNotNull("Invalid null-value for test case perspective id!", perspectiveId); //$NON-NLS-1$
 		
-		// in case the test case is launched within a new workspace, the eclipse intro
-		// view is hiding everything else. Find the intro page and hide it.
-		hideView("org.eclipse.ui.internal.introview", perspectiveId); //$NON-NLS-1$
-		
-		// toggle the Remote Systems View zoom state.
-		rseSystemsViewZoomStateChanged = false;
-		IViewPart part = showView(IRSEViews.RSE_REMOTE_SYSTEMS_VIEW_ID, perspectiveId);
-		assertNotNull("RSE Remote System View is not available!", part); //$NON-NLS-1$
-		// Unfortunately, for the zooming, we needs the view reference and not the view part :-(
-		IViewReference reference = findView(IRSEViews.RSE_REMOTE_SYSTEMS_VIEW_ID, perspectiveId);
-		assertNotNull("Failed to lookup view reference for RSE Remote Systems View!", reference); //$NON-NLS-1$
-		if (reference.getPage().getPartState(reference) != IWorkbenchPage.STATE_MAXIMIZED
-				&& isProperty(IRSECoreTestCaseProperties.PROP_MAXIMIZE_REMOTE_SYSTEMS_VIEW, true)) {
-			reference.getPage().toggleZoom(reference);
-			rseSystemsViewZoomStateChanged = true;
-		} else if (reference.getPage().getPartState(reference) == IWorkbenchPage.STATE_MAXIMIZED
-								&& isProperty(IRSECoreTestCaseProperties.PROP_MAXIMIZE_REMOTE_SYSTEMS_VIEW, false)) {
-			reference.getPage().toggleZoom(reference);
-			rseSystemsViewZoomStateChanged = true;
-		}
+		// all view managment must happen in the UI thread!
+		PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
+			public void run() {
+				// in case the test case is launched within a new workspace, the eclipse intro
+				// view is hiding everything else. Find the intro page and hide it.
+				hideView("org.eclipse.ui.internal.introview", perspectiveId); //$NON-NLS-1$
+				
+				// toggle the Remote Systems View zoom state.
+				setProperty(PROP_RSE_SYSTEMS_VIEW_ZOOM_STATE_CHANGED, false);
+				IViewPart part = showView(IRSEViews.RSE_REMOTE_SYSTEMS_VIEW_ID, perspectiveId);
+				assertNotNull("RSE Remote System View is not available!", part); //$NON-NLS-1$
+				// Unfortunately, for the zooming, we needs the view reference and not the view part :-(
+				IViewReference reference = findView(IRSEViews.RSE_REMOTE_SYSTEMS_VIEW_ID, perspectiveId);
+				assertNotNull("Failed to lookup view reference for RSE Remote Systems View!", reference); //$NON-NLS-1$
+				if (reference.getPage().getPartState(reference) != IWorkbenchPage.STATE_MAXIMIZED
+						&& isProperty(IRSECoreTestCaseProperties.PROP_MAXIMIZE_REMOTE_SYSTEMS_VIEW, true)) {
+					reference.getPage().toggleZoom(reference);
+					setProperty(PROP_RSE_SYSTEMS_VIEW_ZOOM_STATE_CHANGED, true);
+				} else if (reference.getPage().getPartState(reference) == IWorkbenchPage.STATE_MAXIMIZED
+										&& isProperty(IRSECoreTestCaseProperties.PROP_MAXIMIZE_REMOTE_SYSTEMS_VIEW, false)) {
+					reference.getPage().toggleZoom(reference);
+					setProperty(PROP_RSE_SYSTEMS_VIEW_ZOOM_STATE_CHANGED, true);
+				}
+			}
+		});
 		
 		// Give the UI a chance to repaint if the view zoom state changed
-		if (rseSystemsViewZoomStateChanged) RSEWaitAndDispatchUtil.waitAndDispatch(1000);
+		if (isProperty(PROP_RSE_SYSTEMS_VIEW_ZOOM_STATE_CHANGED, true)) RSEWaitAndDispatchUtil.waitAndDispatch(1000);
 	}
 
 	/* (non-Javadoc)
@@ -381,20 +389,25 @@ public class RSECoreTestCase extends TestCase {
 	 */
 	protected void tearDown() throws Exception {
 		// restore the original view zoom state
-		if (rseSystemsViewZoomStateChanged) {
-			String perspectiveId = getProperty(IRSECoreTestCaseProperties.PROP_SWITCH_TO_PERSPECTIVE);
+		if (isProperty(PROP_RSE_SYSTEMS_VIEW_ZOOM_STATE_CHANGED, true)) {
+			final String perspectiveId = getProperty(IRSECoreTestCaseProperties.PROP_SWITCH_TO_PERSPECTIVE);
 			assertNotNull("Invalid null-value for test case perspective id!", perspectiveId); //$NON-NLS-1$
 
-			IViewReference reference = findView(IRSEViews.RSE_REMOTE_SYSTEMS_VIEW_ID, perspectiveId);
-			assertNotNull("Failed to lookup view reference for RSE Remote Systems View!", reference); //$NON-NLS-1$
-			if (reference.getPage().getPartState(reference) == IWorkbenchPage.STATE_MAXIMIZED
-					&& isProperty(IRSECoreTestCaseProperties.PROP_MAXIMIZE_REMOTE_SYSTEMS_VIEW, true)) {
-				reference.getPage().toggleZoom(reference);
-			} else if (reference.getPage().getPartState(reference) != IWorkbenchPage.STATE_MAXIMIZED
-									&& isProperty(IRSECoreTestCaseProperties.PROP_MAXIMIZE_REMOTE_SYSTEMS_VIEW, false)) {
-				reference.getPage().toggleZoom(reference);
-			}
-			rseSystemsViewZoomStateChanged = false;
+			// all view managment must happen in the UI thread!
+			PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
+				public void run() {
+					IViewReference reference = findView(IRSEViews.RSE_REMOTE_SYSTEMS_VIEW_ID, perspectiveId);
+					assertNotNull("Failed to lookup view reference for RSE Remote Systems View!", reference); //$NON-NLS-1$
+					if (reference.getPage().getPartState(reference) == IWorkbenchPage.STATE_MAXIMIZED
+							&& isProperty(IRSECoreTestCaseProperties.PROP_MAXIMIZE_REMOTE_SYSTEMS_VIEW, true)) {
+						reference.getPage().toggleZoom(reference);
+					} else if (reference.getPage().getPartState(reference) != IWorkbenchPage.STATE_MAXIMIZED
+							&& isProperty(IRSECoreTestCaseProperties.PROP_MAXIMIZE_REMOTE_SYSTEMS_VIEW, false)) {
+						reference.getPage().toggleZoom(reference);
+					}
+					setProperty(PROP_RSE_SYSTEMS_VIEW_ZOOM_STATE_CHANGED, false);
+				}
+			});
 		}
 		
 		super.tearDown();
@@ -408,9 +421,8 @@ public class RSECoreTestCase extends TestCase {
 	 * @param viewId The unique view id. Must be not <code>null</code>.
 	 * @param perspectiveId The unique perspective id within the view should be searched. Must be not <code>null</code>.
 	 * @return The view reference instance to the view or <code>null</code> if not available.
-	 * @throws WorkbenchException If the specified perspective could not be shown.
 	 */
-	protected final IViewReference findView(String viewId, String perspectiveId) throws WorkbenchException {
+	protected final IViewReference findView(String viewId, String perspectiveId) {
 		assert viewId != null && perspectiveId != null;
 		if (viewId == null || perspectiveId == null) return null;
 		
@@ -419,11 +431,15 @@ public class RSECoreTestCase extends TestCase {
 		IWorkbench workbench = PlatformUI.getWorkbench();
 		assertNotNull("Failed to query current workbench instance!", workbench); //$NON-NLS-1$
 		// and the corresponding currently active workbench window.
-		IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+		IWorkbenchWindow window = workbench.getActiveWorkbenchWindow();
 		assertNotNull("Failed to query currently active workbench window!", window); //$NON-NLS-1$
 		
 		// Now we have to switch to the specified perspecitve
-		workbench.showPerspective(perspectiveId, window);
+		try {
+			workbench.showPerspective(perspectiveId, window);
+		} catch (WorkbenchException e) {
+			SystemBasePlugin.logError("Failed to switch to requested perspective (id = " + perspectiveId + ")!", e); //$NON-NLS-1$ //$NON-NLS-2$
+		}
 		
 		// From the active workbench window, we need the active workbench page
 		IWorkbenchPage page = window.getActivePage();
@@ -438,9 +454,8 @@ public class RSECoreTestCase extends TestCase {
 	 * @param viewId The unique view id. Must be not <code>null</code>.
 	 * @param perspectiveId The unique perspective id within the view should be activated. Must be not <code>null</code>.
 	 * @return The view part instance to the view or <code>null</code> if it cannot be shown.
-	 * @throws WorkbenchException If the specified perspective could not be shown.
 	 */
-	protected final IViewPart showView(String viewId, String perspectiveId) throws WorkbenchException {
+	protected final IViewPart showView(String viewId, String perspectiveId) {
 		assert viewId != null && perspectiveId != null;
 		if (viewId == null || perspectiveId == null) return null;
 		
@@ -453,13 +468,24 @@ public class RSECoreTestCase extends TestCase {
 		assertNotNull("Failed to query currently active workbench window!", window); //$NON-NLS-1$
 		
 		// Now we have to switch to the specified perspecitve
-		workbench.showPerspective(perspectiveId, window);
+		try {
+			workbench.showPerspective(perspectiveId, window);
+		} catch (WorkbenchException e) {
+			SystemBasePlugin.logError("Failed to switch to requested perspective (id = " + perspectiveId + ")!", e); //$NON-NLS-1$ //$NON-NLS-2$
+		}
 		
 		// From the active workbench window, we need the active workbench page
 		IWorkbenchPage page = window.getActivePage();
 		assertNotNull("Failed to query currently active workbench page!", page); //$NON-NLS-1$
 		
-		return page.showView(viewId);
+		IViewPart part = null;
+		try {
+			part = page.showView(viewId);
+		} catch (PartInitException e) {
+			SystemBasePlugin.logError("Failed to show view (id = " + viewId + ")!", e); //$NON-NLS-1$ //$NON-NLS-2$
+		}
+		
+		return part;
 	}
 
 	/**
@@ -467,9 +493,8 @@ public class RSECoreTestCase extends TestCase {
 	 * 
 	 * @param viewId The unique view id. Must be not <code>null</code>.
 	 * @param perspectiveId The unique perspective id the view should be hidden from. Must be not <code>null</code>.
-	 * @throws WorkbenchException If the specified perspective could not be shown.
 	 */
-	protected final void hideView(String viewId, String perspectiveId) throws WorkbenchException {
+	protected final void hideView(String viewId, String perspectiveId) {
 		assert viewId != null && perspectiveId != null;
 		if (viewId == null || perspectiveId == null) return;
 		

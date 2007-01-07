@@ -32,12 +32,6 @@
          unpack="false"/>
 
    <plugin
-         id="org.eclipse.dd.dsf.doc"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"/>
-
-   <plugin
          id="org.eclipse.dd.dsf.ui"
          download-size="0"
          install-size="0"

@@ -4,12 +4,16 @@
       label="DSF MI Feature"
       version="0.9.0">
 
-   <description url="http://www.example.com/description">
-      [Enter Feature Description here.]
+   <description url="http://www.eclipse.org/dsdp/dd/">
+      Device Software Development Platform Project
+Device Debug
+Debug Services Framework
+GDB-MI Implementation
    </description>
 
-   <copyright url="http://www.example.com/copyright">
-      [Enter Copyright Description here.]
+   <copyright url="http://www.eclipse.org/legal/epl-v10.html">
+      Copyright (c) 2006-2007 Wind River Systems and others.
+All rights reserved. This program and the accompanying materials are made available under the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at http://www.eclipse.org/legal/epl-v10.html
    </copyright>
 
    <license url="http://www.example.com/license">

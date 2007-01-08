@@ -473,6 +473,8 @@ public interface ISubSystem extends ISystemFilterPoolReferenceManagerProvider, I
 	 *
 	 * @param filterString filter pattern for objects to return.
 	 * @return Array of objects that are the result of this filter string
+	 * 
+	 * @deprecated use resolveFilterString(IProgressMonitor monitor, String filterString) instead
 	 */
 	public Object[] resolveFilterString(String filterString) throws Exception;
 
@@ -485,6 +487,8 @@ public interface ISubSystem extends ISystemFilterPoolReferenceManagerProvider, I
 	 *
 	 * @param filterStrings array of filter patterns for objects to return.
 	 * @return Array of objects that are the result of resolving all the filter strings
+	 * 
+	 * @deprecated use resolveFilterStrings(IProgressMonitor monitor, String[] filterStrings) instead
 	 */
 	public Object[] resolveFilterStrings(String[] filterStrings) throws Exception;
 
@@ -512,6 +516,8 @@ public interface ISubSystem extends ISystemFilterPoolReferenceManagerProvider, I
 	 * @param parent Object that is being expanded.
 	 * @param filterString filter pattern for children of parent.
 	 *  @return Array of objects that are the result of this filter string
+	 *  
+	 *  @deprecated use resolveFilterString(IProgressMonitor monitor, String filterString) instead
 	 */
 	public Object[] resolveFilterString(Object parent, String filterString) throws Exception;
 
@@ -542,6 +548,8 @@ public interface ISubSystem extends ISystemFilterPoolReferenceManagerProvider, I
 	 * @param key Identifies property to set
 	 * @param value Value to set property to
 	 * @return Object interpretable by subsystem. Might be a Boolean, or the might be new value for confirmation.
+	 * 
+	 * @deprecated this shouldn't be used
 	 */
 	public Object setProperty(Object subject, String key, String value) throws Exception;
 
@@ -552,6 +560,8 @@ public interface ISubSystem extends ISystemFilterPoolReferenceManagerProvider, I
 	 * @param subject Identifies which object to get the properties of
 	 * @param key Identifies property to get value of
 	 * @return String The value of the requested key.
+	 * 
+	 * @deprecated this shouldn't be used
 	 */
 	public String getProperty(Object subject, String key) throws Exception;
 
@@ -563,6 +573,8 @@ public interface ISubSystem extends ISystemFilterPoolReferenceManagerProvider, I
 	 * @param keys Identifies the properties to set
 	 * @param values Values to set properties to. One to one mapping to keys by index number
 	 * @return Object interpretable by subsystem. Might be a Boolean, or the might be new values for confirmation.
+	 * 
+	 * @deprecated this shouldn't be used
 	 */
 	public Object setProperties(Object subject, String[] keys, String[] values) throws Exception;
 
@@ -573,6 +585,8 @@ public interface ISubSystem extends ISystemFilterPoolReferenceManagerProvider, I
 	 * @param subject Identifies which object to get the properties of
 	 * @param keys Identifies properties to get value of
 	 * @return The values of the requested keys.
+	 * 
+	 * @deprecated this shouldn't be used
 	 */
 	public String[] getProperties(Object subject, String[] keys) throws Exception;
 

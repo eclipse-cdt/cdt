@@ -15,6 +15,7 @@
  ********************************************************************************/
 
 package org.eclipse.rse.ui.view;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.rse.core.SystemBasePlugin;
 import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.model.ISystemMessageObject;
@@ -85,7 +86,7 @@ public class SystemTestFilterStringAPIProviderImpl
 		  return children;
 		try
 		{
-	 	   children = subsystem.resolveFilterString(filterString);
+	 	   children = subsystem.resolveFilterString(new NullProgressMonitor(), filterString);
 	 	   if ((children == null) || (children.length==0))
 	 	   {
 	 	   	 if (nullObject == null)

@@ -23,11 +23,11 @@ import java.util.List;
 import java.util.StringTokenizer;
 
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.rse.core.SystemBasePlugin;
 import org.eclipse.rse.core.model.IHost;
+import org.eclipse.rse.core.model.IProperty;
 import org.eclipse.rse.core.model.IPropertySet;
 import org.eclipse.rse.core.subsystems.CommunicationsEvent;
 import org.eclipse.rse.core.subsystems.ICommunicationsListener;
@@ -605,7 +605,12 @@ public abstract class RemoteCmdSubSystem extends SubSystem implements IRemoteCmd
 			}
 		}
 
-		setRemoteAttribute(COMMAND_SHELLS_MEMENTO, shellBuffer.toString());
+		IPropertySet set = getPropertySet("Remote"); //$NON-NLS-1$
+		if (set != null)
+		{
+			IProperty property = set.getProperty(COMMAND_SHELLS_MEMENTO);
+			property.setValue(shellBuffer.toString());
+		}
 	}
 
 	protected void internalRemoveShell(Object command) throws java.lang.reflect.InvocationTargetException,
@@ -635,7 +640,14 @@ public abstract class RemoteCmdSubSystem extends SubSystem implements IRemoteCmd
 	{
 		this.shell = shellWindow;
 		IRemoteCommandShell[] results = null;
-		String shellStr = getRemoteAttribute(COMMAND_SHELLS_MEMENTO);
+		
+		String shellStr = null;
+		IPropertySet set = getPropertySet("Remote"); //$NON-NLS-1$
+		if (set != null)
+		{
+			shellStr =  set.getPropertyValue(COMMAND_SHELLS_MEMENTO);
+		}
+
 		int numShells = 0;
 		if (shellStr != null && shellStr.length() > 0)
 		{
@@ -807,42 +819,29 @@ public abstract class RemoteCmdSubSystem extends SubSystem implements IRemoteCmd
 
 	/**
 	 * overridden so that for universal we don't need to do in modal thread
+	 * @deprecated 
 	 */
 	public Object[] runCommand(String command, Object context, boolean interpretOutput) throws Exception
 	{
 //dwd		if (shell != null)
 //dwd			this.shell = shell;
-		if (isConnected())
-		{
-			return internalRunCommand(null, command, context, interpretOutput);
-		}
-		else
-		{
-			try
-			{
-//dwd				this.shell = shell; // FIXME remove this
-
-				RunCommandJob job = new RunCommandJob(command, context, interpretOutput);
-
-				IStatus status = scheduleJob(job, null, true);
-				if (status.isOK())
-				{
-					return job.getOutputs();
-				}
-			}
-			catch (InterruptedException exc)
-			{
-				if (shell == null)
-					throw exc;
-				else
-					showOperationCancelledMessage(shell);
-			}
-			return null;
-		}
+		return internalRunCommand(null, command, context, interpretOutput);
+	}
+	
+	/**
+	 * overridden so that for universal we don't need to do in modal thread
+	 */
+	public Object[] runCommand(IProgressMonitor monitor, String command, Object context, boolean interpretOutput) throws Exception
+	{
+//dwd		if (shell != null)
+//dwd			this.shell = shell;
+		return internalRunCommand(monitor, command, context, interpretOutput);
 	}
 
 	/**
 	 * overridden so that for universal we don't need to do in modal thread
+	 * 
+	 * @deprecated
 	 */
 	public IRemoteCommandShell runShell(Object context) throws Exception
 	{
@@ -855,26 +854,21 @@ public abstract class RemoteCmdSubSystem extends SubSystem implements IRemoteCmd
 		}
 		else
 		{
-			try
-			{
-//dwd				this.shell = shell; // FIXME remove this
-				RunShellJob job = new RunShellJob(context);
-
-				IStatus status = scheduleJob(job, null, true);
-				if (status.isOK())
-				{
-					return (IRemoteCommandShell) job.getOutputs()[0];
-				}
-			}
-			catch (InterruptedException exc)
-			{
-				if (shell == null)
-					throw exc;
-				else
-					showOperationCancelledMessage(shell);
-			}
+			return null;
 		}
 
+		SystemRegistry registry = RSEUIPlugin.getTheSystemRegistry();
+		registry.fireEvent(new SystemResourceChangeEvent(this, ISystemResourceChangeEvents.EVENT_REFRESH, this));
+
+		return cmdShell;
+	}
+	
+	/**
+	 * overridden so that for universal we don't need to do in modal thread
+	 */
+	public IRemoteCommandShell runShell(IProgressMonitor monitor, Object context) throws Exception
+	{
+		IRemoteCommandShell cmdShell = internalRunShell(monitor, context);
 		SystemRegistry registry = RSEUIPlugin.getTheSystemRegistry();
 		registry.fireEvent(new SystemResourceChangeEvent(this, ISystemResourceChangeEvents.EVENT_REFRESH, this));
 
@@ -890,10 +884,27 @@ public abstract class RemoteCmdSubSystem extends SubSystem implements IRemoteCmd
 	 *            valid and means to use the default context.
 	 * @return Array of objects that are the result of running this command.
 	 *         Typically, these are messages logged by the command.
+	 *         
+	 * @deprecated
 	 */
 	public Object[] runCommand(String command, Object context) throws Exception
 	{
 		return runCommand(command,  context, true);
+	}
+	
+	/**
+	 * Execute a remote command. This is only applicable if the subsystem
+	 * factory reports true for supportsCommands().
+	 * 
+	 * @param command Command to be executed remotely.
+	 * @param context context of a command (i.e. working directory). <code>null</code> is
+	 *            valid and means to use the default context.
+	 * @return Array of objects that are the result of running this command.
+	 *         Typically, these are messages logged by the command.
+	 */
+	public Object[] runCommand(IProgressMonitor monitor, String command, Object context) throws Exception
+	{
+		return runCommand(monitor, command,  context, true);
 	}
 
 	/**
@@ -901,6 +912,8 @@ public abstract class RemoteCmdSubSystem extends SubSystem implements IRemoteCmd
 	 * 
 	 * @param input the command to invoke in the shell.
 	 * @param commandObject the shell or command to send the invocation to.
+	 * 
+	 * @deprecated
 	 */
 	public void sendCommandToShell(String input,  Object commandObject) throws Exception
 	{
@@ -921,11 +934,7 @@ public abstract class RemoteCmdSubSystem extends SubSystem implements IRemoteCmd
 //dwd				this.shell = shell; // FIXME remove this
 				SendCommandToShellJob job = new SendCommandToShellJob(input, commandObject);
 
-				IStatus status = scheduleJob(job, null, true);
-				if (status.isOK())
-				{
-					return;
-				}
+				scheduleJob(job, null);
 			}
 			catch (InterruptedException exc)
 			{
@@ -940,6 +949,27 @@ public abstract class RemoteCmdSubSystem extends SubSystem implements IRemoteCmd
 			SystemBasePlugin.logDebugMessage(this.getClass().getName(),
 					"in SubSystemImpl.sendCommandToShell: isConnected() returning false!"); //$NON-NLS-1$
 
+	}
+	
+	/**
+	 * Send a command as input to a running command shell.
+	 * 
+	 * @param monitor the progress monitor
+	 * @param input the command to invoke in the shell.
+	 * @param commandObject the shell or command to send the invocation to.
+	 */
+	public void sendCommandToShell(IProgressMonitor monitor, String input,  Object commandObject) throws Exception
+	{
+		boolean ok = true;
+		if (!isConnected())
+			ok = promptForPassword();
+		if (ok)
+		{
+			internalSendCommandToShell(monitor, input, commandObject);
+		}		
+		else
+			SystemBasePlugin.logDebugMessage(this.getClass().getName(),
+					"in SubSystemImpl.sendCommandToShell: isConnected() returning false!"); //$NON-NLS-1$
 	}
 
 	/**
@@ -964,7 +994,7 @@ public abstract class RemoteCmdSubSystem extends SubSystem implements IRemoteCmd
 				{
 //dwd					this.shell = shell; // FIXME remove this
 					CancelShellJob job = new CancelShellJob(commandObject);
-					scheduleJob(job, null, false);
+					scheduleJob(job, null);
 				}
 				catch (InterruptedException exc)
 				{
@@ -979,6 +1009,30 @@ public abstract class RemoteCmdSubSystem extends SubSystem implements IRemoteCmd
 						"in SubSystemImpl.cancelShell: isConnected() returning false!"); //$NON-NLS-1$
 		}
 	}
+	
+	/**
+	 * Cancel a shell or running command.
+	 * 
+	 * @param monitor the progress monitor
+	 * @param commandObject the shell or command to cancel.
+	 */
+	public void cancelShell(IProgressMonitor monitor, Object commandObject) throws Exception
+	{
+		boolean ok = true;
+		if (!isConnected())
+			ok = promptForPassword();
+		
+		if (ok)
+		{
+			internalCancelShell(monitor, commandObject);
+		}
+		else
+		{
+			SystemBasePlugin.logDebugMessage(this.getClass().getName(),
+					"in SubSystemImpl.cancelShell: isConnected() returning false!"); //$NON-NLS-1$
+		}
+	}
+
 
 	/**
 	 * Remove and Cancel a shell or running command.
@@ -1002,7 +1056,7 @@ public abstract class RemoteCmdSubSystem extends SubSystem implements IRemoteCmd
 				{
 //dwd					this.shell = shell; // FIXME remove this
 					RemoveShellJob job = new RemoveShellJob(commandObject);
-					scheduleJob(job, null, false);
+					scheduleJob(job, null);
 				}
 				catch (InterruptedException exc)
 				{

@@ -15,6 +15,7 @@
  ********************************************************************************/
 
 package org.eclipse.rse.ui.view;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.rse.core.SystemAdapterHelpers;
 import org.eclipse.rse.core.SystemBasePlugin;
 import org.eclipse.rse.core.filters.ISystemFilter;
@@ -579,7 +580,7 @@ public class SystemSelectRemoteObjectAPIProviderImpl
 		Object[] children = null;
 		try
 		{
-	 	     children = subsystem.resolveFilterString(filterString);	 	     
+	 	     children = subsystem.resolveFilterString(new NullProgressMonitor(), filterString);	 	     
 		} catch (InterruptedException exc)
 		{
 		     if (canceledObject == null)

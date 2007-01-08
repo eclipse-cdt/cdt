@@ -143,6 +143,8 @@ public class SystemViewDataDragAdapter extends DragSourceAdapter
 						else
 						{
 							event.doit = true;
+							event.detail = DND.DROP_COPY;
+							event.feedback = DND.FEEDBACK_INSERT_AFTER;
 						}
 					}
 				}
@@ -204,6 +206,7 @@ public class SystemViewDataDragAdapter extends DragSourceAdapter
 				{
 					event.doit = true;
 					event.detail = DND.DROP_COPY;
+
 				}
 				else
 				{

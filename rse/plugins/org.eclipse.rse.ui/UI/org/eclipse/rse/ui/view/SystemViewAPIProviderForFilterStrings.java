@@ -15,6 +15,7 @@
  ********************************************************************************/
 
 package org.eclipse.rse.ui.view;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.rse.core.filters.ISystemFilter;
 import org.eclipse.rse.core.filters.ISystemFilterPool;
 import org.eclipse.rse.core.filters.ISystemFilterPoolReference;
@@ -136,7 +137,7 @@ public class SystemViewAPIProviderForFilterStrings
         Object[] children = null;
 		try
 		{
-			children = ss.resolveFilterString(filterStringReference.getString());
+			children = ss.resolveFilterString(new NullProgressMonitor(), filterStringReference.getString());
 			if ((children == null) || (children.length==0))
 			{
 		      children = new SystemMessageObject[1];

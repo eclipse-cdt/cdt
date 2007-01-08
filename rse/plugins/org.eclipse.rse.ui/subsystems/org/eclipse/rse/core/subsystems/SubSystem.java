@@ -1579,9 +1579,11 @@ public abstract class SubSystem extends RSEModelObject implements IAdaptable, IS
      */
     public class ConnectJob extends SubSystemOperationJob
     {
-    	public ConnectJob()
+    	private SubSystem _ss;
+    	public ConnectJob(SubSystem ss)
     	{
     		super(GenericMessages.RSESubSystemOperation_Connect_message);
+    		_ss = ss;
     	}
     	
     	public void performOperation(IProgressMonitor mon) throws InterruptedException, Exception
@@ -1594,6 +1596,9 @@ public abstract class SubSystem extends RSEModelObject implements IAdaptable, IS
 
     	    if (!implicitConnect(true, mon, msg, totalWorkUnits)) throw new Exception(RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_CONNECT_FAILED).makeSubstitution(getHostName()).getLevelOneText());    		
     	    internalConnect(mon);
+
+    	    ISystemRegistry registry = RSEUIPlugin.getTheSystemRegistry();
+			registry.connectedStatusChange(_ss, true, false);
     	}
     }
 
@@ -1985,6 +1990,8 @@ public abstract class SubSystem extends RSEModelObject implements IAdaptable, IS
      * <p>
      * @param filterString filter pattern for objects to return.
      * @return the results of resolving the filter string. 
+     * 
+     * @deprecated use resolveFilterString(IProgressMonitor monitor, String filterString) instead
      */
     public Object[] resolveFilterString(String filterString)
            throws Exception
@@ -1994,36 +2001,12 @@ public abstract class SubSystem extends RSEModelObject implements IAdaptable, IS
     	  ok = promptForPassword();
         if (ok)
         {
-          	Display display = Display.getCurrent();
-        	if (display != null)
-        	{
         		return internalResolveFilterString(new NullProgressMonitor(), filterString);
-        	}
-        	else
-        	{
-    	  try
-    	  {
-    	    ResolveAbsoluteJob job = new ResolveAbsoluteJob(filterString);
-    	    
-    	    IStatus status = scheduleJob(job, null, shell != null);
-    	    if (status.isOK())
-    	    {
-    	    	if (sortResults && (job.getOutputs()!=null))
-    	    		return sortResolvedFilterStringObjects(job.getOutputs());
-    	    	else
-    	    		return job.getOutputs();
-    	    }
-    	  }
-    	  catch (InterruptedException exc)
-    	  {
-    		  if (shell == null) throw exc;
-    		  else showOperationCancelledMessage(shell);
-    	  }
-        	}
         }
         else
-          System.out.println("in SubSystemImpl.resolveFilterString: isConnected() returning false!"); //$NON-NLS-1$
-    	return null;
+        {
+        	return null;
+        }
     }
     /**
      * Resolve multiple absolute filter strings. This is only applicable if the subsystem
@@ -2039,6 +2022,8 @@ public abstract class SubSystem extends RSEModelObject implements IAdaptable, IS
      *
      * @param filterStrings array of filter patterns for objects to return.
      * @return Array of objects that are the result of resolving all the filter strings
+     * 
+     * @deprecated should use resolveFilterStrings(IProgressMonitor monitor, String[] filterStrings) instead
      */
     public Object[] resolveFilterStrings(String[] filterStrings)
            throws Exception
@@ -2057,39 +2042,16 @@ public abstract class SubSystem extends RSEModelObject implements IAdaptable, IS
         
         if (ok)
         {
-        	Display display = Display.getCurrent();
-        	if (display != null)
-        	{
-        		return internalResolveFilterStrings(new NullProgressMonitor(), filterStrings);
-        	}
-        	else
-        	{
-    	  try
-    	  {
-    	    ResolveAbsolutesJob job = new ResolveAbsolutesJob(filterStrings[0], filterStrings);
-    	      	    
-    	    IStatus status = scheduleJob(job, null, true);
-    	    if (status.isOK())
-    	    {
-        	    if (sortResults && (job.getOutputs()!=null))
-                    return sortResolvedFilterStringObjects(job.getOutputs());
-                else
-                	return job.getOutputs();
-    	    }
-    	  }
-    	  catch (InterruptedException exc)
-    	  {
-    		  if (shell == null) throw exc;
-    		  else showOperationCancelledMessage(shell);
-    	  }    	
-        	}
+        	return internalResolveFilterStrings(new NullProgressMonitor(), filterStrings);
         }
         else
-          System.out.println("in SubSystemImpl.resolveFilterString: isConnected() returning false!"); //$NON-NLS-1$
-    	return null;
+        {
+        	return null;
+        }
+        
     }
     
-    protected IStatus scheduleJob(SubSystemOperationJob job, ISchedulingRule rule, boolean synch) throws InterruptedException
+    protected void scheduleJob(SubSystemOperationJob job, ISchedulingRule rule) throws InterruptedException
     {
     	IRunnableContext context = getRunnableContext(/*shell*/); // dwd needed for side effect or for prompt?
     	if (context instanceof SystemPromptDialog)
@@ -2099,7 +2061,7 @@ public abstract class SubSystem extends RSEModelObject implements IAdaptable, IS
     		{
     			showOperationErrorMessage(shell, status.getException());
     		}
-    		return status;
+    		return;
     	}
     	job.setPriority(Job.INTERACTIVE);
 	    //job.setUser(true);
@@ -2108,31 +2070,6 @@ public abstract class SubSystem extends RSEModelObject implements IAdaptable, IS
     		job.setRule(rule);
     	}
 	    job.schedule();
-	  
-    	if (synch)
-    	{
-    		Display display = Display.getCurrent();
-            while (!job.hasStarted())
-            {
-				while (display!=null && display.readAndDispatch()) {
-					//Process everything on event queue
-				}
-                if (!job.hasStarted()) Thread.sleep(200);
-            }
-            while (job.getResult() == null)
-            {
-				while (display!=null && display.readAndDispatch()) {
-					//Process everything on event queue
-				}
-                if (job.getResult() == null) Thread.sleep(200);
-            }
-            return job.getResult();
-    	}
-    	else
-    	{
-    		return Status.OK_STATUS;
-    	}
-
     }
 
     /**
@@ -2302,6 +2239,8 @@ public abstract class SubSystem extends RSEModelObject implements IAdaptable, IS
      * <p>
      * @param parent Object that is being expanded.
      * @param filterString filter pattern for children of parent. Typically just "*".
+     * 
+     * @deprecated use resolveFilterString(IProgressMonitor monitor, Object parent, String filterString) instead
      */
     public Object[] resolveFilterString(Object parent, String filterString)
            throws Exception
@@ -2311,36 +2250,12 @@ public abstract class SubSystem extends RSEModelObject implements IAdaptable, IS
     	  ok = promptForPassword();
         if (ok)
         {
-        	Display display = Display.getCurrent();
-        	if (display != null)
-        	{
-        		return internalResolveFilterString(new NullProgressMonitor(), parent, filterString);
-        	}
-        	else
-        	{
-    	  try
-    	  {    	    	  	
-  		
-    	    ResolveRelativeJob job = new ResolveRelativeJob(filterString, parent);
-    	    
-    	    IStatus status = scheduleJob(job, null, true);
-    	    if (status.isOK())
-    	    {
-        	    if ((job.getOutputs()!=null) && (job.getOutputs().length>1))
-          	      return sortResolvedFilterStringObjects(job.getOutputs());           
-        	    else return job.getOutputs();
-    	    }
-    	  }
-    	  catch (InterruptedException exc)
-    	  {
-    		  if (shell == null) throw exc;
-    		  else showOperationCancelledMessage(shell);
-    	  }
-        	}
+        	return internalResolveFilterString(new NullProgressMonitor(), parent, filterString);
         }
         else
-          SystemBasePlugin.logDebugMessage(this.getClass().getName(), "in SubSystemImpl.resolveFilterString: isConnected() returning false!"); //$NON-NLS-1$
-    	return null;
+        {
+    	    return null;
+        }
     }
     
 	
@@ -2365,33 +2280,12 @@ public abstract class SubSystem extends RSEModelObject implements IAdaptable, IS
      * @param key Identifies property to set
      * @param value Value to set property to
      * @return Object interpretable by subsystem. Might be a Boolean, or the might be new value for confirmation.
+     * 
+     * @deprecated this shouldn't be used
      */
     public Object setProperty(Object subject, String key, String value)
            throws Exception
     {
-        boolean ok = true;
-    	if (!isConnected())
-    	  ok = promptForPassword();
-        if (ok)
-        {
-    	  try
-    	  {
-    	    SetPropertyJob job = new SetPropertyJob(subject, key, value);
-    	    
-    	    IStatus status = scheduleJob(job, null, true);
-    	    if (status.isOK())
-    	    {
-    	    	return job.getOutputs()[0];
-    	    }
-    	}
-    	catch (InterruptedException exc)
-    	{
-    		if (shell == null) throw exc;
-    		else showOperationCancelledMessage(shell);
-    	}			
-       }
-       else
-         System.out.println("in SubSystemImpl.setProperty: isConnected() returning false!"); //$NON-NLS-1$
        return null;
     }
 
@@ -2402,34 +2296,12 @@ public abstract class SubSystem extends RSEModelObject implements IAdaptable, IS
      * @param subject Identifies which object to get the properties of
      * @param key Identifies property to get value of
       * @return String The value of the requested key.
+      * 
+      * @deprecated this shouldn't be used
      */
     public String getProperty(Object subject, String key)
            throws Exception
     {
-        boolean ok = true;
-    	if (!isConnected())
-    	  ok = promptForPassword();
-        if (ok)
-        {
-    	  try
-    	  {
-    	    GetPropertyJob job = new GetPropertyJob(subject, key);
-    	    scheduleJob(job, null, true);
-    	    
-    	    IStatus status = job.getResult();
-    	    if (status.isOK())
-    	    {
-    	    	return job.getOutputStrings()[0];
-    	    }
-    	}
-    	catch (InterruptedException exc)
-    	{
-    		if (shell == null) throw exc;
-    		else showOperationCancelledMessage(shell);
-    	}
-       }
-       else
-         System.out.println("in SubSystemImpl.getProperty: isConnected() returning false!"); //$NON-NLS-1$
        return null;
     }
 
@@ -2441,33 +2313,12 @@ public abstract class SubSystem extends RSEModelObject implements IAdaptable, IS
      * @param keys the array of propertie keys to set.
      * @param values the array of values to set. The value at a certain index corresponds to the property key at the same index. 
      * @return Object interpretable by subsystem. Might be a Boolean, or the might be new values for confirmation.
+     * 
+     * @deprecated this shouldn't be used
      */
     public Object setProperties(Object subject, String[] keys, String[] values)
            throws Exception
     {
-        boolean ok = true;
-    	if (!isConnected())
-    	  ok = promptForPassword();
-        if (ok)
-        {
-    	  try
-    	  {
-    	    SetPropertiesJob job = new SetPropertiesJob(subject, keys, values);
-    	    
-    	    IStatus status = scheduleJob(job, null, true);
-    	    if (status.isOK())
-    	    {
-    	    	return job.getOutputs()[0];
-    	    }
-    	}
-    	catch (InterruptedException exc)
-    	{
-    		if (shell == null) throw exc;
-    		else showOperationCancelledMessage(shell);
-    	}
-       }
-       else
-         System.out.println("in SubSystemImpl.setProperties: isConnected() returning false!"); //$NON-NLS-1$
        return null;
     }
 
@@ -2555,12 +2406,8 @@ public abstract class SubSystem extends RSEModelObject implements IAdaptable, IS
 //dwd				((ProgressMonitorDialog) runnableContext).setCancelable(true);
 //dwd			}
 			getConnectorService().promptForPassword(forcePrompt); // prompt for userid and password    
-			ConnectJob job = new ConnectJob();
-			scheduleJob(job, null, shell != null);
-			IStatus status = job.getResult();
-			if (status != null && status.isOK()) {
-				registry.connectedStatusChange(this, true, false);
-			}
+			ConnectJob job = new ConnectJob(this);
+			scheduleJob(job, null);
 		}
 	}
     
@@ -2679,33 +2526,12 @@ public abstract class SubSystem extends RSEModelObject implements IAdaptable, IS
      * @param subject Identifies which object to get the properties of
      * @param keys the array of property keys.
      * @return the values for the given property keys.
+     * 
+     * @deprecated this shouldn't be used
      */
     public String[] getProperties(Object subject, String[] keys)
            throws Exception
     {
-        boolean ok = true;
-       
-    	if (!isConnected())
-    	  ok = promptForPassword();
-        if (ok)
-        {
-    	  try
-    	  {
-      	    GetPropertiesJob job = new GetPropertiesJob(subject, keys);
-    	    
-    	    IStatus status = scheduleJob(job, null, true);
-    	    if (status.isOK())
-    	    {
-    	    	return job.getOutputStrings();
-    	    }
-    	  }
-    	  catch (InterruptedException exc)
-    	  {
-    		if (shell == null) throw exc;
-    		else showOperationCancelledMessage(shell);
-    	  }
-    	
-        }
         return null;
     }
 

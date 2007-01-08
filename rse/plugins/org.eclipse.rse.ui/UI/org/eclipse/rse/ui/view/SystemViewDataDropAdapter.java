@@ -343,6 +343,7 @@ public class SystemViewDataDropAdapter extends ViewerDropAdapter
 	{
 		super.dragOver(event);
 		event.feedback &= ~DND.FEEDBACK_EXPAND;
+		event.detail = DND.DROP_COPY;
 	}
 
 }

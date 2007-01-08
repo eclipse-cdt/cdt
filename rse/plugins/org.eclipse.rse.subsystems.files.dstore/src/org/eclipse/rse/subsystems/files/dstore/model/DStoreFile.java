@@ -17,15 +17,85 @@
 package org.eclipse.rse.subsystems.files.dstore.model;
 
 import org.eclipse.dstore.core.model.DataElement;
+import org.eclipse.dstore.core.model.DataStore;
+import org.eclipse.rse.core.SystemBasePlugin;
 import org.eclipse.rse.dstore.universal.miners.IUniversalDataStoreConstants;
 import org.eclipse.rse.services.dstore.files.DStoreHostFile;
 import org.eclipse.rse.subsystems.files.core.servicesubsystem.AbstractRemoteFile;
 import org.eclipse.rse.subsystems.files.core.servicesubsystem.FileServiceSubSystem;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFileContext;
+import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFileSubSystem;
 
 public class DStoreFile extends AbstractRemoteFile implements IRemoteFile
 {
+	public IRemoteFile getParentRemoteFile() 
+	{
+		// because this can get called by eclipse from the main thread, and dstore can have problems with main-thread queries,
+		// this is overridden to provide a parent without doing the actual query
+		if (this._parentFile == null)
+    	{
+    		if (isRoot())
+    		{
+    			return null;
+    		}
+    		
+	    	IRemoteFile parentFile = null;
+
+	    	String pathOnly = getParentPath();
+	    	if (pathOnly != null)
+	    	{    	  
+	     	  IRemoteFileSubSystem ss = _context.getParentRemoteFileSubSystem();
+	    	  if (ss != null)
+	    	  {
+	    		  
+	    	  	try {
+		    	  	char sep = getSeparatorChar();
+		    	  	if (pathOnly.length() == 0)
+		    	  	{
+		    	  		return null;
+		    	  	}
+		    	  	else if (pathOnly.length() == 1)
+		    	  	{
+		    	  		// parentFile is already null
+		    	  		//parentFile = null;
+		    	  	}
+		    	  	else if (!(pathOnly.charAt(pathOnly.length()-1)==sep))
+		    	  	{
+		    	  		DataStore ds = _dstoreHostFile.getDataElement().getDataStore();
+		    	  		DataElement element = ds.createObject(null, IUniversalDataStoreConstants.UNIVERSAL_FOLDER_DESCRIPTOR, pathOnly+sep);
+		    	  		
+		    	  		DStoreHostFile hostParent = new DStoreHostFile(element);
+		    	  		parentFile = new DStoreFile((FileServiceSubSystem)ss, _context, (IRemoteFile)null, hostParent);
+		              //parentFile = ss.getRemoteFileObject(pathOnly+sep);
+		    	  	}
+		            else
+		            {DataStore ds = _dstoreHostFile.getDataElement().getDataStore();
+	    	  		DataElement element = ds.createObject(null, IUniversalDataStoreConstants.UNIVERSAL_FOLDER_DESCRIPTOR, pathOnly);
+	    	  		
+	    	  		DStoreHostFile hostParent = new DStoreHostFile(element);
+	    	  		parentFile = new DStoreFile((FileServiceSubSystem)ss, _context, (IRemoteFile)null, hostParent);
+		            	
+		              //parentFile = ss.getRemoteFileObject(pathOnly);
+		            }
+	    	  	} catch (Exception e) {
+	    	  		SystemBasePlugin.logError("RemoteFileImpl.getParentRemoteFile()", e); //$NON-NLS-1$
+	    	  	}
+	    	  }
+	    	}
+	    	else
+	    	{
+	    	}
+	    	this._parentFile = parentFile;
+    	}
+    	return this._parentFile;
+	}
+
+	protected Object clone() throws CloneNotSupportedException {
+		// TODO Auto-generated method stub
+		return super.clone();
+	}
+
 	protected DStoreHostFile _dstoreHostFile;
 	public DStoreFile(FileServiceSubSystem ss, IRemoteFileContext context, IRemoteFile parent, DStoreHostFile hostFile)
 	{

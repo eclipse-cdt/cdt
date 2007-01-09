@@ -38,22 +38,15 @@ public class CompletionTest_SingleName_Method_Prefix	  extends CompletionProposa
 			"aFirstEnum",
 			"aSecondEnum",
 			"aThirdEnum",
+			// missing proposals:
 			"AStruct",
 			"AMacro(x)"
 	};
 	
-	
-	
-	/* (non-Javadoc)
-	 * Relax result checking here because the "a" prefix also finds the template for "author"
-	 * @see org.eclipse.cdt.ui.tests.text.contentassist2.CompletionProposalsBaseTest#doCheckExtraResults()
-	 */
-	protected boolean doCheckExtraResults() {
-		return false ;
-	}
-
 	public CompletionTest_SingleName_Method_Prefix(String name) {
 		super(name);
+		// see https://bugs.eclipse.org/bugs/show_bug.cgi?id=109724
+		setExpectFailure(109724);
 	}
 
 	public static Test suite() {

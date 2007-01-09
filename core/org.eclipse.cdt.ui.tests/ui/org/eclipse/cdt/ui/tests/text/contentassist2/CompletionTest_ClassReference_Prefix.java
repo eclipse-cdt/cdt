@@ -38,13 +38,14 @@ public class CompletionTest_ClassReference_Prefix  extends CompletionProposalsBa
 			Result: anotherFunction(void) void
 			Result: aSecondEnum
 			Result: aThirdEnum
-			Result: author - author name
 			Result: aVariable : int
 			*/
 	};
 	
 	public CompletionTest_ClassReference_Prefix(String name) {
 		super(name);
+		// see https://bugs.eclipse.org/bugs/show_bug.cgi?id=88787
+		setExpectFailure(88787);
 	}
 
 	public static Test suite() {

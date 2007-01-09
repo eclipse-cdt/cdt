@@ -28,10 +28,21 @@ public class CompletionTest_ArgumentType_NoPrefix  extends CompletionProposalsBa
 	private final String headerFileFullPath ="resources/contentassist/" + headerFileName;
 	private final String expectedPrefix = "";
 	private final String[] expectedResults = {
+			"aClass",
+			"anotherClass",
+			"aNamespace",
+			"anEnumeration",
+			"AStruct",
+			"xOtherClass",
+			"xNamespace",
+			"xEnumeration",
+			"XStruct"
 	};
 	
 	public CompletionTest_ArgumentType_NoPrefix(String name) {
 		super(name);
+		// see https://bugs.eclipse.org/bugs/show_bug.cgi?id=151207
+		setExpectFailure(151207);
 	}
 	
 	public static Test suite() {

@@ -33,6 +33,7 @@ public class CompletionTest_ExceptionReference_Prefix  extends CompletionProposa
 			"anotherClass",
 			"aNamespace",
 			"anEnumeration",
+			// missing proposal:
 			"AStruct"
 			/* FIXME: Additional results which should not be there. Run with trace enabled to reproduce:
 Result: aFirstEnum
@@ -42,13 +43,15 @@ Result: anotherFunction(void) void
 Result: anotherMethod(void) void
 Result: aSecondEnum
 Result: aThirdEnum
-Result: author - author name
 Result: aVariable : int
 			 */
 	};
 	
 	public CompletionTest_ExceptionReference_Prefix(String name) {
 		super(name);
+		// see https://bugs.eclipse.org/bugs/show_bug.cgi?id=109724
+		// and https://bugs.eclipse.org/bugs/show_bug.cgi?id=88787
+		setExpectFailure(109724);
 	}
 
 	public static Test suite() {

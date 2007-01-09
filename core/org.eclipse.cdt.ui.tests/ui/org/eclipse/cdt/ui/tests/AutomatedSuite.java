@@ -20,6 +20,7 @@ import org.eclipse.cdt.ui.tests.callhierarchy.CallHierarchyTestSuite;
 import org.eclipse.cdt.ui.tests.includebrowser.IncludeBrowserTestSuite;
 import org.eclipse.cdt.ui.tests.text.TextTestSuite;
 import org.eclipse.cdt.ui.tests.text.contentassist.ContentAssistTestSuite;
+import org.eclipse.cdt.ui.tests.text.contentassist2.ContentAssist2TestSuite;
 import org.eclipse.cdt.ui.tests.text.selection.SelectionTestSuite;
 import org.eclipse.cdt.ui.tests.viewsupport.ViewSupportTestSuite;
 
@@ -56,12 +57,12 @@ public class AutomatedSuite extends TestSuite {
 		// tests from package org.eclipse.cdt.ui.tests.text.contentAssist
 		addTest(ContentAssistTestSuite.suite());
 
+		// tests from package org.eclipse.cdt.ui.tests.text.contentAssist2
+		addTest(ContentAssist2TestSuite.suite());
+
 		// tests from the refactoring plugin
 		addTest(RenameRegressionTests.suite());
-		// tests from package org.eclipse.cdt.ui.tests.text.contentAssist2
-		// commented out because they are failing pretty badly
-		// addTest(ContentAssist2TestSuite.suite());
-
+		
 		// tests from package org.eclipse.cdt.ui.tests.text.selection
 		addTest(SelectionTestSuite.suite());
 	}

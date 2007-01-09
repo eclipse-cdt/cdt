@@ -28,10 +28,17 @@ public class CompletionTest_NewTypeReference_NoPrefix  extends CompletionProposa
 	private final String headerFileFullPath ="resources/contentassist/" + headerFileName;
 	private final String expectedPrefix = ""; 
 	private final String[] expectedResults = {
+			"aClass",
+			"anotherClass",
+			"AStruct",
+			"xOtherClass",
+			"XStruct"
 	};
 	
 	public CompletionTest_NewTypeReference_NoPrefix(String name) {
 		super(name);
+		// see https://bugs.eclipse.org/bugs/show_bug.cgi?id=151207
+		setExpectFailure(151207);
 	}
 
 	public static Test suite() {

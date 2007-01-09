@@ -38,6 +38,8 @@ Result: y : int
 	
 	public CompletionTest_ScopedReference_NonCodeScope(String name) {
 		super(name);
+		// see https://bugs.eclipse.org/bugs/show_bug.cgi?id=88787
+		setExpectFailure(88787);
 	}
 
 	public static Test suite() {

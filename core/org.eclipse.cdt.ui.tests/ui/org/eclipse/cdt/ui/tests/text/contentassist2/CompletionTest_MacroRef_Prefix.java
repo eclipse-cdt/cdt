@@ -27,12 +27,13 @@ public class CompletionTest_MacroRef_Prefix  extends CompletionProposalsBaseTest
 	private final String headerFileFullPath ="resources/contentassist/" + headerFileName;
 	private final String expectedPrefix = "D"; 
 	private final String[] expectedResults = {
-// Should be 			
-//			"Debug"
+			"Debug"
 	};
 	
 	public CompletionTest_MacroRef_Prefix(String name) {
 		super(name);
+		// see https://bugs.eclipse.org/bugs/show_bug.cgi?id=151207
+		setExpectFailure(151207);
 	}
 
 	public static Test suite() {

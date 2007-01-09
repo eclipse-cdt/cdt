@@ -34,15 +34,6 @@ public class CompletionTest_TypeDef_NoPrefix  extends CompletionProposalsBaseTes
 	};
 	
 	
-	
-	/* (non-Javadoc)
-	 * Relax checking here because the "m" prefix also finds the templates for "main" and "mutable"
-	 * @see org.eclipse.cdt.ui.tests.text.contentassist2.CompletionProposalsBaseTest#doCheckExtraResults()
-	 */
-	protected boolean doCheckExtraResults() {
-		return false ;
-	}
-
 	public CompletionTest_TypeDef_NoPrefix(String name) {
 		super(name);
 	}

@@ -28,10 +28,14 @@ public class CompletionTest_MemberReference_Dot_Prefix  extends CompletionPropos
 	private final String[] expectedResults = {
 			"aField : int",
 			"aMethod(void) int",
+			/* "aClass"  FIXME: Surplus result: aClass is currently returned as a result, but this is not syntactically correct.
+            Completion processing needs to be fixed, putting this here as a reminder. */
 	};
 	
 	public CompletionTest_MemberReference_Dot_Prefix(String name) {
 		super(name);
+		// see https://bugs.eclipse.org/bugs/show_bug.cgi?id=88787
+		setExpectFailure(88787);
 	}
 	
 	public static Test suite() {

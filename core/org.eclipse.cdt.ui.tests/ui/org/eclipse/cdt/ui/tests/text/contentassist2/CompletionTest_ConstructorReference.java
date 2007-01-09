@@ -36,6 +36,8 @@ public class CompletionTest_ConstructorReference  extends CompletionProposalsBas
 	
 	public CompletionTest_ConstructorReference(String name) {
 		super(name);
+		// see https://bugs.eclipse.org/bugs/show_bug.cgi?id=151207
+		setExpectFailure(151207);
 	}
 
 	public static Test suite() {

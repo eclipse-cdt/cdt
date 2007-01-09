@@ -27,21 +27,22 @@ public class CompletionTest_MacroRef_NoPrefix  extends CompletionProposalsBaseTe
 	private final String headerFileFullPath ="resources/contentassist/" + headerFileName;
 	private final String expectedPrefix = ""; 
 	private final String[] expectedResults = {
-// Should be 			
-//			"aMacro(x)",
-//			"Debug",
-//			"xMacro(x,y)"
+			"aMacro(x)",
+			"Debug",
+			"xMacro(x,y)"
 	};
 	
 	public CompletionTest_MacroRef_NoPrefix(String name) {
 		super(name);
+		// see https://bugs.eclipse.org/bugs/show_bug.cgi?id=151207
+		setExpectFailure(151207);
 	}
 
 	public static Test suite() {
 		TestSuite suite= new TestSuite(CompletionTest_MacroRef_NoPrefix.class.getName());
 		suite.addTest(new CompletionTest_MacroRef_NoPrefix("testCompletionProposals"));
 		return suite;
-	}		
+	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.codeassist.tests.CompletionProposalsTest#getCompletionPosition()

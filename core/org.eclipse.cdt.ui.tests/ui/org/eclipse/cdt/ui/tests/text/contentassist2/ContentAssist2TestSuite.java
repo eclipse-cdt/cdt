@@ -25,7 +25,7 @@ public class ContentAssist2TestSuite extends TestSuite {
 	public ContentAssist2TestSuite()  {
 		super("Tests in package org.eclipse.cdt.ui.tests.text.contentassist2");
 		
-		addTest(CompletionFailedTest_MemberReference_Arrow_Prefix2.suite());
+		addTest(CompletionTest_MemberReference_Arrow_Prefix2.suite());
 		addTest(CompletionTest_ArgumentType_NoPrefix.suite());
 		addTest(CompletionTest_ArgumentType_NoPrefix2.suite());
 		addTest(CompletionTest_ArgumentType_Prefix.suite());

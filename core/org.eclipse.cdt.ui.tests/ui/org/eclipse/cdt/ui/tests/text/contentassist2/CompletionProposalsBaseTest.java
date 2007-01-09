@@ -6,7 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * IBM Rational Software - Initial API and implementation
+ *     IBM Rational Software - Initial API and implementation
+ *     Anton Leherbauer (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.ui.tests.text.contentassist2;
 
@@ -17,199 +18,92 @@ package org.eclipse.cdt.ui.tests.text.contentassist2;
  *	 
  */
 import java.io.FileInputStream;
-
-import junit.framework.TestCase;
+import java.io.FileNotFoundException;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.text.Document;
-import org.eclipse.jface.text.contentassist.ICompletionProposal;
-import org.eclipse.ui.IEditorPart;
-import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.part.FileEditorInput;
 
-import org.eclipse.cdt.core.CCProjectNature;
-import org.eclipse.cdt.core.dom.IPDOMManager;
 import org.eclipse.cdt.core.dom.ast.ASTCompletionNode;
-import org.eclipse.cdt.core.dom.ast.IASTName;
-import org.eclipse.cdt.core.dom.ast.IBinding;
-import org.eclipse.cdt.core.model.CoreModel;
-import org.eclipse.cdt.core.model.ICProject;
-import org.eclipse.cdt.core.model.ITranslationUnit;
-import org.eclipse.cdt.core.testplugin.CProjectHelper;
 import org.eclipse.cdt.ui.testplugin.CTestPlugin;
 
-import org.eclipse.cdt.internal.ui.editor.CEditor;
-import org.eclipse.cdt.internal.ui.text.contentassist.CCompletionProcessor2;
+public abstract class CompletionProposalsBaseTest extends AbstractCompletionTest {
 
-public abstract class CompletionProposalsBaseTest  extends TestCase{
-	protected static final String EMPTY_STRING = ""; //$NON-NLS-1$
-	private final String projectName = "TestProject1"; //$NON-NLS-1$
-	private final String projectType = "bin"; //$NON-NLS-1$
-	private ICProject fCProject;
-	private IFile fCFile;
-	private IFile fHeaderFile;
-	private NullProgressMonitor monitor;
-	private ITranslationUnit tu = null;
-	private String buffer = EMPTY_STRING;
-	private Document document = null;
-	
-		
+	private boolean fFailingTest;
+
 	public CompletionProposalsBaseTest(String name) {
 		super(name);
 	}
 	
 	/*
-	 * Derived classes have to provide these test parameters
+	 * @see junit.framework.TestCase#getName()
+	 */
+	public String getName() {
+		if (fFailingTest) {
+			return "[Failing] " + super.getName();
+		}
+		return super.getName();
+	}
+
+	/*
+	 * @see org.eclipse.cdt.core.testplugin.util.BaseTestCase#setExpectFailure(int)
+	 */
+	public void setExpectFailure(int bugnumber) {
+		super.setExpectFailure(bugnumber);
+		fFailingTest= true;
+	}
+
+	/*
+	 * Derived classes have to provide the file locations
 	 */
 	protected abstract String getFileName();
 	protected abstract String getFileFullPath();
 	protected abstract String getHeaderFileName();
 	protected abstract String getHeaderFileFullPath();
+	/*
+	 * Derived classes have to provide these test parameters
+	 */
 	protected abstract int getCompletionPosition();
 	protected abstract String getExpectedPrefix();
 	protected abstract String[] getExpectedResultsValues();
-	protected String getFunctionOrConstructorName()	{ return EMPTY_STRING; }
-	
-	/**
-	 * Override to relax checking of extra results
-	 */
-	protected boolean doCheckExtraResults()  {
-		return true ;
-	}
-	
-	protected void setUp() throws Exception {
-		monitor = new NullProgressMonitor();
-		
-		fCProject= CProjectHelper.createCProject(projectName, projectType, IPDOMManager.ID_NO_INDEXER);
-		fHeaderFile = fCProject.getProject().getFile(getHeaderFileName());
+
+	protected IFile setUpProjectContent(IProject project) throws FileNotFoundException {
+		IFile headerFile = project.getFile(getHeaderFileName());
 		String fileName = getFileName();
-		fCFile = fCProject.getProject().getFile(fileName);
-		if ( (!fCFile.exists()) &&( !fHeaderFile.exists() )) {
+		IFile bodyFile = project.getFile(fileName);
+		if ( (!bodyFile.exists()) &&( !headerFile.exists() )) {
+			IProgressMonitor monitor= new NullProgressMonitor();
 			try{
 				FileInputStream headerFileIn = new FileInputStream(
 						CTestPlugin.getDefault().getFileInPlugin(new Path(getHeaderFileFullPath()))); 
-				fHeaderFile.create(headerFileIn,false, monitor);  
+				headerFile.create(headerFileIn,false, monitor);  
 				FileInputStream bodyFileIn = new FileInputStream(
 						CTestPlugin.getDefault().getFileInPlugin(new Path(getFileFullPath()))); 
-				fCFile.create(bodyFileIn,false, monitor);        
+				bodyFile.create(bodyFileIn,false, monitor);        
 			} catch (CoreException e) {
 				e.printStackTrace();
 			}
 		}
-		if (!fCProject.getProject().hasNature(CCProjectNature.CC_NATURE_ID)) {
-			addNatureToProject(fCProject.getProject(), CCProjectNature.CC_NATURE_ID, null);
-		}
+		return bodyFile;
 	}
 
-	private static void addNatureToProject(IProject proj, String natureId, IProgressMonitor monitor) throws CoreException {
-		IProjectDescription description = proj.getDescription();
-		String[] prevNatures= description.getNatureIds();
-		String[] newNatures= new String[prevNatures.length + 1];
-		System.arraycopy(prevNatures, 0, newNatures, 0, prevNatures.length);
-		newNatures[prevNatures.length]= natureId;
-		description.setNatureIds(newNatures);
-		proj.setDescription(description, monitor);
-	}
-	
-	protected void tearDown() {
-		CProjectHelper.delete(fCProject);
-	}	
-	
 	public void testCompletionProposals() throws Exception {
-		
-			if (CTestPlugin.getDefault().isDebugging())  {
-				System.out.println("\n\n\n\n\nTesting "+this.getClass().getName());
-			}
-			// setup the translation unit, the buffer and the document
-			ITranslationUnit tu = (ITranslationUnit)CoreModel.getDefault().create(fCFile);
-			buffer = tu.getBuffer().getContents();
-			
-			IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
-			FileEditorInput editorInput = new FileEditorInput(fCFile);
-			IEditorPart editorPart = page.openEditor(editorInput, "org.eclipse.cdt.ui.editor.CEditor");
-			
-			CEditor editor = (CEditor) editorPart ;
-			IAction completionAction = editor.getAction("ContentAssistProposal");
-			
-			CCompletionProcessor2 completionProcessor = new CCompletionProcessor2(editorPart);
-			// call the CompletionProcessor
-			ICompletionProposal[] results = completionProcessor.computeCompletionProposals(editor.getCSourceViewer(), getCompletionPosition()); // (document, pos, wc, null);
-			assertTrue(results != null);
-			if (CTestPlugin.getDefault().isDebugging())  {
-				for (int i = 0; i < results.length; i++) {
-					ICompletionProposal proposal = results[i];
-					System.out.println("Result: " + proposal.getDisplayString());
-				}
-			}
-			
-			// check the completion node
-			ASTCompletionNode currentCompletionNode = completionProcessor.getCurrentCompletionNode();
-			assertNotNull("null completion node!", currentCompletionNode);
-			IASTName[] names = currentCompletionNode.getNames();
-			IASTName currentName = names[0];
-			IBinding binding = currentName.getBinding();
-			String prefix = currentCompletionNode.getPrefix();
-			assertEquals(getExpectedPrefix(), prefix);
-			
-			String[] expected = getExpectedResultsValues();
+		String[] expected = getExpectedResultsValues();
+		assertCompletionResults(getCompletionPosition(), expected, false);
 
-			boolean allFound = true ;  // for the time being, let's be optimistic
-			
-			for (int i = 0; i< expected.length; i++){
-				boolean found = false;
-				for(int j = 0; j< results.length; j++){
-					ICompletionProposal proposal = results[j];
-					String displayString = proposal.getDisplayString();
-					if(expected[i].equals(displayString)){
-						found = true;
-						if (CTestPlugin.getDefault().isDebugging())  {
-							System.out.println("Lookup success for " + expected[i]);
-						}
-						break;
-					}
-				}
-				if (!found)  {
-					allFound = false ;
-					if (CTestPlugin.getDefault().isDebugging())  {
-						System.out.println( "Lookup failed for " + expected[i]); //$NON-NLS-1$
-					}
-				}
-			}	
-			assertTrue("Not enough results!", results.length >= expected.length);
-			if (doCheckExtraResults())  {
-				assertEquals("Extra results! Run with tracing to see details!", expected.length, results.length);
-			}
-			assertTrue("Some expected results were not found!", allFound);
-			
-	}	
+	}
+
+	/*
+	 * @see org.eclipse.cdt.ui.tests.text.contentassist2.AbstractCompletionTest#checkCompletionNode(org.eclipse.cdt.core.dom.ast.ASTCompletionNode)
+	 */
+	protected void checkCompletionNode(ASTCompletionNode currentCompletionNode) {
+		assertNotNull("null completion node!", currentCompletionNode);
+		// check the completion node
+		String prefix = currentCompletionNode.getPrefix();
+		assertEquals(getExpectedPrefix(), prefix);
+	}
 	
-	/**
-	 * @return Returns the buffer.
-	 */
-	public String getBuffer() {
-		return buffer;
-	}
-
-	/**
-	 * @return Returns the document.
-	 */
-	public Document getDocument() {
-		return document;
-	}
-
-	/**
-	 * @return Returns the tu.
-	 */
-	public ITranslationUnit getTranslationUnit() {
-		return tu;
-	}
-
 }

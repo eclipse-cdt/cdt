@@ -8,7 +8,6 @@
  * Contributors:
  *    Markus Schorn - initial API and implementation
  *******************************************************************************/ 
-
 package org.eclipse.cdt.ui.tests;
 
 import java.io.IOException;
@@ -30,8 +29,6 @@ import org.eclipse.cdt.core.testplugin.util.TestSourceReader;
 import org.eclipse.cdt.ui.testplugin.CTestPlugin;
 
 public class BaseUITestCase extends BaseTestCase {
-	private boolean fExpectFailure= false;
-	private int fBugnumber= 0;
 	
 	public BaseUITestCase() {
 		super();

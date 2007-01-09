@@ -35,14 +35,14 @@ public class CompletionTest_SingleName_Prefix2  extends CompletionProposalsBaseT
 			"aFirstEnum",
 			"aSecondEnum",
 			"aThirdEnum",
+			// missing proposal:
 			"AMacro(x)" 
-			/* FIXME: Additional results which should not be there. Run with tracing to reproduce:
-			 * Result: author - author name
-			 */
 	};
 	
 	public CompletionTest_SingleName_Prefix2(String name) {
 		super(name);
+		// see https://bugs.eclipse.org/bugs/show_bug.cgi?id=109724
+		setExpectFailure(109724);
 	}
 	
 	public static Test suite() {

@@ -34,6 +34,8 @@ public class CompletionTest_SingleName_Method_NoPrefix  extends CompletionPropos
 	
 	public CompletionTest_SingleName_Method_NoPrefix(String name) {
 		super(name);
+		// see https://bugs.eclipse.org/bugs/show_bug.cgi?id=151207
+		setExpectFailure(151207);
 	}
 	
 	public static Test suite() {

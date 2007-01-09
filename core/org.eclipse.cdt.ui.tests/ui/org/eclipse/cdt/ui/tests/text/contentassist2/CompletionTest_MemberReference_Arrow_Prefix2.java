@@ -19,30 +19,28 @@ import junit.framework.TestSuite;
  * Complex Context: Function return value: foo()->a(CTRL+SPACE)
  *
  */
-public class CompletionFailedTest_MemberReference_Arrow_Prefix2  extends CompletionProposalsBaseTest{
+public class CompletionTest_MemberReference_Arrow_Prefix2  extends CompletionProposalsBaseTest{
 	private final String fileName = "CompletionTestStart7.cpp";
 	private final String fileFullPath ="resources/contentassist/" + fileName;
 	private final String headerFileName = "CompletionTestStart.h";
 	private final String headerFileFullPath ="resources/contentassist/" + headerFileName;
 	private final String expectedPrefix = "a";
 	private final String[] expectedResults = {
-			"aClass",
+// FIXME: additional result
+//			"aClass",
 			"aField : int",
 			"aMethod(void) int"
 	};
 	
-	/* Additional results which should not be found. Run with trace activated to reproduce: 
-	 * Result: author - author name
-	 * is a template --> relax extra results checking
-	 */
-	
-	public CompletionFailedTest_MemberReference_Arrow_Prefix2(String name) {
+	public CompletionTest_MemberReference_Arrow_Prefix2(String name) {
 		super(name) ;
+		// see https://bugs.eclipse.org/bugs/show_bug.cgi?id=88787
+		setExpectFailure(88787);
 	}
 	
 	public static Test suite() {
-		TestSuite suite= new TestSuite(CompletionFailedTest_MemberReference_Arrow_Prefix2.class.getName());
-		suite.addTest(new CompletionFailedTest_MemberReference_Arrow_Prefix2("testCompletionProposals"));
+		TestSuite suite= new TestSuite(CompletionTest_MemberReference_Arrow_Prefix2.class.getName());
+		suite.addTest(new CompletionTest_MemberReference_Arrow_Prefix2("testCompletionProposals"));
 		return suite;
 	}		
 	/* (non-Javadoc)
@@ -91,13 +89,6 @@ public class CompletionFailedTest_MemberReference_Arrow_Prefix2  extends Complet
 	 */
 	protected String getHeaderFileName() {
 		return headerFileName;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.ui.tests.text.contentassist2.CompletionProposalsBaseTest#doCheckExtraResults()
-	 */
-	protected boolean doCheckExtraResults() {
-		return false ;
 	}
 
 }

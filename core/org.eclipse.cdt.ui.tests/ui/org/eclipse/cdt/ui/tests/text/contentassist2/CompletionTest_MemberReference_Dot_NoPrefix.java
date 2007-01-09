@@ -37,6 +37,8 @@ public class CompletionTest_MemberReference_Dot_NoPrefix  extends CompletionProp
 	
 	public CompletionTest_MemberReference_Dot_NoPrefix(String name) {
 		super(name);
+		// see https://bugs.eclipse.org/bugs/show_bug.cgi?id=88787
+		setExpectFailure(88787);
 	}
 	
 	public static Test suite() {

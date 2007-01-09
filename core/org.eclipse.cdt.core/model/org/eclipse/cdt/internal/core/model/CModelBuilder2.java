@@ -668,15 +668,15 @@ public class CModelBuilder2 implements IContributedModelBuilder {
 		final int kind;
 		switch (elaboratedTypeSpecifier.getKind()) {
 		case IASTElaboratedTypeSpecifier.k_struct:
-			kind= (isTemplate) ? ICElement.C_TEMPLATE_STRUCT : ICElement.C_STRUCT;
+			kind= (isTemplate) ? ICElement.C_TEMPLATE_STRUCT_DECLARATION : ICElement.C_STRUCT_DECLARATION;
 			type= Keywords.STRUCT;
 			break;
 		case IASTElaboratedTypeSpecifier.k_union:
-			kind= (isTemplate) ? ICElement.C_TEMPLATE_UNION : ICElement.C_UNION;
+			kind= (isTemplate) ? ICElement.C_TEMPLATE_UNION_DECLARATION : ICElement.C_UNION_DECLARATION;
 			type= Keywords.UNION;
 			break;
 		case ICPPASTElaboratedTypeSpecifier.k_class:
-			kind= (isTemplate) ? ICElement.C_TEMPLATE_CLASS : ICElement.C_CLASS;
+			kind= (isTemplate) ? ICElement.C_TEMPLATE_CLASS_DECLARATION : ICElement.C_CLASS_DECLARATION;
 			type= Keywords.CLASS;
 			break;
 		default:

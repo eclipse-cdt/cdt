@@ -138,7 +138,7 @@ public abstract class UpdateHandler extends Handler
 				else
 				{
 					
-					if (_dataStore != null && object != null)
+					if (_dataStore != null && object != null && !object.isDeleted())
 					{
 						if (object.getType().equals(DataStoreResources.model_status))
 						{

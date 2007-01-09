@@ -340,7 +340,6 @@ public class ConnectionEstablisher
 		_dataStore.setSSLProperties(sslProperties);
 		
 		DataElement ticket = _dataStore.getTicket();
-		System.out.println("ticket="+ticketStr); //$NON-NLS-1$
 		ticket.setAttribute(DE.A_NAME, ticketStr);
 
 		_updateHandler.setDataStore(_dataStore);

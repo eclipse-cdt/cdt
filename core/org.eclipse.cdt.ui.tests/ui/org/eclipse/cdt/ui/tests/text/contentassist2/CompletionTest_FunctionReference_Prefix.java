@@ -46,13 +46,15 @@ public class CompletionTest_FunctionReference_Prefix  extends CompletionProposal
 	
 	public CompletionTest_FunctionReference_Prefix(String name) {
 		super(name);
+		// see https://bugs.eclipse.org/bugs/show_bug.cgi?id=109724
+		setExpectFailure(109724);
 	}
 	
 	public static Test suite() {
 		TestSuite suite= new TestSuite(CompletionTest_FunctionReference_Prefix.class.getName());
 		suite.addTest(new CompletionTest_FunctionReference_Prefix("testCompletionProposals"));
 		return suite;
-	}		
+	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.codeassist.tests.CompletionProposalsTest#getCompletionPosition()
 	 */

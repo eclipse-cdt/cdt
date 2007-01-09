@@ -71,6 +71,7 @@ import org.eclipse.rse.files.ui.resources.SystemIFileProperties;
 import org.eclipse.rse.files.ui.resources.SystemRemoteEditManager;
 import org.eclipse.rse.files.ui.resources.UniversalFileTransferUtility;
 import org.eclipse.rse.filters.SystemFilterReference;
+import org.eclipse.rse.internal.subsystems.files.core.ISystemFilePreferencesConstants;
 import org.eclipse.rse.model.ISystemRegistryUI;
 import org.eclipse.rse.model.ISystemResourceChangeEvents;
 import org.eclipse.rse.model.SystemRegistry;
@@ -103,7 +104,6 @@ import org.eclipse.rse.subsystems.files.core.util.ValidatorFileUniqueName;
 import org.eclipse.rse.ui.ISystemContextMenuConstants;
 import org.eclipse.rse.ui.ISystemIconConstants;
 import org.eclipse.rse.ui.ISystemMessages;
-import org.eclipse.rse.ui.ISystemPreferencesConstants;
 import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemMenuManager;
 import org.eclipse.rse.ui.SystemResources;
@@ -1415,7 +1415,7 @@ public class SystemViewRemoteFileAdapter
 	{
 	
 		boolean supportsSearch = ((IRemoteFileSubSystemConfiguration)set.getSubSystem().getSubSystemConfiguration()).supportsSearch();
-		boolean doSuperTransferProperty = RSEUIPlugin.getDefault().getPreferenceStore().getBoolean(ISystemPreferencesConstants.DOSUPERTRANSFER);
+		boolean doSuperTransferProperty = RSEUIPlugin.getDefault().getPreferenceStore().getBoolean(ISystemFilePreferencesConstants.DOSUPERTRANSFER);
 		if (!doSuperTransferProperty && supportsSearch)
 		{
 			SystemRemoteResourceSet flatSet = new SystemRemoteResourceSet(set.getSubSystem(), set.getAdapter());
@@ -1717,7 +1717,7 @@ public class SystemViewRemoteFileAdapter
 			{
 				if (fromSet instanceof SystemWorkspaceResourceSet)
 				{		
-					boolean doSuperTransferProperty = RSEUIPlugin.getDefault().getPreferenceStore().getBoolean(ISystemPreferencesConstants.DOSUPERTRANSFER);
+					boolean doSuperTransferProperty = RSEUIPlugin.getDefault().getPreferenceStore().getBoolean(ISystemFilePreferencesConstants.DOSUPERTRANSFER);
 					if (!doSuperTransferProperty)
 					{
 						SystemWorkspaceResourceSet flatFromSet = new SystemWorkspaceResourceSet();

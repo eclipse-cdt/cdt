@@ -37,8 +37,8 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.rse.core.SystemBasePlugin;
 import org.eclipse.rse.core.subsystems.ISubSystem;
+import org.eclipse.rse.internal.subsystems.files.core.ISystemFilePreferencesConstants;
 import org.eclipse.rse.services.clientserver.SystemEncodingUtil;
-import org.eclipse.rse.ui.ISystemPreferencesConstants;
 import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.view.ISystemEditableRemoteObject;
 import org.eclipse.rse.ui.view.ISystemRemoteElementAdapter;
@@ -664,14 +664,14 @@ public class SystemRemoteEditManager
 	{
 
 		IPreferenceStore store = RSEUIPlugin.getDefault().getPreferenceStore();
-		boolean enableMaxSize = store.getBoolean(ISystemPreferencesConstants.LIMIT_CACHE);
+		boolean enableMaxSize = store.getBoolean(ISystemFilePreferencesConstants.LIMIT_CACHE);
 		if (enableMaxSize)
 		{	
-			int max = Integer.parseInt(ISystemPreferencesConstants.DEFAULT_MAX_CACHE_SIZE) * 1000000;
+			int max = Integer.parseInt(ISystemFilePreferencesConstants.DEFAULT_MAX_CACHE_SIZE) * 1000000;
 			
 			// get the cache limit
 			try {
-				String maxSize = store.getString(ISystemPreferencesConstants.MAX_CACHE_SIZE);
+				String maxSize = store.getString(ISystemFilePreferencesConstants.MAX_CACHE_SIZE);
 				
 				if (maxSize != null && !maxSize.equals("")) { //$NON-NLS-1$
 					max = Integer.parseInt(maxSize) * 1000000;
@@ -679,7 +679,7 @@ public class SystemRemoteEditManager
 			}
 			catch (NumberFormatException nfe) {
 				SystemBasePlugin.logError("Could not get max cache size", nfe); //$NON-NLS-1$
-				max = Integer.parseInt(ISystemPreferencesConstants.DEFAULT_MAX_CACHE_SIZE) * 1000000;
+				max = Integer.parseInt(ISystemFilePreferencesConstants.DEFAULT_MAX_CACHE_SIZE) * 1000000;
 			}
 			
 			try {

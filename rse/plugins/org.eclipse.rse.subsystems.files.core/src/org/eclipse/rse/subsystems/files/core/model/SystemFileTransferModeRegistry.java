@@ -30,9 +30,9 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.rse.core.SystemBasePlugin;
 import org.eclipse.rse.core.SystemSorter;
+import org.eclipse.rse.internal.subsystems.files.core.ISystemFilePreferencesConstants;
 import org.eclipse.rse.services.clientserver.SystemEncodingUtil;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile;
-import org.eclipse.rse.ui.ISystemPreferencesConstants;
 import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.ui.IEditorRegistry;
 import org.eclipse.ui.IFileEditorMapping;
@@ -354,7 +354,7 @@ public class SystemFileTransferModeRegistry
 	public static int getFileTransferModeDefaultPreference() 
 	{
 		IPreferenceStore store= RSEUIPlugin.getDefault().getPreferenceStore();
-		return store.getInt(ISystemPreferencesConstants.FILETRANSFERMODEDEFAULT);
+		return store.getInt(ISystemFilePreferencesConstants.FILETRANSFERMODEDEFAULT);
 	}
 	
 	/**
@@ -465,11 +465,11 @@ public class SystemFileTransferModeRegistry
 		// default	
 		int defaultFileTransferMode = getFileTransferModeDefaultPreference();
 	
-		if (defaultFileTransferMode == ISystemPreferencesConstants.FILETRANSFERMODE_BINARY)
+		if (defaultFileTransferMode == ISystemFilePreferencesConstants.FILETRANSFERMODE_BINARY)
 		{
 			mapping.setAsBinary();
 		}
-		else if (defaultFileTransferMode == ISystemPreferencesConstants.FILETRANSFERMODE_TEXT)
+		else if (defaultFileTransferMode == ISystemFilePreferencesConstants.FILETRANSFERMODE_TEXT)
 		{
 			mapping.setAsText();
 		}

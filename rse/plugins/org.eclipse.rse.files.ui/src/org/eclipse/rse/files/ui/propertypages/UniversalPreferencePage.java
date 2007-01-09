@@ -30,13 +30,13 @@ import org.eclipse.jface.viewers.ColumnWeightData;
 import org.eclipse.jface.viewers.TableLayout;
 import org.eclipse.jface.window.Window;
 import org.eclipse.rse.files.ui.FileResources;
+import org.eclipse.rse.internal.subsystems.files.core.ISystemFilePreferencesConstants;
 import org.eclipse.rse.services.clientserver.archiveutils.ArchiveHandlerManager;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.services.clientserver.messages.SystemMessageFile;
 import org.eclipse.rse.subsystems.files.core.model.SystemFileTransferModeMapping;
 import org.eclipse.rse.subsystems.files.core.model.SystemFileTransferModeRegistry;
 import org.eclipse.rse.ui.ISystemMessages;
-import org.eclipse.rse.ui.ISystemPreferencesConstants;
 import org.eclipse.rse.ui.Mnemonics;
 import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemWidgetHelpers;
@@ -264,16 +264,25 @@ public class UniversalPreferencePage
 		// Add the boolean field editor for users to choose whether
 		// hidden files should be displayed
 		BooleanFieldEditor showHiddenEditor = new BooleanFieldEditor(
-			ISystemPreferencesConstants.SHOWHIDDEN,
+			ISystemFilePreferencesConstants.SHOWHIDDEN,
 			FileResources.RESID_PREF_UNIVERSAL_SHOWHIDDEN_LABEL,
 			groupComponent);
 			
 		addField(showHiddenEditor);
 		
+
+		
 		IPreferenceStore store= RSEUIPlugin.getDefault().getPreferenceStore();
 		
+		// field to indicate whether or not to preserve timestamps during copy
+		BooleanFieldEditor preserveTimestamps = new BooleanFieldEditor(
+				ISystemFilePreferencesConstants.PRESERVETIMESTAMPS, 
+				FileResources.RESID_PREF_UNIVERSAL_PRESERVE_TIMESTAMPS_LABEL,
+				parent);
+		addField(preserveTimestamps);
+		
+		store.setDefault(ISystemFilePreferencesConstants.PRESERVETIMESTAMPS, true);
 		// download and upload buffer size
-	
 		Group transferGroup = new Group(parent, SWT.NULL);
 		transferGroup.setText(FileResources.RESID_FILES_PREFERENCES_BUFFER);
 		
@@ -349,11 +358,11 @@ public class UniversalPreferencePage
 		boolean doSuperTransfer = getDoSuperTransfer();
 		doSuperTransferButton.setSelection(doSuperTransfer);
 		
-		String initialArchiveType = store.getString(ISystemPreferencesConstants.SUPERTRANSFER_ARC_TYPE);
+		String initialArchiveType = store.getString(ISystemFilePreferencesConstants.SUPERTRANSFER_ARC_TYPE);
 		if (initialArchiveType == null ||
 				!ArchiveHandlerManager.getInstance().isRegisteredArchive("test." + initialArchiveType)) //$NON-NLS-1$
 		{
-			initialArchiveType = ISystemPreferencesConstants.DEFAULT_SUPERTRANSFER_ARCHIVE_TYPE;
+			initialArchiveType = ISystemFilePreferencesConstants.DEFAULT_SUPERTRANSFER_ARCHIVE_TYPE;
 		}
 		archiveTypeCombo.setText(initialArchiveType);
 		archiveTypeCombo.setTextLimit(6);
@@ -390,11 +399,12 @@ public class UniversalPreferencePage
 
 	public static void initDefaults(IPreferenceStore store) 
 	{
-		store.setDefault(ISystemPreferencesConstants.SHOWHIDDEN, false);
-		store.setDefault(ISystemPreferencesConstants.DOSUPERTRANSFER, ISystemPreferencesConstants.DEFAULT_DOSUPERTRANSFER);
-		store.setDefault(ISystemPreferencesConstants.SUPERTRANSFER_ARC_TYPE, ISystemPreferencesConstants.DEFAULT_SUPERTRANSFER_ARCHIVE_TYPE);
-		store.setDefault(ISystemPreferencesConstants.DOWNLOAD_BUFFER_SIZE, ISystemPreferencesConstants.DEFAULT_DOWNLOAD_BUFFER_SIZE);
-		store.setDefault(ISystemPreferencesConstants.UPLOAD_BUFFER_SIZE, ISystemPreferencesConstants.DEFAULT_DOWNLOAD_BUFFER_SIZE);
+		store.setDefault(ISystemFilePreferencesConstants.SHOWHIDDEN, false);
+		store.setDefault(ISystemFilePreferencesConstants.PRESERVETIMESTAMPS, ISystemFilePreferencesConstants.DEFAULT_PRESERVETIMESTAMPS);
+		store.setDefault(ISystemFilePreferencesConstants.DOSUPERTRANSFER, ISystemFilePreferencesConstants.DEFAULT_DOSUPERTRANSFER);
+		store.setDefault(ISystemFilePreferencesConstants.SUPERTRANSFER_ARC_TYPE, ISystemFilePreferencesConstants.DEFAULT_SUPERTRANSFER_ARCHIVE_TYPE);
+		store.setDefault(ISystemFilePreferencesConstants.DOWNLOAD_BUFFER_SIZE, ISystemFilePreferencesConstants.DEFAULT_DOWNLOAD_BUFFER_SIZE);
+		store.setDefault(ISystemFilePreferencesConstants.UPLOAD_BUFFER_SIZE, ISystemFilePreferencesConstants.DEFAULT_DOWNLOAD_BUFFER_SIZE);
 	}
 
 	
@@ -427,11 +437,11 @@ public class UniversalPreferencePage
 		}
 		
 		int defaultFileTransferMode = getFileTransferModeDefaultPreference();
-		if (defaultFileTransferMode == ISystemPreferencesConstants.FILETRANSFERMODE_BINARY)
+		if (defaultFileTransferMode == ISystemFilePreferencesConstants.FILETRANSFERMODE_BINARY)
 		{		
 			defaultBinaryButton.setSelection(true);
 		}
-		else if (defaultFileTransferMode == ISystemPreferencesConstants.FILETRANSFERMODE_TEXT)
+		else if (defaultFileTransferMode == ISystemFilePreferencesConstants.FILETRANSFERMODE_TEXT)
 		{		
 			defaultTextButton.setSelection(true);
 		}
@@ -457,8 +467,8 @@ public class UniversalPreferencePage
 		resourceTypeTable.setRedraw(true);
 
 		int defaultFileTransferMode = getFileTransferModeDefaultPreference();
-		defaultBinaryButton.setSelection(defaultFileTransferMode == ISystemPreferencesConstants.FILETRANSFERMODE_BINARY);
-		defaultTextButton.setSelection(defaultFileTransferMode == ISystemPreferencesConstants.FILETRANSFERMODE_TEXT);
+		defaultBinaryButton.setSelection(defaultFileTransferMode == ISystemFilePreferencesConstants.FILETRANSFERMODE_BINARY);
+		defaultTextButton.setSelection(defaultFileTransferMode == ISystemFilePreferencesConstants.FILETRANSFERMODE_TEXT);
 		
 		if (resourceTypeTable.getItemCount() > 0) 
 		{
@@ -472,16 +482,16 @@ public class UniversalPreferencePage
 	
 	protected void resetSuperTransferPrefs()
 	{
-		archiveTypeCombo.setText(ISystemPreferencesConstants.DEFAULT_SUPERTRANSFER_ARCHIVE_TYPE);
-		setSuperTransferTypePreference(ISystemPreferencesConstants.DEFAULT_SUPERTRANSFER_ARCHIVE_TYPE);
-		doSuperTransferButton.setSelection(ISystemPreferencesConstants.DEFAULT_DOSUPERTRANSFER);
-		setDoSuperTransfer(ISystemPreferencesConstants.DEFAULT_DOSUPERTRANSFER);
+		archiveTypeCombo.setText(ISystemFilePreferencesConstants.DEFAULT_SUPERTRANSFER_ARCHIVE_TYPE);
+		setSuperTransferTypePreference(ISystemFilePreferencesConstants.DEFAULT_SUPERTRANSFER_ARCHIVE_TYPE);
+		doSuperTransferButton.setSelection(ISystemFilePreferencesConstants.DEFAULT_DOSUPERTRANSFER);
+		setDoSuperTransfer(ISystemFilePreferencesConstants.DEFAULT_DOSUPERTRANSFER);
 	}
 	
 	protected void resetBufferSizePrefs()
 	{
-	    downloadBufferSize.setText(ISystemPreferencesConstants.DEFAULT_DOWNLOAD_BUFFER_SIZE + ""); //$NON-NLS-1$
-	    uploadBufferSize.setText(ISystemPreferencesConstants.DEFAULT_DOWNLOAD_BUFFER_SIZE + ""); //$NON-NLS-1$
+	    downloadBufferSize.setText(ISystemFilePreferencesConstants.DEFAULT_DOWNLOAD_BUFFER_SIZE + ""); //$NON-NLS-1$
+	    uploadBufferSize.setText(ISystemFilePreferencesConstants.DEFAULT_DOWNLOAD_BUFFER_SIZE + ""); //$NON-NLS-1$
 	}
 	
 	/**
@@ -755,6 +765,8 @@ public class UniversalPreferencePage
 	protected void performDefaults() 
 	{
 		super.performDefaults();	
+		
+		
 		resetResourceTypeTable();
 
 		resetSuperTransferPrefs();
@@ -792,14 +804,14 @@ public class UniversalPreferencePage
 			((EditorRegistry)editorRegistry).saveAssociations();
 			
 			// editorRegistry.removePropertyListener(this);
-			int defaultFileTransferMode = ISystemPreferencesConstants.FILETRANSFERMODE_BINARY;
+			int defaultFileTransferMode = ISystemFilePreferencesConstants.FILETRANSFERMODE_BINARY;
 			if (defaultBinaryButton.getSelection())
 			{
-				defaultFileTransferMode = ISystemPreferencesConstants.FILETRANSFERMODE_BINARY;
+				defaultFileTransferMode = ISystemFilePreferencesConstants.FILETRANSFERMODE_BINARY;
 			}
 			else
 			{
-				defaultFileTransferMode = ISystemPreferencesConstants.FILETRANSFERMODE_TEXT;			
+				defaultFileTransferMode = ISystemFilePreferencesConstants.FILETRANSFERMODE_TEXT;			
 			}
 			setFileTransferModeDefaultPreference(defaultFileTransferMode);
 			setDoSuperTransfer(doSuperTransferButton.getSelection());
@@ -817,7 +829,7 @@ public class UniversalPreferencePage
 	public static int getFileTransferModeDefaultPreference() 
 	{
 		IPreferenceStore store= RSEUIPlugin.getDefault().getPreferenceStore();
-		return store.getInt(ISystemPreferencesConstants.FILETRANSFERMODEDEFAULT);
+		return store.getInt(ISystemFilePreferencesConstants.FILETRANSFERMODEDEFAULT);
 	}
 	/**
 	 * Set the default file transfer mode to use for unspecified file types
@@ -825,7 +837,7 @@ public class UniversalPreferencePage
 	public static void setFileTransferModeDefaultPreference(int defaultMode) 
 	{
 		IPreferenceStore store= RSEUIPlugin.getDefault().getPreferenceStore();
-		store.setValue(ISystemPreferencesConstants.FILETRANSFERMODEDEFAULT,defaultMode);
+		store.setValue(ISystemFilePreferencesConstants.FILETRANSFERMODEDEFAULT,defaultMode);
 		savePreferenceStore();
 	}	
 	
@@ -835,7 +847,7 @@ public class UniversalPreferencePage
 	public static String getSuperTransferTypePreference() 
 	{
 		IPreferenceStore store= RSEUIPlugin.getDefault().getPreferenceStore();
-		return store.getString(ISystemPreferencesConstants.SUPERTRANSFER_ARC_TYPE);
+		return store.getString(ISystemFilePreferencesConstants.SUPERTRANSFER_ARC_TYPE);
 	}
 	/**
 	 * Set the default as to whether or not to compress directories before remote transfer
@@ -843,23 +855,23 @@ public class UniversalPreferencePage
 	public static void setSuperTransferTypePreference(String type) 
 	{
 		IPreferenceStore store= RSEUIPlugin.getDefault().getPreferenceStore();
-		store.setValue(ISystemPreferencesConstants.SUPERTRANSFER_ARC_TYPE,type);
+		store.setValue(ISystemFilePreferencesConstants.SUPERTRANSFER_ARC_TYPE,type);
 		savePreferenceStore();
 	}	
 	
 	public static boolean getDoSuperTransfer() 
 	{
 		IPreferenceStore store= RSEUIPlugin.getDefault().getPreferenceStore();
-		return store.getBoolean(ISystemPreferencesConstants.DOSUPERTRANSFER);
+		return store.getBoolean(ISystemFilePreferencesConstants.DOSUPERTRANSFER);
 	}
 	
 	public static int getDownloadBufferSize()
 	{
 		IPreferenceStore store= RSEUIPlugin.getDefault().getPreferenceStore();
-		int result = store.getInt(ISystemPreferencesConstants.DOWNLOAD_BUFFER_SIZE);
+		int result = store.getInt(ISystemFilePreferencesConstants.DOWNLOAD_BUFFER_SIZE);
 		if (result == 0)
 		{
-		    result = ISystemPreferencesConstants.DEFAULT_DOWNLOAD_BUFFER_SIZE;
+		    result = ISystemFilePreferencesConstants.DEFAULT_DOWNLOAD_BUFFER_SIZE;
 		}
 		return result;
 	}
@@ -867,10 +879,10 @@ public class UniversalPreferencePage
 	public static int getUploadBufferSize()
 	{
 		IPreferenceStore store= RSEUIPlugin.getDefault().getPreferenceStore();
-		int result = store.getInt(ISystemPreferencesConstants.UPLOAD_BUFFER_SIZE);
+		int result = store.getInt(ISystemFilePreferencesConstants.UPLOAD_BUFFER_SIZE);
 		if (result == 0)
 		{
-		    result = ISystemPreferencesConstants.DEFAULT_DOWNLOAD_BUFFER_SIZE;
+		    result = ISystemFilePreferencesConstants.DEFAULT_DOWNLOAD_BUFFER_SIZE;
 		}
 		return result;
 	}
@@ -878,7 +890,7 @@ public class UniversalPreferencePage
 	public static void setDoSuperTransfer(boolean flag)
 	{
 		IPreferenceStore store= RSEUIPlugin.getDefault().getPreferenceStore();
-		store.setValue(ISystemPreferencesConstants.DOSUPERTRANSFER,flag);
+		store.setValue(ISystemFilePreferencesConstants.DOSUPERTRANSFER,flag);
 		savePreferenceStore();
 	}
 	
@@ -897,7 +909,7 @@ public class UniversalPreferencePage
 	    if (size > 0)
 	    {
 	        IPreferenceStore store = RSEUIPlugin.getDefault().getPreferenceStore();
-	    	store.setValue(ISystemPreferencesConstants.DOWNLOAD_BUFFER_SIZE, size);
+	    	store.setValue(ISystemFilePreferencesConstants.DOWNLOAD_BUFFER_SIZE, size);
 	    	savePreferenceStore();
 	    }
 	}
@@ -907,7 +919,7 @@ public class UniversalPreferencePage
 	    if (size > 0)
 	    {
 	        IPreferenceStore store = RSEUIPlugin.getDefault().getPreferenceStore();
-	    	store.setValue(ISystemPreferencesConstants.UPLOAD_BUFFER_SIZE, size);
+	    	store.setValue(ISystemFilePreferencesConstants.UPLOAD_BUFFER_SIZE, size);
 	    	savePreferenceStore();
 	    }
 	}

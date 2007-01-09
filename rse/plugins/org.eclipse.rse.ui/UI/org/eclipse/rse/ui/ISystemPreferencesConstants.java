@@ -35,24 +35,16 @@ public interface ISystemPreferencesConstants
     public static final String ORDER_CONNECTIONS       = ROOT + "order.connections"; //$NON-NLS-1$
     public static final String HISTORY_FOLDER          = ROOT + "history.folder"; //$NON-NLS-1$
     public static final String HISTORY_QUALIFIED_FOLDER= ROOT + "history.qualified.folder"; //$NON-NLS-1$
-    public static final String SHOWHIDDEN              = ROOT + "showhidden"; //$NON-NLS-1$
     public static final String SHOWNEWCONNECTIONPROMPT = ROOT + "shownewconnection"; //$NON-NLS-1$
     public static final String REMEMBER_STATE          = ROOT + "rememberState";     //$NON-NLS-1$
     public static final String USE_DEFERRED_QUERIES    = ROOT + "useDeferredQueries";   //$NON-NLS-1$
 	public static final String RESTORE_STATE_FROM_CACHE = ROOT + "restoreStateFromCache"; //$NON-NLS-1$
     public static final String CASCADE_UDAS_BYPROFILE  = ROOT + "uda.cascade";     //$NON-NLS-1$
-    public static final String FILETRANSFERMODEDEFAULT = ROOT + "filetransfermodedefault"; //$NON-NLS-1$
+
 	public static final String DAEMON_AUTOSTART 	   = ROOT + "daemon.autostart"; //$NON-NLS-1$
 	public static final String DAEMON_PORT 			   = ROOT + "daemon.port"; //$NON-NLS-1$
 
-	public static final String LIMIT_CACHE             = ROOT + "limit.cache"; //$NON-NLS-1$
-	public static final String MAX_CACHE_SIZE          = ROOT + "max.cache.size"; //$NON-NLS-1$
 
-    public static final String DOSUPERTRANSFER		   = ROOT + "dosupertransfer"; //$NON-NLS-1$
-    public static final String SUPERTRANSFER_ARC_TYPE  = ROOT + "supertransfer.archivetype"; //$NON-NLS-1$
-    
-    public static final String DOWNLOAD_BUFFER_SIZE    = ROOT + "download.buffer.size"; //$NON-NLS-1$
-    public static final String UPLOAD_BUFFER_SIZE      = ROOT + "upload.buffer.size"; //$NON-NLS-1$
     
     public static final String VERIFY_CONNECTION       = ROOT + "verify.connection"; //$NON-NLS-1$
     
@@ -69,29 +61,21 @@ public interface ISystemPreferencesConstants
     
     public static final String  DEFAULT_ORDER_CONNECTIONS        = "";     //$NON-NLS-1$
     public static final String  DEFAULT_HISTORY_FOLDER           = ""; //$NON-NLS-1$
-    public static final boolean DEFAULT_SHOW_HIDDEN              = true;
+
     public static final boolean DEFAULT_SHOWNEWCONNECTIONPROMPT  = false;
     public static final boolean DEFAULT_REMEMBER_STATE           = true; // changed in R2. Phil
 	public static final boolean DEFAULT_RESTORE_STATE_FROM_CACHE = true; // yantzi: artemis 6.0      
     public static final boolean DEFAULT_CASCADE_UDAS_BYPROFILE   = false;
-    public static final int     DEFAULT_FILETRANSFERMODE         = 0;
     public static final boolean DEFAULT_USE_DEFERRED_QUERIES     = true;
     
     public static final String DEFAULT_TEAMPROFILE    = "Team"; //$NON-NLS-1$
 
-	public static final int FILETRANSFERMODE_BINARY 			= 0;
-	public static final int FILETRANSFERMODE_TEXT 				= 1;
 
 	public static final boolean DEFAULT_DAEMON_AUTOSTART		= false;
 	public static final int     DEFAULT_DAEMON_PORT				= 4300;   
 	
-	public static final boolean DEFAULT_LIMIT_CACHE             = false;
-	public static final String  DEFAULT_MAX_CACHE_SIZE          = "512"; //$NON-NLS-1$
+
 	
-	public static final String DEFAULT_SUPERTRANSFER_ARCHIVE_TYPE 	= "zip"; //$NON-NLS-1$
-	public static final boolean DEFAULT_DOSUPERTRANSFER 			= true;
-	
-	public static final int DEFAULT_DOWNLOAD_BUFFER_SIZE        = 40;
 	
     public static final boolean DEFAULT_VERIFY_CONNECTION = true;	
     

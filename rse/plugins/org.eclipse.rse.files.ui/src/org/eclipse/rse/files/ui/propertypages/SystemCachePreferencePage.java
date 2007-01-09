@@ -38,10 +38,10 @@ import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.files.ui.FileResources;
 import org.eclipse.rse.files.ui.resources.SystemIFileProperties;
 import org.eclipse.rse.files.ui.resources.SystemRemoteEditManager;
+import org.eclipse.rse.internal.subsystems.files.core.ISystemFilePreferencesConstants;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.ui.GenericMessages;
 import org.eclipse.rse.ui.ISystemMessages;
-import org.eclipse.rse.ui.ISystemPreferencesConstants;
 import org.eclipse.rse.ui.Mnemonics;
 import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemWidgetHelpers;
@@ -188,13 +188,13 @@ public class SystemCachePreferencePage extends PreferencePage implements IWorkbe
 	private void initControls()
 	{
 		IPreferenceStore store = RSEUIPlugin.getDefault().getPreferenceStore();
-		boolean enableMaxSize = store.getBoolean(ISystemPreferencesConstants.LIMIT_CACHE);
+		boolean enableMaxSize = store.getBoolean(ISystemFilePreferencesConstants.LIMIT_CACHE);
 		_maxCacheSize.setEnabled(enableMaxSize);
 		
-		String maxCacheSizeStr = store.getString(ISystemPreferencesConstants.MAX_CACHE_SIZE);
+		String maxCacheSizeStr = store.getString(ISystemFilePreferencesConstants.MAX_CACHE_SIZE);
 		
 		if (maxCacheSizeStr == null || maxCacheSizeStr.equals("")) { //$NON-NLS-1$
-			maxCacheSizeStr = ISystemPreferencesConstants.DEFAULT_MAX_CACHE_SIZE;
+			maxCacheSizeStr = ISystemFilePreferencesConstants.DEFAULT_MAX_CACHE_SIZE;
 		}
 		
 		_maxCacheSize.setText(maxCacheSizeStr);
@@ -218,11 +218,11 @@ public class SystemCachePreferencePage extends PreferencePage implements IWorkbe
 
 		IPreferenceStore store = RSEUIPlugin.getDefault().getPreferenceStore();
 
-		boolean enableMaxSize = store.getDefaultBoolean(ISystemPreferencesConstants.LIMIT_CACHE);
+		boolean enableMaxSize = store.getDefaultBoolean(ISystemFilePreferencesConstants.LIMIT_CACHE);
 		_maxCacheCheckbox.setSelection(enableMaxSize);
 
 		_maxCacheSize.setEnabled(enableMaxSize);
-		_maxCacheSize.setText(store.getDefaultString(ISystemPreferencesConstants.MAX_CACHE_SIZE));
+		_maxCacheSize.setText(store.getDefaultString(ISystemFilePreferencesConstants.MAX_CACHE_SIZE));
 	}
 
 	/**
@@ -232,8 +232,8 @@ public class SystemCachePreferencePage extends PreferencePage implements IWorkbe
 	 */
 	public static void initDefaults(IPreferenceStore store)
 	{
-		store.setDefault(ISystemPreferencesConstants.LIMIT_CACHE, ISystemPreferencesConstants.DEFAULT_LIMIT_CACHE);
-		store.setDefault(ISystemPreferencesConstants.MAX_CACHE_SIZE, ISystemPreferencesConstants.DEFAULT_MAX_CACHE_SIZE);
+		store.setDefault(ISystemFilePreferencesConstants.LIMIT_CACHE, ISystemFilePreferencesConstants.DEFAULT_LIMIT_CACHE);
+		store.setDefault(ISystemFilePreferencesConstants.MAX_CACHE_SIZE, ISystemFilePreferencesConstants.DEFAULT_MAX_CACHE_SIZE);
 	}
 
 	/**
@@ -245,11 +245,11 @@ public class SystemCachePreferencePage extends PreferencePage implements IWorkbe
 		String size = _maxCacheSize.getText();
 		
 		if (size == null || size.trim().equals("")) { //$NON-NLS-1$
-			size = ISystemPreferencesConstants.DEFAULT_MAX_CACHE_SIZE;
+			size = ISystemFilePreferencesConstants.DEFAULT_MAX_CACHE_SIZE;
 		}
 
-		store.setValue(ISystemPreferencesConstants.MAX_CACHE_SIZE, size);
-		store.setValue(ISystemPreferencesConstants.LIMIT_CACHE, _maxCacheCheckbox.getSelection());
+		store.setValue(ISystemFilePreferencesConstants.MAX_CACHE_SIZE, size);
+		store.setValue(ISystemFilePreferencesConstants.LIMIT_CACHE, _maxCacheCheckbox.getSelection());
 
 		return super.performOk();
 	}

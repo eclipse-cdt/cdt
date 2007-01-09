@@ -147,12 +147,12 @@ public interface ISystemFileConstants
     // -------------------------------
     // Enter or select file form
     // -------------------------------
-	public static final String RESID_ENTER_OR_SELECT_FILE_PREFIX = RESID_PREFIX + "EnterOrSelectFile.";
-	public static final String RESID_ENTER_OR_SELECT_FILE_TITLE = RESID_ENTER_OR_SELECT_FILE_PREFIX + "title";
-	public static final String RESID_ENTER_OR_SELECT_FILE_VERBIAGE_LABEL = RESID_ENTER_OR_SELECT_FILE_PREFIX + "verbiage.label";
-	public static final String RESID_ENTER_OR_SELECT_FILE_ENTER_LABEL = RESID_ENTER_OR_SELECT_FILE_PREFIX + "enter.label";
-	public static final String RESID_ENTER_OR_SELECT_FILE_ENTER_TOOLTIP = RESID_ENTER_OR_SELECT_FILE_PREFIX + "enter.tooltip";
-	public static final String RESID_ENTER_OR_SELECT_FILE_SELECT_TOOLTIP = RESID_ENTER_OR_SELECT_FILE_PREFIX + "select.tooltip";
-	public static final String RESID_ENTER_OR_SELECT_FILE_FILE_LABEL = RESID_ENTER_OR_SELECT_FILE_PREFIX + "file.label";
-	public static final String RESID_ENTER_OR_SELECT_FILE_FILE_TOOLTIP = RESID_ENTER_OR_SELECT_FILE_PREFIX + "file.tooltip";
+	public static final String RESID_ENTER_OR_SELECT_FILE_PREFIX = RESID_PREFIX + "EnterOrSelectFile."; //$NON-NLS-1$
+	public static final String RESID_ENTER_OR_SELECT_FILE_TITLE = RESID_ENTER_OR_SELECT_FILE_PREFIX + "title"; //$NON-NLS-1$
+	public static final String RESID_ENTER_OR_SELECT_FILE_VERBIAGE_LABEL = RESID_ENTER_OR_SELECT_FILE_PREFIX + "verbiage.label"; //$NON-NLS-1$
+	public static final String RESID_ENTER_OR_SELECT_FILE_ENTER_LABEL = RESID_ENTER_OR_SELECT_FILE_PREFIX + "enter.label"; //$NON-NLS-1$
+	public static final String RESID_ENTER_OR_SELECT_FILE_ENTER_TOOLTIP = RESID_ENTER_OR_SELECT_FILE_PREFIX + "enter.tooltip"; //$NON-NLS-1$
+	public static final String RESID_ENTER_OR_SELECT_FILE_SELECT_TOOLTIP = RESID_ENTER_OR_SELECT_FILE_PREFIX + "select.tooltip"; //$NON-NLS-1$
+	public static final String RESID_ENTER_OR_SELECT_FILE_FILE_LABEL = RESID_ENTER_OR_SELECT_FILE_PREFIX + "file.label"; //$NON-NLS-1$
+	public static final String RESID_ENTER_OR_SELECT_FILE_FILE_TOOLTIP = RESID_ENTER_OR_SELECT_FILE_PREFIX + "file.tooltip"; //$NON-NLS-1$
 }

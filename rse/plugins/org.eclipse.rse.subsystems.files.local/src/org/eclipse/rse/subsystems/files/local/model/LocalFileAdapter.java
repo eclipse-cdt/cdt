@@ -19,6 +19,7 @@ package org.eclipse.rse.subsystems.files.local.model;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.rse.internal.subsystems.files.core.ISystemFilePreferencesConstants;
 import org.eclipse.rse.services.files.IHostFile;
 import org.eclipse.rse.services.local.files.LocalHostFile;
 import org.eclipse.rse.services.local.files.LocalVirtualHostFile;
@@ -26,7 +27,6 @@ import org.eclipse.rse.subsystems.files.core.servicesubsystem.FileServiceSubSyst
 import org.eclipse.rse.subsystems.files.core.subsystems.IHostFileToRemoteFileAdapter;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFileContext;
-import org.eclipse.rse.ui.ISystemPreferencesConstants;
 import org.eclipse.rse.ui.RSEUIPlugin;
 
 
@@ -38,7 +38,7 @@ public class LocalFileAdapter implements IHostFileToRemoteFileAdapter
 	public IRemoteFile[] convertToRemoteFiles(FileServiceSubSystem ss, IRemoteFileContext context, IRemoteFile parent, IHostFile[] nodes) 
 	{
 		if (nodes == null) return null;
-		boolean showHidden = RSEUIPlugin.getDefault().getPreferenceStore().getBoolean(ISystemPreferencesConstants.SHOWHIDDEN);
+		boolean showHidden = RSEUIPlugin.getDefault().getPreferenceStore().getBoolean(ISystemFilePreferencesConstants.SHOWHIDDEN);
 		
 		List results = new ArrayList();
 		for (int i = 0; i < nodes.length; i++) 

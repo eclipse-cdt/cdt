@@ -48,6 +48,7 @@ import org.eclipse.rse.core.model.SystemWorkspaceResourceSet;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.files.ui.Activator;
 import org.eclipse.rse.files.ui.FileResources;
+import org.eclipse.rse.internal.subsystems.files.core.ISystemFilePreferencesConstants;
 import org.eclipse.rse.model.SystemRemoteResourceSet;
 import org.eclipse.rse.services.clientserver.SystemEncodingUtil;
 import org.eclipse.rse.services.clientserver.archiveutils.ArchiveHandlerManager;
@@ -66,7 +67,6 @@ import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFileSubSystem;
 import org.eclipse.rse.subsystems.files.core.subsystems.IVirtualRemoteFile;
 import org.eclipse.rse.subsystems.files.core.util.ValidatorFileUniqueName;
 import org.eclipse.rse.ui.ISystemMessages;
-import org.eclipse.rse.ui.ISystemPreferencesConstants;
 import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.dialogs.SystemRenameSingleDialog;
 import org.eclipse.rse.ui.messages.SystemMessageDialog;
@@ -313,7 +313,7 @@ public class UniversalFileTransferUtility
 			return null;
 		}
 	
-		boolean doSuperTransferProperty = RSEUIPlugin.getDefault().getPreferenceStore().getBoolean(ISystemPreferencesConstants.DOSUPERTRANSFER);
+		boolean doSuperTransferProperty = RSEUIPlugin.getDefault().getPreferenceStore().getBoolean(ISystemFilePreferencesConstants.DOSUPERTRANSFER);
 
 
 		List set = remoteSet.getResourceSet();
@@ -763,7 +763,7 @@ public class UniversalFileTransferUtility
 		{
 			IResource tempFolder = null;
 			
-			boolean doSuperTransferProperty = RSEUIPlugin.getDefault().getPreferenceStore().getBoolean(ISystemPreferencesConstants.DOSUPERTRANSFER);
+			boolean doSuperTransferProperty = RSEUIPlugin.getDefault().getPreferenceStore().getBoolean(ISystemFilePreferencesConstants.DOSUPERTRANSFER);
 			
 			if (doCompressedTransfer && doSuperTransferProperty && !srcFileOrFolder.isRoot() 
 					&& !(srcFileOrFolder.getParentRemoteFileSubSystem().getHost().getSystemType().equals("Local"))) //$NON-NLS-1$
@@ -903,7 +903,7 @@ public class UniversalFileTransferUtility
 	 */
 	public static SystemRemoteResourceSet copyWorkspaceResourcesToRemote(SystemWorkspaceResourceSet workspaceSet, IRemoteFile targetFolder, IProgressMonitor monitor, boolean checkForCollisions)
 	{	
-		boolean doSuperTransferPreference = RSEUIPlugin.getDefault().getPreferenceStore().getBoolean(ISystemPreferencesConstants.DOSUPERTRANSFER)
+		boolean doSuperTransferPreference = RSEUIPlugin.getDefault().getPreferenceStore().getBoolean(ISystemFilePreferencesConstants.DOSUPERTRANSFER)
 											&& targetFolder.getParentRemoteFileSubSystem().getParentRemoteFileSubSystemConfiguration().supportsArchiveManagement();
  
 		IRemoteFileSubSystem targetFS = targetFolder.getParentRemoteFileSubSystem();
@@ -1032,8 +1032,11 @@ public class UniversalFileTransferUtility
 					newFilePathList.add(newPath);
 					
 					// should check preference first
-					SystemIFileProperties properties = new SystemIFileProperties(srcFileOrFolder);
-					((FileServiceSubSystem)targetFS).getFileService().setLastModified(monitor, newPathBuf.toString(), name, properties.getRemoteFileTimeStamp());
+					if (RSEUIPlugin.getDefault().getPreferenceStore().getBoolean(ISystemFilePreferencesConstants.PRESERVETIMESTAMPS))
+					{
+						SystemIFileProperties properties = new SystemIFileProperties(srcFileOrFolder);
+						((FileServiceSubSystem)targetFS).getFileService().setLastModified(monitor, newPathBuf.toString(), name, properties.getRemoteFileTimeStamp());
+					}
 				}
 			
 				catch (RemoteFileIOException e)
@@ -1229,8 +1232,12 @@ public class UniversalFileTransferUtility
 				IRemoteFile copiedFile = targetFS.getRemoteFileObject(targetFolder, name);
 			
 				// should check preference first
-				SystemIFileProperties properties = new SystemIFileProperties(srcFileOrFolder);
-				targetFS.setLastModified(monitor, copiedFile, properties.getRemoteFileTimeStamp());
+				
+				if (RSEUIPlugin.getDefault().getPreferenceStore().getBoolean(ISystemFilePreferencesConstants.PRESERVETIMESTAMPS))
+				{
+					SystemIFileProperties properties = new SystemIFileProperties(srcFileOrFolder);
+					targetFS.setLastModified(monitor, copiedFile, properties.getRemoteFileTimeStamp());
+				}
 				
 				return copiedFile;
 			}
@@ -1290,7 +1297,7 @@ public class UniversalFileTransferUtility
 				
 				boolean isTargetLocal = newTargetFolder.getParentRemoteFileSubSystem().getHost().getSystemType().equals("Local"); //$NON-NLS-1$
 				boolean destInArchive = (newTargetFolder  instanceof IVirtualRemoteFile) || newTargetFolder.isArchive();
-				boolean doSuperTransferPreference = RSEUIPlugin.getDefault().getPreferenceStore().getBoolean(ISystemPreferencesConstants.DOSUPERTRANSFER);
+				boolean doSuperTransferPreference = RSEUIPlugin.getDefault().getPreferenceStore().getBoolean(ISystemFilePreferencesConstants.DOSUPERTRANSFER);
 				
 				if (doCompressedTransfer && doSuperTransferPreference && !destInArchive && !isTargetLocal)
 				{
@@ -1452,7 +1459,7 @@ public class UniversalFileTransferUtility
 	{
 	
 		IPreferenceStore store= RSEUIPlugin.getDefault().getPreferenceStore();
-		String archiveType = store.getString(ISystemPreferencesConstants.SUPERTRANSFER_ARC_TYPE);
+		String archiveType = store.getString(ISystemFilePreferencesConstants.SUPERTRANSFER_ARC_TYPE);
 		if (archiveType == null || !ArchiveHandlerManager.getInstance().isRegisteredArchive("test." + archiveType)) //$NON-NLS-1$
 		{
 			archiveType = ".zip"; //$NON-NLS-1$

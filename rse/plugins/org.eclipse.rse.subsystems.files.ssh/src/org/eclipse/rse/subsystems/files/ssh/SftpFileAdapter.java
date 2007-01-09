@@ -19,19 +19,19 @@ package org.eclipse.rse.subsystems.files.ssh;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.rse.internal.subsystems.files.core.ISystemFilePreferencesConstants;
 import org.eclipse.rse.services.files.IHostFile;
 import org.eclipse.rse.services.ssh.files.SftpHostFile;
 import org.eclipse.rse.subsystems.files.core.servicesubsystem.FileServiceSubSystem;
 import org.eclipse.rse.subsystems.files.core.subsystems.IHostFileToRemoteFileAdapter;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFileContext;
-import org.eclipse.rse.ui.ISystemPreferencesConstants;
 import org.eclipse.rse.ui.RSEUIPlugin;
 
 public class SftpFileAdapter implements IHostFileToRemoteFileAdapter {
 
 	public IRemoteFile[] convertToRemoteFiles(FileServiceSubSystem ss, IRemoteFileContext context, IRemoteFile parent, IHostFile[] nodes) {
-		boolean showHidden = RSEUIPlugin.getDefault().getPreferenceStore().getBoolean(ISystemPreferencesConstants.SHOWHIDDEN);
+		boolean showHidden = RSEUIPlugin.getDefault().getPreferenceStore().getBoolean(ISystemFilePreferencesConstants.SHOWHIDDEN);
 
 		List results = new ArrayList();
 		if (nodes!=null) {

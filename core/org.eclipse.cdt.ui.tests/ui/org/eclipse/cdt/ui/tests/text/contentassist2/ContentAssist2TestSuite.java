@@ -64,5 +64,7 @@ public class ContentAssist2TestSuite extends TestSuite {
 		addTest(CompletionTest_VariableType_NestedPrefix.suite());
 		addTest(CompletionTest_VariableType_NoPrefix.suite());
 		addTest(CompletionTest_VariableType_Prefix.suite());
+		
+		addTest(CompletionTests.suite());
 	}
 }

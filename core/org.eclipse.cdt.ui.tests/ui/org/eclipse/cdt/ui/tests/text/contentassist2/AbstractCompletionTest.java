@@ -52,10 +52,10 @@ public abstract class AbstractCompletionTest extends BaseUITestCase {
 	private final static Set fgAllKeywords= new HashSet();
 	
 	static {
-		Set cKeywords= ParserFactory.getKeywordSet(KeywordSetKey.KEYWORDS, ParserLanguage.C);
-		Set cppKeywords= ParserFactory.getKeywordSet(KeywordSetKey.KEYWORDS, ParserLanguage.CPP);
-		fgAllKeywords.addAll(cKeywords);
-		fgAllKeywords.addAll(cppKeywords);
+		fgAllKeywords.addAll(ParserFactory.getKeywordSet(KeywordSetKey.KEYWORDS, ParserLanguage.C));
+		fgAllKeywords.addAll(ParserFactory.getKeywordSet(KeywordSetKey.TYPES, ParserLanguage.C));
+		fgAllKeywords.addAll(ParserFactory.getKeywordSet(KeywordSetKey.KEYWORDS, ParserLanguage.CPP));
+		fgAllKeywords.addAll(ParserFactory.getKeywordSet(KeywordSetKey.TYPES, ParserLanguage.CPP));
 	}
 	public AbstractCompletionTest(String name) {
 		super(name);

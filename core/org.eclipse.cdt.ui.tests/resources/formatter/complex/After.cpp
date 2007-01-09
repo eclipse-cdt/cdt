@@ -1,17 +1,28 @@
 
 /* This is sample code to test the formatter */
 
+// comment
 class Complex {
+	// comment
+
+	// comment
+
+	// comment
 private:
+	// comment
 	float re;
 	float im;
 public:
+	// comment
 	Complex(float re, float im) :
-		re(re), im(im) {
+		// comment
+				re(re), im(im) {
 	}
+	// comment
 	float GetRe() {
 		return re;
 	}
+	// comment
 	float GetIm() {
 		return im;
 	}
@@ -24,3 +35,5 @@ public:
 	void SetIm(float i);
 	void Print();
 };
+
+// comment

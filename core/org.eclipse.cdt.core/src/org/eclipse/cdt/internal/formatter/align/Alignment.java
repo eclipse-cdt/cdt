@@ -342,7 +342,7 @@ public class Alignment {
 		}
 		
 		if (this.fragmentBreaks[this.fragmentIndex] == BREAK) {
-			this.scribe.printNewLine();
+			this.scribe.startNewLine();
 		}
 		if (this.fragmentIndentations[this.fragmentIndex] > 0) {
 			this.scribe.indentationLevel = this.fragmentIndentations[this.fragmentIndex];

@@ -39,7 +39,7 @@ public class Scribe {
 	private boolean checkLineWrapping;
 
 	/** one-based column */
-	public int column;
+	public int column= 1;
 
 	// Most specific alignment.
 	public Alignment currentAlignment;
@@ -196,6 +196,7 @@ public class Scribe {
 					}
 				}
 			} else {
+				assert endOffsetOfPreviousEdit < offset;
 				edits[editsIndex++]= new OptimizedReplaceEdit(offset, length, replacement);
 			}
 		} else {
@@ -203,6 +204,12 @@ public class Scribe {
 		}
 	}
 
+	/**
+	 * Add a replace edit.
+	 * @param start  start offset (inclusive)
+	 * @param end  end offset (inclusive)
+	 * @param replacement  the replacement string
+	 */
 	public final void addReplaceEdit(int start, int end, String replacement) {
 		if (edits.length == editsIndex) {
 			// resize
@@ -812,7 +819,7 @@ public class Scribe {
 		needSpace= false;
 		scanner.resetTo(currentTokenEndPosition, scannerEndPosition - 1);
 		if (forceNewLine) {
-			printNewLine();
+			startNewLine();
 		}
 	}
 
@@ -1051,6 +1058,7 @@ public class Scribe {
 		needSpace= false;
 		pendingSpace= false;
 		lastNumberOfNewLines= 0;
+		scanner.resetTo(currentTokenEndPosition, scannerEndPosition - 1);
 		// realign to the proper value
 		if (currentAlignment != null) {
 			if (memberAlignment != null) {
@@ -1066,7 +1074,6 @@ public class Scribe {
 				currentAlignment.performFragmentEffect();
 			}
 		}
-		scanner.resetTo(currentTokenEndPosition, scannerEndPosition - 1);
 	}
 
 	public void printEmptyLines(int linesNumber) {
@@ -1183,6 +1190,11 @@ public class Scribe {
 		}
 	}
 
+	public void startNewLine() {
+		if (column > 1) {
+			printNewLine();
+		}
+	}
 	public void printNewLine() {
 		if (lastNumberOfNewLines >= 1) {
 			column= 1; // ensure that the scribe is at the beginning of a new
@@ -1334,7 +1346,7 @@ public class Scribe {
 					printNewLine(scanner.getCurrentTokenStartPosition());
 				hasWhitespaces= false;
 				printPreprocessorDirective();
-				printNewLine();
+				startNewLine();
 				currentTokenStartPosition= scanner.getCurrentPosition();
 				hasLineComment= false;
 				hasComment= false;

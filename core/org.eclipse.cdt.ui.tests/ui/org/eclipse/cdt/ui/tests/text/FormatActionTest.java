@@ -41,11 +41,11 @@ public class FormatActionTest extends TestCase {
 		}
 	}
 
-	protected static class IndentTestSetup extends TestSetup {
+	protected static class FormatTestSetup extends TestSetup {
 
 		private ICProject fCProject;
 		
-		public IndentTestSetup(Test test) {
+		public FormatTestSetup(Test test) {
 			super(test);
 		}
 		
@@ -66,7 +66,7 @@ public class FormatActionTest extends TestCase {
 	
 	private static final Class THIS= FormatActionTest.class;
 	public static Test suite() {
-		return new IndentTestSetup(new TestSuite(THIS));
+		return new FormatTestSetup(new TestSuite(THIS));
 	}
 
 	private CEditor fEditor;

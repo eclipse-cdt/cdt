@@ -1310,5 +1310,11 @@ public class LocalFileService extends AbstractFileService implements IFileServic
 		return ok;
 	}
 
+	public boolean setLastModified(IProgressMonitor monitor, String parent, String name, long timestamp) 
+	{
+		File file = new File(parent, name);
+		return file.setLastModified(timestamp);
+	}
+
 	
 }

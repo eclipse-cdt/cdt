@@ -752,4 +752,11 @@ public class SftpFileService extends AbstractFileService implements IFileService
 		return true;
 	}
 
+	public boolean setLastModified(IProgressMonitor monitor, String parent,
+			String name, long timestamp) throws SystemMessageException 
+	{
+		// TODO implement this to set the timestamp on the specified file
+		return false;
+	}
+
 }

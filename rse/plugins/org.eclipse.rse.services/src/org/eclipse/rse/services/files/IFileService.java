@@ -264,4 +264,14 @@ public interface IFileService extends IService
 	 * @return true if the file system has case sensitive file names
 	 */
 	public boolean isCaseSensitive();
+	
+	/**
+	 * Sets the last modified stamp of the file or folder with the specified timestamp
+	 * @param monitor the progress monitor
+	 * @param parent the parent path of the file to set
+	 * @param name the name of the file to set
+	 * @param timestamp the new timestamp  
+	 * @return true if the file timestamp was changed successfully
+	 */
+	public boolean setLastModified(IProgressMonitor monitor, String parent, String name, long timestamp) throws SystemMessageException;
 }

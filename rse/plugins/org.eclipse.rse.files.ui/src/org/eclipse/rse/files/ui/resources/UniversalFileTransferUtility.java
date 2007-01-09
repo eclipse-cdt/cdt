@@ -1030,6 +1030,10 @@ public class UniversalFileTransferUtility
 					String srcFileLocation = srcFileOrFolder.getLocation().toOSString();
 					targetFS.upload(srcFileLocation, srcCharSet, newPath, targetFS.getRemoteEncoding(),monitor);	
 					newFilePathList.add(newPath);
+					
+					// should check preference first
+					SystemIFileProperties properties = new SystemIFileProperties(srcFileOrFolder);
+					((FileServiceSubSystem)targetFS).getFileService().setLastModified(monitor, newPathBuf.toString(), name, properties.getRemoteFileTimeStamp());
 				}
 			
 				catch (RemoteFileIOException e)
@@ -1220,9 +1224,14 @@ public class UniversalFileTransferUtility
 				}
 				
 
+				
 				targetFS.upload(srcFileLocation, srcCharSet, newPath, targetFS.getRemoteEncoding(), monitor);				
 				IRemoteFile copiedFile = targetFS.getRemoteFileObject(targetFolder, name);
-
+			
+				// should check preference first
+				SystemIFileProperties properties = new SystemIFileProperties(srcFileOrFolder);
+				targetFS.setLastModified(monitor, copiedFile, properties.getRemoteFileTimeStamp());
+				
 				return copiedFile;
 			}
 		
@@ -1416,7 +1425,7 @@ public class UniversalFileTransferUtility
 		if (source instanceof IFile)
 		{
 			SystemIFileProperties properties = new SystemIFileProperties(source);
-			target.getParentRemoteFileSubSystem().setLastModified(target, properties.getRemoteFileTimeStamp());
+			target.getParentRemoteFileSubSystem().setLastModified(monitor, target, properties.getRemoteFileTimeStamp());
 		}
 		else if (source instanceof IContainer)
 		{

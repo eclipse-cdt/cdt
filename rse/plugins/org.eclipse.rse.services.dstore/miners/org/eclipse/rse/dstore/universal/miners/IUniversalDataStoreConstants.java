@@ -62,6 +62,21 @@ public interface IUniversalDataStoreConstants extends IServiceConstants
 	public static final String C_COPY = "C_COPY"; //$NON-NLS-1$
 	public static final String C_COPY_BATCH = "C_COPY_BATCH"; //$NON-NLS-1$
 	
+	public static final String C_SEARCH = "C_SEARCH"; //$NON-NLS-1$
+	public static final String C_CANCEL = "C_CANCEL"; //$NON-NLS-1$
+	
+	public static final String C_SET_READONLY = "C_SET_READONLY";//$NON-NLS-1$
+	public static final String C_SET_LASTMODIFIED = "C_SET_LASTMODIFIED";//$NON-NLS-1$
+	public static final String C_QUERY_BASIC_PROPERTY = "C_QUERY_BASIC_PROPERTY";//$NON-NLS-1$
+	public static final String C_QUERY_CAN_WRITE_PROPERTY = "C_QUERY_CAN_WRITE_PROPERTY";//$NON-NLS-1$
+	public static final String C_QUERY_ADVANCE_PROPERTY = "C_QUERY_ADVANCE_PROPERTY";//$NON-NLS-1$
+	public static final String C_QUERY_FILE_CLASSIFICATION = "C_QUERY_FILE_CLASSIFICATION";//$NON-NLS-1$
+	public static final String C_QUERY_FILE_CLASSIFICATIONS = "C_QUERY_FILE_CLASSIFICATIONS"; //$NON-NLS-1$
+	public static final String C_QUERY_EXISTS = "C_QUERY_EXISTS";//$NON-NLS-1$
+	public static final String C_GET_OSTYPE = "C_GET_OSTYPE";//$NON-NLS-1$
+	public static final String C_QUERY_CLASSNAME = "C_QUERY_CLASSNAME"; //$NON-NLS-1$
+	public static final String C_CREATE_TEMP = "C_CREATE_TEMP"; //$NON-NLS-1$
+	
 	// Download file command
 	public static final String C_DOWNLOAD_FILE = "C_DOWNLOAD_FILE"; //$NON-NLS-1$
 	

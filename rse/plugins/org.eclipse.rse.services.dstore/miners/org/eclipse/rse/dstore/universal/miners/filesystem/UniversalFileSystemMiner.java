@@ -108,8 +108,6 @@ public class UniversalFileSystemMiner extends Miner implements
 	public DataElement handleCommand(DataElement theElement) {
 		String name = getCommandName(theElement);
 
-	
-	
 		
 		DataElement status = getCommandStatus(theElement);
 		DataElement subject = getCommandArgument(theElement, 0);
@@ -120,7 +118,7 @@ public class UniversalFileSystemMiner extends Miner implements
 		boolean caseSensitive = !_isWindows;
 		// TODO: test on WINDOWS!
 
-		if ("C_QUERY_VIEW_ALL".equals(name)) { //$NON-NLS-1$
+		if (C_QUERY_VIEW_ALL.equals(name)) { 
 			    DataElement attributes = getCommandArgument(theElement, 1);
 			    if (attributes != null && attributes.getType().equals("attributes")) //$NON-NLS-1$
 			    {
@@ -132,7 +130,7 @@ public class UniversalFileSystemMiner extends Miner implements
 			        return handleQueryAll(subject, null, status, queryType,
 						caseSensitive);
 			    }
-		} else if ("C_QUERY_VIEW_FILES".equals(name)) { //$NON-NLS-1$
+		} else if (C_QUERY_VIEW_FILES.equals(name)) { 
 			    DataElement attributes = getCommandArgument(theElement, 1);
 			    if (attributes != null && attributes.getType().equals("attributes")) //$NON-NLS-1$
 			    {
@@ -144,7 +142,7 @@ public class UniversalFileSystemMiner extends Miner implements
 			        return handleQueryFiles(subject, null, status, queryType,
 						caseSensitive);
 			    }
-		} else if ("C_QUERY_VIEW_FOLDERS".equals(name)) { //$NON-NLS-1$
+		} else if (C_QUERY_VIEW_FOLDERS.equals(name)) { 
 			    DataElement attributes = getCommandArgument(theElement, 1);
 			    if (attributes != null && attributes.getType().equals("attributes")) //$NON-NLS-1$
 			    {
@@ -156,48 +154,48 @@ public class UniversalFileSystemMiner extends Miner implements
 			        return handleQueryFolders(subject, null, status, queryType,
 						caseSensitive);
 			    }
-		} else if ("C_QUERY_ROOTS".equals(name)) { //$NON-NLS-1$
+		} else if (C_QUERY_ROOTS.equals(name)) { 
 				return handleQueryRoots(subject, status);
-		} else if ("C_SEARCH".equals(name)) { //$NON-NLS-1$
+		} else if (C_SEARCH.equals(name)) { 
 				return handleSearch(theElement, status, queryType,
 						caseSensitive);
-		} else if ("C_CANCEL".equals(name)) { //$NON-NLS-1$
+		} else if (C_CANCEL.equals(name)) { 
 				subject.getName();
 				return handleCancel(subject, status);
-		} else if ("C_RENAME".equals(name)) { //$NON-NLS-1$
+		} else if (C_RENAME.equals(name)) { 
 				return handleRename(subject, status);
-		} else if ("C_DELETE".equals(name)) { //$NON-NLS-1$
+		} else if (C_DELETE.equals(name)) { 
 				return handleDelete(subject, status, true);
-		} else if ("C_DELETE_BATCH".equals(name)) { //$NON-NLS-1$
+		} else if (C_DELETE_BATCH.equals(name)) { 
 				return handleDeleteBatch(theElement, status);
-		} else if ("C_COPY".equals(name)) { //$NON-NLS-1$
+		} else if (C_COPY.equals(name)) { 
 				return handleCopy(subject, getCommandArgument(theElement, 1),
 						getCommandArgument(theElement, 2), status);
-		} else if ("C_COPY_BATCH".equals(name)) { //$NON-NLS-1$
+		} else if (C_COPY_BATCH.equals(name)) { 
 				return handleCopyBatch(subject, theElement, status);
-		} else if ("C_CREATE_FILE".equals(name)) { //$NON-NLS-1$
+		} else if (C_CREATE_FILE.equals(name)) { 
 				return handleCreateFile(subject, status, queryType);
-		} else if ("C_CREATE_FOLDER".equals(name)) { //$NON-NLS-1$
+		} else if (C_CREATE_FOLDER.equals(name)) { 
 				return handleCreateFolder(subject, status, queryType);
-		} else if ("C_SET_READONLY".equals(name)) { //$NON-NLS-1$
+		} else if (C_SET_READONLY.equals(name)) { 
 				return handleSetReadOnly(subject, status);
-		} else if ("C_SET_LASTMODIFIED".equals(name)) { //$NON-NLS-1$
+		} else if (C_SET_LASTMODIFIED.equals(name)) { 
 				return handleSetLastModified(subject, status);
-		} else if ("C_QUERY_BASIC_PROPERTY".equals(name)) { //$NON-NLS-1$
+		} else if (C_QUERY_BASIC_PROPERTY.equals(name)) { 
 				return handleQueryBasicProperty(subject, status);
-		} else if ("C_QUERY_CAN_WRITE_PROPERTY".equals(name)) { //$NON-NLS-1$
+		} else if (C_QUERY_CAN_WRITE_PROPERTY.equals(name)) {
 				return handleQuerycanWriteProperty(subject, status);
-		} else if ("C_QUERY_ADVANCE_PROPERTY".equals(name)) { //$NON-NLS-1$
+		} else if (C_QUERY_ADVANCE_PROPERTY.equals(name)) {
 				return handleQueryAdvanceProperty(subject, status);
-		} else if ("C_QUERY_FILE_CLASSIFICATIONS".equals(name)) { //$NON-NLS-1$
+		} else if (C_QUERY_FILE_CLASSIFICATIONS.equals(name)) { 
 				return handleQueryFileClassification(subject, status);
-		} else if ("C_QUERY_FILE_CLASSIFICATION".equals(name)) { //$NON-NLS-1$
+		} else if (C_QUERY_FILE_CLASSIFICATION.equals(name)) {
 				return handleQueryFileClassification(subject, status);
-		} else if ("C_QUERY_EXISTS".equals(name)) { //$NON-NLS-1$
+		} else if (C_QUERY_EXISTS.equals(name)) { 
 				return handleQueryExists(subject, status, queryType);
-		} else if ("C_QUERY_GET_REMOTE_OBJECT".equals(name)) { //$NON-NLS-1$
+		} else if (C_QUERY_GET_REMOTE_OBJECT.equals(name)) { 
 				return handleQueryGetRemoteObject(subject, status, queryType);
-		} else if ("C_GET_OSTYPE".equals(name)) { //$NON-NLS-1$
+		} else if (C_GET_OSTYPE.equals(name)) { 
 				return handleGetOSType(subject, status);
 		} else if (C_DOWNLOAD_FILE.equals(name)) {
 				return handleDownload(theElement, status);
@@ -205,7 +203,7 @@ public class UniversalFileSystemMiner extends Miner implements
 				return handleQueryEncoding(subject, status);
 		} else if (C_QUERY_UNUSED_PORT.equals(name)) {
 				return handleQueryUnusedPort(subject, status);
-		} else if ("C_QUERY_CLASSNAME".equals(name)) { //$NON-NLS-1$
+		} else if (C_QUERY_CLASSNAME.equals(name)) { 
 				return handleQueryClassName(subject, status);
 		} else if (C_QUERY_QUALIFIED_CLASSNAME.equals(name)) {
 				return handleQueryQualifiedClassName(subject, status);
@@ -1286,15 +1284,15 @@ private DataElement createDataElementFromLSString(DataElement subject,
 	 * Method to set LastModified to a file or folder.
 	 */
 	public DataElement handleSetLastModified(DataElement subject,
-			DataElement status) {
-
+			DataElement status) 
+	{	
 		File filename = new File(subject.getAttribute(DE.A_VALUE));
 		if (!filename.exists())
 			status.setAttribute(DE.A_SOURCE, FAILED_WITH_DOES_NOT_EXIST);
 		else {
 			try {
 				String str = subject.getAttribute(DE.A_SOURCE);
-
+			
 				long date = Long.parseLong(str);
 				boolean done = filename.setLastModified(date);
 
@@ -2525,32 +2523,23 @@ private DataElement createDataElementFromLSString(DataElement subject,
 		_dataStore.refresh(schemaRoot);
 
 		// Define command descriptors
-		createCommandDescriptor(UniversalFilter, "Filter", "C_QUERY_VIEW_ALL"); //$NON-NLS-1$ //$NON-NLS-2$
-		createCommandDescriptor(UniversalFilter, "Filter", "C_QUERY_VIEW_FILES"); //$NON-NLS-1$ //$NON-NLS-2$
-		createCommandDescriptor(UniversalFilter, "Filter", //$NON-NLS-1$
-				"C_QUERY_VIEW_FOLDERS"); //$NON-NLS-1$
-		createCommandDescriptor(UniversalFilter, "Filter", "C_QUERY_ROOTS"); //$NON-NLS-1$ //$NON-NLS-2$
+		createCommandDescriptor(UniversalFilter, "Filter", C_QUERY_VIEW_ALL); //$NON-NLS-1$
+		createCommandDescriptor(UniversalFilter, "Filter", C_QUERY_VIEW_FILES); //$NON-NLS-1$
+		createCommandDescriptor(UniversalFilter, "Filter", C_QUERY_VIEW_FOLDERS); //$NON-NLS-1$
+		createCommandDescriptor(UniversalFilter, "Filter", C_QUERY_ROOTS); //$NON-NLS-1$ 
 
-		createCommandDescriptor(UniversalFilter, "GetOSType", "C_GET_OSTYPE"); //$NON-NLS-1$ //$NON-NLS-2$
-		createCommandDescriptor(UniversalFilter, "Exists", "C_QUERY_EXISTS"); //$NON-NLS-1$ //$NON-NLS-2$
-		createCommandDescriptor(UniversalFilter, "GetRemoteObject", //$NON-NLS-1$
-				"C_QUERY_GET_REMOTE_OBJECT"); //$NON-NLS-1$
-		createCommandDescriptor(UniversalFilter, "CreateNewFile", //$NON-NLS-1$
-				"C_CREATE_FILE"); //$NON-NLS-1$
-		createCommandDescriptor(UniversalFilter, "CreateNewFolder", //$NON-NLS-1$
-				"C_CREATE_FOLDER"); //$NON-NLS-1$
-		createCommandDescriptor(deUniversalFolderObject, "Filter", //$NON-NLS-1$
-				"C_QUERY_VIEW_ALL"); //$NON-NLS-1$
-		createCommandDescriptor(deUniversalFolderObject, "Filter", //$NON-NLS-1$
-				"C_QUERY_VIEW_FILES"); //$NON-NLS-1$
-		createCommandDescriptor(deUniversalFolderObject, "Filter", //$NON-NLS-1$
-				"C_QUERY_VIEW_FOLDERS"); //$NON-NLS-1$
-		createCommandDescriptor(deUniversalArchiveFileObject, "Filter", //$NON-NLS-1$
-				"C_QUERY_VIEW_ALL"); //$NON-NLS-1$
-		createCommandDescriptor(deUniversalArchiveFileObject, "Filter", //$NON-NLS-1$
-				"C_QUERY_VIEW_FILES"); //$NON-NLS-1$
-		createCommandDescriptor(deUniversalArchiveFileObject, "Filter", //$NON-NLS-1$
-				"C_QUERY_VIEW_FOLDERS"); //$NON-NLS-1$
+		createCommandDescriptor(UniversalFilter, "GetOSType", C_GET_OSTYPE); //$NON-NLS-1$ 
+		createCommandDescriptor(UniversalFilter, "Exists", C_QUERY_EXISTS); //$NON-NLS-1$ 
+		createCommandDescriptor(UniversalFilter, "GetRemoteObject", C_QUERY_GET_REMOTE_OBJECT); //$NON-NLS-1$
+		createCommandDescriptor(UniversalFilter, "CreateNewFile", C_CREATE_FILE); //$NON-NLS-1$
+		createCommandDescriptor(UniversalFilter, "CreateNewFolder", C_CREATE_FOLDER); //$NON-NLS-1$
+		createCommandDescriptor(UniversalFilter, "SetLastModified", C_SET_LASTMODIFIED); //$NON-NLS-1$
+		createCommandDescriptor(deUniversalFolderObject, "Filter", C_QUERY_VIEW_ALL); //$NON-NLS-1$
+		createCommandDescriptor(deUniversalFolderObject, "Filter", C_QUERY_VIEW_FILES); //$NON-NLS-1$
+		createCommandDescriptor(deUniversalFolderObject, "Filter", C_QUERY_VIEW_FOLDERS); //$NON-NLS-1$
+		createCommandDescriptor(deUniversalArchiveFileObject, "Filter", C_QUERY_VIEW_ALL); //$NON-NLS-1$
+		createCommandDescriptor(deUniversalArchiveFileObject, "Filter", C_QUERY_VIEW_FILES); //$NON-NLS-1$
+		createCommandDescriptor(deUniversalArchiveFileObject, "Filter", C_QUERY_VIEW_FOLDERS); //$NON-NLS-1$
 
 		_dataStore.createReference(deUniversalFileObject,
 				deUniversalArchiveFileObject, "abstracts", "abstracted by"); //$NON-NLS-1$ //$NON-NLS-2$
@@ -2562,66 +2551,45 @@ private DataElement createDataElementFromLSString(DataElement subject,
 				deUniversalVirtualFolderObject, "abstracts", "abstracted by"); //$NON-NLS-1$ //$NON-NLS-2$
 
 		// create the search descriptor and make it cacnellable
-		DataElement searchDescriptor = createCommandDescriptor(
-				deUniversalFolderObject, "Search", "C_SEARCH"); //$NON-NLS-1$ //$NON-NLS-2$
+		DataElement searchDescriptor = createCommandDescriptor(deUniversalFolderObject, "Search", C_SEARCH); //$NON-NLS-1$ 
 		DataElement cancellable = _dataStore.find(schemaRoot, DE.A_NAME,
 				DataStoreResources.model_Cancellable, 1);
 		_dataStore.createReference(cancellable, searchDescriptor, "abstracts", //$NON-NLS-1$
 				"abstracted by"); //$NON-NLS-1$
 
-		createCommandDescriptor(deUniversalFolderObject, "GetAdvanceProperty", //$NON-NLS-1$
-				"C_QUERY_ADVANCE_PROPERTY"); //$NON-NLS-1$
-		createCommandDescriptor(tempnode, "Filter", "C_CREATE_TEMP"); //$NON-NLS-1$ //$NON-NLS-2$
-		createCommandDescriptor(deUniversalFileObject, "Delete", "C_DELETE"); //$NON-NLS-1$ //$NON-NLS-2$
-		createCommandDescriptor(deUniversalFileObject, "DeleteBatch", "C_DELETE_BATCH"); //$NON-NLS-1$ //$NON-NLS-2$
-		createCommandDescriptor(deUniversalFileObject, "CreateNewFile", //$NON-NLS-1$
-				"C_CREATE_FILE"); //$NON-NLS-1$
-		createCommandDescriptor(deUniversalFileObject, "CreateNewFolder", //$NON-NLS-1$
-				"C_CREATE_FOLDER"); //$NON-NLS-1$
-		createCommandDescriptor(deUniversalFileObject, "Rename", "C_RENAME"); //$NON-NLS-1$ //$NON-NLS-2$
-		createCommandDescriptor(deUniversalFileObject, "SetReadOnly", //$NON-NLS-1$
-				"C_SET_READONLY"); //$NON-NLS-1$
-		createCommandDescriptor(deUniversalFileObject, "SetLastModified", //$NON-NLS-1$
-				"C_SET_LASTMODIFIED"); //$NON-NLS-1$
-		createCommandDescriptor(deUniversalFileObject, "GetAdvanceProperty", //$NON-NLS-1$
-				"C_QUERY_ADVANCE_PROPERTY"); //$NON-NLS-1$
-//		dePropertyQuery = createCommandDescriptor(deUniversalFileObject, "GetBasicProperty", "C_QUERY_BASIC_PROPERTY");
-		createCommandDescriptor(deUniversalFileObject, "GetBasicProperty", "C_QUERY_BASIC_PROPERTY"); //$NON-NLS-1$ //$NON-NLS-2$
+		createCommandDescriptor(deUniversalFolderObject, "GetAdvanceProperty", C_QUERY_ADVANCE_PROPERTY); //$NON-NLS-1$
+		createCommandDescriptor(tempnode, "Filter", C_CREATE_TEMP); //$NON-NLS-1$ 
+		createCommandDescriptor(deUniversalFileObject, "Delete", C_DELETE); //$NON-NLS-1$
+		createCommandDescriptor(deUniversalFileObject, "DeleteBatch", C_DELETE_BATCH); //$NON-NLS-1$
+		createCommandDescriptor(deUniversalFileObject, "CreateNewFile", C_CREATE_FILE); //$NON-NLS-1$
+		createCommandDescriptor(deUniversalFileObject, "CreateNewFolder", C_CREATE_FOLDER); //$NON-NLS-1$
+		createCommandDescriptor(deUniversalFileObject, "Rename", C_RENAME); //$NON-NLS-1$ 
+		createCommandDescriptor(deUniversalFileObject, "SetReadOnly", C_SET_READONLY); //$NON-NLS-1$
+		createCommandDescriptor(deUniversalFileObject, "SetLastModified", C_SET_LASTMODIFIED); //$NON-NLS-1$
+		createCommandDescriptor(deUniversalFileObject, "GetAdvanceProperty", C_QUERY_ADVANCE_PROPERTY); //$NON-NLS-1$
+		createCommandDescriptor(deUniversalFileObject, "GetBasicProperty", C_QUERY_BASIC_PROPERTY); //$NON-NLS-1$ 
 
-		createCommandDescriptor(deUniversalFileObject, "GetcanWriteProperty", //$NON-NLS-1$
-				"C_QUERY_CAN_WRITE_PROPERTY"); //$NON-NLS-1$
-		createCommandDescriptor(deUniversalFileObject, "Exists", "C_QUERY_EXISTS"); //$NON-NLS-1$ //$NON-NLS-2$
+		createCommandDescriptor(deUniversalFileObject, "GetcanWriteProperty", C_QUERY_CAN_WRITE_PROPERTY); //$NON-NLS-1$
+		createCommandDescriptor(deUniversalFileObject, "Exists", C_QUERY_EXISTS); //$NON-NLS-1$
 
-		createCommandDescriptor(deUniversalFolderObject, "Delete", "C_DELETE"); //$NON-NLS-1$ //$NON-NLS-2$
-		createCommandDescriptor(deUniversalFolderObject, "DeleteBatch", "C_DELETE_BATCH"); //$NON-NLS-1$ //$NON-NLS-2$
-		createCommandDescriptor(deUniversalFolderObject, "Rename", "C_RENAME"); //$NON-NLS-1$ //$NON-NLS-2$
-		createCommandDescriptor(deUniversalFolderObject, "Copy", "C_COPY"); //$NON-NLS-1$ //$NON-NLS-2$
-		createCommandDescriptor(deUniversalFolderObject, "CopyBatch", "C_COPY_BATCH"); //$NON-NLS-1$ //$NON-NLS-2$
-		createCommandDescriptor(deUniversalFolderObject, "CreateNewFolder", //$NON-NLS-1$
-				"C_CREATE_FOLDER"); //$NON-NLS-1$
-		createCommandDescriptor(deUniversalFolderObject, "SetReadOnly", //$NON-NLS-1$
-				"C_SET_READONLY"); //$NON-NLS-1$
-		createCommandDescriptor(deUniversalFolderObject, "SetLastModified", //$NON-NLS-1$
-				"C_SET_LASTMODIFIED"); //$NON-NLS-1$
-		createCommandDescriptor(deUniversalFolderObject, "GetBasicProperty", //$NON-NLS-1$
-				"C_QUERY_BASIC_PROPERTY"); //$NON-NLS-1$
-		createCommandDescriptor(deUniversalFolderObject, "GetcanWriteProperty", //$NON-NLS-1$
-				"C_QUERY_CAN_WRITE_PROPERTY"); //$NON-NLS-1$
+		createCommandDescriptor(deUniversalFolderObject, "Delete", C_DELETE); //$NON-NLS-1$
+		createCommandDescriptor(deUniversalFolderObject, "DeleteBatch", C_DELETE_BATCH); //$NON-NLS-1$ 
+		createCommandDescriptor(deUniversalFolderObject, "Rename", C_RENAME); //$NON-NLS-1$
+		createCommandDescriptor(deUniversalFolderObject, "Copy", C_COPY); //$NON-NLS-1$ 
+		createCommandDescriptor(deUniversalFolderObject, "CopyBatch", C_COPY_BATCH); //$NON-NLS-1$ 
+		createCommandDescriptor(deUniversalFolderObject, "CreateNewFolder", C_CREATE_FOLDER); //$NON-NLS-1$
+		createCommandDescriptor(deUniversalFolderObject, "SetReadOnly", C_SET_READONLY); //$NON-NLS-1$
+		createCommandDescriptor(deUniversalFolderObject, "SetLastModified", C_SET_LASTMODIFIED); //$NON-NLS-1$
+		createCommandDescriptor(deUniversalFolderObject, "GetBasicProperty", C_QUERY_BASIC_PROPERTY); //$NON-NLS-1$
+		createCommandDescriptor(deUniversalFolderObject, "GetcanWriteProperty", C_QUERY_CAN_WRITE_PROPERTY); //$NON-NLS-1$
 
-//		deFileClassificationQuery = createCommandDescriptor(deUniversalFileObject, "GetFileClassifications", "C_QUERY_FILE_CLASSIFICATIONS");
-		createCommandDescriptor(deUniversalFileObject, "GetFileClassifications", "C_QUERY_FILE_CLASSIFICATIONS"); //$NON-NLS-1$ //$NON-NLS-2$
-//		deFolderClassificationQuery = createCommandDescriptor(deUniversalFolderObject, "GetFolderClassifications", "C_QUERY_FILE_CLASSIFICATION");
-		createCommandDescriptor(deUniversalFolderObject, "GetFolderClassifications", "C_QUERY_FILE_CLASSIFICATION"); //$NON-NLS-1$ //$NON-NLS-2$
-		createCommandDescriptor(deUniversalFolderObject, "Exists", //$NON-NLS-1$
-				"C_QUERY_EXISTS"); //$NON-NLS-1$
-		createCommandDescriptor(deUniversalFolderObject, "CreateNewFile", //$NON-NLS-1$
-				"C_CREATE_FILE"); //$NON-NLS-1$
-		createCommandDescriptor(deUniversalFolderObject, "CreateNewFolder", //$NON-NLS-1$
-				"C_CREATE_FOLDER"); //$NON-NLS-1$
-		createCommandDescriptor(deUniversalFolderObject, "GetOSType", //$NON-NLS-1$
-				"C_GET_OSTYPE"); //$NON-NLS-1$
-		createCommandDescriptor(deUniversalFileObject, "GetOSType", //$NON-NLS-1$
-				"C_GET_OSTYPE"); //$NON-NLS-1$
+		createCommandDescriptor(deUniversalFileObject, "GetFileClassifications", C_QUERY_FILE_CLASSIFICATIONS); //$NON-NLS-1$ 
+		createCommandDescriptor(deUniversalFolderObject, "GetFolderClassifications", C_QUERY_FILE_CLASSIFICATION); //$NON-NLS-1$ 
+		createCommandDescriptor(deUniversalFolderObject, "Exists", C_QUERY_EXISTS); //$NON-NLS-1$
+		createCommandDescriptor(deUniversalFolderObject, "CreateNewFile", C_CREATE_FILE); //$NON-NLS-1$
+		createCommandDescriptor(deUniversalFolderObject, "CreateNewFolder", C_CREATE_FOLDER); //$NON-NLS-1$
+		createCommandDescriptor(deUniversalFolderObject, "GetOSType", C_GET_OSTYPE); //$NON-NLS-1$
+		createCommandDescriptor(deUniversalFileObject, "GetOSType", C_GET_OSTYPE); //$NON-NLS-1$
 
 		// create a download command descriptor and make it cancellable
 		DataElement downloadDescriptor = createCommandDescriptor(
@@ -2643,8 +2611,7 @@ private DataElement createDataElementFromLSString(DataElement subject,
 		createCommandDescriptor(tempnode, "UnusedPort", C_QUERY_UNUSED_PORT); //$NON-NLS-1$
 
 		// command descriptor to retrieve package name for a class file
-		createCommandDescriptor(deUniversalFileObject, "GetQualifiedClassName", //$NON-NLS-1$
-				"C_QUERY_CLASSNAME"); //$NON-NLS-1$
+		createCommandDescriptor(deUniversalFileObject, "GetQualifiedClassName", C_QUERY_CLASSNAME); //$NON-NLS-1$
 
 		// command descriptor to retrieve qualified class name for class file
 		createCommandDescriptor(deUniversalFileObject, "GetFullClassName", //$NON-NLS-1$

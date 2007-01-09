@@ -762,10 +762,20 @@ public final class FileServiceSubSystem extends RemoteFileSubSystem implements I
 	}
 
 	
-	public boolean setLastModified(IRemoteFile folderOrFile, long newDate) throws RemoteFileSecurityException, RemoteFileIOException 
+	public boolean setLastModified(IProgressMonitor monitor, IRemoteFile folderOrFile, long newDate) throws RemoteFileSecurityException, RemoteFileIOException 
 	{
-		// TODO Auto-generated method stub
-		return false;
+		String name = folderOrFile.getName();
+		String parent = folderOrFile.getParentPath();
+		try
+		{
+			return _hostFileService.setLastModified(monitor, parent, name, newDate);
+		}
+		catch (SystemMessageException e)
+		{			
+			SystemMessageDialog dlg = new SystemMessageDialog(getShell(), e.getSystemMessage());
+			dlg.open();
+			return false;
+		}
 	}
 
 	public boolean setReadOnly(IRemoteFile folderOrFile) throws RemoteFileSecurityException, RemoteFileIOException 

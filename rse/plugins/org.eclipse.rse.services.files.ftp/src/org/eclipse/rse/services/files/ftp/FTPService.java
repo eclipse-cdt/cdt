@@ -978,6 +978,15 @@ public class FTPService extends AbstractFileService implements IFileService, IFT
 			  fMonitor.done();
 		  }
 	}
+
+
+
+	public boolean setLastModified(IProgressMonitor monitor, String parent,
+			String name, long timestamp) throws SystemMessageException
+	{
+		// TODO - implement this to set the timestamp
+		return false;
+	}
 	
 	
 }

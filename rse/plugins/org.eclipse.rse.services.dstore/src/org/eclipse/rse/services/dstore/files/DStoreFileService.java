@@ -1227,6 +1227,28 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 		return true;
 	}
 
+	public boolean setLastModified(IProgressMonitor monitor, String parent,
+			String name, long timestamp) throws SystemMessageException 
+	{
+		String remotePath = parent + getSeparator(parent) + name;
+		DataElement de = getElementFor(remotePath);
+		DataStore ds = de.getDataStore();
+
+		
+		DataElement setCmd = getCommandDescriptor(de, C_SET_LASTMODIFIED);
+		if (setCmd != null)
+		{
+			
+
+			// first modify the source attribute to temporarily be the date field
+			de.setAttribute(DE.A_SOURCE, timestamp + "");			 //$NON-NLS-1$
+			ds.command(setCmd, de, true);
+			return true;
+		}
+		
+		return false;
+	}
+
 
 
 }

@@ -2980,15 +2980,6 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IR
 		}
 	}
 	
-	public CSourceViewer getCSourceViewer()  {
-		ISourceViewer viewer = getSourceViewer();
-		CSourceViewer cViewer = null ;
-		if (viewer instanceof CSourceViewer) {
-			cViewer = (CSourceViewer) viewer;
-		}
-		return cViewer ;
-	}
-	
 	/*
 	 * @see org.eclipse.ui.texteditor.AbstractDecoratedTextEditor#collectContextMenuPreferencePages()
 	 */

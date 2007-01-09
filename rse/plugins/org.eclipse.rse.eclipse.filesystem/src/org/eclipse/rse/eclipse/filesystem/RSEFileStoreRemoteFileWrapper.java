@@ -190,14 +190,14 @@ public class RSEFileStoreRemoteFileWrapper extends FileStore implements IFileSto
 			{
 				
 				
-				if (_remoteFile.getName().equals(".project") && _remoteFile.getLength() == 0)
+				if (_remoteFile.getName().equals(".project") && _remoteFile.getLength() == 0) //$NON-NLS-1$
 				{
-					System.out.println("reading empty .project");
+					System.out.println("reading empty .project"); //$NON-NLS-1$
 					InputStream stream = getDummyProjectFileStream();
 					try
 					{
 						int size = stream.available();
-						_subSystem.upload(stream, size, _remoteFile, "utf8", monitor);
+						_subSystem.upload(stream, size, _remoteFile, "utf8", monitor); //$NON-NLS-1$
 						_remoteFile = _subSystem.getRemoteFileObject(_remoteFile.getAbsolutePath());
 						
 					}
@@ -222,7 +222,6 @@ public class RSEFileStoreRemoteFileWrapper extends FileStore implements IFileSto
 					*/
 				}
 			
-				if (file == null || !file.exists())
 				{
 					file = (IFile)UniversalFileTransferUtility.copyRemoteResourceToWorkspace(_remoteFile, monitor);
 					if (file != null && !file.isSynchronized(IResource.DEPTH_ZERO))
@@ -244,7 +243,7 @@ public class RSEFileStoreRemoteFileWrapper extends FileStore implements IFileSto
 			{
 				file = (IFile)UniversalFileTransferUtility.getTempFileFor(_remoteFile);
 			}
-			if (!file.isSynchronized(IResource.DEPTH_ZERO) && !_remoteFile.getName().equals(".project"))
+			if (file != null && !file.isSynchronized(IResource.DEPTH_ZERO) && !_remoteFile.getName().equals(".project")) //$NON-NLS-1$
 			{
 				try
 				{
@@ -305,7 +304,7 @@ public class RSEFileStoreRemoteFileWrapper extends FileStore implements IFileSto
 			String path = _remoteFile.getAbsolutePath();
 			if (path.charAt(0) != '/')
 			{
-				path = "/" + path.replace('\\', '/');
+				path = "/" + path.replace('\\', '/'); //$NON-NLS-1$
 			}
 			return new URI("rse", _subSystem.getHost().getHostName(), path, null); //$NON-NLS-1$
 		} 
@@ -355,7 +354,7 @@ public class RSEFileStoreRemoteFileWrapper extends FileStore implements IFileSto
 			//checkReadOnlyParent(file, e);
 			String message;
 			String path = _remoteFile.getAbsolutePath();
-			if (file.isDirectory())
+			if (file != null && file.isDirectory())
 				message = NLS.bind(Messages.notAFile, path);
 			else
 				message = NLS.bind(Messages.couldNotWrite, path);
@@ -443,7 +442,7 @@ public class RSEFileStoreRemoteFileWrapper extends FileStore implements IFileSto
 		}
 		else
 		{
-			if (_remoteFile.getName().equals(".project"))
+			if (_remoteFile.getName().equals(".project")) //$NON-NLS-1$
 			{
 				file = UniversalFileTransferUtility.getTempFileFor(_remoteFile);
 				return file.getLocation().toFile();
@@ -452,7 +451,7 @@ public class RSEFileStoreRemoteFileWrapper extends FileStore implements IFileSto
 			{
 				try
 				{
-					return File.createTempFile(_remoteFile.getName(), "empty");
+					return File.createTempFile(_remoteFile.getName(), "empty"); //$NON-NLS-1$
 				}
 				catch (Exception e)
 				{

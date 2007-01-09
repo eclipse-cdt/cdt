@@ -23,7 +23,6 @@ import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.filesystem.provider.FileSystem;
 import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.rse.core.SystemBasePlugin;
 import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.model.ISystemRegistry;
 import org.eclipse.rse.core.subsystems.IConnectorService;
@@ -31,8 +30,6 @@ import org.eclipse.rse.subsystems.files.core.model.RemoteFileUtility;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFileSubSystem;
 import org.eclipse.rse.ui.RSEUIPlugin;
-import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.PlatformUI;
 
 public class RSEFileSystem extends FileSystem 
 {
@@ -106,12 +103,6 @@ public class RSEFileSystem extends FileSystem
 			IRemoteFileSubSystem ss = store.getRemoteFileSubSystem();
 			if (!ss.isConnected())
 			{
-				Shell shell = null;
-	
-				if (PlatformUI.isWorkbenchRunning())
-				{
-					shell = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
-				}
 				
 				try
 				{

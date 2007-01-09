@@ -28,6 +28,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.text.contentassist.ICompletionProposal;
+import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PlatformUI;
@@ -42,6 +43,7 @@ import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.model.IWorkingCopy;
 import org.eclipse.cdt.core.testplugin.CProjectHelper;
 import org.eclipse.cdt.ui.tests.BaseUITestCase;
+import org.eclipse.cdt.ui.tests.text.EditorTestHelper;
 import org.eclipse.cdt.ui.text.ICHelpInvocationContext;
 
 import org.eclipse.cdt.internal.ui.CHelpProviderManager;
@@ -168,7 +170,8 @@ public class ContentAssistTests extends BaseUITestCase {
 		CEditor editor = (CEditor) editorPart ;
 		IAction completionAction = editor.getAction("ContentAssistProposal");
 		CCompletionProcessor2 completionProcessor = new CCompletionProcessor2(editorPart);
-		ICompletionProposal[] results = completionProcessor.computeCompletionProposals(editor.getCSourceViewer(), offset); // (document, pos, wc, null);
+		ISourceViewer viewer= EditorTestHelper.getSourceViewer(editor);
+		ICompletionProposal[] results = completionProcessor.computeCompletionProposals(viewer, offset); // (document, pos, wc, null);
 
 		return results ;
     }

@@ -14,6 +14,10 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.text.ITextViewer;
+import org.eclipse.swt.graphics.Image;
+
 import org.eclipse.cdt.core.dom.ast.ASTCompletionNode;
 import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
 import org.eclipse.cdt.core.dom.ast.DOMException;
@@ -36,16 +40,15 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPDelegate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMember;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDeclaration;
 import org.eclipse.cdt.core.model.IWorkingCopy;
 import org.eclipse.cdt.core.parser.ast.ASTAccessVisibility;
-import org.eclipse.cdt.internal.ui.viewsupport.CElementImageProvider;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.text.contentassist.ICompletionContributor;
-import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.jface.text.ITextViewer;
-import org.eclipse.swt.graphics.Image;
+
+import org.eclipse.cdt.internal.ui.viewsupport.CElementImageProvider;
 
 public class DOMCompletionContributor implements ICompletionContributor {
 
@@ -106,7 +109,7 @@ public class DOMCompletionContributor implements ICompletionContributor {
 	}
 	
 	private void handleFunction(IFunction function, ASTCompletionNode completionNode, int offset, ITextViewer viewer, List proposals) {
-		Image image = getImage(CElementImageProvider.getFunctionImageDescriptor());
+		Image image = getImage(function);
 		
 		StringBuffer repStringBuff = new StringBuffer();
 		repStringBuff.append(function.getName());
@@ -288,6 +291,18 @@ public class DOMCompletionContributor implements ICompletionContributor {
 					imageDescriptor = CElementImageProvider.getStructImageDescriptor();
 				else if (((ICompositeType)binding).getKey() == ICompositeType.k_union)
 					imageDescriptor = CElementImageProvider.getUnionImageDescriptor();
+			} else if (binding instanceof ICPPMethod) {
+				switch (((ICPPMethod)binding).getVisibility()) {
+				case ICPPMember.v_private:
+					imageDescriptor = CElementImageProvider.getMethodImageDescriptor(ASTAccessVisibility.PRIVATE);
+					break;
+				case ICPPMember.v_protected:
+					imageDescriptor = CElementImageProvider.getMethodImageDescriptor(ASTAccessVisibility.PROTECTED);
+					break;
+				default:
+					imageDescriptor = CElementImageProvider.getMethodImageDescriptor(ASTAccessVisibility.PUBLIC);
+					break;
+				}
 			} else if (binding instanceof IFunction) {
 				imageDescriptor = CElementImageProvider.getFunctionImageDescriptor();
 			} else if (binding instanceof ICPPField) {

@@ -514,6 +514,13 @@ public class RxThread extends Thread {
 				event = new MIInferiorSignalExitEvent(session, rr);
 			}
 			session.getMIInferior().setTerminated();
+		} else if ("shlib-event".equals(reason)) { //$NON-NLS-1$
+			if (exec != null) {
+				event = new MISharedLibEvent(session, exec);
+			} else if (rr != null) {
+				event = new MISharedLibEvent(session, rr);
+			}
+			session.getMIInferior().setSuspended();
 		}
 		return event;
 	}

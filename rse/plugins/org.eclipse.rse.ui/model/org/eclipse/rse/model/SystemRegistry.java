@@ -2200,7 +2200,29 @@ public class SystemRegistry implements ISystemRegistryUI, ISystemModelChangeEven
 			}
 			
 
-			//int eventType = ISystemResourceChangeEvent.EVENT_ADD;       
+			FireNewHostEvents fire = new FireNewHostEvents(conn, subSystems);
+			Display.getDefault().asyncExec(fire);
+
+		}
+		SystemPreferencesManager.getPreferencesManager().setConnectionNamesOrder(); // update preferences order list                
+	
+		RSEUIPlugin.getThePersistenceManager().commit(conn);
+		return conn;
+	}
+	
+	
+	class FireNewHostEvents implements Runnable
+	{
+		private ISubSystem[] subSystems;
+		private IHost conn;
+		public FireNewHostEvents(IHost host, ISubSystem[] subSystems)
+		{
+			this.subSystems= subSystems; 
+			this.conn = host;
+		}
+		
+		public void run()
+		{
 			int eventType = ISystemResourceChangeEvents.EVENT_ADD_RELATIVE;
 			SystemResourceChangeEvent event = new SystemResourceChangeEvent(conn, eventType, this);
 			//event.setPosition(pool.getConnectionPosition(conn));
@@ -2214,14 +2236,9 @@ public class SystemRegistry implements ISystemRegistryUI, ISystemModelChangeEven
 				ISubSystem ss = subSystems[s];
 				fireModelChangeEvent(ISystemModelChangeEvents.SYSTEM_RESOURCE_ADDED, ISystemModelChangeEvents.SYSTEM_RESOURCETYPE_SUBSYSTEM, ss, null);						
 			}
-			
-
 		}
-		SystemPreferencesManager.getPreferencesManager().setConnectionNamesOrder(); // update preferences order list                
-	
-		RSEUIPlugin.getThePersistenceManager().commit(conn);
-		return conn;
 	}
+	
 	private ISystemNewConnectionWizardPage[] getApplicableWizardPages(ISubSystemConfiguration ssf, ISystemNewConnectionWizardPage[] allPages)
 	{
 		if ((allPages == null) || (allPages.length == 0))

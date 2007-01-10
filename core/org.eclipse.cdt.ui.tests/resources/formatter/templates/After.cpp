@@ -12,16 +12,16 @@ class Foo {
 
 // TEMPLATE_STRUCT
 template<class Key, class Value, class SortAlgorithm=DefaultSort> struct Map {
-	Key * keys;
-	Value * values;
-	SortAlgorithm * sortAlgorithm;
+	Key* keys;
+	Value* values;
+	SortAlgorithm* sortAlgorithm;
 	Map();
 };
 
 // TEMPLATE_CLASS
 template<class T> class nonVector {
 private:
-	T * head;
+	T* head;
 
 public:
 	nonVector() {
@@ -30,7 +30,7 @@ public:
 	int length() {
 		return 1;
 	}
-	const T &first() const;
+	const T& first() const;
 };
 
 // TEMPLATE_UNION
@@ -52,7 +52,7 @@ class TemplateContainer {
 };
 
 // TEMPLATE_FUNCTION
-template<class T> const T &nonVector<T>::first() const {
+template<class T> const T& nonVector<T>::first() const {
 	return *head;
 }
 

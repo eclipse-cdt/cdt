@@ -650,6 +650,9 @@ public class CodeFormatterVisitor extends CPPASTVisitor {
 		final int line= scribe.line;
 		IASTDeclSpecifier declSpec= node.getDeclSpecifier();
 		declSpec.accept(this);
+		if (scribe.printComment()) {
+			scribe.space();
+		}
 		IASTFunctionDeclarator decl= node.getDeclarator();
 		decl.accept(this);
 		IASTStatement bodyStmt= node.getBody();
@@ -781,7 +784,9 @@ public class CodeFormatterVisitor extends CPPASTVisitor {
 		declSpec.accept(this);
 		final List declarators= Arrays.asList(node.getDeclarators());
 		if (declarators.size() > 0) {
-			scribe.space();
+			if (scribe.printComment()) {
+				scribe.space();
+			}
 			final ListAlignment align= new ListAlignment(Alignment.M_COMPACT_SPLIT);
 			formatList(declarators, align, false, false);
 		}
@@ -817,13 +822,11 @@ public class CodeFormatterVisitor extends CPPASTVisitor {
 
 	private int visit(IASTSimpleDeclSpecifier node) {
 		formatNode(node);
-		scribe.space();
 		return PROCESS_SKIP;
 	}
 
 	private int visit(IASTNamedTypeSpecifier node) {
 		formatNode(node);
-		scribe.space();
 		return PROCESS_SKIP;
 	}
 
@@ -1557,7 +1560,9 @@ public class CodeFormatterVisitor extends CPPASTVisitor {
 	}
 	
 	private void formatNode(IASTNode node) {
-		scribe.printComment();
+		if (scribe.printComment()) {
+			scribe.space();
+		}
 		IASTNodeLocation location= node.getFileLocation();
 		if (location != null) {
 			scribe.printRaw(location.getNodeOffset(), location.getNodeLength());

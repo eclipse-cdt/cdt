@@ -131,4 +131,7 @@ public class FormatActionTest extends TestCase {
 		assertFormatResult();
 	}
 
+	public void testBugs() throws Exception {
+		
+	}
 }

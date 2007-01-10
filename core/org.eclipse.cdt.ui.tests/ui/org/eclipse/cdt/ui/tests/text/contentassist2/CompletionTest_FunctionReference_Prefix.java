@@ -40,8 +40,8 @@ public class CompletionTest_FunctionReference_Prefix  extends CompletionProposal
 			"xSecondEnum",
 			"xThirdEnum",
 			"xEnumeration",
-			/* FIXME: DOM search is currently case sensitive?
-			"XMacro(x,y)"  */
+			/* FIXME: DOM search is currently case sensitive? */
+			"XMacro(x,y)"
 	};
 	
 	public CompletionTest_FunctionReference_Prefix(String name) {

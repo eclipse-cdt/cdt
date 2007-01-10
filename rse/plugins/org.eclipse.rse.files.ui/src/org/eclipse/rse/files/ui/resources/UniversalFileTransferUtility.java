@@ -1551,7 +1551,6 @@ public class UniversalFileTransferUtility
 			ISystemArchiveHandler handler = ArchiveHandlerManager.getInstance().getRegisteredHandler(dest);
 	
 			VirtualChild[] arcContents = handler.getVirtualChildrenList();
-			Display display = Display.getCurrent();
 			monitor.beginTask(FileResources.RESID_SUPERTRANSFER_PROGMON_SUBTASK_EXTRACT, arcContents.length);
 			
 			for (int i = 0; i < arcContents.length; i++)
@@ -1642,9 +1641,7 @@ public class UniversalFileTransferUtility
 				    {
 				        //return null;
 				    }
-				    while (display.readAndDispatch()) {
-						//Process everything on event queue
-					}
+
 				}
 			}
 		}

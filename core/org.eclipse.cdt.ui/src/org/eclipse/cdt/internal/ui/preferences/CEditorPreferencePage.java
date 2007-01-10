@@ -77,17 +77,6 @@ public class CEditorPreferencePage extends AbstractPreferencePage implements IWo
 	}
 
 	public static void initDefaults(IPreferenceStore store) {
-
-		// bug 84414: enable smart home/end handling
-		// This is a hidden feature of the Eclipse TextEditor:
-		// If enabled, the HOME button positions the cursor to the first
-		// non-whitespace character of the line (ie. the logical start of 
-		// the line). Pressing it a second time, positions the cursor to the 
-		// first character of the line, ie. to the physical start of the line.
-		// The END button works correspondingly for the end of the line.
-		// JDT also enables this feature.
-		store.setDefault(AbstractTextEditor.PREFERENCE_NAVIGATION_SMART_HOME_END, true);    
-
 		store.setDefault(CEditor.SUB_WORD_NAVIGATION, true);
 		
 		store.setDefault(CEditor.MATCHING_BRACKETS, true);

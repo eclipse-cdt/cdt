@@ -87,6 +87,7 @@ public class CUIPreferenceInitializer extends AbstractPreferenceInitializer {
 		store.setToDefault(AbstractTextEditor.PREFERENCE_COLOR_FOREGROUND_SYSTEM_DEFAULT);
 
 		store.setToDefault(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_DISABLE_OVERWRITE_MODE);
+		store.setToDefault(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_SMART_HOME_END);
 	}
 
 }

@@ -13,6 +13,7 @@
 
 package org.eclipse.cdt.internal.core.model;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -565,8 +566,16 @@ public class CModelManager implements IResourceChangeListener, ICDescriptorListe
 	public IBinaryFile createBinaryFile(IFile file) {
 		//Avoid name special devices, empty files and the like
 		if (! Util.isNonZeroLengthFile(file.getLocationURI())) {
-			return null;
+			// PR:xxx the EFS does not seem to work for newly created file
+			// so before bailing out give another try?
+			//Avoid name special devices, empty files and the like
+			File f = new File(file.getLocationURI());
+			if (f.length() == 0) {
+				return null;
+			}
+			//return null;
 		}
+
 		BinaryParserConfig[] parsers = getBinaryParser(file.getProject());
 		int hints = 0;
 		

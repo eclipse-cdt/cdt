@@ -35,7 +35,6 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.PreferencesUtil;
-import org.eclipse.ui.texteditor.AbstractTextEditor;
 
 import org.eclipse.cdt.ui.PreferenceConstants;
 

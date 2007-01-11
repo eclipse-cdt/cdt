@@ -2199,14 +2199,15 @@ public class SystemRegistry implements ISystemRegistryUI, ISystemModelChangeEven
 				subSystems[idx] = factories[idx].createSubSystem(conn, true, getApplicableWizardPages(factories[idx], newConnectionWizardPages)); // give it the opportunity to create a subsystem
 			}
 			
-
-			FireNewHostEvents fire = new FireNewHostEvents(conn, subSystems);
-			Display.getDefault().asyncExec(fire);
+			
+			FireNewHostEvents fire = new FireNewHostEvents(conn, subSystems, this);
+			Display.getDefault().syncExec(fire);
 
 		}
+		RSEUIPlugin.getThePersistenceManager().commit(conn);
 		SystemPreferencesManager.getPreferencesManager().setConnectionNamesOrder(); // update preferences order list                
 	
-		RSEUIPlugin.getThePersistenceManager().commit(conn);
+		
 		return conn;
 	}
 	
@@ -2215,16 +2216,18 @@ public class SystemRegistry implements ISystemRegistryUI, ISystemModelChangeEven
 	{
 		private ISubSystem[] subSystems;
 		private IHost conn;
-		public FireNewHostEvents(IHost host, ISubSystem[] subSystems)
+		private ISystemRegistry reg;
+		public FireNewHostEvents(IHost host, ISubSystem[] subSystems, ISystemRegistry registry)
 		{
 			this.subSystems= subSystems; 
 			this.conn = host;
+			this.reg = registry;
 		}
 		
 		public void run()
 		{
 			int eventType = ISystemResourceChangeEvents.EVENT_ADD_RELATIVE;
-			SystemResourceChangeEvent event = new SystemResourceChangeEvent(conn, eventType, this);
+			SystemResourceChangeEvent event = new SystemResourceChangeEvent(conn, eventType, reg);
 			//event.setPosition(pool.getConnectionPosition(conn));
 			//event.setPosition(getConnectionPositionInView(conn));
 			event.setRelativePrevious(getPreviousHost(conn));

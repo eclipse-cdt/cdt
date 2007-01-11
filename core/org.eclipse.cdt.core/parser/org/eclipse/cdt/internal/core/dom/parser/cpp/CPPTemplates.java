@@ -220,8 +220,9 @@ public class CPPTemplates {
 			parent instanceof ICPPASTElaboratedTypeSpecifier && segment != 0 )
 		{
 		    return createClassExplicitInstantiation( (ICPPASTElaboratedTypeSpecifier) parent );
-		} else if( (parent instanceof ICPPASTElaboratedTypeSpecifier ||
-				    parent instanceof ICPPASTCompositeTypeSpecifier ) && segment != 0 ){
+		} else if( ( (parent instanceof ICPPASTElaboratedTypeSpecifier && decl instanceof ICPPASTTemplateDeclaration) ||
+				     parent instanceof ICPPASTCompositeTypeSpecifier ) 
+				   && segment != 0 ){
 			return createClassSpecialization( (ICPPASTDeclSpecifier) parent );
 		} else if( parent instanceof ICPPASTFunctionDeclarator && segment != 0 ){
 			return createFunctionSpecialization( id );
@@ -229,7 +230,11 @@ public class CPPTemplates {
 		
 		//a reference: class or function template?
 		IBinding template = null;
-		if( parent instanceof ICPPASTNamedTypeSpecifier || parent instanceof ICPPASTBaseSpecifier || segment == 0 ){
+		if( parent instanceof ICPPASTNamedTypeSpecifier ||
+			parent instanceof ICPPASTElaboratedTypeSpecifier ||
+			parent instanceof ICPPASTBaseSpecifier || 
+			segment == 0 )
+		{
 			//class template
 			IASTName templateName = id.getTemplateName();
 			template = templateName.resolveBinding();

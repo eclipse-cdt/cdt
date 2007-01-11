@@ -1986,4 +1986,16 @@ public class AST2TemplateTests extends AST2BaseTest {
         assertSame(blah, col.getName(15).resolveBinding());
         assertSame(c2, col.getName(16).resolveBinding());
     }
+    
+    public void testBug169628() throws Exception {
+    	StringBuffer buffer = new StringBuffer();
+    	buffer.append("template< class T > class C {};                 \n"); //$NON-NLS-1$
+    	buffer.append("typedef struct C<int> CInt;                     \n"); //$NON-NLS-1$
+    	
+    	IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP, true, true );
+    	CPPNameCollector col = new CPPNameCollector();
+        tu.accept(  col );
+        
+        assertTrue( col.getName(2).resolveBinding() instanceof ICPPSpecialization );
+    }
 }

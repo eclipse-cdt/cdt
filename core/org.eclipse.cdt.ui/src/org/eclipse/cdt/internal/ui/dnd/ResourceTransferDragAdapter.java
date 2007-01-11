@@ -7,7 +7,6 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Anton Leherbauer (Wind River Systems) - 148114 Disable move-refactor in CView
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.dnd;
 
@@ -17,14 +16,12 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.core.runtime.Assert;
-import org.eclipse.jface.util.LocalSelectionTransfer;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.dnd.DND;
 import org.eclipse.swt.dnd.DragSource;
 import org.eclipse.swt.dnd.DragSourceEvent;
@@ -63,9 +60,6 @@ public class ResourceTransferDragAdapter implements TransferDragSourceListener {
 	public void dragStart(DragSourceEvent event) {
 		IResource[] resources = getSelectedResources();
 		event.doit = resources.length > 0;
-		// Need to set selection to LocalSelectionTransfer because this
-		// is used in ResourceTransferDropAdapter to validate the drop
-		LocalSelectionTransfer.getTransfer().setSelection(new StructuredSelection(resources));
 	}
 
 	public void dragSetData(DragSourceEvent event) {

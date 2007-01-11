@@ -14,6 +14,7 @@ package org.eclipse.cdt.internal.ui.navigator;
 import org.eclipse.core.commands.operations.IUndoContext;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.actions.ActionContext;
@@ -23,6 +24,8 @@ import org.eclipse.ui.navigator.ICommonViewerWorkbenchSite;
 import org.eclipse.ui.operations.UndoRedoActionGroup;
 
 import org.eclipse.cdt.refactoring.actions.CRefactoringActionGroup;
+
+import org.eclipse.cdt.internal.ui.actions.SelectionConverter;
 
 /**
  * A clone of org.eclipse.ui.internal.navigator.resources.actions.RefactorActionProvider.
@@ -73,7 +76,7 @@ public class CNavigatorRefactorActionProvider extends CommonActionProvider {
 
 	public void setContext(ActionContext context) {
 		undoRedoGroup.setContext(context);
-		resourceRefactorGroup.setContext(context);
+		resourceRefactorGroup.setContext(convertToResources(context));
 		cElementRefactorGroup.setContext(context);
 	}
 
@@ -81,6 +84,19 @@ public class CNavigatorRefactorActionProvider extends CommonActionProvider {
 		undoRedoGroup.updateActionBars();
 		resourceRefactorGroup.updateActionBars();
 		cElementRefactorGroup.updateActionBars();
+	}
+
+	/**
+	 * @param context
+	 * @return context with selection elements converted to IResources
+	 */
+	private ActionContext convertToResources(ActionContext context) {
+		if (context != null) {
+			// convert non-IResource to IResources
+			ISelection selection = SelectionConverter.convertSelectionToResources(context.getSelection());
+			return new ActionContext(selection);
+		}
+		return null;
 	}
 
 }

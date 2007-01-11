@@ -1500,11 +1500,25 @@
           </enablement>
        </actionProvider>
        <actionProvider
+             class="org.eclipse.cdt.internal.ui.navigator.CNavigatorEditActionProvider"
+             id="org.eclipse.cdt.ui.navigator.actions.edit"
+             overrides="org.eclipse.ui.navigator.resources.actions.EditActions">
+          <enablement>
+			<or>
+				<instanceof value="org.eclipse.cdt.core.model.ICElement" />
+				<instanceof value="org.eclipse.core.resources.IResource" />
+			</or>
+          </enablement>
+       </actionProvider>
+       <actionProvider
              class="org.eclipse.cdt.internal.ui.navigator.CNavigatorRefactorActionProvider"
              id="org.eclipse.cdt.ui.navigator.actions.refactor"
              overrides="org.eclipse.ui.navigator.resources.actions.RefactorActions">
           <enablement>
-			 <instanceof value="org.eclipse.cdt.core.model.ICElement" />	
+			<or>
+				<instanceof value="org.eclipse.cdt.core.model.ICElement" />
+				<instanceof value="org.eclipse.core.resources.IResource" />
+			</or>
           </enablement>
        </actionProvider>
 	   <commonWizard
@@ -1514,7 +1528,7 @@
 	         wizardId="org.eclipse.cdt.ui.wizards.NewSourceFileCreationWizard">
 				<enablement>
 					<or>
-						<instanceof value="org.eclipse.cdt.core.model.ICElement" />	
+						<instanceof value="org.eclipse.cdt.core.model.ICElement" />
 			            <adapt type="org.eclipse.core.resources.IProject">
 			               <test
 			                     property="org.eclipse.core.resources.projectNature"
@@ -1530,7 +1544,7 @@
             wizardId="org.eclipse.cdt.ui.wizards.NewHeaderFileCreationWizard">
 				<enablement>
 					<or>
-						<instanceof value="org.eclipse.cdt.core.model.ICElement" />	
+						<instanceof value="org.eclipse.cdt.core.model.ICElement" />
 			            <adapt type="org.eclipse.core.resources.IProject">
 			               <test
 			                     property="org.eclipse.core.resources.projectNature"
@@ -1546,7 +1560,7 @@
             wizardId="org.eclipse.cdt.ui.wizards.NewSourceFolderCreationWizard">
 				<enablement>
 					<or>
-						<instanceof value="org.eclipse.cdt.core.model.ICElement" />	
+						<instanceof value="org.eclipse.cdt.core.model.ICElement" />
 			            <adapt type="org.eclipse.core.resources.IProject">
 			               <test
 			                     property="org.eclipse.core.resources.projectNature"
@@ -1562,7 +1576,7 @@
             wizardId="org.eclipse.cdt.ui.wizards.NewClassCreationWizard">
 				<enablement>
 					<or>
-						<instanceof value="org.eclipse.cdt.core.model.ICElement" />	
+						<instanceof value="org.eclipse.cdt.core.model.ICElement" />
 			            <adapt type="org.eclipse.core.resources.IProject">
 		                   <test
 		                         property="org.eclipse.core.resources.projectNature"

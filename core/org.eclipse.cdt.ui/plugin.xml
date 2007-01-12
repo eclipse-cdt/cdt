@@ -36,11 +36,6 @@
          <adapter type="org.eclipse.ui.IActionFilter"/>
          <adapter type="org.eclipse.ui.IPersistableElement"/>
       </factory>
-      <factory
-            adaptableType="org.eclipse.cdt.internal.ui.editor.CEditor"
-            class="org.eclipse.cdt.internal.ui.dnd.TextEditorDropAdapter$Factory">
-         <adapter type="org.eclipse.ui.texteditor.ITextEditorDropTargetListener"/>
-      </factory>
    </extension>
 
    <extension

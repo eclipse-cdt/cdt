@@ -24,7 +24,6 @@ import org.eclipse.jface.text.ITextOperationTarget;
 import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.ITextViewerExtension5;
 import org.eclipse.jface.text.Position;
-import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.custom.StyledTextContent;
 import org.eclipse.swt.dnd.DND;
@@ -35,9 +34,6 @@ import org.eclipse.swt.dnd.TextTransfer;
 import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.dnd.TransferData;
 import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.graphics.Rectangle;
-import org.eclipse.swt.widgets.Caret;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PartInitException;
@@ -93,16 +89,12 @@ public class TextEditorDropAdapter extends DropTargetAdapter implements
 
 	}
 
-	/** Saved original caret during drag operation */
-	private Caret fOldCaret;
-	/** Caret used during drag operation to indicate insert point */
-	private Caret fCaret;
 	/** The text viewer target */
 	private ITextViewer fViewer;
 	/** The editor containing the viewer (can be null) */
 	private ITextEditor fEditor;
-	/** Direction of current autoscroll SWT.UP, SWT.DOWN or SWT.NULL */
-	private int fAutoScrollDirection= SWT.NULL;
+	/** Cached selection of styled text widget upon dragEnter */
+	private Point fDropSelection;
 
 	/**
 	 * Create an EditorDropAdapter for the given text viewer and (optional)
@@ -136,8 +128,6 @@ public class TextEditorDropAdapter extends DropTargetAdapter implements
 			} else if (isTextDataType(dataType)) {
 				// event.data is a string
 				assert event.data instanceof String;
-				assert isDocumentEditable();
-				autoScroll(SWT.NULL);
 				int offset= getOffsetAtLocation(event.x, event.y, true);
 				dropText((String) event.data, offset);
 			}
@@ -165,19 +155,13 @@ public class TextEditorDropAdapter extends DropTargetAdapter implements
 				if (event.detail == DND.DROP_DEFAULT) {
 					event.detail= getAcceptableOperation(event.operations);
 				}
-				StyledText textWidget= fViewer.getTextWidget();
-				textWidget.setFocus();
-				fOldCaret= textWidget.getCaret();
-				fCaret= new Caret(textWidget, SWT.NONE);
-				fCaret.setSize(fOldCaret.getSize());
-				int offset= getOffsetAtLocation(event.x, event.y, true);
-				if (offset >= 0) {
-					fCaret.setLocation(textWidget.getLocationAtOffset(offset));
-				}
+				// workaround for 
+				// Bug 162198: DnD removes selection and moves caret
+				// https://bugs.eclipse.org/bugs/show_bug.cgi?id=162198
+				fDropSelection= fViewer.getTextWidget().getSelection();
 			} else {
 				event.detail= DND.DROP_NONE;
 			}
-			event.feedback= DND.FEEDBACK_SCROLL;
 		}
 	}
 
@@ -199,28 +183,13 @@ public class TextEditorDropAdapter extends DropTargetAdapter implements
 					event.detail= getAcceptableOperation(event.operations);
 				}
 				int offset= getOffsetAtLocation(event.x, event.y, true);
-				StyledText textWidget= fViewer.getTextWidget();
-				if (offset >= 0) {
-					fCaret.setLocation(textWidget.getLocationAtOffset(offset));
-				} else {
+				if (offset < 0) {
 					event.detail= DND.DROP_NONE;
-				}
-				// scroll feedback has issues (bugs 149576, 139485): we do it
-				// ourselves
-				Point location= textWidget.toControl(event.x, event.y);
-				Rectangle viewPort= textWidget.getClientArea();
-				if (location.y < textWidget.getLineHeight()) {
-					autoScroll(SWT.UP);
-				} else if (location.y > viewPort.height
-						- textWidget.getLineHeight()) {
-					autoScroll(SWT.DOWN);
-				} else {
-					autoScroll(SWT.NULL);
 				}
 			} else {
 				event.detail= DND.DROP_NONE;
 			}
-			event.feedback= DND.FEEDBACK_SCROLL;
+			event.feedback |= DND.FEEDBACK_SCROLL;
 		}
 	}
 
@@ -284,7 +253,6 @@ public class TextEditorDropAdapter extends DropTargetAdapter implements
 			} else {
 				event.detail= DND.DROP_NONE;
 			}
-			event.feedback= DND.FEEDBACK_SCROLL;
 		}
 	}
 
@@ -309,16 +277,7 @@ public class TextEditorDropAdapter extends DropTargetAdapter implements
 	 * @see org.eclipse.swt.dnd.DropTargetListener#dragLeave(org.eclipse.swt.dnd.DropTargetEvent)
 	 */
 	public void dragLeave(DropTargetEvent event) {
-		autoScroll(SWT.NULL);
-		if (fOldCaret != null) {
-			StyledText textWidget= fViewer.getTextWidget();
-			textWidget.setCaret(fOldCaret);
-			fOldCaret= null;
-		}
-		if (fCaret != null) {
-			fCaret.dispose();
-			fCaret= null;
-		}
+		fDropSelection= null;
 	}
 
 	/**
@@ -331,8 +290,18 @@ public class TextEditorDropAdapter extends DropTargetAdapter implements
 	private void dropText(String text, int offset) throws CoreException {
 		IDocument d= fViewer.getDocument();
 		try {
-			int docOffset= getDocumentOffset(offset);
-			d.replace(docOffset, 0, text);
+			int docOffset;
+			int docLength;
+			Point selection= fDropSelection;
+			if (selection != null && selection.x <= offset && offset < selection.y) {
+				// drop inside selection - replace selected text
+				docOffset= getDocumentOffset(selection.x);
+				docLength= getDocumentOffset(selection.y) - docOffset;
+			} else {
+				docOffset= getDocumentOffset(offset);
+				docLength= 0;
+			}
+			d.replace(docOffset, docLength, text);
 			fViewer.setSelectedRange(docOffset, text.length());
 		} catch (BadLocationException e) {
 			// should not happen
@@ -448,69 +417,6 @@ public class TextEditorDropAdapter extends DropTargetAdapter implements
 			}
 			return widgetOffset + visible.getOffset();
 		}
-	}
-
-	/**
-	 * Scrolls the viewer into the given direction.
-	 * 
-	 * @param direction
-	 *            the scroll direction
-	 */
-	private void autoScroll(int direction) {
-
-		if (fAutoScrollDirection == direction)
-			return;
-
-		final int TIMER_INTERVAL= 20;
-		final Display display= fViewer.getTextWidget().getDisplay();
-		Runnable timer= null;
-		switch (direction) {
-		case SWT.UP:
-			timer= new Runnable() {
-				public void run() {
-					if (fAutoScrollDirection == SWT.UP) {
-						int top= getInclusiveTopIndex();
-						if (top > 0) {
-							fViewer.setTopIndex(top - 1);
-							display.timerExec(TIMER_INTERVAL, this);
-						}
-					}
-				}
-			};
-			break;
-		case SWT.DOWN:
-			timer= new Runnable() {
-				public void run() {
-					if (fAutoScrollDirection == SWT.DOWN) {
-						int top= getInclusiveTopIndex();
-						fViewer.setTopIndex(top + 1);
-						display.timerExec(TIMER_INTERVAL, this);
-					}
-				}
-			};
-			break;
-		}
-
-		fAutoScrollDirection= direction;
-		if (timer != null) {
-			display.timerExec(TIMER_INTERVAL, timer);
-		}
-	}
-
-	/**
-	 * Returns the viewer's first visible line, even if only partially visible.
-	 * 
-	 * @return the viewer's first visible line
-	 */
-	private int getInclusiveTopIndex() {
-		StyledText textWidget= fViewer.getTextWidget();
-		if (textWidget != null && !textWidget.isDisposed()) {
-			int top= fViewer.getTopIndex();
-			if ((textWidget.getTopPixel() % textWidget.getLineHeight()) != 0)
-				--top;
-			return top;
-		}
-		return -1;
 	}
 
 	/**

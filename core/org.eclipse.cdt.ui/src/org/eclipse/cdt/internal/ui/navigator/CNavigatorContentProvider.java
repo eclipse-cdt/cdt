@@ -314,9 +314,12 @@ public class CNavigatorContentProvider extends CViewContentProvider implements I
 		for (Iterator iter= currentChildren.iterator(); iter.hasNext();) {
 			Object child= iter.next();
 			if (child instanceof IResource) {
-				if ((newChild= CoreModel.getDefault().create((IResource) child)) != null) {
-					iter.remove();
-					convertedChildren.add(newChild);
+				IResource resource= (IResource)child;
+				if (resource.isAccessible()) {
+					if ((newChild= CoreModel.getDefault().create((IResource) child)) != null) {
+						iter.remove();
+						convertedChildren.add(newChild);
+					}
 				}
 			}
 		}

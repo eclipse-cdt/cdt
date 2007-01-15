@@ -44,7 +44,7 @@ plugin@org.eclipse.cdt.debug.ui.tests=@cdtTag@,:pserver:anonymous@dev.eclipse.or
 plugin@org.eclipse.cdt.managedbuilder.core.tests=@cdtTag@,:pserver:anonymous@dev.eclipse.org:/cvsroot/tools,,org.eclipse.cdt/all/org.eclipse.cdt.managedbuilder.core.tests
 plugin@org.eclipse.cdt.managedbuilder.ui.tests=@cdtTag@,:pserver:anonymous@dev.eclipse.org:/cvsroot/tools,,org.eclipse.cdt/all/org.eclipse.cdt.managedbuilder.ui.tests
 plugin@org.eclipse.cdt.testing=@cdtTag@,:pserver:anonymous@dev.eclipse.org:/cvsroot/tools,,org.eclipse.cdt/all/org.eclipse.cdt.testing
-plugin@org.eclipse.test=HEAD,:pserver:anonymous@dev.eclipse.org:/cvsroot/eclipse,
+plugin@org.eclipse.test=v20061130,:pserver:anonymous@dev.eclipse.org:/cvsroot/eclipse,
 fragment@org.eclipse.ant.optional.junit=HEAD,:pserver:anonymous@dev.eclipse.org:/cvsroot/eclipse,
 feature@org.eclipse.cdt.testing=@cdtTag@,:pserver:anonymous@dev.eclipse.org:/cvsroot/tools,,org.eclipse.cdt/all/org.eclipse.cdt.testing-feature
 

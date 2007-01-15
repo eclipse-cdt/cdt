@@ -609,7 +609,10 @@ public abstract class RemoteCmdSubSystem extends SubSystem implements IRemoteCmd
 		if (set != null)
 		{
 			IProperty property = set.getProperty(COMMAND_SHELLS_MEMENTO);
-			property.setValue(shellBuffer.toString());
+			if (property != null)
+			{
+				property.setValue(shellBuffer.toString());
+			}
 		}
 	}
 

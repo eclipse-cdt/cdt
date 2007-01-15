@@ -11,8 +11,8 @@
 	<target name="init">
 		<touch file="${user.home}/.cvspass" />
 		<tstamp/>
-		<property name="branchVersion" value="3.1.1"/>
-		<property name="testVersion" value="3.1.1"/>
+		<property name="branchVersion" value="3.1.2"/>
+		<property name="testVersion" value="3.1.2"/>
 		<property name="timestamp" value="${DSTAMP}${TSTAMP}" />
 		<property name="forceContextQualifier" value="${timestamp}"/>
 		<property name="buildDirectory" value="${basedir}/results" />

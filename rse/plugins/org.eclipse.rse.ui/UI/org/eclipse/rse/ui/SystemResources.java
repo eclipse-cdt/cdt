@@ -419,6 +419,8 @@ public class SystemResources extends NLS
 	public static String RESID_CHANGE_PASSWORD_TITLE;
 	public static String RESID_CHANGE_PASSWORD_NEW_LABEL;
 	public static String RESID_CHANGE_PASSWORD_NEW_TOOLTIP;
+	public static String RESID_CHANGE_PASSWORD_OLD_LABEL;
+	public static String RESID_CHANGE_PASSWORD_OLD_TOOLTIP;
 	public static String RESID_CHANGE_PASSWORD_CONFIRM_LABEL;
 	public static String RESID_CHANGE_PASSWORD_CONFIRM_TOOLTIP;
 

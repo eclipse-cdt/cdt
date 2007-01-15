@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 QNX Software Systems and others.
+ * Copyright (c) 2005, 2007 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -152,15 +152,77 @@ ICPPClassScope, IPDOMMemberOwner, IIndexType {
 		list.accept(visitor);
 	}
 
+	public ICPPMethod[] getDeclaredMethods() throws DOMException {
+		try {
+			MethodCollector methods = new MethodCollector(false);
+			accept(methods);
+			return methods.getMethods();
+		} catch (CoreException e) {
+			return new ICPPMethod[0];
+		}
+	}
+
+	public ICPPMethod[] getMethods() throws DOMException {
+		try {
+			MethodCollector methods = new MethodCollector(true);
+			accept(methods);
+			return methods.getMethods();
+		} catch (CoreException e) {
+			return new ICPPMethod[0];
+		}
+	}
+
+	public ICPPMethod[] getImplicitMethods() {
+		try {
+			MethodCollector methods = new MethodCollector(true, false);
+			accept(methods);
+			return methods.getMethods();
+		} catch (CoreException e) {
+			return new ICPPMethod[0];
+		}
+	}
+
+	private void acceptInHierarchy(Set visited, IPDOMVisitor visitor) throws CoreException {
+		if (visited.contains(this))
+			return;
+		visited.add(this);
+
+		// Get my members
+		accept(visitor);
+
+		// Visit my base classes
+		for (PDOMCPPBase base = getFirstBase(); base != null; base = base.getNextBase()) {
+			try {
+				IBinding baseClass = base.getBaseClass();
+				if (baseClass != null && baseClass instanceof PDOMCPPClassType)
+					((PDOMCPPClassType)baseClass).acceptInHierarchy(visited, visitor);
+			} catch (DOMException e) {
+				throw new CoreException(Util.createStatus(e));
+			}
+		}
+	}
+
+	public ICPPMethod[] getAllDeclaredMethods() throws DOMException {
+		MethodCollector myMethods = new MethodCollector(false, true);
+		Set visited = new HashSet();
+		try {
+			acceptInHierarchy(visited, myMethods);
+			return myMethods.getMethods();
+		} catch (CoreException e) {
+			CCorePlugin.log(e);
+			return new ICPPMethod[0];
+		}
+	}
+	
 	private static class MethodCollector implements IPDOMVisitor {
 		private final List methods;
 		private final boolean acceptImplicit;
 		private final boolean acceptAll;
-		public MethodCollector(List methods, boolean acceptImplicit) {
-			this(methods, acceptImplicit, true);
+		public MethodCollector(boolean acceptImplicit) {
+			this(acceptImplicit, true);
 		}
-		public MethodCollector(List methods, boolean acceptImplicit, boolean acceptExplicit) {
-			this.methods = methods == null ? new ArrayList() : methods;
+		public MethodCollector(boolean acceptImplicit, boolean acceptExplicit) {
+			this.methods = new ArrayList();
 			this.acceptImplicit= acceptImplicit;
 			this.acceptAll= acceptImplicit && acceptExplicit;
 		}
@@ -179,87 +241,25 @@ ICPPClassScope, IPDOMMemberOwner, IIndexType {
 		}
 	}
 
-	public ICPPMethod[] getDeclaredMethods() throws DOMException {
-		try {
-			MethodCollector methods = new MethodCollector(null, false);
-			accept(methods);
-			return methods.getMethods();
-		} catch (CoreException e) {
-			return new ICPPMethod[0];
-		}
-	}
 
-	public ICPPMethod[] getMethods() throws DOMException {
-		try {
-			MethodCollector methods = new MethodCollector(null, true);
-			accept(methods);
-			return methods.getMethods();
-		} catch (CoreException e) {
-			return new ICPPMethod[0];
-		}
-	}
-
-	public ICPPMethod[] getImplicitMethods() {
-		try {
-			MethodCollector methods = new MethodCollector(null, true, false);
-			accept(methods);
-			return methods.getMethods();
-		} catch (CoreException e) {
-			return new ICPPMethod[0];
-		}
-	}
-
-	private void visitAllDeclaredMethods(Set visited, List methods) throws CoreException {
-		if (visited.contains(this))
-			return;
-		visited.add(this);
-
-		// Get my members
-		MethodCollector myMethods = new MethodCollector(methods, false, true);
-		accept(myMethods);
-
-		// Visit my base classes
-		for (PDOMCPPBase base = getFirstBase(); base != null; base = base.getNextBase()) {
-			try {
-				IBinding baseClass = base.getBaseClass();
-				if (baseClass != null && baseClass instanceof PDOMCPPClassType)
-					((PDOMCPPClassType)baseClass).visitAllDeclaredMethods(visited, methods);
-			} catch (DOMException e) {
-				throw new CoreException(Util.createStatus(e));
-			}
-		}
-	}
-
-	public ICPPMethod[] getAllDeclaredMethods() throws DOMException {
-		List methods = new ArrayList();
-		Set visited = new HashSet();
-		try {
-			visitAllDeclaredMethods(visited, methods);
-			return (ICPPMethod[])methods.toArray(new ICPPMethod[methods.size()]);
-		} catch (CoreException e) {
-			CCorePlugin.log(e);
-			return new ICPPMethod[0];
-		}
-	}
-	
 	private static class FieldCollector implements IPDOMVisitor {
 		private List fields = new ArrayList();
 		public boolean visit(IPDOMNode node) throws CoreException {
-			if (node instanceof IField)
+			if (node instanceof ICPPField)
 				fields.add(node);
 			return false;
 		}
 		public void leave(IPDOMNode node) throws CoreException {
 		}
-		public IField[] getFields() {
-			return (IField[])fields.toArray(new IField[fields.size()]);
+		public ICPPField[] getFields() {
+			return (ICPPField[])fields.toArray(new ICPPField[fields.size()]);
 		}
 	}
 
 	public IField[] getFields() throws DOMException {
 		try {
 			FieldCollector visitor = new FieldCollector();
-			accept(visitor);
+			acceptInHierarchy(new HashSet(), visitor);
 			return visitor.getFields();
 		} catch (CoreException e) {
 			CCorePlugin.log(e);
@@ -267,6 +267,17 @@ ICPPClassScope, IPDOMMemberOwner, IIndexType {
 		}
 	}
 
+	public ICPPField[] getDeclaredFields() throws DOMException {
+		try {
+			FieldCollector visitor = new FieldCollector();
+			accept(visitor);
+			return visitor.getFields();
+		} catch (CoreException e) {
+			CCorePlugin.log(e);
+			return new ICPPField[0];
+		}
+	}
+	
 	private static class NestedClassCollector implements IPDOMVisitor {
 		private List nestedClasses = new ArrayList();
 		public boolean visit(IPDOMNode node) throws CoreException {
@@ -399,7 +410,6 @@ ICPPClassScope, IPDOMMemberOwner, IIndexType {
 	public IField findField(String name) throws DOMException {fail();return null;}
 	public IBinding[] getFriends() throws DOMException {fail();return null;}
 	public IBinding[] find(String name) throws DOMException {fail();return null;}
-	public ICPPField[] getDeclaredFields() throws DOMException {fail();return null;}
 
 	public IScope getParent() throws DOMException {
 		try {

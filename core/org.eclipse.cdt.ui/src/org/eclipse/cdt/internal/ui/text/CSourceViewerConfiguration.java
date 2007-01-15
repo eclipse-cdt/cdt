@@ -21,6 +21,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.content.IContentType;
+import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.AbstractInformationControlManager;
 import org.eclipse.jface.text.DefaultInformationControl;
@@ -331,8 +332,7 @@ public class CSourceViewerConfiguration extends TextSourceViewerConfiguration {
 		return reconciler;
 	}
 
-
-	/**
+	/*
 	 * @see SourceViewerConfiguration#getContentAssistant(ISourceViewer)
 	 */
 	public IContentAssistant getContentAssistant(ISourceViewer sourceViewer) {
@@ -341,12 +341,14 @@ public class CSourceViewerConfiguration extends TextSourceViewerConfiguration {
 		}
 
 		ContentAssistant assistant = new ContentAssistant();
+		assistant.setDocumentPartitioning(getConfiguredDocumentPartitioning(sourceViewer));
+
+		assistant.setRestoreCompletionProposalSize(getSettings("completion_proposal_size")); //$NON-NLS-1$
 		
 		IContentAssistProcessor processor = new CCompletionProcessor2(getEditor());
 		assistant.setContentAssistProcessor(processor, IDocument.DEFAULT_CONTENT_TYPE);
 
-		//Will this work as a replacement for the configuration lines below?
-		ContentAssistPreference.configure(assistant, getPreferenceStore());
+		ContentAssistPreference.configure(assistant, fPreferenceStore);
 		
 		assistant.setProposalPopupOrientation(IContentAssistant.PROPOSAL_OVERLAY);		
 		assistant.setContextInformationPopupOrientation(IContentAssistant.CONTEXT_INFO_ABOVE);
@@ -354,7 +356,22 @@ public class CSourceViewerConfiguration extends TextSourceViewerConfiguration {
 
 		return assistant;
 	}
-	
+
+	/**
+	 * Returns the settings for the given section.
+	 *
+	 * @param sectionName the section name
+	 * @return the settings
+	 * @since 4.0
+	 */
+	private IDialogSettings getSettings(String sectionName) {
+		IDialogSettings settings= CUIPlugin.getDefault().getDialogSettings().getSection(sectionName);
+		if (settings == null)
+			settings= CUIPlugin.getDefault().getDialogSettings().addNewSection(sectionName);
+
+		return settings;
+	}
+
 	/*
 	 * @see org.eclipse.ui.editors.text.TextSourceViewerConfiguration#getReconciler(org.eclipse.jface.text.source.ISourceViewer)
 	 */
@@ -572,7 +589,8 @@ public class CSourceViewerConfiguration extends TextSourceViewerConfiguration {
 	}
 
 	protected IPreferenceStore getPreferenceStore() {
-		return CUIPlugin.getDefault().getPreferenceStore();
+		Assert.isTrue(!isNewSetup());
+		return fPreferenceStore;
 	}
 	
 	/**

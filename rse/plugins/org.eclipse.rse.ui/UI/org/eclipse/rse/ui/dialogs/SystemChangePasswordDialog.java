@@ -43,8 +43,10 @@ public class SystemChangePasswordDialog extends SystemPromptDialog
 {
 	private String _hostname;
 	private String _user;
+	private String _oldPassword = ""; // $NON_NLS-1$
 	private String _newPassword = ""; //$NON-NLS-1$
-	
+		
+	private Text _txtOldPassword;
 	private Text _txtNewPassword;
 	private Text _txtConfirmPassword;
 	
@@ -53,6 +55,8 @@ public class SystemChangePasswordDialog extends SystemPromptDialog
     
     private boolean newPasswordModified = false;
     private boolean confirmModified = false;
+    
+    private boolean _promptForOldPassword = false;
 	
 	/**
 	 * Construct a new SystemChangePasswordDialog. Since this dialog is asking for a new password
@@ -71,11 +75,21 @@ public class SystemChangePasswordDialog extends SystemPromptDialog
 		_user = userid;
 		setErrorMessage(msg);
 	}
+	
+	public void promptForOldPassword(boolean flag)
+	{
+		_promptForOldPassword = flag;
+	}
 
 	/**
 	 * @see SystemPromptDialog#getInitialFocusControl()
 	 */
-	protected Control getInitialFocusControl() {
+	protected Control getInitialFocusControl() 
+	{
+		if (_promptForOldPassword)
+		{
+			return _txtOldPassword;
+		}
 		return _txtNewPassword;
 	}
 
@@ -112,6 +126,17 @@ public class SystemChangePasswordDialog extends SystemPromptDialog
 		userID.setEnabled(false);
 		userID.setToolTipText(SystemResources.RESID_PREF_SIGNON_USERID_TOOLTIP);
 		((GridData) userID.getLayoutData()).widthHint = 75;
+		
+		if (_promptForOldPassword)
+		{
+			// Old password
+			label = new Label(c, SWT.NONE);
+			label.setText(SystemResources.RESID_CHANGE_PASSWORD_OLD_LABEL);
+			_txtOldPassword = SystemWidgetHelpers.createTextField(c, null);
+			_txtOldPassword.setEchoChar('*');
+			_txtOldPassword.setToolTipText(SystemResources.RESID_CHANGE_PASSWORD_OLD_TOOLTIP);
+			((GridData) _txtOldPassword.getLayoutData()).widthHint = 75;
+		}
 		
 		// New password
 		label = new Label(c, SWT.NONE);
@@ -181,6 +206,11 @@ public class SystemChangePasswordDialog extends SystemPromptDialog
 		String newPassword = _txtNewPassword.getText().trim();
 		String confirmPassword = _txtConfirmPassword.getText().trim();
 		
+		if (_promptForOldPassword)
+		{
+			_oldPassword = _txtOldPassword.getText().trim();
+		}
+
 		if (!newPassword.equals(confirmPassword)) 
 		{
 			return RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_COMM_PWD_MISMATCH);
@@ -203,6 +233,15 @@ public class SystemChangePasswordDialog extends SystemPromptDialog
 		if (error == null) return true;
 		else setErrorMessage(error);
 		return false;
+	}
+	
+	/**
+	 * @return The old password set by the user or null if the 
+	 *         cancel button was pressed or if no old password prompt is displayed.
+	 */
+	public String getOldPassword() 
+	{
+		return _oldPassword;		
 	}
 	
 	/**

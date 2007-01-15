@@ -1168,13 +1168,13 @@ public abstract class AbstractConnectorService extends RSEModelObject implements
 		log.logError("Unexpected exception", t); //$NON-NLS-1$
 	}
 	
-	protected NewPasswordInfo promptForNewPassword(SystemMessage prompt) throws InterruptedException
+	public NewPasswordInfo promptForNewPassword(SystemMessage prompt) throws InterruptedException
 	{
 		ShowPromptForNewPassword msgAction = new ShowPromptForNewPassword(prompt);
 		Display.getDefault().syncExec(msgAction);
 		if (msgAction.isCancelled()) throw new InterruptedException();
 		return new NewPasswordInfo(msgAction.getNewPassword(), msgAction.isSavePassword());
-	}
+	} 
 	
 	private class ShowPromptForNewPassword implements Runnable
 	{

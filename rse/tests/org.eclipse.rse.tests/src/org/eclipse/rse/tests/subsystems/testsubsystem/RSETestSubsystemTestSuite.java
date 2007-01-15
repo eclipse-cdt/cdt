@@ -6,25 +6,16 @@
  * http://www.eclipse.org/legal/epl-v10.html 
  * 
  * Contributors: 
- * Uwe Stieber (Wind River) - initial API and implementation
+ * Tobias Schwarz (Wind River) - initial API and implementation.
  *******************************************************************************/
-package org.eclipse.rse.tests;
+package org.eclipse.rse.tests.subsystems.testsubsystem;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
-import org.eclipse.rse.tests.core.connection.RSEConnectionTestSuite;
 import org.eclipse.rse.tests.framework.DelegatingTestSuiteHolder;
-import org.eclipse.rse.tests.internal.RSEInternalFrameworkTestSuite;
-import org.eclipse.rse.tests.subsystems.files.RSEFileSubsystemTestSuite;
-import org.eclipse.rse.tests.subsystems.testsubsystem.RSETestSubsystemTestSuite;
 
-/**
- * Main class bundling all single specialized test suites into a
- * overall complete one.
- */
-public class RSECombinedTestSuite extends DelegatingTestSuiteHolder {
-
+public class RSETestSubsystemTestSuite extends DelegatingTestSuiteHolder {
 	/**
 	 * Standard Java application main method. Allows to launch the test
 	 * suite from outside as part of nightly runs, headless runs or other.
@@ -47,13 +38,9 @@ public class RSECombinedTestSuite extends DelegatingTestSuiteHolder {
 	 * @return The test suite instance.
 	 */
 	public static Test suite() {
-		TestSuite suite = new TestSuite("RSE Combined Test Suite"); //$NON-NLS-1$
-
+		TestSuite suite = new TestSuite("RSE Test Subsystem Test Suite"); //$NON-NLS-1$
 		// add the single test suites to the overall one here.
-		suite.addTest(RSEInternalFrameworkTestSuite.suite());
-		suite.addTest(RSEConnectionTestSuite.suite());
-		suite.addTest(RSEFileSubsystemTestSuite.suite());
-		suite.addTest(RSETestSubsystemTestSuite.suite());
+		suite.addTestSuite(TestSubsystemTestCase.class);
 		
 		return suite;
 	}
@@ -62,6 +49,7 @@ public class RSECombinedTestSuite extends DelegatingTestSuiteHolder {
 	 * @see org.eclipse.rse.tests.framework.AbstractTestSuiteHolder#getTestSuite()
 	 */
 	public TestSuite getTestSuite() {
-		return (TestSuite)RSECombinedTestSuite.suite();
+		return (TestSuite)RSETestSubsystemTestSuite.suite();
 	}
+
 }

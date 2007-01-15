@@ -1223,7 +1223,7 @@ public abstract class AbstractConnectorService extends RSEModelObject implements
 		}
 	}
 	
-	protected class NewPasswordInfo
+	public class NewPasswordInfo
 	{
 		public String newPassword;
 		public boolean savePassword;

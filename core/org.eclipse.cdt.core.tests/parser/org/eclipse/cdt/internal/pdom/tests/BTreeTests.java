@@ -34,16 +34,6 @@ import org.eclipse.core.runtime.CoreException;
  *
  */
 public class BTreeTests extends BaseTestCase {
-	
-	/**
-	 * Workaround: If the page table size of the database is too small,
-	 * there will be frequent page ins and page outs.  This trips a bug
-	 * in FileChannelImpl.map0() which causes an IOException.  If the
-	 * page table size is large enough so that page outs are infrequent,
-	 * the problem does not occur.
-	 */
-	static final int PAGE_TABLE_SIZE = 10 * 1024 * 1024 / Database.CHUNK_SIZE; // 10 MB
-	
 	protected File dbFile;
 	protected Database db;
 	protected BTree btree;
@@ -60,7 +50,7 @@ public class BTreeTests extends BaseTestCase {
 	// and invoke it multiple times per Junit test
 	protected void init(int degree) throws Exception {
 		dbFile = File.createTempFile("pdomtest", "db");
-		db = new Database(dbFile, PAGE_TABLE_SIZE);
+		db = new Database(dbFile);
 		rootRecord = Database.DATA_AREA;
 		comparator = new BTMockRecordComparator();
 		btree = new BTree(db, rootRecord, degree, comparator);

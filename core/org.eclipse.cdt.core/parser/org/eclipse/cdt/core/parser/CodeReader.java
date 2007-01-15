@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005 IBM Corporation and others.
+ * Copyright (c) 2005, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  * IBM Rational Software - Initial API and implementation
  * Cheong, Jeong-Sik - fix for 162381
+ * Valeri Atamaniouk - fix for 170398
  *******************************************************************************/
 package org.eclipse.cdt.core.parser;
 
@@ -29,6 +30,14 @@ public class CodeReader {
     public static final String SYSTEM_DEFAULT_ENCODING = System.getProperty( "file.encoding" ); //$NON-NLS-1$
 	private static final String NF = "<text>"; //$NON-NLS-1$
 	private static final char [] NOFILE = NF.toCharArray(); 
+	
+	/**
+	 * Maximum number of bytes from the source file to load. If the file length
+	 * exceeds this value, the content is truncated
+	 * 
+	 * @see #load(String, FileInputStream)
+	 */
+	private static final int MAX_FILE_SIZE = Integer.MAX_VALUE;
 	
 	public final char[] buffer;
 	public final char[] filename;
@@ -91,25 +100,44 @@ public class CodeReader {
 		}
 	}
 	
-	private char[] load( String charSet, FileInputStream stream ) throws IOException {
-	    String encoding = Charset.isSupported( charSet ) ? charSet : SYSTEM_DEFAULT_ENCODING; 
+	/**
+	 * Load the stream content as a character array. The method loads the stream
+	 * content using given character set name. In case if the character set is
+	 * not supported, the default one is used.
+	 * <p>
+	 * If the file is really large, it is silently truncated.
+	 * </p>
+	 * 
+	 * @param charSet
+	 *            Character set name to use for decoding.
+	 * @param stream
+	 *            Input stream
+	 * @return Loaded character content
+	 * @throws IOException
+	 */
+	private char[] load(String charSet, FileInputStream stream)
+			throws IOException {
+		String encoding = Charset.isSupported(charSet) ? charSet
+				: SYSTEM_DEFAULT_ENCODING;
 
-        FileChannel channel = stream.getChannel();
-		ByteBuffer byteBuffer = ByteBuffer.allocateDirect((int)channel.size());
+		FileChannel channel = stream.getChannel();
+
+		// In most cases JDK uses Java-written character set decoders. Heap
+		// buffer will work way faster here
+		// Also if the file is larger then 2^31 we truncate it (hope there is
+		// enough heap space)
+		ByteBuffer byteBuffer = ByteBuffer.allocate((int) Math.min(channel
+				.size(), MAX_FILE_SIZE));
 		channel.read(byteBuffer);
-		byteBuffer.rewind();
+		byteBuffer.flip();
 
-		
 		CharBuffer charBuffer = Charset.forName(encoding).decode(byteBuffer);
-		char[] buff= null;
-		if (charBuffer.hasArray()) {
-			buff= charBuffer.array();
-			// bug 162381, handle the case where the buffer is longer
-			if (buff.length == charBuffer.length()) {
+		if (charBuffer.hasArray() && charBuffer.arrayOffset() == 0) {
+			char[] buff= charBuffer.array();
+			if (buff.length == charBuffer.remaining()) 
 				return buff;
-			}
 		}
-		buff = new char[charBuffer.length()];
+		char[] buff = new char[charBuffer.remaining()];
 		charBuffer.get(buff);
 		return buff;
 	}

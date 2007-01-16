@@ -2,7 +2,7 @@
 <feature
       id="org.eclipse.rse.tests"
       label="%featureName"
-      version="1.0.2.qualifier"
+      version="2.0.0.qualifier"
       provider-name="%providerName">
 
    <description>
@@ -23,8 +23,8 @@
    </url>
 
    <requires>
-      <import feature="org.eclipse.rse.core" version="1.0.2.qualifier" match="equivalent"/>
-      <import feature="org.eclipse.rse.local" version="1.0.2.qualifier" match="equivalent"/>
+      <import feature="org.eclipse.rse.core" version="2.0.0.qualifier" match="equivalent"/>
+      <import feature="org.eclipse.rse.local" version="2.0.0.qualifier" match="equivalent"/>
       <import plugin="org.junit"/>
    </requires>
 

@@ -636,30 +636,7 @@ public class VariableManager extends Manager {
 		for (int i = 0; i < vars.length; i++) {
 			Variable variable = vars[i];
 			if (isVariableNeedsToBeUpdate(variable, currentStack, frames, lowLevel)) {
-				String varName = variable.getMIVar().getVarName();
-				MIVarChange[] changes = noChanges;
-				MIVarUpdate update = factory.createMIVarUpdate(varName);
-				try {
-					mi.postCommand(update);
-					MIVarUpdateInfo info = update.getMIVarUpdateInfo();
-					if (info == null) {
-						throw new CDIException(CdiResources.getString("cdi.Common.No_answer")); //$NON-NLS-1$
-					}
-					changes = info.getMIVarChanges();
-				} catch (MIException e) {
-					//throw new MI2CDIException(e);
-					eventList.add(new MIVarDeletedEvent(mi, varName));
-				}
-				variable.setUpdated(true);
-				for (int j = 0; j < changes.length; j++) {
-					String n = changes[j].getVarName();
-					if (changes[j].isInScope()) {
-						eventList.add(new MIVarChangedEvent(mi, n));
-					} else {
-						destroyVariable(variable);
-						eventList.add(new MIVarDeletedEvent(mi, n));
-					}
-				}
+				update(target, variable, eventList);
 			} else {
 				variable.setUpdated(false);
 			}
@@ -680,19 +657,36 @@ public class VariableManager extends Manager {
 	public void update(Target target, Variable variable, List eventList) throws CDIException {
 		MISession mi = target.getMISession();
 		CommandFactory factory = mi.getCommandFactory();
-		String varName = variable.getMIVar().getVarName();
 		MIVarChange[] changes = noChanges;
-		MIVarUpdate update = factory.createMIVarUpdate(varName);
 		try {
-			mi.postCommand(update);
-			MIVarUpdateInfo info = update.getMIVarUpdateInfo();
-			if (info == null) {
-				throw new CDIException(CdiResources.getString("cdi.Common.No_answer")); //$NON-NLS-1$
+			String miVarName = variable.getMIVar().getVarName();
+			MIVarUpdate update = factory.createMIVarUpdate(miVarName);
+			try {
+				mi.postCommand(update);
+				MIVarUpdateInfo info = update.getMIVarUpdateInfo();
+				if (info == null) {
+					throw new CDIException(CdiResources.getString("cdi.Common.No_answer")); //$NON-NLS-1$
+				}
+				changes = info.getMIVarChanges();
+			} catch (MIException e) {
+				//throw new MI2CDIException(e);
+				eventList.add(new MIVarDeletedEvent(mi, miVarName));
 			}
-			changes = info.getMIVarChanges();
-		} catch (MIException e) {
-			//throw new MI2CDIException(e);
-			eventList.add(new MIVarDeletedEvent(mi, varName));
+		} catch (CDIException exc) {
+			// When the variable was out of scope the fisrt time, the getMIVar() generates an exception.
+			// Then create again the variable, set the fVarCreateCMD of Variable class and try again the update command.
+			try {						
+				MIVarCreate var = factory.createMIVarCreate(variable.getName());
+				mi.postCommand(var, -1);						
+				variable.setMIVarCreate(var);						
+				try {
+					update(target,variable,eventList);
+				} catch (Exception ex1) {
+					//nothing...					
+				}					
+			} catch (MIException e) {
+				throw new MI2CDIException(e);
+			}
 		}
 		variable.setUpdated(true);
 		for (int j = 0; j < changes.length; j++) {

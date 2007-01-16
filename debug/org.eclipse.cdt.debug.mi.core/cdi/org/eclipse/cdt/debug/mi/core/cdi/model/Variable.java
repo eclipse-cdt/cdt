@@ -522,4 +522,8 @@ public abstract class Variable extends VariableDescriptor implements ICDIVariabl
 		}
 		return fTypename;
 	}
+
+	public void setMIVarCreate(MIVarCreate miVar) {
+		fVarCreateCMD = miVar;
+	}
 }

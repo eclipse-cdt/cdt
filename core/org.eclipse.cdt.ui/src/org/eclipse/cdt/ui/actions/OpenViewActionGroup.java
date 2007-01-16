@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -27,12 +27,15 @@ import org.eclipse.ui.dialogs.PropertyDialogAction;
 import org.eclipse.ui.part.Page;
 
 import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.ui.CUIPlugin;
 
 import org.eclipse.cdt.internal.ui.IContextMenuConstants;
 import org.eclipse.cdt.internal.ui.callhierarchy.CHViewPart;
 import org.eclipse.cdt.internal.ui.callhierarchy.OpenCallHierarchyAction;
 import org.eclipse.cdt.internal.ui.editor.CEditor;
 import org.eclipse.cdt.internal.ui.editor.ICEditorActionDefinitionIds;
+import org.eclipse.cdt.internal.ui.typehierarchy.OpenTypeHierarchyAction;
+import org.eclipse.cdt.internal.ui.typehierarchy.THViewPart;
 
 /**
  * Action group that adds actions to open a new CDT view part or an external 
@@ -47,14 +50,14 @@ import org.eclipse.cdt.internal.ui.editor.ICEditorActionDefinitionIds;
 public class OpenViewActionGroup extends ActionGroup {
 
     private boolean fEditorIsOwner;
-//	private boolean fIsTypeHiararchyViewerOwner;
+	private boolean fIsTypeHiararchyViewerOwner;
     private boolean fIsCallHiararchyViewerOwner;
 	private IWorkbenchSite fSite;
 	private String fGroupName= IContextMenuConstants.GROUP_OPEN;
 	
 //	private OpenSuperImplementationAction fOpenSuperImplementation;
 //	private OpenExternalJavadocAction fOpenExternalJavadoc;
-//	private OpenTypeHierarchyAction fOpenTypeHierarchy;
+	private OpenTypeHierarchyAction fOpenTypeHierarchy;
 	private PropertyDialogAction fOpenPropertiesDialog;
 	private OpenCallHierarchyAction fOpenCallHierarchy;
 
@@ -78,8 +81,8 @@ public class OpenViewActionGroup extends ActionGroup {
 	 */
 	public OpenViewActionGroup(IViewPart part) {
 		createSiteActions(part.getSite());
-//		fIsTypeHiararchyViewerOwner= part instanceof TypeHierarchyViewPart;
         fIsCallHiararchyViewerOwner= part instanceof CHViewPart;
+        fIsTypeHiararchyViewerOwner= part instanceof THViewPart;
 	}
 	
 	/**
@@ -96,15 +99,21 @@ public class OpenViewActionGroup extends ActionGroup {
 //		fOpenExternalJavadoc.setActionDefinitionId(IJavaEditorActionDefinitionIds.OPEN_EXTERNAL_JAVADOC);
 //		part.setAction("OpenExternalJavadoc", fOpenExternalJavadoc); //$NON-NLS-1$
 
-//		fOpenTypeHierarchy= new OpenTypeHierarchyAction(part);
-//		fOpenTypeHierarchy.setActionDefinitionId(ICEditorActionDefinitionIds.OPEN_TYPE_HIERARCHY);
-//		part.setAction("OpenTypeHierarchy", fOpenTypeHierarchy); //$NON-NLS-1$
-
+		fOpenTypeHierarchy= new OpenTypeHierarchyAction(part);
+		fOpenTypeHierarchy.setActionDefinitionId(ICEditorActionDefinitionIds.OPEN_TYPE_HIERARCHY);
+		if (useTypeHierarchy()) {
+			part.setAction("OpenTypeHierarchy", fOpenTypeHierarchy); //$NON-NLS-1$
+		}
+		
         fOpenCallHierarchy= new OpenCallHierarchyAction(part);
         fOpenCallHierarchy.setActionDefinitionId(ICEditorActionDefinitionIds.OPEN_CALL_HIERARCHY);
         part.setAction("OpenCallHierarchy", fOpenCallHierarchy); //$NON-NLS-1$
 
 		initialize(part.getEditorSite());
+	}
+
+	private boolean useTypeHierarchy() {
+		return CUIPlugin.getDefault().getPluginPreferences().getBoolean("showCtxMenuTypeHierarchy"); //$NON-NLS-1$
 	}
 
 	private void createSiteActions(IWorkbenchSite site) {
@@ -114,9 +123,9 @@ public class OpenViewActionGroup extends ActionGroup {
 //		fOpenExternalJavadoc= new OpenExternalJavadocAction(site);
 //		fOpenExternalJavadoc.setActionDefinitionId(IJavaEditorActionDefinitionIds.OPEN_EXTERNAL_JAVADOC);
 
-//		fOpenTypeHierarchy= new OpenTypeHierarchyAction(site);
-//		fOpenTypeHierarchy.setActionDefinitionId(ICEditorActionDefinitionIds.OPEN_TYPE_HIERARCHY);
-
+		fOpenTypeHierarchy= new OpenTypeHierarchyAction(site);
+		fOpenTypeHierarchy.setActionDefinitionId(ICEditorActionDefinitionIds.OPEN_TYPE_HIERARCHY);
+		
 		fOpenCallHierarchy= new OpenCallHierarchyAction(site);
         fOpenCallHierarchy.setActionDefinitionId(ICEditorActionDefinitionIds.OPEN_CALL_HIERARCHY);
 
@@ -132,7 +141,7 @@ public class OpenViewActionGroup extends ActionGroup {
 		ISelection selection= provider.getSelection();
 //		fOpenSuperImplementation.update(selection);
 //		fOpenExternalJavadoc.update(selection);
-//		fOpenTypeHierarchy.update(selection);
+		fOpenTypeHierarchy.update(selection);
 		fOpenCallHierarchy.update(selection);
 		if (!fEditorIsOwner) {
 			if (selection instanceof IStructuredSelection) {
@@ -143,7 +152,7 @@ public class OpenViewActionGroup extends ActionGroup {
 			}
 //			provider.addSelectionChangedListener(fOpenSuperImplementation);
 //			provider.addSelectionChangedListener(fOpenExternalJavadoc);
-//			provider.addSelectionChangedListener(fOpenTypeHierarchy);
+			provider.addSelectionChangedListener(fOpenTypeHierarchy);
 			provider.addSelectionChangedListener(fOpenCallHierarchy);
 			// no need to register the open properties dialog action since it registers itself
 		}
@@ -162,15 +171,18 @@ public class OpenViewActionGroup extends ActionGroup {
 	 */
 	public void fillContextMenu(IMenuManager menu) {
 		super.fillContextMenu(menu);
-//		if (!fIsTypeHiararchyViewerOwner)
-//			appendToGroup(menu, fOpenTypeHierarchy);
+		if (useTypeHierarchy() && !fIsTypeHiararchyViewerOwner && fOpenTypeHierarchy.isEnabled()) {
+			menu.appendToGroup(fGroupName, fOpenTypeHierarchy);
+		}
 		if (!fIsCallHiararchyViewerOwner && fOpenCallHierarchy.isEnabled()) {
 			menu.appendToGroup(fGroupName, fOpenCallHierarchy);
 		}
 //		appendToGroup(menu, fOpenSuperImplementation);
 		IStructuredSelection selection= getStructuredSelection();
-		if (fOpenPropertiesDialog != null && fOpenPropertiesDialog.isEnabled() && selection != null &&fOpenPropertiesDialog.isApplicableForSelection(selection)) {
-			menu.appendToGroup(IContextMenuConstants.GROUP_PROPERTIES, fOpenPropertiesDialog);
+		if (!fIsCallHiararchyViewerOwner && !fIsTypeHiararchyViewerOwner) {
+			if (fOpenPropertiesDialog != null && fOpenPropertiesDialog.isEnabled() && selection != null &&fOpenPropertiesDialog.isApplicableForSelection(selection)) {
+				menu.appendToGroup(IContextMenuConstants.GROUP_PROPERTIES, fOpenPropertiesDialog);
+			}
 		}
 	}
 
@@ -181,7 +193,7 @@ public class OpenViewActionGroup extends ActionGroup {
 		ISelectionProvider provider= fSite.getSelectionProvider();
 //		provider.removeSelectionChangedListener(fOpenSuperImplementation);
 //		provider.removeSelectionChangedListener(fOpenExternalJavadoc);
-//		provider.removeSelectionChangedListener(fOpenTypeHierarchy);
+		provider.removeSelectionChangedListener(fOpenTypeHierarchy);
 		provider.removeSelectionChangedListener(fOpenCallHierarchy);
 		if (fOpenPropertiesDialog != null) {
 			fOpenPropertiesDialog.dispose();
@@ -192,7 +204,7 @@ public class OpenViewActionGroup extends ActionGroup {
 	private void setGlobalActionHandlers(IActionBars actionBars) {
 //		actionBars.setGlobalActionHandler(JdtActionConstants.OPEN_SUPER_IMPLEMENTATION, fOpenSuperImplementation);
 //		actionBars.setGlobalActionHandler(JdtActionConstants.OPEN_EXTERNAL_JAVA_DOC, fOpenExternalJavadoc);
-//		actionBars.setGlobalActionHandler(CdtActionConstants.OPEN_TYPE_HIERARCHY, fOpenTypeHierarchy);
+		actionBars.setGlobalActionHandler(CdtActionConstants.OPEN_TYPE_HIERARCHY, fOpenTypeHierarchy);
         actionBars.setGlobalActionHandler(CdtActionConstants.OPEN_CALL_HIERARCHY, fOpenCallHierarchy);
         if (fOpenPropertiesDialog != null) {
         	actionBars.setGlobalActionHandler(ActionFactory.PROPERTIES.getId(), fOpenPropertiesDialog);

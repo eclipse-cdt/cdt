@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2006 IBM Corporation and others.
+ * Copyright (c) 2003, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -689,7 +689,8 @@ public class CElementLabels {
 				}
 			}
 			if (isQualifier) {
-				getTypeLabel(parent, flags, buf);
+				int qflags= flags & ~MF_POST_FILE_QUALIFIED;
+				getTypeLabel(parent, qflags, buf);
 				buf.append("::"); //$NON-NLS-1$
 			}
 		}
@@ -719,6 +720,14 @@ public class CElementLabels {
 		//template parameters
 		if (elem instanceof ITemplate) {
 			getTemplateParameters((ITemplate)elem, flags, buf);
+		}
+		
+		if( getFlag(flags, MF_POST_FILE_QUALIFIED)) {
+			IPath path= elem.getPath();
+			if (path != null) {
+				buf.append( CONCAT_STRING );
+				buf.append(path.toString());
+			}
 		}
 	}
 	

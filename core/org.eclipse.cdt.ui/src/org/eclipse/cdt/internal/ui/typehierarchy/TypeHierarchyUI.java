@@ -9,7 +9,7 @@
  *    Markus Schorn - initial API and implementation
  *******************************************************************************/ 
 
-package org.eclipse.cdt.internal.ui.callhierarchy;
+package org.eclipse.cdt.internal.ui.typehierarchy;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -25,50 +25,51 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTName;
+import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IBinding;
-import org.eclipse.cdt.core.dom.ast.IEnumerator;
-import org.eclipse.cdt.core.dom.ast.IFunction;
-import org.eclipse.cdt.core.dom.ast.IVariable;
-import org.eclipse.cdt.core.dom.ast.c.ICExternalBinding;
+import org.eclipse.cdt.core.dom.ast.ICompositeType;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.index.IIndexManager;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.cdt.core.model.IWorkingCopy;
 import org.eclipse.cdt.ui.CUIPlugin;
 
 import org.eclipse.cdt.internal.ui.actions.OpenActionUtil;
 import org.eclipse.cdt.internal.ui.editor.CEditor;
 import org.eclipse.cdt.internal.ui.util.ExceptionHandler;
 import org.eclipse.cdt.internal.ui.viewsupport.CElementLabels;
+import org.eclipse.cdt.internal.ui.viewsupport.FindNameForSelectionVisitor;
 import org.eclipse.cdt.internal.ui.viewsupport.IndexUI;
 
-public class CallHierarchyUI {
+public class TypeHierarchyUI {
 	private static boolean sIsJUnitTest= false;
 
 	public static void setIsJUnitTest(boolean val) {
 		sIsJUnitTest= val;
 	}
 	
-	public static CHViewPart open(ICElement input, IWorkbenchWindow window) {
+	public static THViewPart open(ICElement input, IWorkbenchWindow window) {
         if (input != null) {
         	return openInViewPart(window, input);
         }
         return null;
     }
 
-    private static CHViewPart openInViewPart(IWorkbenchWindow window, ICElement input) {
+    private static THViewPart openInViewPart(IWorkbenchWindow window, ICElement input) {
         IWorkbenchPage page= window.getActivePage();
         try {
-            CHViewPart result= (CHViewPart)page.showView(CUIPlugin.ID_CALL_HIERARCHY);
+            THViewPart result= (THViewPart)page.showView(CUIPlugin.ID_TYPE_HIERARCHY);
             result.setInput(input);
             return result;
         } catch (CoreException e) {
-            ExceptionHandler.handle(e, window.getShell(), CHMessages.OpenCallHierarchyAction_label, null); 
+            ExceptionHandler.handle(e, window.getShell(), Messages.TypeHierarchyUI_OpenTypeHierarchy, null); 
         }
         return null;        
     }
 
-    private static CHViewPart openInViewPart(IWorkbenchWindow window, ICElement[] input) {
+    private static THViewPart openInViewPart(IWorkbenchWindow window, ICElement[] input) {
 		ICElement elem = null;
 		switch (input.length) {
 		case 0:
@@ -81,7 +82,7 @@ public class CallHierarchyUI {
 				throw new RuntimeException("ambigous input"); //$NON-NLS-1$
 			}
 			elem = OpenActionUtil.selectCElement(input, window.getShell(),
-					CHMessages.CallHierarchyUI_label, CHMessages.CallHierarchyUI_selectMessage,
+					Messages.TypeHierarchyUI_OpenTypeHierarchy, Messages.TypeHierarchyUI_SelectFromList,
 					CElementLabels.ALL_DEFAULT | CElementLabels.MF_POST_FILE_QUALIFIED, 0);
 			break;
 		}
@@ -97,7 +98,7 @@ public class CallHierarchyUI {
 			final IEditorInput editorInput = editor.getEditorInput();
 			final Display display= Display.getCurrent();
 			
-			Job job= new Job(CHMessages.CallHierarchyUI_label) {
+			Job job= new Job(Messages.TypeHierarchyUI_OpenTypeHierarchy) {
 				protected IStatus run(IProgressMonitor monitor) {
 					try {
 						final ICElement[] elems= findDefinitions(project, editorInput, sel);
@@ -125,10 +126,10 @@ public class CallHierarchyUI {
 
 			index.acquireReadLock();
 			try {
-				IASTName name= IndexUI.getSelectedName(index, editorInput, sel);
+				IASTName name= getSelectedName(index, editorInput, sel);
 				if (name != null) {
 					IBinding binding= name.resolveBinding();
-					if (CallHierarchyUI.isRelevantForCallHierarchy(binding)) {
+					if (isValidInput(binding)) {
 						if (name.isDefinition()) {
 							ICElement elem= IndexUI.getCElementForName(project, index, name);
 							if (elem != null) {
@@ -168,36 +169,49 @@ public class CallHierarchyUI {
 		return null;
 	}
 
-	public static boolean isRelevantForCallHierarchy(IBinding binding) {
-		if (binding instanceof ICExternalBinding ||
-				binding instanceof IEnumerator ||
-				binding instanceof IFunction ||
-				binding instanceof IVariable) {
+	private static IASTName getSelectedName(IIndex index, IEditorInput editorInput, ITextSelection selection) throws CoreException {
+		int selectionStart = selection.getOffset();
+		int selectionLength = selection.getLength();
+
+		IWorkingCopy workingCopy = CUIPlugin.getDefault().getWorkingCopyManager().getWorkingCopy(editorInput);
+		if (workingCopy == null)
+			return null;
+		
+		int options= ITranslationUnit.AST_SKIP_INDEXED_HEADERS;
+		IASTTranslationUnit ast = workingCopy.getAST(index, options);
+		FindNameForSelectionVisitor finder= new FindNameForSelectionVisitor(ast.getFilePath(), selectionStart, selectionLength);
+		ast.accept(finder);
+		return finder.getSelectedName();
+	}
+
+	public static boolean isValidInput(IBinding binding) {
+		if (binding instanceof ICompositeType) {
+//			|| binding instanceof ITypedef ||
+//				binding instanceof IField || binding instanceof ICPPMethod) {
 			return true;
 		}
 		return false;
 	}
 
-	public static boolean isRelevantForCallHierarchy(ICElement elem) {
+	public static boolean isValidInput(ICElement elem) {
 		if (elem == null) {
 			return false;
 		}
 		switch (elem.getElementType()) {
-		case ICElement.C_CLASS_CTOR:
-		case ICElement.C_CLASS_DTOR:
-		case ICElement.C_ENUMERATOR:
-		case ICElement.C_FIELD:
-		case ICElement.C_FUNCTION:
-		case ICElement.C_FUNCTION_DECLARATION:
-		case ICElement.C_METHOD:
-		case ICElement.C_METHOD_DECLARATION:
-		case ICElement.C_TEMPLATE_FUNCTION:
-		case ICElement.C_TEMPLATE_FUNCTION_DECLARATION:
-		case ICElement.C_TEMPLATE_METHOD:
-		case ICElement.C_TEMPLATE_METHOD_DECLARATION:
-		case ICElement.C_TEMPLATE_VARIABLE:
-		case ICElement.C_VARIABLE:
-		case ICElement.C_VARIABLE_DECLARATION:
+		case ICElement.C_CLASS:
+		case ICElement.C_STRUCT:
+		case ICElement.C_UNION:
+		case ICElement.C_CLASS_DECLARATION:
+		case ICElement.C_STRUCT_DECLARATION:
+		case ICElement.C_UNION_DECLARATION:
+//		case ICElement.C_TYPEDEF:
+//		case ICElement.C_CLASS_CTOR:
+//		case ICElement.C_CLASS_DTOR:
+//		case ICElement.C_FIELD:
+//		case ICElement.C_METHOD:
+//		case ICElement.C_METHOD_DECLARATION:
+//		case ICElement.C_TEMPLATE_METHOD:
+//		case ICElement.C_TEMPLATE_METHOD_DECLARATION:
 			return true;
 		}
 		return false;

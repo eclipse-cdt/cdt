@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.preferences;
 
@@ -85,6 +86,7 @@ public class WorkInProgressPreferencePage extends PreferencePage implements IWor
 
 		// Add your controls here
 		addCheckBox(result, "Use new model builder", CCorePlugin.PREF_USE_NEW_MODEL_BUILDER); //$NON-NLS-1$
+		addCheckBox(result, "Show context menus for type hierarchy", "showCtxMenuTypeHierarchy"); //$NON-NLS-1$ //$NON-NLS-2$
 		
 		applyDialogFont(result);
 		return result;

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2006 IBM Corporation and others.
+ * Copyright (c) 2003, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -96,6 +96,7 @@ public class CUIPlugin extends AbstractUIPlugin {
 
     public static final String ID_INCLUDE_BROWSER= PLUGIN_ID + ".includeBrowser"; //$NON-NLS-1$
     public static final String ID_CALL_HIERARCHY= PLUGIN_ID + ".callHierarchy"; //$NON-NLS-1$
+	public static final String ID_TYPE_HIERARCHY = PLUGIN_ID + ".typeHierarchy"; //$NON-NLS-1$
     
 	public static final String C_PROJECT_WIZARD_ID = PLUGIN_ID + ".wizards.StdCWizard"; //$NON-NLS-1$
 	public static final String CPP_PROJECT_WIZARD_ID = PLUGIN_ID + ".wizards.StdCCWizard"; //$NON-NLS-1$
@@ -179,12 +180,6 @@ public class CUIPlugin extends AbstractUIPlugin {
 	 * @since 2.0
 	 */
 	public static String ID_MEMBERS_VIEW = PLUGIN_ID + ".MembersView"; //$NON-NLS-1$
-
-	/** 
-	 * The view part id of the type hierarchy part
-	 * (value <code>"org.eclipse.cdt.ui.TypeHierarchy"</code>).
-	 */ 
-	public static final String ID_TYPE_HIERARCHY = "org.eclipse.cdt.ui.TypeHierarchyView"; //$NON-NLS-1$
 
 	/**
 	 * The key to store customized templates. 

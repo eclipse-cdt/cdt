@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 QNX Software Systems and others.
+ * Copyright (c) 2000, 2007 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
  *     IBM Corporation
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 
 package org.eclipse.cdt.internal.ui.editor;
@@ -124,7 +125,7 @@ public interface ICEditorActionDefinitionIds extends ITextEditorActionDefinition
 	 * Action definition ID of the navigate -> open type hierarchy action
 	 * (value <code>"org.eclipse.cdt.ui.edit.text.c.open.type.hierarchy"</code>).
 	 */
-//	public static final String OPEN_TYPE_HIERARCHY= "org.eclipse.cdt.ui.edit.text.c.open.type.hierarchy"; //$NON-NLS-1$
+	public static final String OPEN_TYPE_HIERARCHY= "org.eclipse.cdt.ui.edit.text.c.open.type.hierarchy"; //$NON-NLS-1$
 
 	/**
 	 * Action definition ID of the navigate -> open action

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 IBM Corporation and others.
+ * Copyright (c) 2005, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -204,9 +204,21 @@ public class CPluginImages {
     public static final String IMG_ACTION_HIDE_MACROS = NAME_PREFIX + "filterDefines.gif"; //$NON-NLS-1$
     public static final String IMG_SHOW_NEXT= NAME_PREFIX + "search_next.gif"; //$NON-NLS-1$
     public static final String IMG_SHOW_PREV= NAME_PREFIX + "search_prev.gif"; //$NON-NLS-1$
+
     public static final String IMG_REFRESH= NAME_PREFIX + "refresh_nav.gif"; //$NON-NLS-1$
-    
-    
+    public static final String IMG_LCL_CANCEL= NAME_PREFIX + "progress_stop.gif"; //$NON-NLS-1$
+
+    // view orientation
+	public static final String IMG_LCL_HORIZONTAL_ORIENTATION= NAME_PREFIX + "th_horizontal.gif"; //$NON-NLS-1$
+	public static final String IMG_LCL_VERTICAL_ORIENTATION= NAME_PREFIX + "th_vertical.gif"; //$NON-NLS-1$
+	public static final String IMG_LCL_AUTOMATIC_ORIENTATION= NAME_PREFIX + "th_automatic.gif"; //$NON-NLS-1$
+	public static final String IMG_LCL_SINGLE_ORIENTATION= NAME_PREFIX + "th_single.gif"; //$NON-NLS-1$
+
+    // hierarchy kind
+	public static final String IMG_LCL_TYPE_HIERARCHY= NAME_PREFIX + "hierarchy_co.gif"; //$NON-NLS-1$
+	public static final String IMG_LCL_SUB_TYPE_HIERARCHY= NAME_PREFIX + "sub_co.gif"; //$NON-NLS-1$
+	public static final String IMG_LCL_SUPER_TYPE_HIERARCHY= NAME_PREFIX + "super_co.gif"; //$NON-NLS-1$
+
 	public static final ImageDescriptor DESC_OBJS_TEMPLATE= createManaged(T_OBJ, IMG_OBJS_TEMPLATE);
 	
 	public static final ImageDescriptor DESC_OVR_STATIC= create(T_OVR, "static_co.gif"); //$NON-NLS-1$

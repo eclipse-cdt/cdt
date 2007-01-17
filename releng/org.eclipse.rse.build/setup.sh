@@ -45,6 +45,12 @@ if [ ! -f eclipse/plugins/org.eclipse.emf_2.2.0.v200612211251.jar ]; then
   unzip -o emf-sdo-runtime-2.3.0M4.zip
   rm emf-sdo-runtime-2.3.0M4.zip 
 fi
+if [ ! -f eclipse/plugins/org.junit_3.8.2/junit.jar ]; then
+  # Eclipse Test Framework
+  wget "http://download.eclipse.org/eclipse/downloads/drops/S-3.3M4-200612141445/eclipse-test-framework-3.3M4.zip"
+  unzip -o eclipse-test-framework-3.3M4.zip
+  rm eclipse-test-framework-3.3M4.zip
+fi
 
 # checkout the basebuilder
 if [ ! -f org.eclipse.releng.basebuilder/plugins/org.eclipse.core.runtime_3.3.100.v20061204.jar ]; then

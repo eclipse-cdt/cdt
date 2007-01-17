@@ -42,7 +42,7 @@
    <feature url="features/org.apache.oro_2.0.8.qualifier.jar" id="org.apache.oro" version="2.0.8.qualifier">
       <category name="Enabling Features"/>
    </feature>
-   <feature url="features/org.eclipse.tm.terminal.sdk_0.9.1.qualifier.jar" id="org.eclipse.tm.terminal.sdk" version="0.9.1.qualifier">
+   <feature url="features/org.eclipse.tm.terminal.sdk_0.9.100.qualifier.jar" id="org.eclipse.tm.terminal.sdk" version="0.9.100.qualifier">
       <category name="Target Management Add-ons"/>
    </feature>
    <feature url="features/org.eclipse.rse.tests_2.0.0.qualifier.jar" id="org.eclipse.rse.tests" version="2.0.0.qualifier">

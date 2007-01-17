@@ -20,8 +20,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-import javax.comm.CommPortIdentifier;
-import javax.comm.SerialPort;
+import gnu.io.CommPortIdentifier;
+import gnu.io.SerialPort;
 
 import org.eclipse.tm.terminal.ISettingsPage;
 import org.eclipse.tm.terminal.ISettingsStore;

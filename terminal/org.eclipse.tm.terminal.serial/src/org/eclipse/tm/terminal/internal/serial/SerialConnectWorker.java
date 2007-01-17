@@ -16,9 +16,9 @@
  *******************************************************************************/
 package org.eclipse.tm.terminal.internal.serial;
 
-import javax.comm.CommPortIdentifier;
-import javax.comm.PortInUseException;
-import javax.comm.SerialPort;
+import gnu.io.CommPortIdentifier;
+import gnu.io.PortInUseException;
+import gnu.io.SerialPort;
 
 import org.eclipse.tm.terminal.ITerminalControl;
 import org.eclipse.tm.terminal.TerminalState;

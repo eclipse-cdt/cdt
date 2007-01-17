@@ -1,12 +1,13 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * IBM - Initial API and implementation
+ *     IBM - Initial API and implementation
+ *     Anton Leherbauer (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.text.contentassist;
 
@@ -31,7 +32,7 @@ public class ContentAssistPreference {
 	//public final static String AUTOACTIVATION=  "content_assist_autoactivation";
 	/** Preference key for content assist auto activation delay */
 	public final static String AUTOACTIVATION_DELAY=  "content_assist_autoactivation_delay"; //$NON-NLS-1$
-	/** Preference key for content assist timeout delay */
+	/** Preference key for content assist timeout delay (unused) */
 	public final static String TIMEOUT_DELAY=  "content_assist_timeout_delay"; //$NON-NLS-1$
 	/** Preference key for content assist proposal color */
 	public final static String PROPOSALS_FOREGROUND=  "content_assist_proposals_foreground"; //$NON-NLS-1$
@@ -44,24 +45,24 @@ public class ContentAssistPreference {
 	/** Preference key for content assist auto insert */
 	public final static String AUTOINSERT=  "content_assist_autoinsert"; //$NON-NLS-1$
 	/** Preference key for content assist to insert the common prefix */
-	public final static String CODEASSIST_PREFIX_COMPLETION= "content_assist_prefix_completion"; //$NON-NLS-1$
+	public final static String PREFIX_COMPLETION= "content_assist_prefix_completion"; //$NON-NLS-1$
 
 	/** Preference key for C/CPP content assist auto activation triggers */
 	public final static String AUTOACTIVATION_TRIGGERS_DOT= "content_assist_autoactivation_trigger_dot"; //$NON-NLS-1$
 	public final static String AUTOACTIVATION_TRIGGERS_ARROW= "content_assist_autoactivation_trigger_arrow"; //$NON-NLS-1$
 	public final static String AUTOACTIVATION_TRIGGERS_DOUBLECOLON= "content_assist_autoactivation_trigger_doublecolon"; //$NON-NLS-1$
 	
-	/** Preference key for visibility of proposals */
+	/** Preference key for visibility of proposals (unused) */
 	public final static String SHOW_DOCUMENTED_PROPOSALS= "content_assist_show_visible_proposals"; //$NON-NLS-1$
 	/** Preference key for alphabetic ordering of proposals */
 	public final static String ORDER_PROPOSALS= "content_assist_order_proposals"; //$NON-NLS-1$
 	/** Preference key for case sensitivity of propsals */
 	//public final static String CASE_SENSITIVITY= "content_assist_case_sensitivity";
-	/** Preference key for adding imports on code assist */
+	/** Preference key for adding includes on code assist (unused) */
 	public final static String ADD_INCLUDE= "content_assist_add_import";	 //$NON-NLS-1$
-	/** Preference key for completion search scope */
+	/** Preference key for completion search scope (unused) */
 	public final static String CURRENT_FILE_SEARCH_SCOPE= "content_assist_current_file_search_scope";	 //$NON-NLS-1$
-	/** Preference key for completion search scope */
+	/** Preference key for completion search scope (unused) */
 	public final static String PROJECT_SEARCH_SCOPE= "content_assist_project_search_scope";	 //$NON-NLS-1$
 	/** Preference key for completion filtering */
 	public final static String PROPOSALS_FILTER= "content_assist_proposal_filter"; //$NON-NLS-1$
@@ -131,7 +132,6 @@ public class ContentAssistPreference {
 		int delay= store.getInt(AUTOACTIVATION_DELAY);
 		assistant.setAutoActivationDelay(delay);
 		
-		delay= store.getInt(TIMEOUT_DELAY);
 		Color c1= getColor(store, PROPOSALS_FOREGROUND, manager);
 		assistant.setProposalSelectorForeground(c1);
 		
@@ -149,7 +149,7 @@ public class ContentAssistPreference {
 		enabled= store.getBoolean(AUTOINSERT);
 		assistant.enableAutoInsert(enabled);
 
-		enabled = store.getBoolean(CODEASSIST_PREFIX_COMPLETION);
+		enabled = store.getBoolean(PREFIX_COMPLETION);
 		assistant.enablePrefixCompletion(enabled);
 
 		configureCProcessor(assistant, store);
@@ -231,6 +231,9 @@ public class ContentAssistPreference {
 		} else if (AUTOINSERT.equals(p)) {
 			boolean enabled= store.getBoolean(AUTOINSERT);
 			assistant.enableAutoInsert(enabled);
+		} else if (PREFIX_COMPLETION.equals(p)) {
+			boolean enabled= store.getBoolean(PREFIX_COMPLETION);
+			assistant.enablePrefixCompletion(enabled);
 		} 
 		
 		changeCProcessor(assistant, store, p);

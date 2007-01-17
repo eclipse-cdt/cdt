@@ -1,30 +1,30 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2006 QNX Software Systems and others.
+ * Copyright (c) 2002, 2007 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * QNX Software Systems - Initial API and implementation
+ *     QNX Software Systems - Initial API and implementation
+ *     Anton Leherbauer (Wind River Systems)
  *******************************************************************************/
 
 package org.eclipse.cdt.internal.ui.preferences;
 
 import java.util.ArrayList;
 
-import org.eclipse.cdt.internal.ui.ICHelpContextIds;
-import org.eclipse.cdt.internal.ui.text.contentassist.ContentAssistPreference;
 import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.PlatformUI;
+
+import org.eclipse.cdt.internal.ui.ICHelpContextIds;
+import org.eclipse.cdt.internal.ui.text.contentassist.ContentAssistPreference;
 
 /**
  * CodeAssistPreferencePage
@@ -44,12 +44,8 @@ public class CodeAssistPreferencePage extends AbstractPreferencePage {
 
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.INT, ContentAssistPreference.AUTOACTIVATION_DELAY));
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, ContentAssistPreference.AUTOINSERT));
-		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, ContentAssistPreference.CODEASSIST_PREFIX_COMPLETION));
+		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, ContentAssistPreference.PREFIX_COMPLETION));
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.INT, ContentAssistPreference.TIMEOUT_DELAY));		
-		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, ContentAssistPreference.PROPOSALS_BACKGROUND));
-		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, ContentAssistPreference.PROPOSALS_FOREGROUND));
-		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, ContentAssistPreference.PARAMETERS_BACKGROUND));
-		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, ContentAssistPreference.PARAMETERS_FOREGROUND));
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, ContentAssistPreference.AUTOACTIVATION_TRIGGERS_DOT));
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, ContentAssistPreference.AUTOACTIVATION_TRIGGERS_ARROW));
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, ContentAssistPreference.AUTOACTIVATION_TRIGGERS_DOUBLECOLON));
@@ -78,16 +74,18 @@ public class CodeAssistPreferencePage extends AbstractPreferencePage {
 		layout.numColumns = 2;
 		contentAssistComposite.setLayout(layout);
 
+		String label;
 		//&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+		// search scope (no longer supported)
 		// The following three radio buttons are grouped together
-		String label = PreferencesMessages.CEditorPreferencePage_ContentAssistPage_searchGroupTitle; 
-		Group searchGroup = addGroupBox(contentAssistComposite, label, 2);
-		
-		label= PreferencesMessages.CEditorPreferencePage_ContentAssistPage_searchGroupCurrentFileOption; 
-		addRadioButton(searchGroup, label, ContentAssistPreference.CURRENT_FILE_SEARCH_SCOPE, 0);
-		
-		label= PreferencesMessages.CEditorPreferencePage_ContentAssistPage_searchGroupCurrentProjectOption; 
-		addRadioButton(searchGroup, label, ContentAssistPreference.PROJECT_SEARCH_SCOPE, 0);
+//		label = PreferencesMessages.CEditorPreferencePage_ContentAssistPage_searchGroupTitle; 
+//		Group searchGroup = addGroupBox(contentAssistComposite, label, 2);
+//		
+//		label= PreferencesMessages.CEditorPreferencePage_ContentAssistPage_searchGroupCurrentFileOption; 
+//		addRadioButton(searchGroup, label, ContentAssistPreference.CURRENT_FILE_SEARCH_SCOPE, 0);
+//		
+//		label= PreferencesMessages.CEditorPreferencePage_ContentAssistPage_searchGroupCurrentProjectOption; 
+//		addRadioButton(searchGroup, label, ContentAssistPreference.PROJECT_SEARCH_SCOPE, 0);
 		
 		//&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 		label = PreferencesMessages.CEditorPreferencePage_ContentAssistPage_insertionGroupTitle; 
@@ -97,15 +95,23 @@ public class CodeAssistPreferencePage extends AbstractPreferencePage {
 		addCheckBox(insertionGroup, label, ContentAssistPreference.AUTOINSERT, 0);
 
 		label = PreferencesMessages.CEditorPreferencePage_ContentAssistPage_insertCommonProposalAutomatically; 
-		addCheckBox(insertionGroup, label, ContentAssistPreference.CODEASSIST_PREFIX_COMPLETION, 0);
+		addCheckBox(insertionGroup, label, ContentAssistPreference.PREFIX_COMPLETION, 0);
 		
+		// parsing timeout (no longer supported)
+//		label = PreferencesMessages.CEditorPreferencePage_ContentAssistPage_timeoutDelay; 
+//		addTextField(insertionGroup, label, ContentAssistPreference.TIMEOUT_DELAY, 6, 0, true);
+
+		//&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+		// sorting and filtering	
+		label = PreferencesMessages.CEditorPreferencePage_ContentAssistPage_sortingSection_title; 
+		Group sortingGroup = addGroupBox(contentAssistComposite, label, 2);
+
 		label= PreferencesMessages.CEditorPreferencePage_ContentAssistPage_showProposalsInAlphabeticalOrder; 
-		addCheckBox(insertionGroup, label, ContentAssistPreference.ORDER_PROPOSALS, 0);
+		addCheckBox(sortingGroup, label, ContentAssistPreference.ORDER_PROPOSALS, 0);
 
-		label = PreferencesMessages.CEditorPreferencePage_ContentAssistPage_timeoutDelay; 
-		addTextField(insertionGroup, label, ContentAssistPreference.TIMEOUT_DELAY, 6, 0, true);
-
-
+		label = PreferencesMessages.CEditorPreferencePage_ContentAssistPage_proposalFilterSelect ; 
+		addComboBox(sortingGroup, label, ContentAssistPreference.PROPOSALS_FILTER, 20, 0);
+    	
 		//&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 		// The following items are grouped for Auto Activation
 		label = PreferencesMessages.CEditorPreferencePage_ContentAssistPage_autoActivationGroupTitle; 
@@ -123,22 +129,6 @@ public class CodeAssistPreferencePage extends AbstractPreferencePage {
 		label = PreferencesMessages.CEditorPreferencePage_ContentAssistPage_autoActivationDelay; 
 		addTextField(enableGroup, label, ContentAssistPreference.AUTOACTIVATION_DELAY, 4, 0, true);
 
-		//&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&		
-		label = PreferencesMessages.CEditorPreferencePage_ContentAssistPage_completionProposalBackgroundColor; 
-		addColorButton(contentAssistComposite, label, ContentAssistPreference.PROPOSALS_BACKGROUND, 0);
-
-		label= PreferencesMessages.CEditorPreferencePage_ContentAssistPage_completionProposalForegroundColor; 
-		addColorButton(contentAssistComposite, label, ContentAssistPreference.PROPOSALS_FOREGROUND, 0);
-
-//		label= PreferencesMessages.getString("CEditorPreferencePage.ContentAssistPage.parameterBackgroundColor"); 
-//		addColorButton(contentAssistComposite, label, ContentAssistPreference.PARAMETERS_BACKGROUND, 0);
-//
-//		label= PreferencesMessages.getString("CEditorPreferencePage.ContentAssistPage.parameterForegroundColor");
-//		addColorButton(contentAssistComposite, label, ContentAssistPreference.PARAMETERS_FOREGROUND, 0);
-
-		label = PreferencesMessages.CEditorPreferencePage_ContentAssistPage_proposalFilterSelect ; 
-		addComboBox(contentAssistComposite, label, ContentAssistPreference.PROPOSALS_FILTER, 20, 0);
-    	
 		initializeFields();
 
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(contentAssistComposite, ICHelpContextIds.C_EDITOR_CONTENT_ASSIST_PREF_PAGE);
@@ -165,11 +155,7 @@ public class CodeAssistPreferencePage extends AbstractPreferencePage {
 		store.setDefault(ContentAssistPreference.AUTOACTIVATION_DELAY, 500);
 		
 		store.setDefault(ContentAssistPreference.AUTOINSERT, true);
-		store.setDefault(ContentAssistPreference.CODEASSIST_PREFIX_COMPLETION, true);
-		PreferenceConverter.setDefault(store, ContentAssistPreference.PROPOSALS_BACKGROUND, new RGB(254, 241, 233));
-		PreferenceConverter.setDefault(store, ContentAssistPreference.PROPOSALS_FOREGROUND, new RGB(0, 0, 0));
-		PreferenceConverter.setDefault(store, ContentAssistPreference.PARAMETERS_BACKGROUND, new RGB(254, 241, 233));
-		PreferenceConverter.setDefault(store, ContentAssistPreference.PARAMETERS_FOREGROUND, new RGB(0, 0, 0));
+		store.setDefault(ContentAssistPreference.PREFIX_COMPLETION, true);
 		store.setDefault(ContentAssistPreference.ORDER_PROPOSALS, false);
 		store.setDefault(ContentAssistPreference.ADD_INCLUDE, true);
 		store.setDefault(ContentAssistPreference.PROPOSALS_FILTER, ProposalFilterPreferencesUtil.getProposalFilternamesAsString());  // $NON_NLS 1$

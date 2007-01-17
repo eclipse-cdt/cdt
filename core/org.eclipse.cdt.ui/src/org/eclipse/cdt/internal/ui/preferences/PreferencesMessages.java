@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -79,7 +79,10 @@ public final class PreferencesMessages extends NLS {
 	public static String CEditorPreferencePage_ContentAssistPage_proposalFilterSelect;
 	public static String CEditorPreferencePage_ContentAssistPage_completionProposalBackgroundColor;
 	public static String CEditorPreferencePage_ContentAssistPage_completionProposalForegroundColor;
+	public static String CEditorPreferencePage_ContentAssistPage_parameterBackgroundColor;
+	public static String CEditorPreferencePage_ContentAssistPage_parameterForegroundColor;
 	public static String CEditorPreferencePage_ContentAssistPage_autoActivationEnableDoubleColon;
+	public static String CEditorPreferencePage_ContentAssistPage_sortingSection_title;
 	public static String CEditorColoringConfigurationBlock_MultiLine;
 	public static String CEditorColoringConfigurationBlock_singleLine;
 	public static String CEditorColoringConfigurationBlock_keywords;

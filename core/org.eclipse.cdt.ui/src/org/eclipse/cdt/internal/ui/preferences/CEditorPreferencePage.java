@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 IBM Corporation and others.
+ * Copyright (c) 2005, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -40,6 +40,7 @@ import org.eclipse.cdt.ui.PreferenceConstants;
 
 import org.eclipse.cdt.internal.ui.ICHelpContextIds;
 import org.eclipse.cdt.internal.ui.editor.CEditor;
+import org.eclipse.cdt.internal.ui.text.contentassist.ContentAssistPreference;
 
 /*
  * The page for setting the editor options.
@@ -49,6 +50,10 @@ public class CEditorPreferencePage extends AbstractPreferencePage implements IWo
 	protected final String[][] fAppearanceColorListModel = new String[][] { 
 			{PreferencesMessages.CEditorPreferencePage_behaviorPage_matchingBracketColor, CEditor.MATCHING_BRACKETS_COLOR, null }, 
 			{PreferencesMessages.CEditorPreferencePage_behaviorPage_inactiveCodeColor, CEditor.INACTIVE_CODE_COLOR, null }, 
+			{PreferencesMessages.CEditorPreferencePage_ContentAssistPage_completionProposalBackgroundColor, ContentAssistPreference.PROPOSALS_BACKGROUND, null }, 
+			{PreferencesMessages.CEditorPreferencePage_ContentAssistPage_completionProposalForegroundColor, ContentAssistPreference.PROPOSALS_FOREGROUND, null }, 
+			{PreferencesMessages.CEditorPreferencePage_ContentAssistPage_parameterBackgroundColor, ContentAssistPreference.PARAMETERS_BACKGROUND, null }, 
+			{PreferencesMessages.CEditorPreferencePage_ContentAssistPage_parameterForegroundColor, ContentAssistPreference.PARAMETERS_FOREGROUND, null }, 
 	};
 
 	private List fAppearanceColorList;
@@ -69,6 +74,10 @@ public class CEditorPreferencePage extends AbstractPreferencePage implements IWo
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, CEditor.INACTIVE_CODE_COLOR));
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, CEditor.INACTIVE_CODE_ENABLE));
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, PreferenceConstants.ENSURE_NEWLINE_AT_EOF));
+		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, ContentAssistPreference.PROPOSALS_BACKGROUND));
+		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, ContentAssistPreference.PROPOSALS_FOREGROUND));
+		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, ContentAssistPreference.PARAMETERS_BACKGROUND));
+		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, ContentAssistPreference.PARAMETERS_FOREGROUND));
       
         OverlayPreferenceStore.OverlayKey[] keys = new OverlayPreferenceStore.OverlayKey[overlayKeys.size()];
 		overlayKeys.toArray(keys);
@@ -84,6 +93,10 @@ public class CEditorPreferencePage extends AbstractPreferencePage implements IWo
 		store.setDefault(CEditor.INACTIVE_CODE_ENABLE, true);
 		PreferenceConverter.setDefault(store, CEditor.INACTIVE_CODE_COLOR, new RGB(224, 224, 224));
 
+		PreferenceConverter.setDefault(store, ContentAssistPreference.PROPOSALS_BACKGROUND, new RGB(254, 241, 233));
+		PreferenceConverter.setDefault(store, ContentAssistPreference.PROPOSALS_FOREGROUND, new RGB(0, 0, 0));
+		PreferenceConverter.setDefault(store, ContentAssistPreference.PARAMETERS_BACKGROUND, new RGB(254, 241, 233));
+		PreferenceConverter.setDefault(store, ContentAssistPreference.PARAMETERS_FOREGROUND, new RGB(0, 0, 0));
 	}
 
 	/*

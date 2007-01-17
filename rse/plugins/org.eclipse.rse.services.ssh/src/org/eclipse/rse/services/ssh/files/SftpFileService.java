@@ -759,4 +759,10 @@ public class SftpFileService extends AbstractFileService implements IFileService
 		return false;
 	}
 
+	public boolean setReadOnly(IProgressMonitor monitor, String parent,
+			String name, boolean readOnly) throws SystemMessageException {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
 }

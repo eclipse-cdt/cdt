@@ -19,6 +19,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.rse.model.ISystemResourceChangeEvents;
 import org.eclipse.rse.services.files.RemoteFileIOException;
 import org.eclipse.rse.services.files.RemoteFileSecurityException;
@@ -220,7 +221,7 @@ public class SystemFilePropertyPage extends SystemBasePropertyPage
 	      {
 	        cbReadonlyPrompt.setSelection(!file.canWrite());
 	        wasReadOnly = !file.canWrite();
-	        if (wasReadOnly || file instanceof IVirtualRemoteFile)
+	        if (file instanceof IVirtualRemoteFile)
               cbReadonlyPrompt.setEnabled(false);
 	      }
 	    }  
@@ -252,11 +253,14 @@ public class SystemFilePropertyPage extends SystemBasePropertyPage
 	public boolean performOk()
 	{
 		boolean ok = super.performOk();
-		if (ok && (cbReadonlyPrompt!=null) && cbReadonlyPrompt.getSelection() && !wasReadOnly)
+		boolean readOnlySelected = cbReadonlyPrompt != null ? cbReadonlyPrompt.getSelection() : false;
+		if (ok && (cbReadonlyPrompt!=null) && 
+				((readOnlySelected && !wasReadOnly) || 
+				 (!readOnlySelected && wasReadOnly)))
 		{
    		  try
     	  {
-    	     getRemoteFile().getParentRemoteFileSubSystem().setReadOnly(getRemoteFile());
+    	     getRemoteFile().getParentRemoteFileSubSystem().setReadOnly(new NullProgressMonitor(), getRemoteFile(), readOnlySelected);
 		     RSEUIPlugin.getTheSystemRegistry().fireEvent(
                    new org.eclipse.rse.model.SystemResourceChangeEvent(
                    getRemoteFile(),ISystemResourceChangeEvents.EVENT_PROPERTY_CHANGE,null)); 

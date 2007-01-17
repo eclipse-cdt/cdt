@@ -987,6 +987,12 @@ public class FTPService extends AbstractFileService implements IFileService, IFT
 		// TODO - implement this to set the timestamp
 		return false;
 	}
+
+	public boolean setReadOnly(IProgressMonitor monitor, String parent,
+			String name, boolean readOnly) throws SystemMessageException {
+		// TODO Auto-generated method stub
+		return false;
+	}
 	
 	
 }

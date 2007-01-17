@@ -356,6 +356,10 @@ public class DStoreHostFile implements IHostFile
 
 	public boolean canRead() {
 		String str = getAttribute(_element.getSource(), ATTRIBUTE_CAN_READ);
+		if (str == null)
+		{
+			System.out.println("HELP:"+_element.toString());
+		}
 		return(str.equals("true")); //$NON-NLS-1$
 	}
 

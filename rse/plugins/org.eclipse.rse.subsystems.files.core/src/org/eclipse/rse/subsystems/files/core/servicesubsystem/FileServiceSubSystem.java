@@ -778,10 +778,20 @@ public final class FileServiceSubSystem extends RemoteFileSubSystem implements I
 		}
 	}
 
-	public boolean setReadOnly(IRemoteFile folderOrFile) throws RemoteFileSecurityException, RemoteFileIOException 
+	public boolean setReadOnly(IProgressMonitor monitor, IRemoteFile folderOrFile, boolean readOnly) throws RemoteFileSecurityException, RemoteFileIOException 
 	{
-		// TODO Auto-generated method stub
-		return false;
+		String name = folderOrFile.getName();
+		String parent = folderOrFile.getParentPath();
+		try
+		{
+			return _hostFileService.setReadOnly(monitor, parent, name, readOnly);
+		}
+		catch (SystemMessageException e)
+		{			
+			SystemMessageDialog dlg = new SystemMessageDialog(getShell(), e.getSystemMessage());
+			dlg.open();
+			return false;
+		}
 	}
 
 	public ILanguageUtilityFactory getLanguageUtilityFactory() 

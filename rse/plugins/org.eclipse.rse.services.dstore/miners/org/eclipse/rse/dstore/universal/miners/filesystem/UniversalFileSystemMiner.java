@@ -1257,20 +1257,64 @@ private DataElement createDataElementFromLSString(DataElement subject,
 	 */
 	public DataElement handleSetReadOnly(DataElement subject, DataElement status) {
 
-		File filename = new File(subject.getAttribute(DE.A_VALUE)
-				+ File.separatorChar + subject.getName());
+		File filename = new File(subject.getAttribute(DE.A_VALUE), subject.getAttribute(DE.A_NAME));
+		
+		if (!filename.exists())
+		{
+			filename = new File(subject.getAttribute(DE.A_VALUE));
+		}
 		if (!filename.exists())
 			status.setAttribute(DE.A_SOURCE, FAILED_WITH_DOES_NOT_EXIST);
 		else {
 			try {
-				boolean done = filename.setReadOnly();
-				if (done) {
+				String str = subject.getAttribute(DE.A_SOURCE);
+				boolean readOnly = false;
+				if (str.equals("true")) //$NON-NLS-1$
+				{
+					readOnly = true;
+				}
+				else
+				{
+					readOnly = false;
+				}
+				boolean done = false;
+				if (readOnly)
+				{
+					done = filename.setReadOnly();
+				}
+				else
+				{
+					// doesn't handle non-unix
+					if (!_isWindows)
+					{
+						// make this read-write
+						String[] cmd = new String[3];
+						cmd[0] = "chmod"; //$NON-NLS-1$
+						cmd[1] = "a+w"; //$NON-NLS-1$
+						cmd[2] = filename.getAbsolutePath();
+						Process p = Runtime.getRuntime().exec(cmd);
+						int exitValue = p.waitFor();
+						done = (exitValue == 0);
+					}
+					else
+					{
+						done = false;
+					}
+				}
+				if (done) 
+				{
 					status.setAttribute(DE.A_SOURCE, SUCCESS);
-					subject.setAttribute(DE.A_SOURCE, setProperties(filename));
-					_dataStore.refresh(subject);
-				} else {
+				}
+				else
+				{
 					status.setAttribute(DE.A_SOURCE, FAILED);
 				}
+				
+				// update filename?				
+				filename = new File(filename.getAbsolutePath());
+				subject.setAttribute(DE.A_SOURCE, setProperties(filename));
+				_dataStore.refresh(subject);
+				
 			} catch (Exception e) {
 				UniversalServerUtilities.logError(CLASSNAME,
 						"handleSetreadOnly", e); //$NON-NLS-1$
@@ -1286,7 +1330,12 @@ private DataElement createDataElementFromLSString(DataElement subject,
 	public DataElement handleSetLastModified(DataElement subject,
 			DataElement status) 
 	{	
-		File filename = new File(subject.getAttribute(DE.A_VALUE));
+		File filename = new File(subject.getAttribute(DE.A_VALUE), subject.getAttribute(DE.A_NAME));
+		
+		if (!filename.exists())
+		{
+			filename = new File(subject.getAttribute(DE.A_VALUE));
+		}
 		if (!filename.exists())
 			status.setAttribute(DE.A_SOURCE, FAILED_WITH_DOES_NOT_EXIST);
 		else {
@@ -1296,13 +1345,18 @@ private DataElement createDataElementFromLSString(DataElement subject,
 				long date = Long.parseLong(str);
 				boolean done = filename.setLastModified(date);
 
-				filename = new File(subject.getAttribute(DE.A_VALUE));
 				if (done) {
 					status.setAttribute(DE.A_SOURCE, SUCCESS);
-					subject.setAttribute(DE.A_SOURCE, setProperties(filename));
-					_dataStore.refresh(subject);
-				} else
+				} 
+				else
+				{
 					status.setAttribute(DE.A_SOURCE, FAILED);
+				}
+				
+				filename = new File(filename.getAbsolutePath());
+				subject.setAttribute(DE.A_SOURCE, setProperties(filename));
+				_dataStore.refresh(subject);
+				
 			} catch (Exception e) {
 				UniversalServerUtilities.logError(CLASSNAME,
 						"handleSetLastModified", e); //$NON-NLS-1$

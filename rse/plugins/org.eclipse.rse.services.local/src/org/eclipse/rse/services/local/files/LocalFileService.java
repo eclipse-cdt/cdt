@@ -1316,5 +1316,20 @@ public class LocalFileService extends AbstractFileService implements IFileServic
 		return file.setLastModified(timestamp);
 	}
 
+	public boolean setReadOnly(IProgressMonitor monitor, String parent,
+			String name, boolean readOnly) throws SystemMessageException 
+	{
+		File file = new File(parent, name);
+		if (readOnly)
+		{
+			return file.setReadOnly();
+		}
+		else
+		{
+			// not implemented yet
+			return false;
+		}
+	}
+
 	
 }

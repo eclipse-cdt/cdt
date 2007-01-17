@@ -354,13 +354,15 @@ public interface IRemoteFileSubSystem extends ISubSystem{
 	public boolean setLastModified(IProgressMonitor monitor, IRemoteFile folderOrFile, long newDate) throws RemoteFileSecurityException, RemoteFileIOException;
 
 	/**
-	 * Set a file to readonly.
+	 * Set a files readonly permissions.
 	 * Folder or file must exist on disk for this to succeed.
 	 * 
+	 * @param monitor the progress monitor
 	 * @param folderOrFile represents the object to be renamed.
+	 * @param readOnly whether to set it to be readonly or not
 	 * @return false if the given folder/file didn't exist on disk (operation fails), else true. Throws an exception if anything fails.
 	 */
-	public boolean setReadOnly(IRemoteFile folderOrFile) throws RemoteFileSecurityException, RemoteFileIOException;
+	public boolean setReadOnly(IProgressMonitor monitor, IRemoteFile folderOrFile, boolean readOnly) throws RemoteFileSecurityException, RemoteFileIOException;
 
 	
 	// ----------------------------

@@ -188,8 +188,7 @@ public abstract class AbstractRemoteFile extends RemoteFile implements IRemoteFi
 
 	public boolean showReadOnlyProperty()
 	{
-		// TODO Auto-generated method stub
-		return false;
+		return true;
 	}
 
 	public IHostFile getHostFile()

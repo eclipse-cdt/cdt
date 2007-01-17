@@ -274,4 +274,14 @@ public interface IFileService extends IService
 	 * @return true if the file timestamp was changed successfully
 	 */
 	public boolean setLastModified(IProgressMonitor monitor, String parent, String name, long timestamp) throws SystemMessageException;
+	
+	/**
+	 * Sets the readonly permission of the file or folder
+	 * @param monitor the progress monitor
+	 * @param parent the parent path of the file to set
+	 * @param name the name of the file to set
+	 * @param readOnly indicates whether to make the file readonly or read-write
+	 * @return true if the readonly permission was changed successfully
+	 */
+	public boolean setReadOnly(IProgressMonitor monitor, String parent, String name, boolean readOnly) throws SystemMessageException;
 }

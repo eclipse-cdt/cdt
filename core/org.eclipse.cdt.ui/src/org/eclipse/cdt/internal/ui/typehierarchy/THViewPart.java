@@ -35,6 +35,8 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TreeViewer;
+import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CLabel;
@@ -45,6 +47,7 @@ import org.eclipse.swt.dnd.DropTarget;
 import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.events.ControlListener;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
@@ -69,6 +72,9 @@ import com.ibm.icu.text.MessageFormat;
 
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.model.IDeclaration;
+import org.eclipse.cdt.core.model.IMember;
+import org.eclipse.cdt.core.parser.ast.ASTAccessVisibility;
 import org.eclipse.cdt.refactoring.actions.CRefactoringActionGroup;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.actions.OpenViewActionGroup;
@@ -77,6 +83,7 @@ import org.eclipse.cdt.internal.ui.CPluginImages;
 import org.eclipse.cdt.internal.ui.IContextMenuConstants;
 import org.eclipse.cdt.internal.ui.search.actions.SelectionSearchGroup;
 import org.eclipse.cdt.internal.ui.viewsupport.AdaptingSelectionProvider;
+import org.eclipse.cdt.internal.ui.viewsupport.CElementImageProvider;
 import org.eclipse.cdt.internal.ui.viewsupport.CElementLabels;
 import org.eclipse.cdt.internal.ui.viewsupport.CUILabelProvider;
 import org.eclipse.cdt.internal.ui.viewsupport.EditorOpener;
@@ -90,6 +97,10 @@ public class THViewPart extends ViewPart {
     private static final String TRUE = String.valueOf(true);
 //    private static final String KEY_WORKING_SET_FILTER = "workingSetFilter"; //$NON-NLS-1$
     private static final String KEY_SHOW_FILES= "showFilesInLabels"; //$NON-NLS-1$
+    private static final String KEY_SHOW_INHERITED_MEMBERS= "showInheritedMembers"; //$NON-NLS-1$
+    private static final String KEY_FILTER_FIELDS= "filterFields"; //$NON-NLS-1$
+    private static final String KEY_FILTER_STATIC= "filterStatic"; //$NON-NLS-1$
+    private static final String KEY_FILTER_NON_PUBLIC= "filterNonPublic"; //$NON-NLS-1$
     private static final String KEY_MODE= "hierarchyMode"; //$NON-NLS-1$
     private static final String KEY_ORIENTATION= "viewOrientation"; //$NON-NLS-1$
 	private static final String KEY_SPLITTER_W1 = "splitterWeight1"; //$NON-NLS-1$
@@ -101,7 +112,8 @@ public class THViewPart extends ViewPart {
 	private static final int ORIENTATION_VERTICAL = 2;
 	private static final int ORIENTATION_SINGLE = 3;
 	private static final int METHOD_LABEL_OPTIONS_SIMPLE = CElementLabels.M_PARAMETER_TYPES;
-//	private static final int METHOD_LABEL_OPTIONS_QUALIFIED = METHOD_LABEL_OPTIONS_SIMPLE | CElementLabels.M_FULLY_QUALIFIED;
+	private static final int METHOD_LABEL_OPTIONS_QUALIFIED = METHOD_LABEL_OPTIONS_SIMPLE | CElementLabels.ALL_POST_QUALIFIED;
+	private static final int METHOD_ICON_OPTIONS = CElementImageProvider.OVERLAY_ICONS;
     
     private IMemento fMemento;
     private boolean fShowsMessage= true;
@@ -134,6 +146,7 @@ public class THViewPart extends ViewPart {
     private Action fShowSuperTypeHierarchyAction;
     private Action fShowSubTypeHierarchyAction;
     private Action fShowTypeHierarchyAction;
+    private Action fShowInheritedMembersAction;
     private Action fShowFilesInLabelsAction;
     private Action fRefreshAction;
     private Action fCancelAction;
@@ -143,7 +156,15 @@ public class THViewPart extends ViewPart {
 	private Action fVerticalOrientation;
 	private Action fAutomaticOrientation;
 	private Action fSingleOrientation;
-	
+
+	private Action fFieldFilterAction;
+	private Action fStaticFilterAction;
+	private Action fNonPublicFilterAction;
+
+	private ViewerFilter fFieldFilter;
+	private ViewerFilter fStaticFilter;
+	private ViewerFilter fNonPublicFilter;
+
 	// action groups
 	private OpenViewActionGroup fOpenViewActionGroup;
 	private SelectionSearchGroup fSelectionSearchGroup;
@@ -228,10 +249,18 @@ public class THViewPart extends ViewPart {
         int mode= THHierarchyModel.TYPE_HIERARCHY;
         int orientation= ORIENTATION_AUTOMATIC;
         boolean showFiles= false;
+        boolean showInheritedMembers= false;
+        boolean hideFields= false;
+        boolean hideStatic= false;
+        boolean hideNonPublic= false;
         int[] weights= {35,65};
         
         if (fMemento != null) {
             showFiles= TRUE.equals(fMemento.getString(KEY_SHOW_FILES));
+            showInheritedMembers= TRUE.equals(fMemento.getString(KEY_SHOW_INHERITED_MEMBERS));
+            hideFields= TRUE.equals(fMemento.getString(KEY_FILTER_FIELDS));
+            hideStatic= TRUE.equals(fMemento.getString(KEY_FILTER_STATIC));
+            hideNonPublic= TRUE.equals(fMemento.getString(KEY_FILTER_NON_PUBLIC));
             Integer intval= fMemento.getInteger(KEY_MODE);
             if (intval != null) {
             	mode= intval.intValue();
@@ -251,6 +280,16 @@ public class THViewPart extends ViewPart {
         restoreHierarchyKind(mode);
 		fSplitter.setWeights(weights);
 
+		fShowInheritedMembersAction.setChecked(showInheritedMembers);
+		fShowInheritedMembersAction.run();
+		
+		fFieldFilterAction.setChecked(hideFields);
+		fFieldFilterAction.run();
+		fStaticFilterAction.setChecked(hideStatic);
+		fStaticFilterAction.run();
+		fNonPublicFilterAction.setChecked(hideNonPublic);
+		fNonPublicFilterAction.run();
+
 		fHierarchyLabelProvider.setShowFiles(showFiles);
         fShowFilesInLabelsAction.setChecked(showFiles);
   
@@ -267,7 +306,11 @@ public class THViewPart extends ViewPart {
 //        if (fWorkingSetFilterUI != null) {
 //        	fWorkingSetFilterUI.saveState(memento, KEY_WORKING_SET_FILTER);
 //        }
+    	memento.putString(KEY_SHOW_INHERITED_MEMBERS, String.valueOf(fShowInheritedMembersAction.isChecked()));
         memento.putString(KEY_SHOW_FILES, String.valueOf(fShowFilesInLabelsAction.isChecked()));
+        memento.putString(KEY_FILTER_FIELDS, String.valueOf(fFieldFilterAction.isChecked()));
+        memento.putString(KEY_FILTER_STATIC, String.valueOf(fStaticFilterAction.isChecked()));
+        memento.putString(KEY_FILTER_NON_PUBLIC, String.valueOf(fNonPublicFilterAction.isChecked()));
 		int[] weights= fSplitter.getWeights();
         memento.putInteger(KEY_SPLITTER_W1, weights[0]);
         memento.putInteger(KEY_SPLITTER_W2, weights[1]);
@@ -366,7 +409,7 @@ public class THViewPart extends ViewPart {
 	}
    
 	private Control createMethodControl(ViewForm parent) {
-		fMethodLabelProvider= new CUILabelProvider(METHOD_LABEL_OPTIONS_SIMPLE, 0);
+		fMethodLabelProvider= new CUILabelProvider(METHOD_LABEL_OPTIONS_SIMPLE, METHOD_ICON_OPTIONS);
 		fMethodViewer = new TableViewer(parent, SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER);
 		fMethodViewer.setContentProvider(new THMethodContentProvider());
 		fMethodViewer.setLabelProvider(fMethodLabelProvider);
@@ -432,6 +475,7 @@ public class THViewPart extends ViewPart {
 			THNode node= selectionToNode(event.getSelection());
 			fModel.onHierarchySelectionChanged(node);
 			fMethodViewer.refresh();
+			updateDescription();
 		}
 	}
 
@@ -527,6 +571,96 @@ public class THViewPart extends ViewPart {
         fShowSuperTypeHierarchyAction.setToolTipText(Messages.THViewPart_SupertypeHierarchy_tooltip);
         CPluginImages.setImageDescriptors(fShowSuperTypeHierarchyAction, CPluginImages.T_LCL, CPluginImages.IMG_LCL_SUPER_TYPE_HIERARCHY);       
 
+		fShowInheritedMembersAction= new Action(Messages.THViewPart_ShowInherited_label, IAction.AS_CHECK_BOX) {
+			public void run() {
+				onShowInheritedMembers(isChecked());
+			}
+        };
+        fShowInheritedMembersAction.setToolTipText(Messages.THViewPart_ShowInherited_tooltip);
+        CPluginImages.setImageDescriptors(fShowInheritedMembersAction, CPluginImages.T_LCL, CPluginImages.IMG_LCL_SHOW_INHERITED_MEMBERS);       
+
+        fFieldFilter= new ViewerFilter() {
+            public boolean select(Viewer viewer, Object parentElement, Object element) {
+                if (element instanceof ICElement) {
+                	ICElement node= (ICElement) element;
+                	switch (node.getElementType()) {
+                	case ICElement.C_ENUMERATOR:
+                	case ICElement.C_FIELD:
+                	case ICElement.C_TEMPLATE_VARIABLE:
+                	case ICElement.C_VARIABLE:
+                	case ICElement.C_VARIABLE_DECLARATION:
+                	case ICElement.C_VARIABLE_LOCAL:
+                		return false;
+                	}
+                }
+                return true;
+            }
+        };
+        fStaticFilter= new ViewerFilter() {
+            public boolean select(Viewer viewer, Object parentElement, Object element) {
+                if (element instanceof IDeclaration) {
+                	IDeclaration node= (IDeclaration) element;
+                	try {
+						return !node.isStatic();
+					} catch (CModelException e) {
+						CUIPlugin.getDefault().log(e);
+					}
+                }
+                return true;
+            }
+        };
+        fNonPublicFilter= new ViewerFilter() {
+            public boolean select(Viewer viewer, Object parentElement, Object element) {
+                if (element instanceof IMember) {
+                	IMember node= (IMember) element;
+                	try {
+						return ASTAccessVisibility.PUBLIC.equals(node.getVisibility());
+					} catch (CModelException e) {
+						CUIPlugin.getDefault().log(e);
+					}
+                }
+                return true;
+            }
+        };
+        fFieldFilterAction= new Action(Messages.THViewPart_HideFields_label, IAction.AS_CHECK_BOX) {
+            public void run() {
+                if (isChecked()) {
+                    fMethodViewer.addFilter(fFieldFilter);
+                }
+                else {
+                	fMethodViewer.removeFilter(fFieldFilter);
+                }
+            }
+        };
+        fFieldFilterAction.setToolTipText(Messages.THViewPart_HideFields_tooltip);
+        CPluginImages.setImageDescriptors(fFieldFilterAction, CPluginImages.T_LCL, CPluginImages.IMG_ACTION_HIDE_FIELDS);       
+
+        fStaticFilterAction= new Action(Messages.THViewPart_HideStatic_label, IAction.AS_CHECK_BOX) {
+            public void run() {
+                if (isChecked()) {
+                    fMethodViewer.addFilter(fStaticFilter);
+                }
+                else {
+                	fMethodViewer.removeFilter(fStaticFilter);
+                }
+            }
+        };
+        fStaticFilterAction.setToolTipText(Messages.THViewPart_HideStatic_tooltip);
+        CPluginImages.setImageDescriptors(fStaticFilterAction, CPluginImages.T_LCL, CPluginImages.IMG_ACTION_HIDE_STATIC);       
+
+        fNonPublicFilterAction= new Action(Messages.THViewPart_HideNonPublic_label, IAction.AS_CHECK_BOX) {
+            public void run() {
+                if (isChecked()) {
+                    fMethodViewer.addFilter(fNonPublicFilter);
+                }
+                else {
+                	fMethodViewer.removeFilter(fNonPublicFilter);
+                }
+            }
+        };
+        fNonPublicFilterAction.setToolTipText(Messages.THViewPart_HideNonPublic_tooltip);
+        CPluginImages.setImageDescriptors(fNonPublicFilterAction, CPluginImages.T_LCL, CPluginImages.IMG_ACTION_SHOW_PUBLIC);       
+
         fOpenElement= new Action(Messages.THViewPart_Open) {
         	public void run() {
         		onOpenElement(getSite().getSelectionProvider().getSelection());
@@ -595,11 +729,15 @@ public class THViewPart extends ViewPart {
 		submenu.add(fSingleOrientation);
 
 		mm.appendToGroup(IContextMenuConstants.GROUP_VIEWER_SETUP, submenu);
-
-//        mm.add(fReferencedByAction);
-//        mm.add(fMakesReferenceToAction);
         mm.add(new Separator());
         mm.add(fShowFilesInLabelsAction);
+        
+        // method toolbar
+        fMethodToolbarManager.add(fShowInheritedMembersAction);
+        fMethodToolbarManager.add(new Separator());
+        fMethodToolbarManager.add(fFieldFilterAction);
+        fMethodToolbarManager.add(fStaticFilterAction);
+        fMethodToolbarManager.add(fNonPublicFilterAction);        
     }
             
 	protected void onOpenElement(ISelection selection) {
@@ -663,6 +801,19 @@ public class THViewPart extends ViewPart {
             		String scope= workingSet.getLabel();
                 	message= MessageFormat.format("{0} - {1}", new Object[] {label, scope}); //$NON-NLS-1$
             	}
+            	
+            	label= ""; //$NON-NLS-1$
+            	Image image= null;
+            	THNode node= fModel.getSelectionInHierarchy();
+            	if (node != null) {
+            		elem= node.getRepresentedDeclaration();
+            		if (elem != null) {
+            			label= CElementLabels.getElementLabel(elem, 0);
+            			image= fHierarchyLabelProvider.getImage(elem);
+            		}
+            	}
+            	fMethodLabel.setText(label);
+            	fMethodLabel.setImage(image);
             }
         }
         setContentDescription(message);
@@ -689,6 +840,15 @@ public class THViewPart extends ViewPart {
     	}
     }
 
+    protected void onShowInheritedMembers(boolean show) {
+    	if (fModel.isShowInheritedMembers() != show) {
+    		fModel.setShowInheritedMembers(show);
+    		fMethodLabelProvider.setTextFlags(show ? 
+    				METHOD_LABEL_OPTIONS_QUALIFIED : METHOD_LABEL_OPTIONS_SIMPLE);
+    		fMethodViewer.refresh();
+    	}
+    }
+    
     private void updateView() {
     	if (!fShowsMessage) {
     		fIgnoreSelectionChanges++;

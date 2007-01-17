@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2007 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,21 +11,33 @@
 
 package org.eclipse.cdt.internal.core.model.ext;
 
+import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.IMethod;
 import org.eclipse.cdt.core.model.IMethodDeclaration;
+import org.eclipse.cdt.core.parser.ast.ASTAccessVisibility;
 import org.eclipse.cdt.internal.core.model.FunctionDeclaration;
 import org.eclipse.cdt.internal.core.model.MethodDeclaration;
 
 public class MethodHandle extends CElementHandle implements IMethod {
 	private String[] fParameterTypes;
+	private ASTAccessVisibility fVisibility;
+	private boolean fIsStatic;
 
 	public MethodHandle(ICElement parent, ICPPMethod method) throws DOMException {
 		super(parent, ICElement.C_METHOD, method.getName());
 		fParameterTypes= extractParameterTypes(method);
+		fVisibility= getVisibility(method);
+		try {
+			fIsStatic= method.isStatic();
+		} catch (DOMException e) {
+			CCorePlugin.log(e);
+			fIsStatic= false;
+		}
+
 	}
 
 	public boolean equals(Object obj) {
@@ -45,5 +57,13 @@ public class MethodHandle extends CElementHandle implements IMethod {
 
 	public String getSignature() throws CModelException {
 		return FunctionDeclaration.getSignature(this);
+	}
+
+	public boolean isStatic() throws CModelException {
+		return fIsStatic;
+	}
+
+	public ASTAccessVisibility getVisibility() throws CModelException {
+		return fVisibility;
 	}
 }

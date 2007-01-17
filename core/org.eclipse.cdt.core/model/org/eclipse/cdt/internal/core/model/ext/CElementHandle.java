@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2007 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,8 +18,10 @@ import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.IPositionConverter;
 import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
 import org.eclipse.cdt.core.dom.ast.DOMException;
+import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IFunction;
 import org.eclipse.cdt.core.dom.ast.IParameter;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPMember;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICElementVisitor;
@@ -202,10 +204,6 @@ abstract class CElementHandle implements ICElementHandle, ISourceReference {
 		return false;
 	}
 
-	public boolean isStatic() throws CModelException {
-		return false;
-	}
-
 	public boolean isVolatile() throws CModelException {
 		return false;
 	}
@@ -238,10 +236,6 @@ abstract class CElementHandle implements ICElementHandle, ISourceReference {
 		return false;
 	}
 
-	public ASTAccessVisibility getVisibility() throws CModelException {
-		return ASTAccessVisibility.PUBLIC;
-	}
-	
 	public boolean isMutable() throws CModelException {
 		return false;
 	}
@@ -273,5 +267,24 @@ abstract class CElementHandle implements ICElementHandle, ISourceReference {
 			return EMPTY_STRING_ARRAY;
 		}
 		return parameterTypes;
+	}
+	
+	protected ASTAccessVisibility getVisibility(IBinding binding) {
+		if (binding instanceof ICPPMember) {
+			ICPPMember member= (ICPPMember) binding;
+			try {
+				switch (member.getVisibility()) {
+				case ICPPMember.v_private:
+					return ASTAccessVisibility.PRIVATE;
+				case ICPPMember.v_protected:
+					return ASTAccessVisibility.PROTECTED;
+				case ICPPMember.v_public:
+					return ASTAccessVisibility.PUBLIC;
+				}
+			} catch (DOMException e) {
+				CCorePlugin.log(e);
+			}
+		}
+		return ASTAccessVisibility.PUBLIC;
 	}
 }

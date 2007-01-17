@@ -64,6 +64,7 @@ public class THHierarchyModel {
 
 	private ICElement fInput;
 	private int fHierarchyKind;
+	private boolean fShowInheritedMembers;
 	
 	private THGraph fGraph;
 	private Object[] fRootNodes;
@@ -90,6 +91,14 @@ public class THHierarchyModel {
 	public void setHierarchyKind(int hierarchyKind) {
 		fHierarchyKind = hierarchyKind;
 		computeNodes();
+	}
+
+	public boolean isShowInheritedMembers() {
+		return fShowInheritedMembers;
+	}
+
+	public void setShowInheritedMembers(boolean showInheritedMembers) {
+		fShowInheritedMembers = showInheritedMembers;
 	}
 
 	public Object[] getHierarchyRootElements() {
@@ -172,6 +181,9 @@ public class THHierarchyModel {
 		stack.add(fInput);
 		handled.add(fInput);
 		while (!stack.isEmpty()) {
+			if (monitor.isCanceled()) {
+				return;
+			}
 			ICElement elem= (ICElement) stack.remove(stack.size()-1);
 			THGraphNode graphNode= graph.addNode(elem);
 			try {
@@ -181,6 +193,9 @@ public class THHierarchyModel {
 					addMembers(index, graphNode, ct);
 					ICPPBase[] bases= ct.getBases();
 					for (int i = 0; i < bases.length; i++) {
+						if (monitor.isCanceled()) {
+							return;
+						}
 						ICPPBase base= bases[i];
 						IBinding basecl= base.getBaseClass();
 						ICElement[] baseElems= IndexUI.findRepresentative(index, basecl);
@@ -204,7 +219,7 @@ public class THHierarchyModel {
 	}
 
 	private void addMembers(IIndex index, THGraphNode graphNode, IBinding binding) throws DOMException, CoreException {
-		if (graphNode.getMembers() == null) {
+		if (graphNode.getMembers(false) == null) {
 			if (binding instanceof ICPPClassType) {
 				ICPPClassType ct= (ICPPClassType) binding;
 				ArrayList memberList= new ArrayList();
@@ -359,7 +374,7 @@ public class THHierarchyModel {
 	public Object[] getMembers() {
 		if (fHierarchySelection != null) {
 			THGraphNode gnode= fGraph.getNode(fHierarchySelection.getRepresentedDeclaration());
-			return gnode.getMembers();
+			return gnode.getMembers(fShowInheritedMembers);
 		}
 		return NO_CHILDREN;
 	}

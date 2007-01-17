@@ -55,6 +55,9 @@ public class THLabelProvider extends LabelProvider implements IColorProvider {
                 }
             }
         }
+        else if (element instanceof ICElement) {
+        	return fCLabelProvider.getImage(element);
+        }
         return super.getImage(element);
     }
 

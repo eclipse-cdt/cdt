@@ -12,7 +12,10 @@
 package org.eclipse.cdt.internal.ui.typehierarchy;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.cdt.core.model.ICElement;
@@ -64,7 +67,23 @@ class THGraphNode {
 		fMembers= array;
 	}
 	
-	public Object[] getMembers() {
-		return fMembers;
+	public Object[] getMembers(boolean addInherited) {
+		if (!addInherited) {
+			return fMembers;
+		}
+		ArrayList list= new ArrayList();
+		collectMembers(new HashSet(), list);
+		return list.toArray();
+	}
+
+	private void collectMembers(HashSet visited, List list) {
+		if (visited.add(this)) {
+			list.addAll(Arrays.asList(fMembers));
+			List bases= getOutgoing();
+			for (Iterator iterator = bases.iterator(); iterator.hasNext();) {
+				THGraphEdge edge = (THGraphEdge) iterator.next();
+				edge.getEndNode().collectMembers(visited, list);
+			}
+		}
 	}
 }

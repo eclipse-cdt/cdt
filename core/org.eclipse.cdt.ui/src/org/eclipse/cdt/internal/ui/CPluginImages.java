@@ -218,7 +218,8 @@ public class CPluginImages {
 	public static final String IMG_LCL_TYPE_HIERARCHY= NAME_PREFIX + "hierarchy_co.gif"; //$NON-NLS-1$
 	public static final String IMG_LCL_SUB_TYPE_HIERARCHY= NAME_PREFIX + "sub_co.gif"; //$NON-NLS-1$
 	public static final String IMG_LCL_SUPER_TYPE_HIERARCHY= NAME_PREFIX + "super_co.gif"; //$NON-NLS-1$
-
+	public static final String IMG_LCL_SHOW_INHERITED_MEMBERS= NAME_PREFIX + "inher_co.gif"; //$NON-NLS-1$
+	
 	public static final ImageDescriptor DESC_OBJS_TEMPLATE= createManaged(T_OBJ, IMG_OBJS_TEMPLATE);
 	
 	public static final ImageDescriptor DESC_OVR_STATIC= create(T_OVR, "static_co.gif"); //$NON-NLS-1$

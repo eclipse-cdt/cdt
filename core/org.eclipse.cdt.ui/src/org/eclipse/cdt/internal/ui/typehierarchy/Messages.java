@@ -30,6 +30,12 @@ public class Messages extends NLS {
 	public static String THViewPart_CompleteTypeHierarchy;
 	public static String THViewPart_CompleteTypeHierarchy_tooltip;
 	public static String THViewPart_FocusOn;
+	public static String THViewPart_HideFields_label;
+	public static String THViewPart_HideFields_tooltip;
+	public static String THViewPart_HideNonPublic_label;
+	public static String THViewPart_HideNonPublic_tooltip;
+	public static String THViewPart_HideStatic_label;
+	public static String THViewPart_HideStatic_tooltip;
 	public static String THViewPart_HorizontalOrientation;
 	public static String THViewPart_instruction;
 	public static String THViewPart_LayoutMenu;
@@ -40,6 +46,8 @@ public class Messages extends NLS {
 	public static String THViewPart_Refresh_tooltip;
 	public static String THViewPart_ShowFileNames;
 	public static String THViewPart_ShowFileNames_tooltip;
+	public static String THViewPart_ShowInherited_label;
+	public static String THViewPart_ShowInherited_tooltip;
 	public static String THViewPart_SinglePaneOrientation;
 	public static String THViewPart_SubtypeHierarchy;
 	public static String THViewPart_SubtypeHierarchy_tooltip;

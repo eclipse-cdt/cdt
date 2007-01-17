@@ -171,11 +171,13 @@ public class OpenViewActionGroup extends ActionGroup {
 	 */
 	public void fillContextMenu(IMenuManager menu) {
 		super.fillContextMenu(menu);
-		if (useTypeHierarchy() && !fIsTypeHiararchyViewerOwner && fOpenTypeHierarchy.isEnabled()) {
-			menu.appendToGroup(fGroupName, fOpenTypeHierarchy);
-		}
-		if (!fIsCallHiararchyViewerOwner && fOpenCallHierarchy.isEnabled()) {
-			menu.appendToGroup(fGroupName, fOpenCallHierarchy);
+		if (!fEditorIsOwner) {
+			if (useTypeHierarchy() && !fIsTypeHiararchyViewerOwner && fOpenTypeHierarchy.isEnabled()) {
+				menu.appendToGroup(fGroupName, fOpenTypeHierarchy);
+			}
+			if (!fIsCallHiararchyViewerOwner && fOpenCallHierarchy.isEnabled()) {
+				menu.appendToGroup(fGroupName, fOpenCallHierarchy);
+			}
 		}
 //		appendToGroup(menu, fOpenSuperImplementation);
 		IStructuredSelection selection= getStructuredSelection();

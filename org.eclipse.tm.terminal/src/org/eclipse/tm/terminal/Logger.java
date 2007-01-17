@@ -101,13 +101,14 @@ public final class Logger {
 						encoded=true;
 					} else if (c>=' ' && c<'\u007f') {
 						buf.append(c);
+					} else if (c <= '\u00ff') {
+							buf.append('\\'); buf.append('x'); 
+							buf.append(Integer.toHexString(c)); 
+							encoded=true;
 					} else {
 						buf.append('\\'); buf.append('u');
 						if (c<='\u0fff') { 
 							buf.append('0');
-							if (c<='\u00ff') {
-								buf.append('0');
-							}
 						}
 						buf.append(Integer.toHexString(c));
 						encoded=true;

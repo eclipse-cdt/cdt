@@ -47,16 +47,16 @@
 </table>
 <table>
   <tbody>
-    <tr><td><b>RSE 2.0 is tested against 
+    <tr><td><b>RSE 2.0 requires 
     	<a href="http://download.eclipse.org/eclipse/downloads/drops/S-3.3M4-200612141445/index.php">
-         Eclipse-Platform-3.3M4</a>.
+         Eclipse-Platform-3.3M4</a> or later.
     </b></td></tr>
     <tr><td>
       Prerequisites for add-ons (like CDT, EMF) should be retrieved from the
       <a href="http://download.eclipse.org/europa/releases/">Europa Discovery Site</a>.
     </td></tr> 
     <tr><td>
-      3.2 should still work but is not currently being tested.
+      Earlier versions (e.g. Eclipse 3.2.x) will <b>not</b> work!
     </td></tr> 
   </tbody>
 </table>

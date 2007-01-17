@@ -1290,7 +1290,7 @@ private DataElement createDataElementFromLSString(DataElement subject,
 						// make this read-write
 						String[] cmd = new String[3];
 						cmd[0] = "chmod"; //$NON-NLS-1$
-						cmd[1] = "a+w"; //$NON-NLS-1$
+						cmd[1] = "u+w"; //$NON-NLS-1$
 						cmd[2] = filename.getAbsolutePath();
 						Process p = Runtime.getRuntime().exec(cmd);
 						int exitValue = p.waitFor();

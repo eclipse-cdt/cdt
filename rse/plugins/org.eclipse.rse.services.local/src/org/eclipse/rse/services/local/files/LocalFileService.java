@@ -1331,7 +1331,7 @@ public class LocalFileService extends AbstractFileService implements IFileServic
 				// make this read-write
 				String[] cmd = new String[3];
 				cmd[0] = "chmod"; //$NON-NLS-1$
-				cmd[1] = "a+w"; //$NON-NLS-1$
+				cmd[1] = "u+w"; //$NON-NLS-1$
 				cmd[2] = file.getAbsolutePath();
 				int exitValue = -1;
 				try

@@ -32,17 +32,17 @@
   coordinated release are served from this site.<br/>
   The official TM update site will continue serving RSE 1.0 stream updates only, 
   which are compatible with Eclipse 3.2.x, until RSE 2.0 is released.</li>
-<li>A <b>Unit Test Package</b> is now available from the 
-  <a href="http://download.eclipse.org/dsdp/tm/downloads">downloads page</a> as well as the interim update site.</li>
-<li>Jakarta ORO and Commons Net are now consumed out of the <a href="">Orbit</a> repository.</li>
-<li><b>Terminal</b>: [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=168185">168185</a>] Increase dialog fields width, Remember dialog sizes, fix command context descriptors, move logs to "eclipselogs", improve quoting in logging.</li>
+<li><b>Terminal</b>: [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=168893">168893</a>] 
+  [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=170810">170810</a>]
+  Use rxtx-2.1 (gnu.io) for serial line support instead of javax.comm. See the new
+  <a href="http://dev.eclipse.org/viewcvs/index.cgi/org.eclipse.tm.core/terminal/org.eclipse.tm.terminal.serial/README.txt?root=DSDP_Project&view=co">README</a> for installing RXTX.</li>
 <li>Use 
-  <!-- <a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced&classification=DSDP&product=Target+Management&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&resolution=FIXED&resolution=WONTFIX&resolution=INVALID&resolution=WORKSFORME&chfieldfrom=2006-12-16&chfieldto=Now&chfield=resolution&cmdtype=doit">  -->
-  <a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced&classification=DSDP&product=Target+Management&target_milestone=2.0+M4&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&resolution=FIXED&resolution=WONTFIX&resolution=INVALID&resolution=WORKSFORME&cmdtype=doit">
+  <a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced&classification=DSDP&product=Target+Management&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&resolution=FIXED&resolution=WONTFIX&resolution=INVALID&resolution=WORKSFORME&chfieldfrom=2006-12-24&chfieldto=Now&chfield=resolution&cmdtype=doit">
+  <!-- <a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced&classification=DSDP&product=Target+Management&target_milestone=2.0+M5&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&resolution=FIXED&resolution=WONTFIX&resolution=INVALID&resolution=WORKSFORME&cmdtype=doit">  -->
   this query</a> to show the list of bugs fixed since the last release,
-  <a href="http://download.eclipse.org/dsdp/tm/downloads/drops/R-1.0.1-200612151830/index.php">
-  RSE 1.0.1</a>
-  [<a href="http://download.eclipse.org/dsdp/tm/downloads/drops/R-1.0.1-200612151830/buildNotes.php">build notes</a>].</li>
+  <a href="http://download.eclipse.org/dsdp/tm/downloads/drops/S-2.0M4-200701040900/index.php">
+  RSE 2.0M4</a>
+  [<a href="http://download.eclipse.org/dsdp/tm/downloads/drops/S-2.0M4-200701040900/buildNotes.php">build notes</a>].</li>
 <li>For details on checkins, see the
   <a href="http://download.eclipse.org/dsdp/tm/downloads/drops/N-changelog/index.html">
   RSE CVS changelog</a>, and the
@@ -125,13 +125,10 @@ APIs better.
 	</tr>
 </table>
 <table><tbody><tr><td>
-<!--
-<ul>
-<li>[<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=161777">161777</a>]:
-  <b>Moved</b> <b>HostShellAdapter</b> and <b>HostShellOutputStream</b> from remotecdt into 
-  org.eclipse.rse.services.shells, thus making them API.</li>
-</ul>
--->
+Use 
+  <a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced&short_desc_type=allwordssubstr&short_desc=%5Bapi%5D&classification=DSDP&product=Target+Management&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&resolution=FIXED&resolution=WONTFIX&resolution=INVALID&resolution=WORKSFORME&chfieldfrom=2006-12-24&chfieldto=2007-07-01&chfield=resolution&cmdtype=doit">
+  <!-- <a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced&short_desc_type=allwordssubstr&short_desc=%5Bapi%5D&classification=DSDP&product=Target+Management&target_milestone=2.0+M5&target_milestone=2.0+M6&target_milestone=2.0+M7&target_milestone=2.0+RC1&target_milestone=2.0&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&resolution=FIXED&resolution=WONTFIX&resolution=INVALID&resolution=WORKSFORME&cmdtype=doit">  -->
+  this query</a> to show the full list of API changes since RSE 1.0.1.
 </td></tr></tbody></table>
 
 <table border="0" cellspacing="5" cellpadding="2" width="100%">
@@ -147,8 +144,8 @@ We'll strive to fix these as soon as possible.
 <ul>
   <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=162993">bug 162993</a> - maj - ssh connection gets confused</li>
 </ul>
--->
 <p>No major or critical bugs are known at the time of release.
+-->
 Use 
 <a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced&classification=DSDP&product=Target+Management&component=RSE&bug_status=UNCONFIRMED&bug_status=NEW&bug_status=ASSIGNED&bug_status=REOPENED&bug_severity=blocker&bug_severity=critical&bug_severity=major&cmdtype=doit">this query</a>
 for an up-to-date list of major or critical bugs.</p>

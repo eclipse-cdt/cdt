@@ -24,7 +24,7 @@ curdir=`pwd`
 
 #Remove old logs and builds
 echo "Removing old logs and builds..."
-cd $HOME/ws
+cd $HOME/ws2
 rm log-N*.txt
 if [ -d working/build ]; then
   rm -rf working/build

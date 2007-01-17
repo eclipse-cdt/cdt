@@ -19,9 +19,9 @@ package org.eclipse.tm.terminal.internal.serial;
 import java.io.IOException;
 import java.text.MessageFormat;
 
-import javax.comm.CommPortOwnershipListener;
-import javax.comm.SerialPortEvent;
-import javax.comm.SerialPortEventListener;
+import gnu.io.CommPortOwnershipListener;
+import gnu.io.SerialPortEvent;
+import gnu.io.SerialPortEventListener;
 
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.widgets.Display;

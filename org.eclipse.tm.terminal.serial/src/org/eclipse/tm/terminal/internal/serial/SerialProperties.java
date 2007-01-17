@@ -21,7 +21,7 @@ import java.util.Enumeration;
 import java.util.List;
 import java.util.Vector;
 
-import javax.comm.CommPortIdentifier;
+import gnu.io.CommPortIdentifier;
 
 public class SerialProperties {
 	protected List fSerialPortTable;

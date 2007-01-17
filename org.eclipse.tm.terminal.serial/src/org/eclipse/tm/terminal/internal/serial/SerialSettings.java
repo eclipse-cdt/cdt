@@ -16,7 +16,7 @@
  *******************************************************************************/
 package org.eclipse.tm.terminal.internal.serial;
 
-import javax.comm.SerialPort;
+import gnu.io.SerialPort;
 
 import org.eclipse.tm.terminal.ISettingsStore;
 

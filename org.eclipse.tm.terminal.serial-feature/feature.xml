@@ -3,7 +3,7 @@
       id="org.eclipse.tm.terminal.serial"
       label="%featureName"
       provider-name="%providerName"
-      version="0.9.0.qualifier">
+      version="0.9.100.qualifier">
 
    <description>
       %description

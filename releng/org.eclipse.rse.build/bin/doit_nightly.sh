@@ -18,7 +18,7 @@ umask 22
 #export PATH=/shared/common/ibm-java2-ppc64-50/bin:$PATH
 #export PATH=/shared/webtools/apps/IBMJava2-ppc64-142/bin:$PATH
 #export PATH=/shared/webtools/apps/IBMJava2-ppc-142/bin:$PATH
-export PATH=${HOME}/ws/IBMJava2-ppc-142/bin:$PATH
+export PATH=${HOME}/ws2/IBMJava2-ppc-142/bin:$PATH
 
 curdir=`pwd`
 
@@ -37,7 +37,7 @@ fi
 echo "Updating builder from CVS..."
 cd org.eclipse.rse.build
 stamp=`date +'%Y%m%d-%H%M'`
-log=$HOME/ws/log-N$stamp.txt
+log=$HOME/ws2/log-N$stamp.txt
 touch $log
 cvs -q update -RPd >> $log 2>&1
 daystamp=`date +'%Y%m%d-%H'`
@@ -47,10 +47,10 @@ echo "Running the builder..."
 tail -50 $log
 
 #Fixup permissions and group id on download.eclpse.org (just to be safe)
-#chmod -R g+w $HOME/ws/publish/N${daystamp}*
+#chmod -R g+w $HOME/ws2/publish/N${daystamp}*
 
 #Copy latest SDK in order to give access to DOC server
-cd $HOME/ws/publish
+cd $HOME/ws2/publish
 FILES=`ls N${daystamp}*/RSE-SDK-N${daystamp}*.zip 2>/dev/null`
 echo "FILES=$FILES"
 if [ "$FILES" != "" ]; then
@@ -61,6 +61,6 @@ if [ "$FILES" != "" ]; then
 fi
 
 #Cleanup old nightly builds (leave only last 5 in place)
-cd $HOME/ws/publish
+cd $HOME/ws2/publish
 ls -d N200* | sort | head -n-5 | xargs rm -rf
 

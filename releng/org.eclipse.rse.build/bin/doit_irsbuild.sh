@@ -1,6 +1,6 @@
 #!/bin/sh
 #*******************************************************************************
-# Copyright (c) 2006 Wind River Systems, Inc.
+# Copyright (c) 2006, 2007 Wind River Systems, Inc.
 # All rights reserved. This program and the accompanying materials 
 # are made available under the terms of the Eclipse Public License v1.0 
 # which accompanies this distribution, and is available at 
@@ -32,13 +32,15 @@ echo ${mydir}
 #export PATH=/shared/common/ibm-java2-ppc64-50/bin:$PATH
 #export PATH=/shared/webtools/apps/IBMJava2-ppc64-142/bin:$PATH
 #export PATH=/shared/webtools/apps/IBMJava2-ppc-142/bin:$PATH
-export PATH=${HOME}/ws/IBMJava2-ppc-142/bin:$PATH
+export PATH=${HOME}/ws2/IBMJava2-ppc-142/bin:$PATH
 
 #Get parameters
+mapTag=HEAD
 buildType=$1
 buildId=$2
 case x$buildType in
-  xP|xN|xI|xS|xR|xM) ok=1 ;;
+  xP|xN|xI|xS|xR) ok=1 ;;
+  xM) mapTag=R1_0_maintenance ; ok=1 ;;
   *) ok=0 ;;
 esac
 if [ $ok != 1 ]; then
@@ -62,26 +64,28 @@ fi
 echo "Updating builder from CVS..."
 cd org.eclipse.rse.build
 stamp=`date +'%Y%m%d-%H%M'`
-log=$HOME/ws/log-${buildType}$stamp.txt
+log=$HOME/ws2/log-${buildType}$stamp.txt
 touch $log
 cvs -q update -RPd >> $log 2>&1
 daystamp=`date +'%Y%m%d*%H'`
 
 echo "Running the builder..."
-./nightly.sh HEAD ${buildType} ${buildId} >> $log 2>&1
+./nightly.sh ${mapTag} ${buildType} ${buildId} >> $log 2>&1
 tail -50 $log
 
 #update the main download and archive pages
 cd /home/data/httpd/download.eclipse.org/dsdp/tm/downloads
 cvs -q update -RPd >> $log 2>&1
+chgrp -R dsdp-tmadmin *
 cd /home/data/httpd/archive.eclipse.org/dsdp/tm/downloads
 cvs -q update -RPd >> $log 2>&1
+chgrp -R dsdp-tmadmin *
 
 #Fixup permissions and group id on download.eclpse.org (just to be safe)
-#chmod -R g+w $HOME/ws/publish/${buildType}*${daystamp}*
+#chmod -R g+w $HOME/ws2/publish/${buildType}*${daystamp}*
 
 #Check the publishing
-cd $HOME/ws/publish
+cd $HOME/ws2/publish
 cd ${buildType}*${daystamp}*
 FILES=`ls RSE-SDK-*.zip 2>/dev/null`
 echo "FILES=$FILES"
@@ -99,21 +103,26 @@ if [ -f package.count -a "$FILES" != "" ]; then
     ${mydir}/batch_sign.sh `pwd`
   fi
 
-  #update the doc server
-  rm -f ../N.latest/RSE-SDK-*.zip
-  cp -f RSE-SDK-*.zip ../N.latest/RSE-SDK-latest.zip
-  #chmod g+w ../N.latest/RSE-SDK-latest.zip
-  #chgrp dsdp-tmadmin ../N.latest/RSE-SDK-latest.zip
-  
-  #Update the testUpdates sites
-  echo "Refreshing update site"
-  cd $HOME/downloads-tm/testUpdates/bin
-  ./mkTestUpdates.sh
-  #echo "Refreshing signedUpdates site"
-  #cd $HOME/downloads-tm/signedUpdates/bin
-  #./mkTestUpdates.sh
+  if [ ${buildType} != M ]; then
+    #update the doc server
+    rm -f ../N.latest/RSE-SDK-*.zip
+    cp -f RSE-SDK-*.zip ../N.latest/RSE-SDK-latest.zip
+    #chmod g+w ../N.latest/RSE-SDK-latest.zip
+    #chgrp dsdp-tmadmin ../N.latest/RSE-SDK-latest.zip
 
+    if [ ${buildType} != N ]; then
+      #Update the testUpdates sites
+      echo "Refreshing update site"
+      cd $HOME/downloads-tm/testUpdates/bin
+      ./mkTestUpdates.sh
+      #echo "Refreshing signedUpdates site"
+      #cd $HOME/downloads-tm/signedUpdates/bin
+      #./mkTestUpdates.sh
+    fi
+  fi
+  
   cd "$curdir"
 else
   echo "package.count missing, release seems failed"
 fi
+chmod dsdp-tm-rse $log

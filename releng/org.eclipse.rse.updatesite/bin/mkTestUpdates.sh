@@ -12,7 +12,7 @@
 # Convert normal "site.xml" to "testUpdates"
 #
 # Prerequisites: 
-# - Eclipse 3.2 installed in $HOME/ws/eclipse
+# - Eclipse 3.3Mx installed in $HOME/ws2/eclipse
 # - Java5 in the PATH or in /shared/common/ibm-java2-ppc64-50
 
 curdir=`pwd`
@@ -40,10 +40,10 @@ fi
 # get newest plugins and features: to be done manually on real update site
 if [ `basename $SITE` = testUpdates ]; then
     echo "Working on test update site"
-    REL=`ls $HOME/ws/working/package | sort | tail -1`
+    REL=`ls $HOME/ws2/working/package | sort | tail -1`
     if [ "$REL" != "" ]; then
       echo "Checking new Updates from $REL"
-      DIR="$HOME/ws/working/package/$REL/updates"
+      DIR="$HOME/ws2/working/package/$REL/updates"
       if [ -d "$DIR/features" ]; then
         echo "Copying new plugins and features from $DIR"
         rm -rf features
@@ -67,12 +67,12 @@ if [ `basename $SITE` = testUpdates ]; then
     mv -f web/site.xsl.new web/site.xsl
     echo "Conditioning the site... $SITE"
     #java -Dorg.eclipse.update.jarprocessor.pack200=$mydir \
-    #    -jar $HOME/ws/eclipse/startup.jar \
+    #    -jar $HOME/ws2/eclipse/startup.jar \
     #    -application org.eclipse.update.core.siteOptimizer \
     #    -jarProcessor -outputDir $SITE \
     #    -processAll -repack $SITE
     java -Dorg.eclipse.update.jarprocessor.pack200=$mydir \
-    	$HOME/ws/jarprocessor/jarprocessor.jar \
+    	$HOME/ws2/jarprocessor/jarprocessor.jar \
 		-outputDir $SITE -processAll -repack $SITE
 elif [ `basename $SITE` = signedUpdates ]; then
     echo "Working on signed update site"
@@ -227,17 +227,17 @@ done
 # See https://bugs.eclipse.org/bugs/show_bug.cgi?id=154069
 echo "Packing the site... $SITE"
 #java -Dorg.eclipse.update.jarprocessor.pack200=$mydir \
-#    -jar $HOME/ws/eclipse/startup.jar \
+#    -jar $HOME/ws2/eclipse/startup.jar \
 #    -application org.eclipse.update.core.siteOptimizer \
 #    -jarProcessor -outputDir $SITE \
 #    -processAll -pack $SITE
 java -Dorg.eclipse.update.jarprocessor.pack200=$mydir \
-    $HOME/ws/jarprocessor/jarprocessor.jar \
+    $HOME/ws2/jarprocessor/jarprocessor.jar \
     -outputDir $SITE -processAll -pack $SITE
 
 #Create the digest
 echo "Creating digest..."
-java -jar $HOME/ws/eclipse/startup.jar \
+java -jar $HOME/ws2/eclipse/startup.jar \
     -application org.eclipse.update.core.siteOptimizer \
     -digestBuilder -digestOutputDir=$SITE \
     -siteXML=$SITE/site.xml

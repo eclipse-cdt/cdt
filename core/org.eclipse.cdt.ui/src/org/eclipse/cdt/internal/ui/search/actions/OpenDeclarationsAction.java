@@ -11,6 +11,7 @@
 
 package org.eclipse.cdt.internal.ui.search.actions;
 
+import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IBinding;
@@ -21,8 +22,10 @@ import org.eclipse.cdt.internal.ui.editor.CEditor;
 import org.eclipse.cdt.internal.ui.editor.CEditorMessages;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.text.ITextSelection;
@@ -70,31 +73,42 @@ public class OpenDeclarationsAction extends SelectionParseAction {
 					if (binding != null && !(binding instanceof IProblemBinding)) {
 						final IASTName[] declNames = ast.getDeclarations(binding);
 						if (declNames.length > 0) {
-							Display.getDefault().asyncExec(new Runnable() {
-								public void run() {
-									try {
-										open(declNames[0]);
-									} catch (CoreException e) {
-										CUIPlugin.getDefault().log(e);
-									}
-								};
-							});
+					    	IASTFileLocation fileloc = declNames[0].getFileLocation();
+					    	if (fileloc != null) {
+								final IPath path = new Path(fileloc.getFileName());
+						    	final int offset = fileloc.getNodeOffset();
+						    	final int length = fileloc.getNodeLength();
+								Display.getDefault().asyncExec(new Runnable() {
+									public void run() {
+										try {
+											open(path, offset, length);
+										} catch (CoreException e) {
+											CUIPlugin.getDefault().log(e);
+										}
+									};
+								});
+					    	}
 						} else if (binding instanceof PDOMBinding) {
 							PDOMBinding pdomBinding = (PDOMBinding)binding;
 							IASTName name = pdomBinding.getFirstDefinition();
 							if (name == null)
 								name = pdomBinding.getFirstDeclaration();
 							if (name != null) {
-								final IASTName dname = name;
-								Display.getDefault().asyncExec(new Runnable() {
-									public void run() {
-										try {
-											open(dname);
-										} catch (CoreException e) {
-											CUIPlugin.getDefault().log(e);
+						    	IASTFileLocation fileloc = name.getFileLocation();
+						    	if (fileloc != null) {
+									final IPath path = new Path(fileloc.getFileName());
+							    	final int offset = fileloc.getNodeOffset();
+							    	final int length = fileloc.getNodeLength();
+									Display.getDefault().asyncExec(new Runnable() {
+										public void run() {
+											try {
+												open(path, offset, length);
+											} catch (CoreException e) {
+												CUIPlugin.getDefault().log(e);
+											}
 										}
-									}
-								});
+									});
+						    	}
 							}
 						}
 					}

@@ -24,11 +24,14 @@ import org.eclipse.core.runtime.Status;
  */
 public class Database {
 
+	// Access directly by the Chunks
 	final RandomAccessFile file;
 	Chunk[] toc;
 	
 	private long malloced;
 	private long freed;
+	
+	int version = 0;
 	
 	// public for tests only, you shouldn't need these
 	public static final int VERSION_OFFSET = 0;
@@ -46,53 +49,47 @@ public class Database {
 		try {
 			file = new RandomAccessFile(filename, "rw"); //$NON-NLS-1$
 			
-			// Allocate chunk table, make sure we have at least one
 			long nChunks = file.length() / CHUNK_SIZE;
 			if (nChunks == 0) {
+				// New file, allocate the header chunk
 				file.seek(0);
-				file.write(new byte[CHUNK_SIZE]); // the header chunk
-				++nChunks;
+				file.write(new byte[CHUNK_SIZE]);
+				
+				// Write out the version
+				file.seek(0);
+				file.writeInt(version);
+				nChunks = 1;
+			} else {
+				// Read in the version
+				file.seek(0);
+				version = file.readInt();
 			}
 			
 			toc = new Chunk[(int)nChunks];
-			toc[0] = new Chunk(file, 0);
 		} catch (IOException e) {
 			throw new CoreException(new DBStatus(e));
 		}
 	}
 	
 	public int getVersion() {
-		return toc[0].getInt(0);
+		return version;
 	}
 	
-	public void setVersion(int version) {
-		toc[0].putInt(0, version);
-	}
-
 	/**
 	 * Empty the contents of the Database, make it ready to start again
 	 * @throws CoreException
 	 */
-	public void clear() throws CoreException {
-		// Clear out the memory headers
-		toc[0].clear(4, DATA_AREA - 4);
+	public void clear(int version) throws CoreException {
+		// Clear out the data area and reset the version
+		Chunk chunk = getChunk(0);
+		chunk.putInt(0, version);
+		chunk.clear(4, DATA_AREA - 4);
+
 		// Add the remainder of the chunks backwards
 		for (int block = (toc.length - 1) * CHUNK_SIZE; block > 0; block -= CHUNK_SIZE) {
 			addBlock(getChunk(block), CHUNK_SIZE, block); 
 		}
 		malloced = freed = 0;
-	}
-	
-	/**
-	 * This saves the chunks to the file. Normally this isn't necessary.
-	 * However if the memory map fails, direct byte buffers are used instead
-	 * and need to be saved back to disk.
-	 * @throws CoreException
-	 */
-	public void save() throws CoreException {
-		for (int i = 0; i < toc.length; ++i)
-			if (toc[i] != null)
-				toc[i].save();
 	}
 	
 	/**
@@ -104,10 +101,12 @@ public class Database {
 	public Chunk getChunk(int offset) throws CoreException {
 		int index = offset / CHUNK_SIZE;
 		Chunk chunk = toc[index];
+		boolean isNew = false;
 		if (chunk == null) {
-			chunk = toc[index] = new Chunk(file, index * CHUNK_SIZE);
+			chunk = toc[index] = new Chunk(this, index);
+			isNew = true;
 		}
-		
+		Database.lruPutFirst(chunk, isNew);
 		return chunk;
 	}
 
@@ -174,19 +173,20 @@ public class Database {
 			file.write(new byte[CHUNK_SIZE]);
 			toc = new Chunk[n + 1];
 			System.arraycopy(oldtoc, 0, toc, 0, n);
-			toc[n] = new Chunk(file, offset);
+			toc[n] = new Chunk(this, n);
+			Database.lruPutFirst(toc[n], true);
 			return n;
 		} catch (IOException e) {
 			throw new CoreException(new DBStatus(e));
 		}
 	}
 	
-	private int getFirstBlock(int blocksize) {
-		return toc[0].getInt((blocksize / MIN_SIZE) * INT_SIZE);
+	private int getFirstBlock(int blocksize) throws CoreException {
+		return getChunk(0).getInt((blocksize / MIN_SIZE) * INT_SIZE);
 	}
 	
-	private void setFirstBlock(int blocksize, int block) {
-		toc[0].putInt((blocksize / MIN_SIZE) * INT_SIZE, block);
+	private void setFirstBlock(int blocksize, int block) throws CoreException {
+		getChunk(0).putInt((blocksize / MIN_SIZE) * INT_SIZE, block);
 	}
 	
 	private void removeBlock(Chunk chunk, int blocksize, int block) throws CoreException {
@@ -304,4 +304,110 @@ public class Database {
 				System.out.println("Block size: " + bs + "=" + count);
 		}
 	}
+	
+	// Chunk management
+	static private Chunk lruFirst;
+	static private Chunk lruLast;
+	static private int lruSize;
+	static private final int lruMax;
+	static private final int MEG = 1024 * 1024; 
+	
+	static {
+		String maxString = System.getProperty("cdt.index.lruMax"); //$NON-NLS-1$
+		if (maxString != null) {
+			int max = Integer.valueOf(maxString).intValue();
+			if (max > 0)
+				lruMax = max * MEG / CHUNK_SIZE;
+			else
+				lruMax = 64 * MEG / CHUNK_SIZE;
+		} else {
+			long max = Runtime.getRuntime().maxMemory();
+			if (max < 512 * MEG)
+				lruMax = (int)max / 8 / CHUNK_SIZE;
+			else
+				lruMax = 64 * MEG / CHUNK_SIZE;
+		}
+	}
+	
+	static public final void lruPutFirst(Chunk chunk, boolean isNew) throws CoreException {
+		// If this chunk is already first, we're good
+		if (chunk == lruFirst)
+			return;
+		
+		if (lockCount == 0)
+			// Accessing database without locking
+			CCorePlugin.log(new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, 0, "Index not locked", new Exception())); //$NON-NLS-1$
+
+		if (!isNew) {
+			// Remove from current position in cache
+			if (chunk.lruPrev != null) {
+				chunk.lruPrev.lruNext = chunk.lruNext;
+			}
+			if (chunk.lruNext != null) {
+				chunk.lruNext.lruPrev = chunk.lruPrev;
+			} else {
+				// No next => New last
+				lruLast = chunk.lruPrev;
+			}
+		}
+
+		// Insert at front of cache
+		chunk.lruNext = lruFirst;
+		chunk.lruPrev = null;
+		if (lruFirst != null)
+			lruFirst.lruPrev = chunk;
+		lruFirst = chunk;
+		if (lruLast == null)
+			lruLast = chunk;
+
+		if (isNew) {
+			// New chunk, see if we need to release one
+			if (lruSize == lruMax) {
+				Chunk last = lruLast;
+				lruLast = last.lruPrev;
+				lruLast.lruNext = null;
+				last.free();
+			} else {
+				++lruSize;
+			}
+		}
+	}
+	
+	// Global locks on the databases
+	// Allow only one access at a time
+	private static Object mutex = new Object();
+	private static Thread lockOwner;
+	private static int lockCount;
+	
+	public static void acquireLock() throws InterruptedException {
+		synchronized (mutex) {
+			if (lockOwner != Thread.currentThread())
+				while (lockCount > 0)
+					mutex.wait();
+			++lockCount;
+			lockOwner = Thread.currentThread();
+		}
+	}
+	
+	public static void releaseLock() {
+		synchronized (mutex) {
+			--lockCount;
+			if (lockCount == 0) {
+				lockOwner = null;
+				mutex.notify();
+			}
+		}
+	}
+	
+	public static void saveAll() {
+		// save the database
+		try {
+			for (Chunk chunk = lruFirst; chunk != null; chunk = chunk.lruNext) {
+				chunk.save();
+			}
+		} catch (CoreException e) {
+			CCorePlugin.log(e);
+		}
+	}
+
 }

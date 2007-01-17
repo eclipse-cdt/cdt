@@ -29,6 +29,8 @@ public class PDOMFastIndexer implements IPDOMIndexer {
 	
 	protected ICProject project;
 	
+	private boolean isReindexing;
+	
 	public PDOMFastIndexer() {
 	}
 
@@ -45,9 +47,16 @@ public class PDOMFastIndexer implements IPDOMIndexer {
 				new PDOMFastHandleDelta(this, delta));
 	}
 	
-	public void reindex() throws CoreException {
+	public synchronized void reindex() throws CoreException {
+		if (isReindexing)
+			return;
+		isReindexing = true;
+		
 		CCorePlugin.getPDOMManager().enqueue(
 				new PDOMFastReindex(this));
 	}
 	
+	synchronized void reindexingComplete() {
+		isReindexing = false;
+	}
 }

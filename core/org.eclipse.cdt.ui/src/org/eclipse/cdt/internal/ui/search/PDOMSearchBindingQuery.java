@@ -11,6 +11,7 @@
 
 package org.eclipse.cdt.internal.ui.search;
 
+import org.eclipse.cdt.core.dom.IPDOM;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
 import org.eclipse.cdt.ui.CUIPlugin;
@@ -36,7 +37,14 @@ public class PDOMSearchBindingQuery extends PDOMSearchQuery {
 	
 	public IStatus run(IProgressMonitor monitor) throws OperationCanceledException {
 		try {
-			createMatches(binding.getLinkage().getLanguage(), binding);
+			IPDOM pdom = binding.getPDOM();
+			try {
+				pdom.acquireReadLock();
+				createMatches(binding.getLinkage().getLanguage(), binding);
+			} catch (InterruptedException e) {
+			} finally {
+				pdom.releaseReadLock();
+			}
 			return Status.OK_STATUS;
 		} catch (CoreException e) {
 			return new Status(IStatus.ERROR, CUIPlugin.PLUGIN_ID, 0, e.getLocalizedMessage(), e);
@@ -44,7 +52,15 @@ public class PDOMSearchBindingQuery extends PDOMSearchQuery {
 	}
 
 	public String getLabel() {
-		return super.getLabel() + " " + binding.getName();
+		IPDOM pdom = binding.getPDOM();
+		try {
+			pdom.acquireReadLock();
+			return super.getLabel() + " " + binding.getName();
+		} catch (InterruptedException e) {
+		} finally {
+			pdom.releaseReadLock();
+		}
+		return super.getLabel();
 	}
 
 }

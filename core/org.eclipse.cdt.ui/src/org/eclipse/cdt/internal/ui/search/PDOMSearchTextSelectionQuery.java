@@ -11,6 +11,8 @@
 
 package org.eclipse.cdt.internal.ui.search;
 
+import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.dom.IPDOM;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IBinding;
@@ -42,13 +44,20 @@ public class PDOMSearchTextSelectionQuery extends PDOMSearchQuery {
 	public IStatus run(IProgressMonitor monitor) throws OperationCanceledException {
 		try {
 			ILanguage language = tu.getLanguage();
-			IASTTranslationUnit ast = language.getASTTranslationUnit(tu, ILanguage.AST_SKIP_ALL_HEADERS | ILanguage.AST_USE_INDEX);
-			IASTName[] names = language.getSelectedNames(ast, selection.getOffset(), selection.getLength());
-			
-			for (int i = 0; i < names.length; ++i) {
-				IBinding binding = names[i].resolveBinding();
-				if (binding != null)
-					createMatches(language, binding);
+			IPDOM pdom = CCorePlugin.getPDOMManager().getPDOM(tu.getCProject());
+			try {
+				pdom.acquireReadLock();
+				IASTTranslationUnit ast = language.getASTTranslationUnit(tu, ILanguage.AST_SKIP_ALL_HEADERS | ILanguage.AST_USE_INDEX);
+				IASTName[] names = language.getSelectedNames(ast, selection.getOffset(), selection.getLength());
+				
+				for (int i = 0; i < names.length; ++i) {
+					IBinding binding = names[i].resolveBinding();
+					if (binding != null)
+						createMatches(language, binding);
+				}
+			} catch (InterruptedException e) {
+			} finally {
+				pdom.releaseReadLock();
 			}
 			return Status.OK_STATUS;
 		} catch (CoreException e) {

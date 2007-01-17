@@ -71,41 +71,46 @@ public class CountNodeAction extends IndexAction {
 				ICProject project = (ICProject)objs[i];
 				final PDOM pdom = (PDOM)CCorePlugin.getPDOMManager().getPDOM(project);
 				//pdom.getDB().reportFreeBlocks();
-
-				pdom.getFileIndex().accept(new IBTreeVisitor() {
-					public int compare(int record) throws CoreException {
-						return 1;
-					}
-					public boolean visit(int record) throws CoreException {
-						if (record != 0) {
-							PDOMFile file = new PDOMFile(pdom, record);
-							++count[FILES];
-							PDOMMacro macro = file.getFirstMacro();
-							while (macro != null) {
-								++count[MACROS];
-								macro = macro.getNextMacro();
+				try {
+					pdom.acquireReadLock();
+					pdom.getFileIndex().accept(new IBTreeVisitor() {
+						public int compare(int record) throws CoreException {
+							return 1;
+						}
+						public boolean visit(int record) throws CoreException {
+							if (record != 0) {
+								PDOMFile file = new PDOMFile(pdom, record);
+								++count[FILES];
+								PDOMMacro macro = file.getFirstMacro();
+								while (macro != null) {
+									++count[MACROS];
+									macro = macro.getNextMacro();
+								}
 							}
+							return true;
 						}
-						return true;
-					}
-				});
-				pdom.accept(new IPDOMVisitor() {
-					public boolean visit(IPDOMNode node) throws CoreException {
-						++count[SYMBOLS];
-						if (node instanceof PDOMBinding) {
-							PDOMBinding binding = (PDOMBinding)node;
-							for (PDOMName name = binding.getFirstReference(); name != null; name = name.getNextInBinding())
-								++count[REFS];
-							for (PDOMName name = binding.getFirstDeclaration(); name != null; name = name.getNextInBinding())
-								++count[DECLS];
-							for (PDOMName name = binding.getFirstDefinition(); name != null; name = name.getNextInBinding())
-								++count[DEFS];
+					});
+					pdom.accept(new IPDOMVisitor() {
+						public boolean visit(IPDOMNode node) throws CoreException {
+							++count[SYMBOLS];
+							if (node instanceof PDOMBinding) {
+								PDOMBinding binding = (PDOMBinding)node;
+								for (PDOMName name = binding.getFirstReference(); name != null; name = name.getNextInBinding())
+									++count[REFS];
+								for (PDOMName name = binding.getFirstDeclaration(); name != null; name = name.getNextInBinding())
+									++count[DECLS];
+								for (PDOMName name = binding.getFirstDefinition(); name != null; name = name.getNextInBinding())
+									++count[DEFS];
+							}
+							return true;
 						}
-						return true;
-					}
-					public void leave(IPDOMNode node) throws CoreException {
-					}
-				});
+						public void leave(IPDOMNode node) throws CoreException {
+						}
+					});
+				} catch (InterruptedException e) {
+				} finally {
+					pdom.releaseReadLock();
+				}
 			}
 		} catch (CoreException e) {
 			CUIPlugin.getDefault().log(e);

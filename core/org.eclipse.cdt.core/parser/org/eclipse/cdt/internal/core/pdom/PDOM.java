@@ -44,7 +44,6 @@ import org.eclipse.cdt.internal.core.pdom.dom.PDOMFile.Finder;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.PlatformObject;
 import org.eclipse.core.runtime.Status;
 
@@ -57,10 +56,6 @@ public class PDOM extends PlatformObject
 		implements IPDOM, IPDOMResolver, IPDOMWriter {
 
 	private Database db;
-	
-	// On Neutrino, we need to save the database to ensure the
-	// buffer gets written to the file.
-	private static boolean needSave = Platform.getOS() == Platform.OS_QNX;
 	
 	public static final int VERSION = 11;
 	// 0 - the beginning of it all
@@ -81,28 +76,29 @@ public class PDOM extends PlatformObject
 	
 	// Local caches
 	private BTree fileIndex;
-	private Map linkageCache = new HashMap();
+	private Map _linkageCache; // Access only using getLinkageCache()
 	
 	public PDOM(IPath dbPath) throws CoreException {
 		// Load up the database
 		db = new Database(dbPath.toOSString());
-		
-		if (db.getVersion() == VERSION) {
-			// populate the linkage cache
-			PDOMLinkage linkage = getFirstLinkage();
-			while (linkage != null) {
-				linkageCache.put(linkage.getLanguage().getId(), linkage);
-				linkage = linkage.getNextLinkage();
-			}
-		}
 	}
 	
-	public boolean versionMismatch() {
-		if (db.getVersion() != VERSION) {
-			db.setVersion(VERSION);
-			return true;
-		} else
-			return false;
+	private Map getLinkageCache() throws CoreException {
+		if (_linkageCache == null) {
+			_linkageCache = new HashMap();
+			if (!versionMismatch()) {
+				PDOMLinkage linkage = getFirstLinkage();
+				while (linkage != null) {
+					_linkageCache.put(linkage.getLanguage().getId(), linkage);
+					linkage = linkage.getNextLinkage();
+				}
+			}
+		}
+		return _linkageCache;
+	}
+	
+	public boolean versionMismatch() throws CoreException {
+		return db.getVersion() != VERSION;
 	}
 
 	public Object getAdapter(Class adapter) {
@@ -181,16 +177,15 @@ public class PDOM extends PlatformObject
 	}
 	
 	public void clear() throws CoreException {
-		Database db = getDB();
 		// Clear out the database
-		db.clear();
+		db.clear(VERSION);
 		
 		// Zero out the File Index and Linkages
 		db.putInt(FILE_INDEX, 0);
 		fileIndex = null;
 		
 		db.putInt(LINKAGES, 0);
-		linkageCache.clear();
+		getLinkageCache().clear();
 	}
 
 	public boolean isEmpty() throws CoreException {
@@ -326,7 +321,7 @@ public class PDOM extends PlatformObject
 	}
 	
 	public PDOMLinkage getLinkage(ILanguage language) throws CoreException {
-		PDOMLinkage linkage = (PDOMLinkage)linkageCache.get(language.getId());
+		PDOMLinkage linkage = (PDOMLinkage)getLinkageCache().get(language.getId());
 		if (linkage != null)
 			return linkage;
 		
@@ -350,7 +345,7 @@ public class PDOM extends PlatformObject
 		
 		// First check the cache. We do a linear search since there will be very few linkages
 		// in a given database.
-		Iterator i = linkageCache.values().iterator();
+		Iterator i = getLinkageCache().values().iterator();
 		while (i.hasNext()) {
 			PDOMLinkage linkage = (PDOMLinkage)i.next();
 			if (linkage.getRecord() == record)
@@ -366,15 +361,15 @@ public class PDOM extends PlatformObject
 		return getLinkage(db.getInt(LINKAGES));
 	}
 	
-	public PDOMLinkage[] getLinkages() {
-		Collection values = linkageCache.values();
+	public PDOMLinkage[] getLinkages() throws CoreException {
+		Collection values = getLinkageCache().values();
 		return (PDOMLinkage[])values.toArray(new PDOMLinkage[values.size()]);
 	}
 	
 	public void insertLinkage(PDOMLinkage linkage) throws CoreException {
 		linkage.setNext(db.getInt(LINKAGES));
 		db.putInt(LINKAGES, linkage.getRecord());
-		linkageCache.put(linkage.getLanguage().getId(), linkage);
+		getLinkageCache().put(linkage.getLanguage().getId(), linkage);
 	}
 	
 	public PDOMBinding getBinding(int record) throws CoreException {
@@ -386,52 +381,21 @@ public class PDOM extends PlatformObject
 		}
 	}
 
-	// Read-write lock rules. Readers don't conflict with other readers,
-	// Writers conflict with readers, and everyone conflicts with writers.
-	private Object mutex = new Object();
-	private int lockCount;
-	private int waitingReaders;
-	
 	public void acquireReadLock() throws InterruptedException {
-		synchronized (mutex) {
-			++waitingReaders;
-			while (lockCount < 0)
-				mutex.wait();
-			--waitingReaders;
-			++lockCount;
-		}
+		Database.acquireLock();
 	}
 	
 	public void releaseReadLock() {
-		synchronized (mutex) {
-			if (lockCount > 0)
-				--lockCount;
-			mutex.notifyAll();
-		}
+		Database.releaseLock();
 	}
 	
 	public void acquireWriteLock() throws InterruptedException {
-		synchronized (mutex) {
-			// Let the readers go first
-			while (lockCount != 0 || waitingReaders > 0)
-				mutex.wait();
-			--lockCount;
-		}
+		Database.acquireLock();
 	}
 	
 	public void releaseWriteLock() {
-		synchronized (mutex) {
-			// save the database
-			if (needSave)
-				try {
-					db.save();
-				} catch (CoreException e) {
-					CCorePlugin.log(e);
-				}
-			if (lockCount < 0)
-				++lockCount;
-			mutex.notifyAll();
-		}
+		Database.saveAll();
+		Database.releaseLock();
 		fireChange();
 	}
 	

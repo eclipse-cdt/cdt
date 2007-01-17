@@ -58,9 +58,11 @@ public abstract class PDOMFastIndexerJob implements IPDOMIndexerTask {
 			return;
 	
 		// get the AST in a "Fast" way
+		pdom.acquireReadLock();
 		IASTTranslationUnit ast = language.getASTTranslationUnit(tu,
 				codeReaderFactory,
 				ILanguage.AST_USE_INDEX	| ILanguage.AST_SKIP_IF_NO_BUILD_INFO);
+		pdom.releaseReadLock();
 		if (ast == null)
 			return;
 		

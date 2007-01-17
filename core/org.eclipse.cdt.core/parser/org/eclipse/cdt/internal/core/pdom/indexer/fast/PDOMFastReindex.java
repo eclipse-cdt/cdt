@@ -57,12 +57,20 @@ public class PDOMFastReindex extends PDOMFastIndexerJob {
 			long start = System.currentTimeMillis();
 			
 			// First clear the pdom
-			pdom.clear();
+			try {
+				pdom.acquireWriteLock();
+				pdom.clear();
+				pdom.releaseWriteLock();
+			} catch (InterruptedException e) {
+				return;
+			}
 			
 			ISourceRoot[] roots = indexer.getProject().getAllSourceRoots();
 			for (int i = 0; i < roots.length; ++i)
 				addSources(roots[i], monitor);
 
+			indexer.reindexingComplete();
+			
 			String showTimings = Platform.getDebugOption(CCorePlugin.PLUGIN_ID
 					+ "/debug/pdomtimings"); //$NON-NLS-1$
 			if (showTimings != null && showTimings.equalsIgnoreCase("true")) //$NON-NLS-1$

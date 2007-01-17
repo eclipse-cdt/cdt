@@ -10,6 +10,9 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.search.actions;
 
+import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.dom.IPDOM;
+import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IBinding;
@@ -19,8 +22,10 @@ import org.eclipse.cdt.internal.ui.editor.CEditor;
 import org.eclipse.cdt.internal.ui.editor.CEditorMessages;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.text.ITextSelection;
@@ -59,30 +64,43 @@ public class OpenDefinitionAction extends SelectionParseAction {
 				IWorkingCopy workingCopy = CUIPlugin.getDefault().getWorkingCopyManager().getWorkingCopy(fEditor.getEditorInput());
 				if (workingCopy == null)
 					return Status.CANCEL_STATUS;
-					
-				IASTTranslationUnit ast = workingCopy.getLanguage().getASTTranslationUnit(workingCopy, ILanguage.AST_SKIP_ALL_HEADERS | ILanguage.AST_USE_INDEX);
-				IASTName[] selectedNames = workingCopy.getLanguage().getSelectedNames(ast, selectionStart, selectionLength);
-					
-				if (selectedNames.length > 0 && selectedNames[0] != null) { // just right, only one name selected
-					IASTName searchName = selectedNames[0];
-		
-					IBinding binding = searchName.resolveBinding();
-					if (binding != null) {
-						final IASTName[] declNames = ast.getDefinitions(binding);
-						if (declNames.length > 0) {
-							Display.getDefault().asyncExec(new Runnable() {
-								public void run() {
-									try {
-										open(declNames[0]);
-									} catch (CoreException e) {
-										CUIPlugin.getDefault().log(e);
-									}
-								};
-							});
+				
+				IPDOM pdom = CCorePlugin.getPDOMManager().getPDOM(workingCopy.getCProject());
+				try {
+					pdom.acquireReadLock();
+					IASTTranslationUnit ast = workingCopy.getLanguage().getASTTranslationUnit(workingCopy, ILanguage.AST_SKIP_ALL_HEADERS | ILanguage.AST_USE_INDEX);
+					IASTName[] selectedNames = workingCopy.getLanguage().getSelectedNames(ast, selectionStart, selectionLength);
+						
+					if (selectedNames.length > 0 && selectedNames[0] != null) { // just right, only one name selected
+						IASTName searchName = selectedNames[0];
+			
+						IBinding binding = searchName.resolveBinding();
+						if (binding != null) {
+							final IASTName[] declNames = ast.getDefinitions(binding);
+							if (declNames.length > 0) {
+						    	IASTFileLocation fileloc = declNames[0].getFileLocation();
+						    	if (fileloc != null) {
+									final IPath path = new Path(fileloc.getFileName());
+							    	final int offset = fileloc.getNodeOffset();
+							    	final int length = fileloc.getNodeLength();
+	
+									Display.getDefault().asyncExec(new Runnable() {
+										public void run() {
+											try {
+												open(path, offset, length);
+											} catch (CoreException e) {
+												CUIPlugin.getDefault().log(e);
+											}
+										};
+									});
+								}
+							}
 						}
 					}
+				} catch (InterruptedException e) {
+				} finally {
+					pdom.releaseReadLock();
 				}
-					
 				return Status.OK_STATUS;
 			} catch (CoreException e) {
 				return e.getStatus();

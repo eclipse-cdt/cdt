@@ -11,10 +11,6 @@
 package org.eclipse.cdt.internal.core.pdom.db;
 
 import java.io.IOException;
-import java.io.RandomAccessFile;
-import java.nio.ByteBuffer;
-import java.nio.MappedByteBuffer;
-import java.nio.channels.FileChannel.MapMode;
 
 import org.eclipse.core.runtime.CoreException;
 
@@ -24,83 +20,104 @@ import org.eclipse.core.runtime.CoreException;
  */
 public class Chunk {
 
-	private ByteBuffer buffer;
+	private final Database db;
+	private final int index;
+	private final byte[] buffer;
 	
-	// Cache info
-	private Database db;
-	int index;
+	Chunk lruPrev;
+	Chunk lruNext;
 	
-	Chunk(RandomAccessFile file, int offset) throws CoreException {
-		index = offset / Database.CHUNK_SIZE;
+	private boolean dirty;
+	
+	Chunk(Database db, int index) throws CoreException {
+		this.db = db;
+		this.index = index;
+		buffer = new byte[Database.CHUNK_SIZE];
+		
 		try {
-			buffer = file.getChannel().map(MapMode.READ_WRITE, offset, Database.CHUNK_SIZE);
-		} catch (IOException e) {
-			try {
-				buffer = ByteBuffer.allocateDirect(Database.CHUNK_SIZE);
-				file.seek(offset);
-				file.getChannel().read(buffer);
-			} catch (IOException e2) {			
-				throw new CoreException(new DBStatus(e2));
-			}
+			db.file.seek(index * Database.CHUNK_SIZE);
+			db.file.read(buffer, 0, Database.CHUNK_SIZE);
+		} catch (IOException e) {			
+			throw new CoreException(new DBStatus(e));
 		}
 	}
 
-	public void save() throws CoreException {
-		// if we're not memory mapped, write the buffer out to the file
-		if (buffer instanceof MappedByteBuffer)
-			((MappedByteBuffer)buffer).force();
-		else {
-			try {
-				db.file.seek(index * Database.CHUNK_SIZE);
-				db.file.getChannel().write(buffer);
-			} catch (IOException e) {
-				throw new CoreException(new DBStatus(e));
-			}
+	public final void save() throws CoreException {
+		if (!dirty)
+			return;
+		
+		if (index == 0 && getInt(0) != 11)
+			return;
+		
+		try {
+			db.file.seek(index * Database.CHUNK_SIZE);
+			db.file.write(buffer, 0, Database.CHUNK_SIZE);
+			dirty = false;
+		} catch (IOException e) {
+			throw new CoreException(new DBStatus(e));
 		}
 	}
 
 	public void putByte(int offset, byte value) {
-		buffer.put(offset % Database.CHUNK_SIZE, value);
+		dirty = true;
+		buffer[offset % Database.CHUNK_SIZE] = value;
 	}
 	
 	public byte getByte(int offset) {
-		return buffer.get(offset % Database.CHUNK_SIZE);
+		return buffer[offset % Database.CHUNK_SIZE];
 	}
 	
 	public byte[] getBytes(int offset, int length) {
 		byte[] bytes = new byte[length];
-		buffer.position(offset % Database.CHUNK_SIZE);
-		buffer.get(bytes, 0, length);
+		System.arraycopy(buffer, offset % Database.CHUNK_SIZE, bytes, 0, length);
 		return bytes;
 	}
 	
 	public void putBytes(int offset, byte[] bytes) {
-		buffer.position(offset % Database.CHUNK_SIZE);
-		buffer.put(bytes, 0, bytes.length);
+		dirty = true;
+		System.arraycopy(bytes, 0, buffer, offset % Database.CHUNK_SIZE, bytes.length);
 	}
 	
 	public void putInt(int offset, int value) {
-		buffer.putInt(offset % Database.CHUNK_SIZE, value);
+		dirty = true;
+		int i = offset % Database.CHUNK_SIZE;
+		buffer[i++] = (byte)((value >>> 24) & 0xff);
+		buffer[i++] = (byte)((value >>> 16) & 0xff);
+		buffer[i++] = (byte)((value >>> 8) & 0xff);
+		buffer[i] = (byte)(value & 0xff);
 	}
 	
 	public int getInt(int offset) {
-		return buffer.getInt(offset % Database.CHUNK_SIZE);
+		int i = offset % Database.CHUNK_SIZE;
+		return ((buffer[i] & 0xff) << 24)
+			| ((buffer[i + 1] & 0xff) << 16)
+			| ((buffer[i + 2] & 0xff) << 8)
+			| (buffer[i + 3] & 0xff);
 	}
 	
 	public void putChar(int offset, char value) {
-		buffer.putChar(offset % Database.CHUNK_SIZE, value);
+		dirty = true;
+		int i = offset % Database.CHUNK_SIZE;
+		buffer[i] = (byte)((value >>> 8) & 0xff);
+		buffer[i + 1] = (byte)(value & 0xff);
 	}
 	
 	public char getChar(int offset) {
-		return buffer.getChar(offset % Database.CHUNK_SIZE);
+		int i = offset % Database.CHUNK_SIZE;
+		return (char)(((buffer[i] & 0xff) << 8) + (buffer[i + 1] & 0xff));
 	}
 	
 	void clear(int offset, int length) {
-		buffer.position(offset % Database.CHUNK_SIZE);
-		buffer.put(new byte[length]);
+		dirty = true;
+		int i = offset % Database.CHUNK_SIZE;
+		while (length > 0) {
+			buffer[i++] = 0;
+			--length;
+		}
 	}
 	
-	void free() {
+	void free() throws CoreException {
+		save();
 		db.toc[index] = null;
 	}
 	

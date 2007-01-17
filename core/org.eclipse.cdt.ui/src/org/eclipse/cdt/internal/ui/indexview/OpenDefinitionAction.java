@@ -11,6 +11,7 @@
 
 package org.eclipse.cdt.internal.ui.indexview;
 
+import org.eclipse.cdt.core.dom.IPDOM;
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.resources.FileStorage;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
@@ -49,8 +50,11 @@ public class OpenDefinitionAction extends IndexAction {
 			if (!(objs[i] instanceof PDOMBinding))
 				continue;
 			
+			PDOMBinding binding = (PDOMBinding)objs[i];
+			IPDOM pdom = binding.getPDOM();
+			
 			try {
-				PDOMBinding binding = (PDOMBinding)objs[i];
+				pdom.acquireReadLock();
 				PDOMName name = binding.getFirstDefinition();
 				if (name == null)
 					name = binding.getFirstDeclaration();
@@ -87,8 +91,11 @@ public class OpenDefinitionAction extends IndexAction {
 					
 					textEditor.selectAndReveal(offset, length);
 				}
+			} catch (InterruptedException e) {
 			} catch (CoreException e) {
 				CUIPlugin.getDefault().log(e);
+			} finally {
+				pdom.releaseReadLock();
 			}
 		}
 	}

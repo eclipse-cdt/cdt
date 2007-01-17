@@ -14,8 +14,6 @@ package org.eclipse.cdt.internal.ui.search.actions;
 import java.io.IOException;
 
 import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
-import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.IWorkingCopy;
 import org.eclipse.cdt.core.parser.CodeReader;
@@ -42,7 +40,6 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IStatusLineManager;
 import org.eclipse.jface.text.BadLocationException;
@@ -521,22 +518,14 @@ public class SelectionParseAction extends Action {
      * 
      * @param name
      */
-    protected void open(IASTName name) throws CoreException {
-    	IASTFileLocation fileloc = name.getFileLocation();
-    	if (fileloc == null)
-    		// no source location - TODO spit out an error in the status bar
-    		return;
-    	int currentOffset = fileloc.getNodeOffset();
-    	int currentLength = fileloc.getNodeLength();
-    	
-		IPath path = new Path(fileloc.getFileName());
+    protected void open(IPath path, int offset, int length) throws CoreException {
 		IFile[] files = ResourcesPlugin.getWorkspace().getRoot().findFilesForLocation(path);
 		if (files.length > 0) {
 			IEditorPart editor = IDE.openEditor(CUIPlugin.getActivePage(), files[0]);
 			try {
 				IMarker marker = files[0].createMarker(NewSearchUI.SEARCH_MARKER);
-				marker.setAttribute(IMarker.CHAR_START, currentOffset);
-				marker.setAttribute(IMarker.CHAR_END, currentOffset + currentLength);
+				marker.setAttribute(IMarker.CHAR_START, offset);
+				marker.setAttribute(IMarker.CHAR_END, offset + length);
 				IDE.gotoMarker(editor, marker);
 				marker.delete();
 			} catch (CoreException e) {
@@ -548,7 +537,7 @@ public class SelectionParseAction extends Action {
 			IEditorPart editor = CUIPlugin.getActivePage().openEditor(input, ExternalSearchEditor.EDITOR_ID);
 			if (editor instanceof ITextEditor) {
 				ITextEditor textEditor = (ITextEditor)editor;
-				textEditor.selectAndReveal(currentOffset, currentLength);
+				textEditor.selectAndReveal(offset, length);
 			}
 		}
 

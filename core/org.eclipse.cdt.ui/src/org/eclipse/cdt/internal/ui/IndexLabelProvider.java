@@ -11,6 +11,7 @@
 
 package org.eclipse.cdt.internal.ui;
 
+import org.eclipse.cdt.core.dom.IPDOM;
 import org.eclipse.cdt.core.dom.ast.ICompositeType;
 import org.eclipse.cdt.core.dom.ast.IFunction;
 import org.eclipse.cdt.core.dom.ast.IVariable;
@@ -40,11 +41,18 @@ public class IndexLabelProvider extends LabelProvider {
 	public String getText(Object element) {
 		if (element == null) {
 			return "null :(";
-		} else if (element instanceof PDOMNode) {
+		} else if (element instanceof PDOMNamedNode) {
+			PDOMNamedNode namedNode = (PDOMNamedNode)element;
+			IPDOM pdom = namedNode.getPDOM();
 			try {
+				pdom.acquireReadLock();
 				return ((PDOMNamedNode)element).getDBName().getString();
+			} catch (InterruptedException e) {
+				return e.getMessage();
 			} catch (CoreException e) {
 				return e.getMessage();
+			} finally {
+				pdom.releaseReadLock();
 			}
 		} else
 			return super.getText(element);
@@ -52,13 +60,19 @@ public class IndexLabelProvider extends LabelProvider {
 	
 	public Image getImage(Object element) {
 		ImageDescriptor desc = null;
-	
+
 		if (element instanceof IVariable)
 			desc = CElementImageProvider.getVariableImageDescriptor();
 		else if (element instanceof IFunction)
 			desc = CElementImageProvider.getFunctionImageDescriptor();
 		else if (element instanceof ICPPClassType) {
+			IPDOM pdom = null;
+			if (element instanceof PDOMNode)
+				pdom = ((PDOMNode)element).getPDOM();
+			
 			try {
+				if (pdom != null)
+					pdom.acquireReadLock();
 				switch (((ICPPClassType)element).getKey()) {
 				case ICPPClassType.k_class:
 					desc = CElementImageProvider.getClassImageDescriptor();
@@ -70,8 +84,11 @@ public class IndexLabelProvider extends LabelProvider {
 					desc = CElementImageProvider.getUnionImageDescriptor();
 					break;
 				}
+			} catch (InterruptedException e) {
 			} catch (CoreException e) {
 				CUIPlugin.getDefault().log(e);
+			} finally {
+				pdom.releaseReadLock();
 			}
 		}
 		else if (element instanceof ICompositeType)

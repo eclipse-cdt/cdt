@@ -41,19 +41,19 @@ public class BTree {
 		return db.getInt(rootPointer);
 	}
 	
-	protected final void putRecord(Chunk chunk, int node, int index, int record) {
+	protected final void putRecord(Chunk chunk, int node, int index, int record) throws CoreException {
 		chunk.putInt(node + index * Database.INT_SIZE, record);
 	}
 	
-	protected final int getRecord(Chunk chunk, int node, int index) {
+	protected final int getRecord(Chunk chunk, int node, int index) throws CoreException {
 		return chunk.getInt(node + index * Database.INT_SIZE);
 	}
 
-	protected final void putChild(Chunk chunk, int node, int index, int child) {
+	protected final void putChild(Chunk chunk, int node, int index, int child) throws CoreException {
 		chunk.putInt(node + OFFSET_CHILDREN + index * Database.INT_SIZE, child);
 	}
 	
-	protected final int getChild(Chunk chunk, int node, int index) {
+	protected final int getChild(Chunk chunk, int node, int index) throws CoreException {
 		return chunk.getInt(node + OFFSET_CHILDREN + index * Database.INT_SIZE);
 	}
 	

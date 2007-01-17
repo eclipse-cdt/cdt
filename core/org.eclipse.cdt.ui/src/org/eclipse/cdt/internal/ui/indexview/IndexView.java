@@ -15,6 +15,7 @@ import java.util.Arrays;
 import java.util.Comparator;
 
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.dom.IPDOM;
 import org.eclipse.cdt.core.dom.IPDOMNode;
 import org.eclipse.cdt.core.dom.IPDOMVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
@@ -30,6 +31,7 @@ import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMLinkage;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMName;
+import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
 import org.eclipse.cdt.internal.ui.IndexLabelProvider;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -184,26 +186,39 @@ public class IndexView extends ViewPart implements PDOM.IListener, IElementChang
 				if (parentElement instanceof ICProject) {
 					PDOM pdom = (PDOM)CCorePlugin.getPDOMManager().getPDOM((ICProject)parentElement);
 					int n = 0;
-					PDOMLinkage firstLinkage = pdom.getFirstLinkage();
-					for (PDOMLinkage linkage = firstLinkage; linkage != null; linkage = linkage.getNextLinkage())
-						++n;
-					if (n == 1) {
-						// Skip linkages in hierarchy if there is only one
-						return getChildren(firstLinkage);
+					try {
+						pdom.acquireReadLock();
+						PDOMLinkage firstLinkage = pdom.getFirstLinkage();
+						for (PDOMLinkage linkage = firstLinkage; linkage != null; linkage = linkage.getNextLinkage())
+							++n;
+						if (n == 1) {
+							// Skip linkages in hierarchy if there is only one
+							return getChildren(firstLinkage);
+						}
+						PDOMLinkage[] linkages = new PDOMLinkage[n];
+						int i = 0;
+						for (PDOMLinkage linkage = pdom.getFirstLinkage(); linkage != null; linkage = linkage.getNextLinkage())
+							linkages[i++] = linkage;
+						return linkages;
+					} catch (InterruptedException e) {
+					} finally {
+						pdom.releaseReadLock();
 					}
-					PDOMLinkage[] linkages = new PDOMLinkage[n];
-					int i = 0;
-					for (PDOMLinkage linkage = pdom.getFirstLinkage(); linkage != null; linkage = linkage.getNextLinkage())
-						linkages[i++] = linkage;
-					return linkages;
-				} else if (parentElement instanceof IPDOMNode) {
-					IPDOMNode node = (IPDOMNode)parentElement;
-					Counter counter = new Counter();
-					node.accept(counter);
-					IPDOMNode[] children = new IPDOMNode[counter.count];
-					Children childrener = new Children(children);
-					node.accept(childrener);
-					return children;
+				} else if (parentElement instanceof PDOMNode) {
+					PDOMNode node = (PDOMNode)parentElement;
+					IPDOM pdom = node.getPDOM();
+					try {
+						pdom.acquireReadLock();
+						Counter counter = new Counter();
+						node.accept(counter);
+						IPDOMNode[] children = new IPDOMNode[counter.count];
+						Children childrener = new Children(children);
+						node.accept(childrener);
+						return children;
+					} catch (InterruptedException e) {
+					} finally {
+						pdom.releaseReadLock();
+					}
 				}
 			} catch (CoreException e) {
 				CUIPlugin.getDefault().log(e);
@@ -220,21 +235,33 @@ public class IndexView extends ViewPart implements PDOM.IListener, IElementChang
 			try {
 				if (element instanceof ICProject) {
 					PDOM pdom = (PDOM)CCorePlugin.getPDOMManager().getPDOM((ICProject)element);
-					PDOMLinkage[] linkages = pdom.getLinkages();
-					if (linkages.length == 0)
-						return false;
-					else if (linkages.length == 1)
-						// Skipping linkages if only one
-						return hasChildren(linkages[0]);
-					else
-						return true;
+					try {
+						pdom.acquireReadLock();
+						PDOMLinkage[] linkages = pdom.getLinkages();
+						if (linkages.length == 0)
+							return false;
+						else if (linkages.length == 1)
+							// Skipping linkages if only one
+							return hasChildren(linkages[0]);
+						else
+							return true;
+					} catch (InterruptedException e) {
+					} finally {
+						pdom.releaseReadLock();
+					}
 				} else if (element instanceof IPDOMNode) {
 					HasChildren hasChildren = new HasChildren();
+					PDOMNode pdomNode = (PDOMNode)element;
+					IPDOM pdom = pdomNode.getPDOM();
 					try {
+						pdom.acquireReadLock();
 						((IPDOMNode)element).accept(hasChildren);
+					} catch (InterruptedException e) {
 					} catch (CoreException e) {
 						if (e.getStatus() != Status.OK_STATUS)
 							throw e;
+					} finally {
+						pdom.releaseReadLock();
 					}
 					return hasChildren.hasChildren;
 				}
@@ -401,12 +428,18 @@ public class IndexView extends ViewPart implements PDOM.IListener, IElementChang
 		viewer.getControl().setFocus();
 	}
 
-	public void handleChange(PDOM pdom) {
-		viewer.getControl().getDisplay().asyncExec(new Runnable() {
-			public void run() {
-				viewer.refresh();
-			}
-		});
+	public void handleChange(final PDOM pdom) {
+			viewer.getControl().getDisplay().asyncExec(new Runnable() {
+				public void run() {
+					try {
+						pdom.acquireReadLock();
+						viewer.refresh();
+					} catch (InterruptedException e) {
+					} finally {
+						pdom.releaseReadLock();
+					}
+				}
+			});
 	}
 
 	public void elementChanged(ElementChangedEvent event) {

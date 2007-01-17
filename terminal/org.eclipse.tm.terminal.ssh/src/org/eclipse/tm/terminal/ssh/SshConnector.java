@@ -32,6 +32,8 @@ public class SshConnector implements ITerminalConnector {
 	private ChannelShell fChannel;
 	private SshConnection fConnection;
 	private final SshSettings fSettings;
+	private int fWidth;
+	private int fHeight;
 	public SshConnector() {
 		this(new SshSettings());
 		try {
@@ -80,9 +82,12 @@ public class SshConnector implements ITerminalConnector {
 		return false;
 	}
 	public void setTerminalSize(int newWidth, int newHeight) {
-		if(fChannel!=null)
-			fChannel.setPtySize(newWidth, newHeight, 8, 8);
-		
+		if(fChannel!=null && (newWidth!=fWidth || newHeight!=fHeight)) {
+			//avoid excessive communications due to change size requests by caching previous size
+			fChannel.setPtySize(newWidth, newHeight, 8*newWidth, 8*newHeight);
+			fWidth=newWidth;
+			fHeight=newHeight;
+		}
 	}
 	public InputStream getInputStream() {
 		return fInputStream;
@@ -128,5 +133,7 @@ public class SshConnector implements ITerminalConnector {
 	}
 	void setChannel(ChannelShell channel) {
 		fChannel = channel;
+		fWidth=-1;
+		fHeight=-1;
 	}
 }

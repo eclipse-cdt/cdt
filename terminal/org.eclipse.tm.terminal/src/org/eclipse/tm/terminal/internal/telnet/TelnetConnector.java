@@ -35,6 +35,9 @@ public class TelnetConnector implements ITerminalConnector {
 	private ITerminalControl fControl;
 	private TelnetConnection fTelnetConnection;
 	private final TelnetSettings fSettings;
+	private int fWidth = -1;
+	private int fHeight = -1;
+
 	public TelnetConnector() {
 		this(new TelnetSettings());
 	}
@@ -47,6 +50,8 @@ public class TelnetConnector implements ITerminalConnector {
 	public void connect(ITerminalControl control) {
 		Logger.log("entered."); //$NON-NLS-1$
 		fControl=control;
+		fWidth=-1;
+		fHeight=-1;
 		TelnetConnectWorker worker = new TelnetConnectWorker(this,control);
 		worker.start();
 	}
@@ -85,9 +90,12 @@ public class TelnetConnector implements ITerminalConnector {
 		return fTelnetConnection.localEcho();
 	}
 	public void setTerminalSize(int newWidth, int newHeight) {
-		if(fTelnetConnection!=null)
+		if(fTelnetConnection!=null && (newWidth!=fWidth || newHeight!=fHeight)) {
+			//avoid excessive communications due to change size requests by caching previous size
 			fTelnetConnection.setTerminalSize(newWidth, newHeight);
-		
+			fWidth=newWidth;
+			fHeight=newHeight;
+		}
 	}
 	public InputStream getInputStream() {
 		return fInputStream;

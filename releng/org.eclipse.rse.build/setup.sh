@@ -14,7 +14,7 @@
 # Works on build.eclipse.org -- may need to be adjusted
 # for other hosts.
 #
-# This must be run in $HOME/ws in order for the mkTestUpdateSite.sh
+# This must be run in $HOME/ws2 in order for the mkTestUpdateSite.sh
 # script to find the published packages
 #
 # Bootstrapping: Get this script by
@@ -27,31 +27,31 @@
 curdir=`pwd`
 
 # prepare the base Eclipse installation in folder "eclipse"
-if [ ! -f eclipse/plugins/org.eclipse.core.resources_3.2.0.v20060603.jar ]; then
-  # Eclipse Platform 3.2
-  wget "http://download.eclipse.org/eclipse/downloads/drops/R-3.2-200606291905/eclipse-platform-3.2-linux-gtk-ppc.tar.gz"
-  tar xfvz eclipse-platform-3.2-linux-gtk-ppc.tar.gz
-  rm eclipse-platform-3.2-linux-gtk-ppc.tar.gz
+if [ ! -f eclipse/plugins/org.eclipse.core.resources_3.3.0.v20061204.jar ]; then
+  # Eclipse Platform 3.3M4
+  wget "http://download.eclipse.org/eclipse/downloads/drops/S-3.3M4-200612141445/eclipse-platform-3.3M4-linux-gtk-ppc.tar.gz"
+  tar xfvz eclipse-platform-3.3M4-linux-gtk-ppc.tar.gz
+  rm eclipse-platform-3.3M4-linux-gtk-ppc.tar.gz
 fi
-if [ ! -f eclipse/plugins/org.eclipse.cdt.core_3.1.0.200606261600.jar ]; then
-  # CDT 3.1.0 Runtime
-  wget "http://download.eclipse.org/tools/cdt/releases/callisto/dist/3.1.0/org.eclipse.cdt-3.1.0-linux.ppc.tar.gz"
-  tar xfvz org.eclipse.cdt-3.1.0-linux.ppc.tar.gz
-  rm org.eclipse.cdt-3.1.0-linux.ppc.tar.gz
+if [ ! -f eclipse/plugins/org.eclipse.cdt.core_4.0.0.200612221600.jar ]; then
+  # CDT 4.0.0 Runtime
+  wget "http://download.eclipse.org/tools/cdt/releases/europa/dist/4.0.0M4/cdt-4.0.0-M4-linux.ppc.tar.gz"
+  tar xfvz cdt-4.0.0-M4-linux.ppc.tar.gz
+  rm cdt-4.0.0-M4-linux.ppc.tar.gz
 fi
-if [ ! -f eclipse/plugins/org.eclipse.emf_2.2.0.v200606271057.jar ]; then
-  # EMF 2.2.0 Runtime
-  wget "http://download.eclipse.org/tools/emf/downloads/drops/2.2.0/R200606271057/emf-sdo-runtime-2.2.0.zip"
-  unzip -o emf-sdo-runtime-2.2.0.zip
-  rm emf-sdo-runtime-2.2.0.zip 
+if [ ! -f eclipse/plugins/org.eclipse.emf_2.2.0.v200612211251.jar ]; then
+  # EMF 2.3.0 Runtime
+  wget "http://download.eclipse.org/modeling/emf/emf/downloads/drops/2.3.0/S200612211251/emf-sdo-runtime-2.3.0M4.zip"
+  unzip -o emf-sdo-runtime-2.3.0M4.zip
+  rm emf-sdo-runtime-2.3.0M4.zip 
 fi
 
 # checkout the basebuilder
-if [ ! -f org.eclipse.releng.basebuilder/plugins/org.eclipse.core.runtime_3.2.0.v20060603.jar ]; then
+if [ ! -f org.eclipse.releng.basebuilder/plugins/org.eclipse.core.runtime_3.3.100.v20061204.jar ]; then
   if [ -d org.eclipse.releng.basebuilder ]; then
     rm -rf org.eclipse.releng.basebuilder
   fi
-  cvs -d :pserver:anonymous@dev.eclipse.org:/cvsroot/eclipse co -r r321_v20060830 org.eclipse.releng.basebuilder
+  cvs -d :pserver:anonymous@dev.eclipse.org:/cvsroot/eclipse co -r M4_33 org.eclipse.releng.basebuilder
 fi
 
 # checkout the RSE builder
@@ -81,6 +81,9 @@ if [ ! -e testUpdates ]; then
 fi
 if [ ! -e udpates ]; then
   ln -s /home/data/httpd/download.eclipse.org/dsdp/tm/updates updates
+fi
+if [ ! -e staging ]; then
+  ln -s /home/data/httpd/download-staging.priv/dsdp/tm staging
 fi
 
 # create symlinks as needed

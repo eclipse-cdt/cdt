@@ -109,10 +109,10 @@
         <td><a href="http://www.eclipse.org/downloads/download.php?file=/dsdp/tm/downloads/drops/@dropDir@/TM-terminal-@buildId@.zip">TM-terminal-@buildId@.zip</a></td>
         <td>
 			A stand-alone ANSI / vt102 terminal emulator widget and view (with minor 
-			  <a href="http://dev.eclipse.org/viewcvs/index.cgi/org.eclipse.tm.core/terminal/org.eclipse.tm.terminal/README.txt?root=DSDP_Project&view=co">
+			  <a href="http://dev.eclipse.org/viewcvs/index.cgi/org.eclipse.tm.core/terminal/org.eclipse.tm.terminal/README.txt?root=DSDP_Project&view=markup">
 			limitations</a>). Includes pluggable connectors 
-			for serial line (through Sun Javacomm, see the 
-			  <a href="http://dev.eclipse.org/viewcvs/index.cgi/org.eclipse.tm.core/terminal/org.eclipse.tm.terminal.serial/README.txt?root=DSDP_Project&view=co">
+			for serial line (through RXTX, see the 
+			  <a href="http://dev.eclipse.org/viewcvs/index.cgi/org.eclipse.tm.core/terminal/org.eclipse.tm.terminal.serial/README.txt?root=DSDP_Project&view=markup">
 			installation notes</a>), ssh and telnet. Includes Source.
         </td>
     </tr>

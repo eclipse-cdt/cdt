@@ -26,16 +26,13 @@ public class CompletionTest_MemberReference_Arrow_Prefix2  extends CompletionPro
 	private final String headerFileFullPath ="resources/contentassist/" + headerFileName;
 	private final String expectedPrefix = "a";
 	private final String[] expectedResults = {
-// FIXME: additional result
-//			"aClass",
+			"aClass", // aClass is valid
 			"aField : int",
 			"aMethod(void) int"
 	};
 	
 	public CompletionTest_MemberReference_Arrow_Prefix2(String name) {
 		super(name) ;
-		// see https://bugs.eclipse.org/bugs/show_bug.cgi?id=88787
-		setExpectFailure(88787);
 	}
 	
 	public static Test suite() {

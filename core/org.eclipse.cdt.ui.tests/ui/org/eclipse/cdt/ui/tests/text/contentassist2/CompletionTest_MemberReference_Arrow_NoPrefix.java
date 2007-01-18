@@ -30,15 +30,12 @@ public class CompletionTest_MemberReference_Arrow_NoPrefix  extends CompletionPr
 			"aField : int",
 			"xAClassField : float",
 			"aMethod(void) int",
-			"xAClassMethod(int x) void"
-			/* "aClass"  FIXME: Surplus result: aClass is currently returned as a result, but this is not syntactically correct.
-            Completion processing needs to be fixed, putting this here as a reminder. */
+			"xAClassMethod(int x) void",
+			"aClass" // aClass is valid
 	};
 	
 	public CompletionTest_MemberReference_Arrow_NoPrefix(String name) {
 		super(name);
-		// see https://bugs.eclipse.org/bugs/show_bug.cgi?id=88787
-		setExpectFailure(88787);
 	}
 	
 	public static Test suite() {

@@ -15,6 +15,7 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 import org.eclipse.cdt.core.IAddress;
+import org.eclipse.cdt.core.IAddressFactory;
 import org.eclipse.cdt.debug.core.CDebugCorePlugin;
 import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
 import org.eclipse.cdt.debug.core.cdi.CDIException;
@@ -152,13 +153,11 @@ public class CMemoryBlockRetrievalExtension extends PlatformObject implements IM
 				}
 				
 				// See if the expression is a simple numeric value; if it is, we can avoid some costly
-				// processing (calling the backend to resolve the expression)
+				// processing (avoid calling the backend to resolve the expression)
 				try {
-					if (expression.startsWith("0x") && expression.length() > 2) {
-						return new CMemoryBlockExtension((CDebugTarget)target, expression, new BigInteger(expression.substring(2), 16));
-					} else if (Character.isDigit(expression.charAt(0))) {
-						return new CMemoryBlockExtension((CDebugTarget)target, expression, new BigInteger(expression));
-					}
+					IAddressFactory addrFactory = ((CDebugTarget)target).getAddressFactory();
+					String hexstr = addrFactory.createAddress(expression).toString(16);
+					return new CMemoryBlockExtension((CDebugTarget)target, expression, new BigInteger(hexstr, 16));
 				} catch (NumberFormatException nfexc) {
 					// OK, expression is not a simple, absolute numeric value; keep trucking and try to resolve as expression
 				}

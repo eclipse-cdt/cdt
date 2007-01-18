@@ -146,6 +146,23 @@ public class CMemoryBlockRetrievalExtension extends PlatformObject implements IM
 		try {
 			if (selected instanceof IDebugElement) {
 				IDebugElement debugElement = (IDebugElement)selected;
+				IDebugTarget target = debugElement.getDebugTarget();
+				if (!(target instanceof CDebugTarget)) {
+					throw new DebugException( new Status( IStatus.ERROR, CDebugCorePlugin.getUniqueIdentifier(), DebugException.REQUEST_FAILED, msg, null ) );
+				}
+				
+				// See if the expression is a simple numeric value; if it is, we can avoid some costly
+				// processing (calling the backend to resolve the expression)
+				try {
+					if (expression.startsWith("0x") && expression.length() > 2) {
+						return new CMemoryBlockExtension((CDebugTarget)target, expression, new BigInteger(expression.substring(2), 16));
+					} else if (Character.isDigit(expression.charAt(0))) {
+						return new CMemoryBlockExtension((CDebugTarget)target, expression, new BigInteger(expression));
+					}
+				} catch (NumberFormatException nfexc) {
+					// OK, expression is not a simple, absolute numeric value; keep trucking and try to resolve as expression
+				}
+				
 				CStackFrame frame = getStackFrame( debugElement );
 				if ( frame != null ) {
 					// We need to provide a better way for retrieving the address of expression
@@ -157,13 +174,10 @@ public class CMemoryBlockRetrievalExtension extends PlatformObject implements IM
 						if ( type != null && (type.isPointer() || type.isIntegralType()) ) {
 							address = value.getValueString();
 							exp.dispose();
-							IDebugTarget target = debugElement.getDebugTarget();
-							if ( target instanceof CDebugTarget ) {
-								if ( address != null ) {
-									// ???
-									BigInteger a = ( address.startsWith( "0x" ) ) ? new BigInteger( address.substring( 2 ), 16 ) : new BigInteger( address ); //$NON-NLS-1$
-									return new CMemoryBlockExtension( (CDebugTarget)target, expression, a );
-								}
+							if ( address != null ) {
+								// ???
+								BigInteger a = ( address.startsWith( "0x" ) ) ? new BigInteger( address.substring( 2 ), 16 ) : new BigInteger( address ); //$NON-NLS-1$
+								return new CMemoryBlockExtension( (CDebugTarget)target, expression, a );
 							}
 						}
 						else {

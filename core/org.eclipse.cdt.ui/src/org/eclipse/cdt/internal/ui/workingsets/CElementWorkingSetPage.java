@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,6 +12,8 @@
 package org.eclipse.cdt.internal.ui.workingsets;
 
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.core.resources.IContainer;
@@ -59,7 +61,7 @@ import org.eclipse.cdt.internal.ui.viewsupport.CElementImageProvider;
 import org.eclipse.cdt.internal.ui.viewsupport.DecoratingCLabelProvider;
 
 /**
- * The C element working set page allows the user to clreate 
+ * The C element working set page allows the user to create 
  * and edit a C element working set.
  * <p>
  * Working set elements are presented as a C element tree.
@@ -186,7 +188,7 @@ public class CElementWorkingSetPage extends WizardPage implements IWorkingSetPag
 		} else {
 			// Add inaccessible resources
 			IAdaptable[] oldItems= fWorkingSet.getElements();
-			ArrayList closedWithChildren= new ArrayList(elements.size());
+			HashSet closedWithChildren= new HashSet(elements.size());
 			for (int i= 0; i < oldItems.length; i++) {
 				IResource oldResource= null;
 				if (oldItems[i] instanceof IResource) {
@@ -196,7 +198,7 @@ public class CElementWorkingSetPage extends WizardPage implements IWorkingSetPag
 				}
 				if (oldResource != null && oldResource.isAccessible() == false) {
 					IProject project= oldResource.getProject();
-					if (elements.contains(project) || closedWithChildren.contains(project)) {
+					if (closedWithChildren.contains(project) || elements.contains(project)) {
 						elements.add(oldItems[i]);
 						elements.remove(project);
 						closedWithChildren.add(project);
@@ -242,14 +244,44 @@ public class CElementWorkingSetPage extends WizardPage implements IWorkingSetPag
 				|| element instanceof ICModel || element instanceof IContainer);
 	}
 
+	private void updateParentState(Object child, boolean baseChildState) {
+		if (child == null)
+			return;
+		if (child instanceof IAdaptable) {
+			IResource resource= (IResource)((IAdaptable)child).getAdapter(IResource.class);
+			if (resource != null && !resource.isAccessible())
+				return;
+		}
+		Object parent= fTreeContentProvider.getParent(child);
+		if (parent == null)
+			return;
+		
+		updateObjectState(parent, baseChildState);
+	}
+
+	private void updateObjectState(Object element, boolean baseChildState) {		
+
+		boolean allSameState= true;
+		Object[] children= fTreeContentProvider.getChildren(element);
+
+		for (int i= children.length -1; i >= 0; i--) {
+			if (fTree.getChecked(children[i]) != baseChildState || fTree.getGrayed(children[i])) {
+				allSameState= false;
+				break;
+			}
+		}
+	
+		fTree.setGrayed(element, !allSameState);
+		fTree.setChecked(element, !allSameState || baseChildState);
+		
+		updateParentState(element, baseChildState);
+	}
+
 	/**
 	 * Sets the checked state of tree items based on the initial 
 	 * working set, if any.
 	 */
 	private void initializeCheckedState() {
-		if (fWorkingSet == null)
-			return;
-
 		BusyIndicator.showWhile(getShell().getDisplay(), new Runnable() {
 			public void run() {
 				Object[] elements;
@@ -282,31 +314,43 @@ public class CElementWorkingSetPage extends WizardPage implements IWorkingSetPag
 				for (int i = 0; i < elements.length; i++) {
 					Object element = elements[i];
 					if (element instanceof IResource) {
-						// for backwards compatibility: adapt to ICElement if possible
-						ICElement cElement= CoreModel.getDefault().create((IResource)element);
-						if (cElement != null) {
-							elements[i]= element= cElement;
-						}
-					}
-					if (element instanceof IResource) {
 						IProject project= ((IResource)element).getProject();
-						if (!project.isAccessible())
+						if (!project.isAccessible()) {
 							elements[i]= project;
-					}
-					if (element instanceof ICElement) {
+						} else {
+							// for backwards compatibility: adapt to ICElement if possible
+							if(CoreModel.hasCNature(project)) {
+								ICElement cElement= CoreModel.getDefault().create((IResource)element);
+								if (cElement != null) {
+									elements[i]= cElement;
+								}
+							}
+						}
+					} else if (element instanceof ICElement) {
 						ICProject cProject= ((ICElement)element).getCProject();
 						if (cProject != null && !cProject.getProject().isAccessible()) 
 							elements[i]= cProject.getProject();
 					}
 				}
 				fTree.setCheckedElements(elements);
+				HashSet parents = new HashSet();
 				for (int i= 0; i < elements.length; i++) {
 					Object element= elements[i];
 					if (isExpandable(element))
 						setSubtreeChecked(element, true, true);
 						
-					updateParentState(element, true);
+					if (element instanceof IAdaptable) {
+						IResource resource= (IResource) ((IAdaptable)element).getAdapter(IResource.class);
+						if (resource != null && !resource.isAccessible())
+							continue;
+					}
+					Object parent= fTreeContentProvider.getParent(element);
+					if (parent != null)
+						parents.add(parent);
 				}
+				
+				for (Iterator i = parents.iterator(); i.hasNext();)
+					updateObjectState(i.next(), true);
 			}
 		});
 	}
@@ -356,45 +400,6 @@ public class CElementWorkingSetPage extends WizardPage implements IWorkingSetPag
 		}
 	}
 
-	/**
-	 * Check and gray the resource parent if all resources of the 
-	 * parent are checked.
-	 * 
-	 * @param child the resource whose parent checked state should 
-	 * 	be set.
-	 * @param baseChildState
-	 */
-	void updateParentState(Object child, boolean baseChildState) {
-		if (child == null)
-			return;
-		if (child instanceof IAdaptable) {
-			IResource resource = (IResource) ((IAdaptable) child)
-					.getAdapter(IResource.class);
-			if (resource != null && !resource.isAccessible())
-				return;
-		}
-		Object parent = fTreeContentProvider.getParent(child);
-		if (parent == null)
-			return;
-
-		boolean allSameState = true;
-		Object[] children = null;
-		children = fTreeContentProvider.getChildren(parent);
-
-		for (int i = children.length - 1; i >= 0; i--) {
-			if (fTree.getChecked(children[i]) != baseChildState
-					|| fTree.getGrayed(children[i])) {
-				allSameState = false;
-				break;
-			}
-		}
-
-		fTree.setGrayed(parent, !allSameState);
-		fTree.setChecked(parent, !allSameState || baseChildState);
-
-		updateParentState(parent, baseChildState);
-	}
-	
 	/**
 	 * Validates the working set name and the checked state of the 
 	 * resource tree.

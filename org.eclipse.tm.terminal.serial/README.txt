@@ -1,5 +1,12 @@
 Important note:
+---------------
+This README is for terminal.serial version 0.9.100 and later, corresponding
+to RSE downloads after 2.0M4. Instructions for previous versions (using
+Sun javacomm / javax.comm package instead of gnu.io) are still available from
+http://dev.eclipse.org/viewcvs/index.cgi/org.eclipse.tm.core/terminal/org.eclipse.tm.terminal.serial/README.txt?root=DSDP_Project&view=markup&pathrev=R1_0_1  
 
+Prerequisites:
+--------------
 In order to compile and run this plugin, RXTX has to be installed into 
 the jvm. Once RXTXcomm.jar is installed in your JRE, you'll need to 
 quit and re-start Eclipse PDE in order to recompute the classpath.

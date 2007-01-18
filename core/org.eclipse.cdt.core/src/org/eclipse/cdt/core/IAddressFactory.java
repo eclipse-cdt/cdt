@@ -35,12 +35,17 @@ public interface IAddressFactory
 	/**
 	 * Creates address from string representation. 
 	 * 
-	 * 1. This method should be able to create address from hex 
+	 * 1. Method should be able to create address from hex 
 	 *    address string (string produced with 
 	 *    IAddress.toHexAddressString() method). 
 	 * 2. Method should be case insensetive
 	 * 3. Method should be able to create address from decimal address 
 	 *    representation
+	 * 4. Method should throw NumberFormatException if the given string
+	 *    cannot be decoded.
+	 * 5. Method should not attempt to evaluate string as expression (i.e., 
+	 *    "0x1000 + 5" should not result in an IAddress for 0x1005.) Input
+	 *    must be a straightforward, absolute value.
 	 * 
 	 * Please see Addr32Factory.createAddress() for reference implementation.
 	 *
@@ -55,6 +60,13 @@ public interface IAddressFactory
 	 * Given string should not contain any prefixes or sign numbers.
 	 * 
 	 * Method should be case insensetive
+	 * 
+	 * Method should throw NumberFormatException if the given string
+	 * cannot be decoded.
+	 * 
+	 * Method should not attempt to evaluate string as expression (i.e., 
+	 * "1000 + 5" should not result in an IAddress for 1005.) Input
+	 * must be a straightforward, absolute value.
 	 * 
 	 * @param addr
 	 * @param radix

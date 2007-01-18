@@ -52,32 +52,39 @@ public abstract class PDOMFastIndexerJob implements IPDOMIndexerTask {
 		return indexer;
 	}
 	
-	protected void addTU(ITranslationUnit tu) throws InterruptedException, CoreException {
+	protected void addTU(ITranslationUnit tu) throws CoreException {
 		ILanguage language = tu.getLanguage();
 		if (language == null)
 			return;
 	
 		// get the AST in a "Fast" way
-		pdom.acquireReadLock();
-		IASTTranslationUnit ast = language.getASTTranslationUnit(tu,
-				codeReaderFactory,
-				ILanguage.AST_USE_INDEX	| ILanguage.AST_SKIP_IF_NO_BUILD_INFO);
-		pdom.releaseReadLock();
+		IASTTranslationUnit ast;
+		try {
+			pdom.acquireReadLock();
+			ast = language.getASTTranslationUnit(tu,
+					codeReaderFactory,
+					ILanguage.AST_USE_INDEX	| ILanguage.AST_SKIP_IF_NO_BUILD_INFO);
+		} catch (InterruptedException e) {
+			return;
+		} finally {
+			pdom.releaseReadLock();
+		}
 		if (ast == null)
 			return;
 		
 		// Clear the macros
 		codeReaderFactory.clearMacros();
 
-		pdom.acquireWriteLock();
 		try {
+			pdom.acquireWriteLock();
 			addSymbols(language, ast);
+		} catch (InterruptedException e) {
 		} finally {
 			pdom.releaseWriteLock();
 		}
 	}
 
-	protected void addSymbols(ILanguage language, IASTTranslationUnit ast) throws InterruptedException, CoreException {
+	protected void addSymbols(ILanguage language, IASTTranslationUnit ast) throws CoreException {
 		final PDOMLinkage linkage = pdom.getLinkage(language);
 		if (linkage == null)
 			return;

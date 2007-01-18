@@ -36,6 +36,12 @@
          <adapter type="org.eclipse.ui.IActionFilter"/>
          <adapter type="org.eclipse.ui.IPersistableElement"/>
       </factory>
+
+      <factory
+            class="org.eclipse.cdt.internal.ui.CProjectAdapterFactory"
+            adaptableType="org.eclipse.cdt.core.model.ICProject">
+         <adapter type="org.eclipse.core.resources.IProject"/>
+      </factory>
    </extension>
 
    <extension
@@ -469,7 +475,7 @@
          </description>
       </wizard>
    </extension>
-<!-- Define the document provider and partitionner for the CEditor -->
+<!-- Define the document setup participant for the C/C++ and Assembly Editors -->
    <extension
          id="org.eclipse.cdt.ui.CDocumentSetupParticipant"
          name="%cDocumentSetupParticipant"
@@ -478,23 +484,44 @@
             class="org.eclipse.cdt.internal.ui.editor.CDocumentSetupParticipant"
             contentTypeId="org.eclipse.cdt.core.cSource">
       </participant>
+   </extension>
+   <extension
+         id="org.eclipse.cdt.ui.CDocumentSetupParticipant"
+         name="%cDocumentSetupParticipant"
+         point="org.eclipse.core.filebuffers.documentSetup">
       <participant
             class="org.eclipse.cdt.internal.ui.editor.CDocumentSetupParticipant"
             contentTypeId="org.eclipse.cdt.core.cHeader">
       </participant>
+   </extension>
+   <extension
+         id="org.eclipse.cdt.ui.CDocumentSetupParticipant"
+         name="%cDocumentSetupParticipant"
+         point="org.eclipse.core.filebuffers.documentSetup">
       <participant
             class="org.eclipse.cdt.internal.ui.editor.CDocumentSetupParticipant"
             contentTypeId="org.eclipse.cdt.core.cxxSource">
       </participant>
+   </extension>
+   <extension
+         id="org.eclipse.cdt.ui.CDocumentSetupParticipant"
+         name="%cDocumentSetupParticipant"
+         point="org.eclipse.core.filebuffers.documentSetup">
       <participant
             class="org.eclipse.cdt.internal.ui.editor.CDocumentSetupParticipant"
             contentTypeId="org.eclipse.cdt.core.cxxHeader">
       </participant>
+   </extension>
+   <extension
+         id="org.eclipse.cdt.ui.CDocumentSetupParticipant"
+         name="%cDocumentSetupParticipant"
+         point="org.eclipse.core.filebuffers.documentSetup">
       <participant
             class="org.eclipse.cdt.internal.ui.editor.CDocumentSetupParticipant"
             contentTypeId="org.eclipse.cdt.core.asmSource">
       </participant>
    </extension>
+<!-- Define the C/C++ and Assembly Editors -->
    <extension
          id="org.eclipse.cdt.ui.ceditor"
          point="org.eclipse.ui.editors">
@@ -521,6 +548,7 @@
             id="org.eclipse.cdt.ui.editor.asm.AsmEditor">
             <contentTypeBinding contentTypeId="org.eclipse.cdt.core.asmSource"/>
       </editor>
+      <!-- deprecated -->
       <editor
             symbolicFontName="org.eclipse.cdt.ui.editors.textfont"
             class="org.eclipse.cdt.internal.ui.editor.ExternalSearchEditor"
@@ -1280,37 +1308,34 @@
    <extension
          point="org.eclipse.ui.propertyPages">
       <page
-            adaptable="true"
-            objectClass="org.eclipse.core.resources.IProject"
             name="%CDTIndexerProperty.name"
             class="org.eclipse.cdt.ui.dialogs.IndexerOptionPropertyPage"
             id="org.eclipse.cdt.ui.indexer">
-			<filter
-               	name="nature"
-        		value="org.eclipse.cdt.core.cnature">
-    	     </filter>            
+         <enabledWhen>
+		     <adapt type="org.eclipse.core.resources.IProject">
+		          <test property="org.eclipse.core.resources.projectNature" value="org.eclipse.cdt.core.cnature"/>
+		     </adapt>         
+         </enabledWhen>
       </page>
       <page
-            adaptable="true"
-            objectClass="org.eclipse.core.resources.IProject"
             name="%CDTFileTypesProperty.name"
             class="org.eclipse.cdt.internal.ui.preferences.CFileTypesPropertyPage"
             id="org.eclipse.cdt.ui.fileTypes">
-         <filter
-               name="nature"
-               value="org.eclipse.cdt.core.cnature">
-         </filter>
+         <enabledWhen>
+		     <adapt type="org.eclipse.core.resources.IProject">
+		          <test property="org.eclipse.core.resources.projectNature" value="org.eclipse.cdt.core.cnature"/>
+		     </adapt>         
+         </enabledWhen>
        </page>
       <page
-            adaptable="true"
-            objectClass="org.eclipse.core.resources.IProject"
             name="%CDTHelpProperty.name"
             class="org.eclipse.cdt.ui.dialogs.CHelpConfigurationPropertyPage"
             id="org.eclipse.cdt.ui.cHelp">
-             <filter
-               	name="nature"
-        		value="org.eclipse.cdt.core.cnature">
-    	     </filter>            
+         <enabledWhen>
+		     <adapt type="org.eclipse.core.resources.IProject">
+		          <test property="org.eclipse.core.resources.projectNature" value="org.eclipse.cdt.core.cnature"/>
+		     </adapt>         
+         </enabledWhen>
       </page>
    </extension>
    <extension

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,12 +8,14 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     QNX Software System
+ *     Anton Leherbauer (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.text.template;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IInformationControl;
 import org.eclipse.jface.text.IInformationControlCreator;
@@ -24,18 +26,14 @@ import org.eclipse.jface.text.templates.Template;
 import org.eclipse.jface.text.templates.TemplateContext;
 import org.eclipse.jface.text.templates.TemplateContextType;
 import org.eclipse.jface.text.templates.TemplateProposal;
-import org.eclipse.core.runtime.Assert;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Shell;
 
-import org.eclipse.cdt.core.dom.ast.ASTCompletionNode;
 import org.eclipse.cdt.core.model.ITranslationUnit;
-import org.eclipse.cdt.core.model.IWorkingCopy;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.text.ICCompletionProposal;
-import org.eclipse.cdt.ui.text.contentassist.ICompletionContributor;
 
 import org.eclipse.cdt.internal.corext.template.c.CContextType;
 import org.eclipse.cdt.internal.corext.template.c.TranslationUnitContext;
@@ -44,7 +42,7 @@ import org.eclipse.cdt.internal.corext.template.c.TranslationUnitContextType;
 import org.eclipse.cdt.internal.ui.CPluginImages;
 import org.eclipse.cdt.internal.ui.text.c.hover.SourceViewerInformationControl;
 
-public class TemplateEngine implements ICompletionContributor {
+public class TemplateEngine {
 
 	private TemplateContextType fContextType;	
 	private ArrayList fProposals= new ArrayList();
@@ -91,7 +89,7 @@ public class TemplateEngine implements ICompletionContributor {
 	 * This is the default constructor used by the new content assist extension point
 	 */
 	public TemplateEngine() {
-		fContextType = CUIPlugin.getDefault().getTemplateContextRegistry().getContextType(CContextType.CCONTEXT_TYPE);			
+		fContextType = CUIPlugin.getDefault().getTemplateContextRegistry().getContextType(CContextType.ID);			
 		if (fContextType == null) {
 			fContextType= new CContextType();
 			CUIPlugin.getDefault().getTemplateContextRegistry().addContextType(fContextType);
@@ -129,7 +127,6 @@ public class TemplateEngine implements ICompletionContributor {
 
 		Point selection= viewer.getSelectedRange();
 
-		((TranslationUnitContextType) fContextType).setContextParameters(document.get(), completionPosition, translationUnit);		
 		TranslationUnitContext context= ((TranslationUnitContextType) fContextType).createContext(document, completionPosition, selection.y, translationUnit);
 		int start= context.getStart();
 		int end= context.getEnd();
@@ -141,17 +138,5 @@ public class TemplateEngine implements ICompletionContributor {
 				fProposals.add(new CTemplateProposal(templates[i], context, region, CPluginImages.get(CPluginImages.IMG_OBJS_TEMPLATE)));
 	}
 	
-	public void contributeCompletionProposals(ITextViewer viewer,
-											  int offset,
-											  IWorkingCopy workingCopy,
-											  ASTCompletionNode completionNode,
-                                              String prefix,
-											  List proposals)
-	{
-		// TODO We should use the completion node to determine the proper context for the templates
-		// For now we just keep the current behavior
-		complete(viewer, offset, workingCopy);
-		proposals.addAll(fProposals);
-	}
 }
 

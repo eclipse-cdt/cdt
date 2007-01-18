@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     QNX Software System
+ *     Anton Leherbauer (Wind River Systems)
  *******************************************************************************/
 
 package org.eclipse.cdt.internal.corext.template.c;
@@ -16,24 +17,16 @@ import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.IFunctionDeclaration;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.templates.GlobalTemplateVariables;
 import org.eclipse.jface.text.templates.TemplateContext;
 import org.eclipse.jface.text.templates.TemplateContextType;
 import org.eclipse.jface.text.templates.TemplateVariableResolver;
 
 /**
- * Compilation unit context type.
+ * A context type for translation units.
  */
 public abstract class TranslationUnitContextType extends TemplateContextType {
-	
-	/** the document string */
-	protected String fString;
 
-	/** the completion position within the document string */
-	protected int fPosition;
-
-	/** the associated compilation unit, may be <code>null</code> */
-	protected ITranslationUnit fTranslationUnit;
-	
 	protected static class ReturnType extends TemplateVariableResolver {
 	 	public ReturnType() {
 	 	 	super("return_type", TemplateMessages.getString("CContextType.variable.description.return.type")); //$NON-NLS-1$ //$NON-NLS-2$
@@ -151,19 +144,26 @@ public abstract class TranslationUnitContextType extends TemplateContextType {
 	}
 
 	/*
-	 * @see ContextType#ContextType(String)
+	 * @see TemplateContextType#TemplateContextType()
 	 */
 	public TranslationUnitContextType() {
 		super();	
-	}
-
-	/**
-	 * Sets context parameters. Needs to be called before createContext().
-	 */
-	public void setContextParameters(String string, int position, ITranslationUnit translationUnit) {
-		fString= string;
-		fPosition= position;
-		fTranslationUnit= translationUnit;
+		// global
+		addResolver(new GlobalTemplateVariables.Cursor());
+		addResolver(new GlobalTemplateVariables.WordSelection());
+		addResolver(new GlobalTemplateVariables.LineSelection());
+		addResolver(new GlobalTemplateVariables.Dollar());
+		addResolver(new GlobalTemplateVariables.Date());
+		addResolver(new GlobalTemplateVariables.Year());
+		addResolver(new GlobalTemplateVariables.Time());
+		addResolver(new GlobalTemplateVariables.User());
+		
+		// translation unit
+		addResolver(new File());
+		addResolver(new ReturnType());
+		addResolver(new Method());
+		addResolver(new Project());
+		addResolver(new Arguments());
 	}
 
 	public abstract TranslationUnitContext createContext(IDocument document, int offset, int length, ITranslationUnit translationUnit);

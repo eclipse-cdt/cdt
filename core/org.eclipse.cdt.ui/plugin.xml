@@ -1371,6 +1371,11 @@
             class="org.eclipse.cdt.internal.corext.template.c.CContextType"
             id="org.eclipse.cdt.ui.text.templates.c">
       </contextType>
+      <contextType
+            class="org.eclipse.cdt.internal.corext.template.c.CommentContextType"
+            id="org.eclipse.cdt.ui.text.templates.comment"
+            name="%comment.contextType.name">
+      </contextType>
       <include
       		file="templates/default-templates.xml"
       		translations="$nl$/templates/default-templates.properties">
@@ -1402,7 +1407,7 @@
             id="DOM"
             priority="1"/>
       <contributor
-            class="org.eclipse.cdt.internal.ui.text.template.TemplateEngine"
+            class="org.eclipse.cdt.internal.ui.text.template.CTemplateCompletionProcessor"
             id="CodeTemplates"
             priority="2"/>
       <contributor

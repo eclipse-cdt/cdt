@@ -1,13 +1,12 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2007 QNX Software Systems and others.
+ * Copyright (c) 2007 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     QNX Software Systems - Initial API and implementation
- *     Anton Leherbauer (Wind River Systems)
+ *     Anton Leherbauer (Wind River Systems) - initial API and implementation
  *******************************************************************************/
 
 package org.eclipse.cdt.internal.corext.template.c;
@@ -17,22 +16,27 @@ import org.eclipse.jface.text.IDocument;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 
 /**
- * A context type for C/C++ code.
+ * A context type for comments.
+ *
+ * @since 4.0
  */
-public class CContextType extends TranslationUnitContextType {
+public class CommentContextType extends TranslationUnitContextType {
 
-	public final static String ID = "org.eclipse.cdt.ui.text.templates.c"; //$NON-NLS-1$
+	public static final String ID= "org.eclipse.cdt.ui.text.templates.comment"; //$NON-NLS-1$
 
-	public CContextType() {
+	/**
+	 * Creates a comment context type.
+	 */
+	public CommentContextType() {
 		super();
 	}
-
-	/* (non-Javadoc)
+	
+	/*
 	 * @see org.eclipse.cdt.internal.corext.template.c.TranslationUnitContextType#createContext(org.eclipse.jface.text.IDocument, int, int, org.eclipse.cdt.core.model.ITranslationUnit)
 	 */
 	public TranslationUnitContext createContext(IDocument document, int offset,
 			int length, ITranslationUnit translationUnit) {
-		return new CContext(this, document, offset, length, translationUnit);
+		return new CommentContext(this, document, offset, length, translationUnit);
 	}
 
 }

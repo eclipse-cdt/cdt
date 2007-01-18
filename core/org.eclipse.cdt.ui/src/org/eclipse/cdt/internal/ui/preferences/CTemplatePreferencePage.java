@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2006 QNX Software Systems and others.
+ * Copyright (c) 2002, 2007 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,7 +16,13 @@ import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.contentassist.ContentAssistant;
+import org.eclipse.jface.text.contentassist.IContentAssistant;
+import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.text.source.SourceViewer;
+import org.eclipse.jface.text.templates.ContextTypeRegistry;
+import org.eclipse.jface.text.templates.Template;
+import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.accessibility.AccessibleAdapter;
 import org.eclipse.swt.accessibility.AccessibleEvent;
@@ -24,11 +30,13 @@ import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.texteditor.templates.TemplatePreferencePage;
 
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.PreferenceConstants;
+import org.eclipse.cdt.ui.text.ICPartitions;
 
 import org.eclipse.cdt.internal.ui.ICHelpContextIds;
 import org.eclipse.cdt.internal.ui.editor.CSourceViewer;
@@ -36,9 +44,52 @@ import org.eclipse.cdt.internal.ui.text.CSourceViewerConfiguration;
 import org.eclipse.cdt.internal.ui.text.CTextTools;
 
 /**
- * CTemplatePreferencePage
+ * Template preference page for C/C++ editor templates.
  */
 public class CTemplatePreferencePage extends TemplatePreferencePage {
+
+	/**
+	 * A dialog to edit a template.
+	 */
+	protected class CEditTemplateDialog extends EditTemplateDialog {
+
+		public CEditTemplateDialog(Shell shell, Template template,
+				boolean edit, boolean isNameModifiable,
+				ContextTypeRegistry contextTypeRegistry) {
+			super(shell, template, edit, isNameModifiable, contextTypeRegistry);
+		}
+		/*
+		 * @see org.eclipse.ui.texteditor.templates.TemplatePreferencePage.EditTemplateDialog#createViewer(org.eclipse.swt.widgets.Composite)
+		 */
+		protected SourceViewer createViewer(Composite parent) {
+			IPreferenceStore store= CUIPlugin.getDefault().getCombinedPreferenceStore();
+			CSourceViewer viewer= new CSourceViewer(parent, null, null, false, SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL, store);
+			CTextTools tools= CUIPlugin.getDefault().getTextTools();
+			CSourceViewerConfiguration configuration= new CSourceViewerConfiguration(tools.getColorManager(), store, null, tools.getDocumentPartitioning()) {
+				public IContentAssistant getContentAssistant(ISourceViewer sourceViewer) {
+					ContentAssistant assistant= new ContentAssistant();
+					assistant.enableAutoActivation(true);
+					assistant.enableAutoInsert(true);
+					assistant.setContentAssistProcessor(getTemplateProcessor(), IDocument.DEFAULT_CONTENT_TYPE);
+					assistant.setContentAssistProcessor(getTemplateProcessor(), ICPartitions.C_MULTI_LINE_COMMENT);
+					assistant.setContentAssistProcessor(getTemplateProcessor(), ICPartitions.C_SINGLE_LINE_COMMENT);
+					assistant.setContentAssistProcessor(getTemplateProcessor(), ICPartitions.C_PREPROCESSOR);
+					return assistant;
+				}
+			};
+			IDocument document = new Document();
+			tools.setupCDocument(document);
+			viewer.configure(configuration);
+			viewer.setEditable(true);
+			viewer.setDocument(document);
+		
+			Font font= JFaceResources.getFontRegistry().get(PreferenceConstants.EDITOR_TEXT_FONT);
+			viewer.getTextWidget().setFont(font);
+		
+			CSourcePreviewerUpdater.registerPreviewer(viewer, configuration, CUIPlugin.getDefault().getCombinedPreferenceStore());
+			return viewer;
+		}
+	}
 
 	public CTemplatePreferencePage() {
 		setPreferenceStore(CUIPlugin.getDefault().getPreferenceStore());
@@ -59,6 +110,17 @@ public class CTemplatePreferencePage extends TemplatePreferencePage {
 	 */
 	protected String getFormatterPreferenceKey() {
 		return PreferenceConstants.TEMPLATES_USE_CODEFORMATTER;
+	}
+
+	/*
+	 * @see org.eclipse.ui.texteditor.templates.TemplatePreferencePage#createTemplateEditDialog2(org.eclipse.jface.text.templates.Template, boolean, boolean)
+	 */
+	protected Template editTemplate(Template template, boolean edit, boolean isNameModifiable) {
+		CEditTemplateDialog dialog= new CEditTemplateDialog(getShell(), template, edit, isNameModifiable, getContextTypeRegistry());
+		if (dialog.open() == Window.OK) {
+			return dialog.getTemplate();
+		}
+		return null;
 	}
 
 	/*

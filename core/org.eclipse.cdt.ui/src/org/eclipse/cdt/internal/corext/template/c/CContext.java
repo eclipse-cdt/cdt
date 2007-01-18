@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005 IBM Corporation and others.
+ * Copyright (c) 2005, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,20 +8,13 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     QnX Software System
+ *     Anton Leherbauer (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.corext.template.c;
-
-import org.eclipse.cdt.core.model.ICProject;
-import org.eclipse.cdt.core.model.ITranslationUnit;
-import org.eclipse.cdt.internal.corext.util.CodeFormatterUtil;
-import org.eclipse.cdt.internal.ui.util.Strings;
-import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.cdt.ui.PreferenceConstants;
 
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
-import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.TextUtilities;
 import org.eclipse.jface.text.templates.Template;
 import org.eclipse.jface.text.templates.TemplateBuffer;
@@ -29,17 +22,19 @@ import org.eclipse.jface.text.templates.TemplateContextType;
 import org.eclipse.jface.text.templates.TemplateException;
 import org.eclipse.jface.text.templates.TemplateTranslator;
 
+import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.PreferenceConstants;
+
 
 /**
- * A context for c/c++
+ * A context for C/C++
  */
 public class CContext extends TranslationUnitContext {	
 
-	/** The platform default line delimiter. */
-	private static final String PLATFORM_LINE_DELIMITER= System.getProperty("line.separator"); //$NON-NLS-1$
-
 	/**
-	 * Creates a javadoc template context.
+	 * Creates a C/C++ code template context.
 	 * 
 	 * @param type the context type
 	 * @param document the document
@@ -119,10 +114,12 @@ public class CContext extends TranslationUnitContext {
 	 * @see TemplateContext#canEvaluate(Template templates)
 	 */
 	public boolean canEvaluate(Template template) {
+		if (fForceEvaluation)
+			return true;
+		
 		String key= getKey();
 		return template.matches(key, getContextType().getId())
 			&& key.length() != 0 && template.getName().toLowerCase().startsWith(key.toLowerCase());
-		//return template.matches(getKey(), getContextType().getName());
 	}
 
 	/*
@@ -137,38 +134,14 @@ public class CContext extends TranslationUnitContext {
 
 		getContextType().resolve(buffer, this);
 
-		String lineDelimiter= null;
-		try {
-			lineDelimiter= getDocument().getLineDelimiter(0);
-		} catch (BadLocationException e) {
-		}
-
-		if (lineDelimiter == null) {
-			lineDelimiter= PLATFORM_LINE_DELIMITER;
-		}
-
 		IPreferenceStore prefs= CUIPlugin.getDefault().getPreferenceStore();
 		boolean useCodeFormatter= prefs.getBoolean(PreferenceConstants.TEMPLATES_USE_CODEFORMATTER);			
 
-		ICProject project= getTranslationUnit() != null ? getTranslationUnit().getCProject() : null;
-		CFormatter formatter= new CFormatter(TextUtilities.getDefaultLineDelimiter(getDocument()), getIndentationLevel(project), useCodeFormatter, project);
+		ICProject project= getCProject();
+		CFormatter formatter= new CFormatter(TextUtilities.getDefaultLineDelimiter(getDocument()), getIndentationLevel(), useCodeFormatter, project);
 		formatter.format(buffer, this);
 		
 		return buffer;
 	}
 
-	/**
-	 * Returns the indentation level at the position of code completion.
-	 */
-	private int getIndentationLevel(ICProject project) {
-		int start= getStart();
-		IDocument document= getDocument();
-		try {
-			IRegion region= document.getLineInformationOfOffset(start);
-			String lineContent= document.get(region.getOffset(), region.getLength());
-			return Strings.computeIndent(lineContent, CodeFormatterUtil.getTabWidth(project), CodeFormatterUtil.getIndentWidth(project));
-		} catch (BadLocationException e) {
-			return 0;
-		}
-	}	
 }

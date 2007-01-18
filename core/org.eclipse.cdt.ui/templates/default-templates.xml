@@ -81,6 +81,6 @@ private:
 </template>
 <template name="stdout" description="%printtostdout" context="org.eclipse.cdt.ui.text.templates.c" id="org.eclipse.cdt.ui.text.templates.c.printf" enabled="true">printf(${cursor});</template>
 <template name="stderr" description="%printtostderr" context="org.eclipse.cdt.ui.text.templates.c" id="org.eclipse.cdt.ui.text.templates.c.fprintf" enabled="true">fprintf(stderr, ${cursor});</template>
-<template name="author" description="%authorname" context="org.eclipse.cdt.ui.text.templates.c" id="org.eclipse.cdt.ui.text.templates.c.author" enabled="true">author ${user}</template>
+<template name="author" description="%authorname" context="org.eclipse.cdt.ui.text.templates.comment" id="org.eclipse.cdt.ui.text.templates.comment.author" enabled="true">author ${user}</template>
 
 </templates>

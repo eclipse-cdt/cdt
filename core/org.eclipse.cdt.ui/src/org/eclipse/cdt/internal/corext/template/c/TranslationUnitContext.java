@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,27 +8,38 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     QNX Software System
+ *     Anton Leherbauer (Wind River Systems)
  *******************************************************************************/
 
 package org.eclipse.cdt.internal.corext.template.c;
 
-import org.eclipse.cdt.core.model.CModelException;
-import org.eclipse.cdt.core.model.ICElement;
-import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.templates.DocumentTemplateContext;
 import org.eclipse.jface.text.templates.TemplateContextType;
 
+import org.eclipse.cdt.core.model.CModelException;
+import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.core.model.ITranslationUnit;
+
+import org.eclipse.cdt.internal.corext.util.CodeFormatterUtil;
+
+import org.eclipse.cdt.internal.ui.util.Strings;
+
 /**
- * A compilation unit context.
+ * A translation unit context.
  */
 public abstract class TranslationUnitContext extends DocumentTemplateContext {
 
-	/** The compilation unit, may be <code>null</code>. */
+	/** The translation unit, may be <code>null</code>. */
 	private final ITranslationUnit fTranslationUnit;
+	/** A flag to force evaluation in head-less mode. */
+	protected boolean fForceEvaluation;
 
 	/**
-	 * Creates a compilation unit context.
+	 * Creates a translation unit context.
 	 * 
 	 * @param type the context type
 	 * @param document the document
@@ -44,7 +55,7 @@ public abstract class TranslationUnitContext extends DocumentTemplateContext {
 	}
 	
 	/**
-	 * Returns the compilation unit if one is associated with this context, <code>null</code> otherwise.
+	 * Returns the translation unit if one is associated with this context, <code>null</code> otherwise.
 	 */
 	public final ITranslationUnit getTranslationUnit() {
 		return fTranslationUnit;
@@ -70,6 +81,42 @@ public abstract class TranslationUnitContext extends DocumentTemplateContext {
 		}
 	}
 
+	/**
+	 * Sets whether evaluation is forced or not.
+	 * 
+	 * @param evaluate <code>true</code> in order to force evaluation,
+	 *            <code>false</code> otherwise
+	 */
+	public void setForceEvaluation(boolean evaluate) {
+		fForceEvaluation= evaluate;	
+	}
+	
+	/**
+	 * Get the associated <code>ICProject</code>.
+	 * @return the associated <code>ICProject</code> or <code>null</code>
+	 */
+	protected ICProject getCProject() {
+		ITranslationUnit translationUnit= getTranslationUnit();
+		ICProject project= translationUnit == null ? null : translationUnit.getCProject();
+		return project;
+	}	
+
+	/**
+	 * Get the indentation level at the position of code completion.
+	 * @return the indentation level at the position of code completion
+	 */
+	protected int getIndentationLevel() {
+		int start= getStart();
+		IDocument document= getDocument();
+		try {
+			IRegion region= document.getLineInformationOfOffset(start);
+			String lineContent= document.get(region.getOffset(), region.getLength());
+			ICProject project= getCProject();
+			return Strings.computeIndent(lineContent, CodeFormatterUtil.getTabWidth(project), CodeFormatterUtil.getIndentWidth(project));
+		} catch (BadLocationException e) {
+			return 0;
+		}
+	}	
 }
 
 

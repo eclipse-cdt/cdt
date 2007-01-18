@@ -63,6 +63,7 @@ import org.eclipse.cdt.core.model.IWorkingCopyProvider;
 
 import org.eclipse.cdt.internal.core.model.IBufferFactory;
 import org.eclipse.cdt.internal.corext.template.c.CContextType;
+import org.eclipse.cdt.internal.corext.template.c.CommentContextType;
 
 import org.eclipse.cdt.internal.ui.CElementAdapterFactory;
 import org.eclipse.cdt.internal.ui.ICStatusConstants;
@@ -728,7 +729,8 @@ public class CUIPlugin extends AbstractUIPlugin {
 	public ContextTypeRegistry getTemplateContextRegistry() {
 		if (fContextTypeRegistry == null) {
 			fContextTypeRegistry= new ContributionContextTypeRegistry();
-			fContextTypeRegistry.addContextType(CContextType.CCONTEXT_TYPE);
+			fContextTypeRegistry.addContextType(CContextType.ID);
+			fContextTypeRegistry.addContextType(CommentContextType.ID);
 		}
 		return fContextTypeRegistry;
 	}

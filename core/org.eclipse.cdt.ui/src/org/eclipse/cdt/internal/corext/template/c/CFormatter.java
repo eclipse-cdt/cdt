@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 IBM Corporation and others.
+ * Copyright (c) 2005, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Qnx Software System
- *     Anton Leherbauer (Wind River Systems) - Fixed bug 126617
+ *     Anton Leherbauer (Wind River Systems)
  *     Sergey Prigogin, Google
  *******************************************************************************/
 package org.eclipse.cdt.internal.corext.template.c;
@@ -56,8 +56,6 @@ public class CFormatter {
 
 	private static final String COMMENT_START= "/*-"; //$NON-NLS-1$
 	private static final String COMMENT_END= "*/"; //$NON-NLS-1$
-//	private static final String CURSOR= "cursor"; //$NON-NLS-1$
-//	private static final String MARKER= "/*${cursor}*/"; //$NON-NLS-1$
 
 	/** The line delimiter to use if code formatter is not used. */
 	private final String fLineDelimiter;
@@ -161,40 +159,10 @@ public class CFormatter {
 		return false;
 	}
 
-//	private static int getCaretOffset(TemplateVariable[] variables) {
-//	    for (int i= 0; i != variables.length; i++) {
-//	        TemplateVariable variable= variables[i];
-//	        
-//	        if (variable.getName().equals(CURSOR)) {
-//	        	return variable.getOffsets()[0];
-//	        }
-//	    }
-//	    
-//	    return -1;
-//	}
-
-//	private boolean isInsideCommentOrString(String string, int offset) {
-//
-//		IDocument document= new Document(string);
-//		CUIPlugin.getDefault().getTextTools().setupCDocument(document);
-//
-//		try {		
-//			ITypedRegion partition= document.getPartition(offset);
-//			String partitionType= partition.getType();
-//		
-//			return partitionType != null && (
-//				partitionType.equals(ICPartitions.C_MULTILINE_COMMENT) ||
-//				partitionType.equals(ICPartitions.C_SINGLE_LINE_COMMENT) ||
-//				partitionType.equals(ICPartitions.C_STRING));
-//		} catch (BadLocationException e) {
-//			return false;	
-//		}
-//	}
-
 	private void format(IDocument doc, TranslationUnitContext context) throws BadLocationException {
 		Map options;
-		if (context.getTranslationUnit() != null)
-			options= context.getTranslationUnit().getCProject().getOptions(true); 
+		if (fProject != null)
+			options= fProject.getOptions(true); 
 		else
 			options= CCorePlugin.getOptions();
 		
@@ -253,6 +221,7 @@ public class CFormatter {
 					ICPartitions.C_SINGLE_LINE_COMMENT,
 					ICPartitions.C_STRING,
 					ICPartitions.C_CHARACTER,
+					ICPartitions.C_PREPROCESSOR,
 					IDocument.DEFAULT_CONTENT_TYPE
 			};
 			FastPartitioner partitioner= new FastPartitioner(new FastCPartitionScanner(), types);

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 IBM Corporation and others.
+ * Copyright (c) 2005, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -83,6 +83,7 @@ import org.eclipse.cdt.internal.ui.text.c.hover.CEditorTextHoverDescriptor;
 import org.eclipse.cdt.internal.ui.text.c.hover.CEditorTextHoverProxy;
 import org.eclipse.cdt.internal.ui.text.contentassist.CCompletionProcessor2;
 import org.eclipse.cdt.internal.ui.text.contentassist.ContentAssistPreference;
+import org.eclipse.cdt.internal.ui.text.template.CTemplateCompletionProcessor;
 import org.eclipse.cdt.internal.ui.util.ExternalEditorInput;
 
 
@@ -348,6 +349,7 @@ public class CSourceViewerConfiguration extends TextSourceViewerConfiguration {
 		IContentAssistProcessor processor = new CCompletionProcessor2(getEditor());
 		assistant.setContentAssistProcessor(processor, IDocument.DEFAULT_CONTENT_TYPE);
 
+		assistant.setContentAssistProcessor(new CTemplateCompletionProcessor(getEditor()), ICPartitions.C_MULTI_LINE_COMMENT);
 		ContentAssistPreference.configure(assistant, fPreferenceStore);
 		
 		assistant.setProposalPopupOrientation(IContentAssistant.PROPOSAL_OVERLAY);		

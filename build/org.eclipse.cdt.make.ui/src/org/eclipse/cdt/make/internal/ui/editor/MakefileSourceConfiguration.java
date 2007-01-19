@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 QNX Software Systems and others.
+ * Copyright (c) 2000, 2007 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
+ *     Anton Leherbauer (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.make.internal.ui.editor;
 
@@ -18,6 +19,7 @@ import org.eclipse.cdt.make.internal.ui.text.makefile.MakefilePartitionScanner;
 import org.eclipse.cdt.make.internal.ui.text.makefile.MakefileReconcilingStrategy;
 import org.eclipse.cdt.make.internal.ui.text.makefile.MakefileTextHover;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.ITextHover;
 import org.eclipse.jface.text.TextAttribute;
@@ -35,8 +37,9 @@ import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.text.source.SourceViewerConfiguration;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.graphics.RGB;
+import org.eclipse.ui.editors.text.TextSourceViewerConfiguration;
 
-public class MakefileSourceConfiguration extends SourceViewerConfiguration {
+public class MakefileSourceConfiguration extends TextSourceViewerConfiguration {
 
 	private ColorManager colorManager;
 	MakefileCodeScanner codeScanner;
@@ -54,8 +57,8 @@ public class MakefileSourceConfiguration extends SourceViewerConfiguration {
 	/**
 	 * Constructor for MakeConfiguration
 	 */
-	public MakefileSourceConfiguration(MakefileEditor editor) {
-		super();
+	public MakefileSourceConfiguration(IPreferenceStore preferenceStore, MakefileEditor editor) {
+		super(preferenceStore);
 		fEditor = editor;
 		colorManager = ColorManager.getDefault();
 	}

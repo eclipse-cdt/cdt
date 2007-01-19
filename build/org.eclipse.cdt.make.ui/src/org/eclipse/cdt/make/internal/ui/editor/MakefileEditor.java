@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 QNX Software Systems and others.
+ * Copyright (c) 2000, 2007 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -103,7 +103,6 @@ public class MakefileEditor extends TextEditor implements ISelectionChangedListe
 	 * @see org.eclipse.ui.texteditor.AbstractDecoratedTextEditor#initializeEditor()
 	 */
 	protected void initializeEditor() {
-		setSourceViewerConfiguration(new MakefileSourceConfiguration(this));
 		setRangeIndicator(new DefaultRangeIndicator());
 		setEditorContextMenuId("#MakefileEditorContext"); //$NON-NLS-1$
 		setRulerContextMenuId("#MakefileRulerContext"); //$NON-NLS-1$
@@ -113,6 +112,7 @@ public class MakefileEditor extends TextEditor implements ISelectionChangedListe
 		stores[1] = EditorsUI.getPreferenceStore();
 		ChainedPreferenceStore chainedStore = new ChainedPreferenceStore(stores);
 		setPreferenceStore(chainedStore);
+		setSourceViewerConfiguration(new MakefileSourceConfiguration(chainedStore, this));
 	}
 
 	/* (non-Javadoc)

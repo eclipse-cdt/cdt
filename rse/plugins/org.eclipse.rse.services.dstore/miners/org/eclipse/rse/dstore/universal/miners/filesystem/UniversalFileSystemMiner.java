@@ -1298,7 +1298,14 @@ private DataElement createDataElementFromLSString(DataElement subject,
 					}
 					else
 					{
-						done = false;
+						// windows version
+						String[] cmd = new String[3];
+						cmd[0] = "attrib"; //$NON-NLS-1$
+						cmd[1] = "-R"; //$NON-NLS-1$
+						cmd[2] = filename.getAbsolutePath();
+						Process p = Runtime.getRuntime().exec(cmd);
+						int exitValue = p.waitFor();
+						done = (exitValue == 0);
 					}
 				}
 				if (done) 

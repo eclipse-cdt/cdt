@@ -1344,8 +1344,24 @@ public class LocalFileService extends AbstractFileService implements IFileServic
 				}
 				return (exitValue == 0);
 			}
-			// windows version not implemented yet
-			return false;
+			// windows version
+			else
+			{
+				String[] cmd = new String[3];
+				cmd[0] = "attrib"; //$NON-NLS-1$
+				cmd[1] = "-R"; //$NON-NLS-1$
+				cmd[2] = file.getAbsolutePath();
+				int exitValue = -1;
+				try
+				{
+					Process p = Runtime.getRuntime().exec(cmd);
+					exitValue = p.waitFor();
+				}
+				catch (Exception e)
+				{					
+				}
+				return (exitValue == 0);
+			}
 		}
 	}
 

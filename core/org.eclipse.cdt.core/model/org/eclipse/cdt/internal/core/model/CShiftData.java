@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 Intel Corporation and others.
+ * Copyright (c) 2006, 2007 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -117,6 +117,6 @@ public class CShiftData implements ICElementDelta {
 	}
 
 	public String toString() {
-		return ("CShiftData: offset=" + offset + ", size=" + size + ", lines=" + lines);
+		return ("CShiftData: offset=" + offset + ", size=" + size + ", lines=" + lines);   //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
 	}
 }

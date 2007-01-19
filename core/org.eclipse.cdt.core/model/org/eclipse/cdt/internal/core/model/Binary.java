@@ -296,7 +296,7 @@ public class Binary extends Openable implements IBinary {
 					File file = new File(filename);
 					if (file.exists()) {
 						filename = file.getCanonicalPath();
-					} else if (filename.startsWith(".")) {
+					} else if (filename.startsWith(".")) { //$NON-NLS-1$
 						file = new File(obj.getPath().removeLastSegments(1).toOSString(), filename);
 						filename = file.getCanonicalPath();
 					}
@@ -346,7 +346,7 @@ public class Binary extends Openable implements IBinary {
 	}
 	
 	private void addFunction(OpenableInfo info, ISymbol symbol, Map hash) throws CModelException {
-		IPath filename = filename = symbol.getFilename();
+		IPath filename= symbol.getFilename();
 		BinaryFunction function = null;
 
 		if (filename != null && !filename.isEmpty()) {
@@ -376,7 +376,7 @@ public class Binary extends Openable implements IBinary {
 	}
 
 	private void addVariable(OpenableInfo info, ISymbol symbol, Map hash) throws CModelException {
-		IPath filename = filename = symbol.getFilename();
+		IPath filename= symbol.getFilename();
 		BinaryVariable variable = null;
 		if (filename != null && !filename.isEmpty()) {
 			BinaryModule module = null;

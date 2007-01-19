@@ -27,7 +27,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.ISafeRunnable;
-import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.SafeRunner;
 
 /**
   * @see IBuffer
@@ -226,7 +226,7 @@ public class Buffer implements IBuffer {
 		if (this.changeListeners != null) {
 			for (int i = 0, size = this.changeListeners.size(); i < size; ++i) {
 				final IBufferChangedListener listener = (IBufferChangedListener) this.changeListeners.get(i);
-				Platform.run(new ISafeRunnable() {
+				SafeRunner.run(new ISafeRunnable() {
 					public void handleException(Throwable exception) {
 						Util.log(exception, "Exception occurred in listener of buffer change notification", ICLogConstants.CDT); //$NON-NLS-1$
 					}

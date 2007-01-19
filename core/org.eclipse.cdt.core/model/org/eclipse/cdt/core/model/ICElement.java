@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 QNX Software Systems and others.
+ * Copyright (c) 2000, 2007 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.core.model;
 
@@ -227,16 +228,19 @@ public interface ICElement extends IAdaptable {
 
 	/**
 	 * Modifier indicating a class constructor
+	 * @deprecated use {@link IMethodDeclaration#isConstructor()}
 	 */
 	static final int C_CLASS_CTOR = 0x100;
 	
 	/**
 	 * Modifier indicating a class destructor
+	 * @deprecated use {@link IMethodDeclaration#isDestructor()}
 	 */
 	static final int C_CLASS_DTOR = 0x200;
 		
 	/**
 	 * Modifier indicating a static storage attribute
+	 * @deprecated use {@link IDeclaration#isStatic()}
 	 */
 	static final int C_STORAGE_STATIC = 0x400;
 		
@@ -247,21 +251,24 @@ public interface ICElement extends IAdaptable {
 
 	/**
 	 * Modifier indicating a private class
+	 * @deprecated use {@link IMember#getVisibility()}
 	 */
 	static final int CPP_PRIVATE = 0x1000;
 
 	/**
 	 * Modifier indicating a public class
+	 * @deprecated use {@link IMember#getVisibility()}
 	 */
-
 	static final int CPP_PUBLIC = 0x2000;
 
 	/**
 	 * Modifier indicating a protected class
+	 * @deprecated use {@link IMember#getVisibility()}
 	 */
 	static final int CPP_PROTECTED = 0x4000;
 	/**
 	 * Modifier indicating a friend class
+	 * @deprecated use {@link IMethodDeclaration#isFriend()}
 	 */
 	static final int CPP_FRIEND = 0x8000;
 

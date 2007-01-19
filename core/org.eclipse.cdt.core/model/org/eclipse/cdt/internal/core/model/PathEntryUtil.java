@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 QNX Software Systems and others.
+ * Copyright (c) 2000, 2007 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -409,7 +409,7 @@ public class PathEntryUtil {
 							} else {
 								StringBuffer errMesg = new StringBuffer(
 										CCorePlugin.getResourceString("CoreModel.PathEntry.NestedEntry")); //$NON-NLS-1$
-								return new CModelStatus(ICModelStatusConstants.INVALID_PATHENTRY, errMesg.toString()); //$NON-NLS-1$
+								return new CModelStatus(ICModelStatusConstants.INVALID_PATHENTRY, errMesg.toString()); 
 							}
 						}
 					}
@@ -439,7 +439,7 @@ public class PathEntryUtil {
 				IPath includePath = include.getFullIncludePath();
 				if (!isValidExternalPath(includePath)) {
 					return new CModelStatus(ICModelStatusConstants.INVALID_PATHENTRY,
-							CoreModelMessages.getFormattedString("PathEntryManager.2", includePath.toOSString())); //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
+							CoreModelMessages.getFormattedString("PathEntryManager.2", includePath.toOSString())); //$NON-NLS-1$
 				}
 				if (!isValidBasePath(include.getBasePath())) {
 					return new CModelStatus(ICModelStatusConstants.INVALID_PATHENTRY,

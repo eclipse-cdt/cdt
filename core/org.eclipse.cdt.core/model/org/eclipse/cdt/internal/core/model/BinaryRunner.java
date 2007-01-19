@@ -83,7 +83,7 @@ public class BinaryRunner {
 
 	public void start() {
 		String taskName = CCorePlugin.getResourceString("CoreModel.BinaryRunner.Binary_Search_Thread"); //$NON-NLS-1$
-		taskName += " (" + cproject.getElementName() + ")";
+		taskName += " (" + cproject.getElementName() + ")";  //$NON-NLS-1$//$NON-NLS-2$
 		runner = new Job(taskName) {
 
 			/*

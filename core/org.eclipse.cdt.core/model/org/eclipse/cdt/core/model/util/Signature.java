@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -942,7 +942,7 @@ private static int scanArrayTypeSignature(char[] string, int start) {
 		throw new IllegalArgumentException();
 	}
 	char c = string[start];
-	if (c != C_ARRAY) { //$NON-NLS-1$
+	if (c != C_ARRAY) {
 		throw new IllegalArgumentException();
 	}
 	return scanTypeSignature(string, start + 1);
@@ -1691,7 +1691,7 @@ private static int appendArrayTypeSignature(char[] string, int start, boolean fu
 		throw new IllegalArgumentException();
 	}
 	char c = string[start];
-	if (c != C_ARRAY) { //$NON-NLS-1$
+	if (c != C_ARRAY) {
 		throw new IllegalArgumentException();
 	}
 	int e = appendTypeSignature(string, start + 1, fullyQualifyTypeNames, buffer);

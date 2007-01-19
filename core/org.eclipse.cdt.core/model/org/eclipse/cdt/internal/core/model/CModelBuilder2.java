@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2007 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -248,7 +248,7 @@ public class CModelBuilder2 implements IContributedModelBuilder {
 			final IASTTranslationUnit ast= fTranslationUnit.getAST(index, ITranslationUnit.AST_SKIP_ALL_HEADERS);
 			Util.debugLog("CModelBuilder2: parsing " //$NON-NLS-1$
 					+ fTranslationUnit.getElementName()
-					+ " mode="+ (quickParseMode ? "fast " : "full ") //$NON-NLS-1$ //$NON-NLS-2$
+					+ " mode="+ (quickParseMode ? "fast " : "full ") //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 					+ " time="+ ( System.currentTimeMillis() - startTime ) + "ms", //$NON-NLS-1$ //$NON-NLS-2$
 					IDebugLogConstants.MODEL, false);
 
@@ -781,7 +781,7 @@ public class CModelBuilder2 implements IContributedModelBuilder {
 		}
 
 		final IASTName astClassName= compositeTypeSpecifier.getName();
-		final String className= ASTStringUtil.getSimpleName(astClassName);;
+		final String className= ASTStringUtil.getSimpleName(astClassName);
 
 		final Structure element;
 		if (!isTemplate) {

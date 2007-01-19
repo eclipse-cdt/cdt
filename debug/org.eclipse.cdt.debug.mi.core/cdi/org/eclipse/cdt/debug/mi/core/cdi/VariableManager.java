@@ -679,11 +679,7 @@ public class VariableManager extends Manager {
 				MIVarCreate var = factory.createMIVarCreate(variable.getName());
 				mi.postCommand(var, -1);						
 				variable.setMIVarCreate(var);						
-				try {
-					update(target,variable,eventList);
-				} catch (Exception ex1) {
-					//nothing...					
-				}					
+				update(target, variable, eventList);
 			} catch (MIException e) {
 				throw new MI2CDIException(e);
 			}

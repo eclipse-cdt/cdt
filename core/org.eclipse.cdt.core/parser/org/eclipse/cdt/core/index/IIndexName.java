@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2007 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -62,5 +62,10 @@ public interface IIndexName extends IName {
 	 * Currently the method works with function definitions, only.
 	 */
 	public IIndexName[] getEnclosedNames() throws CoreException;
+
+	/**
+	 * Returns whether a declaration is a base-class specifier.
+	 */
+	public boolean isBaseSpecifier() throws CoreException;
 
 }

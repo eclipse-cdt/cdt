@@ -274,7 +274,7 @@ public class THHierarchyModel {
 			try {
 				IBinding binding = IndexUI.elementToBinding(index, elem);
 				if (binding instanceof ICPPClassType) {
-					IIndexName[] names= index.findNames(binding, IIndex.FIND_ALL_OCCURENCES);
+					IIndexName[] names= index.findNames(binding, IIndex.FIND_REFERENCES);
 					for (int i = 0; i < names.length; i++) {
 						if (monitor.isCanceled()) {
 							return;

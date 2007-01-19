@@ -74,6 +74,7 @@ import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.IDeclaration;
 import org.eclipse.cdt.core.model.IMember;
+import org.eclipse.cdt.core.model.IMethodDeclaration;
 import org.eclipse.cdt.core.parser.ast.ASTAccessVisibility;
 import org.eclipse.cdt.refactoring.actions.CRefactoringActionGroup;
 import org.eclipse.cdt.ui.CUIPlugin;
@@ -429,6 +430,16 @@ public class THViewPart extends ViewPart {
     				ICElement celem= (ICElement)element;
     				switch (celem.getElementType()) {
     					case ICElement.C_FIELD: return 1;
+    					case ICElement.C_METHOD: 
+    					case ICElement.C_METHOD_DECLARATION:
+    						IMethodDeclaration md= (IMethodDeclaration) celem;
+    						try {
+								if (md.isConstructor()) return 2;
+								if (md.isDestructor()) return 3;
+							} catch (CModelException e) {
+								CUIPlugin.getDefault().log(e);
+							}
+    						break;
     				}
     			}
     			return 10;

@@ -205,8 +205,6 @@ public class TypeHierarchyUI {
 		case ICElement.C_STRUCT_DECLARATION:
 		case ICElement.C_UNION_DECLARATION:
 //		case ICElement.C_TYPEDEF:
-//		case ICElement.C_CLASS_CTOR:
-//		case ICElement.C_CLASS_DTOR:
 //		case ICElement.C_FIELD:
 //		case ICElement.C_METHOD:
 //		case ICElement.C_METHOD_DECLARATION:

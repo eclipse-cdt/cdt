@@ -13,6 +13,7 @@ package org.eclipse.cdt.internal.core.model.ext;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.DOMException;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.ICElement;
@@ -26,16 +27,20 @@ public class MethodHandle extends CElementHandle implements IMethod {
 	private String[] fParameterTypes;
 	private ASTAccessVisibility fVisibility;
 	private boolean fIsStatic;
-
+	private boolean fIsConstructor;
+	private boolean fIsDestructor;
+	
 	public MethodHandle(ICElement parent, ICPPMethod method) throws DOMException {
 		super(parent, ICElement.C_METHOD, method.getName());
 		fParameterTypes= extractParameterTypes(method);
 		fVisibility= getVisibility(method);
 		try {
 			fIsStatic= method.isStatic();
+			fIsConstructor= method instanceof ICPPConstructor;
+			if (!fIsConstructor) 
+				fIsDestructor= method.isDestructor();
 		} catch (DOMException e) {
 			CCorePlugin.log(e);
-			fIsStatic= false;
 		}
 
 	}
@@ -65,5 +70,13 @@ public class MethodHandle extends CElementHandle implements IMethod {
 
 	public ASTAccessVisibility getVisibility() throws CModelException {
 		return fVisibility;
+	}
+	
+	public boolean isConstructor() throws CModelException {
+		return fIsConstructor;
+	}
+
+	public boolean isDestructor() throws CModelException {
+		return fIsDestructor;
 	}
 }

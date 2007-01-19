@@ -212,14 +212,6 @@ abstract class CElementHandle implements ICElementHandle, ISourceReference {
 		return false;
 	}
 	
-	public boolean isConstructor() throws CModelException {
-		return false;
-	}
-
-	public boolean isDestructor() throws CModelException {
-		return false;
-	}
-
 	public boolean isInline() throws CModelException {
 		return false;
 	}

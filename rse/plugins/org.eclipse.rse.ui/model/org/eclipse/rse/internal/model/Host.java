@@ -18,7 +18,6 @@ package org.eclipse.rse.internal.model;
 
 import java.util.Locale;
 
-import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.rse.core.IRSESystemType;
 import org.eclipse.rse.core.SystemPreferencesManager;
@@ -35,7 +34,7 @@ import org.eclipse.rse.ui.RSEUIPlugin;
 /**
  * A single connection object.
  */
-public class Host extends RSEModelObject implements IHost, IAdaptable
+public class Host extends RSEModelObject implements IHost
 {
 
 	/**

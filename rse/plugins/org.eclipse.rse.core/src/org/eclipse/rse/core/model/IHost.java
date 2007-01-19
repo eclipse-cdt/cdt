@@ -16,6 +16,7 @@
 
 package org.eclipse.rse.core.model;
 
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.rse.core.subsystems.IConnectorService;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 
@@ -29,7 +30,7 @@ import org.eclipse.rse.core.subsystems.ISubSystem;
 /**
  * @lastgen interface SystemConnection  {}
  */
-public interface IHost extends IRSEModelObject {
+public interface IHost extends IAdaptable, IRSEModelObject {
 	/**
 	 * Return the system profile that owns this connection
 	 */

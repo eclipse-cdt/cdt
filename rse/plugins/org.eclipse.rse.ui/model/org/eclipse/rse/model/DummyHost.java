@@ -15,6 +15,7 @@
  ********************************************************************************/
 
 package org.eclipse.rse.model;
+import org.eclipse.core.runtime.PlatformObject;
 import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.model.IPropertySet;
 import org.eclipse.rse.core.model.ISystemHostPool;
@@ -22,7 +23,7 @@ import org.eclipse.rse.core.model.ISystemProfile;
 import org.eclipse.rse.core.subsystems.IConnectorService;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 
-public class DummyHost implements IHost
+public class DummyHost extends PlatformObject implements IHost
 {
 	protected String _hostName;
 	protected String _systemType;

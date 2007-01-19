@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 QNX Software Systems and others.
+ * Copyright (c) 2006, 2007 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,15 +7,16 @@
  *
  * Contributors:
  * QNX - Initial API and implementation
+ * Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 
 import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBase;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.db.Database;
+import org.eclipse.cdt.internal.core.pdom.dom.PDOMName;
 import org.eclipse.core.runtime.CoreException;
 
 /**
@@ -23,7 +24,7 @@ import org.eclipse.core.runtime.CoreException;
  */
 class PDOMCPPBase implements ICPPBase {
 
-	private static final int BASECLASS = 0;
+	private static final int BASECLASS_SPECIFIER = 0;
 	private static final int NEXTBASE = 4;
 	private static final int FLAGS = 8;
 	
@@ -37,13 +38,13 @@ class PDOMCPPBase implements ICPPBase {
 		this.record = record;
 	}
 	
-	public PDOMCPPBase(PDOM pdom, PDOMCPPClassType baseClass, boolean isVirtual, int visibility) throws CoreException {
+	public PDOMCPPBase(PDOM pdom, PDOMName baseClassSpec, boolean isVirtual, int visibility) throws CoreException {
 		this.pdom = pdom;
 		Database db = pdom.getDB();
 		this.record = db.malloc(RECORD_SIZE);
 		
-		int baserec = baseClass != null ? baseClass.getRecord() : 0;
-		db.putInt(record + BASECLASS, baserec);
+		int baserec = baseClassSpec != null ? baseClassSpec.getRecord() : 0;
+		db.putInt(record + BASECLASS_SPECIFIER, baserec);
 		
 		byte flags = (byte)(visibility | (isVirtual ? 4 : 0));
 		db.putByte(record + FLAGS, flags);
@@ -66,18 +67,31 @@ class PDOMCPPBase implements ICPPBase {
 	private int getFlags() throws CoreException {
 		return pdom.getDB().getByte(record + FLAGS);
 	}
-	
-	public IBinding getBaseClass() throws DOMException {
+
+	public PDOMName getBaseClassSpecifierImpl() {
 		try {
-			int rec = pdom.getDB().getInt(record + BASECLASS);
-			return rec != 0 ? new PDOMCPPClassType(pdom, rec) : null;
+			int rec = pdom.getDB().getInt(record + BASECLASS_SPECIFIER);
+			if (rec != 0) {
+				return new PDOMName(pdom, rec);
+			}
 		} catch (CoreException e) {
 			CCorePlugin.log(e);
-			return null;
 		}
+		return null;
 	}
 
-	public int getVisibility() throws DOMException {
+	public IBinding getBaseClass() {
+		try {
+			PDOMName name= getBaseClassSpecifierImpl();
+			if (name != null)
+				return name.getPDOMBinding();				
+		} catch (CoreException e) {
+			CCorePlugin.log(e);
+		}
+		return null;
+	}
+
+	public int getVisibility() {
 		try {
 			return getFlags() & 0x3;
 		} catch (CoreException e) {
@@ -87,7 +101,7 @@ class PDOMCPPBase implements ICPPBase {
 		
 	}
 
-	public boolean isVirtual() throws DOMException {
+	public boolean isVirtual() {
 		try {
 			return (getFlags() & 0x4) != 0;
 		} catch (CoreException e) {
@@ -96,4 +110,7 @@ class PDOMCPPBase implements ICPPBase {
 		}
 	}
 
+	public void delete() throws CoreException {
+		pdom.getDB().free(record);
+	}
 }

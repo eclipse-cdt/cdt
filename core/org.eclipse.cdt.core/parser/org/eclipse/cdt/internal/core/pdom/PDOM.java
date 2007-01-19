@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 QNX Software Systems and others.
+ * Copyright (c) 2005, 2007 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -71,7 +71,7 @@ public class PDOM extends PlatformObject implements IIndexFragment, IPDOM {
 
 	private Database db;
 
-	public static final int VERSION = 20;
+	public static final int VERSION = 22;
 	// 0 - the beginning of it all
 	// 1 - first change to kick off upgrades
 	// 2 - added file inclusions
@@ -94,6 +94,7 @@ public class PDOM extends PlatformObject implements IIndexFragment, IPDOM {
     // 19 - alter representation of paths in the pdom (162172)
 	// 20 - add pointer to member types, array types, return types for functions
 	// 21 - change representation of paths in the pdom (167549)
+	// 22 - fix inheritance relations (167396)
 
 	public static final int LINKAGES = Database.DATA_AREA;
 	public static final int FILE_INDEX = Database.DATA_AREA + 4;

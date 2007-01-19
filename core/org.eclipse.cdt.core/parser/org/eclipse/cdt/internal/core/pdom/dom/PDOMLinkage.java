@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 QNX Software Systems and others.
+ * Copyright (c) 2005, 2007 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -225,5 +225,27 @@ public abstract class PDOMLinkage extends PDOMNamedNode implements IIndexLinkage
 		getIndex().accept(visitor);
 		
 		return visitor.getBinding();
+	}
+
+	/**
+	 * Callback informing the linkage that a name has been added. This is
+	 * used to do addtional processing, like establishing inheritance relationships.
+	 * @param pdomName the name that was inserted into the linkage
+	 * @param name the name that caused the insertion
+	 * @throws CoreException 
+	 * @since 4.0
+	 */
+	public void onCreateName(PDOMName pdomName, IASTName name) throws CoreException {
+	}
+
+	/**
+	 * Callback informing the linkage that a name is about to be deleted. This is
+	 * used to do addtional processing, like removing inheritance relationships.
+	 * @param pdomName the name that was inserted into the linkage
+	 * @param name the name that caused the insertion
+	 * @throws CoreException 
+	 * @since 4.0
+	 */
+	public void onDeleteName(PDOMName nextName) throws CoreException {
 	}
 }

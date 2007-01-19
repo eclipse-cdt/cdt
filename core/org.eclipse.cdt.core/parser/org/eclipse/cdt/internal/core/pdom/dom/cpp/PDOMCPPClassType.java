@@ -44,6 +44,7 @@ import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.db.PDOMNodeLinkedList;
 import org.eclipse.cdt.internal.core.pdom.dom.IPDOMMemberOwner;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMLinkage;
+import org.eclipse.cdt.internal.core.pdom.dom.PDOMName;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNamedNode;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
 import org.eclipse.core.runtime.CoreException;
@@ -192,13 +193,9 @@ ICPPClassScope, IPDOMMemberOwner, IIndexType {
 
 		// Visit my base classes
 		for (PDOMCPPBase base = getFirstBase(); base != null; base = base.getNextBase()) {
-			try {
-				IBinding baseClass = base.getBaseClass();
-				if (baseClass != null && baseClass instanceof PDOMCPPClassType)
-					((PDOMCPPClassType)baseClass).acceptInHierarchy(visited, visitor);
-			} catch (DOMException e) {
-				throw new CoreException(Util.createStatus(e));
-			}
+			IBinding baseClass = base.getBaseClass();
+			if (baseClass != null && baseClass instanceof PDOMCPPClassType)
+				((PDOMCPPClassType)baseClass).acceptInHierarchy(visited, visitor);
 		}
 	}
 
@@ -426,5 +423,27 @@ ICPPClassScope, IPDOMMemberOwner, IIndexType {
 
 	public boolean mayHaveChildren() {
 		return true;
+	}
+
+	public void removeBase(PDOMName pdomName) throws CoreException {
+		PDOMCPPBase base= getFirstBase();
+		PDOMCPPBase predecessor= null;
+		int nameRec= pdomName.getRecord();
+		while (base != null) {
+			if (base.getBaseClassSpecifierImpl().getRecord() == nameRec) {
+				break;
+			}
+			predecessor= base;
+			base= base.getNextBase();
+		}
+		if (base != null) {
+			if (predecessor != null) {
+				predecessor.setNextBase(base.getNextBase());
+			}
+			else {
+				setFirstBase(base.getNextBase());
+			}
+			base.delete();
+		}
 	}
 }

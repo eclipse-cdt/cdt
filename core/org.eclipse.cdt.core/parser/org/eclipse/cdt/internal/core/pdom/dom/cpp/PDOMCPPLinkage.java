@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 QNX Software Systems and others.
+ * Copyright (c) 2005, 2007 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -25,7 +25,6 @@ import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBasicType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope;
@@ -51,6 +50,7 @@ import org.eclipse.cdt.internal.core.pdom.db.IBTreeComparator;
 import org.eclipse.cdt.internal.core.pdom.dom.IPDOMMemberOwner;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMLinkage;
+import org.eclipse.cdt.internal.core.pdom.dom.PDOMName;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
 import org.eclipse.core.runtime.CoreException;
 
@@ -123,10 +123,6 @@ class PDOMCPPLinkage extends PDOMLinkage {
 		PDOMBinding pdomBinding = addBinding(binding);
 		if (pdomBinding instanceof PDOMCPPClassType) {
 			PDOMCPPClassType pdomClassType= (PDOMCPPClassType) pdomBinding;
-			IASTNode baseNode= name.getParent();
-			if (baseNode instanceof ICPPASTBaseSpecifier) 
-				addBaseClasses(pdomClassType, (ICPPASTBaseSpecifier) baseNode);
-			
 			if (binding instanceof ICPPClassType && name.isDefinition()) {
 				addImplicitMethods(pdomClassType, (ICPPClassType) binding);
 			}
@@ -148,17 +144,6 @@ class PDOMCPPLinkage extends PDOMLinkage {
 		}
 
 		return pdomBinding;
-	}
-
-	private void addBaseClasses(PDOMCPPClassType pdomBinding, ICPPASTBaseSpecifier baseNode) throws CoreException {
-		ICPPASTCompositeTypeSpecifier ownerNode = (ICPPASTCompositeTypeSpecifier)baseNode.getParent();
-		IBinding ownerBinding = adaptBinding(ownerNode.getName().resolveBinding());
-		if (ownerBinding != null && ownerBinding instanceof PDOMCPPClassType) {
-			PDOMCPPClassType ownerClass = (PDOMCPPClassType)ownerBinding;
-			PDOMCPPBase pdomBase = new PDOMCPPBase(pdom, pdomBinding,
-					baseNode.isVirtual(), baseNode.getVisibility());
-			ownerClass.addBase(pdomBase);
-		}
 	}
 
 	private PDOMBinding addBinding(PDOMNode parent, IBinding binding) throws CoreException, DOMException {
@@ -362,5 +347,39 @@ class PDOMCPPLinkage extends PDOMLinkage {
 
 	public IBTreeComparator getIndexComparator() {
 		return new CPPFindBinding.CPPBindingBTreeComparator(pdom);
+	}
+
+	public void onCreateName(PDOMName pdomName, IASTName name) throws CoreException {
+		super.onCreateName(pdomName, name);
+		
+		PDOMName derivedClassName= (PDOMName) pdomName.getEnclosingDefinition();
+		if (derivedClassName != null) {
+			IASTNode parentNode= name.getParent();
+			if (parentNode instanceof ICPPASTBaseSpecifier) {
+				ICPPASTBaseSpecifier baseNode= (ICPPASTBaseSpecifier) parentNode;
+				PDOMBinding derivedClassBinding= derivedClassName.getPDOMBinding();
+				if (derivedClassBinding instanceof PDOMCPPClassType) {
+					PDOMCPPClassType ownerClass = (PDOMCPPClassType)derivedClassBinding;
+					PDOMCPPBase pdomBase = new PDOMCPPBase(pdom, pdomName, baseNode.isVirtual(), baseNode.getVisibility());
+					ownerClass.addBase(pdomBase);
+					pdomName.setIsBaseSpecifier(true);
+				}
+			}
+		}
+	}
+	
+	public void onDeleteName(PDOMName pdomName) throws CoreException {
+		super.onDeleteName(pdomName);
+		
+		if (pdomName.isBaseSpecifier()) {
+			PDOMName derivedClassName= (PDOMName) pdomName.getEnclosingDefinition();
+			if (derivedClassName != null) {
+				PDOMBinding derivedClassBinding= derivedClassName.getPDOMBinding();
+				if (derivedClassBinding instanceof PDOMCPPClassType) {
+					PDOMCPPClassType ownerClass = (PDOMCPPClassType)derivedClassBinding;
+					ownerClass.removeBase(pdomName);
+				}
+			}
+		}
 	}
 }

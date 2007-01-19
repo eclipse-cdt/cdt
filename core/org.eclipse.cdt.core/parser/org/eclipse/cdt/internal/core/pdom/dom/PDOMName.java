@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 QNX Software Systems and others.
+ * Copyright (c) 2005, 2007 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -50,6 +50,9 @@ public class PDOMName implements IIndexFragmentName, IASTFileLocation {
 	private static final int IS_DECLARATION = 1;
 	private static final int IS_DEFINITION = 2;
 	private static final int IS_REFERENCE = 3;
+	private static final int DECL_DEF_REF_MASK= 3;
+	private static final int IS_INHERITANCE_SPEC = 4;
+
 	
 
 	public PDOMName(PDOM pdom, IASTName name, PDOMFile file, PDOMBinding binding, PDOMName caller) throws CoreException {
@@ -192,13 +195,26 @@ public class PDOMName implements IIndexFragmentName, IASTFileLocation {
 		}
 	}
 
-	private byte getFlags() throws CoreException {
-		return pdom.getDB().getByte(record + FLAGS);
+	private byte getFlags(int mask) throws CoreException {
+		return (byte) (pdom.getDB().getByte(record + FLAGS) & mask);
 	}
 
+	public void setIsBaseSpecifier(boolean val) throws CoreException {
+		byte flags= getFlags(0xff);
+		if (val) 
+			flags |= IS_INHERITANCE_SPEC;
+		else
+			flags &= ~IS_INHERITANCE_SPEC;
+		pdom.getDB().putByte(record + FLAGS, flags);
+	}
+
+	public boolean isBaseSpecifier() throws CoreException {
+		return getFlags(IS_INHERITANCE_SPEC) == IS_INHERITANCE_SPEC;
+	}
+	
 	public boolean isDeclaration() {
 		try {
-			byte flags = getFlags();
+			byte flags = getFlags(DECL_DEF_REF_MASK);
 			return flags == IS_DECLARATION || flags == IS_DEFINITION;
 		} catch (CoreException e) {
 			CCorePlugin.log(e);
@@ -208,7 +224,7 @@ public class PDOMName implements IIndexFragmentName, IASTFileLocation {
 
 	public boolean isReference() {
 		try {
-			byte flags = getFlags();
+			byte flags = getFlags(DECL_DEF_REF_MASK);
 			return flags == IS_REFERENCE;
 		} catch (CoreException e) {
 			CCorePlugin.log(e);
@@ -218,7 +234,7 @@ public class PDOMName implements IIndexFragmentName, IASTFileLocation {
 
 	public boolean isDefinition() {
 		try {
-			byte flags = getFlags();
+			byte flags = getFlags(DECL_DEF_REF_MASK);
 			return flags == IS_DEFINITION;
 		} catch (CoreException e) {
 			CCorePlugin.log(e);
@@ -286,7 +302,7 @@ public class PDOMName implements IIndexFragmentName, IASTFileLocation {
 		if (prevName != null)
 			prevName.setNextInBinding(nextName);
 		else {
-			switch (getFlags()) {
+			switch (getFlags(DECL_DEF_REF_MASK)) {
 			case IS_DECLARATION:
 				getPDOMBinding().setFirstDeclaration(nextName);
 				break;

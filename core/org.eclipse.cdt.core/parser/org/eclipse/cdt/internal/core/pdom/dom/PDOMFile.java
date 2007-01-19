@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 QNX Software Systems and others.
+ * Copyright (c) 2005, 2007 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,6 +13,7 @@ package org.eclipse.cdt.internal.core.pdom.dom;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.cdt.core.CCorePlugin;
@@ -211,6 +212,7 @@ public class PDOMFile implements IIndexFragmentFile {
 			PDOMBinding binding = ((WritablePDOM) pdom).addBinding(name);
 			if (binding != null) {
 				result= new PDOMName(pdom, name, this, binding, caller);
+				binding.getLinkageImpl().onCreateName(result, name);
 			}
 		} catch (CoreException e) {
 			CCorePlugin.log(e);
@@ -238,11 +240,17 @@ public class PDOMFile implements IIndexFragmentFile {
 		setFirstMacro(null);
 
 		// Delete all the names in this file
+		ArrayList names= new ArrayList();
 		PDOMName name = getFirstName();
 		while (name != null) {
-			PDOMName nextName = name.getNextInFile();
+			names.add(name);
+			name.getPDOMBinding().getLinkageImpl().onDeleteName(name);
+			name= name.getNextInFile();
+		}
+		
+		for (Iterator iterator = names.iterator(); iterator.hasNext();) {
+			name = (PDOMName) iterator.next();
 			name.delete();
-			name = nextName;
 		}
 		setFirstName(null);
 	}

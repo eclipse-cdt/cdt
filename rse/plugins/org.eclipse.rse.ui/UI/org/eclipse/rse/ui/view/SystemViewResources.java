@@ -212,14 +212,7 @@ public class SystemViewResources extends NLS {
 	// Property sheet values: Categories in Team view
 	public static String	RESID_PROPERTY_TEAM_CATEGORY_TYPE_VALUE;
 	public static String	RESID_PROPERTY_TEAM_SSFACTORY_TYPE_VALUE;
-	public static String	RESID_PROPERTY_TEAM_USERACTION_TYPE_VALUE;
-	public static String	RESID_PROPERTY_TEAM_COMPILETYPE_TYPE_VALUE;
-	public static String	RESID_PROPERTY_TEAM_COMPILECMD_TYPE_VALUE;
-
-	// Property sheet values: Compile types
-	public static String	RESID_PROPERTY_COMPILETYPE_TYPES_LABEL;
-	public static String	RESID_PROPERTY_COMPILETYPE_TYPES_DESCRIPTION;
-
+	
 	// Miscellaneous / common
 	public static String	RESID_PROPERTY_ORIGIN_LABEL;
 	public static String	RESID_PROPERTY_ORIGIN_TOOLTIP;

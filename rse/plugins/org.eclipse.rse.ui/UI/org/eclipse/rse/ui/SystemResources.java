@@ -465,7 +465,6 @@ public class SystemResources extends NLS
 
 	// TEAM VIEW
 	public static String RESID_TEAMVIEW_SUBSYSFACTORY_VALUE;
-	public static String RESID_TEAMVIEW_USERACTION_VALUE;
 	public static String RESID_TEAMVIEW_CATEGORY_VALUE;
 
 	public static String RESID_TEAMVIEW_CATEGORY_CONNECTIONS_LABEL;

@@ -183,8 +183,6 @@ public class CallHierarchyUI {
 			return false;
 		}
 		switch (elem.getElementType()) {
-		case ICElement.C_CLASS_CTOR:
-		case ICElement.C_CLASS_DTOR:
 		case ICElement.C_ENUMERATOR:
 		case ICElement.C_FIELD:
 		case ICElement.C_FUNCTION:

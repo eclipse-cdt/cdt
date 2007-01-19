@@ -35,6 +35,7 @@ import org.eclipse.cdt.core.dom.ast.IEnumeration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBase;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.index.IIndex;
+import org.eclipse.cdt.core.index.IIndexName;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICProject;
@@ -154,7 +155,7 @@ public class THHierarchyModel {
 				addSuperClasses(graph, index, monitor);
 				if (monitor.isCanceled()) 
 					return Status.CANCEL_STATUS;
-				addSubClasses(graph, monitor);
+				addSubClasses(graph, index, monitor);
 				if (monitor.isCanceled()) 
 					return Status.CANCEL_STATUS;
 			}
@@ -256,9 +257,53 @@ public class THHierarchyModel {
 		}
 	}
 
-	private void addSubClasses(THGraph graph, IProgressMonitor monitor) {
-		// mstodo Auto-generated method stub
-		
+	private void addSubClasses(THGraph graph, IIndex index, IProgressMonitor monitor) {
+		if (fInput == null) {
+			return;
+		}
+		HashSet handled= new HashSet();
+		ArrayList stack= new ArrayList();
+		stack.add(fInput);
+		handled.add(fInput);
+		while (!stack.isEmpty()) {
+			if (monitor.isCanceled()) {
+				return;
+			}
+			ICElement elem= (ICElement) stack.remove(stack.size()-1);
+			THGraphNode graphNode= graph.addNode(elem);
+			try {
+				IBinding binding = IndexUI.elementToBinding(index, elem);
+				if (binding instanceof ICPPClassType) {
+					IIndexName[] names= index.findNames(binding, IIndex.FIND_ALL_OCCURENCES);
+					for (int i = 0; i < names.length; i++) {
+						if (monitor.isCanceled()) {
+							return;
+						}
+						IIndexName indexName = names[i];
+						if (indexName.isBaseSpecifier()) {
+							IIndexName subClassDef= indexName.getEnclosingDefinition();
+							if (subClassDef != null) {
+								IBinding subClass= index.findBinding(subClassDef);
+								ICElement[] subClassElems= IndexUI.findRepresentative(index, subClass);
+								if (subClassElems.length > 0) {
+									ICElement subClassElem= subClassElems[0];
+									THGraphNode subGraphNode= graph.addNode(subClassElem);
+									addMembers(index, subGraphNode, subClass);							
+									graph.addEdge(subGraphNode, graphNode);
+									if (handled.add(subClassElem)) {
+										stack.add(subClassElem);
+									}
+								}
+							}
+						}
+					}
+				}
+			} catch (DOMException e) {
+				CUIPlugin.getDefault().log(e);
+			} catch (CoreException e) {
+				CUIPlugin.getDefault().log(e);
+			}
+		}
 	}
 
 	protected void computeNodes() {

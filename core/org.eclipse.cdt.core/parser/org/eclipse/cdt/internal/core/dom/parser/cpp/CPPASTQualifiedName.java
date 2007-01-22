@@ -186,7 +186,7 @@ public class CPPASTQualifiedName extends CPPASTNode implements
 				return false;
 		}
 		if (action.shouldVisitNames) {
-			switch (action.visit(this)) {
+			switch (action.leave(this)) {
 			case ASTVisitor.PROCESS_ABORT:
 				return false;
 			case ASTVisitor.PROCESS_SKIP:

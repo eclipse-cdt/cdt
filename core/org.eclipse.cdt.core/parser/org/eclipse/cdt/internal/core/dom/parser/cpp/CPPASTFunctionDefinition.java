@@ -93,7 +93,7 @@ public class CPPASTFunctionDefinition extends CPPASTNode implements
         if( bodyStatement != null ) if( !bodyStatement.accept( action ) ) return false;
         
         if( action.shouldVisitDeclarations ){
-		    switch( action.visit( this ) ){
+		    switch( action.leave( this ) ){
 	            case ASTVisitor.PROCESS_ABORT : return false;
 	            case ASTVisitor.PROCESS_SKIP  : return true;
 	            default : break;

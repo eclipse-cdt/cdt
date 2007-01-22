@@ -2284,10 +2284,6 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IR
 //        action.setActionDefinitionId(ICEditorActionDefinitionIds.OPEN_DEF);
 //        setAction("OpenDefinition", action); //$NON-NLS-1$
         
-//		action = new OpenTypeHierarchyAction(this);
-//		action.setActionDefinitionId(ICEditorActionDefinitionIds.OPEN_TYPE_HIERARCHY);
-//		setAction("OpenTypeHierarchy", action); //$NON-NLS-1$
-
 		fShowInCViewAction = new ShowInCViewAction(this);
 		action = fShowInCViewAction;
 		action.setActionDefinitionId(ICEditorActionDefinitionIds.OPEN_CVIEW);

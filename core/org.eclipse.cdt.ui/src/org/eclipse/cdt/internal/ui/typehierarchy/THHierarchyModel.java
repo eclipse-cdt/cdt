@@ -288,7 +288,10 @@ class THHierarchyModel {
 	public Object[] getMembers() {
 		if (fHierarchySelection != null) {
 			THGraphNode gnode= fGraph.getNode(fHierarchySelection.getRepresentedDeclaration());
-			return gnode.getMembers(fShowInheritedMembers);
+			Object[] result= gnode.getMembers(fShowInheritedMembers);
+			if (result != null) {
+				return result;
+			}
 		}
 		return NO_CHILDREN;
 	}

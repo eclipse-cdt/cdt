@@ -965,11 +965,11 @@
             sequence="M1+G"
             contextId="org.eclipse.cdt.ui.cEditorScope"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
-     <!--key
+     <key
             sequence="F4"
             contextId="org.eclipse.cdt.ui.cEditorScope"
-            commandId="org.eclipse.cdt.ui.edit.text.c.open.type.hierarchy"
-            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/-->
+            commandId="org.eclipse.cdt.ui.edit.open.type.hierarchy"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
      <!--key
             sequence="M1+M2+H"
             contextId="org.eclipse.cdt.ui.cEditorScope"
@@ -1095,12 +1095,12 @@
             description="%ActionDefinition.openCallHierarchy.description"
             name="%ActionDefinition.openCallHierarchy.name"
             id="org.eclipse.cdt.ui.edit.open.call.hierarchy"/>
-      <!--command
+      <command
             name="%ActionDefinition.openTypeHierarchy.name"
             description="%ActionDefinition.openTypeHierarchy.description"
             categoryId="org.eclipse.ui.category.navigate"
-            id="org.eclipse.cdt.ui.edit.text.c.open.type.hierarchy">
-      </command-->
+            id="org.eclipse.cdt.ui.edit.open.type.hierarchy">
+      </command>
       <!--command
             name="%ActionDefinition.openTypeInHierarchy.name"
             description="%ActionDefinition.openTypeInHierarchy.description"
@@ -1191,13 +1191,13 @@
                retarget="true"
                tooltip="%OpenCallHierarchy.tooltip">
          </action>
-        <!--action
-               definitionId="org.eclipse.cdt.ui.edit.text.c.open.type.hierarchy"
+         <action
+               definitionId="org.eclipse.cdt.ui.edit.open.type.hierarchy"
                label="%OpenTypeHierarchyAction.label"
                retarget="true"
                menubarPath="navigate/open.ext"
                id="org.eclipse.cdt.ui.actions.OpenTypeHierarchy">
-         </action-->
+         </action>
          <!--action
                id="org.eclipse.cdt.ui.actions.openTypeInHierarchy"
                class="org.eclipse.cdt.internal.ui.browser.typehierarchy.OpenTypeInHierarchyAction"

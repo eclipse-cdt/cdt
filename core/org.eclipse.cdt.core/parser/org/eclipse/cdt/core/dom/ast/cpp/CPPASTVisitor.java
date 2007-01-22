@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2005 IBM Corporation and others.
+ * Copyright (c) 2004, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,6 +19,8 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBas
 
 /**
  * C++ specific visitor class.
+ * <br>The visit() methods implement a top-down traversal of the AST,
+ * and the leave() methods implement a bottom-up traversal.
  * 
  * @author jcamelon
  */
@@ -67,6 +69,38 @@ public abstract class CPPASTVisitor extends ASTVisitor {
 	 * @return
 	 */
 	public int visit(ICPPASTTemplateParameter parameter) {
+		return PROCESS_CONTINUE;
+	}
+	/**
+	 * Visit BaseSpecifiers.
+	 * Bottom-up traversal.
+	 * 
+	 * @param specifier
+	 * @return
+	 */
+	public int leave(ICPPASTBaseSpecifier specifier) {
+		return PROCESS_CONTINUE;
+	}
+
+	/**
+	 * Visit namespace definitions.
+	 * Bottom-up traversal.
+	 * 
+	 * @param namespace
+	 * @return
+	 */
+	public int leave(ICPPASTNamespaceDefinition namespace) {
+		return PROCESS_CONTINUE;
+	}
+
+	/**
+	 * Visit template parameter.
+	 * Bottom-up traversal.
+	 * 
+	 * @param parameter
+	 * @return
+	 */
+	public int leave(ICPPASTTemplateParameter parameter) {
 		return PROCESS_CONTINUE;
 	}
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2006 IBM Corporation and others.
+ * Copyright (c) 2004, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,6 +17,12 @@ package org.eclipse.cdt.core.dom.ast;
 
 import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier.IASTEnumerator;
 
+/**
+ * Visitor allows traversal of AST.  <br>
+ * visit() methods implement a top-down traversal, and <br>
+ * leave() methods implement a bottom-up traversal.
+ *
+ */
 public abstract class ASTVisitor {
 
 	/**
@@ -109,8 +115,8 @@ public abstract class ASTVisitor {
 		return PROCESS_CONTINUE;
 	}
 	
-	/*
-	 * leave method.
+	/**
+	 * leave methods - implement a bottom-up traversal 
 	 */
 	public int leave(IASTTranslationUnit tu) {
 		return PROCESS_CONTINUE;

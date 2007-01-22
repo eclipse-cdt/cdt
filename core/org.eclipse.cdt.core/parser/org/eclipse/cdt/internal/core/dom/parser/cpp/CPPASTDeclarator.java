@@ -127,6 +127,14 @@ public class CPPASTDeclarator extends CPPASTNode implements IASTDeclarator {
         
         if( nestedDeclarator != null ) if( !nestedDeclarator.accept( action ) ) return false;
         
+        if( action.shouldVisitDeclarators ){
+		    switch( action.leave( this ) ){
+	            case ASTVisitor.PROCESS_ABORT : return false;
+	            case ASTVisitor.PROCESS_SKIP  : return true;
+	            default : break;
+	        }
+		}
+        
         return postAccept( action );
     }
     

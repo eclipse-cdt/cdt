@@ -48,6 +48,14 @@ public class CPPASTCastExpression extends CPPASTUnaryExpression implements
         if( typeId != null ) if( !typeId.accept( action ) ) return false;
         IASTExpression op = getOperand();
         if( op != null ) if( !op.accept( action ) ) return false;
+        
+        if( action.shouldVisitExpressions ){
+		    switch( action.leave( this ) ){
+	            case ASTVisitor.PROCESS_ABORT : return false;
+	            case ASTVisitor.PROCESS_SKIP  : return true;
+	            default : break;
+	        }
+		}
         return true;
     }
 }

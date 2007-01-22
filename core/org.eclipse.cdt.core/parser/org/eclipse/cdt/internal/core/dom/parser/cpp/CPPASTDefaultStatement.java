@@ -26,6 +26,13 @@ public class CPPASTDefaultStatement extends CPPASTNode implements
 	            default : break;
 	        }
 		}
+        if( action.shouldVisitStatements ){
+		    switch( action.leave( this ) ){
+	            case ASTVisitor.PROCESS_ABORT : return false;
+	            case ASTVisitor.PROCESS_SKIP  : return true;
+	            default : break;
+	        }
+		}
         return true;
     }
 

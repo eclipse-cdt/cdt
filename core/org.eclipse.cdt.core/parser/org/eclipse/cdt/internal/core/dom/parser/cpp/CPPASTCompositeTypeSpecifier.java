@@ -133,7 +133,14 @@ public class CPPASTCompositeTypeSpecifier extends CPPASTBaseDeclSpecifier
         IASTDeclaration [] decls = getMembers();
         for( int i = 0; i < decls.length; i++ )
             if( !decls[i].accept( action ) ) return false;
-            
+        
+        if( action.shouldVisitDeclSpecifiers ){
+		    switch( action.leave( this ) ){
+	            case ASTVisitor.PROCESS_ABORT : return false;
+	            case ASTVisitor.PROCESS_SKIP  : return true;
+	            default : break;
+	        }
+		}
         return true;
     }
 	

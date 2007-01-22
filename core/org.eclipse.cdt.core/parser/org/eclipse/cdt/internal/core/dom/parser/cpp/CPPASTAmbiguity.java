@@ -9,7 +9,7 @@
  * IBM - Initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
-
+//no change for leave()
 import java.util.Arrays;
 
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;

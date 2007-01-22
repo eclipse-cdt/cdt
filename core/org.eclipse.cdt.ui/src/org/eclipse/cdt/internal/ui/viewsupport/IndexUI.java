@@ -46,10 +46,11 @@ import org.eclipse.cdt.core.model.IWorkingCopy;
 import org.eclipse.cdt.ui.CUIPlugin;
 
 import org.eclipse.cdt.internal.core.model.ext.CElementHandleFactory;
+import org.eclipse.cdt.internal.core.model.ext.ICElementHandle;
 import org.eclipse.cdt.internal.corext.util.CModelUtil;
 
 public class IndexUI {
-	private static final ICElement[] EMPTY_ELEMENTS = new ICElement[0];
+	private static final ICElementHandle[] EMPTY_ELEMENTS = new ICElementHandle[0];
 
 	public static IIndexBinding elementToBinding(IIndex index, ICElement element) throws CoreException {
 		IIndexName name= elementToName(index, element);
@@ -90,37 +91,37 @@ public class IndexUI {
 		return null;
 	}
 
-	public static ICElement[] findRepresentative(IIndex index, IBinding binding)
+	public static ICElementHandle[] findRepresentative(IIndex index, IBinding binding)
 		throws CoreException, DOMException {
-		ICElement[] defs = IndexUI.findAllDefinitions(index, binding);
+		ICElementHandle[] defs = IndexUI.findAllDefinitions(index, binding);
 		if (defs.length == 0) {
-			ICElement elem = IndexUI.findAnyDeclaration(index, null, binding);
+			ICElementHandle elem = IndexUI.findAnyDeclaration(index, null, binding);
 			if (elem != null) {
-				defs = new ICElement[] { elem };
+				defs = new ICElementHandle[] { elem };
 			}
 		}
 		return defs;
 	}
 
-	public static ICElement[] findAllDefinitions(IIndex index, IBinding binding) throws CoreException, DOMException {
+	public static ICElementHandle[] findAllDefinitions(IIndex index, IBinding binding) throws CoreException, DOMException {
 		if (binding != null) {
 			IIndexName[] defs= index.findDefinitions(binding);
 
 			ArrayList result= new ArrayList();
 			for (int i = 0; i < defs.length; i++) {
 				IIndexName in = defs[i];
-				ICElement definition= getCElementForName(null, index, in);
+				ICElementHandle definition= getCElementForName(null, index, in);
 				if (definition != null) {
 					result.add(definition);
 				}
 				
 			}
-			return (ICElement[]) result.toArray(new ICElement[result.size()]);
+			return (ICElementHandle[]) result.toArray(new ICElementHandle[result.size()]);
 		}
 		return EMPTY_ELEMENTS;
 	}
 			
-	public static ICElement getCElementForName(ICProject preferProject, IIndex index, IASTName declName) throws CoreException, DOMException {
+	public static ICElementHandle getCElementForName(ICProject preferProject, IIndex index, IASTName declName) throws CoreException, DOMException {
 		assert !declName.isReference();
 		IBinding binding= declName.resolveBinding();
 		if (binding != null) {
@@ -150,7 +151,7 @@ public class IndexUI {
 		}
 	}
 
-	public static ICElement getCElementForName(ICProject preferProject, IIndex index, IIndexName declName) throws CoreException, DOMException {
+	public static ICElementHandle getCElementForName(ICProject preferProject, IIndex index, IIndexName declName) throws CoreException, DOMException {
 		assert !declName.isReference();
 		ITranslationUnit tu= getTranslationUnit(preferProject, declName);
 		if (tu != null) {
@@ -161,11 +162,11 @@ public class IndexUI {
 		return null;
 	}
 
-	public static ICElement findAnyDeclaration(IIndex index, ICProject preferProject, IBinding binding) throws CoreException, DOMException {
+	public static ICElementHandle findAnyDeclaration(IIndex index, ICProject preferProject, IBinding binding) throws CoreException, DOMException {
 		if (binding != null) {
 			IIndexName[] names= index.findNames(binding, IIndex.FIND_DECLARATIONS);
 			for (int i = 0; i < names.length; i++) {
-				ICElement elem= getCElementForName(preferProject, index, names[i]);
+				ICElementHandle elem= getCElementForName(preferProject, index, names[i]);
 				if (elem != null) {
 					return elem;
 				}

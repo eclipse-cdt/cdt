@@ -17,6 +17,8 @@ public class Messages extends NLS {
 	private static final String BUNDLE_NAME = "org.eclipse.cdt.internal.ui.typehierarchy.messages"; //$NON-NLS-1$
 	public static String OpenTypeHierarchyAction_label;
 	public static String OpenTypeHierarchyAction_tooltip;
+	public static String THGraph_error_elementNotFound;
+	public static String THHierarchyModel_errorComputingHierarchy;
 	public static String THHierarchyModel_Job_title;
 	public static String THHistoryDropDownAction_ClearHistory;
 	public static String THHistoryDropDownAction_tooltip;

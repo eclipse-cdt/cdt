@@ -21,10 +21,11 @@ import java.util.List;
 import org.eclipse.cdt.core.model.ICElement;
 
 class THGraphNode {
+	private static final Object[] NO_MEMBERS= new Object[0];
 	private List fOutgoing= Collections.EMPTY_LIST;
 	private List fIncoming= Collections.EMPTY_LIST;
 	private ICElement fElement;
-	private Object[] fMembers;
+	private Object[] fMembers= NO_MEMBERS;
 	
 	THGraphNode(ICElement element) {
 		fElement= element;

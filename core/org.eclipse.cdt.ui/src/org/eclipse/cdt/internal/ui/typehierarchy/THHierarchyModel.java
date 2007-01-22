@@ -14,7 +14,6 @@ package org.eclipse.cdt.internal.ui.typehierarchy;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 
@@ -28,22 +27,13 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.progress.IWorkbenchSiteProgressService;
 
 import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.dom.ast.DOMException;
-import org.eclipse.cdt.core.dom.ast.IBinding;
-import org.eclipse.cdt.core.dom.ast.ICompositeType;
-import org.eclipse.cdt.core.dom.ast.IEnumeration;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPBase;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.index.IIndex;
-import org.eclipse.cdt.core.index.IIndexName;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.ui.CUIPlugin;
 
-import org.eclipse.cdt.internal.ui.viewsupport.IndexUI;
-
-public class THHierarchyModel {
+class THHierarchyModel {
     public class BackgroundJob extends Job {
 		public BackgroundJob() {
 			super(Messages.THHierarchyModel_Job_title);
@@ -152,10 +142,11 @@ public class THHierarchyModel {
 			try {
 				if (monitor.isCanceled()) 
 					return Status.CANCEL_STATUS;
-				addSuperClasses(graph, index, monitor);
+				graph.defineInputNode(index, fInput);
+				graph.addSuperClasses(index, monitor);
 				if (monitor.isCanceled()) 
 					return Status.CANCEL_STATUS;
-				addSubClasses(graph, index, monitor);
+				graph.addSubClasses(index, monitor);
 				if (monitor.isCanceled()) 
 					return Status.CANCEL_STATUS;
 			}
@@ -173,139 +164,7 @@ public class THHierarchyModel {
 		return Status.OK_STATUS;
 	}
 	
-	private void addSuperClasses(THGraph graph, IIndex index, IProgressMonitor monitor) {
-		if (fInput == null) {
-			return;
-		}
-		HashSet handled= new HashSet();
-		ArrayList stack= new ArrayList();
-		stack.add(fInput);
-		handled.add(fInput);
-		while (!stack.isEmpty()) {
-			if (monitor.isCanceled()) {
-				return;
-			}
-			ICElement elem= (ICElement) stack.remove(stack.size()-1);
-			THGraphNode graphNode= graph.addNode(elem);
-			try {
-				IBinding binding = IndexUI.elementToBinding(index, elem);
-				if (binding instanceof ICPPClassType) {
-					ICPPClassType ct= (ICPPClassType) binding;
-					addMembers(index, graphNode, ct);
-					ICPPBase[] bases= ct.getBases();
-					for (int i = 0; i < bases.length; i++) {
-						if (monitor.isCanceled()) {
-							return;
-						}
-						ICPPBase base= bases[i];
-						IBinding basecl= base.getBaseClass();
-						ICElement[] baseElems= IndexUI.findRepresentative(index, basecl);
-						if (baseElems.length > 0) {
-							ICElement baseElem= baseElems[0];
-							THGraphNode baseGraphNode= graph.addNode(baseElem);
-							addMembers(index, baseGraphNode, basecl);							
-							graph.addEdge(graphNode, baseGraphNode);
-							if (handled.add(baseElem)) {
-								stack.add(baseElem);
-							}
-						}
-					}
-				}
-			} catch (DOMException e) {
-				CUIPlugin.getDefault().log(e);
-			} catch (CoreException e) {
-				CUIPlugin.getDefault().log(e);
-			}
-		}
-	}
-
-	private void addMembers(IIndex index, THGraphNode graphNode, IBinding binding) throws DOMException, CoreException {
-		if (graphNode.getMembers(false) == null) {
-			if (binding instanceof ICPPClassType) {
-				ICPPClassType ct= (ICPPClassType) binding;
-				ArrayList memberList= new ArrayList();
-				IBinding[] members= ct.getDeclaredFields();
-				addMemberElements(index, members, memberList);
-				members= ct.getDeclaredMethods();
-				addMemberElements(index, members, memberList);
-				graphNode.setMembers(memberList.toArray());
-			}
-			else if (binding instanceof ICompositeType) {
-				ICompositeType ct= (ICompositeType) binding;
-				ArrayList memberList= new ArrayList();
-				IBinding[] members= ct.getFields();
-				addMemberElements(index, members, memberList);
-				graphNode.setMembers(memberList.toArray());
-			}
-			else if (binding instanceof IEnumeration) {
-				IEnumeration ct= (IEnumeration) binding;
-				ArrayList memberList= new ArrayList();
-				IBinding[] members= ct.getEnumerators();
-				addMemberElements(index, members, memberList);
-				graphNode.setMembers(memberList.toArray());
-			}
-		}
-	}
 	
-	private void addMemberElements(IIndex index, IBinding[] members, ArrayList memberList) throws CoreException, DOMException {
-		for (int i = 0; i < members.length; i++) {
-			IBinding binding = members[i];
-			ICElement[] elems= IndexUI.findRepresentative(index, binding);
-			if (elems.length > 0) {
-				memberList.add(elems[0]);
-			}
-		}
-	}
-
-	private void addSubClasses(THGraph graph, IIndex index, IProgressMonitor monitor) {
-		if (fInput == null) {
-			return;
-		}
-		HashSet handled= new HashSet();
-		ArrayList stack= new ArrayList();
-		stack.add(fInput);
-		handled.add(fInput);
-		while (!stack.isEmpty()) {
-			if (monitor.isCanceled()) {
-				return;
-			}
-			ICElement elem= (ICElement) stack.remove(stack.size()-1);
-			THGraphNode graphNode= graph.addNode(elem);
-			try {
-				IBinding binding = IndexUI.elementToBinding(index, elem);
-				if (binding instanceof ICPPClassType) {
-					IIndexName[] names= index.findNames(binding, IIndex.FIND_REFERENCES);
-					for (int i = 0; i < names.length; i++) {
-						if (monitor.isCanceled()) {
-							return;
-						}
-						IIndexName indexName = names[i];
-						if (indexName.isBaseSpecifier()) {
-							IIndexName subClassDef= indexName.getEnclosingDefinition();
-							if (subClassDef != null) {
-								IBinding subClass= index.findBinding(subClassDef);
-								ICElement[] subClassElems= IndexUI.findRepresentative(index, subClass);
-								if (subClassElems.length > 0) {
-									ICElement subClassElem= subClassElems[0];
-									THGraphNode subGraphNode= graph.addNode(subClassElem);
-									addMembers(index, subGraphNode, subClass);							
-									graph.addEdge(subGraphNode, graphNode);
-									if (handled.add(subClassElem)) {
-										stack.add(subClassElem);
-									}
-								}
-							}
-						}
-					}
-				}
-			} catch (DOMException e) {
-				CUIPlugin.getDefault().log(e);
-			} catch (CoreException e) {
-				CUIPlugin.getDefault().log(e);
-			}
-		}
-	}
-
 	protected void computeNodes() {
 		if (fGraph == null) {
 			return;
@@ -321,7 +180,7 @@ public class THHierarchyModel {
 			groots= fGraph.getLeaveNodes();
 		}
 		else {
-			THGraphNode node= fGraph.getNode(fInput);
+			THGraphNode node= fGraph.getInputNode();
 			if (node != null) {
 				groots= Collections.singleton(node);
 			}
@@ -386,6 +245,16 @@ public class THHierarchyModel {
 			fDisplay.asyncExec(new Runnable(){
 				public void run() {
 					fGraph= graph;
+					THGraphNode inputNode= fGraph.getInputNode();
+					if (inputNode == null) {
+						fView.setMessage(Messages.THHierarchyModel_errorComputingHierarchy);
+					}
+					else {
+						if (fHierarchySelectionToRestore == fInput) {
+							fHierarchySelectionToRestore= inputNode.getElement();
+						}
+						fInput= inputNode.getElement();
+					}
 					computeNodes();
 					notifyEvent(END_OF_COMPUTATION);
 				}

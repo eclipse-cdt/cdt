@@ -185,7 +185,7 @@ public class THViewPart extends ViewPart {
         updateActionEnablement();
     }
     
-    public void setInput(ICElement input) {
+    void setInput(ICElement input) {
     	if (input == null) {
             setMessage(Messages.THViewPart_instruction);
             fHierarchyTreeViewer.setInput(null);
@@ -935,7 +935,7 @@ public class THViewPart extends ViewPart {
 		fHistoryEntries.addAll(Arrays.asList(remaining));
 	}
 
-	public ICElement getInput() {
+	ICElement getInput() {
         Object input= fModel.getInput();
         if (input instanceof ICElement) {
         	return (ICElement) input;

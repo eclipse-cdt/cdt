@@ -40,7 +40,7 @@ import org.eclipse.jface.text.IRegion;
 public class CElementHandleFactory {
 	private CElementHandleFactory() {}
 
-	public static ICElement create(ITranslationUnit tu, IBinding binding,
+	public static ICElementHandle create(ITranslationUnit tu, IBinding binding,
 			IRegion region, long timestamp) throws CoreException, DOMException {
 		
 		ICElement parentElement= create(tu, binding.getScope());

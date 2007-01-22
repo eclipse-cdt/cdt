@@ -18,36 +18,54 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 
-import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
 
-public class THGraph {
+import org.eclipse.cdt.core.dom.ast.DOMException;
+import org.eclipse.cdt.core.dom.ast.IBinding;
+import org.eclipse.cdt.core.dom.ast.ICompositeType;
+import org.eclipse.cdt.core.dom.ast.IEnumeration;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPBase;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
+import org.eclipse.cdt.core.index.IIndex;
+import org.eclipse.cdt.core.index.IIndexName;
+import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.ui.CUIPlugin;
+
+import org.eclipse.cdt.internal.core.model.ext.ICElementHandle;
+
+import org.eclipse.cdt.internal.ui.viewsupport.IndexUI;
+
+class THGraph {
+	private THGraphNode fInputNode= null;
 	private HashSet fRootNodes= new HashSet();
 	private HashSet fLeaveNodes= new HashSet();
 	private HashMap fNodes= new HashMap();
 	
-	public void clear() {
-		fRootNodes.clear();
-		fLeaveNodes.clear();
-		fNodes.clear();
+	public THGraph() {
 	}
 
+	public THGraphNode getInputNode() {
+		return fInputNode;
+	}
+	
 	public THGraphNode getNode(ICElement elem) {
 		return (THGraphNode) fNodes.get(elem);
 	}
 
-	public THGraphNode addNode(ICElement elem) {
-		THGraphNode node= (THGraphNode) fNodes.get(elem); 
+	private THGraphNode addNode(ICElement input) {
+		THGraphNode node= (THGraphNode) fNodes.get(input); 
 
 		if (node == null) {
-			node= new THGraphNode(elem);
-			fNodes.put(elem, node);
+			node= new THGraphNode(input);
+			fNodes.put(input, node);
 			fRootNodes.add(node);
 			fLeaveNodes.add(node);
 		}
 		return node;
 	}
 	
-	public THGraphEdge addEdge(THGraphNode from, THGraphNode to) {
+	private THGraphEdge addEdge(THGraphNode from, THGraphNode to) {
 		if (createsLoop(from, to)) {
 			return null;
 		}
@@ -91,5 +109,161 @@ public class THGraph {
 
 	public Collection getLeaveNodes() {
 		return fLeaveNodes;
+	}
+
+	public void defineInputNode(IIndex index, ICElement input) {
+		if (input instanceof ICElementHandle) {
+			fInputNode= addNode(input);
+		}
+		else if (input != null) { 
+			try {
+				IIndexName name= IndexUI.elementToName(index, input);
+				if (name != null) {
+					ICElementHandle inputHandle= IndexUI.getCElementForName(input.getCProject(), index, name);
+					fInputNode= addNode(inputHandle);
+				} 
+				else {
+					fInputNode= addNode(input);
+				}
+			} catch (CoreException e) {
+				CUIPlugin.getDefault().log(e);
+			} catch (DOMException e) {
+				CUIPlugin.getDefault().log(e);
+			}
+		}
+	}
+
+	public void addSuperClasses(IIndex index, IProgressMonitor monitor) {
+		if (fInputNode == null) {
+			return;
+		}
+		HashSet handled= new HashSet();
+		ArrayList stack= new ArrayList();
+		stack.add(fInputNode.getElement());
+		handled.add(fInputNode.getElement());
+		while (!stack.isEmpty()) {
+			if (monitor.isCanceled()) {
+				return;
+			}
+			ICElement elem= (ICElement) stack.remove(stack.size()-1);
+			THGraphNode graphNode= addNode(elem);
+			try {
+				IBinding binding = IndexUI.elementToBinding(index, elem);
+				if (binding instanceof ICPPClassType) {
+					ICPPClassType ct= (ICPPClassType) binding;
+					addMembers(index, graphNode, ct);
+					ICPPBase[] bases= ct.getBases();
+					for (int i = 0; i < bases.length; i++) {
+						if (monitor.isCanceled()) {
+							return;
+						}
+						ICPPBase base= bases[i];
+						IBinding basecl= base.getBaseClass();
+						ICElementHandle[] baseElems= IndexUI.findRepresentative(index, basecl);
+						if (baseElems.length > 0) {
+							ICElementHandle baseElem= baseElems[0];
+							THGraphNode baseGraphNode= addNode(baseElem);
+							addMembers(index, baseGraphNode, basecl);							
+							addEdge(graphNode, baseGraphNode);
+							if (handled.add(baseElem)) {
+								stack.add(baseElem);
+							}
+						}
+					}
+				}
+			} catch (DOMException e) {
+				CUIPlugin.getDefault().log(e);
+			} catch (CoreException e) {
+				CUIPlugin.getDefault().log(e);
+			}
+		}
+	}
+
+	public void addSubClasses(IIndex index, IProgressMonitor monitor) {
+		if (fInputNode == null) {
+			return;
+		}
+		HashSet handled= new HashSet();
+		ArrayList stack= new ArrayList();
+		ICElement element = fInputNode.getElement();
+		stack.add(element);
+		handled.add(element);
+		while (!stack.isEmpty()) {
+			if (monitor.isCanceled()) {
+				return;
+			}
+			ICElement elem= (ICElement) stack.remove(stack.size()-1);
+			THGraphNode graphNode= addNode(elem);
+			try {
+				IBinding binding = IndexUI.elementToBinding(index, elem);
+				if (binding instanceof ICPPClassType) {
+					IIndexName[] names= index.findNames(binding, IIndex.FIND_REFERENCES);
+					for (int i = 0; i < names.length; i++) {
+						if (monitor.isCanceled()) {
+							return;
+						}
+						IIndexName indexName = names[i];
+						if (indexName.isBaseSpecifier()) {
+							IIndexName subClassDef= indexName.getEnclosingDefinition();
+							if (subClassDef != null) {
+								IBinding subClass= index.findBinding(subClassDef);
+								ICElementHandle[] subClassElems= IndexUI.findRepresentative(index, subClass);
+								if (subClassElems.length > 0) {
+									ICElementHandle subClassElem= subClassElems[0];
+									THGraphNode subGraphNode= addNode(subClassElem);
+									addMembers(index, subGraphNode, subClass);							
+									addEdge(subGraphNode, graphNode);
+									if (handled.add(subClassElem)) {
+										stack.add(subClassElem);
+									}
+								}
+							}
+						}
+					}
+				}
+			} catch (DOMException e) {
+				CUIPlugin.getDefault().log(e);
+			} catch (CoreException e) {
+				CUIPlugin.getDefault().log(e);
+			}
+		}
+	}
+	
+	private void addMembers(IIndex index, THGraphNode graphNode, IBinding binding) throws DOMException, CoreException {
+		if (graphNode.getMembers(false) == null) {
+			if (binding instanceof ICPPClassType) {
+				ICPPClassType ct= (ICPPClassType) binding;
+				ArrayList memberList= new ArrayList();
+				IBinding[] members= ct.getDeclaredFields();
+				addMemberElements(index, members, memberList);
+				members= ct.getDeclaredMethods();
+				addMemberElements(index, members, memberList);
+				graphNode.setMembers(memberList.toArray());
+			}
+			else if (binding instanceof ICompositeType) {
+				ICompositeType ct= (ICompositeType) binding;
+				ArrayList memberList= new ArrayList();
+				IBinding[] members= ct.getFields();
+				addMemberElements(index, members, memberList);
+				graphNode.setMembers(memberList.toArray());
+			}
+			else if (binding instanceof IEnumeration) {
+				IEnumeration ct= (IEnumeration) binding;
+				ArrayList memberList= new ArrayList();
+				IBinding[] members= ct.getEnumerators();
+				addMemberElements(index, members, memberList);
+				graphNode.setMembers(memberList.toArray());
+			}
+		}
+	}
+	
+	private void addMemberElements(IIndex index, IBinding[] members, ArrayList memberList) throws CoreException, DOMException {
+		for (int i = 0; i < members.length; i++) {
+			IBinding binding = members[i];
+			ICElement[] elems= IndexUI.findRepresentative(index, binding);
+			if (elems.length > 0) {
+				memberList.add(elems[0]);
+			}
+		}
 	}
 }

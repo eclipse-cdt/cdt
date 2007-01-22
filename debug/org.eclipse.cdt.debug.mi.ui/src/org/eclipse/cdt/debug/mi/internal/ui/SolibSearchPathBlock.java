@@ -30,6 +30,7 @@ import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
 import org.eclipse.cdt.debug.mi.core.IMILaunchConfigurationConstants;
 import org.eclipse.cdt.debug.mi.core.MICoreUtils;
 import org.eclipse.cdt.debug.mi.internal.ui.dialogfields.DialogField;
+import org.eclipse.cdt.debug.mi.internal.ui.dialogfields.IDialogFieldListener;
 import org.eclipse.cdt.debug.mi.internal.ui.dialogfields.IListAdapter;
 import org.eclipse.cdt.debug.mi.internal.ui.dialogfields.LayoutUtil;
 import org.eclipse.cdt.debug.mi.internal.ui.dialogfields.ListDialogField;
@@ -73,7 +74,7 @@ import org.eclipse.ui.dialogs.CheckedTreeSelectionDialog;
 /**
  * The UI component to access the shared libraries search path.
  */
-public class SolibSearchPathBlock extends Observable implements IMILaunchConfigurationComponent {
+public class SolibSearchPathBlock extends Observable implements IMILaunchConfigurationComponent, IDialogFieldListener {
 
 	class AddDirectoryDialog extends Dialog {
 
@@ -252,6 +253,8 @@ public class SolibSearchPathBlock extends Observable implements IMILaunchConfigu
 		fDirList.setUpButtonIndex( 1 );
 		fDirList.setDownButtonIndex( 2 );
 		fDirList.setRemoveButtonIndex( 3 );
+		
+		fDirList.setDialogFieldListener(this);
 	}
 
 	/* (non-Javadoc)
@@ -577,5 +580,10 @@ public class SolibSearchPathBlock extends Observable implements IMILaunchConfigu
 			return true;
 		String name = path.lastSegment();
 		return ( name.indexOf( ".so." ) >= 0 ); //$NON-NLS-1$
+	}
+
+	public void dialogFieldChanged(DialogField field) {
+		setChanged();
+		notifyObservers();
 	}
 }

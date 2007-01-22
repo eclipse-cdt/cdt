@@ -1417,33 +1417,28 @@ public class SystemView extends TreeViewer implements ISystemTree, ISystemResour
 
 	}
 
-	protected Item removeFirstItem(Item[] items, Item[] children) {
+	
+	protected Item removeFirstItem(Item[] items, Item[] children) 
+	{
 		int firstIndex = 0;
 		Item firstItem = null;
-		int firstItemPosition = 0;
-
 	
 		if (items != null)
 		{
-			for (int i = 0; i < items.length; i++) {
+			for (int i = 0; i < items.length; i++) 
+			{
 				if (items[i] != null) 
 				{
 					Item current = items[i];
-					int position = getTreeItemPosition(current, children);
-	
-					if (firstItem == null || position < firstItemPosition) {
-						firstItem = current;
-						firstItemPosition = position;
-						firstIndex = i;
-					}
+					items[i] = null;
+					return current;			
 				}
 			}
-	
-			items[firstIndex] = null;
 		}
-		return firstItem;
+		return null;
 	}
 
+	
 	
 	/**
 	 * Move one tree item to a new location
@@ -1534,6 +1529,7 @@ public class SystemView extends TreeViewer implements ISystemTree, ISystemResour
 		}
 		return pos;
 	}
+	
 
 	/**
 	 * Expand a given filter, given a subsystem that contains a reference to the filter's pool.

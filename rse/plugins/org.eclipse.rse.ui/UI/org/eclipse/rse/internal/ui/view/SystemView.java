@@ -2538,6 +2538,7 @@ public class SystemView extends TreeViewer implements ISystemTree, ISystemResour
 		}
 		//System.out.println("matches size = " + matches.size() + ", any binary duplicates? " + dupes);
 
+		List toRemove = new ArrayList();
 		// STEP 3: process all references to the object
 		for (int idx = 0; idx < matches.size(); idx++) {
 			Item match = (Item) matches.elementAt(idx);
@@ -2567,11 +2568,15 @@ public class SystemView extends TreeViewer implements ISystemTree, ISystemResour
 					disassociate(match);
 					match.dispose();
 				} else {
+					toRemove.add(data);
 					//System.out.println(".....calling remove(data) on this match");
-					remove(data); // remove this item from the tree
+					//remove(data); // remove this item from the tree
 				}
 			}
 		}
+		
+		// do the remove now
+		remove(toRemove.toArray());
 
 		// STEP 4: if we removed a selected item, select its parent
 		if (wasSelected && (parentItem != null) && (parentItem instanceof TreeItem) && (parentItem.getData() != null)) {

@@ -1419,10 +1419,7 @@ public class SystemView extends TreeViewer implements ISystemTree, ISystemResour
 
 	
 	protected Item removeFirstItem(Item[] items, Item[] children) 
-	{
-		int firstIndex = 0;
-		Item firstItem = null;
-	
+	{	
 		if (items != null)
 		{
 			for (int i = 0; i < items.length; i++) 

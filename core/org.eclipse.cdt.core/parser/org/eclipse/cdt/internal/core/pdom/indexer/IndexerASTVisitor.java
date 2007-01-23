@@ -52,11 +52,16 @@ abstract public class IndexerASTVisitor extends ASTVisitor {
 		if (fDefinitionName != null) {
 			fStack.add(new Object[] {fDefinitionName, fDefinitionNode});
 		}
+		name = getLastInQualified(name);
+		fDefinitionName= name;
+		fDefinitionNode= node;
+	}
+
+	private IASTName getLastInQualified(IASTName name) {
 		if (name instanceof ICPPASTQualifiedName) {
 			name= ((ICPPASTQualifiedName) name).getLastName();
 		}
-		fDefinitionName= name;
-		fDefinitionNode= node;
+		return name;
 	}
 
 	private void pop(IASTNode node) {
@@ -77,7 +82,7 @@ abstract public class IndexerASTVisitor extends ASTVisitor {
 	public int visit(IASTDeclaration decl) {
 		if (decl instanceof IASTFunctionDefinition) {
 			IASTFunctionDefinition fdef= (IASTFunctionDefinition) decl;
-			IASTName name = fdef.getDeclarator().getName();
+			IASTName name = getLastInQualified(fdef.getDeclarator().getName());
 			visit(name, fDefinitionName);
 			push(name, decl);
 		}
@@ -89,7 +94,7 @@ abstract public class IndexerASTVisitor extends ASTVisitor {
 					IASTDeclarator declarator = declarators[i];
 					if (declarator.getPointerOperators().length == 0 &&
 							declarator.getNestedDeclarator() == null) {
-						IASTName name= declarator.getName();
+						IASTName name= getLastInQualified(declarator.getName());
 						visit(name, fDefinitionName);
 						push(name, decl);
 					}
@@ -108,7 +113,7 @@ abstract public class IndexerASTVisitor extends ASTVisitor {
 	public int visit(IASTDeclSpecifier declspec) {
 		if (declspec instanceof ICPPASTCompositeTypeSpecifier) {
 			ICPPASTCompositeTypeSpecifier cts= (ICPPASTCompositeTypeSpecifier) declspec;
-			IASTName name = cts.getName();
+			IASTName name = getLastInQualified(cts.getName());
 			visit(name, fDefinitionName);
 			push(name, declspec);
 		}

@@ -835,15 +835,18 @@ public class SystemView extends TreeViewer implements ISystemTree, ISystemResour
 				//{
 				//	 ISystemViewElementAdapter nextAdapter = (ISystemViewElementAdapter)uniqueAdapters.nextElement();
 				adapter.addActions(ourMenu, selection, shell, ISystemContextMenuConstants.GROUP_ADAPTERS);
-				if (adapter instanceof AbstractSystemViewAdapter) {
-
-					AbstractSystemViewAdapter aVA = (AbstractSystemViewAdapter) adapter;
-					// add remote actions
-					aVA.addCommonRemoteActions(ourMenu, selection, shell, ISystemContextMenuConstants.GROUP_ADAPTERS);
-
-					// add dynamic menu popups
-					aVA.addDynamicPopupMenuActions(ourMenu, selection, shell, ISystemContextMenuConstants.GROUP_ADDITIONS);
-				}
+				
+			     if (adapter instanceof AbstractSystemViewAdapter)
+			     {
+		
+						AbstractSystemViewAdapter aVA = (AbstractSystemViewAdapter)adapter;
+						
+						// add dynamic menu popups
+						aVA.addDynamicPopupMenuActions(ourMenu, selection, shell,  ISystemContextMenuConstants.GROUP_ADDITIONS);
+						
+						// add remote actions
+						aVA.addCommonRemoteActions(ourMenu, selection, shell, ISystemContextMenuConstants.GROUP_ADAPTERS);
+			     }
 				//}
 			}
 	

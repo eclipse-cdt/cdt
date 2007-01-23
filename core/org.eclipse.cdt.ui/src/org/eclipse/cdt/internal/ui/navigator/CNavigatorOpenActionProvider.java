@@ -76,9 +76,7 @@ public class CNavigatorOpenActionProvider extends CommonActionProvider {
 	 */
 	public void fillContextMenu(IMenuManager menu) {
 		if (fOpenGroup != null) {
-			if (fOpenGroup.getOpenAction().isEnabled()) {
-				fOpenGroup.fillContextMenu(menu);
-			}
+			fOpenGroup.fillContextMenu(menu);
 		}
 	}
 

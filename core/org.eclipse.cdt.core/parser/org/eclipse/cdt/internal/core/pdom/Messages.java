@@ -20,6 +20,7 @@ public class Messages extends NLS {
 	public static String PDOMManager_notifyJob_label;
 	public static String PDOMManager_notifyTask_message;
 	public static String PDOMManager_savePrefsJob;
+	public static String PDOMManager_StartJob_name;
 	public static String WritablePDOM_error_unknownLinkage;
 	static {
 		// initialize resource bundle

@@ -76,19 +76,22 @@ import org.osgi.service.prefs.Preferences;
  */
 public class PDOMManager implements IPDOMManager, IWritableIndexManager, IListener {
 
-	private static final QualifiedName indexerProperty= new QualifiedName(CCorePlugin.PLUGIN_ID, "pdomIndexer"); //$NON-NLS-1$
-	private static final QualifiedName dbNameProperty= new QualifiedName(CCorePlugin.PLUGIN_ID, "pdomName"); //$NON-NLS-1$
-
-	public static final String INDEXER_ID_KEY = "indexerId"; //$NON-NLS-1$
-	public static final String INDEX_ALL_FILES = "indexAllFiles"; //$NON-NLS-1$
-	private static final ISchedulingRule NOTIFICATION_SCHEDULING_RULE = new ISchedulingRule(){
+	private static final class PerInstanceSchedulingRule implements ISchedulingRule {
 		public boolean contains(ISchedulingRule rule) {
 			return rule == this;
 		}
 		public boolean isConflicting(ISchedulingRule rule) {
 			return rule == this;
 		}
-	};
+	}
+
+	private static final QualifiedName indexerProperty= new QualifiedName(CCorePlugin.PLUGIN_ID, "pdomIndexer"); //$NON-NLS-1$
+	private static final QualifiedName dbNameProperty= new QualifiedName(CCorePlugin.PLUGIN_ID, "pdomName"); //$NON-NLS-1$
+
+	public static final String INDEXER_ID_KEY = "indexerId"; //$NON-NLS-1$
+	public static final String INDEX_ALL_FILES = "indexAllFiles"; //$NON-NLS-1$
+	private static final ISchedulingRule NOTIFICATION_SCHEDULING_RULE = new PerInstanceSchedulingRule();
+	private static final ISchedulingRule INDEXER_SCHEDULING_RULE = new PerInstanceSchedulingRule();
 
 	/**
 	 * Protects indexerJob, currentTask and taskQueue.
@@ -130,20 +133,29 @@ public class PDOMManager implements IPDOMManager, IWritableIndexManager, IListen
 	 * change events.
 	 */
 	public void startup() {
-		CoreModel model = CoreModel.getDefault();
-		model.addElementChangedListener(fCModelListener);
-		ICProject[] projects;
-		try {
-			projects = model.getCModel().getCProjects();
-			for (int i = 0; i < projects.length; i++) {
-				ICProject project = projects[i];
-				if (project.getProject().isOpen()) {
-					addProject(project, null);
-				}
+		Job startup= new Job(Messages.PDOMManager_StartJob_name) {
+			protected IStatus run(IProgressMonitor monitor) {
+				CoreModel model = CoreModel.getDefault();
+				model.addElementChangedListener(fCModelListener);
+				ICProject[] projects;
+				try {
+					projects = model.getCModel().getCProjects();
+					for (int i = 0; i < projects.length; i++) {
+						ICProject project = projects[i];
+						if (project.getProject().isOpen()) {
+							addProject(project, null);
+						}
+					}
+				} catch (CoreException e) {
+					CCorePlugin.log(e);
+					return e.getStatus();
+				} 
+				return Status.OK_STATUS;
 			}
-		} catch (CoreException e) {
-			CCorePlugin.log(e);
-		} 
+		};
+		startup.setSystem(true);
+		startup.setRule(INDEXER_SCHEDULING_RULE); // block indexer until init is done.
+		startup.schedule(1000);
 	}
 
 	public IPDOM getPDOM(ICProject project) throws CoreException {
@@ -425,6 +437,7 @@ public class PDOMManager implements IPDOMManager, IWritableIndexManager, IListen
 				fCompletedSources= 0;
 				fCompletedHeaders= 0;
 				fIndexerJob = new PDOMIndexerJob(this);
+				fIndexerJob.setRule(INDEXER_SCHEDULING_RULE);
 				fIndexerJob.schedule();
 	    		notifyState(IndexerStateEvent.STATE_BUSY);
 			}
@@ -462,6 +475,7 @@ public class PDOMManager implements IPDOMManager, IWritableIndexManager, IListen
     		}
     		else {
     			fIndexerJob = new PDOMIndexerJob(this);
+    			fIndexerJob.setRule(INDEXER_SCHEDULING_RULE);
     			fIndexerJob.schedule();
     		}
     	}

@@ -31,6 +31,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.jface.action.MenuManager;
@@ -722,7 +723,7 @@ public class SystemViewRemoteFileAdapter
 			    }
 			    else
 			    {
-			        children = ss.resolveFilterString(file, filter);
+			        children = ss.resolveFilterString(new NullProgressMonitor(), file, filter);
 			    }
 				if ((children == null) || (children.length == 0))
 				{
@@ -746,6 +747,7 @@ public class SystemViewRemoteFileAdapter
 				SystemBasePlugin.logError("Exception resolving file filter strings", exc); //$NON-NLS-1$
 			} // message already issued        
 		}
+		file.markStale(false);
 		return children;
 	}
 	/**

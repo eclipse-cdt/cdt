@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005 IBM Corporation and others.
+ * Copyright (c) 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -94,6 +94,14 @@ public class CASTFunctionDefinition extends CASTNode implements
         if( declSpecifier != null ) if( !declSpecifier.accept( action ) ) return false;
         if( declarator != null ) if( !declarator.accept( action ) ) return false;
         if( bodyStatement != null ) if( !bodyStatement.accept( action ) ) return false;
+      
+        if( action.shouldVisitDeclarations ){
+		    switch( action.leave( this ) ){
+	            case ASTVisitor.PROCESS_ABORT : return false;
+	            case ASTVisitor.PROCESS_SKIP  : return true;
+	            default : break;
+	        }
+		}
         return true;
     }
 

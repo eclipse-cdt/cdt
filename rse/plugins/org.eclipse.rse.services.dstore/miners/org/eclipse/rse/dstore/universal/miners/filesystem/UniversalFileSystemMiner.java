@@ -1674,18 +1674,21 @@ private DataElement createDataElementFromLSString(DataElement subject,
 			for (int f = 0; f < children.size(); f++)
 			{
 				DataElement child = (DataElement)children.get(f);
-				String type = child.getType();
-				if (type.equals(UNIVERSAL_FILE_DESCRIPTOR) || type.equals(UNIVERSAL_ARCHIVE_FILE_DESCRIPTOR))
+				if (!child.isDeleted())
 				{
-					if (StringCompare.compare(filter, child.getName(), false))
+					String type = child.getType();
+					if (type.equals(UNIVERSAL_FILE_DESCRIPTOR) || type.equals(UNIVERSAL_ARCHIVE_FILE_DESCRIPTOR))
+					{
+						if (StringCompare.compare(filter, child.getName(), false))
+						{
+							filteredChildren.add(child);
+						}
+					}
+					else
 					{
 						filteredChildren.add(child);
 					}
 				}
-				else
-				{
-					filteredChildren.add(child);
-				}				
 			}
 			
 		

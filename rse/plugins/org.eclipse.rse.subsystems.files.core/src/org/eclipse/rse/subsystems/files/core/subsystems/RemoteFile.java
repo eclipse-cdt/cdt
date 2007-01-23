@@ -1142,4 +1142,29 @@ public abstract class RemoteFile implements IRemoteFile,  IAdaptable, Comparable
 	{
 		return getSystemConnection().getHostName();
 	}
+
+
+    /**
+     * Returns the encoding of the remote file. Queries {@link RemoteFileEncodingManager} for the encoding of the remote file.
+     * @return the encoding of the remote file.
+     * @see org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile#getEncoding()
+	 */
+	public String getEncoding() {
+		
+		String encoding = RemoteFileEncodingManager.getInstance().getEncoding(getHostName(), getAbsolutePath());
+		
+		if (encoding == null) {
+			encoding = getParentRemoteFileSubSystem().getRemoteEncoding();
+		}
+		
+		return encoding;
+	}
+
+	/**
+	 * Sets the encoding of the remote file. It sets the encoding of the remote file in {@link RemoteFileEncodingManager}.
+	 * @param encoding the encoding to be set for the remote file.
+	 */
+	public void setEncoding(String encoding) {
+		RemoteFileEncodingManager.getInstance().setEncoding(getHostName(), getAbsolutePath(), encoding);
+	}
 }

@@ -287,5 +287,10 @@ public interface IRemoteFile extends IRemoteContainer, IRemotePropertyHolder, IS
     public String getCanonicalPath();
     
     public IHostFile getHostFile();
-
+    
+    /**
+     * Returns the encoding of the remote file.
+     * @return the encoding of the remote file.
+     */
+    public String getEncoding();
 }

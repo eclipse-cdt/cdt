@@ -78,7 +78,9 @@ class THGraphNode {
 
 	private void collectMembers(HashSet visited, List list) {
 		if (visited.add(this)) {
-			list.addAll(Arrays.asList(fMembers));
+			if (fMembers != null) {
+				list.addAll(Arrays.asList(fMembers));
+			}
 			List bases= getOutgoing();
 			for (Iterator iterator = bases.iterator(); iterator.hasNext();) {
 				THGraphEdge edge = (THGraphEdge) iterator.next();

@@ -11,6 +11,8 @@
 
 package org.eclipse.cdt.internal.core.pdom.indexer;
 
+import java.util.ArrayList;
+
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
@@ -19,12 +21,14 @@ import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTInitializer;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
+import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
 
 abstract public class IndexerASTVisitor extends ASTVisitor {
 	private IASTName fDefinitionName;
 	private IASTNode fDefinitionNode;
+	private ArrayList fStack= new ArrayList();
 
 	public IndexerASTVisitor() {
 		shouldVisitNames= true;
@@ -37,12 +41,6 @@ abstract public class IndexerASTVisitor extends ASTVisitor {
 
 	final public int visit(IASTName name) {
 		if (!(name instanceof ICPPASTQualifiedName)) {
-			if (fDefinitionNode != null) {
-				if (!fDefinitionNode.contains(name)) {
-					fDefinitionNode= null;
-					fDefinitionName= null;
-				}
-			}
 			if (name != fDefinitionName) {
 				visit(name, fDefinitionName);
 			}
@@ -50,69 +48,91 @@ abstract public class IndexerASTVisitor extends ASTVisitor {
 		return PROCESS_CONTINUE;
 	}
 
+	private void push(IASTName name, IASTNode node) {
+		if (fDefinitionName != null) {
+			fStack.add(new Object[] {fDefinitionName, fDefinitionNode});
+		}
+		if (name instanceof ICPPASTQualifiedName) {
+			name= ((ICPPASTQualifiedName) name).getLastName();
+		}
+		fDefinitionName= name;
+		fDefinitionNode= node;
+	}
+
+	private void pop(IASTNode node) {
+		if (node == fDefinitionNode) {
+			if (fStack.isEmpty()) {
+				fDefinitionName= null;
+				fDefinitionNode= null;
+			}
+			else {
+				Object[] old= (Object[]) fStack.remove(fStack.size()-1);
+				fDefinitionName= (IASTName) old[0];
+				fDefinitionNode= (IASTNode) old[1];
+			}
+		}
+	}
+
+	// functions and methods
 	public int visit(IASTDeclaration decl) {
 		if (decl instanceof IASTFunctionDefinition) {
 			IASTFunctionDefinition fdef= (IASTFunctionDefinition) decl;
-			fDefinitionNode= decl;
-			fDefinitionName= fdef.getDeclarator().getName();
-			if (fDefinitionName instanceof ICPPASTQualifiedName) {
-				fDefinitionName= ((ICPPASTQualifiedName) fDefinitionName).getLastName();
+			IASTName name = fdef.getDeclarator().getName();
+			visit(name, fDefinitionName);
+			push(name, decl);
+		}
+		else if (decl instanceof IASTSimpleDeclaration) {
+			IASTSimpleDeclaration sdecl= (IASTSimpleDeclaration) decl;
+			if (sdecl.getDeclSpecifier().getStorageClass() == IASTDeclSpecifier.sc_typedef) {
+				IASTDeclarator[] declarators= sdecl.getDeclarators();
+				for (int i = 0; i < declarators.length; i++) {
+					IASTDeclarator declarator = declarators[i];
+					if (declarator.getPointerOperators().length == 0 &&
+							declarator.getNestedDeclarator() == null) {
+						IASTName name= declarator.getName();
+						visit(name, fDefinitionName);
+						push(name, decl);
+					}
+				}
 			}
-			visit(fDefinitionName, null);
 		}
 		return PROCESS_CONTINUE;
 	}
 
-// leave methods don't get called correctly: bug 152846
-//	public int leave(IASTDeclaration decl) {
-//		if (decl == fDefinitionNode) {
-//			fDefinitionNode= null;
-//			fDefinitionName= null;
-//		}
-//		return PROCESS_CONTINUE;
-//	}
+	public int leave(IASTDeclaration decl) {
+		pop(decl);
+		return PROCESS_CONTINUE;
+	}
 
+	// class definitions, typedefs
 	public int visit(IASTDeclSpecifier declspec) {
 		if (declspec instanceof ICPPASTCompositeTypeSpecifier) {
-			if (fDefinitionNode == null || !fDefinitionNode.contains(declspec)) {
-				ICPPASTCompositeTypeSpecifier cts= (ICPPASTCompositeTypeSpecifier) declspec;
-				fDefinitionNode= declspec;
-				fDefinitionName= cts.getName();
-				if (fDefinitionName instanceof ICPPASTQualifiedName) {
-					fDefinitionName= ((ICPPASTQualifiedName) fDefinitionName).getLastName();
-				}
-				visit(fDefinitionName, null);
-			}
+			ICPPASTCompositeTypeSpecifier cts= (ICPPASTCompositeTypeSpecifier) declspec;
+			IASTName name = cts.getName();
+			visit(name, fDefinitionName);
+			push(name, declspec);
 		}
 		return PROCESS_CONTINUE;
 	}
 
-// leave methods don't get called correctly: bug 152846
-//	public int leave(IASTDeclSpecifier declspec) {
-//		if (declspec == fDefinitionNode) {
-//			fDefinitionNode= null;
-//			fDefinitionName= null;
-//		}
-//		return PROCESS_CONTINUE;
-//	}
+	public int leave(IASTDeclSpecifier declspec) {
+		pop(declspec);
+		return PROCESS_CONTINUE;
+	}
 
+	// variable and field initializers
 	public int visit(IASTInitializer initializer) {
-		if (fDefinitionNode == null) {
+		if (!(fDefinitionNode instanceof IASTFunctionDefinition)) {
 			IASTNode cand= initializer.getParent();
 			if (cand instanceof IASTDeclarator) {
-				fDefinitionNode= cand;
-				fDefinitionName= ((IASTDeclarator) cand).getName();
+				push(((IASTDeclarator) cand).getName(), initializer);
 			}
 		}
 		return PROCESS_CONTINUE;
 	}
 	
-	// leave methods don't get called correctly: bug 152846
-//	public int leave(IASTInitializer initializer) {
-//		if (fDefinitionNode == initializer) {
-//			fDefinitionNode= null;
-//			fDefinitionName= null;
-//		}
-//		return PROCESS_CONTINUE;
-//	}
+	public int leave(IASTInitializer initializer) {
+		pop(initializer);
+		return PROCESS_CONTINUE;
+	}
 }

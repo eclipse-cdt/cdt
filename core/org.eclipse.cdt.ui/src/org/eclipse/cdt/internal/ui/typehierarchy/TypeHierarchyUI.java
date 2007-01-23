@@ -28,6 +28,8 @@ import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.ICompositeType;
+import org.eclipse.cdt.core.dom.ast.IEnumeration;
+import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.index.IIndexManager;
 import org.eclipse.cdt.core.model.ICElement;
@@ -185,8 +187,9 @@ public class TypeHierarchyUI {
 	}
 
 	public static boolean isValidInput(IBinding binding) {
-		if (binding instanceof ICompositeType) {
-//			|| binding instanceof ITypedef ||
+		if (binding instanceof ICompositeType
+				|| binding instanceof IEnumeration 
+				|| binding instanceof ITypedef) {
 //				binding instanceof IField || binding instanceof ICPPMethod) {
 			return true;
 		}
@@ -204,7 +207,8 @@ public class TypeHierarchyUI {
 		case ICElement.C_CLASS_DECLARATION:
 		case ICElement.C_STRUCT_DECLARATION:
 		case ICElement.C_UNION_DECLARATION:
-//		case ICElement.C_TYPEDEF:
+		case ICElement.C_ENUMERATION:
+		case ICElement.C_TYPEDEF:
 //		case ICElement.C_FIELD:
 //		case ICElement.C_METHOD:
 //		case ICElement.C_METHOD_DECLARATION:

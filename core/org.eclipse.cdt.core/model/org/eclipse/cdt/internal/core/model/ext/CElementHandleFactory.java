@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2007 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,10 +15,12 @@ import org.eclipse.cdt.core.dom.IName;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.ICompositeType;
+import org.eclipse.cdt.core.dom.ast.IEnumeration;
 import org.eclipse.cdt.core.dom.ast.IEnumerator;
 import org.eclipse.cdt.core.dom.ast.IField;
 import org.eclipse.cdt.core.dom.ast.IFunction;
 import org.eclipse.cdt.core.dom.ast.IScope;
+import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.core.dom.ast.c.ICCompositeTypeScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope;
@@ -61,6 +63,9 @@ public class CElementHandleFactory {
 		else if (binding instanceof IVariable) {
 			element= new VariableHandle(parentElement, (IVariable) binding);
 		}
+		else if (binding instanceof IEnumeration) {
+			element= new EnumerationHandle(parentElement, (IEnumeration) binding);
+		}
 		else if (binding instanceof IEnumerator) {
 			element= new EnumeratorHandle(parentElement, (IEnumerator) binding);
 		}
@@ -69,7 +74,10 @@ public class CElementHandleFactory {
 		}
 		else if (binding instanceof ICPPNamespace) {
 			element= new NamespaceHandle(parentElement, (ICPPNamespace) binding);
-		}		
+		}
+		else if (binding instanceof ITypedef) {
+			element= new TypedefHandle(parentElement, (ITypedef) binding);
+		}
 		if (element != null && region != null) {
 			element.setRangeOfID(region, timestamp);
 		}

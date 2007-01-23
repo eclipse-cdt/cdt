@@ -166,7 +166,7 @@ ICPPClassScope, IPDOMMemberOwner, IIndexType {
 	public ICPPMethod[] getMethods() throws DOMException {
 		try {
 			MethodCollector methods = new MethodCollector(true);
-			accept(methods);
+			acceptInHierarchy(new HashSet(), methods);
 			return methods.getMethods();
 		} catch (CoreException e) {
 			return new ICPPMethod[0];

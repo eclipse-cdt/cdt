@@ -25,6 +25,8 @@ import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.ICompositeType;
 import org.eclipse.cdt.core.dom.ast.IEnumeration;
+import org.eclipse.cdt.core.dom.ast.IType;
+import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBase;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.index.IIndex;
@@ -117,14 +119,12 @@ class THGraph {
 		}
 		else if (input != null) { 
 			try {
+				ICElement inputHandle= null;
 				IIndexName name= IndexUI.elementToName(index, input);
 				if (name != null) {
-					ICElementHandle inputHandle= IndexUI.getCElementForName(input.getCProject(), index, name);
-					fInputNode= addNode(inputHandle);
+					inputHandle= IndexUI.getCElementForName(input.getCProject(), index, name);
 				} 
-				else {
-					fInputNode= addNode(input);
-				}
+				fInputNode= addNode(inputHandle == null ? input : inputHandle);
 			} catch (CoreException e) {
 				CUIPlugin.getDefault().log(e);
 			} catch (DOMException e) {
@@ -149,9 +149,11 @@ class THGraph {
 			THGraphNode graphNode= addNode(elem);
 			try {
 				IBinding binding = IndexUI.elementToBinding(index, elem);
+				if (binding != null) {
+					addMembers(index, graphNode, binding);
+				}
 				if (binding instanceof ICPPClassType) {
 					ICPPClassType ct= (ICPPClassType) binding;
-					addMembers(index, graphNode, ct);
 					ICPPBase[] bases= ct.getBases();
 					for (int i = 0; i < bases.length; i++) {
 						if (monitor.isCanceled()) {
@@ -159,6 +161,23 @@ class THGraph {
 						}
 						ICPPBase base= bases[i];
 						IBinding basecl= base.getBaseClass();
+						ICElementHandle[] baseElems= IndexUI.findRepresentative(index, basecl);
+						if (baseElems.length > 0) {
+							ICElementHandle baseElem= baseElems[0];
+							THGraphNode baseGraphNode= addNode(baseElem);
+							addMembers(index, baseGraphNode, basecl);							
+							addEdge(graphNode, baseGraphNode);
+							if (handled.add(baseElem)) {
+								stack.add(baseElem);
+							}
+						}
+					}
+				}
+				else if (binding instanceof ITypedef) {
+					ITypedef ct= (ITypedef) binding;
+					IType type= ct.getType();
+					if (type instanceof IBinding) {
+						IBinding basecl= (IBinding) type;
 						ICElementHandle[] baseElems= IndexUI.findRepresentative(index, basecl);
 						if (baseElems.length > 0) {
 							ICElementHandle baseElem= baseElems[0];
@@ -196,26 +215,24 @@ class THGraph {
 			THGraphNode graphNode= addNode(elem);
 			try {
 				IBinding binding = IndexUI.elementToBinding(index, elem);
-				if (binding instanceof ICPPClassType) {
-					IIndexName[] names= index.findNames(binding, IIndex.FIND_REFERENCES);
-					for (int i = 0; i < names.length; i++) {
-						if (monitor.isCanceled()) {
-							return;
-						}
-						IIndexName indexName = names[i];
-						if (indexName.isBaseSpecifier()) {
-							IIndexName subClassDef= indexName.getEnclosingDefinition();
-							if (subClassDef != null) {
-								IBinding subClass= index.findBinding(subClassDef);
-								ICElementHandle[] subClassElems= IndexUI.findRepresentative(index, subClass);
-								if (subClassElems.length > 0) {
-									ICElementHandle subClassElem= subClassElems[0];
-									THGraphNode subGraphNode= addNode(subClassElem);
-									addMembers(index, subGraphNode, subClass);							
-									addEdge(subGraphNode, graphNode);
-									if (handled.add(subClassElem)) {
-										stack.add(subClassElem);
-									}
+				IIndexName[] names= index.findNames(binding, IIndex.FIND_REFERENCES | IIndex.FIND_DEFINITIONS);
+				for (int i = 0; i < names.length; i++) {
+					if (monitor.isCanceled()) {
+						return;
+					}
+					IIndexName indexName = names[i];
+					if (indexName.isBaseSpecifier()) {
+						IIndexName subClassDef= indexName.getEnclosingDefinition();
+						if (subClassDef != null) {
+							IBinding subClass= index.findBinding(subClassDef);
+							ICElementHandle[] subClassElems= IndexUI.findRepresentative(index, subClass);
+							if (subClassElems.length > 0) {
+								ICElementHandle subClassElem= subClassElems[0];
+								THGraphNode subGraphNode= addNode(subClassElem);
+								addMembers(index, subGraphNode, subClass);							
+								addEdge(subGraphNode, graphNode);
+								if (handled.add(subClassElem)) {
+									stack.add(subClassElem);
 								}
 							}
 						}

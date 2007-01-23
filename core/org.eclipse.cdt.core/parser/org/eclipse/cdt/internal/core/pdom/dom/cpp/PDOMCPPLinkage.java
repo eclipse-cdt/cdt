@@ -15,6 +15,7 @@ package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.DOMException;
+import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IBinding;
@@ -362,6 +363,12 @@ class PDOMCPPLinkage extends PDOMLinkage {
 					PDOMCPPClassType ownerClass = (PDOMCPPClassType)derivedClassBinding;
 					PDOMCPPBase pdomBase = new PDOMCPPBase(pdom, pdomName, baseNode.isVirtual(), baseNode.getVisibility());
 					ownerClass.addBase(pdomBase);
+					pdomName.setIsBaseSpecifier(true);
+				}
+			}
+			else if (parentNode instanceof IASTDeclSpecifier) {
+				IASTDeclSpecifier ds= (IASTDeclSpecifier) parentNode;
+				if (ds.getStorageClass() == IASTDeclSpecifier.sc_typedef) {
 					pdomName.setIsBaseSpecifier(true);
 				}
 			}

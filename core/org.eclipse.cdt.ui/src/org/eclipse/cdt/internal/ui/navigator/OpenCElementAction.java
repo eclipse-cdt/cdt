@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.navigator;
 
+import org.eclipse.cdt.core.model.IBinary;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ISourceReference;
 import org.eclipse.cdt.internal.ui.util.EditorUtility;
@@ -62,8 +63,9 @@ public class OpenCElementAction extends OpenFileAction {
 		fOpenElement = null;
 		if (selection.size() == 1) {
 			Object element = selection.getFirstElement();
-			if (element instanceof ICElement && element instanceof ISourceReference) {
-				fOpenElement = (ICElement)element;
+			if (element instanceof ICElement
+					&& (element instanceof ISourceReference || element instanceof IBinary)) {
+				fOpenElement = (ICElement) element;
 			}
 		}
 		return fOpenElement != null || super.updateSelection(selection);

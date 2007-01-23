@@ -112,9 +112,7 @@ public class ExternalEditorInput implements ITranslationUnitEditorInput {
 	 * @see org.eclipse.ui.editors.text.ILocationProvider#getPath(java.lang.Object)
 	 */
 	public IPath getPath(Object element) {
-		if (location!=null)
-			return location ;
-		return externalFile.getFullPath();
+		return location ;
 	}
 
 	public ExternalEditorInput(ITranslationUnit unit, IStorage exFile) {

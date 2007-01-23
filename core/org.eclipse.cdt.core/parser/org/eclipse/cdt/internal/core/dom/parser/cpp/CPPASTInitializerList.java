@@ -54,6 +54,7 @@ public class CPPASTInitializerList extends CPPASTNode implements
         for ( int i = 0; i < list.length; i++ ) {
             if( !list[i].accept( action ) ) return false;
         }
+        
         if( action.shouldVisitInitializers ){
 		    switch( action.leave( this ) ){
 	            case ASTVisitor.PROCESS_ABORT : return false;

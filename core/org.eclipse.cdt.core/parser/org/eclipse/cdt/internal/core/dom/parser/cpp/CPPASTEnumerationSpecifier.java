@@ -81,9 +81,12 @@ public class CPPASTEnumerationSpecifier extends CPPASTBaseDeclSpecifier
 	public boolean accept(ASTVisitor action) {
 		if (action.shouldVisitDeclSpecifiers) {
 			switch (action.visit(this)) {
-			case ASTVisitor.PROCESS_ABORT : return false;
-			case ASTVisitor.PROCESS_SKIP  : return true;
-			default: break;
+			case ASTVisitor.PROCESS_ABORT:
+				return false;
+			case ASTVisitor.PROCESS_SKIP:
+				return true;
+			default:
+				break;
 			}
 		}
 		if (name != null)
@@ -93,8 +96,8 @@ public class CPPASTEnumerationSpecifier extends CPPASTBaseDeclSpecifier
 		for (int i = 0; i < enums.length; i++)
 			if (!enums[i].accept(action))
 				return false;
-		
-	    if( action.shouldVisitDeclSpecifiers ){
+				
+		if( action.shouldVisitDeclSpecifiers ){
 		    switch( action.leave( this ) ){
 	            case ASTVisitor.PROCESS_ABORT : return false;
 	            case ASTVisitor.PROCESS_SKIP  : return true;

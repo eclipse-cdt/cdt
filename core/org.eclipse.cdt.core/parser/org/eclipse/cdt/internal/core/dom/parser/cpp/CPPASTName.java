@@ -118,6 +118,7 @@ public class CPPASTName extends CPPASTNode implements IASTName {
             }
         }
         
+                
         if (action.shouldVisitNames) {
             switch (action.leave(this)) {
             case ASTVisitor.PROCESS_ABORT:

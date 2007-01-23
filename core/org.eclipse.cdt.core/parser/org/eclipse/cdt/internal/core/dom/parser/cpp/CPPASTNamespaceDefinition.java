@@ -85,9 +85,9 @@ public class CPPASTNamespaceDefinition extends CPPASTNode implements
         if( name != null ) if( !name.accept( action ) ) return false;
         IASTDeclaration [] decls = getDeclarations();
         for ( int i = 0; i < decls.length; i++ )
-            if( !decls[i].accept( action ) ) return false;   
-        
-        if( action instanceof CPPASTVisitor &&
+            if( !decls[i].accept( action ) ) return false;    
+
+		if( action instanceof CPPASTVisitor &&
                 ((CPPASTVisitor)action).shouldVisitNamespaces ){
     		    switch( ((CPPASTVisitor)action).leave( this ) ){
     	            case ASTVisitor.PROCESS_ABORT : return false;
@@ -95,6 +95,7 @@ public class CPPASTNamespaceDefinition extends CPPASTNode implements
     	            default : break;
     	        }
     		}
+
         return true;
     }
 

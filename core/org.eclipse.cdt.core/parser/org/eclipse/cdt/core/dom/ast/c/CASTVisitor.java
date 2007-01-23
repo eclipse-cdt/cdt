@@ -39,6 +39,7 @@ public abstract class CASTVisitor extends ASTVisitor {
 	public int visit(ICASTDesignator designator) {
 		return PROCESS_CONTINUE;
 	}
+	
 	/**
 	 * Function to override if you wish to visit designators in your
 	 * implementation: this does a bottom-up traversal.

@@ -185,6 +185,7 @@ public class CPPASTQualifiedName extends CPPASTNode implements
 			} else if (!names[i].accept(action))
 				return false;
 		}
+		
 		if (action.shouldVisitNames) {
 			switch (action.leave(this)) {
 			case ASTVisitor.PROCESS_ABORT:
@@ -195,6 +196,7 @@ public class CPPASTQualifiedName extends CPPASTNode implements
 				break;
 			}
 		}
+		
 		return true;
 	}
 

@@ -161,7 +161,7 @@ public class PDOMName implements IIndexFragmentName, IASTFileLocation {
 		return namerec != 0 ? new PDOMName(pdom, namerec) : null;
 	}
 
-	private int getEnclosingDefinitionRecord() throws CoreException {
+	int getEnclosingDefinitionRecord() throws CoreException {
 		return pdom.getDB().getInt(record + CALLER_REC_OFFSET);
 	}
 	

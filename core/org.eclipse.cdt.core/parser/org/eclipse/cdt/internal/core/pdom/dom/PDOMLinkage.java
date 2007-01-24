@@ -19,6 +19,7 @@ import org.eclipse.cdt.core.dom.IName;
 import org.eclipse.cdt.core.dom.IPDOMVisitor;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTCompoundStatement;
+import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
@@ -236,6 +237,15 @@ public abstract class PDOMLinkage extends PDOMNamedNode implements IIndexLinkage
 	 * @since 4.0
 	 */
 	public void onCreateName(PDOMName pdomName, IASTName name) throws CoreException {
+		IASTNode parentNode= name.getParent();
+		if (parentNode instanceof IASTDeclSpecifier) {
+			IASTDeclSpecifier ds= (IASTDeclSpecifier) parentNode;
+			if (ds.getStorageClass() == IASTDeclSpecifier.sc_typedef) {
+				if (pdomName.getEnclosingDefinitionRecord() != 0) {
+					pdomName.setIsBaseSpecifier(true);
+				}
+			}
+		}
 	}
 
 	/**

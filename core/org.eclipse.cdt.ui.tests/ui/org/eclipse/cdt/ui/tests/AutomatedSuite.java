@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -22,6 +22,7 @@ import org.eclipse.cdt.ui.tests.text.TextTestSuite;
 import org.eclipse.cdt.ui.tests.text.contentassist.ContentAssistTestSuite;
 import org.eclipse.cdt.ui.tests.text.contentassist2.ContentAssist2TestSuite;
 import org.eclipse.cdt.ui.tests.text.selection.SelectionTestSuite;
+import org.eclipse.cdt.ui.tests.typehierarchy.TypeHierarchyTestSuite;
 import org.eclipse.cdt.ui.tests.viewsupport.ViewSupportTestSuite;
 
 /**
@@ -51,7 +52,10 @@ public class AutomatedSuite extends TestSuite {
 		// tests for package org.eclipse.cdt.ui.tests.callhierarchy
 		addTest(CallHierarchyTestSuite.suite());
 
-		// tests for package org.eclipse.cdt.ui.tests.callhierarchy
+		// tests for package org.eclipse.cdt.ui.tests.typehierarchy
+		addTest(TypeHierarchyTestSuite.suite());
+
+		// tests for package org.eclipse.cdt.ui.tests.includebrowser
 		addTest(IncludeBrowserTestSuite.suite());
 
 		// tests from package org.eclipse.cdt.ui.tests.text.contentAssist

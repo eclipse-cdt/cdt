@@ -39,6 +39,7 @@ import org.eclipse.cdt.internal.core.model.ext.ICElementHandle;
 import org.eclipse.cdt.internal.ui.viewsupport.IndexUI;
 
 class THGraph {
+	private static final Object[] NO_MEMBERS = new Object[0];
 	private THGraphNode fInputNode= null;
 	private HashSet fRootNodes= new HashSet();
 	private HashSet fLeaveNodes= new HashSet();
@@ -80,6 +81,9 @@ class THGraph {
 	}
 
 	private boolean createsLoop(THGraphNode from, THGraphNode to) {
+		if (from == to) {
+			return true;
+		}
 		if (to.getOutgoing().isEmpty() || from.getIncoming().isEmpty()) {
 			return false;
 		}
@@ -270,6 +274,9 @@ class THGraph {
 				IBinding[] members= ct.getEnumerators();
 				addMemberElements(index, members, memberList);
 				graphNode.setMembers(memberList.toArray());
+			}
+			else {
+				graphNode.setMembers(NO_MEMBERS);
 			}
 		}
 	}

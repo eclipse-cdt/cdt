@@ -844,7 +844,7 @@ public class THViewPart extends ViewPart {
 //    	updateView();
 //    }
     
-    protected void onSetHierarchyKind(int kind) {
+    public void onSetHierarchyKind(int kind) {
     	if (fModel.getHierarchyKind() != kind) {
     		fModel.setHierarchyKind(kind);
     		updateView();

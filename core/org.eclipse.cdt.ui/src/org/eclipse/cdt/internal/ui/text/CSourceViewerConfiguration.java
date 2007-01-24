@@ -81,9 +81,8 @@ import org.eclipse.cdt.internal.ui.editor.CDocumentProvider;
 import org.eclipse.cdt.internal.ui.editor.CElementHyperlinkDetector;
 import org.eclipse.cdt.internal.ui.text.c.hover.CEditorTextHoverDescriptor;
 import org.eclipse.cdt.internal.ui.text.c.hover.CEditorTextHoverProxy;
-import org.eclipse.cdt.internal.ui.text.contentassist.CCompletionProcessor2;
+import org.eclipse.cdt.internal.ui.text.contentassist.CContentAssistProcessor;
 import org.eclipse.cdt.internal.ui.text.contentassist.ContentAssistPreference;
-import org.eclipse.cdt.internal.ui.text.template.CTemplateCompletionProcessor;
 import org.eclipse.cdt.internal.ui.util.ExternalEditorInput;
 
 
@@ -346,10 +345,21 @@ public class CSourceViewerConfiguration extends TextSourceViewerConfiguration {
 
 		assistant.setRestoreCompletionProposalSize(getSettings("completion_proposal_size")); //$NON-NLS-1$
 		
-		IContentAssistProcessor processor = new CCompletionProcessor2(getEditor());
+		IContentAssistProcessor processor = new CContentAssistProcessor(getEditor(), assistant, IDocument.DEFAULT_CONTENT_TYPE);
 		assistant.setContentAssistProcessor(processor, IDocument.DEFAULT_CONTENT_TYPE);
 
-		assistant.setContentAssistProcessor(new CTemplateCompletionProcessor(getEditor()), ICPartitions.C_MULTI_LINE_COMMENT);
+		processor = new CContentAssistProcessor(getEditor(), assistant, ICPartitions.C_MULTI_LINE_COMMENT);
+		assistant.setContentAssistProcessor(processor, ICPartitions.C_MULTI_LINE_COMMENT);
+
+		processor = new CContentAssistProcessor(getEditor(), assistant, ICPartitions.C_SINGLE_LINE_COMMENT);
+		assistant.setContentAssistProcessor(processor, ICPartitions.C_SINGLE_LINE_COMMENT);
+
+		processor = new CContentAssistProcessor(getEditor(), assistant, ICPartitions.C_STRING);
+		assistant.setContentAssistProcessor(processor, ICPartitions.C_STRING);
+
+		processor = new CContentAssistProcessor(getEditor(), assistant, ICPartitions.C_PREPROCESSOR);
+		assistant.setContentAssistProcessor(processor, ICPartitions.C_PREPROCESSOR);
+
 		ContentAssistPreference.configure(assistant, fPreferenceStore);
 		
 		assistant.setProposalPopupOrientation(IContentAssistant.PROPOSAL_OVERLAY);		

@@ -17,6 +17,7 @@
    <extension-point id="IndexerPage" name="%indexerPage.name" schema="schema/IndexerPage.exsd"/>
    <extension-point id="completionContributors" name="%completionContributors" schema="schema/completionContributors.exsd"/>
    <extension-point id="ProposalFilter" name="%proposalFilter.name" schema="schema/ProposalFilter.exsd"/>
+   <extension-point id="completionProposalComputer" name="%completionProposalComputer" schema="schema/completionProposalComputer.exsd"/>
 
    <extension
          point="org.eclipse.core.runtime.adapters">
@@ -608,6 +609,12 @@
             category="org.eclipse.cdt.ui.preferences.CEditorPreferencePage"
             class="org.eclipse.cdt.internal.ui.preferences.CodeAssistPreferencePage"
             id="org.eclipse.cdt.ui.preferences.CodeAssistPreferencePage">
+      </page>
+      <page
+            name="%CodeAssistAdvancedPreferencePage.name"
+            category="org.eclipse.cdt.ui.preferences.CodeAssistPreferencePage"
+            class="org.eclipse.cdt.internal.ui.preferences.CodeAssistAdvancedPreferencePage"
+            id="org.eclipse.cdt.ui.preferences.CodeAssistPreferenceAdvanced">
       </page>
       <page
             name="%ColoringPreferencePage.name"
@@ -1432,10 +1439,6 @@
             id="DOM"
             priority="1"/>
       <contributor
-            class="org.eclipse.cdt.internal.ui.text.template.CTemplateCompletionProcessor"
-            id="CodeTemplates"
-            priority="2"/>
-      <contributor
             class="org.eclipse.cdt.internal.ui.text.contentassist.KeywordCompletionContributor"
             id="Keywords"
             priority="10"/>
@@ -1443,11 +1446,91 @@
             class="org.eclipse.cdt.internal.ui.text.contentassist.HelpCompletionContributor"
             id="Help"
             priority="99"/>
-      <contributor
+      <!--contributor
             class="org.eclipse.cdt.internal.ui.text.contentassist.PDOMCompletionContributor"
             id="PDOM"
-            priority="3"/>
-   	</extension>
+            priority="3"/-->
+   </extension>
+
+    <extension
+        point="org.eclipse.cdt.ui.completionProposalComputer"
+        id="defaultProposalCategory"
+        name="%DefaultProposalCategory">
+        <proposalCategory/>
+    </extension>
+    <extension
+        point="org.eclipse.cdt.ui.completionProposalComputer"
+        id="parserProposalCategory"
+        name="%ParserProposalCategory">
+        <proposalCategory
+            icon="$nl$/icons/elcl16/codeassist_co.gif"/>
+    </extension>
+    <extension
+        point="org.eclipse.cdt.ui.completionProposalComputer"
+        id="templateProposalCategory"
+        name="%TemplateProposalCategory">
+        <proposalCategory
+            icon="$nl$/icons/elcl16/templateprop_co.gif"/>
+    </extension>
+    <extension
+        point="org.eclipse.cdt.ui.completionProposalComputer"
+        id="textProposalCategory"
+        name="%TextProposalCategory">
+        <proposalCategory
+            icon="$nl$/icons/elcl16/wordassist_co.gif"/>
+    </extension>
+     
+    <!-- legacy completions (completionContributors) -->   
+    <extension
+        point="org.eclipse.cdt.ui.completionProposalComputer"
+        id="LegacyCompletionProposalComputer">
+        <completionProposalComputer 
+            class="org.eclipse.cdt.internal.ui.text.contentassist.LegacyCompletionProposalComputer"
+            categoryId="org.eclipse.cdt.ui.parserProposalCategory">
+            <partition type="__dftl_partition_content_type"/>
+        </completionProposalComputer>
+    </extension>
+    <!-- template proposals -->
+    <extension
+        point="org.eclipse.cdt.ui.completionProposalComputer"
+        id="TemplateCompletionProposalComputer">
+        <completionProposalComputer 
+            class="org.eclipse.cdt.internal.ui.text.contentassist.TemplateCompletionProposalComputer"
+            categoryId="org.eclipse.cdt.ui.templateProposalCategory">
+            <partition type="__dftl_partition_content_type"/>
+            <partition type="__c_multiline_comment"/>
+        </completionProposalComputer>
+    </extension>
+    <!-- hippie word completions -->   
+    <extension
+        point="org.eclipse.cdt.ui.completionProposalComputer"
+        id="HippieCompletionProposalComputer">
+        <completionProposalComputer
+            class="org.eclipse.cdt.internal.ui.text.contentassist.HippieProposalComputer"
+            categoryId="org.eclipse.cdt.ui.textProposalCategory">
+            <partition type="__c_singleline_comment"/>
+            <partition type="__c_multiline_comment"/>
+            <partition type="__c_string"/>
+        </completionProposalComputer>
+    </extension>
+    
+    <!-- the parameterized content assist action and keybindings for our contributed computers -->
+   <extension
+    point="org.eclipse.ui.commands">
+        <command
+            categoryId="org.eclipse.ui.category.edit"
+            description="%SpecificContentAssist.desc"
+            id="org.eclipse.cdt.ui.specific_content_assist.command"
+            name="%SpecificContentAssist.name"
+            defaultHandler="org.eclipse.cdt.internal.ui.text.contentassist.ContentAssistHandler">
+            <commandParameter
+                id="org.eclipse.cdt.ui.specific_content_assist.category_id"
+                name="%SpecificContentAssist.param"
+                optional="false"
+                values="org.eclipse.cdt.internal.ui.text.contentassist.ContentAssistComputerParameter"/>
+        </command>
+   </extension>
+
  <extension
        point="org.eclipse.ui.popupMenus">
     <objectContribution

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 IBM Corporation and others.
+ * Copyright (c) 2005, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     QNX Software System
+ *     Anton Leherbauer (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.ui;
 
@@ -25,8 +26,7 @@ import org.eclipse.cdt.internal.ui.text.ICColorConstants;
  * preference store programmatically.
  * 
  * @since 2.0
-  */
-
+ */
 public class PreferenceConstants {
 	
 	private PreferenceConstants() {
@@ -672,6 +672,27 @@ public class PreferenceConstants {
 	public static final String CVIEW_GROUP_INCLUDES= "org.eclipse.cdt.ui.cview.groupincludes"; //$NON-NLS-1$
 
 	/**
+	 * A named preference that controls which completion proposal categories
+	 * have been excluded from the default proposal list.
+	 * <p>
+	 * Value is of type <code>String</code>, a "\0"-separated list of identifiers.
+	 * </p>
+	 * 
+	 * @since 4.0
+	 */
+	public static final String CODEASSIST_EXCLUDED_CATEGORIES= "content_assist_disabled_computers"; //$NON-NLS-1$
+
+	/**
+	 * A named preference that controls the order of the specific code assist commands.
+	 * <p>
+	 * Value is of type <code>String</code>, a "\0"-separated list of identifiers.
+	 * </p>
+	 * 
+	 * @since 4.0
+	 */
+	public static final String CODEASSIST_CATEGORY_ORDER= "content_assist_category_order"; //$NON-NLS-1$
+
+	/**
 	 * A named preference that controls whether folding is enabled in the C editor.
 	 * <p>
 	 * Value is of type <code>Boolean</code>.
@@ -985,5 +1006,9 @@ public class PreferenceConstants {
 		store.setDefault(PreferenceConstants.EDITOR_ESCAPE_STRINGS, false);
 		
 		store.setDefault(PreferenceConstants.ENSURE_NEWLINE_AT_EOF, false);
+		
+		// content assist
+		store.setDefault(PreferenceConstants.CODEASSIST_EXCLUDED_CATEGORIES, "org.eclipse.cdt.ui.textProposalCategory\0"); //$NON-NLS-1$
+		store.setDefault(PreferenceConstants.CODEASSIST_CATEGORY_ORDER, "org.eclipse.cdt.ui.parserProposalCategory:65539\0org.eclipse.cdt.ui.textProposalCategory:65541\0org.eclipse.cdt.ui.templateProposalCategory:2\0"); //$NON-NLS-1$
     }
 }

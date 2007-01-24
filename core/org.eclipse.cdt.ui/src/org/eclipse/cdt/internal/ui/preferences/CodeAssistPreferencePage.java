@@ -45,13 +45,13 @@ public class CodeAssistPreferencePage extends AbstractPreferencePage {
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.INT, ContentAssistPreference.AUTOACTIVATION_DELAY));
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, ContentAssistPreference.AUTOINSERT));
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, ContentAssistPreference.PREFIX_COMPLETION));
-		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.INT, ContentAssistPreference.TIMEOUT_DELAY));		
+//		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.INT, ContentAssistPreference.TIMEOUT_DELAY));		
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, ContentAssistPreference.AUTOACTIVATION_TRIGGERS_DOT));
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, ContentAssistPreference.AUTOACTIVATION_TRIGGERS_ARROW));
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, ContentAssistPreference.AUTOACTIVATION_TRIGGERS_DOUBLECOLON));
-		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, ContentAssistPreference.SHOW_DOCUMENTED_PROPOSALS));
-		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, ContentAssistPreference.ORDER_PROPOSALS));
-		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, ContentAssistPreference.ADD_INCLUDE));
+//		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, ContentAssistPreference.SHOW_DOCUMENTED_PROPOSALS));
+//		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, ContentAssistPreference.ORDER_PROPOSALS));
+//		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, ContentAssistPreference.ADD_INCLUDE));
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, ContentAssistPreference.CURRENT_FILE_SEARCH_SCOPE));        
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, ContentAssistPreference.PROJECT_SEARCH_SCOPE));
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, ContentAssistPreference.PROPOSALS_FILTER));
@@ -106,8 +106,8 @@ public class CodeAssistPreferencePage extends AbstractPreferencePage {
 		label = PreferencesMessages.CEditorPreferencePage_ContentAssistPage_sortingSection_title; 
 		Group sortingGroup = addGroupBox(contentAssistComposite, label, 2);
 
-		label= PreferencesMessages.CEditorPreferencePage_ContentAssistPage_showProposalsInAlphabeticalOrder; 
-		addCheckBox(sortingGroup, label, ContentAssistPreference.ORDER_PROPOSALS, 0);
+//		label= PreferencesMessages.CEditorPreferencePage_ContentAssistPage_showProposalsInAlphabeticalOrder; 
+//		addCheckBox(sortingGroup, label, ContentAssistPreference.ORDER_PROPOSALS, 0);
 
 		label = PreferencesMessages.CEditorPreferencePage_ContentAssistPage_proposalFilterSelect ; 
 		addComboBox(sortingGroup, label, ContentAssistPreference.PROPOSALS_FILTER, 20, 0);
@@ -147,7 +147,7 @@ public class CodeAssistPreferencePage extends AbstractPreferencePage {
 		store.setDefault(ContentAssistPreference.CURRENT_FILE_SEARCH_SCOPE, true);
 		store.setDefault(ContentAssistPreference.PROJECT_SEARCH_SCOPE, false);
 
-		store.setDefault(ContentAssistPreference.TIMEOUT_DELAY, 3000);
+//		store.setDefault(ContentAssistPreference.TIMEOUT_DELAY, 3000);
 		
 		store.setDefault(ContentAssistPreference.AUTOACTIVATION_TRIGGERS_DOT, true);
 		store.setDefault(ContentAssistPreference.AUTOACTIVATION_TRIGGERS_ARROW, true);
@@ -156,8 +156,8 @@ public class CodeAssistPreferencePage extends AbstractPreferencePage {
 		
 		store.setDefault(ContentAssistPreference.AUTOINSERT, true);
 		store.setDefault(ContentAssistPreference.PREFIX_COMPLETION, true);
-		store.setDefault(ContentAssistPreference.ORDER_PROPOSALS, false);
-		store.setDefault(ContentAssistPreference.ADD_INCLUDE, true);
+//		store.setDefault(ContentAssistPreference.ORDER_PROPOSALS, false);
+//		store.setDefault(ContentAssistPreference.ADD_INCLUDE, true);
 		store.setDefault(ContentAssistPreference.PROPOSALS_FILTER, ProposalFilterPreferencesUtil.getProposalFilternamesAsString());  // $NON_NLS 1$
 
 	}

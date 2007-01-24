@@ -2271,9 +2271,10 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IR
 		setAction("ContentAssistProposal", action); //$NON-NLS-1$
 		markAsStateDependentAction("ContentAssistProposal", true); //$NON-NLS-1$
 
-		action = new TextOperationAction(CEditorMessages.getResourceBundle(), "ContentAssistTip.", this, ISourceViewer.CONTENTASSIST_CONTEXT_INFORMATION); //$NON-NLS-1$
+		action= new TextOperationAction(CEditorMessages.getResourceBundle(), "ContentAssistContextInformation.", this, ISourceViewer.CONTENTASSIST_CONTEXT_INFORMATION); //$NON-NLS-1$
 		action.setActionDefinitionId(ITextEditorActionDefinitionIds.CONTENT_ASSIST_CONTEXT_INFORMATION);
-		setAction("ContentAssistTip", action); //$NON-NLS-1$
+		setAction("ContentAssistContextInformation", action); //$NON-NLS-1$
+		markAsStateDependentAction("ContentAssistContextInformation", true); //$NON-NLS-1$
 
 		action = new OpenDeclarationsAction(this);
 		action.setActionDefinitionId(ICEditorActionDefinitionIds.OPEN_DECL);
@@ -2983,10 +2984,11 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IR
 	protected String[] collectContextMenuPreferencePages() {
 		// Add C/C++ Editor relevant pages
 		String[] parentPrefPageIds = super.collectContextMenuPreferencePages();
-		String[] prefPageIds = new String[parentPrefPageIds.length + 8];
+		String[] prefPageIds = new String[parentPrefPageIds.length + 9];
 		int nIds = 0;
 		prefPageIds[nIds++] = "org.eclipse.cdt.ui.preferences.CEditorPreferencePage"; //$NON-NLS-1$
 		prefPageIds[nIds++] = "org.eclipse.cdt.ui.preferences.CodeAssistPreferencePage"; //$NON-NLS-1$
+		prefPageIds[nIds++] = "org.eclipse.cdt.ui.preferences.CodeAssistPreferenceAdvanced"; //$NON-NLS-1$
 		prefPageIds[nIds++] = "org.eclipse.cdt.ui.preferences.HoverPreferencePage"; //$NON-NLS-1$
 		prefPageIds[nIds++] = "org.eclipse.cdt.ui.preferences.FoldingPreferencePage"; //$NON-NLS-1$
 		prefPageIds[nIds++] = "org.eclipse.cdt.ui.preferences.CodeColoringPreferencePage"; //$NON-NLS-1$

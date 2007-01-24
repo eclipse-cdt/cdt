@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Sergey Prigogin, Google
+ *     Anton Leherbauer (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.text;
 
@@ -30,6 +31,8 @@ public interface Symbols {
 	int TokenEQUAL= 12;
 	int TokenLESSTHAN= 13;
 	int TokenGREATERTHAN= 14;
+	int TokenDOT= 15;
+	int TokenMINUS= 16;
 	int TokenIF= 109;
 	int TokenDO= 1010;
 	int TokenFOR= 1011;

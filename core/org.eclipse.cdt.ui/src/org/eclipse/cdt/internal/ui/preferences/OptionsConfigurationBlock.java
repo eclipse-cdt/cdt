@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,72 +7,130 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Anton Leherbauer (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.preferences;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.IdentityHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
 
-import org.eclipse.core.resources.IncrementalProjectBuilder;
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IResourceProxy;
-import org.eclipse.core.resources.IResourceProxyVisitor;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.SubProgressMonitor;
-
-import org.eclipse.osgi.util.NLS;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.ProjectScope;
+import org.eclipse.core.runtime.preferences.DefaultScope;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences;
+import org.eclipse.core.runtime.preferences.IScopeContext;
+import org.eclipse.core.runtime.preferences.InstanceScope;
+import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.IDialogSettings;
+import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Link;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Widget;
-
-import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.dialogs.ProgressMonitorDialog;
-import org.eclipse.jface.operation.IRunnableWithProgress;
-
-import org.eclipse.ui.IEditorInput;
+import org.eclipse.ui.forms.events.ExpansionAdapter;
+import org.eclipse.ui.forms.events.ExpansionEvent;
+import org.eclipse.ui.forms.widgets.ExpandableComposite;
+import org.eclipse.ui.preferences.IWorkbenchPreferenceContainer;
+import org.eclipse.ui.preferences.IWorkingCopyManager;
+import org.eclipse.ui.preferences.WorkingCopyManager;
+import org.osgi.service.prefs.BackingStoreException;
 
 import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.model.CoreModel;
-import org.eclipse.cdt.core.model.CModelException;
-import org.eclipse.cdt.core.model.ICProject;
-import org.eclipse.cdt.core.model.ITranslationUnit;
-
 import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.cdt.internal.ui.util.ExceptionHandler;
-import org.eclipse.cdt.internal.ui.util.EditorUtility;
+
 import org.eclipse.cdt.internal.ui.dialogs.IStatusChangeListener;
 
 /**
-  */
+ * Abstract options configuration block providing a general implementation for setting up
+ * an options configuration page.
+ */
 public abstract class OptionsConfigurationBlock {
+	
+	public static final class Key {
+		
+		private String fQualifier;
+		private String fKey;
+		
+		public Key(String qualifier, String key) {
+			fQualifier= qualifier;
+			fKey= key;
+		}
+		
+		public String getName() {
+			return fKey;
+		}
+		
+		private IEclipsePreferences getNode(IScopeContext context, IWorkingCopyManager manager) {
+			IEclipsePreferences node= context.getNode(fQualifier);
+			if (manager != null) {
+				return manager.getWorkingCopy(node);
+			}
+			return node;
+		}
+		
+		public String getStoredValue(IScopeContext context, IWorkingCopyManager manager) {
+			return getNode(context, manager).get(fKey, null);
+		}
+		
+		public String getStoredValue(IScopeContext[] lookupOrder, boolean ignoreTopScope, IWorkingCopyManager manager) {
+			for (int i= ignoreTopScope ? 1 : 0; i < lookupOrder.length; i++) {
+				String value= getStoredValue(lookupOrder[i], manager);
+				if (value != null) {
+					return value;
+				}
+			}
+			return null;
+		}
+		
+		public void setStoredValue(IScopeContext context, String value, IWorkingCopyManager manager) {
+			if (value != null) {
+				getNode(context, manager).put(fKey, value);
+			} else {
+				getNode(context, manager).remove(fKey);
+			}
+		}
+			
+		/* (non-Javadoc)
+		 * @see java.lang.Object#toString()
+		 */
+		public String toString() {
+			return fQualifier + '/' + fKey;
+		}
+
+		public String getQualifier() {
+			return fQualifier;
+		}
+
+	}
+	
 
 	protected static class ControlData {
-		private String fKey;
+		private Key fKey;
 		private String[] fValues;
 		
-		public ControlData(String key, String[] values) {
+		public ControlData(Key key, String[] values) {
 			fKey= key;
 			fValues= values;
 		}
 		
-		public String getKey() {
+		public Key getKey() {
 			return fKey;
 		}
 		
@@ -86,75 +144,170 @@ public abstract class OptionsConfigurationBlock {
 		}		
 		
 		public int getSelection(String value) {
-			for (int i= 0; i < fValues.length; i++) {
-				if (value.equals(fValues[i])) {
-					return i;
+			if (value != null) {
+				for (int i= 0; i < fValues.length; i++) {
+					if (value.equals(fValues[i])) {
+						return i;
+					}
 				}
 			}
-			throw new IllegalArgumentException();
+			return fValues.length -1; // assume the last option is the least severe
 		}
 	}
 	
+	private static final String REBUILD_COUNT_KEY= "preferences_build_requested"; //$NON-NLS-1$
 	
-	protected Map fWorkingValues;
+	private static final String SETTINGS_EXPANDED= "expanded"; //$NON-NLS-1$
 
-	protected ArrayList fCheckBoxes;
-	protected ArrayList fComboBoxes;
-	protected ArrayList fTextBoxes;
+	protected final ArrayList fCheckBoxes;
+	protected final ArrayList fComboBoxes;
+	protected final ArrayList fTextBoxes;
+	protected final HashMap fLabels;
+	protected final ArrayList fExpandedComposites;
 	
 	private SelectionListener fSelectionListener;
 	private ModifyListener fTextModifyListener;
 
 	protected IStatusChangeListener fContext;
-	protected ICProject fProject; // project or null
+	protected final IProject fProject; // project or null
+	protected final Key[] fAllKeys;
+	
+	private IScopeContext[] fLookupOrder;
 	
 	private Shell fShell;
 
-	public OptionsConfigurationBlock(IStatusChangeListener context, ICProject project) {
+	private final IWorkingCopyManager fManager;
+	private IWorkbenchPreferenceContainer fContainer;
+
+	private Map fDisabledProjectSettings; // null when project specific settings are turned off
+	
+	private int fRebuildCount; /// used to prevent multiple dialogs that ask for a rebuild
+	
+	public OptionsConfigurationBlock(IStatusChangeListener context, IProject project, Key[] allKeys, IWorkbenchPreferenceContainer container) {
 		fContext= context;
 		fProject= project;
+		fAllKeys= allKeys;
+		fContainer= container;
+		if (container == null) {
+			fManager= new WorkingCopyManager();
+		} else {
+			fManager= container.getWorkingCopyManager();
+		}
 		
-		fWorkingValues= getOptions(true);
+		if (fProject != null) {
+			fLookupOrder= new IScopeContext[] {
+				new ProjectScope(fProject),
+				new InstanceScope(),
+				new DefaultScope()
+			};
+		} else {
+			fLookupOrder= new IScopeContext[] {
+				new InstanceScope(),
+				new DefaultScope()
+			};
+		}
+		
+		testIfOptionsComplete(allKeys);
+		if (fProject == null || hasProjectSpecificOptions(fProject)) {
+			fDisabledProjectSettings= null;
+		} else {
+			fDisabledProjectSettings= new IdentityHashMap();
+			for (int i= 0; i < allKeys.length; i++) {
+				Key curr= allKeys[i];
+				fDisabledProjectSettings.put(curr, curr.getStoredValue(fLookupOrder, false, fManager));
+			}
+		}
+		
+		settingsUpdated();
 		
 		fCheckBoxes= new ArrayList();
 		fComboBoxes= new ArrayList();
-		fTextBoxes= new ArrayList(2); 
-	}
-	
-	protected abstract String[] getAllKeys();
-	
-	protected Map getOptions(boolean inheritCCoreOptions) {
-		if (fProject != null) {
-			return fProject.getOptions(inheritCCoreOptions);
-		}
-		return CCorePlugin.getOptions();
-	}
-	
-	protected Map getDefaultOptions() {
-		return CCorePlugin.getDefaultOptions();
+		fTextBoxes= new ArrayList(2);
+		fLabels= new HashMap();
+		fExpandedComposites= new ArrayList();
+		
+		fRebuildCount= getRebuildCount();
 	}	
 	
-	public final boolean hasProjectSpecificOptions() {
-		if (fProject != null) {
-			Map settings= fProject.getOptions(false);
-			String[] allKeys= getAllKeys();
+	protected final IWorkbenchPreferenceContainer getPreferenceContainer() {
+		return fContainer;
+	}
+	
+	protected static Key getKey(String plugin, String key) {
+		return new Key(plugin, key);
+	}
+	
+	protected final static Key getCDTCoreKey(String key) {
+		return getKey(CCorePlugin.PLUGIN_ID, key);
+	}
+	
+	protected final static Key getCDTUIKey(String key) {
+		return getKey(CUIPlugin.PLUGIN_ID, key);
+	}
+	
+		
+	private void testIfOptionsComplete(Key[] allKeys) {
+		for (int i= 0; i < allKeys.length; i++) {
+			if (allKeys[i].getStoredValue(fLookupOrder, false, fManager) == null) {
+				CUIPlugin.getDefault().logErrorMessage("preference option missing: " + allKeys[i] + " (" + this.getClass().getName() +')');  //$NON-NLS-1$//$NON-NLS-2$
+			}
+		}
+	}
+	
+	private int getRebuildCount() {
+		return fManager.getWorkingCopy(new DefaultScope().getNode(CUIPlugin.PLUGIN_ID)).getInt(REBUILD_COUNT_KEY, 0);
+	}
+	
+	private void incrementRebuildCount() {
+		fRebuildCount++;
+		fManager.getWorkingCopy(new DefaultScope().getNode(CUIPlugin.PLUGIN_ID)).putInt(REBUILD_COUNT_KEY, fRebuildCount);
+	}
+	
+	
+	protected void settingsUpdated() {
+	}
+	
+	
+	public void selectOption(String key, String qualifier) {
+		for (int i= 0; i < fAllKeys.length; i++) {
+			Key curr= fAllKeys[i];
+			if (curr.getName().equals(key) && curr.getQualifier().equals(qualifier)) {
+				selectOption(curr);
+			}
+		}
+	}
+	
+	public void selectOption(Key key) {
+		Control control= findControl(key);
+		if (control != null) {
+			if (!fExpandedComposites.isEmpty()) {
+				ExpandableComposite expandable= getParentExpandableComposite(control);
+				if (expandable != null) {
+					for (int i= 0; i < fExpandedComposites.size(); i++) {
+						ExpandableComposite curr= (ExpandableComposite) fExpandedComposites.get(i);
+						curr.setExpanded(curr == expandable);
+					}
+					expandedStateChanged(expandable);
+				}
+			}
+			control.setFocus();
+		}
+	}
+	
+	
+	public final boolean hasProjectSpecificOptions(IProject project) {
+		if (project != null) {
+			IScopeContext projectContext= new ProjectScope(project);
+			Key[] allKeys= fAllKeys;
 			for (int i= 0; i < allKeys.length; i++) {
-				if (settings.get(allKeys[i]) != null) {
+				if (allKeys[i].getStoredValue(projectContext, fManager) != null) {
 					return true;
 				}
 			}
 		}
 		return false;
 	}	
-		
-	protected final void setOptions(Map map) {
-		if (fProject != null) {
-			fProject.setOptions(map);
-		} else {
-			CCorePlugin.setOptions((HashMap) map);
-		}	
-	} 
-	
+			
 	protected Shell getShell() {
 		return fShell;
 	}
@@ -165,58 +318,150 @@ public abstract class OptionsConfigurationBlock {
 	
 	protected abstract Control createContents(Composite parent);
 	
-	protected void addCheckBox(Composite parent, String label, String key, String[] values, int indent) {
+	protected Button addCheckBox(Composite parent, String label, Key key, String[] values, int indent) {
 		ControlData data= new ControlData(key, values);
 		
 		GridData gd= new GridData(GridData.HORIZONTAL_ALIGN_FILL);
-		gd.horizontalSpan= 2;
+		gd.horizontalSpan= 3;
 		gd.horizontalIndent= indent;
 		
 		Button checkBox= new Button(parent, SWT.CHECK);
+		checkBox.setFont(JFaceResources.getDialogFont());
 		checkBox.setText(label);
 		checkBox.setData(data);
 		checkBox.setLayoutData(gd);
 		checkBox.addSelectionListener(getSelectionListener());
 		
-		String currValue= (String)fWorkingValues.get(key);	
+		makeScrollableCompositeAware(checkBox);
+		
+		String currValue= getValue(key);
 		checkBox.setSelection(data.getSelection(currValue) == 0);
 		
 		fCheckBoxes.add(checkBox);
+		
+		return checkBox;
 	}
 	
-	protected void addComboBox(Composite parent, String label, String key, String[] values, String[] valueLabels, int indent) {
+	protected Button addCheckBoxWithLink(Composite parent, String label, Key key, String[] values, int indent, int widthHint, SelectionListener listener) {
 		ControlData data= new ControlData(key, values);
 		
-		GridData gd= new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
+		GridData gd= new GridData(GridData.FILL, GridData.FILL, true, false);
+		gd.horizontalSpan= 3;
+		gd.horizontalIndent= indent;
+		
+		Composite composite= new Composite(parent, SWT.NONE);
+		GridLayout layout= new GridLayout();
+		layout.marginHeight= 0;
+		layout.marginWidth= 0;
+		layout.numColumns= 2;
+		composite.setLayout(layout);
+		composite.setLayoutData(gd);
+		
+		Button checkBox= new Button(composite, SWT.CHECK);
+		checkBox.setFont(JFaceResources.getDialogFont());
+		checkBox.setData(data);
+		checkBox.setLayoutData(new GridData(GridData.FILL, GridData.BEGINNING, false, false));
+		checkBox.addSelectionListener(getSelectionListener());
+		
+		gd= new GridData(GridData.FILL, GridData.CENTER, true, false);
+		gd.widthHint= widthHint;
+		
+		Link link= new Link(composite, SWT.NONE);
+		link.setText(label);
+		link.setLayoutData(gd);
+		if (listener != null) {
+			link.addSelectionListener(listener);
+		}
+		
+		makeScrollableCompositeAware(link);
+		makeScrollableCompositeAware(checkBox);
+		
+		String currValue= getValue(key);
+		checkBox.setSelection(data.getSelection(currValue) == 0);
+		
+		fCheckBoxes.add(checkBox);
+		
+		return checkBox;
+	}
+	
+	protected Combo addComboBox(Composite parent, String label, Key key, String[] values, String[] valueLabels, int indent) {
+		GridData gd= new GridData(GridData.FILL, GridData.CENTER, true, false, 2, 1);
 		gd.horizontalIndent= indent;
 				
-		Label labelControl= new Label(parent, SWT.LEFT | SWT.WRAP);
+		Label labelControl= new Label(parent, SWT.LEFT);
+		labelControl.setFont(JFaceResources.getDialogFont());
 		labelControl.setText(label);
 		labelControl.setLayoutData(gd);
+				
+		Combo comboBox= newComboControl(parent, key, values, valueLabels);
+		comboBox.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL));
+
+		fLabels.put(comboBox, labelControl);
 		
-		Combo comboBox= new Combo(parent, SWT.READ_ONLY);
+		return comboBox;
+	}
+	
+	protected Combo addInversedComboBox(Composite parent, String label, Key key, String[] values, String[] valueLabels, int indent) {
+		GridData gd= new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
+		gd.horizontalIndent= indent;
+		gd.horizontalSpan= 3;
+		
+		Composite composite= new Composite(parent, SWT.NONE);
+		GridLayout layout= new GridLayout();
+		layout.marginHeight= 0;
+		layout.marginWidth= 0;
+		layout.numColumns= 2;
+		composite.setLayout(layout);
+		composite.setLayoutData(gd);
+		
+		Combo comboBox= newComboControl(composite, key, values, valueLabels);
+		comboBox.setFont(JFaceResources.getDialogFont());
+		comboBox.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL));
+		
+		Label labelControl= new Label(composite, SWT.LEFT | SWT.WRAP);
+		labelControl.setText(label);
+		labelControl.setLayoutData(new GridData());
+		
+		fLabels.put(comboBox, labelControl);
+		return comboBox;
+	}
+	
+	protected Combo newComboControl(Composite composite, Key key, String[] values, String[] valueLabels) {
+		ControlData data= new ControlData(key, values);
+		
+		Combo comboBox= new Combo(composite, SWT.READ_ONLY);
 		comboBox.setItems(valueLabels);
 		comboBox.setData(data);
-		comboBox.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL));
 		comboBox.addSelectionListener(getSelectionListener());
+		comboBox.setFont(JFaceResources.getDialogFont());
+			
+		makeScrollableCompositeAware(comboBox);
 		
-		String currValue= (String)fWorkingValues.get(key);	
+		String currValue= getValue(key);	
 		comboBox.select(data.getSelection(currValue));
 		
 		fComboBoxes.add(comboBox);
+		return comboBox;
 	}
-	
-	protected Text addTextField(Composite parent, String label, String key, int indent, int widthHint) {	
-		Label labelControl= new Label(parent, SWT.NONE);
+
+	protected Text addTextField(Composite parent, String label, Key key, int indent, int widthHint) {	
+		Label labelControl= new Label(parent, SWT.WRAP);
 		labelControl.setText(label);
+		labelControl.setFont(JFaceResources.getDialogFont());
 		labelControl.setLayoutData(new GridData());
 				
 		Text textBox= new Text(parent, SWT.BORDER | SWT.SINGLE);
 		textBox.setData(key);
 		textBox.setLayoutData(new GridData());
 		
-		String currValue= (String) fWorkingValues.get(key);	
-		textBox.setText(currValue);
+		makeScrollableCompositeAware(textBox);
+		
+		fLabels.put(textBox, labelControl);
+		
+		String currValue= getValue(key);	
+		if (currValue != null) {
+			textBox.setText(currValue);
+		}
 		textBox.addModifyListener(getTextModifyListener());
 
 		GridData data= new GridData(GridData.HORIZONTAL_ALIGN_FILL);
@@ -224,12 +469,83 @@ public abstract class OptionsConfigurationBlock {
 			data.widthHint= widthHint;
 		}
 		data.horizontalIndent= indent;
+		data.horizontalSpan= 2;
 		textBox.setLayoutData(data);
 
 		fTextBoxes.add(textBox);
 		return textBox;
-	}	
-
+	}
+	
+	protected ScrolledPageContent getParentScrolledComposite(Control control) {
+		Control parent= control.getParent();
+		while (!(parent instanceof ScrolledPageContent) && parent != null) {
+			parent= parent.getParent();
+		}
+		if (parent instanceof ScrolledPageContent) {
+			return (ScrolledPageContent) parent;
+		}
+		return null;
+	}
+	
+	protected ExpandableComposite getParentExpandableComposite(Control control) {
+		Control parent= control.getParent();
+		while (!(parent instanceof ExpandableComposite) && parent != null) {
+			parent= parent.getParent();
+		}
+		if (parent instanceof ExpandableComposite) {
+			return (ExpandableComposite) parent;
+		}
+		return null;
+	}
+	
+	private void makeScrollableCompositeAware(Control control) {
+		ScrolledPageContent parentScrolledComposite= getParentScrolledComposite(control);
+		if (parentScrolledComposite != null) {
+			parentScrolledComposite.adaptChild(control);
+		}
+	}
+	
+	protected ExpandableComposite createStyleSection(Composite parent, String label, int nColumns) {
+		ExpandableComposite excomposite= new ExpandableComposite(parent, SWT.NONE, ExpandableComposite.TWISTIE | ExpandableComposite.CLIENT_INDENT);
+		excomposite.setText(label);
+		excomposite.setExpanded(false);
+		excomposite.setFont(JFaceResources.getFontRegistry().getBold(JFaceResources.DIALOG_FONT));
+		excomposite.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, false, nColumns, 1));
+		excomposite.addExpansionListener(new ExpansionAdapter() {
+			public void expansionStateChanged(ExpansionEvent e) {
+				expandedStateChanged((ExpandableComposite) e.getSource());
+			}
+		});
+		fExpandedComposites.add(excomposite);
+		makeScrollableCompositeAware(excomposite);
+		return excomposite;
+	}
+	
+	protected final void expandedStateChanged(ExpandableComposite expandable) {
+		ScrolledPageContent parentScrolledComposite= getParentScrolledComposite(expandable);
+		if (parentScrolledComposite != null) {
+			parentScrolledComposite.reflow(true);
+		}
+	}
+	
+	protected void restoreSectionExpansionStates(IDialogSettings settings) {
+		for (int i= 0; i < fExpandedComposites.size(); i++) {
+			ExpandableComposite excomposite= (ExpandableComposite) fExpandedComposites.get(i);
+			if (settings == null) {
+				excomposite.setExpanded(i == 0); // only expand the first node by default
+			} else {
+				excomposite.setExpanded(settings.getBoolean(SETTINGS_EXPANDED + String.valueOf(i)));
+			}
+		}
+	}
+	
+	protected void storeSectionExpansionStates(IDialogSettings settings) {
+		for (int i= 0; i < fExpandedComposites.size(); i++) {
+			ExpandableComposite curr= (ExpandableComposite) fExpandedComposites.get(i);
+			settings.put(SETTINGS_EXPANDED + String.valueOf(i), curr.isExpanded());
+		}
+	}
+	
 	protected SelectionListener getSelectionListener() {
 		if (fSelectionListener == null) {
 			fSelectionListener= new SelectionListener() {
@@ -264,27 +580,60 @@ public abstract class OptionsConfigurationBlock {
 		} else {
 			return;
 		}
-		fWorkingValues.put(data.getKey(), newValue);
-		
-		validateSettings(data.getKey(), newValue);
+		String oldValue= setValue(data.getKey(), newValue);
+		validateSettings(data.getKey(), oldValue, newValue);
 	}
 	
 	protected void textChanged(Text textControl) {
-		String key= (String) textControl.getData();
+		Key key= (Key) textControl.getData();
 		String number= textControl.getText();
-		fWorkingValues.put(key, number);
-		validateSettings(key, number);
+		String oldValue= setValue(key, number);
+		validateSettings(key, oldValue, number);
 	}	
 
-	protected boolean checkValue(String key, String value) {
-		return value.equals(fWorkingValues.get(key));
+	protected boolean checkValue(Key key, String value) {
+		return value.equals(getValue(key));
 	}
 	
-	/* (non-javadoc)
+	protected String getValue(Key key) {
+		if (fDisabledProjectSettings != null) {
+			return (String) fDisabledProjectSettings.get(key);
+		}
+		return key.getStoredValue(fLookupOrder, false, fManager);
+	}
+	
+	
+	protected boolean getBooleanValue(Key key) {
+		return Boolean.valueOf(getValue(key)).booleanValue();
+	}
+	
+	protected String setValue(Key key, String value) {
+		if (fDisabledProjectSettings != null) {
+			return (String) fDisabledProjectSettings.put(key, value);
+		}
+		String oldValue= getValue(key);
+		key.setStoredValue(fLookupOrder[0], value, fManager);
+		return oldValue;
+	}
+	
+	protected String setValue(Key key, boolean value) {
+		return setValue(key, String.valueOf(value));
+	}
+
+	/**
+	 * Returns the value as actually stored in the preference store.
+	 * @param key
+	 * @return the value as actually stored in the preference store.
+	 */
+	protected String getStoredValue(Key key) {
+		return key.getStoredValue(fLookupOrder, false, fManager);
+	}
+	
+	/**
 	 * Update fields and validate.
 	 * @param changedKey Key that changed, or null, if all changed.
 	 */	
-	protected abstract void validateSettings(String changedKey, String newValue);
+	protected abstract void validateSettings(Key changedKey, String oldValue, String newValue);
 	
 	
 	protected String[] getTokens(String text, String separator) {
@@ -295,183 +644,242 @@ public abstract class OptionsConfigurationBlock {
 			res[i]= tok.nextToken().trim();
 		}
 		return res;
-	}	
+	}
 
-
-	public boolean performOk(boolean enabled) {
-		String[] allKeys= getAllKeys();
-		Map actualOptions= getOptions(false);
-		
-		// preserve other options
-		boolean hasChanges= false;
-		for (int i= 0; i < allKeys.length; i++) {
-			String key= allKeys[i];
-			String oldVal= (String) actualOptions.get(key);
-			String val= null;
-			if (enabled) {
-				val= (String) fWorkingValues.get(key);
-				if (!val.equals(oldVal)) {
-					hasChanges= true;
-					actualOptions.put(key, val);
-				}
-			} else {
+	private boolean getChanges(IScopeContext currContext, List changedSettings) {
+		boolean needsBuild= false;
+		for (int i= 0; i < fAllKeys.length; i++) {
+			Key key= fAllKeys[i];
+			String oldVal= key.getStoredValue(currContext, null);
+			String val= key.getStoredValue(currContext, fManager);
+			if (val == null) {
 				if (oldVal != null) {
-					actualOptions.remove(key);
-					hasChanges= true;
+					changedSettings.add(key);
+					needsBuild |= !oldVal.equals(key.getStoredValue(fLookupOrder, true, fManager));
+				}
+			} else if (!val.equals(oldVal)) {
+				changedSettings.add(key);
+				needsBuild |= oldVal != null || !val.equals(key.getStoredValue(fLookupOrder, true, fManager));
+			}
+		}
+		return needsBuild;
+	}
+	
+	public void useProjectSpecificSettings(boolean enable) {
+		boolean hasProjectSpecificOption= fDisabledProjectSettings == null;
+		if (enable != hasProjectSpecificOption && fProject != null) {
+			if (enable) {
+				for (int i= 0; i < fAllKeys.length; i++) {
+					Key curr= fAllKeys[i];
+					String val= (String) fDisabledProjectSettings.get(curr);
+					curr.setStoredValue(fLookupOrder[0], val, fManager);
+				}
+				fDisabledProjectSettings= null;
+				updateControls();
+				validateSettings(null, null, null);
+			} else {
+				fDisabledProjectSettings= new IdentityHashMap();
+				for (int i= 0; i < fAllKeys.length; i++) {
+					Key curr= fAllKeys[i];
+					String oldSetting= curr.getStoredValue(fLookupOrder, false, fManager);
+					fDisabledProjectSettings.put(curr, oldSetting);
+					curr.setStoredValue(fLookupOrder[0], null, fManager); // clear project settings
 				}
 			}
 		}
+	}
+	
+	public boolean areSettingsEnabled() {
+		return fDisabledProjectSettings == null || fProject == null;
+	}
+	
+	
+	public boolean performOk() {
+		return processChanges(fContainer);
+	}
+	
+	public boolean performApply() {
+		return processChanges(null); // apply directly
+	}
+	
+	protected boolean processChanges(IWorkbenchPreferenceContainer container) {
+		IScopeContext currContext= fLookupOrder[0];
 		
-		
-		if (hasChanges) {
-			boolean doReParse = false;
-			String[] strings = getFullReParseDialogStrings(fProject == null);
+		List /* <Key>*/ changedOptions= new ArrayList();
+		boolean needsBuild= getChanges(currContext, changedOptions);
+		if (changedOptions.isEmpty()) {
+			return true;
+		}
+		if (needsBuild) {
+			int count= getRebuildCount();
+			if (count > fRebuildCount) {
+				needsBuild= false; // build already requested
+				fRebuildCount= count;
+			}
+		}
+
+		boolean doBuild= false;
+		if (needsBuild) {
+			String[] strings= getFullBuildDialogStrings(fProject == null);
 			if (strings != null) {
-				MessageDialog dialog = new MessageDialog(getShell(), strings[0], null, strings[1], MessageDialog.QUESTION, new String[] { IDialogConstants.YES_LABEL, IDialogConstants.NO_LABEL, IDialogConstants.CANCEL_LABEL }, 2);
+				MessageDialog dialog= new MessageDialog(getShell(), strings[0], null, strings[1], MessageDialog.QUESTION, new String[] { IDialogConstants.YES_LABEL, IDialogConstants.NO_LABEL, IDialogConstants.CANCEL_LABEL }, 2);
 				int res= dialog.open();
 				if (res == 0) {
-					doReParse = true;
+					doBuild= true;
 				} else if (res != 1) {
 					return false; // cancel pressed
 				}
 			}
-			setOptions(actualOptions);
-			if (doReParse) {
-				doFullReParse();
+		}
+		if (container != null) {
+			// no need to apply the changes to the original store: will be done by the page container
+			if (doBuild) { // post build
+				incrementRebuildCount();
+				// do a re-index?
+//				container.registerUpdateJob(CoreUtility.getBuildJob(fProject));
 			}
+		} else {
+			// apply changes right away
+			try {
+				fManager.applyChanges();
+			} catch (BackingStoreException e) {
+				CUIPlugin.getDefault().log(e);
+				return false;
+			}
+			if (doBuild) {
+				// do a re-index?
+//				CoreUtility.getBuildJob(fProject).schedule();
+			}
+			
 		}
 		return true;
 	}
 	
-	protected abstract String[] getFullBuildDialogStrings(boolean workspaceSettings);
-	protected abstract String[] getFullReParseDialogStrings(boolean workspaceSettings);
-		
-	protected void doFullBuild() {
-		ProgressMonitorDialog dialog= new ProgressMonitorDialog(getShell());
-		try {
-			dialog.run(true, true, new IRunnableWithProgress() { 
-				public void run(IProgressMonitor monitor) throws InvocationTargetException {
-					monitor.beginTask("", 1); //$NON-NLS-1$
-					try {
-						if (fProject != null) {
-							monitor.setTaskName(NLS.bind(PreferencesMessages.OptionsConfigurationBlock_buildproject_taskname, fProject.getElementName())); 
-							fProject.getProject().build(IncrementalProjectBuilder.FULL_BUILD, new SubProgressMonitor(monitor,1));
-						} else {
-							monitor.setTaskName(PreferencesMessages.OptionsConfigurationBlock_buildall_taskname); 
-							CUIPlugin.getWorkspace().build(IncrementalProjectBuilder.FULL_BUILD, new SubProgressMonitor(monitor,1));
-						}
-					} catch (CoreException e) {
-						throw new InvocationTargetException(e);
-					} finally {
-						monitor.done();
-					}
-				}
-			});
-		} catch (InterruptedException e) {
-			// cancelled by user
-		} catch (InvocationTargetException e) {
-			String title= PreferencesMessages.OptionsConfigurationBlock_builderror_title; 
-			String message= PreferencesMessages.OptionsConfigurationBlock_builderror_message; 
-			ExceptionHandler.handle(e, getShell(), title, message);
-		}
+	private final String[] getFullBuildDialogStrings(boolean workspaceSettings) {
+		// rebuild (re-index) is not implemented
+		// no builds triggered by our settings
+		return null;
 	}
-	
-	protected void doFullReParse() {
-		ProgressMonitorDialog dialog= new ProgressMonitorDialog(getShell());
-		try {
-			dialog.run(true, true, new IRunnableWithProgress() { 
-				public void run(IProgressMonitor monitor) throws InvocationTargetException {
-					monitor.beginTask("", 1); //$NON-NLS-1$
-					
-					if (fProject != null) {
-						monitor.setTaskName(NLS.bind(PreferencesMessages.OptionsConfigurationBlock_parseproject_taskname, fProject.getElementName())); 
-						reParseHierarchy(fProject.getResource(), monitor);
-					} else {
-						monitor.setTaskName(PreferencesMessages.OptionsConfigurationBlock_parseall_taskname); 
-						reParseHierarchy(CUIPlugin.getWorkspace().getRoot(), monitor);
-					}
-					
-					monitor.done();
-				}
-			});
-		} catch (InterruptedException e) {
-			// cancelled by user
-		} catch (InvocationTargetException e) {
-			String title= PreferencesMessages.OptionsConfigurationBlock_parseerror_title; 
-			String message= PreferencesMessages.OptionsConfigurationBlock_parseerror_message; 
-			ExceptionHandler.handle(e, getShell(), title, message);
-		}
-	}	
-	
-	protected void reParseHierarchy(IResource root, final IProgressMonitor monitor) {
-		try {
-			root.accept(
-				new IResourceProxyVisitor() {
-					public boolean visit(IResourceProxy proxy) {
-						switch(proxy.getType()) {
-						case IResource.FILE :
-							IFile file = (IFile)proxy.requestResource();
-	
-							if (CoreModel.isTranslationUnit(file)) {
-								CoreModel cModel = CoreModel.getDefault();
-								ITranslationUnit translationUnit = (ITranslationUnit)cModel.create(file);
-								
-								try {
-									IEditorInput input = EditorUtility.getEditorInput(file);
-									if (input != null) {
-										ITranslationUnit workingCopy = CUIPlugin.getDefault().getWorkingCopyManager().getWorkingCopy(input);
-										if (workingCopy != null) {
-                                            // We have a copy in an editor - use it
-                                            translationUnit = workingCopy;
-                                        } 
-									}
-								
-									translationUnit.makeConsistent(monitor, true /*forced*/);
-								} catch (CModelException e) {
-								}
-							}
-							
-							return false; // Do not look into file's structure 
-						}
-							
-						return true;
-					 }
-				}
-			, IResource.NONE);
-		} catch (CoreException e) {
-		}
-	}
-	
+			
 	public void performDefaults() {
-		fWorkingValues= getDefaultOptions();
+		for (int i= 0; i < fAllKeys.length; i++) {
+			Key curr= fAllKeys[i];
+			String defValue= curr.getStoredValue(fLookupOrder, true, fManager);
+			setValue(curr, defValue);
+		}
+		
+		settingsUpdated();
 		updateControls();
-		validateSettings(null, null);
+		validateSettings(null, null, null);
+	}
+
+	/**
+	 * @since 3.1
+	 */
+	public void performRevert() {
+		for (int i= 0; i < fAllKeys.length; i++) {
+			Key curr= fAllKeys[i];
+			String origValue= curr.getStoredValue(fLookupOrder, false, null);
+			setValue(curr, origValue);
+		}
+		
+		settingsUpdated();
+		updateControls();
+		validateSettings(null, null, null);
+	}
+	
+	public void dispose() {
 	}
 	
 	protected void updateControls() {
 		// update the UI
 		for (int i= fCheckBoxes.size() - 1; i >= 0; i--) {
-			Button curr= (Button) fCheckBoxes.get(i);
-			ControlData data= (ControlData) curr.getData();
-					
-			String currValue= (String) fWorkingValues.get(data.getKey());	
-			curr.setSelection(data.getSelection(currValue) == 0);			
+			updateCheckBox((Button) fCheckBoxes.get(i));
 		}
 		for (int i= fComboBoxes.size() - 1; i >= 0; i--) {
-			Combo curr= (Combo) fComboBoxes.get(i);
-			ControlData data= (ControlData) curr.getData();
-					
-			String currValue= (String) fWorkingValues.get(data.getKey());	
-			curr.select(data.getSelection(currValue));			
+			updateCombo((Combo) fComboBoxes.get(i));
 		}
 		for (int i= fTextBoxes.size() - 1; i >= 0; i--) {
-			Text curr= (Text) fTextBoxes.get(i);
-			String key= (String) curr.getData();
-			
-			String currValue= (String) fWorkingValues.get(key);
+			updateText((Text) fTextBoxes.get(i));
+		}
+	}
+	
+	protected void updateCombo(Combo curr) {
+		ControlData data= (ControlData) curr.getData();
+		
+		String currValue= getValue(data.getKey());	
+		curr.select(data.getSelection(currValue));					
+	}
+	
+	protected void updateCheckBox(Button curr) {
+		ControlData data= (ControlData) curr.getData();
+		
+		String currValue= getValue(data.getKey());	
+		curr.setSelection(data.getSelection(currValue) == 0);						
+	}
+	
+	protected void updateText(Text curr) {
+		Key key= (Key) curr.getData();
+		
+		String currValue= getValue(key);
+		if (currValue != null) {
 			curr.setText(currValue);
 		}
 	}
 	
+	protected Button getCheckBox(Key key) {
+		for (int i= fCheckBoxes.size() - 1; i >= 0; i--) {
+			Button curr= (Button) fCheckBoxes.get(i);
+			ControlData data= (ControlData) curr.getData();
+			if (key.equals(data.getKey())) {
+				return curr;
+			}
+		}
+		return null;		
+	}
 	
+	protected Combo getComboBox(Key key) {
+		for (int i= fComboBoxes.size() - 1; i >= 0; i--) {
+			Combo curr= (Combo) fComboBoxes.get(i);
+			ControlData data= (ControlData) curr.getData();
+			if (key.equals(data.getKey())) {
+				return curr;
+			}
+		}
+		return null;		
+	}
+	
+	protected Text getTextControl(Key key) {
+		for (int i= fTextBoxes.size() - 1; i >= 0; i--) {
+			Text curr= (Text) fTextBoxes.get(i);
+			ControlData data= (ControlData) curr.getData();
+			if (key.equals(data.getKey())) {
+				return curr;
+			}
+		}
+		return null;		
+	}
+	
+	protected Control findControl(Key key) {
+		Combo comboBox= getComboBox(key);
+		if (comboBox != null) {
+			return comboBox;
+		}
+		Button checkBox= getCheckBox(key);
+		if (checkBox != null) {
+			return checkBox;
+		}
+		Text text= getTextControl(key);
+		if (text != null) {
+			return text;
+		}
+		return null;
+	}
+	
+	protected void setComboEnabled(Key key, boolean enabled) {
+		Combo combo= getComboBox(key);
+		Label label= (Label) fLabels.get(combo);
+		combo.setEnabled(enabled);
+		label.setEnabled(enabled);
+	}
 }

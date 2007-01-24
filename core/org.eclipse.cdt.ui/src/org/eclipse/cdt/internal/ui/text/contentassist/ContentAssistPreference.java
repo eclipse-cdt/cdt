@@ -28,8 +28,8 @@ import org.eclipse.jface.util.PropertyChangeEvent;
 
 public class ContentAssistPreference {
 	
-	/** Preference key for content assist auto activation */
-	//public final static String AUTOACTIVATION=  "content_assist_autoactivation";
+//	/** Preference key for content assist auto activation (unused) */
+//	public final static String AUTOACTIVATION=  "content_assist_autoactivation";
 	/** Preference key for content assist auto activation delay */
 	public final static String AUTOACTIVATION_DELAY=  "content_assist_autoactivation_delay"; //$NON-NLS-1$
 	/** Preference key for content assist timeout delay (unused) */
@@ -52,14 +52,14 @@ public class ContentAssistPreference {
 	public final static String AUTOACTIVATION_TRIGGERS_ARROW= "content_assist_autoactivation_trigger_arrow"; //$NON-NLS-1$
 	public final static String AUTOACTIVATION_TRIGGERS_DOUBLECOLON= "content_assist_autoactivation_trigger_doublecolon"; //$NON-NLS-1$
 	
-	/** Preference key for visibility of proposals (unused) */
-	public final static String SHOW_DOCUMENTED_PROPOSALS= "content_assist_show_visible_proposals"; //$NON-NLS-1$
-	/** Preference key for alphabetic ordering of proposals */
-	public final static String ORDER_PROPOSALS= "content_assist_order_proposals"; //$NON-NLS-1$
-	/** Preference key for case sensitivity of propsals */
-	//public final static String CASE_SENSITIVITY= "content_assist_case_sensitivity";
-	/** Preference key for adding includes on code assist (unused) */
-	public final static String ADD_INCLUDE= "content_assist_add_import";	 //$NON-NLS-1$
+//	/** Preference key for visibility of proposals (unused) */
+//	public final static String SHOW_DOCUMENTED_PROPOSALS= "content_assist_show_visible_proposals"; //$NON-NLS-1$
+//	/** Preference key for alphabetic ordering of proposals (unused) */
+//	public final static String ORDER_PROPOSALS= "content_assist_order_proposals"; //$NON-NLS-1$
+//	/** Preference key for case sensitivity of propsals */
+//	public final static String CASE_SENSITIVITY= "content_assist_case_sensitivity";
+//	/** Preference key for adding includes on code assist (unused) */
+//	public final static String ADD_INCLUDE= "content_assist_add_import";	 //$NON-NLS-1$
 	/** Preference key for completion search scope (unused) */
 	public final static String CURRENT_FILE_SEARCH_SCOPE= "content_assist_current_file_search_scope";	 //$NON-NLS-1$
 	/** Preference key for completion search scope (unused) */
@@ -77,16 +77,16 @@ public class ContentAssistPreference {
 		return getColor(store, key, textTools.getColorManager());
 	}
 	
-	private static CCompletionProcessor2 getCProcessor(ContentAssistant assistant) {
+	private static CContentAssistProcessor getCProcessor(ContentAssistant assistant) {
 		IContentAssistProcessor p= assistant.getContentAssistProcessor(IDocument.DEFAULT_CONTENT_TYPE);
-		if (p instanceof CCompletionProcessor2)
-			return  (CCompletionProcessor2) p;
+		if (p instanceof CContentAssistProcessor)
+			return  (CContentAssistProcessor) p;
 		return null;
 	}
 	
 	private static void configureCProcessor(ContentAssistant assistant, IPreferenceStore store) {
-		CCompletionProcessor2 jcp= getCProcessor(assistant);
-		if (jcp == null)
+		CContentAssistProcessor ccp= getCProcessor(assistant);
+		if (ccp == null)
 			return;
 
 		String triggers = ""; //$NON-NLS-1$
@@ -99,19 +99,20 @@ public class ContentAssistPreference {
 		boolean useDoubleColonAsTrigger = store.getBoolean(AUTOACTIVATION_TRIGGERS_DOUBLECOLON);
 		if(useDoubleColonAsTrigger)
 			triggers += ":"; //$NON-NLS-1$
-		jcp.setCompletionProposalAutoActivationCharacters(triggers.toCharArray());
+		ccp.setCompletionProposalAutoActivationCharacters(triggers.toCharArray());
 					
-		boolean enabled= store.getBoolean(SHOW_DOCUMENTED_PROPOSALS);
-		//jcp.restrictProposalsToVisibility(enabled);
+//		boolean enabled;
+//		enabled= store.getBoolean(SHOW_DOCUMENTED_PROPOSALS);
+//		ccp.restrictProposalsToVisibility(enabled);
+//		
+//		enabled= store.getBoolean(CASE_SENSITIVITY);
+//		ccp.restrictProposalsToMatchingCases(enabled);
 		
-		//enabled= store.getBoolean(CASE_SENSITIVITY);
-		//jcp.restrictProposalsToMatchingCases(enabled);
+//		enabled= store.getBoolean(ORDER_PROPOSALS);
+//		ccp.orderProposalsAlphabetically(enabled);
 		
-		enabled= store.getBoolean(ORDER_PROPOSALS);
-		jcp.orderProposalsAlphabetically(enabled);
-		
-		enabled= store.getBoolean(ADD_INCLUDE);
-		jcp.allowAddingIncludes(enabled);		
+//		enabled= store.getBoolean(ADD_INCLUDE);
+//		ccp.allowAddingIncludes(enabled);		
 	}
 
 	
@@ -157,8 +158,8 @@ public class ContentAssistPreference {
 	
 	
 	private static void changeCProcessor(ContentAssistant assistant, IPreferenceStore store, String key) {
-		CCompletionProcessor2 jcp= getCProcessor(assistant);
-		if (jcp == null)
+		CContentAssistProcessor ccp= getCProcessor(assistant);
+		if (ccp == null)
 			return;
 			
 		if ( (AUTOACTIVATION_TRIGGERS_DOT.equals(key)) 
@@ -177,22 +178,23 @@ public class ContentAssistPreference {
 			if (useDoubleColonAsTrigger){
 				triggers += ":"; //$NON-NLS-1$
 			}
-			jcp.setCompletionProposalAutoActivationCharacters(triggers.toCharArray());
-		} else if (SHOW_DOCUMENTED_PROPOSALS.equals(key)) {
-			//boolean enabled= store.getBoolean(SHOW_DOCUMENTED_PROPOSALS);
-			//jcp.restrictProposalsToVisibility(enabled);
-		} 
-		//else if (CASE_SENSITIVITY.equals(key)) {
-		//	boolean enabled= store.getBoolean(CASE_SENSITIVITY);
-		//	jcp.restrictProposalsToMatchingCases(enabled);
-		// } 
-		else if (ORDER_PROPOSALS.equals(key)) {
-			boolean enable= store.getBoolean(ORDER_PROPOSALS);
-			jcp.orderProposalsAlphabetically(enable);
-		} else if (ADD_INCLUDE.equals(key)) {
-			boolean enabled= store.getBoolean(ADD_INCLUDE);
-			jcp.allowAddingIncludes(enabled);
+			ccp.setCompletionProposalAutoActivationCharacters(triggers.toCharArray());
 		}
+//		else if (SHOW_DOCUMENTED_PROPOSALS.equals(key)) {
+//			boolean enabled= store.getBoolean(SHOW_DOCUMENTED_PROPOSALS);
+//			ccp.restrictProposalsToVisibility(enabled);
+//		}
+//		else if (CASE_SENSITIVITY.equals(key)) {
+//			boolean enabled= store.getBoolean(CASE_SENSITIVITY);
+//			ccp.restrictProposalsToMatchingCases(enabled);
+//		}
+//		else if (ORDER_PROPOSALS.equals(key)) {
+//			boolean enable= store.getBoolean(ORDER_PROPOSALS);
+//			ccp.orderProposalsAlphabetically(enable);
+//		} else if (ADD_INCLUDE.equals(key)) {
+//			boolean enabled= store.getBoolean(ADD_INCLUDE);
+//			ccp.allowAddingIncludes(enabled);
+//		}
 	}
 	
 	/**

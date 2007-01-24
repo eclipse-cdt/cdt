@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -58,6 +58,8 @@ public final class CHeuristicScanner implements Symbols {
 	private static final char EQUAL= '=';
 	private static final char LANGLE= '<';
 	private static final char RANGLE= '>';
+	private static final char DOT= '.';
+	private static final char MINUS= '-';
 
 	/**
 	 * Specifies the stop condition, upon which the <code>scanXXX</code> methods will decide whether
@@ -401,6 +403,10 @@ public final class CHeuristicScanner implements Symbols {
 				return TokenLESSTHAN;
 			case RANGLE:
 				return TokenGREATERTHAN;
+			case DOT:
+				return TokenDOT;
+			case MINUS:
+				return TokenMINUS;
 		}
 
 		// else
@@ -551,13 +557,31 @@ public final class CHeuristicScanner implements Symbols {
 	 * @return the matching peer character position, or <code>NOT_FOUND</code>
 	 */
 	public int findOpeningPeer(int start, char openingPeer, char closingPeer) {
+		return findOpeningPeer(start, CHeuristicScanner.UNBOUND, openingPeer, closingPeer);
+	}
+
+	/**
+	 * Returns the position of the opening peer character (backward search). Any scopes introduced by closing peers
+	 * are skipped. All peers accounted for must reside in the default partition.
+	 *
+	 * <p>Note that <code>start</code> must not point to the closing peer, but to the first
+	 * character being searched.</p>
+	 *
+	 * @param start the start position
+	 * @param bound the bound
+	 * @param openingPeer the opening peer character (e.g. '{')
+	 * @param closingPeer the closing peer character (e.g. '}')
+	 * @return the matching peer character position, or <code>NOT_FOUND</code>
+	 */
+	public int findOpeningPeer(int start, int bound, char openingPeer, char closingPeer) {
 		Assert.isLegal(start < fDocument.getLength());
 
 		try {
+			final CharacterMatch match= new CharacterMatch(new char[] {openingPeer, closingPeer});
 			int depth= 1;
 			start += 1;
 			while (true) {
-				start= scanBackward(start - 1, UNBOUND, new CharacterMatch(new char[] {openingPeer, closingPeer}));
+				start= scanBackward(start - 1, bound, match);
 				if (start == NOT_FOUND)
 					return NOT_FOUND;
 
@@ -587,7 +611,7 @@ public final class CHeuristicScanner implements Symbols {
 		if (offset < 1 || offset >= fDocument.getLength())
 			return null;
 
-		int begin= findOpeningPeer(offset - 1, LBRACE, RBRACE);
+		int begin= findOpeningPeer(offset - 1, CHeuristicScanner.UNBOUND, LBRACE, RBRACE);
 		int end= findClosingPeer(offset, LBRACE, RBRACE);
 		if (begin == NOT_FOUND || end == NOT_FOUND)
 			return null;
@@ -821,7 +845,7 @@ public final class CHeuristicScanner implements Symbols {
 			case TokenELSE:
 				return true;
 			case TokenRPAREN:
-				position= findOpeningPeer(fPos, LPAREN, RPAREN);
+				position= findOpeningPeer(fPos, CHeuristicScanner.UNBOUND, LPAREN, RPAREN);
 				if (position > 0) {
 					switch (previousToken(position - 1, bound)) {
 						case TokenIF:
@@ -877,6 +901,33 @@ public final class CHeuristicScanner implements Symbols {
 				token= previousToken(getPosition(), bound);
 			}
 			return token == Symbols.TokenNEW;
+		}
+		return false;
+	}
+
+	/**
+	 * Returns <code>true</code> if the document, when scanned backwards from <code>start</code>
+	 * appears to contain a field reference, i.e. a (optional) name preceded by a <code>.</code> or <code>-&gt;</code>
+	 * The <code>start</code> must be before the operator.
+	 * 
+	 * @param start the position after the field reference operator.
+	 * @param bound the first position in <code>fDocument</code> to not consider any more, with
+	 *        <code>bound</code> &lt; <code>start</code>, or <code>UNBOUND</code>
+	 * @return <code>true</code> if the current position looks like a field reference
+	 */
+	public boolean looksLikeFieldReferenceBackward(int start, int bound) {
+		int token= previousToken(start - 1, bound);
+		if (token == Symbols.TokenIDENT) { // field name
+			token= previousToken(getPosition(), bound);
+		}
+		if (token == Symbols.TokenDOT) {
+			return true;
+		}
+		if (token == Symbols.TokenGREATERTHAN) {
+			token= previousToken(getPosition(), bound);
+			if (token == Symbols.TokenMINUS) {
+				return true;
+			}
 		}
 		return false;
 	}

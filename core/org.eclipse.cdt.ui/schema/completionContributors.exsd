@@ -11,6 +11,11 @@
    </annotation>
 
    <element name="extension">
+      <annotation>
+         <appInfo>
+            <meta.element deprecated="true" replacement="completionProposalComputer" />
+         </appInfo>
+      </annotation>
       <complexType>
          <sequence>
             <element ref="contributor" minOccurs="1" maxOccurs="unbounded"/>

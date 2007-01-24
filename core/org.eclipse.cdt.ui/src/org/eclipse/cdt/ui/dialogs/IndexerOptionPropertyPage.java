@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2006 IBM Corporation and others.
+ * Copyright (c) 2004, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,17 +7,14 @@
  *
  * Contributors:
  *     IBM Corp. - Rational Software - initial implementation
+ *     Anton Leherbauer (Wind River Systems)
  *******************************************************************************/
 
 package org.eclipse.cdt.ui.dialogs;
 
-import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.model.CoreModel;
-import org.eclipse.cdt.core.model.ICProject;
-import org.eclipse.cdt.internal.ui.ICHelpContextIds;
-import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
@@ -25,6 +22,13 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.PropertyPage;
+
+import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.model.CoreModel;
+import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.ui.CUIPlugin;
+
+import org.eclipse.cdt.internal.ui.ICHelpContextIds;
 
 public class IndexerOptionPropertyPage extends PropertyPage {
 
@@ -72,11 +76,13 @@ public class IndexerOptionPropertyPage extends PropertyPage {
 	}
 	
 	public IProject getProject(){
-		Object tempElement = getElement();
-		IProject project = null;
-		if (tempElement != null && tempElement instanceof IProject)
+		IAdaptable tempElement = getElement();
+		IProject project;
+		if (tempElement instanceof IProject) {
 			project = (IProject) tempElement;
-			
+		} else {
+			project = (IProject)tempElement.getAdapter(IProject.class);
+		}
 		return project;
 	}
 

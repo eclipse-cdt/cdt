@@ -1,5 +1,5 @@
 /**********************************************************************
- * Copyright (c) 2004, 2005 Intel Corporation and others.
+ * Copyright (c) 2004, 2007 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  * 
  * Contributors: 
  *     Intel Corporation - Initial API and implementation
+ *     Anton Leherbauer (Wind River Systems)
  **********************************************************************/
 package org.eclipse.cdt.ui.dialogs;
 
@@ -14,20 +15,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.eclipse.cdt.core.model.ITranslationUnit;
-import org.eclipse.cdt.internal.ui.CHelpProviderManager;
-import org.eclipse.cdt.internal.ui.CPluginImages;
-import org.eclipse.cdt.internal.ui.CUIMessages;
-import org.eclipse.cdt.internal.ui.text.CHelpBookDescriptor;
-import org.eclipse.cdt.internal.ui.util.ImageDescriptorRegistry;
-import org.eclipse.cdt.internal.ui.util.PixelConverter;
-import org.eclipse.cdt.internal.ui.wizards.dialogfields.CheckedListDialogField;
-import org.eclipse.cdt.internal.ui.wizards.dialogfields.DialogField;
-import org.eclipse.cdt.internal.ui.wizards.dialogfields.LayoutUtil;
-import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.cdt.ui.text.ICHelpInvocationContext;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.SWT;
@@ -37,6 +27,20 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.dialogs.PropertyPage;
+
+import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.text.ICHelpInvocationContext;
+
+import org.eclipse.cdt.internal.ui.CHelpProviderManager;
+import org.eclipse.cdt.internal.ui.CPluginImages;
+import org.eclipse.cdt.internal.ui.CUIMessages;
+import org.eclipse.cdt.internal.ui.text.CHelpBookDescriptor;
+import org.eclipse.cdt.internal.ui.util.ImageDescriptorRegistry;
+import org.eclipse.cdt.internal.ui.util.PixelConverter;
+import org.eclipse.cdt.internal.ui.wizards.dialogfields.CheckedListDialogField;
+import org.eclipse.cdt.internal.ui.wizards.dialogfields.DialogField;
+import org.eclipse.cdt.internal.ui.wizards.dialogfields.LayoutUtil;
 
 /**
  * This class defines a project property page 
@@ -155,8 +159,16 @@ public class CHelpConfigurationPropertyPage extends PropertyPage implements
 	 */
 	protected Control createContents(Composite parent) {
 		fCHelpSettingsDisplay= new CHelpSettingsDisplay();
-		fCHelpSettingsDisplay.init((IResource)getElement());
+		fCHelpSettingsDisplay.init(getResource());
 		return fCHelpSettingsDisplay.createControl(parent);
+	}
+
+	private IResource getResource() {
+		IAdaptable element= getElement();
+		if (element instanceof IResource) {
+			return (IResource)element;
+		}
+		return (IResource)element.getAdapter(IResource.class);
 	}
 
 	public boolean performOk() {

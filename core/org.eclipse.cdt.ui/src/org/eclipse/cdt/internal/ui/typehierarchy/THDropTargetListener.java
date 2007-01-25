@@ -21,18 +21,18 @@ import org.eclipse.swt.dnd.DND;
 import org.eclipse.swt.dnd.DropTargetEvent;
 import org.eclipse.swt.dnd.DropTargetListener;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.ui.IWorkbenchWindow;
 
 import org.eclipse.cdt.core.model.ICElement;
 
 
 public class THDropTargetListener implements DropTargetListener {
-    
-    private THViewPart fTypeHierarchy;
 	private ICElement fInput;
 	private boolean fEnabled= true;
+	private IWorkbenchWindow fWindow;
 
     public THDropTargetListener(THViewPart view) {
-    	fTypeHierarchy= view;
+    	fWindow= view.getSite().getWorkbenchWindow();
     }
     
     public void setEnabled(boolean val) {
@@ -87,7 +87,7 @@ public class THDropTargetListener implements DropTargetListener {
             Display.getCurrent().beep();
         }
         else {
-            fTypeHierarchy.setInput(fInput);
+        	TypeHierarchyUI.open(fInput, fWindow);
         }
     }
 

@@ -76,13 +76,11 @@ public class TypeHierarchyBaseTest extends BaseUITestCase {
 	}	
 
 	protected void openTypeHierarchy(CEditor editor) {
-		TypeHierarchyUI.setIsJUnitTest(true);
 		TypeHierarchyUI.open(editor, (ITextSelection) editor.getSelectionProvider().getSelection());
 		runEventQueue(200);
 	}
 
 	protected void openTypeHierarchy(CEditor editor, int mode) {
-		TypeHierarchyUI.setIsJUnitTest(true);
 		TypeHierarchyUI.open(editor, (ITextSelection) editor.getSelectionProvider().getSelection());
 		runEventQueue(0);
 		THViewPart th= null;

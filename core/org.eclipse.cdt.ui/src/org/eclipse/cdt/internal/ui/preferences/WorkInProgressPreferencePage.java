@@ -86,7 +86,6 @@ public class WorkInProgressPreferencePage extends PreferencePage implements IWor
 
 		// Add your controls here
 		addCheckBox(result, "Use new model builder", CCorePlugin.PREF_USE_NEW_MODEL_BUILDER); //$NON-NLS-1$
-		addCheckBox(result, "Show context menus for type hierarchy", "showCtxMenuTypeHierarchy"); //$NON-NLS-1$ //$NON-NLS-2$
 		
 		applyDialogFont(result);
 		return result;

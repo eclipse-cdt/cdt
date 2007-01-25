@@ -188,6 +188,7 @@ public class CElementImageDescriptor extends CompositeImageDescriptor {
 		drawTopRight();
 		drawBottomRight();
 		drawBottomLeft();
+		drawTopLeft();
 	}	
 	
 	private void drawTopRight() {		
@@ -207,10 +208,6 @@ public class CElementImageDescriptor extends CompositeImageDescriptor {
 			data= CPluginImages.DESC_OVR_STATIC.getImageData();
 			x-= data.width;
 			drawImage(data, x, 0);
-		} 
-		if ((fFlags & DEFINES) != 0) {
-			data= CPluginImages.DESC_OVR_DEFINES.getImageData();
-			drawImage(data, 0, 0);
 		} 
 		if ((fFlags & TEMPLATE) != 0) {
 			data= CPluginImages.DESC_OVR_TEMPLATE.getImageData();
@@ -260,6 +257,14 @@ public class CElementImageDescriptor extends CompositeImageDescriptor {
 //		}		
 	}		
 	
+	private void drawTopLeft() {
+		ImageData data= null;
+		if ((fFlags & DEFINES) != 0) {
+			data= CPluginImages.DESC_OVR_DEFINES.getImageData();
+			drawImage(data, 0, 0);
+		} 
+	}		
+
 	private void drawBottomLeft() {
 		Point size= getSize();
 		int x= 0;

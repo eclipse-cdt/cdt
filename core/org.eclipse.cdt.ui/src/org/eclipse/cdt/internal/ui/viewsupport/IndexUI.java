@@ -72,7 +72,7 @@ public class IndexUI {
 						String elementName= element.getElementName();
 						int idx= elementName.lastIndexOf(":")+1; //$NON-NLS-1$
 						ISourceRange pos= sf.getSourceRange();
-						IRegion region= new Region(pos.getIdStartPos()+idx, pos.getIdLength());
+						IRegion region= new Region(pos.getIdStartPos()+idx, pos.getIdLength()-idx);
 						IPositionConverter converter= CCorePlugin.getPositionTrackerManager().findPositionConverter(tu, file.getTimestamp());
 						if (converter != null) {
 							region= converter.actualToHistoric(region);

@@ -174,7 +174,7 @@ public class THHistoryListAction extends Action {
 		HistoryListDialog dialog= new HistoryListDialog(fView.getSite().getShell(), historyEntries);
 		if (dialog.open() == Window.OK) {
 			fView.setHistoryEntries(dialog.getRemaining());
-			fView.setInput(dialog.getResult());
+			fView.setInput(dialog.getResult(), null);
 		}
 	}
 

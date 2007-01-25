@@ -27,7 +27,6 @@ import org.eclipse.ui.dialogs.PropertyDialogAction;
 import org.eclipse.ui.part.Page;
 
 import org.eclipse.cdt.core.model.ICElement;
-import org.eclipse.cdt.ui.CUIPlugin;
 
 import org.eclipse.cdt.internal.ui.IContextMenuConstants;
 import org.eclipse.cdt.internal.ui.callhierarchy.CHViewPart;
@@ -101,19 +100,13 @@ public class OpenViewActionGroup extends ActionGroup {
 
 		fOpenTypeHierarchy= new OpenTypeHierarchyAction(part);
 		fOpenTypeHierarchy.setActionDefinitionId(ICEditorActionDefinitionIds.OPEN_TYPE_HIERARCHY);
-		if (useTypeHierarchy()) {
-			part.setAction("OpenTypeHierarchy", fOpenTypeHierarchy); //$NON-NLS-1$
-		}
+		part.setAction("OpenTypeHierarchy", fOpenTypeHierarchy); //$NON-NLS-1$
 		
         fOpenCallHierarchy= new OpenCallHierarchyAction(part);
         fOpenCallHierarchy.setActionDefinitionId(ICEditorActionDefinitionIds.OPEN_CALL_HIERARCHY);
         part.setAction("OpenCallHierarchy", fOpenCallHierarchy); //$NON-NLS-1$
 
 		initialize(part.getEditorSite());
-	}
-
-	private boolean useTypeHierarchy() {
-		return CUIPlugin.getDefault().getPluginPreferences().getBoolean("showCtxMenuTypeHierarchy"); //$NON-NLS-1$
 	}
 
 	private void createSiteActions(IWorkbenchSite site) {
@@ -172,7 +165,7 @@ public class OpenViewActionGroup extends ActionGroup {
 	public void fillContextMenu(IMenuManager menu) {
 		super.fillContextMenu(menu);
 		if (!fEditorIsOwner) {
-			if (useTypeHierarchy() && !fIsTypeHiararchyViewerOwner && fOpenTypeHierarchy.isEnabled()) {
+			if (!fIsTypeHiararchyViewerOwner && fOpenTypeHierarchy.isEnabled()) {
 				menu.appendToGroup(fGroupName, fOpenTypeHierarchy);
 			}
 			if (!fIsCallHiararchyViewerOwner && fOpenCallHierarchy.isEnabled()) {

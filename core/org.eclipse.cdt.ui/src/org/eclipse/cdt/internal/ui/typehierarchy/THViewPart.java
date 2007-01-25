@@ -185,20 +185,20 @@ public class THViewPart extends ViewPart {
         updateActionEnablement();
     }
     
-    void setInput(ICElement input) {
-    	if (input == null) {
+    void setInput(ICElement inputType, ICElement inputMember) {
+    	if (inputType == null) {
             setMessage(Messages.THViewPart_instruction);
             fHierarchyTreeViewer.setInput(null);
             fMemberViewer.setInput(null);
             return;
     	}
         fShowsMessage= false;
-        fModel.setInput(input);
+        fModel.setInput(inputType, inputMember);
         fHierarchyTreeViewer.setInput(fModel);
         fMemberViewer.setInput(fModel);
         fPagebook.showPage(fSplitter);
         updateDescription();
-    	updateHistory(input);
+    	updateHistory(inputType);
     	updateActionEnablement();
     	fModel.computeGraph();
     }
@@ -365,7 +365,7 @@ public class THViewPart extends ViewPart {
 				});
 				menu.appendToGroup(IContextMenuConstants.GROUP_OPEN, new Action(label) {
 					public void run() {
-						setInput(elem);
+						setInput(elem, null);
 					}
 				});
 			}

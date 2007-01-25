@@ -219,24 +219,26 @@ class THGraph {
 			THGraphNode graphNode= addNode(elem);
 			try {
 				IBinding binding = IndexUI.elementToBinding(index, elem);
-				IIndexName[] names= index.findNames(binding, IIndex.FIND_REFERENCES | IIndex.FIND_DEFINITIONS);
-				for (int i = 0; i < names.length; i++) {
-					if (monitor.isCanceled()) {
-						return;
-					}
-					IIndexName indexName = names[i];
-					if (indexName.isBaseSpecifier()) {
-						IIndexName subClassDef= indexName.getEnclosingDefinition();
-						if (subClassDef != null) {
-							IBinding subClass= index.findBinding(subClassDef);
-							ICElementHandle[] subClassElems= IndexUI.findRepresentative(index, subClass);
-							if (subClassElems.length > 0) {
-								ICElementHandle subClassElem= subClassElems[0];
-								THGraphNode subGraphNode= addNode(subClassElem);
-								addMembers(index, subGraphNode, subClass);							
-								addEdge(subGraphNode, graphNode);
-								if (handled.add(subClassElem)) {
-									stack.add(subClassElem);
+				if (binding != null) {
+					IIndexName[] names= index.findNames(binding, IIndex.FIND_REFERENCES | IIndex.FIND_DEFINITIONS);
+					for (int i = 0; i < names.length; i++) {
+						if (monitor.isCanceled()) {
+							return;
+						}
+						IIndexName indexName = names[i];
+						if (indexName.isBaseSpecifier()) {
+							IIndexName subClassDef= indexName.getEnclosingDefinition();
+							if (subClassDef != null) {
+								IBinding subClass= index.findBinding(subClassDef);
+								ICElementHandle[] subClassElems= IndexUI.findRepresentative(index, subClass);
+								if (subClassElems.length > 0) {
+									ICElementHandle subClassElem= subClassElems[0];
+									THGraphNode subGraphNode= addNode(subClassElem);
+									addMembers(index, subGraphNode, subClass);							
+									addEdge(subGraphNode, graphNode);
+									if (handled.add(subClassElem)) {
+										stack.add(subClassElem);
+									}
 								}
 							}
 						}

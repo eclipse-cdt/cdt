@@ -53,7 +53,7 @@ public class THHistoryAction extends Action {
 	 * @see Action#run()
 	 */
 	public void run() {
-		fViewPart.setInput(fElement);
+		fViewPart.setInput(fElement, null);
 	}
 	
 }

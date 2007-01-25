@@ -92,7 +92,7 @@ class THHierarchyModel {
 
 	public void setShowInheritedMembers(boolean showInheritedMembers) {
 		fShowInheritedMembers = showInheritedMembers;
-		computeSelectedMember();
+		updateSelectedMember();
 		updateImplementors();
 	}
 
@@ -107,9 +107,11 @@ class THHierarchyModel {
 //		
 //	}
 
-	synchronized public void setInput(ICElement input) {
+	synchronized public void setInput(ICElement input, ICElement member) {
 		stopGraphComputation();
 		fInput= input;
+		fSelectedMember= member;
+		fMemberSignatureToSelect= TypeHierarchyUI.getLocalElementSignature(fSelectedMember);
 		fRootNodes= null;
 		fSelectedTypeNode= null;
 		fTypeToSelect= input;
@@ -223,14 +225,14 @@ class THHierarchyModel {
 		}
 		if (fSelectedTypeNode != null) {
 			fTypeToSelect= fSelectedTypeNode.getElement();
-			computeSelectedMember();
+			updateSelectedMember();
 		}
 		
 		fRootNodes= (THNode[]) roots.toArray(new THNode[roots.size()]);
 		updateImplementors();
 	}
 
-	private void computeSelectedMember() {
+	private void updateSelectedMember() {
 		ICElement oldSelection= fSelectedMember;
 		fSelectedMember= null;
 		if (fSelectedTypeNode != null && fMemberSignatureToSelect != null) {
@@ -315,7 +317,7 @@ class THHierarchyModel {
 		if (node != null) {
 			fTypeToSelect= node.getElement();
 		}
-		computeSelectedMember();
+		updateSelectedMember();
 		updateImplementors();
 	}
 
@@ -357,7 +359,7 @@ class THHierarchyModel {
 	}
 
 	private boolean isImplementor(ICElement element) {
-		if (element == null || fSelectedMember == null) {
+		if (element == null || fSelectedMember == null || fMemberSignatureToSelect == null) {
 			return false;
 		}
 		THGraphNode gnode= fGraph.getNode(element);
@@ -369,8 +371,7 @@ class THHierarchyModel {
 					if (member == fSelectedMember) {
 						return true;
 					}
-					if (fMemberSignatureToSelect != null &&
-							fMemberSignatureToSelect.equals(TypeHierarchyUI.getLocalElementSignature(member))) {
+					if (fMemberSignatureToSelect.equals(TypeHierarchyUI.getLocalElementSignature(member))) {
 						return true;
 					}
 				}

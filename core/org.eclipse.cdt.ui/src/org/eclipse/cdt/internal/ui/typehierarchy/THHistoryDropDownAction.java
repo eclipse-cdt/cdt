@@ -36,7 +36,7 @@ public class THHistoryDropDownAction extends Action implements IMenuCreator {
 			
 		public void run() {
 			fView.setHistoryEntries(new ICElement[0]);
-			fView.setInput(null);
+			fView.setInput(null, null);
 		}
 	}
 

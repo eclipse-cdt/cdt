@@ -307,14 +307,10 @@ public class EditorUtility {
 			}
 			// no translation unit - still try to get a sensible marker resource
 			// from the associated element
-			if (context instanceof IWorkingCopy && ((IWorkingCopy) context).isWorkingCopy()) {
-				context= ((IWorkingCopy) context).getOriginalElement();
+			if (cproject != null) {
+				IResource markerResource= cproject.getProject();
+				return new ExternalEditorInput(new FileStorage(location), markerResource);
 			}
-			IResource markerResource= null;
-			if (context != null) {
-				markerResource= context.getUnderlyingResource();
-			}
-			return new ExternalEditorInput(new FileStorage(location), markerResource);
 		}
 		return new ExternalEditorInput(new FileStorage(location));
 	}

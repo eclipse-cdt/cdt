@@ -135,7 +135,7 @@ public class ExternalEditorInput implements ITranslationUnitEditorInput {
 	 * and a reference to a resource which holds the markers for the external file.
 	 */
 	public ExternalEditorInput(IStorage exFile, IResource markerResource)  {
-		this.externalFile = exFile ;
+		this(exFile, exFile.getFullPath());
 		this.markerResource = markerResource ;
 	}
 

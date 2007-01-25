@@ -122,7 +122,7 @@ public class TypeHierarchyBaseTest extends BaseUITestCase {
 			runEventQueue(10);
 		}
 		assertNotNull(th);
-		return th.getMethodViewer();
+		return th.getMemberViewer();
 	}
 
 	protected TreeItem checkTreeNode(Tree tree, int i0, String label) {

@@ -58,9 +58,11 @@ class THHierarchyModel {
 	private boolean fShowInheritedMembers;
 	
 	private THGraph fGraph;
-	private Object[] fRootNodes;
-	private THNode fHierarchySelection;
-	private ICElement fHierarchySelectionToRestore;
+	private THNode[] fRootNodes;
+	private THNode fSelectedTypeNode;
+	private ICElement fTypeToSelect;
+	private ICElement fSelectedMember;
+	private String fMemberSignatureToSelect;
 	
 	private Job fJob;
 	private Display fDisplay;
@@ -90,6 +92,8 @@ class THHierarchyModel {
 
 	public void setShowInheritedMembers(boolean showInheritedMembers) {
 		fShowInheritedMembers = showInheritedMembers;
+		computeSelectedMember();
+		updateImplementors();
 	}
 
 	public Object[] getHierarchyRootElements() {
@@ -107,8 +111,8 @@ class THHierarchyModel {
 		stopGraphComputation();
 		fInput= input;
 		fRootNodes= null;
-		fHierarchySelection= null;
-		fHierarchySelectionToRestore= input;
+		fSelectedTypeNode= null;
+		fTypeToSelect= input;
 	}
 
 	synchronized public void computeGraph() {
@@ -198,7 +202,7 @@ class THHierarchyModel {
 		
 		while(!stack.isEmpty()) {
 			THNode node= (THNode) stack.remove(stack.size()-1);
-			THGraphNode gnode= fGraph.getNode(node.getRepresentedDeclaration());
+			THGraphNode gnode= fGraph.getNode(node.getElement());
 			List edges= fwd ? gnode.getOutgoing() : gnode.getIncoming();
 			if (edges.isEmpty()) {
 				leaves.add(node);
@@ -213,25 +217,53 @@ class THHierarchyModel {
 				}
 			}
 		}
-		fHierarchySelection= newSelection[0];
-		if (fHierarchySelection == null) {
-			fHierarchySelection= newSelection[1];
+		fSelectedTypeNode= newSelection[0];
+		if (fSelectedTypeNode == null) {
+			fSelectedTypeNode= newSelection[1];
 		}
-		if (fHierarchySelection != null) {
-			fHierarchySelectionToRestore= fHierarchySelection.getRepresentedDeclaration();
+		if (fSelectedTypeNode != null) {
+			fTypeToSelect= fSelectedTypeNode.getElement();
+			computeSelectedMember();
 		}
-		fRootNodes= roots.toArray();
+		
+		fRootNodes= (THNode[]) roots.toArray(new THNode[roots.size()]);
+		updateImplementors();
+	}
+
+	private void computeSelectedMember() {
+		ICElement oldSelection= fSelectedMember;
+		fSelectedMember= null;
+		if (fSelectedTypeNode != null && fMemberSignatureToSelect != null) {
+			THGraphNode gnode= fGraph.getNode(fSelectedTypeNode.getElement());
+			if (gnode != null) {
+				ICElement[] members= gnode.getMembers(fShowInheritedMembers);
+				for (int i = 0; i < members.length; i++) {
+					ICElement member= members[i];
+					if (member.equals(oldSelection)) {
+						fSelectedMember= member;
+						return;
+					}
+				}
+				for (int i = 0; i < members.length; i++) {
+					ICElement member= members[i];
+					if (fMemberSignatureToSelect.equals(TypeHierarchyUI.getLocalElementSignature(member))) {
+						fSelectedMember= member;
+						return;
+					}
+				}
+			}
+		}	
 	}
 
 	private THNode createNode(THNode[] newSelection, THNode parent, THGraphNode gnode) {
 		ICElement element = gnode.getElement();
 		THNode node= new THNode(parent, element);
 		if (newSelection[0] == null) {
-			if (node.equals(fHierarchySelection)) {
+			if (node.equals(fSelectedTypeNode)) {
 				newSelection[0]= node;
 			}
 			else if (newSelection[1] == null) {
-				if (element.equals(fHierarchySelectionToRestore)) {
+				if (element.equals(fTypeToSelect)) {
 					newSelection[1]= node;
 				}
 			}
@@ -250,8 +282,8 @@ class THHierarchyModel {
 						fView.setMessage(Messages.THHierarchyModel_errorComputingHierarchy);
 					}
 					else {
-						if (fHierarchySelectionToRestore == fInput) {
-							fHierarchySelectionToRestore= inputNode.getElement();
+						if (fTypeToSelect == fInput) {
+							fTypeToSelect= inputNode.getElement();
 						}
 						fInput= inputNode.getElement();
 					}
@@ -275,24 +307,79 @@ class THHierarchyModel {
 	}
 
 	public THNode getSelectionInHierarchy() {
-		return fHierarchySelection;
+		return fSelectedTypeNode;
 	}
 
 	public void onHierarchySelectionChanged(THNode node) {
-		fHierarchySelection= node;
+		fSelectedTypeNode= node;
 		if (node != null) {
-			fHierarchySelectionToRestore= node.getRepresentedDeclaration();
+			fTypeToSelect= node.getElement();
 		}
+		computeSelectedMember();
+		updateImplementors();
 	}
 
 	public Object[] getMembers() {
-		if (fHierarchySelection != null) {
-			THGraphNode gnode= fGraph.getNode(fHierarchySelection.getRepresentedDeclaration());
+		if (fSelectedTypeNode != null) {
+			THGraphNode gnode= fGraph.getNode(fSelectedTypeNode.getElement());
 			Object[] result= gnode.getMembers(fShowInheritedMembers);
 			if (result != null) {
 				return result;
 			}
 		}
 		return NO_CHILDREN;
+	}
+
+	public void onMemberSelectionChanged(ICElement elem) {
+		fSelectedMember= elem;
+		if (fSelectedMember != null) {
+			fMemberSignatureToSelect= TypeHierarchyUI.getLocalElementSignature(fSelectedMember);
+		}
+		updateImplementors();
+	}
+
+	private void updateImplementors() {
+		if (fRootNodes != null) {
+			for (int i = 0; i < fRootNodes.length; i++) {
+				THNode node = fRootNodes[i];
+				updateImplementors(node);
+			}
+		}
+	}
+
+	private void updateImplementors(THNode node) {
+		node.setIsImplementor(isImplementor(node.getElement()));
+		THNode[] children= node.getChildren();
+		for (int i = 0; i < children.length; i++) {
+			THNode child = children[i];
+			updateImplementors(child);
+		}
+	}
+
+	private boolean isImplementor(ICElement element) {
+		if (element == null || fSelectedMember == null) {
+			return false;
+		}
+		THGraphNode gnode= fGraph.getNode(element);
+		if (gnode != null) {
+			ICElement[] members= gnode.getMembers(false);
+			if (members != null) {
+				for (int i = 0; i < members.length; i++) {
+					ICElement member = members[i];
+					if (member == fSelectedMember) {
+						return true;
+					}
+					if (fMemberSignatureToSelect != null &&
+							fMemberSignatureToSelect.equals(TypeHierarchyUI.getLocalElementSignature(member))) {
+						return true;
+					}
+				}
+			}
+		}
+		return false;
+	}
+
+	public ICElement getSelectedMember() {
+		return fSelectedMember;
 	}
 }

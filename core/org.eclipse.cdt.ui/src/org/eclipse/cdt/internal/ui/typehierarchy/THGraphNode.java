@@ -24,7 +24,7 @@ class THGraphNode {
 	private List fOutgoing= Collections.EMPTY_LIST;
 	private List fIncoming= Collections.EMPTY_LIST;
 	private ICElement fElement;
-	private Object[] fMembers= null;
+	private ICElement[] fMembers= null;
 	
 	THGraphNode(ICElement element) {
 		fElement= element;
@@ -63,17 +63,17 @@ class THGraphNode {
 		return fIncoming;
 	}
 
-	public void setMembers(Object[] array) {
+	public void setMembers(ICElement[] array) {
 		fMembers= array;
 	}
 	
-	public Object[] getMembers(boolean addInherited) {
+	public ICElement[] getMembers(boolean addInherited) {
 		if (!addInherited) {
 			return fMembers;
 		}
 		ArrayList list= new ArrayList();
 		collectMembers(new HashSet(), list);
-		return list.toArray();
+		return (ICElement[]) list.toArray(new ICElement[list.size()]);
 	}
 
 	private void collectMembers(HashSet visited, List list) {

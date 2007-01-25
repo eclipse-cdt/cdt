@@ -39,7 +39,7 @@ import org.eclipse.cdt.internal.core.model.ext.ICElementHandle;
 import org.eclipse.cdt.internal.ui.viewsupport.IndexUI;
 
 class THGraph {
-	private static final Object[] NO_MEMBERS = new Object[0];
+	private static final ICElement[] NO_MEMBERS = new ICElement[0];
 	private THGraphNode fInputNode= null;
 	private HashSet fRootNodes= new HashSet();
 	private HashSet fLeaveNodes= new HashSet();
@@ -252,31 +252,29 @@ class THGraph {
 	
 	private void addMembers(IIndex index, THGraphNode graphNode, IBinding binding) throws DOMException, CoreException {
 		if (graphNode.getMembers(false) == null) {
+			ArrayList memberList= new ArrayList();
 			if (binding instanceof ICPPClassType) {
 				ICPPClassType ct= (ICPPClassType) binding;
-				ArrayList memberList= new ArrayList();
 				IBinding[] members= ct.getDeclaredFields();
 				addMemberElements(index, members, memberList);
 				members= ct.getDeclaredMethods();
 				addMemberElements(index, members, memberList);
-				graphNode.setMembers(memberList.toArray());
 			}
 			else if (binding instanceof ICompositeType) {
 				ICompositeType ct= (ICompositeType) binding;
-				ArrayList memberList= new ArrayList();
 				IBinding[] members= ct.getFields();
 				addMemberElements(index, members, memberList);
-				graphNode.setMembers(memberList.toArray());
 			}
 			else if (binding instanceof IEnumeration) {
 				IEnumeration ct= (IEnumeration) binding;
-				ArrayList memberList= new ArrayList();
 				IBinding[] members= ct.getEnumerators();
 				addMemberElements(index, members, memberList);
-				graphNode.setMembers(memberList.toArray());
+			}
+			if (memberList.isEmpty()) {
+				graphNode.setMembers(NO_MEMBERS);
 			}
 			else {
-				graphNode.setMembers(NO_MEMBERS);
+				graphNode.setMembers((ICElement[]) memberList.toArray(new ICElement[memberList.size()]));
 			}
 		}
 	}

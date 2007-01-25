@@ -232,6 +232,7 @@ public class CPluginImages {
     public static final ImageDescriptor DESC_OVR_REC_RELATESTO= create(T_OVR, "rec_relatesto_co.gif"); //$NON-NLS-1$
     public static final ImageDescriptor DESC_OVR_REC_REFERENCEDBY= create(T_OVR, "rec_referencedby_co.gif"); //$NON-NLS-1$
     public static final ImageDescriptor DESC_OVR_SYSTEM_INCLUDE= create(T_OVR, "systeminclude_co.gif"); //$NON-NLS-1$
+    public static final ImageDescriptor DESC_OVR_DEFINES= create(T_OVR, "defines_co.gif"); //$NON-NLS-1$
     
 	public static final ImageDescriptor DESC_OVR_WARNING= create(T_OVR, "warning_co.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_OVR_ERROR= create(T_OVR, "error_co.gif"); //$NON-NLS-1$

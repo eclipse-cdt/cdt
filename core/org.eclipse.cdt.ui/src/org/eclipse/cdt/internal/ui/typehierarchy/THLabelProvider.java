@@ -47,7 +47,7 @@ public class THLabelProvider extends LabelProvider implements IColorProvider {
     public Image getImage(Object element) {
         if (element instanceof THNode) {
             THNode node= (THNode) element;
-            ICElement decl= node.getRepresentedDeclaration();
+            ICElement decl= node.getElement();
             if (decl != null) {
             	Image image= fCLabelProvider.getImage(decl);
                 if (image != null) {
@@ -64,7 +64,7 @@ public class THLabelProvider extends LabelProvider implements IColorProvider {
     public String getText(Object element) {
         if (element instanceof THNode) {
             THNode node= (THNode) element;
-            ICElement decl= node.getRepresentedDeclaration();
+            ICElement decl= node.getElement();
             if (decl != null) {
             	String label= fCLabelProvider.getText(decl);
             	return label;
@@ -92,6 +92,9 @@ public class THLabelProvider extends LabelProvider implements IColorProvider {
             else {
                 flags |= CElementImageDescriptor.REFERENCED_BY;
             }
+        }
+        if (node.isImplementor()) {
+        	flags |= CElementImageDescriptor.DEFINES;
         }
 
         String key= image.toString()+String.valueOf(flags);

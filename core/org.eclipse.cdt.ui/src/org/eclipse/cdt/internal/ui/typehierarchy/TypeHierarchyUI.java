@@ -32,8 +32,10 @@ import org.eclipse.cdt.core.dom.ast.IEnumeration;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.index.IIndexManager;
+import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.core.model.IFunctionDeclaration;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.model.IWorkingCopy;
 import org.eclipse.cdt.ui.CUIPlugin;
@@ -217,5 +219,22 @@ public class TypeHierarchyUI {
 			return true;
 		}
 		return false;
+	}
+
+	static String getLocalElementSignature(ICElement element) {
+		if (element != null) {
+			try {
+				switch (element.getElementType()) {
+				case ICElement.C_METHOD:
+				case ICElement.C_METHOD_DECLARATION:
+					return ((IFunctionDeclaration) element).getSignature();
+				case ICElement.C_FIELD:
+					return element.getElementName();
+				}
+			} catch (CModelException e) {
+				CUIPlugin.getDefault().log(e);
+			}
+		}
+		return null;
 	}
 }

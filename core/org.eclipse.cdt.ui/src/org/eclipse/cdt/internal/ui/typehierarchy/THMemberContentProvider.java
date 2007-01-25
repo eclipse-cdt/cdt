@@ -14,11 +14,11 @@ package org.eclipse.cdt.internal.ui.typehierarchy;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 
-public class THMethodContentProvider implements IStructuredContentProvider {
+public class THMemberContentProvider implements IStructuredContentProvider {
 	private static final Object[] NO_CHILDREN= new Object[0];
 	private THHierarchyModel fModel; 
 
-	public THMethodContentProvider() {
+	public THMemberContentProvider() {
 	}
     
     final public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {

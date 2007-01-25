@@ -23,18 +23,19 @@ import org.eclipse.cdt.internal.ui.util.CoreUtility;
 
 public class THNode implements IAdaptable {
 	private THNode fParent;
-	private ICElement fRepresentedDecl;
+	private ICElement fElement;
 	private List fChildren= Collections.EMPTY_LIST;
     
     private int fHashCode;
     private boolean fIsFiltered;
+    private boolean fIsImplementor;
 
     /**
      * Creates a new node for the include browser
      */
     public THNode(THNode parent, ICElement decl) {
         fParent= parent;
-        fRepresentedDecl= decl;
+        fElement= decl;
         fHashCode= computeHashCode();
     }
     
@@ -43,8 +44,8 @@ public class THNode implements IAdaptable {
         if (fParent != null) {
             hashCode= fParent.hashCode() * 31;
         }
-        if (fRepresentedDecl != null) {
-        	hashCode+= fRepresentedDecl.hashCode();
+        if (fElement != null) {
+        	hashCode+= fElement.hashCode();
         }
         return hashCode;
     }   
@@ -63,7 +64,7 @@ public class THNode implements IAdaptable {
 			return false;
 		}
 
-		return CoreUtility.safeEquals(fRepresentedDecl, rhs.fRepresentedDecl);
+		return CoreUtility.safeEquals(fElement, rhs.fElement);
     }
     
 	/**
@@ -74,13 +75,13 @@ public class THNode implements IAdaptable {
     }
 
 
-	public ICElement getRepresentedDeclaration() {
-		return fRepresentedDecl;
+	public ICElement getElement() {
+		return fElement;
 	}
 	
 	public Object getAdapter(Class adapter) {
 		if (adapter.isAssignableFrom(ICElement.class)) {
-			return getRepresentedDeclaration();
+			return getElement();
 		}
 		return null;
 	}
@@ -112,8 +113,16 @@ public class THNode implements IAdaptable {
 		return !fChildren.isEmpty();
 	}
 
-	public Object[] getChildren() {
-		return fChildren.toArray();
+	public THNode[] getChildren() {
+		return (THNode[]) fChildren.toArray(new THNode[fChildren.size()]);
+	}
+
+	public void setIsImplementor(boolean val) {
+		fIsImplementor= val;
+	}
+
+	public boolean isImplementor() {
+		return fIsImplementor;
 	}
 }
 

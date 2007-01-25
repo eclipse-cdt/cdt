@@ -112,9 +112,9 @@ public class THViewPart extends ViewPart {
 	private static final int ORIENTATION_HORIZONTAL = 1;
 	private static final int ORIENTATION_VERTICAL = 2;
 	private static final int ORIENTATION_SINGLE = 3;
-	private static final int METHOD_LABEL_OPTIONS_SIMPLE = CElementLabels.M_PARAMETER_TYPES;
-	private static final int METHOD_LABEL_OPTIONS_QUALIFIED = METHOD_LABEL_OPTIONS_SIMPLE | CElementLabels.ALL_POST_QUALIFIED;
-	private static final int METHOD_ICON_OPTIONS = CElementImageProvider.OVERLAY_ICONS;
+	private static final int MEMBER_LABEL_OPTIONS_SIMPLE = CElementLabels.M_PARAMETER_TYPES;
+	private static final int MEMBER_LABEL_OPTIONS_QUALIFIED = MEMBER_LABEL_OPTIONS_SIMPLE | CElementLabels.ALL_POST_QUALIFIED;
+	private static final int MEMBER_ICON_OPTIONS = CElementImageProvider.OVERLAY_ICONS;
     
     private IMemento fMemento;
     private boolean fShowsMessage= true;
@@ -129,21 +129,21 @@ public class THViewPart extends ViewPart {
     private Text fInfoText;
 	private SashForm fSplitter;
 	private ViewForm fHierarchyViewForm;
-	private ViewForm fMethodViewForm;
-	private CLabel fMethodLabel;
+	private ViewForm fMemberViewForm;
+	private CLabel fMemberLabel;
 
     // viewers
 	private THHierarchyModel fModel;
 	private THLabelProvider fHierarchyLabelProvider;
-	private CUILabelProvider fMethodLabelProvider;
-	private TableViewer fMethodViewer;
+	private CUILabelProvider fMemberLabelProvider;
+	private TableViewer fMemberViewer;
 	private TreeViewer fHierarchyTreeViewer;
 
     // filters, sorter
 //	private WorkingSetFilterUI fWorkingSetFilterUI;
 
     // actions
-	private ToolBarManager fMethodToolbarManager;
+	private ToolBarManager fMemberToolbarManager;
     private Action fShowSuperTypeHierarchyAction;
     private Action fShowSubTypeHierarchyAction;
     private Action fShowTypeHierarchyAction;
@@ -189,13 +189,13 @@ public class THViewPart extends ViewPart {
     	if (input == null) {
             setMessage(Messages.THViewPart_instruction);
             fHierarchyTreeViewer.setInput(null);
-            fMethodViewer.setInput(null);
+            fMemberViewer.setInput(null);
             return;
     	}
         fShowsMessage= false;
         fModel.setInput(input);
         fHierarchyTreeViewer.setInput(fModel);
-        fMethodViewer.setInput(fModel);
+        fMemberViewer.setInput(fModel);
         fPagebook.showPage(fSplitter);
         updateDescription();
     	updateHistory(input);
@@ -222,7 +222,7 @@ public class THViewPart extends ViewPart {
 	private void initSelectionProvider() {
 		SelectionProviderMediator mediator= new SelectionProviderMediator();
 		mediator.addViewer(fHierarchyTreeViewer);
-		mediator.addViewer(fMethodViewer);
+		mediator.addViewer(fMemberViewer);
 		getSite().setSelectionProvider(new AdaptingSelectionProvider(ICElement.class, mediator));
 	}
 
@@ -294,7 +294,7 @@ public class THViewPart extends ViewPart {
 		fHierarchyLabelProvider.setShowFiles(showFiles);
         fShowFilesInLabelsAction.setChecked(showFiles);
   
-		fMethodToolbarManager.update(true);
+		fMemberToolbarManager.update(true);
     }
 
 	public void init(IViewSite site, IMemento memento) throws PartInitException {
@@ -347,14 +347,14 @@ public class THViewPart extends ViewPart {
     			onContextMenuAboutToShow(m, false);
     		}
     	});
-    	menu = manager.createContextMenu(fMethodViewer.getControl());
-    	fMethodViewer.getControl().setMenu(menu);
-    	site.registerContextMenu(CUIPlugin.ID_TYPE_HIERARCHY + ".methods", manager, fMethodViewer); //$NON-NLS-1$
+    	menu = manager.createContextMenu(fMemberViewer.getControl());
+    	fMemberViewer.getControl().setMenu(menu);
+    	site.registerContextMenu(CUIPlugin.ID_TYPE_HIERARCHY + ".members", manager, fMemberViewer); //$NON-NLS-1$
     }
 
 	protected void onContextMenuAboutToShow(IMenuManager menu, boolean hierarchyView) {
 		CUIPlugin.createStandardGroups(menu);
-		StructuredViewer viewer= hierarchyView ? (StructuredViewer) fHierarchyTreeViewer : fMethodViewer;
+		StructuredViewer viewer= hierarchyView ? (StructuredViewer) fHierarchyTreeViewer : fMemberViewer;
 		final ICElement elem= selectionToElement(viewer.getSelection());
 		if (elem != null) {
 			menu.appendToGroup(IContextMenuConstants.GROUP_OPEN, fOpenElement);
@@ -400,31 +400,31 @@ public class THViewPart extends ViewPart {
 		Control hierarchyControl= createHierarchyControl(fHierarchyViewForm);
 		fHierarchyViewForm.setContent(hierarchyControl);
 				
-		fMethodViewForm= new ViewForm(fSplitter, SWT.NONE);
-		Control methodControl= createMethodControl(fMethodViewForm);
-		fMethodViewForm.setContent(methodControl);
+		fMemberViewForm= new ViewForm(fSplitter, SWT.NONE);
+		Control memberControl= createMemberControl(fMemberViewForm);
+		fMemberViewForm.setContent(memberControl);
 		
-		fMethodLabel = new CLabel(fMethodViewForm, SWT.NONE);
-    	fMethodLabel.setText(Messages.THViewPart_MethodPane_title); 
-		fMethodViewForm.setTopLeft(fMethodLabel);
+		fMemberLabel = new CLabel(fMemberViewForm, SWT.NONE);
+    	fMemberLabel.setText(Messages.THViewPart_MethodPane_title); 
+		fMemberViewForm.setTopLeft(fMemberLabel);
 	}
    
-	private Control createMethodControl(ViewForm parent) {
-		fMethodLabelProvider= new CUILabelProvider(METHOD_LABEL_OPTIONS_SIMPLE, METHOD_ICON_OPTIONS);
-		fMethodViewer = new TableViewer(parent, SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER);
-		fMethodViewer.setContentProvider(new THMethodContentProvider());
-		fMethodViewer.setLabelProvider(fMethodLabelProvider);
-		fMethodViewer.addOpenListener(new IOpenListener() {
+	private Control createMemberControl(ViewForm parent) {
+		fMemberLabelProvider= new CUILabelProvider(MEMBER_LABEL_OPTIONS_SIMPLE, MEMBER_ICON_OPTIONS);
+		fMemberViewer = new TableViewer(parent, SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER);
+		fMemberViewer.setContentProvider(new THMemberContentProvider());
+		fMemberViewer.setLabelProvider(fMemberLabelProvider);
+		fMemberViewer.addOpenListener(new IOpenListener() {
 			public void open(OpenEvent event) {
 				onOpenElement(event.getSelection());
 			}
 		});
-    	fMethodViewer.addSelectionChangedListener(new ISelectionChangedListener() {
+    	fMemberViewer.addSelectionChangedListener(new ISelectionChangedListener() {
 			public void selectionChanged(final SelectionChangedEvent event) {
-				onMethodSelectionChanged(event);
+				onMemberSelectionChanged(event);
 			}
     	});
-    	fMethodViewer.setSorter(new ViewerSorter() {
+    	fMemberViewer.setSorter(new ViewerSorter() {
     		public int category(Object element) {
     			if (element instanceof ICElement) {
     				ICElement celem= (ICElement)element;
@@ -446,14 +446,17 @@ public class THViewPart extends ViewPart {
     		}
     	});   
         
-		ToolBar methodToolBar= new ToolBar(parent, SWT.FLAT | SWT.WRAP);
-		parent.setTopCenter(methodToolBar);
-		fMethodToolbarManager= new ToolBarManager(methodToolBar);
-    	return fMethodViewer.getControl();
+		ToolBar memberToolBar= new ToolBar(parent, SWT.FLAT | SWT.WRAP);
+		parent.setTopCenter(memberToolBar);
+		fMemberToolbarManager= new ToolBarManager(memberToolBar);
+    	return fMemberViewer.getControl();
 	}
 
-	protected void onMethodSelectionChanged(SelectionChangedEvent event) {
+	protected void onMemberSelectionChanged(SelectionChangedEvent event) {
 		if (fIgnoreSelectionChanges == 0) {
+			ICElement elem= selectionToElement(event.getSelection());
+			fModel.onMemberSelectionChanged(elem);
+			fHierarchyTreeViewer.refresh();
 		}
 	}
 
@@ -485,8 +488,7 @@ public class THViewPart extends ViewPart {
 		if (fIgnoreSelectionChanges == 0) {
 			THNode node= selectionToNode(event.getSelection());
 			fModel.onHierarchySelectionChanged(node);
-			fMethodViewer.refresh();
-			updateDescription();
+			updateView();
 		}
 	}
 
@@ -636,10 +638,10 @@ public class THViewPart extends ViewPart {
         fFieldFilterAction= new Action(Messages.THViewPart_HideFields_label, IAction.AS_CHECK_BOX) {
             public void run() {
                 if (isChecked()) {
-                    fMethodViewer.addFilter(fFieldFilter);
+                    fMemberViewer.addFilter(fFieldFilter);
                 }
                 else {
-                	fMethodViewer.removeFilter(fFieldFilter);
+                	fMemberViewer.removeFilter(fFieldFilter);
                 }
             }
         };
@@ -649,10 +651,10 @@ public class THViewPart extends ViewPart {
         fStaticFilterAction= new Action(Messages.THViewPart_HideStatic_label, IAction.AS_CHECK_BOX) {
             public void run() {
                 if (isChecked()) {
-                    fMethodViewer.addFilter(fStaticFilter);
+                    fMemberViewer.addFilter(fStaticFilter);
                 }
                 else {
-                	fMethodViewer.removeFilter(fStaticFilter);
+                	fMemberViewer.removeFilter(fStaticFilter);
                 }
             }
         };
@@ -662,10 +664,10 @@ public class THViewPart extends ViewPart {
         fNonPublicFilterAction= new Action(Messages.THViewPart_HideNonPublic_label, IAction.AS_CHECK_BOX) {
             public void run() {
                 if (isChecked()) {
-                    fMethodViewer.addFilter(fNonPublicFilter);
+                    fMemberViewer.addFilter(fNonPublicFilter);
                 }
                 else {
-                	fMethodViewer.removeFilter(fNonPublicFilter);
+                	fMemberViewer.removeFilter(fNonPublicFilter);
                 }
             }
         };
@@ -743,12 +745,12 @@ public class THViewPart extends ViewPart {
         mm.add(new Separator());
         mm.add(fShowFilesInLabelsAction);
         
-        // method toolbar
-        fMethodToolbarManager.add(fShowInheritedMembersAction);
-        fMethodToolbarManager.add(new Separator());
-        fMethodToolbarManager.add(fFieldFilterAction);
-        fMethodToolbarManager.add(fStaticFilterAction);
-        fMethodToolbarManager.add(fNonPublicFilterAction);        
+        // member toolbar
+        fMemberToolbarManager.add(fShowInheritedMembersAction);
+        fMemberToolbarManager.add(new Separator());
+        fMemberToolbarManager.add(fFieldFilterAction);
+        fMemberToolbarManager.add(fStaticFilterAction);
+        fMemberToolbarManager.add(fNonPublicFilterAction);        
     }
             
 	protected void onOpenElement(ISelection selection) {
@@ -817,14 +819,14 @@ public class THViewPart extends ViewPart {
             	Image image= null;
             	THNode node= fModel.getSelectionInHierarchy();
             	if (node != null) {
-            		elem= node.getRepresentedDeclaration();
+            		elem= node.getElement();
             		if (elem != null) {
             			label= CElementLabels.getElementLabel(elem, 0);
             			image= fHierarchyLabelProvider.getImage(elem);
             		}
             	}
-            	fMethodLabel.setText(label);
-            	fMethodLabel.setImage(image);
+            	fMemberLabel.setText(label);
+            	fMemberLabel.setImage(image);
             }
         }
         setContentDescription(message);
@@ -854,21 +856,33 @@ public class THViewPart extends ViewPart {
     protected void onShowInheritedMembers(boolean show) {
     	if (fModel.isShowInheritedMembers() != show) {
     		fModel.setShowInheritedMembers(show);
-    		fMethodLabelProvider.setTextFlags(show ? 
-    				METHOD_LABEL_OPTIONS_QUALIFIED : METHOD_LABEL_OPTIONS_SIMPLE);
-    		fMethodViewer.refresh();
+    		fMemberLabelProvider.setTextFlags(show ? 
+    				MEMBER_LABEL_OPTIONS_QUALIFIED : MEMBER_LABEL_OPTIONS_SIMPLE);
+    		updateViewers();
     	}
     }
-    
-    private void updateView() {
+
+    private void updateViewers() {
     	if (!fShowsMessage) {
     		fIgnoreSelectionChanges++;
     		try {
     			fHierarchyTreeViewer.refresh();
-    			fMethodViewer.refresh();
+    			fMemberViewer.refresh();
+    			setSelections();
+    		}
+    		finally {
+    			fIgnoreSelectionChanges--;
+    		}
+    	}
+	}
+
+    private void updateView() {
+    	if (!fShowsMessage) {
+    		fIgnoreSelectionChanges++;
+    		try {
+    			updateViewers();
     			updateDescription();
     			updateActionEnablement();
-    			setSelections();
     		}
     		finally {
     			fIgnoreSelectionChanges--;
@@ -883,6 +897,10 @@ public class THViewPart extends ViewPart {
 			if (node != null) {
 				fHierarchyTreeViewer.setSelection(new StructuredSelection(node));
 				fHierarchyTreeViewer.expandToLevel(node, 1);
+			}
+			ICElement elem= fModel.getSelectedMember();
+			if (elem != null) {
+				fMemberViewer.setSelection(new StructuredSelection(elem));
 			}
 		}
 		finally {
@@ -947,8 +965,8 @@ public class THViewPart extends ViewPart {
 		return fHierarchyTreeViewer;
 	}
 
-	public TableViewer getMethodViewer() {
-		return fMethodViewer;
+	public TableViewer getMemberViewer() {
+		return fMemberViewer;
 	}
 	
 	private void restoreOrientation(int orientation) {
@@ -998,10 +1016,10 @@ public class THViewPart extends ViewPart {
 						orientation= getBestOrientation();
 					}
 					if (orientation == ORIENTATION_SINGLE) {
-						fMethodViewForm.setVisible(false);
+						fMemberViewForm.setVisible(false);
 					} else {
 						if (fCurrentViewOrientation == ORIENTATION_SINGLE) {
-							fMethodViewForm.setVisible(true);
+							fMemberViewForm.setVisible(true);
 						}
 						boolean horizontal= orientation == ORIENTATION_HORIZONTAL;
 						fSplitter.setOrientation(horizontal ? SWT.HORIZONTAL : SWT.VERTICAL);

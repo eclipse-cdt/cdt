@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -49,7 +49,9 @@ public class CElementImageDescriptor extends CompositeImageDescriptor {
 	/** Flag to render the static adornment */
 	public final static int STATIC=			0x008;
 	
-	/** Flag to render the runnable adornment */
+	/**  
+	 * @deprecated flag never had an effect
+	 */
 	public final static int RUNNABLE= 		0x010;
 	
 	/** Flag to render the waring adornment */
@@ -58,10 +60,14 @@ public class CElementImageDescriptor extends CompositeImageDescriptor {
 	/** Flag to render the error adornment */
 	public final static int ERROR=			0x040;
 	
-	/** Flag to render the 'override' adornment */
+	/**  
+	 * @deprecated flag never had an effect 
+	 */
 	public final static int OVERRIDES= 		0x080;
 	
-	/** Flag to render the 'implements' adornment */
+	/**  
+	 * @deprecated flag never had an effect 
+	 */
 	public final static int IMPLEMENTS= 	0x100;		
 
     /** Flag to render the 'relates to' adornment (for trees, an arrow down) */
@@ -78,6 +84,9 @@ public class CElementImageDescriptor extends CompositeImageDescriptor {
     
     /** Flag to render the 'system include' adornment */
     public final static int SYSTEM_INCLUDE= 0x2000;      
+
+    /** Flag to render the 'defines' adornment in the type hierarchy*/
+    public final static int DEFINES= 0x4000;      
 
 	private ImageDescriptor fBaseImage;
 	private int fFlags;
@@ -103,8 +112,8 @@ public class CElementImageDescriptor extends CompositeImageDescriptor {
 	
 	/**
 	 * Sets the descriptors adornments. Valid values are: <code>ABSTRACT</code>, <code>FINAL</code>,
-	 * <code>SYNCHRONIZED</code>, </code>STATIC<code>, </code>RUNNABLE<code>, </code>WARNING<code>, 
-	 * </code>ERROR<code>, </code>OVERRIDDEN<code>, or any combination of those.
+	 * </code>STATIC<code>, </code>WARNING<code>, 
+	 * </code>ERROR<code>, or any combination of those.
 	 * 
 	 * @param adornments the image descritpors adornments
 	 */
@@ -199,6 +208,10 @@ public class CElementImageDescriptor extends CompositeImageDescriptor {
 			x-= data.width;
 			drawImage(data, x, 0);
 		} 
+		if ((fFlags & DEFINES) != 0) {
+			data= CPluginImages.DESC_OVR_DEFINES.getImageData();
+			drawImage(data, 0, 0);
+		} 
 		if ((fFlags & TEMPLATE) != 0) {
 			data= CPluginImages.DESC_OVR_TEMPLATE.getImageData();
 			x-= data.width;
@@ -235,26 +248,16 @@ public class CElementImageDescriptor extends CompositeImageDescriptor {
             x-= data.width;
             drawImage(data, x, size.y-data.height);
         }
-		 /*if ((fFlags & SYNCHRONIZED) != 0) {
-			data= CPluginImages.DESC_OVR_SYNCH.getImageData();
-			x-= data.width;
-			drawImage(data, x, size.y - data.height);
-		}
-		if ((fFlags & RUNNABLE) != 0) {
-			data= CPluginImages.DESC_OVR_RUN.getImageData();
-			x-= data.width;
-			drawImage(data, x, size.y - data.height);
-		}
-		if ((fFlags & OVERRIDES) != 0) {
-			data= CPluginImages.DESC_OVR_OVERRIDES.getImageData();
-			x-= data.width;
-			drawImage(data, x, size.y - data.height);
-		}
-		if ((fFlags & IMPLEMENTS) != 0) {
-			data= CPluginImages.DESC_OVR_IMPLEMENTS.getImageData();
-			x-= data.width;
-			drawImage(data, x, size.y - data.height);
-		}	*/		
+//		if ((fFlags & OVERRIDES) != 0) {
+//			data= CPluginImages.DESC_OVR_OVERRIDES.getImageData();
+//			x-= data.width;
+//			drawImage(data, x, size.y - data.height);
+//		}
+//		if ((fFlags & IMPLEMENTS) != 0) {
+//			data= CPluginImages.DESC_OVR_IMPLEMENTS.getImageData();
+//			x-= data.width;
+//			drawImage(data, x, size.y - data.height);
+//		}		
 	}		
 	
 	private void drawBottomLeft() {

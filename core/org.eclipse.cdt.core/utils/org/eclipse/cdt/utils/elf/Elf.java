@@ -108,6 +108,7 @@ public class Elf {
 		public final static int EM_H8_300 = 46;
 		public final static int EM_H8_300H = 47;
 		public final static int EM_IA_64 = 50;
+		public final static int EM_COLDFIRE = 52;
 		public final static int EM_X86_64 = 62;		
 		public final static int EM_ST100 = 60;
 		public final static int EM_AVR = 83;
@@ -816,6 +817,9 @@ public class Elf {
 				break;
 			case Elf.ELFhdr.EM_IA_64 :
 				attrib.cpu = "ia64"; //$NON-NLS-1$
+				break;
+			case Elf.ELFhdr.EM_COLDFIRE:
+				attrib.cpu = "coldfire"; //$NON-NLS-1$
 				break;
 			case Elf.ELFhdr.EM_AVR :
 				attrib.cpu = "avr"; //$NON-NLS-1$

@@ -566,15 +566,15 @@ public class DefaultCodeFormatterConstants {
 	 * </pre>
 	 */
 	public static final String FORMATTER_CONTINUATION_INDENTATION = CCorePlugin.PLUGIN_ID + ".formatter.continuation_indentation";	//$NON-NLS-1$
-//	/**
-//	 * <pre>
-//	 * FORMATTER / Option to set the continuation indentation inside array initializer
-//	 *     - option id:         "org.eclipse.cdt.core.formatter.continuation_indentation_for_array_initializer"
-//	 *     - possible values:   "&lt;n&gt;", where n is zero or a positive integer
-//	 *     - default:           "2"
-//	 * </pre>
-//	 */
-//	public static final String FORMATTER_CONTINUATION_INDENTATION_FOR_ARRAY_INITIALIZER = CCorePlugin.PLUGIN_ID + ".formatter.continuation_indentation_for_array_initializer";	//$NON-NLS-1$
+	/**
+	 * <pre>
+	 * FORMATTER / Option to set the continuation indentation inside array initializer
+	 *     - option id:         "org.eclipse.cdt.core.formatter.continuation_indentation_for_array_initializer"
+	 *     - possible values:   "&lt;n&gt;", where n is zero or a positive integer
+	 *     - default:           "2"
+	 * </pre>
+	 */
+	public static final String FORMATTER_CONTINUATION_INDENTATION_FOR_ARRAY_INITIALIZER = CCorePlugin.PLUGIN_ID + ".formatter.continuation_indentation_for_array_initializer";	//$NON-NLS-1$
 //	/**
 //	 * <pre>
 //	 * FORMATTER / Option to indent body declarations compare to its enclosing enum constant header
@@ -733,17 +733,17 @@ public class DefaultCodeFormatterConstants {
 //	 */
 //	public static final String FORMATTER_INSERT_NEW_LINE_AFTER_ANNOTATION = CCorePlugin.PLUGIN_ID + ".formatter.insert_new_line_after_annotation";//$NON-NLS-1$
 //
-//	/**
-//	 * <pre>
-//	 * FORMATTER / Option to insert a new line after the opening brace in an array initializer
-//	 *     - option id:         "org.eclipse.cdt.core.formatter.insert_new_line_after_opening_brace_in_array_initializer"
-//	 *     - possible values:   { INSERT, DO_NOT_INSERT }
-//	 *     - default:           DO_NOT_INSERT
-//	 * </pre>
-//	 * @see CCorePlugin#INSERT
-//	 * @see CCorePlugin#DO_NOT_INSERT
-//	 */
-//	public static final String FORMATTER_INSERT_NEW_LINE_AFTER_OPENING_BRACE_IN_ARRAY_INITIALIZER = CCorePlugin.PLUGIN_ID + ".formatter.insert_new_line_after_opening_brace_in_array_initializer";//$NON-NLS-1$
+	/**
+	 * <pre>
+	 * FORMATTER / Option to insert a new line after the opening brace in an array initializer
+	 *     - option id:         "org.eclipse.cdt.core.formatter.insert_new_line_after_opening_brace_in_array_initializer"
+	 *     - possible values:   { INSERT, DO_NOT_INSERT }
+	 *     - default:           DO_NOT_INSERT
+	 * </pre>
+	 * @see CCorePlugin#INSERT
+	 * @see CCorePlugin#DO_NOT_INSERT
+	 */
+	public static final String FORMATTER_INSERT_NEW_LINE_AFTER_OPENING_BRACE_IN_ARRAY_INITIALIZER = CCorePlugin.PLUGIN_ID + ".formatter.insert_new_line_after_opening_brace_in_array_initializer";//$NON-NLS-1$
 
 	/**
 	 * <pre>
@@ -767,17 +767,17 @@ public class DefaultCodeFormatterConstants {
 //	 * @see CCorePlugin#DO_NOT_INSERT
 //	 */
 //	public static final String FORMATTER_INSERT_NEW_LINE_BEFORE_CATCH_IN_TRY_STATEMENT = CCorePlugin.PLUGIN_ID + ".formatter.insert_new_line_before_catch_in_try_statement";	//$NON-NLS-1$
-//	/**
-//	 * <pre>
-//	 * FORMATTER / Option to insert a new line before the closing brace in an array initializer
-//	 *     - option id:         "org.eclipse.cdt.core.formatter.insert_new_line_before_closing_brace_in_array_initializer"
-//	 *     - possible values:   { INSERT, DO_NOT_INSERT }
-//	 *     - default:           DO_NOT_INSERT
-//	 * </pre>
-//	 * @see CCorePlugin#INSERT
-//	 * @see CCorePlugin#DO_NOT_INSERT
-//	 */
-//	public static final String FORMATTER_INSERT_NEW_LINE_BEFORE_CLOSING_BRACE_IN_ARRAY_INITIALIZER = CCorePlugin.PLUGIN_ID + ".formatter.insert_new_line_before_closing_brace_in_array_initializer";//$NON-NLS-1$
+	/**
+	 * <pre>
+	 * FORMATTER / Option to insert a new line before the closing brace in an array initializer
+	 *     - option id:         "org.eclipse.cdt.core.formatter.insert_new_line_before_closing_brace_in_array_initializer"
+	 *     - possible values:   { INSERT, DO_NOT_INSERT }
+	 *     - default:           DO_NOT_INSERT
+	 * </pre>
+	 * @see CCorePlugin#INSERT
+	 * @see CCorePlugin#DO_NOT_INSERT
+	 */
+	public static final String FORMATTER_INSERT_NEW_LINE_BEFORE_CLOSING_BRACE_IN_ARRAY_INITIALIZER = CCorePlugin.PLUGIN_ID + ".formatter.insert_new_line_before_closing_brace_in_array_initializer";//$NON-NLS-1$
 	/**
 	 * <pre>
 	 * FORMATTER / Option to insert a new line before the else keyword in if statement
@@ -1020,17 +1020,17 @@ public class DefaultCodeFormatterConstants {
 //	 * @see CCorePlugin#DO_NOT_INSERT
 //	 */
 //	public static final String FORMATTER_INSERT_SPACE_AFTER_COMMA_IN_ANNOTATION = CCorePlugin.PLUGIN_ID + ".formatter.insert_space_after_comma_in_annotation"; //$NON-NLS-1$
-//	/**
-//	 * <pre>
-//	 * FORMATTER / Option to insert a space after the comma in an array initializer
-//	 *     - option id:         "org.eclipse.cdt.core.formatter.insert_space_after_comma_in_array_initializer"
-//	 *     - possible values:   { INSERT, DO_NOT_INSERT }
-//	 *     - default:           INSERT
-//	 * </pre>
-//	 * @see CCorePlugin#INSERT
-//	 * @see CCorePlugin#DO_NOT_INSERT
-//	 */
-//	public static final String FORMATTER_INSERT_SPACE_AFTER_COMMA_IN_ARRAY_INITIALIZER = CCorePlugin.PLUGIN_ID + ".formatter.insert_space_after_comma_in_array_initializer"; //$NON-NLS-1$
+	/**
+	 * <pre>
+	 * FORMATTER / Option to insert a space after the comma in an array initializer
+	 *     - option id:         "org.eclipse.cdt.core.formatter.insert_space_after_comma_in_array_initializer"
+	 *     - possible values:   { INSERT, DO_NOT_INSERT }
+	 *     - default:           INSERT
+	 * </pre>
+	 * @see CCorePlugin#INSERT
+	 * @see CCorePlugin#DO_NOT_INSERT
+	 */
+	public static final String FORMATTER_INSERT_SPACE_AFTER_COMMA_IN_ARRAY_INITIALIZER = CCorePlugin.PLUGIN_ID + ".formatter.insert_space_after_comma_in_array_initializer"; //$NON-NLS-1$
 //	/**
 //	 * <pre>
 //	 * FORMATTER / Option to insert a space after the comma in the parameters of a constructor declaration
@@ -1251,17 +1251,17 @@ public class DefaultCodeFormatterConstants {
 //	 * @see CCorePlugin#DO_NOT_INSERT
 //	 */
 //	public static final String FORMATTER_INSERT_SPACE_AFTER_OPENING_ANGLE_BRACKET_IN_TYPE_PARAMETERS = CCorePlugin.PLUGIN_ID + ".formatter.insert_space_after_opening_angle_bracket_in_type_parameters";//$NON-NLS-1$
-//	/**
-//	 * <pre>
-//	 * FORMATTER / Option to insert a space after the opening brace in an array initializer
-//	 *     - option id:         "org.eclipse.cdt.core.formatter.insert_space_after_opening_brace_in_array_initializer"
-//	 *     - possible values:   { INSERT, DO_NOT_INSERT }
-//	 *     - default:           DO_NOT_INSERT
-//	 * </pre>
-//	 * @see CCorePlugin#INSERT
-//	 * @see CCorePlugin#DO_NOT_INSERT
-//	 */
-//	public static final String FORMATTER_INSERT_SPACE_AFTER_OPENING_BRACE_IN_ARRAY_INITIALIZER = CCorePlugin.PLUGIN_ID + ".formatter.insert_space_after_opening_brace_in_array_initializer";	//$NON-NLS-1$
+	/**
+	 * <pre>
+	 * FORMATTER / Option to insert a space after the opening brace in an array initializer
+	 *     - option id:         "org.eclipse.cdt.core.formatter.insert_space_after_opening_brace_in_array_initializer"
+	 *     - possible values:   { INSERT, DO_NOT_INSERT }
+	 *     - default:           DO_NOT_INSERT
+	 * </pre>
+	 * @see CCorePlugin#INSERT
+	 * @see CCorePlugin#DO_NOT_INSERT
+	 */
+	public static final String FORMATTER_INSERT_SPACE_AFTER_OPENING_BRACE_IN_ARRAY_INITIALIZER = CCorePlugin.PLUGIN_ID + ".formatter.insert_space_after_opening_brace_in_array_initializer";	//$NON-NLS-1$
 //	/**
 //	 * <pre>
 //	 * FORMATTER / Option to insert a space after the opening bracket inside an array allocation expression
@@ -1537,17 +1537,17 @@ public class DefaultCodeFormatterConstants {
 //	 * @see CCorePlugin#DO_NOT_INSERT
 //	 */
 //	public static final String FORMATTER_INSERT_SPACE_BEFORE_CLOSING_ANGLE_BRACKET_IN_TYPE_PARAMETERS = CCorePlugin.PLUGIN_ID + ".formatter.insert_space_before_closing_angle_bracket_in_type_parameters";		//$NON-NLS-1$
-//	/**
-//	 * <pre>
-//	 * FORMATTER / Option to insert a space before the closing brace in an array initializer
-//	 *     - option id:         "org.eclipse.cdt.core.formatter.insert_space_before_closing_brace_in_array_initializer"
-//	 *     - possible values:   { INSERT, DO_NOT_INSERT }
-//	 *     - default:           DO_NOT_INSERT
-//	 * </pre>
-//	 * @see CCorePlugin#INSERT
-//	 * @see CCorePlugin#DO_NOT_INSERT
-//	 */
-//	public static final String FORMATTER_INSERT_SPACE_BEFORE_CLOSING_BRACE_IN_ARRAY_INITIALIZER = CCorePlugin.PLUGIN_ID + ".formatter.insert_space_before_closing_brace_in_array_initializer";		//$NON-NLS-1$
+	/**
+	 * <pre>
+	 * FORMATTER / Option to insert a space before the closing brace in an array initializer
+	 *     - option id:         "org.eclipse.cdt.core.formatter.insert_space_before_closing_brace_in_array_initializer"
+	 *     - possible values:   { INSERT, DO_NOT_INSERT }
+	 *     - default:           DO_NOT_INSERT
+	 * </pre>
+	 * @see CCorePlugin#INSERT
+	 * @see CCorePlugin#DO_NOT_INSERT
+	 */
+	public static final String FORMATTER_INSERT_SPACE_BEFORE_CLOSING_BRACE_IN_ARRAY_INITIALIZER = CCorePlugin.PLUGIN_ID + ".formatter.insert_space_before_closing_brace_in_array_initializer";		//$NON-NLS-1$
 //	/**
 //	 * <pre>
 //	 * FORMATTER / Option to insert a space before the closing bracket in an array allocation expression
@@ -1768,17 +1768,17 @@ public class DefaultCodeFormatterConstants {
 //	 * @see CCorePlugin#DO_NOT_INSERT
 //	 */
 //	public static final String FORMATTER_INSERT_SPACE_BEFORE_COMMA_IN_ANNOTATION = CCorePlugin.PLUGIN_ID + ".formatter.insert_space_before_comma_in_annotation";	//$NON-NLS-1$
-//	/**
-//	 * <pre>
-//	 * FORMATTER / Option to insert a space before comma in an array initializer
-//	 *     - option id:         "org.eclipse.cdt.core.formatter.insert_space_before_comma_in_array_initializer"
-//	 *     - possible values:   { INSERT, DO_NOT_INSERT }
-//	 *     - default:           DO_NOT_INSERT
-//	 * </pre>
-//	 * @see CCorePlugin#INSERT
-//	 * @see CCorePlugin#DO_NOT_INSERT
-//	 */
-//	public static final String FORMATTER_INSERT_SPACE_BEFORE_COMMA_IN_ARRAY_INITIALIZER = CCorePlugin.PLUGIN_ID + ".formatter.insert_space_before_comma_in_array_initializer";	//$NON-NLS-1$
+	/**
+	 * <pre>
+	 * FORMATTER / Option to insert a space before comma in an array initializer
+	 *     - option id:         "org.eclipse.cdt.core.formatter.insert_space_before_comma_in_array_initializer"
+	 *     - possible values:   { INSERT, DO_NOT_INSERT }
+	 *     - default:           DO_NOT_INSERT
+	 * </pre>
+	 * @see CCorePlugin#INSERT
+	 * @see CCorePlugin#DO_NOT_INSERT
+	 */
+	public static final String FORMATTER_INSERT_SPACE_BEFORE_COMMA_IN_ARRAY_INITIALIZER = CCorePlugin.PLUGIN_ID + ".formatter.insert_space_before_comma_in_array_initializer";	//$NON-NLS-1$
 //	/**
 //	 * <pre>
 //	 * FORMATTER / Option to insert a space before comma in the parameters of a constructor declaration
@@ -2021,17 +2021,17 @@ public class DefaultCodeFormatterConstants {
 //	 * @see CCorePlugin#DO_NOT_INSERT
 //	 */
 //	public static final String FORMATTER_INSERT_SPACE_BEFORE_OPENING_BRACE_IN_ANONYMOUS_TYPE_DECLARATION = CCorePlugin.PLUGIN_ID + ".formatter.insert_space_before_opening_brace_in_anonymous_type_declaration"; 	//$NON-NLS-1$
-//	/**
-//	 * <pre>
-//	 * FORMATTER / Option to insert a space before the opening brace in an array initializer
-//	 *     - option id:         "org.eclipse.cdt.core.formatter.insert_space_before_opening_brace_in_array_initializer"
-//	 *     - possible values:   { INSERT, DO_NOT_INSERT }
-//	 *     - default:           DO_NOT_INSERT
-//	 * </pre>
-//	 * @see CCorePlugin#INSERT
-//	 * @see CCorePlugin#DO_NOT_INSERT
-//	 */
-//	public static final String FORMATTER_INSERT_SPACE_BEFORE_OPENING_BRACE_IN_ARRAY_INITIALIZER = CCorePlugin.PLUGIN_ID + ".formatter.insert_space_before_opening_brace_in_array_initializer"; //$NON-NLS-1$
+	/**
+	 * <pre>
+	 * FORMATTER / Option to insert a space before the opening brace in an array initializer
+	 *     - option id:         "org.eclipse.cdt.core.formatter.insert_space_before_opening_brace_in_array_initializer"
+	 *     - possible values:   { INSERT, DO_NOT_INSERT }
+	 *     - default:           DO_NOT_INSERT
+	 * </pre>
+	 * @see CCorePlugin#INSERT
+	 * @see CCorePlugin#DO_NOT_INSERT
+	 */
+	public static final String FORMATTER_INSERT_SPACE_BEFORE_OPENING_BRACE_IN_ARRAY_INITIALIZER = CCorePlugin.PLUGIN_ID + ".formatter.insert_space_before_opening_brace_in_array_initializer"; //$NON-NLS-1$
 	/**
 	 * <pre>
 	 * FORMATTER / Option to insert a space before the opening brace in a block
@@ -2375,17 +2375,17 @@ public class DefaultCodeFormatterConstants {
 //	 * @see CCorePlugin#DO_NOT_INSERT
 //	 */
 //	public static final String FORMATTER_INSERT_SPACE_BETWEEN_BRACKETS_IN_ARRAY_TYPE_REFERENCE = CCorePlugin.PLUGIN_ID + ".formatter.insert_space_between_brackets_in_array_type_reference";	//$NON-NLS-1$
-//	/**
-//	 * <pre>
-//	 * FORMATTER / Option to insert a space between empty braces in an array initializer
-//	 *     - option id:         "org.eclipse.cdt.core.formatter.insert_space_between_empty_braces_in_array_initializer"
-//	 *     - possible values:   { INSERT, DO_NOT_INSERT }
-//	 *     - default:           DO_NOT_INSERT
-//	 * </pre>
-//	 * @see CCorePlugin#INSERT
-//	 * @see CCorePlugin#DO_NOT_INSERT
-//	 */
-//	public static final String FORMATTER_INSERT_SPACE_BETWEEN_EMPTY_BRACES_IN_ARRAY_INITIALIZER = CCorePlugin.PLUGIN_ID + ".formatter.insert_space_between_empty_braces_in_array_initializer";	//$NON-NLS-1$
+	/**
+	 * <pre>
+	 * FORMATTER / Option to insert a space between empty braces in an array initializer
+	 *     - option id:         "org.eclipse.cdt.core.formatter.insert_space_between_empty_braces_in_array_initializer"
+	 *     - possible values:   { INSERT, DO_NOT_INSERT }
+	 *     - default:           DO_NOT_INSERT
+	 * </pre>
+	 * @see CCorePlugin#INSERT
+	 * @see CCorePlugin#DO_NOT_INSERT
+	 */
+	public static final String FORMATTER_INSERT_SPACE_BETWEEN_EMPTY_BRACES_IN_ARRAY_INITIALIZER = CCorePlugin.PLUGIN_ID + ".formatter.insert_space_between_empty_braces_in_array_initializer";	//$NON-NLS-1$
 //	/**
 //	 * <pre>
 //	 * FORMATTER / Option to insert a space between empty brackets in an array allocation expression
@@ -2463,17 +2463,17 @@ public class DefaultCodeFormatterConstants {
 	 * @see #FALSE
 	 */
 	public static final String FORMATTER_KEEP_ELSE_STATEMENT_ON_SAME_LINE = CCorePlugin.PLUGIN_ID + ".formatter.keep_else_statement_on_same_line"; //$NON-NLS-1$
-//	/**
-//	 * <pre>
-//	 * FORMATTER / Option to keep empty array initializer one one line
-//	 *     - option id:         "org.eclipse.cdt.core.formatter.keep_empty_array_initializer_on_one_line"
-//	 *     - possible values:   { TRUE, FALSE }
-//	 *     - default:           FALSE
-//	 * </pre>
-//	 * @see #TRUE
-//	 * @see #FALSE
-//	 */
-//	public static final String FORMATTER_KEEP_EMPTY_ARRAY_INITIALIZER_ON_ONE_LINE = CCorePlugin.PLUGIN_ID + ".formatter.keep_empty_array_initializer_on_one_line"; //$NON-NLS-1$
+	/**
+	 * <pre>
+	 * FORMATTER / Option to keep empty array initializer one one line
+	 *     - option id:         "org.eclipse.cdt.core.formatter.keep_empty_array_initializer_on_one_line"
+	 *     - possible values:   { TRUE, FALSE }
+	 *     - default:           FALSE
+	 * </pre>
+	 * @see #TRUE
+	 * @see #FALSE
+	 */
+	public static final String FORMATTER_KEEP_EMPTY_ARRAY_INITIALIZER_ON_ONE_LINE = CCorePlugin.PLUGIN_ID + ".formatter.keep_empty_array_initializer_on_one_line"; //$NON-NLS-1$
 	/**
 	 * <pre>
 	 * FORMATTER / Option to keep guardian clause on one line

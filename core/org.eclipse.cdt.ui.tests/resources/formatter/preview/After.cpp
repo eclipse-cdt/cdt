@@ -41,3 +41,21 @@ int foo(int bar) const {
 	}
 }
 } // end namespace FOO
+/*
+ * Line Wrapping
+ */
+int array[]= { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 1000,
+				2000, 3000, 4000, 5000 };
+int compare(int argument, int otherArgument) {
+	return argument+otherArgument > argument*otherArgument+1000000 ? 100000+50000
+			: 200000-30000;
+}
+class Other {
+	static void bar(int arg1, int arg2, int arg3, int arg4, int arg5, int arg6,
+			int arg7, int arg8, int arg9) {
+	}
+};
+void foo() {
+	Other::bar(100000, 200000, 300000, 400000, 500000, 600000, 700000, 800000,
+			900000);
+}

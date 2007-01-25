@@ -643,7 +643,7 @@ public class Scribe {
 				switch (currentToken.type) {
 				case Token.tLBRACE:
 					scanner.resetTo(scanner.getCurrentTokenStartPosition(), scannerEndPosition-1);
-					formatOpeningBrace(formatter.preferences.brace_position_for_block, hasWhitespace);
+					formatOpeningBrace(formatter.preferences.brace_position_for_block, formatter.preferences.insert_space_before_opening_brace_in_block);
 					if (formatter.preferences.indent_statements_compare_to_block) {
 						indent();
 					}
@@ -1543,13 +1543,17 @@ public class Scribe {
 		while ((currentToken= scanner.nextToken()) != null) {
 			switch (currentToken.type) {
 			case Token.tLBRACE:
-				++braceLevel;
+				if (expectedTokenType != Token.tLBRACE) {
+					++braceLevel;
+				}
 				break;
 			case Token.tRBRACE:
 				--braceLevel;
 				break;
 			case Token.tLPAREN:
-				++parenLevel;
+				if (expectedTokenType != Token.tLPAREN) {
+					++parenLevel;
+				}
 				break;
 			case Token.tRPAREN:
 				--parenLevel;

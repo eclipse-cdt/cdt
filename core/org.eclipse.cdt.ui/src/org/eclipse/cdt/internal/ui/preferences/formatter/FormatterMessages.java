@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -299,7 +299,7 @@ final class FormatterMessages extends NLS {
 	public static String LineWrappingTabPage_width_indent;
 	public static String LineWrappingTabPage_width_indent_option_max_line_width;
 	public static String LineWrappingTabPage_width_indent_option_default_indent_wrapped;
-//	public static String LineWrappingTabPage_width_indent_option_default_indent_array;
+	public static String LineWrappingTabPage_width_indent_option_default_indent_array;
 	public static String LineWrappingTabPage_error_invalid_value;
 //	public static String LineWrappingTabPage_enum_superinterfaces;
 //	public static String LineWrappingTabPage_assignment_alignment;
@@ -338,8 +338,8 @@ final class FormatterMessages extends NLS {
 	public static String BracesTabPage_option_blocks;
 	public static String BracesTabPage_option_blocks_in_case;
 	public static String BracesTabPage_option_switch_case;
-//	public static String BracesTabPage_option_array_initializer;
-//	public static String BracesTabPage_option_keep_empty_array_initializer_on_one_line;
+	public static String BracesTabPage_option_array_initializer;
+	public static String BracesTabPage_option_keep_empty_array_initializer_on_one_line;
 //	public static String BracesTabPage_option_enum_declaration;
 //	public static String BracesTabPage_option_enumconst_declaration;
 //	public static String BracesTabPage_option_annotation_type_declaration;

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -392,7 +392,7 @@ public class LineWrappingTabPage extends ModifyDialogTabPage {
 	
 	private final Category fMessageSendArgumentsCategory= new Category(
 	    DefaultCodeFormatterConstants.FORMATTER_ALIGNMENT_FOR_ARGUMENTS_IN_METHOD_INVOCATION,
-	    "class Other {static void bar(int arg1, int arg2, int arg3, int arg4, int arg5, int arg6) {}};"+ //$NON-NLS-1$
+	    "class Other {static void bar(int arg1, int arg2, int arg3, int arg4, int arg5, int arg6, int arg7, int arg8, int arg9) {}};"+ //$NON-NLS-1$
 	    "void foo() {Other::bar(100, 200, 300, 400, 500, 600, 700, 800, 900);}", //$NON-NLS-1$
 	    FormatterMessages.LineWrappingTabPage_arguments
 	); 
@@ -434,7 +434,7 @@ public class LineWrappingTabPage extends ModifyDialogTabPage {
 	
 	private final Category fArrayInitializerExpressionsCategory= new Category(
 	    DefaultCodeFormatterConstants.FORMATTER_ALIGNMENT_FOR_EXPRESSIONS_IN_ARRAY_INITIALIZER,
-	    "int[] array= {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14};", //$NON-NLS-1$
+	    "int array[]= {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17};", //$NON-NLS-1$
 	    FormatterMessages.LineWrappingTabPage_array_init
 	);
 	
@@ -446,7 +446,7 @@ public class LineWrappingTabPage extends ModifyDialogTabPage {
 
 	private final Category fConditionalExpressionCategory= new Category(
 	    DefaultCodeFormatterConstants.FORMATTER_ALIGNMENT_FOR_CONDITIONAL_EXPRESSION,
-	    "int example(bool argument0, int otherArgument) {return argument ? 100000 : 200000;}}", //$NON-NLS-1$
+	    "int compare(int argument, int otherArgument) {return argument > argument ? 100000 : 200000;}", //$NON-NLS-1$
 	    FormatterMessages.LineWrappingTabPage_conditionals
 	);
 
@@ -615,7 +615,7 @@ public class LineWrappingTabPage extends ModifyDialogTabPage {
 		root.add(methodDeclarations);
 //		root.add(enumDeclarations);
 		root.add(functionCalls);
-//		root.add(expressions);
+		root.add(expressions);
 //		root.add(statements);
 		
 		return root;
@@ -630,7 +630,7 @@ public class LineWrappingTabPage extends ModifyDialogTabPage {
 
 		createNumberPref(lineWidthGroup, numColumns, FormatterMessages.LineWrappingTabPage_width_indent_option_max_line_width, DefaultCodeFormatterConstants.FORMATTER_LINE_SPLIT, 0, 9999); 
 		createNumberPref(lineWidthGroup, numColumns, FormatterMessages.LineWrappingTabPage_width_indent_option_default_indent_wrapped, DefaultCodeFormatterConstants.FORMATTER_CONTINUATION_INDENTATION, 0, 9999); 
-//		createNumberPref(lineWidthGroup, numColumns, FormatterMessages.LineWrappingTabPage_width_indent_option_default_indent_array, DefaultCodeFormatterConstants.FORMATTER_CONTINUATION_INDENTATION_FOR_ARRAY_INITIALIZER, 0, 9999); 
+		createNumberPref(lineWidthGroup, numColumns, FormatterMessages.LineWrappingTabPage_width_indent_option_default_indent_array, DefaultCodeFormatterConstants.FORMATTER_CONTINUATION_INDENTATION_FOR_ARRAY_INITIALIZER, 0, 9999); 
 
 		fCategoriesViewer= new TreeViewer(composite /*categoryGroup*/, SWT.MULTI | SWT.BORDER | SWT.READ_ONLY | SWT.V_SCROLL );
 		fCategoriesViewer.setContentProvider(new ITreeContentProvider() {

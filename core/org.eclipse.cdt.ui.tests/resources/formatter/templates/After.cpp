@@ -67,7 +67,7 @@ template<bool threads, int inst> char
 
 // an instantiation, not a template:
 complex
-<float> cf(0,0);
+<float> cf(0, 0);
 //template<class Language, class CharacterSet, class SortAlgorithm<CharacterSet> >
 //Dictionary* TheSpellCheckDictionary;
 

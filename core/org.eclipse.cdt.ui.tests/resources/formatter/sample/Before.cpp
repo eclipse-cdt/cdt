@@ -1,4 +1,21 @@
-#include <Simple.h>
+//#include <Simple.h>
+#ifndef SIMPLE_H
+#define SIMPLE_H
+
+struct SimpleStruct
+{
+	int   num;
+	char  name[ ];
+	float floatNum;
+};
+
+
+void SimpleStruct_construct( struct SimpleStruct * const this );
+
+int SimpleStruct_doSomething( const struct SimpleStruct * const this );
+
+#endif /* SIMPLE_H */
+
 
 const SimpleStruct simpleStruct =
 {
@@ -15,23 +32,21 @@ const SimpleStruct simpleStruct =
         \
                 }
 
-const OtherStruct array[] =
+const SimpleStruct array[] =
 {
 	{
+		  SIZEOF( simpleStruct, num ),
 #if FOO
 				"foo"
    #  else
 		"bar"
 #endif
-	  ,	SIZEOF( simpleStruct, num )
-	  , &t_int
-	  , 0
+	  , 0.5
 	}
   , {
-		"name"
-	  , SIZEOF( simpleStruct, floatnum )
-	  , &t_float
-	  , 1
+	  SIZEOF( simpleStruct, floatNum )
+, "name"
+	  , 1.1
 	}
 };
 

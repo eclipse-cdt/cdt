@@ -55,8 +55,7 @@ public class DefaultCodeFormatterOptions {
 		return options;
 	}
 
-
-	//	public int alignment_for_arguments_in_allocation_expression;
+//	public int alignment_for_arguments_in_allocation_expression;
 //	public int alignment_for_arguments_in_enum_constant;
 //	public int alignment_for_arguments_in_explicit_constructor_call;
 	public int alignment_for_arguments_in_method_invocation;
@@ -89,7 +88,7 @@ public class DefaultCodeFormatterOptions {
 	public String brace_position_for_switch;
 	
 	public int continuation_indentation;
-//	public int continuation_indentation_for_array_initializer;
+	public int continuation_indentation_for_array_initializer;
 	
 //	public int blank_lines_after_includes;
 //	public int blank_lines_before_field;
@@ -121,10 +120,10 @@ public class DefaultCodeFormatterOptions {
 	public boolean indent_switchstatements_compare_to_switch;
 	public int indentation_size;
 
-//	public boolean insert_new_line_after_opening_brace_in_array_initializer;
+	public boolean insert_new_line_after_opening_brace_in_array_initializer;
 	public boolean insert_new_line_at_end_of_file_if_missing;
 //	public boolean insert_new_line_before_catch_in_try_statement;
-//	public boolean insert_new_line_before_closing_brace_in_array_initializer;
+	public boolean insert_new_line_before_closing_brace_in_array_initializer;
 	public boolean insert_new_line_before_else_in_if_statement;
 //	public boolean insert_new_line_before_finally_in_try_statement;
 	public boolean insert_new_line_before_while_in_do_statement;
@@ -145,7 +144,7 @@ public class DefaultCodeFormatterOptions {
 //	public boolean insert_space_after_colon_in_for;
 //	public boolean insert_space_after_colon_in_labeled_statement;
 //	public boolean insert_space_after_comma_in_allocation_expression;
-//	public boolean insert_space_after_comma_in_array_initializer;
+	public boolean insert_space_after_comma_in_array_initializer;
 //	public boolean insert_space_after_comma_in_constructor_declaration_parameters;
 //	public boolean insert_space_after_comma_in_constructor_declaration_throws;
 //	public boolean insert_space_after_comma_in_enum_constant_arguments;
@@ -168,7 +167,7 @@ public class DefaultCodeFormatterOptions {
 //	public boolean insert_space_after_opening_angle_bracket_in_type_parameters;
 //	public boolean insert_space_after_opening_bracket_in_array_allocation_expression;
 //	public boolean insert_space_after_opening_bracket_in_array_reference;
-//	public boolean insert_space_after_opening_brace_in_array_initializer;
+	public boolean insert_space_after_opening_brace_in_array_initializer;
 //	public boolean insert_space_after_opening_paren_in_cast;
 //	public boolean insert_space_after_opening_paren_in_catch;
 //	public boolean insert_space_after_opening_paren_in_constructor_declaration;
@@ -191,7 +190,7 @@ public class DefaultCodeFormatterOptions {
 //	public boolean insert_space_before_closing_angle_bracket_in_parameterized_type_reference;
 //	public boolean insert_space_before_closing_angle_bracket_in_type_arguments;
 //	public boolean insert_space_before_closing_angle_bracket_in_type_parameters;
-//	public boolean insert_space_before_closing_brace_in_array_initializer;
+	public boolean insert_space_before_closing_brace_in_array_initializer;
 //	public boolean insert_space_before_closing_bracket_in_array_allocation_expression;
 //	public boolean insert_space_before_closing_bracket_in_array_reference;
 //	public boolean insert_space_before_closing_paren_in_cast;
@@ -211,7 +210,7 @@ public class DefaultCodeFormatterOptions {
 //	public boolean insert_space_before_colon_in_for;
 //	public boolean insert_space_before_colon_in_labeled_statement;
 //	public boolean insert_space_before_comma_in_allocation_expression;
-//	public boolean insert_space_before_comma_in_array_initializer;
+	public boolean insert_space_before_comma_in_array_initializer;
 //	public boolean insert_space_before_comma_in_constructor_declaration_parameters;
 //	public boolean insert_space_before_comma_in_constructor_declaration_throws;
 //	public boolean insert_space_before_comma_in_enum_constant_arguments;
@@ -233,7 +232,7 @@ public class DefaultCodeFormatterOptions {
 //	public boolean insert_space_before_opening_angle_bracket_in_parameterized_type_reference;
 //	public boolean insert_space_before_opening_angle_bracket_in_type_arguments;
 //	public boolean insert_space_before_opening_angle_bracket_in_type_parameters;
-//	public boolean insert_space_before_opening_brace_in_array_initializer;
+	public boolean insert_space_before_opening_brace_in_array_initializer;
 	public boolean insert_space_before_opening_brace_in_block;
 //	public boolean insert_space_before_opening_brace_in_constructor_declaration;
 //	public boolean insert_space_before_opening_brace_in_enum_constant;
@@ -262,7 +261,7 @@ public class DefaultCodeFormatterOptions {
 	public boolean insert_space_before_semicolon_in_for;
 //	public boolean insert_space_before_unary_operator;
 //	public boolean insert_space_between_brackets_in_array_type_reference;
-//	public boolean insert_space_between_empty_braces_in_array_initializer;
+	public boolean insert_space_between_empty_braces_in_array_initializer;
 //	public boolean insert_space_between_empty_brackets_in_array_allocation_expression;
 //	public boolean insert_space_between_empty_parens_in_constructor_declaration;
 //	public boolean insert_space_between_empty_parens_in_enum_constant;
@@ -271,7 +270,7 @@ public class DefaultCodeFormatterOptions {
 	public boolean compact_else_if;
 	public boolean keep_guardian_clause_on_one_line;
 	public boolean keep_else_statement_on_same_line;
-//	public boolean keep_empty_array_initializer_on_one_line;
+	public boolean keep_empty_array_initializer_on_one_line;
 	public boolean keep_simple_if_on_one_line;
 	public boolean keep_then_statement_on_same_line;
 	public int number_of_empty_lines_to_preserve;
@@ -335,7 +334,7 @@ public class DefaultCodeFormatterOptions {
 //		options.put(DefaultCodeFormatterConstants.FORMATTER_COMMENT_FORMAT_SOURCE, this.comment_format_source ? DefaultCodeFormatterConstants.TRUE : DefaultCodeFormatterConstants.FALSE);
 //		options.put(DefaultCodeFormatterConstants.FORMATTER_COMMENT_LINE_LENGTH, Integer.toString(this.comment_line_length));
 		options.put(DefaultCodeFormatterConstants.FORMATTER_CONTINUATION_INDENTATION, Integer.toString(this.continuation_indentation));
-//		options.put(DefaultCodeFormatterConstants.FORMATTER_CONTINUATION_INDENTATION_FOR_ARRAY_INITIALIZER, Integer.toString(this.continuation_indentation_for_array_initializer));
+		options.put(DefaultCodeFormatterConstants.FORMATTER_CONTINUATION_INDENTATION_FOR_ARRAY_INITIALIZER, Integer.toString(this.continuation_indentation_for_array_initializer));
 //		options.put(DefaultCodeFormatterConstants.FORMATTER_BLANK_LINES_AFTER_IMPORTS, Integer.toString(this.blank_lines_after_includes));
 //		options.put(DefaultCodeFormatterConstants.FORMATTER_BLANK_LINES_BEFORE_FIELD, Integer.toString(this.blank_lines_before_field));
 //		options.put(DefaultCodeFormatterConstants.FORMATTER_BLANK_LINES_BEFORE_FIRST_CLASS_BODY_DECLARATION, Integer.toString(this.blank_lines_before_first_class_body_declaration));
@@ -357,10 +356,10 @@ public class DefaultCodeFormatterOptions {
 		options.put(DefaultCodeFormatterConstants.FORMATTER_INDENT_SWITCHSTATEMENTS_COMPARE_TO_CASES, this.indent_switchstatements_compare_to_cases ? DefaultCodeFormatterConstants.TRUE : DefaultCodeFormatterConstants.FALSE);
 		options.put(DefaultCodeFormatterConstants.FORMATTER_INDENT_SWITCHSTATEMENTS_COMPARE_TO_SWITCH, this.indent_switchstatements_compare_to_switch ? DefaultCodeFormatterConstants.TRUE : DefaultCodeFormatterConstants.FALSE);
 		options.put(DefaultCodeFormatterConstants.FORMATTER_INDENTATION_SIZE, Integer.toString(this.indentation_size));
-//		options.put(DefaultCodeFormatterConstants.FORMATTER_INSERT_NEW_LINE_AFTER_OPENING_BRACE_IN_ARRAY_INITIALIZER, this.insert_new_line_after_opening_brace_in_array_initializer? CCorePlugin.INSERT : CCorePlugin.DO_NOT_INSERT);
+		options.put(DefaultCodeFormatterConstants.FORMATTER_INSERT_NEW_LINE_AFTER_OPENING_BRACE_IN_ARRAY_INITIALIZER, this.insert_new_line_after_opening_brace_in_array_initializer? CCorePlugin.INSERT : CCorePlugin.DO_NOT_INSERT);
 		options.put(DefaultCodeFormatterConstants.FORMATTER_INSERT_NEW_LINE_AT_END_OF_FILE_IF_MISSING, this.insert_new_line_at_end_of_file_if_missing ? CCorePlugin.INSERT : CCorePlugin.DO_NOT_INSERT);
 //		options.put(DefaultCodeFormatterConstants.FORMATTER_INSERT_NEW_LINE_BEFORE_CATCH_IN_TRY_STATEMENT, this.insert_new_line_before_catch_in_try_statement? CCorePlugin.INSERT : CCorePlugin.DO_NOT_INSERT);
-//		options.put(DefaultCodeFormatterConstants.FORMATTER_INSERT_NEW_LINE_BEFORE_CLOSING_BRACE_IN_ARRAY_INITIALIZER, this.insert_new_line_before_closing_brace_in_array_initializer? CCorePlugin.INSERT : CCorePlugin.DO_NOT_INSERT);
+		options.put(DefaultCodeFormatterConstants.FORMATTER_INSERT_NEW_LINE_BEFORE_CLOSING_BRACE_IN_ARRAY_INITIALIZER, this.insert_new_line_before_closing_brace_in_array_initializer? CCorePlugin.INSERT : CCorePlugin.DO_NOT_INSERT);
 		options.put(DefaultCodeFormatterConstants.FORMATTER_INSERT_NEW_LINE_BEFORE_ELSE_IN_IF_STATEMENT, this.insert_new_line_before_else_in_if_statement? CCorePlugin.INSERT : CCorePlugin.DO_NOT_INSERT);
 //		options.put(DefaultCodeFormatterConstants.FORMATTER_INSERT_NEW_LINE_BEFORE_FINALLY_IN_TRY_STATEMENT, this.insert_new_line_before_finally_in_try_statement? CCorePlugin.INSERT : CCorePlugin.DO_NOT_INSERT);
 		options.put(DefaultCodeFormatterConstants.FORMATTER_INSERT_NEW_LINE_BEFORE_WHILE_IN_DO_STATEMENT, this.insert_new_line_before_while_in_do_statement? CCorePlugin.INSERT : CCorePlugin.DO_NOT_INSERT);
@@ -381,7 +380,7 @@ public class DefaultCodeFormatterOptions {
 //		options.put(DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_AFTER_COLON_IN_FOR, this.insert_space_after_colon_in_for ? CCorePlugin.INSERT : CCorePlugin.DO_NOT_INSERT);
 //		options.put(DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_AFTER_COLON_IN_LABELED_STATEMENT, this.insert_space_after_colon_in_labeled_statement? CCorePlugin.INSERT : CCorePlugin.DO_NOT_INSERT);
 //		options.put(DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_AFTER_COMMA_IN_ALLOCATION_EXPRESSION, this.insert_space_after_comma_in_allocation_expression? CCorePlugin.INSERT : CCorePlugin.DO_NOT_INSERT);
-//		options.put(DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_AFTER_COMMA_IN_ARRAY_INITIALIZER, this.insert_space_after_comma_in_array_initializer? CCorePlugin.INSERT : CCorePlugin.DO_NOT_INSERT);
+		options.put(DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_AFTER_COMMA_IN_ARRAY_INITIALIZER, this.insert_space_after_comma_in_array_initializer? CCorePlugin.INSERT : CCorePlugin.DO_NOT_INSERT);
 //		options.put(DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_AFTER_COMMA_IN_CONSTRUCTOR_DECLARATION_PARAMETERS, this.insert_space_after_comma_in_constructor_declaration_parameters? CCorePlugin.INSERT : CCorePlugin.DO_NOT_INSERT);
 //		options.put(DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_AFTER_COMMA_IN_CONSTRUCTOR_DECLARATION_THROWS, this.insert_space_after_comma_in_constructor_declaration_throws? CCorePlugin.INSERT : CCorePlugin.DO_NOT_INSERT);
 //		options.put(DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_AFTER_COMMA_IN_ENUM_CONSTANT_ARGUMENTS, this.insert_space_after_comma_in_enum_constant_arguments ? CCorePlugin.INSERT : CCorePlugin.DO_NOT_INSERT);
@@ -404,7 +403,7 @@ public class DefaultCodeFormatterOptions {
 //		options.put(DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_AFTER_OPENING_ANGLE_BRACKET_IN_TYPE_ARGUMENTS, this.insert_space_after_opening_angle_bracket_in_type_arguments? CCorePlugin.INSERT : CCorePlugin.DO_NOT_INSERT);
 //		options.put(DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_AFTER_OPENING_ANGLE_BRACKET_IN_TYPE_PARAMETERS, this.insert_space_after_opening_angle_bracket_in_type_parameters? CCorePlugin.INSERT : CCorePlugin.DO_NOT_INSERT);
 //		options.put(DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_AFTER_OPENING_BRACKET_IN_ARRAY_REFERENCE, this.insert_space_after_opening_bracket_in_array_reference? CCorePlugin.INSERT : CCorePlugin.DO_NOT_INSERT);
-//		options.put(DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_AFTER_OPENING_BRACE_IN_ARRAY_INITIALIZER, this.insert_space_after_opening_brace_in_array_initializer? CCorePlugin.INSERT : CCorePlugin.DO_NOT_INSERT);
+		options.put(DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_AFTER_OPENING_BRACE_IN_ARRAY_INITIALIZER, this.insert_space_after_opening_brace_in_array_initializer? CCorePlugin.INSERT : CCorePlugin.DO_NOT_INSERT);
 //		options.put(DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_AFTER_OPENING_PAREN_IN_CAST, this.insert_space_after_opening_paren_in_cast? CCorePlugin.INSERT : CCorePlugin.DO_NOT_INSERT);
 //		options.put(DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_AFTER_OPENING_PAREN_IN_CATCH, this.insert_space_after_opening_paren_in_catch? CCorePlugin.INSERT : CCorePlugin.DO_NOT_INSERT);
 //		options.put(DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_AFTER_OPENING_PAREN_IN_CONSTRUCTOR_DECLARATION, this.insert_space_after_opening_paren_in_constructor_declaration? CCorePlugin.INSERT : CCorePlugin.DO_NOT_INSERT);
@@ -427,7 +426,7 @@ public class DefaultCodeFormatterOptions {
 //		options.put(DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_BEFORE_CLOSING_ANGLE_BRACKET_IN_PARAMETERIZED_TYPE_REFERENCE, this.insert_space_before_closing_angle_bracket_in_parameterized_type_reference? CCorePlugin.INSERT : CCorePlugin.DO_NOT_INSERT);
 //		options.put(DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_BEFORE_CLOSING_ANGLE_BRACKET_IN_TYPE_ARGUMENTS, this.insert_space_before_closing_angle_bracket_in_type_arguments? CCorePlugin.INSERT : CCorePlugin.DO_NOT_INSERT);
 //		options.put(DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_BEFORE_CLOSING_ANGLE_BRACKET_IN_TYPE_PARAMETERS, this.insert_space_before_closing_angle_bracket_in_type_parameters? CCorePlugin.INSERT : CCorePlugin.DO_NOT_INSERT);
-//		options.put(DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_BEFORE_CLOSING_BRACE_IN_ARRAY_INITIALIZER, this.insert_space_before_closing_brace_in_array_initializer? CCorePlugin.INSERT : CCorePlugin.DO_NOT_INSERT);
+		options.put(DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_BEFORE_CLOSING_BRACE_IN_ARRAY_INITIALIZER, this.insert_space_before_closing_brace_in_array_initializer? CCorePlugin.INSERT : CCorePlugin.DO_NOT_INSERT);
 //		options.put(DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_BEFORE_CLOSING_BRACKET_IN_ARRAY_ALLOCATION_EXPRESSION, this.insert_space_before_closing_bracket_in_array_allocation_expression? CCorePlugin.INSERT : CCorePlugin.DO_NOT_INSERT);
 //		options.put(DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_BEFORE_CLOSING_BRACKET_IN_ARRAY_REFERENCE, this.insert_space_before_closing_bracket_in_array_reference? CCorePlugin.INSERT : CCorePlugin.DO_NOT_INSERT);
 //		options.put(DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_BEFORE_CLOSING_PAREN_IN_CAST, this.insert_space_before_closing_paren_in_cast? CCorePlugin.INSERT : CCorePlugin.DO_NOT_INSERT);
@@ -447,7 +446,7 @@ public class DefaultCodeFormatterOptions {
 //		options.put(DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_BEFORE_COLON_IN_FOR, this.insert_space_before_colon_in_for ? CCorePlugin.INSERT : CCorePlugin.DO_NOT_INSERT);
 //		options.put(DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_BEFORE_COLON_IN_LABELED_STATEMENT, this.insert_space_before_colon_in_labeled_statement? CCorePlugin.INSERT : CCorePlugin.DO_NOT_INSERT);
 //		options.put(DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_BEFORE_COMMA_IN_ALLOCATION_EXPRESSION, this.insert_space_before_comma_in_allocation_expression? CCorePlugin.INSERT : CCorePlugin.DO_NOT_INSERT);
-//		options.put(DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_BEFORE_COMMA_IN_ARRAY_INITIALIZER, this.insert_space_before_comma_in_array_initializer? CCorePlugin.INSERT : CCorePlugin.DO_NOT_INSERT);
+		options.put(DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_BEFORE_COMMA_IN_ARRAY_INITIALIZER, this.insert_space_before_comma_in_array_initializer? CCorePlugin.INSERT : CCorePlugin.DO_NOT_INSERT);
 //		options.put(DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_BEFORE_COMMA_IN_CONSTRUCTOR_DECLARATION_PARAMETERS, this.insert_space_before_comma_in_constructor_declaration_parameters? CCorePlugin.INSERT : CCorePlugin.DO_NOT_INSERT);
 //		options.put(DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_BEFORE_COMMA_IN_CONSTRUCTOR_DECLARATION_THROWS, this.insert_space_before_comma_in_constructor_declaration_throws? CCorePlugin.INSERT : CCorePlugin.DO_NOT_INSERT);
 //		options.put(DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_BEFORE_COMMA_IN_ENUM_CONSTANT_ARGUMENTS, this.insert_space_before_comma_in_enum_constant_arguments? CCorePlugin.INSERT : CCorePlugin.DO_NOT_INSERT);
@@ -468,7 +467,7 @@ public class DefaultCodeFormatterOptions {
 //		options.put(DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_BEFORE_OPENING_ANGLE_BRACKET_IN_PARAMETERIZED_TYPE_REFERENCE, this.insert_space_before_opening_angle_bracket_in_parameterized_type_reference? CCorePlugin.INSERT : CCorePlugin.DO_NOT_INSERT);
 //		options.put(DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_BEFORE_OPENING_ANGLE_BRACKET_IN_TYPE_ARGUMENTS, this.insert_space_before_opening_angle_bracket_in_type_arguments? CCorePlugin.INSERT : CCorePlugin.DO_NOT_INSERT);
 //		options.put(DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_BEFORE_OPENING_ANGLE_BRACKET_IN_TYPE_PARAMETERS, this.insert_space_before_opening_angle_bracket_in_type_parameters? CCorePlugin.INSERT : CCorePlugin.DO_NOT_INSERT);
-//		options.put(DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_BEFORE_OPENING_BRACE_IN_ARRAY_INITIALIZER, this.insert_space_before_opening_brace_in_array_initializer? CCorePlugin.INSERT : CCorePlugin.DO_NOT_INSERT);
+		options.put(DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_BEFORE_OPENING_BRACE_IN_ARRAY_INITIALIZER, this.insert_space_before_opening_brace_in_array_initializer? CCorePlugin.INSERT : CCorePlugin.DO_NOT_INSERT);
 		options.put(DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_BEFORE_OPENING_BRACE_IN_BLOCK, this.insert_space_before_opening_brace_in_block? CCorePlugin.INSERT : CCorePlugin.DO_NOT_INSERT);
 //		options.put(DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_BEFORE_OPENING_BRACE_IN_CONSTRUCTOR_DECLARATION, this.insert_space_before_opening_brace_in_constructor_declaration? CCorePlugin.INSERT : CCorePlugin.DO_NOT_INSERT);
 //		options.put(DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_BEFORE_OPENING_BRACE_IN_ENUM_CONSTANT, this.insert_space_before_opening_brace_in_enum_constant? CCorePlugin.INSERT : CCorePlugin.DO_NOT_INSERT);
@@ -498,7 +497,7 @@ public class DefaultCodeFormatterOptions {
 		options.put(DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_BEFORE_SEMICOLON_IN_FOR, this.insert_space_before_semicolon_in_for? CCorePlugin.INSERT : CCorePlugin.DO_NOT_INSERT);
 //		options.put(DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_BEFORE_UNARY_OPERATOR, this.insert_space_before_unary_operator? CCorePlugin.INSERT : CCorePlugin.DO_NOT_INSERT);
 //		options.put(DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_BETWEEN_BRACKETS_IN_ARRAY_TYPE_REFERENCE, this.insert_space_between_brackets_in_array_type_reference? CCorePlugin.INSERT : CCorePlugin.DO_NOT_INSERT);
-//		options.put(DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_BETWEEN_EMPTY_BRACES_IN_ARRAY_INITIALIZER, this.insert_space_between_empty_braces_in_array_initializer? CCorePlugin.INSERT : CCorePlugin.DO_NOT_INSERT);
+		options.put(DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_BETWEEN_EMPTY_BRACES_IN_ARRAY_INITIALIZER, this.insert_space_between_empty_braces_in_array_initializer? CCorePlugin.INSERT : CCorePlugin.DO_NOT_INSERT);
 //		options.put(DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_BETWEEN_EMPTY_BRACKETS_IN_ARRAY_ALLOCATION_EXPRESSION, this.insert_space_between_empty_brackets_in_array_allocation_expression? CCorePlugin.INSERT : CCorePlugin.DO_NOT_INSERT);
 //		options.put(DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_BETWEEN_EMPTY_PARENS_IN_CONSTRUCTOR_DECLARATION, this.insert_space_between_empty_parens_in_constructor_declaration? CCorePlugin.INSERT : CCorePlugin.DO_NOT_INSERT);
 //		options.put(DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_BETWEEN_EMPTY_PARENS_IN_ENUM_CONSTANT, this.insert_space_between_empty_parens_in_enum_constant? CCorePlugin.INSERT : CCorePlugin.DO_NOT_INSERT);
@@ -507,7 +506,7 @@ public class DefaultCodeFormatterOptions {
 		options.put(DefaultCodeFormatterConstants.FORMATTER_COMPACT_ELSE_IF, this.compact_else_if ? DefaultCodeFormatterConstants.TRUE : DefaultCodeFormatterConstants.FALSE);
 		options.put(DefaultCodeFormatterConstants.FORMATTER_KEEP_GUARDIAN_CLAUSE_ON_ONE_LINE, this.keep_guardian_clause_on_one_line ? DefaultCodeFormatterConstants.TRUE : DefaultCodeFormatterConstants.FALSE);
 		options.put(DefaultCodeFormatterConstants.FORMATTER_KEEP_ELSE_STATEMENT_ON_SAME_LINE, this.keep_else_statement_on_same_line ? DefaultCodeFormatterConstants.TRUE : DefaultCodeFormatterConstants.FALSE);
-//		options.put(DefaultCodeFormatterConstants.FORMATTER_KEEP_EMPTY_ARRAY_INITIALIZER_ON_ONE_LINE, this.keep_empty_array_initializer_on_one_line ? DefaultCodeFormatterConstants.TRUE : DefaultCodeFormatterConstants.FALSE);
+		options.put(DefaultCodeFormatterConstants.FORMATTER_KEEP_EMPTY_ARRAY_INITIALIZER_ON_ONE_LINE, this.keep_empty_array_initializer_on_one_line ? DefaultCodeFormatterConstants.TRUE : DefaultCodeFormatterConstants.FALSE);
 		options.put(DefaultCodeFormatterConstants.FORMATTER_KEEP_SIMPLE_IF_ON_ONE_LINE, this.keep_simple_if_on_one_line ? DefaultCodeFormatterConstants.TRUE : DefaultCodeFormatterConstants.FALSE);
 		options.put(DefaultCodeFormatterConstants.FORMATTER_KEEP_THEN_STATEMENT_ON_SAME_LINE, this.keep_then_statement_on_same_line ? DefaultCodeFormatterConstants.TRUE : DefaultCodeFormatterConstants.FALSE);
 		options.put(DefaultCodeFormatterConstants.FORMATTER_NUMBER_OF_EMPTY_LINES_TO_PRESERVE, Integer.toString(this.number_of_empty_lines_to_preserve));
@@ -804,16 +803,16 @@ public class DefaultCodeFormatterOptions {
 				this.continuation_indentation = 2;
 			}
 		}
-//		final Object continuationIndentationForArrayInitializerOption = settings.get(DefaultCodeFormatterConstants.FORMATTER_CONTINUATION_INDENTATION_FOR_ARRAY_INITIALIZER);
-//		if (continuationIndentationForArrayInitializerOption != null) {
-//			try {
-//				this.continuation_indentation_for_array_initializer = Integer.parseInt((String) continuationIndentationForArrayInitializerOption);
-//			} catch (NumberFormatException e) {
-//				this.continuation_indentation_for_array_initializer = 2;
-//			} catch(ClassCastException e) {
-//				this.continuation_indentation_for_array_initializer = 2;
-//			}
-//		}
+		final Object continuationIndentationForArrayInitializerOption = settings.get(DefaultCodeFormatterConstants.FORMATTER_CONTINUATION_INDENTATION_FOR_ARRAY_INITIALIZER);
+		if (continuationIndentationForArrayInitializerOption != null) {
+			try {
+				this.continuation_indentation_for_array_initializer = Integer.parseInt((String) continuationIndentationForArrayInitializerOption);
+			} catch (NumberFormatException e) {
+				this.continuation_indentation_for_array_initializer = 2;
+			} catch(ClassCastException e) {
+				this.continuation_indentation_for_array_initializer = 2;
+			}
+		}
 //		final Object blankLinesAfterIncludesOption = settings.get(DefaultCodeFormatterConstants.FORMATTER_BLANK_LINES_AFTER_IMPORTS);
 //		if (blankLinesAfterIncludesOption != null) {
 //			try {
@@ -988,10 +987,10 @@ public class DefaultCodeFormatterOptions {
 				this.indentation_size = 4;
 			}
 		}
-//		final Object insertNewLineAfterOpeningBraceInArrayInitializerOption = settings.get(DefaultCodeFormatterConstants.FORMATTER_INSERT_NEW_LINE_AFTER_OPENING_BRACE_IN_ARRAY_INITIALIZER);
-//		if (insertNewLineAfterOpeningBraceInArrayInitializerOption != null) {
-//			this.insert_new_line_after_opening_brace_in_array_initializer = CCorePlugin.INSERT.equals(insertNewLineAfterOpeningBraceInArrayInitializerOption);
-//		}
+		final Object insertNewLineAfterOpeningBraceInArrayInitializerOption = settings.get(DefaultCodeFormatterConstants.FORMATTER_INSERT_NEW_LINE_AFTER_OPENING_BRACE_IN_ARRAY_INITIALIZER);
+		if (insertNewLineAfterOpeningBraceInArrayInitializerOption != null) {
+			this.insert_new_line_after_opening_brace_in_array_initializer = CCorePlugin.INSERT.equals(insertNewLineAfterOpeningBraceInArrayInitializerOption);
+		}
 		final Object insertNewLineAtEndOfFileIfMissingOption = settings.get(DefaultCodeFormatterConstants.FORMATTER_INSERT_NEW_LINE_AT_END_OF_FILE_IF_MISSING);
 		if (insertNewLineAtEndOfFileIfMissingOption != null) {
 			this.insert_new_line_at_end_of_file_if_missing = CCorePlugin.INSERT.equals(insertNewLineAtEndOfFileIfMissingOption);
@@ -1000,10 +999,10 @@ public class DefaultCodeFormatterOptions {
 //		if (insertNewLineBeforeCatchInTryStatementOption != null) {
 //			this.insert_new_line_before_catch_in_try_statement = CCorePlugin.INSERT.equals(insertNewLineBeforeCatchInTryStatementOption);
 //		}
-//		final Object insertNewLineBeforeClosingBraceInArrayInitializerOption = settings.get(DefaultCodeFormatterConstants.FORMATTER_INSERT_NEW_LINE_BEFORE_CLOSING_BRACE_IN_ARRAY_INITIALIZER);
-//		if (insertNewLineBeforeClosingBraceInArrayInitializerOption != null) {
-//			this.insert_new_line_before_closing_brace_in_array_initializer = CCorePlugin.INSERT.equals(insertNewLineBeforeClosingBraceInArrayInitializerOption);
-//		}
+		final Object insertNewLineBeforeClosingBraceInArrayInitializerOption = settings.get(DefaultCodeFormatterConstants.FORMATTER_INSERT_NEW_LINE_BEFORE_CLOSING_BRACE_IN_ARRAY_INITIALIZER);
+		if (insertNewLineBeforeClosingBraceInArrayInitializerOption != null) {
+			this.insert_new_line_before_closing_brace_in_array_initializer = CCorePlugin.INSERT.equals(insertNewLineBeforeClosingBraceInArrayInitializerOption);
+		}
 		final Object insertNewLineBeforeElseInIfStatementOption = settings.get(DefaultCodeFormatterConstants.FORMATTER_INSERT_NEW_LINE_BEFORE_ELSE_IN_IF_STATEMENT);
 		if (insertNewLineBeforeElseInIfStatementOption != null) {
 			this.insert_new_line_before_else_in_if_statement = CCorePlugin.INSERT.equals(insertNewLineBeforeElseInIfStatementOption);
@@ -1084,10 +1083,10 @@ public class DefaultCodeFormatterOptions {
 //		if (insertSpaceAfterCommaInAllocationExpressionOption != null) {
 //			this.insert_space_after_comma_in_allocation_expression = CCorePlugin.INSERT.equals(insertSpaceAfterCommaInAllocationExpressionOption);
 //		}
-//		final Object insertSpaceAfterCommaInArrayInitializerOption = settings.get(DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_AFTER_COMMA_IN_ARRAY_INITIALIZER);
-//		if (insertSpaceAfterCommaInArrayInitializerOption != null) {
-//			this.insert_space_after_comma_in_array_initializer = CCorePlugin.INSERT.equals(insertSpaceAfterCommaInArrayInitializerOption);
-//		}
+		final Object insertSpaceAfterCommaInArrayInitializerOption = settings.get(DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_AFTER_COMMA_IN_ARRAY_INITIALIZER);
+		if (insertSpaceAfterCommaInArrayInitializerOption != null) {
+			this.insert_space_after_comma_in_array_initializer = CCorePlugin.INSERT.equals(insertSpaceAfterCommaInArrayInitializerOption);
+		}
 //		final Object insertSpaceAfterCommaInConstructorDeclarationParametersOption = settings.get(DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_AFTER_COMMA_IN_CONSTRUCTOR_DECLARATION_PARAMETERS);
 //		if (insertSpaceAfterCommaInConstructorDeclarationParametersOption != null) {
 //			this.insert_space_after_comma_in_constructor_declaration_parameters = CCorePlugin.INSERT.equals(insertSpaceAfterCommaInConstructorDeclarationParametersOption);
@@ -1176,10 +1175,10 @@ public class DefaultCodeFormatterOptions {
 //		if (insertSpaceAfterOpeningBracketInArrayReferenceOption != null) {
 //			this.insert_space_after_opening_bracket_in_array_reference = CCorePlugin.INSERT.equals(insertSpaceAfterOpeningBracketInArrayReferenceOption);
 //		}
-//		final Object insertSpaceAfterOpeningBraceInArrayInitializerOption = settings.get(DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_AFTER_OPENING_BRACE_IN_ARRAY_INITIALIZER);
-//		if (insertSpaceAfterOpeningBraceInArrayInitializerOption != null) {
-//			this.insert_space_after_opening_brace_in_array_initializer = CCorePlugin.INSERT.equals(insertSpaceAfterOpeningBraceInArrayInitializerOption);
-//		}
+		final Object insertSpaceAfterOpeningBraceInArrayInitializerOption = settings.get(DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_AFTER_OPENING_BRACE_IN_ARRAY_INITIALIZER);
+		if (insertSpaceAfterOpeningBraceInArrayInitializerOption != null) {
+			this.insert_space_after_opening_brace_in_array_initializer = CCorePlugin.INSERT.equals(insertSpaceAfterOpeningBraceInArrayInitializerOption);
+		}
 //		final Object insertSpaceAfterOpeningParenInCastOption = settings.get(DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_AFTER_OPENING_PAREN_IN_CAST);
 //		if (insertSpaceAfterOpeningParenInCastOption != null) {
 //			this.insert_space_after_opening_paren_in_cast = CCorePlugin.INSERT.equals(insertSpaceAfterOpeningParenInCastOption);
@@ -1691,7 +1690,7 @@ public class DefaultCodeFormatterOptions {
 //		this.comment_insert_new_line_for_parameter = true;
 //		this.comment_line_length = 80;
 		this.continuation_indentation = 2;
-//		this.continuation_indentation_for_array_initializer = 2;
+		this.continuation_indentation_for_array_initializer = 2;
 //		this.blank_lines_after_includes = 1;
 //		this.blank_lines_before_field = 1;
 //		this.blank_lines_before_first_class_body_declaration = 0;
@@ -1712,10 +1711,10 @@ public class DefaultCodeFormatterOptions {
 		this.indent_switchstatements_compare_to_cases = true;
 		this.indent_switchstatements_compare_to_switch = false;
 		this.indentation_size = 4;
-//		this.insert_new_line_after_opening_brace_in_array_initializer = false;
+		this.insert_new_line_after_opening_brace_in_array_initializer = false;
 		this.insert_new_line_at_end_of_file_if_missing = false;
 //		this.insert_new_line_before_catch_in_try_statement = false;
-//		this.insert_new_line_before_closing_brace_in_array_initializer = false;
+		this.insert_new_line_before_closing_brace_in_array_initializer = false;
 		this.insert_new_line_before_else_in_if_statement = false;
 //		this.insert_new_line_before_finally_in_try_statement = false;
 		this.insert_new_line_before_while_in_do_statement = false;
@@ -1736,7 +1735,7 @@ public class DefaultCodeFormatterOptions {
 //		this.insert_space_after_colon_in_for = true;
 //		this.insert_space_after_colon_in_labeled_statement = true;
 //		this.insert_space_after_comma_in_allocation_expression = true;
-//		this.insert_space_after_comma_in_array_initializer = true;
+		this.insert_space_after_comma_in_array_initializer = true;
 //		this.insert_space_after_comma_in_constructor_declaration_parameters = true;
 //		this.insert_space_after_comma_in_constructor_declaration_throws = true;
 //		this.insert_space_after_comma_in_enum_constant_arguments = true;
@@ -1759,7 +1758,7 @@ public class DefaultCodeFormatterOptions {
 //		this.insert_space_after_opening_angle_bracket_in_type_parameters = false;
 //		this.insert_space_after_opening_bracket_in_array_allocation_expression = false;
 //		this.insert_space_after_opening_bracket_in_array_reference = false;
-//		this.insert_space_after_opening_brace_in_array_initializer = true;
+		this.insert_space_after_opening_brace_in_array_initializer = true;
 //		this.insert_space_after_opening_paren_in_cast = false;
 //		this.insert_space_after_opening_paren_in_catch = false;
 //		this.insert_space_after_opening_paren_in_constructor_declaration = false;
@@ -1782,7 +1781,7 @@ public class DefaultCodeFormatterOptions {
 //		this.insert_space_before_closing_angle_bracket_in_parameterized_type_reference = false;
 //		this.insert_space_before_closing_angle_bracket_in_type_arguments = false;
 //		this.insert_space_before_closing_angle_bracket_in_type_parameters = false;
-//		this.insert_space_before_closing_brace_in_array_initializer = true;
+		this.insert_space_before_closing_brace_in_array_initializer = true;
 //		this.insert_space_before_closing_bracket_in_array_allocation_expression = false;
 //		this.insert_space_before_closing_bracket_in_array_reference = false;
 //		this.insert_space_before_closing_paren_in_cast = false;
@@ -1802,7 +1801,7 @@ public class DefaultCodeFormatterOptions {
 //		this.insert_space_before_colon_in_for = true;
 //		this.insert_space_before_colon_in_labeled_statement = false;
 //		this.insert_space_before_comma_in_allocation_expression = false;
-//		this.insert_space_before_comma_in_array_initializer = false;
+		this.insert_space_before_comma_in_array_initializer = false;
 //		this.insert_space_before_comma_in_constructor_declaration_parameters = false;
 //		this.insert_space_before_comma_in_constructor_declaration_throws = false;
 //		this.insert_space_before_comma_in_enum_constant_arguments = false;
@@ -1824,7 +1823,7 @@ public class DefaultCodeFormatterOptions {
 //		this.insert_space_before_opening_angle_bracket_in_parameterized_type_reference = false;
 //		this.insert_space_before_opening_angle_bracket_in_type_arguments = false;
 //		this.insert_space_before_opening_angle_bracket_in_type_parameters = false;
-//		this.insert_space_before_opening_brace_in_array_initializer = true;
+		this.insert_space_before_opening_brace_in_array_initializer = true;
 		this.insert_space_before_opening_brace_in_block = true;
 //		this.insert_space_before_opening_brace_in_constructor_declaration = true;
 //		this.insert_space_before_opening_brace_in_enum_constant = true;
@@ -1853,7 +1852,7 @@ public class DefaultCodeFormatterOptions {
 		this.insert_space_before_semicolon_in_for = false;
 //		this.insert_space_before_unary_operator = false;
 //		this.insert_space_between_brackets_in_array_type_reference = false;
-//		this.insert_space_between_empty_braces_in_array_initializer = false;
+		this.insert_space_between_empty_braces_in_array_initializer = false;
 //		this.insert_space_between_empty_brackets_in_array_allocation_expression = false;
 //		this.insert_space_between_empty_parens_in_constructor_declaration = false;
 //		this.insert_space_between_empty_parens_in_enum_constant = false;
@@ -1862,7 +1861,7 @@ public class DefaultCodeFormatterOptions {
 		this.compact_else_if = true;
 		this.keep_guardian_clause_on_one_line = false;
 		this.keep_else_statement_on_same_line = false;
-//		this.keep_empty_array_initializer_on_one_line = false;
+		this.keep_empty_array_initializer_on_one_line = false;
 		this.keep_simple_if_on_one_line = false;
 		this.keep_then_statement_on_same_line = false;
 		this.number_of_empty_lines_to_preserve = 1;
@@ -1938,10 +1937,10 @@ public class DefaultCodeFormatterOptions {
 		this.indent_switchstatements_compare_to_switch = false;
 		this.indentation_size = 4;
 
-//		this.insert_new_line_after_opening_brace_in_array_initializer = false;
+		this.insert_new_line_after_opening_brace_in_array_initializer = false;
 		this.insert_new_line_at_end_of_file_if_missing = false;
 //		this.insert_new_line_before_catch_in_try_statement = false;
-//		this.insert_new_line_before_closing_brace_in_array_initializer = false;
+		this.insert_new_line_before_closing_brace_in_array_initializer = false;
 		this.insert_new_line_before_else_in_if_statement = true;
 //		this.insert_new_line_before_finally_in_try_statement = false;
 		this.insert_new_line_before_while_in_do_statement = false;
@@ -1954,7 +1953,7 @@ public class DefaultCodeFormatterOptions {
 		this.compact_else_if = true;
 		this.keep_guardian_clause_on_one_line = false;
 		this.keep_else_statement_on_same_line = false;
-//		this.keep_empty_array_initializer_on_one_line = false;
+		this.keep_empty_array_initializer_on_one_line = false;
 		this.keep_simple_if_on_one_line = false;
 		this.keep_then_statement_on_same_line = false;
 		this.number_of_empty_lines_to_preserve = 1;
@@ -2012,10 +2011,10 @@ public class DefaultCodeFormatterOptions {
 		this.indent_switchstatements_compare_to_switch = false;
 		this.indentation_size = 8;
 
-//		this.insert_new_line_after_opening_brace_in_array_initializer = false;
+		this.insert_new_line_after_opening_brace_in_array_initializer = false;
 		this.insert_new_line_at_end_of_file_if_missing = false;
 //		this.insert_new_line_before_catch_in_try_statement = false;
-//		this.insert_new_line_before_closing_brace_in_array_initializer = false;
+		this.insert_new_line_before_closing_brace_in_array_initializer = false;
 		this.insert_new_line_before_else_in_if_statement = true;
 //		this.insert_new_line_before_finally_in_try_statement = false;
 		this.insert_new_line_before_while_in_do_statement = false;
@@ -2028,7 +2027,7 @@ public class DefaultCodeFormatterOptions {
 		this.compact_else_if = true;
 		this.keep_guardian_clause_on_one_line = false;
 		this.keep_else_statement_on_same_line = false;
-//		this.keep_empty_array_initializer_on_one_line = false;
+		this.keep_empty_array_initializer_on_one_line = false;
 		this.keep_simple_if_on_one_line = false;
 		this.keep_then_statement_on_same_line = false;
 		this.number_of_empty_lines_to_preserve = 1;
@@ -2061,6 +2060,8 @@ public class DefaultCodeFormatterOptions {
 	 */
 	public void setWhitesmitsSettings() {
 		setDefaultSettings();
+		this.alignment_for_expressions_in_array_initializer = Alignment.M_ONE_PER_LINE_SPLIT;
+		
 		this.brace_position_for_array_initializer = DefaultCodeFormatterConstants.NEXT_LINE_SHIFTED;
 		this.brace_position_for_block = DefaultCodeFormatterConstants.NEXT_LINE_SHIFTED;
 		this.brace_position_for_block_in_case = DefaultCodeFormatterConstants.NEXT_LINE_SHIFTED;
@@ -2084,12 +2085,12 @@ public class DefaultCodeFormatterOptions {
 		this.indent_switchstatements_compare_to_switch = false;
 		this.indentation_size = 4;
 
-//		this.insert_new_line_after_opening_brace_in_array_initializer = false;
+		this.insert_new_line_after_opening_brace_in_array_initializer = true;
 		this.insert_new_line_at_end_of_file_if_missing = false;
-//		this.insert_new_line_before_catch_in_try_statement = false;
-//		this.insert_new_line_before_closing_brace_in_array_initializer = false;
+//		this.insert_new_line_before_catch_in_try_statement = true;
+		this.insert_new_line_before_closing_brace_in_array_initializer = true;
 		this.insert_new_line_before_else_in_if_statement = true;
-//		this.insert_new_line_before_finally_in_try_statement = false;
+//		this.insert_new_line_before_finally_in_try_statement = true;
 		this.insert_new_line_before_while_in_do_statement = true;
 		this.insert_new_line_in_empty_block = true;
 //		this.insert_new_line_in_empty_enum_constant = true;
@@ -2100,7 +2101,7 @@ public class DefaultCodeFormatterOptions {
 		this.compact_else_if = false;
 		this.keep_guardian_clause_on_one_line = false;
 		this.keep_else_statement_on_same_line = false;
-//		this.keep_empty_array_initializer_on_one_line = false;
+		this.keep_empty_array_initializer_on_one_line = false;
 		this.keep_simple_if_on_one_line = false;
 		this.keep_then_statement_on_same_line = false;
 		this.number_of_empty_lines_to_preserve = 1;

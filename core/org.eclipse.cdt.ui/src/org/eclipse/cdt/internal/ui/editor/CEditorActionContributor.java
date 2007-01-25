@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 IBM Corporation and others.
+ * Copyright (c) 2005, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,7 +17,6 @@ import java.util.ResourceBundle;
 
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuManager;
-import org.eclipse.jface.action.IStatusLineManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.text.ITextOperationTarget;
 import org.eclipse.ui.IActionBars;
@@ -35,13 +34,13 @@ import org.eclipse.cdt.internal.ui.actions.GoToNextPreviousMemberAction;
 
 public class CEditorActionContributor extends TextEditorActionContributor {
 	
-	protected CEditor fCEditor;
-	protected RetargetTextEditorAction fContentAssist;
-	protected RetargetTextEditorAction fFormatter;
-	protected RetargetTextEditorAction fAddInclude;
-//	protected RetargetTextEditorAction fOpenOnSelection;
-	protected RetargetTextEditorAction fShiftLeft;
-	protected RetargetTextEditorAction fShiftRight;
+	private RetargetTextEditorAction fContentAssist;
+	private RetargetTextEditorAction fContextInformation;
+	private RetargetTextEditorAction fFormatter;
+	private RetargetTextEditorAction fAddInclude;
+//	private RetargetTextEditorAction fOpenOnSelection;
+	private RetargetTextEditorAction fShiftLeft;
+	private RetargetTextEditorAction fShiftRight;
 	private TogglePresentationAction fTogglePresentation;
 	private GotoAnnotationAction fPreviousAnnotation;
 	private GotoAnnotationAction fNextAnnotation;
@@ -49,6 +48,7 @@ public class CEditorActionContributor extends TextEditorActionContributor {
 	private RetargetTextEditorAction fGotoNextMemberAction;
 	private RetargetTextEditorAction fGotoPreviousMemberAction;
 	private RetargetTextEditorAction fToggleInsertModeAction;
+	private RetargetTextEditorAction fShowOutline;
 	
 	public CEditorActionContributor() {
 		super();
@@ -65,6 +65,9 @@ public class CEditorActionContributor extends TextEditorActionContributor {
 		
 		fContentAssist = new RetargetTextEditorAction(bundle, "ContentAssistProposal."); //$NON-NLS-1$
 		fContentAssist.setActionDefinitionId(ITextEditorActionDefinitionIds.CONTENT_ASSIST_PROPOSALS);
+
+		fContextInformation = new RetargetTextEditorAction(bundle, "ContentAssistContextInformation."); //$NON-NLS-1$
+		fContextInformation.setActionDefinitionId(ITextEditorActionDefinitionIds.CONTENT_ASSIST_CONTEXT_INFORMATION);
 
 		fFormatter = new RetargetTextEditorAction(bundle, "Format."); //$NON-NLS-1$
 		fFormatter.setActionDefinitionId(ICEditorActionDefinitionIds.FORMAT);
@@ -93,8 +96,11 @@ public class CEditorActionContributor extends TextEditorActionContributor {
 
 		fToggleInsertModeAction= new RetargetTextEditorAction(bundle, "ToggleInsertMode.", IAction.AS_CHECK_BOX); //$NON-NLS-1$
 		fToggleInsertModeAction.setActionDefinitionId(ITextEditorActionDefinitionIds.TOGGLE_INSERT_MODE);
-	}	
 
+		fShowOutline= new RetargetTextEditorAction(bundle, "OpenOutline."); //$NON-NLS-1$
+		fShowOutline.setActionDefinitionId(ICEditorActionDefinitionIds.OPEN_OUTLINE);
+
+	}	
 
 	/*
 	 * @see org.eclipse.ui.texteditor.BasicTextEditorActionContributor#contributeToMenu(org.eclipse.jface.action.IMenuManager)
@@ -105,18 +111,26 @@ public class CEditorActionContributor extends TextEditorActionContributor {
 		
 		IMenuManager editMenu= menu.findMenuUsingPath(IWorkbenchActionConstants.M_EDIT);
 		if (editMenu != null) {	
-			editMenu.add(fShiftRight);
-			editMenu.add(fShiftLeft);
+			editMenu.appendToGroup(ITextEditorActionConstants.GROUP_ASSIST, fContentAssist);
+			editMenu.appendToGroup(ITextEditorActionConstants.GROUP_ASSIST, fContextInformation);
 
-			editMenu.add(new Separator(IContextMenuConstants.GROUP_GENERATE));
-			editMenu.appendToGroup(IContextMenuConstants.GROUP_GENERATE, fContentAssist);
-			editMenu.appendToGroup(IContextMenuConstants.GROUP_GENERATE, fAddInclude);
-			editMenu.appendToGroup(IContextMenuConstants.GROUP_GENERATE, fFormatter);
-//			editMenu.appendToGroup(IContextMenuConstants.GROUP_GENERATE, fOpenOnSelection);
+			editMenu.appendToGroup(ITextEditorActionConstants.GROUP_GENERATE, fShiftRight);
+			editMenu.appendToGroup(ITextEditorActionConstants.GROUP_GENERATE, fShiftLeft);
+			editMenu.appendToGroup(ITextEditorActionConstants.GROUP_GENERATE, fFormatter);
+			editMenu.appendToGroup(ITextEditorActionConstants.GROUP_GENERATE, new Separator());
+			editMenu.appendToGroup(ITextEditorActionConstants.GROUP_GENERATE, fAddInclude);
+			editMenu.appendToGroup(ITextEditorActionConstants.GROUP_GENERATE, new Separator());
 
 			editMenu.appendToGroup(IContextMenuConstants.GROUP_ADDITIONS, fToggleInsertModeAction);
+		}
+		
+		IMenuManager navigateMenu= menu.findMenuUsingPath(IWorkbenchActionConstants.M_NAVIGATE);
+		if (navigateMenu != null) {
+			navigateMenu.appendToGroup(IWorkbenchActionConstants.SHOW_EXT, fShowOutline);
+//			navigateMenu.appendToGroup(IWorkbenchActionConstants.SHOW_EXT, fOpenHierarchy);
+//			navigateMenu.appendToGroup(IWorkbenchActionConstants.SHOW_EXT, fOpenOnSelection);
 
-			IMenuManager gotoMenu= menu.findMenuUsingPath("navigate/goTo"); //$NON-NLS-1$
+			IMenuManager gotoMenu= navigateMenu.findMenuUsingPath(IWorkbenchActionConstants.GO_TO);
 			if (gotoMenu != null) {
 				gotoMenu.add(new Separator("additions2"));  //$NON-NLS-1$
 				gotoMenu.appendToGroup("additions2", fGotoPreviousMemberAction); //$NON-NLS-1$
@@ -124,6 +138,7 @@ public class CEditorActionContributor extends TextEditorActionContributor {
 				gotoMenu.appendToGroup("additions2", fGotoMatchingBracket); //$NON-NLS-1$
 			}
 		}
+
 	}
 	
 	/**
@@ -140,7 +155,6 @@ public class CEditorActionContributor extends TextEditorActionContributor {
 		bars.setGlobalActionHandler(ITextEditorActionDefinitionIds.TOGGLE_SHOW_SELECTED_ELEMENT_ONLY, fTogglePresentation);
 	}
 
-	
 	/*
 	 * @see org.eclipse.ui.editors.text.TextEditorActionContributor#setActiveEditor(org.eclipse.ui.IEditorPart)
 	 */
@@ -160,6 +174,7 @@ public class CEditorActionContributor extends TextEditorActionContributor {
 		fNextAnnotation.setEditor(textEditor);
 
 		fContentAssist.setAction(getAction(textEditor, "ContentAssistProposal")); //$NON-NLS-1$
+		fContextInformation.setAction(getAction(textEditor, "ContentAssistContextInformation")); //$NON-NLS-1$
 		fAddInclude.setAction(getAction(textEditor, "AddIncludeOnSelection")); //$NON-NLS-1$
 //		fOpenOnSelection.setAction(getAction(textEditor, "OpenOnSelection")); //$NON-NLS-1$
 		fFormatter.setAction(getAction(textEditor, "Format")); //$NON-NLS-1$
@@ -167,7 +182,9 @@ public class CEditorActionContributor extends TextEditorActionContributor {
 		fGotoMatchingBracket.setAction(getAction(textEditor, GotoMatchingBracketAction.GOTO_MATCHING_BRACKET));
 		fGotoNextMemberAction.setAction(getAction(textEditor, GoToNextPreviousMemberAction.NEXT_MEMBER));
 		fGotoPreviousMemberAction.setAction(getAction(textEditor, GoToNextPreviousMemberAction.PREVIOUS_MEMBER));
-		
+
+		fShowOutline.setAction(getAction(textEditor, "OpenOutline")); //$NON-NLS-1$
+
 		fToggleInsertModeAction.setAction(getAction(textEditor, ITextEditorActionConstants.TOGGLE_INSERT_MODE));
 
 		if (part instanceof CEditor) {
@@ -177,15 +194,6 @@ public class CEditorActionContributor extends TextEditorActionContributor {
 
 	}
 	
-	/*
-	 * @see EditorActionBarContributor#contributeToStatusLine(IStatusLineManager)
-	 *
-	 * More code here only until we move to 2.0...
-	 */
-	public void contributeeToStatusLine(IStatusLineManager statusLineManager) {
-		super.contributeToStatusLine(statusLineManager);
-	}
-
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IEditorActionBarContributor#dispose()
 	 */

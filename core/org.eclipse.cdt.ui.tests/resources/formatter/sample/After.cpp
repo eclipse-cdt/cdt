@@ -1,11 +1,20 @@
-#include <Simple.h>
+//#include <Simple.h>
+#ifndef SIMPLE_H
+#define SIMPLE_H
 
-const SimpleStruct simpleStruct =
-{
-	1
-	, "mySimple"
-	, 0.1232
+struct SimpleStruct {
+	int num;
+	char name[ ];
+	float floatNum;
 };
+
+void SimpleStruct_construct( struct SimpleStruct * const this );
+
+int SimpleStruct_doSomething( const struct SimpleStruct * const this );
+
+#endif /* SIMPLE_H */
+
+const SimpleStruct simpleStruct = { 1, "mySimple", 0.1232 };
 
 #define SIZEOF( A, B ) sizeof( A.B )
 
@@ -15,25 +24,13 @@ const SimpleStruct simpleStruct =
         \
                 }
 
-const OtherStruct array[] =
-{
-	{
+const SimpleStruct array[] = { { SIZEOF( simpleStruct, num ),
 #if FOO
-		"foo"
+				"foo"
 #  else
-		"bar"
+				"bar"
 #endif
-		, SIZEOF( simpleStruct, num )
-		, &t_int
-		, 0
-	}
-	, {
-		"name"
-		, SIZEOF( simpleStruct, floatnum )
-		, &t_float
-		, 1
-	}
-};
+				, 0.5 }, { SIZEOF( simpleStruct, floatNum ), "name", 1.1 } };
 
 //          single line outside scope
 

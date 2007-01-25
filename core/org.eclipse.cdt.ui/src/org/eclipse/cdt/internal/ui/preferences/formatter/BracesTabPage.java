@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,7 +12,10 @@
 package org.eclipse.cdt.internal.ui.preferences.formatter;
  
 import java.util.Map;
+import java.util.Observable;
+import java.util.Observer;
 
+import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
 
@@ -126,24 +129,24 @@ public class BracesTabPage extends ModifyDialogTabPage {
 		createExtendedBracesCombo(group, numColumns, FormatterMessages.BracesTabPage_option_blocks_in_case, DefaultCodeFormatterConstants.FORMATTER_BRACE_POSITION_FOR_BLOCK_IN_CASE); 
 		createBracesCombo(group, numColumns, FormatterMessages.BracesTabPage_option_switch_case, DefaultCodeFormatterConstants.FORMATTER_BRACE_POSITION_FOR_SWITCH); 
 		
-//		ComboPreference arrayInitOption= createBracesCombo(group, numColumns, FormatterMessages.BracesTabPage_option_array_initializer, DefaultCodeFormatterConstants.FORMATTER_BRACE_POSITION_FOR_ARRAY_INITIALIZER); 
-//		final CheckboxPreference arrayInitCheckBox= createIndentedCheckboxPref(group, numColumns, FormatterMessages.BracesTabPage_option_keep_empty_array_initializer_on_one_line, DefaultCodeFormatterConstants.FORMATTER_KEEP_EMPTY_ARRAY_INITIALIZER_ON_ONE_LINE, FALSE_TRUE); 
+		ComboPreference arrayInitOption= createBracesCombo(group, numColumns, FormatterMessages.BracesTabPage_option_array_initializer, DefaultCodeFormatterConstants.FORMATTER_BRACE_POSITION_FOR_ARRAY_INITIALIZER); 
+		final CheckboxPreference arrayInitCheckBox= createIndentedCheckboxPref(group, numColumns, FormatterMessages.BracesTabPage_option_keep_empty_array_initializer_on_one_line, DefaultCodeFormatterConstants.FORMATTER_KEEP_EMPTY_ARRAY_INITIALIZER_ON_ONE_LINE, FALSE_TRUE); 
 
-//		arrayInitOption.addObserver(new Observer() {
-//			public void update(Observable o, Object arg) {
-//				updateOptionEnablement((ComboPreference) o, arrayInitCheckBox);
-//			}
-//		});
-//		updateOptionEnablement(arrayInitOption, arrayInitCheckBox);
+		arrayInitOption.addObserver(new Observer() {
+			public void update(Observable o, Object arg) {
+				updateOptionEnablement((ComboPreference) o, arrayInitCheckBox);
+			}
+		});
+		updateOptionEnablement(arrayInitOption, arrayInitCheckBox);
 	}
 	
-//	/**
-//	 * @param arrayInitOption
-//	 * @param arrayInitCheckBox
-//	 */
-//	protected final void updateOptionEnablement(ComboPreference arrayInitOption, CheckboxPreference arrayInitCheckBox) {
-//		arrayInitCheckBox.setEnabled(!arrayInitOption.hasValue(DefaultCodeFormatterConstants.END_OF_LINE));
-//	}
+	/**
+	 * @param arrayInitOption
+	 * @param arrayInitCheckBox
+	 */
+	protected final void updateOptionEnablement(ComboPreference arrayInitOption, CheckboxPreference arrayInitCheckBox) {
+		arrayInitCheckBox.setEnabled(!arrayInitOption.hasValue(DefaultCodeFormatterConstants.END_OF_LINE));
+	}
 
 	protected void initializePage() {
 	    fPreview.setPreviewText(PREVIEW);
@@ -162,12 +165,12 @@ public class BracesTabPage extends ModifyDialogTabPage {
 		return createComboPref(composite, numColumns, message, key, fExtendedBracePositions, fExtendedBracePositionNames);
 	}
 	
-//	private CheckboxPreference createIndentedCheckboxPref(Composite composite, int numColumns, String message, String key, String [] values) {
-//		CheckboxPreference pref= createCheckboxPref(composite, numColumns, message, key, values);
-//		GridData data= (GridData) pref.getControl().getLayoutData();
-//		data.horizontalIndent= fPixelConverter.convertWidthInCharsToPixels(1);
-//		return pref;
-//	}
+	private CheckboxPreference createIndentedCheckboxPref(Composite composite, int numColumns, String message, String key, String [] values) {
+		CheckboxPreference pref= createCheckboxPref(composite, numColumns, message, key, values);
+		GridData data= (GridData) pref.getControl().getLayoutData();
+		data.horizontalIndent= fPixelConverter.convertWidthInCharsToPixels(1);
+		return pref;
+	}
 	
 
     protected void doUpdatePreview() {

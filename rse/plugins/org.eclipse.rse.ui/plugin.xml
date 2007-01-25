@@ -883,4 +883,28 @@ Contributors:
 			</description>
 		</wizard>
 	</extension>
+	
+    <extension point="org.eclipse.ui.navigator.navigatorContent">
+        <commonFilter
+            id="org.eclipse.rse.project.filters.RemoteSystemsProjects"
+            name="%ProjectFilter.label"
+            description="%ProjectFilter.description"
+            activeByDefault="true">
+            <filterExpression>
+                <and>
+                    <instanceof value="org.eclipse.core.resources.IProject"/>
+                    <test property="org.eclipse.core.resources.name" value="RemoteSystems*"/>
+                </and>
+            </filterExpression>
+        </commonFilter>
+    </extension>
+   
+    <extension point="org.eclipse.ui.navigator.viewer">
+        <viewerContentBinding viewerId="org.eclipse.ui.navigator.ProjectExplorer">
+            <includes>
+                <contentExtension pattern="org.eclipse.rse.project.filters.*"/>
+            </includes>
+        </viewerContentBinding>
+    </extension>
+	
 </plugin>

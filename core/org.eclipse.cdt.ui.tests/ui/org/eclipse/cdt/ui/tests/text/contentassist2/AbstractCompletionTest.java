@@ -103,14 +103,17 @@ public abstract class AbstractCompletionTest extends BaseUITestCase {
 		assertTrue(results != null);
 
 		results= filterProposals(results);
+		String[] resultStrings= toStringArray(results, compareIdString);
+		Arrays.sort(expected);
+		Arrays.sort(resultStrings);
 
 		checkCompletionNode(completionProcessor.getCurrentCompletionNode());
 
 		if (CTestPlugin.getDefault().isDebugging())  {
 			System.out.println("Time (ms): " + (endTime-startTime));
-			for (int i = 0; i < results.length; i++) {
-				ICompletionProposal proposal = results[i];
-				System.out.println("Result: " + proposal.getDisplayString());
+			for (int i = 0; i < resultStrings.length; i++) {
+				String proposal = resultStrings[i];
+				System.out.println("Result: " + proposal);
 			}
 		}
 
@@ -118,10 +121,9 @@ public abstract class AbstractCompletionTest extends BaseUITestCase {
 
 		for (int i = 0; i< expected.length; i++){
 			boolean found = false;
-			for(int j = 0; j< results.length; j++){
-				ICompletionProposal proposal = results[j];
-				String displayString = proposal.getDisplayString();
-				if(expected[i].equals(displayString)){
+			for(int j = 0; j< resultStrings.length; j++){
+				String proposal = resultStrings[j];
+				if(expected[i].equals(proposal)){
 					found = true;
 					if (CTestPlugin.getDefault().isDebugging())  {
 						System.out.println("Lookup success for " + expected[i]);
@@ -136,10 +138,6 @@ public abstract class AbstractCompletionTest extends BaseUITestCase {
 				}
 			}
 		}
-
-		String[] resultStrings= toStringArray(results, compareIdString);
-		Arrays.sort(expected);
-		Arrays.sort(resultStrings);
 
 		if (!allFound) {
 			assertEquals("Missing results!", toString(expected), toString(resultStrings));

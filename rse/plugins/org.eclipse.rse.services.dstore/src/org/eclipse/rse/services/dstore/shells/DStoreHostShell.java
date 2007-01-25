@@ -62,6 +62,13 @@ public class DStoreHostShell extends AbstractHostShell implements IHostShell
 	{
 		return _stderrHandler;
 	}
+	
+	public DataElement getStatus()
+	{
+		return _status;
+	}
+
+	
 
 	public void exit()
 	{

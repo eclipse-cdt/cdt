@@ -75,8 +75,15 @@ public class DStoreShellOutputReader extends AbstractHostShellOutputReader imple
 		
 			try
 			{
-				waitForResponse();	
-				return internalReadLine();
+				if (_hostShell.isActive())
+				{
+					waitForResponse();	
+					return internalReadLine();
+				}
+				else
+				{
+					return null;
+				}
 			}
 			catch (Exception e)
 			{					
@@ -122,8 +129,7 @@ public class DStoreShellOutputReader extends AbstractHostShellOutputReader imple
 	}
 
 	/**
-	 * Causes the current thread to wait until this class request has been
-	 * fulfilled.
+	 * Causes the current thread to wait until notified
 	 */
 	public synchronized void waitForResponse()
 	{
@@ -138,7 +144,7 @@ public class DStoreShellOutputReader extends AbstractHostShellOutputReader imple
 	}
 	
 	/**
-	 * Causes all threads waiting for this class request to be filled
+	 * Causes all threads waiting for this 
 	 * to wake up.
 	 */
 	public synchronized void notifyResponse()

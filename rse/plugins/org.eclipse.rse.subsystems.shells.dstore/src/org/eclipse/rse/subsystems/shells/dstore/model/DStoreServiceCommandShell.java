@@ -130,5 +130,19 @@ public class DStoreServiceCommandShell extends ServiceCommandShell
 		}
 		*/
 	}
+
+	public boolean isActive() 
+	{
+		boolean activeShell = _hostShell.isActive();
+		if (!activeShell)
+		{
+			DataElement status = ((DStoreHostShell)_hostShell).getStatus();
+			if (_output.size() < status.getNestedSize())
+			{
+				return true;
+			}				
+		}
+		return activeShell;
+	}
 	
 }

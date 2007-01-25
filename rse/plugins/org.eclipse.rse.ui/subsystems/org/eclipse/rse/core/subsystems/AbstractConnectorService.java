@@ -527,14 +527,28 @@ public abstract class AbstractConnectorService extends RSEModelObject implements
 		}
 		if (shell == null)
 		{
-			shell = SystemBasePlugin.getActiveWorkbenchShell();
+			try
+			{
+				shell = SystemBasePlugin.getActiveWorkbenchShell();
+			}
+			catch (Exception e)
+			{
+				shell = new Shell();
+			}
 		}
     		
 		if (supportsPassword() || supportsUserId()) 
 		{
 			if (shell == null)
 			{
-				shell = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
+				try
+				{
+					shell = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
+				}
+				catch (Exception e)
+				{
+					shell = new Shell();
+				}
 			}
 			if (shell != null) {
 				boolean passwordNeeded = supportsPassword() && _passwordInfo.getPassword() == null;

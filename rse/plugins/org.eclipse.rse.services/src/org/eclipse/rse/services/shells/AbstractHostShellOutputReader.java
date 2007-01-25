@@ -77,6 +77,7 @@ public abstract class AbstractHostShellOutputReader  extends Thread implements I
 		else
 		{
 			finish();
+			_keepRunning = false;
 		}
 	
 	}
@@ -158,7 +159,6 @@ public abstract class AbstractHostShellOutputReader  extends Thread implements I
 		{
 
 			_waitIncrement = 0;
-			_keepRunning = false;
 			//dispose();
 		}
 	}

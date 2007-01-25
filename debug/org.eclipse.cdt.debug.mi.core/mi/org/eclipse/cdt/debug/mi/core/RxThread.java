@@ -208,7 +208,7 @@ public class RxThread extends Thread {
 					}
 					session.getMIInferior().setRunning();
 					MIEvent event = new MIRunningEvent(session, id, type);
-					if (cmd.isQuiet())
+					if (cmd != null && cmd.isQuiet())
 						event.setPropagate(false);
 					list.add(event);
 				} else if ("exit".equals(state)) { //$NON-NLS-1$

@@ -39,6 +39,7 @@ import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.viewers.DecoratingLabelProvider;
 import org.eclipse.jface.viewers.DoubleClickEvent;
+import org.eclipse.jface.viewers.IBaseLabelProvider;
 import org.eclipse.jface.viewers.IBasicPropertyConstants;
 import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ILabelDecorator;
@@ -2632,17 +2633,20 @@ public class SystemView extends TreeViewer implements ISystemTree, ISystemResour
 		for (int idx = 0; idx < matches.size(); idx++) {
 			Item match = (Item) matches.elementAt(idx);
 			// a reference to this remote object
-			if ((match instanceof TreeItem) && !((TreeItem) match).isDisposed()) {
+			if ((match instanceof TreeItem) && !((TreeItem) match).isDisposed()) 
+			{
 				Object data = match.getData();
-		
+				if (rmtAdapter == null) rmtAdapter = getRemoteAdapter(data);
 				if (data != renameObject) // not a binary match
-				{
-					if (rmtAdapter == null) rmtAdapter = getRemoteAdapter(data);
+				{					
 					refresh = rmtAdapter.refreshRemoteObject(data, renameObject); // old, new
 				} else {
 					refresh = true;
 				}
 			
+				// rename explicitly here (since internalUpdate doesn't seem to have an effect
+				String newName = rmtAdapter.getName(data);
+				match.setText(newName);
 				
 				internalUpdate(match, data, properties);
 						

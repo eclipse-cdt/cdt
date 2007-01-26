@@ -7,6 +7,7 @@
  *
  * Contributors:
  * IBM Rational Software - Initial API and implementation
+ * Ed Swartz (Nokia)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
@@ -100,4 +101,10 @@ public class ANSICPPParserExtensionConfiguration implements
 		return false;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPParserExtensionConfiguration#supportDeclspecSpecifiers()
+	 */
+	public boolean supportDeclspecSpecifiers() {
+		return false;
+	}
 }

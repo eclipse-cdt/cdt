@@ -7,6 +7,7 @@
  *
  * Contributors:
  * IBM Rational Software - Initial API and implementation
+ * Ed Swartz (Nokia)
  *******************************************************************************/
 
 package org.eclipse.cdt.core.parser;
@@ -20,9 +21,11 @@ public class GCCKeywords {
 	public static final String TYPEOF = "typeof"; //$NON-NLS-1$
 	public static final String __ALIGNOF__ = "__alignof__"; //$NON-NLS-1$
 	public static final String __ATTRIBUTE__ = "__attribute__"; //$NON-NLS-1$
+	public static final String __DECLSPEC = "__declspec"; //$NON-NLS-1$
 
 	public static final char [] cpTYPEOF = TYPEOF.toCharArray();
 	public static final char [] cp__ALIGNOF__ = __ALIGNOF__.toCharArray();
 	public static final char [] cp__ATTRIBUTE__ = __ATTRIBUTE__.toCharArray();
+	public static final char [] cp__DECLSPEC = __DECLSPEC.toCharArray();
 
 }

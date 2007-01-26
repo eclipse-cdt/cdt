@@ -7,6 +7,7 @@
  *
  * Contributors:
  * IBM Rational Software - Initial API and implementation
+ * Ed Swartz (Nokia)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.c;
 
@@ -34,5 +35,11 @@ public interface ICParserExtensionConfiguration {
 	 * @return
 	 */
 	public boolean supportAttributeSpecifiers();
+
+	/**
+	 * Win32 compiler extensions also supported by GCC on Win32 
+	 * @return
+	 */
+	public boolean supportDeclspecSpecifiers();
 
 }

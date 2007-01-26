@@ -7,6 +7,7 @@
  *
  * Contributors:
  * IBM - Initial API and implementation
+ * Ed Swartz (Nokia)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.parser.scanner2;
 
@@ -40,6 +41,7 @@ public class GPPScannerExtensionConfiguration extends GNUScannerExtensionConfigu
 		additionalCPPKeywords.put( Keywords.cRESTRICT, IToken.t_restrict );
 		additionalCPPKeywords.put( Keywords.c_COMPLEX, IToken.t__Complex );
 		additionalCPPKeywords.put( Keywords.c_IMAGINARY, IToken.t__Imaginary );
+		additionalCPPKeywords.put( GCCKeywords.cp__DECLSPEC, IGCCToken.t__declspec );
 		return additionalCPPKeywords;
     }
 

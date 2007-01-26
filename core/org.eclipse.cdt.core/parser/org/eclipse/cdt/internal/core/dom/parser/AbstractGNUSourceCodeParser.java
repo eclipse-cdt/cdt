@@ -8,6 +8,7 @@
  * Contributors:
  * IBM Rational Software - Initial API and implementation
  * Markus Schorn (Wind River Systems)
+ * Ed Swartz (Nokia)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser;
 
@@ -91,13 +92,15 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
     protected final boolean supportGCCOtherBuiltinSymbols;
     
     protected final boolean supportAttributeSpecifiers;
+    
+    protected final boolean supportDeclspecSpecifiers;
 
     protected AbstractGNUSourceCodeParser(IScanner scanner,
             IParserLogService logService, ParserMode parserMode,
             boolean supportStatementsInExpressions,
             boolean supportTypeOfUnaries, boolean supportAlignOfUnaries,
             boolean supportKnRC, boolean supportGCCOtherBuiltinSymbols,
-            boolean supportAttributeSpecifiers) {
+    		boolean supportAttributeSpecifiers, boolean supportDeclspecSpecifiers) {
         this.scanner = scanner;
         this.log = wrapLogService(logService);
         this.mode = parserMode;
@@ -107,6 +110,7 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
         this.supportKnRC = supportKnRC;
         this.supportGCCOtherBuiltinSymbols = supportGCCOtherBuiltinSymbols;
         this.supportAttributeSpecifiers = supportAttributeSpecifiers;
+        this.supportDeclspecSpecifiers = supportDeclspecSpecifiers;
     }
 
 	protected boolean parsePassed = true;
@@ -2268,6 +2272,27 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
     		}
     	}
     }
+    
+    protected void __declspec() throws BacktrackException, EndOfFileException {
+    	IToken token = LA(1);
+
+    	if (token.getType() == IGCCToken.t__declspec) {
+    		consume();
+
+    		token = LA(1);
+
+    		if (token.getType() == IToken.tLPAREN) {
+    			consume();
+    			while(true) {
+    				token = LA(1);
+    				consume();
+    				if (token.getType() == IToken.tRPAREN) {
+    					break;
+    				}
+    			}
+    		}
+    	}
+    }    
     
     /**
      * In case a cast expression is followed by +/- or & we should avoid it:

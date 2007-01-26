@@ -7,8 +7,11 @@
  *
  * Contributors:
  * IBM Rational Software - Initial API and implementation
+ * Ed Swartz (Nokia)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.c;
+
+import org.eclipse.core.runtime.Platform;
 
 /**
  * @author jcamelon
@@ -65,4 +68,13 @@ public class GCCParserExtensionConfiguration implements
 		return true;
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.dom.parser.c.ICParserExtensionConfiguration#supportDeclspecSpecifiers()
+	 */
+	public boolean supportDeclspecSpecifiers() {
+		// XXX Yes, this is a hack -- should use the target platform
+		if (Platform.getOS().equals(Platform.OS_WIN32))
+			return true;
+		return false;
+	}
 }

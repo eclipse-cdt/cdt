@@ -73,6 +73,13 @@
             platforms="macosx"/>
       <commandFactory
             class="org.eclipse.cdt.debug.mi.core.command.factories.StandardCommandFactory"
+            debuggerID="org.eclipse.cdt.debug.mi.core.CDebuggerNew"
+            id="org.eclipse.cdt.debug.mi.core.standardCommandFactory"
+            miVersions="mi,mi1,mi2"
+            name="%StandardCommandFactory.name"
+            platforms="*"/>
+      <commandFactory
+            class="org.eclipse.cdt.debug.mi.core.command.factories.StandardCommandFactory"
             debuggerID="org.eclipse.cdt.debug.mi.core.GDBServerCDebugger"
             id="org.eclipse.cdt.debug.mi.core.standardCommandFactory"
             miVersions="mi,mi1,mi2"

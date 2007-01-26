@@ -534,8 +534,11 @@ public class CModelBuilder2 implements IContributedModelBuilder {
 					setBodyPosition((SourceManipulation)element, templateDeclaration);
 				}
 			}
+		} else if (declaration instanceof ICPPASTTemplateDeclaration) {
+			// strange: template decl inside template decl
+			createTemplateDeclaration(parent, (ICPPASTTemplateDeclaration)declaration);
 		} else if (declaration instanceof IASTProblemDeclaration) {
-			// ignore problem declarations
+			// ignore problem declarations (or create special elements for debugging?)
 		} else {
 			assert false : "TODO: " + declaration.getClass().getName(); //$NON-NLS-1$
 		}

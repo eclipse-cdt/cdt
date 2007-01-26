@@ -32,13 +32,19 @@ public class CompletionTest_NewTypeReference_NoPrefix  extends CompletionProposa
 			"anotherClass",
 			"AStruct",
 			"xOtherClass",
-			"XStruct"
+			"XStruct",
+			"aNamespace",
+			"xNamespace"
+			/* extra results:
+			anEnumeration
+			xEnumeration
+			*/
 	};
 	
 	public CompletionTest_NewTypeReference_NoPrefix(String name) {
 		super(name);
-		// see https://bugs.eclipse.org/bugs/show_bug.cgi?id=151207
-		setExpectFailure(151207);
+		// unknown problem
+		setExpectFailure(77777);
 	}
 
 	public static Test suite() {

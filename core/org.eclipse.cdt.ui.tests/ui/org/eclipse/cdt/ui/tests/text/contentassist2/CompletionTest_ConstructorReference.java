@@ -30,14 +30,15 @@ public class CompletionTest_ConstructorReference  extends CompletionProposalsBas
 	private final String headerFileFullPath ="resources/contentassist/" + headerFileName;
 	private final String expectedPrefix = "";  
 	private final String[] expectedResults = {
+			// missing proposals:
 			"xOtherClass(char*)",
 			"xOtherClass(int)"
 	};
 	
 	public CompletionTest_ConstructorReference(String name) {
 		super(name);
-		// see https://bugs.eclipse.org/bugs/show_bug.cgi?id=151207
-		setExpectFailure(151207);
+		// unknown failure
+		setExpectFailure(77777);
 	}
 
 	public static Test suite() {

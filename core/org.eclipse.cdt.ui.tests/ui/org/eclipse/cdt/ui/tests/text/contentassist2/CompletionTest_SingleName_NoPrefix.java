@@ -26,46 +26,47 @@ public class CompletionTest_SingleName_NoPrefix  extends CompletionProposalsBase
 	private final String headerFileFullPath ="resources/contentassist/" + headerFileName;
 	private final String expectedPrefix = "";
 	private final String[] expectedResults = {
-			"x : int"
-//			"aVariable : int",
-//			"xVariable : int",
-//			"aFunction() bool",
-//			"anotherFunction() void",
-//			"foo(int) void",
-//			"xFunction() bool",
-//			"xOtherFunction() void",
-//			"aClass",
-//			"anotherClass",
-//			"xOtherClass",
-//			"AStruct",
-//			"XStruct",
-//			"aNamespace",
-//			"xNamespace",
-//			"anEnumeration",
-//			"xEnumeration",
-//			"aFirstEnum",
-//			"aSecondEnum",
-//			"aThirdEnum",
-//			"xFirstEnum",
-//			"xSecondEnum",
-//			"xThirdEnum",
-//			"__cplusplus", 
-//			"__DATE__",
-//			"__FILE__",
-//			"__LINE__",
-//			"__STDC__",
-//			"__STDC_HOSTED__",
-//			"__STDC_VERSION__",
-//			"__TIME__",
-//			"AMacro(x)",
-//			"DEBUG",
-//			"XMacro(x,y)"
+			"x : int",
+			"aVariable : int",
+			"xVariable : int",
+			"aFunction(void) bool",
+			"anotherFunction(void) void",
+			"foo(int) void",
+			"xFunction(void) bool",
+			"xOtherFunction(void) void",
+			"aClass",
+			"anotherClass",
+			"xOtherClass",
+			"AStruct",
+			"XStruct",
+			"aNamespace",
+			"xNamespace",
+			"anEnumeration",
+			"xEnumeration",
+			"aFirstEnum",
+			"aSecondEnum",
+			"aThirdEnum",
+			"xFirstEnum",
+			"xSecondEnum",
+			"xThirdEnum",
+			// missing:
+			"__cplusplus", 
+			"__DATE__",
+			"__FILE__",
+			"__LINE__",
+			"__STDC__",
+			"__STDC_HOSTED__",
+			"__STDC_VERSION__",
+			"__TIME__",
+			"AMacro(x)",
+			"DEBUG",
+			"XMacro(x,y)"
 	};
 	
 	public CompletionTest_SingleName_NoPrefix(String name) {
 		super(name);
-		// see https://bugs.eclipse.org/bugs/show_bug.cgi?id=151207
-		setExpectFailure(151207);
+		// see https://bugs.eclipse.org/bugs/show_bug.cgi?id=171708
+		setExpectFailure(171708);
 	}
 	
 	public static Test suite() {

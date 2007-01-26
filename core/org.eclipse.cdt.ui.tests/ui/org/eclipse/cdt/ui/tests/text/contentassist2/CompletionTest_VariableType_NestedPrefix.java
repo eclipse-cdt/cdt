@@ -27,19 +27,18 @@ public class CompletionTest_VariableType_NestedPrefix  extends CompletionProposa
 	private final String headerFileFullPath ="resources/contentassist/" + headerFileName;
 	private final String expectedPrefix = "";
 	private final String[] expectedResults = {
-			"Foo",
-			"DEF",
+			"Foo(void) ",
 			"bar(void) void",
 			"fum(void) void",
+			// missing:
+			"DEF",
 			"x : int"
 	};
-/* FIXME: Unexpected result. Rerun with tracing to reproduce
-Result: y : int
- */
+
 	public CompletionTest_VariableType_NestedPrefix(String name) {
 		super(name);
-		// see https://bugs.eclipse.org/bugs/show_bug.cgi?id=88787
-		setExpectFailure(88787);
+		// unknown problem
+		setExpectFailure(77777);
 	}
 
 	public static Test suite() {

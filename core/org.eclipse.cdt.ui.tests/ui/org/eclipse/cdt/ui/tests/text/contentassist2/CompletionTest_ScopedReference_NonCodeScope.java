@@ -27,19 +27,17 @@ public class CompletionTest_ScopedReference_NonCodeScope  extends CompletionProp
 	private final String headerFileFullPath ="resources/contentassist/" + headerFileName;
 	private final String expectedPrefix = "";
 	private final String[] expectedResults = {
-			 "Foo",
-			 "x : int", 
+			 "Foo(void) ",
 			 "bar(void) void",
-			 "fum(void) void"
+			 "fum(void) void",
+			 // missing:
+			 "x : int"
 	};
-	/* FIXME: Unexpected results; run with tracing to reproduce
-Result: y : int
-	 */
 	
 	public CompletionTest_ScopedReference_NonCodeScope(String name) {
 		super(name);
-		// see https://bugs.eclipse.org/bugs/show_bug.cgi?id=88787
-		setExpectFailure(88787);
+		// unknown problem
+		setExpectFailure(77777);
 	}
 
 	public static Test suite() {

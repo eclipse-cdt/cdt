@@ -36,8 +36,8 @@ public class CompletionTest_ClassReference_NoPrefix  extends CompletionProposals
 	
 	public CompletionTest_ClassReference_NoPrefix(String name) {
 		super(name);
-		// see https://bugs.eclipse.org/bugs/show_bug.cgi?id=151207
-		setExpectFailure(151207);
+		// https://bugs.eclipse.org/bugs/show_bug.cgi?id=169860
+		setExpectFailure(169860);
 	}
 
 	public static Test suite() {

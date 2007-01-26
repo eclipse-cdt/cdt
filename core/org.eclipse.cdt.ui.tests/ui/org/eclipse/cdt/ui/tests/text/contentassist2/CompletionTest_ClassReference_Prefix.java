@@ -30,22 +30,12 @@ public class CompletionTest_ClassReference_Prefix  extends CompletionProposalsBa
 	private final String[] expectedResults = {
 			"aClass", //$NON-NLS-1$
 			"anotherClass" //$NON-NLS-1$
-			/* FIXME: Additional results which should not be there. Run with trace enabled to reproduce:
-			Result: aFirstEnum
-			Result: aFunction(void) bool
-			Result: aNamespace
-			Result: anEnumeration
-			Result: anotherFunction(void) void
-			Result: aSecondEnum
-			Result: aThirdEnum
-			Result: aVariable : int
-			*/
 	};
 	
 	public CompletionTest_ClassReference_Prefix(String name) {
 		super(name);
-		// see https://bugs.eclipse.org/bugs/show_bug.cgi?id=88787
-		setExpectFailure(88787);
+		// https://bugs.eclipse.org/bugs/show_bug.cgi?id=169860
+		setExpectFailure(169860);
 	}
 
 	public static Test suite() {

@@ -41,8 +41,8 @@ public class CompletionTest_ArgumentType_NoPrefix2  extends CompletionProposalsB
 	
 	public CompletionTest_ArgumentType_NoPrefix2(String name) {
 		super(name);
-		// see https://bugs.eclipse.org/bugs/show_bug.cgi?id=151207
-		setExpectFailure(151207);
+		// https://bugs.eclipse.org/bugs/show_bug.cgi?id=169860
+		setExpectFailure(169860);
 	}
 	
 	public static Test suite() {

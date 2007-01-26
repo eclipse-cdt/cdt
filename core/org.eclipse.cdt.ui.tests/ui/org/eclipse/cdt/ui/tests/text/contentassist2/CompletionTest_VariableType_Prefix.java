@@ -31,20 +31,11 @@ public class CompletionTest_VariableType_Prefix  extends CompletionProposalsBase
 			"anEnumeration",
 			// missing proposal:
 			"AStruct"
-			/* Superfluous proposals:
-			"aFirstEnum",
-			"aFunction(void) bool",
-			"aSecondEnum",
-			"aThirdEnum",
-			"aVariable : int",
-			"anotherFunction(void) void"
-			 */
 	};
 	
 	public CompletionTest_VariableType_Prefix(String name) {
 		super(name);
 		// see https://bugs.eclipse.org/bugs/show_bug.cgi?id=109724
-		// and https://bugs.eclipse.org/bugs/show_bug.cgi?id=88787
 		setExpectFailure(109724);
 	}
 	

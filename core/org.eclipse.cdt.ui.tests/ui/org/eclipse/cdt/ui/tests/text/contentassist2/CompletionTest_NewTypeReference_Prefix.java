@@ -30,23 +30,17 @@ public class CompletionTest_NewTypeReference_Prefix  extends CompletionProposals
 	private final String[] expectedResults = {
 			"aClass",
 			"anotherClass",
+			"aNamespace",
 			// missing proposal:
 			"AStruct"
-			/* FIXME: Additional results which should not be there. Run with trace enabled to reproduce:
-Result: aFirstEnum
-Result: aFunction(void) bool
-Result: anotherField : int
-Result: anotherFunction(void) void
-Result: anotherMethod(void) void
-Result: aSecondEnum
-Result: aThirdEnum
-Result: aVariable : int
-			*/	};
+			// extra proposal:
+			// anEnumeration
+
+	};
 	
 	public CompletionTest_NewTypeReference_Prefix(String name) {
 		super(name);
 		// see https://bugs.eclipse.org/bugs/show_bug.cgi?id=109724
-		// and https://bugs.eclipse.org/bugs/show_bug.cgi?id=88787
 		setExpectFailure(109724);
 	}
 

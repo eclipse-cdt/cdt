@@ -29,22 +29,12 @@ public class CompletionTest_TypeRef_Prefix  extends CompletionProposalsBaseTest{
 	private final String expectedPrefix = "a"; 
 	private final String[] expectedResults = {
 			"aNamespace"
-			/* FIXME: Additional results which should not be there. Run with trace enabled to reproduce:
-Result: aClass
-Result: aFirstEnum
-Result: aFunction(void) bool
-Result: anEnumeration
-Result: anotherClass
-Result: anotherFunction(void) void
-Result: aSecondEnum
-Result: aThirdEnum
-Result: aVariable : int
-			*/	};
+	};
 	
 	public CompletionTest_TypeRef_Prefix(String name) {
 		super(name);
-		// see https://bugs.eclipse.org/bugs/show_bug.cgi?id=88787
-		setExpectFailure(88787);
+		// https://bugs.eclipse.org/bugs/show_bug.cgi?id=169860
+		setExpectFailure(169860);
 	}
 
 	public static Test suite() {

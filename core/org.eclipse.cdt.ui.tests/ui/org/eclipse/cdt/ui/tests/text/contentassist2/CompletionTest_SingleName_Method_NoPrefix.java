@@ -28,14 +28,38 @@ public class CompletionTest_SingleName_Method_NoPrefix  extends CompletionPropos
 	
 	//TODO Hoda - please update this constant with what it is supposed to be
 	private final String[] expectedResults = {
+			"AStruct",
+			"XStruct",
+			"aClass",
+			"aFirstEnum",
+			"aFunction(void) bool",
+			"aNamespace",
+			"aSecondEnum",
+			"aThirdEnum",
+			"aVariable : int",
+			"anEnumeration",
+			"anotherClass",
 			"anotherField : int",
-			"anotherMethod() void"
+			"anotherFunction(void) void",
+			"anotherMethod(void) void",
+			"xEnumeration",
+			"xFirstEnum",
+			"xFunction(void) bool",
+			"xNamespace",
+			"xOtherClass",
+			"xOtherFunction(void) void",
+			"xSecondEnum",
+			"xThirdEnum",
+			"xVariable : int",
+			"~anotherClass(void) " 
+			// extra result
+			// "operator =(const anotherClass &) anotherClass &",
 	};
 	
 	public CompletionTest_SingleName_Method_NoPrefix(String name) {
 		super(name);
-		// see https://bugs.eclipse.org/bugs/show_bug.cgi?id=151207
-		setExpectFailure(151207);
+		// https://bugs.eclipse.org/bugs/show_bug.cgi?id=169860
+		setExpectFailure(169860);
 	}
 	
 	public static Test suite() {

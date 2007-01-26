@@ -27,15 +27,27 @@ public class CompletionTest_MacroRef_NoPrefix  extends CompletionProposalsBaseTe
 	private final String headerFileFullPath ="resources/contentassist/" + headerFileName;
 	private final String expectedPrefix = ""; 
 	private final String[] expectedResults = {
+			// missing results:
 			"aMacro(x)",
 			"Debug",
 			"xMacro(x,y)"
+			/* superfluous results:
+			AStruct
+			XStruct
+			aClass
+			aNamespace
+			anEnumeration
+			anotherClass
+			xEnumeration
+			xNamespace
+			xOtherClass
+*/
 	};
 	
 	public CompletionTest_MacroRef_NoPrefix(String name) {
 		super(name);
-		// see https://bugs.eclipse.org/bugs/show_bug.cgi?id=151207
-		setExpectFailure(151207);
+		// see https://bugs.eclipse.org/bugs/show_bug.cgi?id=171708
+		setExpectFailure(171708);
 	}
 
 	public static Test suite() {

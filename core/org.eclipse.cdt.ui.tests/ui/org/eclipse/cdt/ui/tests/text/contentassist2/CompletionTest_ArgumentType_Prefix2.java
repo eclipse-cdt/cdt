@@ -33,20 +33,11 @@ public class CompletionTest_ArgumentType_Prefix2  extends CompletionProposalsBas
 			"anEnumeration",
 			// missing proposal:
 			"AStruct"
-			/* FIXME: Additional results which should not be there. Run with trace enabled to reproduce:
-Result: aFirstEnum
-Result: aFunction(void) bool
-Result: anotherFunction(void) void
-Result: aSecondEnum
-Result: aThirdEnum
-Result: aVariable : int
-			 */
 	};
 	
 	public CompletionTest_ArgumentType_Prefix2(String name) {
 		super(name);
 		// see https://bugs.eclipse.org/bugs/show_bug.cgi?id=109724
-		// and https://bugs.eclipse.org/bugs/show_bug.cgi?id=88787
 		setExpectFailure(109724);
 	}
 	

@@ -29,32 +29,12 @@ public class CompletionTest_TypeRef_NoPrefix  extends CompletionProposalsBaseTes
 	private final String[] expectedResults = {
 			"aNamespace",
 			"xNamespace"
-			/* FIXME: Additional results which should not be there. Run with trace enabled to reproduce:
-Result: aClass
-Result: aFirstEnum
-Result: aFunction(void) bool
-Result: anEnumeration
-Result: anotherClass
-Result: anotherFunction(void) void
-Result: aSecondEnum
-Result: AStruct
-Result: aThirdEnum
-Result: aVariable : int
-Result: xEnumeration
-Result: xFirstEnum
-Result: xFunction(void) bool
-Result: xOtherClass
-Result: xOtherFunction(void) void
-Result: xSecondEnum
-Result: XStruct
-Result: xThirdEnum
-Result: xVariable : int
-			*/	};
+	};
 	
 	public CompletionTest_TypeRef_NoPrefix(String name) {
 		super(name);
-		// see https://bugs.eclipse.org/bugs/show_bug.cgi?id=88787
-		setExpectFailure(88787);
+		// https://bugs.eclipse.org/bugs/show_bug.cgi?id=169860
+		setExpectFailure(169860);
 	}
 
 	public static Test suite() {

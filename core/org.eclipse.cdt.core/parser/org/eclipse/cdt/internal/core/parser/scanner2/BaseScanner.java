@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2006 IBM Corporation and others.
+ * Copyright (c) 2004, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial implementation
  *     Markus Schorn (Wind River Systems)
+ *     Bryan Wilkinson (QNX) - https://bugs.eclipse.org/bugs/show_bug.cgi?id=151207
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.parser.scanner2;
 
@@ -2036,7 +2037,7 @@ abstract class BaseScanner implements IScanner {
         }
 
         // We've run out of contexts, our work is done here
-        return contentAssistMode ? eocToken : null;
+        return contentAssistMode ? new SimpleToken(IToken.tCOMPLETION, Integer.MAX_VALUE, null, Integer.MAX_VALUE) : null;
     }
     
     protected CharTable ident = new CharTable(1024);

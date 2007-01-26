@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Markus Schorn (Wind River Systems)
+ *     Bryan Wilkinson (QNX) - https://bugs.eclipse.org/bugs/show_bug.cgi?id=151207
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
@@ -4471,6 +4472,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
                 break;
             case IToken.tCOLONCOLON:
             case IToken.tIDENTIFIER:
+            case IToken.tCOMPLETION:
                 // to get templates right we need to use the class as the scope
                 ITokenDuple d = name();
                 name = createName(d);
@@ -4506,6 +4508,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 
                 continue baseSpecifierLoop;
             case IToken.tLBRACE:
+            case IToken.tEOC:
                 if (name == null)
                     name = createName();
                 baseSpec = createBaseSpecifier();

@@ -27,13 +27,22 @@ public class CompletionTest_FieldType_NoPrefix2  extends CompletionProposalsBase
 	private final String headerFileFullPath ="resources/contentassist/" + headerFileName;
 	private final String expectedPrefix = "";
 	private final String[] expectedResults = {
-			"<aType>"  // TODO
+			"AStruct",
+			"XStruct",
+			"aClass",
+			"aNamespace",
+			"aThirdClass",
+			"anEnumeration",
+			"anotherClass",
+			"xEnumeration",
+			"xNamespace",
+			"xOtherClass"
 	};
 	
 	public CompletionTest_FieldType_NoPrefix2(String name) {
 		super(name);
-		// see https://bugs.eclipse.org/bugs/show_bug.cgi?id=151207
-		setExpectFailure(151207);
+		// https://bugs.eclipse.org/bugs/show_bug.cgi?id=169860
+		setExpectFailure(169860);
 	}
 
 	public static Test suite() {

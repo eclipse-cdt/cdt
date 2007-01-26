@@ -29,13 +29,12 @@ public class CompletionTest_NamespaceRef_Prefix  extends CompletionProposalsBase
 	private final String expectedPrefix = "a"; 
 	private final String[] expectedResults = {
 			"aNamespace"
-			/* FIXME: extra results */
 	};
 	
 	public CompletionTest_NamespaceRef_Prefix(String name) {
 		super(name);
-		// see https://bugs.eclipse.org/bugs/show_bug.cgi?id=88787
-		setExpectFailure(88787);
+		// https://bugs.eclipse.org/bugs/show_bug.cgi?id=169860
+		setExpectFailure(169860);
 	}
 
 	public static Test suite() {

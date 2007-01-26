@@ -12,8 +12,10 @@
 
 package org.eclipse.cdt.internal.index.tests;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.regex.Pattern;
 
 import junit.framework.TestSuite;
@@ -24,6 +26,10 @@ import org.eclipse.cdt.core.dom.IPDOMManager;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IBinding;
+import org.eclipse.cdt.core.dom.ast.IEnumeration;
+import org.eclipse.cdt.core.dom.ast.IType;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPVariable;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.core.index.IIndexFile;
@@ -333,6 +339,54 @@ public class IndexBugsTests extends BaseTestCase {
 		}
 		finally {
 			index.releaseReadLock();
+			CProjectHelper.delete(cproject);
+		}
+	}
+	
+	// // header.h
+	// class E {};
+	
+	// #include "header.h"
+	// E var;
+	
+	// // header.h	
+	// enum E {A,B,C};
+	public void _test171834() throws Exception {
+		waitForIndexer();
+
+		ICProject cproject = CProjectHelper.createCCProject("seq1", "bin", IPDOMManager.ID_FAST_INDEXER);
+		try {
+			IIndex index = CCorePlugin.getIndexManager().getIndex(cproject);
+			StringBuffer[] testData = getContentsForTest(3);
+			IFile header= TestSourceReader.createFile(cproject.getProject(), "header.h", testData[0].toString());
+			IFile referer= TestSourceReader.createFile(cproject.getProject(), "content.cpp", testData[1].toString());
+			TestSourceReader.waitUntilFileIsIndexed(index, referer, 8000);
+
+			index.acquireReadLock();
+			try {
+				IBinding[] bindings = index.findBindings(Pattern.compile("var"), true, IndexFilter.ALL, new NullProgressMonitor());
+				assertEquals(1, bindings.length);
+				IType type = ((ICPPVariable)bindings[0]).getType();
+				assertTrue(type instanceof ICPPClassType);
+				assertEquals("var is not of type class", ICPPClassType.k_class, ((ICPPClassType)type).getKey());
+			} finally {
+				index.releaseReadLock();
+			}
+
+			InputStream in = new ByteArrayInputStream(testData[2].toString().getBytes()); 
+			header.setContents(in, IResource.FORCE, null);
+			TestSourceReader.waitUntilFileIsIndexed(index, header, 8000);
+
+			try {
+				IBinding[] bindings = index.findBindings(Pattern.compile("var"), true, IndexFilter.ALL, new NullProgressMonitor());
+				assertEquals(1, bindings.length);
+
+				IType type = ((ICPPVariable)bindings[0]).getType();
+				assertTrue(type instanceof IEnumeration);
+			} finally {
+				index.releaseReadLock();
+			}
+		} finally {
 			CProjectHelper.delete(cproject);
 		}
 	}

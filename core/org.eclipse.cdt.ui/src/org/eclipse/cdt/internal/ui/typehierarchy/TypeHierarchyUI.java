@@ -296,6 +296,12 @@ public class TypeHierarchyUI {
 		case ICElement.C_UNION_DECLARATION:
 		case ICElement.C_ENUMERATION:
 		case ICElement.C_TYPEDEF:
+//		case ICElement.C_TEMPLATE_CLASS:
+//		case ICElement.C_TEMPLATE_CLASS_DECLARATION:
+//		case ICElement.C_TEMPLATE_STRUCT:
+//		case ICElement.C_TEMPLATE_STRUCT_DECLARATION:
+//		case ICElement.C_TEMPLATE_UNION:
+//		case ICElement.C_TEMPLATE_UNION_DECLARATION:
 			return true;
 		}
 		return false;

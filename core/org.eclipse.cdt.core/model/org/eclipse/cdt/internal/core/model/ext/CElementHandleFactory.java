@@ -24,10 +24,12 @@ import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.core.dom.ast.c.ICCompositeTypeScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespaceScope;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateScope;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.core.runtime.CoreException;
@@ -70,7 +72,12 @@ public class CElementHandleFactory {
 			element= new EnumeratorHandle(parentElement, (IEnumerator) binding);
 		}
 		else if (binding instanceof ICompositeType) {
-			element= new StructureHandle(parentElement, (ICompositeType) binding);
+			if (binding instanceof ICPPClassTemplate) {
+				element= new StructureTemplateHandle(parentElement, (ICompositeType) binding);
+			}
+			else {
+				element= new StructureHandle(parentElement, (ICompositeType) binding);
+			}
 		}
 		else if (binding instanceof ICPPNamespace) {
 			element= new NamespaceHandle(parentElement, (ICPPNamespace) binding);
@@ -93,6 +100,9 @@ public class CElementHandleFactory {
 		if (scopeName == null) {
 			if (scope.getParent() == null) {
 				return tu;
+			} 
+			if (scope instanceof ICPPTemplateScope) {
+				return create(tu, scope.getParent());
 			}
 			return null; // unnamed namespace
 		}

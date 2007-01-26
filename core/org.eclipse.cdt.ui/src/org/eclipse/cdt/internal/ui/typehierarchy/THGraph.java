@@ -290,4 +290,8 @@ class THGraph {
 			}
 		}
 	}
+
+	public boolean isTrivial() {
+		return fNodes.size() < 2;
+	}
 }

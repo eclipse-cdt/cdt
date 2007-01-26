@@ -440,4 +440,27 @@ public class CppTypeHierarchyTest extends TypeHierarchyBaseTest {
 		checkMethodTable(new String[] {"field4", "method4()"});
 	}
 
+	// template <typename T> class SimpleTemplate {
+	// public:
+	//    T field1;
+	//    T method1();
+	// };
+	public void _testTemplatesNoInheritance() throws Exception {
+		String content= getContentsForTest(1)[0].toString();
+		IFile file= createFile(getProject(), "simpleTemplate.cpp", content);
+		waitForIndexer(fIndex, file, INDEXER_WAIT_TIME);
+		IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
+		CEditor editor= (CEditor) IDE.openEditor(page, file);
+		Tree tree;
+		TreeItem item1, item2, item3, item4;
+		
+		editor.selectAndReveal(content.indexOf("SimpleTemplate"), 1);
+		openTypeHierarchy(editor);
+		tree= getHierarchyViewer().getTree();
+		
+		item1= checkTreeNode(tree, 0, "SimpleTemplate");
+		assertEquals(1, tree.getItemCount());
+		assertEquals(0, item1.getItemCount());
+		checkMethodTable(new String[] {"field1", "method1()"});
+	}
 }

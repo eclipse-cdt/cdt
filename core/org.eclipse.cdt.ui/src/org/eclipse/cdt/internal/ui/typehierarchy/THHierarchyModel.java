@@ -359,7 +359,9 @@ class THHierarchyModel {
 	}
 
 	private boolean isImplementor(ICElement element) {
-		if (element == null || fSelectedMember == null || fMemberSignatureToSelect == null) {
+		if (element == null 
+				|| fSelectedMember == null || fMemberSignatureToSelect == null
+				|| fGraph.isTrivial()) {
 			return false;
 		}
 		THGraphNode gnode= fGraph.getNode(element);

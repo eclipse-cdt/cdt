@@ -2611,14 +2611,15 @@ public class SystemView extends TreeViewer implements ISystemTree, ISystemResour
 		Vector matches = null;
 
 		// STEP 1: get the object's remote adapter and subsystem
-		//String newElementName = null;
+		String newElementName = null;
 		ISystemRemoteElementAdapter rmtAdapter = null;
 		if (renameObject instanceof String) {
 			//FIXME How to get the adapter based on the String name?
-			//newElementName = (String)renameObject;
+			newElementName = (String)renameObject;
 		} else {
 			rmtAdapter = getRemoteAdapter(renameObject);
 			subsystem = rmtAdapter.getSubSystem(renameObject);
+			newElementName = rmtAdapter.getName(renameObject);
 		}
 
 		// STEP 2: find all references to the old name object
@@ -2645,10 +2646,10 @@ public class SystemView extends TreeViewer implements ISystemTree, ISystemResour
 				}
 			
 				// rename explicitly here (since internalUpdate doesn't seem to have an effect
-				String newName = rmtAdapter.getName(data);
-				match.setText(newName);
+				System.out.println("setting name to "+newElementName);
+				match.setText(newElementName);
 				
-				internalUpdate(match, data, properties);
+				//internalUpdate(match, data, properties);
 						
 				//update(data, properties); // for refreshing non-structural properties in viewer when model changes
 				//System.out.println("Match found. refresh required? " + refresh);

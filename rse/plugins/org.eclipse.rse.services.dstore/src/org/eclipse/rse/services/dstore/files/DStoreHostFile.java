@@ -324,17 +324,20 @@ public class DStoreHostFile implements IHostFile
 	public void renameTo(String newAbsolutePath) 
 	{
 		String current = getName();
-		if (newAbsolutePath.endsWith(current))
+		
+		int lastSep = newAbsolutePath.lastIndexOf('/');
+		if (lastSep == -1)
+			lastSep = newAbsolutePath.lastIndexOf('\\');
+		
+		String newName = newAbsolutePath.substring(lastSep + 1);
+
+		if (newName.equals(current))
 		{
 			// data element already updated
 		}
 		else
 		{				
-			int lastSep = newAbsolutePath.lastIndexOf('/');
-			if (lastSep == -1)
-				lastSep = newAbsolutePath.lastIndexOf('\\');
-			
-			String newName = newAbsolutePath.substring(lastSep + 1);
+
 			
 			_element.setAttribute(DE.A_NAME, newName);
 		}

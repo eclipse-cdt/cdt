@@ -36,7 +36,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
  * @author Doug Schaefer
  *
  */
-abstract class PDOMFullIndexerJob extends PDOMIndexerTask implements IPDOMIndexerTask {
+abstract class PDOMFullIndexerJob extends PDOMIndexerTask {
 	final static Object REQUIRED= new Object();
 	final static Object MISSING = new Object();
 	final static Object SKIP=     new Object();

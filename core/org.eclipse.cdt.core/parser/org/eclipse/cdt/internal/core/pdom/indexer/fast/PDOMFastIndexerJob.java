@@ -43,7 +43,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
  * @author Doug Schaefer
  *
  */
-abstract class PDOMFastIndexerJob extends PDOMIndexerTask implements IPDOMIndexerTask {
+abstract class PDOMFastIndexerJob extends PDOMIndexerTask {
 
 	protected final PDOMFastIndexer indexer;
 	protected IWritableIndex index;

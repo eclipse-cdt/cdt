@@ -168,8 +168,8 @@ class THGraph {
 						IName name= base.getBaseClassSpecifierName();
 						IBinding basecl= name != null ? index.findBinding(name) : base.getBaseClass();
 						ICElementHandle[] baseElems= IndexUI.findRepresentative(index, basecl);
-						if (baseElems.length > 0) {
-							ICElementHandle baseElem= baseElems[0];
+						for (int j = 0; j < baseElems.length; j++) {
+							ICElementHandle baseElem = baseElems[j];
 							THGraphNode baseGraphNode= addNode(baseElem);
 							addMembers(index, baseGraphNode, basecl);							
 							addEdge(graphNode, baseGraphNode);

@@ -33,6 +33,8 @@ import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.ui.CUIPlugin;
 
+import org.eclipse.cdt.internal.ui.viewsupport.WorkingSetFilterUI;
+
 class THHierarchyModel {
     public class BackgroundJob extends Job {
 		public BackgroundJob() {
@@ -67,6 +69,7 @@ class THHierarchyModel {
 	private Job fJob;
 	private Display fDisplay;
 	private THViewPart fView;
+	private WorkingSetFilterUI fFilter;
 	
 	public THHierarchyModel(THViewPart view, Display display) {
 		fDisplay= display;
@@ -103,9 +106,10 @@ class THHierarchyModel {
 		return fRootNodes;
 	}
 
-//	public void setWorkingSetFilter(WorkingSetFilterUI filterUI) {
-//		
-//	}
+	public void setWorkingSetFilter(WorkingSetFilterUI filterUI) {
+		fFilter= filterUI;
+		computeNodes();
+	}
 
 	synchronized public void setInput(ICElement input, ICElement member) {
 		stopGraphComputation();
@@ -178,10 +182,11 @@ class THHierarchyModel {
 		boolean fwd= fHierarchyKind == SUPER_TYPE_HIERARCHY;
 		ArrayList stack= new ArrayList();
 		ArrayList roots= new ArrayList();
-		ArrayList leaves= new ArrayList();
+		ArrayList leafs= new ArrayList();
 		
-		THNode[] newSelection= new THNode[2];
+		THGraphNode inputNode= fGraph.getInputNode();
 		Collection groots;
+		
 		if (fHierarchyKind == TYPE_HIERARCHY) {
 			groots= fGraph.getLeaveNodes();
 		}
@@ -197,7 +202,7 @@ class THHierarchyModel {
 		
 		for (Iterator iterator = groots.iterator(); iterator.hasNext();) {
 			THGraphNode gnode = (THGraphNode) iterator.next();
-			THNode node = createNode(newSelection, null, gnode);
+			THNode node = createNode(null, gnode, inputNode);
 			roots.add(node);
 			stack.add(node);
 		}
@@ -207,29 +212,66 @@ class THHierarchyModel {
 			THGraphNode gnode= fGraph.getNode(node.getElement());
 			List edges= fwd ? gnode.getOutgoing() : gnode.getIncoming();
 			if (edges.isEmpty()) {
-				leaves.add(node);
+				leafs.add(node);
 			}
 			else {
 				for (Iterator iterator = edges.iterator(); iterator.hasNext();) {
 					THGraphEdge edge = (THGraphEdge) iterator.next();
 					THGraphNode gchildNode= fwd ? edge.getEndNode() : edge.getStartNode();
-					THNode childNode= createNode(newSelection, node, gchildNode);
+					THNode childNode= createNode(node, gchildNode, inputNode);
 					node.addChild(childNode);
 					stack.add(childNode);
 				}
 			}
 		}
-		fSelectedTypeNode= newSelection[0];
-		if (fSelectedTypeNode == null) {
-			fSelectedTypeNode= newSelection[1];
-		}
+		fRootNodes= (THNode[]) roots.toArray(new THNode[roots.size()]);
+		removeFilteredLeafs(fRootNodes);
+		fSelectedTypeNode= findSelection(fRootNodes);
 		if (fSelectedTypeNode != null) {
 			fTypeToSelect= fSelectedTypeNode.getElement();
 			updateSelectedMember();
 		}
 		
-		fRootNodes= (THNode[]) roots.toArray(new THNode[roots.size()]);
 		updateImplementors();
+	}
+
+	private void removeFilteredLeafs(THNode[] rootNodes) {
+		for (int i = 0; i < rootNodes.length; i++) {
+			THNode node = rootNodes[i];
+			node.removeFilteredLeafs();
+		}
+	}
+
+	private THNode findSelection(THNode[] searchme) {
+		THNode[] result= new THNode[2];
+		findSelection(searchme, result);
+		if (result[0] != null) {
+			return result[0];
+		}
+		return result[1];
+	}
+
+	private void findSelection(THNode[] seachme, THNode[] result) {
+		for (int i = 0; i < seachme.length; i++) {
+			findSelection(seachme[i], result);
+			if (result[0] != null) {
+				break;
+			}
+		}
+	}
+
+	private void findSelection(THNode node, THNode[] result) {
+		if (node.equals(fSelectedTypeNode)) {
+			result[0]= node;
+			return;
+		}
+		else if (result[1] == null) {
+			if (node.getElement().equals(fTypeToSelect)) {
+				result[1]= node;
+			}
+		}
+		THNode[] children= node.getChildren();
+		findSelection(children, result);
 	}
 
 	private void updateSelectedMember() {
@@ -257,18 +299,11 @@ class THHierarchyModel {
 		}	
 	}
 
-	private THNode createNode(THNode[] newSelection, THNode parent, THGraphNode gnode) {
+	private THNode createNode(THNode parent, THGraphNode gnode, THGraphNode inputNode) {
 		ICElement element = gnode.getElement();
 		THNode node= new THNode(parent, element);
-		if (newSelection[0] == null) {
-			if (node.equals(fSelectedTypeNode)) {
-				newSelection[0]= node;
-			}
-			else if (newSelection[1] == null) {
-				if (element.equals(fTypeToSelect)) {
-					newSelection[1]= node;
-				}
-			}
+		if (gnode != inputNode && fFilter != null && !fFilter.isPartOfWorkingSet(element)) {
+			node.setIsFiltered(true);
 		}
 		return node;
 	}

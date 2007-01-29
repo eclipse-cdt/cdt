@@ -26,6 +26,7 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.ui.CElementImageDescriptor;
 
+import org.eclipse.cdt.internal.ui.viewsupport.CElementImageProvider;
 import org.eclipse.cdt.internal.ui.viewsupport.CElementLabels;
 import org.eclipse.cdt.internal.ui.viewsupport.CUILabelProvider;
 import org.eclipse.cdt.internal.ui.viewsupport.ImageImageDescriptor;
@@ -45,11 +46,15 @@ public class THLabelProvider extends LabelProvider implements IColorProvider {
     }
     
     public Image getImage(Object element) {
-        if (element instanceof THNode) {
+    	if (element instanceof THNode) {
             THNode node= (THNode) element;
             ICElement decl= node.getElement();
             if (decl != null) {
+            	if (node.isFiltered()) {
+            		fCLabelProvider.setImageFlags(CElementImageProvider.LIGHT_TYPE_ICONS);
+            	}
             	Image image= fCLabelProvider.getImage(decl);
+        		fCLabelProvider.setImageFlags(0);
                 if (image != null) {
                 	return decorateImage(image, node);
                 }

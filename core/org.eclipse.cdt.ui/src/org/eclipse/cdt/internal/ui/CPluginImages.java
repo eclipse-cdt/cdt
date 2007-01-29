@@ -53,12 +53,17 @@ public class CPluginImages {
 	public static final String IMG_OBJS_VARIABLE= NAME_PREFIX + "variable_obj.gif"; //$NON-NLS-1$
 	public static final String IMG_OBJS_LOCAL_VARIABLE= NAME_PREFIX + "variable_local_obj.gif"; //$NON-NLS-1$
 	public static final String IMG_OBJS_CLASS= NAME_PREFIX + "class_obj.gif"; //$NON-NLS-1$
+	public static final String IMG_OBJS_CLASS_ALT= NAME_PREFIX + "classfo_obj.gif"; //$NON-NLS-1$
 	public static final String IMG_OBJS_NAMESPACE= NAME_PREFIX + "namespace_obj.gif"; //$NON-NLS-1$
 	public static final String IMG_OBJS_USING= NAME_PREFIX + "using_obj.gif"; //$NON-NLS-1$
 	public static final String IMG_OBJS_STRUCT= NAME_PREFIX + "struct_obj.gif"; //$NON-NLS-1$
+	public static final String IMG_OBJS_STRUCT_ALT= NAME_PREFIX + "structfo_obj.gif"; //$NON-NLS-1$
 	public static final String IMG_OBJS_UNION= NAME_PREFIX + "union_obj.gif"; //$NON-NLS-1$
+	public static final String IMG_OBJS_UNION_ALT= NAME_PREFIX + "unionfo_obj.gif"; //$NON-NLS-1$
 	public static final String IMG_OBJS_TYPEDEF= NAME_PREFIX + "typedef_obj.gif"; //$NON-NLS-1$
+	public static final String IMG_OBJS_TYPEDEF_ALT= NAME_PREFIX + "typedeffo_obj.gif"; //$NON-NLS-1$
 	public static final String IMG_OBJS_ENUMERATION= NAME_PREFIX + "enum_obj.gif"; //$NON-NLS-1$
+	public static final String IMG_OBJS_ENUMERATION_ALT= NAME_PREFIX + "enumfo_obj.gif"; //$NON-NLS-1$
 	public static final String IMG_OBJS_UNKNOWN_TYPE= NAME_PREFIX + "unknown_type_obj.gif"; //$NON-NLS-1$
 	public static final String IMG_OBJS_ENUMERATOR= NAME_PREFIX + "enumerator_obj.gif"; //$NON-NLS-1$
 	public static final String IMG_OBJS_FUNCTION= NAME_PREFIX + "function_obj.gif"; //$NON-NLS-1$
@@ -139,7 +144,13 @@ public class CPluginImages {
 	public static final ImageDescriptor DESC_OBJS_PROTECTED_FIELD= createManaged(T_OBJ, IMG_OBJS_PROTECTED_FIELD);
 	public static final ImageDescriptor DESC_OBJS_PRIVATE_FIELD= createManaged(T_OBJ, IMG_OBJS_PRIVATE_FIELD);
 	public static final ImageDescriptor DESC_OBJS_KEYWORD= createManaged(T_OBJ, IMG_OBJS_KEYWORD);			
-	
+
+	public static final ImageDescriptor DESC_OBJS_CLASS_ALT= createManaged(T_OBJ, IMG_OBJS_CLASS_ALT);
+	public static final ImageDescriptor DESC_OBJS_STRUCT_ALT= createManaged(T_OBJ, IMG_OBJS_STRUCT_ALT);
+	public static final ImageDescriptor DESC_OBJS_UNION_ALT= createManaged(T_OBJ, IMG_OBJS_UNION_ALT);
+	public static final ImageDescriptor DESC_OBJS_TYPEDEF_ALT= createManaged(T_OBJ, IMG_OBJS_TYPEDEF_ALT);
+	public static final ImageDescriptor DESC_OBJS_ENUMERATION_ALT= createManaged(T_OBJ, IMG_OBJS_ENUMERATION_ALT);
+
 	public static final ImageDescriptor DESC_OBJS_DECLARARION= createManaged(T_OBJ, IMG_OBJS_DECLARATION);
 	public static final ImageDescriptor DESC_OBJS_VAR_DECLARARION= createManaged(T_OBJ, IMG_OBJS_VAR_DECLARATION);
 	public static final ImageDescriptor DESC_OBJS_INCLUDE= createManaged(T_OBJ, IMG_OBJS_INCLUDE);

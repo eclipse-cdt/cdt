@@ -89,6 +89,7 @@ import org.eclipse.cdt.internal.ui.viewsupport.CElementLabels;
 import org.eclipse.cdt.internal.ui.viewsupport.CUILabelProvider;
 import org.eclipse.cdt.internal.ui.viewsupport.EditorOpener;
 import org.eclipse.cdt.internal.ui.viewsupport.SelectionProviderMediator;
+import org.eclipse.cdt.internal.ui.viewsupport.WorkingSetFilterUI;
 
 /**
  * The view part for the include browser.
@@ -96,7 +97,7 @@ import org.eclipse.cdt.internal.ui.viewsupport.SelectionProviderMediator;
 public class THViewPart extends ViewPart {
 	private static final int MAX_HISTORY_SIZE = 10;
     private static final String TRUE = String.valueOf(true);
-//    private static final String KEY_WORKING_SET_FILTER = "workingSetFilter"; //$NON-NLS-1$
+    private static final String KEY_WORKING_SET_FILTER = "workingSetFilter"; //$NON-NLS-1$
     private static final String KEY_SHOW_FILES= "showFilesInLabels"; //$NON-NLS-1$
     private static final String KEY_SHOW_INHERITED_MEMBERS= "showInheritedMembers"; //$NON-NLS-1$
     private static final String KEY_FILTER_FIELDS= "filterFields"; //$NON-NLS-1$
@@ -112,16 +113,19 @@ public class THViewPart extends ViewPart {
 	private static final int ORIENTATION_HORIZONTAL = 1;
 	private static final int ORIENTATION_VERTICAL = 2;
 	private static final int ORIENTATION_SINGLE = 3;
+	
+	// options for label provider
 	private static final int MEMBER_LABEL_OPTIONS_SIMPLE = CElementLabels.M_PARAMETER_TYPES;
 	private static final int MEMBER_LABEL_OPTIONS_QUALIFIED = MEMBER_LABEL_OPTIONS_SIMPLE | CElementLabels.ALL_POST_QUALIFIED;
 	private static final int MEMBER_ICON_OPTIONS = CElementImageProvider.OVERLAY_ICONS;
     
+	// state information
     private IMemento fMemento;
     private boolean fShowsMessage= true;
 	private int fCurrentViewOrientation= -1;
 	private boolean fInComputeOrientation= false;
-
 	private ArrayList fHistoryEntries= new ArrayList(MAX_HISTORY_SIZE);
+	private int fIgnoreSelectionChanges= 0;
 
     // widgets
     private PageBook fPagebook;
@@ -132,46 +136,46 @@ public class THViewPart extends ViewPart {
 	private ViewForm fMemberViewForm;
 	private CLabel fMemberLabel;
 
-    // viewers
+    // viewers and helpers
 	private THHierarchyModel fModel;
 	private THLabelProvider fHierarchyLabelProvider;
 	private CUILabelProvider fMemberLabelProvider;
 	private TableViewer fMemberViewer;
 	private TreeViewer fHierarchyTreeViewer;
 
-    // filters, sorter
-//	private WorkingSetFilterUI fWorkingSetFilterUI;
+    // filters
+	private WorkingSetFilterUI fWorkingSetFilterUI;
+	private ViewerFilter fFieldFilter;
+	private ViewerFilter fStaticFilter;
+	private ViewerFilter fNonPublicFilter;
 
     // actions
 	private ToolBarManager fMemberToolbarManager;
-    private Action fShowSuperTypeHierarchyAction;
+    
+	private Action fShowSuperTypeHierarchyAction;
     private Action fShowSubTypeHierarchyAction;
     private Action fShowTypeHierarchyAction;
-    private Action fShowInheritedMembersAction;
+    
     private Action fShowFilesInLabelsAction;
     private Action fRefreshAction;
     private Action fCancelAction;
 	private Action fHistoryAction;
 	private Action fOpenElement;
+
 	private Action fHorizontalOrientation;
 	private Action fVerticalOrientation;
 	private Action fAutomaticOrientation;
 	private Action fSingleOrientation;
 
+    private Action fShowInheritedMembersAction;
 	private Action fFieldFilterAction;
 	private Action fStaticFilterAction;
 	private Action fNonPublicFilterAction;
-
-	private ViewerFilter fFieldFilter;
-	private ViewerFilter fStaticFilter;
-	private ViewerFilter fNonPublicFilter;
 
 	// action groups
 	private OpenViewActionGroup fOpenViewActionGroup;
 	private SelectionSearchGroup fSelectionSearchGroup;
 	private CRefactoringActionGroup fRefactoringActionGroup;
-	private int fIgnoreSelectionChanges= 0;
-
     
     public void setFocus() {
         fPagebook.setFocus();
@@ -239,10 +243,10 @@ public class THViewPart extends ViewPart {
 			fRefactoringActionGroup.dispose();
 			fRefactoringActionGroup= null;
 		}
-//		if (fWorkingSetFilterUI != null) {
-//			fWorkingSetFilterUI.dispose();
-//			fWorkingSetFilterUI= null;
-//		}
+		if (fWorkingSetFilterUI != null) {
+			fWorkingSetFilterUI.dispose();
+			fWorkingSetFilterUI= null;
+		}
 		super.dispose();
 	}
 	
@@ -304,9 +308,9 @@ public class THViewPart extends ViewPart {
 
 
     public void saveState(IMemento memento) {
-//        if (fWorkingSetFilterUI != null) {
-//        	fWorkingSetFilterUI.saveState(memento, KEY_WORKING_SET_FILTER);
-//        }
+        if (fWorkingSetFilterUI != null) {
+        	fWorkingSetFilterUI.saveState(memento, KEY_WORKING_SET_FILTER);
+        }
     	memento.putString(KEY_SHOW_INHERITED_MEMBERS, String.valueOf(fShowInheritedMembersAction.isChecked()));
         memento.putString(KEY_SHOW_FILES, String.valueOf(fShowFilesInLabelsAction.isChecked()));
         memento.putString(KEY_FILTER_FIELDS, String.valueOf(fFieldFilterAction.isChecked()));
@@ -339,7 +343,6 @@ public class THViewPart extends ViewPart {
     	fHierarchyTreeViewer.getControl().setMenu(menu);
     	site.registerContextMenu(CUIPlugin.ID_TYPE_HIERARCHY, manager, fHierarchyTreeViewer); 
 
-    	
     	manager = new MenuManager();
     	manager.setRemoveAllWhenShown(true);
     	manager.addMenuListener(new IMenuListener() {
@@ -517,14 +520,14 @@ public class THViewPart extends ViewPart {
     	fSelectionSearchGroup= new SelectionSearchGroup(getSite());
     	fRefactoringActionGroup= new CRefactoringActionGroup(this);
     	
-//    	fWorkingSetFilterUI= new WorkingSetFilterUI(this, fMemento, KEY_WORKING_SET_FILTER) {
-//            protected void onWorkingSetChange() {
-//                updateWorkingSetFilter(this);
-//            }
-//            protected void onWorkingSetNameChange() {
-//                updateDescription();
-//            }
-//        };
+    	fWorkingSetFilterUI= new WorkingSetFilterUI(this, fMemento, KEY_WORKING_SET_FILTER) {
+            protected void onWorkingSetChange() {
+                updateWorkingSetFilter(this);
+            }
+            protected void onWorkingSetNameChange() {
+                updateDescription();
+            }
+        };
 
 		fHorizontalOrientation= new Action(Messages.THViewPart_HorizontalOrientation, IAction.AS_RADIO_BUTTON) {
 			public void run() {
@@ -728,8 +731,8 @@ public class THViewPart extends ViewPart {
         // local menu
         IMenuManager mm = actionBars.getMenuManager();
 
-//        fWorkingSetFilterUI.fillActionBars(actionBars);
-//        mm.add(new Separator(IContextMenuConstants.GROUP_SHOW));
+        fWorkingSetFilterUI.fillActionBars(actionBars);
+        mm.add(new Separator(IContextMenuConstants.GROUP_SHOW));
         mm.add(fShowTypeHierarchyAction);
         mm.add(fShowSuperTypeHierarchyAction);
         mm.add(fShowSubTypeHierarchyAction);
@@ -805,8 +808,7 @@ public class THViewPart extends ViewPart {
                 label= CElementLabels.getElementLabel(elem, 0);
             	
                 // scope
-                IWorkingSet workingSet= null;
-//                workingSet= fWorkingSetFilterUI.getWorkingSet();
+                IWorkingSet workingSet= fWorkingSetFilterUI.getWorkingSet();
             	if (workingSet == null) {	
             		message= label;
             	}
@@ -841,10 +843,10 @@ public class THViewPart extends ViewPart {
 		fShowTypeHierarchyAction.setEnabled(!fShowsMessage);
 	}
 
-//    private void updateWorkingSetFilter(WorkingSetFilterUI filterUI) {
-//    	fModel.setWorkingSetFilter(filterUI);
-//    	updateView();
-//    }
+    private void updateWorkingSetFilter(WorkingSetFilterUI filterUI) {
+    	fModel.setWorkingSetFilter(filterUI);
+    	updateView();
+    }
     
     public void onSetHierarchyKind(int kind) {
     	if (fModel.getHierarchyKind() != kind) {

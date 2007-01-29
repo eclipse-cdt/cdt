@@ -13,6 +13,7 @@ package org.eclipse.cdt.internal.ui.typehierarchy;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.core.runtime.IAdaptable;
@@ -123,6 +124,16 @@ public class THNode implements IAdaptable {
 
 	public boolean isImplementor() {
 		return fIsImplementor;
+	}
+
+	public void removeFilteredLeafs() {
+		for (Iterator iterator = fChildren.iterator(); iterator.hasNext();) {
+			THNode child = (THNode) iterator.next();
+			child.removeFilteredLeafs();
+			if (child.isFiltered() && !child.hasChildren()) {
+				iterator.remove();
+			}
+		}
 	}
 }
 

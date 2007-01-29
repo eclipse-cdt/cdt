@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     QNX Software System
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.viewsupport;
 
@@ -331,21 +332,21 @@ public class CElementImageProvider {
 
 			case ICElement.C_STRUCT:
 			case ICElement.C_TEMPLATE_STRUCT:
-				return getStructImageDescriptor();
+				return getStructImageDescriptor((renderFlags & LIGHT_TYPE_ICONS) != 0);
 				
 			case ICElement.C_CLASS:
 			case ICElement.C_TEMPLATE_CLASS:
-				return getClassImageDescriptor();
+				return getClassImageDescriptor((renderFlags & LIGHT_TYPE_ICONS) != 0);
 				
 			case ICElement.C_UNION:
 			case ICElement.C_TEMPLATE_UNION:
-				return getUnionImageDescriptor();
+				return getUnionImageDescriptor((renderFlags & LIGHT_TYPE_ICONS) != 0);
 
 			case ICElement.C_TYPEDEF:
-				return getTypedefImageDescriptor();
+				return getTypedefImageDescriptor((renderFlags & LIGHT_TYPE_ICONS) != 0);
 
 			case ICElement.C_ENUMERATION:
-				return getEnumerationImageDescriptor();
+				return getEnumerationImageDescriptor((renderFlags & LIGHT_TYPE_ICONS) != 0);
 
 			case ICElement.C_ENUMERATOR:
 				return getEnumeratorImageDescriptor();
@@ -455,25 +456,45 @@ public class CElementImageProvider {
 	
 	public void dispose() {
 	}
-	
+
 	public static ImageDescriptor getStructImageDescriptor(){
-		return CPluginImages.DESC_OBJS_STRUCT;	
+		return getStructImageDescriptor(false);
+	}
+
+	public static ImageDescriptor getStructImageDescriptor(boolean alt){
+		return alt ? CPluginImages.DESC_OBJS_STRUCT_ALT : CPluginImages.DESC_OBJS_STRUCT;	
 	}
 	
 	public static ImageDescriptor getClassImageDescriptor(){
-		return CPluginImages.DESC_OBJS_CLASS;	
+		return getClassImageDescriptor(false);
 	}
-	
+
+	public static ImageDescriptor getClassImageDescriptor(boolean alt){
+		return alt ? CPluginImages.DESC_OBJS_CLASS_ALT : CPluginImages.DESC_OBJS_CLASS;	
+	}
+
 	public static ImageDescriptor getUnionImageDescriptor(){
-		return CPluginImages.DESC_OBJS_UNION;	
+		return getUnionImageDescriptor(false);
 	}
-	
+
+	public static ImageDescriptor getUnionImageDescriptor(boolean alt){
+		return alt ? CPluginImages.DESC_OBJS_UNION_ALT : CPluginImages.DESC_OBJS_UNION;	
+	}
+
 	public static ImageDescriptor getTypedefImageDescriptor(){
-		return CPluginImages.DESC_OBJS_TYPEDEF;	
+		return getTypedefImageDescriptor(false);
+	}
+
+	public static ImageDescriptor getTypedefImageDescriptor(boolean alt){
+		return alt ? CPluginImages.DESC_OBJS_TYPEDEF_ALT : CPluginImages.DESC_OBJS_TYPEDEF;	
 	}
 	
 	public static ImageDescriptor getEnumerationImageDescriptor(){
-		return CPluginImages.DESC_OBJS_ENUMERATION;	
+		return getEnumerationImageDescriptor(false);
+	}
+
+	public static ImageDescriptor getEnumerationImageDescriptor(boolean alt){
+		return alt ? CPluginImages.DESC_OBJS_ENUMERATION_ALT : CPluginImages.DESC_OBJS_ENUMERATION;	
 	}
 	
 	public static ImageDescriptor getEnumeratorImageDescriptor(){

@@ -31,9 +31,8 @@ public class CompletionTest_SingleName_Prefix  extends CompletionProposalsBaseTe
 	
 	public CompletionTest_SingleName_Prefix(String name) {
 		super(name);
-		// https://bugs.eclipse.org/bugs/show_bug.cgi?id=169860
 		// see https://bugs.eclipse.org/bugs/show_bug.cgi?id=171708
-//		setExpectFailure(171708);
+		setExpectFailure(171708);
 	}
 	
 	public static Test suite() {

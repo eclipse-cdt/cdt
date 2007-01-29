@@ -16,13 +16,15 @@
  *******************************************************************************/
 package org.eclipse.tm.terminal.internal.serial;
 
+import gnu.io.CommPortIdentifier;
+import gnu.io.SerialPort;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-import gnu.io.CommPortIdentifier;
-import gnu.io.SerialPort;
-
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.tm.terminal.ISettingsPage;
 import org.eclipse.tm.terminal.ISettingsStore;
 import org.eclipse.tm.terminal.ITerminalConnector;
@@ -44,8 +46,8 @@ public class SerialConnector implements ITerminalConnector {
 		try {
 			settins=new SerialSettings();			
 		} catch (NoClassDefFoundError e) {
-			// the comm library is not installed
-			e.printStackTrace();
+			// tell the user how to install the library
+			Activator.getDefault().getLog().log(new Status(IStatus.WARNING,Activator.PLUGIN_ID,SerialMessages.ERROR_LIBRARY_NOT_INSTALLED,e));
 		}
 		fSettings=settins;
 	}

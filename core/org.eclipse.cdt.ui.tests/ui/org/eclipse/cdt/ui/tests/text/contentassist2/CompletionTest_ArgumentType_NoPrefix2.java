@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004 IBM Corporation and others.
+ * Copyright (c) 2004, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  * IBM Rational Software - Initial API and implementation
+ * Bryan Wilkinson (QNX)
  *******************************************************************************/
 package org.eclipse.cdt.ui.tests.text.contentassist2;
 
@@ -42,7 +43,6 @@ public class CompletionTest_ArgumentType_NoPrefix2  extends CompletionProposalsB
 	public CompletionTest_ArgumentType_NoPrefix2(String name) {
 		super(name);
 		// https://bugs.eclipse.org/bugs/show_bug.cgi?id=169860
-		setExpectFailure(169860);
 	}
 	
 	public static Test suite() {

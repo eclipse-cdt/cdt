@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Anton Leherbauer (Wind River Systems)
+ *     Bryan Wilkinson (QNX)
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.text.contentassist;
 
@@ -23,6 +24,7 @@ import org.eclipse.cdt.core.dom.ast.ASTCompletionNode;
 import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionStyleMacroParameter;
+import org.eclipse.cdt.core.dom.ast.IASTIdExpression;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorFunctionStyleMacroDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorMacroDefinition;
@@ -48,6 +50,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDeclaration;
 import org.eclipse.cdt.core.model.IWorkingCopy;
 import org.eclipse.cdt.core.parser.ast.ASTAccessVisibility;
+import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.text.contentassist.ICompletionContributor;
 
@@ -61,7 +64,9 @@ public class DOMCompletionContributor implements ICompletionContributor {
 											  ASTCompletionNode completionNode,
                                               String prefix,
 											  List proposals) {
+		
 		if (completionNode != null) {
+			boolean handleMacros = false;
 			IASTName[] names = completionNode.getNames();
 			if (names == null || names.length == 0)
 				// No names, not much we can do here
@@ -74,6 +79,7 @@ public class DOMCompletionContributor implements ICompletionContributor {
 					// The node isn't properly hooked up, must have backtracked out of this node
 					continue;
 				IBinding[] bindings = names[i].resolvePrefix();
+				if (names[i].getParent() instanceof IASTIdExpression) handleMacros = true;
 				if (bindings != null)
 					for (int j = 0; j < bindings.length; ++j) {
 						IBinding binding = bindings[j];
@@ -91,11 +97,11 @@ public class DOMCompletionContributor implements ICompletionContributor {
 			}
 			
 			// Find all macros if there is a prefix
-			if (prefix.length() > 0) {
+			if (prefix.length() > 0 && handleMacros) {
 				IASTPreprocessorMacroDefinition[] macros = completionNode.getTranslationUnit().getMacroDefinitions();
 				if (macros != null)
 					for (int i = 0; i < macros.length; ++i)
-						if (macros[i].getName().toString().startsWith(prefix))
+						if (CharArrayUtils.equals(macros[i].getName().toCharArray(), 0, prefix.length(), prefix.toCharArray(), false))
 							handleMacro(macros[i], completionNode, offset, viewer, proposals);
 			}
         }

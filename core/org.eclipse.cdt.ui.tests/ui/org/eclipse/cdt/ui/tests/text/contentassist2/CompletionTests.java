@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2007 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Anton Leherbauer (Wind River Systems) - initial API and implementation
+ *     Bryan Wilkinson (QNX)
  *******************************************************************************/
 package org.eclipse.cdt.ui.tests.text.contentassist2;
 
@@ -40,7 +41,6 @@ public class CompletionTests extends AbstractCompletionTest {
 //
 //extern C1* gfC1();
 //C2* gfC2();
-//static C3* gfC3();
 //	
 //enum E1 {e11, e12};	
 //
@@ -239,7 +239,7 @@ public class CompletionTests extends AbstractCompletionTest {
 	//void f() {gf/*cursor*/
 	public void testGlobalFunctions_GlobalScope() throws Exception {
 		final String[] expected= {
-				"gfC1(void)", "gfC2(void)", "gfC3(void)"
+				"gfC1(void)", "gfC2(void)"
 		};
 		assertCompletionResults(fCursorOffset, expected, true);
 	}
@@ -247,7 +247,7 @@ public class CompletionTests extends AbstractCompletionTest {
 	//void C3::f() {gf/*cursor*/
 	public void testGlobalFunctions_MethodScope() throws Exception {
 		final String[] expected= {
-				"gfC1(void)", "gfC2(void)", "gfC3(void)"
+				"gfC1(void)", "gfC2(void)"
 		};
 		assertCompletionResults(fCursorOffset, expected, true);
 	}

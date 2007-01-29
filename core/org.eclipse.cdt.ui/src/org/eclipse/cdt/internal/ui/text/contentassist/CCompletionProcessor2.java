@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2006 IBM Corporation and others.
+ * Copyright (c) 2004, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  * IBM - Initial API and implementation
+ * Bryan Wilkinson (QNX)
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.text.contentassist;
 
@@ -29,9 +30,11 @@ import org.eclipse.jface.text.contentassist.IContextInformationValidator;
 import org.eclipse.ui.IEditorPart;
 
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.dom.IPDOMManager;
 import org.eclipse.cdt.core.dom.ast.ASTCompletionNode;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.index.IIndexManager;
+import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.model.IWorkingCopy;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.text.ICCompletionProposal;
@@ -78,11 +81,14 @@ public class CCompletionProcessor2 implements IContentAssistProcessor {
 				String prefix = null;
 	
 				if (workingCopy != null) {
-					// TODO, to improve performance, we want to skip all headers
-					// But right now we're not getting any completions
-//					fCurrentCompletionNode = workingCopy.getCompletionNode(index, ITranslationUnit.AST_SKIP_ALL_HEADERS, offset);
-					fCurrentCompletionNode = workingCopy.getCompletionNode(index, 0, offset);
-	
+					IPDOMManager manager = CCorePlugin.getPDOMManager();
+					String indexerId = manager.getIndexerId(workingCopy.getCProject());
+					int flags = ITranslationUnit.AST_SKIP_ALL_HEADERS;
+					if (IPDOMManager.ID_NO_INDEXER.equals(indexerId)) {
+						flags = 0;
+					}
+					fCurrentCompletionNode = workingCopy.getCompletionNode(index, flags, offset);
+					
 	                if (fCurrentCompletionNode != null)
 	                    prefix = fCurrentCompletionNode.getPrefix();
 	            }

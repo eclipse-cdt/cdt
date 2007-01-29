@@ -452,7 +452,7 @@ public class CPPClassType extends PlatformObject implements ICPPClassType, ICPPI
 		if( definition == null ){
             checkForDefinition();
             if( definition == null ){
-                IASTNode node = (declarations != null && declarations.length > 0) ? declarations[0] : null;
+                IASTName node = (declarations != null && declarations.length > 0) ? declarations[0] : null;
                 return new ICPPBase [] { new CPPBaseClause.CPPBaseProblem( node, IProblemBinding.SEMANTIC_DEFINITION_NOT_FOUND, getNameCharArray() ) };
             }
         }

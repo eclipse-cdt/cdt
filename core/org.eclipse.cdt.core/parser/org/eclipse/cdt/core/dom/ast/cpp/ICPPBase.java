@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.ast.cpp;
 
+import org.eclipse.cdt.core.dom.IName;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier;
@@ -30,6 +31,12 @@ public interface ICPPBase {
 	 * @return
 	 */
 	public IBinding getBaseClass() throws DOMException;
+	
+	/**
+	 * Returns the name that specifies the base class.
+	 * @since 4.0
+	 */
+	public IName getBaseClassSpecifierName();
 
 	/**
 	 * The visibility qualifier applied to the base class.

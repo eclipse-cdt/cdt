@@ -12,6 +12,7 @@
 package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.dom.IName;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBase;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
@@ -69,7 +70,7 @@ class PDOMCPPBase implements ICPPBase {
 		return pdom.getDB().getByte(record + FLAGS);
 	}
 
-	public PDOMName getBaseClassSpecifierImpl() {
+	public PDOMName getBaseClassSpecifierNameImpl() {
 		try {
 			int rec = pdom.getDB().getInt(record + BASECLASS_SPECIFIER);
 			if (rec != 0) {
@@ -81,9 +82,13 @@ class PDOMCPPBase implements ICPPBase {
 		return null;
 	}
 
+	public IName getBaseClassSpecifierName() {
+		return getBaseClassSpecifierNameImpl();
+	}
+	
 	public IBinding getBaseClass() {
 		try {
-			PDOMName name= getBaseClassSpecifierImpl();
+			PDOMName name= getBaseClassSpecifierNameImpl();
 			if (name != null) {
 				PDOMBinding b = name.getPDOMBinding();
 		    	while( b instanceof PDOMCPPTypedef && ((PDOMCPPTypedef)b).getType() instanceof PDOMBinding ){

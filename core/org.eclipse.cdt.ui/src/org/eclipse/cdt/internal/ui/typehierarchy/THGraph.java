@@ -21,6 +21,7 @@ import java.util.List;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 
+import org.eclipse.cdt.core.dom.IName;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.ICompositeType;
@@ -164,7 +165,8 @@ class THGraph {
 							return;
 						}
 						ICPPBase base= bases[i];
-						IBinding basecl= base.getBaseClass();
+						IName name= base.getBaseClassSpecifierName();
+						IBinding basecl= name != null ? index.findBinding(name) : base.getBaseClass();
 						ICElementHandle[] baseElems= IndexUI.findRepresentative(index, basecl);
 						if (baseElems.length > 0) {
 							ICElementHandle baseElem= baseElems[0];

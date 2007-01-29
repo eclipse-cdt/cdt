@@ -14,8 +14,9 @@
  */
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
+import org.eclipse.cdt.core.dom.IName;
 import org.eclipse.cdt.core.dom.ast.DOMException;
-import org.eclipse.cdt.core.dom.ast.IASTNode;
+import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
@@ -32,7 +33,7 @@ import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
 public class CPPBaseClause implements ICPPBase {
     static public class CPPBaseProblem extends ProblemBinding implements ICPPBase {
     	private ICPPClassType classProblem = null; 
-        public CPPBaseProblem( IASTNode node, int id, char[] arg ) {
+        public CPPBaseProblem( IASTName node, int id, char[] arg ) {
             super( node, id, arg );
         }
         public IBinding getBaseClass() {
@@ -49,6 +50,9 @@ public class CPPBaseClause implements ICPPBase {
         public boolean isVirtual() throws DOMException {
             throw new DOMException( this );
         }
+		public IName getBaseClassSpecifierName() {
+			return (IName) node;
+		}
     }
     private ICPPASTBaseSpecifier base = null;
 	private IBinding baseClass = null;
@@ -56,6 +60,7 @@ public class CPPBaseClause implements ICPPBase {
     public CPPBaseClause( ICPPASTBaseSpecifier base ){
         this.base = base;
     }
+    
     
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPBase#getBaseClass()
@@ -104,6 +109,10 @@ public class CPPBaseClause implements ICPPBase {
 
 	public void setBaseClass(ICPPClassType cls) {
 		baseClass = cls;
+	}
+
+	public IName getBaseClassSpecifierName() {
+		return base.getName();
 	}
 
 }

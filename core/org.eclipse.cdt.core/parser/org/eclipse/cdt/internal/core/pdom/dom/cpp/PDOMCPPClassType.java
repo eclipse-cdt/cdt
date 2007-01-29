@@ -474,7 +474,8 @@ ICPPClassScope, IPDOMMemberOwner, IIndexType {
 		PDOMCPPBase predecessor= null;
 		int nameRec= pdomName.getRecord();
 		while (base != null) {
-			if (base.getBaseClassSpecifierImpl().getRecord() == nameRec) {
+			PDOMName name = base.getBaseClassSpecifierNameImpl();
+			if (name != null && name.getRecord() == nameRec) {
 				break;
 			}
 			predecessor= base;

@@ -195,7 +195,7 @@ public class CPPClassTemplate extends CPPTemplateDefinition implements
 		if( definition == null ){
             checkForDefinition();
             if( definition == null ){
-                IASTNode node = (declarations != null && declarations.length > 0) ? declarations[0] : null;
+                IASTName node = (declarations != null && declarations.length > 0) ? declarations[0] : null;
                 return new ICPPBase [] { new CPPBaseClause.CPPBaseProblem( node, IProblemBinding.SEMANTIC_DEFINITION_NOT_FOUND, getNameCharArray() ) };
             }
         }

@@ -14,6 +14,9 @@
 
 package org.eclipse.cdt.internal.core.pdom.dom;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.eclipse.cdt.core.dom.ILinkage;
 import org.eclipse.cdt.core.dom.IName;
 import org.eclipse.cdt.core.dom.IPDOMVisitor;
@@ -29,9 +32,11 @@ import org.eclipse.cdt.core.dom.ast.IPointerType;
 import org.eclipse.cdt.core.dom.ast.IQualifierType;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespaceScope;
 import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.core.index.IIndexLinkage;
+import org.eclipse.cdt.core.index.IndexFilter;
 import org.eclipse.cdt.internal.core.Util;
 import org.eclipse.cdt.internal.core.dom.parser.ASTInternal;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
@@ -228,6 +233,50 @@ public abstract class PDOMLinkage extends PDOMNamedNode implements IIndexLinkage
 		return visitor.getBinding();
 	}
 
+	private static class PrefixedBindingFinder implements IBTreeVisitor {
+		private PDOMLinkage linkage;
+		private String prefix;
+		private IndexFilter filter;
+		private List bindings = new ArrayList();
+		
+		PrefixedBindingFinder(PDOMLinkage linkage, String prefix, IndexFilter filter) {
+			this.linkage = linkage;
+			this.prefix = prefix;
+			this.filter = filter;
+		}
+		
+		public int compare(int record) throws CoreException {
+			PDOMNamedNode node = (PDOMNamedNode) linkage.getNode(record);
+			IString name = node.getDBName();
+			if (name.getString().startsWith(prefix)) {
+				return 0;
+			}
+			return name.compare(prefix);
+		}
+
+		public boolean visit(int record) throws CoreException {
+			PDOMBinding binding = linkage.getPDOM().getBinding(record);
+			if (filter.acceptImplicitMethods() || !(binding instanceof ICPPMethod) ||
+					!((ICPPMethod)binding).isImplicit()) {
+				if (filter.acceptBinding(binding)) {
+					bindings.add(binding);
+				}
+			}
+			return true;
+		}
+		
+		public IBinding[] getBindings() {
+			return (IBinding[]) bindings.toArray(new IBinding[bindings.size()]);
+		}
+	}
+	
+	public IBinding[] findBindingsForPrefix(String prefix, IndexFilter filter) throws CoreException {
+		PrefixedBindingFinder visitor = new PrefixedBindingFinder(this, prefix, filter);
+		getIndex().accept(visitor);
+		
+		return visitor.getBindings();
+	}
+	
 	/**
 	 * Callback informing the linkage that a name has been added. This is
 	 * used to do addtional processing, like establishing inheritance relationships.

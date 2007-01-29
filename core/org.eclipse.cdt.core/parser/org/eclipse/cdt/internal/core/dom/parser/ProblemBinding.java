@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2006 IBM Corporation and others.
+ * Copyright (c) 2004, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Markus Schorn (Wind River Systems)
+ *     Bryan Wilkinson (QNX)
  *******************************************************************************/
 
 /*
@@ -134,11 +135,17 @@ public class ProblemBinding extends PlatformObject implements IProblemBinding, I
         throw new DOMException( this );
     }
 
-
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.IScope#find(java.lang.String)
      */
     public IBinding[] find( String name ) throws DOMException {
+        throw new DOMException( this );
+    }
+    
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.dom.ast.IScope#find(java.lang.String)
+     */
+    public IBinding[] find( String name, boolean prefixLookup ) throws DOMException {
         throw new DOMException( this );
     }
 

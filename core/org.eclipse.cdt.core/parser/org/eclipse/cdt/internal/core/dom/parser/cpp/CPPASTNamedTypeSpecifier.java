@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 20057 IBM Corporation and others.
+ * Copyright (c) 2004, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,18 +7,35 @@
  *
  * Contributors:
  * IBM - Initial API and implementation
+ * Bryan Wilkinson (QNX)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.eclipse.cdt.core.dom.ILinkage;
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
+import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTName;
+import org.eclipse.cdt.core.dom.ast.IBinding;
+import org.eclipse.cdt.core.dom.ast.IEnumeration;
+import org.eclipse.cdt.core.dom.ast.IScope;
+import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamedTypeSpecifier;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
+import org.eclipse.cdt.core.index.IIndex;
+import org.eclipse.cdt.core.index.IndexFilter;
+import org.eclipse.cdt.internal.core.dom.parser.IASTCompletionContext;
+import org.eclipse.core.runtime.CoreException;
 
 /**
  * @author jcamelon
  */
 public class CPPASTNamedTypeSpecifier extends CPPASTBaseDeclSpecifier implements
-        ICPPASTNamedTypeSpecifier {
+        ICPPASTNamedTypeSpecifier, IASTCompletionContext {
 
     private boolean typename;
     private IASTName name;
@@ -78,5 +95,59 @@ public class CPPASTNamedTypeSpecifier extends CPPASTBaseDeclSpecifier implements
 		if( n == name )
 			return r_reference;
 		return r_unclear;
+	}
+	
+	public IBinding[] resolvePrefix(IASTName n) {
+		List filtered = new ArrayList();
+		
+		IScope scope = CPPVisitor.getContainingScope(n);
+		
+		if (scope != null) {
+			try {
+				IBinding[] bindings = scope.find(n.toString(), true);
+				for (int i = 0; i < bindings.length; i++) {
+					if (bindings[i] instanceof ICPPTemplateParameter) {
+						filtered.add(bindings[i]);
+					}
+				}
+			} catch (DOMException e) {
+			}	
+		}
+
+		IndexFilter filter = new IndexFilter() {
+			public boolean acceptBinding(IBinding binding) {
+				return binding instanceof ICPPClassType
+				|| binding instanceof IEnumeration
+				|| binding instanceof ICPPNamespace
+				|| binding instanceof ITypedef;
+			}
+			public boolean acceptLinkage(ILinkage linkage) {
+				return linkage.getID() == ILinkage.CPP_LINKAGE_ID;
+			}
+		};
+		
+		try {
+			IBinding[] bindings = getTranslationUnit().getScope().find(n.toString(), true);
+			for (int i = 0 ; i < bindings.length; i++) {
+				if (filter.acceptBinding(bindings[i])) {
+					filtered.add(bindings[i]);
+				}
+			}
+		} catch (DOMException e1) {
+		}
+
+		IIndex index = getTranslationUnit().getIndex();
+		
+		if (index != null) {
+			try {
+				IBinding[] bindings = index.findBindingsForPrefix(n.toString(), filter);
+				for (int i = 0; i < bindings.length; i++) {
+					filtered.add(bindings[i]);
+				}
+			} catch (CoreException e) {
+			}	
+		}
+		
+		return (IBinding[]) filtered.toArray(new IBinding[filtered.size()]);
 	}
 }

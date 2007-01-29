@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2007 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *    Markus Schorn - initial API and implementation
+ *    Bryan Wilkinson (QNX)
  *******************************************************************************/ 
 
 package org.eclipse.cdt.internal.core.index;
@@ -93,7 +94,7 @@ final public class EmptyCIndex implements IIndex {
 	public IIndexBinding[] findBindings(Pattern[] pattern, boolean isFullyQualified, IndexFilter filter, IProgressMonitor monitor) throws CoreException {
 		return IIndexFragmentBinding.EMPTY_INDEX_BINDING_ARRAY;
 	}
-
+	
 	public IIndexBinding adaptBinding(IBinding binding) throws CoreException {
 		return null;
 	}
@@ -103,6 +104,10 @@ final public class EmptyCIndex implements IIndex {
 	}
 
 	public IBinding[] findInNamespace(IBinding nsbinding, char[] name) {
+		return IIndexBinding.EMPTY_INDEX_BINDING_ARRAY;
+	}
+	
+	public IBinding[] findBindingsForPrefix(String prefix, IndexFilter filter) throws CoreException {
 		return IIndexBinding.EMPTY_INDEX_BINDING_ARRAY;
 	}
 }

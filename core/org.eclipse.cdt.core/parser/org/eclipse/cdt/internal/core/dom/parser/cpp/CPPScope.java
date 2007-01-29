@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2006 IBM Corporation and others.
+ * Copyright (c) 2004, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Markus Schorn (Wind River Systems)
+ *     Bryan Wilkinson (QNX)
  *******************************************************************************/
 /*
  * Created on Nov 29, 2004
@@ -201,7 +202,14 @@ abstract public class CPPScope implements ICPPScope, IASTInternalScope {
 	 * @see org.eclipse.cdt.core.dom.ast.IScope#find(java.lang.String)
 	 */
 	public IBinding[] find(String name) throws DOMException {
-	    return CPPSemantics.findBindings( this, name, false );
+	    return CPPSemantics.findBindings( this, name, false, false );
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.dom.ast.IScope#find(java.lang.String)
+	 */
+	public IBinding[] find(String name, boolean prefixLookup) throws DOMException {
+	    return CPPSemantics.findBindings( this, name, false, prefixLookup );
 	}
 	
 	public void flushCache() {

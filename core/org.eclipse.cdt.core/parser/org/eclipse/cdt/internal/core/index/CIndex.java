@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2007 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *    Markus Schorn - initial API and implementation
+ *    Bryan Wilkinson (QNX)
  *******************************************************************************/ 
 
 package org.eclipse.cdt.internal.core.index;
@@ -154,8 +155,7 @@ public class CIndex implements IIndex {
 		monitor.done();
 		return (IIndexBinding[]) result.toArray(new IIndexBinding[result.size()]);
 	}
-
-
+	
 	public IIndexName[] findNames(IBinding binding, int flags) throws CoreException {
 		ArrayList result= new ArrayList();
 		for (int i = 0; i < fPrimaryFragmentCount; i++) {
@@ -365,6 +365,27 @@ public class CIndex implements IIndex {
 			} catch (CoreException e) {
 				CCorePlugin.log(e);
 			}
+		}
+		return IIndexBinding.EMPTY_INDEX_BINDING_ARRAY;
+	}
+	
+	public IBinding[] findBindingsForPrefix(String prefix, IndexFilter filter) throws CoreException {
+		ArrayList result= new ArrayList();
+		for (int i = 0; i < fFragments.length; i++) {
+			try {
+				IBinding[] part = fFragments[i].findBindingsForPrefix(prefix, filter);
+				for (int j = 0; j < part.length; j++) {
+					IBinding binding = part[j];
+					if (binding instanceof IIndexBinding) {
+						result.add(binding);
+					}
+				}
+			} catch (CoreException e) {
+				CCorePlugin.log(e);
+			}
+		}
+		if (!result.isEmpty()) {
+			return (IIndexBinding[]) result.toArray(new IIndexBinding[result.size()]);
 		}
 		return IIndexBinding.EMPTY_INDEX_BINDING_ARRAY;
 	}

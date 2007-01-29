@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2007 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *    Markus Schorn - initial API and implementation
  *    Andrew Ferguson (Symbian)
+ *    Bryan Wilkinson (QNX)
  *******************************************************************************/ 
 
 package org.eclipse.cdt.core.index;
@@ -241,6 +242,15 @@ public interface IIndex {
 	 */
 	public IBinding[] findInNamespace(IBinding nsbinding, char[] name);
 
+	/**
+	 * Searches for all bindings with names that start with the given prefix.
+	 * @param prefix the prefix with which all returned bindings must start
+	 * @param filter a filter that allows for skipping parts of the index
+	 * @return an array of bindings with the prefix
+	 * @throws CoreException
+	 */
+	public IBinding[] findBindingsForPrefix(String prefix, IndexFilter filter) throws CoreException;
+	
 	/**
 	 * Searches for all names that resolve to the given binding. You can limit the result to references, declarations
 	 * or definitions, or a combination of those.

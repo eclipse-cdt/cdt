@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2006 IBM Corporation and others.
+ * Copyright (c) 2004, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,11 +8,15 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Markus Schorn (Wind River Systems)
+ *     Bryan Wilkinson (QNX)
  *******************************************************************************/
 /*
  * Created on Dec 1, 2004
  */
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import org.eclipse.cdt.core.dom.IName;
 import org.eclipse.cdt.core.dom.ast.DOMException;
@@ -31,6 +35,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
 import org.eclipse.cdt.core.parser.util.CharArrayObjectMap;
+import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 
 /**
  * @author aniefer
@@ -72,11 +77,30 @@ public class CPPFunctionScope extends CPPScope implements ICPPFunctionScope {
 	 * @see org.eclipse.cdt.core.dom.ast.IScope#find(java.lang.String)
 	 */
 	public IBinding[] find(String name) throws DOMException {
+	    return find(name, false);
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.dom.ast.IScope#find(java.lang.String)
+	 */
+	public IBinding[] find(String name, boolean prefixLookup) throws DOMException {
 	    char [] n = name.toCharArray();
-	    if( labels.containsKey( n ) )
-	        return new IBinding[] { (IBinding) labels.get( n ) };
-
-	    return super.find( name );
+	    List bindings = new ArrayList();
+	    
+	    for (int i = 0; i < labels.size(); i++) {
+	    	char[] key = labels.keyAt(i);
+	    	if ((prefixLookup && CharArrayUtils.equals(key, 0, n.length, n, false))
+		    		|| (!prefixLookup && CharArrayUtils.equals(key, n))) {
+	    		bindings.add(labels.get(key));
+	    	}
+	    }
+	    
+	    IBinding[] additional = super.find( name, prefixLookup );
+	    for (int i = 0; i < additional.length; i++) {
+	    	bindings.add(additional[i]);
+	    }
+	    
+	    return (IBinding[]) bindings.toArray(new IBinding[bindings.size()]);
 	}
 	
 	public IScope getParent() throws DOMException {

@@ -35,6 +35,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
+import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.internal.core.Util;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPClassScope;
@@ -169,6 +170,7 @@ ICPPClassScope, IPDOMMemberOwner, IIndexType {
 			acceptInHierarchy(new HashSet(), methods);
 			return methods.getMethods();
 		} catch (CoreException e) {
+			CCorePlugin.log(e);
 			return new ICPPMethod[0];
 		}
 	}
@@ -401,12 +403,54 @@ ICPPClassScope, IPDOMMemberOwner, IIndexType {
 		return null;
 	}
 
+	private static class BindingFinder implements IPDOMVisitor {
+		private List fBindings = new ArrayList();
+		private char[] fName;
+		private boolean fPrefixLookup;
+		
+		public BindingFinder(char[] name, boolean prefiexLookup) {
+			fName= name;
+			fPrefixLookup= prefiexLookup;
+		}
+		
+		public boolean visit(IPDOMNode node) throws CoreException {
+			if (node instanceof PDOMNamedNode && node instanceof IBinding
+					&& !(node instanceof ICPPConstructor)) {
+				char[] n= ((PDOMNamedNode) node).getDBName().getChars();
+				if ((fPrefixLookup && CharArrayUtils.equals(n, 0, fName.length, fName, false))
+						|| (!fPrefixLookup && CharArrayUtils.equals(n, fName))) {
+					fBindings.add(node);
+				}
+			}
+			return false;
+		}
+		public void leave(IPDOMNode node) throws CoreException {
+		}
+		public IBinding[] getBindings() {
+			return (IBinding[])fBindings.toArray(new IBinding[fBindings.size()]);
+		}
+	}
+	
+	public IBinding[] find(String name) throws DOMException {
+		return find(name, false);
+	}
+	
+	public IBinding[] find(String name, boolean prefixLookup) throws DOMException {
+		try {
+			BindingFinder visitor= new BindingFinder(name.toCharArray(), prefixLookup);
+			acceptInHierarchy(new HashSet(), visitor);
+			return visitor.getBindings();
+		} catch (CoreException e) {
+			CCorePlugin.log(e);
+		}
+		return null;
+	}
+	
 	// Not implemented
 
 	public Object clone() {fail();return null;}
 	public IField findField(String name) throws DOMException {fail();return null;}
 	public IBinding[] getFriends() throws DOMException {fail();return null;}
-	public IBinding[] find(String name) throws DOMException {fail();return null;}
 
 	public IScope getParent() throws DOMException {
 		try {

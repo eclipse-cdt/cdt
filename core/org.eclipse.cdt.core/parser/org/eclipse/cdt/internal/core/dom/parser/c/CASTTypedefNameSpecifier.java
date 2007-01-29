@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 IBM Corporation and others.
+ * Copyright (c) 2005, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,18 +8,33 @@
  * Contributors:
  * IBM Rational Software - Initial API and implementation
  * Yuan Zhang / Beth Tibbitts (IBM Research)
+ * Bryan Wilkinson (QNX)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.c;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.eclipse.cdt.core.dom.ILinkage;
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
+import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTName;
+import org.eclipse.cdt.core.dom.ast.IBinding;
+import org.eclipse.cdt.core.dom.ast.ICompositeType;
+import org.eclipse.cdt.core.dom.ast.IEnumeration;
+import org.eclipse.cdt.core.dom.ast.IScope;
+import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.c.ICASTTypedefNameSpecifier;
+import org.eclipse.cdt.core.index.IIndex;
+import org.eclipse.cdt.core.index.IndexFilter;
+import org.eclipse.cdt.internal.core.dom.parser.IASTCompletionContext;
+import org.eclipse.core.runtime.CoreException;
 
 /**
  * @author jcamelon
  */
 public class CASTTypedefNameSpecifier extends CASTBaseDeclSpecifier implements
-        ICASTTypedefNameSpecifier {
+        ICASTTypedefNameSpecifier, IASTCompletionContext {
 
     private IASTName name;
     /* (non-Javadoc)
@@ -63,4 +78,47 @@ public class CASTTypedefNameSpecifier extends CASTBaseDeclSpecifier implements
 		return r_unclear;
 	}
 
+	public IBinding[] resolvePrefix(IASTName n) {
+		List filtered = new ArrayList();
+		IndexFilter filter = new IndexFilter() {
+			public boolean acceptBinding(IBinding binding) {
+				return binding instanceof ICompositeType
+				|| binding instanceof IEnumeration
+				|| binding instanceof ITypedef;
+			}
+			public boolean acceptLinkage(ILinkage linkage) {
+				return linkage.getID() == ILinkage.C_LINKAGE_ID;
+			}
+		};
+		
+		IScope scope = CVisitor.getContainingScope(n);
+		
+		if (scope == null) {
+			scope = getTranslationUnit().getScope();
+		}
+		
+		try {
+			IBinding[] bindings = scope.find(n.toString(), true);
+			for (int i = 0 ; i < bindings.length; i++) {
+				if (filter.acceptBinding(bindings[i])) {
+					filtered.add(bindings[i]);
+				}
+			}
+		} catch (DOMException e) {
+		}
+		
+		IIndex index = getTranslationUnit().getIndex();
+		
+		if (index != null) {
+			try {
+				IBinding[] bindings = index.findBindingsForPrefix(n.toString(), filter);
+				for (int i = 0; i < bindings.length; i++) {
+					filtered.add(bindings[i]);
+				}
+			} catch (CoreException e) {
+			}
+		}
+		
+		return (IBinding[]) filtered.toArray(new IBinding[filtered.size()]);
+	}
 }

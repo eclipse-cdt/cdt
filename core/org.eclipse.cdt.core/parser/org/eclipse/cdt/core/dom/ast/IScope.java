@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2006 IBM Corporation and others.
+ * Copyright (c) 2004, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  * IBM - Initial API and implementation
  * Markus Schorn (Wind River Systems)
+ * Bryan Wilkinson (QNX)
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.ast;
 
@@ -46,6 +47,18 @@ public interface IScope {
 	 */
 	public IBinding[] find(String name) throws DOMException;
         	
+	/**
+	 * This is the general lookup entry point. It returns the list of
+	 * valid bindings for a given name or prefix.  The lookup proceeds as an unqualified
+	 * lookup.  Constructors are not considered during this lookup and won't be returned.
+	 * No attempt is made to resolve potential ambiguities or perform access checking.
+	 * 
+	 * @param name the name for which to search
+	 * @param prefixLookup whether or not to only check prefixes
+	 * @return List of IBinding
+	 */
+	public IBinding[] find(String name, boolean prefixLookup) throws DOMException;
+	
 	/**
 	 * Get the binding in this scope that the given name would resolve to. Could
 	 * return null if there is no matching binding in this scope, if the binding has not

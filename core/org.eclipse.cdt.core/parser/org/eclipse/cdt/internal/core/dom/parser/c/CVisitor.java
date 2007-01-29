@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 IBM Corporation and others.
+ * Copyright (c) 2005, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,9 +8,13 @@
  * Contributors:
  * IBM Rational Software - Initial API and implementation 
  * Markus Schorn (Wind River Systems)
+ * Bryan Wilkinson (QNX)
  *******************************************************************************/
 
 package org.eclipse.cdt.internal.core.dom.parser.c;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.ASTNodeProperty;
@@ -609,7 +613,7 @@ public class CVisitor {
 		            char [] p = fieldReference.getFieldName().toCharArray();
                     IField [] fields = ((ICompositeType) type).getFields();
                     for ( int i = 0; i < fields.length; i++ ) {
-                        if( CharArrayUtils.equals( fields[i].getNameCharArray(), 0, p.length, p ) ){
+                        if( CharArrayUtils.equals( fields[i].getNameCharArray(), 0, p.length, p, false ) ){
                             result = (IBinding[]) ArrayUtil.append( IBinding.class, result, fields[i] );
                         }
                     }
@@ -1415,7 +1419,7 @@ public class CVisitor {
 	    char [] c = candidate.toCharArray();
         if( prefixMap == null && CharArrayUtils.equals( c, name ) ){
             return candidate;
-        } else if( prefixMap != null && CharArrayUtils.equals( c, 0, name.length, name ) && !prefixMap.containsKey( c ) ){
+        } else if( prefixMap != null && CharArrayUtils.equals( c, 0, name.length, name, false ) && !prefixMap.containsKey( c ) ){
 	        prefixMap.put( c, candidate );
 	    }
         return prefixMap;
@@ -1437,7 +1441,7 @@ public class CVisitor {
 		    char [] n = name.toCharArray();
 		    if( prefixMap == null && CharArrayUtils.equals( c, n ) )
 		        return tempName;
-		    else if( prefixMap != null && CharArrayUtils.equals( c, 0, n.length, n ) && !prefixMap.containsKey( c ) )
+		    else if( prefixMap != null && CharArrayUtils.equals( c, 0, n.length, n, false ) && !prefixMap.containsKey( c ) )
 		        prefixMap.put( c, tempName );
 		} else {
 		    return checkForBinding( scope, paramDecl.getDeclSpecifier(), name, typesOnly, prefixMap );
@@ -1920,7 +1924,7 @@ public class CVisitor {
         return (IBinding[]) ArrayUtil.trim( IBinding.class, result );
     }
     
-    public static IBinding[] findBindings( IScope scope, String name ) throws DOMException{
+    public static IBinding[] findBindings( IScope scope, String name, boolean prefixLookup ) throws DOMException{
         IASTNode node = ASTInternal.getPhysicalNodeOfScope(scope);
         if( node instanceof IASTFunctionDefinition )
             node = ((IASTFunctionDefinition)node).getBody();
@@ -1930,39 +1934,65 @@ public class CVisitor {
 	    
 	    //normal names
 	    astName.setPropertyInParent( STRING_LOOKUP_PROPERTY );
-	    IBinding b1 = (IBinding) findBinding( astName, astName, COMPLETE );
+	    int flags = prefixLookup ? COMPLETE | PREFIX_LOOKUP : COMPLETE;
+	    Object o1 = findBinding( astName, astName, flags );
         
+	    IBinding[] b1 = null;
+	    if (o1 instanceof IBinding) {
+	    	b1 = new IBinding[] { (IBinding) o1 };
+	    } else {
+	    	b1 = (IBinding[]) o1;
+	    }
+	    
 	    //structure names
         astName.setPropertyInParent( STRING_LOOKUP_TAGS_PROPERTY );
-        IBinding b2 = (IBinding) findBinding( astName, astName, COMPLETE | TAGS );
+        flags = prefixLookup ? COMPLETE | TAGS | PREFIX_LOOKUP : COMPLETE | TAGS;
+        Object o2 = findBinding( astName, astName, flags );
 
+	    IBinding[] b2 = null;
+	    if (o2 instanceof IBinding) {
+	    	b2 = new IBinding[] { (IBinding) o2 };
+	    } else {
+	    	b2 = (IBinding[]) o2;
+	    }
+        
         //label names
-        ILabel b3 = null;
+        List b3 = new ArrayList();
         do{
             char [] n = name.toCharArray();
             if( scope instanceof ICFunctionScope ){
                 ILabel [] labels = ((CFunctionScope)scope).getLabels();
                 for( int i = 0; i < labels.length; i++ ){
 	                ILabel label = labels[i];
-	                if( CharArrayUtils.equals( label.getNameCharArray(), n) ){
-	                    b3 = label;
-	                    break;
+	                if (prefixLookup) {
+	                	if (CharArrayUtils.equals(label.getNameCharArray(),
+	                			0, n.length, n, false)) {
+	                		b3.add(label);
+	                	}
+	                } else {
+	                	if (CharArrayUtils.equals(label.getNameCharArray(), n)) {
+	                		b3.add(label);
+	                		break;
+	                	}
 	                }
 	            }
-                break;
+                if (!prefixLookup) break;
             }
             scope = scope.getParent();
         } while( scope != null );
         
-        int c = (( b1 != null ) ? 1 : 0) + (( b2 != null ) ? 1 : 0) + (( b3 != null ) ? 1 : 0);
+        int c = (b1 == null ? 0 : b1.length) + (b2 == null ? 0 :b2.length) + (b3 == null ? 0 : b3.size());
+
         IBinding [] result = new IBinding [c];
-        c = 0;
-        if( b1 != null ) 
-            result[c++] = b1;
-        if( b2 != null )
-            result[c++] = b2;
-        if( b3 != null )
-            result[c] = b3;
+        
+        if (b1 != null)
+        	ArrayUtil.addAll(IBinding.class, result, b1);
+        
+        if (b2 != null)
+        	ArrayUtil.addAll(IBinding.class, result, b2);
+       
+        if (b3 != null)
+        	ArrayUtil.addAll(IBinding.class, result, b3.toArray(new IBinding[b3.size()]));
         
         return result;
     }

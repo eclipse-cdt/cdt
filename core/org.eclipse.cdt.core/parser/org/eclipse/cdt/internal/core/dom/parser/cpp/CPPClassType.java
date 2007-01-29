@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2006 IBM Corporation and others.
+ * Copyright (c) 2004, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Markus Schorn (Wind River Systems)
+ *     Bryan Wilkinson (QNX)
  *******************************************************************************/
 /*
  * Created on Nov 29, 2004
@@ -333,7 +334,7 @@ public class CPPClassType extends PlatformObject implements ICPPClassType, ICPPI
 	 * @see org.eclipse.cdt.core.dom.ast.ICompositeType#findField(java.lang.String)
 	 */
 	public IField findField(String name) throws DOMException {
-		IBinding [] bindings = CPPSemantics.findBindings( getCompositeScope(), name, true );
+		IBinding [] bindings = CPPSemantics.findBindings( getCompositeScope(), name, true, false );
 		IField field = null;
 		for ( int i = 0; i < bindings.length; i++ ) {
             if( bindings[i] instanceof IField ){

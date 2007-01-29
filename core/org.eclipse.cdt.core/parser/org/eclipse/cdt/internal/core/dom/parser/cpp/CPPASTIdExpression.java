@@ -7,18 +7,28 @@
  *
  * Contributors:
  * IBM - Initial API and implementation
+ * Bryan Wilkinson (QNX)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
+import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTIdExpression;
 import org.eclipse.cdt.core.dom.ast.IASTName;
+import org.eclipse.cdt.core.dom.ast.IBinding;
+import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
+import org.eclipse.cdt.core.index.IIndex;
+import org.eclipse.cdt.core.index.IndexFilter;
+import org.eclipse.cdt.core.parser.util.ArrayUtil;
+import org.eclipse.cdt.internal.core.dom.Linkage;
+import org.eclipse.cdt.internal.core.dom.parser.IASTCompletionContext;
+import org.eclipse.core.runtime.CoreException;
 
 /**
  * @author jcamelon
  */
-public class CPPASTIdExpression extends CPPASTNode implements IASTIdExpression {
+public class CPPASTIdExpression extends CPPASTNode implements IASTIdExpression, IASTCompletionContext {
     private IASTName name;
 
     public IASTName getName() {
@@ -59,4 +69,33 @@ public class CPPASTIdExpression extends CPPASTNode implements IASTIdExpression {
 		return CPPVisitor.getExpressionType(this);
 	}
 	
+	public IBinding[] resolvePrefix(IASTName n) {
+		IScope scope = CPPVisitor.getContainingScope(n);
+		
+		IBinding[] b1 = null;
+		if (scope != null) {
+			try {
+				b1 = scope.find(n.toString(), true);
+			} catch (DOMException e) {
+			}	
+		}
+		
+		IIndex index = getTranslationUnit().getIndex();
+		
+		IBinding[] b2 = null;
+		if (index != null) {
+			try {
+				b2 = index.findBindingsForPrefix(
+						n.toString(),
+						IndexFilter.getFilter(Linkage.CPP_LINKAGE));
+			} catch (CoreException e) {
+			} 	
+		}
+		
+		int size = (b1 == null ? 0 : b1.length) + (b2 == null ? 0 : b2.length);
+		IBinding[] all = new IBinding[size];
+		if (b1 != null) ArrayUtil.addAll(IBinding.class, all, b1);
+		if (b2 != null) ArrayUtil.addAll(IBinding.class, all, b2);
+		return all;
+	}
 }

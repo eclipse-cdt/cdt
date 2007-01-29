@@ -8,6 +8,7 @@
  * Contributors:
  * IBM - Initial API and implementation
  * Markus Schorn (Wind River Systems)
+ * Bryan Wilkinson (QNX)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
@@ -18,6 +19,7 @@ import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
+import org.eclipse.cdt.internal.core.dom.parser.IASTCompletionContext;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
 
 /**
@@ -75,7 +77,16 @@ public class CPPASTName extends CPPASTNode implements IASTName {
     }
 
     public IBinding[] resolvePrefix() {
-    	return CPPSemantics.prefixLookup(this);
+    	IASTNode node = getParent();
+    	while (!(node instanceof IASTCompletionContext)) {
+    		if (node == null) {
+    			return null;
+    		}
+    		node = node.getParent();
+    	}
+    	
+    	IASTCompletionContext context = (IASTCompletionContext) node;
+    	return context.resolvePrefix(this);
     }
 
     public void setBinding(IBinding binding) {

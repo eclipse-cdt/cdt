@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 QNX Software Systems and others.
+ * Copyright (c) 2006, 2007 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,17 +14,24 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.cdt.core.dom.ast.IBinding;
+import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.internal.core.pdom.db.IBTreeVisitor;
+import org.eclipse.cdt.internal.core.pdom.db.IString;
 import org.eclipse.core.runtime.CoreException;
 
 public final class FindBindingsInBTree implements IBTreeVisitor {
 	protected final PDOMLinkage linkage;
 	protected final char[] name;
+	protected final boolean prefixLookup;
 	
 	
 	public int compare(int record) throws CoreException {
-		PDOMNamedNode node = ((PDOMNamedNode)linkage.getNode(record)); 
-		return node.getDBName().compare(name);
+		PDOMNamedNode node = ((PDOMNamedNode)linkage.getNode(record));
+		IString n = node.getDBName();
+		if (prefixLookup && n.getString().startsWith(new String(name))) {
+			return 0;
+		}
+		return n.compare(name);
 	}
 	
 	private List bindings = new ArrayList();
@@ -59,9 +66,22 @@ public final class FindBindingsInBTree implements IBTreeVisitor {
 	 * @param desiredType
 	 */
 	public FindBindingsInBTree(PDOMLinkage linkage, char[] name, int[] desiredType) {
+		this(linkage, name, desiredType, false);
+	}
+	
+	/**
+	 * Match a collection of types.
+	 * 
+	 * @param pdom
+	 * @param name
+	 * @param desiredType
+	 * @param prefixLookup
+	 */
+	public FindBindingsInBTree(PDOMLinkage linkage, char[] name, int[] desiredType, boolean prefixLookup) {
 		this.name = name;
 		this.desiredType = desiredType;
 		this.linkage= linkage;
+		this.prefixLookup = prefixLookup;
 	}
 	
 	public boolean visit(int record) throws CoreException {
@@ -69,8 +89,10 @@ public final class FindBindingsInBTree implements IBTreeVisitor {
 			return true;
 		
 		PDOMBinding tBinding = linkage.getPDOM().getBinding(record);
-		if (!tBinding.hasName(name))
-			// no more bindings with our desired name
+		if ((!prefixLookup && !tBinding.hasName(name))
+				|| (prefixLookup && !CharArrayUtils.equals(
+						tBinding.getNameCharArray(),
+						0, name.length, name, false)))
 			return false;
 		
 		if (desiredType == null) {

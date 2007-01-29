@@ -7,18 +7,32 @@
  *
  * Contributors:
  * IBM - Initial API and implementation
+ * Bryan Wilkinson (QNX)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.eclipse.cdt.core.dom.ILinkage;
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
+import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTName;
+import org.eclipse.cdt.core.dom.ast.IBinding;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDirective;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
+import org.eclipse.cdt.core.index.IIndex;
+import org.eclipse.cdt.core.index.IndexFilter;
+import org.eclipse.cdt.core.parser.util.CharArrayUtils;
+import org.eclipse.cdt.internal.core.dom.parser.IASTCompletionContext;
+import org.eclipse.core.runtime.CoreException;
 
 /**
  * @author jcamelon
  */
 public class CPPASTUsingDirective extends CPPASTNode implements
-        ICPPASTUsingDirective {
+        ICPPASTUsingDirective, IASTCompletionContext {
 
     private IASTName name;
 
@@ -64,5 +78,46 @@ public class CPPASTUsingDirective extends CPPASTNode implements
 		if( n == name )
 			return r_reference;
 		return r_unclear;
+	}
+	
+	public IBinding[] resolvePrefix(IASTName n) {
+		List filtered = new ArrayList();
+		IndexFilter filter = new IndexFilter() {
+			public boolean acceptBinding(IBinding binding) {
+				return binding instanceof ICPPNamespace;
+			}
+			public boolean acceptLinkage(ILinkage linkage) {
+				return linkage.getID() == ILinkage.CPP_LINKAGE_ID;
+			}
+		};
+		
+		IASTDeclaration[] decls = getTranslationUnit().getDeclarations();
+		char[] nChars = n.toCharArray();
+		for (int i = 0; i < decls.length; i++) {
+			if (decls[i] instanceof ICPPASTNamespaceDefinition) {
+				ICPPASTNamespaceDefinition defn = (ICPPASTNamespaceDefinition) decls[i];
+				IASTName name = defn.getName();
+				if (CharArrayUtils.equals(name.toCharArray(), 0, nChars.length, nChars, false)) {
+					IBinding binding = name.resolveBinding();
+					if (filter.acceptBinding(binding)) {
+						filtered.add(binding);
+					}
+				}
+			}
+		}
+		
+		IIndex index = getTranslationUnit().getIndex();
+		
+		if (index != null) {
+			try {
+				IBinding[] bindings = index.findBindingsForPrefix(n.toString(), filter);
+				for (int i = 0; i < bindings.length; i++) {
+					filtered.add(bindings[i]);
+				}
+			} catch (CoreException e) {
+			}	
+		}
+		
+		return (IBinding[]) filtered.toArray(new IBinding[filtered.size()]);
 	}
 }

@@ -7,19 +7,32 @@
  *
  * Contributors:
  * IBM - Initial API and implementation
+ * Bryan Wilkinson (QNX)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.eclipse.cdt.core.dom.ILinkage;
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
+import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTName;
+import org.eclipse.cdt.core.dom.ast.IBinding;
+import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.cpp.CPPASTVisitor;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier;
+import org.eclipse.cdt.core.index.IIndex;
+import org.eclipse.cdt.core.index.IndexFilter;
+import org.eclipse.cdt.internal.core.dom.parser.IASTCompletionContext;
+import org.eclipse.core.runtime.CoreException;
 
 /**
  * @author jcamelon
  */
 public class CPPASTBaseSpecifier extends CPPASTNode implements
-        ICPPASTBaseSpecifier {
+        ICPPASTBaseSpecifier, IASTCompletionContext {
 
     private boolean isVirtual;
     private int visibility;
@@ -98,4 +111,53 @@ public class CPPASTBaseSpecifier extends CPPASTNode implements
 		return r_unclear;
 	}
 
+	public IBinding[] resolvePrefix(IASTName n) {
+		List filtered = new ArrayList();
+		IndexFilter filter = new IndexFilter(){
+			public boolean acceptBinding(IBinding binding) {
+				if (binding instanceof ICPPClassType) {
+					ICPPClassType classType = (ICPPClassType) binding;
+					try {
+						int key = classType.getKey();
+						if (key == ICPPClassType.k_class) {
+							return true;
+						}
+					} catch (DOMException e) {
+					}
+				}
+				return false;
+			}
+			public boolean acceptLinkage(ILinkage linkage) {
+				return linkage.getID() == ILinkage.CPP_LINKAGE_ID;
+			}
+		};
+		
+		IScope scope = CPPVisitor.getContainingScope(n);
+		
+		if (scope != null) {
+			try {
+				IBinding[] bindings = scope.find(n.toString(), true);
+				for (int i = 0; i < bindings.length; i++) {
+					if (filter.acceptBinding(bindings[i])) {
+						filtered.add(bindings[i]);
+					}
+				}
+			} catch (DOMException e) {
+			}	
+		}
+				
+		IIndex index = getTranslationUnit().getIndex();
+		
+		if (index != null) {
+			try {
+				IBinding[] bindings = index.findBindingsForPrefix(n.toString(), filter);
+				for (int i = 0; i < bindings.length; i++) {
+					filtered.add(bindings[i]);
+				}
+			} catch (CoreException e) {
+			}
+		}
+			
+		return (IBinding[]) filtered.toArray(new IBinding[filtered.size()]);
+	}
 }

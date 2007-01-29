@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 QNX Software Systems and others.
+ * Copyright (c) 2006, 2007 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,11 +12,13 @@
 
 package org.eclipse.cdt.internal.core.pdom.dom.c;
 
+import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.internal.core.Util;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
+import org.eclipse.cdt.internal.core.pdom.db.Database;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
 import org.eclipse.core.runtime.CoreException;
@@ -28,20 +30,32 @@ import org.eclipse.core.runtime.CoreException;
 class PDOMCVariable extends PDOMBinding implements IVariable {
 
 	/**
+	 * Offset of pointer to type information for this parameter
+	 * (relative to the beginning of the record).
+	 */
+	private static final int TYPE_OFFSET = PDOMBinding.RECORD_SIZE + 0;
+	
+	/**
 	 * Offset of annotation information (relative to the beginning of the
 	 * record).
 	 */
-	private static final int ANNOTATIONS = PDOMBinding.RECORD_SIZE + 0;
+	private static final int ANNOTATIONS = PDOMBinding.RECORD_SIZE + 4;
 	
 	/**
 	 * The size in bytes of a PDOMCVariable record in the database.
 	 */
-	protected static final int RECORD_SIZE = PDOMBinding.RECORD_SIZE + 1;
+	protected static final int RECORD_SIZE = PDOMBinding.RECORD_SIZE + 5;
 	
 	public PDOMCVariable(PDOM pdom, PDOMNode parent, IVariable variable) throws CoreException {
 		super(pdom, parent, variable.getNameCharArray());
 
 		try {
+			// Find the type record
+			Database db = pdom.getDB();
+			PDOMNode typeNode = parent.getLinkageImpl().addType(this, variable.getType());
+			if (typeNode != null)
+				db.putInt(record + TYPE_OFFSET, typeNode.getRecord());
+			
 			pdom.getDB().putByte(record + ANNOTATIONS, PDOMCAnnotation.encodeAnnotation(variable));
 		} catch (DOMException e) {
 			throw new CoreException(Util.createStatus(e));
@@ -61,9 +75,13 @@ class PDOMCVariable extends PDOMBinding implements IVariable {
 	}
 	
 	public IType getType() throws DOMException {
-		return null;
-		// TODO - do we need the real type?
-		//throw new PDOMNotImplementedError();
+		try {
+			int typeRec = pdom.getDB().getInt(record + TYPE_OFFSET);
+			return (IType)getLinkageImpl().getNode(typeRec);
+		} catch (CoreException e) {
+			CCorePlugin.log(e);
+			return null;
+		}
 	}
 
 	public boolean isStatic() throws DOMException {

@@ -7,10 +7,15 @@
  *
  * Contributors:
  * IBM - Initial API and implementation
+ * Bryan Wilkinson (QNX)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
+import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNameOwner;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
@@ -19,13 +24,18 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConversionName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTOperatorName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateId;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
+import org.eclipse.cdt.core.parser.util.CharArrayUtils;
+import org.eclipse.cdt.internal.core.dom.parser.IASTCompletionContext;
 
 /**
  * @author jcamelon
  */
 public class CPPASTQualifiedName extends CPPASTNode implements
-		ICPPASTQualifiedName {
+		ICPPASTQualifiedName, IASTCompletionContext {
 
 	/**
 	 * @param duple
@@ -287,4 +297,45 @@ public class CPPASTQualifiedName extends CPPASTNode implements
         }
         return false;
     }
+
+	public IBinding[] resolvePrefix(IASTName n) {
+		IBinding binding = names[names.length - 2].resolveBinding();
+		if (binding instanceof ICPPClassType) {
+			ICPPClassType classType = (ICPPClassType) binding;
+			List bindings = new ArrayList();
+			char[] name = n.toCharArray();
+			
+			try {
+				ICPPMethod[] methods = classType.getDeclaredMethods();
+				for (int i = 0; i < methods.length; i++) {
+					char[] potential = methods[i].getNameCharArray();
+					if (CharArrayUtils.equals(potential, 0, name.length, name, false)) {
+						bindings.add(methods[i]);
+					}
+				}
+			} catch (DOMException e) {
+			}
+			
+			return (IBinding[]) bindings.toArray(new IBinding[bindings.size()]);
+		} else if (binding instanceof ICPPNamespace) {
+			ICPPNamespace namespace = (ICPPNamespace) binding;
+			List bindings = new ArrayList();
+			char[] name = n.toCharArray();
+			
+			try {
+				IBinding[] members = namespace.getMemberBindings();
+				for (int i = 0 ; i < members.length; i++) {
+					char[] potential = members[i].getNameCharArray();
+					if (CharArrayUtils.equals(potential, 0, name.length, name, false)) {
+						bindings.add(members[i]);
+					}
+				}
+			} catch (DOMException e) {
+			}
+			
+			return (IBinding[]) bindings.toArray(new IBinding[bindings.size()]);
+		}
+		
+		return null;
+	}
 }

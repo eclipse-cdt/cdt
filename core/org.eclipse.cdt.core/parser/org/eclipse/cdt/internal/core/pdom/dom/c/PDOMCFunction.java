@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 QNX Software Systems and others.
+ * Copyright (c) 2006, 2007 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -44,20 +44,35 @@ class PDOMCFunction extends PDOMBinding implements IFunction {
 	public static final int FIRST_PARAM = PDOMBinding.RECORD_SIZE + 4;
 	
 	/**
+	 * Offset for return type of this function (relative to
+	 * the beginning of the record).
+	 */
+	private static final int RETURN_TYPE = PDOMBinding.RECORD_SIZE + 8;
+	
+	/**
 	 * Offset of annotation information (relative to the beginning of the
 	 * record).
 	 */
-	private static final int ANNOTATIONS = PDOMBinding.RECORD_SIZE + 8; // byte
+	private static final int ANNOTATIONS = PDOMBinding.RECORD_SIZE + 12; // byte
 	
 	/**
 	 * The size in bytes of a PDOMCPPFunction record in the database.
 	 */
-	public static final int RECORD_SIZE = PDOMBinding.RECORD_SIZE + 9;
+	public static final int RECORD_SIZE = PDOMBinding.RECORD_SIZE + 13;
 	
 	public PDOMCFunction(PDOM pdom, PDOMNode parent, IFunction function) throws CoreException {
 		super(pdom, parent, function.getNameCharArray());
 		
 		try {
+			IFunctionType ft= function.getType();
+			IType rt= ft.getReturnType();
+			if (rt != null) {
+				PDOMNode typeNode = getLinkageImpl().addType(this, rt);
+				if (typeNode != null) {
+					pdom.getDB().putInt(record + RETURN_TYPE, typeNode.getRecord());
+				}
+			}
+			
 			IParameter[] params = function.getParameters();
 			pdom.getDB().putInt(record + NUM_PARAMS, params.length);
 			for (int i = 0; i < params.length; ++i) {
@@ -173,8 +188,19 @@ class PDOMCFunction extends PDOMBinding implements IFunction {
 		return getBit(getByte(record + ANNOTATIONS), PDOMCAnnotation.VARARGS_OFFSET);
 	}
 	
+	public IType getReturnType() throws DOMException {
+		try {
+			PDOMNode node = getLinkageImpl().getNode(pdom.getDB().getInt(record + RETURN_TYPE));
+			if (node instanceof IType) {
+				return (IType) node;
+			}
+		} catch (CoreException e) {
+			CCorePlugin.log(e);
+		}
+		return null;
+	}
+	
 	public IScope getFunctionScope() throws DOMException {fail(); return null;}
-	public IType getReturnType() throws DOMException {fail();return null;}
 	public boolean isSameType(IType type) {fail(); return false;}
 	public Object clone() {fail(); return null;}
 }

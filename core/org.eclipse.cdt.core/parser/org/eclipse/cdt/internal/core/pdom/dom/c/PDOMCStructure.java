@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 QNX Software Systems and others.
+ * Copyright (c) 2006, 2007 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -28,12 +28,14 @@ import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.c.ICCompositeTypeScope;
+import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.internal.core.Util;
 import org.eclipse.cdt.internal.core.index.IIndexType;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.db.PDOMNodeLinkedList;
 import org.eclipse.cdt.internal.core.pdom.dom.IPDOMMemberOwner;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
+import org.eclipse.cdt.internal.core.pdom.dom.PDOMNamedNode;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNotImplementedError;
 import org.eclipse.core.runtime.CoreException;
@@ -196,11 +198,49 @@ public class PDOMCStructure extends PDOMBinding implements ICompositeType, ICCom
 		fail(); return null;
 	}
 
-	public IBinding[] find(String name) throws DOMException {
-		fail(); return null;
-	}
-
 	public IBinding getBinding(IASTName name, boolean resolve) throws DOMException {
 		fail(); return null;
+	}
+	
+	private static class BindingFinder implements IPDOMVisitor {
+		private List fBindings = new ArrayList();
+		private char[] fName;
+		private boolean fPrefixLookup;
+		
+		public BindingFinder(char[] name, boolean prefiexLookup) {
+			fName= name;
+			fPrefixLookup= prefiexLookup;
+		}
+		
+		public boolean visit(IPDOMNode node) throws CoreException {
+			if (node instanceof PDOMNamedNode && node instanceof IBinding) {
+				char[] n= ((PDOMNamedNode) node).getDBName().getChars();
+				if ((fPrefixLookup && CharArrayUtils.equals(n, 0, fName.length, fName, false))
+						|| (!fPrefixLookup && CharArrayUtils.equals(n, fName))) {
+					fBindings.add(node);
+				}
+			}
+			return false;
+		}
+		public void leave(IPDOMNode node) throws CoreException {
+		}
+		public IBinding[] getBindings() {
+			return (IBinding[])fBindings.toArray(new IBinding[fBindings.size()]);
+		}
+	}
+	
+	public IBinding[] find(String name) throws DOMException {
+		return find(name, false);
+	}
+	
+	public IBinding[] find(String name, boolean prefixLookup) throws DOMException {
+		try {
+			BindingFinder visitor= new BindingFinder(name.toCharArray(), prefixLookup);
+			accept(visitor);
+			return visitor.getBindings();
+		} catch (CoreException e) {
+			CCorePlugin.log(e);
+		}
+		return null;
 	}
 }

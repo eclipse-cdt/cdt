@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2006 IBM Corporation and others.
+ * Copyright (c) 2004, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Markus Schorn (Wind River Systems)
+ *     Bryan Wilkinson (QNX)
  *******************************************************************************/
 /*
  * Created on Nov 29, 2004
@@ -300,6 +301,13 @@ public class CPPClassScope extends CPPScope implements ICPPClassScope {
 	 * @see org.eclipse.cdt.core.dom.ast.IScope#find(java.lang.String)
 	 */
 	public IBinding[] find(String name) throws DOMException {
+	    return find(name, false);
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.dom.ast.IScope#find(java.lang.String)
+	 */
+	public IBinding[] find(String name, boolean prefixLookup) throws DOMException {
 	    char [] n = name.toCharArray();
 	    ICPPASTCompositeTypeSpecifier compType = (ICPPASTCompositeTypeSpecifier) getPhysicalNode();
 	    IASTName compName = compType.getName();
@@ -307,10 +315,11 @@ public class CPPClassScope extends CPPScope implements ICPPClassScope {
 	    	IASTName [] ns = ((ICPPASTQualifiedName)compName).getNames();
 	    	compName = ns[ ns.length - 1 ];
 	    }
-	    if( CharArrayUtils.equals( n, compName.toCharArray() ) ){
+	    if((prefixLookup && CharArrayUtils.equals(compName.toCharArray(), 0, n.length, n, false))
+	    		|| (!prefixLookup && CharArrayUtils.equals(compName.toCharArray(), n))) {
 	        return (IBinding[]) ArrayUtil.addAll( IBinding.class, null, getConstructors( bindings, true ) );
 	    }
-	    return super.find( name );
+	    return super.find( name, prefixLookup );
 	}
 	
 	public static boolean isConstructorReference( IASTName name ){

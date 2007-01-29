@@ -16,6 +16,7 @@ import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBase;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.db.Database;
+import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMName;
 import org.eclipse.core.runtime.CoreException;
 
@@ -83,8 +84,13 @@ class PDOMCPPBase implements ICPPBase {
 	public IBinding getBaseClass() {
 		try {
 			PDOMName name= getBaseClassSpecifierImpl();
-			if (name != null)
-				return name.getPDOMBinding();				
+			if (name != null) {
+				PDOMBinding b = name.getPDOMBinding();
+		    	while( b instanceof PDOMCPPTypedef && ((PDOMCPPTypedef)b).getType() instanceof PDOMBinding ){
+					b = (PDOMBinding) ((PDOMCPPTypedef)b).getType();
+		    	}
+		    	return b;
+			}				
 		} catch (CoreException e) {
 			CCorePlugin.log(e);
 		}

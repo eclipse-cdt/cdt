@@ -95,6 +95,7 @@ public class PDOM extends PlatformObject implements IIndexFragment, IPDOM {
 	// 20 - add pointer to member types, array types, return types for functions
 	// 21 - change representation of paths in the pdom (167549)
 	// 22 - fix inheritance relations (167396)
+	// 23 - types on c-variables, return types on c-functions
 
 	public static final int LINKAGES = Database.DATA_AREA;
 	public static final int FILE_INDEX = Database.DATA_AREA + 4;
@@ -257,13 +258,13 @@ public class PDOM extends PlatformObject implements IIndexFragment, IPDOM {
 		private List bindings = new ArrayList();
 		private boolean isFullyQualified;
 		private BitSet matchesUpToLevel;
-		private boolean acceptImplicitMethods;
+		private IndexFilter filter;
 
-		public BindingFinder(Pattern[] pattern, boolean isFullyQualified, boolean acceptImplicitMethods, IProgressMonitor monitor) {
+		public BindingFinder(Pattern[] pattern, boolean isFullyQualified, IndexFilter filter, IProgressMonitor monitor) {
 			this.pattern = pattern;
 			this.monitor = monitor;
 			this.isFullyQualified= isFullyQualified;
-			this.acceptImplicitMethods= acceptImplicitMethods;
+			this.filter= filter;
 			matchesUpToLevel= new BitSet();
 			matchesUpToLevel.set(0);
 			matchStack.add(matchesUpToLevel);
@@ -280,9 +281,11 @@ public class PDOM extends PlatformObject implements IIndexFragment, IPDOM {
 				// check if we have a complete match.
 				final int lastIdx = pattern.length-1;
 				if (matchesUpToLevel.get(lastIdx) && pattern[lastIdx].matcher(name).matches()) {
-					if (acceptImplicitMethods || !(binding instanceof ICPPMethod) ||
+					if (filter.acceptImplicitMethods() || !(binding instanceof ICPPMethod) ||
 							!((ICPPMethod)binding).isImplicit()) {
-						bindings.add(binding);
+						if (filter.acceptBinding(binding)) {
+							bindings.add(binding);
+						}
 					}
 				}
 
@@ -344,7 +347,7 @@ public class PDOM extends PlatformObject implements IIndexFragment, IPDOM {
 	}
 
 	public IIndexFragmentBinding[] findBindings(Pattern[] pattern, boolean isFullyQualified, IndexFilter filter, IProgressMonitor monitor) throws CoreException {
-		BindingFinder finder = new BindingFinder(pattern, isFullyQualified, filter.acceptImplicitMethods(), monitor);
+		BindingFinder finder = new BindingFinder(pattern, isFullyQualified, filter, monitor);
 		for (Iterator iter = fLinkageIDCache.values().iterator(); iter.hasNext();) {
 			PDOMLinkage linkage = (PDOMLinkage) iter.next();
 			if (filter.acceptLinkage(linkage)) {
@@ -613,5 +616,19 @@ public class PDOM extends PlatformObject implements IIndexFragment, IPDOM {
 			}
 		}
 		return IIndexBinding.EMPTY_INDEX_BINDING_ARRAY;
+	}
+	
+	public IBinding[] findBindingsForPrefix(String prefix, IndexFilter filter) throws CoreException {
+		ArrayList result = new ArrayList();
+		for (Iterator iter = fLinkageIDCache.values().iterator(); iter.hasNext();) {
+			PDOMLinkage linkage = (PDOMLinkage) iter.next();
+			if (filter.acceptLinkage(linkage)) {
+				IBinding[] bindings = linkage.findBindingsForPrefix(prefix, filter);
+				for (int j = 0; j < bindings.length; j++) {
+					result.add(bindings[j]);
+				}
+			}
+		}
+		return (IBinding[]) result.toArray(new IBinding[result.size()]);
 	}
 }

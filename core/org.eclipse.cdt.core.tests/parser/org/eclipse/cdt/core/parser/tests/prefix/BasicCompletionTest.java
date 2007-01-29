@@ -1,5 +1,5 @@
 /**********************************************************************
- * Copyright (c) 2004, 2005 IBM Corporation and others.
+ * Copyright (c) 2004, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Bryan Wilkinson (QNX)
  *******************************************************************************/
 package org.eclipse.cdt.core.parser.tests.prefix;
 
@@ -54,9 +55,8 @@ public class BasicCompletionTest extends CompletionTestBase {
 		assertEquals("func2", ((IFunction)bindings[1]).getName());
 		// The second name shouldn't be hooked up
 		assertNull(names[1].getTranslationUnit());
-		// The declaration should point to nothing since there are no types
-		bindings = names[2].resolvePrefix();
-		assertEquals(0, bindings.length);
+		// The third name shouldn't be hooked up either
+		assertNull(names[2].getTranslationUnit());
 
 		// C
 		node = getGCCCompletionNode(code.toString());
@@ -69,9 +69,8 @@ public class BasicCompletionTest extends CompletionTestBase {
 		assertEquals(2, bindings.length);
 		assertEquals("func", ((IFunction)bindings[0]).getName());
 		assertEquals("func2", ((IFunction)bindings[1]).getName());
-		// The declaration should point to nothing since there are no types
-		bindings = names[1].resolvePrefix();
-		assertEquals(0, bindings.length);
+		// The second name shouldn't be hooked up
+		assertNull(names[1].getTranslationUnit());
 	}
 
 	public void testTypedef() throws Exception {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2007 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,11 +8,13 @@
  * Contributors:
  *    Markus Schorn - initial API and implementation
  *    Andrew Ferguson (Symbian)
+ *    Bryan Wilkinson (QNX)
  *******************************************************************************/ 
 
 package org.eclipse.cdt.core.index;
 
 import org.eclipse.cdt.core.dom.ILinkage;
+import org.eclipse.cdt.core.dom.ast.IBinding;
 
 /**
  * Can be subclassed and used for queries in the index.
@@ -60,5 +62,15 @@ public class IndexFilter {
 	 */
 	public boolean acceptImplicitMethods() {
 		return false;
+	}
+	
+	/**
+	 * Determines whether or not a binding is valid.
+	 * 
+	 * @param binding the binding being checked for validity
+	 * @return whether or not the binding is valid
+	 */
+	public boolean acceptBinding(IBinding binding) {
+		return true;
 	}
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 IBM Corporation and others.
+ * Copyright (c) 2005, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,21 +8,32 @@
  * Contributors:
  * IBM Rational Software - Initial API and implementation
  * Yuan Zhang / Beth Tibbitts (IBM Research)
+ * Bryan Wilkinson (QNX)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.c;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
+import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTFieldReference;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
+import org.eclipse.cdt.core.dom.ast.IBinding;
+import org.eclipse.cdt.core.dom.ast.ICompositeType;
+import org.eclipse.cdt.core.dom.ast.IField;
 import org.eclipse.cdt.core.dom.ast.IType;
+import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
+import org.eclipse.cdt.internal.core.dom.parser.IASTCompletionContext;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPSemantics;
 
 /**
  * @author jcamelon
  */
-public class CASTFieldReference extends CASTNode implements IASTFieldReference, IASTAmbiguityParent {
+public class CASTFieldReference extends CASTNode implements IASTFieldReference, IASTAmbiguityParent, IASTCompletionContext {
 
     private IASTExpression owner;
     private IASTName name;
@@ -92,5 +103,31 @@ public class CASTFieldReference extends CASTNode implements IASTFieldReference, 
     public IType getExpressionType() {
     	return CVisitor.getExpressionType(this);
     }
-    
+
+	public IBinding[] resolvePrefix(IASTName n) {
+		IASTExpression expression = getFieldOwner();
+		IType type = expression.getExpressionType();
+		type = CPPSemantics.getUltimateType(type, true); //stop at pointer to member?
+		
+		if (type instanceof ICompositeType) {
+			ICompositeType compType = (ICompositeType) type;
+			List bindings = new ArrayList();
+			char[] name = n.toCharArray();
+			
+			try {
+				IField[] fields = compType.getFields();
+				for (int i = 0; i < fields.length; i++) {
+					char[] potential = fields[i].getNameCharArray();
+					if (CharArrayUtils.equals(potential, 0, name.length, name, false)) {
+						bindings.add(fields[i]);
+					}
+				}
+			} catch (DOMException e) {
+			}
+			
+			return (IBinding[]) bindings.toArray(new IBinding[bindings.size()]);
+		}
+		
+		return null;
+	}
 }

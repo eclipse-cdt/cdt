@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 QNX Software Systems and others.
+ * Copyright (c) 2006, 2007 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  * QNX - Initial API and implementation
  * Markus Schorn (Wind River Systems)
  * Andrew Ferguson (Symbian)
+ * Bryan Wilkinson (QNX)
  *******************************************************************************/
 
 package org.eclipse.cdt.internal.core.pdom.dom.cpp;
@@ -16,7 +17,11 @@ package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 import java.util.ArrayList;
 import java.util.List;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.dom.IPDOMNode;
 import org.eclipse.cdt.core.dom.IPDOMVisitor;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTName;
@@ -31,6 +36,7 @@ import org.eclipse.cdt.internal.core.pdom.db.BTree;
 import org.eclipse.cdt.internal.core.pdom.db.IBTreeVisitor;
 import org.eclipse.cdt.internal.core.pdom.dom.FindBindingsInBTree;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
+import org.eclipse.cdt.internal.core.pdom.dom.PDOMNamedNode;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
 import org.eclipse.core.runtime.CoreException;
 
@@ -96,8 +102,12 @@ class PDOMCPPNamespace extends PDOMCPPBinding implements ICPPNamespace, ICPPName
 	}
 
 	public IBinding[] find(String name) {
+		return find(name, false);
+	}
+	
+	public IBinding[] find(String name, boolean prefixLookup) {
 		try {
-			FindBindingsInBTree visitor = new FindBindingsInBTree(getLinkageImpl(), name.toCharArray());
+			FindBindingsInBTree visitor = new FindBindingsInBTree(getLinkageImpl(), name.toCharArray(), null, prefixLookup);
 			getIndex().accept(visitor);
 			return visitor.getBinding();
 		} catch (CoreException e) {

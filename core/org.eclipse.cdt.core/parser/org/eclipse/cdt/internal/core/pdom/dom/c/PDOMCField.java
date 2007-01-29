@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 QNX Software Systems and others.
+ * Copyright (c) 2006, 2007 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,10 +14,8 @@ package org.eclipse.cdt.internal.core.pdom.dom.c;
 
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IField;
-import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.dom.IPDOMMemberOwner;
-import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
 import org.eclipse.core.runtime.CoreException;
 
@@ -25,10 +23,10 @@ import org.eclipse.core.runtime.CoreException;
  * @author Doug Schaefer
  *
  */
-class PDOMCField extends PDOMBinding implements IField {
+class PDOMCField extends PDOMCVariable implements IField {
 
 	public PDOMCField(PDOM pdom, IPDOMMemberOwner parent, IField field) throws CoreException {
-		super(pdom, (PDOMNode) parent, field.getNameCharArray());
+		super(pdom, (PDOMNode) parent, field);
 	}
 
 	public PDOMCField(PDOM pdom, int record) {
@@ -41,12 +39,6 @@ class PDOMCField extends PDOMBinding implements IField {
 
 	public int getNodeType() {
 		return PDOMCLinkage.CFIELD;
-	}
-	
-	public IType getType() throws DOMException {
-		return null;
-		// TODO - do we need the real type?
-		//throw new PDOMNotImplementedError();
 	}
 
 	public boolean isStatic() throws DOMException {

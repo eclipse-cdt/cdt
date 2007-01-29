@@ -7,6 +7,7 @@
  *
  * Contributors:
  * IBM - Initial API and implementation
+ * Bryan Wilkinson (QNX)
  *******************************************************************************/
 /*
  * Created on Mar 31, 2005
@@ -236,7 +237,7 @@ public class CPPClassTemplate extends CPPTemplateDefinition implements
 	 * @see org.eclipse.cdt.core.dom.ast.ICompositeType#findField(java.lang.String)
 	 */
 	public IField findField(String name) throws DOMException {
-		IBinding [] bindings = CPPSemantics.findBindings( getCompositeScope(), name, true );
+		IBinding [] bindings = CPPSemantics.findBindings( getCompositeScope(), name, true, false );
 		IField field = null;
 		for ( int i = 0; i < bindings.length; i++ ) {
             if( bindings[i] instanceof IField ){

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2007 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *    Markus Schorn - initial API and implementation
+ *    Bryan Wilkinson (QNX)
  *******************************************************************************/ 
 
 package org.eclipse.cdt.internal.core.index;
@@ -143,4 +144,9 @@ public interface IIndexFragment {
 	 * Returns all bindings with the given name in the given namespace
 	 */
 	IBinding[] findInNamespace(IBinding nsbinding, char[] name) throws CoreException;
+	
+	/**
+	 * Returns all bindings with the given prefix, accepted by the given filter
+	 */
+	IBinding[] findBindingsForPrefix(String prefix, IndexFilter filter) throws CoreException;
 }

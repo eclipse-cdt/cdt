@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2006 IBM Corporation and others.
+ * Copyright (c) 2004, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  * IBM - Initial API and implementation
  * Markus Schorn (Wind River Systems)
+ * Bryan Wilkinson (QNX)
  *******************************************************************************/
 /*
  * Created on Dec 8, 2004
@@ -90,6 +91,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDirective;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTWhileStatement;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBase;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBasicType;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPBlockScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
@@ -116,6 +118,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateTypeParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier;
+import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.core.parser.util.CharArrayObjectMap;
@@ -127,6 +130,7 @@ import org.eclipse.cdt.internal.core.dom.parser.ASTInternal;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
+import org.eclipse.core.runtime.CoreException;
 
 /**
  * @author aniefer
@@ -1023,6 +1027,26 @@ public class CPPSemantics {
 						b= scope.getBinding( data.astName, false );
 						if (b instanceof CPPImplicitFunction || b instanceof CPPImplicitTypedef) 
 							mergeResults( data, b, true );
+					} else if (data.prefixLookup && data.astName != null) {
+						IASTNode parent = ASTInternal.getPhysicalNodeOfScope(scope);
+						if (parent == null && scope instanceof IIndexBinding) {
+							IBinding[] bindings = scope.find(data.astName.toString(), data.prefixLookup);
+							mergeResults(data, bindings, true);
+						} else if (scope instanceof ICPPNamespaceScope && !(scope instanceof ICPPBlockScope)) {
+							ICPPNamespaceScope ns = (ICPPNamespaceScope) scope;
+							IIndex index = parent.getTranslationUnit().getIndex();
+							if (index != null) {
+								try {
+									IIndexBinding binding = index.findBinding(ns.getScopeName());
+									if (binding instanceof ICPPNamespaceScope) {
+										ICPPNamespaceScope indexNs = (ICPPNamespaceScope) binding;
+										IBinding[] bindings = indexNs.find(data.astName.toString(), data.prefixLookup);
+										mergeResults(data, bindings, true);
+									}
+								} catch (CoreException e) {
+								}
+							}
+						}
 					}
 				    IASTName[] inScope = lookupInScope( data, scope, blockItem );
 				    if (inScope != null) {
@@ -1789,8 +1813,8 @@ public class CPPSemantics {
 	    }
 	    char[] c = potential.toCharArray();
 	    char [] n = data.name();
-	    return ( (data.prefixLookup && CharArrayUtils.equals( c, 0, n.length, n )) || 
-			     (!data.prefixLookup && CharArrayUtils.equals( c, n )) );
+	    return (data.prefixLookup && CharArrayUtils.equals(c, 0, n.length, n, false))
+			|| (!data.prefixLookup && CharArrayUtils.equals(c, n));
 	}
 	
 	private static void addDefinition( IBinding binding, IASTName name ){
@@ -3251,14 +3275,18 @@ public class CPPSemantics {
 		return null;
 	}
 	
-	public static IBinding[] findBindings( IScope scope, String name, boolean qualified ) throws DOMException{
-		return findBindings( scope, name.toCharArray(), qualified );
+	public static IBinding[] findBindings( IScope scope, String name, boolean qualified, boolean prefixLookup ) throws DOMException{
+		return findBindings( scope, name.toCharArray(), qualified, prefixLookup );
 	}
-	public static IBinding[] findBindings( IScope scope, char []name, boolean qualified ) throws DOMException{
+	public static IBinding[] findBindings( IScope scope, char []name, boolean qualified, boolean prefixLookup ) throws DOMException{
 	    CPPASTName astName = new CPPASTName();
 	    astName.setName( name );
 	    astName.setParent( ASTInternal.getPhysicalNodeOfScope(scope));
 	    astName.setPropertyInParent( STRING_LOOKUP_PROPERTY );
+	    
+	    if (prefixLookup) {
+	    	return prefixLookup(astName, scope);
+	    }
 	    
 	    LookupData data = new LookupData( astName );
 	    data.forceQualified = qualified;
@@ -3296,13 +3324,17 @@ public class CPPSemantics {
 	    return (IBinding[]) set.keyArray( IBinding.class );
 	}
 	
-    public static IBinding [] prefixLookup( IASTName name ){
+	public static IBinding [] prefixLookup( IASTName name ){
+		return prefixLookup(name, name);
+	}
+	
+    public static IBinding [] prefixLookup( IASTName name, Object start ){
         LookupData data = createLookupData( name, true );
         data.prefixLookup = true;
         data.foundItems = new CharArrayObjectMap( 2 );
         
         try {
-            lookup( data, name );
+            lookup( data, start );
         } catch ( DOMException e ) {
         }
         CharArrayObjectMap map = (CharArrayObjectMap) data.foundItems;

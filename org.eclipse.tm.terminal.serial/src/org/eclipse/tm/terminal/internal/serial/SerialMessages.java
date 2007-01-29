@@ -32,4 +32,6 @@ public class SerialMessages extends NLS {
     public static String PORT_IN_USE;
     public static String TIMEOUT;
 
+    public static String ERROR_LIBRARY_NOT_INSTALLED;
+
 }

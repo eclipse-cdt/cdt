@@ -22,7 +22,7 @@ public class Messages extends NLS {
 		NLS.initializeMessages(BUNDLE_NAME, Messages.class);
 	}
 
-	public static String AddMemBlockDlg_enterMemSpaceAndAddr;
+	public static String AddMemBlockDlg_enterAddrAndMemSpace;
 	public static String AddMemBlockDlg_enterExpression;
 	public static String AddMemBlockDlg_or;
 	public static String AddMemBlockDlg_MonitorMemory;

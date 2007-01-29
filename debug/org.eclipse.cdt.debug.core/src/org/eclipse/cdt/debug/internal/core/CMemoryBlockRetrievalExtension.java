@@ -55,7 +55,10 @@ import org.w3c.dom.NodeList;
 public class CMemoryBlockRetrievalExtension extends PlatformObject implements IMemoryBlockRetrievalExtension {
 
 	private static final String MEMORY_BLOCK_EXPRESSION_LIST = "memoryBlockExpressionList"; //$NON-NLS-1$
+	private static final String MEMORY_BLOCK_EXPRESSION_ITEM = "memoryBlockExpressionItem"; //$NON-NLS-1$	
 	private static final String MEMORY_BLOCK_EXPRESSION = "expression"; //$NON-NLS-1$
+	private static final String MEMORY_BLOCK_MEMSPACEID = "memorySpaceID"; //$NON-NLS-1$
+	private static final String ATTR_MEMORY_BLOCK_MEMSPACEID_TEXT = "text"; //$NON-NLS-1$	
 	private static final String ATTR_MEMORY_BLOCK_EXPRESSION_TEXT = "text"; //$NON-NLS-1$
 
 	CDebugTarget fDebugTarget;
@@ -83,35 +86,63 @@ public class CMemoryBlockRetrievalExtension extends PlatformObject implements IM
 		}
 	}
 
+	private void parseMementoExprItem(Element element, List expressions, List memorySpaceIDs) {
+		NodeList list = element.getChildNodes();
+		int length = list.getLength();
+		String exp = null;
+		String memorySpaceID = null;
+		for( int i = 0; i < length; ++i ) {
+			Node node = list.item( i );
+			if ( node.getNodeType() == Node.ELEMENT_NODE ) {
+				Element entry = (Element)node;
+				if ( entry.getNodeName().equalsIgnoreCase( MEMORY_BLOCK_EXPRESSION ) ) {
+					exp = entry.getAttribute( ATTR_MEMORY_BLOCK_EXPRESSION_TEXT );
+				} else if ( entry.getNodeName().equalsIgnoreCase( MEMORY_BLOCK_MEMSPACEID ) ) {
+					memorySpaceID = entry.getAttribute( ATTR_MEMORY_BLOCK_MEMSPACEID_TEXT );
+				}
+			}
+		}
+		if (exp != null) {
+			expressions.add( exp );
+			memorySpaceIDs.add( memorySpaceID );
+		}
+	}
+
+	
 	private void initializeFromMemento( String memento ) throws CoreException {
 		Element root = DebugPlugin.parseDocument( memento );
 		if ( root.getNodeName().equalsIgnoreCase( MEMORY_BLOCK_EXPRESSION_LIST ) ) {
 			List expressions = new ArrayList();
+			List memorySpaceIDs = new ArrayList();
 			NodeList list = root.getChildNodes();
 			int length = list.getLength();
 			for( int i = 0; i < length; ++i ) {
 				Node node = list.item( i );
-				short type = node.getNodeType();
-				if ( type == Node.ELEMENT_NODE ) {
+				if ( node.getNodeType() == Node.ELEMENT_NODE ) {
 					Element entry = (Element)node;
-					if ( entry.getNodeName().equalsIgnoreCase( MEMORY_BLOCK_EXPRESSION ) ) {
-						String exp = entry.getAttribute( ATTR_MEMORY_BLOCK_EXPRESSION_TEXT );
-						expressions.add( exp );
+					if ( entry.getNodeName().equalsIgnoreCase( MEMORY_BLOCK_EXPRESSION_ITEM ) ) {
+						parseMementoExprItem(entry, expressions, memorySpaceIDs);
 					}
 				}
 			}
-			createMemoryBlocks( (String[])expressions.toArray( new String[expressions.size()] ) );
+			createMemoryBlocks( (String[])expressions.toArray( new String[expressions.size()]) ,
+								(String[])memorySpaceIDs.toArray( new String[memorySpaceIDs.size()]));
+					
 			return;
 		}
 		abort( InternalDebugCoreMessages.getString( "CMemoryBlockRetrievalExtension.3" ), null ); //$NON-NLS-1$
 	}
 
-	private void createMemoryBlocks( String[] expressions ) {
+	private void createMemoryBlocks( String[] expressions, String[] memorySpaceIDs ) {
 		ArrayList list = new ArrayList( expressions.length );
 		for ( int i = 0; i < expressions.length; ++i ) {
 			IAddress address = getDebugTarget().getAddressFactory().createAddress( expressions[i] );
 			if ( address != null ) {
-				list.add( new CMemoryBlockExtension( getDebugTarget(), address.toHexAddressString(), address.getValue() ) );
+				if (memorySpaceIDs[i] == null) {
+					list.add( new CMemoryBlockExtension( getDebugTarget(), address.toHexAddressString(), address.getValue() ) );
+				} else {
+					list.add( new CMemoryBlockExtension( getDebugTarget(), address.getValue(), memorySpaceIDs[i] ) );
+				}
 			}
 		}
 		DebugPlugin.getDefault().getMemoryBlockManager().addMemoryBlocks( (IMemoryBlock[])list.toArray( new IMemoryBlock[list.size()] ) );
@@ -120,20 +151,54 @@ public class CMemoryBlockRetrievalExtension extends PlatformObject implements IM
 	public String getMemento() throws CoreException {
 		IMemoryBlock[] blocks = DebugPlugin.getDefault().getMemoryBlockManager().getMemoryBlocks( getDebugTarget() );
 		Document document = DebugPlugin.newDocument();
-		Element element = document.createElement( MEMORY_BLOCK_EXPRESSION_LIST );
+		Element exprList = document.createElement( MEMORY_BLOCK_EXPRESSION_LIST );
 		for ( int i = 0; i < blocks.length; ++i ) {
 			if ( blocks[i] instanceof IMemoryBlockExtension ) {
+				IMemoryBlockExtension memBlockExt = (IMemoryBlockExtension)blocks[i];
+				Element exprItem = document.createElement( MEMORY_BLOCK_EXPRESSION_ITEM );
+				exprList.appendChild(exprItem);
+
+				BigInteger addrBigInt = null;
+				String memorySpaceID = null;
+				if (hasMemorySpaces()) {
+					ICDITarget cdiTarget = fDebugTarget.getCDITarget();
+					StringBuffer sbuf = new StringBuffer();
+					try {
+						addrBigInt = ((ICDIMemorySpaceManagement)cdiTarget).stringToAddress(memBlockExt.getExpression(), sbuf);
+						if (addrBigInt == null) {
+							// Client wants our default decoding; minimum is "<space>:0x?"
+							addrBigInt = stringToAddress(memBlockExt.getExpression(), sbuf);
+						}
+						memorySpaceID = sbuf.toString();
+					} 
+					catch( CDIException e ) {
+						CDebugCorePlugin.log( e );
+						addrBigInt = null;
+					}
+				}
+				
 				Element child = document.createElement( MEMORY_BLOCK_EXPRESSION );
 				try {
-					child.setAttribute( ATTR_MEMORY_BLOCK_EXPRESSION_TEXT, ((IMemoryBlockExtension)blocks[i]).getBigBaseAddress().toString() );
-					element.appendChild( child );
+					if (addrBigInt != null && memorySpaceID != null) {
+						child.setAttribute( ATTR_MEMORY_BLOCK_EXPRESSION_TEXT, addrBigInt.toString() );						
+					} 
+					else {
+						child.setAttribute( ATTR_MEMORY_BLOCK_EXPRESSION_TEXT, memBlockExt.getBigBaseAddress().toString() );
+					}
+					exprItem.appendChild( child );
 				}
 				catch( DebugException e ) {
 					CDebugCorePlugin.log( e.getStatus() );
 				}
+
+				if (memorySpaceID != null) { 
+					child = document.createElement( MEMORY_BLOCK_MEMSPACEID );
+					child.setAttribute( ATTR_MEMORY_BLOCK_MEMSPACEID_TEXT, memorySpaceID);
+					exprItem.appendChild( child );
+				}
 			}
 		}
-		document.appendChild( element );
+		document.appendChild( exprList );
 		return DebugPlugin.serializeDocument( document );
 	}
 
@@ -284,12 +349,13 @@ public class CMemoryBlockRetrievalExtension extends PlatformObject implements IM
 	}
 
 	/**
-	 * Checks the CDI backend to see is memory spaces are supported
+	 * Checks the CDI backend to see is memory spaces are supported and actually
+	 * available for the target process.
 	 * 
 	 * @return true if the backend supports memory spaces
 	 */
-	public boolean supportsMemorySpaces() {
-		return fDebugTarget.getCDITarget() instanceof ICDIMemorySpaceManagement;
+	public boolean hasMemorySpaces() {
+		return getMemorySpaces().length > 0;
 	}
 
 	/**
@@ -303,5 +369,34 @@ public class CMemoryBlockRetrievalExtension extends PlatformObject implements IM
 			return ((ICDIMemorySpaceManagement)cdiTarget).getMemorySpaces(); 
 		
 		return new String[0];
+	}
+	
+	/* 
+	 * static implementation of
+	 *    @see org.eclipse.cdt.debug.core.cdi.model.ICDIMemorySpaceManagement#addressToString(java.math.BigInteger, java.lang.String) 
+	 * client may choose not to provide the encoding/decoding and instead use our built-in handling.  
+	 * 
+	 */
+	public static String addressToString(BigInteger address, String memorySpaceID) {
+		return memorySpaceID + ":0x" + address.toString(16);
+	}
+
+	/*
+	 * static implementation of
+	 * 	 @see org.eclipse.cdt.debug.core.cdi.model.ICDIMemorySpaceManagement#stringToAddr(java.lang.String, java.math.BigInteger, java.lang.StringBuffer)
+	 * client may choose not to provide the encoding/decoding and instead use our built-in handling.  
+	 */
+	public static BigInteger stringToAddress(String str, StringBuffer memorySpaceID_out) throws CoreException {
+		int index = str.lastIndexOf(':');
+		
+		// minimum is "<space>:0x?"
+		if (index == -1 || str.length() <= index + 3 || str.charAt(index+1) != '0' || str.charAt(index+2) != 'x') {
+			IStatus s = new Status( IStatus.ERROR, CDebugCorePlugin.getUniqueIdentifier(), CDebugCorePlugin.INTERNAL_ERROR, InternalDebugCoreMessages.getString( "CMemoryBlockRetrievalExtension.5" ), null );
+			throw new CoreException( s );
+		}
+
+		memorySpaceID_out.setLength(0);
+		memorySpaceID_out.append(str.substring(0, index));
+		return new BigInteger(str.substring(index+3), 16);
 	}
 }

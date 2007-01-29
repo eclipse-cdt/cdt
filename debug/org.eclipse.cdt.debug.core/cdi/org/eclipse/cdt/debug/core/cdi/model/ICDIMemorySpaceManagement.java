@@ -12,6 +12,8 @@ package org.eclipse.cdt.debug.core.cdi.model;
 
 import java.math.BigInteger;
 
+import org.eclipse.cdt.debug.core.cdi.CDIException;
+
 /**
  * The memory space manager provides varous memory-space related operations.
  * The backend implementation of ICDITarget should implement this interface   
@@ -30,6 +32,16 @@ public interface ICDIMemorySpaceManagement extends ICDIObject {
 	 */
 	String addressToString(BigInteger address, String memorySpaceID);
 
+	/**
+	 * The inverse of addressToString
+	 *
+	 * @param str - the encoded string (contains memory space + hex address value)
+	 * @param memorySpaceID_out the memory space ID
+	 * @return the BigInteger part of str; client should return null if the default decoding provided
+	 * by CDT is sufficient (<memory-space-id>:<address(hex)>)
+	 */
+	BigInteger stringToAddress(String str, StringBuffer memorySpaceID_out) throws CDIException;
+	
 	/**
 	 * Provides the memory spaces available.
 	 * 

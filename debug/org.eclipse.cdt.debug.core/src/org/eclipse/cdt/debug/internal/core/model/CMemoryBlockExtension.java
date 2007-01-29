@@ -26,6 +26,7 @@ import org.eclipse.cdt.debug.core.cdi.model.ICDIMemorySpaceManagement;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIObject;
 import org.eclipse.cdt.debug.core.cdi.model.ICDITarget;
 import org.eclipse.cdt.debug.core.model.IExecFileInfo;
+import org.eclipse.cdt.debug.internal.core.CMemoryBlockRetrievalExtension;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
@@ -100,8 +101,8 @@ public class CMemoryBlockExtension extends CDebugElement implements IMemoryBlock
 		
 		if (fExpression == null)
 			// If the backend supports memory spaces, it should implement ICDIMemorySpaceManagement
-			// If not, we use a default encoding
-			fExpression = memorySpaceID + ':' + baseAddress.toString(16);
+			// Even if it does, it may choose to use our built-in encoding/decoding
+			fExpression = CMemoryBlockRetrievalExtension.addressToString(baseAddress, memorySpaceID);
 	}
 
 	/* (non-Javadoc)

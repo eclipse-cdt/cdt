@@ -40,7 +40,7 @@ public class CMemoryAdapterFactory implements IAdapterFactory {
 
 		if (adapterType.equals(IAddMemoryBlocksTarget.class)) {
 			if (adaptableObject instanceof CMemoryBlockRetrievalExtension) {
-				if (((CMemoryBlockRetrievalExtension)adaptableObject).supportsMemorySpaces())
+				if (((CMemoryBlockRetrievalExtension)adaptableObject).hasMemorySpaces())
 					return fgAddMemoryBlocks;
 			}
 		}

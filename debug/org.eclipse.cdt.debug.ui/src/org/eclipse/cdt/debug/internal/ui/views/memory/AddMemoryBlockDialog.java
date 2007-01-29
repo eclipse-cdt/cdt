@@ -18,12 +18,14 @@ import org.eclipse.debug.core.model.IMemoryBlockRetrieval;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.dialogs.TrayDialog;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.FocusEvent;
-import org.eclipse.swt.events.FocusListener;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.events.VerifyEvent;
 import org.eclipse.swt.events.VerifyListener;
+import org.eclipse.swt.graphics.FontMetrics;
+import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -31,7 +33,6 @@ import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.PlatformUI;
 
 /**
@@ -39,25 +40,23 @@ import org.eclipse.ui.PlatformUI;
  * debug target that supports memory spaces. 
  * <p>
  * It differs from the platform one in that you can enter an expression or
- * an memory space + address pair.
+ * an address + memory space pair.
  *  
  * @since 3.2
  */
-public class AddMemoryBlockDialog extends TrayDialog implements ModifyListener, FocusListener, VerifyListener {
+public class AddMemoryBlockDialog extends TrayDialog implements ModifyListener, SelectionListener {
 
 	private Combo fAddressInput;
+	private Button fAddressRadio;
 	private Combo fMemorySpaceInput;
 	private Combo fExpressionInput;
 	private String fExpression;
+	private Button fExpressionRadio;
 	private String fAddress;
 	private String fMemorySpace;
-	private boolean fExpressionEntered;
+	private boolean fEnteredExpression;	// basically, which of the two radio buttons was selected when OK was hit		
 	private CMemoryBlockRetrievalExtension fMemRetrieval;
-	private Button fEnterAddr;
-	private Button fEnterExpression;
-	
-	private static boolean sfExpressionSetLast = false; // used to persist the default entry-type selection  
-	
+
 	private static ArrayList sAddressHistory = new ArrayList();
 	private static ArrayList sExpressionHistory = new ArrayList();
 
@@ -96,22 +95,40 @@ public class AddMemoryBlockDialog extends TrayDialog implements ModifyListener, 
 		composite.setLayoutData(gridData);
 		parent = composite;  // for all our widgets, the two-column composite is the real parent
 
-		fEnterAddr = new Button(parent, SWT.RADIO);
-		
-		// take this opportunity to get the width of just the radion buton 
-		// (w/no text), as we'll need it below 
-		int buttonWidth = fEnterAddr.computeSize(SWT.DEFAULT, SWT.DEFAULT,  false).x;
-		
-		fEnterAddr.setText(Messages.AddMemBlockDlg_enterMemSpaceAndAddr);
+		fAddressRadio = new Button(parent, SWT.RADIO);
+		final int radioButtonWidth = fAddressRadio.computeSize(SWT.DEFAULT, SWT.DEFAULT).x;
+		fAddressRadio.setText(Messages.AddMemBlockDlg_enterAddrAndMemSpace);
 		gridData = new GridData(GridData.FILL_HORIZONTAL);
 		gridData.horizontalSpan = 2;
-		fEnterAddr.setLayoutData(gridData);
+		fAddressRadio.setLayoutData(gridData);
+		fAddressRadio.addSelectionListener(this);
 
 		fMemorySpaceInput = new Combo(parent, SWT.BORDER | SWT.READ_ONLY);
 		gridData = new GridData();
-		gridData.horizontalIndent = buttonWidth;
+		gridData.horizontalIndent = radioButtonWidth; 
 		fMemorySpaceInput.setLayoutData(gridData);
-		fMemorySpaceInput.addFocusListener(this);
+		fMemorySpaceInput.addSelectionListener(this);		
+
+		fAddressInput = new Combo(parent, SWT.BORDER);
+		gridData = new GridData(GridData.FILL_HORIZONTAL);
+		GC gc = new GC(fAddressInput);
+		FontMetrics fm = gc.getFontMetrics();
+		// Give enough room for a 64 bit hex address (25 is a guess at the combobox selector) 
+		gridData.minimumWidth = gridData.minimumWidth = 18 * fm.getAverageCharWidth() + 25;
+		gc.dispose();
+		fAddressInput.setLayoutData(gridData);
+		fAddressInput.addModifyListener(this);
+		fAddressInput.addVerifyListener(new VerifyListener() {
+			// limit entry to hex or decimal 
+			public void verifyText(VerifyEvent e) {
+				e.doit = false;
+				final char c = e.character; 
+				if (Character.isDigit(c) || ('a' <= c && c <= 'f') || ('A' <= c && c <= 'F') ||
+					c == 'x' ||	Character.isISOControl(e.character)) {
+					e.doit = true;
+				}
+			}
+		});
 
 		// Populate the memory space combobox with the available spaces
 		if (fMemRetrieval != null) {
@@ -123,27 +140,19 @@ public class AddMemoryBlockDialog extends TrayDialog implements ModifyListener, 
 				fMemorySpaceInput.select(0);
 		}
 
-		fAddressInput = new Combo(parent, SWT.BORDER);
-		gridData = new GridData(GridData.FILL_HORIZONTAL);
-		fAddressInput.setLayoutData(gridData);
-		fAddressInput.addModifyListener(this);
-		fAddressInput.addFocusListener(this);
-		fAddressInput.addVerifyListener(this);
-		
-		fEnterExpression = new Button(parent, SWT.RADIO);
-		fEnterExpression.setText(Messages.AddMemBlockDlg_enterExpression);
-		gridData = new GridData(GridData.FILL_HORIZONTAL);
+		fExpressionRadio = new Button(parent, SWT.RADIO);
+		fExpressionRadio.setText(Messages.AddMemBlockDlg_enterExpression);
+		gridData = new GridData();
 		gridData.horizontalSpan = 2;
-		fEnterExpression.setLayoutData(gridData);
+		fExpressionRadio.setLayoutData(gridData);
+		fExpressionRadio.addSelectionListener(this);
 		
 		fExpressionInput = new Combo(parent, SWT.BORDER);
 		gridData = new GridData(GridData.FILL_HORIZONTAL);
 		gridData.horizontalSpan = 2;
-		gridData.horizontalIndent = buttonWidth;
+		gridData.horizontalIndent = radioButtonWidth;
 		fExpressionInput.setLayoutData(gridData);
-		fExpressionInput.addModifyListener(this);
-		fExpressionInput.addFocusListener(this);
-		
+
 		// add the history into the combo boxes 
 		String[] history = getHistory(sExpressionHistory);
 		for (int i = 0; i < history.length; i++)
@@ -153,16 +162,8 @@ public class AddMemoryBlockDialog extends TrayDialog implements ModifyListener, 
 		for (int i = 0; i < history.length; i++)
 			fAddressInput.add(history[i]);
 
-		fExpressionInput.addFocusListener(this);
+		fExpressionInput.addModifyListener(this);
 
-		fEnterExpression.setSelection(sfExpressionSetLast);
-		fEnterAddr.setSelection(!sfExpressionSetLast);
-		if (sfExpressionSetLast) {
-			fExpressionInput.forceFocus();
-		} else {
-			fAddressInput.forceFocus();
-		}
-		
 		return parent;
 	}
 
@@ -180,8 +181,6 @@ public class AddMemoryBlockDialog extends TrayDialog implements ModifyListener, 
 	 * @see org.eclipse.jface.dialogs.Dialog#okPressed()
 	 */
 	protected void okPressed() {
-
-		fExpressionEntered = fEnterExpression.getSelection();
 		fExpression = fExpressionInput.getText();
 		fAddress = fAddressInput.getText();
 		fMemorySpace = fMemorySpaceInput.getText();
@@ -192,9 +191,7 @@ public class AddMemoryBlockDialog extends TrayDialog implements ModifyListener, 
 		if (fAddress.length() > 0)
 			addHistory(sAddressHistory, fAddress);
 
-		// this will persist the entry type from one dialog invocation to another
-		sfExpressionSetLast = fExpressionEntered;
-		
+		fEnteredExpression = fExpressionRadio.getSelection();
 		super.okPressed();
 	}
 
@@ -202,13 +199,14 @@ public class AddMemoryBlockDialog extends TrayDialog implements ModifyListener, 
 	 * @see org.eclipse.swt.events.ModifyListener#modifyText(org.eclipse.swt.events.ModifyEvent)
 	 */
 	public void modifyText(ModifyEvent e) {
-		// if user enters text into one of the two input options, disable/gray the other
-		// to make the mutual exlusivity obvious
-		fAddressInput.setEnabled(fExpressionInput.getText().length() == 0);
-		fEnterAddr.setEnabled(fExpressionInput.getText().length() == 0);
-		fMemorySpaceInput.setEnabled(fExpressionInput.getText().length() == 0);
-		fExpressionInput.setEnabled(fAddressInput.getText().length() == 0);
-		fEnterExpression.setEnabled(fAddressInput.getText().length() == 0);
+		// if user enters text into either the address field or the expression one, automatically
+		// select its associated radio button (and deselect the other, these are mutually exclusive) 
+		if (e.widget == fAddressInput ||
+			e.widget == fExpressionInput) {
+
+			fAddressRadio.setSelection(e.widget != fExpressionInput);
+			fExpressionRadio.setSelection(e.widget == fExpressionInput);
+		}
 	}
 
 	/* (non-Javadoc)
@@ -230,8 +228,8 @@ public class AddMemoryBlockDialog extends TrayDialog implements ModifyListener, 
 		return fMemorySpace;
 	}
 
-	public boolean wasExpressionEntered() {
-		return fExpressionEntered;
+	public boolean enteredExpression() {
+		return fEnteredExpression;
 	}
 	
 	private static void addHistory(ArrayList list, String item)	{		
@@ -247,52 +245,22 @@ public class AddMemoryBlockDialog extends TrayDialog implements ModifyListener, 
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.swt.events.FocusListener#focusGained(org.eclipse.swt.events.FocusEvent)
+	 * @see org.eclipse.swt.events.SelectionListener#widgetDefaultSelected(org.eclipse.swt.events.SelectionEvent)
 	 */
-	public void focusGained(FocusEvent e) {
-		// when the user gives focus to one of the combo boxes, shift the radio button state accordingly
-		if (e.widget == fAddressInput || e.widget == fMemorySpaceInput) {
-			fEnterAddr.setSelection(true);
-			fEnterExpression.setSelection(false);			
-		}
-		else if (e.widget == fExpressionInput) {
-			fEnterAddr.setSelection(false);
-			fEnterExpression.setSelection(true);
-		}
+	public void widgetDefaultSelected(SelectionEvent e) {
+		// TODO Auto-generated method stub
+		
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.swt.events.FocusListener#focusLost(org.eclipse.swt.events.FocusEvent)
+	 * @see org.eclipse.swt.events.SelectionListener#widgetSelected(org.eclipse.swt.events.SelectionEvent)
 	 */
-	public void focusLost(FocusEvent e) {
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.swt.events.VerifyListener#verifyText(org.eclipse.swt.events.VerifyEvent)
-	 */
-	public void verifyText(VerifyEvent event) {
-		if (event.widget == fAddressInput) {
-			// assume we won't allow it
-			event.doit = false;
-
-			char c = event.character;
-
-			String textAlreadyInControl = ((Combo)event.widget).getText();
-			
-			if ((c == 'x') && (textAlreadyInControl.length() == 1)
-					&& textAlreadyInControl.charAt(0) == '0') {
-				// allow 'x' if it's the second character and the first is zero.
-				// Note that this level of verification has a hole; user can use 
-				// ISO control characters (e.g., the Delete key) to move the 'x' 
-				// in the first slot. Oh well; this doesn't need to be bullet proof
-				event.doit = true;
-			} else if ((c == '\b') || // allow backspace
-					Character.isDigit(c) || ('a' <= c && c <= 'f')
-					|| ('A' <= c && c <= 'F')) {
-				event.doit = true;
-			} else if (Character.isISOControl(c)) {
-				event.doit = true;
-			}
+	public void widgetSelected(SelectionEvent e) {
+		// if user selects a memory space, select its associated radio button (and deselect the 
+		// other, these are mutually exclusive) 
+		if (e.widget == fMemorySpaceInput) {
+			fAddressRadio.setSelection(true);
+			fExpressionRadio.setSelection(false);
 		}
 	}
 }

@@ -89,8 +89,7 @@ public class AddMemoryBlocks implements IAddMemoryBlocksTarget {
 		if (returnCode == Window.CANCEL)
 			return;
 
-		String input = (dialog.getAddress().length() > 0) ? dialog.getAddress()
-				: dialog.getExpression();
+		String input = dialog.enteredExpression() ? dialog.getExpression() : dialog.getAddress();
 
 		ArrayList list = new ArrayList();
 
@@ -105,7 +104,7 @@ public class AddMemoryBlocks implements IAddMemoryBlocksTarget {
 		final String[] addrsOrExprs = (String[]) list.toArray(new String[list.size()]);
 
 		ParamHolder params;
-		if (dialog.wasExpressionEntered())
+		if (dialog.enteredExpression())
 			params = new ExpressionsHolder(addrsOrExprs);
 		else
 			params = new AddressAndSpaceHolder(addrsOrExprs, dialog.getMemorySpace());

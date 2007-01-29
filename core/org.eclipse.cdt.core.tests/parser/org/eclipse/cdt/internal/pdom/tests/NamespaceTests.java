@@ -62,7 +62,7 @@ public class NamespaceTests extends PDOMTestBase {
 		}
 	}
 	
-	public void _testAlias() throws Exception {
+	public void testAlias() throws Exception {
 		/* Find all the namespace */
 		IBinding[] namespaces = pdom.findBindings(Pattern.compile("namespace1"), false, INDEX_FILTER, NULL_MONITOR);
 		assertEquals(1, namespaces.length);

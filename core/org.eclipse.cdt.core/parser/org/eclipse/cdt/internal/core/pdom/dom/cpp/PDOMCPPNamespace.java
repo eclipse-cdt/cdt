@@ -13,6 +13,9 @@
 
 package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.IPDOMVisitor;
 import org.eclipse.cdt.core.dom.ast.DOMException;
@@ -124,6 +127,25 @@ class PDOMCPPNamespace extends PDOMCPPBinding implements ICPPNamespace, ICPPName
 		return true;
 	}
 
-	public IBinding[] getMemberBindings() throws DOMException {fail(); return null;}
+	public IBinding[] getMemberBindings() throws DOMException {
+		IBinding[] result = null;
+		final List preresult = new ArrayList();
+		try {
+			getIndex().accept(new IBTreeVisitor() {
+				public int compare(int record) throws CoreException {
+					return 0;
+				}
+				public boolean visit(int record) throws CoreException {
+					preresult.add(getLinkageImpl().getNode(record));
+					return true;
+				}
+			});
+			result = (IBinding[]) preresult.toArray(new IBinding[preresult.size()]);
+		} catch(CoreException ce) {
+			CCorePlugin.log(ce);
+		}
+		return result;
+	}
+	
 	public void addUsingDirective(IASTNode directive) throws DOMException {fail();}
 }

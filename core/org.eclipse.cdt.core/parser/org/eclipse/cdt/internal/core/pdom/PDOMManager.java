@@ -133,10 +133,14 @@ public class PDOMManager implements IPDOMManager, IWritableIndexManager, IListen
 	 * change events.
 	 */
 	public void startup() {
+		// the model listener is attached outside of the job in
+		// order to avoid a race condition where its not noticed
+		// that new projects are being created
+		final CoreModel model = CoreModel.getDefault();
+		model.addElementChangedListener(fCModelListener);
+		
 		Job startup= new Job(Messages.PDOMManager_StartJob_name) {
 			protected IStatus run(IProgressMonitor monitor) {
-				CoreModel model = CoreModel.getDefault();
-				model.addElementChangedListener(fCModelListener);
 				ICProject[] projects;
 				try {
 					projects = model.getCModel().getCProjects();

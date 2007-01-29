@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2006 IBM Corporation and others.
+ * Copyright (c) 2002, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,9 +7,9 @@
  *
  * Contributors:
  * Rational Software - Initial API and implementation
+ * Anton Leherbauer (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.editor;
-
 
 
 import java.util.ArrayList;
@@ -40,6 +40,7 @@ import org.eclipse.jface.text.DefaultLineTracker;
 import org.eclipse.jface.text.DocumentEvent;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IDocumentListener;
+import org.eclipse.jface.text.ISynchronizable;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.swt.widgets.Display;
 
@@ -181,17 +182,27 @@ public class DocumentAdapter implements IBuffer, IDocumentListener {
 	private List fBufferListeners= new ArrayList(3);
 	private IStatus fStatus;
 
+	private IPath fLocation;
+
 	
 	public DocumentAdapter(IOpenable owner, IFile file) {
 		fOwner= owner;
 		fFile= file;
+		fLocation= file.getFullPath();
+
+		initialize();			
+	}
+
+	public DocumentAdapter(IOpenable owner, IPath location) {
+		fOwner= owner;
+		fLocation= location;
 		
 		initialize();			
 	}
 
 	private void initialize() {
 		ITextFileBufferManager manager= FileBuffers.getTextFileBufferManager();
-		IPath location= fFile.getFullPath();
+		IPath location= fLocation;
 		try {
 			manager.connect(location, new NullProgressMonitor());
 			fTextFileBuffer= manager.getTextFileBuffer(location);
@@ -199,6 +210,8 @@ public class DocumentAdapter implements IBuffer, IDocumentListener {
 		} catch (CoreException x) {
 			fStatus= x.getStatus();
 			fDocument= manager.createEmptyDocument(location);
+			if (fDocument instanceof ISynchronizable)
+				((ISynchronizable)fDocument).setLockObject(new Object());
 		}
 		fDocument.addPrenotifiedDocumentListener(this);
 	}

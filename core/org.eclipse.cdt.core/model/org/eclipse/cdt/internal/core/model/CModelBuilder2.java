@@ -257,10 +257,8 @@ public class CModelBuilder2 implements IContributedModelBuilder {
 				((ASTHolderTUInfo)elementInfo).fAST= ast;
 			}
 
+			checkCanceled();
 			if (ast == null) {
-				checkCanceled();
-				// fallback to old model builder
-				new CModelBuilder(fTranslationUnit, new HashMap()).parse(true);
 				return;
 			}
 			startTime= System.currentTimeMillis();
@@ -556,7 +554,9 @@ public class CModelBuilder2 implements IContributedModelBuilder {
 		IASTDeclaration[] declarations= linkageDeclaration.getDeclarations();
 		for (int i= 0; i < declarations.length; i++) {
 			IASTDeclaration declaration= declarations[i];
-			createDeclaration(parent, declaration);
+			if (linkageDeclaration.getFileLocation() != null || isLocalToFile(declaration)) {
+				createDeclaration(parent, declaration);
+			}
 		}
 	}
 
@@ -661,7 +661,9 @@ public class CModelBuilder2 implements IContributedModelBuilder {
 		IASTDeclaration[] nsDeclarations= declaration.getDeclarations();
 		for (int i= 0; i < nsDeclarations.length; i++) {
 			IASTDeclaration nsDeclaration= nsDeclarations[i];
-			createDeclaration(element, nsDeclaration);
+			if (declaration.getFileLocation() != null || isLocalToFile(nsDeclaration)) {
+				createDeclaration(element, nsDeclaration);
+			}
 		}
 	}
 
@@ -852,7 +854,9 @@ public class CModelBuilder2 implements IContributedModelBuilder {
 			final IASTDeclaration[] memberDeclarations= compositeTypeSpecifier.getMembers();
 			for (int i= 0; i < memberDeclarations.length; i++) {
 				IASTDeclaration member= memberDeclarations[i];
-				createDeclaration(element, member);
+				if (compositeTypeSpecifier.getFileLocation() != null || isLocalToFile(member)) {
+					createDeclaration(element, member);
+				}
 			}
 		} finally {
 			popDefaultVisibility();
@@ -1219,6 +1223,7 @@ public class CModelBuilder2 implements IContributedModelBuilder {
 	private void setIdentifierPosition(SourceManipulation element, IASTNode astName) {
 		final IASTFileLocation location= astName.getFileLocation();
 		if (location != null) {
+			assert fTranslationUnitFileName.equals(location.getFileName());
 			element.setIdPos(location.getNodeOffset(), location.getNodeLength());
 		} else {
 			final IASTNodeLocation[] locations= astName.getNodeLocations();

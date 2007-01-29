@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2006 IBM Corporation and others.
+ * Copyright (c) 2002, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  * Rational Software - Initial API and implementation
  * Markus Schorn (Wind River Systems)
+ * Anton Leherbauer (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.model;
 
@@ -219,7 +220,11 @@ public class WorkingCopy extends TranslationUnit implements IWorkingCopy {
 	 * @see org.eclipse.cdt.core.model.IWorkingCopy#getOriginalElement()
 	 */
 	public ITranslationUnit getOriginalElement() {
-		return new TranslationUnit(getParent(), getFile(), getContentTypeId());
+		IFile file= getFile();
+		if (file != null) {
+			return new TranslationUnit(getParent(), getFile(), getContentTypeId());
+		}
+		return new ExternalTranslationUnit(getParent(), getLocation(), getContentTypeId());
 	}
 
 	/**
@@ -288,8 +293,9 @@ public class WorkingCopy extends TranslationUnit implements IWorkingCopy {
 		//	this.problemRequestor.endReporting();
 		//}
 	}
-	/**
-	 * @see org.eclipse.cdt.internal.core.model.CFile#openBuffer(IProgressMonitor)
+
+	/*
+	 * @see org.eclipse.cdt.internal.core.model.TranslationUnit#openBuffer(org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	protected IBuffer openBuffer(IProgressMonitor pm) throws CModelException {
 
@@ -301,7 +307,7 @@ public class WorkingCopy extends TranslationUnit implements IWorkingCopy {
 			return null;
 
 		// set the buffer source if needed
-		if (buffer.getCharacters() == null){
+		if (buffer.getContents() == null){
 			ITranslationUnit original= this.getOriginalElement();
 			IBuffer originalBuffer = null;
 			try {

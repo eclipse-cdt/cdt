@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2006 QNX Software Systems and others.
+ * Copyright (c) 2002, 2007 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -71,7 +71,6 @@ import org.eclipse.cdt.ui.text.ICPartitions;
 
 import org.eclipse.cdt.internal.core.model.IBufferFactory;
 
-import org.eclipse.cdt.internal.ui.CFileElementWorkingCopy;
 import org.eclipse.cdt.internal.ui.CPluginImages;
 import org.eclipse.cdt.internal.ui.text.IProblemRequestorExtension;
 
@@ -240,7 +239,7 @@ public class CDocumentProvider extends TextFileDocumentProvider {
 		}
 		
 		/*
-		 * @see org.eclipse.cdt.internal.ui.javaeditor.IJavaAnnotation#getOverlay()
+		 * @see org.eclipse.cdt.internal.ui.editor.IJavaAnnotation#getOverlay()
 		 */
 		public ICAnnotation getOverlay() {
 			return null;
@@ -466,7 +465,7 @@ public class CDocumentProvider extends TextFileDocumentProvider {
 		}
 		
 		/*
-		 * @see org.eclipse.jdt.internal.ui.text.java.IProblemRequestorExtension#beginReportingSequence()
+		 * @see org.eclipse.cdt.internal.ui.text.java.IProblemRequestorExtension#beginReportingSequence()
 		 */
 		public void beginReportingSequence() {
 			ProblemRequestorState state= (ProblemRequestorState) fProblemRequestorState.get();
@@ -513,7 +512,7 @@ public class CDocumentProvider extends TextFileDocumentProvider {
 		}
 		
 		/*
-		 * @see org.eclipse.jdt.internal.ui.text.java.IProblemRequestorExtension#endReportingSequence()
+		 * @see org.eclipse.cdt.internal.ui.text.java.IProblemRequestorExtension#endReportingSequence()
 		 */
 		public void endReportingSequence() {
 			ProblemRequestorState state= (ProblemRequestorState) fProblemRequestorState.get();
@@ -773,10 +772,6 @@ public class CDocumentProvider extends TextFileDocumentProvider {
 	/** Annotation model listener added to all created CU annotation models */
 	private GlobalAnnotationModelListener fGlobalAnnotationModelListener;	
 
-
-	/** The save policy used by this provider */
-	//private ISavePolicy fSavePolicy;
-
 	/**
 	 *  
 	 */
@@ -860,14 +855,8 @@ public class CDocumentProvider extends TextFileDocumentProvider {
 		setUpSynchronization(tuInfo);
 
 		IProblemRequestor requestor= tuInfo.fModel instanceof IProblemRequestor ? (IProblemRequestor) tuInfo.fModel : null;
-		IWorkingCopy copy = null;
-		if (element instanceof IFileEditorInput) {
-			IBufferFactory factory = CUIPlugin.getDefault().getBufferFactory();
-			copy = original.getSharedWorkingCopy(getProgressMonitor(), factory, requestor);
-		} else if (element instanceof ITranslationUnitEditorInput) {
-			copy = new CFileElementWorkingCopy(original);
-		}
-		tuInfo.fCopy = copy;
+		IBufferFactory factory = CUIPlugin.getDefault().getBufferFactory();
+		tuInfo.fCopy = original.getSharedWorkingCopy(getProgressMonitor(), factory, requestor);
 
 		if (tuInfo.fModel == null && element instanceof IStorageEditorInput) {
 			IStorage storage= ((IStorageEditorInput)element).getStorage();
@@ -893,38 +882,6 @@ public class CDocumentProvider extends TextFileDocumentProvider {
 	}
 
 	/*
-	 * @see org.eclipse.ui.editors.text.TextFileDocumentProvider#isReadOnly(java.lang.Object)
-	 */
-	public boolean isReadOnly(Object element) {
-		// external translation unit must not be modified
-		// because of missing functionality in CFileElementWorkingCopy
-		FileInfo info= getFileInfo(element);
-		if (info instanceof TranslationUnitInfo) {
-			TranslationUnitInfo tuInfo= (TranslationUnitInfo)info;
-			if (tuInfo.fCopy instanceof CFileElementWorkingCopy) {
-				return true;
-			}
-		}
-		return super.isReadOnly(element);
-	}
-
-	/*
-	 * @see org.eclipse.ui.editors.text.TextFileDocumentProvider#isModifiable(java.lang.Object)
-	 */
-	public boolean isModifiable(Object element) {
-		// external translation unit must not be modified
-		// because of missing functionality in CFileElementWorkingCopy
-		FileInfo info= getFileInfo(element);
-		if (info instanceof TranslationUnitInfo) {
-			TranslationUnitInfo tuInfo= (TranslationUnitInfo)info;
-			if (tuInfo.fCopy instanceof CFileElementWorkingCopy) {
-				return false;
-			}
-		}
-		return super.isModifiable(element);
-	}
-
-	/*
 	 * @see org.eclipse.ui.editors.text.TextFileDocumentProvider#disposeFileInfo(java.lang.Object,
 	 *      org.eclipse.ui.editors.text.TextFileDocumentProvider.FileInfo)
 	 */
@@ -941,25 +898,16 @@ public class CDocumentProvider extends TextFileDocumentProvider {
 	protected void commitWorkingCopy(IProgressMonitor monitor, Object element, TranslationUnitInfo info, boolean overwrite)
 			throws CoreException {
 
-		synchronized (info.fCopy) {
-			info.fCopy.reconcile();
-		}
-
 		IDocument document= info.fTextFileBuffer.getDocument();
 		IResource resource= info.fCopy.getResource();
 		
-		//Assert.isTrue(resource instanceof IFile);
 		if (resource instanceof IFile && !resource.exists()) {
 			// underlying resource has been deleted, just recreate file, ignore the rest
 			createFileFromDocument(monitor, (IFile) resource, document);
 			return;
 		}
 
-		//if (fSavePolicy != null)
-		//	fSavePolicy.preSave(info.fCopy);
-		
 		try {
-			//info.fCopy.commit(overwrite, monitor);
 			commitFileBuffer(monitor, info, overwrite);
 		} catch (CoreException x) {
 			// inform about the failure
@@ -969,17 +917,7 @@ public class CDocumentProvider extends TextFileDocumentProvider {
 			// inform about the failure
 			fireElementStateChangeFailed(element);
 			throw x;
-		} finally {
 		}
-
-		// If here, the dirty state of the editor will change to "not dirty".
-		// Thus, the state changing flag will be reset.
-		// NOTE: this is done in commitFileBuffer() if we use info.fCopy.comit(...) reenable code
-		//if (info.fModel instanceof AbstractMarkerAnnotationModel) {
-		//	AbstractMarkerAnnotationModel model= (AbstractMarkerAnnotationModel) info.fModel;
-		//	model.updateMarkers(document);
-		//}
-
 	}
 
 	/*
@@ -1038,7 +976,7 @@ public class CDocumentProvider extends TextFileDocumentProvider {
 				}
 			};
 		}
-		return null;
+		return super.createSaveOperation(element, document, overwrite);
 	}
 
 	/**
@@ -1063,24 +1001,14 @@ public class CDocumentProvider extends TextFileDocumentProvider {
 		}
 	}
 
-	/*
-	 * @see org.eclipse.jdt.internal.ui.javaeditor.ITranlationUnitDocumentProvider#addGlobalAnnotationModelListener(org.eclipse.jface.text.source.IAnnotationModelListener)
-	 */
 	public void addGlobalAnnotationModelListener(IAnnotationModelListener listener) {
 		fGlobalAnnotationModelListener.addListener(listener);
 	}
 
-	/*
-	 * @see org.eclipse.jdt.internal.ui.javaeditor.ITranslationUnitDocumentProvider#removeGlobalAnnotationModelListener(org.eclipse.jface.text.source.IAnnotationModelListener)
-	 */
 	public void removeGlobalAnnotationModelListener(IAnnotationModelListener listener) {
 		fGlobalAnnotationModelListener.removeListener(listener);
 	}
 
-
-	/*
-	 * @see org.eclipse.jdt.internal.ui.javaeditor.ICompilationUnitDocumentProvider#getWorkingCopy(java.lang.Object)
-	 */
 	public IWorkingCopy getWorkingCopy(Object element) {
 		FileInfo fileInfo = getFileInfo(element);
 		if (fileInfo instanceof TranslationUnitInfo) {
@@ -1090,11 +1018,8 @@ public class CDocumentProvider extends TextFileDocumentProvider {
 		return null;
 	}
 
-	/*
-	 * @see org.eclipse.jdt.internal.ui.javaeditor.ICompilationUnitDocumentProvider#shutdown()
-	 */
 	public void shutdown() {
-		//CUIPlugin.getDefault().getPreferenceStore().removePropertyChangeListener(fPropertyListener);
+//		CUIPlugin.getDefault().getPreferenceStore().removePropertyChangeListener(fPropertyListener);
 		Iterator e = getConnectedElementsIterator();
 		while (e.hasNext())
 			disconnect(e.next());

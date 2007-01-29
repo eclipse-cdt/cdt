@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 QNX Software Systems and others.
+ * Copyright (c) 2000, 2007 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,10 +9,14 @@
  *     QNX Software Systems - Initial API and implementation
  *     Markus Schorn (Wind River Systems)
  *     IBM Corporation
+ *     Anton Leherbauer (Wind River Systems)
  *******************************************************************************/
 
 package org.eclipse.cdt.internal.core.model;
 
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -81,13 +85,9 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 	}
 
 	public TranslationUnit(ICElement parent, IPath path, String idType) {
-		super(parent, path, ICElement.C_UNIT);
+		super(parent, (IResource)null, path.toString(), ICElement.C_UNIT);
 		setContentTypeID(idType);
-	}
-
-	public TranslationUnit(ICElement parent, IResource res, String name, String idType) {
-		super(parent, res, name, ICElement.C_UNIT);
-		setContentTypeID(idType);
+		setLocation(path);
 	}
 
 	public ITranslationUnit getTranslationUnit() {
@@ -280,7 +280,7 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 		return (INamespace[]) aList.toArray(new INamespace[0]);
 	}
 
-	public void setLocation(IPath loc) {
+	protected void setLocation(IPath loc) {
 		location = loc;
 	}
 
@@ -294,6 +294,10 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 			}
 		}
 		return location;
+	}
+
+	public IPath getPath() {
+		return getLocation();
 	}
 
 	public IFile getFile() {
@@ -454,7 +458,13 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 	}
 
 	public IWorkingCopy getWorkingCopy(IProgressMonitor monitor, IBufferFactory factory)throws CModelException{
-		WorkingCopy workingCopy = new WorkingCopy(getParent(), getFile(), getContentTypeId(), factory);
+		WorkingCopy workingCopy;
+		IFile file= getFile();
+		if (file != null) {
+			workingCopy= new WorkingCopy(getParent(), file, getContentTypeId(), factory);
+		} else {
+			workingCopy= new WorkingCopy(getParent(), getLocation(), getContentTypeId(), factory);
+		}
 		// open the working copy now to ensure contents are that of the current state of this element
 		workingCopy.open(monitor);
 		return workingCopy;
@@ -549,9 +559,22 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 
 		// set the buffer source
 		if (buffer.getCharacters() == null) {
-			IResource file = this.getResource();
-			if (file != null && file.getType() == IResource.FILE) {
-				buffer.setContents(Util.getResourceContentsAsCharArray((IFile)file));
+			IResource resource = this.getResource();
+			if (resource != null && resource.getType() == IResource.FILE) {
+				buffer.setContents(Util.getResourceContentsAsCharArray((IFile)resource));
+			} else {
+				IPath path = this.getLocation();
+				java.io.File file = path.toFile();
+				if (file != null && file.isFile()) {
+					try {
+						InputStream stream = new FileInputStream(file);
+						buffer.setContents(Util.getInputStreamAsCharArray(stream, (int)file.length(), null));
+					} catch (IOException e) {
+						buffer.setContents(new char[0]);
+					}
+				} else {
+					buffer.setContents(new char[0]);
+				}
 			}
 		}
 
@@ -657,7 +680,10 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 		IResource res = getResource();
 		if (res != null)
 			return res.exists();
-		return super.exists();
+		if (location != null) {
+			return location.toFile().exists();
+		}
+		return false;
 	}
 
 	public ILanguage getLanguage() throws CoreException {

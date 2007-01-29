@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 QNX Software Systems and others.
+ * Copyright (c) 2000, 2007 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
+ *     Anton Leherbauer (Wind River Systems)
  *******************************************************************************/
 
 package org.eclipse.cdt.internal.core.model;
@@ -41,7 +42,13 @@ public class CreateWorkingCopyOperation extends CModelOperation {
 	protected void executeOperation() throws CModelException {
 		ITranslationUnit tu = getTranslationUnit();
 
-		WorkingCopy workingCopy = new WorkingCopy(tu.getParent(), (IFile)tu.getResource(), tu.getContentTypeId(), this.factory, this.problemRequestor);
+		WorkingCopy workingCopy;
+		
+		if (tu.getResource() != null) {
+			workingCopy= new WorkingCopy(tu.getParent(), (IFile)tu.getResource(), tu.getContentTypeId(), this.factory, this.problemRequestor);
+		} else {
+			workingCopy= new WorkingCopy(tu.getParent(), tu.getLocation(), tu.getContentTypeId(), this.factory);
+		}
 		// open the working copy now to ensure contents are that of the current state of this element
 		// Alain: Actually no, delay the parsing 'till it is really needed.  Doing the parsing here
 		// really slows down the opening of the CEditor.

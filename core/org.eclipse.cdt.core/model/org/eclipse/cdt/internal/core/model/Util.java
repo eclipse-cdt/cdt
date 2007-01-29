@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2006 IBM Corporation and others.
+ * Copyright (c) 2002, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  * Rational Software - Initial API and implementation
  * Markus Schorn (Wind River Systems)
+ * Anton Leherbauer (Wind River Systems)
  *******************************************************************************/
 
 package org.eclipse.cdt.internal.core.model;
@@ -157,7 +158,11 @@ public class Util implements ICLogConstants {
 	 */
 	public static char[] getResourceContentsAsCharArray(IFile file)
 			throws CModelException {
-		return getResourceContentsAsCharArray(file, null);
+		try {
+			return getResourceContentsAsCharArray(file, file.getCharset());
+		} catch (CoreException exc) {
+			throw new CModelException(exc, ICModelStatusConstants.CORE_EXCEPTION);
+		}
 	}
 
 	public static char[] getResourceContentsAsCharArray(IFile file,

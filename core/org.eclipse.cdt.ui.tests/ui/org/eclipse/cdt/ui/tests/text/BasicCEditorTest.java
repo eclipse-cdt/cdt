@@ -11,11 +11,15 @@
 
 package org.eclipse.cdt.ui.tests.text;
 
+import java.io.File;
+
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.text.TextSelection;
@@ -24,11 +28,18 @@ import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.ui.PartInitException;
 
+import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.model.CModelException;
+import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.testplugin.CProjectHelper;
 import org.eclipse.cdt.ui.tests.BaseUITestCase;
 
+import org.eclipse.cdt.internal.core.model.ExternalTranslationUnit;
+
 import org.eclipse.cdt.internal.ui.editor.CEditor;
+import org.eclipse.cdt.internal.ui.util.EditorUtility;
 
 /**
  * Basic CEditor tests.
@@ -74,9 +85,19 @@ public class BasicCEditorTest extends BaseUITestCase {
 		assertNotNull(fDocument);
 	}
 
+	private void setUpEditor(File file) throws PartInitException, CModelException {
+		fEditor= (CEditor) EditorUtility.openInEditor(new ExternalTranslationUnit(fCProject, Path.fromOSString(file.toString()), CCorePlugin.CONTENT_TYPE_CXXSOURCE));
+		assertNotNull(fEditor);
+		fTextWidget= fEditor.getViewer().getTextWidget();
+		assertNotNull(fTextWidget);
+		fAccessor= new Accessor(fTextWidget, StyledText.class);
+		fDocument= fEditor.getDocumentProvider().getDocument(fEditor.getEditorInput());
+		assertNotNull(fDocument);
+	}
+
 	public void testEditInNonCProject() throws Exception {
 		final String file= "/ceditor/src/main.cpp";
-		fNonCProject = EditorTestHelper.createNonCProject("ceditor", "resources/ceditor", false);
+		fNonCProject= EditorTestHelper.createNonCProject("ceditor", "resources/ceditor", false);
 		setUpEditor(file);
 		fSourceViewer= EditorTestHelper.getSourceViewer(fEditor);
 		assertTrue(EditorTestHelper.joinReconciler(fSourceViewer, 0, 10000, 100));
@@ -94,6 +115,46 @@ public class BasicCEditorTest extends BaseUITestCase {
 		setUpEditor(file);
 		content= fDocument.get();
 		assertEquals("Save failed", newContent, content);
+	}
+
+	public void testEditExternalTranslationUnit() throws Exception {
+		final String file= "/ceditor/src/main.cpp";
+		fCProject= EditorTestHelper.createCProject("ceditor", "resources/ceditor", false);
+		IFile mainFile= ResourceTestHelper.findFile(file);
+		assertNotNull(mainFile);
+		File tmpFile= File.createTempFile("tmp", ".cpp");
+		tmpFile.deleteOnExit();
+		FileTool.copy(mainFile.getLocation().toFile(), tmpFile);
+		setUpEditor(tmpFile);
+		fSourceViewer= EditorTestHelper.getSourceViewer(fEditor);
+		assertTrue(EditorTestHelper.joinReconciler(fSourceViewer, 0, 10000, 100));
+		String content= fDocument.get();
+		setCaret(0);
+		String newtext= "/* "+getName()+" */";
+		type(newtext);
+		type('\n');
+		String newContent= fDocument.get();
+		assertEquals("Edit failed", newtext, newContent.substring(0, newtext.length()));
+		// save
+		fEditor.doSave(new NullProgressMonitor());
+		// close and reopen
+		EditorTestHelper.closeEditor(fEditor);
+		setUpEditor(tmpFile);
+		fSourceViewer= EditorTestHelper.getSourceViewer(fEditor);
+		assertTrue(EditorTestHelper.joinReconciler(fSourceViewer, 0, 10000, 100));
+		content= fDocument.get();
+		assertEquals("Save failed", newContent, content);
+		// check reconciler
+		ITranslationUnit tUnit= (ITranslationUnit)fEditor.getInputCElement();
+		ICElement[] children= tUnit.getChildren();
+		assertEquals(2, children.length);
+		setCaret(content.length());
+		type('\n');
+		type("void func() {}\n");
+		assertTrue(EditorTestHelper.joinReconciler(fSourceViewer, 0, 10000, 100));
+		children= tUnit.getChildren();
+		assertEquals(3, children.length);
+		tmpFile.delete();
 	}
 
 	/**

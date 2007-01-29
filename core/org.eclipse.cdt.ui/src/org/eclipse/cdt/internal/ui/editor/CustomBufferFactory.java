@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2006 QNX Software Systems and others.
+ * Copyright (c) 2002, 2007 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,17 +7,21 @@
  *
  * Contributors:
  * QNX Software Systems - Initial API and implementation
+ * Anton Leherbauer (Wind River Systems)
  *******************************************************************************/
 
 package org.eclipse.cdt.internal.ui.editor;
+
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.IPath;
 
 import org.eclipse.cdt.core.model.IBuffer;
 import org.eclipse.cdt.core.model.IOpenable;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.model.IWorkingCopy;
+
 import org.eclipse.cdt.internal.core.model.IBufferFactory;
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IResource;
 
 /**
  * CustomBufferFactory
@@ -43,6 +47,12 @@ public class CustomBufferFactory implements IBufferFactory {
 				IFile fFile = (IFile)resource;
 				DocumentAdapter adapter= new DocumentAdapter(owner, fFile);
 				return adapter;
+			}
+
+			// external file
+			IPath location= original.getLocation();
+			if (location != null) {
+				return new DocumentAdapter(owner, location);
 			}
 						
 		}

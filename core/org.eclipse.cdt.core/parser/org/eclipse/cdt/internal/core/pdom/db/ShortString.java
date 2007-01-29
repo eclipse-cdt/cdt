@@ -223,6 +223,33 @@ public class ShortString implements IString {
 			return 0;
 	}
 	
+	public int comparePrefix(char[] other) throws CoreException {
+		Chunk chunk = db.getChunk(record);
+		
+		int i1 = record + CHARS;
+		int i2 = 0;
+		int n1 = i1 + chunk.getInt(record + LENGTH) * 2;
+		int n2 = other.length;
+		
+		while (i1 < n1 && i2 < n2) {
+			char c1 = chunk.getChar(i1);
+			char c2 = other[i2];
+			
+			if (c1 < c2)
+				return -1;
+			if (c1 > c2)
+				return 1;
+			
+			i1 += 2;
+			++i2;
+		}
+
+		if (i1 == n1 && i2 != n2)
+			return -1;
+		else
+			return 0;
+	}
+
 	public int compare(String other) throws CoreException {
 		Chunk chunk = db.getChunk(record);
 		

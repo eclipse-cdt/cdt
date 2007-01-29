@@ -59,7 +59,19 @@ public interface IString {
 	 * @throws CoreException
 	 */
 	public int compare(char[] chars) throws CoreException;
+
 	
+	/**
+	 * Compare this IString record and the specified character array
+	 * @param chars
+	 * @return <ul><li> -1 if this &lt; chars
+	 * <li> 0 if this has a prefix chars
+	 * <li> 1 if this &gt; chars and does not have the prefix
+	 * </ul>
+	 * @throws CoreException
+	 */
+	public int comparePrefix(char[] name) throws CoreException;
+
 	/**
 	 * Get an equivalent character array to this IString record<p>
 	 * <b>N.B. This method can be expensive: compare and equals can be used for

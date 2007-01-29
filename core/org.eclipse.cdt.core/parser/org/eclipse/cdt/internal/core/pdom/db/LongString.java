@@ -153,6 +153,10 @@ public class LongString implements IString {
 		throw new PDOMNotImplementedError();
 	}
 
+	public int comparePrefix(char[] name) {
+		throw new PDOMNotImplementedError();
+	}
+
 	private interface IReader {
 		public void appendChar(char c);
 	}

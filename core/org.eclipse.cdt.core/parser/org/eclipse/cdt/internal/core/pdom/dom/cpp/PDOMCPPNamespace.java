@@ -109,7 +109,7 @@ class PDOMCPPNamespace extends PDOMCPPBinding implements ICPPNamespace, ICPPName
 		try {
 			FindBindingsInBTree visitor = new FindBindingsInBTree(getLinkageImpl(), name.toCharArray(), null, prefixLookup);
 			getIndex().accept(visitor);
-			return visitor.getBinding();
+			return visitor.getBindings();
 		} catch (CoreException e) {
 			CCorePlugin.log(e);
 		}
@@ -121,7 +121,7 @@ class PDOMCPPNamespace extends PDOMCPPBinding implements ICPPNamespace, ICPPName
 			FindBindingsInBTree visitor= new FindBindingsInBTree(getLinkageImpl(), name.toCharArray());
 			getIndex().accept(visitor);
 			
-			IBinding[] bindings= visitor.getBinding();
+			IBinding[] bindings= visitor.getBindings();
 			return CPPSemantics.resolveAmbiguities(name, bindings);
 		} catch (CoreException e) {
 			CCorePlugin.log(e);

@@ -39,7 +39,6 @@ import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.viewers.DecoratingLabelProvider;
 import org.eclipse.jface.viewers.DoubleClickEvent;
-import org.eclipse.jface.viewers.IBaseLabelProvider;
 import org.eclipse.jface.viewers.IBasicPropertyConstants;
 import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ILabelDecorator;
@@ -365,7 +364,7 @@ public class SystemView extends TreeViewer implements ISystemTree, ISystemResour
 	protected void init() {
 		_setList = new ArrayList();
 		busyCursor = new Cursor(shell.getDisplay(), SWT.CURSOR_WAIT);
-		setUseHashlookup(true); // new for our 2nd release. Attempt to fix 38 minutes to refresh for 15K elements
+		//setUseHashlookup(true); // new for our 2nd release. Attempt to fix 38 minutes to refresh for 15K elements
 
 		// set content provider
 		SystemViewLabelAndContentProvider lcProvider = new SystemViewLabelAndContentProvider();
@@ -2646,10 +2645,9 @@ public class SystemView extends TreeViewer implements ISystemTree, ISystemResour
 				}
 			
 				// rename explicitly here (since internalUpdate doesn't seem to have an effect
-				System.out.println("setting name to "+newElementName);
 				match.setText(newElementName);
-				
-				//internalUpdate(match, data, properties);
+				//updateItem(match, renameObject);
+				internalUpdate(match, data, properties);
 						
 				//update(data, properties); // for refreshing non-structural properties in viewer when model changes
 				//System.out.println("Match found. refresh required? " + refresh);
@@ -2661,7 +2659,8 @@ public class SystemView extends TreeViewer implements ISystemTree, ISystemResour
 		
 		if (refresh)
 		{
-			smartRefresh((TreeItem[])matches.toArray(new TreeItem[matches.size()]));
+			// causes duplicates to appear when there are more than one rename objects
+			//smartRefresh((TreeItem[])matches.toArray(new TreeItem[matches.size()]));
 			getTree().setSelection(selected);
 		}
 
@@ -2770,6 +2769,23 @@ public class SystemView extends TreeViewer implements ISystemTree, ISystemResour
 		}
 		return true;
 	}
+	
+	protected void doUpdateItem(final Item item, Object element)
+	{
+		super.doUpdateItem(item, element);
+		
+		// adding this because base eclipse version isn't renaming properly on duplicates
+		ISystemRemoteElementAdapter adapter = getRemoteAdapter(element);
+		if (adapter != null)
+		{
+			String oldText = item.getText();
+			String newText = adapter.getName(element);
+			if (!oldText.equals(newText))
+			{
+				item.setText(newText);
+			}
+		}
+	}
 
 	/**
 	 * Given the result of findAllRemoteItemReferences, scan for first non-filter object
@@ -2828,6 +2844,12 @@ public class SystemView extends TreeViewer implements ISystemTree, ISystemResour
 		if (debug) {
 			logDebugMsg("in doOurInternalRefresh on " + getAdapter(element).getName(element)); //$NON-NLS-1$
 			logDebugMsg("...current selection is " + getFirstSelectionName(getSelection())); //$NON-NLS-1$
+		}
+		ISystemViewElementAdapter adapter = getAdapter(element);
+		if (adapter != null)
+		{
+			//String name = adapter.getName(element);
+			//System.out.println("refreshing "+ ((TreeItem)widget).getText() + " with " + name);
 		}
 		SystemElapsedTimer timer = null;
 		if (doTimings) timer = new SystemElapsedTimer();
@@ -3242,6 +3264,11 @@ public class SystemView extends TreeViewer implements ISystemTree, ISystemResour
 			System.out.println("Refresh Timer 7: time to setRedraw(true): " + timer.setEndTime()); //$NON-NLS-1$
 			timer.setStartTime();
 		}
+	}
+	
+	public void refreshRemote(Object element)
+	{		
+		smartRefresh(element, true);
 	}
 
 	/**
@@ -5268,11 +5295,11 @@ public class SystemView extends TreeViewer implements ISystemTree, ISystemResour
 		_setList.add(newSet);
 		return newSet;
 	}
-
+/*
 	protected boolean usingElementMap() {
 		return false;
 	}
-
+*/
 	public void add(Object parentElementOrTreePath, Object[] childElements) {
 		assertElementsNotNull(childElements);
 

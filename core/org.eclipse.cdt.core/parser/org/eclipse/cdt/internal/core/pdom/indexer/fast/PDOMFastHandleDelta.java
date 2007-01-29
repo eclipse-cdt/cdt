@@ -129,9 +129,16 @@ class PDOMFastHandleDelta extends PDOMFastIndexerJob {
 		PDOMCodeReaderFactory codeReaderFactory = new PDOMCodeReaderFactory(pdom);
 		
 		// get the AST in a "Fast" way
-		IASTTranslationUnit ast = language.getASTTranslationUnit(tu,
-				codeReaderFactory,
-				ILanguage.AST_USE_INDEX	| ILanguage.AST_SKIP_IF_NO_BUILD_INFO);
+		IASTTranslationUnit ast = null;
+		pdom.acquireReadLock();
+		try {
+			ast = language.getASTTranslationUnit(tu,
+					codeReaderFactory,
+					ILanguage.AST_USE_INDEX	| ILanguage.AST_SKIP_IF_NO_BUILD_INFO);
+		} finally {
+			pdom.releaseReadLock();
+		}
+
 		if (ast == null)
 			return;
 

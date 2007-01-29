@@ -20,6 +20,9 @@ import org.eclipse.rse.core.SystemPerspectiveHelpers;
 import org.eclipse.rse.core.filters.ISystemFilterPoolManager;
 import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.model.ISystemRegistry;
+import org.eclipse.rse.model.ISystemResourceChangeEvents;
+import org.eclipse.rse.model.SystemRegistry;
+import org.eclipse.rse.model.SystemResourceChangeEvent;
 import org.eclipse.rse.tests.RSETestsPlugin;
 import org.eclipse.rse.tests.core.RSEWaitAndDispatchUtil;
 import org.eclipse.rse.tests.core.connection.RSEBaseConnectionTestCase;
@@ -59,7 +62,7 @@ public class TestSubsystemTestCase extends RSEBaseConnectionTestCase {
 		assertNotNull("No test subystem", testSubSystem); //$NON-NLS-1$
 
 		testSubSystem.removeAllChildNodes();
-		ISystemRegistry registry = RSEUIPlugin.getTheSystemRegistry();
+		SystemRegistry registry = RSEUIPlugin.getTheSystemRegistry();
         registry.invalidateFiltersFor(testSubSystem);
         
 		TestSubSystemContainerNode firstNode = null;
@@ -95,9 +98,10 @@ public class TestSubsystemTestCase extends RSEBaseConnectionTestCase {
 		assertEquals("wrong item selected", node, structSel.getFirstElement()); //$NON-NLS-1$
 
 		testSubSystem.removeAllChildNodes();
-		registry.invalidateFiltersFor(testSubSystem);
+		//registry.invalidateFiltersFor(testSubSystem);
 		 
-		SystemPerspectiveHelpers.findRSEView().refresh(testSubSystem);
+		//SystemPerspectiveHelpers.findRSEView().refresh(testSubSystem);
+		registry.fireEvent(new SystemResourceChangeEvent(testSubSystem, ISystemResourceChangeEvents.EVENT_REFRESH, testSubSystem));
 		RSEWaitAndDispatchUtil.waitAndDispatch(1000);
 		
 		SystemPerspectiveHelpers.findRSEView().setSelection(new StructuredSelection(firstNode));
@@ -147,13 +151,16 @@ public class TestSubsystemTestCase extends RSEBaseConnectionTestCase {
 			
 			RSEUIPlugin.getTheSystemRegistry().invalidateFiltersFor(testSubSystem);
 			SystemPerspectiveHelpers.findRSEView().refresh(testSubSystem);
+			
 			RSEWaitAndDispatchUtil.waitAndDispatch(1000);
 			SystemPerspectiveHelpers.findRSEView().expandToLevel(testSubSystem, AbstractTreeViewer.ALL_LEVELS);
 			SystemPerspectiveHelpers.findRSEView().refresh(testSubSystem);
 			RSEWaitAndDispatchUtil.waitAndDispatch(1000);
 			
 			node.setName("Node 1 (changed)"); //$NON-NLS-1$
-			SystemPerspectiveHelpers.findRSEView().refresh(node);
+
+			SystemRegistry registry = RSEUIPlugin.getTheSystemRegistry();
+			registry.fireEvent(new SystemResourceChangeEvent(node, ISystemResourceChangeEvents.EVENT_REFRESH, node));
 			
 			RSEWaitAndDispatchUtil.waitAndDispatch(10000);
 		}

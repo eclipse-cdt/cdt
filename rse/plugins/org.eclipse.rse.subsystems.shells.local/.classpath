@@ -3,8 +3,6 @@
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.pde.core.requiredPlugins">
 		<accessrules>
-			<accessrule kind="accessible" pattern="org/eclipse/dstore/**"/>
-			<accessrule kind="accessible" pattern="org/eclipse/rse/**"/>
 			<accessrule kind="discouraged" pattern="**/internal/**"/>
 		</accessrules>
 	</classpathentry>

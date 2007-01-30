@@ -571,15 +571,10 @@ Contributors:
             class="org.eclipse.rse.ui.propertypages.SystemFilterPropertyPage"
             id="org.eclipse.rse.SystemFilterPropertyPage">
          <enabledWhen>
-            <instanceof value="org.eclipse.rse.core.filters.ISystemFilter"/>
-         </enabledWhen>
-      </page>
-      <page
-            name="%PropertyPage.Filter"
-            class="org.eclipse.rse.ui.propertypages.SystemFilterPropertyPage"
-            id="org.eclipse.rse.SystemFilterReferencePropertyPage">
-         <enabledWhen>
-            <instanceof value="org.eclipse.rse.core.filters.ISystemFilterReference"/>
+         	<or>
+            	<instanceof value="org.eclipse.rse.core.filters.ISystemFilter"/>
+	            <instanceof value="org.eclipse.rse.core.filters.ISystemFilterReference"/>
+         	</or>
          </enabledWhen>
       </page>
       <page
@@ -588,16 +583,10 @@ Contributors:
             id="org.eclipse.rse.SystemChangeFilterPropertyPage">
             <filter name="showChangeFilterStringPropertyPage" value="true"/>
          <enabledWhen>
-            <instanceof value="org.eclipse.rse.core.filters.ISystemFilter"/>
-         </enabledWhen>
-      </page>
-      <page
-            name="%PropertyPage.ChangeFilter"
-            class="org.eclipse.rse.ui.propertypages.SystemChangeFilterPropertyPage"
-            id="org.eclipse.rse.SystemChangeFilterReferencePropertyPage">
-            <filter name="showChangeFilterStringPropertyPage" value="true"/>
-         <enabledWhen>
-            <instanceof value="org.eclipse.rse.core.filters.ISystemFilterReference"/>
+         	<or>
+            	<instanceof value="org.eclipse.rse.core.filters.ISystemFilter"/>
+	            <instanceof value="org.eclipse.rse.core.filters.ISystemFilterReference"/>
+         	</or>
          </enabledWhen>
       </page>
       <page

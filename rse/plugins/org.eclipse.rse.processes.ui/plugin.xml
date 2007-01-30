@@ -38,17 +38,21 @@ Contributors:
    <extension
          point="org.eclipse.ui.propertyPages">   
       <page
-            objectClass="org.eclipse.rse.subsystems.processes.servicesubsystem.ProcessServiceSubSystem"
             name="%PropertyPage.ServerLauncherSettings" 
             class="org.eclipse.rse.ui.propertypages.ServerLauncherPropertyPage"
             id="org.eclipse.rse.ui.propertypages.serverLauncherPropertyPage">
             <filter name="serverLaunchPP" value="true"/>
+         <enabledWhen>
+            <instanceof value="org.eclipse.rse.subsystems.processes.servicesubsystem.ProcessServiceSubSystem"/>
+         </enabledWhen>
       </page>
       <page
-            objectClass="org.eclipse.rse.subsystems.processes.servicesubsystem.ProcessServiceSubSystem"
             name="%PropertyPage.Service"
             class="org.eclipse.rse.processes.ui.propertypages.ProcessServicesPropertyPage"
             id="org.eclipse.rse.processes.ui.propertypages.ProcessServicesPropertyPage">
+         <enabledWhen>
+            <instanceof value="org.eclipse.rse.subsystems.processes.servicesubsystem.ProcessServiceSubSystem"/>
+         </enabledWhen>
       </page>
    </extension>
    

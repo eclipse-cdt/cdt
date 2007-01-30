@@ -66,19 +66,23 @@ Contributors:
       </page> 
 -->
       <page
-            objectClass="org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFileSubSystem"
             name="%PropertyPage.ServerLauncherSettings" 
             class="org.eclipse.rse.ui.propertypages.ServerLauncherPropertyPage"
             id="org.eclipse.rse.ui.propertypages.ServerLauncherPropertyPage">
             <filter name="serverLaunchPP" value="true"/>
+         <enabledWhen>
+            <instanceof value="org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFileSubSystem"/>
+         </enabledWhen>
       </page>
 
       
        <page
-            objectClass="org.eclipse.rse.subsystems.files.core.servicesubsystem.FileServiceSubSystem"
             name="%PropertyPage.Service"
             class="org.eclipse.rse.files.ui.propertypages.FileServicesPropertyPage"
             id="org.eclipse.rse.files.ui.propertypages.FileServicesPropertyPage">
+         <enabledWhen>
+            <instanceof value="org.eclipse.rse.subsystems.files.core.servicesubsystem.FileServiceSubSystem"/>
+         </enabledWhen>
       </page>
       
    </extension>

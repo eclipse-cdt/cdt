@@ -36,30 +36,33 @@ Contributors:
          point="org.eclipse.ui.propertyPages">
 
       <page
-            objectClass="org.eclipse.rse.subsystems.shells.core.subsystems.IRemoteCmdSubSystem"
             name="%PropertyPage.EnvVariables"
             class="org.eclipse.rse.shells.ui.propertypages.EnvironmentVariablesPropertyPage"
             id="org.eclipse.rse.shells.ui.propertypages.EnvironmentVariablesPropertyPage">
-            
             <!--
             <filter name="envVarPP" value="true"/>
             -->
-            
+         <enabledWhen>
+            <instanceof value="org.eclipse.rse.subsystems.shells.core.subsystems.IRemoteCmdSubSystem"/>
+         </enabledWhen>
       </page> 
-   
       
       <page
-            objectClass="org.eclipse.rse.subsystems.shells.core.subsystems.IRemoteCmdSubSystem"
             name="%PropertyPage.ShellSettings"
             class="org.eclipse.rse.shells.ui.propertypages.SystemShellPropertyPage"
             id="org.eclipse.rse.shells.ui.propertypages.SystemShellPropertyPage">
+         <enabledWhen>
+            <instanceof value="org.eclipse.rse.subsystems.shells.core.subsystems.IRemoteCmdSubSystem"/>
+         </enabledWhen>
       </page>
 
         <page
-            objectClass="org.eclipse.rse.subsystems.shells.core.subsystems.servicesubsystem.ShellServiceSubSystem"
             name="%PropertyPage.Service"
             class="org.eclipse.rse.shells.ui.propertypages.ShellServicesPropertyPage"
             id="org.eclipse.rse.shells.ui.propertypages.ShellServicesPropertyPage">
+         <enabledWhen>
+            <instanceof value="org.eclipse.rse.subsystems.shells.core.subsystems.servicesubsystem.ShellServiceSubSystem"/>
+         </enabledWhen>
       </page>
       
    </extension>

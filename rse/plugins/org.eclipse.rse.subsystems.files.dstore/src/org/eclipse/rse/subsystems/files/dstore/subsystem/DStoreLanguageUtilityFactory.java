@@ -21,7 +21,7 @@ import java.util.Map;
 
 import org.eclipse.rse.internal.subsystems.files.core.AbstractLanguageUtilityFactory;
 import org.eclipse.rse.internal.subsystems.files.core.ILanguageUtility;
-import org.eclipse.rse.internal.subsystems.files.core.ILanguageUtilityFactory;
+import org.eclipse.rse.subsystems.files.core.ILanguageUtilityFactory;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFileSubSystem;
 
 
@@ -66,7 +66,7 @@ public class DStoreLanguageUtilityFactory extends AbstractLanguageUtilityFactory
 	}
 
 	/**
-	 * @see org.eclipse.rse.internal.subsystems.files.core.ILanguageUtilityFactory#getUtility(java.lang.String)
+	 * @see org.eclipse.rse.subsystems.files.core.ILanguageUtilityFactory#getUtility(java.lang.String)
 	 */
 	public ILanguageUtility getUtility(String language) {
 		

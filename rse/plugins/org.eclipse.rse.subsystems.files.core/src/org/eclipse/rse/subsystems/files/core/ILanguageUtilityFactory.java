@@ -14,8 +14,9 @@
  * {Name} (company) - description of contribution.
  ********************************************************************************/
 
-package org.eclipse.rse.internal.subsystems.files.core;
+package org.eclipse.rse.subsystems.files.core;
 
+import org.eclipse.rse.internal.subsystems.files.core.ILanguageUtility;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFileSubSystem;
 
 /**

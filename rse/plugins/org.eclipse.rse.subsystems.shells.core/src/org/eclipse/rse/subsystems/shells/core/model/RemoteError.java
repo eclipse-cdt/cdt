@@ -14,7 +14,7 @@
  * {Name} (company) - description of contribution.
  ********************************************************************************/
 
-package org.eclipse.rse.internal.subsystems.shells.subsystems;
+package org.eclipse.rse.subsystems.shells.core.model;
 
 import org.eclipse.rse.subsystems.shells.core.subsystems.IRemoteError;
 

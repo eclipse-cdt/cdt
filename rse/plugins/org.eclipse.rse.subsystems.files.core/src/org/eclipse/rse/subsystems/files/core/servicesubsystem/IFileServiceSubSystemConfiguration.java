@@ -19,12 +19,12 @@ package org.eclipse.rse.subsystems.files.core.servicesubsystem;
 
 import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.subsystems.IServiceSubSystemConfiguration;
-import org.eclipse.rse.internal.subsystems.files.core.ILanguageUtilityFactory;
 import org.eclipse.rse.services.clientserver.SystemSearchString;
 import org.eclipse.rse.services.files.IFileService;
 import org.eclipse.rse.services.search.IHostSearchResultConfiguration;
 import org.eclipse.rse.services.search.IHostSearchResultSet;
 import org.eclipse.rse.services.search.ISearchService;
+import org.eclipse.rse.subsystems.files.core.ILanguageUtilityFactory;
 import org.eclipse.rse.subsystems.files.core.subsystems.IHostFileToRemoteFileAdapter;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFileSubSystem;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFileSubSystemConfiguration;

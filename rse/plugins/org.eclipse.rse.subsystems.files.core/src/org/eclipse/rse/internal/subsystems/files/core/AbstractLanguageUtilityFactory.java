@@ -16,6 +16,7 @@
 
 package org.eclipse.rse.internal.subsystems.files.core;
 
+import org.eclipse.rse.subsystems.files.core.ILanguageUtilityFactory;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFileSubSystem;
 
 /**
@@ -43,7 +44,7 @@ public abstract class AbstractLanguageUtilityFactory implements ILanguageUtility
 	}
 
 	/**
-	 * @see org.eclipse.rse.internal.subsystems.files.core.ILanguageUtilityFactory#getSubSystem()
+	 * @see org.eclipse.rse.subsystems.files.core.ILanguageUtilityFactory#getSubSystem()
 	 */
 	public IRemoteFileSubSystem getSubSystem() {
 		return subsystem;
@@ -51,7 +52,7 @@ public abstract class AbstractLanguageUtilityFactory implements ILanguageUtility
 
 	/**
 	 * For Java, subclasses should return an instance of <code>IJavaLanguageUtility</code>
-	 * @see org.eclipse.rse.internal.subsystems.files.core.ILanguageUtilityFactory#getUtility(java.lang.String)
+	 * @see org.eclipse.rse.subsystems.files.core.ILanguageUtilityFactory#getUtility(java.lang.String)
 	 * 
 	 * @see IJavaLanguageUtility
 	 */

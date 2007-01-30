@@ -46,7 +46,7 @@ class SshConnection extends Thread {
 	private final SshConnector fConn;
 	private Channel fChannel;
 	protected SshConnection(SshConnector conn,ITerminalControl control) {
-		super("SshConnection-"+fgNo++);
+		super("SshConnection-"+fgNo++); //$NON-NLS-1$
 		fControl = control;
 		fConn = conn;
 		fControl.setState(TerminalState.CONNECTING);
@@ -293,7 +293,7 @@ class SshConnection extends Thread {
 			if((n=in.read(bytes))==-1)
 				return;
 			// we assume we get ASCII UTF8 bytes
-			fControl.writeToTerminal(new String(bytes,0,n,"UTF8"));
+			fControl.writeToTerminal(new String(bytes,0,n,"UTF8")); //$NON-NLS-1$
 		}
 	}
 

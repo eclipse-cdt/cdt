@@ -34,6 +34,7 @@ import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.ui.PlatformUI;
 
 
 public class RemoteCMainTab extends CMainTab {
@@ -94,7 +95,7 @@ public class RemoteCMainTab extends CMainTab {
 			}
 		});
 
-		LaunchUIPlugin.getDefault().getWorkbench().getHelpSystem().setHelp(getControl(),
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(),
 				"org.eclipse.rse.remotecdt.launchgroup"); //$NON-NLS-1$
 
 		LaunchUIPlugin.setDialogShell(parent.getShell());

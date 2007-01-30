@@ -16,10 +16,9 @@
  *******************************************************************************/
 package org.eclipse.tm.terminal.internal.actions;
 
-import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.tm.terminal.internal.view.ITerminalView;
 import org.eclipse.ui.ISharedImages;
-import org.eclipse.ui.internal.WorkbenchImages;
+import org.eclipse.ui.PlatformUI;
 
 public class TerminalActionCopy extends TerminalAction
 {
@@ -27,17 +26,13 @@ public class TerminalActionCopy extends TerminalAction
     {
         super(target,
               TerminalActionCopy.class.getName());
-
-        ImageRegistry imageRegistry;
-        
-        imageRegistry = WorkbenchImages.getImageRegistry();
+        ISharedImages si = PlatformUI.getWorkbench().getSharedImages();
         setupAction(ActionMessages.COPY,
                     ActionMessages.COPY,
-                    ISharedImages.IMG_TOOL_COPY,
-                    ISharedImages.IMG_TOOL_COPY,
-                    ISharedImages.IMG_TOOL_COPY_DISABLED,
-                    true,
-                    imageRegistry);
+                    si.getImageDescriptor(ISharedImages.IMG_TOOL_COPY),
+                    si.getImageDescriptor(ISharedImages.IMG_TOOL_COPY),
+                    si.getImageDescriptor(ISharedImages.IMG_TOOL_COPY_DISABLED),
+                    true);
     }
 	public void run() {
 		fTarget.onEditCopy();

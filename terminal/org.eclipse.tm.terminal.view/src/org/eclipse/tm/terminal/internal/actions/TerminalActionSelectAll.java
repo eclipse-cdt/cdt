@@ -16,6 +16,7 @@
  *******************************************************************************/
 package org.eclipse.tm.terminal.internal.actions;
 
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.tm.terminal.internal.view.ITerminalView;
 
 public class TerminalActionSelectAll extends TerminalAction
@@ -27,7 +28,7 @@ public class TerminalActionSelectAll extends TerminalAction
 
         setupAction(ActionMessages.SELECTALL,
                     ActionMessages.SELECTALL,
-                    null,
+                    (ImageDescriptor)null,
                     null,
                     null,
                     false);

@@ -16,10 +16,9 @@
  *******************************************************************************/
 package org.eclipse.tm.terminal.internal.actions;
 
-import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.tm.terminal.internal.view.ITerminalView;
 import org.eclipse.ui.ISharedImages;
-import org.eclipse.ui.internal.WorkbenchImages;
+import org.eclipse.ui.PlatformUI;
 
 public class TerminalActionPaste extends TerminalAction
 {
@@ -27,17 +26,13 @@ public class TerminalActionPaste extends TerminalAction
     {
         super(target,
               TerminalActionPaste.class.getName());
-
-        ImageRegistry imageRegistry;
-        
-        imageRegistry = WorkbenchImages.getImageRegistry();
+        ISharedImages si = PlatformUI.getWorkbench().getSharedImages();
         setupAction(ActionMessages.PASTE,
                     ActionMessages.PASTE,
-                    ISharedImages.IMG_TOOL_PASTE,
-                    ISharedImages.IMG_TOOL_PASTE_DISABLED,
-                    ISharedImages.IMG_TOOL_PASTE,
-                    false,
-                    imageRegistry);
+                    si.getImageDescriptor(ISharedImages.IMG_TOOL_PASTE),
+                    si.getImageDescriptor(ISharedImages.IMG_TOOL_PASTE_DISABLED),
+                    si.getImageDescriptor(ISharedImages.IMG_TOOL_PASTE),
+                    false);
     }
 	public void run() {
 		fTarget.onEditPaste();

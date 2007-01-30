@@ -29,7 +29,7 @@ import org.eclipse.ui.IMemento;
  */
 class SettingsStore implements ISettingsStore {
 	
-	private static final String KEYS = "_keys_";
+	private static final String KEYS = "_keys_"; //$NON-NLS-1$
 	final private Map fMap=new HashMap();
 	public SettingsStore(IMemento memento) {
 		if(memento==null)
@@ -37,12 +37,12 @@ class SettingsStore implements ISettingsStore {
 		// load all keys ever used from the memento
 		String keys=memento.getString(KEYS);
 		if(keys!=null) {
-			String[] keyNames=keys.split(",");
+			String[] keyNames=keys.split(","); //$NON-NLS-1$
 			for (int i = 0; i < keyNames.length; i++) {
 				String key=keyNames[i];
 				if(!KEYS.equals(key)) {
 					// get the dot separated elements
-					String[] path=key.split("\\.");
+					String[] path=key.split("\\."); //$NON-NLS-1$
 					IMemento m=memento;
 					// iterate over all but the last segment and get the children...
 					for(int iPath=0; m!=null && iPath+1<path.length; iPath++) {
@@ -69,8 +69,8 @@ class SettingsStore implements ISettingsStore {
 	}
 
 	public void put(String key, String value) {
-		if(!key.matches("^[\\w.]+$"))
-			throw new IllegalArgumentException("Key '"+key+"' is not alpha numeric or '.'!");
+		if(!key.matches("^[\\w.]+$")) //$NON-NLS-1$
+			throw new IllegalArgumentException("Key '"+key+"' is not alpha numeric or '.'!"); //$NON-NLS-1$ //$NON-NLS-2$
 		// null values remove the key from the map
 		if ((value == null) || (value.equals(""))) //$NON-NLS-1$
 			fMap.remove(key);
@@ -87,7 +87,7 @@ class SettingsStore implements ISettingsStore {
 		StringBuffer buffer=new StringBuffer();
 		for (int i = 0; i < keyNames.length; i++) {
 			String key=keyNames[i];
-			String[] path=key.split("\\.");
+			String[] path=key.split("\\."); //$NON-NLS-1$
 			IMemento m=memento;
 			// iterate over all but the last segment and get the children...
 			for(int iPath=0; iPath+1<path.length; iPath++) {
@@ -101,7 +101,7 @@ class SettingsStore implements ISettingsStore {
 			m.putString(path[path.length-1], (String) fMap.get(key));
 			// construct the string for the keys
 			if(i>0)
-				buffer.append(",");
+				buffer.append(","); //$NON-NLS-1$
 			buffer.append(key);
 		}
 		// save the keys we have used.

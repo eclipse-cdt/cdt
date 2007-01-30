@@ -16,7 +16,6 @@
  *******************************************************************************/
 package org.eclipse.tm.terminal.internal.view;
 
-import org.eclipse.core.runtime.Preferences;
 import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
@@ -99,13 +98,13 @@ public class TerminalView extends ViewPart implements ITerminalView, ITerminalLi
 		Logger
 				.log("==============================================================="); //$NON-NLS-1$
 	}
-
-	private void XXXXX() {
-		Preferences preferences = TerminalViewPlugin.getDefault().getPluginPreferences();
-		boolean bLimitOutput = preferences.getBoolean(TerminalPreferencePage.PREF_LIMITOUTPUT);
-		int bufferLineLimit = preferences.getInt(TerminalPreferencePage.PREF_BUFFERLINES);
-
-	}
+// TODO MSA
+//	private void XXXXX() {
+//		Preferences preferences = TerminalViewPlugin.getDefault().getPluginPreferences();
+//		boolean bLimitOutput = preferences.getBoolean(TerminalPreferencePage.PREF_LIMITOUTPUT);
+//		int bufferLineLimit = preferences.getInt(TerminalPreferencePage.PREF_BUFFERLINES);
+//
+//	}
 	// TerminalTarget interface
 	public void setState(final TerminalState state) {
 		Runnable runnable=new Runnable() {

@@ -20,8 +20,6 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.files.ui.actions.SystemAbstractRemoteFilePopupMenuExtensionAction;
-import org.eclipse.rse.internal.subsystems.shells.subsystems.RemoteError;
-import org.eclipse.rse.internal.subsystems.shells.subsystems.RemoteOutput;
 import org.eclipse.rse.services.shells.IHostOutput;
 import org.eclipse.rse.services.shells.IHostShell;
 import org.eclipse.rse.services.shells.IHostShellChangeEvent;
@@ -31,6 +29,8 @@ import org.eclipse.rse.shells.ui.RemoteCommandHelpers;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile;
 import org.eclipse.rse.subsystems.shells.core.subsystems.IRemoteCmdSubSystem;
 import org.eclipse.rse.subsystems.shells.core.subsystems.IRemoteCommandShell;
+import org.eclipse.rse.subsystems.shells.core.subsystems.IRemoteError;
+import org.eclipse.rse.subsystems.shells.core.subsystems.IRemoteOutput;
 import org.eclipse.rse.subsystems.shells.core.subsystems.servicesubsystem.IShellServiceSubSystem;
 
 /**
@@ -120,7 +120,7 @@ public class ShowJarContents extends SystemAbstractRemoteFilePopupMenuExtensionA
 	public void runCommandInvisibly(IRemoteCmdSubSystem cmdss, String command) throws Exception
 	{
 		command = command + cmdss.getParentRemoteCmdSubSystemConfiguration().getCommandSeparator() + "exit"; //$NON-NLS-1$
-		Object[] result = cmdss.runCommand(command, null, false);
+		Object[] result = cmdss.runCommand(new NullProgressMonitor(), command, null, false);
 		if (result.length>0 && result[0] instanceof IRemoteCommandShell) {
 			IRemoteCommandShell cs = (IRemoteCommandShell)result[0];
 			while (cs.isActive()) {
@@ -128,10 +128,10 @@ public class ShowJarContents extends SystemAbstractRemoteFilePopupMenuExtensionA
 			}
 			Object[] output = cs.listOutput();
 			for (int i=0; i<output.length; i++) {
-				if (output[i] instanceof RemoteOutput) {
-					System.out.println(((RemoteOutput)output[i]).getText());
-				} else if (output[i] instanceof RemoteError) {
-					System.err.println(((RemoteError)output[i]).getText());
+				if (output[i] instanceof IRemoteOutput) {
+					System.out.println(((IRemoteOutput)output[i]).getText());
+				} else if (output[i] instanceof IRemoteError) {
+					System.err.println(((IRemoteError)output[i]).getText());
 				}
 			}
 			cmdss.removeShell(cs);

@@ -28,13 +28,13 @@ public class CompletionTest_MacroRef_Prefix  extends CompletionProposalsBaseTest
 	private final String expectedPrefix = "D"; 
 	private final String[] expectedResults = {
 			// missing result:
-			"Debug"
+			"DEBUG"
 	};
 	
 	public CompletionTest_MacroRef_Prefix(String name) {
 		super(name);
-		// see https://bugs.eclipse.org/bugs/show_bug.cgi?id=171708
-		setExpectFailure(171708);
+		// see https://bugs.eclipse.org/bugs/show_bug.cgi?id=172158
+		setExpectFailure(172158);
 	}
 
 	public static Test suite() {

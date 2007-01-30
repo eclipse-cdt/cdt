@@ -31,7 +31,7 @@ public class CompletionTest_SingleName_NoPrefix  extends CompletionProposalsBase
 			"xVariable : int",
 			"aFunction(void) bool",
 			"anotherFunction(void) void",
-			"foo(int) void",
+			"foo(int x) void",
 			"xFunction(void) bool",
 			"xOtherFunction(void) void",
 			"aClass",
@@ -49,24 +49,12 @@ public class CompletionTest_SingleName_NoPrefix  extends CompletionProposalsBase
 			"xFirstEnum",
 			"xSecondEnum",
 			"xThirdEnum",
-			// missing:
-			"__cplusplus", 
-			"__DATE__",
-			"__FILE__",
-			"__LINE__",
-			"__STDC__",
-			"__STDC_HOSTED__",
-			"__STDC_VERSION__",
-			"__TIME__",
-			"AMacro(x)",
-			"DEBUG",
-			"XMacro(x,y)"
+			"y : int"
+			// note: macros are omitted intentionally
 	};
 	
 	public CompletionTest_SingleName_NoPrefix(String name) {
 		super(name);
-		// see https://bugs.eclipse.org/bugs/show_bug.cgi?id=171708
-		setExpectFailure(171708);
 	}
 	
 	public static Test suite() {

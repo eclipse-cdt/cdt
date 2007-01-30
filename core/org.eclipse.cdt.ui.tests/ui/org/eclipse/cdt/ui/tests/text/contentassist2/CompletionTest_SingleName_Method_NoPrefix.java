@@ -58,8 +58,8 @@ public class CompletionTest_SingleName_Method_NoPrefix  extends CompletionPropos
 	
 	public CompletionTest_SingleName_Method_NoPrefix(String name) {
 		super(name);
-		// https://bugs.eclipse.org/bugs/show_bug.cgi?id=169860
-		setExpectFailure(169860);
+		// operators should not be proposed
+		setExpectFailure(77777);
 	}
 	
 	public static Test suite() {

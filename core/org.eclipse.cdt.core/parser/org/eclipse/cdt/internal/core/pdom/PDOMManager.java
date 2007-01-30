@@ -25,7 +25,6 @@ import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICElementDelta;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.IElementChangedListener;
-import org.eclipse.cdt.internal.core.pdom.indexer.fast.PDOMFastIndexer;
 import org.eclipse.cdt.internal.core.pdom.indexer.nulli.PDOMNullIndexer;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ProjectScope;
@@ -218,7 +217,6 @@ public class PDOMManager implements IPDOMManager, IElementChangedListener {
     		super("Save Project Preferences"); //$NON-NLS-1$
     		this.project = project;
     		setSystem(true);
-    		setRule(project.getProject());
     	}
     	protected IStatus run(IProgressMonitor monitor) {
    	    	IEclipsePreferences prefs = new ProjectScope(project.getProject()).getNode(CCorePlugin.PLUGIN_ID);

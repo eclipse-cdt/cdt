@@ -38,7 +38,7 @@ import org.eclipse.rse.subsystems.shells.core.subsystems.IRemoteCmdSubSystem;
 import org.eclipse.rse.subsystems.shells.core.subsystems.IRemoteOutput;
 import org.eclipse.rse.subsystems.shells.core.subsystems.servicesubsystem.ServiceCommandShell;
 
-public class SshServiceCommandShell extends ServiceCommandShell implements ISystemOutputRemoteTypes
+public class SshServiceCommandShell extends ServiceCommandShell
 {
 	private Patterns _patterns;
 	private String _curCommand;

@@ -44,27 +44,29 @@ abstract public class TerminalAction extends Action {
 				strDisabledImage, bEnabled, imageRegistry);
 	}
 	protected void setupAction(String strText, String strToolTip,
-			String strImage, String strEnabledImage, String strDisabledImage,
+			String strHoverImage, String strEnabledImage, String strDisabledImage,
 			boolean bEnabled, ImageRegistry imageRegistry) {
-		ImageDescriptor imageDescriptor;
-
+		setupAction(strText,
+				strToolTip,
+				imageRegistry.getDescriptor(strHoverImage),	
+				imageRegistry.getDescriptor(strEnabledImage),	
+				imageRegistry.getDescriptor(strDisabledImage),
+				bEnabled);
+	}
+	protected void setupAction(String strText, String strToolTip,
+			ImageDescriptor hoverImage, ImageDescriptor enabledImage, ImageDescriptor disabledImage,
+			boolean bEnabled) {
 		setText(strText);
 		setToolTipText(strToolTip);
 		setEnabled(bEnabled);
-
-		imageDescriptor = imageRegistry.getDescriptor(strEnabledImage);
-		if (imageDescriptor != null) {
-			setImageDescriptor(imageDescriptor);
+		if (enabledImage != null) {
+			setImageDescriptor(enabledImage);
 		}
-
-		imageDescriptor = imageRegistry.getDescriptor(strDisabledImage);
-		if (imageDescriptor != null) {
-			setDisabledImageDescriptor(imageDescriptor);
+		if (disabledImage != null) {
+			setDisabledImageDescriptor(disabledImage);
 		}
-
-		imageDescriptor = imageRegistry.getDescriptor(strImage);
-		if (imageDescriptor != null) {
-			setHoverImageDescriptor(imageDescriptor);
+		if (hoverImage != null) {
+			setHoverImageDescriptor(hoverImage);
 		}
 	}
 }

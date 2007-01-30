@@ -16,6 +16,7 @@
  *******************************************************************************/
 package org.eclipse.tm.terminal.internal.actions;
 
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.tm.terminal.internal.view.ITerminalView;
 
 public class TerminalActionClearAll extends TerminalAction
@@ -27,7 +28,7 @@ public class TerminalActionClearAll extends TerminalAction
 
         setupAction(ActionMessages.CLEARALL,
                     ActionMessages.CLEARALL,
-                    null,
+                    (ImageDescriptor)null,
                     null,
                     null,
                     false);

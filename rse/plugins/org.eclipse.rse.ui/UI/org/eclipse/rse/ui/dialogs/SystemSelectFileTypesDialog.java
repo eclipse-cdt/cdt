@@ -186,7 +186,7 @@ public class SystemSelectFileTypesDialog
 	 * will appear on the screen.
 	 * </p>
 	 *
-	 * @param parent the parent composite
+	 * @param composite the parent composite
 	 * @return the message label
 	 */
 	protected Label createInstructionArea(Composite composite) 
@@ -384,7 +384,7 @@ public class SystemSelectFileTypesDialog
 	 * Set the selections made by the user, or <code>null</code> if
 	 * the selection was canceled.
 	 *
-	 * @param the list of selected elements, or <code>null</code> if Cancel was
+	 * @param newResult list of selected elements, or <code>null</code> if Cancel was
 	 *   pressed
 	 */
 	protected void setResult(java.util.List newResult) 

@@ -81,10 +81,8 @@ public class LocalSearchHandler implements ISearchHandler
 	/**
 	 * Constructor for local search handler.
 	 * 
-	 * @param shell
-	 *            a shell.
-	 * @param searchConfig
-	 *            a search configuration.
+	 * @param searchConfig a search configuration.
+	 * @param fileService the file service to search.
 	 */
 	public LocalSearchHandler(IHostSearchResultConfiguration searchConfig, IFileService fileService)
 	{

@@ -36,18 +36,18 @@ import org.eclipse.swt.widgets.Shell;
  * The advantages to using this class over the base action class are:
  * <ul>
  *  <li>Supports setting the label, description, image and tooltip text for this action, via constructors.
- *  <li>Sets {@link org.eclipse.rse.ui.SystemBaseAction#allowOnMultipleSelection(boolean)} to false, since most wizard actions are not permitted on multiple selection.
- *  <li>Supports setting whether the wizard requires a {@link org.eclipse.rse.ui.actions.SystemBaseDialogAction#setNeedsProgressMonitor() progress-monitor} or not, which is propogated to the wizard.
+ *  <li>Sets {@link org.eclipse.rse.ui.actions.SystemBaseAction#allowOnMultipleSelection(boolean)} to false, since most wizard actions are not permitted on multiple selection.
+ *  <li>Supports setting whether the wizard requires a {@link org.eclipse.rse.ui.actions.SystemBaseDialogAction#setNeedsProgressMonitor(boolean) progress-monitor} or not, which is propogated to the wizard.
  *  <li>Supports setting the overall wizard {@link #setWizardTitle(String) title}, which is propogated to the wizard.
  *  <li>Supports setting the overall wizard {@link #setWizardImage(ImageDescriptor) image}, which is propogated to the wizard.
  *  <li>Supports setting the default wizard {@link #setWizardPageTitle(String) page-title}, which is propogated to the wizard and the wizard pages.
  *  <li>Supports setting the wizard;s default {@link #setHelp(String) contextual-help}, which is propogated to the wizard and the wizard pages.
  *  <li>Supports setting the wizard's {@link #setMinimumPageSize(int,int) minimum-size}, which is propogated and applied to the wizard.
- *  <li>Supports setting an {@link org.eclipse.rse.ui.SystemBaseAction#setInputObject(Object) input-object}, which is propogated to the wizard and wizard pages. By default, this 
+ *  <li>Supports setting an {@link org.eclipse.rse.ui.actions.SystemBaseAction#setInputObject(Object) input-object}, which is propogated to the wizard and wizard pages. By default, this 
  *       is set the current StructuredSelection.
- *  <li>Supports querying a {@link org.eclipse.rse.ui.SystemBaseAction#getOutputObject() output-object} which is set by the wizard class.
+ *  <li>Supports querying a {@link org.eclipse.rse.ui.actions.SystemBaseAction#getOutputObject() output-object} which is set by the wizard class.
  *  <li>Supports a {@link #wasCancelled()} method so the caller can easily determine if the wizard was dismissed or cancelled by the user.
- *  <li>Supports propogation of the {@link org.eclipse.rse.ui.SystemBaseAction#getViewer() current-viewer}.
+ *  <li>Supports propogation of the {@link org.eclipse.rse.ui.actions.SystemBaseAction#getViewer() current-viewer}.
  * </ul>
  * 
  * <p>To use this class:</p>

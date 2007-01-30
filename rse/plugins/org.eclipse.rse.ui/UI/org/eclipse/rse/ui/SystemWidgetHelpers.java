@@ -739,8 +739,7 @@ public class SystemWidgetHelpers {
 	 * Assign the listener to the passed in implementer of Listener.
 	 * @param group composite to put the button into.
 	 * @param listener object to listen for events. Can be null.               
-	 * @param bundle ResourceBundle of tooltip text
-	 * @param id bundle key for tooltip text 
+	 * @param tooltip the tooltip text 
 	 * @deprecated
 	 */
 	public static Button createBrowseButton(Composite group, Listener listener, String tooltip) {

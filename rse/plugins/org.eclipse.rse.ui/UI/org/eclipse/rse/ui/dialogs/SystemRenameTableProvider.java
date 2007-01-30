@@ -120,14 +120,14 @@ public class SystemRenameTableProvider implements ITableLabelProvider, IStructur
 	}
 
 	/**
-	 * @see IBaseLabelProvider#addListener(org.eclipse.jface.viewers.ILabelProviderListener)
+	 * @see org.eclipse.jface.viewers.IBaseLabelProvider#addListener(org.eclipse.jface.viewers.ILabelProviderListener)
 	 */
 	public void addListener(ILabelProviderListener listener) 
 	{
 	}
 
 	/**
-	 * @see IBaseLabelProvider#dispose()
+	 * @see org.eclipse.jface.viewers.IBaseLabelProvider#dispose()
 	 */
 	public void dispose() 
 	{
@@ -147,7 +147,7 @@ public class SystemRenameTableProvider implements ITableLabelProvider, IStructur
 	}
 
 	/**
-	 * @see IBaseLabelProvider#isLabelProperty(java.lang.Object, java.lang.String)
+	 * @see org.eclipse.jface.viewers.IBaseLabelProvider#isLabelProperty(java.lang.Object, java.lang.String)
 	 */
 	public boolean isLabelProperty(Object element, String property) 
 	{
@@ -155,7 +155,7 @@ public class SystemRenameTableProvider implements ITableLabelProvider, IStructur
 	}
 
 	/**
-	 * @see IBaseLabelProvider#removeListener(org.eclipse.jface.viewers.ILabelProviderListener)
+	 * @see org.eclipse.jface.viewers.IBaseLabelProvider#removeListener(org.eclipse.jface.viewers.ILabelProviderListener)
 	 */
 	public void removeListener(ILabelProviderListener listener) 
 	{

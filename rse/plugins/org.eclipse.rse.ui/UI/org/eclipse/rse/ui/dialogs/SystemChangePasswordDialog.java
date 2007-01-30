@@ -43,7 +43,7 @@ public class SystemChangePasswordDialog extends SystemPromptDialog
 {
 	private String _hostname;
 	private String _user;
-	private String _oldPassword = ""; // $NON_NLS-1$
+	private String _oldPassword = ""; //$NON-NLS-1$
 	private String _newPassword = ""; //$NON-NLS-1$
 		
 	private Text _txtOldPassword;

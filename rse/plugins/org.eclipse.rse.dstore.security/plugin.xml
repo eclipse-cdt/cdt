@@ -40,26 +40,18 @@ Contributors:
   <!-- ============================================ -->
    <extension
          point="org.eclipse.ui.propertyPages">
-     <page 
-            objectClass="org.eclipse.rse.subsystems.files.core.servicesubsystem.FileServiceSubSystem"
+       <page 
             name="%PropertyPage.ServerConnectionSecurity"
             class="org.eclipse.rse.ui.propertypages.ServerConnectionSecurityPropertyPage"
             id="org.eclipse.rse.connectionsecurity.PropertyPage">
             <filter name="serverLaunchPP" value="true"/>
-      </page>
-      <page 
-            objectClass="org.eclipse.rse.subsystems.processes.servicesubsystem.ProcessServiceSubSystem"
-            name="%PropertyPage.ServerConnectionSecurity"
-            class="org.eclipse.rse.ui.propertypages.ServerConnectionSecurityPropertyPage"
-            id="org.eclipse.rse.connectionsecurity.PropertyPage2">
-            <filter name="serverLaunchPP" value="true"/>
-      </page>
-       <page 
-            objectClass="org.eclipse.rse.subsystems.shells.core.subsystems.servicesubsystem.ShellServiceSubSystem"
-            name="%PropertyPage.ServerConnectionSecurity"
-            class="org.eclipse.rse.ui.propertypages.ServerConnectionSecurityPropertyPage"
-            id="org.eclipse.rse.connectionsecurity.PropertyPage3">
-            <filter name="serverLaunchPP" value="true"/>
+         <enabledWhen>
+         	<or>
+	            <instanceof value="org.eclipse.rse.subsystems.files.core.servicesubsystem.FileServiceSubSystem"/>
+	            <instanceof value="org.eclipse.rse.subsystems.processes.servicesubsystem.ProcessServiceSubSystem"/>
+            	<instanceof value="org.eclipse.rse.subsystems.shells.core.subsystems.servicesubsystem.ShellServiceSubSystem"/>
+            </or>
+         </enabledWhen>
       </page>
    </extension>
 </plugin>

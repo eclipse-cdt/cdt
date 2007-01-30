@@ -511,16 +511,20 @@ Contributors:
    <extension
          point="org.eclipse.ui.propertyPages">
       <page
-            objectClass="org.eclipse.rse.core.subsystems.ISubSystem"
             name="%PropertyPage.SubSystem"
             class="org.eclipse.rse.ui.propertypages.SystemSubSystemPropertyPageCore"
             id="org.eclipse.rse.SubSystemsPropertyPage">
+         <enabledWhen>
+            <instanceof value="org.eclipse.rse.core.subsystems.ISubSystem"/>
+         </enabledWhen>
       </page>
       <page
-            objectClass="org.eclipse.rse.core.model.IHost"
             name="%PropertyPage.Connection"
             class="org.eclipse.rse.ui.propertypages.SystemConnectionPropertyPage"
             id="org.eclipse.rse.SystemPropertyPage">
+         <enabledWhen>
+            <instanceof value="org.eclipse.rse.core.model.IHost"/>
+         </enabledWhen>
       </page>
       <!-- with move to services this should disappear
       <page
@@ -531,78 +535,102 @@ Contributors:
       </page>
       -->
       <page
-            objectClass="org.eclipse.rse.core.model.IHost"
             name="%PropertyPage.Connection.ConnectorServices"
             class="org.eclipse.rse.ui.propertypages.SystemConnectorServicesPropertyPage"
             id="org.eclipse.rse.ui.propertypages.SystemConnectorServicesPropertyPage">
+         <enabledWhen>
+            <instanceof value="org.eclipse.rse.core.model.IHost"/>
+         </enabledWhen>
       </page>
       <page
-            objectClass="org.eclipse.rse.core.filters.ISystemFilterPool"
             name="%PropertyPage.FilterPool"
             class="org.eclipse.rse.ui.propertypages.SystemFilterPoolPropertyPage"
             id="org.eclipse.rse.SystemFilterPoolPropertyPage">
+         <enabledWhen>
+            <instanceof value="org.eclipse.rse.core.filters.ISystemFilterPool"/>
+         </enabledWhen>
       </page>
       <page
-            objectClass="org.eclipse.rse.core.filters.ISystemFilterPoolReference"
             name="%PropertyPage.Reference"
             class="org.eclipse.rse.ui.propertypages.SystemFilterPoolReferencePropertyPage"
             id="org.eclipse.rse.SystemFilterPoolReferencePropertyPage">
+         <enabledWhen>
+            <instanceof value="org.eclipse.rse.core.filters.ISystemFilterPoolReference"/>
+         </enabledWhen>
       </page>
       <page
-            objectClass="org.eclipse.rse.core.filters.ISystemFilterPoolReference"
             name="%PropertyPage.ReferencedFilterPool"
             class="org.eclipse.rse.ui.propertypages.SystemFilterPoolPropertyPage"
             id="org.eclipse.rse.SystemFilterPoolReferencePropertyPage2">
+         <enabledWhen>
+            <instanceof value="org.eclipse.rse.core.filters.ISystemFilterPoolReference"/>
+         </enabledWhen>
       </page>
       <page
-            objectClass="org.eclipse.rse.core.filters.ISystemFilter"
             name="%PropertyPage.Filter"
             class="org.eclipse.rse.ui.propertypages.SystemFilterPropertyPage"
             id="org.eclipse.rse.SystemFilterPropertyPage">
+         <enabledWhen>
+            <instanceof value="org.eclipse.rse.core.filters.ISystemFilter"/>
+         </enabledWhen>
       </page>
       <page
-            objectClass="org.eclipse.rse.core.filters.ISystemFilterReference"
             name="%PropertyPage.Filter"
             class="org.eclipse.rse.ui.propertypages.SystemFilterPropertyPage"
             id="org.eclipse.rse.SystemFilterReferencePropertyPage">
+         <enabledWhen>
+            <instanceof value="org.eclipse.rse.core.filters.ISystemFilterReference"/>
+         </enabledWhen>
       </page>
       <page
-            objectClass="org.eclipse.rse.core.filters.ISystemFilter"
             name="%PropertyPage.ChangeFilter"
             class="org.eclipse.rse.ui.propertypages.SystemChangeFilterPropertyPage"
             id="org.eclipse.rse.SystemChangeFilterPropertyPage">
             <filter name="showChangeFilterStringPropertyPage" value="true"/>
+         <enabledWhen>
+            <instanceof value="org.eclipse.rse.core.filters.ISystemFilter"/>
+         </enabledWhen>
       </page>
       <page
-            objectClass="org.eclipse.rse.core.filters.ISystemFilterReference"
             name="%PropertyPage.ChangeFilter"
             class="org.eclipse.rse.ui.propertypages.SystemChangeFilterPropertyPage"
             id="org.eclipse.rse.SystemChangeFilterReferencePropertyPage">
             <filter name="showChangeFilterStringPropertyPage" value="true"/>
+         <enabledWhen>
+            <instanceof value="org.eclipse.rse.core.filters.ISystemFilterReference"/>
+         </enabledWhen>
       </page>
       <page
-            objectClass="org.eclipse.rse.core.filters.ISystemFilterString"
             name="%PropertyPage.FilterString"
             class="org.eclipse.rse.ui.propertypages.SystemFilterStringPropertyPage"
             id="org.eclipse.rse.SystemFilterStringPropertyPage">
+         <enabledWhen>
+            <instanceof value="org.eclipse.rse.core.filters.ISystemFilterString"/>
+         </enabledWhen>
       </page>
       <page
-            objectClass="org.eclipse.rse.ui.view.team.SystemTeamViewCategoryNode"
             name="%PropertyPage.TeamViewCategoryNode"
             class="org.eclipse.rse.ui.propertypages.SystemTeamViewCategoryPropertyPage"
             id="org.eclipse.rse.SystemTeamViewCategoryPropertyPage">
+         <enabledWhen>
+            <instanceof value="org.eclipse.rse.ui.view.team.SystemTeamViewCategoryNode"/>
+         </enabledWhen>
       </page>
       <page
-            objectClass="org.eclipse.rse.core.model.ISystemProfile"
             name="%PropertyPage.Profile"
             class="org.eclipse.rse.ui.propertypages.SystemTeamViewProfilePropertyPage"
             id="org.eclipse.rse.SystemProfilePropertyPage">
+         <enabledWhen>
+            <instanceof value="org.eclipse.rse.core.model.ISystemProfile"/>
+         </enabledWhen>
       </page>
       <page
-            objectClass="org.eclipse.rse.ui.view.team.SystemTeamViewSubSystemConfigurationNode"
             name="%PropertyPage.TeamViewSubSystemFactoryNode"
             class="org.eclipse.rse.ui.propertypages.SystemTeamViewSubSystemConfigurationPropertyPage"
             id="org.eclipse.rse.SystemTeamViewSubSystemFactoryPropertyPage">
+         <enabledWhen>
+            <instanceof value="org.eclipse.rse.ui.view.team.SystemTeamViewSubSystemConfigurationNode"/>
+         </enabledWhen>
       </page>
       
    </extension>

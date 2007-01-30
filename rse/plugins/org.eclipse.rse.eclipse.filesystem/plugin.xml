@@ -42,9 +42,7 @@ Contributors:
    			typefilter="folder"
    			id="org.eclipse.rse.eclipse.filesystem.createproject.">
             <visibility> 
-            	<and>
-                	<objectClass name="org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile"/>   
-                </and> 
+                <objectClass name="org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile"/>   
             </visibility>
             
          <action

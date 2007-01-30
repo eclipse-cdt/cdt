@@ -107,9 +107,10 @@ public class SystemUniversalTempFileListener extends SystemTempFileListener
 	* Synchronize the specified remote file with the temporary local file using the 
 	* specified remote file subsystem.
 	* 
-	* @param fs the remote file subsystem of the remote file
+	* @param subsystem the remote file subsystem of the remote file
 	* @param tempFile the temporary file
-	* @param remoteFile the remote file
+	* @param resourceId the remote file
+	* @param monitor progress monitor
 	*/
 	protected void doResourceSynchronization(ISubSystem subsystem, IFile tempFile, String resourceId, IProgressMonitor monitor)
 	{

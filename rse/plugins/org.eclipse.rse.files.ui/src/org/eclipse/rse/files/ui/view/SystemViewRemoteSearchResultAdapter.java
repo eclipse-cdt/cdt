@@ -678,7 +678,7 @@ public class SystemViewRemoteSearchResultAdapter extends AbstractSystemViewAdapt
 	 * temporary object produced by the doDrag.
 	 * @param target the object to be copied to.
 	 * @param sameSystem an indication whether the target and source reside on the same type of system
-	 * @param indicates the type of source
+	 * @param srcType indicates the type of source
 	 * @param monitor the progress monitor
 	 * @return an indication whether the operation was successful or not.
 	 */

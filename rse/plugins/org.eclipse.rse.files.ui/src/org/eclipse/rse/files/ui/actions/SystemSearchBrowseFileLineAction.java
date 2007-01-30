@@ -34,14 +34,14 @@ public class SystemSearchBrowseFileLineAction extends SystemSearchEditFileLineAc
 	 * @param parent the parent shell.
 	 * @param editorId the editor id.
 	 * @param remoteFile the remote file that is to be opened.
-	 * @param line the line number.
+	 * @param searchResult the line number.
 	 */
 	public SystemSearchBrowseFileLineAction(String text, String tooltip, ImageDescriptor image, Shell parent, String editorId, IRemoteFile remoteFile, IRemoteSearchResult searchResult) {
 		super(text, tooltip, image, parent, editorId, remoteFile, searchResult);
 	}
 	
 	/**
-	 * @see org.eclipse.rse.files.ui.actions.SystemSearchEditFileAction#process(IRemoteFile)
+	 * @see org.eclipse.rse.files.ui.actions.SystemEditFileAction#process(IRemoteFile)
 	 */
 	protected void process(IRemoteFile remoteFile) {
 		SystemEditableRemoteFile editableFile = new SystemEditableRemoteFile(remoteFile, _editorId);

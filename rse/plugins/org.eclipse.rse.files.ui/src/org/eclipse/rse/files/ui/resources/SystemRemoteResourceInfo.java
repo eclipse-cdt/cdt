@@ -43,7 +43,7 @@ public class SystemRemoteResourceInfo implements Cloneable {
 
 	/** 
 	 * Sets all of the bits indicated by the mask.
-	 * @param the mask
+	 * @param mask the mask
 	 */
 	public void set(int mask) {
 		flags |= mask;
@@ -51,7 +51,7 @@ public class SystemRemoteResourceInfo implements Cloneable {
 
 	/** 
 	 * Clears all of the bits indicated by the mask.
-	 * @param the mask
+	 * @param mask the mask
 	 */
 	public void clear(int mask) {
 		flags &= ~mask;
@@ -75,7 +75,7 @@ public class SystemRemoteResourceInfo implements Cloneable {
 	/**
 	 * Set the markers for the resource info. <code>null</code> can be used
 	 * to indicate that the resource has no markers.
-	 * @param the marker set
+	 * @param markerSet the marker set
 	 */
 	public void setMarkers(SystemRemoteMarkerSet markerSet) {
 		this.markers = markerSet;

@@ -28,14 +28,14 @@ public interface ISystemRemoteManager {
 
 	/**
 	 * This method is called during plugin startup.
-	 * @param a progress monitor for long running operations, or null
+	 * @param monitor progress monitor for long running operations, or null
 	 * if none is desired.
 	 */
 	public void startup(IProgressMonitor monitor);
 	
 	/**
 	 * This method is called during plugin shutdown.
-	 * @param a progress monitor for long running operations, or null
+	 * @param monitor progress monitor for long running operations, or null
 	 * if none is desired.
 	 */
 	public void shutdown(IProgressMonitor monitor);

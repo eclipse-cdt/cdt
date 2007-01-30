@@ -45,7 +45,7 @@ public class SystemSafeFileOutputStream extends OutputStream {
 	
 	/**
 	 * Constructor for SystemSafeFileOutputStream.
-	 * @param the destination file.
+	 * @param file the destination file.
 	 */
 	public SystemSafeFileOutputStream(File file) throws IOException {
 		this(file.getAbsolutePath(), null);
@@ -53,7 +53,7 @@ public class SystemSafeFileOutputStream extends OutputStream {
 	
 	/**
 	 * Constructor for SystemSafeFileOutputStream.
-	 * @param the destination file name
+	 * @param destinationName the destination file name
 	 */
 	public SystemSafeFileOutputStream(String destinationName) throws IOException {
 		this(destinationName, null);
@@ -61,8 +61,8 @@ public class SystemSafeFileOutputStream extends OutputStream {
 	
 	/**
 	 * Constructor for SystemSafeFileOutputStream.
-	 * @param the destination file name
-	 * @param the temporary file name
+	 * @param destinationPath the destination file name
+	 * @param tempPath the temporary file name
 	 */
 	public SystemSafeFileOutputStream(String destinationPath, String tempPath) throws IOException {
 		destination = new File(destinationPath);
@@ -121,8 +121,8 @@ public class SystemSafeFileOutputStream extends OutputStream {
 	
 	/**
 	 * Copy contents of one file to another.
-	 * @param the source file
-	 * @param the destination file
+	 * @param sourceFile the source file
+	 * @param destinationFile the destination file
 	 */
 	protected void copy(File sourceFile, File destinationFile) throws IOException {
 		
@@ -137,7 +137,7 @@ public class SystemSafeFileOutputStream extends OutputStream {
 	
 	/**
 	 * Create the temporary file at the given path.
-	 * @param the path of the temporary file to be created
+	 * @param tempPath the path of the temporary file to be created
 	 */
 	protected void createTempFile(String tempPath) throws IOException {
 		
@@ -205,7 +205,7 @@ public class SystemSafeFileOutputStream extends OutputStream {
 	
 	/**
 	 * Write an integer.
-	 * @param the integer to write
+	 * @param b the integer to write
 	 */
 	public void write(int b) throws IOException {
 		

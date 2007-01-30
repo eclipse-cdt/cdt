@@ -393,7 +393,6 @@ public boolean isDynamic()
  *
  * @param menu the menu to add the item to
  * @param file the file bing edited
- * @param registry the editor registry
  */
 protected void createDefaultMenuItem(Menu menu, final IRemoteFile file) 
 {

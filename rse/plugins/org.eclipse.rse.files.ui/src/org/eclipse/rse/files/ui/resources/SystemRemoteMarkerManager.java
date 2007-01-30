@@ -81,8 +81,8 @@ public class SystemRemoteMarkerManager implements ISystemRemoteManager {
 
 	/**
 	 * Adds the given markers to the given resource.
-	 * @param the resource
-	 * @param the marker infos 
+	 * @param resource the resource
+	 * @param newMarkers the marker infos 
 	 */
 	public void add(ISystemRemoteResource resource, SystemRemoteMarkerInfo[] newMarkers) {
 
@@ -131,8 +131,8 @@ public class SystemRemoteMarkerManager implements ISystemRemoteManager {
 
 	/**
 	 * Removes a marker.
-	 * @param the resource.
-	 * @param the marker id
+	 * @param resource the resource.
+	 * @param id the marker id
 	 */
 	public void removeMarker(ISystemRemoteResource resource, long id) {
 		SystemRemoteMarkerInfo markerInfo = findMarkerInfo(resource, id);
@@ -166,8 +166,8 @@ public class SystemRemoteMarkerManager implements ISystemRemoteManager {
 
 	/**
 	 * Finds a marker info given a resource, and the marker id.
-	 * @param the resource.
-	 * @param the marker id
+	 * @param resource the resource.
+	 * @param id the marker id
 	 * @return the marker info
 	 */
 	public SystemRemoteMarkerInfo findMarkerInfo(ISystemRemoteResource resource, long id) {
@@ -189,9 +189,9 @@ public class SystemRemoteMarkerManager implements ISystemRemoteManager {
 	/**
 	 * Removes markers of the given type, and optionally all the subtypes, from
 	 * the given resource.
-	 * @param the resource
-	 * @param the type
-	 * @param flag indicating whether to include subtypes
+	 * @param resource the resource
+	 * @param type the type
+	 * @param includeSubtypes flag indicating whether to include subtypes
 	 */
 	public void removeMarkers(ISystemRemoteResource resource, String type, boolean includeSubtypes) {
 		SystemRemoteResourceInfo info = ((SystemRemoteResource)(resource)).getResourceInfo();
@@ -284,8 +284,8 @@ public class SystemRemoteMarkerManager implements ISystemRemoteManager {
 	
 	/**
  	 * Returns the marker with the given id or <code>null</code> if none is found.
- 	 * @param the resource
- 	 * @param the id of the marker to find
+ 	 * @param resource the resource
+ 	 * @param id the id of the marker to find
  	 * @return the marker, or <code>null</code> if none s found.
  	 */
 	public ISystemRemoteMarker findMarker(ISystemRemoteResource resource, long id) {
@@ -296,9 +296,9 @@ public class SystemRemoteMarkerManager implements ISystemRemoteManager {
 	/**
  	 * Returns all markers of the specified type on the given target, and optionally the subtypes as well.
  	 * Passing <code>null</code> for the type specifies a matching target for all types.
- 	 * @param the resource
- 	 * @param the type
- 	 * @param flag indicating whether to include subtypes
+ 	 * @param resource the resource
+ 	 * @param type the type
+ 	 * @param includeSubtypes flag indicating whether to include subtypes
   	 */
 	public ISystemRemoteMarker[] findMarkers(ISystemRemoteResource resource, String type, boolean includeSubtypes) {
 		SystemRemoteResourceInfo info = ((SystemRemoteResource)resource).getResourceInfo();
@@ -350,7 +350,7 @@ public class SystemRemoteMarkerManager implements ISystemRemoteManager {
 
 	/**
 	 * Returns whether marker info is persistent.
-	 * @param the marker info
+	 * @param info the marker info
 	 * @return true if the given marker represented by this info is persistent,
 	 * and false otherwise.
 	 */
@@ -360,7 +360,7 @@ public class SystemRemoteMarkerManager implements ISystemRemoteManager {
 
 	/**
 	 * Returns whether given marker is persistent.
-	 * @param the marker
+	 * @param marker the marker
 	 * @return true if the given marker is persistent, and false
 	 * otherwise.
 	 */
@@ -370,7 +370,7 @@ public class SystemRemoteMarkerManager implements ISystemRemoteManager {
 
 	/**
 	 * Returns whether any of the marker infos are persistent.
-	 * @param the marker infos
+	 * @param infos the marker infos
 	 * @return true if the a marker represented by any of the infos is persistent,
 	 * and false otherwise.
 	 */

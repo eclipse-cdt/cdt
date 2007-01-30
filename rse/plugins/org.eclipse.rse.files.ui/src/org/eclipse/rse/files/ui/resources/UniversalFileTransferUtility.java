@@ -119,7 +119,6 @@ public class UniversalFileTransferUtility
 	 * 
 	 * @param srcFileOrFolder the file to copy
 	 * @param monitor the progress monitor
-	 * @param shell 
 	 * @return the resulting local replica
 	 */
 	protected static IFile copyRemoteFileToWorkspace(IRemoteFile srcFileOrFolder, IProgressMonitor monitor)

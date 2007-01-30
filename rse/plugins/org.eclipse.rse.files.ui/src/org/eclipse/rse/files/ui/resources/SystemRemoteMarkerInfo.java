@@ -50,7 +50,7 @@ public class SystemRemoteMarkerInfo implements ISystemRemoteMarkerSetElement, Cl
 	
 	/**
 	 * Set the marker id.
-	 * @param the id
+	 * @param id the id
 	 */
 	public void setId(long id) {
 		this.id = id;
@@ -65,7 +65,7 @@ public class SystemRemoteMarkerInfo implements ISystemRemoteMarkerSetElement, Cl
 	
 	/**
 	 * Set the type.
-	 * @param the marker type
+	 * @param type the marker type
 	 */
 	public void setType(String type) {
 		this.type = type;
@@ -81,7 +81,7 @@ public class SystemRemoteMarkerInfo implements ISystemRemoteMarkerSetElement, Cl
 
 	/**
 	 * Set the attributes.
-	 * @param the attributes
+	 * @param attributes the attributes
 	 */
 	public void setAttributes(Map attributes) {
 		this.attributes = attributes;
@@ -97,7 +97,7 @@ public class SystemRemoteMarkerInfo implements ISystemRemoteMarkerSetElement, Cl
 	
 	/**
 	 * Get the attributes.
-	 * @param specify whether to return a copy or the actual map
+	 * @param makeCopy specify whether to return a copy or the actual map
 	 * @return the attribute map
 	 */
 	public Map getAttributes(boolean makeCopy) {
@@ -118,7 +118,7 @@ public class SystemRemoteMarkerInfo implements ISystemRemoteMarkerSetElement, Cl
 	
 	/**
 	 * Set the creation time.
-	 * @param the creation time
+	 * @param creationTime the creation time
 	 */
 	public void setCreationTime(long creationTime) {
 		this.creationTime = creationTime;
@@ -143,7 +143,7 @@ public class SystemRemoteMarkerInfo implements ISystemRemoteMarkerSetElement, Cl
 	
 	/**
 	 * Get attribute values given the attribute names.
-	 * @param the array of attribute names
+	 * @param attributeNames the array of attribute names
 	 * @return the array of attribute values
 	 */
 	public Object[] getAttributes(String[] attributeNames) {
@@ -157,7 +157,7 @@ public class SystemRemoteMarkerInfo implements ISystemRemoteMarkerSetElement, Cl
 	
 	/**
 	 * Get the attribute value given the attribute name.
-	 * @param the attribute name
+	 * @param attributeName the attribute name
 	 * @return the attribute value
 	 */
 	public Object getAttribute(String attributeName) {
@@ -172,7 +172,7 @@ public class SystemRemoteMarkerInfo implements ISystemRemoteMarkerSetElement, Cl
 	
 	/**
 	 * Checks if attribute value is valid.
-	 * @param the attribute value
+	 * @param value the attribute value
 	 * @return true if value is null, or a String, or an Integer, or a Boolean
 	 */ 
 	protected static boolean isValidAttributeValue(Object value) {
@@ -181,8 +181,8 @@ public class SystemRemoteMarkerInfo implements ISystemRemoteMarkerSetElement, Cl
 	
 	/**
 	 * Set the value of an attribute.
-	 * @param the attribute name
-	 * @param the value of the attribute
+	 * @param attributeName the attribute name
+	 * @param value the value of the attribute
 	 */
 	public void setAttribute(String attributeName, Object value) {
 	
@@ -217,8 +217,8 @@ public class SystemRemoteMarkerInfo implements ISystemRemoteMarkerSetElement, Cl
 
 	/**
 	 * Set the values of an array of attributes
-	 * @param the attribute names
-	 * @param the attribute values
+	 * @param attributeNames the attribute names
+	 * @param values the attribute values
 	 */
 	public void setAttributes(String[] attributeNames, Object[] values) {
 		

@@ -102,7 +102,7 @@ public class SystemRemoteMarkerTypeDefinitionCache {
 	
 	/**
  	* Returns whether the given marker type is defined to be persistent.
- 	* @param the marker type
+ 	* @param type the marker type
  	* @return true if marker type is persistent, false otherwise
  	*/
 	public boolean isPersistent(String type) {
@@ -112,8 +112,8 @@ public class SystemRemoteMarkerTypeDefinitionCache {
 	
 	/**
  	* Returns whether the given type is a subtype of the given supertype.
- 	* @param a marker type
- 	* @param another marker type
+ 	* @param type a marker type
+ 	* @param superType another marker type
  	* @return true if type is a subtype of supertype, false otherwise
  	*/
 	public boolean isSubtype(String type, String superType) {

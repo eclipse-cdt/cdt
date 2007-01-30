@@ -29,15 +29,15 @@ public interface ISystemRemoteEditResourceManager extends ISystemRemoteManager {
 	 * edit object associated with it, and this object will take care
 	 * of remote editing of that object. Using the remote path as a key ensures
 	 * that a resource with a unique path will have a unique remote object.
-	 * @param the remote path to use as a key
-	 * @param the editbable object
+	 * @param key remote path to use as a key
+	 * @param editObj editbable object
 	 * @return the previously stored edit object, or null if none
 	 */
 	public Object putEditObject(ISystemRemotePath key, Object editObj);
 	
 	/**
 	 * Get a remote edit object given the remote path as a key.
-	 * @param the remote path as a key
+	 * @param key remote path as a key
 	 * @return the stored edit object
 	 */
 	public Object getEditObject(ISystemRemotePath key);

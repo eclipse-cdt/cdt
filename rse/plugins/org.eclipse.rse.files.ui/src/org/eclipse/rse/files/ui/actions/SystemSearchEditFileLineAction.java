@@ -51,7 +51,7 @@ public class SystemSearchEditFileLineAction extends SystemEditFileAction {
 	 * @param parent the parent shell.
 	 * @param editorId the editor id.
 	 * @param remoteFile the remote file that is to be opened.
-	 * @param line the line number.
+	 * @param searchResult the line number.
 	 */
 	public SystemSearchEditFileLineAction(String text, String tooltip, ImageDescriptor image, Shell parent, String editorId, IRemoteFile remoteFile, IRemoteSearchResult searchResult) {
 		super(text, tooltip, image, parent, editorId);

@@ -47,7 +47,7 @@ public class SystemRemoteMarkerSet {
 	
 	/**
 	 * Constructor for SystemRemoteMarkerSet.
-	 * @param the initial capacity
+	 * @param capacity the initial capacity
 	 */
 	public SystemRemoteMarkerSet(int capacity) {
 		super();
@@ -56,7 +56,7 @@ public class SystemRemoteMarkerSet {
 	
 	/**
 	 * Add an element to the set.
-	 * @param the element to add to the set
+	 * @param element the element to add to the set
 	 */
 	public void add(ISystemRemoteMarkerSetElement element) {
 		
@@ -104,7 +104,7 @@ public class SystemRemoteMarkerSet {
 	
 	/**
 	 * Add multiple elements.
-	 * @param the elements to add to the set
+	 * @param elements the elements to add to the set
 	 */
 	public void addAll(ISystemRemoteMarkerSetElement[] elements) {
 		
@@ -115,7 +115,7 @@ public class SystemRemoteMarkerSet {
 	
 	/**
 	 * Returns whether the set contains an element with the given id.
-	 * @param the id to search for
+	 * @param id the id to search for
 	 * @return true if there is an element with the given id, false otherwise
 	 */
 	public boolean contains(long id) {
@@ -179,7 +179,7 @@ public class SystemRemoteMarkerSet {
 	/**
 	 * Returns the set element with the given id, or null if none
 	 * is found.
-	 * @param the id to search for
+	 * @param id the id to search for
 	 * @return the element, if found, or null
 	 */
 	public ISystemRemoteMarkerSetElement get(long id) {
@@ -283,7 +283,7 @@ public class SystemRemoteMarkerSet {
 
 	/**
 	 * Removes an element with the given id from the set.
-	 * @param the id of the element to remove.
+	 * @param id the id of the element to remove.
 	 */	
 	public void remove(long id) {
 		int hash = hashFor(id) % elements.length;
@@ -318,7 +318,7 @@ public class SystemRemoteMarkerSet {
 	/**
 	 * Removes the given element from the set. Uses the element id
 	 * to search for the element in the set.
-	 * @param the element
+	 * @param element the element
 	 */
 	public void remove(ISystemRemoteMarkerSetElement element) {
 		remove(element.getId());
@@ -326,7 +326,7 @@ public class SystemRemoteMarkerSet {
 	
 	/**
 	 * Removes all of the elements in the given array from the set.
-	 * @param the array of elements to remove
+	 * @param elements the array of elements to remove
 	 */
 	public void removeAll(ISystemRemoteMarkerSetElement[] elements) {
 		

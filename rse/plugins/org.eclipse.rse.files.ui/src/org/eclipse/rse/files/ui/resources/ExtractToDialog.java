@@ -44,7 +44,6 @@ public class ExtractToDialog extends SystemSelectRemoteFileOrFolderDialog {
 	 * 
 	 * @param shell The shell to hang the dialog off of
 	 * @param title The title to give the dialog
-	 * @param fileMode True if selecting files, false if selecting folders
 	 */
 	public ExtractToDialog(Shell shell, String title)
 	{

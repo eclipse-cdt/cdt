@@ -680,7 +680,7 @@ public class SystemQualifiedRemoteFolderCombo extends Composite
 
 	/**
 	 * Prepares this composite control and sets the default layout data.
-	 * @param Number of columns the new group will contain.     
+	 * @param numColumns Number of columns the new group will contain.     
 	 */
 	protected Composite prepareComposite(int numColumns)
 	{

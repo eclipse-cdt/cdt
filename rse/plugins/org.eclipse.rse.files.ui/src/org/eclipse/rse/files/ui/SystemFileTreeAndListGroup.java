@@ -135,7 +135,7 @@ public class SystemFileTreeAndListGroup extends org.eclipse.ui.internal.ide.dial
     /**
      *	Handle the selection of an item in the tree viewer.
      *  Intercept of parent so we can record the last selected tree node.
-     *	@param selection ISelection
+     *	@param event the selection changed event
      */
     public void selectionChanged(SelectionChangedEvent event) 
     {

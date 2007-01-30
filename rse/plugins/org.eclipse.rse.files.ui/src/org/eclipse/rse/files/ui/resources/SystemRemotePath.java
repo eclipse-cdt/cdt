@@ -31,8 +31,8 @@ public class SystemRemotePath implements ISystemRemotePath {
 
 	/**
 	 * Constructor for SystemRemotePath.
-	 * @param profile name
-	 * @param connection name
+	 * @param profileName profile name
+	 * @param connectionName connection name
 	 * @param path
 	 */
 	public SystemRemotePath(String profileName, String connectionName, String path) {
@@ -44,7 +44,7 @@ public class SystemRemotePath implements ISystemRemotePath {
 	
 	/**
 	 * Set the profile name.
-	 * @param the profile name
+	 * @param profileName the profile name
 	 */
 	public void setProfileName(String profileName) {
 		this.profileName = profileName;
@@ -52,7 +52,7 @@ public class SystemRemotePath implements ISystemRemotePath {
 	
 	/**
 	 * Set the connection name.
-	 * @param the connection name
+	 * @param connectionName the connection name
 	 */
 	public void setConnectionName(String connectionName) {
 		this.connectionName = connectionName;
@@ -60,7 +60,7 @@ public class SystemRemotePath implements ISystemRemotePath {
 	
 	/**
 	 * Set the remote path.
-	 * @param the path
+	 * @param path the path
 	 */
 	public void setPath(String path) {
 		this.path = path;

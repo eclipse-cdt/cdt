@@ -1408,7 +1408,6 @@ public class SystemViewRemoteFileAdapter
 	 * set.  For optimal performance, this should be overridden.
 	 * 
 	 * @param set the set of objects to copy
-	 * @param sameSystemType indication of whether the source and target reside on the same type of system
 	 * @param monitor the progress monitor
 	 * @return a temporary workspace copies of the object that was copied
 	 * 
@@ -1667,8 +1666,8 @@ public class SystemViewRemoteFileAdapter
 	
 	/**
 	 *  Perform drop from the "fromSet" of objects to the "to" object
-	 * @param from the source objects for the drop
-	 * @param to the target object for the drop
+	 * @param fromSet the source objects for the drop
+	 * @param target the target object for the drop
 	 * @param sameSystemType indication of whether the source and target reside of the same type of system
 	 * @param sameSystem indication of whether the source and target are on the same system
 	 * @param srcType the type of objects to be dropped
@@ -1935,8 +1934,9 @@ public class SystemViewRemoteFileAdapter
 	 * @param src the object to be copied.  If the target and source are not on the same system, then this is a
 	 * temporary object produced by the doDrag.
 	 * @param target the object to be copied to.
+	 * @param sameSystemType indication of whether the source and target reside on the same type of system
 	 * @param sameSystem an indication whether the target and source reside on the same type of system
-	 * @param srcType type of source being transferred
+	 * @param sourceType type of source being transferred
 	 * @param monitor the progress monitor
 	 * @return an indication whether the operation was successful or not.
 	 */

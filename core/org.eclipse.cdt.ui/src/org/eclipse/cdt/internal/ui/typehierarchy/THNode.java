@@ -96,18 +96,10 @@ public class THNode implements IAdaptable {
 	}
 
 	public void addChild(THNode childNode) {
-		switch(fChildren.size()) {
-		case 0:
-			fChildren= Collections.singletonList(childNode);
-			break;
-		case 1:
-			fChildren= new ArrayList(fChildren);
-			fChildren.add(childNode);
-			break;
-		default:
-			fChildren.add(childNode);
-			break;
-		}
+		if (fChildren.isEmpty()) {
+			fChildren= new ArrayList();
+		}			
+		fChildren.add(childNode);
 	}
 
 	public boolean hasChildren() {

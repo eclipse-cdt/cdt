@@ -2293,7 +2293,11 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IR
         action = new TextOperationAction(CEditorMessages.getResourceBundle(), "OpenOutline.", this, CSourceViewer.SHOW_OUTLINE, true); //$NON-NLS-1$
         action.setActionDefinitionId(ICEditorActionDefinitionIds.OPEN_OUTLINE);
         setAction("OpenOutline", action); //$NON-NLS-1$*/
-        
+
+        action = new TextOperationAction(CEditorMessages.getResourceBundle(), "OpenHierarchy.", this, CSourceViewer.SHOW_HIERARCHY, true); //$NON-NLS-1$
+        action.setActionDefinitionId(ICEditorActionDefinitionIds.OPEN_QUICK_TYPE_HIERARCHY);
+        setAction("OpenHierarchy", action); //$NON-NLS-1$*/
+
         action = new GoToNextPreviousMemberAction(CEditorMessages.getResourceBundle(), "GotoNextMember.", this, true); //$NON-NLS-1$
         action.setActionDefinitionId(ICEditorActionDefinitionIds.GOTO_NEXT_MEMBER);
         setAction(GoToNextPreviousMemberAction.PREVIOUS_MEMBER, action);
@@ -2340,6 +2344,7 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IR
 			addAction(menu, IContextMenuConstants.GROUP_OPEN, "OpenCallHierarchy"); //$NON-NLS-1$
 	
 			addAction(menu, IContextMenuConstants.GROUP_OPEN, "OpenOutline"); //$NON-NLS-1$
+			addAction(menu, IContextMenuConstants.GROUP_OPEN, "OpenHierarchy"); //$NON-NLS-1$
 		}
 		
 		ActionContext context= new ActionContext(getSelectionProvider().getSelection());

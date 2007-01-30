@@ -52,9 +52,12 @@ public class CSourceViewer extends ProjectionViewer implements IPropertyChangeLi
 
     /** Show outline operation id. */
     public static final int SHOW_OUTLINE = 101;
+    public static final int SHOW_HIERARCHY = 102;
     
     /** Presents outline. */
     private IInformationPresenter fOutlinePresenter;
+    /** Presents type hierarchy. */
+    private IInformationPresenter fHierarchyPresenter;
 
     private List fTextConverters;
 	private boolean fIgnoreTextConverters= false;
@@ -147,6 +150,9 @@ public class CSourceViewer extends ProjectionViewer implements IPropertyChangeLi
 			fOutlinePresenter= cConfiguration.getOutlinePresenter(this);
 			if (fOutlinePresenter != null)
 				fOutlinePresenter.install(this);
+			fHierarchyPresenter= cConfiguration.getHierarchyPresenter(this);
+			if (fHierarchyPresenter != null) 
+				fHierarchyPresenter.install(this);
 		}
 		if (fPreferenceStore != null) {
 			fPreferenceStore.addPropertyChangeListener(this);
@@ -242,6 +248,10 @@ public class CSourceViewer extends ProjectionViewer implements IPropertyChangeLi
             fOutlinePresenter.uninstall();  
             fOutlinePresenter= null;
         }
+        if (fHierarchyPresenter != null) {
+        	fHierarchyPresenter.uninstall();  
+        	fHierarchyPresenter= null;
+        }
 		if (fForegroundColor != null) {
 			fForegroundColor.dispose();
 			fForegroundColor= null;
@@ -308,6 +318,9 @@ public class CSourceViewer extends ProjectionViewer implements IPropertyChangeLi
             case SHOW_OUTLINE:
                 fOutlinePresenter.showInformation();
                 return;
+            case SHOW_HIERARCHY:
+            	fHierarchyPresenter.showInformation();
+            	return;
 			case UNDO:
 				fIgnoreTextConverters= true;
 				super.doOperation(operation);
@@ -328,6 +341,9 @@ public class CSourceViewer extends ProjectionViewer implements IPropertyChangeLi
     public boolean canDoOperation(int operation) {
         if (operation == SHOW_OUTLINE) {
             return fOutlinePresenter != null;
+        }
+        else if (operation == SHOW_HIERARCHY) {
+        	return fHierarchyPresenter != null;
         }
         return super.canDoOperation(operation);
     }

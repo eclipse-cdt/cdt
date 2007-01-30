@@ -39,6 +39,8 @@ public class THLabelProvider extends LabelProvider implements IColorProvider {
     private THHierarchyModel fModel;
     private HashMap fCachedImages= new HashMap();
 	private Color fColorInactive;
+	private boolean fMarkImplementers= true;
+	private boolean fHideNonImplementers= false;
     
     public THLabelProvider(Display display, THHierarchyModel model) {
         fColorInactive= display.getSystemColor(SWT.COLOR_DARK_GRAY);
@@ -50,7 +52,8 @@ public class THLabelProvider extends LabelProvider implements IColorProvider {
             THNode node= (THNode) element;
             ICElement decl= node.getElement();
             if (decl != null) {
-            	if (node.isFiltered()) {
+            	if (node.isFiltered() ||
+            			(fHideNonImplementers && !node.isImplementor())) {
             		fCLabelProvider.setImageFlags(CElementImageProvider.LIGHT_TYPE_ICONS);
             	}
             	Image image= fCLabelProvider.getImage(decl);
@@ -98,7 +101,7 @@ public class THLabelProvider extends LabelProvider implements IColorProvider {
                 flags |= CElementImageDescriptor.REFERENCED_BY;
             }
         }
-        if (node.isImplementor()) {
+        if (fMarkImplementers && node.isImplementor()) {
         	flags |= CElementImageDescriptor.DEFINES;
         }
 
@@ -130,4 +133,12 @@ public class THLabelProvider extends LabelProvider implements IColorProvider {
     public void setShowFiles(boolean show) {
 		fCLabelProvider.setTextFlags(show ? LABEL_OPTIONS_SHOW_FILES : LABEL_OPTIONS_SIMPLE);
     }
+
+	public void setMarkImplementers(boolean val) {
+		fMarkImplementers= val;
+	}
+
+	public void setHideNonImplementers(boolean val) {
+		fHideNonImplementers= val;
+	}
 }

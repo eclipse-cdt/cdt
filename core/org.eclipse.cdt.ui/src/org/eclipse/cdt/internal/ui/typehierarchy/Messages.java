@@ -26,6 +26,8 @@ public class Messages extends NLS {
 	public static String THHistoryListAction_HistoryList_title;
 	public static String THHistoryListAction_label;
 	public static String THHistoryListAction_Remove;
+	public static String THInformationControl_regularTitle;
+	public static String THInformationControl_showDefiningTypesTitle;
 	public static String THViewPart_AutomaticOrientation;
 	public static String THViewPart_Cancel;
 	public static String THViewPart_Cancel_tooltip;

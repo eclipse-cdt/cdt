@@ -68,10 +68,10 @@ class THHierarchyModel {
 	
 	private Job fJob;
 	private Display fDisplay;
-	private THViewPart fView;
+	private ITHModelPresenter fView;
 	private WorkingSetFilterUI fFilter;
 	
-	public THHierarchyModel(THViewPart view, Display display) {
+	public THHierarchyModel(ITHModelPresenter view, Display display) {
 		fDisplay= display;
 		fView= view;
 	}
@@ -127,7 +127,7 @@ class THHierarchyModel {
 		}
 		fJob= new BackgroundJob();
 		fJob.setRule(RULE);
-		IWorkbenchSiteProgressService ps= (IWorkbenchSiteProgressService) fView.getSite().getAdapter(IWorkbenchSiteProgressService.class);
+		IWorkbenchSiteProgressService ps= fView.getProgressService();
 		if (ps != null) {
 			ps.schedule(fJob, 0L, true);
 		}
@@ -395,8 +395,7 @@ class THHierarchyModel {
 
 	private boolean isImplementor(ICElement element) {
 		if (element == null 
-				|| fSelectedMember == null || fMemberSignatureToSelect == null
-				|| fGraph.isTrivial()) {
+				|| fSelectedMember == null || fMemberSignatureToSelect == null) {
 			return false;
 		}
 		THGraphNode gnode= fGraph.getNode(element);
@@ -419,5 +418,12 @@ class THHierarchyModel {
 
 	public ICElement getSelectedMember() {
 		return fSelectedMember;
+	}
+
+	public boolean hasTrivialHierarchy() {
+		if (fRootNodes == null || fRootNodes.length == 0) {
+			return true;
+		}
+		return fRootNodes.length == 1 && !fRootNodes[0].hasChildren();
 	}
 }

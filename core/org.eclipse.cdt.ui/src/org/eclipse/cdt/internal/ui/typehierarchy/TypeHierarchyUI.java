@@ -16,11 +16,14 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITextSelection;
+import org.eclipse.jface.text.Region;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.texteditor.ITextEditor;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.DOMException;
@@ -44,7 +47,6 @@ import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.model.IWorkingCopy;
 import org.eclipse.cdt.ui.CUIPlugin;
 
-import org.eclipse.cdt.internal.ui.editor.CEditor;
 import org.eclipse.cdt.internal.ui.util.ExceptionHandler;
 import org.eclipse.cdt.internal.ui.viewsupport.FindNameForSelectionVisitor;
 import org.eclipse.cdt.internal.ui.viewsupport.IndexUI;
@@ -85,35 +87,55 @@ public class TypeHierarchyUI {
         return null;        
     }
 
-    public static void open(final CEditor editor, final ITextSelection sel) {
+	public static ICElement[] getInput(final ITextEditor editor, IRegion region) {
 		if (editor != null) {
-			final ICProject project= editor.getInputCElement().getCProject();
 			final IEditorInput editorInput = editor.getEditorInput();
-			final Display display= Display.getCurrent();
-			
-			Job job= new Job(Messages.TypeHierarchyUI_OpenTypeHierarchy) {
-				protected IStatus run(IProgressMonitor monitor) {
-					try {
-						final ICElement[] elems= findInput(project, editorInput, sel);
-						if (elems != null && elems.length == 2) {
-							display.asyncExec(new Runnable() {
-								public void run() {
-									openInViewPart(editor.getSite().getWorkbenchWindow(), elems[0], elems[1]);
-								}});
-						}
-						return Status.OK_STATUS;
-					} 
-					catch (CoreException e) {
-						return e.getStatus();
-					}
+			ICElement inputCElement = CUIPlugin.getDefault().getWorkingCopyManager().getWorkingCopy(editorInput);
+			if (inputCElement != null) {
+				final ICProject project= inputCElement.getCProject();
+				try {
+					return findInput(project, editorInput, region);
+				} catch (CoreException e) {
+					CUIPlugin.getDefault().log(e);
 				}
-			};
-			job.setUser(true);
-			job.schedule();
+			}
+		}
+		return null;
+	}
+
+    public static void open(final ITextEditor editor, final ITextSelection sel) {
+		if (editor != null) {
+			ICElement inputCElement = CUIPlugin.getDefault().getWorkingCopyManager().getWorkingCopy(editor.getEditorInput());
+			if (inputCElement != null) {
+				final ICProject project= inputCElement.getCProject();
+				final IEditorInput editorInput = editor.getEditorInput();
+				final Display display= Display.getCurrent();
+
+				Job job= new Job(Messages.TypeHierarchyUI_OpenTypeHierarchy) {
+					protected IStatus run(IProgressMonitor monitor) {
+						try {
+							IRegion reg= new Region(sel.getOffset(), sel.getLength());
+							final ICElement[] elems= findInput(project, editorInput, reg);
+							if (elems != null && elems.length == 2) {
+								display.asyncExec(new Runnable() {
+									public void run() {
+										openInViewPart(editor.getSite().getWorkbenchWindow(), elems[0], elems[1]);
+									}});
+							}
+							return Status.OK_STATUS;
+						} 
+						catch (CoreException e) {
+							return e.getStatus();
+						}
+					}
+				};
+				job.setUser(true);
+				job.schedule();
+			}
 		}
     }
     
-	private static ICElement[] findInput(ICProject project, IEditorInput editorInput, ITextSelection sel) throws CoreException {
+	private static ICElement[] findInput(ICProject project, IEditorInput editorInput, IRegion sel) throws CoreException {
 		try {
 			IIndex index= CCorePlugin.getIndexManager().getIndex(project, IIndexManager.ADD_DEPENDENCIES | IIndexManager.ADD_DEPENDENT);
 
@@ -231,9 +253,9 @@ public class TypeHierarchyUI {
 		return IndexUI.findAnyDeclaration(index, project, binding);
 	}
 
-	private static IASTName getSelectedName(IIndex index, IEditorInput editorInput, ITextSelection selection) throws CoreException {
-		int selectionStart = selection.getOffset();
-		int selectionLength = selection.getLength();
+	private static IASTName getSelectedName(IIndex index, IEditorInput editorInput, IRegion sel) throws CoreException {
+		int selectionStart = sel.getOffset();
+		int selectionLength = sel.getLength();
 
 		IWorkingCopy workingCopy = CUIPlugin.getDefault().getWorkingCopyManager().getWorkingCopy(editorInput);
 		if (workingCopy == null)

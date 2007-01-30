@@ -70,7 +70,7 @@ class THGraph {
 	}
 	
 	private THGraphEdge addEdge(THGraphNode from, THGraphNode to) {
-		if (createsLoop(from, to)) {
+		if (createsLoopOrIsDuplicate(from, to)) {
 			return null;
 		}
 		THGraphEdge edge= new THGraphEdge(from, to);
@@ -81,7 +81,7 @@ class THGraph {
 		return edge;
 	}
 
-	private boolean createsLoop(THGraphNode from, THGraphNode to) {
+	private boolean createsLoopOrIsDuplicate(THGraphNode from, THGraphNode to) {
 		if (from == to) {
 			return true;
 		}
@@ -105,6 +105,14 @@ class THGraph {
 				if (checked.add(node)) {
 					stack.add(node);
 				}
+			}
+		}
+		// check if edge is already there.
+		List out= from.getOutgoing();
+		for (Iterator iterator = out.iterator(); iterator.hasNext();) {
+			THGraphEdge edge = (THGraphEdge) iterator.next();
+			if (edge.getEndNode() == to) {
+				return true;
 			}
 		}
 		return false;

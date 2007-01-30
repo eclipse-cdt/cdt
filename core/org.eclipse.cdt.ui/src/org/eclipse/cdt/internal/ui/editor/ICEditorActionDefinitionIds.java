@@ -128,6 +128,12 @@ public interface ICEditorActionDefinitionIds extends ITextEditorActionDefinition
 	public static final String OPEN_TYPE_HIERARCHY= "org.eclipse.cdt.ui.edit.open.type.hierarchy"; //$NON-NLS-1$
 
 	/**
+	 * Action definition ID of the navigate -> open type hierarchy action
+	 * (value <code>"org.eclipse.cdt.ui.edit.text.c.open.quick.type.hierarchy"</code>).
+	 */
+	public static final String OPEN_QUICK_TYPE_HIERARCHY= "org.eclipse.cdt.ui.edit.open.quick.type.hierarchy"; //$NON-NLS-1$
+
+	/**
 	 * Action definition ID of the navigate -> open action
 	 * (value <code>"org.eclipse.cdt.ui.edit.text.c.open.editor"</code>).
 	 */

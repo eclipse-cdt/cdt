@@ -83,6 +83,8 @@ import org.eclipse.cdt.internal.ui.text.c.hover.CEditorTextHoverDescriptor;
 import org.eclipse.cdt.internal.ui.text.c.hover.CEditorTextHoverProxy;
 import org.eclipse.cdt.internal.ui.text.contentassist.CContentAssistProcessor;
 import org.eclipse.cdt.internal.ui.text.contentassist.ContentAssistPreference;
+import org.eclipse.cdt.internal.ui.typehierarchy.THInformationControl;
+import org.eclipse.cdt.internal.ui.typehierarchy.THInformationProvider;
 import org.eclipse.cdt.internal.ui.util.ExternalEditorInput;
 
 
@@ -248,6 +250,26 @@ public class CSourceViewerConfiguration extends TextSourceViewerConfiguration {
         presenter.setDocumentPartitioning(getConfiguredDocumentPartitioning(sourceViewer));
 		presenter.setAnchor(AbstractInformationControlManager.ANCHOR_GLOBAL);
 		final IInformationProvider provider = new CElementContentProvider(getEditor());
+        presenter.setInformationProvider(provider, IDocument.DEFAULT_CONTENT_TYPE);
+        presenter.setInformationProvider(provider, ICPartitions.C_MULTI_LINE_COMMENT);
+        presenter.setInformationProvider(provider, ICPartitions.C_SINGLE_LINE_COMMENT);
+        presenter.setInformationProvider(provider, ICPartitions.C_STRING);
+        presenter.setInformationProvider(provider, ICPartitions.C_CHARACTER);
+        presenter.setInformationProvider(provider, ICPartitions.C_PREPROCESSOR);
+        presenter.setSizeConstraints(50, 20, true, false);
+        return presenter;
+    }
+
+    /**
+     * Creates outline presenter. 
+     * @return Presenter with outline view.
+     */
+    public IInformationPresenter getHierarchyPresenter(ISourceViewer sourceViewer) {
+        final IInformationControlCreator hierarchyControlCreator = getHierarchyControlCreator();
+        final InformationPresenter presenter = new InformationPresenter(hierarchyControlCreator);
+        presenter.setDocumentPartitioning(getConfiguredDocumentPartitioning(sourceViewer));
+		presenter.setAnchor(AbstractInformationControlManager.ANCHOR_GLOBAL);
+		final IInformationProvider provider = new THInformationProvider(getEditor());
         presenter.setInformationProvider(provider, IDocument.DEFAULT_CONTENT_TYPE);
         presenter.setInformationProvider(provider, ICPartitions.C_MULTI_LINE_COMMENT);
         presenter.setInformationProvider(provider, ICPartitions.C_SINGLE_LINE_COMMENT);
@@ -732,7 +754,25 @@ public class CSourceViewerConfiguration extends TextSourceViewerConfiguration {
         };
         return conrolCreator;
     }
-    
+
+	/**
+     * Creates control for outline presentation in editor.
+     * @return Control.
+     */
+    private IInformationControlCreator getHierarchyControlCreator() {
+        final IInformationControlCreator conrolCreator = new IInformationControlCreator() {
+            /**
+             * @see org.eclipse.jface.text.IInformationControlCreator#createInformationControl(org.eclipse.swt.widgets.Shell)
+             */
+            public IInformationControl createInformationControl(Shell parent) {
+                int shellStyle= SWT.RESIZE;
+                int treeStyle= SWT.V_SCROLL | SWT.H_SCROLL;
+                return new THInformationControl(parent, shellStyle, treeStyle);   
+            }
+        };
+        return conrolCreator;
+    }
+
 	protected ILanguage getLanguage() {
 		if (fTextEditor == null) {
 			return null;

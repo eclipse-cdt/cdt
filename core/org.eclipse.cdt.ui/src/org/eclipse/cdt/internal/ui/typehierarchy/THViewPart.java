@@ -67,6 +67,7 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.part.PageBook;
 import org.eclipse.ui.part.ViewPart;
+import org.eclipse.ui.progress.IWorkbenchSiteProgressService;
 
 import com.ibm.icu.text.MessageFormat;
 
@@ -94,7 +95,7 @@ import org.eclipse.cdt.internal.ui.viewsupport.WorkingSetFilterUI;
 /**
  * The view part for the include browser.
  */
-public class THViewPart extends ViewPart {
+public class THViewPart extends ViewPart implements ITHModelPresenter {
 	private static final int MAX_HISTORY_SIZE = 10;
     private static final String TRUE = String.valueOf(true);
     private static final String KEY_WORKING_SET_FILTER = "workingSetFilter"; //$NON-NLS-1$
@@ -868,6 +869,7 @@ public class THViewPart extends ViewPart {
     	if (!fShowsMessage) {
     		fIgnoreSelectionChanges++;
     		try {
+    			fHierarchyLabelProvider.setMarkImplementers(!fModel.hasTrivialHierarchy());
     			fHierarchyTreeViewer.refresh();
     			fMemberViewer.refresh();
     			setSelections();
@@ -1050,5 +1052,9 @@ public class THViewPart extends ViewPart {
 			updateView();
 			break;
 		}		
+	}
+
+	public IWorkbenchSiteProgressService getProgressService() {
+		return (IWorkbenchSiteProgressService) getSite().getAdapter(IWorkbenchSiteProgressService.class);	
 	}
 }

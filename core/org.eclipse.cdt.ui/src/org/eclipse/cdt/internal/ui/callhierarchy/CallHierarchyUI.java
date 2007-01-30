@@ -21,6 +21,7 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.texteditor.ITextEditor;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.DOMException;
@@ -37,7 +38,6 @@ import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.ui.CUIPlugin;
 
 import org.eclipse.cdt.internal.ui.actions.OpenActionUtil;
-import org.eclipse.cdt.internal.ui.editor.CEditor;
 import org.eclipse.cdt.internal.ui.util.ExceptionHandler;
 import org.eclipse.cdt.internal.ui.viewsupport.CElementLabels;
 import org.eclipse.cdt.internal.ui.viewsupport.IndexUI;
@@ -91,31 +91,34 @@ public class CallHierarchyUI {
 		return null;
 	}
 
-    public static void open(final CEditor editor, final ITextSelection sel) {
+    public static void open(final ITextEditor editor, final ITextSelection sel) {
 		if (editor != null) {
-			final ICProject project= editor.getInputCElement().getCProject();
-			final IEditorInput editorInput = editor.getEditorInput();
-			final Display display= Display.getCurrent();
-			
-			Job job= new Job(CHMessages.CallHierarchyUI_label) {
-				protected IStatus run(IProgressMonitor monitor) {
-					try {
-						final ICElement[] elems= findDefinitions(project, editorInput, sel);
-						if (elems != null && elems.length > 0) {
-							display.asyncExec(new Runnable() {
-								public void run() {
-									openInViewPart(editor.getSite().getWorkbenchWindow(), elems);
-								}});
+			ICElement inputCElement = CUIPlugin.getDefault().getWorkingCopyManager().getWorkingCopy(editor.getEditorInput());
+			if (inputCElement != null) {
+				final ICProject project= inputCElement.getCProject();
+				final IEditorInput editorInput = editor.getEditorInput();
+				final Display display= Display.getCurrent();
+
+				Job job= new Job(CHMessages.CallHierarchyUI_label) {
+					protected IStatus run(IProgressMonitor monitor) {
+						try {
+							final ICElement[] elems= findDefinitions(project, editorInput, sel);
+							if (elems != null && elems.length > 0) {
+								display.asyncExec(new Runnable() {
+									public void run() {
+										openInViewPart(editor.getSite().getWorkbenchWindow(), elems);
+									}});
+							}
+							return Status.OK_STATUS;
+						} 
+						catch (CoreException e) {
+							return e.getStatus();
 						}
-						return Status.OK_STATUS;
-					} 
-					catch (CoreException e) {
-						return e.getStatus();
 					}
-				}
-			};
-			job.setUser(true);
-			job.schedule();
+				};
+				job.setUser(true);
+				job.schedule();
+			}
 		}
     }
     

@@ -15,16 +15,17 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.IWorkbenchSite;
+import org.eclipse.ui.texteditor.ITextEditor;
 
 import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.actions.SelectionDispatchAction;
 
-import org.eclipse.cdt.internal.ui.editor.CEditor;
 
 
 public class OpenTypeHierarchyAction extends SelectionDispatchAction {
 
-	private CEditor fEditor;
+	private ITextEditor fEditor;
 
 	public OpenTypeHierarchyAction(IWorkbenchSite site) {
 		super(site);
@@ -32,10 +33,10 @@ public class OpenTypeHierarchyAction extends SelectionDispatchAction {
 		setToolTipText(Messages.OpenTypeHierarchyAction_tooltip);
 	}
 	
-	public OpenTypeHierarchyAction(CEditor editor) {
+	public OpenTypeHierarchyAction(ITextEditor editor) {
 		this(editor.getSite());
 		fEditor= editor;
-		setEnabled(fEditor != null && fEditor.getInputCElement() != null);
+		setEnabled(fEditor != null && CUIPlugin.getDefault().getWorkingCopyManager().getWorkingCopy(editor.getEditorInput()) != null);
 	}
 
 	public void run(ITextSelection sel) {

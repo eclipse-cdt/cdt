@@ -993,6 +993,11 @@
             commandId="org.eclipse.cdt.ui.edit.open.outline"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
      <key
+            sequence="M1+T"
+            contextId="org.eclipse.cdt.ui.cEditorScope"
+            commandId="org.eclipse.cdt.ui.edit.open.quick.type.hierarchy"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
+     <key
             sequence="M1+M2+ARROW_DOWN"
             contextId="org.eclipse.cdt.ui.cEditorScope"
             commandId="org.eclipse.cdt.ui.edit.text.c.goto.next.member"
@@ -1125,6 +1130,12 @@
             description="%ActionDefinition.showOutline.description"
             categoryId="org.eclipse.cdt.ui.category.source"
             id="org.eclipse.cdt.ui.edit.open.outline">
+      </command>
+      <command
+            name="%ActionDefinition.showQuickTypeHierarchy.name"
+            description="%ActionDefinition.showQuickTypeHierarchy.description"
+            categoryId="org.eclipse.cdt.ui.category.source"
+            id="org.eclipse.cdt.ui.edit.open.quick.type.hierarchy">
       </command>
       <command
             name="%ActionDefinition.GotoNextMember.name"

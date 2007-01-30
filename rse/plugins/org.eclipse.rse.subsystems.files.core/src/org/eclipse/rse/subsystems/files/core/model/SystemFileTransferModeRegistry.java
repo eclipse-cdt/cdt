@@ -39,8 +39,8 @@ import org.eclipse.ui.IFileEditorMapping;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IPropertyListener;
 import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.XMLMemento;
-import org.eclipse.ui.internal.Workbench;
 
 
 
@@ -107,7 +107,7 @@ public class SystemFileTransferModeRegistry
 		// editor registry. We can be out of sync because we may not have
 		// been listening for editor registry changes (e.g. if our plugin wasn't
 		// started while those changes were made).
-		IWorkbench wb = Workbench.getInstance();
+		IWorkbench wb = PlatformUI.getWorkbench();
 		if (wb != null)
 		{
 			IEditorRegistry registry = wb.getEditorRegistry();

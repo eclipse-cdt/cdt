@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *     Anton Leherbauer (Wind River Systems)
  *     Bryan Wilkinson (QNX)
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.text.contentassist;
 
@@ -99,6 +100,11 @@ public class DOMCompletionContributor implements ICompletionContributor {
 			// Find all macros if there is a prefix
 			if (prefix.length() > 0 && handleMacros) {
 				IASTPreprocessorMacroDefinition[] macros = completionNode.getTranslationUnit().getMacroDefinitions();
+				if (macros != null)
+					for (int i = 0; i < macros.length; ++i)
+						if (CharArrayUtils.equals(macros[i].getName().toCharArray(), 0, prefix.length(), prefix.toCharArray(), false))
+							handleMacro(macros[i], completionNode, offset, viewer, proposals);
+				macros = completionNode.getTranslationUnit().getBuiltinMacroDefinitions();
 				if (macros != null)
 					for (int i = 0; i < macros.length; ++i)
 						if (CharArrayUtils.equals(macros[i].getName().toCharArray(), 0, prefix.length(), prefix.toCharArray(), false))

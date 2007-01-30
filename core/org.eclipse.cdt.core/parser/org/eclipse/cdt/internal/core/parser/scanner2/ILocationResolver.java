@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2005 IBM Corporation and others.
+ * Copyright (c) 2004, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  * IBM - Initial API and implementation
+ * Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.parser.scanner2;
 
@@ -28,6 +29,7 @@ import org.eclipse.cdt.internal.core.dom.parser.ASTPreprocessorSelectionResult;
 public interface ILocationResolver {
     
 	public IASTPreprocessorMacroDefinition [] getMacroDefinitions();
+	public IASTPreprocessorMacroDefinition [] getBuiltinMacroDefinitions();
 	public IASTPreprocessorIncludeStatement [] getIncludeDirectives();
 	public IASTPreprocessorStatement [] getAllPreprocessorStatements();
 

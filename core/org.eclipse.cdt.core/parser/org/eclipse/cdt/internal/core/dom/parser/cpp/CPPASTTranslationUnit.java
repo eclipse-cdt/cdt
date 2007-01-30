@@ -467,6 +467,17 @@ public class CPPASTTranslationUnit extends CPPASTNode implements
     /*
      * (non-Javadoc)
      * 
+     * @see org.eclipse.cdt.core.dom.ast.IASTTranslationUnit#getMacroDefinitions()
+     */
+    public IASTPreprocessorMacroDefinition[] getBuiltinMacroDefinitions() {
+       if( resolver == null ) return EMPTY_PREPROCESSOR_MACRODEF_ARRAY;
+       IASTPreprocessorMacroDefinition [] result = resolver.getBuiltinMacroDefinitions();
+       return result;
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
      * @see org.eclipse.cdt.core.dom.ast.IASTTranslationUnit#getIncludeDirectives()
      */
     public IASTPreprocessorIncludeStatement[] getIncludeDirectives() {

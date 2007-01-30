@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2006 IBM Corporation and others.
+ * Copyright (c) 2004, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,6 +11,8 @@
  * Anton Leherbauer (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.parser.scanner2;
+
+import java.util.ArrayList;
 
 import org.eclipse.cdt.core.dom.ILinkage;
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
@@ -1452,6 +1454,20 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
         return result;
     }
 
+    public IASTPreprocessorMacroDefinition[] getBuiltinMacroDefinitions() {
+    	IMacroDefinition[] mdefs= tu.getBuiltinMacroDefinitions();
+        if (mdefs.length == 0)
+            return EMPTY_MACRO_DEFINITIONS_ARRAY;
+        ArrayList result= new ArrayList(mdefs.length);
+        for (int i = 0; i < mdefs.length; i++) {
+			IMacroDefinition mdef = mdefs[i];
+			if (mdef instanceof _MacroDefinition) {
+				result.add(createASTMacroDefinition((_MacroDefinition) mdef));
+			}
+        }
+        return (IASTPreprocessorMacroDefinition[]) result.toArray(new IASTPreprocessorMacroDefinition[result.size()]);
+    }
+
     public IMacroBinding resolveBindingForMacro(char[] name, int offset ) {
         _Context search = findContextForOffset( offset );
         IMacroDefinition macroDefinition = null;
@@ -1478,9 +1494,7 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
     private IASTPreprocessorMacroDefinition createASTMacroDefinition(
             _MacroDefinition d) {
         IASTPreprocessorMacroDefinition r = null;
-        if (d instanceof _ObjectMacroDefinition)
-            r = new ASTObjectMacro();
-        else if (d instanceof _FunctionMacroDefinition) {
+        if (d instanceof _FunctionMacroDefinition) {
             IASTPreprocessorFunctionStyleMacroDefinition f = new ASTFunctionMacro();
             char[][] parms = ((_FunctionMacroDefinition) d).getParms();
             for (int j = 0; j < parms.length; ++j) {
@@ -1493,7 +1507,10 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
             }
             r = f;
         }
-
+        else {
+        	r = new ASTObjectMacro();
+        }
+        
         IASTName name = new ASTMacroName(d.name);
         name.setPropertyInParent(IASTPreprocessorMacroDefinition.MACRO_NAME);
         name.setParent(r);

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2006 IBM Corporation and others.
+ * Copyright (c) 2002, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -424,6 +424,19 @@ public class CASTTranslationUnit extends CASTNode implements
 			return EMPTY_PREPROCESSOR_MACRODEF_ARRAY;
 		IASTPreprocessorMacroDefinition[] result = resolver
 				.getMacroDefinitions();
+		return result;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.cdt.core.dom.ast.IASTTranslationUnit#getMacroDefinitions()
+	 */
+	public IASTPreprocessorMacroDefinition[] getBuiltinMacroDefinitions() {
+		if (resolver == null)
+			return EMPTY_PREPROCESSOR_MACRODEF_ARRAY;
+		IASTPreprocessorMacroDefinition[] result = resolver
+				.getBuiltinMacroDefinitions();
 		return result;
 	}
 

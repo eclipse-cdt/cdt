@@ -25,7 +25,7 @@ public interface ISystemFilePreferencesConstants
     
     public static final String FILETRANSFERMODEDEFAULT = ROOT + "filetransfermodedefault"; //$NON-NLS-1$
     
-    public static final String PRESERVETIMESTAMPS     = ROOT + "preservetimestamps"; // $NON-NLS-1$
+    public static final String PRESERVETIMESTAMPS     = ROOT + "preservetimestamps"; //$NON-NLS-1$
     
 	public static final String LIMIT_CACHE             = ROOT + "limit.cache"; //$NON-NLS-1$
 	public static final String MAX_CACHE_SIZE          = ROOT + "max.cache.size"; //$NON-NLS-1$

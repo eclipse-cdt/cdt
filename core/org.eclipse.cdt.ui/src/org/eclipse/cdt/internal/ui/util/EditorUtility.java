@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 QNX Software Systems and others.
+ * Copyright (c) 2000, 2007 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,7 @@
  *     Markus Schorn (Wind River Systems)
  *     Norbert Ploett (Siemens AG)
  *     Anton Leherbauer (Wind River Systems)
+ *     Ed Swartz (Nokia)
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.util;
 
@@ -45,12 +46,14 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.editors.text.EditorsUI;
 import org.eclipse.ui.part.FileEditorInput;
 
+import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.IBinary;
 import org.eclipse.cdt.core.model.IBuffer;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.core.model.IIncludeReference;
 import org.eclipse.cdt.core.model.ISourceReference;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.model.IWorkingCopy;
@@ -296,7 +299,29 @@ public class EditorUtility {
 		IFile resource= getWorkspaceFileAtLocation(location, context);
 		if (resource != null) {
 			return new FileEditorInput(resource);
-		} else if (context != null) {
+		} 
+		
+		if (context == null) {
+			// try to synthesize a context for a location appearing on a project's
+			// include paths
+			try {
+				ICProject[] projects = CCorePlugin.getDefault().getCoreModel().getCModel().getCProjects();
+				for (int i = 0; i < projects.length; i++) {
+					IIncludeReference[] includeReferences = projects[i].getIncludeReferences();
+					for (int j = 0; j < includeReferences.length; j++) {
+						if (includeReferences[j].isOnIncludeEntry(location)) {
+							context = includeReferences[j].getCProject();
+							break;
+						}
+					}
+					if (context != null)
+						break;
+				}
+			} catch (CModelException e) {
+			}
+		}
+		
+		if (context != null) {
 			// try to get a translation unit from the location and associated element
 			ICProject cproject= context.getCProject();
 			if (cproject != null) {

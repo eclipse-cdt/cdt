@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2006 QNX Software Systems and others.
+ * Copyright (c) 2002, 2007 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  * QNX Software Systems - Initial API and implementation
+ * Red Hat Inc. - Multiple build console support
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.buildconsole;
 
@@ -26,18 +27,22 @@ public class BuildConsole extends AbstractConsole {
 	public static final String P_STREAM_COLOR = CUIPlugin.PLUGIN_ID  + ".CONSOLE_P_STREAM_COLOR";	 //$NON-NLS-1$
 
 	private IBuildConsoleManager fConsoleManager;
+	private String fConsoleName;
+	private String fConsoleId;
 
-	public BuildConsole(IBuildConsoleManager manager) {
-		super(ConsoleMessages.getString("BuildConsole.buildConsole"), CPluginImages.DESC_BUILD_CONSOLE); //$NON-NLS-1$
+	public BuildConsole(IBuildConsoleManager manager, String name, String id) {
+		super(name, CPluginImages.DESC_BUILD_CONSOLE);
 		fConsoleManager = manager;
+		fConsoleName = name;
+		fConsoleId = id;
 	}
 
 	public IPageBookViewPage createPage(IConsoleView view) {
-		return new BuildConsolePage(view, this);
+		return new BuildConsolePage(view, this, fConsoleId);
 	}
 
 	public void setTitle(IProject project) {
-		String title = ConsoleMessages.getString("BuildConsole.buildConsole"); //$NON-NLS-1$
+		String title = fConsoleName;
 		if (project != null) {
 			title += " [" + project.getName() + "]"; //$NON-NLS-1$ //$NON-NLS-2$
 		}

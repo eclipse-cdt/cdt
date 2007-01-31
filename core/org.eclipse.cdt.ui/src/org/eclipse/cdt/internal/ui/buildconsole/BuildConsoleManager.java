@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2006 QNX Software Systems and others.
+ * Copyright (c) 2002, 2007 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     QNX Software Systems - initial API and implementation
+ *     Red Hat Inc. - multiple build console support
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.buildconsole;
 
@@ -54,10 +55,14 @@ public class BuildConsoleManager implements IBuildConsoleManager, IResourceChang
 	private Map fConsoleMap = new HashMap();
 	Color infoColor, outputColor, errorColor;
 	BuildConsoleStream infoStream, outputStream, errorStream;
+	String fName, fContextMenuId;
 
 	static public final int BUILD_STREAM_TYPE_INFO = 0;
 	static public final int BUILD_STREAM_TYPE_OUTPUT = 1;
 	static public final int BUILD_STREAM_TYPE_ERROR = 2;
+	
+	static public final String DEFAULT_CONTEXT_MENU_ID = CUIPlugin.PLUGIN_ID + ".CBuildConole"; //$NON-NLS-1$
+
 	private IProject fLastProject;
 
 	public BuildConsoleManager() {
@@ -170,10 +175,12 @@ public class BuildConsoleManager implements IBuildConsoleManager, IResourceChang
 		}
 	}
 
-	public void startup() {
+	public void startup(String name, String id) {
 		infoStream = new BuildConsoleStream();
 		outputStream = new BuildConsoleStream();
 		errorStream = new BuildConsoleStream();
+		fName = name;
+		fContextMenuId = id;
 
 		runUI(new Runnable() {
 
@@ -184,7 +191,7 @@ public class BuildConsoleManager implements IBuildConsoleManager, IResourceChang
 			 */
 			public void run() {
 				// install colors
-				fConsole = new BuildConsole(BuildConsoleManager.this);
+				fConsole = new BuildConsole(BuildConsoleManager.this, fName, fContextMenuId);
 				ConsolePlugin.getDefault().getConsoleManager().addConsoles(new org.eclipse.ui.console.IConsole[]{fConsole});
 				infoStream.setConsole(fConsole);
 				infoColor = createColor(CUIPlugin.getStandardDisplay(), BuildConsolePreferencePage.PREF_BUILDCONSOLE_INFO_COLOR);

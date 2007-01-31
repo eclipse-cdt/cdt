@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2006 QNX Software Systems and others.
+ * Copyright (c) 2002, 2007 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     QNX Software Systems - initial API and implementation
+ *     Red Hat Inc. - multiple build console support
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.buildconsole;
 
@@ -17,10 +18,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
 
-import org.eclipse.cdt.internal.ui.preferences.BuildConsolePreferencePage;
-import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.cdt.ui.IBuildConsoleEvent;
-import org.eclipse.cdt.ui.IBuildConsoleListener;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -75,6 +72,12 @@ import org.eclipse.ui.texteditor.FindReplaceAction;
 import org.eclipse.ui.texteditor.ITextEditorActionConstants;
 import org.eclipse.ui.texteditor.IUpdate;
 
+import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.IBuildConsoleEvent;
+import org.eclipse.cdt.ui.IBuildConsoleListener;
+
+import org.eclipse.cdt.internal.ui.preferences.BuildConsolePreferencePage;
+
 public class BuildConsolePage extends Page
 		implements
 			ISelectionListener,
@@ -85,6 +88,7 @@ public class BuildConsolePage extends Page
 
 	private BuildConsole fConsole;
 	private IConsoleView fConsoleView;
+	private String fContextMenuId;
 	private BuildConsoleViewer fViewer;
 	private IProject fProject;
 
@@ -109,10 +113,13 @@ public class BuildConsolePage extends Page
 	/**
 	 * @param view
 	 * @param console
+	 * @param contextId
 	 */
-	public BuildConsolePage(IConsoleView view, BuildConsole console) {
+	public BuildConsolePage(IConsoleView view, BuildConsole console, 
+			String contextId) {
 		fConsole = console;
 		fConsoleView = view;
+		fContextMenuId = contextId;
 	}
 
 	protected void setProject(IProject project) {
@@ -187,7 +194,7 @@ public class BuildConsolePage extends Page
 		fMenu = manager.createContextMenu(getControl());
 		getControl().setMenu(fMenu);
 		IPageSite site = getSite();
-		site.registerContextMenu(CUIPlugin.PLUGIN_ID + ".CBuildConole", manager, getViewer()); //$NON-NLS-1$
+		site.registerContextMenu(fContextMenuId, manager, getViewer());
 		site.setSelectionProvider(getViewer());
 		createActions();
 		configureToolBar(site.getActionBars().getToolBarManager());

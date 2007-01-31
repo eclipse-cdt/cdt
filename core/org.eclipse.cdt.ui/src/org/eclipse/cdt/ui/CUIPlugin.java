@@ -10,14 +10,17 @@
  *     IBM Corp. - Rational Software
  *     Markus Schorn (Wind River Systems)
  *     Anton Leherbauer (Wind River Systems)
+ *     Jeff Johnston (Red Hat Inc.)
  *******************************************************************************/
 package org.eclipse.cdt.ui;
 
 import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 import java.util.Set;
@@ -330,7 +333,7 @@ public class CUIPlugin extends AbstractUIPlugin {
 	private CTextTools fTextTools;
 	private AsmTextTools fAsmTextTools;
 	private ProblemMarkerManager fProblemMarkerManager;
-	private BuildConsoleManager fBuildConsoleManager;
+	private Map fBuildConsoleManagers;
 	private ResourceAdapterFactory fResourceAdapterFactory;
 	private CElementAdapterFactory fCElementAdapterFactory;
 
@@ -356,7 +359,8 @@ public class CUIPlugin extends AbstractUIPlugin {
 	public CUIPlugin() {
 		fgCPlugin = this;
 		fDocumentProvider = null;
-		fTextTools = null;		
+		fTextTools = null;
+		fBuildConsoleManagers = new HashMap();
 	}
 		
 	/**
@@ -408,12 +412,28 @@ public class CUIPlugin extends AbstractUIPlugin {
 		return fAsmTextTools;
 	}
 
+	/**
+	 * Return the default console manager.
+	 * @return IBuildConsoleManager
+	 */
 	public IBuildConsoleManager getConsoleManager() {
-		if ( fBuildConsoleManager == null ) {
-			fBuildConsoleManager = new BuildConsoleManager();
-			fBuildConsoleManager.startup();
+		return getConsoleManager(getResourceString("BuildConsole.name"), BuildConsoleManager.DEFAULT_CONTEXT_MENU_ID); //$NON-NLS-1$
+	}
+
+	/**
+	 * Return a console manager specified by id.
+	 * @param name console name
+	 * @param id console id
+	 * @return IBuildConsoleManager
+	 */	
+	public IBuildConsoleManager getConsoleManager(String name, String id) {
+		BuildConsoleManager manager = (BuildConsoleManager)fBuildConsoleManagers.get(id);
+		if (manager == null ) {
+			manager = new BuildConsoleManager();
+			fBuildConsoleManagers.put(id, manager);
+			manager.startup(name, id);
 		}
-		return fBuildConsoleManager;
+		return manager;
 	}
 
 	/* (non-Javadoc)
@@ -453,9 +473,14 @@ public class CUIPlugin extends AbstractUIPlugin {
 			fImageDescriptorRegistry.dispose();
 			fImageDescriptorRegistry= null;
 		}
-		if ( fBuildConsoleManager != null ) {
-			fBuildConsoleManager.shutdown();
-			fBuildConsoleManager = null;
+		if (fBuildConsoleManagers != null ) {
+			Object[] bcm = fBuildConsoleManagers.values().toArray();
+			for (int i = 0; i < bcm.length; ++i) {
+				BuildConsoleManager m = (BuildConsoleManager)bcm[i];
+				if (m != null)
+					m.shutdown();
+			}
+			fBuildConsoleManagers.clear();
 		}
 
 		unregisterAdapters();

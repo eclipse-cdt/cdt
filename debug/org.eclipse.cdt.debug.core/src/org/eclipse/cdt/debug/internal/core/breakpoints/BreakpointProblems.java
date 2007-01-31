@@ -38,13 +38,13 @@ public class BreakpointProblems {
 	public static final String BREAKPOINT_CONTEXT_ID = "bp_context_id"; //$NON-NLS-1$
 
 	public static IMarker reportBreakpointMoved(ICBreakpoint breakpoint, int oldLineNumber, int newLineNumber, String contextName, String contextID) throws CoreException {
-		String message = MessageFormat.format("Breakpoint could not be set at line {0}, moved to line {1}", new Object[] { new Integer(oldLineNumber), new Integer(newLineNumber) });
+		String message = MessageFormat.format(BreakpointMessages.getString("BreakpointProblems_Moved"), new Object[] { new Integer(oldLineNumber), new Integer(newLineNumber) }); //$NON-NLS-1$
 		IMarker marker = BreakpointProblems.reportBreakpointProblem(breakpoint, message, IMarker.SEVERITY_INFO, MOVED, true, false, contextName, contextID);
 		return marker;
 	}
 
 	public static IMarker reportUnresolvedBreakpoint(ICBreakpoint breakpoint, String contextName, String contextID) throws CoreException {
-		IMarker marker = BreakpointProblems.reportBreakpointProblem(breakpoint, "Unresolved breakpoint", IMarker.SEVERITY_WARNING, UNRESOLVED, true, false, contextName, contextID);
+		IMarker marker = BreakpointProblems.reportBreakpointProblem(breakpoint, BreakpointMessages.getString("BreakpointProblems_Unresolved"), IMarker.SEVERITY_WARNING, UNRESOLVED, true, false, contextName, contextID); //$NON-NLS-1$
 		return marker;
 	}
 
@@ -78,9 +78,9 @@ public class BreakpointProblems {
 			{
 				IMarker[] bpProblems = bpResource.findMarkers(BREAKPOINT_PROBLEM_MARKER_ID, true, IResource.DEPTH_INFINITE);
 				for (int i = 0; i < bpProblems.length; i++) {
-					if (bpProblems[i].getAttribute(BREAKPOINT_PROBLEM_TYPE, "").equalsIgnoreCase(UNRESOLVED) &&
+					if (bpProblems[i].getAttribute(BREAKPOINT_PROBLEM_TYPE, "").equalsIgnoreCase(UNRESOLVED) && //$NON-NLS-1$
 							bpProblems[i].getAttribute(IMarker.LINE_NUMBER, 0) == lineNumber &&
-							bpProblems[i].getAttribute(BREAKPOINT_CONTEXT_ID, "").equals(contextID))
+							bpProblems[i].getAttribute(BREAKPOINT_CONTEXT_ID, "").equals(contextID)) //$NON-NLS-1$
 					{
 						bpProblems[i].delete();
 					}
@@ -108,7 +108,7 @@ public class BreakpointProblems {
 							int lineNumber = existingMarker.getAttribute(IMarker.LINE_NUMBER, 0);
 							IMarker[] bpProblems = bpResource.findMarkers(BREAKPOINT_PROBLEM_MARKER_ID, true, IResource.DEPTH_INFINITE);
 							for (int i = 0; i < bpProblems.length; i++) {
-								if (bpProblems[i].getAttribute(BREAKPOINT_PROBLEM_TYPE, "").equalsIgnoreCase(problemType) &&
+								if (bpProblems[i].getAttribute(BREAKPOINT_PROBLEM_TYPE, "").equalsIgnoreCase(problemType) && //$NON-NLS-1$
 										bpProblems[i].getAttribute(IMarker.LINE_NUMBER, 0) == lineNumber)
 								{
 									bpProblems[i].delete();
@@ -123,7 +123,7 @@ public class BreakpointProblems {
 					marker = reportBreakpointProblem(new ProblemMarkerInfo(
 							lineBreakpoint.getMarker().getResource(),
 							lineBreakpoint.getLineNumber(), description, severity,
-							""));
+							"")); //$NON-NLS-1$
 					marker.setAttribute(BREAKPOINT_PROBLEM_TYPE, problemType);
 					marker.setAttribute(BREAKPOINT_CONTEXT_NAME, contextName);
 					marker.setAttribute(BREAKPOINT_CONTEXT_ID, contextID);

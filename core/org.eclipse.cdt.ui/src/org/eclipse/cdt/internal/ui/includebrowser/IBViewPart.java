@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2007 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *    Markus Schorn - initial API and implementation
+ *    Ed Swartz (Nokia)
  *******************************************************************************/ 
 
 package org.eclipse.cdt.internal.ui.includebrowser;
@@ -79,6 +80,7 @@ import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.ui.CUIPlugin;
 
 import org.eclipse.cdt.internal.ui.CPluginImages;
+import org.eclipse.cdt.internal.ui.navigator.OpenCElementAction;
 import org.eclipse.cdt.internal.ui.util.Messages;
 import org.eclipse.cdt.internal.ui.viewsupport.EditorOpener;
 import org.eclipse.cdt.internal.ui.viewsupport.ExtendedTreeViewer;
@@ -643,7 +645,7 @@ public class IBViewPart extends ViewPart
             final ITranslationUnit tu= node.getRepresentedTranslationUnit();
             if (tu != null) {
                 // open
-                OpenFileAction ofa= new OpenFileAction(page);
+                OpenCElementAction ofa= new OpenCElementAction(page);
                 ofa.selectionChanged(selection);
                 m.add(ofa);
 

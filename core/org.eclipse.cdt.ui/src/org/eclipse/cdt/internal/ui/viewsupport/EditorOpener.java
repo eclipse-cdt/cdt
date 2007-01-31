@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2007 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *    Markus Schorn - initial API and implementation
+ *    Ed Swartz (Nokia)
  *******************************************************************************/ 
 
 package org.eclipse.cdt.internal.ui.viewsupport;
@@ -16,7 +17,6 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.Region;
-import org.eclipse.ui.IEditorDescriptor;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
@@ -30,12 +30,11 @@ import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ISourceRange;
 import org.eclipse.cdt.core.model.ISourceReference;
 import org.eclipse.cdt.core.model.ITranslationUnit;
-import org.eclipse.cdt.core.resources.FileStorage;
 import org.eclipse.cdt.ui.CUIPlugin;
 
 import org.eclipse.cdt.internal.core.model.ext.ICElementHandle;
 
-import org.eclipse.cdt.internal.ui.util.ExternalEditorInput;
+import org.eclipse.cdt.internal.ui.util.EditorUtility;
 
 /**
  * An utility to open editors for references or elements.
@@ -74,18 +73,16 @@ public class EditorOpener {
 	 * Opens the editor for an external location, selecting the given region.
 	 */
 	public static void openExternalFile(IWorkbenchPage page, IPath location, IRegion region, long timestamp) {
-        IEditorPart editor= null;
-        if (timestamp == 0) {
-        	timestamp= location.toFile().lastModified();
-        }
-        ExternalEditorInput ei= new ExternalEditorInput(new FileStorage(null, location));
-        try {
-        	IEditorDescriptor descriptor = IDE.getEditorDescriptor(location.lastSegment());
-        	editor= IDE.openEditor(page, ei, descriptor.getId(), false);
-        } catch (PartInitException e) {
-        	CUIPlugin.getDefault().log(e);
-        }
-        selectRegion(location, region, timestamp, editor);
+		IEditorPart editor= null;
+		try {
+			editor= EditorUtility.openInEditor(location, null);
+	        if (timestamp == 0) {
+	        	timestamp= location.toFile().lastModified();
+	        }
+	        selectRegion(location, region, timestamp, editor);
+		} catch (PartInitException e) {
+			CUIPlugin.getDefault().log(e);
+		}
 	}
 
 	/**

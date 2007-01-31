@@ -73,10 +73,19 @@
          <viewShortcut
                id="org.eclipse.cdt.debug.ui.ModulesView">
          </viewShortcut>
+          <view
+               visible="true"
+               relative="org.eclipse.ui.console.ConsoleView"
+               relationship="stack"
+               id="org.eclipse.ui.views.ProblemView">
+         </view>      
+         <viewShortcut
+               id="org.eclipse.ui.views.ProblemView">
+         </viewShortcut>
          <actionSet
                id="org.eclipse.cdt.debug.ui.debugActionSet">
          </actionSet>
-      </perspectiveExtension>
+       </perspectiveExtension>
    </extension>
    <extension
          point="org.eclipse.ui.preferencePages">

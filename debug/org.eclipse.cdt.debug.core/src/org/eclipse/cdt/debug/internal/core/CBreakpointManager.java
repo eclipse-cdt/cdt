@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2006 QNX Software Systems and others.
+ * Copyright (c) 2004, 2007 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,7 +7,8 @@
  *
  * Contributors:
  * QNX Software Systems - Initial API and implementation
- * Matthias Spycher (matthias@coware.com) - patch for bug #112008 
+ * Matthias Spycher (matthias@coware.com) - patch for bug #112008
+ * Ken Ryall (Nokia) - bug 170027
  *******************************************************************************/
 package org.eclipse.cdt.debug.internal.core; 
 
@@ -31,6 +32,8 @@ import org.eclipse.cdt.debug.core.cdi.ICDICondition;
 import org.eclipse.cdt.debug.core.cdi.ICDIFunctionLocation;
 import org.eclipse.cdt.debug.core.cdi.ICDILineLocation;
 import org.eclipse.cdt.debug.core.cdi.ICDILocator;
+import org.eclipse.cdt.debug.core.cdi.event.ICDIBreakpointMovedEvent;
+import org.eclipse.cdt.debug.core.cdi.event.ICDIBreakpointProblemEvent;
 import org.eclipse.cdt.debug.core.cdi.event.ICDIChangedEvent;
 import org.eclipse.cdt.debug.core.cdi.event.ICDICreatedEvent;
 import org.eclipse.cdt.debug.core.cdi.event.ICDIDestroyedEvent;
@@ -54,10 +57,12 @@ import org.eclipse.cdt.debug.core.model.ICLineBreakpoint;
 import org.eclipse.cdt.debug.core.model.ICThread;
 import org.eclipse.cdt.debug.core.model.ICWatchpoint;
 import org.eclipse.cdt.debug.core.sourcelookup.ICSourceLocator;
+import org.eclipse.cdt.debug.internal.core.breakpoints.BreakpointProblems;
 import org.eclipse.cdt.debug.internal.core.breakpoints.CBreakpoint;
 import org.eclipse.cdt.debug.internal.core.model.CDebugTarget;
 import org.eclipse.cdt.debug.internal.core.sourcelookup.CSourceLookupDirector;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IMarkerDelta;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -235,6 +240,8 @@ public class CBreakpointManager implements IBreakpointsListener, IBreakpointMana
 	private BreakpointMap fMap;
 	
 	private boolean fSkipBreakpoint = false;
+	
+	private ArrayList fBreakpointProblems = new ArrayList();
 
 	public CBreakpointManager( CDebugTarget target ) {
 		super();
@@ -347,6 +354,14 @@ public class CBreakpointManager implements IBreakpointsListener, IBreakpointMana
 					if ( source instanceof ICDIBreakpoint )
 						handleBreakpointChangedEvent( (ICDIBreakpoint)source );
 				}
+				else if ( event instanceof ICDIBreakpointMovedEvent ) {
+					if ( source instanceof ICDIBreakpoint )
+						handleBreakpointMovedEvent( (ICDIBreakpointMovedEvent) event );
+				}
+				else if ( event instanceof ICDIBreakpointProblemEvent ) {
+					if ( source instanceof ICDIBreakpoint )
+						handleBreakpointProblemEvent( (ICDIBreakpointProblemEvent) event );
+				}
 			}
 		}
 	}
@@ -442,6 +457,7 @@ public class CBreakpointManager implements IBreakpointsListener, IBreakpointMana
 //			}
 			
 			try {
+				BreakpointProblems.removeProblemsForResolvedBreakpoint(breakpoint, getDebugTarget().getInternalID());
 				breakpoint.setTargetFilter( getDebugTarget() );
 				((CBreakpoint)breakpoint).register( true );
 			}
@@ -481,6 +497,39 @@ public class CBreakpointManager implements IBreakpointsListener, IBreakpointMana
 		}
 	}
 
+	private void handleBreakpointMovedEvent( ICDIBreakpointMovedEvent movedEvent )
+	{
+		ICBreakpoint breakpoint = getBreakpointMap().getCBreakpoint( (ICDIBreakpoint) movedEvent.getSource() );
+		if (breakpoint != null)
+		{
+			try {
+				int newLineNumber = movedEvent.getNewLocation().getLineNumber();
+				int currLineNumber = breakpoint.getMarker().getAttribute(IMarker.LINE_NUMBER, newLineNumber);
+				breakpoint.getMarker().setAttribute(IMarker.LINE_NUMBER, newLineNumber);
+				fBreakpointProblems.add(BreakpointProblems.reportBreakpointMoved(
+						breakpoint, currLineNumber, newLineNumber, getDebugTarget().getName(), getDebugTarget().getInternalID()));
+			} catch (CoreException e) {}
+		}
+		
+	}
+
+	private void handleBreakpointProblemEvent( ICDIBreakpointProblemEvent problemEvent )
+	{
+		ICBreakpoint breakpoint = getBreakpointMap().getCBreakpoint( problemEvent.getBreakpoint() );
+		if (breakpoint != null)
+		{
+			try {
+				IMarker marker;
+				marker = BreakpointProblems.reportBreakpointProblem(breakpoint, problemEvent.getDescription(), 
+						problemEvent.getSeverity(), problemEvent.getProblemType(), problemEvent.removeExisting(),
+						problemEvent.removeOnly(), getDebugTarget().getName(), getDebugTarget().getInternalID());
+				if (marker != null)
+					fBreakpointProblems.add(marker);
+			} catch (DebugException e) {}
+		}
+		
+	}
+	
 	private void handleBreakpointChangedEvent( ICDIBreakpoint cdiBreakpoint ) {
 		ICBreakpoint breakpoint = getBreakpointMap().getCBreakpoint( cdiBreakpoint );
 		if ( breakpoint != null ) {
@@ -525,6 +574,9 @@ public class CBreakpointManager implements IBreakpointsListener, IBreakpointMana
 				catch( CoreException e ) {
 				}
 			}
+			try {
+				BreakpointProblems.removeProblemsForBreakpoint(breakpoint);
+			} catch (CoreException e) {}
 			getBreakpointNotifier().breakpointsRemoved( getDebugTarget(), new IBreakpoint[] { breakpoint } );
 		}
 	}
@@ -557,6 +609,13 @@ public class CBreakpointManager implements IBreakpointsListener, IBreakpointMana
 			}
 		} );			
 		getBreakpointNotifier().breakpointsRemoved( getDebugTarget(), breakpoints );
+		// Remove all breakpoint problem markers
+		for (Iterator iter = fBreakpointProblems.iterator(); iter.hasNext();) {
+			IMarker marker = (IMarker) iter.next();
+			try {
+				marker.delete();
+			} catch (CoreException e) {}
+		}
 	}
 
 	private ICBreakpoint[] register( IBreakpoint[] breakpoints ) {
@@ -594,6 +653,7 @@ public class CBreakpointManager implements IBreakpointsListener, IBreakpointMana
 					String fileName = breakpoint.getFileName();
 					ICDIFunctionLocation location = cdiTarget.createFunctionLocation( fileName, function );
 					ICDICondition condition = createCondition( breakpoint );
+					fBreakpointProblems.add(BreakpointProblems.reportUnresolvedBreakpoint(breakpoint, getDebugTarget().getName(), getDebugTarget().getInternalID()));
 					b = cdiTarget.setFunctionBreakpoint( ICDIBreakpoint.REGULAR, location, condition, true );								
 				} else if ( breakpoints[i] instanceof ICAddressBreakpoint ) {
 					ICAddressBreakpoint breakpoint = (ICAddressBreakpoint)breakpoints[i]; 
@@ -607,6 +667,7 @@ public class CBreakpointManager implements IBreakpointsListener, IBreakpointMana
 					IPath path = convertPath( handle );
 					ICDILineLocation location = cdiTarget.createLineLocation( path.toPortableString(), breakpoint.getLineNumber() );
 					ICDICondition condition = createCondition( breakpoint );
+					fBreakpointProblems.add(BreakpointProblems.reportUnresolvedBreakpoint(breakpoint, getDebugTarget().getName(), getDebugTarget().getInternalID()));
 					b = cdiTarget.setLineBreakpoint( ICDIBreakpoint.REGULAR, location, condition, true );
 				} else if ( breakpoints[i] instanceof ICWatchpoint ) {
 					ICWatchpoint watchpoint = (ICWatchpoint)breakpoints[i];

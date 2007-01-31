@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 QNX Software Systems and others.
+ * Copyright (c) 2000, 2007 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
- *     Ken Ryall (Nokia) - https://bugs.eclipse.org/bugs/show_bug.cgi?id=118894
+ *     Ken Ryall (Nokia) - bugs 118894, 170027
  *******************************************************************************/
 package org.eclipse.cdt.debug.internal.core.model;
 
@@ -223,6 +223,13 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 	 * Support for the memory retrival on this target.
 	 */
 	private CMemoryBlockRetrievalExtension fMemoryBlockRetrieval;
+
+	/**
+	 * Internal ID that uniquely identifies this CDebugTarget.
+	 */
+	private String internalD = Integer.toString(lastInternalID++);
+	
+	private static int lastInternalID = 1;
 
 	/**
 	 * Constructor for CDebugTarget.
@@ -1803,5 +1810,9 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 		CModuleManager mm = getModuleManager();
 		if ( mm != null )
 			mm.loadSymbolsForAllModules();
+	}
+
+	public String getInternalID() {
+		return internalD;
 	}
 }

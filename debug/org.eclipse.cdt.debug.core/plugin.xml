@@ -98,6 +98,21 @@
       </attribute>
    </extension>
    <extension
+         id="breakpointproblem"
+         name="%breakpointProblem.name"
+         point="org.eclipse.core.resources.markers">
+      <super
+            type="org.eclipse.core.resources.problemmarker">
+      </super>
+      <super
+            type="org.eclipse.core.resources.textmarker">
+      </super>
+      <persistent
+            value="false">
+      </persistent>
+      <attribute name="externalLocation"/>
+   </extension>
+   <extension
          point="org.eclipse.debug.core.breakpoints">
       <breakpoint
             class="org.eclipse.cdt.debug.internal.core.breakpoints.CLineBreakpoint"

@@ -47,7 +47,7 @@ public class SerialConnector implements ITerminalConnector {
 			settins=new SerialSettings();			
 		} catch (NoClassDefFoundError e) {
 			// tell the user how to install the library
-			Activator.getDefault().getLog().log(new Status(IStatus.WARNING,Activator.PLUGIN_ID,SerialMessages.ERROR_LIBRARY_NOT_INSTALLED,e));
+			Activator.getDefault().getLog().log(new Status(IStatus.WARNING,Activator.PLUGIN_ID,0, SerialMessages.ERROR_LIBRARY_NOT_INSTALLED,e));
 		}
 		fSettings=settins;
 	}

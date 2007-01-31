@@ -121,6 +121,7 @@ public class CompletionTests extends AbstractCompletionTest {
 	//void gfunc() {C1 v; v.m/*cursor*/
 	public void _testLocalVariable() throws Exception {
 		// fails because of additional m1private(void)
+		// see https://bugs.eclipse.org/bugs/show_bug.cgi?id=172305
 		final String[] expected= {
 				"m123(void)", "m12(void)", "m13(void)"
 		};
@@ -130,6 +131,7 @@ public class CompletionTests extends AbstractCompletionTest {
 	//void gfunc() {C1 v; v.fMySelf.m/*cursor*/
 	public void _testLocalVariable_MemberVariable() throws Exception {
 		// fails because of additional m1private(void)
+		// see https://bugs.eclipse.org/bugs/show_bug.cgi?id=172305
 		final String[] expected= {
 				"m123(void)", "m12(void)", "m13(void)"
 		};
@@ -139,6 +141,7 @@ public class CompletionTests extends AbstractCompletionTest {
 	//void gfunc() {C1 v; v.m12().m/*cursor*/
 	public void _testLocalVariable_MemberFunction() throws Exception {
 		// fails because of additional m1private(void)
+		// see https://bugs.eclipse.org/bugs/show_bug.cgi?id=172305
 		final String[] expected= {
 				"m123(void)", "m12(void)", "m13(void)"
 		};
@@ -148,6 +151,7 @@ public class CompletionTests extends AbstractCompletionTest {
 	//void gfunc() {gfC1().m/*cursor*/
 	public void _testGlobalFunction() throws Exception {
 		// fails because of additional m1private(void)
+		// see https://bugs.eclipse.org/bugs/show_bug.cgi?id=172305
 		final String[] expected= {
 				"m123(void)", "m12(void)", "m13(void)"
 		};
@@ -173,6 +177,7 @@ public class CompletionTests extends AbstractCompletionTest {
 	//void gfunc() {try{int bla;}catch(C1 v) {v.fMySelf.m/*cursor*/
 	public void _testCatchBlock1() throws Exception {
 		// fails because of additional m1private(void)
+		// see https://bugs.eclipse.org/bugs/show_bug.cgi?id=172305
 		final String[] expected= {
 				"m123(void)", "m12(void)", "m13(void)"
 		};
@@ -182,6 +187,7 @@ public class CompletionTests extends AbstractCompletionTest {
 	//void gfunc() {try{int bla;}catch(C2 c){} catch(C1 v) {v.fMySelf.m/*cursor*/
 	public void _testCatchBlock2() throws Exception {
 		// fails because of additional m1private(void)
+		// see https://bugs.eclipse.org/bugs/show_bug.cgi?id=172305
 		final String[] expected= {
 				"m123(void)", "m12(void)", "m13(void)"
 		};
@@ -255,6 +261,7 @@ public class CompletionTests extends AbstractCompletionTest {
 	//void f() {C1* l1; l1.m/*cursor*/
 	public void _testMethods_GlobalScope() throws Exception {
 		// fails because of additional m1private(void)
+		// see https://bugs.eclipse.org/bugs/show_bug.cgi?id=172305
 		final String[] expected= {
 				"m123(void)", "m12(void)", "m13(void)"
 		};
@@ -264,6 +271,7 @@ public class CompletionTests extends AbstractCompletionTest {
 	//void C3::f() {m/*cursor*/
 	public void _testMethods_MethodScope() throws Exception {
 		// fails because of additional m1private(void)
+		// see https://bugs.eclipse.org/bugs/show_bug.cgi?id=172305
 		final String[] expected= {
 				"m123(void)", "m12(void)", "m13(void)"
 		};
@@ -533,6 +541,14 @@ public class CompletionTests extends AbstractCompletionTest {
 	public void testAccessToNamespaceFromClassMember2() throws Exception {
 		final String[] expected= {
 				"NSCONST"
+		};
+		assertCompletionResults(fCursorOffset, expected, true);
+	}
+	
+	//#i/*cursor*/
+	public void testCompletePreprocessorDirective() throws Exception {
+		final String[] expected= {
+				"#if", "#ifdef", "#ifndef", "#include"
 		};
 		assertCompletionResults(fCursorOffset, expected, true);
 	}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005 IBM Corporation and others.
+ * Copyright (c) 2005, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  * IBM - Initial API and implementation
+ * Anton Leherbauer (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.text.contentassist;
 
@@ -16,12 +17,17 @@ import org.eclipse.cdt.core.dom.ast.ASTCompletionNode;
 import org.eclipse.cdt.core.dom.ast.IASTFieldReference;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.model.IWorkingCopy;
+import org.eclipse.cdt.core.parser.Directives;
 import org.eclipse.cdt.core.parser.Keywords;
 import org.eclipse.cdt.internal.ui.viewsupport.CElementImageProvider;
 import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.text.ICPartitions;
 import org.eclipse.cdt.ui.text.contentassist.ICompletionContributor;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.text.BadLocationException;
+import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.ITextViewer;
+import org.eclipse.jface.text.TextUtilities;
 import org.eclipse.swt.graphics.Image;
 
 public class KeywordCompletionContributor implements ICompletionContributor {
@@ -34,22 +40,28 @@ public class KeywordCompletionContributor implements ICompletionContributor {
         if (prefix.length() == 0)
             return;
 
-        if (!validContext(completionNode))
-            return;
-        
-        String[] keywords = cppkeywords; // default to C++
-        if (workingCopy != null && workingCopy.isCLanguage())
-            keywords = ckeywords;
-        
-        if (prefix.length() > 0)
-            for (int i = 0; i < keywords.length; ++i)
-                if (keywords[i].startsWith(prefix)) {
-                    ImageDescriptor imagedesc = CElementImageProvider.getKeywordImageDescriptor();
-                    Image image = imagedesc != null ? CUIPlugin.getImageDescriptorRegistry().get(imagedesc) : null;
-                    int repLength = prefix.length();
-                    int repOffset = offset - repLength;
-                    proposals.add(new CCompletionProposal(keywords[i], repOffset, repLength, image, keywords[i], 1, viewer));
-                }
+        String[] keywords;
+		if(inPreprocessorDirective(viewer.getDocument(), offset)) {
+			keywords= preprocessorKeywords;
+		} else {
+	        if (!validContext(completionNode))
+	            return;
+	        
+	        keywords = cppkeywords; // default to C++
+	        if (workingCopy != null && workingCopy.isCLanguage())
+	            keywords = ckeywords;
+	        
+		}
+		// add matching keyword proposals
+        ImageDescriptor imagedesc = CElementImageProvider.getKeywordImageDescriptor();
+        Image image = imagedesc != null ? CUIPlugin.getImageDescriptorRegistry().get(imagedesc) : null;
+        for (int i = 0; i < keywords.length; ++i) {
+            if (keywords[i].startsWith(prefix)) {
+                int repLength = prefix.length();
+                int repOffset = offset - repLength;
+                proposals.add(new CCompletionProposal(keywords[i], repOffset, repLength, image, keywords[i], 1, viewer));
+            }
+        }
     }
 
     // TODO This is copied from the search completion contributor
@@ -81,6 +93,25 @@ public class KeywordCompletionContributor implements ICompletionContributor {
         // Couldn't find a valid context
         return valid;
     }
+
+	/**
+	 * Check if given offset is inside a preprocessor directive.
+	 * 
+	 * @param doc  the document
+	 * @param offset  the offset to check
+	 * @return <code>true</code> if offset is inside a preprocessor directive
+	 */
+	private boolean inPreprocessorDirective(IDocument doc, int offset) {
+		if (offset > 0 && offset == doc.getLength()) {
+		--offset;
+		}
+		try {
+			return ICPartitions.C_PREPROCESSOR
+					.equals(TextUtilities.getContentType(doc, ICPartitions.C_PARTITIONING, offset, false));
+		} catch (BadLocationException exc) {
+		}
+		return false;
+	}
 
     // These are the keywords we complete
     // We only do the ones that are >= 5 characters long
@@ -160,4 +191,17 @@ public class KeywordCompletionContributor implements ICompletionContributor {
         Keywords.WHILE
     };
 
+    private static String [] preprocessorKeywords = {
+        Directives.POUND_DEFINE,
+        Directives.POUND_ELIF,
+        Directives.POUND_ELSE,
+        Directives.POUND_ENDIF,
+        Directives.POUND_ERROR,
+        Directives.POUND_IF,
+        Directives.POUND_IFDEF,
+        Directives.POUND_IFNDEF,
+        Directives.POUND_INCLUDE,
+        Directives.POUND_PRAGMA,
+        Directives.POUND_UNDEF,
+    };
 }

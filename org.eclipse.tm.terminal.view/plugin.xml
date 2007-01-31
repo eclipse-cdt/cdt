@@ -73,4 +73,8 @@
             id="org.eclipse.tm.terminal.category1"
             name="%terminal.view.insertion.category.name"/>
    </extension>
+   <extension
+         point="org.eclipse.core.runtime.preferences">
+      <initializer class="org.eclipse.tm.terminal.internal.view.TerminalPreferenceInitializer"/>
+   </extension>
  </plugin>

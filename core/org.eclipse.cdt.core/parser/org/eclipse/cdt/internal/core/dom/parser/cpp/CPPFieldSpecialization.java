@@ -16,6 +16,7 @@ package org.eclipse.cdt.internal.core.dom.parser.cpp;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IBinding;
+import org.eclipse.cdt.core.dom.ast.ICompositeType;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPDelegate;
@@ -79,6 +80,10 @@ public class CPPFieldSpecialization extends CPPSpecialization implements ICPPFie
 
 	public ICPPDelegate createDelegate(IASTName name) {
 		return new CPPFieldDelegate( name, this );
+	}
+
+	public ICompositeType getCompositeTypeOwner() throws DOMException {
+		return getClassOwner();
 	}
 
 }

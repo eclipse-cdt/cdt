@@ -12,7 +12,8 @@
 
 package org.eclipse.cdt.internal.core.pdom.dom.c;
 
-import org.eclipse.cdt.core.dom.ast.DOMException;
+import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.dom.ast.ICompositeType;
 import org.eclipse.cdt.core.dom.ast.IField;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.dom.IPDOMMemberOwner;
@@ -41,24 +42,32 @@ class PDOMCField extends PDOMCVariable implements IField {
 		return PDOMCLinkage.CFIELD;
 	}
 
-	public boolean isStatic() throws DOMException {
+	public boolean isStatic() {
 		// ISO/IEC 9899:TC1 6.7.2.1
 		return false;
 	}
 
-	public boolean isExtern() throws DOMException {
+	public boolean isExtern() {
 		// ISO/IEC 9899:TC1 6.7.2.1
 		return false;
 	}
 
-	public boolean isAuto() throws DOMException {
+	public boolean isAuto() {
 		// ISO/IEC 9899:TC1 6.7.2.1
 		return false;
 	}
 
-	public boolean isRegister() throws DOMException {
+	public boolean isRegister() {
 		// ISO/IEC 9899:TC1 6.7.2.1
 		return false;
 	}
 
+	public ICompositeType getCompositeTypeOwner() {
+		try {
+			return (ICompositeType)getParentNode();
+		} catch (CoreException e) {
+			CCorePlugin.log(e);
+			return null;
+		}
+	}
 }

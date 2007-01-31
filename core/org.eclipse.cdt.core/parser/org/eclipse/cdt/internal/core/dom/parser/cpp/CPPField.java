@@ -21,6 +21,7 @@ import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
+import org.eclipse.cdt.core.dom.ast.ICompositeType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTVisiblityLabel;
@@ -45,6 +46,9 @@ public class CPPField extends CPPVariable implements ICPPField, ICPPInternalBind
         public ICPPClassType getClassOwner() throws DOMException {
         	return ((ICPPField)getBinding()).getClassOwner();
         }
+		public ICompositeType getCompositeTypeOwner() throws DOMException {
+			return getClassOwner();
+		}
     }
     public static class CPPFieldProblem extends CPPVariable.CPPVariableProblem implements ICPPField {
         /**
@@ -64,6 +68,10 @@ public class CPPField extends CPPVariable implements ICPPField, ICPPInternalBind
         public boolean isStatic() throws DOMException {
             throw new DOMException( this );
         }
+
+		public ICompositeType getCompositeTypeOwner() throws DOMException {
+			return getClassOwner();
+		}
     }
     
 	public CPPField( IASTName name ){
@@ -155,4 +163,9 @@ public class CPPField extends CPPVariable implements ICPPField, ICPPInternalBind
     public ICPPDelegate createDelegate( IASTName name ) {
         return new CPPFieldDelegate( name, this );
     }
+
+	public ICompositeType getCompositeTypeOwner() throws DOMException {
+		// mstodo Auto-generated method stub
+		return null;
+	}
 }

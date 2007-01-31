@@ -281,18 +281,20 @@ class THHierarchyModel {
 			THGraphNode gnode= fGraph.getNode(fSelectedTypeNode.getElement());
 			if (gnode != null) {
 				ICElement[] members= gnode.getMembers(fShowInheritedMembers);
-				for (int i = 0; i < members.length; i++) {
-					ICElement member= members[i];
-					if (member.equals(oldSelection)) {
-						fSelectedMember= member;
-						return;
+				if (members != null) {
+					for (int i = 0; i < members.length; i++) {
+						ICElement member= members[i];
+						if (member.equals(oldSelection)) {
+							fSelectedMember= member;
+							return;
+						}
 					}
-				}
-				for (int i = 0; i < members.length; i++) {
-					ICElement member= members[i];
-					if (fMemberSignatureToSelect.equals(TypeHierarchyUI.getLocalElementSignature(member))) {
-						fSelectedMember= member;
-						return;
+					for (int i = 0; i < members.length; i++) {
+						ICElement member= members[i];
+						if (fMemberSignatureToSelect.equals(TypeHierarchyUI.getLocalElementSignature(member))) {
+							fSelectedMember= member;
+							return;
+						}
 					}
 				}
 			}

@@ -13,7 +13,7 @@
 package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 
 import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.dom.ast.DOMException;
+import org.eclipse.cdt.core.dom.ast.ICompositeType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
@@ -44,7 +44,7 @@ class PDOMCPPField extends PDOMCPPVariable implements ICPPField {
 		return PDOMCPPLinkage.CPPFIELD;
 	}
 	
-	public ICPPClassType getClassOwner() throws DOMException {
+	public ICPPClassType getClassOwner() {
 		try {
 			return (ICPPClassType)getParentNode();
 		} catch (CoreException e) {
@@ -53,30 +53,34 @@ class PDOMCPPField extends PDOMCPPVariable implements ICPPField {
 		}
 	}
 
-	public int getVisibility() throws DOMException {
+	public int getVisibility() {
 		return PDOMCPPAnnotation.getVisibility(getByte(record + ANNOTATIONS));
 	}
 
 	// @Override
-	public boolean isMutable() throws DOMException {
+	public boolean isMutable() {
 		return getBit(getByte(record + ANNOTATIONS), PDOMCPPAnnotation.MUTABLE_OFFSET);
 	}
 
 	// @Override
-	public boolean isAuto() throws DOMException {
+	public boolean isAuto() {
 		// ISO/IEC 14882:2003 9.2.6
 		return false; 
 	}
 
 	// @Override
-	public boolean isExtern() throws DOMException {
+	public boolean isExtern() {
 		// ISO/IEC 14882:2003 9.2.6
 		return false; 
 	}
 
 	// @Override
-	public boolean isRegister() throws DOMException {
+	public boolean isRegister() {
 		// ISO/IEC 14882:2003 9.2.6
 		return false; 
+	}
+
+	public ICompositeType getCompositeTypeOwner() {
+		return getClassOwner();
 	}
 }

@@ -11,9 +11,12 @@
 
 package org.eclipse.cdt.internal.core.dom.parser.c;
 
+import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
+import org.eclipse.cdt.core.dom.ast.ICompositeType;
 import org.eclipse.cdt.core.dom.ast.IField;
+import org.eclipse.cdt.core.dom.ast.c.ICCompositeTypeScope;
 
 /**
  * Created on Nov 8, 2004
@@ -24,12 +27,21 @@ public class CField extends CVariable implements IField {
         public CFieldProblem( IASTNode node, int id, char[] arg ) {
             super( node, id, arg );
         }
+
+		public ICompositeType getCompositeTypeOwner() throws DOMException {
+			throw new DOMException(this);
+		}
     }
 	/**
 	 * @param name
 	 */
 	public CField(IASTName name) {
 		super(name);
+	}
+	
+	public ICompositeType getCompositeTypeOwner() throws DOMException {
+		ICCompositeTypeScope scope = (ICCompositeTypeScope) getScope();
+		return scope.getCompositeType();
 	}
 
 }

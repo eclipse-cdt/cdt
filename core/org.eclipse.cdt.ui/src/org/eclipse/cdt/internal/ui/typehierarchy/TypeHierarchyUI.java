@@ -33,6 +33,7 @@ import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.ICompositeType;
 import org.eclipse.cdt.core.dom.ast.IEnumeration;
 import org.eclipse.cdt.core.dom.ast.IEnumerator;
+import org.eclipse.cdt.core.dom.ast.IField;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMember;
@@ -224,6 +225,9 @@ public class TypeHierarchyUI {
 		else if (memberBinding instanceof ICPPMember) {
 			return ((ICPPMember) memberBinding).getClassOwner();
 		}
+		else if (memberBinding instanceof IField) {
+			return ((IField) memberBinding).getCompositeTypeOwner();
+		}
 		return null;
 	}
 
@@ -271,7 +275,8 @@ public class TypeHierarchyUI {
 	public static boolean isValidInput(IBinding binding) {
 		if (isValidTypeInput(binding)
 				|| binding instanceof ICPPMember
-				|| binding instanceof IEnumerator) {
+				|| binding instanceof IEnumerator
+				|| binding instanceof IField) {
 			return true;
 		}
 		return false;

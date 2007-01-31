@@ -22,7 +22,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.tm.terminal.Logger;
@@ -77,16 +76,6 @@ public class TerminalViewPlugin extends AbstractUIPlugin {
 		} catch (MalformedURLException malformedURLException) {
 			malformedURLException.printStackTrace();
 		}
-	}
-	protected void initializeDefaultPreferences(IPreferenceStore store) {
-		store.setDefault(TerminalPreferencePage.PREF_LIMITOUTPUT,
-				TerminalPreferencePage.DEFAULT_LIMITOUTPUT);
-		store.setDefault(TerminalPreferencePage.PREF_BUFFERLINES,
-				TerminalPreferencePage.DEFAULT_BUFFERLINES);
-		store.setDefault(TerminalPreferencePage.PREF_TIMEOUT_SERIAL,
-				TerminalPreferencePage.DEFAULT_TIMEOUT_SERIAL);
-		store.setDefault(TerminalPreferencePage.PREF_TIMEOUT_NETWORK,
-				TerminalPreferencePage.DEFAULT_TIMEOUT_NETWORK);
 	}
 	/**
 	 * Returns the shared instance.

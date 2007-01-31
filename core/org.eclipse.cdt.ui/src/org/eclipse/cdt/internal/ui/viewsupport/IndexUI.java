@@ -7,6 +7,7 @@
  *
  * Contributors:
  *    Markus Schorn - initial API and implementation
+ *    Ed Swartz (Nokia)
  *******************************************************************************/ 
 
 package org.eclipse.cdt.internal.ui.viewsupport;
@@ -128,10 +129,10 @@ public class IndexUI {
 			ITranslationUnit tu= getTranslationUnit(preferProject, declName);
 			if (tu != null) {
 				IFile file= (IFile) tu.getResource();
-				long timestamp= file.getLocalTimeStamp();
+				long timestamp= file != null ? file.getLocalTimeStamp() : 0;
 				IASTFileLocation loc= declName.getFileLocation();
 				IRegion region= new Region(loc.getNodeOffset(), loc.getNodeLength());
-				IPositionConverter converter= CCorePlugin.getPositionTrackerManager().findPositionConverter(file, timestamp);
+				IPositionConverter converter= CCorePlugin.getPositionTrackerManager().findPositionConverter(tu, timestamp);
 				if (converter != null) {
 					region= converter.actualToHistoric(region);
 				}

@@ -74,6 +74,43 @@ public class CTypeHierarchyTest extends TypeHierarchyBaseTest {
 	// typedef enum E2 {e3, e4} TE2;
 	// enum E3 {e5, e6};
 	// typedef E3 TE3;
+	public void testEnumCFromMember() throws Exception {
+		String content= getContentsForTest(1)[0].toString();
+		IFile file= createFile(getProject(), "enummem.c", content);
+		waitForIndexer(fIndex, file, INDEXER_WAIT_TIME);
+		IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
+		CEditor editor= (CEditor) IDE.openEditor(page, file);
+		Tree tree;
+		TreeItem item;
+		
+		editor.selectAndReveal(content.indexOf("e1"), 1);
+		openTypeHierarchy(editor);
+		tree = getHierarchyViewer().getTree();
+		item= checkTreeNode(tree, 0, "E1");
+		assertEquals(0, item.getItemCount());
+		checkMethodTable(new String[] {"e1", "e2"});
+
+		editor.selectAndReveal(content.indexOf("e3"), 1);
+		openTypeHierarchy(editor);
+		tree = getHierarchyViewer().getTree();
+		item= checkTreeNode(tree, 0, "E2");
+		item= checkTreeNode(item, 0, "TE2");
+		assertEquals(0, item.getItemCount());
+		checkMethodTable(new String[] {"e3", "e4"});
+
+		editor.selectAndReveal(content.indexOf("e6"), 1);
+		openTypeHierarchy(editor);
+		tree = getHierarchyViewer().getTree();
+		item= checkTreeNode(tree, 0, "E3");
+		item= checkTreeNode(item, 0, "TE3");
+		assertEquals(0, item.getItemCount());
+		checkMethodTable(new String[] {"e5", "e6"});
+	}
+
+	// enum E1 {e1, e2};
+	// typedef enum E2 {e3, e4} TE2;
+	// enum E3 {e5, e6};
+	// typedef E3 TE3;
 	public void testEnumCPP() throws Exception {
 		String content= getContentsForTest(1)[0].toString();
 		IFile file= createFile(getProject(), "enum.cpp", content);
@@ -106,7 +143,44 @@ public class CTypeHierarchyTest extends TypeHierarchyBaseTest {
 		assertEquals(0, item.getItemCount());
 		checkMethodTable(new String[] {"e5", "e6"});
 	}
-	
+
+	// enum E1 {e1, e2};
+	// typedef enum E2 {e3, e4} TE2;
+	// enum E3 {e5, e6};
+	// typedef E3 TE3;
+	public void testEnumCPPFromMember() throws Exception {
+		String content= getContentsForTest(1)[0].toString();
+		IFile file= createFile(getProject(), "enummem.cpp", content);
+		waitForIndexer(fIndex, file, INDEXER_WAIT_TIME);
+		IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
+		CEditor editor= (CEditor) IDE.openEditor(page, file);
+		Tree tree;
+		TreeItem item;
+		
+		editor.selectAndReveal(content.indexOf("e1"), 1);
+		openTypeHierarchy(editor);
+		tree = getHierarchyViewer().getTree();
+		item= checkTreeNode(tree, 0, "E1");
+		assertEquals(0, item.getItemCount());
+		checkMethodTable(new String[] {"e1", "e2"});
+
+		editor.selectAndReveal(content.indexOf("e4"), 1);
+		openTypeHierarchy(editor);
+		tree = getHierarchyViewer().getTree();
+		item= checkTreeNode(tree, 0, "E2");
+		item= checkTreeNode(item, 0, "TE2");
+		assertEquals(0, item.getItemCount());
+		checkMethodTable(new String[] {"e3", "e4"});
+
+		editor.selectAndReveal(content.indexOf("e6"), 1);
+		openTypeHierarchy(editor);
+		tree = getHierarchyViewer().getTree();
+		item= checkTreeNode(tree, 0, "E3");
+		item= checkTreeNode(item, 0, "TE3");
+		assertEquals(0, item.getItemCount());
+		checkMethodTable(new String[] {"e5", "e6"});
+	}
+
 	// struct S1 {
 	//    int a1;
 	//    int b1;
@@ -190,6 +264,37 @@ public class CTypeHierarchyTest extends TypeHierarchyBaseTest {
 	//    int a1;
 	//    int b1;
 	// };
+	// typedef struct S3 {
+	//    int a3;
+	//    int b3;
+	// } T3;
+	public void testStructCFromMember() throws Exception {
+		String content= getContentsForTest(1)[0].toString();
+		IFile file= createFile(getProject(), "structmem.c", content);
+		waitForIndexer(fIndex, file, INDEXER_WAIT_TIME);
+		IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
+		CEditor editor= (CEditor) IDE.openEditor(page, file);
+
+		editor.selectAndReveal(content.indexOf("a1"), 1);
+		openTypeHierarchy(editor);
+		Tree tree = getHierarchyViewer().getTree();
+		TreeItem item= checkTreeNode(tree, 0, "S1");
+		assertEquals(0, item.getItemCount());
+		checkMethodTable(new String[] {"a1", "b1"});
+		
+		editor.selectAndReveal(content.indexOf("b3"), 1);
+		openTypeHierarchy(editor);
+		tree = getHierarchyViewer().getTree();
+		item= checkTreeNode(tree, 0, "S3");
+		item= checkTreeNode(item, 0, "T3");
+		assertEquals(0, item.getItemCount());
+		checkMethodTable(new String[] {"a3", "b3"});
+	}
+
+	// struct S1 {
+	//    int a1;
+	//    int b1;
+	// };
 	// typedef struct S2 {
 	//    int a2;
 	//    int b2;
@@ -257,6 +362,49 @@ public class CTypeHierarchyTest extends TypeHierarchyBaseTest {
 		checkMethodTable(new String[0]);
 	}
 
+	// struct S1 {
+	//    int a1;
+	//    int b1;
+	// };
+	// typedef struct S2 {
+	//    int a2;
+	//    int b2;
+	// } S2;
+	// typedef struct S3 {
+	//    int a3;
+	//    int b3;
+	// } T3;
+	public void testStructCPPFromMember() throws Exception {
+		String content= getContentsForTest(1)[0].toString();
+		IFile file= createFile(getProject(), "structmem.cpp", content);
+		waitForIndexer(fIndex, file, INDEXER_WAIT_TIME);
+		IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
+		CEditor editor= (CEditor) IDE.openEditor(page, file);
+
+		editor.selectAndReveal(content.indexOf("a1"), 1);
+		openTypeHierarchy(editor);
+		Tree tree = getHierarchyViewer().getTree();
+		TreeItem item= checkTreeNode(tree, 0, "S1");
+		assertEquals(0, item.getItemCount());
+		checkMethodTable(new String[] {"a1", "b1"});
+
+		editor.selectAndReveal(content.indexOf("b2"), 1);
+		openTypeHierarchy(editor);
+		tree = getHierarchyViewer().getTree();
+		item= checkTreeNode(tree, 0, "S2");
+		item= checkTreeNode(item, 0, "S2");
+		assertEquals(0, item.getItemCount());
+		checkMethodTable(new String[] {"a2", "b2"});
+
+		editor.selectAndReveal(content.indexOf("a3"), 1);
+		openTypeHierarchy(editor);
+		tree = getHierarchyViewer().getTree();
+		item= checkTreeNode(tree, 0, "S3");
+		item= checkTreeNode(item, 0, "T3");
+		assertEquals(0, item.getItemCount());
+		checkMethodTable(new String[] {"a3", "b3"});
+	}
+
 	// union U1 {
 	//    int a1;
 	//    char b1;
@@ -322,6 +470,25 @@ public class CTypeHierarchyTest extends TypeHierarchyBaseTest {
 		item= checkTreeNode(item, 0, "T3");
 		assertEquals(0, item.getItemCount());
 		checkMethodTable(new String[0]);
+	}
+
+	// union U1 {
+	//    int a1;
+	//    char b1;
+	// };
+	public void testUnionCFromMember() throws Exception {
+		String content= getContentsForTest(1)[0].toString();
+		IFile file= createFile(getProject(), "unionmem.c", content);
+		waitForIndexer(fIndex, file, INDEXER_WAIT_TIME);
+		IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
+		CEditor editor= (CEditor) IDE.openEditor(page, file);
+
+		editor.selectAndReveal(content.indexOf("a1"), 1);
+		openTypeHierarchy(editor);
+		Tree tree = getHierarchyViewer().getTree();
+		TreeItem item= checkTreeNode(tree, 0, "U1");
+		assertEquals(0, item.getItemCount());
+		checkMethodTable(new String[] {"a1", "b1"});
 	}
 
 	// union U1 {
@@ -397,4 +564,38 @@ public class CTypeHierarchyTest extends TypeHierarchyBaseTest {
 		checkMethodTable(new String[0]);
 	}
 
+	// union U1 {
+	//    int a1;
+	//    int b1;
+	// };
+	// typedef union U2 {
+	//    int a2;
+	//    int b2;
+	// } U2;
+	// typedef union U3 {
+	//    int a3;
+	//    int b3;
+	// } T3;
+	public void testUnionCPPFromMember() throws Exception {
+		String content= getContentsForTest(1)[0].toString();
+		IFile file= createFile(getProject(), "unionmem.cpp", content);
+		waitForIndexer(fIndex, file, INDEXER_WAIT_TIME);
+		IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
+		CEditor editor= (CEditor) IDE.openEditor(page, file);
+
+		editor.selectAndReveal(content.indexOf("a1"), 1);
+		openTypeHierarchy(editor);
+		Tree tree = getHierarchyViewer().getTree();
+		TreeItem item= checkTreeNode(tree, 0, "U1");
+		assertEquals(0, item.getItemCount());
+		checkMethodTable(new String[] {"a1", "b1"});
+
+		editor.selectAndReveal(content.indexOf("b3"), 1);
+		openTypeHierarchy(editor);
+		tree = getHierarchyViewer().getTree();
+		item= checkTreeNode(tree, 0, "U3");
+		item= checkTreeNode(item, 0, "T3");
+		assertEquals(0, item.getItemCount());
+		checkMethodTable(new String[] {"a3", "b3"});
+	}
 }

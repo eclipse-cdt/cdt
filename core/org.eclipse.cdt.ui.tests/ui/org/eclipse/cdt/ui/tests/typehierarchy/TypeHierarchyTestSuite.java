@@ -23,6 +23,7 @@ public class TypeHierarchyTestSuite extends TestSuite {
         super("Tests in package org.eclipse.cdt.ui.tests.typehierarchy");
         addTest(CTypeHierarchyTest.suite());
         addTest(CppTypeHierarchyTest.suite());
+        addTest(QuickTypeHierarchyTest.suite());
         addTest(TypeHierarchyAcrossProjectsTest.suite());
     }
 }

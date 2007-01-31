@@ -14,11 +14,17 @@ package org.eclipse.cdt.ui.tests.typehierarchy;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.jface.text.ITextSelection;
+import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TreeViewer;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.SWTException;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
+import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.IWorkbenchPage;
@@ -76,7 +82,8 @@ public class TypeHierarchyBaseTest extends BaseUITestCase {
 	}	
 
 	protected void openTypeHierarchy(CEditor editor) {
-		TypeHierarchyUI.open(editor, (ITextSelection) editor.getSelectionProvider().getSelection());
+		ISelectionProvider selectionProvider = editor.getSelectionProvider();
+		TypeHierarchyUI.open(editor, (ITextSelection) selectionProvider.getSelection());
 		runEventQueue(200);
 	}
 
@@ -95,6 +102,11 @@ public class TypeHierarchyBaseTest extends BaseUITestCase {
 		th.onSetHierarchyKind(mode);
 	}
 
+	protected void openQuickTypeHierarchy(CEditor editor) {
+		editor.getAction("OpenHierarchy").run();
+		runEventQueue(200);
+	}
+
 	protected TreeViewer getHierarchyViewer() {
 		IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
 		runEventQueue(0);
@@ -107,6 +119,27 @@ public class TypeHierarchyBaseTest extends BaseUITestCase {
 		}
 		assertNotNull(th);
 		return th.getHiearchyViewer();
+	}
+
+	protected Tree getQuickTypeHierarchyViewer(CEditor editor) {
+		runEventQueue(0);
+		THViewPart th= null;
+		for (int i=0; i<50; i++) {
+			Control focus= editor.getSite().getShell().getDisplay().getFocusControl();
+			if (focus instanceof Text) {
+				Composite parent= focus.getParent();
+				Control[] children= parent.getChildren();
+				for (int j = 0; j < children.length; j++) {
+					Control child = children[j];
+					if (child instanceof Tree) {
+						return (Tree) child;
+					}
+				}
+			}
+			runEventQueue(10);
+		}
+		fail();
+		return null;
 	}
 
 	protected TableViewer getMethodViewer() {
@@ -174,7 +207,13 @@ public class TypeHierarchyBaseTest extends BaseUITestCase {
 			for (int i=0; i<40; i++) {
 				item= root.getItem(i1);
 				try {
-					if (!"...".equals(item.getText())) {
+					if ("".equals(item.getText())) {
+						TreeItem parent= item.getParentItem();
+						if (!parent.getExpanded()) {
+							expandTreeItem(parent);
+						}
+					}
+					else if (!"...".equals(item.getText())) {
 						break;
 					}
 				} catch (SWTException e) {
@@ -190,6 +229,14 @@ public class TypeHierarchyBaseTest extends BaseUITestCase {
 		assertNotNull("Unexpected tree node " + item.getText(), label);
 		assertEquals(label, item.getText());
 		return item;
+	}
+	
+	protected void expandTreeItem(TreeItem item) {
+		item.setExpanded(true);
+		Event event = new Event();
+		event.item = item;
+		item.getParent().notifyListeners(SWT.Expand, event);	
+		runEventQueue(0);
 	}
 	
 	protected void checkMethodTable(String[] items) {

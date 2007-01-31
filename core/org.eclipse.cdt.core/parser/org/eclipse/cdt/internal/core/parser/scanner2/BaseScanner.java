@@ -9,6 +9,7 @@
  *     IBM Corporation - initial implementation
  *     Markus Schorn (Wind River Systems)
  *     Bryan Wilkinson (QNX) - https://bugs.eclipse.org/bugs/show_bug.cgi?id=151207
+ *     Anton Leherbauer (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.parser.scanner2;
 
@@ -1613,6 +1614,17 @@ abstract class BaseScanner implements IScanner {
 		IToken result= null;
 		try {
 		    result = fetchToken();
+		} catch (OffsetLimitReachedException olre) {
+			if (contentAssistMode) {
+				IASTCompletionNode node= olre.getCompletionNode();
+				if (node != null) {
+					result= newToken(IToken.tCOMPLETION, node.getCompletionPrefix().toCharArray());
+				} else {
+					result= newToken(IToken.tCOMPLETION);
+				}
+			} else {
+				throw olre;
+			}
 		} catch (ArrayIndexOutOfBoundsException e) {
 			if (isCancelled) {
 		        throw new ParseError(ParseError.ParseErrorKind.TIMEOUT_OR_CANCELLED);
@@ -2037,7 +2049,10 @@ abstract class BaseScanner implements IScanner {
         }
 
         // We've run out of contexts, our work is done here
-        return contentAssistMode ? new SimpleToken(IToken.tCOMPLETION, Integer.MAX_VALUE, null, Integer.MAX_VALUE) : null;
+        if (contentAssistMode) { 
+        	return new SimpleToken(IToken.tCOMPLETION, Integer.MAX_VALUE, null, Integer.MAX_VALUE);
+        }
+        return null;
     }
     
     protected CharTable ident = new CharTable(1024);
@@ -4702,7 +4717,7 @@ abstract class BaseScanner implements IScanner {
 	 * @see org.eclipse.cdt.core.parser.IScanner#setContentAssistMode(int)
 	 */
 	public void setContentAssistMode(int offset) {
-		bufferLimit[0] = offset;
+		setOffsetBoundary(offset);
 		contentAssistMode = true;
 	}
 	

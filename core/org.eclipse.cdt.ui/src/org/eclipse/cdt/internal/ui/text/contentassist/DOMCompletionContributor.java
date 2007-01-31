@@ -18,7 +18,10 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.text.BadLocationException;
+import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.ITextViewer;
+import org.eclipse.jface.text.TextUtilities;
 import org.eclipse.swt.graphics.Image;
 
 import org.eclipse.cdt.core.dom.ast.ASTCompletionNode;
@@ -53,6 +56,7 @@ import org.eclipse.cdt.core.model.IWorkingCopy;
 import org.eclipse.cdt.core.parser.ast.ASTAccessVisibility;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.text.ICPartitions;
 import org.eclipse.cdt.ui.text.contentassist.ICompletionContributor;
 
 import org.eclipse.cdt.internal.ui.viewsupport.CElementImageProvider;
@@ -66,8 +70,14 @@ public class DOMCompletionContributor implements ICompletionContributor {
                                               String prefix,
 											  List proposals) {
 		
-		if (completionNode != null) {
-			boolean handleMacros = false;
+		if (completionNode == null) {
+			return;
+		}
+		if(inPreprocessorDirective(viewer.getDocument(), offset)) {
+			// add only macros
+			addMacroProposals(viewer, offset, completionNode, prefix, proposals);
+		} else {
+			boolean handleMacros= false;
 			IASTName[] names = completionNode.getNames();
 			if (names == null || names.length == 0)
 				// No names, not much we can do here
@@ -80,7 +90,10 @@ public class DOMCompletionContributor implements ICompletionContributor {
 					// The node isn't properly hooked up, must have backtracked out of this node
 					continue;
 				IBinding[] bindings = names[i].resolvePrefix();
-				if (names[i].getParent() instanceof IASTIdExpression) handleMacros = true;
+				if (names[i].getParent() instanceof IASTIdExpression) {
+					// handle macros only if there is a prefix
+					handleMacros = prefix.length() > 0;
+				}
 				if (bindings != null)
 					for (int j = 0; j < bindings.length; ++j) {
 						IBinding binding = bindings[j];
@@ -96,21 +109,45 @@ public class DOMCompletionContributor implements ICompletionContributor {
 				IBinding binding = (IBinding)iBinding.next();
 				handleBinding(binding, completionNode, offset, viewer, proposals);
 			}
-			
-			// Find all macros if there is a prefix
-			if (prefix.length() > 0 && handleMacros) {
-				IASTPreprocessorMacroDefinition[] macros = completionNode.getTranslationUnit().getMacroDefinitions();
-				if (macros != null)
-					for (int i = 0; i < macros.length; ++i)
-						if (CharArrayUtils.equals(macros[i].getName().toCharArray(), 0, prefix.length(), prefix.toCharArray(), false))
-							handleMacro(macros[i], completionNode, offset, viewer, proposals);
-				macros = completionNode.getTranslationUnit().getBuiltinMacroDefinitions();
-				if (macros != null)
-					for (int i = 0; i < macros.length; ++i)
-						if (CharArrayUtils.equals(macros[i].getName().toCharArray(), 0, prefix.length(), prefix.toCharArray(), false))
-							handleMacro(macros[i], completionNode, offset, viewer, proposals);
+
+			if (handleMacros) {
+				addMacroProposals(viewer, offset, completionNode, prefix, proposals);
 			}
-        }
+		}
+	}
+
+	private void addMacroProposals(ITextViewer viewer, int offset,
+			ASTCompletionNode completionNode, String prefix, List proposals) {
+		char[] prefixChars= prefix.toCharArray();
+		IASTPreprocessorMacroDefinition[] macros = completionNode.getTranslationUnit().getMacroDefinitions();
+		if (macros != null)
+			for (int i = 0; i < macros.length; ++i)
+				if (CharArrayUtils.equals(macros[i].getName().toCharArray(), 0, prefixChars.length, prefixChars, false))
+					handleMacro(macros[i], completionNode, offset, viewer, proposals);
+		macros = completionNode.getTranslationUnit().getBuiltinMacroDefinitions();
+		if (macros != null)
+			for (int i = 0; i < macros.length; ++i)
+				if (CharArrayUtils.equals(macros[i].getName().toCharArray(), 0, prefixChars.length, prefixChars, false))
+					handleMacro(macros[i], completionNode, offset, viewer, proposals);
+	}
+
+	/**
+	 * Check if given offset is inside a preprocessor directive.
+	 * 
+	 * @param doc  the document
+	 * @param offset  the offset to check
+	 * @return <code>true</code> if offset is inside a preprocessor directive
+	 */
+	private boolean inPreprocessorDirective(IDocument doc, int offset) {
+		if (offset > 0 && offset == doc.getLength()) {
+		--offset;
+		}
+		try {
+			return ICPartitions.C_PREPROCESSOR
+					.equals(TextUtilities.getContentType(doc, ICPartitions.C_PARTITIONING, offset, false));
+		} catch (BadLocationException exc) {
+		}
+		return false;
 	}
 
 	protected void handleBinding(IBinding binding, ASTCompletionNode completionNode, int offset, ITextViewer viewer, List proposals) {

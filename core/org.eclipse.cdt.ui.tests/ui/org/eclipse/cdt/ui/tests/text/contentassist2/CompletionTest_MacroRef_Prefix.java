@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004 IBM Corporation and others.
+ * Copyright (c) 2004, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -27,14 +27,11 @@ public class CompletionTest_MacroRef_Prefix  extends CompletionProposalsBaseTest
 	private final String headerFileFullPath ="resources/contentassist/" + headerFileName;
 	private final String expectedPrefix = "D"; 
 	private final String[] expectedResults = {
-			// missing result:
 			"DEBUG"
 	};
 	
 	public CompletionTest_MacroRef_Prefix(String name) {
 		super(name);
-		// see https://bugs.eclipse.org/bugs/show_bug.cgi?id=172158
-		setExpectFailure(172158);
 	}
 
 	public static Test suite() {

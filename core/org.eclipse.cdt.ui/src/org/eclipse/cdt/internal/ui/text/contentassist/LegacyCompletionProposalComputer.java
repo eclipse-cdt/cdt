@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Anton Leherbauer (Wind River Systems) - initial API and implementation
+ *     Bryan Wilkinson (QNX)
  *******************************************************************************/
 
 package org.eclipse.cdt.internal.ui.text.contentassist;
@@ -137,13 +138,17 @@ public class LegacyCompletionProposalComputer implements ICompletionProposalComp
 			int paren= scanner.findOpeningPeer(pos, bound, '(', ')');
 			if (paren == CHeuristicScanner.NOT_FOUND)
 				break;
-			int token= scanner.previousToken(paren - 1, bound);
+			paren= scanner.findNonWhitespaceBackward(paren - 1, bound);
+			if (paren == CHeuristicScanner.NOT_FOUND) {
+				break;
+			}
+			int token= scanner.previousToken(paren, bound);
 			// next token must be a method name (identifier) or the closing angle of a
 			// constructor call of a template type.
 			if (token == Symbols.TokenIDENT || token == Symbols.TokenGREATERTHAN) {
-				return paren - 1;
+				return paren + 1;
 			}
-			pos= paren - 1;
+			pos= paren;
 		} while (true);
 		
 		return context.getInvocationOffset();

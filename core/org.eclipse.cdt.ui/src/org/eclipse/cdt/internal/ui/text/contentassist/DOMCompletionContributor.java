@@ -200,7 +200,7 @@ public class DOMCompletionContributor implements ICompletionContributor {
 		proposal.setCursorPosition(repString.length() - 1);
 		
 		if (dispargString.length() > 0) {
-			CProposalContextInformation info = new CProposalContextInformation(repString, dispargString);
+			CProposalContextInformation info = new CProposalContextInformation(image, dispString, dispargString);
 			info.setContextInformationPosition(offset);
 			proposal.setContextInformation(info);
 		}
@@ -273,7 +273,7 @@ public class DOMCompletionContributor implements ICompletionContributor {
 			proposal.setCursorPosition(repString.length() - 1);
 			
 			if (argString.length() > 0) {
-				CProposalContextInformation info = new CProposalContextInformation(repString, argString);
+				CProposalContextInformation info = new CProposalContextInformation(image, descString, argString);
 				info.setContextInformationPosition(offset);
 				proposal.setContextInformation(info);
 			}

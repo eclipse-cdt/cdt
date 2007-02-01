@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2007 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -53,6 +53,8 @@ import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.IWorkingSet;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.actions.ActionFactory;
+import org.eclipse.ui.contexts.IContextActivation;
+import org.eclipse.ui.contexts.IContextService;
 import org.eclipse.ui.part.PageBook;
 import org.eclipse.ui.part.ViewPart;
 
@@ -130,6 +132,7 @@ public class CHViewPart extends ViewPart {
 	private OpenViewActionGroup fOpenViewActionGroup;
 	private SelectionSearchGroup fSelectionSearchGroup;
 	private CRefactoringActionGroup fRefactoringActionGroup;
+	private IContextActivation fContextActivation;
 
     
     public void setFocus() {
@@ -190,9 +193,21 @@ public class CHViewPart extends ViewPart {
         setMessage(CHMessages.CHViewPart_emptyPageMessage);
         
         initializeActionStates();
+        
+    	IContextService ctxService = (IContextService) getSite().getService(IContextService.class);
+    	if (ctxService != null) {
+    		fContextActivation= ctxService.activateContext(CUIPlugin.CVIEWS_SCOPE);
+    	}
     }
 	
 	public void dispose() {
+		if (fContextActivation != null) {
+			IContextService ctxService = (IContextService)getSite().getService(IContextService.class);
+	    	if (ctxService != null) {
+	    		ctxService.deactivateContext(fContextActivation);
+	    	}
+		}
+
 		if (fOpenViewActionGroup != null) {
 			fOpenViewActionGroup.dispose();
 			fOpenViewActionGroup= null;
@@ -310,6 +325,8 @@ public class CHViewPart extends ViewPart {
     private void createActions() {
     	// action gruops
     	fOpenViewActionGroup= new OpenViewActionGroup(this);
+    	fOpenViewActionGroup.setSuppressCallHierarchy(true);
+    	fOpenViewActionGroup.setSuppressProperties(true);
     	fSelectionSearchGroup= new SelectionSearchGroup(getSite());
     	fRefactoringActionGroup= new CRefactoringActionGroup(this);
     	

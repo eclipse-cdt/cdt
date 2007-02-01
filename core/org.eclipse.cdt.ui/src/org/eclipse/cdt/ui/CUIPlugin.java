@@ -87,6 +87,7 @@ import org.eclipse.cdt.internal.ui.text.folding.CFoldingStructureProviderRegistr
 import org.eclipse.cdt.internal.ui.util.ImageDescriptorRegistry;
 import org.eclipse.cdt.internal.ui.util.ProblemMarkerManager;
 import org.eclipse.cdt.internal.ui.util.Util;
+import org.eclipse.cdt.internal.ui.viewsupport.CDTContextActivator;
 
 public class CUIPlugin extends AbstractUIPlugin {
 
@@ -198,6 +199,13 @@ public class CUIPlugin extends AbstractUIPlugin {
 	 * @since 2.0
 	 */
 	public static final String ID_CELEMENT_CREATION_ACTION_SET= "org.eclipse.cdt.ui.CElementCreationActionSet"; //$NON-NLS-1$
+
+	/**
+	 * The id of the scope used by all the CDT views
+	 * (value <code>"org.eclipse.cdt.ui.scope"</code>).
+	 * @since 4.0
+	 */
+	public static final String CVIEWS_SCOPE = "org.eclipse.cdt.ui.cViewScope"; //$NON-NLS-1$
 	
 	// -------- static methods --------
 
@@ -455,12 +463,14 @@ public class CUIPlugin extends AbstractUIPlugin {
 		
 		// init ast provider
 		getASTProvider();
+		CDTContextActivator.getInstance().install();
 	}
 
 	/* (non-Javadoc)
 	 * @see org.osgi.framework.BundleActivator#stop(org.osgi.framework.BundleContext)
 	 */
 	public void stop(BundleContext context) throws Exception {
+		CDTContextActivator.getInstance().uninstall();
 		if (fASTProvider != null) {
 			fASTProvider.dispose();
 			fASTProvider= null;

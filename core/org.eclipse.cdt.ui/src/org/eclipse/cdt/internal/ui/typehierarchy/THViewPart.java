@@ -65,6 +65,8 @@ import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.IWorkingSet;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.actions.ActionFactory;
+import org.eclipse.ui.contexts.IContextActivation;
+import org.eclipse.ui.contexts.IContextService;
 import org.eclipse.ui.part.PageBook;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.ui.progress.IWorkbenchSiteProgressService;
@@ -177,6 +179,7 @@ public class THViewPart extends ViewPart implements ITHModelPresenter {
 	private OpenViewActionGroup fOpenViewActionGroup;
 	private SelectionSearchGroup fSelectionSearchGroup;
 	private CRefactoringActionGroup fRefactoringActionGroup;
+	private IContextActivation fContextActivation;
     
     public void setFocus() {
         fPagebook.setFocus();
@@ -222,16 +225,21 @@ public class THViewPart extends ViewPart implements ITHModelPresenter {
 
         setMessage(Messages.THViewPart_instruction);
         initializeActionStates();
+        
+    	IContextService ctxService = (IContextService) getSite().getService(IContextService.class);
+    	if (ctxService != null) {
+    		fContextActivation= ctxService.activateContext(CUIPlugin.CVIEWS_SCOPE);
+    	}
     }
 	
-	private void initSelectionProvider() {
-		SelectionProviderMediator mediator= new SelectionProviderMediator();
-		mediator.addViewer(fHierarchyTreeViewer);
-		mediator.addViewer(fMemberViewer);
-		getSite().setSelectionProvider(new AdaptingSelectionProvider(ICElement.class, mediator));
-	}
-
 	public void dispose() {
+		if (fContextActivation != null) {
+			IContextService ctxService = (IContextService)getSite().getService(IContextService.class);
+	    	if (ctxService != null) {
+	    		ctxService.deactivateContext(fContextActivation);
+	    	}
+		}
+
 		if (fOpenViewActionGroup != null) {
 			fOpenViewActionGroup.dispose();
 			fOpenViewActionGroup= null;
@@ -251,6 +259,13 @@ public class THViewPart extends ViewPart implements ITHModelPresenter {
 		super.dispose();
 	}
 	
+	private void initSelectionProvider() {
+		SelectionProviderMediator mediator= new SelectionProviderMediator();
+		mediator.addViewer(fHierarchyTreeViewer);
+		mediator.addViewer(fMemberViewer);
+		getSite().setSelectionProvider(new AdaptingSelectionProvider(ICElement.class, mediator));
+	}
+
     private void initializeActionStates() {
         int mode= THHierarchyModel.TYPE_HIERARCHY;
         int orientation= ORIENTATION_AUTOMATIC;
@@ -518,6 +533,8 @@ public class THViewPart extends ViewPart implements ITHModelPresenter {
     private void createActions() {
     	// action gruops
     	fOpenViewActionGroup= new OpenViewActionGroup(this);
+    	fOpenViewActionGroup.setSuppressTypeHierarchy(true);
+    	fOpenViewActionGroup.setSuppressProperties(true);
     	fSelectionSearchGroup= new SelectionSearchGroup(getSite());
     	fRefactoringActionGroup= new CRefactoringActionGroup(this);
     	

@@ -19,22 +19,20 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.IActionBars;
-import org.eclipse.ui.IViewPart;
+import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchSite;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.actions.ActionGroup;
 import org.eclipse.ui.dialogs.PropertyDialogAction;
 import org.eclipse.ui.part.Page;
+import org.eclipse.ui.texteditor.ITextEditor;
 
 import org.eclipse.cdt.core.model.ICElement;
 
 import org.eclipse.cdt.internal.ui.IContextMenuConstants;
-import org.eclipse.cdt.internal.ui.callhierarchy.CHViewPart;
 import org.eclipse.cdt.internal.ui.callhierarchy.OpenCallHierarchyAction;
-import org.eclipse.cdt.internal.ui.editor.CEditor;
 import org.eclipse.cdt.internal.ui.editor.ICEditorActionDefinitionIds;
 import org.eclipse.cdt.internal.ui.typehierarchy.OpenTypeHierarchyAction;
-import org.eclipse.cdt.internal.ui.typehierarchy.THViewPart;
 
 /**
  * Action group that adds actions to open a new CDT view part or an external 
@@ -49,8 +47,9 @@ import org.eclipse.cdt.internal.ui.typehierarchy.THViewPart;
 public class OpenViewActionGroup extends ActionGroup {
 
     private boolean fEditorIsOwner;
-	private boolean fIsTypeHiararchyViewerOwner;
-    private boolean fIsCallHiararchyViewerOwner;
+	private boolean fSuppressTypeHierarchy;
+	private boolean fSuppressCallHierarchy;
+	private boolean fSuppressProperties;
 	private IWorkbenchSite fSite;
 	private String fGroupName= IContextMenuConstants.GROUP_OPEN;
 	
@@ -78,16 +77,14 @@ public class OpenViewActionGroup extends ActionGroup {
 	 * 
 	 * @param part the view part that owns this action group
 	 */
-	public OpenViewActionGroup(IViewPart part) {
+	public OpenViewActionGroup(IWorkbenchPart part) {
 		createSiteActions(part.getSite());
-        fIsCallHiararchyViewerOwner= part instanceof CHViewPart;
-        fIsTypeHiararchyViewerOwner= part instanceof THViewPart;
 	}
 	
 	/**
 	 * Note: This constructor is for internal use only. Clients should not call this constructor.
 	 */
-	public OpenViewActionGroup(CEditor part) {
+	public OpenViewActionGroup(ITextEditor part) {
 		fEditorIsOwner= true;
 
 //		fOpenSuperImplementation= new OpenSuperImplementationAction(part);
@@ -165,16 +162,16 @@ public class OpenViewActionGroup extends ActionGroup {
 	public void fillContextMenu(IMenuManager menu) {
 		super.fillContextMenu(menu);
 		if (!fEditorIsOwner) {
-			if (!fIsTypeHiararchyViewerOwner && fOpenTypeHierarchy.isEnabled()) {
+			if (!fSuppressTypeHierarchy && fOpenTypeHierarchy.isEnabled()) {
 				menu.appendToGroup(fGroupName, fOpenTypeHierarchy);
 			}
-			if (!fIsCallHiararchyViewerOwner && fOpenCallHierarchy.isEnabled()) {
+			if (!fSuppressCallHierarchy && fOpenCallHierarchy.isEnabled()) {
 				menu.appendToGroup(fGroupName, fOpenCallHierarchy);
 			}
 		}
 //		appendToGroup(menu, fOpenSuperImplementation);
 		IStructuredSelection selection= getStructuredSelection();
-		if (!fIsCallHiararchyViewerOwner && !fIsTypeHiararchyViewerOwner) {
+		if (!fSuppressProperties) {
 			if (fOpenPropertiesDialog != null && fOpenPropertiesDialog.isEnabled() && selection != null &&fOpenPropertiesDialog.isApplicableForSelection(selection)) {
 				menu.appendToGroup(IContextMenuConstants.GROUP_PROPERTIES, fOpenPropertiesDialog);
 			}
@@ -239,5 +236,17 @@ public class OpenViewActionGroup extends ActionGroup {
 
 	public void setAppendToGroup(String groupName) {
 		fGroupName= groupName;
+	}
+
+	public void setSuppressTypeHierarchy(boolean suppressTypeHierarchy) {
+		fSuppressTypeHierarchy = suppressTypeHierarchy;
+	}
+
+	public void setSuppressCallHierarchy(boolean suppressCallHierarchy) {
+		fSuppressCallHierarchy = suppressCallHierarchy;
+	}
+
+	public void setSuppressProperties(boolean suppressProperties) {
+		fSuppressProperties = suppressProperties;
 	}
 }

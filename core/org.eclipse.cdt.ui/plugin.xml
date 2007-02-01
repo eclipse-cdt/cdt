@@ -913,8 +913,15 @@
             id="org.eclipse.cdt.ui.cEditorScope">
        </context>
    </extension> 
-   <extension
-   		 point="org.eclipse.ui.bindings">
+   <extension point="org.eclipse.ui.contexts">
+      <context 
+            name="%cViewScope.name" 
+            description="%cViewScope.description" 
+            id="org.eclipse.cdt.ui.cViewScope" 
+            parentId="org.eclipse.ui.contexts.window"
+      />
+   </extension>   
+   <extension point="org.eclipse.ui.bindings">
       <!--  win32:  M1=CTRL,    M2=SHIFT, M3=ALT, M4=-
             carbon: M1=COMMAND, M2=SHIFT, M3=ALT, M4=CTRL -->
    	 <key
@@ -948,13 +955,24 @@
             commandId="org.eclipse.cdt.ui.edit.open.call.hierarchy"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
      <key
+            sequence="M1+M3+H"
+            contextId="org.eclipse.cdt.ui.cViewScope"
+            commandId="org.eclipse.cdt.ui.edit.open.call.hierarchy"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
+     <!--removed, see bug 167162
+     <key
             sequence="M1+F3"
             contextId="org.eclipse.cdt.ui.cEditorScope"
             commandId="org.eclipse.cdt.ui.edit.opendef"
-            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/-->
      <key
             sequence="F3"
             contextId="org.eclipse.cdt.ui.cEditorScope"
+            commandId="org.eclipse.cdt.ui.edit.opendecl"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
+     <key
+            sequence="F3"
+            contextId="org.eclipse.cdt.ui.cViewScope"
             commandId="org.eclipse.cdt.ui.edit.opendecl"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
      <key
@@ -968,13 +986,28 @@
             contextId="org.eclipse.cdt.ui.cEditorScope"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
      <key
+            commandId="org.eclipse.cdt.ui.search.findrefs"
+            sequence="M1+M2+G"
+            contextId="org.eclipse.cdt.ui.cViewScope"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
+     <key
             commandId="org.eclipse.cdt.ui.search.finddecl"
             sequence="M1+G"
             contextId="org.eclipse.cdt.ui.cEditorScope"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
      <key
+            commandId="org.eclipse.cdt.ui.search.finddecl"
+            sequence="M1+G"
+            contextId="org.eclipse.cdt.ui.cViewScope"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
+     <key
             sequence="F4"
             contextId="org.eclipse.cdt.ui.cEditorScope"
+            commandId="org.eclipse.cdt.ui.edit.open.type.hierarchy"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
+     <key
+            sequence="F4"
+            contextId="org.eclipse.cdt.ui.cViewScope"
             commandId="org.eclipse.cdt.ui.edit.open.type.hierarchy"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
      <!--key
@@ -1627,6 +1660,13 @@
           </enablement>
        </actionProvider>
        <actionProvider
+             class="org.eclipse.cdt.internal.ui.navigator.CNavigatorOpenViewActionProvider"
+             id="org.eclipse.cdt.ui.navigator.actions.open.view">
+          <enablement>
+             <instanceof value="org.eclipse.cdt.core.model.ICElement"/>
+          </enablement>
+       </actionProvider>
+       <actionProvider
              class="org.eclipse.cdt.internal.ui.navigator.CNavigatorEditActionProvider"
              id="org.eclipse.cdt.ui.navigator.actions.edit"
              overrides="org.eclipse.ui.navigator.resources.actions.EditActions">
@@ -1768,5 +1808,4 @@
           class="org.eclipse.cdt.internal.ui.navigator.CNavigatorDragAdapterAssistant"
           viewerId="org.eclipse.ui.navigator.ProjectExplorer"/>
  </extension>
-
 </plugin>

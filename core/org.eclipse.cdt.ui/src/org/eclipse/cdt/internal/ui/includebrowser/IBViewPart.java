@@ -61,6 +61,8 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.actions.ContributionItemFactory;
 import org.eclipse.ui.actions.OpenFileAction;
+import org.eclipse.ui.contexts.IContextActivation;
+import org.eclipse.ui.contexts.IContextService;
 import org.eclipse.ui.part.IShowInSource;
 import org.eclipse.ui.part.IShowInTarget;
 import org.eclipse.ui.part.IShowInTargetList;
@@ -133,6 +135,8 @@ public class IBViewPart extends ViewPart
     private Action fPreviousAction;
     private Action fRefreshAction;
 	private Action fHistoryAction;
+	private IContextActivation fContextActivation;
+	private WorkingSetFilterUI fWorkingSetFilterUI;
 
     
     public void setFocus() {
@@ -215,8 +219,25 @@ public class IBViewPart extends ViewPart
         initializeActionStates();
         restoreInput();
         fMemento= null;
+
+    	IContextService ctxService = (IContextService) getSite().getService(IContextService.class);
+    	if (ctxService != null) {
+    		fContextActivation= ctxService.activateContext(CUIPlugin.CVIEWS_SCOPE);
+    	}
     }
-    
+	
+	public void dispose() {
+		if (fContextActivation != null) {
+			IContextService ctxService = (IContextService)getSite().getService(IContextService.class);
+	    	if (ctxService != null) {
+	    		ctxService.deactivateContext(fContextActivation);
+	    	}
+		}
+		if (fWorkingSetFilterUI != null) {
+			fWorkingSetFilterUI.dispose();
+		}
+	}
+	
     private void initializeActionStates() {
         boolean includedBy= true;
         boolean filterSystem= false;
@@ -348,7 +369,7 @@ public class IBViewPart extends ViewPart
     }
 
     private void createActions() {
-        WorkingSetFilterUI wsFilterUI= new WorkingSetFilterUI(this, fMemento, KEY_WORKING_SET_FILTER) {
+        fWorkingSetFilterUI= new WorkingSetFilterUI(this, fMemento, KEY_WORKING_SET_FILTER) {
             protected void onWorkingSetChange() {
                 updateWorkingSetFilter(this);
             }
@@ -506,7 +527,7 @@ public class IBViewPart extends ViewPart
 //        tm.add(fNext);
 //        tm.add(fPrevious);
 //        tm.add(new Separator());
-        wsFilterUI.fillActionBars(actionBars);
+        fWorkingSetFilterUI.fillActionBars(actionBars);
         mm.add(fIncludedByAction);
         mm.add(fIncludesToAction);
         mm.add(new Separator());

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 QNX Software Systems and others.
+ * Copyright (c) 2000, 2007 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -68,6 +68,8 @@ import org.eclipse.ui.IWorkingSetManager;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.ResourceWorkingSetFilter;
 import org.eclipse.ui.actions.ActionContext;
+import org.eclipse.ui.contexts.IContextActivation;
+import org.eclipse.ui.contexts.IContextService;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 import org.eclipse.ui.part.ISetSelectionTarget;
 import org.eclipse.ui.part.IShowInSource;
@@ -239,6 +241,7 @@ public class CView extends ViewPart implements ISetSelectionTarget, IPropertyCha
 			}
 		}
 	};
+	private IContextActivation fContextActivation;
 
 	/**
 	 * Handles an open event from the viewer.
@@ -576,8 +579,12 @@ public class CView extends ViewPart implements ISetSelectionTarget, IPropertyCha
 		}
 		memento = null;
 
-	}
-
+    	IContextService ctxService = (IContextService) getSite().getService(IContextService.class);
+    	if (ctxService != null) {
+    		fContextActivation= ctxService.activateContext(CUIPlugin.CVIEWS_SCOPE);
+    	}
+    }
+	
 	protected ProblemTreeViewer createViewer(Composite parent) {
 		return new RemoteTreeViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
 	}
@@ -598,6 +605,13 @@ public class CView extends ViewPart implements ISetSelectionTarget, IPropertyCha
 	 * (non-Javadoc) Method declared on IWorkbenchPart.
 	 */
 	public void dispose() {
+		if (fContextActivation != null) {
+			IContextService ctxService = (IContextService)getSite().getService(IContextService.class);
+	    	if (ctxService != null) {
+	    		ctxService.deactivateContext(fContextActivation);
+	    	}
+		}
+
 		getSite().getPage().removePartListener(partListener);
 		CUIPlugin.getDefault().getPreferenceStore().removePropertyChangeListener(this);
 		if (viewer != null) {

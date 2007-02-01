@@ -82,6 +82,7 @@ public interface ICEditorActionDefinitionIds extends ITextEditorActionDefinition
 	/**
 	 * Action definition ID of the open definition action
 	 * (value <code>"org.eclipse.cdt.ui.edit.opendef"</code>).
+	 * @deprecated see bug 167162
 	 */
 	public static final String OPEN_DEF= "org.eclipse.cdt.ui.edit.opendef"; //$NON-NLS-1$
 

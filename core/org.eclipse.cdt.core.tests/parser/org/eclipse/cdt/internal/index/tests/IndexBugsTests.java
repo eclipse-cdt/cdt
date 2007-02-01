@@ -399,7 +399,7 @@ public class IndexBugsTests extends BaseTestCase {
 	// typedef struct S20070201 {
 	//    int a;
 	// } S20070201;
-	public void test172454_1() throws Exception {
+	public void _test172454_1() throws Exception {
 		waitForIndexer();
 		String content= getContentsForTest(1)[0].toString();
 
@@ -434,7 +434,7 @@ public class IndexBugsTests extends BaseTestCase {
 	// typedef struct S20070201 {
 	//    int a;
 	// } S20070201;
-	public void test172454_2() throws Exception {
+	public void _test172454_2() throws Exception {
 		waitForIndexer();
 		String content= getContentsForTest(1)[0].toString();
 

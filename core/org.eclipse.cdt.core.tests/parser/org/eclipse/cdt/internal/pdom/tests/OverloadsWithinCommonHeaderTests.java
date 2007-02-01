@@ -14,6 +14,7 @@ import java.util.regex.Pattern;
 
 import junit.framework.TestSuite;
 
+import org.eclipse.cdt.core.dom.ILinkage;
 import org.eclipse.cdt.core.dom.ast.IBasicType;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IPointerType;
@@ -21,7 +22,6 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.index.IndexFilter;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.internal.core.CCoreInternals;
-import org.eclipse.cdt.internal.core.dom.Linkage;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
@@ -73,7 +73,7 @@ public class OverloadsWithinCommonHeaderTests extends PDOMTestBase {
 	
 	public void testOverloadedInCommonHeader_FileScope() throws CoreException {
 		Pattern[] QuuxPath = makePatternArray(new String[] {"quux"});		
-		IBinding[] Quux = pdom.findBindings(QuuxPath, true, IndexFilter.getFilter(Linkage.CPP_LINKAGE), new NullProgressMonitor());
+		IBinding[] Quux = pdom.findBindings(QuuxPath, true, IndexFilter.getFilter(ILinkage.CPP_LINKAGE_ID), new NullProgressMonitor());
 		
 		assertEquals(5,Quux.length);
 		
@@ -95,7 +95,7 @@ public class OverloadsWithinCommonHeaderTests extends PDOMTestBase {
 	
 	public void testOverloadedInCommonHeader_NamespaceScope() throws CoreException {
 		Pattern[] GraultPath = makePatternArray(new String[] {"corge","grault"});
-		IBinding[] Grault = pdom.findBindings(GraultPath, true, IndexFilter.getFilter(Linkage.CPP_LINKAGE), new NullProgressMonitor());
+		IBinding[] Grault = pdom.findBindings(GraultPath, true, IndexFilter.getFilter(ILinkage.CPP_LINKAGE_ID), new NullProgressMonitor());
 		assertEquals(5,Grault.length);
 		 
 		// corge::grault()
@@ -116,7 +116,7 @@ public class OverloadsWithinCommonHeaderTests extends PDOMTestBase {
 	
 	public void testOverloadedInCommonHeader_NamespaceScope_Collides_With_Filescope() throws CoreException {
 		Pattern[] ns2Path = makePatternArray(new String[] {"ns2","quux"});
-		IBinding[] ns2 = pdom.findBindings(ns2Path, true, IndexFilter.getFilter(Linkage.CPP_LINKAGE), new NullProgressMonitor());
+		IBinding[] ns2 = pdom.findBindings(ns2Path, true, IndexFilter.getFilter(ILinkage.CPP_LINKAGE_ID), new NullProgressMonitor());
 		assertEquals(5,ns2.length);
 		 
 		// ns2::quux()

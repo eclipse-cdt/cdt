@@ -33,6 +33,20 @@ public class IndexFilter {
 	/**
 	 * Get an IndexFilter that filters out bindings from linkages other than that
 	 * specified
+	 * @param linkageID the id of the linkage whose bindings should be retained
+	 * @return an IndexFilter instance
+	 */
+	public static IndexFilter getFilter(final String linkageID) {
+		return new IndexFilter() {
+			public boolean acceptLinkage(ILinkage linkage) {
+				return linkageID.equals(linkage.getID());
+			}
+		};
+	}
+
+	/**
+	 * Get an IndexFilter that filters out bindings from linkages other than that
+	 * specified
 	 * @param target the linkage whose bindings should be retained
 	 * @return an IndexFilter instance
 	 */

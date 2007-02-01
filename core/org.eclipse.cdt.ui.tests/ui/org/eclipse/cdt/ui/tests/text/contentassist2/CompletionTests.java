@@ -84,6 +84,7 @@ public class CompletionTests extends AbstractCompletionTest {
 //		C3* m123();
 //		C3* m13();
 //	
+//  	template<typename T> T tConvert();
 //private:
 //		void m3private();
 //};
@@ -94,6 +95,15 @@ public class CompletionTests extends AbstractCompletionTest {
 //   class CNS {
 //	      void mcns();
 //   };
+//};
+//template <class T> class TClass {
+//	T fTField;
+//public:
+//	TClass(T tArg) : fTField(tArg) {
+//	}
+//	T add(T tOther) {
+//		return fTField + tOther;
+//	}
 //};
 
 	public CompletionTests(String name) {
@@ -549,6 +559,25 @@ public class CompletionTests extends AbstractCompletionTest {
 	public void testCompletePreprocessorDirective() throws Exception {
 		final String[] expected= {
 				"#if", "#ifdef", "#ifndef", "#include"
+		};
+		assertCompletionResults(fCursorOffset, expected, true);
+	}
+	
+	//void gfunc(){TClass<int> t(0); t./*cursor*/
+	public void _testTemplateClassMethod() throws Exception {
+		// see https://bugs.eclipse.org/bugs/show_bug.cgi?id=172436
+		final String[] expected= {
+				"add(T)"
+		};
+		assertCompletionResults(fCursorOffset, expected, true);
+	}
+	
+	//void gfunc(){C3 c3; c3.t/*cursor*/
+	public void _testTemplateMethod() throws Exception {
+		// see https://bugs.eclipse.org/bugs/show_bug.cgi?id=172436
+		final String[] expected= {
+				"tConvert(void)"
+//				"tConvert<T>(void)"
 		};
 		assertCompletionResults(fCursorOffset, expected, true);
 	}

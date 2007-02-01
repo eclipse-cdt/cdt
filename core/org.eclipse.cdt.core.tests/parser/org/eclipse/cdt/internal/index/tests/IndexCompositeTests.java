@@ -22,7 +22,10 @@ import junit.framework.Test;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.IPDOMManager;
+import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IBinding;
+import org.eclipse.cdt.core.dom.ast.ICompositeType;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.index.IIndexManager;
 import org.eclipse.cdt.core.index.IndexFilter;
@@ -49,7 +52,9 @@ public class IndexCompositeTests  extends BaseTestCase {
 
 	private static final int NONE = 0, REFS = IIndexManager.ADD_DEPENDENCIES;
 	private static final int REFD = IIndexManager.ADD_DEPENDENT, BOTH = REFS | REFD;
-
+	
+	IIndex index;
+	
 	protected StringBuffer[] getContentsForTest(int blocks) throws IOException {
 		return TestSourceReader.getContentsForTest(
 				CTestPlugin.getDefault().getBundle(), "parser", getClass(), getName(), blocks);
@@ -73,22 +78,22 @@ public class IndexCompositeTests  extends BaseTestCase {
 			ICProject cprojA = pb.create();
 			projects.add(cprojA);
 
-			assertBCount(cprojB, NONE, 1, 1);
-			assertBCount(cprojB, REFS, 1, 1);
-			assertBCount(cprojB, REFD, 2, 2);
-			assertBCount(cprojB, BOTH, 2, 2);
+			setIndex(cprojB, NONE);	assertBCount(1, 1);
+			setIndex(cprojB, REFS);	assertBCount(1, 1);
+			setIndex(cprojB, REFD);	assertBCount(2, 2);
+			setIndex(cprojB, BOTH);	assertBCount(2, 2);
 
-			assertBCount(cprojA, NONE, 1, 1);
-			assertBCount(cprojA, REFS, 2, 2);
-			assertBCount(cprojA, REFD, 1, 1);
-			assertBCount(cprojA, BOTH, 2, 2);
+			setIndex(cprojA, NONE);	assertBCount(1, 1);
+			setIndex(cprojA, REFS);	assertBCount(2, 2);
+			setIndex(cprojA, REFD);	assertBCount(1, 1);
+			setIndex(cprojA, BOTH);	assertBCount(2, 2);
 		} finally {
 			for(Iterator i = projects.iterator(); i.hasNext(); )
 				((ICProject)i.next()).getProject().delete(true, true, new NullProgressMonitor());
 		}
 	}
 
-	// class C1 {};
+	// class C1 {public: int i;};
 	// namespace X { class C2 {}; }
 	// enum E {E1,E2};
 	// void foo(C1 c) {}
@@ -118,31 +123,77 @@ public class IndexCompositeTests  extends BaseTestCase {
 			ICProject cprojB = pb.create();
 			projects.add(cprojB);
 
-			pb = new ProjectBuilder("projB"+System.currentTimeMillis(), true);
+			pb = new ProjectBuilder("projA"+System.currentTimeMillis(), true);
 			pb.addFile("h1.h", contents[2]).addDependency(cprojB.getProject());
 			ICProject cprojA = pb.create();
 			projects.add(cprojA);
 
 			/* Defines Global, Defines Namespace, References Global, References Namespace
-			 * projC: 6, 1, 0, 0
+			 * projC: 6, 2, 0, 0
 			 * projB: 6, 1, 1, 1
 			 * projA: 3, 3, 0, 2
 			 */
 
-			assertBCount(cprojC, NONE, 6, 7);
-			assertBCount(cprojC, REFS, 6, 7);
-			assertBCount(cprojC, REFD, (6+(6-1)+(3-1)), (6+1)+(6+1-1)+(3+3-1));
-			assertBCount(cprojC, BOTH, (6+(6-1)+(3-1)), (6+1)+(6+1-1)+(3+3-1));
+			setIndex(cprojC, NONE);
+			assertBCount(6, 6 +2); assertNamespaceXMemberCount(1);
+			assertFieldCount("C1", 1);
+			
+			setIndex(cprojC, REFS);
+			assertBCount(6, 6 +2);
+			assertNamespaceXMemberCount(1);
+			assertFieldCount("C1", 1);
+			
+			setIndex(cprojC, REFD);
+			assertBCount((6+(6-1)+(3-1)), (6+2)+(6+1-1)+(3+3-1));
+			assertNamespaceXMemberCount(5);
+			assertFieldCount("C1", 1);
+			
+			setIndex(cprojC, BOTH);
+			assertBCount((6+(6-1)+(3-1)), (6+2)+(6+1-1)+(3+3-1));
+			assertNamespaceXMemberCount(5);
+			assertFieldCount("C1", 1);
 
-			assertBCount(cprojB, NONE, 6+1, 6+1+1+1);
-			assertBCount(cprojB, REFS, 6+1+6-1-1, (6+1+1+1)-1-1 + (6+1) -1);
-			assertBCount(cprojB, REFD, 6+1+3-1, (6+1+1+1) + (3+3) -1);
-			assertBCount(cprojB, BOTH, (6+1)-1+3+6 -2,  (6+1+1+1)-1-1 + (3+3+2)-2 + (6+1) -2);
+			
+			setIndex(cprojB, NONE);
+			assertBCount(6+1, 6+1+1+1);
+			assertNamespaceXMemberCount(2);
+			assertFieldCount("C1", 1);
+			
+			setIndex(cprojB, REFS);
+			assertBCount(6+1+6-1-1, (6+1+1+1)-1-1 + (6+2) -1);
+			assertNamespaceXMemberCount(2);
+			assertFieldCount("C1", 1);
+			
+			setIndex(cprojB, REFD);
+			assertBCount(6+1+3-1, (6+1+1+1) + (3+3) -1);
+			assertNamespaceXMemberCount(5);
+			assertFieldCount("C1", 1);
+			
+			setIndex(cprojB, BOTH);
+			assertBCount((6+1)-1+3+6 -2,  (6+1+1+1)-1-1 + (3+3+2)-2 + (6+2) -2);
+			assertNamespaceXMemberCount(5);
+			assertFieldCount("C1", 1);
 
-			assertBCount(cprojA, NONE, 3, 8);
-			assertBCount(cprojA, REFS, (6+1)-1+3+6 -2, (6+1+1+1)-1-1 + (3+3+2)-2 + (6+1) -2);
-			assertBCount(cprojA, REFD, 3, 8);
-			assertBCount(cprojA, BOTH, (6+1)-1+3+6 -2, (6+1+1+1)-1-1 + (3+3+2)-2 + (6+1) -2);
+			
+			setIndex(cprojA, NONE);
+			assertBCount(3, 8);
+			assertNamespaceXMemberCount(5);
+			// binding C1 is not referenced by cprojA
+			
+			setIndex(cprojA, REFS);
+			assertBCount(6+6+3-1-1, (6+1+1+1)-1-1 + (3+3+2)-2 + (6+2) -2);
+			assertNamespaceXMemberCount(5);
+			assertFieldCount("C1", 1);
+			
+			setIndex(cprojA, REFD);
+			assertBCount(3, 8);
+			assertNamespaceXMemberCount(5);
+			// binding C1 is not referenced by cprojA
+			
+			setIndex(cprojA, BOTH);
+			assertBCount(6+6+3-1-1, (6+1+1+1)-1-1 + (3+3+2)-2 + (6+2) -2);
+			assertNamespaceXMemberCount(5);
+			assertFieldCount("C1", 1);
 		} finally {
 			for(Iterator i = projects.iterator(); i.hasNext(); )
 				((ICProject)i.next()).getProject().delete(true, true, new NullProgressMonitor());
@@ -168,6 +219,8 @@ public class IndexCompositeTests  extends BaseTestCase {
 		StringBuffer[] contents = getContentsForTest(3);
 		List projects = new ArrayList();
 
+		
+		
 		try {
 			ProjectBuilder pb = new ProjectBuilder("projB"+System.currentTimeMillis(), true);
 			pb.addFile("h2.h", contents[1]);
@@ -184,26 +237,54 @@ public class IndexCompositeTests  extends BaseTestCase {
 			ICProject cprojA = pb.create();
 			projects.add(cprojA);
 
-			/* Defines Global, Defines Namespace, Ext. References Global, Ext. References Namespace
+			/*  A   C    |
+		     *   \ /     | Depends On / References
+		     *    B      V
+		     *    
+			 * Defines Global, Defines Namespace, Ext. References Global, Ext. References Namespace
 			 * projC: 7, 2, 1, 1
 			 * projB: 4, 1, 0, 0
 			 * projA: 4, 1, 1, 1
 			 */
 
-			assertBCount(cprojC, NONE, 7+1, 7+2+1+1);
-			assertBCount(cprojC, REFS, 7+1+4-1-1, 7+1+1+2+4+1-1-2);
-			assertBCount(cprojC, REFD, 7+1, 7+1+1+2);
-			assertBCount(cprojC, BOTH, 7+4+4-2, 7+4+4-2 +2+1+1);
+			setIndex(cprojC, NONE);
+			assertBCount(7+1, 7+2+1+1);
+			assertNamespaceXMemberCount(3);
+			setIndex(cprojC, REFS);
+			assertBCount(7+1+4-1-1, 7+1+1+2+4+1-1-2);
+			assertNamespaceXMemberCount(3);
+			setIndex(cprojC, REFD);
+			assertBCount(7+1, 7+1+1+2);
+			assertNamespaceXMemberCount(3);
+			setIndex(cprojC, BOTH);
+			assertBCount(7+4+4-2, 7+4+4-2 +2+1+1);
+			assertNamespaceXMemberCount(4);
 
-			assertBCount(cprojB, NONE, 4, 4+1);
-			assertBCount(cprojB, REFS, 4, 4+1);
-			assertBCount(cprojB, REFD, 7+4+4-2, 7+4+4-2 +2+1+1);
-			assertBCount(cprojB, BOTH, 7+4+4-2, 7+4+4-2 +2+1+1);
+			setIndex(cprojB, NONE);
+			assertBCount(4, 4+1);
+			assertNamespaceXMemberCount(1);
+			setIndex(cprojB, REFS);
+			assertBCount(4, 4+1);
+			assertNamespaceXMemberCount(1);
+			setIndex(cprojB, REFD);
+			assertBCount(7+4+4-2, 7+4+4-2 +2+1+1);
+			assertNamespaceXMemberCount(4);
+			setIndex(cprojB, BOTH);
+			assertBCount(7+4+4-2, 7+4+4-2 +2+1+1);
+			assertNamespaceXMemberCount(4);
 
-			assertBCount(cprojA, NONE, 4+1, 4+1+1+1);
-			assertBCount(cprojA, REFS, 4+1+4-1-1, 4+1+4-1-1 +1+1);
-			assertBCount(cprojA, REFD, 4+1, 4+1+1+1);
-			assertBCount(cprojA, BOTH, 7+4+4-2, 7+4+4-2 +2+1+1);
+			setIndex(cprojA, NONE);
+			assertBCount(4+1, 4+1+1+1);
+			assertNamespaceXMemberCount(2);
+			setIndex(cprojA, REFS);
+			assertBCount(4+1+4-1-1, 4+1+4-1-1 +1+1);
+			assertNamespaceXMemberCount(2);
+			setIndex(cprojA, REFD);
+			assertBCount(4+1, 4+1+1+1);
+			assertNamespaceXMemberCount(2);
+			setIndex(cprojA, BOTH);
+			assertBCount(7+4+4-2, 7+4+4-2 +2+1+1);
+			assertNamespaceXMemberCount(4);
 		} finally {
 			for(Iterator i = projects.iterator(); i.hasNext(); )
 				((ICProject)i.next()).getProject().delete(true, true, new NullProgressMonitor());
@@ -233,7 +314,7 @@ public class IndexCompositeTests  extends BaseTestCase {
 			ICProject cprojC = pb.create();
 			projects.add(cprojC);
 
-			pb = new ProjectBuilder("projB"+System.currentTimeMillis(), true);
+			pb = new ProjectBuilder("projA"+System.currentTimeMillis(), true);
 			pb.addFile("h1.h", contents[2]);
 			ICProject cprojA = pb.create();
 			projects.add(cprojA);
@@ -243,32 +324,60 @@ public class IndexCompositeTests  extends BaseTestCase {
 			ICProject cprojB = pb.create();
 			projects.add(cprojB);
 
-			/* Defines Global, Defines Namespace, References Global, References Namespace
+			/*    B     |
+		     *   / \    | Depends On / References
+		     *  A   C   V
+		     *    
+			 *  Defines Global, Defines Namespace, References Global, References Namespace
 			 * projC: 6, 1, 0, 0
 			 * projB: 4, 2, 2, 1
 			 * projA: 3, 1, 0, 0
 			 */
 
-			assertBCount(cprojC, NONE, 6, 6+1);
-			assertBCount(cprojC, REFS, 6, 6+1);
-			assertBCount(cprojC, REFD, 6+4+1-1, 6+4+1-1 +1+1+1+1 );
-			assertBCount(cprojC, BOTH, 6+4+3-2, 6+4+3-2 +1+2+1);
+			setIndex(cprojC, NONE);
+			assertBCount(6, 6+1);
+			assertNamespaceXMemberCount(1);
+			setIndex(cprojC, REFS);
+			assertBCount(6, 6+1);
+			assertNamespaceXMemberCount(1);
+			setIndex(cprojC, REFD);
+			assertBCount(6+4+1-1, 6+4+1-1 +1+1+1+1 );
+			assertNamespaceXMemberCount(4);
+			setIndex(cprojC, BOTH);
+			assertBCount(6+4+3-2, 6+4+3-2 +1+2+1);
+			assertNamespaceXMemberCount(4);
 
-			assertBCount(cprojB, NONE, 4+2, 4+2 +2+1);
-			assertBCount(cprojB, REFS, 6+4+3-2, 6+4+3-2 +1+2+1);
-			assertBCount(cprojB, REFD, 4+2, 4+2 +2+1);
-			assertBCount(cprojB, BOTH, 6+4+3-2, 6+4+3-2 +1+2+1);
+			setIndex(cprojB, NONE);
+			assertBCount(4+2, 4+2 +2+1);
+			assertNamespaceXMemberCount(4);
+			setIndex(cprojB, REFS);
+			assertBCount(6+4+3-2, 6+4+3-2 +1+2+1);
+			assertNamespaceXMemberCount(4);
+			setIndex(cprojB, REFD);
+			assertBCount(4+2, 4+2 +2+1);
+			assertNamespaceXMemberCount(4);
+			setIndex(cprojB, BOTH);
+			assertBCount(6+4+3-2, 6+4+3-2 +1+2+1);
+			assertNamespaceXMemberCount(4);
 
-			assertBCount(cprojA, NONE, 3, 3 +1);
-			assertBCount(cprojA, REFS, 3, 3 +1);
-			assertBCount(cprojA, REFD, 4+2+3-1-1, 4+2+3-1-1 +2+1 );
-			assertBCount(cprojA, BOTH, 6+4+3-2, 6+4+3-2 +1+2+1);
+			setIndex(cprojA, NONE);
+			assertBCount(3, 3 +1);
+			assertNamespaceXMemberCount(1);
+			setIndex(cprojA, REFS);
+			assertBCount(3, 3 +1);
+			assertNamespaceXMemberCount(1);
+			setIndex(cprojA, REFD);
+			assertBCount(4+2+3-1-1, 4+2+3-1-1 +2+1 );
+			assertNamespaceXMemberCount(4);
+			setIndex(cprojA, BOTH);
+			assertBCount(6+4+3-2, 6+4+3-2 +1+2+1);
+			assertNamespaceXMemberCount(4);
 		} finally {
 			for(Iterator i = projects.iterator(); i.hasNext(); )
 				((ICProject)i.next()).getProject().delete(true, true, new NullProgressMonitor());
 		}
 	}
-
+	
 	/**
 	 * Asserts binding counts, and returns the index tested against
 	 * @param cprojA the project to obtain the index for
@@ -278,13 +387,39 @@ public class IndexCompositeTests  extends BaseTestCase {
 	 * @return
 	 * @throws CoreException
 	 */
-	private IIndex assertBCount(ICProject cprojA, int options, int global, int all) throws CoreException {
-		IIndex index = CCorePlugin.getIndexManager().getIndex(cprojA, options);
+	private IIndex assertBCount(int global, int all) throws CoreException {
 		IBinding[] bindings = index.findBindings(Pattern.compile(".*"), true, IndexFilter.ALL, new NullProgressMonitor());
 		assertEquals(global, bindings.length);
 		bindings = index.findBindings(Pattern.compile(".*"), false, IndexFilter.ALL, new NullProgressMonitor());
 		assertEquals(all, bindings.length);
 		return index;
+	}
+	
+	private void assertNamespaceXMemberCount(int count) throws CoreException, DOMException {
+		IBinding[] bindings = index.findBindings(Pattern.compile("X"), true, IndexFilter.ALL, new NullProgressMonitor());
+		assertEquals(1, bindings.length);
+		assertEquals(count, ((ICPPNamespace)bindings[0]).getMemberBindings().length);
+	}
+	
+	private void assertFieldCount(String qnPattern, int count) throws CoreException, DOMException {
+		IBinding[] bindings = index.findBindings(Pattern.compile(qnPattern), true, IndexFilter.ALL, new NullProgressMonitor());
+		assertEquals(1, bindings.length);
+		assertEquals(count, ((ICompositeType)bindings[0]).getFields().length);
+	}
+	
+	private void setIndex(ICProject project, int options) throws CoreException, InterruptedException {
+		if(index!=null) {
+			index.releaseReadLock();
+		}
+		index = CCorePlugin.getIndexManager().getIndex(project, options);
+		index.acquireReadLock();
+	}
+	
+	protected void tearDown() throws Exception {
+		if(index!=null) {
+			index.releaseReadLock();
+		}
+		super.tearDown();
 	}
 }
 
@@ -313,8 +448,8 @@ class ProjectBuilder {
 	}
 
 	ICProject create() throws CoreException {
-		ICProject result = cpp ? CProjectHelper.createCCProject(name, "bin", IPDOMManager.ID_FAST_INDEXER)
-				: CProjectHelper.createCCProject(name, "bin", IPDOMManager.ID_FAST_INDEXER);
+		ICProject result = cpp ? CProjectHelper.createCCProject(name, "bin", IPDOMManager.ID_NO_INDEXER)
+				: CProjectHelper.createCCProject(name, "bin", IPDOMManager.ID_NO_INDEXER);
 
 		for(Iterator i = path2content.entrySet().iterator(); i.hasNext(); ) {
 			Map.Entry entry = (Map.Entry) i.next();
@@ -325,7 +460,7 @@ class ProjectBuilder {
 		desc.setReferencedProjects( (IProject[]) dependencies.toArray(new IProject[dependencies.size()]) );
 		result.getProject().setDescription(desc, new NullProgressMonitor());
 
-		CCoreInternals.getPDOMManager().reindex(result);
+		CCoreInternals.getPDOMManager().setIndexerId(result, IPDOMManager.ID_FAST_INDEXER);
 		CCorePlugin.getIndexManager().joinIndexer(4000, new NullProgressMonitor());
 		return result;
 	}

@@ -30,15 +30,12 @@ public class CompletionTest_VariableType_NestedPrefix  extends CompletionProposa
 			"Foo(void) ",
 			"bar(void) void",
 			"fum(void) void",
-			// missing:
 			"DEF",
 			"x : int"
 	};
 
 	public CompletionTest_VariableType_NestedPrefix(String name) {
 		super(name);
-		// unknown problem
-		setExpectFailure(77777);
 	}
 
 	public static Test suite() {

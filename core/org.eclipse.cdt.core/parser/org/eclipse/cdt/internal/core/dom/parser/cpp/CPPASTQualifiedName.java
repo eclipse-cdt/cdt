@@ -20,6 +20,7 @@ import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNameOwner;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IBinding;
+import org.eclipse.cdt.core.dom.ast.IField;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConversionName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTOperatorName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
@@ -301,41 +302,71 @@ public class CPPASTQualifiedName extends CPPASTNode implements
 	public IBinding[] resolvePrefix(IASTName n) {
 		IBinding binding = names[names.length - 2].resolveBinding();
 		if (binding instanceof ICPPClassType) {
-			ICPPClassType classType = (ICPPClassType) binding;
-			List bindings = new ArrayList();
-			char[] name = n.toCharArray();
-			
-			try {
-				ICPPMethod[] methods = classType.getDeclaredMethods();
-				for (int i = 0; i < methods.length; i++) {
-					char[] potential = methods[i].getNameCharArray();
-					if (CharArrayUtils.equals(potential, 0, name.length, name, false)) {
-						bindings.add(methods[i]);
-					}
-				}
-			} catch (DOMException e) {
-			}
-			
-			return (IBinding[]) bindings.toArray(new IBinding[bindings.size()]);
+			return resolveClassScopePrefix((ICPPClassType) binding, 
+					n.toCharArray());
 		} else if (binding instanceof ICPPNamespace) {
-			ICPPNamespace namespace = (ICPPNamespace) binding;
-			List bindings = new ArrayList();
-			char[] name = n.toCharArray();
-			
-			try {
-				IBinding[] members = namespace.getMemberBindings();
-				for (int i = 0 ; i < members.length; i++) {
-					char[] potential = members[i].getNameCharArray();
-					if (CharArrayUtils.equals(potential, 0, name.length, name, false)) {
-						bindings.add(members[i]);
-					}
-				}
-			} catch (DOMException e) {
-			}
-			
-			return (IBinding[]) bindings.toArray(new IBinding[bindings.size()]);
+			return resolveNamespaceScopePrefix((ICPPNamespace) binding, 
+					n.toCharArray());
 		}
 		
 		return null;
+	}
+	
+	private IBinding[] resolveClassScopePrefix(ICPPClassType classType, char[] name) {
+		List bindings = new ArrayList();
+		
+		try {
+			IField[] fields = classType.getFields();
+			for (int i = 0; i < fields.length; i++) {
+				if (fields[i].isStatic()) {
+					char[] potential = fields[i].getNameCharArray();
+					if (CharArrayUtils.equals(potential, 0, name.length, name, false)) {
+						bindings.add(fields[i]);
+					}
+				}
+			}
+		} catch (DOMException e) {
+		}
+		
+		try {
+			ICPPMethod[] methods = classType.getDeclaredMethods();
+			for (int i = 0; i < methods.length; i++) {
+				char[] potential = methods[i].getNameCharArray();
+				if (CharArrayUtils.equals(potential, 0, name.length, name, false)) {
+					bindings.add(methods[i]);
+				}
+			}
+		} catch (DOMException e) {
+		}
+		
+		try {
+			ICPPClassType[] nested = classType.getNestedClasses();
+			for (int i = 0; i < nested.length; i++) {
+				char[] potential = nested[i].getNameCharArray();
+				if (CharArrayUtils.equals(potential, 0, name.length, name, false)) {
+					bindings.add(nested[i]);
+				}
+			}
+		} catch (DOMException e) {
+		}
+		
+		return (IBinding[]) bindings.toArray(new IBinding[bindings.size()]);
+	}
+	
+	private IBinding[] resolveNamespaceScopePrefix(ICPPNamespace namespace, char[] name) {
+		List bindings = new ArrayList();
+		
+		try {
+			IBinding[] members = namespace.getMemberBindings();
+			for (int i = 0 ; i < members.length; i++) {
+				char[] potential = members[i].getNameCharArray();
+				if (CharArrayUtils.equals(potential, 0, name.length, name, false)) {
+					bindings.add(members[i]);
+				}
+			}
+		} catch (DOMException e) {
+		}
+		
+		return (IBinding[]) bindings.toArray(new IBinding[bindings.size()]);
 	}
 }

@@ -30,14 +30,11 @@ public class CompletionTest_ScopedReference_NonCodeScope  extends CompletionProp
 			 "Foo(void) ",
 			 "bar(void) void",
 			 "fum(void) void",
-			 // missing:
 			 "x : int"
 	};
 	
 	public CompletionTest_ScopedReference_NonCodeScope(String name) {
 		super(name);
-		// unknown problem
-		setExpectFailure(77777);
 	}
 
 	public static Test suite() {

@@ -74,15 +74,16 @@ echo "Running the builder..."
 tail -50 $log
 
 #update the main download and archive pages
-cd /home/data/httpd/download.eclipse.org/dsdp/tm/downloads
+cd /home/data/httpd/archive.eclipse.org/dsdp/tm/downloads
 cvs -q update -RPd >> $log 2>&1
 chgrp dsdp-tmadmin * CVS/*
-cd /home/data/httpd/archive.eclipse.org/dsdp/tm/downloads
+cd /home/data/httpd/download.eclipse.org/dsdp/tm/downloads
 cvs -q update -RPd >> $log 2>&1
 chgrp dsdp-tmadmin * CVS/*
 
 #Fixup permissions and group id on download.eclpse.org (just to be safe)
-#chmod -R g+w $HOME/ws2/publish/${buildType}*${daystamp}*
+chgrp -R dsdp-tmadmin drops/${buildType}*${daystamp}*
+chmod -R g+w drops/${buildType}*${daystamp}*
 
 #Check the publishing
 cd $HOME/ws2/publish

@@ -14,7 +14,7 @@
  * {Name} (company) - description of contribution.
  ********************************************************************************/
 
-package org.eclipse.rse.internal.subsystems.shells.subsystems;
+package org.eclipse.rse.subsystems.shells.core.model;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,10 +24,10 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.model.ISystemRegistry;
 import org.eclipse.rse.core.subsystems.ISubSystem;
+import org.eclipse.rse.internal.subsystems.shells.subsystems.RemoteCmdSubSystem;
 import org.eclipse.rse.subsystems.files.core.model.RemoteFileUtility;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFileSubSystem;
-import org.eclipse.rse.subsystems.shells.core.model.RemoteOutput;
 import org.eclipse.rse.subsystems.shells.core.subsystems.ICandidateCommand;
 import org.eclipse.rse.subsystems.shells.core.subsystems.IRemoteCmdSubSystem;
 import org.eclipse.rse.subsystems.shells.core.subsystems.IRemoteCommandShell;

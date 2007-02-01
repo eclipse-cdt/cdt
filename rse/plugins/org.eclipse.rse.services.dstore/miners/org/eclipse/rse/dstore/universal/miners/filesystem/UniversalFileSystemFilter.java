@@ -36,9 +36,7 @@ public class UniversalFileSystemFilter implements java.io.FilenameFilter, IUnive
    protected int includeFilesOrFolders;
   
    /**
-    * Insert the method's description here.
-    * Creation date: (2/22/01 1:15:54 PM)
-    * @param filter java.lang.String
+    * @param fString the filter string
     */
    public UniversalFileSystemFilter(String fString, boolean files, boolean folders, boolean caseSensitive) {
       this.filter  = fString;      
@@ -55,10 +53,10 @@ public class UniversalFileSystemFilter implements java.io.FilenameFilter, IUnive
 	 * @return  <code>true</code> if and only if the name should be
 	 * included in the file list; <code>false</code> otherwise.
 	 */
-   public boolean accept(java.io.File dir, String nameFilter) {
+   public boolean accept(java.io.File dir, String name) {
    	
    	  boolean match = true; 
-   	  java.io.File file = new java.io.File(dir, nameFilter);
+   	  java.io.File file = new java.io.File(dir, name);
       if (!allowDirs && file.isDirectory()) 
       	 return false;
       
@@ -80,14 +78,14 @@ public class UniversalFileSystemFilter implements java.io.FilenameFilter, IUnive
       if ((matcher == null) && (folderNameMatcher == null))
     	  return true;
       if (includeFilesOrFolders != INCLUDE_ALL)
-    	  match = matcher.matches(nameFilter);
+    	  match = matcher.matches(name);
       else {
     	if (file.isFile()) {
     	  if (matcher!=null)
-    	  match = matcher.matches(nameFilter);
+    	  match = matcher.matches(name);
     	} else {
     	  if (folderNameMatcher!=null)
-    	  match = folderNameMatcher.matches(nameFilter);
+    	  match = folderNameMatcher.matches(name);
     	}
       }
       return match;
@@ -112,7 +110,7 @@ public class UniversalFileSystemFilter implements java.io.FilenameFilter, IUnive
      * when there is separate filters for both folder names and filter names.
      * @param includeFilesOrFolders A constant from {IFileConstants}
      * @param folderNameFilter The pattern to filter the folder names by. Can be null to include all folders
-     * @param nameFilter The pattern to filter the file names by. Can be null to include all files
+     * @param fileNameFilter The pattern to filter the file names by. Can be null to include all files
      */
     protected void setListValues(int includeFilesOrFolders, String folderNameFilter, String fileNameFilter)
     {

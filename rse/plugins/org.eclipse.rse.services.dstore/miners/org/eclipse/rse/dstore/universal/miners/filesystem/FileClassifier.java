@@ -943,7 +943,7 @@ public class FileClassifier extends Thread
     /**
      * Classify virtual children.
      * 
-     * @param fullPath
+     * @param parentPath
      *            the full path of the parent file. The path could represent an
      *            archive or a virtual folder.
      */

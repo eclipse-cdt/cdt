@@ -148,7 +148,7 @@ import org.eclipse.ui.views.framelist.GoIntoAction;
 /*
  * At one time implemented the following as well: MenuListener, IDoubleClickListener, ArmListener, IWireEventTarget
  */
-public class SystemView extends SystemViewSafeTreeViewer implements ISystemTree, ISystemResourceChangeListener, ISystemRemoteChangeListener, IMenuListener,
+public class SystemView extends SafeTreeViewer implements ISystemTree, ISystemResourceChangeListener, ISystemRemoteChangeListener, IMenuListener,
 		ISelectionChangedListener, ISelectionProvider, ITreeViewerListener, ISystemResourceChangeEvents, ISystemDeleteTarget, ISystemRenameTarget, ISystemSelectAllTarget
 {
 

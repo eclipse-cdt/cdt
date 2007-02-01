@@ -10,6 +10,7 @@
  ********************************************************************************/
 package org.eclipse.rse.ui.view;
 
+import org.eclipse.jface.viewers.IDelayedLabelDecorator;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -18,19 +19,28 @@ import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.Widget;
 
 /**
- * Delayed label provider can trigger tree item updates called in the
- * viewer after the tree item itself got disposed. This happens especially
- * if items appear and disappear very fast within the tree which then will
- * lead to nasty SWT Widget already disposed exceptions.
+ * The SafeTreeViewer wraps an SWT TreeViewer in order to avoid
+ * exceptions due to accessing already disposed items.
+ * 
+ * The main reason for this wrapping is that delayed label providers
+ * (i.e. instances of {@link IDelayedLabelDecorator}) can trigger tree 
+ * item updates called in the viewer after the tree item itself got 
+ * disposed already. This happens especially if items appear and 
+ * disappear very fast within the tree which then will lead to nasty 
+ * SWT Widget already disposed exceptions.
+ * 
+ * Clients may subclass this class.
+ * 
+ * @since RSE 2.0
  */
-public class SystemViewSafeTreeViewer extends TreeViewer {
+public class SafeTreeViewer extends TreeViewer {
 
 	/**
 	 * Constructor.
 	 * 
 	 * @param parent The parant control.
 	 */
-	public SystemViewSafeTreeViewer(Composite parent) {
+	public SafeTreeViewer(Composite parent) {
 		super(parent);
 	}
 
@@ -39,7 +49,7 @@ public class SystemViewSafeTreeViewer extends TreeViewer {
 	 * 
 	 * @param tree The tree control.
 	 */
-	public SystemViewSafeTreeViewer(Tree tree) {
+	public SafeTreeViewer(Tree tree) {
 		super(tree);
 	}
 
@@ -49,7 +59,7 @@ public class SystemViewSafeTreeViewer extends TreeViewer {
 	 * @param parent The parent control.
 	 * @param style The SWT style bits passed to the tree creation.
 	 */
-	public SystemViewSafeTreeViewer(Composite parent, int style) {
+	public SafeTreeViewer(Composite parent, int style) {
 		super(parent, style);
 	}
 

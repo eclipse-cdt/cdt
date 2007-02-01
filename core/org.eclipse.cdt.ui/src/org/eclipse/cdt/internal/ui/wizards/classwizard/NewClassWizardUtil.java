@@ -378,47 +378,53 @@ public class NewClassWizardUtil {
 		
 		IPDOMManager pdomManager = CCorePlugin.getPDOMManager();
 		try {
-			PDOM pdom = (PDOM)pdomManager.getPDOM(project);	
-			IBinding[] bindings = pdom.findBindings(Pattern.compile(typeName.getName()), new NullProgressMonitor());
 			boolean sameTypeNameExists = false;
 			boolean sameNameDifferentTypeExists = false;
-			
-			for (int i = 0; i < bindings.length; ++i)
-			{
-				PDOMBinding binding = (PDOMBinding)bindings[i];
-				PDOMBinding pdomBinding = pdom.getLinkage(GPPLanguage.getDefault()).adaptBinding(binding);
+			PDOM pdom = (PDOM)pdomManager.getPDOM(project);	
+			pdom.acquireReadLock();
+			try {
+				IBinding[] bindings = pdom.findBindings(Pattern.compile(typeName.getName()), new NullProgressMonitor());
 				
-				//get the fully qualified name of this binding
-				String bindingFullName = getBindingQualifiedName(pdomBinding);
-				
-				int currentNodeType = pdomBinding.getNodeType();
-				// full binding				
-				if (currentNodeType == pdomNodeType)
-				{						
-					if (bindingFullName.equals(fullyQualifiedTypeName))
-					{
-						return SEARCH_MATCH_FOUND_EXACT;
-					} else {
-						// same type , same name , but different name space
-						// see if there is an exact match;
-						sameTypeNameExists = true;
+				for (int i = 0; i < bindings.length; ++i)
+				{
+					PDOMBinding binding = (PDOMBinding)bindings[i];
+					PDOMBinding pdomBinding = pdom.getLinkage(GPPLanguage.getDefault()).adaptBinding(binding);
+					
+					//get the fully qualified name of this binding
+					String bindingFullName = getBindingQualifiedName(pdomBinding);
+					
+					int currentNodeType = pdomBinding.getNodeType();
+					// full binding				
+					if (currentNodeType == pdomNodeType)
+					{						
+						if (bindingFullName.equals(fullyQualifiedTypeName))
+						{
+							return SEARCH_MATCH_FOUND_EXACT;
+						} else {
+							// same type , same name , but different name space
+							// see if there is an exact match;
+							sameTypeNameExists = true;
+						}
+					}
+					else if(currentNodeType == PDOMCPPLinkage.CPPCLASSTYPE || 
+							currentNodeType == PDOMCPPLinkage.CPPENUMERATION ||
+							currentNodeType == PDOMCPPLinkage.CPPNAMESPACE ||
+							currentNodeType == PDOMCPPLinkage.CPPTYPEDEF ||
+							currentNodeType == PDOMCPPLinkage.CPPBASICTYPE)
+					{						
+						if (bindingFullName.equals(fullyQualifiedTypeName))
+						{
+				        	return SEARCH_MATCH_FOUND_EXACT_ANOTHER_TYPE;
+				        } else {
+							// different type , same name , but different name space
+							sameNameDifferentTypeExists = true;
+				        }
 					}
 				}
-				else if(currentNodeType == PDOMCPPLinkage.CPPCLASSTYPE || 
-						currentNodeType == PDOMCPPLinkage.CPPENUMERATION ||
-						currentNodeType == PDOMCPPLinkage.CPPNAMESPACE ||
-						currentNodeType == PDOMCPPLinkage.CPPTYPEDEF ||
-						currentNodeType == PDOMCPPLinkage.CPPBASICTYPE)
-				{						
-					if (bindingFullName.equals(fullyQualifiedTypeName))
-					{
-			        	return SEARCH_MATCH_FOUND_EXACT_ANOTHER_TYPE;
-			        } else {
-						// different type , same name , but different name space
-						sameNameDifferentTypeExists = true;
-			        }
-				}
+			} finally {
+				pdom.releaseReadLock();
 			}
+			
 			if(sameTypeNameExists){
 				return SEARCH_MATCH_FOUND_ANOTHER_NAMESPACE;
 			}
@@ -426,6 +432,8 @@ public class NewClassWizardUtil {
 			if(sameNameDifferentTypeExists){
 				return SEARCH_MATCH_FOUND_ANOTHER_TYPE;
 			}
+		} catch (InterruptedException e) {
+			return SEARCH_MATCH_ERROR;
 		} catch (CoreException e) {
 			return SEARCH_MATCH_ERROR;
 		}

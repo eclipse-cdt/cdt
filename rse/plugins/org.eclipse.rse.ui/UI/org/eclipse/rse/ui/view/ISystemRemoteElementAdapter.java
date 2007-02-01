@@ -32,9 +32,18 @@ import org.eclipse.swt.widgets.Shell;
 public interface ISystemRemoteElementAdapter extends IRemoteObjectIdentifier
 {
 	/**
-	 * Return the name of this object, which may be different than the display text ({#link #getText(Object)}.
+	 * Return the name of this object, which may be different than
+	 * the display text ({#link #getText(Object)}.
 	 */
 	public String getName(Object element);
+	
+	/**
+   * Return the label for this object.
+   * @see #getName(Object)
+   * @see #getAbsoluteName(Object)
+   */
+  public String getText(Object element);
+
 	/**
 	 * Return the fully qualified name of this remote object. 
 	 * Unlike getName, this should include the full path to the name.

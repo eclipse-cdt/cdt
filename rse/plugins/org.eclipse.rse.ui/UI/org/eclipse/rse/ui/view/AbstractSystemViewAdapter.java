@@ -364,15 +364,6 @@ public abstract class AbstractSystemViewAdapter
 	 */
 	public abstract ImageDescriptor getImageDescriptor(Object element);
 
-		
-	/**
-     * <i><b>Abstract</b>. Must be overridden by subclasses.</i><br>
-	 * Return the label for this object.
-	 * @see #getName(Object)
-	 * @see #getAbsoluteName(Object)
-	 */
-	public abstract String getText(Object element);
-
 	/**
 	 * Return the alternate label for this object.  By default this
 	 * just returns the regular label.  If a custom label is required,

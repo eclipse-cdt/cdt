@@ -41,6 +41,7 @@ public class FTPHostFile implements IHostFile
 	private boolean _canWrite = true;
 	private boolean _isRoot;
 	private boolean _exists;
+	private FTPFile _ftpFile;
 		
 	public FTPHostFile(String parentPath, String name, boolean isDirectory, boolean isRoot, long lastModified, long size, boolean exists)
 	{
@@ -59,6 +60,7 @@ public class FTPHostFile implements IHostFile
 	public FTPHostFile(String parentPath, FTPFile ftpFile, String systemName)
 	{
 		_parentPath = parentPath;
+		_ftpFile = ftpFile;
 		
 		if(systemName.equals(FTPClientConfig.SYST_VMS))
 		{
@@ -183,6 +185,39 @@ public class FTPHostFile implements IHostFile
 		
 		_isArchive = internalIsArchive();
 	}
+	
+	public int getUserPermissions()
+	{
+		//user
+		int userRead = _ftpFile.hasPermission(FTPFile.USER_ACCESS, FTPFile.READ_PERMISSION) || _canRead ? 1 : 0;
+		int userWrite = _ftpFile.hasPermission(FTPFile.USER_ACCESS, FTPFile.WRITE_PERMISSION) || _canWrite ? 1 : 0;
+		int userExec = _ftpFile.hasPermission(FTPFile.USER_ACCESS, FTPFile.EXECUTE_PERMISSION) ? 1 : 0;
+		
+		return userRead << 2  | userWrite << 1  | userExec;
+	}
+	
+	public int getGroupPermissions()
+	{	
+		//group
+		int groupRead = _ftpFile.hasPermission(FTPFile.GROUP_ACCESS, FTPFile.READ_PERMISSION) ? 1 : 0;
+		int groupWrite = _ftpFile.hasPermission(FTPFile.GROUP_ACCESS, FTPFile.WRITE_PERMISSION) ? 1 : 0;
+		int groupExec = _ftpFile.hasPermission(FTPFile.GROUP_ACCESS, FTPFile.EXECUTE_PERMISSION) ? 1 : 0;
+		
+		return groupRead << 2 | groupWrite << 1 | groupExec;
+	}
+		
+	public int getOtherPermissions()
+	{
+		//other
+		int otherRead = _ftpFile.hasPermission(FTPFile.WORLD_ACCESS, FTPFile.READ_PERMISSION) ? 1 : 0;
+		int otherWrite = _ftpFile.hasPermission(FTPFile.WORLD_ACCESS, FTPFile.WRITE_PERMISSION) ? 1 : 0;
+		int otherExec = _ftpFile.hasPermission(FTPFile.WORLD_ACCESS, FTPFile.EXECUTE_PERMISSION) ? 1 : 0;
+		
+		return otherRead << 2 | otherWrite << 1 | otherExec;
+	}
+	
+	
+	
 	
 	protected boolean internalIsArchive()
 	{

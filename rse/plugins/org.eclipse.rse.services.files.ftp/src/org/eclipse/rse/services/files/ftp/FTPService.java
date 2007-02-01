@@ -418,7 +418,7 @@ public class FTPService extends AbstractFileService implements IFileService, IFT
 	{
 		char separator =  '/'; 
 		
-		if(_systemName.equals(FTPClientConfig.SYST_NT) || _userHome.indexOf('\\')!=-1) 
+		if((_systemName.equals(FTPClientConfig.SYST_NT) || _userHome.indexOf('\\')!=-1) && _userHome.indexOf('/')==-1) 
 		{
 			separator = '\\';  
 		}
@@ -980,18 +980,52 @@ public class FTPService extends AbstractFileService implements IFileService, IFT
 	}
 
 
-
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.rse.services.files.IFileService#setLastModified(org.eclipse.core.runtime.IProgressMonitor, java.lang.String, java.lang.String, long)
+	 */
 	public boolean setLastModified(IProgressMonitor monitor, String parent,
 			String name, long timestamp) throws SystemMessageException
 	{
-		// TODO - implement this to set the timestamp
+		// not applicable for FTP
 		return false;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.rse.services.files.IFileService#setReadOnly(org.eclipse.core.runtime.IProgressMonitor, java.lang.String, java.lang.String, boolean)
+	 */
 	public boolean setReadOnly(IProgressMonitor monitor, String parent,
 			String name, boolean readOnly) throws SystemMessageException {
-		// TODO Auto-generated method stub
-		return false;
+		
+		boolean result = false;
+		int permissions = 0;
+		
+		FTPHostFile file = (FTPHostFile)getFile(monitor,parent, name);
+		
+		int userPermissions = file.getUserPermissions();
+		int groupPermissions = file.getGroupPermissions();
+		int otherPermissions = file.getOtherPermissions();
+		
+		
+		if(readOnly)
+		{
+			userPermissions &= 5; // & 101b
+		}
+		else
+		{
+			userPermissions |= 2; // | 010b
+		}
+		
+		permissions = userPermissions * 100 + groupPermissions * 10 + otherPermissions;
+		
+		try {
+			result =_ftpClient.sendSiteCommand("CHMOD "+permissions+" "+file.getAbsolutePath()); //$NON-NLS-1$ //$NON-NLS-2$
+		} catch (IOException e) {
+			result = false;
+		} 
+		
+		return result;
 	}
 	
 	

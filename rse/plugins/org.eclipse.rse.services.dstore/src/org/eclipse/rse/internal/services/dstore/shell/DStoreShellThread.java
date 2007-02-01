@@ -47,7 +47,6 @@ public class DStoreShellThread
 	 * @param cwd initial working directory
 	 * @param invocation launch shell command
 	 * @param encoding
-	 * @param patterns patterns file for output interpretation
 	 * @param envVars user and system environment variables to launch shell with
 	 */
 	public DStoreShellThread(DataStore dataStore, String cwd, String invocation, String encoding, String[] envVars)

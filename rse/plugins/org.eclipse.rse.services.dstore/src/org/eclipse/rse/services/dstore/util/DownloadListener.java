@@ -206,24 +206,29 @@ public class DownloadListener implements IDomainListener,IUniversalDataStoreCons
 
 
 	/**
-		 * Wait for the the status DataElement to be refreshed
-		 *
-		 * @param
-		 *    ICommunicationsDiagnosticFactory factory : for creating system specific diagnostic class instance 
-		 *    Int wait : threshold for starting diagnostic. Default is 60 seconds; a zero means to use the default.
-		 *               -1 means to force a timeout; mainly for testing purpose.  
-		 *
-		 * @return The status DataElement after it has been updated, or the user
-		 *         has pressed cancel
-		 *
-		 * @throws InterruptedException if the thread was interrupted.
-		 */
+     * Wait for the the status DataElement to be refreshed
+     *
+     * @return The status DataElement after it has been updated, or the user
+     *         has pressed cancel
+     *
+     * @throws InterruptedException if the thread was interrupted.
+     */
 	public DataElement waitForUpdate() throws InterruptedException
 	{
 		return waitForUpdate(0); //No diagnostic
 	}
 
-
+	/**
+	 * Wait for the the status DataElement to be refreshed
+	 *
+	 * @param wait threshold for starting diagnostic. Default is 60 seconds; a zero means to use the default.
+	 *             -1 means to force a timeout; mainly for testing purpose.  
+	 *
+	 * @return The status DataElement after it has been updated, or the user
+	 *         has pressed cancel
+	 *
+	 * @throws InterruptedException if the thread was interrupted.
+	 */
 	public DataElement waitForUpdate(int wait) throws InterruptedException
 	{
 		Display display = _display;

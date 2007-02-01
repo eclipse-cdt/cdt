@@ -1258,7 +1258,7 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 		DataElement setCmd = getCommandDescriptor(de, C_SET_READONLY);
 		if (setCmd != null)
 		{
-			String flag = readOnly ? "true" : "false";
+			String flag = readOnly ? "true" : "false"; //$NON-NLS-1$ //$NON-NLS-2$
 			de.setAttribute(DE.A_SOURCE, flag);
 			DataElement status = ds.command(setCmd, de, true);
 			try

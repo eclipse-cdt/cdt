@@ -215,9 +215,6 @@ public class DStoreStatusMonitor implements IDomainListener
 		return false;
 	}
 	
-	/**
-	 * @see IDomainListener#getShell()
-	 */
 	public Shell getShell() 
 	{
 		// dy:  DomainNotifier (which calls this method) requires the shell not be disposed

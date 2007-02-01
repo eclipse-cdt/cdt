@@ -14,7 +14,6 @@ package org.eclipse.cdt.internal.core.index;
 
 import java.util.regex.Pattern;
 
-import org.eclipse.cdt.core.dom.ILinkage;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.index.IIndex;
@@ -107,7 +106,18 @@ public interface IIndexFragment {
 	 * @return an array of bindings matching the pattern
 	 * @throws CoreException
 	 */
-	IIndexFragmentBinding[] findBindings(Pattern[] pattern, boolean isFullyQualified, IndexFilter filter, IProgressMonitor monitor) throws CoreException;
+	IIndexFragmentBinding[] findBindings(Pattern[] patterns, boolean isFullyQualified, IndexFilter filter, IProgressMonitor monitor) throws CoreException;
+
+	/**
+	 * Searches for all bindings with qualified names that seen as an array of simple names equals
+	 * the given array of names. 
+	 * @param names an array of names the qualified name of the bindings have to match.
+	 * @param filter a filter that allows for skipping parts of the index 
+	 * @param monitor a monitor to report progress
+	 * @return an array of bindings matching the pattern
+	 * @throws CoreException
+	 */
+	IIndexFragmentBinding[] findBindings(char[][] names, IndexFilter filter, IProgressMonitor monitor) throws CoreException;
 
 	/**
 	 * Searches for all names that resolve to the given binding. You can limit the result to references, declarations
@@ -136,11 +146,6 @@ public interface IIndexFragment {
 	long getLastWriteAccess();
 
 	/**
-	 * Returns all bindings with the given name in the given linkage
-	 */
-	IBinding[] findInGlobalScope(ILinkage linkage, char[] name) throws CoreException;
-
-	/**
 	 * Returns all bindings with the given name in the given namespace
 	 */
 	IBinding[] findInNamespace(IBinding nsbinding, char[] name) throws CoreException;
@@ -148,5 +153,5 @@ public interface IIndexFragment {
 	/**
 	 * Returns all bindings with the given prefix, accepted by the given filter
 	 */
-	IBinding[] findBindingsForPrefix(String prefix, IndexFilter filter) throws CoreException;
+	IBinding[] findBindingsForPrefix(char[] prefix, IndexFilter filter) throws CoreException;
 }

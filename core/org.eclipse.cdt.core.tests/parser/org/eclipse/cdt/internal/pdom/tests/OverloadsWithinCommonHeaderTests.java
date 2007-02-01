@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 Symbian Software and others.
+ * Copyright (c) 2006, 2007 Symbian Software and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -52,7 +52,7 @@ public class OverloadsWithinCommonHeaderTests extends PDOMTestBase {
 	
 	public void testOverloadedInCommonHeader_ClassScope() throws CoreException {
 		Pattern[] ManyOverloadedQuxPath = makePatternArray(new String[] {"ManyOverloaded","qux"});
-		IBinding[] ManyOverloadedQux = pdom.findBindings(ManyOverloadedQuxPath, new NullProgressMonitor());
+		IBinding[] ManyOverloadedQux = pdom.findBindings(ManyOverloadedQuxPath, true, IndexFilter.ALL, new NullProgressMonitor());
 		assertEquals(5,ManyOverloadedQux.length);
 		
 		// ManyOverloaded.qux()

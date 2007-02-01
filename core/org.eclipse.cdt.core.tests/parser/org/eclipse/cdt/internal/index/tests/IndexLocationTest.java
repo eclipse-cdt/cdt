@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 Symbian Software Systems and others.
+ * Copyright (c) 2006, 2007 Symbian Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -98,6 +98,12 @@ public class IndexLocationTest extends BaseTestCase {
 		IBinding[] bs1 = index.findBindings(Pattern.compile("foo"), true, IndexFilter.ALL, new NullProgressMonitor());
 		IBinding[] bs2 = index.findBindings(Pattern.compile("bar"), true, IndexFilter.ALL, new NullProgressMonitor());
 		IBinding[] bs3 = index.findBindings(Pattern.compile("baz"), true, IndexFilter.ALL, new NullProgressMonitor());
+		assertEquals(1, bs1.length);
+		assertEquals(1, bs2.length);
+		assertEquals(1, bs3.length);
+		bs1 = index.findBindings("foo".toCharArray(), IndexFilter.ALL, new NullProgressMonitor());
+		bs2 = index.findBindings("bar".toCharArray(), IndexFilter.ALL, new NullProgressMonitor());
+		bs3 = index.findBindings("baz".toCharArray(), IndexFilter.ALL, new NullProgressMonitor());
 		assertEquals(1, bs1.length);
 		assertEquals(1, bs2.length);
 		assertEquals(1, bs3.length);

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 Symbian Software and others.
+ * Copyright (c) 2006, 2007 Symbian Software and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,6 +17,7 @@ import java.util.regex.Pattern;
 import org.eclipse.cdt.core.dom.ast.IBasicType;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
+import org.eclipse.cdt.core.index.IndexFilter;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.internal.core.CCoreInternals;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
@@ -45,26 +46,26 @@ public class OverloadsWithinSingleTUTests extends PDOMTestBase {
 	}
 	
 	public void testDistinctBindingsPresent() throws Exception {
-		IBinding[] fooBs = pdom.findBindings(Pattern.compile("foo"), new NullProgressMonitor());
+		IBinding[] fooBs = pdom.findBindings(Pattern.compile("foo"), false, IndexFilter.ALL, new NullProgressMonitor());
 		assertEquals(3, fooBs.length);
 
-		IBinding[] barBs = pdom.findBindings(Pattern.compile("bar"), new NullProgressMonitor());
+		IBinding[] barBs = pdom.findBindings(Pattern.compile("bar"), false, IndexFilter.ALL, new NullProgressMonitor());
 		assertEquals(8, barBs.length);
 
-		IBinding[] FooBs = pdom.findBindings(Pattern.compile("Foo"), new NullProgressMonitor());
+		IBinding[] FooBs = pdom.findBindings(Pattern.compile("Foo"), false, IndexFilter.ALL, new NullProgressMonitor());
 		assertEquals(4, FooBs.length);
 
 		Pattern[] XBarAbsPath = makePatternArray(new String[] {"X","bar"});
-		IBinding[] XBarBs = pdom.findBindings(XBarAbsPath, new NullProgressMonitor());
+		IBinding[] XBarBs = pdom.findBindings(XBarAbsPath, true, IndexFilter.ALL, new NullProgressMonitor());
 		assertEquals(4, XBarBs.length);
 
 		Pattern[] XFooPath = makePatternArray(new String[] {"X","Foo"});
-		IBinding[] XFooPathBs = pdom.findBindings(XFooPath, new NullProgressMonitor());
+		IBinding[] XFooPathBs = pdom.findBindings(XFooPath, true, IndexFilter.ALL, new NullProgressMonitor());
 		assertEquals(1, XFooPathBs.length);
 	}
 
 	public void testReferencesToGlobalBindings() throws Exception {
-		IBinding[] BarBs = pdom.findBindings(Pattern.compile("bar"), new NullProgressMonitor());
+		IBinding[] BarBs = pdom.findBindings(Pattern.compile("bar"), false, IndexFilter.ALL, new NullProgressMonitor());
 		IBinding[] globalBs = getGlobalBindings(BarBs);
 		assertEquals(4, globalBs.length);
 
@@ -94,7 +95,7 @@ public class OverloadsWithinSingleTUTests extends PDOMTestBase {
 
 	public void testReferencesToNamespacedBindings() throws Exception {
 		Pattern[] XBarAbsPath = makePatternArray(new String[] {"X","bar"});
-		IBinding[] XBarBs = pdom.findBindings(XBarAbsPath, new NullProgressMonitor());
+		IBinding[] XBarBs = pdom.findBindings(XBarAbsPath, false, IndexFilter.ALL, new NullProgressMonitor());
 
 		// X::bar()
 		assertFunctionRefCount(new Class[] {}, XBarBs, 2);

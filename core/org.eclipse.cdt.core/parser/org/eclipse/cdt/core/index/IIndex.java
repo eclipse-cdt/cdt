@@ -15,7 +15,6 @@ package org.eclipse.cdt.core.index;
 
 import java.util.regex.Pattern;
 
-import org.eclipse.cdt.core.dom.ILinkage;
 import org.eclipse.cdt.core.dom.IName;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.core.runtime.CoreException;
@@ -225,13 +224,32 @@ public interface IIndex {
 	public IIndexBinding[] findBindings(Pattern[] patterns, boolean isFullyQualified, IndexFilter filter, IProgressMonitor monitor) throws CoreException;
 	
 	/**
-	 * Searches the global scope for all bindings of a given name and linkage. 
-	 * In case a binding exists in multiple projects, no duplicate bindings are returned.
-	 * @param linkage the linkage to be searched
-	 * @param name a simple (unqualified) name.
-	 * @return an array of bindings
+	 * Searches for all bindings in global scope with a given name. In case a binding exists in multiple projects, no duplicate bindings are returned.
+	 * This method makes use of the BTree and is faster than the methods using patterns.
+	 * @param names an array of names, which has to be matched by the qualified name of the bindings.
+	 * @param filter a filter that allows for skipping parts of the index 
+	 * @param monitor a monitor to report progress
+	 * @return an array of bindings matching the pattern
+	 * @throws CoreException
 	 */
-	public IBinding[] findInGlobalScope(ILinkage linkage, char[] name);
+	public IIndexBinding[] findBindings(char[][] names, IndexFilter filter, IProgressMonitor monitor) throws CoreException;
+
+	/**
+	 * Searches the global scope for all bindings with a given name.
+	 * In case a binding exists in multiple projects, no duplicate bindings are returned.
+	 * This method makes use of the BTree and is faster than the methods using patterns.
+	 *
+ 	 * This is fully equivalent to 
+	 * <pre>
+	 * findBindings(new Pattern[]{pattern}, isFullyQualified, filter, monitor);
+	 * </pre> 
+	 * @param names an array of names, which has to be matched by the qualified name of the bindings.
+	 * @param filter a filter that allows for skipping parts of the index 
+	 * @param monitor a monitor to report progress
+	 * @return an array of bindings matching the pattern
+	 * @throws CoreException
+	 */
+	public IIndexBinding[] findBindings(char[] names, IndexFilter filter, IProgressMonitor monitor) throws CoreException;
 
 	/**
 	 * Searches the given namespace for all bindings of a given name. 
@@ -249,7 +267,7 @@ public interface IIndex {
 	 * @return an array of bindings with the prefix
 	 * @throws CoreException
 	 */
-	public IBinding[] findBindingsForPrefix(String prefix, IndexFilter filter) throws CoreException;
+	public IBinding[] findBindingsForPrefix(char[] prefix, IndexFilter filter) throws CoreException;
 	
 	/**
 	 * Searches for all names that resolve to the given binding. You can limit the result to references, declarations

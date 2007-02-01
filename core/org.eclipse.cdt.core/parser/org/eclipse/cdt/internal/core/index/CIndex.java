@@ -22,7 +22,6 @@ import java.util.List;
 import java.util.regex.Pattern;
 
 import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.dom.ILinkage;
 import org.eclipse.cdt.core.dom.IName;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IBinding;
@@ -155,7 +154,21 @@ public class CIndex implements IIndex {
 		monitor.done();
 		return (IIndexBinding[]) result.toArray(new IIndexBinding[result.size()]);
 	}
-	
+
+	public IIndexBinding[] findBindings(char[] name, IndexFilter filter, IProgressMonitor monitor) throws CoreException {
+		return findBindings(new char[][]{name}, filter, monitor);
+	}
+
+	public IIndexBinding[] findBindings(char[][] names, IndexFilter filter, IProgressMonitor monitor) throws CoreException {
+		ArrayList result= new ArrayList();
+		monitor.beginTask(Messages.CIndex_FindBindingsTask_label, fFragments.length);
+		for (int i = 0; !monitor.isCanceled() && i < fFragments.length; i++) {
+			result.addAll(Arrays.asList(fFragments[i].findBindings(names, filter, new SubProgressMonitor(monitor, 1))));
+		}
+		monitor.done();
+		return (IIndexBinding[]) result.toArray(new IIndexBinding[result.size()]);
+	}
+
 	public IIndexName[] findNames(IBinding binding, int flags) throws CoreException {
 		ArrayList result= new ArrayList();
 		for (int i = 0; i < fPrimaryFragmentCount; i++) {
@@ -327,27 +340,6 @@ public class CIndex implements IIndex {
 		return result;
 	}
 
-	public IBinding[] findInGlobalScope(ILinkage linkage, char[] name) {
-		ArrayList result= new ArrayList();
-		for (int i = 0; i < fFragments.length; i++) {
-			try {
-				IBinding[] part = fFragments[i].findInGlobalScope(linkage, name);
-				for (int j = 0; j < part.length; j++) {
-					IBinding binding = part[j];
-					if (binding instanceof IIndexBinding) {
-						result.add(binding);
-					}
-				}
-			} catch (CoreException e) {
-				CCorePlugin.log(e);
-			}
-		}
-		if (!result.isEmpty()) {
-			return (IIndexBinding[]) result.toArray(new IIndexBinding[result.size()]);
-		}
-		return IIndexBinding.EMPTY_INDEX_BINDING_ARRAY;
-	}
-
 	public IBinding[] findInNamespace(IBinding nsbinding, char[] name) {
 		ArrayList result= new ArrayList();
 		for (int i = 0; i < fFragments.length; i++) {
@@ -369,7 +361,7 @@ public class CIndex implements IIndex {
 		return IIndexBinding.EMPTY_INDEX_BINDING_ARRAY;
 	}
 	
-	public IBinding[] findBindingsForPrefix(String prefix, IndexFilter filter) throws CoreException {
+	public IBinding[] findBindingsForPrefix(char[] prefix, IndexFilter filter) throws CoreException {
 		ArrayList result= new ArrayList();
 		for (int i = 0; i < fFragments.length; i++) {
 			try {

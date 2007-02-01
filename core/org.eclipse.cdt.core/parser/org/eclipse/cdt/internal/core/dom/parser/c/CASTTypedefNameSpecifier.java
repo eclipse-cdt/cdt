@@ -111,7 +111,7 @@ public class CASTTypedefNameSpecifier extends CASTBaseDeclSpecifier implements
 		
 		if (index != null) {
 			try {
-				IBinding[] bindings = index.findBindingsForPrefix(n.toString(), filter);
+				IBinding[] bindings = index.findBindingsForPrefix(n.toCharArray(), filter);
 				for (int i = 0; i < bindings.length; i++) {
 					filtered.add(bindings[i]);
 				}

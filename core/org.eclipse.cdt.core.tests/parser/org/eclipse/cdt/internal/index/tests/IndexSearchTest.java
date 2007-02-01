@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2007 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -104,12 +104,18 @@ public class IndexSearchTest extends IndexTestBase {
 	}
 
 	public void testFindClassInNamespace() throws CoreException {
-		Pattern pcl= Pattern.compile("C160913");
-		Pattern pns= Pattern.compile("ns160913");
+		String scl = "C160913";
+		Pattern pcl= Pattern.compile(scl);
+		String sns = "ns160913";
+		Pattern pns= Pattern.compile(sns);
 		
 		IIndexBinding[] bindings;
 		
 		bindings= fIndex.findBindings(pcl, true, INDEX_FILTER, NPM);
+		assertEquals(1, bindings.length);
+		checkIsClass(bindings[0]);
+
+		bindings= fIndex.findBindings(scl.toCharArray(), INDEX_FILTER, NPM);
 		assertEquals(1, bindings.length);
 		checkIsClass(bindings[0]);
 
@@ -123,12 +129,20 @@ public class IndexSearchTest extends IndexTestBase {
 		assertEquals(1, bindings.length);
 		checkIsClass(bindings[0]);
 
+		bindings= fIndex.findBindings(new char[][]{sns.toCharArray(), scl.toCharArray()}, INDEX_FILTER, NPM);
+		assertEquals(1, bindings.length);
+		checkIsClass(bindings[0]);
+
 		bindings= fIndex.findBindings(new Pattern[]{pns, pcl}, false, INDEX_FILTER, NPM);
 		assertEquals(2, bindings.length);
 		checkIsClass(bindings[0]);
 		checkIsClass(bindings[1]);
 
 		bindings= fIndex.findBindings(new Pattern[]{pns, pns, pcl}, true, INDEX_FILTER, NPM);
+		assertEquals(1, bindings.length);
+		checkIsClass(bindings[0]);
+
+		bindings= fIndex.findBindings(new char[][]{sns.toCharArray(), sns.toCharArray(), scl.toCharArray()}, INDEX_FILTER, NPM);
 		assertEquals(1, bindings.length);
 		checkIsClass(bindings[0]);
 
@@ -140,10 +154,16 @@ public class IndexSearchTest extends IndexTestBase {
 	public void testFindNamespaceInNamespace() throws CoreException {
 		Pattern pcl= Pattern.compile("C160913");
 		Pattern pns= Pattern.compile("ns160913");
+		char[] scl= pcl.pattern().toCharArray();
+		char[] sns= pns.pattern().toCharArray();
 		
 		IIndexBinding[] bindings;
 
 		bindings= fIndex.findBindings(pns, true, INDEX_FILTER, NPM);
+		assertEquals(1, bindings.length);
+		checkIsNamespace(bindings[0]);
+
+		bindings= fIndex.findBindings(sns, INDEX_FILTER, NPM);
 		assertEquals(1, bindings.length);
 		checkIsNamespace(bindings[0]);
 
@@ -153,6 +173,10 @@ public class IndexSearchTest extends IndexTestBase {
 		checkIsNamespace(bindings[1]);
 
 		bindings= fIndex.findBindings(new Pattern[]{pns, pns}, true, INDEX_FILTER, NPM);
+		assertEquals(1, bindings.length);
+		checkIsNamespace(bindings[0]);
+
+		bindings= fIndex.findBindings(new char[][]{sns, sns}, INDEX_FILTER, NPM);
 		assertEquals(1, bindings.length);
 		checkIsNamespace(bindings[0]);
 
@@ -169,12 +193,17 @@ public class IndexSearchTest extends IndexTestBase {
 		// the binding in the unnamed namespace is not visible in global scope.
 		bindings= fIndex.findBindings(pcl, true, INDEX_FILTER, NPM);
 		assertEquals(0, bindings.length);
-	}
+
+		bindings= fIndex.findBindings(pcl.pattern().toCharArray(), INDEX_FILTER, NPM);
+		assertEquals(0, bindings.length);
+}
 
 	public void testFindEnumerator() throws CoreException {
 		Pattern pEnumeration= Pattern.compile("E20061017");
 		Pattern pEnumerator= Pattern.compile("e20061017");
-		
+		char[] sEnumeration= pEnumeration.pattern().toCharArray();
+		char[] sEnumerator= pEnumerator.pattern().toCharArray();
+
 		IIndexBinding[] bindings;
 		
 		// enumerators are found in global scope
@@ -189,10 +218,17 @@ public class IndexSearchTest extends IndexTestBase {
 		bindings= fIndex.findBindings(new Pattern[]{pEnumeration, pEnumerator}, true, INDEX_FILTER, NPM);
 		assertEquals(0, bindings.length);
 
+		bindings= fIndex.findBindings(new char[][]{sEnumeration, sEnumerator}, INDEX_FILTER, NPM);
+		assertEquals(0, bindings.length);
+
 		bindings= fIndex.findBindings(new Pattern[]{pEnumeration, pEnumerator}, false, INDEX_FILTER, NPM);
 		assertEquals(0, bindings.length);
 		
 		bindings= fIndex.findBindings(pEnumeration, true, INDEX_FILTER, NPM);
+		assertEquals(1, bindings.length);
+		checkIsEnumeration(bindings[0]);
+
+		bindings= fIndex.findBindings(sEnumeration, INDEX_FILTER, NPM);
 		assertEquals(1, bindings.length);
 		checkIsEnumeration(bindings[0]);
 

@@ -14,6 +14,7 @@ package org.eclipse.cdt.internal.core.pdom;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.BitSet;
 import java.util.Collection;
 import java.util.HashMap;
@@ -35,7 +36,6 @@ import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespaceScope;
-import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.core.index.IIndexFileLocation;
 import org.eclipse.cdt.core.index.IIndexName;
@@ -49,6 +49,7 @@ import org.eclipse.cdt.internal.core.index.IIndexFragmentName;
 import org.eclipse.cdt.internal.core.index.IIndexProxyBinding;
 import org.eclipse.cdt.internal.core.pdom.db.BTree;
 import org.eclipse.cdt.internal.core.pdom.db.Database;
+import org.eclipse.cdt.internal.core.pdom.dom.BindingCollector;
 import org.eclipse.cdt.internal.core.pdom.dom.IIndexLocationConverter;
 import org.eclipse.cdt.internal.core.pdom.dom.IPDOMLinkageFactory;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
@@ -205,13 +206,6 @@ public class PDOM extends PlatformObject implements IIndexFragment, IPDOM {
 	}
 
 	/**
-	 * @deprecated use findDeclarations() instead.
-	 */
-	public IName[] getDeclarations(IBinding binding) throws CoreException {
-		return findNames(binding, IIndex.FIND_DECLARATIONS_DEFINITIONS);
-	}
-
-	/**
 	 * @deprecated use findDefinitions() instead
 	 */
 	public IName[] getDefinitions(IBinding binding) throws CoreException {
@@ -328,20 +322,6 @@ public class PDOM extends PlatformObject implements IIndexFragment, IPDOM {
 		}
 	}
 
-	/** 
-	 * @deprecated
-	 */
-	public IBinding[] findBindings(Pattern pattern, IProgressMonitor monitor) throws CoreException {
-		return findBindings(new Pattern[] { pattern }, false, new IndexFilter(), monitor);
-	}
-
-	/**
-	 * @deprecated
-	 */
-	public IBinding[] findBindings(Pattern[] pattern, IProgressMonitor monitor) throws CoreException {
-		return findBindings(pattern, true, new IndexFilter(), monitor);
-	}
-
 	public IIndexBinding[] findBindings(Pattern pattern, boolean isFullyQualified, IndexFilter filter, IProgressMonitor monitor) throws CoreException {
 		return findBindings(new Pattern[] { pattern }, isFullyQualified, filter, monitor);
 	}
@@ -362,6 +342,29 @@ public class PDOM extends PlatformObject implements IIndexFragment, IPDOM {
 			}
 		}
 		return finder.getBindings();
+	}
+
+	public IIndexFragmentBinding[] findBindings(char[][] names, IndexFilter filter, IProgressMonitor monitor) throws CoreException {
+		ArrayList result= new ArrayList();
+		for (Iterator iter = fLinkageIDCache.values().iterator(); iter.hasNext();) {
+			PDOMLinkage linkage = (PDOMLinkage) iter.next();
+			if (filter.acceptLinkage(linkage)) {
+				ArrayList bindings= new ArrayList();
+				bindings.add(linkage);
+				for (int i=0; i < names.length; i++) {
+					char[] name= names[i];
+					BindingCollector collector= new BindingCollector(linkage, name, filter, false);
+					for (Iterator in = bindings.iterator(); in.hasNext();) {
+						PDOMNode node= (PDOMNode) in.next();
+						node.accept(collector);
+					}
+					bindings.clear();
+					bindings.addAll(Arrays.asList(collector.getBindings()));
+				}
+				result.addAll(bindings);
+			}
+		}
+		return (IIndexFragmentBinding[]) result.toArray(new IIndexFragmentBinding[result.size()]);
 	}
 
 	private void readLinkages() throws CoreException {
@@ -597,14 +600,6 @@ public class PDOM extends PlatformObject implements IIndexFragment, IPDOM {
 		return fPath;
 	}
 	
-	public IBinding[] findInGlobalScope(ILinkage linkage, char[] name) throws CoreException {
-		PDOMLinkage pdomLinkage= adaptLinkage(linkage);
-		if (pdomLinkage != null) {
-			return pdomLinkage.findInGlobalScope(name);
-		}
-		return IIndexBinding.EMPTY_INDEX_BINDING_ARRAY;
-	}
-
 	public IBinding[] findInNamespace(IBinding nsbinding, char[] name) throws CoreException {
 		IIndexProxyBinding ns= adaptBinding(nsbinding);
 		if (ns instanceof ICPPNamespace) {
@@ -618,7 +613,7 @@ public class PDOM extends PlatformObject implements IIndexFragment, IPDOM {
 		return IIndexBinding.EMPTY_INDEX_BINDING_ARRAY;
 	}
 	
-	public IBinding[] findBindingsForPrefix(String prefix, IndexFilter filter) throws CoreException {
+	public IBinding[] findBindingsForPrefix(char[] prefix, IndexFilter filter) throws CoreException {
 		ArrayList result = new ArrayList();
 		for (Iterator iter = fLinkageIDCache.values().iterator(); iter.hasNext();) {
 			PDOMLinkage linkage = (PDOMLinkage) iter.next();

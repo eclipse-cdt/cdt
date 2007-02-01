@@ -12,6 +12,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.c;
 
+import org.eclipse.cdt.core.dom.ILinkage;
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTIdExpression;
@@ -22,7 +23,6 @@ import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.index.IndexFilter;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
-import org.eclipse.cdt.internal.core.dom.Linkage;
 import org.eclipse.cdt.internal.core.dom.parser.IASTCompletionContext;
 import org.eclipse.core.runtime.CoreException;
 
@@ -88,8 +88,8 @@ public class CASTIdExpression extends CASTNode implements IASTIdExpression, IAST
 		if (index != null) {
 			try {
 				b2 = index.findBindingsForPrefix(
-						n.toString(),
-						IndexFilter.getFilter(Linkage.C_LINKAGE));
+						n.toCharArray(),
+						IndexFilter.getFilter(ILinkage.C_LINKAGE_ID));
 			} catch (CoreException e) {
 			}
 		}

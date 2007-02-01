@@ -17,11 +17,7 @@ package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 import java.util.ArrayList;
 import java.util.List;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.dom.IPDOMNode;
 import org.eclipse.cdt.core.dom.IPDOMVisitor;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTName;
@@ -34,9 +30,8 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPSemantics;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.db.BTree;
 import org.eclipse.cdt.internal.core.pdom.db.IBTreeVisitor;
-import org.eclipse.cdt.internal.core.pdom.dom.FindBindingsInBTree;
+import org.eclipse.cdt.internal.core.pdom.dom.BindingCollector;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
-import org.eclipse.cdt.internal.core.pdom.dom.PDOMNamedNode;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
 import org.eclipse.core.runtime.CoreException;
 
@@ -71,21 +66,25 @@ class PDOMCPPNamespace extends PDOMCPPBinding implements ICPPNamespace, ICPPName
 	}
 
 	public void accept(final IPDOMVisitor visitor) throws CoreException {
-		super.accept(visitor);
-		getIndex().accept(new IBTreeVisitor() {
-			public int compare(int record) throws CoreException {
-				return 0;
-			}
-			public boolean visit(int record) throws CoreException {
-				PDOMBinding binding = pdom.getBinding(record);
-				if (binding != null) {
-					if (visitor.visit(binding))
-						binding.accept(visitor);
-					visitor.leave(binding);
+		if (visitor instanceof IBTreeVisitor) {
+			getIndex().accept((IBTreeVisitor) visitor);
+		}
+		else {
+			getIndex().accept(new IBTreeVisitor() {
+				public int compare(int record) throws CoreException {
+					return 0;
 				}
-				return true;
-			}
-		});
+				public boolean visit(int record) throws CoreException {
+					PDOMBinding binding = pdom.getBinding(record);
+					if (binding != null) {
+						if (visitor.visit(binding))
+							binding.accept(visitor);
+						visitor.leave(binding);
+					}
+					return true;
+				}
+			});
+		}
 	}
 
 	public void addChild(PDOMNode child) throws CoreException {
@@ -107,7 +106,7 @@ class PDOMCPPNamespace extends PDOMCPPBinding implements ICPPNamespace, ICPPName
 	
 	public IBinding[] find(String name, boolean prefixLookup) {
 		try {
-			FindBindingsInBTree visitor = new FindBindingsInBTree(getLinkageImpl(), name.toCharArray(), null, prefixLookup);
+			BindingCollector visitor = new BindingCollector(getLinkageImpl(), name.toCharArray(), null, prefixLookup);
 			getIndex().accept(visitor);
 			return visitor.getBindings();
 		} catch (CoreException e) {
@@ -118,7 +117,7 @@ class PDOMCPPNamespace extends PDOMCPPBinding implements ICPPNamespace, ICPPName
 
 	public IBinding getBinding(IASTName name, boolean resolve) throws DOMException {
 		try {
-			FindBindingsInBTree visitor= new FindBindingsInBTree(getLinkageImpl(), name.toCharArray());
+			BindingCollector visitor= new BindingCollector(getLinkageImpl(), name.toCharArray());
 			getIndex().accept(visitor);
 			
 			IBinding[] bindings= visitor.getBindings();

@@ -366,10 +366,6 @@ public class CTypeHierarchyTest extends TypeHierarchyBaseTest {
 	//    int a1;
 	//    int b1;
 	// };
-	// typedef struct S2 {
-	//    int a2;
-	//    int b2;
-	// } S2;
 	// typedef struct S3 {
 	//    int a3;
 	//    int b3;
@@ -387,14 +383,6 @@ public class CTypeHierarchyTest extends TypeHierarchyBaseTest {
 		TreeItem item= checkTreeNode(tree, 0, "S1");
 		assertEquals(0, item.getItemCount());
 		checkMethodTable(new String[] {"a1", "b1"});
-
-		editor.selectAndReveal(content.indexOf("b2"), 1);
-		openTypeHierarchy(editor);
-		tree = getHierarchyViewer().getTree();
-		item= checkTreeNode(tree, 0, "S2");
-		item= checkTreeNode(item, 0, "S2");
-		assertEquals(0, item.getItemCount());
-		checkMethodTable(new String[] {"a2", "b2"});
 
 		editor.selectAndReveal(content.indexOf("a3"), 1);
 		openTypeHierarchy(editor);

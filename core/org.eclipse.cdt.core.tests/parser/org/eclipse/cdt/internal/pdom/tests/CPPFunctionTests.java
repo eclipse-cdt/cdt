@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 IBM Corporation.
+ * Copyright (c) 2006, 2007 IBM Corporation.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -21,6 +21,7 @@ import org.eclipse.cdt.core.dom.ast.IFunctionType;
 import org.eclipse.cdt.core.dom.ast.IParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBasicType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
+import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.internal.core.CCoreInternals;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
@@ -150,7 +151,7 @@ public class CPPFunctionTests extends PDOMTestBase {
 
 		for (int i = 0; i < 2; i++) {
 			ICPPFunction function = (ICPPFunction) bindings[i];
-			assertEquals(1, pdom.getDeclarations(function).length);
+			assertEquals(1, pdom.findNames(function, IIndex.FIND_DECLARATIONS_DEFINITIONS).length);
 			assertEquals(1, pdom.getDefinitions(function).length);
 			IParameter[] parameters = function.getParameters();
 			switch (parameters.length) {

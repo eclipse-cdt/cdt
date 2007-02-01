@@ -11,6 +11,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
+import org.eclipse.cdt.core.dom.ILinkage;
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTIdExpression;
@@ -21,7 +22,6 @@ import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.index.IndexFilter;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
-import org.eclipse.cdt.internal.core.dom.Linkage;
 import org.eclipse.cdt.internal.core.dom.parser.IASTCompletionContext;
 import org.eclipse.core.runtime.CoreException;
 
@@ -86,8 +86,8 @@ public class CPPASTIdExpression extends CPPASTNode implements IASTIdExpression, 
 		if (index != null) {
 			try {
 				b2 = index.findBindingsForPrefix(
-						n.toString(),
-						IndexFilter.getFilter(Linkage.CPP_LINKAGE));
+						n.toCharArray(),
+						IndexFilter.getFilter(ILinkage.CPP_LINKAGE_ID));
 			} catch (CoreException e) {
 			} 	
 		}

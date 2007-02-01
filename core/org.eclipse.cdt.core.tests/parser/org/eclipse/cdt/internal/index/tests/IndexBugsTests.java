@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2007 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -21,6 +21,7 @@ import java.util.regex.Pattern;
 import junit.framework.TestSuite;
 
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.dom.ILinkage;
 import org.eclipse.cdt.core.dom.IName;
 import org.eclipse.cdt.core.dom.IPDOMManager;
 import org.eclipse.cdt.core.dom.ast.IASTName;
@@ -49,7 +50,6 @@ import org.eclipse.cdt.core.testplugin.TestScannerProvider;
 import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
 import org.eclipse.cdt.core.testplugin.util.TestSourceReader;
 import org.eclipse.cdt.internal.core.CCoreInternals;
-import org.eclipse.cdt.internal.core.dom.Linkage;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -408,7 +408,7 @@ public class IndexBugsTests extends BaseTestCase {
 
 		fIndex.acquireReadLock();
 		try {
-			IBinding[] bindings= fIndex.findInGlobalScope(Linkage.C_LINKAGE, "S20070201".toCharArray());
+			IBinding[] bindings= fIndex.findBindings("S20070201".toCharArray(), IndexFilter.getFilter(ILinkage.C_LINKAGE_ID), NPM);
 			assertEquals(2, bindings.length);
 			
 			IBinding struct, typedef;
@@ -443,7 +443,7 @@ public class IndexBugsTests extends BaseTestCase {
 
 		fIndex.acquireReadLock();
 		try {
-			IBinding[] bindings= fIndex.findInGlobalScope(Linkage.CPP_LINKAGE, "S20070201".toCharArray());
+			IBinding[] bindings= fIndex.findBindings("S20070201".toCharArray(), IndexFilter.getFilter(ILinkage.CPP_LINKAGE_ID), NPM);
 			assertEquals(2, bindings.length);
 			
 			IBinding struct, typedef;

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 QNX Software Systems and others.
+ * Copyright (c) 2005, 2007 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,7 +14,6 @@ package org.eclipse.cdt.internal.ui.wizards.classwizard;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.regex.Pattern;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -401,13 +400,13 @@ public class NewClassWizardUtil {
 		try {
 			String fullyQualifiedTypeName = typeName.getFullyQualifiedName();
 			try {
-				IndexFilter filter= new IndexFilter() {
-					public boolean acceptLinkage(ILinkage linkage) {
-						return linkage.getID() == ILinkage.CPP_LINKAGE_ID;
-					}
-				};
-				// mstodo revisit, the pattern must be split
-				IBinding[] bindings = index.findBindings(Pattern.compile(typeName.getName()), true, filter, new NullProgressMonitor());
+				IndexFilter filter= IndexFilter.getFilter(ILinkage.CPP_LINKAGE_ID);
+				String[] nameStrs= fullyQualifiedTypeName.split("::"); //$NON-NLS-1$
+				char[][] names= new char[nameStrs.length][];
+				for (int i = 0; i < names.length; i++) {
+					names[i]= nameStrs[i].toCharArray();
+				}
+				IBinding[] bindings = index.findBindings(names, filter, new NullProgressMonitor());
 				boolean sameTypeNameExists = false;
 				boolean sameNameDifferentTypeExists = false;
 

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 QNX Software Systems and others.
+ * Copyright (c) 2006, 2007 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,6 +15,7 @@ package org.eclipse.cdt.internal.pdom.tests;
 import java.util.regex.Pattern;
 
 import org.eclipse.cdt.core.dom.ast.IBinding;
+import org.eclipse.cdt.core.index.IndexFilter;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.internal.core.CCoreInternals;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
@@ -33,7 +34,7 @@ public class RaceCondition157992Test extends PDOMTestBase {
 			PDOM pdom = (PDOM)CCoreInternals.getPDOMManager().getPDOM(project);
 			pdom.acquireReadLock();	
 
-			IBinding[] Bs = pdom.findBindings(Pattern.compile("B"), new NullProgressMonitor());
+			IBinding[] Bs = pdom.findBindings(Pattern.compile("B"), true, IndexFilter.ALL, new NullProgressMonitor());
 			if(Bs.length==1)
 				successes++;
 

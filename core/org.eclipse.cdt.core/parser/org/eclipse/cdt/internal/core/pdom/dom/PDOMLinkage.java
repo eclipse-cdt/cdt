@@ -107,21 +107,25 @@ public abstract class PDOMLinkage extends PDOMNamedNode implements IIndexLinkage
 	}
 	
 	public void accept(final IPDOMVisitor visitor) throws CoreException {
-		super.accept(visitor);
-		getIndex().accept(new IBTreeVisitor() {
-			public int compare(int record) throws CoreException {
-				return 0;
-			}
-			public boolean visit(int record) throws CoreException {
-				PDOMBinding binding = pdom.getBinding(record);
-				if (binding != null) {
-					if (visitor.visit(binding))
-						binding.accept(visitor);
-					visitor.leave(binding);
+		if (visitor instanceof IBTreeVisitor) {
+			getIndex().accept((IBTreeVisitor) visitor);
+		}
+		else {
+			getIndex().accept(new IBTreeVisitor() {
+				public int compare(int record) throws CoreException {
+					return 0;
 				}
-				return true;
-			}
-		});
+				public boolean visit(int record) throws CoreException {
+					PDOMBinding binding = pdom.getBinding(record);
+					if (binding != null) {
+						if (visitor.visit(binding))
+							binding.accept(visitor);
+						visitor.leave(binding);
+					}
+					return true;
+				}
+			});
+		}
 	}
 	
 	public ILinkage getLinkage() throws CoreException {
@@ -221,16 +225,9 @@ public abstract class PDOMLinkage extends PDOMNamedNode implements IIndexLinkage
 	}
 	
 	public abstract int getBindingType(IBinding binding);
-
-	public IBinding[] findInGlobalScope(char[] name) throws CoreException {
-		FindBindingsInBTree visitor= new FindBindingsInBTree(this, name);
-		getIndex().accept(visitor);
-		
-		return visitor.getBindings();
-	}
 	
-	public IBinding[] findBindingsForPrefix(String prefix, IndexFilter filter) throws CoreException {
-		FindBindingsInBTree visitor = new FindBindingsInBTree(this, prefix.toCharArray(), filter, true);
+	public IBinding[] findBindingsForPrefix(char[] prefix, IndexFilter filter) throws CoreException {
+		BindingCollector visitor = new BindingCollector(this, prefix, filter, true);
 		getIndex().accept(visitor);
 		
 		return visitor.getBindings();

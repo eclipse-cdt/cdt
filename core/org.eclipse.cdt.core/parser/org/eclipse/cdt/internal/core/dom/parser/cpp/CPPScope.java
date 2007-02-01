@@ -15,6 +15,8 @@
  */
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
+import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.dom.ILinkage;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
@@ -26,18 +28,23 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDeclaration;
 import org.eclipse.cdt.core.index.IIndex;
+import org.eclipse.cdt.core.index.IndexFilter;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.core.parser.util.CharArrayObjectMap;
 import org.eclipse.cdt.core.parser.util.ObjectSet;
-import org.eclipse.cdt.internal.core.dom.Linkage;
 import org.eclipse.cdt.internal.core.dom.parser.IASTInternalScope;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.NullProgressMonitor;
 
 /**
  * @author aniefer
  */
 abstract public class CPPScope implements ICPPScope, IASTInternalScope {
-    public static class CPPScopeProblem extends ProblemBinding implements ICPPScope {
+	private static final IProgressMonitor NPM = new NullProgressMonitor();
+
+	public static class CPPScopeProblem extends ProblemBinding implements ICPPScope {
         public CPPScopeProblem( IASTNode node, int id, char[] arg ) {
             super( node, id, arg );
         }
@@ -91,8 +98,12 @@ abstract public class CPPScope implements ICPPScope, IASTInternalScope {
 			if (index != null) {
 				// Try looking this up in the PDOM
 				if (physicalNode instanceof IASTTranslationUnit) {
-					IBinding[] bindings= index.findInGlobalScope(Linkage.CPP_LINKAGE, name.toCharArray());
-					binding= CPPSemantics.resolveAmbiguities(name, bindings);
+					try {
+						IBinding[] bindings= index.findBindings(name.toCharArray(), IndexFilter.getFilter(ILinkage.CPP_LINKAGE_ID), NPM);
+						binding= CPPSemantics.resolveAmbiguities(name, bindings);
+					} catch (CoreException e) {
+		        		CCorePlugin.log(e);
+					}
 				}
 				else if (physicalNode instanceof ICPPASTNamespaceDefinition) {
 					ICPPASTNamespaceDefinition nsdef = (ICPPASTNamespaceDefinition)physicalNode;

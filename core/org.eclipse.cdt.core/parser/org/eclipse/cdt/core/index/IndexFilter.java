@@ -45,20 +45,6 @@ public class IndexFilter {
 	}
 
 	/**
-	 * Get an IndexFilter that filters out bindings from linkages other than that
-	 * specified
-	 * @param target the linkage whose bindings should be retained
-	 * @return an IndexFilter instance
-	 */
-	public static IndexFilter getFilter(final ILinkage target) {
-		return new IndexFilter() {
-			public boolean acceptLinkage(ILinkage linkage) {
-				return linkage.getID() == target.getID();
-			}
-		};
-	}
-
-	/**
 	 * Returns whether or not to include objects of the given linkage in the query.
 	 * @see IIndex#findBindings(java.util.regex.Pattern, boolean, IndexFilter, org.eclipse.core.runtime.IProgressMonitor)
 	 * @param linkage a linkage to be tested

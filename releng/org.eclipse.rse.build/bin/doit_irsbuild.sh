@@ -76,10 +76,10 @@ tail -50 $log
 #update the main download and archive pages
 cd /home/data/httpd/download.eclipse.org/dsdp/tm/downloads
 cvs -q update -RPd >> $log 2>&1
-chgrp -R dsdp-tmadmin *
+chgrp dsdp-tmadmin * CVS/*
 cd /home/data/httpd/archive.eclipse.org/dsdp/tm/downloads
 cvs -q update -RPd >> $log 2>&1
-chgrp -R dsdp-tmadmin *
+chgrp dsdp-tmadmin * CVS/*
 
 #Fixup permissions and group id on download.eclpse.org (just to be safe)
 #chmod -R g+w $HOME/ws2/publish/${buildType}*${daystamp}*
@@ -125,4 +125,4 @@ if [ -f package.count -a "$FILES" != "" ]; then
 else
   echo "package.count missing, release seems failed"
 fi
-chmod dsdp-tm-rse $log
+chgrp dsdp-tm-rse $log

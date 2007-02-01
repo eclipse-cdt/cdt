@@ -51,7 +51,6 @@ import org.eclipse.jface.viewers.ITreeViewerListener;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeExpansionEvent;
-import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.jface.window.SameShellProvider;
 import org.eclipse.rse.core.SystemAdapterHelpers;
@@ -149,7 +148,7 @@ import org.eclipse.ui.views.framelist.GoIntoAction;
 /*
  * At one time implemented the following as well: MenuListener, IDoubleClickListener, ArmListener, IWireEventTarget
  */
-public class SystemView extends TreeViewer implements ISystemTree, ISystemResourceChangeListener, ISystemRemoteChangeListener, IMenuListener,
+public class SystemView extends SystemViewSafeTreeViewer implements ISystemTree, ISystemResourceChangeListener, ISystemRemoteChangeListener, IMenuListener,
 		ISelectionChangedListener, ISelectionProvider, ITreeViewerListener, ISystemResourceChangeEvents, ISystemDeleteTarget, ISystemRenameTarget, ISystemSelectAllTarget
 {
 

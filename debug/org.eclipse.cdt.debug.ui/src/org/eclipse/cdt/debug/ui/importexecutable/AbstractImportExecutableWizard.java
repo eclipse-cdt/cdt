@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 Nokia and others.
+ * Copyright (c) 2007 Nokia and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -108,18 +108,17 @@ public abstract class AbstractImportExecutableWizard extends Wizard implements I
 	 *            project receiving the executables
 	 * @throws CoreException
 	 */
-	private void addExecutables(IProject project) throws CoreException {
+	private void addExecutables(ICProject project) throws CoreException {
 
 		String[] executables = pageOne.getSelectedExecutables();
 
 		for (int i = 0; i < executables.length; i++) {
 			IPath location = Path.fromOSString(executables[i]);
 			String executableName = location.toFile().getName();
-			IFile exeFile = project.getFile(executableName);
+			IFile exeFile = project.getProject().getFile(executableName);
 			if (!exeFile.exists())
 				exeFile.createLink(location, 0, null);
 		}
-
 	}
 
 	public void addPages() {
@@ -203,22 +202,16 @@ public abstract class AbstractImportExecutableWizard extends Wizard implements I
 		ICProject targetProject = null;
 		try {
 			if (pageTwo.isCreateNewProjectSelected()) {
-				// Create a new project and add the executables and binary
-				// parsers.
 				IProject newProject = createCProjectForExecutable(pageTwo
 						.getNewProjectName());
 				setupProject(newProject);
-				addExecutables(newProject);
-				addBinaryParsers(newProject);
 				targetProject = CCorePlugin.getDefault().getCoreModel().create(
 						newProject);
 			} else {
-				// Assume the existing project already has binary parsers setup,
-				// just add the executables.
-				ICProject existingProject = pageTwo.getExistingCProject();
-				addExecutables(existingProject.getProject());
-				targetProject = existingProject;
+				targetProject = pageTwo.getExistingCProject();
 			}
+			addBinaryParsers(targetProject.getProject());
+			addExecutables(targetProject);
 			if (pageTwo.isCreateLaunchConfigurationSelected()) {
 				createLaunchConfiguration(targetProject);
 			}

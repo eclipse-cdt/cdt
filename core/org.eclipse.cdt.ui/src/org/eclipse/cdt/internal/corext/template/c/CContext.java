@@ -15,6 +15,7 @@ package org.eclipse.cdt.internal.corext.template.c;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.TextUtilities;
 import org.eclipse.jface.text.templates.Template;
 import org.eclipse.jface.text.templates.TemplateBuffer;
@@ -47,81 +48,68 @@ public class CContext extends TranslationUnitContext {
 		super(type, document, completionOffset, completionLength, translationUnit);
 	}
 
+	/**
+	 * Creates a C/C++ code template context.
+	 * 
+	 * @param type the context type.
+	 * @param document the document.
+	 * @param completionPosition the completion position within the document
+	 * @param translationUnit the translation unit (may be <code>null</code>).
+	 */
+	public CContext(TemplateContextType type, IDocument document,
+			Position completionPosition, ITranslationUnit translationUnit) {
+		super(type, document, completionPosition, translationUnit);
+	}
+
 	/*
 	 * @see DocumentTemplateContext#getStart()
 	 */ 
 	public int getStart() {
+		if (fIsManaged && getCompletionLength() > 0)
+			return super.getStart();
+		
 		try {
 			IDocument document= getDocument();
 
-			if (getCompletionLength() == 0) {
-
-				int start= getCompletionOffset();		
-				while ((start != 0) && Character.isUnicodeIdentifierPart(document.getChar(start - 1)))
-					start--;
-					
-				if ((start != 0) && Character.isUnicodeIdentifierStart(document.getChar(start - 1)))
-					start--;
-		
-				return start;
-			
-			}
-
 			int start= getCompletionOffset();
 			int end= getCompletionOffset() + getCompletionLength();
 			
-			while (start != 0 && Character.isUnicodeIdentifierPart(document.getChar(start - 1))) {
+			while (start != 0 && !Character.isWhitespace(document.getChar(start - 1)))
 				start--;
-			}
 			
-			while (start != end && Character.isWhitespace(document.getChar(start))) {
+			while (start != end && Character.isWhitespace(document.getChar(start)))
 				start++;
-			}
 			
-			if (start == end) {
-				start= getCompletionOffset();
-			}
+			if (start == end)
+				start= getCompletionOffset();	
 			
-			return start;	
+				return start;	
+
 		} catch (BadLocationException e) {
 			return super.getStart();	
 		}
-
 	}
 
 	public int getEnd() {
-		
-		if (getCompletionLength() == 0)
+		if (fIsManaged || getCompletionLength() == 0)
 			return super.getEnd();
 
-		try {			
+		try {
 			IDocument document= getDocument();
 
 			int start= getCompletionOffset();
 			int end= getCompletionOffset() + getCompletionLength();
 			
-			while (start != end && Character.isWhitespace(document.getChar(end - 1))) {
+			while (start != end && Character.isWhitespace(document.getChar(end - 1)))
 				end--;
-			}
 			
 			return end;	
+
 		} catch (BadLocationException e) {
 			return super.getEnd();
 		}		
 	}
 	
-	/*
-	 * @see TemplateContext#canEvaluate(Template templates)
-	 */
-	public boolean canEvaluate(Template template) {
-		if (fForceEvaluation)
-			return true;
-		
-		String key= getKey();
-		return template.matches(key, getContextType().getId())
-			&& key.length() != 0 && template.getName().toLowerCase().startsWith(key.toLowerCase());
-	}
-
 	/*
 	 * @see TemplateContext#evaluate(Template)
 	 */

@@ -19,15 +19,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.formatter.CodeFormatter;
-import org.eclipse.cdt.core.model.ICProject;
-
-import org.eclipse.cdt.internal.corext.util.CodeFormatterUtil;
-import org.eclipse.cdt.internal.ui.editor.IndentUtil;
-import org.eclipse.cdt.internal.ui.text.FastCPartitionScanner;
-import org.eclipse.cdt.ui.text.ICPartitions;
-
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.BadPositionCategoryException;
@@ -47,6 +38,16 @@ import org.eclipse.text.edits.MultiTextEdit;
 import org.eclipse.text.edits.RangeMarker;
 import org.eclipse.text.edits.ReplaceEdit;
 import org.eclipse.text.edits.TextEdit;
+
+import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.formatter.CodeFormatter;
+import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.ui.text.ICPartitions;
+
+import org.eclipse.cdt.internal.corext.util.CodeFormatterUtil;
+
+import org.eclipse.cdt.internal.ui.editor.IndentUtil;
+import org.eclipse.cdt.internal.ui.text.FastCPartitionScanner;
 
 
 /**
@@ -94,7 +95,7 @@ public class CFormatter {
 			
 			internalFormat(document, context);
 			convertLineDelimiters(document);
-			if (!isReplacedAreaEmpty(context))
+			if (isReplacedAreaEmpty(context))
 				trimStart(document);
 			
 			tracker.updateBuffer();
@@ -142,19 +143,19 @@ public class CFormatter {
 	}
 
 	private boolean isReplacedAreaEmpty(TemplateContext context) {
-		// don't trim the buffer if the replacement area is empty
-		// case: surrounding empty lines with block
 		if (context instanceof DocumentTemplateContext) {
 			DocumentTemplateContext dtc= (DocumentTemplateContext) context;
-			if (dtc.getStart() == dtc.getCompletionOffset())
-				try {
-					if (dtc.getDocument().get(dtc.getStart(), dtc.getEnd() - dtc.getStart()).trim().length() == 0)
-						return true;
-				} catch (BadLocationException x) {
-					// ignore - this may happen when the document was modified after the initial invocation, and the
-					// context does not track the changes properly - don't trim in that case
+			if (dtc.getCompletionLength() == 0) {
+				return true;
+			}
+			try {
+				if (dtc.getDocument().get(dtc.getStart(), dtc.getEnd() - dtc.getStart()).trim().length() == 0)
 					return true;
-				}
+			} catch (BadLocationException x) {
+				// ignore - this may happen when the document was modified after the initial invocation, and the
+				// context does not track the changes properly - don't trim in that case
+				return false;
+			}
 		}
 		return false;
 	}
@@ -319,7 +320,7 @@ public class CFormatter {
 		
 		private boolean isWhitespaceVariable(String value) {
 			int length= value.length();
-			return length == 0 || Character.isWhitespace(value.charAt(0)) || Character.isWhitespace(value.charAt(length - 1));
+			return length == 0 || value.trim().length() == 0;
 		}
 		
 		private void removeRangeMarkers(List positions, IDocument document, TemplateVariable[] variables) throws MalformedTreeException, BadLocationException, BadPositionCategoryException {

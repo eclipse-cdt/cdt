@@ -21,14 +21,14 @@
 
 <templates>
 <template name="for" description="for loop" context="org.eclipse.cdt.ui.text.templates.c" id="org.eclipse.cdt.ui.text.templates.c.for" enabled="true">for (${var} = 0; ${var} &lt; ${max}; ++${var}) {
-	${cursor}
+	${line_selection}${cursor}
 }</template>
 
 <template name="for" description="for loop %withtempvar" context="org.eclipse.cdt.ui.text.templates.c" id="org.eclipse.cdt.ui.text.templates.cpp.for" enabled="true">for (int ${var} = 0; ${var} &lt; ${max}; ++${var}) {
-	${cursor}
+	${line_selection}${cursor}
 }</template>
 <template name="do" description="do while %statement" context="org.eclipse.cdt.ui.text.templates.c" id="org.eclipse.cdt.ui.text.templates.c.do" enabled="true">do {
-	${cursor}
+	${line_selection}${cursor}
 } while (${condition});</template>
 <template name="switch" description="switch case %statement" context="org.eclipse.cdt.ui.text.templates.c" id="org.eclipse.cdt.ui.text.templates.c.switch" enabled="true">switch (${key}) {
 	case ${value}:
@@ -39,7 +39,7 @@
 }</template>
 
 <template name="if" description="if %statement" context="org.eclipse.cdt.ui.text.templates.c" id="org.eclipse.cdt.ui.text.templates.c.if" enabled="true">if (${condition}) {
-	${cursor}
+	${line_selection}${cursor}
 }</template>
 <template name="ifelse" description="if else %statement" context="org.eclipse.cdt.ui.text.templates.c" id="org.eclipse.cdt.ui.text.templates.c.ifelse" enabled="true">if (${condition}) {
 	${cursor}
@@ -53,7 +53,7 @@
 	${cursor}
 }</template>
 <template name="try" description="try catch %block" context="org.eclipse.cdt.ui.text.templates.c" id="org.eclipse.cdt.ui.text.templates.cpp.try" enabled="true">try {
-	${cursor}
+	${line_selection}${cursor}
 } catch (${Exception} e) {
 }</template>
 <template name="catch" description="catch %block" context="org.eclipse.cdt.ui.text.templates.c" id="org.eclipse.cdt.ui.text.templates.cpp.catch" enabled="true">catch (${Exception} e) {

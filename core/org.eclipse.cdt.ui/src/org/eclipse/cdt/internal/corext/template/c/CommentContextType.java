@@ -12,6 +12,7 @@
 package org.eclipse.cdt.internal.corext.template.c;
 
 import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.Position;
 
 import org.eclipse.cdt.core.model.ITranslationUnit;
 
@@ -37,6 +38,14 @@ public class CommentContextType extends TranslationUnitContextType {
 	public TranslationUnitContext createContext(IDocument document, int offset,
 			int length, ITranslationUnit translationUnit) {
 		return new CommentContext(this, document, offset, length, translationUnit);
+	}
+
+	/*
+	 * @see org.eclipse.cdt.internal.corext.template.c.TranslationUnitContextType#createContext(org.eclipse.jface.text.IDocument, org.eclipse.jface.text.Position, org.eclipse.cdt.core.model.ITranslationUnit)
+	 */
+	public TranslationUnitContext createContext(IDocument document,
+			Position position, ITranslationUnit translationUnit) {
+		return new CommentContext(this, document, position, translationUnit);
 	}
 
 }

@@ -13,6 +13,7 @@ package org.eclipse.cdt.internal.corext.template.c;
 
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.TextUtilities;
 import org.eclipse.jface.text.templates.Template;
 import org.eclipse.jface.text.templates.TemplateBuffer;
@@ -44,25 +45,24 @@ public class CommentContext extends TranslationUnitContext {
 		super(type, document, completionOffset, completionLength, translationUnit);
 	}
 
-	/*
-	 * @see TemplateContext#canEvaluate(Template templates)
+	/**
+	 * Creates a comment template context.
+	 * 
+	 * @param type the context type.
+	 * @param document the document.
+	 * @param completionPosition the completion position within the document
+	 * @param translationUnit the translation unit (may be <code>null</code>).
 	 */
-	public boolean canEvaluate(Template template) {
-		String key= getKey();
-		
-		if (fForceEvaluation)
-			return true;
-
-		return
-			template.matches(key, getContextType().getId()) &&
-			(key.length() != 0) && template.getName().toLowerCase().startsWith(key.toLowerCase());
+	public CommentContext(TemplateContextType type, IDocument document,
+			Position completionPosition, ITranslationUnit translationUnit) {
+		super(type, document, completionPosition, translationUnit);
 	}
 
 	/*
 	 * @see DocumentTemplateContext#getStart()
 	 */ 
 	public int getStart() {
-		if (/*fIsManaged &&*/ getCompletionLength() > 0)
+		if (fIsManaged && getCompletionLength() > 0)
 			return super.getStart();
 		
 		try {
@@ -105,8 +105,7 @@ public class CommentContext extends TranslationUnitContext {
 	 * @see org.eclipse.jdt.internal.corext.template.DocumentTemplateContext#getEnd()
 	 */
 	public int getEnd() {
-		
-		if (/*fIsManaged ||*/ getCompletionLength() == 0)		
+		if (fIsManaged || getCompletionLength() == 0)		
 			return super.getEnd();
 
 		try {			
@@ -123,28 +122,6 @@ public class CommentContext extends TranslationUnitContext {
 		} catch (BadLocationException e) {
 			return super.getEnd();
 		}		
-	}
-
-	/*
-	 * @see org.eclipse.jdt.internal.corext.template.DocumentTemplateContext#getKey()
-	 */
-	public String getKey() {
-
-		if (getCompletionLength() == 0)		
-			return super.getKey();
-
-		try {
-			IDocument document= getDocument();
-
-			int start= getStart();
-			int end= getCompletionOffset();
-			return start <= end
-				? document.get(start, end - start)
-				: ""; //$NON-NLS-1$
-			
-		} catch (BadLocationException e) {
-			return super.getKey();			
-		}
 	}
 
 	/*

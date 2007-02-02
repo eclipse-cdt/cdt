@@ -17,6 +17,7 @@ import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.IFunctionDeclaration;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.templates.GlobalTemplateVariables;
 import org.eclipse.jface.text.templates.TemplateContext;
 import org.eclipse.jface.text.templates.TemplateContextType;
@@ -167,7 +168,7 @@ public abstract class TranslationUnitContextType extends TemplateContextType {
 	}
 
 	public abstract TranslationUnitContext createContext(IDocument document, int offset, int length, ITranslationUnit translationUnit);
-
+	public abstract TranslationUnitContext createContext(IDocument document, Position position, ITranslationUnit translationUnit);
 }
 
 

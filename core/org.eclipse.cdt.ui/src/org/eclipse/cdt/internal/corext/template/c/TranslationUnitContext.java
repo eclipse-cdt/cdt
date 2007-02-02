@@ -16,7 +16,9 @@ package org.eclipse.cdt.internal.corext.template.c;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
+import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.templates.DocumentTemplateContext;
+import org.eclipse.jface.text.templates.Template;
 import org.eclipse.jface.text.templates.TemplateContextType;
 
 import org.eclipse.cdt.core.model.CModelException;
@@ -37,6 +39,8 @@ public abstract class TranslationUnitContext extends DocumentTemplateContext {
 	private final ITranslationUnit fTranslationUnit;
 	/** A flag to force evaluation in head-less mode. */
 	protected boolean fForceEvaluation;
+	/** <code>true</code> if the context has a managed (i.e. added to the document) position, <code>false</code> otherwise. */
+	protected final boolean fIsManaged;
 
 	/**
 	 * Creates a translation unit context.
@@ -48,10 +52,60 @@ public abstract class TranslationUnitContext extends DocumentTemplateContext {
 	 * @param translationUnit the translation unit represented by the document
 	 */
 	protected TranslationUnitContext(TemplateContextType type, IDocument document, int completionOffset,
-			int completionLength, ITranslationUnit translationUnit)
-	{
+			int completionLength, ITranslationUnit translationUnit) {
 		super(type, document, completionOffset, completionLength);
 		fTranslationUnit= translationUnit;
+		fIsManaged= false;
+	}
+	
+	/**
+	 * Creates a translation unit context.
+	 * 
+	 * @param type the context type
+	 * @param document the document
+	 * @param completionPosition the completion position within the document
+	 * @param translationUnit the translation unit represented by the document
+	 */
+	protected TranslationUnitContext(TemplateContextType type, IDocument document, 
+			Position completionPosition, ITranslationUnit translationUnit) {
+		super(type, document, completionPosition);
+		fTranslationUnit= translationUnit;
+		fIsManaged= true;
+	}
+	
+	/*
+	 * @see org.eclipse.jface.text.templates.DocumentTemplateContext#canEvaluate(org.eclipse.jface.text.templates.Template)
+	 */
+	public boolean canEvaluate(Template template) {
+		if (fForceEvaluation)
+			return true;
+		
+		String key= getKey();
+		return template.matches(key, getContextType().getId())
+			&& key.length() != 0 && template.getName().startsWith(key);
+	}
+
+
+
+	/*
+	 * @see org.eclipse.jdt.internal.corext.template.DocumentTemplateContext#getKey()
+	 */
+	public String getKey() {
+		if (getCompletionLength() == 0)		
+			return super.getKey();
+
+		try {
+			IDocument document= getDocument();
+
+			int start= getStart();
+			int end= getCompletionOffset();
+			return start <= end
+			? document.get(start, end - start)
+					: ""; //$NON-NLS-1$
+
+		} catch (BadLocationException e) {
+			return super.getKey();			
+		}
 	}
 	
 	/**

@@ -399,7 +399,7 @@ public class IndexBugsTests extends BaseTestCase {
 	// typedef struct S20070201 {
 	//    int a;
 	// } S20070201;
-	public void _test172454_1() throws Exception {
+	public void test172454_1() throws Exception {
 		waitForIndexer();
 		String content= getContentsForTest(1)[0].toString();
 
@@ -434,7 +434,7 @@ public class IndexBugsTests extends BaseTestCase {
 	// typedef struct S20070201 {
 	//    int a;
 	// } S20070201;
-	public void _test172454_2() throws Exception {
+	public void test172454_2() throws Exception {
 		waitForIndexer();
 		String content= getContentsForTest(1)[0].toString();
 
@@ -447,7 +447,7 @@ public class IndexBugsTests extends BaseTestCase {
 			assertEquals(2, bindings.length);
 			
 			IBinding struct, typedef;
-			if (bindings[0] instanceof ICCompositeTypeScope) {
+			if (bindings[0] instanceof ICPPClassType) {
 				struct= bindings[0];
 				typedef= bindings[1];
 			}
@@ -456,9 +456,12 @@ public class IndexBugsTests extends BaseTestCase {
 				typedef= bindings[0];
 			}
 			
-			assertTrue(struct instanceof ICompositeType);
+			assertTrue(struct instanceof ICPPClassType);
+			assertTrue(((ICPPClassType)struct).getKey()==ICompositeType.k_struct);
 			assertTrue(typedef instanceof ITypedef);
-			assertTrue(((ITypedef) typedef).getType() instanceof ICCompositeTypeScope);
+			IType aliased = ((ITypedef) typedef).getType();
+			assertTrue(aliased instanceof ICPPClassType);
+			assertTrue(((ICPPClassType)aliased).getKey()==ICompositeType.k_struct);
 			assertTrue(((ITypedef) typedef).isSameType((ICompositeType) struct));
 		}
 		finally {

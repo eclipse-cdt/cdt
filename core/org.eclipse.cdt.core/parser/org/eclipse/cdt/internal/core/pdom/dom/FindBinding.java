@@ -34,7 +34,13 @@ public class FindBinding {
 		public int compare(int record1, int record2) throws CoreException {
 			IString nm1 = PDOMNamedNode.getDBName(pdom, record1);
 			IString nm2 = PDOMNamedNode.getDBName(pdom, record2);
-			return nm1.compare(nm2);
+			int cmp = nm1.compare(nm2);
+			if(cmp == 0) {
+				int t1 = PDOMNamedNode.getNodeType(pdom, record1);
+				int t2 = PDOMNamedNode.getNodeType(pdom, record2);
+				return t1 < t2 ? -1 : (t1 > t2 ? 1 : 0);
+			}
+			return cmp;
 		}
 	}
 
@@ -46,7 +52,17 @@ public class FindBinding {
 				return nm1.compare(name);
 			}
 			public boolean visit(int record) throws CoreException {
-				result[0] = pdom.getBinding(record);
+				PDOMNamedNode nnode = (PDOMNamedNode) PDOMLinkage.getLinkage(pdom, record).getNode(record);
+				if(nnode.hasName(name)) {
+					int constant = nnode.getNodeType();
+					for(int i=0; i<constants.length; i++) {
+						if(constant==constants[i]) {
+							result[0] = (PDOMBinding) nnode;
+							return false;
+						}
+					}
+					return true;
+				}
 				return false;
 			}
 		});

@@ -80,23 +80,7 @@ class PDOMCLinkage extends PDOMLinkage {
 		return new GCCLanguage();
 	}
 
-	public PDOMBinding addBinding(IASTName name) throws CoreException {
-		if (name == null)
-			return null;
-
-		char[] namechars = name.toCharArray();
-		if (namechars == null || name.toCharArray().length == 0)
-			return null;
-
-		IBinding binding = name.resolveBinding();
-		if (binding == null || binding instanceof IProblemBinding)
-			// can't tell what it is
-			return null;
-
-		if (binding instanceof IParameter)
-			// skip parameters
-			return null;
-		
+	public PDOMBinding addBinding(IBinding binding) throws CoreException {
 		PDOMBinding pdomBinding = adaptBinding(binding);
 		try {
 			if (pdomBinding == null) {
@@ -143,6 +127,26 @@ class PDOMCLinkage extends PDOMLinkage {
 			throw new CoreException(Util.createStatus(e));
 		}
 		return pdomBinding;
+	}
+	
+	public PDOMBinding addBinding(IASTName name) throws CoreException {
+		if (name == null)
+			return null;
+
+		char[] namechars = name.toCharArray();
+		if (namechars == null || name.toCharArray().length == 0)
+			return null;
+
+		IBinding binding = name.resolveBinding();
+		if (binding == null || binding instanceof IProblemBinding)
+			// can't tell what it is
+			return null;
+
+		if (binding instanceof IParameter)
+			// skip parameters
+			return null;
+		
+		return addBinding(binding);
 	}
 
 	public int getBindingType(IBinding binding) {
@@ -238,9 +242,8 @@ class PDOMCLinkage extends PDOMLinkage {
 	public PDOMNode addType(PDOMNode parent, IType type) throws CoreException {
 		if (type instanceof ICBasicType) {
 			return new PDOMCBasicType(pdom, parent, (ICBasicType)type);
-		} else if (type instanceof ICompositeType) {
-			ICompositeType ctype = (ICompositeType) type;
-			return FindBinding.findBinding(getIndex(), getPDOM(), ctype.getNameCharArray(), new int[] {getBindingType(ctype)});  
+		} else if (type instanceof IBinding) {
+			return addBinding((IBinding)type);
 		}
 		return super.addType(parent, type); 
 	}

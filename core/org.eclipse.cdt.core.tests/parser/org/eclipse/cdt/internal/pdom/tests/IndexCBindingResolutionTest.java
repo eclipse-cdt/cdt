@@ -16,6 +16,8 @@ import junit.framework.TestSuite;
 
 import org.eclipse.cdt.core.dom.IPDOMManager;
 import org.eclipse.cdt.core.dom.ast.IBinding;
+import org.eclipse.cdt.core.dom.ast.ICompositeType;
+import org.eclipse.cdt.core.dom.ast.IEnumeration;
 import org.eclipse.cdt.core.testplugin.CProjectHelper;
 import org.eclipse.core.runtime.Path;
 
@@ -79,6 +81,20 @@ public class IndexCBindingResolutionTest extends IndexBindingResolutionTestBase 
 		IBinding b21 = getBindingFromASTName("a); /*func5*/", 1);
 	}
 
+	// typedef struct S {int a;} S;
+	// typedef enum E {A,B} E;
+	
+	// struct A {
+	//    S *s;
+	//    E *e;
+	// };
+	public void testTypedef() {
+		IBinding b1 = getBindingFromASTName("S", 1);
+		assertTrue(b1 instanceof ICompositeType);
+		IBinding b2 = getBindingFromASTName("E", 1);
+		assertTrue(b2 instanceof IEnumeration);
+	}
+	
 	public void _testEnumeratorInFileScope() {fail("todo");}
 	public void _testEnumeratorInStructScope() {fail("todo");}
 	public void _testEnumeratorInUnionScope() {fail("todo");}

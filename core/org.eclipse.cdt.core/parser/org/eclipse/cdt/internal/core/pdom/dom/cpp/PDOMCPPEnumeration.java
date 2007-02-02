@@ -91,15 +91,15 @@ class PDOMCPPEnumeration extends PDOMCPPBinding implements IEnumeration, IIndexT
 	}
 	
 	public boolean isSameType(IType type) {
+		if (type instanceof ITypedef) {
+			return type.isSameType(this);
+		}
+		
 		if (type instanceof PDOMNode) {
 			PDOMNode node= (PDOMNode) type;
 			if (node.getPDOM() == getPDOM()) {
 				return node.getRecord() == getRecord();
 			}
-		}
-
-		if (type instanceof ITypedef) {
-			return type.isSameType(this);
 		}
 		
 		try {

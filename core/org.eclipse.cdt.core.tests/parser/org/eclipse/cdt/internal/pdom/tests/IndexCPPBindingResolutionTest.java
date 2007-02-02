@@ -17,6 +17,7 @@ import junit.framework.TestSuite;
 import org.eclipse.cdt.core.dom.IPDOMManager;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IBinding;
+import org.eclipse.cdt.core.dom.ast.IEnumeration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPVariable;
@@ -958,4 +959,19 @@ public class IndexCPPBindingResolutionTest extends IndexBindingResolutionTestBas
 		assertEquals(4, index.findNames(binding2, IIndex.FIND_DECLARATIONS).length);
 	}
 
+	// typedef struct S {int a;} S;
+	// typedef enum E {A,B} E;
+	
+	// class A {
+	//   public:
+	//     S *s;
+	//	   E *e;
+	// };
+	public void testTypedef() {
+		IBinding b1 = getBindingFromASTName("S", 1);
+		assertTrue(b1 instanceof ICPPClassType);
+		IBinding b2 = getBindingFromASTName("E", 1);
+		assertTrue(b2 instanceof IEnumeration);
+	}
+	
 }

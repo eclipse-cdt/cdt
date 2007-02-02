@@ -22,6 +22,7 @@ import org.eclipse.cdt.core.dom.ast.IASTInitializer;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
+import org.eclipse.cdt.core.dom.ast.c.ICASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
 
@@ -114,6 +115,12 @@ abstract public class IndexerASTVisitor extends ASTVisitor {
 		if (declspec instanceof ICPPASTCompositeTypeSpecifier) {
 			ICPPASTCompositeTypeSpecifier cts= (ICPPASTCompositeTypeSpecifier) declspec;
 			IASTName name = getLastInQualified(cts.getName());
+			visit(name, fDefinitionName);
+			push(name, declspec);
+		}
+		if (declspec instanceof ICASTCompositeTypeSpecifier) {
+			ICASTCompositeTypeSpecifier cts= (ICASTCompositeTypeSpecifier) declspec;
+			IASTName name = cts.getName();
 			visit(name, fDefinitionName);
 			push(name, declspec);
 		}

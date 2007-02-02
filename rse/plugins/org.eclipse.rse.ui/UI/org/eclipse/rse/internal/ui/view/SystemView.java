@@ -14,7 +14,7 @@
  * Michael Berger (IBM) - Patch to remove non-standard expand/collapse from menu.
  * Tobias Schwarz (Wind River) - Fix 166343 getChildCount() counts invalid items
  * Martin Oberhuber (Wind River) - Improve fix for 166343 getChildCount()
- * Uwe Stieber (Wind Rvier) - [172492] Use SafeTreeViewer
+ * Uwe Stieber (Wind River) - [172492] Use SafeTreeViewer
  ********************************************************************************/
 
 package org.eclipse.rse.ui.view;
@@ -2772,19 +2772,19 @@ public class SystemView extends SafeTreeViewer implements ISystemTree, ISystemRe
 	
 	protected void doUpdateItem(final Item item, Object element)
 	{
-		super.doUpdateItem(item, element);
-		
 		// adding this because base eclipse version isn't renaming properly on duplicates
 		ISystemRemoteElementAdapter adapter = getRemoteAdapter(element);
-		if (adapter != null)
+		if (adapter != null && item != null && !item.isDisposed())
 		{
 			String oldText = item.getText();
-			String newText = adapter.getName(element);
+			String newText = adapter.getText(element);
 			if (!oldText.equals(newText))
 			{
 				item.setText(newText);
 			}
 		}
+		
+		super.doUpdateItem(item, element);
 	}
 
 	/**

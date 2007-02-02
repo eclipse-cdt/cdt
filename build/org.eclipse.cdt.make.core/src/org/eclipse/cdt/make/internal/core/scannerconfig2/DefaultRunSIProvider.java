@@ -62,14 +62,18 @@ public class DefaultRunSIProvider implements IExternalScannerInfoProvider {
     
     private SCMarkerGenerator markerGenerator = new SCMarkerGenerator();
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.make.core.scannerconfig.IExternalScannerInfoProvider#invokeProvider(org.eclipse.core.runtime.IProgressMonitor, org.eclipse.core.resources.IResource, java.lang.String, org.eclipse.cdt.make.core.scannerconfig.IScannerConfigBuilderInfo2, org.eclipse.cdt.make.core.scannerconfig.IScannerInfoCollector2)
-     */
+    public boolean invokeProvider(IProgressMonitor monitor, IResource resource,
+    		String providerId, IScannerConfigBuilderInfo2 buildInfo,
+    		IScannerInfoCollector collector) {
+    	return invokeProvider(monitor, resource, providerId, buildInfo, collector, null);
+    }
+    
     public boolean invokeProvider(IProgressMonitor monitor,
                                   IResource resource, 
                                   String providerId, 
                                   IScannerConfigBuilderInfo2 buildInfo,
-                                  IScannerInfoCollector collector) {
+                                  IScannerInfoCollector collector,
+                                  Properties env) {
 	    // initialize fields
         this.resource = resource;
         this.providerId = providerId;
@@ -115,7 +119,7 @@ public class DefaultRunSIProvider implements IExternalScannerInfoProvider {
             OutputStream consoleOut = (sniffer == null ? cos : sniffer.getOutputStream());
             OutputStream consoleErr = (sniffer == null ? cos : sniffer.getErrorStream());
             TraceUtil.outputTrace("Default provider is executing command:", fCompileCommand.toString() + ca, ""); //$NON-NLS-1$ //$NON-NLS-2$
-            Process p = launcher.execute(fCompileCommand, compileArguments, setEnvironment(launcher), fWorkingDirectory);
+            Process p = launcher.execute(fCompileCommand, compileArguments, setEnvironment(launcher, env), fWorkingDirectory);
             if (p != null) {
                 try {
                     // Close the input of the Process explicitely.
@@ -153,6 +157,7 @@ public class DefaultRunSIProvider implements IExternalScannerInfoProvider {
     }
     
 
+    
     /**
      * Initialization of protected fields. 
      * Subclasses are most likely to override default implementation.
@@ -201,9 +206,9 @@ public class DefaultRunSIProvider implements IExternalScannerInfoProvider {
      * @param launcher
      * @return
      */
-    protected String[] setEnvironment(CommandLauncher launcher) {
+    protected String[] setEnvironment(CommandLauncher launcher, Properties initialEnv) {
         // Set the environmennt, some scripts may need the CWD var to be set.
-        Properties props = launcher.getEnvironment();
+        Properties props = initialEnv != null ? initialEnv : launcher.getEnvironment();
         props.put("CWD", fWorkingDirectory.toOSString()); //$NON-NLS-1$
         props.put("PWD", fWorkingDirectory.toOSString()); //$NON-NLS-1$
         // On POSIX (Linux, UNIX) systems reset LANG variable to English with UTF-8 encoding

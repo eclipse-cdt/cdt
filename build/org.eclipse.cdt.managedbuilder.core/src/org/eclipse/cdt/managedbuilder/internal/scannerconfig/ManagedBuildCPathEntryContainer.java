@@ -14,6 +14,7 @@ package org.eclipse.cdt.managedbuilder.internal.scannerconfig;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.Vector;
 
 import org.eclipse.cdt.core.model.CoreModel;
@@ -27,9 +28,11 @@ import org.eclipse.cdt.make.core.scannerconfig.IScannerInfoCollector;
 import org.eclipse.cdt.make.internal.core.scannerconfig2.SCProfileInstance;
 import org.eclipse.cdt.make.internal.core.scannerconfig2.ScannerConfigProfileManager;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
+import org.eclipse.cdt.managedbuilder.core.IManagedBuildInfo;
 import org.eclipse.cdt.managedbuilder.core.ITarget;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuilderCorePlugin;
+import org.eclipse.cdt.managedbuilder.envvar.IBuildEnvironmentVariable;
 import org.eclipse.cdt.managedbuilder.internal.core.ManagedBuildInfo;
 import org.eclipse.cdt.managedbuilder.scannerconfig.IManagedScannerInfoCollector;
 import org.eclipse.core.resources.IProject;
@@ -144,7 +147,14 @@ public class ManagedBuildCPathEntryContainer implements IPathEntryContainer {
 			ISafeRunnable runnable = new ISafeRunnable() {
 				public void run() {
 					IProgressMonitor monitor = new NullProgressMonitor();
-					esiProvider.invokeProvider(monitor, project, providerId, buildInfo, collector);
+					IManagedBuildInfo info = ManagedBuildManager.getBuildInfo(project);
+					IConfiguration config = info.getDefaultConfiguration();
+					IBuildEnvironmentVariable[] vars = ManagedBuildManager.getEnvironmentVariableProvider().getVariables(config, true, true);
+					Properties env = new Properties();
+					if (vars != null)
+						for (int i = 0; i < vars.length; ++i)
+							env.put(vars[i].getName(), vars[i].getValue());
+					esiProvider.invokeProvider(monitor, project, providerId, buildInfo, collector, env);
 				}
 	
 				public void handleException(Throwable exception) {

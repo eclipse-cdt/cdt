@@ -18,6 +18,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.util.Properties;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.resources.IConsole;
@@ -47,9 +48,12 @@ public class DefaultSIFileReader implements IExternalScannerInfoProvider {
     
     private SCMarkerGenerator markerGenerator = new SCMarkerGenerator();
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.make.core.scannerconfig.IExternalScannerInfoProvider#invokeProvider(org.eclipse.core.runtime.IProgressMonitor, org.eclipse.core.resources.IResource, java.lang.String, org.eclipse.cdt.make.core.scannerconfig.IScannerConfigBuilderInfo2, org.eclipse.cdt.make.core.scannerconfig.IScannerInfoCollector2)
-     */
+    public boolean invokeProvider(IProgressMonitor monitor, IResource resource,
+    		String providerId, IScannerConfigBuilderInfo2 buildInfo,
+    		IScannerInfoCollector collector, Properties env) {
+    	return invokeProvider(monitor, resource, providerId, buildInfo, collector);
+    }
+    
     public boolean invokeProvider(IProgressMonitor monitor,
                                   IResource resource, 
                                   String providerId, 

@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.make.core.scannerconfig;
 
+import java.util.Properties;
+
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
 
@@ -34,4 +36,22 @@ public interface IExternalScannerInfoProvider {
                                   IScannerConfigBuilderInfo2 buildInfo,
                                   IScannerInfoCollector collector); 
 
+    /**
+     * Alternative interface to pass down the environment.
+     * 
+     * @param monitor
+     * @param resource
+     * @param providerId
+     * @param buildInfo
+     * @param collector
+     * @param env
+     * @return
+     */
+    public boolean invokeProvider(IProgressMonitor monitor, 
+            IResource resource,
+            String providerId,
+            IScannerConfigBuilderInfo2 buildInfo,
+            IScannerInfoCollector collector,
+            Properties env); 
+ 
 }

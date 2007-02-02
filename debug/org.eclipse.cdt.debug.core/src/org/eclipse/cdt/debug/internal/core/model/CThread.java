@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
+ *     Stefan Bylund (Enea, steby@enea.se) - patch for bug 155464
  *******************************************************************************/
 package org.eclipse.cdt.debug.internal.core.model;
 
@@ -693,6 +694,7 @@ public class CThread extends CDebugElement implements ICThread, IRestart, IResum
 	private void handleResumedEvent( ICDIResumedEvent event ) {
 		CDebugElementState state = CDebugElementState.RESUMED;
 		int detail = DebugEvent.RESUME;
+		syncWithBackend();
 		if ( isCurrent() && event.getType() != ICDIResumedEvent.CONTINUE ) {
 			preserveStackFrames();
 			switch( event.getType() ) {
@@ -893,6 +895,7 @@ public class CThread extends CDebugElement implements ICThread, IRestart, IResum
 	}
 
 	protected void resumedByTarget( int detail, List events ) {
+		syncWithBackend();
 		if ( isCurrent() && detail != DebugEvent.CLIENT_REQUEST && detail != DebugEvent.UNSPECIFIED ) {
 			setState( CDebugElementState.STEPPED );
 			preserveStackFrames();
@@ -932,5 +935,17 @@ public class CThread extends CDebugElement implements ICThread, IRestart, IResum
 				fireSuspendEvent( DebugEvent.BREAKPOINT );
 			}			
 		}
+	}
+
+	private void syncWithBackend() {
+		ICDIThread cdiThread = getCDIThread();
+		ICDIThread currentThread = null;
+		try {
+			currentThread = cdiThread.getTarget().getCurrentThread();
+		}
+		catch( CDIException e ) {
+			// ignore
+		}
+		setCurrent( cdiThread.equals( currentThread ) );
 	}
 }

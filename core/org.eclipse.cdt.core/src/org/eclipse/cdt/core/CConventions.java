@@ -38,7 +38,7 @@ public class CConventions {
 
 	private final static String ILLEGAL_FILE_CHARS = "/\\:<>?*|\""; //$NON-NLS-1$
 	
-	private static boolean isLegalIdentifier(String name) {
+	public static boolean isLegalIdentifier(String name) {
 		if (name == null) {
 			return false;
 		}

@@ -23,8 +23,8 @@
 </table>
 <table><tbody><tr><td>
 <ul>
-<li>Added an <b>interim update site</b> for RSE 2.0 milestone builds at
-  <a href="http://download.eclipse.org/dsdp/tm/updates/interim">http://download.eclipse.org/dsdp/tm/updates/interim</a>.
+<li>Added a <b>milestone update site</b> for RSE 2.0 milestone builds at
+  <a href="http://download.eclipse.org/dsdp/tm/updates/milestones">http://download.eclipse.org/dsdp/tm/updates/milestones</a>.
   Builds on this site are tested against the latest Eclipse Platform 3.3 Milestones
   only. Update jars are currently packed but unsigned, until the fix for Platform bug 
   <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=168594">168594</a>

@@ -15,12 +15,14 @@ import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
 import org.eclipse.cdt.debug.core.ICDebugConstants;
 import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.event.ICDIEvent;
+import org.eclipse.cdt.debug.core.cdi.event.ICDIMemoryChangedEvent;
 import org.eclipse.cdt.debug.core.cdi.event.ICDIResumedEvent;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIArgumentDescriptor;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIObject;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIRegister;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIRegisterDescriptor;
 import org.eclipse.cdt.debug.core.cdi.model.ICDITarget;
+import org.eclipse.cdt.debug.core.cdi.model.ICDITargetConfiguration3;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIValue;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIVariable;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIVariableDescriptor;
@@ -366,13 +368,19 @@ public class CRegister extends CVariable implements IRegister {
 	public void handleDebugEvents( ICDIEvent[] events ) {
 		for( int i = 0; i < events.length; i++ ) {
 			ICDIEvent event = events[i];
-			if ( event instanceof ICDIResumedEvent ) {
-				ICDIObject source = event.getSource();
-				if ( source != null ) {
-					ICDITarget cdiTarget = source.getTarget();
+			ICDIObject source = event.getSource();
+			ICDITarget cdiTarget = source.getTarget();
+			if (source != null) {
+				if ( event instanceof ICDIResumedEvent ) {
 					if (  getCDITarget().equals( cdiTarget ) ) {
 						setChanged( false );
 					}
+				}
+				else if ( event instanceof ICDIMemoryChangedEvent &&
+						cdiTarget.getConfiguration() instanceof ICDITargetConfiguration3 &&
+						((ICDITargetConfiguration3)cdiTarget.getConfiguration()).needsRegistersUpdated(event)) {
+					resetValue();
+					return;	// avoid similar but logic inappropriate for us in CVariable
 				}
 			}
 		}

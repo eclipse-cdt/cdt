@@ -17,9 +17,11 @@ import org.eclipse.cdt.debug.core.ICDebugConstants;
 import org.eclipse.cdt.debug.core.cdi.event.ICDIChangedEvent;
 import org.eclipse.cdt.debug.core.cdi.event.ICDIEvent;
 import org.eclipse.cdt.debug.core.cdi.event.ICDIEventListener;
+import org.eclipse.cdt.debug.core.cdi.event.ICDIMemoryChangedEvent;
 import org.eclipse.cdt.debug.core.cdi.event.ICDIResumedEvent;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIObject;
 import org.eclipse.cdt.debug.core.cdi.model.ICDITarget;
+import org.eclipse.cdt.debug.core.cdi.model.ICDITargetConfiguration3;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIVariable;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIVariableDescriptor;
 import org.eclipse.cdt.debug.core.model.CVariableFormat;
@@ -422,7 +424,12 @@ public abstract class CVariable extends AbstractCVariable implements ICDIEventLi
 				continue;
 			ICDITarget target = source.getTarget();
 			if ( target.equals( getCDITarget() ) ) {
-				if ( event instanceof ICDIChangedEvent ) {
+				if ( event instanceof ICDIMemoryChangedEvent &&
+						target.getConfiguration() instanceof ICDITargetConfiguration3 &&
+						((ICDITargetConfiguration3)target.getConfiguration()).needsVariablesUpdated(event)) {
+					resetValue();
+				}
+				else if ( event instanceof ICDIChangedEvent ) {
 					if ( source instanceof ICDIVariable && iv.isSameVariable( (ICDIVariable)source ) ) {
 						handleChangedEvent( (ICDIChangedEvent)event );
 					}

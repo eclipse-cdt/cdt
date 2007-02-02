@@ -85,6 +85,7 @@ import org.eclipse.cdt.internal.core.parser.scanner2.FileCodeReaderFactory;
 import org.eclipse.cdt.internal.core.parser.scanner2.GCCScannerExtensionConfiguration;
 import org.eclipse.cdt.internal.core.parser.scanner2.GPPScannerExtensionConfiguration;
 import org.eclipse.cdt.internal.core.parser.scanner2.IScannerExtensionConfiguration;
+import org.eclipse.core.runtime.Platform;
 
 /**
  * @author jcamelon
@@ -2166,7 +2167,7 @@ public class CompleteParser2Tests extends TestCase {
 		Writer writer = new StringWriter();
 		writer.write( "#define __cdecl __attribute__ ((__cdecl__))\n" ); //$NON-NLS-1$
 		writer.write( "typedef int size_t; \n int __cdecl foo(); \n" ); //$NON-NLS-1$
-		parse(writer.toString(), true, ParserLanguage.CPP, true);//$NON-NLS-1$
+		parse(writer.toString(), true, ParserLanguage.CPP, true);
 	}
 	
 	public void testPredefinedSymbol_bug70928_infinite_loop_test1() throws Exception {
@@ -2174,16 +2175,16 @@ public class CompleteParser2Tests extends TestCase {
 		Writer writer = new StringWriter();
 		writer.write( "#define __cdecl __attribute__ ((__cdecl__))\n" ); //$NON-NLS-1$
 		writer.write( "typedef int size_t; \n int __cdecl foo(); \n" ); //$NON-NLS-1$
-		parse(writer.toString(), false, ParserLanguage.CPP, false);//$NON-NLS-1$ // test for an infinite loop if the GCC extensions aren't supported
-		parse(writer.toString(), false, ParserLanguage.C, false);//$NON-NLS-1$ // test for an infinite loop if the GCC extensions aren't supported
+		parse(writer.toString(), false, ParserLanguage.CPP, false);// test for an infinite loop if the GCC extensions aren't supported
+		parse(writer.toString(), false, ParserLanguage.C, false);// test for an infinite loop if the GCC extensions aren't supported
 	}
 	
 	public void testPredefinedSymbol_bug70928_infinite_loop_test2() throws Exception {
 		// GNU builtin storage class type __cdecl preceded by a custom return type 
 		Writer writer = new StringWriter();
 		writer.write( "int x __attribute__ ((aligned (16))) = 0;\n" ); //$NON-NLS-1$
-		parse(writer.toString(), false, ParserLanguage.CPP, false);//$NON-NLS-1$ // test for an infinite loop if the GCC extensions aren't supported
-		parse(writer.toString(), false, ParserLanguage.C, false);//$NON-NLS-1$ // test for an infinite loop if the GCC extensions aren't supported
+		parse(writer.toString(), false, ParserLanguage.CPP, false);// test for an infinite loop if the GCC extensions aren't supported
+		parse(writer.toString(), false, ParserLanguage.C, false);// test for an infinite loop if the GCC extensions aren't supported
 	}
 	
 	public void testBug102376() throws Exception {
@@ -2580,6 +2581,9 @@ public class CompleteParser2Tests extends TestCase {
     }
     
     public void test158192_declspec_on_class() throws Exception {
+    	if(!Platform.getOS().equals(Platform.OS_WIN32))
+    		return; // XXX: see GPPParserExtensionConfiguration.supportDeclspecSpecifiers()
+    	
     	Writer writer = new StringWriter();
     	writer.write("class __declspec(foobar) Foo1 {};\n");
     	writer.write("union __declspec(foobar) Foo2 {};\n");
@@ -2604,6 +2608,9 @@ public class CompleteParser2Tests extends TestCase {
     }
 
     public void test158192_declspec_on_variable() throws Exception {
+    	if(!Platform.getOS().equals(Platform.OS_WIN32))
+    		return; // XXX: see GPPParserExtensionConfiguration.supportDeclspecSpecifiers()
+    
     	Writer writer = new StringWriter();
     	writer.write("__declspec(foobar) class Foo {} bar;\n");
     	IASTTranslationUnit tu = parse( writer.toString(), true, ParserLanguage.CPP, true);
@@ -2622,6 +2629,9 @@ public class CompleteParser2Tests extends TestCase {
     // MSVC does not allow declspec in this position, GCC does so we test for this
     // see https://bugs.eclipse.org/bugs/show_bug.cgi?id=158192
     public void test158192_declspec_in_declarator() throws Exception {
+    	if(!Platform.getOS().equals(Platform.OS_WIN32))
+    		return; // XXX: see GPPParserExtensionConfiguration.supportDeclspecSpecifiers()
+    	
     	Writer writer = new StringWriter();
 
     	writer.write("int * __declspec(foo) bar = 0;\n");

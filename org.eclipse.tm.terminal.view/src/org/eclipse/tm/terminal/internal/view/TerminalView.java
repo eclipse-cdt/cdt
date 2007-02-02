@@ -25,6 +25,7 @@ import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.jface.window.ApplicationWindow;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.dnd.TextTransfer;
@@ -54,13 +55,11 @@ import org.eclipse.tm.terminal.internal.actions.TerminalActionSettings;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IViewSite;
-import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.actions.RetargetAction;
-import org.eclipse.ui.internal.WorkbenchWindow;
 import org.eclipse.ui.part.ViewPart;
 
 public class TerminalView extends ViewPart implements ITerminalView, ITerminalListener {
@@ -354,21 +353,10 @@ public class TerminalView extends ViewPart implements ITerminalView, ITerminalLi
 
 		setPartName("Terminal"); //$NON-NLS-1$
 
-		TerminalViewPlugin plugin;
-		IWorkbench workbench;
-		WorkbenchWindow workbenchWindow;
-		MenuManager menuMgr;
-		Menu menu;
 
 		JFaceResources.getFontRegistry().removeListener(fPropertyChangeHandler);
-		plugin = TerminalViewPlugin.getDefault();
-		workbench = plugin.getWorkbench();
-		workbenchWindow = (WorkbenchWindow) workbench
-				.getActiveWorkbenchWindow();
-		menuMgr = workbenchWindow.getMenuManager();
-		menuMgr = (MenuManager) menuMgr
-				.findMenuUsingPath(IWorkbenchActionConstants.M_EDIT);
-		menu = menuMgr.getMenu();
+		MenuManager menuMgr = getEditMenuManager();
+		Menu menu = menuMgr.getMenu();
 
 		menuMgr.removeMenuListener(fMenuHandlerEdit);
 
@@ -377,7 +365,6 @@ public class TerminalView extends ViewPart implements ITerminalView, ITerminalLi
 
 		fCtlTerminal.disposeTerminal();
 	}
-
 	/**
 	 * Passing the focus request to the viewer's control.
 	 */
@@ -443,25 +430,23 @@ public class TerminalView extends ViewPart implements ITerminalView, ITerminalLi
 	}
 
 	protected void setupMenus() {
-		TerminalViewPlugin plugin;
-		IWorkbench workbench;
-		WorkbenchWindow workbenchWindow;
-		MenuManager menuMgr;
-		Menu menu;
+		MenuManager menuMgr = getEditMenuManager();
+		Menu menu = menuMgr.getMenu();
 
 		fMenuHandlerEdit = new TerminalMenuHandlerEdit();
-		plugin = TerminalViewPlugin.getDefault();
-		workbench = plugin.getWorkbench();
-		workbenchWindow = (WorkbenchWindow) workbench
-				.getActiveWorkbenchWindow();
-		menuMgr = workbenchWindow.getMenuManager();
-		menuMgr = (MenuManager) menuMgr
-				.findMenuUsingPath(IWorkbenchActionConstants.M_EDIT);
-		menu = menuMgr.getMenu();
-
 		menuMgr.addMenuListener(fMenuHandlerEdit);
 		menu.addMenuListener(fMenuHandlerEdit);
 	}
+	/**
+	 * @return the Edit Menu
+	 */
+	private MenuManager getEditMenuManager() {
+		ApplicationWindow workbenchWindow = (ApplicationWindow) TerminalViewPlugin.getDefault().getWorkbench().getActiveWorkbenchWindow();
+		MenuManager menuMgr = workbenchWindow.getMenuBarManager();
+		menuMgr = (MenuManager) menuMgr.findMenuUsingPath(IWorkbenchActionConstants.M_EDIT);
+		return menuMgr;
+	}
+
 
 	protected void setupLocalToolBars() {
 		IToolBarManager toolBarMgr = getViewSite().getActionBars().getToolBarManager();
@@ -507,6 +492,15 @@ public class TerminalView extends ViewPart implements ITerminalView, ITerminalLi
 
 	// Inner classes
 
+	/**
+	 * Because it is too expensive to update the cut/copy/pase/selectAll actions
+	 * each time the selection in the terminal view has changed, we update them,
+	 * when the menu is shown.
+	 * <p>
+	 * TODO: this might be dangerous because those actions might be shown in the toolbar
+	 * and might not update...
+	 *
+	 */
 	protected class TerminalMenuHandlerEdit implements MenuListener, IMenuListener {
 		protected String fActionDefinitionIdCopy;
 
@@ -567,9 +561,6 @@ public class TerminalView extends ViewPart implements ITerminalView, ITerminalLi
 			// do nothing
 		}
 		public void menuHidden(MenuEvent event) {
-			TerminalViewPlugin plugin;
-			IWorkbench workbench;
-			WorkbenchWindow workbenchWindow;
 			MenuManager menuMgr;
 			ActionContributionItem item;
 			RetargetAction action;
@@ -578,13 +569,7 @@ public class TerminalView extends ViewPart implements ITerminalView, ITerminalLi
 			updateEditCopy();
 			updateEditCut();
 
-			plugin = TerminalViewPlugin.getDefault();
-			workbench = plugin.getWorkbench();
-			workbenchWindow = (WorkbenchWindow) workbench
-					.getActiveWorkbenchWindow();
-			menuMgr = workbenchWindow.getMenuManager();
-			menuMgr = (MenuManager) menuMgr
-					.findMenuUsingPath(IWorkbenchActionConstants.M_EDIT);
+			menuMgr = getEditMenuManager();
 
 			item = (ActionContributionItem) menuMgr.find(ActionFactory.COPY
 					.getId());

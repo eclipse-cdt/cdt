@@ -48,7 +48,13 @@ class PDOMFullReindex extends PDOMFullIndexerJob {
 			}
 
 			registerTUsInReaderFactory(sources);
-			parseTUs(sources, headers, monitor);
+			index.acquireReadLock();
+			try {
+				parseTUs(sources, headers, monitor);
+			}
+			finally {
+				index.releaseReadLock();
+			}
 		} catch (CoreException e) {
 			if (e.getStatus() != Status.CANCEL_STATUS)
 				CCorePlugin.log(e);

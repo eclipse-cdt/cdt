@@ -71,7 +71,13 @@ class PDOMFullHandleDelta extends PDOMFullIndexerJob {
 				}
 			}
 
-			parseTUs(sources, headers, monitor);
+			index.acquireReadLock();
+			try {
+				parseTUs(sources, headers, monitor);
+			}
+			finally {
+				index.releaseReadLock();
+			}
 		} catch (CoreException e) {
 			CCorePlugin.log(e);
 		} catch (InterruptedException e) {

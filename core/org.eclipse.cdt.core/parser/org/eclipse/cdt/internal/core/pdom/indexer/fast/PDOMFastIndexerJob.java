@@ -20,7 +20,6 @@ import java.util.Map;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.IPDOMIndexer;
-import org.eclipse.cdt.core.dom.IPDOMIndexerTask;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.index.IIndexFile;
 import org.eclipse.cdt.core.index.IIndexFileLocation;
@@ -101,22 +100,16 @@ abstract class PDOMFastIndexerJob extends PDOMIndexerTask {
 			return;
 		}
 
-		index.acquireReadLock();
-		try {
-			// get the AST in a "Fast" way
-			IASTTranslationUnit ast= language.getASTTranslationUnit(codeReader, scanner, codeReaderFactory, index, ParserUtil.getParserLogService());
-			if (pm.isCanceled()) {
-				return;
-			}
-			// Clear the macros
-			codeReaderFactory.clearMacroAttachements();
-				
-			// Add the new symbols
-			addSymbols(ast, pm);
+		// get the AST in a "Fast" way
+		IASTTranslationUnit ast= language.getASTTranslationUnit(codeReader, scanner, codeReaderFactory, index, ParserUtil.getParserLogService());
+		if (pm.isCanceled()) {
+			return;
 		}
-		finally {
-			index.releaseReadLock();
-		}
+		// Clear the macros
+		codeReaderFactory.clearMacroAttachements();
+
+		// Add the new symbols
+		addSymbols(ast, pm);
 	}
 
 	protected IWritableIndex getIndex() {

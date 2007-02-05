@@ -44,9 +44,15 @@ class PDOMFastReindex extends PDOMFastIndexerJob {
 				return;
 			}
 			
-			registerTUsInReaderFactory(sources);
-			registerTUsInReaderFactory(headers);
-			parseTUs(sources, headers, monitor);
+			index.acquireReadLock();
+			try {
+				registerTUsInReaderFactory(sources);
+				registerTUsInReaderFactory(headers);
+				parseTUs(sources, headers, monitor);
+			}
+			finally {
+				index.releaseReadLock();
+			}
 
 		} catch (CoreException e) {
 			CCorePlugin.log(e);

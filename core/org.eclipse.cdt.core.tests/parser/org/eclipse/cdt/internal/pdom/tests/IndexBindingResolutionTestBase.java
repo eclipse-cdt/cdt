@@ -67,11 +67,14 @@ public abstract class IndexBindingResolutionTestBase extends PDOMTestBase {
 		assertTrue(CCorePlugin.getIndexManager().joinIndexer(360000, new NullProgressMonitor()));
 		
 		index= CCorePlugin.getIndexManager().getIndex(cproject);
-		
+		index.acquireReadLock();
 		ast = TestSourceReader.createIndexBasedAST(index, cproject, cppfile);
 	}
 	
 	protected void tearDown() throws Exception {
+		if (index != null) {
+			index.releaseReadLock();
+		}
 		if (cproject != null) {
 			cproject.getProject().delete(IResource.FORCE | IResource.ALWAYS_DELETE_PROJECT_CONTENT, new NullProgressMonitor());
 		}

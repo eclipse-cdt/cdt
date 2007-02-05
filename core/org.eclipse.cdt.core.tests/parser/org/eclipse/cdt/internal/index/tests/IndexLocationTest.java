@@ -93,51 +93,57 @@ public class IndexLocationTest extends BaseTestCase {
 	// #include "header.h"
 	// #include "ABS_EXTERNAL"
 	// class baz {};
-	public void testBasicLocations() throws CoreException, ExecutionException {
+	public void testBasicLocations() throws CoreException, ExecutionException, InterruptedException {
 		IIndex index = CCorePlugin.getIndexManager().getIndex(cproject);
-		IBinding[] bs1 = index.findBindings(Pattern.compile("foo"), true, IndexFilter.ALL, new NullProgressMonitor());
-		IBinding[] bs2 = index.findBindings(Pattern.compile("bar"), true, IndexFilter.ALL, new NullProgressMonitor());
-		IBinding[] bs3 = index.findBindings(Pattern.compile("baz"), true, IndexFilter.ALL, new NullProgressMonitor());
-		assertEquals(1, bs1.length);
-		assertEquals(1, bs2.length);
-		assertEquals(1, bs3.length);
-		bs1 = index.findBindings("foo".toCharArray(), IndexFilter.ALL, new NullProgressMonitor());
-		bs2 = index.findBindings("bar".toCharArray(), IndexFilter.ALL, new NullProgressMonitor());
-		bs3 = index.findBindings("baz".toCharArray(), IndexFilter.ALL, new NullProgressMonitor());
-		assertEquals(1, bs1.length);
-		assertEquals(1, bs2.length);
-		assertEquals(1, bs3.length);
-		IIndexName[] nms1 = index.findNames(bs1[0], IIndex.FIND_ALL_OCCURENCES);
-		IIndexName[] nms2 = index.findNames(bs2[0], IIndex.FIND_ALL_OCCURENCES);
-		IIndexName[] nms3 = index.findNames(bs3[0], IIndex.FIND_ALL_OCCURENCES);
-		assertEquals(1, nms1.length);
-		assertEquals(1, nms2.length);
-		assertEquals(1, nms3.length);
-		URI workspaceRoot = ResourcesPlugin.getWorkspace().getRoot().getLocationURI();
-		assertEquals(
-				ResourcesPlugin.getWorkspace().getRoot().getFile(new Path("LocationTests/header.h")).getLocationURI(),
-				nms1[0].getFile().getLocation().getURI()
-		);		
-		assertEquals(
-				externalHeader.toURI(),
-				nms2[0].getFile().getLocation().getURI()
-		);
-		assertEquals(
-				ResourcesPlugin.getWorkspace().getRoot().getFile(new Path("LocationTests/source.cpp")).getLocationURI(),
-				nms3[0].getFile().getLocation().getURI()
-		);
+		index.acquireReadLock();
+		try {
+			IBinding[] bs1 = index.findBindings(Pattern.compile("foo"), true, IndexFilter.ALL, new NullProgressMonitor());
+			IBinding[] bs2 = index.findBindings(Pattern.compile("bar"), true, IndexFilter.ALL, new NullProgressMonitor());
+			IBinding[] bs3 = index.findBindings(Pattern.compile("baz"), true, IndexFilter.ALL, new NullProgressMonitor());
+			assertEquals(1, bs1.length);
+			assertEquals(1, bs2.length);
+			assertEquals(1, bs3.length);
+			bs1 = index.findBindings("foo".toCharArray(), IndexFilter.ALL, new NullProgressMonitor());
+			bs2 = index.findBindings("bar".toCharArray(), IndexFilter.ALL, new NullProgressMonitor());
+			bs3 = index.findBindings("baz".toCharArray(), IndexFilter.ALL, new NullProgressMonitor());
+			assertEquals(1, bs1.length);
+			assertEquals(1, bs2.length);
+			assertEquals(1, bs3.length);
+			IIndexName[] nms1 = index.findNames(bs1[0], IIndex.FIND_ALL_OCCURENCES);
+			IIndexName[] nms2 = index.findNames(bs2[0], IIndex.FIND_ALL_OCCURENCES);
+			IIndexName[] nms3 = index.findNames(bs3[0], IIndex.FIND_ALL_OCCURENCES);
+			assertEquals(1, nms1.length);
+			assertEquals(1, nms2.length);
+			assertEquals(1, nms3.length);
+			URI workspaceRoot = ResourcesPlugin.getWorkspace().getRoot().getLocationURI();
+			assertEquals(
+					ResourcesPlugin.getWorkspace().getRoot().getFile(new Path("LocationTests/header.h")).getLocationURI(),
+					nms1[0].getFile().getLocation().getURI()
+			);		
+			assertEquals(
+					externalHeader.toURI(),
+					nms2[0].getFile().getLocation().getURI()
+			);
+			assertEquals(
+					ResourcesPlugin.getWorkspace().getRoot().getFile(new Path("LocationTests/source.cpp")).getLocationURI(),
+					nms3[0].getFile().getLocation().getURI()
+			);
 
-		assertEquals(
-				ResourcesPlugin.getWorkspace().getRoot().getFile(new Path("LocationTests/header.h")).getFullPath(),
-				new Path(nms1[0].getFile().getLocation().getFullPath())
-		);
-		assertEquals(
-				null,
-				nms2[0].getFile().getLocation().getFullPath()
-		);
-		assertEquals(
-				ResourcesPlugin.getWorkspace().getRoot().getFile(new Path("LocationTests/source.cpp")).getFullPath(),
-				new Path(nms3[0].getFile().getLocation().getFullPath())
-		);
+			assertEquals(
+					ResourcesPlugin.getWorkspace().getRoot().getFile(new Path("LocationTests/header.h")).getFullPath(),
+					new Path(nms1[0].getFile().getLocation().getFullPath())
+			);
+			assertEquals(
+					null,
+					nms2[0].getFile().getLocation().getFullPath()
+			);
+			assertEquals(
+					ResourcesPlugin.getWorkspace().getRoot().getFile(new Path("LocationTests/source.cpp")).getFullPath(),
+					new Path(nms3[0].getFile().getLocation().getFullPath())
+			);
+		}
+		finally {
+			index.releaseReadLock();
+		}
 	}
 }

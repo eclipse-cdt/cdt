@@ -382,6 +382,7 @@ public class IndexBugsTests extends BaseTestCase {
 			header.setContents(in, IResource.FORCE, null);
 			TestSourceReader.waitUntilFileIsIndexed(index, header, INDEX_WAIT_TIME);
 
+			index.acquireReadLock();
 			try {
 				IBinding[] bindings = index.findBindings(Pattern.compile("var"), true, IndexFilter.ALL, new NullProgressMonitor());
 				assertEquals(1, bindings.length);

@@ -19,7 +19,6 @@ import java.util.Map;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.IPDOMIndexer;
-import org.eclipse.cdt.core.dom.IPDOMIndexerTask;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.index.IIndexFile;
 import org.eclipse.cdt.core.index.IIndexFileLocation;
@@ -95,7 +94,7 @@ abstract class PDOMFullIndexerJob extends PDOMIndexerTask {
 	}
 
 	protected int getReadlockCount() {
-		return 0;
+		return 1;
 	}
 
 	protected boolean needToUpdate(IIndexFileLocation location) throws CoreException {

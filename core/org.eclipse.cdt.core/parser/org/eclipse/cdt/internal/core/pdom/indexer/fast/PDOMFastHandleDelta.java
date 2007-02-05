@@ -37,38 +37,44 @@ class PDOMFastHandleDelta extends PDOMFastIndexerJob {
 		long start = System.currentTimeMillis();
 		try {
 			setupIndexAndReaderFactory();
-			registerTUsInReaderFactory(changed);
-			
-			Iterator i= removed.iterator();
-			while (i.hasNext()) {
-				if (monitor.isCanceled())
-					return;
-				ITranslationUnit tu = (ITranslationUnit)i.next();
-				removeTU(index, tu);
-				if (tu.isSourceUnit()) {
-					fCompletedSources++;
-				}
-				else {
-					fTotalSourcesEstimate--;
-					fCompletedHeaders++;
-				}
-			}
+			index.acquireReadLock();
+			try {
+				registerTUsInReaderFactory(changed);
 
-			// separate headers
-			List headers= new ArrayList();
-			List sources= changed;
-			for (Iterator iter = changed.iterator(); iter.hasNext();) {
-				ITranslationUnit tu = (ITranslationUnit) iter.next();
-				if (!tu.isSourceUnit()) {
-					headers.add(tu);
-					iter.remove();
+				Iterator i= removed.iterator();
+				while (i.hasNext()) {
+					if (monitor.isCanceled())
+						return;
+					ITranslationUnit tu = (ITranslationUnit)i.next();
+					removeTU(index, tu);
+					if (tu.isSourceUnit()) {
+						fCompletedSources++;
+					}
+					else {
+						fTotalSourcesEstimate--;
+						fCompletedHeaders++;
+					}
 				}
+
+				// separate headers
+				List headers= new ArrayList();
+				List sources= changed;
+				for (Iterator iter = changed.iterator(); iter.hasNext();) {
+					ITranslationUnit tu = (ITranslationUnit) iter.next();
+					if (!tu.isSourceUnit()) {
+						headers.add(tu);
+						iter.remove();
+					}
+				}
+
+				parseTUs(sources, headers, monitor);
+				if (monitor.isCanceled()) {
+					return;
+				}	
 			}
-			
-			parseTUs(sources, headers, monitor);
-			if (monitor.isCanceled()) {
-				return;
-			}		
+			finally {
+				index.releaseReadLock();
+			}
 		} catch (CoreException e) {
 			CCorePlugin.log(e);
 		} catch (InterruptedException e) {

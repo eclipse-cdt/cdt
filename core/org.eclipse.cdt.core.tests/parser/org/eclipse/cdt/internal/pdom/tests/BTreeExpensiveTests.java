@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 Symbian Software Systems and others.
+ * Copyright (c) 2007 Symbian Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.pdom.tests;
 
+import junit.framework.Test;
+
 /**
  * Tests which are too expensive to run as part of normal testing, but
  * should be run after B-tree related development.
@@ -18,11 +20,12 @@ package org.eclipse.cdt.internal.pdom.tests;
  * invariants after each B-tree operation, and so are especially
  * expensive and cpu hungry.
  */
-/*
- * JUnit only invokes methods declared in the class itself (not super-classes)
- */
 public class BTreeExpensiveTests extends BTreeTests {
-
+	
+	public static Test suite() {
+		return suite(BTreeExpensiveTests.class);
+	}
+	
 	public void testBySortedSetMirror() throws Exception {
 		sortedMirrorTest(100);
 	}

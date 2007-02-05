@@ -239,11 +239,15 @@ class PDOMCLinkage extends PDOMLinkage {
 	}
 
 	public PDOMNode addType(PDOMNode parent, IType type) throws CoreException {
+		if(type instanceof IProblemBinding)
+			return null;
+		
 		if (type instanceof ICBasicType) {
 			return new PDOMCBasicType(pdom, parent, (ICBasicType)type);
 		} else if (type instanceof IBinding) {
 			return addBinding((IBinding)type);
 		}
+		
 		return super.addType(parent, type); 
 	}
 	

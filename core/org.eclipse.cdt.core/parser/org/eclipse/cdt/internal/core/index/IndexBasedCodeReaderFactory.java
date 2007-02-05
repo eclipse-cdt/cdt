@@ -49,6 +49,8 @@ public class IndexBasedCodeReaderFactory implements ICodeReaderFactory {
 	private Map/*<IIndexFileLocation,FileInfo>*/ fileInfoCache;
 	private Map/*<String,IIndexFileLocation>*/ iflCache;
 	private List usedMacros = new ArrayList();
+	/** The fallback code reader factory used in case a header file is not indexed */
+	private ICodeReaderFactory fFallBackFactory;
 	
 	private static final char[] EMPTY_CHARS = new char[0];
 	
@@ -73,13 +75,22 @@ public class IndexBasedCodeReaderFactory implements ICodeReaderFactory {
 	public IndexBasedCodeReaderFactory(IIndex index) {
 		this(index, new HashMap/*<String,IIndexFileLocation>*/());
 	}
-	
+
+	public IndexBasedCodeReaderFactory(IIndex index, ICodeReaderFactory fallbackFactory) {
+		this(index, new HashMap/*<String,IIndexFileLocation>*/(), fallbackFactory);
+	}
+
 	public IndexBasedCodeReaderFactory(IIndex index, Map iflCache) {
+		this(index, iflCache, null);
+	}
+
+	public IndexBasedCodeReaderFactory(IIndex index, Map iflCache, ICodeReaderFactory fallbackFactory) {
 		this.index = index;
 		this.fileInfoCache = new HashMap/*<IIndexFileLocation,FileInfo>*/();
 		this.iflCache = iflCache;
+		this.fFallBackFactory= fallbackFactory;
 	}
-	
+
 	public int getUniqueIdentifier() {
 		return 0;
 	}
@@ -140,6 +151,9 @@ public class IndexBasedCodeReaderFactory implements ICodeReaderFactory {
 			// still try to parse the file.
 		}
 
+		if (fFallBackFactory != null) {
+			return fFallBackFactory.createCodeReaderForInclusion(scanner, canonicalPath);
+		}
 		return ParserUtil.createReader(canonicalPath, null);
 	}
 

@@ -12,12 +12,10 @@ package org.eclipse.cdt.internal.core.model;
 
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Stack;
 
 import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.dom.IPDOMManager;
 import org.eclipse.cdt.core.dom.ast.ASTSignatureUtil;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTASMDeclaration;
@@ -82,7 +80,6 @@ import org.eclipse.cdt.core.parser.ast.ASTAccessVisibility;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguousDeclaration;
 import org.eclipse.cdt.internal.core.dom.parser.IASTDeclarationAmbiguity;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPVisitor;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
 
@@ -227,13 +224,8 @@ public class CModelBuilder2 implements IContributedModelBuilder {
 	 * @see org.eclipse.cdt.core.model.IContributedModelBuilder#parse(boolean)
 	 */
 	public void parse(boolean quickParseMode) throws Exception {
-		if (isIndexerDisabled()) {
-			// fallback to old model builder
-			new CModelBuilder(fTranslationUnit, new HashMap()).parse(true);
-			return;
-		}
 		final IIndexManager indexManager= CCorePlugin.getIndexManager();
-		IIndex index= indexManager.getIndex(fTranslationUnit.getCProject());
+		IIndex index= indexManager.getIndex(fTranslationUnit.getCProject(), IIndexManager.ADD_DEPENDENCIES);
 		
 		try {
 			if (index != null) {
@@ -245,10 +237,10 @@ public class CModelBuilder2 implements IContributedModelBuilder {
 			}
 			checkCanceled();
 			long startTime= System.currentTimeMillis();
-			final IASTTranslationUnit ast= fTranslationUnit.getAST(index, ITranslationUnit.AST_SKIP_ALL_HEADERS);
+			final IASTTranslationUnit ast= fTranslationUnit.getAST(index, quickParseMode ? ITranslationUnit.AST_SKIP_ALL_HEADERS : ITranslationUnit.AST_SKIP_INDEXED_HEADERS);
 			Util.debugLog("CModelBuilder2: parsing " //$NON-NLS-1$
 					+ fTranslationUnit.getElementName()
-					+ " mode="+ (quickParseMode ? "fast " : "full ") //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+					+ " mode="+ (quickParseMode ? "skip all " : "skip indexed ") //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 					+ " time="+ ( System.currentTimeMillis() - startTime ) + "ms", //$NON-NLS-1$ //$NON-NLS-2$
 					IDebugLogConstants.MODEL, false);
 
@@ -284,16 +276,6 @@ public class CModelBuilder2 implements IContributedModelBuilder {
 			Util.debugLog("CModelBuilder2: cancelled ", IDebugLogConstants.MODEL, false); //$NON-NLS-1$
 			throw new OperationCanceledException();
 		}
-	}
-
-	private boolean isIndexerDisabled() {
-		final IPDOMManager pdomManager= CCorePlugin.getPDOMManager();
-		try {
-			return IPDOMManager.ID_NO_INDEXER.equals(pdomManager.getIndexerId(fTranslationUnit.getCProject()));
-		} catch (CoreException exc) {
-			CCorePlugin.log(exc.getStatus());
-		}
-		return true;
 	}
 
 	/**

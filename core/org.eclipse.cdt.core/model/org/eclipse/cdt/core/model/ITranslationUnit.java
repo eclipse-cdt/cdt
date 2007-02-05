@@ -34,18 +34,30 @@ import org.eclipse.core.runtime.IProgressMonitor;
 public interface ITranslationUnit extends ICElement, IParent, IOpenable, ISourceReference, ISourceManipulation {
 	
 	/**
-	 * Style for {@link #getAST(IIndex, int)}. Don't parse header files. 
+	 * Style constant for {@link #getAST(IIndex, int)}. 
+	 * Meaning: Skip over headers that are found in the index, parse all others.
+	 * Macro definitions and bindings are taken from index for skipped files.
 	 */
-	public static final int AST_SKIP_ALL_HEADERS = 2;
+	public static final int AST_SKIP_INDEXED_HEADERS = 2;
 
 	/**
-	 * Style for {@link #getAST(IIndex, int)}. Skips over headers that are found in the index.
+	 * Style constant for {@link #getAST(IIndex, int)}. 
+	 * Meaning: Skip headers even if they are not found in the index. 
+	 * Makes practically only sense in combination with {@link AST_SKIP_INDEXED_HEADERS}.
 	 */
-	public static final int AST_SKIP_INDEXED_HEADERS = 4;
+	public static final int AST_SKIP_NONINDEXED_HEADERS = 4;
 
 	/**
-	 * Style for {@link #getAST(IIndex, int)}. Don't parse the file if there is no build
-	 * information for it.
+	 * Style constant for {@link #getAST(IIndex, int)}. 
+	 * A combination of {@link AST_SKIP_INDEXED_HEADERS} and {@link AST_SKIP_NONINDEXED_HEADERS}.
+	 * Meaning: Don't parse header files at all, be they indexed or not. 
+	 * Macro definitions and bindings are taken from the index if available.
+	 */
+	public static final int AST_SKIP_ALL_HEADERS = AST_SKIP_INDEXED_HEADERS | AST_SKIP_NONINDEXED_HEADERS;
+
+	/**
+	 * Style constant for {@link #getAST(IIndex, int)}. 
+	 * Meaning: Don't parse the file if there is no build information for it.
 	 */
 	public static final int AST_SKIP_IF_NO_BUILD_INFO = 8;
 

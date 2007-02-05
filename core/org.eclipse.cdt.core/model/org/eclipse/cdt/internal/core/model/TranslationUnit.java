@@ -49,6 +49,7 @@ import org.eclipse.cdt.core.parser.IScannerInfo;
 import org.eclipse.cdt.core.parser.IScannerInfoProvider;
 import org.eclipse.cdt.core.parser.ParserUtil;
 import org.eclipse.cdt.core.parser.ScannerInfo;
+import org.eclipse.cdt.internal.core.dom.NullCodeReaderFactory;
 import org.eclipse.cdt.internal.core.dom.SavedCodeReaderFactory;
 import org.eclipse.cdt.internal.core.index.IndexBasedCodeReaderFactory;
 import org.eclipse.core.resources.IFile;
@@ -610,12 +611,7 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 	 */
 	private void parseUsingCModelBuilder(Map newElements, boolean quickParseMode, IProgressMonitor monitor) {
 		try {
-			boolean useNewModelBuilder= CCorePlugin.getDefault().useNewModelBuilder();
-			if (useNewModelBuilder) {
-				new CModelBuilder2(this, monitor).parse(quickParseMode);
-			} else {
-				new CModelBuilder(this, newElements).parse(quickParseMode);
-			}
+			new CModelBuilder2(this, monitor).parse(quickParseMode);
 		} catch (OperationCanceledException oce) {
 			if (isWorkingCopy()) {
 				throw oce;
@@ -741,11 +737,13 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 
 	public IASTTranslationUnit getAST(IIndex index, int style) throws CoreException {
 		ICodeReaderFactory codeReaderFactory;
-		if (index != null && (style & (ITranslationUnit.AST_SKIP_INDEXED_HEADERS | ITranslationUnit.AST_SKIP_ALL_HEADERS)) != 0) {
-			codeReaderFactory= new IndexBasedCodeReaderFactory(index);
+		if ((style & ITranslationUnit.AST_SKIP_NONINDEXED_HEADERS) != 0) {
+			codeReaderFactory= NullCodeReaderFactory.getInstance();
+		} else {
+			codeReaderFactory= SavedCodeReaderFactory.getInstance();
 		}
-		else {
-			codeReaderFactory = SavedCodeReaderFactory.getInstance();
+		if (index != null && (style & ITranslationUnit.AST_SKIP_INDEXED_HEADERS) != 0) {
+			codeReaderFactory= new IndexBasedCodeReaderFactory(index, codeReaderFactory);
 		}
 		
 		IScannerInfo scanInfo = getScannerInfo( (style & ITranslationUnit.AST_SKIP_IF_NO_BUILD_INFO) == 0);
@@ -766,7 +764,13 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 	public ASTCompletionNode getCompletionNode(IIndex index, int style, int offset) throws CoreException {
 		ICodeReaderFactory codeReaderFactory;
 		if (index != null && (style & (ITranslationUnit.AST_SKIP_INDEXED_HEADERS | ITranslationUnit.AST_SKIP_ALL_HEADERS)) != 0) {
-			codeReaderFactory= new IndexBasedCodeReaderFactory(index);
+			ICodeReaderFactory fallbackFactory;
+			if ((style & ITranslationUnit.AST_SKIP_ALL_HEADERS) != 0) {
+				fallbackFactory= NullCodeReaderFactory.getInstance();
+			} else {
+				fallbackFactory= SavedCodeReaderFactory.getInstance();
+			}
+			codeReaderFactory= new IndexBasedCodeReaderFactory(index, fallbackFactory);
 		}
 		else {
 			codeReaderFactory = SavedCodeReaderFactory.getInstance();

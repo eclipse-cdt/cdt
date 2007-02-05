@@ -989,16 +989,6 @@ public class CCorePlugin extends Plugin {
 		return getPluginPreferences().getBoolean(PREF_USE_STRUCTURAL_PARSE_MODE);
 	}
 	
-	// Preference to turn on/off the use of the new model builder to build the CModel
-	public void setUseNewModelBuilder(boolean useNewModelBuilder) {
-		getPluginPreferences().setValue(PREF_USE_NEW_MODEL_BUILDER, useNewModelBuilder);
-		savePluginPreferences();
-	}
-
-	public boolean useNewModelBuilder() {
-		return getPluginPreferences().getBoolean(PREF_USE_NEW_MODEL_BUILDER);
-	}
-	
 	public CDOM getDOM() {
 	    return CDOM.getInstance();
 	}

@@ -29,7 +29,6 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.PlatformUI;
 
-import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.ui.CUIPlugin;
 
 /**
@@ -85,7 +84,6 @@ public class WorkInProgressPreferencePage extends PreferencePage implements IWor
 		result.setLayout(layout);
 
 		// Add your controls here
-		addCheckBox(result, "Use new model builder", CCorePlugin.PREF_USE_NEW_MODEL_BUILDER); //$NON-NLS-1$
 		
 		applyDialogFont(result);
 		return result;
@@ -158,15 +156,11 @@ public class WorkInProgressPreferencePage extends PreferencePage implements IWor
 			String key= (String) text.getData();
 			store.setValue(key, text.getText());
 		}
-		CCorePlugin.getDefault().setUseNewModelBuilder(store.getBoolean(CCorePlugin.PREF_USE_NEW_MODEL_BUILDER));
 		CUIPlugin.getDefault().savePluginPreferences();
 		return super.performOk();
 	}
 
 	public static void initDefaults(IPreferenceStore store) {
 		// Initialize your defaults here
-		boolean coreDefault= CCorePlugin.getDefault().getPluginPreferences().getDefaultBoolean(CCorePlugin.PREF_USE_NEW_MODEL_BUILDER);
-		store.setDefault(CCorePlugin.PREF_USE_NEW_MODEL_BUILDER, coreDefault);
-		CCorePlugin.getDefault().setUseNewModelBuilder(store.getBoolean(CCorePlugin.PREF_USE_NEW_MODEL_BUILDER));
 	}
 }

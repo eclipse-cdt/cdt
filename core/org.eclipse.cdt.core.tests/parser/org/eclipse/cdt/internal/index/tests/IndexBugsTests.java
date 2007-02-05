@@ -31,7 +31,6 @@ import org.eclipse.cdt.core.dom.ast.ICompositeType;
 import org.eclipse.cdt.core.dom.ast.IEnumeration;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
-import org.eclipse.cdt.core.dom.ast.c.ICCompositeTypeScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPVariable;
 import org.eclipse.cdt.core.index.IIndex;
@@ -413,7 +412,7 @@ public class IndexBugsTests extends BaseTestCase {
 			assertEquals(2, bindings.length);
 			
 			IBinding struct, typedef;
-			if (bindings[0] instanceof ICCompositeTypeScope) {
+			if (bindings[0] instanceof ICompositeType) {
 				struct= bindings[0];
 				typedef= bindings[1];
 			}
@@ -424,7 +423,7 @@ public class IndexBugsTests extends BaseTestCase {
 			
 			assertTrue(struct instanceof ICompositeType);
 			assertTrue(typedef instanceof ITypedef);
-			assertTrue(((ITypedef) typedef).getType() instanceof ICCompositeTypeScope);
+			assertTrue(((ITypedef) typedef).getType() instanceof ICompositeType);
 			assertTrue(((ITypedef) typedef).isSameType((ICompositeType) struct));
 		}
 		finally {

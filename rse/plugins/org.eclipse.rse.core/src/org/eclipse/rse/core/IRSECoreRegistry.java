@@ -11,7 +11,7 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  *
  * Contributors:
- * {Name} (company) - description of contribution.
+ * Uwe Stieber (Wind River) - Added system types provider extension.
  ********************************************************************************/
 package org.eclipse.rse.core;
 
@@ -25,6 +25,7 @@ public interface IRSECoreRegistry {
 
 	public static final String PI_RSE_CORE = "org.eclipse.rse.core"; //$NON-NLS-1$
 	public static final String PI_SYSTEM_TYPES = "systemTypes"; //$NON-NLS-1$
+	public static final String PI_SYSTEM_TYPES_PROVIDER = "systemTypeProviders"; //$NON-NLS-1$
 
 	/**
 	 * Returns all defined system types.

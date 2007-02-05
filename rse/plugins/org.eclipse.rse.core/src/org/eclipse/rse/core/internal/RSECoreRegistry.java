@@ -11,15 +11,23 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  *
  * Contributors:
- * {Name} (company) - description of contribution.
+ * Uwe Stieber (Wind River) - Added system types provider extension.
  ********************************************************************************/
 package org.eclipse.rse.core.internal;
 
+import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
+
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.rse.core.IRSECoreRegistry;
 import org.eclipse.rse.core.IRSESystemType;
+import org.eclipse.rse.core.IRSESystemTypeProvider;
+import org.eclipse.rse.core.RSECorePlugin;
 
 /**
  * Singleton class representing the RSE core registry.
@@ -122,21 +130,67 @@ public class RSECoreRegistry implements IRSECoreRegistry {
 	 * @return an array of system types that have been defined
 	 */
 	private IRSESystemType[] readSystemTypes() {
+		List types = new LinkedList();
+		List typeIds = new ArrayList();
 
 		IExtensionRegistry registry = getExtensionRegistry();
+		
+		// First we take the direct system type contributions via extension point
 		IConfigurationElement[] elements = registry.getConfigurationElementsFor(PI_RSE_CORE, PI_SYSTEM_TYPES);
-		IRSESystemType[] types = new IRSESystemType[elements.length];
-
 		for (int i = 0; i < elements.length; i++) {
 			IConfigurationElement element = elements[i];
 
 			if (element.getName().equals(ELEMENT_SYTEM_TYPE)) {
 				RSESystemType type = new RSESystemType(element);
-				types[i] = type;
+				if (!typeIds.contains(type.getId())) {
+					types.add(type);
+					typeIds.add(type.getId());
+					
+					String message = "Successfully registered RSE system type ''{0}'' (id = ''{1}'')."; //$NON-NLS-1$
+					message = MessageFormat.format(message, new Object[] { type.getName(), type.getId() });
+					RSECorePlugin.getDefault().getLogger().logInfo(message);
+				} else {
+					String message = "RSE system type contribution skipped. Non-unique system type id (plugin: {0}, id: {1})."; //$NON-NLS-1$
+					message = MessageFormat.format(message, new Object[] { element.getContributor().getName(), type.getId()});
+					RSECorePlugin.getDefault().getLogger().logWarning(message);
+				}
 			}
 		}
 
-		return types;
+		// check on the IRSESystemTypeProviders now
+		elements = registry.getConfigurationElementsFor(PI_RSE_CORE, PI_SYSTEM_TYPES_PROVIDER);
+		for (int i = 0; i < elements.length; i++) {
+			IConfigurationElement element = elements[i];
+			try {
+				Object provider = element.createExecutableExtension("class"); //$NON-NLS-1$
+				if (provider instanceof IRSESystemTypeProvider) {
+					IRSESystemType[] typesForRegistration = ((IRSESystemTypeProvider)provider).getSystemTypesForRegistration();
+					if (typesForRegistration == null) continue;
+					
+					for (int j = 0; j < typesForRegistration.length; j++) {
+						IRSESystemType type = typesForRegistration[j];
+						if (!typeIds.contains(type.getId())) {
+							types.add(type);
+							typeIds.add(type.getId());
+							
+							String message = "Successfully registered RSE system type ''{0}'' (id = ''{1}'')."; //$NON-NLS-1$
+							message = MessageFormat.format(message, new Object[] { type.getName(), type.getId() });
+							RSECorePlugin.getDefault().getLogger().logInfo(message);
+						} else {
+							String message = "RSE system type contribution skipped. Non-unique system type id (plugin: {0}, id: {1})."; //$NON-NLS-1$
+							message = MessageFormat.format(message, new Object[] { element.getContributor().getName(), type.getId()});
+							RSECorePlugin.getDefault().getLogger().logWarning(message);
+						}
+					}
+				}
+			} catch (CoreException e) {
+				String message = "RSE system types provider failed creation (plugin: {0}, id: {1})."; //$NON-NLS-1$
+				message = MessageFormat.format(message, new Object[] { element.getContributor().getName(), element.getDeclaringExtension().getSimpleIdentifier()});
+				RSECorePlugin.getDefault().getLogger().logError(message, e);
+			}
+		}
+		
+		return (IRSESystemType[])types.toArray(new IRSESystemType[types.size()]);
 	}
 
 	/**

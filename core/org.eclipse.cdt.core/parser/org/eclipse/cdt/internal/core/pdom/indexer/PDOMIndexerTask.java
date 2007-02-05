@@ -94,7 +94,7 @@ public abstract class PDOMIndexerTask implements IPDOMIndexerTask {
 	protected volatile int fCompletedHeaders= 0;
 	protected Map/*<IIndexFileLocation, Object>*/ fContextMap = new HashMap/*<IIndexFileLocation, Object>*/();
 	protected volatile String fMessage;
-	
+
 	private boolean fShowActivity;
 	private boolean fShowStatistics;
 	private boolean fShowProblems;
@@ -105,29 +105,29 @@ public abstract class PDOMIndexerTask implements IPDOMIndexerTask {
 	private int fReferenceCount= 0;
 	private int fDeclarationCount= 0;
 	private int fProblemBindingCount= 0;
-	
+
 	protected PDOMIndexerTask() {
 		fShowActivity= checkDebugOption("indexer/activity", "true");  //$NON-NLS-1$//$NON-NLS-2$
 		fShowStatistics= checkDebugOption("indexer/statistics", "true");  //$NON-NLS-1$//$NON-NLS-2$
 		fShowProblems= checkDebugOption("indexer/problems", "true");  //$NON-NLS-1$//$NON-NLS-2$
 	}
-	
+
 	private boolean checkDebugOption(String option, String value) {
 		String trace = Platform.getDebugOption(CCorePlugin.PLUGIN_ID + "/debug/" + option);  //$NON-NLS-1$
 		return (trace != null && trace.equalsIgnoreCase(value));
 	}
-	
+
 	protected void processDelta(ICElementDelta delta, Collection added, Collection changed, Collection removed) throws CoreException {
 		boolean allFiles= getIndexAllFiles();
 		int flags = delta.getFlags();
-		
+
 		if ((flags & ICElementDelta.F_CHILDREN) != 0) {
 			ICElementDelta[] children = delta.getAffectedChildren();
 			for (int i = 0; i < children.length; ++i) {
 				processDelta(children[i], added, changed, removed);
 			}
 		}
-		
+
 		ICElement element = delta.getElement();
 		switch (element.getElementType()) {
 		case ICElement.C_UNIT:
@@ -158,9 +158,9 @@ public abstract class PDOMIndexerTask implements IPDOMIndexerTask {
 			}
 			break;
 		}
-			
+
 	}
-	
+
 	private void collectSources(ICContainer container, final Collection sources, final Collection headers, final boolean allFiles) throws CoreException {
 		container.accept(new TranslationUnitCollector(sources, headers, allFiles));
 	}
@@ -180,7 +180,7 @@ public abstract class PDOMIndexerTask implements IPDOMIndexerTask {
 			index.releaseWriteLock(0);
 		}
 	}
-	
+
 	protected void parseTUs(Collection sources, Collection headers, IProgressMonitor monitor) throws CoreException, InterruptedException {
 		// sources first
 		for (Iterator iter = sources.iterator(); iter.hasNext();) {
@@ -202,7 +202,7 @@ public abstract class PDOMIndexerTask implements IPDOMIndexerTask {
 				iter.remove();
 			} else {
 				ITranslationUnit context= findContext(getIndex(), location);
-			 	if (context != null) {
+				if (context != null) {
 					parseTU(context, monitor);
 				}
 			}
@@ -250,15 +250,15 @@ public abstract class PDOMIndexerTask implements IPDOMIndexerTask {
 	private void swallowError(IPath file, Throwable e) throws CoreException {
 		IStatus status= CCorePlugin.createStatus(
 				MessageFormat.format(Messages.PDOMIndexerTask_errorWhileParsing, new Object[]{file}), e);
-			CCorePlugin.log(status);
+		CCorePlugin.log(status);
 		if (++fErrorCount > MAX_ERRORS) {
 			throw new CoreException(CCorePlugin.createStatus(
-				MessageFormat.format(Messages.PDOMIndexerTask_tooManyIndexProblems, new Object[]{getIndexer().getProject().getElementName()})));
+					MessageFormat.format(Messages.PDOMIndexerTask_tooManyIndexProblems, new Object[]{getIndexer().getProject().getElementName()})));
 		}
 	}
 
 	abstract protected void doParseTU(ITranslationUnit tu, IProgressMonitor pm) throws CoreException, InterruptedException;
-	
+
 	protected void clearIndex(IWritableIndex index) throws InterruptedException, CoreException {
 		// reset error count
 		fErrorCount= 0;
@@ -271,17 +271,17 @@ public abstract class PDOMIndexerTask implements IPDOMIndexerTask {
 			index.releaseWriteLock(0);
 		}
 	}
-	
+
 	protected boolean getIndexAllFiles() {
 		return getIndexer().getIndexAllFiles();
 	}
-	
+
 	protected ITranslationUnit findContext(IIndex index, IIndexFileLocation location) {
 		Object cachedContext= fContextMap.get(location);
 		if (cachedContext != null) {
 			return cachedContext == NO_CONTEXT ? null : (ITranslationUnit) cachedContext;
 		}
-		
+
 		fContextMap.put(location, NO_CONTEXT); // prevent recursion
 		IIndexFile pdomFile;
 		try {
@@ -316,12 +316,12 @@ public abstract class PDOMIndexerTask implements IPDOMIndexerTask {
 		}
 		return null;
 	}
-	
+
 	public String getMonitorMessageDetail() {
 		return fMessage;
 	}
 
-	
+
 	final public int estimateRemainingSources() {
 		return fTotalSourcesEstimate-fCompletedSources;
 	}
@@ -333,8 +333,8 @@ public abstract class PDOMIndexerTask implements IPDOMIndexerTask {
 	public int getCompletedSourcesCount() {
 		return fCompletedSources;
 	}
-	
-	
+
+
 	protected void addSymbols(IASTTranslationUnit ast, IProgressMonitor pm) throws InterruptedException, CoreException {
 		final Map symbolMap= new HashMap();
 		try {
@@ -359,8 +359,8 @@ public abstract class PDOMIndexerTask implements IPDOMIndexerTask {
 							fReferenceCount++;
 						else 
 							fDeclarationCount++;
+					}
 				}
-		}
 				fResolutionTime += System.currentTimeMillis()-start;
 			}
 
@@ -374,7 +374,7 @@ public abstract class PDOMIndexerTask implements IPDOMIndexerTask {
 					if (pm.isCanceled()) 
 						return;
 
-				IIndexFileLocation path = orderedPaths[i];
+					IIndexFileLocation path = orderedPaths[i];
 					if (path != null) {
 						if (fShowActivity) {
 							System.out.println("Indexer: adding " + path.getURI()); //$NON-NLS-1$
@@ -448,7 +448,7 @@ public abstract class PDOMIndexerTask implements IPDOMIndexerTask {
 				orderedIncludes.add(currentPath);
 			}
 		}
-		
+
 		// macros
 		IASTPreprocessorMacroDefinition[] macros = ast.getMacroDefinitions();
 		for (int i2 = 0; i2 < macros.length; ++i2) {
@@ -459,7 +459,7 @@ public abstract class PDOMIndexerTask implements IPDOMIndexerTask {
 				addToMap(symbolMap, 1, path2, macro);
 			}
 		}
-			
+
 		// names
 		ast.accept(new IndexerASTVisitor() {
 			public void visit(IASTName name, IASTName caller) {
@@ -517,7 +517,7 @@ public abstract class PDOMIndexerTask implements IPDOMIndexerTask {
 		}
 		return file;
 	}
-	
+
 	protected void traceEnd(long start) {
 		if (fShowStatistics) {
 			String name= getClass().getName();
@@ -544,13 +544,13 @@ public abstract class PDOMIndexerTask implements IPDOMIndexerTask {
 					+ fProblemBindingCount + "(" + nf.format(problemPct) + ") problems.");  //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}
-	
+
 	protected IIndexFileLocation getIndexFileLocation(ITranslationUnit tu) {
 		if(tu.getResource()!=null)
 			return IndexLocationFactory.getWorkspaceIFL((IFile)tu.getResource());
 		else
 			return IndexLocationFactory.getExternalIFL(tu.getLocation());
 	}
-	
+
 	protected abstract IIndexFileLocation findLocation(String absolutePath);
 }

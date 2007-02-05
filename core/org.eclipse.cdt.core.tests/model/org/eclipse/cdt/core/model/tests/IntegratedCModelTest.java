@@ -42,7 +42,6 @@ public abstract class IntegratedCModelTest extends TestCase {
 	private IFile sourceFile;
 	private NullProgressMonitor monitor;
 	private boolean structuralParse = false;
-	private boolean fUseNewModelBuilder= true;
 
 	/**
 	 * 
@@ -114,19 +113,4 @@ public abstract class IntegratedCModelTest extends TestCase {
 		this.structuralParse = structuralParse;
 	}
 
-	/**
-	 * @return  whether to use the new model builder or not
-	 */
-	public boolean useNewModelBuilder() {
-		return fUseNewModelBuilder;
-	}
-
-	/**
-	 * Set whether to use the new model builder.
-	 * @param useNewModelBuilder
-	 */
-	public TestCase setUseNewModelBuilder(boolean useNewModelBuilder) {
-		fUseNewModelBuilder = useNewModelBuilder;
-		return this;
-	}
 }

@@ -219,24 +219,23 @@ class PDOMCLinkage extends PDOMLinkage {
 	}
 
 	public PDOMBinding resolveBinding(IASTName name) throws CoreException {
-		int constant;
+		int[] constants;
 		IASTNode parent = name.getParent();
 		if (parent instanceof IASTIdExpression) {			// reference
 			IASTNode eParent = parent.getParent();
 			if (eParent instanceof IASTFunctionCallExpression) {
-				constant = CFUNCTION;
+				constants = new int[] {CFUNCTION};
 			} else {
-				constant = CVARIABLE;
+				constants = new int[] {CVARIABLE, CENUMERATOR};
 			}
 		} else if (parent instanceof ICASTElaboratedTypeSpecifier) {
-			constant = CSTRUCTURE;
+			constants = new int[] {CSTRUCTURE};
 		} else if (parent instanceof IASTNamedTypeSpecifier){
-			return FindBinding.findBinding(getIndex(), getPDOM(), name.toCharArray(), new int [] {CSTRUCTURE, CENUMERATION, CTYPEDEF});
+			constants= new int [] {CSTRUCTURE, CENUMERATION, CTYPEDEF};
 		} else {
 			return null;
 		}
-		
-		return FindBinding.findBinding(getIndex(), getPDOM(), name.toCharArray(), new int[] {constant});
+		return FindBinding.findBinding(getIndex(), getPDOM(), name.toCharArray(), constants);
 	}
 
 	public PDOMNode addType(PDOMNode parent, IType type) throws CoreException {

@@ -11,6 +11,7 @@
 package org.eclipse.cdt.managedbuilder.internal.buildmodel;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -287,10 +288,42 @@ public class BuildStep implements IBuildStep {
 				fTool.getOutputFlag(), 
 				fTool.getOutputPrefix(),
 				listToString(resourcesToStrings(cwd, getPrimaryResources(false)), " "), 	//$NON-NLS-1$
-				resourcesToStrings(cwd, getPrimaryResources(true)), 
+				getInputResources(cwd, getPrimaryResources(true)), 
 				fTool.getCommandLinePattern());
 
 		return createCommandsFromString(resolveMacros(info.getCommandLine(), data, true), cwd, getEnvironment());
+	}
+	
+	private String[] getInputResources(IPath cwd, BuildResource[] rcs) {
+		String[] resources = resourcesToStrings(cwd, rcs);
+		
+		// also need to get libraries
+		String[] libs = null;
+		IOption[] opts = fTool.getOptions();
+		for (int i = 0; i < opts.length; ++i) {
+			try {
+				IOption opt = opts[i];
+				if (opt.getValueType() == IOption.LIBRARIES) {
+					String[] l = opts[i].getLibraries();
+					if (l != null) {
+						libs = new String[l.length];
+						for (int j = 0; j < l.length; ++j) {
+							libs[j] = opt.getCommand() + l[j];
+						}
+					}
+				}
+			} catch (BuildException e) {
+			}
+		}
+		
+		if (libs != null) {
+			String[] irs = new String[resources.length + libs.length];
+			System.arraycopy(resources, 0, irs, 0, resources.length);
+			System.arraycopy(libs, 0, irs, resources.length, libs.length);
+			return irs;
+		} else {
+			return resources;
+		}
 	}
 	
 	private IPath calcCWD(){

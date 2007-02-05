@@ -202,6 +202,26 @@ being contributed to the Europa coordinated release train (Eclipse 3.3).' \
     sed -e 's,Project Update,Project Milestone Update,g' \
     	web/site.xsl > web/site.xsl.new
     mv -f web/site.xsl.new web/site.xsl
+elif [ `basename $SITE` = interim ]; then
+    echo "Working on interim update site"
+    echo "Expect that you copied your features and plugins yourself"
+    stamp=`date +'%Y%m%d-%H%M'`
+    rm index.html site.xml web/site.xsl
+    cvs -q update -dPR
+    sed -e 's,/dsdp/tm/updates,/dsdp/tm/updates/interim,g' \
+    	-e 's,Project Update,Project Interim Update,g' \
+    	-e '\,</h1>,a\
+This site contains Target Management Interim Maintenance builds (M-builds) in order \
+to test them before going live.' \
+    	index.html > index.html.new
+    mv -f index.html.new index.html
+    sed -e 's,/dsdp/tm/updates,/dsdp/tm/updates/interim,g' \
+        -e 's,Project Update,Project Interim Update,g' \
+        site.xml > site.xml.new
+    mv -f site.xml.new site.xml
+    sed -e 's,Project Update,Project Interim Update,g' \
+    	web/site.xsl > web/site.xsl.new
+    mv -f web/site.xsl.new web/site.xsl
 else
     echo "Working on official update site"
     echo "Expect that you copied your features and plugins yourself"
@@ -219,6 +239,11 @@ for feature in $FEATURES ; do
     mv -f site.xml.new site.xml
   fi
 done
+#Create Europa version of site.xml
+if [ -f site-europa.xml ]; then
+  rm -rf site-europa.xml
+fi
+sed -e '/!EUROPA_ONLY!/d' site.xml > site-europa.xml
 
 # optimize the site
 # see http://wiki.eclipse.org/index.php/Platform-releng-faq

@@ -27,6 +27,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceChangeEvent;
 import org.eclipse.core.resources.IResourceChangeListener;
 import org.eclipse.core.resources.IWorkspace;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.rse.core.filters.ISystemFilterPool;
 import org.eclipse.rse.core.filters.ISystemFilterPoolManager;
 import org.eclipse.rse.core.model.IHost;
@@ -152,7 +153,7 @@ public class SystemResourceManager implements SystemResourceConstants
     	if (remoteSystemsProject == null)
     	{
 	      remoteSystemsProject = SystemBasePlugin.getWorkspaceRoot().getProject(RESOURCE_PROJECT_NAME);
-	      if (!initDone)
+	      if (!initDone || !remoteSystemsProject.isAccessible())
 	        remoteSystemsProject = createRemoteSystemsProjectInternal(remoteSystemsProject);
     	}
 	    return remoteSystemsProject;
@@ -172,47 +173,49 @@ public class SystemResourceManager implements SystemResourceConstants
 	}
     /**
      * Create a remote systems project, plus the core subfolders required.
-     * @return IProject handle of the project.
+     * @param proj the handle for the remote systems project
+     * @return the IProject handle of the project (the argument)
      */
-    protected static IProject createRemoteSystemsProjectInternal(IProject proj)
-              //throws Exception
-    {
-	    if (!proj.exists())
-	    {
-	      try {
-	        proj.create(null);
-	        proj.open(null);
-		    IProjectDescription description = proj.getDescription();
-		    String newNatures[] = {RemoteSystemsProject.ID};
-		    description.setNatureIds(newNatures);
-		    proj.setDescription(description, null);
-		    firstTime = true;
-	      } catch (Exception e)
-	      {
-	      	SystemBasePlugin.logError("error creating remote systems project",e); //$NON-NLS-1$
-	      	//throw e;
-	      }
-	    }	
-    	else if (!proj.isOpen())
-    	{
-    	  try {
-    	    proj.open(null);
-    	  } catch (Exception e)
-    	  {
-	      	SystemBasePlugin.logError("error opening remote systems project",e); //$NON-NLS-1$
-	      	//throw e;
-    	  }
-    	}	
-    	try{
-		  // create types folder...
-    	  getResourceHelpers().getOrCreateFolder(proj,RESOURCE_TYPE_FILTERS_FOLDER_NAME);
-    	} catch (Exception e)
-    	{
-	      	SystemBasePlugin.logError("error opening/creating types folder",e); //$NON-NLS-1$
-    	}
-    	initDone = true;
-	    return proj;
-    }
+    protected static IProject createRemoteSystemsProjectInternal(IProject proj) {
+		// Check first for the project to be closed. If yes, try to open it and if this fails,
+		// try to delete if first before failing here. The case is that the user removed the
+		// directory in the workspace and we must be able to recover from it.
+		// See https://bugs.eclipse.org/bugs/show_bug.cgi?id=172437.
+		if (!proj.isOpen()) {
+			try {
+				proj.open(null);
+			} catch (Exception e) {
+				try {
+					proj.delete(false, true, null);
+					SystemBasePlugin.logWarning("Removed stale remote systems project reference. Re-creating remote system project to recover."); //$NON-NLS-1$
+				} catch (CoreException exc) {
+					// If the delete fails, the original opening error will be passed to the error log.
+					SystemBasePlugin.logError("error opening remote systems project", e); //$NON-NLS-1$
+				}
+			}
+		}
+		if (!proj.exists()) {
+			try {
+				proj.create(null);
+				proj.open(null);
+				IProjectDescription description = proj.getDescription();
+				String newNatures[] = { RemoteSystemsProject.ID };
+				description.setNatureIds(newNatures);
+				proj.setDescription(description, null);
+				firstTime = true;
+			} catch (Exception e) {
+				SystemBasePlugin.logError("error creating remote systems project", e); //$NON-NLS-1$
+			}
+		}
+		try {
+			// create types folder...
+			// getResourceHelpers().getOrCreateFolder(proj, RESOURCE_TYPE_FILTERS_FOLDER_NAME);
+		} catch (Exception e) {
+			SystemBasePlugin.logError("error opening/creating types folder", e); //$NON-NLS-1$
+		}
+		initDone = true;
+		return proj;
+	}
     /**
      * Return true if we just created the remote systems project for the first time.
      * This call has the side effect of resetting the flag to false so it doesn't return

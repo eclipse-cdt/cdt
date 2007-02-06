@@ -22,8 +22,6 @@ import org.eclipse.ui.navigator.ICommonViewerWorkbenchSite;
 
 import org.eclipse.cdt.ui.actions.OpenViewActionGroup;
 
-import org.eclipse.cdt.internal.ui.search.actions.SelectionSearchGroup;
-
 public class CNavigatorOpenViewActionProvider extends CommonActionProvider {
 
 	private OpenViewActionGroup fOpenViewActionGroup;
@@ -39,6 +37,8 @@ public class CNavigatorOpenViewActionProvider extends CommonActionProvider {
 		if (workbenchSite != null) {
 			if (workbenchSite.getPart() != null && workbenchSite.getPart() instanceof IViewPart) {
 				fOpenViewActionGroup= new OpenViewActionGroup(workbenchSite.getPart());
+				// properties action is already provided by resource extensions
+				fOpenViewActionGroup.setSuppressProperties(true);
 			}
 		}
 	}
@@ -69,7 +69,7 @@ public class CNavigatorOpenViewActionProvider extends CommonActionProvider {
 	public void fillContextMenu(IMenuManager menu) {
 		if (fOpenViewActionGroup != null) {
 			ISelection selection = getContext().getSelection();
-			if (SelectionSearchGroup.canActionBeAdded(selection)){
+			if (OpenViewActionGroup.canActionBeAdded(selection)){
 				fOpenViewActionGroup.fillContextMenu(menu);
 			}
 		}

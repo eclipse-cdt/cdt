@@ -15,9 +15,12 @@
  ********************************************************************************/
 
 package org.eclipse.rse.files.ui.propertypages;
+import java.nio.charset.Charset;
+import java.nio.charset.IllegalCharsetNameException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.rse.model.ISystemResourceChangeEvents;
@@ -26,17 +29,25 @@ import org.eclipse.rse.services.files.RemoteFileSecurityException;
 import org.eclipse.rse.subsystems.files.core.SystemFileResources;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile;
 import org.eclipse.rse.subsystems.files.core.subsystems.IVirtualRemoteFile;
+import org.eclipse.rse.subsystems.files.core.subsystems.RemoteFileEncodingManager;
 import org.eclipse.rse.ui.ISystemMessages;
 import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemWidgetHelpers;
 import org.eclipse.rse.ui.propertypages.SystemBasePropertyPage;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.KeyAdapter;
+import org.eclipse.swt.events.KeyEvent;
+import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.ui.ide.IDEEncoding;
 
 
 /**
@@ -53,7 +64,7 @@ public class SystemFilePropertyPage extends SystemBasePropertyPage
 	//protected Button cbReadablePrompt, cbWritablePrompt;
 	protected Button cbReadonlyPrompt, cbHiddenPrompt;
 	protected Label labelName, labelType, labelPath, labelSize, labelModified, labelReadable, labelWritable, labelHidden;
-	protected Button inheritedEncodingButton, otherEncodingButton;
+	protected Button defaultEncodingButton, otherEncodingButton;
 	protected Combo otherEncodingCombo;
 	protected String errorMessage;	
     protected boolean initDone = false;
@@ -158,6 +169,79 @@ public class SystemFilePropertyPage extends SystemBasePropertyPage
 			composite_prompts, null, SystemFileResources.RESID_PP_FILE_HIDDEN_LABEL, SystemFileResources.RESID_PP_FILE_HIDDEN_TOOLTIP);
 	      //((GridData)cbHiddenPrompt.getLayoutData()).horizontalSpan = nbrColumns;
 		}
+		
+		// check if an encodings field should be added. Add only if the subsystem
+		// indicates that it supports encodings
+		if (file.getParentRemoteFileSubSystem().supportsEncoding()) {
+			
+			// encoding field
+			Group encodingGroup = SystemWidgetHelpers.createGroupComposite(composite_prompts, 2, SystemFileResources.RESID_PP_FILE_ENCODING_GROUP_LABEL);
+			GridData data = new GridData();
+			data.horizontalAlignment = SWT.BEGINNING;
+			data.grabExcessHorizontalSpace = true;
+			data.verticalAlignment = SWT.BEGINNING;
+			data.grabExcessVerticalSpace = false;
+			encodingGroup.setLayoutData(data);
+			
+			SelectionAdapter buttonSelectionListener = new SelectionAdapter() {
+				public void widgetSelected(SelectionEvent e) {
+					updateEncodingGroupState(defaultEncodingButton.getSelection());
+					updateValidState();
+				}
+			};
+		
+			// default encoding field
+			defaultEncoding = file.getParentRemoteFileSubSystem().getRemoteEncoding();
+			String defaultEncodingLabel = SystemFileResources.RESID_PP_FILE_ENCODING_DEFAULT_LABEL;
+			int idx = defaultEncodingLabel.indexOf('%');
+			
+			if (idx != -1) {
+				defaultEncodingLabel = defaultEncodingLabel.substring(0, idx) + file.getParentRemoteFileSubSystem().getRemoteEncoding() + defaultEncodingLabel.substring(idx+2);
+			}
+			
+			defaultEncodingButton = SystemWidgetHelpers.createRadioButton(encodingGroup, null, defaultEncodingLabel, SystemFileResources.RESID_PP_FILE_ENCODING_DEFAULT_TOOLTIP);
+			data = new GridData();
+			data.horizontalSpan = 2;
+			defaultEncodingButton.setLayoutData(data);
+			defaultEncodingButton.addSelectionListener(buttonSelectionListener);
+
+			// other encoding field
+			otherEncodingButton = SystemWidgetHelpers.createRadioButton(encodingGroup, null, SystemFileResources.RESID_PP_FILE_ENCODING_OTHER_LABEL, SystemFileResources.RESID_PP_FILE_ENCODING_OTHER_TOOLTIP);
+			otherEncodingButton.addSelectionListener(buttonSelectionListener);
+
+			// other encoding combo
+			otherEncodingCombo = SystemWidgetHelpers.createCombo(encodingGroup, null, SystemFileResources.RESID_PP_FILE_ENCODING_ENTER_TOOLTIP);
+			data = new GridData();
+			data.horizontalAlignment = SWT.BEGINNING;
+			data.grabExcessHorizontalSpace = true;
+			otherEncodingCombo.setLayoutData(data);
+
+			otherEncodingCombo.addSelectionListener(new SelectionAdapter(){
+				public void widgetSelected(SelectionEvent e) {
+					updateValidState();
+				}
+			});
+
+			otherEncodingCombo.addKeyListener(new KeyAdapter(){
+				public void keyReleased(KeyEvent e) {
+					updateValidState();
+				}
+			});
+
+			Label emptyLabel = new Label(composite_prompts, SWT.NONE);
+			emptyLabel.setText("");
+			data = new GridData();
+			data.horizontalAlignment = SWT.BEGINNING;
+			data.grabExcessHorizontalSpace = false;
+			data.verticalAlignment = SWT.BEGINNING;
+			data.grabExcessVerticalSpace = true;
+			emptyLabel.setLayoutData(data);
+			
+			encodingFieldAdded = true;
+		}
+		else {
+			encodingFieldAdded = false;
+		}
         
 	    if (!initDone)	
 	      doInitializeFields();		  
@@ -167,6 +251,84 @@ public class SystemFilePropertyPage extends SystemBasePropertyPage
         
 		return composite_prompts;
 	}
+	
+	/**
+	 * Update the encoding group state.
+	 * @param useDefault whether to update the state with default option on. <code>true</code> if the default option
+	 * should be on, <code>false</code> if it should be off.
+	 */
+	private void updateEncodingGroupState(boolean useDefault) {
+		defaultEncodingButton.setSelection(useDefault);
+		otherEncodingButton.setSelection(!useDefault);
+		
+		if (useDefault) {
+			otherEncodingCombo.setText(getDefaultEncoding());
+		}
+		
+		otherEncodingCombo.setEnabled(!useDefault);
+		updateValidState();
+	}
+	
+	/**
+	 * Updates the valid state of the encoding group.
+	 */
+	private void updateValidState() {
+		boolean isValid = isEncodingValid();
+		
+		if (isValid != isValidBefore) {
+			isValidBefore = isValid;
+			
+			if (isValidBefore) {
+				clearErrorMessage();
+			}
+			else {
+				setErrorMessage("The selected encoding is not supported.");
+			}
+		}
+	}
+	
+	/**
+	 * Returns the default encoding.
+	 * @return the default encoding
+	 */
+	protected String getDefaultEncoding() {
+		return defaultEncoding;
+	}
+	
+	/**
+	 * Returns the currently selected encoding.
+	 * @return the currently selected encoding.
+	 */
+	protected String getSelectedEncoding() {
+		if (defaultEncodingButton.getSelection()) {
+			return defaultEncoding;
+		}
+		
+		return otherEncodingCombo.getText();
+	}
+
+	/**
+	 * Returns whether the encoding is valid.
+	 * @return <code>true</code> if the encoding is valid, <code>false</code> otherwise.
+	 */
+	private boolean isEncodingValid() {
+		return defaultEncodingButton.getSelection() || isEncodingValid(otherEncodingCombo.getText());
+	}
+	
+	/**
+	 * Returns whether or not the given encoding is valid.
+	 * @param encoding the encoding.
+	 * @return <code>true</code> if the encoding is valid, <code>false</code> otherwise.
+	 */
+	private boolean isEncodingValid(String encoding) {
+		try {
+			return Charset.isSupported(encoding);
+		}
+		catch (IllegalCharsetNameException e) {
+			return false;
+		}
+	}
+	
 	/**
 	 * Get the input remote file object
 	 */
@@ -252,6 +414,26 @@ public class SystemFilePropertyPage extends SystemBasePropertyPage
 	      cbHiddenPrompt.setSelection(file.isHidden());
           cbHiddenPrompt.setEnabled(false); 
 	    }
+	    
+	    // the file encoding group
+	    if (encodingFieldAdded) {
+	    	List encodings = IDEEncoding.getIDEEncodings();
+	    	String[] encodingStrings = new String[encodings.size()];
+	    	encodings.toArray(encodingStrings);
+	    	otherEncodingCombo.setItems(encodingStrings);
+
+	    	String encoding = file.getEncoding();
+
+	    	// if the encoding is the same as the default encoding, then we want to choose the default encoding option
+	    	if (encoding.equalsIgnoreCase(defaultEncoding)) {
+	    		updateEncodingGroupState(true);
+	    	}
+	    	// otherwise choose the other encoding option
+	    	else {
+	    		otherEncodingCombo.setText(encoding);
+	    		updateEncodingGroupState(false);
+	    	}
+	    }
 	}
 	
 	/**
@@ -272,19 +454,23 @@ public class SystemFilePropertyPage extends SystemBasePropertyPage
                    new org.eclipse.rse.model.SystemResourceChangeEvent(
                    getRemoteFile(),ISystemResourceChangeEvents.EVENT_PROPERTY_CHANGE,null)); 
     	     
-    	  } catch (RemoteFileIOException exc) 
-    	  {
+    	  }
+   		  catch (RemoteFileIOException exc) {
              setMessage(RSEUIPlugin.getPluginMessage(ISystemMessages.FILEMSG_IO_ERROR));
-    	  } catch (RemoteFileSecurityException exc)
-    	  {
+    	  }
+   		  catch (RemoteFileSecurityException exc) {
              setMessage(RSEUIPlugin.getPluginMessage(ISystemMessages.FILEMSG_SECURITY_ERROR));
     	  }
-    	  //catch (RemoteFileException e)
-    	  //{ 	
-    	  //}
-		}    
+		}
+		
+	    // set the encoding
+		if (encodingFieldAdded) {
+			RemoteFileEncodingManager.getInstance().setEncoding(getRemoteFile().getParentRemoteFileSubSystem().getHost().getHostName(), getRemoteFile().getAbsolutePath(), getSelectedEncoding());
+		}
+		
 		return ok;
 	}
+	
     /**
      * Validate all the widgets on the page
 	 * <p>

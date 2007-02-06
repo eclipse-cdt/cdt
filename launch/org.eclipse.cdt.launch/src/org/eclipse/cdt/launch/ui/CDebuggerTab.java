@@ -27,6 +27,7 @@ import org.eclipse.cdt.debug.core.CDebugCorePlugin;
 import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
 import org.eclipse.cdt.debug.core.ICDebugConfiguration;
 import org.eclipse.cdt.debug.core.ICDebugConstants;
+import org.eclipse.cdt.debug.ui.ICDebuggerPage;
 import org.eclipse.cdt.launch.internal.ui.AbstractCDebuggerTab;
 import org.eclipse.cdt.launch.internal.ui.LaunchMessages;
 import org.eclipse.cdt.launch.internal.ui.LaunchUIPlugin;
@@ -445,6 +446,9 @@ public class CDebuggerTab extends AbstractCDebuggerTab {
 	 */
 	public void dispose() {
 		getAdvancedAttributes().clear();
+		ICDebuggerPage debuggerPage = getDynamicTab();
+		if ( debuggerPage != null )
+			debuggerPage.dispose();
 		super.dispose();
 	}
 

@@ -2259,14 +2259,7 @@ public class SystemViewRemoteFileAdapter
 		//System.out.println("INSIDE CANDELETE FOR ADAPTER: RETURNING " + !file.isRoot());
 		return !file.isRoot() && file.canRead();
 	}
-	/**
-	 * Perform the delete action. Defers request to the remote file subsystem
-	 * @deprecated use the one with monitor now
-	 */
-	public boolean doDelete(Shell shell, Object element) throws Exception
-	{
-		return doDelete(shell, element, null);
-	}
+
 	
 	/**
 	 * Perform the delete action. Defers request to the remote file subsystem

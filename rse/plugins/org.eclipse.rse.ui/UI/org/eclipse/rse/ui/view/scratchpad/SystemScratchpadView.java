@@ -43,7 +43,6 @@ import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.window.SameShellProvider;
 import org.eclipse.rse.core.SystemAdapterHelpers;
 import org.eclipse.rse.core.SystemBasePlugin;
-import org.eclipse.rse.core.SystemPopupMenuActionContributorManager;
 import org.eclipse.rse.core.filters.ISystemFilter;
 import org.eclipse.rse.core.filters.ISystemFilterReference;
 import org.eclipse.rse.core.model.IHost;
@@ -69,7 +68,6 @@ import org.eclipse.rse.ui.actions.SystemCommonRenameAction;
 import org.eclipse.rse.ui.actions.SystemCommonSelectAllAction;
 import org.eclipse.rse.ui.actions.SystemOpenExplorerPerspectiveAction;
 import org.eclipse.rse.ui.actions.SystemRefreshAction;
-import org.eclipse.rse.ui.actions.SystemRemotePropertiesAction;
 import org.eclipse.rse.ui.actions.SystemShowInTableAction;
 import org.eclipse.rse.ui.actions.SystemSubMenuManager;
 import org.eclipse.rse.ui.messages.ISystemMessageLine;
@@ -99,7 +97,6 @@ import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.swt.widgets.Widget;
 import org.eclipse.ui.IWorkbench;
-import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.PropertyDialogAction;
@@ -131,7 +128,6 @@ public class SystemScratchpadView
 	// of actions.  I say limited because somethings don't yet work properly.
 	protected SystemRefreshAction _refreshAction;
 	protected PropertyDialogAction _propertyDialogAction;
-	protected SystemRemotePropertiesAction _remotePropertyDialogAction;
 	protected SystemOpenExplorerPerspectiveAction _openToPerspectiveAction;
 	protected SystemShowInTableAction _showInTableAction;
 
@@ -157,7 +153,6 @@ public class SystemScratchpadView
 	protected boolean _selectionIsRemoteObject = true;
 	protected boolean _selectionFlagsUpdated = false;
 
-	private IWorkbenchPart _workbenchPart = null;
 
 	private ISystemMessageLine _messageLine;
 	protected boolean     menuListenerAdded = false;
@@ -220,11 +215,6 @@ public class SystemScratchpadView
 	public Layout getLayout()
 	{
 		return _layout;
-	}
-
-	public void setWorkbenchPart(IWorkbenchPart part)
-	{
-		_workbenchPart = part;
 	}
 
 
@@ -697,19 +687,8 @@ public class SystemScratchpadView
 		_propertyDialogAction.selectionChanged(getSelection());
 		return _propertyDialogAction;
 	}
-	/**
-	 * Rather than pre-defining this common action we wait until it is first needed,
-	 *  for performance reasons.
-	 */
-	protected SystemRemotePropertiesAction getRemotePropertyDialogAction()
-	{
-		if (_remotePropertyDialogAction == null)
-		{
-			_remotePropertyDialogAction = new SystemRemotePropertiesAction(getShell());
-		}
-		_remotePropertyDialogAction.setSelection(getSelection());
-		return _remotePropertyDialogAction;
-	}
+
+	
 	/**
 	 * Return the select All action
 	 */
@@ -1194,45 +1173,28 @@ public class SystemScratchpadView
 			// registered propertyPages extension points registered for the selected object's class type.
 			//propertyDialogAction.selectionChanged(selection);		  
 
-			if (!_selectionIsRemoteObject) // is not a remote object
+	
+			PropertyDialogAction pdAction = getPropertyDialogAction();
+			if (pdAction.isApplicableForSelection())
 			{
-				PropertyDialogAction pdAction = getPropertyDialogAction();
-				if (pdAction.isApplicableForSelection())
-				{
 
-					menu.appendToGroup(ISystemContextMenuConstants.GROUP_PROPERTIES, pdAction);
-				}
-				// OPEN IN NEW PERSPECTIVE ACTION... if (fromSystemViewPart && showOpenViewActions())
-				{
-					//SystemCascadingOpenToAction openToAction = getOpenToAction();
-					SystemOpenExplorerPerspectiveAction openToPerspectiveAction = getOpenToPerspectiveAction();
-					SystemShowInTableAction showInTableAction = getShowInTableAction();
-					openToPerspectiveAction.setSelection(selection);
-					showInTableAction.setSelection(selection);
-					//menu.appendToGroup(ISystemContextMenuConstants.GROUP_OPEN, openToAction.getSubMenu());
-					menu.appendToGroup(ISystemContextMenuConstants.GROUP_OPEN, openToPerspectiveAction);
-					menu.appendToGroup(ISystemContextMenuConstants.GROUP_OPEN, showInTableAction);
+				menu.appendToGroup(ISystemContextMenuConstants.GROUP_PROPERTIES, pdAction);
+			}
+			// OPEN IN NEW PERSPECTIVE ACTION... if (fromSystemViewPart && showOpenViewActions())
+			if (!_selectionIsRemoteObject)
+			{
+				//SystemCascadingOpenToAction openToAction = getOpenToAction();
+				SystemOpenExplorerPerspectiveAction openToPerspectiveAction = getOpenToPerspectiveAction();
+				SystemShowInTableAction showInTableAction = getShowInTableAction();
+				openToPerspectiveAction.setSelection(selection);
+				showInTableAction.setSelection(selection);
+				//menu.appendToGroup(ISystemContextMenuConstants.GROUP_OPEN, openToAction.getSubMenu());
+				menu.appendToGroup(ISystemContextMenuConstants.GROUP_OPEN, openToPerspectiveAction);
+				menu.appendToGroup(ISystemContextMenuConstants.GROUP_OPEN, showInTableAction);
 
-				}
 			}
-			else // is a remote object
-				{
-				//Object firstSelection = selection.getFirstElement();
-				//ISystemRemoteElementAdapter remoteAdapter = getRemoteAdapter(firstSelection);
-				//logMyDebugMessage(this.getClass().getName(), ": there is a remote adapter");
-				SystemRemotePropertiesAction pdAction = getRemotePropertyDialogAction();
-				if (pdAction.isApplicableForSelection())
-					menu.appendToGroup(ISystemContextMenuConstants.GROUP_PROPERTIES, pdAction);
-				//else
-				//logMyDebugMessage(this.getClass().getName(), ": but it is not applicable for selection");          	
-				// --------------------------------------------------------------------------------------------------------------------
-				// look for and add any popup menu actions registered via our org.eclipse.rse.core.popupMenus extension point...
-				// --------------------------------------------------------------------------------------------------------------------
-				if (_workbenchPart != null)
-				{
-					SystemPopupMenuActionContributorManager.getManager().contributeObjectActions(_workbenchPart, ourMenu, this, null);
-				}
-			}
+		
+	
 
 		}
 	}

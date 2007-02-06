@@ -537,7 +537,6 @@ public class SystemSearchViewPart extends ViewPart
 		//TableTree table = new TableTree(pageBook, SWT.H_SCROLL | SWT.V_SCROLL | SWT.MULTI | SWT.BORDER | SWT.FULL_SELECTION | SWT.HIDE_SELECTION);
 		Tree tabletree = new Tree(pageBook, SWT.H_SCROLL | SWT.V_SCROLL | SWT.MULTI | SWT.BORDER | SWT.FULL_SELECTION | SWT.HIDE_SELECTION);
 		SystemSearchTableView viewer = new SystemSearchTableView(tabletree, resultSet, this);
-		viewer.setWorkbenchPart(this);
 		
 		getSite().registerContextMenu(viewer.getContextMenuManager(), viewer);
 		return viewer;

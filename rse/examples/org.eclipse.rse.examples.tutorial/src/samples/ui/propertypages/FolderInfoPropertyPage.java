@@ -16,10 +16,10 @@
 
 package samples.ui.propertypages;
 
-import org.eclipse.rse.files.ui.propertypages.SystemAbstractRemoteFilePropertyPageExtensionAction;
 import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile;
 import org.eclipse.rse.ui.SystemWidgetHelpers;
+import org.eclipse.rse.ui.propertypages.SystemBasePropertyPage;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.widgets.Button;
@@ -35,7 +35,7 @@ import samples.RSESamplesPlugin;
  *  extension point xml to only apply to folder objects.
  */
 public class FolderInfoPropertyPage
-	extends SystemAbstractRemoteFilePropertyPageExtensionAction
+	extends SystemBasePropertyPage
 	implements SelectionListener
 {
 	// gui widgets...
@@ -262,5 +262,17 @@ public class FolderInfoPropertyPage
 		Display.getDefault().asyncExec(guiUpdater);
 	}
 
+	protected boolean verifyPageContents() {
+		return true;
+	}
+
+	/**
+	 * Get the input remote file object
+	 */
+	protected IRemoteFile getRemoteFile()
+	{
+		Object element = getElement();
+		return ((IRemoteFile)element);
+	}
 
 }

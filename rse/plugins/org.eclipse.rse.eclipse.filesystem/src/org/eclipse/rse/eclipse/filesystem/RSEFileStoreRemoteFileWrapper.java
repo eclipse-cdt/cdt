@@ -43,6 +43,9 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.rse.core.subsystems.RemoteChildrenContentsType;
@@ -224,18 +227,19 @@ public class RSEFileStoreRemoteFileWrapper extends FileStore implements IFileSto
 			
 				{
 					file = (IFile)UniversalFileTransferUtility.copyRemoteResourceToWorkspace(_remoteFile, monitor);
+
 					if (file != null && !file.isSynchronized(IResource.DEPTH_ZERO))
 					{
-						/*
+						RefreshJob refresh = new RefreshJob(file, IResource.DEPTH_ZERO);
+						refresh.schedule();
 						try
 						{
-							file.refreshLocal(IFile.DEPTH_ZERO, monitor);
+							refresh.join();
 						}
 						catch (Exception e)
 						{
 							e.printStackTrace();
 						}
-						*/
 					}
 				}
 			}
@@ -245,14 +249,18 @@ public class RSEFileStoreRemoteFileWrapper extends FileStore implements IFileSto
 			}
 			if (file != null && !file.isSynchronized(IResource.DEPTH_ZERO) && !_remoteFile.getName().equals(".project")) //$NON-NLS-1$
 			{
-				try
-				{
-					file.refreshLocal(IResource.DEPTH_ZERO, monitor);
-				}
-				catch (Exception e)
-				{
-					e.printStackTrace();
-				}
+					RefreshJob refresh = new RefreshJob(file, IResource.DEPTH_ZERO);
+					refresh.schedule();
+					try
+					{
+						refresh.join();
+					}
+					catch (Exception e)
+					{
+						e.printStackTrace();
+					}
+			
+
 			}
 			if (file != null)
 			{
@@ -276,6 +284,31 @@ public class RSEFileStoreRemoteFileWrapper extends FileStore implements IFileSto
 			}
 		}
 		return null;
+	}
+	
+	public class RefreshJob extends Job
+	{
+		private IResource _resource;
+		private int _depth;
+		public RefreshJob(IResource resource, int depth)
+		{
+			super("Refresh");
+			_resource = resource;			
+			_depth = depth;
+		}
+		
+		public IStatus run(IProgressMonitor monitor)				
+		{
+			try
+			{
+				_resource.refreshLocal(_depth, monitor);
+			}
+			catch (Exception e)
+			{
+				e.printStackTrace();
+			}
+			return Status.OK_STATUS;
+		}
 	}
 	
 	private InputStream getDummyProjectFileStream()

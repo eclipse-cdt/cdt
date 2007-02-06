@@ -57,7 +57,6 @@ import org.eclipse.jface.window.SameShellProvider;
 import org.eclipse.rse.core.SystemAdapterHelpers;
 import org.eclipse.rse.core.SystemBasePlugin;
 import org.eclipse.rse.core.SystemElapsedTimer;
-import org.eclipse.rse.core.SystemPopupMenuActionContributorManager;
 import org.eclipse.rse.core.SystemPreferencesManager;
 import org.eclipse.rse.core.filters.ISystemFilter;
 import org.eclipse.rse.core.filters.ISystemFilterContainer;
@@ -104,7 +103,6 @@ import org.eclipse.rse.ui.actions.SystemExpandAction;
 import org.eclipse.rse.ui.actions.SystemNewConnectionAction;
 import org.eclipse.rse.ui.actions.SystemOpenExplorerPerspectiveAction;
 import org.eclipse.rse.ui.actions.SystemRefreshAction;
-import org.eclipse.rse.ui.actions.SystemRemotePropertiesAction;
 import org.eclipse.rse.ui.actions.SystemShowInMonitorAction;
 import org.eclipse.rse.ui.actions.SystemShowInTableAction;
 import org.eclipse.rse.ui.actions.SystemSubMenuManager;
@@ -162,7 +160,6 @@ public class SystemView extends SafeTreeViewer implements ISystemTree, ISystemRe
 	protected SystemNewConnectionAction newConnectionAction;
 	protected SystemRefreshAction refreshAction;
 	protected PropertyDialogAction propertyDialogAction;
-	protected SystemRemotePropertiesAction remotePropertyDialogAction;
 	protected SystemCollapseAction collapseAction; // defect 41203
 	protected SystemExpandAction expandAction; // defect 41203
 	protected SystemOpenExplorerPerspectiveAction openToPerspectiveAction;
@@ -637,17 +634,6 @@ public class SystemView extends SafeTreeViewer implements ISystemTree, ISystemRe
 		return propertyDialogAction;
 	}
 
-	/**
-	 * Rather than pre-defining this common action we wait until it is first needed,
-	 *  for performance reasons.
-	 */
-	public SystemRemotePropertiesAction getRemotePropertyDialogAction() {
-		if (remotePropertyDialogAction == null) {
-			remotePropertyDialogAction = new SystemRemotePropertiesAction(getShell());
-		}
-		remotePropertyDialogAction.setSelection(getSelection());
-		return remotePropertyDialogAction;
-	}
 
 	/**
 	 * Return the select All action
@@ -884,57 +870,40 @@ public class SystemView extends SafeTreeViewer implements ISystemTree, ISystemRe
 			// registered propertyPages extension points registered for the selected object's class type.
 			//propertyDialogAction.selectionChanged(selection);		  
 
-			if (!selectionIsRemoteObject) // is not a remote object
-			{
-				PropertyDialogAction pdAction = getPropertyDialogAction();
+			PropertyDialogAction pdAction = getPropertyDialogAction();
 
-				if (pdAction.isApplicableForSelection()) menu.appendToGroup(ISystemContextMenuConstants.GROUP_PROPERTIES, pdAction);
+			if (pdAction.isApplicableForSelection()) menu.appendToGroup(ISystemContextMenuConstants.GROUP_PROPERTIES, pdAction);
+
+			
+			// GO INTO ACTION...
+			// OPEN IN NEW WINDOW ACTION...
+			if (fromSystemViewPart && showOpenViewActions() && !selectionIsRemoteObject) {
 
 				
-				// GO INTO ACTION...
-				// OPEN IN NEW WINDOW ACTION...
-				if (fromSystemViewPart && showOpenViewActions()) {
+				GoIntoAction goIntoAction = getGoIntoAction();
+				goIntoAction.setEnabled(selection.size() == 1);
+				menu.appendToGroup(ISystemContextMenuConstants.GROUP_GOTO, goIntoAction);
+
+				SystemOpenExplorerPerspectiveAction openToPerspectiveAction = getOpenToPerspectiveAction();
+				openToPerspectiveAction.setSelection(selection);
+				menu.appendToGroup(openToPerspectiveAction.getContextMenuGroup(), openToPerspectiveAction);
+
+				if (showGenericShowInTableAction()) {
 
 					
-					GoIntoAction goIntoAction = getGoIntoAction();
-					goIntoAction.setEnabled(selection.size() == 1);
-					menu.appendToGroup(ISystemContextMenuConstants.GROUP_GOTO, goIntoAction);
+					SystemShowInTableAction showInTableAction = getShowInTableAction();
+					showInTableAction.setSelection(selection);
+					menu.appendToGroup(openToPerspectiveAction.getContextMenuGroup(), showInTableAction);
 
-					SystemOpenExplorerPerspectiveAction openToPerspectiveAction = getOpenToPerspectiveAction();
-					openToPerspectiveAction.setSelection(selection);
-					menu.appendToGroup(openToPerspectiveAction.getContextMenuGroup(), openToPerspectiveAction);
+					SystemShowInMonitorAction showInMonitorAction = getShowInMonitorAction();
+					showInMonitorAction.setSelection(selection);
+					menu.appendToGroup(openToPerspectiveAction.getContextMenuGroup(), showInMonitorAction);
 
-					if (showGenericShowInTableAction()) {
-	
-						
-						SystemShowInTableAction showInTableAction = getShowInTableAction();
-						showInTableAction.setSelection(selection);
-						menu.appendToGroup(openToPerspectiveAction.getContextMenuGroup(), showInTableAction);
-
-						SystemShowInMonitorAction showInMonitorAction = getShowInMonitorAction();
-						showInMonitorAction.setSelection(selection);
-						menu.appendToGroup(openToPerspectiveAction.getContextMenuGroup(), showInMonitorAction);
-	
-					}
-
-					
 				}
 
-			} else // is a remote object
-			{
-				//Object firstSelection = selection.getFirstElement();
-				//ISystemRemoteElementAdapter remoteAdapter = getRemoteAdapter(firstSelection);
-				//logMyDebugMessage(this.getClass().getName(), ": there is a remote adapter");
-				SystemRemotePropertiesAction pdAction = getRemotePropertyDialogAction();
-				if (pdAction.isApplicableForSelection()) menu.appendToGroup(ISystemContextMenuConstants.GROUP_PROPERTIES, pdAction);
-				//else
-				//logMyDebugMessage(this.getClass().getName(), ": but it is not applicable for selection");          	
-				// --------------------------------------------------------------------------------------------------------------------
-				// look for and add any popup menu actions registered via our org.eclipse.rse.core.popupMenus extension point...
-				// --------------------------------------------------------------------------------------------------------------------
-				if (fromSystemViewPart) // these require an IWorkbenchPart as a parameter, so we can't support them from within dialogs
-					addObjectActions(ourMenu);
+				
 			}
+
 
 			
 			// GO TO CASCADING ACTIONS...
@@ -949,15 +918,6 @@ public class SystemView extends SafeTreeViewer implements ISystemTree, ISystemRe
 
 	}
 
-	/**
-	 * Contributes popup menu actions and submenus registered for the object type(s) in the current selection.
-	 * Patterned after addObjectActions in PopupMenuExtender class supplied by Eclipse.
-	 */
-	protected void addObjectActions(SystemMenuManager menu) {
-		if (SystemPopupMenuActionContributorManager.getManager().contributeObjectActions(getWorkbenchPart(), menu, this, null)) {
-			//menu.add(new Separator());
-		}
-	}
 
 	/**
 	 * Called when the context menu is about to open.

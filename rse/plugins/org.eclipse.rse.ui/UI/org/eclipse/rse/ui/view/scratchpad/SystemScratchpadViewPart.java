@@ -103,7 +103,6 @@ public class SystemScratchpadViewPart extends ViewPart implements ISelectionList
 		Tree tree = new Tree(parent, SWT.H_SCROLL | SWT.V_SCROLL | SWT.MULTI | SWT.FULL_SELECTION | SWT.HIDE_SELECTION);
         
 		_viewer = new SystemScratchpadView(tree, this);
-		_viewer.setWorkbenchPart(this);
 	
 		ISelectionService selectionService = getSite().getWorkbenchWindow().getSelectionService();
 		selectionService.addSelectionListener(this);

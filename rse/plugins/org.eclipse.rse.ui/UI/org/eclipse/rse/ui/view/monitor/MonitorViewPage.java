@@ -424,7 +424,6 @@ FocusListener
 		
 		Tree tree = new Tree(parent, SWT.H_SCROLL | SWT.V_SCROLL | SWT.MULTI | SWT.BORDER | SWT.FULL_SELECTION | SWT.HIDE_SELECTION);
 		_viewer = new SystemTableTreeView(tree, _viewPart);
-		_viewer.setWorkbenchPart(_viewPart);
 
 		_viewer.addDoubleClickListener(new IDoubleClickListener()
 		{

@@ -272,7 +272,6 @@ FocusListener
 		// create table portion
 		Table table = new Table(parent, SWT.H_SCROLL | SWT.V_SCROLL | SWT.MULTI | SWT.BORDER | SWT.FULL_SELECTION | SWT.HIDE_SELECTION);
 		_viewer = new SystemCommandsView(table, _viewPart);
-		_viewer.setWorkbenchPart(_viewPart);
 
 		_viewer.addDoubleClickListener(new IDoubleClickListener()
 		{

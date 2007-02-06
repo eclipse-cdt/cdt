@@ -21,31 +21,37 @@ Martin Oberhuber (Wind River) - Adapted original tutorial code to Open RSE.
 	<!-- Remote Object Popup Menu Actions        -->
 	<!-- ======================================= -->
 	<!-- Tutorial #1: Creating a Remote Resource pop-up Menu Action -->
-	<extension point="org.eclipse.rse.ui.popupMenus">
-		<objectContribution id="actions.jar"
-							typecategoryfilter="files"
-							typefilter="file"
-							namefilter="*.jar">
-			<action id="actions.jar.show"
-					enablesFor="1"
-					label="Show contents"
-					tooltip="List contents of this file"
-					class="samples.ui.actions.ShowJarContents">
-			</action>
-		</objectContribution>
+	<extension point="org.eclipse.ui.popupMenus">
+	      <objectContribution
+            objectClass="org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile"
+            nameFilter="*.jar"
+            id="actions.jar">
+         <action
+               label="Show contents"
+               tooltip="list contents of this file"
+               class="samples.ui.actions.ShowJarContents"
+               menubarPath="additions"
+               enablesFor="1"
+               id="actions.jar.show">
+         </action>
+      </objectContribution>
 	</extension>
 
 	<!-- ======================================= -->
 	<!-- Remote Object Property Pages            -->
 	<!-- ======================================= -->
 	<!-- Tutorial #2: Creating a Remote Resource Property Page -->
-	<extension point="org.eclipse.rse.ui.propertyPages">
-		<page name="Folder Contents"
-			class="samples.ui.propertypages.FolderInfoPropertyPage"
-			id="samples.ui.PropertyPage1"
-			typefilter="folder"
-			typecategoryfilter="files">
-		</page>
+  <extension 
+         point="org.eclipse.ui.propertyPages">
+      <page 
+            name="Folder Contents"
+            class="samples.ui.propertypages.FolderInfoPropertyPage"
+			id="samples.ui.PropertyPage1">
+           <enabledWhen>
+             <instanceof value="org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile"/>                        
+         </enabledWhen>
+         <filter name="isDirectory" value="true"/>  
+      </page>
 	</extension>    
 
 	<!-- ======================================= -->

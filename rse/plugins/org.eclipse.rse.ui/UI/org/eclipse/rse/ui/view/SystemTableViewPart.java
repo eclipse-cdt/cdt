@@ -1128,7 +1128,6 @@ public class SystemTableViewPart extends ViewPart implements ISelectionListener,
 	{
 		Table table = new Table(parent, SWT.H_SCROLL | SWT.V_SCROLL | SWT.MULTI | SWT.FULL_SELECTION | SWT.HIDE_SELECTION);
 		_viewer = new SystemTableView(table, this);
-		_viewer.setWorkbenchPart(this);
 
 		table.setLinesVisible(true);
 

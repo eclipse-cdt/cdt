@@ -31,7 +31,6 @@ import org.eclipse.rse.core.IRSESystemType;
 import org.eclipse.rse.core.ISystemViewSupplier;
 import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.SystemBasePlugin;
-import org.eclipse.rse.core.SystemPropertyPageExtension;
 import org.eclipse.rse.core.SystemResourceManager;
 import org.eclipse.rse.core.comm.ISystemKeystoreProvider;
 import org.eclipse.rse.core.comm.SystemCommunicationsDaemon;
@@ -849,59 +848,6 @@ public class RSEUIPlugin extends SystemBasePlugin implements ISystemMessageProvi
 
   
 
-    /**
-     * Return an array of SystemPropertyPageExtension objects.
-     * These represent all extensions to our propertyPage extension point.
-     */
-    public SystemPropertyPageExtension[] getPropertyPageExtensions()
-    {
-    	SystemPropertyPageExtension[] propertyPageExtensions = null;
-    	IConfigurationElement[] propertyPagePlugins = getPropertyPagePlugins();
-    	if (propertyPagePlugins != null)
-    	{
-          Vector v = new Vector();
-          for (int idx=0; idx<propertyPagePlugins.length; idx++)
-          {
-             SystemPropertyPageExtension sppe =
-               new SystemPropertyPageExtension(propertyPagePlugins[idx]);           	
-             v.addElement(sppe);
-          }    	  	
-          
-          propertyPageExtensions = new SystemPropertyPageExtension[v.size()];
-          
-          // prescan for first
-          boolean foundFirst = false;
-          
-          for (int idx=0; !foundFirst && (idx<v.size()); idx++)
-              if (((SystemPropertyPageExtension)v.elementAt(idx)).isAtTop())
-              {
-                  propertyPageExtensions[0] = (SystemPropertyPageExtension)v.elementAt(idx);
-                  foundFirst = true;
-              }
-          
-          int ppIdx = foundFirst ? 1: 0;
-          
-          for (int idx=0; idx<v.size(); idx++)
-              if (!((SystemPropertyPageExtension)v.elementAt(idx)).isAtTop())
-                  propertyPageExtensions[ppIdx++] = (SystemPropertyPageExtension)v.elementAt(idx);
-    	}
-    	
-    	return propertyPageExtensions;
-    }
-
-    /**
-     *  Return all elements that extend the org.eclipse.rse.ui.propertyPage extension point
-     */
-    private IConfigurationElement[] getPropertyPagePlugins()
-    {
-   	    // Get reference to the plug-in registry
-	    IExtensionRegistry registry = Platform.getExtensionRegistry();
-	    // Get configured extenders
-	    IConfigurationElement[] propertyPageExtensions =
-		  registry.getConfigurationElementsFor(PLUGIN_ID,"propertyPages"); //$NON-NLS-1$   	
-
-	    return propertyPageExtensions;
-    }
 	/**
 	 *  Return all elements that extend the org.eclipse.rse.ui.remoteSystemsViewPreferencesActions extension point
 	 */

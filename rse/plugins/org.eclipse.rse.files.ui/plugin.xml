@@ -39,17 +39,18 @@ Contributors:
 <!-- ============================================ -->
 <!-- Define Remote Object Properties Pages        -->
 <!-- ============================================ -->
-   <extension 
-         point="org.eclipse.rse.ui.propertyPages">
+  
+      <extension 
+         point="org.eclipse.ui.propertyPages">
       <page 
             name="%RemotePropertyPage.File.Info"
-            typecategoryfilter="files"
             class="org.eclipse.rse.files.ui.propertypages.SystemFilePropertyPage"
             id="org.eclipse.rse.files.PropertyPage">
+           <enabledWhen>
+             <instanceof value="org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile"/>
+         </enabledWhen>
       </page>
    </extension>
-   
-   
    
 <!-- ============================================ -->
 <!-- Define Workbench Properties Pages            -->

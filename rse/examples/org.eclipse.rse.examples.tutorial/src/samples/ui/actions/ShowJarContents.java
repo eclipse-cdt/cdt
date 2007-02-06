@@ -16,10 +16,17 @@
 
 package samples.ui.actions;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.rse.core.SystemBasePlugin;
 import org.eclipse.rse.core.model.IHost;
-import org.eclipse.rse.files.ui.actions.SystemAbstractRemoteFilePopupMenuExtensionAction;
+import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.services.shells.IHostOutput;
 import org.eclipse.rse.services.shells.IHostShell;
 import org.eclipse.rse.services.shells.IHostShellChangeEvent;
@@ -32,24 +39,50 @@ import org.eclipse.rse.subsystems.shells.core.subsystems.IRemoteCommandShell;
 import org.eclipse.rse.subsystems.shells.core.subsystems.IRemoteError;
 import org.eclipse.rse.subsystems.shells.core.subsystems.IRemoteOutput;
 import org.eclipse.rse.subsystems.shells.core.subsystems.servicesubsystem.IShellServiceSubSystem;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.IObjectActionDelegate;
+import org.eclipse.ui.IWorkbenchPart;
 
 /**
  * An action that runs a command to display the contents of a Jar file.
  * The plugin.xml file restricts this action so it only appears for .jar files.
  */
-public class ShowJarContents extends SystemAbstractRemoteFilePopupMenuExtensionAction {
-
+public class ShowJarContents implements IObjectActionDelegate 
+{
+	private List _selectedFiles;
+	
 	/**
 	 * Constructor for ShowJarContents.
 	 */
-	public ShowJarContents() {
-		super();
+	public ShowJarContents() 
+	{
+		_selectedFiles = new ArrayList();
 	}
 
+	protected Shell getShell()
+	{
+		return SystemBasePlugin.getActiveWorkbenchShell();
+	}
+	
+	protected IRemoteFile getFirstSelectedRemoteFile()
+	{
+		if (_selectedFiles.size() > 0)
+		{
+			return (IRemoteFile)_selectedFiles.get(0);
+		}
+		return null;
+	}
+	
+	protected ISubSystem getSubSystem()
+	{
+		return getFirstSelectedRemoteFile().getParentRemoteFileSubSystem();
+	}
+	
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.rse.ui.actions.SystemAbstractPopupMenuExtensionAction#run()
 	 */
-	public void run() {
+	public void run(IAction action) {
 		IRemoteFile selectedFile = getFirstSelectedRemoteFile();
 		String cmdToRun = "jar -tvf " + selectedFile.getAbsolutePath(); //$NON-NLS-1$
 		try {
@@ -72,6 +105,8 @@ public class ShowJarContents extends SystemAbstractRemoteFilePopupMenuExtensionA
 		}
 		return null;
 	}
+	
+	
 	
 	public void runCommand(String command) throws Exception
 	{
@@ -138,4 +173,24 @@ public class ShowJarContents extends SystemAbstractRemoteFilePopupMenuExtensionA
 		}
 	}
 
+    public void selectionChanged(org.eclipse.jface.action.IAction action,
+            org.eclipse.jface.viewers.ISelection selection) 
+    { 
+    	_selectedFiles.clear();
+    	// store the selected jars to be used when running
+    	Iterator theSet = ((IStructuredSelection)selection).iterator();
+    	while (theSet.hasNext())
+    	 {
+    		 Object obj = theSet.next();
+    		 if (obj instanceof IRemoteFile)
+    		 {
+    			 _selectedFiles.add(obj);
+    		 }
+    	 }
+    }
+
+	public void setActivePart(IAction action, IWorkbenchPart targetPart) {
+		// TODO Auto-generated method stub
+		
+	}
 }

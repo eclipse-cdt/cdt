@@ -161,6 +161,13 @@ public class SystemFileResources extends NLS
 	public static String	RESID_PP_FILE_WRITABLE_TOOLTIP;
 	public static String	RESID_PP_FILE_HIDDEN_TOOLTIP;
 	
+	public static String	RESID_PP_FILE_ENCODING_GROUP_LABEL;
+	public static String	RESID_PP_FILE_ENCODING_DEFAULT_LABEL;
+	public static String	RESID_PP_FILE_ENCODING_DEFAULT_TOOLTIP;
+	public static String	RESID_PP_FILE_ENCODING_OTHER_LABEL;
+	public static String	RESID_PP_FILE_ENCODING_OTHER_TOOLTIP;
+	public static String	RESID_PP_FILE_ENCODING_ENTER_TOOLTIP;
+	
 	// -------------------------------
 	// Enter or select file form
 	// -------------------------------

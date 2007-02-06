@@ -291,6 +291,7 @@ public interface IRemoteFile extends IRemoteContainer, IRemotePropertyHolder, IS
     /**
      * Returns the encoding of the remote file.
      * @return the encoding of the remote file.
+     * @since 2.0
      */
     public String getEncoding();
 }

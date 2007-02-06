@@ -78,7 +78,7 @@
          <meta.section type="examples"/>
       </appInfo>
       <documentation>
-         he following is an example of this extension point&apos;s usage:
+         The following is an example of this extension point&apos;s usage:
 
 &lt;p&gt;
 &lt;pre&gt;

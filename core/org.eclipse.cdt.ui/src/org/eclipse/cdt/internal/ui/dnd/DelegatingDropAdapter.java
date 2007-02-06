@@ -11,19 +11,23 @@
 
 package org.eclipse.cdt.internal.ui.dnd;
 
+import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.util.Assert;
 import org.eclipse.jface.util.SafeRunnable;
+import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.swt.dnd.DND;
 import org.eclipse.swt.dnd.DropTargetEvent;
 import org.eclipse.swt.dnd.DropTargetListener;
 import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.dnd.TransferData;
+import org.eclipse.ui.part.PluginDropAdapter;
 
 /**
  * DelegatingDropAdapter
  */
-public class DelegatingDropAdapter implements DropTargetListener {
+public class DelegatingDropAdapter extends PluginDropAdapter { // implements DropTargetListener {
 	private TransferDropTargetListener[] fListeners;
 	TransferDropTargetListener fCurrentListener;
 	private int fOriginalDropType;
@@ -33,7 +37,8 @@ public class DelegatingDropAdapter implements DropTargetListener {
 	 * 
 	 * @param listeners an array of potential listeners
 	 */
-	public DelegatingDropAdapter(TransferDropTargetListener[] listeners) {
+	public DelegatingDropAdapter(StructuredViewer viewer, TransferDropTargetListener[] listeners) {
+		super(viewer);
 		Assert.isNotNull(listeners);
 		fListeners= listeners;
 	}
@@ -49,6 +54,7 @@ public class DelegatingDropAdapter implements DropTargetListener {
 	public void dragEnter(DropTargetEvent event) {
 		fOriginalDropType= event.detail;
 		updateCurrentListener(event);
+		super.dragEnter(event);			
 	}
 
 	/**
@@ -78,13 +84,14 @@ public class DelegatingDropAdapter implements DropTargetListener {
 		// only notify the current listener if it hasn't changed based on the
 		// operation change. otherwise the new listener would get a dragEnter
 		// followed by a dragOperationChanged with the exact same event.
-		if (newListener != null && newListener == oldListener) {
+		if ((newListener != null) && (newListener == oldListener)) {
 			Platform.run(new SafeRunnable() {
 				public void run() throws Exception {
 					newListener.dragOperationChanged(event);
 				}
 			});
 		}
+		super.dragOperationChanged(event);
 	}
 
 	/**
@@ -104,12 +111,16 @@ public class DelegatingDropAdapter implements DropTargetListener {
 		// only notify the current listener if it hasn't changed based on the
 		// drag over. otherwise the new listener would get a dragEnter
 		// followed by a dragOver with the exact same event.
-		if (newListener != null && newListener == oldListener) {
-			Platform.run(new SafeRunnable() {
-				public void run() throws Exception {
-					newListener.dragOver(event);
-				}
-			});
+		if (newListener != null) {
+			if(newListener == oldListener) {
+				Platform.run(new SafeRunnable() {
+					public void run() throws Exception {
+						newListener.dragOver(event);
+					}
+				});
+			}
+		} else {
+			super.dragOver(event);
 		}
 	}
 
@@ -128,7 +139,8 @@ public class DelegatingDropAdapter implements DropTargetListener {
 					getCurrentListener().drop(event);
 				}
 			});
-		}
+		} else
+			super.drop(event);
 		setCurrentListener(null, event);
 	}
 
@@ -139,13 +151,18 @@ public class DelegatingDropAdapter implements DropTargetListener {
 	 * @see DropTargetListener#dropAccept(DropTargetEvent)
 	 */
 	public void dropAccept(final DropTargetEvent event) {
+		updateCurrentListener(event);
 		if (getCurrentListener() != null) {
 			Platform.run(new SafeRunnable() {
 				public void run() throws Exception {
 					getCurrentListener().dropAccept(event);
 				}
 			});
-		}
+		} else
+			super.dropAccept(event);
+		// Copy is the default operation
+		if(DND.DROP_DEFAULT == event.detail)
+			event.detail = DND.DROP_COPY;
 	}
 
 	/**
@@ -231,7 +248,7 @@ public class DelegatingDropAdapter implements DropTargetListener {
 	 * 
 	 * @param event the drop target event
 	 */
-	private void updateCurrentListener(DropTargetEvent event) {
+	private boolean updateCurrentListener(DropTargetEvent event) {
 		int originalDetail= event.detail;
 		// Revert the detail to the "original" drop type that the User
 		// indicated. This is necessary because the previous listener 
@@ -252,13 +269,29 @@ public class DelegatingDropAdapter implements DropTargetListener {
 					// event detail
 					if (!setCurrentListener(listener, event))
 						event.detail= originalDetail;
-					return;
+					return true;
 				}
 				event.currentDataType= originalDataType;
 			}
 		}
 		setCurrentListener(null, event);
-		event.detail= DND.DROP_NONE;
+		// event.detail= DND.DROP_NONE;
+		return false;
+	}
+
+	protected Object determineTarget(DropTargetEvent event) {
+		Object dropTarget = super.determineTarget(event);
+		if (dropTarget instanceof ICElement)
+			dropTarget = ((ICElement)dropTarget).getResource();
+		return dropTarget;
+	}
+
+	protected Object getCurrentTarget() {
+		Object dropTarget =  super.getCurrentTarget();
+		if (dropTarget instanceof IContainer) {
+			return dropTarget;
+		} else
+			return null;
 	}
 
 }

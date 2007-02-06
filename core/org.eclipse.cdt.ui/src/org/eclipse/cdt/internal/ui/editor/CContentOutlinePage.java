@@ -456,7 +456,8 @@ public class CContentOutlinePage extends Page implements IContentOutlinePage, IS
 		TransferDropTargetListener[] dropListeners= new TransferDropTargetListener[] {
 			new SelectionTransferDropAdapter(fTreeViewer)
 		};
-		fTreeViewer.addDropSupport(ops | DND.DROP_DEFAULT, transfers, new DelegatingDropAdapter(dropListeners));
+		fTreeViewer.addDropSupport(ops | DND.DROP_DEFAULT, transfers, 
+				new DelegatingDropAdapter(fTreeViewer, dropListeners));
 		
 		// Drag Adapter
 		TransferDragSourceListener[] dragListeners= new TransferDragSourceListener[] {

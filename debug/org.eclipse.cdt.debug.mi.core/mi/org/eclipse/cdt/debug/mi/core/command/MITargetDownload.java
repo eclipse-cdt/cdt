@@ -26,9 +26,13 @@ package org.eclipse.cdt.debug.mi.core.command;
  *  total-sent="512",total-size="9880"}
  * 
  */
-public class MITargetDownload extends MICommand 
-{
-	public MITargetDownload(String miVersion) {
-		super(miVersion, "-target-download"); //$NON-NLS-1$
+public class MITargetDownload extends MICommand {
+
+    public MITargetDownload(String miVersion) {
+        super(miVersion, "-target-download"); //$NON-NLS-1$
+    }
+
+    public MITargetDownload(String miVersion, String file) {
+		super(miVersion, "-target-download", new String[] { file }); //$NON-NLS-1$
 	}
 }

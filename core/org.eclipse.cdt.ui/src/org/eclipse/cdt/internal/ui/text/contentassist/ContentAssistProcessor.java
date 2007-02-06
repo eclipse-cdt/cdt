@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Anton Leherbauer (Wind River Systems)
+ *     Bryan Wilkinson (QNX)
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.text.contentassist;
 
@@ -206,29 +207,34 @@ public class ContentAssistProcessor implements IContentAssistProcessor {
 		IProgressMonitor monitor= createProgressMonitor();
 		monitor.beginTask(ContentAssistMessages.ContentAssistProcessor_computing_proposals, fCategories.size() + 1);
 
-		ContentAssistInvocationContext context= createContext(viewer, offset);
-		long setup= DEBUG ? System.currentTimeMillis() : 0;
+		ContentAssistInvocationContext context= createContext(viewer, offset, true);
 		
-		monitor.subTask(ContentAssistMessages.ContentAssistProcessor_collecting_proposals);
-		List proposals= collectProposals(viewer, offset, monitor, context);
-		long collect= DEBUG ? System.currentTimeMillis() : 0;
+		try {
+			long setup= DEBUG ? System.currentTimeMillis() : 0;
+			
+			monitor.subTask(ContentAssistMessages.ContentAssistProcessor_collecting_proposals);
+			List proposals= collectProposals(viewer, offset, monitor, context);
+			long collect= DEBUG ? System.currentTimeMillis() : 0;
 
-		monitor.subTask(ContentAssistMessages.ContentAssistProcessor_sorting_proposals);
-		List filtered= filterAndSortProposals(proposals, monitor, context);
-		fNumberOfComputedResults= filtered.size();
-		long filter= DEBUG ? System.currentTimeMillis() : 0;
-		
-		ICompletionProposal[] result= (ICompletionProposal[]) filtered.toArray(new ICompletionProposal[filtered.size()]);
-		monitor.done();
-		
-		if (DEBUG) {
-			System.err.println("Code Assist Stats (" + result.length + " proposals)"); //$NON-NLS-1$ //$NON-NLS-2$
-			System.err.println("Code Assist (setup):\t" + (setup - start) ); //$NON-NLS-1$
-			System.err.println("Code Assist (collect):\t" + (collect - setup) ); //$NON-NLS-1$
-			System.err.println("Code Assist (sort):\t" + (filter - collect) ); //$NON-NLS-1$
+			monitor.subTask(ContentAssistMessages.ContentAssistProcessor_sorting_proposals);
+			List filtered= filterAndSortProposals(proposals, monitor, context);
+			fNumberOfComputedResults= filtered.size();
+			long filter= DEBUG ? System.currentTimeMillis() : 0;
+			
+			ICompletionProposal[] result= (ICompletionProposal[]) filtered.toArray(new ICompletionProposal[filtered.size()]);
+			monitor.done();
+			
+			if (DEBUG) {
+				System.err.println("Code Assist Stats (" + result.length + " proposals)"); //$NON-NLS-1$ //$NON-NLS-2$
+				System.err.println("Code Assist (setup):\t" + (setup - start) ); //$NON-NLS-1$
+				System.err.println("Code Assist (collect):\t" + (collect - setup) ); //$NON-NLS-1$
+				System.err.println("Code Assist (sort):\t" + (filter - collect) ); //$NON-NLS-1$
+			}
+			
+			return result;
+		} finally {
+			context.dispose();
 		}
-		
-		return result;
 	}
 
 	private void clearState() {
@@ -288,18 +294,22 @@ public class ContentAssistProcessor implements IContentAssistProcessor {
 
 	private List collectContextInformation(ITextViewer viewer, int offset, IProgressMonitor monitor) {
 		List proposals= new ArrayList();
-		ContentAssistInvocationContext context= createContext(viewer, offset);
+		ContentAssistInvocationContext context= createContext(viewer, offset, false);
 		
-		List providers= getCategories();
-		for (Iterator it= providers.iterator(); it.hasNext();) {
-			CompletionProposalCategory cat= (CompletionProposalCategory) it.next();
-			List computed= cat.computeContextInformation(context, fPartition, new SubProgressMonitor(monitor, 1));
-			proposals.addAll(computed);
-			if (fErrorMessage == null)
-				fErrorMessage= cat.getErrorMessage();
+		try {
+			List providers= getCategories();
+			for (Iterator it= providers.iterator(); it.hasNext();) {
+				CompletionProposalCategory cat= (CompletionProposalCategory) it.next();
+				List computed= cat.computeContextInformation(context, fPartition, new SubProgressMonitor(monitor, 1));
+				proposals.addAll(computed);
+				if (fErrorMessage == null)
+					fErrorMessage= cat.getErrorMessage();
+			}
+			
+			return proposals;
+		} finally {
+			context.dispose();
 		}
-		
-		return proposals;
 	}
 
 	/**
@@ -381,7 +391,7 @@ public class ContentAssistProcessor implements IContentAssistProcessor {
 	 * @param offset the content assist offset
 	 * @return the context to be passed to the computers
 	 */
-	protected ContentAssistInvocationContext createContext(ITextViewer viewer, int offset) {
+	protected ContentAssistInvocationContext createContext(ITextViewer viewer, int offset, boolean isCompletion) {
 		return new ContentAssistInvocationContext(viewer, offset);
 	}
 

@@ -1320,7 +1320,12 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
             if (LT(1) != IToken.tRPAREN)
                 newInitializerExpressions = expression();
 
-            lastOffset = consume(IToken.tRPAREN).getEndOffset();
+            if (LT(1) == IToken.tEOC) {
+            	lastOffset = consume().getEndOffset();
+            } else {
+            	lastOffset = consume(IToken.tRPAREN).getEndOffset();
+            }
+            
             if (templateIdScopes.size() > 0) {
                 templateIdScopes.pop();
             }

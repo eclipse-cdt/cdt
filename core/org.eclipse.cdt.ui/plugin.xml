@@ -1479,10 +1479,6 @@
 	<extension
          point="org.eclipse.cdt.ui.completionContributors">
       <contributor
-            class="org.eclipse.cdt.internal.ui.text.contentassist.DOMCompletionContributor"
-            id="DOM"
-            priority="1"/>
-      <contributor
             class="org.eclipse.cdt.internal.ui.text.contentassist.KeywordCompletionContributor"
             id="Keywords"
             priority="10"/>
@@ -1522,6 +1518,20 @@
         name="%TextProposalCategory">
         <proposalCategory
             icon="$nl$/icons/elcl16/wordassist_co.gif"/>
+    </extension>
+    <extension
+          id="DOMCompletionProposalComputer"
+          point="org.eclipse.cdt.ui.completionProposalComputer">
+       <completionProposalComputer
+             categoryId="org.eclipse.cdt.ui.parserProposalCategory"
+             class="org.eclipse.cdt.internal.ui.text.contentassist.DOMCompletionProposalComputer">
+          <partition
+                type="__dftl_partition_content_type">
+          </partition>
+          <partition
+                type="__c_preprocessor">
+          </partition>
+       </completionProposalComputer>
     </extension>
      
     <!-- legacy completions (completionContributors) -->   
@@ -1808,4 +1818,5 @@
           class="org.eclipse.cdt.internal.ui.navigator.CNavigatorDragAdapterAssistant"
           viewerId="org.eclipse.ui.navigator.ProjectExplorer"/>
  </extension>
+
 </plugin>

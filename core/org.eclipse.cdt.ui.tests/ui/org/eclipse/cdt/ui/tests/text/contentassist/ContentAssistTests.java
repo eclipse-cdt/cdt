@@ -27,8 +27,8 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.text.contentassist.ContentAssistant;
 import org.eclipse.jface.text.contentassist.ICompletionProposal;
-import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PlatformUI;
@@ -43,13 +43,12 @@ import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.model.IWorkingCopy;
 import org.eclipse.cdt.core.testplugin.CProjectHelper;
 import org.eclipse.cdt.ui.tests.BaseUITestCase;
-import org.eclipse.cdt.ui.tests.text.EditorTestHelper;
 import org.eclipse.cdt.ui.text.ICHelpInvocationContext;
 
 import org.eclipse.cdt.internal.ui.CHelpProviderManager;
 import org.eclipse.cdt.internal.ui.editor.CEditor;
 import org.eclipse.cdt.internal.ui.text.CHelpBookDescriptor;
-import org.eclipse.cdt.internal.ui.text.contentassist.CCompletionProcessor2;
+import org.eclipse.cdt.internal.ui.text.contentassist.CContentAssistProcessor;
 
 /**
  * @author aniefer
@@ -163,20 +162,20 @@ public class ContentAssistTests extends BaseUITestCase {
 			fail("Failed to get working copy"); //$NON-NLS-1$
 		}
 	
-		// call the CompletionProcessor
+		// call the ContentAssistProcessor
 		IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
 		FileEditorInput editorInput = new FileEditorInput(file);
 		IEditorPart editorPart = page.openEditor(editorInput, "org.eclipse.cdt.ui.editor.CEditor");
 		CEditor editor = (CEditor) editorPart ;
 		IAction completionAction = editor.getAction("ContentAssistProposal");
-		CCompletionProcessor2 completionProcessor = new CCompletionProcessor2(editorPart);
-		ISourceViewer viewer= EditorTestHelper.getSourceViewer(editor);
-		ICompletionProposal[] results = completionProcessor.computeCompletionProposals(viewer, offset); // (document, pos, wc, null);
 
-		return results ;
+		String contentType = editor.getViewer().getDocument().getContentType(offset);
+		ContentAssistant assistant = new ContentAssistant();
+		CContentAssistProcessor processor = new CContentAssistProcessor(editor, assistant, contentType);
+		return processor.computeCompletionProposals(editor.getViewer(), offset);
     }
     
-    public void _testBug69334() throws Exception {
+    public void testBug69334() throws Exception {
         importFile( "test.h", "class Test{ public : Test( int ); }; \n" );  //$NON-NLS-1$//$NON-NLS-2$
         StringWriter writer = new StringWriter();
         writer.write( "#include \"test.h\"                \n"); //$NON-NLS-1$

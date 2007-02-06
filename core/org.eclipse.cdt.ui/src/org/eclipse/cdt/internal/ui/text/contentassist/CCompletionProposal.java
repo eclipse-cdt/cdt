@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2006 IBM Corporation and others.
+ * Copyright (c) 2004, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -667,29 +667,20 @@ public class CCompletionProposal implements ICCompletionProposal, ICompletionPro
 		setReplacementLength(length);
 	}
 
-	/* (non-Javadoc)
+	/*
 	 * @see java.lang.Object#hashCode()
 	 */
 	public int hashCode() {
-		return fDisplayString.hashCode() 
-		+ fReplacementString.hashCode() 
-		+ ((fContextInformation == null) ? 0 : fContextInformation.hashCode());
+		return fIdString.hashCode();
 	}
-	/* (non-Javadoc)
+
+	/*
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
 	public boolean equals(Object other) {
-		if(!(other instanceof CCompletionProposal))
+		if(!(other instanceof ICCompletionProposal))
 			return false;
-		if(!(fDisplayString.equals(((CCompletionProposal)other).fDisplayString)))
-			return false;
-		if(!(fReplacementString.equals(((CCompletionProposal)other).fReplacementString)))
-			return false;
-		if((fContextInformation != null) && (((CCompletionProposal)other).fContextInformation != null) && (!(fContextInformation.equals(((CCompletionProposal)other).fContextInformation))))
-			return false;
-		
-		return true;
+		return fIdString.equalsIgnoreCase(((ICCompletionProposal)other).getIdString());
 	}
-
 
 }

@@ -19,6 +19,7 @@ import java.util.Set;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.jface.text.contentassist.ContentAssistant;
 import org.eclipse.jface.text.contentassist.ICompletionProposal;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.text.templates.TemplateProposal;
@@ -26,7 +27,6 @@ import org.eclipse.ui.texteditor.AbstractTextEditor;
 import org.eclipse.ui.texteditor.ITextEditor;
 
 import org.eclipse.cdt.core.dom.IPDOMManager;
-import org.eclipse.cdt.core.dom.ast.ASTCompletionNode;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.parser.KeywordSetKey;
 import org.eclipse.cdt.core.parser.ParserFactory;
@@ -37,7 +37,7 @@ import org.eclipse.cdt.ui.tests.BaseUITestCase;
 import org.eclipse.cdt.ui.tests.text.EditorTestHelper;
 import org.eclipse.cdt.ui.text.ICCompletionProposal;
 
-import org.eclipse.cdt.internal.ui.text.contentassist.CCompletionProcessor2;
+import org.eclipse.cdt.internal.ui.text.contentassist.CContentAssistProcessor;
 
 /**
  * 
@@ -94,11 +94,13 @@ public abstract class AbstractCompletionTest extends BaseUITestCase {
 			System.out.println("\n\n\n\n\nTesting "+this.getClass().getName());
 		}
 
-		CCompletionProcessor2 completionProcessor = new CCompletionProcessor2(fEditor);
-		// call the CompletionProcessor
+		//Call the CContentAssistProcessor
 		ISourceViewer sourceViewer= EditorTestHelper.getSourceViewer((AbstractTextEditor)fEditor);
+		String contentType = sourceViewer.getDocument().getContentType(offset);
+		ContentAssistant assistant = new ContentAssistant();
+		CContentAssistProcessor processor = new CContentAssistProcessor(fEditor, assistant, contentType);
 		long startTime= System.currentTimeMillis();
-		ICompletionProposal[] results = completionProcessor.computeCompletionProposals(sourceViewer, offset);
+		ICompletionProposal[] results = processor.computeCompletionProposals(sourceViewer, offset);
 		long endTime= System.currentTimeMillis();
 		assertTrue(results != null);
 
@@ -106,8 +108,6 @@ public abstract class AbstractCompletionTest extends BaseUITestCase {
 		String[] resultStrings= toStringArray(results, compareIdString);
 		Arrays.sort(expected);
 		Arrays.sort(resultStrings);
-
-		checkCompletionNode(completionProcessor.getCurrentCompletionNode());
 
 		if (CTestPlugin.getDefault().isDebugging())  {
 			System.out.println("Time (ms): " + (endTime-startTime));
@@ -145,15 +145,6 @@ public abstract class AbstractCompletionTest extends BaseUITestCase {
 			assertEquals("Extra results!", toString(expected), toString(resultStrings));
 		}
 
-	}
-
-	/**
-	 * Perform additional checks on the ASTCompletionNode.
-	 * 
-	 * @param currentCompletionNode
-	 */
-	protected void checkCompletionNode(ASTCompletionNode currentCompletionNode) {
-		// no-op by default
 	}
 
 	private String toString(String[] strings) {

@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Anton Leherbauer (Wind River Systems)
+ *     Bryan Wilkinson (QNX)
  *******************************************************************************/
 package org.eclipse.cdt.ui.text.contentassist;
 
@@ -143,6 +144,13 @@ public class ContentAssistInvocationContext {
 		}
 		
 		return fPrefix;
+	}
+	
+	/**
+	 * Called upon completion of the content assist. Used to free any resources
+	 * used by the context.
+	 */
+	public void dispose() {
 	}
 	
 	/**

@@ -27,7 +27,6 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 
-import org.eclipse.cdt.core.dom.ast.ASTCompletionNode;
 import org.eclipse.cdt.ui.testplugin.CTestPlugin;
 
 public abstract class CompletionProposalsBaseTest extends AbstractCompletionTest {
@@ -95,15 +94,4 @@ public abstract class CompletionProposalsBaseTest extends AbstractCompletionTest
 		assertCompletionResults(getCompletionPosition(), expected, false);
 
 	}
-
-	/*
-	 * @see org.eclipse.cdt.ui.tests.text.contentassist2.AbstractCompletionTest#checkCompletionNode(org.eclipse.cdt.core.dom.ast.ASTCompletionNode)
-	 */
-	protected void checkCompletionNode(ASTCompletionNode currentCompletionNode) {
-		assertNotNull("null completion node!", currentCompletionNode);
-		// check the completion node
-		String prefix = currentCompletionNode.getPrefix();
-		assertEquals(getExpectedPrefix(), prefix);
-	}
-	
 }

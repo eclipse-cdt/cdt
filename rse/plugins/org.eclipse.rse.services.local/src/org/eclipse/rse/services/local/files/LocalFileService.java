@@ -88,8 +88,6 @@ public class LocalFileService extends AbstractFileService implements IFileServic
 	
 	public LocalFileService(ISystemFileTypes fileTypeRegistry)
 	{
-		
-	
 		_fileTypeRegistry = fileTypeRegistry;
 	}
 	

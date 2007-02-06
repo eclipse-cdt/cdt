@@ -33,6 +33,7 @@ import org.eclipse.rse.ui.propertypages.SystemBasePropertyPage;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
@@ -52,9 +53,15 @@ public class SystemFilePropertyPage extends SystemBasePropertyPage
 	//protected Button cbReadablePrompt, cbWritablePrompt;
 	protected Button cbReadonlyPrompt, cbHiddenPrompt;
 	protected Label labelName, labelType, labelPath, labelSize, labelModified, labelReadable, labelWritable, labelHidden;
+	protected Button inheritedEncodingButton, otherEncodingButton;
+	protected Combo otherEncodingCombo;
 	protected String errorMessage;	
     protected boolean initDone = false;
     protected boolean wasReadOnly = false;
+    
+    private boolean encodingFieldAdded = false;
+    private String defaultEncoding = null;
+    private boolean isValidBefore = true;
        	
 	/**
 	 * Constructor for SystemFilterPropertyPage

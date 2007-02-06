@@ -1742,8 +1742,6 @@ public abstract class RemoteFileSubSystem extends SubSystem implements IRemoteFi
 	    return null;
     }
     
- 
-
 	/**
 	 * @deprecated
 	 */
@@ -1751,5 +1749,22 @@ public abstract class RemoteFileSubSystem extends SubSystem implements IRemoteFi
 	{
 		// TODO Auto-generated method stub
 		
+	}
+	
+	/**
+	 * Returns <code>true</code> by default. Subclasses should override if they do not support encodings.
+	 * @see org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFileSubSystem#supportsEncoding()
+	 * @since 2.0
+	 */
+	public boolean supportsEncoding() {
+		return true;
+	}
+	
+	/**
+	 * Returns the local platform encoding by default. Subclasses should override to return the actual remote encoding.
+	 * @see org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFileSubSystem#getRemoteEncoding()
+	 */
+	public String getRemoteEncoding() {
+		return System.getProperty("file.encoding");
 	}
 }

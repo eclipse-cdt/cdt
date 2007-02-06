@@ -118,13 +118,6 @@ public final class FileServiceSubSystem extends RemoteFileSubSystem implements I
 	{
 		return _hostFileToRemoteFileAdapter;
 	}
-	
-	
-	
-	public String getRemoteEncoding()
-	{
-		return System.getProperty("file.encoding"); //$NON-NLS-1$
-	}
 
 	public void setHostFileToRemoteFileAdapter(IHostFileToRemoteFileAdapter hostFileAdapter)
 	{
@@ -899,4 +892,22 @@ public final class FileServiceSubSystem extends RemoteFileSubSystem implements I
 		_userHome = null;
 	}
 
-} 
+	/**
+	 * Returns the encoding from the file service being used by this subsystem.
+	 * @see RemoteFileSubSystem#getRemoteEncoding()
+	 */
+	public String getRemoteEncoding() {
+		String encoding = null;
+		
+		try {
+			encoding = getFileService().getEncoding(null);
+		}
+		catch (SystemMessageException e) {
+			SystemMessageDialog dlg = new SystemMessageDialog(getShell(), e.getSystemMessage());
+			dlg.open();
+			encoding = super.getRemoteEncoding();
+		}
+		
+		return encoding;
+	}
+}

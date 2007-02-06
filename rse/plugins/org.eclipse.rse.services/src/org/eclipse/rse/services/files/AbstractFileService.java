@@ -93,6 +93,13 @@ public abstract class AbstractFileService implements IFileService
 		}
 		return ok;
 	}
-	
-	
+
+	/**
+	 * Returns the local platform encoding by default. Subclasses should override to return the actual remote encoding.
+	 * @see org.eclipse.rse.services.files.IFileService#getEncoding(org.eclipse.core.runtime.IProgressMonitor)
+	 * @since 2.0
+	 */
+	public String getEncoding(IProgressMonitor monitor) throws SystemMessageException {
+		return System.getProperty("file.encoding");
+	}
 }

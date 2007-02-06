@@ -284,4 +284,13 @@ public interface IFileService extends IService
 	 * @return true if the readonly permission was changed successfully
 	 */
 	public boolean setReadOnly(IProgressMonitor monitor, String parent, String name, boolean readOnly) throws SystemMessageException;
+	
+	/**
+	 * Gets the remote encoding.
+	 * @param monitor the progress monitor.
+	 * @return the encoding.
+	 * @throws SystemMessageException if an error occurs.
+	 * @since 2.0
+	 */
+	public String getEncoding(IProgressMonitor monitor) throws SystemMessageException;
 }

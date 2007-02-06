@@ -61,6 +61,7 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 	private int _bufferUploadSize = IUniversalDataStoreConstants.BUFFER_SIZE;
 	private int _bufferDownloadSize = IUniversalDataStoreConstants.BUFFER_SIZE;
 	protected ISystemFileTypes _fileTypeRegistry;
+	private String remoteEncoding;
 	
 	private static String _percentMsg = SystemMessage.sub(SystemMessage.sub(SystemMessage.sub(ServiceResources.DStore_Service_Percent_Complete_Message, "&0", "{0}"), "&1", "{1}"), "&2", "{2}");	 //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$
 
@@ -1274,6 +1275,26 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 		return false;
 	}
 
+	/**
+	 * Queries the remote system for the platform encoding.
+	 * @see org.eclipse.rse.services.files.IFileService#getEncoding(org.eclipse.core.runtime.IProgressMonitor)
+	 * @since 2.0
+	 */
+	public String getEncoding(IProgressMonitor monitor) throws SystemMessageException {
+		
+		if (remoteEncoding == null) {
+			
+			DataStore ds = getDataStore();
 
+			DataElement encodingElement = ds.createObject(null, UNIVERSAL_TEMP_DESCRIPTOR, ""); //$NON-NLS-1$
 
+			DataElement queryCmd = ds.localDescriptorQuery(encodingElement.getDescriptor(), C_SYSTEM_ENCODING);
+
+			DataElement status = ds.command(queryCmd, encodingElement, true);
+
+			remoteEncoding = encodingElement.getValue();
+		}
+
+		return remoteEncoding;
+	}
 }

@@ -212,13 +212,29 @@ public interface IRemoteFileSubSystem extends ISubSystem{
 	 * Given a folder or file, return its parent folder name, fully qualified
 	 * @param folderOrFile folder or file to return parent of.
 	 */
-	public String getParentFolderName(IRemoteFile folderOrFile);	
+	public String getParentFolderName(IRemoteFile folderOrFile);
+	
+	/**
+	 * Returns whether the file subsystem supports encodings. There are file subsystems that deal with codepages and encodings
+	 * using other mechanisms besides encodings, and such platforms should return <code>false</code>. Other file subsystems
+	 * may not deal with encodings at all.
+	 * @return <code>true<code> if the file subsystem supports encodings, <code>false</code> otherwise.
+	 * @since 2.0
+	 */
+	public boolean supportsEncoding();
 
 	/**
-	 * Get the default encoding of the target system
-	 * @return the encoding
+	 * Returns the encoding of the remote system.
+	 * @return the encoding of the remote system.
 	 */
 	public String getRemoteEncoding();
+	
+	/**
+	 * Returns the encoding of the file with the remote path.
+	 * @param remotePath the remote path of the file.
+	 * @return the encoding of the remote file.
+	 */
+	// public String getEncoding(String remotePath);
 	
 	/**
 	 * Given a set of fully qualified file or folder names, return an ISystemResourceSet object for it.

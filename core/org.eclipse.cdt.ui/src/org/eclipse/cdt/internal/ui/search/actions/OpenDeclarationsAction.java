@@ -66,8 +66,7 @@ public class OpenDeclarationsAction extends SelectionParseAction {
 				IPDOM pdom = CCorePlugin.getPDOMManager().getPDOM(workingCopy.getCProject());
 				pdom.acquireReadLock();
 				try {
-					IASTTranslationUnit ast = workingCopy.getLanguage().getASTTranslationUnit(workingCopy,
-							ILanguage.AST_SKIP_ALL_HEADERS | ILanguage.AST_USE_INDEX);
+					IASTTranslationUnit ast = workingCopy.getLanguage().getASTTranslationUnit(workingCopy, ILanguage.AST_USE_INDEX);
 					IASTName[] selectedNames = workingCopy.getLanguage().getSelectedNames(ast, selectionStart, selectionLength);
 
 					if (selectedNames.length > 0 && selectedNames[0] != null) { // got a name

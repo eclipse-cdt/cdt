@@ -292,6 +292,7 @@ public class Database {
 	}
 	
 	// Chunk management
+	static private Object lruMutex = new Object();
 	static private Chunk lruFirst;
 	static private Chunk lruLast;
 	static private int lruSize;
@@ -316,65 +317,67 @@ public class Database {
 	}
 	
 	static private final void lruPutFirst(Chunk chunk, boolean isNew) throws CoreException {
-		// If this chunk is already first, we're good
-		if (chunk == lruFirst)
-			return;
-		
-		if (!isNew) {
-			// Remove from current position in cache
-			if (chunk.lruPrev != null) {
-				chunk.lruPrev.lruNext = chunk.lruNext;
+		synchronized (lruMutex) {
+			// If this chunk is already first, we're good
+			if (chunk == lruFirst)
+				return;
+			
+			if (!isNew) {
+				// Remove from current position in cache
+				if (chunk.lruPrev != null) {
+					chunk.lruPrev.lruNext = chunk.lruNext;
+				}
+				if (chunk.lruNext != null) {
+					chunk.lruNext.lruPrev = chunk.lruPrev;
+				} else {
+					// No next => New last
+					lruLast = chunk.lruPrev;
+				}
 			}
-			if (chunk.lruNext != null) {
-				chunk.lruNext.lruPrev = chunk.lruPrev;
-			} else {
-				// No next => New last
-				lruLast = chunk.lruPrev;
-			}
-		}
-
-		// Insert at front of cache
-		chunk.lruNext = lruFirst;
-		chunk.lruPrev = null;
-		if (lruFirst != null)
-			lruFirst.lruPrev = chunk;
-		lruFirst = chunk;
-		if (lruLast == null)
-			lruLast = chunk;
-
-		if (isNew) {
-			// New chunk, see if we need to release one
-			if (lruSize == lruMax) {
-				Chunk last = lruLast;
-				lruLast = last.lruPrev;
-				lruLast.lruNext = null;
-				last.free();
-			} else {
-				++lruSize;
+	
+			// Insert at front of cache
+			chunk.lruNext = lruFirst;
+			chunk.lruPrev = null;
+			if (lruFirst != null)
+				lruFirst.lruPrev = chunk;
+			lruFirst = chunk;
+			if (lruLast == null)
+				lruLast = chunk;
+	
+			if (isNew) {
+				// New chunk, see if we need to release one
+				if (lruSize == lruMax) {
+					Chunk last = lruLast;
+					lruLast = last.lruPrev;
+					lruLast.lruNext = null;
+					last.free();
+				} else {
+					++lruSize;
+				}
 			}
 		}
 	}
 	
-	private Object mutex = new Object();
+	private Object lockMutex = new Object();
 	private Thread lockOwner;
 	private int lockCount;
 	
 	public void acquireLock() throws InterruptedException {
-		synchronized (mutex) {
+		synchronized (lockMutex) {
 			if (lockOwner != Thread.currentThread())
 				while (lockCount > 0)
-					mutex.wait();
+					lockMutex.wait();
 			++lockCount;
 			lockOwner = Thread.currentThread();
 		}
 	}
 	
 	public void releaseLock() {
-		synchronized (mutex) {
+		synchronized (lockMutex) {
 			--lockCount;
 			if (lockCount == 0) {
 				lockOwner = null;
-				mutex.notify();
+				lockMutex.notify();
 			}
 		}
 	}

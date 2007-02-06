@@ -34,12 +34,11 @@ Contributors:
    </extension>
    
    <!-- remote eclipse filesystem not properly supported yet-->
+   <!--
       <extension
-         point="org.eclipse.rse.ui.popupMenus">
+         point="org.eclipse.ui.popupMenus">
       <objectContribution  
       		adaptable="false" 
-            subsystemconfigurationCategory="files"
-   			typefilter="folder"
    			id="org.eclipse.rse.eclipse.filesystem.createproject.">
             <visibility> 
                 <objectClass name="org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile"/>   
@@ -55,5 +54,26 @@ Contributors:
          </action>
        </objectContribution>
       </extension>
+      -->
+      
+      <extension point="org.eclipse.ui.popupMenus">
+	      <objectContribution
+            objectClass="org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile"
+            id="org.eclipse.rse.eclipse.filesystem.createproject.">
+                <visibility> 
+                	<objectState name="isdirectory" value="true"/>                  
+            </visibility>
+         <action
+               label="Create Remote Project"
+                tooltip="%ImportToProject.tooltip"
+               class="org.eclipse.rse.eclipse.filesystem.ui.actions.CreateRemoteProjectActionDelegate"
+               menubarPath="group.importexport"
+               enablesFor="1"
+               id="importToProject">
+         </action>
+      </objectContribution>
+      </extension>
+      
+      
  <!--  -->     
 </plugin>

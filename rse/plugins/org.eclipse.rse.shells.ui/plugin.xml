@@ -69,16 +69,12 @@ Contributors:
    
    
   <extension
-         point="org.eclipse.rse.ui.popupMenus">
+         point="org.eclipse.ui.popupMenus">
       <objectContribution  
-      		adaptable="false" 
-      		typecategoryfilter="files"
+      		objectClass="org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile"
    			id="org.eclipse.rse.shells.ui.launch">
             <visibility> 
-            	<and>
-		            <objectClass name="org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile"/>
                 	<objectState name="isdirectory" value="true"/>   
-                </and> 
             </visibility>
          <action
                label="%Launch_Shell"

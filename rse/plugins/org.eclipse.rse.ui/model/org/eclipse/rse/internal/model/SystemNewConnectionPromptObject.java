@@ -81,7 +81,16 @@ public class SystemNewConnectionPromptObject
     	this.systemTypesSet = true;
     }
     
-    /**
+    /* (non-Javadoc)
+     * @see org.eclipse.rse.model.ISystemPromptableObject#getSystemTypes()
+     */
+    public String[] getSystemTypes() {
+    	String[] types = systemTypes;
+    	if (types == null || !systemTypesSet) types = new String[0];
+			return types;
+		}
+    
+		/**
      * Set the parent object so that we can respond to getParent requests
      */
     public void setParent(Object parent)

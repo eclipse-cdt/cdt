@@ -32,40 +32,54 @@ import org.eclipse.swt.widgets.Shell;
 public interface ISystemPromptableObject extends IAdaptable
 {
 
-    /**
-     * Get the parent object (within tree view)
-     */
-    public Object getParent();
-    /**
-     * Set the parent object so that we can respond to getParent requests
-     */
-    public void setParent(Object parent);
+	/**
+	 * Returns the list of system types this promptable object
+	 * is associated with. This is important to implement label
+	 * and icon decorators for promptable objects.
+	 * 
+	 * @return The list of associated system types or an empty list.
+	 */
+	public String[] getSystemTypes();
+	
+  /**
+	 * Get the parent object (within tree view)
+	 */
+	public Object getParent();
+
+	/**
+	 * Set the parent object so that we can respond to getParent requests
+	 */
+	public void setParent(Object parent);
+
 	/**
 	 * Returns an image descriptor for the image. More efficient than getting the image.
 	 * Calls getImage on the subsystem's owning factory.
 	 */
 	public ImageDescriptor getImageDescriptor();
+
 	/**
 	 * Return the label for this object
 	 */
 	public String getText();
+
 	/**
 	 * Return the type label for this object
 	 */
 	public String getType();
-	
+
 	/**
 	 * Run this prompt. This should return an appropriate ISystemMessageObject to show
 	 *  as the child, reflecting if it ran successfully, was cancelled or failed.
 	 */
-	public Object[] run(Shell shell);	
-	
+	public Object[] run(Shell shell);
+
 	/**
 	 * Return the child promptable objects.
 	 * If this returns null, then SystemViewPromptableAdapter will subsequently
 	 * call {@link #run(Shell)}.
 	 */
 	public ISystemPromptableObject[] getChildren();
+
 	/**
 	 * Return true if this is an expandable prompt
 	 */

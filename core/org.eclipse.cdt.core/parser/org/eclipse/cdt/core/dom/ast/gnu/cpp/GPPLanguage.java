@@ -13,6 +13,7 @@ package org.eclipse.cdt.core.dom.ast.gnu.cpp;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Pattern;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.CDOM;
@@ -22,6 +23,7 @@ import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.cpp.CPPASTVisitor;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.IContributedModelBuilder;
 import org.eclipse.cdt.core.model.ILanguage;
@@ -214,5 +216,17 @@ public class GPPLanguage extends PlatformObject implements ILanguage {
 	public IContributedModelBuilder createModelBuilder(ITranslationUnit tu) {
 		// Use the default CDT model builder
 		return null;
+	}
+	
+	public static Pattern[] createSearchPattern(IASTName name) {
+		if (name instanceof ICPPASTQualifiedName) {
+			IASTName[] names = ((ICPPASTQualifiedName)name).getNames();
+			List patterns = new ArrayList();
+			for (int i = 0; i < names.length; ++i)
+				patterns.add(Pattern.compile(new String(names[i].toCharArray())));
+			return (Pattern[])patterns.toArray(new Pattern[patterns.size()]);
+		} else {
+			return new Pattern[] { Pattern.compile(new String(name.toCharArray())) };
+		}
 	}
 }

@@ -118,7 +118,7 @@ public class Chunk {
 	
 	void free() throws CoreException {
 		save();
-		db.toc[index] = null;
+		db.freeChunk(index);
 	}
 	
 }

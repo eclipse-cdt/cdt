@@ -11,13 +11,17 @@
 
 package org.eclipse.cdt.internal.ui.search.actions;
 
+import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.dom.IPDOM;
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IBinding;
-import org.eclipse.cdt.core.dom.ast.IProblemBinding;
+import org.eclipse.cdt.core.dom.ast.gnu.cpp.GPPLanguage;
+import org.eclipse.cdt.core.model.ILanguage;
 import org.eclipse.cdt.core.model.IWorkingCopy;
-import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
+import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
+import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.ui.editor.CEditor;
 import org.eclipse.cdt.internal.ui.editor.CEditorMessages;
 import org.eclipse.cdt.ui.CUIPlugin;
@@ -59,25 +63,46 @@ public class OpenDeclarationsAction extends SelectionParseAction {
 				if (workingCopy == null)
 					return Status.CANCEL_STATUS;
 
-				int style = 0;
-//				IPDOM pdom = CCorePlugin.getPDOMManager().getPDOM(workingCopy.getCProject());
-//				if (!pdom.isEmpty())
-//					style |= ILanguage.AST_SKIP_ALL_HEADERS | ILanguage.AST_USE_INDEX;
-				IASTTranslationUnit ast = workingCopy.getLanguage().getASTTranslationUnit(workingCopy, style);
-				IASTName[] selectedNames = workingCopy.getLanguage().getSelectedNames(ast, selectionStart, selectionLength);
-					
-				if (selectedNames.length > 0 && selectedNames[0] != null) { // just right, only one name selected
-					IASTName searchName = selectedNames[0];
-		
-					IBinding binding = searchName.resolveBinding();
-					if (binding != null && !(binding instanceof IProblemBinding)) {
-						final IASTName[] declNames = ast.getDeclarations(binding);
-						if (declNames.length > 0) {
+				IPDOM pdom = CCorePlugin.getPDOMManager().getPDOM(workingCopy.getCProject());
+				pdom.acquireReadLock();
+				try {
+					IASTTranslationUnit ast = workingCopy.getLanguage().getASTTranslationUnit(workingCopy,
+							ILanguage.AST_SKIP_ALL_HEADERS | ILanguage.AST_USE_INDEX);
+					IASTName[] selectedNames = workingCopy.getLanguage().getSelectedNames(ast, selectionStart, selectionLength);
+
+					if (selectedNames.length > 0 && selectedNames[0] != null) { // got a name
+						IASTName searchName = selectedNames[0];
+						IBinding binding = searchName.resolveBinding();
+						IASTName[] declNames = null;
+						if (binding != null && !(binding instanceof ProblemBinding)) {
+							boolean isDefinition = searchName.isDefinition();
+							declNames = isDefinition ? ast.getDeclarations(binding) : ast.getDefinitions(binding);
+							if (declNames.length == 0) // try the other way
+								declNames = isDefinition ? ast.getDefinitions(binding) : ast.getDeclarations(binding);
+						}
+						
+						if (declNames == null || declNames.length == 0) { // try the pdom
+							IBinding[] bindings = pdom.findBindings(GPPLanguage.createSearchPattern(searchName), monitor);
+							for (int i = 0; i < bindings.length; ++i) {
+								declNames = ((PDOM)pdom).getDefinitions(bindings[i]);
+								if (declNames.length > 0)
+									break;
+							}
+							if (declNames == null || declNames.length == 0) // try the decls
+								for (int i = 0; i < bindings.length; ++i) {
+									declNames = ((PDOM)pdom).getDeclarations(bindings[i]);
+									if (declNames.length > 0)
+										break;
+								}
+						}
+
+						if (declNames != null && declNames.length > 0) { // got one
 					    	IASTFileLocation fileloc = declNames[0].getFileLocation();
 					    	if (fileloc != null) {
 								final IPath path = new Path(fileloc.getFileName());
 						    	final int offset = fileloc.getNodeOffset();
 						    	final int length = fileloc.getNodeLength();
+
 								Display.getDefault().asyncExec(new Runnable() {
 									public void run() {
 										try {
@@ -87,34 +112,16 @@ public class OpenDeclarationsAction extends SelectionParseAction {
 										}
 									};
 								});
-					    	}
-						} else if (binding instanceof PDOMBinding) {
-							PDOMBinding pdomBinding = (PDOMBinding)binding;
-							IASTName name = pdomBinding.getFirstDefinition();
-							if (name == null)
-								name = pdomBinding.getFirstDeclaration();
-							if (name != null) {
-						    	IASTFileLocation fileloc = name.getFileLocation();
-						    	if (fileloc != null) {
-									final IPath path = new Path(fileloc.getFileName());
-							    	final int offset = fileloc.getNodeOffset();
-							    	final int length = fileloc.getNodeLength();
-									Display.getDefault().asyncExec(new Runnable() {
-										public void run() {
-											try {
-												open(path, offset, length);
-											} catch (CoreException e) {
-												CUIPlugin.getDefault().log(e);
-											}
-										}
-									});
-						    	}
 							}
 						}
 					}
+				} finally {
+					pdom.releaseReadLock();
 				}
 					
 				return Status.OK_STATUS;
+			} catch (InterruptedException e) {
+				return Status.CANCEL_STATUS;
 			} catch (CoreException e) {
 				return e.getStatus();
 			}

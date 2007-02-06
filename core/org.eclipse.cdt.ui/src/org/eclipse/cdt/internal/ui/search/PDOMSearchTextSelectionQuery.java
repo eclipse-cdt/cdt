@@ -16,9 +16,11 @@ import org.eclipse.cdt.core.dom.IPDOM;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IBinding;
+import org.eclipse.cdt.core.dom.ast.gnu.cpp.GPPLanguage;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ILanguage;
 import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -52,8 +54,13 @@ public class PDOMSearchTextSelectionQuery extends PDOMSearchQuery {
 				
 				for (int i = 0; i < names.length; ++i) {
 					IBinding binding = names[i].resolveBinding();
-					if (binding != null)
+					if (binding != null && !(binding instanceof ProblemBinding))
 						createMatches(language, binding);
+					else { // try pdom directly
+						IBinding[] bindings = pdom.findBindings(GPPLanguage.createSearchPattern(names[i]), monitor);
+						for (int j = 0; j < bindings.length; ++j)
+							createMatches(language, bindings[j]);
+					}
 				}
 			} catch (InterruptedException e) {
 			} finally {

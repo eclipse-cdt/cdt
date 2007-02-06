@@ -26,7 +26,7 @@ public class Database {
 
 	// Access directly by the Chunks
 	final RandomAccessFile file;
-	Chunk[] toc;
+	private Chunk[] toc;
 	
 	private long malloced;
 	private long freed;
@@ -79,7 +79,7 @@ public class Database {
 	 * Empty the contents of the Database, make it ready to start again
 	 * @throws CoreException
 	 */
-	public void clear(int version) throws CoreException {
+	public synchronized void clear(int version) throws CoreException {
 		// Clear out the data area and reset the version
 		Chunk chunk = getChunk(0);
 		chunk.putInt(0, version);
@@ -99,17 +99,30 @@ public class Database {
 	 * @return
 	 */
 	public Chunk getChunk(int offset) throws CoreException {
+//		if (lockCount == 0)
+			// Accessing database without locking
+//			CCorePlugin.log(new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, 0, "Index not locked", new Exception())); //$NON-NLS-1$
+		
 		int index = offset / CHUNK_SIZE;
-		Chunk chunk = toc[index];
-		boolean isNew = false;
-		if (chunk == null) {
-			chunk = toc[index] = new Chunk(this, index);
-			isNew = true;
+		Chunk chunk;
+		boolean isNew;
+		synchronized (this) {
+			chunk = toc[index];
+			isNew = false;
+			if (chunk == null) {
+				chunk = toc[index] = new Chunk(this, index);
+				isNew = true;
+			}
 		}
 		Database.lruPutFirst(chunk, isNew);
 		return chunk;
 	}
 
+	// Called by the chunk to set itself free
+	synchronized void freeChunk(int index) {
+		toc[index] = null;
+	}
+	
 	/**
 	 * Allocate a block out of the database.
 	 * 
@@ -140,10 +153,22 @@ public class Database {
 		Chunk chunk;
 		if (freeblock == 0) {
 			// Out of memory, allocate a new chunk
-			int i = createChunk();
-			chunk = toc[i];
-			freeblock = i * CHUNK_SIZE;
-			blocksize = CHUNK_SIZE;
+			synchronized (this) {
+				Chunk[] oldtoc = toc;
+				int n = oldtoc.length;
+				freeblock = n * CHUNK_SIZE;
+				blocksize = CHUNK_SIZE;
+				try {
+					file.seek(freeblock);
+					file.write(new byte[CHUNK_SIZE]);
+				} catch (IOException e) {
+					throw new CoreException(new DBStatus(e));
+				}
+				toc = new Chunk[n + 1];
+				System.arraycopy(oldtoc, 0, toc, 0, n);
+				toc[n] = chunk = new Chunk(this, n);
+			}
+			Database.lruPutFirst(chunk, true);
 		} else {
 			chunk = getChunk(freeblock);
 			removeBlock(chunk, blocksize, freeblock);
@@ -162,23 +187,6 @@ public class Database {
 
 		malloced += matchsize;
 		return freeblock + 4;
-	}
-	
-	private int createChunk() throws CoreException {
-		try {
-			Chunk[] oldtoc = toc;
-			int n = oldtoc.length;
-			int offset = n * CHUNK_SIZE;
-			file.seek(offset);
-			file.write(new byte[CHUNK_SIZE]);
-			toc = new Chunk[n + 1];
-			System.arraycopy(oldtoc, 0, toc, 0, n);
-			toc[n] = new Chunk(this, n);
-			Database.lruPutFirst(toc[n], true);
-			return n;
-		} catch (IOException e) {
-			throw new CoreException(new DBStatus(e));
-		}
 	}
 	
 	private int getFirstBlock(int blocksize) throws CoreException {
@@ -283,28 +291,6 @@ public class Database {
 			return new ShortString(this, offset);
 	}
 	
-	public int getNumChunks() {
-		return toc.length;
-	}
-
-	public void reportFreeBlocks() throws CoreException {
-		System.out.println("Allocated size: " + toc.length * CHUNK_SIZE);
-		System.out.println("malloc'ed: " + malloced);
-		System.out.println("free'd: " + freed);
-		System.out.println("wasted: " + (toc.length * CHUNK_SIZE - (malloced - freed)));
-		System.out.println("Free blocks");
-		for (int bs = MIN_SIZE; bs <= CHUNK_SIZE; bs += MIN_SIZE) {
-			int count = 0;
-			int block = getFirstBlock(bs);
-			while (block != 0) {
-				++count;
-				block = getInt(block + NEXT_OFFSET);
-			}
-			if (count != 0)
-				System.out.println("Block size: " + bs + "=" + count);
-		}
-	}
-	
 	// Chunk management
 	static private Chunk lruFirst;
 	static private Chunk lruLast;
@@ -329,15 +315,11 @@ public class Database {
 		}
 	}
 	
-	static public final void lruPutFirst(Chunk chunk, boolean isNew) throws CoreException {
+	static private final void lruPutFirst(Chunk chunk, boolean isNew) throws CoreException {
 		// If this chunk is already first, we're good
 		if (chunk == lruFirst)
 			return;
 		
-		if (lockCount == 0)
-			// Accessing database without locking
-			CCorePlugin.log(new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, 0, "Index not locked", new Exception())); //$NON-NLS-1$
-
 		if (!isNew) {
 			// Remove from current position in cache
 			if (chunk.lruPrev != null) {
@@ -373,13 +355,11 @@ public class Database {
 		}
 	}
 	
-	// Global locks on the databases
-	// Allow only one access at a time
-	private static Object mutex = new Object();
-	private static Thread lockOwner;
-	private static int lockCount;
+	private Object mutex = new Object();
+	private Thread lockOwner;
+	private int lockCount;
 	
-	public static void acquireLock() throws InterruptedException {
+	public void acquireLock() throws InterruptedException {
 		synchronized (mutex) {
 			if (lockOwner != Thread.currentThread())
 				while (lockCount > 0)
@@ -389,7 +369,7 @@ public class Database {
 		}
 	}
 	
-	public static void releaseLock() {
+	public void releaseLock() {
 		synchronized (mutex) {
 			--lockCount;
 			if (lockCount == 0) {

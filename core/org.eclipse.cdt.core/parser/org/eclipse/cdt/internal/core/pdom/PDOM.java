@@ -382,20 +382,20 @@ public class PDOM extends PlatformObject
 	}
 
 	public void acquireReadLock() throws InterruptedException {
-		Database.acquireLock();
+		db.acquireLock();
 	}
 	
 	public void releaseReadLock() {
-		Database.releaseLock();
+		db.releaseLock();
 	}
 	
 	public void acquireWriteLock() throws InterruptedException {
-		Database.acquireLock();
+		db.acquireLock();
 	}
 	
 	public void releaseWriteLock() {
 		Database.saveAll();
-		Database.releaseLock();
+		db.releaseLock();
 		fireChange();
 	}
 	

@@ -400,9 +400,7 @@ public class CDebugUtils {
 		String condition = breakpoint.getCondition();
 		if ( condition != null && condition.length() > 0 ) {
 			buffer.append( ' ' );
-			buffer.append( DebugCoreMessages.getString( "CDebugUtils.4" ) ); //$NON-NLS-1$
-			buffer.append( ' ' );
-			buffer.append( condition );
+			buffer.append( MessageFormat.format( DebugCoreMessages.getString( "CDebugUtils.4" ), new String[] { condition } ) ); //$NON-NLS-1$
 		}
 	}
 
@@ -410,10 +408,7 @@ public class CDebugUtils {
 		String expression = watchpoint.getExpression();
 		if ( expression != null && expression.length() > 0 ) {
 			label.append( ' ' );
-			label.append( DebugCoreMessages.getString( "CDebugUtils.5" ) ); //$NON-NLS-1$
-			label.append( " \'" ); //$NON-NLS-1$
-			label.append( expression );
-			label.append( '\'' );
+			label.append( MessageFormat.format(  DebugCoreMessages.getString( "CDebugUtils.5" ), new String[] { expression } ) ); //$NON-NLS-1$
 		}
 	}
 

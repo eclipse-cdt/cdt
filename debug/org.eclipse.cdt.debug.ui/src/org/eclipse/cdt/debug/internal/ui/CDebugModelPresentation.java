@@ -746,8 +746,6 @@ public class CDebugModelPresentation extends LabelProvider implements IDebugMode
 				if ( frame.getFile() != null ) {
 					IPath path = new Path( frame.getFile() );
 					if ( !path.isEmpty() ) {
-						label.append( CDebugUIMessages.getString( "CDTDebugModelPresentation.20" ) ); //$NON-NLS-1$
-						label.append( ' ' );
 						label.append( (qualified ? path.toOSString() : path.lastSegment()) );
 						label.append( ':' );
 						if ( frame.getFrameLineNumber() != 0 )

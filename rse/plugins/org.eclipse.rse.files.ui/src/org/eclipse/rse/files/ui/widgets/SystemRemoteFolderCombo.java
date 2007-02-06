@@ -271,6 +271,7 @@ public class SystemRemoteFolderCombo extends Composite implements ISystemCombo
 	 */
 	public void setEnabled(boolean enabled)
 	{
+		folderLabel.setEnabled(enabled);
 		folderCombo.setEnabled(enabled);
 		browseButton.setEnabled(enabled);		
 	}

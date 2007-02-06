@@ -99,6 +99,7 @@ public class DeveloperFilterStringEditPane extends SystemFilterStringEditPane {
 				}
 			}
 		);		
+		setEditable(editable);
 		return composite_prompts;
 	}
 	
@@ -134,7 +135,17 @@ public class DeveloperFilterStringEditPane extends SystemFilterStringEditPane {
 		    	textDevr.setText(inputFilterString.substring(idx+1));
 		    }
 		}
-	}	
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.ui.filters.SystemFilterStringEditPane#setEditable(boolean)
+	 */
+	public void setEditable(boolean editable) {
+		super.setEditable(editable);
+		enable(textDevr, editable);
+		enable(textTeam, editable);
+	}
+	
 	/**
 	 * Override of parent method.
 	 * This is called in the change filter dialog when the user selects "new", or selects another string.

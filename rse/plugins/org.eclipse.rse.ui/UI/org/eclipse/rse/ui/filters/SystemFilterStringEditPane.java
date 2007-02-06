@@ -83,16 +83,18 @@ public class SystemFilterStringEditPane implements SelectionListener
 	protected boolean newMode = true;
 	protected boolean changeFilterMode = false;
 	protected boolean ignoreChanges;
-	//protected boolean editable = true;
+	protected boolean editable = true;
 	
 	// default GUI
 	protected Label labelString;
 	protected Text  textString;
 	protected Button dlgTestButton;
+	
 	// state
 	protected SystemMessage errorMessage;
     protected boolean skipEventFiring;
     protected int     currentSelectionIndex;	
+    
 
 	/**
 	 * Constructor for SystemFilterStringEditPane.
@@ -328,20 +330,43 @@ public class SystemFilterStringEditPane implements SelectionListener
 		System.out.println("Someone forgot to override processTest in SystemFilterStringEditPane!"); //$NON-NLS-1$
 	}
 
-	/*
-	 * Set if the edit pane is not to be editable
-	 *
-	public void setEditable(boolean editable)
-	{
+	/**
+	 * Sets whether or not the edit pane is not to be editable. May be invoked
+	 * atany time prior or after the creation of the controls.
+	 * Subclasses should override and enable their own controls appropriately.
+	 * <p>
+	 * Subclasses should call super to ensure that the "editable" flag is 
+	 * set properly. Controls which are not instantiated in this call will be ignored.
+	 * @param editable true if the controls in this pane are to be editable.
+	 * Usually set to true, but if the filter is not modifiable it will be
+	 * set to false.
+	 */
+	public void setEditable(boolean editable) {
 		this.editable = editable;
-	}*/
+		enable(labelString, editable);
+		enable(textString, editable);
+		enable(dlgTestButton, editable);
+	}
+	
+	/**
+	 * Set the enabled state of a particular control.
+	 * @param control the control of which to set the state
+	 * @param enabled the enabled state
+	 */
+	protected void enable(Control control, boolean enabled) {
+		if (!(control == null || control.isDisposed())) {
+			control.setEnabled(enabled);
+		}
+	}
+
 	/*
 	 * Return whether the edit pane is editable, as set by {@link #setEditable(boolean)}
 	 *
+	 */
 	public boolean getEditable()
 	{
 		return editable;
-	}*/
+	}
 
 	// ------------------------------	
 	// DATA EXTRACTION METHODS
@@ -447,7 +472,8 @@ public class SystemFilterStringEditPane implements SelectionListener
 					validateStringInput();
 				}
 			}
-		);		
+		);
+		setEditable(editable);
 		return composite_prompts;
 	}
 	/**

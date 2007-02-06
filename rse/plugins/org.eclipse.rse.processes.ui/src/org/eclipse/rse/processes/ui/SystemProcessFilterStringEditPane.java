@@ -111,6 +111,25 @@ public class SystemProcessFilterStringEditPane extends
 	// INPUT/CONFIGURATION METHODS...
 	// ------------------------------
 	    
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.ui.filters.SystemFilterStringEditPane#setEditable(boolean)
+	 */
+	public void setEditable(boolean editable) {
+		super.setEditable(editable);
+		enable(lblStatus, editable);
+		enable(lblExeName, editable);
+		enable(lblUserName, editable);
+		enable(lblGid, editable);
+		enable(txtExeName, editable);
+		enable(txtUserName, editable);
+		enable(txtGid, editable);
+		enable(lblMinVM, editable);
+		enable(lblMaxVM, editable);
+		enable(txtMinVM, editable);
+		enable(txtMaxVM, editable);
+		enable(chkBoxUnlimitedVM, editable);
+	}
+	
 	/**
 	 * Call this to override the text limit for the filter name, from the default of 256.
 	 */
@@ -289,6 +308,7 @@ public class SystemProcessFilterStringEditPane extends
 		
 		chkBoxUnlimitedVM.addSelectionListener(this);
 		
+		setEditable(editable);
 		return composite_prompts;
 	}
 	

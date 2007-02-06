@@ -18,6 +18,7 @@ package org.eclipse.rse.files.ui;
 
 import java.util.Vector;
 
+import org.eclipse.jface.viewers.CheckboxTableViewer;
 import org.eclipse.rse.core.SystemBasePlugin;
 import org.eclipse.rse.core.filters.ISystemFilter;
 import org.eclipse.rse.core.filters.ISystemFilterPoolManagerProvider;
@@ -64,11 +65,13 @@ public class SystemFileFilterStringEditPane
 {
 	// GUI widgets
 	protected Button filesOnlyCheckBox;
-	//protected Button testButton;	
-	protected Button subsetByFileNameRadioButton, subsetByFileTypesRadioButton;
+	protected Button subsetByFileNameRadioButton;
+	protected Button subsetByFileTypesRadioButton;
 	protected Button selectTypesButton;
-	protected Label  labelFile, labelTypes;
-	protected Text   textFile, textTypes;
+	protected Label labelFile;
+	protected Label labelTypes;
+	protected Text textFile;
+	protected Text textTypes;
     protected SystemRemoteFolderCombo folderCombo;
 	// limits
 	protected int filterFileLength    = 256;
@@ -150,6 +153,23 @@ public class SystemFileFilterStringEditPane
 		if (folderCombo != null)
 		  folderCombo.setTextLimit(max);
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.ui.filters.SystemFilterStringEditPane#setEditable(boolean)
+	 */
+	public void setEditable(boolean editable) {
+		super.setEditable(editable);
+		enable(filesOnlyCheckBox, editable);
+		enable(subsetByFileNameRadioButton, editable);
+		enable(selectTypesButton, editable);
+		enable(labelFile, editable);
+		enable(textFile, editable);
+		enable(folderCombo, editable);		
+		enable(subsetByFileTypesRadioButton, editable);
+		enable(labelTypes, editable);
+		enable(textTypes, editable);
+	}
+	
 	/**
 	 * Existing strings are used to aid in uniqueness validation.
 	 */	
@@ -304,6 +324,7 @@ public class SystemFileFilterStringEditPane
         selectTypesButton.addSelectionListener(this);   
 		filesOnlyCheckBox.addSelectionListener(this);
 		
+		setEditable(editable);
 		return composite_prompts;
 	}
     private void updateGridData(Control widget, int gridColumns)

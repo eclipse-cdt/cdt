@@ -565,8 +565,8 @@ public class SystemChangeFilterPane extends SystemBaseForm
 				listView.setEnabled(false);
 			if (strings.length > 0)
 				editpane.setFilterString(strings[0], 0);
-			editPaneComposite.setEnabled(false);
-			//editpane.setEditable(false);
+//			editPaneComposite.setEnabled(false);
+			editpane.setEditable(false);
 			setPageComplete(true);
 		}
 		else if (!getSupportsMultipleStrings())

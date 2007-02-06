@@ -79,7 +79,7 @@ public class Database {
 	 * Empty the contents of the Database, make it ready to start again
 	 * @throws CoreException
 	 */
-	public synchronized void clear(int version) throws CoreException {
+	public void clear(int version) throws CoreException {
 		// Clear out the data area and reset the version
 		Chunk chunk = getChunk(0);
 		chunk.putInt(0, version);
@@ -106,21 +106,23 @@ public class Database {
 		int index = offset / CHUNK_SIZE;
 		Chunk chunk;
 		boolean isNew;
-		synchronized (this) {
+		synchronized (lruMutex) {
 			chunk = toc[index];
 			isNew = false;
 			if (chunk == null) {
 				chunk = toc[index] = new Chunk(this, index);
 				isNew = true;
 			}
+			Database.lruPutFirst(chunk, isNew);
 		}
-		Database.lruPutFirst(chunk, isNew);
 		return chunk;
 	}
 
 	// Called by the chunk to set itself free
-	synchronized void freeChunk(int index) {
-		toc[index] = null;
+	void freeChunk(int index) {
+		synchronized (lruMutex) {
+			toc[index] = null;
+		}
 	}
 	
 	/**
@@ -153,7 +155,7 @@ public class Database {
 		Chunk chunk;
 		if (freeblock == 0) {
 			// Out of memory, allocate a new chunk
-			synchronized (this) {
+			synchronized (lruMutex) {
 				Chunk[] oldtoc = toc;
 				int n = oldtoc.length;
 				freeblock = n * CHUNK_SIZE;
@@ -167,8 +169,8 @@ public class Database {
 				toc = new Chunk[n + 1];
 				System.arraycopy(oldtoc, 0, toc, 0, n);
 				toc[n] = chunk = new Chunk(this, n);
+				Database.lruPutFirst(chunk, true);
 			}
-			Database.lruPutFirst(chunk, true);
 		} else {
 			chunk = getChunk(freeblock);
 			removeBlock(chunk, blocksize, freeblock);
@@ -317,43 +319,41 @@ public class Database {
 	}
 	
 	static private final void lruPutFirst(Chunk chunk, boolean isNew) throws CoreException {
-		synchronized (lruMutex) {
-			// If this chunk is already first, we're good
-			if (chunk == lruFirst)
-				return;
-			
-			if (!isNew) {
-				// Remove from current position in cache
-				if (chunk.lruPrev != null) {
-					chunk.lruPrev.lruNext = chunk.lruNext;
-				}
-				if (chunk.lruNext != null) {
-					chunk.lruNext.lruPrev = chunk.lruPrev;
-				} else {
-					// No next => New last
-					lruLast = chunk.lruPrev;
-				}
+		// If this chunk is already first, we're good
+		if (chunk == lruFirst)
+			return;
+		
+		if (!isNew) {
+			// Remove from current position in cache
+			if (chunk.lruPrev != null) {
+				chunk.lruPrev.lruNext = chunk.lruNext;
 			}
-	
-			// Insert at front of cache
-			chunk.lruNext = lruFirst;
-			chunk.lruPrev = null;
-			if (lruFirst != null)
-				lruFirst.lruPrev = chunk;
-			lruFirst = chunk;
-			if (lruLast == null)
-				lruLast = chunk;
-	
-			if (isNew) {
-				// New chunk, see if we need to release one
-				if (lruSize == lruMax) {
-					Chunk last = lruLast;
-					lruLast = last.lruPrev;
-					lruLast.lruNext = null;
-					last.free();
-				} else {
-					++lruSize;
-				}
+			if (chunk.lruNext != null) {
+				chunk.lruNext.lruPrev = chunk.lruPrev;
+			} else {
+				// No next => New last
+				lruLast = chunk.lruPrev;
+			}
+		}
+
+		// Insert at front of cache
+		chunk.lruNext = lruFirst;
+		chunk.lruPrev = null;
+		if (lruFirst != null)
+			lruFirst.lruPrev = chunk;
+		lruFirst = chunk;
+		if (lruLast == null)
+			lruLast = chunk;
+
+		if (isNew) {
+			// New chunk, see if we need to release one
+			if (lruSize == lruMax) {
+				Chunk last = lruLast;
+				lruLast = last.lruPrev;
+				lruLast.lruNext = null;
+				last.free();
+			} else {
+				++lruSize;
 			}
 		}
 	}

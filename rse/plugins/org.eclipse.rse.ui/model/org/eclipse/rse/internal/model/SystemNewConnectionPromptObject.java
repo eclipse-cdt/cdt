@@ -56,7 +56,7 @@ public class SystemNewConnectionPromptObject
      */
     public SystemNewConnectionPromptObject()
     {
-    	systemTypes = RSECorePlugin.getDefault().getRegistry().getSystemTypeNames();
+    	setSystemTypes(RSECorePlugin.getDefault().getRegistry().getSystemTypeNames());
     	isRootPrompt = true;
     }
     /**
@@ -65,7 +65,7 @@ public class SystemNewConnectionPromptObject
     public SystemNewConnectionPromptObject(SystemNewConnectionPromptObject parent, String systemType)
     {
     	this.parent = parent;
-    	this.systemTypes = new String[] {systemType};
+    	setSystemTypes(new String[] {systemType});
     }
     
     // ----------------------------------------------------

@@ -299,9 +299,13 @@ public class CommandFactory {
 		return new MITargetDetach(getMIVersion());
 	}
 
-	public MITargetSelect createMITargetSelect(String[] params) {
-		return new MITargetSelect(getMIVersion(), params);
-	}
+    public MITargetDownload createMITargetDownload(String file) {
+        return new MITargetDownload(getMIVersion(), file);
+    }
+
+    public MITargetSelect createMITargetSelect(String[] params) {
+        return new MITargetSelect(getMIVersion(), params);
+    }
 
 	public MIThreadListIds createMIThreadListIds() {
 		return new MIThreadListIds(getMIVersion());

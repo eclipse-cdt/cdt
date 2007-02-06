@@ -278,27 +278,6 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 		getBreakpointManager().initialize();
 	}
 
-	public void start( boolean stopInMain, boolean resume ) throws DebugException {
-		String stopSymbol = null;
-		try {
-			if ( stopInMain )
-				stopSymbol = getLaunch().getLaunchConfiguration().getAttribute( ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_STOP_AT_MAIN_SYMBOL, ICDTLaunchConfigurationConstants.DEBUGGER_STOP_AT_MAIN_SYMBOL_DEFAULT );
-		}
-		catch( CoreException e ) {
-			throw new DebugException( e.getStatus() );
-		}
-		ICDITargetConfiguration config = getConfiguration();
-		if ( config.supportsBreakpoints() ) {
-			getBreakpointManager().setInitialBreakpoints();
-			if ( stopSymbol != null && stopSymbol.length() != 0 ) {
-				stopAtSymbol( stopSymbol );
-			}
-		}
-		if ( config.supportsResume() && resume ) {
-			resume();
-		}
-	}
-
 	public void start( String stopSymbol, boolean resume ) throws DebugException {
 		ICDITargetConfiguration config = getConfiguration();
 		if ( config.supportsBreakpoints() ) {

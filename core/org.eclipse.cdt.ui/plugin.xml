@@ -1388,6 +1388,17 @@
 		     </adapt>         
          </enabledWhen>
       </page>
+      <page
+            adaptable="true"
+            class="org.eclipse.cdt.internal.ui.language.ProjectLanguageMappingPropertyPage"
+            id="org.eclipse.cdt.ui.projectLanguageMappings"
+            name="%CDTLanguagesProperty.name"
+            objectClass="org.eclipse.core.resources.IProject">
+         <filter
+               name="nature"
+               value="org.eclipse.cdt.core.cnature">
+         </filter>
+      </page>
    </extension>
    <extension
          point="org.eclipse.cdt.ui.PathContainerPage">

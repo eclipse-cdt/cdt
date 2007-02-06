@@ -23,6 +23,7 @@ import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.cpp.CPPASTVisitor;
+import org.eclipse.cdt.core.dom.ast.gnu.Messages;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.model.AbstractLanguage;
 import org.eclipse.cdt.core.model.IContributedModelBuilder;
@@ -62,6 +63,10 @@ public class GPPLanguage extends AbstractLanguage {
 	
 	public String getId() {
 		return ID;
+	}
+	
+	public String getName() {
+		return new String(Messages.getString("GPPLanguage.name")); //$NON-NLS-1$
 	}
 	
 	public Object getAdapter(Class adapter) {

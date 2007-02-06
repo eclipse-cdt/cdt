@@ -43,6 +43,7 @@ import org.eclipse.cdt.core.dom.ast.c.ICASTDesignator;
 import org.eclipse.cdt.core.dom.ast.gnu.c.GCCLanguage;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.model.ILanguage;
+import org.eclipse.cdt.core.model.LanguageManager;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.ast.IASTEnumerator;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
@@ -573,13 +574,9 @@ public class CASTTranslationUnit extends CASTNode implements
 	}
 
     public ParserLanguage getParserLanguage() {
-        return ParserLanguage.C;
+    	return ParserLanguage.C;
     }
 
-    public ILanguage getLanguage() {
-    	// Assuming gnu C for now.
-    	return new GCCLanguage();
-    }
     
     public IIndex getIndex() {
     	return index;

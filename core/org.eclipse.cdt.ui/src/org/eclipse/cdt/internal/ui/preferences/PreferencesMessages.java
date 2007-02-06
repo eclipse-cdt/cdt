@@ -193,6 +193,15 @@ public final class PreferencesMessages extends NLS {
 	public static String CodeFormatterPreferencePage_title;
 	public static String CodeFormatterPreferencePage_description; 
 	
+	public static String ProjectLanguagesPropertyPage_contentTypeColumn;
+	public static String ProjectLanguagesPropertyPage_languageColumn;
+	public static String ProjectLanguagesPropertyPage_addMappingButton;
+	public static String ProjectLanguagesPropertyPage_removeMappingButton;
+	
+	public static String ContentTypeMappingsDialog_title;
+	public static String ContentTypeMappingsDialog_contentType;
+	public static String ContentTypeMappingsDialog_language;
+	
 	static {
 		NLS.initializeMessages(BUNDLE_NAME, PreferencesMessages.class);
 	}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 Symbian Software Systems and others.
+ * Copyright (c) 2006, 2007 Symbian Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  * Andrew Ferguson (Symbian) - Initial implementation
+ * IBM Corporation
  *******************************************************************************/
 package org.eclipse.cdt.internal.pdom.tests;
 
@@ -27,12 +28,15 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPBinding;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.core.model.ILanguage;
+import org.eclipse.cdt.core.model.LanguageManager;
 import org.eclipse.cdt.core.testplugin.CTestPlugin;
 import org.eclipse.cdt.core.testplugin.util.TestSourceReader;
 import org.eclipse.cdt.internal.core.CCoreInternals;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPVisitor;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.osgi.framework.Bundle;
@@ -82,7 +86,18 @@ public abstract class IndexBindingResolutionTestBase extends PDOMTestBase {
 	}
 		
 	protected IBinding getBindingFromASTName(String section, int len) {
-		IASTName[] names= ast.getLanguage().getSelectedNames(ast, testData[1].indexOf(section), len);
+		// get the language from the language manager
+		ILanguage language = null;
+		try {
+			language = LanguageManager.getInstance().getLanguageForFile(ast.getFilePath(), cproject.getProject());
+		} catch (CoreException e) {
+			fail("Unexpected exception while getting language for file.");
+		}
+		
+		
+		assertNotNull("No language for file " + ast.getFilePath().toString(), language);
+		
+		IASTName[] names= language.getSelectedNames(ast, testData[1].indexOf(section), len);
 		assertEquals("<>1 name found for \""+section+"\"", 1, names.length);
 		IBinding binding = names[0].resolveBinding();
 		assertNotNull("No binding for "+names[0].getRawSignature(), binding);
@@ -91,7 +106,17 @@ public abstract class IndexBindingResolutionTestBase extends PDOMTestBase {
 	}
 
 	protected IBinding getProblemFromASTName(String section, int len) {
-		IASTName[] names= ast.getLanguage().getSelectedNames(ast, testData[1].indexOf(section), len);
+		// get the language from the language manager
+		ILanguage language = null;
+		try {
+			language = LanguageManager.getInstance().getLanguageForFile(ast.getFilePath(), cproject.getProject());
+		} catch (CoreException e) {
+			fail("Unexpected exception while getting language for file.");
+		}
+		
+				assertNotNull("No language for file " + ast.getFilePath().toString(), language);
+		
+		IASTName[] names= language.getSelectedNames(ast, testData[1].indexOf(section), len);
 		assertEquals("<>1 name found for \""+section+"\"", 1, names.length);
 		IBinding binding = names[0].resolveBinding();
 		assertNotNull("No binding for "+names[0].getRawSignature(), binding);

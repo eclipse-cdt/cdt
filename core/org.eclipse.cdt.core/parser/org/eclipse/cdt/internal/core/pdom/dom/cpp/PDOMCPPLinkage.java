@@ -96,10 +96,6 @@ class PDOMCPPLinkage extends PDOMLinkage {
 	public static final int CPP_CONSTRUCTOR= PDOMLinkage.LAST_NODE_TYPE + 14;
 	public static final int CPP_REFERENCE_TYPE= PDOMLinkage.LAST_NODE_TYPE + 15;
 
-	public ILanguage getLanguage() {
-		return new GPPLanguage();
-	}
-
 	public PDOMBinding addBinding(IASTName name) throws CoreException {
 		if (name == null || name instanceof ICPPASTQualifiedName)
 			return null;

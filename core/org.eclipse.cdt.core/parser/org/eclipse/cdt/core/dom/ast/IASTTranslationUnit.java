@@ -235,12 +235,5 @@ public interface IASTTranslationUnit extends IASTNode {
      * @param index
      */
     public void setIndex(IIndex index);
-
-    /**
-     * Returns the language for this translation unit.
-     * 
-     * @return language for this translation unit
-     */
-    public ILanguage getLanguage();
     
 }

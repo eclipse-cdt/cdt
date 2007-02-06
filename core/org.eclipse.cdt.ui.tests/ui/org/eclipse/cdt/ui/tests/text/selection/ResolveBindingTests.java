@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2007 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *    Markus Schorn - initial API and implementation
+ *    IBM Corporation
  *******************************************************************************/ 
 
 package org.eclipse.cdt.ui.tests.text.selection;
@@ -15,6 +16,7 @@ import junit.framework.Test;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
 
 import org.eclipse.cdt.core.CCorePlugin;
@@ -27,6 +29,8 @@ import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.core.model.ILanguage;
+import org.eclipse.cdt.core.model.LanguageManager;
 import org.eclipse.cdt.core.testplugin.CProjectHelper;
 import org.eclipse.cdt.ui.tests.BaseUITestCase;
 
@@ -58,7 +62,17 @@ public class ResolveBindingTests extends BaseUITestCase  {
 	}
 
 	private IASTName getSelectedName(IASTTranslationUnit astTU, int offset, int len) {
-		IASTName[] names= astTU.getLanguage().getSelectedNames(astTU, offset, len);
+		// get the language from the language manager
+		ILanguage language = null;
+		try {
+			language = LanguageManager.getInstance().getLanguageForFile(astTU.getFilePath(), fCProject.getProject());
+		} catch (CoreException e) {
+			fail("Unexpected exception while getting language for file.");
+		}
+		
+		assertNotNull("No language for file " + astTU.getFilePath().toString(), language);
+		
+		IASTName[] names= language.getSelectedNames(astTU, offset, len);
 		assertEquals(1, names.length);
 		return names[0];
 	}

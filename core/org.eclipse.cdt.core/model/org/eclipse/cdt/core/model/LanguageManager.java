@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 QNX Software Systems and others.
+ * Copyright (c) 2005, 2007 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,15 +15,24 @@ package org.eclipse.cdt.core.model;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ILinkage;
+import org.eclipse.cdt.internal.core.CContentTypes;
+import org.eclipse.cdt.internal.core.language.LanguageMappingConfiguration;
+import org.eclipse.cdt.internal.core.language.LanguageMappingStore;
 import org.eclipse.cdt.internal.core.model.TranslationUnit;
 import org.eclipse.cdt.internal.core.pdom.dom.IPDOMLinkageFactory;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.SafeRunner;
@@ -47,6 +56,8 @@ public class LanguageManager {
 	private Map fLanguageCache = new HashMap();
 	private Map fPDOMLinkageFactoryCache= new HashMap();
 	private Map fContentTypeToLanguageCache= new HashMap();
+	private Map fLanguageConfigurationCache = new HashMap();
+	private boolean fIsFullyCached;
 	
 	public static LanguageManager getInstance() {
 		if (instance == null)
@@ -95,6 +106,8 @@ public class LanguageManager {
 	}
 	
 	private ILanguage getLanguageForContentTypeID(String contentTypeID) {
+		cacheAllLanguages();
+		
 		ILanguage language = (ILanguage)fContentTypeToLanguageCache.get(contentTypeID);
 		if (language != null || fContentTypeToLanguageCache.containsKey(contentTypeID))
 			return language;
@@ -224,4 +237,169 @@ public class LanguageManager {
 		}
 		return result[0];
 	}
+	
+	public ILanguage[] getRegisteredLanguages() {
+		cacheAllLanguages();
+		ILanguage[] languages = new ILanguage[fLanguageCache.size()];
+		Iterator values = fLanguageCache.values().iterator();
+		for (int i = 0; values.hasNext(); i++) {
+			languages[i] = (ILanguage) values.next();
+		}
+		return languages;
+	}
+
+	private void cacheAllLanguages() {
+		if (fIsFullyCached) {
+			return;
+		}
+		IConfigurationElement[] configs= Platform.getExtensionRegistry().getConfigurationElementsFor(LANGUAGE_EXTENSION_POINT_ID);
+		for (int j = 0; j < configs.length; ++j) {
+			final IConfigurationElement languageElem = configs[j];
+			if (ELEMENT_LANGUAGE.equals(languageElem.getName())) {
+				String langId = getLanguageID(languageElem);  
+				final ILanguage[] result= new ILanguage[]{null};
+				SafeRunner.run(new ISafeRunnable(){
+					public void handleException(Throwable exception) {
+						CCorePlugin.log(exception);
+					}
+
+					public void run() throws Exception {
+						result[0]= (ILanguage)languageElem.createExecutableExtension(ATTRIBUTE_CLASS);
+					}
+				});
+				if (result[0] != null) {
+					fLanguageCache.put(langId, result[0]);
+				}
+			}
+		}
+		fIsFullyCached = true;
+	}
+	
+	public LanguageMappingConfiguration getLanguageMappingConfiguration(IProject project) throws CoreException {
+		LanguageMappingConfiguration mappings = (LanguageMappingConfiguration) fLanguageConfigurationCache.get(project);
+		if (mappings != null) {
+			return mappings;
+		}
+		
+		LanguageMappingStore store = new LanguageMappingStore(project);
+		mappings = store.decodeMappings();
+		fLanguageConfigurationCache.put(project, mappings);
+		return mappings;
+	}
+	
+	public void storeLanguageMappingConfiguration(IProject project) throws CoreException {
+		LanguageMappingConfiguration mappings = (LanguageMappingConfiguration) fLanguageConfigurationCache.get(project);
+		LanguageMappingStore store = new LanguageMappingStore(project);
+		store.storeMappings(mappings);
+	}
+	
+	/**
+	 * @since 4.0
+	 * @return an ILanguage representing the language to be used for the given file
+	 * @param fullPathToFile the full path to the file for which the language is requested
+	 * @param project the IProject that this file is in the context of.  This field cannot be null.
+	 * @throws CoreException 
+	 * TODO:  implement other mapping levels besides project level and content type level
+	 */
+	public ILanguage getLanguageForFile(String fullPathToFile, IProject project) throws CoreException {
+		
+		if(project == null)
+			throw new IllegalArgumentException("project must not be null in call to LanguageManager.getLanguageForFile(String, IProject)");
+		
+		IContentType contentType = CContentTypes.getContentType(project, fullPathToFile);
+		
+		if(contentType == null)
+		{
+			return null;
+		}
+		
+		String contentTypeID = contentType.getId();
+		
+		// TODO: other mappings would go here
+		
+		// Project-level mappings
+		LanguageMappingConfiguration mappings = getLanguageMappingConfiguration(project);
+		if (mappings != null) {
+			String id = (String) mappings.getProjectMappings().get(contentType);
+			if (id != null) {
+				return getLanguage(id);
+			}
+		}
+		
+		// Content type mappings
+		return getLanguageForContentTypeID(contentTypeID);
+	}
+
+	/**
+	 * @since 4.0
+	 * @return an ILanguage representing the language to be used for the given file
+	 * @param pathToFile the path to the file for which the language is requested.
+	 * The path can be either workspace or project relative.
+	 * @param project the project that this file should be parsed in context of.  This field is optional and may
+	 * be set to null.  If the project is null then this method tries to determine the project context via workspace APIs.
+	 * @throws CoreException
+	 * * TODO:  implement other mapping levels besides project level and content type level 
+	 */
+	public ILanguage getLanguageForFile(IPath pathToFile, IProject project) throws CoreException {
+		IResource resource = ResourcesPlugin.getWorkspace().getRoot().getFileForLocation(pathToFile);
+		
+			
+		IContentType contentType = CContentTypes.getContentType(project, pathToFile.toString());
+		
+		if(contentType == null)
+		{
+			return null;
+		}
+		
+		String contentTypeID = contentType.getId();
+				
+		// if we don't have a project but have an IResource then we can infer the project
+		if (project == null && resource != null) {
+			project = ResourcesPlugin.getWorkspace().getRoot().getProject(
+					pathToFile.segment(0));
+
+		}
+		
+		// TODO: other mappings would go here
+		
+		// Project-level mappings
+		LanguageMappingConfiguration mappings = getLanguageMappingConfiguration(project);
+		if (mappings != null) {
+			String id = (String) mappings.getProjectMappings().get(contentType);
+			if (id != null) {
+				return getLanguage(id);
+			}
+		}
+		
+		// Content type mappings
+		return getLanguageForContentTypeID(contentTypeID);
+	}
+
+	/**
+	 * @since 4.0
+	 * @return an ILanguage representing the language to be used for the given file
+	 * @param file the file for which the language is requested
+	 * @throws CoreException
+	 * TODO:  implement other mapping levels besides project level and content type level 
+	 */
+	public ILanguage getLanguageForFile(IFile file) throws CoreException {
+		IProject project = file.getProject();
+		
+		IContentType contentType = CContentTypes.getContentType(project, file.getLocation().toString());
+				
+		// TODO: other mappings would go here
+		
+		// Project-level mappings
+		LanguageMappingConfiguration mappings = getLanguageMappingConfiguration(project);
+		if (mappings != null) {
+			String id = (String) mappings.getProjectMappings().get(contentType.getId());
+			if (id != null) {
+				return getLanguage(id);
+			}
+		}
+		
+		// Content type mappings
+		return getLanguageForContentTypeID(contentType.getId());
+	}
+
 }

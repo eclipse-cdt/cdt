@@ -115,34 +115,28 @@ public class SystemNewConnectionPromptObject
 	 * If this returns null, then SystemViewPromptableAdapter will subsequently
 	 * call {@link #run(Shell)}.
 	 */
-	public ISystemPromptableObject[] getChildren()
-	{
-	    if (!hasChildren())
-	      return null;
-	    
-	   
-	    else if (children == null)
-	    {
-	    	children = new ISystemPromptableObject[systemTypes.length];
-	    	for (int idx=0; idx<children.length; idx++)
-	    	{
-	    		children[idx] = new SystemNewConnectionPromptObject(this, systemTypes[idx]);
-	    	}
-	    }	    	
-	    else
-	    {
-	    	 String[] typeNames = RSECorePlugin.getDefault().getRegistry().getSystemTypeNames();
-	    	 if (typeNames.length != systemTypes.length)
-	    	 {
-	    		 systemTypes = typeNames;
-	    		 children = new ISystemPromptableObject[systemTypes.length];
-	 	    	for (int idx=0; idx<children.length; idx++)
-	 	    	{
-	 	    		children[idx] = new SystemNewConnectionPromptObject(this, systemTypes[idx]);
-	 	    	}
-	    	 }
-	    }
-	    return children;
+	public ISystemPromptableObject[] getChildren() {
+		if (!hasChildren())
+			return null;
+
+		if (children == null) {
+			// Basically, once initialized, the list of system types cannot change, but
+			// it doesn't hurt to check this in case it changes because of future extensions.
+			if (isRootPrompt) {
+				String[] typeNames = RSECorePlugin.getDefault().getRegistry().getSystemTypeNames();
+				if (systemTypes == null || typeNames.length != systemTypes.length)
+					systemTypes = typeNames;
+			}
+
+			if (systemTypes != null) {
+				children = new ISystemPromptableObject[systemTypes.length];
+				for (int idx = 0; idx < children.length; idx++) {
+					children[idx] = new SystemNewConnectionPromptObject(this, systemTypes[idx]);
+				}
+			}
+		}
+
+		return children;
 	}
 	
 	/**
@@ -153,7 +147,7 @@ public class SystemNewConnectionPromptObject
 	
 		// DKM - I think we shouuld indicate children even if there's only one connection type	
 		//if (systemTypes.length == 1)	
-		if (systemTypes.length == 1 && !isRootPrompt)
+		if (systemTypes == null || (systemTypes.length == 1 && !isRootPrompt))
 			return false;
 		else
 		  return true;
@@ -163,38 +157,34 @@ public class SystemNewConnectionPromptObject
 	 * Returns an image descriptor for the image. More efficient than getting the image.
 	 * Calls getImage on the subsystem's owning factory.
 	 */
-	public ImageDescriptor getImageDescriptor()
-	{
+	public ImageDescriptor getImageDescriptor() {
 		if (hasChildren())
-          return RSEUIPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_NEWCONNECTION_ID);
-        else {
-        	IRSESystemType sysType = RSECorePlugin.getDefault().getRegistry().getSystemType(systemTypes[0]);
-        	RSESystemTypeAdapter adapter = (RSESystemTypeAdapter)(sysType.getAdapter(IRSESystemType.class));
-            return adapter.getImageDescriptor(sysType);
-        }
+			return RSEUIPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_NEWCONNECTION_ID);
+		else {
+			IRSESystemType sysType = RSECorePlugin.getDefault().getRegistry().getSystemType(systemTypes[0]);
+			RSESystemTypeAdapter adapter = (RSESystemTypeAdapter)(sysType.getAdapter(IRSESystemType.class));
+			return adapter.getImageDescriptor(sysType);
+		}
 	}
 	
 	/**
 	 * Return the label for this object
 	 */
-	public String getText()
-	{
-		if (newConnText == null)
-		{
-		   if (hasChildren() || systemTypesSet)
-		   {
-			  if (hasChildren())
-			     newConnText = SystemResources.RESID_NEWCONN_PROMPT_LABEL;
-			  else
-			     newConnText = SystemResources.RESID_NEWCONN_PROMPT_LABEL+"..."; //$NON-NLS-1$
-		   }
-		   else
-		   {
-		   	  newConnText = systemTypes[0]+"..."; //$NON-NLS-1$
-		   }
+	public String getText() {
+		if (newConnText == null) {
+			if (isRootPrompt || getSystemTypes().length == 0) {
+				if (hasChildren())
+					newConnText = SystemResources.RESID_NEWCONN_PROMPT_LABEL;
+				else
+					newConnText = SystemResources.RESID_NEWCONN_PROMPT_LABEL + " ..."; //$NON-NLS-1$
+			} else if (getSystemTypes().length > 0) {
+				newConnText = systemTypes[0] + " ..."; //$NON-NLS-1$
+			}
 		}
+
 		return newConnText;
 	}
+	
 	/**
 	 * Return the type label for this object
 	 */
@@ -208,7 +198,7 @@ public class SystemNewConnectionPromptObject
 	
 	/**
 	 * Run this prompt. This should return an appropriate ISystemMessageObject to show
-	 *  as the child, reflecting if it ran successfully, was cancelled or failed. 
+	 * as the child, reflecting if it ran successfully, was cancelled or failed. 
 	 */
 	public Object[] run(Shell shell)
 	{

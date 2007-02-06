@@ -67,7 +67,7 @@ public class CPPTemplateScope extends CPPScope implements ICPPTemplateScope {
 	public IScope getParent() {
 	    ICPPASTTemplateDeclaration templateDecl = (ICPPASTTemplateDeclaration) getPhysicalNode();
 	    IASTName name = CPPTemplates.getTemplateName( templateDecl );
-	    IASTNode p = name.getParent();
+	    IASTNode p = name != null ? name.getParent() : null;
 	    if( p instanceof ICPPASTQualifiedName ){
 	        ICPPASTQualifiedName qual = (ICPPASTQualifiedName) p;
 	        IASTName [] names = qual.getNames();

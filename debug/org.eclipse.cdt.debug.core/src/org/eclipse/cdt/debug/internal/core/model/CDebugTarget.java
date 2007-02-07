@@ -282,8 +282,16 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 		ICDITargetConfiguration config = getConfiguration();
 		if ( config.supportsBreakpoints() ) {
 			getBreakpointManager().setInitialBreakpoints();
+
 			if ( stopSymbol != null && stopSymbol.length() != 0 ) {
-				stopAtSymbol( stopSymbol );
+				// See if the expression is a numeric address
+				try {
+					IAddress address = getAddressFactory().createAddress(stopSymbol);
+					stopAtAddress(address);
+				} catch (NumberFormatException nfexc) {
+					// OK, expression is not a simple, absolute numeric value; keep trucking and try to resolve as expression
+					stopAtSymbol( stopSymbol );	
+				}
 			}
 		}
 		if ( config.supportsResume() && resume ) {
@@ -1733,27 +1741,41 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 		getBreakpointManager().skipBreakpoints( enabled );
 	}
 
-	protected void stopAtSymbol( String stopSymbol ) throws DebugException {
+	/**
+	 * 'stopExpression' is used solely for the error message if the request
+	 * fails. Where to stop is dictated entirely by 'location'
+	 * @param symbol
+	 */
+	private void stopAtLocation(ICDILocation location, String stopExpression ) throws DebugException {
 		try {
-			ICDILocation location = getCDITarget().createFunctionLocation( "", stopSymbol ); //$NON-NLS-1$ 
 			setInternalTemporaryBreakpoint( location );
 		}
 		catch( CoreException e ) {
 			boolean isTerminated = getCDITarget().isTerminated();
 			if ( isTerminated ) {
-				String message = MessageFormat.format( CoreModelMessages.getString( "CDebugTarget.0" ), new String[]{ stopSymbol } ); //$NON-NLS-1$
+				String message = MessageFormat.format( CoreModelMessages.getString( "CDebugTarget.0" ), new String[]{ stopExpression } ); //$NON-NLS-1$
 				MultiStatus status = new MultiStatus( CDebugCorePlugin.getUniqueIdentifier(), IStatus.OK, message, null );
 				status.add( e.getStatus() );
 				throw new DebugException( status );
 			}
-			String message = MessageFormat.format( CoreModelMessages.getString( "CDebugTarget.2" ), new String[]{ stopSymbol, e.getStatus().getMessage() } ); //$NON-NLS-1$
+			String message = MessageFormat.format( CoreModelMessages.getString( "CDebugTarget.2" ), new String[]{ stopExpression, e.getStatus().getMessage() } ); //$NON-NLS-1$
 			IStatus newStatus = new Status( IStatus.WARNING, e.getStatus().getPlugin(), ICDebugInternalConstants.STATUS_CODE_QUESTION, message, null );
 			if ( !CDebugUtils.question( newStatus, this ) ) {
 				throw new DebugException( new Status( IStatus.OK, e.getStatus().getPlugin(), e.getStatus().getCode(), e.getStatus().getMessage(), null ) );
 			}
 		}
 	}
+	
+	protected void stopAtSymbol( String stopSymbol ) throws DebugException {
+		ICDILocation location = getCDITarget().createFunctionLocation( "", stopSymbol ); //$NON-NLS-1$
+		stopAtLocation(location, stopSymbol);			
+	}
 
+	protected void stopAtAddress( IAddress address ) throws DebugException {
+		ICDIAddressLocation location = getCDITarget().createAddressLocation(address.getValue()); 
+		stopAtLocation(location, address.toHexAddressString());			
+	}
+	
 	protected void stopInMain() throws DebugException {
 		String mainSymbol = new String( ICDTLaunchConfigurationConstants.DEBUGGER_STOP_AT_MAIN_SYMBOL_DEFAULT );
 		try {

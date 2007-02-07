@@ -14,9 +14,11 @@
  * {Name} (company) - description of contribution.
  ********************************************************************************/
 
-package org.eclipse.dstore.extra.internal.extra;
+package org.eclipse.dstore.extra;
 
 import java.util.List;
+
+import org.eclipse.dstore.extra.internal.extra.IElement;
 
 public interface IDataElement extends IElement
 {

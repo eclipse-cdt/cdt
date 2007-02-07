@@ -18,6 +18,9 @@ package org.eclipse.dstore.extra.internal.extra;
 
 import java.util.ArrayList;
 
+import org.eclipse.dstore.extra.IDomainListener;
+import org.eclipse.dstore.extra.IDomainNotifier;
+
 public class DomainNotifier implements IDomainNotifier
 {
 

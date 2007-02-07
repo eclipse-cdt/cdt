@@ -14,7 +14,9 @@
  * {Name} (company) - description of contribution.
  ********************************************************************************/
 
-package org.eclipse.dstore.extra.internal.extra;
+package org.eclipse.dstore.extra;
+
+import org.eclipse.dstore.extra.internal.extra.DomainEvent;
 
 public interface IDomainNotifier
 {

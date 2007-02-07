@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2002, 2006 IBM Corporation. All rights reserved.
+ * Copyright (c) 2001, 2006 IBM Corporation and International Business Machines Corporation. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -14,11 +14,16 @@
  * {Name} (company) - description of contribution.
  ********************************************************************************/
 
-package org.eclipse.dstore.extra.internal.extra;
+package org.eclipse.dstore.extra;
 
-public interface IDomainListener
+import org.eclipse.dstore.extra.internal.extra.DomainEvent;
+
+public interface IDomainNotifier
 {
 
-    public boolean listeningTo(DomainEvent e);  
-    public void domainChanged(DomainEvent e);
+
+  public void addDomainListener(IDomainListener listener);
+  public void fireDomainChanged(DomainEvent event);
+  public boolean hasDomainListener(IDomainListener listener);
+  public void removeDomainListener(IDomainListener listener);
 }

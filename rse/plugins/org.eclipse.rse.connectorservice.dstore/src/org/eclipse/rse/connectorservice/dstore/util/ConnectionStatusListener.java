@@ -20,8 +20,8 @@ import java.lang.reflect.InvocationTargetException;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.dstore.core.model.DataElement;
+import org.eclipse.dstore.extra.IDomainListener;
 import org.eclipse.dstore.extra.internal.extra.DomainEvent;
-import org.eclipse.dstore.extra.internal.extra.IDomainListener;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.jface.operation.IRunnableWithProgress;

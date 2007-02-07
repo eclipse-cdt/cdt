@@ -141,7 +141,7 @@ public class RemoteCommandHelpers
 	                if (pwd == null || !pwd.getAbsolutePath().equals(path))
 	                {
 						 String cdCmd = "cd " + PathUtility.enQuoteUnix(path); //$NON-NLS-1$
-	                	 if (!fileSSF.isUnixStyle())
+	                	 if (!fileSSF.isUnixStyle()) 
 	                	 {                	 
 	                	 	if (path.endsWith(":")) //$NON-NLS-1$
 	                	 	{

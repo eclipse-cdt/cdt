@@ -16,6 +16,8 @@
 
 package org.eclipse.dstore.extra.internal.extra;
 
+import org.eclipse.dstore.extra.IDataElement;
+
 public class DataElementActionFilter implements org.eclipse.ui.IActionFilter {
 
 

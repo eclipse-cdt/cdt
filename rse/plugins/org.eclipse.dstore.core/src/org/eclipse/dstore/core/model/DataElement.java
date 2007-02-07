@@ -21,9 +21,9 @@ import java.util.List;
 
 import org.eclipse.dstore.core.util.DataElementRemover;
 import org.eclipse.dstore.core.util.StringCompare;
+import org.eclipse.dstore.extra.IDataElement;
 import org.eclipse.dstore.extra.internal.extra.DataElementActionFilter;
 import org.eclipse.dstore.extra.internal.extra.DesktopElement;
-import org.eclipse.dstore.extra.internal.extra.IDataElement;
 import org.eclipse.dstore.extra.internal.extra.PropertySource;
 
 /**

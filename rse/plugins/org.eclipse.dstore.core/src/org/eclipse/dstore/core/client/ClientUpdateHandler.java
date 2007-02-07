@@ -22,8 +22,8 @@ import org.eclipse.dstore.core.java.IRemoteClassInstance;
 import org.eclipse.dstore.core.model.DE;
 import org.eclipse.dstore.core.model.DataElement;
 import org.eclipse.dstore.core.model.UpdateHandler;
+import org.eclipse.dstore.extra.IDomainNotifier;
 import org.eclipse.dstore.extra.internal.extra.DomainEvent;
-import org.eclipse.dstore.extra.internal.extra.IDomainNotifier;
 
 /**
  * The ClientUpdateHandler is contains a queue of data update requests

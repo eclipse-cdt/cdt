@@ -19,6 +19,7 @@ package org.eclipse.dstore.extra.internal.extra;
 import java.util.HashMap;
 import java.util.List;
 
+import org.eclipse.dstore.extra.IDataElement;
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
 import org.eclipse.ui.views.properties.TextPropertyDescriptor;
 

@@ -16,6 +16,9 @@
 
 package org.eclipse.dstore.extra.internal.extra;
 
+import org.eclipse.dstore.extra.IDomainListener;
+import org.eclipse.dstore.extra.IDomainNotifier;
+
 public class DomainNotifier implements IDomainNotifier 
 {
 

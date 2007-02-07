@@ -23,7 +23,7 @@ public interface IRSESystemTypeProvider {
 	/**
 	 * Returns a list of possible RSE system types to register
 	 * at initialization of the RSE core system. The method will
-	 * be called only once for each provider from {@link RSECoreRegistry}.
+	 * be called only once for each provider from {@link IRSECoreRegistry}.
 	 * The list of the returned RSE system types will be checked
 	 * for duplicates (via the system type id). Duplicates will
 	 * be dropped.

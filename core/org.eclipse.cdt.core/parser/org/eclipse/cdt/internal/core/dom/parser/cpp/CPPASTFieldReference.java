@@ -127,10 +127,12 @@ public class CPPASTFieldReference extends CPPASTNode implements
 			
 			try {
 				IField[] fields = classType.getFields();
-				for (int i = 0; i < fields.length; i++) {
-					char[] potential = fields[i].getNameCharArray();
-					if (CharArrayUtils.equals(potential, 0, name.length, name, false)) {
-						bindings.add(fields[i]);
+				if (fields != null) {
+					for (int i = 0; i < fields.length; i++) {
+						char[] potential = fields[i].getNameCharArray();
+						if (CharArrayUtils.equals(potential, 0, name.length, name, false)) {
+							bindings.add(fields[i]);
+						}
 					}
 				}
 			} catch (DOMException e) {
@@ -138,11 +140,13 @@ public class CPPASTFieldReference extends CPPASTNode implements
 			
 			try {
 				ICPPMethod[] methods = classType.getMethods();
-				for (int i = 0; i < methods.length; i++) {
-					if (!(methods[i] instanceof ICPPConstructor) && !methods[i].isImplicit()) {
-						char[] potential = methods[i].getNameCharArray();
-						if (CharArrayUtils.equals(potential, 0, name.length, name, false)) {
-							bindings.add(methods[i]);
+				if (methods != null) {
+					for (int i = 0; i < methods.length; i++) {
+						if (!(methods[i] instanceof ICPPConstructor) && !methods[i].isImplicit()) {
+							char[] potential = methods[i].getNameCharArray();
+							if (CharArrayUtils.equals(potential, 0, name.length, name, false)) {
+								bindings.add(methods[i]);
+							}
 						}
 					}
 				}

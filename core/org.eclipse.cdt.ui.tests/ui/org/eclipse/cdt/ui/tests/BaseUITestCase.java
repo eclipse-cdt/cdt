@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2007 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -64,8 +64,13 @@ public class BaseUITestCase extends BaseTestCase {
     }
 
 	protected void waitForIndexer(IIndex index, IFile file, int maxmillis) throws Exception {
+		boolean firstTime= true;
 		long endTime= System.currentTimeMillis() + maxmillis;
-		do {
+		while (firstTime || System.currentTimeMillis() < endTime) {
+			if (!firstTime) 
+				Thread.sleep(50);
+			firstTime= false;
+			
 			index.acquireReadLock();
 			try {
 				IIndexFile pfile= index.getFile(IndexLocationFactory.getWorkspaceIFL(file));
@@ -76,9 +81,7 @@ public class BaseUITestCase extends BaseTestCase {
 			finally {
 				index.releaseReadLock();
 			}
-			
-			Thread.sleep(50);
-		} while (System.currentTimeMillis() < endTime);
+		}
 		throw new Exception("Indexer did not complete in time!");
 	}
 	

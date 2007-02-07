@@ -132,11 +132,11 @@ public class BasicCallHierarchyTest extends CallHierarchyBaseTest {
 		doTestEnumerator("enumerator.cpp", "testEnumerator");
 	}
 
-	public void _testAnonymousEnumeratorC_156671() throws Exception {
+	public void testAnonymousEnumeratorC_156671() throws Exception {
 		doTestEnumerator("enumerator.c", "testAnonymousEnumerator");
 	}
 	
-	public void _testAnonymousEnumeratorCpp_156671() throws Exception {
+	public void testAnonymousEnumeratorCpp_156671() throws Exception {
 		doTestEnumerator("enumerator.cpp", "testAnonymousEnumerator");
 	}
 
@@ -178,14 +178,6 @@ public class BasicCallHierarchyTest extends CallHierarchyBaseTest {
 		checkTreeNode(tree, 0, "main()");
 	}
 	
-	public void testStructMembersC() throws Exception {
-		doTestStructMembers("struct_member.c");
-	}
-	
-	public void testStructMembersCpp() throws Exception {
-		doTestStructMembers("struct_member.cpp");
-	}
-	
 	// {testStructMembers}
 	// struct s1 {
 	//    int mem1;
@@ -215,19 +207,19 @@ public class BasicCallHierarchyTest extends CallHierarchyBaseTest {
 	//    i= vt2.mem2; //ref
 	//    i= vt3.mem3; //ref
 	// };
-	private void doTestStructMembers(String filename) throws Exception {
+	public void testStructMembersC() throws Exception {
 		String content = readTaggedComment("testStructMembers");
-		IFile file= createFile(getProject(), filename, content);
+		IFile file= createFile(getProject(), "struct_member.c", content);
 		waitForIndexer(fIndex, file, 1000);
 		IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
 		CEditor editor= (CEditor) IDE.openEditor(page, file);
-
+		
 		editor.selectAndReveal(content.indexOf("mem1"), 0);
 		openCallHierarchy(editor);
 		Tree tree = getCHTreeViewer().getTree();
 		checkTreeNode(tree, 0, "s1::mem1");
 		checkTreeNode(tree, 0, 0, "main()");
-
+		
 		editor.selectAndReveal(content.indexOf("mem2"), 0);
 		openCallHierarchy(editor);
 		checkTreeNode(tree, 0, "s2::mem2");
@@ -236,78 +228,137 @@ public class BasicCallHierarchyTest extends CallHierarchyBaseTest {
 		editor.selectAndReveal(content.indexOf("mem3"), 0);
 		openCallHierarchy(editor);
 		checkTreeNode(tree, 0, "(anon)::mem3");
-
+		
 		editor.selectAndReveal(content.indexOf("mem4"), 0);
 		openCallHierarchy(editor);
 		checkTreeNode(tree, 0, "s4::mem4");
 		checkTreeNode(tree, 0, 0, "main()");
-
+		
 		editor.selectAndReveal(content.indexOf("mem5"), 0);
 		openCallHierarchy(editor);
-		checkTreeNode(tree, 0, "s4::(anon)::mem5");
-
+		checkTreeNode(tree, 0, "(anon)::mem5");
+		
 		editor.selectAndReveal(content.indexOf("mem1; //ref"), 0);
 		openCallHierarchy(editor);
 		checkTreeNode(tree, 0, "s1::mem1");
 		checkTreeNode(tree, 0, 0, "main()");
-
+		
 		editor.selectAndReveal(content.indexOf("mem2; //ref"), 0);
 		openCallHierarchy(editor);
 		checkTreeNode(tree, 0, "s2::mem2");
 		checkTreeNode(tree, 0, 0, "main()");
-
+		
 		editor.selectAndReveal(content.indexOf("mem4."), 0);
 		openCallHierarchy(editor);
 		checkTreeNode(tree, 0, "s4::mem4");
 		checkTreeNode(tree, 0, 0, "main()");
 	}
-
-	public void _testAnonymousStructMembersC_156671() throws Exception {
-		doTestAnonymousStructMembers("anon_struct_member.c");
-	}
 	
-	public void _testAnonymousStructMembersCpp_156671() throws Exception {
-		doTestAnonymousStructMembers("anon_struct_member.cpp");
-	}
-	
-	private void doTestAnonymousStructMembers(String filename) throws Exception {
+	public void testStructMembersCpp() throws Exception {
 		String content = readTaggedComment("testStructMembers");
-		IFile file= createFile(getProject(), filename, content);
+		IFile file= createFile(getProject(), "struct_member.cpp", content);
 		waitForIndexer(fIndex, file, 1000);
 		IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
 		CEditor editor= (CEditor) IDE.openEditor(page, file);
-
+		
+		editor.selectAndReveal(content.indexOf("mem1"), 0);
+		openCallHierarchy(editor);
+		Tree tree = getCHTreeViewer().getTree();
+		checkTreeNode(tree, 0, "s1::mem1");
+		checkTreeNode(tree, 0, 0, "main()");
+		
+		editor.selectAndReveal(content.indexOf("mem2"), 0);
+		openCallHierarchy(editor);
+		checkTreeNode(tree, 0, "s2::mem2");
+		checkTreeNode(tree, 0, 0, "main()");
+		
+		editor.selectAndReveal(content.indexOf("mem3"), 0);
+		openCallHierarchy(editor);
+		checkTreeNode(tree, 0, "(anon)::mem3");
+		
+		editor.selectAndReveal(content.indexOf("mem4"), 0);
+		openCallHierarchy(editor);
+		checkTreeNode(tree, 0, "s4::mem4");
+		checkTreeNode(tree, 0, 0, "main()");
+		
+		editor.selectAndReveal(content.indexOf("mem5"), 0);
+		openCallHierarchy(editor);
+		checkTreeNode(tree, 0, "s4::(anon)::mem5");
+		
+		editor.selectAndReveal(content.indexOf("mem1; //ref"), 0);
+		openCallHierarchy(editor);
+		checkTreeNode(tree, 0, "s1::mem1");
+		checkTreeNode(tree, 0, 0, "main()");
+		
+		editor.selectAndReveal(content.indexOf("mem2; //ref"), 0);
+		openCallHierarchy(editor);
+		checkTreeNode(tree, 0, "s2::mem2");
+		checkTreeNode(tree, 0, 0, "main()");
+		
+		editor.selectAndReveal(content.indexOf("mem4."), 0);
+		openCallHierarchy(editor);
+		checkTreeNode(tree, 0, "s4::mem4");
+		checkTreeNode(tree, 0, 0, "main()");
+	}
+	
+	public void testAnonymousStructMembersC_156671() throws Exception {
+		String content = readTaggedComment("testStructMembers");
+		IFile file= createFile(getProject(), "anon_struct_member.c", content);
+		waitForIndexer(fIndex, file, 1000);
+		IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
+		CEditor editor= (CEditor) IDE.openEditor(page, file);
+		
 		editor.selectAndReveal(content.indexOf("mem3"), 0);
 		openCallHierarchy(editor);
 		Tree tree = getCHTreeViewer().getTree();
 		checkTreeNode(tree, 0, "(anon)::mem3");
 		checkTreeNode(tree, 0, 0, "main()");
-
+		
 		editor.selectAndReveal(content.indexOf("mem5"), 0);
 		openCallHierarchy(editor);
-		checkTreeNode(tree, 0, "s4::(anon)::mem5");
+		checkTreeNode(tree, 0, "(anon)::mem5");
 		checkTreeNode(tree, 0, 0, "main()");
-
+		
 		editor.selectAndReveal(content.indexOf("mem3; //ref"), 0);
 		openCallHierarchy(editor);
 		checkTreeNode(tree, 0, "(anon)::mem3");
 		checkTreeNode(tree, 0, 0, "main()");
-
+		
+		editor.selectAndReveal(content.indexOf("mem5; //ref"), 0);
+		openCallHierarchy(editor);
+		checkTreeNode(tree, 0, "(anon)::mem5");
+		checkTreeNode(tree, 0, 0, "main()");
+	}
+	
+	public void testAnonymousStructMembersCpp_156671() throws Exception {
+		String content = readTaggedComment("testStructMembers");
+		IFile file= createFile(getProject(), "anon_struct_member.cpp", content);
+		waitForIndexer(fIndex, file, 1000);
+		IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
+		CEditor editor= (CEditor) IDE.openEditor(page, file);
+		
+		editor.selectAndReveal(content.indexOf("mem3"), 0);
+		openCallHierarchy(editor);
+		Tree tree = getCHTreeViewer().getTree();
+		checkTreeNode(tree, 0, "(anon)::mem3");
+		checkTreeNode(tree, 0, 0, "main()");
+		
+		editor.selectAndReveal(content.indexOf("mem5"), 0);
+		openCallHierarchy(editor);
+		checkTreeNode(tree, 0, "s4::(anon)::mem5");
+		checkTreeNode(tree, 0, 0, "main()");
+		
+		editor.selectAndReveal(content.indexOf("mem3; //ref"), 0);
+		openCallHierarchy(editor);
+		checkTreeNode(tree, 0, "(anon)::mem3");
+		checkTreeNode(tree, 0, 0, "main()");
+		
 		editor.selectAndReveal(content.indexOf("mem5; //ref"), 0);
 		openCallHierarchy(editor);
 		checkTreeNode(tree, 0, "s4::(anon)::mem5");
 		checkTreeNode(tree, 0, 0, "main()");
 	}
 	
-	
-	public void testUnionMembersC() throws Exception {
-		doTestUnionMembers("union_member.c");
-	}
-	
-	public void testUnionMembersCpp() throws Exception {
-		doTestUnionMembers("union_member.cpp");
-	}
-
 	// {testUnionMembers}
 	// union u1 {
 	//    int mem1;
@@ -342,19 +393,19 @@ public class BasicCallHierarchyTest extends CallHierarchyBaseTest {
 	//    i= vt2.mem2; //ref
 	//    i= vt3.mem3; //ref
 	// };
-	private void doTestUnionMembers(String filename) throws Exception {
+	public void testUnionMembersC() throws Exception {
 		String content = readTaggedComment("testUnionMembers");
-		IFile file= createFile(getProject(), filename, content);
+		IFile file= createFile(getProject(), "union_member.c", content);
 		waitForIndexer(fIndex, file, 1000);
 		IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
 		CEditor editor= (CEditor) IDE.openEditor(page, file);
-
+		
 		editor.selectAndReveal(content.indexOf("mem1"), 0);
 		openCallHierarchy(editor);
 		Tree tree = getCHTreeViewer().getTree();
 		checkTreeNode(tree, 0, "u1::mem1");
 		checkTreeNode(tree, 0, 0, "main()");
-
+		
 		editor.selectAndReveal(content.indexOf("mem2"), 0);
 		openCallHierarchy(editor);
 		checkTreeNode(tree, 0, "u2::mem2");
@@ -363,63 +414,131 @@ public class BasicCallHierarchyTest extends CallHierarchyBaseTest {
 		editor.selectAndReveal(content.indexOf("mem3"), 0);
 		openCallHierarchy(editor);
 		checkTreeNode(tree, 0, "(anon)::mem3");
-
+		
 		editor.selectAndReveal(content.indexOf("mem4"), 0);
 		openCallHierarchy(editor);
 		checkTreeNode(tree, 0, "u4::mem4");
 		checkTreeNode(tree, 0, 0, "main()");
-
+		
 		editor.selectAndReveal(content.indexOf("mem5"), 0);
 		openCallHierarchy(editor);
-		checkTreeNode(tree, 0, "u4::(anon)::mem5");
-
+		checkTreeNode(tree, 0, "(anon)::mem5");
+		
 		editor.selectAndReveal(content.indexOf("mem1; //ref"), 0);
 		openCallHierarchy(editor);
 		checkTreeNode(tree, 0, "u1::mem1");
 		checkTreeNode(tree, 0, 0, "main()");
-
+		
 		editor.selectAndReveal(content.indexOf("mem2; //ref"), 0);
 		openCallHierarchy(editor);
 		checkTreeNode(tree, 0, "u2::mem2");
 		checkTreeNode(tree, 0, 0, "main()");
-
+		
+		editor.selectAndReveal(content.indexOf("mem4."), 0);
+		openCallHierarchy(editor);
+		checkTreeNode(tree, 0, "u4::mem4");
+		checkTreeNode(tree, 0, 0, "main()");
+	}
+	
+	public void testUnionMembersCpp() throws Exception {
+		String content = readTaggedComment("testUnionMembers");
+		IFile file= createFile(getProject(), "union_member.cpp", content);
+		waitForIndexer(fIndex, file, 1000);
+		IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
+		CEditor editor= (CEditor) IDE.openEditor(page, file);
+		
+		editor.selectAndReveal(content.indexOf("mem1"), 0);
+		openCallHierarchy(editor);
+		Tree tree = getCHTreeViewer().getTree();
+		checkTreeNode(tree, 0, "u1::mem1");
+		checkTreeNode(tree, 0, 0, "main()");
+		
+		editor.selectAndReveal(content.indexOf("mem2"), 0);
+		openCallHierarchy(editor);
+		checkTreeNode(tree, 0, "u2::mem2");
+		checkTreeNode(tree, 0, 0, "main()");
+		
+		editor.selectAndReveal(content.indexOf("mem3"), 0);
+		openCallHierarchy(editor);
+		checkTreeNode(tree, 0, "(anon)::mem3");
+		
+		editor.selectAndReveal(content.indexOf("mem4"), 0);
+		openCallHierarchy(editor);
+		checkTreeNode(tree, 0, "u4::mem4");
+		checkTreeNode(tree, 0, 0, "main()");
+		
+		editor.selectAndReveal(content.indexOf("mem5"), 0);
+		openCallHierarchy(editor);
+		checkTreeNode(tree, 0, "u4::(anon)::mem5");
+		
+		editor.selectAndReveal(content.indexOf("mem1; //ref"), 0);
+		openCallHierarchy(editor);
+		checkTreeNode(tree, 0, "u1::mem1");
+		checkTreeNode(tree, 0, 0, "main()");
+		
+		editor.selectAndReveal(content.indexOf("mem2; //ref"), 0);
+		openCallHierarchy(editor);
+		checkTreeNode(tree, 0, "u2::mem2");
+		checkTreeNode(tree, 0, 0, "main()");
+		
 		editor.selectAndReveal(content.indexOf("mem4."), 0);
 		openCallHierarchy(editor);
 		checkTreeNode(tree, 0, "u4::mem4");
 		checkTreeNode(tree, 0, 0, "main()");
 	}
 
-	public void _testAnonymousUnionMembersC_156671() throws Exception {
-		doTestAnonymousUnionMembers("anon_union_member.c");
-	}
-	
-	public void _testAnonymousUnionMembersCpp_156671() throws Exception {
-		doTestAnonymousUnionMembers("anon_union_member.cpp");
-	}
-	
-	private void doTestAnonymousUnionMembers(String filename) throws Exception {
+	public void testAnonymousUnionMembersC_156671() throws Exception {
 		String content = readTaggedComment("testUnionMembers");
-		IFile file= createFile(getProject(), filename, content);
+		IFile file= createFile(getProject(), "anon_union_member.c", content);
 		waitForIndexer(fIndex, file, 1000);
 		IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
 		CEditor editor= (CEditor) IDE.openEditor(page, file);
-
+		
 		editor.selectAndReveal(content.indexOf("mem3"), 0);
 		openCallHierarchy(editor);
 		Tree tree = getCHTreeViewer().getTree();
 		checkTreeNode(tree, 0, "(anon)::mem3");
 		checkTreeNode(tree, 0, 0, "main()");
-
+		
 		editor.selectAndReveal(content.indexOf("mem5"), 0);
 		openCallHierarchy(editor);
-		checkTreeNode(tree, 0, "u4::(anon)::mem5");
+		checkTreeNode(tree, 0, "(anon)::mem5");
 		checkTreeNode(tree, 0, 0, "main()");
-
+		
 		editor.selectAndReveal(content.indexOf("mem3; //ref"), 0);
 		openCallHierarchy(editor);
 		checkTreeNode(tree, 0, "(anon)::mem3");
 		checkTreeNode(tree, 0, 0, "main()");
-
+		
+		editor.selectAndReveal(content.indexOf("mem5; //ref"), 0);
+		openCallHierarchy(editor);
+		checkTreeNode(tree, 0, "(anon)::mem5");
+		checkTreeNode(tree, 0, 0, "main()");
+	}
+	
+	public void testAnonymousUnionMembersCpp_156671() throws Exception {
+		String content = readTaggedComment("testUnionMembers");
+		IFile file= createFile(getProject(), "anon_union_member.cpp", content);
+		waitForIndexer(fIndex, file, 1000);
+		IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
+		CEditor editor= (CEditor) IDE.openEditor(page, file);
+		
+		editor.selectAndReveal(content.indexOf("mem3"), 0);
+		openCallHierarchy(editor);
+		Tree tree = getCHTreeViewer().getTree();
+		checkTreeNode(tree, 0, "(anon)::mem3");
+		checkTreeNode(tree, 0, 0, "main()");
+		
+		editor.selectAndReveal(content.indexOf("mem5"), 0);
+		openCallHierarchy(editor);
+		checkTreeNode(tree, 0, "u4::(anon)::mem5");
+		checkTreeNode(tree, 0, 0, "main()");
+		
+		editor.selectAndReveal(content.indexOf("mem3; //ref"), 0);
+		openCallHierarchy(editor);
+		checkTreeNode(tree, 0, "(anon)::mem3");
+		checkTreeNode(tree, 0, 0, "main()");
+		
 		editor.selectAndReveal(content.indexOf("mem5; //ref"), 0);
 		openCallHierarchy(editor);
 		checkTreeNode(tree, 0, "u4::(anon)::mem5");

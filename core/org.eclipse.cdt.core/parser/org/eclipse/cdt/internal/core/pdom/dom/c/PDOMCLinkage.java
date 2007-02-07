@@ -40,6 +40,7 @@ import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.db.IBTreeComparator;
 import org.eclipse.cdt.internal.core.pdom.dom.FindBinding;
 import org.eclipse.cdt.internal.core.pdom.dom.IPDOMMemberOwner;
+import org.eclipse.cdt.internal.core.pdom.dom.PDOMASTAdapter;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMLinkage;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
@@ -83,10 +84,14 @@ class PDOMCLinkage extends PDOMLinkage {
 				PDOMNode parent = getAdaptedParent(binding);
 				if (parent == null)
 					return null;
+				
+				// assign names to anonymous types.
+				binding= PDOMASTAdapter.getAdapterIfAnonymous(binding);
 
-				if (binding instanceof IParameter)
+				if (binding == null || binding instanceof IParameter)
 					return null; // skip parameters
-				else if (binding instanceof IField) { // must be before IVariable
+				
+				if (binding instanceof IField) { // must be before IVariable
 					if (parent instanceof IPDOMMemberOwner)
 						pdomBinding = new PDOMCField(pdom, (IPDOMMemberOwner)parent, (IField) binding);
 				} else if (binding instanceof IVariable) {
@@ -130,7 +135,7 @@ class PDOMCLinkage extends PDOMLinkage {
 			return null;
 
 		char[] namechars = name.toCharArray();
-		if (namechars == null || name.toCharArray().length == 0)
+		if (namechars == null)
 			return null;
 
 		IBinding binding = name.resolveBinding();
@@ -174,7 +179,13 @@ class PDOMCLinkage extends PDOMLinkage {
 			}
 			// so if the binding is from another pdom it has to be adapted. 
 		}
-
+		else {
+			// assign names to anonymous types.
+			binding= PDOMASTAdapter.getAdapterIfAnonymous(binding);
+			if (binding == null) {
+				return null;
+			}
+		}
 		PDOMNode parent = getAdaptedParent(binding);
 
 		if (parent == this) {

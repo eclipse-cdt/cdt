@@ -241,7 +241,7 @@ public interface IIndex {
 	 *
  	 * This is fully equivalent to 
 	 * <pre>
-	 * findBindings(new Pattern[]{pattern}, isFullyQualified, filter, monitor);
+	 * findBindings(new char[][]{name}, filter, monitor);
 	 * </pre> 
 	 * @param names an array of names, which has to be matched by the qualified name of the bindings.
 	 * @param filter a filter that allows for skipping parts of the index 
@@ -249,7 +249,7 @@ public interface IIndex {
 	 * @return an array of bindings matching the pattern
 	 * @throws CoreException
 	 */
-	public IIndexBinding[] findBindings(char[] names, IndexFilter filter, IProgressMonitor monitor) throws CoreException;
+	public IIndexBinding[] findBindings(char[] name, IndexFilter filter, IProgressMonitor monitor) throws CoreException;
 
 	/**
 	 * Searches the given namespace for all bindings of a given name. 

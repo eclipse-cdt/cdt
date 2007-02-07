@@ -115,22 +115,28 @@ public class CPPImplicitMethod extends CPPImplicitFunction implements ICPPMethod
 				if( dtor instanceof ICPPASTFunctionDeclarator &&
 					CharArrayUtils.equals( name.toCharArray(), getNameCharArray() ) )
 				{
-					IFunctionType t = (IFunctionType) CPPVisitor.createType( dtor );
-					IType [] ps = t.getParameterTypes();
+					IType t0= CPPVisitor.createType( dtor );
 					boolean ok= false;
-					if( ps.length == params.length ){
-						int idx = 0;
-						for( ; idx < ps.length && ps[idx] != null; idx++ ){
-							if( !ps[idx].isSameType(params[idx]) )
-								break;
+					if (t0 instanceof IFunctionType) {
+						IFunctionType t = (IFunctionType) t0;
+						IType [] ps = t.getParameterTypes();
+						if( ps.length == params.length ){
+							int idx = 0;
+							for( ; idx < ps.length && ps[idx] != null; idx++ ){
+								if( !ps[idx].isSameType(params[idx]) )
+									break;
+							}
+							ok= idx == ps.length;
 						}
-						ok= idx == ps.length;
+						else if (ps.length == 0) {
+							if (params.length == 1) {
+								IType t1= params[0];
+								ok = (t1 instanceof IBasicType) && ((IBasicType) t1).getType() == IBasicType.t_void;
+							}
+						}
 					}
-					else if (ps.length == 0) {
-						if (params.length == 1) {
-							IType t1= params[0];
-							ok = (t1 instanceof IBasicType) && ((IBasicType) t1).getType() == IBasicType.t_void;
-						}
+					else {
+						ok= false;
 					}
 					if (ok) {
 						name.setBinding( this );

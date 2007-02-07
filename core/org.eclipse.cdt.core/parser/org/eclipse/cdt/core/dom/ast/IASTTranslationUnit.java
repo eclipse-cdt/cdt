@@ -13,7 +13,6 @@ package org.eclipse.cdt.core.dom.ast;
 
 import org.eclipse.cdt.core.dom.IName;
 import org.eclipse.cdt.core.index.IIndex;
-import org.eclipse.cdt.core.model.ILanguage;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 
 /**

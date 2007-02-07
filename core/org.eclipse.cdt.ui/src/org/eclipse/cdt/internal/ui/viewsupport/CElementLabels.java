@@ -688,7 +688,8 @@ public class CElementLabels {
 					break;
 				}
 			}
-			if (isQualifier) {
+			// types cannot be qualified in plain c
+			if (isQualifier && !isCLanguage(parent)) {
 				int qflags= flags & ~MF_POST_FILE_QUALIFIED;
 				getTypeLabel(parent, qflags, buf);
 				buf.append("::"); //$NON-NLS-1$
@@ -731,6 +732,16 @@ public class CElementLabels {
 		}
 	}
 	
+	private static boolean isCLanguage(ICElement elem) {
+		while (elem != null) {
+			elem= elem.getParent();
+			if (elem instanceof ITranslationUnit) {
+				 return ((ITranslationUnit) elem).isCLanguage();
+			}
+		}
+		return false;
+	}
+
 	/**
 	 * Convert an <code>ASTAccessVisibility</code> into its string representation.
 	 * 

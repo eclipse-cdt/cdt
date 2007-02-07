@@ -48,6 +48,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalFunction;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.db.IBTreeComparator;
 import org.eclipse.cdt.internal.core.pdom.dom.IPDOMMemberOwner;
+import org.eclipse.cdt.internal.core.pdom.dom.PDOMASTAdapter;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMLinkage;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMName;
@@ -102,9 +103,9 @@ class PDOMCPPLinkage extends PDOMLinkage {
 
 		// Check for null name
 		char[] namechars = name.toCharArray();
-		if (namechars == null || namechars.length == 0)
+		if (namechars == null)
 			return null;
-
+		
 		IBinding binding = name.resolveBinding();
 
 		if (binding == null || binding instanceof IProblemBinding) {
@@ -145,6 +146,12 @@ class PDOMCPPLinkage extends PDOMLinkage {
 	private PDOMBinding addBinding(PDOMNode parent, IBinding binding) throws CoreException, DOMException {
 		PDOMBinding pdomBinding= null;
 		
+		// assign names to anonymous types.
+		binding= PDOMASTAdapter.getAdapterIfAnonymous(binding);
+		if (binding == null) {
+			return null;
+		}
+
 		if (binding instanceof ICPPField && parent instanceof PDOMCPPClassType)
 			pdomBinding = new PDOMCPPField(pdom, (PDOMCPPClassType)parent, (ICPPField) binding);
 		else if (binding instanceof ICPPVariable && !(binding.getScope() instanceof CPPBlockScope)) {
@@ -253,6 +260,13 @@ class PDOMCPPLinkage extends PDOMLinkage {
 				return pdomBinding;
 			}
 			// so if the binding is from another pdom it has to be adapted. 
+		}
+		else {
+			// assign names to anonymous types.
+			binding= PDOMASTAdapter.getAdapterIfAnonymous(binding);
+			if (binding == null) {
+				return null;
+			}
 		}
 
 		PDOMNode parent = getAdaptedParent(binding);

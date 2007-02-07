@@ -29,6 +29,7 @@ import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.ICompositeType;
 import org.eclipse.cdt.core.dom.ast.IEnumeration;
+import org.eclipse.cdt.core.dom.ast.IEnumerator;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
@@ -463,6 +464,25 @@ public class IndexBugsTests extends BaseTestCase {
 			assertTrue(aliased instanceof ICPPClassType);
 			assertTrue(((ICPPClassType)aliased).getKey()==ICompositeType.k_struct);
 			assertTrue(((ITypedef) typedef).isSameType((ICompositeType) struct));
+		}
+		finally {
+			fIndex.releaseReadLock();
+		}
+	}
+
+	// enum {e20070206};
+	public void test156671() throws Exception {
+		waitForIndexer();
+		String content= getContentsForTest(1)[0].toString();
+
+		IFile file= TestSourceReader.createFile(fCProject.getProject(), "test156671.cpp", content);
+		TestSourceReader.waitUntilFileIsIndexed(fIndex, file, INDEX_WAIT_TIME);
+
+		fIndex.acquireReadLock();
+		try {
+			IBinding[] bindings= fIndex.findBindings("e20070206".toCharArray(), IndexFilter.getFilter(ILinkage.CPP_LINKAGE_ID), NPM);
+			assertEquals(1, bindings.length);
+			assertTrue(bindings[0] instanceof IEnumerator);
 		}
 		finally {
 			fIndex.releaseReadLock();

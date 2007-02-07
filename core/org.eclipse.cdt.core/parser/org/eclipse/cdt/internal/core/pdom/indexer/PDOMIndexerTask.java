@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2007 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -45,6 +45,7 @@ import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.internal.core.index.IIndexFragmentFile;
 import org.eclipse.cdt.internal.core.index.IWritableIndex;
+import org.eclipse.cdt.internal.core.pdom.dom.PDOMASTAdapter;
 import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
@@ -463,7 +464,10 @@ public abstract class PDOMIndexerTask implements IPDOMIndexerTask {
 		// names
 		ast.accept(new IndexerASTVisitor() {
 			public void visit(IASTName name, IASTName caller) {
+				// assign a location to anonymous types.
+				name= PDOMASTAdapter.getAdapterIfAnonymous(name);
 				IASTFileLocation nameLoc = name.getFileLocation();
+				
 				if (nameLoc != null) {
 					IIndexFileLocation location = findLocation(nameLoc.getFileName());
 					addToMap(symbolMap, 2, location, new IASTName[]{name, caller});

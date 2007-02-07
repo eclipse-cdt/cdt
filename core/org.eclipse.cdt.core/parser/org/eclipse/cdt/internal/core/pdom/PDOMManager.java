@@ -685,8 +685,8 @@ public class PDOMManager implements IPDOMManager, IWritableIndexManager, IListen
 		monitor.beginTask(Messages.PDOMManager_JoinIndexerTask, 1000);
 		long limit= System.currentTimeMillis()+waitMaxMillis;
 		try {
+			int currentTicks= 0;
 			while (true) {
-				int currentTicks= 0;
 				if (monitor.isCanceled()) {
 					return false;
 				}

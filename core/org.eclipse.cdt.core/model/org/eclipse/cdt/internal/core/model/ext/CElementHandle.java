@@ -52,7 +52,14 @@ abstract class CElementHandle implements ICElementHandle, ISourceReference {
 	public CElementHandle(ICElement parent, int type, String name) {
 		fParent= parent;
 		fType= type;
-		fName= name;
+		// anonymous types are assigned a name in the index, we 
+		// undo this here
+		if (name.length() > 0 && name.charAt(0)=='{') {
+			fName= ""; //$NON-NLS-1$
+		}
+		else {
+			fName= name;
+		}
 	}
 	
 	public boolean equals(Object obj) {

@@ -369,8 +369,8 @@ public class CRegister extends CVariable implements IRegister {
 		for( int i = 0; i < events.length; i++ ) {
 			ICDIEvent event = events[i];
 			ICDIObject source = event.getSource();
-			ICDITarget cdiTarget = source.getTarget();
 			if (source != null) {
+				ICDITarget cdiTarget = source.getTarget();
 				if ( event instanceof ICDIResumedEvent ) {
 					if (  getCDITarget().equals( cdiTarget ) ) {
 						setChanged( false );

@@ -70,7 +70,7 @@ public class RemoteSystemsProject extends PlatformObject
 	
 	public void setProject(IProject project) 
 	{
-		SystemBasePlugin.logInfo("Inside setProject"); //$NON-NLS-1$
+		RSECorePlugin.getDefault().getLogger().logInfo("Inside setProject"); //$NON-NLS-1$
 		fProject= project;
 	}
 	/**
@@ -78,7 +78,7 @@ public class RemoteSystemsProject extends PlatformObject
 	 */
 	public void configure() throws CoreException 
 	{
-		SystemBasePlugin.logInfo("Inside configure");		 //$NON-NLS-1$
+		RSECorePlugin.getDefault().getLogger().logInfo("Inside configure");		 //$NON-NLS-1$
 	}
 	/**
 	 * Removes the Java nature from the project.

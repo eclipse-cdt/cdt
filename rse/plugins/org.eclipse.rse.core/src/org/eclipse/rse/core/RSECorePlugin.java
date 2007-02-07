@@ -163,7 +163,7 @@ public class RSECorePlugin extends Plugin {
 	public Logger getLogger() {
 		return logger;
 	}
-
+	
 	/**
 	 * Log an unexpected exception that occurs during the functioning of this class.
 	 * @param t the exception to log

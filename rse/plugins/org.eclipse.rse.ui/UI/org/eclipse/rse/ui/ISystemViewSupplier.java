@@ -14,7 +14,7 @@
  * {Name} (company) - description of contribution.
  ********************************************************************************/
 
-package org.eclipse.rse.core;
+package org.eclipse.rse.ui;
 
 /**
  * You own views launchable from the Remote System Explorer. You must register yourself

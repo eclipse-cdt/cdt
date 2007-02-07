@@ -380,8 +380,9 @@ public class SystemResourceListener implements IResourceChangeListener, Runnable
     }
 
     /**
-     * Process all deltas
-     * CURRENTLY NOT USED. WILL FLESH OUT IN A FUTURE RELEASE AND TRY TO AVOID THE ATOM BOMB APPROACH WE TAKE NOW
+     * Process all deltas.
+     * Currently not used.
+     * WILL FLESH OUT IN A FUTURE RELEASE AND TRY TO AVOID THE ATOM BOMB APPROACH WE TAKE NOW
      */
     protected boolean processDelta(String indent, IResourceDelta delta)
     {
@@ -732,7 +733,7 @@ public class SystemResourceListener implements IResourceChangeListener, Runnable
     }
     
     /**
-     * Re-load the whole RSE from the workspace. This is to be called after a team-sync, say
+     * Re-load the whole RSE from the workspace. This is to be called after a team synchronization.
      */
     public static void reloadRSE()
     {
@@ -760,7 +761,7 @@ public class SystemResourceListener implements IResourceChangeListener, Runnable
          //  1. Close all non-primary RSE perspectives
          //     -- For the primary (last one found with SystemRegistry as the input) RSE perspective, leave it open
          //  2. Close all non-primary views from the primary RSE perspective. Currently, a no-op
-         //  3. Reload the world!
+         //  3. Reload the model.
          //  4. Re-open non-primary views in primary RSE perspective. Currently a no-op
          //  5. Give model change listeners (eg, views) an opportunity to re-load themselves if they need to
 

@@ -195,7 +195,7 @@ public class DOMCompletionProposalComputer extends ParsingBasedProposalComputer 
 			
 			if (argString.length() > 0) {
 				CProposalContextInformation info = new CProposalContextInformation(image, descString, argString);
-				info.setContextInformationPosition(context.getParseOffset());
+				info.setContextInformationPosition(context.getContextInformationOffset());
 				proposal.setContextInformation(info);
 			}
 			
@@ -307,7 +307,7 @@ public class DOMCompletionProposalComputer extends ParsingBasedProposalComputer 
 		
 		if (dispargString.length() > 0) {
 			CProposalContextInformation info = new CProposalContextInformation(image, dispString, dispargString);
-			info.setContextInformationPosition(context.getParseOffset());
+			info.setContextInformationPosition(context.getContextInformationOffset());
 			proposal.setContextInformation(info);
 		}
 		

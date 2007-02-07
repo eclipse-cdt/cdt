@@ -51,6 +51,7 @@ public class CContentAssistInvocationContext extends ContentAssistInvocationCont
 	private ASTCompletionNode fCN= null;
 	private boolean fCNComputed= false;
 	private IIndex fIndex = null;
+	private int fContextInfoPosition;
 	
 	/**
 	 * Creates a new context.
@@ -109,6 +110,9 @@ public class CContentAssistInvocationContext extends ContentAssistInvocationCont
 		
 		fCNComputed = true;
 		
+		int offset = getParseOffset();
+		if (offset < 0) return null;
+		
 		ICProject proj= getProject();
 		if (proj == null) return null;
 		
@@ -129,7 +133,7 @@ public class CContentAssistInvocationContext extends ContentAssistInvocationCont
 				flags = 0;
 			}
 			
-			fCN = fTU.getCompletionNode(fIndex, flags, getParseOffset());
+			fCN = fTU.getCompletionNode(fIndex, flags, offset);
 		} catch (CoreException e) {
 		}
 		
@@ -139,19 +143,35 @@ public class CContentAssistInvocationContext extends ContentAssistInvocationCont
 	public int getParseOffset() {
 		if (!fParseOffsetComputed) {
 			fParseOffsetComputed= true;
+			fContextInfoPosition= guessContextInformationPosition();
 			if (fIsCompletion) {
-				fParseOffset = guessCompletionPosition();
+				fParseOffset = guessCompletionPosition(getInvocationOffset());
+			} else if (fContextInfoPosition > 0) {
+				fParseOffset = guessCompletionPosition(fContextInfoPosition);
 			} else {
-				fParseOffset = guessContextInformationPosition();
+				fParseOffset = -1;
 			}
 		}
 		
 		return fParseOffset;
 	}
+
+	/**
+	 * @return the offset where context information (parameter hints) starts.
+	 */
+	public int getContextInformationOffset() {
+		getParseOffset();
+		return fContextInfoPosition;
+	}
 	
-	protected int guessCompletionPosition() {
-		final int contextPosition= getInvocationOffset();
-		
+	/**
+	 * Try to find a sensible completion position backwards in case the given offset
+	 * is inside a function call argument list.
+	 * 
+	 * @param contextPosition  the starting position
+	 * @return a sensible completion offset
+	 */
+	protected int guessCompletionPosition(int contextPosition) {
 		CHeuristicScanner scanner= new CHeuristicScanner(getDocument());
 		int bound= Math.max(-1, contextPosition - 200);
 		
@@ -162,14 +182,14 @@ public class CContentAssistInvocationContext extends ContentAssistInvocationCont
 		
 		if (token == Symbols.TokenCOMMA) {
 			pos= scanner.findOpeningPeer(pos, bound, '(', ')');
-			if (pos == CHeuristicScanner.NOT_FOUND) return contextPosition; 
+			if (pos == CHeuristicScanner.NOT_FOUND) return contextPosition;
 			
 			token = scanner.previousToken(pos, bound);
 		}
 		
 		if (token == Symbols.TokenLPAREN) {
 			pos= scanner.findNonWhitespaceBackward(pos - 1, bound);
-			if (pos == CHeuristicScanner.NOT_FOUND) return contextPosition; 
+			if (pos == CHeuristicScanner.NOT_FOUND) return contextPosition;
 			
 			token= scanner.previousToken(pos, bound);
 			
@@ -181,6 +201,13 @@ public class CContentAssistInvocationContext extends ContentAssistInvocationCont
 		return contextPosition;
 	}
 	
+	/**
+	 * Try to find the smallest offset inside the opening parenthesis of a function call
+	 * argument list.
+	 * 
+	 * @return the offset of the function call parenthesis plus 1 or -1 if the invocation
+	 *     offset is not inside a function call (or similar)
+	 */
 	protected int guessContextInformationPosition() {
 		final int contextPosition= getInvocationOffset();
 		
@@ -193,20 +220,16 @@ public class CContentAssistInvocationContext extends ContentAssistInvocationCont
 			int paren= scanner.findOpeningPeer(pos, bound, '(', ')');
 			if (paren == CHeuristicScanner.NOT_FOUND)
 				break;
-			paren= scanner.findNonWhitespaceBackward(paren - 1, bound);
-			if (paren == CHeuristicScanner.NOT_FOUND) {
-				break;
-			}
-			int token= scanner.previousToken(paren, bound);
+			int token= scanner.previousToken(paren - 1, bound);
 			// next token must be a method name (identifier) or the closing angle of a
 			// constructor call of a template type.
 			if (token == Symbols.TokenIDENT || token == Symbols.TokenGREATERTHAN) {
 				return paren + 1;
 			}
-			pos= paren;
+			pos= paren - 1;
 		} while (true);
 		
-		return contextPosition;
+		return -1;
 	}
 	
 	/**

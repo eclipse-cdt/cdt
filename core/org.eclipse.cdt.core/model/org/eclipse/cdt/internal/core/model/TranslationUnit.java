@@ -683,7 +683,11 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 	}
 
 	public ILanguage getLanguage() throws CoreException {
-		ILanguage language = LanguageManager.getInstance().getLanguageForFile(getFile());
+	
+		ILanguage language = null;
+		
+		language = LanguageManager.getInstance().getLanguageForFile(getLocation(), getCProject().getProject());
+	
 		return language;
 	}
 

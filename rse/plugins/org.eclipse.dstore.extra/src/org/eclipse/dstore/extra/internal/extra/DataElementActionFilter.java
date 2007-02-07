@@ -32,26 +32,6 @@ public class DataElementActionFilter implements org.eclipse.ui.IActionFilter {
 
 	/**
 	 * Supports Eclipse filtering and enablement.
-	 * eg:<code>
-	 * <extension point="org.eclipse.rse.ui.popupMenus">
-	 *	  <objectContribution id="xyz.perspective.rse.actions.createprojectcontribution"         
-	 *                 subsytemfactoryid="xyz.files"
-	 *                 typecategoryfilter="LIBRARIES">
-	 *  	 <action id="xyz.perspective.rse.actions.createproject"
-	 *            label="%create_xyz_project"
-	 *            tooltip="%create_xyz_project"
-	 *            helpContextId="xyz.perspective.rse01"
-	 *            enablesFor="1"
-	 *            class="xyz.rse.actions.RSECreateXyzProjectAction">
-	 *           <enablement>              	    
-	 *     	    <not> 
-	 *   	             <objectState name="name" value="SPECIAL*"/> 
-	 *	          </not>            
-	 *           </enablement> 
-	 *	        </action>
-	 *	 </objectContribution>
-	 *  </extension>
-	 *	</code>
 	 * 
 	 * The above contribution uses the RSE pop-up extension point to contribute an action 
 	 * to any single RSE object but not anything beginning with SPECIAL.

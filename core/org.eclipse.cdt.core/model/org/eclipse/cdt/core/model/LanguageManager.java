@@ -320,7 +320,7 @@ public class LanguageManager {
 		// Project-level mappings
 		LanguageMappingConfiguration mappings = getLanguageMappingConfiguration(project);
 		if (mappings != null) {
-			String id = (String) mappings.getProjectMappings().get(contentType);
+			String id = (String) mappings.getProjectMappings().get(contentTypeID);
 			if (id != null) {
 				return getLanguage(id);
 			}
@@ -365,7 +365,7 @@ public class LanguageManager {
 		// Project-level mappings
 		LanguageMappingConfiguration mappings = getLanguageMappingConfiguration(project);
 		if (mappings != null) {
-			String id = (String) mappings.getProjectMappings().get(contentType);
+			String id = (String) mappings.getProjectMappings().get(contentTypeID);
 			if (id != null) {
 				return getLanguage(id);
 			}

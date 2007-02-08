@@ -17,8 +17,8 @@
 package org.eclipse.rse.internal.services.dstore.shell;
 
 import org.eclipse.dstore.core.model.DataElement;
+import org.eclipse.dstore.extra.DomainEvent;
 import org.eclipse.dstore.extra.IDomainListener;
-import org.eclipse.dstore.extra.internal.extra.DomainEvent;
 import org.eclipse.rse.services.dstore.shells.DStoreHostOutput;
 import org.eclipse.rse.services.shells.AbstractHostShellOutputReader;
 import org.eclipse.rse.services.shells.IHostOutput;

@@ -19,7 +19,7 @@ package org.eclipse.rse.subsystems.files.dstore.subsystem;
 import java.util.List;
 
 import org.eclipse.dstore.core.model.DataElement;
-import org.eclipse.dstore.extra.internal.extra.DomainEvent;
+import org.eclipse.dstore.extra.DomainEvent;
 import org.eclipse.rse.core.subsystems.RemoteChildrenContentsType;
 import org.eclipse.rse.services.clientserver.SystemSearchString;
 import org.eclipse.rse.services.dstore.search.DStoreSearchResultConfiguration;

@@ -46,7 +46,7 @@ import org.eclipse.dstore.core.util.ExternalLoader;
 import org.eclipse.dstore.core.util.Sender;
 import org.eclipse.dstore.core.util.ssl.DStoreSSLContext;
 import org.eclipse.dstore.core.util.ssl.DataStoreTrustManager;
-import org.eclipse.dstore.extra.internal.extra.DomainNotifier;
+import org.eclipse.dstore.extra.internal.DomainNotifier;
 
 
 /**

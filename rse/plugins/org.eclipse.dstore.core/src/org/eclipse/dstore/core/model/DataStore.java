@@ -48,7 +48,7 @@ import org.eclipse.dstore.core.util.ExternalLoader;
 import org.eclipse.dstore.core.util.StringCompare;
 import org.eclipse.dstore.core.util.XMLgenerator;
 import org.eclipse.dstore.core.util.XMLparser;
-import org.eclipse.dstore.extra.internal.extra.DomainNotifier;
+import org.eclipse.dstore.extra.internal.DomainNotifier;
 
 /**
  * <code>DataStore</code> is the heart of the <code>DataStore</code> Distributed Tooling Framework.

@@ -17,8 +17,8 @@
 package org.eclipse.rse.services.dstore.search;
 
 import org.eclipse.dstore.core.model.DataElement;
+import org.eclipse.dstore.extra.DomainEvent;
 import org.eclipse.dstore.extra.IDomainListener;
-import org.eclipse.dstore.extra.internal.extra.DomainEvent;
 import org.eclipse.rse.services.clientserver.SystemSearchString;
 import org.eclipse.rse.services.search.AbstractSearchResultConfiguration;
 import org.eclipse.rse.services.search.IHostSearchResultSet;

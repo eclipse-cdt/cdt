@@ -858,7 +858,7 @@ public class CModelBuilder2 implements IContributedModelBuilder {
 		// create the element
 		String name= ASTStringUtil.getSimpleName(astTypedefName);
 
-        TypeDef element= new TypeDef(parent, name);
+        final TypeDef element= new TypeDef(parent, name);
 
         String typeName= ASTStringUtil.getSignatureString(declSpecifier, declarator);
 		element.setTypeName(typeName);
@@ -867,15 +867,16 @@ public class CModelBuilder2 implements IContributedModelBuilder {
 		parent.addChild(element);
 
 		// set positions
+		final SourceManipulationInfo info= element.getSourceManipulationInfo();
 		if (name.length() > 0) {
-			setIdentifierPosition(element, astTypedefName);
+			setIdentifierPosition(info, astTypedefName);
 		} else {
-			setIdentifierPosition(element, declSpecifier);
+			setIdentifierPosition(info, declSpecifier);
 		}
 		if (declSpecifier instanceof IASTCompositeTypeSpecifier) {
-			setBodyPosition(element, astTypedefName);
+			setBodyPosition(info, astTypedefName);
 		} else {
-			setBodyPosition(element, declSpecifier.getParent());
+			setBodyPosition(info, declSpecifier.getParent());
 		}
 		return element;
 	}
@@ -895,6 +896,8 @@ public class CModelBuilder2 implements IContributedModelBuilder {
 		final String variableName= ASTStringUtil.getQualifiedName(astVariableName);
 
 		final VariableDeclaration element;
+		final SourceManipulationInfo info;
+
 		if (declarator instanceof IASTFieldDeclarator || parent instanceof IStructure
 				|| CModelBuilder2.getScope(astVariableName) instanceof ICPPClassScope) {
 			// field
@@ -903,8 +906,11 @@ public class CModelBuilder2 implements IContributedModelBuilder {
 				final ICPPASTDeclSpecifier cppSpecifier= (ICPPASTDeclSpecifier)specifier;
 				newElement.setMutable(cppSpecifier.getStorageClass() == ICPPASTDeclSpecifier.sc_mutable);
 			}
-			newElement.setVisibility(getCurrentVisibility());
+			newElement.setTypeName(ASTStringUtil.getSignatureString(specifier, declarator));
+			final FieldInfo fieldInfo= (FieldInfo)newElement.getElementInfo();
+			fieldInfo.setVisibility(getCurrentVisibility());
 			element= newElement;
+			info= fieldInfo;
 		} else {
 			if (isTemplate) {
 				// template variable
@@ -921,8 +927,9 @@ public class CModelBuilder2 implements IContributedModelBuilder {
 					element= newElement;
 				}
 			}
+			element.setTypeName(ASTStringUtil.getSignatureString(specifier, declarator));
+			info= element.getSourceManipulationInfo();
 		}
-		element.setTypeName(ASTStringUtil.getSignatureString(specifier, declarator));
 		element.setConst(specifier.isConst());
 		element.setVolatile(specifier.isVolatile());
 		// TODO [cmodel] correctly resolve isStatic
@@ -931,12 +938,12 @@ public class CModelBuilder2 implements IContributedModelBuilder {
 		parent.addChild(element);
 
 		// set positions
-		setIdentifierPosition(element, astVariableName);
+		setIdentifierPosition(info, astVariableName);
 		if (!isTemplate) {
 			if (specifier instanceof IASTCompositeTypeSpecifier) {
-				setBodyPosition(element, astVariableName);
+				setBodyPosition(info, astVariableName);
 			} else {
-				setBodyPosition(element, specifier.getParent());
+				setBodyPosition(info, specifier.getParent());
 			}
 		}
 		return element;
@@ -961,8 +968,9 @@ public class CModelBuilder2 implements IContributedModelBuilder {
 		final String returnType= ASTStringUtil.getTypeString(declSpecifier, declarator);
 
 		final FunctionDeclaration element;
+		final FunctionInfo info;
 
-		if(declarator instanceof ICPPASTFunctionDeclarator) {
+		if (declarator instanceof ICPPASTFunctionDeclarator) {
 
 			final ICPPASTFunctionDeclarator cppFunctionDeclarator= (ICPPASTFunctionDeclarator)declarator;
 			final IASTName simpleName;
@@ -999,34 +1007,38 @@ public class CModelBuilder2 implements IContributedModelBuilder {
 					methodElement= new Method(parent, ASTStringUtil.getQualifiedName(name));
 				}
 				element= methodElement;
+				// establish identity attributes before getElementInfo()
+				methodElement.setParameterTypes(parameterTypes);
+				methodElement.setReturnType(returnType);
+				methodElement.setConst(cppFunctionDeclarator.isConst());
+				final MethodInfo methodInfo= methodElement.getMethodInfo();
+				info= methodInfo;
 				ICPPMethod methodBinding= null;
 				if (scope != null) {
-					final IBinding binding= simpleName.getBinding();
+					final IBinding binding= simpleName.resolveBinding();
 					if (binding instanceof ICPPMethod) {
 						methodBinding= (ICPPMethod)binding;
 					}
 				}
 				if (methodBinding != null) {
-					methodElement.setVirtual(methodBinding.isVirtual());
-					methodElement.setInline(methodBinding.isInline());
-					methodElement.setFriend(((ICPPASTDeclSpecifier)declSpecifier).isFriend());
-					methodElement.setVolatile(cppFunctionDeclarator.isVolatile());
-					methodElement.setVisibility(adaptVisibilityConstant(methodBinding.getVisibility()));
-					methodElement.setConst(cppFunctionDeclarator.isConst());
-					methodElement.setPureVirtual(false);
+					methodInfo.setVirtual(methodBinding.isVirtual());
+					methodInfo.setInline(methodBinding.isInline());
+					methodInfo.setFriend(((ICPPASTDeclSpecifier)declSpecifier).isFriend());
+					methodInfo.setVolatile(cppFunctionDeclarator.isVolatile());
+					methodInfo.setVisibility(adaptVisibilityConstant(methodBinding.getVisibility()));
+					methodInfo.setPureVirtual(false);
 					methodElement.setConstructor(methodBinding instanceof ICPPConstructor);
 					methodElement.setDestructor(methodBinding.isDestructor());
 				} else {
 					if (declSpecifier instanceof ICPPASTDeclSpecifier) {
 						final ICPPASTDeclSpecifier cppDeclSpecifier= (ICPPASTDeclSpecifier)declSpecifier;
-						methodElement.setVirtual(cppDeclSpecifier.isVirtual());
-						methodElement.setInline(cppDeclSpecifier.isInline());
-						methodElement.setFriend(cppDeclSpecifier.isFriend());
+						methodInfo.setVirtual(cppDeclSpecifier.isVirtual());
+						methodInfo.setInline(cppDeclSpecifier.isInline());
+						methodInfo.setFriend(cppDeclSpecifier.isFriend());
 					}
-					methodElement.setVolatile(cppFunctionDeclarator.isVolatile());
-					methodElement.setVisibility(getCurrentVisibility());
-					methodElement.setConst(cppFunctionDeclarator.isConst());
-					methodElement.setPureVirtual(false);
+					methodInfo.setVolatile(cppFunctionDeclarator.isVolatile());
+					methodInfo.setVisibility(getCurrentVisibility());
+					methodInfo.setPureVirtual(false);
 					final boolean isConstructor;
 					if (scope != null) {
 						isConstructor= CPPVisitor.isConstructor(scope, declarator);
@@ -1044,24 +1056,29 @@ public class CModelBuilder2 implements IContributedModelBuilder {
 					// function
 					element= new Function(parent, ASTStringUtil.getQualifiedName(name));
 				}
+				element.setParameterTypes(parameterTypes);
+				element.setReturnType(returnType);
+				info= element.getFunctionInfo();
+				info.setConst(cppFunctionDeclarator.isConst());
 			}
 
 		} else {
 			element= new Function(parent, functionName);
+			element.setParameterTypes(parameterTypes);
+			element.setReturnType(returnType);
+			info= element.getFunctionInfo();
 		}
 
-		element.setParameterTypes(parameterTypes);
-		element.setReturnType(returnType);
 		// TODO [cmodel] correctly resolve isStatic
-		element.setStatic(declSpecifier.getStorageClass() == IASTDeclSpecifier.sc_static);
+		info.setStatic(declSpecifier.getStorageClass() == IASTDeclSpecifier.sc_static);
 
 		// add to parent
 		parent.addChild(element);
 
 		// set positions
-		setIdentifierPosition(element, name);
+		setIdentifierPosition(info, name);
 		if (!isTemplate) {
-			setBodyPosition(element, functionDeclaration);
+			setBodyPosition(info, functionDeclaration);
 		}
 		return element;
 	}
@@ -1082,8 +1099,9 @@ public class CModelBuilder2 implements IContributedModelBuilder {
 		final String returnType= ASTStringUtil.getTypeString(declSpecifier, declarator);
 
 		final FunctionDeclaration element;
+		final FunctionInfo info;
 
-		if(declarator instanceof ICPPASTFunctionDeclarator) {
+		if (declarator instanceof ICPPASTFunctionDeclarator) {
 			final ICPPASTFunctionDeclarator cppFunctionDeclarator= (ICPPASTFunctionDeclarator)declarator;
 			if (parent instanceof IStructure) {
 				// method
@@ -1094,16 +1112,21 @@ public class CModelBuilder2 implements IContributedModelBuilder {
 					methodElement= new MethodDeclaration(parent, functionName);
 				}
 				element= methodElement;
+				// establish identity attributes before getElementInfo()
+				methodElement.setParameterTypes(parameterTypes);
+				methodElement.setReturnType(returnType);
+				methodElement.setConst(cppFunctionDeclarator.isConst());
+				final MethodInfo methodInfo= methodElement.getMethodInfo();
+				info= methodInfo;
 				if (declSpecifier instanceof ICPPASTDeclSpecifier) {
 					final ICPPASTDeclSpecifier cppDeclSpecifier= (ICPPASTDeclSpecifier)declSpecifier;
-					methodElement.setVirtual(cppDeclSpecifier.isVirtual());
-					methodElement.setInline(cppDeclSpecifier.isInline());
-					methodElement.setFriend(cppDeclSpecifier.isFriend());
+					methodInfo.setVirtual(cppDeclSpecifier.isVirtual());
+					methodInfo.setInline(cppDeclSpecifier.isInline());
+					methodInfo.setFriend(cppDeclSpecifier.isFriend());
 				}
-				methodElement.setVolatile(cppFunctionDeclarator.isVolatile());
-				methodElement.setVisibility(getCurrentVisibility());
-				methodElement.setConst(cppFunctionDeclarator.isConst());
-				methodElement.setPureVirtual(cppFunctionDeclarator.isPureVirtual());
+				methodInfo.setVolatile(cppFunctionDeclarator.isVolatile());
+				methodInfo.setVisibility(getCurrentVisibility());
+				methodInfo.setPureVirtual(cppFunctionDeclarator.isPureVirtual());
 				methodElement.setConstructor(functionName.equals(parent.getElementName()));
 				methodElement.setDestructor(functionName.charAt(0) == '~');
 			} else {
@@ -1112,6 +1135,10 @@ public class CModelBuilder2 implements IContributedModelBuilder {
 				} else {
 					element= new FunctionDeclaration(parent, functionName);
 				}
+				element.setParameterTypes(parameterTypes);
+				element.setReturnType(returnType);
+				info= (FunctionInfo)element.getElementInfo();
+				info.setConst(cppFunctionDeclarator.isConst());
 			}
 		} else if (declarator instanceof IASTStandardFunctionDeclarator) {
 			if (isTemplate) {
@@ -1119,23 +1146,24 @@ public class CModelBuilder2 implements IContributedModelBuilder {
 			} else {
 				element= new FunctionDeclaration(parent, functionName);
 			}
+			element.setParameterTypes(parameterTypes);
+			element.setReturnType(returnType);
+			info= (FunctionInfo)element.getElementInfo();
 		} else {
 			assert false;
 			return null;
 		}
 
-		element.setParameterTypes(parameterTypes);
-		element.setReturnType(returnType);
 		// TODO [cmodel] correctly resolve isStatic
-		element.setStatic(declSpecifier.getStorageClass() == IASTDeclSpecifier.sc_static);
+		info.setStatic(declSpecifier.getStorageClass() == IASTDeclSpecifier.sc_static);
 
 		// add to parent
 		parent.addChild(element);
 
 		// hook up the offsets
-		setIdentifierPosition(element, name);
+		setIdentifierPosition(info, name);
 		if (!isTemplate) {
-			setBodyPosition(element, declarator);
+			setBodyPosition(info, declarator);
 		}
 		return element;
 	}
@@ -1173,12 +1201,23 @@ public class CModelBuilder2 implements IContributedModelBuilder {
 	 *
 	 * @param element
 	 * @param astNode
+	 * @throws CModelException 
 	 */
-	private void setBodyPosition(SourceManipulation element, IASTNode astNode) {
+	private void setBodyPosition(SourceManipulation element, IASTNode astNode) throws CModelException {
+		setBodyPosition(element.getSourceManipulationInfo(), astNode);
+	}
+
+	/**
+	 * Utility method to set the body position of an element from an AST node.
+	 *
+	 * @param info
+	 * @param astNode
+	 */
+	private void setBodyPosition(SourceManipulationInfo info, IASTNode astNode) {
 		final IASTFileLocation location= astNode.getFileLocation();
 		if (location != null) {
-			element.setPos(location.getNodeOffset(), location.getNodeLength());
-			element.setLines(location.getStartingLineNumber(), location.getEndingLineNumber());
+			info.setPos(location.getNodeOffset(), location.getNodeLength());
+			info.setLines(location.getStartingLineNumber(), location.getEndingLineNumber());
 		} else {
 			final IASTNodeLocation[] locations= astNode.getNodeLocations();
 			final IASTFileLocation minLocation= getMinFileLocation(locations);
@@ -1187,10 +1226,10 @@ public class CModelBuilder2 implements IContributedModelBuilder {
 				if (maxLocation != null) {
 					final int startOffset= minLocation.getNodeOffset();
 					final int endOffset= maxLocation.getNodeOffset() + maxLocation.getNodeLength();
-					element.setPos(startOffset, endOffset - startOffset);
+					info.setPos(startOffset, endOffset - startOffset);
 					final int startLine= minLocation.getStartingLineNumber();
 					final int endLine= maxLocation.getEndingLineNumber();
-					element.setLines(startLine, endLine);
+					info.setLines(startLine, endLine);
 				}
 			}
 		}
@@ -1201,12 +1240,23 @@ public class CModelBuilder2 implements IContributedModelBuilder {
 	 *
 	 * @param element
 	 * @param astName
+	 * @throws CModelException 
 	 */
-	private void setIdentifierPosition(SourceManipulation element, IASTNode astName) {
+	private void setIdentifierPosition(SourceManipulation element, IASTNode astName) throws CModelException {
+		setIdentifierPosition(element.getSourceManipulationInfo(), astName);
+	}
+
+	/**
+	 * Utility method to set the identifier position of an element from an AST name.
+	 *
+	 * @param info
+	 * @param astName
+	 */
+	private void setIdentifierPosition(SourceManipulationInfo info, IASTNode astName) {
 		final IASTFileLocation location= astName.getFileLocation();
 		if (location != null) {
 			assert fTranslationUnitFileName.equals(location.getFileName());
-			element.setIdPos(location.getNodeOffset(), location.getNodeLength());
+			info.setIdPos(location.getNodeOffset(), location.getNodeLength());
 		} else {
 			final IASTNodeLocation[] locations= astName.getNodeLocations();
 			final IASTFileLocation minLocation= getMinFileLocation(locations);
@@ -1215,7 +1265,7 @@ public class CModelBuilder2 implements IContributedModelBuilder {
 				if (maxLocation != null) {
 					final int startOffset= minLocation.getNodeOffset();
 					final int endOffset= maxLocation.getNodeOffset() + maxLocation.getNodeLength();
-					element.setIdPos(startOffset, endOffset - startOffset);
+					info.setIdPos(startOffset, endOffset - startOffset);
 				}
 			}
 		}

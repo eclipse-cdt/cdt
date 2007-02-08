@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2006 IBM Corporation and others.
+ * Copyright (c) 2002, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  * Rational Software - Initial API and implementation
  * Markus Schorn (Wind River Systems)
+ * Anton Leherbauer (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.model;
 
@@ -32,15 +33,11 @@ public class MethodDeclaration extends FunctionDeclaration implements IMethodDec
 	}
 	
 	public boolean isConstructor(){
-		// is not implemented in the parser's quick mode
-		//return isConstructor;
-		return getElementName().equals(getParent().getElementName());
+		return isConstructor;
 	}
 
 	public boolean isDestructor() {
-		// is not implemented in the parser's quick mode
-		//return isDestructor;
-		return getElementName().startsWith("~"); //$NON-NLS-1$
+		return isDestructor;
 	}
 
 	public void setConstructor(boolean isConstructor) {
@@ -93,7 +90,6 @@ public class MethodDeclaration extends FunctionDeclaration implements IMethodDec
 
 	public void setConst(boolean isConst) throws CModelException{
 		this.isConst = isConst;
-		getMethodInfo().setConst(isConst);
 	}
 
 	public ASTAccessVisibility getVisibility() throws CModelException{
@@ -108,7 +104,7 @@ public class MethodDeclaration extends FunctionDeclaration implements IMethodDec
 		return new MethodInfo(this);
 	}
 	
-	private MethodInfo getMethodInfo() throws CModelException{
+	protected MethodInfo getMethodInfo() throws CModelException{
 		return (MethodInfo) getElementInfo();
 	}
 	

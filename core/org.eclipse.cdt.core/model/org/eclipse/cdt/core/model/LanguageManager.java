@@ -302,8 +302,7 @@ public class LanguageManager {
 	 * TODO:  implement other mapping levels besides project level and content type level
 	 */
 	public ILanguage getLanguageForFile(String fullPathToFile, IProject project) throws CoreException {
-		
-		if(project == null)
+		if (project == null)
 			throw new IllegalArgumentException("project must not be null in call to LanguageManager.getLanguageForFile(String, IProject)");
 		
 		IContentType contentType = CContentTypes.getContentType(project, fullPathToFile);
@@ -341,25 +340,36 @@ public class LanguageManager {
 	 * * TODO:  implement other mapping levels besides project level and content type level 
 	 */
 	public ILanguage getLanguageForFile(IPath pathToFile, IProject project) throws CoreException {
-		IResource resource = ResourcesPlugin.getWorkspace().getRoot().getFileForLocation(pathToFile);
-		
-			
-		IContentType contentType = CContentTypes.getContentType(project, pathToFile.toString());
-		
-		if(contentType == null)
-		{
-			return null;
+		return getLanguageForFile(pathToFile, project, null);
+	}
+	
+	/**
+	 * @since 4.0
+	 * @return an ILanguage representing the language to be used for the given file
+	 * @param pathToFile the path to the file for which the language is requested.
+	 * The path can be either workspace or project relative.
+	 * @param project the project that this file should be parsed in context of.  This field is optional and may
+	 * be set to null.  If the project is null then this method tries to determine the project context via workspace APIs.
+	 * @param contentTypeID id of the content type, may be <code>null</code>.
+	 * @throws CoreException
+	 * * TODO:  implement other mapping levels besides project level and content type level 
+	 */
+	public ILanguage getLanguageForFile(IPath pathToFile, IProject project, String contentTypeID) throws CoreException {
+		if (project == null) {
+			IResource resource = ResourcesPlugin.getWorkspace().getRoot().getFileForLocation(pathToFile);
+			if (resource == null) {
+				return null;
+			}
+			project= resource.getProject();
 		}
-		
-		String contentTypeID = contentType.getId();
-				
-		// if we don't have a project but have an IResource then we can infer the project
-		if (project == null && resource != null) {
-			project = ResourcesPlugin.getWorkspace().getRoot().getProject(
-					pathToFile.segment(0));
-
+		if (contentTypeID==null) {
+			IContentType ct= CContentTypes.getContentType(project, pathToFile.toString());
+			if (ct == null) {
+				return null;
+			}
+			contentTypeID= ct.getId();
 		}
-		
+								
 		// TODO: other mappings would go here
 		
 		// Project-level mappings
@@ -383,23 +393,43 @@ public class LanguageManager {
 	 * TODO:  implement other mapping levels besides project level and content type level 
 	 */
 	public ILanguage getLanguageForFile(IFile file) throws CoreException {
+		return getLanguageForFile(file, null);
+	}
+	
+	
+	/**
+	 * @since 4.0
+	 * @return an ILanguage representing the language to be used for the given file
+	 * @param file the file for which the language is requested
+	 * @param contentTypeID id of the content type, may be <code>null</code>.
+	 * @throws CoreException
+	 * TODO:  implement other mapping levels besides project level and content type level 
+	 */
+	public ILanguage getLanguageForFile(IFile file, String contentTypeId) throws CoreException {
 		IProject project = file.getProject();
 		
-		IContentType contentType = CContentTypes.getContentType(project, file.getLocation().toString());
-				
+		if (contentTypeId == null) {
+			IContentType contentType= 
+				CContentTypes.getContentType(project, file.getLocation().toString());
+			if (contentType == null) {
+				return null;
+			}
+			contentTypeId= contentType.getId();
+		}
+		
 		// TODO: other mappings would go here
 		
 		// Project-level mappings
 		LanguageMappingConfiguration mappings = getLanguageMappingConfiguration(project);
 		if (mappings != null) {
-			String id = (String) mappings.getProjectMappings().get(contentType.getId());
+			String id = (String) mappings.getProjectMappings().get(contentTypeId);
 			if (id != null) {
 				return getLanguage(id);
 			}
 		}
 		
 		// Content type mappings
-		return getLanguageForContentTypeID(contentType.getId());
+		return getLanguageForContentTypeID(contentTypeId);
 	}
 
 }

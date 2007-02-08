@@ -59,9 +59,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.content.IContentType;
-import org.eclipse.core.runtime.content.IContentTypeManager;
 
 /**
  * @see ITranslationUnit
@@ -70,7 +68,6 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 
 	private IPath location = null;
 	private String contentTypeId;
-	private ILanguage language;
 
 	/**
 	 * If set, this is the problem requestor which will be used to notify problems
@@ -683,23 +680,16 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 	}
 
 	public ILanguage getLanguage() throws CoreException {
-	
 		ILanguage language = null;
-		
-		language = LanguageManager.getInstance().getLanguageForFile(getLocation(), getCProject().getProject());
-	
-		return language;
-	}
 
-	private ILanguage computeLanguage(String contentTypeId) throws CoreException {
-		// Look for the language extension registered against the
-		// content type string
-		IContentTypeManager manager = Platform.getContentTypeManager();
-		IContentType contentType = manager.getContentType(contentTypeId);
-		if (contentType != null) {
-			return LanguageManager.getInstance().getLanguage(contentType);
+		IFile file= getFile();
+		if (file != null) {
+			language= LanguageManager.getInstance().getLanguageForFile(file, contentTypeId);
 		}
-		return null;
+		else {
+			language = LanguageManager.getInstance().getLanguageForFile(getLocation(), getCProject().getProject(), contentTypeId);
+		}
+		return language;
 	}
 
 	public String getContentTypeId() {

@@ -11,7 +11,6 @@
  *******************************************************************************/
 package org.eclipse.tm.terminal;
 
-import java.io.InputStream;
 import java.io.OutputStream;
 
 
@@ -63,11 +62,6 @@ public interface ITerminalConnector {
      */
     OutputStream getOutputStream();
 
-    /**
-     * @return a stream to write to the remote site.
-     */
-    InputStream getInputStream();
-    
 	/**
 	 * Load the state of this connection. Is typically called before 
 	 * {@link #connect(ITerminalControl)}.

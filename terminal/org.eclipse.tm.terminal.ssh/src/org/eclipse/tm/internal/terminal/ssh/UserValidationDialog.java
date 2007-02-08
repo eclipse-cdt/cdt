@@ -9,7 +9,7 @@
  * IBM Corporation - initial API and implementation
  * Martin Oberhuber (Wind River) - copied from org.eclipse.team.cvs.ui
  *******************************************************************************/
-package org.eclipse.tm.terminal.ssh;
+package org.eclipse.tm.internal.terminal.ssh;
 
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;

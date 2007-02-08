@@ -9,7 +9,7 @@
  * Michael Scharf (Wind River) - initial API and implementation
  * Martin Oberhuber (Wind River) - fixed copyright headers and beautified
  *******************************************************************************/
-package org.eclipse.tm.terminal.ssh;
+package org.eclipse.tm.internal.terminal.ssh;
 
 import java.io.IOException;
 import java.io.InputStream;

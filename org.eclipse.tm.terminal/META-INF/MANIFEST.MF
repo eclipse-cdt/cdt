@@ -13,4 +13,6 @@ Eclipse-LazyStart: true
 Bundle-RequiredExecutionEnvironment: J2SE-1.4
 Bundle-ClassPath: .
 Export-Package: org.eclipse.tm.terminal,
- org.eclipse.tm.terminal.control
+ org.eclipse.tm.terminal.control,
+ org.eclipse.tm.terminal.internal.control;x-internal:=true,
+ org.eclipse.tm.terminal.internal.telnet;x-internal:=true

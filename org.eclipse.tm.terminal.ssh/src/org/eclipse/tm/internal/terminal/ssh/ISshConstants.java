@@ -9,7 +9,7 @@
  * IBM Corporation - initial API and implementation
  * Martin Oberhuber (Wind River) - extracted from various team.cvs plugins
  *******************************************************************************/
-package org.eclipse.tm.terminal.ssh;
+package org.eclipse.tm.internal.terminal.ssh;
 
 
 /**

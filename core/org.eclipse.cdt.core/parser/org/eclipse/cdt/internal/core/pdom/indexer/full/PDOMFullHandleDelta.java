@@ -61,7 +61,7 @@ class PDOMFullHandleDelta extends PDOMFullIndexerJob {
 				if (monitor.isCanceled())
 					return;
 				ITranslationUnit tu = (ITranslationUnit)i.next();
-				removeTU(index, tu);
+				removeTU(index, tu, 0);
 				if (tu.isSourceUnit()) {
 					fCompletedSources++;
 				}

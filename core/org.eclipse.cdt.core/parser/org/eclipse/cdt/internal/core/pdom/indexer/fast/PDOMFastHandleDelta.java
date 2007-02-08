@@ -46,7 +46,7 @@ class PDOMFastHandleDelta extends PDOMFastIndexerJob {
 					if (monitor.isCanceled())
 						return;
 					ITranslationUnit tu = (ITranslationUnit)i.next();
-					removeTU(index, tu);
+					removeTU(index, tu, 1);
 					if (tu.isSourceUnit()) {
 						fCompletedSources++;
 					}

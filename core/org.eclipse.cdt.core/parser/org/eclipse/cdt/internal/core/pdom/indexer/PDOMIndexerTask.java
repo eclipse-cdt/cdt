@@ -171,14 +171,14 @@ public abstract class PDOMIndexerTask implements IPDOMIndexerTask {
 		project.accept(new TranslationUnitCollector(sources, headers, allFiles));
 	}
 
-	protected void removeTU(IWritableIndex index, ITranslationUnit tu) throws CoreException, InterruptedException {
-		index.acquireWriteLock(0);
+	protected void removeTU(IWritableIndex index, ITranslationUnit tu, int readlocks) throws CoreException, InterruptedException {
+		index.acquireWriteLock(readlocks);
 		try {
 			IIndexFragmentFile file = (IIndexFragmentFile) index.getFile(getIndexFileLocation(tu));
 			if (file != null)
 				index.clearFile(file);
 		} finally {
-			index.releaseWriteLock(0);
+			index.releaseWriteLock(readlocks);
 		}
 	}
 

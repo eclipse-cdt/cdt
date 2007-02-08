@@ -428,11 +428,16 @@ public class TerminalText implements Runnable, ControlListener {
 
 	/**
 	 * This method executes in the Display thread to process data received from
-	 * the remote host by classes {@link TelnetConnection} and 
-	 * SerialPortHandler. This method must not execute at the same time
-	 * as methods {@link #setNewText(StringBuffer)} and {@link #clearTerminal()}.
+	 * the remote host by class {@link TelnetConnection} and 
+	 * other implementors of {@link ITerminalConnector}, like the 
+	 * SerialPortHandler.
 	 * <p>
-	 * 
+	 * These connectors write text to the terminal's buffer through
+	 * {@link #setNewText(StringBuffer)} and then have this run method
+	 * exectued in the display thread. This method must not execute 
+	 * at the same time as methods {@link #setNewText(StringBuffer)}
+	 * and {@link #clearTerminal()}.
+	 * <p>
 	 * IMPORTANT: This method must be called in strict alternation with method
 	 * {@link #setNewText(StringBuffer)}.
 	 * <p>

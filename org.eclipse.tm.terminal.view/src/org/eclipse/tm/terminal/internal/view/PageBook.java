@@ -1,22 +1,18 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2006 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * IBM Corporation - initial API and implementation (org.eclipse.ui.part.PageBook) 
- * Michael Scharf (Wind River) - consider all children for layout and hiding
+ * Michael Scharf (Wind River) - simplified implementation
  *******************************************************************************/
 package org.eclipse.tm.terminal.internal.view;
 
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.custom.StackLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Layout;
 
 /**
  * A pagebook is a composite control where only a single control is visible
@@ -27,94 +23,14 @@ import org.eclipse.swt.widgets.Layout;
  *
  */
 public class PageBook extends Composite {
-	private Point minimumPageSize = new Point(0, 0);
-
-	/**
-	 * Layout for the page container.
-	 *  
-	 */
-	private class PageBookLayout extends Layout {
-		public Point computeSize(Composite composite, int wHint, int hHint, boolean force) {
-			if (wHint != SWT.DEFAULT && hHint != SWT.DEFAULT)
-				return new Point(wHint, hHint);
-			int x = minimumPageSize.x;
-			int y = minimumPageSize.y;
-			Control[] children = composite.getChildren();
-			for (int i = 0; i < children.length; i++) {
-				Point size = children[i].computeSize(wHint, hHint, force);
-				x = Math.max(x, size.x);
-				y = Math.max(y, size.y);
-			}
-			
-			if (wHint != SWT.DEFAULT) {
-				x = wHint;
-			}
-			if (hHint != SWT.DEFAULT) {
-				y = hHint;
-			}
-			return new Point(x, y);
-		}
-
-		public void layout(Composite composite, boolean force) {
-			Rectangle rect = composite.getClientArea();
-			Control[] children = composite.getChildren();
-			for (int i = 0; i < children.length; i++) {
-                children[i].setBounds(rect);
-			}
-		}
+	private StackLayout fLayout;
+	public PageBook(Composite parent, int style) {
+		super(parent, style);
+		fLayout= new StackLayout();
+		setLayout(fLayout);
 	}
-
-    /**
-     * The current control; <code>null</code> if none.
-     */
-    private Control currentPage = null;
-
-	/**
-     * Creates a new empty pagebook.
-     *
-     * @param parent the parent composite
-     * @param style the SWT style bits (use {@link SWT#NONE})
-     */
-    public PageBook(Composite parent, int style, int minWidth, int minHeight) {
-        super(parent, style);
-        minimumPageSize.x=minWidth;
-        minimumPageSize.y=minHeight;
-        setLayout(new PageBookLayout());
-    }
-
-    /**
-     * Shows the given page. This method has no effect if the given page is not
-     * contained in this pagebook.
-     *
-     * @param page the page to show
-     */
-    public void showPage(Control page) {
-
-        if (page == currentPage) {
-            return;
-        }
-        if (page==null || page.getParent() != this) {
-            return;
-        }
-
-        currentPage = page;
- 
-        // show new page
-        if (!page.isDisposed()) {
-            page.setVisible(true);
-            layout(true);
-            //				if (fRequestFocusOnShowPage)
-            //					page.setFocus();
-        }
-        
-        // hide old *after* new page has been made visible in order to avoid flashing
-        // we have to hide all other pages, because they might be visible
-        // by some other means...
-    	Control[] pages=getChildren();
-    	for (int i = 0; i < pages.length; i++) {
-    		if(pages[i]!=page && !pages[i].isDisposed()) {
-    			pages[i].setVisible(false);
-    		}
-		}
-    }
+	public void showPage(Control page) {
+		fLayout.topControl= page;
+		layout();
+	}
 }

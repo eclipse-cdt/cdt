@@ -121,7 +121,7 @@ class TerminalSettingsDlg extends Dialog {
 		group.setText(ViewMessages.SETTINGS + ":"); //$NON-NLS-1$
 		group.setLayout(new GridLayout());
 		group.setLayoutData(new GridData(GridData.FILL_BOTH));
-		fPageBook=new PageBook(group,SWT.NONE,230,0);
+		fPageBook=new PageBook(group,SWT.NONE);
 		fPageBook.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		
 		

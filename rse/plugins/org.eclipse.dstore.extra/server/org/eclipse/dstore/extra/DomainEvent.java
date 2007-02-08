@@ -14,12 +14,10 @@
  * {Name} (company) - description of contribution.
  ********************************************************************************/
 
-package org.eclipse.dstore.extra.internal.extra;
+package org.eclipse.dstore.extra;
 
 import java.util.List;
 
-import org.eclipse.dstore.extra.IDataElement;
-import org.eclipse.dstore.extra.IDomainNotifier;
 
 public class DomainEvent 
 {

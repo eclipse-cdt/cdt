@@ -14,10 +14,11 @@
  * {Name} (company) - description of contribution.
  ********************************************************************************/
 
-package org.eclipse.dstore.extra.internal.extra;
+package org.eclipse.dstore.extra.internal;
 
-public interface IPropertySource extends org.eclipse.ui.views.properties.IPropertySource
+ 
+public interface IDesktopElement extends org.eclipse.ui.model.IWorkbenchAdapter
 {
 
-
+  
 }

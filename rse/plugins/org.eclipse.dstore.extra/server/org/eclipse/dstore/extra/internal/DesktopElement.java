@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2006 IBM Corporation. All rights reserved.
+ * Copyright (c) 2001, 2006 IBM Corporation and International Business Machines Corporation. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -14,46 +14,19 @@
  * {Name} (company) - description of contribution.
  ********************************************************************************/
 
-package org.eclipse.dstore.extra.internal.extra;
+package org.eclipse.dstore.extra.internal;
 
-import org.eclipse.dstore.extra.IDataElement;
-
-
-
-public class DataElementActionFilter 
+public class DesktopElement
 {
 
-
-    private static String                  _type = "type";
-    private static DataElementActionFilter _instance;
-    
-    public static DataElementActionFilter getInstance() 
-    {
-	if (_instance == null)
-	    _instance = new DataElementActionFilter();
-	return _instance;
-    }
-    
-    /**
-     * @see IActionFilter#testAttribute(Object, String, String)
-     */
-    public boolean testAttribute(Object target, String name, String value) 
-    {
-	if (name.equals(_type)) 
-	    {
-		IDataElement le = (IDataElement)target;
-		if (le.getType().equals(value) || le.isOfType(value))
-		    {
-			return true;
-		    }
-	    }       
-	
-	return false;
-    }
-
+  
     public static boolean matches(Class aClass)
     {
 	return false;
     }
-
+    
+    public static Object getPlatformAdapter(Object obj, Class aClass)
+    {
+	return null;
+    }  
 }

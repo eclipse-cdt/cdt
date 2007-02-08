@@ -14,10 +14,11 @@
  * {Name} (company) - description of contribution.
  ********************************************************************************/
 
-package org.eclipse.dstore.extra.internal.extra;
+package org.eclipse.dstore.extra.internal;
 
 import java.util.ArrayList;
 
+import org.eclipse.dstore.extra.DomainEvent;
 import org.eclipse.dstore.extra.IDomainListener;
 import org.eclipse.dstore.extra.IDomainNotifier;
 

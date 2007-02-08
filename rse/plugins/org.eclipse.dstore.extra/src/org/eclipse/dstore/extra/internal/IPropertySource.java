@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2001, 2006 IBM Corporation and International Business Machines Corporation. All rights reserved.
+ * Copyright (c) 2002, 2006 IBM Corporation. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -14,19 +14,10 @@
  * {Name} (company) - description of contribution.
  ********************************************************************************/
 
-package org.eclipse.dstore.extra.internal.extra;
+package org.eclipse.dstore.extra.internal;
 
-public class DesktopElement
+public interface IPropertySource extends org.eclipse.ui.views.properties.IPropertySource
 {
 
-  
-    public static boolean matches(Class aClass)
-    {
-	return false;
-    }
-    
-    public static Object getPlatformAdapter(Object obj, Class aClass)
-    {
-	return null;
-    }  
+
 }

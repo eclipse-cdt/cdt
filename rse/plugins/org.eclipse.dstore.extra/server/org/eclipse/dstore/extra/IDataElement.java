@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2001, 2007 IBM Corporation and International Business Machines Corporation. All rights reserved.
+ * Copyright (c) 2001, 2006 IBM Corporation and International Business Machines Corporation. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -18,7 +18,7 @@ package org.eclipse.dstore.extra;
 
 import java.util.List;
 
-import org.eclipse.dstore.extra.internal.extra.IElement;
+import org.eclipse.dstore.extra.internal.IElement;
 
 public interface IDataElement extends IElement
 {
@@ -30,8 +30,8 @@ public interface IDataElement extends IElement
     List getNestedData();
     int getNestedSize();
 
+
     Object getElementProperty(Object obj);
     List getAssociated(String key);
-
     boolean isOfType(String typeStr);
 }

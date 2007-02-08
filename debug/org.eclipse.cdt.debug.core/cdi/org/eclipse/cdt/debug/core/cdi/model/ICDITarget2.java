@@ -11,6 +11,7 @@
 
 package org.eclipse.cdt.debug.core.cdi.model;
 
+import org.eclipse.cdt.core.IAddressFactory;
 import org.eclipse.cdt.debug.core.model.IGlobalVariableDescriptor;
 
 public interface ICDITarget2 extends ICDITarget {
@@ -20,5 +21,11 @@ public interface ICDITarget2 extends ICDITarget {
 	 * @return list of globals for the targeted process
 	 */
 	IGlobalVariableDescriptor[] getGlobalVariables();
+
+	/**
+	 * Returns an AddressFactory for use with this target. 
+	 * @return an IAddressFactory.
+	 */
+	IAddressFactory getAddressFactory();
 
 }

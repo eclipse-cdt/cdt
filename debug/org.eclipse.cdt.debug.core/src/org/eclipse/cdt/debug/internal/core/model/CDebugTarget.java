@@ -1625,6 +1625,14 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 					fAddressFactory = file.getAddressFactory();
 				}
 			}
+			else {
+				// No binary file, possible when we do pure assembly level debug
+				// Without any binary file involved, ask CDI plugin for default
+				// AddressFactory, if any.
+				if (fCDITarget instanceof ICDITarget2) {
+					fAddressFactory = ((ICDITarget2) fCDITarget).getAddressFactory();
+				}
+			}
 		}
 		return fAddressFactory;
 	}

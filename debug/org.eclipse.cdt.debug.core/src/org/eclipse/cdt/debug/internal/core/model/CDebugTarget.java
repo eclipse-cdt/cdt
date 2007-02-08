@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
- *     Ken Ryall (Nokia) - bugs 118894, 170027
+ *     Ken Ryall (Nokia) - bugs 118894, 170027, 91771
  *******************************************************************************/
 package org.eclipse.cdt.debug.internal.core.model;
 
@@ -59,6 +59,7 @@ import org.eclipse.cdt.debug.core.cdi.model.ICDIObject;
 import org.eclipse.cdt.debug.core.cdi.model.ICDISharedLibrary;
 import org.eclipse.cdt.debug.core.cdi.model.ICDISignal;
 import org.eclipse.cdt.debug.core.cdi.model.ICDITarget;
+import org.eclipse.cdt.debug.core.cdi.model.ICDITarget2;
 import org.eclipse.cdt.debug.core.cdi.model.ICDITargetConfiguration;
 import org.eclipse.cdt.debug.core.cdi.model.ICDITargetConfiguration2;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIThread;
@@ -1343,12 +1344,22 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 	 * @see org.eclipse.cdt.debug.core.model.IExecFileInfo#getGlobals()
 	 */
 	public IGlobalVariableDescriptor[] getGlobals() throws DebugException {
-		ArrayList list = new ArrayList();
-		IBinaryObject file = getBinaryFile();
-		if (file != null) {
-			list.addAll( getCFileGlobals( file ) );
+		ICDITarget cdiTarget = getCDITarget();
+		IGlobalVariableDescriptor[] globals = new IGlobalVariableDescriptor[0];
+		// If the backend can give us the globals...
+		if (cdiTarget instanceof ICDITarget2)
+			globals = ((ICDITarget2) cdiTarget).getGlobalVariables();
+		// otherwise ask the binary
+		if (globals.length == 0)
+		{
+			ArrayList list = new ArrayList();
+			IBinaryObject file = getBinaryFile();
+			if (file != null) {
+				list.addAll( getCFileGlobals( file ) );
+			}
+			globals =  (IGlobalVariableDescriptor[])list.toArray( new IGlobalVariableDescriptor[list.size()] );			
 		}
-		return (IGlobalVariableDescriptor[])list.toArray( new IGlobalVariableDescriptor[list.size()] );
+		return globals;
 	}
 
 	private List getCFileGlobals( IBinaryObject file ) throws DebugException {

@@ -433,10 +433,10 @@ public class TerminalText implements Runnable, ControlListener {
 	 * SerialPortHandler.
 	 * <p>
 	 * These connectors write text to the terminal's buffer through
-	 * {@link #setNewText(StringBuffer)} and then have this run method
-	 * exectued in the display thread. This method must not execute 
-	 * at the same time as methods {@link #setNewText(StringBuffer)}
-	 * and {@link #clearTerminal()}.
+	 * {@link TerminalControl#writeToTerminal(String)} and then have 
+	 * this run method exectued in the display thread. This method 
+	 * must not execute at the same time as methods 
+	 * {@link #setNewText(StringBuffer)} and {@link #clearTerminal()}.
 	 * <p>
 	 * IMPORTANT: This method must be called in strict alternation with method
 	 * {@link #setNewText(StringBuffer)}.

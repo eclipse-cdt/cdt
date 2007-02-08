@@ -77,6 +77,14 @@ public class AST2BaseTest extends BaseTestCase {
 	
     private static final IParserLogService NULL_LOG = new NullLogService();
 
+    public AST2BaseTest() {
+    	super();
+    }
+    
+    public AST2BaseTest(String name) {
+    	super(name);
+    }
+    
     protected IASTTranslationUnit parse( String code, ParserLanguage lang ) throws ParserException {
     	return parse(code, lang, false, true );
     }

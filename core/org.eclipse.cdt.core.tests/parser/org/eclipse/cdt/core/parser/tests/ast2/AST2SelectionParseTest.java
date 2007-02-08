@@ -48,6 +48,13 @@ import org.eclipse.core.resources.IFile;
  */
 public class AST2SelectionParseTest extends AST2SelectionParseBaseTest {
 
+	public AST2SelectionParseTest() {
+	}
+
+	public AST2SelectionParseTest(String name, Class className) {
+		super(name, className);
+	}
+
 	public AST2SelectionParseTest(String name) {
 		super(name, AST2SelectionParseTest.class);
 	}

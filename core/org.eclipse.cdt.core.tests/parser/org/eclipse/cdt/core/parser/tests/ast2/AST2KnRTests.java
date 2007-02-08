@@ -55,7 +55,15 @@ import org.eclipse.cdt.internal.core.dom.parser.c.ICInternalBinding;
  * @author dsteffle
  */
 public class AST2KnRTests extends AST2BaseTest {
-    public void testSimpleKRCTest1() throws Exception {
+	
+    public AST2KnRTests() {
+	}
+
+	public AST2KnRTests(String name) {
+		super(name);
+	}
+
+	public void testSimpleKRCTest1() throws Exception {
     	StringBuffer buffer = new StringBuffer(); //$NON-NLS-1$
     	buffer.append( "int f(char x);\n" ); //$NON-NLS-1$
     	buffer.append( "int f(x) char x;\n" ); //$NON-NLS-1$

@@ -52,6 +52,14 @@ import junit.framework.TestCase;
 public class AST2SpecBaseTest extends TestCase {
     private static final IParserLogService NULL_LOG = new NullLogService();
 
+	public AST2SpecBaseTest() {
+		super();
+	}
+
+	public AST2SpecBaseTest(String name) {
+		super(name);
+	}
+
 	/**
 	 * checkSemantics is used to specify whether the example should have semantics checked
 	 * since several spec examples have syntactically correct code ONLY this flag was added

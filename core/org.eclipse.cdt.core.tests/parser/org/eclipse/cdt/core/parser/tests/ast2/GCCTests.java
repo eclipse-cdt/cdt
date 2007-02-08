@@ -31,7 +31,14 @@ import org.eclipse.cdt.core.parser.ParserLanguage;
  */
 public class GCCTests extends AST2BaseTest {
 
-    public void testGCC20000113() throws Exception {
+    public GCCTests() {
+	}
+
+	public GCCTests(String name) {
+		super(name);
+	}
+
+	public void testGCC20000113() throws Exception {
         StringBuffer buffer = new StringBuffer();
         buffer.append( "struct x {                           \n" ); //$NON-NLS-1$
         buffer.append( "   unsigned x1:1;                    \n" ); //$NON-NLS-1$

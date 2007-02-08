@@ -94,7 +94,13 @@ public class CompleteParser2Tests extends TestCase {
 
     private static final NullLogService NULL_LOG = new NullLogService();
     
-    static private class CPPNameCollector extends CPPASTVisitor {
+    public CompleteParser2Tests() {
+	}
+	public CompleteParser2Tests(String name) {
+		super(name);
+	}
+
+	static private class CPPNameCollector extends CPPASTVisitor {
         {
             shouldVisitNames = true;
         }

@@ -18,6 +18,13 @@ import org.eclipse.cdt.internal.core.parser.ParserException;
  */
 public class AST2CPPSpecTest extends AST2SpecBaseTest {
 
+	public AST2CPPSpecTest() {
+	}
+
+	public AST2CPPSpecTest(String name) {
+		super(name);
+	}
+	
 	/**
 	 * Note:  Each example should have the example in a comment before
 	 * the tested method with the following format:
@@ -38,6 +45,8 @@ public class AST2CPPSpecTest extends AST2SpecBaseTest {
 	 *
 	 */
 	
+	
+
 	/**
 	 [--Start Example(CPP 2.4-5):
 	 int x=x+++++y;

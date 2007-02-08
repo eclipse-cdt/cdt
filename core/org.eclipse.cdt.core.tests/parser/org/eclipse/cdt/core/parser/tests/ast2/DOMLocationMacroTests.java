@@ -31,7 +31,14 @@ import org.eclipse.cdt.internal.core.parser.ParserException;
 
 public class DOMLocationMacroTests extends AST2BaseTest {
 
-    public void testObjectStyleMacroExpansionSimpleDeclarator() throws Exception
+    public DOMLocationMacroTests() {
+	}
+
+	public DOMLocationMacroTests(String name) {
+		super(name);
+	}
+
+	public void testObjectStyleMacroExpansionSimpleDeclarator() throws Exception
     {
         StringBuffer buffer = new StringBuffer( "#define ABC D\n" ); //$NON-NLS-1$
         buffer.append( "int ABC;"); //$NON-NLS-1$

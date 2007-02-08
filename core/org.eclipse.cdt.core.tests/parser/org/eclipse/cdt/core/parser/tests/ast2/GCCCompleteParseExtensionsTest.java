@@ -35,6 +35,13 @@ import org.eclipse.cdt.internal.core.parser.ParserException;
  */
 public class GCCCompleteParseExtensionsTest extends AST2BaseTest {
 
+	public GCCCompleteParseExtensionsTest() {
+	}
+
+	public GCCCompleteParseExtensionsTest(String name) {
+		super(name);
+	}
+
 	private IASTTranslationUnit parseGCC(String code) throws ParserException {
 		IASTTranslationUnit tu = parse(code, ParserLanguage.C, true, true); 
 		

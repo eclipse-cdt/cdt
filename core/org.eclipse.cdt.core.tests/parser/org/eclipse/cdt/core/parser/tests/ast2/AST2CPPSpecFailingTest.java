@@ -21,6 +21,15 @@ import org.eclipse.cdt.core.parser.ParserLanguage;
  */
 public class AST2CPPSpecFailingTest extends AST2SpecBaseTest {
 
+	
+	
+	public AST2CPPSpecFailingTest() {
+	}
+
+	public AST2CPPSpecFailingTest(String name) {
+		super(name);
+	}
+
 	/**
 	 [--Start Example(CPP 2.3-2):
 	 ??=define arraycheck(a,b) a??(b??) ??!??! b??(a??)

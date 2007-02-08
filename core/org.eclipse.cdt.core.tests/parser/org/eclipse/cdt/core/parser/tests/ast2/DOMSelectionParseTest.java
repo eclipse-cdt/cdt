@@ -43,6 +43,13 @@ import org.eclipse.core.resources.IFile;
  */
 public class DOMSelectionParseTest extends DOMSelectionParseBaseTest {
 
+	public DOMSelectionParseTest() {
+	}
+
+	public DOMSelectionParseTest(String name, Class className) {
+		super(name, className);
+	}
+
 	public DOMSelectionParseTest(String name) {
 		super(name, DOMSelectionParseTest.class);
 	}

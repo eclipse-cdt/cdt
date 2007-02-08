@@ -101,6 +101,15 @@ public class AST2Tests extends AST2BaseTest {
     	return suite(AST2Tests.class);
     }
     
+    public AST2Tests() {
+    	super();
+    }
+    
+    public AST2Tests(String name) {
+    	super(name);
+    }
+    
+    
     public void testBug75189() throws Exception {
         parseAndCheckBindings( "struct A{};typedef int (*F) (A*);" ); //$NON-NLS-1$
     }

@@ -107,7 +107,14 @@ import org.eclipse.cdt.internal.core.parser.ParserException;
 public class AST2CPPTests extends AST2BaseTest {
     
     
-    public void testBug102825() throws Exception {
+    public AST2CPPTests() {
+	}
+
+	public AST2CPPTests(String name) {
+		super(name);
+	}
+
+	public void testBug102825() throws Exception {
         StringBuffer buffer = new StringBuffer("#define CURLOPTTYPE_OBJECTPOINT   10000\n" ); //$NON-NLS-1$
         buffer.append("#define CINIT(name,type,number) CURLOPT_ ## name = CURLOPTTYPE_ ## type + number\n" ); //$NON-NLS-1$
         buffer.append("typedef enum {\n" ); //$NON-NLS-1$

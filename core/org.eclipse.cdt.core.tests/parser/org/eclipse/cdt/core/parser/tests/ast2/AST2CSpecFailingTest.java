@@ -17,6 +17,13 @@ import org.eclipse.cdt.core.parser.ParserLanguage;
  */
 public class AST2CSpecFailingTest extends AST2SpecBaseTest {
 
+	public AST2CSpecFailingTest() {
+	}
+
+	public AST2CSpecFailingTest(String name) {
+		super(name);
+	}
+
 	/**
 	 [--Start Example(C 6.7.7-6):
 	typedef signed int t;

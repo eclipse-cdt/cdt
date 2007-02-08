@@ -61,6 +61,13 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPVisitor;
  */
 public class AST2TemplateTests extends AST2BaseTest {
 	
+	public AST2TemplateTests() {
+	}
+
+	public AST2TemplateTests(String name) {
+		super(name);
+	}
+
 	public void testBasicClassTemplate() throws Exception {
 		IASTTranslationUnit tu = parse( "template <class T> class A{ T t; };", ParserLanguage.CPP ); //$NON-NLS-1$
         CPPNameCollector col = new CPPNameCollector();

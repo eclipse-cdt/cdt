@@ -46,7 +46,14 @@ import org.eclipse.core.resources.IFile;
  */
 public class AST2SelectionParseBaseTest extends FileBasePluginTest {
 
-    private static final IParserLogService NULL_LOG = new NullLogService();
+    public AST2SelectionParseBaseTest() {
+	}
+
+	public AST2SelectionParseBaseTest(String name) {
+		super(name);
+	}
+
+	private static final IParserLogService NULL_LOG = new NullLogService();
         
 	public AST2SelectionParseBaseTest(String name, Class className) {
 		super(name, className);

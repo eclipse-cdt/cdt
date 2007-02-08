@@ -21,6 +21,13 @@ import org.eclipse.core.resources.IFile;
  */
 public class CDOMBaseTest extends FileBasePluginTest {
 
+	public CDOMBaseTest() {
+	}
+
+	public CDOMBaseTest(String name) {
+		super(name);
+	}
+
 	public CDOMBaseTest(String name, Class className) {
 		super(name, className);
 	}

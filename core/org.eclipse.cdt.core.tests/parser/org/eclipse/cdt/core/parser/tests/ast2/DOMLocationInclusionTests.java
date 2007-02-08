@@ -45,7 +45,14 @@ import org.eclipse.core.runtime.content.IContentType;
  */
 public class DOMLocationInclusionTests extends AST2FileBasePluginTest {
 
-    public void testBug97967() throws Exception {
+    public DOMLocationInclusionTests() {
+	}
+
+	public DOMLocationInclusionTests(String name, Class className) {
+		super(name, className);
+	}
+
+	public void testBug97967() throws Exception {
         StringBuffer buffer = new StringBuffer();
         buffer.append("#ifndef _INCLUDE_H_\n"); //$NON-NLS-1$
         buffer.append("#define _INCLUDE_H_\n"); //$NON-NLS-1$

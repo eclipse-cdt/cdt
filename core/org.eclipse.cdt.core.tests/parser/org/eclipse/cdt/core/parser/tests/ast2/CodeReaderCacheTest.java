@@ -28,6 +28,13 @@ import org.eclipse.core.runtime.jobs.Job;
  */
 public class CodeReaderCacheTest extends CDOMBaseTest {
 	
+	public CodeReaderCacheTest() {
+	}
+
+	public CodeReaderCacheTest(String name, Class className) {
+		super(name, className);
+	}
+
 	public CodeReaderCacheTest(String name) {
 		super(name, CodeReaderCacheTest.class);
 	}

@@ -18,6 +18,11 @@ import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 
 public class AST2UtilOldTests extends AST2BaseTest {
+	public AST2UtilOldTests() {
+	}
+	public AST2UtilOldTests(String name) {
+		super(name);
+	}
 	// Kind PRIMARY_EMPTY : void
 	public void testPrimaryEmpty() throws Exception
 	{

@@ -48,7 +48,14 @@ public class AST2FileBasePluginTest extends TestCase {
     static Class					className;
 	static ICProject cPrj; 
 
-    private void initialize(Class aClassName){
+    public AST2FileBasePluginTest() {
+	}
+
+	public AST2FileBasePluginTest(String name) {
+		super(name);
+	}
+
+	private void initialize(Class aClassName){
         if( CCorePlugin.getDefault() != null && CCorePlugin.getDefault().getCoreModel() != null){
 			//(CCorePlugin.getDefault().getCoreModel().getIndexManager()).reset();
 			monitor = new NullProgressMonitor();

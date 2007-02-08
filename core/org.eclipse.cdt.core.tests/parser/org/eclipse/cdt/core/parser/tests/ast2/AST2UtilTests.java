@@ -27,6 +27,13 @@ import org.eclipse.cdt.core.parser.ParserLanguage;
  * @author dsteffle
  */
 public class AST2UtilTests extends AST2BaseTest {
+	public AST2UtilTests() {
+	}
+
+	public AST2UtilTests(String name) {
+		super(name);
+	}
+
 	public void testSimpleSignature() throws Exception {
 	    StringBuffer buff = new StringBuffer();
 	    buff.append("int l, m, n=0;\n"); //$NON-NLS-1$

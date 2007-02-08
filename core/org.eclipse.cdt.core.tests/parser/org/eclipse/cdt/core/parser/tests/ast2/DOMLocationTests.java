@@ -63,7 +63,10 @@ import org.eclipse.cdt.internal.core.parser.ParserException;
  */
 public class DOMLocationTests extends AST2BaseTest {
 
-    private static final String _TEXT_ = "<text>"; //$NON-NLS-1$
+    public DOMLocationTests() {
+	}
+
+	private static final String _TEXT_ = "<text>"; //$NON-NLS-1$
 
 	public DOMLocationTests(String name) {
 		setName(name);

@@ -17,6 +17,13 @@ import org.eclipse.cdt.core.parser.ParserLanguage;
  */
 public class AST2CSpecTest extends AST2SpecBaseTest {
 
+	public AST2CSpecTest() {
+	}
+
+	public AST2CSpecTest(String name) {
+		super(name);
+	}
+
 	/**
 	 [--Start Example(C 4-6):
 	#ifdef _ _STDC_IEC_559_ _ // FE_UPWARD defined 

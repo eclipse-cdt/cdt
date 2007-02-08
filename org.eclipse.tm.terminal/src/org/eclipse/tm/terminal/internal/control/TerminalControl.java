@@ -17,7 +17,6 @@
 package org.eclipse.tm.terminal.internal.control;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.SocketException;
 
@@ -451,15 +450,6 @@ public class TerminalControl implements ITerminalControlForText, ITerminalContro
 				.isOptionEnabled(Logger.TRACE_DEBUG_LOG_BUFFER_SIZE);
 	}
 
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.tm.terminal.ITerminalControl#getInputStream()
-	 */
-	public InputStream getInputStream() {
-		if(fConnector!=null)
-			return fConnector.getInputStream();
-		return null;
-	}
 
 	public OutputStream getOutputStream() {
 		if(fConnector!=null)

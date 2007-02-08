@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2005 IBM Corporation and others.
+ * Copyright (c) 2004, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -3811,7 +3811,7 @@ public class AST2CPPTests extends AST2BaseTest {
         tu.accept(col);
 
         IASTName f = col.getName(5);
-        f.resolvePrefix();
+        f.getCompletionContext().findBindings(f, true);
     }
 
     public void testBug90654_1() throws Exception {
@@ -3971,7 +3971,8 @@ public class AST2CPPTests extends AST2BaseTest {
         IVariable a1 = (IVariable) col.getName(1).resolveBinding();
         IVariable a2 = (IVariable) col.getName(2).resolveBinding();
 
-        IBinding[] bs = col.getName(3).resolvePrefix();
+        IBinding[] bs = col.getName(3).getCompletionContext().findBindings(
+				col.getName(3), true);
         assertEquals(bs.length, 2);
         assertSame(bs[0], a1);
         assertSame(bs[1], a2);

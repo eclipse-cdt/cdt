@@ -11,8 +11,6 @@
 package org.eclipse.cdt.internal.ui.text.contentassist;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -24,6 +22,7 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.cdt.core.dom.ast.ASTCompletionNode;
 import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
 import org.eclipse.cdt.core.dom.ast.DOMException;
+import org.eclipse.cdt.core.dom.ast.IASTCompletionContext;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionStyleMacroParameter;
 import org.eclipse.cdt.core.dom.ast.IASTIdExpression;
 import org.eclipse.cdt.core.dom.ast.IASTName;
@@ -82,40 +81,30 @@ public class DOMCompletionProposalComputer extends ParsingBasedProposalComputer 
 		} else {
 			boolean handleMacros= false;
 			IASTName[] names = completionNode.getNames();
-			if (names == null || names.length == 0)
-				// No names, not much we can do here
-				return Collections.EMPTY_LIST;
-			
-			// Find all bindings
-			List allBindings = new ArrayList();
+
 			for (int i = 0; i < names.length; ++i) {
 				if (names[i].getTranslationUnit() == null)
 					// The node isn't properly hooked up, must have backtracked out of this node
 					continue;
-				IBinding[] bindings = names[i].resolvePrefix();
-				if (names[i].getParent() instanceof IASTIdExpression) {
+				
+				IASTCompletionContext astContext = names[i].getCompletionContext();
+				if (astContext == null) {
+					continue;
+				} else if (astContext instanceof IASTIdExpression) {
 					// handle macros only if there is a prefix
 					handleMacros = prefix.length() > 0;
 				}
+				
+				IBinding[] bindings = astContext.findBindings(
+						names[i], !context.isContextInformationStyle());
+				
 				if (bindings != null)
-					for (int j = 0; j < bindings.length; ++j) {
-						IBinding binding = bindings[j];
-						//if (!allBindings.contains(binding))
-						// TODO I removed this check since equals in the IBinding tree is currently broken
-						// It is returning true at times when I don't think it should (Bug 91577)
-							allBindings.add(binding);
-					}
-			}
-			
-			Iterator iBinding = allBindings.iterator();
-			while (iBinding.hasNext()) {
-				IBinding binding = (IBinding)iBinding.next();
-				handleBinding(binding, context, proposals);
+					for (int j = 0; j < bindings.length; ++j)
+						handleBinding(bindings[j], context, astContext, proposals);
 			}
 
-			if (handleMacros) {
+			if (handleMacros)
 				addMacroProposals(context, prefix, proposals);
-			}
 		}
 		
 		return proposals;
@@ -204,15 +193,17 @@ public class DOMCompletionProposalComputer extends ParsingBasedProposalComputer 
 			proposals.add(createProposal(macroName, macroName, image, context));
 	}
 	
-	protected void handleBinding(IBinding binding, CContentAssistInvocationContext context, List proposals) {
+	protected void handleBinding(IBinding binding,
+			CContentAssistInvocationContext cContext,
+			IASTCompletionContext astContext, List proposals) {
 		if (binding instanceof ICPPClassType) {
-			handleClass((ICPPClassType) binding, context, proposals);
+			handleClass((ICPPClassType) binding, cContext, proposals);
 		} else if (binding instanceof IFunction)  {
-			handleFunction((IFunction)binding, context, proposals);
+			handleFunction((IFunction)binding, cContext, proposals);
 		} else if (binding instanceof IVariable)  {
-			handleVariable((IVariable) binding, context, proposals);
-		} else {
-			proposals.add(createProposal(binding.getName(), binding.getName(), getImage(binding), context));
+			handleVariable((IVariable) binding, cContext, proposals);
+		} else if (!cContext.isContextInformationStyle()) {
+			proposals.add(createProposal(binding.getName(), binding.getName(), getImage(binding), cContext));
 		}
 	}
 	
@@ -286,7 +277,7 @@ public class DOMCompletionProposalComputer extends ParsingBasedProposalComputer 
         StringBuffer dispStringBuff = new StringBuffer(repStringBuff.toString());
 		dispStringBuff.append(dispargString);
         dispStringBuff.append(')');
-        if (returnTypeStr != null) {
+        if (returnTypeStr != null && returnTypeStr.length() > 0) {
             dispStringBuff.append(' ');
             dispStringBuff.append(returnTypeStr);
         }
@@ -315,6 +306,8 @@ public class DOMCompletionProposalComputer extends ParsingBasedProposalComputer 
 	}
 	
 	private void handleVariable(IVariable variable, CContentAssistInvocationContext context, List proposals) {
+		if (context.isContextInformationStyle()) return;
+		
 		StringBuffer repStringBuff = new StringBuffer();
 		repStringBuff.append(variable.getName());
 		

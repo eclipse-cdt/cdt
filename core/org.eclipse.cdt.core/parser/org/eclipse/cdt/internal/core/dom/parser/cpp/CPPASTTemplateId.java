@@ -11,6 +11,7 @@
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
+import org.eclipse.cdt.core.dom.ast.IASTCompletionContext;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNameOwner;
@@ -81,8 +82,7 @@ public class CPPASTTemplateId extends CPPASTNode implements ICPPASTTemplateId, I
         return binding;    
     }
 
-	public IBinding[] resolvePrefix() {
-		// TODO Auto-generated method stub
+	public IASTCompletionContext getCompletionContext() {
 		return null;
 	}
 	

@@ -15,6 +15,7 @@ package org.eclipse.cdt.internal.core.parser.scanner2;
 import java.util.ArrayList;
 
 import org.eclipse.cdt.core.dom.ILinkage;
+import org.eclipse.cdt.core.dom.ast.IASTCompletionContext;
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionStyleMacroParameter;
 import org.eclipse.cdt.core.dom.ast.IASTMacroExpansion;
@@ -665,7 +666,7 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
         }
 
 
-        public IBinding[] resolvePrefix() {
+    	public IASTCompletionContext getCompletionContext() {
             // TODO Auto-generated method stub
             return null;
         }
@@ -746,9 +747,9 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
         public IBinding resolveBinding() {
             return null; 
         }
-        public IBinding[] resolvePrefix() {
-            return null;
-        }
+    	public IASTCompletionContext getCompletionContext() {
+    		return null;
+    	}
 
         public char[] toCharArray() {
             return name;

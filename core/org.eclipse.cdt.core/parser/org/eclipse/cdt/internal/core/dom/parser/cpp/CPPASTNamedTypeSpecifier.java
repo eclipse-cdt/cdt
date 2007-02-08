@@ -17,6 +17,7 @@ import java.util.List;
 import org.eclipse.cdt.core.dom.ILinkage;
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.DOMException;
+import org.eclipse.cdt.core.dom.ast.IASTCompletionContext;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IEnumeration;
@@ -28,8 +29,8 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.index.IndexFilter;
-import org.eclipse.cdt.internal.core.dom.parser.IASTCompletionContext;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.NullProgressMonitor;
 
 /**
  * @author jcamelon
@@ -97,14 +98,14 @@ public class CPPASTNamedTypeSpecifier extends CPPASTBaseDeclSpecifier implements
 		return r_unclear;
 	}
 	
-	public IBinding[] resolvePrefix(IASTName n) {
+	public IBinding[] findBindings(IASTName n, boolean isPrefix) {
 		List filtered = new ArrayList();
 		
 		IScope scope = CPPVisitor.getContainingScope(n);
 		
 		if (scope != null) {
 			try {
-				IBinding[] bindings = scope.find(n.toString(), true);
+				IBinding[] bindings = scope.find(n.toString(), isPrefix);
 				for (int i = 0; i < bindings.length; i++) {
 					if (bindings[i] instanceof ICPPTemplateParameter) {
 						filtered.add(bindings[i]);
@@ -127,7 +128,7 @@ public class CPPASTNamedTypeSpecifier extends CPPASTBaseDeclSpecifier implements
 		};
 		
 		try {
-			IBinding[] bindings = getTranslationUnit().getScope().find(n.toString(), true);
+			IBinding[] bindings = getTranslationUnit().getScope().find(n.toString(), isPrefix);
 			for (int i = 0 ; i < bindings.length; i++) {
 				if (filter.acceptBinding(bindings[i])) {
 					filtered.add(bindings[i]);
@@ -140,7 +141,9 @@ public class CPPASTNamedTypeSpecifier extends CPPASTBaseDeclSpecifier implements
 		
 		if (index != null) {
 			try {
-				IBinding[] bindings = index.findBindingsForPrefix(n.toCharArray(), filter);
+				IBinding[] bindings = isPrefix ?
+						index.findBindingsForPrefix(n.toCharArray(), filter) :
+						index.findBindings(n.toCharArray(), filter, new NullProgressMonitor());
 				for (int i = 0; i < bindings.length; i++) {
 					filtered.add(bindings[i]);
 				}

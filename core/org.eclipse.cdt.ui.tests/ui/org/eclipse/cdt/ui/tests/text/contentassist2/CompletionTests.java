@@ -23,7 +23,7 @@ import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
  *
  * @since 4.0
  */
-public class CompletionTests extends AbstractCompletionTest {
+public class CompletionTests extends AbstractContentAssistTest {
 
 	private static final String HEADER_FILE_NAME = "CompletionTest.h";
 	private static final String SOURCE_FILE_NAME = "CompletionTest.cpp";
@@ -128,6 +128,10 @@ public class CompletionTests extends AbstractCompletionTest {
 		return createFile(project, SOURCE_FILE_NAME, sourceContent.toString());
 	}
 
+	protected void assertCompletionResults(int offset, String[] expected, boolean compareIdString) throws Exception {
+		assertContentAssistResults(offset, expected, true, compareIdString);
+	}
+	
 	//void gfunc() {C1 v; v.m/*cursor*/
 	public void _testLocalVariable() throws Exception {
 		// fails because of additional m1private(void)

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2006 IBM Corporation and others.
+ * Copyright (c) 2004, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  * IBM - Initial API and implementation
  * Markus Schorn (Wind River Systems)
+ * Bryan Wilkinson (QNX)
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.ast;
 
@@ -51,12 +52,11 @@ public interface IASTName extends IASTNode, IName {
 	public IBinding resolveBinding();
 
 	/**
-	 * Return a list of bindings in the scope of the name that have the name as
-	 * a prefix.
+	 * Return the completion context for this name.
 	 * 
-	 * @return <code>IBinding []</code> bindings that start with this name
+	 * @return <code>IASTCompletionContext</code> the context for completion
 	 */
-	public IBinding[] resolvePrefix();
+	public IASTCompletionContext getCompletionContext();
 	
 	/**
 	 * Determines the current linkage in which the name has to be resolved.

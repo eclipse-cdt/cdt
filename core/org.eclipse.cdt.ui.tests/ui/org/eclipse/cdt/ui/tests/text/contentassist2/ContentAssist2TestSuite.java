@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 Siemens AG.
+ * Copyright (c) 2006, 2007 Siemens AG and others.
  * All rights reserved. This content and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  * Norbert Ploett - Initial implementation
+ * Bryan Wilkinson (QNX)
  *******************************************************************************/
 package org.eclipse.cdt.ui.tests.text.contentassist2;
 
@@ -14,7 +15,7 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 
 /**
- * This suite bundles all tests for the CContentAssistProcessor2
+ * This suite bundles all tests for the CContentAssistProcessor
  */
 public class ContentAssist2TestSuite extends TestSuite {
 
@@ -25,7 +26,6 @@ public class ContentAssist2TestSuite extends TestSuite {
 	public ContentAssist2TestSuite()  {
 		super("Tests in package org.eclipse.cdt.ui.tests.text.contentassist2");
 		
-		addTest(CompletionTest_MemberReference_Arrow_Prefix2.suite());
 		addTest(CompletionTest_ArgumentType_Prefix.suite());
 		addTest(CompletionTest_ArgumentType_Prefix2.suite());
 		addTest(CompletionTest_ClassReference_NoPrefix.suite());
@@ -41,6 +41,7 @@ public class ContentAssist2TestSuite extends TestSuite {
 		addTest(CompletionTest_MacroRef_Prefix.suite());
 		addTest(CompletionTest_MemberReference_Arrow_NoPrefix.suite());
 		addTest(CompletionTest_MemberReference_Arrow_Prefix.suite());
+		addTest(CompletionTest_MemberReference_Arrow_Prefix2.suite());
 		addTest(CompletionTest_MemberReference_Dot_NoPrefix.suite());
 		addTest(CompletionTest_MemberReference_Dot_Prefix.suite());
 		addTest(CompletionTest_NamespaceRef_NoPrefix.suite());
@@ -64,5 +65,6 @@ public class ContentAssist2TestSuite extends TestSuite {
 		addTest(CompletionTest_VariableType_Prefix.suite());
 		
 		addTest(CompletionTests.suite());
+		addTest(ParameterHintTests.suite());
 	}
 }

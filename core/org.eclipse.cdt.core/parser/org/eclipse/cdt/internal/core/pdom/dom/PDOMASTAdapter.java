@@ -15,6 +15,7 @@ import org.eclipse.cdt.core.dom.ILinkage;
 import org.eclipse.cdt.core.dom.ast.ASTNodeProperty;
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.DOMException;
+import org.eclipse.cdt.core.dom.ast.IASTCompletionContext;
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
@@ -129,8 +130,8 @@ public class PDOMASTAdapter {
 			return fDelegate.resolveBinding();
 		}
 
-		public IBinding[] resolvePrefix() {
-			return fDelegate.resolvePrefix();
+		public IASTCompletionContext getCompletionContext() {
+			return fDelegate.getCompletionContext();
 		}
 
 		public void setBinding(IBinding binding) {

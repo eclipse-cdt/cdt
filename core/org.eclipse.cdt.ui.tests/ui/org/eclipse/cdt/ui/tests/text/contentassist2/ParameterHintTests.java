@@ -1,0 +1,167 @@
+/*******************************************************************************
+ * Copyright (c) 2007 QNX Software Systems and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ * Bryan Wilkinson (QNX) - Initial API and implementation
+ *******************************************************************************/
+package org.eclipse.cdt.ui.tests.text.contentassist2;
+
+import junit.framework.Test;
+
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IProject;
+
+import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
+
+public class ParameterHintTests extends AbstractContentAssistTest {
+
+	private static final String HEADER_FILE_NAME = "PHTest.h";
+	private static final String SOURCE_FILE_NAME = "PHTest.cpp";
+	
+//{PHTest.h}
+//class aClass {
+//public:
+//	int aField;
+//	void aMethod(char c);
+//  void aMethod(char c, int x);
+//};
+//class bClass {
+//public:
+//	bClass(int x);
+//	bClass(int x, int y);
+//};
+//void aFunc(int i);
+//int anotherFunc(int i, int j);
+//int pi(aClass a);
+//int pie(aClass a);
+//int pies(aClass a);
+	
+	public ParameterHintTests(String name) {
+		super(name);
+	}
+
+	public static Test suite() {
+		return BaseTestCase.suite(ParameterHintTests.class, "_");
+	}
+	
+	protected IFile setUpProjectContent(IProject project) throws Exception {
+		String headerContent= readTaggedComment(HEADER_FILE_NAME);
+		StringBuffer sourceContent= getContentsForTest(1)[0];
+		sourceContent.insert(0, "#include \""+HEADER_FILE_NAME+"\"\n");
+		assertNotNull(createFile(project, HEADER_FILE_NAME, headerContent));
+		return createFile(project, SOURCE_FILE_NAME, sourceContent.toString());
+	}
+	
+	protected void assertParameterHints(String[] expected) throws Exception {
+		assertContentAssistResults(getBuffer().length() - 1, expected, false, false);
+	}
+	
+	//void foo(){aFunc(
+	public void testFunction() throws Exception {
+		assertParameterHints(new String[] {
+				"aFunc(int i) void"
+		});
+	}
+	
+	////TODO move function into header once indexer supports templates
+	//template<class T>void tFunc(T x, T y);
+	//void foo(){tFunc(
+	public void testTemplateFunction() throws Exception {
+		assertParameterHints(new String[] {
+				"tFunc(T x,T y) void"
+		});
+	}
+	
+	////TODO move function into header once indexer supports templates
+	//template<class T>void tFunc(T x, T y);
+	//void foo(){tFunc<int>(
+	public void _testTemplateFunction2() throws Exception {
+		assertParameterHints(new String[] {
+				"tFunc(T x,T y) void"
+		});
+	}
+	
+	//void foo(){int a=5;aFunc  ( anotherFunc   (  a ,  (in
+	public void testOffsetCalculation() throws Exception {
+		assertParameterHints(new String[] {
+				"anotherFunc(int i,int j) int"
+		});
+	}
+	
+	//void foo(){int a=pie(
+	public void testAccurateName() throws Exception {
+		assertParameterHints(new String[] {
+				"pie(aClass a) int"
+		});
+	}
+	
+	//void foo(){int a=pi
+	public void testInvalidInvocation() throws Exception {
+		assertParameterHints(new String[] {});
+	}
+	
+	//void aClass::aMethod(
+	public void testMethodDefinition() throws Exception {
+		assertParameterHints(new String[] {
+				"aMethod(char c) void",
+				"aMethod(char c,int x) void"
+		});
+	}
+	
+	//void aClass::aMethod(char c){aMethod(c,aFi
+	public void testMethodScope() throws Exception {
+		assertParameterHints(new String[] {
+				"aMethod(char c) void",
+				"aMethod(char c,int x) void"
+		});
+	}
+	
+	//void foo(){aClass a=new aClass( 
+	public void testConstructor() throws Exception {
+		assertParameterHints(new String[] {
+				"aClass(void)",
+				"aClass(const aClass &)"
+		});
+	}
+
+	//void foo(){bClass b(
+	public void _testConstructor2() throws Exception {
+		assertParameterHints(new String[] {
+				"bClass(int x)",
+				"bClass(int x,int y)",
+				"bClass(const bClass &)"
+		});
+	}
+	
+	////TODO move class into header once indexer supports templates
+	//template<class T>class tClass {public:tClass(T t);};
+	//void foo(){tClass<int> t=new tClass<int>(
+	public void _testTemplateConstructor() throws Exception {
+		assertParameterHints(new String[] {
+				"tClass(void)",
+				"tClass(T t)",
+				"tClass(const tClass &)"
+		});
+	}
+	
+	////TODO move class into header once indexer supports templates
+	//template<class T>class tClass {public:tClass(T t);};
+	//void foo(){tClass<int> t(
+	public void _testTemplateConstructor2() throws Exception {
+		assertParameterHints(new String[] {
+				"tClass(T t)",
+				"tClass(const tClass &)"
+		});
+	}
+	
+	//void foo(){int pi = 3;pi(
+	public void testFunctionsOnly() throws Exception {
+		assertParameterHints(new String[] {
+				"pi(aClass a) int"
+		});
+	}
+}

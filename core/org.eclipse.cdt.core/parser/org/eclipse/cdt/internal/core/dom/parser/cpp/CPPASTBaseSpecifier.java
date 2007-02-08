@@ -17,6 +17,7 @@ import java.util.List;
 import org.eclipse.cdt.core.dom.ILinkage;
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.DOMException;
+import org.eclipse.cdt.core.dom.ast.IASTCompletionContext;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
@@ -25,8 +26,8 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.index.IndexFilter;
-import org.eclipse.cdt.internal.core.dom.parser.IASTCompletionContext;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.NullProgressMonitor;
 
 /**
  * @author jcamelon
@@ -111,7 +112,7 @@ public class CPPASTBaseSpecifier extends CPPASTNode implements
 		return r_unclear;
 	}
 
-	public IBinding[] resolvePrefix(IASTName n) {
+	public IBinding[] findBindings(IASTName n, boolean isPrefix) {
 		List filtered = new ArrayList();
 		IndexFilter filter = new IndexFilter(){
 			public boolean acceptBinding(IBinding binding) {
@@ -136,7 +137,7 @@ public class CPPASTBaseSpecifier extends CPPASTNode implements
 		
 		if (scope != null) {
 			try {
-				IBinding[] bindings = scope.find(n.toString(), true);
+				IBinding[] bindings = scope.find(n.toString(), isPrefix);
 				for (int i = 0; i < bindings.length; i++) {
 					if (filter.acceptBinding(bindings[i])) {
 						filtered.add(bindings[i]);
@@ -150,7 +151,9 @@ public class CPPASTBaseSpecifier extends CPPASTNode implements
 		
 		if (index != null) {
 			try {
-				IBinding[] bindings = index.findBindingsForPrefix(n.toCharArray(), filter);
+				IBinding[] bindings = isPrefix ?
+						index.findBindingsForPrefix(n.toCharArray(), filter) :
+						index.findBindings(n.toCharArray(), filter, new NullProgressMonitor());
 				for (int i = 0; i < bindings.length; i++) {
 					filtered.add(bindings[i]);
 				}

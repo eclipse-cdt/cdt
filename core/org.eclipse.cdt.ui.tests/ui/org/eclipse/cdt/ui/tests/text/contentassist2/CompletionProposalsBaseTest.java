@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2006 IBM Corporation and others.
+ * Copyright (c) 2004, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Rational Software - Initial API and implementation
  *     Anton Leherbauer (Wind River Systems)
+ *     Bryan Wilkinson (QNX)
  *******************************************************************************/
 package org.eclipse.cdt.ui.tests.text.contentassist2;
 
@@ -29,7 +30,7 @@ import org.eclipse.core.runtime.Path;
 
 import org.eclipse.cdt.ui.testplugin.CTestPlugin;
 
-public abstract class CompletionProposalsBaseTest extends AbstractCompletionTest {
+public abstract class CompletionProposalsBaseTest extends AbstractContentAssistTest {
 
 	private boolean fFailingTest;
 
@@ -89,6 +90,10 @@ public abstract class CompletionProposalsBaseTest extends AbstractCompletionTest
 		return bodyFile;
 	}
 
+	protected void assertCompletionResults(int offset, String[] expected, boolean compareIdString) throws Exception {
+		assertContentAssistResults(offset, expected, true, compareIdString);
+	}
+	
 	public void testCompletionProposals() throws Exception {
 		String[] expected = getExpectedResultsValues();
 		assertCompletionResults(getCompletionPosition(), expected, false);

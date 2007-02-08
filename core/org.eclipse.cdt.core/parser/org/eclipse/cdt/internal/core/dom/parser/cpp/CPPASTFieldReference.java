@@ -16,6 +16,7 @@ import java.util.List;
 
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.DOMException;
+import org.eclipse.cdt.core.dom.ast.IASTCompletionContext;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
@@ -29,7 +30,6 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
-import org.eclipse.cdt.internal.core.dom.parser.IASTCompletionContext;
 
 /**
  * @author jcamelon
@@ -115,7 +115,7 @@ public class CPPASTFieldReference extends CPPASTNode implements
     	return CPPVisitor.getExpressionType(this);
     }
 
-	public IBinding[] resolvePrefix(IASTName n) {
+	public IBinding[] findBindings(IASTName n, boolean isPrefix) {
 		IASTExpression expression = getFieldOwner();
 		IType type = expression.getExpressionType();
 		type = CPPSemantics.getUltimateType(type, true); //stop at pointer to member?
@@ -130,7 +130,7 @@ public class CPPASTFieldReference extends CPPASTNode implements
 				if (fields != null) {
 					for (int i = 0; i < fields.length; i++) {
 						char[] potential = fields[i].getNameCharArray();
-						if (CharArrayUtils.equals(potential, 0, name.length, name, false)) {
+						if (nameMatches(potential, name, isPrefix)) {
 							bindings.add(fields[i]);
 						}
 					}
@@ -144,7 +144,7 @@ public class CPPASTFieldReference extends CPPASTNode implements
 					for (int i = 0; i < methods.length; i++) {
 						if (!(methods[i] instanceof ICPPConstructor) && !methods[i].isImplicit()) {
 							char[] potential = methods[i].getNameCharArray();
-							if (CharArrayUtils.equals(potential, 0, name.length, name, false)) {
+							if (nameMatches(potential, name, isPrefix)) {
 								bindings.add(methods[i]);
 							}
 						}
@@ -153,16 +153,15 @@ public class CPPASTFieldReference extends CPPASTNode implements
 			} catch (DOMException e) {
 			}
 			
-			collectBases(classType, bindings, n.toCharArray());
+			collectBases(classType, bindings, n.toCharArray(), isPrefix);
 			return (IBinding[]) bindings.toArray(new IBinding[bindings.size()]);
 		}
 		
 		return null;
 	}
     
-	private void collectBases(ICPPClassType classType, List bindings, char[] prefix) {
-		if (CharArrayUtils.equals(classType.getNameCharArray(),
-				0, prefix.length, prefix, false)) {
+	private void collectBases(ICPPClassType classType, List bindings, char[] name, boolean isPrefix) {
+		if (nameMatches(classType.getNameCharArray(), name, isPrefix)) {
 			bindings.add(classType);
 		}
 		
@@ -172,10 +171,18 @@ public class CPPASTFieldReference extends CPPASTNode implements
 				IBinding base = bases[i].getBaseClass();
 				if (base instanceof ICPPClassType) {
 					ICPPClassType baseClass = (ICPPClassType) base;
-					collectBases(baseClass, bindings, prefix);
+					collectBases(baseClass, bindings, name, isPrefix);
 				}
 			}
 		} catch (DOMException e) {
+		}
+	}
+	
+	private boolean nameMatches(char[] potential, char[] name, boolean isPrefix) {
+		if (isPrefix) {
+			return CharArrayUtils.equals(potential, 0, name.length, name, false);
+		} else {
+			return CharArrayUtils.equals(potential, name);
 		}
 	}
 }

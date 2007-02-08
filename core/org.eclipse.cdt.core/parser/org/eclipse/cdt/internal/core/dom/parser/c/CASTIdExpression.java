@@ -15,6 +15,7 @@ package org.eclipse.cdt.internal.core.dom.parser.c;
 import org.eclipse.cdt.core.dom.ILinkage;
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.DOMException;
+import org.eclipse.cdt.core.dom.ast.IASTCompletionContext;
 import org.eclipse.cdt.core.dom.ast.IASTIdExpression;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IBinding;
@@ -23,8 +24,8 @@ import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.index.IndexFilter;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
-import org.eclipse.cdt.internal.core.dom.parser.IASTCompletionContext;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.NullProgressMonitor;
 
 /**
  * @author jcamelon
@@ -71,13 +72,13 @@ public class CASTIdExpression extends CASTNode implements IASTIdExpression, IAST
 		return CVisitor.getExpressionType(this);
 	}
 	
-	public IBinding[] resolvePrefix(IASTName n) {
+	public IBinding[] findBindings(IASTName n, boolean isPrefix) {
 		IScope scope = CVisitor.getContainingScope(n);
 		
 		IBinding[] b1 = null;
 		if (scope != null) {
 			try {
-				b1 = scope.find(n.toString(), true);
+				b1 = scope.find(n.toString(), isPrefix);
 			} catch (DOMException e) {
 			}	
 		}
@@ -87,9 +88,10 @@ public class CASTIdExpression extends CASTNode implements IASTIdExpression, IAST
 		IBinding[] b2 = null;
 		if (index != null) {
 			try {
-				b2 = index.findBindingsForPrefix(
-						n.toCharArray(),
-						IndexFilter.getFilter(ILinkage.C_LINKAGE_ID));
+				IndexFilter filter = IndexFilter.getFilter(ILinkage.C_LINKAGE_ID);
+				b2 = isPrefix ?
+						index.findBindingsForPrefix(n.toCharArray(), filter) :
+						index.findBindings(n.toCharArray(), filter, new NullProgressMonitor());
 			} catch (CoreException e) {
 			}
 		}

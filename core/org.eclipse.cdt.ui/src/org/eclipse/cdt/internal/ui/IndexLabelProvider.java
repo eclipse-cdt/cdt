@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 QNX Software Systems and others.
+ * Copyright (c) 2006, 2007 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -106,7 +106,7 @@ public class IndexLabelProvider extends LabelProvider {
 		else if (element instanceof IEnumeration)
 			desc = CElementImageProvider.getEnumerationImageDescriptor();
 		else if (element instanceof IEnumerator)
-			CElementImageProvider.getEnumeratorImageDescriptor();
+			desc = CElementImageProvider.getEnumeratorImageDescriptor();
 		else if (element instanceof ITypedef)
 			desc = CElementImageProvider.getTypedefImageDescriptor();
 		else if (element instanceof ICProject)

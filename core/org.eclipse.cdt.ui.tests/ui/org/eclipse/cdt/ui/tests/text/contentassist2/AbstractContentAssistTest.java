@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2006 IBM Corporation and others.
+ * Copyright (c) 2004, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Rational Software - Initial API and implementation
  *     Anton Leherbauer (Wind River Systems)
+ *     Bryan Wilkinson (QNX)
  *******************************************************************************/
 package org.eclipse.cdt.ui.tests.text.contentassist2;
 
@@ -21,6 +22,7 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.jface.text.contentassist.ContentAssistant;
 import org.eclipse.jface.text.contentassist.ICompletionProposal;
+import org.eclipse.jface.text.contentassist.IContextInformation;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.text.templates.TemplateProposal;
 import org.eclipse.ui.texteditor.AbstractTextEditor;
@@ -39,11 +41,7 @@ import org.eclipse.cdt.ui.text.ICCompletionProposal;
 
 import org.eclipse.cdt.internal.ui.text.contentassist.CContentAssistProcessor;
 
-/**
- * 
- * @since 4.0
- */
-public abstract class AbstractCompletionTest extends BaseUITestCase {
+public abstract class AbstractContentAssistTest extends BaseUITestCase {
 
 	private ICProject fCProject;
 	protected IFile fCFile;
@@ -57,7 +55,7 @@ public abstract class AbstractCompletionTest extends BaseUITestCase {
 		fgAllKeywords.addAll(ParserFactory.getKeywordSet(KeywordSetKey.KEYWORDS, ParserLanguage.CPP));
 		fgAllKeywords.addAll(ParserFactory.getKeywordSet(KeywordSetKey.TYPES, ParserLanguage.CPP));
 	}
-	public AbstractCompletionTest(String name) {
+	public AbstractContentAssistTest(String name) {
 		super(name);
 	}
 
@@ -88,7 +86,7 @@ public abstract class AbstractCompletionTest extends BaseUITestCase {
 		super.tearDown();
 	}
 
-	protected void assertCompletionResults(int offset, String[] expected, boolean compareIdString) throws Exception {
+	protected void assertContentAssistResults(int offset, String[] expected, boolean isCompletion, boolean compareIdString) throws Exception {
 
 		if (CTestPlugin.getDefault().isDebugging())  {
 			System.out.println("\n\n\n\n\nTesting "+this.getClass().getName());
@@ -100,11 +98,13 @@ public abstract class AbstractCompletionTest extends BaseUITestCase {
 		ContentAssistant assistant = new ContentAssistant();
 		CContentAssistProcessor processor = new CContentAssistProcessor(fEditor, assistant, contentType);
 		long startTime= System.currentTimeMillis();
-		ICompletionProposal[] results = processor.computeCompletionProposals(sourceViewer, offset);
+		Object[] results = isCompletion
+			? (Object[]) processor.computeCompletionProposals(sourceViewer, offset)
+			: (Object[]) processor.computeContextInformation(sourceViewer, offset);
 		long endTime= System.currentTimeMillis();
 		assertTrue(results != null);
 
-		results= filterProposals(results);
+		results= filterResults(results);
 		String[] resultStrings= toStringArray(results, compareIdString);
 		Arrays.sort(expected);
 		Arrays.sort(resultStrings);
@@ -147,6 +147,44 @@ public abstract class AbstractCompletionTest extends BaseUITestCase {
 
 	}
 
+	/**
+	 * Filter out template and keyword proposals.
+	 * @param results
+	 * @return filtered proposals
+	 */
+	private Object[] filterResults(Object[] results) {
+		List filtered= new ArrayList();
+		for (int i = 0; i < results.length; i++) {
+			Object result = results[i];
+			if (result instanceof TemplateProposal) {
+				continue;
+			}
+			if (result instanceof ICCompletionProposal) {
+				// check for keywords proposal
+				if (fgAllKeywords.contains(((ICCompletionProposal)result).getDisplayString())) {
+					continue;
+				}
+			}
+			filtered.add(result);
+		}
+		return filtered.toArray();
+	}
+	
+	private String[] toStringArray(Object[] results, boolean useIdString) {
+		String[] strings= new String[results.length];
+		for(int i=0; i< results.length; i++){
+			Object result = results[i];
+			if (result instanceof ICCompletionProposal && useIdString) {
+				strings[i]= ((ICCompletionProposal)result).getIdString();
+			} else if (result instanceof ICompletionProposal) {
+				strings[i]= ((ICompletionProposal)result).getDisplayString();
+			} else {
+				strings[i]= ((IContextInformation)result).getContextDisplayString();
+			}
+		}
+		return strings;
+	}
+	
 	private String toString(String[] strings) {
 		StringBuffer buf= new StringBuffer();
 		for(int i=0; i< strings.length; i++){
@@ -155,47 +193,11 @@ public abstract class AbstractCompletionTest extends BaseUITestCase {
 		return buf.toString();
 	}
 
-	private String[] toStringArray(ICompletionProposal[] proposals, boolean useIdString) {
-		String[] strings= new String[proposals.length];
-		for(int i=0; i< proposals.length; i++){
-			ICompletionProposal proposal = proposals[i];
-			if (proposal instanceof ICCompletionProposal && useIdString) {
-				strings[i]= ((ICCompletionProposal)proposal).getIdString();
-			} else {
-				strings[i]= proposal.getDisplayString();
-			}
-		}
-		return strings;
-	}
-
 	/**
 	 * Override to relax checking of extra results
 	 */
 	protected boolean doCheckExtraResults() {
 		return true ;
-	}
-
-	/**
-	 * Filter out template and keyword proposals.
-	 * @param results
-	 * @return filtered proposals
-	 */
-	private ICompletionProposal[] filterProposals(ICompletionProposal[] results) {
-		List filtered= new ArrayList();
-		for (int i = 0; i < results.length; i++) {
-			ICompletionProposal proposal = results[i];
-			if (proposal instanceof TemplateProposal) {
-				continue;
-			}
-			if (proposal instanceof ICCompletionProposal) {
-				// check for keywords proposal
-				if (fgAllKeywords.contains(proposal.getDisplayString())) {
-					continue;
-				}
-			}
-			filtered.add(proposal);
-		}
-		return (ICompletionProposal[]) filtered.toArray(new ICompletionProposal[filtered.size()]);
 	}
 
 	/**

@@ -13,13 +13,13 @@
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
+import org.eclipse.cdt.core.dom.ast.IASTCompletionContext;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNameOwner;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
-import org.eclipse.cdt.internal.core.dom.parser.IASTCompletionContext;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
 
 /**
@@ -76,17 +76,16 @@ public class CPPASTName extends CPPASTNode implements IASTName {
         return binding;
     }
 
-    public IBinding[] resolvePrefix() {
-    	IASTNode node = getParent();
-    	while (!(node instanceof IASTCompletionContext)) {
-    		if (node == null) {
-    			return null;
+    public IASTCompletionContext getCompletionContext() {
+        IASTNode node = getParent();
+    	while (node != null) {
+    		if (node instanceof IASTCompletionContext) {
+    			return (IASTCompletionContext) node;
     		}
     		node = node.getParent();
     	}
     	
-    	IASTCompletionContext context = (IASTCompletionContext) node;
-    	return context.resolvePrefix(this);
+    	return null;
     }
 
     public void setBinding(IBinding binding) {

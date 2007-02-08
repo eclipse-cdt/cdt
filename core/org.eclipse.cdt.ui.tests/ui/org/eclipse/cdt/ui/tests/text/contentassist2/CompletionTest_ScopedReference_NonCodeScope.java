@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2006 IBM Corporation and others.
+ * Copyright (c) 2004, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -27,7 +27,7 @@ public class CompletionTest_ScopedReference_NonCodeScope  extends CompletionProp
 	private final String headerFileFullPath ="resources/contentassist/" + headerFileName;
 	private final String expectedPrefix = "";
 	private final String[] expectedResults = {
-			 "Foo(void) ",
+			 "Foo(void)",
 			 "bar(void) void",
 			 "fum(void) void",
 			 "x : int"

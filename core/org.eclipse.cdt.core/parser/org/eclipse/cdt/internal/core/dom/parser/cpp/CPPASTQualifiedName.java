@@ -16,6 +16,7 @@ import java.util.List;
 
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.DOMException;
+import org.eclipse.cdt.core.dom.ast.IASTCompletionContext;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNameOwner;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
@@ -30,7 +31,6 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
-import org.eclipse.cdt.internal.core.dom.parser.IASTCompletionContext;
 
 /**
  * @author jcamelon
@@ -56,10 +56,10 @@ public class CPPASTQualifiedName extends CPPASTNode implements
 		return lastName != null ? lastName.resolveBinding() : null;
 	}
 
-	public IBinding[] resolvePrefix() {
+	public IASTCompletionContext getCompletionContext() {
 		removeNullNames();
 		IASTName lastName = getLastName();
-		return lastName != null ? lastName.resolvePrefix() : new IBinding[0];
+		return lastName != null ? lastName.getCompletionContext() : null;
 	}
 
 	/*
@@ -299,20 +299,21 @@ public class CPPASTQualifiedName extends CPPASTNode implements
         return false;
     }
 
-	public IBinding[] resolvePrefix(IASTName n) {
+	public IBinding[] findBindings(IASTName n, boolean isPrefix) {
 		IBinding binding = names[names.length - 2].resolveBinding();
 		if (binding instanceof ICPPClassType) {
-			return resolveClassScopePrefix((ICPPClassType) binding, 
-					n.toCharArray());
+			return findClassScopeBindings((ICPPClassType) binding, 
+					n.toCharArray(), isPrefix);
 		} else if (binding instanceof ICPPNamespace) {
-			return resolveNamespaceScopePrefix((ICPPNamespace) binding, 
-					n.toCharArray());
+			return findNamespaceScopeBindings((ICPPNamespace) binding, 
+					n.toCharArray(), isPrefix);
 		}
 		
 		return null;
 	}
 	
-	private IBinding[] resolveClassScopePrefix(ICPPClassType classType, char[] name) {
+	private IBinding[] findClassScopeBindings(ICPPClassType classType,
+			char[] name, boolean isPrefix) {
 		List bindings = new ArrayList();
 		
 		try {
@@ -320,7 +321,7 @@ public class CPPASTQualifiedName extends CPPASTNode implements
 			for (int i = 0; i < fields.length; i++) {
 				if (fields[i].isStatic()) {
 					char[] potential = fields[i].getNameCharArray();
-					if (CharArrayUtils.equals(potential, 0, name.length, name, false)) {
+					if (nameMatches(potential, name, isPrefix)) {
 						bindings.add(fields[i]);
 					}
 				}
@@ -332,7 +333,7 @@ public class CPPASTQualifiedName extends CPPASTNode implements
 			ICPPMethod[] methods = classType.getDeclaredMethods();
 			for (int i = 0; i < methods.length; i++) {
 				char[] potential = methods[i].getNameCharArray();
-				if (CharArrayUtils.equals(potential, 0, name.length, name, false)) {
+				if (nameMatches(potential, name, isPrefix)) {
 					bindings.add(methods[i]);
 				}
 			}
@@ -343,7 +344,7 @@ public class CPPASTQualifiedName extends CPPASTNode implements
 			ICPPClassType[] nested = classType.getNestedClasses();
 			for (int i = 0; i < nested.length; i++) {
 				char[] potential = nested[i].getNameCharArray();
-				if (CharArrayUtils.equals(potential, 0, name.length, name, false)) {
+				if (nameMatches(potential, name, isPrefix)) {
 					bindings.add(nested[i]);
 				}
 			}
@@ -353,14 +354,15 @@ public class CPPASTQualifiedName extends CPPASTNode implements
 		return (IBinding[]) bindings.toArray(new IBinding[bindings.size()]);
 	}
 	
-	private IBinding[] resolveNamespaceScopePrefix(ICPPNamespace namespace, char[] name) {
+	private IBinding[] findNamespaceScopeBindings(ICPPNamespace namespace,
+			char[] name, boolean isPrefix) {
 		List bindings = new ArrayList();
 		
 		try {
 			IBinding[] members = namespace.getMemberBindings();
 			for (int i = 0 ; i < members.length; i++) {
 				char[] potential = members[i].getNameCharArray();
-				if (CharArrayUtils.equals(potential, 0, name.length, name, false)) {
+				if (nameMatches(potential, name, isPrefix)) {
 					bindings.add(members[i]);
 				}
 			}
@@ -368,5 +370,13 @@ public class CPPASTQualifiedName extends CPPASTNode implements
 		}
 		
 		return (IBinding[]) bindings.toArray(new IBinding[bindings.size()]);
+	}
+	
+	private boolean nameMatches(char[] potential, char[] name, boolean isPrefix) {
+		if (isPrefix) {
+			return CharArrayUtils.equals(potential, 0, name.length, name, false);
+		} else {
+			return CharArrayUtils.equals(potential, name);
+		}
 	}
 }

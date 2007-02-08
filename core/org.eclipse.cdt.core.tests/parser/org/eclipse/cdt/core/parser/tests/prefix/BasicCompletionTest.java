@@ -23,7 +23,8 @@ public class BasicCompletionTest extends CompletionTestBase {
 	private void testVar(ASTCompletionNode node) throws Exception {
 		IASTName[] names = node.getNames();
 		assertEquals(1, names.length);
-		IBinding[] bindings = names[0].resolvePrefix();
+		IBinding[] bindings = names[0].getCompletionContext().findBindings(
+				names[0], true);
 		assertEquals(1, bindings.length);
 		IVariable var = (IVariable)bindings[0];
 		assertEquals("blah", var.getName());
@@ -48,7 +49,8 @@ public class BasicCompletionTest extends CompletionTestBase {
 		// There are three names, one as an expression, one that isn't connected, one as a declaration
 		assertEquals(3, names.length);
 		// The expression points to our functions
-		IBinding[] bindings = names[0].resolvePrefix();
+		IBinding[] bindings = names[0].getCompletionContext().findBindings(
+				names[0], true);
 		// There should be two since they both start with fu
 		assertEquals(2, bindings.length);
 		assertEquals("func", ((IFunction)bindings[0]).getName());
@@ -64,7 +66,8 @@ public class BasicCompletionTest extends CompletionTestBase {
 		// There are two names, one as an expression, one as a declaration
 		assertEquals(2, names.length);
 		// The expression points to our functions
-		bindings = sortBindings(names[0].resolvePrefix());
+		bindings = sortBindings(names[0].getCompletionContext().findBindings(
+				names[0], true));
 		// There should be two since they both start with fu
 		assertEquals(2, bindings.length);
 		assertEquals("func", ((IFunction)bindings[0]).getName());
@@ -83,7 +86,8 @@ public class BasicCompletionTest extends CompletionTestBase {
 		IASTName[] names = node.getNames();
 		assertEquals(2, names.length);
 		assertNull(names[0].getTranslationUnit());
-		IBinding[] bindings = names[1].resolvePrefix();
+		IBinding[] bindings = names[1].getCompletionContext().findBindings(
+				names[1], true);
 		assertEquals(1, bindings.length);
 		assertEquals("blah", ((ITypedef)bindings[0]).getName());
 		
@@ -91,7 +95,7 @@ public class BasicCompletionTest extends CompletionTestBase {
 		node = getGCCCompletionNode(code.toString());
 		names = node.getNames();
 		assertEquals(1, names.length);
-		bindings = names[0].resolvePrefix();
+		bindings = names[0].getCompletionContext().findBindings(names[0], true);
 		assertEquals(1, bindings.length);
 		assertEquals("blah", ((ITypedef)bindings[0]).getName());
 	}

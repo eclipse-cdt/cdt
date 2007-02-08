@@ -370,8 +370,13 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 		catch( CDIException e ) {
 			DebugPlugin.log( e );
 		}
-		ICModule[] modules = new ICModule[slibs.length + 1];
-		modules[0] = CModule.createExecutable( this, getExecFile().getPath() );
+		ICModule[] modules = null;
+		if (getExecFile() != null) {
+			modules = new ICModule[slibs.length + 1];
+			modules[0] = CModule.createExecutable( this, getExecFile().getPath() );
+		}
+		else
+			modules = new ICModule[slibs.length];
 		for ( int i = 0; i < slibs.length; ++i ) {
 			modules[i + 1] = CModule.createSharedLibrary( this, slibs[i] );
 		}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2007 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,6 +12,7 @@
 package org.eclipse.cdt.core.index;
 
 import org.eclipse.cdt.core.dom.ast.IBinding;
+import org.eclipse.core.runtime.CoreException;
 
 /**
  * Represents the semantics of a name in the index.
@@ -35,4 +36,11 @@ public interface IIndexBinding extends IBinding {
 	 * Returns the qualified name of this binding as array of strings.
 	 */
 	String[] getQualifiedName();
+	
+	/**
+	 * Returns whether the scope of the binding is file-local. A file local
+	 * binding is private to an index and should not be adapted to a binding
+	 * in another index.
+	 */
+	boolean isFileLocal() throws CoreException;
 }

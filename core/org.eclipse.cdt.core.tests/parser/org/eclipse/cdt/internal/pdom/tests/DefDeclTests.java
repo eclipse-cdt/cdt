@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 QNX Software Systems and others.
+ * Copyright (c) 2006, 2007 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -23,10 +23,16 @@ import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.ICompositeType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.index.IIndex;
+import org.eclipse.cdt.core.index.IIndexFile;
+import org.eclipse.cdt.core.index.IIndexFileLocation;
+import org.eclipse.cdt.core.index.IIndexName;
 import org.eclipse.cdt.core.index.IndexFilter;
+import org.eclipse.cdt.core.index.IndexLocationFactory;
 import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.testplugin.util.TestSourceReader;
 import org.eclipse.cdt.internal.core.CCoreInternals;
+import org.eclipse.cdt.internal.core.index.IIndexFragmentName;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
@@ -204,25 +210,35 @@ public class DefDeclTests extends PDOMTestBase {
 		assertDefDeclRef("foo", "06", 1, 1, 1);
 	}
 
-	public void testWrongMatchedStaticDefinition_unexpected() throws Exception {
-		assertDefDeclRef("foo", "07", 1, 1, 1);
+	public void testWrongMatchedStaticDefinition() throws Exception {
+		assertDefDeclRef("foo", "07", 0, 1, 1);
 	}
 
-	public void testStaticBindings_f08_unexpected() throws Exception {
-		// should be 2 bindings, otherwise how to distinguish proper def/decl
-		// pairs?
-		// static elements cannot be found on global scope, see bug 161216
+	public void testStaticBindings_f08() throws Exception {
 		String elName = "foo" + "08";
-		IBinding[] binds = pdom.findBindings(Pattern.compile(elName), true,
-				IndexFilter.ALL, new NullProgressMonitor());
-		assertEquals(0, binds.length);
-//		assertEquals(elName, binds[0].getName());
-//		IBinding element = binds[0];
-//		IBinding binding = element;
-//		checkDefinition(binding, "def" + "08", 2);
-//		checkReference(binding, "ref" + "08", 2);
-//		checkDefinition(binding, "defS" + "08", 2);
-//		checkReference(binding, "refS" + "08", 2);
+
+		IIndexFileLocation ifl= IndexLocationFactory.getIFL((ITranslationUnit) cproject.findElement(new Path("func.c")));
+		IIndexFile file= pdom.getFile(ifl);
+		int offset= TestSourceReader.indexOfInFile("foo08();", new Path(ifl.getFullPath()));
+		IIndexName[] names= file.findNames(offset, 5);
+		assertEquals(1, names.length);
+		
+		IBinding element = pdom.findBinding((IIndexFragmentName)names[0]);
+		assertEquals(elName, element.getName());
+		checkDefinition(element, "def" + "08", 1);
+		checkReference(element, "ref" + "08", 1);
+
+		// check the other file
+		ifl= IndexLocationFactory.getIFL((ITranslationUnit) cproject.findElement(new Path("second.c")));
+		file= pdom.getFile(ifl);
+		offset= TestSourceReader.indexOfInFile("foo08();", new Path(ifl.getFullPath()));
+		names= file.findNames(offset, 5);
+		assertEquals(1, names.length);
+		
+		element = pdom.findBinding((IIndexFragmentName)names[0]);
+		assertEquals(elName, element.getName());
+		checkDefinition(element, "defS" + "08", 1);
+		checkReference(element, "refS" + "08", 1);
 	}
 
 	public void testSimpleGlobalWrite_v09() throws Exception {
@@ -263,7 +279,7 @@ public class DefDeclTests extends PDOMTestBase {
 		assertDefDeclRef("type", "_t03", 1, 1, 1);
 	}
 
-	public void _testStructAndTypedef_t04_unexpected() throws Exception {
+	public void testStructAndTypedef_t04() throws Exception {
 		String num = "_t04";
 		String elName = "type" + num;
 		
@@ -274,7 +290,7 @@ public class DefDeclTests extends PDOMTestBase {
 		IBinding struct = bindings[0] instanceof ICompositeType ? bindings[0] : bindings[1];
 		
 		checkReference(typedef, "ref" + num, 1);
-		checkDeclaration(typedef, "def" + num, 1);
+		checkDefinition(typedef, "def" + num, 1);
 		
 		checkReference(struct, "refS" + num, 1);
 		checkDefinition(struct, "defS" + num, 1);

@@ -11,27 +11,17 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom.dom;
 
-import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.cdt.core.dom.IPDOMNode;
-import org.eclipse.cdt.core.dom.IPDOMVisitor;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.index.IndexFilter;
-import org.eclipse.cdt.internal.core.pdom.db.IBTreeVisitor;
-import org.eclipse.core.runtime.CoreException;
 
 /**
  * Visitor to find bindings in a BTree or below a PDOMNode. Nested bindings are not visited.
  * @since 4.0
  */
-public final class BindingCollector implements IBTreeVisitor, IPDOMVisitor {
-	private final PDOMLinkage linkage;
-	private final char[] name;
-	private final boolean prefixLookup;
+public final class BindingCollector extends NamedNodeCollector {
 	private IndexFilter filter;
-	
-	private List bindings = new ArrayList();
 
 	/**
 	 * Collects all bindings with given name.
@@ -45,55 +35,21 @@ public final class BindingCollector implements IBTreeVisitor, IPDOMVisitor {
 	 * <code>true</code> a binding is considered if its name starts with the given prefix.
 	 */
 	public BindingCollector(PDOMLinkage linkage, char[] name, IndexFilter filter, boolean prefixLookup) {
-		this.name = name;
-		this.linkage= linkage;
+		super(linkage, name, prefixLookup);
 		this.filter= filter;
-		this.prefixLookup = prefixLookup;
 	}
-	
-	public int compare(int record) throws CoreException {
-		PDOMNamedNode node = ((PDOMNamedNode)linkage.getNode(record));
-		return compare(node);
-	}
-
-	private int compare(PDOMNamedNode node) throws CoreException {
-		if (prefixLookup) {
-			return node.getDBName().comparePrefix(name);
-		}
-		return node.getDBName().compare(name);
-	}
-	
-	public boolean visit(int record) throws CoreException {
-		if (record == 0)
-			return true;
 		
-		PDOMBinding tBinding = linkage.getPDOM().getBinding(record);
-		if (tBinding != null) {
-			visit(tBinding);
+	public boolean addNode(PDOMNamedNode tBinding) {
+		if (tBinding instanceof IBinding) {
+			if (filter == null || filter.acceptBinding((IBinding) tBinding)) {
+				return super.addNode(tBinding);
+			}
 		}
 		return true; // look for more
 	}
-
-	private void visit(PDOMBinding tBinding) {
-		if (filter == null || filter.acceptBinding(tBinding)) {
-			bindings.add(tBinding);
-		}
-	}
 	
 	public IBinding[] getBindings() {
+		List bindings= getNodeList();
 		return (IBinding[])bindings.toArray(new IBinding[bindings.size()]);
-	}
-
-	public boolean visit(IPDOMNode node) throws CoreException {
-		if (node instanceof PDOMBinding) {
-			PDOMBinding pb= (PDOMBinding) node;
-			if (compare(pb) == 0) {
-				visit(pb);
-			}
-		}
-		return false;	// don't visit children
-	}
-
-	public void leave(IPDOMNode node) throws CoreException {
 	}
 }

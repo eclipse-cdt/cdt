@@ -59,12 +59,13 @@ public abstract class PDOMLinkage extends PDOMNamedNode implements IIndexLinkage
 	protected static final int RECORD_SIZE = PDOMNamedNode.RECORD_SIZE + 12;
 	
 	// node types
-	protected static final int LINKAGE = 0; // special one for myself
-	static final int POINTER_TYPE = 1;
-	static final int ARRAY_TYPE = 2;
-	static final int QUALIFIER_TYPE = 3;
+	protected static final int LINKAGE= 0; // special one for myself
+	static final int POINTER_TYPE= 1;
+	static final int ARRAY_TYPE= 2;
+	static final int QUALIFIER_TYPE= 3;
+	static final int FILE_LOCAL_SCOPE_TYPE= 4;
 	
-	protected static final int LAST_NODE_TYPE = QUALIFIER_TYPE;
+	protected static final int LAST_NODE_TYPE = FILE_LOCAL_SCOPE_TYPE;
 	
 	public PDOMLinkage(PDOM pdom, int record) {
 		super(pdom, record);
@@ -144,6 +145,8 @@ public abstract class PDOMLinkage extends PDOMNamedNode implements IIndexLinkage
 			return new PDOMArrayType(pdom, record);
 		case QUALIFIER_TYPE:
 			return new PDOMQualifierType(pdom, record);
+		case FILE_LOCAL_SCOPE_TYPE:
+			return new PDOMFileLocalScope(pdom, record);
 		}
 		return null;
 	}
@@ -178,17 +181,28 @@ public abstract class PDOMLinkage extends PDOMNamedNode implements IIndexLinkage
 	/**
 	 * 
 	 * @param binding
+	 * @param createFileLocalScope if <code>true</code> the creation of a file local
+	 *        scope object is allowed.
 	 * @return <ul><li> null - skip this binding (don't add to pdom)
 	 * <li>this - for filescope
 	 * <li>a PDOMBinding instance - parent adapted binding
 	 * </ul>
 	 * @throws CoreException
 	 */
-	public PDOMNode getAdaptedParent(IBinding binding) throws CoreException {
+	protected PDOMNode getAdaptedParent(IBinding binding, boolean createFileLocalScope) throws CoreException {
 		try {
 		IScope scope = binding.getScope();
 		if (scope == null) {
-			return binding instanceof PDOMBinding ? this : null;
+			if (binding instanceof IIndexBinding) {
+				IIndexBinding ib= (IIndexBinding) binding;
+				// don't adapt file local bindings from other fragments to this one.
+				if (ib.isFileLocal()) {
+					return null;
+				}
+				// in an index the null scope represents global scope.
+				return this;
+			}
+			return null;
 		}
 		
 		if (scope instanceof IIndexBinding) {
@@ -207,8 +221,13 @@ public abstract class PDOMLinkage extends PDOMNamedNode implements IIndexLinkage
 		IASTNode scopeNode = ASTInternal.getPhysicalNodeOfScope(scope);
 		if (scopeNode instanceof IASTCompoundStatement)
 			return null;
-		else if (scopeNode instanceof IASTTranslationUnit)
+		else if (scopeNode instanceof IASTTranslationUnit) {
+			if (isFileLocalBinding(binding)) {
+				IASTTranslationUnit tu= (IASTTranslationUnit) scopeNode;
+				return findFileLocalScope(tu.getFilePath(), createFileLocalScope);
+			}
 			return this;
+		}
 		else {
 			IName scopeName = scope.getScopeName();
 			if (scopeName instanceof IASTName) {
@@ -224,6 +243,7 @@ public abstract class PDOMLinkage extends PDOMNamedNode implements IIndexLinkage
 		return null;
 	}
 	
+	protected abstract boolean isFileLocalBinding(IBinding binding) throws DOMException;
 	public abstract int getBindingType(IBinding binding);
 	
 	public IBinding[] findBindingsForPrefix(char[] prefix, IndexFilter filter) throws CoreException {
@@ -262,5 +282,52 @@ public abstract class PDOMLinkage extends PDOMNamedNode implements IIndexLinkage
 	 * @since 4.0
 	 */
 	public void onDeleteName(PDOMName nextName) throws CoreException {
+	}
+	
+	/**
+	 * Searches for the a file local scope object. If none is found depending
+	 * on the value of the parameter 'create' such an object is created.
+	 * @param fileName
+	 * @param create
+	 * @since 4.0
+	 */
+	final protected PDOMFileLocalScope findFileLocalScope(String fileName, boolean create) throws CoreException {
+		char[] fname= fileName.toCharArray();
+		int fnamestart= findFileNameStart(fname);
+		StringBuffer buf= new StringBuffer();
+		buf.append('{');
+		buf.append(fname, fnamestart, fname.length-fnamestart);
+		buf.append(':');
+		buf.append(fileName.hashCode());
+		buf.append('}');
+		fname= buf.toString().toCharArray();
+
+		final PDOMFileLocalScope[] fls= new PDOMFileLocalScope[] {null};
+		NamedNodeCollector collector= new NamedNodeCollector(this, fname) {
+			public boolean addNode(PDOMNamedNode node) {
+				if (node instanceof PDOMFileLocalScope) {
+					fls[0]= (PDOMFileLocalScope) node;
+					return false;	// done
+				}
+				return true;
+			}
+		};
+		getIndex().accept(collector);
+		if (fls[0] == null && create) {
+			fls[0]= new PDOMFileLocalScope(pdom, this, fname);
+			addChild(fls[0]);
+		}
+		return fls[0];
+	}
+
+	private static int findFileNameStart(char[] fname) {
+		for (int i= fname.length-2; i>=0; i--) {
+			switch (fname[i]) {
+			case '/':
+			case '\\':
+				return i+1;
+			}
+		}
+		return 0;
 	}
 }

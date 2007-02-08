@@ -40,8 +40,6 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPReferenceType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPVariable;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier;
-import org.eclipse.cdt.core.dom.ast.gnu.cpp.GPPLanguage;
-import org.eclipse.cdt.core.model.ILanguage;
 import org.eclipse.cdt.internal.core.Util;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPBlockScope;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalFunction;
@@ -128,10 +126,16 @@ class PDOMCPPLinkage extends PDOMLinkage {
 	}
 
 	private PDOMBinding addBinding(IBinding binding) throws CoreException {
+		// assign names to anonymous types.
+		binding= PDOMASTAdapter.getAdapterIfAnonymous(binding);
+		if (binding == null) {
+			return null;
+		}
+
 		PDOMBinding pdomBinding = adaptBinding(binding);
 		try {
 			if (pdomBinding == null) {
-				PDOMNode parent = getAdaptedParent(binding);
+				PDOMNode parent = getAdaptedParent(binding, true);
 				if (parent == null)
 					return null;
 				pdomBinding = addBinding(parent, binding);
@@ -146,32 +150,25 @@ class PDOMCPPLinkage extends PDOMLinkage {
 	private PDOMBinding addBinding(PDOMNode parent, IBinding binding) throws CoreException, DOMException {
 		PDOMBinding pdomBinding= null;
 		
-		// assign names to anonymous types.
-		binding= PDOMASTAdapter.getAdapterIfAnonymous(binding);
-		if (binding == null) {
-			return null;
-		}
-
-		if (binding instanceof ICPPField && parent instanceof PDOMCPPClassType)
-			pdomBinding = new PDOMCPPField(pdom, (PDOMCPPClassType)parent, (ICPPField) binding);
-		else if (binding instanceof ICPPVariable && !(binding.getScope() instanceof CPPBlockScope)) {
+		if (binding instanceof ICPPField ) {
+			if (parent instanceof PDOMCPPClassType) {
+				pdomBinding = new PDOMCPPField(pdom, (PDOMCPPClassType)parent, (ICPPField) binding);
+			}
+		} else if (binding instanceof ICPPVariable) {
 			if (!(binding.getScope() instanceof CPPBlockScope)) {
 				ICPPVariable var= (ICPPVariable) binding;
-				if (!var.isStatic()) {  // bug 161216
-					pdomBinding = new PDOMCPPVariable(pdom, parent, var);
-				}
+				pdomBinding = new PDOMCPPVariable(pdom, parent, var);
 			}
-		} else if (binding instanceof ICPPConstructor && parent instanceof PDOMCPPClassType) {
-			pdomBinding = new PDOMCPPConstructor(pdom, parent, (ICPPConstructor)binding);
-		} else if (binding instanceof ICPPMethod && parent instanceof PDOMCPPClassType) {
-			pdomBinding = new PDOMCPPMethod(pdom, parent, (ICPPMethod)binding);
+		} else if (binding instanceof ICPPConstructor) {
+			if (parent instanceof PDOMCPPClassType) {
+				pdomBinding = new PDOMCPPConstructor(pdom, parent, (ICPPConstructor)binding);
+			}
+		} else if (binding instanceof ICPPMethod) {
+			if (parent instanceof PDOMCPPClassType) {
+				pdomBinding = new PDOMCPPMethod(pdom, parent, (ICPPMethod)binding);
+			}
 		} else if (binding instanceof ICPPFunction) {
-			ICPPFunction func = (ICPPFunction)binding;
-			if (binding instanceof ICPPInternalFunction) {
-				if (!((ICPPInternalFunction)binding).isStatic(false))
-					pdomBinding = new PDOMCPPFunction(pdom, parent, func);
-			} else
-				pdomBinding = new PDOMCPPFunction(pdom, parent, func);
+			pdomBinding = new PDOMCPPFunction(pdom, parent, (ICPPFunction) binding);
 		} else if (binding instanceof ICPPClassType) {
 			pdomBinding= new PDOMCPPClassType(pdom, parent, (ICPPClassType) binding);
 		} else if (binding instanceof ICPPNamespaceAlias) {
@@ -269,7 +266,7 @@ class PDOMCPPLinkage extends PDOMLinkage {
 			}
 		}
 
-		PDOMNode parent = getAdaptedParent(binding);
+		PDOMNode parent = getAdaptedParent(binding, false);
 
 		if (parent == this) {
 			return CPPFindBinding.findBinding(getIndex(), this, binding);
@@ -391,5 +388,26 @@ class PDOMCPPLinkage extends PDOMLinkage {
 				}
 			}
 		}
+	}
+
+	protected boolean isFileLocalBinding(IBinding binding) throws DOMException {
+		if (binding instanceof ICPPField) {
+			return false;
+		}
+		if (binding instanceof ICPPVariable) {
+			if (!(binding.getScope() instanceof CPPBlockScope)) {
+				ICPPVariable var= (ICPPVariable) binding;
+				return var.isStatic();
+			}
+			return false;
+		}
+		if (binding instanceof ICPPMethod) {
+			return false;
+		}
+		if (binding instanceof ICPPInternalFunction) {
+			ICPPInternalFunction func = (ICPPInternalFunction)binding;
+			return func.isStatic(false);
+		}
+		return false;
 	}
 }

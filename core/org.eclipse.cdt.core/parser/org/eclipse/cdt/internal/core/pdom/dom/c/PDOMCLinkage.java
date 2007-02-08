@@ -33,8 +33,6 @@ import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.core.dom.ast.c.ICASTElaboratedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.c.ICBasicType;
-import org.eclipse.cdt.core.dom.ast.gnu.c.GCCLanguage;
-import org.eclipse.cdt.core.model.ILanguage;
 import org.eclipse.cdt.internal.core.Util;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.db.IBTreeComparator;
@@ -79,53 +77,45 @@ class PDOMCLinkage extends PDOMLinkage {
 
 	public PDOMBinding addBinding(IBinding binding) throws CoreException {
 		PDOMBinding pdomBinding = adaptBinding(binding);
-		try {
-			if (pdomBinding == null) {
-				PDOMNode parent = getAdaptedParent(binding);
-				if (parent == null)
-					return null;
-				
-				// assign names to anonymous types.
-				binding= PDOMASTAdapter.getAdapterIfAnonymous(binding);
+		if (pdomBinding == null) {
+			PDOMNode parent = getAdaptedParent(binding, true);
+			if (parent == null)
+				return null;
+			
+			// assign names to anonymous types.
+			binding= PDOMASTAdapter.getAdapterIfAnonymous(binding);
 
-				if (binding == null || binding instanceof IParameter)
-					return null; // skip parameters
-				
-				if (binding instanceof IField) { // must be before IVariable
-					if (parent instanceof IPDOMMemberOwner)
-						pdomBinding = new PDOMCField(pdom, (IPDOMMemberOwner)parent, (IField) binding);
-				} else if (binding instanceof IVariable) {
-					IVariable var= (IVariable) binding;
-					if (!var.isStatic()) {  // bug 161216
-						pdomBinding = new PDOMCVariable(pdom, parent, var);
-					}
-				} else if (binding instanceof IFunction) {
-					IFunction func= (IFunction) binding;
-					if (!func.isStatic()) {  // bug 161216
-						pdomBinding = new PDOMCFunction(pdom, parent, func);
-					}
-				} else if (binding instanceof ICompositeType)
-					pdomBinding = new PDOMCStructure(pdom, parent, (ICompositeType) binding);
-				else if (binding instanceof IEnumeration)
-					pdomBinding = new PDOMCEnumeration(pdom, parent, (IEnumeration) binding);
-				else if (binding instanceof IEnumerator) {
-					try {
-						IEnumeration enumeration = (IEnumeration)((IEnumerator)binding).getType();
-						PDOMBinding pdomEnumeration = adaptBinding(enumeration);
-						if (pdomEnumeration instanceof PDOMCEnumeration)
-							pdomBinding = new PDOMCEnumerator(pdom, parent, (IEnumerator) binding, (PDOMCEnumeration)pdomEnumeration);
-					} catch (DOMException e) {
-						throw new CoreException(Util.createStatus(e));
-					}
-				} else if (binding instanceof ITypedef)
-					pdomBinding = new PDOMCTypedef(pdom, parent, (ITypedef)binding);
-
-				if(pdomBinding!=null) {
-					parent.addChild(pdomBinding);
+			if (binding == null || binding instanceof IParameter)
+				return null; // skip parameters
+			
+			if (binding instanceof IField) { // must be before IVariable
+				if (parent instanceof IPDOMMemberOwner)
+					pdomBinding = new PDOMCField(pdom, (IPDOMMemberOwner)parent, (IField) binding);
+			} else if (binding instanceof IVariable) {
+				IVariable var= (IVariable) binding;
+				pdomBinding = new PDOMCVariable(pdom, parent, var);
+			} else if (binding instanceof IFunction) {
+				IFunction func= (IFunction) binding;
+				pdomBinding = new PDOMCFunction(pdom, parent, func);
+			} else if (binding instanceof ICompositeType)
+				pdomBinding = new PDOMCStructure(pdom, parent, (ICompositeType) binding);
+			else if (binding instanceof IEnumeration)
+				pdomBinding = new PDOMCEnumeration(pdom, parent, (IEnumeration) binding);
+			else if (binding instanceof IEnumerator) {
+				try {
+					IEnumeration enumeration = (IEnumeration)((IEnumerator)binding).getType();
+					PDOMBinding pdomEnumeration = adaptBinding(enumeration);
+					if (pdomEnumeration instanceof PDOMCEnumeration)
+						pdomBinding = new PDOMCEnumerator(pdom, parent, (IEnumerator) binding, (PDOMCEnumeration)pdomEnumeration);
+				} catch (DOMException e) {
+					throw new CoreException(Util.createStatus(e));
 				}
+			} else if (binding instanceof ITypedef)
+				pdomBinding = new PDOMCTypedef(pdom, parent, (ITypedef)binding);
+
+			if(pdomBinding!=null) {
+				parent.addChild(pdomBinding);
 			}
-		} catch (DOMException e) {
-			throw new CoreException(Util.createStatus(e));
 		}
 		return pdomBinding;
 	}
@@ -186,7 +176,7 @@ class PDOMCLinkage extends PDOMLinkage {
 				return null;
 			}
 		}
-		PDOMNode parent = getAdaptedParent(binding);
+		PDOMNode parent = getAdaptedParent(binding, false);
 
 		if (parent == this) {
 			return FindBinding.findBinding(getIndex(), getPDOM(), binding.getNameCharArray(), new int[] {getBindingType(binding)});
@@ -262,7 +252,18 @@ class PDOMCLinkage extends PDOMLinkage {
 		return new FindBinding.DefaultBindingBTreeComparator(getPDOM());
 	}
 
-	public IBinding findInGlobalScope(String filePath, IASTName name) throws CoreException {
-		return null;
+	protected boolean isFileLocalBinding(IBinding binding) throws DOMException {
+		if (binding instanceof IField) {
+			return false;
+		}
+		if (binding instanceof IVariable) {
+			IVariable var= (IVariable) binding;
+			return var.isStatic();
+		}
+		if (binding instanceof IFunction) {
+			IFunction f= (IFunction) binding;
+			return f.isStatic();
+		}
+		return false;
 	}
 }

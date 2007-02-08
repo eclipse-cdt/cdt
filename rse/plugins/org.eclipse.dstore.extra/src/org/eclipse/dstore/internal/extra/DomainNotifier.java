@@ -14,7 +14,7 @@
  * {Name} (company) - description of contribution.
  ********************************************************************************/
 
-package org.eclipse.dstore.extra.internal;
+package org.eclipse.dstore.internal.extra;
 
 import java.util.ArrayList;
 

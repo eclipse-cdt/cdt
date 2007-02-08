@@ -14,19 +14,10 @@
  * {Name} (company) - description of contribution.
  ********************************************************************************/
 
-package org.eclipse.dstore.extra.internal;
+package org.eclipse.dstore.internal.extra;
 
-public class DesktopElement
+public interface IDesktopElement
 {
 
   
-    public static boolean matches(Class aClass)
-    {
-	return false;
-    }
-    
-    public static Object getPlatformAdapter(Object obj, Class aClass)
-    {
-	return null;
-    }  
 }

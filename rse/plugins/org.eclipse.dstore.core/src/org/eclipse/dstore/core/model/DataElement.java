@@ -22,9 +22,9 @@ import java.util.List;
 import org.eclipse.dstore.core.util.DataElementRemover;
 import org.eclipse.dstore.core.util.StringCompare;
 import org.eclipse.dstore.extra.IDataElement;
-import org.eclipse.dstore.extra.internal.DataElementActionFilter;
-import org.eclipse.dstore.extra.internal.DesktopElement;
-import org.eclipse.dstore.extra.internal.PropertySource;
+import org.eclipse.dstore.internal.extra.DataElementActionFilter;
+import org.eclipse.dstore.internal.extra.DesktopElement;
+import org.eclipse.dstore.internal.extra.PropertySource;
 
 /**
  * <code>DataElement</code> is the unit of information for the <code>DataStore</code>.  All objects including

@@ -14,11 +14,13 @@
  * {Name} (company) - description of contribution.
  ********************************************************************************/
 
-package org.eclipse.dstore.extra.internal;
+package org.eclipse.dstore.internal.extra;
 
- 
-public interface IDesktopElement extends org.eclipse.ui.model.IWorkbenchAdapter
+import org.eclipse.core.runtime.IAdaptable;
+
+public interface IElement extends IAdaptable
 {
 
-  
+
+  public Object getElementProperty(Object key);
 }

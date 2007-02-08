@@ -14,44 +14,10 @@
  * {Name} (company) - description of contribution.
  ********************************************************************************/
 
-package org.eclipse.dstore.extra.internal;
+package org.eclipse.dstore.internal.extra;
 
-import org.eclipse.dstore.extra.DomainEvent;
-import org.eclipse.dstore.extra.IDomainListener;
-import org.eclipse.dstore.extra.IDomainNotifier;
-
-public class DomainNotifier implements IDomainNotifier 
+public interface IPropertySource 
 {
 
 
-    public DomainNotifier()
-      {
-      }
-  
-    public void enable(boolean on)
-    { 
-    }
-
-    public boolean isEnabled()
-    {
-        return false;
-    }
-
-  public void addDomainListener(IDomainListener listener)
-      {
-      }
-
-
-  public void fireDomainChanged(DomainEvent event)
-      {
-      }	
-
-  public boolean hasDomainListener(IDomainListener listener)
-      {
-	  return false;
-      }
-
-  public void removeDomainListener(IDomainListener listener)
-      {
-      }
 }

@@ -14,11 +14,20 @@
  * {Name} (company) - description of contribution.
  ********************************************************************************/
 
-package org.eclipse.dstore.extra.internal;
+package org.eclipse.dstore.internal.extra;
+
+import org.eclipse.dstore.extra.IDataElement;
  
-public interface IElement
+public class PropertySource
 {
 
 
-  public Object getElementProperty(Object key);
+  public PropertySource(IDataElement element)
+  {
+  }
+  
+  public static boolean matches(Class key)
+  {
+	  return false;
+  }
 }

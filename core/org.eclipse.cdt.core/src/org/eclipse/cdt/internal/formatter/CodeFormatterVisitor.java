@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2007 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -284,7 +284,7 @@ public class CodeFormatterVisitor extends CPPASTVisitor {
 		int indentLevel= scribe.indentationLevel;
 		try {
     		if (node.getNodeLocations()[0] instanceof IASTMacroExpansion) {
-    			formatNode(node);
+    			skipNode(node);
     		} else
     		if (node instanceof IASTFunctionDefinition) {
     			return visit((IASTFunctionDefinition)node);
@@ -481,7 +481,9 @@ public class CodeFormatterVisitor extends CPPASTVisitor {
 		if (locations.length == 0) {
 			return PROCESS_SKIP;
 		} else if (locations[0] instanceof IASTMacroExpansion) {
-			formatNode(node);
+			skipNode(node);
+		} else if (locations[0].getNodeOffset()+locations[0].getNodeLength() < scribe.scanner.getCurrentPosition()) {
+			return PROCESS_SKIP;
 		} else
 		if (node instanceof IASTConditionalExpression) {
 			visit((IASTConditionalExpression)node);
@@ -514,8 +516,8 @@ public class CodeFormatterVisitor extends CPPASTVisitor {
     		if (locations.length == 0) {
     			return PROCESS_SKIP;
     		} else if (locations[0] instanceof IASTMacroExpansion) {
-    			formatNode(node);
-    		} else if (locations[0].getNodeOffset()+locations[0].getNodeLength() < scribe.scanner.getCurrentTokenStartPosition()) {
+    			skipNode(node);
+    		} else if (locations[0].getNodeOffset()+locations[0].getNodeLength() < scribe.scanner.getCurrentPosition()) {
     			return PROCESS_SKIP;
     		} else
     		if (node instanceof IASTCompoundStatement) {
@@ -846,6 +848,10 @@ public class CodeFormatterVisitor extends CPPASTVisitor {
 			}
 			final ListAlignment align= new ListAlignment(Alignment.M_COMPACT_SPLIT);
 			formatList(declarators, align, false, false);
+		}
+		if (peekNextToken() == Token.tIDENTIFIER) {
+			// there may be a macro
+			scribe.skipToToken(Token.tSEMI);
 		}
 		scribe.printNextToken(Token.tSEMI, preferences.insert_space_before_semicolon);
 		scribe.printTrailingComment();
@@ -1322,6 +1328,10 @@ public class CodeFormatterVisitor extends CPPASTVisitor {
 	}
 
 	private int visit(IASTNullStatement node) {
+		if (peekNextToken() == Token.tIDENTIFIER) {
+			// probably a macro with empty expansion
+			skipToNode(node);
+		}
 		scribe.printNextToken(Token.tSEMI, preferences.insert_space_before_semicolon);
 		scribe.printTrailingComment();
 		return PROCESS_SKIP;
@@ -1710,7 +1720,7 @@ public class CodeFormatterVisitor extends CPPASTVisitor {
 			if (maxLocation != null) {
 				final int startOffset= minLocation.getNodeOffset();
 				final int endOffset= maxLocation.getNodeOffset() + maxLocation.getNodeLength();
-				scribe.printRaw(minLocation.getNodeOffset(), endOffset - startOffset);
+				scribe.printRaw(startOffset, endOffset - startOffset);
 			}
 		}
 	}
@@ -1927,7 +1937,18 @@ public class CodeFormatterVisitor extends CPPASTVisitor {
 
 	protected int peekNextToken() {
 		localScanner.resetTo(scribe.scanner.getCurrentPosition(), scribe.scannerEndPosition - 1);
-		return localScanner.getNextToken();
+		int token = localScanner.getNextToken();
+		loop: while(true) {
+			switch(token) {
+			case Token.tBLOCKCOMMENT :
+			case Token.tLINECOMMENT :
+				token = localScanner.getNextToken();
+				continue loop;
+			default:
+				break loop;
+			}
+		}
+		return token;
 	}
 
 	protected boolean isClosingTemplateToken() {
@@ -1971,22 +1992,6 @@ public class CodeFormatterVisitor extends CPPASTVisitor {
 			return true;
 		}
 		return false;
-	}
-
-	protected boolean isNextToken(int tokenType) {
-		localScanner.resetTo(scribe.scanner.getCurrentPosition(), scribe.scannerEndPosition - 1);
-		int token = localScanner.getNextToken();
-		loop: while(true) {
-			switch(token) {
-				case Token.tBLOCKCOMMENT :
-				case Token.tLINECOMMENT :
-					token = localScanner.getNextToken();
-					continue loop;
-				default:
-					break loop;
-			}
-		}
-		return  token == tokenType;
 	}
 
 	/**

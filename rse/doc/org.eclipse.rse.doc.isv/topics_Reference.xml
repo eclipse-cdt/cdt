@@ -16,8 +16,6 @@
 		<topic label="org.eclipse.rse.ui.mountPathMappers" href="reference/extension-points/org_eclipse_rse_ui_mountPathMappers.html" />
 		<topic label="org.eclipse.rse.ui.newConnectionWizardDelegates" href="reference/extension-points/org_eclipse_rse_ui_newConnectionWizardDelegates.html" />
 		<topic label="org.eclipse.rse.ui.persistenceProviders" href="reference/extension-points/org_eclipse_rse_ui_persistenceProviders.html" />
-		<topic label="org.eclipse.rse.ui.popupMenus" href="reference/extension-points/org_eclipse_rse_ui_popupMenus.html" />
-		<topic label="org.eclipse.rse.ui.propertyPages" href="reference/extension-points/org_eclipse_rse_ui_propertyPages.html" />
 		<topic label="org.eclipse.rse.ui.remoteSystemsViewPreferencesActions" href="reference/extension-points/org_eclipse_rse_ui_remoteSystemsViewPreferencesActions.html" />
 		<topic label="org.eclipse.rse.ui.subsystemConfigurations" href="reference/extension-points/org_eclipse_rse_ui_subsystemConfigurations.html" />
 		<anchor id="rse-extension-points-ref" />

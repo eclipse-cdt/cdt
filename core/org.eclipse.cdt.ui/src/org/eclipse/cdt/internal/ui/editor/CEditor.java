@@ -95,7 +95,6 @@ import org.eclipse.jface.text.source.projection.ProjectionViewer;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
-import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
@@ -170,7 +169,6 @@ import org.eclipse.cdt.ui.IWorkingCopyManager;
 import org.eclipse.cdt.ui.PreferenceConstants;
 import org.eclipse.cdt.ui.actions.GenerateActionGroup;
 import org.eclipse.cdt.ui.actions.OpenViewActionGroup;
-import org.eclipse.cdt.ui.actions.ShowInCViewAction;
 import org.eclipse.cdt.ui.text.ICPartitions;
 import org.eclipse.cdt.ui.text.folding.ICFoldingStructureProvider;
 
@@ -236,12 +234,7 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IR
 
 			switch (operation) {
 				case CONTENTASSIST_PROPOSALS:
-//					long time= CODE_ASSIST_DEBUG ? System.currentTimeMillis() : 0;
 					String msg= fContentAssistant.showPossibleCompletions();
-//					if (CODE_ASSIST_DEBUG) {
-//						long delta= System.currentTimeMillis() - time;
-//						System.err.println("Code Assist (total): " + delta); //$NON-NLS-1$
-//					}
 					setStatusLineErrorMessage(msg);
 					return;
 				case QUICK_ASSIST:
@@ -1468,13 +1461,6 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IR
 	/** Generate action group filling the "Source" submenu */
 	private GenerateActionGroup fGenerateActionGroup;
 
-    /** Action which shows selected element in CView. */
-	private ShowInCViewAction fShowInCViewAction;
-	
-	/** Activity Listeners **/
-	protected ISelectionChangedListener fStatusLineClearer;
-    protected ISelectionChangedListener fSelectionUpdateListener;
-	
 	/** Pairs of brackets, used to match. */
     protected final static char[] BRACKETS = { '{', '}', '(', ')', '[', ']', '<', '>' };
 
@@ -2106,17 +2092,6 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IR
 			fCEditorErrorTickUpdater = null;
 		}
 		
-        if (fSelectionUpdateListener != null) {
-			getSelectionProvider().addSelectionChangedListener(fSelectionUpdateListener);
-			fSelectionUpdateListener = null;
-        }
-        
-       	if (fStatusLineClearer != null) {
-			ISelectionProvider provider = getSelectionProvider();
-       		provider.removeSelectionChangedListener(fStatusLineClearer);
-			fStatusLineClearer = null;
-		}
-        
         if (fBracketMatcher != null) {
 			fBracketMatcher.dispose();
 			fBracketMatcher = null;
@@ -2125,11 +2100,6 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IR
 		if (fOutlinePage != null) {
 			fOutlinePage.dispose();
 			fOutlinePage = null;
-		}
-		
-		if (fShowInCViewAction != null) {
-			fShowInCViewAction.dispose();
-			fShowInCViewAction = null;
 		}
 		
 		if (fSelectionSearchGroup != null) {
@@ -2284,11 +2254,6 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IR
 //        action = new OpenDefinitionAction(this);
 //        action.setActionDefinitionId(ICEditorActionDefinitionIds.OPEN_DEF);
 //        setAction("OpenDefinition", action); //$NON-NLS-1$
-        
-		fShowInCViewAction = new ShowInCViewAction(this);
-		action = fShowInCViewAction;
-		action.setActionDefinitionId(ICEditorActionDefinitionIds.OPEN_CVIEW);
-		setAction("ShowInCView", action); //$NON-NLS-1$
         
         action = new TextOperationAction(CEditorMessages.getResourceBundle(), "OpenOutline.", this, CSourceViewer.SHOW_OUTLINE, true); //$NON-NLS-1$
         action.setActionDefinitionId(ICEditorActionDefinitionIds.OPEN_OUTLINE);

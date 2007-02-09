@@ -1076,6 +1076,11 @@ public class CView extends ViewPart implements ISetSelectionTarget, IPropertyCha
 	 * @see org.eclipse.ui.part.IShowInTarget#show(org.eclipse.ui.part.ShowInContext)
 	 */
 	public boolean show(ShowInContext context) {
+		ISelection selection= context.getSelection();
+		if (selection != null) {
+			selectReveal(selection);
+			return true;
+		}
 		IEditorInput input = (IEditorInput) context.getInput();
 		if (input != null) {
 			IResource res = (IResource) input.getAdapter(IResource.class);
@@ -1083,11 +1088,6 @@ public class CView extends ViewPart implements ISetSelectionTarget, IPropertyCha
 				selectReveal(new StructuredSelection(res));
 				return true;
 			}
-		}
-		ISelection selection= context.getSelection();
-		if (selection != null) {
-			selectReveal(selection);
-			return true;
 		}
 		return false;
 	}

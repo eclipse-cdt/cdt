@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2007 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,11 +17,13 @@ import junit.framework.Test;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.swt.widgets.Tree;
+import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.IDE;
 
+import org.eclipse.cdt.internal.ui.callhierarchy.CHNode;
 import org.eclipse.cdt.internal.ui.editor.CEditor;
 
 
@@ -98,7 +100,7 @@ public class BasicCallHierarchyTest extends CallHierarchyBaseTest {
 	private void doTestVariables(String filename) throws Exception {
 		String content = readTaggedComment("testVariables");
 		IFile file= createFile(getProject(), filename, content);
-		waitForIndexer(fIndex, file, 1000);
+		waitForIndexer(fIndex, file, INDEXER_WAIT_TIME);
 		IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
 		CEditor editor= (CEditor) IDE.openEditor(page, file);
 
@@ -154,7 +156,7 @@ public class BasicCallHierarchyTest extends CallHierarchyBaseTest {
 	private void doTestEnumerator(String filename, String contentTag) throws Exception {
 		String content = readTaggedComment(contentTag);
 		IFile file= createFile(getProject(), filename, content);
-		waitForIndexer(fIndex, file, 1000);
+		waitForIndexer(fIndex, file, INDEXER_WAIT_TIME);
 		IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
 		CEditor editor= (CEditor) IDE.openEditor(page, file);
 
@@ -210,7 +212,7 @@ public class BasicCallHierarchyTest extends CallHierarchyBaseTest {
 	public void testStructMembersC() throws Exception {
 		String content = readTaggedComment("testStructMembers");
 		IFile file= createFile(getProject(), "struct_member.c", content);
-		waitForIndexer(fIndex, file, 1000);
+		waitForIndexer(fIndex, file, INDEXER_WAIT_TIME);
 		IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
 		CEditor editor= (CEditor) IDE.openEditor(page, file);
 		
@@ -257,7 +259,7 @@ public class BasicCallHierarchyTest extends CallHierarchyBaseTest {
 	public void testStructMembersCpp() throws Exception {
 		String content = readTaggedComment("testStructMembers");
 		IFile file= createFile(getProject(), "struct_member.cpp", content);
-		waitForIndexer(fIndex, file, 1000);
+		waitForIndexer(fIndex, file, INDEXER_WAIT_TIME);
 		IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
 		CEditor editor= (CEditor) IDE.openEditor(page, file);
 		
@@ -304,7 +306,7 @@ public class BasicCallHierarchyTest extends CallHierarchyBaseTest {
 	public void testAnonymousStructMembersC_156671() throws Exception {
 		String content = readTaggedComment("testStructMembers");
 		IFile file= createFile(getProject(), "anon_struct_member.c", content);
-		waitForIndexer(fIndex, file, 1000);
+		waitForIndexer(fIndex, file, INDEXER_WAIT_TIME);
 		IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
 		CEditor editor= (CEditor) IDE.openEditor(page, file);
 		
@@ -333,7 +335,7 @@ public class BasicCallHierarchyTest extends CallHierarchyBaseTest {
 	public void testAnonymousStructMembersCpp_156671() throws Exception {
 		String content = readTaggedComment("testStructMembers");
 		IFile file= createFile(getProject(), "anon_struct_member.cpp", content);
-		waitForIndexer(fIndex, file, 1000);
+		waitForIndexer(fIndex, file, INDEXER_WAIT_TIME);
 		IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
 		CEditor editor= (CEditor) IDE.openEditor(page, file);
 		
@@ -396,7 +398,7 @@ public class BasicCallHierarchyTest extends CallHierarchyBaseTest {
 	public void testUnionMembersC() throws Exception {
 		String content = readTaggedComment("testUnionMembers");
 		IFile file= createFile(getProject(), "union_member.c", content);
-		waitForIndexer(fIndex, file, 1000);
+		waitForIndexer(fIndex, file, INDEXER_WAIT_TIME);
 		IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
 		CEditor editor= (CEditor) IDE.openEditor(page, file);
 		
@@ -443,7 +445,7 @@ public class BasicCallHierarchyTest extends CallHierarchyBaseTest {
 	public void testUnionMembersCpp() throws Exception {
 		String content = readTaggedComment("testUnionMembers");
 		IFile file= createFile(getProject(), "union_member.cpp", content);
-		waitForIndexer(fIndex, file, 1000);
+		waitForIndexer(fIndex, file, INDEXER_WAIT_TIME);
 		IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
 		CEditor editor= (CEditor) IDE.openEditor(page, file);
 		
@@ -490,7 +492,7 @@ public class BasicCallHierarchyTest extends CallHierarchyBaseTest {
 	public void testAnonymousUnionMembersC_156671() throws Exception {
 		String content = readTaggedComment("testUnionMembers");
 		IFile file= createFile(getProject(), "anon_union_member.c", content);
-		waitForIndexer(fIndex, file, 1000);
+		waitForIndexer(fIndex, file, INDEXER_WAIT_TIME);
 		IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
 		CEditor editor= (CEditor) IDE.openEditor(page, file);
 		
@@ -519,7 +521,7 @@ public class BasicCallHierarchyTest extends CallHierarchyBaseTest {
 	public void testAnonymousUnionMembersCpp_156671() throws Exception {
 		String content = readTaggedComment("testUnionMembers");
 		IFile file= createFile(getProject(), "anon_union_member.cpp", content);
-		waitForIndexer(fIndex, file, 1000);
+		waitForIndexer(fIndex, file, INDEXER_WAIT_TIME);
 		IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
 		CEditor editor= (CEditor) IDE.openEditor(page, file);
 		
@@ -543,5 +545,149 @@ public class BasicCallHierarchyTest extends CallHierarchyBaseTest {
 		openCallHierarchy(editor);
 		checkTreeNode(tree, 0, "u4::(anon)::mem5");
 		checkTreeNode(tree, 0, 0, "main()");
+	}
+	
+	// {testStaticFunctions}
+	// void gf();
+	// static void sf() {
+	//     gf();
+	//     sf();
+	// }
+
+	// void gf() {
+	//     gf();
+	//     sf();
+	// }
+	public void testStaticFunctionsC() throws Exception {
+		StringBuffer[] sbs= getContentsForTest(2);
+		String content2= sbs[0].toString();
+		String content1= content2 + sbs[1].toString();
+		IFile file1= createFile(getProject(), "staticFunc1.c", content1);
+		IFile file2= createFile(getProject(), "staticFunc2.c", content2);
+		waitForIndexer(fIndex, file1, INDEXER_WAIT_TIME);
+		waitForIndexer(fIndex, file2, INDEXER_WAIT_TIME);
+
+		TreeItem i0, i1, i2, i3, i4, i5, i6;
+		Tree tree;
+		IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
+		CEditor editor;
+		
+		// first file with definition of gf()
+		editor= (CEditor) IDE.openEditor(page, file1);
+		editor.selectAndReveal(content1.indexOf("sf"), 0);
+		openCallHierarchy(editor);
+		tree = getCHTreeViewer().getTree();
+		i0= checkTreeNode(tree, 0, "sf()");
+		assertEquals(1, tree.getItemCount());
+
+		i1= checkTreeNode(i0, 0, "gf()");	// sf()[f1] <- gf()
+		i2= checkTreeNode(i0, 1, "sf()");   // sf()[f1] <- sf()[f1]
+		checkTreeNode(i0, 2, null);
+
+		expandTreeItem(i1);
+		expandTreeItem(i2);
+		checkTreeNode(i2, 0, null);
+		i3= checkTreeNode(i1, 0, "gf()");   // sf()[f1] <- gf() <- gf()
+		i4= checkTreeNode(i1, 1, "sf()");   // sf()[f1] <- gf() <- sf()[f1]
+		i5= checkTreeNode(i1, 2, "sf()");   // sf()[f1] <- gf() <- sf()[f2]
+
+		if (((CHNode) i4.getData()).getRepresentedDeclaration().getResource().equals(file2)) {
+			i0= i4; i4=i5; i5=i0;
+		}
+		expandTreeItem(i3);
+		expandTreeItem(i4);
+		expandTreeItem(i5);
+		checkTreeNode(i3, 0, null);
+		checkTreeNode(i4, 0, null);
+		i6= checkTreeNode(i5, 0, "sf()"); 	// sf()[f1] <- gf() <- sf()[f2] <- sf()[f2]
+		
+		expandTreeItem(i6);
+		checkTreeNode(i6, 0, null);
+
+		// second file without definition of gf()
+		editor= (CEditor) IDE.openEditor(page, file2);
+		editor.selectAndReveal(content1.indexOf("sf"), 0);
+		openCallHierarchy(editor);
+		tree = getCHTreeViewer().getTree();
+		i0= checkTreeNode(tree, 0, "sf()");
+		assertEquals(1, tree.getItemCount());
+
+		i1= checkTreeNode(i0, 0, "sf()");	// sf()[f2] <- sf()[f2]
+		checkTreeNode(i0, 1, null);			// not called by gf()
+
+		expandTreeItem(i1);
+		checkTreeNode(i1, 0, null);
+	}
+
+	// {testStaticFunctions}
+	// void gf();
+	// static void sf() {
+	//     gf();
+	//     sf();
+	// }
+
+	// void gf() {
+	//     gf();
+	//     sf();
+	// }
+	public void testStaticFunctionsCpp() throws Exception {
+		StringBuffer[] sbs= getContentsForTest(2);
+		String content2= sbs[0].toString();
+		String content1= content2 + sbs[1].toString();
+		IFile file1= createFile(getProject(), "staticFunc1.cpp", content1);
+		IFile file2= createFile(getProject(), "staticFunc2.cpp", content2);
+		waitForIndexer(fIndex, file1, INDEXER_WAIT_TIME);
+		waitForIndexer(fIndex, file2, INDEXER_WAIT_TIME);
+
+		TreeItem i0, i1, i2, i3, i4, i5, i6;
+		Tree tree;
+		IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
+		CEditor editor;
+		
+		// first file with definition of gf()
+		editor= (CEditor) IDE.openEditor(page, file1);
+		editor.selectAndReveal(content1.indexOf("sf"), 0);
+		openCallHierarchy(editor);
+		tree = getCHTreeViewer().getTree();
+		i0= checkTreeNode(tree, 0, "sf()");
+		assertEquals(1, tree.getItemCount());
+
+		i1= checkTreeNode(i0, 0, "gf()");	// sf()[f1] <- gf()
+		i2= checkTreeNode(i0, 1, "sf()");   // sf()[f1] <- sf()[f1]
+		checkTreeNode(i0, 2, null);
+
+		expandTreeItem(i1);
+		expandTreeItem(i2);
+		checkTreeNode(i2, 0, null);
+		i3= checkTreeNode(i1, 0, "gf()");   // sf()[f1] <- gf() <- gf()
+		i4= checkTreeNode(i1, 1, "sf()");   // sf()[f1] <- gf() <- sf()[f1]
+		i5= checkTreeNode(i1, 2, "sf()");   // sf()[f1] <- gf() <- sf()[f2]
+
+		if (((CHNode) i4.getData()).getRepresentedDeclaration().getResource().equals(file2)) {
+			i0= i4; i4=i5; i5=i0;
+		}
+		expandTreeItem(i3);
+		expandTreeItem(i4);
+		expandTreeItem(i5);
+		checkTreeNode(i3, 0, null);
+		checkTreeNode(i4, 0, null);
+		i6= checkTreeNode(i5, 0, "sf()"); 	// sf()[f1] <- gf() <- sf()[f2] <- sf()[f2]
+		
+		expandTreeItem(i6);
+		checkTreeNode(i6, 0, null);
+
+		// second file without definition of gf()
+		editor= (CEditor) IDE.openEditor(page, file2);
+		editor.selectAndReveal(content1.indexOf("sf"), 0);
+		openCallHierarchy(editor);
+		tree = getCHTreeViewer().getTree();
+		i0= checkTreeNode(tree, 0, "sf()");
+		assertEquals(1, tree.getItemCount());
+
+		i1= checkTreeNode(i0, 0, "sf()");	// sf()[f2] <- sf()[f2]
+		checkTreeNode(i0, 1, null);			// not called by gf()
+
+		expandTreeItem(i1);
+		checkTreeNode(i1, 0, null);
 	}
 }

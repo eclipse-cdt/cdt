@@ -17,11 +17,9 @@ import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TreeViewer;
-import org.eclipse.swt.SWT;
 import org.eclipse.swt.SWTException;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
@@ -229,14 +227,6 @@ public class TypeHierarchyBaseTest extends BaseUITestCase {
 		assertNotNull("Unexpected tree node " + item.getText(), label);
 		assertEquals(label, item.getText());
 		return item;
-	}
-	
-	protected void expandTreeItem(TreeItem item) {
-		item.setExpanded(true);
-		Event event = new Event();
-		event.item = item;
-		item.getParent().notifyListeners(SWT.Expand, event);	
-		runEventQueue(0);
 	}
 	
 	protected void checkMethodTable(String[] items) {

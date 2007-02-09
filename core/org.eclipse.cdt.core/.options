@@ -30,7 +30,7 @@ org.eclipse.cdt.core/debug/indexer/activity=false
 # Reports statistics for indexer
 org.eclipse.cdt.core/debug/indexer/statistics=false
 
-# Reports statistics for indexer
+# Reports problems for indexer
 org.eclipse.cdt.core/debug/indexer/problems=false
 
 # Code formatter debugging

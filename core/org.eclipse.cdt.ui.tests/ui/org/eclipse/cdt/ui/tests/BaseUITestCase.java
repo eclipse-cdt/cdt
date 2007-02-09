@@ -16,7 +16,10 @@ import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.TreeItem;
 
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.index.IIndex;
@@ -91,5 +94,13 @@ public class BaseUITestCase extends BaseTestCase {
 			while (Display.getCurrent().readAndDispatch());
 		}
 		while(System.currentTimeMillis() < endTime);
+	}
+	
+	protected void expandTreeItem(TreeItem item) {
+		item.setExpanded(true);
+		Event event = new Event();
+		event.item = item;
+		item.getParent().notifyListeners(SWT.Expand, event);	
+		runEventQueue(0);
 	}
 }

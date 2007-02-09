@@ -49,7 +49,15 @@ public interface ICDIMemoryBlock extends ICDIObject {
 	long getLength();
 
 	/**
-	 * @return The size of each memory word in bytes.
+	 * This method is a misnomer. It should be getAddressableSize. This is how
+	 * CDT finds out from the CDI client the addressable size of the
+	 * memory--i.e., how many bytes per address. Some embedded systems have
+	 * memory with addressable sizes >1. Such backends should make sure to
+	 * ignore the now deprecated wordSize parameter of
+	 * ICDIMemoryBlockManagement.createMemory block() and not regurgitate that
+	 * value in the implementation of this method.
+	 * 
+	 * @return The addressable size of the memory
 	 */
 	int getWordSize();
 

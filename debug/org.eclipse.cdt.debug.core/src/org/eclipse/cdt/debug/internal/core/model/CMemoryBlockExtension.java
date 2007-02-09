@@ -67,14 +67,15 @@ public class CMemoryBlockExtension extends CDebugElement implements IMemoryBlock
 
 	private HashSet fChanges = new HashSet();
 
-	private int fWordSize;
-
 
 	/** 
 	 * Constructor for CMemoryBlockExtension. 
 	 */
 	public CMemoryBlockExtension( CDebugTarget target, String expression, BigInteger baseAddress ) {
-		this( target, expression, baseAddress, 1 );
+		super( target );
+		
+		fExpression = expression;
+		fBaseAddress = baseAddress;
 	}
 
 	/** 
@@ -84,7 +85,6 @@ public class CMemoryBlockExtension extends CDebugElement implements IMemoryBlock
 		super( target );
 		fExpression = expression;
 		fBaseAddress = baseAddress;
-		fWordSize = wordSize;
 	}
 
 	/** 
@@ -95,7 +95,6 @@ public class CMemoryBlockExtension extends CDebugElement implements IMemoryBlock
 		super( target );
 		fBaseAddress = baseAddress;
 		fMemorySpaceID = memorySpaceID; 
-		fWordSize = 1;
 		if (target.getCDITarget() instanceof ICDIMemorySpaceManagement)
 			fExpression = ((ICDIMemorySpaceManagement)target.getCDITarget()).addressToString(baseAddress, memorySpaceID);
 		
@@ -130,8 +129,17 @@ public class CMemoryBlockExtension extends CDebugElement implements IMemoryBlock
 	 * @see org.eclipse.debug.core.model.IMemoryBlockExtension#getAddressableSize()
 	 */
 	public int getAddressableSize() throws DebugException {
-		ICDIMemoryBlock block = getCDIBlock();
-		return ( block != null ) ? block.getWordSize() : fWordSize;
+		if (getCDIBlock() == null) {
+			try {
+				// create a CDI block of an arbitrary size so we can call into
+				// the backed to determine the memory's addressable size
+				setCDIBlock( createCDIBlock( fBaseAddress, 100 ));
+			}
+			catch( CDIException e ) {
+				targetRequestFailed( e.getMessage(), null );
+			}
+		}
+		return getCDIBlock().getWordSize();
 	}
 
 	/* (non-Javadoc)
@@ -162,19 +170,19 @@ public class CMemoryBlockExtension extends CDebugElement implements IMemoryBlock
 		ICDIMemoryBlock cdiBlock = getCDIBlock();
 		if ( cdiBlock == null || 
 			 cdiBlock.getStartAddress().compareTo( address ) > 0 || 
-			 cdiBlock.getStartAddress().add( BigInteger.valueOf( cdiBlock.getLength() ) ).compareTo( address.add( BigInteger.valueOf( length ) ) ) < 0 ) {
+			 cdiBlock.getStartAddress().add( BigInteger.valueOf( cdiBlock.getLength()/cdiBlock.getWordSize() ) ).compareTo( address.add( BigInteger.valueOf( length ) ) ) < 0 ) {
 			synchronized( this ) {
 				byte[] bytes = null;
 				try {
 					cdiBlock = getCDIBlock();
 					if ( cdiBlock == null || 
 						 cdiBlock.getStartAddress().compareTo( address ) > 0 || 
-						 cdiBlock.getStartAddress().add( BigInteger.valueOf( cdiBlock.getLength() ) ).compareTo( address.add( BigInteger.valueOf( length ) ) ) < 0 ) {
+						 cdiBlock.getStartAddress().add( BigInteger.valueOf( cdiBlock.getLength()/cdiBlock.getWordSize() ) ).compareTo( address.add( BigInteger.valueOf( length ) ) ) < 0 ) {
 						if ( cdiBlock != null ) {
 							disposeCDIBlock();
 							fBytes = null;
 						}
-						setCDIBlock( createCDIBlock( address, length, fWordSize ) );
+						setCDIBlock( cdiBlock = createCDIBlock( address, length ) );
 					}
 					bytes = getCDIBlock().getBytes();
 				}
@@ -190,11 +198,13 @@ public class CMemoryBlockExtension extends CDebugElement implements IMemoryBlock
 		MemoryByte[] result = new MemoryByte[0];
 		if ( fBytes != null ) {
 			int offset = address.subtract( getRealBlockAddress() ).intValue();
+			int offsetInBytes = offset * cdiBlock.getWordSize();
+			long lengthInBytes = length * cdiBlock.getWordSize();
 			if ( offset >= 0 ) {
-				int size = ( fBytes.length - offset >= length ) ? (int)length : fBytes.length - offset;
+				int size = ( fBytes.length - offsetInBytes >= lengthInBytes ) ? (int)lengthInBytes : fBytes.length - offsetInBytes;
 				if ( size > 0 ) {
 					result = new MemoryByte[size];
-					System.arraycopy( fBytes, offset, result, 0, size );
+					System.arraycopy( fBytes, offsetInBytes, result, 0, size );
 				}
 			}
 		}
@@ -291,14 +301,18 @@ public class CMemoryBlockExtension extends CDebugElement implements IMemoryBlock
 		}
 	}
 
-	private ICDIMemoryBlock createCDIBlock( BigInteger address, long length, int wordSize ) throws CDIException {
+	private ICDIMemoryBlock createCDIBlock( BigInteger address, long length) throws CDIException {
 		ICDIMemoryBlock block = null;
 		CDebugTarget target = (CDebugTarget)getDebugTarget();
 		ICDITarget cdiTarget = target.getCDITarget();
 		if ((fMemorySpaceID != null) && (cdiTarget instanceof ICDIMemoryBlockManagement2)) {
-			block = ((ICDIMemoryBlockManagement2)cdiTarget).createMemoryBlock(address, fMemorySpaceID, (int)length, wordSize); 
+			block = ((ICDIMemoryBlockManagement2)cdiTarget).createMemoryBlock(address, fMemorySpaceID, (int)length); 
 		} else {
-			block = cdiTarget.createMemoryBlock( address.toString(), (int)length, wordSize );
+			// Note that CDI clients should ignore the word size 
+			// parameter. It has been deprecated in 4.0. We continue to
+			// pass in 1 as has always been the case to maintain backwards
+			// compatibility.
+			block = cdiTarget.createMemoryBlock( address.toString(), (int)length, 1);
 		}
 		block.setFrozen( false );
 		getCDISession().getEventManager().addEventListener( this );

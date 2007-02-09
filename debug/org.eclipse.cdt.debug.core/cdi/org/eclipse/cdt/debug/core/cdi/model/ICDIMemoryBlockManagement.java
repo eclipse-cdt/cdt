@@ -25,8 +25,13 @@ public interface ICDIMemoryBlockManagement {
 	/**
 	 * Returns a memory block specified by given identifier.
 	 * @param address 
-	 * @param units - number of units
-	 * @param wordSize - The size of each memory word in bytes
+	 * @param units - number of bytes
+	 * @param wordSize - this parameter has been deprecated in 4.0
+	 * and will always be passed as the value 1. If the memory
+	 * has an addressable size (number of bytes per address)
+	 * greather than 1, the CDI client should take care not to
+	 * return the value of wordSize we pass in here, but rather
+	 * return the actual addressable size for that memory.
 	 * @return a memory block with the specified identifier
 	 * @throws CDIException on failure. Reasons include:
 	 */

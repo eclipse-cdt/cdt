@@ -307,7 +307,9 @@ public class SubSystemConfigurationProxy implements ISubSystemConfigurationProxy
 				IRSESystemType[] systemTypes = RSECorePlugin.getDefault().getRegistry().getSystemTypes();
 				for (int i = 0; i < systemTypes.length; i++) {
 					IRSESystemType systemType = systemTypes[i];
-					if (isMatchingDeclaredSystemTypes(systemType)) {
+					if (isMatchingDeclaredSystemTypes(systemType)
+							|| (systemType.getSubsystemConfigurationIds() != null
+									&& Arrays.asList(systemType.getSubsystemConfigurationIds()).contains(getId()))) {
 						resolvedSystemTypes.add(systemType.getName());
 					}
 				}

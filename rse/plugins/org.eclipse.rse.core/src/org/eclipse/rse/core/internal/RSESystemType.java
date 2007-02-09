@@ -121,6 +121,15 @@ public class RSESystemType implements IRSESystemType {
 		return definingBundle;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.core.IRSESystemType#getSubsystemConfigurationIds()
+	 */
+	public String[] getSubsystemConfigurationIds() {
+		// We are not proposing any subsystem configuration here
+		// by default.
+		return null;
+	}
+
 	/**
 	 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
 	 */

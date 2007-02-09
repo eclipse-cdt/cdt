@@ -11,7 +11,7 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * Uwe Stieber (Wind River) - Extended system type -> subsystemConfiguration association.
  ********************************************************************************/
 
 package org.eclipse.rse.core;
@@ -112,4 +112,18 @@ public interface IRSESystemType extends IAdaptable {
 	 * @return the bundle which defines this system type or <code>null</code> if none
 	 */
 	public Bundle getDefiningBundle();
+	
+  /**
+   * Returns a list of fully qualified known subsystem configuration id's that
+   * this system type wants to be registered against. More subsystem configurations
+   * can be added through the <tt>subsystemConfigurations</tt> extension point.
+   * <p>
+   * <b>Note:</b> The list returned here does not imply that the corresponding
+   * subsystem configurations exist. The list contains only possibilites not
+   * requirements.
+   * 
+   * @return The list of subsystem configuration id or <code>null</code>.
+   */
+  public String[] getSubsystemConfigurationIds();
+
 }

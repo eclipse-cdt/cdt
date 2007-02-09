@@ -134,6 +134,7 @@ public class Elf {
 		public final static int EM_CYGNUS_FRV = 0x5441;
 		public final static int EM_IQ2000 = 0xFEBA;
 		public static final int EM_XILINX_MICROBLAZE = 0xbaab;
+		public static final int EM_SDMA = 0xcafe;
 
 		public byte e_ident[] = new byte[EI_NDENT];
 		public int e_type; /* file type (Elf32_Half) */
@@ -743,7 +744,7 @@ public class Elf {
 				break;
 		}
 
-		switch (ehdr.e_machine) {
+		switch (ehdr.e_machine & 0xFFFF) {
 			case Elf.ELFhdr.EM_386 :
 			case Elf.ELFhdr.EM_486 :
 				attrib.cpu = "x86"; //$NON-NLS-1$
@@ -847,6 +848,9 @@ public class Elf {
 				break;
 			case Elf.ELFhdr.EM_BLACKFIN :
 				attrib.cpu = "bfin"; //$NON-NLS-1$
+				break;
+			case Elf.ELFhdr.EM_SDMA:
+				attrib.cpu = "sdma"; //$NON-NLS-1$
 				break;
 			case Elf.ELFhdr.EM_NONE :
 			default :

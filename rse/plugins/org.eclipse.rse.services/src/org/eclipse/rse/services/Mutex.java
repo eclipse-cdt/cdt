@@ -19,11 +19,12 @@ import org.eclipse.core.runtime.IProgressMonitor;
 
 /**
  * A Mutual Exclusion Lock for Threads that need to access a resource
- * in a serialized manner.
+ * in a serialized manner. An Eclipse ProgressMonitor is accepted
+ * in order to support cancellation when waiting for the Mutex.
  * 
  * Usage Example:
  * <code>
- *    private Mutex fooMutex;
+ *    private Mutex fooMutex = new Mutex();
  *    boolean doFooSerialized()(IProgressMonitor monitor) {
  *        if (fooMutex.waitForLock(monitor, 1000)) {
  *            try {
@@ -35,11 +36,20 @@ import org.eclipse.core.runtime.IProgressMonitor;
  *        return false;
  *    }
  * </code>
+ * 
+ * The Mutex is not reentrant, so when a Thread has locked the 
+ * Mutex it must not try locking it again.
  */
 public class Mutex {
 	
 	private boolean fLocked = false;
 	private List fWaitQueue = new LinkedList();
+
+    /**
+     * Creates an instance of <tt>Mutex</tt>.
+     */
+	public Mutex() {
+	}
 	
 	/**
 	 * Try to acquire the lock maintained by this mutex.

@@ -6,13 +6,7 @@
          <meta.schema plugin="org.eclipse.rse.core" id="systemTypes" name="RSE System Types"/>
       </appInfo>
       <documentation>
-         This extension point is used in combination with the org.eclipse.rse.ui.subsystemConfigurations
-extension point for defining new subsystems, which appear under a connection when it is expanded in the
-Remote Systems view. The systemTypes extension point allows subsystem providers to define a new system
-type that appears in the list of valid system types in the New Connection wizard, used by users when defining
-a new connection to a remote system. The system type is simply a string identifying the operating system
-type, such as Solaris, and an pair of icons used to identify connections to systems of this type. One
-icon is used when the connection is not connected, while the other is used when there is a live connection.
+         This extension point is used in combination with the &quot;org.eclipse.rse.ui.subsystemConfigurations&quot; extension point for defining new subsystems, which appear under a connection when it is expanded in the Remote Systems view. The systemTypes extension point allows subsystem providers to define a new system type that appears in the list of valid system types in the New Connection wizard, used by users when defining a new connection to a remote system. The system type is simply a string identifying the operating system type, such as Solaris, and an pair of icons used to identify connections to systems of this type. One icon is used when the connection is not connected, while the other is used when there is a live connection.
       </documentation>
    </annotation>
 
@@ -123,6 +117,16 @@ If not specified, a default icon will be used by RSE.
                </documentation>
             </annotation>
          </attribute>
+         <attribute name="subsystemConfigurationIds" type="string">
+            <annotation>
+               <documentation>
+                  A semicolon separated list of fully qualified subsystem configuration ids this system type wants to get registered against.
+&lt;p&gt;
+&lt;b&gt;Note:&lt;/b&gt; The list specified here does not imply that the corresponding subsystem configurations exist. The list contains only possibilites, not requirements.
+
+               </documentation>
+            </annotation>
+         </attribute>
       </complexType>
    </element>
 
@@ -170,9 +174,9 @@ If not specified, a default icon will be used by RSE.
       &lt;systemType id=&quot;com.acme.systemtype.Solaris&quot;
             name=&quot;Solaris&quot;
             description=&quot;Connects to Solaris systems.&quot;
-   			icon=&quot;icons/solaris.gif&quot;
-   			iconLive=&quot;icons/solarisLive.gif&quot;&gt;
-	  &lt;/systemType&gt;
+      icon=&quot;icons/solaris.gif&quot;
+      iconLive=&quot;icons/solarisLive.gif&quot;&gt;
+   &lt;/systemType&gt;
   &lt;/extension&gt;
 &lt;/pre&gt;
 &lt;/p&gt;

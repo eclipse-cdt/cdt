@@ -115,11 +115,12 @@ public interface IRSESystemType extends IAdaptable {
 	
   /**
    * Returns a list of fully qualified known subsystem configuration id's that
-   * this system type wants to be registered against. More subsystem configurations
-   * can be added through the <tt>subsystemConfigurations</tt> extension point.
+   * this system type wants to be registered against. 
+   * More subsystem configurations can be added through the <tt>subsystemConfigurations</tt>
+   * extension point.
    * <p>
    * <b>Note:</b> The list returned here does not imply that the corresponding
-   * subsystem configurations exist. The list contains only possibilites not
+   * subsystem configurations exist. The list contains only possibilites not,
    * requirements.
    * 
    * @return The list of subsystem configuration id or <code>null</code>.

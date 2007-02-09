@@ -100,6 +100,6 @@ public abstract class AbstractFileService implements IFileService
 	 * @since 2.0
 	 */
 	public String getEncoding(IProgressMonitor monitor) throws SystemMessageException {
-		return System.getProperty("file.encoding");
+		return System.getProperty("file.encoding"); //$NON-NLS-1$
 	}
 }

@@ -16,11 +16,20 @@
 
 package org.eclipse.rse.core.subsystems;
 
+import org.osgi.framework.Bundle;
+
 /**
  * Interface to SubSystemConfigurationExtension class
  * Internal use, not likely you will ever need to use it or access it directly.
  */
 public interface ISubSystemConfigurationProxy {
+	
+	/**
+	 * Return value of the <samp>id</samp> xml attribute.
+	 * Return unique id of this configuration.
+	 */
+	public String getId();
+
 	/**
 	 * Return value of the <samp>name</samp> xml attribute.
 	 * Return name of this factory. Matches value in name attribute in extension point xml
@@ -34,14 +43,31 @@ public interface ISubSystemConfigurationProxy {
 	public String getDescription();
 
 	/**
-	 * Return value of the <samp>id</samp> xml attribute.
-	 * Return unique id of this configuration.
+	 * Returns the bundle which have declared the subsystem
+	 * configuration associated with this proxy.
+	 *  
+	 * @return The declaring bundle.
 	 */
-	public String getId();
-
+	public Bundle getDeclaringBundle();
+	
 	/**
 	 * Return value of the <samp>systemTypes</samp> xml attribute.
-	 * Return the system types this subsystem configuration supports.
+	 * Return the system type names this subsystem configuration supports.
+	 */
+	public String getDeclaredSystemTypeNames();
+	
+	/**
+	 * Return value of the <samp>systemTypeIds</samp> xml attribute.
+	 * Return the system type ids this subsystem configuration supports.
+	 */
+	public String getDeclaredSystemTypeIds();
+	
+	/**
+	 * Returns the list of system types the subsystem configuration is supporting.
+	 * The list is combined from the list of currently registered system types cleaned
+	 * up by the ones not matching the declared system type names and ids.
+	 *  
+	 * @return The list of supported system types or an empty list.
 	 */
 	public String[] getSystemTypes();
 

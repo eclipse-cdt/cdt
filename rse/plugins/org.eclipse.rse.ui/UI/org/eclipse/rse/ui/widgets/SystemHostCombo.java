@@ -203,38 +203,40 @@ public class SystemHostCombo extends Composite implements ISelectionProvider, IS
 	 * @param ssFactoryCategory Only connections with subsystems owned by factories of this category are returned.
 	 * @param showLabel true if a 'Connection' label is to be included in this composite
 	 */
-	public SystemHostCombo(Composite parent, int style, IHost defaultConnection, boolean showNewButton, String ssFactoryCategory, boolean showLabel)
-	{
-		super(parent, style);	
+	public SystemHostCombo(Composite parent, int style, IHost defaultConnection, boolean showNewButton, String ssFactoryCategory, boolean showLabel) {
+		super(parent, style);
 		if (showNewButton) // this is expensive, so only need to do this if New is enabled
 		{
-		  ISubSystemConfigurationProxy[] ssfProxies = RSEUIPlugin.getTheSystemRegistry().getSubSystemConfigurationProxiesByCategory(ssFactoryCategory);
-		  Vector vTypes = new Vector();
-		  for (int idx=0; idx<ssfProxies.length; idx++)
-		  {
-			String[] types = ssfProxies[idx].getSystemTypes();
-			for (int jdx=0; jdx<types.length; jdx++)
-			{
-			   if (!vTypes.contains(types[jdx]))
-			     vTypes.addElement(types[jdx]);
-			}			
-		  }
-		  restrictSystemTypesTo = new String[vTypes.size()];
-		  for (int idx=0; idx<vTypes.size(); idx++)
-		     restrictSystemTypesTo[idx] = (String)vTypes.elementAt(idx);
-		}	
-		init(parent, showNewButton, showLabel);	
+			ISubSystemConfigurationProxy[] ssfProxies = RSEUIPlugin.getTheSystemRegistry().getSubSystemConfigurationProxiesByCategory(ssFactoryCategory);
+			Vector vTypes = new Vector();
+			for (int idx = 0; idx < ssfProxies.length; idx++) {
+				// Do not call ISubSystemConfigurationProxy.getSystemTypes() directly. If
+				// some one has overriden ISubSystemConfiguration.getSystemTypes(), the
+				// proxy cannot return the correct list anymore. This is especially important
+				// if the systemType <--> subsystemConfiguration association is dynamic!
+				String[] types = ssfProxies[idx].getSubSystemConfiguration().getSystemTypes();
+				for (int jdx = 0; jdx < types.length; jdx++) {
+					if (!vTypes.contains(types[jdx]))
+						vTypes.addElement(types[jdx]);
+				}
+			}
+			restrictSystemTypesTo = new String[vTypes.size()];
+			for (int idx = 0; idx < vTypes.size(); idx++)
+				restrictSystemTypesTo[idx] = (String)vTypes.elementAt(idx);
+		}
+		init(parent, showNewButton, showLabel);
 		populateSSFactoryCategory = ssFactoryCategory;
-	    populateConnectionCombo(connectionCombo, defaultConnection, ssFactoryCategory);
-        setConnectionToolTipText();
-	    addOurConnectionSelectionListener();
+		populateConnectionCombo(connectionCombo, defaultConnection, ssFactoryCategory);
+		setConnectionToolTipText();
+		addOurConnectionSelectionListener();
 	}
 
 	/**
-	 * Set auto-uppercase. When enabled, all non-quoted values are uppercases when added to the history.
+	 * Set auto-uppercase. When enabled, all non-quoted values are uppercases when added to the
+	 * history.
 	 * <p>
-	 * This method is part of ISystemCombo, so we must support it, but it does not apply this combo widget since the
-	 *  contents are read-only. Hence, it does nothing!
+	 * This method is part of ISystemCombo, so we must support it, but it does not apply this combo
+	 * widget since the contents are read-only. Hence, it does nothing!
 	 */
 	public void setAutoUpperCase(boolean enable)
 	{

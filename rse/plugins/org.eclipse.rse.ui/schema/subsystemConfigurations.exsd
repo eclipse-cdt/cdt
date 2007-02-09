@@ -6,33 +6,11 @@
          <meta.schema plugin="org.eclipse.rse.ui" id="subsystemConfigurations" name="Subsystem Configurations"/>
       </appInfo>
       <documentation>
-         This extension point allows tool-writers to extend the capability
-of the Remote System Explorer,
-by identifying a subsystem configuration that produces a subsystem
-whenever a new connection is created.
-This subsystem appears under the connection when it is expanded
-in the Remote Systems view of
-the Remote System Explorer perspective. The subsystem configuration
-is called by the Remote System
-framework when the user creates a new connection, when the connection&apos;s
-system type is one of the
-types identified as supported by this subsystem configuration extension.
-
+         This extension point allows tool-writers to extend the capability of the Remote System Explorer, by identifying a subsystem configuration that produces a subsystem whenever a new connection is created. This subsystem appears under the connection when it is expanded in the Remote Systems view of the Remote System Explorer perspective. The subsystem configuration is called by the Remote System framework when the user creates a new connection, when the connection&apos;s system type is one of the types identified as supported by this subsystem configuration extension.
 &lt;p&gt;
-There is one subsystem
-object per connection, and the role of a subsystem is to allow
-users to work with remote resources
-for the remote system identified by the containing connection.
-Defining a subsystem configuration involves more than the single subsystem
-configuration class. There must
-also be a subsystem class defined, and a system class defined.
-There may also be other classes
-defined, such as classes for the content area of wizards for
-defining filters, user actions 
-and compile commands, if the subsystem configuration wishes to support
-these. See the developer documentation for the Remote System Explorer
-for documentation details on defining
-subsystems.
+There is one subsystem object per connection, and the role of a subsystem is to allow
+users to work with remote resourcesfor the remote system identified by the containing connection. Defining a subsystem configuration involves more than the single subsystem
+configuration class. There must also be a subsystem class defined, and a system class defined. There may also be other classes defined, such as classes for the content area of wizards for defining filters, user actions and compile commands, if the subsystem configuration wishes to support these. See the developer documentation for the Remote System Explorer for documentation details on defining subsystems.
       </documentation>
    </annotation>
 
@@ -157,26 +135,25 @@ These appear in configuration and properties pages for subsystems.
          <attribute name="systemTypes" type="string">
             <annotation>
                <documentation>
-                  A semicolon separated list of system type names that subsystems from this configuration support.
-For example, &quot;Unix;Linux&quot;. If not specified, defaults to all system types.
+                  A semicolon separated list of system type names that subsystems from this configuration support. For example, &quot;Unix;Linux&quot;.
+If not specified and the &quot;systemTypeIds&quot; attribute is not specified, defaults to all system types.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="systemTypeIds" type="string">
+            <annotation>
+               <documentation>
+                  A semicolon separated list of system type ids that subsystems from this configuration support. For example, &quot;org.eclipse.rse.systemtype.unix;org.eclipse.rse.systemtype.linux&quot;.
+If not specified and the &quot;systemTypes&quot; attribute is not specified, defaults to all system types.
                </documentation>
             </annotation>
          </attribute>
          <attribute name="category" type="string">
             <annotation>
                <documentation>
-                  This optional attribute allows subsystem providers to classify
-the type of remote resources
-that are listed by this subsystem configuration. It is possible for
-multiple subsystem factories to
-support the same remote resource category. This category is used
-in the popupMenus and
-propertyPages extension points, to scope actions and property
-pages to only remote resources
-of a particular category, via their &lt;samp&gt;subsystemconfigurationCategory&lt;/samp&gt; attribute. 
-For example, if listing database resources
-you might specify a 
-category of &quot;database&quot;.
+                  This optional attribute allows subsystem providers to classify the type of remote resources that are listed by this subsystem configuration. It is possible for
+multiple subsystem factories to support the same remote resource category. This category is used in the popupMenus and propertyPages extension points, to scope actions and property pages to only remote resources of a particular category, via their &lt;samp&gt;subsystemconfigurationCategory&lt;/samp&gt; attribute. 
+For example, if listing database resources you might specify a category of &quot;database&quot;.
                </documentation>
             </annotation>
          </attribute>
@@ -218,11 +195,9 @@ Note that ServiceSubSystems that share the same service should always use the sa
 &lt;/pre&gt;
 &lt;/p&gt;
 
-&lt;p&gt;Defining the xml for the extension point is easy. There is a fair amount to know about
-creating the classes needed for a subsystem configuration, however. For this information, consult
-the Remote System Explorer developer documention, including the JavaDoc for the supplied 
-classes and interfaces for this task.
-&lt;/p&gt;
+&lt;p&gt;
+Defining the xml for the extension point is easy. There is a fair amount to know about
+creating the classes needed for a subsystem configuration, however. For this information, consult the Remote System Explorer developer documention, including the JavaDoc for the supplied classes and interfaces for this task.
       </documentation>
    </annotation>
 
@@ -234,8 +209,7 @@ classes and interfaces for this task.
          The provider of subsystem factories must implement the interface
 &lt;samp&gt;org.eclipse.rse.core.subsystems.ISubSystemConfiguration&lt;/samp&gt;,
 although it is not recommended to create a new class from scratch.
-Rather, it is highly recommended
-to use the supplied base class &lt;samp&gt;org.eclipse.rse.core.subsystems.SubSystemConfiguration&lt;/samp&gt;.
+Rather, it is highly recommended to use the supplied base class &lt;samp&gt;org.eclipse.rse.core.subsystems.SubSystemConfiguration&lt;/samp&gt;.
 This base class pre-supplies much functionality, including support for
 persisting properties and metadata, and support for filters.
       </documentation>
@@ -266,6 +240,7 @@ available at http://www.eclipse.org/legal/epl-v10.html
 
 Contributors:
 IBM Corporation - initial API and implementation
+Uwe Stieber (Wind River) - systemTypeIds attribute extensions
       </documentation>
    </annotation>
 

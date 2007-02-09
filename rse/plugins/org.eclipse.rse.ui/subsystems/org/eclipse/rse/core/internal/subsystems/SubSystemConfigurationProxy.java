@@ -226,7 +226,7 @@ public class SubSystemConfigurationProxy implements ISubSystemConfigurationProxy
 		// We default to all system types if neither systemTypeNames nor systemTypeIds are specified. 
 		if (systemTypeNames == null && systemTypeIds == null) systemTypeNames = "*"; //$NON-NLS-1$
 
-		this.allTypes = systemTypeNames.equals("*"); //$NON-NLS-1$
+		this.allTypes = systemTypeNames != null && systemTypeNames.equals("*"); //$NON-NLS-1$
 		
 		this.image = getPluginImage(element, element.getAttribute("icon")); //$NON-NLS-1$
 		if (this.image == null)	this.image = RSEUIPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_CONNECTION_ID);

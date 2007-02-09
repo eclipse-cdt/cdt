@@ -173,7 +173,7 @@ public class SubSystemConfigurationProxy implements ISubSystemConfigurationProxy
 			if (translated.indexOf('.') != -1) translated = translated.replaceAll("\\.", "\\."); //$NON-NLS-1$ //$NON-NLS-2$
 			if (translated.indexOf(' ') != -1) translated = translated.replaceAll(" ", "\\ "); //$NON-NLS-1$ //$NON-NLS-2$
 			if (translated.indexOf('*') != -1) translated = translated.replaceAll("\\*", ".*"); //$NON-NLS-1$ //$NON-NLS-2$
-		  if (translated.indexOf('?') != -1) translated = translated.replaceAll("?", "."); //$NON-NLS-1$ //$NON-NLS-2$
+		  if (translated.indexOf('?') != -1) translated = translated.replaceAll("\\?", "."); //$NON-NLS-1$ //$NON-NLS-2$
 			return translated;
 		}
 		

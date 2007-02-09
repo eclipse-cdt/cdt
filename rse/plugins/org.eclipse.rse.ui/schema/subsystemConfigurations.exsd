@@ -136,7 +136,7 @@ These appear in configuration and properties pages for subsystems.
             <annotation>
                <documentation>
                   A semicolon separated list of system type names that subsystems from this configuration support. For example, &quot;Unix;Linux&quot;.
-If not specified and the &quot;systemTypeIds&quot; attribute is not specified, defaults to all system types.
+If not specified and the &quot;systemTypeIds&quot; attribute is not specified, defaults to all system types. The wildcards &apos;*&apos; and &apos;?&apos; are accepted.
                </documentation>
             </annotation>
          </attribute>
@@ -144,7 +144,7 @@ If not specified and the &quot;systemTypeIds&quot; attribute is not specified, d
             <annotation>
                <documentation>
                   A semicolon separated list of system type ids that subsystems from this configuration support. For example, &quot;org.eclipse.rse.systemtype.unix;org.eclipse.rse.systemtype.linux&quot;.
-If not specified and the &quot;systemTypes&quot; attribute is not specified, defaults to all system types.
+If not specified and the &quot;systemTypes&quot; attribute is not specified, defaults to all system types. The wildcards &apos;*&apos; and &apos;?&apos; are accepted.
                </documentation>
             </annotation>
          </attribute>

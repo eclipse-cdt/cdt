@@ -224,9 +224,9 @@ public class SubSystemConfigurationProxy implements ISubSystemConfigurationProxy
 		if (category == null) category = "Unknown"; //$NON-NLS-1$
 		
 		// We default to all system types if neither systemTypeNames nor systemTypeIds are specified. 
-		if (systemTypeNames == null && systemTypeIds == null) systemTypeNames = "*"; //$NON-NLS-1$
+		if (systemTypeNames == null && systemTypeIds == null) systemTypeIds = "*"; //$NON-NLS-1$
 
-		this.allTypes = systemTypeNames != null && systemTypeNames.equals("*"); //$NON-NLS-1$
+		this.allTypes = systemTypeIds != null && systemTypeIds.equals("*"); //$NON-NLS-1$
 		
 		this.image = getPluginImage(element, element.getAttribute("icon")); //$NON-NLS-1$
 		if (this.image == null)	this.image = RSEUIPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_CONNECTION_ID);
@@ -277,7 +277,7 @@ public class SubSystemConfigurationProxy implements ISubSystemConfigurationProxy
 	 * @see org.eclipse.rse.core.subsystems.ISubSystemConfigurationProxy#getDeclaredSystemTypeIds()
 	 */
 	public String getDeclaredSystemTypeIds() {
-		return systemTypeIds;
+		return "*".equals(systemTypeIds) ? null : systemTypeIds; //$NON-NLS-1$
 	}
 
 	/* (non-Javadoc)

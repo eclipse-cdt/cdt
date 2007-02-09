@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 Nokia and others.
+ * Copyright (c) 2007 Nokia and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -176,9 +176,21 @@ public class DwarfReader extends Dwarf implements ISymbolReader {
 		String fullName = name;
 		
 		Path pa = new Path(name);
-		if (! pa.isAbsolute() && dir.length() > 0)
-			fullName = dir + File.separatorChar + name;
-
+		
+		
+		// Check to see if the file exists, if not, append the path information from the dir info.
+		// In cases where the file name has the full path, only the drive letter is added. 
+		// In some cases the file name has the full path except the drive letter,
+		// in other cases the file name doesn't have the path info so we need to add the complete dir path.
+		
+		if ( !pa.toFile().exists() && dir.length() > 0)
+		{			
+			if (pa.isAbsolute())
+				fullName = dir.substring(0, 2) + name;
+			else
+				fullName = dir + File.separatorChar + name;
+		}
+	
 		// This convert the path to canonical path (but not necessarily absolute, which
 		// is different from java.io.File.getCanonicalPath()).
 		pa = new Path(fullName);

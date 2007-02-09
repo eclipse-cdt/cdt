@@ -47,7 +47,7 @@ public abstract class AbstractSearchResultConfiguration implements IHostSearchRe
 	 * Constructor for a result set configuration. Sets status to <code>RUNNING</code>.
 	 * @param resultSet the parent result set.
 	 * @param searchObject the target of the search.
-	 * @param searchString the search string.
+	 * @param string the search string.
 	 */
 	public AbstractSearchResultConfiguration(IHostSearchResultSet resultSet, Object searchObject, SystemSearchString string, ISearchService searchService) 
 	{

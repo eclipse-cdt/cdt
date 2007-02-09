@@ -112,7 +112,7 @@ public interface IHostSearchResultConfiguration extends IHostSearchConstants {
 	/**
 	 * Sets the status of the search. One of <code>RUNNING</code>, <code>FINISHED</code>,
 	 * <code>CANCELLED</code>, or <code>DISCONNECTED</code>.
-	 * @param the status.
+	 * @param status the status.
 	 */
 	public void setStatus(int status);
 	

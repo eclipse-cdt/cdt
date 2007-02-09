@@ -291,7 +291,7 @@ public class CElementLabels {
 		
 		if (element instanceof IBinary) {
 			IBinary bin = (IBinary)element;
-			buf.append(" - [" + bin.getCPU() + (bin.isLittleEndian() ? "le" : "be") + "]"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+			buf.append(" - [" + bin.getCPU() + "/" + (bin.isLittleEndian() ? "le" : "be") + "]"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
 		}
 
 	}

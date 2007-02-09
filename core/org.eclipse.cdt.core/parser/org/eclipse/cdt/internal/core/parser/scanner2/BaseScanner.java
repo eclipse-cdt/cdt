@@ -4026,9 +4026,13 @@ abstract class BaseScanner implements IScanner {
                     return null;
                 }
 
-                MacroData data = (MacroData) bufferData[stackpPos + 1];
-                for (int i = bufferStackPos; i > stackpPos; i--)
-                    popContext();
+                MacroData data;
+                IMacro popMacro= macro;
+                do {
+                	data= (MacroData) bufferData[bufferStackPos];
+                    popContextForFunctionMacroName(popMacro);
+                	popMacro= data.macro;
+                } while (bufferStackPos > stackpPos);
 
                 bufferPos[bufferStackPos] = idx;
                 buffer = bufferStack[bufferStackPos];
@@ -4158,7 +4162,18 @@ abstract class BaseScanner implements IScanner {
         return result;
     }
 
-    protected char[] replaceArgumentMacros(char[] arg) {
+    /**
+     * Called when the buffer limit is reached while expanding a function style macro.
+     * This special case might be handled differently by subclasses.
+     * 
+	 * @param macro
+	 */
+	protected void popContextForFunctionMacroName(IMacro macro) {
+		// do the default
+		popContext();
+	}
+
+	protected char[] replaceArgumentMacros(char[] arg) {
         int limit = arg.length;
         int start = -1, end = -1;
         Object expObject = null;

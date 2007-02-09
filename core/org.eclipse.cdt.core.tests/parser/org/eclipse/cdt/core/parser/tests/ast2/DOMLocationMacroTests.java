@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2006 IBM Corporation and others.
+ * Copyright (c) 2004, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,12 +8,15 @@
  * Contributors:
  * IBM - Initial API and implementation
  * Markus Schorn (Wind River Systems)
+ * Anton Leherbauer (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.core.parser.tests.ast2;
 
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
+import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
+import org.eclipse.cdt.core.dom.ast.IASTInitializerExpression;
 import org.eclipse.cdt.core.dom.ast.IASTMacroExpansion;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNodeLocation;
@@ -344,4 +347,29 @@ public class DOMLocationMacroTests extends AST2BaseTest {
             assertNotNull( f.getFileLocation() ); 
         }
     }
+
+    public void testFunctionMacroExpansionWithNameSubstitution_Bug173637() throws Exception
+    {
+        StringBuffer buffer = new StringBuffer( "#define PLUS5(x) (x+5)\n"); //$NON-NLS-1$
+        buffer.append( "#define FUNCTION PLUS5 \n"); //$NON-NLS-1$
+        buffer.append( "int var= FUNCTION(1);"); //$NON-NLS-1$
+        String code = buffer.toString();
+        
+        for (ParserLanguage p = ParserLanguage.C; p != null; p = (p == ParserLanguage.C) ? ParserLanguage.CPP
+                : null) {
+            IASTTranslationUnit tu = parse(code, p);
+            IASTSimpleDeclaration var = (IASTSimpleDeclaration) tu.getDeclarations()[0];
+            IASTInitializerExpression initializer= (IASTInitializerExpression)var.getDeclarators()[0].getInitializer();
+            IASTExpression expr= initializer.getExpression();
+            assertNotNull(expr.getFileLocation()); 
+            IASTNodeLocation [] locations = expr.getNodeLocations();
+            assertEquals(1, locations.length);
+            IASTMacroExpansion macroExpansion = (IASTMacroExpansion) locations[0];
+            IASTNodeLocation[] expLocations= macroExpansion.getExpansionLocations();
+            assertEquals(1, expLocations.length);
+            assertEquals(code.indexOf("FUNCTION(1)"), expLocations[0].getNodeOffset());
+            assertEquals("FUNCTION(1)".length(), expLocations[0].getNodeLength());
+        }
+    }
+
 }

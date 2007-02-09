@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2006 IBM Corporation and others.
+ * Copyright (c) 2004, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  * IBM - Initial API and implementation
  * Markus Schorn (Wind River Systems)
+ * Anton Leherbauer (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.parser.scanner2;
 
@@ -250,6 +251,15 @@ public class DOMScanner extends BaseScanner {
         }
 	}
 
+	/*
+	 * @see org.eclipse.cdt.internal.core.parser.scanner2.BaseScanner#popContextForFunctionMacroName(org.eclipse.cdt.core.parser.IMacro)
+	 */
+	protected void popContextForFunctionMacroName(IMacro macro) {
+		// fix the delta before popping
+		bufferDelta[bufferStackPos] -= macro.getName().length;
+		popContext();
+	}
+	
     protected int fsmCount = 0;
 
     /*

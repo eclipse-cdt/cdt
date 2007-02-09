@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005, 2007 QNX Software Systems and others.
+ * Copyright (c) 2000, 2005, 2006 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,7 +7,6 @@
  *
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
- *     Nokia ( Warren Paul ) - Prevent the project from being deleted while running.
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.model;
 
@@ -123,8 +122,6 @@ public class BinaryRunner {
 			}
 		};
 		runner.setPriority(Job.LONG);
-		// Prevent user from deleting the project while we're running
-		runner.setRule(cproject.getProject());
 		runner.schedule();
 	}
 

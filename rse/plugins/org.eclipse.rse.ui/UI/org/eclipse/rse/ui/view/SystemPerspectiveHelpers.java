@@ -14,10 +14,8 @@
  * {Name} (company) - description of contribution.
  ********************************************************************************/
 
-package org.eclipse.rse.core;
-import org.eclipse.rse.ui.view.SystemPerspectiveLayout;
-import org.eclipse.rse.ui.view.SystemView;
-import org.eclipse.rse.ui.view.SystemViewPart;
+package org.eclipse.rse.ui.view;
+import org.eclipse.rse.core.SystemBasePlugin;
 import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPage;

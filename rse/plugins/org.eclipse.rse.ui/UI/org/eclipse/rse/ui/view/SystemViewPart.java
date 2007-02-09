@@ -44,7 +44,6 @@ import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.rse.core.SystemBasePlugin;
-import org.eclipse.rse.core.SystemElapsedTimer;
 import org.eclipse.rse.core.SystemPreferencesManager;
 import org.eclipse.rse.core.filters.ISystemFilterPoolReference;
 import org.eclipse.rse.core.filters.ISystemFilterReference;
@@ -138,10 +137,8 @@ public class SystemViewPart
 	protected SystemMessage sysErrorMessage;
 	protected IStatusLineManager statusLine = null;
 	protected boolean inputIsRoot = true;
-	protected boolean doTimings = false;
 	protected boolean isLinkingEnabled = false;
 
-	protected SystemElapsedTimer timer;
 	protected FrameList frameList;
 	protected SystemViewPartGotoActionGroup gotoActionGroup;
 	protected ToggleLinkingAction toggleLinkingAction;
@@ -1082,9 +1079,6 @@ public class SystemViewPart
 		if (!SystemPreferencesManager.getPreferencesManager().getRememberState())
 		  return;
 		  
-		if (doTimings)
-		  timer = new SystemElapsedTimer();
-		
 		// restore the show filter pools and show filter strings settings as they were when this was saved
 		boolean showFilterPools = false;
 		boolean showFilterStrings = false;
@@ -1151,17 +1145,10 @@ public class SystemViewPart
 				for (int idx=0; idx<remoteElements.size(); idx++)
 				{
 					RemoteObject ro = (RemoteObject)remoteElements.elementAt(idx);
-					if (doTimings)
-					  timer.setStartTime();
 					//event = new SystemResourceChangeEvent(ro.name,ISystemResourceChangeEvents.EVENT_REFRESH_REMOTE,
 					//                                      SystemViewDummyObject.getSingleton()); // This tells SystemView to expand this remote object, but don't select a child
 					//systemView.systemResourceChanged(event);
 		   	        systemView.refreshRemoteObject(ro.name, SystemViewDummyObject.getSingleton(), true);
-					if (doTimings)
-					{
-						timer.setEndTime();
-						System.out.println("Time to restore "+ro.name+": " + timer);
-					}
 				}
 			}
 		}
@@ -1192,15 +1179,8 @@ public class SystemViewPart
 					RemoteObject ro = (RemoteObject)remoteElements.elementAt(idx);
 					v.addElement(ro.name);
 				}
-				if (doTimings)
-				  timer.setStartTime();
 			    SystemResourceChangeEvent event = new SystemResourceChangeEvent(v,ISystemResourceChangeEvents.EVENT_SELECT_REMOTE,null);
 			    systemView.systemResourceChanged(event);								
-				if (doTimings)
-				{
-					timer.setEndTime();
-					System.out.println("Time to select "+v.size()+" elements: " + timer);
-				}
 			}
 		}
 		Tree tree= systemView.getTree();
@@ -1545,9 +1525,6 @@ public class SystemViewPart
 			if (!SystemPreferencesManager.getPreferencesManager().getRememberState())
 				return Status.CANCEL_STATUS;
 
-			if (doTimings)
-				timer = new SystemElapsedTimer();
-
 			// restore the show filter pools and show filter strings settings as they were when this was saved
 			boolean showFilterPools = false;
 			boolean showFilterStrings = false;
@@ -1649,8 +1626,6 @@ public class SystemViewPart
 					for (int idx = 0; idx < remoteElements.size(); idx++)
 					{
 						RemoteObject ro = (RemoteObject) remoteElements.elementAt(idx);
-						if (doTimings)
-							timer.setStartTime();
 						//event = new SystemResourceChangeEvent(ro.name,ISystemResourceChangeEvents.EVENT_REFRESH_REMOTE,
 						//                                      SystemViewDummyObject.getSingleton()); // This tells SystemView to expand this remote object, but don't select a child
 						//systemView.systemResourceChanged(event);
@@ -1670,11 +1645,6 @@ public class SystemViewPart
 							ro.subsystem.getCacheManager().setRestoreFromMemento(false);
 						}						
 						
-						if (doTimings)
-						{
-							timer.setEndTime();
-							System.out.println("Time to restore " + ro.name + ": " + timer); //$NON-NLS-1$ //$NON-NLS-2$
-						}
 					}
 				}
 				
@@ -1714,15 +1684,8 @@ public class SystemViewPart
 						RemoteObject ro = (RemoteObject) remoteElements.elementAt(idx);
 						v.addElement(ro.name);
 					}
-					if (doTimings)
-						timer.setStartTime();
 					SystemResourceChangeEvent event = new SystemResourceChangeEvent(v, ISystemResourceChangeEvents.EVENT_SELECT_REMOTE, null);
 					systemView.systemResourceChanged(event);
-					if (doTimings)
-					{
-						timer.setEndTime();
-						System.out.println("Time to select " + v.size() + " elements: " + timer); //$NON-NLS-1$ //$NON-NLS-2$
-					}
 				}
 			}
 			Tree tree = systemView.getTree();

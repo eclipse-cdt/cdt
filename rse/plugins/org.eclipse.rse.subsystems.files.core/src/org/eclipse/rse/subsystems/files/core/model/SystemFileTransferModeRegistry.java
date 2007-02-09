@@ -22,14 +22,16 @@ import java.io.FileOutputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.rse.core.SystemBasePlugin;
-import org.eclipse.rse.core.SystemSorter;
 import org.eclipse.rse.internal.subsystems.files.core.ISystemFilePreferencesConstants;
 import org.eclipse.rse.services.clientserver.SystemEncodingUtil;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile;
@@ -169,34 +171,16 @@ public class SystemFileTransferModeRegistry
 	 * typically only needed for certain dialogs/choices etc.
 	 */
 	private List sortedTypeModeMappings() {
-	
-		Object[] array = new Object[typeModeMappings.size()];
-		Iterator iter = typeModeMappings.values().iterator();
-		
-		int j = 0;
-		
-		while (iter.hasNext()) {
-			array[j++] = iter.next();
-		}
-	
-		SystemSorter s = new SystemSorter() {
-			
-			public boolean compare(Object o1, Object o2) {
-				
+		Comparator c = new Comparator() {
+			public int compare(Object o1, Object o2) {
 				String s1 = ((ISystemFileTransferModeMapping)o1).getLabel().toUpperCase();
 				String s2 = ((ISystemFileTransferModeMapping)o2).getLabel().toUpperCase();
-				return s2.compareTo(s1) > 0;
+				return s1.compareTo(s2);
 			}
 		};
-		
-		array = s.sort(array);
-		
-		List result = new ArrayList();
-		
-		for (int i = 0; i < array.length; i++) {
-			result.add(array[i]);
-		}
-		
+		SortedSet s = new TreeSet(c);
+		s.addAll(typeModeMappings.values());
+		List result = new ArrayList(s);
 		return result;
 	}
 	

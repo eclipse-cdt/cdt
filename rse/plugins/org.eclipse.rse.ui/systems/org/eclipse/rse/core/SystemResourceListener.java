@@ -27,6 +27,7 @@ import org.eclipse.rse.core.model.ISystemModelChangeEvents;
 import org.eclipse.rse.core.model.ISystemRegistry;
 import org.eclipse.rse.internal.model.SystemModelChangeEvent;
 import org.eclipse.rse.ui.RSEUIPlugin;
+import org.eclipse.rse.ui.view.SystemPerspectiveHelpers;
 import org.eclipse.rse.ui.view.SystemPerspectiveLayout;
 import org.eclipse.rse.ui.view.SystemView;
 import org.eclipse.rse.ui.view.SystemViewPart;

@@ -56,7 +56,6 @@ import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.jface.window.SameShellProvider;
 import org.eclipse.rse.core.SystemAdapterHelpers;
 import org.eclipse.rse.core.SystemBasePlugin;
-import org.eclipse.rse.core.SystemElapsedTimer;
 import org.eclipse.rse.core.SystemPreferencesManager;
 import org.eclipse.rse.core.filters.ISystemFilter;
 import org.eclipse.rse.core.filters.ISystemFilterContainer;
@@ -204,8 +203,6 @@ public class SystemView extends SafeTreeViewer implements ISystemTree, ISystemRe
 	public boolean debug = false;
 	public boolean debugRemote = false;
 	public boolean debugProperties = debug && false;
-	public boolean doTimings = false;
-	public SystemElapsedTimer elapsedTime = new SystemElapsedTimer();
 	// for support of Expand To actions ... transient filters really.
 	// we need to record these per tree node they are applied to.
 	protected Hashtable expandToFiltersByObject; // most efficient way to find these is by binary object
@@ -1235,16 +1232,10 @@ public class SystemView extends SafeTreeViewer implements ISystemTree, ISystemRe
 		}
 		Shell shell = getShell();
 		Object data = item.getData();
-		boolean isTiming = (data != null) && doTimings;
 		boolean showBusy = (data instanceof IHost) && ((IHost)data).isOffline();
-		if (isTiming) elapsedTime.setStartTime();
 		if (showBusy) SystemPromptDialog.setDisplayCursor(shell, busyCursor);
 		super.handleTreeExpand(event);
 		if (showBusy) SystemPromptDialog.setDisplayCursor(shell, null);
-		if (isTiming) {
-			elapsedTime.setEndTime();
-			System.out.println("Time to expand for " + item.getItemCount() + " items: " + elapsedTime); //$NON-NLS-1$ //$NON-NLS-2$
-		}
 	}
 
 	/**
@@ -1888,8 +1879,6 @@ public class SystemView extends SafeTreeViewer implements ISystemTree, ISystemRe
 				Vector selectedRemoteObjects = new Vector();
 				items = getTree().getSelection();
 				int itemIdx = 0;
-				SystemElapsedTimer timer = null;
-				if (doTimings) timer = new SystemElapsedTimer();
 				//System.out.println("Inside EVENT_REFRESH_SELECTED. FIRST SELECTED OBJECT = " + items[0].handle);
 				while (i.hasNext()) {
 
@@ -1924,10 +1913,6 @@ public class SystemView extends SafeTreeViewer implements ISystemTree, ISystemRe
 				// We go straight the TreeItem level for performance and ease of programming.
 				else {
 					smartRefresh(getTree().getSelection());
-				}
-				if (doTimings && timer != null) {
-					timer.setEndTime();
-					System.out.println("Time to refresh selected: " + timer); //$NON-NLS-1$
 				}
 				//else
 				//{                  	
@@ -2765,7 +2750,7 @@ public class SystemView extends SafeTreeViewer implements ISystemTree, ISystemRe
 	 * @param doStruct <code>true</code> if structural changes are to be picked up,
 	 *   and <code>false</code> if only label provider changes are of interest
 	 */
-	protected void ourInternalRefresh(Widget widget, Object element, boolean doStruct, boolean forceRemote, boolean doTimings) {
+	protected void ourInternalRefresh(Widget widget, Object element, boolean doStruct, boolean forceRemote) {
 		final Widget fWidget = widget;
 		final Object fElement = element;
 		final boolean fDoStruct = doStruct;
@@ -2775,16 +2760,15 @@ public class SystemView extends SafeTreeViewer implements ISystemTree, ISystemRe
 			if (!isTreeItemSelected(widget)) // it is one of our kids that is selected
 			{
 				clearSelection(); // there is nothing much else we can do. Calling code will restore it anyway hopefully
-				doOurInternalRefresh(fWidget, fElement, fDoStruct, doTimings, true);
+				doOurInternalRefresh(fWidget, fElement, fDoStruct, true);
 			} else // it is us that is selected. This might be a refresh selected operation. TreeItem address won't change
 			{
-				doOurInternalRefresh(fWidget, fElement, fDoStruct, doTimings, true);
+				doOurInternalRefresh(fWidget, fElement, fDoStruct, true);
 			}
 		} else {
-			final boolean finalDoTimings = doTimings;
 			preservingSelection(new Runnable() {
 				public void run() {
-					doOurInternalRefresh(fWidget, fElement, fDoStruct, finalDoTimings, true);
+					doOurInternalRefresh(fWidget, fElement, fDoStruct, true);
 				}
 			});
 		}
@@ -2800,85 +2784,29 @@ public class SystemView extends SafeTreeViewer implements ISystemTree, ISystemRe
 		return false;
 	}
 
-	protected void doOurInternalRefresh(Widget widget, Object element, boolean doStruct, boolean doTimings, boolean firstCall) {
+	protected void doOurInternalRefresh(Widget widget, Object element, boolean doStruct, boolean firstCall) {
 		if (debug) {
 			logDebugMsg("in doOurInternalRefresh on " + getAdapter(element).getName(element)); //$NON-NLS-1$
 			logDebugMsg("...current selection is " + getFirstSelectionName(getSelection())); //$NON-NLS-1$
 		}
-		ISystemViewElementAdapter adapter = getAdapter(element);
-		if (adapter != null)
-		{
-			//String name = adapter.getName(element);
-			//System.out.println("refreshing "+ ((TreeItem)widget).getText() + " with " + name);
-		}
-		SystemElapsedTimer timer = null;
-		if (doTimings) timer = new SystemElapsedTimer();
 		if (widget instanceof Item) {
-			//System.out.println("Inside doOurInternalRefresh. widget = " + ((TreeItem)widget).handle);    		
 			if (doStruct) {
 				updatePlus((Item) widget, element);
 			}
 			updateItem(widget, element);
-			if (doTimings  && timer != null) {
-				System.out.println("doOurInternalRefresh timer 1: time to updatePlus and updateItem:" + timer.setEndTime()); //$NON-NLS-1$
-				timer.setStartTime();
-			}
 		}
 
-		if (doStruct) {
-			// pass null for children, to allow updateChildren to get them only if needed
-			//	Object[] newChildren = null;
-			if ((widget instanceof Item) && getExpanded((Item) widget)) {
-				// DKM - get raw children does a query but so does internalRefresh()
-				//    		  newChildren = getRawChildren(widget);
-				if (doTimings  && timer != null) {
-					System.out.println("doOurInternalRefresh timer 2: time to getRawChildren:" + timer.setEndTime()); //$NON-NLS-1$
-					timer.setStartTime();
-				}
-			}
-			// DKM - without the else we get duplicate queries on expanded folder
-			// uncommented - seems new results after query aren't showing up
-			//else
-//			{
-//				internalRefresh(element);
-//			}
-
-			if (doTimings && timer != null) {
-				System.out.println("doOurInternalRefresh timer 3: time to updateChildren:" + timer.setEndTime()); //$NON-NLS-1$
-				timer.setStartTime();
-			}
-		}
 		// recurse
 		Item[] children = getChildren(widget);
 		if (children != null) {
-			//SystemElapsedTimer timer2 = null;
-			//int intervalCount = 0;
-			//if (doTimings)
-			//timer2 = new SystemElapsedTimer();
 			for (int i = 0; i < children.length; i++) {
 				Widget item = children[i];
 				Object data = item.getData();
-				if (data != null) doOurInternalRefresh(item, data, doStruct, false, false);
-				/*
-				 if (doTimings)
-				 {
-				 ++intervalCount;
-				 if (intervalCount == 1000)
-				 {
-				 System.out.println("...time to recurse next 1000 children: " + timer2.setEndTime());
-				 intervalCount = 0;
-				 timer2.setStartTime();
-				 }
-				 }*/
+				if (data != null) doOurInternalRefresh(item, data, doStruct, false);
 			}
 		}
-		if (firstCall)
-		{
+		if (firstCall) {
 			internalRefresh(element);
-		}
-		if (doTimings && timer != null) {
-			System.out.println("doOurInternalRefresh timer 4: time to recurse children:" + timer.setEndTime()); //$NON-NLS-1$
-			timer.setStartTime();
 		}
 	}
 
@@ -3118,8 +3046,6 @@ public class SystemView extends SafeTreeViewer implements ISystemTree, ISystemRe
 	}
 
 	protected void smartRefresh(TreeItem[] itemsToRefresh, ArrayList expandedChildren, boolean forceRemote) {
-		SystemElapsedTimer timer = null;
-		if (doTimings) timer = new SystemElapsedTimer();
 		areAnyRemote = false; // set in ExpandedItem constructor
 		boolean fullRefresh = false;
 		// for each selected tree item gather a list of expanded child nodes...
@@ -3142,10 +3068,8 @@ public class SystemView extends SafeTreeViewer implements ISystemTree, ISystemRe
 				setExpandedState(data, false); // collapse temp expansion of prompts
 			else if (currItem.getExpanded()) {
 				//expandedChildren.add(new ExpandedItem(currItem)); we don't need special processing for given items themselves as they will not be refreshed, only their kids
-				if (doTimings && timer != null) timer.setStartTime();
 				gatherExpandedChildren((fullRefresh ? null : currItem), currItem, expandedChildren);
 				wasExpanded[idx] = true;
-				if (doTimings && timer != null) System.out.println("Refresh Timer 1: time to gatherExpandedChildren: " + timer.setEndTime()); //$NON-NLS-1$
 			} else
 				wasExpanded[idx] = false;
 		}
@@ -3155,7 +3079,7 @@ public class SystemView extends SafeTreeViewer implements ISystemTree, ISystemRe
 		if (!areAnyRemote) {
 			for (int idx = 0; idx < itemsToRefresh.length; idx++)
 				//ourInternalRefresh(itemsToRefresh[idx], itemsToRefresh[idx].getData(), wasExpanded[idx]);
-				ourInternalRefresh(itemsToRefresh[idx], itemsToRefresh[idx].getData(), true, forceRemote, doTimings); // defect 42321
+				ourInternalRefresh(itemsToRefresh[idx], itemsToRefresh[idx].getData(), true, forceRemote); // defect 42321
 			return;
 		}
 		getControl().setRedraw(false);
@@ -3165,28 +3089,11 @@ public class SystemView extends SafeTreeViewer implements ISystemTree, ISystemRe
 		//    address won't change, only that of its children.
 		for (int idx = 0; idx < itemsToRefresh.length; idx++) {
 			TreeItem currItem = itemsToRefresh[idx];
-			if (doTimings && timer != null) timer.setStartTime();
 			setExpanded(currItem, false); // collapse node
-			if (doTimings && timer != null) {
-				System.out.println("Refresh Timer 2: time to setExpanded(false): " + timer.setEndTime()); //$NON-NLS-1$
-				timer.setStartTime();
-			}
-			ourInternalRefresh(currItem, currItem.getData(), true, true, doTimings); // dispose of children, update plus
-			if (doTimings && timer != null) {
-				System.out.println("Refresh Timer 3: time to do ourInternalRefresh(...): " + timer.setEndTime()); //$NON-NLS-1$
-				timer.setStartTime();
-			}
+			ourInternalRefresh(currItem, currItem.getData(), true, true); // dispose of children, update plus
 			if (wasExpanded[idx]) {
 				createChildren(currItem); // re-expand
-				if (doTimings && timer != null) {
-					System.out.println("Refresh Timer 4: time to createChildren(...): " + timer.setEndTime()); //$NON-NLS-1$
-					timer.setStartTime();
-				}
 				currItem.setExpanded(true);
-				if (doTimings && timer != null) {
-					System.out.println("Refresh Timer 5: time to setExpanded(true): " + timer.setEndTime()); //$NON-NLS-1$
-					timer.setStartTime();
-				}
 			} else // hmm, item was not expanded so just flush its memory
 			{
 
@@ -3215,15 +3122,7 @@ public class SystemView extends SafeTreeViewer implements ISystemTree, ISystemRe
 				if (debug) System.out.println("Re-Expanded non-remote Item: " + itemToExpand.data); //$NON-NLS-1$
 			}
 		}
-		if (doTimings && timer != null) {
-			System.out.println("Refresh Timer 6: time to reExpanded expanded subnodes: " + timer.setEndTime()); //$NON-NLS-1$
-			timer.setStartTime();
-		}
 		getControl().setRedraw(true);
-		if (doTimings && timer != null) {
-			System.out.println("Refresh Timer 7: time to setRedraw(true): " + timer.setEndTime()); //$NON-NLS-1$
-			timer.setStartTime();
-		}
 	}
 	
 	public void refreshRemote(Object element)

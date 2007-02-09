@@ -15,9 +15,9 @@
  ********************************************************************************/
 
 package org.eclipse.rse.ui.actions;
-import org.eclipse.rse.core.SystemPerspectiveHelpers;
 import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemResources;
+import org.eclipse.rse.ui.view.SystemPerspectiveHelpers;
 import org.eclipse.rse.ui.view.team.SystemTeamViewPart;
 import org.eclipse.swt.widgets.Shell;
 

@@ -17,6 +17,8 @@ import java.util.List;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 
+import org.eclipse.rse.internal.services.Activator;
+
 /**
  * A Mutual Exclusion Lock for Threads that need to access a resource
  * in a serialized manner. An Eclipse ProgressMonitor is accepted

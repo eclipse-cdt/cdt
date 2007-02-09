@@ -3,7 +3,7 @@ Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
 Bundle-SymbolicName: org.eclipse.rse.services
 Bundle-Version: 2.0.0.qualifier
-Bundle-Activator: org.eclipse.rse.services.Activator
+Bundle-Activator: org.eclipse.rse.internal.services.Activator
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin
 Require-Bundle: org.eclipse.core.runtime
@@ -20,5 +20,7 @@ Export-Package: org.eclipse.rse.services,
  org.eclipse.rse.services.files,
  org.eclipse.rse.services.processes,
  org.eclipse.rse.services.search,
- org.eclipse.rse.services.shells
+ org.eclipse.rse.services.shells,
+ org.eclipse.rse.internal.services;x-internal:=true,
+ org.eclipse.rse.internal.services.shells;x-internal:=true
 Bundle-RequiredExecutionEnvironment: J2SE-1.4

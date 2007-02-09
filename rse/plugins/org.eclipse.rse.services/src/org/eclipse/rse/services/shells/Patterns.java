@@ -23,7 +23,10 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.regex.Pattern;
 
-import org.eclipse.rse.services.Activator;
+import org.eclipse.rse.internal.services.Activator;
+import org.eclipse.rse.internal.services.shells.CommandPattern;
+import org.eclipse.rse.internal.services.shells.OutputPattern;
+
 import org.osgi.framework.Bundle;
 
 public class Patterns {

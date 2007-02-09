@@ -137,7 +137,12 @@ These appear in configuration and properties pages for subsystems.
                <documentation>
                   A semicolon separated list of system type names that subsystems from this configuration support. For example, &quot;Unix;Linux&quot;.
 If not specified and the &quot;systemTypeIds&quot; attribute is not specified, defaults to all system types. The wildcards &apos;*&apos; and &apos;?&apos; are accepted.
+&lt;p&gt;
+&lt;b&gt;Deprecated:&lt;/b&gt; Use the systemTypeIds attribute instead.
                </documentation>
+               <appInfo>
+                  <meta.attribute deprecated="true"/>
+               </appInfo>
             </annotation>
          </attribute>
          <attribute name="systemTypeIds" type="string">

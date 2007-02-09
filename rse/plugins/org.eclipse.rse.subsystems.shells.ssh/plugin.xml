@@ -14,7 +14,7 @@ Martin Oberhuber - initial API and implementation
 	<extension
 		point="org.eclipse.rse.ui.subsystemConfigurations">
 		<configuration
-			systemTypes="Linux;Unix;AIX;SSH Only"
+			systemTypeIds="org.eclipse.rse.systemtype.linux;org.eclipse.rse.systemtype.unix;org.eclipse.rse.systemtype.aix;org.eclipse.rse.systemtype.ssh"
 			name="%SshShellSubsystemName"
 			description="%SshShellSubsystemDescription"
 			iconlive="icons/full/obj16/systemcommandslive_obj.gif"

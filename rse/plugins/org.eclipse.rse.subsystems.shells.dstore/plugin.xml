@@ -22,7 +22,7 @@ Contributors:
    <extension
          point="org.eclipse.rse.ui.subsystemConfigurations">
       <configuration
-            systemTypes="Linux;Unix;Windows"
+            systemTypeIds="org.eclipse.rse.systemtype.linux;org.eclipse.rse.systemtype.unix;org.eclipse.rse.systemtype.windows"
             name="%Shells"
             description="%ShellsDescription"
             iconlive="icons/full/obj16/systemcommandslive_obj.gif"

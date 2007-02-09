@@ -62,7 +62,7 @@ Martin Oberhuber (Wind River) - Adapted original tutorial code to Open RSE.
 		point="org.eclipse.rse.ui.subsystemConfigurations">
 		<configuration
 			id="samples.subsystems.factory"
-			systemTypes="Linux;Unix;Windows"
+			systemTypeIds="org.eclipse.rse.systemtype.linux;org.eclipse.rse.systemtype.unix;org.eclipse.rse.systemtype.windows"
 			name="Teams"
 			class="samples.subsystems.DeveloperSubSystemConfiguration"
 			category="users"

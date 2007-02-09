@@ -21,7 +21,7 @@ Contributors:
    <extension
          point="org.eclipse.rse.ui.subsystemConfigurations">
       <configuration
-            systemTypes="Linux;Unix"
+            systemTypeIds="org.eclipse.rse.systemtype.linux;org.eclipse.rse.systemtype.unix"
             name="%Files"
             description="%FilesDescription"
             iconlive="icons/full/obj16/systemfileslive_obj.gif"
@@ -34,7 +34,7 @@ Contributors:
       </configuration>
 
       <configuration 
-            systemTypes="Windows"
+            systemTypeIds="org.eclipse.rse.systemtype.windows"
             name="%Files"
             description="%FilesDescription"
             iconlive="icons/full/obj16/systemfileslive_obj.gif"

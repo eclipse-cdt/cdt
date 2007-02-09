@@ -15,6 +15,7 @@
       	<type name="org.eclipse.rse.tests.subsystems.files.RSEFileSubsystemTestSuite" class="org.eclipse.rse.tests.subsystems.files.RSEFileSubsystemTestSuite" />
    </extension>
 
+	<!-- Do not replace the use of systemTypes here as long it only deprecated! -->
 	<extension point="org.eclipse.rse.ui.subsystemConfigurations">
 		<configuration
 			id="org.eclipse.rse.tests.subsystems.TestSubSystem"
@@ -42,6 +43,7 @@
 			priority="100000">
 		</configuration>
 
+		<!-- Do not replace the use of systemTypes here as long it only deprecated! -->
 		<configuration
 			id="org.eclipse.rse.tests.subsystems.TestSubSystem3"
 			systemTypes="*n?x"

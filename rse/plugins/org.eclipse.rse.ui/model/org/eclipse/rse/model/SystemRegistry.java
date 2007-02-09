@@ -1334,7 +1334,8 @@ public class SystemRegistry implements ISystemRegistryUI, ISystemModelChangeEven
 
 	/**
 	 * Return the absolute name for the specified subsystem
-	 * @param the subsystem
+	 * 
+	 * @param subSystem The subsystem. Must be not <code>null</code>
 	 * @return the absolute name of the subsystem
 	 */
 	public String getAbsoluteNameForSubSystem(ISubSystem subSystem)
@@ -1355,7 +1356,8 @@ public class SystemRegistry implements ISystemRegistryUI, ISystemModelChangeEven
 
 	 /**
 	  * Return the absolute name for the specified connection
-	  * @param the connection
+	  * 
+	  * @param connection The connection. Must be not <code>null</code>.
 	  * @return the absolute name of the connection
 	  */
 	 public String getAbsoluteNameForConnection(IHost connection)
@@ -2501,7 +2503,7 @@ public class SystemRegistry implements ISystemRegistryUI, ISystemModelChangeEven
 	 * </ul>
 	 * <b>TODO PROBLEM: CAN'T RE-ORDER FOLDERS SO CAN WE SUPPORT THIS ACTION?</b>
 	 * @param conns Array of SystemConnections to move.
-	 * @param newPosition new zero-based position for the connection
+	 * @param delta new zero-based position for the connection
 	 */
 	public void moveHosts(String profileName, IHost conns[], int delta)
 	{

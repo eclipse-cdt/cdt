@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,7 +7,6 @@
  *
  * Contributors:
  *    Markus Schorn - initial API and implementation
- *    Warren Paul (Nokia) - Ignore deltas for deleted projects
  *******************************************************************************/ 
 
 package org.eclipse.cdt.internal.core.pdom;
@@ -57,11 +56,6 @@ public class CModelListener implements IElementChangedListener {
 		case ICElement.C_PROJECT:
 			// Find the appropriate indexer and pass the delta on
 			final ICProject project = (ICProject)delta.getElement();
-
-			// If the project has been deleted then ignore
-			if (!project.getProject().exists())
-				return;
-
 			switch (delta.getKind()) {
 			case ICElementDelta.ADDED:
 				fManager.addProject(project, delta);

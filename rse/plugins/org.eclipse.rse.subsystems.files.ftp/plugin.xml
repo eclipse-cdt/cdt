@@ -28,6 +28,7 @@ Martin Oberhuber (Wind River) - add FTP Only system type
     <extension point="org.eclipse.rse.ui.subsystemConfigurations">
       <configuration
             systemTypeIds="org.eclipse.rse.systemtype.linux;org.eclipse.rse.systemtype.unix;org.eclipse.rse.systemtype.windows;org.eclipse.rse.systemtype.ftp"
+			supportsAllSystemTypes="false"
             name="%Files"
             description="%FilesDescription"
             iconlive="icons/full/obj16/systemfileslive_obj.gif"

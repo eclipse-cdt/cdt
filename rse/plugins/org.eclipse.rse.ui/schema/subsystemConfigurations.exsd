@@ -66,50 +66,6 @@ as a folder name for information contained by the subsystem configuration, or by
                </documentation>
             </annotation>
          </attribute>
-         <attribute name="vendor" type="string" use="required">
-            <annotation>
-               <documentation>
-                  Name of the vendor supplying this subsystem configuration.
-               </documentation>
-               <appInfo>
-                  <meta.attribute translatable="true"/>
-               </appInfo>
-            </annotation>
-         </attribute>
-         <attribute name="icon" type="string" use="required">
-            <annotation>
-               <documentation>
-                  The icon to dipslay for subsystems of this configuration, when not connected. 
-Specify the path of the .gif file, relative to your plugin directory.
-               </documentation>
-               <appInfo>
-                  <meta.attribute kind="resource"/>
-               </appInfo>
-            </annotation>
-         </attribute>
-         <attribute name="iconlive" type="string" use="required">
-            <annotation>
-               <documentation>
-                  The icon to display for subsystems of this configuration, when there is a live connection. This
-is usually derived from the normal icon, but adorned with a bright green arrow. Specify
-a path to the icon&apos;s .gif file, relative to your plugin directory.
-               </documentation>
-               <appInfo>
-                  <meta.attribute kind="resource"/>
-               </appInfo>
-            </annotation>
-         </attribute>
-         <attribute name="class" type="string" use="required">
-            <annotation>
-               <documentation>
-                  A class that implements &lt;samp&gt;org.eclipse.rse.core.subsystems.ISubSystemConfiguration&lt;/samp&gt;.
-It is recommended to extend &lt;samp&gt;org.eclipse.rse.core.subsystems.SubSystemConfiguration&lt;/samp&gt; or &lt;samp&gt;org.eclipse.rse.core.servicesubsystem.ServiceSubSystemConfiguration&lt;/samp&gt;.
-               </documentation>
-               <appInfo>
-                  <meta.attribute kind="java" basedOn="org.eclipse.rse.core.subsystems.SubSystemConfiguration:org.eclipse.rse.core.subsystems.ISubSystemConfiguration"/>
-               </appInfo>
-            </annotation>
-         </attribute>
          <attribute name="name" type="string" use="required">
             <annotation>
                <documentation>
@@ -132,25 +88,62 @@ These appear in configuration and properties pages for subsystems.
                </appInfo>
             </annotation>
          </attribute>
-         <attribute name="systemTypes" type="string">
+         <attribute name="vendor" type="string" use="required">
             <annotation>
                <documentation>
-                  A semicolon separated list of system type names that subsystems from this configuration support. For example, &quot;Unix;Linux&quot;.
-If not specified and the &quot;systemTypeIds&quot; attribute is not specified, defaults to all system types. The wildcards &apos;*&apos; and &apos;?&apos; are accepted.
-&lt;p&gt;
-&lt;b&gt;Deprecated:&lt;/b&gt; Use the systemTypeIds attribute instead.
+                  Name of the vendor supplying this subsystem configuration.
                </documentation>
                <appInfo>
-                  <meta.attribute deprecated="true"/>
+                  <meta.attribute translatable="true"/>
                </appInfo>
+            </annotation>
+         </attribute>
+         <attribute name="class" type="string" use="required">
+            <annotation>
+               <documentation>
+                  A class that implements &lt;samp&gt;org.eclipse.rse.core.subsystems.ISubSystemConfiguration&lt;/samp&gt;.
+It is recommended to extend &lt;samp&gt;org.eclipse.rse.core.subsystems.SubSystemConfiguration&lt;/samp&gt; or &lt;samp&gt;org.eclipse.rse.core.servicesubsystem.ServiceSubSystemConfiguration&lt;/samp&gt;.
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="java" basedOn="org.eclipse.rse.core.subsystems.SubSystemConfiguration:org.eclipse.rse.core.subsystems.ISubSystemConfiguration"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+         <attribute name="supportsAllSystemTypes" type="boolean" use="required">
+            <annotation>
+               <documentation>
+                  A boolean attribute to mark the subsystem configuration compatible with all contributed system types.
+               </documentation>
             </annotation>
          </attribute>
          <attribute name="systemTypeIds" type="string">
             <annotation>
                <documentation>
-                  A semicolon separated list of system type ids that subsystems from this configuration support. For example, &quot;org.eclipse.rse.systemtype.unix;org.eclipse.rse.systemtype.linux&quot;.
-If not specified and the &quot;systemTypes&quot; attribute is not specified, defaults to all system types. The wildcards &apos;*&apos; and &apos;?&apos; are accepted.
+                  A semicolon separated list of system type ids that subsystems from this configuration support. For example, &quot;org.eclipse.rse.systemtype.unix;org.eclipse.rse.systemtype.linux&quot;. The wildcards &apos;*&apos; and &apos;?&apos; are accepted. The attribute will be not considered if the attribute &apos;supportsAllSystemTypes&apos; is set to &apos;true&apos;.
                </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="icon" type="string">
+            <annotation>
+               <documentation>
+                  The icon to dipslay for subsystems of this configuration, when not connected. 
+Specify the path of the .gif file, relative to your plugin directory.
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="resource"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+         <attribute name="iconlive" type="string">
+            <annotation>
+               <documentation>
+                  The icon to display for subsystems of this configuration, when there is a live connection. This
+is usually derived from the normal icon, but adorned with a bright green arrow. Specify
+a path to the icon&apos;s .gif file, relative to your plugin directory.
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="resource"/>
+               </appInfo>
             </annotation>
          </attribute>
          <attribute name="category" type="string">
@@ -187,6 +180,7 @@ Note that ServiceSubSystems that share the same service should always use the sa
       point=&quot;org.eclipse.rse.ui.subsystemConfigurations&quot;&gt;
       &lt;configuration
          systemTypes=&quot;Unix;Linux;Local&quot; 
+         supportsAllSystemTypes=&quot;false&quot;
          name=&quot;Databases&quot;
          icon=&quot;icons/dbsubsys.gif&quot; 
          iconlive=&quot;icons/dbsubsyslive.gif&quot;

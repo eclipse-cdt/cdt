@@ -28,6 +28,7 @@ Contributors:
 <!--      point="org.eclipse.rse.ui.subsystemConfigurations">                            -->
 <!--      <configuration                                                                -->
 <!--         systemTypeIds="org.eclipse.rse.systemtype.local;org.eclipse.rse.systemtype.unix"-->
+<!--         supportsAllSystemTypes="false"                                             -->
 <!--         name="Files"                                                               -->
 <!--         description="This subsystem allows you to work with files on local or remote systems."-->
 <!--         icon="icons/filesubsys.gif"                                                -->

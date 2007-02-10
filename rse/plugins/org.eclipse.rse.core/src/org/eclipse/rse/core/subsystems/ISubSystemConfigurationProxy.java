@@ -51,12 +51,6 @@ public interface ISubSystemConfigurationProxy {
 	public Bundle getDeclaringBundle();
 	
 	/**
-	 * Return value of the <samp>systemTypes</samp> xml attribute.
-	 * Return the system type names this subsystem configuration supports.
-	 */
-	public String getDeclaredSystemTypeNames();
-	
-	/**
 	 * Return value of the <samp>systemTypeIds</samp> xml attribute.
 	 * Return the system type ids this subsystem configuration supports.
 	 */

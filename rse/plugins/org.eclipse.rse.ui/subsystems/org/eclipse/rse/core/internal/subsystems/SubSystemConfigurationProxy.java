@@ -51,8 +51,6 @@ public class SubSystemConfigurationProxy implements ISubSystemConfigurationProxy
 	private String name;
 	// The subsystem configuration description
 	private String description;
-	// The list of associated system types by name as it appears in the plugin.xml
-	private String systemTypeNames;
 	// The list of associated system types by id as it appears in the plugin.xml
 	private String systemTypeIds;
 	
@@ -95,26 +93,6 @@ public class SubSystemConfigurationProxy implements ISubSystemConfigurationProxy
 	}
 
 	private final class SystemTypeMatcher implements ISystemTypeMatcher {
-		private final class SystemTypeNamePattern implements ISystemTypeMatcher {
-			private final Pattern pattern;
-			
-			/**
-			 * Constructor.
-			 */
-			public SystemTypeNamePattern(Pattern pattern) {
-				assert pattern != null;
-				this.pattern = pattern;
-			}
-			
-			/* (non-Javadoc)
-			 * @see org.eclipse.rse.core.internal.subsystems.SubSystemConfigurationProxy.ISystemTypePattern#matches(org.eclipse.rse.core.IRSESystemType)
-			 */
-			public boolean matches(IRSESystemType systemType) {
-				assert systemType != null;
-				return pattern.matcher(systemType.getName()).matches();
-			}
-		}
-		
 		private final class SystemTypeIdPattern implements ISystemTypeMatcher {
 			private final Pattern pattern;
 			
@@ -141,21 +119,10 @@ public class SubSystemConfigurationProxy implements ISubSystemConfigurationProxy
 		/**
 		 * Constructor. 
 		 * 
-		 * @param declaredSystemTypeNames The list of declared system type names. Might be <code>null</code>.
 		 * @param declaredSystemTypeIds  The list of declared system type ids. Might be <code>null</code>.
 		 */
-		public SystemTypeMatcher(String declaredSystemTypeNames, String declaredSystemTypeIds) {
+		public SystemTypeMatcher(String declaredSystemTypeIds) {
 			// Compile the list of patterns out of given lists of declared system types
-			if (declaredSystemTypeNames != null) {
-				String[] names = declaredSystemTypeNames.split(";"); //$NON-NLS-1$
-				if (names != null && names.length > 0) {
-					for (int i = 0; i < names.length; i++) {
-						SystemTypeNamePattern pattern = new SystemTypeNamePattern(Pattern.compile(makeRegex(names[i])));
-						patterns.add(pattern);
-					}
-				}
-			}
-
 			if (declaredSystemTypeIds != null) {
 				String[] ids = declaredSystemTypeIds.split(";"); //$NON-NLS-1$
 				if (ids != null && ids.length > 0) {
@@ -204,29 +171,23 @@ public class SubSystemConfigurationProxy implements ISubSystemConfigurationProxy
 		this.id = element.getAttribute("id"); //$NON-NLS-1$
 		this.name = element.getAttribute("name").trim(); //$NON-NLS-1$
 		this.description = element.getAttribute("description").trim(); //$NON-NLS-1$
-		this.systemTypeNames = element.getAttribute("systemTypes"); //$NON-NLS-1$
 		this.systemTypeIds = element.getAttribute("systemTypeIds"); //$NON-NLS-1$
 		this.vendor = element.getAttribute("vendor"); //$NON-NLS-1$
 		this.category = element.getAttribute("category"); //$NON-NLS-1$
 		this.priority = Integer.MAX_VALUE;
 
 		String priorityStr = element.getAttribute("priority"); //$NON-NLS-1$
-
-		// Normalize the attributes now
 		try {
 			if (priorityStr != null) priority = Integer.parseInt(priorityStr);
 		} catch (NumberFormatException e) {
-			priority = Integer.MAX_VALUE;
 			SystemBasePlugin.logError("Exception reading priority for subsystem configuration " + name + " defined in plugin " + element.getDeclaringExtension().getNamespaceIdentifier(), e); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 
+		String supportsAllSystemTypes = element.getAttribute("supportsAllSystemTypes"); //$NON-NLS-1$
+		if (supportsAllSystemTypes != null) this.allTypes = Boolean.TRUE.equals(Boolean.valueOf(supportsAllSystemTypes));
+		
 		if (vendor == null) vendor = "Unknown"; //$NON-NLS-1$
 		if (category == null) category = "Unknown"; //$NON-NLS-1$
-		
-		// We default to all system types if neither systemTypeNames nor systemTypeIds are specified. 
-		if (systemTypeNames == null && systemTypeIds == null) systemTypeIds = "*"; //$NON-NLS-1$
-
-		this.allTypes = systemTypeIds != null && systemTypeIds.equals("*"); //$NON-NLS-1$
 		
 		this.image = getPluginImage(element, element.getAttribute("icon")); //$NON-NLS-1$
 		if (this.image == null)	this.image = RSEUIPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_CONNECTION_ID);
@@ -234,7 +195,7 @@ public class SubSystemConfigurationProxy implements ISubSystemConfigurationProxy
 		this.liveImage = getPluginImage(element, element.getAttribute("iconlive")); //$NON-NLS-1$
 		if (this.liveImage == null) this.liveImage = RSEUIPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_CONNECTIONLIVE_ID);
 		
-		systemTypeMatcher = new SystemTypeMatcher(getDeclaredSystemTypeNames(), getDeclaredSystemTypeIds());
+		systemTypeMatcher = new SystemTypeMatcher(getDeclaredSystemTypeIds());
 	}
 
 	/* (non-Javadoc)
@@ -277,14 +238,7 @@ public class SubSystemConfigurationProxy implements ISubSystemConfigurationProxy
 	 * @see org.eclipse.rse.core.subsystems.ISubSystemConfigurationProxy#getDeclaredSystemTypeIds()
 	 */
 	public String getDeclaredSystemTypeIds() {
-		return "*".equals(systemTypeIds) ? null : systemTypeIds; //$NON-NLS-1$
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.rse.core.subsystems.ISubSystemConfigurationProxy#getDeclaredSystemTypeNames()
-	 */
-	public String getDeclaredSystemTypeNames() {
-		return "*".equals(systemTypeNames) ? null : systemTypeNames; //$NON-NLS-1$
+		return systemTypeIds;
 	}
 
 	/* (non-Javadoc)
@@ -310,7 +264,9 @@ public class SubSystemConfigurationProxy implements ISubSystemConfigurationProxy
 					if (isMatchingDeclaredSystemTypes(systemType)
 							|| (systemType.getSubsystemConfigurationIds() != null
 									&& Arrays.asList(systemType.getSubsystemConfigurationIds()).contains(getId()))) {
-						resolvedSystemTypes.add(systemType.getName());
+						if (!resolvedSystemTypes.contains(systemType.getName())) {
+								resolvedSystemTypes.add(systemType.getName());
+						}
 					}
 				}
 			}

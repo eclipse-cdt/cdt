@@ -22,6 +22,7 @@ Contributors:
          point="org.eclipse.rse.ui.subsystemConfigurations">
       <configuration
             systemTypeIds="org.eclipse.rse.systemtype.local"
+			supportsAllSystemTypes="false"
             name="%Files"
             description="%FilesDescription"
             iconlive="icons/full/obj16/systemfileslive_obj.gif"

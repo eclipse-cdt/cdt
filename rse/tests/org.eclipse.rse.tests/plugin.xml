@@ -19,7 +19,8 @@
 	<extension point="org.eclipse.rse.ui.subsystemConfigurations">
 		<configuration
 			id="org.eclipse.rse.tests.subsystems.TestSubSystem"
-			systemTypes="Local;Windows"
+			systemTypeIds="org.eclipse.rse.systemtype.local;org.eclipse.rse.systemtype.windows"
+			supportsAllSystemTypes="false"
 			name="%testSubSystemName"
 			class="org.eclipse.rse.tests.internal.testsubsystem.TestSubSystemConfiguration"
 			category="users"
@@ -33,6 +34,7 @@
 		<configuration
 			id="org.eclipse.rse.tests.subsystems.TestSubSystem2"
 			systemTypeIds="org.eclipse.rse.tests.*"
+			supportsAllSystemTypes="false"
 			name="%testSubSystem2Name"
 			class="org.eclipse.rse.tests.internal.testsubsystem.TestSubSystemConfiguration"
 			category="users"
@@ -46,7 +48,8 @@
 		<!-- Do not replace the use of systemTypes here as long it only deprecated! -->
 		<configuration
 			id="org.eclipse.rse.tests.subsystems.TestSubSystem3"
-			systemTypes="*n?x"
+			systemTypeIds="org.eclipse.rse.systemtype.*n?x"
+			supportsAllSystemTypes="false"
 			name="%testSubSystem3Name"
 			class="org.eclipse.rse.tests.internal.testsubsystem.TestSubSystemConfiguration"
 			category="users"

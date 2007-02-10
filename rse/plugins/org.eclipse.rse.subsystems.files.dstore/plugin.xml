@@ -22,6 +22,7 @@ Contributors:
          point="org.eclipse.rse.ui.subsystemConfigurations">
       <configuration
             systemTypeIds="org.eclipse.rse.systemtype.linux;org.eclipse.rse.systemtype.unix"
+			supportsAllSystemTypes="false"
             name="%Files"
             description="%FilesDescription"
             iconlive="icons/full/obj16/systemfileslive_obj.gif"
@@ -35,6 +36,7 @@ Contributors:
 
       <configuration 
             systemTypeIds="org.eclipse.rse.systemtype.windows"
+            supportsAllSystemTypes="false"
             name="%Files"
             description="%FilesDescription"
             iconlive="icons/full/obj16/systemfileslive_obj.gif"

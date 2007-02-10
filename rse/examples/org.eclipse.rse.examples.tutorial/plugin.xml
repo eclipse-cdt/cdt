@@ -63,6 +63,7 @@ Martin Oberhuber (Wind River) - Adapted original tutorial code to Open RSE.
 		<configuration
 			id="samples.subsystems.factory"
 			systemTypeIds="org.eclipse.rse.systemtype.linux;org.eclipse.rse.systemtype.unix;org.eclipse.rse.systemtype.windows"
+			supportsAllSystemTypes="false"
 			name="Teams"
 			class="samples.subsystems.DeveloperSubSystemConfiguration"
 			category="users"

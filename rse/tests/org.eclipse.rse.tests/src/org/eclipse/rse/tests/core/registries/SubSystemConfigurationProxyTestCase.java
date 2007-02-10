@@ -40,19 +40,13 @@ public class SubSystemConfigurationProxyTestCase extends RSECoreTestCase {
 				assertFalse("Unexpected return value true for proxy.equals(null)!", proxy.equals(null)); //$NON-NLS-1$
 				assertTrue("Unexpected return value false for proxy.equals(proxy)!", proxy.equals(proxy)); //$NON-NLS-1$
 				
-				if (proxy.getDeclaredSystemTypeNames() == null && proxy.getDeclaredSystemTypeIds() == null) {
-					assertTrue("Proxy is not flagged to support all system types but should!", proxy.supportsAllSystemTypes()); //$NON-NLS-1$
-				} else {
-					assertFalse("Proxy is flagged to support all system types but should not!", proxy.supportsAllSystemTypes()); //$NON-NLS-1$
-				}
-				
 				// a few specific value we test only for one well known test subsystem
 				if ("org.eclipse.rse.tests.subsystems.TestSubSystem".equals(proxy.getId())) { //$NON-NLS-1$
 					assertEquals("Unexpected return value for proxy.getDescription()!", "Test Subsystem", proxy.getDescription()); //$NON-NLS-1$ //$NON-NLS-2$
 					assertEquals("Unexpected return value for proxy.getVendor()!", "Eclipse.org", proxy.getVendor()); //$NON-NLS-1$ //$NON-NLS-2$
 					assertEquals("Unexpected return value for proxy.getName()!", "Tests", proxy.getName()); //$NON-NLS-1$ //$NON-NLS-2$
-					assertEquals("Unexpected return value for proxy.getDeclaredSystemTypeNames()!", "Local;Windows", proxy.getDeclaredSystemTypeNames()); //$NON-NLS-1$ //$NON-NLS-2$
-					assertNull("Unexpected return value non-null for proxy.getDeclaredSystemTypeIds()!", proxy.getDeclaredSystemTypeIds()); //$NON-NLS-1$
+					assertEquals("Unexpected return value for proxy.getDeclaredSystemTypeIds()!", "org.eclipse.rse.systemtype.local;org.eclipse.rse.systemtype.windows", proxy.getDeclaredSystemTypeIds()); //$NON-NLS-1$ //$NON-NLS-2$
+					assertFalse("Unexpected return value true for proxy.supportsAllSystemTypes()!", proxy.supportsAllSystemTypes()); //$NON-NLS-1$
 					assertEquals("Unexpected return value for proxy.getPriority()!", 50000, proxy.getPriority()); //$NON-NLS-1$
 					assertEquals("Unexpected return value for proxy.getCategory()!", "users", proxy.getCategory()); //$NON-NLS-1$ //$NON-NLS-2$
 					assertNotNull("Unexpected return value null for proxy.getSubSystemConfiguration()!", proxy.getSubSystemConfiguration()); //$NON-NLS-1$
@@ -76,7 +70,7 @@ public class SubSystemConfigurationProxyTestCase extends RSECoreTestCase {
 					assertEquals("Unexpected return value for proxy.getVendor()!", "Eclipse.org", proxy.getVendor()); //$NON-NLS-1$ //$NON-NLS-2$
 					assertEquals("Unexpected return value for proxy.getName()!", "Tests2", proxy.getName()); //$NON-NLS-1$ //$NON-NLS-2$
 					assertEquals("Unexpected return value for proxy.getDeclaredSystemTypeIds()!", "org.eclipse.rse.tests.*", proxy.getDeclaredSystemTypeIds()); //$NON-NLS-1$ //$NON-NLS-2$
-					assertNull("Unexpected return value non-null for proxy.getDeclaredSystemTypeNames()!", proxy.getDeclaredSystemTypeNames()); //$NON-NLS-1$
+					assertFalse("Unexpected return value true for proxy.supportsAllSystemTypes()!", proxy.supportsAllSystemTypes()); //$NON-NLS-1$
 					assertEquals("Unexpected return value for proxy.getPriority()!", 100000, proxy.getPriority()); //$NON-NLS-1$
 					assertEquals("Unexpected return value for proxy.getCategory()!", "users", proxy.getCategory()); //$NON-NLS-1$ //$NON-NLS-2$
 					assertNotNull("Unexpected return value null for proxy.getSubSystemConfiguration()!", proxy.getSubSystemConfiguration()); //$NON-NLS-1$
@@ -99,8 +93,8 @@ public class SubSystemConfigurationProxyTestCase extends RSECoreTestCase {
 					assertEquals("Unexpected return value for proxy.getDescription()!", "Test Subsystem 3", proxy.getDescription()); //$NON-NLS-1$ //$NON-NLS-2$
 					assertEquals("Unexpected return value for proxy.getVendor()!", "Eclipse.org", proxy.getVendor()); //$NON-NLS-1$ //$NON-NLS-2$
 					assertEquals("Unexpected return value for proxy.getName()!", "Tests3", proxy.getName()); //$NON-NLS-1$ //$NON-NLS-2$
-					assertEquals("Unexpected return value for proxy.getDeclaredSystemTypeNames()!", "*n?x", proxy.getDeclaredSystemTypeNames()); //$NON-NLS-1$ //$NON-NLS-2$
-					assertNull("Unexpected return value non-null for proxy.getDeclaredSystemTypeIds()!", proxy.getDeclaredSystemTypeIds()); //$NON-NLS-1$
+					assertEquals("Unexpected return value for proxy.getDeclaredSystemTypeIds()!", "org.eclipse.rse.systemtype.*n?x", proxy.getDeclaredSystemTypeIds()); //$NON-NLS-1$ //$NON-NLS-2$
+					assertFalse("Unexpected return value true for proxy.supportsAllSystemTypes()!", proxy.supportsAllSystemTypes()); //$NON-NLS-1$
 					assertEquals("Unexpected return value for proxy.getPriority()!", 2000, proxy.getPriority()); //$NON-NLS-1$
 					assertEquals("Unexpected return value for proxy.getCategory()!", "users", proxy.getCategory()); //$NON-NLS-1$ //$NON-NLS-2$
 					assertNotNull("Unexpected return value null for proxy.getSubSystemConfiguration()!", proxy.getSubSystemConfiguration()); //$NON-NLS-1$

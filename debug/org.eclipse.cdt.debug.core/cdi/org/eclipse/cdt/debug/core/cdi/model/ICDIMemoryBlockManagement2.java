@@ -27,10 +27,10 @@ public interface ICDIMemoryBlockManagement2 extends ICDIMemoryBlockManagement {
 	 * in that this support memory spaces.
 	 * @param address 
 	 * @param memorySpaceID - value is meaningful only to the backend
-	 * @param units - number of units
+	 * @param size - number of bytes
 	 * @return a memory block with the specified identifier
 	 * @throws CDIException on failure. Reasons include:
 	 */
-	ICDIMemoryBlock createMemoryBlock(BigInteger address, String memorySpaceID, int units)
+	ICDIMemoryBlock createMemoryBlock(BigInteger address, String memorySpaceID, int size)
 		throws CDIException;
 }

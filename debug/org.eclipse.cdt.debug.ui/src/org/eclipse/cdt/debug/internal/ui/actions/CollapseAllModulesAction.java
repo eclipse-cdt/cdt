@@ -10,10 +10,10 @@
  *******************************************************************************/
 package org.eclipse.cdt.debug.internal.ui.actions; 
 
-import org.eclipse.cdt.debug.internal.ui.views.modules.ModulesViewer;
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.debug.ui.IDebugView;
 import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.util.Assert;
+import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.ui.IViewActionDelegate;
 import org.eclipse.ui.IViewPart;
@@ -39,9 +39,9 @@ public class CollapseAllModulesAction extends ActionDelegate implements IViewAct
 	 */
 	public void run( IAction action ) {
 		Viewer viewer = getView().getViewer();
-		if ( viewer instanceof ModulesViewer ) {
+		if ( viewer instanceof TreeViewer ) {
 			viewer.getControl().setRedraw( false );
-			((ModulesViewer)viewer).collapseAll();
+			((TreeViewer)viewer).collapseAll();
 			viewer.getControl().setRedraw( true );
 		}
 	}

@@ -71,6 +71,8 @@ public class ImportExecutablePageTwo extends WizardPage {
 
 	private AbstractImportExecutableWizard wizard;
 
+	private boolean shouldUpdateButtons = true;
+
 	public ImportExecutablePageTwo(AbstractImportExecutableWizard wizard) {
 		super("ImportExecutablePageTwo");
 		this.wizard = wizard;
@@ -96,6 +98,7 @@ public class ImportExecutablePageTwo extends WizardPage {
 	}
 
 	public void checkExecutableSettings() {
+		shouldUpdateButtons = false;
 		if (isCreateNewProjectSelected) {
 			String defaultName = getDefaultProjectName();
 			if (defaultName.length() > 0) {
@@ -106,48 +109,14 @@ public class ImportExecutablePageTwo extends WizardPage {
 					existingProjectName.setText(defaultName);
 					existingProjectButton.setSelection(true);
 					newProjectButton.setSelection(false);
-					checkExistingProjectName();
 				} else {
 					newProjectName.setText(defaultName);
-					checkNewProjectName();
 				}
 				setLaunchConfigurationName(defaultName);
 			}
 		}
-	}
-
-	protected void checkExistingProjectName() {
-		ICProject project = getExistingCProject();
-		setErrorMessage(null);
-		setPageComplete(project != null);
-		if (project == null) {
-			setErrorMessage(Messages.ImportExecutablePageTwo_BadProjectName);
-		}
-	}
-
-	protected void checkLaunchConfigurationName() {
-		String newName = configurationName.getText();
-		setErrorMessage(null);
-		if (isCreateLaunchConfigurationSelected) {
-			setPageComplete(newName.length() > 0);
-			if (newName.length() == 0) {
-				setErrorMessage(Messages.ImportExecutablePageTwo_EnterLaunchConfig);
-			}
-		}
-	}
-
-	protected void checkNewProjectName() {
-		String newName = newProjectName.getText().trim();
-		setErrorMessage(null);
-		setPageComplete(newName.length() > 0);
-		if (newName.length() == 0) {
-			setErrorMessage(Messages.ImportExecutablePageTwo_EnterProjectName);
-		}
-		ICProject cProject = CoreModel.getDefault().getCModel().getCProject(
-				newName);
-		if (cProject.exists()) {
-			setErrorMessage(Messages.ImportExecutablePageTwo_ProjectAlreadyExists);
-		}
+		updateControls();
+		shouldUpdateButtons = true;
 	}
 
 	protected ICProject chooseCProject() {
@@ -190,7 +159,6 @@ public class ImportExecutablePageTwo extends WizardPage {
 		newProjectButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				isCreateNewProjectSelected = newProjectButton.getSelection();
-				checkNewProjectName();
 				updateControls();
 			}
 		});
@@ -202,7 +170,7 @@ public class ImportExecutablePageTwo extends WizardPage {
 		newProjectName.addModifyListener(new ModifyListener() {
 
 			public void modifyText(ModifyEvent e) {
-				checkNewProjectName();
+				updateControls();
 			}
 
 		});
@@ -226,7 +194,6 @@ public class ImportExecutablePageTwo extends WizardPage {
 		existingProjectButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				isCreateNewProjectSelected = !newProjectButton.getSelection();
-				checkExistingProjectName();
 				updateControls();
 			}
 		});
@@ -238,7 +205,7 @@ public class ImportExecutablePageTwo extends WizardPage {
 		existingProjectName.addModifyListener(new ModifyListener() {
 
 			public void modifyText(ModifyEvent e) {
-				checkExistingProjectName();
+				updateControls();
 			}
 
 		});
@@ -281,7 +248,6 @@ public class ImportExecutablePageTwo extends WizardPage {
 				isCreateLaunchConfigurationSelected = createLaunch
 						.getSelection();
 				setLaunchConfigurationName(configurationName.getText().trim());
-				checkLaunchConfigurationName();
 				updateControls();
 			}
 		});
@@ -310,7 +276,7 @@ public class ImportExecutablePageTwo extends WizardPage {
 		configurationName.addModifyListener(new ModifyListener() {
 
 			public void modifyText(ModifyEvent e) {
-				checkLaunchConfigurationName();
+				updateControls();
 			}
 
 		});
@@ -406,7 +372,7 @@ public class ImportExecutablePageTwo extends WizardPage {
 	private void setLaunchConfigurationName(String defaultName) {
 		configurationName.setText(DebugPlugin.getDefault().getLaunchManager()
 				.generateUniqueLaunchConfigurationNameFrom(defaultName));
-		checkLaunchConfigurationName();
+		updateControls();
 	}
 
 	protected void updateControls() {
@@ -419,5 +385,42 @@ public class ImportExecutablePageTwo extends WizardPage {
 		configTypes.setEnabled(isCreateLaunchConfigurationSelected);
 		configurationName.setEnabled(isCreateLaunchConfigurationSelected);
 		configurationNameLabel.setEnabled(isCreateLaunchConfigurationSelected);
+		if (shouldUpdateButtons )
+			getContainer().updateButtons();
 	}
+	
+    public boolean isPageComplete() {
+    	setErrorMessage(null);
+		if (isCreateNewProjectSelected()) {
+			if (getNewProjectName().length() == 0) {
+
+				setErrorMessage(Messages.ImportExecutablePageTwo_EnterProjectName);
+				return false;
+			}
+			ICProject cProject = CoreModel.getDefault().getCModel().getCProject(getNewProjectName());
+			if (cProject.exists()) {
+
+				setErrorMessage(Messages.ImportExecutablePageTwo_ProjectAlreadyExists);
+				return false;
+			}
+
+		} else if (!isCreateNewProjectSelected()) {
+
+			ICProject project = getExistingCProject();
+			if (project == null) {
+
+				setErrorMessage(Messages.ImportExecutablePageTwo_BadProjectName);
+				return false;
+			}
+
+		}
+		if (isCreateLaunchConfigurationSelected() && getNewConfigurationName().length() == 0) {
+
+			setErrorMessage(Messages.ImportExecutablePageTwo_EnterLaunchConfig);
+			return false;
+		}
+		return super.isPageComplete();
+	}
+
+
 }

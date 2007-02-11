@@ -12,11 +12,13 @@ package org.eclipse.cdt.debug.internal.ui.views;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.debug.core.DebugException;
-import org.eclipse.debug.internal.ui.viewers.AsynchronousTreeViewer;
+import org.eclipse.jface.viewers.AbstractTreeViewer;
 import org.eclipse.jface.viewers.TreePath;
 import org.eclipse.jface.viewers.TreeSelection;
+import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.widgets.TreeItem;
 
 /**
@@ -32,7 +34,7 @@ public abstract class AbstractViewerState {
 	/**
 	 * Constructs a memento for the given viewer.
 	 */
-	public AbstractViewerState(AsynchronousTreeViewer viewer) {
+	public AbstractViewerState(TreeViewer viewer) {
 		saveState(viewer);
 	}
 
@@ -42,7 +44,7 @@ public abstract class AbstractViewerState {
 	 * 
 	 * @param viewer viewer of which to save the state
 	 */
-	public void saveState(AsynchronousTreeViewer viewer) {
+	public void saveState(TreeViewer viewer) {
 		List expanded = new ArrayList();
 		fSavedExpansion = null;
 		TreeItem[] items = viewer.getTree().getItems();
@@ -114,7 +116,7 @@ public abstract class AbstractViewerState {
 	 * 
 	 * @param viewer viewer to which state is restored
 	 */
-	public void restoreState(AsynchronousTreeViewer viewer) {
+	public void restoreState(TreeViewer viewer) {
 	    boolean expansionComplete = true;
 	    if (fSavedExpansion != null && fSavedExpansion.size() > 0) {
 			for (int i = 0; i < fSavedExpansion.size(); i++) {
@@ -123,7 +125,7 @@ public abstract class AbstractViewerState {
 					try {
 						TreePath treePath = decodePath(path, viewer);
 						if (treePath != null) {
-							viewer.expand(new TreeSelection(new TreePath[] { treePath }));
+							viewer.expandToLevel( new TreeSelection(new TreePath[] { treePath }), AbstractTreeViewer.ALL_LEVELS);
 							
 							if (treePath.getSegmentCount()-1 != path.segmentCount()) {
 								expansionComplete = false;
@@ -175,6 +177,6 @@ public abstract class AbstractViewerState {
 	 * @return element represented by the path, or <code>null</code> if none
 	 * @throws DebugException if unable to locate a variable
 	 */
-	protected abstract TreePath decodePath(IPath path, AsynchronousTreeViewer viewer) throws DebugException;
+	protected abstract TreePath decodePath(IPath path, TreeViewer viewer) throws DebugException;
 
 }

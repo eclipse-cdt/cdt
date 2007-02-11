@@ -13,11 +13,11 @@ package org.eclipse.cdt.debug.internal.ui.elements.adapters;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.debug.core.model.ICModule;
 import org.eclipse.cdt.debug.core.model.IModuleRetrieval;
-import org.eclipse.cdt.debug.internal.ui.views.modules.ModuleContentAdapter;
+import org.eclipse.cdt.debug.internal.ui.views.modules.ModuleContentProvider;
 import org.eclipse.cdt.debug.internal.ui.views.modules.ModuleProxyFactory;
 import org.eclipse.core.runtime.IAdapterFactory;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementContentProvider;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelProxyFactoryAdapter;
-import org.eclipse.debug.internal.ui.viewers.provisional.IAsynchronousContentAdapter;
 import org.eclipse.debug.internal.ui.viewers.provisional.IAsynchronousLabelAdapter;
  
 /**
@@ -26,7 +26,7 @@ import org.eclipse.debug.internal.ui.viewers.provisional.IAsynchronousLabelAdapt
 public class CDebugElementAdapterFactory implements IAdapterFactory {
 
 //	private static IAsynchronousLabelAdapter fgModuleLabelAdapter = new AsynchronousDebugLabelAdapter();
-	private static IAsynchronousContentAdapter fgModuleContentAdapter = new ModuleContentAdapter();
+    private static IElementContentProvider fgModuleContentProvider = new ModuleContentProvider();
 	private static IModelProxyFactoryAdapter fgModuleProxyFactory = new ModuleProxyFactory();
 
 
@@ -37,15 +37,15 @@ public class CDebugElementAdapterFactory implements IAdapterFactory {
 	    if ( adapterType.isInstance( adaptableObject ) ) {
 			return adaptableObject;
 		}
-		if ( adapterType.equals( IAsynchronousContentAdapter.class ) ) {
+		if ( adapterType.equals( IElementContentProvider.class ) ) {
 			if ( adaptableObject instanceof IModuleRetrieval ) {
-				return fgModuleContentAdapter;
+				return fgModuleContentProvider;
 			}
 			if ( adaptableObject instanceof ICModule ) {
-				return fgModuleContentAdapter;
+				return fgModuleContentProvider;
 			}
 			if ( adaptableObject instanceof ICElement ) {
-				return fgModuleContentAdapter;
+				return fgModuleContentProvider;
 			}
 		}
 		if ( adapterType.equals( IModelProxyFactoryAdapter.class ) ) {
@@ -61,7 +61,7 @@ public class CDebugElementAdapterFactory implements IAdapterFactory {
 	 */
 	public Class[] getAdapterList() {
 		return new Class[] {
-				IAsynchronousContentAdapter.class,
+				IElementContentProvider.class,
 				IAsynchronousLabelAdapter.class,
 				IModelProxyFactoryAdapter.class
 			};

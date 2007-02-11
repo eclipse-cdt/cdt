@@ -27,18 +27,26 @@ import org.eclipse.cdt.debug.internal.ui.views.IDebugExceptionHandler;
 import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
 import org.eclipse.cdt.debug.ui.ICDebugUIConstants;
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
-import org.eclipse.debug.internal.ui.contexts.DebugContextManager;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelChangedListener;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelDelta;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelProxy;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdate;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdateListener;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.PresentationContext;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.TreeModelViewer;
 import org.eclipse.debug.ui.AbstractDebugView;
-import org.eclipse.debug.ui.IDebugUIConstants;
+import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.contexts.DebugContextEvent;
 import org.eclipse.debug.ui.contexts.IDebugContextListener;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.action.IStatusLineManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
@@ -61,6 +69,7 @@ import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
@@ -74,14 +83,16 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IMemento;
-import org.eclipse.ui.INullSelectionListener;
-import org.eclipse.ui.ISelectionListener;
+import org.eclipse.ui.IPerspectiveDescriptor;
+import org.eclipse.ui.IPerspectiveListener;
 import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.IWorkbenchActionConstants;
-import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.console.actions.TextViewerAction;
@@ -91,7 +102,7 @@ import org.eclipse.ui.texteditor.IWorkbenchActionDefinitionIds;
 /**
  * Displays the modules currently loaded by the process being debugged.
  */
-public class ModulesView extends AbstractDebugView implements IDebugContextListener, IDebugExceptionHandler, IPropertyChangeListener, ISelectionListener, INullSelectionListener {
+public class ModulesView extends AbstractDebugView implements IDebugContextListener, IDebugExceptionHandler, IPropertyChangeListener, IPerspectiveListener, IModelChangedListener, IViewerUpdateListener {
 
 	/**
 	 * Internal interface for a cursor listener. I.e. aggregation 
@@ -100,7 +111,6 @@ public class ModulesView extends AbstractDebugView implements IDebugContextListe
 	interface ICursorListener extends MouseListener, KeyListener {
 	}
 
-	
 	/**
 	 * The selection provider for the modules view changes depending on whether
 	 * the variables viewer or detail pane source viewer have focus. This "super" 
@@ -174,15 +184,10 @@ public class ModulesView extends AbstractDebugView implements IDebugContextListe
 	private IDocument fDetailDocument;
 	
 	/**
-	 * Selection provider for this view.
+	 * Stores whether the tree viewer was the last control to have focus in the
+	 * view. Used to give focus to the correct component if the user leaves the view.    
 	 */
-	private ModulesViewSelectionProvider fSelectionProvider = new ModulesViewSelectionProvider();
-
-	/**
-	 * The model presentation used as the label provider for the tree viewer,
-	 * and also as the detail information provider for the detail pane.
-	 */
-//	private IDebugModelPresentation fModelPresentation;
+	private boolean fTreeHasFocus = true;
 
 	/**
 	 * Remembers which viewer (tree viewer or details viewer) had focus, so we
@@ -213,16 +218,20 @@ public class ModulesView extends AbstractDebugView implements IDebugContextListe
 
 	private HashMap fSelectionStates = new HashMap( 10 );
 
-	private AbstractViewerState fLastState = null;
-	
 	private HashMap fImageCache = new HashMap( 10 );
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.AbstractDebugView#createViewer(org.eclipse.swt.widgets.Composite)
 	 */
 	protected Viewer createViewer( Composite parent ) {
-		ModulesViewer viewer = (ModulesViewer)createTreeViewer( parent );
-		viewer.setContext( new PresentationContext( ICDebugUIConstants.ID_MODULES_VIEW ) );
+
+		// create the sash form that will contain the tree viewer & text viewer
+		setSashForm( new SashForm( parent, SWT.NONE ) );
+		
+		CDebugUIPlugin.getDefault().getPreferenceStore().addPropertyChangeListener( this );
+		JFaceResources.getFontRegistry().addListener( this );
+
+		TreeModelViewer viewer = createTreeViewer( getSashForm() );
 
 		createDetailsViewer();
 		getSashForm().setMaximizedControl( viewer.getControl() );
@@ -234,6 +243,9 @@ public class ModulesView extends AbstractDebugView implements IDebugContextListe
 			fToggleDetailPaneActions[i].setChecked( fToggleDetailPaneActions[i].getOrientation().equals( orientation ) );
 		}
 		setDetailPaneOrientation( orientation );
+
+		viewer.addModelChangedListener( this );
+		viewer.addViewerUpdateListener( this );
 
 		return viewer;
 	}
@@ -296,24 +308,16 @@ public class ModulesView extends AbstractDebugView implements IDebugContextListe
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.ISelectionListener#selectionChanged(org.eclipse.ui.IWorkbenchPart, org.eclipse.jface.viewers.ISelection)
-	 */
-	public void selectionChanged( IWorkbenchPart part, ISelection selection ) {
-		if ( !isAvailable() || !isVisible() )
-			return;
-		if ( selection == null )
-			setViewerInput( new StructuredSelection() );
-		else if ( selection instanceof IStructuredSelection )
-			setViewerInput( selection );
-	}
-
 	protected void setViewerInput( Object context ) {
 		IModuleRetrieval mr = null;
 		if ( context instanceof IAdaptable ) {
 			ICDebugTarget target = (ICDebugTarget)((IAdaptable)context).getAdapter( ICDebugTarget.class );
 			if ( target != null )
 				mr = (IModuleRetrieval)target.getAdapter( IModuleRetrieval.class );
+		}
+
+		if ( context == null ) {
+			clearDetails();
 		}
 		Object current = getViewer().getInput();
 		if ( current == null && mr == null ) {
@@ -322,78 +326,37 @@ public class ModulesView extends AbstractDebugView implements IDebugContextListe
 		if ( current != null && current.equals( mr ) ) {
 			return;
 		}
-		if ( current != null ) {
-			// save state
-			fLastState = getViewerState();
-			cacheViewerState( current, fLastState );
-		}
 
 		showViewer();
 		getViewer().setInput( mr );
-		restoreState();
-
-//		
-//		ICDebugTarget target = null;
-//		if ( ssel.size() == 1 ) {
-//			Object input = ssel.getFirstElement();
-//			if ( input instanceof ICDebugElement ) {
-//				target = (ICDebugTarget)((ICDebugElement)input).getDebugTarget();
-//			}
-//		}
-//
-//		Object current = getViewer().getInput();
-//		if ( current == null && target == null ) {
-//			return;
-//		}
-//		if ( current != null && current.equals( target ) ) {
-//			return;
-//		}
-//
-//		if ( current != null ) {
-//			// save state
-//			fLastState = getViewerState();
-//			cacheViewerState( current, fLastState );
-//		}		
-//
-//		showViewer();
-//		getViewer().setInput( target );
-//
-//		// restore state
-//		if ( target != null ) {
-//			AbstractViewerState state = (AbstractViewerState)fSelectionStates.get( target );
-//			if ( state == null ) {
-//				// attempt to restore selection/expansion based on last target
-//				state = fLastState;
-//			}
-//			if ( state != null ) {
-//				state.restoreState( getModulesViewer() );
-//			}
-//		}
 	}
 
-	protected Viewer createTreeViewer( Composite parent ) {
-		CDebugUIPlugin.getDefault().getPreferenceStore().addPropertyChangeListener( this );
-		JFaceResources.getFontRegistry().addListener( this );
-		// create the sash form that will contain the tree viewer & text viewer
-		setSashForm( new SashForm( parent, SWT.NONE ) );
+	protected TreeModelViewer createTreeViewer( Composite parent ) {
 		// add tree viewer
-		final ModulesViewer modulesViewer = new ModulesViewer( getSashForm(), this );
+		final TreeModelViewer modulesViewer = new TreeModelViewer( parent, SWT.MULTI | SWT.V_SCROLL | SWT.H_SCROLL | SWT.VIRTUAL | SWT.FULL_SELECTION, getPresentationContext() );
 		modulesViewer.getControl().addFocusListener( new FocusAdapter() {
 
 			/* (non-Javadoc)
 			 * @see org.eclipse.swt.events.FocusListener#focusGained(org.eclipse.swt.events.FocusEvent)
 			 */
 			public void focusGained( FocusEvent e ) {
-				getModulesViewSelectionProvider().setUnderlyingSelectionProvider( modulesViewer );
-				setFocusViewer( getModulesViewer() );
+				fTreeHasFocus = true;
+				getSite().setSelectionProvider( modulesViewer );
+			}
+			
+			/* (non-Javadoc)
+			 * @see org.eclipse.swt.events.FocusAdapter#focusLost(org.eclipse.swt.events.FocusEvent)
+			 */
+			public void focusLost( FocusEvent e ) {
+				getSite().setSelectionProvider( null );
 			}
 		} );
+
+		getSite().setSelectionProvider( modulesViewer );
 		modulesViewer.addPostSelectionChangedListener( getTreeSelectionChangedListener() );
-		getModulesViewSelectionProvider().setUnderlyingSelectionProvider( modulesViewer );
-		getSite().setSelectionProvider( getModulesViewSelectionProvider() );
 
 		// listen to debug context
-		DebugContextManager.getDefault().addDebugContextListener(this);
+		DebugUITools.getDebugContextManager().getContextService( getSite().getWorkbenchWindow() ).addDebugContextListener( this );
 		return modulesViewer;
 	}
 
@@ -403,6 +366,13 @@ public class ModulesView extends AbstractDebugView implements IDebugContextListe
 	protected void createDetailsViewer() {
 		// Create & configure a SourceViewer
 		SourceViewer detailsViewer = new SourceViewer( getSashForm(), null, SWT.V_SCROLL | SWT.H_SCROLL );
+		Listener activateListener = new Listener() {
+
+			public void handleEvent( Event event ) {
+				fTreeHasFocus = false;
+			}
+		};
+		detailsViewer.getControl().addListener( SWT.Activate, activateListener );
 		setDetailViewer( detailsViewer );
 		detailsViewer.setDocument( getDetailDocument() );
 		detailsViewer.getTextWidget().setFont( JFaceResources.getFont( IInternalCDebugUIConstants.DETAIL_PANE_FONT ) );
@@ -419,7 +389,6 @@ public class ModulesView extends AbstractDebugView implements IDebugContextListe
 			 * @see org.eclipse.swt.events.FocusListener#focusGained(org.eclipse.swt.events.FocusEvent)
 			 */
 			public void focusGained( FocusEvent e ) {
-				getModulesViewSelectionProvider().setUnderlyingSelectionProvider( getDetailViewer().getSelectionProvider() );
 				setFocusViewer( (Viewer)getDetailViewer() );
 			}
 		} );
@@ -463,12 +432,8 @@ public class ModulesView extends AbstractDebugView implements IDebugContextListe
 //		return fModelPresentation;
 //	}
 //
-	protected ModulesViewSelectionProvider getModulesViewSelectionProvider() {
-		return fSelectionProvider;
-	}
-
-	protected ModulesViewer getModulesViewer() {
-		return (ModulesViewer)getViewer();
+	protected TreeModelViewer getModulesViewer() {
+		return (TreeModelViewer)getViewer();
 	}
 
 	protected void setFocusViewer( Viewer viewer ) {
@@ -489,7 +454,7 @@ public class ModulesView extends AbstractDebugView implements IDebugContextListe
 
 				public void selectionChanged( SelectionChangedEvent event ) {
 					if ( event.getSelectionProvider().equals( getModulesViewer() ) ) {
-						getModulesViewSelectionProvider().fireSelectionChanged( event );
+						clearStatusLine();
 						// if the detail pane is not visible, don't waste time retrieving details
 						if ( getSashForm().getMaximizedControl() == getViewer().getControl() ) {
 							return;
@@ -541,10 +506,6 @@ public class ModulesView extends AbstractDebugView implements IDebugContextListe
 			fDetailSelectionChangedListener = new ISelectionChangedListener() {
 
 				public void selectionChanged( SelectionChangedEvent event ) {
-					if ( event.getSelectionProvider().equals( getModulesViewSelectionProvider().getUnderlyingSelectionProvider() ) ) {
-						getModulesViewSelectionProvider().fireSelectionChanged( event );
-						updateSelectionDependentActions();
-					}
 				}
 			};
 		}
@@ -711,7 +672,7 @@ public class ModulesView extends AbstractDebugView implements IDebugContextListe
 	 * Make sure the currently selected item in the tree is visible.
 	 */
 	protected void revealTreeSelection() {
-		ModulesViewer viewer = getModulesViewer();
+		StructuredViewer viewer = (StructuredViewer)getViewer();
 		if ( viewer != null ) {
 			ISelection selection = viewer.getSelection();
 			if ( selection instanceof IStructuredSelection ) {
@@ -768,6 +729,7 @@ public class ModulesView extends AbstractDebugView implements IDebugContextListe
 				setLastSashWeights( weights );
 			}
 		}
+		site.getWorkbenchWindow().addPerspectiveListener( this );
 	}
 
 	/* (non-Javadoc)
@@ -790,8 +752,8 @@ public class ModulesView extends AbstractDebugView implements IDebugContextListe
 	 */
 	protected void becomesVisible() {
 		super.becomesVisible();
-		ISelection selection = DebugContextManager.getDefault().getContextService( getSite().getWorkbenchWindow() ).getActiveContext();
-		contextActivated( selection, null );
+		ISelection selection = DebugUITools.getDebugContextManager().getContextService( getSite().getWorkbenchWindow() ).getActiveContext();
+		contextActivated( selection );
 	}
 
 	private void computeDetail( final Object element ) {
@@ -887,10 +849,15 @@ public class ModulesView extends AbstractDebugView implements IDebugContextListe
 	 * @see org.eclipse.ui.IWorkbenchPart#dispose()
 	 */
 	public void dispose() {
-		getSite().getPage().removeSelectionListener( IDebugUIConstants.ID_DEBUG_VIEW, this );
+		DebugUITools.getDebugContextManager().getContextService( getSite().getWorkbenchWindow() ).removeDebugContextListener( this );
+		getSite().getWorkbenchWindow().removePerspectiveListener( this );
 		CDebugUIPlugin.getDefault().getPreferenceStore().removePropertyChangeListener( this );
 		JFaceResources.getFontRegistry().removeListener( this );
-		Viewer viewer = getViewer();
+		TreeModelViewer viewer = getModulesViewer();
+		if ( viewer != null ) {
+			viewer.removeModelChangedListener( this );
+			viewer.removeViewerUpdateListener( this );
+		}
 		if ( viewer != null ) {
 			getDetailDocument().removeDocumentListener( getDetailDocumentListener() );
 		}
@@ -898,9 +865,9 @@ public class ModulesView extends AbstractDebugView implements IDebugContextListe
 		super.dispose();
 	}
 
-	private AbstractViewerState getViewerState() {
-		return new ModulesViewerState( getModulesViewer() );
-	}
+//	private AbstractViewerState getViewerState() {
+//		return new ModulesViewerState( getModulesViewer() );
+//	}
 	
 	protected Image getImage( ImageDescriptor desc ) {
 		Image image = (Image)fImageCache.get( desc );
@@ -919,23 +886,23 @@ public class ModulesView extends AbstractDebugView implements IDebugContextListe
 		fImageCache.clear();
 	}
 
-    protected void restoreState() {
-		ModulesViewer viewer = (ModulesViewer)getViewer();
-		if ( viewer != null ) {
-			Object context = viewer.getInput();
-			if ( context != null ) {
-				AbstractViewerState state = getCachedViewerState( context );
-				if ( state == null ) {
-					// attempt to restore selection/expansion based on last
-					// frame
-					state = fLastState;
-				}
-				if ( state != null ) {
-					state.restoreState( viewer );
-				}
-			}
-		}
-	}
+//    protected void restoreState() {
+//		ModulesViewer viewer = (ModulesViewer)getViewer();
+//		if ( viewer != null ) {
+//			Object context = viewer.getInput();
+//			if ( context != null ) {
+//				AbstractViewerState state = getCachedViewerState( context );
+//				if ( state == null ) {
+//					// attempt to restore selection/expansion based on last
+//					// frame
+//					state = fLastState;
+//				}
+//				if ( state != null ) {
+//					state.restoreState( viewer );
+//				}
+//			}
+//		}
+//	}
 
 	/**
 	 * Caches the given viewer state for the given viewer input.
@@ -970,7 +937,7 @@ public class ModulesView extends AbstractDebugView implements IDebugContextListe
 		return (AbstractViewerState)fSelectionStates.get( generateKey( input ) );
 	}
 
-	public void contextActivated( ISelection selection, IWorkbenchPart part ) {
+	public void contextActivated( ISelection selection ) {
 		if ( !isAvailable() || !isVisible() ) {
 			return;
 		}
@@ -980,8 +947,64 @@ public class ModulesView extends AbstractDebugView implements IDebugContextListe
 		showViewer();
 	}
 
-	public void debugContextChanged(DebugContextEvent event) {
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.ui.contexts.IDebugContextListener#debugContextChanged(org.eclipse.debug.ui.contexts.DebugContextEvent)
+	 */
+	public void debugContextChanged( DebugContextEvent event ) {
+		if ( (event.getFlags() & DebugContextEvent.ACTIVATED) > 0 ) {
+			contextActivated( event.getContext() );
+		}
+	}
+
+	private IPresentationContext getPresentationContext() {
+		return new PresentationContext( ICDebugUIConstants.ID_MODULES_VIEW );
+	}
+
+	private void clearDetails() {
+		getDetailDocument().set( "" ); //$NON-NLS-1$
+	}
+
+	public void perspectiveActivated( IWorkbenchPage page, IPerspectiveDescriptor perspective ) {
+	}
+
+	public void perspectiveChanged( IWorkbenchPage page, IPerspectiveDescriptor perspective, String changeId ) {
+		if ( changeId.equals( IWorkbenchPage.CHANGE_RESET ) ) {
+			setLastSashWeights( DEFAULT_SASH_WEIGHTS );
+			fSashForm.setWeights( DEFAULT_SASH_WEIGHTS );
+		}
+	}
+
+	public void modelChanged( IModelDelta delta, IModelProxy proxy ) {
 		// TODO Auto-generated method stub
+		
+	}
+
+	public void updateComplete( IViewerUpdate update ) {
+		IStatus status = update.getStatus();
+		if ( !update.isCanceled() ) {
+			if ( status != null && status.getCode() != IStatus.OK ) {
+				showMessage( status.getMessage() );
+			}
+			else {
+				showViewer();
+			}
+		}
+	}
+
+	public void updateStarted( IViewerUpdate update ) {
+	}
+
+	public void viewerUpdatesBegin() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void viewerUpdatesComplete() {
 	}
 	
+	protected void clearStatusLine() {
+		IStatusLineManager manager = getViewSite().getActionBars().getStatusLineManager();
+		manager.setErrorMessage( null );
+		manager.setMessage( null );
+	}
 }

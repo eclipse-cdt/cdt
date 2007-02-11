@@ -18,14 +18,12 @@ import org.eclipse.cdt.debug.internal.ui.views.modules.ModuleProxyFactory;
 import org.eclipse.core.runtime.IAdapterFactory;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementContentProvider;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelProxyFactoryAdapter;
-import org.eclipse.debug.internal.ui.viewers.provisional.IAsynchronousLabelAdapter;
  
 /**
  * Comment for .
  */
 public class CDebugElementAdapterFactory implements IAdapterFactory {
 
-//	private static IAsynchronousLabelAdapter fgModuleLabelAdapter = new AsynchronousDebugLabelAdapter();
     private static IElementContentProvider fgModuleContentProvider = new ModuleContentProvider();
 	private static IModelProxyFactoryAdapter fgModuleProxyFactory = new ModuleProxyFactory();
 
@@ -62,7 +60,6 @@ public class CDebugElementAdapterFactory implements IAdapterFactory {
 	public Class[] getAdapterList() {
 		return new Class[] {
 				IElementContentProvider.class,
-				IAsynchronousLabelAdapter.class,
 				IModelProxyFactoryAdapter.class
 			};
 	}

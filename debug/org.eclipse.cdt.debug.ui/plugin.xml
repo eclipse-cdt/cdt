@@ -1260,5 +1260,11 @@
             id="org.eclipse.cdt.debug.internal.ui.sourcelookup.CSourceNotFoundEditor">
       </editor>
    </extension>
+   <extension
+         point="org.eclipse.ui.startup">
+      <startup
+            class="org.eclipse.cdt.debug.internal.ui.Startup">
+      </startup>
+   </extension>
 
 </plugin>

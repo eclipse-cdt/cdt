@@ -40,6 +40,7 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.PresentationConte
 import org.eclipse.debug.internal.ui.viewers.model.provisional.TreeModelViewer;
 import org.eclipse.debug.ui.AbstractDebugView;
 import org.eclipse.debug.ui.DebugUITools;
+import org.eclipse.debug.ui.IDebugModelPresentation;
 import org.eclipse.debug.ui.contexts.DebugContextEvent;
 import org.eclipse.debug.ui.contexts.IDebugContextListener;
 import org.eclipse.jface.action.IAction;
@@ -101,6 +102,20 @@ import org.eclipse.ui.texteditor.IWorkbenchActionDefinitionIds;
  * Displays the modules currently loaded by the process being debugged.
  */
 public class ModulesView extends AbstractDebugView implements IDebugContextListener, IDebugExceptionHandler, IPropertyChangeListener, IPerspectiveListener, IModelChangedListener, IViewerUpdateListener {
+
+	public class ModulesViewPresentationContext extends PresentationContext {
+
+		private IDebugModelPresentation fModelPresentation;
+
+		public ModulesViewPresentationContext( IDebugModelPresentation modelPresentation ) {
+			super( ICDebugUIConstants.ID_MODULES_VIEW );
+			fModelPresentation = modelPresentation;
+		}
+
+		public IDebugModelPresentation getModelPresentation() {
+			return fModelPresentation;
+		}
+	}
 
 	/**
 	 * Internal interface for a cursor listener. I.e. aggregation 
@@ -881,7 +896,7 @@ public class ModulesView extends AbstractDebugView implements IDebugContextListe
 	}
 
 	private IPresentationContext getPresentationContext() {
-		return new PresentationContext( ICDebugUIConstants.ID_MODULES_VIEW );
+		return new ModulesViewPresentationContext( CDebugUIPlugin.getDebugModelPresentation() );
 	}
 
 	private void clearDetails() {

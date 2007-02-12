@@ -772,7 +772,6 @@ public abstract class RemoteFile implements IRemoteFile,  IAdaptable, Comparable
 		}
 		
 		ArrayList calculatedResults = new ArrayList();
-		
 	
 		StringComparePatternMatcher fmatcher = new StringComparePatternMatcher(filter);
 		
@@ -786,29 +785,44 @@ public abstract class RemoteFile implements IRemoteFile,  IAdaptable, Comparable
 			// KM: we need to match with the key to ensure that the filter is a subset
 			StringComparePatternMatcher matcher = new StringComparePatternMatcher(key);
 			
-			if (matcher.stringMatches(filter))    
-			{
+			if (matcher.stringMatches(filter)) {
 				// get all children, i.e. the superset
-				Object[] all = (Object[])filters.get(key);
-				
+				Object[] all = (Object[]) filters.get(key);
+
 				if (all != null) {
-					
+
 					for (int s = 0; s < all.length; s++) {
-						
-						Object subContent = all[s];			
-																		
-						if (!calculatedResults.contains(subContent)) 
-						{
-							if (subContent instanceof IRemoteFile)
-							{
-								// match with the filter to take out those that do not match the filter
-								if (fmatcher.stringMatches(((IRemoteFile)subContent).getName()))
-								{
+
+						Object subContent = all[s];
+
+						if (!calculatedResults.contains(subContent)) {
+							
+							if (subContent instanceof IRemoteFile) {
+
+								IRemoteFile temp = (IRemoteFile) subContent;
+
+								if (temp.isFile()) {
+									String compareTo = null;
+									boolean filterForFileTypes = isFilterForFileTypes(filter);
+
+									if (!filterForFileTypes) {
+										compareTo = temp.getName();
+									}
+									else {
+										compareTo = temp.getExtension();
+									}
+
+									// match with the filter to take out those
+									// that do not match the filter
+									if (compareTo != null && fmatcher.stringMatches(compareTo)) {
+										calculatedResults.add(subContent);
+									}
+								}
+								else {
 									calculatedResults.add(subContent);
 								}
 							}
-							else
-							{
+							else {
 								calculatedResults.add(subContent);
 							}
 						}
@@ -820,7 +834,20 @@ public abstract class RemoteFile implements IRemoteFile,  IAdaptable, Comparable
 		return calculatedResults.toArray();
 	}	  
 
-	
+	/**
+	 * Returns whether filter is for file types. 
+	 * @param filter the filter.
+	 * @return <code>true</code> if filter is for file types, <code>false</code> otherwise.
+	 */
+	private boolean isFilterForFileTypes(String filter) {
+		
+		if (filter.endsWith(",")) {
+			return true;
+		}
+		else {
+			return false;
+		}
+	}
 	
 	public void setIsContainer(boolean con) {
 		isContainer = con;

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -471,7 +471,6 @@ public final class ASTProvider {
 						System.out.println(getThreadName() + " - " + DEBUG_PREFIX + "returning null (WAIT_NO) for: " + cElement.getElementName()); //$NON-NLS-1$ //$NON-NLS-2$
 
 					return null;
-
 				}
 			}
 		}
@@ -484,7 +483,8 @@ public final class ASTProvider {
 					if (DEBUG)
 						System.out.println(getThreadName() + " - " + DEBUG_PREFIX + "waiting for AST for: " + cElement.getElementName()); //$NON-NLS-1$ //$NON-NLS-2$
 
-					fWaitLock.wait();
+					// don't wait forever, notify might have happened already
+					fWaitLock.wait(1000);
 				}
 
 				// Check whether active element is still valid

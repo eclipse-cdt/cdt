@@ -144,7 +144,8 @@ public class SystemViewDataDragAdapter extends DragSourceAdapter
 						{
 							event.doit = true;
 							event.detail = DND.DROP_COPY;
-							event.feedback = DND.FEEDBACK_INSERT_AFTER;
+							////FIXME as per bug [142947], drag under feedback now works differently in SWT 
+							//event.feedback = DND.FEEDBACK_INSERT_AFTER;
 						}
 					}
 				}

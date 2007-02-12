@@ -105,8 +105,6 @@ import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.custom.VerifyKeyListener;
 import org.eclipse.swt.dnd.DND;
 import org.eclipse.swt.dnd.DragSource;
-import org.eclipse.swt.dnd.DragSourceListener;
-import org.eclipse.swt.dnd.DropTarget;
 import org.eclipse.swt.dnd.TextTransfer;
 import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.events.VerifyEvent;
@@ -125,6 +123,7 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.ActionContext;
 import org.eclipse.ui.actions.ActionGroup;
+import org.eclipse.ui.dnd.IDragAndDropService;
 import org.eclipse.ui.editors.text.TextEditor;
 import org.eclipse.ui.part.EditorActionBarContributor;
 import org.eclipse.ui.part.IShowInSource;
@@ -1526,6 +1525,12 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IR
 	 */
 	private SemanticHighlightingManager fSemanticManager;
 
+	/**
+	 * Custom text drag source listener overriding platform implementation.
+	 * @since 4.0
+	 */
+	private TextViewerDragAdapter fTextViewerDragAdapter;
+
 	private static final Set angularIntroducers = new HashSet();
 	static {
 		angularIntroducers.add("template"); //$NON-NLS-1$
@@ -2422,22 +2427,39 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IR
 	}
 
 	/*
-	 * @see org.eclipse.ui.texteditor.AbstractTextEditor#initializeDragAndDrop(org.eclipse.jface.text.source.ISourceViewer)
+	 * @see org.eclipse.ui.texteditor.AbstractTextEditor#installTextDragAndDrop(org.eclipse.jface.text.source.ISourceViewer)
 	 */
-	protected void initializeDragAndDrop(ISourceViewer viewer) {
+	protected void installTextDragAndDrop(ISourceViewer viewer) {
+		if (fTextViewerDragAdapter != null) {
+			// already installed, enable it
+			fTextViewerDragAdapter.setEnabled(true);
+			return;
+		}
+		final IDragAndDropService dndService= (IDragAndDropService)getSite().getService(IDragAndDropService.class);
+		if (dndService == null || viewer == null) {
+			return;
+		}
 		Control control = viewer.getTextWidget();
 		int operations = DND.DROP_MOVE | DND.DROP_COPY;
-
-		DropTarget dropTarget = new DropTarget(control, operations);
-		ITextEditorDropTargetListener dropTargetListener = new TextEditorDropAdapter(viewer, this);
-		dropTarget.setTransfer(dropTargetListener.getTransfers());
-		dropTarget.addDropListener(dropTargetListener);
 
 		DragSource dragSource = new DragSource(control, operations);
 		Transfer[] dragTypes = new Transfer[] { TextTransfer.getInstance() };
 		dragSource.setTransfer(dragTypes);
-		DragSourceListener dragSourceListener = new TextViewerDragAdapter(viewer, this);
-		dragSource.addDragListener(dragSourceListener);
+		fTextViewerDragAdapter = new TextViewerDragAdapter(viewer, this);
+		dragSource.addDragListener(fTextViewerDragAdapter);
+
+		ITextEditorDropTargetListener dropTargetListener = new TextEditorDropAdapter(viewer, this);
+		dndService.addMergedDropTarget(control, operations, dropTargetListener.getTransfers(), dropTargetListener);
+	}
+
+	/*
+	 * @see org.eclipse.ui.texteditor.AbstractTextEditor#uninstallTextDragAndDrop(org.eclipse.jface.text.source.ISourceViewer)
+	 */
+	protected void uninstallTextDragAndDrop(ISourceViewer viewer) {
+		if (fTextViewerDragAdapter != null) {
+			// uninstall not possible, disable instead
+			fTextViewerDragAdapter.setEnabled(false);
+		}
 	}
 
 	/*

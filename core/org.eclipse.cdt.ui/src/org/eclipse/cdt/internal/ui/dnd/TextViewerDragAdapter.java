@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2007 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -50,6 +50,8 @@ public class TextViewerDragAdapter extends DragSourceAdapter {
 	private ITextEditorExtension fEditor;
 	/** Location of last mouse down event (as a workaround for bug 151197) */
 	private Point fDragStartLocation;
+	/** Flag whether this drag source listener allows to drag */
+	private boolean fIsEnabled= true;
 
 	/**
 	 * Create a new TextViewerDragAdapter.
@@ -122,6 +124,10 @@ public class TextViewerDragAdapter extends DragSourceAdapter {
 	 * @see org.eclipse.swt.dnd.DragSourceListener#dragStart(org.eclipse.swt.dnd.DragSourceEvent)
 	 */
 	public void dragStart(DragSourceEvent event) {
+		if (!fIsEnabled) {
+			event.doit= false;
+			return;
+		}
 		// workaround for bug 151197
 		if (fDragStartLocation == null) {
 			event.doit= false;
@@ -231,6 +237,14 @@ public class TextViewerDragAdapter extends DragSourceAdapter {
 			return !fEditor.isEditorInputReadOnly();
 		}
 		return fViewer.isEditable();
+	}
+
+	/**
+	 * Enable or disable this drag listener.
+	 * @param enabled
+	 */
+	public void setEnabled(boolean enabled) {
+		fIsEnabled= enabled;
 	}
 
 }

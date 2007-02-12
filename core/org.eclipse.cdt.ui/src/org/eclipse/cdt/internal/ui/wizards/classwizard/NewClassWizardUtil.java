@@ -14,6 +14,7 @@ package org.eclipse.cdt.internal.ui.wizards.classwizard;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Pattern;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -42,11 +43,13 @@ import org.eclipse.cdt.core.dom.ILinkage;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IEnumeration;
+import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBasicType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBinding;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
 import org.eclipse.cdt.core.index.IIndex;
+import org.eclipse.cdt.core.index.IIndexName;
 import org.eclipse.cdt.core.index.IndexFilter;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.CoreModel;
@@ -54,7 +57,6 @@ import org.eclipse.cdt.core.model.ICContainer;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.ISourceRoot;
-import org.eclipse.cdt.core.model.ITypeDef;
 import org.eclipse.cdt.core.parser.IScannerInfo;
 import org.eclipse.cdt.core.parser.IScannerInfoProvider;
 import org.eclipse.cdt.ui.CUIPlugin;
@@ -406,8 +408,10 @@ public class NewClassWizardUtil {
 				for (int i = 0; i < names.length; i++) {
 					names[i]= nameStrs[i].toCharArray();
 				}
-				IBinding[] bindings = index.findBindings(names, filter, new NullProgressMonitor());
-				boolean sameTypeNameExists = false;
+				//bug 165636: findBindings(char[][]...) does not find nested nodes (classes)
+				//therefore switching back to findBindings(Pattern...)
+				IBinding[] bindings = index.findBindings(Pattern.compile(typeName.getName()), false, filter, new NullProgressMonitor());
+				boolean sameTypeNameExists = false; 
 				boolean sameNameDifferentTypeExists = false;
 
 				for (int i = 0; i < bindings.length; ++i) {
@@ -419,7 +423,11 @@ public class NewClassWizardUtil {
 					// full binding				
 					if (queryType.isAssignableFrom(currentNodeType)) {						
 						if (bindingFullName.equals(fullyQualifiedTypeName)) {
-							return SEARCH_MATCH_FOUND_EXACT;
+							//bug 165636: there is a match only if there is a definition for the binding
+							//otherwise, users can create a new class definition for this binding
+							if (index.findDefinitions(binding).length > 0)	{
+								return SEARCH_MATCH_FOUND_EXACT;
+							}							
 						} else {
 							// same type , same name , but different name space
 							// see if there is an exact match;
@@ -428,7 +436,7 @@ public class NewClassWizardUtil {
 					} else if(ICPPClassType.class.isAssignableFrom(currentNodeType) || 
 							IEnumeration.class.isAssignableFrom(currentNodeType) || // TODO - this should maybe be ICPPEnumeration
 							ICPPNamespace.class.isAssignableFrom(currentNodeType) ||
-							ITypeDef.class.isAssignableFrom(currentNodeType) ||
+							ITypedef.class.isAssignableFrom(currentNodeType) ||
 							ICPPBasicType.class.isAssignableFrom(currentNodeType))
 					{						
 						if (bindingFullName.equals(fullyQualifiedTypeName))	{

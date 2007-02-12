@@ -28,7 +28,6 @@ import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
 import org.eclipse.cdt.debug.ui.ICDebugUIConstants;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelChangedListener;
@@ -65,7 +64,6 @@ import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
-import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
@@ -109,62 +107,6 @@ public class ModulesView extends AbstractDebugView implements IDebugContextListe
 	 * of mouse and key listener.
 	 */
 	interface ICursorListener extends MouseListener, KeyListener {
-	}
-
-	/**
-	 * The selection provider for the modules view changes depending on whether
-	 * the variables viewer or detail pane source viewer have focus. This "super" 
-	 * provider ensures the correct selection is sent to all listeners.
-	 */
-	public class ModulesViewSelectionProvider implements ISelectionProvider {
-
-		private ListenerList fListeners= new ListenerList();
-		
-		private ISelectionProvider fUnderlyingSelectionProvider;
-
-		/* (non-Javadoc)
-		 * @see org.eclipse.jface.viewers.ISelectionProvider#addSelectionChangedListener(org.eclipse.jface.viewers.ISelectionChangedListener)
-		 */
-		public void addSelectionChangedListener( ISelectionChangedListener listener ) {
-			fListeners.add( listener );
-		}
-
-		/* (non-Javadoc)
-		 * @see org.eclipse.jface.viewers.ISelectionProvider#getSelection()
-		 */
-		public ISelection getSelection() {
-			return getUnderlyingSelectionProvider().getSelection();
-		}
-
-		/* (non-Javadoc)
-		 * @see org.eclipse.jface.viewers.ISelectionProvider#removeSelectionChangedListener(org.eclipse.jface.viewers.ISelectionChangedListener)
-		 */
-		public void removeSelectionChangedListener( ISelectionChangedListener listener ) {
-			fListeners.remove( listener );
-		}
-
-		/* (non-Javadoc)
-		 * @see org.eclipse.jface.viewers.ISelectionProvider#setSelection(org.eclipse.jface.viewers.ISelection)
-		 */
-		public void setSelection( ISelection selection ) {
-			getUnderlyingSelectionProvider().setSelection( selection );
-		}
-
-		protected ISelectionProvider getUnderlyingSelectionProvider() {
-			return fUnderlyingSelectionProvider;
-		}
-
-		protected void setUnderlyingSelectionProvider( ISelectionProvider underlyingSelectionProvider ) {
-			fUnderlyingSelectionProvider = underlyingSelectionProvider;
-		}
-
-		protected void fireSelectionChanged( SelectionChangedEvent event ) {
-			Object[] listeners = fListeners.getListeners();
-			for( int i = 0; i < listeners.length; i++ ) {
-				ISelectionChangedListener listener = (ISelectionChangedListener)listeners[i];
-				listener.selectionChanged( event );
-			}
-		}
 	}
 
 	/**
@@ -414,24 +356,6 @@ public class ModulesView extends AbstractDebugView implements IDebugContextListe
 		fSashForm = sashForm;
 	}
 
-//	protected IContentProvider createContentProvider() {
-//		ModulesViewContentProvider cp = new ModulesViewContentProvider();
-//		cp.setExceptionHandler( this );
-//		return cp;
-//	}
-//
-//	protected IBaseLabelProvider createLabelProvider( StructuredViewer viewer ) {
-////		return new DebugViewDecoratingLabelProvider( viewer, new DebugViewInterimLabelProvider( getModelPresentation() ), new DebugViewLabelDecorator( getModelPresentation() ) );
-//		return getModelPresentation();
-//	}
-//
-//	protected IDebugModelPresentation getModelPresentation() {
-//		if ( fModelPresentation == null ) {
-//			fModelPresentation = new ModulesViewModelPresentation();
-//		}
-//		return fModelPresentation;
-//	}
-//
 	protected TreeModelViewer getModulesViewer() {
 		return (TreeModelViewer)getViewer();
 	}

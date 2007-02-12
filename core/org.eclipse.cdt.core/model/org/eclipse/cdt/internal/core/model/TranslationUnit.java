@@ -294,10 +294,6 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 		return location;
 	}
 
-	public IPath getPath() {
-		return getLocation();
-	}
-
 	public IFile getFile() {
 		IResource res = getResource();
 		if (res instanceof IFile) {

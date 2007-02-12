@@ -27,4 +27,9 @@ public class ExternalTranslationUnit extends TranslationUnit {
 	public ExternalTranslationUnit(ICElement parent, IPath path, String contentTypeID) {
 		super(parent, path, contentTypeID);
 	}
+	
+	public IPath getPath() {
+		return getLocation();
+	}
+
 }

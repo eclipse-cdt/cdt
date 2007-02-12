@@ -177,6 +177,8 @@ public class CodeFormatterVisitor extends CPPASTVisitor {
 	public Scribe scribe;
 	private String fTranslationUnitFile;
 
+	private boolean fInsideFor;
+
 	public CodeFormatterVisitor(DefaultCodeFormatterOptions preferences, Map settings, int offset, int length) {
 		localScanner = new Scanner() {
 			public Token nextToken() {
@@ -740,6 +742,13 @@ public class CodeFormatterVisitor extends CPPASTVisitor {
 
 	private int visit(ICPPASTFunctionDeclarator node) {
 		visit((IASTStandardFunctionDeclarator)node);
+		final IASTTypeId[] exceptionSpecification= node.getExceptionSpecification();
+		if (exceptionSpecification != null && exceptionSpecification.length > 0) {
+			// TLETODO [formatter] need special alignment for exception specification
+			scribe.printNextToken(Token.t_throw, true);
+			final ListAlignment align= new ListAlignment(Alignment.M_COMPACT_SPLIT);
+			formatList(Arrays.asList(exceptionSpecification), align, true, false);
+		}
 		final ICPPASTConstructorChainInitializer[] constructorChain= node.getConstructorChain();
 		if (constructorChain != null && constructorChain.length > 0) {
 			// TLETODO [formatter] need special constructor chain alignment
@@ -751,7 +760,7 @@ public class CodeFormatterVisitor extends CPPASTVisitor {
 			formatList(Arrays.asList(constructorChain), align, false, false);
 			scribe.unIndent();
 		}
-		// skip the rest (const, throw, etc.)
+		// skip the rest (const, etc.)
 		skipNode(node);
 		return PROCESS_SKIP;
 	}
@@ -855,7 +864,6 @@ public class CodeFormatterVisitor extends CPPASTVisitor {
 		}
 		scribe.printNextToken(Token.tSEMI, preferences.insert_space_before_semicolon);
 		scribe.printTrailingComment();
-		scribe.startNewLine();
 		return PROCESS_SKIP;
 	}
 
@@ -1339,9 +1347,9 @@ public class CodeFormatterVisitor extends CPPASTVisitor {
 
 	private int visit(IASTDeclarationStatement node) {
 		node.getDeclaration().accept(this);
-		// semicolon is already part of declaration
-//		scribe.printNextToken(Token.tSEMI, preferences.insert_space_before_semicolon);
-//		scribe.printTrailingComment();
+		if (!fInsideFor) {
+			scribe.startNewLine();
+		}
 		return PROCESS_SKIP;
 	}
 
@@ -1361,7 +1369,9 @@ public class CodeFormatterVisitor extends CPPASTVisitor {
 			scribe.space();
 		}
 		IASTStatement initializerStmt= node.getInitializerStatement();
+		fInsideFor= true;
 		initializerStmt.accept(this);
+		fInsideFor= false;
 		final IASTExpression condition = node.getConditionExpression();
 		if (condition != null) {
 			if (preferences.insert_space_after_semicolon_in_for) {

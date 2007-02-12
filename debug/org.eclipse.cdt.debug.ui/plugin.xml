@@ -942,7 +942,6 @@
       <hover
             label="%DebugTextHover.label"
             description="%DebugTextHover.description"
-            perspective="org.eclipse.debug.ui.DebugPerspective"
             class="org.eclipse.cdt.debug.internal.ui.editors.DebugTextHover"
             id="org.eclipse.cdt.debug.internal.ui.editors.DebugTextHover">
       </hover>
@@ -971,27 +970,45 @@
    <extension
          point="org.eclipse.ui.propertyPages">
       <page
-            adaptable="true"
-            objectClass="org.eclipse.cdt.debug.core.model.ICBreakpoint"
             class="org.eclipse.cdt.debug.internal.ui.propertypages.CBreakpointPropertyPage"
-            name="%CommonBreakpointPage.label"
-            id="org.eclipse.cdt.debug.ui.propertypages.breakpoint.common"/>
+            id="org.eclipse.cdt.debug.ui.propertypages.breakpoint.common"
+            name="%CommonBreakpointPage.label">
+         <enabledWhen>
+            <adapt
+                  type="org.eclipse.cdt.debug.core.model.ICBreakpoint">
+            </adapt>
+         </enabledWhen>
+      </page>
       <page
-            adaptable="true"
-            objectClass="org.eclipse.cdt.debug.core.model.ICBreakpoint"
             class="org.eclipse.cdt.debug.internal.ui.propertypages.CBreakpointFilteringPage"
-            name="%FilteringBreakpointPage.label"
-            id="org.eclipse.cdt.debug.ui.propertypages.breakpoint.filtering"/>
+            id="org.eclipse.cdt.debug.ui.propertypages.breakpoint.filtering"
+            name="%FilteringBreakpointPage.label">
+         <enabledWhen>
+            <adapt
+                  type="org.eclipse.cdt.debug.core.model.ICBreakpoint">
+            </adapt>
+         </enabledWhen>
+      </page>
       <page
-            objectClass="org.eclipse.cdt.debug.core.model.ICSignal"
             class="org.eclipse.cdt.debug.internal.ui.propertypages.SignalPropertyPage"
-            name="%CommonSignalPage.label"
-            id="org.eclipse.cdt.debug.ui.propertypages.signal.common"/>
+            id="org.eclipse.cdt.debug.ui.propertypages.signal.common"
+            name="%CommonSignalPage.label">
+         <enabledWhen>
+            <instanceof
+                  value="org.eclipse.cdt.debug.core.model.ICSignal">
+            </instanceof>
+         </enabledWhen>
+      </page>
       <page
-            objectClass="org.eclipse.cdt.debug.core.model.ICModule"
             class="org.eclipse.cdt.debug.internal.ui.propertypages.ModulePropertyPage"
-            name="%CommonModulePage.label"
-            id="org.eclipse.cdt.debug.ui.propertypages.module.common"/>
+            id="org.eclipse.cdt.debug.ui.propertypages.module.common"
+            name="%CommonModulePage.label">
+         <enabledWhen>
+            <instanceof
+                  value="org.eclipse.cdt.debug.core.model.ICModule">
+            </instanceof>
+         </enabledWhen>
+      </page>
    </extension>
    <extension
          point="org.eclipse.debug.core.sourceLocators">

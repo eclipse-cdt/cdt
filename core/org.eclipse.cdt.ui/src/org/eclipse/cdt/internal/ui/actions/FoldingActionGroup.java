@@ -108,7 +108,7 @@ public class FoldingActionGroup extends ActionGroup {
 		fExpandAll.setActionDefinitionId(IFoldingCommandIds.FOLDING_EXPAND_ALL);
 		editor.setAction("FoldingExpandAll", fExpandAll); //$NON-NLS-1$
 		
-		fCollapseAll= new TextOperationAction(FoldingMessages.getResourceBundle(), "Projection.CollapseAll.", editor, ProjectionViewer.COLLAPSE, true); //$NON-NLS-1$
+		fCollapseAll= new TextOperationAction(FoldingMessages.getResourceBundle(), "Projection.CollapseAll.", editor, ProjectionViewer.COLLAPSE_ALL, true); //$NON-NLS-1$
 		fCollapseAll.setActionDefinitionId(IFoldingCommandIds.FOLDING_COLLAPSE_ALL);
 		editor.setAction("FoldingCollapseAll", fCollapseAll); //$NON-NLS-1$
 

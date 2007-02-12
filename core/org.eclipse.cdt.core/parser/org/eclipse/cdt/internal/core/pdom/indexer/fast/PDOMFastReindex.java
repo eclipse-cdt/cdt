@@ -34,7 +34,12 @@ class PDOMFastReindex extends PDOMFastIndexerJob {
 			boolean allFiles= getIndexAllFiles();
 			List sources= new ArrayList();
 			List headers= new ArrayList();
-			collectSources(indexer.getProject(), sources, allFiles ? headers : null, allFiles);
+			collectSources(indexer.getProject(), sources, 
+					allFiles ? headers : null, allFiles, monitor);
+			
+			if (monitor.isCanceled()) {
+				return;
+			}
 
 			fTotalSourcesEstimate= sources.size() + headers.size();
 			setupIndexAndReaderFactory();

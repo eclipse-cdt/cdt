@@ -59,14 +59,20 @@ public abstract class PDOMIndexerTask implements IPDOMIndexerTask {
 		private final Collection fHeaders;
 		private final boolean fAllFiles;
 		private final Collection fSources;
+		private final IProgressMonitor fProgressMonitor;
 
-		private TranslationUnitCollector(Collection sources, Collection headers, boolean allFiles) {
+		private TranslationUnitCollector(Collection sources, Collection headers, boolean allFiles,
+				IProgressMonitor pm) {
 			fHeaders = headers;
 			fAllFiles = allFiles;
 			fSources = sources;
+			fProgressMonitor= pm;
 		}
 
 		public boolean visit(ICElement element) throws CoreException {
+			if (fProgressMonitor.isCanceled()) {
+				return false;
+			}
 			switch (element.getElementType()) {
 			case ICElement.C_UNIT:
 				ITranslationUnit tu = (ITranslationUnit)element;
@@ -118,14 +124,15 @@ public abstract class PDOMIndexerTask implements IPDOMIndexerTask {
 		return (trace != null && trace.equalsIgnoreCase(value));
 	}
 
-	protected void processDelta(ICElementDelta delta, Collection added, Collection changed, Collection removed) throws CoreException {
+	protected void processDelta(ICElementDelta delta, Collection added, Collection changed, Collection removed,
+			IProgressMonitor pm) throws CoreException {
 		boolean allFiles= getIndexAllFiles();
 		int flags = delta.getFlags();
 
 		if ((flags & ICElementDelta.F_CHILDREN) != 0) {
 			ICElementDelta[] children = delta.getAffectedChildren();
 			for (int i = 0; i < children.length; ++i) {
-				processDelta(children[i], added, changed, removed);
+				processDelta(children[i], added, changed, removed, pm);
 			}
 		}
 
@@ -155,20 +162,22 @@ public abstract class PDOMIndexerTask implements IPDOMIndexerTask {
 		case ICElement.C_CCONTAINER:
 			ICContainer folder= (ICContainer) element;
 			if (delta.getKind() == ICElementDelta.ADDED) {
-				collectSources(folder, added, added, allFiles);
+				collectSources(folder, added, added, allFiles, pm);
 			}
 			break;
 		}
 
 	}
 
-	private void collectSources(ICContainer container, final Collection sources, final Collection headers, final boolean allFiles) throws CoreException {
-		container.accept(new TranslationUnitCollector(sources, headers, allFiles));
+	private void collectSources(ICContainer container, Collection sources, Collection headers, boolean allFiles,
+			IProgressMonitor pm) throws CoreException {
+		container.accept(new TranslationUnitCollector(sources, headers, allFiles, pm));
 	}
 
-	protected void collectSources(ICProject project, final Collection sources, final Collection headers, final boolean allFiles) throws CoreException {
+	protected void collectSources(ICProject project, Collection sources, Collection headers, boolean allFiles,
+			IProgressMonitor pm) throws CoreException {
 		fMessage= MessageFormat.format(Messages.PDOMIndexerTask_collectingFilesTask, new Object[]{project.getElementName()});
-		project.accept(new TranslationUnitCollector(sources, headers, allFiles));
+		project.accept(new TranslationUnitCollector(sources, headers, allFiles, pm));
 	}
 
 	protected void removeTU(IWritableIndex index, ITranslationUnit tu, int readlocks) throws CoreException, InterruptedException {

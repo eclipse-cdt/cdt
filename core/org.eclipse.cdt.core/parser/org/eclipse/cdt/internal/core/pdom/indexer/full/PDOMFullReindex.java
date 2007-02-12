@@ -37,7 +37,8 @@ class PDOMFullReindex extends PDOMFullIndexerJob {
 			List/*<ITranslationUnit>*/ sources= new ArrayList/*<ITranslationUnit>*/();
 			List/*<ITranslationUnit>*/ headers= new ArrayList/*<ITranslationUnit>*/();
 			
-			collectSources(indexer.getProject(), sources, allFiles ? headers : null, allFiles);
+			collectSources(indexer.getProject(), sources, 
+					allFiles ? headers : null, allFiles, monitor);
 			fTotalSourcesEstimate= sources.size() + headers.size();
 
 			setupIndexAndReaderFactory();

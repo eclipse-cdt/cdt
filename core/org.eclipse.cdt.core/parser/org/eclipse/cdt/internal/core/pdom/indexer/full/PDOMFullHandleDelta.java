@@ -21,6 +21,7 @@ import org.eclipse.cdt.core.model.ICElementDelta;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.NullProgressMonitor;
 
 /**
  * @author Doug Schaefer
@@ -33,7 +34,7 @@ class PDOMFullHandleDelta extends PDOMFullIndexerJob {
 
 	public PDOMFullHandleDelta(PDOMFullIndexer indexer, ICElementDelta delta) throws CoreException {
 		super(indexer);
-		processDelta(delta, changed, changed, removed);
+		processDelta(delta, changed, changed, removed, new NullProgressMonitor());
 		fTotalSourcesEstimate= changed.size() + removed.size();
 	}
 

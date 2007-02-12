@@ -10,6 +10,11 @@
  *******************************************************************************/
 package org.eclipse.cdt.debug.internal.ui.views.modules; 
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.util.HashMap;
 import java.util.Iterator;
 
@@ -92,7 +97,10 @@ import org.eclipse.ui.IPerspectiveListener;
 import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.WorkbenchException;
+import org.eclipse.ui.XMLMemento;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.console.actions.TextViewerAction;
 import org.eclipse.ui.texteditor.IUpdate;
@@ -123,6 +131,18 @@ public class ModulesView extends AbstractDebugView implements IDebugContextListe
 	 */
 	interface ICursorListener extends MouseListener, KeyListener {
 	}
+
+    protected String PREF_STATE_MEMENTO = "pref_state_memento."; //$NON-NLS-1$
+	
+	/**
+	 * the preference name for the view part of the sash form
+	 */
+	protected static final String SASH_VIEW_PART = CDebugUIPlugin.getUniqueIdentifier() + ".SASH_VIEW_PART"; //$NON-NLS-1$
+
+	/**
+	 * the preference name for the details part of the sash form
+	 */
+	protected static final String SASH_DETAILS_PART = CDebugUIPlugin.getUniqueIdentifier() + ".SASH_DETAILS_PART"; //$NON-NLS-1$
 
 	/**
 	 * The UI construct that provides a sliding sash between the modules tree
@@ -630,19 +650,17 @@ public class ModulesView extends AbstractDebugView implements IDebugContextListe
 		fDetailViewer.getTextWidget().setWordWrap( on );
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IViewPart#saveState(org.eclipse.ui.IMemento)
+	/**
+	 * Saves the current state of the viewer
+	 * @param memento the memento to write the viewer state into
 	 */
-	public void saveState( IMemento memento ) {
-		super.saveState( memento );
-		SashForm sashForm = getSashForm();
-		if ( sashForm != null ) {
-			int[] weights = sashForm.getWeights();
-			memento.putInteger( SASH_WEIGHTS + "-Length", weights.length ); //$NON-NLS-1$
-			for( int i = 0; i < weights.length; i++ ) {
-				memento.putInteger( SASH_WEIGHTS + "-" + i, weights[i] ); //$NON-NLS-1$
-			}
+	public void saveViewerState( IMemento memento ) {
+		if ( fSashForm != null && !fSashForm.isDisposed() ) {
+			int[] weights = fSashForm.getWeights();
+			memento.putInteger( SASH_VIEW_PART, weights[0] );
+			memento.putInteger( SASH_DETAILS_PART, weights[1] );
 		}
+		getModulesViewer().saveState( memento );
 	}
 
 	/* (non-Javadoc)
@@ -650,22 +668,43 @@ public class ModulesView extends AbstractDebugView implements IDebugContextListe
 	 */
 	public void init( IViewSite site, IMemento memento ) throws PartInitException {
 		super.init( site, memento );
-		if ( memento != null ) {
-			Integer bigI = memento.getInteger( SASH_WEIGHTS + "-Length" ); //$NON-NLS-1$
-			if ( bigI == null ) {
-				return;
+
+		PREF_STATE_MEMENTO = PREF_STATE_MEMENTO + site.getId();
+		IPreferenceStore store = CDebugUIPlugin.getDefault().getPreferenceStore();
+		String string = store.getString( PREF_STATE_MEMENTO );
+		if ( string.length() > 0 ) {
+			ByteArrayInputStream bin = new ByteArrayInputStream( string.getBytes() );
+			InputStreamReader reader = new InputStreamReader( bin );
+			try {
+				XMLMemento stateMemento = XMLMemento.createReadRoot( reader );
+				setMemento( stateMemento );
 			}
-			int numWeights = bigI.intValue();
-			int[] weights = new int[numWeights];
-			for( int i = 0; i < numWeights; i++ ) {
-				bigI = memento.getInteger( SASH_WEIGHTS + "-" + i ); //$NON-NLS-1$
-				if ( bigI == null ) {
-					return;
+			catch( WorkbenchException e ) {
+			}
+			finally {
+				try {
+					reader.close();
+					bin.close();
 				}
-				weights[i] = bigI.intValue();
+				catch( IOException e ) {
+				}
 			}
-			if ( weights.length > 0 ) {
-				setLastSashWeights( weights );
+		}
+
+        IMemento mem = getMemento();
+        setLastSashWeights( DEFAULT_SASH_WEIGHTS );
+        setLastSashWeights( DEFAULT_SASH_WEIGHTS );
+		if ( mem != null ) {
+			Integer sw = mem.getInteger( SASH_VIEW_PART );
+			if ( sw != null ) {
+				int view = sw.intValue();
+				sw = mem.getInteger( SASH_DETAILS_PART );
+				if ( sw != null ) {
+					int details = sw.intValue();
+					if ( view > -1 & details > -1 ) {
+						setLastSashWeights( new int[] { view, details } );
+					}
+				}
 			}
 		}
 		site.getWorkbenchWindow().addPerspectiveListener( this );
@@ -945,5 +984,37 @@ public class ModulesView extends AbstractDebugView implements IDebugContextListe
 		IStatusLineManager manager = getViewSite().getActionBars().getStatusLineManager();
 		manager.setErrorMessage( null );
 		manager.setMessage( null );
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.part.PageBookView#partDeactivated(org.eclipse.ui.IWorkbenchPart)
+	 */
+	public void partDeactivated( IWorkbenchPart part ) {
+		String id = part.getSite().getId();
+		if ( id.equals( getSite().getId() ) ) {
+			ByteArrayOutputStream bout = new ByteArrayOutputStream();
+			OutputStreamWriter writer = new OutputStreamWriter( bout );
+
+			try {
+				XMLMemento memento = XMLMemento.createWriteRoot( "ModulesViewMemento" ); //$NON-NLS-1$
+				saveViewerState( memento );
+				memento.save( writer );
+
+				IPreferenceStore store = CDebugUIPlugin.getDefault().getPreferenceStore();
+				String xmlString = bout.toString();
+				store.putValue( PREF_STATE_MEMENTO, xmlString );
+			}
+			catch( IOException e ) {
+			}
+			finally {
+				try {
+					writer.close();
+					bout.close();
+				}
+				catch( IOException e ) {
+				}
+			}
+		}
+		super.partDeactivated( part );
 	}
 }

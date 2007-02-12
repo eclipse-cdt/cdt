@@ -98,40 +98,35 @@ public class RSESystemType implements IRSESystemType {
 		}
 	}
 
-	/**
-	 * Returns the id of the system type.
+	/* (non-Javadoc)
 	 * @see org.eclipse.rse.core.IRSESystemType#getId()
 	 */
 	public String getId() {
 		return id;
 	}
 
-	/**
-	 * Returns the name of the system type.
+	/* (non-Javadoc)
 	 * @see org.eclipse.rse.core.IRSESystemType#getName()
 	 */
 	public String getName() {
 		return name;
 	}
 
-	/**
-	 * Returns the description of the system type.
+	/* (non-Javadoc)
 	 * @see org.eclipse.rse.core.IRSESystemType#getDescription()
 	 */
 	public String getDescription() {
 		return description;
 	}
 
-	/**
-	 * Returns a property of the system type given a key.
+	/* (non-Javadoc)
 	 * @see org.eclipse.rse.core.IRSESystemType#getProperty(java.lang.String)
 	 */
 	public String getProperty(String key) {
 		return (String) (properties.get(key));
 	}
 
-	/**
-	 * Returns the bundle which is responsible for the definition of this system type.
+	/* (non-Javadoc)
 	 * @see org.eclipse.rse.core.IRSESystemType#getDefiningBundle()
 	 */
 	public Bundle getDefiningBundle() {
@@ -145,7 +140,14 @@ public class RSESystemType implements IRSESystemType {
 		return subsystemConfigurationIds;
 	}
 
-	/**
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.core.IRSESystemType#acceptNewConnectionWizardDelegate(java.lang.String)
+	 */
+	public boolean acceptNewConnectionWizardDelegate(String newConnectionWizardDelegateId) {
+		return false;
+	}
+	
+	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
 	 */
 	public Object getAdapter(Class adapter) {

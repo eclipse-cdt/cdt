@@ -111,7 +111,7 @@ public class RSENewConnectionWizard extends AbstractSystemWizard implements IRSE
 							IRSESystemType[] systemTypes = RSECorePlugin.getDefault().getRegistry().getSystemTypes();
 							for (int j = 0; j < systemTypes.length; j++) {
 								IRSESystemType systemType = systemTypes[j];
-								if (systemType.acceptNewConnectionWizardDelegate(element.getDeclaringExtension().getUniqueIdentifier())
+								if (systemType.acceptNewConnectionWizardDelegate(element.getAttribute(NEW_CONNECTION_WIZARD_DELEGATE_EXTENSION_CONFIG_ATTRIBUTE_ID))
 										&& !wizardDelegates.containsKey(systemType.getId())) {
 									wizardDelegates.put(systemType.getId(), obj);
 								}

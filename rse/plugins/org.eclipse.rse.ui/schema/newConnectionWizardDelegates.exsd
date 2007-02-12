@@ -27,7 +27,7 @@
                </documentation>
             </annotation>
          </attribute>
-         <attribute name="id" type="string" use="required">
+         <attribute name="id" type="string">
             <annotation>
                <documentation>
                   
@@ -54,6 +54,13 @@
          </documentation>
       </annotation>
       <complexType>
+         <attribute name="id" type="string" use="required">
+            <annotation>
+               <documentation>
+                  A unique identifier for this extension.
+               </documentation>
+            </annotation>
+         </attribute>
          <attribute name="systemType" type="string">
             <annotation>
                <documentation>

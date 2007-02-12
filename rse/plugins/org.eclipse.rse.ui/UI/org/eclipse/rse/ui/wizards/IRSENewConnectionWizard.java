@@ -23,6 +23,7 @@ public interface IRSENewConnectionWizard extends INewWizard {
 
 	public static final String NEW_CONNECTION_WIZARD_DELEGATE_EXTENSION_POINT_ID = "org.eclipse.rse.ui.newConnectionWizardDelegates"; //$NON-NLS-1$
 	public static final String NEW_CONNECTION_WIZARD_DELEGATE_EXTENSION_CONFIG_NAME = "newConnectionWizardDelegate"; //$NON-NLS-1$
+	public static final String NEW_CONNECTION_WIZARD_DELEGATE_EXTENSION_CONFIG_ATTRIBUTE_ID = "id"; //$NON-NLS-1$
 	public static final String NEW_CONNECTION_WIZARD_DELEGATE_EXTENSION_CONFIG_ATTRIBUTE_SYSTEMTYPE = "systemType"; //$NON-NLS-1$
 	public static final String NEW_CONNECTION_WIZARD_DELEGATE_EXTENSION_CONFIG_ATTRIBUTE_CLASS = "class"; //$NON-NLS-1$
 	

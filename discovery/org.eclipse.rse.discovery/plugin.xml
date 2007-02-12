@@ -15,9 +15,10 @@ Contributors:
 
 	<extension
        point="org.eclipse.rse.ui.newConnectionWizardDelegates">
-   	  <newConnectionWizardDelegate 
-   	  		class="org.eclipse.rse.discovery.ServiceDiscoveryWizardDelegate"
-    		systemType="org.eclipse.rse.systemtype.discovery"/>
+   	  <newConnectionWizardDelegate
+            class="org.eclipse.rse.discovery.ServiceDiscoveryWizardDelegate"
+            id="org.eclipse.rse.discovery.ServiceDiscoveryWizardDelegate"
+            systemType="org.eclipse.rse.systemtype.discovery"/>
    </extension>
   
    <extension

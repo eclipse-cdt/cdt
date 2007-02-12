@@ -123,7 +123,8 @@ public interface IRSESystemType extends IAdaptable {
    * subsystem configurations exist. The list contains only possibilites not,
    * requirements.
    * 
-   * @return The list of subsystem configuration id or <code>null</code>.
+   * @return The list of subsystem configuration id's. May be empty,
+   *         but never <code>null</code>.
    */
   public String[] getSubsystemConfigurationIds();
 

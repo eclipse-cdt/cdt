@@ -77,23 +77,12 @@ public class SubSystemConfigurationProxy implements ISubSystemConfigurationProxy
 	// only by the null value of the field configuration.
 	private boolean subSystemConfigurationInitialized = false;
 
-	private final ISystemTypeMatcher systemTypeMatcher;
+	private final SystemTypeMatcher systemTypeMatcher;
 	
 	// Internal classes encapsulating the logic to match the declared system types against
 	// a specific given one.
 	
-	private static interface ISystemTypeMatcher {
-		/**
-		 * Checks if the specified system type is matched by this pattern.
-		 */
-		public boolean matches(IRSESystemType systemType);
-		/**
-		 * @return true if this matcher supports all system types.
-		 */
-		public boolean supportsAllSystemTypes();
-	}
-
-	private final class SystemTypeMatcher implements ISystemTypeMatcher {
+	private final class SystemTypeMatcher  {
 		private final class SystemTypeIdPattern {
 			private final Pattern pattern;
 			
@@ -114,7 +103,7 @@ public class SubSystemConfigurationProxy implements ISubSystemConfigurationProxy
 			}
 		}
 		
-		// List of patterns to match. The order is preserved. Names comes before ids.
+		// List of patterns to match. The order is preserved.
 		private final List patterns = new LinkedList();
 		private boolean matchAllTypes = false;
 		
@@ -152,19 +141,22 @@ public class SubSystemConfigurationProxy implements ISubSystemConfigurationProxy
 			return translated;
 		}
 		
+		/**
+		 * @return true if this matcher supports all system types.
+		 */
 		public boolean supportsAllSystemTypes() {
 			return matchAllTypes;
 		}
 		
-		/* (non-Javadoc)
-		 * @see org.eclipse.rse.core.internal.subsystems.SubSystemConfigurationProxy.ISystemTypeMatcher#matches(org.eclipse.rse.core.IRSESystemType)
+		/**
+		 * Checks if the specified system type is matched by this pattern.
 		 */
 		public boolean matches(IRSESystemType systemType) {
 			assert systemType != null;
 			if (matchAllTypes) return true;
 			Iterator iterator = patterns.iterator();
 			while (iterator.hasNext()) {
-				ISystemTypeMatcher matcher = (ISystemTypeMatcher)iterator.next();
+				SystemTypeIdPattern matcher = (SystemTypeIdPattern)iterator.next();
 				if (matcher.matches(systemType)) return true;
 			}
 			return false;

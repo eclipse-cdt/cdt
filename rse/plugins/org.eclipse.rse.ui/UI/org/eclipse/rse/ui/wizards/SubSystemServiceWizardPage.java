@@ -166,8 +166,11 @@ public class SubSystemServiceWizardPage extends AbstractSystemNewConnectionWizar
 							ServiceElement[] cch = child.getChildren();
 							if (cch != null && cch.length > 0) 
 							{
-								ServerLauncherPropertiesServiceElement result = (ServerLauncherPropertiesServiceElement)cch[0];
-								results.add(result);
+								if(cch[0] instanceof ServerLauncherPropertiesServiceElement)
+								{
+									ServerLauncherPropertiesServiceElement result = (ServerLauncherPropertiesServiceElement)cch[0];
+									results.add(result);
+								}
 							}
 						}
 					}

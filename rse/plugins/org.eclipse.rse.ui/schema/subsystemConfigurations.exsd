@@ -109,17 +109,13 @@ It is recommended to extend &lt;samp&gt;org.eclipse.rse.core.subsystems.SubSyste
                </appInfo>
             </annotation>
          </attribute>
-         <attribute name="supportsAllSystemTypes" type="boolean" use="required">
-            <annotation>
-               <documentation>
-                  A boolean attribute to mark the subsystem configuration compatible with all contributed system types.
-               </documentation>
-            </annotation>
-         </attribute>
          <attribute name="systemTypeIds" type="string">
             <annotation>
                <documentation>
-                  A semicolon separated list of system type ids that subsystems from this configuration support. For example, &quot;org.eclipse.rse.systemtype.unix;org.eclipse.rse.systemtype.linux&quot;. The wildcards &apos;*&apos; and &apos;?&apos; are accepted. The attribute will be not considered if the attribute &apos;supportsAllSystemTypes&apos; is set to &apos;true&apos;.
+                  A semicolon separated list of system type ids that subsystems from this configuration support. For example, &lt;code&gt;&quot;org.eclipse.rse.systemtype.unix;org.eclipse.rse.systemtype.linux&quot;
+&lt;/code&gt;.
+&lt;p/&gt;
+The wildcards &apos;*&apos; and &apos;?&apos; are accepted. Therefore, if a subsystem configuration should be registered against all existing system types, this slot should be set to &lt;code&gt;&quot;*&quot;&lt;/code&gt;.
                </documentation>
             </annotation>
          </attribute>
@@ -179,8 +175,7 @@ Note that ServiceSubSystems that share the same service should always use the sa
    &lt;extension 
       point=&quot;org.eclipse.rse.ui.subsystemConfigurations&quot;&gt;
       &lt;configuration
-         systemTypes=&quot;Unix;Linux;Local&quot; 
-         supportsAllSystemTypes=&quot;false&quot;
+         systemTypeIds=&quot;org.eclipse.rse.systemtype.unix;*.rse.systemtype.linux&quot; 
          name=&quot;Databases&quot;
          icon=&quot;icons/dbsubsys.gif&quot; 
          iconlive=&quot;icons/dbsubsyslive.gif&quot;
@@ -232,7 +227,7 @@ for examples.
          <meta.section type="copyright"/>
       </appInfo>
       <documentation>
-         Copyright (c) 2002, 2006 IBM Corporation. All Rights Reserved.
+         Copyright (c) 2002, 2007 IBM Corporation and others. All Rights Reserved.
 This program and the accompanying materials are made available under the terms
 of the Eclipse Public License v1.0 which accompanies this distribution, and is 
 available at http://www.eclipse.org/legal/epl-v10.html

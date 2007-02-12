@@ -20,7 +20,6 @@
 		<configuration
 			id="org.eclipse.rse.tests.subsystems.TestSubSystem"
 			systemTypeIds="org.eclipse.rse.systemtype.local;org.eclipse.rse.systemtype.windows"
-			supportsAllSystemTypes="false"
 			name="%testSubSystemName"
 			class="org.eclipse.rse.tests.internal.testsubsystem.TestSubSystemConfiguration"
 			category="users"
@@ -34,7 +33,6 @@
 		<configuration
 			id="org.eclipse.rse.tests.subsystems.TestSubSystem2"
 			systemTypeIds="org.eclipse.rse.tests.*"
-			supportsAllSystemTypes="false"
 			name="%testSubSystem2Name"
 			class="org.eclipse.rse.tests.internal.testsubsystem.TestSubSystemConfiguration"
 			category="users"
@@ -49,7 +47,6 @@
 		<configuration
 			id="org.eclipse.rse.tests.subsystems.TestSubSystem3"
 			systemTypeIds="org.eclipse.rse.systemtype.*n?x"
-			supportsAllSystemTypes="false"
 			name="%testSubSystem3Name"
 			class="org.eclipse.rse.tests.internal.testsubsystem.TestSubSystemConfiguration"
 			category="users"

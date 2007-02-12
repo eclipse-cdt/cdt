@@ -59,9 +59,6 @@ public class SubSystemConfigurationProxy implements ISubSystemConfigurationProxy
 	// matching either by name or id.
 	private List resolvedSystemTypes;
 
-	// Flag to mark if the subsystem configuration supports all registered system types
-	private boolean allTypes = false;
-	
 	// The subsystem configuration vendor
 	private String vendor;
 	// The remote system resource category
@@ -90,10 +87,14 @@ public class SubSystemConfigurationProxy implements ISubSystemConfigurationProxy
 		 * Checks if the specified system type is matched by this pattern.
 		 */
 		public boolean matches(IRSESystemType systemType);
+		/**
+		 * @return true if this matcher supports all system types.
+		 */
+		public boolean supportsAllSystemTypes();
 	}
 
 	private final class SystemTypeMatcher implements ISystemTypeMatcher {
-		private final class SystemTypeIdPattern implements ISystemTypeMatcher {
+		private final class SystemTypeIdPattern {
 			private final Pattern pattern;
 			
 			/**
@@ -115,6 +116,7 @@ public class SubSystemConfigurationProxy implements ISubSystemConfigurationProxy
 		
 		// List of patterns to match. The order is preserved. Names comes before ids.
 		private final List patterns = new LinkedList();
+		private boolean matchAllTypes = false;
 		
 		/**
 		 * Constructor. 
@@ -127,8 +129,15 @@ public class SubSystemConfigurationProxy implements ISubSystemConfigurationProxy
 				String[] ids = declaredSystemTypeIds.split(";"); //$NON-NLS-1$
 				if (ids != null && ids.length > 0) {
 					for (int i = 0; i < ids.length; i++) {
-						SystemTypeIdPattern pattern = new SystemTypeIdPattern(Pattern.compile(makeRegex(ids[i])));
-						patterns.add(pattern);
+						String id = ids[i].trim();
+						if (id.equals("*")) { //$NON-NLS-1$
+							matchAllTypes = true;
+							patterns.clear();
+							return;
+						} else if(id.length()>0) {
+							SystemTypeIdPattern pattern = new SystemTypeIdPattern(Pattern.compile(makeRegex(id)));
+							patterns.add(pattern);
+						}
 					}
 				}
 			}
@@ -138,10 +147,13 @@ public class SubSystemConfigurationProxy implements ISubSystemConfigurationProxy
 			assert pattern != null;
 			String translated = pattern;
 			if (translated.indexOf('.') != -1) translated = translated.replaceAll("\\.", "\\."); //$NON-NLS-1$ //$NON-NLS-2$
-			if (translated.indexOf(' ') != -1) translated = translated.replaceAll(" ", "\\ "); //$NON-NLS-1$ //$NON-NLS-2$
 			if (translated.indexOf('*') != -1) translated = translated.replaceAll("\\*", ".*"); //$NON-NLS-1$ //$NON-NLS-2$
-		  if (translated.indexOf('?') != -1) translated = translated.replaceAll("\\?", "."); //$NON-NLS-1$ //$NON-NLS-2$
+			if (translated.indexOf('?') != -1) translated = translated.replaceAll("\\?", "."); //$NON-NLS-1$ //$NON-NLS-2$
 			return translated;
+		}
+		
+		public boolean supportsAllSystemTypes() {
+			return matchAllTypes;
 		}
 		
 		/* (non-Javadoc)
@@ -149,12 +161,11 @@ public class SubSystemConfigurationProxy implements ISubSystemConfigurationProxy
 		 */
 		public boolean matches(IRSESystemType systemType) {
 			assert systemType != null;
-			if (!patterns.isEmpty()) {
-				Iterator iterator = patterns.iterator();
-				while (iterator.hasNext()) {
-					ISystemTypeMatcher matcher = (ISystemTypeMatcher)iterator.next();
-					if (matcher.matches(systemType)) return true;
-				}
+			if (matchAllTypes) return true;
+			Iterator iterator = patterns.iterator();
+			while (iterator.hasNext()) {
+				ISystemTypeMatcher matcher = (ISystemTypeMatcher)iterator.next();
+				if (matcher.matches(systemType)) return true;
 			}
 			return false;
 		}
@@ -183,9 +194,6 @@ public class SubSystemConfigurationProxy implements ISubSystemConfigurationProxy
 			SystemBasePlugin.logError("Exception reading priority for subsystem configuration " + name + " defined in plugin " + element.getDeclaringExtension().getNamespaceIdentifier(), e); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 
-		String supportsAllSystemTypes = element.getAttribute("supportsAllSystemTypes"); //$NON-NLS-1$
-		if (supportsAllSystemTypes != null) this.allTypes = Boolean.TRUE.equals(Boolean.valueOf(supportsAllSystemTypes));
-		
 		if (vendor == null) vendor = "Unknown"; //$NON-NLS-1$
 		if (category == null) category = "Unknown"; //$NON-NLS-1$
 		
@@ -289,7 +297,7 @@ public class SubSystemConfigurationProxy implements ISubSystemConfigurationProxy
 	 * Return true if this factory supports all system types
 	 */
 	public boolean supportsAllSystemTypes() {
-		return allTypes;
+		return systemTypeMatcher.supportsAllSystemTypes();
 	}
 
 	/**
@@ -324,7 +332,7 @@ public class SubSystemConfigurationProxy implements ISubSystemConfigurationProxy
 	 */
 	public boolean appliesToSystemType(String type) {
 		assert type != null;
-		if (allTypes) return true;
+		if (systemTypeMatcher.supportsAllSystemTypes()) return true;
 		return Arrays.asList(getSystemTypes()).contains(type);
 	}
 

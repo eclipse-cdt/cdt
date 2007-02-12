@@ -31,7 +31,7 @@ Contributors:
     <extension
          point="org.eclipse.rse.ui.subsystemConfigurations">
       <configuration
-            systemTypes="Discovery"
+            systemTypeIds="org.eclipse.rse.systemtype.discovery"
             name="Discovery"
             description="Service Discovery Wizard"
             iconlive=""

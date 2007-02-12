@@ -25,7 +25,6 @@ Martin Oberhuber (Wind River) - initial API and implementation
 		point="org.eclipse.rse.ui.subsystemConfigurations">
 		<configuration
 			systemTypeIds="org.eclipse.rse.examples.daytime.systemtype"
-			supportsAllSystemTypes="false"
 			name="%Files"
 			description="%FilesDescription"
 			iconlive="icons/full/obj16/systemfileslive_obj.gif"
@@ -43,7 +42,6 @@ Martin Oberhuber (Wind River) - initial API and implementation
 		point="org.eclipse.rse.ui.subsystemConfigurations">
 		<configuration
 			systemTypeIds="org.eclipse.rse.examples.daytime.systemtype;org.eclipse.rse.systemtype.unix"
-			supportsAllSystemTypes="false"
 			name="%DaytimeSubsystemName"
 			description="%DaytimeDescription"
 			iconlive="icons/full/obj16/daytimelive_obj.gif"

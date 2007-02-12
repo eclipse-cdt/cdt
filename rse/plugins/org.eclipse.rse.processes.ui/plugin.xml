@@ -25,7 +25,6 @@ Contributors:
          point="org.eclipse.rse.ui.subsystemConfigurations">
       <factory
             systemTypeIds="org.eclipse.rse.systemtype.local"
-            supportsAllSystemTypes="false"
             name="%Factory.LocalProcesses"
             iconlive="icons/full/obj16/activeprocess.gif"
             icon="icons/full/obj16/activeprocess.gif"

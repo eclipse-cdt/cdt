@@ -23,7 +23,6 @@ Contributors:
          point="org.eclipse.rse.ui.subsystemConfigurations">
       <configuration
             systemTypeIds="org.eclipse.rse.systemtype.linux;org.eclipse.rse.systemtype.unix;org.eclipse.rse.systemtype.windows"
-			supportsAllSystemTypes="false"
             name="%Shells"
             description="%ShellsDescription"
             iconlive="icons/full/obj16/systemcommandslive_obj.gif"

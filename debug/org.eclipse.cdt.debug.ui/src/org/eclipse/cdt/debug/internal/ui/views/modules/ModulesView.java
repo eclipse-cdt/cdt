@@ -27,7 +27,6 @@ import org.eclipse.cdt.debug.internal.ui.ICDebugHelpContextIds;
 import org.eclipse.cdt.debug.internal.ui.IInternalCDebugUIConstants;
 import org.eclipse.cdt.debug.internal.ui.actions.ToggleDetailPaneAction;
 import org.eclipse.cdt.debug.internal.ui.preferences.ICDebugPreferenceConstants;
-import org.eclipse.cdt.debug.internal.ui.views.AbstractViewerState;
 import org.eclipse.cdt.debug.internal.ui.views.IDebugExceptionHandler;
 import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
 import org.eclipse.cdt.debug.ui.ICDebugUIConstants;
@@ -862,57 +861,6 @@ public class ModulesView extends AbstractDebugView implements IDebugContextListe
 			((Image)it.next()).dispose();
 		}
 		fImageCache.clear();
-	}
-
-//    protected void restoreState() {
-//		ModulesViewer viewer = (ModulesViewer)getViewer();
-//		if ( viewer != null ) {
-//			Object context = viewer.getInput();
-//			if ( context != null ) {
-//				AbstractViewerState state = getCachedViewerState( context );
-//				if ( state == null ) {
-//					// attempt to restore selection/expansion based on last
-//					// frame
-//					state = fLastState;
-//				}
-//				if ( state != null ) {
-//					state.restoreState( viewer );
-//				}
-//			}
-//		}
-//	}
-
-	/**
-	 * Caches the given viewer state for the given viewer input.
-	 * 
-	 * @param input viewer input
-	 * @param state viewer state
-	 */
-	protected void cacheViewerState( Object input, AbstractViewerState state ) {
-		// generate a key for the input based on its hashcode, we don't
-		// want to maintain reference real model objects preventing GCs.
-		fSelectionStates.put( generateKey( input ), state );
-	}
-	
-	/**
-	 * Generate a key for an input object.
-	 * 
-	 * @param input
-	 * @return key
-	 */
-	protected Object generateKey( Object input ) {
-		return new Integer( input.hashCode() );
-	}
-	
-	/**
-	 * Returns the cached viewer state for the given viewer input or 
-	 * <code>null</code> if none.
-	 * 
-	 * @param input viewer input
-	 * @return viewer state or <code>null</code>
-	 */
-	protected AbstractViewerState getCachedViewerState( Object input ) {
-		return (AbstractViewerState)fSelectionStates.get( generateKey( input ) );
 	}
 
 	public void contextActivated( ISelection selection ) {

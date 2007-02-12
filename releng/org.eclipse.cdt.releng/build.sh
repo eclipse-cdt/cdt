@@ -18,5 +18,5 @@ cvs -d:pserver:anonymous@dev.eclipse.org:/cvsroot/eclipse \
 	checkout org.eclipse.releng.basebuilder
 cd ..
 
-java -jar tools/org.eclipse.releng.basebuilder/startup.jar \
+java -jar tools/org.eclipse.releng.basebuilder/plugins/org.eclipse.equinox.launcher.jar \
 	-ws gtk -application org.eclipse.ant.core.antRunner $*

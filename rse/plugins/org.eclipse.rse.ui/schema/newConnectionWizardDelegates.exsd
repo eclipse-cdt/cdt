@@ -27,7 +27,7 @@
                </documentation>
             </annotation>
          </attribute>
-         <attribute name="id" type="string">
+         <attribute name="id" type="string" use="required">
             <annotation>
                <documentation>
                   
@@ -54,10 +54,10 @@
          </documentation>
       </annotation>
       <complexType>
-         <attribute name="systemType" type="string" use="required">
+         <attribute name="systemType" type="string">
             <annotation>
                <documentation>
-                  The system type ID.
+                  The system type ID. If not specified, all registered system types will be checked if any of them accepts this contributed new connection wizard delegate.
                </documentation>
             </annotation>
          </attribute>
@@ -83,11 +83,11 @@
 
 &lt;p&gt;
 &lt;pre&gt;
-	&lt;extension point=&quot;org.eclipse.rse.ui.newConnectionWizardDelegates&quot;&gt;
-		&lt;newConnectionWizardDelegate
-			class=&quot;com.abc.SerialConnectionWizardDelegate&quot;
-			systemType=&quot;Embedded-Linux-Serial&quot;/&gt;
-	&lt;/extension&gt;
+ &lt;extension point=&quot;org.eclipse.rse.ui.newConnectionWizardDelegates&quot;&gt;
+  &lt;newConnectionWizardDelegate
+   class=&quot;com.abc.SerialConnectionWizardDelegate&quot;
+   systemType=&quot;Embedded-Linux-Serial&quot;/&gt;
+ &lt;/extension&gt;
 &lt;/pre&gt;
 &lt;/p&gt;
       </documentation>

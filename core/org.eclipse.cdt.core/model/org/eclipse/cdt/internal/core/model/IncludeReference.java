@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
+ *     Ed Swartz (Nokia)
  *******************************************************************************/
 
 package org.eclipse.cdt.internal.core.model;
@@ -22,6 +23,7 @@ import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.IIncludeEntry;
 import org.eclipse.cdt.core.model.IIncludeReference;
+import org.eclipse.cdt.utils.PathUtil;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -47,7 +49,7 @@ public class IncludeReference extends Openable implements IIncludeReference {
 	public IncludeReference(ICElement celement, IIncludeEntry entry, IPath path) {
 		super(celement, null, path.toString(), ICElement.C_VCONTAINER);
 		fIncludeEntry = entry;
-		fPath = path;
+		fPath = PathUtil.getCanonicalPath(path);
 	}
 
 	/* (non-Javadoc)

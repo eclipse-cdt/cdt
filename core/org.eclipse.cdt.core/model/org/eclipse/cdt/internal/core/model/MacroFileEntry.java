@@ -7,12 +7,14 @@
  *
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
+ *     Ed Swartz (Nokia)
  *******************************************************************************/
 
 package org.eclipse.cdt.internal.core.model;
 
 import org.eclipse.cdt.core.model.IMacroFileEntry;
 import org.eclipse.cdt.core.model.IPathEntry;
+import org.eclipse.cdt.utils.PathUtil;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
@@ -25,7 +27,7 @@ public class MacroFileEntry extends APathEntry implements IMacroFileEntry {
 	public MacroFileEntry(IPath resourcePath, IPath basePath, IPath baseRef, IPath macroFilePath,
 			IPath[] exclusionPatterns, boolean isExported) {
 		super(IPathEntry.CDT_MACRO_FILE, basePath, baseRef, resourcePath, exclusionPatterns, isExported);
-		this.macroFilePath = (macroFilePath == null) ? Path.EMPTY : macroFilePath;
+		this.macroFilePath = (macroFilePath == null) ? Path.EMPTY : PathUtil.getCanonicalPath(macroFilePath);
 	}
 
 	/**

@@ -8,6 +8,7 @@
  * Contributors:
  *     QNX Software Systems - initial API and implementation
  *     Markus Schorn (Wind River Systems)
+ *     Ed Swartz (Nokia)
  *******************************************************************************/
 package org.eclipse.cdt.utils;
 
@@ -41,13 +42,19 @@ public class PathUtil {
 	}
 	
 	public static IPath getCanonicalPath(IPath fullPath) {
+		if (!fullPath.isAbsolute())
+			return fullPath;
+		
 	    File file = fullPath.toFile();
 		try {
 			String canonPath = file.getCanonicalPath();
-			return new Path(canonPath);
+			IPath canonicalPath = new Path(canonPath);
+			if (fullPath.getDevice() == null)
+				canonicalPath = canonicalPath.setDevice(null);
+			return canonicalPath;
 		} catch (IOException ex) {
 		}
-		return null;
+		return fullPath;
 	}
 
 	public static IPath getWorkspaceRelativePath(IPath fullPath) {

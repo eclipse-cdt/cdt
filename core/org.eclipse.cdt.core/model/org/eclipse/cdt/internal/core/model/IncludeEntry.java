@@ -8,11 +8,13 @@
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
  *     Markus Schorn (Wind River Systems)
+ *     Ed Swartz (Nokia)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.model;
 
 import org.eclipse.cdt.core.model.IIncludeEntry;
 import org.eclipse.cdt.core.model.IPathEntry;
+import org.eclipse.cdt.utils.PathUtil;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
@@ -25,7 +27,7 @@ public class IncludeEntry extends APathEntry implements IIncludeEntry {
 	public IncludeEntry(IPath resourcePath, IPath basePath, IPath baseRef, IPath includePath, boolean isSystemInclude,
 			IPath[] exclusionPatterns, boolean isExported) {
 		super(IPathEntry.CDT_INCLUDE, basePath, baseRef, resourcePath, exclusionPatterns, isExported);
-		this.includePath = (includePath == null) ? Path.EMPTY : includePath;
+		this.includePath = (includePath == null) ? Path.EMPTY : PathUtil.getCanonicalPath(includePath);
 		this.isSystemInclude = isSystemInclude;
 	}
 

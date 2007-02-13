@@ -7,12 +7,14 @@
  *
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
+ *     Ed Swartz (Nokia)
  *******************************************************************************/
 
 package org.eclipse.cdt.internal.core.model;
 
 import org.eclipse.cdt.core.model.IIncludeFileEntry;
 import org.eclipse.cdt.core.model.IPathEntry;
+import org.eclipse.cdt.utils.PathUtil;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
@@ -25,7 +27,7 @@ public class IncludeFileEntry extends APathEntry implements IIncludeFileEntry {
 	public IncludeFileEntry(IPath resourcePath, IPath basePath, IPath baseRef, IPath includeFilePath,
 			IPath[] exclusionPatterns, boolean isExported) {
 		super(IPathEntry.CDT_INCLUDE_FILE, basePath, baseRef, resourcePath, exclusionPatterns, isExported);
-		this.includeFilePath = (includeFilePath == null) ? Path.EMPTY : includeFilePath;
+		this.includeFilePath = (includeFilePath == null) ? Path.EMPTY : PathUtil.getCanonicalPath(includeFilePath);
 	}
 
 

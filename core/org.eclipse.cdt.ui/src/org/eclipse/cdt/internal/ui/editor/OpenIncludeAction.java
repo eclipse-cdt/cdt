@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *     QNX Software System
  *     Sergey Prigogin, Google - https://bugs.eclipse.org/bugs/show_bug.cgi?id=13221
+ *     Ed Swartz (Nokia)
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.editor;
 
@@ -28,6 +29,7 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ISelection;
@@ -44,6 +46,7 @@ import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.parser.IScannerInfo;
 import org.eclipse.cdt.core.parser.IScannerInfoProvider;
 import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.utils.PathUtil;
 
 import org.eclipse.cdt.internal.ui.CPluginImages;
 import org.eclipse.cdt.internal.ui.dialogs.ElementListSelectionDialog;
@@ -165,13 +168,16 @@ public class OpenIncludeAction extends Action {
 			throws CoreException {
 		// in case it is an absolute path
 		IPath includeFile= new Path(name);		
-		if (includeFile.isAbsolute() && includeFile.toFile().exists()) {
-			list.add(includeFile);
-			return;
+		if (includeFile.isAbsolute()) {
+			includeFile = PathUtil.getCanonicalPath(includeFile);
+			if (includeFile.toFile().exists()) {
+				list.add(includeFile);
+				return;
+			}
 		}
 		HashSet foundSet = new HashSet();
 		for (int i = 0; i < includePaths.length; i++) {
-			IPath path = new Path(includePaths[i]).append(includeFile);
+			IPath path = PathUtil.getCanonicalPath(new Path(includePaths[i]).append(includeFile));
 			File file = path.toFile();
 			if (file.exists()) {
 				IPath[] paths = resolveIncludeLink(path);
@@ -201,8 +207,11 @@ public class OpenIncludeAction extends Action {
 					int numSegToRemove = rPath.segmentCount() - name.segmentCount();
 					IPath sPath = rPath.removeFirstSegments(numSegToRemove);
 					sPath = sPath.setDevice(name.getDevice());
-					if (sPath.equals(name))
+					if (Platform.getOS().equals(Platform.OS_WIN32) ?
+							sPath.toOSString().equalsIgnoreCase(name.toOSString()) :
+							sPath.equals(name)) {
 						list.add(rPath);
+					}
 					return false;
 				}
 				return true;

@@ -9,6 +9,7 @@
  * IBM - Initial API and implementation
  * Markus Schorn (Wind River Systems)
  * Bryan Wilkinson (QNX)
+ * Andrew Ferguson (Symbian)
  *******************************************************************************/
 /*
  * Created on Dec 8, 2004
@@ -130,6 +131,7 @@ import org.eclipse.cdt.internal.core.dom.parser.ASTInternal;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
+import org.eclipse.cdt.internal.core.index.IIndexScope;
 import org.eclipse.core.runtime.CoreException;
 
 /**
@@ -1029,7 +1031,7 @@ public class CPPSemantics {
 							mergeResults( data, b, true );
 					} else if (data.prefixLookup && data.astName != null) {
 						IASTNode parent = ASTInternal.getPhysicalNodeOfScope(scope);
-						if (parent == null && scope instanceof IIndexBinding) {
+						if (parent == null && scope instanceof IIndexScope) {
 							IBinding[] bindings = scope.find(data.astName.toString(), data.prefixLookup);
 							mergeResults(data, bindings, true);
 						} else if (scope instanceof ICPPNamespaceScope && !(scope instanceof ICPPBlockScope)) {
@@ -1038,8 +1040,8 @@ public class CPPSemantics {
 							if (index != null) {
 								try {
 									IIndexBinding binding = index.findBinding(ns.getScopeName());
-									if (binding instanceof ICPPNamespaceScope) {
-										ICPPNamespaceScope indexNs = (ICPPNamespaceScope) binding;
+									if (binding instanceof ICPPNamespace) {
+										ICPPNamespaceScope indexNs = ((ICPPNamespace)binding).getNamespaceScope();
 										IBinding[] bindings = indexNs.find(data.astName.toString(), data.prefixLookup);
 										mergeResults(data, bindings, true);
 									}
@@ -1138,7 +1140,7 @@ public class CPPSemantics {
 	private static IScope getParentScope(IScope scope, IASTTranslationUnit unit) throws DOMException {
 		IScope parentScope= scope.getParent();
 		// the index cannot return the translation unit as parent scope
-		if (parentScope == null && scope instanceof IIndexBinding) {
+		if (parentScope == null && scope instanceof IIndexScope) {
 			parentScope= unit.getScope();
 		}
 		return parentScope;

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2007 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,15 +7,13 @@
  *
  * Contributors:
  *    Markus Schorn - initial API and implementation
+ *    Andrew Ferguson (Symbian)
  *******************************************************************************/
 package org.eclipse.cdt.internal.pdom.tests;
 
 import junit.framework.TestSuite;
 
-import org.eclipse.cdt.core.dom.IPDOMManager;
 import org.eclipse.cdt.core.dom.ast.IBinding;
-import org.eclipse.cdt.core.testplugin.CProjectHelper;
-import org.eclipse.core.runtime.Path;
 
 /**
  * For testing PDOM binding resolution
@@ -26,11 +24,8 @@ public class IndexBindingResolutionBugs extends IndexBindingResolutionTestBase {
 		return suite(IndexBindingResolutionBugs.class);
 	}
 	
-	protected void setUp() throws Exception {
-		cproject= CProjectHelper.createCCProject("ResolveBindingBugs", "bin", IPDOMManager.ID_NO_INDEXER);
-		header = new Path("header.h");
-		references = new Path("references.cpp");
-		super.setUp();
+	public IndexBindingResolutionBugs() {
+		setStrategy(new SinglePDOMTestStrategy(true));
 	}
 	
 	// // header file

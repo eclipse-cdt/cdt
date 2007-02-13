@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2007 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *    Markus Schorn - initial API and implementation
+ *    Andrew Ferguson (Symbian)
  *******************************************************************************/ 
 
 package org.eclipse.cdt.core.testplugin.util;
@@ -20,10 +21,10 @@ import java.io.LineNumberReader;
 import java.io.Reader;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 
 import junit.framework.Assert;
+import junit.framework.TestCase;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
@@ -62,14 +63,13 @@ public class TestSourceReader {
 	 * @throws IOException
 	 */
 	public static StringBuffer[] getContentsForTest(Bundle bundle, String srcRoot, Class clazz, final String testName, int sections) throws IOException {
-		IPath filePath= new Path(srcRoot + '/' + clazz.getName().replace('.', '/') + ".java");
+		String fqn = clazz.getName().replace('.', '/');
+		fqn = fqn.indexOf("$")==-1 ? fqn : fqn.substring(0,fqn.indexOf("$"));
+		IPath filePath= new Path(srcRoot + '/' + fqn + ".java");
 	    
 	    InputStream in= FileLocator.openStream(bundle, filePath, false);
 	    BufferedReader br = new BufferedReader(new InputStreamReader(in));
 	    
-	    final int OUT_COMMENT=0, IN_COMMENT=1;
-	    int state = OUT_COMMENT;
-	    LinkedList q;
 	    List contents = new ArrayList();
 	    StringBuffer content = new StringBuffer();
 	    for(String line = br.readLine(); line!=null; line = br.readLine()) {
@@ -90,6 +90,9 @@ public class TestSourceReader {
 	    	}
 	    }
 	    
+	    if(clazz.getSuperclass()!=null && !clazz.equals(TestCase.class)) {
+	    	return getContentsForTest(bundle, srcRoot, clazz.getSuperclass(), testName, sections);
+	    }
 	    throw new IOException("Test data not found for "+clazz+" "+testName);	
 	}
 	

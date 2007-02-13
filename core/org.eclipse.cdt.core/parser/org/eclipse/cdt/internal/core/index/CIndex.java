@@ -8,6 +8,7 @@
  * Contributors:
  *    Markus Schorn - initial API and implementation
  *    Bryan Wilkinson (QNX)
+ *    Andrew Ferguson (Symbian)
  *******************************************************************************/ 
 
 package org.eclipse.cdt.internal.core.index;
@@ -22,6 +23,7 @@ import java.util.List;
 import java.util.regex.Pattern;
 
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.dom.ILinkage;
 import org.eclipse.cdt.core.dom.IName;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IBinding;
@@ -32,11 +34,22 @@ import org.eclipse.cdt.core.index.IIndexFileLocation;
 import org.eclipse.cdt.core.index.IIndexInclude;
 import org.eclipse.cdt.core.index.IIndexName;
 import org.eclipse.cdt.core.index.IndexFilter;
+import org.eclipse.cdt.internal.core.dom.Linkage;
+import org.eclipse.cdt.internal.core.index.composite.CompositingNotImplementedError;
+import org.eclipse.cdt.internal.core.index.composite.ICompositesFactory;
+import org.eclipse.cdt.internal.core.index.composite.c.CCompositesFactory;
+import org.eclipse.cdt.internal.core.index.composite.cpp.CPPCompositesFactory;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.SubProgressMonitor;
 
 public class CIndex implements IIndex {
+	/**
+	 * If this constant is set, for logical index objects with only 
+	 * one fragment, composite binding wrappers will not be used.
+	 */
+	private static final boolean SPECIALCASE_SINGLES = true;
+	
 	final private IIndexFragment[] fFragments;
 	final private int fPrimaryFragmentCount;
 	private int fReadLock;
@@ -50,91 +63,18 @@ public class CIndex implements IIndex {
 		this(fragments, fragments.length);
 	}
 
-	public IIndexFragment[] getPrimaryFragments() {
-		IIndexFragment[] result= new IIndexFragment[fPrimaryFragmentCount];
-		System.arraycopy(fFragments, 0, result, 0, fPrimaryFragmentCount);
-		return result;
-	}
-	
-	public IIndexBinding adaptBinding(IBinding binding) throws CoreException {
-		if (binding instanceof IIndexFragmentBinding) {
-			IIndexFragmentBinding fragBinding= (IIndexFragmentBinding) binding;
-			if (isFragment(fragBinding.getFragment())) {
-				return fragBinding;
-			}
-		}
-		
-		for (int i = 0; i < fFragments.length; i++) {
-			IIndexProxyBinding result= fFragments[i].adaptBinding(binding);
-			if (result instanceof IIndexFragmentBinding) {
-				return (IIndexFragmentBinding) result;
-			}
-		}
-		return null;
-	}
-	
 	public IIndexBinding findBinding(IName name) throws CoreException {
 		if (name instanceof IIndexFragmentName) {
-			return findBinding((IIndexFragmentName) name);
-		}
-		if (name instanceof IASTName) {
-			return findBinding((IASTName) name);
-		}
-		return null;
-	}
-
-	private IIndexBinding findBinding(IIndexFragmentName indexName) throws CoreException {
-		IIndexProxyBinding proxy= indexName.getBinding();
-		
-		if (proxy instanceof IIndexFragmentBinding) {
-			IIndexFragmentBinding binding= (IIndexFragmentBinding) proxy;
-			if (isFragment(binding.getFragment())) {
-				return binding;
-			}
-		}
-		
-		if (proxy != null) {
-			for (int i = 0; i < fFragments.length; i++) {
-				IIndexProxyBinding result= fFragments[i].adaptBinding(proxy);
-				if (result instanceof IIndexFragmentBinding) {
-					return (IIndexFragmentBinding) result;
-				}
-			}
-		}
-		return null;
-	}
-
-	private boolean isFragment(IIndexFragment frag) {
-		for (int i = 0; i < fFragments.length; i++) {
-			if (frag == fFragments[i]) {
-				return true;
-			}
-		}
-		return false;
-	}
-
-	private boolean isPrimaryFragment(IIndexFragment frag) {
-		for (int i = 0; i < fPrimaryFragmentCount; i++) {
-			if (frag == fFragments[i]) {
-				return true;
-			}
-		}
-		return false;
-	}
-
-	private IIndexBinding findBinding(IASTName astName) throws CoreException {
-		IIndexProxyBinding binding= null;
-		for (int i = 0; i < fFragments.length; i++) {
-			if (binding == null) {
-				binding= fFragments[i].findBinding(astName);
-				if (binding instanceof IIndexFragmentBinding) {
-					return (IIndexFragmentBinding) binding;
-				}
-			}
-			else {
-				IIndexProxyBinding alt= fFragments[i].adaptBinding(binding);
-				if (alt instanceof IIndexFragmentBinding) {
-					return (IIndexFragmentBinding) alt;
+			return adaptBinding(((IIndexFragmentName) name).getBinding());
+		} else if (name instanceof IASTName) {
+			if(SPECIALCASE_SINGLES && fFragments.length==1) {
+				return fFragments[0].findBinding((IASTName) name);
+			} else {
+				for (int i = 0; i < fPrimaryFragmentCount; i++) {
+					IIndexFragmentBinding binding= fFragments[i].findBinding((IASTName) name);
+					if(binding!=null) {
+						return getCompositesFactory(binding.getLinkage().getID()).getCompositeBinding(binding);
+					}
 				}
 			}
 		}
@@ -146,33 +86,36 @@ public class CIndex implements IIndex {
 	}
 	
 	public IIndexBinding[] findBindings(Pattern[] patterns, boolean isFullyQualified, IndexFilter filter, IProgressMonitor monitor) throws CoreException {
-		ArrayList result= new ArrayList();
-		monitor.beginTask(Messages.CIndex_FindBindingsTask_label, fFragments.length);
-		for (int i = 0; !monitor.isCanceled() && i < fFragments.length; i++) {
-			result.addAll(Arrays.asList(fFragments[i].findBindings(patterns, isFullyQualified, filter, new SubProgressMonitor(monitor, 1))));
+		if(SPECIALCASE_SINGLES && fFragments.length==1) {
+			 return fFragments[0].findBindings(patterns, isFullyQualified, filter, monitor); 
+		} else {
+			List result = new ArrayList();
+			ILinkage[] linkages = Linkage.getAllLinkages();
+			for(int j=0; j < linkages.length; j++) {
+				if(filter.acceptLinkage(linkages[j])) {
+					IIndexFragmentBinding[][] fragmentBindings = new IIndexFragmentBinding[fPrimaryFragmentCount][];
+					for (int i = 0; i < fPrimaryFragmentCount; i++) {
+						try {
+							IBinding[] part = fFragments[i].findBindings(patterns, isFullyQualified, retargetFilter(linkages[j], filter), new SubProgressMonitor(monitor, 1));
+							fragmentBindings[i] = new IIndexFragmentBinding[part.length];
+							System.arraycopy(part, 0, fragmentBindings[i], 0, part.length);
+						} catch (CoreException e) {
+							CCorePlugin.log(e);
+							fragmentBindings[i] = IIndexFragmentBinding.EMPTY_INDEX_BINDING_ARRAY;
+						}
+					}
+					ICompositesFactory factory = getCompositesFactory(linkages[j].getID());
+					result.add(factory.getCompositeBindings(fragmentBindings));
+				}
+			}
+			return flatten(result);
 		}
-		monitor.done();
-		return (IIndexBinding[]) result.toArray(new IIndexBinding[result.size()]);
-	}
-
-	public IIndexBinding[] findBindings(char[] name, IndexFilter filter, IProgressMonitor monitor) throws CoreException {
-		return findBindings(new char[][]{name}, filter, monitor);
-	}
-
-	public IIndexBinding[] findBindings(char[][] names, IndexFilter filter, IProgressMonitor monitor) throws CoreException {
-		ArrayList result= new ArrayList();
-		monitor.beginTask(Messages.CIndex_FindBindingsTask_label, fFragments.length);
-		for (int i = 0; !monitor.isCanceled() && i < fFragments.length; i++) {
-			result.addAll(Arrays.asList(fFragments[i].findBindings(names, filter, new SubProgressMonitor(monitor, 1))));
-		}
-		monitor.done();
-		return (IIndexBinding[]) result.toArray(new IIndexBinding[result.size()]);
 	}
 
 	public IIndexName[] findNames(IBinding binding, int flags) throws CoreException {
 		ArrayList result= new ArrayList();
 		for (int i = 0; i < fPrimaryFragmentCount; i++) {
-			IIndexProxyBinding adaptedBinding= fFragments[i].adaptBinding(binding);
+			IIndexFragmentBinding adaptedBinding= fFragments[i].adaptBinding(binding);
 			if (adaptedBinding != null) {
 				result.addAll(Arrays.asList(fFragments[i].findNames(adaptedBinding, flags)));
 			}
@@ -193,11 +136,18 @@ public class CIndex implements IIndex {
 	}
 
 	public IIndexFile getFile(IIndexFileLocation location) throws CoreException {
-		IIndexFile result= null;
+		IIndexFile result= null, backup= null;
 		for (int i = 0; result==null && i < fPrimaryFragmentCount; i++) {
-			result= fFragments[i].getFile(location);
+			IIndexFragmentFile candidate= fFragments[i].getFile(location);
+			if(candidate!=null) {
+				if(candidate.hasNames()) {
+					result = candidate;
+				}
+				if(backup==null)
+					backup = candidate;
+			}
 		}
-		return result;
+		return result == null ? backup : result;
 	}
 
 	public IIndexFile resolveInclude(IIndexInclude include) throws CoreException {
@@ -209,7 +159,7 @@ public class CIndex implements IIndex {
 				return result;
 			}
 		}
-		
+
 		IIndexFileLocation location= include.getIncludesLocation();
 		for (int i = 0; i < fPrimaryFragmentCount; i++) {
 			IIndexFragment otherFrag = fFragments[i];
@@ -226,7 +176,7 @@ public class CIndex implements IIndex {
 	public IIndexInclude[] findIncludedBy(IIndexFile file) throws CoreException {
 		return findIncludedBy(file, 0);
 	}	
-	
+
 	public IIndexInclude[] findIncludedBy(IIndexFile file, int depth) throws CoreException {
 		List result= new ArrayList();
 		findIncludedBy(Collections.singletonList(file), result, depth, new HashSet());
@@ -258,12 +208,12 @@ public class CIndex implements IIndex {
 		}
 		findIncludedBy(nextLevel, out, depth, handled);
 	}
-		
+
 
 	public IIndexInclude[] findIncludes(IIndexFile file) throws CoreException {
 		return findIncludes(file, 0);
 	}
-	
+
 	public IIndexInclude[] findIncludes(IIndexFile file, int depth) throws CoreException {
 		List result= new ArrayList();
 		findIncludes(Collections.singletonList(file), result, depth, new HashSet());
@@ -327,7 +277,7 @@ public class CIndex implements IIndex {
 			}
 		}
 	}
-	
+
 	protected synchronized int getReadLockCount() {
 		return fReadLock;
 	}
@@ -340,45 +290,166 @@ public class CIndex implements IIndex {
 		return result;
 	}
 
-	public IBinding[] findInNamespace(IBinding nsbinding, char[] name) {
-		ArrayList result= new ArrayList();
-		for (int i = 0; i < fFragments.length; i++) {
+	public IIndexBinding[] findBindings(char[][] names, IndexFilter filter, IProgressMonitor monitor) throws CoreException {
+		if(SPECIALCASE_SINGLES && fFragments.length==1) {
 			try {
-				IBinding[] part = fFragments[i].findInNamespace(nsbinding, name);
-				for (int j = 0; j < part.length; j++) {
-					IBinding binding = part[j];
-					if (binding instanceof IIndexBinding) {
-						result.add(binding);
-					}
-				}
-				if (!result.isEmpty()) {
-					return (IIndexBinding[]) result.toArray(new IIndexBinding[result.size()]);
-				}
+				return fFragments[0].findBindings(names, filter, monitor);
 			} catch (CoreException e) {
 				CCorePlugin.log(e);
+				return IIndexFragmentBinding.EMPTY_INDEX_BINDING_ARRAY;
 			}
+		} else {
+			List result = new ArrayList();
+			ILinkage[] linkages = Linkage.getAllLinkages();
+			monitor.beginTask(Messages.CIndex_FindBindingsTask_label, fFragments.length * linkages.length);
+			for(int j=0; j < linkages.length; j++) {
+				if(filter.acceptLinkage(linkages[j])) {
+					IIndexFragmentBinding[][] fragmentBindings = new IIndexFragmentBinding[fPrimaryFragmentCount][];
+					for (int i = 0; i < fPrimaryFragmentCount; i++) {
+						try {
+							IBinding[] part = fFragments[i].findBindings(names, retargetFilter(linkages[j], filter), new SubProgressMonitor(monitor, 1));
+							fragmentBindings[i] = new IIndexFragmentBinding[part.length];
+							System.arraycopy(part, 0, fragmentBindings[i], 0, part.length);
+						} catch (CoreException e) {
+							CCorePlugin.log(e);
+							fragmentBindings[i] = IIndexFragmentBinding.EMPTY_INDEX_BINDING_ARRAY;
+						}
+					}
+					ICompositesFactory factory = getCompositesFactory(linkages[j].getID());
+					result.add(factory.getCompositeBindings(fragmentBindings));
+				}
+			}
+			monitor.done();
+			return flatten(result);
+			
 		}
-		return IIndexBinding.EMPTY_INDEX_BINDING_ARRAY;
+	}
+
+	public IIndexBinding adaptBinding(IBinding binding) {
+		try {
+			if(SPECIALCASE_SINGLES && fFragments.length==1) {
+				return fFragments[0].adaptBinding(binding);
+			} else {
+				return getCompositesFactory(binding.getLinkage().getID()).getCompositeBinding(binding);
+			}
+		} catch(CoreException ce) {
+			CCorePlugin.log(ce);
+			return null;
+		}
+	}
+
+	public IIndexBinding[] findBindings(char[] name, IndexFilter filter, IProgressMonitor monitor) throws CoreException {
+		return findBindings(new char[][]{name}, filter, monitor);
+	}
+
+	/*
+	 * Non-API
+	 */
+	
+	private IIndexBinding[] flatten(List bindingArrays) {
+		int size = 0;
+		for(int i=0; i<bindingArrays.size(); i++) {
+			size += ((IBinding[])bindingArrays.get(i)).length;
+		}
+		IIndexBinding[] result = new IIndexBinding[size];
+		int offset = 0;
+		for(int i=0; i<bindingArrays.size(); i++) {
+			IBinding[] src = (IBinding[]) bindingArrays.get(i);
+			System.arraycopy(src, 0, result, offset, src.length);
+			offset += src.length;
+		}
+		return result;
 	}
 	
-	public IBinding[] findBindingsForPrefix(char[] prefix, IndexFilter filter) throws CoreException {
-		ArrayList result= new ArrayList();
-		for (int i = 0; i < fFragments.length; i++) {
-			try {
-				IBinding[] part = fFragments[i].findBindingsForPrefix(prefix, filter);
-				for (int j = 0; j < part.length; j++) {
-					IBinding binding = part[j];
-					if (binding instanceof IIndexBinding) {
-						result.add(binding);
-					}
-				}
-			} catch (CoreException e) {
-				CCorePlugin.log(e);
+	public IIndexFragment[] getPrimaryFragments() {
+		IIndexFragment[] result= new IIndexFragment[fPrimaryFragmentCount];
+		System.arraycopy(fFragments, 0, result, 0, fPrimaryFragmentCount);
+		return result;
+	}
+	
+	private boolean isPrimaryFragment(IIndexFragment frag) {
+		for (int i = 0; i < fPrimaryFragmentCount; i++) {
+			if (frag == fFragments[i]) {
+				return true;
 			}
 		}
-		if (!result.isEmpty()) {
-			return (IIndexBinding[]) result.toArray(new IIndexBinding[result.size()]);
+		return false;
+	}
+	
+	public IIndexFragmentBinding[] findEquivalentBindings(IBinding binding) throws CoreException {
+		List result = new ArrayList();
+		for (int i = 0; i < fFragments.length; i++) {
+			IIndexFragmentBinding adapted = fFragments[i].adaptBinding(binding);
+			if (adapted instanceof IIndexFragmentBinding) {
+				result.add(adapted);
+			}
 		}
-		return IIndexBinding.EMPTY_INDEX_BINDING_ARRAY;
+		return (IIndexFragmentBinding[]) result.toArray(new IIndexFragmentBinding[result.size()]);
+	}
+	
+	ICompositesFactory cppCF, cCF, fCF;
+	private ICompositesFactory getCompositesFactory(String linkageID) {
+		if(linkageID.equals(ILinkage.CPP_LINKAGE_ID)) {
+			if(cppCF==null) {
+				cppCF = new CPPCompositesFactory(new CIndex(fFragments, fFragments.length));
+			}
+			return cppCF; 
+		}
+		if(linkageID.equals(ILinkage.C_LINKAGE_ID)) {
+			if(cCF==null) {
+				cCF = new CCompositesFactory(new CIndex(fFragments, fFragments.length));
+			}
+			return cCF;
+		}
+		if(linkageID.equals(ILinkage.FORTRAN_LINKAGE_ID)) {
+			if(fCF==null) {
+				fCF = new CCompositesFactory(new CIndex(fFragments, fFragments.length)); 
+			}
+			// This is a placeholder - it will throw CompositingNotImplementedError
+			// if non-empty (non-c) results are returned by a fragment
+			return fCF;
+		}
+		throw new CompositingNotImplementedError();
+	}
+	
+	private IndexFilter retargetFilter(final ILinkage linkage, final IndexFilter filter) {
+		return new IndexFilter() {
+			public boolean acceptBinding(IBinding binding) {
+				return filter.acceptBinding(binding);
+			}
+			public boolean acceptImplicitMethods() {
+				return filter.acceptImplicitMethods();
+			};
+			public boolean acceptLinkage(ILinkage other) {
+				return linkage.getID().equals(other.getID());
+			}
+		};
+	}
+	
+	public IIndexBinding[] findBindingsForPrefix(char[] prefix, IndexFilter filter) throws CoreException {
+		if(SPECIALCASE_SINGLES && fFragments.length==1) {
+			return fFragments[0].findBindingsForPrefix(prefix, filter);
+		} else {
+			List result = new ArrayList();
+			ILinkage[] linkages = Linkage.getAllLinkages();
+			for(int j=0; j < linkages.length; j++) {
+				if(filter.acceptLinkage(linkages[j])) {
+					IIndexFragmentBinding[][] fragmentBindings = new IIndexFragmentBinding[fPrimaryFragmentCount][];
+					for (int i = 0; i < fPrimaryFragmentCount; i++) {
+						try {
+							IBinding[] part = fFragments[i].findBindingsForPrefix(prefix, retargetFilter(linkages[j], filter));
+							fragmentBindings[i] = new IIndexFragmentBinding[part.length];
+							System.arraycopy(part, 0, fragmentBindings[i], 0, part.length);
+						} catch (CoreException e) {
+							CCorePlugin.log(e);
+							fragmentBindings[i] = IIndexFragmentBinding.EMPTY_INDEX_BINDING_ARRAY;
+						}
+					}
+					ICompositesFactory factory = getCompositesFactory(linkages[j].getID());
+					result.add(factory.getCompositeBindings(fragmentBindings));
+				}
+			}
+			return flatten(result);
+		}
 	}
 }

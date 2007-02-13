@@ -58,12 +58,16 @@ class PDOMCPPVariable extends PDOMCPPBinding implements ICPPVariable {
 			if (typeNode != null)
 				db.putInt(record + TYPE_OFFSET, typeNode.getRecord());
 
-			db.putByte(record + ANNOTATIONS, PDOMCPPAnnotation.encodeAnnotation(variable));
+			db.putByte(record + ANNOTATIONS, encodeFlags(variable));
 		} catch (DOMException e) {
 			throw new CoreException(Util.createStatus(e));
 		}
 	}
 
+	protected byte encodeFlags(ICPPVariable variable) throws DOMException {
+		return PDOMCPPAnnotation.encodeAnnotation(variable);
+	}
+	
 	public PDOMCPPVariable(PDOM pdom, int record) {
 		super(pdom, record);
 	}

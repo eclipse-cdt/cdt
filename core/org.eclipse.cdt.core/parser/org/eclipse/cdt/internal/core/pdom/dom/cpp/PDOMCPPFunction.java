@@ -238,39 +238,39 @@ class PDOMCPPFunction extends PDOMCPPBinding implements IIndexType, ICPPFunction
 		}
 
 		try {
-	        if (type instanceof ICPPFunctionType) {
-	            ICPPFunctionType ft = (ICPPFunctionType) type;
-	            IType rt1= getReturnType();
-	            IType rt2= ft.getReturnType();
-	            if (rt1 != rt2) {
-	                if (rt1 == null || !rt1.isSameType(rt2)) {
-	                	return false;
-	                }
-	            }
+			if (type instanceof ICPPFunctionType) {
+				ICPPFunctionType ft = (ICPPFunctionType) type;
+				IType rt1= getReturnType();
+				IType rt2= ft.getReturnType();
+				if (rt1 != rt2) {
+					if (rt1 == null || !rt1.isSameType(rt2)) {
+						return false;
+					}
+				}
 	            
-	            IType[] params1= getParameterTypes();
-	            IType[] params2= ft.getParameterTypes();
-	            if( params1.length == 1 && params2.length == 0 ){
-	            	if( !(params1[0] instanceof IBasicType) || ((IBasicType)params1[0]).getType() != IBasicType.t_void )
-	            		return false;
-	            } else if( params2.length == 1 && params1.length == 0 ){
-	            	if( !(params2[0] instanceof IBasicType) || ((IBasicType)params2[0]).getType() != IBasicType.t_void )
-	            		return false;
-	            } else if( params1.length != params2.length ){
-	            	return false;
-	            } else {
-	            	for( int i = 0; i < params1.length; i++ ){
-	            		if (params1[i] == null || ! params1[i].isSameType( params2[i] ) )
-	            			return false;
-	            	}
-	            }
-	           
-	            if( isConst() != ft.isConst() || isVolatile() != ft.isVolatile() )
-	                return false;
-	                
-	            return true;
-	        }
-	        return false;
+				IType[] params1= getParameterTypes();
+				IType[] params2= ft.getParameterTypes();
+				if( params1.length == 1 && params2.length == 0 ){
+					if( !(params1[0] instanceof IBasicType) || ((IBasicType)params1[0]).getType() != IBasicType.t_void )
+						return false;
+				} else if( params2.length == 1 && params1.length == 0 ){
+					if( !(params2[0] instanceof IBasicType) || ((IBasicType)params2[0]).getType() != IBasicType.t_void )
+						return false;
+				} else if( params1.length != params2.length ){
+					return false;
+				} else {
+					for( int i = 0; i < params1.length; i++ ){
+						if (params1[i] == null || ! params1[i].isSameType( params2[i] ) )
+							return false;
+					}
+				}
+
+				if( isConst() != ft.isConst() || isVolatile() != ft.isVolatile() )
+					return false;
+
+				return true;
+			}
+			return false;
 		} catch (DOMException e) {
 		}
 		return false;
@@ -285,7 +285,7 @@ class PDOMCPPFunction extends PDOMCPPBinding implements IIndexType, ICPPFunction
 			if(types[0] instanceof IBasicType) {
 				if(((IBasicType)types[0]).getType()==IBasicType.t_void) {
 					types = new IType[0];
-}
+				}
 			}
 		}
 		StringBuffer result = new StringBuffer();
@@ -303,5 +303,34 @@ class PDOMCPPFunction extends PDOMCPPBinding implements IIndexType, ICPPFunction
 	public static int getSignatureMemento(IFunctionType type) throws DOMException {
 		IType[] params = type.getParameterTypes();	
 		return getSignatureMemento(params);
+	}
+
+	public int compareTo(Object other) {
+		int cmp = super.compareTo(other);
+		if(cmp==0) {
+			if(other instanceof PDOMCPPFunction) {
+				try {
+					PDOMCPPFunction otherFunction = (PDOMCPPFunction) other;
+					int mySM = getSignatureMemento();
+					int otherSM = otherFunction.getSignatureMemento();
+					return mySM == otherSM ? 0 : mySM < otherSM ? -1 : 1;
+				} catch(CoreException ce) {
+					CCorePlugin.log(ce);
+				}
+			} else {
+				throw new PDOMNotImplementedError();
+			}
+		}
+		return cmp;
+	}
+	
+	public String toString() {
+		StringBuffer result = new StringBuffer();
+		try {
+			result.append(getName()+" "+ASTTypeUtil.getParameterTypeString(getType())); //$NON-NLS-1$
+		} catch(DOMException de) {
+			result.append(de);
+		}
+		return result.toString();
 	}
 }

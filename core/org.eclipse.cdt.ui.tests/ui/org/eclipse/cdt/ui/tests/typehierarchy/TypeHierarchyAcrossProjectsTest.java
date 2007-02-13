@@ -14,6 +14,9 @@ package org.eclipse.cdt.ui.tests.typehierarchy;
 import junit.framework.Test;
 
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IProjectDescription;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.IWorkbenchPage;
@@ -47,6 +50,10 @@ public class TypeHierarchyAcrossProjectsTest extends TypeHierarchyBaseTest {
 		super.setUp();
 
 		fCProject2= CProjectHelper.createCCProject("__thTest_2__", "bin", IPDOMManager.ID_FAST_INDEXER);
+		IProjectDescription desc= fCProject2.getProject().getDescription();
+		desc.setReferencedProjects(new IProject[]{fCProject.getProject()});
+		fCProject2.getProject().setDescription(desc, new NullProgressMonitor());
+		
 		CCoreInternals.getPDOMManager().reindex(fCProject2);
 		fIndex= CCorePlugin.getIndexManager().getIndex(new ICProject[] {fCProject, fCProject2});
 		TestScannerProvider.sIncludes= new String[]{fCProject.getProject().getLocation().toOSString(), fCProject2.getProject().getLocation().toOSString()};
@@ -82,7 +89,7 @@ public class TypeHierarchyAcrossProjectsTest extends TypeHierarchyBaseTest {
 	//    int field4;
 	//    int method4();
 	// };
-	public void _testSimpleInheritanceAcross() throws Exception {
+	public void testSimpleInheritanceAcross() throws Exception {
 		StringBuffer[] content= getContentsForTest(2);
 		String header= content[0].toString();
 		String source = content[1].toString();

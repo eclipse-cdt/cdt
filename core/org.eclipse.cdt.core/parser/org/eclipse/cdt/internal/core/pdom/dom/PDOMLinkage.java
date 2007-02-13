@@ -35,6 +35,8 @@ import org.eclipse.cdt.core.index.IIndexLinkage;
 import org.eclipse.cdt.core.index.IndexFilter;
 import org.eclipse.cdt.internal.core.Util;
 import org.eclipse.cdt.internal.core.dom.parser.ASTInternal;
+import org.eclipse.cdt.internal.core.index.IIndexScope;
+import org.eclipse.cdt.internal.core.index.composite.CompositeScope;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.db.BTree;
 import org.eclipse.cdt.internal.core.pdom.db.Database;
@@ -204,9 +206,13 @@ public abstract class PDOMLinkage extends PDOMNamedNode implements IIndexLinkage
 			}
 			return null;
 		}
-		
-		if (scope instanceof IIndexBinding) {
-			return adaptBinding((IBinding) scope);
+		 		
+		if(scope instanceof IIndexScope) {
+			if(scope instanceof CompositeScope) { // we special case for performance
+				return adaptBinding(((CompositeScope)scope).getRawScopeBinding());
+			} else {
+				return adaptBinding(((IIndexScope) scope).getScopeBinding());
+			}
 		}
 			
 		// the scope is from the ast

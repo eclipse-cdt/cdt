@@ -9,6 +9,7 @@
  * QNX - Initial API and implementation
  * Markus Schorn (Wind River Systems)
  * IBM Corporation
+ * Andrew Ferguson (Symbian)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom;
 
@@ -24,20 +25,18 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 
-import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ILinkage;
 import org.eclipse.cdt.core.dom.IName;
 import org.eclipse.cdt.core.dom.IPDOM;
 import org.eclipse.cdt.core.dom.IPDOMNode;
 import org.eclipse.cdt.core.dom.IPDOMVisitor;
-import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespaceScope;
 import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.core.index.IIndexFileLocation;
+import org.eclipse.cdt.core.index.IIndexLinkage;
+import org.eclipse.cdt.core.index.IIndexLocationConverter;
 import org.eclipse.cdt.core.index.IIndexName;
 import org.eclipse.cdt.core.index.IndexFilter;
 import org.eclipse.cdt.core.model.LanguageManager;
@@ -46,11 +45,9 @@ import org.eclipse.cdt.internal.core.index.IIndexFragmentBinding;
 import org.eclipse.cdt.internal.core.index.IIndexFragmentFile;
 import org.eclipse.cdt.internal.core.index.IIndexFragmentInclude;
 import org.eclipse.cdt.internal.core.index.IIndexFragmentName;
-import org.eclipse.cdt.internal.core.index.IIndexProxyBinding;
 import org.eclipse.cdt.internal.core.pdom.db.BTree;
 import org.eclipse.cdt.internal.core.pdom.db.Database;
 import org.eclipse.cdt.internal.core.pdom.dom.BindingCollector;
-import org.eclipse.cdt.internal.core.pdom.dom.IIndexLocationConverter;
 import org.eclipse.cdt.internal.core.pdom.dom.IPDOMLinkageFactory;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMFile;
@@ -236,7 +233,7 @@ public class PDOM extends PlatformObject implements IIndexFragment, IPDOM {
 		return IIndexFragmentName.EMPTY_NAME_ARRAY;
 	}
 
-	public IIndexProxyBinding findBinding(IASTName name) throws CoreException {
+	public IIndexFragmentBinding findBinding(IASTName name) throws CoreException {
 		PDOMLinkage linkage= adaptLinkage(name.getLinkage());
 		if (linkage != null) {
 			return linkage.resolveBinding(name);
@@ -419,7 +416,12 @@ public class PDOM extends PlatformObject implements IIndexFragment, IPDOM {
 		return db.getInt(LINKAGES);
 	}
 
-	public PDOMLinkage[] getLinkages() {
+	public IIndexLinkage[] getLinkages() {
+		Collection values = fLinkageIDCache.values();
+		return (IIndexLinkage[]) values.toArray(new IIndexLinkage[values.size()]);
+	}
+	
+	public PDOMLinkage[] getLinkageImpls() {
 		Collection values = fLinkageIDCache.values();
 		return (PDOMLinkage[]) values.toArray(new PDOMLinkage[values.size()]);
 	}
@@ -445,6 +447,7 @@ public class PDOM extends PlatformObject implements IIndexFragment, IPDOM {
 	private int lockCount;
 	private int waitingReaders;
 	private long lastWriteAccess= 0;
+	private long lastReadAccess= 0;
 
 	public void acquireReadLock() throws InterruptedException {
 		synchronized (mutex) {
@@ -459,6 +462,7 @@ public class PDOM extends PlatformObject implements IIndexFragment, IPDOM {
 	public void releaseReadLock() {
 		synchronized (mutex) {
 			assert lockCount > 0: "No lock to release"; //$NON-NLS-1$
+			lastReadAccess= System.currentTimeMillis();
 			if (lockCount > 0)
 				--lockCount;
 			mutex.notifyAll();
@@ -508,12 +512,16 @@ public class PDOM extends PlatformObject implements IIndexFragment, IPDOM {
 	public long getLastWriteAccess() {
 		return lastWriteAccess;
 	}
+	 
+	public long getLastReadAccess() {
+		return lastReadAccess;
+	}
 
 	protected PDOMLinkage adaptLinkage(ILinkage linkage) throws CoreException {
 		return (PDOMLinkage) fLinkageIDCache.get(linkage.getID());
 	}
 
-	public IIndexProxyBinding adaptBinding(IBinding binding) throws CoreException {
+	public IIndexFragmentBinding adaptBinding(IBinding binding) throws CoreException {
 		if (binding instanceof PDOMBinding) {
 			PDOMBinding pdomBinding= (PDOMBinding) binding;
 			if (pdomBinding.getPDOM() == this) {
@@ -528,7 +536,7 @@ public class PDOM extends PlatformObject implements IIndexFragment, IPDOM {
 		return null;
 	}
 
-	public IIndexProxyBinding adaptBinding(IIndexProxyBinding binding) throws CoreException {
+	public IIndexFragmentBinding adaptBinding(IIndexFragmentBinding binding) throws CoreException {
 		if (binding instanceof IBinding) {
 			return adaptBinding((IBinding) binding);
 		}
@@ -544,14 +552,14 @@ public class PDOM extends PlatformObject implements IIndexFragment, IPDOM {
 	}
 
 	public IIndexFragmentName[] findNames(IBinding binding, int options) throws CoreException {
-		IIndexProxyBinding proxyBinding= adaptBinding(binding);
+		IIndexFragmentBinding proxyBinding= adaptBinding(binding);
 		if (proxyBinding != null) {
 			return findNames(proxyBinding, options);
 		}
 		return IIndexFragmentName.EMPTY_NAME_ARRAY;
 	}
 
-	public IIndexFragmentName[] findNames(IIndexProxyBinding binding, int options) throws CoreException {
+	public IIndexFragmentName[] findNames(IIndexFragmentBinding binding, int options) throws CoreException {
 		PDOMBinding pdomBinding = (PDOMBinding) adaptBinding(binding);
 
 		if (pdomBinding != null) {
@@ -601,20 +609,7 @@ public class PDOM extends PlatformObject implements IIndexFragment, IPDOM {
 		return fPath;
 	}
 	
-	public IBinding[] findInNamespace(IBinding nsbinding, char[] name) throws CoreException {
-		IIndexProxyBinding ns= adaptBinding(nsbinding);
-		if (ns instanceof ICPPNamespace) {
-			try {
-				ICPPNamespaceScope scope = ((ICPPNamespace)ns).getNamespaceScope();
-				return scope.find(new String(name));
-			} catch(DOMException de) {
-				CCorePlugin.log(de);
-			}
-		}
-		return IIndexBinding.EMPTY_INDEX_BINDING_ARRAY;
-	}
-	
-	public IBinding[] findBindingsForPrefix(char[] prefix, IndexFilter filter) throws CoreException {
+	public IIndexFragmentBinding[] findBindingsForPrefix(char[] prefix, IndexFilter filter) throws CoreException {
 		ArrayList result = new ArrayList();
 		for (Iterator iter = fLinkageIDCache.values().iterator(); iter.hasNext();) {
 			PDOMLinkage linkage = (PDOMLinkage) iter.next();
@@ -625,6 +620,6 @@ public class PDOM extends PlatformObject implements IIndexFragment, IPDOM {
 				}
 			}
 		}
-		return (IBinding[]) result.toArray(new IBinding[result.size()]);
+		return (IIndexFragmentBinding[]) result.toArray(new IIndexFragmentBinding[result.size()]);
 	}
 }

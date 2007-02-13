@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *     Markus Schorn (Wind River Systems)
  *     Bryan Wilkinson (QNX)
+ *     Andrew Ferguson (Symbian)
  *******************************************************************************/
 /*
  * Created on Nov 29, 2004
@@ -25,6 +26,7 @@ import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDeclaration;
 import org.eclipse.cdt.core.index.IIndex;
@@ -109,9 +111,12 @@ abstract public class CPPScope implements ICPPScope, IASTInternalScope {
 					ICPPASTNamespaceDefinition nsdef = (ICPPASTNamespaceDefinition)physicalNode;
 					IASTName nsname = nsdef.getName();
 					IBinding nsbinding= nsname.resolveBinding();
-					if (nsbinding != null) {
-						IBinding[] bindings= index.findInNamespace(nsbinding, name.toCharArray());
-						binding= CPPSemantics.resolveAmbiguities(name, bindings);
+					if(nsbinding instanceof ICPPNamespace) {
+						ICPPNamespace nsbindingAdapted = (ICPPNamespace) index.adaptBinding(nsbinding);
+						if(nsbindingAdapted!=null) {
+							IBinding[] bindings = nsbindingAdapted.getNamespaceScope().find(name.toString());
+							binding= CPPSemantics.resolveAmbiguities(name, bindings);
+						}
 					}
 				}
 			}

@@ -8,6 +8,7 @@
  * Contributors:
  *    Markus Schorn - initial API and implementation
  *    Bryan Wilkinson (QNX)
+ *    Andrew Ferguson (Symbian)
  *******************************************************************************/ 
 
 package org.eclipse.cdt.internal.core.index;
@@ -93,15 +94,15 @@ final public class EmptyCIndex implements IIndex {
 	public IIndexBinding[] findBindings(Pattern[] pattern, boolean isFullyQualified, IndexFilter filter, IProgressMonitor monitor) throws CoreException {
 		return IIndexFragmentBinding.EMPTY_INDEX_BINDING_ARRAY;
 	}
-	
-	public IBinding[] findInNamespace(IBinding nsbinding, char[] name) {
-		return IIndexBinding.EMPTY_INDEX_BINDING_ARRAY;
-	}
-	
-	public IBinding[] findBindingsForPrefix(char[] prefix, IndexFilter filter) {
-		return IIndexBinding.EMPTY_INDEX_BINDING_ARRAY;
+
+	public IIndexBinding adaptBinding(IBinding binding) {
+		return null;
 	}
 
+	public IIndexBinding[] findBindingsForPrefix(char[] prefix, IndexFilter filter) {
+		return IIndexBinding.EMPTY_INDEX_BINDING_ARRAY;
+	}
+	
 	public IIndexBinding[] findBindings(char[][] names, IndexFilter filter,
 			IProgressMonitor monitor) {
 		return IIndexBinding.EMPTY_INDEX_BINDING_ARRAY;

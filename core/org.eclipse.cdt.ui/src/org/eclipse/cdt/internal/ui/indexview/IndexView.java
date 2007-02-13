@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 QNX Software Systems and others.
+ * Copyright (c) 2005, 2006, 2007 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  * QNX - Initial API and implementation
+ * Andrew Ferguson (Symbian)
  *******************************************************************************/
 
 package org.eclipse.cdt.internal.ui.indexview;
@@ -190,7 +191,7 @@ public class IndexView extends ViewPart implements PDOM.IListener, IElementChang
 						return new Object[0];
 					}
 					PDOM pdom = (PDOM)CCoreInternals.getPDOMManager().getPDOM(cproject);
-					PDOMLinkage[] linkages= pdom.getLinkages();
+					PDOMLinkage[] linkages= pdom.getLinkageImpls();
 					if (linkages.length == 1) {
 						// Skip linkages in hierarchy if there is only one
 						return getChildren(linkages[0]);
@@ -224,7 +225,7 @@ public class IndexView extends ViewPart implements PDOM.IListener, IElementChang
 						return false;
 					}
 					PDOM pdom = (PDOM)CCoreInternals.getPDOMManager().getPDOM(cproject);
-					PDOMLinkage[] linkages = pdom.getLinkages();
+					PDOMLinkage[] linkages = pdom.getLinkageImpls();
 					if (linkages.length == 0)
 						return false;
 					else if (linkages.length == 1)

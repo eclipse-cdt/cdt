@@ -18,9 +18,10 @@ import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IParameter;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
-import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPParameter;
 import org.eclipse.cdt.internal.core.Util;
+import org.eclipse.cdt.internal.core.index.IIndexFragment;
+import org.eclipse.cdt.internal.core.index.IIndexFragmentBinding;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.db.Database;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNamedNode;
@@ -33,7 +34,7 @@ import org.eclipse.core.runtime.CoreException;
  * 
  * @author Doug Schaefer
  */
-class PDOMCPPParameter extends PDOMNamedNode implements ICPPParameter {
+class PDOMCPPParameter extends PDOMNamedNode implements ICPPParameter, IIndexFragmentBinding {
 
 	/**
 	 * Offset of pointer to the next parameter (relative to the
@@ -114,7 +115,7 @@ class PDOMCPPParameter extends PDOMNamedNode implements ICPPParameter {
 		return rec != 0 ? new PDOMCPPParameter(pdom, rec) : null;
 	}
 	
-	public String[] getQualifiedName() throws DOMException {
+	public String[] getQualifiedName() {
 		throw new PDOMNotImplementedError();
 	}
 
@@ -192,5 +193,22 @@ class PDOMCPPParameter extends PDOMNamedNode implements ICPPParameter {
 			CCorePlugin.log(e);
 		}
 		return defValue;
+	}
+
+	public IIndexFragment getFragment() {
+		return pdom;
+	}	
+	
+	public boolean hasDefinition() throws CoreException {
+		// parameter bindings do not span index fragments
+		return true;
+	}
+
+	public int compareTo(Object arg0) {
+		throw new PDOMNotImplementedError();
+	}
+	
+	public boolean isFileLocal() throws CoreException {
+		return true;
 	}
 }

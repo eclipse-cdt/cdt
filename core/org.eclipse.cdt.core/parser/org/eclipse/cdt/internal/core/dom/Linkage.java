@@ -18,6 +18,13 @@ public class Linkage implements ILinkage {
 	public static final ILinkage NO_LINKAGE = new Linkage(NO_LINKAGE_ID);
 	public static final ILinkage C_LINKAGE = new Linkage(C_LINKAGE_ID);
 	public static final ILinkage CPP_LINKAGE = new Linkage(CPP_LINKAGE_ID);
+	public static final ILinkage FORTRAN_LINKAGE = new Linkage(FORTRAN_LINKAGE_ID);
+	
+	private static final ILinkage[] LINKAGES= {C_LINKAGE, CPP_LINKAGE, FORTRAN_LINKAGE};
+	
+	public static final ILinkage[] getAllLinkages() {
+		return LINKAGES;
+	}
 	
 	private String fID;
 	private Linkage(String id) {

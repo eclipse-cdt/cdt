@@ -252,22 +252,13 @@ public interface IIndex {
 	public IIndexBinding[] findBindings(char[] name, IndexFilter filter, IProgressMonitor monitor) throws CoreException;
 
 	/**
-	 * Searches the given namespace for all bindings of a given name. 
-	 * In case a binding exists in multiple projects, no duplicate bindings are returned.
-	 * @param nsbinding the namespace to be searched.
-	 * @param name a simple (unqualified) name.
-	 * @return an array of bindings
-	 */
-	public IBinding[] findInNamespace(IBinding nsbinding, char[] name);
-
-	/**
 	 * Searches for all bindings with names that start with the given prefix.
 	 * @param prefix the prefix with which all returned bindings must start
 	 * @param filter a filter that allows for skipping parts of the index
 	 * @return an array of bindings with the prefix
 	 * @throws CoreException
 	 */
-	public IBinding[] findBindingsForPrefix(char[] prefix, IndexFilter filter) throws CoreException;
+	public IIndexBinding[] findBindingsForPrefix(char[] prefix, IndexFilter filter) throws CoreException;
 	
 	/**
 	 * Searches for all names that resolve to the given binding. You can limit the result to references, declarations
@@ -314,4 +305,15 @@ public interface IIndex {
 	 * @throws CoreException
 	 */
 	public IIndexName[] findDefinitions(IBinding binding) throws CoreException;
+
+	/**
+	 * Returns an IIndexBinding for this IIndex that is equivalent to the specified binding,
+	 * or null if such a binding does not exist in this index. This is useful for adapting
+	 * bindings obtained from IIndex objects that might have been created for a different scope
+     * or for IBinding objects obtained direct from the AST.
+	 * @param binding
+	 * @return an IIndexBinding for this IIndex that is equivalent to the specified binding
+	 * @throws CoreException
+	 */
+	public IIndexBinding adaptBinding(IBinding binding);
 }

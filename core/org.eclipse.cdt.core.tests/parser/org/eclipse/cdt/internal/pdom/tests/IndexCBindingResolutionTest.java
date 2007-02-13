@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 Symbian Software Systems and others.
+ * Copyright (c) 2007 Symbian Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,12 +14,9 @@ import java.io.IOException;
 
 import junit.framework.TestSuite;
 
-import org.eclipse.cdt.core.dom.IPDOMManager;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.ICompositeType;
 import org.eclipse.cdt.core.dom.ast.IEnumeration;
-import org.eclipse.cdt.core.testplugin.CProjectHelper;
-import org.eclipse.core.runtime.Path;
 
 /**
  * For testing PDOM binding C language resolution
@@ -31,15 +28,20 @@ import org.eclipse.core.runtime.Path;
  */
 public class IndexCBindingResolutionTest extends IndexBindingResolutionTestBase {
 
-	public static TestSuite suite() {
-		return suite(IndexCBindingResolutionTest.class);
+	public static class SingleProject extends IndexCBindingResolutionTest {
+		public SingleProject() {setStrategy(new SinglePDOMTestStrategy(false));}
 	}
-
-	protected void setUp() throws Exception {
-		cproject= CProjectHelper.createCProject("ResolveBindingTestsC", "bin", IPDOMManager.ID_NO_INDEXER);
-		header = new Path("header.h");
-		references = new Path("references.c");
-		super.setUp();
+	public static class ProjectWithDepProj extends IndexCBindingResolutionTest {
+		public ProjectWithDepProj() {setStrategy(new ReferencedProject(false));}
+	}
+	
+	public static void addTests(TestSuite suite) {		
+		suite.addTest(suite(SingleProject.class));
+		suite.addTest(suite(ProjectWithDepProj.class));
+	}
+	
+	public IndexCBindingResolutionTest() {
+		setStrategy(new SinglePDOMTestStrategy(false));
 	}
 	
 	// // header file

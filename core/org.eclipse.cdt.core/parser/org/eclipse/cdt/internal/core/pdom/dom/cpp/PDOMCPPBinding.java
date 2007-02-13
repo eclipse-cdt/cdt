@@ -12,6 +12,9 @@
 
 package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBinding;
@@ -49,17 +52,24 @@ abstract class PDOMCPPBinding extends PDOMBinding implements ICPPBinding {
 		return false;
 	}
 
-	// TODO: performance?
 	final public char[][] getQualifiedNameCharArray() throws DOMException {
-		String[] preResult = getQualifiedName();
-		char[][] result = new char[preResult.length][];
-		for(int i=0; i<preResult.length; i++) {
-			result[i] = preResult[i].toCharArray();
+		List result = new ArrayList();
+		try {
+			PDOMNode node = this;
+			while (node != null) {
+				if (node instanceof PDOMBinding) {							
+					result.add(0, ((PDOMBinding)node).getName().toCharArray());
+				}
+				node = node.getParentNode();
+			}
+			return (char[][]) result.toArray(new char[result.size()][]);
+		} catch(CoreException ce) {
+			CCorePlugin.log(ce);
+			return null;
 		}
-		return result;
 	}
 
 	public boolean isGloballyQualified() throws DOMException {
 		throw new PDOMNotImplementedError();
-	}
+	}	
 }

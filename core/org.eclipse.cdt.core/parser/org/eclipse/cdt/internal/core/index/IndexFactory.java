@@ -90,6 +90,7 @@ public class IndexFactory {
 			ICProject cproject = projects[i];
 			IProject project= cproject.getProject();
 			checkAddProject(project, map, projectsToSearch, markWith);
+			projectsToSearch.add(project);
 		}
 		
 		if (addDependencies || addDependent) {
@@ -156,11 +157,24 @@ public class IndexFactory {
 			}
 		}
 		
+		selectedProjects= getProjects(new ICProject[] {project}, true, false, new HashMap(), new Integer(1));		
+		selectedProjects.remove(project);
+		ArrayList readOnly= new ArrayList();
+		for (Iterator iter = selectedProjects.iterator(); iter.hasNext(); ) {
+			ICProject cproject = (ICProject) iter.next();
+			IWritableIndexFragment pdom= (IWritableIndexFragment) fPDOMManager.getPDOM(cproject);
+			if (pdom != null) {
+				readOnly.add(pdom);
+			}
+		}
+		
+		
 		if (pdoms.isEmpty()) {
 			throw new CoreException(CCorePlugin.createStatus(
 					MessageFormat.format(Messages.IndexFactory_errorNoSuchPDOM0, new Object[]{project.getElementName()})));
 		}
 		
-		return new WritableCIndex((IWritableIndexFragment[]) pdoms.toArray(new IWritableIndexFragment[pdoms.size()]), new IIndexFragment[0]);
+		return new WritableCIndex((IWritableIndexFragment[]) pdoms.toArray(new IWritableIndexFragment[pdoms.size()]),
+				(IIndexFragment[]) readOnly.toArray(new IIndexFragment[readOnly.size()]) );
 	}
 }

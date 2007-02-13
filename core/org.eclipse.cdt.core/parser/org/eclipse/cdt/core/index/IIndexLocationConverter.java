@@ -8,9 +8,8 @@
  * Contributors:
  *    Andrew Ferguson (Symbian) - initial API and implementation
  *******************************************************************************/ 
-package org.eclipse.cdt.internal.core.pdom.dom;
+package org.eclipse.cdt.core.index;
 
-import org.eclipse.cdt.core.index.IIndexFileLocation;
 
 /**
  * Each IIndexFragment stores file location representations in an implementation specific manner.

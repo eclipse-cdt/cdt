@@ -8,6 +8,7 @@
  * Contributors:
  *    Markus Schorn - initial API and implementation
  *    Bryan Wilkinson (QNX)
+ *    Andrew Ferguson (Symbian)
  *******************************************************************************/ 
 
 package org.eclipse.cdt.internal.core.index;
@@ -18,6 +19,7 @@ import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.index.IIndexFileLocation;
+import org.eclipse.cdt.core.index.IIndexLinkage;
 import org.eclipse.cdt.core.index.IndexFilter;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -75,7 +77,7 @@ public interface IIndexFragment {
 	 * @return the binding, or <code>null</code>
 	 * @throws CoreException 
 	 */
-	IIndexProxyBinding adaptBinding(IBinding binding) throws CoreException;
+	IIndexFragmentBinding adaptBinding(IBinding binding) throws CoreException;
 
 	/**
 	 * Looks for a proxy binding matching the given one. May return <code>null</code>, if no
@@ -84,7 +86,7 @@ public interface IIndexFragment {
 	 * @return the binding, or <code>null</code>
 	 * @throws CoreException 
 	 */
-	IIndexProxyBinding adaptBinding(IIndexProxyBinding proxy) throws CoreException;
+	IIndexFragmentBinding adaptBinding(IIndexFragmentBinding proxy) throws CoreException;
 
 	/**
 	 * Looks for a binding of the given name from the AST. May return <code>null</code>, if no
@@ -93,7 +95,7 @@ public interface IIndexFragment {
 	 * @return the binding for the name, or <code>null</code>
 	 * @throws CoreException
 	 */
-	IIndexProxyBinding findBinding(IASTName astName) throws CoreException;
+	IIndexFragmentBinding findBinding(IASTName astName) throws CoreException;
 	
 	/**
 	 * Searches for all bindings with qualified names that seen as an array of simple names match the given array 
@@ -127,7 +129,7 @@ public interface IIndexFragment {
 	 * @return an array of names
 	 * @throws CoreException
 	 */
-	IIndexFragmentName[] findNames(IIndexProxyBinding binding, int flags) throws CoreException;
+	IIndexFragmentName[] findNames(IIndexFragmentBinding binding, int flags) throws CoreException;
 	
 	/**
 	 * Acquires a read lock.
@@ -146,12 +148,13 @@ public interface IIndexFragment {
 	long getLastWriteAccess();
 
 	/**
-	 * Returns all bindings with the given name in the given namespace
-	 */
-	IBinding[] findInNamespace(IBinding nsbinding, char[] name) throws CoreException;
-	
-	/**
 	 * Returns all bindings with the given prefix, accepted by the given filter
 	 */
-	IBinding[] findBindingsForPrefix(char[] prefix, IndexFilter filter) throws CoreException;
+	IIndexFragmentBinding[] findBindingsForPrefix(char[] prefix, IndexFilter filter) throws CoreException;
+	
+	/**
+	 * Returns the linkages that are contained in this fragment
+	 * @return
+	 */
+	IIndexLinkage[] getLinkages();
 }

@@ -22,6 +22,7 @@ import org.eclipse.cdt.core.dom.ast.IASTPreprocessorIncludeStatement;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorMacroDefinition;
 import org.eclipse.cdt.core.index.IIndexFileLocation;
 import org.eclipse.cdt.core.index.IIndexInclude;
+import org.eclipse.cdt.core.index.IIndexLocationConverter;
 import org.eclipse.cdt.core.index.IIndexMacro;
 import org.eclipse.cdt.core.index.IIndexName;
 import org.eclipse.cdt.internal.core.index.IIndexFragment;
@@ -262,14 +263,14 @@ public class PDOMFile implements IIndexFragmentFile {
 		PDOMInclude lastInclude= null;
 		for (int i = 0; i < includes.length; i++) {
 			IASTPreprocessorIncludeStatement statement = includes[i];
-			PDOMFile file= (PDOMFile) files[i];
-			assert file.getIndexFragment() instanceof IWritableIndexFragment;
+			PDOMFile thisIncludes= (PDOMFile) files[i];
+			assert thisIncludes.getIndexFragment() instanceof IWritableIndexFragment;
 
 			PDOMInclude pdomInclude = new PDOMInclude(pdom, statement);
 			pdomInclude.setIncludedBy(this);
-			pdomInclude.setIncludes(file);
+			pdomInclude.setIncludes(thisIncludes);
 
-			file.addIncludedBy(pdomInclude);
+			thisIncludes.addIncludedBy(pdomInclude);
 			if (lastInclude == null) {
 				setFirstInclude(pdomInclude);
 			}
@@ -377,5 +378,9 @@ public class PDOMFile implements IIndexFragmentFile {
 		if(result==null)
 			throw new CoreException(CCorePlugin.createStatus(Messages.getString("PDOMFile.toExternalProblem")+raw)); //$NON-NLS-1$
 		return result;
+	}
+	
+	public boolean hasNames() throws CoreException {
+		return getFirstName()!=null;
 	}
 }

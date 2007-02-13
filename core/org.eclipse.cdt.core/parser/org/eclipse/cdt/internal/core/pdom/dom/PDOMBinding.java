@@ -25,6 +25,7 @@ import org.eclipse.cdt.internal.core.index.IIndexFragment;
 import org.eclipse.cdt.internal.core.index.IIndexFragmentBinding;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.db.Database;
+import org.eclipse.cdt.internal.core.pdom.db.IString;
 import org.eclipse.core.runtime.CoreException;
 
 /**
@@ -217,7 +218,7 @@ public abstract class PDOMBinding extends PDOMNamedNode implements IIndexFragmen
 			return null;
 		}
 	}
-	
+
 	final public String[] getQualifiedName() {
 		List result = new ArrayList();
 		try {
@@ -237,5 +238,45 @@ public abstract class PDOMBinding extends PDOMNamedNode implements IIndexFragmen
 	
 	final public boolean isFileLocal() throws CoreException {
 		return getParentNode() instanceof PDOMFileLocalScope;
+	}
+	
+
+	public boolean hasDefinition() throws CoreException {
+		return getFirstDefinition()!=null;
+	}
+
+	private static int comparePDOMBindingQNs(PDOMBinding b0, PDOMBinding b1) {
+		try {
+			int cmp = 0; 
+			do {
+				IString s0 = b0.getDBName(), s1 = b1.getDBName();
+				cmp = s0.compare(s1);
+				if(cmp==0) {
+					b0 = (PDOMBinding) b0.getParentBinding();
+					b1 = (PDOMBinding) b1.getParentBinding();
+					if(b0==null || b1==null) {
+						cmp = b0==b1 ? 0 : (b0==null ? -1 : 1);
+					}
+				}
+			} while(cmp==0 && b1!=null && b0!=null);
+			return cmp;
+		} catch(CoreException ce) {
+			CCorePlugin.log(ce);
+			return -1;
+		}
+	}
+
+	public int compareTo(Object other) {
+		if(other instanceof PDOMBinding) {
+			PDOMBinding otherBinding = (PDOMBinding) other;
+			int cmp = comparePDOMBindingQNs(this, otherBinding);
+			if(cmp==0) {
+				int t1 = getNodeType();
+				int t2 = otherBinding.getNodeType();
+				return t1 < t2 ? -1 : (t1 > t2 ? 1 : 0);
+			}
+			return cmp;
+		}
+		throw new PDOMNotImplementedError();
 	}
 }

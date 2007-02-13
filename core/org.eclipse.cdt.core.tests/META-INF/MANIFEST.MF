@@ -25,7 +25,8 @@ Require-Bundle: org.eclipse.core.resources,
  org.eclipse.core.runtime,
  org.eclipse.ui.ide,
  org.eclipse.ui,
- org.eclipse.jface.text
+ org.eclipse.jface.text,
+ org.eclipse.core.filesystem
 Eclipse-LazyStart: true
 Bundle-Vendor: Eclipse.org
 Bundle-RequiredExecutionEnvironment: J2SE-1.4

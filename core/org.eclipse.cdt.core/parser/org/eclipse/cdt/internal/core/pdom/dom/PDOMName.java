@@ -20,8 +20,8 @@ import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.index.IIndexFile;
 import org.eclipse.cdt.core.index.IIndexName;
 import org.eclipse.cdt.internal.core.index.IIndexFragment;
+import org.eclipse.cdt.internal.core.index.IIndexFragmentBinding;
 import org.eclipse.cdt.internal.core.index.IIndexFragmentName;
-import org.eclipse.cdt.internal.core.index.IIndexProxyBinding;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.db.Database;
 import org.eclipse.core.runtime.CoreException;
@@ -326,7 +326,7 @@ public class PDOMName implements IIndexFragmentName, IASTFileLocation {
 		return pdom;
 	}
 
-	public IIndexProxyBinding getBinding() throws CoreException {
+	public IIndexFragmentBinding getBinding() throws CoreException {
 		return getPDOMBinding();
 	}
 

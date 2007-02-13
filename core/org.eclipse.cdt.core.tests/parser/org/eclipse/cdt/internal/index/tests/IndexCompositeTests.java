@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 Symbian Software Systems and others.
+ * Copyright (c) 2007 Symbian Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -108,7 +108,7 @@ public class IndexCompositeTests  extends BaseTestCase {
 	// class A1 {};
 	// void foo(X::B2 c) {}
 	// namespace X { class A2 {}; B2 b; C2 c; }
-	public void _testTripleLinear() throws Exception {
+	public void testTripleLinear() throws Exception {
 		StringBuffer[] contents = getContentsForTest(3);
 		List projects = new ArrayList();
 
@@ -215,7 +215,7 @@ public class IndexCompositeTests  extends BaseTestCase {
 	// void foo(X::B2 c) {}
 	// namespace X { class A2 {}; }
 	// B1 ab;
-	public void _testTripleUpwardV() throws Exception {
+	public void testTripleUpwardV() throws Exception {
 		StringBuffer[] contents = getContentsForTest(3);
 		List projects = new ArrayList();
 
@@ -304,7 +304,7 @@ public class IndexCompositeTests  extends BaseTestCase {
 	// class A1 {};
 	// void foo(A1 a, A1 b) {}
 	// namespace X { class A2 {}; }
-	public void _testTripleDownwardV() throws Exception {
+	public void testTripleDownwardV() throws Exception {
 		StringBuffer[] contents = getContentsForTest(3);
 		List projects = new ArrayList();
 

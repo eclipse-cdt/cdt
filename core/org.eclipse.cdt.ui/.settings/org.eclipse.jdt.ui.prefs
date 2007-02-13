@@ -1,7 +1,7 @@
-#Mon Jul 03 10:04:50 CEST 2006
+#Sun Feb 11 21:07:41 EST 2007
 eclipse.preferences.version=1
 formatter_profile=_Eclipse [built-in] - cdt
-formatter_settings_version=10
+formatter_settings_version=11
 internal.default.compliance=user
 org.eclipse.jdt.ui.ignorelowercasenames=true
 org.eclipse.jdt.ui.importorder=java;javax;org;com;org.eclipse.cdt;org.eclipse.cdt.internal;org.eclipse.cdt.internal.ui;

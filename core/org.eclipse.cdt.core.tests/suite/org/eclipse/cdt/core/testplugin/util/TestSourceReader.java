@@ -220,8 +220,12 @@ public class TestSourceReader {
 		InputStream stream = new ByteArrayInputStream(contents.getBytes());
 		//Create file input stream
 		if (file.exists()) {
+			long timestamp= file.getLocalTimeStamp();
 			file.setContents(stream, false, false, new NullProgressMonitor());
-		} 
+			if (file.getLocalTimeStamp() == timestamp) {
+				file.setLocalTimeStamp(timestamp+1000);
+			}
+		}
 		else {
 			file.create(stream, false, new NullProgressMonitor());
 		}

@@ -26,6 +26,7 @@ import org.eclipse.cdt.core.dom.IName;
 import org.eclipse.cdt.core.dom.IPDOMManager;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
+import org.eclipse.cdt.core.dom.ast.IBasicType;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.ICompositeType;
 import org.eclipse.cdt.core.dom.ast.IEnumeration;
@@ -483,6 +484,55 @@ public class IndexBugsTests extends BaseTestCase {
 			IBinding[] bindings= fIndex.findBindings("e20070206".toCharArray(), IndexFilter.getFilter(ILinkage.CPP_LINKAGE_ID), NPM);
 			assertEquals(1, bindings.length);
 			assertTrue(bindings[0] instanceof IEnumerator);
+		}
+		finally {
+			fIndex.releaseReadLock();
+		}
+	}
+	
+	// typedef int T20070213;
+	public void _test173997() throws Exception {
+		waitForIndexer();
+		String content= getContentsForTest(1)[0].toString();
+
+		IFile file= TestSourceReader.createFile(fCProject.getProject(), "test173997.cpp", content);
+		TestSourceReader.waitUntilFileIsIndexed(fIndex, file, INDEX_WAIT_TIME);
+
+		fIndex.acquireReadLock();
+		try {
+			IBinding[] bindings= fIndex.findBindings("T20070213".toCharArray(), IndexFilter.getFilter(ILinkage.CPP_LINKAGE_ID), NPM);
+			assertEquals(1, bindings.length);
+			assertTrue(bindings[0] instanceof ITypedef);
+			ITypedef td= (ITypedef) bindings[0];
+			IType type= td.getType();
+			assertTrue(type instanceof IBasicType);
+			IBasicType btype= (IBasicType) type;
+			assertEquals(IBasicType.t_int, btype.getType());
+		}
+		finally {
+			fIndex.releaseReadLock();
+		}
+		
+		long timestamp= file.getLocalTimeStamp();
+		content= "int UPDATED20070213;\n" + content.replaceFirst("int", "float");
+		file= TestSourceReader.createFile(fCProject.getProject(), "test173997.cpp", content);
+		TestSourceReader.waitUntilFileIsIndexed(fIndex, file, INDEX_WAIT_TIME);
+
+		fIndex.acquireReadLock();
+		try {
+			// double check if file was indexed
+			IBinding[] bindings= fIndex.findBindings("UPDATED20070213".toCharArray(), IndexFilter.getFilter(ILinkage.CPP_LINKAGE_ID), NPM);
+			assertEquals(1, bindings.length);
+			
+			bindings= fIndex.findBindings("T20070213".toCharArray(), IndexFilter.getFilter(ILinkage.CPP_LINKAGE_ID), NPM);
+			assertEquals(1, bindings.length);
+			assertTrue(bindings[0] instanceof ITypedef);
+			ITypedef td= (ITypedef) bindings[0];
+			IType type= td.getType();
+			assertTrue(type instanceof IBasicType);
+			IBasicType btype= (IBasicType) type;
+			assertTrue(IBasicType.t_int != btype.getType());
+			assertEquals(IBasicType.t_float, btype.getType());
 		}
 		finally {
 			fIndex.releaseReadLock();

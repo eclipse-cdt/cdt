@@ -141,13 +141,6 @@ public class RSESystemType implements IRSESystemType {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.rse.core.IRSESystemType#acceptNewConnectionWizardDelegate(java.lang.String)
-	 */
-	public boolean acceptNewConnectionWizardDelegate(String newConnectionWizardDelegateId) {
-		return false;
-	}
-	
-	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
 	 */
 	public Object getAdapter(Class adapter) {

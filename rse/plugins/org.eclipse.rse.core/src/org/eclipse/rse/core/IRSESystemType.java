@@ -127,19 +127,4 @@ public interface IRSESystemType extends IAdaptable {
    *         but never <code>null</code>.
    */
   public String[] getSubsystemConfigurationIds();
-
-  /**
-   * Returns if or if not the specified new connection wizard delegate can be used for this
-   * system type. This method is called by the {@link org.eclipse.rse.ui.wizard.IRSENewConnectionWizard}
-   * if the system type attribute of the <code>newConnectionWizardDelegates</code> extension
-   * point is not specified. This allows to declare new connection wizard delegates which are
-   * associated to system types dynamically contributed via the <code>systemTypeProviders</code> 
-   * extension point.
-   * <p>
-   * <b>Note:</b> The default RSE system type implementation returns always <code>false</code> here.
-   * 
-   * @param newConnectionWizardDelegateId The new connection wizard delegate id. Must be not <code>null</code>.
-   * @return <code>True</code> if the system type accepts the new connection wizard delegate, <code>false</code> otherwise.
-   */
-  public boolean acceptNewConnectionWizardDelegate(String newConnectionWizardDelegateId);
 }

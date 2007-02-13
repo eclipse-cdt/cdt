@@ -25,7 +25,6 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.rse.core.IRSESystemType;
-import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.SystemBasePlugin;
 import org.eclipse.rse.ui.ISystemIconConstants;
 import org.eclipse.rse.ui.RSEUIPlugin;
@@ -107,15 +106,6 @@ public class RSENewConnectionWizard extends AbstractSystemWizard implements IRSE
 						// if the systemTypeId is null or empty, ask the system types if they accept the newConnectionWizardDelegate
 						if (systemTypeId != null && !"".equals(systemTypeId.trim())) { //$NON-NLS-1$
 							if (!wizardDelegates.containsKey(systemTypeId)) wizardDelegates.put(systemTypeId, obj);
-						} else {
-							IRSESystemType[] systemTypes = RSECorePlugin.getDefault().getRegistry().getSystemTypes();
-							for (int j = 0; j < systemTypes.length; j++) {
-								IRSESystemType systemType = systemTypes[j];
-								if (systemType.acceptNewConnectionWizardDelegate(element.getAttribute(NEW_CONNECTION_WIZARD_DELEGATE_EXTENSION_CONFIG_ATTRIBUTE_ID))
-										&& !wizardDelegates.containsKey(systemType.getId())) {
-									wizardDelegates.put(systemType.getId(), obj);
-								}
-							}
 						}
 					} else {
 						continue;

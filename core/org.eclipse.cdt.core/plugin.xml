@@ -22,27 +22,27 @@
 <!-- =================================================================================== -->
 <!-- Extension Point: IBinaryParser, use to detect wheter an IFile is a binary           -->
 <!-- =================================================================================== -->
-   <extension-point id="BinaryParser" name="BinaryParser"/>
+   <extension-point id="BinaryParser" name="%BinaryParser.name"/>
 <!-- =================================================================================== -->
 <!-- Extension Point: IPathEntryStore, use to provide a storage for PathEtnry            -->
 <!-- =================================================================================== -->
-   <extension-point id="PathEntryStore" name="PathEntryStore"/>
+   <extension-point id="PathEntryStore" name="%PathEntryStore.name"/>
 <!-- =================================================================================== -->
 <!-- Obsolete extension point, use the IPathEntry mechanism to provide include/macros    -->
 <!-- =================================================================================== -->
-   <extension-point id="ScannerInfoProvider" name="Scanner Information Provider"/>
+   <extension-point id="ScannerInfoProvider" name="%ScannerInfoProvider.name"/>
 <!-- =================================================================================== -->
 <!-- Extension Point: CFileType and CFileTypeAssociation for translation unit ident      -->
 <!-- =================================================================================== -->
-   <extension-point id="CLanguage" name="CLanguage" schema="schema/CLanguage.exsd"/>
-   <extension-point id="CFileType" name="CFileType" />
-   <extension-point id="CFileTypeAssociation" name="CFileTypeAssociation" />
+   <extension-point id="CLanguage" name="%CLanguage.name" schema="schema/CLanguage.exsd"/>
+   <extension-point id="CFileType" name="%CFileType.name" />
+   <extension-point id="CFileTypeAssociation" name="%CFileTypeAssociation.name" />
 <!-- =================================================================================== -->
 <!-- PathEntryContainer initialization, this is part of the IPathEntry framework         -->
 <!-- =================================================================================== -->
    <extension-point id="PathEntryContainerInitializer" name="%PathEntryContainerInitializer" schema="schema/PathEntryContainerInitializer.exsd"/>
    <extension-point id="CodeFormatter" name="%CodeFormatter.name" schema="schema/CodeFormatter.exsd"/>
-   <extension-point id="CIndexer" name="C/C++ Indexer" schema="schema/CIndexer.exsd"/>
+   <extension-point id="CIndexer" name="%CIndexer.name" schema="schema/CIndexer.exsd"/>
    <extension-point id="language" name="%language.name" schema="schema/language.exsd"/>
 <!-- =================================================================================== -->
 <!-- Define the list of the Binary Parser provided by the CDT                            -->
@@ -511,11 +511,6 @@
    		 id="nullindexer"
          name="%CDTIndexer.nullindexer"
          point="org.eclipse.cdt.core.CIndexer">
-      <cextension>
-         <run 
-            class="org.eclipse.cdt.internal.core.index.nullindexer.NullIndexer">
-         </run>
-      </cextension>
       <run class="org.eclipse.cdt.internal.core.pdom.indexer.nulli.PDOMNullIndexer"/>
    </extension>
    <extension
@@ -523,21 +518,11 @@
          name="%fastIndexer.name"
          point="org.eclipse.cdt.core.CIndexer">
       <run class="org.eclipse.cdt.internal.core.pdom.indexer.fast.PDOMFastIndexer"/>
-      <cextension>
-         <run 
-            class="org.eclipse.cdt.internal.core.index.nullindexer.NullIndexer">
-         </run>
-      </cextension>
    </extension>
    <extension
          name="%CDTIndexer.domsourceindexer"
          id="domsourceindexer"
          point="org.eclipse.cdt.core.CIndexer">
-      <cextension>
-         <run 
-            	class="org.eclipse.cdt.internal.core.index.domsourceindexer.DOMSourceIndexer">
-         </run>
-      </cextension>
       <run class="org.eclipse.cdt.internal.core.pdom.indexer.full.PDOMFullIndexer"/>
    </extension>
    <extension
@@ -577,15 +562,6 @@
             class="org.eclipse.cdt.internal.core.pdom.dom.cpp.PDOMCPPLinkageFactory"
             id="C++"/>
    </extension>
-   <extension
-         point="org.eclipse.core.runtime.adapters">
-      <factory
-            adaptableType="org.eclipse.cdt.core.dom.ast.IBinding"
-            class="org.eclipse.cdt.internal.core.pdom.dom.PDOMBindingAdapterFactory">
-         <adapter type="org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding"/>
-      </factory>
-   </extension>
-
 <!-- =================================================================================== -->
 <!-- Dynamic Variables                                                          -->	
 <!-- =================================================================================== -->

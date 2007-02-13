@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Markus Schorn (Wind River Systems)
+ *     Ed Swartz (Nokia)
  *******************************************************************************/
 
 package org.eclipse.cdt.internal.ui.search.actions;
@@ -96,9 +97,9 @@ public class OpenDeclarationsAction extends SelectionParseAction {
 										findDefinitions(index, ast, binding) :
 										findDeclarations(index, ast, binding);
 							}
-							
-							if (declNames.length > 0) {
-								IASTFileLocation fileloc = declNames[0].getFileLocation();
+
+							for (int i = 0; i < declNames.length; i++) {
+								IASTFileLocation fileloc = declNames[i].getFileLocation();
 								if (fileloc != null) {
 									final IPath path = new Path(fileloc.getFileName());
 									final int offset = fileloc.getNodeOffset();
@@ -113,6 +114,7 @@ public class OpenDeclarationsAction extends SelectionParseAction {
 											}
 										}
 									});
+									break;
 								}
 							}
 						}

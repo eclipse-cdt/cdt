@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Markus Schorn (Wind River Systems)
+ *     Ed Swartz (Nokia)
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.search.actions;
 
@@ -88,8 +89,8 @@ public class OpenDefinitionAction extends SelectionParseAction {
 						IBinding binding = searchName.resolveBinding();
 						if (binding != null) {
 							final IName[] declNames = ast.getDefinitions(binding);
-							if (declNames.length > 0) {
-						    	IASTFileLocation fileloc = declNames[0].getFileLocation();
+							for (int i = 0; i < declNames.length; i++) {
+						    	IASTFileLocation fileloc = declNames[i].getFileLocation();
 					    		// no source location - TODO spit out an error in the status bar
 						    	if (fileloc != null) {
 						    		final IPath path = new Path(fileloc.getFileName());
@@ -105,6 +106,7 @@ public class OpenDefinitionAction extends SelectionParseAction {
 						    				}
 						    			}
 						    		});
+						    		break;
 						    	}
 							}
 						}

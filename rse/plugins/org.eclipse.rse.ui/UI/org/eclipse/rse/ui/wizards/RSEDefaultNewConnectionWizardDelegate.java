@@ -47,7 +47,6 @@ import org.eclipse.rse.ui.view.SystemPerspectiveHelpers;
 public class RSEDefaultNewConnectionWizardDelegate extends RSENewConnectionWizardDelegate {
 	
 	private RSENewConnectionWizardDefaultDelegateMainPage         mainPage;
-	private SystemNewConnectionWizardRenameProfilePage rnmProfilePage;
     private ISystemNewConnectionWizardPage[]           subsystemFactorySuppliedWizardPages;
     private Hashtable                                  ssfWizardPagesPerSystemType = new Hashtable();
 	private String                                     defaultUserId;
@@ -500,7 +499,7 @@ public class RSEDefaultNewConnectionWizardDelegate extends RSENewConnectionWizar
      */
     public IWizardPage getNextPage(IWizardPage page) 
     {
-	    if (!hasAdditionalPages() || (page==rnmProfilePage))
+	    if (!hasAdditionalPages())
 	      return null;
 	    else
 	    {

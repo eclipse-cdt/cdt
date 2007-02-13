@@ -112,6 +112,8 @@ public class EditorTestHelper {
 	public static final String NAVIGATOR_VIEW_ID= "org.eclipse.ui.views.ResourceNavigator";
 	
 	public static final String INTRO_VIEW_ID= "org.eclipse.ui.internal.introview";
+
+	private static final long MAX_WAIT_TIME = 60000; // don't wait longer than 60 seconds
 	
 	public static IEditorPart openInEditor(IFile file, boolean runEventLoop) throws PartInitException {
 		IEditorPart part= IDE.openEditor(getActivePage(), file);
@@ -272,7 +274,7 @@ public class EditorTestHelper {
 		IIndexManager indexManager= CCorePlugin.getIndexManager();
 		indexManager.joinIndexer(1000, new NullProgressMonitor());
 		// Join jobs
-		joinJobs(0, 0, 500);
+		joinJobs(0, 1000, 500);
 		Logger.global.exiting("EditorTestHelper", "joinBackgroundActivities");
 	}
 	
@@ -285,7 +287,7 @@ public class EditorTestHelper {
 				return allJobsQuiet();
 			}
 		};
-		boolean quiet= helper.waitForCondition(getActiveDisplay(), maxTime > 0 ? maxTime : Long.MAX_VALUE, intervalTime);
+		boolean quiet= helper.waitForCondition(getActiveDisplay(), maxTime > 0 ? maxTime : MAX_WAIT_TIME, intervalTime);
 		Logger.global.exiting("EditorTestHelper", "joinJobs", new Boolean(quiet));
 		return quiet;
 	}
@@ -361,7 +363,7 @@ public class EditorTestHelper {
 				return !isRunning(cReconcilerAccessor, backgroundThreadAccessor);
 			}
 		};
-		boolean finished= helper.waitForCondition(getActiveDisplay(), maxTime > 0 ? maxTime : Long.MAX_VALUE, intervalTime);
+		boolean finished= helper.waitForCondition(getActiveDisplay(), maxTime > 0 ? maxTime : MAX_WAIT_TIME, intervalTime);
 		Logger.global.exiting("EditorTestHelper", "joinReconciler", new Boolean(finished));
 		return finished;
 	}

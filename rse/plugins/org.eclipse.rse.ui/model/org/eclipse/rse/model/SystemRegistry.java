@@ -2168,6 +2168,49 @@ public class SystemRegistry implements ISystemRegistryUI, ISystemModelChangeEven
 		ISystemNewConnectionWizardPage[] newConnectionWizardPages)
 		throws Exception
 	{
+		return createHost(profileName, systemType, connectionName, hostName, description, defaultUserId, defaultUserIdLocation, true, newConnectionWizardPages);
+	}
+	
+	/**
+	 * Create a connection object, given the connection pool and given all the possible attributes.
+	 * <p>
+	 * THE RESULTING CONNECTION OBJECT IS ADDED TO THE LIST OF EXISTING CONNECTIONS FOR YOU, IN
+	 *  THE PROFILE YOU SPECIFY. THE PROFILE IS ALSO SAVED TO DISK.
+	 * <p>
+	 * This method:
+	 * <ul>
+	 *  <li>creates and saves a new connection within the given profile
+	 *  <li>calls all subsystem factories to give them a chance to create a subsystem instance
+	 *  <li>fires an ISystemResourceChangeEvent event of type EVENT_ADD to all registered listeners
+	 * </ul>
+	 * <p>
+	 * @param profileName Name of the system profile the connection is to be added to.
+	 * @param systemType system type matching one of the system type names defined via the
+	 *                    systemTypes extension point.
+	 * @param connectionName unique connection name.
+	 * @param hostName ip name of host.
+	 * @param description optional description of the connection. Can be null.
+	 * @param defaultUserId userId to use as the default for the subsystems.
+	 * @param defaultUserIdLocation one of the constants in {@link org.eclipse.rse.core.IRSEUserIdConstants}
+	 *   that tells us where to set the user Id
+	 * @param createSubSystems <code>true</code> to create subsystems for the host, <code>false</code> otherwise.
+	 * @param newConnectionWizardPages when called from the New Connection wizard this is union of the list of additional
+	 *          wizard pages supplied by the subsystem factories that pertain to the specified system type. Else null.
+	 * @return SystemConnection object, or null if it failed to create. This is typically
+	 *   because the connectionName is not unique. Call getLastException() if necessary.
+	 */
+	public IHost createHost(
+		String profileName,
+		String systemType,
+		String connectionName,
+		String hostName,
+		String description,
+		String defaultUserId,
+		int defaultUserIdLocation,
+		boolean createSubSystems,
+		ISystemNewConnectionWizardPage[] newConnectionWizardPages)
+		throws Exception
+	{
 		lastException = null;
 		ISystemHostPool pool = getHostPool(profileName);
 		IHost conn = null;
@@ -2191,7 +2234,7 @@ public class SystemRegistry implements ISystemRegistryUI, ISystemModelChangeEven
 			SystemBasePlugin.logError("Exception in createConnection for " + connectionName, exc); //$NON-NLS-1$
 			throw exc;
 		}
-		if ((lastException == null) && !promptable)
+		if ((lastException == null) && !promptable && createSubSystems)
 		{
 			// only 1 factory used per service type
 			ISubSystemConfiguration[] factories = getSubSystemConfigurationsBySystemType(systemType, true);
@@ -2211,6 +2254,25 @@ public class SystemRegistry implements ISystemRegistryUI, ISystemModelChangeEven
 	
 		
 		return conn;
+	}
+	
+	/**
+	 * Creates subsystem for a given host.
+	 * @param host the host.
+	 * @param configurations the subsystem configurations
+	 * @since 2.0
+	 */
+	public void createSubSystems(IHost host, ISubSystemConfiguration[] configurations) {
+		
+		ISubSystem[] subsystems = new ISubSystem[configurations.length];
+		
+		for (int i = 0; i < configurations.length; i++) {
+			subsystems[i] = configurations[i].createSubSystem(host, false, null);
+		}
+		
+		FireNewHostEvents fire = new FireNewHostEvents(host, subsystems, this);
+		Display.getDefault().syncExec(fire);
+		RSEUIPlugin.getThePersistenceManager().commit(host);
 	}
 	
 	
@@ -2286,8 +2348,38 @@ public class SystemRegistry implements ISystemRegistryUI, ISystemModelChangeEven
 	public IHost createHost(String profileName, String systemType, String connectionName, String hostName, String description)
 		throws Exception
 	{
+		return createHost(profileName, systemType, connectionName, hostName, description, true);  
+	}
+	
+	/**
+	 * Create a connection object. This is a simplified version
+	 * <p>
+	 * THE RESULTING CONNECTION OBJECT IS ADDED TO THE LIST OF EXISTING CONNECTIONS FOR YOU, IN
+	 *  THE PROFILE YOU SPECIFY. THE PROFILE IS ALSO SAVED TO DISK.
+	 * <p>
+	 * This method:
+	 * <ul>
+	 *  <li>creates and saves a new connection within the given profile
+	 *  <li>optionally calls all subsystem factories to give them a chance to create subsystem instances
+	 *  <li>fires an ISystemResourceChangeEvent event of type EVENT_ADD to all registered listeners
+	 * </ul>
+	 * <p>
+	 * @param profileName Name of the system profile the connection is to be added to.
+	 * @param systemType system type matching one of the system type names defined via the
+	 *                    systemTypes extension point.
+	 * @param connectionName unique connection name.
+	 * @param hostName ip name of host.
+	 * @param description optional description of the connection. Can be null.
+	 * @param createSubSystems <code>true</code> to create subsystems for the host, <code>false</code> otherwise.
+	 * @return SystemConnection object, or null if it failed to create. This is typically
+	 *   because the connectionName is not unique. Call getLastException() if necessary.
+	 * @since 2.0
+	 */
+	public IHost createHost(String profileName, String systemType, String connectionName, String hostName, String description, boolean createSubSystems) throws Exception
+	{
 		return createHost(profileName, systemType, connectionName, hostName, description, null, IRSEUserIdConstants.USERID_LOCATION_HOST, null);  
 	}
+	
 	/**
 	 * Create a connection object. This is a very simplified version that defaults to the user's
 	 *  private profile, or the first active profile if there is no private profile.
@@ -2316,7 +2408,7 @@ public class SystemRegistry implements ISystemRegistryUI, ISystemModelChangeEven
 		ISystemProfile profile = getSystemProfileManager().getDefaultPrivateSystemProfile();
 		if (profile == null)
 			profile = getSystemProfileManager().getActiveSystemProfiles()[0];
-		return createHost(profile.getName(), systemType, connectionName, hostName, description, null, IRSEUserIdConstants.USERID_LOCATION_HOST, null);  
+		return createHost(profile.getName(), systemType, connectionName, hostName, description);  
 	}
 	/**
 	 * Return the previous connection as would be shown in the view

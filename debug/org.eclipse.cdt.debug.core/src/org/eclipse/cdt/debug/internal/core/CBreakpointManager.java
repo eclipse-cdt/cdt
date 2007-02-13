@@ -586,6 +586,13 @@ public class CBreakpointManager implements IBreakpointsListener, IBreakpointMana
 	}
 
 	private void removeAllBreakpoints() {
+		// Remove all breakpoint problem markers
+		for (Iterator iter = fBreakpointProblems.iterator(); iter.hasNext();) {
+			IMarker marker = (IMarker) iter.next();
+			try {
+				marker.delete();
+			} catch (CoreException e) {}
+		}
 		ArrayList list = new ArrayList();
 		ICBreakpoint[] breakpoints = new ICBreakpoint[0];
 		synchronized( getBreakpointMap() ) {
@@ -609,13 +616,6 @@ public class CBreakpointManager implements IBreakpointsListener, IBreakpointMana
 			}
 		} );			
 		getBreakpointNotifier().breakpointsRemoved( getDebugTarget(), breakpoints );
-		// Remove all breakpoint problem markers
-		for (Iterator iter = fBreakpointProblems.iterator(); iter.hasNext();) {
-			IMarker marker = (IMarker) iter.next();
-			try {
-				marker.delete();
-			} catch (CoreException e) {}
-		}
 	}
 
 	private ICBreakpoint[] register( IBreakpoint[] breakpoints ) {

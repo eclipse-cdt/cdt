@@ -69,6 +69,10 @@ public class SelectionParseAction extends Action {
 		fSite=site;
 	}
 
+	public IWorkbenchSite getSite() {
+		return fSite;
+	}
+	
 	protected void operationNotAvailable(final String message) {
 		// run the code to update the status line on the Display thread
 		// this way any other thread can invoke operationNotAvailable(String)

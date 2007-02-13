@@ -1,0 +1,99 @@
+/*******************************************************************************
+ * Copyright (c) 2007 Wind River Systems, Inc. and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *    Markus Schorn - initial API and implementation
+ *******************************************************************************/ 
+package org.eclipse.cdt.internal.ui.search.actions;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.jface.window.Window;
+import org.eclipse.ui.IWorkbenchSite;
+import org.eclipse.ui.IWorkingSet;
+import org.eclipse.ui.IWorkingSetManager;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.dialogs.IWorkingSetSelectionDialog;
+
+import org.eclipse.cdt.core.model.ICElement;
+
+import org.eclipse.cdt.internal.ui.editor.CEditor;
+import org.eclipse.cdt.internal.ui.search.CSearchMessages;
+import org.eclipse.cdt.internal.ui.search.CSearchUtil;
+
+public abstract class FindInWorkingSetAction extends FindAction {
+	
+	private IWorkingSet[] fWorkingSets;
+	private String scopeDescription = ""; //$NON-NLS-1$
+	
+	public FindInWorkingSetAction(CEditor editor, String label, String tooltip, IWorkingSet[] workingSets) {
+		super(editor);
+		setText(label); 
+		setToolTipText(tooltip); 
+		fWorkingSets = workingSets;
+	}
+	
+	public FindInWorkingSetAction(IWorkbenchSite site, String label, String tooltip, IWorkingSet[] workingSets){
+		super(site);
+		setText(label); 
+		setToolTipText(tooltip); 
+		fWorkingSets= workingSets;
+	}
+	
+	final public void run() {
+		IWorkingSet[] initial= fWorkingSets;
+		if (fWorkingSets == null) {
+			fWorkingSets= askForWorkingSets();
+		}
+		if (fWorkingSets != null) {
+			scopeDescription = CSearchMessages.getFormattedString("WorkingSetScope", new String[] {CSearchUtil.toString(fWorkingSets)}); //$NON-NLS-1$
+			super.run();
+		}
+		fWorkingSets= initial;
+	}
+
+	final protected String getScopeDescription() {
+		return scopeDescription;
+	}
+
+	final protected ICElement[] getScope() {
+		if (fWorkingSets == null) {
+			return new ICElement[0];
+		}
+		List scope = new ArrayList();
+		for (int i = 0; i < fWorkingSets.length; ++i) {
+			IAdaptable[] elements = fWorkingSets[i].getElements();
+			for (int j = 0; j < elements.length; ++j) {
+				ICElement element = (ICElement)elements[j].getAdapter(ICElement.class);
+				if (element != null)
+					scope.add(element);
+			}
+		}
+		
+		return (ICElement[])scope.toArray(new ICElement[scope.size()]);
+	}
+	
+	private IWorkingSet[] askForWorkingSets() {
+		IWorkingSetManager wsm= PlatformUI.getWorkbench().getWorkingSetManager();
+		IWorkingSetSelectionDialog dlg= 
+			wsm.createWorkingSetSelectionDialog(getSite().getShell(), true);
+		IWorkingSet[] mru= wsm.getRecentWorkingSets();
+		if (mru != null && mru.length > 0) {
+			dlg.setSelection(new IWorkingSet[] {mru[0]});
+		}
+		if (dlg.open() == Window.OK) {
+			mru= dlg.getSelection();
+			if (mru != null && mru.length == 1) {
+				wsm.addRecentWorkingSet(mru[0]);
+			}
+			return mru;
+		}
+		return null;
+	}
+}

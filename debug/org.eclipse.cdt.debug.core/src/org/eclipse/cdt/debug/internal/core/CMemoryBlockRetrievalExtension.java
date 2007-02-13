@@ -161,9 +161,11 @@ public class CMemoryBlockRetrievalExtension extends PlatformObject implements IM
 				BigInteger addrBigInt = null;
 				String memorySpaceID = null;
 				if (hasMemorySpaces()) {
+					// Can't tell if block was created with a memory-space/address or with an expression.
+					// Assume the former and let an exception in the decoding tell us otherwise
 					ICDITarget cdiTarget = fDebugTarget.getCDITarget();
-					StringBuffer sbuf = new StringBuffer();
 					try {
+						StringBuffer sbuf = new StringBuffer();
 						addrBigInt = ((ICDIMemorySpaceManagement)cdiTarget).stringToAddress(memBlockExt.getExpression(), sbuf);
 						if (addrBigInt == null) {
 							// Client wants our default decoding; minimum is "<space>:0x?"
@@ -171,9 +173,11 @@ public class CMemoryBlockRetrievalExtension extends PlatformObject implements IM
 						}
 						memorySpaceID = sbuf.toString();
 					} 
-					catch( CDIException e ) {
-						CDebugCorePlugin.log( e );
+					catch( CDIException e ) { // thrown by CDI client decoding method
 						addrBigInt = null;
+					}
+					catch (CoreException e) {
+						addrBigInt = null; // thrown by our decoding method
 					}
 				}
 				
@@ -218,7 +222,7 @@ public class CMemoryBlockRetrievalExtension extends PlatformObject implements IM
 				}
 				
 				// See if the expression is a simple numeric value; if it is, we can avoid some costly
-				// processing (avoid calling the backend to resolve the expression)
+				// processing (calling the backend to resolve the expression)
 				try {
 					IAddressFactory addrFactory = ((CDebugTarget)target).getAddressFactory();
 					String hexstr = addrFactory.createAddress(expression).toString(16);

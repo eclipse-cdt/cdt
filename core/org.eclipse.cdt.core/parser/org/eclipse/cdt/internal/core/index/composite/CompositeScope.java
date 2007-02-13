@@ -46,10 +46,9 @@ public abstract class CompositeScope implements IIndexScope {
 
 	// Note: for c++ namespaces we are returning an arbitrary name 
 	final public IName getScopeName() throws DOMException {
-		IScope scope = rbinding.getScope();
-		if(scope==null)
-			return null;
-		return scope.getScopeName();
+		if(rbinding instanceof IScope)
+			return ((IScope) rbinding).getScopeName();
+		return null;
 	}
 
 	protected final void fail() {

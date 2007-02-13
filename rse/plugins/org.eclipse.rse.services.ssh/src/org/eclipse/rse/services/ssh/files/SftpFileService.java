@@ -491,7 +491,7 @@ public class SftpFileService extends AbstractFileService implements IFileService
 	}
 	
 	public IHostFile getUserHome() {
-		//TODO assert: this is only called after we are connected
+		//TODO Assert: this is only called after we are connected
 		int lastSlash = fUserHome.lastIndexOf('/');
 		String name = fUserHome.substring(lastSlash + 1);	
 		String parent = fUserHome.substring(0, lastSlash);

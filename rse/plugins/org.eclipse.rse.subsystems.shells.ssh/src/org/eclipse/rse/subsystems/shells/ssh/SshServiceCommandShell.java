@@ -185,7 +185,7 @@ public class SshServiceCommandShell extends ServiceCommandShell
 	 */
 	protected String getPromptCommand() {
 		IHostShell shell = getHostShell();
-		//assert shell instanceof SshHostShell;
+		//Assert shell instanceof SshHostShell;
 		if (shell instanceof SshHostShell) {
 			return ((SshHostShell)shell).getPromptCommand();
 		}

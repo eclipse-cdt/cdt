@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2002, 2006 IBM Corporation. All rights reserved.
+ * Copyright (c) 2002, 2007 IBM Corporation. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -11,11 +11,12 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * {Uwe Stieber} (Wind River) - API consistency.
  ********************************************************************************/
 
 package org.eclipse.rse.ui.dialogs;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.jface.wizard.IWizard;
 import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.ProgressMonitorPart;
 import org.eclipse.jface.wizard.WizardDialog;
@@ -57,137 +58,122 @@ import org.eclipse.swt.widgets.Shell;
  * @see org.eclipse.rse.ui.wizards.AbstractSystemWizard
  * @see org.eclipse.rse.ui.actions.SystemBaseWizardAction
  */
-public class SystemWizardDialog
-	   extends WizardDialog 
-	   implements ISystemPromptDialog
-{
-	protected ISystemWizard wizard;
+public class SystemWizardDialog extends WizardDialog implements ISystemPromptDialog {
 	protected String helpId;
-	
+
 	/**
 	 * Constructor
 	 */
-	public SystemWizardDialog(Shell shell, ISystemWizard wizard)
-	{
-		super(shell, wizard);
-		this.wizard = wizard;
-		wizard.setSystemWizardDialog(this);
+	public SystemWizardDialog(Shell shell, IWizard wizard) {
+		this(shell, wizard, null);
 	}
+
 	/**
 	 * Constructor two. Use when you have an input object at instantiation time.
 	 */
-	public SystemWizardDialog(Shell shell, ISystemWizard wizard, Object inputObject)
-	{
-		super(shell,wizard);
-		this.wizard = wizard;		
-		setInputObject(inputObject);
-		wizard.setSystemWizardDialog(this);
+	public SystemWizardDialog(Shell shell, IWizard wizard, Object inputObject) {
+		super(shell, wizard);
+		if (wizard instanceof ISystemWizard) {
+			((ISystemWizard)wizard).setSystemWizardDialog(this);
+			setInputObject(inputObject);
+		}
 	}
-    
-	/**
-	 * For explicitly setting input object. Called by SystemDialogAction
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.ui.dialogs.ISystemPromptDialog#setInputObject(java.lang.Object)
 	 */
-	public void setInputObject(Object inputObject)
-	{
-		wizard.setInputObject(inputObject);
+	public void setInputObject(Object inputObject) {
+		if (getWizard() instanceof ISystemWizard) ((ISystemWizard)getWizard()).setInputObject(inputObject);
 	}
-	/**
-	 * For explicitly getting input object.
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.ui.dialogs.ISystemPromptDialog#getInputObject()
 	 */
-	public Object getInputObject()
-	{
-		return wizard.getInputObject();
+	public Object getInputObject() {
+		return getWizard() instanceof ISystemWizard ? ((ISystemWizard)getWizard()).getInputObject() : null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.ui.dialogs.ISystemPromptDialog#getOutputObject()
+	 */
+	public Object getOutputObject() {
+		return getWizard() instanceof ISystemWizard ? ((ISystemWizard)getWizard()).getOutputObject() : null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.ui.dialogs.ISystemPromptDialog#setOutputObject(java.lang.Object)
+	 */
+	public void setOutputObject(Object outputObject) {
+		if (getWizard() instanceof ISystemWizard) ((ISystemWizard)getWizard()).setOutputObject(outputObject);
 	}
 	
-	/**
-	 * For explicitly getting output object after wizard is dismissed. Set by the
-	 * dialog's processOK method.
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.ui.dialogs.ISystemPromptDialog#wasCancelled()
 	 */
-	public Object getOutputObject()
-	{
-		
-		return wizard.getOutputObject();
-	}
-	
-	/**
-	 * Allow caller to determine if wizard was cancelled or not.
-	 */
-	public boolean wasCancelled()
-	{
+	public boolean wasCancelled() {
 		//System.out.println("Inside wasCancelled of SystemWizardDialog: " + wizard.wasCancelled());
-		return wizard.wasCancelled();
+		return getWizard() instanceof ISystemWizard ? ((ISystemWizard)getWizard()).wasCancelled() : false;
 	}
-	
-    /**
-     * Set the help context id for this wizard dialog
-     */
-    public void setHelp(String id)
-    {
-    	helpId = id;
-    	if (wizard != null) {
-    		wizard.setHelp(id);
-    	}
-    }
-    
+
+	/**
+	 * Set the help context id for this wizard dialog
+	 */
+	public void setHelp(String id) {
+		helpId = id;
+		if (getWizard() instanceof ISystemWizard) ((ISystemWizard)getWizard()).setHelp(id);
+	}
+
 	/**
 	 * Get the help context id for this wizard dialog, as set in setHelp
 	 */
-	public String getHelpContextId()
-	{
+	public String getHelpContextId() {
 		return helpId;
 	}
-	
+
 	/**
 	 * Intercept of parent method so we can automatically register the wizard's progress monitor
 	 *  with the SystemRegistry for all framework progress monitor requests, if user has specified
 	 *  they need a progress monitor for this wizard.
 	 */
-    protected Control createDialogArea(Composite parent) 
-    {
-    	boolean needsMonitor = wizard.needsProgressMonitor();
-    	Control ctrl = super.createDialogArea(parent);
-        if (!needsMonitor)
-        {
-        	IProgressMonitor pm = getProgressMonitor();
-        	((ProgressMonitorPart)pm).dispose();
-        }
-        if (needsMonitor && RSEUIPlugin.isTheSystemRegistryActive())
-        {
-        	RSEUIPlugin.getTheSystemRegistry().setRunnableContext(getShell(), this);
-	        // add a dispose listener
-	        getShell().addDisposeListener(new DisposeListener() 
-	        {
-		      public void widgetDisposed(DisposeEvent e) 
-		      {
-        	      RSEUIPlugin.getTheSystemRegistry().clearRunnableContext();		      	
-		      }
- 	        });
-        }
-        return ctrl;	
-    }
-    
-    /**
-     * Exposes this nice new 2.0 capability to the public. 
-     */
-    public void updateSize(IWizardPage page) 
-    {
-    	super.updateSize(page);
-    }    
-    
-    /**
-     * Expose inherited protected method convertWidthInCharsToPixels as a publicly
-     *  excessible method
-     */
-    public int publicConvertWidthInCharsToPixels(int chars) 
-    {
-    	return convertWidthInCharsToPixels(chars);
-    }
-    /**
-     * Expose inherited protected method convertHeightInCharsToPixels as a publicly
-     *  excessible method
-     */
-    public int publicConvertHeightInCharsToPixels(int chars) 
-    {
-    	return convertHeightInCharsToPixels(chars);
-    }    
+	protected Control createDialogArea(Composite parent) {
+		boolean needsMonitor = getWizard().needsProgressMonitor();
+		Control ctrl = super.createDialogArea(parent);
+		if (!needsMonitor) {
+			IProgressMonitor pm = getProgressMonitor();
+			((ProgressMonitorPart)pm).dispose();
+		}
+		if (needsMonitor && RSEUIPlugin.isTheSystemRegistryActive()) {
+			RSEUIPlugin.getTheSystemRegistry().setRunnableContext(getShell(), this);
+			// add a dispose listener
+			getShell().addDisposeListener(new DisposeListener() {
+				public void widgetDisposed(DisposeEvent e) {
+					RSEUIPlugin.getTheSystemRegistry().clearRunnableContext();
+				}
+			});
+		}
+		return ctrl;
+	}
+
+	/**
+	 * Exposes this nice new 2.0 capability to the public. 
+	 */
+	public void updateSize(IWizardPage page) {
+		super.updateSize(page);
+	}
+
+	/**
+	 * Expose inherited protected method convertWidthInCharsToPixels as a publicly
+	 *  excessible method
+	 */
+	public int publicConvertWidthInCharsToPixels(int chars) {
+		return convertWidthInCharsToPixels(chars);
+	}
+
+	/**
+	 * Expose inherited protected method convertHeightInCharsToPixels as a publicly
+	 *  excessible method
+	 */
+	public int publicConvertHeightInCharsToPixels(int chars) {
+		return convertHeightInCharsToPixels(chars);
+	}
 }

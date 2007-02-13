@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2002, 2006 IBM Corporation. All rights reserved.
+ * Copyright (c) 2002, 2007 IBM Corporation and others.. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -11,7 +11,7 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * {Uwe Stieber} (Wind River) - API consistency.
  ********************************************************************************/
 
 package org.eclipse.rse.ui.dialogs;
@@ -354,33 +354,32 @@ public abstract class SystemPromptDialog
     	//helpIdPerControl.put(c, helpId);
     }
 
-	/**
-	 * For explicitly setting input object. Called by SystemDialogAction
-	 */
+  /* (non-Javadoc)
+   * @see org.eclipse.rse.ui.dialogs.ISystemPromptDialog#setInputObject(java.lang.Object)
+   */
 	public void setInputObject(Object inputObject)
 	{
 		this.inputObject = inputObject;
 	}
-	/**
-	 * For explicitly getting input object
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.ui.dialogs.ISystemPromptDialog#getInputObject()
 	 */
 	public Object getInputObject()
 	{
 		return inputObject;
 	}
-	
-	/**
-	 * For explicitly getting output object after dialog is dismissed. Set by the
-	 * dialog's processOK method.
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.ui.dialogs.ISystemPromptDialog#getOutputObject()
 	 */
 	public Object getOutputObject()
 	{
 		return outputObject;
 	}
-	
-	/**
-	 * Allow caller to determine if window was cancelled or not.
-	 * Will return <code>false</code> if Cancel All was pressed.
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.ui.dialogs.ISystemPromptDialog#wasCancelled()
 	 */
 	public boolean wasCancelled()
 	{
@@ -415,21 +414,28 @@ public abstract class SystemPromptDialog
 	{
 		  return fMessageLine;
 	}
-		
-	/**
-	 * For explicitly setting output object. Call this in your processOK method.
-	 * If an output object validator has been set via setOutputObjectValidator, then
-	 *  this will call its isValid method on the outputObject and will return the error
-	 *  message if any that it issues. A return of null always means no errors and
-	 *  hence it is ok to dismiss the dialog.
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.ui.dialogs.ISystemPromptDialog#setOutputObject(java.lang.Object)
+	 * <p>
+	 * Note: Signature has changed to ensure overall API consistency!!! If used with return
+	 *       value in specific product code (open source code does not reference this method!),
+	 *       replace the old code:<pre>
+	 * 
+	 *          String xyz = "output object";
+	 *          SystemMessage message = systemPromptDialog.setOutputObject(xyz);
+	 * 
+	 * </pre>with the new code:<pre>
+	 * 
+	 *          String xyz = "output object";
+	 *          systemPromptDialog.setOutputObject(xyz);
+	 *          if (systemPromptDialog.getOutputObjectValidator() != null)
+	 *          	SystemMessage message = systemPromptDialog.getOutputObjectValidator().validate((String)systemPromptDialog.getOutputObject()); 
+	 * </pre>
+	 * 
 	 */
-	protected SystemMessage setOutputObject(Object outputObject)
-	{
+	public void setOutputObject(Object outputObject) {
 		this.outputObject = outputObject;
-		if ((outputObjectValidator != null) && (outputObject instanceof String))
-		  return outputObjectValidator.validate((String)outputObject);
-		else
-		  return null;
 	}
 	
 	/**

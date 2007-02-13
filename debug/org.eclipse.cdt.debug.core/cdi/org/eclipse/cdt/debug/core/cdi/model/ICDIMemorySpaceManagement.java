@@ -33,12 +33,16 @@ public interface ICDIMemorySpaceManagement extends ICDIObject {
 	String addressToString(BigInteger address, String memorySpaceID);
 
 	/**
-	 * The inverse of addressToString
+	 * The inverse of addressToString. Optionally decodes a memoryspace/address
+	 * string to its components. Client must provide decoding if it provides 
+	 * encoding in addressToString. Conversely, it should return null if 
+	 * addressToString returns null.
 	 *
 	 * @param str - the encoded string (contains memory space + hex address value)
 	 * @param memorySpaceID_out the memory space ID
 	 * @return the BigInteger part of str; client should return null if the default decoding provided
 	 * by CDT is sufficient (<memory-space-id>:<address(hex)>)
+	 * @throws CDIException if string is not in the expected format
 	 */
 	BigInteger stringToAddress(String str, StringBuffer memorySpaceID_out) throws CDIException;
 	

@@ -18,7 +18,6 @@ import org.eclipse.cdt.debug.internal.ui.views.modules.ModuleLabelProvider;
 import org.eclipse.cdt.debug.internal.ui.views.modules.ModuleMementoProvider;
 import org.eclipse.cdt.debug.internal.ui.views.modules.ModuleProxyFactory;
 import org.eclipse.core.runtime.IAdapterFactory;
-import org.eclipse.debug.core.model.IStackFrame;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementContentProvider;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementLabelProvider;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementMementoProvider;

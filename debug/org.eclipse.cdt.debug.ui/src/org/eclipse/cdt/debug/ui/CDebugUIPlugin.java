@@ -12,9 +12,11 @@ package org.eclipse.cdt.debug.ui;
 
 import java.util.HashMap;
 import java.util.Map;
+
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.debug.core.CDebugCorePlugin;
 import org.eclipse.cdt.debug.core.model.ICModule;
+import org.eclipse.cdt.debug.core.model.ICVariable;
 import org.eclipse.cdt.debug.core.model.IModuleRetrieval;
 import org.eclipse.cdt.debug.internal.ui.CBreakpointUpdater;
 import org.eclipse.cdt.debug.internal.ui.CDebugImageDescriptorRegistry;
@@ -25,9 +27,10 @@ import org.eclipse.cdt.debug.internal.ui.EvaluationContextManager;
 import org.eclipse.cdt.debug.internal.ui.IInternalCDebugUIConstants;
 import org.eclipse.cdt.debug.internal.ui.elements.adapters.CDebugElementAdapterFactory;
 import org.eclipse.cdt.debug.internal.ui.elements.adapters.CMemoryAdapterFactory;
+import org.eclipse.cdt.debug.internal.ui.elements.adapters.CWatchExpressionFactoryAdapterFactory;
 import org.eclipse.cdt.debug.ui.sourcelookup.DefaultSourceLocator;
 import org.eclipse.cdt.debug.ui.sourcelookup.OldDefaultSourceLocator;
-import org.eclipse.cdt.internal.ui.editor.SharedTextColors;
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
@@ -277,6 +280,9 @@ public class CDebugUIPlugin extends AbstractUIPlugin {
 		manager.registerAdapters( elementAdapterFactory, IModuleRetrieval.class );
 		manager.registerAdapters( elementAdapterFactory, ICModule.class );
 		manager.registerAdapters( elementAdapterFactory, ICElement.class );
+
+		CWatchExpressionFactoryAdapterFactory watchExpressionAdapterFactory = new CWatchExpressionFactoryAdapterFactory();
+		manager.registerAdapters( watchExpressionAdapterFactory, ICVariable.class );
 		
 		CMemoryAdapterFactory memoryAdapterFactory = new CMemoryAdapterFactory();
 		manager.registerAdapters( memoryAdapterFactory, IMemoryBlockRetrievalExtension.class );
@@ -308,7 +314,7 @@ public class CDebugUIPlugin extends AbstractUIPlugin {
 	 */
 	public ISharedTextColors getSharedTextColors() {
 		if ( fSharedTextColors == null )
-			fSharedTextColors = new SharedTextColors();
+			fSharedTextColors = CUIPlugin.getDefault().getSharedTextColors();
 		return fSharedTextColors;
 	}
 }

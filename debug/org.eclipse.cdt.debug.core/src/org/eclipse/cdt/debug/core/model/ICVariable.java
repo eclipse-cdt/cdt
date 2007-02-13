@@ -33,4 +33,12 @@ public interface ICVariable extends IVariable, ICDebugElement, IFormatSupport, I
 	 * @return whether this variable is an argument
 	 */
 	boolean isArgument();
+
+	/**
+	 * Returns the text presentation of this variable as an expression.
+	 * 
+	 * @return the text presentation of this variable as an expression
+	 * @throws DebugException
+	 */
+	public String getExpressionString() throws DebugException;
 }

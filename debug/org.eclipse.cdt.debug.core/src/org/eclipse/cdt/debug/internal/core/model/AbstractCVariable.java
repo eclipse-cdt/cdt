@@ -62,14 +62,6 @@ public abstract class AbstractCVariable extends CDebugElement implements ICVaria
 		return super.getAdapter( adapter );
 	}
 
-	/**
-	 * Returns the text presentation of this variable as an expression.
-	 * 
-	 * @return the text presentation of this variable as an expression
-	 * @throws DebugException
-	 */
-	public abstract String getExpressionString() throws DebugException;
-
 	public abstract void dispose();
 
 	protected abstract void resetValue();

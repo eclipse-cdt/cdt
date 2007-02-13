@@ -15,13 +15,13 @@ import org.eclipse.cdt.debug.core.CDebugUtils;
 import org.eclipse.cdt.debug.core.model.ICDebugTarget;
 import org.eclipse.cdt.debug.core.model.IModuleRetrieval;
 import org.eclipse.cdt.debug.internal.core.ICDebugInternalConstants;
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
-import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.jface.action.IAction;
 
 /**
@@ -85,8 +85,8 @@ public class LoadSymbolsForAllActionDelegate extends AbstractViewActionDelegate 
 	}
 
 	private ICDebugTarget getDebugTarget( Object element ) {
-		if ( element instanceof IDebugElement ) {
-			return (ICDebugTarget)((IDebugElement)element).getDebugTarget().getAdapter( ICDebugTarget.class );
+		if ( element instanceof IAdaptable ) {
+			return (ICDebugTarget)((IAdaptable)element).getAdapter( ICDebugTarget.class );
 		}
 		return null;
 	}

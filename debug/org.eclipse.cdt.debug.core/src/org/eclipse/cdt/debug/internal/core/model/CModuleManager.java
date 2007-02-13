@@ -13,9 +13,11 @@ package org.eclipse.cdt.debug.internal.core.model;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
+
 import org.eclipse.cdt.debug.core.CDIDebugModel;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIObject;
 import org.eclipse.cdt.debug.core.cdi.model.ICDISharedLibrary;
+import org.eclipse.cdt.debug.core.model.ICDebugTarget;
 import org.eclipse.cdt.debug.core.model.ICModule;
 import org.eclipse.cdt.debug.core.model.IModuleRetrieval;
 import org.eclipse.cdt.debug.internal.core.ICDebugInternalConstants;
@@ -150,5 +152,14 @@ public class CModuleManager extends PlatformObject implements IModuleRetrieval {
 				return module;
 		}
 		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.runtime.PlatformObject#getAdapter(java.lang.Class)
+	 */
+	public Object getAdapter( Class adapter ) {
+		if ( adapter.equals( ICDebugTarget.class ) )
+			return getDebugTarget();
+		return super.getAdapter( adapter );
 	}
 }

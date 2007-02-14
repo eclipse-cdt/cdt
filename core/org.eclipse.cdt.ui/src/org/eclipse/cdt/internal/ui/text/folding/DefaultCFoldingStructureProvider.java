@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 QNX Software Systems and others.
+ * Copyright (c) 2000, 2007 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -90,7 +90,8 @@ public class DefaultCFoldingStructureProvider implements ICFoldingStructureProvi
 	 * Reconcile annotation positions from preprocessor branches.
 	 */
 	private class PreprocessorBranchesReconciler implements ICReconcilingListener {
-		
+		volatile boolean fReconciling;
+
 		/*
 		 * @see org.eclipse.cdt.internal.ui.text.ICReconcilingListener#aboutToBeReconciled()
 		 */
@@ -102,16 +103,21 @@ public class DefaultCFoldingStructureProvider implements ICFoldingStructureProvi
 		 * @see org.eclipse.cdt.internal.ui.text.ICReconcilingListener#reconciled(org.eclipse.cdt.core.dom.ast.IASTTranslationUnit, org.eclipse.cdt.core.IPositionConverter, org.eclipse.core.runtime.IProgressMonitor)
 		 */
 		public void reconciled(IASTTranslationUnit ast, IPositionConverter positionTracker, IProgressMonitor progressMonitor) {
-			if (fInput == null) {
+			if (fInput == null || ast == null || fReconciling) {
 				return;
 			}
-			FoldingStructureComputationContext ctx= createContext(fInitialASTReconcile);
-			fInitialASTReconcile= false;
-			if (fPreprocessorBranchFoldingEnabled) {
-				ctx.fAST= ast;
-				ctx.fASTPositionConverter= positionTracker;
+			fReconciling= true;
+			try {
+				FoldingStructureComputationContext ctx= createContext(fInitialASTReconcile);
+				fInitialASTReconcile= false;
+				if (fPreprocessorBranchFoldingEnabled) {
+					ctx.fAST= ast;
+					ctx.fASTPositionConverter= positionTracker;
+				}
+	            update(ctx);
+			} finally {
+				fReconciling= false;
 			}
-            update(ctx);
 		}
 
 	}

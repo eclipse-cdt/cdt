@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005, 2006 QNX Software Systems and others.
+ * Copyright (c) 2000, 2007 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,8 @@
  *
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
+ *     Warren Paul (Nokia)
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.model;
 
@@ -61,6 +63,9 @@ public class BinaryRunner {
 			CElementDelta cdelta = new CElementDelta(root);
 			cdelta.changed(cproj, ICElementDelta.F_CONTENT);
 			for (int j = 0; j < containers.length; ++j) {
+				if (fMonitor.isCanceled()) {
+					return;
+				}
 				IParent container = containers[j];
 				ICElement[] children = container.getChildren();
 				if (children.length > 0) {
@@ -74,23 +79,20 @@ public class BinaryRunner {
 		}
 		
 	}
-	ICProject cproject;
-	Job runner;
+	
+	private final ICProject cproject;
+	private final Job runnerJob;		// final fields don't need syncronization
+	private boolean isStopped= false;   // access to isStopped must be syncronized.
 
 	public BinaryRunner(IProject prj) {
 		cproject = CModelManager.getDefault().create(prj);
+		runnerJob= createRunnerJob();
 	}
 
-	public void start() {
+	private Job createRunnerJob() {
 		String taskName = CCorePlugin.getResourceString("CoreModel.BinaryRunner.Binary_Search_Thread"); //$NON-NLS-1$
 		taskName += " (" + cproject.getElementName() + ")";  //$NON-NLS-1$//$NON-NLS-2$
-		runner = new Job(taskName) {
-
-			/*
-			 * (non-Javadoc)
-			 * 
-			 * @see org.eclipse.core.runtime.jobs.Job#run(org.eclipse.core.runtime.IProgressMonitor)
-			 */
+		Job job= new Job(taskName) {
 			protected IStatus run(IProgressMonitor monitor) {
 				IStatus status = Status.OK_STATUS;
 				try {
@@ -107,9 +109,10 @@ public class BinaryRunner {
 
 						cproject.getProject().accept(new Visitor(monitor), IContainer.INCLUDE_PHANTOMS);
 
-						CModelOperation op = new BinaryRunnerOperation(cproject);
-						op.runOperation(monitor);
-
+						if (!monitor.isCanceled()) {
+							CModelOperation op = new BinaryRunnerOperation(cproject);
+							op.runOperation(monitor);
+						}
 					}
 				} catch (CoreException e) {
 					// Ignore the error and just cancel the binary thread
@@ -121,26 +124,37 @@ public class BinaryRunner {
 				return status;
 			}
 		};
-		runner.setPriority(Job.LONG);
-		runner.schedule();
+		job.setPriority(Job.LONG);
+		return job;
+	}
+
+	public void start() {
+		synchronized (runnerJob) {
+			if (!isStopped) {
+				runnerJob.schedule();
+			}
+		}
 	}
 
 	/**
 	 * wrap the wait call and the interrupteException.
 	 */
 	public void waitIfRunning() {
-		if (runner != null) {
-			try {
-				runner.join();
-			} catch (InterruptedException e) {
-			}
+		try {
+			runnerJob.join();
+		} catch (InterruptedException e) {
 		}
 	}
 
+	/**
+	 * Cancels the binary runner and waits until it is stopped.
+	 */
 	public void stop() {
-		if (runner != null && runner.getState() == Job.RUNNING) {
-			runner.cancel();
+		synchronized (runnerJob) {
+			isStopped= true;	// make sure job is not scheduled afterwards
+			runnerJob.cancel();
 		}
+		waitIfRunning();
 	}
 
 	private class Visitor implements IResourceProxyVisitor {

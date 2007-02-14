@@ -2654,4 +2654,16 @@ public class CompleteParser2Tests extends TestCase {
 
     	assertInstances(col, bar, 1);
     }
+    
+    public void test173874_nestedClasses() throws Exception {
+    	String code = "class aClass { class bClass; int x; };";
+    	IASTTranslationUnit tu = parse(code, true, ParserLanguage.CPP, true);
+    	
+    	CPPNameCollector col = new CPPNameCollector();
+    	tu.accept(col);
+    	
+    	ICPPClassType cls = (ICPPClassType)col.getName(0).resolveBinding();
+    	ICPPClassType[] nested = cls.getNestedClasses();
+    	assertEquals(1, nested.length);
+    }
 }

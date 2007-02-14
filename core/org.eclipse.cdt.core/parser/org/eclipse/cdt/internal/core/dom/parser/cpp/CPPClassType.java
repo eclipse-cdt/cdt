@@ -793,7 +793,7 @@ public class CPPClassType extends PlatformObject implements ICPPClassType, ICPPI
                 return new ICPPClassType[] { new CPPClassTypeProblem( node, IProblemBinding.SEMANTIC_DEFINITION_NOT_FOUND, getNameCharArray() ) };
             }
         }
-	    IBinding binding = null;
+		
 	    ICPPClassType [] result = null;
 	    
 	    IASTDeclaration [] decls = getCompositeTypeSpecifier().getMembers();
@@ -801,12 +801,13 @@ public class CPPClassType extends PlatformObject implements ICPPClassType, ICPPI
 			IASTDeclaration decl = decls[i];
 			while( decl instanceof ICPPASTTemplateDeclaration )
 				decl = ((ICPPASTTemplateDeclaration)decl).getDeclaration();
-            if( decls[i] instanceof IASTSimpleDeclaration ){
-				IASTDeclSpecifier declSpec = ((IASTSimpleDeclaration) decls[i]).getDeclSpecifier();
+            if( decl instanceof IASTSimpleDeclaration ){
+            	IBinding binding = null;
+				IASTDeclSpecifier declSpec = ((IASTSimpleDeclaration) decl).getDeclSpecifier();
 				if( declSpec instanceof ICPPASTCompositeTypeSpecifier ){
 					binding = ((ICPPASTCompositeTypeSpecifier)declSpec).getName().resolveBinding();
 				} else if( declSpec instanceof ICPPASTElaboratedTypeSpecifier &&
-						   ((IASTSimpleDeclaration)decls[i]).getDeclarators().length == 0 )
+						   ((IASTSimpleDeclaration)decl).getDeclarators().length == 0 )
 				{
 					binding = ((ICPPASTElaboratedTypeSpecifier)declSpec).getName().resolveBinding();
 				}

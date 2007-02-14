@@ -1665,7 +1665,7 @@ public class SystemTableViewPart extends ViewPart implements ISelectionListener,
 	{
 		super.init(site, memento);
 
-		if (memento != null && SystemPreferencesManager.getPreferencesManager().getRememberState())
+		if (memento != null && SystemPreferencesManager.getRememberState())
 		{
 			_memento = memento;
 
@@ -1679,7 +1679,7 @@ public class SystemTableViewPart extends ViewPart implements ISelectionListener,
 	{				  
 		super.saveState(memento);
 
-		if (!SystemPreferencesManager.getPreferencesManager().getRememberState())
+		if (!SystemPreferencesManager.getRememberState())
 			return;
 			
 		if (_viewer != null)

@@ -255,9 +255,8 @@ public abstract class SubSystem extends RSEModelObject implements IAdaptable, IS
     	String newKey = getPreferencesKey(newName, getHostAliasName());
     	if ((userIdValue != null) && (userIdValue.length()>0))
     	{
-   	      	SystemPreferencesManager prefMgr = getPreferencesManager();    	    		
-   	      	prefMgr.clearUserId(previousUserIdKey);
-    	  	prefMgr.setUserId(newKey, userIdValue); // store old value with new preference key
+    		SystemPreferencesManager.clearUserId(previousUserIdKey);
+    		SystemPreferencesManager.setUserId(newKey, userIdValue); // store old value with new preference key
     	}
     	previousUserIdKey = newKey;
     	
@@ -304,9 +303,8 @@ public abstract class SubSystem extends RSEModelObject implements IAdaptable, IS
     	String newKey = getPreferencesKey(getSystemProfileName(), newName);    	
     	if ((userIdValue != null) && (userIdValue.length()>0))
     	{
-   	      SystemPreferencesManager prefMgr = getPreferencesManager();    	    		
-   	      prefMgr.clearUserId(previousUserIdKey);
-    	  prefMgr.setUserId(newKey, userIdValue); // store old value with new preference key
+    		SystemPreferencesManager.clearUserId(previousUserIdKey);
+    		SystemPreferencesManager.setUserId(newKey, userIdValue); // store old value with new preference key
     	}
     	previousUserIdKey = newKey;
     	 
@@ -341,8 +339,7 @@ public abstract class SubSystem extends RSEModelObject implements IAdaptable, IS
     	// value (the actual user id) the old keyed entry held.
     	if (oldUserId != null)
     	{
-   	      SystemPreferencesManager prefMgr = getPreferencesManager();    	    		
-   	      prefMgr.clearUserId(previousUserIdKey);
+   	      SystemPreferencesManager.clearUserId(previousUserIdKey);
     	}		
 		// delete the connection-private filter pool, if it exists:
 		ISystemFilterPool privatePool = getConnectionPrivateFilterPool(false); // false => don't create if not found
@@ -385,14 +382,6 @@ public abstract class SubSystem extends RSEModelObject implements IAdaptable, IS
     }
 
     /**
-     * Helper method to return preference manager
-     */
-    protected SystemPreferencesManager getPreferencesManager()
-    {
-   	    return SystemPreferencesManager.getPreferencesManager();
-    }
-
-    /**
      * Helper method to compute a unique name for a given subsystem instance
      */
     protected String getPreferencesKey()
@@ -419,8 +408,7 @@ public abstract class SubSystem extends RSEModelObject implements IAdaptable, IS
     	String uid = null;
     	if ((key!=null) && (key.length()>0))
     	{    	
-   	      SystemPreferencesManager prefMgr = getPreferencesManager();    	
-    	  uid = prefMgr.getUserId(key); // resolve from preferences	
+    	  uid = SystemPreferencesManager.getUserId(key); // resolve from preferences	
     	}
     	return uid;    	
     }
@@ -456,7 +444,7 @@ public abstract class SubSystem extends RSEModelObject implements IAdaptable, IS
     public void clearLocalUserId()
     {
     	if (previousUserIdKey != null)
-     	  getPreferencesManager().clearUserId(previousUserIdKey);    	
+     	  SystemPreferencesManager.clearUserId(previousUserIdKey);    	
     	IConnectorService system = getConnectorService();
     	if (system != null)
     	  system.clearUserIdCache();

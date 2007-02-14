@@ -777,11 +777,11 @@ public class SystemViewPart
 	public void systemPreferenceChanged(ISystemPreferenceChangeEvent event)
 	{
 		if ((event.getType() == ISystemPreferenceChangeEvents.EVENT_QUALIFYCONNECTIONNAMES) && (qualifyConnectionNamesAction != null))
-			qualifyConnectionNamesAction.setChecked(SystemPreferencesManager.getPreferencesManager().getQualifyConnectionNames());
+			qualifyConnectionNamesAction.setChecked(SystemPreferencesManager.getQualifyConnectionNames());
 		else if ((event.getType() == ISystemPreferenceChangeEvents.EVENT_SHOWFILTERPOOLS) && (showFilterPoolsAction != null))
-			showFilterPoolsAction.setChecked(SystemPreferencesManager.getPreferencesManager().getShowFilterPools());
+			showFilterPoolsAction.setChecked(SystemPreferencesManager.getShowFilterPools());
 		else if ((event.getType() == ISystemPreferenceChangeEvents.EVENT_RESTORESTATE) && (restoreStateAction != null))
-			restoreStateAction.setChecked(SystemPreferencesManager.getPreferencesManager().getRememberState());
+			restoreStateAction.setChecked(SystemPreferencesManager.getRememberState());
 
 		//else if ((event.getType() == ISystemPreferenceChangeEvents.EVENT_SHOWFILTERSTRINGS) &&
 		//    (showFilterStringsAction != null))
@@ -934,7 +934,7 @@ public class SystemViewPart
 	public void saveState(IMemento memento)
 	{
 		//System.out.println("INSIDE SAVESTATE");
-		if (!SystemPreferencesManager.getPreferencesManager().getRememberState())
+		if (!SystemPreferencesManager.getRememberState())
 			return;
 		if (systemView == null)
 		{
@@ -960,7 +960,7 @@ public class SystemViewPart
 		// We do this to ensure the states match on restore. If they don't we will be in trouble
 		//  restoring expansion state and hence will abandon it.
 
-		memento.putString(TAG_SHOWFILTERPOOLS, SystemPreferencesManager.getPreferencesManager().getShowFilterPools() ? "t" : "f"); //$NON-NLS-1$ //$NON-NLS-2$
+		memento.putString(TAG_SHOWFILTERPOOLS, SystemPreferencesManager.getShowFilterPools() ? "t" : "f"); //$NON-NLS-1$ //$NON-NLS-2$
 		//memento.putString(TAG_SHOWFILTERSTRINGS, SystemPreferencesManager.getPreferencesManager().getShowFilterStrings() ? "t" : "f");       
 
 		String inputMemento = memento.getString("factoryID"); // see IWorkbenchWindow ... this is only clue I can figure out!  //$NON-NLS-1$
@@ -1522,7 +1522,7 @@ public class SystemViewPart
 		{
 			IMemento memento = _memento;
 			//System.out.println("SYSTEMVIEWPART: restoreState");
-			if (!SystemPreferencesManager.getPreferencesManager().getRememberState())
+			if (!SystemPreferencesManager.getRememberState())
 				return Status.CANCEL_STATUS;
 
 			// restore the show filter pools and show filter strings settings as they were when this was saved
@@ -1548,7 +1548,7 @@ public class SystemViewPart
 			if (savedValue != null)
 				showFilterPools = savedValue.equals("t"); //$NON-NLS-1$
 			else
-				showFilterPools = SystemPreferencesManager.getPreferencesManager().getShowFilterPools();
+				showFilterPools = SystemPreferencesManager.getShowFilterPools();
 			savedValue = memento.getString(TAG_SHOWFILTERSTRINGS); // historical
 			if (savedValue != null)
 				showFilterStrings = savedValue.equals("t"); //$NON-NLS-1$
@@ -1754,7 +1754,7 @@ public class SystemViewPart
 		if (savedValue != null)
 			showFilterPools = savedValue.equals("t"); //$NON-NLS-1$
 		else
-			showFilterPools = SystemPreferencesManager.getPreferencesManager().getShowFilterPools();
+			showFilterPools = SystemPreferencesManager.getShowFilterPools();
 
 		savedValue = memento.getString(TAG_SHOWFILTERSTRINGS);
 		if (savedValue != null)
@@ -1861,7 +1861,7 @@ public class SystemViewPart
 	{
 		//System.out.println("INSIDE GETADAPTER IN SYSTEMVIEWPART. adaptableObject = "+adaptableObject+", adapterType = "+adapterType.getName());
 		// we don't try to restore these secondary perspectives unless user has elected to do so...
-		if (!SystemPreferencesManager.getPreferencesManager().getRememberState())
+		if (!SystemPreferencesManager.getRememberState())
 			return null;
 		else
 			return this;

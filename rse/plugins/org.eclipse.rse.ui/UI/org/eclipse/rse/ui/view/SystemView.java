@@ -1496,7 +1496,7 @@ public class SystemView extends SafeTreeViewer implements ISystemTree, ISystemRe
 		setExpandedState(parentSubSystem, true); // expand the subsystem
 		Object filterParentInTree = parentSubSystem; // will be case unless in show filter pool mode
 		// if showing filter pools, expand parent filter pool reference...
-		if (SystemPreferencesManager.getPreferencesManager().getShowFilterPools()) {
+		if (SystemPreferencesManager.getShowFilterPools()) {
 			ISystemFilterPoolReference poolRef = parentSubSystem.getFilterPoolReferenceManager().getReferenceToSystemFilterPool(filter.getParentFilterPool());
 			setExpandedState(poolRef, true);
 			filterParentInTree = poolRef;

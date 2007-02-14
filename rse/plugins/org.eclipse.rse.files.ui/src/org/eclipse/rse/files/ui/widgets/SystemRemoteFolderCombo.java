@@ -444,7 +444,7 @@ public class SystemRemoteFolderCombo extends Composite implements ISystemCombo
 	 */
 	public static String[] getHistory()
 	{
-		return SystemPreferencesManager.getPreferencesManager().getFolderHistory();
+		return SystemPreferencesManager.getFolderHistory();
 	}
 
 	/**

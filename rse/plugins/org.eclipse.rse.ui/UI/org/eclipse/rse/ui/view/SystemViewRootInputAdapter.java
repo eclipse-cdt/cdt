@@ -33,7 +33,6 @@ import org.eclipse.swt.widgets.Shell;
  */
 public class SystemViewRootInputAdapter extends AbstractSystemViewAdapter implements ISystemViewElementAdapter
 {
-	private SystemPreferencesManager	spg;
     private SystemNewConnectionPromptObject newConnPrompt;
     private Object[] newConnPromptArray;
         
@@ -168,9 +167,7 @@ public class SystemViewRootInputAdapter extends AbstractSystemViewAdapter implem
     
     private boolean showNewConnectionPrompt()
     {
-    	if (spg == null)
-    	  spg = SystemPreferencesManager.getPreferencesManager();
-    	return spg.getShowNewConnectionPrompt();
+    	return SystemPreferencesManager.getShowNewConnectionPrompt();
     }
 
     private SystemNewConnectionPromptObject getNewConnectionPromptObject()

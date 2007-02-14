@@ -40,7 +40,7 @@ public class SystemPreferenceShowFilterPoolsAction extends SystemBaseAction
 		super(SystemResources.ACTION_PREFERENCE_SHOW_FILTERPOOLS_LABEL,SystemResources.ACTION_PREFERENCE_SHOW_FILTERPOOLS_TOOLTIP,
 		      parent);
         allowOnMultipleSelection(true);        
-        setChecked(SystemPreferencesManager.getPreferencesManager().getShowFilterPools());
+        setChecked(SystemPreferencesManager.getShowFilterPools());
         setSelectionSensitive(false);
         
 		setHelp(RSEUIPlugin.HELPPREFIX+"actn0011"); //$NON-NLS-1$
@@ -53,7 +53,7 @@ public class SystemPreferenceShowFilterPoolsAction extends SystemBaseAction
 	public void run() 
 	{
 		boolean newState = isChecked();
-        SystemPreferencesManager.getPreferencesManager().setShowFilterPools(newState);
+        SystemPreferencesManager.setShowFilterPools(newState);
     	firePreferenceChangeEvent(ISystemPreferenceChangeEvents.EVENT_SHOWFILTERPOOLS,
     	                          !newState,newState);  // defect 41794             
 	}		

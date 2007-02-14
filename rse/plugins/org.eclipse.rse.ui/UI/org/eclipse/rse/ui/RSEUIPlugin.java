@@ -16,7 +16,6 @@
 
 package org.eclipse.rse.ui;
 
-import java.net.InetAddress;
 import java.net.URL;
 import java.util.Arrays;
 import java.util.Vector;
@@ -30,6 +29,7 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.rse.core.IRSESystemType;
 import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.SystemBasePlugin;
+import org.eclipse.rse.core.SystemPreferencesManager;
 import org.eclipse.rse.core.SystemResourceManager;
 import org.eclipse.rse.core.comm.ISystemKeystoreProvider;
 import org.eclipse.rse.core.comm.SystemCommunicationsDaemon;
@@ -56,8 +56,6 @@ import org.eclipse.rse.ui.actions.SystemDynamicPopupMenuExtensionManager;
 import org.eclipse.rse.ui.actions.SystemShowPreferencesPageAction;
 import org.eclipse.rse.ui.internal.RSESystemTypeAdapterFactory;
 import org.eclipse.rse.ui.internal.RSEUIRegistry;
-import org.eclipse.rse.ui.propertypages.RemoteSystemsPreferencePage;
-import org.eclipse.rse.ui.propertypages.SystemCommunicationsPreferencePage;
 import org.eclipse.rse.ui.view.SubSystemConfigurationAdapterFactory;
 import org.eclipse.rse.ui.view.SystemViewAdapterFactory;
 import org.eclipse.rse.ui.view.team.SystemTeamViewResourceAdapterFactory;
@@ -81,7 +79,6 @@ public class RSEUIPlugin extends SystemBasePlugin implements ISystemMessageProvi
     private static SystemMessageFile    defaultMessageFile = null;    
     
 //    private SystemType[]	            allSystemTypes = null;
-    private String                      enabledSystemTypes;
     private SystemRegistry              _systemRegistry = null;
     
     
@@ -93,7 +90,6 @@ public class RSEUIPlugin extends SystemBasePlugin implements ISystemMessageProvi
     private SystemViewAdapterFactory svaf; // for fastpath access
     private SystemTeamViewResourceAdapterFactory svraf; // for fastpath
 	private SystemShowPreferencesPageAction[] showPrefPageActions = null;
-	private boolean dontShowLocalConnection, dontShowProfilePageInitially;
 	private boolean loggingSystemMessageLine = false;
 	    		
 	/**
@@ -119,50 +115,12 @@ public class RSEUIPlugin extends SystemBasePlugin implements ISystemMessageProvi
     }
 
 	/**
-	 * Initializes default preferences.
+	 * Initializes preferences.
 	 */
 	public void initializeDefaultPreferences() {
-		
-	    boolean showNewConnPromptPref = ISystemPreferencesConstants.DEFAULT_SHOWNEWCONNECTIONPROMPT;
-	    dontShowLocalConnection = false;
-	    dontShowProfilePageInitially = false;
-	    
-	    String showNewConn = System.getProperty("rse.showNewConnectionPrompt"); //$NON-NLS-1$
-		
-	    if (showNewConn != null) {
-	    	showNewConnPromptPref = showNewConn.equals("true"); //$NON-NLS-1$
-	    }
-	    
-	    String showLocalConn = System.getProperty("rse.showLocalConnection"); //$NON-NLS-1$
-	    
-		if (showLocalConn != null) {
-			dontShowLocalConnection = showLocalConn.equals("false"); //$NON-NLS-1$
-		}
-		
-		enabledSystemTypes = System.getProperty("rse.enableSystemTypes"); //$NON-NLS-1$
-		
-		if ((enabledSystemTypes != null) && (enabledSystemTypes.length() == 0)) {
-			enabledSystemTypes = null;
-		}
-		
-		String showProfileInitially = System.getProperty("rse.showProfilePage"); //$NON-NLS-1$
-		
-		if (showProfileInitially != null) {
-			dontShowProfilePageInitially = showProfileInitially.equals("false"); //$NON-NLS-1$
-		}
-	    
-		RemoteSystemsPreferencePage.initDefaults(getPreferenceStore(), showNewConnPromptPref);
-		SystemCommunicationsPreferencePage.initDefaults(getPreferenceStore());
+		SystemPreferencesManager.initDefaults();
 	}
-	
-	/**
-	 * Returns whether to show profile page initially, i.e. during the first new connection creation.
-	 * @return <code>true</code> to show profile page initially, <code>false</code> otherwise.
-	 */
-	public boolean getShowProfilePageInitially() {
-		return !dontShowProfilePageInitially;
-	}
-	
+
 	/**
 	 * Set whether or not to log the messages shown on the system message line for dialogs
 	 * and wizards. These message are typically validation messages for fields. 
@@ -546,7 +504,7 @@ public class RSEUIPlugin extends SystemBasePlugin implements ISystemMessageProvi
 	      //}
 //	    }
 		 // new support to allow products to not pre-create a local connection
-		if (SystemResourceManager.isFirstTime() && !dontShowLocalConnection) {	
+		if (SystemResourceManager.isFirstTime() && SystemPreferencesManager.getShowLocalConnection()) {	
 			ISystemProfileManager profileManager = SystemProfileManager.getSystemProfileManager();
 			ISystemProfile profile = profileManager.getDefaultPrivateSystemProfile();
 			String userName = System.getProperty("user.name"); //$NON-NLS-1$
@@ -706,22 +664,6 @@ public class RSEUIPlugin extends SystemBasePlugin implements ISystemMessageProvi
     
     
 
-    /**
-     * Returns a qualified hostname given a potentially unqualified hostname
-     */
-    public static String getQualifiedHostName(String hostName)
-	{
-	 try
-     {	       	    
-		 InetAddress address = InetAddress.getByName(hostName);
-		 return address.getCanonicalHostName();
-     } 
-     catch (java.net.UnknownHostException exc)
-     {
-       	return hostName;
-     }
-	}
-    
     /**
      * Return an array of SubSystemConfigurationProxy objects.
      * These represent all extensions to our subsystemConfigurations extension point.

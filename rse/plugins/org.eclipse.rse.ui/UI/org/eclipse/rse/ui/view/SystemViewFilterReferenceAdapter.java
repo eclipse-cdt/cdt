@@ -206,7 +206,7 @@ public class SystemViewFilterReferenceAdapter
 			return parentContainer;
 		// else parent is a filter pool. The parent will be the pool only if
 		//  we are in "Show Filter Pools" mode, else it is the subsystem.
-		boolean showFPs = SystemPreferencesManager.getPreferencesManager().getShowFilterPools();
+		boolean showFPs = SystemPreferencesManager.getShowFilterPools();
 		if (showFPs)
 			return parentContainer;
 		else
@@ -748,7 +748,7 @@ public class SystemViewFilterReferenceAdapter
 	{
 		Object parent = ((ISystemFilterReference) element).getParent(); //getParent(element); // will be filter (nested) or filter pool
 		ISystemViewElementAdapter parentAdapter = getAdapter(parent);
-		boolean showFPs = SystemPreferencesManager.getPreferencesManager().getShowFilterPools();
+		boolean showFPs = SystemPreferencesManager.getShowFilterPools();
 		if (parent instanceof ISystemFilterPoolReference) // not a nested filter
 		{
 			if (!showFPs) // not showing the real parent in GUI?

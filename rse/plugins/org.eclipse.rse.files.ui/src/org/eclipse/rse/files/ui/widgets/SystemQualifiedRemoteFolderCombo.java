@@ -527,7 +527,7 @@ public class SystemQualifiedRemoteFolderCombo extends Composite
 	 */
 	public static String[] getHistory()
 	{
-		return SystemPreferencesManager.getPreferencesManager().getFolderHistory();
+		return SystemPreferencesManager.getFolderHistory();
 	}
 
 	/**

@@ -20,6 +20,7 @@ import java.util.Hashtable;
 import java.util.Vector;
 
 import org.eclipse.jface.wizard.IWizardPage;
+import org.eclipse.rse.core.IRSEPreferenceNames;
 import org.eclipse.rse.core.IRSESystemType;
 import org.eclipse.rse.core.SystemBasePlugin;
 import org.eclipse.rse.core.model.IHost;
@@ -33,7 +34,6 @@ import org.eclipse.rse.model.DummyHost;
 import org.eclipse.rse.model.SystemStartHere;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
-import org.eclipse.rse.ui.ISystemPreferencesConstants;
 import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemConnectionForm;
 import org.eclipse.rse.ui.SystemResources;
@@ -129,7 +129,7 @@ public class RSEDefaultNewConnectionWizardDelegate extends RSENewConnectionWizar
 	      
 	      SystemStartHere.getSystemProfileManager().getDefaultPrivateSystemProfile();
 	      
-	      RSEUIPlugin.getDefault().getShowProfilePageInitially();
+	      // RSEUIPlugin.getShowProfilePage();
 	      /* DKM - I don't think we should force profiles into the faces of users
 	       *     we no longer default to "private" so hopefully this would never be
 	       *     desirable
@@ -177,7 +177,7 @@ public class RSEDefaultNewConnectionWizardDelegate extends RSENewConnectionWizar
             {
               if ((lastProfile == null) && (activeProfileNames!=null))
               {
-                String defaultTeamName = ISystemPreferencesConstants.DEFAULT_TEAMPROFILE;
+                String defaultTeamName = IRSEPreferenceNames.DEFAULT_TEAMPROFILE;
                 for (int idx=0; (lastProfile==null)&&(idx<activeProfileNames.length); idx++)
                 {
               	 if (!activeProfileNames[idx].equals(defaultTeamName))

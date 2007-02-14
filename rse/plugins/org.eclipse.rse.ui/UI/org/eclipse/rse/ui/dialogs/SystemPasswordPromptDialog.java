@@ -253,7 +253,7 @@ public final class SystemPasswordPromptDialog extends SystemPromptDialog impleme
 		originalUserId = connectorService.getUserId();
 		userId = originalUserId;
 		if (connectorService.supportsUserId() && (userId == null || userId.length() == 0)) {
-			userId = SystemPreferencesManager.getPreferencesManager().getDefaultUserId(connectorService.getHostType());
+			userId = SystemPreferencesManager.getUserId(connectorService.getHostType());
 		}
 		if (textUserId != null && userId != null) {
 			textUserId.setText(userId);

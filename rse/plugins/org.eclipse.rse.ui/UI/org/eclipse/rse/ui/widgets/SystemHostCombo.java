@@ -254,7 +254,7 @@ public class SystemHostCombo extends Composite implements ISelectionProvider, IS
     {
 		this.showNewButton = showNewButton;
 		this.showLabel = showLabel;
-		showQualifiedNames = SystemPreferencesManager.getPreferencesManager().getQualifyConnectionNames();
+		showQualifiedNames = SystemPreferencesManager.getQualifyConnectionNames();
 		//prepareComposite(showNewButton ? 3 : 2);
 		prepareComposite(3);
 
@@ -925,7 +925,7 @@ public class SystemHostCombo extends Composite implements ISelectionProvider, IS
 					{
 						// if RENAME, update showQualifiedNames in case it changed
 						if ( type == EVENT_RENAME )
-							showQualifiedNames = SystemPreferencesManager.getPreferencesManager().getQualifyConnectionNames();
+							showQualifiedNames = SystemPreferencesManager.getQualifyConnectionNames();
 							
 						refreshConnections();
 					}

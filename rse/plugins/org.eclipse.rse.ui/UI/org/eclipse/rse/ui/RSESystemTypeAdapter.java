@@ -21,13 +21,10 @@ import java.net.URL;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.core.runtime.Plugin;
-import org.eclipse.core.runtime.Preferences;
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.rse.core.IRSEPreferenceNames;
 import org.eclipse.rse.core.IRSESystemType;
 import org.eclipse.rse.core.IRSESystemTypeConstants;
-import org.eclipse.rse.core.RSECorePlugin;
+import org.eclipse.rse.core.SystemPreferencesManager;
 import org.osgi.framework.Bundle;
 
 /**
@@ -183,12 +180,7 @@ public class RSESystemTypeAdapter extends RSEAdapter implements IRSESystemTypeCo
 		boolean result = false;
 		IRSESystemType systemType = getSystemType(object);
 		if ( systemType != null) {
-			Preferences prefs = RSECorePlugin.getDefault().getPluginPreferences();
-			String key = getPreferencesKey(systemType, IRSEPreferenceNames.ST_ENABLED);
-			if (!prefs.contains(key)) {
-				prefs.setDefault(key, true);
-			}
-			result = prefs.getBoolean(key);
+			result = SystemPreferencesManager.getIsSystemTypeEnabled(systemType);
 		}
 		return result;
 	}
@@ -201,11 +193,7 @@ public class RSESystemTypeAdapter extends RSEAdapter implements IRSESystemTypeCo
 	public void setIsEnabled(Object object, boolean isEnabled) {
 		IRSESystemType systemType = getSystemType(object);
 		if ( systemType != null) {
-			Plugin core = RSECorePlugin.getDefault();
-			Preferences prefs = core.getPluginPreferences();
-			String key = getPreferencesKey(systemType, IRSEPreferenceNames.ST_ENABLED);
-			prefs.setValue(key, isEnabled);
-			core.savePluginPreferences();
+			SystemPreferencesManager.setIsSystemTypeEnabled(systemType, isEnabled);
 		}
 	}
 
@@ -219,12 +207,7 @@ public class RSESystemTypeAdapter extends RSEAdapter implements IRSESystemTypeCo
 		String result = null;
 		IRSESystemType systemType = getSystemType(object);
 		if ( systemType != null) {
-			Preferences prefs = RSECorePlugin.getDefault().getPluginPreferences();
-			String key = getPreferencesKey(systemType, IRSEPreferenceNames.ST_DEFAULT_USERID);
-			if (!prefs.contains(key)) {
-				prefs.setDefault(key, System.getProperty("user.name")); //$NON-NLS-1$
-			}
-			result = prefs.getString(key);
+			result = SystemPreferencesManager.getDefaultUserId(systemType);
 		}
 		return result;
 	}
@@ -237,20 +220,11 @@ public class RSESystemTypeAdapter extends RSEAdapter implements IRSESystemTypeCo
 	public void setDefaultUserId(Object object, String defaultUserId) {
 		IRSESystemType systemType = getSystemType(object);
 		if ( systemType != null) {
-			Plugin core = RSECorePlugin.getDefault();
-			Preferences prefs = core.getPluginPreferences();
-			String key = getPreferencesKey(systemType, IRSEPreferenceNames.ST_DEFAULT_USERID);
-			prefs.setValue(key, defaultUserId);
-			core.savePluginPreferences();
+			SystemPreferencesManager.setDefaultUserId(systemType, defaultUserId);
 		}
 	}
-	
-	private String getPreferencesKey(IRSESystemType systemType, String preference) {
-		String key = systemType.getName() + "." + preference; //$NON-NLS-1$
-		return key;
-	}
-	
-	private IRSESystemType getSystemType(Object systemTypeCandidate) {
+
+	private static IRSESystemType getSystemType(Object systemTypeCandidate) {
 		IRSESystemType result = null;
 		if (systemTypeCandidate instanceof IRSESystemType) {
 			result = (IRSESystemType) systemTypeCandidate;

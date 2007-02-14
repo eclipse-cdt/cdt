@@ -209,8 +209,7 @@ public class Host extends RSEModelObject implements IHost
     	// value (the actual user id) the old keyed entry held.
     	if (oldUserId != null)
     	{
-   	      SystemPreferencesManager prefMgr = getPreferencesManager();    	    		
-   	      prefMgr.clearUserId(previousUserIdKey);
+    		SystemPreferencesManager.clearUserId(previousUserIdKey);
     	}		  	
 	}
 	/**
@@ -230,9 +229,8 @@ public class Host extends RSEModelObject implements IHost
     	String newKey = getPreferencesKey(newName, getAliasName());
     	if ((userIdValue != null) && (userIdValue.length()>0))
     	{
-   	      SystemPreferencesManager prefMgr = getPreferencesManager();    	    		
-   	      prefMgr.clearUserId(previousUserIdKey);
-    	  prefMgr.setUserId(newKey, userIdValue); // store old value with new preference key
+    		SystemPreferencesManager.clearUserId(previousUserIdKey);
+    		SystemPreferencesManager.setUserId(newKey, userIdValue); // store old value with new preference key
     	}
     	previousUserIdKey = newKey;    	
     }
@@ -278,9 +276,8 @@ public class Host extends RSEModelObject implements IHost
     	String newKey = getPreferencesKey(getSystemProfileName(), newName);
     	if ((userIdValue != null) && (userIdValue.length()>0))
     	{
-   	      SystemPreferencesManager prefMgr = getPreferencesManager();    	    		
-   	      prefMgr.clearUserId(previousUserIdKey);
-    	  prefMgr.setUserId(newKey, userIdValue); // store old value with new preference key
+    		SystemPreferencesManager.clearUserId(previousUserIdKey);
+    		SystemPreferencesManager.setUserId(newKey, userIdValue); // store old value with new preference key
     	}
     	previousUserIdKey = newKey;
     }
@@ -338,8 +335,7 @@ public class Host extends RSEModelObject implements IHost
     	  String key = getPreferencesKey();
     	  if (key != null)
     	  {
-   	        SystemPreferencesManager prefMgr = getPreferencesManager();    	
-    	    prefMgr.setUserId(key, newId);
+    		  SystemPreferencesManager.setUserId(key, newId);
     	  }
     	}
     }    
@@ -363,8 +359,7 @@ public class Host extends RSEModelObject implements IHost
     	String uid = getLocalDefaultUserId();
     	if ((uid == null) || (uid.length()==0))
     	{    		
-   	      SystemPreferencesManager prefMgr = getPreferencesManager();    	
-    	  uid = prefMgr.getDefaultUserId(getSystemType()); // resolve from preferences	
+    	  uid = SystemPreferencesManager.getUserId(getSystemType()); // resolve from preferences	
     	  if ((uid != null) && ucId)
     	    uid = uid.toUpperCase();          
     	}
@@ -379,8 +374,7 @@ public class Host extends RSEModelObject implements IHost
     	String uid = null;
     	if ((key!=null) && (key.length()>0))
     	{    	  
-   	      SystemPreferencesManager prefMgr = getPreferencesManager();    	
-    	  uid = prefMgr.getUserId(key); // resolve from preferences	
+    	  uid = SystemPreferencesManager.getUserId(key); // resolve from preferences	
     	}   
     	return uid; 	
     }
@@ -403,17 +397,9 @@ public class Host extends RSEModelObject implements IHost
     public void clearLocalDefaultUserId()
     {
     	if (previousUserIdKey!=null)
-     	  getPreferencesManager().clearUserId(previousUserIdKey);    	
+     	  SystemPreferencesManager.clearUserId(previousUserIdKey);    	
     }   
 
-    /**
-     * Helper method to return preference manager
-     */
-    protected static SystemPreferencesManager getPreferencesManager()
-    {
-   	    return SystemPreferencesManager.getPreferencesManager();
-    }
-    
     /**
      * Helper method to compute a unique name for a given subsystem instance
      */

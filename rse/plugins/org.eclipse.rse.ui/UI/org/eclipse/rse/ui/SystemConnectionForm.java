@@ -37,7 +37,6 @@ import org.eclipse.rse.core.model.ISystemRegistry;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.ui.dialogs.SystemPromptDialog;
 import org.eclipse.rse.ui.messages.ISystemMessageLine;
-import org.eclipse.rse.ui.propertypages.RemoteSystemsPreferencePage;
 import org.eclipse.rse.ui.validators.ISystemValidator;
 import org.eclipse.rse.ui.validators.ValidatorConnectionName;
 import org.eclipse.rse.ui.validators.ValidatorUserId;
@@ -469,7 +468,7 @@ public class SystemConnectionForm
 			}
 			else
 				userIdLocation = IRSEUserIdConstants.USERID_LOCATION_NOTSET;
-			SystemPreferencesManager.getPreferencesManager().setVerifyConnection(verifyHostNameCB.getSelection());
+			SystemPreferencesManager.setVerifyConnection(verifyHostNameCB.getSelection());
 		}
 		
 		return ok;
@@ -699,7 +698,7 @@ public class SystemConnectionForm
         
         if (!updateMode && (defaultSystemType==null))
         {
-		  defaultSystemType = RemoteSystemsPreferencePage.getSystemTypePreference();
+		  defaultSystemType = SystemPreferencesManager.getSystemType();
 		  if ((defaultSystemType == null) || (defaultSystemType.length() == 0))
 		    defaultSystemType = lastSystemType;
 		  if ((defaultSystemType == null) || (defaultSystemType.length() == 0))
@@ -738,7 +737,7 @@ public class SystemConnectionForm
 	    if (updateMode)
 	    	verifyHostNameCB.setSelection(false);
 	    else
-	    	verifyHostNameCB.setSelection(SystemPreferencesManager.getPreferencesManager().getVerifyConnection());
+	    	verifyHostNameCB.setSelection(SystemPreferencesManager.getVerifyConnection());
 	     
 	    // yantzi: artemis 6.0, work offline
 	    if (enableOfflineCB())
@@ -991,7 +990,7 @@ public class SystemConnectionForm
         {
         	if (defaultSystemType == null)
         	{
-		        defaultSystemType = RemoteSystemsPreferencePage.getSystemTypePreference();
+		        defaultSystemType = SystemPreferencesManager.getSystemType();
 		        if ((defaultSystemType == null) || (defaultSystemType.length()==0))
 		          defaultSystemType = lastSystemType;
         	}
@@ -1060,7 +1059,7 @@ public class SystemConnectionForm
         // ---------------		
 		// default user id
         // ---------------
-        String parentUserId = SystemPreferencesManager.getPreferencesManager().getDefaultUserId(systemType);
+        String parentUserId = SystemPreferencesManager.getUserId(systemType);
 		if (textUserId!=null)
 		{        
 		  textUserId.setInheritedText(parentUserId);

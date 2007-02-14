@@ -16,22 +16,17 @@
 
 package org.eclipse.rse.ui.propertypages;
 
-import java.util.Hashtable;
-import java.util.StringTokenizer;
 
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
-import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.util.PropertyChangeEvent;
-import org.eclipse.rse.core.IRSESystemType;
+import org.eclipse.rse.core.IRSEPreferenceNames;
 import org.eclipse.rse.core.RSECorePlugin;
+import org.eclipse.rse.core.SystemPreferencesManager;
 import org.eclipse.rse.core.model.ISystemPreferenceChangeEvents;
 import org.eclipse.rse.internal.model.SystemPreferenceChangeEvent;
-import org.eclipse.rse.internal.model.SystemProfileManager;
 import org.eclipse.rse.ui.ISystemPreferencesConstants;
 import org.eclipse.rse.ui.Mnemonics;
-import org.eclipse.rse.ui.RSESystemTypeAdapter;
 import org.eclipse.rse.ui.RSEUIPlugin;
-import org.eclipse.rse.ui.SystemConnectionForm;
 import org.eclipse.rse.ui.SystemResources;
 import org.eclipse.rse.ui.SystemWidgetHelpers;
 import org.eclipse.swt.SWT;
@@ -93,7 +88,7 @@ public class RemoteSystemsPreferencePage
 	{
         // DEFAULT SYSTEM TYPE		
 		SystemComboBoxFieldEditor systemTypeEditor = new SystemComboBoxFieldEditor(
-			ISystemPreferencesConstants.SYSTEMTYPE,
+			IRSEPreferenceNames.SYSTEMTYPE,
 			SystemResources.RESID_PREF_SYSTEMTYPE_PREFIX_LABEL,
 			RSECorePlugin.getDefault().getRegistry().getSystemTypeNames(),
 			true, // readonly
@@ -169,7 +164,7 @@ public class RemoteSystemsPreferencePage
 
 		// USE DEFERRED QUERY
 		useDeferredQueryEditor = new SystemBooleanFieldEditor(
-		        ISystemPreferencesConstants.USE_DEFERRED_QUERIES,
+		        IRSEPreferenceNames.USE_DEFERRED_QUERIES,
 		        SystemResources.RESID_PREF_USEDEFERREDQUERIES_PREFIX_LABEL,
 		        getFieldEditorParent())
 		        ;
@@ -197,419 +192,11 @@ public class RemoteSystemsPreferencePage
 
 	}
 	
-	// ---------------------------------------------------------
-	// GETTERS/SETTERS FOR EACH OF THE USER PREFERENCE VALUES...
-	// ---------------------------------------------------------
-	// DWD these preferences methods should be moved to SystemPreferencesManager since they are not a proper function of a preference page.
-    /**
-     * Return the names of the profiles the user has elected to make "active".
-     */
-	public static String[] getActiveProfiles()
-	{
-		IPreferenceStore store = RSEUIPlugin.getDefault().getPreferenceStore();
-		return parseStrings(store.getString(ISystemPreferencesConstants.ACTIVEUSERPROFILES));		
-	}
-	
-    /**
-     * Set the names of the profiles the user has elected to make "active".
-     */
-	public static void setActiveProfiles(String[] newProfileNames)
-	{		
-		IPreferenceStore store= RSEUIPlugin.getDefault().getPreferenceStore();
-		store.setValue(ISystemPreferencesConstants.ACTIVEUSERPROFILES, makeString(newProfileNames));		
-		savePreferenceStore();
-	}
-	
-    /**
-     * Return the ordered list of connection names. This is how user arranged his connections in the system view.
-     */
-	public static String[] getConnectionNamesOrder()
-	{
-		IPreferenceStore store= RSEUIPlugin.getDefault().getPreferenceStore();
-		return parseStrings(store.getString(ISystemPreferencesConstants.ORDER_CONNECTIONS));		
-	}
-    /**
-     * Set the ordered list of connection names. This is how user arranged his connections in the system view.
-     */
-	public static void setConnectionNamesOrder(String[] newConnectionNamesOrder)
-	{		
-		IPreferenceStore store= RSEUIPlugin.getDefault().getPreferenceStore();
-		store.setValue(ISystemPreferencesConstants.ORDER_CONNECTIONS, makeString(newConnectionNamesOrder));		
-		savePreferenceStore();
-	}
-    /**
-     * Return true if the user has elected to show filter pools in the Remote System Explorer view
-     */
-	public static boolean getShowFilterPoolsPreference() 
-	{
-		IPreferenceStore store= RSEUIPlugin.getDefault().getPreferenceStore();
-		return store.getBoolean(ISystemPreferencesConstants.SHOWFILTERPOOLS);
-	}
-    /**
-     * Toggle whether to show filter pools in the Remote System Explorer view
-     */
-	public static void setShowFilterPoolsPreference(boolean show) 
-	{
-		IPreferenceStore store= RSEUIPlugin.getDefault().getPreferenceStore();
-		store.setValue(ISystemPreferencesConstants.SHOWFILTERPOOLS,show);
-		savePreferenceStore();
-	}
-
-    /**
-     * Return true if the user has elected to show the "New Connection..." prompt in the Remote Systems view
-     */
-	public static boolean getShowNewConnectionPromptPreference() 
-	{
-		IPreferenceStore store= RSEUIPlugin.getDefault().getPreferenceStore();
-		boolean value = store.getBoolean(ISystemPreferencesConstants.SHOWNEWCONNECTIONPROMPT);
-		return value;
-	}
-    /**
-     * Toggle whether to show filter pools in the Remote System Explorer view
-     */
-	public static void setShowNewConnectionPromptPreference(boolean show) 
-	{
-		IPreferenceStore store= RSEUIPlugin.getDefault().getPreferenceStore();
-		store.setValue(ISystemPreferencesConstants.SHOWNEWCONNECTIONPROMPT,show);
-		savePreferenceStore();
-	}
-
-    /**
-     * Return true if the user has elected to show connection names qualified by profile
-     */
-	public static boolean getQualifyConnectionNamesPreference() 
-	{
-		IPreferenceStore store= RSEUIPlugin.getDefault().getPreferenceStore();
-		return store.getBoolean(ISystemPreferencesConstants.QUALIFY_CONNECTION_NAMES);
-	}
-    /**
-     * Set if the user has elected to show connection names qualified by profile
-     */
-	public static void setQualifyConnectionNamesPreference(boolean set) 
-	{
-		IPreferenceStore store= RSEUIPlugin.getDefault().getPreferenceStore();
-		store.setValue(ISystemPreferencesConstants.QUALIFY_CONNECTION_NAMES,set);
-		savePreferenceStore();
-	}
-
-    /**
-     * Return true if the user has elected to remember the state of the Remote Systems view
-     */
-	public static boolean getRememberStatePreference() 
-	{
-		IPreferenceStore store= RSEUIPlugin.getDefault().getPreferenceStore();
-		return store.getBoolean(ISystemPreferencesConstants.REMEMBER_STATE);
-	}
-    /**
-     * Set if the user has elected to show connection names qualified by profile
-     */
-	public static void setRememberStatePreference(boolean set) 
-	{
-		IPreferenceStore store= RSEUIPlugin.getDefault().getPreferenceStore();
-		store.setValue(ISystemPreferencesConstants.REMEMBER_STATE,set);
-		savePreferenceStore();
-	}
-
-	/**
-	 * Return true if the user has elected to restore the state of the Remote Systems view from cached information
-	 */
-	public static boolean getRestoreStateFromCachePreference() 
-	{
-		IPreferenceStore store= RSEUIPlugin.getDefault().getPreferenceStore();
-		return store.getBoolean(ISystemPreferencesConstants.RESTORE_STATE_FROM_CACHE);
-	}
-
-	/**
-	 * Set if the user has elected to restore the state of the Remote Systems view from cached information
-	 */
-	public static void setRestoreStateFromCachePreference(boolean set) 
-	{
-		IPreferenceStore store= RSEUIPlugin.getDefault().getPreferenceStore();
-		store.setValue(ISystemPreferencesConstants.RESTORE_STATE_FROM_CACHE, set);
-		savePreferenceStore();
-	}
-
-    /**
-     * Return true if the user has elected to show user defined actions cascaded by profile
-     */
-	public static boolean getCascadeUserActionsPreference() 
-	{
-		IPreferenceStore store= RSEUIPlugin.getDefault().getPreferenceStore();
-		return store.getBoolean(ISystemPreferencesConstants.CASCADE_UDAS_BYPROFILE);
-	}
-    /**
-     * Set if the user has elected to show user defined actions cascaded by profile
-     */
-	public static void setCascadeUserActionsPreference(boolean set) 
-	{
-		IPreferenceStore store= RSEUIPlugin.getDefault().getPreferenceStore();
-		store.setValue(ISystemPreferencesConstants.CASCADE_UDAS_BYPROFILE,set);
-		savePreferenceStore();
-	}
-    /**
-     * Return the userId to default to on the Create Connection wizard, per the given system type.
-     * 
-     * @see SystemConnectionForm
-     */
-	public static String getUserIdPreference(String systemType)
-	{
-		if (systemType == null)
-		  return null;
-
-		IRSESystemType sysType = RSECorePlugin.getDefault().getRegistry().getSystemType(systemType);
-		Object adapter = sysType.getAdapter(IRSESystemType.class);
-		if (adapter instanceof RSESystemTypeAdapter)
-		{
-			RSESystemTypeAdapter sysTypeAdapter = (RSESystemTypeAdapter)adapter;
-			return sysTypeAdapter.getDefaultUserId(sysType);
-		}
-		else
-			return null;
-	}
-	
-    /**
-     * Set the default userId per the given system type.
-     */
-	public static void setUserIdPreference(String systemType, String userId)
-	{
-		IRSESystemType sysType = RSECorePlugin.getDefault().getRegistry().getSystemType(systemType);
-		RSESystemTypeAdapter sysTypeAdapter = (RSESystemTypeAdapter)(sysType.getAdapter(IRSESystemType.class));
-		if (sysTypeAdapter != null)
-			sysTypeAdapter.setDefaultUserId(sysType, userId);
-		else
-			return;
-		// following needs to stay in synch with modify() method in SystemTypeFieldEditor...
-		String value = RSEUIPlugin.getDefault().getPreferenceStore().getString(ISystemPreferencesConstants.SYSTEMTYPE_VALUES);
-		Hashtable keyValues = null;
-	    if ((value == null) || (value.length()==0)) // not initialized yet?
-	    {
-    		keyValues = new Hashtable();
-	    	// nothing to do, as we have read from systemTypes extension points already
-	    }
-	    else
-	    {
-	    	keyValues = parseString(value);
-	    }
-	    
-	    String defaultUserId = sysTypeAdapter.getDefaultUserId(sysType);
-	    
-	    if (defaultUserId == null) {
-	    	defaultUserId = "null"; //$NON-NLS-1$
-	    }
-	    
-	    keyValues.put(sysType.getName(), "" + sysTypeAdapter.isEnabled(sysType) + SystemTypeFieldEditor.EACHVALUE_DELIMITER + defaultUserId); //$NON-NLS-1$
-		String s = SystemTypeFieldEditor.createString(keyValues);
-
-		if (s != null)
-			RSEUIPlugin.getDefault().getPreferenceStore().setValue(ISystemPreferencesConstants.SYSTEMTYPE_VALUES, s);	
-				        
-		savePreferenceStore();
-	}
-
-
-//    /**
-//     * Return the hashtable where the key is a string identifying a particular object, and 
-//     *  the value is the user Id for that object.
-//     */
-//	public static Hashtable getUserIdsPerKey() // DWD remove this later
-//	{
-//		IPreferenceStore store= RSEUIPlugin.getDefault().getPreferenceStore();
-//		Hashtable keyValues = null;
-//		String value = store.getString(ISystemPreferencesConstants.USERIDPERKEY);
-//		if (value != null)
-//		  keyValues = parseString(value);
-//		else
-//		{
-//		  keyValues = new Hashtable();
-//		}
-//		return keyValues;
-//	}
-//	/**
-//	 * Set/store the user ids that are saved keyed by some key.
-//	 */
-//	public static void setUserIdsPerKey(Hashtable uidsPerKey) // DWD remove this later
-//	{
-//		IPreferenceStore store= RSEUIPlugin.getDefault().getPreferenceStore();				
-//		store.setValue(ISystemPreferencesConstants.USERIDPERKEY, makeString(uidsPerKey));		
-//		savePreferenceStore();
-//	}
-
-    /**
-     * Return the System type to default to on the Create Connection wizard.
-     * 
-     * @see SystemConnectionForm
-     */
-	public static String getSystemTypePreference()
-	{
-		IPreferenceStore store= RSEUIPlugin.getDefault().getPreferenceStore();
-		return store.getString(ISystemPreferencesConstants.SYSTEMTYPE);		
-	}
-
-    /**
-     * Return the history for the folder combo box widget
-     */
-	public static String[] getFolderHistory()
-	{
-		return getWidgetHistory(ISystemPreferencesConstants.HISTORY_FOLDER);
-	}
-    /**
-     * Set the history for the folder combo box widget.
-     */
-	public static void setFolderHistory(String[] newHistory)
-	{		
-		setWidgetHistory(ISystemPreferencesConstants.HISTORY_FOLDER, newHistory);
-	}
-    /**
-     * Return the history for a widget given an arbitrary key uniquely identifying it
-     */
-	public static String[] getWidgetHistory(String key)
-	{
-		IPreferenceStore store= RSEUIPlugin.getDefault().getPreferenceStore();
-		return parseStrings(store.getString(key));		
-	}
-    /**
-     * Set the history for a widget given an arbitrary key uniquely identifying it.
-     */
-	public static void setWidgetHistory(String key, String[] newHistory)
-	{		
-		IPreferenceStore store= RSEUIPlugin.getDefault().getPreferenceStore();
-		store.setValue(key, makeString(newHistory));		
-		savePreferenceStore();
-	}
-
-		
-	// -------------------------------------------------
-	// MISCELLANEOUS METHODS...
-	// -------------------------------------------------
-	
-	/**
-	 * Parse out list of key-value pairs into a hashtable
-	 */
-	protected static Hashtable parseString(String allvalues)
-	{
-		StringTokenizer tokens = new StringTokenizer(allvalues, "=;"); //$NON-NLS-1$
-		Hashtable keyValues = new Hashtable(10);
-		int count = 0;
-		String token1=null;
-		String token2=null;
-		while (tokens.hasMoreTokens())
-		{
-			count++;
-			if ((count % 2) == 0) // even number
-			{
-			  token2 = tokens.nextToken();
-			  keyValues.put(token1, token2);
-			}
-			else
-			  token1 = tokens.nextToken();
-		}
-		return keyValues;
-	}
-	/**
-	 * Convert hashtable of key-value pairs into a single string
-	 */
-//	protected static String makeString(Hashtable keyValues) DWD remove this later
-//	{
-//		Enumeration keys = keyValues.keys();
-//		StringBuffer sb = new StringBuffer();
-//		while (keys.hasMoreElements())
-//		{
-//			String key = (String)keys.nextElement();
-//			String value = (String)keyValues.get(key);
-//			if ((value != null) && (value.length()>0))
-//			{
-//			  sb.append(key);
-//			  sb.append('=');
-//			  sb.append(value);
-//			  sb.append(';');
-//			}
-//		}
-//		return sb.toString();
-//	}
-		
-	/**
-	 * Parse out list of multiple values into a string array per value
-	 */
-	protected static String[] parseStrings(String allvalues)
-	{
-		if (allvalues == null)
-		  return new String[0];
-		//StringTokenizer tokens = new StringTokenizer(allvalues, ";");
-		String[] tokens = allvalues.split(";"); //$NON-NLS-1$
-		return tokens;
-		/*
-		Vector v = new Vector();
-		int idx=0;
-		while (tokens.hasMoreTokens())
-		 v.addElement(tokens.nextToken());
-		String keyValues[] = new String[v.size()];
-		for (idx=0;idx<v.size();idx++)
-		  keyValues[idx] = (String)v.elementAt(idx);
-		return keyValues;
-		*/
-	}
-	/**
-	 * Make a single string out of an array of strings
-	 */
-	protected static String makeString(String[] values)
-	{
-        StringBuffer allValues = new StringBuffer();
-        boolean first = true;
-		for (int idx=0; idx<values.length; idx++)
-		{
-		   if (values[idx] != null)
-		   {
-		     if (!first)
-		     {
-		       allValues = allValues.append(';');
-		     }
-		     allValues.append(values[idx]);
-             first = false;
-		   }
-		}
-		return allValues.toString();
-	}
-	
-	/**
-	 * Save the preference store.
-	 */
-	private static void savePreferenceStore()
-	{
-		/* plugin preferences and preference stores are actually the same store and are flushed to disk using this call */
-		RSEUIPlugin.getDefault().savePluginPreferences();
-	}
-
 	public void init(IWorkbench workbench) 
 	{
 	}
 
     /**
-     * Initialize our preference store with our defaults.
-     * This is called in RSEUIPlugin.initializeDefaultPreferences
-     */
-	public static void initDefaults(IPreferenceStore store, boolean showNewConnectionPromptDefault) 
-	{
-		store.setDefault(ISystemPreferencesConstants.SYSTEMTYPE,               ISystemPreferencesConstants.DEFAULT_SYSTEMTYPE);
-		store.setDefault(ISystemPreferencesConstants.QUALIFY_CONNECTION_NAMES, ISystemPreferencesConstants.DEFAULT_QUALIFY_CONNECTION_NAMES);		
-		store.setDefault(ISystemPreferencesConstants.SHOWFILTERPOOLS,          ISystemPreferencesConstants.DEFAULT_SHOWFILTERPOOLS);
-		
-		String defaultProfileNames = ISystemPreferencesConstants.DEFAULT_ACTIVEUSERPROFILES;
-		String userProfileName = SystemProfileManager.getDefaultPrivateSystemProfileName();
-		defaultProfileNames += ";" + userProfileName; //$NON-NLS-1$
-		
-		
-		store.setDefault(ISystemPreferencesConstants.ACTIVEUSERPROFILES,       defaultProfileNames);
-		store.setDefault(ISystemPreferencesConstants.ORDER_CONNECTIONS,        ISystemPreferencesConstants.DEFAULT_ORDER_CONNECTIONS);
-		store.setDefault(ISystemPreferencesConstants.HISTORY_FOLDER,           ISystemPreferencesConstants.DEFAULT_HISTORY_FOLDER);
-		store.setDefault(ISystemPreferencesConstants.REMEMBER_STATE,           ISystemPreferencesConstants.DEFAULT_REMEMBER_STATE);
-		store.setDefault(ISystemPreferencesConstants.RESTORE_STATE_FROM_CACHE, ISystemPreferencesConstants.DEFAULT_RESTORE_STATE_FROM_CACHE);
-		store.setDefault(ISystemPreferencesConstants.SHOWNEWCONNECTIONPROMPT,  showNewConnectionPromptDefault);
-		store.setDefault(ISystemPreferencesConstants.CASCADE_UDAS_BYPROFILE,   ISystemPreferencesConstants.DEFAULT_CASCADE_UDAS_BYPROFILE);
-		
-		store.setDefault(ISystemPreferencesConstants.USE_DEFERRED_QUERIES, ISystemPreferencesConstants.DEFAULT_USE_DEFERRED_QUERIES);
-	}
-	
-	/**
 	 * we don't use this after all because it causes an event to be fired as the
 	 *  user makes each change. We prefer to wait until Apply or Defaults are pressed.
 	 */
@@ -635,7 +222,7 @@ public class RemoteSystemsPreferencePage
     public boolean performOk() 
     {
     	boolean ok = super.performOk();
-    	savePreferenceStore(); // better save to disk, just in case.
+    	SystemPreferencesManager.savePreferences(); // better save to disk, just in case.
         if (!RSEUIPlugin.getDefault().isSystemRegistryActive())    	
           	return ok;
     	if (showFilterPoolsEditor != null)

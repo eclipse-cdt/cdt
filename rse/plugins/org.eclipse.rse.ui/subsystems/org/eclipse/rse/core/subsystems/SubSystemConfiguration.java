@@ -585,7 +585,7 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 	 */
 	public boolean showFilterPools()
 	{
-		return SystemPreferencesManager.getPreferencesManager().getShowFilterPools();
+		return SystemPreferencesManager.getShowFilterPools();
 	}
 	/*
 	 * If we support filters, should we show filter strings in the remote system explorer?

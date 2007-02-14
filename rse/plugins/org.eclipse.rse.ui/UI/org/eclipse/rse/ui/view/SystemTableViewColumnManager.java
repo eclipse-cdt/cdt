@@ -53,7 +53,6 @@ public class SystemTableViewColumnManager
 	public void setCustomDescriptors(ISystemViewElementAdapter adapter, IPropertyDescriptor[] descriptors)
 	{
 	    putCachedDescriptors(adapter, descriptors);
-	    SystemPreferencesManager mgr = SystemPreferencesManager.getPreferencesManager();
 	    String historyKey = getHistoryKey(adapter);
 	    String[] history = new String[descriptors.length];
 	    for (int i = 0; i < descriptors.length; i++)
@@ -61,7 +60,7 @@ public class SystemTableViewColumnManager
 	        history[i] = descriptors[i].getId().toString();
 	    }
 	    
-	    mgr.setWidgetHistory(historyKey, history);
+	    SystemPreferencesManager.setWidgetHistory(historyKey, history);
 	}
 	
 	/**
@@ -99,9 +98,8 @@ public class SystemTableViewColumnManager
 	{
 	    IPropertyDescriptor[] uniqueDescriptors = adapter.getUniquePropertyDescriptors();
 	  
-	    SystemPreferencesManager mgr = SystemPreferencesManager.getPreferencesManager();
 	    String historyKey = getHistoryKey(adapter);
-	    String[] history = mgr.getWidgetHistory(historyKey);
+	    String[] history = SystemPreferencesManager.getWidgetHistory(historyKey);
 	    
 	    // determine the order and which of the uniqueDescriptors to use based on the history
 	    if (history != null && history.length > 0)

@@ -24,25 +24,6 @@ public interface ISystemPreferencesConstants {
 	 */
 	public static final String ROOT = "org.eclipse.rse.preferences."; //$NON-NLS-1$
 	/*
-	 * core preference keys
-	 */
-	public static final String SYSTEMTYPE = ROOT + "systemtype"; //$NON-NLS-1$
-	public static final String SYSTEMTYPE_VALUES = ROOT + "systemtype.info"; //$NON-NLS-1$
-	public static final String USERIDPERKEY = ROOT + "useridperkey"; //$NON-NLS-1$
-	public static final String USERIDKEYS = ROOT + "userid.keys"; //$NON-NLS-1$
-	public static final String ACTIVEUSERPROFILES = ROOT + "activeuserprofiles"; //$NON-NLS-1$
-	public static final String USE_DEFERRED_QUERIES = ROOT + "useDeferredQueries"; //$NON-NLS-1$
-	public static final String RESTORE_STATE_FROM_CACHE = ROOT + "restoreStateFromCache"; //$NON-NLS-1$
-	/*
-	 * core preference default values
-	 */
-	public static final String DEFAULT_SYSTEMTYPE = ""; //$NON-NLS-1$
-	public static final String DEFAULT_USERID = ""; //$NON-NLS-1$
-	public static final boolean DEFAULT_RESTORE_STATE_FROM_CACHE = true; // yantzi: artemis 6.0      
-	public static final boolean DEFAULT_USE_DEFERRED_QUERIES = true;
-	public static final String DEFAULT_TEAMPROFILE = "Team"; //$NON-NLS-1$
-	public static final String DEFAULT_ACTIVEUSERPROFILES = "Team"; //$NON-NLS-1$
-	/*
 	 * dstore preference keys
 	 */
 	public static final String DAEMON_AUTOSTART = ROOT + "daemon.autostart"; //$NON-NLS-1$
@@ -63,6 +44,8 @@ public interface ISystemPreferencesConstants {
 	/*
 	 * ui preference keys
 	 */
+	public static final String RESTORE_STATE_FROM_CACHE = ROOT + "restoreStateFromCache"; //$NON-NLS-1$
+	public static final String SYSTEMTYPE_VALUES = ROOT + "systemtype.info"; //$NON-NLS-1$
 	public static final String SHOWFILTERPOOLS = ROOT + "filterpools.show"; //$NON-NLS-1$
 	public static final String QUALIFY_CONNECTION_NAMES = ROOT + "qualifyconnectionnames"; //$NON-NLS-1$
 	public static final String ORDER_CONNECTIONS = ROOT + "order.connections"; //$NON-NLS-1$
@@ -76,6 +59,7 @@ public interface ISystemPreferencesConstants {
 	/*
 	 * ui preference default values
 	 */
+	public static final boolean DEFAULT_RESTORE_STATE_FROM_CACHE = true; // yantzi: artemis 6.0      
 	public static final boolean DEFAULT_SHOWFILTERPOOLS = false;
 	public static final boolean DEFAULT_QUALIFY_CONNECTION_NAMES = false;
 	public static final String DEFAULT_ORDER_CONNECTIONS = ""; //$NON-NLS-1$

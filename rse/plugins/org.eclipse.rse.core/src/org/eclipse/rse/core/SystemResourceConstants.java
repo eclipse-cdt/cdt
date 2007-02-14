@@ -16,7 +16,6 @@
 
 package org.eclipse.rse.core;
 
-import org.eclipse.rse.ui.ISystemPreferencesConstants;
 
 /**
  * Constants related to project and folder names.
@@ -32,5 +31,5 @@ public interface SystemResourceConstants
     public static final String RESOURCE_USERACTIONS_FOLDER_NAME = "UserActions"; //$NON-NLS-1$
     public static final String RESOURCE_COMPILECOMMANDS_FOLDER_NAME = "CompileCommands"; //$NON-NLS-1$
     
-    public static final String RESOURCE_TEAMPROFILE_NAME = ISystemPreferencesConstants.DEFAULT_TEAMPROFILE;
+    public static final String RESOURCE_TEAMPROFILE_NAME = IRSEPreferenceNames.DEFAULT_TEAMPROFILE;
 }

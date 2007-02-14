@@ -23,7 +23,6 @@ import java.util.Hashtable;
 import java.util.StringTokenizer;
 
 import org.eclipse.jface.preference.FieldEditor;
-import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.jface.viewers.ColumnLayoutData;
 import org.eclipse.jface.viewers.ColumnWeightData;
@@ -38,8 +37,8 @@ import org.eclipse.jface.viewers.TextCellEditor;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.rse.core.IRSESystemType;
 import org.eclipse.rse.core.RSECorePlugin;
+import org.eclipse.rse.core.SystemPreferencesManager;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
-import org.eclipse.rse.ui.ISystemPreferencesConstants;
 import org.eclipse.rse.ui.RSESystemTypeAdapter;
 import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemResources;
@@ -152,7 +151,7 @@ public class SystemTypeFieldEditor extends FieldEditor
     	if (systemTypes == null)
     		systemTypes = getSystemTypes(false);
     	
-		String value = getPreferenceStore().getString(ISystemPreferencesConstants.SYSTEMTYPE_VALUES);
+		String value = SystemPreferencesManager.getSystemTypeValues();
 		keyValues = null;
 		
 	    if ((value == null) || (value.length() == 0))
@@ -185,8 +184,9 @@ public class SystemTypeFieldEditor extends FieldEditor
 		{
 			String s = createString(keyValues);
 
-			if (s != null)
-				getPreferenceStore().setValue(getPreferenceName(), s);	
+			if (s != null) {
+				SystemPreferencesManager.setSystemTypeValues(s);
+			}
 		}
 	}
 
@@ -486,55 +486,56 @@ public class SystemTypeFieldEditor extends FieldEditor
     	table.setToolTipText(tip);
     }
 
-    public static Hashtable initSystemTypePreferences(IPreferenceStore store, IRSESystemType[] systemTypes)
-    {
-		String value = store.getString(ISystemPreferencesConstants.SYSTEMTYPE_VALUES);
-		Hashtable keyValues = null;
-	    if ((value == null) || (value.length()==0)) // not initialized yet?
-	    {
-	    	return null;
-	    	// nothing to do, as we have read from systemTypes extension points already
-	    }
-	    else
-	    {
-	    	keyValues = parseString(value);
-	    	// we have now a hashtable, where the keys are the system type names,
-	    	//  and the values are the column-value attributes for that type, separated
-	    	//  by a '+' character: enabled+userid. eg: "true+bob"
-			Enumeration keys = keyValues.keys();
-			while (keys.hasMoreElements())
-			{
-				String key = (String)keys.nextElement();
-				String attributes = (String)keyValues.get(key);
-				String attr1="true", attr2=""; //$NON-NLS-1$ //$NON-NLS-2$
-				if ((attributes != null) && (attributes.length()>0))
-				{
-					StringTokenizer tokens = new StringTokenizer(attributes, Character.toString(EACHVALUE_DELIMITER));
-					if (tokens.hasMoreTokens())
-					{
-						attr1 = tokens.nextToken();
-						if (tokens.hasMoreTokens())
-						{
-							attr2 = tokens.nextToken();
-						}
-						else
-						{
-							attr2 = "null"; //$NON-NLS-1$
-						}
-					}
-				}
-				// find this system type in the array...
-				IRSESystemType matchingType = RSECorePlugin.getDefault().getRegistry().getSystemType(key);
-				RSESystemTypeAdapter adapter = (RSESystemTypeAdapter)(matchingType.getAdapter(IRSESystemType.class));
-				
-				// update this system type's attributes as per preferences...
-				{
-					adapter.setIsEnabled(matchingType, attr1.equals("true")); //$NON-NLS-1$
-					if (!attr2.equals("null")) //$NON-NLS-1$
-						adapter.setDefaultUserId(matchingType, attr2);
-				}
-			}	    		    	
-	    }    
-	    return keyValues;
-    }
+//    public static Hashtable initSystemTypePreferences(IPreferenceStore store, IRSESystemType[] systemTypes)
+//    {
+//    	/* this must stay in synch with the SystemPreferencesManager */
+//		String value = store.getString(ISystemPreferencesConstants.SYSTEMTYPE_VALUES);
+//		Hashtable keyValues = null;
+//	    if ((value == null) || (value.length()==0)) // not initialized yet?
+//	    {
+//	    	return null;
+//	    	// nothing to do, as we have read from systemTypes extension points already
+//	    }
+//	    else
+//	    {
+//	    	keyValues = parseString(value);
+//	    	// we have now a hashtable, where the keys are the system type names,
+//	    	//  and the values are the column-value attributes for that type, separated
+//	    	//  by a '+' character: enabled+userid. eg: "true+bob"
+//			Enumeration keys = keyValues.keys();
+//			while (keys.hasMoreElements())
+//			{
+//				String key = (String)keys.nextElement();
+//				String attributes = (String)keyValues.get(key);
+//				String attr1="true", attr2=""; //$NON-NLS-1$ //$NON-NLS-2$
+//				if ((attributes != null) && (attributes.length()>0))
+//				{
+//					StringTokenizer tokens = new StringTokenizer(attributes, Character.toString(EACHVALUE_DELIMITER));
+//					if (tokens.hasMoreTokens())
+//					{
+//						attr1 = tokens.nextToken();
+//						if (tokens.hasMoreTokens())
+//						{
+//							attr2 = tokens.nextToken();
+//						}
+//						else
+//						{
+//							attr2 = "null"; //$NON-NLS-1$
+//						}
+//					}
+//				}
+//				// find this system type in the array...
+//				IRSESystemType matchingType = RSECorePlugin.getDefault().getRegistry().getSystemType(key);
+//				RSESystemTypeAdapter adapter = (RSESystemTypeAdapter)(matchingType.getAdapter(IRSESystemType.class));
+//				
+//				// update this system type's attributes as per preferences...
+//				{
+//					adapter.setIsEnabled(matchingType, attr1.equals("true")); //$NON-NLS-1$
+//					if (!attr2.equals("null")) //$NON-NLS-1$
+//						adapter.setDefaultUserId(matchingType, attr2);
+//				}
+//			}	    		    	
+//	    }    
+//	    return keyValues;
+//    }
 }

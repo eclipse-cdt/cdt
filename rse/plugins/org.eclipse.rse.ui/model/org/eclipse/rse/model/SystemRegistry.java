@@ -681,14 +681,14 @@ public class SystemRegistry implements ISystemRegistryUI, ISystemModelChangeEven
 	 */
 	public boolean getQualifiedHostNames()
 	{
-		return SystemPreferencesManager.getPreferencesManager().getQualifyConnectionNames();
+		return SystemPreferencesManager.getQualifyConnectionNames();
 	}
 	/**
 	 * Set if connection names are to be qualified by profile name
 	 */
 	public void setQualifiedHostNames(boolean set)
 	{
-		SystemPreferencesManager.getPreferencesManager().setQualifyConnectionNames(set);
+		SystemPreferencesManager.setQualifyConnectionNames(set);
 		IHost[] conns = getHosts();
 		if (conns != null)
 		{
@@ -697,7 +697,7 @@ public class SystemRegistry implements ISystemRegistryUI, ISystemModelChangeEven
 				fireEvent(new SystemResourceChangeEvent(conns[idx], ISystemResourceChangeEvents.EVENT_RENAME, this));
 			}
 		}
-		if (SystemPreferencesManager.getPreferencesManager().getShowFilterPools())
+		if (SystemPreferencesManager.getShowFilterPools())
 		{
 			fireEvent(new SystemResourceChangeEvent(this, ISystemResourceChangeEvents.EVENT_REFRESH, this));			
 		}
@@ -892,7 +892,7 @@ public class SystemRegistry implements ISystemRegistryUI, ISystemModelChangeEven
 				ssf.renameSubSystemProfile(ss, oldName, newName);
 			}
 		}
-		SystemPreferencesManager.getPreferencesManager().setConnectionNamesOrder(); // update preferences order list                
+		SystemPreferencesManager.setConnectionNamesOrder(); // update preferences order list                
 		boolean namesQualifed = getQualifiedHostNames();
 		if (namesQualifed)
 			setQualifiedHostNames(namesQualifed); // causes refresh events to be fired
@@ -1072,7 +1072,7 @@ public class SystemRegistry implements ISystemRegistryUI, ISystemModelChangeEven
 		}
 		// last step... physically blow away the profile...
 		getSystemProfileManager().deleteSystemProfile(profile, true);
-		SystemPreferencesManager.getPreferencesManager().setConnectionNamesOrder(); // update preferences order list        
+		SystemPreferencesManager.setConnectionNamesOrder(); // update preferences order list        
 		if (connections.length > 0) // defect 42112
 			fireEvent(new org.eclipse.rse.model.SystemResourceChangeEvent(connections, ISystemResourceChangeEvents.EVENT_DELETE_MANY, this));
 
@@ -1166,7 +1166,7 @@ public class SystemRegistry implements ISystemRegistryUI, ISystemModelChangeEven
 			SystemResourceChangeEvent event = new org.eclipse.rse.model.SystemResourceChangeEvent(affectedConnections, ISystemResourceChangeEvents.EVENT_ADD_MANY, this);
 			fireEvent(event);
 		}
-		SystemPreferencesManager.getPreferencesManager().setConnectionNamesOrder(); // update preferences order list            	
+		SystemPreferencesManager.setConnectionNamesOrder(); // update preferences order list            	
 
 		fireModelChangeEvent(SYSTEM_RESOURCE_CHANGED, SYSTEM_RESOURCETYPE_PROFILE, profile, null);
 	}
@@ -2250,7 +2250,7 @@ public class SystemRegistry implements ISystemRegistryUI, ISystemModelChangeEven
 
 		}
 		RSEUIPlugin.getThePersistenceManager().commit(conn);
-		SystemPreferencesManager.getPreferencesManager().setConnectionNamesOrder(); // update preferences order list                
+		SystemPreferencesManager.setConnectionNamesOrder(); // update preferences order list                
 	
 		
 		return conn;
@@ -2555,7 +2555,7 @@ public class SystemRegistry implements ISystemRegistryUI, ISystemModelChangeEven
 			 ((ISubSystemConfiguration) affectedSubSystemFactories.elementAt(idx)).deleteSubSystemsByConnection(conn);
 		} 
 		conn.getHostPool().deleteHost(conn); // delete from memory and from disk.       
-		SystemPreferencesManager.getPreferencesManager().setConnectionNamesOrder(); // update preferences order list        
+		SystemPreferencesManager.setConnectionNamesOrder(); // update preferences order list        
 		fireModelChangeEvent(SYSTEM_RESOURCE_REMOVED, SYSTEM_RESOURCETYPE_CONNECTION, conn, null);
 	}
 
@@ -2580,7 +2580,7 @@ public class SystemRegistry implements ISystemRegistryUI, ISystemModelChangeEven
 		for (int idx = 0; idx < affectedSubSystemFactories.size(); idx++)
 			 ((ISubSystemConfiguration) affectedSubSystemFactories.elementAt(idx)).renameSubSystemsByConnection(conn, newName);
 		conn.getHostPool().renameHost(conn, newName); // rename in memory and disk
-		SystemPreferencesManager.getPreferencesManager().setConnectionNamesOrder(); // update preferences order list        
+		SystemPreferencesManager.setConnectionNamesOrder(); // update preferences order list        
 		fireModelChangeEvent(SYSTEM_RESOURCE_RENAMED, SYSTEM_RESOURCETYPE_CONNECTION, conn, oldName);
 	}
 
@@ -2601,7 +2601,7 @@ public class SystemRegistry implements ISystemRegistryUI, ISystemModelChangeEven
 	{
 		ISystemHostPool pool = getHostPool(profileName);
 		pool.moveHosts(conns, delta);
-		SystemPreferencesManager.getPreferencesManager().setConnectionNamesOrder();
+		SystemPreferencesManager.setConnectionNamesOrder();
 		//fireEvent(new SystemResourceChangeEvent(pool.getSystemConnections(),ISystemResourceChangeEvent.EVENT_MOVE_MANY,this));
 		SystemResourceChangeEvent event = new SystemResourceChangeEvent(conns, ISystemResourceChangeEvents.EVENT_MOVE_MANY, this);
 		event.setPosition(delta);

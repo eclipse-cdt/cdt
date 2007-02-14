@@ -17,7 +17,6 @@
 package org.eclipse.rse.ui.propertypages;
 
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
-import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.IntegerFieldEditor;
 import org.eclipse.rse.core.comm.SystemCommunicationsDaemon;
 import org.eclipse.rse.ui.ISystemMessages;
@@ -102,17 +101,6 @@ public class SystemCommunicationsPreferencePage extends FieldEditorPreferencePag
 	{
 	}
 
-	/**
-	 * Set default preferences for the communications preference page.
-	 * 
-	 * @param store PreferenceStore used for this preference page.
-	 */
-	public static void initDefaults(IPreferenceStore store) 
-	{
-		store.setDefault(ISystemPreferencesConstants.DAEMON_AUTOSTART, ISystemPreferencesConstants.DEFAULT_DAEMON_AUTOSTART);
-		store.setDefault(ISystemPreferencesConstants.DAEMON_PORT, ISystemPreferencesConstants.DEFAULT_DAEMON_PORT);
-	}
-	
 	/**
 	 * @see FieldEditorPreferencePage#performOk()
 	 */

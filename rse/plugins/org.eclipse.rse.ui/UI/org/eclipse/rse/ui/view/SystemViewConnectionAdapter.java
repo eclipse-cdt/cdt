@@ -403,7 +403,7 @@ public class SystemViewConnectionAdapter
 	{
 		String localUserId = conn.getLocalDefaultUserId();
 		data.setLocalValue(localUserId);
-		String parentUserId = SystemPreferencesManager.getPreferencesManager().getDefaultUserId(conn.getSystemType());
+		String parentUserId = SystemPreferencesManager.getUserId(conn.getSystemType());
 		data.setInheritedValue(parentUserId);
 		data.setIsLocal((localUserId!=null)&&(localUserId.length()>0));
 	    //data.printDetails();

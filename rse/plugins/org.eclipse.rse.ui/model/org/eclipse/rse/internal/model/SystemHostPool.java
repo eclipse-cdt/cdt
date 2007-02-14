@@ -211,6 +211,7 @@ public class SystemHostPool extends RSEModelObject implements ISystemHostPool
           addHost(conn); // only record internally if saved successfully
           conn.setHostPool(this);          
           conn.setAliasName(aliasName);
+          conn.setSystemType(systemType);
           // if default userID is null, and location is in the connection we should retrieve it and use it as the initial value.
           if (defaultUserId == null && defaultUserIdLocation == IRSEUserIdConstants.USERID_LOCATION_HOST) {
               defaultUserId = conn.getDefaultUserId();
@@ -256,13 +257,12 @@ public class SystemHostPool extends RSEModelObject implements ISystemHostPool
     	  if (defaultUserIdLocation != IRSEUserIdConstants.USERID_LOCATION_HOST)
     	  {
     	    conn.setDefaultUserId(null); // clear what was there, to ensure inheritance
-   	        SystemPreferencesManager prefMgr = SystemPreferencesManager.getPreferencesManager();    	
    	        boolean forceToUpperCase = conn.getForceUserIdToUpperCase();
    	        if (forceToUpperCase && (defaultUserId != null))
    	          defaultUserId = defaultUserId.toUpperCase();
     	    if (defaultUserIdLocation == IRSEUserIdConstants.USERID_LOCATION_DEFAULT_SYSTEMTYPE)
     	    {
-    	      prefMgr.setDefaultUserId(systemType, defaultUserId);    	      
+    	    	SystemPreferencesManager.setDefaultUserId(systemType, defaultUserId);    	      
     	    }
     	    //else if (defaultUserIdLocation == IRSEUserIdConstants.USERID_LOCATION_DEFAULT_OVERALL)
     	    //{

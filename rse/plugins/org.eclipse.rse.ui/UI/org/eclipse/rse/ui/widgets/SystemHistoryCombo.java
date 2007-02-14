@@ -183,7 +183,7 @@ public class SystemHistoryCombo extends Composite implements ISystemCombo, Trave
 		  {
 		  	setItems(newItems);
 		  	selIdx = currentItems.length;
-		    SystemPreferencesManager.getPreferencesManager().setWidgetHistory(historyKey, newItems);				  	
+		    SystemPreferencesManager.setWidgetHistory(historyKey, newItems);				  	
 		  }
 		  if (selIdx >= 0)
 		  {
@@ -273,7 +273,7 @@ public class SystemHistoryCombo extends Composite implements ISystemCombo, Trave
     	if (historyCombo.getItemCount() == 0)
     	{
     	  setItems(items);
-    	  SystemPreferencesManager.getPreferencesManager().setWidgetHistory(historyKey, items);	//d41439
+    	  SystemPreferencesManager.setWidgetHistory(historyKey, items);	//d41439
     	  //updateHistory();    d41439  
     	}
     }
@@ -416,7 +416,7 @@ public class SystemHistoryCombo extends Composite implements ISystemCombo, Trave
 	 */
 	public String[] getHistory()
 	{
-		return SystemPreferencesManager.getPreferencesManager().getWidgetHistory(historyKey);
+		return SystemPreferencesManager.getWidgetHistory(historyKey);
 	}
 	/**
 	 * Update the history with current entry field setting, but don't refresh contents.
@@ -477,14 +477,14 @@ public class SystemHistoryCombo extends Composite implements ISystemCombo, Trave
 		                ++idx2;
 		  	         }   
 		          }	            
-		          SystemPreferencesManager.getPreferencesManager().setWidgetHistory(historyKey, newHistory);				  
+		          SystemPreferencesManager.setWidgetHistory(historyKey, newHistory);				  
 			   }   
 		    }
 		    else
 		    {
 		       newHistory =new String[1]; 
 		       newHistory[0] = textValue;
-		       SystemPreferencesManager.getPreferencesManager().setWidgetHistory(historyKey, newHistory);				  
+		       SystemPreferencesManager.setWidgetHistory(historyKey, newHistory);				  
 		    }   	
 		    if (refresh && (newHistory != null))
 		    {
@@ -513,7 +513,7 @@ public class SystemHistoryCombo extends Composite implements ISystemCombo, Trave
 	 */
 	public void setHistory(String[] newHistory)
 	{
-		SystemPreferencesManager.getPreferencesManager().setWidgetHistory(historyKey, newHistory);
+		SystemPreferencesManager.setWidgetHistory(historyKey, newHistory);
 	}
 	
 	// -----------------------
@@ -600,7 +600,7 @@ public class SystemHistoryCombo extends Composite implements ISystemCombo, Trave
 		{
 		  	String value = historyCombo.getText();		  	 // d41471 	 
 		  	String[] newHistory = dlg.getHistory();
-		    SystemPreferencesManager.getPreferencesManager().setWidgetHistory(historyKey, newHistory);				  	  	
+		    SystemPreferencesManager.setWidgetHistory(historyKey, newHistory);				  	  	
 		    setItems(newHistory);
 		    historyCombo.setText(value);  // Restore the value  d41471
 		}

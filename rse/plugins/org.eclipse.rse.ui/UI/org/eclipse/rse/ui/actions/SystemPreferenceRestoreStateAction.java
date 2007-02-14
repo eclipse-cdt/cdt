@@ -40,7 +40,7 @@ public class SystemPreferenceRestoreStateAction extends SystemBaseAction
         setSelectionSensitive(false);
         allowOnMultipleSelection(true);
         //sr = RSEUIPlugin.getTheSystemRegistry();	        
-        setChecked(SystemPreferencesManager.getPreferencesManager().getRememberState());
+        setChecked(SystemPreferencesManager.getRememberState());
 
 		setHelp(RSEUIPlugin.HELPPREFIX+"aprefres"); //$NON-NLS-1$
 	}
@@ -52,7 +52,7 @@ public class SystemPreferenceRestoreStateAction extends SystemBaseAction
 	public void run() 
 	{
 		boolean newState = isChecked();
-		SystemPreferencesManager.getPreferencesManager().setRememberState(newState);        
+		SystemPreferencesManager.setRememberState(newState);        
     	firePreferenceChangeEvent(ISystemPreferenceChangeEvents.EVENT_RESTORESTATE,
     	                          !newState,newState);               
 	}		

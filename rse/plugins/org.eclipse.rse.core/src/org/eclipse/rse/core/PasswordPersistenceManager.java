@@ -24,12 +24,11 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.core.runtime.Preferences;
 import org.eclipse.rse.core.model.SystemSignonInformation;
-import org.eclipse.rse.ui.ISystemPreferencesConstants;
-import org.eclipse.rse.ui.RSEUIPlugin;
 
 
 /**
@@ -323,7 +322,7 @@ public class PasswordPersistenceManager {
 			// if no passwords found with new URL, check old URL
 			if (passwords == null) {
 				
-				URL oldServerURL1 = new URL(SERVER_URL + SystemBasePlugin.getWorkspace().getRoot().getLocation().toOSString());
+				URL oldServerURL1 = new URL(SERVER_URL + ResourcesPlugin.getWorkspace().getRoot().getLocation().toOSString());
 				passwords = Platform.getAuthorizationInfo(oldServerURL1, systemType, AUTH_SCHEME);
 				
 				// passwords found, so migrate to using new URL
@@ -343,7 +342,7 @@ public class PasswordPersistenceManager {
 			}
 		}
 		catch (MalformedURLException e) {
-			SystemBasePlugin.logError("PasswordPersistenceManager.getPasswordMap", e); //$NON-NLS-1$
+			RSECorePlugin.getDefault().getLogger().logError("PasswordPersistenceManager.getPasswordMap", e); //$NON-NLS-1$
 		}
 		
 		return passwords; 
@@ -361,10 +360,10 @@ public class PasswordPersistenceManager {
 			Platform.addAuthorizationInfo(serverURL, systemType, AUTH_SCHEME, passwords);
 		}
 		catch (MalformedURLException e) {
-			SystemBasePlugin.logError("PasswordPersistenceManager.savePasswordMap", e); //$NON-NLS-1$
+			RSECorePlugin.getDefault().getLogger().logError("PasswordPersistenceManager.savePasswordMap", e); //$NON-NLS-1$
 		}
 		catch (CoreException e) {
-			SystemBasePlugin.logError("PasswordPersistenceManager.savePasswordMap", e); //$NON-NLS-1$
+			RSECorePlugin.getDefault().getLogger().logError("PasswordPersistenceManager.savePasswordMap", e); //$NON-NLS-1$
 		}		
 	}
 
@@ -411,8 +410,8 @@ public class PasswordPersistenceManager {
 							// uid matches, check if hosts are the same
 							if (khostname.startsWith(phostname) || phostname.startsWith(khostname))
 							{
-								String qkhost = RSEUIPlugin.getQualifiedHostName(khostname);
-								String qphost = RSEUIPlugin.getQualifiedHostName(phostname);
+								String qkhost = RSEHostUtil.getQualifiedHostName(khostname);
+								String qphost = RSEHostUtil.getQualifiedHostName(phostname);
 								if (qkhost.equals(qphost))
 								{
 									password = (String)passwords.get(key);
@@ -461,8 +460,8 @@ public class PasswordPersistenceManager {
 						// uid matches, check if hosts are the same
 						if (khostname.startsWith(phostname) || phostname.startsWith(khostname))
 						{
-							String qkhost = RSEUIPlugin.getQualifiedHostName(khostname);
-							String qphost = RSEUIPlugin.getQualifiedHostName(phostname);
+							String qkhost = RSEHostUtil.getQualifiedHostName(khostname);
+							String qphost = RSEHostUtil.getQualifiedHostName(phostname);
 							if (qkhost.equals(qphost))
 							{
 								password = (String)passwords.get(key);
@@ -546,8 +545,8 @@ public class PasswordPersistenceManager {
 	{
 		if (DEFAULT_SYSTEM_TYPE.equals(systemType))
 		{
-			IPreferenceStore store = RSEUIPlugin.getDefault().getPreferenceStore();
-			systemType = store.getString(ISystemPreferencesConstants.SYSTEMTYPE);
+			Preferences store = RSECorePlugin.getDefault().getPluginPreferences();
+			systemType = store.getString(IRSEPreferenceNames.SYSTEMTYPE);
 		}
 	
 		// First find the correct provider

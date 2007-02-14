@@ -20,6 +20,7 @@ import org.eclipse.cdt.core.dom.ast.IASTDeclarationStatement;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTElaboratedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier;
+import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTExpressionStatement;
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IASTForStatement;
@@ -28,6 +29,7 @@ import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionStyleMacroParameter;
 import org.eclipse.cdt.core.dom.ast.IASTIdExpression;
 import org.eclipse.cdt.core.dom.ast.IASTIfStatement;
+import org.eclipse.cdt.core.dom.ast.IASTInitializer;
 import org.eclipse.cdt.core.dom.ast.IASTInitializerExpression;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTNodeLocation;
@@ -47,6 +49,7 @@ import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTStandardFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IASTTypeId;
+import org.eclipse.cdt.core.dom.ast.IASTTypeIdExpression;
 import org.eclipse.cdt.core.dom.ast.IASTUnaryExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
@@ -668,6 +671,24 @@ public class DOMLocationTests extends AST2BaseTest {
         IASTProblem[] problems= tu.getPreprocessorProblems();
         assertEquals(1, problems.length);
         assertSoleLocation(problems[0], buffer.indexOf("X"), "X".length() );
-    }	   
+    }
 
+    public void _testBug171520() throws Exception {
+    	// https://bugs.eclipse.org/bugs/show_bug.cgi?id=171520
+        StringBuffer buffer = new StringBuffer();
+        buffer.append("int i = sizeof(int);");
+        IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP, false, false);
+        IASTDeclaration[] decls= tu.getDeclarations();
+        assertEquals(1, decls.length);
+        assertSoleLocation(decls[0], 0, buffer.length());
+        assertTrue(decls[0] instanceof IASTSimpleDeclaration);
+        IASTSimpleDeclaration simpleDecl= (IASTSimpleDeclaration)decls[0];
+        IASTDeclarator[] declarators= simpleDecl.getDeclarators();
+        assertEquals(1, declarators.length);
+        IASTInitializer initializer= declarators[0].getInitializer();
+        assertTrue(initializer instanceof IASTInitializerExpression);
+        IASTExpression expr= ((IASTInitializerExpression)initializer).getExpression();
+        assertTrue(expr instanceof IASTTypeIdExpression);
+        assertSoleLocation(expr, buffer.indexOf("sizeof"), "sizeof(int)".length());
+    }
 }

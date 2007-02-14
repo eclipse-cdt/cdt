@@ -5,7 +5,6 @@ Bundle-SymbolicName: org.eclipse.cdt.ui.tests; singleton:=true
 Bundle-Version: 4.0.0.qualifier
 Bundle-ClassPath: cdtuitests.jar
 Bundle-Activator: org.eclipse.cdt.ui.testplugin.CTestPlugin
-Bundle-Localization: plugin
 Export-Package: org.eclipse.cdt.ui.testplugin,
  org.eclipse.cdt.ui.testplugin.util,
  org.eclipse.cdt.ui.tests,

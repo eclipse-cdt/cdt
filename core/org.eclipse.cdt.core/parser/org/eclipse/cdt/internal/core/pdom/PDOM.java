@@ -522,11 +522,9 @@ public class PDOM extends PlatformObject implements IIndexFragment, IPDOM {
 	}
 
 	public IIndexFragmentBinding adaptBinding(IBinding binding) throws CoreException {
-		if (binding instanceof PDOMBinding) {
-			PDOMBinding pdomBinding= (PDOMBinding) binding;
-			if (pdomBinding.getPDOM() == this) {
-				return pdomBinding;
-			}
+		PDOMBinding pdomBinding= (PDOMBinding) binding.getAdapter(PDOMBinding.class);
+		if (pdomBinding != null && pdomBinding.getPDOM() == this) {
+			return pdomBinding;
 		}
 
 		PDOMLinkage linkage= adaptLinkage(binding.getLinkage());

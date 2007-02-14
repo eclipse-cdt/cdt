@@ -49,10 +49,10 @@ public abstract class PDOMBinding extends PDOMNamedNode implements IIndexFragmen
 	}
 	
 	public Object getAdapter(Class adapter) {
-		if (adapter == PDOMBinding.class)
+		if (adapter.isAssignableFrom(PDOMBinding.class))
 			return this;
-		else
-			return null;
+
+		return null;
 	}
 	
 	/**

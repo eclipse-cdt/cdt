@@ -7,6 +7,7 @@
  *
  * Contributors:
  * Andrew Ferguson (Symbian) - Initial implementation
+ * Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.index.composite;
 
@@ -57,7 +58,9 @@ public abstract class CompositeIndexBinding implements IIndexBinding {
 	}
 
 	public Object getAdapter(Class adapter) {
-		fail();
+		if (adapter.isInstance(rbinding)) {
+			return rbinding;
+		}
 		return null;
 	}
 

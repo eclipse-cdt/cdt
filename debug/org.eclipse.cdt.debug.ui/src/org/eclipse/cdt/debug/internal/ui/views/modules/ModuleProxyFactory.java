@@ -24,7 +24,7 @@ public class ModuleProxyFactory implements IModelProxyFactoryAdapter {
 	public IModelProxy createModelProxy( Object element, IPresentationContext context ) {
 		if ( ICDebugUIConstants.ID_MODULES_VIEW.equals( context.getId() ) ) {
 			if ( element instanceof IModuleRetrieval ) {
-					return new ModulesViewModelProxy( (IModuleRetrieval)element );
+				return new ModulesViewModelProxy( (IModuleRetrieval)element );
 			}
 		}
 		return null;

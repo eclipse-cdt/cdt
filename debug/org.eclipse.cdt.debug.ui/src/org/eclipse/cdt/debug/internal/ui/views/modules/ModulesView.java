@@ -842,10 +842,6 @@ public class ModulesView extends AbstractDebugView implements IDebugContextListe
 		super.dispose();
 	}
 
-//	private AbstractViewerState getViewerState() {
-//		return new ModulesViewerState( getModulesViewer() );
-//	}
-	
 	protected Image getImage( ImageDescriptor desc ) {
 		Image image = (Image)fImageCache.get( desc );
 		if ( image == null ) {
@@ -901,8 +897,6 @@ public class ModulesView extends AbstractDebugView implements IDebugContextListe
 	}
 
 	public void modelChanged( IModelDelta delta, IModelProxy proxy ) {
-		// TODO Auto-generated method stub
-		
 	}
 
 	public void updateComplete( IViewerUpdate update ) {
@@ -921,8 +915,6 @@ public class ModulesView extends AbstractDebugView implements IDebugContextListe
 	}
 
 	public void viewerUpdatesBegin() {
-		// TODO Auto-generated method stub
-		
 	}
 
 	public void viewerUpdatesComplete() {

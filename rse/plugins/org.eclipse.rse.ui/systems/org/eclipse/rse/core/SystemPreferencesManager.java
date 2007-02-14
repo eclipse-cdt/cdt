@@ -415,7 +415,7 @@ public class SystemPreferencesManager
    /**
     * Return whether to cascade user actions menu by profile
     */
-   public boolean getCascadeUserActions()
+   public static boolean getCascadeUserActionsPreference()
    {
    	   return RemoteSystemsPreferencePage.getCascadeUserActionsPreference();
    }

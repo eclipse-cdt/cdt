@@ -136,7 +136,8 @@ public class Elf {
 		public final static int EM_IQ2000 = 0xFEBA;
 		public static final int EM_XILINX_MICROBLAZE = 0xbaab;
 		public static final int EM_SDMA = 0xcafe;
-
+		public static final int EM_CRADLE = 0x4d55; 
+			
 		public byte e_ident[] = new byte[EI_NDENT];
 		public int e_type; /* file type (Elf32_Half) */
 		public int e_machine; /* machine type (Elf32_Half) */
@@ -855,6 +856,9 @@ public class Elf {
 				break;
 			case Elf.ELFhdr.EM_SDMA:
 				attrib.cpu = "sdma"; //$NON-NLS-1$
+				break;
+			case Elf.ELFhdr.EM_CRADLE:
+				attrib.cpu = "cradle"; //$NON-NLS-1$
 				break;
 			case Elf.ELFhdr.EM_NONE :
 			default :

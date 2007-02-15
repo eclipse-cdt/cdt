@@ -143,7 +143,7 @@ FocusListener
 				   {
 					    public IStatus run(IProgressMonitor monitor) 
 					    {			
-						    Object[] children = _adapter.getChildren(monitor, _inputObject);
+						    Object[] children = _adapter.getChildren(monitor, (IAdaptable)_inputObject);
 		   					if (children != null)
 		   					{
 		   						SystemTableTreeViewProvider provider = (SystemTableTreeViewProvider)_viewer.getContentProvider();

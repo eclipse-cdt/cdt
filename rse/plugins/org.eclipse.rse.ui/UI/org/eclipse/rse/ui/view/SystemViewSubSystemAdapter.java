@@ -15,6 +15,7 @@
  ********************************************************************************/
 
 package org.eclipse.rse.ui.view;
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -165,7 +166,7 @@ public class SystemViewSubSystemAdapter extends AbstractSystemViewAdapter
 	/**
 	 * Return the children of this object
 	 */
-	public Object[] getChildren(Object element)
+	public Object[] getChildren(IProgressMonitor monitor, IAdaptable element)
 	{
 		//System.out.println("INSIDE GETCHILDREN FOR SUBSYSTEM VIEW ADAPTER: "+element);		
 		ISubSystem ss = (ISubSystem)element;

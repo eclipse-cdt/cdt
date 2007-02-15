@@ -17,6 +17,7 @@
 package org.eclipse.rse.ui.view;
 import java.util.Vector;
 
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -172,7 +173,7 @@ public class SystemViewFilterAdapter extends AbstractSystemViewAdapter implement
 	 * Return the children of this filter.
 	 * This is a combination of nested filters and resolved filter objects.
 	 */
-	public Object[] getChildren(Object element)
+	public Object[] getChildren(IProgressMonitor monitor, IAdaptable element)
 	{
 		ISystemFilter filter = getFilter(element);
 		// transient filters...

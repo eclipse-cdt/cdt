@@ -234,7 +234,7 @@ public class SystemViewRemoteSearchResultAdapter extends AbstractSystemViewAdapt
 	/**
 	 * Returns nothing
 	 */
-	public Object[] getChildren(Object element)
+	public Object[] getChildren(IProgressMonitor monitor, IAdaptable element)
 	{
 		return null;
 	}

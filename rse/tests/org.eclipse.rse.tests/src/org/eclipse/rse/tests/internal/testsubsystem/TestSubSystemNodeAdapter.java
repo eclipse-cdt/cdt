@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.rse.tests.internal.testsubsystem;
 
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -124,7 +125,7 @@ public class TestSubSystemNodeAdapter extends AbstractSystemViewAdapter
 	/* (non-Javadoc)
 	 * @see org.eclipse.rse.ui.view.AbstractSystemViewAdapter#getChildren(java.lang.Object)
 	 */
-	public Object[] getChildren(Object element) {
+	public Object[] getChildren(IProgressMonitor monitor, IAdaptable element) {
 		if (isTestSubSystemNodeContainer(element))
 			return ((ITestSubSystemNodeContainer)element).getChildNodes();
 		return null;

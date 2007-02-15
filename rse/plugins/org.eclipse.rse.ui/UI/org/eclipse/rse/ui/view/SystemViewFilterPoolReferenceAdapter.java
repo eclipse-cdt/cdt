@@ -17,6 +17,7 @@
 package org.eclipse.rse.ui.view;
 import java.util.Vector;
 
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -197,7 +198,7 @@ public class SystemViewFilterPoolReferenceAdapter
 	 * Return the children of this object.
 	 * For filter pools, this is a list of filters.
 	 */
-	public Object[] getChildren(Object element)
+	public Object[] getChildren(IProgressMonitor monitor, IAdaptable element)
 	{
 		ISystemFilterPoolReference fpRef = getFilterPoolReference(element);
 		ISubSystem ss = getSubSystem(element);

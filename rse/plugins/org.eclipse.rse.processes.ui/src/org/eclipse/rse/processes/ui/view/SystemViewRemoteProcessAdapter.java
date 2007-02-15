@@ -17,6 +17,7 @@
 package org.eclipse.rse.processes.ui.view;
 
 
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -156,7 +157,7 @@ public class SystemViewRemoteProcessAdapter extends AbstractSystemViewAdapter
 		return false;
 	}
 
-	public Object[] getChildren(Object element)
+	public Object[] getChildren(IProgressMonitor monitor, IAdaptable element)
 	{
 		IRemoteProcess process = (IRemoteProcess) element;
 		IRemoteProcessSubSystem ss = process.getParentRemoteProcessSubSystem();

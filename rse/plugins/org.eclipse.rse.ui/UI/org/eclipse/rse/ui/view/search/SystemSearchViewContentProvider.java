@@ -17,6 +17,7 @@
 package org.eclipse.rse.ui.view.search;
 
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.rse.core.SystemAdapterHelpers;
@@ -55,7 +56,7 @@ public class SystemSearchViewContentProvider implements ITreeContentProvider {
 				return null;
 			}
 			else {
-				return adapter.getChildren(parentElement);
+				return adapter.getChildren(new NullProgressMonitor(), (IAdaptable)parentElement);
 			}
 		}
 		
@@ -124,7 +125,7 @@ public class SystemSearchViewContentProvider implements ITreeContentProvider {
 				return null;
 			}
 			else {
-				return adapter.getChildren(inputElement);
+				return adapter.getChildren(new NullProgressMonitor(), (IAdaptable)inputElement);
 			}
 		}
 		

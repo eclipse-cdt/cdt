@@ -25,6 +25,7 @@ import java.util.Map;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.AbstractTreeViewer;
@@ -37,10 +38,10 @@ import org.eclipse.rse.core.SystemBasePlugin;
 import org.eclipse.rse.core.model.SystemMessageObject;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.model.ISystemResourceChangeListener;
+import org.eclipse.rse.ui.operations.SystemDeferredTreeContentManager;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.model.IWorkbenchAdapter;
-import org.eclipse.ui.progress.DeferredTreeContentManager;
 import org.eclipse.ui.progress.PendingUpdateAdapter;
 
 
@@ -65,7 +66,7 @@ public class SystemViewLabelAndContentProvider extends LabelProvider
 	private String                      filterString = null;
 	private Hashtable                   resolvedChildrenPerFolder = null; // local cache to improve performance
 	
-	private DeferredTreeContentManager manager;
+	private SystemDeferredTreeContentManager manager;
 	/**
 	 * The cache of images that have been dispensed by this provider.
 	 * Maps ImageDescriptor->Image.
@@ -167,6 +168,8 @@ public class SystemViewLabelAndContentProvider extends LabelProvider
 	      }
         }
     }
+
+	
     /**
      * Returns the implementation of ISystemViewElement for the given
      * object.  Returns null if the adapter is not defined or the
@@ -174,6 +177,10 @@ public class SystemViewLabelAndContentProvider extends LabelProvider
      */
     protected ISystemViewElementAdapter getAdapter(Object o) 
     {
+    	if (o instanceof IContextObject)
+    	{
+    		o = ((IContextObject)o).getModelObject();
+    	}
     	ISystemViewElementAdapter adapter = null;    	
     	if (o == null)
     	{
@@ -241,20 +248,33 @@ public class SystemViewLabelAndContentProvider extends LabelProvider
     /**
      * @see ITreeContentProvider
      */
-    public Object[] getChildren(Object element) 
+    public Object[] getChildren(Object object) 
     {
-    	ISystemViewElementAdapter adapter = getAdapter(element);
+    	ISystemViewElementAdapter adapter = getAdapter(object);
+    	Object element = object;
+    	if (object instanceof IContextObject)
+    	{
+    		element = ((IContextObject)object).getModelObject();
+    	}
     	if (supportsDeferredQueries())
     	{
 	        if (manager != null && adapter.supportsDeferredQueries()) 
 	        {
-	            ISubSystem ss = adapter.getSubSystem(element);
+	        	ISubSystem ss = null;
+	        	if (object instanceof IContextObject)
+	        	{
+	        		ss = ((IContextObject)object).getSubSystem();
+	        	}
+	        	else
+	        	{
+	        		ss = adapter.getSubSystem(object);
+	        	}
 	            if (ss != null)
 	            {
 	               // if (ss.isConnected())
 	                {
 			            
-						Object[] children = manager.getChildren(element);
+						Object[] children = manager.getChildren(object);
 						if (children != null) 
 						{
 							// This will be a placeholder to indicate 
@@ -301,8 +321,16 @@ public class SystemViewLabelAndContentProvider extends LabelProvider
     	  	if (children != null) // found cached list?
     	  	  return children;    //  return it to caller
     	  }
+
+    	  if (object instanceof IContextObject)
+    	  {
+    		  children = adapter.getChildren(new NullProgressMonitor(), (IContextObject)object);
+    	  }
+    	  else 
+    	  {
+    		  children = adapter.getChildren(new NullProgressMonitor(), (IAdaptable)object);
+    	  }
     	  
-    	  children = adapter.getChildren(element);
 
     	  if ((filesOnly || foldersOnly) && 
     	      // an array of one SystemMessageObject item implies some kind of error, so don't cache...
@@ -378,7 +406,7 @@ public class SystemViewLabelAndContentProvider extends LabelProvider
     	}
     	if (viewer instanceof AbstractTreeViewer) 
     	{
-			manager = new DeferredTreeContentManager(this, (AbstractTreeViewer) viewer);
+			manager = new SystemDeferredTreeContentManager(this, (AbstractTreeViewer) viewer);
 		}
     }
     

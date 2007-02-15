@@ -16,6 +16,8 @@
 
 package org.eclipse.rse.ui.view;
 
+import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.rse.core.SystemPreferencesManager;
@@ -102,7 +104,7 @@ public class SystemViewRootInputAdapter extends AbstractSystemViewAdapter implem
 	/**
 	 * Return the children of this object
 	 */
-	public Object[] getChildren(Object element)
+	public Object[] getChildren(IProgressMonitor monitor, IAdaptable element)
 	{
 		ISystemViewInputProvider provider = (ISystemViewInputProvider)element;
 

@@ -16,6 +16,8 @@
 
 package org.eclipse.rse.examples.daytime.model;
 
+import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.widgets.Shell;
@@ -27,6 +29,7 @@ import org.eclipse.rse.examples.daytime.service.IDaytimeService;
 import org.eclipse.rse.examples.daytime.subsystems.DaytimeSubSystem;
 import org.eclipse.rse.ui.SystemMenuManager;
 import org.eclipse.rse.ui.view.AbstractSystemViewAdapter;
+import org.eclipse.rse.ui.view.IContextObject;
 import org.eclipse.rse.ui.view.ISystemRemoteElementAdapter;
 
 /**
@@ -70,10 +73,11 @@ public class DaytimeResourceAdapter extends AbstractSystemViewAdapter implements
 		return false;
 	}
 
-	public Object[] getChildren(Object element) {
+	public Object[] getChildren(IProgressMonitor monitor, IAdaptable element) {
 		return null;
 	}
 
+	
 	protected Object internalGetPropertyValue(Object key) {
 		return null;
 	}

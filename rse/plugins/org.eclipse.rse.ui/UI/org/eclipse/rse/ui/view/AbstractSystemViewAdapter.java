@@ -23,6 +23,7 @@ import java.util.Vector;
 
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -278,9 +279,12 @@ public abstract class AbstractSystemViewAdapter
 	{
 		if (element instanceof AbstractResource)
 		  return ((AbstractResource)element).getSubSystem();
+		else if (element instanceof IContextObject)
+			return ((IContextObject)element).getSubSystem();
 		else
 		  return null;	
 	}
+	
 	
 	/**
      * <i>Called by SystemView viewer. No need to override or call.</i><br>
@@ -406,6 +410,10 @@ public abstract class AbstractSystemViewAdapter
 	 */
 	public String getLabel(Object element)
 	{
+		if (element instanceof IContextObject)
+		{
+			element = ((IContextObject)element).getModelObject();
+		}
 		return getText(element);
 	}
 	
@@ -441,21 +449,44 @@ public abstract class AbstractSystemViewAdapter
 	 * Return true if this object has children.
 	 */
 	public abstract boolean hasChildren(Object element);
-	
+
 	/**
-     * <i><b>Abstract</b>. Must be overridden by subclasses.</i><br>
-	 * Return the children of this object. Return null if children not supported.
+	 * Implementation of IWorkbenchAdapter.getChildren().  Rather than overriding this, adapter implementors
+	 * should override the getChildren() methods that take a monitor.
 	 */
-	public abstract Object[] getChildren(Object element);
+	public Object[] getChildren(Object object)
+	{
+		return getChildren(new NullProgressMonitor(), (IAdaptable)object);
+	}
+	
 	
 	/**
      * This should be overridden by subclasses in order to provide
      * deferred query support via the Eclipse Jobs mechanism
 	 * Return the children of this object. Return null if children not supported.
+	 * 
+	 * @param monitor the progress monitor
+	 * @param element the model object to get children from
+	 * @return the children of element
 	 */
-	public Object[] getChildren(IProgressMonitor monitor, Object element)
+	public abstract Object[] getChildren(IProgressMonitor monitor, IAdaptable element);
+	
+	/**
+     * This should be overridden by subclasses in order to provide
+     * deferred query support via the Eclipse Jobs mechanism.  The context object is passed in
+     * in place of the model object.  By default, we just fall back to the original mechanism
+	 * Return the children of this object. Return null if children not supported.
+	 * 
+	 * This method should be overridden if your adapter supports context objects.  If not, this will
+	 * fall back to the model object version of the method.
+	 * 
+	 * @param monitor the progress monitor
+	 * @param element the context object that wrappers a model object, it's subsystem and filter reference
+	 * @return the children of the model object within the context object that matches the containing filter reference criteria
+	 */
+	public Object[] getChildren(IProgressMonitor monitor, IContextObject element)
 	{
-		return getChildren(element);
+		return getChildren(monitor, element.getModelObject());
 	}
 	
 
@@ -1778,7 +1809,7 @@ public abstract class AbstractSystemViewAdapter
 	 */
 	protected SystemFetchOperation getSystemFetchOperation(Object o, IElementCollector collector)
 	{
-	    return new SystemFetchOperation(null, (IAdaptable)o, this, collector);
+	    return new SystemFetchOperation(null, o, this, collector);
 	}
 	
 	
@@ -1790,8 +1821,15 @@ public abstract class AbstractSystemViewAdapter
         return true;
     }
 
-    public ISchedulingRule getRule(Object element) {
+    public ISchedulingRule getRule(Object element) 
+    {
+    	if (element instanceof IContextObject)
+    	{
+    		element = ((IContextObject)element).getModelObject();
+    	}
     	IAdaptable location = (IAdaptable)element;
         return new SystemSchedulingRule(location); 
     }
+    
+
 }

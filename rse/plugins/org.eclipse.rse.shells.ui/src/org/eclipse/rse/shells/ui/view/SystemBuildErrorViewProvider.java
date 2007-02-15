@@ -19,6 +19,7 @@ package org.eclipse.rse.shells.ui.view;
 import java.util.ArrayList;
 
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.rse.core.subsystems.IRemoteLineReference;
 import org.eclipse.rse.subsystems.shells.core.subsystems.IRemoteCommandShell;
@@ -97,7 +98,7 @@ public class SystemBuildErrorViewProvider extends SystemTableViewProvider
 				ISystemViewElementAdapter adapter = getAdapterFor(object);
 				if (adapter != null)
 				{
-					results = adapter.getChildren(object);
+					results = adapter.getChildren(new NullProgressMonitor(), (IAdaptable)object);
 					
 					ArrayList filterredResults = new ArrayList();
 					for (int i = _offset+ 1; i <results.length;i++)

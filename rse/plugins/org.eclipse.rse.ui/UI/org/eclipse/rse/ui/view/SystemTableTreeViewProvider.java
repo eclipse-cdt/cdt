@@ -25,6 +25,7 @@ import java.util.Map;
 
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.ListenerList;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.AbstractTreeViewer;
 import org.eclipse.jface.viewers.ILabelProvider;
@@ -180,20 +181,29 @@ public class SystemTableTreeViewProvider implements ILabelProvider, ITableLabelP
 
 	public Object[] getElements(Object object)
 	{
+		
+    	
 		Object[] results = null;
 		if (object == _lastObject && _lastResults != null)
 		{
 			return _lastResults;
 		}
 		else
-			if (object instanceof IAdaptable)
+		{
+			Object element = object;
+			// object could either be a model object or a wrapper IContextObject 
+	    	if (object instanceof IContextObject)
+	    	{
+	    		element = ((IContextObject)object).getModelObject();
+	    	}
 			{
-				ISystemViewElementAdapter adapter = getAdapterFor(object);
+				
+				ISystemViewElementAdapter adapter = getAdapterFor(element);
 				adapter.setViewer(_viewer);
 				
 		
 				
-				if (adapter.hasChildren(object))
+				if (adapter.hasChildren(element))
 				{
 					if (supportsDeferredQueries())
 			    	{
@@ -212,7 +222,14 @@ public class SystemTableTreeViewProvider implements ILabelProvider, ITableLabelP
 			    	}
 					else
 					{
-						results = adapter.getChildren(object);
+						  if (object instanceof IContextObject)
+				    	  {
+				    		  results = adapter.getChildren(new NullProgressMonitor(), (IContextObject)object);
+				    	  }
+				    	  else 
+				    	  {
+				    		  results = adapter.getChildren(new NullProgressMonitor(), (IAdaptable)object);
+				    	  }
 					}
 					if (adapter instanceof SystemViewRootInputAdapter && results != null)
 					{
@@ -233,6 +250,7 @@ public class SystemTableTreeViewProvider implements ILabelProvider, ITableLabelP
 					_lastObject = object;
 				}
 			}
+		}
 		if (results == null)
 		{
 			return new Object[0];

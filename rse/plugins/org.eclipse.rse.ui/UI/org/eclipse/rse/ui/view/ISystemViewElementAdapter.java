@@ -18,6 +18,7 @@ package org.eclipse.rse.ui.view;
 
 import java.util.List;
 
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -168,17 +169,34 @@ public interface ISystemViewElementAdapter extends IPropertySource, ISystemDragD
 	 * Return the parent of this object
 	 */
 	public Object getParent(Object element);
-	/**
-	 * Return the children of this object
-	 */
-	public Object[] getChildren(Object element);
 	
 	/**
-	 * Return the children of this object.  This version (with monitor) is used when the
-	 * request happens on a modal thread.  The implementation needs to take this into
+	 * Return the children of this model object. 
+	 * 
+	 * @param monitor the progress monitor
+	 * @param element the model object to query
+	 * 
+	 * @return the children of element
+	 * 
+	 * The implementation needs to take this into
 	 * account so that SWT thread exceptions are avoided.
 	 */
-	public Object[] getChildren(IProgressMonitor monitor, Object element);
+	public Object[] getChildren(IProgressMonitor monitor, IAdaptable element);
+	
+	/**
+	 * Return the children of this object.  When a contextObject is passed in
+	 * instead of an adaptable model object, the adapter needs handle both the model object
+	 * as well as the associated filter.
+	 * 
+	 * @param monitor the progress monitor
+	 * @param contextObject a wrapper object that contains the model object plus context information
+	 * 
+	 * @return the children of the model object in contextObject that matches the filter in contextObject
+	 * 
+	 * The implementation needs to take this into
+	 * account so that SWT thread exceptions are avoided.
+	 */
+	public Object[] getChildren(IProgressMonitor monitor, IContextObject contextObject);
 	
 	/**
 	 * Return the children of this object, using the given Expand-To filter

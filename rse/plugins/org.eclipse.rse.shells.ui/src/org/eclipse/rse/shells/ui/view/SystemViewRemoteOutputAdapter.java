@@ -327,7 +327,7 @@ implements  ISystemViewElementAdapter, ISystemRemoteElementAdapter, ISystemOutpu
 	/**
 	 * Returns the children of a remote command if the element is a remote command
 	 */
-	public Object[] getChildren(Object element)
+	public Object[] getChildren(IProgressMonitor monitor, IAdaptable element)
 	{
 	  
 	        if (element instanceof IRemoteCommandShell)

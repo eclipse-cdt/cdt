@@ -15,12 +15,13 @@
 package org.eclipse.rse.ui.view;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.rse.ui.operations.SystemDeferredTreeContentManager;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.ui.progress.DeferredTreeContentManager;
+import org.eclipse.ui.progress.IDeferredWorkbenchAdapter;
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
 
 public class SystemDeferredTableTreeContentManager extends
-		DeferredTreeContentManager {
+		SystemDeferredTreeContentManager {
 
 	private SystemTableTreeViewProvider _provider;
 	private SystemTableTreeView _view;
@@ -42,6 +43,24 @@ public class SystemDeferredTableTreeContentManager extends
 		}
 	}
 	
+    /**
+     * Return the IDeferredWorkbenchAdapter for element or the element if it is
+     * an instance of IDeferredWorkbenchAdapter. If it does not exist return
+     * null.
+     * 
+     * @param element
+     * @return IDeferredWorkbenchAdapter or <code>null</code>
+     */
+    protected IDeferredWorkbenchAdapter getAdapter(Object element) 
+    {
+    	
+    	if (element instanceof IContextObject)
+    	{
+    		element = ((IContextObject)element).getModelObject();
+    	}
+        return super.getAdapter(element);
+    }
+    
 	
 	public class RelayoutView implements Runnable
 	{

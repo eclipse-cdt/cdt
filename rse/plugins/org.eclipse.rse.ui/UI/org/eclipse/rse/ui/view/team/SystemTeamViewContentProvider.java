@@ -19,6 +19,7 @@ package org.eclipse.rse.ui.view.team;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.rse.core.SystemBasePlugin;
@@ -64,7 +65,7 @@ public class SystemTeamViewContentProvider extends WorkbenchContentProvider
 		{
 			ISystemViewElementAdapter adapter = getSystemViewAdapter(element);
 			if (adapter != null)
-				children = adapter.getChildren(element);
+				children = adapter.getChildren(new NullProgressMonitor(), (IAdaptable)element);
 			else
 				children = super.getChildren(element);
 		}

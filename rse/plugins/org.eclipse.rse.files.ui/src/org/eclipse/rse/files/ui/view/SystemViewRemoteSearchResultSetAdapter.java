@@ -18,6 +18,8 @@ package org.eclipse.rse.files.ui.view;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.rse.core.subsystems.ISubSystem;
@@ -134,7 +136,7 @@ public class SystemViewRemoteSearchResultSetAdapter extends AbstractSystemViewAd
 	/**
 	 * Returns the search results for the given search handle
 	 */
-	public Object[] getChildren(Object element) {
+	public Object[] getChildren(IProgressMonitor monitor, IAdaptable element) {
 		
 		if (element instanceof IHostSearchResultSet) {
 			IHostSearchResultSet output = (IHostSearchResultSet)element;

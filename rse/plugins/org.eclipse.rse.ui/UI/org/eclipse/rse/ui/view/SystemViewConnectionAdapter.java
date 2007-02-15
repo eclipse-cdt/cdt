@@ -17,6 +17,7 @@
 package org.eclipse.rse.ui.view;
 import java.util.Vector;
 
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.ICellEditorValidator;
@@ -250,7 +251,7 @@ public class SystemViewConnectionAdapter
 	/**
 	 * Return the children of this object
 	 */
-	public Object[] getChildren(Object element)
+	public Object[] getChildren(IProgressMonitor monitor, IAdaptable element)
 	{
 		IHost conn = (IHost)element;	
 		ISystemViewInputProvider input = getInput();

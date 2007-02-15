@@ -25,9 +25,11 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Vector;
 
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.action.ActionContributionItem;
@@ -109,6 +111,7 @@ import org.eclipse.rse.ui.dialogs.SystemPromptDialog;
 import org.eclipse.rse.ui.messages.ISystemMessageLine;
 import org.eclipse.rse.ui.messages.SystemMessageDialog;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.dnd.DND;
 import org.eclipse.swt.dnd.FileTransfer;
 import org.eclipse.swt.dnd.Transfer;
@@ -5159,8 +5162,17 @@ public class SystemView extends SafeTreeViewer implements ISystemTree, ISystemRe
 		return false;
 	}
 */
+
 	public void add(Object parentElementOrTreePath, Object[] childElements) {
 		assertElementsNotNull(childElements);
+		
+		ISystemFilterReference originalFilter = null;
+		if (parentElementOrTreePath instanceof IContextObject)
+		{
+			IContextObject context = (IContextObject)parentElementOrTreePath;
+			originalFilter = context.getFilterReference();
+			parentElementOrTreePath = context.getModelObject();
+		}
 
 		Vector matches = new Vector();
 		matches = findAllRemoteItemReferences(parentElementOrTreePath, parentElementOrTreePath, matches);
@@ -5211,7 +5223,20 @@ public class SystemView extends SafeTreeViewer implements ISystemTree, ISystemRe
 		{
 		for (int i = 0; i < matches.size(); i++) {
 			Widget match = (Widget) matches.get(i);
-			internalAdd(match, parentElementOrTreePath, childElements);
+			ISystemFilterReference ref = getContainingFilterReference((TreeItem)match);
+			if (matches.size() > 1 && ref != null && ref != originalFilter)
+			{
+				// could have the same object under multiple filters
+				// need to apply filter
+				ISystemViewElementAdapter adapter = (ISystemViewElementAdapter)((IAdaptable)parentElementOrTreePath).getAdapter(ISystemViewElementAdapter.class);
+				IContextObject contextObject = getContextObject((TreeItem)match);
+				Object[] newChildren = adapter.getChildren(new NullProgressMonitor(), contextObject);
+				internalAdd(match, parentElementOrTreePath, newChildren);
+			}
+			else
+			{
+				internalAdd(match, parentElementOrTreePath, childElements);
+			}
 		}
 		}
 		
@@ -5226,4 +5251,156 @@ public class SystemView extends SafeTreeViewer implements ISystemTree, ISystemRe
 
 		
 	}
+
+
+	/**
+	 * Get the containing filter reference for an item
+	 * @param item the item to get the filter reference for
+	 * @return the filter reference
+	 */
+	public ISystemFilterReference getContainingFilterReference(TreeItem item)
+	{
+		Object data = item.getData();
+		if (data instanceof ISystemFilterReference)
+		{
+			return (ISystemFilterReference)data;
+		}
+		else
+		{
+			TreeItem parent = item.getParentItem();
+			if (parent != null)
+			{
+				return getContainingFilterReference(parent);
+			}
+			else				
+			{
+				Object input = getInput();
+				if (input instanceof ISystemFilterReference)
+				{
+					return (ISystemFilterReference)input;
+				}
+				else
+				{
+					return null;
+				}
+			}
+		}
+	}
+	
+	/**
+	 * Get the containing subsystem from an item
+	 * @param item the item to get the subsystem for
+	 * @return the subsystem
+	 */
+	public ISubSystem getContainingSubSystem(TreeItem item)
+	{
+		Object data = item.getData();
+		if (data instanceof ISubSystem)
+		{
+			return (ISubSystem)data;
+		}
+		else
+		{
+			TreeItem parent = item.getParentItem();
+			if (parent != null)
+			{
+				return getContainingSubSystem(parent);
+			}
+			else				
+			{
+				Object input = getInput();
+				if (input instanceof ISubSystem)
+				{
+					return (ISubSystem)input;
+				}
+				else
+				{
+					return null;
+				}
+			}
+		}
+	}
+	
+	
+	/**
+	 * Get the context object from a tree item
+	 * @param item the item to get the context for
+	 * @return the context object
+	 */
+	public IContextObject getContextObject(TreeItem item)
+	{
+		Object data = item.getData();
+		ISystemFilterReference filterReference = getContainingFilterReference(item);
+		if (filterReference != null)
+		{
+			return new ContextObject(data, filterReference.getSubSystem(), filterReference);
+		}
+		else
+		{
+			ISubSystem subSystem = getContainingSubSystem(item);
+			if (subSystem != null)
+			{
+				return new ContextObject(data, subSystem);
+			}
+			else
+			{				
+				return new ContextObject(data);
+			}
+		}
+	}
+
+	/**
+	 * Overridden so that we can pass a wrapper IContextObject into the provider to get children instead 
+	 * of the model object, itself
+	 */
+	protected void createChildren(final Widget widget) 
+	{
+		if (widget instanceof TreeItem)
+		{
+		final Item[] tis = getChildren(widget);
+		if (tis != null && tis.length > 0) {
+			Object data = tis[0].getData();
+			if (data != null) {
+				return; // children already there!
+			}
+		}
+
+		BusyIndicator.showWhile(widget.getDisplay(), new Runnable() {
+			public void run() {
+				// fix for PR 1FW89L7:
+				// don't complain and remove all "dummies" ...
+				if (tis != null) {
+					for (int i = 0; i < tis.length; i++) {
+						if (tis[i].getData() != null) {
+							disassociate(tis[i]);
+							Assert.isTrue(tis[i].getData() == null,
+									"Second or later child is non -null");//$NON-NLS-1$
+
+						}
+						tis[i].dispose();
+					}
+				}
+				Object d = widget.getData();
+				if (d != null) 
+				{
+					Object parentElement = getContextObject((TreeItem)widget);
+					Object[] children = getSortedChildren(parentElement);
+					if (children != null)
+					{
+						for (int i = 0; i < children.length; i++) 
+						{	
+							createTreeItem(widget, children[i], -1);
+						}
+					}
+				}
+			}
+
+		});
+		}
+		else
+		{
+			super.createChildren(widget);
+		}
+	}
+
 }

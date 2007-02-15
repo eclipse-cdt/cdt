@@ -17,6 +17,7 @@
 package org.eclipse.rse.ui.view;
 import java.util.Vector;
 
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -148,7 +149,7 @@ public class SystemViewFilterStringAdapter extends AbstractSystemViewAdapter imp
 	 * Return the children of this filter.
 	 * This returns an empty list.
 	 */
-	public Object[] getChildren(Object element)
+	public Object[] getChildren(IProgressMonitor monitor, IAdaptable element)
 	{
 		return null;
 	}

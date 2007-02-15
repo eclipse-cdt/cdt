@@ -18,6 +18,7 @@ package org.eclipse.rse.ui.view;
 
 import java.util.List;
 
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -103,7 +104,7 @@ public class SystemViewScratchpadAdapter extends AbstractSystemViewAdapter imple
 	/**
 	 * Return the children of this object
 	 */
-	public Object[] getChildren(Object element)
+	public Object[] getChildren(IProgressMonitor monitor, IAdaptable element)
 	{
 	    SystemScratchpad pad = (SystemScratchpad)element;
 	    return pad.getChildren();

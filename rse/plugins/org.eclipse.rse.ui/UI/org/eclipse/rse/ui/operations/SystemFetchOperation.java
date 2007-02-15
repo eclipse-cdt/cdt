@@ -36,6 +36,7 @@ import org.eclipse.rse.ui.GenericMessages;
 import org.eclipse.rse.ui.ISystemMessages;
 import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.messages.SystemMessageDialog;
+import org.eclipse.rse.ui.view.IContextObject;
 import org.eclipse.rse.ui.view.ISystemViewElementAdapter;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
@@ -50,14 +51,14 @@ import org.eclipse.ui.progress.IElementCollector;
 public class SystemFetchOperation extends JobChangeAdapter implements IRunnableWithProgress
 {
     protected IWorkbenchPart _part;
-    protected IAdaptable _remoteObject;
+    protected Object _remoteObject;
     protected IElementCollector _collector;
     private IRunnableContext context;
     protected ISystemViewElementAdapter _adapter;
     protected boolean _canRunAsJob;
     protected InvocationTargetException _exc;
  
-    public SystemFetchOperation(IWorkbenchPart part, IAdaptable remoteObject, ISystemViewElementAdapter adapter, IElementCollector collector) 
+    public SystemFetchOperation(IWorkbenchPart part, Object remoteObject, ISystemViewElementAdapter adapter, IElementCollector collector) 
     {
 		_part = part;
 		_remoteObject = remoteObject;
@@ -66,7 +67,7 @@ public class SystemFetchOperation extends JobChangeAdapter implements IRunnableW
 		_canRunAsJob = false;
 	}
     
-    public SystemFetchOperation(IWorkbenchPart part, IAdaptable remoteObject, ISystemViewElementAdapter adapter, IElementCollector collector, boolean canRunAsJob) 
+    public SystemFetchOperation(IWorkbenchPart part, Object remoteObject, ISystemViewElementAdapter adapter, IElementCollector collector, boolean canRunAsJob) 
     {
 		_part = part;
 		_remoteObject = remoteObject;
@@ -165,7 +166,15 @@ public class SystemFetchOperation extends JobChangeAdapter implements IRunnableW
 	 */
 	protected void execute(IProgressMonitor monitor) throws Exception, InterruptedException
 	{
-		SubSystem ss = (SubSystem)_adapter.getSubSystem(_remoteObject);
+		SubSystem ss = null;
+		if (_remoteObject instanceof IContextObject)
+		{
+			ss = (SubSystem)((IContextObject)_remoteObject).getSubSystem();
+		}
+		else
+		{
+			ss = (SubSystem)_adapter.getSubSystem(_remoteObject);
+		}
 		synchronized (ss.getConnectorService())
 		{
 		if (!ss.isConnected())
@@ -194,7 +203,15 @@ public class SystemFetchOperation extends JobChangeAdapter implements IRunnableW
 			
 		}
 		}
-	    Object[] children = _adapter.getChildren(monitor, _remoteObject);
+		Object[] children = null;
+		if (_remoteObject instanceof IContextObject)
+		{
+			children = _adapter.getChildren(monitor, (IContextObject)_remoteObject);
+		}
+		else
+		{
+			children = _adapter.getChildren(monitor, (IAdaptable)_remoteObject);
+		}
 	    _collector.add(children, monitor);
 	    monitor.done();
 	}

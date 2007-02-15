@@ -223,24 +223,11 @@ public class SystemViewFilterReferenceAdapter
 	 *  <li>resolved objects for each filter string if user has elected NOT to show filter strings in his preferences
 	 * </ul>
 	 */
-	public Object[] getChildren(IProgressMonitor monitor, Object element)
+	public Object[] getChildren(IProgressMonitor monitor, IAdaptable element)
 	{
 		return internalGetChildren(monitor, element);
 	}
 	
-	/**
-	 * Return the children of this object.
-	 * For filters, this is one or more of:
-	 * <ul>
-	 *  <li>filters if nested filters supported
-	 *  <li>filter strings if user has elected to show filter strings in his preferences
-	 *  <li>resolved objects for each filter string if user has elected NOT to show filter strings in his preferences
-	 * </ul>
-	 */
-	public Object[] getChildren(Object element)
-	{
-	    return internalGetChildren(null, element);	    
-	}
 	
 	/*
 	 * Returns the children of the specified element.  If a monitor is passed in then 
@@ -621,7 +608,7 @@ public class SystemViewFilterReferenceAdapter
 
 	/**
 	 * Return a validator for verifying the new name is correct.
-	 * @param either a filter for a rename action, or a filter pool for a "new" action.
+	 * @param element either a filter for a rename action, or a filter pool for a "new" action.
 	 */
 	public ISystemValidator getNameValidator(Object element)
 	{

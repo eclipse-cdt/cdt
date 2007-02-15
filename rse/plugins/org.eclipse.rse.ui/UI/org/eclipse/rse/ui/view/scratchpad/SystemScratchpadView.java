@@ -21,6 +21,7 @@ import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Vector;
 
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Platform;
@@ -48,6 +49,7 @@ import org.eclipse.rse.core.filters.ISystemFilterReference;
 import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.model.ISystemRegistry;
 import org.eclipse.rse.core.references.IRSEBaseReferencingObject;
+import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.model.ISystemRemoteChangeEvent;
 import org.eclipse.rse.model.ISystemRemoteChangeEvents;
 import org.eclipse.rse.model.ISystemRemoteChangeListener;
@@ -73,6 +75,8 @@ import org.eclipse.rse.ui.actions.SystemSubMenuManager;
 import org.eclipse.rse.ui.messages.ISystemMessageLine;
 import org.eclipse.rse.ui.messages.SystemMessageDialog;
 import org.eclipse.rse.ui.view.AbstractSystemViewAdapter;
+import org.eclipse.rse.ui.view.ContextObject;
+import org.eclipse.rse.ui.view.IContextObject;
 import org.eclipse.rse.ui.view.ISystemRemoteElementAdapter;
 import org.eclipse.rse.ui.view.ISystemSelectAllTarget;
 import org.eclipse.rse.ui.view.ISystemViewElementAdapter;
@@ -81,6 +85,7 @@ import org.eclipse.rse.ui.view.SystemViewDataDragAdapter;
 import org.eclipse.rse.ui.view.SystemViewDataDropAdapter;
 import org.eclipse.rse.ui.view.SystemViewMenuListener;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.dnd.DND;
 import org.eclipse.swt.dnd.FileTransfer;
 import org.eclipse.swt.dnd.TextTransfer;
@@ -90,6 +95,7 @@ import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Item;
 import org.eclipse.swt.widgets.Layout;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Shell;
@@ -1402,5 +1408,167 @@ public class SystemScratchpadView
 		}
 	}
 	
+	/**
+	 * Overridden so that we can pass a wrapper IContextObject into the provider to get children instead 
+	 * of the model object, itself
+	 */
+	protected void createChildren(final Widget widget) 
+	{
+		if (widget instanceof TreeItem)
+		{
+		final Item[] tis = getChildren(widget);
+		if (tis != null && tis.length > 0) {
+			Object data = tis[0].getData();
+			if (data != null) {
+				return; // children already there!
+			}
+		}
+
+		BusyIndicator.showWhile(widget.getDisplay(), new Runnable() {
+			public void run() {
+				// fix for PR 1FW89L7:
+				// don't complain and remove all "dummies" ...
+				if (tis != null) {
+					for (int i = 0; i < tis.length; i++) {
+						if (tis[i].getData() != null) {
+							disassociate(tis[i]);
+							Assert.isTrue(tis[i].getData() == null,
+									"Second or later child is non -null");//$NON-NLS-1$
+
+						}
+						tis[i].dispose();
+					}
+				}
+				Object d = widget.getData();
+				if (d != null) 
+				{
+					Object parentElement = getContextObject((TreeItem)widget);
+					Object[] children = getSortedChildren(parentElement);
+					if (children != null)
+					{
+						for (int i = 0; i < children.length; i++) 
+						{	
+							createTreeItem(widget, children[i], -1);
+						}
+					}
+				}
+			}
+
+		});
+		}
+		else
+		{
+			super.createChildren(widget);
+		}
+	}
 	
+	
+	/**
+	 * Get the containing filter reference for an item
+	 * @param item the item to get the filter reference for
+	 * @return the filter reference
+	 */
+	public ISystemFilterReference getContainingFilterReference(TreeItem item)
+	{
+		Object data = item.getData();
+		if (data instanceof ISystemFilterReference)
+		{
+			return (ISystemFilterReference)data;
+		}
+		else
+		{
+			TreeItem parent = item.getParentItem();
+			if (parent != null)
+			{
+				return getContainingFilterReference(parent);
+			}
+			else				
+			{
+				Object input = getInput();
+				if (input instanceof ISystemFilterReference)
+				{
+					return (ISystemFilterReference)input;
+				}
+				else
+				{
+					return null;
+				}
+			}
+		}
+	}
+	
+	/**
+	 * Get the containing subsystem from an item
+	 * @param item the item to get the subsystem for
+	 * @return the subsystem
+	 */
+	public ISubSystem getContainingSubSystem(TreeItem item)
+	{
+		Object data = item.getData();
+		if (data instanceof ISubSystem)
+		{
+			return (ISubSystem)data;
+		}
+		else
+		{
+			TreeItem parent = item.getParentItem();
+			if (parent != null)
+			{
+				return getContainingSubSystem(parent);
+			}
+			else				
+			{
+				Object input = getInput();
+				if (input instanceof ISubSystem)
+				{
+					return (ISubSystem)input;
+				}
+				else
+				{
+					return null;
+				}
+			}
+		}
+	}
+	
+	/**
+	 * Get the context object from a tree item
+	 * @param item the item to get the context for
+	 * @return the context object
+	 */
+	public IContextObject getContextObject(TreeItem item)
+	{
+		Object data = item.getData();
+		ISystemFilterReference filterReference = getContainingFilterReference(item);
+		if (filterReference != null)
+		{
+			return new ContextObject(data, filterReference.getSubSystem(), filterReference);
+		}
+		else
+		{
+			ISubSystem subSystem = getContainingSubSystem(item);
+			if (subSystem != null)
+			{
+				return new ContextObject(data, subSystem);
+			}
+			else
+			{				
+				return new ContextObject(data);
+			}
+		}
+	}
+	
+	/**
+	 * Overrides the standard viewer method to get the model object from the context object
+	 */
+	public void add(Object parentElementOrTreePath, Object[] childElements) {
+		Assert.isNotNull(parentElementOrTreePath);
+		assertElementsNotNull(childElements);
+		
+		if (parentElementOrTreePath instanceof IContextObject)
+		{
+			parentElementOrTreePath = ((IContextObject)parentElementOrTreePath).getModelObject();
+		}
+		super.add(parentElementOrTreePath, childElements);
+	}
 }

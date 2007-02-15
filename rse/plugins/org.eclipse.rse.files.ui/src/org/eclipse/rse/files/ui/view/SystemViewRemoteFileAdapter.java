@@ -41,6 +41,7 @@ import org.eclipse.jface.viewers.AbstractTreeViewer;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.rse.core.SystemBasePlugin;
+import org.eclipse.rse.core.filters.ISystemFilter;
 import org.eclipse.rse.core.filters.ISystemFilterReference;
 import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.model.ISystemContainer;
@@ -78,6 +79,7 @@ import org.eclipse.rse.model.ISystemResourceChangeEvents;
 import org.eclipse.rse.model.SystemRegistry;
 import org.eclipse.rse.model.SystemRemoteResourceSet;
 import org.eclipse.rse.model.SystemResourceChangeEvent;
+import org.eclipse.rse.services.clientserver.PathUtility;
 import org.eclipse.rse.services.clientserver.StringCompare;
 import org.eclipse.rse.services.clientserver.SystemSearchString;
 import org.eclipse.rse.services.clientserver.archiveutils.ArchiveHandlerManager;
@@ -117,6 +119,8 @@ import org.eclipse.rse.ui.messages.SystemMessageDialog;
 import org.eclipse.rse.ui.operations.SystemFetchOperation;
 import org.eclipse.rse.ui.validators.ISystemValidator;
 import org.eclipse.rse.ui.view.AbstractSystemViewAdapter;
+import org.eclipse.rse.ui.view.ContextObject;
+import org.eclipse.rse.ui.view.IContextObject;
 import org.eclipse.rse.ui.view.ISystemDragDropAdapter;
 import org.eclipse.rse.ui.view.ISystemEditableRemoteObject;
 import org.eclipse.rse.ui.view.ISystemMementoConstants;
@@ -607,23 +611,21 @@ public class SystemViewRemoteFileAdapter
 	 * Return the children of this object.
 	 * If this is a folder or root, we list all child folders and files.
 	 */
-	public Object[] getChildren(IProgressMonitor monitor, Object element)
+	public Object[] getChildren(IProgressMonitor monitor, IAdaptable element)
 	{
-		return internalGetChildren(monitor, element);
+		return internalGetChildren(monitor, element, null);
 	}
 	
 	/**
 	 * Return the children of this object.
 	 * If this is a folder or root, we list all child folders and files.
 	 */
-	public Object[] getChildren(Object element)
+	public Object[] getChildren(IProgressMonitor monitor, IContextObject context)
 	{
-		_lastResults = internalGetChildren(null, element);
-		return _lastResults;
-		//		}
+		return internalGetChildren(monitor, context.getModelObject(), context.getFilterReference());
 	}
 
-	private synchronized Object[] internalGetChildren(IProgressMonitor monitor, Object element)
+	private synchronized Object[] internalGetChildren(IProgressMonitor monitor, IAdaptable element, ISystemFilterReference filterReference)
 	{
 		//System.out.println("Inside getChildren for: "+element);
 		IRemoteFile file = (IRemoteFile) element;
@@ -638,9 +640,12 @@ public class SystemViewRemoteFileAdapter
 			return ((RemoteFileRoot) file).getRootFiles();
 		}
 		IRemoteFileSubSystem ss = file.getParentRemoteFileSubSystem();
+	
+		
+		/*
 		RemoteFileFilterString orgRffs = file.getFilterString();
 	
-		String filter = null;
+
 		if (orgRffs != null)
 		{
 			if (foldersOnly)
@@ -660,7 +665,28 @@ public class SystemViewRemoteFileAdapter
 				filter = rffs.toString();
 			}
 		}
-		else if (foldersOnly)
+		else
+		*/
+		String filter = null;
+		if (filterReference != null)
+		{
+			ISystemFilter filterObject = filterReference.getReferencedFilter();
+			if (filterObject.getFilterStringCount() > 0)
+			{
+				String filterString = filterObject.getFilterStrings()[0];
+				String separator = PathUtility.getSeparator(filterString);
+				
+				int sepIndex = filterString.lastIndexOf(separator);
+				if (sepIndex > 0)
+				{
+					filter = filterString.substring(sepIndex + 1);
+				}
+			}
+		}
+		else
+		{
+		
+		if (foldersOnly)
 		{
 			if (filterString == null)
 				filter = "* /nf"; //$NON-NLS-1$
@@ -680,6 +706,7 @@ public class SystemViewRemoteFileAdapter
 				filter = "*"; //$NON-NLS-1$
 			else
 				filter = filterString;	
+		}
 		}
 		
 		Object[] children = null;
@@ -791,9 +818,12 @@ public class SystemViewRemoteFileAdapter
 		else
 		{
 			// check that the children are actually there			
-			Object[] contents = file.getContents(RemoteChildrenContentsType.getInstance());
-			if (!file.isStale() && contents != null && contents.length == 0 )
-				hasChildren = false;
+			//Object[] contents = file.getContents(RemoteChildrenContentsType.getInstance());
+			hasChildren = file.hasContents(RemoteChildrenContentsType.getInstance());
+			if (!hasChildren && !file.isStale())
+				hasChildren = true;
+		//	if (!file.isStale() && contents != null && contents.length == 0 )
+		//		hasChildren = false;
 		}
 
 		return hasChildren;
@@ -2593,7 +2623,7 @@ public class SystemViewRemoteFileAdapter
 			IRemoteFile file = (IRemoteFile) element;
 			return file.getParentRemoteFileSubSystem();
 		}
-		return null;
+		return super.getSubSystem(element);
 	}
 	/** 
 	 * Return the subsystem factory id that owns this remote object
@@ -3145,7 +3175,7 @@ public class SystemViewRemoteFileAdapter
 
 	protected SystemFetchOperation getSystemFetchOperation(Object o, IElementCollector collector)
 	{
-	    return new SystemFetchOperation(null, (IAdaptable)o, this, collector, true);
+	    return new SystemFetchOperation(null, o, this, collector, true);
 	}
 
 	/**

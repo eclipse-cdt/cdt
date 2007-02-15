@@ -15,6 +15,7 @@
  ********************************************************************************/
 
 package org.eclipse.rse.ui.view;
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.rse.core.SystemAdapterHelpers;
 import org.eclipse.rse.core.SystemBasePlugin;
@@ -344,7 +345,7 @@ public class SystemSelectRemoteObjectAPIProviderImpl
         Object[] children = null;
 
 		if (filterString == null)
-	 	  children = subsystemAdapter.getChildren(subsystem);
+	 	  children = subsystemAdapter.getChildren(new NullProgressMonitor(), (IAdaptable)subsystem);
 	 	else
 	 	{
 	 	  children = resolveFilterString(subsystem, filterString);

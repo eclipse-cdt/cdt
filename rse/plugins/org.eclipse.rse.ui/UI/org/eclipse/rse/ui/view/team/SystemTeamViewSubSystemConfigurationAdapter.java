@@ -16,6 +16,8 @@
 
 package org.eclipse.rse.ui.view.team;
 
+import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.rse.core.filters.ISystemFilterPoolManager;
@@ -165,7 +167,7 @@ public class SystemTeamViewSubSystemConfigurationAdapter
 	/**
 	 * Return the children of this profile. 
 	 */
-	public Object[] getChildren(Object element)
+	public Object[] getChildren(IProgressMonitor monitor, IAdaptable element)
 	{		
 		SystemTeamViewSubSystemConfigurationNode ssfNode = (SystemTeamViewSubSystemConfigurationNode)element;
 		SystemTeamViewCategoryNode category = ssfNode.getParentCategory();

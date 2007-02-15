@@ -25,6 +25,7 @@ import java.util.Map;
 
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.ListenerList;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ILabelProviderListener;
@@ -152,7 +153,7 @@ public class SystemTableViewProvider implements ILabelProvider, ITableLabelProvi
 				if (adapter != null)
 				{
 				    adapter.setViewer(_viewer);
-					results = adapter.getChildren(object);
+					results = adapter.getChildren(new NullProgressMonitor(), (IAdaptable)object);
 					if (adapter instanceof SystemViewRootInputAdapter)
 					{
 						ArrayList filterredResults = new ArrayList();

@@ -21,11 +21,13 @@ import java.util.Map;
 
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.ListenerList;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.rse.ui.view.IContextObject;
 import org.eclipse.rse.ui.view.ISystemViewElementAdapter;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.model.IWorkbenchAdapter;
@@ -120,20 +122,32 @@ public class SystemScratchpadViewProvider implements ILabelProvider, ITreeConten
 	{
 		Object[] results = null;
 
-			if (object instanceof IAdaptable)
+		Object element = object;
+		if (object instanceof IContextObject)
+    	{
+    		element = ((IContextObject)object).getModelObject();
+    	}
+		if (element instanceof IAdaptable)
+		{				
+			ISystemViewElementAdapter adapter = getAdapterFor(element);
+			if (adapter != null && adapter.hasChildren(element))
 			{
-				ISystemViewElementAdapter adapter = getAdapterFor(object);
-				if (adapter != null && adapter.hasChildren(object))
-				{
-					results = adapter.getChildren(object);
-				}
-				else
-				{
-					IWorkbenchAdapter wa = (IWorkbenchAdapter)((IAdaptable)object).getAdapter(IWorkbenchAdapter.class);
-					if (wa != null)
-						return wa.getChildren(object);
-				}
+				  if (object instanceof IContextObject)
+		    	  {
+		    		  results = adapter.getChildren(new NullProgressMonitor(), (IContextObject)object);
+		    	  }
+		    	  else 
+		    	  {
+		    		  results = adapter.getChildren(new NullProgressMonitor(), (IAdaptable)object);
+		    	  }
 			}
+			else
+			{
+				IWorkbenchAdapter wa = (IWorkbenchAdapter)((IAdaptable)object).getAdapter(IWorkbenchAdapter.class);
+				if (wa != null)
+					return wa.getChildren(object);
+			}
+		}
 		if (results == null)
 		{
 			return new Object[0];

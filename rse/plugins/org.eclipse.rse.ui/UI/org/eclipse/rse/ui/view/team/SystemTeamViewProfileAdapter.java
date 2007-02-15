@@ -17,6 +17,7 @@
 package org.eclipse.rse.ui.view.team;
 import java.util.Hashtable;
 
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -209,7 +210,7 @@ public class SystemTeamViewProfileAdapter
 	/**
 	 * Return the children of this profile. 
 	 */
-	public Object[] getChildren(Object element)
+	public Object[] getChildren(IProgressMonitor monitor, IAdaptable element)
 	{
 		ISystemProfile profile = (ISystemProfile)element;	
 		return getCategoryChildren(profile);

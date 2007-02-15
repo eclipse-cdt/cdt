@@ -54,6 +54,7 @@ import org.eclipse.cdt.debug.core.cdi.event.ICDIExitedEvent;
 import org.eclipse.cdt.debug.core.cdi.event.ICDIRestartedEvent;
 import org.eclipse.cdt.debug.core.cdi.event.ICDIResumedEvent;
 import org.eclipse.cdt.debug.core.cdi.event.ICDISuspendedEvent;
+import org.eclipse.cdt.debug.core.cdi.model.ICDIAddressFactoryManagement;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIBreakpoint;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIObject;
 import org.eclipse.cdt.debug.core.cdi.model.ICDISharedLibrary;
@@ -1634,8 +1635,8 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 				// No binary file, possible when we do pure assembly level debug
 				// Without any binary file involved, ask CDI plugin for default
 				// AddressFactory, if any.
-				if (fCDITarget instanceof ICDITarget2) {
-					fAddressFactory = ((ICDITarget2) fCDITarget).getAddressFactory();
+				if (fCDITarget instanceof ICDIAddressFactoryManagement) {
+					fAddressFactory = ((ICDIAddressFactoryManagement) fCDITarget).getAddressFactory();
 				}
 			}
 		}

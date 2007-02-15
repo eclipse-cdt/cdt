@@ -25,7 +25,7 @@
       </category>
       <view
             allowMultiple="true"
-            class="org.eclipse.tm.terminal.internal.view.TerminalView"
+            class="org.eclipse.tm.internal.terminal.view.TerminalView"
             icon="icons/cview16/terminal_view.gif"
             category="Terminal"
             name="%terminal.views.view.name"
@@ -46,7 +46,7 @@
          point="org.eclipse.ui.preferencePages">
       <page
             name="%terminal.views.view.name"
-            class="org.eclipse.tm.terminal.internal.view.TerminalPreferencePage"
+            class="org.eclipse.tm.internal.terminal.view.TerminalPreferencePage"
             id="org.eclipse.tm.terminal.TerminalPreferencePage">
       </page>
    </extension>
@@ -75,6 +75,6 @@
    </extension>
    <extension
          point="org.eclipse.core.runtime.preferences">
-      <initializer class="org.eclipse.tm.terminal.internal.view.TerminalPreferenceInitializer"/>
+      <initializer class="org.eclipse.tm.internal.terminal.view.TerminalPreferenceInitializer"/>
    </extension>
  </plugin>

@@ -15,7 +15,7 @@
    <extension-point id="terminalConnector" name="Terminal Connector" schema="schema/terminalConnector.exsd"/>
    <extension
          point="org.eclipse.tm.terminal.terminalConnector">
-      <connector class="org.eclipse.tm.terminal.internal.telnet.TelnetConnector"/>
+      <connector class="org.eclipse.tm.internal.terminal.telnet.TelnetConnector"/>
    </extension>
 
    <extension point="org.eclipse.ui.contexts">           

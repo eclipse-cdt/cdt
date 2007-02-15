@@ -1233,8 +1233,8 @@ public class SystemRegistry implements ISystemRegistryUI, ISystemModelChangeEven
 		{
 			for (int idx = 0; idx < subsystemFactoryProxies.length; idx++)
 			{
-				if (subsystemFactoryProxies[idx].appliesToSystemType(conn.getSystemType()))
-				{
+				// if (subsystemFactoryProxies[idx].appliesToSystemType(conn.getSystemType()))
+				// {
 					ISubSystemConfiguration factory = subsystemFactoryProxies[idx].getSubSystemConfiguration();
 					if (factory != null)
 					{
@@ -1243,7 +1243,7 @@ public class SystemRegistry implements ISystemRegistryUI, ISystemModelChangeEven
 							for (int jdx = 0; jdx < sss.length; jdx++)
 								v.addElement(sss[jdx]);
 					}
-				}
+				// }
 			}
 			//if (v.size() > 0)
 			//{
@@ -2267,11 +2267,13 @@ public class SystemRegistry implements ISystemRegistryUI, ISystemModelChangeEven
 		ISubSystem[] subsystems = new ISubSystem[configurations.length];
 		
 		for (int i = 0; i < configurations.length; i++) {
-			subsystems[i] = configurations[i].createSubSystem(host, false, null);
+			subsystems[i] = configurations[i].createSubSystem(host, true, null);
 		}
 		
-		FireNewHostEvents fire = new FireNewHostEvents(host, subsystems, this);
-		Display.getDefault().syncExec(fire);
+		for (int j = 0; j < subsystems.length; j++) {
+			fireModelChangeEvent(ISystemModelChangeEvents.SYSTEM_RESOURCE_ADDED, ISystemModelChangeEvents.SYSTEM_RESOURCETYPE_SUBSYSTEM, subsystems[j], null);
+		}
+		
 		RSEUIPlugin.getThePersistenceManager().commit(host);
 	}
 	

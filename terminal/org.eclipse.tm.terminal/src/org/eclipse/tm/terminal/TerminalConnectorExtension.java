@@ -18,7 +18,7 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.RegistryFactory;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.tm.terminal.internal.control.TerminalPlugin;
+import org.eclipse.tm.internal.terminal.control.impl.TerminalPlugin;
 
 /**
  * A factory to get {@link ITerminalConnector} instances.

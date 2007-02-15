@@ -3,7 +3,7 @@ Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
 Bundle-SymbolicName: org.eclipse.tm.terminal; singleton:=true
 Bundle-Version: 0.9.2.qualifier
-Bundle-Activator: org.eclipse.tm.terminal.internal.control.TerminalPlugin
+Bundle-Activator: org.eclipse.tm.internal.terminal.control.impl.TerminalPlugin
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin
 Require-Bundle: org.eclipse.core.runtime,
@@ -11,7 +11,7 @@ Require-Bundle: org.eclipse.core.runtime,
 Eclipse-LazyStart: true
 Bundle-RequiredExecutionEnvironment: J2SE-1.4
 Bundle-ClassPath: .
-Export-Package: org.eclipse.tm.terminal,
- org.eclipse.tm.terminal.control,
- org.eclipse.tm.terminal.internal.control;x-internal:=true,
- org.eclipse.tm.terminal.internal.telnet;x-internal:=true
+Export-Package: org.eclipse.tm.internal.terminal.control;x-friends:="org.eclipse.tm.terminal.view",
+ org.eclipse.tm.internal.terminal.control.impl;x-internal:=true,
+ org.eclipse.tm.internal.terminal.telnet;x-internal:=true,
+ org.eclipse.tm.terminal

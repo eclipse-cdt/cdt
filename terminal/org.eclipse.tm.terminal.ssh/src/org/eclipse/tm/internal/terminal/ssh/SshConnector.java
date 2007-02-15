@@ -101,10 +101,6 @@ public class SshConnector implements ITerminalConnector {
 	void setOutputStream(OutputStream outputStream) {
 		fOutputStream = outputStream;
 	}
-	public void writeToTerminal(String txt) {
-		fControl.writeToTerminal(txt);
-		
-	}
 	public void setState(TerminalState state) {
 		fControl.setState(state);
 		

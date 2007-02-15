@@ -1155,7 +1155,7 @@ public class SystemTableView
 			remoteResourceName = (String) remoteResource;
 		else
 		{
-			ISystemRemoteElementAdapter ra = getRemoteAdapter(remoteResource);
+			IRemoteObjectIdentifier ra = getRemoteObjectIdentifier(remoteResource);
 			if (ra == null)
 				return null;
 			remoteResourceName = ra.getAbsoluteName(remoteResource);

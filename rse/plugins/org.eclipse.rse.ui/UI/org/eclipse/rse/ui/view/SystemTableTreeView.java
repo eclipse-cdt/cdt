@@ -49,6 +49,7 @@ import org.eclipse.rse.core.SystemBasePlugin;
 import org.eclipse.rse.core.filters.ISystemFilterReference;
 import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.model.ISystemRegistry;
+import org.eclipse.rse.core.subsystems.IRemoteObjectIdentifier;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.model.ISystemRemoteChangeEvent;
 import org.eclipse.rse.model.ISystemRemoteChangeEvents;
@@ -1046,7 +1047,7 @@ implements IMenuListener, ISystemDeleteTarget, ISystemRenameTarget, ISystemSelec
 			remoteResourceName = (String) remoteResource;
 		else
 		{
-			ISystemRemoteElementAdapter ra = getRemoteAdapter(remoteResource);
+			IRemoteObjectIdentifier ra = getRemoteObjectIdentifier(remoteResource);
 			if (ra == null)
 				return null;
 			remoteResourceName = ra.getAbsoluteName(remoteResource);
@@ -1427,6 +1428,15 @@ implements IMenuListener, ISystemDeleteTarget, ISystemRenameTarget, ISystemSelec
 		return adapter;
 	}
 
+	/**
+	 * Returns the implementation of IRemoteObjectIdentifier for the given
+	 * object.  Returns null if this object does not adaptable to this.
+	 */
+	protected IRemoteObjectIdentifier getRemoteObjectIdentifier(Object o) 
+	{
+		return (IRemoteObjectIdentifier)((IAdaptable)o).getAdapter(IRemoteObjectIdentifier.class);
+	}
+	
 	/**
 	* Return true if select all should be enabled for the given object.
 	* For a tree view, you should return true if and only if the selected object has children.

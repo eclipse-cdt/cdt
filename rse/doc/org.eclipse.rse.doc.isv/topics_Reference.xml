@@ -98,7 +98,6 @@
 			<topic label="org.eclipse.rse.connectorservice.dstore" href="reference/api/org/eclipse/rse/connectorservice/dstore/package-summary.html"/>
 			<topic label="org.eclipse.rse.connectorservice.dstore.util" href="reference/api/org/eclipse/rse/connectorservice/dstore/util/package-summary.html"/>
 			<topic label="org.eclipse.rse.connectorservice.local" href="reference/api/org/eclipse/rse/connectorservice/local/package-summary.html"/>
-			<topic label="org.eclipse.rse.connectorservice.ssh" href="reference/api/org/eclipse/rse/connectorservice/ssh/package-summary.html"/>
 		</topic>
 		<topic label="File Subsystem" href="provisional_api.html">
 			<topic label="org.eclipse.rse.subsystems.files.core" href="reference/api/org/eclipse/rse/subsystems/files/core/package-summary.html"/>

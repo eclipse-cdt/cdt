@@ -10,12 +10,12 @@
  * Martin Oberhuber (Wind River) - copy dialogs from team.cvs.ui 
  *******************************************************************************/
 
-package org.eclipse.rse.connectorservice.ssh;
+package org.eclipse.rse.internal.connectorservice.ssh;
 
 import org.eclipse.osgi.util.NLS;
 
 public class SshConnectorResources extends NLS {
-	private static final String BUNDLE_NAME = "org.eclipse.rse.connectorservice.ssh.SshConnectorResources"; //$NON-NLS-1$
+	private static final String BUNDLE_NAME = "org.eclipse.rse.internal.connectorservice.ssh.SshConnectorResources"; //$NON-NLS-1$
 	static {
 		NLS.initializeMessages(BUNDLE_NAME, SshConnectorResources.class);
 	}

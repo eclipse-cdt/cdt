@@ -14,7 +14,7 @@
  * Martin Oberhuber (Wind River) - Adapted from LocalConnectorServiceManager.
  ********************************************************************************/
 
-package org.eclipse.rse.connectorservice.ssh;
+package org.eclipse.rse.internal.connectorservice.ssh;
 
 import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.subsystems.AbstractConnectorServiceManager;

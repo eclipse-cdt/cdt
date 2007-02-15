@@ -9,7 +9,7 @@
  * IBM Corporation - initial API and implementation
  * Martin Oberhuber (Wind River) - extracted from various team.cvs plugins
  *******************************************************************************/
-package org.eclipse.rse.connectorservice.ssh;
+package org.eclipse.rse.internal.connectorservice.ssh;
 
 
 /**

@@ -10,7 +10,7 @@
  * IBM Corporation - ongoing maintenance
  * Martin Oberhuber (Wind River) - copied and adapted from team.cvs.ui
  *******************************************************************************/
-package org.eclipse.rse.connectorservice.ssh;
+package org.eclipse.rse.internal.connectorservice.ssh;
 
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;

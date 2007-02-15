@@ -9,7 +9,7 @@
  * Martin Oberhuber (Wind River) - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.rse.connectorservice.ssh;
+package org.eclipse.rse.internal.connectorservice.ssh;
 
 import java.io.IOException;
 import java.io.InputStream;

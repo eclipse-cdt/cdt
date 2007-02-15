@@ -1260,13 +1260,12 @@ public class SystemView extends SafeTreeViewer implements ISystemTree, ISystemRe
 	}
 
 	/**
-	 * Returns the implementation of ISystemRemoteElement for the given
+	 * Returns the implementation of IRemoteObjectIdentifier for the given
 	 * object.  Returns null if this object does not adaptable to this.
 	 */
 	protected IRemoteObjectIdentifier getRemoteAdapter(Object o) 
 	{
 		return (IRemoteObjectIdentifier)((IAdaptable)o).getAdapter(IRemoteObjectIdentifier.class);
-		//return SystemAdapterHelpers.getRemoteAdapter(o, this);
 	}
 	
 	protected ISystemViewElementAdapter getViewAdapter(Object o)

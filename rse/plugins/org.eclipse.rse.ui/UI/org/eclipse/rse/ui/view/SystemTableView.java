@@ -49,6 +49,7 @@ import org.eclipse.rse.core.filters.ISystemFilterReference;
 import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.model.ISystemContainer;
 import org.eclipse.rse.core.model.ISystemRegistry;
+import org.eclipse.rse.core.subsystems.IRemoteObjectIdentifier;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.model.ISystemRemoteChangeEvent;
 import org.eclipse.rse.model.ISystemRemoteChangeEvents;
@@ -1491,7 +1492,7 @@ public class SystemTableView
 		Object element = null;
 
 		ISystemViewElementAdapter adapter = null;
-		ISystemRemoteElementAdapter remoteAdapter = null;
+		IRemoteObjectIdentifier remoteAdapter = null;
 		String oldFullName = null;
 		boolean ok = true;
 		try
@@ -1503,7 +1504,7 @@ public class SystemTableView
 				adapter = getAdapter(element);
 				Object parentElement = getParentForContent(element);
 
-				remoteAdapter = getRemoteAdapter(element);
+				remoteAdapter = getRemoteObjectIdentifier(element);
 				if (remoteAdapter != null)
 					oldFullName = remoteAdapter.getAbsoluteName(element);
 				// pre-rename
@@ -1518,7 +1519,7 @@ public class SystemTableView
 						{
 							updateItem(widget, element);
 						}
-						sr.fireRemoteResourceChangeEvent(ISystemRemoteChangeEvents.SYSTEM_REMOTE_RESOURCE_RENAMED, element, parentElement, remoteAdapter.getSubSystem(element), oldFullName, this);
+						sr.fireRemoteResourceChangeEvent(ISystemRemoteChangeEvents.SYSTEM_REMOTE_RESOURCE_RENAMED, element, parentElement, adapter.getSubSystem(element), oldFullName, this);
 
 					}
 					else
@@ -1558,6 +1559,15 @@ public class SystemTableView
 		if ((adapter != null) && (adapter instanceof ISystemViewElementAdapter))
 			 ((ISystemViewElementAdapter) adapter).setViewer(this);
 		return adapter;
+	}
+	
+	/**
+	 * Returns the implementation of IRemoteObjectIdentifier for the given
+	 * object.  Returns null if this object does not adaptable to this.
+	 */
+	protected IRemoteObjectIdentifier getRemoteObjectIdentifier(Object o) 
+	{
+		return (IRemoteObjectIdentifier)((IAdaptable)o).getAdapter(IRemoteObjectIdentifier.class);
 	}
 
 	/**

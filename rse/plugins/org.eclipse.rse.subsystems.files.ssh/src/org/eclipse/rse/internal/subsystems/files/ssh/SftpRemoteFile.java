@@ -14,7 +14,7 @@
  * Martin Oberhuber (Wind River) - Adapted from FTPRemoteFile.
  ********************************************************************************/
 
-package org.eclipse.rse.subsystems.files.ssh;
+package org.eclipse.rse.internal.subsystems.files.ssh;
 
 import org.eclipse.rse.internal.services.ssh.files.SftpHostFile;
 import org.eclipse.rse.subsystems.files.core.servicesubsystem.AbstractRemoteFile;

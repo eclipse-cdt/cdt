@@ -9,7 +9,7 @@
  * Martin Oberhuber (Wind River) - initial API and implementation 
  *******************************************************************************/
 
-package org.eclipse.rse.subsystems.files.ssh;
+package org.eclipse.rse.internal.subsystems.files.ssh;
 
 import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.subsystems.IConnectorService;

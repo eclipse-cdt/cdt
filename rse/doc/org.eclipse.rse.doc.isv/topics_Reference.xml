@@ -111,7 +111,6 @@
 			<topic label="org.eclipse.rse.subsystems.files.ftp" href="reference/api/org/eclipse/rse/subsystems/files/ftp/package-summary.html"/>
 			<topic label="org.eclipse.rse.subsystems.files.local.model" href="reference/api/org/eclipse/rse/subsystems/files/local/model/package-summary.html"/>
 			<topic label="org.eclipse.rse.subsystems.files.local" href="reference/api/org/eclipse/rse/subsystems/files/local/package-summary.html"/>
-			<topic label="org.eclipse.rse.subsystems.files.ssh" href="reference/api/org/eclipse/rse/subsystems/files/ssh/package-summary.html"/>
 		</topic>
 		<topic label="Process Subsystem" href="provisional_api.html">
 			<topic label="org.eclipse.rse.subsystems.processes.core" href="reference/api/org/eclipse/rse/subsystems/processes/core/package-summary.html"/>

@@ -14,7 +14,7 @@
  * Martin Oberhuber (Wind River) - Adapted from FTPFileAdapter.
  ********************************************************************************/
 
-package org.eclipse.rse.subsystems.files.ssh;
+package org.eclipse.rse.internal.subsystems.files.ssh;
 
 import java.util.ArrayList;
 import java.util.List;

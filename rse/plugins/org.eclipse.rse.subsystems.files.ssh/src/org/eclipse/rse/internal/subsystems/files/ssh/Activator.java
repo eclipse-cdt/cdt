@@ -9,7 +9,7 @@
  * Martin Oberhuber (Wind River) - initial API and implementation
  * Dave McKnight (IBM) - Fix bug 148971: activate files.ui on startup 
  *******************************************************************************/
-package org.eclipse.rse.subsystems.files.ssh;
+package org.eclipse.rse.internal.subsystems.files.ssh;
 
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.plugin.AbstractUIPlugin;

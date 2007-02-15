@@ -25,10 +25,7 @@ import org.eclipse.cdt.utils.Addr32Factory;
 import org.eclipse.cdt.utils.Addr64;
 import org.eclipse.cdt.utils.Addr64Factory;
 import org.eclipse.cdt.utils.ERandomAccessFile;
-import org.eclipse.cdt.utils.coff.Coff.SectionHeader;
-import org.eclipse.cdt.utils.coff.PE.Attribute;
 import org.eclipse.cdt.utils.debug.dwarf.DwarfReader;
-import org.eclipse.cdt.utils.debug.stabs.StabsReader;
 
 // test checkin
 public class Elf {
@@ -111,6 +108,8 @@ public class Elf {
 		public final static int EM_H8_300 = 46;
 		public final static int EM_H8_300H = 47;
 		public final static int EM_IA_64 = 50;
+		public final static int EM_COLDFIRE = 52;
+		public final static int EM_STARCORE = 58;
 		public final static int EM_X86_64 = 62;		
 		public final static int EM_ST100 = 60;
 		public final static int EM_AVR = 83;
@@ -120,6 +119,7 @@ public class Elf {
 		public final static int EM_MN10300 = 89;
 		public final static int EM_MN10200 = 90;
 		public final static int EM_MSP430 = 105;
+		public final static int EM_BLACKFIN = 106;
 		public final static int EM_EXCESS = 111;
 		public final static int EM_NIOSII = 113;
 		public final static int EM_C166 = 116;
@@ -135,7 +135,9 @@ public class Elf {
 		public final static int EM_CYGNUS_FRV = 0x5441;
 		public final static int EM_IQ2000 = 0xFEBA;
 		public static final int EM_XILINX_MICROBLAZE = 0xbaab;
-
+		public static final int EM_SDMA = 0xcafe;
+		public static final int EM_CRADLE = 0x4d55; 
+			
 		public byte e_ident[] = new byte[EI_NDENT];
 		public int e_type; /* file type (Elf32_Half) */
 		public int e_machine; /* machine type (Elf32_Half) */
@@ -744,7 +746,7 @@ public class Elf {
 				break;
 		}
 
-		switch (ehdr.e_machine) {
+		switch (ehdr.e_machine & 0xFFFF) {
 			case Elf.ELFhdr.EM_386 :
 			case Elf.ELFhdr.EM_486 :
 				attrib.cpu = "x86"; //$NON-NLS-1$
@@ -819,6 +821,9 @@ public class Elf {
 			case Elf.ELFhdr.EM_IA_64 :
 				attrib.cpu = "ia64"; //$NON-NLS-1$
 				break;
+			case Elf.ELFhdr.EM_COLDFIRE:
+				attrib.cpu = "coldfire"; //$NON-NLS-1$
+				break;
 			case Elf.ELFhdr.EM_AVR :
 				attrib.cpu = "avr"; //$NON-NLS-1$
 				break;
@@ -842,6 +847,18 @@ public class Elf {
 				break;
 			case Elf.ELFhdr.EM_M16C:
 				attrib.cpu = "M16C"; //$NON-NLS-1$
+				break;
+			case Elf.ELFhdr.EM_STARCORE:
+				attrib.cpu = "StarCore"; //$NON-NLS-1$
+				break;
+			case Elf.ELFhdr.EM_BLACKFIN :
+				attrib.cpu = "bfin"; //$NON-NLS-1$
+				break;
+			case Elf.ELFhdr.EM_SDMA:
+				attrib.cpu = "sdma"; //$NON-NLS-1$
+				break;
+			case Elf.ELFhdr.EM_CRADLE:
+				attrib.cpu = "cradle"; //$NON-NLS-1$
 				break;
 			case Elf.ELFhdr.EM_NONE :
 			default :

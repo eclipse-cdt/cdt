@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2006 IBM Corporation. All rights reserved.
+ * Copyright (c) 2006, 2007 IBM Corporation. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -13,6 +13,7 @@
  * Contributors:
  * Javier Montalvo Orus (Symbian) - Bug 140348 - FTP did not use port number
  * Javier Montalvo Orus (Symbian) - Bug 161209 - Need a Log of ftp commands
+ * Javier Montalvo Orus (Symbian) - Bug 169680 - [ftp] FTP files subsystem and service should use passive mode
  ********************************************************************************/
 
 package org.eclipse.rse.subsystems.files.ftp.connectorservice;
@@ -21,6 +22,8 @@ import java.io.OutputStream;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.rse.core.model.IHost;
+import org.eclipse.rse.core.model.IPropertySet;
+import org.eclipse.rse.core.model.PropertyType;
 import org.eclipse.rse.core.model.SystemSignonInformation;
 import org.eclipse.rse.core.subsystems.AbstractConnectorService;
 import org.eclipse.rse.services.files.IFileService;
@@ -35,11 +38,20 @@ import org.eclipse.ui.console.MessageConsole;
 public class FTPConnectorService extends AbstractConnectorService 
 {
 	protected FTPService _ftpService;
+	private IPropertySet _propertySet;
 	
 	public FTPConnectorService(IHost host, int port)
 	{		
 		super(SystemFileResources.RESID_FTP_CONNECTORSERVICE_NAME,SystemFileResources.RESID_FTP_CONNECTORSERVICE_DESCRIPTION, host, port);
 		_ftpService = new FTPService();
+		
+		_propertySet = getPropertySet("FTP Settings"); //$NON-NLS-1$
+		
+		if(_propertySet==null)
+		{
+			_propertySet = createPropertySet("FTP Settings"); //$NON-NLS-1$
+			_propertySet.addProperty("passive","false",PropertyType.getEnumPropertyType(new String[]{"true","false"})); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+		}	
 	} 
 	
 	public void internalConnect(IProgressMonitor monitor) throws Exception
@@ -56,6 +68,7 @@ public class FTPConnectorService extends AbstractConnectorService
 		_ftpService.setPassword(info.getPassword());
 		_ftpService.setPortNumber(getPort());
 		_ftpService.setLoggingStream(getLoggingStream(info.getHostname(),getPort()));
+		_ftpService.setPropertySet(_propertySet);
 		_ftpService.connect();	
 	}
 	

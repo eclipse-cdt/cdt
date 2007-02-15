@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2006 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2006, 2007 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -35,6 +35,7 @@
  * Javier Montalvo Orus (Symbian) - Fixing 165471 - [ftp] On wftpd-2.0, "." and ".." directory entries should be hidden
  * Javier Montalvo Orus (Symbian) - Fixing 165476 - [ftp] On warftpd-1.65 in MSDOS mode, cannot expand drives
  * Javier Montalvo Orus (Symbian) - Fixing 168120 - [ftp] root filter resolves to home dir
+ * Javier Montalvo Orus (Symbian) - Fixing 169680 - [ftp] FTP files subsystem and service should use passive mode
  ********************************************************************************/
 
 package org.eclipse.rse.services.files.ftp;
@@ -60,6 +61,7 @@ import org.apache.commons.net.ftp.FTPFile;
 import org.apache.commons.net.ftp.FTPReply;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.rse.core.model.IPropertySet;
 import org.eclipse.rse.services.clientserver.FileTypeMatcher;
 import org.eclipse.rse.services.clientserver.IMatcher;
 import org.eclipse.rse.services.clientserver.NamePatternMatcher;
@@ -85,8 +87,26 @@ public class FTPService extends AbstractFileService implements IFileService, IFT
 	private transient int _portNumber;
 	
 	private OutputStream _ftpLoggingOutputStream;
-	
+	private IPropertySet _ftpPropertySet;
 	private Exception _exception;
+
+	
+	/**
+	 * Set a IPropertySet containing pairs of keys and values with 
+	 * the FTP Client preferences<br/>
+	 * Supported keys and values are:<br/>
+	 * <table border="1">
+	 * <tr><th>KEY</th><th>VALUE</th><th>Usage</th></tr>
+	 * <tr><th>"passive"</th><th>"true" | "false"</th><th>Enables FTP passive mode</th></tr>
+	 * </table>
+	 * 
+	 * @see org.eclipse.rse.core.model.IPropertySet
+	 * @param ftpPropertySet
+	 */
+	public void setPropertySet(IPropertySet ftpPropertySet)
+	{
+		_ftpPropertySet = ftpPropertySet;
+	}
 	
 	/*
 	 * (non-Javadoc)
@@ -240,6 +260,17 @@ public class FTPService extends AbstractFileService implements IFileService, IFT
 			_userHome = '/'+_userHome.substring(0,_userHome.lastIndexOf(']'));
 		}
 		
+		if(_ftpPropertySet != null)
+		{
+			if(_ftpPropertySet.getPropertyValue("passive").equalsIgnoreCase("true")) //$NON-NLS-1$ //$NON-NLS-2$
+			{
+				_ftpClient.enterLocalPassiveMode();
+			}
+			else
+			{
+				_ftpClient.enterLocalActiveMode();
+			}
+		}
 	}
 	
 	public void disconnect()
@@ -270,6 +301,18 @@ public class FTPService extends AbstractFileService implements IFileService, IFT
 		{
 			_ftpClient = new FTPClient();
 			
+		}
+		
+		if(_ftpPropertySet != null)
+		{
+			if(_ftpPropertySet.getPropertyValue("passive").equalsIgnoreCase("true")) //$NON-NLS-1$ //$NON-NLS-2$
+			{
+				_ftpClient.enterLocalPassiveMode();
+			}
+			else
+			{
+				_ftpClient.enterLocalActiveMode();
+			}
 		}
 		
 		if(_hostName!=null)

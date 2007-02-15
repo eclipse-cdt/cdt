@@ -77,9 +77,6 @@
 			<topic label="org.eclipse.rse.services.dstore.rmtservice" href="reference/api/org/eclipse/rse/services/dstore/rmtservice/package-summary.html"/>
 			<topic label="org.eclipse.rse.services.dstore.search" href="reference/api/org/eclipse/rse/services/dstore/search/package-summary.html"/>
 			<topic label="org.eclipse.rse.services.dstore.util" href="reference/api/org/eclipse/rse/services/dstore/util/package-summary.html"/>
-			<topic label="org.eclipse.rse.services.ssh" href="reference/api/org/eclipse/rse/services/ssh/package-summary.html"/>
-			<topic label="org.eclipse.rse.services.ssh.files" href="reference/api/org/eclipse/rse/services/ssh/files/package-summary.html"/>
-			<topic label="org.eclipse.rse.services.ssh.shell" href="reference/api/org/eclipse/rse/services/ssh/shell/package-summary.html"/>
 		</topic>
 		<topic label="DStore Security and Miners" href="provisional_api.html">
 			<topic label="org.eclipse.rse.dstore.security" href="reference/api/org/eclipse/rse/dstore/security/package-summary.html"/>

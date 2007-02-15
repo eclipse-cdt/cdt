@@ -9,7 +9,7 @@
  * Martin Oberhuber (Wind River) - initial API and implementation 
  *******************************************************************************/
 
-package org.eclipse.rse.services.ssh.shell;
+package org.eclipse.rse.internal.services.ssh.shell;
 
 import java.io.PrintWriter;
 

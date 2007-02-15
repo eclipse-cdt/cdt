@@ -9,12 +9,12 @@
  * Martin Oberhuber (Wind River) - initial API and implementation 
  *******************************************************************************/
 
-package org.eclipse.rse.services.ssh;
+package org.eclipse.rse.internal.services.ssh;
 
 import org.eclipse.osgi.util.NLS;
 
 public class SshServiceResources extends NLS {
-	private static final String BUNDLE_NAME = "org.eclipse.rse.services.ssh.SshServiceResources"; //$NON-NLS-1$
+	private static final String BUNDLE_NAME = "org.eclipse.rse.internal.services.ssh.SshServiceResources"; //$NON-NLS-1$
 
 	public static String SftpFileService_Error_download_size;
 

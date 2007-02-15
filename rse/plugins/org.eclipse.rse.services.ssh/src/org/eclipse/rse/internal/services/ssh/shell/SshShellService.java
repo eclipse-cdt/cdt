@@ -14,16 +14,16 @@
  * Martin Oberhuber (Wind River) - Adapted from LocalShellService.
  ********************************************************************************/
 
-package org.eclipse.rse.services.ssh.shell;
+package org.eclipse.rse.internal.services.ssh.shell;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 
+import org.eclipse.rse.internal.services.ssh.ISshService;
+import org.eclipse.rse.internal.services.ssh.ISshSessionProvider;
+import org.eclipse.rse.internal.services.ssh.SshServiceResources;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.services.shells.IHostShell;
 import org.eclipse.rse.services.shells.IShellService;
-import org.eclipse.rse.services.ssh.ISshService;
-import org.eclipse.rse.services.ssh.ISshSessionProvider;
-import org.eclipse.rse.services.ssh.SshServiceResources;
 
 /**
  * A Shell Services for ssh.

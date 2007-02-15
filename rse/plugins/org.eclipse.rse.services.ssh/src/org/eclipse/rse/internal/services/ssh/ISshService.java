@@ -9,7 +9,7 @@
  * Martin Oberhuber (Wind River) - initial API and implementation 
  *******************************************************************************/
 
-package org.eclipse.rse.services.ssh;
+package org.eclipse.rse.internal.services.ssh;
 
 /** 
  * Markup Interface for services using the SshConnectorService.

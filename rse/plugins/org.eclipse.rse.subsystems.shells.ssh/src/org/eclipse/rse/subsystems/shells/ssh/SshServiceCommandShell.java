@@ -23,13 +23,13 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 
 import org.eclipse.rse.core.subsystems.ISubSystem;
+import org.eclipse.rse.internal.services.ssh.shell.SshHostShell;
 import org.eclipse.rse.internal.subsystems.shells.servicesubsystem.OutputRefreshJob;
 import org.eclipse.rse.services.shells.IHostOutput;
 import org.eclipse.rse.services.shells.IHostShell;
 import org.eclipse.rse.services.shells.IHostShellChangeEvent;
 import org.eclipse.rse.services.shells.ParsedOutput;
 import org.eclipse.rse.services.shells.Patterns;
-import org.eclipse.rse.services.ssh.shell.SshHostShell;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFileSubSystem;
 import org.eclipse.rse.subsystems.shells.core.model.ISystemOutputRemoteTypes;
 import org.eclipse.rse.subsystems.shells.core.model.RemoteError;

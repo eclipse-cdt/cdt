@@ -14,7 +14,7 @@
  * Martin Oberhuber (Wind River) - Adapted from FTPHostFile.
  ********************************************************************************/
 
-package org.eclipse.rse.services.ssh.files;
+package org.eclipse.rse.internal.services.ssh.files;
 
 import java.io.File;
 

@@ -14,7 +14,7 @@
  * Martin Oberhuber (Wind River) - Adapted from LocalHostShell.
  ********************************************************************************/
 
-package org.eclipse.rse.services.ssh.shell;
+package org.eclipse.rse.internal.services.ssh.shell;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -29,11 +29,11 @@ import com.jcraft.jsch.Channel;
 import com.jcraft.jsch.ChannelShell;
 import com.jcraft.jsch.Session;
 
+import org.eclipse.rse.internal.services.ssh.ISshSessionProvider;
 import org.eclipse.rse.services.clientserver.PathUtility;
 import org.eclipse.rse.services.shells.AbstractHostShell;
 import org.eclipse.rse.services.shells.IHostShell;
 import org.eclipse.rse.services.shells.IHostShellOutputReader;
-import org.eclipse.rse.services.ssh.ISshSessionProvider;
 
 /**
  * A Shell subsystem for SSH.

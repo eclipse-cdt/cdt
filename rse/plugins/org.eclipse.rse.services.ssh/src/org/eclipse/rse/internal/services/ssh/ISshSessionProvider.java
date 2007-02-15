@@ -13,7 +13,7 @@
  * Contributors:
  * {Name} (company) - description of contribution.
  ********************************************************************************/
-package org.eclipse.rse.services.ssh;
+package org.eclipse.rse.internal.services.ssh;
 
 import com.jcraft.jsch.Session;
 

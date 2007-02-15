@@ -19,9 +19,9 @@ package org.eclipse.rse.subsystems.files.ssh;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.rse.internal.services.ssh.files.SftpHostFile;
 import org.eclipse.rse.internal.subsystems.files.core.ISystemFilePreferencesConstants;
 import org.eclipse.rse.services.files.IHostFile;
-import org.eclipse.rse.services.ssh.files.SftpHostFile;
 import org.eclipse.rse.subsystems.files.core.servicesubsystem.FileServiceSubSystem;
 import org.eclipse.rse.subsystems.files.core.subsystems.IHostFileToRemoteFileAdapter;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile;

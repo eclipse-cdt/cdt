@@ -10,7 +10,7 @@
  * Dave Dykstal (IBM) - fixing bug 162510: correctly process filter strings  
  *******************************************************************************/
 
-package org.eclipse.rse.services.ssh.files;
+package org.eclipse.rse.internal.services.ssh.files;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -38,6 +38,10 @@ import com.jcraft.jsch.SftpATTRS;
 import com.jcraft.jsch.SftpException;
 import com.jcraft.jsch.SftpProgressMonitor;
 
+import org.eclipse.rse.internal.services.ssh.Activator;
+import org.eclipse.rse.internal.services.ssh.ISshService;
+import org.eclipse.rse.internal.services.ssh.ISshSessionProvider;
+import org.eclipse.rse.internal.services.ssh.SshServiceResources;
 import org.eclipse.rse.services.Mutex;
 import org.eclipse.rse.services.clientserver.FileTypeMatcher;
 import org.eclipse.rse.services.clientserver.IMatcher;
@@ -49,10 +53,6 @@ import org.eclipse.rse.services.files.IFileService;
 import org.eclipse.rse.services.files.IHostFile;
 import org.eclipse.rse.services.files.RemoteFileIOException;
 import org.eclipse.rse.services.files.RemoteFileSecurityException;
-import org.eclipse.rse.services.ssh.Activator;
-import org.eclipse.rse.services.ssh.ISshService;
-import org.eclipse.rse.services.ssh.ISshSessionProvider;
-import org.eclipse.rse.services.ssh.SshServiceResources;
 
 public class SftpFileService extends AbstractFileService implements IFileService, ISshService
 {

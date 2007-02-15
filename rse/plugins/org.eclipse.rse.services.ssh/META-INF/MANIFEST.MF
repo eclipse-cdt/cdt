@@ -3,14 +3,14 @@ Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
 Bundle-SymbolicName: org.eclipse.rse.services.ssh;singleton:=true
 Bundle-Version: 2.0.0.qualifier
-Bundle-Activator: org.eclipse.rse.services.ssh.Activator
+Bundle-Activator: org.eclipse.rse.internal.services.ssh.Activator
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin
 Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.rse.services,
  com.jcraft.jsch;bundle-version="[0.1.28,2.0.0)"
 Eclipse-LazyStart: true
-Export-Package: org.eclipse.rse.services.ssh,
- org.eclipse.rse.services.ssh.files,
- org.eclipse.rse.services.ssh.shell
+Export-Package: org.eclipse.rse.internal.services.ssh;x-friends:="org.eclipse.rse.connectorservice.ssh,org.eclipse.rse.subsystems.files.ssh,org.eclipse.rse.subsystems.shells.ssh",
+ org.eclipse.rse.internal.services.ssh.files;x-friends:="org.eclipse.rse.connectorservice.ssh,org.eclipse.rse.subsystems.files.ssh,org.eclipse.rse.subsystems.shells.ssh",
+ org.eclipse.rse.internal.services.ssh.shell;x-friends:="org.eclipse.rse.connectorservice.ssh,org.eclipse.rse.subsystems.files.ssh,org.eclipse.rse.subsystems.shells.ssh"
 Bundle-RequiredExecutionEnvironment: J2SE-1.4

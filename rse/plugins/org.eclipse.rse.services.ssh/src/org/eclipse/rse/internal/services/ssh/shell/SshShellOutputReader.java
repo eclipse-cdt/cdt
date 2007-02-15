@@ -15,17 +15,17 @@
  * Martin Oberhuber (Wind River) - Added vt100 escape sequence ignoring. 
  ********************************************************************************/
 
-package org.eclipse.rse.services.ssh.shell;
+package org.eclipse.rse.internal.services.ssh.shell;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 
+import org.eclipse.rse.internal.services.ssh.Activator;
 import org.eclipse.rse.services.shells.AbstractHostShellOutputReader;
 import org.eclipse.rse.services.shells.IHostOutput;
 import org.eclipse.rse.services.shells.IHostShell;
 import org.eclipse.rse.services.shells.IHostShellOutputReader;
 import org.eclipse.rse.services.shells.SimpleHostOutput;
-import org.eclipse.rse.services.ssh.Activator;
 
 /**
  * Listener to shell output. As io streams through, refresh events are sent out

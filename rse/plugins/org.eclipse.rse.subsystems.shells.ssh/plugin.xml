@@ -20,7 +20,7 @@ Martin Oberhuber - initial API and implementation
 			iconlive="icons/full/obj16/systemcommandslive_obj.gif"
 			icon="icons/full/obj16/systemcommands_obj.gif"
 			category="shells"
-			class="org.eclipse.rse.subsystems.shells.ssh.SshShellSubSystemConfiguration"
+			class="org.eclipse.rse.internal.subsystems.shells.ssh.SshShellSubSystemConfiguration"
 			vendor="%providerName"
 			priority="300"
 			id="ssh.shells">

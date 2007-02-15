@@ -8,7 +8,7 @@
  * Contributors: 
  * Martin Oberhuber (Wind River) - initial API and implementation
  *******************************************************************************/
-package org.eclipse.rse.subsystems.shells.ssh;
+package org.eclipse.rse.internal.subsystems.shells.ssh;
 
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.plugin.AbstractUIPlugin;

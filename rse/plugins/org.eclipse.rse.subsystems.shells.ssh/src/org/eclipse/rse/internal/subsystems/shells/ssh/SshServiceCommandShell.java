@@ -14,7 +14,7 @@
  * Martin Oberhuber (Wind River) - Adapted from LocalServiceCommandShell
  ********************************************************************************/
 
-package org.eclipse.rse.subsystems.shells.ssh;
+package org.eclipse.rse.internal.subsystems.shells.ssh;
 
 import java.util.ArrayList;
 import java.util.StringTokenizer;

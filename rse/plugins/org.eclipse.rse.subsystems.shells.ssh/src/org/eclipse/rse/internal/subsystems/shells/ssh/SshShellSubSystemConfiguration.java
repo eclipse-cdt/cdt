@@ -14,7 +14,7 @@
  * Martin Oberhuber (Wind River) - Adapted template for ssh service.
  ********************************************************************************/
 
-package org.eclipse.rse.subsystems.shells.ssh;
+package org.eclipse.rse.internal.subsystems.shells.ssh;
 
 import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.subsystems.IConnectorService;

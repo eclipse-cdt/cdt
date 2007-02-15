@@ -22,10 +22,6 @@ import java.net.SocketException;
 
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.resource.JFaceResources;
-import org.eclipse.jface.text.ConfigurableLineTracker;
-import org.eclipse.jface.text.Document;
-import org.eclipse.jface.text.ITextSelection;
-import org.eclipse.jface.text.TextViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.custom.VerifyKeyListener;
@@ -78,7 +74,6 @@ public class TerminalControl implements ITerminalControlForText, ITerminalContro
 
     private Display                   fDisplay;
     private StyledText                fCtlText;
-    private TextViewer                fViewer;
     private Composite                 fWndParent;
     private Clipboard                 fClipboard;
     private TerminalModifyListener    fModifyListener;
@@ -180,7 +175,7 @@ public class TerminalControl implements ITerminalControlForText, ITerminalContro
 	 * @return non null selection
 	 */
 	public String getSelection() {
-		String txt= ((ITextSelection) fViewer.getSelection()).getText();
+		String txt= fCtlText.getSelectionText();
 		if(txt==null)
 			txt=""; //$NON-NLS-1$
 		return txt;
@@ -383,12 +378,12 @@ public class TerminalControl implements ITerminalControlForText, ITerminalContro
 		// switch to another Workbench control).  We prevent local keyboard input from
 		// modifying the text in method TerminalVerifyKeyListener.verifyKey().
 
-		fViewer = new TextViewer(fWndParent, SWT.V_SCROLL);
-		setCtlText(fViewer.getTextWidget());
+//		fViewer = new TextViewer(fWndParent, SWT.V_SCROLL);
+		setCtlText(new StyledText(fWndParent, SWT.V_SCROLL));
 
 		fDisplay = getCtlText().getDisplay();
 		fClipboard = new Clipboard(fDisplay);
-		fViewer.setDocument(new TerminalDocument());
+//		fViewer.setDocument(new TerminalDocument());
 		getCtlText().setFont(JFaceResources.getTextFont());
 	}
 
@@ -767,12 +762,6 @@ public class TerminalControl implements ITerminalControlForText, ITerminalContro
 			writeToTerminal(charBuffer.toString());
 		}
 
-	}
-
-	protected class TerminalDocument extends Document {
-		protected TerminalDocument() {
-			setLineTracker(new ConfigurableLineTracker(LINE_DELIMITERS));
-		}
 	}
 
 	public void setTerminalTitle(String title) {

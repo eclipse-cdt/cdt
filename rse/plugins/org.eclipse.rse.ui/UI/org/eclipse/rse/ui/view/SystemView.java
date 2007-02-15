@@ -75,6 +75,7 @@ import org.eclipse.rse.core.model.ISystemMessageObject;
 import org.eclipse.rse.core.model.ISystemRegistry;
 import org.eclipse.rse.core.model.SystemMessageObject;
 import org.eclipse.rse.core.references.IRSEBaseReferencingObject;
+import org.eclipse.rse.core.subsystems.IRemoteObjectIdentifier;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.model.ISystemPromptableObject;
 import org.eclipse.rse.model.ISystemRemoteChangeEvent;
@@ -1052,20 +1053,6 @@ public class SystemView extends SafeTreeViewer implements ISystemTree, ISystemRe
 			clearMessage();
 		//System.out.println("Inside selectionChanged in SystemView");
 		expandingTreeOnly = false; //d40615
-		if (debugProperties) {
-			ISystemRemoteElementAdapter element = getRemoteAdapter(firstSelection);
-			if (element == null)
-				return;
-			else {
-				logMyDebugMessage(this.getClass().getName(), ": -----------------------------------------------------------"); //$NON-NLS-1$
-				logMyDebugMessage(this.getClass().getName(), ": REMOTE SSFID.......: " + element.getSubSystemConfigurationId(firstSelection)); //$NON-NLS-1$
-				logMyDebugMessage(this.getClass().getName(), ": REMOTE NAME........: " + element.getName(firstSelection)); //$NON-NLS-1$
-				logMyDebugMessage(this.getClass().getName(), ": REMOTE TYPECATEGORY: " + element.getRemoteTypeCategory(firstSelection)); //$NON-NLS-1$
-				logMyDebugMessage(this.getClass().getName(), ": REMOTE TYPE........: " + element.getRemoteType(firstSelection)); //$NON-NLS-1$
-				logMyDebugMessage(this.getClass().getName(), ": REMOTE SUBTYPE.....: " + element.getRemoteSubType(firstSelection)); //$NON-NLS-1$
-				logMyDebugMessage(this.getClass().getName(), ": REMOTE SUBSUBTYPE..: " + element.getRemoteSubSubType(firstSelection)); //$NON-NLS-1$
-			}
-		}
 	}
 
 	protected void logMyDebugMessage(String prefix, String msg) {
@@ -1276,8 +1263,15 @@ public class SystemView extends SafeTreeViewer implements ISystemTree, ISystemRe
 	 * Returns the implementation of ISystemRemoteElement for the given
 	 * object.  Returns null if this object does not adaptable to this.
 	 */
-	protected ISystemRemoteElementAdapter getRemoteAdapter(Object o) {
-		return SystemAdapterHelpers.getRemoteAdapter(o, this);
+	protected IRemoteObjectIdentifier getRemoteAdapter(Object o) 
+	{
+		return (IRemoteObjectIdentifier)((IAdaptable)o).getAdapter(IRemoteObjectIdentifier.class);
+		//return SystemAdapterHelpers.getRemoteAdapter(o, this);
+	}
+	
+	protected ISystemViewElementAdapter getViewAdapter(Object o)
+	{
+		return (ISystemViewElementAdapter)((IAdaptable)o).getAdapter(ISystemViewElementAdapter.class);
 	}
 
 	/**
@@ -1308,7 +1302,7 @@ public class SystemView extends SafeTreeViewer implements ISystemTree, ISystemRe
 		else if (firstSelection instanceof ISystemFilterReference)
 			return ((ISubSystem) (((ISystemFilterReference) firstSelection).getProvider())).getHost();
 		else if (getRemoteAdapter(firstSelection) != null) {
-			ISubSystem ss = getRemoteAdapter(firstSelection).getSubSystem(firstSelection);
+			ISubSystem ss = getAdapter(firstSelection).getSubSystem(firstSelection);
 			if (ss != null)
 				return ss.getHost();
 			else
@@ -1892,9 +1886,9 @@ public class SystemView extends SafeTreeViewer implements ISystemTree, ISystemRe
 						parentItem = getParentItem(items[itemIdx]);
 						if ((parentItem != null) && (parentItem instanceof Item)) parentElementItem = (Item) parentItem; //.getData();
 					}
-					if (getRemoteAdapter(element) != null) {
+					if (getViewAdapter(element) != null) {
 						selectedRemoteObjects.addElement(element);
-						if (ss == null) ss = getRemoteAdapter(element).getSubSystem(element);
+						if (ss == null) ss = getViewAdapter(element).getSubSystem(element);
 					}
 					itemIdx++;
 				}
@@ -1951,9 +1945,9 @@ public class SystemView extends SafeTreeViewer implements ISystemTree, ISystemRe
 							if (parItem != null) parentElemItem = parItem; //.getData();
 						}
 					}
-					if (getRemoteAdapter(element) != null) {
+					if (getViewAdapter(element) != null) {
 						selRemoteObjects.addElement(element);
-						ss = getRemoteAdapter(element).getSubSystem(element);
+						ss = getViewAdapter(element).getSubSystem(element);
 					}
 				}
 
@@ -1998,7 +1992,7 @@ public class SystemView extends SafeTreeViewer implements ISystemTree, ISystemRe
 			case EVENT_PROPERTY_CHANGE:
 				if (debug) logDebugMsg("SV event: EVENT_PROPERTY_CHANGE "); //$NON-NLS-1$
 				String[] allProps = { IBasicPropertyConstants.P_TEXT, IBasicPropertyConstants.P_IMAGE };
-				ISystemRemoteElementAdapter ra = getRemoteAdapter(src);
+				ISystemViewElementAdapter ra = getViewAdapter(src);
 				if (ra != null) {
 					updateRemoteObjectProperties(src);
 				} else
@@ -2267,7 +2261,7 @@ public class SystemView extends SafeTreeViewer implements ISystemTree, ISystemRe
 		Iterator i = selection.iterator();
 		while (i.hasNext()) {
 			Object element = i.next();
-			ISystemRemoteElementAdapter ra = getRemoteAdapter(element);
+			IRemoteObjectIdentifier ra = getRemoteAdapter(element);
 			if (ra != null) {
 				if (prevSelection == null) prevSelection = new Vector();
 				prevSelection.addElement(ra.getAbsoluteName(element));
@@ -2285,7 +2279,7 @@ public class SystemView extends SafeTreeViewer implements ISystemTree, ISystemRe
 		if (remoteResource instanceof String)
 			remoteResourceName = (String) remoteResource;
 		else {
-			ISystemRemoteElementAdapter ra = getRemoteAdapter(remoteResource);
+			IRemoteObjectIdentifier ra = getRemoteAdapter(remoteResource);
 			if (ra == null) return null;
 			remoteResourceName = ra.getAbsoluteName(remoteResource);
 		}
@@ -2303,7 +2297,7 @@ public class SystemView extends SafeTreeViewer implements ISystemTree, ISystemRe
 				Vector v = (Vector) remoteResource;
 				if (v.size() > 0) ss = getSubSystem(event, v.elementAt(0), null);
 			} else {
-				ISystemRemoteElementAdapter ra = getRemoteAdapter(remoteResource);
+				ISystemViewElementAdapter ra = getViewAdapter(remoteResource);
 				if (ra != null) ss = ra.getSubSystem(remoteResource);
 			}
 		}
@@ -2312,7 +2306,7 @@ public class SystemView extends SafeTreeViewer implements ISystemTree, ISystemRe
 				Vector v = (Vector) remoteParent;
 				if (v.size() > 0) ss = getSubSystem(event, null, v.elementAt(0));
 			} else {
-				ISystemRemoteElementAdapter ra = getRemoteAdapter(remoteParent);
+				ISystemViewElementAdapter ra = getViewAdapter(remoteParent);
 				if (ra != null) ss = ra.getSubSystem(remoteParent);
 			}
 		}
@@ -2461,7 +2455,7 @@ public class SystemView extends SafeTreeViewer implements ISystemTree, ISystemRe
 		if (deleteObject instanceof String)
 			oldElementName = (String) deleteObject;
 		else {
-			ISystemRemoteElementAdapter rmtAdapter = getRemoteAdapter(deleteObject);
+			ISystemViewElementAdapter rmtAdapter = getViewAdapter(deleteObject);
 			if (rmtAdapter == null) return;
 			oldElementName = rmtAdapter.getAbsoluteName(deleteObject);
 			subsystem = rmtAdapter.getSubSystem(deleteObject);
@@ -2559,12 +2553,12 @@ public class SystemView extends SafeTreeViewer implements ISystemTree, ISystemRe
 
 		// STEP 1: get the object's remote adapter and subsystem
 		String newElementName = null;
-		ISystemRemoteElementAdapter rmtAdapter = null;
+		ISystemViewElementAdapter rmtAdapter = null;
 		if (renameObject instanceof String) {
 			//FIXME How to get the adapter based on the String name?
 			newElementName = (String)renameObject;
 		} else {
-			rmtAdapter = getRemoteAdapter(renameObject);
+			rmtAdapter = getViewAdapter(renameObject);
 			subsystem = rmtAdapter.getSubSystem(renameObject);
 			newElementName = rmtAdapter.getName(renameObject);
 		}
@@ -2584,10 +2578,16 @@ public class SystemView extends SafeTreeViewer implements ISystemTree, ISystemRe
 			if ((match instanceof TreeItem) && !((TreeItem) match).isDisposed()) 
 			{
 				Object data = match.getData();
-				if (rmtAdapter == null) rmtAdapter = getRemoteAdapter(data);
+				
+				ISystemRemoteElementAdapter	remoteAdapter = (ISystemRemoteElementAdapter)((IAdaptable)data).getAdapter(ISystemRemoteElementAdapter.class);
+				
 				if (data != renameObject) // not a binary match
-				{					
-					refresh = rmtAdapter.refreshRemoteObject(data, renameObject); // old, new
+				{	
+					if (remoteAdapter != null)
+					{
+						// DKM - would be nice to eventually get rid of remote element adapter
+						refresh = remoteAdapter.refreshRemoteObject(data, renameObject); // old, new
+					}
 				} else {
 					refresh = true;
 				}
@@ -2625,7 +2625,8 @@ public class SystemView extends SafeTreeViewer implements ISystemTree, ISystemRe
 		Vector matches = new Vector();
 
 		// STEP 1: get the object's remote adapter and subsystem
-		ISystemRemoteElementAdapter rmtAdapter = getRemoteAdapter(remoteObject);
+		ISystemRemoteElementAdapter	rmtAdapter = (ISystemRemoteElementAdapter)((IAdaptable)remoteObject).getAdapter(ISystemRemoteElementAdapter.class);
+		
 		ISubSystem subsystem = rmtAdapter.getSubSystem(remoteObject);
 
 		// STEP 2: find all references to the object
@@ -2643,6 +2644,8 @@ public class SystemView extends SafeTreeViewer implements ISystemTree, ISystemRe
 					update(data, allProps); // for refreshing non-structural properties in viewer when model changes
 				else // match by name
 				{
+
+				
 					rmtAdapter.refreshRemoteObject(data, remoteObject); // old, new
 					update(data, allProps);
 				}
@@ -2668,11 +2671,11 @@ public class SystemView extends SafeTreeViewer implements ISystemTree, ISystemRe
 		if (remoteObject == null) return false;
 
 		// STEP 1: get the object's remote adapter and subsystem, or use its name if only given that
-		ISystemRemoteElementAdapter rmtAdapter = null;
+		ISystemViewElementAdapter rmtAdapter = null;
 		ISubSystem subsystem = null;
 		String oldElementName = null;
 		if (!(remoteObject instanceof String)) {
-			rmtAdapter = getRemoteAdapter(remoteObject);
+			rmtAdapter = getViewAdapter(remoteObject);
 			if (rmtAdapter == null) return false;
 			subsystem = rmtAdapter.getSubSystem(remoteObject);
 			oldElementName = rmtAdapter.getAbsoluteName(remoteObject);
@@ -2721,7 +2724,7 @@ public class SystemView extends SafeTreeViewer implements ISystemTree, ISystemRe
 	protected void doUpdateItem(final Item item, Object element)
 	{
 		// adding this because base eclipse version isn't renaming properly on duplicates
-		ISystemRemoteElementAdapter adapter = getRemoteAdapter(element);
+		ISystemViewElementAdapter adapter = getViewAdapter(element);
 		if (adapter != null && item != null && !item.isDisposed())
 		{
 			String oldText = item.getText();
@@ -2841,7 +2844,7 @@ public class SystemView extends SafeTreeViewer implements ISystemTree, ISystemRe
 			Object firstSel = ss.getFirstElement();
 			String name = null;
 			if (firstSel != null) {
-				ISystemRemoteElementAdapter ra = getRemoteAdapter(firstSel);
+				ISystemViewElementAdapter ra = getViewAdapter(firstSel);
 				if (ra != null)
 					name = ra.getAbsoluteName(firstSel);
 				else
@@ -2872,7 +2875,7 @@ public class SystemView extends SafeTreeViewer implements ISystemTree, ISystemRe
 				parentItem = findFirstRemoteItemReference((String) parentObject, subsystem, (Item) null); // search all roots for the parent
 			else // given actual remote object
 			{
-				ISystemRemoteElementAdapter ra = getRemoteAdapter(parentObject);
+				ISystemViewElementAdapter ra = getViewAdapter(parentObject);
 				if (ra != null) {
 					if (subsystem == null) subsystem = ra.getSubSystem(parentObject);
 					parentItem = findFirstRemoteItemReference(ra.getAbsoluteName(parentObject), subsystem, (Item) null); // search all roots for the parent
@@ -2894,7 +2897,7 @@ public class SystemView extends SafeTreeViewer implements ISystemTree, ISystemRe
 			if (remoteObject instanceof String)
 				remoteItem = findFirstRemoteItemReference((String) remoteObject, subsystem, (Item) null);
 			else {
-				ISystemRemoteElementAdapter ra = getRemoteAdapter(remoteObject);
+				ISystemViewElementAdapter ra = getViewAdapter(remoteObject);
 				if (ra != null) {
 					if (subsystem == null) subsystem = ra.getSubSystem(remoteObject);
 					remoteItem = findFirstRemoteItemReference(ra.getAbsoluteName(remoteObject), subsystem, (Item) null);
@@ -2917,7 +2920,7 @@ public class SystemView extends SafeTreeViewer implements ISystemTree, ISystemRe
 		//String parentName = null;
 		// given a parent object? That makes it easy...
 		if (parentObject != null) {
-			ISystemRemoteElementAdapter ra = getRemoteAdapter(parentObject);
+			ISystemViewElementAdapter ra = getViewAdapter(parentObject);
 			if (ra != null) {
 				//parentName = ra.getAbsoluteName(parentObject);
 				if (subsystem == null) subsystem = ra.getSubSystem(parentObject);
@@ -3022,9 +3025,9 @@ public class SystemView extends SafeTreeViewer implements ISystemTree, ISystemRe
 				parentItem = getParentItem((Item) findItem(element));
 				if ((parentItem != null) && (parentItem instanceof Item)) parentElement = ((Item) parentItem).getData();
 			}
-			if (getRemoteAdapter(element) != null) {
+			if (getViewAdapter(element) != null) {
 				selectedRemoteObjects.addElement(element);
-				if (ss == null) ss = getRemoteAdapter(element).getSubSystem(element);
+				if (ss == null) ss = getViewAdapter(element).getSubSystem(element);
 			}
 		}
 
@@ -3176,11 +3179,17 @@ public class SystemView extends SafeTreeViewer implements ISystemTree, ISystemRe
 					smartRefresh(new TreeItem[] { (TreeItem) item });
 				}
 			} else {
-				ISystemRemoteElementAdapter adapter = getRemoteAdapter(element);
+				ISystemViewElementAdapter adapter = getViewAdapter(element);
+				// DKM - taken out as per defect 174295
 				String elementName = adapter.getName(element);
+	
+				//String searchString = adapter.getAbsoluteName(element);
 				ISubSystem subSystem = adapter.getSubSystem(element);
 
 				Vector matches = new Vector();
+				//findAllRemoteItemReferences(searchString, element, subSystem, matches);
+				
+				// DKM - taken out as per defect 174295
 				findAllRemoteItemReferences(elementName, element, subSystem, matches);
 				if (matches.size() > 0) {
 					for (int i = 0; i < matches.size(); i++) {
@@ -3213,7 +3222,7 @@ public class SystemView extends SafeTreeViewer implements ISystemTree, ISystemRe
 		TreeItem item, parentItem;
 		Object data;
 		String remoteName;
-		ISystemRemoteElementAdapter remoteAdapter;
+		ISystemViewElementAdapter remoteAdapter;
 		ISubSystem subsystem;
 
 		ExpandedItem(TreeItem parentItem, TreeItem item) {
@@ -3221,7 +3230,7 @@ public class SystemView extends SafeTreeViewer implements ISystemTree, ISystemRe
 			this.item = item;
 			this.data = item.getData();
 			if (data != null) {
-				remoteAdapter = getRemoteAdapter(data);
+				remoteAdapter = getViewAdapter(data);
 				if (remoteAdapter != null) {
 					remoteName = remoteAdapter.getAbsoluteName(data);
 					subsystem = remoteAdapter.getSubSystem(data);
@@ -3754,7 +3763,7 @@ public class SystemView extends SafeTreeViewer implements ISystemTree, ISystemRe
 		return null;
 	}
 
-	protected ISystemRemoteElementAdapter getRemoteData(Item item, Object rawData) {
+	protected IRemoteObjectIdentifier getRemoteData(Item item, Object rawData) {
 		if (rawData != null)
 			return getRemoteAdapter(rawData);
 		else
@@ -3794,7 +3803,7 @@ public class SystemView extends SafeTreeViewer implements ISystemTree, ISystemRe
 	 */
 	public Item findFirstRemoteItemReference(Object remoteObject, Item parentItem) {
 		//Vector matches = new Vector();
-		ISystemRemoteElementAdapter adapter = getRemoteAdapter(remoteObject);
+		ISystemViewElementAdapter adapter = getViewAdapter(remoteObject);
 		if (adapter == null) return null;
 		Item match = null;
 		ISubSystem subsystem = adapter.getSubSystem(remoteObject);
@@ -3833,7 +3842,7 @@ public class SystemView extends SafeTreeViewer implements ISystemTree, ISystemRe
 			searchString = (String) element;
 		else {
 			if (elementObject == null) elementObject = element;
-			ISystemRemoteElementAdapter adapter = getRemoteAdapter(element);
+			ISystemViewElementAdapter adapter = getViewAdapter(element);
 			if (adapter == null) return matches;
 			subsystem = adapter.getSubSystem(element);
 			searchString = adapter.getAbsoluteName(element);
@@ -3911,11 +3920,11 @@ public class SystemView extends SafeTreeViewer implements ISystemTree, ISystemRe
 	 */
 	protected Vector recursiveFindAllRemoteItemReferences(Item parent, String elementName, Object elementObject, ISubSystem subsystem, Vector occurrences) {
 		Object rawData = parent.getData();
-		ISystemRemoteElementAdapter remoteAdapter = null;
+		ISystemViewElementAdapter remoteAdapter = null;
 		// ----------------------------
 		// what are we looking at here?
 		// ----------------------------
-		if (rawData != null) remoteAdapter = getRemoteAdapter(rawData);
+		if (rawData != null) remoteAdapter = getViewAdapter(rawData);
 		// -----------------------------------------------------------------------
 		// if this is a remote object, test if it is the one we are looking for...
 		// -----------------------------------------------------------------------
@@ -3972,11 +3981,11 @@ public class SystemView extends SafeTreeViewer implements ISystemTree, ISystemRe
 	 */
 	protected Item recursiveFindFirstRemoteItemReference(Item parent, String elementName, Object elementObject, ISubSystem subsystem) {
 		Object rawData = parent.getData();
-		ISystemRemoteElementAdapter remoteAdapter = null;
+		ISystemViewElementAdapter remoteAdapter = null;
 		// ----------------------------
 		// what are we looking at here?
 		// ----------------------------
-		if (rawData != null) remoteAdapter = getRemoteAdapter(rawData);
+		if (rawData != null) remoteAdapter = getViewAdapter(rawData);
 		// -----------------------------------------------------------------------
 		// if this is a remote object, test if it is the one we are looking for...
 		// -----------------------------------------------------------------------
@@ -4460,7 +4469,7 @@ public class SystemView extends SafeTreeViewer implements ISystemTree, ISystemRe
 		Object element = null;
 		Object parentElement = getSelectedParent();
 		ISystemViewElementAdapter adapter = null;
-		ISystemRemoteElementAdapter remoteAdapter = null;
+		ISystemViewElementAdapter remoteAdapter = null;
 		String oldFullName = null;
 		boolean ok = true;
 		try {
@@ -4468,7 +4477,7 @@ public class SystemView extends SafeTreeViewer implements ISystemTree, ISystemRe
 			while (ok && elements.hasNext()) {
 				element = elements.next();
 				adapter = getAdapter(element);
-				remoteAdapter = getRemoteAdapter(element);
+				remoteAdapter = getViewAdapter(element);
 				if (remoteAdapter != null) oldFullName = remoteAdapter.getAbsoluteName(element); // pre-rename
 				ok = adapter.doRename(getShell(), element, newNames[nameIdx++]);
 				if (ok) {
@@ -5062,7 +5071,7 @@ public class SystemView extends SafeTreeViewer implements ISystemTree, ISystemRe
 		TreeItem selectedItem = getFirstSelectedTreeItem();
 		if (selectedItem == null) return;
 		Object element = selectedItem.getData();
-		ISystemRemoteElementAdapter remoteAdapter = getRemoteAdapter(element);
+		IRemoteObjectIdentifier remoteAdapter = getRemoteAdapter(element);
 		if (remoteAdapter == null) return;
 		// update our hashtables, keyed by object address and tree path...
 		if (expandToFiltersByObject == null) expandToFiltersByObject = new Hashtable();

@@ -18,7 +18,7 @@
  * Javier Montalvo Orus (Symbian) - Fixing 161238 - [ftp] connections to VMS servers are not usable   
  ********************************************************************************/
 
-package org.eclipse.rse.services.files.ftp;
+package org.eclipse.rse.internal.services.files.ftp;
 
 
 import java.io.File;

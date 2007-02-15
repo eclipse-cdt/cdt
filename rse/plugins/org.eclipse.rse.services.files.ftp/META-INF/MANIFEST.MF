@@ -3,7 +3,7 @@ Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
 Bundle-SymbolicName: org.eclipse.rse.services.files.ftp
 Bundle-Version: 2.0.0.qualifier
-Bundle-Activator: org.eclipse.rse.services.files.ftp.Activator
+Bundle-Activator: org.eclipse.rse.internal.services.files.ftp.Activator
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin
 Require-Bundle: org.eclipse.core.runtime,
@@ -11,5 +11,5 @@ Require-Bundle: org.eclipse.core.runtime,
  org.apache.commons.net,
  org.eclipse.rse.core
 Eclipse-LazyStart: true
-Export-Package: org.eclipse.rse.services.files.ftp
+Export-Package: org.eclipse.rse.internal.services.files.ftp;x-friends:="org.eclipse.rse.subsystems.files.ftp"
 Bundle-RequiredExecutionEnvironment: J2SE-1.4

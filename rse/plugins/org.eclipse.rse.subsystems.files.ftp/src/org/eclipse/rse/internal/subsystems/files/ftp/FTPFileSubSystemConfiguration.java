@@ -14,14 +14,17 @@
  * {Name} (company) - description of contribution.
  ********************************************************************************/
 
-package org.eclipse.rse.subsystems.files.ftp;
+package org.eclipse.rse.internal.subsystems.files.ftp;
 
 import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.subsystems.IConnectorService;
 import org.eclipse.rse.core.subsystems.ISubSystem;
+import org.eclipse.rse.internal.services.files.ftp.IFTPService;
+import org.eclipse.rse.internal.subsystems.files.ftp.connectorservice.FTPConnectorService;
+import org.eclipse.rse.internal.subsystems.files.ftp.connectorservice.FTPConnectorServiceManager;
+import org.eclipse.rse.internal.subsystems.files.ftp.model.FTPFileAdapter;
 import org.eclipse.rse.services.clientserver.SystemSearchString;
 import org.eclipse.rse.services.files.IFileService;
-import org.eclipse.rse.services.files.ftp.IFTPService;
 import org.eclipse.rse.services.search.IHostSearchResultConfiguration;
 import org.eclipse.rse.services.search.IHostSearchResultSet;
 import org.eclipse.rse.services.search.ISearchService;
@@ -30,9 +33,6 @@ import org.eclipse.rse.subsystems.files.core.servicesubsystem.FileServiceSubSyst
 import org.eclipse.rse.subsystems.files.core.servicesubsystem.FileServiceSubSystemConfiguration;
 import org.eclipse.rse.subsystems.files.core.subsystems.IHostFileToRemoteFileAdapter;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFileSubSystem;
-import org.eclipse.rse.subsystems.files.ftp.connectorservice.FTPConnectorService;
-import org.eclipse.rse.subsystems.files.ftp.connectorservice.FTPConnectorServiceManager;
-import org.eclipse.rse.subsystems.files.ftp.model.FTPFileAdapter;
 
 
 /**

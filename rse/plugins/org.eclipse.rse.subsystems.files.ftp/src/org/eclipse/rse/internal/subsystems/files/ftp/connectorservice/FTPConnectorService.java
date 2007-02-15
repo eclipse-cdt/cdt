@@ -16,7 +16,7 @@
  * Javier Montalvo Orus (Symbian) - Bug 169680 - [ftp] FTP files subsystem and service should use passive mode
  ********************************************************************************/
 
-package org.eclipse.rse.subsystems.files.ftp.connectorservice;
+package org.eclipse.rse.internal.subsystems.files.ftp.connectorservice;
 
 import java.io.OutputStream;
 
@@ -26,8 +26,8 @@ import org.eclipse.rse.core.model.IPropertySet;
 import org.eclipse.rse.core.model.PropertyType;
 import org.eclipse.rse.core.model.SystemSignonInformation;
 import org.eclipse.rse.core.subsystems.AbstractConnectorService;
+import org.eclipse.rse.internal.services.files.ftp.FTPService;
 import org.eclipse.rse.services.files.IFileService;
-import org.eclipse.rse.services.files.ftp.FTPService;
 import org.eclipse.rse.subsystems.files.core.SystemFileResources;
 import org.eclipse.ui.console.ConsolePlugin;
 import org.eclipse.ui.console.IConsole;

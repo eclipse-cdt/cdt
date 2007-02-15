@@ -38,7 +38,7 @@
  * Javier Montalvo Orus (Symbian) - Fixing 169680 - [ftp] FTP files subsystem and service should use passive mode
  ********************************************************************************/
 
-package org.eclipse.rse.services.files.ftp;
+package org.eclipse.rse.internal.services.files.ftp;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;

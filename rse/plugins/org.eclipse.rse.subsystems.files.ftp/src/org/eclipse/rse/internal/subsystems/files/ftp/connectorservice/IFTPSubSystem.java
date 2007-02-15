@@ -14,9 +14,8 @@
  * {Name} (company) - description of contribution.
  ********************************************************************************/
 
-package org.eclipse.rse.services.files.ftp;
+package org.eclipse.rse.internal.subsystems.files.ftp.connectorservice;
 
-public interface IFTPService
-{
+public interface IFTPSubSystem {
 
 }

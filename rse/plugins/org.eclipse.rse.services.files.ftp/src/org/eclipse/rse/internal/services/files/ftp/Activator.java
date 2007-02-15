@@ -14,7 +14,7 @@
  * {Name} (company) - description of contribution.
  ********************************************************************************/
 
-package org.eclipse.rse.services.files.ftp;
+package org.eclipse.rse.internal.services.files.ftp;
 
 import org.eclipse.core.runtime.Plugin;
 import org.osgi.framework.BundleContext;

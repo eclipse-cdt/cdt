@@ -14,10 +14,10 @@
  * {Name} (company) - description of contribution.
  ********************************************************************************/
 
-package org.eclipse.rse.subsystems.files.ftp.model;
+package org.eclipse.rse.internal.subsystems.files.ftp.model;
 
 
-import org.eclipse.rse.services.files.ftp.FTPHostFile;
+import org.eclipse.rse.internal.services.files.ftp.FTPHostFile;
 import org.eclipse.rse.subsystems.files.core.servicesubsystem.AbstractRemoteFile;
 import org.eclipse.rse.subsystems.files.core.servicesubsystem.FileServiceSubSystem;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile;

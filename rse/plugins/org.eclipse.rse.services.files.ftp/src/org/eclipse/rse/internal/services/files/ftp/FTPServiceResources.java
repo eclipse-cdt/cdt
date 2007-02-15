@@ -14,13 +14,13 @@
  * Javier Montalvo Orus (Symbian) - Added Externalized Strings
  ********************************************************************************/
 
-package org.eclipse.rse.services.files.ftp;
+package org.eclipse.rse.internal.services.files.ftp;
 
 import org.eclipse.osgi.util.NLS;
 
 public class FTPServiceResources extends NLS 
 {
-	private static String BUNDLE_NAME = "org.eclipse.rse.services.files.ftp.FTPServiceResources";//$NON-NLS-1$
+	private static String BUNDLE_NAME = "org.eclipse.rse.internal.services.files.ftp.FTPServiceResources";//$NON-NLS-1$
 	public static String FTP_File_Service_Copy_Not_Supported;
 	public static String FTP_File_Service_Deleting_Task;
 	public static String FTP_File_Service_Listing_Job;

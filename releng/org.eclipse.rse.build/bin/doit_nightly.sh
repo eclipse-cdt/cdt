@@ -68,7 +68,7 @@ if [ "$FILES" != "" ]; then
   cd N.latest
   mv -f RSE-SDK-N${daystamp}*.zip RSE-SDK-latest.zip
   chgrp dsdp-tmadmin RSE-SDK-latest.zip
-  cmod g+w RSE-SDK-latest.zip
+  chmod g+w RSE-SDK-latest.zip
 fi
 
 #Cleanup old nightly builds (leave only last 5 in place)

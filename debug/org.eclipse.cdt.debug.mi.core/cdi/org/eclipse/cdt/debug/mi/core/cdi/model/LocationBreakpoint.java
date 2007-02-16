@@ -27,8 +27,8 @@ public abstract class LocationBreakpoint extends Breakpoint implements ICDIBreak
 
 	ICDILocation fLocation;
 
-	public LocationBreakpoint(Target target, int kind, ICDILocation loc, ICDICondition cond) {
-		super(target, kind, cond);
+	public LocationBreakpoint(Target target, int kind, ICDILocation loc, ICDICondition cond, boolean enabled) {
+		super(target, kind, cond, enabled);
 		fLocation = loc;
 	}
 

@@ -19,8 +19,8 @@ public class FunctionBreakpoint extends LocationBreakpoint implements
 		ICDIFunctionBreakpoint {
 
 	public FunctionBreakpoint(Target target, int kind, ICDILocation loc,
-			ICDICondition cond) {
-		super(target, kind, loc, cond);
+			ICDICondition cond, boolean enabled) {
+		super(target, kind, loc, cond, enabled);
 	}
 
 }

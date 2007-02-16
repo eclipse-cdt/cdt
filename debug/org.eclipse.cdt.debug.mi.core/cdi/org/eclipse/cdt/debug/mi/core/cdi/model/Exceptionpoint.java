@@ -26,8 +26,8 @@ public class Exceptionpoint extends Breakpoint implements ICDIExceptionpoint {
 
 	/**
 	 */
-	public Exceptionpoint(Target target, String clazz, boolean stopOnThrow, boolean stopOnCatch, ICDICondition cond) {
-		super(target, ICDIBreakpoint.REGULAR, cond);
+	public Exceptionpoint(Target target, String clazz, boolean stopOnThrow, boolean stopOnCatch, ICDICondition cond, boolean enabled) {
+		super(target, ICDIBreakpoint.REGULAR, cond, enabled);
 		fClazz = clazz;
 		fStopOnThrow = stopOnThrow;
 		fStopOnCatch = stopOnCatch;

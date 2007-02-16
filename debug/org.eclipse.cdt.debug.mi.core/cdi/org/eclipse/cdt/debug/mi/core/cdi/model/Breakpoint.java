@@ -30,11 +30,11 @@ public abstract class Breakpoint extends CObject implements ICDIBreakpoint {
 	int type;
 	boolean enable;
 
-	public Breakpoint(Target target, int kind, ICDICondition cond) {
+	public Breakpoint(Target target, int kind, ICDICondition cond, boolean enabled) {
 		super(target);
 		type = kind;
 		condition = cond;
-		enable = true;
+		enable = enabled;
 	}
 
 	public MIBreakpoint[] getMIBreakpoints() {

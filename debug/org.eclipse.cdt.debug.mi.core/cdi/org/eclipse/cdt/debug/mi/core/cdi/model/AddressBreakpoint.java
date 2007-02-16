@@ -19,8 +19,8 @@ public class AddressBreakpoint extends LocationBreakpoint implements
 		ICDIAddressBreakpoint {
 
 	public AddressBreakpoint(Target target, int kind, ICDILocation loc,
-			ICDICondition cond) {
-		super(target, kind, loc, cond);
+			ICDICondition cond, boolean enabled) {
+		super(target, kind, loc, cond, enabled);
 	}
 
 }

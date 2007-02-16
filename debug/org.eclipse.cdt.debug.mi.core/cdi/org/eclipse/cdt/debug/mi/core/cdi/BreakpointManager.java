@@ -425,7 +425,7 @@ public class BreakpointManager extends Manager {
 					if (allMIBreakpoints[i].isAccessWatchpoint() || allMIBreakpoints[i].isWriteWatchpoint()) {
 						watchType |= ICDIWatchpoint.WRITE;
 					}
-					Watchpoint wpoint = new Watchpoint(target, allMIBreakpoints[i].getWhat(), type, watchType, condition);
+					Watchpoint wpoint = new Watchpoint(target, allMIBreakpoints[i].getWhat(), type, watchType, condition, allMIBreakpoints[i].isEnabled());
 					wpoint.setMIBreakpoints(new MIBreakpoint[] {allMIBreakpoints[i]});
 					bList.add(wpoint);
 				} else {
@@ -433,25 +433,26 @@ public class BreakpointManager extends Manager {
 					String file = allMIBreakpoints[i].getFile();
 					int line = allMIBreakpoints[i].getLine();
 					String addr = allMIBreakpoints[i].getAddress();
+					boolean enabled = allMIBreakpoints[i].isEnabled();
 
 					if (file != null && file.length() > 0 && line > 0) {
 						LineLocation location = createLineLocation (allMIBreakpoints[i].getFile(),
 								allMIBreakpoints[i].getLine());
 						// By default new breakpoint are LineBreakpoint
-						Breakpoint newBreakpoint = new LineBreakpoint(target, type, location, condition);
+						Breakpoint newBreakpoint = new LineBreakpoint(target, type, location, condition, enabled);
 						newBreakpoint.setMIBreakpoints(new MIBreakpoint[] {allMIBreakpoints[i]});
 						bList.add(newBreakpoint);
 					} else if (function != null && function.length() > 0) {
 						FunctionLocation location = createFunctionLocation(file, function);
 						// By default new breakpoint are LineBreakpoint
-						Breakpoint newBreakpoint = new FunctionBreakpoint(target, type, location, condition);
+						Breakpoint newBreakpoint = new FunctionBreakpoint(target, type, location, condition, enabled);
 						newBreakpoint.setMIBreakpoints(new MIBreakpoint[] {allMIBreakpoints[i]});
 						bList.add(newBreakpoint);
 					} else if (addr != null && addr.length() > 0) {
 						BigInteger big = MIFormat.getBigInteger(addr);
 						AddressLocation location = createAddressLocation (big);
 						// By default new breakpoint are LineBreakpoint
-						Breakpoint newBreakpoint = new AddressBreakpoint(target, type, location, condition);
+						Breakpoint newBreakpoint = new AddressBreakpoint(target, type, location, condition, enabled);
 						newBreakpoint.setMIBreakpoints(new MIBreakpoint[] {allMIBreakpoints[i]});
 						bList.add(newBreakpoint);
 					}
@@ -604,8 +605,8 @@ public class BreakpointManager extends Manager {
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIBreakpointManagement#setLineBreakpoint(int, org.eclipse.cdt.debug.core.cdi.ICDILineLocation, org.eclipse.cdt.debug.core.cdi.ICDICondition, boolean)
 	 */
 	public ICDILineBreakpoint setLineBreakpoint(Target target, int type, ICDILineLocation location,
-			ICDICondition condition, boolean deferred) throws CDIException {		
-		LineBreakpoint bkpt = new LineBreakpoint(target, type, location, condition);
+			ICDICondition condition, boolean deferred, boolean enabled) throws CDIException {		
+		LineBreakpoint bkpt = new LineBreakpoint(target, type, location, condition, enabled);
 		setNewLocationBreakpoint(bkpt, deferred);
 		return bkpt;
 	}
@@ -614,8 +615,8 @@ public class BreakpointManager extends Manager {
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIBreakpointManagement#setFunctionBreakpoint(int, org.eclipse.cdt.debug.core.cdi.ICDIFunctionLocation, org.eclipse.cdt.debug.core.cdi.ICDICondition, boolean)
 	 */
 	public ICDIFunctionBreakpoint setFunctionBreakpoint(Target target, int type, ICDIFunctionLocation location,
-			ICDICondition condition, boolean deferred) throws CDIException {		
-		FunctionBreakpoint bkpt = new FunctionBreakpoint(target, type, location, condition);
+			ICDICondition condition, boolean deferred, boolean enabled) throws CDIException {		
+		FunctionBreakpoint bkpt = new FunctionBreakpoint(target, type, location, condition, enabled);
 		setNewLocationBreakpoint(bkpt, deferred);
 		return bkpt;
 	}
@@ -624,8 +625,8 @@ public class BreakpointManager extends Manager {
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIBreakpointManagement#setAddressBreakpoint(int, org.eclipse.cdt.debug.core.cdi.ICDIAddressLocation, org.eclipse.cdt.debug.core.cdi.ICDICondition, boolean)
 	 */
 	public ICDIAddressBreakpoint setAddressBreakpoint(Target target, int type, ICDIAddressLocation location,
-			ICDICondition condition, boolean deferred) throws CDIException {		
-		AddressBreakpoint bkpt = new AddressBreakpoint(target, type, location, condition);
+			ICDICondition condition, boolean deferred, boolean enabled) throws CDIException {		
+		AddressBreakpoint bkpt = new AddressBreakpoint(target, type, location, condition, enabled);
 		setNewLocationBreakpoint(bkpt, deferred);
 		return bkpt;
 	}
@@ -664,7 +665,7 @@ public class BreakpointManager extends Manager {
 	}
 
 	public ICDIWatchpoint setWatchpoint(Target target, int type, int watchType, String expression,
-			ICDICondition condition) throws CDIException {
+			ICDICondition condition, boolean enabled) throws CDIException {
 
 		// HACK: for the IDE,
 		try {
@@ -674,7 +675,7 @@ public class BreakpointManager extends Manager {
 		} catch (NumberFormatException e) {
 			//
 		}
-		Watchpoint bkpt = new Watchpoint(target, expression, type, watchType, condition);
+		Watchpoint bkpt = new Watchpoint(target, expression, type, watchType, condition, enabled);
 
 		setWatchpoint(bkpt);
 		List bList = getBreakpointsList(target);
@@ -821,7 +822,7 @@ public class BreakpointManager extends Manager {
 
 
 	public ICDIExceptionpoint setExceptionpoint(Target target, String clazz, boolean stopOnThrow,
-			boolean stopOnCatch) throws CDIException {
+			boolean stopOnCatch, boolean enabled) throws CDIException {
 
 		if (!stopOnThrow && !stopOnCatch) {
 			throw new CDIException("Must suspend on throw or catch"); //$NON-NLS-1$
@@ -834,7 +835,7 @@ public class BreakpointManager extends Manager {
 				int id = EXCEPTION_THROW_IDX;
 				if (exceptionBps[EXCEPTION_THROW_IDX] == null) {
 					FunctionLocation location = new FunctionLocation(null, EXCEPTION_FUNCS[id]);
-					FunctionBreakpoint bp = new FunctionBreakpoint(target, ICDIBreakpoint.REGULAR, location, null);
+					FunctionBreakpoint bp = new FunctionBreakpoint(target, ICDIBreakpoint.REGULAR, location, null, enabled);
 					setLocationBreakpoint(bp);
 					exceptionBps[id] = bp;
 					miBreakpoints = bp.getMIBreakpoints();
@@ -846,7 +847,7 @@ public class BreakpointManager extends Manager {
 				int id = EXCEPTION_THROW_IDX;
 				if (exceptionBps[id] == null) {
 					FunctionLocation location = new FunctionLocation(null, EXCEPTION_FUNCS[id]);
-					FunctionBreakpoint bp = new FunctionBreakpoint(target, ICDIBreakpoint.REGULAR, location, null);
+					FunctionBreakpoint bp = new FunctionBreakpoint(target, ICDIBreakpoint.REGULAR, location, null, enabled);
 					setLocationBreakpoint(bp);
 					exceptionBps[id] = bp;
 					if (miBreakpoints != null) {
@@ -861,7 +862,7 @@ public class BreakpointManager extends Manager {
 			}
 		}
 
-		Exceptionpoint excp = new Exceptionpoint(target, clazz, stopOnThrow, stopOnCatch, null);
+		Exceptionpoint excp = new Exceptionpoint(target, clazz, stopOnThrow, stopOnCatch, null, enabled);
 		if (miBreakpoints != null && miBreakpoints.length > 0) {
 			excp.setMIBreakpoints(miBreakpoints);
 			List blist = getBreakpointsList(target);

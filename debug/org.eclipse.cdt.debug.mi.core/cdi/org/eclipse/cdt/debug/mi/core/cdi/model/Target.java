@@ -22,6 +22,7 @@ import org.eclipse.cdt.debug.core.cdi.ICDILineLocation;
 import org.eclipse.cdt.debug.core.cdi.ICDILocation;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIAddressBreakpoint;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIBreakpoint;
+import org.eclipse.cdt.debug.core.cdi.model.ICDIBreakpointManagement2;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIExceptionpoint;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIExpression;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIFunctionBreakpoint;
@@ -87,7 +88,7 @@ import org.eclipse.core.runtime.Path;
 
 /**
  */
-public class Target extends SessionObject implements ICDITarget {
+public class Target extends SessionObject implements ICDITarget, ICDIBreakpointManagement2 {
 
 	public class Lock {
 
@@ -864,8 +865,7 @@ public class Target extends SessionObject implements ICDITarget {
 	 */
 	public ICDILineBreakpoint setLineBreakpoint(int type, ICDILineLocation location,
 			ICDICondition condition, boolean deferred) throws CDIException {		
-		BreakpointManager bMgr = ((Session)getSession()).getBreakpointManager();
-		return bMgr.setLineBreakpoint(this, type, location, condition, deferred);
+		return this.setLineBreakpoint(type, location, condition, deferred, true);
 	}
 
 	/* (non-Javadoc)
@@ -873,8 +873,7 @@ public class Target extends SessionObject implements ICDITarget {
 	 */
 	public ICDIFunctionBreakpoint setFunctionBreakpoint(int type, ICDIFunctionLocation location,
 			ICDICondition condition, boolean deferred) throws CDIException {		
-		BreakpointManager bMgr = ((Session)getSession()).getBreakpointManager();
-		return bMgr.setFunctionBreakpoint(this, type, location, condition, deferred);
+		return this.setFunctionBreakpoint(type, location, condition, deferred, true);
 	}
 
 	/* (non-Javadoc)
@@ -882,8 +881,7 @@ public class Target extends SessionObject implements ICDITarget {
 	 */
 	public ICDIAddressBreakpoint setAddressBreakpoint(int type, ICDIAddressLocation location,
 			ICDICondition condition, boolean deferred) throws CDIException {		
-		BreakpointManager bMgr = ((Session)getSession()).getBreakpointManager();
-		return bMgr.setAddressBreakpoint(this, type, location, condition, deferred);
+		return this.setAddressBreakpoint(type, location, condition, deferred, true);
 	}
 
 	/* (non-Javadoc)
@@ -891,8 +889,7 @@ public class Target extends SessionObject implements ICDITarget {
 	 */
 	public ICDIWatchpoint setWatchpoint(int type, int watchType, String expression,
 		ICDICondition condition) throws CDIException {
-		BreakpointManager bMgr = ((Session)getSession()).getBreakpointManager();
-		return bMgr.setWatchpoint(this, type, watchType, expression, condition);
+		return this.setWatchpoint(type, watchType, expression, condition, true);
 	}
 
 	/* (non-Javadoc)
@@ -1191,5 +1188,29 @@ public class Target extends SessionObject implements ICDITarget {
 
 	public boolean isVerboseModeEnabled() {
 		return miSession.isVerboseModeEnabled();
+	}
+
+	public ICDIAddressBreakpoint setAddressBreakpoint(int type, ICDIAddressLocation location, ICDICondition condition, boolean deferred, boolean enabled) throws CDIException {		
+		BreakpointManager bMgr = ((Session)getSession()).getBreakpointManager();
+		return bMgr.setAddressBreakpoint(this, type, location, condition, deferred, enabled);
+	}
+
+	public ICDIExceptionpoint setExceptionBreakpoint(String clazz, boolean stopOnThrow, boolean stopOnCatch, boolean enabled) throws CDIException {
+		throw new CDIException(CdiResources.getString("cdi.Common.Not_implemented")); //$NON-NLS-1$
+	}
+
+	public ICDIFunctionBreakpoint setFunctionBreakpoint(int type, ICDIFunctionLocation location, ICDICondition condition, boolean deferred, boolean enabled) throws CDIException {		
+		BreakpointManager bMgr = ((Session)getSession()).getBreakpointManager();
+		return bMgr.setFunctionBreakpoint(this, type, location, condition, deferred, enabled);
+	}
+
+	public ICDILineBreakpoint setLineBreakpoint(int type, ICDILineLocation location, ICDICondition condition, boolean deferred, boolean enabled) throws CDIException {		
+		BreakpointManager bMgr = ((Session)getSession()).getBreakpointManager();
+		return bMgr.setLineBreakpoint(this, type, location, condition, deferred, enabled);
+	}
+
+	public ICDIWatchpoint setWatchpoint(int type, int watchType, String expression, ICDICondition condition, boolean enabled) throws CDIException {
+		BreakpointManager bMgr = ((Session)getSession()).getBreakpointManager();
+		return bMgr.setWatchpoint(this, type, watchType, expression, condition, enabled);
 	}
 }

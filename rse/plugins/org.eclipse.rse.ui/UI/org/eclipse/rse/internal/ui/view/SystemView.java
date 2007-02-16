@@ -3180,16 +3180,16 @@ public class SystemView extends SafeTreeViewer implements ISystemTree, ISystemRe
 			} else {
 				ISystemViewElementAdapter adapter = getViewAdapter(element);
 				// DKM - taken out as per defect 174295
-				String elementName = adapter.getName(element);
+				//String elementName = adapter.getName(element);
 	
-				//String searchString = adapter.getAbsoluteName(element);
+				String searchString = adapter.getAbsoluteName(element);
 				ISubSystem subSystem = adapter.getSubSystem(element);
 
 				Vector matches = new Vector();
-				//findAllRemoteItemReferences(searchString, element, subSystem, matches);
+				findAllRemoteItemReferences(searchString, element, subSystem, matches);
 				
 				// DKM - taken out as per defect 174295
-				findAllRemoteItemReferences(elementName, element, subSystem, matches);
+				//findAllRemoteItemReferences(elementName, element, subSystem, matches);
 				if (matches.size() > 0) {
 					for (int i = 0; i < matches.size(); i++) {
 						Item match = (Item) matches.get(i);

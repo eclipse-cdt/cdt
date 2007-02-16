@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005 IBM Corporation and others.
+ * Copyright (c) 2005, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,15 +10,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.ui.tests.DOMAST;
 
-import org.eclipse.cdt.core.model.CModelException;
-import org.eclipse.cdt.core.model.ICElement;
-import org.eclipse.cdt.core.model.ISourceReference;
-import org.eclipse.cdt.core.model.ITranslationUnit;
-import org.eclipse.cdt.core.parser.ParserLanguage;
-import org.eclipse.cdt.internal.core.model.TranslationUnit;
-import org.eclipse.cdt.internal.ui.util.EditorUtility;
-import org.eclipse.cdt.ui.tests.DOMAST.DOMAST;
-import org.eclipse.core.resources.IFile;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -30,6 +21,13 @@ import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PartInitException;
 
+import org.eclipse.cdt.core.model.CModelException;
+import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.model.ISourceReference;
+import org.eclipse.cdt.core.model.ITranslationUnit;
+
+import org.eclipse.cdt.internal.ui.util.EditorUtility;
+
 /**
  * @author dsteffle
  */
@@ -37,7 +35,6 @@ public class OpenDOMViewAction implements IViewActionDelegate, IEditorActionDele
 
 	IViewPart viewPart = null;
 	ISelection selection = null;
-	IFile file = null;
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IViewActionDelegate#init(org.eclipse.ui.IViewPart)
@@ -80,12 +77,9 @@ public class OpenDOMViewAction implements IViewActionDelegate, IEditorActionDele
 		
 		if (tempView != null) {
 			if (tempView instanceof DOMAST) {
-				((DOMAST)tempView).setFile(file);
+				((DOMAST)tempView).setTranslationUnit(tu);
 				((DOMAST)tempView).setPart(part);
-				if (tu != null) {
-					((DOMAST)tempView).setLang(tu.isCXXLanguage() ? ParserLanguage.CPP : ParserLanguage.C);
-				}
-				((DOMAST)tempView).setContentProvider(((DOMAST)tempView).new ViewContentProvider(file));
+				((DOMAST)tempView).setContentProvider(((DOMAST)tempView).new ViewContentProvider(tu));
 			}
 		}
 
@@ -96,11 +90,6 @@ public class OpenDOMViewAction implements IViewActionDelegate, IEditorActionDele
 	 * @see org.eclipse.ui.IActionDelegate#selectionChanged(org.eclipse.jface.action.IAction, org.eclipse.jface.viewers.ISelection)
 	 */
 	public void selectionChanged(IAction action, ISelection selection) {
-		if (selection instanceof IStructuredSelection &&
-				((IStructuredSelection)selection).getFirstElement() instanceof TranslationUnit &&
-				((TranslationUnit)((IStructuredSelection)selection).getFirstElement()).getResource() instanceof IFile) {
-			this.file = (IFile)((TranslationUnit)((IStructuredSelection)selection).getFirstElement()).getResource();
-		}
 		this.selection = selection;
 	}
 

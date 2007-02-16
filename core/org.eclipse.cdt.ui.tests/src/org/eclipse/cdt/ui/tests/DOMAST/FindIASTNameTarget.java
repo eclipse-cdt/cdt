@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005 IBM Corporation and others.
+ * Copyright (c) 2005, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,20 +15,23 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.eclipse.cdt.core.dom.ast.IASTName;
-import org.eclipse.cdt.core.dom.ast.IASTPreprocessorMacroDefinition;
-import org.eclipse.cdt.core.dom.ast.IASTPreprocessorStatement;
-import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
-import org.eclipse.cdt.core.dom.ast.c.CASTVisitor;
-import org.eclipse.cdt.core.dom.ast.cpp.CPPASTVisitor;
-import org.eclipse.cdt.core.parser.ParserLanguage;
-import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.jface.text.IFindReplaceTarget;
 import org.eclipse.jface.text.IFindReplaceTargetExtension3;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.TreeItem;
+
+import org.eclipse.cdt.core.dom.ast.IASTName;
+import org.eclipse.cdt.core.dom.ast.IASTPreprocessorMacroDefinition;
+import org.eclipse.cdt.core.dom.ast.IASTPreprocessorStatement;
+import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
+import org.eclipse.cdt.core.dom.ast.c.CASTVisitor;
+import org.eclipse.cdt.core.dom.ast.cpp.CPPASTVisitor;
+
+import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
+import org.eclipse.cdt.internal.core.dom.parser.c.CASTTranslationUnit;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTTranslationUnit;
 
 /**
  * @author dsteffle
@@ -37,7 +40,6 @@ public class FindIASTNameTarget implements IFindReplaceTarget, IFindReplaceTarge
 
 	IASTTranslationUnit tu = null;
 	DOMASTNodeParent tuTreeParent = null;
-	ParserLanguage lang = null;
 	TreeViewer viewer = null;
 	DOMASTNodeLeaf startingNode = null;
 	IASTName[] matchingNames = null;
@@ -252,14 +254,13 @@ public class FindIASTNameTarget implements IFindReplaceTarget, IFindReplaceTarge
         }
     }
 	
-	public FindIASTNameTarget(TreeViewer viewer, ParserLanguage lang) {
+	public FindIASTNameTarget(TreeViewer viewer) {
 		if (viewer.getContentProvider() instanceof DOMAST.ViewContentProvider) {
 			tu = ((DOMAST.ViewContentProvider)viewer.getContentProvider()).getTU();
 			tuTreeParent = ((DOMAST.ViewContentProvider)viewer.getContentProvider()).getTUTreeParent();
 		}
 		
 		this.viewer = viewer;
-		this.lang = lang;
 	}
 	
 	/* (non-Javadoc)
@@ -274,11 +275,11 @@ public class FindIASTNameTarget implements IFindReplaceTarget, IFindReplaceTarge
 			boolean searchForward, boolean caseSensitive, boolean wholeWord, boolean regExSearch) {
 		
 		if (matchingNames == null && tu != null) {
-			if (lang == ParserLanguage.CPP) {
+			if (tu instanceof CPPASTTranslationUnit) {
 				CPPNameCollector col = new CPPNameCollector(findString, caseSensitive, wholeWord, regExSearch);
 				tu.accept(col);
 				matchingNames = col.getNameArray(tu.getAllPreprocessorStatements());
-			} else {
+			} else if(tu instanceof CASTTranslationUnit) {
 				CNameCollector col = new CNameCollector(findString, caseSensitive, wholeWord, regExSearch);
 				tu.accept(col);
 				matchingNames = col.getNameArray(tu.getAllPreprocessorStatements());

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 IBM Corporation and others.
+ * Copyright (c) 2005, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,15 +11,14 @@
 package org.eclipse.cdt.ui.tests.DOMAST;
 
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.content.IContentType;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.action.Action;
@@ -63,9 +62,6 @@ import org.eclipse.ui.part.ViewPart;
 import org.eclipse.ui.texteditor.AbstractTextEditor;
 import org.eclipse.ui.views.properties.PropertySheet;
 
-import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.dom.CDOM;
-import org.eclipse.cdt.core.dom.IASTServiceProvider;
 import org.eclipse.cdt.core.dom.ast.ASTSignatureUtil;
 import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
 import org.eclipse.cdt.core.dom.ast.IASTArrayModifier;
@@ -96,17 +92,16 @@ import org.eclipse.cdt.core.dom.ast.cpp.CPPASTVisitor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConstructorChainInitializer;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateParameter;
 import org.eclipse.cdt.core.model.CModelException;
-import org.eclipse.cdt.core.model.CoreModel;
-import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ITranslationUnit;
-import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.ParserUtil;
 import org.eclipse.cdt.core.parser.ast.IASTEnumerator;
 import org.eclipse.cdt.core.resources.FileStorage;
 import org.eclipse.cdt.ui.actions.CustomFiltersActionGroup;
 import org.eclipse.cdt.ui.testplugin.CTestPlugin;
 
-import org.eclipse.cdt.internal.core.model.CProject;
+import org.eclipse.cdt.internal.core.dom.parser.c.CASTTranslationUnit;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTTranslationUnit;
 
 import org.eclipse.cdt.internal.ui.editor.CEditor;
 import org.eclipse.cdt.internal.ui.util.EditorUtility;
@@ -157,10 +152,10 @@ public class DOMAST extends ViewPart {
    private Action			   collapseAllAction;
    private Action			   clearAction;
    private Action			   searchNamesAction;
-   protected IFile             file              = null;
+
+   protected ITranslationUnit  tu             = null;
    private IEditorPart         part              = null;
-   protected ParserLanguage    lang              = null;
-   
+
    private CustomFiltersActionGroup customFiltersActionGroup;
    
    protected static ViewContentProvider.StartInitializingASTView initializeASTViewJob = null;
@@ -182,13 +177,13 @@ public class DOMAST extends ViewPart {
 
       public ViewContentProvider() {
       }
-
-      public ViewContentProvider(IFile file) {
-      	this(file, null);
+      
+      public ViewContentProvider(ITranslationUnit tu) {
+    	  this(tu, null);
       }
       
-      public ViewContentProvider(IFile file, Object[] expanded) {
-       	initializeASTViewJob = new StartInitializingASTView(new InitializeView(POPULATING_AST_VIEW, this, viewer, file), expanded);
+      public ViewContentProvider(ITranslationUnit tu, Object[] expanded) {
+       	initializeASTViewJob = new StartInitializingASTView(new InitializeView(POPULATING_AST_VIEW, this, viewer, tu), expanded);
    		initializeASTViewJob.schedule();
 
      }
@@ -218,10 +213,6 @@ public class DOMAST extends ViewPart {
       	return tu;
       }
 	  
-	  public ParserLanguage getTULanguage() {
-		  return lang;
-	  }
-
       public void dispose() {
       }
 
@@ -326,18 +317,18 @@ public class DOMAST extends ViewPart {
       	DOMASTNodeParent root = null;
       	ViewContentProvider provider = null;
       	TreeViewer view = null;
-      	IFile aFile = null;
+      	ITranslationUnit tu = null;
       	
     	/**
 		 * @param name
 		 */
-		public InitializeView(String name, ViewContentProvider provider, TreeViewer view, IFile file) {
+		public InitializeView(String name, ViewContentProvider provider, TreeViewer view, ITranslationUnit tu) {
 			super(name);
 			this.name = name;
 			setUser(true);
 			this.provider = provider;
 			this.view = view;
-			this.aFile = file;
+			this.tu = tu;
 		}
 		
 	    public DOMASTNodeParent getInvisibleRoot() {
@@ -358,35 +349,35 @@ public class DOMAST extends ViewPart {
     		long start=0;
 			long overallStart=System.currentTimeMillis();
 			
-    		if (aFile == null || lang == null || monitor == null)
+    		if (tu == null || monitor == null)
 	            return Status.CANCEL_STATUS;
 
 			if (monitor.isCanceled()) return Status.CANCEL_STATUS;
 			monitor.beginTask(name, 100);
 			start=System.currentTimeMillis();
 			
-	         IPopulateDOMASTAction action = null;
-	         IASTTranslationUnit aTu = null;
-	         try {
-	         	monitor.subTask(PARSING_TRANSLATION_UNIT);
-	         	start=System.currentTimeMillis();
-	            aTu = CDOM.getInstance().getASTService().getTranslationUnit(
-	                  aFile,
-	                  CDOM.getInstance().getCodeReaderFactory(
-	                        CDOM.PARSE_SAVED_RESOURCES));
-	            monitor.worked(30);
-	            System.out.println(DOM_AST_VIEW_DONE + PARSING_TRANSLATION_UNIT + COLON_SPACE + (System.currentTimeMillis()- start) );
-	         } catch (IASTServiceProvider.UnsupportedDialectException e) {
-	         	return Status.CANCEL_STATUS;
-	         }
+	        IPopulateDOMASTAction action = null;
+	        IASTTranslationUnit aTu;
+
+	        try {
+	        	monitor.subTask(PARSING_TRANSLATION_UNIT);
+	        	start=System.currentTimeMillis();
+	        	aTu = tu.getAST();
+	        	monitor.worked(30);
+	        	System.out.println(DOM_AST_VIEW_DONE + PARSING_TRANSLATION_UNIT + COLON_SPACE + (System.currentTimeMillis()- start) );
+    		} catch (CoreException e) {
+    			return Status.CANCEL_STATUS;
+    		}
 	         
 	         if (monitor.isCanceled()) return Status.CANCEL_STATUS;
+	         
 	         monitor.subTask(GENERATING_INITIAL_TREE);
 	         start=System.currentTimeMillis();
-	         if (lang == ParserLanguage.CPP) {
+	         if (aTu instanceof CPPASTTranslationUnit ) {
 	            action = new CPPPopulateASTViewAction(aTu, monitor);
 	            aTu.accept( (CPPASTVisitor) action);
-	         } else {
+	         } 
+	         else if (aTu instanceof CASTTranslationUnit){
 	            action = new CPopulateASTViewAction(aTu, monitor);
 	            aTu.accept( (CASTVisitor) action);
 	         }
@@ -652,10 +643,16 @@ public class DOMAST extends ViewPart {
       drillDownAdapter = new DrillDownAdapter(viewer);
 
       if (part instanceof CEditor) {
-         viewer.setContentProvider(new ViewContentProvider(((CEditor) part).getInputFile()));
-      	 setFile(((CEditor) part).getInputFile());
+    	  ICElement inputElement = ((CEditor)part).getInputCElement();
+    	  if(inputElement instanceof ITranslationUnit) {
+    		  viewer.setContentProvider(new ViewContentProvider((ITranslationUnit)inputElement));
+    		  setTranslationUnit((ITranslationUnit)inputElement);
+    	  }
+    	  else {
+    		  viewer.setContentProvider(new ViewContentProvider(null));
+    	  }
       } else {
-         viewer.setContentProvider(new ViewContentProvider(null)); // don't attempt to create a view based on old file info
+    	  viewer.setContentProvider(new ViewContentProvider(null)); // don't attempt to create a view based on old file info
       }
 
       viewer.setLabelProvider(new ViewLabelProvider());
@@ -826,7 +823,7 @@ public class DOMAST extends ViewPart {
 			   Object[] expanded = viewer.getExpandedElements();
 			   
 			   // set the new content provider
-			   setContentProvider(new ViewContentProvider(file, expanded));
+			   setContentProvider(new ViewContentProvider(tu, expanded));
 		   }
 	   };
 	   refreshAction.setText(REFRESH_DOM_AST);
@@ -867,7 +864,7 @@ public class DOMAST extends ViewPart {
 				   showMessage(DOM_AST_HAS_NO_CONTENT);
 			   }
 			   
-			   FindIASTNameDialog dialog = new FindIASTNameDialog(getSite().getShell(), new FindIASTNameTarget(viewer, lang));
+			   FindIASTNameDialog dialog = new FindIASTNameDialog(getSite().getShell(), new FindIASTNameTarget(viewer));
 			   dialog.open();
 		   }
 		   
@@ -942,7 +939,6 @@ public class DOMAST extends ViewPart {
 	   	getSite().getPage().getActiveEditor() instanceof CEditor) {
 	   	editor = getSite().getPage().getActiveEditor();
 	    part = editor;
-	    lang = getLanguageFromFile(((CEditor)editor).getInputFile());
    	}
 
    	return editor;
@@ -999,15 +995,14 @@ public class DOMAST extends ViewPart {
              } else {
                 IPath path = new Path( filename );
 
-                ICProject cproject = new CProject(null, file.getProject());
-                ITranslationUnit unit = CoreModel.getDefault().createTranslationUnitFrom(cproject, path);
-                if (unit != null) 
+                if (tu != null) {
                     try {
-                     aPart = EditorUtility.openInEditor(unit);
-                } catch (PartInitException e) {
-                   return;
-                } catch (CModelException e) {
-                   return;
+                    	aPart = EditorUtility.openInEditor(tu);
+	                } catch (PartInitException e) {
+	                	return;
+	                } catch (CModelException e) {
+	                	return;
+	                }
                 }
              }
              
@@ -1060,12 +1055,9 @@ public class DOMAST extends ViewPart {
          ((ASTHighlighterAction) singleClickAction).setPart(part);
    }
 
-   public void setLang(ParserLanguage lang) {
-      this.lang = lang;
-   }
    
-   public void setFile(IFile file) {
-    this.file = file;
+   public void setTranslationUnit(ITranslationUnit tu) {
+	   this.tu = tu;
    }
 
    private class RunAfterViewOpenJob extends Job {
@@ -1135,24 +1127,16 @@ public class DOMAST extends ViewPart {
     		
     		if (tempView != null) {
     			if (tempView instanceof DOMAST) {
-    				IFile aFile = ((CEditor)editor).getInputFile();
+    				ICElement input = ((CEditor)editor).getInputCElement();
     				
-    				// check if the file is a valid "compilation unit" (based on file extension)
-                    if (aFile == null) {
-                        MessageDialog.openInformation(shell, DOMAST.VIEW_NAME, NOT_VALID_COMPILATION_UNIT);
-                        return null;
-                    }
-                    
-    				String ext = aFile.getFileExtension().toUpperCase();
-    				if (!(ext.equals(EXTENSION_C) || ext.equals(EXTENSION_CC) || ext.equals(EXTENSION_CPP) || ext.equals(EXTENSION_CXX))) {
+    				if(!(input instanceof ITranslationUnit)) {
     					MessageDialog.openInformation(shell, DOMAST.VIEW_NAME, NOT_VALID_COMPILATION_UNIT);
-    					return null;
+        				return null;
     				}
     				
-    				((DOMAST)tempView).setFile(aFile);
+    				((DOMAST)tempView).setTranslationUnit((ITranslationUnit)input);
     				((DOMAST)tempView).setPart(editor);
-    				((DOMAST)tempView).setLang(getLanguageFromFile(aFile));
-    				((DOMAST)tempView).setContentProvider(((DOMAST)tempView).new ViewContentProvider(((CEditor)editor).getInputFile()));
+    				((DOMAST)tempView).setContentProvider(((DOMAST)tempView).new ViewContentProvider((ITranslationUnit)input));
     			}
     		}
 
@@ -1162,24 +1146,5 @@ public class DOMAST extends ViewPart {
     	
     	return tempView;
 	}
-    	
-    public static ParserLanguage getLanguageFromFile(IFile file) {
-        if (file == null) { // assume CPP
-            return ParserLanguage.CPP;
-        }
-        
-       	IProject project = file.getProject();
-       	String lid = null;
-    	IContentType type = CCorePlugin.getContentType(project, file.getFullPath().lastSegment());
-    	if (type != null) {
-    		lid = type.getId();
-    	}
-    	if ( lid != null 
-    			&& ( lid.equals(CCorePlugin.CONTENT_TYPE_CXXSOURCE) || lid.equals(CCorePlugin.CONTENT_TYPE_CXXHEADER)) ) {
-    		return ParserLanguage.CPP;
-    	}
-    	
-    	return ParserLanguage.C;
-    }
    
 }

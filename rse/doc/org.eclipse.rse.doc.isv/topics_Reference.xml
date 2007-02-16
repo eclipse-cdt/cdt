@@ -158,7 +158,6 @@
 			<topic label="org.eclipse.rse.files.ui.dialogs" href="reference/api/org/eclipse/rse/files/ui/dialogs/package-summary.html"/>
 			<topic label="org.eclipse.rse.files.ui.propertypages" href="reference/api/org/eclipse/rse/files/ui/propertypages/package-summary.html"/>
 			<topic label="org.eclipse.rse.files.ui.resources" href="reference/api/org/eclipse/rse/files/ui/resources/package-summary.html"/>
-			<topic label="org.eclipse.rse.files.ui.search" href="reference/api/org/eclipse/rse/files/ui/search/package-summary.html"/>
 			<topic label="org.eclipse.rse.files.ui.view" href="reference/api/org/eclipse/rse/files/ui/view/package-summary.html"/>
 			<topic label="org.eclipse.rse.files.ui.widgets" href="reference/api/org/eclipse/rse/files/ui/widgets/package-summary.html"/>
 			<topic label="org.eclipse.rse.files.ui.wizards" href="reference/api/org/eclipse/rse/files/ui/wizards/package-summary.html"/>

@@ -91,7 +91,6 @@ org.eclipse.rse.files.ui.compare
 org.eclipse.rse.files.ui.dialogs
 org.eclipse.rse.files.ui.propertypages
 org.eclipse.rse.files.ui.resources
-org.eclipse.rse.files.ui.search
 org.eclipse.rse.files.ui.view
 org.eclipse.rse.files.ui.widgets
 org.eclipse.rse.files.ui.wizards

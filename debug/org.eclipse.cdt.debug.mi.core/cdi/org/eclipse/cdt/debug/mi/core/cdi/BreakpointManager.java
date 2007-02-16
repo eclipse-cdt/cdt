@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.debug.mi.core.cdi;
 
+import java.io.File;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -708,6 +709,13 @@ public class BreakpointManager extends Manager {
 				if (points == null || points.length == 0) {
 					throw new CDIException(CdiResources.getString("cdi.BreakpointManager.Parsing_Error")); //$NON-NLS-1$
 				}
+				// Set
+				if (bkpt.getFile().length() > 0)
+				{
+					for (int j = 0; j < points.length; j++) {
+						points[j].setFile(bkpt.getFile());
+					}					
+				}
 				// Make sure that if the breakpoint was disable we create them disable.
 				if (!enable) {
 					int[] numbers = new int[points.length];
@@ -921,6 +929,7 @@ public class BreakpointManager extends Manager {
 		if (bkpt.getLocator() != null) {
 			ICDILocator locator = bkpt.getLocator();
 			String file = locator.getFile();
+			file = new File(file).getName();
 			String function = locator.getFunction();
 			int no = locator.getLineNumber();
 			if (bkpt instanceof LineBreakpoint) {

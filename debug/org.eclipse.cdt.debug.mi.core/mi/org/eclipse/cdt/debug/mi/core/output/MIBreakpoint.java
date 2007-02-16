@@ -259,4 +259,8 @@ public class MIBreakpoint {
 			}
 		}
 	}
+
+	public void setFile(String file) {
+		this.file = file;
+	}
 }

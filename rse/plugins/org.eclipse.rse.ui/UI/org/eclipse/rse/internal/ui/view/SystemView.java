@@ -4935,8 +4935,17 @@ public class SystemView extends SafeTreeViewer implements ISystemTree, ISystemRe
 		// compare with node
 		Object data = parent.getData();
 		if (data != null) {
-			if (data == element) {
+			if (data == element) 
+			{
 				return parent;
+			}
+			else
+			{
+				// fix for 174270 
+				if (data.equals(element))
+				{
+					return parent;
+				}
 			}
 		}
 		// recurse over children

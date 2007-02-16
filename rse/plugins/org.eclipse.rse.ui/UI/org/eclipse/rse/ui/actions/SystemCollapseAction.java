@@ -18,6 +18,7 @@ package org.eclipse.rse.ui.actions;
 
 import java.util.Iterator;
 
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.rse.model.ISystemResourceChangeEvents;
 import org.eclipse.rse.model.ISystemResourceChangeListener;
@@ -62,7 +63,7 @@ public class SystemCollapseAction extends SystemBaseAction {
 			Object selectedObject = e.next();
 			adapter = getAdapter(selectedObject);
 			if (adapter != null) {
-				if (adapter.hasChildren(selectedObject)) enable = true;
+				if (adapter.hasChildren((IAdaptable)selectedObject)) enable = true;
 			}
 		}
 		return enable;

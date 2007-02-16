@@ -20,6 +20,7 @@ import java.util.Random;
 import java.util.Stack;
 
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.rse.core.SystemBasePlugin;
 import org.eclipse.rse.model.ISystemResourceChangeEvent;
 import org.eclipse.rse.model.ISystemResourceChangeEvents;
@@ -104,7 +105,7 @@ public abstract class RemoteCommandShellOperation implements ISystemResourceChan
 		try
 		{
 			RSEUIPlugin.getTheSystemRegistry().addSystemResourceChangeListener(this);
-			_remoteCmdShell = _cmdSubSystem.runShell( _pwd);	
+			_remoteCmdShell = _cmdSubSystem.runShell(new NullProgressMonitor(), _pwd);	
 		}
 		catch (Exception e)
 		{	
@@ -136,7 +137,7 @@ public abstract class RemoteCommandShellOperation implements ISystemResourceChan
 		{
 			try
 			{
-				_cmdSubSystem.cancelShell( _remoteCmdShell);
+				_cmdSubSystem.cancelShell(new NullProgressMonitor(), _remoteCmdShell);
 			}
 			catch (Exception e)
 			{				
@@ -182,7 +183,7 @@ public abstract class RemoteCommandShellOperation implements ISystemResourceChan
 				
 				// echo command appended after ; so that
 				// it isn't treated like stdin for the intial command
-				_cmdSubSystem.sendCommandToShell(cmd + _cmdSeparator + echoCmd,  _remoteCmdShell);
+				_cmdSubSystem.sendCommandToShell(new NullProgressMonitor(), cmd + _cmdSeparator + echoCmd,  _remoteCmdShell);
 																		
 			}
 			catch (Exception e)
@@ -203,7 +204,7 @@ public abstract class RemoteCommandShellOperation implements ISystemResourceChan
 		{
 			try
 			{
-				_cmdSubSystem.sendCommandToShell(input,  _remoteCmdShell);
+				_cmdSubSystem.sendCommandToShell(new NullProgressMonitor(), input,  _remoteCmdShell);
 																		
 			}
 			catch (Exception e)

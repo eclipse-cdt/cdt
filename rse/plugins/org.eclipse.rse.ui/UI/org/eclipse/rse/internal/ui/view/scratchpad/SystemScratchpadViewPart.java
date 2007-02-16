@@ -179,7 +179,7 @@ public class SystemScratchpadViewPart extends ViewPart implements ISelectionList
 		
 		if (adapter != null)
 		{
-			if (adapter.hasChildren(element))
+			if (adapter.hasChildren((IAdaptable)element))
 			{
 				setInput((IAdaptable) element);
 			}

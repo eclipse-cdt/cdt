@@ -149,7 +149,7 @@ public class SystemViewRemoteSearchResultSetAdapter extends AbstractSystemViewAd
 	/**
 	 * Returns <code>true</code> if it has children, otherwise returns <code>false</code>.
 	 */
-	public boolean hasChildren(Object element) {
+	public boolean hasChildren(IAdaptable element) {
 		
 		if (element instanceof IHostSearchResultSet) {
 			int num = ((IHostSearchResultSet)element).getNumOfResults();

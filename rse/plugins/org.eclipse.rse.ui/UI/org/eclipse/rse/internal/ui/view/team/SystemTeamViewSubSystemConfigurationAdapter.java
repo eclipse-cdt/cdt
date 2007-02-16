@@ -212,7 +212,7 @@ public class SystemTeamViewSubSystemConfigurationAdapter
 	/**
 	 * Return true if this profile has children. We return true.
 	 */
-	public boolean hasChildren(Object element)
+	public boolean hasChildren(IAdaptable element)
 	{
 		SystemTeamViewSubSystemConfigurationNode ssConfNode = (SystemTeamViewSubSystemConfigurationNode)element;
 		SystemTeamViewCategoryNode category = ssConfNode.getParentCategory();

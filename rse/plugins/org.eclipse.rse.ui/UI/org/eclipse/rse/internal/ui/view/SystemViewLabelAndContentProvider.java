@@ -377,16 +377,22 @@ public class SystemViewLabelAndContentProvider extends LabelProvider
      */
     public boolean hasChildren(Object element) 
     {
-    	//return getChildren(element).hasNext();
     	ISystemViewElementAdapter adapter = getAdapter(element);
-    	if (adapter != null) 
+    	if (element instanceof IContextObject)
     	{
-    	    return adapter.hasChildren(element);
+    		return adapter.hasChildren((IContextObject)element);
     	}
-    	if (manager != null) {
-			if (manager.isDeferredAdapter(element))
-				return manager.mayHaveChildren(element);
-		}
+    	else
+    	{
+	    	if (adapter != null) 
+	    	{
+	    	    return adapter.hasChildren((IAdaptable)element);
+	    	}
+	    	if (manager != null) {
+				if (manager.isDeferredAdapter(element))
+					return manager.mayHaveChildren(element);
+			}
+    	}
     	return false;
     }
     /**

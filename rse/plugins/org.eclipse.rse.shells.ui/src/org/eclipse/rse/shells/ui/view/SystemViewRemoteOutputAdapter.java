@@ -342,7 +342,7 @@ implements  ISystemViewElementAdapter, ISystemRemoteElementAdapter, ISystemOutpu
 	/**
 	 * Returns true if the element is a remote command and false if it is a remote output.
 	 */
-	public boolean hasChildren(Object element)
+	public boolean hasChildren(IAdaptable element)
 	{
         if (element instanceof IRemoteCommandShell)
         {

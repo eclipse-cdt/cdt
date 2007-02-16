@@ -161,7 +161,7 @@ public class SystemViewFilterStringAdapter extends AbstractSystemViewAdapter imp
 	/**
 	 * Return true if this object has children. We return false;
 	 */
-	public boolean hasChildren(Object element)
+	public boolean hasChildren(IAdaptable element)
 	{
 		return false;
 	}

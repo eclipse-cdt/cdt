@@ -242,7 +242,7 @@ public class SystemViewRemoteSearchResultAdapter extends AbstractSystemViewAdapt
 	/**
 	 * Returns false.
 	 */
-	public boolean hasChildren(Object element)
+	public boolean hasChildren(IAdaptable element)
 	{
 		return false;
 	}

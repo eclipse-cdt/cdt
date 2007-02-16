@@ -373,7 +373,7 @@ public class SystemSelectRemoteObjectAPIProviderImpl
 		  else if (filterString != null)
 		    hasroots = true;
 		  else
-		    hasroots = subsystemAdapter.hasChildren(subsystem);
+		    hasroots = subsystemAdapter.hasChildren((IAdaptable)subsystem);
 		  
 		  return hasroots;
 		}

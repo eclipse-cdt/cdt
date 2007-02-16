@@ -15,6 +15,7 @@
  ********************************************************************************/
 
 package org.eclipse.rse.shells.ui;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.rse.core.SystemBasePlugin;
 import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.model.ISubSystemConfigurationCategories;
@@ -148,7 +149,7 @@ public class SystemRemoteCommandEntryForm extends Composite
 				{
 					try
 					{
-						currSubSystem.runCommand(cmd, null);
+						currSubSystem.runCommand(new NullProgressMonitor(), cmd, null);
 					}
 					catch ( Exception e )
 					{

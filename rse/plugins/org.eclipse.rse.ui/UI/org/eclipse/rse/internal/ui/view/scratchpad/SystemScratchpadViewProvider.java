@@ -82,10 +82,18 @@ public class SystemScratchpadViewProvider implements ILabelProvider, ITreeConten
 
 	public boolean hasChildren(Object object)
 	{
+					
 		ISystemViewElementAdapter adapter = getAdapterFor(object);
 		if (adapter != null)
 		{
-			return adapter.hasChildren(object);
+			if (object instanceof IContextObject)
+			{
+				return adapter.hasChildren((IContextObject)object);
+			}
+			else
+			{
+				return adapter.hasChildren((IAdaptable)object);
+			}
 		}
 		else if (object instanceof IAdaptable) 
 		{
@@ -104,6 +112,10 @@ public class SystemScratchpadViewProvider implements ILabelProvider, ITreeConten
 
 	protected ISystemViewElementAdapter getAdapterFor(Object object)
 	{
+		if (object instanceof IContextObject)
+		{
+			object = ((IContextObject)object).getModelObject();
+		}
 	    if  (object instanceof IAdaptable)
 	    {
 	    	IAdaptable adapt = (IAdaptable) object;
@@ -130,7 +142,7 @@ public class SystemScratchpadViewProvider implements ILabelProvider, ITreeConten
 		if (element instanceof IAdaptable)
 		{				
 			ISystemViewElementAdapter adapter = getAdapterFor(element);
-			if (adapter != null && adapter.hasChildren(element))
+			if (adapter != null && adapter.hasChildren((IAdaptable)element))
 			{
 				  if (object instanceof IContextObject)
 		    	  {

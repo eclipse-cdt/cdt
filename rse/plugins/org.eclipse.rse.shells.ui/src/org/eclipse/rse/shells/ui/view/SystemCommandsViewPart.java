@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IContributionItem;
@@ -147,7 +148,7 @@ public class SystemCommandsViewPart
 		{
 			try
 			{
-				IRemoteCommandShell cmd = _cmdSubSystem.runShell( null);
+				IRemoteCommandShell cmd = _cmdSubSystem.runShell(new NullProgressMonitor(), null);
 				if (cmd != null)
 				{
 					showInView(cmd);

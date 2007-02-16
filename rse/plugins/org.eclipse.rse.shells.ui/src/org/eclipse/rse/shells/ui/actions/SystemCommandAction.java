@@ -19,6 +19,8 @@ package org.eclipse.rse.shells.ui.actions;
 import java.util.Iterator;
 
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.window.Window;
@@ -396,6 +398,7 @@ public class SystemCommandAction extends SystemBaseAction
 					}
 				}
 					
+				IProgressMonitor monitor = new NullProgressMonitor();
 				if (_selected != null)
 				{
 					IRemoteCmdSubSystem cmdSubSystem = getCommandSubSystem();
@@ -403,7 +406,7 @@ public class SystemCommandAction extends SystemBaseAction
 
 					if (launchNewShell)
 					{
-						Object[] results = cmdSubSystem.runCommand(cmd, _selected);
+						Object[] results = cmdSubSystem.runCommand(monitor, cmd, _selected);
 						Object cmdObject = results[0];
 						if (cmdObject instanceof IRemoteCommandShell)
 						{
@@ -425,8 +428,8 @@ public class SystemCommandAction extends SystemBaseAction
 						{
 							cdCmd = "cd /d \"" + path + '\"'; //$NON-NLS-1$
 						}
-						cmdSubSystem.sendCommandToShell(cdCmd, defaultShell);
-						cmdSubSystem.sendCommandToShell(cmd, defaultShell);
+						cmdSubSystem.sendCommandToShell(monitor, cdCmd, defaultShell);
+						cmdSubSystem.sendCommandToShell(monitor, cmd, defaultShell);
 					}
 				}
 				else
@@ -434,7 +437,7 @@ public class SystemCommandAction extends SystemBaseAction
 					IRemoteCmdSubSystem cmdSubSystem = getCommandSubSystem();
 					if (cmdSubSystem != null)
 					{
-						Object[] results = cmdSubSystem.runCommand(cmd,  _selected);
+						Object[] results = cmdSubSystem.runCommand(monitor, cmd,  _selected);
 						Object cmdObject = results[0];
 						if (cmdObject instanceof IRemoteCommandShell)
 						{
@@ -484,7 +487,7 @@ public class SystemCommandAction extends SystemBaseAction
 				{
 					SystemCommandsUI commandsUI = SystemCommandsUI.getInstance();
 					SystemCommandsViewPart cmdsPart = commandsUI.activateCommandsView();
-					IRemoteCommandShell cmd = cmdSubSystem.runShell(_selected);
+					IRemoteCommandShell cmd = cmdSubSystem.runShell(new NullProgressMonitor(), _selected);
 					cmdsPart.updateOutput(cmd);
 				}
 				else
@@ -494,7 +497,7 @@ public class SystemCommandAction extends SystemBaseAction
 					{
 						SystemCommandsUI commandsUI = SystemCommandsUI.getInstance();
 						SystemCommandsViewPart cmdsPart = commandsUI.activateCommandsView();
-						IRemoteCommandShell cmd = cmdSubSystem.runShell( _selected);
+						IRemoteCommandShell cmd = cmdSubSystem.runShell(new NullProgressMonitor(), _selected);
 						cmdsPart.updateOutput(cmd);
 					}
 					//showInView(cmd);

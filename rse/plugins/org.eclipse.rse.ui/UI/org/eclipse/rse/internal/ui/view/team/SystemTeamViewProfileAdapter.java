@@ -278,7 +278,7 @@ public class SystemTeamViewProfileAdapter
 	/**
 	 * Return true if this profile has children. We return true.
 	 */
-	public boolean hasChildren(Object element)
+	public boolean hasChildren(IAdaptable element)
 	{
 		return true;		
 	}

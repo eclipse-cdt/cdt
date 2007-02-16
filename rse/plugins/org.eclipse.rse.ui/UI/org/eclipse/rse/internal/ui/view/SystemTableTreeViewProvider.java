@@ -145,7 +145,7 @@ public class SystemTableTreeViewProvider implements ILabelProvider, ITableLabelP
 		ISystemViewElementAdapter adapter = getAdapterFor(object);
     	if (adapter != null) 
     	{
-    		return adapter.hasChildren(object);
+    		return adapter.hasChildren((IAdaptable)object);
     	}
 		if (manager != null) {
 			if (manager.isDeferredAdapter(object))
@@ -205,7 +205,7 @@ public class SystemTableTreeViewProvider implements ILabelProvider, ITableLabelP
 				
 		
 				
-				if (adapter.hasChildren(element))
+				if (adapter.hasChildren((IAdaptable)element))
 				{
 					if (supportsDeferredQueries())
 			    	{

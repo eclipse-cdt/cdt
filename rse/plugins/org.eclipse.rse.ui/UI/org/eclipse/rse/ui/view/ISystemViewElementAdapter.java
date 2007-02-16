@@ -202,10 +202,17 @@ public interface ISystemViewElementAdapter extends IPropertySource, ISystemDragD
 	 * Return the children of this object, using the given Expand-To filter
 	 */
     public Object[] getChildrenUsingExpandToFilter(Object element, String expandToFilter);
+	
+    /**
+	 * Return true if this object has children
+	 */
+	public boolean hasChildren(IAdaptable element);
+	
 	/**
 	 * Return true if this object has children
 	 */
-	public boolean hasChildren(Object element);
+	public boolean hasChildren(IContextObject element);
+	
     /**
      * Return true if this object is a "prompting" object that prompts the user when expanded.
      * For such objects, we do not try to save and restore their expansion state on F5 or between
@@ -239,12 +246,7 @@ public interface ISystemViewElementAdapter extends IPropertySource, ISystemDragD
 	 *  the Edit->Delete menu item will be enabled.
 	 */
 	public boolean canDelete(Object element);
-	/**
-	 * Perform the delete on the given item. This is after the user has been asked to confirm deletion.
-	 * @deprecated use the one with the monitor
-	 */
-	public boolean doDelete(Shell shell, Object element)
-	    throws Exception;
+
 
 	/**
 	 * Perform the delete on the given item. This is after the user has been asked to confirm deletion.

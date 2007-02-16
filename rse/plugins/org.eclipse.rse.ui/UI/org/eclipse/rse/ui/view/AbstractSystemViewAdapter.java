@@ -450,8 +450,18 @@ public abstract class AbstractSystemViewAdapter
      * <i><b>Abstract</b>. Must be overridden by subclasses.</i><br>
 	 * Return true if this object has children.
 	 */
-	public abstract boolean hasChildren(Object element);
+	public abstract boolean hasChildren(IAdaptable element);
 
+	/**
+	 * Override this to provide context-specific support
+	 * @param element the context object
+	 * @return whether the context has children
+	 */
+	public boolean hasChildren(IContextObject element)
+	{
+		return hasChildren(element.getModelObject());
+	}
+	
 	/**
 	 * Implementation of IWorkbenchAdapter.getChildren().  Rather than overriding this, adapter implementors
 	 * should override the getChildren() methods that take a monitor.
@@ -854,7 +864,6 @@ public abstract class AbstractSystemViewAdapter
 	 * If true, then canDelete will be called to decide whether to enable delete or not.
 	 * <p>By default, returns true.
 	 * @see #canDelete(Object)
-	 * @see #doDelete(Shell,Object)
 	 */
 	public boolean showDelete(Object element)
 	{
@@ -867,7 +876,6 @@ public abstract class AbstractSystemViewAdapter
 	 * <p>
 	 * By default, returns false. Override if your object is deletable.
 	 * @see #showDelete(Object)
-	 * @see #doDelete(Shell,Object)
 	 */
 	public boolean canDelete(Object element)
 	{
@@ -884,7 +892,7 @@ public abstract class AbstractSystemViewAdapter
 	 */
 	public boolean doDelete(Shell shell, Object element, IProgressMonitor monitor) throws Exception
 	{
-		return doDelete(shell, element);
+		return false;
 	}
 	
 	/**
@@ -904,19 +912,6 @@ public abstract class AbstractSystemViewAdapter
 		return ok;
 	}
 	
-	/**
-     * <i><b>Overridable</b> by subclasses, and usually is.</i><br>
-	 * Perform the delete action. By default does nothing. Override if your object is deletable.
-	 * Return true if this was successful. Return false if it failed and you issued a msg. 
-	 * Throw an exception if it failed and you want to use the generic msg.
-	 * @see #showDelete(Object)
-	 * @see #canDelete(Object)
-	 * @deprecated use the one with the monitor
-	 */
-	public boolean doDelete(Shell shell, Object element) throws Exception
-	{
-		return false;
-	}
 
 	// ------------------------------------------
 	// METHODS TO SUPPORT COMMON RENAME ACTION...
@@ -1371,7 +1366,7 @@ public abstract class AbstractSystemViewAdapter
 		  return value.equals(getType(target));
 		else if (name.equalsIgnoreCase("hasChildren")) //$NON-NLS-1$
 		{
-			return hasChildren(target) ? value.equals("true") : value.equals("false"); //$NON-NLS-1$ //$NON-NLS-2$
+			return hasChildren((IAdaptable)target) ? value.equals("true") : value.equals("false"); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		else if (name.equalsIgnoreCase("connected")) //$NON-NLS-1$
 		{

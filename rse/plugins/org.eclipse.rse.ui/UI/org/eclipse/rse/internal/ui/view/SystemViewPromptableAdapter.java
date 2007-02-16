@@ -116,7 +116,7 @@ public class SystemViewPromptableAdapter
 	 * Return true if this object has children. 
 	 * We return true, as either we'll expand and prompt, or expand and show child prompts
 	 */
-	public boolean hasChildren(Object element)
+	public boolean hasChildren(IAdaptable element)
 	{
 		return true;
 	}

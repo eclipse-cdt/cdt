@@ -1245,7 +1245,7 @@ public class SystemTableViewPart extends ViewPart implements ISelectionListener,
 		{
 			alreadyHandled = adapter.handleDoubleClick(element);
 			
-			if (!alreadyHandled && adapter.hasChildren(element))
+			if (!alreadyHandled && adapter.hasChildren((IAdaptable)element))
 			{
 				setInput((IAdaptable) element);
 			}

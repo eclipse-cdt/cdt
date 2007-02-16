@@ -91,7 +91,7 @@ public class SystemShowInMonitorAction extends SystemBaseAction
 		if (selected != null && selected instanceof IAdaptable)
 		{
 			ISystemViewElementAdapter va = (ISystemViewElementAdapter) ((IAdaptable) selected).getAdapter(ISystemViewElementAdapter.class);
-			if (va.hasChildren(selected))
+			if (va.hasChildren((IAdaptable)selected))
 			{
 				_selected = selected;
 				enable = true;

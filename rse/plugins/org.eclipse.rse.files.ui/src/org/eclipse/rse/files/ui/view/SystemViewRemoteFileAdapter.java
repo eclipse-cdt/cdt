@@ -95,7 +95,6 @@ import org.eclipse.rse.services.search.IHostSearchConstants;
 import org.eclipse.rse.services.search.IHostSearchResultConfiguration;
 import org.eclipse.rse.services.search.IHostSearchResultSet;
 import org.eclipse.rse.subsystems.files.core.model.ISystemFileRemoteTypes;
-import org.eclipse.rse.subsystems.files.core.model.RemoteFileFilterString;
 import org.eclipse.rse.subsystems.files.core.model.RemoteFileUtility;
 import org.eclipse.rse.subsystems.files.core.servicesubsystem.FileServiceSubSystem;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile;
@@ -115,14 +114,11 @@ import org.eclipse.rse.ui.SystemMenuManager;
 import org.eclipse.rse.ui.SystemResources;
 import org.eclipse.rse.ui.actions.SystemCopyToClipboardAction;
 import org.eclipse.rse.ui.actions.SystemPasteFromClipboardAction;
-import org.eclipse.rse.ui.actions.SystemShowInMonitorAction;
-import org.eclipse.rse.ui.actions.SystemShowInTableAction;
 import org.eclipse.rse.ui.dialogs.SystemRenameSingleDialog;
 import org.eclipse.rse.ui.messages.SystemMessageDialog;
 import org.eclipse.rse.ui.operations.SystemFetchOperation;
 import org.eclipse.rse.ui.validators.ISystemValidator;
 import org.eclipse.rse.ui.view.AbstractSystemViewAdapter;
-import org.eclipse.rse.ui.view.ContextObject;
 import org.eclipse.rse.ui.view.IContextObject;
 import org.eclipse.rse.ui.view.ISystemDragDropAdapter;
 import org.eclipse.rse.ui.view.ISystemEditableRemoteObject;
@@ -495,7 +491,7 @@ public class SystemViewRemoteFileAdapter
 				isOpen = atv.getExpandedState(element);
 				if (!isOpen)
 				{
-					if (!hasChildren(element))
+					if (!hasChildren((IAdaptable)element))
 						isOpen = true;
 				}
 			}
@@ -742,15 +738,48 @@ public class SystemViewRemoteFileAdapter
 		file.markStale(false);
 		return children;
 	}
+	
 	/**
 	 * Return true if this object has children.
 	 * Since we can't predict the outcome of resolving the filter string, we return true.
 	 */
-	public boolean hasChildren(Object element)
+	public boolean hasChildren(IContextObject element)
+	{
+		return internalHasChildren(element.getModelObject(), element.getFilterReference());
+	}
+	
+	/**
+	 * Return true if this object has children.
+	 * Since we can't predict the outcome of resolving the filter string, we return true.
+	 */
+	public boolean hasChildren(IAdaptable element)
+	{
+		return internalHasChildren(element, null);
+	}
+	
+	public boolean internalHasChildren(IAdaptable element, ISystemFilterReference filterReference)
 	{
 		IRemoteFile file = (IRemoteFile) element;
 		boolean supportsArchiveManagement = file.getParentRemoteFileSubSystem().getParentRemoteFileSubSystemConfiguration().supportsArchiveManagement();
 		boolean hasChildren = false;
+		
+		String filter = "*"; //$NON-NLS-1$
+		if (filterReference != null)
+		{
+			ISystemFilter filterObject = filterReference.getReferencedFilter();
+			if (filterObject.getFilterStringCount() > 0)
+			{
+				String filterString = filterObject.getFilterStrings()[0];
+				String separator = PathUtility.getSeparator(filterString);
+				
+				int sepIndex = filterString.lastIndexOf(separator);
+				if (sepIndex > 0)
+				{
+					filter = filterString.substring(sepIndex + 1);
+				}
+			}
+		}
+		
 		if (file instanceof IVirtualRemoteFile)
 		{
 			hasChildren = ((IVirtualRemoteFile)file).isVirtualFolder();
@@ -777,14 +806,14 @@ public class SystemViewRemoteFileAdapter
 			    }
 		    }
 		    else {
-		        hasChildren = file.hasContents(RemoteChildrenContentsType.getInstance());
+		        hasChildren = file.hasContents(RemoteChildrenContentsType.getInstance(), filter);
 		    }
 		}
 		else
 		{
 			// check that the children are actually there			
 			//Object[] contents = file.getContents(RemoteChildrenContentsType.getInstance());
-			hasChildren = file.hasContents(RemoteChildrenContentsType.getInstance());
+			hasChildren = file.hasContents(RemoteChildrenContentsType.getInstance(), filter);
 			if (!hasChildren && !file.isStale())
 				hasChildren = true;
 		//	if (!file.isStale() && contents != null && contents.length == 0 )

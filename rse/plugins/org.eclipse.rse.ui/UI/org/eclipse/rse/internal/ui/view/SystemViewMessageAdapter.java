@@ -112,7 +112,7 @@ public class SystemViewMessageAdapter
 	/**
 	 * Return true if this object has children. Always false for us.
 	 */
-	public boolean hasChildren(Object element)
+	public boolean hasChildren(IAdaptable element)
 	{
 		return false;
 	}

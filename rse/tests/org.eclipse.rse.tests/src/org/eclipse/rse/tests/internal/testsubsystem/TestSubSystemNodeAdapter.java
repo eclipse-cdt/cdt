@@ -116,7 +116,7 @@ public class TestSubSystemNodeAdapter extends AbstractSystemViewAdapter
 	/* (non-Javadoc)
 	 * @see org.eclipse.rse.ui.view.AbstractSystemViewAdapter#hasChildren(java.lang.Object)
 	 */
-	public boolean hasChildren(Object element) {
+	public boolean hasChildren(IAdaptable element) {
 		if (isTestSubSystemNodeContainer(element))
 			return ((ITestSubSystemNodeContainer)element).hasChildNodes();
 		return false;

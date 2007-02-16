@@ -133,7 +133,7 @@ public class SystemViewRootInputAdapter extends AbstractSystemViewAdapter implem
 	/**
 	 * Return true if this object has children
 	 */
-	public boolean hasChildren(Object element)
+	public boolean hasChildren(IAdaptable element)
 	{
 		ISystemViewInputProvider provider = (ISystemViewInputProvider)element;
         if ((provider instanceof ISystemRegistry) && showNewConnectionPrompt())

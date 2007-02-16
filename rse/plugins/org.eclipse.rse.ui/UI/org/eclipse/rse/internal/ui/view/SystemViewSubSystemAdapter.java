@@ -181,7 +181,7 @@ public class SystemViewSubSystemAdapter extends AbstractSystemViewAdapter
 	/**
 	 * Return true if this object has children
 	 */
-	public boolean hasChildren(Object element)
+	public boolean hasChildren(IAdaptable element)
 	{
 		//System.out.println("INSIDE HASCHILDREN FOR SUBSYSTEM VIEW ADAPTER: "+element);		
 		ISubSystem ss = (ISubSystem)element;

@@ -212,7 +212,7 @@ public class SystemViewFilterPoolReferenceAdapter
 	/**
 	 * Return true if this object has children
 	 */
-	public boolean hasChildren(Object element) {
+	public boolean hasChildren(IAdaptable element) {
 		int count = 0;
 		ISystemFilterPoolReference fpRef = getFilterPoolReference(element);
 		if (fpRef != null) {

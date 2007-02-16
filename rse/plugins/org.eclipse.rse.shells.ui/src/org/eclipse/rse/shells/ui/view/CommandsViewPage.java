@@ -17,6 +17,7 @@
 package org.eclipse.rse.shells.ui.view;
 
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.text.ITextOperationTarget;
 import org.eclipse.jface.util.IPropertyChangeListener;
@@ -358,7 +359,7 @@ FocusListener
 		//boolean alreadyHandled = false;
 		if (adapter != null)
 		{
-			if (adapter.hasChildren(element))
+			if (adapter.hasChildren((IAdaptable)element))
 			{
 				// special case for folders
 				if (element instanceof IRemoteFile)
@@ -443,7 +444,7 @@ FocusListener
 			IRemoteCmdSubSystem commandSubSystem = remoteCommand.getCommandSubSystem();
 			try
 			{
-				commandSubSystem.sendCommandToShell(inputStr, remoteCommand);
+				commandSubSystem.sendCommandToShell(new NullProgressMonitor(), inputStr, remoteCommand);
 			}
 			catch (Exception e)
 			{
@@ -464,7 +465,7 @@ FocusListener
 			IRemoteCmdSubSystem commandSubSystem = remoteCommand.getCommandSubSystem();
 			try
 			{
-				commandSubSystem.sendCommandToShell("#break", remoteCommand); //$NON-NLS-1$
+				commandSubSystem.sendCommandToShell(new NullProgressMonitor(), "#break", remoteCommand); //$NON-NLS-1$
 			}
 			catch (Exception e)
 			{

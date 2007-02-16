@@ -69,7 +69,7 @@ public class DaytimeResourceAdapter extends AbstractSystemViewAdapter implements
 		return null; // not really used, which is good because it is ambiguous
 	}
 
-	public boolean hasChildren(Object element) {
+	public boolean hasChildren(IAdaptable element) {
 		return false;
 	}
 

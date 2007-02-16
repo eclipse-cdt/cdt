@@ -294,7 +294,7 @@ public class SystemViewConnectionAdapter
 	/**
 	 * Return true if this object has children
 	 */
-	public boolean hasChildren(Object element)
+	public boolean hasChildren(IAdaptable element)
 	{
 		IHost conn = (IHost)element;						
 		return getInput().hasConnectionChildren(conn);			

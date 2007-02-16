@@ -233,7 +233,7 @@ public class SystemBuildErrorViewPart extends ViewPart implements ISelectionList
 			//boolean alreadyHandled = false;
 			if (adapter != null)
 			{
-				if (!adapter.hasChildren(element))
+				if (!adapter.hasChildren((IAdaptable)element))
 				{		
 					/*alreadyHandled =*/ adapter.handleDoubleClick(element);
 				}

@@ -151,7 +151,7 @@ public class SystemViewRemoteProcessAdapter extends AbstractSystemViewAdapter
 		return parent;
 	}
 
-	public boolean hasChildren(Object element)
+	public boolean hasChildren(IAdaptable element)
 	{
 		// TODO Auto-generated method stub
 		return false;

@@ -27,6 +27,7 @@ import org.eclipse.rse.core.SystemResourceManager;
 import org.eclipse.rse.core.model.ISystemProfile;
 import org.eclipse.rse.model.ISystemResourceChangeListener;
 import org.eclipse.rse.ui.RSEUIPlugin;
+import org.eclipse.rse.ui.view.IContextObject;
 import org.eclipse.rse.ui.view.ISystemViewElementAdapter;
 import org.eclipse.rse.ui.view.ISystemViewInputProvider;
 import org.eclipse.swt.widgets.Shell;
@@ -104,6 +105,10 @@ public class SystemTeamViewContentProvider extends WorkbenchContentProvider
 	 */
 	public boolean hasChildren(Object element) 
 	{
+		if (element instanceof IContextObject)
+		{
+			element = ((IContextObject)element).getModelObject();
+		}
 		boolean children = false;
 		if (element instanceof IProject) 
 			children = (getChildren(element).length > 0);
@@ -111,7 +116,7 @@ public class SystemTeamViewContentProvider extends WorkbenchContentProvider
 		{
 			ISystemViewElementAdapter adapter = getSystemViewAdapter(element);
 			if (adapter != null)
-		 		children = adapter.hasChildren(element);
+		 		children = adapter.hasChildren((IAdaptable)element);
 		 	else
 				children = super.hasChildren(element);
 		}

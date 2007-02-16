@@ -18,6 +18,7 @@ package org.eclipse.rse.ui.actions;
 import java.util.Iterator;
 import java.util.Vector;
 
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.rse.core.model.ISystemContainer;
 import org.eclipse.rse.model.ISystemResourceChangeEvents;
@@ -91,7 +92,7 @@ public class SystemRefreshAction extends SystemBaseAction
 				
 				if (adapter != null) {
 					Object parent = adapter.getParent(obj);
-					boolean hasChildren = adapter.hasChildren(obj);
+					boolean hasChildren = adapter.hasChildren((IAdaptable)obj);
 					
 					if ((parent != null) && !hasChildren && (!parents.contains(parent))) {
 						parents.add(parent);

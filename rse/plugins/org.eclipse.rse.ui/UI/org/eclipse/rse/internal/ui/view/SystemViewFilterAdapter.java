@@ -219,7 +219,7 @@ public class SystemViewFilterAdapter extends AbstractSystemViewAdapter implement
 		     	}
 		     	// otherwise, get children and then cache
 		     	else {
-		     		children = checkForNull(ss.resolveFilterStrings(filterStrings), true);
+		     		children = checkForNull(ss.resolveFilterStrings(monitor, filterStrings), true);
 		     		
 		     		if (ss.getSubSystemConfiguration().supportsFilterCaching()) {
 		     			simpleFilter.setContents(SystemChildrenContentsType.getInstance(), children);
@@ -332,7 +332,7 @@ public class SystemViewFilterAdapter extends AbstractSystemViewAdapter implement
 	/**
 	 * Return true if this object has children
 	 */
-	public boolean hasChildren(Object element)
+	public boolean hasChildren(IAdaptable element)
 	{
 		ISystemFilter filter = getFilter(element);
     	if (filter.getFilterStringCount() > 0)

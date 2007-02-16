@@ -431,7 +431,7 @@ public class SystemViewFilterReferenceAdapter
 	 * Return true if this object has children.
 	 * That is, if the referenced filter has nested filters or filter strings.
 	 */
-	public boolean hasChildren(Object element)
+	public boolean hasChildren(IAdaptable element)
 	{		
 		ISystemFilterReference fRef = getFilterReference(element);
 		ISystemFilter referencedFilter = fRef.getReferencedFilter();

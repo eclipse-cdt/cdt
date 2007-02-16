@@ -102,7 +102,7 @@ public class SystemSearchViewContentProvider implements ITreeContentProvider {
 				return false;
 			}
 			else {
-				return adapter.hasChildren(element);
+				return adapter.hasChildren((IAdaptable)element);
 			}
 		}
 		

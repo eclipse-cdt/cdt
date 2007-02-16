@@ -235,7 +235,9 @@ public class RSEDOMImporter implements IRSEDOMImporter {
 			}
 
 			if (subSystem == null) {
-				subSystem = factory.createSubSystemInternal(host);
+				// subSystem = factory.createSubSystemInternal(host);
+				ISubSystem[] createdSystems = _registry.createSubSystems(host, new ISubSystemConfiguration[]{factory});
+				subSystem = createdSystems[0];
 			}
 			subSystem.setHidden(isHidden);
 			subSystem.setHost(host);

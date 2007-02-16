@@ -524,6 +524,15 @@ public interface ISystemRegistry extends ISchedulingRule {
 	 *   because the connectionName is not unique. Call getLastException() if necessary.
 	 */
 	public IHost createHost(String systemType, String connectionName, String hostName, String description) throws Exception;
+	
+	/**
+	 * Creates subsystems for a given host and subsystem configurations.
+	 * @param host the host.
+	 * @param configurations the subsystem configurations.
+	 * @return the array of subsystems corresponding to the array of given configurations.
+	 * @since 2.0
+	 */
+	public ISubSystem[] createSubSystems(IHost host, ISubSystemConfiguration[] configurations);
 
 	/**
 	 * Update the workoffline mode for a connection.

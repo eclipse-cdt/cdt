@@ -2257,12 +2257,13 @@ public class SystemRegistry implements ISystemRegistryUI, ISystemModelChangeEven
 	}
 	
 	/**
-	 * Creates subsystem for a given host.
+	 * Creates subsystems for a given host and subsystem configurations.
 	 * @param host the host.
-	 * @param configurations the subsystem configurations
+	 * @param configurations the subsystem configurations.
+	 * @return the array of subsystems corresponding to the array of given configurations.
 	 * @since 2.0
 	 */
-	public void createSubSystems(IHost host, ISubSystemConfiguration[] configurations) {
+	public ISubSystem[] createSubSystems(IHost host, ISubSystemConfiguration[] configurations) {
 		
 		ISubSystem[] subsystems = new ISubSystem[configurations.length];
 		
@@ -2275,6 +2276,7 @@ public class SystemRegistry implements ISystemRegistryUI, ISystemModelChangeEven
 		}
 		
 		RSEUIPlugin.getThePersistenceManager().commit(host);
+		return subsystems;
 	}
 	
 	

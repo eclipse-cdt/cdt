@@ -124,6 +124,7 @@ public class Elf {
 		public final static int EM_NIOSII = 113;
 		public final static int EM_C166 = 116;
 		public final static int EM_M16C = 117;
+		public final static int EM_MMDSP = 160;
 		public final static int EM_NIOS = 0xFEBB;
 		public final static int EM_CYGNUS_POWERPC = 0x9025;
 		public final static int EM_CYGNUS_M32R = 0x9041;
@@ -859,6 +860,9 @@ public class Elf {
 				break;
 			case Elf.ELFhdr.EM_CRADLE:
 				attrib.cpu = "cradle"; //$NON-NLS-1$
+				break;
+			case Elf.ELFhdr.EM_MMDSP:
+				attrib.cpu = "mmdsp"; //$NON-NLS-1$
 				break;
 			case Elf.ELFhdr.EM_NONE :
 			default :

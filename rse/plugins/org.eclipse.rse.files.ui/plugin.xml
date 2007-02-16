@@ -171,9 +171,9 @@ Contributors:
             label="%Search.Page"
             enabled="true"
             icon="icons/full/obj16/system_search.gif"
-            class="org.eclipse.rse.files.ui.search.SystemSearchPage"
+            class="org.eclipse.rse.internal.files.ui.search.SystemSearchPage"
             sizeHint="250,160"
-            id="org.eclipse.rse.files.ui.search.searchPage">
+            id="org.eclipse.rse.internal.files.ui.search.searchPage">
       </page>
    </extension>
 
@@ -202,7 +202,7 @@ Contributors:
                tooltip="%Remote.Search.tooltip"
                helpContextId="org.eclipse.rse.core.rsac0000"
                icon="icons/full/obj16/system_search.gif"
-               class="org.eclipse.rse.files.ui.search.SystemOpenSearchPageAction"
+               class="org.eclipse.rse.internal.files.ui.search.SystemOpenSearchPageAction"
                menubarPath="org.eclipse.search.menu/dialogGroup"
                id="org.eclipse.rse.core.search.searchAction">
          </action>

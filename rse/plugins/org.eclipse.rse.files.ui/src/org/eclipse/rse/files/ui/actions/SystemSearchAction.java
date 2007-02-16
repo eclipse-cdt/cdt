@@ -17,7 +17,7 @@
 package org.eclipse.rse.files.ui.actions;
 
 import org.eclipse.rse.core.SystemBasePlugin;
-import org.eclipse.rse.files.ui.search.SystemSearchPage;
+import org.eclipse.rse.internal.files.ui.search.SystemSearchPage;
 import org.eclipse.rse.ui.ISystemIconConstants;
 import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemResources;

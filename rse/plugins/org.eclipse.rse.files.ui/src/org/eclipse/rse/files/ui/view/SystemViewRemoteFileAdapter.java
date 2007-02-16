@@ -74,6 +74,9 @@ import org.eclipse.rse.files.ui.resources.SystemRemoteEditManager;
 import org.eclipse.rse.files.ui.resources.UniversalFileTransferUtility;
 import org.eclipse.rse.filters.SystemFilterReference;
 import org.eclipse.rse.internal.subsystems.files.core.ISystemFilePreferencesConstants;
+import org.eclipse.rse.internal.ui.view.SystemDNDTransferRunnable;
+import org.eclipse.rse.internal.ui.view.SystemViewResources;
+import org.eclipse.rse.internal.ui.view.search.SystemSearchTableView;
 import org.eclipse.rse.model.ISystemRegistryUI;
 import org.eclipse.rse.model.ISystemResourceChangeEvents;
 import org.eclipse.rse.model.SystemRegistry;
@@ -128,9 +131,6 @@ import org.eclipse.rse.ui.view.ISystemPropertyConstants;
 import org.eclipse.rse.ui.view.ISystemRemoteElementAdapter;
 import org.eclipse.rse.ui.view.ISystemViewDropDestination;
 import org.eclipse.rse.ui.view.ISystemViewElementAdapter;
-import org.eclipse.rse.ui.view.SystemDNDTransferRunnable;
-import org.eclipse.rse.ui.view.SystemViewResources;
-import org.eclipse.rse.ui.view.search.SystemSearchTableView;
 import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
@@ -175,8 +175,6 @@ public class SystemViewRemoteFileAdapter
 	//private SystemCommandAction commandAction, shellAction;
 	
 	private SystemSearchAction searchAction;
-	private SystemShowInTableAction showInTableAction;
-	private SystemShowInMonitorAction showInMonitorAction;
 	private SystemExtractAction extractAction;
 	private SystemExtractToAction extractToAction;
 	private SystemConvertAction convertAction;
@@ -429,16 +427,6 @@ public class SystemViewRemoteFileAdapter
 		{
 			copyClipboardAction = new SystemCopyToClipboardAction(shell, clipboard);
 		}
-		/** FIXME - these show now be contributed via plugin.xml from the shells plugin
-		if (commandAction == null)
-		{
-			commandAction = new SystemCommandAction(shell, false, null);
-		}
-		if (shellAction == null)
-		{
-			shellAction = new SystemCommandAction(shell, true, null);
-		}
-		**/
 		if (searchAction == null)
 		{
 			searchAction = new SystemSearchAction(shell);
@@ -455,15 +443,6 @@ public class SystemViewRemoteFileAdapter
 		{
 			replaceEditionAction = new SystemReplaceWithEditionAction(shell);
 		}
-		if (showInTableAction == null)
-		{
-			showInTableAction = new SystemShowInTableAction(shell);
-		}
-		if (showInMonitorAction == null)
-		{
-			showInMonitorAction = new SystemShowInMonitorAction(shell);
-		}
-
 		if (canEdit && supportsSearch)
 		{
 		    //menu.add(ISystemContextMenuConstants.GROUP_IMPORTEXPORT, addToArchiveAction);
@@ -489,20 +468,6 @@ public class SystemViewRemoteFileAdapter
 		    {
 		        menu.add(menuGroup, pasteClipboardAction);
 		    }
-			menu.add(ISystemContextMenuConstants.GROUP_OPEN, showInTableAction);
-			
-
-			menu.add(ISystemContextMenuConstants.GROUP_OPEN, showInMonitorAction);
-			
-			/** FIXME - shells now separate plugin
-			if (elementType == 1)
-			{
-				if (!isVirtual)
-				{
-					menu.add(menuGroup, shellAction);
-				}
-			}
-			*/
 		}
 		if (!firstFile.isRoot() && canEdit)
 		{

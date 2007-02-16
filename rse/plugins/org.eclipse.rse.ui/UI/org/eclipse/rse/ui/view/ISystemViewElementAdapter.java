@@ -39,7 +39,7 @@ import org.eclipse.ui.views.properties.IPropertySource;
  * Any input into the system viewer must register an adapter that implements this interface.
  * <p>
  * This interface supports a union of all the methods needed to support a TreeViewer
- *  content provider and label provider. The {@link org.eclipse.rse.ui.view.SystemViewLabelAndContentProvider} 
+ *  content provider and label provider. The {@link org.eclipse.rse.internal.ui.view.SystemViewLabelAndContentProvider} 
  *  delegates to objects of this interface almost completely. It gets such an
  *  object by calling:</p>
  * <pre><code>

@@ -10,9 +10,9 @@
 package org.eclipse.rse.files.ui.internal.search;
 
 import org.eclipse.rse.files.ui.widgets.SystemSelectRemoteFileOrFolderForm;
+import org.eclipse.rse.internal.ui.view.SystemSelectRemoteObjectAPIProviderImpl;
 import org.eclipse.rse.subsystems.files.core.model.ISystemFileRemoteTypes;
 import org.eclipse.rse.ui.messages.ISystemMessageLine;
-import org.eclipse.rse.ui.view.SystemSelectRemoteObjectAPIProviderImpl;
 
 /**
  * The selection form to use is search selection dialogs.

@@ -19,7 +19,7 @@ package org.eclipse.rse.ui.widgets.services;
 import org.eclipse.rse.core.model.IProperty;
 import org.eclipse.rse.core.model.IPropertyType;
 import org.eclipse.rse.core.model.Property;
-import org.eclipse.rse.ui.view.SystemComboBoxPropertyDescriptor;
+import org.eclipse.rse.internal.ui.view.SystemComboBoxPropertyDescriptor;
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
 import org.eclipse.ui.views.properties.TextPropertyDescriptor;
 

@@ -16,9 +16,9 @@
 
 package org.eclipse.rse.ui.actions;
 import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.rse.internal.ui.view.SystemViewPart;
 import org.eclipse.rse.ui.ISystemContextMenuConstants;
 import org.eclipse.rse.ui.SystemResources;
-import org.eclipse.rse.ui.view.SystemViewPart;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.views.framelist.BackAction;
 import org.eclipse.ui.views.framelist.ForwardAction;

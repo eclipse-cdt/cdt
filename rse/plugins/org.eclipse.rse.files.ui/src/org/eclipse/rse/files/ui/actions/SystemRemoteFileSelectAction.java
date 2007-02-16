@@ -20,13 +20,13 @@ import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.files.ui.FileResources;
 import org.eclipse.rse.files.ui.ISystemAddFileListener;
 import org.eclipse.rse.files.ui.dialogs.SystemRemoteFileDialog;
+import org.eclipse.rse.internal.ui.view.SystemActionViewerFilter;
 import org.eclipse.rse.subsystems.files.core.model.RemoteFileUtility;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFileSubSystem;
 import org.eclipse.rse.ui.actions.SystemBaseDialogAction;
 import org.eclipse.rse.ui.dialogs.SystemRemoteResourceDialog;
 import org.eclipse.rse.ui.validators.IValidatorRemoteSelection;
-import org.eclipse.rse.ui.view.SystemActionViewerFilter;
 import org.eclipse.swt.widgets.Shell;
 
 

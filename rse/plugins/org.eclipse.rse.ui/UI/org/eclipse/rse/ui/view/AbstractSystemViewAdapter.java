@@ -40,6 +40,8 @@ import org.eclipse.rse.core.subsystems.AbstractResource;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
 import org.eclipse.rse.core.subsystems.util.ISubSystemConfigurationAdapter;
+import org.eclipse.rse.internal.ui.view.SystemViewPart;
+import org.eclipse.rse.internal.ui.view.SystemViewResources;
 import org.eclipse.rse.model.ISystemPromptableObject;
 import org.eclipse.rse.model.SystemRemoteResourceSet;
 import org.eclipse.rse.ui.ISystemMessages;

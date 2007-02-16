@@ -15,9 +15,9 @@ import java.util.Vector;
 
 import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.subsystems.ISubSystem;
+import org.eclipse.rse.internal.ui.view.SystemSelectRemoteObjectAPIProviderImpl;
 import org.eclipse.rse.services.search.ISearchService;
 import org.eclipse.rse.subsystems.files.core.servicesubsystem.FileServiceSubSystem;
-import org.eclipse.rse.ui.view.SystemSelectRemoteObjectAPIProviderImpl;
 
 /**
  * This is the input provider for selection dialogs related to search.
@@ -51,7 +51,7 @@ public class SystemSearchRemoteObjectAPIProvider extends SystemSelectRemoteObjec
 	}
 
 	/**
-	 * @see org.eclipse.rse.ui.view.SystemSelectRemoteObjectAPIProviderImpl#getConnections()
+	 * @see org.eclipse.rse.internal.ui.view.SystemSelectRemoteObjectAPIProviderImpl#getConnections()
 	 */
 	protected Object[] getConnections() {
 		

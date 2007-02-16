@@ -17,7 +17,7 @@
 package org.eclipse.rse.ui.actions;
 
 import org.eclipse.jface.action.Action;
-import org.eclipse.rse.ui.view.SystemPerspectiveHelpers;
+import org.eclipse.rse.internal.ui.view.SystemPerspectiveHelpers;
 
 
 /**

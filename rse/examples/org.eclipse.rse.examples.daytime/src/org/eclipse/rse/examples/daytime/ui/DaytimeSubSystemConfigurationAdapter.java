@@ -22,7 +22,7 @@ import org.eclipse.jface.wizard.IWizard;
 
 import org.eclipse.rse.core.model.ISystemNewConnectionWizardPage;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
-import org.eclipse.rse.ui.view.SubSystemConfigurationAdapter;
+import org.eclipse.rse.internal.ui.view.SubSystemConfigurationAdapter;
 
 
 public class DaytimeSubSystemConfigurationAdapter extends SubSystemConfigurationAdapter

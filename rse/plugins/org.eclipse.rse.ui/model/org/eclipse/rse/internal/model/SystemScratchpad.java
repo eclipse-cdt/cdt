@@ -21,10 +21,10 @@ import java.util.List;
 
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.rse.internal.ui.view.SystemViewScratchpadAdapter;
 import org.eclipse.rse.ui.view.ISystemDragDropAdapter;
 import org.eclipse.rse.ui.view.ISystemRemoteElementAdapter;
 import org.eclipse.rse.ui.view.ISystemViewElementAdapter;
-import org.eclipse.rse.ui.view.SystemViewScratchpadAdapter;
 import org.eclipse.ui.views.properties.IPropertySource;
 
 

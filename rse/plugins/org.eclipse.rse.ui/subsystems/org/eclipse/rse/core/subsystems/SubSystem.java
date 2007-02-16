@@ -1958,7 +1958,7 @@ public abstract class SubSystem extends RSEModelObject implements IAdaptable, IS
      *  result by overriding {@link #sortResolvedFilterStringObjects(Object[])} if you desire to
      *  sort the result, say, or pick our redundancies.
      * <p>
-     * The resulting objects are displayed in the tree in the Remote System {@link org.eclipse.rse.ui.view.SystemView view}. 
+     * The resulting objects are displayed in the tree in the Remote System {@link org.eclipse.rse.internal.ui.view.SystemView view}. 
      * There are <u>two requirements</u> on the returned objects:</p>
      * <ol>
      *   <li>They must implement {@link org.eclipse.core.runtime.IAdaptable}.
@@ -2207,7 +2207,7 @@ public abstract class SubSystem extends RSEModelObject implements IAdaptable, IS
      *  behaviour by overriding {@link #sortResolvedFilterStringObjects(Object[])} if you desire to
      *  sort the result, say, or pick our redundancies.
      * <p>
-     * The resulting objects are displayed in the tree in the Remote System {@link org.eclipse.rse.ui.view.SystemView view}. 
+     * The resulting objects are displayed in the tree in the Remote System {@link org.eclipse.rse.internal.ui.view.SystemView view}. 
      * There are <u>two requirements</u> on the returned objects:</p>
      * <ol>
      *   <li>They must implement {@link org.eclipse.core.runtime.IAdaptable}.
@@ -2662,7 +2662,7 @@ public abstract class SubSystem extends RSEModelObject implements IAdaptable, IS
      *  result by overriding {@link #sortResolvedFilterStringObjects(Object[])} if you desire to
      *  sort the result, say, or pick our redundancies.
      * <p>
-     * The resulting objects are displayed in the tree in the Remote System {@link org.eclipse.rse.ui.view.SystemView view}. 
+     * The resulting objects are displayed in the tree in the Remote System {@link org.eclipse.rse.internal.ui.view.SystemView view}. 
      * There are <u>two requirements</u> on the returned objects:</p>
      * <ol>
      *   <li>They must implement {@link org.eclipse.core.runtime.IAdaptable}.
@@ -2757,7 +2757,7 @@ public abstract class SubSystem extends RSEModelObject implements IAdaptable, IS
      *  behaviour by overriding {@link #sortResolvedFilterStringObjects(Object[])} if you desire to
      *  sort the result, say, or pick our redundancies.
      * <p>
-     * The resulting objects are displayed in the tree in the Remote System {@link org.eclipse.rse.ui.view.SystemView view}. 
+     * The resulting objects are displayed in the tree in the Remote System {@link org.eclipse.rse.internal.ui.view.SystemView view}. 
      * There are <u>two requirements</u> on the returned objects:</p>
      * <ol>
      *   <li>They must implement {@link org.eclipse.core.runtime.IAdaptable}.

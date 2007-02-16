@@ -17,11 +17,11 @@
 package org.eclipse.rse.internal.subsystems.files.core;
 import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.subsystems.ISubSystem;
+import org.eclipse.rse.internal.ui.view.SystemAbstractAPIProvider;
 import org.eclipse.rse.model.SystemRegistry;
 import org.eclipse.rse.subsystems.files.core.model.ISystemFileAPIProvider;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFileSubSystem;
 import org.eclipse.rse.ui.RSEUIPlugin;
-import org.eclipse.rse.ui.view.SystemAbstractAPIProvider;
 
 
 /**

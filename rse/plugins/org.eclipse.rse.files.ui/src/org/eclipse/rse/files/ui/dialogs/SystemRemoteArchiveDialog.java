@@ -17,9 +17,9 @@
 package org.eclipse.rse.files.ui.dialogs;
 
 import org.eclipse.rse.core.model.IHost;
+import org.eclipse.rse.internal.ui.view.SystemActionViewerFilter;
 import org.eclipse.rse.subsystems.files.core.SystemFileResources;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile;
-import org.eclipse.rse.ui.view.SystemActionViewerFilter;
 import org.eclipse.swt.widgets.Shell;
 
 

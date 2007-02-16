@@ -17,11 +17,11 @@
 package org.eclipse.rse.ui.dialogs;
 
 import org.eclipse.rse.core.model.IHost;
+import org.eclipse.rse.internal.ui.view.SystemActionViewerFilter;
+import org.eclipse.rse.internal.ui.view.SystemResourceSelectionForm;
+import org.eclipse.rse.internal.ui.view.SystemResourceSelectionInputProvider;
 import org.eclipse.rse.ui.messages.ISystemMessageLine;
 import org.eclipse.rse.ui.validators.IValidatorRemoteSelection;
-import org.eclipse.rse.ui.view.SystemActionViewerFilter;
-import org.eclipse.rse.ui.view.SystemResourceSelectionForm;
-import org.eclipse.rse.ui.view.SystemResourceSelectionInputProvider;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;

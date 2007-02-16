@@ -18,8 +18,8 @@ package org.eclipse.rse.files.ui.dialogs;
 
 import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.subsystems.ISubSystem;
+import org.eclipse.rse.internal.ui.view.SystemResourceSelectionInputProvider;
 import org.eclipse.rse.subsystems.files.core.model.RemoteFileUtility;
-import org.eclipse.rse.ui.view.SystemResourceSelectionInputProvider;
 
 
 public class SystemRemoteFileSelectionInputProvider extends

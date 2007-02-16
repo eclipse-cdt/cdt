@@ -16,7 +16,7 @@
 
 package org.eclipse.rse.shells.ui.view;
 
-import org.eclipse.rse.ui.view.SystemTableViewProvider;
+import org.eclipse.rse.internal.ui.view.SystemTableViewProvider;
 
 public class SystemCommandsViewProvider extends SystemTableViewProvider
 {

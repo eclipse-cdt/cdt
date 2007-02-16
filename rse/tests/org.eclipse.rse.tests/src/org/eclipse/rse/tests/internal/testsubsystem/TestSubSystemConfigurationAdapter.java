@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.rse.tests.internal.testsubsystem;
 
-import org.eclipse.rse.ui.view.SubSystemConfigurationAdapter;
+import org.eclipse.rse.internal.ui.view.SubSystemConfigurationAdapter;
 
 /**
  * Adapter for subsytsem configuration.

@@ -20,12 +20,12 @@ import java.util.Iterator;
 
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.rse.internal.ui.view.monitor.SystemMonitorUI;
+import org.eclipse.rse.internal.ui.view.monitor.SystemMonitorViewPart;
 import org.eclipse.rse.ui.ISystemIconConstants;
 import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemResources;
 import org.eclipse.rse.ui.view.ISystemViewElementAdapter;
-import org.eclipse.rse.ui.view.monitor.SystemMonitorUI;
-import org.eclipse.rse.ui.view.monitor.SystemMonitorViewPart;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;

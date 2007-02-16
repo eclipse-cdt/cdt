@@ -442,7 +442,7 @@ public abstract class RemoteFileSubSystemConfiguration extends SubSystemConfigur
     /**
      * Populate a new subsystem with our unique attributes, and/or create default filter references.
      * @see org.eclipse.rse.core.subsystems.SubSystemConfiguration#initializeSubSystem(ISubSystem,ISystemNewConnectionWizardPage[])
-     * @see org.eclipse.rse.ui.view.SubSystemConfigurationAdapter#getNewConnectionWizardPages(org.eclipse.rse.core.subsystems.ISubSystemConfiguration, org.eclipse.jface.wizard.IWizard)
+     * @see org.eclipse.rse.internal.ui.view.SubSystemConfigurationAdapter#getNewConnectionWizardPages(org.eclipse.rse.core.subsystems.ISubSystemConfiguration, org.eclipse.jface.wizard.IWizard)
      */
     protected void initializeSubSystem(ISubSystem ss, ISystemNewConnectionWizardPage[] yourNewConnectionWizardPages)
     {

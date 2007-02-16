@@ -18,8 +18,8 @@ package org.eclipse.rse.ui.dialogs;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.rse.ui.view.SystemPropertySheetForm;
-import org.eclipse.rse.ui.view.SystemViewForm;
+import org.eclipse.rse.internal.ui.view.SystemPropertySheetForm;
+import org.eclipse.rse.internal.ui.view.SystemViewForm;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 

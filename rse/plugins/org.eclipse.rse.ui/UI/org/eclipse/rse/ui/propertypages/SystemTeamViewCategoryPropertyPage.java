@@ -15,10 +15,10 @@
  ********************************************************************************/
 
 package org.eclipse.rse.ui.propertypages;
+import org.eclipse.rse.internal.ui.view.SystemViewResources;
+import org.eclipse.rse.internal.ui.view.team.SystemTeamViewCategoryNode;
 import org.eclipse.rse.ui.SystemPropertyResources;
 import org.eclipse.rse.ui.SystemWidgetHelpers;
-import org.eclipse.rse.ui.view.SystemViewResources;
-import org.eclipse.rse.ui.view.team.SystemTeamViewCategoryNode;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;

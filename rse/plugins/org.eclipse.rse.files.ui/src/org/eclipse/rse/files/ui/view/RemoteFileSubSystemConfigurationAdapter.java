@@ -36,11 +36,11 @@ import org.eclipse.rse.files.ui.actions.SystemNewFolderAction;
 import org.eclipse.rse.files.ui.resources.SystemIFileProperties;
 import org.eclipse.rse.files.ui.resources.SystemRemoteEditManager;
 import org.eclipse.rse.files.ui.wizards.SystemFileNewConnectionWizardPage;
+import org.eclipse.rse.internal.ui.view.SubSystemConfigurationAdapter;
 import org.eclipse.rse.model.ISystemRegistryUI;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFileSubSystemConfiguration;
 import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.actions.SystemPasteFromClipboardAction;
-import org.eclipse.rse.ui.view.SubSystemConfigurationAdapter;
 import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.widgets.Shell;
 

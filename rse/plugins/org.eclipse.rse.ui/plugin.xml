@@ -338,7 +338,7 @@ Contributors:
             class="org.eclipse.rse.ui.propertypages.SystemTeamViewCategoryPropertyPage"
             id="org.eclipse.rse.SystemTeamViewCategoryPropertyPage">
          <enabledWhen>
-            <instanceof value="org.eclipse.rse.ui.view.team.SystemTeamViewCategoryNode"/>
+            <instanceof value="org.eclipse.rse.internal.ui.view.team.SystemTeamViewCategoryNode"/>
          </enabledWhen>
       </page>
       <page
@@ -354,7 +354,7 @@ Contributors:
             class="org.eclipse.rse.ui.propertypages.SystemTeamViewSubSystemConfigurationPropertyPage"
             id="org.eclipse.rse.SystemTeamViewSubSystemFactoryPropertyPage">
          <enabledWhen>
-            <instanceof value="org.eclipse.rse.ui.view.team.SystemTeamViewSubSystemConfigurationNode"/>
+            <instanceof value="org.eclipse.rse.internal.ui.view.team.SystemTeamViewSubSystemConfigurationNode"/>
          </enabledWhen>
       </page>
       
@@ -381,21 +381,21 @@ Contributors:
             name="%View.RemoteSystems"
             icon="icons/full/cview16/system_view.gif"
             category="org.eclipse.rse.ui.view"
-            class="org.eclipse.rse.ui.view.SystemViewPart"
+            class="org.eclipse.rse.internal.ui.view.SystemViewPart"
             id="org.eclipse.rse.ui.view.systemView">
       </view>
       <view
             name="%View.Team"
             icon="icons/full/cview16/team_view.gif"
             category="org.eclipse.rse.ui.view"
-            class="org.eclipse.rse.ui.view.team.SystemTeamViewPart"
+            class="org.eclipse.rse.internal.ui.view.team.SystemTeamViewPart"
             id="org.eclipse.rse.ui.view.teamView">
       </view>
       <view
             name="%View.RemoteSystemsDetails"
             icon="icons/full/cview16/system_view.gif"
             category="org.eclipse.rse.ui.view"
-            class="org.eclipse.rse.ui.view.SystemTableViewPart"
+            class="org.eclipse.rse.internal.ui.view.SystemTableViewPart"
             id="org.eclipse.rse.ui.view.systemTableView">
       </view>
       <!-- Remote Search View                                     -->
@@ -403,7 +403,7 @@ Contributors:
 			name="%View.Search"
 			icon="icons/full/obj16/system_search.gif"
 			category="org.eclipse.rse.ui.view"
-			class="org.eclipse.rse.ui.view.search.SystemSearchViewPart"
+			class="org.eclipse.rse.internal.ui.view.search.SystemSearchViewPart"
 			id="org.eclipse.rse.ui.view.SystemSearchView">
       </view>
       <!-- Remote Scratchpad View                                 -->
@@ -411,7 +411,7 @@ Contributors:
 			name="%View.Scratchpad"
 			icon="icons/full/view16/scratchpad_view.gif"
 			category="org.eclipse.rse.ui.view"
-			class="org.eclipse.rse.ui.view.scratchpad.SystemScratchpadViewPart"
+			class="org.eclipse.rse.internal.ui.view.scratchpad.SystemScratchpadViewPart"
 			id="org.eclipse.rse.ui.view.scratchpad.SystemScratchpadViewPart">
       </view>
       <!-- Remote Monitor View                                 -->
@@ -419,18 +419,10 @@ Contributors:
 			name="%View.Monitor"
 			icon="icons/full/view16/system_view.gif"
 			category="org.eclipse.rse.ui.view"
-			class="org.eclipse.rse.ui.view.monitor.SystemMonitorViewPart"
+			class="org.eclipse.rse.internal.ui.view.monitor.SystemMonitorViewPart"
 			id="org.eclipse.rse.ui.view.monitorView">
       </view>
-<!-- Remote Error List being commented out      
-      <view
-            name="%View.RemoteErrorList"
-            icon="icons/full/cview16/errorlist_view.gif"
-            category="org.eclipse.rse.ui.view"
-            class="org.eclipse.rse.ui.view.commands.SystemBuildErrorViewPart"
-            id="org.eclipse.rse.ui.view.buildErrorView">
-      </view>
--->
+
    </extension>
 
 <!-- ================================================================================= -->
@@ -454,7 +446,7 @@ Contributors:
       <perspective
             name="%Perspective.Explorer"
             icon="icons/full/cview16/system_persp.gif"
-            class="org.eclipse.rse.ui.view.SystemPerspectiveLayout"
+            class="org.eclipse.rse.internal.ui.view.SystemPerspectiveLayout"
             id="org.eclipse.rse.ui.view.SystemPerspective">
       </perspective>
    </extension>
@@ -467,7 +459,7 @@ Contributors:
    <extension
          point="org.eclipse.ui.elementFactories">
       <factory
-            class="org.eclipse.rse.ui.view.SystemViewPart"
+            class="org.eclipse.rse.internal.ui.view.SystemViewPart"
             id="org.eclipse.rse.systemview.elementfactory">
       </factory>
    </extension>
@@ -502,7 +494,7 @@ Contributors:
 	<extension point="org.eclipse.ui.dropActions">
 		<action
 	      id="org.eclipse.rse.ui.view.DropActions"
-		  class="org.eclipse.rse.ui.view.SystemDropActionDelegate">
+		  class="org.eclipse.rse.internal.ui.view.SystemDropActionDelegate">
         </action>	
 	</extension>
 

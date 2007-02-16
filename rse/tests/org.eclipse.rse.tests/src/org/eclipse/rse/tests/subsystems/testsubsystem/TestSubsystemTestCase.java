@@ -18,6 +18,7 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.rse.core.filters.ISystemFilterPoolManager;
 import org.eclipse.rse.core.model.IHost;
+import org.eclipse.rse.internal.ui.view.SystemPerspectiveHelpers;
 import org.eclipse.rse.model.ISystemResourceChangeEvents;
 import org.eclipse.rse.model.SystemRegistry;
 import org.eclipse.rse.model.SystemResourceChangeEvent;
@@ -28,7 +29,6 @@ import org.eclipse.rse.tests.testsubsystem.TestSubSystemContainerNode;
 import org.eclipse.rse.tests.testsubsystem.TestSubSystemNode;
 import org.eclipse.rse.tests.testsubsystem.interfaces.ITestSubSystem;
 import org.eclipse.rse.ui.RSEUIPlugin;
-import org.eclipse.rse.ui.view.SystemPerspectiveHelpers;
 
 public class TestSubsystemTestCase extends RSEBaseConnectionTestCase {
 	private ITestSubSystem testSubSystem;

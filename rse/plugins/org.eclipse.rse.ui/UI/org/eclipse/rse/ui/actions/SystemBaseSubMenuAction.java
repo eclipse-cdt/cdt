@@ -26,7 +26,7 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.rse.ui.view.SystemViewMenuListener;
+import org.eclipse.rse.internal.ui.view.SystemViewMenuListener;
 import org.eclipse.swt.widgets.Shell;
 
 /**

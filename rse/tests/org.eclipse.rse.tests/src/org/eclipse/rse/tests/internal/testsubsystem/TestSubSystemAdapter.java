@@ -12,15 +12,15 @@ package org.eclipse.rse.tests.internal.testsubsystem;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.rse.internal.ui.view.SystemPerspectiveHelpers;
+import org.eclipse.rse.internal.ui.view.SystemView;
+import org.eclipse.rse.internal.ui.view.SystemViewSubSystemAdapter;
 import org.eclipse.rse.tests.testsubsystem.TestSubSystemAddAction;
 import org.eclipse.rse.tests.testsubsystem.interfaces.ITestSubSystemAddTarget;
 import org.eclipse.rse.tests.testsubsystem.interfaces.ITestSubSystemNode;
 import org.eclipse.rse.tests.testsubsystem.interfaces.ITestSubSystemNodeContainer;
 import org.eclipse.rse.ui.SystemMenuManager;
 import org.eclipse.rse.ui.view.ISystemRemoteElementAdapter;
-import org.eclipse.rse.ui.view.SystemPerspectiveHelpers;
-import org.eclipse.rse.ui.view.SystemView;
-import org.eclipse.rse.ui.view.SystemViewSubSystemAdapter;
 import org.eclipse.swt.widgets.Shell;
 
 /**

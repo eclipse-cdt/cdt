@@ -17,8 +17,8 @@
 package org.eclipse.rse.ui.actions;
 
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.rse.internal.ui.view.SystemView;
 import org.eclipse.rse.ui.view.ISystemTree;
-import org.eclipse.rse.ui.view.SystemView;
 import org.eclipse.swt.widgets.Shell;
 
 

@@ -27,7 +27,7 @@ import org.eclipse.rse.core.subsystems.IServiceSubSystemConfiguration;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
 import org.eclipse.rse.core.subsystems.SubSystemConfiguration;
-import org.eclipse.rse.ui.view.SubSystemConfigurationAdapter;
+import org.eclipse.rse.internal.ui.view.SubSystemConfigurationAdapter;
 import org.eclipse.swt.widgets.Shell;
 
 
@@ -170,12 +170,12 @@ public abstract class ServiceSubSystemConfiguration extends SubSystemConfigurati
      * 
      * @param subsys - The subsystem that was created via createSubSystemInternal
      * @param yourNewConnectionWizardPages - The wizard pages you supplied to the New Connection wizard, via the
-     *            {@link org.eclipse.rse.ui.view.SubSystemConfigurationAdapter#getNewConnectionWizardPages(org.eclipse.rse.core.subsystems.ISubSystemConfiguration, org.eclipse.jface.wizard.IWizard)} 
+     *            {@link org.eclipse.rse.internal.ui.view.SubSystemConfigurationAdapter#getNewConnectionWizardPages(org.eclipse.rse.core.subsystems.ISubSystemConfiguration, org.eclipse.jface.wizard.IWizard)} 
      *            method or null if you didn't override this method.
      *            Note there may be more pages than you originally supplied, as you are passed all pages contributed
      *            by this factory object, including subclasses. Null on a clone operation.
      * 
-     * @see org.eclipse.rse.ui.view.SubSystemConfigurationAdapter#getNewConnectionWizardPages(org.eclipse.rse.core.subsystems.ISubSystemConfiguration, org.eclipse.jface.wizard.IWizard)
+     * @see org.eclipse.rse.internal.ui.view.SubSystemConfigurationAdapter#getNewConnectionWizardPages(org.eclipse.rse.core.subsystems.ISubSystemConfiguration, org.eclipse.jface.wizard.IWizard)
      */
     protected void initializeSubSystem(ISubSystem subsys,ISystemNewConnectionWizardPage[] yourNewConnectionWizardPages)
     {
@@ -187,7 +187,7 @@ public abstract class ServiceSubSystemConfiguration extends SubSystemConfigurati
 	// --------------------------------
     /**
 	 * <i>Overridable method for getting Remote System view popup menu actions.</i><br>
-	 * Called by {@link org.eclipse.rse.ui.view.SystemView SystemView} when constructing 
+	 * Called by {@link org.eclipse.rse.internal.ui.view.SystemView SystemView} when constructing 
 	 * the popup menu for a selected subsystem.
 	 * <p>
      * For contributing popup menu actions to <b>subsystem objects</b>, beyond the
@@ -219,7 +219,7 @@ public abstract class ServiceSubSystemConfiguration extends SubSystemConfigurati
     	return super.getTranslatedFilterTypeProperty(selectedFilter);
     }
     /**
-	 * <i>Overridable method for getting Remote System view popup menu actions. Called by {@link org.eclipse.rse.ui.view.SystemView SystemView}
+	 * <i>Overridable method for getting Remote System view popup menu actions. Called by {@link org.eclipse.rse.internal.ui.view.SystemView SystemView}
 	 *  when constructing the popup menu for a selected filter.</i><br>
      * This method is only called for filters within subsystems created by this subsystem factory.<br>
      * By default, this returns null. Override if appropriate.

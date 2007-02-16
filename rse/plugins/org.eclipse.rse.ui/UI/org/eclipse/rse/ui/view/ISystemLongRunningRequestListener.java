@@ -15,6 +15,9 @@
  ********************************************************************************/
 
 package org.eclipse.rse.ui.view;
+
+import org.eclipse.rse.internal.ui.view.SystemLongRunningRequestEvent;
+
 /**
  * This interface allows listeners to be kept informed when a long
  *  running request starts and stops. 

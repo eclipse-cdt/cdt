@@ -42,6 +42,7 @@ import org.eclipse.rse.dstore.universal.miners.filesystem.UniversalFileSystemMin
 import org.eclipse.rse.services.clientserver.IServiceConstants;
 import org.eclipse.rse.services.clientserver.ISystemFileTypes;
 import org.eclipse.rse.services.clientserver.PathUtility;
+import org.eclipse.rse.services.clientserver.StringCompare;
 import org.eclipse.rse.services.clientserver.archiveutils.ArchiveHandlerManager;
 import org.eclipse.rse.services.clientserver.messages.ISystemMessageProvider;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
@@ -827,13 +828,28 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 		return file;
 	}
 	
-	protected IHostFile[] convertToHostFiles(DataElement[] elements)
+	protected IHostFile[] convertToHostFiles(DataElement[] elements, String filter)
 	{
-		ArrayList results = new ArrayList();
+		ArrayList results = new ArrayList(elements.length);
 		for (int i = 0; i < elements.length; i++)
 		{
-			if (!elements[i].isDeleted())
-			results.add(convertToHostFile(elements[i]));
+			DataElement element = elements[i];
+			if (!element.isDeleted())
+			{				
+				String type = element.getType();
+				// filter files
+				if (type.equals(UNIVERSAL_FILE_DESCRIPTOR) || type.equals(UNIVERSAL_VIRTUAL_FILE_DESCRIPTOR))
+				{
+					if (StringCompare.compare(filter, element.getName(), true))
+					{
+						results.add(convertToHostFile(element));
+					}
+				}
+				else
+				{
+					results.add(convertToHostFile(element));
+				}
+			}
 		}
 		return (IHostFile[]) results.toArray(new IHostFile[results.size()]);
 	}
@@ -1158,7 +1174,7 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 		DataElement deObj = ds.createObject(universaltemp, UNIVERSAL_FILTER_DESCRIPTOR, "", "", "", false); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		DataElement[] results = dsQueryCommand(monitor, deObj, C_QUERY_ROOTS);
 		
-		return convertToHostFiles(results);
+		return convertToHostFiles(results, "*"); //$NON-NLS-1$
 	}
 	
 	
@@ -1220,7 +1236,7 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 		args.add(attributes);
 		
 		DataElement[] results = dsQueryCommand(monitor, deObj, args, queryType);		
-		return convertToHostFiles(results);
+		return convertToHostFiles(results, fileFilter);
 	}
 
 	public boolean isCaseSensitive()
@@ -1290,7 +1306,7 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 
 			DataElement queryCmd = ds.localDescriptorQuery(encodingElement.getDescriptor(), C_SYSTEM_ENCODING);
 
-			DataElement status = ds.command(queryCmd, encodingElement, true);
+			ds.command(queryCmd, encodingElement, true);
 
 			remoteEncoding = encodingElement.getValue();
 		}

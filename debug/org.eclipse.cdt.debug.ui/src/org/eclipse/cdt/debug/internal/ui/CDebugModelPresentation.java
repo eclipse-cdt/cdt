@@ -48,6 +48,7 @@ import org.eclipse.cdt.debug.core.model.IEnableDisableTarget;
 import org.eclipse.cdt.debug.internal.core.sourcelookup.CSourceNotFoundElement;
 import org.eclipse.cdt.debug.internal.ui.sourcelookup.CSourceNotFoundEditorInput;
 import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
+import org.eclipse.cdt.internal.core.model.ExternalTranslationUnit;
 import org.eclipse.cdt.internal.ui.util.ExternalEditorInput;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.resources.IFile;
@@ -166,6 +167,10 @@ public class CDebugModelPresentation extends LabelProvider implements IDebugMode
 		}
 		if ( element instanceof FileStorage || element instanceof LocalFileStorage ) {
 			return new ExternalEditorInput( (IStorage)element );
+		}
+		if ( element instanceof ExternalTranslationUnit ) {
+			ExternalTranslationUnit etu = (ExternalTranslationUnit) element;
+			return new ExternalEditorInput( etu , new LocalFileStorage( etu.getPath().toFile() ) );
 		}
 		if (element instanceof CSourceNotFoundElement)
 		{

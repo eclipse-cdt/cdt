@@ -14,10 +14,15 @@ package org.eclipse.cdt.debug.core.sourcelookup;
 import java.io.File;
 import java.io.IOException;
 
+import org.eclipse.cdt.core.model.CoreModel;
+import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.debug.core.CDebugCorePlugin;
+import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
+import org.eclipse.cdt.internal.core.model.ExternalTranslationUnit;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.debug.core.sourcelookup.ISourceContainerType;
 import org.eclipse.debug.core.sourcelookup.containers.AbstractSourceContainer;
@@ -30,20 +35,33 @@ public class AbsolutePathSourceContainer extends AbstractSourceContainer {
 	 */
 	public static final String TYPE_ID = CDebugCorePlugin.getUniqueIdentifier() + ".containerType.absolutePath";	 //$NON-NLS-1$
 
-	private Object[] findSourceElementByFile( File file ) {
-		IFile[] wfiles = ResourcesPlugin.getWorkspace().getRoot().findFilesForLocation( new Path( file.getAbsolutePath() ) );
-		if ( wfiles.length > 0 )
+	private Object[] findSourceElementByFile(File file) {
+		IFile[] wfiles = ResourcesPlugin.getWorkspace().getRoot().findFilesForLocation(new Path(file.getAbsolutePath()));
+		if (wfiles.length > 0)
 			return wfiles;
 
 		try {
-			// Check the canonical path as well to support case insensitive file systems like Windows.
-			wfiles = ResourcesPlugin.getWorkspace().getRoot().findFilesForLocation( new Path( file.getCanonicalPath() ) );
-			if ( wfiles.length > 0 )
+			// Check the canonical path as well to support case insensitive file
+			// systems like Windows.
+			wfiles = ResourcesPlugin.getWorkspace().getRoot().findFilesForLocation(new Path(file.getCanonicalPath()));
+			if (wfiles.length > 0)
 				return wfiles;
-		} catch (IOException e) { // ignore if getCanonicalPath throws
+			
+			// The file is not already in the workspace so try to create an external translation unit for it.
+			String projectName = getDirector().getLaunchConfiguration().getAttribute(ICDTLaunchConfigurationConstants.ATTR_PROJECT_NAME, "");
+			ICProject project = CoreModel.getDefault().getCModel().getCProject(projectName);
+			if (project != null)
+			{
+				IPath path = Path.fromOSString(file.getCanonicalPath());
+				String id = CoreModel.getRegistedContentTypeId(project.getProject(), path.lastSegment());
+				return new ExternalTranslationUnit[] { new ExternalTranslationUnit(project, new Path(file.getCanonicalPath()), id) };
 			}
+		} catch (IOException e) { // ignore if getCanonicalPath throws
+		} catch (CoreException e) {
+		}
 
-		return new LocalFileStorage[] { new LocalFileStorage( file ) };
+		// If we can't create an ETU then fall back on LocalFileStorage.
+		return new LocalFileStorage[] { new LocalFileStorage(file) };
 	}
 
 	public boolean isValidAbsoluteFilePath( String name )

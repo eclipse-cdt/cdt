@@ -18,6 +18,17 @@ import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 
+/**
+ * The PreferencesMapper provides an implementation of IPreferenceStore over a "lower level"
+ * Preferences store. This is a relatively straightforward delegation.
+ * 
+ * This class is internal and may not be used or subclassed by users of RSE. This should be used
+ * only within RSE as a means of exploiting field editors on preferences that are stored
+ * in {@link Preferences}.
+ * 
+ * @see Preferences
+ * @see IPreferenceStore
+ */
 public class PreferencesMapper implements IPreferenceStore {
 	
 	private Preferences preferences = null;

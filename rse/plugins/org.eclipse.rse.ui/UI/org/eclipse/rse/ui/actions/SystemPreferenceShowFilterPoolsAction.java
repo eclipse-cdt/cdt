@@ -11,14 +11,14 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * David Dykstal (IBM) - moved SystemPreferencesManager to a new package
  ********************************************************************************/
 
 package org.eclipse.rse.ui.actions;
-import org.eclipse.rse.core.SystemPreferencesManager;
 import org.eclipse.rse.core.model.ISystemPreferenceChangeEvents;
 import org.eclipse.rse.internal.model.SystemPreferenceChangeEvent;
 import org.eclipse.rse.ui.RSEUIPlugin;
+import org.eclipse.rse.ui.SystemPreferencesManager;
 import org.eclipse.rse.ui.SystemResources;
 import org.eclipse.swt.widgets.Shell;
 

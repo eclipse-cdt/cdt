@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation. All rights reserved.
+ * Copyright (c) 2000, 2007 IBM Corporation. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -11,7 +11,7 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * David Dykstal (IBM) - moved SystemPreferencesManager to a new package
  ********************************************************************************/
 
 package org.eclipse.rse.ui.widgets;
@@ -21,13 +21,13 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.StructuredSelection;
-import org.eclipse.rse.core.SystemPreferencesManager;
 import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
 import org.eclipse.rse.core.subsystems.ISubSystemConfigurationProxy;
 import org.eclipse.rse.model.ISystemResourceChangeEvent;
 import org.eclipse.rse.model.ISystemResourceChangeEvents;
 import org.eclipse.rse.ui.RSEUIPlugin;
+import org.eclipse.rse.ui.SystemPreferencesManager;
 import org.eclipse.rse.ui.SystemResources;
 import org.eclipse.rse.ui.SystemWidgetHelpers;
 import org.eclipse.rse.ui.actions.SystemNewConnectionAction;
@@ -585,7 +585,7 @@ public class SystemHostCombo extends Composite implements ISelectionProvider, IS
 	// -----------------------
 	/**
 	 * Prepares this composite control and sets the default layout data.
-	 * @param Number of columns the new group will contain.     
+	 * @param numColumns Number of columns the new group will contain.     
 	 */
 	protected Composite prepareComposite(int numColumns)
 	{
@@ -658,7 +658,7 @@ public class SystemHostCombo extends Composite implements ISelectionProvider, IS
 	 * <p>
 	 * This fills the combination with the names of all the active connections of the given
 	 * system type.
-	 * @param connectionCombo composite to populate
+	 * @param combo composite to populate
 	 * @param systemType the system type to restrict the connection list to. Pass null or * for all system types
 	 * @param defaultConnection the default system connection to preselect.
 	 * @param preSelectIfNoMatch true if we should preselect the first item if the given connection is not found
@@ -676,7 +676,7 @@ public class SystemHostCombo extends Composite implements ISelectionProvider, IS
 	 * <p>
 	 * This fills the combination with the names of all the active connections of the given
 	 * system type.
-	 * @param connectionCombo composite to populate
+	 * @param combo composite to populate
 	 * @param systemType the system type to restrict the connection list to. Pass null or * for all system types
 	 * @param defaultConnection the default system connection to preselect.
 	 * @param preSelectIfNoMatch true if we should preselect the first item if the given connection is not found
@@ -744,7 +744,7 @@ public class SystemHostCombo extends Composite implements ISelectionProvider, IS
 	/**
 	 * Populates a readonly connection combobox instance with system connections for the given
 	 * array of system types.
-	 * @param connectionCombo composite to populate
+	 * @param combo composite to populate
 	 * @param systemTypes the system types to restrict the connection list to. Pass null or * for all system types
 	 * @param defaultConnection the default system connection to preselect.
 	 */
@@ -766,8 +766,8 @@ public class SystemHostCombo extends Composite implements ISelectionProvider, IS
 	 * Populates a readonly connection combobox instance with system connections which have subsystems
 	 * owned by the given subsystem factory.
 	 * <p>
-	 * @param connectionCombo composite to populate
-	 * @param subsystemFactory the subsystem factory to restrict the connection list to.
+	 * @param combo composite to populate
+	 * @param ssFactory the subsystem factory to restrict the connection list to.
 	 * @param defaultConnection the default system connection to preselect.
 	 * @return true if given default connection was found and selected
 	 */
@@ -780,9 +780,9 @@ public class SystemHostCombo extends Composite implements ISelectionProvider, IS
 	 * Populates a readonly connection combobox instance with system connections which have subsystems
 	 * owned by a subsystem factory of the given subsystem factory id.
 	 * <p>
-	 * @param connectionCombo composite to populate
+	 * @param combo composite to populate
 	 * @param defaultConnection the default system connection to preselect.
-	 * @param subsystemFactoryId the subsystem factory id to restrict the connection list by.
+	 * @param ssFactoryId the subsystem factory id to restrict the connection list by.
 	 * @return true if given default connection was found and selected
 	 */
 	protected boolean populateConnectionCombo(Combo combo, String ssFactoryId, IHost defaultConnection)
@@ -795,9 +795,9 @@ public class SystemHostCombo extends Composite implements ISelectionProvider, IS
 	 * Populates a readonly connection combobox instance with system connections which have subsystems
 	 * owned by a subsystem factory of the given subsystem factory category.
 	 * <p>
-	 * @param connectionCombo composite to populate
+	 * @param combo composite to populate
 	 * @param defaultConnection the default system connection to preselect.
-	 * @param subsystemFactoryCategory the subsystem factory category to restrict the connection list by.
+	 * @param ssFactoryCategory the subsystem factory category to restrict the connection list by.
 	 * @return true if given default connection was found and selected
 	 */
 	protected boolean populateConnectionCombo(Combo combo, IHost defaultConnection, String ssFactoryCategory)
@@ -837,9 +837,9 @@ public class SystemHostCombo extends Composite implements ISelectionProvider, IS
 
 	/**
 	 * Do string variable substitution. Using you are replacing %1 (say) with a string
-	 * @param message containing substitution variable. Eg "Connect failed with return code &1"
-	 * @param substitution variable. Eg "%1"
-	 * @param substitution data. Eg "001"
+	 * @param msg message containing substitution variable. Eg "Connect failed with return code &1"
+	 * @param subOld substitution variable. Eg "%1"
+	 * @param subNew substitution data. Eg "001"
 	 * @return message with all occurrences of variable substituted with data.
 	 */
 	protected static String sub(String msg, String subOld, String subNew)

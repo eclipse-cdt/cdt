@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2002, 2006 IBM Corporation. All rights reserved.
+ * Copyright (c) 2002, 2007 IBM Corporation. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -11,7 +11,8 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * David Dykstal (IBM) - created and used RSEPReferencesManager
+ *                     - moved SystemsPreferencesManager to a new plugin
  ********************************************************************************/
 
 package org.eclipse.rse.internal.model;
@@ -21,7 +22,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.rse.core.IRSEUserIdConstants;
-import org.eclipse.rse.core.SystemPreferencesManager;
+import org.eclipse.rse.core.RSEPreferencesManager;
 import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.model.ISystemHostPool;
 import org.eclipse.rse.core.model.ISystemProfile;
@@ -262,7 +263,7 @@ public class SystemHostPool extends RSEModelObject implements ISystemHostPool
    	          defaultUserId = defaultUserId.toUpperCase();
     	    if (defaultUserIdLocation == IRSEUserIdConstants.USERID_LOCATION_DEFAULT_SYSTEMTYPE)
     	    {
-    	    	SystemPreferencesManager.setDefaultUserId(systemType, defaultUserId);    	      
+    	    	RSEPreferencesManager.setDefaultUserId(systemType, defaultUserId);    	      
     	    }
     	    //else if (defaultUserIdLocation == IRSEUserIdConstants.USERID_LOCATION_DEFAULT_OVERALL)
     	    //{
@@ -439,7 +440,7 @@ public class SystemHostPool extends RSEModelObject implements ISystemHostPool
      * </ul>
      * <b>TODO PROBLEM: CAN'T RE-ORDER FOLDERS SO CAN WE SUPPORT THIS ACTION?</b>
      * @param conns Array of SystemConnections to move.
-     * @param newPosition new zero-based position for the connection
+     * @param delta the amount by which to move the connections
      */
     public void moveHosts(IHost conns[], int delta)
     {

@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation. All rights reserved.
+ * Copyright (c) 2000, 2007 IBM Corporation. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -11,7 +11,8 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * David Dykstal (IBM) - moved SystemPreferencesManager to a new package
+ *                     - created and used RSEPreferencesManager
  ********************************************************************************/
 
 package org.eclipse.rse.ui.wizards;
@@ -20,8 +21,8 @@ import java.util.Hashtable;
 import java.util.Vector;
 
 import org.eclipse.jface.wizard.IWizardPage;
-import org.eclipse.rse.core.IRSEPreferenceNames;
 import org.eclipse.rse.core.IRSESystemType;
+import org.eclipse.rse.core.RSEPreferencesManager;
 import org.eclipse.rse.core.SystemBasePlugin;
 import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.model.ISystemNewConnectionWizardPage;
@@ -177,7 +178,7 @@ public class RSEDefaultNewConnectionWizardDelegate extends RSENewConnectionWizar
             {
               if ((lastProfile == null) && (activeProfileNames!=null))
               {
-                String defaultTeamName = IRSEPreferenceNames.DEFAULT_TEAMPROFILE;
+                String defaultTeamName = RSEPreferencesManager.getDefaultTeamProfileName();
                 for (int idx=0; (lastProfile==null)&&(idx<activeProfileNames.length); idx++)
                 {
               	 if (!activeProfileNames[idx].equals(defaultTeamName))

@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2006 IBM Corporation. All rights reserved.
+ * Copyright (c) 2006, 2007 IBM Corporation. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -11,22 +11,25 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * David Dykstal (IBM) - moved SystemPreferencesManager to a new package
+ *                     - created and used PreferencesMapper
  ********************************************************************************/
 
 package org.eclipse.rse.ui.propertypages;
 
 
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.rse.core.IRSEPreferenceNames;
 import org.eclipse.rse.core.RSECorePlugin;
-import org.eclipse.rse.core.SystemPreferencesManager;
 import org.eclipse.rse.core.model.ISystemPreferenceChangeEvents;
 import org.eclipse.rse.internal.model.SystemPreferenceChangeEvent;
+import org.eclipse.rse.internal.ui.PreferencesMapper;
 import org.eclipse.rse.ui.ISystemPreferencesConstants;
 import org.eclipse.rse.ui.Mnemonics;
 import org.eclipse.rse.ui.RSEUIPlugin;
+import org.eclipse.rse.ui.SystemPreferencesManager;
 import org.eclipse.rse.ui.SystemResources;
 import org.eclipse.rse.ui.SystemWidgetHelpers;
 import org.eclipse.swt.SWT;
@@ -86,7 +89,9 @@ public class RemoteSystemsPreferencePage
 	 */
 	protected void createFieldEditors() 
 	{
-        // DEFAULT SYSTEM TYPE		
+		IPreferenceStore coreStore = new PreferencesMapper(RSECorePlugin.getDefault().getPluginPreferences());
+
+		// DEFAULT SYSTEM TYPE		
 		SystemComboBoxFieldEditor systemTypeEditor = new SystemComboBoxFieldEditor(
 			IRSEPreferenceNames.SYSTEMTYPE,
 			SystemResources.RESID_PREF_SYSTEMTYPE_PREFIX_LABEL,
@@ -94,6 +99,7 @@ public class RemoteSystemsPreferencePage
 			true, // readonly
 			getFieldEditorParent()
 		);
+		systemTypeEditor.setPreferenceStore(coreStore);
 		systemTypeEditor.setToolTipText(SystemResources.RESID_PREF_SYSTEMTYPE_PREFIX_TOOLTIP);
 		addField(systemTypeEditor);
 
@@ -166,8 +172,8 @@ public class RemoteSystemsPreferencePage
 		useDeferredQueryEditor = new SystemBooleanFieldEditor(
 		        IRSEPreferenceNames.USE_DEFERRED_QUERIES,
 		        SystemResources.RESID_PREF_USEDEFERREDQUERIES_PREFIX_LABEL,
-		        getFieldEditorParent())
-		        ;
+		        getFieldEditorParent());
+		useDeferredQueryEditor.setPreferenceStore(coreStore);
 		useDeferredQueryEditor.setEnabled(false); // disable this because we want it always to be true
 		addField(useDeferredQueryEditor);
 		useDeferredQueryEditor.setToolTipText(SystemResources.RESID_PREF_USEDEFERREDQUERIES_PREFIX_TOOLTIP);

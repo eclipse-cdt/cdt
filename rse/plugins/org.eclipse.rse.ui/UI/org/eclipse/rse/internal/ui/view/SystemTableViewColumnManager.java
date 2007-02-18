@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2004, 2006 IBM Corporation. All rights reserved.
+ * Copyright (c) 2004, 2007 IBM Corporation. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -11,14 +11,14 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * David Dykstal (IBM) - moved SystemPreferencesManager to a new package
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;
 import java.util.HashMap;
 
 import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.rse.core.SystemPreferencesManager;
+import org.eclipse.rse.ui.SystemPreferencesManager;
 import org.eclipse.rse.ui.view.ISystemViewElementAdapter;
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
 

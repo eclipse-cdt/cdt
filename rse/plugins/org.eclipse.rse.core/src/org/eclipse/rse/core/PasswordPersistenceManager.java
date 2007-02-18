@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2002, 2006 IBM Corporation. All rights reserved.
+ * Copyright (c) 2002, 2007 IBM Corporation. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -11,7 +11,8 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * David Dykstal (IBM) - moved from core package in the UI plugin
+ *                     - updated to use new RSEPreferencesManager
  ********************************************************************************/
 
 package org.eclipse.rse.core;
@@ -27,7 +28,6 @@ import java.util.Map;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.Preferences;
 import org.eclipse.rse.core.model.SystemSignonInformation;
 
 
@@ -410,8 +410,8 @@ public class PasswordPersistenceManager {
 							// uid matches, check if hosts are the same
 							if (khostname.startsWith(phostname) || phostname.startsWith(khostname))
 							{
-								String qkhost = RSEHostUtil.getQualifiedHostName(khostname);
-								String qphost = RSEHostUtil.getQualifiedHostName(phostname);
+								String qkhost = RSECorePlugin.getQualifiedHostName(khostname);
+								String qphost = RSECorePlugin.getQualifiedHostName(phostname);
 								if (qkhost.equals(qphost))
 								{
 									password = (String)passwords.get(key);
@@ -460,8 +460,8 @@ public class PasswordPersistenceManager {
 						// uid matches, check if hosts are the same
 						if (khostname.startsWith(phostname) || phostname.startsWith(khostname))
 						{
-							String qkhost = RSEHostUtil.getQualifiedHostName(khostname);
-							String qphost = RSEHostUtil.getQualifiedHostName(phostname);
+							String qkhost = RSECorePlugin.getQualifiedHostName(khostname);
+							String qphost = RSECorePlugin.getQualifiedHostName(phostname);
 							if (qkhost.equals(qphost))
 							{
 								password = (String)passwords.get(key);
@@ -545,8 +545,7 @@ public class PasswordPersistenceManager {
 	{
 		if (DEFAULT_SYSTEM_TYPE.equals(systemType))
 		{
-			Preferences store = RSECorePlugin.getDefault().getPluginPreferences();
-			systemType = store.getString(IRSEPreferenceNames.SYSTEMTYPE);
+			systemType = RSEPreferencesManager.getSystemType();
 		}
 	
 		// First find the correct provider

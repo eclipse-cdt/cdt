@@ -27,5 +27,11 @@
           id="org.eclipse.rse.persistence.PropertyFileProvider"
           name="Property File Persistence Provider"/>
  </extension>
+ <extension
+       point="org.eclipse.core.runtime.preferences">
+    <initializer
+          class="org.eclipse.rse.core.internal.RSEPreferenceInitializer">
+    </initializer>
+ </extension>
  
 </plugin>

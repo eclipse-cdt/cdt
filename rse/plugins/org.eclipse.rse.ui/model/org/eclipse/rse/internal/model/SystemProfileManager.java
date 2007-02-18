@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2006 IBM Corporation. All rights reserved.
+ * Copyright (c) 2006, 2007 IBM Corporation. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -11,7 +11,8 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * David Dykstal (IBM) - created and used RSEPreferencesManager
+ *                     - moved SystemPreferencesManager to a new plugin
  ********************************************************************************/
 
 package org.eclipse.rse.internal.model;
@@ -20,10 +21,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
 
-import org.eclipse.rse.core.IRSEPreferenceNames;
 import org.eclipse.rse.core.RSECorePlugin;
+import org.eclipse.rse.core.RSEPreferencesManager;
 import org.eclipse.rse.core.SystemBasePlugin;
-import org.eclipse.rse.core.SystemPreferencesManager;
 import org.eclipse.rse.core.model.ISystemProfile;
 import org.eclipse.rse.core.model.ISystemProfileManager;
 import org.eclipse.rse.model.SystemStartHere;
@@ -61,23 +61,6 @@ public class SystemProfileManager implements ISystemProfileManager {
 	}
 
 	/**
-	 * @return the name of the default private system profile.
-	 */
-	public static String getDefaultPrivateSystemProfileName() {
-		String name = RSECorePlugin.getLocalMachineName();
-		if (name != null) {
-			int i = name.indexOf('.');
-			if (i > 0) {
-				name = name.substring(0, i);
-			}
-		}
-		if (name == null) {
-			name = System.getProperty("user.name"); //$NON-NLS-1$
-		}
-		return name;
-	}
-
-	/**
 	 * Clear the default after a team sychronization say
 	 */
 	public static void clearDefault() {
@@ -104,7 +87,7 @@ public class SystemProfileManager implements ISystemProfileManager {
 
 		ISystemProfile newProfile = internalCreateSystemProfileAndFolder(name);
 		if (makeActive) {
-			SystemPreferencesManager.addActiveProfile(name);
+			RSEPreferencesManager.addActiveProfile(name);
 			((SystemProfile) newProfile).setActive(makeActive);
 		}
 		RSEUIPlugin.getThePersistenceManager().commit(this);
@@ -117,8 +100,8 @@ public class SystemProfileManager implements ISystemProfileManager {
 	public void makeSystemProfileActive(ISystemProfile profile, boolean makeActive) {
 		boolean wasActive = isSystemProfileActive(profile.getName());
 		if (wasActive && !makeActive)
-			SystemPreferencesManager.deleteActiveProfile(profile.getName());
-		else if (makeActive && !wasActive) SystemPreferencesManager.addActiveProfile(profile.getName());
+			RSEPreferencesManager.deleteActiveProfile(profile.getName());
+		else if (makeActive && !wasActive) RSEPreferencesManager.addActiveProfile(profile.getName());
 		((SystemProfile) profile).setActive(makeActive);
 	}
 
@@ -128,7 +111,7 @@ public class SystemProfileManager implements ISystemProfileManager {
 	private ISystemProfile internalCreateSystemProfile(String name) {
 		ISystemProfile profile = new SystemProfile();
 		initialize(profile, name);
-		profile.setDefaultPrivate(name.equalsIgnoreCase(getDefaultPrivateSystemProfileName()));
+		profile.setDefaultPrivate(name.equalsIgnoreCase(RSEPreferencesManager.getDefaultPrivateSystemProfileName()));
 		return profile;
 	}
 
@@ -172,7 +155,7 @@ public class SystemProfileManager implements ISystemProfileManager {
 			// when creating connections. 	
 			for (int idx = 0; (!defaultProfileExist) && (idx < profiles.size()); idx++) {
 				ISystemProfile profile = (ISystemProfile) profiles.get(idx);
-				String initProfileName = getDefaultPrivateSystemProfileName();
+				String initProfileName = RSEPreferencesManager.getDefaultPrivateSystemProfileName();
 				if (profile.getName().equalsIgnoreCase(initProfileName)) {
 					profile.setDefaultPrivate(true);
 					defaultProfileExist = true;
@@ -183,7 +166,7 @@ public class SystemProfileManager implements ISystemProfileManager {
 			if (!defaultProfileExist) {
 				for (int idx = 0; (!defaultProfileExist) && (idx < profiles.size()); idx++) {
 					ISystemProfile profile = (ISystemProfile) profiles.get(idx);
-					if (!profile.getName().equalsIgnoreCase(IRSEPreferenceNames.DEFAULT_TEAMPROFILE)) {
+					if (!profile.getName().equalsIgnoreCase(RSEPreferencesManager.getDefaultTeamProfileName())) {
 						profile.setDefaultPrivate(true);
 
 						RSEUIPlugin.getThePersistenceManager().commit(SystemStartHere.getSystemProfileManager());
@@ -259,7 +242,7 @@ public class SystemProfileManager implements ISystemProfileManager {
 		boolean isActive = isSystemProfileActive(profile.getName());
 		String oldName = profile.getName();
 		profile.setName(newName);
-		if (isActive) SystemPreferencesManager.renameActiveProfile(oldName, newName);
+		if (isActive) RSEPreferencesManager.renameActiveProfile(oldName, newName);
 		invalidateCache();
 		// FIXME RSEUIPlugin.getThePersistenceManager().save(this);
 	}
@@ -278,7 +261,7 @@ public class SystemProfileManager implements ISystemProfileManager {
 		 * if (res != null)
 		 * res.getContents().remove(profile);
 		 */
-		if (isActive) SystemPreferencesManager.deleteActiveProfile(oldName);
+		if (isActive) RSEPreferencesManager.deleteActiveProfile(oldName);
 		invalidateCache();
 		if (persist) {
 			RSEUIPlugin.getThePersistenceManager().deleteProfile(oldName);
@@ -322,7 +305,7 @@ public class SystemProfileManager implements ISystemProfileManager {
 	 * @see org.eclipse.rse.core.model.ISystemProfileManager#getActiveSystemProfileNames()
 	 */
 	public String[] getActiveSystemProfileNames() {
-		String[] activeProfileNames = SystemPreferencesManager.getActiveProfiles();
+		String[] activeProfileNames = RSEPreferencesManager.getActiveProfiles();
 		// dy: defect 48355, need to sync this with the actual profile list.  If the user
 		// imports old preference settings or does a team sync and a profile is deleted then
 		// it is possible an active profile no longer exists.
@@ -332,14 +315,14 @@ public class SystemProfileManager implements ISystemProfileManager {
 		boolean found_team = false;
 		boolean found_private = false;
 		boolean changed = false;
-		String defaultProfileName = getDefaultPrivateSystemProfileName();
+		String defaultProfileName = RSEPreferencesManager.getDefaultPrivateSystemProfileName();
 
 		for (int activeIdx = 0; activeIdx < activeProfileNames.length; activeIdx++) {
 			// skip Team and Private profiles
 			String activeProfileName = activeProfileNames[activeIdx];
 			if (activeProfileName.equals(defaultProfileName)) {
 				found_private = true;
-			} else if (activeProfileName.equals(IRSEPreferenceNames.DEFAULT_TEAMPROFILE)) {
+			} else if (activeProfileName.equals(RSEPreferencesManager.getDefaultTeamProfileName())) {
 				found_team = true;
 			} else {
 				found = false;
@@ -351,7 +334,7 @@ public class SystemProfileManager implements ISystemProfileManager {
 
 				if (!found) {
 					// The active profile no longer exists so remove it from the active list
-					SystemPreferencesManager.deleteActiveProfile(activeProfileNames[activeIdx]);
+					RSEPreferencesManager.deleteActiveProfile(activeProfileNames[activeIdx]);
 					changed = true;
 				}
 			}
@@ -370,9 +353,9 @@ public class SystemProfileManager implements ISystemProfileManager {
 			}
 			if (!matchesBoth && found_private) {
 				if (systemProfiles[systemIdx].isActive() || systemProfiles[systemIdx].isDefaultPrivate()) {
-					SystemPreferencesManager.addActiveProfile(name);
-					SystemPreferencesManager.deleteActiveProfile(RSECorePlugin.getLocalMachineName());
-					activeProfileNames = SystemPreferencesManager.getActiveProfiles();
+					RSEPreferencesManager.addActiveProfile(name);
+					RSEPreferencesManager.deleteActiveProfile(RSECorePlugin.getLocalMachineName());
+					activeProfileNames = RSEPreferencesManager.getActiveProfiles();
 				}
 			}
 		}
@@ -384,24 +367,24 @@ public class SystemProfileManager implements ISystemProfileManager {
 				// First time user, make sure default is in the active list, the only time it wouldn't
 				// be is if the pref_store.ini was modified (because the user imported old preferences)
 				if (!found_team) {
-					SystemPreferencesManager.addActiveProfile(IRSEPreferenceNames.DEFAULT_TEAMPROFILE);
+					RSEPreferencesManager.addActiveProfile(RSEPreferencesManager.getDefaultTeamProfileName());
 					changed = true;
 				}
 
 				if (!found_private) {
-					SystemPreferencesManager.addActiveProfile(RSECorePlugin.getLocalMachineName());
+					RSEPreferencesManager.addActiveProfile(RSECorePlugin.getLocalMachineName());
 					changed = true;
 				}
 			} else {
 				ISystemProfile defaultProfile = getDefaultPrivateSystemProfile();
 				if (defaultProfile != null && !found_private) {
-					SystemPreferencesManager.addActiveProfile(defaultProfile.getName());
+					RSEPreferencesManager.addActiveProfile(defaultProfile.getName());
 					changed = true;
 				}
 			}
 
 			if (changed) {
-				activeProfileNames = SystemPreferencesManager.getActiveProfiles();
+				activeProfileNames = RSEPreferencesManager.getActiveProfiles();
 			}
 		}
 
@@ -412,7 +395,7 @@ public class SystemProfileManager implements ISystemProfileManager {
 	 * @return the profile names currently selected by the user as "active" profiles
 	 */
 	public Vector getActiveSystemProfileNamesVector() {
-		String[] profileNames = SystemPreferencesManager.getActiveProfiles();
+		String[] profileNames = RSEPreferencesManager.getActiveProfiles();
 		Vector v = new Vector(profileNames.length);
 		for (int idx = 0; idx < profileNames.length; idx++)
 			v.addElement(profileNames[idx]);
@@ -435,14 +418,14 @@ public class SystemProfileManager implements ISystemProfileManager {
 	 * @see org.eclipse.rse.core.model.ISystemProfileManager#getDefaultPrivateSystemProfile()
 	 */
 	public ISystemProfile getDefaultPrivateSystemProfile() {
-		return getSystemProfile(getDefaultPrivateSystemProfileName());
+		return getSystemProfile(RSEPreferencesManager.getDefaultPrivateSystemProfileName());
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.rse.core.model.ISystemProfileManager#getDefaultTeamSystemProfile()
 	 */
 	public ISystemProfile getDefaultTeamSystemProfile() {
-		return getSystemProfile(IRSEPreferenceNames.DEFAULT_TEAMPROFILE);
+		return getSystemProfile(RSEPreferencesManager.getDefaultTeamProfileName());
 	}
 
 	/**
@@ -531,7 +514,7 @@ public class SystemProfileManager implements ISystemProfileManager {
 	public List getProfiles() {
 		if (_profiles == null) {
 			ISystemProfile profile = new SystemProfile();
-			String initProfileName = getDefaultPrivateSystemProfileName();
+			String initProfileName = RSEPreferencesManager.getDefaultPrivateSystemProfileName();
 			profile.setName(initProfileName);
 			profile.setDefaultPrivate(true);
 			_profiles = new ArrayList();

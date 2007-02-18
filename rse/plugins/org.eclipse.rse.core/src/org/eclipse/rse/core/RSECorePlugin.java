@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2006 IBM Corporation. All rights reserved.
+ * Copyright (c) 2006, 2007 IBM Corporation. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -11,7 +11,7 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  *
  * Contributors:
- * {Name} (company) - description of contribution.
+ * David Dykstal (IBM) - added utility method for finding qualifiedHostNames
  ********************************************************************************/
 package org.eclipse.rse.core;
 
@@ -55,7 +55,7 @@ public class RSECorePlugin extends Plugin {
 	public static IRSEPersistenceManager getThePersistenceManager() {
 		return getDefault().getPersistenceManager();
 	}
-
+	
 	/**
 	 * @return the IP host name of this machine
 	 */
@@ -80,6 +80,18 @@ public class RSECorePlugin extends Plugin {
 			getDefault().log(e);
 		}
 		return machineAddress;
+	}
+
+	/**
+	 * Returns a qualified hostname given a potentially unqualified hostname
+	 */
+	public static String getQualifiedHostName(String hostName) {
+		try {
+			InetAddress address = InetAddress.getByName(hostName);
+			return address.getCanonicalHostName();
+		} catch (UnknownHostException exc) {
+			return hostName;
+		}
 	}
 
 	/**
@@ -151,7 +163,7 @@ public class RSECorePlugin extends Plugin {
 	public IRSECoreRegistry getRegistry() {
 		return RSECoreRegistry.getDefault();
 	}
-
+	
 	/**
 	 * Returns an instance of the logger being used by the core. All core services, or extensions to 
 	 * core services, should use this logger to log any messages. The RSE logger provides run-time 

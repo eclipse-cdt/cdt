@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2006 IBM Corporation. All rights reserved.
+ * Copyright (c) 2006, 2007 IBM Corporation. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -11,7 +11,8 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * David Dykstal (IBM) - using new API from RSECorePlugin, RSEPreferencesManager
+ *                     - moved SystemsPreferencesManager to a new plugin
  ********************************************************************************/
 
 package org.eclipse.rse.internal.model;
@@ -20,7 +21,7 @@ import java.util.Locale;
 
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.rse.core.IRSESystemType;
-import org.eclipse.rse.core.SystemPreferencesManager;
+import org.eclipse.rse.core.RSEPreferencesManager;
 import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.model.ISystemHostPool;
 import org.eclipse.rse.core.model.ISystemProfile;
@@ -209,7 +210,7 @@ public class Host extends RSEModelObject implements IHost
     	// value (the actual user id) the old keyed entry held.
     	if (oldUserId != null)
     	{
-    		SystemPreferencesManager.clearUserId(previousUserIdKey);
+    		RSEPreferencesManager.clearUserId(previousUserIdKey);
     	}		  	
 	}
 	/**
@@ -229,8 +230,8 @@ public class Host extends RSEModelObject implements IHost
     	String newKey = getPreferencesKey(newName, getAliasName());
     	if ((userIdValue != null) && (userIdValue.length()>0))
     	{
-    		SystemPreferencesManager.clearUserId(previousUserIdKey);
-    		SystemPreferencesManager.setUserId(newKey, userIdValue); // store old value with new preference key
+    		RSEPreferencesManager.clearUserId(previousUserIdKey);
+    		RSEPreferencesManager.setUserId(newKey, userIdValue); // store old value with new preference key
     	}
     	previousUserIdKey = newKey;    	
     }
@@ -276,8 +277,8 @@ public class Host extends RSEModelObject implements IHost
     	String newKey = getPreferencesKey(getSystemProfileName(), newName);
     	if ((userIdValue != null) && (userIdValue.length()>0))
     	{
-    		SystemPreferencesManager.clearUserId(previousUserIdKey);
-    		SystemPreferencesManager.setUserId(newKey, userIdValue); // store old value with new preference key
+    		RSEPreferencesManager.clearUserId(previousUserIdKey);
+    		RSEPreferencesManager.setUserId(newKey, userIdValue); // store old value with new preference key
     	}
     	previousUserIdKey = newKey;
     }
@@ -335,7 +336,7 @@ public class Host extends RSEModelObject implements IHost
     	  String key = getPreferencesKey();
     	  if (key != null)
     	  {
-    		  SystemPreferencesManager.setUserId(key, newId);
+    		  RSEPreferencesManager.setUserId(key, newId);
     	  }
     	}
     }    
@@ -359,7 +360,7 @@ public class Host extends RSEModelObject implements IHost
     	String uid = getLocalDefaultUserId();
     	if ((uid == null) || (uid.length()==0))
     	{    		
-    	  uid = SystemPreferencesManager.getUserId(getSystemType()); // resolve from preferences	
+    	  uid = RSEPreferencesManager.getUserId(getSystemType()); // resolve from preferences	
     	  if ((uid != null) && ucId)
     	    uid = uid.toUpperCase();          
     	}
@@ -374,7 +375,7 @@ public class Host extends RSEModelObject implements IHost
     	String uid = null;
     	if ((key!=null) && (key.length()>0))
     	{    	  
-    	  uid = SystemPreferencesManager.getUserId(key); // resolve from preferences	
+    	  uid = RSEPreferencesManager.getUserId(key); // resolve from preferences	
     	}   
     	return uid; 	
     }
@@ -397,7 +398,7 @@ public class Host extends RSEModelObject implements IHost
     public void clearLocalDefaultUserId()
     {
     	if (previousUserIdKey!=null)
-     	  SystemPreferencesManager.clearUserId(previousUserIdKey);    	
+     	  RSEPreferencesManager.clearUserId(previousUserIdKey);    	
     }   
 
     /**

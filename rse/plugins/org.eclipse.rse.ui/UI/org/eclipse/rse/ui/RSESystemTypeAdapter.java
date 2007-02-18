@@ -11,7 +11,8 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  *
  * Contributors:
- * {Name} (company) - description of contribution.
+ * David Dykstal (IBM) - moved SystemPreferencesManager to a new package
+ *                     - created and used RSEPreferencesManager
  ********************************************************************************/
 package org.eclipse.rse.ui;
 
@@ -24,7 +25,7 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.rse.core.IRSESystemType;
 import org.eclipse.rse.core.IRSESystemTypeConstants;
-import org.eclipse.rse.core.SystemPreferencesManager;
+import org.eclipse.rse.core.RSEPreferencesManager;
 import org.osgi.framework.Bundle;
 
 /**
@@ -180,7 +181,7 @@ public class RSESystemTypeAdapter extends RSEAdapter implements IRSESystemTypeCo
 		boolean result = false;
 		IRSESystemType systemType = getSystemType(object);
 		if ( systemType != null) {
-			result = SystemPreferencesManager.getIsSystemTypeEnabled(systemType);
+			result = RSEPreferencesManager.getIsSystemTypeEnabled(systemType);
 		}
 		return result;
 	}
@@ -193,7 +194,7 @@ public class RSESystemTypeAdapter extends RSEAdapter implements IRSESystemTypeCo
 	public void setIsEnabled(Object object, boolean isEnabled) {
 		IRSESystemType systemType = getSystemType(object);
 		if ( systemType != null) {
-			SystemPreferencesManager.setIsSystemTypeEnabled(systemType, isEnabled);
+			RSEPreferencesManager.setIsSystemTypeEnabled(systemType, isEnabled);
 		}
 	}
 
@@ -207,7 +208,7 @@ public class RSESystemTypeAdapter extends RSEAdapter implements IRSESystemTypeCo
 		String result = null;
 		IRSESystemType systemType = getSystemType(object);
 		if ( systemType != null) {
-			result = SystemPreferencesManager.getDefaultUserId(systemType);
+			result = RSEPreferencesManager.getDefaultUserId(systemType);
 		}
 		return result;
 	}
@@ -220,7 +221,7 @@ public class RSESystemTypeAdapter extends RSEAdapter implements IRSESystemTypeCo
 	public void setDefaultUserId(Object object, String defaultUserId) {
 		IRSESystemType systemType = getSystemType(object);
 		if ( systemType != null) {
-			SystemPreferencesManager.setDefaultUserId(systemType, defaultUserId);
+			RSEPreferencesManager.setDefaultUserId(systemType, defaultUserId);
 		}
 	}
 

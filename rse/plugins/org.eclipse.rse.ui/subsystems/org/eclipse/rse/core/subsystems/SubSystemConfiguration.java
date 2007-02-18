@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2002, 2006 IBM Corporation. All rights reserved.
+ * Copyright (c) 2002, 2007 IBM Corporation. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -11,7 +11,7 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * David Dykstal (IBM) - 168870: moved SystemPreferencesManager to a new package
  ********************************************************************************/
 
 package org.eclipse.rse.core.subsystems;
@@ -31,7 +31,6 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.rse.core.IRSESystemType;
 import org.eclipse.rse.core.SystemBasePlugin;
-import org.eclipse.rse.core.SystemPreferencesManager;
 import org.eclipse.rse.core.filters.ISystemFilter;
 import org.eclipse.rse.core.filters.ISystemFilterContainer;
 import org.eclipse.rse.core.filters.ISystemFilterContainerReference;
@@ -60,7 +59,7 @@ import org.eclipse.rse.model.SystemStartHere;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.ui.ISystemMessages;
 import org.eclipse.rse.ui.RSEUIPlugin;
-import org.eclipse.rse.ui.SystemMenuManager;
+import org.eclipse.rse.ui.SystemPreferencesManager;
 import org.eclipse.rse.ui.SystemPropertyResources;
 import org.eclipse.rse.ui.SystemResources;
 import org.eclipse.rse.ui.filters.actions.SystemNewFilterAction;
@@ -311,8 +310,6 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 	 * <p>RETURNS false BY DEFAULT
 	 * 
 	 * @see #supportsUserDefinedActions(ISelection)
-	 * @see #getActionSubSystem(ISubSystem)
-	 * @see #createActionSubSystem() 
 	 */
 	public boolean supportsUserDefinedActions()
 	{
@@ -325,9 +322,6 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 	 *  calls supportsUserDefinedActions() by default. It is called when decided whether or not to show
 	 *  the User Actions menu for the current selection, if supportsUserDefinedActions() returns true.
 	 * 
-	 * @see #getActionSubSystem(ISubSystem)
-	 * @see #createActionSubSystem()
-	 * @see #addCommonRemoteActions(SystemMenuManager, IStructuredSelection, Shell, String, ISubSystem)
 	 */
 	public boolean supportsUserDefinedActions(ISelection selection)
 	{
@@ -384,8 +378,6 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 	 * By returning true, user sees a "Work with->Compile Commands..." action item in the popup menu for this
 	 *  subsystem. The action is supplied by the framework, but is populated using overridable methods in this subsystem.
 	 * <p>RETURNS false BY DEFAULT
-	 * @see #getCompileManager()
-	 * @see #createCompileManager()
 	 */
 	public boolean supportsCompileActions()
 	{
@@ -1154,8 +1146,7 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 	 *   <li>if {@link #supportsFilters()}, creates a {@link org.eclipse.rse.core.filters.ISystemFilterPoolReferenceManager} for the
 	 *           subsystem to manage references to filter pools
 	 *   <li>if (@link #supportsServerLaunchProperties()}, calls {@link #createServerLauncher(IConnectorService)}, to create
-	 *           the server launcher instance to associate with this subsystem. This can be subsequently
-	 *           retrieved via calling subsystem's {@link ISubSystem#getRemoteServerLauncher()}.
+	 *           the server launcher instance to associate with this subsystem.}.
 	 *   <li>calls {@link #initializeSubSystem(ISubSystem, ISystemNewConnectionWizardPage[])} so subclasses can
 	 *           do their thing to initialize the subsystem.
 	 *   <li>finally, saves the subsystem to disk.
@@ -1519,7 +1510,7 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 	}
 	/**
 	 * Update the port for the given subsystem instance.
-	 * Shortcut to {@link #updateSubSystem(Shell, ISubSystem, boolean, String, boolean, int)}
+	 * Shortcut to {@link #updateSubSystem(ISubSystem, boolean, String, boolean, int)}
 	 */
 	public void setSubSystemPort(ISubSystem subsystem, int port)
 	{
@@ -1527,7 +1518,7 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 	}
 	/**
 	 * Update the user ID for the given subsystem instance.
-	 * Shortcut to {@link #updateSubSystem(Shell, ISubSystem, boolean, String, boolean, int)}
+	 * Shortcut to {@link #updateSubSystem(ISubSystem, boolean, String, boolean, int)}
 	 */
 	public void setSubSystemUserId(ISubSystem subsystem, String userId)
 	{

@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation. All rights reserved.
+ * Copyright (c) 2000, 2007 IBM Corporation. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -11,11 +11,11 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * David Dykstal (IBM) - moved SystemPreferencesManager to a new package
  ********************************************************************************/
 
 package org.eclipse.rse.ui.widgets;
-import org.eclipse.rse.core.SystemPreferencesManager;
+import org.eclipse.rse.ui.SystemPreferencesManager;
 import org.eclipse.rse.ui.SystemResources;
 import org.eclipse.rse.ui.dialogs.SystemWorkWithHistoryDialog;
 import org.eclipse.swt.SWT;
@@ -521,7 +521,7 @@ public class SystemHistoryCombo extends Composite implements ISystemCombo, Trave
 	// -----------------------
 	/**
 	 * Prepares this composite control and sets the default layout data.
-	 * @param Number of columns the new group will contain.     
+	 * @param numColumns Number of columns the new group will contain.     
 	 */
 	protected Composite prepareComposite(int numColumns)
 	{

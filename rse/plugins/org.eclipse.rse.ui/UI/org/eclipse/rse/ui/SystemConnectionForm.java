@@ -11,7 +11,8 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * David Dykstal (IBM) - moved SystemPreferencesManager to a new package
+ *                     - created and used RSEPreferencesManager
  ********************************************************************************/
 
 package org.eclipse.rse.ui;
@@ -29,8 +30,8 @@ import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.rse.core.IRSESystemType;
 import org.eclipse.rse.core.IRSEUserIdConstants;
 import org.eclipse.rse.core.RSECorePlugin;
+import org.eclipse.rse.core.RSEPreferencesManager;
 import org.eclipse.rse.core.SystemBasePlugin;
-import org.eclipse.rse.core.SystemPreferencesManager;
 import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.model.ISystemProfile;
 import org.eclipse.rse.core.model.ISystemRegistry;
@@ -698,7 +699,7 @@ public class SystemConnectionForm
         
         if (!updateMode && (defaultSystemType==null))
         {
-		  defaultSystemType = SystemPreferencesManager.getSystemType();
+		  defaultSystemType = RSEPreferencesManager.getSystemType();
 		  if ((defaultSystemType == null) || (defaultSystemType.length() == 0))
 		    defaultSystemType = lastSystemType;
 		  if ((defaultSystemType == null) || (defaultSystemType.length() == 0))
@@ -990,7 +991,7 @@ public class SystemConnectionForm
         {
         	if (defaultSystemType == null)
         	{
-		        defaultSystemType = SystemPreferencesManager.getSystemType();
+		        defaultSystemType = RSEPreferencesManager.getSystemType();
 		        if ((defaultSystemType == null) || (defaultSystemType.length()==0))
 		          defaultSystemType = lastSystemType;
         	}
@@ -1059,7 +1060,7 @@ public class SystemConnectionForm
         // ---------------		
 		// default user id
         // ---------------
-        String parentUserId = SystemPreferencesManager.getUserId(systemType);
+        String parentUserId = RSEPreferencesManager.getUserId(systemType);
 		if (textUserId!=null)
 		{        
 		  textUserId.setInheritedText(parentUserId);

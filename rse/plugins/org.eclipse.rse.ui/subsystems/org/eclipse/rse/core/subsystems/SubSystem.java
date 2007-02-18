@@ -12,7 +12,8 @@
  * 
  * Contributors:
  * Martin Oberhuber (Wind River) - 141803: Fix cpu usage 100% while connecting
- * 
+ * David Dykstal (IBM) - 168870: moved SystemPreferencesManager to a new package
+ * David Dykstal (IBM) - 168870: created and used RSEPreferencesManager
  ********************************************************************************/
 
 package org.eclipse.rse.core.subsystems;
@@ -31,8 +32,8 @@ import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.rse.core.RSEPreferencesManager;
 import org.eclipse.rse.core.SystemBasePlugin;
-import org.eclipse.rse.core.SystemPreferencesManager;
 import org.eclipse.rse.core.filters.ISystemFilter;
 import org.eclipse.rse.core.filters.ISystemFilterPool;
 import org.eclipse.rse.core.filters.ISystemFilterPoolManager;
@@ -255,8 +256,8 @@ public abstract class SubSystem extends RSEModelObject implements IAdaptable, IS
     	String newKey = getPreferencesKey(newName, getHostAliasName());
     	if ((userIdValue != null) && (userIdValue.length()>0))
     	{
-    		SystemPreferencesManager.clearUserId(previousUserIdKey);
-    		SystemPreferencesManager.setUserId(newKey, userIdValue); // store old value with new preference key
+    		RSEPreferencesManager.clearUserId(previousUserIdKey);
+    		RSEPreferencesManager.setUserId(newKey, userIdValue); // store old value with new preference key
     	}
     	previousUserIdKey = newKey;
     	
@@ -303,8 +304,8 @@ public abstract class SubSystem extends RSEModelObject implements IAdaptable, IS
     	String newKey = getPreferencesKey(getSystemProfileName(), newName);    	
     	if ((userIdValue != null) && (userIdValue.length()>0))
     	{
-    		SystemPreferencesManager.clearUserId(previousUserIdKey);
-    		SystemPreferencesManager.setUserId(newKey, userIdValue); // store old value with new preference key
+    		RSEPreferencesManager.clearUserId(previousUserIdKey);
+    		RSEPreferencesManager.setUserId(newKey, userIdValue); // store old value with new preference key
     	}
     	previousUserIdKey = newKey;
     	 
@@ -339,7 +340,7 @@ public abstract class SubSystem extends RSEModelObject implements IAdaptable, IS
     	// value (the actual user id) the old keyed entry held.
     	if (oldUserId != null)
     	{
-   	      SystemPreferencesManager.clearUserId(previousUserIdKey);
+   	      RSEPreferencesManager.clearUserId(previousUserIdKey);
     	}		
 		// delete the connection-private filter pool, if it exists:
 		ISystemFilterPool privatePool = getConnectionPrivateFilterPool(false); // false => don't create if not found
@@ -408,7 +409,7 @@ public abstract class SubSystem extends RSEModelObject implements IAdaptable, IS
     	String uid = null;
     	if ((key!=null) && (key.length()>0))
     	{    	
-    	  uid = SystemPreferencesManager.getUserId(key); // resolve from preferences	
+    	  uid = RSEPreferencesManager.getUserId(key); // resolve from preferences	
     	}
     	return uid;    	
     }
@@ -444,7 +445,7 @@ public abstract class SubSystem extends RSEModelObject implements IAdaptable, IS
     public void clearLocalUserId()
     {
     	if (previousUserIdKey != null)
-     	  SystemPreferencesManager.clearUserId(previousUserIdKey);    	
+     	  RSEPreferencesManager.clearUserId(previousUserIdKey);    	
     	IConnectorService system = getConnectorService();
     	if (system != null)
     	  system.clearUserIdCache();

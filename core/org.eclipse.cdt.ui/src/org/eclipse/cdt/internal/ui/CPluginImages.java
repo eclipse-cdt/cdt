@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *     QNX Software System
  *     Markus Schorn (Wind River Systems)
+ *     Anton Leherbauer (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui;
 
@@ -193,7 +194,8 @@ public class CPluginImages {
 
 	public static final String IMG_MENU_SHIFT_RIGHT= NAME_PREFIX + "shift_r_edit.gif"; //$NON-NLS-1$
 	public static final String IMG_MENU_SHIFT_LEFT= NAME_PREFIX + "shift_l_edit.gif"; //$NON-NLS-1$
-	public static final String IMG_MENU_OPEN_INCLUDE= NAME_PREFIX + "open_incl.gif"; //$NON-NLS-1$
+	public static final String IMG_MENU_OPEN_INCLUDE= NAME_PREFIX + "open_include.gif"; //$NON-NLS-1$
+	public static final String IMG_MENU_GROUP_INCLUDE= NAME_PREFIX + "group_include.gif"; //$NON-NLS-1$
 	public static final String IMG_MENU_SEGMENT_EDIT= NAME_PREFIX + "segment_edit.gif"; //$NON-NLS-1$
 	public static final String IMG_MENU_CODE_ASSIST= NAME_PREFIX + "metharg_obj.gif"; //$NON-NLS-1$
 	public static final String IMG_MENU_COLLAPSE_ALL= NAME_PREFIX + "collapseall.gif"; //$NON-NLS-1$

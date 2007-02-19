@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 IBM Corporation and others.
+ * Copyright (c) 2005, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *     QNX Software System
  *     Markus Schorn (Wind River Systems)
+ *     Anton Leherbauer (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.editor;
 
@@ -76,7 +77,6 @@ import org.eclipse.cdt.internal.ui.util.ProblemTreeViewer;
 import org.eclipse.cdt.internal.ui.viewsupport.AppearanceAwareLabelProvider;
 import org.eclipse.cdt.internal.ui.viewsupport.CElementLabels;
 import org.eclipse.cdt.internal.ui.viewsupport.DecoratingCLabelProvider;
-import org.eclipse.cdt.internal.ui.viewsupport.StandardCElementLabelProvider;
 
 public class CContentOutlinePage extends Page implements IContentOutlinePage, ISelectionChangedListener {
 	private static final int TEXT_FLAGS = AppearanceAwareLabelProvider.DEFAULT_TEXTFLAGS | CElementLabels.F_APP_TYPE_SIGNATURE | CElementLabels.M_APP_RETURNTYPE;
@@ -113,9 +113,7 @@ public class CContentOutlinePage extends Page implements IContentOutlinePage, IS
 			super(ActionMessages.getString("IncludesGroupingAction.label")); //$NON-NLS-1$
 			setDescription(ActionMessages.getString("IncludesGroupingAction.description")); //$NON-NLS-1$
 			setToolTipText(ActionMessages.getString("IncludeGroupingAction.tooltip")); //$NON-NLS-1$
-			//CPluginImages.setImageDescriptors(this, CPluginImages.T_LCL, "synced.gif"); //$NON-NLS-1$
-			CPluginImages.setImageDescriptors(this, CPluginImages.T_LCL, "open_incl.gif"); //$NON-NLS-1$
-			PlatformUI.getWorkbench().getHelpSystem().setHelp(this, ICHelpContextIds.LINK_EDITOR_ACTION);
+			CPluginImages.setImageDescriptors(this, CPluginImages.T_LCL, CPluginImages.IMG_MENU_GROUP_INCLUDE);
 
 			boolean enabled= isIncludesGroupingEnabled();
 			setChecked(enabled);
@@ -300,7 +298,7 @@ public class CContentOutlinePage extends Page implements IContentOutlinePage, IS
 	protected ProblemTreeViewer createTreeViewer(Composite parent) {
 		fTreeViewer = new ProblemTreeViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
 		fTreeViewer.setContentProvider(createContentProvider(fTreeViewer));
-		fTreeViewer.setLabelProvider(new DecoratingCLabelProvider(new StandardCElementLabelProvider(TEXT_FLAGS, IMAGE_FLAGS), true));
+		fTreeViewer.setLabelProvider(new DecoratingCLabelProvider(new AppearanceAwareLabelProvider(TEXT_FLAGS, IMAGE_FLAGS), true));
 		fTreeViewer.setAutoExpandLevel(AbstractTreeViewer.ALL_LEVELS);
 		fTreeViewer.setUseHashlookup(true);
 		fTreeViewer.addSelectionChangedListener(this);

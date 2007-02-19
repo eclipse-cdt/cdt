@@ -14,13 +14,12 @@
  * {Name} (company) - description of contribution.
  ********************************************************************************/
 
-package org.eclipse.rse.internal.subsystems.shells.subsystems;
+package org.eclipse.rse.subsystems.shells.core.subsystems;
 
 import org.eclipse.rse.core.filters.ISystemFilter;
 import org.eclipse.rse.core.filters.ISystemFilterPool;
 import org.eclipse.rse.core.filters.ISystemFilterPoolManager;
 import org.eclipse.rse.core.subsystems.SubSystemConfiguration;
-import org.eclipse.rse.subsystems.shells.core.subsystems.IRemoteCmdSubSystemConfiguration;
 
 
 

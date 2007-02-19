@@ -20,9 +20,9 @@ package org.eclipse.rse.shells.ui.propertypages;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.rse.internal.subsystems.shells.subsystems.RemoteCmdSubSystem;
 import org.eclipse.rse.shells.ui.ShellResources;
 import org.eclipse.rse.shells.ui.view.EncodingForm;
+import org.eclipse.rse.subsystems.shells.core.subsystems.RemoteCmdSubSystem;
 import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.propertypages.SystemBasePropertyPage;
 import org.eclipse.swt.SWT;

@@ -14,7 +14,7 @@
  * {Name} (company) - description of contribution.
  ********************************************************************************/
 
-package org.eclipse.rse.internal.subsystems.shells.subsystems;
+package org.eclipse.rse.subsystems.shells.core.subsystems;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
@@ -34,6 +34,7 @@ import org.eclipse.rse.core.subsystems.ICommunicationsListener;
 import org.eclipse.rse.core.subsystems.IConnectorService;
 import org.eclipse.rse.core.subsystems.IRemoteSystemEnvVar;
 import org.eclipse.rse.core.subsystems.SubSystem;
+import org.eclipse.rse.internal.subsystems.shells.subsystems.RemoteSystemEnvVar;
 import org.eclipse.rse.model.ISystemResourceChangeEvents;
 import org.eclipse.rse.model.SystemRegistry;
 import org.eclipse.rse.model.SystemResourceChangeEvent;
@@ -42,10 +43,6 @@ import org.eclipse.rse.subsystems.files.core.model.RemoteFileUtility;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFileSubSystem;
 import org.eclipse.rse.subsystems.shells.core.ShellStrings;
-import org.eclipse.rse.subsystems.shells.core.subsystems.ICandidateCommand;
-import org.eclipse.rse.subsystems.shells.core.subsystems.IRemoteCmdSubSystem;
-import org.eclipse.rse.subsystems.shells.core.subsystems.IRemoteCmdSubSystemConfiguration;
-import org.eclipse.rse.subsystems.shells.core.subsystems.IRemoteCommandShell;
 import org.eclipse.rse.ui.ISystemMessages;
 import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.swt.widgets.Display;

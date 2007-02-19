@@ -25,13 +25,13 @@ import org.eclipse.rse.core.IRSESystemType;
 import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.subsystems.IConnectorService;
 import org.eclipse.rse.core.subsystems.IServiceSubSystemConfiguration;
-import org.eclipse.rse.internal.subsystems.shells.subsystems.RemoteCmdSubSystem;
 import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
 import org.eclipse.rse.services.shells.IHostShell;
 import org.eclipse.rse.services.shells.IShellService;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile;
 import org.eclipse.rse.subsystems.shells.core.subsystems.IRemoteCmdSubSystem;
 import org.eclipse.rse.subsystems.shells.core.subsystems.IRemoteCommandShell;
+import org.eclipse.rse.subsystems.shells.core.subsystems.RemoteCmdSubSystem;
 
 
 

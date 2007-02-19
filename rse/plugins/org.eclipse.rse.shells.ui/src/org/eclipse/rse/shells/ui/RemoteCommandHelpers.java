@@ -23,7 +23,6 @@ import org.eclipse.rse.core.SystemBasePlugin;
 import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.model.ISystemRegistry;
 import org.eclipse.rse.core.subsystems.ISubSystem;
-import org.eclipse.rse.internal.subsystems.shells.subsystems.RemoteCmdSubSystem;
 import org.eclipse.rse.services.clientserver.PathUtility;
 import org.eclipse.rse.shells.ui.view.SystemCommandsUI;
 import org.eclipse.rse.shells.ui.view.SystemCommandsViewPart;
@@ -33,6 +32,7 @@ import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFileSubSystemConf
 import org.eclipse.rse.subsystems.shells.core.model.RemoteCommandShell;
 import org.eclipse.rse.subsystems.shells.core.subsystems.IRemoteCmdSubSystem;
 import org.eclipse.rse.subsystems.shells.core.subsystems.IRemoteCommandShell;
+import org.eclipse.rse.subsystems.shells.core.subsystems.RemoteCmdSubSystem;
 import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.messages.SystemMessageDialog;
 import org.eclipse.swt.widgets.Shell;

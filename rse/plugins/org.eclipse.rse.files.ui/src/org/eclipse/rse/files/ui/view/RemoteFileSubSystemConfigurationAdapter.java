@@ -114,8 +114,9 @@ public class RemoteFileSubSystemConfigurationAdapter extends SubSystemConfigurat
     	return _changeFilerAction;
     }  
     
-    /**
-     * @see org.eclipse.rse.core.subsystems.SubSystemConfiguration#getAdditionalFilterActions(ISystemFilter,Shell)
+    /*
+     * (non-Javadoc)
+     * @see org.eclipse.rse.ui.view.SubSystemConfigurationAdapter#getAdditionalFilterActions(org.eclipse.rse.core.subsystems.ISubSystemConfiguration, org.eclipse.rse.core.filters.ISystemFilter, org.eclipse.swt.widgets.Shell)
      */
     protected Vector getAdditionalFilterActions(ISubSystemConfiguration factory, ISystemFilter selectedFilter, Shell shell)
     {

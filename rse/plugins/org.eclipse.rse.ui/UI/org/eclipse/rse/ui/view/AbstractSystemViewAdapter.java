@@ -171,7 +171,7 @@ public abstract class AbstractSystemViewAdapter
      * Set the viewer that is driving this adapter
      * Called by label and content provider.
      */
-    public void setViewer(Viewer viewer)
+    public final void setViewer(Viewer viewer)
     {
     	this.viewer = viewer;
     }	
@@ -179,7 +179,7 @@ public abstract class AbstractSystemViewAdapter
      * <i>Configuration method. Typically called by content provider, viewer or action. Do not override.</i><br>
      * Set the shell to be used by any method that requires it.
      */
-    public void setShell(Shell shell)
+    public final void setShell(Shell shell)
     {
     	this.shell = shell;
     }	
@@ -189,7 +189,7 @@ public abstract class AbstractSystemViewAdapter
      * May be used by an adapter to retrieve context-sensitive information.
      * This is set by the Label and Content providers that retrieve this adapter.
      */
-    public void setInput(ISystemViewInputProvider input)
+    public final void setInput(ISystemViewInputProvider input)
     { 
     	this.input = input;
     }
@@ -225,7 +225,7 @@ public abstract class AbstractSystemViewAdapter
 	/**
      * <i>Getter method. Callable by subclasses. Do not override.</i><br>
 	 * Return the current viewer, as set via setViewer or its deduced from the 
-	 *  setInput input object if set. May be null so test it.
+	 * setInput input object if set. May be null so test it.
 	 */
 	public Viewer getViewer()
 	{        
@@ -466,7 +466,7 @@ public abstract class AbstractSystemViewAdapter
 	 * Implementation of IWorkbenchAdapter.getChildren().  Rather than overriding this, adapter implementors
 	 * should override the getChildren() methods that take a monitor.
 	 */
-	public Object[] getChildren(Object object)
+	public final Object[] getChildren(Object object)
 	{
 		return getChildren(new NullProgressMonitor(), (IAdaptable)object);
 	}
@@ -733,6 +733,7 @@ public abstract class AbstractSystemViewAdapter
 
 	/**
 	 * Return the number of immediate children in the tree, for the given tree node
+	 * @deprecated this should be done in the SystemView only
 	 */
     private int getChildCount(TreeViewer viewer, Object element)
 	{		
@@ -752,6 +753,7 @@ public abstract class AbstractSystemViewAdapter
 		return 0;
 	}
 
+    /** @deprecated this should be done in the SystemView only */
     private Widget findItemInTree(TreeViewer tree, Object element) 
     {
   	   Item[] items = getChildren(tree.getControl());
@@ -767,6 +769,7 @@ public abstract class AbstractSystemViewAdapter
 	   return null;
     }
     
+    /** @deprecated this should be done in the SystemView only */
     private Widget internalFindItem(Tree tree, Item parent, Object element) 
     {
     	// compare with node
@@ -787,6 +790,8 @@ public abstract class AbstractSystemViewAdapter
     	}
     	return null;
     }
+
+    /** @deprecated this should be done in the SystemView only */
     private Item[] getChildren(Widget o) 
     {
     	if (o instanceof TreeItem)
@@ -795,7 +800,6 @@ public abstract class AbstractSystemViewAdapter
     		return ((Tree) o).getItems();
     	return null;
     }
-
 	
 	/**
      * <i><b>Overridable</b> by subclasses. Must be iff editable properties are supported.</i><br>
@@ -1520,9 +1524,16 @@ public abstract class AbstractSystemViewAdapter
      * Returns the implementation of ISystemViewElement for the given
      * object.  Returns null if the adapter is not defined or the
      * object is not adaptable.
-     * <p>Just a convenient shortcut to {@link org.eclipse.rse.core.SystemAdapterHelpers#getAdapter(Object, Viewer)}
+     * <p/>
+     * Just a convenient shortcut to {@link org.eclipse.rse.core.SystemAdapterHelpers#getAdapter(Object, Viewer)}
+     * <p/>
+     * Should we allow clients to override this in order to provide an
+     * optimized implementation for their models? But it's being called
+     * by subclasses only anyways...
+     * 
+     * @deprecated use SystemAdapterHelpers.getAdapter(o, getViewer()) instead
      */
-    protected ISystemViewElementAdapter getAdapter(Object o) 
+    protected ISystemViewElementAdapter getSystemViewElementAdapter(Object o) 
     {
         return SystemAdapterHelpers.getAdapter(o, getViewer());
         /*
@@ -1539,12 +1550,20 @@ public abstract class AbstractSystemViewAdapter
     	}
     	return adapter;
     	*/
-    }    
+    }
+    
     /**
      * <i>Callable by subclasses.</i><br>
      * Returns the implementation of ISystemRemoteElement for the given
      * object.  Returns null if this object does not adaptable to this.
-     * <p>Just a convenient shortcut to {@link org.eclipse.rse.core.SystemAdapterHelpers#getRemoteAdapter(Object, Viewer)}
+     * <p/>
+     * Just a convenient shortcut to {@link org.eclipse.rse.core.SystemAdapterHelpers#getRemoteAdapter(Object, Viewer)}
+     * <p/>
+     * Should we allow clients to override this in order to provide an
+     * optimized implementation for their models? But it's being called
+     * by subclasses only anyways...
+     * 
+     * @deprecated use SystemAdapterHelpers.getRemoteAdapter(o, getViewer()) instead
      */
     protected ISystemRemoteElementAdapter getRemoteAdapter(Object o) 
     {
@@ -1671,7 +1690,7 @@ public abstract class AbstractSystemViewAdapter
 	/**
      * <i>Internal use. Do not override</i><br>
      */
-	protected void initMsgObjects()
+	protected final void initMsgObjects()
 	{
 		nullObject     = new SystemMessageObject(RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_EXPAND_EMPTY),ISystemMessageObject.MSGTYPE_EMPTY, null);
 		canceledObject = new SystemMessageObject(RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_LIST_CANCELLED),ISystemMessageObject.MSGTYPE_CANCEL, null);
@@ -1706,7 +1725,7 @@ public abstract class AbstractSystemViewAdapter
      * <i>Callable by subclasses. Do not override</i><br>
      * Return the "Operation cancelled by user" msg as an object array so can be used to answer getChildren()
      */
-    protected Object[] getCancelledMessageObject()
+    protected final Object[] getCancelledMessageObject()
     {    	
 		 if (canceledObject == null)
 		   initMsgObjects();
@@ -1717,7 +1736,7 @@ public abstract class AbstractSystemViewAdapter
      * <i>Callable by subclasses. Do not override</i><br>
      * Return the "Operation failed" msg as an object array so can be used to answer getChildren()
      */
-    protected Object[] getFailedMessageObject()
+    protected final Object[] getFailedMessageObject()
     {    	
 		 if (errorObject == null)
 		   initMsgObjects();
@@ -1728,7 +1747,7 @@ public abstract class AbstractSystemViewAdapter
      * <i>Callable by subclasses. Do not override</i><br>
      * Return the "Empty list" msg as an object array so can be used to answer getChildren()
      */
-    protected Object[] getEmptyMessageObject()
+    protected final Object[] getEmptyMessageObject()
     {    	
 		 if (nullObject == null)
 		   initMsgObjects();

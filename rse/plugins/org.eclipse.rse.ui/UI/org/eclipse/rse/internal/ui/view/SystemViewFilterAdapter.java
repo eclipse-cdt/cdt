@@ -232,7 +232,7 @@ public class SystemViewFilterAdapter extends AbstractSystemViewAdapter implement
                    for (int idx=0; (match==null) && (idx<children.length); idx++)
                    {
                    	  Object child = children[idx];
-                   	  String objName = getAdapter(child).getName(child);
+                   	  String objName = getSystemViewElementAdapter(child).getName(child);
                    	  if ((objName != null) && (objName.equals(preSelectName)))
                    	    match = child;
                    }

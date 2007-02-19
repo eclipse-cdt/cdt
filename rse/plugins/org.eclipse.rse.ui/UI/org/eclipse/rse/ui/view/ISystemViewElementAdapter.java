@@ -97,7 +97,11 @@ public interface ISystemViewElementAdapter extends IPropertySource, ISystemDragD
   	   	
     /**
      * Get the subsystem that corresponds to this object if one exists.
-     * 	
+     * 
+     * @param element The element to be identified. May be of type
+     *                {@link IContextObject} (including the context of the element),
+     *                {@link String} (giving the absolute path of a remote object),
+     *                or the actual remote data element itself.
      */
 	public ISubSystem getSubSystem(Object element);	
 	

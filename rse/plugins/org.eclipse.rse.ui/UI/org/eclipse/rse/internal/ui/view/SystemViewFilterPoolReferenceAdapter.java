@@ -368,7 +368,7 @@ public class SystemViewFilterPoolReferenceAdapter
 	public String getInputMementoHandle(Object element)
 	{
 		Object parent = getParent(element);
-		return getAdapter(parent).getInputMementoHandle(parent) + MEMENTO_DELIM + getMementoHandle(element);
+		return getSystemViewElementAdapter(parent).getInputMementoHandle(parent) + MEMENTO_DELIM + getMementoHandle(element);
 	}
 	/**
 	 * Return a short string to uniquely identify the type of resource. Eg "conn" for connection.

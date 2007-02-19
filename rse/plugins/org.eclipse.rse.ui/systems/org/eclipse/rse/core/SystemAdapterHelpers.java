@@ -57,8 +57,10 @@ public class SystemAdapterHelpers {
 	 */
 	public static ISystemViewElementAdapter getAdapter(Object o, Viewer viewer) {
 		ISystemViewElementAdapter adapter = getAdapter(o);
-		if (adapter != null)
+		if (adapter != null) {
+			//FIXME This is not thread-safe.
 			adapter.setViewer(viewer);
+		}
 		return adapter;
 	}
 
@@ -71,6 +73,7 @@ public class SystemAdapterHelpers {
 		ISystemViewElementAdapter adapter = getAdapter(o, viewer);
 
 		if (adapter != null) {
+			//FIXME This is not thread-safe.
 			adapter.setInput(inputProvider);
 		}
 

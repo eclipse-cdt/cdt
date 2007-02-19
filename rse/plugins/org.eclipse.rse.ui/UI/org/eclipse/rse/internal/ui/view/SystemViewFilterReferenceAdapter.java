@@ -740,14 +740,14 @@ public class SystemViewFilterReferenceAdapter
 	public String getInputMementoHandle(Object element)
 	{
 		Object parent = ((ISystemFilterReference) element).getParent(); //getParent(element); // will be filter (nested) or filter pool
-		ISystemViewElementAdapter parentAdapter = getAdapter(parent);
+		ISystemViewElementAdapter parentAdapter = getSystemViewElementAdapter(parent);
 		boolean showFPs = SystemPreferencesManager.getShowFilterPools();
 		if (parent instanceof ISystemFilterPoolReference) // not a nested filter
 		{
 			if (!showFPs) // not showing the real parent in GUI?
 			{
 				parent = parentAdapter.getParent(parent); // get the subsystem parent of the filter pool reference
-				parentAdapter = getAdapter(parent); // get the adapter for the subsystem parent
+				parentAdapter = getSystemViewElementAdapter(parent); // get the adapter for the subsystem parent
 			}
 		}
 		return parentAdapter.getInputMementoHandle(parent) + MEMENTO_DELIM + getMementoHandle(element);

@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2002, 2006 IBM Corporation. All rights reserved.
+ * Copyright (c) 2002, 2007 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -11,7 +11,7 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * Uwe Stieber (Wind River) - Reworked new connection wizard extension point.
  ********************************************************************************/
 
 package org.eclipse.rse.ui.wizards;
@@ -26,9 +26,6 @@ import org.eclipse.rse.ui.ISystemMessages;
 import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.dialogs.SystemWizardDialog;
 import org.eclipse.rse.ui.view.ISystemTree;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.Cursor;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IWorkbench;
 
 
@@ -66,7 +63,6 @@ import org.eclipse.ui.IWorkbench;
  *  <li>Supports a {@link #setMinimumPageSize(int, int)} method to set the minimum width and height of the wizard.
  *  <li>Supports a {@link #setPageError(IWizardPage)} method that can be called in performFinish when an error is detected on a 
  *      non-current page. This issues a message telling the user there is an error on another page.
- *  <li>Supports a simple {@link #setBusyCursor(boolean)} method to toggle the cursor between busy and normal
  * </ul>
  * <p>To use this class, :</p>
  * <ol>
@@ -96,7 +92,6 @@ public abstract class      AbstractSystemWizard
 	protected Viewer  viewer = null;	
     protected String  pageTitle;	
     protected SystemWizardDialog owningDialog;
-	private   Cursor waitCursor;
 
     /**
      * Default constructor.
@@ -409,26 +404,6 @@ public abstract class      AbstractSystemWizard
     	else
     	  return -1;
     }        
-	/**
-	 * Set the cursor to the wait cursor (true) or restores it to the normal cursor (false).
-	 */
-	public void setBusyCursor(boolean setBusy)
-	{
-		if (setBusy)
-		{
-          // Set the busy cursor to all shells.
-    	  Display d = getShell().getDisplay();
-    	  waitCursor = new Cursor(d, SWT.CURSOR_WAIT);
-		  org.eclipse.rse.ui.dialogs.SystemPromptDialog.setDisplayCursor(getShell(), waitCursor);
-		}
-		else
-		{
-		  org.eclipse.rse.ui.dialogs.SystemPromptDialog.setDisplayCursor(getShell(), null);
-		  if (waitCursor != null)
-		    waitCursor.dispose();
-		  waitCursor = null;
-		}
-	}
     
     // ----------------------------
     // METHODS YOU MUST OVERRIDE...

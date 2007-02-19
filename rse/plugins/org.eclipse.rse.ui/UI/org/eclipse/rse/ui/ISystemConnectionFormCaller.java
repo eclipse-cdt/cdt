@@ -20,19 +20,19 @@ import org.eclipse.swt.widgets.Shell;
 /**
  * Interface that any UI that uses the SystemConnectionForm must implement
  */
-public interface ISystemConnectionFormCaller 
-{
+public interface ISystemConnectionFormCaller {
 
+	/**
+	 * Event: the user has selected a system type.
+	 * 
+	 * @param systemType the type of system selected
+	 * @param duringInitialization true if this is being set at page initialization time versus selected by the user
+	 */
+	public void systemTypeSelected(String systemType, boolean duringInitialization);
 
-    /**
-     * Event: the user has selected a system type.
-     * @param systemType the type of system selected
-     * @param duringInitialization true if this is being set at page initialization time versus selected by the user
-     */
-    public void systemTypeSelected(String systemType, boolean duringInitialization);
-    /**
-     * Return the shell hosting this form
-     */
-    public Shell getShell();
-    
+	/**
+	 * Return the shell hosting this form
+	 */
+	public Shell getShell();
+
 }

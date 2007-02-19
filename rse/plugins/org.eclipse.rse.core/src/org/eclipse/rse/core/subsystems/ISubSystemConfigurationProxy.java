@@ -59,7 +59,7 @@ public interface ISubSystemConfigurationProxy {
 	/**
 	 * Returns the list of system types the subsystem configuration is supporting.
 	 * The list is combined from the list of currently registered system types cleaned
-	 * up by the ones not matching the declared system type names and ids.
+	 * up by the ones not matching the declared system type ids.
 	 *  
 	 * @return The list of supported system types or an empty list.
 	 */

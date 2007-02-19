@@ -47,6 +47,8 @@ Export-Package: org.eclipse.rse.core,
  org.eclipse.rse.ui.view,
  org.eclipse.rse.ui.widgets,
  org.eclipse.rse.ui.widgets.services,
- org.eclipse.rse.ui.wizards
+ org.eclipse.rse.ui.wizards,
+ org.eclipse.rse.ui.wizards.newconnection,
+ org.eclipse.rse.ui.wizards.registries
 Bundle-Vendor: %providerName
 Bundle-RequiredExecutionEnvironment: J2SE-1.4

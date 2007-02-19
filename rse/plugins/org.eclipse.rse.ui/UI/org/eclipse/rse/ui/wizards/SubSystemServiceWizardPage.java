@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2006 IBM Corporation. All rights reserved.
+ * Copyright (c) 2007 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -11,7 +11,7 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * Uwe Stieber (Wind River) - Reworked new connection wizard extension point.
  ********************************************************************************/
 
 package org.eclipse.rse.ui.wizards;
@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.jface.wizard.IWizard;
+import org.eclipse.rse.core.IRSESystemType;
 import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.model.ISystemRegistry;
 import org.eclipse.rse.core.subsystems.IConnectorService;
@@ -28,6 +29,7 @@ import org.eclipse.rse.core.subsystems.IServiceSubSystem;
 import org.eclipse.rse.core.subsystems.IServiceSubSystemConfiguration;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
+import org.eclipse.rse.model.DummyHost;
 import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.widgets.services.ConnectorServiceElement;
 import org.eclipse.rse.ui.widgets.services.FactoryServiceElement;
@@ -35,6 +37,8 @@ import org.eclipse.rse.ui.widgets.services.RootServiceElement;
 import org.eclipse.rse.ui.widgets.services.ServerLauncherPropertiesServiceElement;
 import org.eclipse.rse.ui.widgets.services.ServiceElement;
 import org.eclipse.rse.ui.widgets.services.ServicesForm;
+import org.eclipse.rse.ui.wizards.newconnection.RSEDefaultNewConnectionWizard;
+import org.eclipse.rse.ui.wizards.newconnection.RSEDefaultNewConnectionWizardMainPage;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 
@@ -81,15 +85,19 @@ public class SubSystemServiceWizardPage extends AbstractSystemNewConnectionWizar
 			
 			IServiceSubSystemConfiguration currentFactory = (IServiceSubSystemConfiguration)getSubSystemConfiguration();
 			
-			String systemTypeStr = getMainPage().getSystemType();
-			//IRSESystemType systemType = RSECorePlugin.getDefault().getRegistry().getSystemType(systemTypeStr);
+			IRSESystemType systemType = getMainPage() != null ? getMainPage().getSystemType() : null;
+			String systemTypeName = systemType != null ? systemType.getName() : null;
 			
-			IServiceSubSystemConfiguration[] factories = getServiceSubSystemFactories(systemTypeStr, currentFactory.getServiceType());
+			IServiceSubSystemConfiguration[] factories = getServiceSubSystemFactories(systemTypeName, currentFactory.getServiceType());
 			
 			IHost dummyHost = null;
-			if (getWizard() instanceof RSENewConnectionWizard)
+			if (getWizard() instanceof RSEDefaultNewConnectionWizard)
 			{
-				dummyHost = ((RSENewConnectionWizard)getWizard()).getDelegate().getDummyHost();
+				RSEDefaultNewConnectionWizard wizard = (RSEDefaultNewConnectionWizard)getWizard();
+				if (wizard.getMainPage() instanceof RSEDefaultNewConnectionWizardMainPage) {
+					dummyHost = new DummyHost(((RSEDefaultNewConnectionWizardMainPage)wizard.getMainPage()).getHostName(),
+																		 wizard.getSystemType() != null ? wizard.getSystemType().getName() : null);
+				}
 			}
 			
 			// create elements for each 

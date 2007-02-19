@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2002, 2006 IBM Corporation. All rights reserved.
+ * Copyright (c) 2002, 2007 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -11,7 +11,7 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * Uwe Stieber (Wind River) - Reworked new connection wizard extension point.
  ********************************************************************************/
 
 package org.eclipse.rse.ui.wizards;
@@ -21,6 +21,8 @@ import org.eclipse.rse.core.model.ISystemNewConnectionWizardPage;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
 import org.eclipse.rse.ui.SystemConnectionForm;
 import org.eclipse.rse.ui.SystemResources;
+import org.eclipse.rse.ui.wizards.newconnection.RSEAbstractNewConnectionWizard;
+import org.eclipse.rse.ui.wizards.newconnection.RSEDefaultNewConnectionWizardMainPage;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 
@@ -98,50 +100,44 @@ public abstract class AbstractSystemNewConnectionWizardPage extends AbstractSyst
 	}
 
     /**
-     * Get the parent wizard typed as the SystemNewConnectionWizard
+     * Get the parent wizard typed as the RSEAbstractNewConnectionWizard
      */
-    public RSENewConnectionWizard getNewConnectionWizard()
+    public RSEAbstractNewConnectionWizard getNewConnectionWizard()
     {
-        return (RSENewConnectionWizard)getWizard();
+    	if (getWizard() instanceof RSEAbstractNewConnectionWizard)
+        return (RSEAbstractNewConnectionWizard)getWizard();
+    	
+    	return null;
     }
 
     /**
-     * Get the main page of SystemNewConnectionWizard, which contains all user enter connection attributes
+     * Get the main page of RSEDefaultNewConnectionWizard, which contains all user enter connection attributes
      */
-    public ISystemNewConnectionWizardMainPage getMainPage()
-    {
-    	RSENewConnectionWizard ourWizard = getNewConnectionWizard();
+    public RSEDefaultNewConnectionWizardMainPage getMainPage() {
+    	RSEAbstractNewConnectionWizard ourWizard = getNewConnectionWizard();
     	if (ourWizard != null) {
-    	  //String[] systemTypes = parentFactory.getSystemTypes();
-    	  //IRSESystemType systemType = RSECorePlugin.getDefault().getRegistry().getSystemType(systemTypes[0]);
-    	  IWizardPage wizardPage = ourWizard.getDelegate().getMainPage();
-    	  
-    	  if (wizardPage instanceof ISystemNewConnectionWizardMainPage) {
-    		  return (ISystemNewConnectionWizardMainPage)wizardPage;
-    	  }
-    	  else {
-    		  return null;
-    	  }
+    		IWizardPage wizardPage = ourWizard.getStartingPage();
+    		if (wizardPage instanceof RSEDefaultNewConnectionWizardMainPage) {
+    			return (RSEDefaultNewConnectionWizardMainPage)wizardPage;
+    		}
     	}
-        else {
-          return null;
-        }
+  		return null;
     }
 
     /**
-     * Get the SystemConnectionForm of the main page of SystemNewConnectionWizard, which 
-     *  contains all user enter connection attributes
-     */
+		 * Get the SystemConnectionForm of the main page of SystemNewConnectionWizard, which contains all user enter
+		 * connection attributes
+		 */
     public SystemConnectionForm getMainPageForm()
     {
-    	RSENewConnectionWizard ourWizard = getNewConnectionWizard();
+    	RSEAbstractNewConnectionWizard ourWizard = getNewConnectionWizard();
     	if (ourWizard != null) {
       	  //String[] systemTypes = parentFactory.getSystemTypes();
     	  //IRSESystemType systemType = RSECorePlugin.getDefault().getRegistry().getSystemType(systemTypes[0]);
-    	  IWizardPage wizardPage = ourWizard.getDelegate().getMainPage();
+    	  IWizardPage wizardPage = ourWizard.getStartingPage();
     	  
-    	  if (wizardPage instanceof RSENewConnectionWizardDefaultDelegateMainPage) {
-    		  return ((RSENewConnectionWizardDefaultDelegateMainPage)wizardPage).getForm();
+    	  if (wizardPage instanceof RSEDefaultNewConnectionWizardMainPage) {
+    		  return ((RSEDefaultNewConnectionWizardMainPage)wizardPage).getForm();
     	  }
     	  else {
     		  return null;

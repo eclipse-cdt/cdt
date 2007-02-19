@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2006 IBM Corporation. All rights reserved.
+ * Copyright (c) 2006, 2007 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -13,6 +13,7 @@
  * Contributors:
  * David Dykstal (IBM) - moved SystemPreferencesManager to a new package
  *                     - created and used RSEPreferencesManager
+ * Uwe Stieber (Wind River) - Reworked new connection wizard extension point.
  ********************************************************************************/
 package org.eclipse.rse.ui;
 
@@ -26,6 +27,7 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.rse.core.IRSESystemType;
 import org.eclipse.rse.core.IRSESystemTypeConstants;
 import org.eclipse.rse.core.RSEPreferencesManager;
+import org.eclipse.rse.ui.wizards.registries.IRSEWizardDescriptor;
 import org.osgi.framework.Bundle;
 
 /**
@@ -233,4 +235,23 @@ public class RSESystemTypeAdapter extends RSEAdapter implements IRSESystemTypeCo
 		return result;
 	}
 	
+	/**
+	 * Checks if the given wizard descriptor is accepted for the system types the
+	 * adapter is covering.
+	 * 
+	 * @param wizardConfigurationElementName The wizard configuration element name. Must be not <code>null</code>.
+	 * @param descriptor The wizard descriptor. Must be not <code>null</code>.
+	 * 
+	 * @return <code>True</code> is accepted, <code>false</code> otherwise.
+	 */
+	public boolean acceptWizardDescriptor(String wizardConfigurationElementName, IRSEWizardDescriptor descriptor) {
+		assert wizardConfigurationElementName != null && descriptor != null;
+		
+		// We always accept the default RSE new connection wizard
+		if ("org.eclipse.rse.ui.wizards.newconnection.RSEDefaultNewConnectionWizard".equals(descriptor.getId())) { //$NON-NLS-1$
+			return true;
+		}
+		
+		return false;
+	}
 }

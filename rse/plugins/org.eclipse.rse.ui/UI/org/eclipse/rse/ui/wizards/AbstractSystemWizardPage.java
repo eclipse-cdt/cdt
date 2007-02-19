@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2002, 2006 IBM Corporation. All rights reserved.
+ * Copyright (c) 2002, 2007 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -11,7 +11,7 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * Uwe Stieber (Wind River) - Reworked new connection wizard extension point.
  ********************************************************************************/
 
 package org.eclipse.rse.ui.wizards;
@@ -25,13 +25,11 @@ import org.eclipse.rse.ui.SystemWidgetHelpers;
 import org.eclipse.rse.ui.messages.ISystemMessageLine;
 import org.eclipse.rse.ui.messages.SystemMessageLine;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.Cursor;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 
 
@@ -54,7 +52,6 @@ import org.eclipse.swt.widgets.Label;
  *  <li>Supports setting a default-focus control, which gets initial focus when the page is shown.
  *  <li>Supports helper methods to aid in population of the client area: {@link #addSeparatorLine(Composite, int)}, 
  *      {@link #addFillerLine(Composite,int)} and {@link #addGrowableFillerLine(Composite,int)}.
- *  <li>Supports a simple {@link #setBusyCursor(boolean)} method to toggle the cursor between busy and normal
  * </ul>
  * 
  * <p>To use this class, :</p>
@@ -102,8 +99,6 @@ public abstract class AbstractSystemWizardPage
 	private String  helpId;
 	private Composite parentComposite;
 	private SystemMessage pendingMessage, pendingErrorMessage;
-	//private Hashtable helpIdPerControl;
-	private Cursor waitCursor;
 	
 	/**
 	 * Constructor when a unique page title is desired.
@@ -112,29 +107,30 @@ public abstract class AbstractSystemWizardPage
 	 * @param pageTitle - the translated title of this page. Appears below the overall wizard title. 
 	 * @param pageDescription - the translated description of this page. Appears to the right of the page title.
 	 */
-	public AbstractSystemWizardPage(IWizard wizard,
-  								    String pageName, String pageTitle, String pageDescription)
-	{
+	public AbstractSystemWizardPage(IWizard wizard, String pageName, String pageTitle, String pageDescription) {
 		super(pageName);
 		setWizard(wizard);
+		
 		if (pageTitle != null)
-		  setTitle(pageTitle);
+			setTitle(pageTitle);
 		else if (wizard instanceof AbstractSystemWizard)
-		  setTitle(((AbstractSystemWizard)wizard).getWizardPageTitle());
-	  	setDescription(pageDescription);
+			setTitle(((AbstractSystemWizard)wizard).getWizardPageTitle());
+		
+		setDescription(pageDescription);
 	}
 	/**
-	 * Constructor when the overall wizard page title is desired, as specified in 
-	 *  {@link org.eclipse.rse.ui.wizards.AbstractSystemWizard#setWizardPageTitle(String)}. 
-	 * <p>It is a somewhat common design pattern to use the same title for all pages in a wizard, and 
-	 *  this makes it easy to do that.
+	 * Constructor when the overall wizard page title is desired, as specified in
+	 * {@link org.eclipse.rse.ui.wizards.AbstractSystemWizard#setWizardPageTitle(String)}.
+	 * <p>
+	 * It is a somewhat common design pattern to use the same title for all pages in a wizard, and this makes it easy to
+	 * do that.
 	 * <p>
 	 * Your wizard must extend AbstractSystemWizard, and you must have called setWizardPageTitle.
 	 * @param wizard - the page's wizard.
 	 * @param pageName - the untranslated ID of this page. Not really used.
 	 * @param pageDescription - the translated description of this page. Appears to the right of the page title.
 	 */
-	public AbstractSystemWizardPage(ISystemWizard wizard,
+	public AbstractSystemWizardPage(IWizard wizard,
   								    String pageName, String pageDescription)
 	{
 		this(wizard, pageName, null, pageDescription);
@@ -150,9 +146,6 @@ public abstract class AbstractSystemWizardPage
      * <p>
      * This id is stored, and then applied to each of the input-capable
      * controls in the main composite returned from createContents.
-     * <p>
-     * Call this first to set the default help, then call {@link #setHelp(Control, String)} per individual
-     * control if control-unique help is desired.
      */
     public void setHelp(String helpId)
     {
@@ -161,19 +154,6 @@ public abstract class AbstractSystemWizardPage
     	  //SystemWidgetHelpers.setCompositeHelp(parentComposite, helpId, helpIdPerControl);		
     	//System.out.println("Setting help to " + helpId);
     	this.helpId = helpId;
-    }
-    /**
-     * Configuration method. <br>
-     * For setting control-specific help for a control on the wizard page.
-     * <p>
-     * This overrides the default set in the call to {@link #setHelp(String)}.
-     */
-    public void setHelp(Control c, String helpId)
-    {
-    	SystemWidgetHelpers.setHelp(c, helpId);		
-    	//if (helpIdPerControl == null)
-    	//  helpIdPerControl = new Hashtable();
-    	//helpIdPerControl.put(c, helpId);
     }
      
 	/**
@@ -423,26 +403,6 @@ public abstract class AbstractSystemWizardPage
     // ---------------
     // HELPER METHODS
     // ---------------  
-	/**
-	 * Set the cursor to the wait cursor (true) or restores it to the normal cursor (false).
-	 */
-	public void setBusyCursor(boolean setBusy)
-	{
-		if (setBusy)
-		{
-          // Set the busy cursor to all shells.
-    	  Display d = getShell().getDisplay();
-    	  waitCursor = new Cursor(d, SWT.CURSOR_WAIT);
-		  org.eclipse.rse.ui.dialogs.SystemPromptDialog.setDisplayCursor(getShell(), waitCursor);
-		}
-		else
-		{
-		  org.eclipse.rse.ui.dialogs.SystemPromptDialog.setDisplayCursor(getShell(), null);
-		  if (waitCursor != null)
-		    waitCursor.dispose();
-		  waitCursor = null;
-		}
-	}
 
     /**
      * Helper method <br>

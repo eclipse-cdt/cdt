@@ -115,7 +115,7 @@ public class SystemSubSystemsPropertiesWizardPage
 				_thePage = cpage;
 				
 				//set the hostname for the page in case it's required
-				cpage.setHostname(getMainPage().getHostName());
+				if (getMainPage() != null) cpage.setHostname(getMainPage().getHostName());
 				
 				numAdded++;
 			}			
@@ -151,7 +151,7 @@ public class SystemSubSystemsPropertiesWizardPage
 					}
 					
 					//set the hostname for the page in case it's required
-					cpage.setHostname(getMainPage().getHostName());
+					if (getMainPage() != null) cpage.setHostname(getMainPage().getHostName());
 					
 					numAdded++;
 				}			
@@ -199,8 +199,8 @@ public class SystemSubSystemsPropertiesWizardPage
 	 */
 	public boolean isPageComplete()
 	{
-	    String hostName = getMainPage().getHostName();
-	    if (!hostName.equals(_lastHostName))
+	    String hostName = getMainPage() != null ? getMainPage().getHostName() : null;
+	    if (hostName != null && !hostName.equals(_lastHostName))
 	    {
 	        hostNameUpdated(hostName);
 	        _lastHostName = hostName;

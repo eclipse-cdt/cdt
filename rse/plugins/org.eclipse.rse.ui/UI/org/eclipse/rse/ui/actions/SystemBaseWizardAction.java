@@ -43,9 +43,6 @@ import org.eclipse.swt.widgets.Shell;
  *  <li>Supports setting the default wizard {@link #setWizardPageTitle(String) page-title}, which is propogated to the wizard and the wizard pages.
  *  <li>Supports setting the wizard;s default {@link #setHelp(String) contextual-help}, which is propogated to the wizard and the wizard pages.
  *  <li>Supports setting the wizard's {@link #setMinimumPageSize(int,int) minimum-size}, which is propogated and applied to the wizard.
- *  <li>Supports setting an {@link org.eclipse.rse.ui.actions.SystemBaseAction#setInputObject(Object) input-object}, which is propogated to the wizard and wizard pages. By default, this 
- *       is set the current StructuredSelection.
- *  <li>Supports querying a {@link org.eclipse.rse.ui.actions.SystemBaseAction#getOutputObject() output-object} which is set by the wizard class.
  *  <li>Supports a {@link #wasCancelled()} method so the caller can easily determine if the wizard was dismissed or cancelled by the user.
  *  <li>Supports propogation of the {@link org.eclipse.rse.ui.actions.SystemBaseAction#getViewer() current-viewer}.
  * </ul>
@@ -64,15 +61,13 @@ import org.eclipse.swt.widgets.Shell;
  *       after the sucessful completion of the wizard.
  * </ol>
  */
-public abstract class SystemBaseWizardAction extends SystemBaseDialogAction 
-                                             implements ISystemWizardAction
-{
-	
-    private IWizard newWizard;
-    private String wizardTitle, pageTitle;
-    private ImageDescriptor wizardImage;
-    private int minPageWidth=-1, minPageHeight=-1;
-    
+public abstract class SystemBaseWizardAction extends SystemBaseDialogAction implements ISystemWizardAction {
+
+	private IWizard newWizard;
+	private String wizardTitle, pageTitle;
+	private ImageDescriptor wizardImage;
+	private int minPageWidth = -1, minPageHeight = -1;
+
 	/**
 	 * Constructor for SystemBaseWizardAction when translated label is known. You must separately
 	 *  call setToolTipText and setDescription to enable these if desired.
@@ -80,55 +75,52 @@ public abstract class SystemBaseWizardAction extends SystemBaseDialogAction
 	 * @param image icon to display in menu or toolbar. Can be null.
 	 * @param parent Shell of parent window. Can be null if you don't know it, but call setShell when you do.
 	 */
-	protected SystemBaseWizardAction(String text, ImageDescriptor image, Shell parent) 
-	{
+	protected SystemBaseWizardAction(String text, ImageDescriptor image, Shell parent) {
 		super(text, image, parent);
 		allowOnMultipleSelection(false);
 	}
+
 	/**
 	 * Constructor for SystemBaseWizardAction when translated label and tooltip are known. You must
 	 *  separately call setDescription to enable this if desired.
 	 * @param text string to display in menu or toolbar
 	 * @param tooltip string to display when user hovers mouse over action.
-     * @param image icon to display in menu or toolbar. Can be null.
+	 * @param image icon to display in menu or toolbar. Can be null.
 	 * @param parent Shell of parent window. Can be null if you don't know it, but call setShell when you do.
 	 */
-	protected SystemBaseWizardAction(String text, String tooltip, ImageDescriptor image, Shell parent) 
-	{
+	protected SystemBaseWizardAction(String text, String tooltip, ImageDescriptor image, Shell parent) {
 		super(text, tooltip, image, parent);
-		allowOnMultipleSelection(false);		
+		allowOnMultipleSelection(false);
 	}
+
 	/**
 	 * Constructor for SystemBaseWizardAction when translated label and tooltip and description are
 	 *  all known. 
 	 * @param text string to display in menu or toolbar
 	 * @param tooltip string to display when user hovers mouse over action.
 	 * @param description string displayed in status bar of some displays. Longer than tooltip.
-     * @param image icon to display in menu or toolbar. Can be null.
+	 * @param image icon to display in menu or toolbar. Can be null.
 	 * @param parent Shell of parent window. Can be null if you don't know it, but call setShell when you do.
 	 */
-	protected SystemBaseWizardAction(String text, String tooltip, String description, ImageDescriptor image, Shell parent) 
-	{
+	protected SystemBaseWizardAction(String text, String tooltip, String description, ImageDescriptor image, Shell parent) {
 		super(text, tooltip, description, image, parent);
-		allowOnMultipleSelection(false);		
-	}	
+		allowOnMultipleSelection(false);
+	}
 
-
-	
 	/**
 	 * Set the wizard title. Using this makes it possible to avoid subclassing a wizard
 	 */
-	public void setWizardTitle(String title)
-	{
+	public void setWizardTitle(String title) {
 		this.wizardTitle = title;
 	}
+
 	/**
 	 * Set the wizard image. Using this makes it possible to avoid subclassing a wizard
 	 */
-	public void setWizardImage(ImageDescriptor wizardImage)
-	{
+	public void setWizardImage(ImageDescriptor wizardImage) {
 		this.wizardImage = wizardImage;
 	}
+
 	/**
 	 * Set the wizard page title. Using this makes it possible to avoid subclassing.
 	 * The page title goes below the wizard title, and can be unique per page. However,
@@ -137,30 +129,30 @@ public abstract class SystemBaseWizardAction extends SystemBaseDialogAction
 	 * This is not used by default, but can be queried via getPageTitle() when constructing
 	 *  pages.
 	 */
-	public void setWizardPageTitle(String pageTitle)
-	{
+	public void setWizardPageTitle(String pageTitle) {
 		this.pageTitle = pageTitle;
 	}
+
 	/**
 	 * Return the page title as set via setWizardPageTitle
 	 */
-	public String getWizardPageTitle()
-	{
+	public String getWizardPageTitle() {
 		return pageTitle;
-	}		
+	}
+
 	/**
 	 * Call this method to set the wizard's dimensions without having to subclass the wizard.
 	 * If you pass zero for either value, then the default will be used for that.
 	 */
-	public void setMinimumPageSize(int width, int height)
-	{
-    	//if (width <= 0)
-    	//  width = 300; // found this number in WizardDialog code
-    	//if (height<= 0)
-    	//  height = 225; // found this number in WizardDialog code	        
+	public void setMinimumPageSize(int width, int height) {
+		//if (width <= 0)
+		//  width = 300; // found this number in WizardDialog code
+		//if (height<= 0)
+		//  height = 225; // found this number in WizardDialog code	        
 		this.minPageWidth = width;
 		this.minPageHeight = height;
 	}
+
 	/**
 	 * Override of parent's method. Does the following:
 	 * <ul>
@@ -172,59 +164,59 @@ public abstract class SystemBaseWizardAction extends SystemBaseDialogAction
 	 * </ul>
 	 * 
 	 */
-	protected Dialog createDialog(Shell shell)
-	{
+	protected final Dialog createDialog(Shell shell) {
 		newWizard = createWizard();
-		    
+
 		if ((newWizard instanceof Wizard) && wasNeedsProgressMonitorSet())
-		  ((Wizard)newWizard).setNeedsProgressMonitor(getNeedsProgressMonitor());
-		  
-		if (newWizard instanceof Wizard)
-		{
-          if (wizardTitle != null)
-		    ((Wizard)newWizard).setWindowTitle(wizardTitle);
-	  	  if (wizardImage != null)
-		    ((Wizard)newWizard).setDefaultPageImageDescriptor(wizardImage);
+			((Wizard)newWizard).setNeedsProgressMonitor(getNeedsProgressMonitor());
+
+		if (newWizard instanceof Wizard) {
+			if (wizardTitle != null)
+				((Wizard)newWizard).setWindowTitle(wizardTitle);
+			if (wizardImage != null)
+				((Wizard)newWizard).setDefaultPageImageDescriptor(wizardImage);
 		}
 
-		
-	    WizardDialog dialog = null;	    
-	    
-	    if (newWizard instanceof ISystemWizard)
-	    {	    		      	
-	      ISystemWizard swizard = (ISystemWizard)newWizard;
-	      if (pageTitle != null)
-	        swizard.setWizardPageTitle(pageTitle);
-	      swizard.setViewer(getViewer());
-	      dialog = new SystemWizardDialog(shell,swizard);		
-	      int w = swizard.getMinimumPageWidth();
-	      int h = swizard.getMinimumPageHeight();	      
-	      if (minPageWidth > 0)
-	        w = minPageWidth;
-	      if (minPageHeight > 0)
-	        h = minPageHeight;
-	      //System.out.println("In SystemBaseWizardAction. minPageWidth = " + w + ", minPageHeight = " + h);
-	      if ((w>0) && (h>0))
-	        dialog.setMinimumPageSize(w,h);
-		  
-		  /*
-		   * Don't do the following here as it is redundant! The run method in the parent SystemBaseDialogAction
-		   *  does this already
-		  Object wizardInputValue = null;		  	
-		  if (getValue() != null)
-		    wizardInputValue = getValue();		      		  
-		  else
-		    wizardInputValue = getFirstSelection();		    	      
-		  if (wizardInputValue != null)
-		    ((SystemWizardDialog)dialog).setInputObject(wizardInputValue);
-		  */
-	    }
-	    else
-	      dialog = new WizardDialog(shell,newWizard);	      
-	    
-	    return dialog;
+		return doCreateWizardDialog(shell, newWizard);
 	}
-	
+
+	/**
+	 * Creates the dialog instance. Called from <code>createDialog(...)</code>.
+	 * Gives overrides the chance to plug-in their own specialized wizard dialog
+	 * implementations.
+	 * 
+	 * @param shell The shell to create the dialog in. Must be not <code>null</code>.
+	 * @param wizard The wizard to create the wizard dialog for. Must be not <code>null</code>.
+	 * 
+	 * @return The wizard dialog instance. Must be never <code>null</code>.
+	 */
+	protected WizardDialog doCreateWizardDialog(Shell shell, IWizard wizard) {
+		assert shell != null && wizard != null;
+
+		WizardDialog dialog = null;
+
+		if (newWizard instanceof ISystemWizard) {
+			ISystemWizard swizard = (ISystemWizard)newWizard;
+			if (pageTitle != null)
+				swizard.setWizardPageTitle(pageTitle);
+			swizard.setViewer(getViewer());
+			dialog = new SystemWizardDialog(shell, swizard);
+			int w = swizard.getMinimumPageWidth();
+			int h = swizard.getMinimumPageHeight();
+			if (minPageWidth > 0)
+				w = minPageWidth;
+			if (minPageHeight > 0)
+				h = minPageHeight;
+			//System.out.println("In SystemBaseWizardAction. minPageWidth = " + w + ", minPageHeight = " + h);
+			if ((w > 0) && (h > 0))
+				dialog.setMinimumPageSize(w, h);
+
+		} else
+			dialog = new WizardDialog(shell, newWizard);
+
+		return dialog;
+	}
+
 	/**
 	 * The default processing for the run method calls createDialog, which
 	 *  we override in this class. The implementation of createDialog calls
@@ -232,49 +224,42 @@ public abstract class SystemBaseWizardAction extends SystemBaseDialogAction
 	 *  goes into a WizardDialog which is opened and hence displayed to the 
 	 *  user.
 	 */
-	protected abstract IWizard createWizard();	
-	
+	protected abstract IWizard createWizard();
+
 	/**
 	 * By default, we try to get the wizard's value by calling getOutputObject()
 	 */
-	protected Object getDialogValue(Dialog dlg)
-	{
-	    postProcessWizard(newWizard);
-		if (newWizard instanceof ISystemWizard)
-		{
+	protected Object getDialogValue(Dialog dlg) {
+		postProcessWizard(newWizard);
+		if (newWizard instanceof ISystemWizard) {
 			ISystemWizard ourWizard = (ISystemWizard)newWizard;
-		    return ourWizard.getOutputObject();
-		}
-		else
-		    return null;
+			return ourWizard.getOutputObject();
+		} else
+			return null;
 	}
 
-    /**
-     * Typically, the wizard's performFinish method does the work required by
-     *  a successful finish of the wizard. However, often we also want to be
-     *  able to extract user-entered data from the wizard, by calling getters
-     *  in this action. To enable this, override this method to populate your
-     *  output instance variables from the completed wizard, which is passed
-     *  as a parameter. This is only called after successful completion of the
-     *  wizard.
-     */
-    protected void postProcessWizard(IWizard wizard)
-    {
-    }
-    
+	/**
+	 * Typically, the wizard's performFinish method does the work required by
+	 *  a successful finish of the wizard. However, often we also want to be
+	 *  able to extract user-entered data from the wizard, by calling getters
+	 *  in this action. To enable this, override this method to populate your
+	 *  output instance variables from the completed wizard, which is passed
+	 *  as a parameter. This is only called after successful completion of the
+	 *  wizard.
+	 */
+	protected void postProcessWizard(IWizard wizard) {
+	}
+
 	/**
 	 * Returns true if the user cancelled the wizard.
 	 * This is an override of the parent method, since we can be more
 	 *  accurate with wizards than we can with dialogs.
 	 */
-	public boolean wasCancelled()
-	{
-		if (newWizard instanceof ISystemWizard)
-		{
+	public boolean wasCancelled() {
+		if (newWizard instanceof ISystemWizard) {
 			ISystemWizard ourWizard = (ISystemWizard)newWizard;
-		    return ourWizard.wasCancelled();
-		}
-		else
-		  return super.wasCancelled();
-	}    
+			return ourWizard.wasCancelled();
+		} else
+			return super.wasCancelled();
+	}
 }

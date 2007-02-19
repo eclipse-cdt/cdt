@@ -13,13 +13,18 @@ Contributors:
 
 <plugin>
 
-	<extension
-       point="org.eclipse.rse.ui.newConnectionWizardDelegates">
-   	  <newConnectionWizardDelegate
-            class="org.eclipse.rse.discovery.ServiceDiscoveryWizardDelegate"
-            id="org.eclipse.rse.discovery.ServiceDiscoveryWizardDelegate"
-            systemType="org.eclipse.rse.systemtype.discovery"/>
-   </extension>
+    <extension
+          point="org.eclipse.rse.ui.newConnectionWizard">
+       <newConnectionWizard
+             canFinishEarly="false"
+             categoryId="org.eclipse.rse.ui.wizards.newconnection.default.category"
+             class="org.eclipse.rse.discovery.ServiceDiscoveryWizard"
+             hasPages="true"
+             id="org.eclipse.rse.discovery.ServiceDiscoveryWizard"
+             name="%NewConnectionWizard.discovery.name"
+             systemTypeIds="org.eclipse.rse.systemtype.discovery">
+       </newConnectionWizard>
+    </extension>
   
    <extension
          point="org.eclipse.rse.core.systemTypes">

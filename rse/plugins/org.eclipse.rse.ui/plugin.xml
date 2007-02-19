@@ -485,7 +485,7 @@ Contributors:
 <!-- ================================================================= -->
    <extension-point id="keystoreProviders" name="%extPoint.keystoreProviders" schema="schema/keystoreProviders.exsd"/>
 
-   <extension-point id="newConnectionWizardDelegates" name="RSE New Connection Wizard Delegate" schema="schema/newConnectionWizardDelegates.exsd"/>
+   <extension-point id="newConnectionWizard" name="%extPoint.newConnectionWizard" schema="schema/newConnectionWizard.exsd"/>
 
 
 <!-- ================================================================= -->
@@ -605,6 +605,19 @@ Contributors:
             </enablement>
         </decorator>
      </extension>
+  <extension
+        point="org.eclipse.rse.ui.newConnectionWizard">
+		<category id="org.eclipse.rse.ui.wizards.newconnection.default.category"
+				name="%Creation.category.name"/>
+		<newConnectionWizard
+	        id="org.eclipse.rse.ui.wizards.newconnection.RSEDefaultNewConnectionWizard"
+        	class="org.eclipse.rse.ui.wizards.newconnection.RSEDefaultNewConnectionWizard"
+	        name="%DefaultRSENewConnectionWizard.name"
+			canFinishEarly="false"
+    	    categoryId="org.eclipse.rse.ui.wizards.newconnection.default.category"
+        	hasPages="true">
+		</newConnectionWizard>
+  </extension>
 
 
 <!-- ================================================================= -->
@@ -616,7 +629,7 @@ Contributors:
 		<wizard
         canFinishEarly="false"
         category="org.eclipse.rse.ui.newWizards.rseCategory"
-        class="org.eclipse.rse.ui.wizards.RSENewConnectionWizard"
+        class="org.eclipse.rse.ui.wizards.newconnection.RSEMainNewConnectionWizard"
         finalPerspective="org.eclipse.rse.ui.view.SystemPerspective"
         hasPages="true"
         icon="icons/full/etool16/newconnection_wiz.gif"

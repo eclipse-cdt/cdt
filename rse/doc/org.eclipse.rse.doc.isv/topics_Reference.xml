@@ -7,7 +7,7 @@
 
 	<topic label="Extension Points Reference" href="provisional_api.html">
 		<topic label="org.eclipse.rse.core.systemTypes" href="reference/extension-points/org_eclipse_rse_core_systemTypes.html" />
-		<topic label="org.eclipse.rse.ui.archivehandlers" href="reference/extension-points/org_eclipse_rse_ui_archivehandlers.html" />
+		<topic label="org.eclipse.rse.services.archivehandlers" href="reference/extension-points/org_eclipse_rse_services_archivehandlers.html" />
 		<!-- TODODeferred after RSE 1.0
 		<topic label="org.eclipse.rse.ui.compile" href="reference/extension-points/org_eclipse_rse_ui_compile.html" />
 		-->

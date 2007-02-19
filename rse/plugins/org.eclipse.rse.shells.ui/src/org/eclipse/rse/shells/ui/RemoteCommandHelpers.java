@@ -19,6 +19,8 @@ package org.eclipse.rse.shells.ui;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.rse.core.SystemBasePlugin;
 import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.model.ISystemRegistry;
@@ -125,6 +127,7 @@ public class RemoteCommandHelpers
                                                  IRemoteCmdSubSystem cmdSubSystem, boolean isCompile)
      {
      	  boolean ok = false;
+     	  IProgressMonitor monitor = new NullProgressMonitor();
           if (cmdSubSystem != null)
           {
           	  ok = true;
@@ -150,9 +153,9 @@ public class RemoteCommandHelpers
 	                   		cdCmd = "cd /d \"" + path + '\"'; //$NON-NLS-1$                  		                    		 
 	                	 }	 
 	                            
-						cmdSubSystem.sendCommandToShell(cdCmd, defaultShell);				   
+						cmdSubSystem.sendCommandToShell(monitor, cdCmd, defaultShell);				   
 	                }
-                	cmdSubSystem.sendCommandToShell(cmdString, defaultShell);
+                	cmdSubSystem.sendCommandToShell(monitor, cmdString, defaultShell);
               	 
               
               }

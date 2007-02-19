@@ -169,7 +169,7 @@ public abstract class SystemBaseForm
 	/**
 	 * The completeness of the page has changed.
 	 * We direct it to the Apply button versus just the OK button
-	 * @see {@link #addPageCompleteListener(ISystemPageCompleteListener)}
+	 * @see #addPageCompleteListener(ISystemPageCompleteListener)
 	 */
 	protected void setPageComplete(boolean complete)
 	{

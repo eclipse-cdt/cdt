@@ -19,8 +19,10 @@ package org.eclipse.rse.ui.dialogs;
 
 import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.ui.ISystemPageCompleteListener;
+import org.eclipse.rse.ui.SystemBaseForm;
 import org.eclipse.rse.ui.SystemResources;
 import org.eclipse.rse.ui.messages.ISystemMessageLine;
+import org.eclipse.rse.ui.validators.IValidatorRemoteSelection;
 import org.eclipse.rse.ui.widgets.SystemSelectConnectionForm;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -352,7 +354,7 @@ public class SystemSelectConnectionDialog
 	/**
 	 * The callback method. 
 	 * This is called whenever setPageComplete is called by the form code.
-	 * @see {@link SystemBaseForm#addPageCompleteListener(ISystemPageCompleteListener)} 
+	 * @see SystemBaseForm#addPageCompleteListener(ISystemPageCompleteListener) 
 	 */
 	public void setPageComplete(boolean complete)
 	{

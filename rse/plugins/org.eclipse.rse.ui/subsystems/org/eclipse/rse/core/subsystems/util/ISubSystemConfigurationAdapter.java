@@ -25,6 +25,7 @@ import org.eclipse.rse.core.filters.ISystemFilterPool;
 import org.eclipse.rse.core.filters.ISystemFilterPoolReference;
 import org.eclipse.rse.core.filters.ISystemFilterReference;
 import org.eclipse.rse.core.filters.ISystemFilterString;
+import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.model.ISystemNewConnectionWizardPage;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
@@ -73,7 +74,7 @@ public interface ISubSystemConfigurationAdapter
 	 * <ul>
 	 *   <li>The wizard pages must implement ISystemNewConnectionWizardPage, so as to fit into the wizard's framework
 	 *   <li>When the user successfully presses Finish, the createConnection method in the SystemRegistry will call 
-	 *        your {@link #createSubSystem(IHost,boolean, ISystemNewConnectionWizardPage[])} method to create the 
+	 *        your {@link ISubSystemConfiguration#createSubSystem(IHost,boolean, ISystemNewConnectionWizardPage[])} method to create the 
 	 *        your subsystem for the connection. The same pages you return here are passed back to you so you can 
 	 *        interrogate them for the user-entered data and use it when creating the default subsystem instance.
 	 * </ul>
@@ -168,7 +169,7 @@ public interface ISubSystemConfigurationAdapter
      * <p>
      * Most actions are handled in this base, except if you have your own action for
      * creating a new filter. In this case, <b>override getNewFilterAction()</b>
-     * To add additional actions, override {@link #getFilterReferenceActions(ISystemFilterReference, Shell)}.
+     * To add additional actions, override {@link #getFilterReferenceActions(ISubSystemConfiguration, ISystemFilterReference, Shell)}.
      *
      * @param selectedFilterRef the currently selected filter reference
      * @param shell parent shell of viewer where the popup menu is being constructed
@@ -187,7 +188,7 @@ public interface ISubSystemConfigurationAdapter
     // --------------------------
 	/**
 	 * Return the form used in the property page, etc for this server launcher.
-	 * Only called if {@link #supportsServerLaunchProperties()} returns true.
+	 * Only called if {@link ISubSystemConfiguration#supportsServerLaunchProperties(IHost)} returns true.
 	 */
 	public IServerLauncherForm getServerLauncherForm(ISubSystemConfiguration factory, Shell shell, ISystemMessageLine msgLine);	
 

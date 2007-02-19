@@ -21,6 +21,7 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.jface.viewers.IContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.rse.core.SystemBasePlugin;
 import org.eclipse.rse.core.SystemResourceManager;

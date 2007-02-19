@@ -28,10 +28,14 @@ curdir=`pwd`
 
 # prepare the base Eclipse installation in folder "eclipse"
 if [ ! -f eclipse/plugins/org.eclipse.core.resources_3.3.0.v20070202.jar ]; then
-  # Eclipse Platform 3.3M4
-  wget "http://download.eclipse.org/eclipse/downloads/drops/S-3.3M5-200702091006/eclipse-platform-3.3M5-linux-gtk-ppc.tar.gz"
-  tar xfvz eclipse-platform-3.3M5-linux-gtk-ppc.tar.gz
-  rm eclipse-platform-3.3M5-linux-gtk-ppc.tar.gz
+  ## Eclipse Platform 3.3M5
+  #wget "http://download.eclipse.org/eclipse/downloads/drops/S-3.3M5-200702091006/eclipse-platform-3.3M5-linux-gtk-ppc.tar.gz"
+  #tar xfvz eclipse-platform-3.3M5-linux-gtk-ppc.tar.gz
+  #rm eclipse-platform-3.3M5-linux-gtk-ppc.tar.gz
+  # Eclipse SDK 3.3M5: Need the SDK because EMF needs JDT (somehow)
+  wget "http://download.eclipse.org/eclipse/downloads/drops/S-3.3M5-200702091006/eclipse-SDK-3.3M5-linux-gtk-ppc.tar.gz"
+  tar xfvz eclipse-SDK-3.3M5-linux-gtk-ppc.tar.gz
+  rm eclipse-SDK-3.3M5-linux-gtk-ppc.tar.gz
 fi
 if [ ! -f eclipse/plugins/org.eclipse.cdt.core_4.0.0.200702161600.jar ]; then
   # CDT 4.0.0 Runtime

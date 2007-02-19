@@ -20,6 +20,7 @@ import org.eclipse.cdt.core.dom.ast.IASTCompletionContext;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNameOwner;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
+import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IEnumerator;
 import org.eclipse.cdt.core.dom.ast.IField;
@@ -28,6 +29,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTOperatorName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateId;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMember;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
@@ -330,6 +332,7 @@ public class CPPASTQualifiedName extends CPPASTNode implements
 		}
 		
 		try {
+			final boolean isDeclaration = getParent().getParent() instanceof IASTSimpleDeclaration;
 			IBinding[] bindings = classType.getCompositeScope().find(new String(name), isPrefix);
 			for (int i = 0; i < bindings.length; i++) {
 				if (bindings[i] instanceof ICPPMember) {
@@ -342,8 +345,11 @@ public class CPPASTQualifiedName extends CPPASTNode implements
 					} else if (member instanceof ICPPMethod) {
 						ICPPMethod method = (ICPPMethod) member;
 						if (method.isImplicit()) continue;
+						if (method.isDestructor() || method instanceof ICPPConstructor) {
+							if (!isDeclaration) continue;
+						} else if (!method.isStatic() && !isDeclaration) continue;
 					}
-				} else if (!(bindings[i] instanceof IEnumerator)) continue;
+				} else if (!(bindings[i] instanceof IEnumerator) || isDeclaration) continue;
 				
 				filtered.add(bindings[i]);
 			}

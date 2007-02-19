@@ -199,6 +199,7 @@ public class ContentAssistTests extends BaseUITestCase {
         writer.write( "public :                                     \n"); //$NON-NLS-1$
         writer.write( "   enum _Ability { IDIOT, NORMAL, CHEAT } ;  \n"); //$NON-NLS-1$
         writer.write( "   Strategy( _Ability a ) { }                \n"); //$NON-NLS-1$
+        writer.write( "   _Ability getAbility();                    \n"); //$NON-NLS-1$
         writer.write( "};                                           \n"); //$NON-NLS-1$
         writer.write( "int main(){                                  \n"); //$NON-NLS-1$
         
@@ -220,7 +221,18 @@ public class ContentAssistTests extends BaseUITestCase {
         assertEquals( "CHEAT", results[0].getDisplayString()  ); //$NON-NLS-1$
         assertEquals( "IDIOT", results[1].getDisplayString()  ); //$NON-NLS-1$
         assertEquals( "NORMAL", results[2].getDisplayString()  ); //$NON-NLS-1$
-    }
+
+        // in a method definition context, constructors and methods should be proposed 
+        
+        c2 = code + "return 0;}\nStrategy::\n"; //$NON-NLS-1$
+
+        cu = importFile( "strategy.cpp", c2 ); //$NON-NLS-1$
+        
+        results = getResults( cu, c2.indexOf( "::" ) + 2 ); //$NON-NLS-1$
+        assertEquals( 2, results.length );
+        assertEquals( "getAbility(void) enum _Ability", results[0].getDisplayString()  ); //$NON-NLS-1$
+        assertEquals( "Strategy(enum _Ability a)", results[1].getDisplayString()  ); //$NON-NLS-1$
+}
     
     public void testBug72559() throws Exception {
         StringWriter writer = new StringWriter();

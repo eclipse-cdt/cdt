@@ -15,6 +15,7 @@
  * Tobias Schwarz (Wind River) - Fix 166343 getChildCount() counts invalid items
  * Martin Oberhuber (Wind River) - Improve fix for 166343 getChildCount()
  * Uwe Stieber (Wind River) - [172492] Use SafeTreeViewer
+ * David Dykstal (IBM) - moved SystemPreferencesManager to a new package
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;
@@ -43,6 +44,7 @@ import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.viewers.DecoratingLabelProvider;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IBasicPropertyConstants;
+import org.eclipse.jface.viewers.IContentProvider;
 import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ILabelDecorator;
 import org.eclipse.jface.viewers.ISelection;
@@ -50,15 +52,16 @@ import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITreeContentProvider;
+import org.eclipse.jface.viewers.ITreePathContentProvider;
 import org.eclipse.jface.viewers.ITreeViewerListener;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeExpansionEvent;
+import org.eclipse.jface.viewers.TreePath;
 import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.jface.window.SameShellProvider;
 import org.eclipse.rse.core.SystemAdapterHelpers;
 import org.eclipse.rse.core.SystemBasePlugin;
-import org.eclipse.rse.core.SystemPreferencesManager;
 import org.eclipse.rse.core.filters.ISystemFilter;
 import org.eclipse.rse.core.filters.ISystemFilterContainer;
 import org.eclipse.rse.core.filters.ISystemFilterContainerReference;
@@ -94,6 +97,7 @@ import org.eclipse.rse.ui.ISystemMessages;
 import org.eclipse.rse.ui.ISystemRenameTarget;
 import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemMenuManager;
+import org.eclipse.rse.ui.SystemPreferencesManager;
 import org.eclipse.rse.ui.SystemResources;
 import org.eclipse.rse.ui.actions.ISystemAction;
 import org.eclipse.rse.ui.actions.SystemCascadingGoToAction;
@@ -1888,7 +1892,7 @@ public class SystemView extends SafeTreeViewer implements ISystemTree, ISystemRe
 
 					Object element = i.next();
 					ISystemViewElementAdapter adapter = _originatingViewer.getAdapter(element);
-					if ((parentElementItem == null) && (adapter != null) && (!adapter.hasChildren(element))) {
+					if ((parentElementItem == null) && (adapter != null) && (!adapter.hasChildren((IAdaptable)element))) {
 						//parentItem = getParentItem((Item)findItem(element));
 						parentItem = getParentItem(items[itemIdx]);
 						if ((parentItem != null) && (parentItem instanceof Item)) parentElementItem = (Item) parentItem; //.getData();
@@ -5428,4 +5432,49 @@ public class SystemView extends SafeTreeViewer implements ISystemTree, ISystemRe
 		}
 	}
 
+	/**
+	 * Override to pass context into hasChildren()
+	 * 
+	 */
+	public boolean isExpandable(Object elementOrTreePath) {
+		Object element;
+		TreePath path;
+		if (elementOrTreePath instanceof TreePath) {
+			path = (TreePath) elementOrTreePath;
+			element = path.getLastSegment();
+		} else {
+			element = elementOrTreePath;
+			path = null;
+		}
+		IContentProvider cp = getContentProvider();
+		if (cp instanceof ITreePathContentProvider) {
+			ITreePathContentProvider tpcp = (ITreePathContentProvider) cp;
+			if (path == null) {
+				// A path was not provided so try and find one
+				Widget w = findItem(element);
+				if (w instanceof Item) {
+					Item item = (Item) w;
+					path = getTreePathFromItem(item);
+				}
+				if (path == null) {
+					path = new TreePath(new Object[] { element });
+				}
+			}
+			return tpcp.hasChildren(path);
+		}
+		if (cp instanceof ITreeContentProvider) 
+		{
+			ITreeContentProvider tcp = (ITreeContentProvider) cp;
+			if (elementOrTreePath instanceof TreeItem)
+			{
+				IContextObject context = getContextObject((TreeItem)elementOrTreePath);
+				return tcp.hasChildren(context);
+			}
+			else
+			{
+				return tcp.hasChildren(element);
+			}
+		}
+		return false;
+	}
 }

@@ -27,29 +27,29 @@
 curdir=`pwd`
 
 # prepare the base Eclipse installation in folder "eclipse"
-if [ ! -f eclipse/plugins/org.eclipse.core.resources_3.3.0.v20061204.jar ]; then
+if [ ! -f eclipse/plugins/org.eclipse.core.resources_3.3.0.v20070202.jar ]; then
   # Eclipse Platform 3.3M4
-  wget "http://download.eclipse.org/eclipse/downloads/drops/S-3.3M4-200612141445/eclipse-platform-3.3M4-linux-gtk-ppc.tar.gz"
-  tar xfvz eclipse-platform-3.3M4-linux-gtk-ppc.tar.gz
-  rm eclipse-platform-3.3M4-linux-gtk-ppc.tar.gz
+  wget "http://download.eclipse.org/eclipse/downloads/drops/S-3.3M5-200702091006/eclipse-platform-3.3M5-linux-gtk-ppc.tar.gz"
+  tar xfvz eclipse-platform-3.3M5-linux-gtk-ppc.tar.gz
+  rm eclipse-platform-3.3M5-linux-gtk-ppc.tar.gz
 fi
-if [ ! -f eclipse/plugins/org.eclipse.cdt.core_4.0.0.200612221600.jar ]; then
+if [ ! -f eclipse/plugins/org.eclipse.cdt.core_4.0.0.200702161600.jar ]; then
   # CDT 4.0.0 Runtime
-  wget "http://download.eclipse.org/tools/cdt/releases/europa/dist/4.0.0M4/cdt-4.0.0-M4-linux.ppc.tar.gz"
-  tar xfvz cdt-4.0.0-M4-linux.ppc.tar.gz
-  rm cdt-4.0.0-M4-linux.ppc.tar.gz
+  wget "http://download.eclipse.org/tools/cdt/releases/europa/dist/4.0.0M5/cdt-4.0.0-M5-linux.ppc.tar.gz"
+  tar xfvz cdt-4.0.0-M5-linux.ppc.tar.gz
+  rm cdt-4.0.0-M5-linux.ppc.tar.gz
 fi
-if [ ! -f eclipse/plugins/org.eclipse.emf_2.2.0.v200612211251.jar ]; then
+if [ ! -f eclipse/plugins/org.eclipse.emf_2.2.0.v200702121527.jar ]; then
   # EMF 2.3.0 Runtime
-  wget "http://download.eclipse.org/modeling/emf/emf/downloads/drops/2.3.0/S200612211251/emf-sdo-runtime-2.3.0M4.zip"
-  unzip -o emf-sdo-runtime-2.3.0M4.zip
-  rm emf-sdo-runtime-2.3.0M4.zip 
+  wget "http://download.eclipse.org//modeling/emf/emf/downloads/drops/2.3.0/S200702121527/emf-sdo-runtime-2.3.0M5.zip"
+  unzip -o emf-sdo-runtime-2.3.0M5.zip
+  rm emf-sdo-runtime-2.3.0M5.zip 
 fi
 if [ ! -f eclipse/plugins/org.junit_3.8.2/junit.jar ]; then
   # Eclipse Test Framework
-  wget "http://download.eclipse.org/eclipse/downloads/drops/S-3.3M4-200612141445/eclipse-test-framework-3.3M4.zip"
-  unzip -o eclipse-test-framework-3.3M4.zip
-  rm eclipse-test-framework-3.3M4.zip
+  wget "http://download.eclipse.org/eclipse/downloads/drops/S-3.3M5-200702091006/eclipse-test-framework-3.3M5.zip"
+  unzip -o eclipse-test-framework-3.3M5.zip
+  rm eclipse-test-framework-3.3M5.zip
 fi
 
 # checkout the basebuilder

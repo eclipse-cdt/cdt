@@ -22,7 +22,6 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.rse.ui.SystemMenuManager;
 import org.eclipse.rse.ui.view.AbstractSystemViewAdapter;
-import org.eclipse.rse.ui.view.IContextObject;
 import org.eclipse.rse.ui.view.ISystemRemoteElementAdapter;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.views.properties.IPropertyDescriptor;

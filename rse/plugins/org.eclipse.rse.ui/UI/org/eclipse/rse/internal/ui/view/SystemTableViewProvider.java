@@ -79,8 +79,7 @@ public class SystemTableViewProvider implements ILabelProvider, ITableLabelProvi
 
 	/**
 	 * Constructor for table view provider where a column manager is not present.
-	 * In this case, the column can not be customized
-	 * @param columnManager
+	 * In this case, the column can not be customized.
 	 */
 	public SystemTableViewProvider()
 	{

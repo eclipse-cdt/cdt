@@ -17,7 +17,7 @@
  * Uwe Stieber (Wind River) - [172492] Use SafeTreeViewer
  ********************************************************************************/
 
-package org.eclipse.rse.ui.view;
+package org.eclipse.rse.internal.ui.view;
 
 import java.util.ArrayList;
 import java.util.Hashtable;
@@ -111,6 +111,14 @@ import org.eclipse.rse.ui.actions.SystemSubMenuManager;
 import org.eclipse.rse.ui.dialogs.SystemPromptDialog;
 import org.eclipse.rse.ui.messages.ISystemMessageLine;
 import org.eclipse.rse.ui.messages.SystemMessageDialog;
+import org.eclipse.rse.ui.view.AbstractSystemViewAdapter;
+import org.eclipse.rse.ui.view.ContextObject;
+import org.eclipse.rse.ui.view.IContextObject;
+import org.eclipse.rse.ui.view.ISystemRemoteElementAdapter;
+import org.eclipse.rse.ui.view.ISystemSelectAllTarget;
+import org.eclipse.rse.ui.view.ISystemTree;
+import org.eclipse.rse.ui.view.ISystemViewElementAdapter;
+import org.eclipse.rse.ui.view.ISystemViewInputProvider;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.dnd.DND;

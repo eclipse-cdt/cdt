@@ -369,7 +369,7 @@ public class SystemNewFilterAction
 	/**
 	 * <i><b>Overridable</b> lifecyle method. </i><br>
 	 * Create and return the actual wizard.
-	 * By default this returns an instance of {@link org.eclipse.rse.filters.ui.wizards.SystemNewFilterWizard}.
+	 * By default this returns an instance of {@link SystemNewFilterWizard}.
 	 * <p>
 	 * You can avoid creating your own wizard subclass by instead overriding 
 	 * {@link #configureNewFilterWizard(SystemNewFilterWizard)}

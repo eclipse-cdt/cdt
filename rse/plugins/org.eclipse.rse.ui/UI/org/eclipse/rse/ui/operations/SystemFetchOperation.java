@@ -315,7 +315,7 @@ public class SystemFetchOperation extends JobChangeAdapter implements IRunnableW
 	/**
 	 * If this operation can safely be run in the background, then subclasses can
 	 * override this method and return <code>true</code>. This will make their
-	 * action run in a {@link  org.eclipse.core.runtime.Job}. 
+	 * action run in a {@link  org.eclipse.core.runtime.jobs.Job}. 
 	 * Subsclass that override this method should 
 	 * also override the <code>getJobName()</code> method.
 	 * 

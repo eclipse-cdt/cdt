@@ -39,7 +39,7 @@ import org.eclipse.swt.widgets.Shell;
  * To use this class, simply subclass it and override the appropriate methods in it, such as:</p>
  * <ul>
  *    <li>any of the supportsXXX() configuration methods you wish to change.
- *    <li>{@link #createSubSystemInternal(org.eclipse.rse.model.IHost)}, to instantiate your subsystem class.
+ *    <li>{@link #createSubSystemInternal(org.eclipse.rse.core.model.IHost)}, to instantiate your subsystem class.
  * </ul>
  * <p>
  * For additional customization of the subsystem, you may supply a {@link SubSystemConfigurationAdapter},
@@ -224,7 +224,7 @@ public abstract class ServiceSubSystemConfiguration extends SubSystemConfigurati
      * This method is only called for filters within subsystems created by this subsystem factory.<br>
      * By default, this returns null. Override if appropriate.
      * 
-     * @see org.eclipse.rse.core.subsystems.SubSystemConfiguration#getFilterActions(ISystemFilter,Shell)
+     * @see SubSystemConfigurationAdapter#getFilterActions(ISubSystemConfiguration, ISystemFilter, Shell)
      * 
      * @return Vector of IAction objects, which usually are subclasses of {@link org.eclipse.rse.ui.actions.SystemBaseAction SystemBaseAction} or
      * {@link org.eclipse.rse.ui.actions.SystemBaseDialogAction SystemBaseDialogAction} or

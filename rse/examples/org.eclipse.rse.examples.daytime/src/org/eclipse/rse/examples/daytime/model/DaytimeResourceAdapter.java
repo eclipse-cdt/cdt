@@ -29,7 +29,6 @@ import org.eclipse.rse.examples.daytime.service.IDaytimeService;
 import org.eclipse.rse.examples.daytime.subsystems.DaytimeSubSystem;
 import org.eclipse.rse.ui.SystemMenuManager;
 import org.eclipse.rse.ui.view.AbstractSystemViewAdapter;
-import org.eclipse.rse.ui.view.IContextObject;
 import org.eclipse.rse.ui.view.ISystemRemoteElementAdapter;
 
 /**

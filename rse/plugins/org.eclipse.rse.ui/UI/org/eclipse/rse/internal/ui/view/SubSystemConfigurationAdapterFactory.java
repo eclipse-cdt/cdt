@@ -20,6 +20,7 @@ import org.eclipse.core.runtime.IAdapterFactory;
 import org.eclipse.core.runtime.IAdapterManager;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
 import org.eclipse.rse.core.subsystems.util.ISubSystemConfigurationAdapter;
+import org.eclipse.rse.ui.view.SubSystemConfigurationAdapter;
 
 
 public class SubSystemConfigurationAdapterFactory implements IAdapterFactory

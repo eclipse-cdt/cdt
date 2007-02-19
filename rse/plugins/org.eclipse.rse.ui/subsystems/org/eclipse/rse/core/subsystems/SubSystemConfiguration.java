@@ -1390,7 +1390,7 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 	 * 
 	 * @param ss - The subsystem that was created via createSubSystemInternal
 	 * @param yourNewConnectionWizardPages - The wizard pages you supplied to the New Connection wizard, via the
-	 *            {@link org.eclipse.rse.internal.ui.view.SubSystemConfigurationAdapter#getNewConnectionWizardPages(org.eclipse.rse.core.subsystems.ISubSystemConfiguration, org.eclipse.jface.wizard.IWizard)}
+	 *            {@link org.eclipse.rse.ui.view.SubSystemConfigurationAdapter#getNewConnectionWizardPages(org.eclipse.rse.core.subsystems.ISubSystemConfiguration, org.eclipse.jface.wizard.IWizard)}
 	 *             method or null if you didn't override this method.
 	 *            Note there may be more pages than you originally supplied, as you are passed all pages contributed
 	 *            by this factory object, including subclasses. This is null when this method is called other than

@@ -315,11 +315,19 @@ public class CPPClassScope extends CPPScope implements ICPPClassScope {
 	    	IASTName [] ns = ((ICPPASTQualifiedName)compName).getNames();
 	    	compName = ns[ ns.length - 1 ];
 	    }
+	    
+	    IBinding[] results = null;
+	    
 	    if((prefixLookup && CharArrayUtils.equals(compName.toCharArray(), 0, n.length, n, false))
 	    		|| (!prefixLookup && CharArrayUtils.equals(compName.toCharArray(), n))) {
-	        return (IBinding[]) ArrayUtil.addAll( IBinding.class, null, getConstructors( bindings, true ) );
+	        results = (IBinding[]) ArrayUtil.addAll( IBinding.class, null, getConstructors( bindings, true ) );
+	        if (!prefixLookup) {
+	        	return results;
+	        }
 	    }
-	    return super.find( name, prefixLookup );
+
+	    results = (IBinding[]) ArrayUtil.addAll( IBinding.class, results, super.find( name, prefixLookup ));
+	    return results != null ? results : IBinding.EMPTY_BINDING_ARRAY;
 	}
 	
 	public static boolean isConstructorReference( IASTName name ){

@@ -3806,7 +3806,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
                     clause
                             .setPropertyInParent(IASTInitializerList.NESTED_INITIALIZER);
                 }
-                if (LT(1) == IToken.tRBRACE)
+                if (LT(1) == IToken.tRBRACE || LT(1) == IToken.tEOC)
                     break;
                 consume(IToken.tCOMMA);
             }

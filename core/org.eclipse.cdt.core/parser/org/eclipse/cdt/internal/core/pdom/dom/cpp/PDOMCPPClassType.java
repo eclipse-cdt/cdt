@@ -9,6 +9,7 @@
  * QNX - Initial API and implementation
  * Markus Schorn (Wind River Systems)
  * Andrew Ferguson (Symbian)
+ * Bryan Wilkinson (QNX)
  *******************************************************************************/
 
 package org.eclipse.cdt.internal.core.pdom.dom.cpp;
@@ -416,8 +417,7 @@ ICPPClassScope, IPDOMMemberOwner, IIndexType, IIndexScope {
 		}
 		
 		public boolean visit(IPDOMNode node) throws CoreException {
-			if (node instanceof PDOMNamedNode && node instanceof IBinding
-					&& !(node instanceof ICPPConstructor)) {
+			if (node instanceof PDOMNamedNode && node instanceof IBinding) {
 				char[] n= ((PDOMNamedNode) node).getDBName().getChars();
 				if ((fPrefixLookup && CharArrayUtils.equals(n, 0, fName.length, fName, false))
 						|| (!fPrefixLookup && CharArrayUtils.equals(n, fName))) {

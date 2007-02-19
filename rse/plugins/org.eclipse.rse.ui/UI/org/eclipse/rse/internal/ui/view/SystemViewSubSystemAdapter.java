@@ -569,7 +569,7 @@ public class SystemViewSubSystemAdapter extends AbstractSystemViewAdapter
 	 *  one more attribute for subsystems:
 	 * <ol>
 	 *  <li>name="serverLaunchPP". Returns "true" if the given subsystem supports the Server Launch Settings
-	 *      property page, which is determined by calling it's factory's {@link ISubSystemConfiguration#supportsServerLaunchProperties()} method.
+	 *      property page, which is determined by calling it's factory's {@link ISubSystemConfiguration#supportsServerLaunchProperties(org.eclipse.rse.core.model.IHost)} method.
 	 * </ol>
 	 *  
 	 * This property is used to filter the existence of the Server Launch Settings property page.

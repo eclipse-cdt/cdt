@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 Wind River Systems, Inc. and others.
+ * Copyright (c) 2007 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -348,9 +348,14 @@ public class LineBackgroundPainter implements IPainter, LineBackgroundListener {
 
 	/**
 	 * Trigger redraw of given text positions.
+	 * 
+	 * @param positions
 	 */
 	private void redrawPositions(List positions) {
-		final int minOffset= fTextViewer.getTopIndexStartOffset();
+		// TextViewer.getTopIndexStartOffset is buggy
+		// see https://bugs.eclipse.org/bugs/show_bug.cgi?id=174419
+//		final int minOffset= fTextViewer.getTopIndexStartOffset();
+		final int minOffset= getTopIndexStartOffset();
 		final int maxOffset= fTextViewer.getBottomIndexEndOffset()+3;
 		Rectangle clientArea= fTextWidget.getClientArea();
 		int width= clientArea.width + fTextWidget.getHorizontalPixel();
@@ -385,6 +390,20 @@ public class LineBackgroundPainter implements IPainter, LineBackgroundListener {
 				fTextWidget.redraw(0, upperY, width, height, false);
 			}
 		}
+	}
+
+	/**
+	 * Workaround for https://bugs.eclipse.org/bugs/show_bug.cgi?id=174419
+	 * @return the offset of the topmost visible line
+	 * @see ITextViewer#getTopIndexStartOffset()
+	 */
+	private int getTopIndexStartOffset() {
+		if (fTextWidget != null) {
+			int top= fTextWidget.getTopIndex();
+			top= fTextWidget.getOffsetAtLine(top);
+			return getDocumentOffset(top);
+		}
+		return -1;
 	}
 
 	/*

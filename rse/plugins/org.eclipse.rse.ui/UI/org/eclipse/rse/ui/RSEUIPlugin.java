@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2006 IBM Corporation. All rights reserved.
+ * Copyright (c) 2006, 2007 IBM Corporation. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -51,7 +51,6 @@ import org.eclipse.rse.model.SystemRegistry;
 import org.eclipse.rse.model.SystemResourceChangeEvent;
 import org.eclipse.rse.model.SystemStartHere;
 import org.eclipse.rse.persistence.IRSEPersistenceManager;
-import org.eclipse.rse.services.clientserver.archiveutils.ArchiveHandlerManager;
 import org.eclipse.rse.services.clientserver.messages.ISystemMessageProvider;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.services.clientserver.messages.SystemMessageFile;
@@ -472,7 +471,6 @@ public class RSEUIPlugin extends SystemBasePlugin implements ISystemMessageProvi
 			daemon.startDaemon(false);
 		}
 		
-		registerArchiveHandlers();
 		registerDynamicPopupMenuExtensions();
 		registerKeystoreProviders();
 
@@ -983,47 +981,6 @@ public class RSEUIPlugin extends SystemBasePlugin implements ISystemMessageProvi
     	if (viewSuppliers.contains(vs))
     	  viewSuppliers.remove(vs);
     }
-
-	/**
-	 * Initializes the Archive Handler Manager, by registering archive \
-	 * file types with their handlers.
-	 * @author mjberger
-	 */
-	protected void registerArchiveHandlers()
-	{
-		// Get reference to the plug-in registry
-		IExtensionRegistry registry = Platform.getExtensionRegistry();
-		
-		// Get configured extenders
-		IConfigurationElement[] systemTypeExtensions = registry.getConfigurationElementsFor("org.eclipse.rse.ui", "archivehandlers"); //$NON-NLS-1$ //$NON-NLS-2$
-		     	
-		for (int i = 0; i < systemTypeExtensions.length; i++) {
-			String ext = systemTypeExtensions[i].getAttribute("fileNameExtension"); //$NON-NLS-1$
-			if (ext.startsWith(".")) ext = ext.substring(1); //$NON-NLS-1$
-			String handlerType = systemTypeExtensions[i].getAttribute("class"); //$NON-NLS-1$
-			try
-			{	
-				// get the name space of the declaring extension
-			    String nameSpace = systemTypeExtensions[i].getDeclaringExtension().getNamespaceIdentifier();
-				
-				// use the name space to get the bundle
-			    Bundle bundle = Platform.getBundle(nameSpace);
-			    
-			    // if the bundle has not been uninstalled, then load the handler referred to in the
-			    // extension, and load it using the bundle
-			    // then register the handler
-			    if (bundle.getState() != Bundle.UNINSTALLED) {
-			        Class handler = bundle.loadClass(handlerType);
-			        ArchiveHandlerManager.getInstance().setRegisteredHandler(ext, handler);
-			    }
-			}
-			catch (ClassNotFoundException e)
-			{
-				logError("Cound not find archive handler class", e); //$NON-NLS-1$
-			}
-		}
-	}
-	
 	
 	/**
 	 * Initializes the System View Adapter Menu Extension Manager, by registering menu extensions

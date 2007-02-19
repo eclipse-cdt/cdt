@@ -20,12 +20,17 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.ILog;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Plugin;
 import org.eclipse.core.runtime.Status;
+import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
+
+import org.eclipse.rse.services.clientserver.archiveutils.ArchiveHandlerManager;
 
 /**
  * The main plugin class to be used in the desktop.
@@ -48,6 +53,7 @@ public class Activator extends Plugin {
 	 */
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
+		registerArchiveHandlers();
 	}
 
 	/*
@@ -65,6 +71,46 @@ public class Activator extends Plugin {
 	 */
 	public static Activator getDefault() {
 		return plugin;
+	}
+	
+	/**
+	 * Initializes the Archive Handler Manager, by registering archive \
+	 * file types with their handlers.
+	 * @author mjberger
+	 */
+	protected void registerArchiveHandlers()
+	{
+		// Get reference to the plug-in registry
+		IExtensionRegistry registry = Platform.getExtensionRegistry();
+		
+		// Get configured extenders
+		IConfigurationElement[] systemTypeExtensions = registry.getConfigurationElementsFor("org.eclipse.rse.services", "archivehandlers"); //$NON-NLS-1$ //$NON-NLS-2$
+		     	
+		for (int i = 0; i < systemTypeExtensions.length; i++) {
+			String ext = systemTypeExtensions[i].getAttribute("fileNameExtension"); //$NON-NLS-1$
+			if (ext.startsWith(".")) ext = ext.substring(1); //$NON-NLS-1$
+			String handlerType = systemTypeExtensions[i].getAttribute("class"); //$NON-NLS-1$
+			try
+			{	
+				// get the name space of the declaring extension
+			    String nameSpace = systemTypeExtensions[i].getDeclaringExtension().getNamespaceIdentifier();
+				
+				// use the name space to get the bundle
+			    Bundle bundle = Platform.getBundle(nameSpace);
+			    
+			    // if the bundle has not been uninstalled, then load the handler referred to in the
+			    // extension, and load it using the bundle
+			    // then register the handler
+			    if (bundle.getState() != Bundle.UNINSTALLED) {
+			        Class handler = bundle.loadClass(handlerType);
+			        ArchiveHandlerManager.getInstance().setRegisteredHandler(ext, handler);
+			    }
+			}
+			catch (ClassNotFoundException e)
+			{
+				logException(e);
+			}
+		}
 	}
 
 	/**
@@ -113,5 +159,4 @@ public class Activator extends Plugin {
 	}
 
 	//</tracing code>---------------------------------------------------
-
 }

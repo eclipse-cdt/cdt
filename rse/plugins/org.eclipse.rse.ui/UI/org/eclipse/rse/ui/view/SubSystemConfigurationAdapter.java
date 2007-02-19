@@ -179,7 +179,7 @@ public class SubSystemConfigurationAdapter implements ISubSystemConfigurationAda
 		 * <ul>
 		 *   <li>The wizard pages must implement ISystemNewConnectionWizardPage, so as to fit into the wizard's framework
 		 *   <li>When the user successfully presses Finish, the createConnection method in the SystemRegistry will call 
-		 *        your {@link #createSubSystem(org.eclipse.rse.model.IHost,boolean, ISystemNewConnectionWizardPage[])} method to create the 
+		 *        your {@link SubSystemConfiguration#createSubSystem(org.eclipse.rse.core.model.IHost,boolean, ISystemNewConnectionWizardPage[])} method to create the 
 		 *        your subsystem for the connection. The same pages you return here are passed back to you so you can 
 		 *        interrogate them for the user-entered data and use it when creating the default subsystem instance.
 		 * </ul>
@@ -428,8 +428,8 @@ public class SubSystemConfigurationAdapter implements ISubSystemConfigurationAda
 		 * <p>
 		 * If you wish to support more actions, override getAdditionalSubSystemActions to return a Vector
 		 * of IAction objects.
-		 * @see #getSubSystemNewFilterPoolActions(ISubSystem, Shell)
-		 * @see #getAdditionalSubSystemActions(ISubSystem, Shell)
+		 * @see #getSubSystemNewFilterPoolActions(ISubSystemConfiguration, ISubSystem, Shell)
+		 * @see #getAdditionalSubSystemActions(ISubSystemConfiguration, ISubSystem, Shell)
 		 * @param selectedSubSystem the currently selected subsystem
 		 * @param shell The Shell of the view where this action was launched from
 		 * @return array of IAction objects to contribute to the popup menu
@@ -693,7 +693,7 @@ public class SubSystemConfigurationAdapter implements ISubSystemConfigurationAda
 		 * <p>
 		 * By default, returns null.
 		 * @return Vector of IAction objects.
-		 * @see #getSubSystemActions(ISubSystem,Shell)
+		 * @see #getSubSystemActions(ISubSystemConfiguration, ISubSystem, Shell)
 		 */
 		protected Vector getAdditionalSubSystemActions(ISubSystemConfiguration factory, ISubSystem selectedSubSystem, Shell shell)
 		{
@@ -771,7 +771,7 @@ public class SubSystemConfigurationAdapter implements ISubSystemConfigurationAda
 		 * <p>
 		 * Most actions are handled in this base, except if you have your own action for
 		 * creating a new filter. In this case, <b>override getNewFilterAction()</b>
-		 * To add additional actions, override {@link #getAdditionalFilterPoolActions(ISystemFilterPool selectedPool, Shell shell)}.
+		 * To add additional actions, override {@link #getAdditionalFilterPoolActions(ISubSystemConfiguration, ISystemFilterPool, Shell)}.
 		 *
 		 * @param selectedPool the currently selected pool
 		 * @param shell parent shell of viewer where the popup menu is being constructed
@@ -824,10 +824,10 @@ public class SubSystemConfigurationAdapter implements ISubSystemConfigurationAda
 		 * default supplied actions.
 		 * <p>
 		 * By default, this returns null.
-		 * @param pool the currently selected pool
+		 * @param selectedPool the currently selected pool
 		 * @param shell parent shell of viewer where the popup menu is being constructed
 		 * @return Vector of IAction objects.
-		 * @see #getFilterPoolActions(ISystemFilterPool,Shell)
+		 * @see #getFilterPoolActions(ISubSystemConfiguration, ISystemFilterPool, Shell)
 		 */
 		protected Vector getAdditionalFilterPoolActions(ISubSystemConfiguration factory, ISystemFilterPool selectedPool, Shell shell)
 		{
@@ -835,13 +835,13 @@ public class SubSystemConfigurationAdapter implements ISubSystemConfigurationAda
 		}
 		/**
 		 * Overridable method to return the actions for creating a new filter in a filter pool.
-		 * By default returns one action created by calling {@link #getNewFilterPoolFilterAction(ISystemFilterPool, Shell)}.
+		 * By default returns one action created by calling {@link #getNewFilterPoolFilterAction(ISubSystemConfiguration, ISystemFilterPool, Shell)}.
 		 * <p>
 		 * If you have multiple actions for creating new filters, override this.
 		 * <p>
 		 * If you have only a single action for creating new filters, override getNewFilterPoolFilterAction (without the 's').
 		 * <p>
-		 * @param pool the currently selected pool
+		 * @param selectedPool the currently selected pool
 		 * @param shell parent shell of viewer where the popup menu is being constructed
 		 */
 		protected IAction[] getNewFilterPoolFilterActions(ISubSystemConfiguration factory, ISystemFilterPool selectedPool, Shell shell)
@@ -858,7 +858,7 @@ public class SubSystemConfigurationAdapter implements ISubSystemConfigurationAda
 		 * <p>
 		 * If you have only a single action for creating new filters, override this.
 		 * <p>
-		 * @param pool the currently selected pool
+		 * @param selectedPool the currently selected pool
 		 * @param shell parent shell of viewer where the popup menu is being constructed
 		 */
 		protected IAction getNewFilterPoolFilterAction(ISubSystemConfiguration factory, ISystemFilterPool selectedPool, Shell shell)
@@ -871,7 +871,7 @@ public class SubSystemConfigurationAdapter implements ISubSystemConfigurationAda
 		/**
 		 * Overridable method to return the action for creating a new nested filter inside another filter.
 		 * By default returns getNewFilterPoolFilterAction(selectedFilter.getParentFilterPool(),shell).
-		 * @param pool the currently selected pool
+		 * @param selectedFilter the currently selected filter
 		 * @param shell parent shell of viewer where the popup menu is being constructed
 		 */
 		protected IAction getNewNestedFilterAction(ISubSystemConfiguration factory, ISystemFilter selectedFilter, Shell shell)
@@ -906,7 +906,7 @@ public class SubSystemConfigurationAdapter implements ISubSystemConfigurationAda
 		 *  via a Properties page for filters. When this page is activated, this method is called
 		 *  to enable customization of the page, given the selected filter.
 		 * <p>
-		 * By default, this method will call {@link #getChangeFilterAction(ISystemFilter, Shell)} to get
+		 * By default, this method will call {@link #getChangeFilterAction(ISubSystemConfiguration, ISystemFilter, Shell)} to get
 		 * your change filter action, and will configure the given page from the dialog created by your
 		 * change filter action.  
 		 * <p>
@@ -966,7 +966,7 @@ public class SubSystemConfigurationAdapter implements ISubSystemConfigurationAda
 		 *  this method is called to enable customization of the page, given the selected filter string.
 		 * 
 		 * <p>
-		 * By default, this method will call {@link #getChangeFilterAction(ISystemFilter, Shell)} to get
+		 * By default, this method will call {@link #getChangeFilterAction(ISubSystemConfiguration, ISystemFilter, Shell)} to get
 		 * your change filter action, and will configure the given page from the dialog created by your
 		 * change filter action. 
 		 * <p>
@@ -1050,10 +1050,10 @@ public class SubSystemConfigurationAdapter implements ISubSystemConfigurationAda
 		 * default supplied actions.
 		 * <p>
 		 * By default, this returns null.
-		 * @param pool the currently selected pool
+		 * @param selectedPool the currently selected pool
 		 * @param shell parent shell of viewer where the popup menu is being constructed
 		 * @return Vector of IAction objects.
-		 * @see #getFilterPoolReferenceActions(ISystemFilterPoolReference,Shell)
+		 * @see #getFilterPoolReferenceActions(ISubSystemConfiguration, ISystemFilterPoolReference, Shell)
 		 */
 		protected Vector getAdditionalFilterPoolReferenceActions(ISubSystemConfiguration factory, ISystemFilterPool selectedPool, Shell shell)
 		{
@@ -1062,7 +1062,7 @@ public class SubSystemConfigurationAdapter implements ISubSystemConfigurationAda
 		/**
 		 * Overridable method to return the action for removing a filter pool reference.
 		 * By default returns new SystemRemoveFilterPoolReferenceAction.
-		 * @param pool the currently selected pool
+		 * @param selectedPool the currently selected pool
 		 * @param shell parent shell of viewer where the popup menu is being constructed
 		 */
 		protected IAction getRemoveFilterPoolReferenceAction(ISubSystemConfiguration factory, ISystemFilterPool selectedPool, Shell shell)
@@ -1204,7 +1204,7 @@ public class SubSystemConfigurationAdapter implements ISubSystemConfigurationAda
 		 * <p>
 		 * By default, this returns null.
 		 * @return Vector of IAction objects.
-		 * @see #getFilterActions(ISystemFilter,Shell)
+		 * @see #getFilterActions(ISubSystemConfiguration, ISystemFilter, Shell)
 		 */
 		protected Vector getAdditionalFilterActions(ISubSystemConfiguration factory, ISystemFilter selectedFilter, Shell shell)
 		{
@@ -1224,7 +1224,7 @@ public class SubSystemConfigurationAdapter implements ISubSystemConfigurationAda
 		 * <p>
 		 * Most actions are handled in this base, except if you have your own action for
 		 * creating a new filter. In this case, <b>override getNewFilterAction()</b>
-		 * To add additional actions, override {@link #getAdditionalFilterReferenceActions(ISystemFilterReference, Shell)}.
+		 * To add additional actions, override {@link #getAdditionalFilterReferenceActions(ISubSystemConfiguration, ISystemFilterReference, Shell)}.
 		 *
 		 * @param selectedFilterRef the currently selected filter reference
 		 * @param shell parent shell of viewer where the popup menu is being constructed
@@ -1404,10 +1404,10 @@ public class SubSystemConfigurationAdapter implements ISubSystemConfigurationAda
 
 		/**
 		 * Return the form used in the property page, etc for this server launcher.
-		 * Only called if {@link #supportsServerLaunchProperties()} returns true. 
+		 * Only called if {@link ISubSystemConfiguration#supportsServerLaunchProperties(org.eclipse.rse.core.model.IHost)} returns true. 
 		 * <p>
-		 * We return {@link org.eclipse.rse.ui.widgets.ServerLauncherForm}.
 		 * Override if appropriate.
+		 * @return the UI form for the server launcher.
 		 */
 		public IServerLauncherForm getServerLauncherForm(ISubSystemConfiguration factory, Shell shell, ISystemMessageLine msgLine)
 		{

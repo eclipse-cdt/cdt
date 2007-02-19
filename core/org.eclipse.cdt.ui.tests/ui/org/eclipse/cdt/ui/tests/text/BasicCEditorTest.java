@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2007 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -26,6 +26,7 @@ import org.eclipse.jface.text.TextSelection;
 import org.eclipse.jface.text.source.SourceViewer;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.widgets.Event;
+import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.PartInitException;
 
 import org.eclipse.cdt.core.CCorePlugin;
@@ -66,7 +67,6 @@ public class BasicCEditorTest extends BaseUITestCase {
 
 	protected void tearDown () throws Exception {
 		EditorTestHelper.closeEditor(fEditor);
-
 		if (fCProject != null)
 			CProjectHelper.delete(fCProject);
 		if (fNonCProject != null) {
@@ -76,8 +76,10 @@ public class BasicCEditorTest extends BaseUITestCase {
 	}
 
 	private void setUpEditor(String file) throws PartInitException {
-		fEditor= (CEditor) EditorTestHelper.openInEditor(ResourceTestHelper.findFile(file), true);
-		assertNotNull(fEditor);
+		IEditorPart editor= EditorTestHelper.openInEditor(ResourceTestHelper.findFile(file), true);
+		assertNotNull(editor);
+		assertTrue(editor instanceof CEditor);
+		fEditor= (CEditor) editor;
 		fTextWidget= fEditor.getViewer().getTextWidget();
 		assertNotNull(fTextWidget);
 		fAccessor= new Accessor(fTextWidget, StyledText.class);
@@ -86,8 +88,10 @@ public class BasicCEditorTest extends BaseUITestCase {
 	}
 
 	private void setUpEditor(File file) throws PartInitException, CModelException {
-		fEditor= (CEditor) EditorUtility.openInEditor(new ExternalTranslationUnit(fCProject, Path.fromOSString(file.toString()), CCorePlugin.CONTENT_TYPE_CXXSOURCE));
-		assertNotNull(fEditor);
+		IEditorPart editor= EditorUtility.openInEditor(new ExternalTranslationUnit(fCProject, Path.fromOSString(file.toString()), CCorePlugin.CONTENT_TYPE_CXXSOURCE));
+		assertNotNull(editor);
+		assertTrue(editor instanceof CEditor);
+		fEditor= (CEditor) editor;
 		fTextWidget= fEditor.getViewer().getTextWidget();
 		assertNotNull(fTextWidget);
 		fAccessor= new Accessor(fTextWidget, StyledText.class);

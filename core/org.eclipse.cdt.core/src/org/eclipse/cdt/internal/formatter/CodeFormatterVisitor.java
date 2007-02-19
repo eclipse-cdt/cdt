@@ -715,10 +715,11 @@ public class CodeFormatterVisitor extends CPPASTVisitor {
 		final int line= scribe.line;
 		IASTDeclSpecifier declSpec= node.getDeclSpecifier();
 		declSpec.accept(this);
-		if (scribe.printComment()) {
+		IASTFunctionDeclarator decl= node.getDeclarator();
+		boolean needSpace= scribe.printComment() || (decl.getPointerOperators().length == 0 && decl.getNestedDeclarator() == null);
+		if (needSpace) {
 			scribe.space();
 		}
-		IASTFunctionDeclarator decl= node.getDeclarator();
 		decl.accept(this);
 		IASTStatement bodyStmt= node.getBody();
 		if (bodyStmt instanceof IASTCompoundStatement) {
@@ -742,12 +743,15 @@ public class CodeFormatterVisitor extends CPPASTVisitor {
 
 	private int visit(ICPPASTFunctionDeclarator node) {
 		visit((IASTStandardFunctionDeclarator)node);
+		skipConstVolatile();
 		final IASTTypeId[] exceptionSpecification= node.getExceptionSpecification();
-		if (exceptionSpecification != null && exceptionSpecification.length > 0) {
-			// TLETODO [formatter] need special alignment for exception specification
-			scribe.printNextToken(Token.t_throw, true);
-			final ListAlignment align= new ListAlignment(Alignment.M_COMPACT_SPLIT);
-			formatList(Arrays.asList(exceptionSpecification), align, true, false);
+		if (exceptionSpecification != null) {
+			if (peekNextToken() == Token.t_throw) {
+				// TLETODO [formatter] need special alignment for exception specification
+				scribe.printNextToken(Token.t_throw, true);
+				final ListAlignment align= new ListAlignment(Alignment.M_COMPACT_SPLIT);
+				formatList(Arrays.asList(exceptionSpecification), align, true, false);
+			}
 		}
 		final ICPPASTConstructorChainInitializer[] constructorChain= node.getConstructorChain();
 		if (constructorChain != null && constructorChain.length > 0) {
@@ -759,10 +763,19 @@ public class CodeFormatterVisitor extends CPPASTVisitor {
 			final ListAlignment align= new ListAlignment(Alignment.M_COMPACT_SPLIT);
 			formatList(Arrays.asList(constructorChain), align, false, false);
 			scribe.unIndent();
+		} else {
+			// skip the rest (=0)
+			skipNode(node);
 		}
-		// skip the rest (const, etc.)
-		skipNode(node);
 		return PROCESS_SKIP;
+	}
+
+	private void skipConstVolatile() {
+		int token= peekNextToken();
+		while (token == Token.t_const || token == Token.t_volatile) {
+			scribe.printNextToken(token, true);
+			token= peekNextToken();
+		}
 	}
 
 	private int visit(IASTStandardFunctionDeclarator node) {
@@ -904,7 +917,6 @@ public class CodeFormatterVisitor extends CPPASTVisitor {
 	private int visit(ICASTCompositeTypeSpecifier node) {
 		scribe.printComment();
 		final int line= scribe.line;
-
 
 		// storage class and other modifiers
 		scribe.printModifiers();

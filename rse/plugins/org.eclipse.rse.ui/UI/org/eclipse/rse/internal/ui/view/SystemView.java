@@ -2003,7 +2003,7 @@ public class SystemView extends SafeTreeViewer implements ISystemTree, ISystemRe
 			case EVENT_PROPERTY_CHANGE:
 				if (debug) logDebugMsg("SV event: EVENT_PROPERTY_CHANGE "); //$NON-NLS-1$
 				String[] allProps = { IBasicPropertyConstants.P_TEXT, IBasicPropertyConstants.P_IMAGE };
-				ISystemViewElementAdapter ra = getViewAdapter(src);
+				ISystemRemoteElementAdapter ra = (ISystemRemoteElementAdapter)((IAdaptable)src).getAdapter(ISystemRemoteElementAdapter.class);
 				if (ra != null) {
 					updateRemoteObjectProperties(src);
 				} else

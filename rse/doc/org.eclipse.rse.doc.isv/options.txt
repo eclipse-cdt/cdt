@@ -3,7 +3,6 @@
 -charset "iso-8859-1"
 -sourcepath "../org.eclipse.rse.connectorservice.dstore/src
 ;../org.eclipse.rse.connectorservice.local/src
-;../org.eclipse.rse.connectorservice.ssh/src
 ;../org.eclipse.rse.core/persistence
 ;../org.eclipse.rse.core/src
 ;../org.eclipse.rse.dstore.security/src
@@ -15,22 +14,17 @@
 ;../org.eclipse.rse.services/clientserver
 ;../org.eclipse.rse.services.dstore/src
 ;../org.eclipse.rse.services.dstore/miners
-;../org.eclipse.rse.services.files.ftp/src
 ;../org.eclipse.rse.services.local/src
-;../org.eclipse.rse.services.ssh/src
 ;../org.eclipse.rse.shells.ui/src
 ;../org.eclipse.rse.subsystems.files.core/src
 ;../org.eclipse.rse.subsystems.files.dstore/src
-;../org.eclipse.rse.subsystems.files.ftp/src
 ;../org.eclipse.rse.subsystems.files.local/src
-;../org.eclipse.rse.subsystems.files.ssh/src
 ;../org.eclipse.rse.subsystems.processes.core/src
 ;../org.eclipse.rse.subsystems.processes.dstore/src
 ;../org.eclipse.rse.subsystems.processes.local/src
 ;../org.eclipse.rse.subsystems.shells.core/src
 ;../org.eclipse.rse.subsystems.shells.dstore/src
 ;../org.eclipse.rse.subsystems.shells.local/src
-;../org.eclipse.rse.subsystems.shells.ssh/src
 ;../org.eclipse.rse.ui/filters
 ;../org.eclipse.rse.ui/model
 ;../org.eclipse.rse.ui/UI
@@ -63,7 +57,6 @@
 org.eclipse.rse.connectorservice.dstore
 org.eclipse.rse.connectorservice.dstore.util
 org.eclipse.rse.connectorservice.local
-org.eclipse.rse.connectorservice.ssh
 org.eclipse.rse.core
 org.eclipse.rse.core.comm
 org.eclipse.rse.core.filters
@@ -123,7 +116,6 @@ org.eclipse.rse.services.dstore.search
 org.eclipse.rse.services.dstore.shells
 org.eclipse.rse.services.dstore.util
 org.eclipse.rse.services.files
-org.eclipse.rse.services.files.ftp
 org.eclipse.rse.services.local
 org.eclipse.rse.services.local.files
 org.eclipse.rse.services.local.processes
@@ -132,9 +124,6 @@ org.eclipse.rse.services.local.shells
 org.eclipse.rse.services.processes
 org.eclipse.rse.services.search
 org.eclipse.rse.services.shells
-org.eclipse.rse.services.ssh
-org.eclipse.rse.services.ssh.files
-org.eclipse.rse.services.ssh.shell
 org.eclipse.rse.shells.ui
 org.eclipse.rse.shells.ui.actions
 org.eclipse.rse.shells.ui.propertypages
@@ -148,12 +137,8 @@ org.eclipse.rse.subsystems.files.dstore
 org.eclipse.rse.subsystems.files.dstore.model
 org.eclipse.rse.subsystems.files.dstore.old
 org.eclipse.rse.subsystems.files.dstore.subsystem
-org.eclipse.rse.subsystems.files.ftp
-org.eclipse.rse.subsystems.files.ftp.connectorservice
-org.eclipse.rse.subsystems.files.ftp.model
 org.eclipse.rse.subsystems.files.local
 org.eclipse.rse.subsystems.files.local.model
-org.eclipse.rse.subsystems.files.ssh
 org.eclipse.rse.subsystems.processes.core
 org.eclipse.rse.subsystems.processes.core.subsystem
 org.eclipse.rse.subsystems.processes.core.subsystem.impl
@@ -168,7 +153,6 @@ org.eclipse.rse.subsystems.shells.dstore
 org.eclipse.rse.subsystems.shells.dstore.model
 org.eclipse.rse.subsystems.shells.local
 org.eclipse.rse.subsystems.shells.local.model
-org.eclipse.rse.subsystems.shells.ssh
 org.eclipse.rse.ui
 org.eclipse.rse.ui.actions
 org.eclipse.rse.ui.dialogs
@@ -181,10 +165,6 @@ org.eclipse.rse.ui.operations
 org.eclipse.rse.ui.propertypages
 org.eclipse.rse.ui.validators
 org.eclipse.rse.ui.view
-org.eclipse.rse.ui.view.monitor
-org.eclipse.rse.ui.view.scratchpad
-org.eclipse.rse.ui.view.search
-org.eclipse.rse.ui.view.team
 org.eclipse.rse.ui.widgets
 org.eclipse.rse.ui.widgets.services
 org.eclipse.rse.ui.wizards

@@ -59,7 +59,6 @@
 		<topic label="Basic Services Layer" href="provisional_api.html">
 			<topic label="org.eclipse.rse.services" href="reference/api/org/eclipse/rse/services/package-summary.html"/>
 			<topic label="org.eclipse.rse.services.files" href="reference/api/org/eclipse/rse/services/files/package-summary.html"/>
-			<topic label="org.eclipse.rse.services.files.ftp" href="reference/api/org/eclipse/rse/services/files/ftp/package-summary.html"/>
 			<topic label="org.eclipse.rse.services.processes" href="reference/api/org/eclipse/rse/services/processes/package-summary.html"/>
 			<topic label="org.eclipse.rse.services.search" href="reference/api/org/eclipse/rse/services/search/package-summary.html"/>
 			<topic label="org.eclipse.rse.services.shells" href="reference/api/org/eclipse/rse/services/shells/package-summary.html"/>
@@ -106,9 +105,6 @@
 			<topic label="org.eclipse.rse.subsystems.files.dstore.old" href="reference/api/org/eclipse/rse/subsystems/files/dstore/old/package-summary.html"/>
 			<topic label="org.eclipse.rse.subsystems.files.dstore" href="reference/api/org/eclipse/rse/subsystems/files/dstore/package-summary.html"/>
 			<topic label="org.eclipse.rse.subsystems.files.dstore.subsystem" href="reference/api/org/eclipse/rse/subsystems/files/dstore/subsystem/package-summary.html"/>
-			<topic label="org.eclipse.rse.subsystems.files.ftp.connectorservice" href="reference/api/org/eclipse/rse/subsystems/files/ftp/connectorservice/package-summary.html"/>
-			<topic label="org.eclipse.rse.subsystems.files.ftp.model" href="reference/api/org/eclipse/rse/subsystems/files/ftp/model/package-summary.html"/>
-			<topic label="org.eclipse.rse.subsystems.files.ftp" href="reference/api/org/eclipse/rse/subsystems/files/ftp/package-summary.html"/>
 			<topic label="org.eclipse.rse.subsystems.files.local.model" href="reference/api/org/eclipse/rse/subsystems/files/local/model/package-summary.html"/>
 			<topic label="org.eclipse.rse.subsystems.files.local" href="reference/api/org/eclipse/rse/subsystems/files/local/package-summary.html"/>
 		</topic>
@@ -142,11 +138,7 @@
 			<topic label="org.eclipse.rse.ui.operations" href="reference/api/org/eclipse/rse/ui/operations/package-summary.html"/>
 			<topic label="org.eclipse.rse.ui.propertypages" href="reference/api/org/eclipse/rse/ui/propertypages/package-summary.html"/>
 			<topic label="org.eclipse.rse.ui.validators" href="reference/api/org/eclipse/rse/ui/validators/package-summary.html"/>
-			<topic label="org.eclipse.rse.ui.view.monitor" href="reference/api/org/eclipse/rse/ui/view/monitor/package-summary.html"/>
 			<topic label="org.eclipse.rse.ui.view" href="reference/api/org/eclipse/rse/ui/view/package-summary.html"/>
-			<topic label="org.eclipse.rse.ui.view.scratchpad" href="reference/api/org/eclipse/rse/ui/view/scratchpad/package-summary.html"/>
-			<topic label="org.eclipse.rse.ui.view.search" href="reference/api/org/eclipse/rse/ui/view/search/package-summary.html"/>
-			<topic label="org.eclipse.rse.ui.view.team" href="reference/api/org/eclipse/rse/ui/view/team/package-summary.html"/>
 			<topic label="org.eclipse.rse.ui.widgets" href="reference/api/org/eclipse/rse/ui/widgets/package-summary.html"/>
 			<topic label="org.eclipse.rse.ui.widgets.services" href="reference/api/org/eclipse/rse/ui/widgets/services/package-summary.html"/>
 			<topic label="org.eclipse.rse.ui.wizards" href="reference/api/org/eclipse/rse/ui/wizards/package-summary.html"/>

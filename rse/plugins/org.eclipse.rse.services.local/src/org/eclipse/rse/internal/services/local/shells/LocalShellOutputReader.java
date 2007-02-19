@@ -19,7 +19,7 @@ package org.eclipse.rse.internal.services.local.shells;
 import java.io.BufferedReader;
 import java.io.IOException;
 
-import org.eclipse.rse.services.local.Activator;
+import org.eclipse.rse.internal.services.local.Activator;
 import org.eclipse.rse.services.shells.AbstractHostShellOutputReader;
 import org.eclipse.rse.services.shells.IHostOutput;
 import org.eclipse.rse.services.shells.IHostShell;

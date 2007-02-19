@@ -3,7 +3,7 @@ Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
 Bundle-SymbolicName: org.eclipse.rse.connectorservice.local
 Bundle-Version: 1.0.1.qualifier
-Bundle-Activator: org.eclipse.rse.connectorservice.local.Activator
+Bundle-Activator: org.eclipse.rse.internal.connectorservice.local.Activator
 Bundle-Localization: plugin
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
@@ -11,6 +11,6 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.rse.core,
  org.eclipse.rse.ui
 Eclipse-LazyStart: true
-Export-Package: org.eclipse.rse.connectorservice.local
+Export-Package: org.eclipse.rse.internal.connectorservice.local;x-friends:="org.eclipse.rse.subsystems.files.local,org.eclipse.rse.subsystems.processes.local,org.eclipse.rse.subsystems.shells.local"
 Bundle-Vendor: %providerName
 Bundle-RequiredExecutionEnvironment: J2SE-1.4

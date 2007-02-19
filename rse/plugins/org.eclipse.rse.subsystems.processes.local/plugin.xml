@@ -31,7 +31,7 @@ Contributors:
             iconlive="icons/full/obj16/processsubsystemlive_obj.gif"
             icon="icons/full/obj16/processsubsystem_obj.gif"
             category="processes"
-            class="org.eclipse.rse.subsystems.processes.local.LocalProcessSubSystemFactory"
+            class="org.eclipse.rse.internal.subsystems.processes.local.LocalProcessSubSystemFactory"
             vendor="%providerName"
             priority="200"
             id="local.processes">

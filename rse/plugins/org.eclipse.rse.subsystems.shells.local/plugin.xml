@@ -31,7 +31,7 @@ Contributors:
             iconlive="icons/full/obj16/systemcommandslive_obj.gif"
             icon="icons/full/obj16/systemcommands_obj.gif"
             category="shells"
-            class="org.eclipse.rse.subsystems.shells.local.LocalShellSubSystemConfiguration"
+            class="org.eclipse.rse.internal.subsystems.shells.local.LocalShellSubSystemConfiguration"
             vendor="%providerName"
             priority="300"
             id="local.shells">

@@ -14,7 +14,7 @@
  * {Name} (company) - description of contribution.
  ********************************************************************************/
 
-package org.eclipse.rse.services.clientserver.archiveutils;
+package org.eclipse.rse.internal.services.clientserver.archiveutils;
 
 import java.util.zip.ZipEntry;
 

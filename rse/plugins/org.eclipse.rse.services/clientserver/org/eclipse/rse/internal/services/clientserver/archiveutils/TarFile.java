@@ -14,7 +14,7 @@
  * {Name} (company) - description of contribution.
  ********************************************************************************/
 
-package org.eclipse.rse.services.clientserver.util.tar;
+package org.eclipse.rse.internal.services.clientserver.archiveutils;
 
 import java.io.File;
 import java.io.FileInputStream;

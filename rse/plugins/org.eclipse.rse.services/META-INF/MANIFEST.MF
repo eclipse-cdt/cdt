@@ -1,14 +1,17 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
-Bundle-SymbolicName: org.eclipse.rse.services
+Bundle-SymbolicName: org.eclipse.rse.services;singleton:=true
 Bundle-Version: 2.0.0.qualifier
 Bundle-Activator: org.eclipse.rse.internal.services.Activator
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin
 Require-Bundle: org.eclipse.core.runtime
 Eclipse-LazyStart: true
-Export-Package: org.eclipse.rse.services,
+Export-Package: org.eclipse.rse.internal.services;x-internal:=true,
+ org.eclipse.rse.internal.services.clientserver.archiveutils;x-internal:=true,
+ org.eclipse.rse.internal.services.shells;x-internal:=true,
+ org.eclipse.rse.services,
  org.eclipse.rse.services.clientserver,
  org.eclipse.rse.services.clientserver.archiveutils,
  org.eclipse.rse.services.clientserver.java,
@@ -16,11 +19,8 @@ Export-Package: org.eclipse.rse.services,
  org.eclipse.rse.services.clientserver.processes,
  org.eclipse.rse.services.clientserver.processes.handlers,
  org.eclipse.rse.services.clientserver.search,
- org.eclipse.rse.services.clientserver.util.tar,
  org.eclipse.rse.services.files,
  org.eclipse.rse.services.processes,
  org.eclipse.rse.services.search,
- org.eclipse.rse.services.shells,
- org.eclipse.rse.internal.services;x-internal:=true,
- org.eclipse.rse.internal.services.shells;x-internal:=true
+ org.eclipse.rse.services.shells
 Bundle-RequiredExecutionEnvironment: J2SE-1.4

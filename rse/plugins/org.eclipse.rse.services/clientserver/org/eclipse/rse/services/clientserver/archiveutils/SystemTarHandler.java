@@ -32,15 +32,16 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Vector;
 
+import org.eclipse.rse.internal.services.clientserver.archiveutils.ITarConstants;
+import org.eclipse.rse.internal.services.clientserver.archiveutils.SystemArchiveUtil;
+import org.eclipse.rse.internal.services.clientserver.archiveutils.TarEntry;
+import org.eclipse.rse.internal.services.clientserver.archiveutils.TarFile;
+import org.eclipse.rse.internal.services.clientserver.archiveutils.TarOutputStream;
 import org.eclipse.rse.services.clientserver.ISystemFileTypes;
 import org.eclipse.rse.services.clientserver.java.BasicClassFileParser;
 import org.eclipse.rse.services.clientserver.search.SystemSearchLineMatch;
 import org.eclipse.rse.services.clientserver.search.SystemSearchStringMatchLocator;
 import org.eclipse.rse.services.clientserver.search.SystemSearchStringMatcher;
-import org.eclipse.rse.services.clientserver.util.tar.ITarConstants;
-import org.eclipse.rse.services.clientserver.util.tar.TarEntry;
-import org.eclipse.rse.services.clientserver.util.tar.TarFile;
-import org.eclipse.rse.services.clientserver.util.tar.TarOutputStream;
 
 
 /**

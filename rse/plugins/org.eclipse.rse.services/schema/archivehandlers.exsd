@@ -1,12 +1,12 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!-- Schema file written by PDE -->
-<schema targetNamespace="org.eclipse.rse.ui">
+<schema targetNamespace="org.eclipse.rse.services">
 <annotation>
       <appInfo>
-         <meta.schema plugin="org.eclipse.rse.ui" id="archivehandlers" name="Archive Handlers"/>
+         <meta.schema plugin="org.eclipse.rse.services" id="archivehandlers" name="Archive Handlers"/>
       </appInfo>
       <documentation>
-         This extension point is used to plug in additional Archive Handlers. These are used to provide seamless integration between Archive Handling and the RSE.
+         This extension point is used to plug in additional archive handlers. Archive handlers are used to provide seamless integration of archives within the RSE. For example, an archive can be expanded to show its contents in RSE if an archive handler is registered for that archive type and handles showing the contents of archives.
       </documentation>
    </annotation>
 
@@ -97,7 +97,7 @@
 
 &lt;p&gt;
 &lt;pre&gt;
-   &lt;extension point=&quot;org.eclipse.rse.ui.archivehandlers&quot;&gt;
+   &lt;extension point=&quot;org.eclipse.rse.services.archivehandlers&quot;&gt;
       &lt;archivehandler
          id=&quot;org.eclipse.rse.services.clientserver.archiveutils.systemziphandler&quot;
          name=&quot;Zip File Handler&quot;
@@ -123,7 +123,7 @@
          <meta.section type="implementation"/>
       </appInfo>
       <documentation>
-         The Remote System Explorer in org.eclipse.rse.files.ui provides three default implementations of this extension point, for ZIP, JAR, and TAR Archives.
+         The Remote System Explorer, in the org.eclipse.rse.files.ui plugin, provides three default implementations of this extension point for ZIP, JAR, and TAR archives.
       </documentation>
    </annotation>
 
@@ -132,7 +132,7 @@
          <meta.section type="copyright"/>
       </appInfo>
       <documentation>
-         Copyright (c) 2002, 2006 IBM Corporation. All Rights Reserved.
+         Copyright (c) 2002, 2006, 2007 IBM Corporation. All Rights Reserved.
 This program and the accompanying materials are made available under the terms
 of the Eclipse Public License v1.0 which accompanies this distribution, and is 
 available at http://www.eclipse.org/legal/epl-v10.html

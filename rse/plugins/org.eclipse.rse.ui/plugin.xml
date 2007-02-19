@@ -467,7 +467,6 @@ Contributors:
 <!-- ================================================================= -->
 <!-- 		Define Archive Handlers extension point					   -->
 <!-- ================================================================= -->
-   <extension-point id="archivehandlers" name="%extPoint.archivehandlers" schema="schema/archivehandlers.exsd"/>
 
 
 <!-- ================================================================= -->

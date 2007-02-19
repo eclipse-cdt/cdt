@@ -33,6 +33,8 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
 
+import org.eclipse.rse.internal.services.clientserver.archiveutils.SystemArchiveUtil;
+import org.eclipse.rse.internal.services.clientserver.archiveutils.SystemUniversalZipEntry;
 import org.eclipse.rse.services.clientserver.ISystemFileTypes;
 import org.eclipse.rse.services.clientserver.SystemEncodingUtil;
 import org.eclipse.rse.services.clientserver.java.BasicClassFileParser;

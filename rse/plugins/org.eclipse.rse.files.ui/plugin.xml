@@ -213,7 +213,7 @@ Contributors:
 <!-- Add handlers for ZIP, TAR, and JAR archive files               == -->
 <!-- ================================================================= -->	
    <extension
-         point="org.eclipse.rse.ui.archivehandlers">
+         point="org.eclipse.rse.services.archivehandlers">
       <archivehandler
             fileNameExtension="zip"
             name="SystemZipHandler"

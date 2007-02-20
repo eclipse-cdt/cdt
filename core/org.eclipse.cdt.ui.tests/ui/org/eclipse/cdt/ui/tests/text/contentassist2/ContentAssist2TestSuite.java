@@ -8,6 +8,7 @@
  * Contributors:
  * Norbert Ploett - Initial implementation
  * Bryan Wilkinson (QNX)
+ * Andrew Ferguson (Symbian)
  *******************************************************************************/
 package org.eclipse.cdt.ui.tests.text.contentassist2;
 
@@ -26,6 +27,7 @@ public class ContentAssist2TestSuite extends TestSuite {
 	public ContentAssist2TestSuite()  {
 		super("Tests in package org.eclipse.cdt.ui.tests.text.contentassist2");
 		
+		addTest(CompletionTest_AnonymousTypes.suite());
 		addTest(CompletionTest_ArgumentType_Prefix.suite());
 		addTest(CompletionTest_ArgumentType_Prefix2.suite());
 		addTest(CompletionTest_ClassReference_NoPrefix.suite());

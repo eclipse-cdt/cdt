@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.core;
 
+import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.w3c.dom.Element;
@@ -28,4 +29,6 @@ public interface ICDescriptor {
 	
 	public Element getProjectData(String id) throws CoreException;
 	public void saveProjectData() throws CoreException;
+	
+	ICConfigurationDescription getConfigurationDescription();
 }

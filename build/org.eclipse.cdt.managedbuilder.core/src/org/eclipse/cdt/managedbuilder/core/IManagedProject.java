@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2006 Intel Corporation and others.
+ * Copyright (c) 2004, 2007 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -38,9 +38,11 @@ import org.w3c.dom.Element;
  * 
  * @since 2.1
  */
-public interface IManagedProject extends IBuildObject {
+public interface IManagedProject extends IBuildObject, IBuildObjectPropertiesContainer {
 	public static final String MANAGED_PROJECT_ELEMENT_NAME = "project";	//$NON-NLS-1$
 	public static final String PROJECTTYPE = "projectType";					//$NON-NLS-1$
+	public static final String BUILD_PROPERTIES = "buildProperties"; //$NON-NLS-1$
+
 	
 	/**
 	 * Creates a configuration for this project populated with the tools
@@ -151,7 +153,7 @@ public interface IManagedProject extends IBuildObject {
 	 * @param doc
 	 * @param element
 	 */
-	public void serialize(Document doc, Element element);
+//	public void serialize(Document doc, Element element);
 
 	/**
 	 * Returns the default build artifact name for the project

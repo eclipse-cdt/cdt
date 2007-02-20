@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 Intel Corporation and others.
+ * Copyright (c) 2006, 2007 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,15 +14,16 @@ package org.eclipse.cdt.managedbuilder.makegen.gnu;
 import org.eclipse.cdt.managedbuilder.core.IBuildObject;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IResourceConfiguration;
+import org.eclipse.cdt.managedbuilder.core.IResourceInfo;
 import org.eclipse.cdt.managedbuilder.core.ITool;
+import org.eclipse.cdt.managedbuilder.internal.macros.BuildMacroProvider;
 import org.eclipse.cdt.managedbuilder.internal.macros.FileContextData;
-import org.eclipse.cdt.managedbuilder.internal.macros.MacroResolver;
 import org.eclipse.cdt.managedbuilder.macros.IBuildMacroProvider;
 import org.eclipse.cdt.managedbuilder.makegen.IManagedBuilderMakefileGenerator;
 import org.eclipse.cdt.managedbuilder.makegen.IManagedDependencyCommands;
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.IPath;
 
 /**
  * This dependency calculator uses the GCC -MMD -MF -MP -MT options in order to
@@ -76,9 +77,9 @@ public class DefaultGCCDependencyCalculator2Commands implements
 		if (buildContext instanceof IConfiguration) {
 			IConfiguration config = (IConfiguration)buildContext;
 			project = (IProject)config.getOwner();
-		} else if (buildContext instanceof IResourceConfiguration) {
-			IResourceConfiguration resConfig = (IResourceConfiguration)buildContext;
-			project = (IProject)resConfig.getOwner();
+		} else if (buildContext instanceof IResourceInfo) {
+			IResourceInfo rcInfo = (IResourceInfo)buildContext;
+			project = rcInfo.getParent().getOwner().getProject();
 		}
 		
 		sourceLocation = (source.isAbsolute() ? source : project.getLocation().append(source));
@@ -104,8 +105,8 @@ public class DefaultGCCDependencyCalculator2Commands implements
 		}
 		
 		needExplicitRuleForFile = resourceNameRequiresExplicitRule || 
-				MacroResolver.getReferencedExplitFileMacros(tool).length > 0
-				|| MacroResolver.getReferencedExplitFileMacros(
+				BuildMacroProvider.getReferencedExplitFileMacros(tool).length > 0
+				|| BuildMacroProvider.getReferencedExplitFileMacros(
 						tool.getToolCommand(), 
 						IBuildMacroProvider.CONTEXT_FILE,
 						new FileContextData(sourceLocation, outputLocation,

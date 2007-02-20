@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 Intel Corporation and others.
+ * Copyright (c) 2005, 2007 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,8 @@
  * Intel Corporation - Initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.macros;
+
+import org.eclipse.cdt.core.cdtvariables.ICdtVariable;
 
 /**
  * 
@@ -65,6 +67,19 @@ public interface IBuildMacroProvider{
 					Object contextData, 
 					boolean includeParentContexts);
 
+
+	public ICdtVariable getVariable(String macroName,
+				int contextType, 
+				Object contextData, 
+				boolean includeParentContexts);
+	
+	/**
+	* 
+	* @return the array of the IBuildMacro representing all available macros 
+	*/
+	public ICdtVariable[] getVariables(int contextType, 
+				Object contextData, 
+				boolean includeParentContexts);
 
 	/**
 	 * This method is defined to be used primarily by the UI classes and should not be used by the

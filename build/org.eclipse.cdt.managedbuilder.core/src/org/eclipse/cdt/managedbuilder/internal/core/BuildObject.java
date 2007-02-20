@@ -44,7 +44,7 @@ public class BuildObject implements IBuildObject {
 	public String getName() {
 		return name;
 	}
-
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.build.managed.IBuildObject#setName(java.lang.String)
 	 */

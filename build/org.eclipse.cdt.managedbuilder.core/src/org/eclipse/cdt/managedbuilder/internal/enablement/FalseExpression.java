@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005 Intel Corporation and others.
+ * Copyright (c) 2005, 2007 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,10 +10,10 @@
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.internal.enablement;
 
-import org.eclipse.cdt.managedbuilder.core.IBuildObject;
 import org.eclipse.cdt.managedbuilder.core.IHoldsOptions;
 import org.eclipse.cdt.managedbuilder.core.IManagedConfigElement;
 import org.eclipse.cdt.managedbuilder.core.IOption;
+import org.eclipse.cdt.managedbuilder.core.IResourceInfo;
 
 public class FalseExpression implements IBooleanExpression {
 	public static final String NAME = "false"; 	//$NON-NLS-1$
@@ -21,7 +21,7 @@ public class FalseExpression implements IBooleanExpression {
 	public FalseExpression(IManagedConfigElement element) {
 	}
 
-	public boolean evaluate(IBuildObject configuration, IHoldsOptions holder,
+	public boolean evaluate(IResourceInfo rcInfo, IHoldsOptions holder,
 			IOption option) {
 		return false;
 	}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2006 Intel Corporation and others.
+ * Copyright (c) 2004, 2007 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,31 +11,45 @@
 package org.eclipse.cdt.managedbuilder.internal.core;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.SortedMap;
 import java.util.StringTokenizer;
 
+import org.eclipse.cdt.core.settings.model.ICStorageElement;
+import org.eclipse.cdt.core.settings.model.extension.CTargetPlatformData;
+import org.eclipse.cdt.make.core.scannerconfig.IDiscoveredPathManager;
+import org.eclipse.cdt.make.core.scannerconfig.IScannerConfigBuilderInfo2;
+import org.eclipse.cdt.make.core.scannerconfig.InfoContext;
+import org.eclipse.cdt.make.internal.core.scannerconfig2.ScannerConfigInfoFactory2;
+import org.eclipse.cdt.make.internal.core.scannerconfig2.ScannerConfigProfileManager;
+import org.eclipse.cdt.managedbuilder.buildproperties.IBuildPropertyType;
+import org.eclipse.cdt.managedbuilder.buildproperties.IBuildPropertyValue;
 import org.eclipse.cdt.managedbuilder.core.IBuildObject;
+import org.eclipse.cdt.managedbuilder.core.IBuildPropertiesRestriction;
 import org.eclipse.cdt.managedbuilder.core.IBuilder;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
+import org.eclipse.cdt.managedbuilder.core.IFolderInfo;
 import org.eclipse.cdt.managedbuilder.core.IManagedConfigElement;
 import org.eclipse.cdt.managedbuilder.core.IManagedIsToolChainSupported;
 import org.eclipse.cdt.managedbuilder.core.IManagedProject;
-import org.eclipse.cdt.managedbuilder.core.IOutputType;
 import org.eclipse.cdt.managedbuilder.core.IOptionPathConverter;
+import org.eclipse.cdt.managedbuilder.core.IOutputType;
 import org.eclipse.cdt.managedbuilder.core.IProjectType;
+import org.eclipse.cdt.managedbuilder.core.IResourceInfo;
 import org.eclipse.cdt.managedbuilder.core.ITargetPlatform;
 import org.eclipse.cdt.managedbuilder.core.ITool;
 import org.eclipse.cdt.managedbuilder.core.IToolChain;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.cdt.managedbuilder.envvar.IConfigurationEnvironmentVariableSupplier;
-import org.eclipse.cdt.managedbuilder.internal.envvar.EnvironmentVariableProvider;
-import org.eclipse.cdt.managedbuilder.internal.envvar.StorableEnvironment;
-import org.eclipse.cdt.managedbuilder.internal.macros.StorableMacros;
+import org.eclipse.cdt.managedbuilder.internal.dataprovider.ConfigurationDataProvider;
+import org.eclipse.cdt.managedbuilder.internal.enablement.OptionEnablementExpression;
 import org.eclipse.cdt.managedbuilder.macros.IConfigurationBuildMacroSupplier;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -43,12 +57,8 @@ import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.PluginVersionIdentifier;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 
-public class ToolChain extends HoldsOptions implements IToolChain {
+public class ToolChain extends HoldsOptions implements IToolChain, IBuildPropertiesRestriction, IMatchKeyProvider {
 
 	private static final String EMPTY_STRING = new String();
 
@@ -62,7 +72,7 @@ public class ToolChain extends HoldsOptions implements IToolChain {
 	//  to access it. This avoids widespread casts from IHoldsOptions to IToolChain.
 	private String superClassId;
 	//  Parent and children
-	private IConfiguration parent;
+	private IConfiguration config;
 	private List toolList;
 	private Map toolMap;
 	private TargetPlatform targetPlatform;
@@ -86,19 +96,34 @@ public class ToolChain extends HoldsOptions implements IToolChain {
 	private IConfigurationBuildMacroSupplier buildMacroSupplier = null;
 	private IConfigurationElement pathconverterElement = null ;
 	private IOptionPathConverter optionPathConverter = null ;
+	private Boolean supportsManagedBuild;
+	private boolean isTest;
+	private SupportedProperties supportedProperties;
+	private String nonInternalBuilderId;
 
 	//  Miscellaneous
 	private boolean isExtensionToolChain = false;
 	private boolean isDirty = false;
 	private boolean resolved = resolvedDefault;
 	//holds the user-defined macros
-	private StorableMacros userDefinedMacros;
+//	private StorableMacros userDefinedMacros;
 	//holds user-defined macros
-	private StorableEnvironment userDefinedEnvironment;
+//	private StorableEnvironment userDefinedEnvironment;
 
 	private IConfigurationElement previousMbsVersionConversionElement = null;
 	private IConfigurationElement currentMbsVersionConversionElement = null;
 	private boolean rebuildState;
+	private BooleanExpressionApplicabilityCalculator booleanExpressionCalculator;
+	
+	private List identicalList;
+
+	
+	private IFolderInfo parentFolderInfo;
+	
+	private IScannerConfigBuilderInfo2 scannerConfigInfo;
+	private IDiscoveredPathManager.IDiscoveredPathInfo discoveredInfo;
+	private Boolean isRcTypeBasedDiscovery;
+
 
 	/*
 	 *  C O N S T R U C T O R S
@@ -114,17 +139,25 @@ public class ToolChain extends HoldsOptions implements IToolChain {
 	 *                provider
 	 * @param managedBuildRevision the fileVersion of Managed Build System               
 	 */
-	public ToolChain(IConfiguration parent, IManagedConfigElement element, String managedBuildRevision) {
+	public ToolChain(IFolderInfo folderInfo, IManagedConfigElement element, String managedBuildRevision) {
 		// setup for resolving
 		super(false);
 		resolved = false;
 
-		this.parent = parent;
+		if(folderInfo != null){
+			this.config = folderInfo.getParent();
+			parentFolderInfo = folderInfo;
+		}
+		
 		isExtensionToolChain = true;
 		
 		// Set the managedBuildRevision 
 		setManagedBuildRevision(managedBuildRevision);
-		
+
+		IManagedConfigElement enablements[] = element.getChildren(OptionEnablementExpression.NAME);
+		if(enablements.length > 0)
+			booleanExpressionCalculator = new BooleanExpressionApplicabilityCalculator(enablements);
+
 		loadFromManifest(element);
 		
 		// Hook me up to the Managed Build Manager
@@ -159,6 +192,14 @@ public class ToolChain extends HoldsOptions implements IToolChain {
 			} else if (toolChainElement.getName().equals(ITool.TOOL_ELEMENT_NAME)) {
 				Tool toolChild = new Tool(this, toolChainElement, managedBuildRevision);
 				addTool(toolChild);
+			}  else if (toolChainElement.getName().equals(SupportedProperties.SUPPORTED_PROPERTIES)){
+				loadProperties(toolChainElement);
+			} else if(toolChainElement.getName().equals(DISCOVERY_INFO)){
+				ICStorageElement el = new ManagedConfigStorageElement(toolChainElement);
+				String profileId = getScannerConfigDiscoveryProfileId();
+				if(profileId == null)
+					profileId = ScannerConfigProfileManager.NULL_PROFILE_ID;
+				scannerConfigInfo = ScannerConfigInfoFactory2.create(new InfoContext(null), el, profileId);
 			}
 		}		
 	}
@@ -173,11 +214,13 @@ public class ToolChain extends HoldsOptions implements IToolChain {
 	 * @param String The name for the new tool chain
 	 * @param boolean Indicates whether this is an extension element or a managed project element
 	 */
-	public ToolChain(Configuration parent, IToolChain superClass, String Id, String name, boolean isExtensionElement) {
+	public ToolChain(IFolderInfo folderInfo, IToolChain superClass, String Id, String name, boolean isExtensionElement) {
 		super(resolvedDefault);
-		this.parent = parent;
+		this.config = folderInfo.getParent();
+		parentFolderInfo = folderInfo;
+		
 		setSuperClassInternal(superClass);
-		setManagedBuildRevision(parent.getManagedBuildRevision());
+		setManagedBuildRevision(config.getManagedBuildRevision());
 		
 		if (getSuperClass() != null) {
 			superClassId = getSuperClass().getId();
@@ -204,9 +247,11 @@ public class ToolChain extends HoldsOptions implements IToolChain {
 	 * @param element The XML element that contains the tool-chain settings.
 	 * @param managedBuildRevision the fileVersion of Managed Build System			
 	 */
-	public ToolChain(IConfiguration parent, Element element, String managedBuildRevision) {
+	public ToolChain(IFolderInfo folderInfo, ICStorageElement element, String managedBuildRevision) {
 		super(resolvedDefault);
-		this.parent = parent;
+		this.config = folderInfo.getParent();
+		parentFolderInfo = folderInfo;
+		
 		isExtensionToolChain = false;
 		
 		// Set the managedBuildRevision
@@ -216,28 +261,33 @@ public class ToolChain extends HoldsOptions implements IToolChain {
 		loadFromProject(element);
 
 		// Load children
-		NodeList configElements = element.getChildNodes();
-		for (int i = 0; i < configElements.getLength(); ++i) {
-			Node configElement = configElements.item(i);
+		ICStorageElement configElements[] = element.getChildren();
+		for (int i = 0; i < configElements.length; ++i) {
+			ICStorageElement configElement = configElements[i];
 			if (loadChild(configElement)) {
 				// do nothing
-			} else if (configElement.getNodeName().equals(ITool.TOOL_ELEMENT_NAME)) {
-				Tool tool = new Tool(this, (Element)configElement, managedBuildRevision);
+			} else if (configElement.getName().equals(ITool.TOOL_ELEMENT_NAME)) {
+				Tool tool = new Tool(this, configElement, managedBuildRevision);
 				addTool(tool);
-			}else if (configElement.getNodeName().equals(ITargetPlatform.TARGET_PLATFORM_ELEMENT_NAME)) {
+			}else if (configElement.getName().equals(ITargetPlatform.TARGET_PLATFORM_ELEMENT_NAME)) {
 				if (targetPlatform != null) {
 					// TODO: report error
 				}
-				targetPlatform = new TargetPlatform(this, (Element)configElement, managedBuildRevision);
-			}else if (configElement.getNodeName().equals(IBuilder.BUILDER_ELEMENT_NAME)) {
+				targetPlatform = new TargetPlatform(this, configElement, managedBuildRevision);
+			}else if (configElement.getName().equals(IBuilder.BUILDER_ELEMENT_NAME)) {
 				if (builder != null) {
 					// TODO: report error
 				}
-				builder = new Builder(this, (Element)configElement, managedBuildRevision);
-			}else if (configElement.getNodeName().equals(StorableMacros.MACROS_ELEMENT_NAME)) {
+				builder = new Builder(this, configElement, managedBuildRevision);
+			}/*else if (configElement.getName().equals(StorableMacros.MACROS_ELEMENT_NAME)) {
 				//load user-defined macros
-				userDefinedMacros = new StorableMacros((Element)configElement);
+				userDefinedMacros = new StorableMacros(configElement);
 
+			}*/else if(configElement.getName().equals(DISCOVERY_INFO)){
+				String profileId = getScannerConfigDiscoveryProfileId();
+				if(profileId == null)
+					profileId = ScannerConfigProfileManager.NULL_PROFILE_ID;
+				scannerConfigInfo = ScannerConfigInfoFactory2.create(new InfoContext(getParentResourceInfo(), null, null), configElement, profileId);
 			}
 		}
 		
@@ -253,9 +303,10 @@ public class ToolChain extends HoldsOptions implements IToolChain {
 	 * @param parent The <code>IConfiguration</code> the tool-chain will be added to. 
 	 * @param toolChain The existing tool-chain to clone.
 	 */
-	public ToolChain(IConfiguration parent, String Id, String name, ToolChain toolChain) {
+	public ToolChain(IFolderInfo folderInfo, String Id, String name, Map superIdMap, ToolChain toolChain) {
 		super(resolvedDefault);
-		this.parent = parent;
+		this.config = folderInfo.getParent();
+		parentFolderInfo = folderInfo;
 		setSuperClassInternal(toolChain.getSuperClass());
 		if (getSuperClass() != null) {
 			if (toolChain.superClassId != null) {
@@ -303,6 +354,14 @@ public class ToolChain extends HoldsOptions implements IToolChain {
         if (toolChain.scannerConfigDiscoveryProfileId != null) {
             scannerConfigDiscoveryProfileId = new String(toolChain.scannerConfigDiscoveryProfileId);
         }
+        
+		isRcTypeBasedDiscovery = toolChain.isRcTypeBasedDiscovery;
+		if(toolChain.scannerConfigInfo != null){
+			scannerConfigInfo = ScannerConfigInfoFactory2.create(new InfoContext(folderInfo, null, null), toolChain.scannerConfigInfo, ScannerConfigProfileManager.NULL_PROFILE_ID); 
+		}
+
+       	supportsManagedBuild = toolChain.supportsManagedBuild; 
+
 		managedIsToolChainSupportedElement = toolChain.managedIsToolChainSupportedElement; 
 		managedIsToolChainSupported = toolChain.managedIsToolChainSupported; 
 
@@ -315,7 +374,10 @@ public class ToolChain extends HoldsOptions implements IToolChain {
 		pathconverterElement = toolChain.pathconverterElement ;
 		optionPathConverter = toolChain.optionPathConverter ;
 
+		nonInternalBuilderId = toolChain.nonInternalBuilderId;
+		
 		//  Clone the children in superclass
+		boolean copyIds = toolChain.getId().equals(id);
 		super.copyChildren(toolChain);
 		//  Clone the children
 		if (toolChain.builder != null) {
@@ -323,12 +385,12 @@ public class ToolChain extends HoldsOptions implements IToolChain {
 			String subName;
 			
 			if (toolChain.builder.getSuperClass() != null) {
-				subId = ManagedBuildManager.calculateChildId(
+				subId = copyIds ? toolChain.builder.getId() : ManagedBuildManager.calculateChildId(
 							toolChain.builder.getSuperClass().getId(),
 							null);
 				subName = toolChain.builder.getSuperClass().getName();
 			} else {
-				subId = ManagedBuildManager.calculateChildId(
+				subId = copyIds ? toolChain.builder.getId() : ManagedBuildManager.calculateChildId(
 						toolChain.builder.getId(),
 						null);
 				subName = toolChain.builder.getName();
@@ -336,50 +398,130 @@ public class ToolChain extends HoldsOptions implements IToolChain {
 
 			builder = new Builder(this, subId, subName, toolChain.builder);
 		}
-		if (toolChain.targetPlatform != null) {
-			int nnn = ManagedBuildManager.getRandomNumber();
-			String subId;
-			String subName;
-			if (toolChain.targetPlatform.getSuperClass() != null) {
-				subId = toolChain.targetPlatform.getSuperClass().getId() + "." + nnn;		//$NON-NLS-1$
-				subName = toolChain.targetPlatform.getSuperClass().getName(); 
-			} else {
-				subId = toolChain.targetPlatform.getId() + "." + nnn;		//$NON-NLS-1$
-				subName = toolChain.targetPlatform.getName();
-			}
-			targetPlatform = new TargetPlatform(this, subId, subName, toolChain.targetPlatform);
+//		if (toolChain.targetPlatform != null) 
+		{
+		ITargetPlatform tpBase = toolChain.getTargetPlatform();
+		if(tpBase != null){
+		ITargetPlatform extTp = tpBase;
+		for(;extTp != null && !extTp.isExtensionElement();extTp = extTp.getSuperClass());
+
+		String subId;
+		if(copyIds){
+			subId = tpBase != null ? tpBase.getId() : ManagedBuildManager.calculateChildId(getId(), null);
+		} else {
+			subId = extTp != null ? ManagedBuildManager.calculateChildId(extTp.getId(), null):
+				ManagedBuildManager.calculateChildId(getId(), null);
 		}
+		String subName = tpBase.getName();
+
+//			if (toolChain.targetPlatform.getSuperClass() != null) {
+//				subId = toolChain.targetPlatform.getSuperClass().getId() + "." + nnn;		//$NON-NLS-1$
+//				subName = toolChain.targetPlatform.getSuperClass().getName(); 
+//			} else {
+//				subId = toolChain.targetPlatform.getId() + "." + nnn;		//$NON-NLS-1$
+//				subName = toolChain.targetPlatform.getName();
+//			}
+			targetPlatform = new TargetPlatform(this, subId, subName, (TargetPlatform)tpBase);
+		}
+//		
+		}
+		
+		IConfiguration cfg = parentFolderInfo.getParent();
 		if (toolChain.toolList != null) {
 			Iterator iter = toolChain.getToolList().listIterator();
 			while (iter.hasNext()) {
 			    Tool toolChild = (Tool) iter.next();
-				int nnn = ManagedBuildManager.getRandomNumber();
-				String subId;
-				String tmpId;
+//				int nnn = ManagedBuildManager.getRandomNumber();
+				String subId = null;
+//				String tmpId;
 				String subName;
-				String version;
+//				String version;
+				ITool extTool = ManagedBuildManager.getExtensionTool(toolChild);
+				Map curIdMap = (Map)superIdMap.get(folderInfo.getPath());
+				if(curIdMap != null){
+					if(extTool != null)
+						subId = (String)curIdMap.get(extTool.getId());
+				}
 				
-				if (toolChild.getSuperClass() != null) {
-					tmpId = toolChild.getSuperClass().getId();
-					subName = toolChild.getSuperClass().getName();
-				} else {
-					tmpId = toolChild.getId();
-					subName = toolChild.getName();
+				subName = toolChild.getName();
+				
+				if(subId == null){
+					if (extTool != null) {
+						subId = copyIds ? toolChild.getId() : ManagedBuildManager.calculateChildId(extTool.getId(), null);
+	//					subName = toolChild.getSuperClass().getName();
+					} else {
+						subId = copyIds ? toolChild.getId() : ManagedBuildManager.calculateChildId(toolChild.getId(), null);
+	//					subName = toolChild.getName();
+					}
 				}
-				version = ManagedBuildManager.getVersionFromIdAndVersion(tmpId);
-				if ( version != null) {		// If the 'tmpId' contains version information
-					subId = ManagedBuildManager.getIdFromIdAndVersion(tmpId) + "." + nnn + "_" + version;		//$NON-NLS-1$ //$NON-NLS-2$
-				} else {
-					subId = tmpId + "." + nnn;		//$NON-NLS-1$
-				}
+//				version = ManagedBuildManager.getVersionFromIdAndVersion(tmpId);
+//				if ( version != null) {		// If the 'tmpId' contains version information
+//					subId = ManagedBuildManager.getIdFromIdAndVersion(tmpId) + "." + nnn + "_" + version;		//$NON-NLS-1$ //$NON-NLS-2$
+//				} else {
+//					subId = tmpId + "." + nnn;		//$NON-NLS-1$
+//				}
 
-				Tool newTool = new Tool(this, null, subId, subName, toolChild);
-				addTool(newTool);
+				//  The superclass for the cloned tool is not the same as the one from the tool being cloned.
+				//  The superclasses reside in different configurations. 
+				ITool toolSuperClass = null;
+				String superId = null;
+				//  Search for the tool in this configuration that has the same grand-superClass as the 
+				//  tool being cloned
+				ITool otherSuperTool = toolChild.getSuperClass();
+				if(otherSuperTool != null){
+					if(otherSuperTool.isExtensionElement()){
+						toolSuperClass = otherSuperTool;
+					} else {
+						IResourceInfo otherRcInfo = otherSuperTool.getParentResourceInfo();
+						IResourceInfo thisRcInfo = cfg.getResourceInfo(otherRcInfo.getPath(), true);
+						ITool otherExtTool = ManagedBuildManager.getExtensionTool(otherSuperTool);
+						if(otherExtTool != null){
+							if(thisRcInfo != null){
+								ITool tools[] = thisRcInfo.getTools();
+								for(int i = 0; i < tools.length; i++){
+									ITool thisExtTool = ManagedBuildManager.getExtensionTool(tools[i]);
+									if(otherExtTool.equals(thisExtTool)){
+										toolSuperClass = tools[i];
+										superId = toolSuperClass.getId();
+										break;
+									}
+								}
+							} else {
+								superId = copyIds ? otherSuperTool.getId() : ManagedBuildManager.calculateChildId(otherExtTool.getId(), null);
+								Map idMap = (Map)superIdMap.get(otherRcInfo.getPath());
+								if(idMap == null){
+									idMap = new HashMap();
+									superIdMap.put(otherRcInfo.getPath(), idMap);
+								}
+								idMap.put(otherExtTool.getId(), superId);
+							}
+						}
+					}
+				}
+//				Tool newTool = new Tool(this, (Tool)null, subId, subName, toolChild);
+//				addTool(newTool);
+				
+				Tool newTool = null;
+				if(toolSuperClass != null)
+					newTool = new Tool(this, toolSuperClass, subId, subName, toolChild);
+				else if(superId != null)
+					newTool = new Tool(this, superId, subId, subName, toolChild);
+				else{
+					//TODO: Error
+				} 
+				if(newTool != null)
+					addTool(newTool);
+
 			}
 		}
 		
-		setDirty(true);
-		setRebuildState(true);
+		if(copyIds){
+			rebuildState = toolChain.rebuildState;
+			isDirty = toolChain.isDirty;
+		} else {
+			setDirty(true);
+			setRebuildState(true);
+		}
 	}
 
 	/*
@@ -427,12 +569,24 @@ public class ToolChain extends HoldsOptions implements IToolChain {
 		
 		// Get the scanner config discovery profile id
         scannerConfigDiscoveryProfileId = element.getAttribute(SCANNER_CONFIG_PROFILE_ID);
+        String tmp = element.getAttribute(RESOURCE_TYPE_BASED_DISCOVERY);
+        if(tmp != null)
+        	isRcTypeBasedDiscovery = Boolean.valueOf(tmp); 
         
 		// Get the 'versionsSupported' attribute
 		versionsSupported =element.getAttribute(VERSIONS_SUPPORTED);
 		
 		// Get the 'convertToId' attribute
 		convertToId = element.getAttribute(CONVERT_TO_ID);
+		
+		tmp = element.getAttribute(SUPPORTS_MANAGED_BUILD);
+		if(tmp != null)
+			supportsManagedBuild = Boolean.valueOf(tmp);
+		
+        tmp = element.getAttribute(IS_SYSTEM);
+        if(tmp != null)
+        	isTest = Boolean.valueOf(tmp).booleanValue();
+
 		
 		// Get the comma-separated list of valid OS
 		String os = element.getAttribute(OS_LIST);
@@ -477,6 +631,8 @@ public class ToolChain extends HoldsOptions implements IToolChain {
 		if (pathconverterTypeName != null && element instanceof DefaultManagedConfigElement) {
 			pathconverterElement = ((DefaultManagedConfigElement)element).getConfigurationElement();			
 		}
+		
+		nonInternalBuilderId = element.getAttribute(NON_INTERNAL_BUILDER_ID);
 	}
 	
 	
@@ -486,13 +642,13 @@ public class ToolChain extends HoldsOptions implements IToolChain {
 	 * 
 	 * @param element An XML element containing the tool-chain information 
 	 */
-	protected void loadFromProject(Element element) {
+	protected void loadFromProject(ICStorageElement element) {
 		
 		// id
 		setId(element.getAttribute(IBuildObject.ID));
 
 		// name
-		if (element.hasAttribute(IBuildObject.NAME)) {
+		if (element.getAttribute(IBuildObject.NAME) != null) {
 			setName(element.getAttribute(IBuildObject.NAME));
 		}
 
@@ -508,12 +664,12 @@ public class ToolChain extends HoldsOptions implements IToolChain {
 		}
 
 		// Get the unused children, if any
-		if (element.hasAttribute(IProjectType.UNUSED_CHILDREN)) {
+		if (element.getAttribute(IProjectType.UNUSED_CHILDREN) != null) {
 				unusedChildren = element.getAttribute(IProjectType.UNUSED_CHILDREN); 
 		}
 		
 		// isAbstract
-		if (element.hasAttribute(IProjectType.IS_ABSTRACT)) {
+		if (element.getAttribute(IProjectType.IS_ABSTRACT) != null) {
 			String isAbs = element.getAttribute(IProjectType.IS_ABSTRACT);
 			if (isAbs != null){
 				isAbstract = new Boolean("true".equals(isAbs)); //$NON-NLS-1$
@@ -521,37 +677,37 @@ public class ToolChain extends HoldsOptions implements IToolChain {
 		}
 		
 		// Get the semicolon separated list of IDs of the error parsers
-		if (element.hasAttribute(ERROR_PARSERS)) {
+		if (element.getAttribute(ERROR_PARSERS) != null) {
 			errorParserIds = element.getAttribute(ERROR_PARSERS);
 		}
 		
 		// Get the semicolon separated list of IDs of the secondary outputs
-		if (element.hasAttribute(SECONDARY_OUTPUTS)) {
+		if (element.getAttribute(SECONDARY_OUTPUTS) != null) {
 			secondaryOutputIds = element.getAttribute(SECONDARY_OUTPUTS);
 		}
 		
 		// Get the target tool id
-		if (element.hasAttribute(TARGET_TOOL)) {
+		if (element.getAttribute(TARGET_TOOL) != null) {
 			targetToolIds = element.getAttribute(TARGET_TOOL);
 		}
 		
         // Get the scanner config discovery profile id
-        if (element.hasAttribute(SCANNER_CONFIG_PROFILE_ID)) {
+        if (element.getAttribute(SCANNER_CONFIG_PROFILE_ID) != null) {
             scannerConfigDiscoveryProfileId = element.getAttribute(SCANNER_CONFIG_PROFILE_ID);
         }
         
 		// Get the 'versionSupported' attribute
-		if (element.hasAttribute(VERSIONS_SUPPORTED)) {
+		if (element.getAttribute(VERSIONS_SUPPORTED) != null) {
 			versionsSupported = element.getAttribute(VERSIONS_SUPPORTED);
 		}
 		
 		// Get the 'convertToId' id
-		if (element.hasAttribute(CONVERT_TO_ID)) {
+		if (element.getAttribute(CONVERT_TO_ID) != null) {
 			convertToId = element.getAttribute(CONVERT_TO_ID);
 		}
 		
 		// Get the comma-separated list of valid OS
-		if (element.hasAttribute(OS_LIST)) {
+		if (element.getAttribute(OS_LIST) != null) {
 			String os = element.getAttribute(OS_LIST);
 			if (os != null) {
 				osList = new ArrayList();
@@ -563,7 +719,7 @@ public class ToolChain extends HoldsOptions implements IToolChain {
 		}
 		
 		// Get the comma-separated list of valid Architectures
-		if (element.hasAttribute(ARCH_LIST)) {
+		if (element.getAttribute(ARCH_LIST) != null) {
 			String arch = element.getAttribute(ARCH_LIST);
 			if (arch != null) {
 				archList = new ArrayList();
@@ -580,7 +736,15 @@ public class ToolChain extends HoldsOptions implements IToolChain {
 			//  TODO:  issue warning?
 		}
 
+		// Get the scanner config discovery profile id
+        scannerConfigDiscoveryProfileId = element.getAttribute(SCANNER_CONFIG_PROFILE_ID);
+        String tmp = element.getAttribute(RESOURCE_TYPE_BASED_DISCOVERY);
+        if(tmp != null)
+        	isRcTypeBasedDiscovery = Boolean.valueOf(tmp); 
 
+		nonInternalBuilderId = element.getAttribute(NON_INTERNAL_BUILDER_ID);
+		
+//		String tmp = element.getAttribute(name)
 	}
 
 	/**
@@ -589,7 +753,7 @@ public class ToolChain extends HoldsOptions implements IToolChain {
 	 * @param doc
 	 * @param element
 	 */
-	public void serialize(Document doc, Element element) {
+	public void serialize(ICStorageElement element) {
 		try {		
 			if (getSuperClass() != null)
 				element.setAttribute(IProjectType.SUPERCLASS, getSuperClass().getId());
@@ -661,26 +825,23 @@ public class ToolChain extends HoldsOptions implements IToolChain {
 			}
 			
 			// Serialize elements from my super class
-			super.serialize(doc, element);
+			super.serialize(element);
 	
 			// Serialize my children
 			if (targetPlatform != null) {
-				Element targetPlatformElement = doc.createElement(ITargetPlatform.TARGET_PLATFORM_ELEMENT_NAME);
-				element.appendChild(targetPlatformElement);
-				targetPlatform.serialize(doc, targetPlatformElement);
+				ICStorageElement targetPlatformElement = element.createChild(ITargetPlatform.TARGET_PLATFORM_ELEMENT_NAME);
+				targetPlatform.serialize(targetPlatformElement);
 			}
 			if (builder != null) {
-				Element builderElement = doc.createElement(IBuilder.BUILDER_ELEMENT_NAME);
-				element.appendChild(builderElement);
-				builder.serialize(doc, builderElement);
+				ICStorageElement builderElement = element.createChild(IBuilder.BUILDER_ELEMENT_NAME);
+				builder.serialize(builderElement);
 			}
 			List toolElements = getToolList();
 			Iterator iter = toolElements.listIterator();
 			while (iter.hasNext()) {
 				Tool tool = (Tool) iter.next();
-				Element toolElement = doc.createElement(ITool.TOOL_ELEMENT_NAME);
-				element.appendChild(toolElement);
-				tool.serialize(doc, toolElement);
+				ICStorageElement toolElement = element.createChild(ITool.TOOL_ELEMENT_NAME);
+				tool.serialize(toolElement);
 			}
 			
 			// Note: isToolChainSupported cannot be specified in a project file because
@@ -702,21 +863,32 @@ public class ToolChain extends HoldsOptions implements IToolChain {
 			}
 
 			//serialize user-defined macros
-			if(userDefinedMacros != null){
-				Element macrosElement = doc.createElement(StorableMacros.MACROS_ELEMENT_NAME);
-				element.appendChild(macrosElement);
-				userDefinedMacros.serialize(doc,macrosElement);
+/*			if(userDefinedMacros != null){
+				ICStorageElement macrosElement = element.createChild(StorableMacros.MACROS_ELEMENT_NAME);
+				userDefinedMacros.serialize(macrosElement);
 			}
-			
+*/			
 			// Note: optionPathConverter cannot be specified in a project file because
 			//       an IConfigurationElement is needed to load it!
 			if (pathconverterElement != null) {
 				//  TODO:  issue warning?
 			}
 
-			if(userDefinedEnvironment != null)
-				EnvironmentVariableProvider.fUserSupplier.storeEnvironment(getParent(),true);
+//			if(userDefinedEnvironment != null)
+//				EnvironmentVariableProvider.fUserSupplier.storeEnvironment(getParent(),true);
 
+			if(nonInternalBuilderId != null)
+				element.setAttribute(NON_INTERNAL_BUILDER_ID, nonInternalBuilderId);
+
+			
+			if(scannerConfigDiscoveryProfileId != null)
+				element.setAttribute(SCANNER_CONFIG_PROFILE_ID, scannerConfigDiscoveryProfileId);
+			if(isRcTypeBasedDiscovery != null)
+				element.setAttribute(RESOURCE_TYPE_BASED_DISCOVERY, isRcTypeBasedDiscovery.toString());
+			if(scannerConfigInfo != null){
+				ICStorageElement cfgInfoEl = element.createChild(DISCOVERY_INFO);
+				ScannerConfigInfoFactory2.serialize(scannerConfigInfo, cfgInfoEl);
+			}
 			saveRebuildState();
 
 			// I am clean now
@@ -734,7 +906,7 @@ public class ToolChain extends HoldsOptions implements IToolChain {
 	 * @see org.eclipse.cdt.core.build.managed.IToolChain#getConfiguration()
 	 */
 	public IConfiguration getParent() {
-		return parent;
+		return config;
 	}
 
 	/* (non-Javadoc)
@@ -775,6 +947,10 @@ public class ToolChain extends HoldsOptions implements IToolChain {
 		setDirty(true);
 		return (IBuilder)builder;
 	}
+	
+	public void setBuilder(Builder builder){
+		this.builder = builder;
+	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.build.managed.IToolChain#getBuilder()
@@ -806,15 +982,29 @@ public class ToolChain extends HoldsOptions implements IToolChain {
 		setDirty(true);
 		return (ITool)tool;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.build.managed.IToolChain#getTools()
 	 */
 	public ITool[] getTools() {
+		ITool tools[] = getAllTools();
+		if(!isExtensionToolChain){
+			for(int i = 0; i < tools.length; i++){
+				if(tools[i].isExtensionElement()){
+					String subId = ManagedBuildManager.calculateChildId(tools[i].getId(), null);				
+					tools[i] = createTool(tools[i], subId, tools[i].getName(), false);
+				}
+			}
+		}
+
+		return tools;
+	}
+
+	public ITool[] getAllTools() {
 		ITool[] tools = null;
 		//  Merge our tools with our superclass' tools
 		if (getSuperClass() != null) {
-			tools = getSuperClass().getTools();
+			tools = ((ToolChain)getSuperClass()).getAllTools();
 		}
 		//  Our tools take precedence
 		if (tools != null) {
@@ -823,11 +1013,22 @@ public class ToolChain extends HoldsOptions implements IToolChain {
 				Tool tool = (Tool)iter.next();
 				int j;
 				for (j = 0; j < tools.length; j++) {
-					if (tool.getSuperClass() != null  // Remove assumption that ALL tools must have superclasses  
-							&&  tool.getSuperClass().getId().equals(tools[j].getId())) {
-						tools[j] = tool;
-						break;
+					ITool superTool = tool.getSuperClass();
+					if(superTool != null){
+						if(!superTool.isExtensionElement())
+							superTool = superTool.getSuperClass();
+						
+						if(superTool != null && superTool.getId().equals(tools[j].getId())){
+							tools[j] = tool;
+							break;
+						}
 					}
+						
+//					if (tool.getSuperClass() != null  // Remove assumption that ALL tools must have superclasses  
+//							&&  tool.getSuperClass().getId().equals(tools[j].getId())) {
+//						tools[j] = tool;
+//						break;
+//					}
  				}
 				//  No Match?  Insert it (may be re-ordered)
 				if (j == tools.length) {
@@ -914,6 +1115,11 @@ public class ToolChain extends HoldsOptions implements IToolChain {
 	public void addTool(Tool tool) {
 		getToolList().add(tool);
 		getToolMap().put(tool.getId(), tool);
+	}
+	
+	public void removeTool(Tool tool){
+		getToolList().remove(tool);
+		getToolMap().remove(tool.getId());
 	}
 
 	/*
@@ -1003,6 +1209,17 @@ public class ToolChain extends HoldsOptions implements IToolChain {
 						ids = toolIds;
 					}
 				}
+			}
+		}
+		return ids;
+	}
+	
+	public String getErrorParserIdsAttribute() {
+		String ids = errorParserIds;
+		if (ids == null) {
+			// If I have a superClass, ask it
+			if (getSuperClass() != null) {
+				ids = ((ToolChain)getSuperClass()).getErrorParserIdsAttribute();
 			}
 		}
 		return ids;
@@ -1136,6 +1353,30 @@ public class ToolChain extends HoldsOptions implements IToolChain {
 			errorParsers = new String[0];
 		}
 		return errorParsers;
+	}
+	
+	public Set contributeErrorParsers(FolderInfo info, Set set, boolean includeChildren){
+		if(set == null)
+			set = new HashSet();
+		
+		String parserIDs = getErrorParserIdsAttribute();
+		if (parserIDs != null && parserIDs.length() != 0) {
+			StringTokenizer tok = new StringTokenizer(parserIDs, ";"); //$NON-NLS-1$
+			while (tok.hasMoreElements()) {
+				set.add(tok.nextToken());
+			}
+		}
+		
+		if(includeChildren){
+			ITool tools[] = info.getFilteredTools();
+			info.contributeErrorParsers(tools, set);
+			
+			if(info.isRoot()){
+				Builder builder = (Builder)getBuilder();
+				builder.contributeErrorParsers(set);
+			}
+		}
+		return set;
 	}
 
 	/* (non-Javadoc)
@@ -1321,11 +1562,11 @@ public class ToolChain extends HoldsOptions implements IToolChain {
 		if (isDirty) return true;
 		
 		//check whether the tool-chain - specific macros are dirty
-		if(userDefinedMacros != null && userDefinedMacros.isDirty())
-			return true;
+//		if(userDefinedMacros != null && userDefinedMacros.isDirty())
+//			return true;
 		
-		if(userDefinedEnvironment != null && userDefinedEnvironment.isDirty())
-			return true;
+//		if(userDefinedEnvironment != null && userDefinedEnvironment.isDirty())
+//			return true;
 
 		if(builder != null && builder.isDirty())
 			return true;
@@ -1546,7 +1787,7 @@ public class ToolChain extends HoldsOptions implements IToolChain {
 	 * this method is called by the UserDefinedMacroSupplier to obtain user-defined
 	 * macros available for this tool-chain
 	 */
-	public StorableMacros getUserDefinedMacros(){
+/*	public StorableMacros getUserDefinedMacros(){
 		if(isExtensionToolChain)
 			return null;
 		
@@ -1554,18 +1795,18 @@ public class ToolChain extends HoldsOptions implements IToolChain {
 			userDefinedMacros = new StorableMacros();
 		return userDefinedMacros;
 	}
+*/	
+//	public StorableEnvironment getUserDefinedEnvironment(){
+//		if(isExtensionToolChain)
+//			return null;
+//		
+//		return userDefinedEnvironment;
+//	}
 	
-	public StorableEnvironment getUserDefinedEnvironment(){
-		if(isExtensionToolChain)
-			return null;
-		
-		return userDefinedEnvironment;
-	}
-	
-	public void setUserDefinedEnvironment(StorableEnvironment env){
-		if(!isExtensionToolChain)
-			userDefinedEnvironment = env;
-	}
+//	public void setUserDefinedEnvironment(StorableEnvironment env){
+//		if(!isExtensionToolChain)
+//			userDefinedEnvironment = env;
+//	}
 	
 	
 	/**
@@ -1809,6 +2050,13 @@ public class ToolChain extends HoldsOptions implements IToolChain {
 	public boolean needsRebuild() {
 		if(rebuildState)
 			return true;
+		
+		ITool tools[] = getTools();
+		for(int i = 0; i < tools.length; i++){
+			if(tools[i].needsRebuild())
+				return true;
+		}
+
 		return super.needsRebuild();
 	}
 
@@ -1824,11 +2072,598 @@ public class ToolChain extends HoldsOptions implements IToolChain {
 			saveRebuildState();
 		}
 		
-		if(!rebuild)
-			super.setRebuildState(rebuild);
+		if(!rebuild){
+			super.setRebuildState(false);
+
+			ITool tools[] = getTools();
+			for(int i = 0; i < tools.length; i++){
+				tools[i].setRebuildState(false);
+			}
+		}
 	}
 	
 	private void saveRebuildState(){
+		if(((Configuration)config).isPreference())
+			return;
 		PropertyManager.getInstance().setProperty(this, REBUILD_STATE, Boolean.toString(needsRebuild()));
+	}
+
+	public IFolderInfo getParentFolderInfo() {
+		return parentFolderInfo;
+	}
+	
+	void setTargetPlatform(TargetPlatform tp){
+		targetPlatform = tp;
+	}
+
+	public CTargetPlatformData getTargetPlatformData() {
+		if(isExtensionToolChain)
+			return null;
+		if(targetPlatform == null){
+			ITargetPlatform platform = getTargetPlatform();
+			if(platform != null){
+				ITargetPlatform extPlatform = platform;
+				for(;extPlatform != null && !extPlatform.isExtensionElement();
+					extPlatform = extPlatform.getSuperClass());
+				String subId;
+				if(extPlatform != null)
+					subId = ManagedBuildManager.calculateChildId(extPlatform.getId(), null);
+				else
+					subId = ManagedBuildManager.calculateChildId(getId(), null);
+					
+				targetPlatform = new TargetPlatform(this, subId, platform.getName(), (TargetPlatform)extPlatform);
+			} else {
+				String subId = ManagedBuildManager.calculateChildId(getId(), null);
+				targetPlatform = new TargetPlatform(this, null, subId, "", false);
+			}
+		}
+			
+		return targetPlatform.getTargetPlatformData();
+	}
+
+	public boolean supportsType(String type, boolean checkTools) {
+		SupportedProperties props = findSupportedProperties();
+		boolean supports = false;
+		if(props != null){
+			supports = props.supportsType(type);
+		} else {
+			BooleanExpressionApplicabilityCalculator calc = getBooleanExpressionCalculator();
+			if(calc != null){
+				supports = calc.referesProperty(type);
+			}
+			
+			if(!supports)
+				supports = super.supportsType(type);
+		}
+		if(!supports && checkTools){
+			ITool tools[] = getTools();
+			for(int i = 0; i < tools.length; i++){
+				if(((Tool)tools[i]).supportsType(type)){
+					supports = true;
+					break;
+				}
+			}
+		}
+		return supports;
+	}
+
+	public boolean supportsType(String type) {
+		return supportsType(type, true);
+	}
+
+	public boolean supportsType(IBuildPropertyType type) {
+		return supportsType(type.getId());
+	}
+
+	public boolean supportsValue(String type, String value){
+		return supportsValue(type, value, true);
+	}
+
+	public boolean supportsValue(String type, String value, boolean checkTools){
+		SupportedProperties props = findSupportedProperties();
+		boolean supports = false;
+		if(props != null){
+			supports = props.supportsValue(type, value);
+		} else {
+			BooleanExpressionApplicabilityCalculator calc = getBooleanExpressionCalculator();
+			if(calc != null){
+				supports = calc.referesPropertyValue(type, value);
+			}
+	
+			if(!supports)
+				supports = super.supportsValue(type, value);
+		}
+
+		if(!supports && checkTools){
+			ITool tools[] = getTools();
+			for(int i = 0; i < tools.length; i++){
+				if(((Tool)tools[i]).supportsValue(type, value)){
+					supports = true;
+					break;
+				}
+			}
+		}
+		return supports;
+	}
+
+	public boolean supportsValue(IBuildPropertyType type,
+			IBuildPropertyValue value) {
+		return supportsValue(type.getId(), value.getId());
+	}
+	
+	public void propertiesChanged() {
+		if(isExtensionToolChain)
+			return;
+		
+		BooleanExpressionApplicabilityCalculator calculator = getBooleanExpressionCalculator();
+		if(calculator != null)
+			calculator.adjustToolChain(getParentFolderInfo(), this, false);
+		
+		super.propertiesChanged();
+	}
+	
+	public BooleanExpressionApplicabilityCalculator getBooleanExpressionCalculator(){
+		if(booleanExpressionCalculator == null){
+			if(superClass != null){
+				return ((ToolChain)superClass).getBooleanExpressionCalculator();
+			}
+		}
+		return booleanExpressionCalculator;
+	}
+
+	protected IResourceInfo getParentResourceInfo() {
+		return getParentFolderInfo();
+	}
+
+	public boolean matches(IToolChain tc){
+		if(tc == this)
+			return true;
+		
+		IToolChain rTc = ManagedBuildManager.getRealToolChain(this);
+		if(rTc == null)
+			return false;
+		
+		return rTc == ManagedBuildManager.getRealToolChain(tc);
+	}
+	
+	private boolean performMatchCompatison(IToolChain tCh){
+		if(tCh == null)
+			return false;
+		
+		if(tCh == this)
+			return true;
+		
+//		if(tCh.isReal() && isReal())
+//			return false;
+		
+		String name = tCh.getName();
+		if(name == null){
+			if(getName() != null)
+				return false;
+		} else if(!name.equals(getName())){
+			return false;
+		}
+		
+		String thisVersion = ManagedBuildManager.getVersionFromIdAndVersion(getId());
+		String otherVersion = ManagedBuildManager.getVersionFromIdAndVersion(tCh.getId());
+		if(thisVersion == null || thisVersion.length() == 0){
+			if(otherVersion != null && otherVersion.length() != 0)
+				return false;
+		} else {
+			if(!thisVersion.equals(otherVersion))
+				return false;
+		}
+			
+		return true;
+		
+//		if(true)
+//			return true;
+//		
+//		ITool tools[] = getTools();
+//		ITool otherTools[] = tCh.getTools();
+//		
+//		if(tools.length != otherTools.length)
+//			return false;
+//
+//		if(!ListComparator.match(tools,
+//				otherTools,
+//				new Comparator(){
+//			public boolean equal(Object o1, Object o2){
+//				return ((Tool)o1).performMatchComparison((Tool)o2);
+//			}
+//		}))
+//			return false; 
+//		
+//		return true;
+	}
+	
+	public List getIdenticalList(){
+		return identicalList;//;(ArrayList)identicalToolChainsList.clone();
+	}
+	
+	public boolean supportsBuild(boolean managed) {
+		if(!getSupportsManagedBuildAttribute())
+			return !managed;
+		
+		IBuilder builder = getBuilder();
+		if(builder != null && !builder.supportsBuild(managed))
+			return false;
+		
+		ITool tools[] = getTools();
+		for(int i = 0; i < tools.length; i++){
+			if(!tools[i].supportsBuild(managed))
+				return false;
+		}
+		
+		return true;
+	}
+	
+	public boolean getSupportsManagedBuildAttribute(){
+		if(supportsManagedBuild == null){
+			if(superClass != null){
+				return ((ToolChain)superClass).getSupportsManagedBuildAttribute();
+			}
+			return true;
+		}
+		return supportsManagedBuild.booleanValue();
+	}
+
+	public boolean isSystemObject() {
+		if(isTest)
+			return true;
+		
+		if(getParent() != null)
+			return getParent().isSystemObject();
+		
+		return false;
+	}
+	
+	private class MatchKey {
+		ToolChain toolChain;
+		
+		public MatchKey(ToolChain tch) {
+			toolChain = tch;
+		}
+		
+		public boolean equals(Object obj) {
+			if(obj == this)
+				return true;
+			if(!(obj instanceof MatchKey))
+				return false;
+			MatchKey other = (MatchKey)obj;
+			return toolChain.performMatchCompatison(other.toolChain);
+		}
+
+		public int hashCode() {
+			String name = getName();
+			if(name == null)
+				name = getId();
+			int code = name.hashCode();
+			String version = ManagedBuildManager.getVersionFromIdAndVersion(getId());
+			if(version != null)
+				code += version.hashCode();
+			return code;
+		}
+		
+	}
+
+	public Object getMatchKey() {
+		if(isAbstract())
+			return null;
+		if(!isExtensionToolChain)
+			return null;
+		return new MatchKey(this);
+	}
+
+	public void setIdenticalList(List list) {
+		identicalList = list;
+	}
+	
+	public String getNameAndVersion(){
+		String name = getName();
+		String version = ManagedBuildManager.getVersionFromIdAndVersion(getId());
+		if(version != null && version.length() != 0){
+			return new StringBuffer().append(name).append(" (").append(version).append("").toString();
+		}
+		return name;
+	}
+	
+	public IConfigurationElement getConverterModificationElement(IToolChain tc){
+		Map map = ManagedBuildManager.getConversionElements(this);
+		IConfigurationElement element = null;
+		if(!map.isEmpty()){
+			for(Iterator iter = map.values().iterator(); iter.hasNext();){
+				IConfigurationElement el = (IConfigurationElement)iter.next();
+				String toId = el.getAttribute("toId"); //$NON-NLS-1$
+				IToolChain toTc = tc;
+				if(toId != null){
+					for(;toTc != null; toTc = toTc.getSuperClass()){
+						if(toId.equals(toTc.getId()))
+							break;
+					}
+				}
+				
+				if(toTc != null){
+					element = el;
+					break; 
+				}
+			}
+		}
+
+		return element;
+	}
+
+	public IConfigurationElement getConverterModificationElement(ITool fromTool, ITool toTool){
+		return ((Tool)fromTool).getConverterModificationElement(toTool);
+	}
+
+	void updateParentFolderInfo(FolderInfo info){
+		parentFolderInfo = info;
+		config = parentFolderInfo.getParent();
+	}
+
+	public String[] getRequiredTypeIds() {
+		return getRequiredTypeIds(true);
+	}
+
+	public String[] getRequiredTypeIds(boolean checkTools) {
+		SupportedProperties props = findSupportedProperties();
+		List result = new ArrayList();
+		if(props != null) {
+			result.addAll(Arrays.asList(props.getRequiredTypeIds()));
+		} else {
+//			BooleanExpressionApplicabilityCalculator calc = getBooleanExpressionCalculator();
+//			if(calc != null){
+//				result.addAll(Arrays.asList(calc.getReferencedPropertyIds()));
+//			}
+			
+			result.addAll(Arrays.asList(super.getRequiredTypeIds()));
+		}
+		
+		//call tools anyway
+		if(checkTools){
+			ITool tools[] = getTools();
+			for(int i = 0; i < tools.length; i++){
+				result.addAll(Arrays.asList(((Tool)tools[i]).getRequiredTypeIds()));
+			}
+		}
+		return (String[])result.toArray(new String[result.size()]);
+	}
+
+	public String[] getSupportedTypeIds() {
+		return getSupportedTypeIds(true);
+	}
+
+	public String[] getSupportedTypeIds(boolean checkTools) {
+		SupportedProperties props = findSupportedProperties();
+		List result = new ArrayList();
+		if(props != null) {
+			result.addAll(Arrays.asList(props.getSupportedTypeIds()));
+		} else {
+			BooleanExpressionApplicabilityCalculator calc = getBooleanExpressionCalculator();
+			if(calc != null){
+				result.addAll(Arrays.asList(calc.getReferencedPropertyIds()));
+			}
+			
+			result.addAll(Arrays.asList(super.getSupportedTypeIds()));
+		}
+		
+		//call tools anyway
+		if(checkTools){
+			ITool tools[] = getTools();
+			for(int i = 0; i < tools.length; i++){
+				result.addAll(Arrays.asList(((Tool)tools[i]).getSupportedTypeIds()));
+			}
+		}
+		return (String[])result.toArray(new String[result.size()]);
+	}
+
+	public String[] getSupportedValueIds(String typeId) {
+		return getSupportedValueIds(typeId, true);
+	}
+
+	public String[] getSupportedValueIds(String typeId, boolean checkTools) {
+		SupportedProperties props = findSupportedProperties();
+		List result = new ArrayList();
+		if(props != null) {
+			result.addAll(Arrays.asList(props.getSupportedValueIds(typeId)));
+		} else {
+			BooleanExpressionApplicabilityCalculator calc = getBooleanExpressionCalculator();
+			if(calc != null){
+				result.addAll(Arrays.asList(calc.getReferencedValueIds(typeId)));
+			}
+			
+			result.addAll(Arrays.asList(super.getSupportedValueIds(typeId)));
+		}
+		
+		//call tools anyway
+		if(checkTools){
+			ITool tools[] = getTools();
+			for(int i = 0; i < tools.length; i++){
+				result.addAll(Arrays.asList(((Tool)tools[i]).getSupportedValueIds(typeId)));
+			}
+		}
+		return (String[])result.toArray(new String[result.size()]);
+	}
+
+	public boolean requiresType(String typeId) {
+		return requiresType(typeId, true);
+	}
+
+	public boolean requiresType(String typeId, boolean checkTools) {
+		SupportedProperties props = findSupportedProperties();
+		boolean required = false;
+		if(props != null) {
+			required = props.requiresType(typeId);
+		} else {
+			required = super.requiresType(typeId);
+		}
+		
+		//call tools if not found
+		if(!required && checkTools){
+			ITool tools[] = getTools();
+			for(int i = 0; i < tools.length; i++){
+				if(((Tool)tools[i]).requiresType(typeId)){
+					required = true;
+					break;
+				}
+			}
+		}
+		return required;
+	}
+	
+	private SupportedProperties findSupportedProperties(){
+		if(supportedProperties == null){
+			if(superClass != null){
+				return ((ToolChain)superClass).findSupportedProperties();
+			}
+		}
+		return supportedProperties;
+	}
+
+	private void loadProperties(IManagedConfigElement el){
+		supportedProperties = new SupportedProperties(el);
+	}
+	
+	void setNonInternalBuilderId(String id){
+		nonInternalBuilderId = id;
+	}
+	
+	String getNonInternalBuilderId(){
+		if(nonInternalBuilderId == null){
+			if(superClass != null){
+				return ((ToolChain)superClass).getNonInternalBuilderId();
+			}
+			return null;
+		}
+		return nonInternalBuilderId;
+	}
+	
+	public void resetErrorParsers(FolderInfo info){
+		errorParserIds = null;
+		info.resetErrorParsers(info.getFilteredTools());
+		
+		if(info.isRoot()){
+			if(builder != null){
+				builder.resetErrorParsers();
+			}
+		}
+	}
+
+	void removeErrorParsers(FolderInfo info, Set set){
+		Set oldSet = contributeErrorParsers(info, null, false);
+		oldSet.removeAll(set);
+		setErrorParserList((String[])oldSet.toArray(new String[oldSet.size()]));
+		
+		info.removeErrorParsers(info.getFilteredTools(), set);
+
+
+		if(info.isRoot()){
+			Builder builder = (Builder)info.getParent().getEditableBuilder();
+			builder.removeErrorParsers(set);
+		}
+	}
+	
+	public void setErrorParserList(String[] ids) {
+		if(ids == null){
+			errorParserIds = null;
+		} else if(ids.length == 0){
+			errorParserIds = EMPTY_STRING;
+		} else {
+			StringBuffer buf = new StringBuffer();
+			buf.append(ids[0]);
+			for(int i = 1; i < ids.length; i++){
+				buf.append(";").append(ids[i]);
+			}
+			errorParserIds = buf.toString();
+		}
+	}
+	
+	public String getUniqueRealName() {
+		String name = getName();
+		if(name == null){
+			name = getId();
+		} else {
+			String version = ManagedBuildManager.getVersionFromIdAndVersion(getId());
+			if(version != null){
+			StringBuffer buf = new StringBuffer();
+			buf.append(name);
+			buf.append(" (v").append(version).append(")");
+			name = buf.toString();
+			}
+		}
+		return name;
+	}
+	
+	void resolveProjectReferences(boolean onLoad){
+		for(Iterator iter = getToolList().iterator(); iter.hasNext();){
+			Tool tool = (Tool)iter.next();
+			tool.resolveProjectReferences(onLoad);
+		}
+	}
+
+	public IScannerConfigBuilderInfo2 setScannerConfigBuilderInfo(IScannerConfigBuilderInfo2 info){
+		IScannerConfigBuilderInfo2 oldInfo = scannerConfigInfo;
+		scannerConfigInfo = info;
+		return oldInfo;
+	}
+
+	public IScannerConfigBuilderInfo2 getScannerConfigBuilderInfoElement(boolean searchSuper){
+		if(scannerConfigInfo == null){
+			if(superClass != null && searchSuper){
+				return ((ToolChain)superClass).getScannerConfigBuilderInfoElement(true);
+			}
+			return null;
+		}
+		return scannerConfigInfo;
+	}
+
+	public IScannerConfigBuilderInfo2 getScannerConfigBuilderInfo(){
+		return getScannerConfigBuilderInfoElement(true);
+	}
+	
+	public boolean hasScannerConfigSettings(){
+		if(getScannerConfigBuilderInfoElement(true) != null)
+			return true;
+		
+		if(getScannerConfigDiscoveryProfileId() != null)
+			return true;
+		
+		return false;
+	}
+	
+	public boolean isPerRcTypeDiscovery(){
+		if(isRcTypeBasedDiscovery == null){
+			if(superClass != null){
+				return ((ToolChain)superClass).isPerRcTypeDiscovery();
+			}
+			return true;
+		}
+		return isRcTypeBasedDiscovery.booleanValue();
+	}
+
+	public void setPerRcTypeDiscovery(boolean on){
+		isRcTypeBasedDiscovery = Boolean.valueOf(on);
+	}
+
+	public IDiscoveredPathManager.IDiscoveredPathInfo setDiscoveredPathInfo(IDiscoveredPathManager.IDiscoveredPathInfo info){
+		IDiscoveredPathManager.IDiscoveredPathInfo oldInfo = discoveredInfo;
+		discoveredInfo = info;
+		return oldInfo;
+	}
+
+	public IDiscoveredPathManager.IDiscoveredPathInfo getDiscoveredPathInfo(){
+		return discoveredInfo;
+	}
+	
+	public IDiscoveredPathManager.IDiscoveredPathInfo clearDiscoveredPathInfo(){
+		IDiscoveredPathManager.IDiscoveredPathInfo oldInfo = discoveredInfo;
+		discoveredInfo = null;
+		return oldInfo;
+	}
+	
+	public boolean isPreferenceToolChain(){
+		IToolChain tch = ManagedBuildManager.getRealToolChain(this);
+		return tch != null && tch.getId().equals(ConfigurationDataProvider.PREF_TC_ID);
 	}
 }

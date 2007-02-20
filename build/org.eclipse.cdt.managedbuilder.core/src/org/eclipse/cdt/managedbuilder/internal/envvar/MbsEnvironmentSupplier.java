@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005 Intel Corporation and others.
+ * Copyright (c) 2005, 2007 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,13 +13,12 @@ package org.eclipse.cdt.managedbuilder.internal.envvar;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.cdt.core.envvar.IEnvironmentVariable;
+import org.eclipse.cdt.managedbuilder.core.IBuilder;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
-import org.eclipse.cdt.managedbuilder.core.IManagedBuildInfo;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.cdt.managedbuilder.envvar.IBuildEnvironmentVariable;
 import org.eclipse.cdt.managedbuilder.envvar.IEnvironmentVariableSupplier;
-import org.eclipse.cdt.managedbuilder.makegen.IManagedBuilderMakefileGenerator;
-import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
@@ -39,7 +38,7 @@ public class MbsEnvironmentSupplier implements IEnvironmentVariableSupplier {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.envvar.IEnvironmentVariableSupplier#getVariable()
 	 */
-	public IBuildEnvironmentVariable getVariable(String name, Object context) {
+	public IEnvironmentVariable getVariable(String name, Object context) {
 		if(context instanceof IConfiguration)
 			return getConfigurationVariable(name,(IConfiguration)context);
 		return null;
@@ -50,20 +49,23 @@ public class MbsEnvironmentSupplier implements IEnvironmentVariableSupplier {
 		if("CWD".equals(name) || "PWD".equals(name)){	//$NON-NLS-1$	//$NON-NLS-2$
 			IResource owner = configuration.getOwner();
 			if(owner != null){
-				IManagedBuildInfo info = ManagedBuildManager.getBuildInfo(owner);
-				if(info != null && configuration.equals(info.getDefaultConfiguration())){
-					IManagedBuilderMakefileGenerator generator = ManagedBuildManager.getBuildfileGenerator(configuration);
-					generator.initialize((IProject)owner,info,null);
-					
-					IPath topBuildDir = generator.getBuildWorkingDir();
-					if(topBuildDir == null)
-						topBuildDir = new Path(info.getConfigurationName());
-
-					IPath projectLocation = owner.getLocation();
-					IPath workingDirectory = projectLocation.append(topBuildDir);
-					String value = workingDirectory.toOSString(); 
-					variable = new BuildEnvVar(name,value,IBuildEnvironmentVariable.ENVVAR_REPLACE,null);
-				}
+//				IManagedBuildInfo info = ManagedBuildManager.getBuildInfo(owner);
+//				if(info != null && configuration.equals(info.getDefaultConfiguration())){
+//					IManagedBuilderMakefileGenerator generator = ManagedBuildManager.getBuildfileGenerator(configuration);
+//					generator.initialize((IProject)owner,info,null);
+				IBuilder builder = configuration.getEditableBuilder();
+				IPath topBuildDir = ManagedBuildManager.getBuildLocation(configuration, builder);
+	
+				
+////					IPath topBuildDir = generator.getBuildWorkingDir();
+//					if(topBuildDir == null)
+//						topBuildDir = new Path(configuration.getName());
+//
+//					IPath projectLocation = owner.getLocation();
+//					IPath workingDirectory = projectLocation.append(topBuildDir);
+//					String value = workingDirectory.toOSString(); 
+					variable = new BuildEnvVar(name, topBuildDir.toOSString(), IBuildEnvironmentVariable.ENVVAR_REPLACE,null);
+//				}
 			}
 		}
 		return variable;
@@ -72,7 +74,7 @@ public class MbsEnvironmentSupplier implements IEnvironmentVariableSupplier {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.envvar.IEnvironmentVariableSupplier#getVariables()
 	 */
-	public IBuildEnvironmentVariable[] getVariables(Object context) {
+	public IEnvironmentVariable[] getVariables(Object context) {
 		if(context instanceof IConfiguration){
 			List variables = new ArrayList(fVariableNames.length);
 			for(int i = 0; i < fVariableNames.length; i++){
@@ -82,7 +84,7 @@ public class MbsEnvironmentSupplier implements IEnvironmentVariableSupplier {
 			}
 			if(variables.size() == 0)
 				return null;
-			return (IBuildEnvironmentVariable[])variables.toArray(new IBuildEnvironmentVariable[variables.size()]);
+			return (IEnvironmentVariable[])variables.toArray(new IBuildEnvironmentVariable[variables.size()]);
 		}
 		return null;
 	}

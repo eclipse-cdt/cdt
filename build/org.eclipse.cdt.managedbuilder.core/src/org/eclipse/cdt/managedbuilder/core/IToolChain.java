@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2005, 2006 Intel Corporation and others.
+ * Copyright (c) 2004, 2007 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.core;
 
+import org.eclipse.cdt.core.settings.model.extension.CTargetPlatformData;
 import org.eclipse.cdt.managedbuilder.envvar.IConfigurationEnvironmentVariableSupplier;
 import org.eclipse.cdt.managedbuilder.macros.IConfigurationBuildMacroSupplier;
 
@@ -42,9 +43,14 @@ public interface IToolChain extends IBuildObject, IHoldsOptions {
 	public static final String IS_TOOL_CHAIN_SUPPORTED = "isToolChainSupported";			//$NON-NLS-1$
 	public static final String CONFIGURATION_ENVIRONMENT_SUPPLIER = "configurationEnvironmentSupplier";			//$NON-NLS-1$
 	public static final String CONFIGURATION_MACRO_SUPPLIER = "configurationMacroSupplier";			//$NON-NLS-1$
+	public static final String SUPPORTS_MANAGED_BUILD = "supportsManagedBuild";
+	public static final String IS_SYSTEM= "isSystem";							//$NON-NLS-1$
+	public static final String NON_INTERNAL_BUILDER_ID = "nonInternalBuilderId";	//$NON-NLS-1$
+	public static final String RESOURCE_TYPE_BASED_DISCOVERY = "resourceTypeBasedDiscovery";	//$NON-NLS-1$
 	
 	// The attribute name for the scanner info collector
 	public static final String SCANNER_CONFIG_PROFILE_ID = "scannerConfigDiscoveryProfileId"; //$NON-NLS-1$
+	public static final String DISCOVERY_INFO = "discoveryInfo";	//$NON-NLS-1$
 
 	/**
 	 * Returns the configuration that is the parent of this tool-chain.
@@ -382,4 +388,16 @@ public interface IToolChain extends IBuildObject, IHoldsOptions {
 	 * or null, if no conversion is required
 	 */
 	public IOptionPathConverter getOptionPathConverter() ;
+	
+	IFolderInfo getParentFolderInfo();
+	
+	CTargetPlatformData getTargetPlatformData();
+	
+	boolean supportsBuild(boolean managed);
+	
+	boolean isSystemObject();
+	
+	boolean matches(IToolChain tc);
+	
+	String getUniqueRealName();
 }

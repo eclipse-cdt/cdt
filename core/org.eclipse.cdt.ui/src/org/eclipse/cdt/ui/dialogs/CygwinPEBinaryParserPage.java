@@ -13,12 +13,6 @@ package org.eclipse.cdt.ui.dialogs;
 
 import java.io.File;
 
-import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.ICDescriptor;
-import org.eclipse.cdt.core.ICExtensionReference;
-import org.eclipse.cdt.internal.ui.CUIMessages;
-import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.cdt.utils.ui.controls.ControlFactory;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -40,6 +34,13 @@ import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
+
+import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.ICExtensionReference;
+import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.utils.ui.controls.ControlFactory;
+
+import org.eclipse.cdt.internal.ui.CUIMessages;
 
 /**
  */
@@ -74,8 +75,7 @@ public class CygwinPEBinaryParserPage extends AbstractCOptionPage {
 		IProject proj = getContainer().getProject();
 		if (proj != null) {
 			String parserID = ""; //$NON-NLS-1$
-			ICDescriptor cdesc = CCorePlugin.getDefault().getCProjectDescription(proj, false);
-			ICExtensionReference[] cext = cdesc.get(CCorePlugin.BINARY_PARSER_UNIQ_ID);
+			ICExtensionReference[] cext = CCorePlugin.getDefault().getBinaryParserExtensions(proj);
 			if (cext.length > 0) {
 				IExtensionPoint point = Platform.getExtensionRegistry().getExtensionPoint(CUIPlugin.PLUGIN_ID, "BinaryParserPage"); //$NON-NLS-1$
 				IConfigurationElement[] infos = point.getConfigurationElements();
@@ -328,8 +328,7 @@ public class CygwinPEBinaryParserPage extends AbstractCOptionPage {
 		IProject proj = getContainer().getProject();
 		if (proj != null) {
 			try {
-				ICDescriptor cdesc = CCorePlugin.getDefault().getCProjectDescription(proj, false);
-				ICExtensionReference[] cext = cdesc.get(CCorePlugin.BINARY_PARSER_UNIQ_ID);
+				ICExtensionReference[] cext = CCorePlugin.getDefault().getBinaryParserExtensions(proj);
 				if (cext.length > 0) {
 					addr2line = cext[0].getExtensionData("addr2line"); //$NON-NLS-1$;
 					cppfilt = cext[0].getExtensionData("c++filt"); //$NON-NLS-1$;

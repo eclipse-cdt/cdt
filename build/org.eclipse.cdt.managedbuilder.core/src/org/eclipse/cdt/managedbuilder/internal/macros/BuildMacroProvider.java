@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 Intel Corporation and others.
+ * Copyright (c) 2005, 2007 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,31 +11,44 @@
 package org.eclipse.cdt.managedbuilder.internal.macros;
 
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
+import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.cdtvariables.CdtVariableException;
+import org.eclipse.cdt.core.cdtvariables.ICdtVariable;
+import org.eclipse.cdt.core.cdtvariables.ICdtVariableManager;
+import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
+import org.eclipse.cdt.managedbuilder.core.BuildException;
+import org.eclipse.cdt.managedbuilder.core.IBuildObject;
 import org.eclipse.cdt.managedbuilder.core.IBuilder;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
+import org.eclipse.cdt.managedbuilder.core.IResourceConfiguration;
+import org.eclipse.cdt.managedbuilder.core.ITool;
+import org.eclipse.cdt.managedbuilder.core.IToolChain;
+import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
+import org.eclipse.cdt.managedbuilder.internal.core.Tool;
 import org.eclipse.cdt.managedbuilder.macros.BuildMacroException;
 import org.eclipse.cdt.managedbuilder.macros.IBuildMacro;
 import org.eclipse.cdt.managedbuilder.macros.IBuildMacroProvider;
 import org.eclipse.cdt.managedbuilder.macros.IBuildMacroSupplier;
+import org.eclipse.cdt.utils.cdtvariables.CdtVariableResolver;
+import org.eclipse.cdt.utils.cdtvariables.ICdtVariableSupplier;
+import org.eclipse.cdt.utils.cdtvariables.IVariableSubstitutor;
+import org.eclipse.cdt.utils.cdtvariables.SupplierBasedCdtVariableManager;
+import org.eclipse.cdt.utils.cdtvariables.SupplierBasedCdtVariableSubstitutor;
+import org.eclipse.core.variables.IDynamicVariable;
+import org.eclipse.core.variables.IStringVariable;
 
 /**
  * The default IBuildMacroProvider implementation
  * @since 3.0
  */
-public class BuildMacroProvider implements IBuildMacroProvider {
+public class BuildMacroProvider implements IBuildMacroProvider, IMacroContextInfoProvider {
+	private static final String PATTERN_MACRO_NAME = "="; //$NON-NLS-1$
+
 	static private BuildMacroProvider fDefault;
 	
-	public static UserDefinedMacroSupplier fUserDefinedMacroSupplier = UserDefinedMacroSupplier.getInstance();
-	public static ExternalExtensionMacroSupplier fExternalExtensionMacroSupplier = ExternalExtensionMacroSupplier.getInstance();
-	public static EnvironmentMacroSupplier fEnvironmentMacroSupplier = EnvironmentMacroSupplier.getInstance();
 	public static MbsMacroSupplier fMbsMacroSupplier = MbsMacroSupplier.getInstance();
-	public static CdtPathEntryMacroSupplier fCdtPathEntryMacroSupplier = CdtPathEntryMacroSupplier.getInstance();
-	public static EclipseVariablesMacroSupplier fEclipseVariablesMacroSupplier = EclipseVariablesMacroSupplier.getInstance();
 
 	protected BuildMacroProvider(){
 		
@@ -51,31 +64,9 @@ public class BuildMacroProvider implements IBuildMacroProvider {
 	 */
 	public IBuildMacro getMacro(String macroName, int contextType,
 			Object contextData, boolean includeParentContexts) {
-		return getMacro(macroName,
-				getMacroContextInfo(contextType,contextData),includeParentContexts);
-	}
-
-	/**
-	 * @param macroName
-	 * @param contextInfo
-	 * @param includeParentContexts
-	 * @return
-	 */
-	static public IBuildMacro getMacro(String macroName, IMacroContextInfo contextInfo, boolean includeParentContexts) {
- 		if(contextInfo == null || macroName == null)
-			return null;
-		
-		do{
-			IBuildMacroSupplier suppliers[] = contextInfo.getSuppliers();
-			if(suppliers != null){
-				for(int i = 0; i < suppliers.length; i++){
-					IBuildMacro macro = suppliers[i].getMacro(macroName,contextInfo.getContextType(),contextInfo.getContextData());
-					if(macro != null)
-						return macro;
-				}
-			}
-		}while(includeParentContexts && (contextInfo = contextInfo.getNext()) != null);
-		
+		ICdtVariable var = getVariable(macroName, contextType, contextData, includeParentContexts);
+		if(var != null)
+			return wrap(var);
 		return null;
 	}
 
@@ -84,62 +75,32 @@ public class BuildMacroProvider implements IBuildMacroProvider {
 	 */
 	public IBuildMacro[] getMacros(int contextType, Object contextData,
 			boolean includeParentContexts) {
-		return getMacros(getMacroContextInfo(contextType,contextData),
-				includeParentContexts);
+		ICdtVariable[] vars = getVariables(contextType, contextData, includeParentContexts);
+		if(vars != null)
+			return wrap(vars);
+		return null;
 	}
-
-	/**
-	 * @param contextInfo
-	 * @param includeParentContexts
-	 * @return
-	 */
-	static public IBuildMacro[] getMacros(IMacroContextInfo contextInfo,
-			boolean includeParentContexts) {
-		if(contextInfo == null)
-			return null;
-		
-		Map map = new HashMap();
-		IMacroContextInfo infos[] = includeParentContexts ? 
-				getAllMacroContextInfos(contextInfo) :
-					new IMacroContextInfo[]{contextInfo};
-		
-		for(int k = infos.length - 1; k >= 0; k--){
-			contextInfo = infos[k];
-			IBuildMacroSupplier suppliers[] = contextInfo.getSuppliers();
-			if(suppliers != null){
-				for(int i = suppliers.length - 1; i >= 0; i--){
-					IBuildMacro macros[] = suppliers[i].getMacros(contextInfo.getContextType(),contextInfo.getContextData());
-					if(macros != null){
-						for(int j = 0; j < macros.length; j++){
-							map.put(macros[j].getName(),macros[j]);
-						}
-					}
-				}
-			}
+	
+	public static CoreMacrosSupplier createCoreSupplier(IConfiguration cfg){
+		ICConfigurationDescription cfgDes = ManagedBuildManager.getDescriptionForConfiguration(cfg);
+		if(cfgDes != null){
+			return new CoreMacrosSupplier(cfgDes);
 		}
-		
-		Collection values = map.values();
-		return (IBuildMacro[])values.toArray(new IBuildMacro[values.size()]);
+		return null;
 	}
 	
-	/*
-	 * returns an array of the IMacroContextInfo that holds the context informations
-	 * starting from the one passed to this method and including all subsequent parents
-	 */
-	private static IMacroContextInfo[] getAllMacroContextInfos(IMacroContextInfo contextInfo){
-		if(contextInfo == null)
-			return null;
-			
-		List list = new ArrayList();
 	
-		list.add(contextInfo);
-			
-		while((contextInfo = contextInfo.getNext()) != null)
-			list.add(contextInfo);
-		
-		return (IMacroContextInfo[])list.toArray(new IMacroContextInfo[list.size()]);
+
+	public ICdtVariable getVariable(String macroName, int contextType,
+			Object contextData, boolean includeParentContexts) {
+		return SupplierBasedCdtVariableManager.getVariable(macroName,
+				getMacroContextInfo(contextType,contextData),includeParentContexts);
 	}
 
+	public ICdtVariable[] getVariables(int contextType, Object contextData,
+			boolean includeParentContexts) {
+		return SupplierBasedCdtVariableManager.getVariables(getMacroContextInfo(contextType,contextData),includeParentContexts);
+	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.macros.IBuildMacroProvider#getSuppliers(int, java.lang.Object)
@@ -147,9 +108,21 @@ public class BuildMacroProvider implements IBuildMacroProvider {
 	public IBuildMacroSupplier[] getSuppliers(int contextType,
 			Object contextData) {
 		IMacroContextInfo info = getMacroContextInfo(contextType,contextData);
-		if(info != null)
-			return info.getSuppliers();
+		if(info != null){
+			ICdtVariableSupplier suppliers[] = info.getSuppliers();
+			if(suppliers != null)
+				return filterMacroSuppliers(suppliers);
+		}
 		return null;
+	}
+
+	private static IBuildMacroSupplier[] filterMacroSuppliers(ICdtVariableSupplier suppliers[]){
+		List list = new ArrayList(suppliers.length);
+		for(int i = 0; i < suppliers.length; i++){
+			if(suppliers[i] instanceof IBuildMacroSupplier)
+				list.add(suppliers[i]);
+		}
+		return (IBuildMacroSupplier[])list.toArray(new IBuildMacroSupplier[list.size()]);
 	}
 	
 	/**
@@ -170,7 +143,26 @@ public class BuildMacroProvider implements IBuildMacroProvider {
 	 * @see org.eclipse.cdt.managedbuilder.macros.IBuildMacroProvider#convertStringListToString(java.lang.String[], java.lang.String)
 	 */
 	public String convertStringListToString(String[] value, String listDelimiter) {
-		return MacroResolver.convertStringListToString(value,listDelimiter);
+		return CdtVariableResolver.convertStringListToString(value,listDelimiter);
+	}
+	
+	public static IBuildMacro wrap(ICdtVariable var){
+		if(var == null)
+			return null;
+		if(var instanceof IBuildMacro)
+			return (IBuildMacro)var;
+		return new BuildMacro(var);
+	}
+
+	public static IBuildMacro[] wrap(ICdtVariable vars[]){
+		if(vars instanceof IBuildMacro[])
+			return (IBuildMacro[])vars;
+		
+		IBuildMacro macros[] = new IBuildMacro[vars.length];
+		for(int i = 0; i < macros.length; i++){
+			macros[i] = wrap(vars[i]);
+		}
+		return macros;
 	}
 
 	/* (non-Javadoc)
@@ -179,12 +171,16 @@ public class BuildMacroProvider implements IBuildMacroProvider {
 	public String resolveValue(String value, String nonexistentMacrosValue,
 			String listDelimiter, int contextType, Object contextData)
 			throws BuildMacroException {
-		
 		IMacroContextInfo info = getMacroContextInfo(contextType,contextData);
-		if(info != null)
-			return MacroResolver.resolveToString(value,
-					getMacroSubstitutor(info,nonexistentMacrosValue, listDelimiter));
-		return null;
+		if(info != null){
+			try {
+				return CdtVariableResolver.resolveToString(value,
+						getMacroSubstitutor(info,nonexistentMacrosValue, listDelimiter));
+			} catch (CdtVariableException e) {
+				throw new BuildMacroException(e);
+			}
+		}
+		return value;
 	}
 	
 	/* (non-Javadoc)
@@ -195,8 +191,13 @@ public class BuildMacroProvider implements IBuildMacroProvider {
 			int contextType, Object contextData) throws BuildMacroException {
 		
 		IMacroContextInfo info = getMacroContextInfo(contextType,contextData);
-		if(info != null)
-			return MacroResolver.resolveToStringList(value,getMacroSubstitutor(info,nonexistentMacrosValue, listDelimiter)); 
+		if(info != null){
+			try {
+				return CdtVariableResolver.resolveToStringList(value,getMacroSubstitutor(info,nonexistentMacrosValue, listDelimiter));
+			} catch (CdtVariableException e) {
+				throw new BuildMacroException(e);
+			}
+		}
 		return null;
 	}
 
@@ -208,9 +209,14 @@ public class BuildMacroProvider implements IBuildMacroProvider {
 			int contextType, Object contextData) throws BuildMacroException {
 
 		IMacroContextInfo info = getMacroContextInfo(contextType,contextData);
-		if(info != null)
-			return MacroResolver.resolveToString(value,
-					getBuildfileMacroSubstitutor(info,nonexistentMacrosValue, listDelimiter));
+		if(info != null){
+			try {
+				return CdtVariableResolver.resolveToString(value,
+						getBuildfileMacroSubstitutor(info,nonexistentMacrosValue, listDelimiter));
+			} catch (CdtVariableException e) {
+				throw new BuildMacroException(e);
+			}
+		}
 		return null;
 	}
 	
@@ -222,8 +228,13 @@ public class BuildMacroProvider implements IBuildMacroProvider {
 			throws BuildMacroException {
 
 		IMacroContextInfo info = getMacroContextInfo(contextType,contextData);
-		if(info != null)
-			return MacroResolver.resolveToStringList(value,getBuildfileMacroSubstitutor(info,nonexistentMacrosValue, listDelimiter));
+		if(info != null){
+			try {
+				return CdtVariableResolver.resolveToStringList(value,getBuildfileMacroSubstitutor(info,nonexistentMacrosValue, listDelimiter));
+			} catch (CdtVariableException e) {
+				throw new BuildMacroException(e);
+			}
+		}
 		return null;
 	}
 
@@ -232,8 +243,8 @@ public class BuildMacroProvider implements IBuildMacroProvider {
 	 */
 	public boolean isStringListValue(String value, int contextType, Object contextData) throws BuildMacroException {
 		try {
-			MacroResolver.resolveToStringList(value,getMacroSubstitutor(getMacroContextInfo(contextType,contextData)," ",null));	//$NON-NLS-1$
-		}catch(BuildMacroException e){
+			CdtVariableResolver.resolveToStringList(value,getMacroSubstitutor(getMacroContextInfo(contextType,contextData)," ",null));	//$NON-NLS-1$
+		}catch(CdtVariableException e){
 			return false;
 		}
 		return true;
@@ -246,42 +257,33 @@ public class BuildMacroProvider implements IBuildMacroProvider {
 	public void checkIntegrity(int contextType, Object contextData)
 			throws BuildMacroException {
 
+		final ICdtVariableManager mngr = CCorePlugin.getDefault().getCdtVariableManager();
 		IMacroContextInfo info = getMacroContextInfo(contextType,contextData);
-		IMacroSubstitutor subst = new DefaultMacroSubstitutor(info,null,""){ //$NON-NLS-1$
-			protected ResolvedMacro resolveMacro(IBuildMacro macro) throws BuildMacroException {
-				if(macro instanceof EclipseVariablesMacroSupplier.EclipseVarMacro)
+		IVariableSubstitutor subst = new SupplierBasedCdtVariableSubstitutor(info,null,""){ //$NON-NLS-1$
+			protected ResolvedMacro resolveMacro(ICdtVariable macro) throws CdtVariableException {
+				IStringVariable var = mngr.toEclipseVariable(macro, null); 
+				if(var instanceof IDynamicVariable)
 					return new ResolvedMacro(macro.getName(),""); //$NON-NLS-1$
 				return super.resolveMacro(macro);
 			}
 		};
-		if(info != null)
-			MacroResolver.checkIntegrity(info,subst);
+		if(info != null){
+			try {
+				CdtVariableResolver.checkIntegrity(info,subst);
+			} catch (CdtVariableException e) {
+				throw new BuildMacroException(e);
+			}
+		}
 	}
 
-	public IMacroSubstitutor getMacroSubstitutor(IMacroContextInfo info, String inexistentMacroValue, String listDelimiter){
-		return new DefaultMacroSubstitutor(info, inexistentMacroValue, listDelimiter);
+	public SupplierBasedCdtVariableSubstitutor getMacroSubstitutor(IMacroContextInfo info, String inexistentMacroValue, String listDelimiter){
+		return new SupplierBasedCdtVariableSubstitutor(info, inexistentMacroValue, listDelimiter);
 	}
 
-	public IMacroSubstitutor getBuildfileMacroSubstitutor(IMacroContextInfo info, String inexistentMacroValue, String listDelimiter){
+	public IVariableSubstitutor getBuildfileMacroSubstitutor(IMacroContextInfo info, String inexistentMacroValue, String listDelimiter){
 		return new BuildfileMacroSubstitutor(info, inexistentMacroValue, listDelimiter);
 	}
 
-	/*
-	 * returns true if the first passed contextInfo is the child of the second one
-	 */
-	public boolean checkParentContextRelation(IMacroContextInfo child, IMacroContextInfo parent){
-		if(child == null || parent == null)
-			return false;
-
-		IMacroContextInfo enumInfo = child;
-		do{
-			if(parent.getContextType() == enumInfo.getContextType() &&
-					parent.getContextData() == enumInfo.getContextData())
-				return true;
-		}while((enumInfo = enumInfo.getNext()) != null);
-		return false;
-	}
-	
 	/**
 	 * answers whether the environment macros are to be expanded in the buildfile
 	 * 
@@ -289,7 +291,8 @@ public class BuildMacroProvider implements IBuildMacroProvider {
 	 * @return
 	 */
 	public boolean areMacrosExpandedInBuildfile(IConfiguration cfg){
-		boolean expanded = fUserDefinedMacroSupplier.areMacrosExpanded(cfg);
+		IBuilder builder = cfg.getBuilder();
+		boolean expanded = !builder.keepEnvironmentVariablesInBuildfile();
 		if(expanded || canKeepMacrosInBuildfile(cfg))
 			return expanded;
 		return true;
@@ -307,10 +310,44 @@ public class BuildMacroProvider implements IBuildMacroProvider {
 	 */
 	public boolean expandMacrosInBuildfile(IConfiguration cfg, boolean expand){
 		if(expand || canKeepMacrosInBuildfile(cfg)){
-			fUserDefinedMacroSupplier.setMacrosExpanded(cfg,expand);
+			IBuilder builder = cfg.getEditableBuilder();
+			builder.setKeepEnvironmentVariablesInBuildfile(!expand);
 			return expand;	
 		}
 		return true;
+	}
+	
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.managedbuilder.macros.IBuildMacroProvider#resolveStringListValues(java.lang.String[], java.lang.String, java.lang.String, int, java.lang.Object)
+	 */
+	public String[] resolveStringListValues(String[] value, String nonexistentMacrosValue, String listDelimiter, int contextType, Object contextData) throws BuildMacroException {
+		IMacroContextInfo info = getMacroContextInfo(contextType,contextData);
+		if(info != null){
+			try {
+				return CdtVariableResolver.resolveStringListValues(value,
+						getMacroSubstitutor(info,nonexistentMacrosValue, listDelimiter), true);
+			} catch (CdtVariableException e) {
+				throw new BuildMacroException(e);
+			}
+		}
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.managedbuilder.macros.IBuildMacroProvider#resolveStringListValuesToMakefileFormat(java.lang.String[], java.lang.String, java.lang.String, int, java.lang.Object)
+	 */
+	public String[] resolveStringListValuesToMakefileFormat(String[] value, String nonexistentMacrosValue, String listDelimiter, int contextType, Object contextData) throws BuildMacroException {
+		IMacroContextInfo info = getMacroContextInfo(contextType,contextData);
+		if(info != null){
+			try {
+				return CdtVariableResolver.resolveStringListValues(value,
+						getBuildfileMacroSubstitutor(info,nonexistentMacrosValue, listDelimiter), true);
+			} catch (CdtVariableException e) {
+				throw new BuildMacroException(e);
+			}
+		}
+		return null;
 	}
 	
 	/**
@@ -320,8 +357,13 @@ public class BuildMacroProvider implements IBuildMacroProvider {
 	 * @param cfg
 	 * @return
 	 */
-	public boolean canKeepMacrosInBuildfile(IConfiguration cfg){
-		return MacroResolver.canKeepMacrosInBuildfile(cfg);
+	public static boolean canKeepMacrosInBuildfile(IConfiguration cfg){
+		if(cfg != null){
+			IToolChain toolChain = cfg.getToolChain();
+			if(toolChain != null)
+				return canKeepMacrosInBuildfile(toolChain.getBuilder());
+		}
+		return false;
 	}
 
 	/**
@@ -331,29 +373,101 @@ public class BuildMacroProvider implements IBuildMacroProvider {
 	 * @param builder
 	 * @return
 	 */
-	public boolean canKeepMacrosInBuildfile(IBuilder builder){
-		return MacroResolver.canKeepMacrosInBuildfile(builder);
+	public static boolean canKeepMacrosInBuildfile(IBuilder builder){
+		if(builder != null){
+			String pattern = builder.getBuilderVariablePattern();
+			if(pattern != null && pattern.indexOf(PATTERN_MACRO_NAME) != -1)
+				return true;
+		}
+		return false;
+	}
+	
+	/**
+	 * creates a macro reference in the buildfile format for the given builder.
+	 * If the builder can not treat macros, returns null
+	 * @param name
+	 * @param builder
+	 * @return String
+	 */
+	public static String createBuildfileMacroReference(String name, IBuilder builder){
+		String ref = null;
+		if(builder != null){
+			String pattern = builder.getBuilderVariablePattern();
+			if(pattern != null && pattern.indexOf(PATTERN_MACRO_NAME) != -1)
+					ref = pattern.replaceAll(PATTERN_MACRO_NAME,name);
+		}
+		return ref;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.managedbuilder.macros.IBuildMacroProvider#resolveStringListValues(java.lang.String[], java.lang.String, java.lang.String, int, java.lang.Object)
+	/**
+	 * creates a macro reference in the buildfile format for the builder used for
+	 * the given configuration.
+	 * If the builder can not treat macros, returns null
+	 * @param name
+	 * @param cfg
+	 * @return String
 	 */
-	public String[] resolveStringListValues(String[] value, String nonexistentMacrosValue, String listDelimiter, int contextType, Object contextData) throws BuildMacroException {
-		IMacroContextInfo info = getMacroContextInfo(contextType,contextData);
-		if(info != null)
-			return MacroResolver.resolveStringListValues(value,
-					getMacroSubstitutor(info,nonexistentMacrosValue, listDelimiter), true);
+	public static String createBuildfileMacroReference(String name, IConfiguration cfg){
+		String ref = null;
+		if(cfg != null){
+			IToolChain toolChain = cfg.getToolChain();
+			if(toolChain != null)
+				ref = createBuildfileMacroReference(name,toolChain.getBuilder());
+		}
+		return ref;
+	}
+	
+	/**
+	 * Returns the array of the explicit file macros, referenced in the tool's options
+	 * (Explicit file macros are the file-specific macros, whose values are not provided
+	 * by the tool-integrator. As a result these macros contain explicit values, but not the values
+	 * specified in the format of the builder automatic variables and text functions)
+	 * 
+	 * @param tool
+	 * @return
+	 */
+	public static IBuildMacro[] getReferencedExplitFileMacros(ITool tool){
+		if(tool instanceof Tool){
+			Tool t = (Tool)tool;
+			ExplicitFileMacroCollector collector = new ExplicitFileMacroCollector(null);
+			try {
+				t.getToolCommandFlags(null,null,collector, getDefault());
+			} catch (BuildException e){
+			}
+			return collector.getExplicisFileMacros();
+		}
+		return new IBuildMacro[0];
+	}
+	
+	static IConfiguration getConfiguration(ITool tool){
+		IBuildObject bo = tool.getParent();
+		if(bo instanceof IResourceConfiguration)
+			return ((IResourceConfiguration)bo).getParent();
+		else if (bo instanceof IToolChain)
+			return ((IToolChain)bo).getParent();
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.managedbuilder.macros.IBuildMacroProvider#resolveStringListValuesToMakefileFormat(java.lang.String[], java.lang.String, java.lang.String, int, java.lang.Object)
+
+	
+	/**
+	 * Returns the array of the explicit file macros, referenced in the given string
+	 * (Explicit file macros are the file-specific macros, whose values are not provided
+	 * by the tool-integrator. As a result these macros contain explicit values, but not the values
+	 * specified in the format of the builder automatic variables and text functions)
+	 * 
+	 * @param expression
+	 * @param contextType
+	 * @param contextData
+	 * @return
 	 */
-	public String[] resolveStringListValuesToMakefileFormat(String[] value, String nonexistentMacrosValue, String listDelimiter, int contextType, Object contextData) throws BuildMacroException {
-		IMacroContextInfo info = getMacroContextInfo(contextType,contextData);
-		if(info != null)
-			return MacroResolver.resolveStringListValues(value,
-					getBuildfileMacroSubstitutor(info,nonexistentMacrosValue, listDelimiter), true);
-		return null;
+	public static IBuildMacro[] getReferencedExplitFileMacros(String expression, int contextType, Object contextData){
+		ExplicitFileMacroCollector collector = new ExplicitFileMacroCollector(getDefault().getMacroContextInfo(contextType, contextData));
+		try {
+			CdtVariableResolver.resolveToString(expression,collector);
+		} catch (CdtVariableException e){
+		}
+		return collector.getExplicisFileMacros();
 	}
+
 }

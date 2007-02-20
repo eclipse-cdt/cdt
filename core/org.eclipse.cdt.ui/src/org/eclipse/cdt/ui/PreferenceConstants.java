@@ -26,7 +26,7 @@ import org.eclipse.cdt.internal.ui.text.ICColorConstants;
  * preference store programmatically.
  * 
  * @since 2.0
- */
+  */
 public class PreferenceConstants {
 	
 	private PreferenceConstants() {

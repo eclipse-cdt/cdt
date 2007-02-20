@@ -136,19 +136,32 @@ public final class MBSCustomPageData
 	 * 				 org.eclipse.cdt.core.cnature and org.eclipse.cdt.core.ccnature
 	 * @return true if the page should be visible when the project has the given nature, false otherwise.
 	 * @since 3.0
+	 * 
+	 * Nature can be either string (old mode) or Set (new mode) or null.
+	 * New mode allows to take into account several natures per project.
+	 * Accepting null allows to process projects w/o nature 
+	 * @since 4.0
 	 */
-	public boolean shouldBeVisibleForNature(String nature)
+	public boolean shouldBeVisibleForNature(Object nature)
 	{
-		if (natureSet == null)
-			return true;
+		if (natureSet == null) return true; 
+		if (nature == null) return false;
 
-		return hasNature(nature);
+		if (nature instanceof String) // old style
+			return hasNature((String)nature);
+		else if (nature instanceof Set) {
+			Iterator it = ((Set)nature).iterator();
+			while (it.hasNext()) {
+				String s = it.next().toString();
+				if (hasNature(s)) return true; 
+			}
+		}
+		return false; // no one nature fits or bad data
 	}
 
 	private boolean hasNature(String nature)
 	{
 		return natureSet.contains(nature);
-
 	}
 
 	/**
@@ -309,16 +322,28 @@ public final class MBSCustomPageData
 	 * @param projectType The unique ID of the project type to check.
 	 * @return true if this page should be visible if the given project type is selected, false otherwise.
 	 * @since 3.0
+	 * 
+	 * Type can be either string (old mode) or Set (new mode) or null.
+	 * New mode allows to take into account several types per project,
+	 * or types absence in some cases 
+	 * @since 4.0
 	 */
-	public boolean shouldBeVisibleForProjectType(String projectType)
+	public boolean shouldBeVisibleForProjectType(Object projectType)
 	{
-		if (projectTypeSet == null)
-			return true;
-
-		if (projectTypeSet.contains(projectType))
-			return true;
-
-		return false;
+		if (projectTypeSet == null)	return true;
+		if (projectType == null) return false; 
+		
+		if (projectType instanceof String)
+			return projectTypeSet.contains(projectType);
+		else if (projectType instanceof Set) {
+			Iterator it = ((Set)projectType).iterator();
+			while (it.hasNext()) {
+				String s = it.next().toString();
+				if (projectTypeSet.contains(s)) 
+					return true; 
+			}
+		} 
+		return false; // no one type fits			
 	}
 
 	/**

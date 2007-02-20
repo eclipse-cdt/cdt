@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005 Intel Corporation and others.
+ * Copyright (c) 2005, 2007 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,6 +15,12 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.cdtvariables.CdtVariableException;
+import org.eclipse.cdt.core.cdtvariables.ICdtVariable;
+import org.eclipse.cdt.core.cdtvariables.ICdtVariableManager;
+import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
+import org.eclipse.cdt.managedbuilder.core.IBuildObject;
 import org.eclipse.cdt.managedbuilder.core.IBuilder;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IInputType;
@@ -22,13 +28,13 @@ import org.eclipse.cdt.managedbuilder.core.IManagedBuildInfo;
 import org.eclipse.cdt.managedbuilder.core.IManagedProject;
 import org.eclipse.cdt.managedbuilder.core.IOutputType;
 import org.eclipse.cdt.managedbuilder.core.ITool;
-import org.eclipse.cdt.managedbuilder.core.IToolChain;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
-import org.eclipse.cdt.managedbuilder.internal.envvar.EnvVarOperationProcessor;
-import org.eclipse.cdt.managedbuilder.macros.BuildMacroException;
-import org.eclipse.cdt.managedbuilder.macros.IBuildMacro;
 import org.eclipse.cdt.managedbuilder.macros.IBuildMacroProvider;
 import org.eclipse.cdt.managedbuilder.macros.IReservedMacroNameSupplier;
+import org.eclipse.cdt.utils.cdtvariables.CdtVariableResolver;
+import org.eclipse.cdt.utils.cdtvariables.IVariableContextInfo;
+import org.eclipse.cdt.utils.cdtvariables.SupplierBasedCdtVariableSubstitutor;
+import org.eclipse.cdt.utils.envvar.EnvVarOperationProcessor;
 import org.eclipse.core.resources.IResource;
 
 /**
@@ -39,11 +45,13 @@ import org.eclipse.core.resources.IResource;
  * @see org.eclipse.cdt.managedbuilder.internal.macros.IMacroSubstitutor
  * @since 3.0
  */
-public class BuildfileMacroSubstitutor extends DefaultMacroSubstitutor {
+public class BuildfileMacroSubstitutor extends SupplierBasedCdtVariableSubstitutor {
 	private static final String PATTERN_MACRO_NAME = "="; //$NON-NLS-1$
 	private IConfiguration fConfiguration;
 	private IBuilder fBuilder;
 	private HashSet fCaseInsensitiveReferencedNames;
+	private ICdtVariableManager fVarMngr;
+	private ICConfigurationDescription fCfgDes;
 	
 	private class DefaultReservedMacroNameSupplier implements IReservedMacroNameSupplier{
 		String fReservedNames[];
@@ -112,35 +120,66 @@ public class BuildfileMacroSubstitutor extends DefaultMacroSubstitutor {
 		}
 	}
 	
-	public BuildfileMacroSubstitutor(int contextType, Object contextData, String inexistentMacroValue, String listDelimiter){
-		super(contextType, contextData, inexistentMacroValue, listDelimiter);
-		init();
+//	public BuildfileMacroSubstitutor(int contextType, Object contextData, String inexistentMacroValue, String listDelimiter){
+//		super(contextType, contextData, inexistentMacroValue, listDelimiter);
+//		init();
+//	}
+
+	public BuildfileMacroSubstitutor(IBuilder builder, IMacroContextInfo contextInfo, String inexistentMacroValue, String listDelimiter){
+		super(contextInfo, inexistentMacroValue, listDelimiter);
+		init(builder, contextInfo);
 	}
 
 	public BuildfileMacroSubstitutor(IMacroContextInfo contextInfo, String inexistentMacroValue, String listDelimiter){
-		super(contextInfo, inexistentMacroValue, listDelimiter);
-		init();
+		this(null, contextInfo, inexistentMacroValue, listDelimiter);
 	}
 	
-	private void init(){
-		IMacroContextInfo contextInfo = getMacroContextInfo();
+	
+	
+	private void init(IBuilder builder, IMacroContextInfo contextInfo){
 		if(contextInfo == null)
 			return;
 		
+		fVarMngr = CCorePlugin.getDefault().getCdtVariableManager();
+		
+		if(builder != null){
+			fBuilder = builder;
+			fConfiguration = builder.getParent().getParent();
+		} else {
+			IBuildObject[] bos = findConfigurationAndBuilderFromContext(contextInfo);
+			if(bos != null){
+				fConfiguration = (IConfiguration)bos[0];
+				fBuilder = (IBuilder)bos[1];
+			}
+		}
+		
+		if(fConfiguration != null){
+			fCfgDes = ManagedBuildManager.getDescriptionForConfiguration(fConfiguration);
+		}
+	}
+	
+	static IBuildObject[] findConfigurationAndBuilderFromContext(IMacroContextInfo contextInfo){
 		int type = contextInfo.getContextType();
+		IConfiguration cfg = null;
+		IBuilder builder = null;
 		switch(type){
 		case IBuildMacroProvider.CONTEXT_FILE:
-			contextInfo = contextInfo.getNext();
+			contextInfo = (IMacroContextInfo)contextInfo.getNext();
 			if(contextInfo == null)
 				break;
 		case IBuildMacroProvider.CONTEXT_OPTION:
-			contextInfo = contextInfo.getNext();
+			contextInfo = (IMacroContextInfo)contextInfo.getNext();
 			if(contextInfo == null)
 				break;
 		case IBuildMacroProvider.CONTEXT_CONFIGURATION:{
 				Object contextData = contextInfo.getContextData();
-				if(contextData instanceof IConfiguration)
-					fConfiguration = (IConfiguration)contextData;
+				if(contextData instanceof IConfiguration){
+					cfg = (IConfiguration)contextData;
+					builder = cfg.getBuilder();
+				} else if (contextData instanceof IBuilder){
+					builder = (IBuilder)contextData;
+					cfg = builder.getParent().getParent();
+				}
 			}
 			break;
 		case IBuildMacroProvider.CONTEXT_PROJECT:{
@@ -149,29 +188,29 @@ public class BuildfileMacroSubstitutor extends DefaultMacroSubstitutor {
 					IResource rc = ((IManagedProject)contextData).getOwner();
 					if(rc != null){
 						IManagedBuildInfo info = ManagedBuildManager.getBuildInfo(rc);
-						fConfiguration = info.getDefaultConfiguration();
+						cfg = info.getDefaultConfiguration();
+						builder = cfg.getBuilder();
 					}
 				}
 			}
 			break;
 		}
-		if(fConfiguration != null){
-			IToolChain toolChain = fConfiguration.getToolChain();
-			if(toolChain != null)
-				fBuilder = toolChain.getBuilder();
-		}
+		
+		if(cfg != null && builder != null)
+			return new IBuildObject[]{cfg, builder};
+		return null;
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.internal.macros.DefaultMacroSubstitutor#resolveMacro(org.eclipse.cdt.managedbuilder.macros.IBuildMacro)
 	 */
-	protected ResolvedMacro resolveMacro(IBuildMacro macro) throws BuildMacroException{
+	protected ResolvedMacro resolveMacro(ICdtVariable macro) throws CdtVariableException{
 		ResolvedMacro resolved = null;
 			
 		if(fConfiguration != null && fBuilder != null && 
-				!UserDefinedMacroSupplier.getInstance().areMacrosExpanded(fConfiguration) && 
-				macro instanceof EnvironmentMacroSupplier.EnvVarMacro &&
-				!MacroResolver.isStringListMacro(macro.getMacroValueType())){
+				fBuilder.keepEnvironmentVariablesInBuildfile() && 
+				fVarMngr.isEnvironmentVariable(macro, fCfgDes) &&
+				!CdtVariableResolver.isStringListVariable(macro.getValueType())){
 			String ref = getMacroReference(macro);
 			if(ref != null)
 				resolved = new ResolvedMacro(macro.getName(),ref);
@@ -196,7 +235,7 @@ public class BuildfileMacroSubstitutor extends DefaultMacroSubstitutor {
 		return supplier;
 	}
 	
-	protected String getMacroReference(IBuildMacro macro){
+	protected String getMacroReference(ICdtVariable macro){
 		String macroName = macro.getName();
 		String ref = null;
 		IReservedMacroNameSupplier supplier = getReservedMacroNameSupplier();
@@ -222,18 +261,18 @@ public class BuildfileMacroSubstitutor extends DefaultMacroSubstitutor {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.internal.macros.DefaultMacroSubstitutor#setMacroContextInfo(org.eclipse.cdt.managedbuilder.internal.macros.IMacroContextInfo)
 	 */
-	public void setMacroContextInfo(IMacroContextInfo info)
-				throws BuildMacroException{
+	public void setMacroContextInfo(IVariableContextInfo info)
+				throws CdtVariableException{
 		super.setMacroContextInfo(info);
-		init();
+//		init();
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.internal.macros.IMacroSubstitutor#setMacroContextInfo(int, java.lang.Object)
 	 */
-	public void setMacroContextInfo(int contextType, Object contextData) throws BuildMacroException{
-		super.setMacroContextInfo(contextType, contextData);
-		init();
-	}
+//	public void setMacroContextInfo(int contextType, Object contextData) throws BuildMacroException{
+//		super.setMacroContextInfo(contextType, contextData);
+//		init();
+//	}
 
 }

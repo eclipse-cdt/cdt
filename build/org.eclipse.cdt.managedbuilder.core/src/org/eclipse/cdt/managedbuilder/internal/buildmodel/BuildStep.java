@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 Intel Corporation and others.
+ * Copyright (c) 2006, 2007 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,6 +18,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.eclipse.cdt.core.cdtvariables.CdtVariableException;
 import org.eclipse.cdt.managedbuilder.buildmodel.BuildDescriptionManager;
 import org.eclipse.cdt.managedbuilder.buildmodel.IBuildCommand;
 import org.eclipse.cdt.managedbuilder.buildmodel.IBuildDescription;
@@ -38,11 +39,10 @@ import org.eclipse.cdt.managedbuilder.internal.core.Tool;
 import org.eclipse.cdt.managedbuilder.internal.macros.BuildMacroProvider;
 import org.eclipse.cdt.managedbuilder.internal.macros.FileContextData;
 import org.eclipse.cdt.managedbuilder.internal.macros.IMacroContextInfo;
-import org.eclipse.cdt.managedbuilder.internal.macros.IMacroSubstitutor;
-import org.eclipse.cdt.managedbuilder.internal.macros.MacroResolver;
-import org.eclipse.cdt.managedbuilder.macros.BuildMacroException;
 import org.eclipse.cdt.managedbuilder.macros.IBuildMacroProvider;
 import org.eclipse.cdt.managedbuilder.macros.IFileContextData;
+import org.eclipse.cdt.utils.cdtvariables.CdtVariableResolver;
+import org.eclipse.cdt.utils.cdtvariables.SupplierBasedCdtVariableSubstitutor;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 
@@ -422,18 +422,18 @@ public class BuildStep implements IBuildStep {
 		String result = str;
 		try {
 			if(resolveAll){
-				IMacroSubstitutor sub = createSubstitutor(fileData);
-				result = MacroResolver.resolveToString(str, sub);
+				SupplierBasedCdtVariableSubstitutor sub = createSubstitutor(fileData);
+				result = CdtVariableResolver.resolveToString(str, sub);
 			} else {
 				result = ManagedBuildManager.getBuildMacroProvider().resolveValueToMakefileFormat(str, "", " ", IBuildMacroProvider.CONTEXT_FILE, fileData);	//$NON-NLS-1$	//$NON-NLS-2$
 			}
-		} catch (BuildMacroException e) {
+		} catch (CdtVariableException e) {
 		}
 
 		return result;
 	}
 	
-	private IMacroSubstitutor createSubstitutor(IFileContextData fileData){
+	private SupplierBasedCdtVariableSubstitutor createSubstitutor(IFileContextData fileData){
 		BuildMacroProvider prov = (BuildMacroProvider)ManagedBuildManager.getBuildMacroProvider();
 		IMacroContextInfo info = prov.getMacroContextInfo(IBuildMacroProvider.CONTEXT_FILE, fileData); 
 		FileMacroExplicitSubstitutor sub = new FileMacroExplicitSubstitutor(
@@ -447,7 +447,8 @@ public class BuildStep implements IBuildStep {
 		try {
 			return resolveAll ? 
 					((Tool)fTool).getToolCommandFlags(inRcPath, outRcPath, 
-							createSubstitutor(new FileContextData(inRcPath, outRcPath, null, fTool)))
+							createSubstitutor(new FileContextData(inRcPath, outRcPath, null, fTool)),
+							BuildMacroProvider.getDefault())
 					:
 						fTool.getToolCommandFlags(inRcPath, outRcPath);
 		} catch (BuildException e) {
@@ -568,7 +569,11 @@ public class BuildStep implements IBuildStep {
 							optType == IOption.LIBRARIES ||
 							optType == IOption.OBJECTS ||
 							optType == IOption.INCLUDE_PATH ||
-							optType == IOption.PREPROCESSOR_SYMBOLS){
+							optType == IOption.PREPROCESSOR_SYMBOLS ||
+							optType == IOption.INCLUDE_FILES ||
+							optType == IOption.LIBRARY_PATHS ||
+							optType == IOption.LIBRARY_FILES ||
+							optType == IOption.MACRO_FILES){
 						//  Mote that when using the enumerated inputs, the path(s) must be translated from project relative 
 						//  to top build directory relative
 						String[] paths = new String[bRcs.length];

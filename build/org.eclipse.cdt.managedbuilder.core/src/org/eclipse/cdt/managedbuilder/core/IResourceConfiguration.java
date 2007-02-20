@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2006 Intel Corporation and others.
+ * Copyright (c) 2004, 2007 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -22,10 +22,8 @@ import org.eclipse.core.resources.IResource;
  * 
  * @since 2.1
  */
-public interface IResourceConfiguration extends IBuildObject {
+public interface IResourceConfiguration extends IResourceInfo {
 	public static final String RESOURCE_CONFIGURATION_ELEMENT_NAME = "resourceConfiguration"; //$NON-NLS-1$
-	public static final String RESOURCE_PATH = "resourcePath";					  //$NON-NLS-1$
-	public static final String EXCLUDE = "exclude";								  //$NON-NLS-1$
 	public static final String RCBS_APPLICABILITY = "rcbsApplicability";		  //$NON-NLS-1$
 	public static final String TOOLS_TO_INVOKE = "toolsToInvoke";				  //$NON-NLS-1$
 	public static final String APPLY_RCBS_TOOL_AS_OVERRIDE = "override";		  //$NON-NLS-1$

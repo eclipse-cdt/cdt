@@ -10,10 +10,12 @@
  *******************************************************************************/
 
 package org.eclipse.cdt.managedbuilder.core.tests;
+
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
+import org.eclipse.cdt.internal.core.envvar.UserDefinedEnvironmentSupplier;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IManagedProject;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
@@ -21,7 +23,6 @@ import org.eclipse.cdt.managedbuilder.envvar.IBuildEnvironmentVariable;
 import org.eclipse.cdt.managedbuilder.envvar.IEnvironmentBuildPathsChangeListener;
 import org.eclipse.cdt.managedbuilder.envvar.IEnvironmentVariableProvider;
 import org.eclipse.cdt.managedbuilder.envvar.IEnvironmentVariableSupplier;
-import org.eclipse.cdt.managedbuilder.internal.envvar.UserDefinedEnvironmentSupplier;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
@@ -165,7 +166,7 @@ public class ManagedBuildEnvironmentTests extends TestCase {
 		assertNotNull(envProvider.getVariable(NAME_CWD, cfg, true, false));
 		assertNotNull(envProvider.getVariable(NAME_PWD, cfg, true, false));
 	}
-		
+/*		
 	public void testEnvSuppliers() {
 		doInit();
 		
@@ -203,7 +204,7 @@ public class ManagedBuildEnvironmentTests extends TestCase {
 			}
 		}
 	}
-	
+*/	
 	/*
 	 * plugin.xml contents:
 	     <projectType id="cdt.managedbuild.target.testgnu.exe">

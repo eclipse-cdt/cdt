@@ -73,7 +73,7 @@ public class PathEntry implements IPathEntry {
 	/**
 	 * Returns the kind from its <code>String</code> form.
 	 */
-	static int kindFromString(String kindStr) {
+	public static int kindFromString(String kindStr) {
 
 		if (kindStr.equalsIgnoreCase("prj")) //$NON-NLS-1$
 			return IPathEntry.CDT_PROJECT;

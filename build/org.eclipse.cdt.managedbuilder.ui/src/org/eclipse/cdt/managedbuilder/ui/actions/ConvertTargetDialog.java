@@ -12,14 +12,15 @@ package org.eclipse.cdt.managedbuilder.ui.actions;
 
 import java.util.HashMap;
 import java.util.Map;
+
+import org.eclipse.cdt.internal.ui.dialogs.StatusDialog;
+import org.eclipse.cdt.internal.ui.dialogs.StatusInfo;
 import org.eclipse.cdt.managedbuilder.core.IConvertManagedBuildObject;
 import org.eclipse.cdt.managedbuilder.core.IManagedBuildInfo;
 import org.eclipse.cdt.managedbuilder.core.IManagedProject;
 import org.eclipse.cdt.managedbuilder.core.IProjectType;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
-import org.eclipse.cdt.managedbuilder.internal.ui.ManagedBuilderUIMessages;
-import org.eclipse.cdt.internal.ui.dialogs.StatusDialog;
-import org.eclipse.cdt.internal.ui.dialogs.StatusInfo;
+import org.eclipse.cdt.ui.newui.NewUIMessages;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -123,7 +124,7 @@ public class ConvertTargetDialog extends StatusDialog {
 		// Create the converters list group area
 		final Group convertersListGroup = new Group(comp, SWT.NONE);
 		convertersListGroup.setFont(parent.getFont());
-		convertersListGroup.setText(ManagedBuilderUIMessages.getResourceString(CONVERTERS_LIST));
+		convertersListGroup.setText(NewUIMessages.getResourceString(CONVERTERS_LIST));
 		convertersListGroup.setLayout(new GridLayout(1, false));
 		convertersListGroup.setLayoutData(new GridData(GridData.FILL_BOTH));
 	

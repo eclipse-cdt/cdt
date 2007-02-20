@@ -5,6 +5,9 @@
      <extension-point id="ManagedBuildInfo" name="Managed Build Tools 2.0 (Deprecated)" schema="schema/ManagedBuildTools.exsd"/>
    <extension-point id="buildDefinitions" name="Managed Build Definitions" schema="schema/buildDefinitions.exsd"/>
    <extension-point id="projectConverter" name="Managed Build Project Converter" schema="schema/Converter.exsd"/>
+   <extension-point id="buildProperties" name="Build Properties" schema="schema/buildProperties.exsd"/>
+   <extension-point id="ScannerConfigurationDiscoveryProfile" name="%extensionScannerConfigurationDiscoveryProfile.name" schema="schema/ScannerConfigurationDiscoveryProfile.exsd"/>
+   
 
 <!-- =================================================================================== -->
 <!-- Extension Point: IScannerInfoProvider for the managed Builder                       -->
@@ -26,9 +29,13 @@
          name="%GeneratedMakefileCBuilder.name"
          point="org.eclipse.core.resources.builders">
       <builder
-            hasNature="true">
-         <run
+            hasNature="true"
+            callOnEmptyDelta="true">
+         <!--run
                class="org.eclipse.cdt.managedbuilder.internal.core.GeneratedMakefileBuilder">
+         </run-->
+         <run
+               class="org.eclipse.cdt.managedbuilder.internal.core.CommonBuilder">
          </run>
       </builder>
    </extension>
@@ -81,15 +88,75 @@
       </scannerInfoProvider>
    </extension>
    <extension
+         id="GCCManagedMakePerProjectProfileCPP"
+         name="GNU C/C++ managed make per project SCD profile"
+         point="org.eclipse.cdt.managedbuilder.core.ScannerConfigurationDiscoveryProfile">
+      <scannerInfoCollector
+            class="org.eclipse.cdt.managedbuilder.internal.scannerconfig.DefaultGCCScannerInfoCollector"
+            scope="project"/>
+      <scannerInfoProvider providerId="specsFile">
+         <run
+               arguments="-E -P -v -dD ${plugin_state_location}/specs.cpp"
+               command="g++"
+               class="org.eclipse.cdt.make.internal.core.scannerconfig2.GCCSpecsRunSIProvider"/>
+         <scannerInfoConsoleParser class="org.eclipse.cdt.make.internal.core.scannerconfig.gnu.GCCSpecsConsoleParser"/>
+      </scannerInfoProvider>
+   </extension>
+   <extension
+         id="GCCManagedMakePerProjectProfileC"
+         name="GNU C/C++ managed make per project SCD profile"
+         point="org.eclipse.cdt.managedbuilder.core.ScannerConfigurationDiscoveryProfile">
+      <scannerInfoCollector
+            class="org.eclipse.cdt.managedbuilder.internal.scannerconfig.DefaultGCCScannerInfoCollector"
+            scope="project"/>
+      <scannerInfoProvider providerId="specsFile">
+         <run
+               arguments="-E -P -v -dD ${plugin_state_location}/specs.c"
+               command="gcc"
+               class="org.eclipse.cdt.make.internal.core.scannerconfig2.GCCSpecsRunSIProvider"/>
+         <scannerInfoConsoleParser class="org.eclipse.cdt.make.internal.core.scannerconfig.gnu.GCCSpecsConsoleParser"/>
+      </scannerInfoProvider>
+   </extension>
+   <extension
          id="GCCWinManagedMakePerProjectProfile"
          name="GNU C/C++ managed make per project SCD profile (Windows)"
-         point="org.eclipse.cdt.make.core.ScannerConfigurationDiscoveryProfile">
+         point="org.eclipse.cdt.managedbuilder.core.ScannerConfigurationDiscoveryProfile">
       <scannerInfoCollector
             class="org.eclipse.cdt.managedbuilder.internal.scannerconfig.DefaultGnuWinScannerInfoCollector"
             scope="project"/>
       <scannerInfoProvider providerId="specsFile">
          <run
                arguments="-E -P -v -dD ${plugin_state_location}/${specs_file}"
+               command="gcc"
+               class="org.eclipse.cdt.make.internal.core.scannerconfig2.GCCSpecsRunSIProvider"/>
+         <scannerInfoConsoleParser class="org.eclipse.cdt.make.internal.core.scannerconfig.gnu.GCCSpecsConsoleParser"/>
+      </scannerInfoProvider>
+   </extension>
+   <extension
+         id="GCCWinManagedMakePerProjectProfileCPP"
+         name="GNU C/C++ managed make per project SCD profile (Windows)"
+         point="org.eclipse.cdt.managedbuilder.core.ScannerConfigurationDiscoveryProfile">
+      <scannerInfoCollector
+            class="org.eclipse.cdt.managedbuilder.internal.scannerconfig.DefaultGnuWinScannerInfoCollector"
+            scope="project"/>
+      <scannerInfoProvider providerId="specsFile">
+         <run
+               arguments="-E -P -v -dD ${plugin_state_location}/specs.cpp"
+               command="g++"
+               class="org.eclipse.cdt.make.internal.core.scannerconfig2.GCCSpecsRunSIProvider"/>
+         <scannerInfoConsoleParser class="org.eclipse.cdt.make.internal.core.scannerconfig.gnu.GCCSpecsConsoleParser"/>
+      </scannerInfoProvider>
+   </extension>
+   <extension
+         id="GCCWinManagedMakePerProjectProfileC"
+         name="GNU C/C++ managed make per project SCD profile (Windows)"
+         point="org.eclipse.cdt.managedbuilder.core.ScannerConfigurationDiscoveryProfile">
+      <scannerInfoCollector
+            class="org.eclipse.cdt.managedbuilder.internal.scannerconfig.DefaultGnuWinScannerInfoCollector"
+            scope="project"/>
+      <scannerInfoProvider providerId="specsFile">
+         <run
+               arguments="-E -P -v -dD ${plugin_state_location}/specs.c"
                command="gcc"
                class="org.eclipse.cdt.make.internal.core.scannerconfig2.GCCSpecsRunSIProvider"/>
          <scannerInfoConsoleParser class="org.eclipse.cdt.make.internal.core.scannerconfig.gnu.GCCSpecsConsoleParser"/>
@@ -142,6 +209,207 @@
       <file-association 
        content-type="org.eclipse.cdt.managedbuilder.core.sharedLibrary"
        file-extensions="dll,so,dylib"/>
+   </extension>
+   <extension
+         id="configurationDataProvider"
+         name="CDT Build System"
+         point="org.eclipse.cdt.core.CConfigurationDataProvider">
+         <provider
+         	natures="org.eclipse.cdt.managedbuilder.core.managedBuildNature;org.eclipse.cdt.managedbuilder.core.ScannerConfigNature"
+         	class="org.eclipse.cdt.managedbuilder.internal.dataprovider.ConfigurationDataProvider"
+         />
+   </extension>
+   <extension
+         id="ProjectConverter"
+         name="pre-4.0 projects converter"
+         point="org.eclipse.cdt.core.projectConverter">
+         <converter
+         	owners="org.eclipse.cdt.managedbuilder.core.managedMake;org.eclipse.cdt.make.core.make"
+         	natures="org.eclipse.cdt.managedbuilder.core.managedBuildNature;org.eclipse.cdt.make.core.makeNature"
+         	class="org.eclipse.cdt.managedbuilder.internal.dataprovider.ProjectConverter"
+         />
    </extension> 
+   
+      <extension
+         id="baseProperties"
+         name="Base Build Properties Definition"
+         point="org.eclipse.cdt.managedbuilder.core.buildProperties">
+      <propertyType id="org.eclipse.cdt.build.core.buildType" name="Build Type"/>
+      <propertyType id="org.eclipse.cdt.build.core.buildArtefactType" name="Build Artefact Type"/>
+
+      <propertyValue 
+            property="org.eclipse.cdt.build.core.buildType" 
+            id="org.eclipse.cdt.build.core.buildType.debug" 
+            name="Debug"/>
+      <propertyValue 
+            property="org.eclipse.cdt.build.core.buildType" 
+            id="org.eclipse.cdt.build.core.buildType.release" 
+            name="Release"/>
+
+      <propertyValue 
+            property="org.eclipse.cdt.build.core.buildArtefactType" 
+            id="org.eclipse.cdt.build.core.buildArtefactType.exe" 
+            name="Executable"/>
+      <propertyValue 
+            property="org.eclipse.cdt.build.core.buildArtefactType" 
+            id="org.eclipse.cdt.build.core.buildArtefactType.staticLib" 
+            name="Static Library"/>
+     <propertyValue 
+            property="org.eclipse.cdt.build.core.buildArtefactType" 
+            id="org.eclipse.cdt.build.core.buildArtefactType.sharedLib" 
+            name="Shared Library"/>
+
+      </extension>
+      
+         <extension
+         id="emptyConfigs"
+         name="Empty Configurations for make projects"
+         point="org.eclipse.cdt.managedbuilder.core.buildDefinitions">
+      <managedBuildRevision
+            fileVersion="4.0.0">
+      </managedBuildRevision>
+      <configuration
+      	id="org.eclipse.cdt.build.core.emptycfg" 
+      	name="Configuration1">
+      </configuration>
+
+	 <configuration
+	 	id="org.eclipse.cdt.build.core.prefbase.cfg"
+	 	name="Configuration1"
+	 	 >     
+	  <toolChain
+	  	id="org.eclipse.cdt.build.core.prefbase.toolchain"
+	  	name="No ToolChain"
+	  	supportsManagedBuild="false"
+	  	isSystem="true">
+      <tool
+      	id="org.eclipse.cdt.build.core.settings.holder.libs"
+	  	supportsManagedBuild="false"
+      	name="holder for library settings"
+      	isSystem="true">
+      	<option
+      		id="org.eclipse.cdt.build.core.settings.holder.libpaths"
+       		browseType="directory"
+      		name="Library Paths"
+			valueType="libPaths"
+      	/>
+      	<option
+      		id="org.eclipse.cdt.build.core.settings.holder.libfiles"
+      		name="Library Files"
+			valueType="libFiles"
+      		browseType="file"
+      	/>
+      	
+      	<!--option
+      		id="org.eclipse.cdt.build.core.settings.holder.libpaths"
+      		name="libraries"
+      		browseType="none"
+            valueType="libs"
+      	/-->
+      </tool>
+	  <builder
+	  	  isAbstract="true"
+	      id="org.eclipse.cdt.build.core.settings.default.builder"
+          command="make"
+          arguments=""
+          variableFormat="${=}"
+          isVariableCaseSensitive="true"
+          reservedMacroNames="ROOT,DEPS,OBJS,.*_SRCS,EXECUTABLES,SUBDIRS,LIBS,USER_OBJS,.*_INPUTS,.*_OUTPUTS"
+          buildfileGenerator="org.eclipse.cdt.managedbuilder.makegen.gnu.GnuMakefileGenerator"
+          macroInputFileNameValue="$(notdir $&lt;)"
+          macroInputFileExtValue="$(suffix $(notdir $&lt;))"
+          macroInputFileBaseNameValue="$(basename $(notdir $&lt;))"
+          macroInputFileRelPathValue="$&lt;"
+          macroInputDirRelPathValue="$(dir $&lt;)"
+          macroOutputFileNameValue="$(notdir $@)"
+          macroOutputFileExtValue="$(suffix $(notdir $@))"
+          macroOutputFileBaseNameValue="$(basename $(notdir $@))"
+          macroOutputFileRelPathValue="$@"
+          macroOutputDirRelPathValue="$(dir $@)"
+          autoBuildTarget="all"
+          incrementalBuildTarget="all"
+          cleanBuildTarget="clean"
+          ignoreErrCmd="-k"
+          parallelBuildCmd="-j*"
+          errorParsers="org.eclipse.cdt.core.MakeErrorParser"
+          name="Gnu Make Builder"
+          isSystem="true">
+   	  </builder>   
+	  	
+	  </toolChain>      
+	 </configuration>     
+
+      <tool
+      	id="org.eclipse.cdt.build.core.settings.holder"
+	  	supportsManagedBuild="false"
+      	name="holder for includes and symbols settings"
+      	isSystem="true">
+      	<inputType
+             id="org.eclipse.cdt.build.core.settings.holder.inType">
+      	</inputType>
+      	<option
+      		id="org.eclipse.cdt.build.core.settings.holder.incpaths"
+      		name="include paths"
+      		browseType="directory"
+      		valueType="includePath"
+      	/>
+      	<option
+      		id="org.eclipse.cdt.build.core.settings.holder.symbols"
+      		name="Symbols"
+			valueType="definedSymbols"
+      	/>
+      	<option
+      		id="org.eclipse.cdt.build.core.settings.holder.symbolfiles"
+      		name="Symbol Files"
+      		browseType="file"
+			valueType="symbolFiles"
+      	/>
+      	<option
+      		id="org.eclipse.cdt.build.core.settings.holder.includefiles"
+      		name="Include Files"
+      		browseType="file"
+			valueType="includeFiles"
+      	/>
+      	<!--option
+      		id="org.eclipse.cdt.build.core.settings.holder.includes"
+      		name="holder for includes"
+      		valueType="includePath"
+      	/-->
+      </tool>
+      
+      <builder
+      	id="org.eclipse.cdt.build.core.internal.builder"
+      	name="CDT Internal Builder">
+      </builder>
+      </extension>
+      
+   <extension
+         id="ScannerConfigNature"
+         name="%epScannerConfigNature.name"
+         point="org.eclipse.core.resources.natures">
+      <requires-nature
+            id="org.eclipse.cdt.managedbuilder.core.managedBuildNature">
+      </requires-nature>
+      <runtime>
+         <run
+               class="org.eclipse.cdt.make.core.scannerconfig.ScannerConfigNature">
+         </run>
+      </runtime>
+      <builder
+            id="org.eclipse.cdt.managedbuilder.core.ScannerConfigBuilder">
+      </builder>
+   </extension>
+   <extension
+         id="ScannerConfigBuilder"
+         name="%epScannerConfigBuilder.name"
+         point="org.eclipse.core.resources.builders">
+      <builder
+            hasNature="true">
+         <run
+               class="org.eclipse.cdt.make.core.scannerconfig.ScannerConfigBuilder">
+         </run>
+      </builder>
+   </extension>
+      
 
 </plugin>

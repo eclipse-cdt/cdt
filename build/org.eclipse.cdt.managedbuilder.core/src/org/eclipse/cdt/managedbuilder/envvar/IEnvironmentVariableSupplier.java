@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005 Intel Corporation and others.
+ * Copyright (c) 2005, 2007 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,8 @@
  * Intel Corporation - Initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.envvar;
+
+import org.eclipse.cdt.core.envvar.IEnvironmentVariable;
 
 /**
  * 
@@ -23,12 +25,12 @@ public interface IEnvironmentVariableSupplier {
 	 * @return the reference to the IBuildEnvironmentVariable interface representing 
 	 * the variable of a given name
 	 */
-	IBuildEnvironmentVariable getVariable(String name, Object context);
+	IEnvironmentVariable getVariable(String name, Object context);
 	
 	/**
 	 *
 	 * @param context the context
 	 * @return the array of IBuildEnvironmentVariable that represents the environment variables 
 	 */
-	IBuildEnvironmentVariable[] getVariables(Object context);
+	IEnvironmentVariable[] getVariables(Object context);
 }

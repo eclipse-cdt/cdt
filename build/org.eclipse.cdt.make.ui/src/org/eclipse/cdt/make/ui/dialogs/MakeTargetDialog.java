@@ -10,12 +10,15 @@
  *******************************************************************************/
 package org.eclipse.cdt.make.ui.dialogs;
 
-import org.eclipse.cdt.make.core.IMakeBuilderInfo;
 import org.eclipse.cdt.make.core.IMakeTarget;
 import org.eclipse.cdt.make.core.IMakeTargetManager;
 import org.eclipse.cdt.make.core.MakeCorePlugin;
 import org.eclipse.cdt.make.internal.ui.MakeUIPlugin;
 import org.eclipse.cdt.make.internal.ui.MessageLine;
+import org.eclipse.cdt.managedbuilder.core.IBuilder;
+import org.eclipse.cdt.managedbuilder.core.IConfiguration;
+import org.eclipse.cdt.managedbuilder.core.IManagedBuildInfo;
+import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.cdt.utils.ui.controls.ControlFactory;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.runtime.CoreException;
@@ -68,6 +71,7 @@ public class MakeTargetDialog extends Dialog {
 
 	IMakeTargetManager fTargetManager;
 	IContainer fContainer;
+	IConfiguration fConfiguration;
 
 	private IPath buildCommand;
 	private boolean isDefaultCommand;
@@ -103,19 +107,28 @@ public class MakeTargetDialog extends Dialog {
 		super(parentShell);
 		fContainer = container;
 		fTargetManager = MakeCorePlugin.getDefault().getTargetManager();
+		IBuilder builder = null;
+		IManagedBuildInfo info = ManagedBuildManager.getBuildInfo(fContainer);
+		if(info == null){
+			throw new CoreException(new Status(IStatus.ERROR, MakeUIPlugin.getUniqueIdentifier(), -1,
+					MakeUIPlugin.getResourceString("project {0} does not have build info associated"), null));
+		}
+		
+		fConfiguration = info.getDefaultConfiguration();
 		String[] id = fTargetManager.getTargetBuilders(container.getProject());
 		if (id.length == 0) {
 			throw new CoreException(new Status(IStatus.ERROR, MakeUIPlugin.getUniqueIdentifier(), -1,
 					MakeUIPlugin.getResourceString("MakeTargetDialog.exception.noTargetBuilderOnProject"), null)); //$NON-NLS-1$
 		}
+
 		targetBuildID = id[0];
-		IMakeBuilderInfo buildInfo = MakeCorePlugin.createBuildInfo(container.getProject(),
-				fTargetManager.getBuilderID(targetBuildID));
-		isStopOnError = buildInfo.isStopOnError();
-		isDefaultCommand = buildInfo.isDefaultBuildCmd();
-		buildCommand = buildInfo.getBuildCommand();
-		buildArguments = buildInfo.getBuildArguments();
-		targetString = buildInfo.getIncrementalBuildTarget();
+//			builder = ManagedBuilderCorePlugin.createBuilderForEclipseBuilder(fConfiguration, fTargetManager.getBuilderID(targetBuildID));
+		builder = fConfiguration.getBuilder();
+		isStopOnError = builder.isStopOnError();
+		isDefaultCommand = builder.isDefaultBuildCmd();
+		buildCommand = builder.getBuildCommand();
+		buildArguments = builder.getBuildArguments();
+		targetString = builder.getIncrementalBuildTarget();
 	}
 
 	protected void configureShell(Shell newShell) {

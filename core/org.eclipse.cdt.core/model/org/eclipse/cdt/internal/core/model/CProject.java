@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 QNX Software Systems and others.
+ * Copyright (c) 2000, 2007 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -42,6 +42,11 @@ import org.eclipse.cdt.core.model.IOutputEntry;
 import org.eclipse.cdt.core.model.IPathEntry;
 import org.eclipse.cdt.core.model.ISourceEntry;
 import org.eclipse.cdt.core.model.ISourceRoot;
+import org.eclipse.cdt.core.settings.model.CSourceEntry;
+import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
+import org.eclipse.cdt.core.settings.model.ICSourceEntry;
+import org.eclipse.cdt.internal.core.settings.model.CProjectDescription;
+import org.eclipse.cdt.internal.core.settings.model.CProjectDescriptionManager;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
@@ -418,8 +423,12 @@ public class CProject extends Openable implements ICProject {
 	 * @see org.eclipse.cdt.core.model.ICProject#getSourceRoot(org.eclipse.cdt.core.model.ISourceEntry)
 	 */
 	public ISourceRoot getSourceRoot(ISourceEntry entry) throws CModelException {
+		return getSourceRoot(new CSourceEntry(entry.getPath(), entry.getExclusionPatterns(), 0));
+	}
+
+	public ISourceRoot getSourceRoot(ICSourceEntry entry) throws CModelException {
 		IPath p = getPath();
-		IPath sp = entry.getPath();
+		IPath sp = entry.getFullPath();
 		if (p.isPrefixOf(sp)) {
 			int count = sp.matchingFirstSegments(p);
 			sp = sp.removeFirstSegments(count);
@@ -592,18 +601,29 @@ public class CProject extends Openable implements ICProject {
 	}
 
 	protected List computeSourceRoots() throws CModelException {
-		IPathEntry[] entries = getResolvedPathEntries();
-		ArrayList list = new ArrayList(entries.length);
-		for (int i = 0; i < entries.length; i++) {
-			if (entries[i].getEntryKind() == IPathEntry.CDT_SOURCE) {
-				ISourceEntry sourceEntry = (ISourceEntry)entries[i];
-				ISourceRoot root = getSourceRoot(sourceEntry);
-				if (root != null) {
-					list.add(root);
-				}
-			}
+		//IPathEntry[] entries = getResolvedPathEntries();
+		ICSourceEntry[] entries = null;
+		CProjectDescription des = (CProjectDescription)CProjectDescriptionManager.getInstance().getProjectDescription(getProject(), false);
+		if(des != null){
+			ICConfigurationDescription cfg = des.getIndexConfiguration();
+			if(cfg != null)
+				entries = cfg.getSourceEntries();
 		}
-		return list;
+		
+		if(entries != null){
+			ArrayList list = new ArrayList(entries.length);
+			for (int i = 0; i < entries.length; i++) {
+//				if (entries[i].getEntryKind() == IPathEntry.CDT_SOURCE) {
+				ICSourceEntry sourceEntry = (ICSourceEntry)entries[i];
+					ISourceRoot root = getSourceRoot(sourceEntry);
+					if (root != null) {
+						list.add(root);
+					}
+//				}
+			}
+			return list;
+		}
+		return new ArrayList(0);
 	}
 
 	protected boolean computeSourceRoots(OpenableInfo info, IResource res) throws CModelException {

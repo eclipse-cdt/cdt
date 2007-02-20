@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2006 IBM Software Corporation and others.
+ * Copyright (c) 2002, 2007 IBM Software Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,12 +11,10 @@
 package org.eclipse.cdt.managedbuilder.internal.core;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Vector;
 
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.CoreModel;
@@ -27,16 +25,16 @@ import org.eclipse.cdt.core.model.IMacroEntry;
 import org.eclipse.cdt.core.model.IPathEntry;
 import org.eclipse.cdt.core.model.IPathEntryContainer;
 import org.eclipse.cdt.core.parser.IScannerInfo;
+import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
+import org.eclipse.cdt.core.settings.model.ICProjectDescription;
+import org.eclipse.cdt.core.settings.model.WriteAccessException;
 import org.eclipse.cdt.managedbuilder.core.BuildException;
 import org.eclipse.cdt.managedbuilder.core.IBuildObject;
 import org.eclipse.cdt.managedbuilder.core.IBuilder;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IEnvVarBuildPath;
-import org.eclipse.cdt.managedbuilder.core.IHoldsOptions;
 import org.eclipse.cdt.managedbuilder.core.IManagedBuildInfo;
-import org.eclipse.cdt.managedbuilder.core.IManagedCommandLineGenerator;
 import org.eclipse.cdt.managedbuilder.core.IManagedCommandLineInfo;
-import org.eclipse.cdt.managedbuilder.core.IManagedConfigElement;
 import org.eclipse.cdt.managedbuilder.core.IManagedProject;
 import org.eclipse.cdt.managedbuilder.core.IOption;
 import org.eclipse.cdt.managedbuilder.core.IOptionApplicability;
@@ -46,10 +44,8 @@ import org.eclipse.cdt.managedbuilder.core.ITarget;
 import org.eclipse.cdt.managedbuilder.core.ITool;
 import org.eclipse.cdt.managedbuilder.core.IToolChain;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
-import org.eclipse.cdt.managedbuilder.core.ManagedBuilderCorePlugin;
 import org.eclipse.cdt.managedbuilder.envvar.IBuildEnvironmentVariable;
 import org.eclipse.cdt.managedbuilder.envvar.IEnvironmentVariableProvider;
-import org.eclipse.cdt.managedbuilder.internal.macros.FileContextData;
 import org.eclipse.cdt.managedbuilder.internal.macros.OptionContextData;
 import org.eclipse.cdt.managedbuilder.internal.scannerconfig.ManagedBuildCPathEntryContainer;
 import org.eclipse.cdt.managedbuilder.macros.BuildMacroException;
@@ -61,8 +57,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.core.runtime.QualifiedName;
-import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
@@ -73,7 +67,7 @@ import org.w3c.dom.NodeList;
 public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 	// The path container used for all managed projects
 	public static final IContainerEntry containerEntry = CoreModel.newContainerEntry(new Path("org.eclipse.cdt.managedbuilder.MANAGED_CONTAINER"));	//$NON-NLS-1$
-	private static final QualifiedName defaultConfigProperty = new QualifiedName(ManagedBuilderCorePlugin.getUniqueIdentifier(), DEFAULT_CONFIGURATION);
+//	private static final QualifiedName defaultConfigProperty = new QualifiedName(ManagedBuilderCorePlugin.getUniqueIdentifier(), DEFAULT_CONFIGURATION);
 	//private static final QualifiedName defaultTargetProperty = new QualifiedName(ManagedBuilderCorePlugin.getUniqueIdentifier(), DEFAULT_TARGET);
 	public static final String MAJOR_SEPERATOR = ";"; //$NON-NLS-1$
 	public static final String MINOR_SEPERATOR = "::"; //$NON-NLS-1$
@@ -81,8 +75,8 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 
 	private IManagedProject managedProject;
 	private ICProject cProject;
-	private IConfiguration defaultConfig;
-	private String defaultConfigId;
+//	private IConfiguration defaultConfig;
+//	private String defaultConfigId;
 	private boolean isDirty;
 	private boolean isValid = false;
 	private IResource owner;
@@ -111,14 +105,14 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 		rebuildNeeded = true;
 
 		// Get the default configs
-		IProject project = owner.getProject();
-		defaultConfigId = null;
-		try {
-			defaultConfigId = project.getPersistentProperty(defaultConfigProperty);
-		} catch (CoreException e) {
-			// Hitting this error just means the default config is not set
-			return;
-		}
+//		IProject project = owner.getProject();
+//		defaultConfigId = null;
+//		try {
+//			defaultConfigId = project.getPersistentProperty(defaultConfigProperty);
+//		} catch (CoreException e) {
+//			// Hitting this error just means the default config is not set
+//			return;
+//		}
 	}
 	
 	/**
@@ -166,16 +160,7 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 	 * @see org.eclipse.cdt.core.build.managed.IManagedBuildInfo#buildsFileType(java.lang.String)
 	 */
 	public boolean buildsFileType(String srcExt) {
-		// Check to see if there is a rule to build a file with this extension
-		IConfiguration config = getDefaultConfiguration();
-		ITool[] tools = config.getFilteredTools();
-		for (int index = 0; index < tools.length; index++) {
-			ITool tool = tools[index];
-			if (tool != null && tool.buildsFileType(srcExt)) {
-				return true;
-			}
-		}
-		return false;
+		return getDefaultConfiguration().buildsFileType(srcExt);
 	}
 	
 	/* (non-Javadoc)
@@ -248,7 +233,7 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 	 */
 	public IConfiguration getDefaultConfiguration() {
 		// Get the default config associated with the project
-		if (defaultConfig == null) {
+/*		if (defaultConfig == null) {
 			if (managedProject != null) {
 				if (defaultConfigId != null) {
 					defaultConfig = managedProject.getConfiguration(defaultConfigId);
@@ -270,6 +255,22 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 			}
 		}
 		return defaultConfig;
+*/
+		ICProjectDescription des = CoreModel.getDefault().getProjectDescription(getOwner().getProject(), false);
+		IConfiguration activeCfg = null;
+		if(des != null){
+			ICConfigurationDescription cfgDes = des.getActiveConfiguration();
+			activeCfg = managedProject.getConfiguration(cfgDes.getId());
+		}
+		
+		if(activeCfg == null){
+			IConfiguration cfgs[] = managedProject.getConfigurations();
+			if(cfgs.length != 0)
+				activeCfg = cfgs[0];
+		}
+		
+		return activeCfg;
+		
 	}
 
 	/* (non-Javadoc)
@@ -407,57 +408,7 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 	 * @see org.eclipse.cdt.core.build.managed.IManagedBuildInfo#getLibsForConfiguration(java.lang.String)
 	 */
 	public String[] getLibsForConfiguration(String extension) {
-		Vector libs = new Vector();
-		ITool tool = getDefaultConfiguration().calculateTargetTool();
-		if(tool == null)
-			tool = getToolFromOutputExtension(extension);
-			
-		if(tool != null){
-				IOption[] opts = tool.getOptions();
-				// Look for the lib option type
-				for (int i = 0; i < opts.length; i++) {
-					IOption option = opts[i];
-					try {
-						if (option.getValueType() == IOption.LIBRARIES) {
-							
-							// check to see if the option has an applicability calculator
-							IOptionApplicability applicabilitytCalculator = option.getApplicabilityCalculator();
-							
-							if (applicabilitytCalculator == null
-									|| applicabilitytCalculator.isOptionUsedInCommandLine(getDefaultConfiguration(), tool, option)) {
-								String command = option.getCommand();
-								String[] allLibs = option.getLibraries();
-								for (int j = 0; j < allLibs.length; j++)
-								{
-									try {
-										String resolved[] = ManagedBuildManager.getBuildMacroProvider().resolveStringListValueToMakefileFormat(
-												allLibs[j],
-												"", //$NON-NLS-1$
-												" ", //$NON-NLS-1$
-												IBuildMacroProvider.CONTEXT_OPTION,
-												new OptionContextData(option, tool));
-										if(resolved != null && resolved.length > 0){
-											for(int k = 0; k < resolved.length; k++){
-												String string = resolved[k];
-												if(string.length() > 0)
-													libs.add(command + string);
-											}
-										}
-									} catch (BuildMacroException e) {
-										// TODO: report error
-										continue;
-									}
-									
-								}
-							}
-						}
-					} catch (BuildException e) {
-						// TODO: report error
-						continue;
-					}
-				}
-		}
-		return (String[])libs.toArray(new String[libs.size()]);
+		return getDefaultConfiguration().getLibs(extension);
 	}
 
 	private HashMap getMacroPathEntries() {
@@ -575,16 +526,7 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 	 * @see org.eclipse.cdt.core.build.managed.IManagedBuildInfo#getOutputExtension(java.lang.String)
 	 */
 	public String getOutputExtension(String resourceExtension) {
-		String outputExtension = null;
-		ITool[] tools = getFilteredTools();
-		for (int index = 0; index < tools.length; index++) {
-			ITool tool = tools[index];
-			outputExtension = tool.getOutputExtension(resourceExtension);
-			if (outputExtension != null) {
-				return outputExtension;
-			}
-		}
-		return null;
+		return getDefaultConfiguration().getOutputExtension(resourceExtension);
 	}
 
 	/*
@@ -593,39 +535,14 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 	 * @see org.eclipse.cdt.core.build.managed.IManagedBuildInfo#getOutputFlag()
 	 */
 	public String getOutputFlag(String outputExt) {
-		// Treat null extension as an empty string
-		String ext = outputExt == null ? new String() : outputExt;
-		
-		// Get all the tools for the current config
-		String flags = new String();
-		ITool[] tools = getFilteredTools();
-		for (int index = 0; index < tools.length; index++) {
-			ITool tool = tools[index];
-			// It's OK
-			if (tool.producesFileType(ext)) {
-				flags = tool.getOutputFlag();
-			}
-		}
-		return flags;
+		return getDefaultConfiguration().getOutputFlag(outputExt);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.build.managed.IManagedBuildInfo#getOutputPrefix(java.lang.String)
 	 */
 	public String getOutputPrefix(String outputExtension) {
-		// Treat null extensions as empty string
-		String ext = outputExtension == null ? new String() : outputExtension;
-		
-		// Get all the tools for the current config
-		String flags = new String();
-		ITool[] tools = getFilteredTools();
-		for (int index = 0; index < tools.length; index++) {
-			ITool tool = tools[index];
-			if (tool.producesFileType(ext)) {
-				flags = tool.getOutputPrefix();
-			}
-		}
-		return flags;
+		return getDefaultConfiguration().getOutputPrefix(outputExtension);
 	}
 
 	/**
@@ -698,98 +615,14 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 	 */
 	public IManagedCommandLineInfo generateToolCommandLineInfo( String sourceExtension, String[] flags, 
 			String outputFlag, String outputPrefix, String outputName, String[] inputResources, IPath inputLocation, IPath outputLocation ){
-		ITool[] tools = getFilteredTools();
-		for (int index = 0; index < tools.length; index++) {
-			ITool tool = tools[index];
-			if (tool.buildsFileType(sourceExtension)) {
-				String cmd = tool.getToolCommand();
-				//try to resolve the build macros in the tool command
-				try{
-					String resolvedCommand = null;
-					
-					if ((inputLocation != null && inputLocation.toString().indexOf(" ") != -1) || //$NON-NLS-1$
-							(outputLocation != null && outputLocation.toString().indexOf(" ") != -1) ) //$NON-NLS-1$
-					{
-						resolvedCommand = ManagedBuildManager
-								.getBuildMacroProvider().resolveValue(
-										cmd,
-										"", //$NON-NLS-1$
-										" ", //$NON-NLS-1$
-										IBuildMacroProvider.CONTEXT_FILE,
-										new FileContextData(inputLocation,
-												outputLocation, null,
-												tool));
-					}
-
-					else {
-						resolvedCommand = ManagedBuildManager
-								.getBuildMacroProvider()
-								.resolveValueToMakefileFormat(
-										cmd,
-										"", //$NON-NLS-1$
-										" ", //$NON-NLS-1$
-										IBuildMacroProvider.CONTEXT_FILE,
-										new FileContextData(inputLocation,
-												outputLocation, null,
-												tool));
-					}
-					if((resolvedCommand = resolvedCommand.trim()).length() > 0)
-						cmd = resolvedCommand;
-						
-				} catch (BuildMacroException e){
-				}
-
-				IManagedCommandLineGenerator gen = tool.getCommandLineGenerator();
-				return gen.generateCommandLineInfo( tool, cmd, 
-						flags, outputFlag, outputPrefix, outputName, inputResources, 
-						tool.getCommandLinePattern() );
-			}
-		}
-		return null;
+		return getDefaultConfiguration().generateToolCommandLineInfo(sourceExtension, flags, outputFlag, outputPrefix, outputName, inputResources, inputLocation, outputLocation);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IManagedBuildInfo#getUserObjectsForConfiguration(java.lang.String)
 	 */
 	public String[] getUserObjectsForConfiguration(String extension) {
-		Vector objs = new Vector();
-		ITool tool = getDefaultConfiguration().calculateTargetTool();
-		if(tool == null)
-			tool = getToolFromOutputExtension(extension);
-			
-		if(tool != null){
-				IOption[] opts = tool.getOptions();
-				// Look for the user object option type
-				for (int i = 0; i < opts.length; i++) {
-					IOption option = opts[i];
-					try {
-						if (option.getValueType() == IOption.OBJECTS) {
-							String unresolved[] = option.getUserObjects();
-							if(unresolved != null && unresolved.length > 0){
-								for(int k = 0; k < unresolved.length; k++){
-									try {
-										String resolved[] = ManagedBuildManager.getBuildMacroProvider().resolveStringListValueToMakefileFormat(
-												unresolved[k],
-												"", //$NON-NLS-1$
-												" ", //$NON-NLS-1$
-												IBuildMacroProvider.CONTEXT_OPTION,
-												new OptionContextData(option, tool));
-										if(resolved != null && resolved.length > 0)
-											objs.addAll(Arrays.asList(resolved));
-									} catch (BuildMacroException e) {
-										// TODO: report error
-										continue;
-									}
-								}
-							}
-						}
-					} catch (BuildException e) {
-						// TODO: report error
-						continue;
-					}
-				}
-		}
-		return (String[])objs.toArray(new String[objs.size()]);
+		return getDefaultConfiguration().getUserObjects(extension);
 	}
 
 	/* (non-Javadoc)
@@ -874,7 +707,7 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 	/* (non-Javadoc)
 	 * 
 	 */
-	private void persistDefaultConfiguration() {
+/*	private void persistDefaultConfiguration() {
 		// Persist the default configuration
 		IProject project = owner.getProject();
 		try {
@@ -884,7 +717,7 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 			// Too bad
 		}
 	}
-	
+*/	
 	/**
 	 * Write the contents of the build model to the persistent store 
 	 * specified in the argument.
@@ -892,7 +725,7 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 	 * @param doc
 	 * @param element
 	 */
-	public void serialize(Document doc, Element element) {
+/*	public void serialize(Document doc, Element element) {
 		// Write out the managed build project
 
 		if(managedProject != null){
@@ -920,7 +753,7 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 		// I'm clean now
 		setDirty(false);
 	}
-
+*/
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.build.managed.IManagedBuildInfo#setDefaultConfiguration(org.eclipse.cdt.core.build.managed.IConfiguration)
 	 */
@@ -931,21 +764,26 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 		if (configuration == null) return;
 
 		if (!configuration.equals(getDefaultConfiguration())) {
-			// Save it
-			defaultConfig = configuration;
-			defaultConfigId = configuration.getId();
-			
-			IProject proj = getOwner().getProject();
-			IResource cdtbuildFile = proj.findMember(ManagedBuildManager.SETTINGS_FILE_NAME);
-			if(cdtbuildFile != null){
-				try {
-					cdtbuildFile.touch(new NullProgressMonitor());
-				} catch (CoreException e) {
-					//TODO: log an error
+			IProject project = owner.getProject();
+			ICProjectDescription des = CoreModel.getDefault().getProjectDescription(project);
+			if(des != null){
+				ICConfigurationDescription activeCfgDes = des.getConfigurationById(configuration.getId());
+				if(activeCfgDes == null){
+					try {
+						activeCfgDes = des.createConfiguration(ManagedBuildManager.CFG_DATA_PROVIDER_ID, configuration.getConfigurationData());
+					} catch (WriteAccessException e) {
+					} catch (CoreException e) {
+					}
+				}
+				
+				if(activeCfgDes != null){
+					des.setActiveConfiguration(activeCfgDes);
+					try {
+						CoreModel.getDefault().setProjectDescription(project, des);
+					} catch (CoreException e) {
+					}
 				}
 			}
-			// TODO: is this appropriate?
-			persistDefaultConfiguration();
 		}
 	}
 

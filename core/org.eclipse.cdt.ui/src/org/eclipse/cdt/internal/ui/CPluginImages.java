@@ -145,7 +145,7 @@ public class CPluginImages {
 	public static final ImageDescriptor DESC_OBJS_PROTECTED_FIELD= createManaged(T_OBJ, IMG_OBJS_PROTECTED_FIELD);
 	public static final ImageDescriptor DESC_OBJS_PRIVATE_FIELD= createManaged(T_OBJ, IMG_OBJS_PRIVATE_FIELD);
 	public static final ImageDescriptor DESC_OBJS_KEYWORD= createManaged(T_OBJ, IMG_OBJS_KEYWORD);			
-
+	
 	public static final ImageDescriptor DESC_OBJS_CLASS_ALT= createManaged(T_OBJ, IMG_OBJS_CLASS_ALT);
 	public static final ImageDescriptor DESC_OBJS_STRUCT_ALT= createManaged(T_OBJ, IMG_OBJS_STRUCT_ALT);
 	public static final ImageDescriptor DESC_OBJS_UNION_ALT= createManaged(T_OBJ, IMG_OBJS_UNION_ALT);
@@ -232,6 +232,11 @@ public class CPluginImages {
 	public static final String IMG_LCL_SUB_TYPE_HIERARCHY= NAME_PREFIX + "sub_co.gif"; //$NON-NLS-1$
 	public static final String IMG_LCL_SUPER_TYPE_HIERARCHY= NAME_PREFIX + "super_co.gif"; //$NON-NLS-1$
 	public static final String IMG_LCL_SHOW_INHERITED_MEMBERS= NAME_PREFIX + "inher_co.gif"; //$NON-NLS-1$
+	
+	public static final String IMG_FILESYSTEM= NAME_PREFIX + "filesyst.gif"; //$NON-NLS-1$
+	public static final String IMG_WORKSPACE = NAME_PREFIX + "workspace.gif"; //$NON-NLS-1$
+	public static final ImageDescriptor DESC_FILESYSTEM = createManaged(T_OBJ, IMG_FILESYSTEM);
+	public static final ImageDescriptor DESC_WORKSPACE  = createManaged(T_OBJ, IMG_WORKSPACE);
 	
 	public static final ImageDescriptor DESC_OBJS_TEMPLATE= createManaged(T_OBJ, IMG_OBJS_TEMPLATE);
 	

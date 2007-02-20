@@ -19,6 +19,10 @@ import org.eclipse.cdt.make.core.MakeCorePlugin;
 import org.eclipse.cdt.make.core.makefile.ITargetRule;
 import org.eclipse.cdt.make.internal.ui.MakeUIPlugin;
 import org.eclipse.cdt.make.ui.dialogs.MakeTargetDialog;
+import org.eclipse.cdt.managedbuilder.core.IBuilder;
+import org.eclipse.cdt.managedbuilder.core.IConfiguration;
+import org.eclipse.cdt.managedbuilder.core.IManagedBuildInfo;
+import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
@@ -117,8 +121,17 @@ public class AddBuildTargetAction extends Action {
 			IFile file = getFile();
 			if (file == null)
 				return false;
-			if (!MakeCorePlugin.getDefault().getTargetManager().hasTargetBuilder(file.getProject()))
+			IManagedBuildInfo info = ManagedBuildManager.getBuildInfo(file);
+			if(info == null)
 				return false;
+			IConfiguration cfg = info.getDefaultConfiguration();
+			if(cfg == null)
+				return false;
+			IBuilder builder = cfg.getBuilder();
+			if(builder == null)
+				return false;
+//			if(!builder.isManagedBuildOn())
+//				return false;
 		}
 		return true;
 	}

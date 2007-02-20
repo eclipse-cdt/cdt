@@ -199,7 +199,7 @@ public class CUIPlugin extends AbstractUIPlugin {
 	 * @since 2.0
 	 */
 	public static final String ID_CELEMENT_CREATION_ACTION_SET= "org.eclipse.cdt.ui.CElementCreationActionSet"; //$NON-NLS-1$
-
+	
 	/**
 	 * The id of the scope used by all the CDT views
 	 * (value <code>"org.eclipse.cdt.ui.scope"</code>).
@@ -367,7 +367,7 @@ public class CUIPlugin extends AbstractUIPlugin {
 	public CUIPlugin() {
 		fgCPlugin = this;
 		fDocumentProvider = null;
-		fTextTools = null;
+		fTextTools = null;		
 		fBuildConsoleManagers = new HashMap();
 	}
 		
@@ -426,7 +426,7 @@ public class CUIPlugin extends AbstractUIPlugin {
 	 */
 	public IBuildConsoleManager getConsoleManager() {
 		return getConsoleManager(getResourceString("BuildConsole.name"), BuildConsoleManager.DEFAULT_CONTEXT_MENU_ID); //$NON-NLS-1$
-	}
+		}
 
 	/**
 	 * Return a console manager specified by id.

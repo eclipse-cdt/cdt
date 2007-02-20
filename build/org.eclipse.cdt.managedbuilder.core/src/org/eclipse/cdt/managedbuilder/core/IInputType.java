@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 Intel Corporation and others.
+ * Copyright (c) 2005, 2007 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -24,7 +24,9 @@ import org.eclipse.core.runtime.content.IContentType;
 public interface IInputType extends IBuildObject {
 	public static final String INPUT_TYPE_ELEMENT_NAME = "inputType";	//$NON-NLS-1$
 	public static final String SOURCE_CONTENT_TYPE = "sourceContentType";	//$NON-NLS-1$
+	public static final String HEADER_CONTENT_TYPE = "headerContentType";	//$NON-NLS-1$
 	public static final String SOURCES = "sources";	//$NON-NLS-1$
+	public static final String HEADERS = "headers";	//$NON-NLS-1$
 	public static final String DEPENDENCY_CONTENT_TYPE = "dependencyContentType";	//$NON-NLS-1$
 	public static final String DEPENDENCY_EXTENSIONS = "dependencyExtensions";	//$NON-NLS-1$
 	public static final String OPTION = "option";	//$NON-NLS-1$
@@ -32,6 +34,15 @@ public interface IInputType extends IBuildObject {
 	public static final String MULTIPLE_OF_TYPE = "multipleOfType";	//$NON-NLS-1$
 	public static final String PRIMARY_INPUT = "primaryInput";	//$NON-NLS-1$
 	public static final String BUILD_VARIABLE = "buildVariable";	//$NON-NLS-1$
+	public static final String LANGUAGE_ID = "languageId";	//$NON-NLS-1$
+	public static final String LANGUAGE_NAME = "languageName";	//$NON-NLS-1$
+	public static final String LANGUAGE_INFO_CALCULATOR = "languageInfoCalculator";	//$NON-NLS-1$
+
+	// The attribute name for the scanner info collector
+	public static final String SCANNER_CONFIG_PROFILE_ID = "scannerConfigDiscoveryProfileId"; //$NON-NLS-1$
+	public static final String DISCOVERY_INFO = "discoveryInfo";	//$NON-NLS-1$
+
+	
 	
 	/**
 	 * Creates an inputOrder child for this InputType.
@@ -147,7 +158,28 @@ public interface IInputType extends IBuildObject {
 	 * @return IContentType
 	 */
 	public IContentType getSourceContentType();
+
+	public IContentType[] getSourceContentTypes();
 	
+	public IContentType[] getHeaderContentTypes();
+	
+	public String[] getSourceContentTypeIds();
+	
+	public String[] getHeaderContentTypeIds();
+	
+	public String[] getHeaderExtensions(ITool tool);
+
+	public String[] getHeaderExtensionsAttribute();
+
+	public void setSourceContentTypeIds(String[] ids);
+
+	public void setHeaderContentTypeIds(String[] ids);
+	
+	public void setSourceExtensionsAttribute(String[] extensions);
+
+	public void setHeaderExtensionsAttribute(String[] extensions);
+
+
 	/**
 	 * Sets the Eclipse <code>IContentType</code> that describes this
 	 * input type.
@@ -388,4 +420,14 @@ public interface IInputType extends IBuildObject {
 	 */
 	public void setDirty(boolean isDirty);
 	
+	String getLanguageId(ITool tool);
+	
+	String getLanguageName(ITool tool);
+	
+	String getDiscoveryProfileId(ITool tool);
+
+	void setLanguageIdAttribute(String id);
+	
+	void setLanguageNameAttribute(String name);
+
 }

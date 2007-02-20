@@ -7,6 +7,8 @@
    <extension-point id="BinaryParserPage" name="%binaryParserPage"/>
    <extension-point id="PathContainerPage" name="%pathContainerPage" schema="schema/PathContainerPage.exsd"/>
    <extension-point id="foldingStructureProviders" name="%foldingStructureProvidersExtensionPoint" schema="schema/foldingStructureProviders.exsd"/>
+   <extension-point id="cPropertyTab" name="%cPropertyTabName" schema="schema/cPropertyTab.exsd"/>
+   
    
 <!-- =========================================================================== -->
 <!-- Extension point: org.eclipse.cdt.ui.textHovers                        -->
@@ -18,6 +20,7 @@
    <extension-point id="completionContributors" name="%completionContributors" schema="schema/completionContributors.exsd"/>
    <extension-point id="ProposalFilter" name="%proposalFilter.name" schema="schema/ProposalFilter.exsd"/>
    <extension-point id="completionProposalComputer" name="%completionProposalComputer" schema="schema/completionProposalComputer.exsd"/>
+   <extension-point id="newCfgDialog" name="%NewCfgDialog.name" schema="schema/newCfgDialog.exsd"/>
 
    <extension
          point="org.eclipse.core.runtime.adapters">
@@ -221,6 +224,7 @@
          <actionSet
                id="org.eclipse.debug.ui.launchActionSet">
          </actionSet>
+         <actionSet id="org.eclipse.cdt.ui.buildConfigActionSet"/>
          <showInPart id="org.eclipse.cdt.ui.includeBrowser"/>
          <showInPart id="org.eclipse.cdt.ui.CView"/>
          <actionSet id="org.eclipse.ui.edit.text.actionSet.presentation"/>
@@ -322,6 +326,10 @@
 <!-- For C Wizards -->
    <extension
          point="org.eclipse.ui.newWizards">
+      <category
+            name="%categoryCDT.name"
+            id="org.eclipse.cdt.ui.newCDTWizards">
+      </category>
       <category
             name="%newCWizardsCategory.name"
             id="org.eclipse.cdt.ui.newCWizards">
@@ -672,17 +680,27 @@
             class="org.eclipse.cdt.internal.ui.preferences.AppearancePreferencePage"
             id="org.eclipse.cdt.ui.preferences.AppearancePreferencePage">
       </page>
-      <page
+      <!--page
             name="%pathEntryVariablesPrefName"
             category="org.eclipse.cdt.ui.preferences.CPluginPreferencePage"
             class="org.eclipse.cdt.internal.ui.preferences.PathEntryVariablePreferencePage"
             id="org.eclipse.cdt.ui.preferences.PathEntryVariablePreferencePage">
-      </page>
+      </page-->
       <page
             category="org.eclipse.cdt.ui.preferences.CPluginPreferencePage"
             class="org.eclipse.cdt.internal.ui.preferences.IndexerPreferencePage"
             id="org.eclipse.cdt.ui.preferences.IndexerPreferencePage"
             name="%indexerPrefName"/>
+      <page
+            category="org.eclipse.cdt.ui.preferences.CPluginPreferencePage"
+            class="org.eclipse.cdt.ui.newui.PrefPage_Env"
+            id="org.eclipse.cdt.ui.preferences.EnvironmentPrefPage"
+            name="%envPrefName"/>
+      <page
+            category="org.eclipse.cdt.ui.preferences.CPluginPreferencePage"
+            class="org.eclipse.cdt.ui.newui.PrefPage_Vars"
+            id="org.eclipse.cdt.ui.preferences.VariablesPrefPage"
+            name="%varsPrefName"/>
       <!--page
             name="%WorkInProgress.name"
             category="org.eclipse.cdt.ui.preferences.CPluginPreferencePage"
@@ -793,7 +811,45 @@
                name="type"
                value="org.eclipse.cdt.core.problem"/>
       </objectContribution>
+     <objectContribution
+           adaptable="true"
+           id="org.eclipse.cdt.ui.buildConfigContribution"
+           objectClass="org.eclipse.core.resources.IResource">
+        <action
+              class="org.eclipse.cdt.ui.actions.ChangeBuildConfigContextAction"
+              enablesFor="+"
+              id="org.eclipse.cdt.ui.buildConfigPulldownAction"
+              label="%BuildConfigContextAction.label"
+              menubarPath="buildGroup"
+              style="pulldown"
+              tooltip="%BuildConfigAction.tooltip"/>
+        <action
+              class="org.eclipse.cdt.ui.actions.ManageConfigsAction"
+              enablesFor="+"
+              id="org.eclipse.cdt.ui.manageConfigsAction0"
+              label="%ManageConfigAction.label"
+              menubarPath="buildGroup"
+              />
+        <action
+              class="org.eclipse.cdt.ui.actions.DeleteResConfigsAction"
+              enablesFor="+"
+              id="org.eclipse.cdt.ui.deleteConfigsAction0"
+              label="%DeleteRcConfigAction.label"
+              menubarPath="buildGroup"
+              />
+     </objectContribution>
+     <objectContribution
+          adaptable="true"
+          id="org.eclipse.cdt.ui.rebuildIndexContribution"
+          objectClass="org.eclipse.cdt.core.model.ICProject">
+       <action
+             class="org.eclipse.cdt.internal.ui.indexview.RebuildIndexActionDelegate"
+             id="org.eclipse.cdt.ui.rebuildIndexAction"
+             label="%RebuildIndex.name"
+             menubarPath="buildGroup"/>
+      </objectContribution>
    </extension>
+   
    <extension
          point="org.eclipse.compare.structureCreators">
       <structureCreator
@@ -1263,7 +1319,56 @@
                id="org.eclipse.search.menu">
          </menu>
       </actionSet>
+     <actionSet
+           description="%BuildConfigurationActionSet.descr"
+           id="org.eclipse.cdt.ui.buildConfigActionSet"
+           label="%BuildConfigActionSet.label"
+           visible="false">
+        <action
+              class="org.eclipse.cdt.ui.actions.ChangeBuildConfigMenuAction"
+              disabledIcon="icons/dlcl16/config-tool.gif"
+              enablesFor="+"
+              icon="icons/elcl16/config-tool.gif"
+              id="org.eclipse.cdt.ui.buildConfigToolbarAction"
+              label="%BuildConfigToolbarAction.label"
+              style="pulldown"
+              toolbarPath="buildConfig"
+              tooltip="%BuildConfigAction.tooltip"/>
+        <action
+              class="org.eclipse.cdt.ui.actions.ChangeBuildConfigMenuAction"
+              enablesFor="+"
+              id="org.eclipse.cdt.ui.buildConfigMenuAction"
+              label="%BuildConfigMenuAction.label"
+              menubarPath="project/build"
+              style="pulldown"
+              tooltip="%BuildConfigAction.tooltip"/>
+
+        <action
+              class="org.eclipse.cdt.ui.actions.ManageConfigsAction"
+              disabledIcon="icons/dlcl16/action-editconfig.gif"
+              enablesFor="+"
+              icon="icons/elcl16/action-editconfig.gif"
+              id="org.eclipse.cdt.ui.manageConfigsAction1"
+              label="%ManageConfigAction.label"
+              toolbarPath="buildConfig"
+              />
+        <action
+              class="org.eclipse.cdt.ui.actions.ManageConfigsAction"
+              enablesFor="+"
+              id="org.eclipse.cdt.ui.manageConfigsAction2"
+              label="%ManageConfigAction.label"
+              menubarPath="project/build"
+              />
+        <action
+              class="org.eclipse.cdt.ui.actions.DeleteResConfigsAction"
+              enablesFor="+"
+              id="org.eclipse.cdt.ui.deleteConfigsAction2"
+              label="%DeleteRcConfigAction.label"
+              menubarPath="project/build"
+              />
+     </actionSet>
    </extension>
+   
    <extension
          point="org.eclipse.ui.actionSetPartAssociations">
       <actionSetPartAssociation
@@ -1356,6 +1461,7 @@
             id="org.eclipse.cdt.ui.pdomSearchViewPage"
             searchResultClass="org.eclipse.cdt.internal.ui.search.PDOMSearchResult"/>
    </extension>
+   
    <extension
          point="org.eclipse.ui.propertyPages">
       <page
@@ -1501,7 +1607,7 @@
             class="org.eclipse.cdt.internal.ui.text.contentassist.PDOMCompletionContributor"
             id="PDOM"
             priority="3"/-->
-   </extension>
+   	</extension>
 
     <extension
         point="org.eclipse.cdt.ui.completionProposalComputer"
@@ -1704,7 +1810,7 @@
              overrides="org.eclipse.ui.navigator.resources.actions.RefactorActions">
           <enablement>
 			<or>
-				<instanceof value="org.eclipse.cdt.core.model.ICElement" />
+			 <instanceof value="org.eclipse.cdt.core.model.ICElement" />	
 				<instanceof value="org.eclipse.core.resources.IResource" />
 			</or>
           </enablement>
@@ -1716,7 +1822,7 @@
 	         wizardId="org.eclipse.cdt.ui.wizards.NewSourceFileCreationWizard">
 				<enablement>
 					<or>
-						<instanceof value="org.eclipse.cdt.core.model.ICElement" />
+						<instanceof value="org.eclipse.cdt.core.model.ICElement" />	
 			            <adapt type="org.eclipse.core.resources.IProject">
 			               <test
 			                     property="org.eclipse.core.resources.projectNature"
@@ -1732,7 +1838,7 @@
             wizardId="org.eclipse.cdt.ui.wizards.NewHeaderFileCreationWizard">
 				<enablement>
 					<or>
-						<instanceof value="org.eclipse.cdt.core.model.ICElement" />
+						<instanceof value="org.eclipse.cdt.core.model.ICElement" />	
 			            <adapt type="org.eclipse.core.resources.IProject">
 			               <test
 			                     property="org.eclipse.core.resources.projectNature"
@@ -1748,7 +1854,7 @@
             wizardId="org.eclipse.cdt.ui.wizards.NewSourceFolderCreationWizard">
 				<enablement>
 					<or>
-						<instanceof value="org.eclipse.cdt.core.model.ICElement" />
+						<instanceof value="org.eclipse.cdt.core.model.ICElement" />	
 			            <adapt type="org.eclipse.core.resources.IProject">
 			               <test
 			                     property="org.eclipse.core.resources.projectNature"
@@ -1764,7 +1870,7 @@
             wizardId="org.eclipse.cdt.ui.wizards.NewClassCreationWizard">
 				<enablement>
 					<or>
-						<instanceof value="org.eclipse.cdt.core.model.ICElement" />
+						<instanceof value="org.eclipse.cdt.core.model.ICElement" />	
 			            <adapt type="org.eclipse.core.resources.IProject">
 		                   <test
 		                         property="org.eclipse.core.resources.projectNature"
@@ -1830,4 +1936,20 @@
           viewerId="org.eclipse.ui.navigator.ProjectExplorer"/>
  </extension>
 
+  <extension
+        point="org.eclipse.core.expressions.propertyTesters">
+      <propertyTester
+           id="org.eclipse.cdt.Tester1"
+           class="org.eclipse.cdt.ui.newui.PropertyTester"
+           namespace="org.eclipse.cdt.ui"
+           properties="isSource"
+           type="org.eclipse.cdt.core.model.ITranslationUnit"/>
+      <propertyTester
+           id="org.eclipse.cdt.Tester2"
+           class="org.eclipse.cdt.ui.newui.PropertyTester"
+           namespace="org.eclipse.cdt.ui"
+           properties="isSource"
+           type="org.eclipse.core.resources.IFile"/>
+  </extension>
+  
 </plugin>

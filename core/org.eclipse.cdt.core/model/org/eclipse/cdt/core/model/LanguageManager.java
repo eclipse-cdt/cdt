@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -24,6 +25,7 @@ import org.eclipse.cdt.core.dom.ILinkage;
 import org.eclipse.cdt.internal.core.CContentTypes;
 import org.eclipse.cdt.internal.core.language.LanguageMappingConfiguration;
 import org.eclipse.cdt.internal.core.language.LanguageMappingStore;
+import org.eclipse.cdt.internal.core.model.LanguageDescriptor;
 import org.eclipse.cdt.internal.core.model.TranslationUnit;
 import org.eclipse.cdt.internal.core.pdom.dom.IPDOMLinkageFactory;
 import org.eclipse.core.resources.IFile;
@@ -58,11 +60,91 @@ public class LanguageManager {
 	private Map fContentTypeToLanguageCache= new HashMap();
 	private Map fLanguageConfigurationCache = new HashMap();
 	private boolean fIsFullyCached;
-	
+	private HashMap fIdToLanguageDescriptorCache;//= new HashMap();
+	private HashMap fContentTypeToDescriptorListCache;
+
 	public static LanguageManager getInstance() {
 		if (instance == null)
 			instance = new LanguageManager();
 		return instance;
+	}
+
+	public ILanguageDescriptor getLanguageDescriptor(String id) {
+		Map map = getDescriptorCache();
+		return (ILanguageDescriptor)map.get(id);
+	}
+	
+	private HashMap getDescriptorCache(){
+		if(fIdToLanguageDescriptorCache == null){
+			fIdToLanguageDescriptorCache = createDescriptorCache();
+		}
+		return fIdToLanguageDescriptorCache;
+	}
+	
+	public ILanguageDescriptor[] getLanguageDescriptors(){
+		HashMap map = getDescriptorCache();
+		return (ILanguageDescriptor[])map.values().toArray(new ILanguageDescriptor[map.size()]);
+	}
+	
+	private HashMap createDescriptorCache(){
+		HashMap map = new HashMap();
+		IConfigurationElement[] configs= Platform.getExtensionRegistry().getConfigurationElementsFor(LANGUAGE_EXTENSION_POINT_ID);
+		for (int j = 0; j < configs.length; ++j) {
+			final IConfigurationElement languageElem = configs[j];
+			if (ELEMENT_LANGUAGE.equals(languageElem.getName())) {
+				LanguageDescriptor lDes = new LanguageDescriptor(languageElem);
+				map.put(lDes.getId(), lDes);
+			}
+		}
+		return map;
+	}
+	
+	private HashMap getContentTypeToDescriptorCache(){
+		if(fContentTypeToDescriptorListCache == null){
+			fContentTypeToDescriptorListCache = createContentTypeToDescriptorCache();
+		}
+		return fContentTypeToDescriptorListCache;
+	}
+	
+	public Map getContentTypeIdToLanguageDescriptionsMap(){
+		HashMap map = (HashMap)getContentTypeToDescriptorCache().clone();
+		for(Iterator iter = map.entrySet().iterator(); iter.hasNext();){
+			Map.Entry entry = (Map.Entry)iter.next();
+			List list = (List)entry.getValue();
+			if(list.size() > 0){
+				ILanguageDescriptor[] dess = (ILanguageDescriptor[])list.toArray(new ILanguageDescriptor[list.size()]);
+				entry.setValue(dess);
+			} else {
+				iter.remove();
+			}
+		}
+		
+		return map;
+	}
+
+	
+	private HashMap createContentTypeToDescriptorCache(){
+		HashMap map = new HashMap();
+		Map dc = getDescriptorCache();
+
+		List list;
+		IContentType type;
+		String id;
+		for(Iterator iter = dc.values().iterator(); iter.hasNext();){
+			ILanguageDescriptor des = (ILanguageDescriptor)iter.next();
+			IContentType types[] = des.getContentTypes();
+			for(int i = 0; i < types.length; i++){
+				type = types[i];
+				id = type.getId();
+				list = (List)map.get(id);
+				if(list == null){
+					list = new ArrayList();
+					map.put(id, list);
+				}
+				list.add(des);
+			}
+		}
+		return map;
 	}
 	
 	public ILanguage getLanguage(String id) {

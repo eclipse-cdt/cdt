@@ -21,10 +21,11 @@ import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.IMacroEntry;
 import org.eclipse.cdt.core.model.IPathEntry;
 import org.eclipse.cdt.core.model.IPathEntryContainer;
-import org.eclipse.cdt.make.core.MakeCorePlugin;
 import org.eclipse.cdt.make.core.scannerconfig.IExternalScannerInfoProvider;
 import org.eclipse.cdt.make.core.scannerconfig.IScannerConfigBuilderInfo2;
 import org.eclipse.cdt.make.core.scannerconfig.IScannerInfoCollector;
+import org.eclipse.cdt.make.core.scannerconfig.InfoContext;
+import org.eclipse.cdt.make.internal.core.scannerconfig.ScannerConfigUtil;
 import org.eclipse.cdt.make.internal.core.scannerconfig2.SCProfileInstance;
 import org.eclipse.cdt.make.internal.core.scannerconfig2.ScannerConfigProfileManager;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
@@ -135,7 +136,7 @@ public class ManagedBuildCPathEntryContainer implements IPathEntryContainer {
 		// TODO Get the provider from the toolchain specification
 
         final IScannerConfigBuilderInfo2 buildInfo = ScannerConfigProfileManager.
-                createScannerConfigBuildInfo2(MakeCorePlugin.getDefault().getPluginPreferences(),
+                createScannerConfigBuildInfo2(ManagedBuilderCorePlugin.getDefault().getPluginPreferences(),
                         profileInstance.getProfile().getId(), false);
         List providerIds = buildInfo.getProviderIdList();
         for (Iterator i = providerIds.iterator(); i.hasNext(); ) {
@@ -154,7 +155,7 @@ public class ManagedBuildCPathEntryContainer implements IPathEntryContainer {
 					if (vars != null)
 						for (int i = 0; i < vars.length; ++i)
 							env.put(vars[i].getName(), vars[i].getValue());
-					esiProvider.invokeProvider(monitor, project, providerId, buildInfo, collector, env);
+					esiProvider.invokeProvider(monitor, project, providerId, buildInfo, collector/*, env*/);
 				}
 	
 				public void handleException(Throwable exception) {
@@ -188,8 +189,10 @@ public class ManagedBuildCPathEntryContainer implements IPathEntryContainer {
         SCProfileInstance profileInstance = null;
         if (scdProfileId != null) {
 			// See if we can load a dynamic resolver
+        	//FIXME:
+        	InfoContext context = ScannerConfigUtil.createContextForProject(project);
 	        profileInstance = ScannerConfigProfileManager.getInstance().
-	                getSCProfileInstance(project, scdProfileId);
+	                getSCProfileInstance(project, context, scdProfileId);
 	        collector = profileInstance.createScannerInfoCollector();
         }
         

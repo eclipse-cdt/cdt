@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 Intel Corporation and others.
+ * Copyright (c) 2005, 2007 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,11 +10,10 @@
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.internal.core;
 
-import org.eclipse.cdt.managedbuilder.core.IInputType;
+import org.eclipse.cdt.core.settings.model.ICStorageElement;
 import org.eclipse.cdt.managedbuilder.core.IAdditionalInput;
+import org.eclipse.cdt.managedbuilder.core.IInputType;
 import org.eclipse.cdt.managedbuilder.core.IManagedConfigElement;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
 
 public class AdditionalInput implements IAdditionalInput {
 
@@ -77,7 +76,7 @@ public class AdditionalInput implements IAdditionalInput {
 	 * @param parent The <code>ITool</code> the AdditionalInput will be added to. 
 	 * @param element The XML element that contains the AdditionalInput settings.
 	 */
-	public AdditionalInput(IInputType parent, Element element) {
+	public AdditionalInput(IInputType parent, ICStorageElement element) {
 		this.parent = parent;
 		isExtensionAdditionalInput = false;
 		
@@ -140,15 +139,15 @@ public class AdditionalInput implements IAdditionalInput {
 	 * 
 	 * @param element An XML element containing the AdditionalInput information 
 	 */
-	protected void loadFromProject(Element element) {
+	protected void loadFromProject(ICStorageElement element) {
 		
 		// path
-		if (element.hasAttribute(IAdditionalInput.PATHS)) {
+		if (element.getAttribute(IAdditionalInput.PATHS) != null) {
 			paths = element.getAttribute(IAdditionalInput.PATHS);
 		}
 		
 		// kind
-		if (element.hasAttribute(IAdditionalInput.KIND)) {
+		if (element.getAttribute(IAdditionalInput.KIND) != null) {
 			String kindStr = element.getAttribute(IAdditionalInput.KIND);
 			if (kindStr == null || kindStr.equals(ADDITIONAL_INPUT_DEPENDENCY)) {
 				kind = new Integer(KIND_ADDITIONAL_INPUT_DEPENDENCY);
@@ -166,7 +165,7 @@ public class AdditionalInput implements IAdditionalInput {
 	 * @param doc
 	 * @param element
 	 */
-	public void serialize(Document doc, Element element) {
+	public void serialize(ICStorageElement element) {
 
 		if (paths != null) {
 			element.setAttribute(IAdditionalInput.PATHS, paths);

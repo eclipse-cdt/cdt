@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2006 IBM Corporation and others.
+ * Copyright (c) 2003, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,6 +15,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.cdt.core.settings.model.ICStorageElement;
 import org.eclipse.cdt.managedbuilder.core.IBuildObject;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IHoldsOptions;
@@ -22,13 +23,12 @@ import org.eclipse.cdt.managedbuilder.core.IManagedConfigElement;
 import org.eclipse.cdt.managedbuilder.core.IOption;
 import org.eclipse.cdt.managedbuilder.core.IOptionCategory;
 import org.eclipse.cdt.managedbuilder.core.IResourceConfiguration;
+import org.eclipse.cdt.managedbuilder.core.IResourceInfo;
 import org.eclipse.cdt.managedbuilder.core.ITool;
 import org.eclipse.cdt.managedbuilder.core.IToolChain;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.PluginVersionIdentifier;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
 
 /**
  * 
@@ -90,7 +90,7 @@ public class OptionCategory extends BuildObject implements IOptionCategory {
 	 * @param parent The <code>IHoldsOptions</code> object the OptionCategory will be added to. 
 	 * @param element The XML element that contains the OptionCategory settings.
 	 */
-	public OptionCategory(IHoldsOptions parent, Element element) {
+	public OptionCategory(IHoldsOptions parent, ICStorageElement element) {
 		this.holder = parent;
 		isExtensionOptionCategory = false;
 		
@@ -131,18 +131,18 @@ public class OptionCategory extends BuildObject implements IOptionCategory {
 	 * 
 	 * @param element An XML element containing the OptionCategory information 
 	 */
-	protected void loadFromProject(Element element) {
+	protected void loadFromProject(ICStorageElement element) {
 		
 		// id
 		setId(element.getAttribute(IBuildObject.ID));
 
 		// name
-		if (element.hasAttribute(IBuildObject.NAME)) {
+		if (element.getAttribute(IBuildObject.NAME) != null) {
 			setName(element.getAttribute(IBuildObject.NAME));
 		}
 		
 		// owner
-		if (element.hasAttribute(IOptionCategory.OWNER)) {
+		if (element.getAttribute(IOptionCategory.OWNER) != null) {
 			ownerId = element.getAttribute(IOptionCategory.OWNER);
 		}
 		if (ownerId != null) {
@@ -152,7 +152,7 @@ public class OptionCategory extends BuildObject implements IOptionCategory {
 		}		
 		
 		// icon - was saved as URL in string form
-		if (element.hasAttribute(IOptionCategory.ICON)) {
+		if (element.getAttribute(IOptionCategory.ICON) != null) {
 			String iconPath = element.getAttribute(IOptionCategory.ICON);
 			try {
 				iconPathURL = new URL(iconPath);
@@ -188,7 +188,7 @@ public class OptionCategory extends BuildObject implements IOptionCategory {
 	 * @param doc
 	 * @param element
 	 */
-	public void serialize(Document doc, Element element) {
+	public void serialize(ICStorageElement element) {
 		element.setAttribute(IBuildObject.ID, id);
 		
 		if (name != null) {
@@ -260,7 +260,7 @@ public class OptionCategory extends BuildObject implements IOptionCategory {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.build.managed.IOptionCategory#getOptions()
 	 */
-	public Object[][] getOptions(IResourceConfiguration resConfig, IHoldsOptions optionHolder) {
+	public Object[][] getOptions(IResourceInfo resinfo, IHoldsOptions optionHolder) {
 		IHoldsOptions[] optionHolders = new IHoldsOptions[1];
 		optionHolders[0] = optionHolder;
 		return getOptions(optionHolders, FILTER_FILE);

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005 Intel Corporation and others.
+ * Copyright (c) 2005, 2007 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.envvar;
 
+import org.eclipse.cdt.core.envvar.IEnvironmentVariable;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 
 /**
@@ -45,20 +46,28 @@ public interface IEnvironmentVariableProvider{
 	 *    2. IManagedProject to represent the managed project
 	 *    3. IWorkspace to represent the workspace
 	 *    4. null to represent the system environment passed to eclipse
+	 * @deprecated use {@link IEnvironmentVariableProvider#getVariable(String, IConfiguration, boolean)} instead
 	 */
 	public IBuildEnvironmentVariable getVariable(
 				String variableName, Object level, boolean includeParentLevels, boolean resolveMacros);
+
+	public IEnvironmentVariable getVariable(String variableName,
+			IConfiguration cfg, boolean resolveMacros);
 
 	/**
 	 *
 	 * if environment variable names are case insensitive in the current OS, 
 	 * the environment variable provider will remove the duplicates of the variables if their names
 	 * differ only by case
+	 * @deprecated use {@link IEnvironmentVariableProvider#getVariables(IConfiguration, boolean)} instead
 	 *
 	 * @return the array of IBuildEnvironmentVariable that represents the environment variables 
 	 */
 	public IBuildEnvironmentVariable[] getVariables(
 				Object level, boolean includeParentLevels, boolean resolveMacros);
+
+	public IEnvironmentVariable[] getVariables(
+			IConfiguration cfg, boolean resolveMacros);
 
 	/**
 	 *

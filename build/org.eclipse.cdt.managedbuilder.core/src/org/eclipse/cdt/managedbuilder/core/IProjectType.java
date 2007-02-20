@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2005 Intel Corporation and others.
+ * Copyright (c) 2004, 2007 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -41,7 +41,7 @@ import org.eclipse.cdt.managedbuilder.macros.IProjectBuildMacroSupplier;
  * 
  * @since 2.1
  */
-public interface IProjectType extends IBuildObject {
+public interface IProjectType extends IBuildObject, IBuildObjectPropertiesContainer {
 	public static final String PROJECTTYPE_ELEMENT_NAME = "projectType";	//$NON-NLS-1$
 	public static final String SUPERCLASS = "superClass";					//$NON-NLS-1$
 	public static final String IS_ABSTRACT = "isAbstract";					//$NON-NLS-1$
@@ -51,6 +51,8 @@ public interface IProjectType extends IBuildObject {
 	public static final String CONFIGURATION_NAME_PROVIDER = "configurationNameProvider";  //$NON-NLS-1$
 	public static final String PROJECT_ENVIRONMENT_SUPPLIER = "projectEnvironmentSupplier";			//$NON-NLS-1$
 	public static final String PROJECT_MACRO_SUPPLIER = "projectMacroSupplier";			//$NON-NLS-1$
+	public static final String BUILD_PROPERTIES = "buildProperties"; //$NON-NLS-1$
+
 	
 	/**
 	 * Creates a configuration for this project-type populated with the tools
@@ -187,4 +189,6 @@ public interface IProjectType extends IBuildObject {
 	 */
 	
 	public boolean checkForMigrationSupport();
+	
+	public String getNameAttribute();
 }

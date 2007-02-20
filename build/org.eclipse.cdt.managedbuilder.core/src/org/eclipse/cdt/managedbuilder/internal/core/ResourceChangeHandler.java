@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 Intel Corporation and others.
+ * Copyright (c) 2005, 2007 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -430,10 +430,10 @@ public class ResourceChangeHandler implements IResourceChangeListener, ISavePart
 	private boolean updateResourceConfiguration(IConfiguration config, IPath oldPath, IPath newPath){
 		IResourceConfiguration rcCfg = config.getResourceConfiguration(oldPath.toString());
 		if(rcCfg != null && !oldPath.equals(newPath)){
-			config.removeResourceConfiguration(rcCfg);
+//			config.removeResourceConfiguration(rcCfg);
 			rcCfg.setResourcePath(newPath.toString());
-			rcCfg.setRebuildState(true);
-			((Configuration)config).addResourceConfiguration((ResourceConfiguration)rcCfg);
+//			rcCfg.setRebuildState(true);
+//			((Configuration)config).addResourceConfiguration((ResourceConfiguration)rcCfg);
 //			config.setRebuildState(true);
 			return true;
 		}

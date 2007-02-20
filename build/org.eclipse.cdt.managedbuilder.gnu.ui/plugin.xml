@@ -9,14 +9,21 @@
          name="Managed Build Tools Description"
          point="org.eclipse.cdt.managedbuilder.core.buildDefinitions">
       <managedBuildRevision
-            fileVersion="3.1.0">
+            fileVersion="4.0.0">
       </managedBuildRevision>
       <tool
             natureFilter="cnature"
             name="%ToolName.linker.gnu.c"
             outputFlag="-o"
             command="gcc"
-            id="cdt.managedbuild.tool.gnu.c.linker">
+            id="cdt.managedbuild.tool.gnu.c.linker"
+            errorParsers="org.eclipse.cdt.core.GLDErrorParser">
+            <supportedProperties>
+            <property id="org.eclipse.cdt.build.core.buildArtefactType">
+	            <value id="org.eclipse.cdt.build.core.buildArtefactType.exe"/>
+    	        <value id="org.eclipse.cdt.build.core.buildArtefactType.sharedLib"/>
+            </property>
+            </supportedProperties>
          <envVarBuildPath 
          	pathType="buildpathLibrary"
          	variableList="LIBRARY_PATH">
@@ -125,6 +132,15 @@
                command="-shared"
                id="gnu.c.link.option.shared"
                valueType="boolean">
+              <enablement 
+              	type="CONTAINER_ATTRIBUTE" 
+              	attribute="defaultValue" 
+              	value="true"
+              	extensionAdjustment="false">
+			  	<checkBuildProperty 
+			  		property="org.eclipse.cdt.build.core.buildArtefactType"
+			  		value="org.eclipse.cdt.build.core.buildArtefactType.sharedLib"/>
+			  </enablement>
          </option>
          <option
                name="%Option.Posix.Linker.SOName"
@@ -168,14 +184,40 @@
             buildVariable="EXECUTABLES"
             nameProvider="org.eclipse.cdt.managedbuilder.makegen.gnu.GnuLinkOutputNameProvider"
             id="cdt.managedbuild.tool.gnu.c.linker.output">
+             <enablement 
+              	type="ALL">
+			  	<checkOption 
+			  		optionId="gnu.c.link.option.shared"
+			  		value="false"/>
+			  </enablement>
          </outputType>
+         <outputType
+		    outputs="so"
+			outputPrefix="lib"
+            nameProvider="org.eclipse.cdt.managedbuilder.makegen.gnu.GnuLinkOutputNameProvider"
+			buildVariable="LIBRARIES"
+			id="cdt.managedbuild.tool.gnu.c.linker.output.so">
+             <enablement 
+              	type="ALL">
+			  	<checkOption 
+			  		optionId="gnu.c.link.option.shared"
+			  		value="true"/>
+			  </enablement>
+		 </outputType>
       </tool>
       <tool
             natureFilter="ccnature"
             name="%ToolName.linker.gnu.cpp"
             outputFlag="-o"
             command="g++"
-            id="cdt.managedbuild.tool.gnu.cpp.linker">
+            id="cdt.managedbuild.tool.gnu.cpp.linker"
+            errorParsers="org.eclipse.cdt.core.GLDErrorParser">
+            <supportedProperties>
+            <property id="org.eclipse.cdt.build.core.buildArtefactType">
+	            <value id="org.eclipse.cdt.build.core.buildArtefactType.exe"/>
+    	        <value id="org.eclipse.cdt.build.core.buildArtefactType.sharedLib"/>
+            </property>
+            </supportedProperties>
          <envVarBuildPath 
          	pathType="buildpathLibrary"
          	variableList="LIBRARY_PATH">
@@ -275,6 +317,15 @@
                command="-shared"
                valueType="boolean"
                id="gnu.cpp.link.option.shared">
+               <enablement 
+              	type="CONTAINER_ATTRIBUTE" 
+              	attribute="defaultValue" 
+              	value="true"
+              	extensionAdjustment="false">
+			  	<checkBuildProperty 
+			  		property="org.eclipse.cdt.build.core.buildArtefactType"
+			  		value="org.eclipse.cdt.build.core.buildArtefactType.sharedLib"/>
+			  </enablement>
          </option>
          <option
                name="%Option.Posix.Linker.SOName"
@@ -318,6 +369,25 @@
             buildVariable="EXECUTABLES"
             nameProvider="org.eclipse.cdt.managedbuilder.makegen.gnu.GnuLinkOutputNameProvider"
             id="cdt.managedbuild.tool.gnu.cpp.linker.output">
+              <enablement 
+              	type="ALL">
+			  	<checkOption 
+			  		optionId="gnu.cpp.link.option.shared"
+			  		value="false"/>
+			  </enablement>
+         </outputType>
+         <outputType
+			  outputs="so"
+			  outputPrefix="lib"
+            nameProvider="org.eclipse.cdt.managedbuilder.makegen.gnu.GnuLinkOutputNameProvider"
+	          buildVariable="LIBRARIES"
+              id="cdt.managedbuild.tool.gnu.cpp.linker.output.so">
+              <enablement 
+              	type="ALL">
+			  	<checkOption 
+			  		optionId="gnu.cpp.link.option.shared"
+			  		value="true"/>
+			  </enablement>
          </outputType>
       </tool>
       <tool
@@ -326,6 +396,11 @@
             name="%ToolName.archiver.gnu"
             command="ar"
             id="cdt.managedbuild.tool.gnu.archiver">
+            <supportedProperties>
+            <property id="org.eclipse.cdt.build.core.buildArtefactType">
+    	        <value id="org.eclipse.cdt.build.core.buildArtefactType.staticLib"/>
+            </property>
+            </supportedProperties>
          <optionCategory
                owner="cdt.managedbuild.tool.gnu.archiver"
                name="%OptionCategory.General"
@@ -430,7 +505,8 @@
             name="%ToolName.assembler.gnu"
             outputFlag="-o"
             id="cdt.managedbuild.tool.gnu.assembler"
-            natureFilter="both">
+            natureFilter="both"
+            errorParsers="org.eclipse.cdt.core.GASErrorParser">
          <optionCategory
                owner="cdt.managedbuild.tool.gnu.assembler"
                name="%OptionCategory.General"
@@ -480,7 +556,14 @@
             outputFlag="-o"
             command="gcc"
             commandLinePattern="${COMMAND} ${FLAGS} ${OUTPUT_FLAG} ${OUTPUT_PREFIX}${OUTPUT} ${INPUTS}"
-            id="cdt.managedbuild.tool.macosx.c.linker">
+            id="cdt.managedbuild.tool.macosx.c.linker"
+            errorParsers="org.eclipse.cdt.core.GLDErrorParser">
+            <supportedProperties>
+            <property id="org.eclipse.cdt.build.core.buildArtefactType">
+	            <value id="org.eclipse.cdt.build.core.buildArtefactType.exe"/>
+    	        <value id="org.eclipse.cdt.build.core.buildArtefactType.sharedLib"/>
+            </property>
+            </supportedProperties>
          <envVarBuildPath 
          	pathType="buildpathLibrary"
          	variableList="LIBRARY_PATH">
@@ -498,6 +581,15 @@
                command="-nostartfiles"
                id="macosx.c.link.option.nostart"
                valueType="boolean">
+              <enablement 
+              	type="CONTAINER_ATTRIBUTE" 
+              	attribute="defaultValue" 
+              	value="true"
+              	extensionAdjustment="false">
+			  	<checkBuildProperty 
+			  		property="org.eclipse.cdt.build.core.buildArtefactType"
+			  		value="org.eclipse.cdt.build.core.buildArtefactType.sharedLib"/>
+			  </enablement>
          </option>
          <option
                defaultValue="false"
@@ -506,6 +598,15 @@
                command="-nodefaultlibs"
                id="macosx.c.link.option.nodeflibs"
                valueType="boolean">
+              <enablement 
+              	type="CONTAINER_ATTRIBUTE" 
+              	attribute="defaultValue" 
+              	value="true"
+              	extensionAdjustment="false">
+			  	<checkBuildProperty 
+			  		property="org.eclipse.cdt.build.core.buildArtefactType"
+			  		value="org.eclipse.cdt.build.core.buildArtefactType.sharedLib"/>
+			  </enablement>
          </option>
          <option
                defaultValue="false"
@@ -589,6 +690,15 @@
                command="-dynamiclib"
                id="macosx.c.link.option.shared"
                valueType="boolean">
+              <enablement 
+              	type="CONTAINER_ATTRIBUTE" 
+              	attribute="defaultValue" 
+              	value="true"
+              	extensionAdjustment="false">
+			  	<checkBuildProperty 
+			  		property="org.eclipse.cdt.build.core.buildArtefactType"
+			  		value="org.eclipse.cdt.build.core.buildArtefactType.sharedLib"/>
+			  </enablement>
          </option>
          <inputType
             sourceContentType="org.eclipse.cdt.managedbuilder.core.compiledObjectFile"
@@ -611,7 +721,26 @@
             buildVariable="EXECUTABLES"
             nameProvider="org.eclipse.cdt.managedbuilder.makegen.gnu.GnuLinkOutputNameProvider"
             id="cdt.managedbuild.tool.macosx.c.linker.output">
+              <enablement 
+              	type="ALL">
+			  	<checkOption 
+			  		optionId="macosx.c.link.option.shared"
+			  		value="false"/>
+			  </enablement>
          </outputType>
+         <outputType
+            outputs="dylib"
+            outputPrefix="lib"
+            nameProvider="org.eclipse.cdt.managedbuilder.makegen.gnu.GnuLinkOutputNameProvider"
+            buildVariable="LIBRARIES"
+            id="cdt.managedbuild.tool.macosx.c.linker.output.so">
+              <enablement 
+              	type="ALL">
+			  	<checkOption 
+			  		optionId="macosx.c.link.option.shared"
+			  		value="true"/>
+			  </enablement>
+		  </outputType>
       </tool>
       <tool
             natureFilter="ccnature"
@@ -619,7 +748,14 @@
             outputFlag="-o"
             command="g++"
             commandLinePattern="${COMMAND} ${FLAGS} ${OUTPUT_FLAG} ${OUTPUT_PREFIX}${OUTPUT} ${INPUTS}"
-            id="cdt.managedbuild.tool.macosx.cpp.linker">
+            id="cdt.managedbuild.tool.macosx.cpp.linker"
+            errorParsers="org.eclipse.cdt.core.GLDErrorParser">
+            <supportedProperties>
+            <property id="org.eclipse.cdt.build.core.buildArtefactType">
+	            <value id="org.eclipse.cdt.build.core.buildArtefactType.exe"/>
+    	        <value id="org.eclipse.cdt.build.core.buildArtefactType.sharedLib"/>
+            </property>
+            </supportedProperties>
          <envVarBuildPath 
          	pathType="buildpathLibrary"
          	variableList="LIBRARY_PATH">
@@ -719,6 +855,15 @@
                command="-dynamiclib"
                valueType="boolean"
                id="macosx.cpp.link.option.shared">
+             <enablement 
+              	type="CONTAINER_ATTRIBUTE" 
+              	attribute="defaultValue" 
+              	value="true"
+              	extensionAdjustment="false">
+			  	<checkBuildProperty 
+			  		property="org.eclipse.cdt.build.core.buildArtefactType"
+			  		value="org.eclipse.cdt.build.core.buildArtefactType.sharedLib"/>
+			  </enablement>
          </option>
          <inputType
             sourceContentType="org.eclipse.cdt.managedbuilder.core.compiledObjectFile"
@@ -741,6 +886,25 @@
             buildVariable="EXECUTABLES"
             nameProvider="org.eclipse.cdt.managedbuilder.makegen.gnu.GnuLinkOutputNameProvider"
             id="cdt.managedbuild.tool.macosx.cpp.linker.output">
+              <enablement 
+              	type="ALL">
+			  	<checkOption 
+			  		optionId="macosx.cpp.link.option.shared"
+			  		value="false"/>
+			  </enablement>
+         </outputType>
+         <outputType
+            outputs="dylib"
+            outputPrefix="lib"
+            nameProvider="org.eclipse.cdt.managedbuilder.makegen.gnu.GnuLinkOutputNameProvider"
+            buildVariable="LIBRARIES"
+            id="cdt.managedbuild.tool.macosx.cpp.linker.output.so">
+              <enablement 
+              	type="ALL">
+			  	<checkOption 
+			  		optionId="macosx.cpp.link.option.shared"
+			  		value="true"/>
+			  </enablement>
          </outputType>
       </tool>
       
@@ -750,7 +914,14 @@
 		  isAbstract="true"
 		  command="gcc"
 		  natureFilter="both"
-		  outputFlag="-o">
+		  outputFlag="-o"
+		  errorParsers="org.eclipse.cdt.core.GCCErrorParser">
+            <supportedProperties>
+            <property id="org.eclipse.cdt.build.core.buildType">
+	            <value id="org.eclipse.cdt.build.core.buildType.debug"/>
+    	        <value id="org.eclipse.cdt.build.core.buildType.release"/>
+            </property>
+            </supportedProperties>
          <envVarBuildPath 
          	pathType="buildpathInclude"
          	variableList="CPATH,C_INCLUDE_PATH">
@@ -840,6 +1011,25 @@
 				  command="-O3"
 				  id="gnu.c.optimization.level.most">
 		  </enumeratedOptionValue>
+		      <enablement 
+              	type="CONTAINER_ATTRIBUTE" 
+              	attribute="defaultValue" 
+              	value="gnu.c.optimization.level.most"
+              	extensionAdjustment="false">
+			  	<checkBuildProperty 
+			  		property="org.eclipse.cdt.build.core.buildType"
+			  		value="org.eclipse.cdt.build.core.buildType.release"/>
+			  </enablement>
+              <enablement 
+              	type="CONTAINER_ATTRIBUTE" 
+              	attribute="defaultValue" 
+              	value="gnu.c.optimization.level.none"
+              	extensionAdjustment="false">
+			  	<checkBuildProperty 
+			  		property="org.eclipse.cdt.build.core.buildType"
+			  		value="org.eclipse.cdt.build.core.buildType.debug"/>
+			  </enablement>
+		  
 		  </option>
 		  <option
 			  name="%Option.Posix.Optimize.Flags"
@@ -879,6 +1069,25 @@
 				  command="-g3"
 				  id="gnu.c.debugging.level.max">
 		  </enumeratedOptionValue>
+		      <enablement 
+              	type="CONTAINER_ATTRIBUTE" 
+              	attribute="value" 
+              	value="gnu.c.debugging.level.none"
+              	extensionAdjustment="false">
+			  	<checkBuildProperty 
+			  		property="org.eclipse.cdt.build.core.buildType"
+			  		value="org.eclipse.cdt.build.core.buildType.release"/>
+			  </enablement>
+              <enablement 
+              	type="CONTAINER_ATTRIBUTE" 
+              	attribute="value" 
+              	value="gnu.c.debugging.level.max"
+              	extensionAdjustment="false">
+			  	<checkBuildProperty 
+			  		property="org.eclipse.cdt.build.core.buildType"
+			  		value="org.eclipse.cdt.build.core.buildType.debug"/>
+			  </enablement>
+		  
 		  </option>
 		  <option
 			  name="%Option.Posix.Debug.Other"
@@ -989,7 +1198,9 @@
               dependencyContentType="org.eclipse.cdt.core.cHeader"
 			  dependencyExtensions="h"
 			  dependencyCalculator="org.eclipse.cdt.managedbuilder.makegen.gnu.DefaultGCCDependencyCalculator2"
-              id="cdt.managedbuild.tool.gnu.c.compiler.input">
+              id="cdt.managedbuild.tool.gnu.c.compiler.input"
+              scannerConfigDiscoveryProfileId="org.eclipse.cdt.managedbuilder.core.GCCManagedMakePerProjectProfileC"
+              languageId="org.eclipse.cdt.core.gcc">
           </inputType>
           <outputType
 			  outputs="o"
@@ -1003,7 +1214,14 @@
 		  isAbstract="true"
 		  command="g++"
 		  natureFilter="ccnature"
-		  outputFlag="-o">
+		  outputFlag="-o"
+		  errorParsers="org.eclipse.cdt.core.GCCErrorParser">
+            <supportedProperties>
+            <property id="org.eclipse.cdt.build.core.buildType">
+	            <value id="org.eclipse.cdt.build.core.buildType.debug"/>
+    	        <value id="org.eclipse.cdt.build.core.buildType.release"/>
+            </property>
+            </supportedProperties>
          <envVarBuildPath 
          	pathType="buildpathInclude"
          	variableList="CPATH,CPLUS_INCLUDE_PATH">
@@ -1087,6 +1305,24 @@
 				  command="-O3"
 				  id="gnu.cpp.compiler.optimization.level.most">
 		  </enumeratedOptionValue>
+		      <enablement 
+              	type="CONTAINER_ATTRIBUTE" 
+              	attribute="value" 
+              	value="gnu.cpp.compiler.optimization.level.most"
+              	extensionAdjustment="false">
+			  	<checkBuildProperty 
+			  		property="org.eclipse.cdt.build.core.buildType"
+			  		value="org.eclipse.cdt.build.core.buildType.release"/>
+			  </enablement>
+              <enablement 
+              	type="CONTAINER_ATTRIBUTE" 
+              	attribute="value" 
+              	value="gnu.cpp.compiler.optimization.level.none"
+              	extensionAdjustment="false">
+			  	<checkBuildProperty 
+			  		property="org.eclipse.cdt.build.core.buildType"
+			  		value="org.eclipse.cdt.build.core.buildType.debug"/>
+			  </enablement>		  
 		  </option>
 		  <option
 			  name="%Option.Posix.Optimize.Flags"
@@ -1126,6 +1362,25 @@
 				  command="-g3"
 				  id="gnu.cpp.compiler.debugging.level.max">
 		  </enumeratedOptionValue>
+		  	 <enablement 
+              	type="CONTAINER_ATTRIBUTE" 
+              	attribute="value" 
+              	value="gnu.cpp.compiler.debugging.level.none"
+              	extensionAdjustment="false">
+			  	<checkBuildProperty 
+			  		property="org.eclipse.cdt.build.core.buildType"
+			  		value="org.eclipse.cdt.build.core.buildType.release"/>
+			  </enablement>
+              <enablement 
+              	type="CONTAINER_ATTRIBUTE" 
+              	attribute="value" 
+              	value="gnu.cpp.compiler.debugging.level.max"
+              	extensionAdjustment="false">
+			  	<checkBuildProperty 
+			  		property="org.eclipse.cdt.build.core.buildType"
+			  		value="org.eclipse.cdt.build.core.buildType.debug"/>
+			  </enablement>		  
+		  
 		  </option>
 		  <option
 			  name="%Option.Posix.Debug.Other"
@@ -1228,7 +1483,9 @@
               dependencyContentType="org.eclipse.cdt.core.cxxHeader"
 			  dependencyExtensions="h,H,hpp"
 			  dependencyCalculator="org.eclipse.cdt.managedbuilder.makegen.gnu.DefaultGCCDependencyCalculator2"
-              id="cdt.managedbuild.tool.gnu.cpp.compiler.input">
+              id="cdt.managedbuild.tool.gnu.cpp.compiler.input"
+              scannerConfigDiscoveryProfileId="org.eclipse.cdt.managedbuilder.core.GCCManagedMakePerProjectProfileCPP"
+              languageId="org.eclipse.cdt.core.g++">
           </inputType>
           <outputType
 			  outputs="o"
@@ -1250,6 +1507,11 @@
               superClass="cdt.managedbuild.tool.gnu.c.linker.output"
               id="cdt.managedbuild.tool.gnu.c.linker.cygwin.output">
           </outputType>
+		  <outputType
+	          outputs="dll,a.dll"
+			  buildVariable="LIBRARIES"
+			  id="cdt.managedbuild.tool.gnu.c.linker.cygwin.output.so">
+	      </outputType>
       </tool>
       <tool
           id="cdt.managedbuild.tool.gnu.cpp.linker.cygwin"
@@ -1264,6 +1526,12 @@
               superClass="cdt.managedbuild.tool.gnu.cpp.linker.output"
 			  id="cdt.managedbuild.tool.gnu.cpp.linker.cygwin.output">
 		  </outputType>
+		  <outputType
+	          outputs="dll,a.dll"
+			  buildVariable="LIBRARIES"
+			  id="cdt.managedbuild.tool.gnu.cpp.linker.cygwin.output.so">
+	      </outputType>
+		  
       </tool>
       <tool
           id="cdt.managedbuild.tool.gnu.c.compiler.cygwin"
@@ -1273,6 +1541,10 @@
               variableList="CPATH,C_INCLUDE_PATH"
               buildPathResolver="org.eclipse.cdt.managedbuilder.gnu.cygwin.CygwinPathResolver">
           </envVarBuildPath>
+          <inputType
+          	  id="cdt.managedbuild.tool.gnu.c.compiler.input.cygwin"
+              superClass="cdt.managedbuild.tool.gnu.c.compiler.input"
+              scannerConfigDiscoveryProfileId="org.eclipse.cdt.managedbuilder.core.GCCWinManagedMakePerProjectProfileC"/>
       </tool>      
       <tool
           id="cdt.managedbuild.tool.gnu.cpp.compiler.cygwin"
@@ -1282,13 +1554,17 @@
               variableList="CPATH,CPLUS_INCLUDE_PATH"
               buildPathResolver="org.eclipse.cdt.managedbuilder.gnu.cygwin.CygwinPathResolver">
           </envVarBuildPath>
+          <inputType
+          	  id="cdt.managedbuild.tool.gnu.cpp.compiler.input.cygwin"
+              superClass="cdt.managedbuild.tool.gnu.cpp.compiler.input"
+              scannerConfigDiscoveryProfileId="org.eclipse.cdt.managedbuilder.core.GCCWinManagedMakePerProjectProfileCPP"/>
       </tool>      
 
 	  <builder
 	  	  isAbstract="true"
 	      id="cdt.managedbuild.target.gnu.builder"
           command="make"
-          arguments="-k"
+          arguments=""
           variableFormat="${=}"
           isVariableCaseSensitive="true"
           reservedMacroNames="ROOT,DEPS,OBJS,.*_SRCS,EXECUTABLES,SUBDIRS,LIBS,USER_OBJS,.*_INPUTS,.*_OUTPUTS"
@@ -1302,28 +1578,24 @@
           macroOutputFileExtValue="$(suffix $(notdir $@))"
           macroOutputFileBaseNameValue="$(basename $(notdir $@))"
           macroOutputFileRelPathValue="$@"
-          macroOutputDirRelPathValue="$(dir $@)">
-   	  </builder>               
-        
-      <projectType      
-            isAbstract="false"     
-            isTest="false"
-            name="%TargetName.gnu.exe"
-            id="cdt.managedbuild.target.gnu.exe">
-         <configuration
-               name="%ConfigName.Dbg"
-               id="cdt.managedbuild.config.gnu.exe.debug"
-               cleanCommand="rm -rf"
-			   errorParsers="org.eclipse.cdt.core.MakeErrorParser;org.eclipse.cdt.core.GCCErrorParser;org.eclipse.cdt.core.GLDErrorParser;org.eclipse.cdt.core.GASErrorParser">
-               <toolChain
-                     archList="all"
-                     osList="linux,hpux,aix,qnx"
-                     name="%ToolChainName.Dbg"
-                     targetTool="cdt.managedbuild.tool.gnu.c.linker.exe.debug;cdt.managedbuild.tool.gnu.cpp.linker.exe.debug"
-                     scannerConfigDiscoveryProfileId="org.eclipse.cdt.managedbuilder.core.GCCManagedMakePerProjectProfile"
-                     id="cdt.managedbuild.toolchain.gnu.exe.debug">
+          macroOutputDirRelPathValue="$(dir $@)"
+          autoBuildTarget="all"
+          incrementalBuildTarget="all"
+          cleanBuildTarget="clean"
+          ignoreErrCmd="-k"
+          parallelBuildCmd="-j*"
+          errorParsers="org.eclipse.cdt.core.MakeErrorParser"
+          name="Gnu Make Builder">
+   	  </builder>   
+   	  
+      <toolChain
+          archList="all"
+          osList="linux,hpux,aix,qnx"
+          name="%ToolChainName.Linux"
+          targetTool="cdt.managedbuild.tool.gnu.c.linker;cdt.managedbuild.tool.gnu.cpp.linker;cdt.managedbuild.tool.gnu.archiver"
+          id="cdt.managedbuild.toolchain.gnu.base">
 		          <targetPlatform
-		              id="cdt.managedbuild.target.gnu.platform.exe.debug"
+		              id="cdt.managedbuild.target.gnu.platform.base"
 		              name="%PlatformName.Dbg"
 		              binaryParser="org.eclipse.cdt.core.ELF"
 		              osList="linux,hpux,aix,qnx"
@@ -1331,120 +1603,418 @@
 	              </targetPlatform>
 				  <builder
 					  superClass="cdt.managedbuild.target.gnu.builder"
-				      id="cdt.managedbuild.target.gnu.builder.exe.debug"
-		              name="%BuilderName.Dbg"
-		              command="make"
-		              arguments="-k"
-		              buildfileGenerator="org.eclipse.cdt.managedbuilder.makegen.gnu.GnuMakefileGenerator">
+				      id="cdt.managedbuild.target.gnu.builder.base">
+		     	  </builder>    
+			      <tool
+		    		  id="cdt.managedbuild.tool.gnu.archiver.base"
+			          superClass="cdt.managedbuild.tool.gnu.archiver">
+			  <enablement 
+              	type="ALL">
+			  	<checkBuildProperty 
+			  		property="org.eclipse.cdt.build.core.buildArtefactType"
+			  		value="org.eclipse.cdt.build.core.buildArtefactType.staticLib"/>
+			  </enablement>
+				  </tool>                 
+				  <tool
+                      id="cdt.managedbuild.tool.gnu.cpp.compiler.base"
+                      superClass="cdt.managedbuild.tool.gnu.cpp.compiler">                         
+                  </tool>
+                  <tool
+                      id="cdt.managedbuild.tool.gnu.c.compiler.base"
+                      superClass="cdt.managedbuild.tool.gnu.c.compiler">                          
+				  </tool>
+                  <tool
+                      id="cdt.managedbuild.tool.gnu.c.linker.base"
+                      superClass="cdt.managedbuild.tool.gnu.c.linker">
+             <enablement 
+              	type="ALL">
+              	<not>
+			  	<checkBuildProperty 
+			  		property="org.eclipse.cdt.build.core.buildArtefactType"
+			  		value="org.eclipse.cdt.build.core.buildArtefactType.staticLib"/>
+			  	</not>
+			  </enablement>
+                  </tool> 
+                  <tool
+                      id="cdt.managedbuild.tool.gnu.cpp.linker.base"
+                      superClass="cdt.managedbuild.tool.gnu.cpp.linker">
+             <enablement 
+              	type="ALL">
+              	<not>
+			  	<checkBuildProperty 
+			  		property="org.eclipse.cdt.build.core.buildArtefactType"
+			  		value="org.eclipse.cdt.build.core.buildArtefactType.staticLib"/>
+			  	</not>
+			  </enablement>
+                  </tool> 
+				  <tool
+					  id="cdt.managedbuild.tool.gnu.assembler.base"
+					  superClass="cdt.managedbuild.tool.gnu.assembler">
+				  </tool>   
+			  </toolChain>
+ 
+              <toolChain
+                     archList="all"
+                     osList="win32"
+                     name="%ToolChainName.Win32"
+                     configurationEnvironmentSupplier="org.eclipse.cdt.managedbuilder.gnu.cygwin.GnuCygwinConfigurationEnvironmentSupplier"
+                     targetTool="cdt.managedbuild.tool.gnu.cpp.linker.cygwin.base;cdt.managedbuild.tool.gnu.c.linker.cygwin.base;cdt.managedbuild.tool.gnu.archiver"
+                     id="cdt.managedbuild.toolchain.gnu.cygwin.base">
+                  <targetPlatform
+					  id="cdt.managedbuild.target.gnu.platform.cygwin.base"
+				 	  name="%PlatformName.Dbg"
+                      binaryParser="org.eclipse.cdt.core.PE"            					  
+					  osList="win32"					  
+					  archList="all">
+				  </targetPlatform>
+				    <builder
+					  superClass="cdt.managedbuild.target.gnu.builder"
+				      id="cdt.managedbuild.target.gnu.builder.cygwin.base">
+		     	  </builder>    
+				  
+				  <tool
+					  id="cdt.managedbuild.tool.gnu.assembler.cygwin.base"
+					  superClass="cdt.managedbuild.tool.gnu.assembler">
+				  </tool> 		               		         
+			      <tool
+		    		  id="cdt.managedbuild.tool.gnu.archiver.cygwin.base"
+			          superClass="cdt.managedbuild.tool.gnu.archiver">
+			  <enablement 
+              	type="ALL">
+			  	<checkBuildProperty 
+			  		property="org.eclipse.cdt.build.core.buildArtefactType"
+			  		value="org.eclipse.cdt.build.core.buildArtefactType.staticLib"/>
+			  </enablement>
+				  </tool>                 
+                  <tool
+                      id="cdt.managedbuild.tool.gnu.cpp.compiler.cygwin.base"
+                      superClass="cdt.managedbuild.tool.gnu.cpp.compiler.cygwin">
+                  </tool>
+                  <tool
+					  id="cdt.managedbuild.tool.gnu.c.compiler.cygwin.base"
+                      superClass="cdt.managedbuild.tool.gnu.c.compiler.cygwin">
+                  </tool>
+                  <tool
+                      id="cdt.managedbuild.tool.gnu.c.linker.cygwin.base"
+                      superClass="cdt.managedbuild.tool.gnu.c.linker.cygwin">
+               <enablement 
+              	type="ALL">
+              	<not>
+			  	<checkBuildProperty 
+			  		property="org.eclipse.cdt.build.core.buildArtefactType"
+			  		value="org.eclipse.cdt.build.core.buildArtefactType.staticLib"/>
+			  	</not>
+			  </enablement>
+                  </tool>
+                  <tool
+                      id="cdt.managedbuild.tool.gnu.cpp.linker.cygwin.base"
+                      superClass="cdt.managedbuild.tool.gnu.cpp.linker.cygwin">
+               <enablement 
+              	type="ALL">
+              	<not>
+			  	<checkBuildProperty 
+			  		property="org.eclipse.cdt.build.core.buildArtefactType"
+			  		value="org.eclipse.cdt.build.core.buildArtefactType.staticLib"/>
+			  	</not>
+			  </enablement>
+                  </tool>                  
+
+               </toolChain>                                   
+   	              
+               <toolChain
+                     archList="all"
+                     osList="macosx"
+                     name="%ToolChainName.Macosx"
+                     targetTool="cdt.managedbuild.tool.macosx.c.linker.macosx.base;cdt.managedbuild.tool.macosx.cpp.linker.macosx.base;cdt.managedbuild.tool.gnu.archiver"
+                     id="cdt.managedbuild.toolchain.gnu.macosx.base">
+                  <targetPlatform
+					  id="cdt.managedbuild.target.gnu.platform.macosx.base"
+				 	  name="%PlatformName.Dbg"
+                      binaryParser="org.eclipse.cdt.core.MachO"
+					  osList="macosx"					  
+					  archList="all">
+				  </targetPlatform>
+				  <builder
+					  superClass="cdt.managedbuild.target.gnu.builder"
+				      id="cdt.managedbuild.target.gnu.builder.macosx.base">
+		     	  </builder>    
+				  
+				  <tool
+				      id="cdt.managedbuild.tool.macosx.c.linker.macosx.base"
+					  superClass="cdt.managedbuild.tool.macosx.c.linker">
+	             <enablement 
+              	type="CMD_USAGE">
+              	<not>
+			  	<checkBuildProperty 
+			  		property="org.eclipse.cdt.build.core.buildArtefactType"
+			  		value="org.eclipse.cdt.build.core.buildArtefactType.staticLib"/>
+			  	</not>
+			  </enablement>
+				  </tool>
+				  <tool
+					  id="cdt.managedbuild.tool.macosx.cpp.linker.macosx.base"
+					  superClass="cdt.managedbuild.tool.macosx.cpp.linker">
+	             <enablement 
+              	type="CMD_USAGE">
+              	<not>
+			  	<checkBuildProperty 
+			  		property="org.eclipse.cdt.build.core.buildArtefactType"
+			  		value="org.eclipse.cdt.build.core.buildArtefactType.staticLib"/>
+			  	</not>
+			  </enablement>
+				  </tool>    
+				  <tool
+					  id="cdt.managedbuild.tool.gnu.assembler.macosx.base"
+					  superClass="cdt.managedbuild.tool.gnu.assembler">
+				  </tool> 		               		         
+			      <tool
+		    		  id="cdt.managedbuild.tool.gnu.archiver.macosx.base"
+			          superClass="cdt.managedbuild.tool.gnu.archiver">
+			  <enablement 
+              	type="ALL">
+			  	<checkBuildProperty 
+			  		property="org.eclipse.cdt.build.core.buildArtefactType"
+			  		value="org.eclipse.cdt.build.core.buildArtefactType.staticLib"/>
+			  </enablement>
+				  </tool>                 
+                  <tool
+                      id="cdt.managedbuild.tool.gnu.cpp.compiler.macosx.base"
+                      superClass="cdt.managedbuild.tool.gnu.cpp.compiler">
+                  </tool>
+                  <tool
+					  id="cdt.managedbuild.tool.gnu.c.compiler.macosx.base"
+                      superClass="cdt.managedbuild.tool.gnu.c.compiler">
+                  </tool>
+               </toolChain>
+               
+               <!--toolChain
+                     name="%ToolChainName.Solaris"
+                     targetTool="cdt.managedbuild.tool.gnu.solaris.cpp.linker.base;cdt.managedbuild.tool.gnu.solaris.c.linker.base"
+                     archList="all"
+                     osList="solaris"
+                     id="cdt.managedbuild.toolchain.gnu.solaris.base">
+		          <targetPlatform
+		              id="cdt.managedbuild.target.gnu.solaris.base"
+		              name="%PlatformName.Dbg"
+		              binaryParser="org.eclipse.cdt.core.ELF"
+		              osList="solaris"
+		              archList="all">
+	              </targetPlatform>
+				  <tool
+                      id="cdt.managedbuild.tool.gnu.solaris.cpp.compiler.base"
+                      superClass="cdt.managedbuild.tool.gnu.cpp.compiler.base"
+                      commandLinePattern="${COMMAND} ${FLAGS} ${OUTPUT_FLAG} ${OUTPUT_PREFIX}${OUTPUT} ${INPUTS}">                          
+                  </tool>
+                  <tool
+                      id="cdt.managedbuild.tool.gnu.solaris.c.compiler.base"
+                      superClass="cdt.managedbuild.tool.gnu.c.compiler.base"
+                      commandLinePattern="${COMMAND} ${FLAGS} ${OUTPUT_FLAG} ${OUTPUT_PREFIX}${OUTPUT} ${INPUTS}">                          
+				  </tool>
+				  <tool
+		    		  id="cdt.managedbuild.tool.gnu.solaris.archiver.base"
+			          superClass="cdt.managedbuild.tool.gnu.archiver">
+			  <enablement 
+              	type="ALL">
+			  	<checkBuildProperty 
+			  		property="org.eclipse.cdt.build.core.buildArtefactType"
+			  		value="org.eclipse.cdt.build.core.buildArtefactType.staticLib"/>
+			  </enablement>
+				  </tool>                 
+                  <tool
+                      id="cdt.managedbuild.tool.gnu.solaris.c.linker.base"
+                      superClass="cdt.managedbuild.tool.gnu.c.linker">
+             <enablement 
+              	type="ALL">
+              	<not>
+			  	<checkBuildProperty 
+			  		property="org.eclipse.cdt.build.core.buildArtefactType"
+			  		value="org.eclipse.cdt.build.core.buildArtefactType.staticLib"/>
+			  	</not>
+			  </enablement>
+                  </tool> 
+                  <tool
+                      id="cdt.managedbuild.tool.gnu.solaris.cpp.linker.base"
+                      superClass="cdt.managedbuild.tool.gnu.cpp.linker">
+             <enablement 
+              	type="ALL">
+              	<not>
+			  	<checkBuildProperty 
+			  		property="org.eclipse.cdt.build.core.buildArtefactType"
+			  		value="org.eclipse.cdt.build.core.buildArtefactType.staticLib"/>
+			  	</not>
+			  </enablement>
+                  </tool> 
+				  <tool
+					  id="cdt.managedbuild.tool.gnu.solaris.assembler.base"
+					  superClass="cdt.managedbuild.tool.gnu.assembler">
+				  </tool>   
+				  
+			  </toolChain-->
+
+               <toolChain
+                     archList="all"
+                     osList="solaris"
+                     id="cdt.managedbuild.toolchain.gnu.solaris.base"
+                     name="%ToolChainName.Solaris"
+                     superClass="cdt.managedbuild.toolchain.gnu.base">
+		          <targetPlatform
+		              id="cdt.managedbuild.target.gnu.solaris.base"
+		              name="%PlatformName.Dbg"
+		              binaryParser="org.eclipse.cdt.core.ELF"
+		              osList="solaris"
+		              archList="all">
+	              </targetPlatform>
+	              <builder
+					  superClass="cdt.managedbuild.target.gnu.builder"
+				      id="cdt.managedbuild.target.gnu.builder.solaris.base">
+		     	  </builder>    
+	              
+				  <tool
+                      id="cdt.managedbuild.tool.gnu.solaris.cpp.compiler.base"
+                      superClass="cdt.managedbuild.tool.gnu.cpp.compiler.base"
+                      commandLinePattern="${COMMAND} ${FLAGS} ${OUTPUT_FLAG} ${OUTPUT_PREFIX}${OUTPUT} ${INPUTS}">                          
+                  </tool>
+                  <tool
+                      id="cdt.managedbuild.tool.gnu.solaris.c.compiler.base"
+                      superClass="cdt.managedbuild.tool.gnu.c.compiler.base"
+                      commandLinePattern="${COMMAND} ${FLAGS} ${OUTPUT_FLAG} ${OUTPUT_PREFIX}${OUTPUT} ${INPUTS}">                          
+				  </tool>
+			  </toolChain>
+
+         <configuration
+               id="cdt.managedbuild.config.gnu.base"
+               cleanCommand="rm -rf"
+			   >
+		    <enablement type="CONTAINER_ATTRIBUTE" 
+              	attribute="artifactExtension"
+              	value="so"
+              	extensionAdjustment="false">
+			  	<checkBuildProperty 
+			  		property="org.eclipse.cdt.build.core.buildArtefactType"
+			  		value="org.eclipse.cdt.build.core.buildArtefactType.sharedLib"/>
+			  </enablement>
+		    <enablement type="CONTAINER_ATTRIBUTE" 
+              	attribute="artifactExtension" 
+              	value="a"
+              	extensionAdjustment="false">
+			  	<checkBuildProperty 
+			  		property="org.eclipse.cdt.build.core.buildArtefactType"
+			  		value="org.eclipse.cdt.build.core.buildArtefactType.staticLib"/>
+			  </enablement>
+		</configuration>
+      
+      <projectType      
+            isAbstract="false"     
+            isTest="false"
+            buildProperties="org.eclipse.cdt.build.core.buildArtefactType=org.eclipse.cdt.build.core.buildArtefactType.exe"
+            id="cdt.managedbuild.target.gnu.exe">
+         <configuration
+               name="%ConfigName.Dbg"
+               id="cdt.managedbuild.config.gnu.exe.debug"
+               buildProperties="org.eclipse.cdt.build.core.buildType=org.eclipse.cdt.build.core.buildType.debug"
+               parent="cdt.managedbuild.config.gnu.base"
+               cleanCommand="rm -rf">
+               <toolChain
+               		superClass="cdt.managedbuild.toolchain.gnu.base"
+                     id="cdt.managedbuild.toolchain.gnu.exe.debug">
+		          <targetPlatform
+		              id="cdt.managedbuild.target.gnu.platform.exe.debug"
+		              superClass="cdt.managedbuild.target.gnu.platform.base">
+	              </targetPlatform>
+				  <builder
+					  superClass="cdt.managedbuild.target.gnu.builder.base"
+				      id="cdt.managedbuild.target.gnu.builder.exe.debug">
 		     	  </builder>               
 				  <tool
                       id="cdt.managedbuild.tool.gnu.cpp.compiler.exe.debug"
-                      superClass="cdt.managedbuild.tool.gnu.cpp.compiler">                         
-                      <option
+                      superClass="cdt.managedbuild.tool.gnu.cpp.compiler.base">                         
+                    <option
 				          id="gnu.cpp.compiler.exe.debug.option.optimization.level"
-                          defaultValue="gnu.cpp.compiler.optimization.level.none"
                           superClass="gnu.cpp.compiler.option.optimization.level">
                       </option>
                       <option
 						  id="gnu.cpp.compiler.exe.debug.option.debugging.level"
-                          defaultValue="gnu.cpp.compiler.debugging.level.max"
                           superClass="gnu.cpp.compiler.option.debugging.level">
-                      </option>
+                      </option>           
                   </tool>
                   <tool
                       id="cdt.managedbuild.tool.gnu.c.compiler.exe.debug"
-                      superClass="cdt.managedbuild.tool.gnu.c.compiler">                          
+                      superClass="cdt.managedbuild.tool.gnu.c.compiler.base">                          
 			  	      <option
 					      id="gnu.c.compiler.exe.debug.option.optimization.level"
-						  defaultValue="gnu.c.optimization.level.none"
 						  superClass="gnu.c.compiler.option.optimization.level">
 					  </option>
 					  <option   
 					      id="gnu.c.compiler.exe.debug.option.debugging.level"					     
-						  defaultValue="gnu.c.debugging.level.max"
 					      superClass="gnu.c.compiler.option.debugging.level">
 					  </option>
 				  </tool>
                   <tool
                       id="cdt.managedbuild.tool.gnu.c.linker.exe.debug"
-                      superClass="cdt.managedbuild.tool.gnu.c.linker">
+                      superClass="cdt.managedbuild.tool.gnu.c.linker.base">
                   </tool> 
                   <tool
                       id="cdt.managedbuild.tool.gnu.cpp.linker.exe.debug"
-                      superClass="cdt.managedbuild.tool.gnu.cpp.linker">
+                      superClass="cdt.managedbuild.tool.gnu.cpp.linker.base">
                   </tool> 
 				  <tool
 					  id="cdt.managedbuild.tool.gnu.assembler.exe.debug"
-					  superClass="cdt.managedbuild.tool.gnu.assembler">
+					  superClass="cdt.managedbuild.tool.gnu.assembler.base">
 				  </tool>   
 			  </toolChain>
          </configuration>
          <configuration
                name="%ConfigName.Rel"
                id="cdt.managedbuild.config.gnu.exe.release"
-               cleanCommand="rm -rf"
-			   errorParsers="org.eclipse.cdt.core.MakeErrorParser;org.eclipse.cdt.core.GCCErrorParser;org.eclipse.cdt.core.GLDErrorParser;org.eclipse.cdt.core.GASErrorParser">               
+               buildProperties="org.eclipse.cdt.build.core.buildType=org.eclipse.cdt.build.core.buildType.release"
+               parent="cdt.managedbuild.config.gnu.base"
+               cleanCommand="rm -rf">               
                <toolChain
-                     archList="all"
-                     osList="linux,hpux,aix,qnx"
-                     name="%ToolChainName.Rel"
-                     targetTool="cdt.managedbuild.tool.gnu.c.linker.exe.release;cdt.managedbuild.tool.gnu.cpp.linker.exe.release"
-                     scannerConfigDiscoveryProfileId="org.eclipse.cdt.managedbuilder.core.GCCManagedMakePerProjectProfile"
+               		superClass="cdt.managedbuild.toolchain.gnu.base"
                      id="cdt.managedbuild.toolchain.gnu.exe.release">
 		          <targetPlatform
 		              id="cdt.managedbuild.target.gnu.platform.exe.release"
-		              name="%PlatformName.Rel"		             
-		              binaryParser="org.eclipse.cdt.core.ELF"
-		              osList="linux,hpux,aix,qnx"
-		              archList="all">		              
+		              superClass="cdt.managedbuild.target.gnu.platform.base">		              
 		          </targetPlatform>
 				  <builder
-				  	  superClass="cdt.managedbuild.target.gnu.builder"
-				      id="cdt.managedbuild.target.gnu.builder.exe.release"
-		              name="%BuilderName.Rel"		              
-		              command="make"
-		              arguments="-k"
-		              buildfileGenerator="org.eclipse.cdt.managedbuilder.makegen.gnu.GnuMakefileGenerator">
+				  	  superClass="cdt.managedbuild.target.gnu.builder.base"
+				      id="cdt.managedbuild.target.gnu.builder.exe.release">
 				  </builder> 
                   <tool
                       id="cdt.managedbuild.tool.gnu.cpp.compiler.exe.release"
-                      superClass="cdt.managedbuild.tool.gnu.cpp.compiler">                     
+                      superClass="cdt.managedbuild.tool.gnu.cpp.compiler.base">                     
 					  <option
 						  id="gnu.cpp.compiler.exe.release.option.optimization.level"
-						  defaultValue="gnu.cpp.compiler.optimization.level.most"
 						  superClass="gnu.cpp.compiler.option.optimization.level">
 					  </option>
 					  <option
 						  id="gnu.cpp.compiler.exe.release.option.debugging.level"
-						  defaultValue="gnu.cpp.compiler.debugging.level.none"
 						  superClass="gnu.cpp.compiler.option.debugging.level">
 					  </option>
                   </tool>
                   <tool
                       id="cdt.managedbuild.tool.gnu.c.compiler.exe.release"
-                      superClass="cdt.managedbuild.tool.gnu.c.compiler">                          
+                      superClass="cdt.managedbuild.tool.gnu.c.compiler.base">                          
 					  <option
 						  id="gnu.c.compiler.exe.release.option.optimization.level"
-						  defaultValue="gnu.c.optimization.level.most"
 						  superClass="gnu.c.compiler.option.optimization.level">
 					  </option>
 					  <option
 						  id="gnu.c.compiler.exe.release.option.debugging.level"
-						  defaultValue="gnu.c.debugging.level.none"
 						  superClass="gnu.c.compiler.option.debugging.level">
 					  </option>
                   </tool>
                   <tool
                       id="cdt.managedbuild.tool.gnu.c.linker.exe.release"
-                      superClass="cdt.managedbuild.tool.gnu.c.linker">
+                      superClass="cdt.managedbuild.tool.gnu.c.linker.base">
                   </tool> 
                   <tool
                       id="cdt.managedbuild.tool.gnu.cpp.linker.exe.release"
-                      superClass="cdt.managedbuild.tool.gnu.cpp.linker">
+                      superClass="cdt.managedbuild.tool.gnu.cpp.linker.base">
                   </tool>  
 				  <tool
 					  id="cdt.managedbuild.tool.gnu.assembler.exe.release"
-					  superClass="cdt.managedbuild.tool.gnu.assembler">
+					  superClass="cdt.managedbuild.tool.gnu.assembler.base">
 				  </tool>   
                </toolChain>
          </configuration>
@@ -1453,193 +2023,147 @@
       <projectType      
             isAbstract="false"     
             isTest="false"
-            name="%TargetName.gnu.so"
+            buildProperties="org.eclipse.cdt.build.core.buildArtefactType=org.eclipse.cdt.build.core.buildArtefactType.sharedLib"
             id="cdt.managedbuild.target.gnu.so">
          <configuration
                name="%ConfigName.Dbg"
                cleanCommand="rm -rf"
-               artifactExtension="so"               
-               errorParsers="org.eclipse.cdt.core.MakeErrorParser;org.eclipse.cdt.core.GCCErrorParser;org.eclipse.cdt.core.GLDErrorParser;org.eclipse.cdt.core.GASErrorParser"                          
+               buildProperties="org.eclipse.cdt.build.core.buildType=org.eclipse.cdt.build.core.buildType.debug"
+               parent="cdt.managedbuild.config.gnu.base"                                         
                id="cdt.managedbuild.config.gnu.so.debug">
                <toolChain
-                     archList="all"
-                     osList="linux,hpux,aix,qnx"
-                     name="%ToolChainName.Dbg"
-                     targetTool="cdt.managedbuild.tool.gnu.c.linker.so.debug;cdt.managedbuild.tool.gnu.cpp.linker.so.debug"
-                     scannerConfigDiscoveryProfileId="org.eclipse.cdt.managedbuilder.core.GCCManagedMakePerProjectProfile"
+               		 superClass="cdt.managedbuild.toolchain.gnu.base"
                      id="cdt.managedbuild.toolchain.gnu.so.debug">
 		          <targetPlatform
 		              id="cdt.managedbuild.target.gnu.platform.so.debug"
-		              name="%PlatformName.Dbg"
-		              binaryParser="org.eclipse.cdt.core.ELF"		            
-		              osList="linux,hpux,aix,qnx"
-		              archList="all">
+		              superClass="cdt.managedbuild.target.gnu.platform.base">
 		          </targetPlatform>
 				  <builder
-					  superClass="cdt.managedbuild.target.gnu.builder"
-				      id="cdt.managedbuild.target.gnu.builder.so.debug"
-		              name="%BuilderName.Dbg"
-		              command="make"
-		              arguments="-k"
-		              buildfileGenerator="org.eclipse.cdt.managedbuilder.makegen.gnu.GnuMakefileGenerator">		              
+					  superClass="cdt.managedbuild.target.gnu.builder.base"
+				      id="cdt.managedbuild.target.gnu.builder.so.debug">		              
 				  </builder>               		         
 				  <tool
 				      id="cdt.managedbuild.tool.gnu.cpp.compiler.so.debug"
-					  superClass="cdt.managedbuild.tool.gnu.cpp.compiler">
+					  superClass="cdt.managedbuild.tool.gnu.cpp.compiler.base">
 					  <option
 					      id="gnu.cpp.compiler.so.debug.option.optimization.level"
-						  defaultValue="gnu.cpp.compiler.optimization.level.none"
 						  superClass="gnu.cpp.compiler.option.optimization.level">
 					  </option>
 					  <option
 					      id="gnu.cpp.compiler.so.debug.option.debugging.level"
-						  defaultValue="gnu.cpp.compiler.debugging.level.max"
 						  superClass="gnu.cpp.compiler.option.debugging.level">
 					  </option>
 				  </tool>
 				  <tool
 				      id="cdt.managedbuild.tool.gnu.c.compiler.so.debug"
-					  superClass="cdt.managedbuild.tool.gnu.c.compiler">
+					  superClass="cdt.managedbuild.tool.gnu.c.compiler.base">
 					  <option
 						  id="gnu.c.compiler.so.debug.option.optimization.level"
-						  defaultValue="gnu.c.optimization.level.none"
 						  superClass="gnu.c.compiler.option.optimization.level">
 					  </option>
 					  <option
 					      id="gnu.c.compiler.so.debug.option.debugging.level"
-						  defaultValue="gnu.c.debugging.level.max"
 						  superClass="gnu.c.compiler.option.debugging.level">
 					  </option>
 				  </tool>
 				  <tool
 				      id="cdt.managedbuild.tool.gnu.c.linker.so.debug"
-					  superClass="cdt.managedbuild.tool.gnu.c.linker">
+					  superClass="cdt.managedbuild.tool.gnu.c.linker.base">
 					  <option
 						  id="gnu.c.link.so.debug.option.shared"
-						  defaultValue="true"
 						  superClass="gnu.c.link.option.shared">
 					  </option>
 			          <outputType
-						  outputs="so"
-						  outputPrefix="lib"
-			              buildVariable="LIBRARIES"
-			              superClass="cdt.managedbuild.tool.gnu.c.linker.output"
+			              superClass="cdt.managedbuild.tool.gnu.c.linker.output.so"
 			              id="cdt.managedbuild.tool.gnu.c.linker.so.debug.output">
 			          </outputType>
 				  </tool>
 				  <tool
 					  id="cdt.managedbuild.tool.gnu.cpp.linker.so.debug"
-					  superClass="cdt.managedbuild.tool.gnu.cpp.linker">
+					  superClass="cdt.managedbuild.tool.gnu.cpp.linker.base">
 					  <option
 						  id="gnu.cpp.link.so.debug.option.shared"
-						  defaultValue="true"
 						  superClass="gnu.cpp.link.option.shared">
 					  </option>
 			          <outputType
-						  outputs="so"
-						  outputPrefix="lib"
-			              buildVariable="LIBRARIES"
-			              superClass="cdt.managedbuild.tool.gnu.cpp.linker.output"
+			              superClass="cdt.managedbuild.tool.gnu.cpp.linker.output.so"
 			              id="cdt.managedbuild.tool.gnu.cpp.linker.so.debug.output">
 			          </outputType>
 				  </tool>
 				  <tool
 					  id="cdt.managedbuild.tool.gnu.assembler.so.debug"
-					  superClass="cdt.managedbuild.tool.gnu.assembler">
+					  superClass="cdt.managedbuild.tool.gnu.assembler.base">
 				  </tool>   
 			   </toolChain>
          </configuration>
          <configuration
                name="%ConfigName.Rel"
                cleanCommand="rm -rf"
-               artifactExtension="so"
-               errorParsers="org.eclipse.cdt.core.MakeErrorParser;org.eclipse.cdt.core.GCCErrorParser;org.eclipse.cdt.core.GLDErrorParser;org.eclipse.cdt.core.GASErrorParser"
+               buildProperties="org.eclipse.cdt.build.core.buildType=org.eclipse.cdt.build.core.buildType.release"
+               parent="cdt.managedbuild.config.gnu.base"               
                id="cdt.managedbuild.config.gnu.so.release">
                <toolChain
-                     archList="all"
-                     osList="linux,hpux,aix,qnx"
-                     name="%ToolChainName.Rel"
-                     targetTool="cdt.managedbuild.tool.gnu.c.linker.so.release;cdt.managedbuild.tool.gnu.cpp.linker.so.release"
-                     scannerConfigDiscoveryProfileId="org.eclipse.cdt.managedbuilder.core.GCCManagedMakePerProjectProfile"
+					 superClass="cdt.managedbuild.toolchain.gnu.base"
                      id="cdt.managedbuild.toolchain.gnu.so.release">
 		          <targetPlatform
 		              id="cdt.managedbuild.target.gnu.platform.so.release"
-		              name="%PlatformName.Rel"
-		              binaryParser="org.eclipse.cdt.core.ELF"		            
-		              osList="linux,hpux,aix,qnx"
-		              archList="all">
+		              superClass="cdt.managedbuild.target.gnu.platform.base">
 		          </targetPlatform>
 				  <builder
-					  superClass="cdt.managedbuild.target.gnu.builder"
-				      id="cdt.managedbuild.target.gnu.builder.so.release"
-		              name="%BuilderName.Rel"
-		              command="make"
-		              arguments="-k"
-		              buildfileGenerator="org.eclipse.cdt.managedbuilder.makegen.gnu.GnuMakefileGenerator">		              
+					  superClass="cdt.managedbuild.target.gnu.builder.base"
+				      id="cdt.managedbuild.target.gnu.builder.so.release">		              
 				  </builder>               
 				  <tool
 				      id="cdt.managedbuild.tool.gnu.cpp.compiler.so.release"
-					  superClass="cdt.managedbuild.tool.gnu.cpp.compiler">
+					  superClass="cdt.managedbuild.tool.gnu.cpp.compiler.base">
 				      <option
 				          id="gnu.cpp.compiler.so.release.option.optimization.level"
-						  defaultValue="gnu.cpp.compiler.optimization.level.most"
 						  superClass="gnu.cpp.compiler.option.optimization.level">
 				      </option>
 				      <option
 				          id="gnu.cpp.compiler.so.release.option.debugging.level"
-						  defaultValue="gnu.cpp.compiler.debugging.level.none"
 						  superClass="gnu.cpp.compiler.option.debugging.level">
 				      </option>
 				  </tool>				
 				  <tool				     
 				      id="cdt.managedbuild.tool.gnu.c.compiler.so.release"
-					  superClass="cdt.managedbuild.tool.gnu.c.compiler">
+					  superClass="cdt.managedbuild.tool.gnu.c.compiler.base">
 				      <option
 				          id="gnu.c.compiler.so.release.option.optimization.level"
-						  defaultValue="gnu.c.optimization.level.most"
 						  superClass="gnu.c.compiler.option.optimization.level">
 				      </option>
 				      <option
 				          id="gnu.c.compiler.so.release.option.debugging.level"
-						  defaultValue="gnu.c.debugging.level.none"
 						  superClass="gnu.c.compiler.option.debugging.level">
 				      </option>
 				  </tool>
 				  <tool
 				      id="cdt.managedbuild.tool.gnu.c.linker.so.release"
-					  superClass="cdt.managedbuild.tool.gnu.c.linker">
+					  superClass="cdt.managedbuild.tool.gnu.c.linker.base">
 					  <option
 						  id="gnu.c.link.so.release.option.shared"
-						  defaultValue="true"
 						  superClass="gnu.c.link.option.shared">
 					  </option>
 			          <outputType
-						  outputs="so"
-						  outputPrefix="lib"
-			              buildVariable="LIBRARIES"
-			              superClass="cdt.managedbuild.tool.gnu.c.linker.output"
+			              superClass="cdt.managedbuild.tool.gnu.c.linker.output.so"
 			              id="cdt.managedbuild.tool.gnu.c.linker.so.release.output">
 			          </outputType>
 				  </tool>
 				  <tool
 					  id="cdt.managedbuild.tool.gnu.cpp.linker.so.release"
-					  superClass="cdt.managedbuild.tool.gnu.cpp.linker">
+					  superClass="cdt.managedbuild.tool.gnu.cpp.linker.base">
 					  <option
 						  id="gnu.cpp.link.so.release.option.shared"
-						  defaultValue="true"
 						  superClass="gnu.cpp.link.option.shared">
 					  </option>
 			          <outputType
-						  outputs="so"
-						  outputPrefix="lib"
-			              buildVariable="LIBRARIES"
-			              superClass="cdt.managedbuild.tool.gnu.cpp.linker.output"
+			              superClass="cdt.managedbuild.tool.gnu.cpp.linker.output.so"
 			              id="cdt.managedbuild.tool.gnu.cpp.linker.so.release.output">
 			          </outputType>
 				  </tool>
 				  <tool
 					  id="cdt.managedbuild.tool.gnu.assembler.so.release"
-					  superClass="cdt.managedbuild.tool.gnu.assembler">
+					  superClass="cdt.managedbuild.tool.gnu.assembler.base">
 				  </tool>   
 			   </toolChain>  
          </configuration>         
@@ -1647,1185 +2171,991 @@
           
       <projectType 
             isTest="false"
-            name="%TargetName.gnu.lib"
+            buildProperties="org.eclipse.cdt.build.core.buildArtefactType=org.eclipse.cdt.build.core.buildArtefactType.staticLib"
             isAbstract="false"
             id="cdt.managedbuild.target.gnu.lib">                        
          <configuration
 			   name="%ConfigName.Dbg"
-			   artifactExtension="a"
+               buildProperties="org.eclipse.cdt.build.core.buildType=org.eclipse.cdt.build.core.buildType.debug"
+               parent="cdt.managedbuild.config.gnu.base"
 			   cleanCommand="rm -rf"
-			   errorParsers="org.eclipse.cdt.core.MakeErrorParser;org.eclipse.cdt.core.GCCErrorParser;org.eclipse.cdt.core.GLDErrorParser;org.eclipse.cdt.core.GASErrorParser"
 			   id="cdt.managedbuild.config.gnu.lib.debug">
                <toolChain
-                     archList="all"
-                     osList="linux,hpux,aix,qnx"
-                     name="%ToolChainName.Dbg"
-                     targetTool="cdt.managedbuild.tool.gnu.archiver.lib.debug"
-                     scannerConfigDiscoveryProfileId="org.eclipse.cdt.managedbuilder.core.GCCManagedMakePerProjectProfile"
+                     superClass="cdt.managedbuild.toolchain.gnu.base"
                      id="cdt.managedbuild.toolchain.gnu.lib.debug">
 				  <targetPlatform
 					  id="cdt.managedbuild.target.gnu.platform.lib.debug"
-				 	  name="%PlatformName.Dbg"
-					  binaryParser="org.eclipse.cdt.core.ELF"		            
-					  osList="linux,hpux,aix,qnx"
-					  archList="all">
+				 	  superClass="cdt.managedbuild.target.gnu.platform.base">
 				  </targetPlatform>
 			  	  <builder
-					  superClass="cdt.managedbuild.target.gnu.builder"
-					  id="cdt.managedbuild.target.gnu.builder.lib.debug"
-					  name="%BuilderName.Dbg"
-					  command="make"
-					  arguments="-k"
-					  buildfileGenerator="org.eclipse.cdt.managedbuilder.makegen.gnu.GnuMakefileGenerator">		              
+					  superClass="cdt.managedbuild.target.gnu.builder.base"
+					  id="cdt.managedbuild.target.gnu.builder.lib.debug">		              
 			      </builder>               		         
                   <tool
 					  id="cdt.managedbuild.tool.gnu.cpp.compiler.lib.debug"
-                      superClass="cdt.managedbuild.tool.gnu.cpp.compiler">
+                      superClass="cdt.managedbuild.tool.gnu.cpp.compiler.base">
 					  <option
 					      id="gnu.cpp.compiler.lib.debug.option.optimization.level"
-					      defaultValue="gnu.cpp.compiler.optimization.level.none"
 					      superClass="gnu.cpp.compiler.option.optimization.level">
 					  </option>
 					  <option
 					      id="gnu.cpp.compiler.lib.debug.option.debugging.level"
-					      defaultValue="gnu.cpp.compiler.debugging.level.max"
 					      superClass="gnu.cpp.compiler.option.debugging.level">
 					  </option>
                   </tool>
 				  <tool
 					  id="cdt.managedbuild.tool.gnu.c.compiler.lib.debug"
-					  superClass="cdt.managedbuild.tool.gnu.c.compiler">
+					  superClass="cdt.managedbuild.tool.gnu.c.compiler.base">
 				      <option
 					      id="gnu.c.compiler.lib.debug.option.optimization.level"
-						  defaultValue="gnu.c.optimization.level.none"
 						  superClass="gnu.c.compiler.option.optimization.level">
 				      </option>
 				      <option
 						  id="gnu.c.compiler.lib.debug.option.debugging.level"						
-						  defaultValue="gnu.c.debugging.level.max"
 						  superClass="gnu.c.compiler.option.debugging.level">
 				      </option>
 				  </tool>
 			      <tool
 		    		  id="cdt.managedbuild.tool.gnu.archiver.lib.debug"
-			          superClass="cdt.managedbuild.tool.gnu.archiver">
+			          superClass="cdt.managedbuild.tool.gnu.archiver.base">
 				  </tool>                 
 				  <tool
 					  id="cdt.managedbuild.tool.gnu.assembler.lib.debug"
-					  superClass="cdt.managedbuild.tool.gnu.assembler">
+					  superClass="cdt.managedbuild.tool.gnu.assembler.base">
 				  </tool>   
                </toolChain>                 
          </configuration>
          <configuration
                name="%ConfigName.Rel"
-               artifactExtension="a"
+               buildProperties="org.eclipse.cdt.build.core.buildType=org.eclipse.cdt.build.core.buildType.release"
+               parent="cdt.managedbuild.config.gnu.base"
                cleanCommand="rm -rf"
-			   errorParsers="org.eclipse.cdt.core.MakeErrorParser;org.eclipse.cdt.core.GCCErrorParser;org.eclipse.cdt.core.GLDErrorParser;org.eclipse.cdt.core.GASErrorParser"
-               id="cdt.managedbuild.config.gnu.lib.release">
+			   id="cdt.managedbuild.config.gnu.lib.release">
                <toolChain
-                     archList="all"
-                     osList="linux,hpux,aix,qnx"
-                     name="%ToolChainName.Rel"
-                     targetTool="cdt.managedbuild.tool.gnu.archiver.lib.release"
-                     scannerConfigDiscoveryProfileId="org.eclipse.cdt.managedbuilder.core.GCCManagedMakePerProjectProfile"
+                     superClass="cdt.managedbuild.toolchain.gnu.base"
                      id="cdt.managedbuild.toolchain.gnu.lib.release">
 		          <targetPlatform
 		              id="cdt.managedbuild.target.gnu.platform.lib.release"
-		              name="%PlatformName.Rel"
-		              binaryParser="org.eclipse.cdt.core.ELF"		            
-		              osList="linux,hpux,aix,qnx"
-		              archList="all">
+		              superClass="cdt.managedbuild.target.gnu.platform.base">
 		          </targetPlatform>
 				  <builder
-					  superClass="cdt.managedbuild.target.gnu.builder"
-				      id="cdt.managedbuild.target.gnu.builder.lib.release"
-		              name="%BuilderName.Rel"
-		              command="make"
-		              arguments="-k"
-		              buildfileGenerator="org.eclipse.cdt.managedbuilder.makegen.gnu.GnuMakefileGenerator">		              
+					  superClass="cdt.managedbuild.target.gnu.builder.base"
+				      id="cdt.managedbuild.target.gnu.builder.lib.release">		              
 				  </builder>               		            
 				  <tool
 					  id="cdt.managedbuild.tool.gnu.cpp.compiler.lib.release"
-					  superClass="cdt.managedbuild.tool.gnu.cpp.compiler">
+					  superClass="cdt.managedbuild.tool.gnu.cpp.compiler.base">
 					  <option
 						  id="gnu.cpp.compiler.lib.release.option.optimization.level"
-						  defaultValue="gnu.cpp.compiler.optimization.level.most"
 						  superClass="gnu.cpp.compiler.option.optimization.level">
 					  </option>
 					  <option
 						  id="gnu.cpp.compiler.lib.release.option.debugging.level"
-						  defaultValue="gnu.cpp.compiler.debugging.level.none"
 						  superClass="gnu.cpp.compiler.option.debugging.level">
 					  </option>
 				  </tool>
 		          <tool
 					  id="cdt.managedbuild.tool.gnu.c.compiler.lib.release"
-					  superClass="cdt.managedbuild.tool.gnu.c.compiler">
+					  superClass="cdt.managedbuild.tool.gnu.c.compiler.base">
 					  <option
 						  id="gnu.c.compiler.lib.release.option.optimization.level"
-						  defaultValue="gnu.c.optimization.level.most"
 						  superClass="gnu.c.compiler.option.optimization.level">
 					  </option>
 					  <option
 						  id="gnu.c.compiler.lib.release.option.debugging.level"
-					      defaultValue="gnu.c.debugging.level.none"
 					      superClass="gnu.c.compiler.option.debugging.level">
 					  </option>
 				  </tool>
 				  <tool
 					  id="cdt.managedbuild.tool.gnu.archiver.lib.release"
-				      superClass="cdt.managedbuild.tool.gnu.archiver">
+				      superClass="cdt.managedbuild.tool.gnu.archiver.base">
 				  </tool>
 				  <tool
 					  id="cdt.managedbuild.tool.gnu.assembler.lib.release"
-					  superClass="cdt.managedbuild.tool.gnu.assembler">
+					  superClass="cdt.managedbuild.tool.gnu.assembler.base">
 				  </tool>   
                </toolChain>				  
          </configuration>                  
       </projectType>
       
+      <configuration
+               id="cdt.managedbuild.config.gnu.cygwin.base"
+               cleanCommand="rm -rf"
+               artifactExtension="exe"
+			   >
+		    <enablement type="CONTAINER_ATTRIBUTE" 
+              	attribute="artifactExtension" 
+              	value="dll"
+              	extensionAdjustment="false">
+			  	<checkBuildProperty 
+			  		property="org.eclipse.cdt.build.core.buildArtefactType"
+			  		value="org.eclipse.cdt.build.core.buildArtefactType.sharedLib"/>
+			  </enablement>
+		    <enablement type="CONTAINER_ATTRIBUTE" 
+              	attribute="artifactExtension" 
+              	value="a"
+              	extensionAdjustment="false">
+			  	<checkBuildProperty 
+			  		property="org.eclipse.cdt.build.core.buildArtefactType"
+			  		value="org.eclipse.cdt.build.core.buildArtefactType.staticLib"/>
+			  </enablement>
+		</configuration>
+
       <projectType 
-            name="%TargetName.cygw.exe"
+            buildProperties="org.eclipse.cdt.build.core.buildArtefactType=org.eclipse.cdt.build.core.buildArtefactType.exe"
             id="cdt.managedbuild.target.gnu.cygwin.exe"
             isTest="false"
             isAbstract="false">                                  
          <configuration
                name="%ConfigName.Dbg"
-               artifactExtension="exe"
                cleanCommand="rm -rf"
-			   errorParsers="org.eclipse.cdt.core.MakeErrorParser;org.eclipse.cdt.core.GCCErrorParser;org.eclipse.cdt.core.GLDErrorParser;org.eclipse.cdt.core.GASErrorParser"
-               id="cdt.managedbuild.config.gnu.cygwin.exe.debug">
+               id="cdt.managedbuild.config.gnu.cygwin.exe.debug"
+               parent="cdt.managedbuild.config.gnu.cygwin.base"
+               buildProperties="org.eclipse.cdt.build.core.buildType=org.eclipse.cdt.build.core.buildType.debug">
                <toolChain
-                     archList="all"
-                     osList="win32"
-                     name="%ToolChainName.Dbg"
-                     targetTool="cdt.managedbuild.tool.gnu.c.linker.cygwin.exe.debug;cdt.managedbuild.tool.gnu.cpp.linker.cygwin.exe.debug"
-                     scannerConfigDiscoveryProfileId="org.eclipse.cdt.managedbuilder.core.GCCWinManagedMakePerProjectProfile"
-                     configurationEnvironmentSupplier="org.eclipse.cdt.managedbuilder.gnu.cygwin.GnuCygwinConfigurationEnvironmentSupplier"
+               		 superClass="cdt.managedbuild.toolchain.gnu.cygwin.base"
                      id="cdt.managedbuild.toolchain.gnu.cygwin.exe.debug">
                   <targetPlatform
 					  id="cdt.managedbuild.target.gnu.platform.cygwin.exe.debug"
-				 	  name="%PlatformName.Dbg"
-                      binaryParser="org.eclipse.cdt.core.PE"            					  
-					  osList="win32"					  
-					  archList="all">
+					  superClass="cdt.managedbuild.target.gnu.platform.cygwin.base">
 				  </targetPlatform>
 			  	  <builder
-					  superClass="cdt.managedbuild.target.gnu.builder"
-					  id="cdt.managedbuild.target.gnu.builder.cygwin.exe.debug"
-					  name="%BuilderName.Dbg"
-					  command="make"
-					  arguments="-k"
-					  buildfileGenerator="org.eclipse.cdt.managedbuilder.makegen.gnu.GnuMakefileGenerator">		              
-			      </builder>               		         
+					  superClass="cdt.managedbuild.target.gnu.builder.cygwin.base"
+					  id="cdt.managedbuild.target.gnu.builder.cygwin.exe.debug">		              
+			      </builder>
                   <tool
                       id="cdt.managedbuild.tool.gnu.cpp.compiler.cygwin.exe.debug"
-                      superClass="cdt.managedbuild.tool.gnu.cpp.compiler.cygwin">
+                      superClass="cdt.managedbuild.tool.gnu.cpp.compiler.cygwin.base">
                       <option
                           id="gnu.cpp.compiler.cygwin.exe.debug.option.optimization.level"
-                          defaultValue="gnu.cpp.compiler.optimization.level.none"
                           superClass="gnu.cpp.compiler.option.optimization.level">
                       </option>
                       <option
 						  id="gnu.cpp.compiler.cygwin.exe.debug.option.debugging.level"
-                          defaultValue="gnu.cpp.compiler.debugging.level.max"
                           superClass="gnu.cpp.compiler.option.debugging.level">
                       </option>
                   </tool>
                   <tool
 					  id="cdt.managedbuild.tool.gnu.c.compiler.cygwin.exe.debug"
-                      superClass="cdt.managedbuild.tool.gnu.c.compiler.cygwin">
+                      superClass="cdt.managedbuild.tool.gnu.c.compiler.cygwin.base">
 					  <option
 						  id="gnu.c.compiler.cygwin.exe.debug.option.optimization.level"
-						  defaultValue="gnu.c.optimization.level.none"
 						  superClass="gnu.c.compiler.option.optimization.level">
 					  </option>
 					  <option
 						  id="gnu.c.compiler.cygwin.exe.debug.option.debugging.level"
-						  defaultValue="gnu.c.debugging.level.max"
 						  superClass="gnu.c.compiler.option.debugging.level">
 					  </option>
                   </tool>
                   <tool
                       id="cdt.managedbuild.tool.gnu.c.linker.cygwin.exe.debug"
-                      superClass="cdt.managedbuild.tool.gnu.c.linker.cygwin">
+                      superClass="cdt.managedbuild.tool.gnu.c.linker.cygwin.base">
                   </tool>
                   <tool
                       id="cdt.managedbuild.tool.gnu.cpp.linker.cygwin.exe.debug"
-                      superClass="cdt.managedbuild.tool.gnu.cpp.linker.cygwin">
+                      superClass="cdt.managedbuild.tool.gnu.cpp.linker.cygwin.base">
                   </tool>                  
 				  <tool
 					  id="cdt.managedbuild.tool.gnu.assembler.cygwin.exe.debug"
-					  superClass="cdt.managedbuild.tool.gnu.assembler">
+					  superClass="cdt.managedbuild.tool.gnu.assembler.cygwin.base">
 				  </tool>   
                </toolChain>                                   
          </configuration>
          <configuration
                name="%ConfigName.Rel"
-               artifactExtension="exe"
                cleanCommand="rm -rf"
-			   errorParsers="org.eclipse.cdt.core.MakeErrorParser;org.eclipse.cdt.core.GCCErrorParser;org.eclipse.cdt.core.GLDErrorParser;org.eclipse.cdt.core.GASErrorParser"               
-               id="cdt.managedbuild.config.gnu.cygwin.exe.release">
+               id="cdt.managedbuild.config.gnu.cygwin.exe.release"
+               parent="cdt.managedbuild.config.gnu.cygwin.base"
+               buildProperties="org.eclipse.cdt.build.core.buildType=org.eclipse.cdt.build.core.buildType.release">
                <toolChain
-                     archList="all"
-                     osList="win32"
-                     name="%ToolChainName.Rel"
-                     targetTool="cdt.managedbuild.tool.gnu.c.linker.cygwin.exe.release;cdt.managedbuild.tool.gnu.cpp.linker.cygwin.exe.release"
-                     scannerConfigDiscoveryProfileId="org.eclipse.cdt.managedbuilder.core.GCCWinManagedMakePerProjectProfile"
-                     configurationEnvironmentSupplier="org.eclipse.cdt.managedbuilder.gnu.cygwin.GnuCygwinConfigurationEnvironmentSupplier"
+                     superClass="cdt.managedbuild.toolchain.gnu.cygwin.base"
                      id="cdt.managedbuild.toolchain.gnu.cygwin.exe.release">
                   <targetPlatform
 					  id="cdt.managedbuild.target.gnu.platform.cygwin.exe.release"
-				 	  name="%PlatformName.Rel"
-                      binaryParser="org.eclipse.cdt.core.PE"            					  
-					  osList="win32"					  
-					  archList="all">
+					  superClass="cdt.managedbuild.target.gnu.platform.cygwin.base">
 				  </targetPlatform>
 			  	  <builder
-					  superClass="cdt.managedbuild.target.gnu.builder"
-					  id="cdt.managedbuild.target.gnu.builder.cygwin.exe.release"
-					  name="%BuilderName.Rel"
-					  command="make"
-					  arguments="-k"
-					  buildfileGenerator="org.eclipse.cdt.managedbuilder.makegen.gnu.GnuMakefileGenerator">		              
+					  superClass="cdt.managedbuild.target.gnu.builder.cygwin.base"
+					  id="cdt.managedbuild.target.gnu.builder.cygwin.exe.release">		              
 			      </builder>               		                       
                   <tool
                       id="cdt.managedbuild.tool.gnu.cpp.compiler.cygwin.exe.release"
-                      superClass="cdt.managedbuild.tool.gnu.cpp.compiler.cygwin">
+                      superClass="cdt.managedbuild.tool.gnu.cpp.compiler.cygwin.base">
                       <option
                           id="gnu.cpp.compiler.cygwin.exe.release.option.optimization.level"
-                          defaultValue="gnu.cpp.compiler.optimization.level.most"
                           superClass="gnu.cpp.compiler.option.optimization.level">
                       </option>
                       <option
                           id="gnu.cpp.compiler.cygwin.exe.release.option.debugging.level"
-                          defaultValue="gnu.cpp.compiler.debugging.level.none"
                           superClass="gnu.cpp.compiler.option.debugging.level">
                       </option>
                   </tool>                      
                   <tool
 					  id="cdt.managedbuild.tool.gnu.c.compiler.cygwin.exe.release"
-                      superClass="cdt.managedbuild.tool.gnu.c.compiler.cygwin">
+                      superClass="cdt.managedbuild.tool.gnu.c.compiler.cygwin.base">
                       <option
                           id="gnu.c.compiler.cygwin.exe.release.option.optimization.level"
-                          defaultValue="gnu.c.optimization.level.most"
                           superClass="gnu.c.compiler.option.optimization.level">
                       </option>
                       <option
                           id="gnu.c.compiler.cygwin.exe.release.option.debugging.level"
-                          defaultValue="gnu.c.debugging.level.none"
                           superClass="gnu.c.compiler.option.debugging.level">
                       </option>
                   </tool>
                   <tool
                       id="cdt.managedbuild.tool.gnu.c.linker.cygwin.exe.release"
-                      superClass="cdt.managedbuild.tool.gnu.c.linker.cygwin">
+                      superClass="cdt.managedbuild.tool.gnu.c.linker.cygwin.base">
                   </tool>
                   <tool
                       id="cdt.managedbuild.tool.gnu.cpp.linker.cygwin.exe.release"
-                      superClass="cdt.managedbuild.tool.gnu.cpp.linker.cygwin">
+                      superClass="cdt.managedbuild.tool.gnu.cpp.linker.cygwin.base">
                   </tool>
 				  <tool
 					  id="cdt.managedbuild.tool.gnu.assembler.cygwin.exe.release"
-					  superClass="cdt.managedbuild.tool.gnu.assembler">
+					  superClass="cdt.managedbuild.tool.gnu.assembler.cygwin.base">
 				  </tool>   
                </toolChain>                                                     
          </configuration>
       </projectType>              
          
       <projectType                  
-            name="%TargetName.cygw.so"
+            buildProperties="org.eclipse.cdt.build.core.buildArtefactType=org.eclipse.cdt.build.core.buildArtefactType.sharedLib"
             id="cdt.managedbuild.target.gnu.cygwin.so"
             isAbstract="false"
             isTest="false">            
          <configuration
                name="%ConfigName.Dbg"
                cleanCommand="rm -rf"
-               artifactExtension="dll"
-               errorParsers="org.eclipse.cdt.core.MakeErrorParser;org.eclipse.cdt.core.GCCErrorParser;org.eclipse.cdt.core.GLDErrorParser;org.eclipse.cdt.core.GASErrorParser"               
+               parent="cdt.managedbuild.config.gnu.cygwin.base"
+               buildProperties="org.eclipse.cdt.build.core.buildType=org.eclipse.cdt.build.core.buildType.debug"
                id="cdt.managedbuild.config.gnu.cygwin.so.debug">
                <toolChain
-                     archList="all"
-                     osList="win32"
-                     name="%ToolChainName.Dbg"
-                     targetTool="cdt.managedbuild.tool.gnu.c.linker.cygwin.so.debug;cdt.managedbuild.tool.gnu.cpp.linker.cygwin.so.debug"
-                     scannerConfigDiscoveryProfileId="org.eclipse.cdt.managedbuilder.core.GCCWinManagedMakePerProjectProfile"
-                     configurationEnvironmentSupplier="org.eclipse.cdt.managedbuilder.gnu.cygwin.GnuCygwinConfigurationEnvironmentSupplier"
+                     superClass="cdt.managedbuild.toolchain.gnu.cygwin.base"
                      id="cdt.managedbuild.toolchain.gnu.cygwin.so.debug">
                   <targetPlatform
 					  id="cdt.managedbuild.target.gnu.platform.cygwin.so.debug"
-				 	  name="%PlatformName.Dbg"
-                      binaryParser="org.eclipse.cdt.core.PE"            					  
-					  osList="win32"					  
-					  archList="all">
+					  superClass="cdt.managedbuild.target.gnu.platform.cygwin.base">
 				  </targetPlatform>
 			  	  <builder
-					  superClass="cdt.managedbuild.target.gnu.builder"
-					  id="cdt.managedbuild.target.gnu.builder.cygwin.so.debug"
-					  name="%BuilderName.Dbg"
-					  command="make"
-					  arguments="-k"
-					  buildfileGenerator="org.eclipse.cdt.managedbuilder.makegen.gnu.GnuMakefileGenerator">		              
+					  superClass="cdt.managedbuild.target.gnu.builder.cygwin.base"
+					  id="cdt.managedbuild.target.gnu.builder.cygwin.so.debug">		              
 			      </builder>               		         
                   <tool
                       id="cdt.managedbuild.tool.gnu.cpp.compiler.cygwin.so.debug"
-                      superClass="cdt.managedbuild.tool.gnu.cpp.compiler.cygwin">
+                      superClass="cdt.managedbuild.tool.gnu.cpp.compiler.cygwin.base">
                       <option
                           id="gnu.cpp.compiler.cygwin.so.debug.option.optimization.level"
-                          defaultValue="gnu.cpp.compiler.optimization.level.none"
                           superClass="gnu.cpp.compiler.option.optimization.level">
                       </option>
                       <option
                           id="gnu.cpp.compiler.cygwin.so.debug.option.debugging.level"
-                          defaultValue="gnu.cpp.compiler.debugging.level.max"
                           superClass="gnu.cpp.compiler.option.debugging.level">
                       </option>
                   </tool>
                   <tool
 					  id="cdt.managedbuild.tool.gnu.c.compiler.cygwin.so.debug"
-                      superClass="cdt.managedbuild.tool.gnu.c.compiler.cygwin">
+                      superClass="cdt.managedbuild.tool.gnu.c.compiler.cygwin.base">
 					  <option
 						  id="gnu.c.compiler.cygwin.so.debug.option.optimization.level"
-						  defaultValue="gnu.c.optimization.level.none"
 						  superClass="gnu.c.compiler.option.optimization.level">
 					  </option>
 					  <option
 						  id="gnu.c.compiler.cygwin.so.debug.option.debugging.level"
-						  defaultValue="gnu.c.debugging.level.max"
 						  superClass="gnu.c.compiler.option.debugging.level">
 					  </option>
                   </tool>
                   <tool
                       id="cdt.managedbuild.tool.gnu.c.linker.cygwin.so.debug"
-                      superClass="cdt.managedbuild.tool.gnu.c.linker.cygwin">
+                      superClass="cdt.managedbuild.tool.gnu.c.linker.cygwin.base">
                       <option
                           id="gnu.c.link.cygwin.so.debug.option.shared"
-                          defaultValue="true"
                           superClass="gnu.c.link.option.shared">
                       </option>
 			          <outputType
-	                      outputs="dll,a.dll"
-			              buildVariable="LIBRARIES"
-			              superClass="cdt.managedbuild.tool.gnu.c.linker.cygwin.output"
+			              superClass="cdt.managedbuild.tool.gnu.c.linker.cygwin.output.so"
 			              id="cdt.managedbuild.tool.gnu.c.linker.cygwin.so.debug.output">
 			          </outputType>
                   </tool>
                   <tool
                       id="cdt.managedbuild.tool.gnu.cpp.linker.cygwin.so.debug"
-                      superClass="cdt.managedbuild.tool.gnu.cpp.linker.cygwin">
+                      superClass="cdt.managedbuild.tool.gnu.cpp.linker.cygwin.base">
                       <option
                           id="gnu.cpp.link.cygwin.so.debug.option.shared"
-                          defaultValue="true"
                           superClass="gnu.cpp.link.option.shared">
                       </option>
 			          <outputType
-	                      outputs="dll,a.dll"
-			              buildVariable="LIBRARIES"
-			              superClass="cdt.managedbuild.tool.gnu.cpp.linker.cygwin.output"
+			              superClass="cdt.managedbuild.tool.gnu.cpp.linker.cygwin.output.so"
 			              id="cdt.managedbuild.tool.gnu.cpp.linker.cygwin.so.debug.output">
 			          </outputType>
                   </tool>                  
 				  <tool
 					  id="cdt.managedbuild.tool.gnu.assembler.cygwin.so.debug"
-					  superClass="cdt.managedbuild.tool.gnu.assembler">
+					  superClass="cdt.managedbuild.tool.gnu.assembler.cygwin.base">
 				  </tool>   
                </toolChain>                                                     
          </configuration>
          <configuration
                name="%ConfigName.Rel"
                cleanCommand="rm -rf"
-               artifactExtension="dll"
-               errorParsers="org.eclipse.cdt.core.MakeErrorParser;org.eclipse.cdt.core.GCCErrorParser;org.eclipse.cdt.core.GLDErrorParser;org.eclipse.cdt.core.GASErrorParser"               
+               parent="cdt.managedbuild.config.gnu.cygwin.base"
+               buildProperties="org.eclipse.cdt.build.core.buildType=org.eclipse.cdt.build.core.buildType.release"
                id="cdt.managedbuild.config.gnu.cygwin.so.release">               
                <toolChain
-                     archList="all"
-                     osList="win32"
-                     name="%ToolChainName.Rel"
-                     targetTool="cdt.managedbuild.tool.gnu.c.linker.cygwin.so.release;cdt.managedbuild.tool.gnu.cpp.linker.cygwin.so.release"
-                     scannerConfigDiscoveryProfileId="org.eclipse.cdt.managedbuilder.core.GCCWinManagedMakePerProjectProfile"
-                     configurationEnvironmentSupplier="org.eclipse.cdt.managedbuilder.gnu.cygwin.GnuCygwinConfigurationEnvironmentSupplier"
+                     superClass="cdt.managedbuild.toolchain.gnu.cygwin.base"
                      id="cdt.managedbuild.toolchain.gnu.cygwin.so.release">
                   <targetPlatform
 					  id="cdt.managedbuild.target.gnu.platform.cygwin.so.release"
-				 	  name="%PlatformName.Rel"
-                      binaryParser="org.eclipse.cdt.core.PE"            					  
-					  osList="win32"					  
-					  archList="all">
+					  superClass="cdt.managedbuild.target.gnu.platform.cygwin.base">
 				  </targetPlatform>
 			  	  <builder
-					  superClass="cdt.managedbuild.target.gnu.builder"
-					  id="cdt.managedbuild.target.gnu.builder.cygwin.so.release"
-					  name="%BuilderName.Rel"
-					  command="make"
-					  arguments="-k"
-					  buildfileGenerator="org.eclipse.cdt.managedbuilder.makegen.gnu.GnuMakefileGenerator">		              
+					  superClass="cdt.managedbuild.target.gnu.builder.cygwin.base"
+					  id="cdt.managedbuild.target.gnu.builder.cygwin.so.release">		              
 			      </builder>               		                                       
                   <tool
                       id="cdt.managedbuild.tool.gnu.cpp.compiler.cygwin.so.release"
-                      superClass="cdt.managedbuild.tool.gnu.cpp.compiler.cygwin">
+                      superClass="cdt.managedbuild.tool.gnu.cpp.compiler.cygwin.base">
                       <option
                           id="gnu.cpp.compiler.cygwin.so.release.option.optimization.level"
-                          defaultValue="gnu.cpp.compiler.optimization.level.most"
                           superClass="gnu.cpp.compiler.option.optimization.level">
                       </option>
                       <option
                           id="gnu.cpp.compiler.cygwin.so.release.option.debugging.level"
-                          defaultValue="gnu.cpp.compiler.debugging.level.none"
                           superClass="gnu.cpp.compiler.option.debugging.level">
                       </option>
                   </tool>
                   <tool
                       id="cdt.managedbuild.tool.gnu.c.compiler.cygwin.so.release"
-                      superClass="cdt.managedbuild.tool.gnu.c.compiler.cygwin">
+                      superClass="cdt.managedbuild.tool.gnu.c.compiler.cygwin.base">
                       <option 
                           id="gnu.c.compiler.cygwin.so.release.option.optimization.level"
-                          defaultValue="gnu.c.optimization.level.most"
                           superClass="gnu.c.compiler.option.optimization.level">
                       </option>
                       <option
                           id="gnu.c.compiler.cygwin.so.release.option.debugging.level"
-                          defaultValue="gnu.c.debugging.level.none"
                           superClass="gnu.c.compiler.option.debugging.level">
                       </option>
                   </tool>
                   <tool
                       id="cdt.managedbuild.tool.gnu.c.linker.cygwin.so.release"
-                      superClass="cdt.managedbuild.tool.gnu.c.linker.cygwin">
+                      superClass="cdt.managedbuild.tool.gnu.c.linker.cygwin.base">
                       <option
                           id="gnu.c.link.cygwin.so.release.option.shared"
-                          defaultValue="true"
                           superClass="gnu.c.link.option.shared">
                       </option>
 			          <outputType
-	                      outputs="dll,a.dll"
-			              buildVariable="LIBRARIES"
-			              superClass="cdt.managedbuild.tool.gnu.c.linker.cygwin.output"
+			              superClass="cdt.managedbuild.tool.gnu.c.linker.cygwin.output.so"
 			              id="cdt.managedbuild.tool.gnu.c.linker.cygwin.so.release.output">
 			          </outputType>
                   </tool>
                   <tool
                       id="cdt.managedbuild.tool.gnu.cpp.linker.cygwin.so.release"
-                      superClass="cdt.managedbuild.tool.gnu.cpp.linker.cygwin">
+                      superClass="cdt.managedbuild.tool.gnu.cpp.linker.cygwin.base">
                       <option
                           id="gnu.cpp.link.cygwin.so.release.option.shared"
-                          defaultValue="true"
                           superClass="gnu.cpp.link.option.shared">
                       </option>
 			          <outputType
-	                      outputs="dll,a.dll"
-			              buildVariable="LIBRARIES"
-			              superClass="cdt.managedbuild.tool.gnu.cpp.linker.cygwin.output"
+			              superClass="cdt.managedbuild.tool.gnu.cpp.linker.cygwin.output.so"
 			              id="cdt.managedbuild.tool.gnu.cpp.linker.cygwin.so.release.output">
 			          </outputType>
                   </tool>
 				  <tool
 					  id="cdt.managedbuild.tool.gnu.assembler.cygwin.so.release"
-					  superClass="cdt.managedbuild.tool.gnu.assembler">
+					  superClass="cdt.managedbuild.tool.gnu.assembler.cygwin.base">
 				  </tool>   
                </toolChain>                                                                                
          </configuration>
       </projectType>
                        
       <projectType 
-            name="%TargetName.cygw.lib"
+            buildProperties="org.eclipse.cdt.build.core.buildArtefactType=org.eclipse.cdt.build.core.buildArtefactType.staticLib"
             id="cdt.managedbuild.target.gnu.cygwin.lib"
             isTest="false"
             isAbstract="false">            
          <configuration
                name="%ConfigName.Dbg"
-               artifactExtension="a"
+               parent="cdt.managedbuild.config.gnu.cygwin.base"
+               buildProperties="org.eclipse.cdt.build.core.buildType=org.eclipse.cdt.build.core.buildType.debug"
                cleanCommand="rm -rf"
-			   errorParsers="org.eclipse.cdt.core.MakeErrorParser;org.eclipse.cdt.core.GCCErrorParser;org.eclipse.cdt.core.GLDErrorParser;org.eclipse.cdt.core.GASErrorParser"
                id="cdt.managedbuild.config.gnu.cygwin.lib.debug">
                <toolChain
-                     archList="all"
-                     osList="win32"
-                     name="%ToolChainName.Dbg"
-                     targetTool="cdt.managedbuild.tool.gnu.archiver.cygwin.lib.debug"
-                     scannerConfigDiscoveryProfileId="org.eclipse.cdt.managedbuilder.core.GCCWinManagedMakePerProjectProfile"
-                     configurationEnvironmentSupplier="org.eclipse.cdt.managedbuilder.gnu.cygwin.GnuCygwinConfigurationEnvironmentSupplier"
+                     superClass="cdt.managedbuild.toolchain.gnu.cygwin.base"
                      id="cdt.managedbuild.toolchain.gnu.cygwin.lib.debug">
                   <targetPlatform
 					  id="cdt.managedbuild.target.gnu.platform.cygwin.lib.debug"
-				 	  name="%PlatformName.Dbg"
-                      binaryParser="org.eclipse.cdt.core.PE"            					  
-					  osList="win32"					  
-					  archList="all">
+				 	  superClass="cdt.managedbuild.target.gnu.platform.cygwin.base">
 				  </targetPlatform>
 			  	  <builder
-					  superClass="cdt.managedbuild.target.gnu.builder"
-					  id="cdt.managedbuild.target.gnu.builder.cygwin.lib.debug"
-					  name="%BuilderName.Dbg"
-					  command="make"
-					  arguments="-k"
-					  buildfileGenerator="org.eclipse.cdt.managedbuilder.makegen.gnu.GnuMakefileGenerator">		              
+					  superClass="cdt.managedbuild.target.gnu.builder.cygwin.base"
+					  id="cdt.managedbuild.target.gnu.builder.cygwin.lib.debug">		              
 			      </builder>               		                                                              
 			      <tool
 			          id="cdt.managedbuild.tool.gnu.cpp.compiler.cygwin.lib.debug"
-					  superClass="cdt.managedbuild.tool.gnu.cpp.compiler.cygwin">
+					  superClass="cdt.managedbuild.tool.gnu.cpp.compiler.cygwin.base">
 					  <option
 					      id="gnu.cpp.compiler.cygwin.lib.debug.option.optimization.level"
-						  defaultValue="gnu.cpp.compiler.optimization.level.none"
 					      superClass="gnu.cpp.compiler.option.optimization.level">
 					  </option>
 					  <option
 					        id="gnu.cpp.compiler.cygwin.lib.debug.option.debugging.level"
-							defaultValue="gnu.cpp.compiler.debugging.level.max"
 							superClass="gnu.cpp.compiler.option.debugging.level">
 					  </option>
 				  </tool>  
                   <tool
                       id="cdt.managedbuild.tool.gnu.c.compiler.cygwin.lib.debug"
-                      superClass="cdt.managedbuild.tool.gnu.c.compiler.cygwin">
+                      superClass="cdt.managedbuild.tool.gnu.c.compiler.cygwin.base">
                       <option
                           id="gnu.c.compiler.cygwin.lib.debug.option.optimization.level"
-                          defaultValue="gnu.c.optimization.level.none"
                           superClass="gnu.c.compiler.option.optimization.level">
                       </option>
                       <option
                           id="gnu.c.compiler.cygwin.lib.debug.option.debugging.level"
-                          defaultValue="gnu.c.debugging.level.max"
                           superClass="gnu.c.compiler.option.debugging.level">
                       </option>
                   </tool>
                   <tool
                       id="cdt.managedbuild.tool.gnu.archiver.cygwin.lib.debug"
-                      superClass="cdt.managedbuild.tool.gnu.archiver">
+                      superClass="cdt.managedbuild.tool.gnu.archiver.cygwin.base">
                   </tool>
 				  <tool
 					  id="cdt.managedbuild.tool.gnu.assembler.cygwin.lib.debug"
-					  superClass="cdt.managedbuild.tool.gnu.assembler">
+					  superClass="cdt.managedbuild.tool.gnu.assembler.cygwin.base">
 				  </tool>   
                </toolChain>                                                                                				               				  
          </configuration>
          <configuration
                name="%ConfigName.Rel"
-               artifactExtension="a"
+               parent="cdt.managedbuild.config.gnu.cygwin.base"
+               buildProperties="org.eclipse.cdt.build.core.buildType=org.eclipse.cdt.build.core.buildType.release"
                cleanCommand="rm -rf"
-			   errorParsers="org.eclipse.cdt.core.MakeErrorParser;org.eclipse.cdt.core.GCCErrorParser;org.eclipse.cdt.core.GLDErrorParser;org.eclipse.cdt.core.GASErrorParser"               
                id="cdt.managedbuild.config.gnu.cygwin.lib.release">
                <toolChain
-                     archList="all"
-                     osList="win32"
-                     name="%ToolChainName.Rel"
-                     targetTool="cdt.managedbuild.tool.gnu.archiver.cygwin.lib.release"
-                     scannerConfigDiscoveryProfileId="org.eclipse.cdt.managedbuilder.core.GCCWinManagedMakePerProjectProfile"
-                     configurationEnvironmentSupplier="org.eclipse.cdt.managedbuilder.gnu.cygwin.GnuCygwinConfigurationEnvironmentSupplier"
+                     superClass="cdt.managedbuild.toolchain.gnu.cygwin.base"
                      id="cdt.managedbuild.toolchain.gnu.cygwin.lib.release">
                   <targetPlatform
 					  id="cdt.managedbuild.target.gnu.platform.cygwin.lib.release"
-				 	  name="%PlatformName.Rel"
-                      binaryParser="org.eclipse.cdt.core.PE"            					  
-					  osList="win32"					  
-					  archList="all">
+					  superClass="cdt.managedbuild.target.gnu.platform.cygwin.base">
 				  </targetPlatform>
 			  	  <builder
-					  superClass="cdt.managedbuild.target.gnu.builder"
-					  id="cdt.managedbuild.target.gnu.builder.cygwin.lib.release"
-					  name="%BuilderName.Rel"
-					  command="make"
-					  arguments="-k"
-					  buildfileGenerator="org.eclipse.cdt.managedbuilder.makegen.gnu.GnuMakefileGenerator">		              
+					  superClass="cdt.managedbuild.target.gnu.builder.cygwin.base"
+					  id="cdt.managedbuild.target.gnu.builder.cygwin.lib.release">		              
 			      </builder>               		                                                                                              
                   <tool
                      id="cdt.managedbuild.tool.gnu.cpp.compiler.cygwin.lib.release"
-                     superClass="cdt.managedbuild.tool.gnu.cpp.compiler.cygwin">
+                     superClass="cdt.managedbuild.tool.gnu.cpp.compiler.cygwin.base">
                      <option       
                          id="gnu.cpp.compiler.cygwin.lib.release.option.optimization.level"         
-                         defaultValue="gnu.cpp.compiler.optimization.level.most"
                          superClass="gnu.cpp.compiler.option.optimization.level">
                      </option>
                      <option
                          id="gnu.cpp.compiler.cygwin.lib.release.option.debugging.level"
-                         defaultValue="gnu.cpp.compiler.debugging.level.none"
                          superClass="gnu.cpp.compiler.option.debugging.level">
                      </option>
                  </tool>
                   <tool
                      id="cdt.managedbuild.tool.gnu.c.compiler.cygwin.lib.release"
-                     superClass="cdt.managedbuild.tool.gnu.c.compiler.cygwin">
+                     superClass="cdt.managedbuild.tool.gnu.c.compiler.cygwin.base">
                      <option
                          id="gnu.c.compiler.cygwin.lib.release.option.optimization.level"
-                         defaultValue="gnu.c.optimization.level.most"
                          superClass="gnu.c.compiler.option.optimization.level">
                      </option>
                      <option
                          id="gnu.c.compiler.cygwin.lib.release.option.debugging.level"                        
-                         defaultValue="gnu.c.debugging.level.none"
                          superClass="gnu.c.compiler.option.debugging.level">                         
                      </option>
                   </tool>
                  <tool
                      id="cdt.managedbuild.tool.gnu.archiver.cygwin.lib.release"
-                     superClass="cdt.managedbuild.tool.gnu.archiver">
+                     superClass="cdt.managedbuild.tool.gnu.archiver.cygwin.base">
                  </tool>
 				 <tool
 					  id="cdt.managedbuild.tool.gnu.assembler.cygwin.lib.release"
-					  superClass="cdt.managedbuild.tool.gnu.assembler">
+					  superClass="cdt.managedbuild.tool.gnu.assembler.cygwin.base">
 				 </tool>   
               </toolChain>                                                                                				                    
          </configuration>         
       </projectType>
       
+            <configuration
+               id="cdt.managedbuild.config.gnu.macosx.base"
+               cleanCommand="rm -rf"
+			   >
+		    <enablement type="CONTAINER_ATTRIBUTE" 
+              	attribute="artifactExtension" 
+              	value="dylib"
+              	extensionAdjustment="false">
+			  	<checkBuildProperty 
+			  		property="org.eclipse.cdt.build.core.buildArtefactType"
+			  		value="org.eclipse.cdt.build.core.buildArtefactType.sharedLib"/>
+			  </enablement>
+		    <enablement type="CONTAINER_ATTRIBUTE" 
+              	attribute="artifactExtension" 
+              	value="a"
+              	extensionAdjustment="false">
+			  	<checkBuildProperty 
+			  		property="org.eclipse.cdt.build.core.buildArtefactType"
+			  		value="org.eclipse.cdt.build.core.buildArtefactType.staticLib"/>
+			  </enablement>
+		</configuration>
+      
       <projectType 
-            name="%TargetName.macosx.exe"
             id="cdt.managedbuild.target.macosx.exe"
             isTest="false"
+            buildProperties="org.eclipse.cdt.build.core.buildArtefactType=org.eclipse.cdt.build.core.buildArtefactType.exe"
             isAbstract="false">
          <configuration
                name="%ConfigName.Dbg"
                cleanCommand="rm -rf"
-			   errorParsers="org.eclipse.cdt.core.MakeErrorParser;org.eclipse.cdt.core.GCCErrorParser;org.eclipse.cdt.core.GLDErrorParser;org.eclipse.cdt.core.GASErrorParser"               
+            buildProperties="org.eclipse.cdt.build.core.buildType=org.eclipse.cdt.build.core.buildType.debug"
+			   parent="cdt.managedbuild.config.gnu.macosx.base"               
                id="cdt.managedbuild.config.gnu.macosx.exe.debug">
                <toolChain
-                     archList="all"
-                     osList="macosx"
-                     name="%ToolChainName.Dbg"
-                     targetTool="cdt.managedbuild.tool.macosx.c.linker.macosx.exe.debug;cdt.managedbuild.tool.macosx.cpp.linker.macosx.exe.debug"
-                     scannerConfigDiscoveryProfileId="org.eclipse.cdt.managedbuilder.core.GCCManagedMakePerProjectProfile"
+                     superClass="cdt.managedbuild.toolchain.gnu.macosx.base"
                      id="cdt.managedbuild.toolchain.gnu.macosx.exe.debug">
                   <targetPlatform
 					  id="cdt.managedbuild.target.gnu.platform.macosx.exe.debug"
-				 	  name="%PlatformName.Dbg"
-                      binaryParser="org.eclipse.cdt.core.MachO"
-					  osList="macosx"					  
-					  archList="all">
+					  superClass="cdt.managedbuild.target.gnu.platform.macosx.base">
 				  </targetPlatform>
 			  	  <builder
-					  superClass="cdt.managedbuild.target.gnu.builder"
-					  id="cdt.managedbuild.target.gnu.builder.macosx.exe.debug"
-					  name="%BuilderName.Dbg"
-					  command="make"
-					  arguments="-k"
-					  buildfileGenerator="org.eclipse.cdt.managedbuilder.makegen.gnu.GnuMakefileGenerator">		              
+					  superClass="cdt.managedbuild.target.gnu.builder.macosx.base"
+					  id="cdt.managedbuild.target.gnu.builder.macosx.exe.debug">		              
 			      </builder>               		         
                   <tool
                       id="cdt.managedbuild.tool.gnu.cpp.compiler.macosx.exe.debug"
-                      superClass="cdt.managedbuild.tool.gnu.cpp.compiler">
+                      superClass="cdt.managedbuild.tool.gnu.cpp.compiler.macosx.base">
                       <option
                           id="gnu.cpp.compilermacosx.exe.debug.option.optimization.level"
-                          defaultValue="gnu.cpp.compiler.optimization.level.none"
                           superClass="gnu.cpp.compiler.option.optimization.level">
                       </option>
                       <option
                           id="gnu.cpp.compiler.macosx.exe.debug.option.debugging.level"
-                          defaultValue="gnu.cpp.compiler.debugging.level.max"
                           superClass="gnu.cpp.compiler.option.debugging.level">
                       </option>
                   </tool>
                   <tool
                       id="cdt.managedbuild.tool.gnu.c.compiler.macosx.exe.debug"
-                      superClass="cdt.managedbuild.tool.gnu.c.compiler">
+                      superClass="cdt.managedbuild.tool.gnu.c.compiler.macosx.base">
                       <option
                           id="gnu.c.compiler.macosx.exe.debug.option.optimization.level"
-                          defaultValue="gnu.c.optimization.level.none"
                           superClass="gnu.c.compiler.option.optimization.level">
                       </option>
                       <option
                           id="gnu.c.compiler.macosx.exe.debug.option.debugging.level"
-                          defaultValue="gnu.c.debugging.level.max"
                           superClass="gnu.c.compiler.option.debugging.level">
                       </option>
                   </tool>
 				  <tool
 				      id="cdt.managedbuild.tool.macosx.c.linker.macosx.exe.debug"
-					  superClass="cdt.managedbuild.tool.macosx.c.linker">
+					  superClass="cdt.managedbuild.tool.macosx.c.linker.macosx.base">
 				  </tool>
 				  <tool
 					  id="cdt.managedbuild.tool.macosx.cpp.linker.macosx.exe.debug"
-					  superClass="cdt.managedbuild.tool.macosx.cpp.linker">
+					  superClass="cdt.managedbuild.tool.macosx.cpp.linker.macosx.base">
 				  </tool>                                     
 				  <tool
 					  id="cdt.managedbuild.tool.gnu.assembler.macosx.exe.debug"
-					  superClass="cdt.managedbuild.tool.gnu.assembler">
+					  superClass="cdt.managedbuild.tool.gnu.assembler.macosx.base">
 				  </tool>   
                </toolChain>                    
          </configuration>
          <configuration
                name="%ConfigName.Rel"
+            buildProperties="org.eclipse.cdt.build.core.buildType=org.eclipse.cdt.build.core.buildType.release"
                cleanCommand="rm -rf"               
-			   errorParsers="org.eclipse.cdt.core.MakeErrorParser;org.eclipse.cdt.core.GCCErrorParser;org.eclipse.cdt.core.GLDErrorParser;org.eclipse.cdt.core.GASErrorParser"                              
-               id="cdt.managedbuild.config.macosx.exe.release">
+               id="cdt.managedbuild.config.macosx.exe.release"
+               parent="cdt.managedbuild.config.gnu.macosx.base"       >
                <toolChain
-                     archList="all"
-                     osList="macosx"
-                     name="%ToolChainName.Rel"
-                     targetTool="cdt.managedbuild.tool.macosx.c.linker.macosx.exe.release;cdt.managedbuild.tool.macosx.cpp.linker.macosx.exe.release"
-                     scannerConfigDiscoveryProfileId="org.eclipse.cdt.managedbuilder.core.GCCManagedMakePerProjectProfile"
-                     id="cdt.managedbuild.toolchain.gnu.macosx.exe.release">
+                     id="cdt.managedbuild.toolchain.gnu.macosx.exe.release"
+                     superClass="cdt.managedbuild.toolchain.gnu.macosx.base">
                   <targetPlatform
 					  id="cdt.managedbuild.target.gnu.platform.macosx.exe.release"
-				 	  name="%PlatformName.Rel"
-                      binaryParser="org.eclipse.cdt.core.MachO"
-					  osList="macosx"					  
-					  archList="all">
+				 	  superClass="cdt.managedbuild.target.gnu.platform.macosx.base">
 				  </targetPlatform>
 			  	  <builder
-					  superClass="cdt.managedbuild.target.gnu.builder"
-					  id="cdt.managedbuild.target.gnu.builder.macosx.exe.release"
-					  name="%BuilderName.Rel"
-					  command="make"
-					  arguments="-k"
-					  buildfileGenerator="org.eclipse.cdt.managedbuilder.makegen.gnu.GnuMakefileGenerator">		              
+					  superClass="cdt.managedbuild.target.gnu.builder.macosx.base"
+					  id="cdt.managedbuild.target.gnu.builder.macosx.exe.release">		              
 			      </builder>               		         
                    <tool
                       id="cdt.managedbuild.tool.gnu.cpp.compiler.macosx.exe.release"
-                      superClass="cdt.managedbuild.tool.gnu.cpp.compiler">
+                      superClass="cdt.managedbuild.tool.gnu.cpp.compiler.macosx.base">
                       <option
                           id="gnu.cpp.compiler.macosx.exe.release.option.optimization.level"
-                          defaultValue="gnu.cpp.compiler.optimization.level.most"
                           superClass="gnu.cpp.compiler.option.optimization.level">
                       </option>
                       <option
                           id="gnu.cpp.compiler.macosx.exe.release.option.debugging.level"
-                          defaultValue="gnu.cpp.compiler.debugging.level.none"
                           superClass="gnu.cpp.compiler.option.debugging.level">
                       </option>
                    </tool>
                   <tool
                       id="cdt.managedbuild.tool.gnu.c.compiler.macosx.exe.release"
-                      superClass="cdt.managedbuild.tool.gnu.c.compiler">
+                      superClass="cdt.managedbuild.tool.gnu.c.compiler.macosx.base">
                       <option
                           id="gnu.c.compiler.macosx.exe.release.option.optimization.level"
-                          defaultValue="gnu.c.optimization.level.most"
                           superClass="gnu.c.compiler.option.optimization.level">
                       </option>
                       <option
                           id="gnu.c.compiler.macosx.exe.release.option.debugging.level"
-                          defaultValue="gnu.c.debugging.level.none"
                           superClass="gnu.c.compiler.option.debugging.level">
                       </option>
                    </tool>
 				   <tool
 				       id="cdt.managedbuild.tool.macosx.c.linker.macosx.exe.release"
-					   superClass="cdt.managedbuild.tool.macosx.c.linker">
+					   superClass="cdt.managedbuild.tool.macosx.c.linker.macosx.base">
 					</tool>
 					<tool
 					    id="cdt.managedbuild.tool.macosx.cpp.linker.macosx.exe.release"
-						superClass="cdt.managedbuild.tool.macosx.cpp.linker">
+						superClass="cdt.managedbuild.tool.macosx.cpp.linker.macosx.base">
 					</tool>                   
 				  <tool
 					  id="cdt.managedbuild.tool.gnu.assembler.macosx.exe.release"
-					  superClass="cdt.managedbuild.tool.gnu.assembler">
+					  superClass="cdt.managedbuild.tool.gnu.assembler.macosx.base">
 				  </tool>   
                </toolChain>                             
          </configuration>
        </projectType>      
             
       <projectType             
-            name="%TargetName.macosx.so"
             id="cdt.managedbuild.target.macosx.so"
+            buildProperties="org.eclipse.cdt.build.core.buildArtefactType=org.eclipse.cdt.build.core.buildArtefactType.sharedLib"
             isTest="false"
             isAbstract="false">            
          <configuration
                name="%ConfigName.Dbg"
-               artifactExtension="dylib"
                cleanCommand="rm -rf"
-			   errorParsers="org.eclipse.cdt.core.MakeErrorParser;org.eclipse.cdt.core.GCCErrorParser;org.eclipse.cdt.core.GLDErrorParser;org.eclipse.cdt.core.GASErrorParser"                              
+			   parent="cdt.managedbuild.config.gnu.macosx.base"                                     
+             buildProperties="org.eclipse.cdt.build.core.buildType=org.eclipse.cdt.build.core.buildType.debug"
                id="cdt.managedbuild.config.macosx.so.debug">
                <toolChain
-                     archList="all"
-                     osList="macosx"
-                     name="%ToolChainName.Dbg"
-                     targetTool="cdt.managedbuild.tool.macosx.c.linker.macosx.so.debug;cdt.managedbuild.tool.macosx.cpp.linker.macosx.so.debug"
-                     scannerConfigDiscoveryProfileId="org.eclipse.cdt.managedbuilder.core.GCCManagedMakePerProjectProfile"
-                     id="cdt.managedbuild.toolchain.gnu.macosx.so.debug">
+               		  superClass="cdt.managedbuild.toolchain.gnu.macosx.base"
+                      id="cdt.managedbuild.toolchain.gnu.macosx.so.debug">
                   <targetPlatform
 					  id="cdt.managedbuild.target.gnu.platform.macosx.so.debug"
-				 	  name="%PlatformName.Dbg"
-                      binaryParser="org.eclipse.cdt.core.MachO"
-					  osList="macosx"					  
-					  archList="all">
+					  superClass="cdt.managedbuild.target.gnu.platform.macosx.base">
 				  </targetPlatform>
 			  	  <builder
-					  superClass="cdt.managedbuild.target.gnu.builder"
-					  id="cdt.managedbuild.target.gnu.builder.macosx.so.debug"
-					  name="%BuilderName.Dbg"
-					  command="make"
-					  arguments="-k"
-					  buildfileGenerator="org.eclipse.cdt.managedbuilder.makegen.gnu.GnuMakefileGenerator">		              
+					  superClass="cdt.managedbuild.target.gnu.builder.macosx.base"
+					  id="cdt.managedbuild.target.gnu.builder.macosx.so.debug">		              
 			      </builder>               		                       
                   <tool
                       id="cdt.managedbuild.tool.gnu.cpp.compiler.macosx.so.debug"
-                      superClass="cdt.managedbuild.tool.gnu.cpp.compiler">
+                      superClass="cdt.managedbuild.tool.gnu.cpp.compiler.macosx.base">
 					  <option
 						  id="gnu.cpp.compiler.macosx.so.debug.option.optimization.level"
-						  defaultValue="gnu.cpp.compiler.optimization.level.none"
 						  superClass="gnu.cpp.compiler.option.optimization.level">
 					  </option>
 					  <option
 						  id="gnu.cpp.compiler.macosx.so.debug.option.debugging.level"
-						  defaultValue="gnu.cpp.compiler.debugging.level.max"
 						  superClass="gnu.cpp.compiler.option.debugging.level">
 					  </option>
                   </tool>
                   <tool
                       id="cdt.managedbuild.tool.gnu.c.compiler.macosx.so.debug"
-                      superClass="cdt.managedbuild.tool.gnu.c.compiler">
+                      superClass="cdt.managedbuild.tool.gnu.c.compiler.macosx.base">
                       <option
                           id="gnu.c.compiler.macosx.so.debug.option.optimization.level"
-                          defaultValue="gnu.c.optimization.level.none"
                           superClass="gnu.c.compiler.option.optimization.level">
                       </option>
                       <option
                           id="gnu.c.compiler.macosx.so.debug.option.debugging.level"
-                          defaultValue="gnu.c.debugging.level.max"
                           superClass="gnu.c.compiler.option.debugging.level">
                       </option>
                   </tool>
 				  <tool
 				      id="cdt.managedbuild.tool.macosx.c.linker.macosx.so.debug"
-					  superClass="cdt.managedbuild.tool.macosx.c.linker">
+					  superClass="cdt.managedbuild.tool.macosx.c.linker.macosx.base">
 					  <option
 					      id="macosx.c.link.macosx.so.debug.option.shared"
-						  defaultValue="true"
 						  superClass="macosx.c.link.option.shared">
 					  </option>
 					  <option
 					      id="macosx.c.link.macosx.so.debug.option.nostart"
-            			  defaultValue="true"
             			  superClass="macosx.c.link.option.nostart">
             		  </option>
 					  <option
 					      id="macosx.c.link.macosx.so.debug.option.nodeflibs"
-						  defaultValue="true"
 						  superClass="macosx.c.link.option.nodeflibs">
 					  </option>
 			          <outputType
-	                      outputs="dylib"
-	                      outputPrefix="lib"
-			              buildVariable="LIBRARIES"
-			              superClass="cdt.managedbuild.tool.macosx.c.linker.output"
+			              superClass="cdt.managedbuild.tool.macosx.c.linker.output.so"
 			              id="cdt.managedbuild.tool.macosx.c.linker.macosx.so.debug.output">
 			          </outputType>
 				  </tool>
 				  <tool
 				      id="cdt.managedbuild.tool.macosx.cpp.linker.macosx.so.debug"
-					  superClass="cdt.managedbuild.tool.macosx.cpp.linker">
+					  superClass="cdt.managedbuild.tool.macosx.cpp.linker.macosx.base">
 					  <option
 					      id="macosx.cpp.link.macosx.so.debug.option.shared"
-						  defaultValue="true"
 						  superClass="macosx.cpp.link.option.shared">
 					  </option>
 			          <outputType
-	                      outputs="dylib"
-	                      outputPrefix="lib"
-			              buildVariable="LIBRARIES"
-			              superClass="cdt.managedbuild.tool.macosx.cpp.linker.output"
+			              superClass="cdt.managedbuild.tool.macosx.cpp.linker.output.so"
 			              id="cdt.managedbuild.tool.macosx.cpp.linker.macosx.so.debug.output">
 			          </outputType>
 				  </tool>                                  
 				  <tool
 					  id="cdt.managedbuild.tool.gnu.assembler.macosx.so.debug"
-					  superClass="cdt.managedbuild.tool.gnu.assembler">
+					  superClass="cdt.managedbuild.tool.gnu.assembler.macosx.base">
 				  </tool>   
                </toolChain>                                                                       
          </configuration>
          <configuration
                name="%ConfigName.Rel"
-               artifactExtension="dylib"
+               parent="cdt.managedbuild.config.gnu.macosx.base"       
                cleanCommand="rm -rf"
-			   errorParsers="org.eclipse.cdt.core.MakeErrorParser;org.eclipse.cdt.core.GCCErrorParser;org.eclipse.cdt.core.GLDErrorParser;org.eclipse.cdt.core.GASErrorParser"               
+            buildProperties="org.eclipse.cdt.build.core.buildType=org.eclipse.cdt.build.core.buildType.release"
                id="cdt.managedbuild.config.macosx.so.release">
                <toolChain
-                     archList="all"
-                     osList="macosx"
-                     name="%ToolChainName.Rel"
-                     targetTool="cdt.managedbuild.tool.macosx.c.linker.macosx.so.release;cdt.managedbuild.tool.macosx.cpp.linker.macosx.so.release"
-                     scannerConfigDiscoveryProfileId="org.eclipse.cdt.managedbuilder.core.GCCManagedMakePerProjectProfile"
+					 superClass="cdt.managedbuild.toolchain.gnu.macosx.base"
                      id="cdt.managedbuild.toolchain.gnu.macosx.so.release">
                   <targetPlatform
 					  id="cdt.managedbuild.target.gnu.platform.macosx.so.release"
-				 	  name="%PlatformName.Rel"
-                      binaryParser="org.eclipse.cdt.core.MachO"
-					  osList="macosx"					  
-					  archList="all">
+					  superClass="cdt.managedbuild.target.gnu.platform.macosx.base">
 				  </targetPlatform>
 			  	  <builder
-					  superClass="cdt.managedbuild.target.gnu.builder"
-					  id="cdt.managedbuild.target.gnu.builder.macosx.so.release"
-					  name="%BuilderName.Rel"
-					  command="make"
-					  arguments="-k"
-					  buildfileGenerator="org.eclipse.cdt.managedbuilder.makegen.gnu.GnuMakefileGenerator">		              
+					  superClass="cdt.managedbuild.target.gnu.builder.macosx.base"
+					  id="cdt.managedbuild.target.gnu.builder.macosx.so.release">		              
 			      </builder>               		                                                     
                   <tool
                       id="cdt.managedbuild.tool.gnu.cpp.compiler.macosx.so.release"
-                      superClass="cdt.managedbuild.tool.gnu.cpp.compiler">
+                      superClass="cdt.managedbuild.tool.gnu.cpp.compiler.macosx.base">
                       <option
                           id="gnu.cpp.compiler.macosx.so.release.option.optimization.level"
-                          defaultValue="gnu.cpp.compiler.optimization.level.most"
                           superClass="gnu.cpp.compiler.option.optimization.level">
                       </option>
                       <option
                           id="gnu.cpp.compiler.macosx.so.release.option.debugging.level"
-                          defaultValue="gnu.cpp.compiler.debugging.level.none"
                           superClass="gnu.cpp.compiler.option.debugging.level">
                       </option>
                   </tool>
                   <tool
                       id="cdt.managedbuild.tool.gnu.c.compiler.macosx.so.release"
-                      superClass="cdt.managedbuild.tool.gnu.c.compiler">
+                      superClass="cdt.managedbuild.tool.gnu.c.compiler.macosx.base">
                       <option
                           id="gnu.c.compiler.macosx.so.release.option.optimization.level"
-                          defaultValue="gnu.c.optimization.level.most"
                           superClass="gnu.c.compiler.option.optimization.level">
                       </option>
                       <option
                           id="gnu.c.compiler.macosx.so.release.option.debugging.level"
-                          defaultValue="gnu.c.debugging.level.none"
                           superClass="gnu.c.compiler.option.debugging.level">
                       </option>
                   </tool>
 				  <tool
 				      id="cdt.managedbuild.tool.macosx.c.linker.macosx.so.release"
-					  superClass="cdt.managedbuild.tool.macosx.c.linker">
+					  superClass="cdt.managedbuild.tool.macosx.c.linker.macosx.base">
 					  <option
 					      id="macosx.c.link.macosx.so.release.option.shared"
-						  defaultValue="true"
 						  superClass="macosx.c.link.option.shared">
 					  </option>
 					  <option
 					      id="macosx.c.link.macosx.so.release.option.nostart"
-            			  defaultValue="true"
             			  superClass="macosx.c.link.option.nostart">
             		  </option>
 					  <option
 					      id="macosx.c.link.macosx.so.release.option.nodeflibs"
-						  defaultValue="true"
 						  superClass="macosx.c.link.option.nodeflibs">
 					  </option>
 			          <outputType
-	                      outputs="dylib"
-	                      outputPrefix="lib"
-			              buildVariable="LIBRARIES"
-			              superClass="cdt.managedbuild.tool.macosx.c.linker.output"
+			              superClass="cdt.managedbuild.tool.macosx.c.linker.output.so"
 			              id="cdt.managedbuild.tool.macosx.c.linker.macosx.so.release.output">
 			          </outputType>
 				  </tool>
 				  <tool
 				      id="cdt.managedbuild.tool.macosx.cpp.linker.macosx.so.release"
-					  superClass="cdt.managedbuild.tool.macosx.cpp.linker">
+					  superClass="cdt.managedbuild.tool.macosx.cpp.linker.macosx.base">
 					  <option
 					      id="macosx.cpp.link.macosx.so.release.option.shared"
-						  defaultValue="true"
 						  superClass="macosx.cpp.link.option.shared">
 					  </option>
 			          <outputType
-	                      outputs="dylib"
-	                      outputPrefix="lib"
-			              buildVariable="LIBRARIES"
-			              superClass="cdt.managedbuild.tool.macosx.cpp.linker.output"
+			              superClass="cdt.managedbuild.tool.macosx.cpp.linker.output.so"
 			              id="cdt.managedbuild.tool.macosx.cpp.linker.macosx.so.release.output">
 			          </outputType>
 				  </tool>                
 				  <tool
 					  id="cdt.managedbuild.tool.gnu.assembler.macosx.so.release"
-					  superClass="cdt.managedbuild.tool.gnu.assembler">
+					  superClass="cdt.managedbuild.tool.gnu.assembler.macosx.base">
 				  </tool>   
               </toolChain>                 
          </configuration>
       </projectType>
       
       <projectType            
-            name="%TargetName.macosx.lib"
+            buildProperties="org.eclipse.cdt.build.core.buildArtefactType=org.eclipse.cdt.build.core.buildArtefactType.staticLib"
             id="cdt.managedbuild.target.macosx.lib"
             isTest="false"
 			isAbstract="false">
          <configuration
                name="%ConfigName.Dbg"
-               artifactExtension="a"
+               parent="cdt.managedbuild.config.gnu.macosx.base"       
+            buildProperties="org.eclipse.cdt.build.core.buildType=org.eclipse.cdt.build.core.buildType.debug"
                cleanCommand="rm -rf"
-			   errorParsers="org.eclipse.cdt.core.MakeErrorParser;org.eclipse.cdt.core.GCCErrorParser;org.eclipse.cdt.core.GLDErrorParser;org.eclipse.cdt.core.GASErrorParser"               
                id="cdt.managedbuild.config.macosx.lib.debug">
                <toolChain
-                     archList="all"
-                     osList="macosx"
-                     name="%ToolChainName.Dbg"
-                     targetTool="cdt.managedbuild.toolmacosx.lib.debug.gnu.archiver"
-                     scannerConfigDiscoveryProfileId="org.eclipse.cdt.managedbuilder.core.GCCManagedMakePerProjectProfile"
+					 superClass="cdt.managedbuild.toolchain.gnu.macosx.base"
                      id="cdt.managedbuild.toolchain.gnu.macosx.lib.debug">
                   <targetPlatform
 					  id="cdt.managedbuild.target.gnu.platform.macosx.lib.debug"
-				 	  name="%PlatformName.Dbg"
-                      binaryParser="org.eclipse.cdt.core.MachO"
-					  osList="macosx"					  
-					  archList="all">
+					  superClass="cdt.managedbuild.target.gnu.platform.macosx.base">
 				  </targetPlatform>
 			  	  <builder
-					  superClass="cdt.managedbuild.target.gnu.builder"
-					  id="cdt.managedbuild.target.gnu.builder.macosx.lib.debug"
-					  name="%BuilderName.Dbg"
-					  command="make"
-					  arguments="-k"
-					  buildfileGenerator="org.eclipse.cdt.managedbuilder.makegen.gnu.GnuMakefileGenerator">		              
+					  superClass="cdt.managedbuild.target.gnu.builder.macosx.base"
+					  id="cdt.managedbuild.target.gnu.builder.macosx.lib.debug">		              
 			      </builder>               		         
                   <tool
                       id="cdt.managedbuild.tool.gnu.cpp.compiler.macosx.lib.debug"
-                      superClass="cdt.managedbuild.tool.gnu.cpp.compiler">
+                      superClass="cdt.managedbuild.tool.gnu.cpp.compiler.macosx.base">
                       <option
                           id="gnu.cpp.compiler.macosx.lib.debug.option.optimization.level"
-                          defaultValue="gnu.cpp.compiler.optimization.level.none"
                           superClass="gnu.cpp.compiler.option.optimization.level">
                       </option>
                       <option
                           id="gnu.cpp.compiler.macosx.lib.debug.option.debugging.level"
-                          defaultValue="gnu.cpp.compiler.debugging.level.max"
                           superClass="gnu.cpp.compiler.option.debugging.level">
                       </option>
                   </tool>
                   <tool
                       id="cdt.managedbuild.tool.gnu.c.compiler.macosx.lib.debug"
-                      superClass="cdt.managedbuild.tool.gnu.c.compiler">
+                      superClass="cdt.managedbuild.tool.gnu.c.compiler.macosx.base">
                       <option
                           id="gnu.c.compiler.macosx.lib.debug.option.optimization.level"
-                          defaultValue="gnu.c.optimization.level.none"
                           superClass="gnu.c.compiler.option.optimization.level">
                       </option>
                       <option
                           id="gnu.c.compiler.macosx.lib.debug.option.debugging.level"
-                          defaultValue="gnu.c.debugging.level.max"
                           superClass="gnu.c.compiler.option.debugging.level">
                       </option>
                   </tool>
                   <tool
                       id="cdt.managedbuild.toolmacosx.lib.debug.gnu.archiver"
-                      superClass="cdt.managedbuild.tool.gnu.archiver">
+                      superClass="cdt.managedbuild.tool.gnu.archiver.macosx.base">
                   </tool>                                   
 				  <tool
 					  id="cdt.managedbuild.tool.gnu.assembler.macosx.lib.debug"
-					  superClass="cdt.managedbuild.tool.gnu.assembler">
+					  superClass="cdt.managedbuild.tool.gnu.assembler.macosx.base">
 				  </tool>   
                </toolChain>                                                        
          </configuration>
          <configuration
                name="%ConfigName.Rel"
-               artifactExtension="a"
+               parent="cdt.managedbuild.config.gnu.macosx.base"       
                cleanCommand="rm -rf"
-			   errorParsers="org.eclipse.cdt.core.MakeErrorParser;org.eclipse.cdt.core.GCCErrorParser;org.eclipse.cdt.core.GLDErrorParser;org.eclipse.cdt.core.GASErrorParser"               
+	            buildProperties="org.eclipse.cdt.build.core.buildType=org.eclipse.cdt.build.core.buildType.release"
                id="cdt.managedbuild.config.macosx.lib.release">
                <toolChain
-                     archList="all"
-                     osList="macosx"
-                     name="%ToolChainName.Rel"
-                     targetTool="cdt.managedbuild.toolmacosx.lib.release.gnu.archiver"
-                     scannerConfigDiscoveryProfileId="org.eclipse.cdt.managedbuilder.core.GCCManagedMakePerProjectProfile"
+ 					 superClass="cdt.managedbuild.toolchain.gnu.macosx.base"
                      id="cdt.managedbuild.toolchain.gnu.macosx.lib.release">
                   <targetPlatform
 					  id="cdt.managedbuild.target.gnu.platform.macosx.lib.release"
-				 	  name="%PlatformName.Rel"
-                      binaryParser="org.eclipse.cdt.core.MachO"
-					  osList="macosx"					  
-					  archList="all">
+					  superClass="cdt.managedbuild.target.gnu.platform.macosx.base">
 				  </targetPlatform>
 			  	  <builder
-					  superClass="cdt.managedbuild.target.gnu.builder"
-					  id="cdt.managedbuild.target.gnu.builder.macosx.lib.release"
-					  name="%BuilderName.Rel"
-					  command="make"
-					  arguments="-k"
-					  buildfileGenerator="org.eclipse.cdt.managedbuilder.makegen.gnu.GnuMakefileGenerator">		              
+					  superClass="cdt.managedbuild.target.gnu.builder.macosx.base"
+					  id="cdt.managedbuild.target.gnu.builder.macosx.lib.release">		              
 			      </builder>               		         
                   <tool
                       id="cdt.managedbuild.tool.gnu.cpp.compiler.macosx.lib.release"
-                      superClass="cdt.managedbuild.tool.gnu.cpp.compiler">
+                      superClass="cdt.managedbuild.tool.gnu.cpp.compiler.macosx.base">
                       <option
                           id="gnu.cpp.compiler.macosx.lib.release.option.optimization.level"
-                          defaultValue="gnu.cpp.compiler.optimization.level.most"
                           superClass="gnu.cpp.compiler.option.optimization.level">
                       </option>
                       <option
                           id="gnu.cpp.compiler.macosx.lib.release.option.debugging.level"
-                          defaultValue="gnu.cpp.compiler.debugging.level.none"
                           superClass="gnu.cpp.compiler.option.debugging.level">
                       </option>
                   </tool>
                   <tool
                       id="cdt.managedbuild.tool.gnu.c.compiler.macosx.lib.release"
-                      superClass="cdt.managedbuild.tool.gnu.c.compiler">
+                      superClass="cdt.managedbuild.tool.gnu.c.compiler.macosx.base">
                       <option
                           id="gnu.c.compiler.macosx.lib.release.option.optimization.level"
-                          defaultValue="gnu.c.optimization.level.most"
                           superClass="gnu.c.compiler.option.optimization.level">
                       </option>
                       <option
                           id="gnu.c.compiler.macosx.lib.release.option.debugging.level"
-                          defaultValue="gnu.c.debugging.level.none"
                           superClass="gnu.c.compiler.option.debugging.level">
                       </option>
                   </tool>
                   <tool
                       id="cdt.managedbuild.toolmacosx.lib.release.gnu.archiver"
-                      superClass="cdt.managedbuild.tool.gnu.archiver">
+                      superClass="cdt.managedbuild.tool.gnu.archiver.macosx.base">
                   </tool>                 
 				  <tool
 					  id="cdt.managedbuild.tool.gnu.assembler.macosx.lib.release"
-					  superClass="cdt.managedbuild.tool.gnu.assembler">
+					  superClass="cdt.managedbuild.tool.gnu.assembler.macosx.base">
 				  </tool>   
                </toolChain>                                                                   
          </configuration>      
       </projectType>      
         
+      <configuration
+               id="cdt.managedbuild.config.gnu.solaris.base"
+               cleanCommand="rm -rf">
+		    <enablement type="CONTAINER_ATTRIBUTE" 
+              	attribute="artifactExtension" 
+              	value="so"
+              	extensionAdjustment="false">
+			  	<checkBuildProperty 
+			  		property="org.eclipse.cdt.build.core.buildArtefactType"
+			  		value="org.eclipse.cdt.build.core.buildArtefactType.sharedLib"/>
+			  </enablement>
+		    <enablement type="CONTAINER_ATTRIBUTE" 
+              	attribute="artifactExtension" 
+              	value="a"
+              	extensionAdjustment="false">
+			  	<checkBuildProperty 
+			  		property="org.eclipse.cdt.build.core.buildArtefactType"
+			  		value="org.eclipse.cdt.build.core.buildArtefactType.staticLib"/>
+			  </enablement>
+		</configuration>
+      
       <projectType      
+            buildProperties="org.eclipse.cdt.build.core.buildArtefactType=org.eclipse.cdt.build.core.buildArtefactType.exe"
             isAbstract="false"     
             isTest="false"
-            name="%TargetName.solaris.exe"
             id="cdt.managedbuild.target.gnu.solaris.exe">
          <configuration
                name="%ConfigName.Dbg"
+            buildProperties="org.eclipse.cdt.build.core.buildType=org.eclipse.cdt.build.core.buildType.debug"
                id="cdt.managedbuild.config.gnu.solaris.exe.debug"
-               cleanCommand="rm -rf"
-			   errorParsers="org.eclipse.cdt.core.MakeErrorParser;org.eclipse.cdt.core.GCCErrorParser;org.eclipse.cdt.core.GLDErrorParser;org.eclipse.cdt.core.GASErrorParser">               
+               parent="cdt.managedbuild.config.gnu.solaris.base">               
                <toolChain
-                     archList="all"
-                     osList="solaris"
                      id="cdt.managedbuild.toolchain.gnu.solaris.exe.debug"
-                     superClass="cdt.managedbuild.toolchain.gnu.exe.debug">
+                     superClass="cdt.managedbuild.toolchain.gnu.solaris.base">
 		          <targetPlatform
 		              id="cdt.managedbuild.target.gnu.solaris.platform.exe.debug"
-		              name="%PlatformName.Dbg"
-		              binaryParser="org.eclipse.cdt.core.ELF"
-		              osList="solaris"
-		              archList="all">
+		              superClass="cdt.managedbuild.target.gnu.solaris.base">
 	              </targetPlatform>
 				  <tool
                       id="cdt.managedbuild.tool.gnu.solaris.cpp.compiler.exe.debug"
-                      superClass="cdt.managedbuild.tool.gnu.cpp.compiler.exe.debug"
-                      commandLinePattern="${COMMAND} ${FLAGS} ${OUTPUT_FLAG} ${OUTPUT_PREFIX}${OUTPUT} ${INPUTS}">                          
+                      superClass="cdt.managedbuild.tool.gnu.solaris.cpp.compiler.base">                          
                   </tool>
                   <tool
                       id="cdt.managedbuild.tool.gnu.solaris.c.compiler.exe.debug"
-                      superClass="cdt.managedbuild.tool.gnu.c.compiler.exe.debug"
-                      commandLinePattern="${COMMAND} ${FLAGS} ${OUTPUT_FLAG} ${OUTPUT_PREFIX}${OUTPUT} ${INPUTS}">                          
+                      superClass="cdt.managedbuild.tool.gnu.solaris.c.compiler.base">                          
 				  </tool>
 			  </toolChain>
          </configuration>
          <configuration
                name="%ConfigName.Rel"
                id="cdt.managedbuild.config.gnu.solaris.exe.release"
-               cleanCommand="rm -rf"
-			   errorParsers="org.eclipse.cdt.core.MakeErrorParser;org.eclipse.cdt.core.GCCErrorParser;org.eclipse.cdt.core.GLDErrorParser;org.eclipse.cdt.core.GASErrorParser">               
+             buildProperties="org.eclipse.cdt.build.core.buildType=org.eclipse.cdt.build.core.buildType.release"
+               parent="cdt.managedbuild.config.gnu.solaris.base">               
                <toolChain
-                     archList="all"
-                     osList="solaris"
                      id="cdt.managedbuild.toolchain.gnu.solaris.exe.release"
-                     superClass="cdt.managedbuild.toolchain.gnu.exe.release">
+                     superClass="cdt.managedbuild.toolchain.gnu.solaris.base">
 		          <targetPlatform
 		              id="cdt.managedbuild.target.gnu.solaris.platform.exe.release"
-		              name="%PlatformName.Dbg"
-		              binaryParser="org.eclipse.cdt.core.ELF"
-		              osList="solaris"
-		              archList="all">
+		              superClass="cdt.managedbuild.target.gnu.solaris.base">
 	              </targetPlatform>
                   <tool
                       id="cdt.managedbuild.tool.gnu.solaris.cpp.compiler.exe.release"
-                      superClass="cdt.managedbuild.tool.gnu.cpp.compiler.exe.release"                     
-                      commandLinePattern="${COMMAND} ${FLAGS} ${OUTPUT_FLAG} ${OUTPUT_PREFIX}${OUTPUT} ${INPUTS}">                          
+                       superClass="cdt.managedbuild.tool.gnu.solaris.cpp.compiler.base">                          
                   </tool>
                   <tool
                       id="cdt.managedbuild.tool.gnu.solaris.c.compiler.exe.release"
-                      superClass="cdt.managedbuild.tool.gnu.c.compiler.exe.release"
-                      commandLinePattern="${COMMAND} ${FLAGS} ${OUTPUT_FLAG} ${OUTPUT_PREFIX}${OUTPUT} ${INPUTS}">                          
+                      superClass="cdt.managedbuild.tool.gnu.solaris.c.compiler.base">                          
                   </tool>
                </toolChain>
          </configuration>
@@ -2834,65 +3164,49 @@
       <projectType      
             isAbstract="false"     
             isTest="false"
-            name="%TargetName.solaris.so"
+            buildProperties="org.eclipse.cdt.build.core.buildArtefactType=org.eclipse.cdt.build.core.buildArtefactType.sharedLib"
             id="cdt.managedbuild.target.gnu.solaris.so">
          <configuration
                name="%ConfigName.Dbg"
-               cleanCommand="rm -rf"
-               artifactExtension="so"               
-               errorParsers="org.eclipse.cdt.core.MakeErrorParser;org.eclipse.cdt.core.GCCErrorParser;org.eclipse.cdt.core.GLDErrorParser;org.eclipse.cdt.core.GASErrorParser"                          
+            buildProperties="org.eclipse.cdt.build.core.buildType=org.eclipse.cdt.build.core.buildType.debug"
+			parent="cdt.managedbuild.config.gnu.solaris.base"
                id="cdt.managedbuild.config.gnu.solaris.so.debug">
                <toolChain
-                     archList="all"
-                     osList="solaris"
                      id="cdt.managedbuild.toolchain.gnu.solaris.so.debug"
-                     superClass="cdt.managedbuild.toolchain.gnu.so.debug">
+                     superClass="cdt.managedbuild.toolchain.gnu.solaris.base">
 		          <targetPlatform
 		              id="cdt.managedbuild.target.gnu.solaris.platform.so.debug"
-		              name="%PlatformName.Dbg"
-		              binaryParser="org.eclipse.cdt.core.ELF"
-		              osList="solaris"
-		              archList="all">
+		              superClass="cdt.managedbuild.target.gnu.solaris.base">
 	              </targetPlatform>
 				  <tool
 				      id="cdt.managedbuild.tool.gnu.solaris.cpp.compiler.so.debug"
-					  superClass="cdt.managedbuild.tool.gnu.cpp.compiler.so.debug"
-                      commandLinePattern="${COMMAND} ${FLAGS} ${OUTPUT_FLAG} ${OUTPUT_PREFIX}${OUTPUT} ${INPUTS}">                          
+                      superClass="cdt.managedbuild.tool.gnu.solaris.cpp.compiler.base">                          
 				  </tool>
 				  <tool
 				      id="cdt.managedbuild.tool.gnu.solaris.c.compiler.so.debug"
-					  superClass="cdt.managedbuild.tool.gnu.c.compiler.so.debug"
-                      commandLinePattern="${COMMAND} ${FLAGS} ${OUTPUT_FLAG} ${OUTPUT_PREFIX}${OUTPUT} ${INPUTS}">                          
+                      superClass="cdt.managedbuild.tool.gnu.solaris.c.compiler.base">                          
 				  </tool>
 			   </toolChain>
          </configuration>
          <configuration
                name="%ConfigName.Rel"
-               cleanCommand="rm -rf"
-               artifactExtension="so"
-               errorParsers="org.eclipse.cdt.core.MakeErrorParser;org.eclipse.cdt.core.GCCErrorParser;org.eclipse.cdt.core.GLDErrorParser;org.eclipse.cdt.core.GASErrorParser"
+            buildProperties="org.eclipse.cdt.build.core.buildType=org.eclipse.cdt.build.core.buildType.release"
+			parent="cdt.managedbuild.config.gnu.solaris.base"
                id="cdt.managedbuild.config.gnu.solaris.so.release">
                <toolChain
-                     archList="all"
-                     osList="solaris"
                      id="cdt.managedbuild.toolchain.gnu.solaris.so.release"
-                     superClass="cdt.managedbuild.toolchain.gnu.so.release">
+                     superClass="cdt.managedbuild.toolchain.gnu.solaris.base">
 		          <targetPlatform
 		              id="cdt.managedbuild.target.gnu.solaris.platform.so.release"
-		              name="%PlatformName.Dbg"
-		              binaryParser="org.eclipse.cdt.core.ELF"
-		              osList="solaris"
-		              archList="all">
+		              superClass="cdt.managedbuild.target.gnu.solaris.base">
 	              </targetPlatform>
 				  <tool
 				      id="cdt.managedbuild.tool.gnu.solaris.cpp.compiler.so.release"
-					  superClass="cdt.managedbuild.tool.gnu.cpp.compiler.so.release"
-                      commandLinePattern="${COMMAND} ${FLAGS} ${OUTPUT_FLAG} ${OUTPUT_PREFIX}${OUTPUT} ${INPUTS}">                          
+					  superClass="cdt.managedbuild.tool.gnu.solaris.cpp.compiler.base">                          
 				  </tool>				
 				  <tool				     
 				      id="cdt.managedbuild.tool.gnu.solaris.c.compiler.so.release"
-					  superClass="cdt.managedbuild.tool.gnu.c.compiler.so.release"
-                      commandLinePattern="${COMMAND} ${FLAGS} ${OUTPUT_FLAG} ${OUTPUT_PREFIX}${OUTPUT} ${INPUTS}">                          
+                      superClass="cdt.managedbuild.tool.gnu.solaris.c.compiler.base">                          
 				  </tool>
 			   </toolChain>  
          </configuration>         
@@ -2900,66 +3214,50 @@
           
       <projectType 
             isTest="false"
-            name="%TargetName.solaris.lib"
+            buildProperties="org.eclipse.cdt.build.core.buildArtefactType=org.eclipse.cdt.build.core.buildArtefactType.staticLib"
             isAbstract="false"
             id="cdt.managedbuild.target.gnu.solaris.lib">                        
          <configuration
 			   name="%ConfigName.Dbg"
-			   artifactExtension="a"
-			   cleanCommand="rm -rf"
-			   errorParsers="org.eclipse.cdt.core.MakeErrorParser;org.eclipse.cdt.core.GCCErrorParser;org.eclipse.cdt.core.GLDErrorParser;org.eclipse.cdt.core.GASErrorParser"
+            buildProperties="org.eclipse.cdt.build.core.buildType=org.eclipse.cdt.build.core.buildType.debug"
+			parent="cdt.managedbuild.config.gnu.solaris.base"
 			   id="cdt.managedbuild.config.gnu.solaris.lib.debug">
                <toolChain
-                     archList="all"
-                     osList="solaris"
                      id="cdt.managedbuild.toolchain.gnu.solaris.lib.debug"
-                     superClass="cdt.managedbuild.toolchain.gnu.lib.debug">
+                     superClass="cdt.managedbuild.toolchain.gnu.solaris.base">
 		          <targetPlatform
 		              id="cdt.managedbuild.target.gnu.solaris.platform.lib.debug"
-		              name="%PlatformName.Dbg"
-		              binaryParser="org.eclipse.cdt.core.ELF"
-		              osList="solaris"
-		              archList="all">
+		              superClass="cdt.managedbuild.target.gnu.solaris.base">
 	              </targetPlatform>
                   <tool
 					  id="cdt.managedbuild.tool.gnu.solaris.cpp.compiler.lib.debug"
-                      superClass="cdt.managedbuild.tool.gnu.cpp.compiler.lib.debug"
-                      commandLinePattern="${COMMAND} ${FLAGS} ${OUTPUT_FLAG} ${OUTPUT_PREFIX}${OUTPUT} ${INPUTS}">                          
+					  superClass="cdt.managedbuild.tool.gnu.solaris.cpp.compiler.base">                          
                   </tool>
 				  <tool
 					  id="cdt.managedbuild.tool.gnu.solaris.c.compiler.lib.debug"
-					  superClass="cdt.managedbuild.tool.gnu.c.compiler.lib.debug"
-                      commandLinePattern="${COMMAND} ${FLAGS} ${OUTPUT_FLAG} ${OUTPUT_PREFIX}${OUTPUT} ${INPUTS}">                          
+                      superClass="cdt.managedbuild.tool.gnu.solaris.c.compiler.base">                          
 				  </tool>
                </toolChain>                 
          </configuration>
          <configuration
                name="%ConfigName.Rel"
-               artifactExtension="a"
-               cleanCommand="rm -rf"
-			   errorParsers="org.eclipse.cdt.core.MakeErrorParser;org.eclipse.cdt.core.GCCErrorParser;org.eclipse.cdt.core.GLDErrorParser;org.eclipse.cdt.core.GASErrorParser"
+             buildProperties="org.eclipse.cdt.build.core.buildType=org.eclipse.cdt.build.core.buildType.release"
+			parent="cdt.managedbuild.config.gnu.solaris.base"
                id="cdt.managedbuild.config.gnu.solaris.lib.release">
                <toolChain
-                     archList="all"
-                     osList="solaris"
                      id="cdt.managedbuild.toolchain.gnu.solaris.lib.release"
-                     superClass="cdt.managedbuild.toolchain.gnu.lib.release">
+                     superClass="cdt.managedbuild.toolchain.gnu.solaris.base">
 		          <targetPlatform
 		              id="cdt.managedbuild.target.gnu.solaris.platform.lib.release"
-		              name="%PlatformName.Dbg"
-		              binaryParser="org.eclipse.cdt.core.ELF"
-		              osList="solaris"
-		              archList="all">
+		              superClass="cdt.managedbuild.target.gnu.solaris.base">
 	              </targetPlatform>
 				  <tool
 					  id="cdt.managedbuild.tool.gnu.solaris.cpp.compiler.lib.release"
-					  superClass="cdt.managedbuild.tool.gnu.cpp.compiler.lib.release"
-                      commandLinePattern="${COMMAND} ${FLAGS} ${OUTPUT_FLAG} ${OUTPUT_PREFIX}${OUTPUT} ${INPUTS}">                          
+					  superClass="cdt.managedbuild.tool.gnu.solaris.cpp.compiler.base">                          
 				  </tool>
 		          <tool
 					  id="cdt.managedbuild.tool.gnu.solaris.c.compiler.lib.release"
-					  superClass="cdt.managedbuild.tool.gnu.c.compiler.lib.release"
-                      commandLinePattern="${COMMAND} ${FLAGS} ${OUTPUT_FLAG} ${OUTPUT_PREFIX}${OUTPUT} ${INPUTS}">                          
+                      superClass="cdt.managedbuild.tool.gnu.solaris.c.compiler.base">                          
 				  </tool>
                </toolChain>				  
          </configuration>                  

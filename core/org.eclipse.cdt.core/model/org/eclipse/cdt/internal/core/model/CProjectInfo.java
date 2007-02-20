@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 QNX Software Systems and others.
+ * Copyright (c) 2000, 2007 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -22,11 +22,15 @@ import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.IIncludeReference;
 import org.eclipse.cdt.core.model.ILibraryReference;
 import org.eclipse.cdt.core.model.IOutputEntry;
-import org.eclipse.cdt.core.model.IPathEntry;
 import org.eclipse.cdt.core.model.ISourceEntry;
 import org.eclipse.cdt.core.model.ISourceRoot;
+import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
+import org.eclipse.cdt.core.settings.model.ICSourceEntry;
+import org.eclipse.cdt.internal.core.settings.model.CProjectDescription;
+import org.eclipse.cdt.internal.core.settings.model.CProjectDescriptionManager;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
@@ -77,25 +81,36 @@ class CProjectInfo extends OpenableInfo {
 
 		// determine if src == project
 		boolean srcIsProject = false;
-		IPathEntry[] entries = null;
+		ICSourceEntry[] entries = null;
 		ICProject cproject = getElement().getCProject();
-		IPath projectPath = cproject.getProject().getFullPath();
+		IProject project = cproject.getProject();
+		IPath projectPath = project.getFullPath();
 		char[][] exclusionPatterns = null;
-		try {
-			entries = cproject.getResolvedPathEntries();
-			for (int i = 0; i < entries.length; i++) {
-				if (entries[i].getEntryKind() == IPathEntry.CDT_SOURCE) {
-					ISourceEntry entry = (ISourceEntry)entries[i];
-					if (projectPath.equals(entry.getPath())) {
-						srcIsProject = true;
-						exclusionPatterns = entry.fullExclusionPatternChars();
-						break;
-					}
+//		try {
+//			entries = cproject.getResolvedPathEntries();
+			CProjectDescription des = (CProjectDescription)CProjectDescriptionManager.getInstance().getProjectDescription(project);
+			if(des != null){
+				ICConfigurationDescription cfg = des.getIndexConfiguration();
+				if(cfg != null){
+					entries = cfg.getSourceEntries();
 				}
 			}
-		} catch (CModelException e) {
+			
+			if(entries != null){
+				for (int i = 0; i < entries.length; i++) {
+//					if (entries[i].getEntryKind() == IPathEntry.CDT_SOURCE) {
+						ICSourceEntry entry = /*(ISourceEntry)*/entries[i];
+						if (projectPath.equals(entry.getFullPath())) {
+							srcIsProject = true;
+							exclusionPatterns = entry.fullExclusionPatternChars();
+							break;
+						}
+//					}
+				}
+			}
+//		} catch (CModelException e) {
 			// ignore
-		}
+//		}
 
 		ArrayList notChildren = new ArrayList();
 		try {

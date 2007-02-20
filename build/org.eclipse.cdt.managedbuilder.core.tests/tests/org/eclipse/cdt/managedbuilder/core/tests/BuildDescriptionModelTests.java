@@ -57,6 +57,7 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 
 public class BuildDescriptionModelTests extends TestCase {
@@ -1100,10 +1101,12 @@ public class BuildDescriptionModelTests extends TestCase {
 		//
 
 		//FIXME: this is very bad, need to wait until the indexing is completed here
-		try {
+/*		try {
 			Thread.sleep(10000);
 		} catch (InterruptedException e1) {
 		}
+*/		
+		CCorePlugin.getIndexManager().joinIndexer(-1, new NullProgressMonitor());
 
 		IBuildDescription des = null;
 		try {

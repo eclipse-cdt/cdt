@@ -1,0 +1,819 @@
+package org.eclipse.cdt.projectmodel.tests;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import junit.framework.Test;
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
+
+import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.model.CoreModel;
+import org.eclipse.cdt.core.model.ElementChangedEvent;
+import org.eclipse.cdt.core.model.ICElementDelta;
+import org.eclipse.cdt.core.model.IElementChangedListener;
+import org.eclipse.cdt.core.settings.model.CIncludePathEntry;
+import org.eclipse.cdt.core.settings.model.CMacroEntry;
+import org.eclipse.cdt.core.settings.model.CSourceEntry;
+import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
+import org.eclipse.cdt.core.settings.model.ICExternalSetting;
+import org.eclipse.cdt.core.settings.model.ICFileDescription;
+import org.eclipse.cdt.core.settings.model.ICFolderDescription;
+import org.eclipse.cdt.core.settings.model.ICLanguageSetting;
+import org.eclipse.cdt.core.settings.model.ICLanguageSettingEntry;
+import org.eclipse.cdt.core.settings.model.ICProjectDescription;
+import org.eclipse.cdt.core.settings.model.ICResourceDescription;
+import org.eclipse.cdt.core.settings.model.ICSettingBase;
+import org.eclipse.cdt.core.settings.model.ICSourceEntry;
+import org.eclipse.cdt.core.settings.model.extension.CConfigurationData;
+import org.eclipse.cdt.managedbuilder.core.IConfiguration;
+import org.eclipse.cdt.managedbuilder.core.IFileInfo;
+import org.eclipse.cdt.managedbuilder.core.IFolderInfo;
+import org.eclipse.cdt.managedbuilder.core.IProjectType;
+import org.eclipse.cdt.managedbuilder.core.IResourceInfo;
+import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
+import org.eclipse.cdt.managedbuilder.internal.core.Configuration;
+import org.eclipse.cdt.managedbuilder.internal.core.ManagedBuildInfo;
+import org.eclipse.cdt.managedbuilder.internal.core.ManagedProject;
+import org.eclipse.cdt.managedbuilder.testplugin.ManagedBuildTestHelper;
+import org.eclipse.core.resources.IFolder;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IProjectDescription;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IWorkspace;
+import org.eclipse.core.resources.IWorkspaceDescription;
+import org.eclipse.core.resources.IWorkspaceRoot;
+import org.eclipse.core.resources.IWorkspaceRunnable;
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.Path;
+
+public class ProjectModelTests extends TestCase implements IElementChangedListener{
+	private CModelEventChecker fEventChecker;
+	
+	public void elementChanged(ElementChangedEvent event) {
+		if(fEventChecker != null)
+			fEventChecker.checkEvent(event);
+	}
+	
+	private class CModelEventChecker {
+		private boolean fEventOccured;
+		
+		void checkEvent(ElementChangedEvent event){
+			fEventOccured = true;
+		}
+		
+	}
+	
+	private class CDefaultModelEventChecker extends CModelEventChecker{
+
+		void checkEvent(ElementChangedEvent event) {
+			super.checkEvent(event);
+			
+			assertEquals(ElementChangedEvent.POST_CHANGE, event.getType());
+			
+			ICElementDelta delta = event.getDelta();
+			System.out.println(delta.toString());
+		}
+		
+	}
+	
+	
+
+	public static Test suite() {
+		return new TestSuite(ProjectModelTests.class);
+	}
+	
+	protected void setUp() throws Exception {
+		super.setUp();
+		fEventChecker = null;
+		CoreModel.getDefault().addElementChangedListener(this);
+	}
+
+	protected void tearDown() throws Exception {
+		super.tearDown();
+		fEventChecker = null;
+		CoreModel.getDefault().removeElementChangedListener(this);
+	}
+
+	public void testDescription() throws Exception{
+		final String projectName = "test1";
+		IProject project = createProject(projectName);
+		CoreModel coreModel = CoreModel.getDefault();
+		ICProjectDescription des = coreModel.getProjectDescription(project);
+		assertNull("detDescription1 returned not null!", des);
+		
+		des = coreModel.createProjectDescription(project, true);
+		assertNotNull("createDescription returned null!", des);
+		
+		assertNull("detDescription2 returned not null!", coreModel.getProjectDescription(project));
+		
+		assertFalse("new des should be not valid", des.isValid());
+		
+		assertEquals(0, des.getConfigurations().length);
+		
+		ManagedBuildInfo info = ManagedBuildManager.createBuildInfo(project);
+		IProjectType type = ManagedBuildManager.getProjectType("cdt.managedbuild.target.gnu30.exe");
+		assertNotNull("project type not found", type);
+
+		ManagedProject mProj = new ManagedProject(project, type);
+		info.setManagedProject(mProj);
+		
+		IConfiguration cfgs[] = type.getConfigurations();
+		
+
+		for(int i = 0; i < cfgs.length; i++){
+			String id = ManagedBuildManager.calculateChildId(cfgs[i].getId(), null);
+			Configuration config = new Configuration(mProj, (Configuration)cfgs[i], id, false, true, false);
+			CConfigurationData data = config.getConfigurationData();
+			assertNotNull("data is null for created configuration", data);
+			ICConfigurationDescription cfgDes = des.createConfiguration("org.eclipse.cdt.managedbuilder.core.configurationDataProvider", data);
+		}
+		coreModel.setProjectDescription(project, des);
+		
+		IWorkspace wsp = ResourcesPlugin.getWorkspace();
+		IWorkspaceRoot root = wsp.getRoot(); 
+		project.delete(false, true, new NullProgressMonitor());
+		
+		project = root.getProject(projectName);
+		des = coreModel.getProjectDescription(project);
+		assertNull("project description is not null for removed project", des);
+		
+		project = createProject(projectName);
+		des = coreModel.getProjectDescription(project);
+		assertNotNull("project description is null for re-created project", des);
+		assertTrue("des should be valid for re-created project", des.isValid());
+		
+		ICConfigurationDescription cfgDess[] = des.getConfigurations();
+		
+		assertEquals(2, cfgDess.length);
+		
+		ICConfigurationDescription cfgDes = cfgDess[0];
+		ICResourceDescription rcDess[] = cfgDes.getResourceDescriptions();
+		assertEquals(1, rcDess.length);
+		assertEquals(cfgDes.getRootFolderDescription(), rcDess[0]);
+		assertFalse(cfgDes.isModified());
+		assertEquals(cfgDes.getRootFolderDescription(), cfgDes.getResourceDescription(new Path(""), true));
+		assertEquals(cfgDes.getRootFolderDescription(), cfgDes.getResourceDescription(new Path(""), false));
+		assertEquals(cfgDes.getRootFolderDescription(), cfgDes.getResourceDescription(new Path(""), false));
+		assertEquals(cfgDes.getRootFolderDescription(), cfgDes.getResourceDescription(new Path("ds/sd/sdf/"), false));
+		assertEquals(cfgDes.getRootFolderDescription(), cfgDes.getResourceDescription(new Path(""), true));
+		assertEquals(null, cfgDes.getResourceDescription(new Path("ds/sd/sdf/"), true));
+		
+		ICFileDescription fd_abc = cfgDes.createFileDescription(new Path("a/b/c"), rcDess[0]);
+		assertTrue(cfgDes.isModified());
+		
+			ICProjectDescription anotherDes = coreModel.getProjectDescription(project);
+			assertNotNull("project description is null for re-created project", des);
+			assertTrue("des should be valid for re-created project", des.isValid());
+			
+			ICConfigurationDescription anotherCfgDess[] = anotherDes.getConfigurations();
+			
+			assertEquals(2, anotherCfgDess.length);
+			
+			ICConfigurationDescription anotherCfgDes = anotherCfgDess[0];
+			ICResourceDescription anotherRcDess[] = anotherCfgDes.getResourceDescriptions();
+			assertEquals(1, anotherRcDess.length);
+			assertEquals(anotherCfgDes.getRootFolderDescription(), anotherRcDess[0]);
+			assertFalse(anotherCfgDes.isModified());
+		
+		CConfigurationData cfgData = cfgDes.getConfigurationData();
+		assertEquals(cfgData, cfgDes.getConfigurationData());
+		IConfiguration cfg = ManagedBuildManager.getConfigurationForDescription(cfgDes);
+		IResourceInfo infos[] = cfg.getResourceInfos();
+		assertEquals(2, infos.length);
+
+		ICFolderDescription rf = cfgDes.getRootFolderDescription();
+		ICResourceDescription nestedFis[] = rf.getNestedResourceDescriptions(ICSettingBase.SETTING_FILE);
+		ICResourceDescription nestedFos[] = rf.getNestedResourceDescriptions(ICSettingBase.SETTING_FOLDER);
+		assertEquals(2, cfgDes.getResourceDescriptions().length);
+		assertEquals(0, nestedFos.length);
+		assertEquals(1, nestedFis.length);
+		
+		ICFileDescription fd_asd = cfgDes.createFileDescription(new Path("a/s/d"), cfgDes.getRootFolderDescription());
+		assertEquals(3, cfgDes.getResourceDescriptions().length);
+		nestedFis = rf.getNestedResourceDescriptions(ICSettingBase.SETTING_FILE);
+		nestedFos = rf.getNestedResourceDescriptions(ICSettingBase.SETTING_FOLDER);
+		assertEquals(0, nestedFos.length);
+		assertEquals(2, nestedFis.length);
+		
+		cfg.createFileInfo(new Path("z/x/c"));
+		nestedFis = rf.getNestedResourceDescriptions(ICSettingBase.SETTING_FILE);
+		nestedFos = rf.getNestedResourceDescriptions(ICSettingBase.SETTING_FOLDER);
+		assertEquals(0, nestedFos.length);
+		assertEquals(3, nestedFis.length);
+		assertEquals(4, cfgDes.getResourceDescriptions().length);
+
+		cfg.createFileInfo(new Path("q/w/e"));
+		ICFileDescription fd_qwe = (ICFileDescription)cfgDes.getResourceDescription(new Path("q/w/e"), true);
+		assertNotNull(fd_qwe);
+		assertEquals(5, cfgDes.getResourceDescriptions().length);
+		nestedFis = rf.getNestedResourceDescriptions(ICSettingBase.SETTING_FILE);
+		nestedFos = rf.getNestedResourceDescriptions(ICSettingBase.SETTING_FOLDER);
+		assertEquals(0, nestedFos.length);
+		assertEquals(4, nestedFis.length);
+		
+		cfgDes.removeResourceDescription(fd_abc);
+		nestedFis = rf.getNestedResourceDescriptions(ICSettingBase.SETTING_FILE);
+		nestedFos = rf.getNestedResourceDescriptions(ICSettingBase.SETTING_FOLDER);
+		assertEquals(0, nestedFos.length);
+		assertEquals(3, nestedFis.length);
+		assertEquals(4, cfgDes.getResourceDescriptions().length);
+
+		cfg.removeResourceInfo(new Path("a/s/d"));
+		assertEquals(3, cfgDes.getResourceDescriptions().length);
+		nestedFis = rf.getNestedResourceDescriptions(ICSettingBase.SETTING_FILE);
+		nestedFos = rf.getNestedResourceDescriptions(ICSettingBase.SETTING_FOLDER);
+		assertEquals(0, nestedFos.length);
+		assertEquals(2, nestedFis.length);
+		
+		IFileInfo fi_qwe = (IFileInfo)cfg.getResourceInfo(new Path("q/w/e"), true);
+		assertNotNull(fi_qwe);
+		
+		ICFileDescription fid_qwe = (ICFileDescription)cfgDes.getResourceDescription(new Path("q/w/e"), true);
+		assertNotNull(fid_qwe);
+		fi_qwe.setPath(new Path("r/t/y"));
+		assertEquals(fi_qwe, cfg.getResourceInfo(new Path("r/t/y"), true));
+		assertNull(cfgDes.getResourceDescription(new Path("q/w/e"), true));
+		ICFileDescription fid_rty = (ICFileDescription)cfgDes.getResourceDescription(new Path("r/t/y"), true);
+		assertEquals(fid_qwe, fid_rty);
+		
+		fid_rty.setPath(new Path("f/g/h"));
+		assertNull(cfg.getResourceInfo(new Path("r/t/y"), true));
+		IFileInfo fi_fgh = (IFileInfo)cfg.getResourceInfo(new Path("f/g/h"), true);
+		assertEquals(fi_qwe, fi_fgh);
+		
+		ICFolderDescription fod_fg1 = cfgDes.createFolderDescription(new Path("f/g/1"), cfgDes.getRootFolderDescription());
+		
+		ICFolderDescription fod_fg12 = cfgDes.createFolderDescription(new Path("f/g/1/2"), fod_fg1);
+		assertEquals(fod_fg12, fod_fg1.getNestedResourceDescription(new Path("2"), true));
+
+		ICFileDescription fid_fg13 = cfgDes.createFileDescription(new Path("f/g/1/3"), fod_fg1);
+		assertEquals(fid_fg13, fod_fg1.getNestedResourceDescription(new Path("3"), true));
+		
+		assertEquals(2, fod_fg1.getNestedResourceDescriptions().length);
+		assertEquals(1, fod_fg1.getNestedResourceDescriptions(ICSettingBase.SETTING_FILE).length);
+		assertEquals(1, fod_fg1.getNestedResourceDescriptions(ICSettingBase.SETTING_FOLDER).length);
+
+		IFolderInfo fo_fg1 = (IFolderInfo)cfg.getResourceInfo(new Path("f/g/1"), true);
+		assertNotNull(fo_fg1);
+		
+		fo_fg1.setPath(new Path("t/y/u"));
+
+		assertEquals(2, fod_fg1.getNestedResourceDescriptions().length);
+		assertEquals(1, fod_fg1.getNestedResourceDescriptions(ICSettingBase.SETTING_FILE).length);
+		assertEquals(1, fod_fg1.getNestedResourceDescriptions(ICSettingBase.SETTING_FOLDER).length);
+		
+		assertEquals(fod_fg12, cfgDes.getResourceDescription(new Path("t/y/u/2"), true));
+		assertEquals(fid_fg13, cfgDes.getResourceDescription(new Path("t/y/u/3"), true));
+
+		ICLanguageSetting settings[] = cfgDes.getRootFolderDescription().getLanguageSettings();
+		for(int i = 0; i < settings.length; i++){
+			ICLanguageSetting setting = settings[i];
+			ICLanguageSettingEntry[] entries = setting.getSettingEntries(ICLanguageSettingEntry.INCLUDE_PATH);
+			for(int j = 0; j < entries.length; j++){
+				System.out.println(entries[j].getName());
+			}
+			System.out.println(entries.length);
+		}
+		coreModel.setProjectDescription(project, des);
+		
+		project.delete(false, true, new NullProgressMonitor());
+		
+		project = root.getProject(projectName);
+		des = coreModel.getProjectDescription(project);
+		assertNull("project description is not null for removed project", des);
+		
+		project = createProject(projectName);
+		long time = System.currentTimeMillis();
+		des = coreModel.getProjectDescription(project);
+		time = System.currentTimeMillis() - time;
+		System.out.println("time to load = " + time);
+		
+		assertNotNull("project description is null for re-created project", des);
+		assertTrue("des should be valid for re-created project", des.isValid());
+		
+		cfgDess = des.getConfigurations();
+		cfgDes = cfgDess[0];
+		rf = cfgDes.getRootFolderDescription();
+		settings = rf.getLanguageSettings();
+		ICLanguageSettingEntry updatedEntries[] = null;
+		for(int i = 0; i < settings.length; i++){
+			ICLanguageSetting setting = settings[i];
+			ICLanguageSettingEntry[] entries = setting.getSettingEntries(ICLanguageSettingEntry.INCLUDE_PATH);
+			if(entries.length > 0){
+				ICLanguageSettingEntry updated[] = new ICLanguageSettingEntry[entries.length + 1];
+				System.arraycopy(entries, 0, updated, 1, entries.length);
+				updated[0] = new CIncludePathEntry("a/b/c", 0);
+				setting.setSettingEntries(ICLanguageSettingEntry.INCLUDE_PATH, updated);
+				updatedEntries = setting.getSettingEntries(ICLanguageSettingEntry.INCLUDE_PATH);
+				assertEquals(updated.length, updatedEntries.length);
+				for(int k = 0; k < updated.length; k++){
+					assertEquals(updated[i].getValue(), updatedEntries[i].getValue());
+				}
+			}
+		}
+		
+		fEventChecker = new CDefaultModelEventChecker();
+		coreModel.setProjectDescription(project, des);
+		fEventChecker = null;
+		
+		project.delete(false, true, new NullProgressMonitor());
+		
+		project = root.getProject(projectName);
+		des = coreModel.getProjectDescription(project);
+		assertNull("project description is not null for removed project", des);
+		
+		project = createProject(projectName);
+		time = System.currentTimeMillis();
+		des = coreModel.getProjectDescription(project);
+		time = System.currentTimeMillis() - time;
+		System.out.println("time to load = " + time);
+		
+		assertNotNull("project description is null for re-created project", des);
+		assertTrue("des should be valid for re-created project", des.isValid());
+		
+		cfgDess = des.getConfigurations();
+		cfgDes = cfgDess[0];
+		rf = cfgDes.getRootFolderDescription();
+		settings = rf.getLanguageSettings();
+
+		for(int i = 0; i < settings.length; i++){
+			ICLanguageSetting setting = settings[i];
+			ICLanguageSettingEntry[] entries = setting.getSettingEntries(ICLanguageSettingEntry.INCLUDE_PATH);
+			if(entries.length > 0){
+//				ICLanguageSettingEntry updated[] = new ICLanguageSettingEntry[entries.length + 1];
+//				System.arraycopy(entries, 0, updated, 1, entries.length);
+//				updated[0] = new CIncludePathEntry("a/b/c", 0);
+//				setting.setSettingEntries(ICLanguageSettingEntry.INCLUDE_PATH, updated);
+//				updatedEntries = setting.getSettingEntries(ICLanguageSettingEntry.INCLUDE_PATH);
+				assertEquals(entries.length, updatedEntries.length);
+				for(int k = 0; k < entries.length; k++){
+					assertEquals(entries[i].getValue(), updatedEntries[i].getValue());
+				}
+			}
+		}
+
+		assertEquals(2, cfgDess.length);
+		nestedFis = rf.getNestedResourceDescriptions(ICSettingBase.SETTING_FILE);
+		nestedFos = rf.getNestedResourceDescriptions(ICSettingBase.SETTING_FOLDER);
+		assertEquals(2, nestedFos.length);
+		assertEquals(3, nestedFis.length);
+		
+		assertEquals(6, cfgDes.getResourceDescriptions().length);
+		
+		IFolder folder = ManagedBuildTestHelper.createFolder(project, "a/b");
+		ICFolderDescription base = (ICFolderDescription)cfgDes.getResourceDescription(new Path("a/b"), false);
+		ICFolderDescription abFoDes =  cfgDes.createFolderDescription(new Path("a/b"), base);
+		ICLanguageSetting ls = abFoDes.getLanguageSettingForFile("a.c");
+		assertNotNull(ls);
+		List list = ls.getSettingEntriesList(ICLanguageSettingEntry.INCLUDE_PATH);
+		list.add(0, new CIncludePathEntry("zzza/b/c", 0));
+		ls.setSettingEntries(ICLanguageSettingEntry.INCLUDE_PATH, list);
+
+		System.out.println("setting entries for non-root folder..\n");
+		fEventChecker = new CDefaultModelEventChecker();
+		coreModel.setProjectDescription(project, des);
+		fEventChecker = null;
+		
+		time = System.currentTimeMillis();
+		des = coreModel.getProjectDescription(project);
+		time = System.currentTimeMillis() - time;
+		System.out.println("time to load = " + time);
+		
+		assertNotNull("project description is null for re-created project", des);
+		assertTrue("des should be valid for re-created project", des.isValid());
+		
+		cfgDess = des.getConfigurations();
+		cfgDes = cfgDess[0];
+		rf = cfgDes.getRootFolderDescription();
+		
+		IFolder f_bc = ManagedBuildTestHelper.createFolder(project, "b/c");
+		base = (ICFolderDescription)cfgDes.getResourceDescription(new Path("b/c"), false);
+		ICFolderDescription bcFoDes =  cfgDes.createFolderDescription(new Path("b/c"), base);
+		ls = bcFoDes.getLanguageSettingForFile("a.c");
+		assertNotNull(ls);
+		ICLanguageSetting rLS = rf.getLanguageSettingForFile("a.c");
+		assertNotNull(rLS);
+		List lsList = ls.getSettingEntriesList(ICLanguageSettingEntry.INCLUDE_PATH);
+		List rLSList = rLS.getSettingEntriesList(ICLanguageSettingEntry.INCLUDE_PATH);
+		
+		System.out.println("default entries for non-root folder..\n");
+		fEventChecker = new CDefaultModelEventChecker();
+		coreModel.setProjectDescription(project, des);
+		fEventChecker = null;
+
+		project.delete(true, true, new NullProgressMonitor());
+	}
+	
+	public void testSourceEntries() throws Exception {
+		final String projectName = "test2";
+		IProject project = createProject(projectName);
+		CoreModel coreModel = CoreModel.getDefault();
+		ICProjectDescription des = coreModel.getProjectDescription(project);
+		assertNull("detDescription1 returned not null!", des);
+		
+		des = coreModel.createProjectDescription(project, true);
+		assertNotNull("createDescription returned null!", des);
+		
+		assertNull("detDescription2 returned not null!", coreModel.getProjectDescription(project));
+		
+		assertFalse("new des should be not valid", des.isValid());
+		
+		assertEquals(0, des.getConfigurations().length);
+		
+		ManagedBuildInfo info = ManagedBuildManager.createBuildInfo(project);
+		IProjectType type = ManagedBuildManager.getProjectType("cdt.managedbuild.target.gnu30.exe");
+		assertNotNull("project type not found", type);
+
+		ManagedProject mProj = new ManagedProject(project, type);
+		info.setManagedProject(mProj);
+		
+		IConfiguration cfgs[] = type.getConfigurations();
+		
+
+		for(int i = 0; i < cfgs.length; i++){
+			String id = ManagedBuildManager.calculateChildId(cfgs[i].getId(), null);
+			Configuration config = new Configuration(mProj, (Configuration)cfgs[i], id, false, true);
+			CConfigurationData data = config.getConfigurationData();
+			assertNotNull("data is null for created configuration", data);
+			ICConfigurationDescription cfgDes = des.createConfiguration("org.eclipse.cdt.managedbuilder.core.configurationDataProvider", data);
+		}
+		coreModel.setProjectDescription(project, des);
+		
+		IWorkspace wsp = ResourcesPlugin.getWorkspace();
+		IWorkspaceRoot root = wsp.getRoot(); 
+		project.delete(false, true, new NullProgressMonitor());
+		
+		project = root.getProject(projectName);
+		des = coreModel.getProjectDescription(project);
+		assertNull("project description is not null for removed project", des);
+		
+		project = createProject(projectName);
+		des = coreModel.getProjectDescription(project);
+		assertNotNull("project description is null for re-created project", des);
+		assertTrue("des should be valid for re-created project", des.isValid());
+		
+		ICConfigurationDescription cfgDess[] = des.getConfigurations();
+		
+		assertEquals(2, cfgDess.length);
+		
+		ICConfigurationDescription cfgDes = cfgDess[0];
+		ICResourceDescription rcDess[] = cfgDes.getResourceDescriptions();
+		assertEquals(1, rcDess.length);
+		assertEquals(cfgDes.getRootFolderDescription(), rcDess[0]);
+		assertFalse(cfgDes.isModified());
+		assertEquals(cfgDes.getRootFolderDescription(), cfgDes.getResourceDescription(new Path(""), true));
+		assertEquals(cfgDes.getRootFolderDescription(), cfgDes.getResourceDescription(new Path(""), false));
+		assertEquals(cfgDes.getRootFolderDescription(), cfgDes.getResourceDescription(new Path(""), false));
+		assertEquals(cfgDes.getRootFolderDescription(), cfgDes.getResourceDescription(new Path("ds/sd/sdf/"), false));
+		assertEquals(cfgDes.getRootFolderDescription(), cfgDes.getResourceDescription(new Path(""), true));
+		assertEquals(null, cfgDes.getResourceDescription(new Path("ds/sd/sdf/"), true));
+
+		ICSourceEntry s[] = cfgDes.getSourceEntries();
+		IPath projPath = cfgDes.getProjectDescription().getProject().getFullPath();
+		assertEquals(1, s.length);
+		assertEquals(projPath, s[0].getFullPath());
+		assertEquals(0, s[0].getExclusionPatterns().length);
+		
+		IFolder folder = ManagedBuildTestHelper.createFolder(project, "a/b");
+
+		ICSourceEntry updatetSEs[] = new ICSourceEntry[2];
+		updatetSEs[0] = new CSourceEntry(projPath.append("a"), new Path[]{new Path("b")}, ICSourceEntry.VALUE_WORKSPACE_PATH);
+		updatetSEs[1] = s[0];
+		
+		cfgDes.setSourceEntries(updatetSEs);
+		
+		s = cfgDes.getSourceEntries();
+		updatetSEs[1] = new CSourceEntry(projPath, new Path[]{new Path("a")}, ICSourceEntry.VALUE_WORKSPACE_PATH);
+		checkArrays(updatetSEs, s);
+		//assertTrue(Arrays.equals(updatetSEs, s));
+
+		System.out.println("saving updated source entries..\n");
+		fEventChecker = new CDefaultModelEventChecker();
+		coreModel.setProjectDescription(project, des);
+		fEventChecker = null;
+		
+		des = coreModel.getProjectDescription(project);
+		cfgDes = des.getConfigurations()[0];
+		checkArrays(cfgDes.getSourceEntries(), s);
+		
+		project.delete(true, true, new NullProgressMonitor());
+	}
+
+	public void testMacroEntries() throws Exception {
+		final String projectName = "test3";
+		IProject project = createProject(projectName);
+		CoreModel coreModel = CoreModel.getDefault();
+		ICProjectDescription des = coreModel.getProjectDescription(project);
+		assertNull("detDescription1 returned not null!", des);
+		
+		des = coreModel.createProjectDescription(project, true);
+		assertNotNull("createDescription returned null!", des);
+		
+		assertNull("detDescription2 returned not null!", coreModel.getProjectDescription(project));
+		
+		assertFalse("new des should be not valid", des.isValid());
+		
+		assertEquals(0, des.getConfigurations().length);
+		
+		ManagedBuildInfo info = ManagedBuildManager.createBuildInfo(project);
+		IProjectType type = ManagedBuildManager.getProjectType("cdt.managedbuild.target.gnu30.exe");
+		assertNotNull("project type not found", type);
+
+		ManagedProject mProj = new ManagedProject(project, type);
+		info.setManagedProject(mProj);
+		
+		IConfiguration cfgs[] = type.getConfigurations();
+		
+		for(int i = 0; i < cfgs.length; i++){
+			String id = ManagedBuildManager.calculateChildId(cfgs[i].getId(), null);
+			Configuration config = new Configuration(mProj, (Configuration)cfgs[i], id, false, true);
+			CConfigurationData data = config.getConfigurationData();
+			assertNotNull("data is null for created configuration", data);
+			ICConfigurationDescription cfgDes = des.createConfiguration("org.eclipse.cdt.managedbuilder.core.configurationDataProvider", data);
+		}
+		coreModel.setProjectDescription(project, des);
+
+		des = coreModel.getProjectDescription(project);
+		assertNotNull("project description is null ", des);
+		assertTrue("des should be valid ", des.isValid());
+		
+		ICConfigurationDescription cfgDess[] = des.getConfigurations();
+		
+		assertEquals(2, cfgDess.length);
+		
+		ICConfigurationDescription cfgDes = cfgDess[0];
+		ICResourceDescription rcDess[] = cfgDes.getResourceDescriptions();
+		assertEquals(1, rcDess.length);
+		assertEquals(cfgDes.getRootFolderDescription(), rcDess[0]);
+		assertFalse(cfgDes.isModified());
+		assertEquals(cfgDes.getRootFolderDescription(), cfgDes.getResourceDescription(new Path(""), true));
+		assertEquals(cfgDes.getRootFolderDescription(), cfgDes.getResourceDescription(new Path(""), false));
+		assertEquals(cfgDes.getRootFolderDescription(), cfgDes.getResourceDescription(new Path(""), false));
+		assertEquals(cfgDes.getRootFolderDescription(), cfgDes.getResourceDescription(new Path("ds/sd/sdf/"), false));
+		assertEquals(cfgDes.getRootFolderDescription(), cfgDes.getResourceDescription(new Path(""), true));
+		assertEquals(null, cfgDes.getResourceDescription(new Path("ds/sd/sdf/"), true));
+
+		ICFolderDescription rf = cfgDes.getRootFolderDescription();
+		ICLanguageSetting setting = rf.getLanguageSettingForFile("a.c");
+		ICLanguageSettingEntry entries[] = setting.getSettingEntries(ICLanguageSettingEntry.MACRO);
+		
+		for(int i = 0; i < entries.length; i++){
+			System.out.println("name = \"" + entries[i].getName() + "\", value = \"" + entries[i].getValue() + "\"");
+		}
+		
+		CMacroEntry entry = new CMacroEntry("a", "b", 0);
+		List list = new ArrayList();
+		list.add(entry);
+		list.addAll(Arrays.asList(entries));
+		
+		setting.setSettingEntries(ICLanguageSettingEntry.MACRO, list);
+	
+		ICLanguageSettingEntry updatedEntries[] = setting.getSettingEntries(ICLanguageSettingEntry.MACRO);
+		assertEquals(entries.length + 1, updatedEntries.length);
+		
+		boolean found = false;
+		for(int i = 0; i < updatedEntries.length; i++){
+			if(updatedEntries[i].getName().equals("a") 
+					&& updatedEntries[i].getValue().equals("b")){
+				found = true;
+				break;
+			}
+		}
+		
+		assertTrue(found);
+	}
+	
+	public void testReferences() throws Exception{
+		final String projectName4 = "test4";
+		final String projectName5 = "test5";
+		final String projectName6 = "test6";
+		final String projectName7 = "test7";
+		CoreModel coreModel = CoreModel.getDefault();
+
+		IProject project4 = createProject(projectName4, "cdt.managedbuild.target.gnu30.exe");
+		IProject project5 = createProject(projectName5, "cdt.managedbuild.target.gnu30.exe");
+		IProject project6 = createProject(projectName6, "cdt.managedbuild.target.gnu30.exe");
+		IProject project7 = createProject(projectName7, "cdt.managedbuild.target.gnu30.exe");
+		
+		ICProjectDescription des4 = coreModel.getProjectDescription(project4);
+		ICProjectDescription des5 = coreModel.getProjectDescription(project5);
+		ICConfigurationDescription dess[] = des5.getConfigurations();
+		String id1 = dess[0].getId();
+		String id2 = dess[1].getId();
+		
+		ICLanguageSettingEntry entries[] = new ICLanguageSettingEntry[]{
+				new CMacroEntry("a", "b", 0),
+				new CMacroEntry("c", "d", 0),
+				new CIncludePathEntry("a/b/c", 0),
+				new CIncludePathEntry("d/e/f", 0),
+		};
+		dess[0].createExternalSetting(null, null, null, entries);
+		dess[0].setActive();
+		
+		ICExternalSetting extSettings[] = dess[0].getExternalSettings();
+		assertEquals(extSettings.length, 1);
+		
+		checkArrays(extSettings[0].getEntries(), entries);
+		List list = new ArrayList(Arrays.asList(entries));
+		list.remove(3);
+		list.remove(2);
+		checkArrays(extSettings[0].getEntries(ICLanguageSettingEntry.MACRO), list.toArray());
+		list = new ArrayList(Arrays.asList(entries));
+		list.remove(0);
+		list.remove(0);
+		checkArrays(extSettings[0].getEntries(ICLanguageSettingEntry.INCLUDE_PATH), list.toArray());
+		coreModel.setProjectDescription(project5, des5);
+		
+		extSettings = coreModel.getProjectDescription(project5).getActiveConfiguration().getExternalSettings();
+		assertEquals(extSettings.length, 1);
+		
+		checkArrays(extSettings[0].getEntries(), entries);
+		list = new ArrayList(Arrays.asList(entries));
+		list.remove(3);
+		list.remove(2);
+		checkArrays(extSettings[0].getEntries(ICLanguageSettingEntry.MACRO), list.toArray());
+		list = new ArrayList(Arrays.asList(entries));
+		list.remove(0);
+		list.remove(0);
+		checkArrays(extSettings[0].getEntries(ICLanguageSettingEntry.INCLUDE_PATH), list.toArray());
+		
+		dess = des4.getConfigurations();
+		ICLanguageSetting ls = dess[0].getRootFolderDescription().getLanguageSettingForFile("a.c");
+		ICLanguageSettingEntry macros[] = ls.getSettingEntries(ICLanguageSettingEntry.MACRO);
+		ICLanguageSettingEntry includes[] = ls.getSettingEntries(ICLanguageSettingEntry.INCLUDE_PATH);
+		assertFalse(arrayContains(entries[0], macros));
+		assertFalse(arrayContains(entries[1], macros));
+		assertFalse(arrayContains(entries[2], includes));
+		assertFalse(arrayContains(entries[3], includes));
+		Map map = new HashMap();
+		map.put(projectName5, "");
+		dess[0].setReferenceInfo(map);
+		ICLanguageSettingEntry updatedMacros[] = ls.getSettingEntries(ICLanguageSettingEntry.MACRO);
+		ICLanguageSettingEntry udatedIncludes[] = ls.getSettingEntries(ICLanguageSettingEntry.INCLUDE_PATH);
+		assertTrue(arrayContains(entries[0], updatedMacros));
+		assertTrue(arrayContains(entries[1], updatedMacros));
+		assertTrue(arrayContains(entries[2], udatedIncludes));
+		assertTrue(arrayContains(entries[3], udatedIncludes));
+
+	}
+	
+	public void testActiveCfg() throws Exception{
+		final String projectName = "test8";
+		
+		IProject project = createProject(projectName, "cdt.managedbuild.target.gnu30.exe");
+		CoreModel coreModel = CoreModel.getDefault();
+		
+		ICProjectDescription des = coreModel.getProjectDescription(project);
+		ICConfigurationDescription cfgs[] = des.getConfigurations();
+		String id1 = cfgs[0].getId();
+		String id2 = cfgs[1].getId();
+		
+		cfgs[0].setActive();
+		assertEquals(cfgs[0], des.getActiveConfiguration());
+		
+		coreModel.setProjectDescription(project, des);
+		
+		des = coreModel.getProjectDescription(project);
+		cfgs = des.getConfigurations();
+		assertEquals(id1, des.getActiveConfiguration().getId());
+		
+		ICConfigurationDescription newActive = null;
+		for(int i = 0; i < cfgs.length; i++){
+			if(!cfgs[i].getId().equals(id1)){
+				newActive = cfgs[i];
+				break;
+			}
+		}
+		
+		String newActiveId = newActive.getId();
+		newActive.setActive();
+		assertEquals(newActive, des.getActiveConfiguration());
+		
+		coreModel.setProjectDescription(project, des);
+		
+		des = coreModel.getProjectDescription(project);
+		assertEquals(newActiveId, des.getActiveConfiguration().getId());
+		
+		
+	}
+
+	private boolean arrayContains(Object el, Object[] a){
+		for(int i = 0; i < a.length; i++){
+			if(el.equals(a[i]))
+				return true;
+		}
+		return false;
+	}
+	
+	private void checkArrays(Object[] a1, Object[] a2){
+		if(a1 == null){
+			assertTrue(a2 == null);
+			return;
+		}
+		assertTrue(a2 != null);
+
+		assertEquals(a1.length, a2.length);
+		
+		for(int i = 0; i < a1.length; i++){
+			Object o1 = a1[i];
+			boolean found = false;
+			for(int j = 0; j < a2.length; j++){
+				if(o1.equals(a2[j])){
+					found = true;
+					break;
+				}
+			}
+			
+			if(!found){
+				fail("a2 array does not contain the \"" + o1 + "\" element");
+			}
+		}
+	}
+	
+	static public IProject createProject(String name, String projTypeId) throws CoreException{
+		IProject project = createProject(name);
+		
+		CoreModel coreModel = CoreModel.getDefault();
+		ICProjectDescription des = coreModel.getProjectDescription(project);
+		assertNull("detDescription1 returned not null!", des);
+		
+		des = coreModel.createProjectDescription(project, true);
+		assertNotNull("createDescription returned null!", des);
+		
+		assertNull("detDescription2 returned not null!", coreModel.getProjectDescription(project));
+		
+		assertFalse("new des should be not valid", des.isValid());
+		
+		assertEquals(0, des.getConfigurations().length);
+		
+		ManagedBuildInfo info = ManagedBuildManager.createBuildInfo(project);
+		IProjectType type = ManagedBuildManager.getProjectType(projTypeId);
+		assertNotNull("project type not found", type);
+
+		ManagedProject mProj = new ManagedProject(project, type);
+		info.setManagedProject(mProj);
+		
+		IConfiguration cfgs[] = type.getConfigurations();
+		
+
+		for(int i = 0; i < cfgs.length; i++){
+			String id = ManagedBuildManager.calculateChildId(cfgs[i].getId(), null);
+			Configuration config = new Configuration(mProj, (Configuration)cfgs[i], id, false, true);
+			CConfigurationData data = config.getConfigurationData();
+			assertNotNull("data is null for created configuration", data);
+			ICConfigurationDescription cfgDes = des.createConfiguration("org.eclipse.cdt.managedbuilder.core.configurationDataProvider", data);
+		}
+
+		coreModel.setProjectDescription(project, des);
+
+		return project;
+	}
+	
+	static public IProject createProject(String name) throws CoreException{
+		return createProject(name, (IPath)null);
+	}
+	
+	static public IProject createProject(
+			final String name, 
+			final IPath location) throws CoreException{
+		IWorkspace workspace = ResourcesPlugin.getWorkspace();
+		IWorkspaceRoot root = workspace.getRoot();
+		final IProject newProjectHandle = root.getProject(name);
+		IProject project = null;
+		
+		if (!newProjectHandle.exists()) {
+			IWorkspaceDescription workspaceDesc = workspace.getDescription();
+			workspaceDesc.setAutoBuilding(false);
+			workspace.setDescription(workspaceDesc);
+			IProjectDescription description = workspace.newProjectDescription(newProjectHandle.getName());
+			if(location != null)
+				description.setLocation(location);
+			//description.setLocation(root.getLocation());
+			project = CCorePlugin.getDefault().createCDTProject(description, newProjectHandle, new NullProgressMonitor());
+		} else {
+			IWorkspaceRunnable runnable = new IWorkspaceRunnable() {
+				public void run(IProgressMonitor monitor) throws CoreException {
+					newProjectHandle.refreshLocal(IResource.DEPTH_INFINITE, monitor);
+				}
+			};
+			NullProgressMonitor monitor = new NullProgressMonitor();
+			workspace.run(runnable, root, IWorkspace.AVOID_UPDATE, monitor);
+			project = newProjectHandle;
+		}
+        
+		// Open the project if we have to
+		if (!project.isOpen()) {
+			project.open(new NullProgressMonitor());
+		}
+				
+		return project;	
+	}
+}

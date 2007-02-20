@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2006 Intel Corporation and others.
+ * Copyright (c) 2004, 2007 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,35 +11,35 @@
 package org.eclipse.cdt.managedbuilder.internal.core;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.cdt.core.settings.model.ICProjectDescription;
+import org.eclipse.cdt.core.settings.model.ICStorageElement;
+import org.eclipse.cdt.core.settings.model.util.XmlStorageElement;
+import org.eclipse.cdt.managedbuilder.buildproperties.IBuildPropertyType;
+import org.eclipse.cdt.managedbuilder.buildproperties.IBuildPropertyValue;
 import org.eclipse.cdt.managedbuilder.core.IBuildObject;
+import org.eclipse.cdt.managedbuilder.core.IBuildObjectProperties;
+import org.eclipse.cdt.managedbuilder.core.IBuildPropertiesRestriction;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IManagedBuildInfo;
 import org.eclipse.cdt.managedbuilder.core.IManagedOptionValueHandler;
 import org.eclipse.cdt.managedbuilder.core.IManagedProject;
 import org.eclipse.cdt.managedbuilder.core.IProjectType;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
-import org.eclipse.cdt.managedbuilder.internal.envvar.EnvironmentVariableProvider;
-import org.eclipse.cdt.managedbuilder.internal.envvar.StorableEnvironment;
-import org.eclipse.cdt.managedbuilder.internal.macros.StorableMacros;
-import org.eclipse.core.resources.IProject;
+import org.eclipse.cdt.utils.envvar.StorableEnvironment;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IWorkspaceRunnable;
-import org.eclipse.core.resources.IncrementalProjectBuilder;
-import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.PluginVersionIdentifier;
-import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-public class ManagedProject extends BuildObject implements IManagedProject {
+public class ManagedProject extends BuildObject implements IManagedProject, IBuildPropertiesRestriction, IBuildPropertyChangeListener {
 	
 	private static final String EMPTY_STRING = new String();
 	private static final IConfiguration[] emptyConfigs = new IConfiguration[0];
@@ -48,16 +48,19 @@ public class ManagedProject extends BuildObject implements IManagedProject {
 	private IProjectType projectType;
 	private String projectTypeId;
 	private IResource owner;
-	private List configList;	//  Configurations of this project type
+//	private List configList;	//  Configurations of this project type
 	private Map configMap;
 	//  Miscellaneous
 	private boolean isDirty = false;
 	private boolean isValid = true;
 	private boolean resolved = true;
 	//holds the user-defined macros
-	private StorableMacros userDefinedMacros;
+//	private StorableMacros userDefinedMacros;
 	//holds user-defined environment
 	private StorableEnvironment userDefinedEnvironment;
+	
+	private BuildObjectProperties buildProperties;
+
 	/*
 	 *  C O N S T R U C T O R S
 	 */
@@ -96,6 +99,24 @@ public class ManagedProject extends BuildObject implements IManagedProject {
 		setDirty(true);
 	}
 
+	public ManagedProject(ICProjectDescription des) {
+		// Make the owner of the ProjectType the project resource
+		this(des.getProject());
+		
+		// Copy the parent's identity
+//		this.projectType = projectType;
+		int id = ManagedBuildManager.getRandomNumber();
+		setId(owner.getName() + "." + des.getId() + "." + id);		 //$NON-NLS-1$ //$NON-NLS-2$
+		setName(des.getName());
+
+//		setManagedBuildRevision(projectType.getManagedBuildRevision());
+		
+		// Hook me up
+//		IManagedBuildInfo buildInfo = ManagedBuildManager.getBuildInfo(owner);
+//		buildInfo.setManagedProject(this);
+//		setDirty(true);
+	}
+
 	/**
 	 * Create the project instance from project file.
 	 * 
@@ -122,11 +143,13 @@ public class ManagedProject extends BuildObject implements IManagedProject {
 			for (int i = 0; i < configElements.getLength(); ++i) {
 				Node configElement = configElements.item(i);
 				if (configElement.getNodeName().equals(IConfiguration.CONFIGURATION_ELEMENT_NAME)) {
-					Configuration config = new Configuration(this, (Element)configElement, managedBuildRevision);
-				}else if (configElement.getNodeName().equals(StorableMacros.MACROS_ELEMENT_NAME)) {
+					ICStorageElement el = new XmlStorageElement((Element)configElement);
+					Configuration config = new Configuration(this, el, managedBuildRevision, false);
+				}/*else if (configElement.getNodeName().equals(StorableMacros.MACROS_ELEMENT_NAME)) {
 					//load user-defined macros
-					userDefinedMacros = new StorableMacros((Element)configElement);
-				}
+					ICStorageElement el = new XmlStorageElement((Element)configElement);
+					userDefinedMacros = new StorableMacros(el);
+				}*/
 
 			}
 		} else {
@@ -165,13 +188,18 @@ public class ManagedProject extends BuildObject implements IManagedProject {
 				return false;
 			}
 		}
+		
+		String props = element.getAttribute(BUILD_PROPERTIES);
+		if(props != null && props.length() != 0)
+			buildProperties = new BuildObjectProperties(props, this, this);
+
 		return true;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IManagedProject#serialize()
 	 */
-	public void serialize(Document doc, Element element) {
+/*	public void serialize(Document doc, Element element) {
 		element.setAttribute(IBuildObject.ID, id);
 		
 		if (name != null) {
@@ -206,7 +234,7 @@ public class ManagedProject extends BuildObject implements IManagedProject {
 		// I am clean now
 		isDirty = false;
 	}
-
+*/
 	/*
 	 *  P A R E N T   A N D   C H I L D   H A N D L I N G
 	 */
@@ -239,7 +267,7 @@ public class ManagedProject extends BuildObject implements IManagedProject {
 	 * @see org.eclipse.cdt.core.build.managed.IManagedProject#createConfiguration(org.eclipse.cdt.core.build.managed.IConfiguration)
 	 */
 	public IConfiguration createConfiguration(IConfiguration parent, String id) {
-		Configuration config = new Configuration(this, (Configuration)parent, id, false, false);
+		Configuration config = new Configuration(this, (Configuration)parent, id, false, false, false);
 		ManagedBuildManager.performValueHandlerEvent(config, IManagedOptionValueHandler.EVENT_OPEN);
 		return (IConfiguration)config;
 	}
@@ -248,7 +276,7 @@ public class ManagedProject extends BuildObject implements IManagedProject {
 	 * @see org.eclipse.cdt.core.build.managed.IManagedProject#createConfigurationClone(org.eclipse.cdt.core.build.managed.IConfiguration)
 	 */
 	public IConfiguration createConfigurationClone(IConfiguration parent, String id) {
-		Configuration config = new Configuration(this, (Configuration)parent, id, true, false);
+		Configuration config = new Configuration(this, (Configuration)parent, id, true, false, false);
 		// Inform all options in the configuration and all its resource configurations
 		ManagedBuildManager.performValueHandlerEvent(config, IManagedOptionValueHandler.EVENT_OPEN);
 		return (IConfiguration)config;
@@ -265,8 +293,8 @@ public class ManagedProject extends BuildObject implements IManagedProject {
 	 * @see org.eclipse.cdt.managedbuilder.core.IManagedProject#getConfigurations()
 	 */
 	public IConfiguration[] getConfigurations() {
-		IConfiguration[] configs = new IConfiguration[getConfigurationList().size()];
-		Iterator iter = getConfigurationList().listIterator();
+		IConfiguration[] configs = new IConfiguration[getConfigurationCollection().size()];
+		Iterator iter = getConfigurationCollection().iterator();
 		int i = 0;
 		while (iter.hasNext()) {
 			Configuration config = (Configuration)iter.next();
@@ -285,58 +313,60 @@ public class ManagedProject extends BuildObject implements IManagedProject {
 		if(getConfigurationMap().get(id) == null)
 			return;
 
-		IWorkspaceRunnable remover = new IWorkspaceRunnable() {
-			public void run(IProgressMonitor monitor) throws CoreException {
-				// Remove the specified configuration from the list and map
-				Iterator iter = getConfigurationList().listIterator();
-				while (iter.hasNext()) {
-					 IConfiguration config = (IConfiguration)iter.next();
-					 if (config.getId().equals(removeId)) {
-						// TODO:  For now we clean the entire project.  This may be overkill, but
-						//        it avoids a problem with leaving the configuration output directory
-					 	//        around and having the outputs try to be used by the makefile generator code.
-					 	IResource proj = config.getOwner();
-						IManagedBuildInfo info = null;
-					 	if (proj instanceof IProject) {
-							info = ManagedBuildManager.getBuildInfo(proj);
-					 	}
-						IConfiguration currentConfig = null;
-						boolean isCurrent = true;
-			 			if (info != null) {
-			 				currentConfig = info.getDefaultConfiguration();
-			 				if (!currentConfig.getId().equals(removeId)) {
-			 					info.setDefaultConfiguration(config);
-			 					isCurrent = false;
-			 				}
-			 			}
-			 			((IProject)proj).build(IncrementalProjectBuilder.CLEAN_BUILD, monitor);
-					 	
-			 			ManagedBuildManager.performValueHandlerEvent(config, 
-			 					IManagedOptionValueHandler.EVENT_CLOSE);
-						PropertyManager.getInstance().clearProperties(config);
-					 	getConfigurationList().remove(config);
-						getConfigurationMap().remove(removeId);
-
-						if (info != null) {
-							if (!isCurrent) {
-			 					info.setDefaultConfiguration(currentConfig);								
-							} else {
-								// If the current default config is the one being removed, reset the default config
-								String[] configs = info.getConfigurationNames();
-								if (configs.length > 0) {
-									info.setDefaultConfiguration(configs[0]);
-								}
-							}
-			 			}
-						break;
-					}
-				}
-			}
-		};
-		try {
-			ResourcesPlugin.getWorkspace().run( remover, null );
-		}
-		catch( CoreException e ) {}
+		getConfigurationMap().remove(removeId);
+//
+//		IWorkspaceRunnable remover = new IWorkspaceRunnable() {
+//			public void run(IProgressMonitor monitor) throws CoreException {
+//				// Remove the specified configuration from the list and map
+//				Iterator iter = getConfigurationCollection().iterator();
+//				while (iter.hasNext()) {
+//					 IConfiguration config = (IConfiguration)iter.next();
+//					 if (config.getId().equals(removeId)) {
+//						// TODO:  For now we clean the entire project.  This may be overkill, but
+//						//        it avoids a problem with leaving the configuration output directory
+//					 	//        around and having the outputs try to be used by the makefile generator code.
+//					 	IResource proj = config.getOwner();
+//						IManagedBuildInfo info = null;
+//					 	if (proj instanceof IProject) {
+//							info = ManagedBuildManager.getBuildInfo(proj);
+//					 	}
+//						IConfiguration currentConfig = null;
+//						boolean isCurrent = true;
+//			 			if (info != null) {
+//			 				currentConfig = info.getDefaultConfiguration();
+//			 				if (!currentConfig.getId().equals(removeId)) {
+//			 					info.setDefaultConfiguration(config);
+//			 					isCurrent = false;
+//			 				}
+//			 			}
+//			 			((IProject)proj).build(IncrementalProjectBuilder.CLEAN_BUILD, monitor);
+//					 	
+//			 			ManagedBuildManager.performValueHandlerEvent(config, 
+//			 					IManagedOptionValueHandler.EVENT_CLOSE);
+//						PropertyManager.getInstance().clearProperties(config);
+////					 	getConfigurationList().remove(config);
+//						getConfigurationMap().remove(removeId);
+//
+//						if (info != null) {
+//							if (!isCurrent) {
+//			 					info.setDefaultConfiguration(currentConfig);								
+//							} else {
+//								// If the current default config is the one being removed, reset the default config
+//								String[] configs = info.getConfigurationNames();
+//								if (configs.length > 0) {
+//									info.setDefaultConfiguration(configs[0]);
+//								}
+//							}
+//			 			}
+//						break;
+//					}
+//				}
+//			}
+//		};
+//		try {
+//			ResourcesPlugin.getWorkspace().run( remover, null );
+//		}
+//		catch( CoreException e ) {}
 		setDirty(true);
 	}
 
@@ -347,7 +377,7 @@ public class ManagedProject extends BuildObject implements IManagedProject {
 	 */
 	public void addConfiguration(Configuration configuration) {
 		if(!configuration.isTemporary()){
-			getConfigurationList().add(configuration);
+//			getConfigurationList().add(configuration);
 			getConfigurationMap().put(configuration.getId(), configuration);
 		}
 	}
@@ -357,11 +387,12 @@ public class ManagedProject extends BuildObject implements IManagedProject {
 	 * 
 	 * @return List containing the configurations
 	 */
-	private List getConfigurationList() {
-		if (configList == null) {
-			configList = new ArrayList();
-		}
-		return configList;
+	private Collection getConfigurationCollection() {
+		return getConfigurationMap().values();
+//		if (configList == null) {
+//			configList = new ArrayList();
+//		}
+//		return configList;
 	}
 	
 	/* (non-Javadoc)
@@ -412,7 +443,7 @@ public class ManagedProject extends BuildObject implements IManagedProject {
 			}
 			
 			// call resolve references on any children
-			Iterator configIter = getConfigurationList().iterator();
+			Iterator configIter = getConfigurationCollection().iterator();
 			while (configIter.hasNext()) {
 				Configuration current = (Configuration)configIter.next();
 				current.resolveReferences();
@@ -429,8 +460,8 @@ public class ManagedProject extends BuildObject implements IManagedProject {
 		if (isDirty) return true;
 		
 		//check whether the project - specific macros are dirty
-		if(userDefinedMacros != null && userDefinedMacros.isDirty())
-			return true;
+//		if(userDefinedMacros != null && userDefinedMacros.isDirty())
+//			return true;
 
 		//check whether the project - specific environment is dirty
 		if(userDefinedEnvironment != null && userDefinedEnvironment.isDirty())
@@ -438,7 +469,7 @@ public class ManagedProject extends BuildObject implements IManagedProject {
 		
 		
 		// Otherwise see if any configurations need saving
-		Iterator iter = getConfigurationList().listIterator();
+		Iterator iter = getConfigurationCollection().iterator();
 		while (iter.hasNext()) {
 			Configuration current = (Configuration) iter.next();
 			if (current.isDirty()) return true;
@@ -454,7 +485,7 @@ public class ManagedProject extends BuildObject implements IManagedProject {
 		this.isDirty = isDirty;
 		// Propagate "false" to the children
 		if (!isDirty) {
-			Iterator iter = getConfigurationList().listIterator();
+			Iterator iter = getConfigurationCollection().iterator();
 			while (iter.hasNext()) {
 				Configuration current = (Configuration) iter.next();
 				current.setDirty(false);
@@ -498,12 +529,12 @@ public class ManagedProject extends BuildObject implements IManagedProject {
 	 * this method is called by the UserDefinedMacroSupplier to obtain user-defined
 	 * macros available for this managed project
 	 */
-	public StorableMacros getUserDefinedMacros(){
+/*	public StorableMacros getUserDefinedMacros(){
 		if(userDefinedMacros == null)
 			userDefinedMacros = new StorableMacros();
 		return userDefinedMacros;
 	}
-
+*/
 	public StorableEnvironment getUserDefinedEnvironmet(){
 		return userDefinedEnvironment;
 	}
@@ -517,7 +548,7 @@ public class ManagedProject extends BuildObject implements IManagedProject {
 	 */
 	public void updateManagedBuildRevision(String revision){
 		super.updateManagedBuildRevision(revision);
-		for(Iterator iter = getConfigurationList().iterator(); iter.hasNext();){
+		for(Iterator iter = getConfigurationCollection().iterator(); iter.hasNext();){
 			Configuration cfg = (Configuration)iter.next();
 			cfg.updateManagedBuildRevision(revision);
 		}
@@ -532,5 +563,100 @@ public class ManagedProject extends BuildObject implements IManagedProject {
 				projectTypeId = this.projectType.getId();
 			}
 		}				
+	}
+	
+	public void applyConfiguration(Configuration cfg){
+		cfg.applyToManagedProject(this);
+	}
+	
+	public IBuildObjectProperties getBuildProperties() {
+		if(buildProperties == null){
+			BuildObjectProperties parentProps = findBuildProperties();
+			if(parentProps != null)
+				buildProperties = new BuildObjectProperties(parentProps, this, this);
+			else
+				buildProperties = new BuildObjectProperties(this, this);
+		}
+		return buildProperties;
+	}
+	
+	private BuildObjectProperties findBuildProperties(){
+		if(buildProperties == null){
+			if(projectType != null){
+				return ((ProjectType)projectType).findBuildProperties();
+			}
+			return null;
+		}
+		return buildProperties;
+	}
+
+	public void propertiesChanged() {
+		IConfiguration cfgs[] = getConfigurations();
+		for(int i = 0; i < cfgs.length; i++){
+			((Configuration)cfgs[i]).propertiesChanged();
+		}
+	}
+
+	public boolean supportsType(IBuildPropertyType type) {
+		return supportsType(type.getId());
+	}
+
+	public boolean supportsValue(IBuildPropertyType type,
+			IBuildPropertyValue value) {
+		return supportsValue(type.getId(), value.getId());
+	}
+
+	public boolean supportsType(String typeId) {
+		IConfiguration cfgs[] = getConfigurations();
+		for(int i = 0; i < cfgs.length; i++){
+			if(((Configuration)cfgs[i]).supportsType(typeId))
+				return true;
+		}
+		return false;
+	}
+
+	public boolean supportsValue(String typeId, String valueId) {
+		IConfiguration cfgs[] = getConfigurations();
+		for(int i = 0; i < cfgs.length; i++){
+			if(((Configuration)cfgs[i]).supportsValue(typeId, valueId))
+				return true;
+		}
+		return false;
+	}
+	
+	public String[] getRequiredTypeIds() {
+		List result = new ArrayList();
+		IConfiguration cfgs[] = getConfigurations();
+		for(int i = 0; i < cfgs.length; i++){
+			result.addAll(Arrays.asList(((Configuration)cfgs[i]).getRequiredTypeIds()));
+		}
+		return (String[])result.toArray(new String[result.size()]);
+	}
+
+	public String[] getSupportedTypeIds() {
+		List result = new ArrayList();
+		IConfiguration cfgs[] = getConfigurations();
+		for(int i = 0; i < cfgs.length; i++){
+			result.addAll(Arrays.asList(((Configuration)cfgs[i]).getSupportedTypeIds()));
+		}
+		return (String[])result.toArray(new String[result.size()]);
+	}
+
+	public String[] getSupportedValueIds(String typeId) {
+		List result = new ArrayList();
+		IConfiguration cfgs[] = getConfigurations();
+		for(int i = 0; i < cfgs.length; i++){
+			result.addAll(Arrays.asList(((Configuration)cfgs[i]).getSupportedValueIds(typeId)));
+		}
+		return (String[])result.toArray(new String[result.size()]);
+	}
+
+	public boolean requiresType(String typeId) {
+		IConfiguration cfgs[] = getConfigurations();
+		for(int i = 0; i < cfgs.length; i++){
+			if(((Configuration)cfgs[i]).requiresType(typeId))
+				return true;
+		}
+		return false;
 	}
 }

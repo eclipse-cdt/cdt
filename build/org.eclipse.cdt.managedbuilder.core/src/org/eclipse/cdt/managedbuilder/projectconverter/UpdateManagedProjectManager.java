@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2006 Intel Corporation and others.
+ * Copyright (c) 2004, 2007 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -319,7 +319,7 @@ public class UpdateManagedProjectManager {
 				version = getManagedBuildInfoVersion(info.getVersion());
 			}
 	
-			if(!isCompatibleProject(info)){
+			if(/*!isCompatibleProject(info)*/ !version.equals(new PluginVersionIdentifier(3,1,0))){
 				throw new CoreException(new Status(IStatus.ERROR, ManagedBuilderCorePlugin.getUniqueIdentifier(), -1,
 						ConverterMessages.getFormattedString("UpdateManagedProjectManager.5",  //$NON-NLS-1$
 								new String [] {

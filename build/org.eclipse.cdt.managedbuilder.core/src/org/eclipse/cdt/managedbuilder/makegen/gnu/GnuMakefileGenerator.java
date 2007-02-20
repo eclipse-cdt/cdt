@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2006 IBM Corporation and others.
+ * Copyright (c) 2003, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -22,21 +22,23 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedHashMap;	// Note: We use LinkedHashMap instead of HashMap 
-								// only to keep the generation of makefiles constant
-								// for our test set.  Make itself doesn't care 
-								// about the order.
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.Vector;
 
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.settings.model.util.IPathSettingsContainerVisitor;
+import org.eclipse.cdt.core.settings.model.util.PathSettingsContainer;
 import org.eclipse.cdt.internal.core.model.Util;
 import org.eclipse.cdt.managedbuilder.core.BuildException;
 import org.eclipse.cdt.managedbuilder.core.IBuildObject;
+import org.eclipse.cdt.managedbuilder.core.IBuilder;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
+import org.eclipse.cdt.managedbuilder.core.IFileInfo;
+import org.eclipse.cdt.managedbuilder.core.IFolderInfo;
 import org.eclipse.cdt.managedbuilder.core.IInputType;
 import org.eclipse.cdt.managedbuilder.core.IManagedBuildInfo;
 import org.eclipse.cdt.managedbuilder.core.IManagedCommandLineGenerator;
@@ -44,23 +46,24 @@ import org.eclipse.cdt.managedbuilder.core.IManagedCommandLineInfo;
 import org.eclipse.cdt.managedbuilder.core.IManagedOutputNameProvider;
 import org.eclipse.cdt.managedbuilder.core.IOption;
 import org.eclipse.cdt.managedbuilder.core.IOutputType;
-import org.eclipse.cdt.managedbuilder.core.IResourceConfiguration;
+import org.eclipse.cdt.managedbuilder.core.IResourceInfo;
 import org.eclipse.cdt.managedbuilder.core.ITool;
-import org.eclipse.cdt.managedbuilder.core.IToolChain;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuilderCorePlugin;
 import org.eclipse.cdt.managedbuilder.internal.core.ManagedMakeMessages;
+import org.eclipse.cdt.managedbuilder.internal.core.ResourceInfo;
+import org.eclipse.cdt.managedbuilder.internal.macros.BuildMacroProvider;
 import org.eclipse.cdt.managedbuilder.internal.macros.FileContextData;
-import org.eclipse.cdt.managedbuilder.internal.macros.MacroResolver;
 import org.eclipse.cdt.managedbuilder.macros.BuildMacroException;
 import org.eclipse.cdt.managedbuilder.macros.IBuildMacroProvider;
 import org.eclipse.cdt.managedbuilder.makegen.IManagedBuilderMakefileGenerator;
-import org.eclipse.cdt.managedbuilder.makegen.IManagedDependencyGeneratorType;
+import org.eclipse.cdt.managedbuilder.makegen.IManagedBuilderMakefileGenerator2;
+import org.eclipse.cdt.managedbuilder.makegen.IManagedDependencyCalculator;
+import org.eclipse.cdt.managedbuilder.makegen.IManagedDependencyCommands;
 import org.eclipse.cdt.managedbuilder.makegen.IManagedDependencyGenerator;
 import org.eclipse.cdt.managedbuilder.makegen.IManagedDependencyGenerator2;
+import org.eclipse.cdt.managedbuilder.makegen.IManagedDependencyGeneratorType;
 import org.eclipse.cdt.managedbuilder.makegen.IManagedDependencyInfo;
-import org.eclipse.cdt.managedbuilder.makegen.IManagedDependencyCommands;
-import org.eclipse.cdt.managedbuilder.makegen.IManagedDependencyCalculator;
 import org.eclipse.cdt.managedbuilder.makegen.IManagedDependencyPreBuild;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
@@ -90,7 +93,7 @@ import org.eclipse.core.runtime.SubProgressMonitor;
  * @since 1.2
  */
 
-public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
+public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 
 	/**
 	 * This class walks the delta supplied by the build system to determine
@@ -108,14 +111,20 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 	 */
 	public class ResourceDeltaVisitor implements IResourceDeltaVisitor {
 		private GnuMakefileGenerator generator;
-		private IManagedBuildInfo info;
+//		private IManagedBuildInfo info;
+		private IConfiguration config;
 
 		/**
 		 * The constructor 
 		 */
 		public ResourceDeltaVisitor(GnuMakefileGenerator generator, IManagedBuildInfo info) {
 			this.generator = generator;
-			this.info = info;
+			this.config = info.getDefaultConfiguration();
+		}
+
+		public ResourceDeltaVisitor(GnuMakefileGenerator generator, IConfiguration cfg) {
+			this.generator = generator;
+			this.config = cfg;
 		}
 
 		/* (non-Javadoc)
@@ -125,43 +134,51 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 			// Should the visitor keep iterating in current directory 
 			boolean keepLooking = false;
 			IResource resource = delta.getResource();
-			
+			IResourceInfo rcInfo = config.getResourceInfo(resource.getProjectRelativePath(), false);
+			IFolderInfo fo = null;
+			boolean isSource = isSource(resource.getProjectRelativePath());
+			if(rcInfo instanceof IFolderInfo){
+				fo = (IFolderInfo)rcInfo;
+			}
 			// What kind of resource change has occurred
-			if (resource.getType() == IResource.FILE) {
-				String ext = resource.getFileExtension();
-				switch (delta.getKind()) {
-					case IResourceDelta.ADDED:
-						if (!generator.isGeneratedResource(resource)) {
-							// This is a source file so just add its container
-							if (info.buildsFileType(ext)) {
-								generator.appendModifiedSubdirectory(resource);
+			if(!rcInfo.isExcluded() && isSource){
+				if (resource.getType() == IResource.FILE) {
+					String ext = resource.getFileExtension();
+					switch (delta.getKind()) {
+						case IResourceDelta.ADDED:
+							if (!generator.isGeneratedResource(resource)) {
+								// This is a source file so just add its container
+								if (fo == null || fo.buildsFileType(ext)) {
+									generator.appendModifiedSubdirectory(resource);
+								}
 							}
-						}
-						break;
-					case IResourceDelta.REMOVED:
-						// we get this notification if a resource is moved too
-						if (!generator.isGeneratedResource(resource)) {
-							// This is a source file so just add its container
-							if (info.buildsFileType(ext)) {
-								generator.appendDeletedFile(resource);
-								generator.appendModifiedSubdirectory(resource);
+							break;
+						case IResourceDelta.REMOVED:
+							// we get this notification if a resource is moved too
+							if (!generator.isGeneratedResource(resource)) {
+								// This is a source file so just add its container
+								if (fo == null || fo.buildsFileType(ext)) {
+									generator.appendDeletedFile(resource);
+									generator.appendModifiedSubdirectory(resource);
+								}
 							}
-						}
-						break;
-					default:
-						keepLooking = true;
-						break;
-				}
-			} 
-			if (resource.getType() == IResource.FOLDER) {
-				// I only care about delete event
-				switch (delta.getKind()) {
-					case IResourceDelta.REMOVED:
-						if (!generator.isGeneratedResource(resource)) {
-							generator.appendDeletedSubdirectory((IContainer)resource);
-						}
-					default:
-						break;
+							break;
+						default:
+							keepLooking = true;
+							break;
+					}
+				} 
+	
+				if (resource.getType() == IResource.FOLDER) {
+					// I only care about delete event
+					switch (delta.getKind()) {
+						case IResourceDelta.REMOVED:
+							if (!generator.isGeneratedResource(resource)) {
+								generator.appendDeletedSubdirectory((IContainer)resource);
+							}
+						default:
+							break;
+					}
 				}
 			}
 			if (resource.getType() == IResource.PROJECT) {
@@ -172,7 +189,8 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 				}
 			} else {
 				// If the resource is part of the generated directory structure don't recurse
-				if (!generator.isGeneratedResource(resource)) {
+				if (resource.getType() == IResource.ROOT || 
+						(isSource && !generator.isGeneratedResource(resource))) {
 					keepLooking = true;
 				}
 			}
@@ -189,7 +207,8 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 	 */
 	protected class ResourceProxyVisitor implements IResourceProxyVisitor {
 		private GnuMakefileGenerator generator;
-		private IManagedBuildInfo info;
+		private IConfiguration config;
+//		private IManagedBuildInfo info;
 
 		/**
 		 * Constructs a new resource proxy visitor to quickly visit project
@@ -197,7 +216,12 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 		 */
 		public ResourceProxyVisitor(GnuMakefileGenerator generator, IManagedBuildInfo info) {
 			this.generator = generator;
-			this.info = info;
+			this.config = info.getDefaultConfiguration();
+		}
+
+		public ResourceProxyVisitor(GnuMakefileGenerator generator, IConfiguration cfg) {
+			this.generator = generator;
+			this.config = cfg;
 		}
 
 		/* (non-Javadoc)
@@ -209,28 +233,42 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 				return false;
 			}
 			
+			IResource resource = proxy.requestResource();
+			boolean isSource = isSource(resource.getProjectRelativePath());
+			
 			// Is this a resource we should even consider
 			if (proxy.getType() == IResource.FILE) {
 				// If this resource has a Resource Configuration and is not excluded or
 				// if it has a file extension that one of the tools builds, add the sudirectory to the list
-				IResource resource = proxy.requestResource();
-				boolean willBuild = false; 
-				IResourceConfiguration resConfig = config.getResourceConfiguration(resource.getFullPath().toString());
-				if (resConfig != null) willBuild = true;
-				if (!willBuild) {
-					String ext = resource.getFileExtension();				
-					if (info.buildsFileType(ext) &&
-							// If this file resource is a generated resource, then it is uninteresting
-							!generator.isGeneratedResource(resource)) {
+//				boolean willBuild = false; 
+				IResourceInfo rcInfo = config.getResourceInfo(resource.getProjectRelativePath(), false);
+				if (isSource && !rcInfo.isExcluded()) {
+					boolean willBuild = false;
+					if(rcInfo instanceof IFolderInfo){
+						String ext = resource.getFileExtension();				
+						if (((IFolderInfo)rcInfo).buildsFileType(ext) &&
+								// If this file resource is a generated resource, then it is uninteresting
+								!generator.isGeneratedResource(resource)) {
+							willBuild = true;
+						}
+					} else {
 						willBuild = true;
 					}
-				}
-				if (willBuild) {
-					if ((resConfig == null) || (!(resConfig.isExcluded()))) {
+					
+					if(willBuild)
 						generator.appendBuildSubdirectory(resource);
-					}
-				}				
+				}
+//				if (willBuild) {
+//					if ((resConfig == null) || (!(resConfig.isExcluded()))) {
+//						generator.appendBuildSubdirectory(resource);
+//					}
+//				}				
 				return false;
+			} else if (proxy.getType() == IResource.FOLDER){
+				
+				if(!isSource || generator.isGeneratedResource(resource))
+					return false;
+				return true;
 			}
 
 			// Recurse into subdirectories
@@ -282,16 +320,28 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 			PROJECT_SUBDIR_RELATIVE = 2,
 			ABSOLUTE = 3;
 	
+	class ToolInfoHolder {
+		ITool[] buildTools;
+		boolean[] buildToolsUsed;
+		ManagedBuildGnuToolInfo[] gnuToolInfos;
+		Set outputExtensionsSet;
+		List dependencyMakefiles;
+	}
+	
+	
 	// Local variables needed by generator
 	private String buildTargetName;
 	private String buildTargetExt;
 	private IConfiguration config;
-	private ITool[] buildTools;
-	private boolean[] buildToolsUsed;
-	private ManagedBuildGnuToolInfo[] gnuToolInfos;
+	private IBuilder builder;
+//	private ITool[] buildTools;
+//	private boolean[] buildToolsUsed;
+//	private ManagedBuildGnuToolInfo[] gnuToolInfos;
+	private PathSettingsContainer toolInfos;
 	private Vector deletedFileList;
 	private Vector deletedDirList;
-	private IManagedBuildInfo info;
+//	private IManagedBuildInfo info;
+//	private IConfiguration cfg
 	private Vector invalidDirList;
 	private Vector modifiedList;
 	private IProgressMonitor monitor;
@@ -302,7 +352,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 	private Vector depRuleList;				//  String's of rules for generating dependency files
 	private Vector subdirList;
 	private IPath topBuildDir;				//  Build directory - relative to the workspace
-	private Set outputExtensionsSet;
+//	private Set outputExtensionsSet;
 	// Maps of macro names (String) to values (List)
     private HashMap buildSrcVars = new HashMap();	//  Map of source file build variable names
     												//  to a List of source file Path's
@@ -312,7 +362,9 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
     												//  to a List of GnuDependencyGroupInfo objects
 	private LinkedHashMap topBuildOutVars = new LinkedHashMap();
 	// Dependency file variables
-	private Vector dependencyMakefiles;		//  IPath's - relative to the top build directory or absolute
+//	private Vector dependencyMakefiles;		//  IPath's - relative to the top build directory or absolute
+	
+	private IPath srcPaths[];
 	
 	
 	public GnuMakefileGenerator() {
@@ -342,7 +394,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 		// Save the monitor reference for reporting back to the user
 		this.monitor = monitor;
 		// Get the build info for the project
-		this.info = info;
+//		this.info = info;
 		// Get the name of the build target
 		buildTargetName = info.getBuildArtifactName();
 		// Get its extension
@@ -367,7 +419,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 					" ", //$NON-NLS-1$
 					IBuildMacroProvider.CONTEXT_CONFIGURATION,
 					info.getDefaultConfiguration());
-			if((resolved = resolved.trim()).length() > 0)
+			if(resolved != null && (resolved = resolved.trim()).length() > 0)
 				buildTargetName = resolved;
 		} catch (BuildMacroException e){
 		}
@@ -378,11 +430,8 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 		}
 		// Cache the build tools
 		config = info.getDefaultConfiguration();
-		buildTools = config.getFilteredTools();
-		buildToolsUsed = new boolean[buildTools.length];
-		for (int i=0; i<buildTools.length; i++) buildToolsUsed[i] = false;
-		// Initialize the tool info array
-		gnuToolInfos = new ManagedBuildGnuToolInfo[buildTools.length];
+		builder = config.getEditableBuilder();
+		initToolInfos();
 		//set the top build dir path
 		topBuildDir = project.getFolder(info.getConfigurationName()).getFullPath();
 	}
@@ -390,12 +439,22 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 	/**
 	 * This method calls the dependency postprocessors defined for the tool chain
 	 */
-	private void callDependencyPostProcessors(IFile depFile,
+	private void callDependencyPostProcessors(IResourceInfo rcInfo, ToolInfoHolder h, IFile depFile,
 			IManagedDependencyGenerator2[] postProcessors,	// This array is the same size as the buildTools array and has
 															// an entry set when the corresponding tool has a dependency calculator
 			boolean callPopulateDummyTargets,
 			boolean force) throws CoreException {
 		try {
+//			IPath path = depFile.getFullPath();
+//			path = inFullPathFromOutFullPath(path);
+//			IResourceInfo rcInfo = config.getResourceInfo(path, false);
+//			IFolderInfo fo;
+//			if(rcInfo instanceof IFileInfo){
+//				fo = (IFolderInfo)config.getResourceInfo(path.removeLastSegments(1), false);
+//			} else {
+//				fo = (IFolderInfo)rcInfo;
+//			}
+//			ToolInfoHolder h = getToolInfo(fo.getPath());
 			updateMonitor(ManagedMakeMessages.getFormattedString("GnuMakefileGenerator.message.postproc.dep.file", depFile.getName()));	//$NON-NLS-1$
 			if (postProcessors != null) {
 				IPath absolutePath = depFile.getLocation();
@@ -404,12 +463,12 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 				for (int i=0; i<postProcessors.length; i++) {
 					IManagedDependencyGenerator2 depGen = postProcessors[i];
 					if (depGen != null) {
-						depGen.postProcessDependencyFile(depPath, config, buildTools[i], getTopBuildDir());
+						depGen.postProcessDependencyFile(depPath, config, h.buildTools[i], getTopBuildDir());
 					}
 				}
 			}
 			if (callPopulateDummyTargets) {
-				populateDummyTargets(config, depFile, force);
+				populateDummyTargets(rcInfo, depFile, force);
 			}
 		} catch (CoreException e) {
 			throw e;
@@ -421,12 +480,13 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 	 * This method collects the dependency postprocessors and file extensions defined for the tool chain
 	 */
 	private boolean collectDependencyGeneratorInformation(
+			ToolInfoHolder h,
 		Vector depExts,					//  Vector of dependency file extensions
 		IManagedDependencyGenerator2[] postProcessors) {
 		
 		boolean callPopulateDummyTargets = false;
-		for (int i=0; i<buildTools.length; i++) {
-			ITool tool = buildTools[i];
+		for (int i=0; i<h.buildTools.length; i++) {
+			ITool tool = h.buildTools[i];
 			IManagedDependencyGeneratorType depType = tool.getDependencyGeneratorForExtension(tool.getDefaultInputExtension());
 			if (depType != null) {
 				int calcType = depType.getCalculatorType();
@@ -451,26 +511,56 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 		}		
 		return callPopulateDummyTargets;
 	}
+
+	protected boolean isSource(IPath path){
+		path = path.makeRelative();
+		for(int i = 0; i < srcPaths.length; i++){
+			if(srcPaths[i].isPrefixOf(path))
+				return true;
+		}
+		return false;
+	}
+	
+	private class DepInfo {
+		Vector depExts;
+		IManagedDependencyGenerator2[] postProcessors;
+		boolean callPopulateDummyTargets;
+	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.makegen.IManagedBuilderMakefileGenerator#generateDependencies()
 	 */
 	public void generateDependencies() throws CoreException {
+		final PathSettingsContainer postProcs = PathSettingsContainer.createRootContainer();
 		// Note: PopulateDummyTargets is a hack for the pre-3.x GCC compilers
 		
 		// Collect the methods that will need to be called
-		Vector depExts = new Vector();				//  Vector of dependency file extensions
-		IManagedDependencyGenerator2[] postProcessors = new IManagedDependencyGenerator2[buildTools.length];
-		boolean callPopulateDummyTargets = collectDependencyGeneratorInformation(depExts, postProcessors);
-		
-		// Is there anyone to call if we do find dependency files?
-		if (!callPopulateDummyTargets) {
-			int i;
-			for (i=0; i<postProcessors.length; i++) {
-				if (postProcessors[i] != null) break;
+		toolInfos.accept(new IPathSettingsContainerVisitor(){
+			public boolean visit(PathSettingsContainer container){
+				ToolInfoHolder h = (ToolInfoHolder)container.getValue();
+				Vector depExts = new Vector();				//  Vector of dependency file extensions
+				IManagedDependencyGenerator2[] postProcessors = new IManagedDependencyGenerator2[h.buildTools.length];
+				boolean callPopulateDummyTargets = collectDependencyGeneratorInformation(h, depExts, postProcessors);
+				
+				// Is there anyone to call if we do find dependency files?
+				if (!callPopulateDummyTargets) {
+					int i;
+					for (i=0; i<postProcessors.length; i++) {
+						if (postProcessors[i] != null) break;
+					}
+					if (i == postProcessors.length) return true;
+				}
+				
+				PathSettingsContainer child = postProcs.getChildContainer(container.getPath(), true, true);
+				DepInfo di = new DepInfo();
+				di.depExts = depExts;
+				di.postProcessors = postProcessors;
+				di.callPopulateDummyTargets = callPopulateDummyTargets;
+				child.setValue(di);
+				
+				return true;
 			}
-			if (i == postProcessors.length) return;
-		}
+		});
 				
 		IWorkspaceRoot root = CCorePlugin.getWorkspace().getRoot();
 		Iterator subDirs = getSubdirList().listIterator();
@@ -478,6 +568,14 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 			// The builder creates a subdir with same name as source in the build location
 			IContainer subDir = (IContainer)subDirs.next();
 			IPath projectRelativePath = subDir.getProjectRelativePath();
+			IResourceInfo rcInfo = config.getResourceInfo(projectRelativePath, false);
+			PathSettingsContainer cr = postProcs.getChildContainer(rcInfo.getPath(), false, true);
+			if(cr == null || cr.getValue() == null)
+				continue;
+			
+			DepInfo di = (DepInfo)cr.getValue();
+			
+			ToolInfoHolder h = getToolInfo(projectRelativePath);
 			IPath buildRelativePath = topBuildDir.append(projectRelativePath);
 			IFolder buildFolder = root.getFolder(buildRelativePath);
 			if (buildFolder == null) continue;
@@ -487,13 +585,13 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 			for (int index = 0; index < files.length; ++index){
 				IResource file = files[index];
 				String fileExt = file.getFileExtension();
-				Iterator iter = depExts.iterator();
+				Iterator iter = di.depExts.iterator();
 				while (iter.hasNext()) {
 					String ext = (String)iter.next();
 					if (ext.equals(fileExt)) {
 						IFile depFile = root.getFile(file.getFullPath());
 						if (depFile == null) continue;
-						callDependencyPostProcessors(depFile, postProcessors, callPopulateDummyTargets, false);
+						callDependencyPostProcessors(rcInfo, h, depFile, di.postProcessors, di.callPopulateDummyTargets, false);
 					}
 				}
 			}
@@ -510,7 +608,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 		 * 1. This is an incremental build, so if the top-level directory is not 
 		 * there, then a rebuild is needed.
 		 */
-		IFolder folder = project.getFolder(info.getConfigurationName());
+		IFolder folder = project.getFolder(config.getName());
 		if (!folder.exists()) {
 			return regenerateMakefiles();
 		}
@@ -520,13 +618,13 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 
 		// Visit the resources in the delta and compile a list of subdirectories to regenerate
 		updateMonitor(ManagedMakeMessages.getFormattedString("MakefileGenerator.message.calc.delta", project.getName()));	//$NON-NLS-1$
-		ResourceDeltaVisitor visitor = new ResourceDeltaVisitor(this, info);
+		ResourceDeltaVisitor visitor = new ResourceDeltaVisitor(this, config);
 		delta.accept(visitor);
 		checkCancel();
 		
 		// Get all the subdirectories participating in the build
 		updateMonitor(ManagedMakeMessages.getFormattedString("MakefileGenerator.message.finding.sources", project.getName()));	//$NON-NLS-1$
-		ResourceProxyVisitor resourceVisitor = new ResourceProxyVisitor(this, info);
+		ResourceProxyVisitor resourceVisitor = new ResourceProxyVisitor(this, config);
 		project.accept(resourceVisitor, IResource.NONE);
 		checkCancel();
 		
@@ -549,7 +647,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 		} 
 
 		// Make sure the build directory is available
-		topBuildDir = createDirectory(info.getConfigurationName());
+		topBuildDir = createDirectory(config.getName());
 		checkCancel();
 
 		// Make sure that there is a makefile containing all the folders participating
@@ -691,7 +789,8 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 	public boolean isGeneratedResource(IResource resource) {
 		// Is this a generated directory ...
 		IPath path = resource.getProjectRelativePath();
-		String[] configNames = info.getConfigurationNames();
+		//TODO: fix to use builder output dir instead
+		String[] configNames = ManagedBuildManager.getBuildInfo(project).getConfigurationNames();
 		for (int i = 0; i < configNames.length; i++) {
 			String name = configNames[i];
 			IPath root = new Path(name);
@@ -707,30 +806,46 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 	 */
 	public void regenerateDependencies(boolean force) throws CoreException {
 		// A hack for the pre-3.x GCC compilers is to put dummy targets for deps
-		IWorkspaceRoot root = CCorePlugin.getWorkspace().getRoot();
+		final IWorkspaceRoot root = CCorePlugin.getWorkspace().getRoot();
+		final CoreException[] es = new CoreException[1];
 		
-		// Collect the methods that will need to be called
-		Vector depExts = new Vector();				//  Vector of dependency file extensions
-		IManagedDependencyGenerator2[] postProcessors = new IManagedDependencyGenerator2[buildTools.length];
-		boolean callPopulateDummyTargets = collectDependencyGeneratorInformation(depExts, postProcessors);
-		
-		// Is there anyone to call if we do find dependency files?
-		if (!callPopulateDummyTargets) {
-			int i;
-			for (i=0; i<postProcessors.length; i++) {
-				if (postProcessors[i] != null) break;
-			}
-			if (i == postProcessors.length) return;
-		}
+		toolInfos.accept(new IPathSettingsContainerVisitor(){
+			public boolean visit(PathSettingsContainer container){
+				ToolInfoHolder h = (ToolInfoHolder)container.getValue();
+				// Collect the methods that will need to be called
+				Vector depExts = new Vector();				//  Vector of dependency file extensions
+				IManagedDependencyGenerator2[] postProcessors = new IManagedDependencyGenerator2[h.buildTools.length];
+				boolean callPopulateDummyTargets = collectDependencyGeneratorInformation(h, depExts, postProcessors);
+				
+				// Is there anyone to call if we do find dependency files?
+				if (!callPopulateDummyTargets) {
+					int i;
+					for (i=0; i<postProcessors.length; i++) {
+						if (postProcessors[i] != null) break;
+					}
+					if (i == postProcessors.length) return true;
+				}
 
-		Iterator iter = getDependencyMakefiles().listIterator();
-		while (iter.hasNext()) {
-			// The path to search for the dependency makefile
-			IPath relDepFilePath = topBuildDir.append((Path)iter.next());
-			IFile depFile = root.getFile(relDepFilePath);
-			if (depFile == null || !depFile.isAccessible()) continue;
-			callDependencyPostProcessors(depFile, postProcessors, callPopulateDummyTargets, true);
-		}
+				Iterator iter = getDependencyMakefiles(h).listIterator();
+				IResourceInfo rcInfo = config.getResourceInfo(container.getPath(), false);
+				while (iter.hasNext()) {
+					// The path to search for the dependency makefile
+					IPath relDepFilePath = topBuildDir.append((Path)iter.next());
+					IFile depFile = root.getFile(relDepFilePath);
+					if (depFile == null || !depFile.isAccessible()) continue;
+					try {
+						callDependencyPostProcessors(rcInfo, h, depFile, postProcessors, callPopulateDummyTargets, true);
+					} catch (CoreException e) {
+						es[0] = e;
+						return false;
+					}
+				}
+				return true;
+			}
+		});
+		
+		if(es[0] != null)
+			throw es[0];
 	}
 	
 	/* (non-Javadoc)
@@ -739,7 +854,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 	public MultiStatus regenerateMakefiles() throws CoreException {
 		MultiStatus status;
 		// Visit the resources in the project
-		ResourceProxyVisitor visitor = new ResourceProxyVisitor(this, info);
+		ResourceProxyVisitor visitor = new ResourceProxyVisitor(this, config);
 		project.accept(visitor, IResource.NONE);
 		
 		// See if the user has cancelled the build
@@ -764,7 +879,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 		} 
 
 		// Create the top-level directory for the build output
-		topBuildDir = createDirectory(info.getConfigurationName());
+		topBuildDir = createDirectory(config.getName());
 		checkCancel();
 		
 		// Get the list of subdirectories
@@ -893,7 +1008,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 		
 		// Add the libraries this project depends on
 		valueList = new ArrayList();
-		String[] libs = info.getLibsForConfiguration(buildTargetExt);
+		String[] libs = config.getLibs(buildTargetExt);
 		for (int i = 0; i < libs.length; i++) {
 			String string = libs[i];
 			valueList.add(string);
@@ -902,7 +1017,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 		
 		// Add the extra user-specified objects
 		valueList = new ArrayList();
-		String[] userObjs = info.getUserObjectsForConfiguration(buildTargetExt);
+		String[] userObjs = config.getUserObjects(buildTargetExt);
 		for (int i = 0; i < userObjs.length; i++) {
 			String string = userObjs[i];
 			valueList.add(string);
@@ -936,58 +1051,65 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 		StringBuffer buffer = addDefaultHeader();
 
 		// Determine the set of macros
- 		HashSet handledInputExtensions = new HashSet();
-		String buildMacro;
-		for (int i=0; i<buildTools.length; i++) {
-			// Add the known sources macros
- 			String[] extensionsList = buildTools[i].getAllInputExtensions();
- 			for (int j=0; j<extensionsList.length; j++) {
- 				// create a macro of the form "EXTENSION_SRCS :="
- 				String extensionName = extensionsList[j];
-				if(//!getOutputExtensions().contains(extensionName) && 
-				   !handledInputExtensions.contains(extensionName)) {
- 					handledInputExtensions.add(extensionName);
- 					buildMacro = getSourceMacroName(extensionName).toString();
-					if (!buildSrcVars.containsKey(buildMacro)) {
-						buildSrcVars.put(buildMacro, new ArrayList());
-					}
-					// Add any generated dependency file macros
-		 			IManagedDependencyGeneratorType depType = buildTools[i].getDependencyGeneratorForExtension(extensionName);
-		 			if (depType != null) {
-		 				int calcType = depType.getCalculatorType();
-		 				if (calcType == IManagedDependencyGeneratorType.TYPE_COMMAND ||
-		 					calcType == IManagedDependencyGeneratorType.TYPE_BUILD_COMMANDS ||
-		 					calcType == IManagedDependencyGeneratorType.TYPE_PREBUILD_COMMANDS) {
-		 					buildMacro = getDepMacroName(extensionName).toString();
-							if (!buildDepVars.containsKey(buildMacro)) {
-								buildDepVars.put(buildMacro, new GnuDependencyGroupInfo(buildMacro, 
-										(calcType != IManagedDependencyGeneratorType.TYPE_PREBUILD_COMMANDS)));
+		toolInfos.accept(new IPathSettingsContainerVisitor() {
+			
+			public boolean visit(PathSettingsContainer container){
+				ToolInfoHolder h = (ToolInfoHolder)container.getValue();
+				ITool[] buildTools = h.buildTools;
+		 		HashSet handledInputExtensions = new HashSet();
+				String buildMacro;
+				for (int i=0; i<buildTools.length; i++) {
+					// Add the known sources macros
+		 			String[] extensionsList = buildTools[i].getAllInputExtensions();
+		 			for (int j=0; j<extensionsList.length; j++) {
+		 				// create a macro of the form "EXTENSION_SRCS :="
+		 				String extensionName = extensionsList[j];
+						if(//!getOutputExtensions().contains(extensionName) && 
+						   !handledInputExtensions.contains(extensionName)) {
+		 					handledInputExtensions.add(extensionName);
+		 					buildMacro = getSourceMacroName(extensionName).toString();
+							if (!buildSrcVars.containsKey(buildMacro)) {
+								buildSrcVars.put(buildMacro, new ArrayList());
 							}
+							// Add any generated dependency file macros
+				 			IManagedDependencyGeneratorType depType = buildTools[i].getDependencyGeneratorForExtension(extensionName);
+				 			if (depType != null) {
+				 				int calcType = depType.getCalculatorType();
+				 				if (calcType == IManagedDependencyGeneratorType.TYPE_COMMAND ||
+				 					calcType == IManagedDependencyGeneratorType.TYPE_BUILD_COMMANDS ||
+				 					calcType == IManagedDependencyGeneratorType.TYPE_PREBUILD_COMMANDS) {
+				 					buildMacro = getDepMacroName(extensionName).toString();
+									if (!buildDepVars.containsKey(buildMacro)) {
+										buildDepVars.put(buildMacro, new GnuDependencyGroupInfo(buildMacro, 
+												(calcType != IManagedDependencyGeneratorType.TYPE_PREBUILD_COMMANDS)));
+									}
+									if (!buildOutVars.containsKey(buildMacro)) {
+										buildOutVars.put(buildMacro, new ArrayList());
+									}
+				 				}
+				 			}
+		 				}
+		 			}
+					// Add the specified output build variables
+					IOutputType[] outTypes = buildTools[i].getOutputTypes();
+					if (outTypes != null && outTypes.length > 0) {
+						for (int j=0; j<outTypes.length; j++) {
+							buildMacro = outTypes[j].getBuildVariable();
 							if (!buildOutVars.containsKey(buildMacro)) {
 								buildOutVars.put(buildMacro, new ArrayList());
 							}
-		 				}
-		 			}
- 				}
- 			}
-			// Add the specified output build variables
-			IOutputType[] outTypes = buildTools[i].getOutputTypes();
-			if (outTypes != null && outTypes.length > 0) {
-				for (int j=0; j<outTypes.length; j++) {
-					buildMacro = outTypes[j].getBuildVariable();
-					if (!buildOutVars.containsKey(buildMacro)) {
-						buildOutVars.put(buildMacro, new ArrayList());
+						}
+					} else {
+						// For support of pre-CDT 3.0 integrations.
+						buildMacro = OBJS_MACRO;	//$NON-NLS-1$
+						if (!buildOutVars.containsKey(buildMacro)) {
+							buildOutVars.put(buildMacro, new ArrayList());
+						}
 					}
 				}
-			} else {
-				// For support of pre-CDT 3.0 integrations.
-				buildMacro = OBJS_MACRO;	//$NON-NLS-1$
-				if (!buildOutVars.containsKey(buildMacro)) {
-					buildOutVars.put(buildMacro, new ArrayList());
-				}
+				return true;
 			}
-		}
-		
+		});
 		// Add the macros to the makefile
 		Iterator iterator = buildSrcVars.entrySet().iterator();
 		while (iterator.hasNext()) {
@@ -1071,11 +1193,11 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 		buffer.append("RM := "); //$NON-NLS-1$
 		
 		// support macros in the clean command
-		String cleanCommand = info.getCleanCommand();
+		String cleanCommand = config.getCleanCommand();
 		
 		try {
 			cleanCommand = ManagedBuildManager.getBuildMacroProvider()
-					.resolveValueToMakefileFormat(info.getCleanCommand(),
+					.resolveValueToMakefileFormat(config.getCleanCommand(),
 							EMPTY_STRING, WHITESPACE,
 							IBuildMacroProvider.CONTEXT_CONFIGURATION, config);
 		} catch (BuildMacroException e) {
@@ -1143,10 +1265,10 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 	private StringBuffer addTargets(List outputVarsAdditionsList, boolean rebuild) {
 		StringBuffer buffer = new StringBuffer();
 
-		IConfiguration config = info.getDefaultConfiguration();
+//		IConfiguration config = info.getDefaultConfiguration();
 
 		// Assemble the information needed to generate the targets
-		String prebuildStep = info.getPrebuildStep();
+		String prebuildStep = config.getPrebuildStep();
 		try{
 			//try to resolve the build macros in the prebuild step
 			prebuildStep = ManagedBuildManager.getBuildMacroProvider().resolveValueToMakefileFormat(
@@ -1159,7 +1281,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 		}
 		prebuildStep = prebuildStep.trim(); // Remove leading and trailing whitespace (and control characters)
 
-		String postbuildStep = info.getPostbuildStep();
+		String postbuildStep = config.getPostbuildStep();
 		try{
 			//try to resolve the build macros in the postbuild step
 			postbuildStep = ManagedBuildManager.getBuildMacroProvider().resolveValueToMakefileFormat(
@@ -1172,8 +1294,8 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 		} catch (BuildMacroException e){
 		}
 		postbuildStep = postbuildStep.trim(); // Remove leading and trailing whitespace (and control characters)
-		String preannouncebuildStep = info.getPreannouncebuildStep();
-		String postannouncebuildStep = info.getPostannouncebuildStep();
+		String preannouncebuildStep = config.getPreannouncebuildStep();
+		String postannouncebuildStep = config.getPostannouncebuildStep();
 		String targets = rebuild ? "clean all" : "all"; //$NON-NLS-1$ //$NON-NLS-2$
 
 		ITool targetTool = config.calculateTargetTool();
@@ -1182,14 +1304,15 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 //		}
 
 		// Get all the projects the build target depends on
-		IProject[] refdProjects = null;
-		try {
+//		IProject[] refdProjects = null;
+		IConfiguration[] refConfigs = ManagedBuildManager.getReferencedConfigurations(config);
+/*		try {
 			refdProjects = project.getReferencedProjects();
 		} catch (CoreException e) {
 			// There are 2 exceptions; the project does not exist or it is not open
 			// and neither conditions apply if we are building for it ....
 		}
-		
+*/		
         // If a prebuild step exists, redefine the all target to be
 		// all: {pre-build} main-build
 		// and then reset the "traditional" all target to main-build
@@ -1247,27 +1370,33 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 		 * are captured in the deps target: deps: <cd <Proj_Dep_1/build_dir>;
 		 * $(MAKE) [clean all | all]>
 		 */
-		Vector managedProjectOutputs = new Vector(refdProjects.length);
-		if (refdProjects.length > 0) {
+//		Vector managedProjectOutputs = new Vector(refdProjects.length);
+//		if (refdProjects.length > 0) {
+		Vector managedProjectOutputs = new Vector(refConfigs.length);
+		if (refConfigs.length > 0) {
 			boolean addDeps = true;
-			if (refdProjects != null) {
-				for (int i = 0; i < refdProjects.length; i++) {
-					IProject dep = refdProjects[i];
-					if (!dep.exists()) continue;
+//			if (refdProjects != null) {
+				for (int i = 0; i < refConfigs.length; i++) {
+//					IProject dep = refdProjects[i];
+					IConfiguration depCfg = refConfigs[i];
+					if(!depCfg.isManagedBuildOn())
+						continue;
+
+//					if (!dep.exists()) continue;
 					if (addDeps) {
 						buffer.append("dependents:" + NEWLINE); //$NON-NLS-1$						
 						addDeps = false;
 					}
-					String buildDir = dep.getLocation().toString();
+					String buildDir = depCfg.getOwner().getLocation().toString();
 					String depTargets = targets;
-					if (ManagedBuildManager.manages(dep)) {
+//					if (ManagedBuildManager.manages(dep)) {
 						// Add the current configuration to the makefile path
-						IManagedBuildInfo depInfo = ManagedBuildManager.getBuildInfo(dep);
-						buildDir += SEPARATOR + depInfo.getConfigurationName();
+//						IManagedBuildInfo depInfo = ManagedBuildManager.getBuildInfo(dep);
+						buildDir += SEPARATOR + depCfg.getName();
 					
 						// Extract the build artifact to add to the dependency list
-						String depTarget = depInfo.getBuildArtifactName();
-						String depExt = depInfo.getBuildArtifactExtension();
+						String depTarget = depCfg.getArtifactName();
+						String depExt = depCfg.getArtifactExtension();
 						
 						try{
 							//try to resolve the build macros in the artifact extension
@@ -1276,7 +1405,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 									"", //$NON-NLS-1$
 									" ", //$NON-NLS-1$
 									IBuildMacroProvider.CONTEXT_CONFIGURATION,
-									info.getDefaultConfiguration());
+									config);
 						} catch (BuildMacroException e){
 						}
 						
@@ -1287,14 +1416,14 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 									"", //$NON-NLS-1$
 									" ", //$NON-NLS-1$
 									IBuildMacroProvider.CONTEXT_CONFIGURATION,
-									info.getDefaultConfiguration());
+									config);
 							if((resolved = resolved.trim()).length() > 0)
 								depTarget = resolved;
 						} catch (BuildMacroException e){
 						}
 
-						String depPrefix = depInfo.getOutputPrefix(depExt);
-						if (depInfo.needsRebuild()) {
+						String depPrefix = depCfg.getOutputPrefix(depExt);
+						if (depCfg.needsRebuild()) {
 							depTargets = "clean all"; //$NON-NLS-1$
 						}
 						String dependency = buildDir + SEPARATOR + depPrefix + depTarget;
@@ -1303,10 +1432,10 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 						}
 						dependency = escapeWhitespaces(dependency);
 						managedProjectOutputs.add(dependency);
-					}
+					//}
 					buffer.append(TAB + "-cd" + WHITESPACE + escapeWhitespaces(buildDir) + WHITESPACE + LOGICAL_AND + WHITESPACE + "$(MAKE) " + depTargets + NEWLINE); //$NON-NLS-1$ //$NON-NLS-2$
 				}
-			}
+//			}
 			buffer.append(NEWLINE);
 		}
 		
@@ -1381,7 +1510,10 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 		StringBuffer buffer = new StringBuffer();
 		// Add the comment
 		buffer.append(COMMENT_SYMBOL + WHITESPACE + ManagedMakeMessages.getResourceString(BUILD_TOP) + NEWLINE);
-
+		
+		ToolInfoHolder h = (ToolInfoHolder)toolInfos.getValue();
+		ITool[] buildTools = h.buildTools;
+		boolean[] buildToolsUsed = h.buildToolsUsed;
 		//  Get the target tool and generate the rule
 		if (targetTool != null) { 		
 			if (addRuleForTool(targetTool, buffer, true, buildTargetName, buildTargetExt, 
@@ -1622,6 +1754,9 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 	 */
 	 private void generateRulesForConsumers(ITool generatingTool, List outputVarsAdditionsList, StringBuffer buffer) {
 		//  Generate a build rule for any tool that consumes the output of this tool
+		 ToolInfoHolder h = (ToolInfoHolder)toolInfos.getValue();
+		 ITool[] buildTools = h.buildTools;
+		 boolean[] buildToolsUsed = h.buildToolsUsed;
 		IOutputType[] outTypes = generatingTool.getOutputTypes();
 		for (int i=0; i<outTypes.length; i++) {
 			String[] outExts = outTypes[i].getOutputExtensions(generatingTool);
@@ -1658,7 +1793,9 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 			Vector enumeratedPrimaryOutputs, Vector enumeratedSecondaryOutputs, 
 			Vector outputVariables, Vector additionalTargets,	
 			boolean bTargetTool, Vector managedProjectOutputs) {
-		 
+		 ToolInfoHolder h = (ToolInfoHolder)toolInfos.getValue();
+		 ITool[] buildTools = h.buildTools;
+		 ManagedBuildGnuToolInfo[] gnuToolInfos = h.gnuToolInfos;
 		//  Get the information regarding the tool's inputs and outputs from the objects
 		//  created by calculateToolInputsOutputs
 		IManagedBuildGnuToolInfo toolInfo = null;
@@ -1697,6 +1834,8 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 	 * @throws CoreException
 	 */
 	protected Vector calculateSecondaryOutputs(IOutputType[] secondaryOutputs) {
+		ToolInfoHolder h = (ToolInfoHolder)toolInfos.getValue();
+		ITool[] buildTools = h.buildTools;
 		Vector buildVars = new Vector();
 		for (int i=0; i<buildTools.length; i++) {
 			// Add the specified output build variables
@@ -1723,7 +1862,8 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 		return buildVars;
 	}
 	
-	protected boolean isSecondaryOutputVar(IOutputType[] secondaryOutputs, String varName) {
+	protected boolean isSecondaryOutputVar(ToolInfoHolder h, IOutputType[] secondaryOutputs, String varName) {
+		ITool[] buildTools = h.buildTools;
 		for (int i=0; i<buildTools.length; i++) {
 			// Add the specified output build variables
 			IOutputType[] outTypes = buildTools[i].getOutputTypes();
@@ -1835,18 +1975,18 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 		// Visit the resources in this folder and add each one to a sources macro, and generate a build rule, if appropriate
 		IResource[] resources = module.members();
 
-		IResourceConfiguration resConfig; 
-		IFolder folder = project.getFolder(info.getConfigurationName());
+		IResourceInfo rcInfo; 
+		IFolder folder = project.getFolder(config.getName());
 		
 		for (int i = 0; i < resources.length; i++) {
 			IResource resource = resources[i];
 			if (resource.getType() == IResource.FILE) {
 				// Check whether this resource is excluded from build
-				resConfig = config.getResourceConfiguration(resource.getFullPath().toString());
-				if( (resConfig != null) && (resConfig.isExcluded()) )
+				rcInfo = config.getResourceInfo(resource.getProjectRelativePath(), false);
+				if( (rcInfo.isExcluded()) )
 					continue;
 				addFragmentMakefileEntriesForSource(buildVarToRuleStringMap, ruleBuffer, 
-						folder, relativePath, resource, resource.getLocation(), resConfig, null, false);
+						folder, relativePath, resource, resource.getLocation(), rcInfo, null, false);
 			}
 		}
 							
@@ -1870,27 +2010,42 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 	 * @param generatedSource  if <code>true</code>, this file was generated by another tool in the tool-chain
 	 */
 	protected void addFragmentMakefileEntriesForSource (LinkedHashMap buildVarToRuleStringMap, StringBuffer ruleBuffer, 
-			IFolder folder, String relativePath, IResource resource, IPath sourceLocation, IResourceConfiguration resConfig, 
+			IFolder folder, String relativePath, IResource resource, IPath sourceLocation, IResourceInfo rcInfo, 
 			String varName, boolean generatedSource) {
 		
 		//  Determine which tool, if any, builds files with this extension
 		String ext = sourceLocation.getFileExtension();
 		ITool tool = null;
 
+		//TODO: remove
+//		IResourceConfiguration resConfig = null;
+//		if(rcInfo instanceof IFileInfo){
+//			resConfig = (IFileInfo)rcInfo;
+//		}
+		//end remove
+		
 		//  Use the tool from the resource configuration if there is one
-		if (resConfig != null) {
-			ITool[] tools = resConfig.getToolsToInvoke();
+		if (rcInfo instanceof IFileInfo) {
+			IFileInfo fi = (IFileInfo)rcInfo;
+			ITool[] tools = fi.getToolsToInvoke();
 			if (tools != null && tools.length > 0) {
 				tool = tools[0];
+				if(!tool.getCustomBuildStep())
+					addToBuildVar(buildVarToRuleStringMap, ext, varName, relativePath, sourceLocation, generatedSource);
 			}
 		}
-		for (int j=0; j<buildTools.length; j++) {
-			if (buildTools[j].buildsFileType(ext)) {
-				if (tool == null) {
-					tool = buildTools[j];
+		ToolInfoHolder h = getToolInfo(rcInfo.getPath());
+		ITool buildTools[] = h.buildTools;
+		
+		if(tool == null){
+			for (int j=0; j<buildTools.length; j++) {
+				if (buildTools[j].buildsFileType(ext)) {
+					if (tool == null) {
+						tool = buildTools[j];
+					}
+					addToBuildVar(buildVarToRuleStringMap, ext, varName, relativePath, sourceLocation, generatedSource);
+					break;
 				}
-				addToBuildVar(buildVarToRuleStringMap, ext, varName, relativePath, sourceLocation, generatedSource);
-				break;
 			}
 		}
 				
@@ -1904,7 +2059,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 				// Try to add the rule for the file
 				Vector generatedOutputs = new Vector();		//  IPath's - build directory relative
 				Vector generatedDepFiles = new Vector();	//  IPath's - build directory relative or absolute
-				addRuleForSource(relativePath, ruleBuffer, resource, sourceLocation, resConfig, generatedSource, generatedDepFiles, generatedOutputs);
+				addRuleForSource(relativePath, ruleBuffer, resource, sourceLocation, rcInfo, generatedSource, generatedDepFiles, generatedOutputs);
 				
 				// If the rule generates a dependency file(s), add the file(s) to the variable
 				if (generatedDepFiles.size() > 0) {
@@ -1962,8 +2117,14 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 						generatedOutput = project.getLocation().append(getBuildWorkingDir()).append((IPath)generatedOutputs.get(k));
 						generateOutputResource = project.getFile(getBuildWorkingDir().append((IPath)generatedOutputs.get(k)));
 					}
+					IResourceInfo nextRcInfo;
+					if(rcInfo instanceof IFileInfo){
+						nextRcInfo = config.getResourceInfo(rcInfo.getPath().removeLastSegments(1), false);
+					} else {
+						nextRcInfo = rcInfo;
+					}
 					addFragmentMakefileEntriesForSource(buildVarToRuleStringMap, ruleBuffer, 
-							folder, relativePath, generateOutputResource, generatedOutput, null, buildVariable, true);
+							folder, relativePath, generateOutputResource, generatedOutput, nextRcInfo, buildVariable, true);
 				}						
 			}
 		} else { 
@@ -1980,7 +2141,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 			else {
 				IOutputType[] secondaryOutputs = config.getToolChain().getSecondaryOutputs();
 				if (secondaryOutputs.length > 0) {
-					if (isSecondaryOutputVar(secondaryOutputs, varName)) {
+					if (isSecondaryOutputVar(h, secondaryOutputs, varName)) {
 						addMacroAdditionFile(buildVarToRuleStringMap, varName, relativePath, sourceLocation, generatedSource); 
 					}
 				}
@@ -2025,6 +2186,53 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 		}
 	}
 	
+	private IManagedCommandLineInfo generateToolCommandLineInfo(ITool tool, String sourceExtension, String[] flags, 
+			String outputFlag, String outputPrefix, String outputName, String[] inputResources, IPath inputLocation, IPath outputLocation ){
+
+		String cmd = tool.getToolCommand();
+		//try to resolve the build macros in the tool command
+		try{
+			String resolvedCommand = null;
+			
+			if ((inputLocation != null && inputLocation.toString().indexOf(" ") != -1) || //$NON-NLS-1$
+					(outputLocation != null && outputLocation.toString().indexOf(" ") != -1) ) //$NON-NLS-1$
+			{
+				resolvedCommand = ManagedBuildManager
+						.getBuildMacroProvider().resolveValue(
+								cmd,
+								"", //$NON-NLS-1$
+								" ", //$NON-NLS-1$
+								IBuildMacroProvider.CONTEXT_FILE,
+								new FileContextData(inputLocation,
+										outputLocation, null,
+										tool));
+			}
+
+			else {
+				resolvedCommand = ManagedBuildManager
+						.getBuildMacroProvider()
+						.resolveValueToMakefileFormat(
+								cmd,
+								"", //$NON-NLS-1$
+								" ", //$NON-NLS-1$
+								IBuildMacroProvider.CONTEXT_FILE,
+								new FileContextData(inputLocation,
+										outputLocation, null,
+										tool));
+			}
+			if((resolvedCommand = resolvedCommand.trim()).length() > 0)
+				cmd = resolvedCommand;
+				
+		} catch (BuildMacroException e){
+		}
+
+		IManagedCommandLineGenerator gen = tool.getCommandLineGenerator();
+		return gen.generateCommandLineInfo( tool, cmd, 
+				flags, outputFlag, outputPrefix, outputName, inputResources, 
+				tool.getCommandLinePattern() );
+	
+	}
+	
 	/* (non-Javadoc)
 	 * Create a rule for this source file.  We create a pattern rule if possible.
 	 * 
@@ -2063,23 +2271,30 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 	 * @param enumeratedOutputs  vector of the filenames that are the output of this rule
 	 */
 	protected void addRuleForSource(String relativePath, StringBuffer buffer, IResource resource, 
-			IPath sourceLocation, IResourceConfiguration resConfig, 
+			IPath sourceLocation, IResourceInfo rcInfo, 
 			boolean generatedSource, Vector generatedDepFiles, Vector enumeratedOutputs) {
 		
 		String fileName = sourceLocation.removeFileExtension().lastSegment();
 		String inputExtension = sourceLocation.getFileExtension();
-		String outputExtension = info.getOutputExtension(inputExtension);
+		String outputExtension;
 
 		ITool tool = null;
-		if( resConfig != null) {
-			ITool[] tools = resConfig.getToolsToInvoke();
+		if( rcInfo instanceof IFileInfo) {
+			IFileInfo fi = (IFileInfo)rcInfo;
+			ITool[] tools = fi.getToolsToInvoke();
 			if (tools != null && tools.length > 0) {
 				tool = tools[0];
 			}
+		} else {
+			IFolderInfo foInfo = (IFolderInfo)rcInfo;
+			tool = foInfo.getToolFromInputExtension(inputExtension);
 		}
-		if (tool == null) {
-			tool = info.getToolFromInputExtension(inputExtension);
-		}
+		
+		ToolInfoHolder h = getToolInfo(rcInfo.getPath());
+		
+		outputExtension = tool.getOutputExtension(inputExtension);
+		if(outputExtension == null)
+			outputExtension = EMPTY_STRING;
 
 		//  Get the dependency generator information for this tool and file extension
 		IManagedDependencyGenerator oldDepGen = null;		//  This interface is deprecated but still supported
@@ -2098,13 +2313,13 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 					doDepGen = (calcType == IManagedDependencyGeneratorType.TYPE_COMMAND);
 					if (doDepGen) {
 						IPath depFile = Path.fromOSString(relativePath + fileName + DOT + DEP_EXT);
-						getDependencyMakefiles().add(depFile);
+						getDependencyMakefiles(h).add(depFile);
 						generatedDepFiles.add(depFile);
 					}
 				} else {
 					depGen = (IManagedDependencyGenerator2)t; 
 					doDepGen = (calcType == IManagedDependencyGeneratorType.TYPE_BUILD_COMMANDS);
-					IBuildObject buildContext = (resConfig != null) ? (IBuildObject)resConfig : (IBuildObject)config;
+					IBuildObject buildContext = rcInfo;//(resConfig != null) ? (IBuildObject)resConfig : (IBuildObject)config;
 				
 					depInfo = depGen.getDependencySourceInfo(resource.getProjectRelativePath(), resource, buildContext, tool, getBuildWorkingDir());
 					
@@ -2117,7 +2332,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 					} 
 					if (depFiles != null) {
 						for (int i=0; i<depFiles.length; i++) {
-							getDependencyMakefiles().add(depFiles[i]);
+							getDependencyMakefiles(h).add(depFiles[i]);
 							generatedDepFiles.add(depFiles[i]);
 						}
 					}
@@ -2179,8 +2394,8 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 						.getProjectRelativePath().toString()));
 				
 		boolean needExplicitRuleForFile = resourceNameRequiresExplicitRule ||
-				MacroResolver.getReferencedExplitFileMacros(tool).length > 0
-				|| MacroResolver.getReferencedExplitFileMacros(tool
+			BuildMacroProvider.getReferencedExplitFileMacros(tool).length > 0
+				|| BuildMacroProvider.getReferencedExplitFileMacros(tool
 						.getToolCommand(), IBuildMacroProvider.CONTEXT_FILE,
 						new FileContextData(sourceLocation, outputLocation,
 								null, tool)).length > 0;
@@ -2240,7 +2455,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 			// Use the relative path (not really needed to store per se but in the future someone may want this)
 			resourcePath = relativePath; 
 			// The rule and command to add to the makefile
-			if( resConfig != null || needExplicitRuleForFile) {
+			if( rcInfo instanceof IFileInfo || needExplicitRuleForFile) {
 				// Need a hardcoded rule, not a pattern rule
 				defaultOutputName = escapeWhitespaces(resourcePath + fileName + optDotExt);
 				patternRule = false;
@@ -2413,7 +2628,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 			String outflag = null;
 			String outputPrefix = null;
 			
-			if( resConfig != null || needExplicitRuleForFile || needExplicitDependencyCommands) {
+			if( rcInfo instanceof IFileInfo || needExplicitRuleForFile || needExplicitDependencyCommands) {
 				outflag = tool.getOutputFlag();
 				outputPrefix = tool.getOutputPrefix();
 				
@@ -2423,11 +2638,11 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 						OUT_MACRO + otherPrimaryOutputs, inputStrings, tool.getCommandLinePattern() );
 		
 			} else {
-				outflag = info.getOutputFlag(outputExtension);
-				outputPrefix = info.getOutputPrefix(outputExtension);
+				outflag = tool.getOutputFlag();//config.getOutputFlag(outputExtension);
+				outputPrefix = tool.getOutputPrefix();//config.getOutputPrefix(outputExtension);
 
 				// Call the command line generator
-				cmdLInfo = info.generateToolCommandLineInfo( inputExtension, flags, outflag, outputPrefix, 
+				cmdLInfo = generateToolCommandLineInfo(tool, inputExtension, flags, outflag, outputPrefix, 
 						OUT_MACRO + otherPrimaryOutputs, inputStrings, sourceLocation, outputLocation );
 			}
 			
@@ -2487,7 +2702,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 				String[] depCmds = null;
 				if (oldDepGen != null) {
 					depCmds = new String[1];
-					depCmds[0] = oldDepGen.getDependencyCommand(resource, info);
+					depCmds[0] = oldDepGen.getDependencyCommand(resource, ManagedBuildManager.getBuildInfo(project));
 				} else {
 					if (depCommands != null) {
 						depCmds = depCommands.getPostToolDependencyCommands();
@@ -2731,8 +2946,8 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 				if (assignToOption != null && option == null) {
 					try {
 						int optType = assignToOption.getValueType();
-						IBuildObject toolParent = tool.getParent();
-						if (toolParent != null) {
+						IResourceInfo rcInfo = tool.getParentResourceInfo();
+						if (rcInfo != null) {
 							if (optType == IOption.STRING) {
 								String optVal = "";	   //$NON-NLS-1$
 								for (int j=0; j<allRes.size(); j++) {
@@ -2751,18 +2966,15 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 									}
 									optVal += ManagedBuildManager.calculateRelativePath(getTopBuildDir(), Path.fromOSString(resPath)).toString();
 								}
-								if (toolParent instanceof IToolChain) {
-									IConfiguration config = ((IToolChain)toolParent).getParent();
-									if (config != null) {
-										ManagedBuildManager.setOption(config, tool, assignToOption, optVal);							
-									}
-								} else if (toolParent instanceof IResourceConfiguration) {
-									ManagedBuildManager.setOption(((IResourceConfiguration)toolParent), tool, assignToOption, optVal);							
-								}
+								ManagedBuildManager.setOption(rcInfo, tool, assignToOption, optVal);							
 							} else if (
 									optType == IOption.STRING_LIST ||
 									optType == IOption.LIBRARIES ||
-									optType == IOption.OBJECTS) {
+									optType == IOption.OBJECTS ||
+									optType == IOption.INCLUDE_FILES ||
+									optType == IOption.LIBRARY_PATHS ||
+									optType == IOption.LIBRARY_FILES ||
+									optType == IOption.MACRO_FILES) {
 								//  Note that the path(s) must be translated from project relative 
 								//  to top build directory relative
 								String[] paths = new String[allRes.size()];
@@ -2778,36 +2990,15 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 										}
 									}
 								}
-								if (toolParent instanceof IToolChain) {
-									IConfiguration config = ((IToolChain)toolParent).getParent();
-									if (config != null) {
-										ManagedBuildManager.setOption(config, tool, assignToOption, paths);							
-									}
-								} else if (toolParent instanceof IResourceConfiguration) {
-									ManagedBuildManager.setOption(((IResourceConfiguration)toolParent), tool, assignToOption, paths);							
-								}
+								ManagedBuildManager.setOption(rcInfo, tool, assignToOption, paths);							
 							} else if (optType == IOption.BOOLEAN) {
 								boolean b = false;
 								if (allRes.size() > 0) b = true;
-								if (toolParent instanceof IToolChain) {
-									IConfiguration config = ((IToolChain)toolParent).getParent();
-									if (config != null) {
-										ManagedBuildManager.setOption(config, tool, assignToOption, b);							
-									}
-								} else if (toolParent instanceof IResourceConfiguration) {
-									ManagedBuildManager.setOption(((IResourceConfiguration)toolParent), tool, assignToOption, b);							
-								}
+								ManagedBuildManager.setOption(rcInfo, tool, assignToOption, b);							
 							} else if (optType == IOption.ENUMERATED) {
 								if (allRes.size() > 0) {
 									String s = allRes.get(0).toString();
-									if (toolParent instanceof IToolChain) {
-										IConfiguration config = ((IToolChain)toolParent).getParent();
-										if (config != null) {
-											ManagedBuildManager.setOption(config, tool, assignToOption, s);
-										}
-									} else if (toolParent instanceof IResourceConfiguration) {
-										ManagedBuildManager.setOption(((IResourceConfiguration)toolParent), tool, assignToOption, s);
-									}
+									ManagedBuildManager.setOption(rcInfo, tool, assignToOption, s);
 								}
 							}
 							allRes.clear();
@@ -2847,6 +3038,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 			IPath sourceLocation, Vector ruleOutputs, Vector enumeratedPrimaryOutputs, Vector enumeratedSecondaryOutputs) {
 		String inExt = sourceLocation.getFileExtension();
 		String outExt = tool.getOutputExtension(inExt);
+		IResourceInfo rcInfo = tool.getParentResourceInfo();
 		
 		IOutputType[] outTypes = tool.getOutputTypes();
 		if (outTypes != null && outTypes.length > 0) {
@@ -2863,29 +3055,29 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
                 // next best thing, i.e. configuration context.
 
                 // figure out the configuration we're using
-                IBuildObject toolParent = tool.getParent();
-                IConfiguration config = null;
+//                IBuildObject toolParent = tool.getParent();
+//                IConfiguration config = null;
                 // if the parent is a config then we're done
-                if (toolParent instanceof IConfiguration)
-                    config = (IConfiguration) toolParent;
-                else if (toolParent instanceof IToolChain) {
-                    // must be a toolchain
-                    config = (IConfiguration) ((IToolChain) toolParent)
-                            .getParent();
-                }
+//                if (toolParent instanceof IConfiguration)
+//                    config = (IConfiguration) toolParent;
+//                else if (toolParent instanceof IToolChain) {
+//                    // must be a toolchain
+//                    config = (IConfiguration) ((IToolChain) toolParent)
+//                            .getParent();
+//                }
+//
+//                else if (toolParent instanceof IResourceConfiguration) {
+//                    config = (IConfiguration) ((IResourceConfiguration) toolParent)
+//                            .getParent();
+//                }
 
-                else if (toolParent instanceof IResourceConfiguration) {
-                    config = (IConfiguration) ((IResourceConfiguration) toolParent)
-                            .getParent();
-                }
+//                else {
+//                    // bad
+//                    throw new AssertionError(
+//                            "tool parent must be one of configuration, toolchain, or resource configuration");
+//                }
 
-                else {
-                    // bad
-                    throw new AssertionError(
-                            "tool parent must be one of configuration, toolchain, or resource configuration");
-                }
-
-                if (config != null) {
+//                if (config != null) {
 
                     try {
                     	
@@ -2915,7 +3107,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
                     catch (BuildMacroException e) {
                     }
 
-                }
+//                }
 
                 
                 
@@ -2937,7 +3129,11 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 						} else if (
 								optType == IOption.STRING_LIST ||
 								optType == IOption.LIBRARIES ||
-								optType == IOption.OBJECTS) {
+								optType == IOption.OBJECTS ||
+								optType == IOption.INCLUDE_FILES ||
+								optType == IOption.LIBRARY_PATHS ||
+								optType == IOption.LIBRARY_FILES ||
+								optType == IOption.MACRO_FILES) {
 							outputList = (List)option.getValue();
 							// Add outputPrefix to each if necessary
 							if (outputPrefix.length() > 0) {
@@ -3278,24 +3474,24 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 	 * 
 	 * @return a <code>Set</code> containing all of the output extensions 
 	 */
-	public Set getOutputExtensions() {
-		if (outputExtensionsSet == null) {
+	public Set getOutputExtensions(ToolInfoHolder h) {
+		if (h.outputExtensionsSet == null) {
 			// The set of output extensions which will be produced by this tool.
 			// It is presumed that this set is not very large (likely < 10) so
 			// a HashSet should provide good performance.
-			outputExtensionsSet = new HashSet();
+			h.outputExtensionsSet = new HashSet();
 			
 			// For each tool for the target, lookup the kinds of sources it outputs
 			// and add that to our list of output extensions.
-			for (int i=0; i<buildTools.length; i++) {
-				ITool tool = buildTools[i];
+			for (int i=0; i<h.buildTools.length; i++) {
+				ITool tool = h.buildTools[i];
 				String[] outputs = tool.getAllOutputExtensions();
 				if (outputs != null) {
-					outputExtensionsSet.addAll(Arrays.asList(outputs));
+					h.outputExtensionsSet.addAll(Arrays.asList(outputs));
 				}
 			}
 		}
- 		return outputExtensionsSet;
+ 		return h.outputExtensionsSet;
 	}
 
 	/**
@@ -3313,6 +3509,11 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 	 * @return a <code>true</code> if the dependency file is modified 
 	 */
 	static public boolean populateDummyTargets(IConfiguration cfg, IFile makefile, boolean force) throws CoreException, IOException {
+		return populateDummyTargets(cfg.getRootFolderInfo(), makefile, force);
+	}
+
+	static public boolean populateDummyTargets(IResourceInfo rcInfo, IFile makefile, boolean force) throws CoreException, IOException {
+
 		if (makefile == null || !makefile.exists()) return false;
 		
 		// Get the contents of the dependency file
@@ -3465,13 +3666,20 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 		outBuffer.append(NEWLINE);
 		save = true;
 		
+		IFolderInfo fo = null;
+		if(rcInfo instanceof IFolderInfo){
+			fo = (IFolderInfo)rcInfo;
+		} else {
+			IConfiguration c = rcInfo.getParent();
+			fo = (IFolderInfo)c.getResourceInfo(rcInfo.getPath().removeLastSegments(1), false);
+		}
 		// Dummy targets to add to the makefile
 		Iterator dummyIter = deps.iterator();
 		while (dummyIter.hasNext()) {
 			String dummy = (String)dummyIter.next();
 			IPath dep = new Path(dummy);
 			String extension = dep.getFileExtension();
-			if (cfg.isHeaderFile(extension)) {
+			if (fo.isHeaderFile(extension)) {
 				/*
 				 * The formatting here is 
 				 * <dummy_target>:
@@ -3701,132 +3909,140 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 	 */
 	protected void calculateToolInputsOutputs() {
 
-		//  We are "done" when the information for all tools has been calculated,
-		//  or we are not making any progress
-		boolean done = false;
-		boolean lastChance = false;
-		int[] doneState = new int[buildTools.length];
+		toolInfos.accept(new IPathSettingsContainerVisitor(){
+			public boolean visit(PathSettingsContainer container){
+				ToolInfoHolder h = (ToolInfoHolder)container.getValue();
+				ITool[] buildTools = h.buildTools;
+				ManagedBuildGnuToolInfo[] gnuToolInfos = h.gnuToolInfos;
+				//  We are "done" when the information for all tools has been calculated,
+				//  or we are not making any progress
+				boolean done = false;
+				boolean lastChance = false;
+				int[] doneState = new int[buildTools.length];
+				
+				// Identify the target tool 
+				ITool targetTool = config.calculateTargetTool();
+		//		if (targetTool == null) {
+		//			targetTool = info.getToolFromOutputExtension(buildTargetExt);
+		//		}
+				
+				//  Initialize the tool info array and the done state
+				for (int i=0; i<buildTools.length; i++) {
+					if ((buildTools[i] == targetTool)) {
+						String ext = config.getArtifactExtension();
+						//try to resolve the build macros in the artifact extension
+						try{
+							ext = ManagedBuildManager.getBuildMacroProvider().resolveValueToMakefileFormat(
+									ext,
+									"", //$NON-NLS-1$
+									" ", //$NON-NLS-1$
+									IBuildMacroProvider.CONTEXT_CONFIGURATION,
+									config);
+						} catch (BuildMacroException e){
+						}
+						
+						String name = config.getArtifactName();
+						//try to resolve the build macros in the artifact name
+						try{
+							String resolved = ManagedBuildManager.getBuildMacroProvider().resolveValueToMakefileFormat(
+									name,
+									"", //$NON-NLS-1$
+									" ", //$NON-NLS-1$
+									IBuildMacroProvider.CONTEXT_CONFIGURATION,
+									config);
+							if((resolved = resolved.trim()).length() > 0)
+								name = resolved;
+						} catch (BuildMacroException e){
+						}
 		
-		// Identify the target tool 
-		ITool targetTool = config.calculateTargetTool();
-//		if (targetTool == null) {
-//			targetTool = info.getToolFromOutputExtension(buildTargetExt);
-//		}
-		
-		//  Initialize the tool info array and the done state
-		for (int i=0; i<buildTools.length; i++) {
-			if ((buildTools[i] == targetTool)) {
-				String ext = info.getBuildArtifactExtension();
-				//try to resolve the build macros in the artifact extension
-				try{
-					ext = ManagedBuildManager.getBuildMacroProvider().resolveValueToMakefileFormat(
-							ext,
-							"", //$NON-NLS-1$
-							" ", //$NON-NLS-1$
-							IBuildMacroProvider.CONTEXT_CONFIGURATION,
-							info.getDefaultConfiguration());
-				} catch (BuildMacroException e){
+						gnuToolInfos[i] = new ManagedBuildGnuToolInfo(project, buildTools[i], true, 
+								name, ext); 
+					} else {
+						gnuToolInfos[i] = new ManagedBuildGnuToolInfo(project, buildTools[i], false, null, null);				
+					}
+					doneState[i] = 0;
 				}
 				
-				String name = info.getBuildArtifactName();
-				//try to resolve the build macros in the artifact name
-				try{
-					String resolved = ManagedBuildManager.getBuildMacroProvider().resolveValueToMakefileFormat(
-							name,
-							"", //$NON-NLS-1$
-							" ", //$NON-NLS-1$
-							IBuildMacroProvider.CONTEXT_CONFIGURATION,
-							info.getDefaultConfiguration());
-					if((resolved = resolved.trim()).length() > 0)
-						name = resolved;
-				} catch (BuildMacroException e){
+				//  Initialize the build output variable to file additions map
+				LinkedHashMap map = getTopBuildOutputVars();
+				Iterator iterator = buildOutVars.entrySet().iterator();
+				while (iterator.hasNext()) {
+					Map.Entry entry = (Map.Entry)iterator.next();
+					String macroName = (String)entry.getKey();
+					addMacroAdditionPrefix(map, macroName, "", false);	//$NON-NLS-1$
 				}
-
-				gnuToolInfos[i] = new ManagedBuildGnuToolInfo(project, buildTools[i], true, 
-						name, ext); 
-			} else {
-				gnuToolInfos[i] = new ManagedBuildGnuToolInfo(project, buildTools[i], false, null, null);				
-			}
-			doneState[i] = 0;
-		}
 		
-		//  Initialize the build output variable to file additions map
-		LinkedHashMap map = getTopBuildOutputVars();
-		Iterator iterator = buildOutVars.entrySet().iterator();
-		while (iterator.hasNext()) {
-			Map.Entry entry = (Map.Entry)iterator.next();
-			String macroName = (String)entry.getKey();
-			addMacroAdditionPrefix(map, macroName, "", false);	//$NON-NLS-1$
-		}
-
-		// Set of input extensions for which macros have been created so far
-		HashSet handledDepsInputExtensions = new HashSet();
-		HashSet handledOutsInputExtensions = new HashSet();
-		
-		while (!done) {
-			int[] testState = new int[doneState.length];
-			for (int i=0; i<testState.length; i++) testState[i] = 0;
-			
-			//  Calculate inputs
-			for (int i=0; i<gnuToolInfos.length; i++) {
-				if (gnuToolInfos[i].areInputsCalculated()) {
-					testState[i]++;
-				} else {
-					if (gnuToolInfos[i].calculateInputs(this, info.getDefaultConfiguration(), projectResources, lastChance)) {
-						testState[i]++;
+				// Set of input extensions for which macros have been created so far
+				HashSet handledDepsInputExtensions = new HashSet();
+				HashSet handledOutsInputExtensions = new HashSet();
+				
+				while (!done) {
+					int[] testState = new int[doneState.length];
+					for (int i=0; i<testState.length; i++) testState[i] = 0;
+					
+					//  Calculate inputs
+					for (int i=0; i<gnuToolInfos.length; i++) {
+						if (gnuToolInfos[i].areInputsCalculated()) {
+							testState[i]++;
+						} else {
+							if (gnuToolInfos[i].calculateInputs(GnuMakefileGenerator.this, config, projectResources, h, lastChance)) {
+								testState[i]++;
+							}
+						}
+					}
+					//  Calculate dependencies
+					for (int i=0; i<gnuToolInfos.length; i++) {
+						if (gnuToolInfos[i].areDependenciesCalculated()) {
+							testState[i]++;
+						} else {
+							if (gnuToolInfos[i].calculateDependencies(GnuMakefileGenerator.this, config, handledDepsInputExtensions, h, lastChance)) {
+								testState[i]++;
+							}
+						}
+					}
+					//  Calculate outputs
+					for (int i=0; i<gnuToolInfos.length; i++) {
+						if (gnuToolInfos[i].areOutputsCalculated()) {
+							testState[i]++;
+						} else {
+							if (gnuToolInfos[i].calculateOutputs(GnuMakefileGenerator.this, config, handledOutsInputExtensions, lastChance)) {
+								testState[i]++;
+							}
+						}
+					}
+					//  Are all calculated?  If so, done.
+					done = true;
+					for (int i=0; i<testState.length; i++) {
+						if (testState[i] != 3) {
+							done = false;
+							break;
+						}
+					}
+					
+					//  Test our "done" state vs. the previous "done" state.
+					//  If we have made no progress, give it a "last chance" and then quit
+					if (!done) {
+						done = true;
+						for (int i=0; i<testState.length; i++) {
+							if (testState[i] != doneState[i]) {
+								done = false;
+								break;
+							}
+						}				
+					}
+					if (done) {
+						if (!lastChance) {
+							lastChance = true;
+							done = false;
+						}
+					} 
+					if (!done) {
+						doneState = testState;
 					}
 				}
+				return true;
 			}
-			//  Calculate dependencies
-			for (int i=0; i<gnuToolInfos.length; i++) {
-				if (gnuToolInfos[i].areDependenciesCalculated()) {
-					testState[i]++;
-				} else {
-					if (gnuToolInfos[i].calculateDependencies(this, info.getDefaultConfiguration(), handledDepsInputExtensions, lastChance)) {
-						testState[i]++;
-					}
-				}
-			}
-			//  Calculate outputs
-			for (int i=0; i<gnuToolInfos.length; i++) {
-				if (gnuToolInfos[i].areOutputsCalculated()) {
-					testState[i]++;
-				} else {
-					if (gnuToolInfos[i].calculateOutputs(this, info.getDefaultConfiguration(), handledOutsInputExtensions, lastChance)) {
-						testState[i]++;
-					}
-				}
-			}
-			//  Are all calculated?  If so, done.
-			done = true;
-			for (int i=0; i<testState.length; i++) {
-				if (testState[i] != 3) {
-					done = false;
-					break;
-				}
-			}
-			
-			//  Test our "done" state vs. the previous "done" state.
-			//  If we have made no progress, give it a "last chance" and then quit
-			if (!done) {
-				done = true;
-				for (int i=0; i<testState.length; i++) {
-					if (testState[i] != doneState[i]) {
-						done = false;
-						break;
-					}
-				}				
-			}
-			if (done) {
-				if (!lastChance) {
-					lastChance = true;
-					done = false;
-				}
-			} 
-			if (!done) {
-				doneState = testState;
-			}
-		}
+		});
 	}
 
 	/* (non-javadoc)
@@ -3839,7 +4055,8 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 	 *                variable have done so.
 	 * @return List
 	 */
-	public List getBuildVariableList(String variable, int locationType, IPath directory, boolean getAll) {
+	public List getBuildVariableList(ToolInfoHolder h, String variable, int locationType, IPath directory, boolean getAll) {
+		ManagedBuildGnuToolInfo[] gnuToolInfos = h.gnuToolInfos;
 		boolean done = true;
 		for (int i=0; i<gnuToolInfos.length; i++) {
 			if (!gnuToolInfos[i].areOutputVariablesCalculated()) {
@@ -4123,7 +4340,17 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 		// Get the project relative path of the file
 		String fileName = getFileName(deletedFile);
 		String srcExtension = deletedFile.getFileExtension();
-		String targetExtension = info.getOutputExtension(srcExtension);
+		IPath folderPath = inFullPathFromOutFullPath(deletedFile.getFullPath().removeLastSegments(1));
+		if(folderPath != null){
+			folderPath = folderPath.removeFirstSegments(1);
+		} else {
+			folderPath = new Path("");
+		}
+		IResourceInfo rcInfo = config.getResourceInfo(folderPath, false);
+		if(rcInfo instanceof IFileInfo){
+			rcInfo = config.getResourceInfo(folderPath.removeLastSegments(1), false);
+		}
+		String targetExtension = ((IFolderInfo)rcInfo).getOutputExtension(srcExtension);
 		if (targetExtension != "") //$NON-NLS-1$
 			fileName += DOT + targetExtension;
 		IPath projectRelativePath = deletedFile.getProjectRelativePath().removeLastSegments(1);
@@ -4139,6 +4366,15 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 		}		
 	}
 	
+	private IPath inFullPathFromOutFullPath(IPath path){
+		IPath inPath = null;
+		if(topBuildDir.isPrefixOf(path)){
+			inPath = path.removeFirstSegments(topBuildDir.segmentCount());
+			inPath = project.getFullPath().append(path);
+		}
+		return inPath;
+	}
+	
 	/**
 	 * @param deletedFile
 	 */
@@ -4148,7 +4384,14 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 		ITool tool = null;
 		IManagedDependencyGeneratorType depType = null;
 		String sourceExtension = deletedFile.getFileExtension();
-		ITool[] tools = config.getFilteredTools();
+		IPath folderPath = inFullPathFromOutFullPath(deletedFile.getFullPath().removeLastSegments(1));
+		if(folderPath != null){
+			folderPath = folderPath.removeFirstSegments(1);
+		} else {
+			folderPath = new Path("");
+		}
+		ToolInfoHolder h = getToolInfo(folderPath);
+		ITool[] tools = h.buildTools;
 		for (int index = 0; index < tools.length; ++index) {
 			if (tools[index].buildsFileType(sourceExtension)) {
 				tool = tools[index];
@@ -4219,11 +4462,11 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 	/* (non-Javadoc)
 	 * @return
 	 */
-	private Vector getDependencyMakefiles() {
-		if (dependencyMakefiles == null) {
-			dependencyMakefiles = new Vector();
+	private List getDependencyMakefiles(ToolInfoHolder h) {
+		if (h.dependencyMakefiles == null) {
+			h.dependencyMakefiles = new ArrayList();
 		}
-		return dependencyMakefiles;
+		return h.dependencyMakefiles;
 	}
 	
 	/* (non-Javadoc)
@@ -4354,5 +4597,110 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 		boolean doubleQuoted = path.startsWith("\"") && path.endsWith("\"");
 		boolean singleQuoted = path.startsWith("'") && path.endsWith("'");
 		return doubleQuoted || singleQuoted ? path.substring(1,path.length()-1) : path; 
+	}
+
+	public void initialize(int buildKind, IConfiguration cfg, IBuilder builder,
+			IProgressMonitor monitor) {
+		// Save the project so we can get path and member information
+		this.project = cfg.getOwner().getProject();
+		if(builder == null){
+			builder = cfg.getEditableBuilder();
+		}
+		try {
+			projectResources = project.members();
+		} catch (CoreException e) {
+			projectResources = null;
+		}
+		// Save the monitor reference for reporting back to the user
+		this.monitor = monitor;
+		// Get the build info for the project
+//		this.info = info;
+		// Get the name of the build target
+		buildTargetName = cfg.getArtifactName();
+		// Get its extension
+		buildTargetExt = cfg.getArtifactExtension();
+		
+		try{
+			//try to resolve the build macros in the target extension
+			buildTargetExt = ManagedBuildManager.getBuildMacroProvider().resolveValueToMakefileFormat(
+					buildTargetExt,
+					"", //$NON-NLS-1$
+					" ", //$NON-NLS-1$
+					IBuildMacroProvider.CONTEXT_CONFIGURATION,
+					builder);
+		} catch (BuildMacroException e){
+		}
+		
+		try{
+			//try to resolve the build macros in the target name
+			String resolved = ManagedBuildManager.getBuildMacroProvider().resolveValueToMakefileFormat(
+					buildTargetName,
+					"", //$NON-NLS-1$
+					" ", //$NON-NLS-1$
+					IBuildMacroProvider.CONTEXT_CONFIGURATION,
+					builder);
+			if((resolved = resolved.trim()).length() > 0)
+				buildTargetName = resolved;
+		} catch (BuildMacroException e){
+		}
+
+		
+		if (buildTargetExt == null) {
+			buildTargetExt = new String();
+		}
+		// Cache the build tools
+		config = cfg;
+		this.builder = builder; 
+		
+		initToolInfos();
+		//set the top build dir path
+		topBuildDir = project.getFolder(cfg.getName()).getFullPath();
+		
+		srcPaths = config.getSourcePaths();
+		if(srcPaths.length == 0){
+			srcPaths = new IPath[]{new Path("")};
+		} else {
+		}
+	}
+	
+	private void initToolInfos(){
+		toolInfos = PathSettingsContainer.createRootContainer();
+		
+		IResourceInfo rcInfos[] = config.getResourceInfos();
+		for(int i = 0; i < rcInfos.length; i++){
+			IResourceInfo rcInfo = rcInfos[i];
+			if(rcInfo.isExcluded() /*&& !((ResourceInfo)rcInfo).isRoot()*/)
+				continue;
+			
+			ToolInfoHolder h = getToolInfo(rcInfo.getPath(), true);
+			if(rcInfo instanceof IFolderInfo){
+				IFolderInfo fo = (IFolderInfo)rcInfo;
+				h.buildTools = fo.getFilteredTools();
+				h.buildToolsUsed = new boolean[h.buildTools.length];
+				h.gnuToolInfos = new ManagedBuildGnuToolInfo[h.buildTools.length];
+			} else {
+				IFileInfo fi = (IFileInfo)rcInfo;
+				h.buildTools = fi.getToolsToInvoke();
+				h.buildToolsUsed = new boolean[h.buildTools.length];
+				h.gnuToolInfos = new ManagedBuildGnuToolInfo[h.buildTools.length];
+			}
+		}
+	}
+
+	private ToolInfoHolder getToolInfo(IPath path){
+		return getToolInfo(path, false);
+	}
+
+	private ToolInfoHolder getToolInfo(IPath path, boolean create){
+		PathSettingsContainer child = toolInfos.getChildContainer(path, create, create);
+		ToolInfoHolder h = null; 
+		if(child != null){
+			h = (ToolInfoHolder)child.getValue();
+			if(h == null && create){
+				h = new ToolInfoHolder();
+				child.setValue(h);
+			}
+		}
+		return h;
 	}
 }

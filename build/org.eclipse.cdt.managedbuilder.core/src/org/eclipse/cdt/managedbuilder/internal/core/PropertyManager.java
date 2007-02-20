@@ -60,6 +60,8 @@ public class PropertyManager {
 	}
 
 	protected void setProperty(IConfiguration cfg, IBuildObject bo, String prop, String value){
+		if(((Configuration)cfg).isPreference())
+			return;
 		Properties props = getProperties(cfg, bo);
 		if(props != null){
 			props.setProperty(prop, value);
@@ -67,6 +69,8 @@ public class PropertyManager {
 	}
 
 	protected String getProperty(IConfiguration cfg, IBuildObject bo, String prop){
+		if(((Configuration)cfg).isPreference())
+			return null;
 		Properties props = getProperties(cfg, bo);
 		if(props != null)
 			return props.getProperty(prop);
@@ -313,7 +317,10 @@ public class PropertyManager {
 	}
 
 	public void setProperty(ITool tool, String key, String value){
-		setProperty(getConfiguration(tool), tool, key, value);
+		Configuration cfg = (Configuration)getConfiguration(tool);
+		if(cfg.isPreference())
+			return;
+		setProperty(cfg, tool, key, value);
 	}
 	
 	public void setProperty(IBuilder builder, String key, String value){

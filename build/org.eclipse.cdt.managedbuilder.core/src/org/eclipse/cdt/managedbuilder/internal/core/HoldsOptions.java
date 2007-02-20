@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 Symbian Ltd and others.
+ * Copyright (c) 2005, 2007 Symbian Ltd and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,22 +11,25 @@
 package org.eclipse.cdt.managedbuilder.internal.core;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Vector;
 
+import org.eclipse.cdt.core.settings.model.ICStorageElement;
+import org.eclipse.cdt.managedbuilder.buildproperties.IBuildPropertyType;
+import org.eclipse.cdt.managedbuilder.buildproperties.IBuildPropertyValue;
 import org.eclipse.cdt.managedbuilder.core.BuildException;
+import org.eclipse.cdt.managedbuilder.core.IBuildPropertiesRestriction;
 import org.eclipse.cdt.managedbuilder.core.IHoldsOptions;
 import org.eclipse.cdt.managedbuilder.core.IManagedConfigElement;
 import org.eclipse.cdt.managedbuilder.core.IOption;
 import org.eclipse.cdt.managedbuilder.core.IOptionCategory;
+import org.eclipse.cdt.managedbuilder.core.IResourceInfo;
 import org.eclipse.cdt.managedbuilder.core.ITool;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
 
 /**
  * Implements the functionality that is needed to hold options and option
@@ -46,7 +49,7 @@ import org.w3c.dom.Node;
  * 
  * @since 3.0
  */
-public class HoldsOptions extends BuildObject implements IHoldsOptions {
+public abstract class HoldsOptions extends BuildObject implements IHoldsOptions, IBuildPropertiesRestriction, IBuildPropertyChangeListener {
 
 	private static final IOptionCategory[] EMPTY_CATEGORIES = new IOptionCategory[0];
 
@@ -88,6 +91,8 @@ public class HoldsOptions extends BuildObject implements IHoldsOptions {
 
 		//  Note: This function ignores OptionCategories since they should not be
 		//        found on an non-extension tools
+		
+		boolean copyIds = id.equals(source.id);
 		if (source.optionList != null) {
 			Iterator iter = source.getOptionList().listIterator();
 			while (iter.hasNext()) {
@@ -96,16 +101,47 @@ public class HoldsOptions extends BuildObject implements IHoldsOptions {
 				String subId;
 				String subName;
 				if (option.getSuperClass() != null) {
-					subId = option.getSuperClass().getId() + "." + nnn;		//$NON-NLS-1$
+					subId = copyIds ? option.getId() : option.getSuperClass().getId() + "." + nnn;		//$NON-NLS-1$
 					subName = option.getSuperClass().getName();
 				} else {
-					subId = option.getId() + "." + nnn;		//$NON-NLS-1$
+					subId = copyIds ? option.getId() : option.getId() + "." + nnn;		//$NON-NLS-1$
 					subName = option.getName();
 				}
 				Option newOption = new Option(this, subId, subName, option);
 				addOption(newOption);
 			}
-		}		
+		}
+		
+		if(copyIds){
+			isDirty = source.isDirty;
+			rebuildState = source.rebuildState;
+		}
+	}
+	
+	void copyNonoverriddenSettings(HoldsOptions ho){
+		if (ho.optionList == null || ho.optionList.size() == 0)
+			return;
+		
+		IOption options[] = getOptions();
+		for(int i = 0; i < options.length; i++){
+			if(!options[i].getParent().equals(ho))
+				continue;
+			
+			Option option = (Option)options[i];
+			int nnn = ManagedBuildManager.getRandomNumber();
+			String subId;
+			String subName;
+			if (option.getSuperClass() != null) {
+				subId = option.getSuperClass().getId() + "." + nnn;		//$NON-NLS-1$
+				subName = option.getSuperClass().getName();
+			} else {
+				subId = option.getId() + "." + nnn;		//$NON-NLS-1$
+				subName = option.getName();
+			}
+			Option newOption = new Option(this, subId, subName, option);
+			addOption(newOption);
+
+		}
 	}
 	
 	/*
@@ -118,13 +154,13 @@ public class HoldsOptions extends BuildObject implements IHoldsOptions {
 	 * @param element which is loaded as child only iff it is of the correct type
 	 * @return true when a child has been loaded, false otherwise 
 	 */
-	protected boolean loadChild(Node element) {
-		if (element.getNodeName().equals(ITool.OPTION)) {
-			Option option = new Option(this, (Element)element);
+	protected boolean loadChild(ICStorageElement element) {
+		if (element.getName().equals(ITool.OPTION)) {
+			Option option = new Option(this, element);
 			addOption(option);
 			return true;
-		} else if (element.getNodeName().equals(ITool.OPTION_CAT)) {
-			new OptionCategory(this, (Element)element);
+		} else if (element.getName().equals(ITool.OPTION_CAT)) {
+			new OptionCategory(this, element);
 			return true;
 		}
 		return false;
@@ -156,7 +192,7 @@ public class HoldsOptions extends BuildObject implements IHoldsOptions {
 	 * @param element
 	 * @throws BuildException 
 	 */
-	protected void serialize(Document doc, Element element) throws BuildException {
+	protected void serialize(ICStorageElement element) throws BuildException {
 		
 		Iterator iter;
 		
@@ -164,9 +200,8 @@ public class HoldsOptions extends BuildObject implements IHoldsOptions {
 			iter = childOptionCategories.listIterator();
 			while (iter.hasNext()) {
 				OptionCategory optCat = (OptionCategory)iter.next();
-				Element optCatElement = doc.createElement(OPTION);
-				element.appendChild(optCatElement);
-				optCat.serialize(doc, optCatElement);
+				ICStorageElement optCatElement = element.createChild(OPTION);
+				optCat.serialize(optCatElement);
 			}
 		}
 		
@@ -174,9 +209,8 @@ public class HoldsOptions extends BuildObject implements IHoldsOptions {
 		iter = optionElements.listIterator();
 		while (iter.hasNext()) {
 			Option option = (Option) iter.next();
-			Element optionElement = doc.createElement(OPTION);
-			element.appendChild(optionElement);
-			option.serialize(doc, optionElement);
+			ICStorageElement optionElement = element.createChild(OPTION);
+			option.serialize(optionElement);
 		}
 }
 	
@@ -607,5 +641,106 @@ public class HoldsOptions extends BuildObject implements IHoldsOptions {
 					option.setRebuildState(false);
 			}
 		}
+	}
+
+	public void propertiesChanged() {
+		if(isExtensionElement())
+			return;
+		adjustOptions(false);
+	}
+	
+	public void adjustOptions(boolean extensions){
+		IOption options[] = getOptions();
+		
+		for(int i = 0; i < options.length; i++){
+			Option option = (Option)options[i];
+			BooleanExpressionApplicabilityCalculator calc = 
+				option.getBooleanExpressionCalculator(extensions);
+				
+			if(calc != null)
+				calc.adjustOption(getParentResourceInfo(),this,option, extensions);
+		}
+	}
+
+	public boolean supportsType(String type) {
+		IOption options[] = getOptions();
+		boolean supports = false;
+		for(int i = 0; i < options.length; i++){
+			Option option = (Option)options[i];
+			if(option.supportsType(type)){
+				supports = true;
+				break;
+			}
+		}
+		return supports;
+	}
+
+	public boolean supportsType(IBuildPropertyType type) {
+		return supportsType(type.getId());
+	}
+
+	public boolean supportsValue(String type, String value){
+		IOption options[] = getOptions();
+		boolean supports = false;
+		for(int i = 0; i < options.length; i++){
+			Option option = (Option)options[i];
+			if(option.supportsValue(type, value)){
+				supports = true;
+				break;
+			}
+		}
+		return supports;
+	}
+
+	public boolean supportsValue(IBuildPropertyType type,
+			IBuildPropertyValue value) {
+		return supportsValue(type.getId(), value.getId());
+	}
+	
+	public abstract boolean isExtensionElement(); 
+	
+	protected abstract IResourceInfo getParentResourceInfo();
+
+	public String[] getRequiredTypeIds() {
+		List list = new ArrayList();
+		IOption options[] = getOptions();
+		for(int i = 0; i < options.length; i++){
+			Option option = (Option)options[i];
+			list.addAll(Arrays.asList(option.getRequiredTypeIds()));
+		}
+		return (String[])list.toArray(new String[list.size()]);
+	}
+
+	public String[] getSupportedTypeIds() {
+		List list = new ArrayList();
+		IOption options[] = getOptions();
+		for(int i = 0; i < options.length; i++){
+			Option option = (Option)options[i];
+			list.addAll(Arrays.asList(option.getSupportedTypeIds()));
+		}
+		return (String[])list.toArray(new String[list.size()]);
+	}
+
+	public String[] getSupportedValueIds(String typeId) {
+		List list = new ArrayList();
+		IOption options[] = getOptions();
+		for(int i = 0; i < options.length; i++){
+			Option option = (Option)options[i];
+			list.addAll(Arrays.asList(option.getSupportedValueIds(typeId)));
+		}
+		return (String[])list.toArray(new String[list.size()]);
+	}
+
+	public boolean requiresType(String typeId) {
+		IOption options[] = getOptions();
+		boolean requires = false;
+		for(int i = 0; i < options.length; i++){
+			Option option = (Option)options[i];
+			if(option.requiresType(typeId)){
+				requires = true;
+				break;
+			}
+		}
+		return requires;
 	}
 }

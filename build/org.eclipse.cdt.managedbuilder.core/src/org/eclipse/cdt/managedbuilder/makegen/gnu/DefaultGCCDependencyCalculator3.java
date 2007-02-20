@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 Intel Corporation and others.
+ * Copyright (c) 2006, 2007 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,6 +16,7 @@ import java.io.IOException;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.managedbuilder.core.IBuildObject;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
+import org.eclipse.cdt.managedbuilder.core.IResourceInfo;
 import org.eclipse.cdt.managedbuilder.core.ITool;
 import org.eclipse.cdt.managedbuilder.makegen.IManagedBuilderMakefileGenerator;
 import org.eclipse.cdt.managedbuilder.makegen.IManagedDependencyGenerator2;
@@ -96,6 +97,9 @@ public class DefaultGCCDependencyCalculator3 implements
 				makefilePath = makefilePath.removeFirstSegments(rootPath.segmentCount());
 			}
 			makefile = root.getFile(makefilePath);
+			IResourceInfo rcInfo = tool.getParentResourceInfo();
+			if(rcInfo != null)
+				return GnuMakefileGenerator.populateDummyTargets(rcInfo, makefile, false);
 			return GnuMakefileGenerator.populateDummyTargets(buildContext, makefile, false);
 		} catch (CoreException e) {
 		} catch (IOException e) {

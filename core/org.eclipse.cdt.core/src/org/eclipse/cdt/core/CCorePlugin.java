@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -24,8 +24,10 @@ import java.util.Map;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
+import org.eclipse.cdt.core.cdtvariables.ICdtVariableManager;
 import org.eclipse.cdt.core.dom.CDOM;
 import org.eclipse.cdt.core.dom.IPDOMManager;
+import org.eclipse.cdt.core.envvar.IEnvironmentVariableManager;
 import org.eclipse.cdt.core.index.IIndexManager;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.IWorkingCopy;
@@ -33,11 +35,16 @@ import org.eclipse.cdt.core.parser.IScannerInfoProvider;
 import org.eclipse.cdt.core.resources.IConsole;
 import org.eclipse.cdt.core.resources.IPathEntryVariableManager;
 import org.eclipse.cdt.core.resources.ScannerProvider;
+import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
+import org.eclipse.cdt.core.settings.model.ICProjectDescription;
+import org.eclipse.cdt.core.settings.model.WriteAccessException;
+import org.eclipse.cdt.internal.core.CConfigBasedDescriptorManager;
 import org.eclipse.cdt.internal.core.CContentTypes;
 import org.eclipse.cdt.internal.core.CDTLogWriter;
-import org.eclipse.cdt.internal.core.CDescriptorManager;
 import org.eclipse.cdt.internal.core.PathEntryVariableManager;
 import org.eclipse.cdt.internal.core.PositionTrackerManager;
+import org.eclipse.cdt.internal.core.cdtvariables.CdtVariableManager;
+import org.eclipse.cdt.internal.core.envvar.EnvironmentVariableManager;
 import org.eclipse.cdt.internal.core.model.BufferManager;
 import org.eclipse.cdt.internal.core.model.CModelManager;
 import org.eclipse.cdt.internal.core.model.DeltaProcessor;
@@ -45,6 +52,7 @@ import org.eclipse.cdt.internal.core.model.IBufferFactory;
 import org.eclipse.cdt.internal.core.model.Util;
 import org.eclipse.cdt.internal.core.pdom.PDOMManager;
 import org.eclipse.cdt.internal.core.pdom.indexer.fast.PDOMFastIndexer;
+import org.eclipse.cdt.internal.core.settings.model.CProjectDescriptionManager;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.IResource;
@@ -171,7 +179,9 @@ public class CCorePlugin extends Plugin {
 	private static CCorePlugin fgCPlugin;
 	private static ResourceBundle fgResourceBundle;
 
-	private CDescriptorManager fDescriptorManager = new CDescriptorManager();
+	private CConfigBasedDescriptorManager/*CDescriptorManager*/ fDescriptorManager;// = new CDescriptorManager();
+
+	private CProjectDescriptionManager fNewCProjectDescriptionManager = CProjectDescriptionManager.getInstance();
 
 	private CoreModel fCoreModel;
 	
@@ -284,10 +294,10 @@ public class CCorePlugin extends Plugin {
 		try {
             PositionTrackerManager.getInstance().uninstall();
             
-			if (fDescriptorManager != null) {
-				fDescriptorManager.shutdown();
-			}
-			
+//			if (fDescriptorManager != null) {
+//				fDescriptorManager.shutdown();
+//			}
+            
 			if (fCoreModel != null) {
 				fCoreModel.shutdown();
 			}
@@ -300,6 +310,9 @@ public class CCorePlugin extends Plugin {
 				fPathEntryVariableManager.shutdown();
 			}
 
+            fNewCProjectDescriptionManager.shutdown();
+            fDescriptorManager = null;
+
 			savePluginPreferences();
 		} finally {
 			super.stop(context);
@@ -311,7 +324,10 @@ public class CCorePlugin extends Plugin {
 	 */
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
-		
+
+		fNewCProjectDescriptionManager.startup();
+		fDescriptorManager = fNewCProjectDescriptionManager.getDescriptorManager();
+
 		// Start file type manager first !!
 		fPathEntryVariableManager = new PathEntryVariableManager();
 		fPathEntryVariableManager.startup();
@@ -321,7 +337,8 @@ public class CCorePlugin extends Plugin {
 		//Set debug tracing options
 		configurePluginDebugOptions();
 		
-		fDescriptorManager.startup();
+//		fDescriptorManager.startup();
+//		CProjectDescriptionManager.getInstance().startup();
 
 		// Fired up the model.
 		fCoreModel = CoreModel.getDefault();
@@ -711,6 +728,7 @@ public class CCorePlugin extends Plugin {
 	 *
 	 * @exception CoreException if the operation fails
 	 * @exception OperationCanceledException if the operation is canceled
+	 * @deprecated
 	 */
 	public IProject createCProject(
 		final IProjectDescription description,
@@ -737,7 +755,7 @@ public class CCorePlugin extends Plugin {
 					// Open first.
 					projectHandle.open(IResource.BACKGROUND_REFRESH, new SubProgressMonitor(monitor, 1));
 
-					mapCProjectOwner(projectHandle, projectID, false);
+//					mapCProjectOwner(projectHandle, projectID, false);
 
 					// Add C Nature ... does not add duplicates
 					CProjectNature.addCNature(projectHandle, new SubProgressMonitor(monitor, 1));
@@ -748,6 +766,42 @@ public class CCorePlugin extends Plugin {
 		}, getWorkspace().getRoot(), 0, monitor);
 		return projectHandle;
 	}
+
+	public IProject createCDTProject(
+			final IProjectDescription description,
+			final IProject projectHandle,
+			IProgressMonitor monitor)
+			throws CoreException, OperationCanceledException {
+
+			getWorkspace().run(new IWorkspaceRunnable() {
+				public void run(IProgressMonitor monitor) throws CoreException {
+					try {
+						if (monitor == null) {
+							monitor = new NullProgressMonitor();
+						}
+						monitor.beginTask("Creating C Project...", 3); //$NON-NLS-1$
+						if (!projectHandle.exists()) {
+							projectHandle.create(description, new SubProgressMonitor(monitor, 1));
+						}
+						
+						if (monitor.isCanceled()) {
+							throw new OperationCanceledException();
+						}
+						
+						// Open first.
+						projectHandle.open(IResource.BACKGROUND_REFRESH, new SubProgressMonitor(monitor, 1));
+
+//						mapCProjectOwner(projectHandle, projectID, false);
+
+						// Add C Nature ... does not add duplicates
+						CProjectNature.addCNature(projectHandle, new SubProgressMonitor(monitor, 1));
+					} finally {
+						monitor.done();
+					}
+				}
+			}, getWorkspace().getRoot(), 0, monitor);
+			return projectHandle;
+		}
 
 	/**
 	 * Method convertProjectFromCtoCC converts
@@ -890,22 +944,29 @@ public class CCorePlugin extends Plugin {
 	}
 
 	public IScannerInfoProvider getScannerInfoProvider(IProject project) {
-		IScannerInfoProvider provider = null;
-		if (project != null) {
-			try {
-				ICDescriptor desc = getCProjectDescription(project);
-				ICExtensionReference[] extensions = desc.get(BUILD_SCANNER_INFO_UNIQ_ID, true);
-				if (extensions.length > 0)
-					provider = (IScannerInfoProvider) extensions[0].createExtension();
-			} catch (CoreException e) {
-				// log(e);
-			}
-			if ( provider == null) {
-				return ScannerProvider.getInstance();
-			}
-		}
-		return provider;
+		return fNewCProjectDescriptionManager.getScannerInfoProviderProxy(project);
+//		IScannerInfoProvider provider = null;
+//		if (project != null) {
+//			try {
+//				ICDescriptor desc = getCProjectDescription(project);
+//				ICExtensionReference[] extensions = desc.get(BUILD_SCANNER_INFO_UNIQ_ID, true);
+//				if (extensions.length > 0)
+//					provider = (IScannerInfoProvider) extensions[0].createExtension();
+//			} catch (CoreException e) {
+//				// log(e);
+//			}
+//			if ( provider == null) {
+//				return getDefaultScannerInfoProvider(project);
+//			}
+//		}
+//		return provider;
 	}
+	
+//	private IScannerInfoProvider getDefaultScannerInfoProvider(IProject project){
+//		if(fNewCProjectDescriptionManager.isNewStyleIndexCfg(project))
+//			return fNewCProjectDescriptionManager.getScannerInfoProvider(project);
+//		return ScannerProvider.getInstance();
+//	}
 
 	/**
 	 * Helper function, returning the contenttype for a filename
@@ -991,6 +1052,102 @@ public class CCorePlugin extends Plugin {
 	
 	public CDOM getDOM() {
 	    return CDOM.getInstance();
+	}
+
+	public ICdtVariableManager getCdtVariableManager(){
+		return CdtVariableManager.getDefault();
+	}
+	
+	public IEnvironmentVariableManager getBuildEnvironmentManager(){
+		return EnvironmentVariableManager.getDefault();
+	}
+	
+	public ICConfigurationDescription getPreferenceConfiguration(String buildSystemId) throws CoreException{
+		return fNewCProjectDescriptionManager.getPreferenceConfiguration(buildSystemId);
+	}
+
+	public ICConfigurationDescription getPreferenceConfiguration(String buildSystemId, boolean write) throws CoreException{
+		return fNewCProjectDescriptionManager.getPreferenceConfiguration(buildSystemId, write);
+	}
+	
+	public void setPreferenceConfiguration(String buildSystemId, ICConfigurationDescription des) throws CoreException {
+		fNewCProjectDescriptionManager.setPreferenceConfiguration(buildSystemId, des);
+	}
+	
+	/**
+	 * the method creates and returns a writable project description
+	 * 
+	 * @param project project for which the project description is requested
+	 * @param loadIfExists if true the method first tries to load and return the project description
+	 * from the settings file (.cproject)
+	 * if false, the stored settings are ignored and the new (empty) project description is created
+	 * NOTE: changes made to the returned project description will not be applied untill the {@link #setProjectDescription(IProject, ICProjectDescription)} is called 
+	 * @return {@link ICProjectDescription}
+	 * @throws CoreException
+	 */
+	public ICProjectDescription createProjectDescription(IProject project, boolean loadIfExists) throws CoreException{
+		return fNewCProjectDescriptionManager.createProjectDescription(project, loadIfExists);
+	}
+	
+	/**
+	 * returns the project description associated with this project
+	 * this is a convenience method fully equivalent to getProjectDescription(project, true)
+	 * see {@link #getProjectDescription(IProject, boolean)} for more detail
+	 * @param project
+	 * @return a writable copy of the ICProjectDescription or null if the project does not contain the
+	 * CDT data associated with it. 
+	 * Note: changes to the project description will not be reflected/used by the core
+	 * untill the {@link #setProjectDescription(IProject, ICProjectDescription)} is called
+	 * 
+	 * @see #getProjectDescription(IProject, boolean)
+	 */
+	public ICProjectDescription getProjectDescription(IProject project){
+		return fNewCProjectDescriptionManager.getProjectDescription(project);
+	}
+	
+	/**
+	 * this method is called to save/apply the project description
+	 * the method should be called to apply changes made to the project description
+	 * returned by the {@link #getProjectDescription(IProject, boolean)} or {@link #createProjectDescription(IProject, boolean)} 
+	 * 
+	 * @param project
+	 * @param des
+	 * @throws CoreException
+	 * 
+	 * @see {@link #getProjectDescription(IProject, boolean)}
+	 * @see #createProjectDescription(IProject, boolean)
+	 */
+	public void setProjectDescription(IProject project, ICProjectDescription des) throws CoreException {
+		fNewCProjectDescriptionManager.setProjectDescription(project, des);
+	}
+
+	/**
+	 * returns the project description associated with this project
+	 * 
+	 * @param project project for which the description is requested
+	 * @param write if true, the writable description copy is returned. 
+	 * If false the cached read-only description is returned.
+	 * 
+	 * CDT core maintains the cached project description settings. If only read access is needed to description,
+	 * then the read-only project description should be obtained.
+	 * This description always operates with cached data and thus it is better to use it for performance reasons
+	 * All set* calls to the read-only description result in the {@link WriteAccessException}
+	 * 
+	 * When the writable description is requested, the description copy is created.
+	 * Changes to this description will not be reflected/used by the core and Build System untill the
+	 * {@link #setProjectDescription(IProject, ICProjectDescription)} is called
+	 *
+	 * Each getProjectDescription(project, true) returns a new copy of the project description 
+	 * 
+	 * The writable description uses the cached data untill the first set call
+	 * after that the description communicates directly to the Build System
+	 * i.e. the implementer of the org.eclipse.cdt.core.CConfigurationDataProvider extension
+	 * This ensures the Core<->Build System settings integrity
+	 * 
+	 * @return {@link ICProjectDescription}
+	 */
+	public ICProjectDescription getProjectDescription(IProject project, boolean write){
+		return fNewCProjectDescriptionManager.getProjectDescription(project, write);
 	}
 
 }

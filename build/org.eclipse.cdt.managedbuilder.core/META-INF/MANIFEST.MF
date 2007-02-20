@@ -8,6 +8,7 @@ Bundle-Vendor: %providerName
 Bundle-Localization: plugin
 Export-Package: org.eclipse.cdt.managedbuilder.buildmodel,
  org.eclipse.cdt.managedbuilder.core,
+ org.eclipse.cdt.newmake.core,
  org.eclipse.cdt.managedbuilder.envvar,
  org.eclipse.cdt.managedbuilder.internal.buildmodel,
  org.eclipse.cdt.managedbuilder.internal.core,
@@ -19,11 +20,17 @@ Export-Package: org.eclipse.cdt.managedbuilder.buildmodel,
  org.eclipse.cdt.managedbuilder.makegen.gnu,
  org.eclipse.cdt.managedbuilder.makegen.internal,
  org.eclipse.cdt.managedbuilder.projectconverter,
- org.eclipse.cdt.managedbuilder.scannerconfig
+ org.eclipse.cdt.managedbuilder.scannerconfig,
+ org.eclipse.cdt.managedbuilder.buildproperties,
+ org.eclipse.cdt.make.internal.core.scannerconfig,
+ org.eclipse.cdt.make.internal.core.scannerconfig.gnu,
+ org.eclipse.cdt.make.internal.core.scannerconfig.jobs,
+ org.eclipse.cdt.make.internal.core.scannerconfig.util,
+ org.eclipse.cdt.make.internal.core.scannerconfig2,
+ org.eclipse.cdt.make.core.scannerconfig
 Require-Bundle: org.eclipse.cdt.core;bundle-version="[4.0.0,5.0.0)",
  org.eclipse.core.resources;bundle-version="[3.2.0,4.0.0)",
  org.eclipse.core.runtime;bundle-version="[3.2.0,4.0.0)",
- org.eclipse.cdt.make.core;bundle-version="[4.0.0,5.0.0)",
  org.eclipse.ui;bundle-version="[3.2.0,4.0.0)",
  org.eclipse.core.variables;bundle-version="[3.1.100,4.0.0)"
 Eclipse-LazyStart: true

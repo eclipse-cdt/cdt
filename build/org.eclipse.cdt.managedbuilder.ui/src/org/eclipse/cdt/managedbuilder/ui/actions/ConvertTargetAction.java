@@ -14,9 +14,9 @@ import org.eclipse.cdt.managedbuilder.core.IManagedBuildInfo;
 import org.eclipse.cdt.managedbuilder.core.IManagedProject;
 import org.eclipse.cdt.managedbuilder.core.IProjectType;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
-import org.eclipse.cdt.managedbuilder.internal.ui.ManagedBuilderUIMessages;
-import org.eclipse.cdt.managedbuilder.internal.ui.ManagedBuilderUIPlugin;
-
+import org.eclipse.cdt.managedbuilder.ui.newui.ManagedBuilderUIPlugin;
+import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.newui.NewUIMessages;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -69,7 +69,7 @@ public class ConvertTargetAction
 	
 
 	public void run(IAction action) {
-		Shell shell = ManagedBuilderUIPlugin.getDefault().getShell();
+		Shell shell = CUIPlugin.getActiveWorkbenchShell();
 		
 		// Check whether the converters available for the selected project
 		// If there are no converters display error dialog otherwise display converters list
@@ -77,23 +77,23 @@ public class ConvertTargetAction
 		if( ManagedBuildManager.hasTargetConversionElements(getProjectType(getSelectedProject())) == true ) {			
 			handleConvertTargetAction();
 		} else {
-			MessageDialog.openError(shell,ManagedBuilderUIMessages.getResourceString("ProjectConvert.noConverterErrordialog.title"), //$NON-NLS-1$
-			        ManagedBuilderUIMessages.getFormattedString("ProjectConvert.noConverterErrordialog.message", new String[] {getSelectedProject().getName()}) );  //$NON-NLS-1$
+			MessageDialog.openError(shell,"No converter", //$NON-NLS-1$
+			        NewUIMessages.getFormattedString("ProjectConvert.noConverterErrordialog.message", new String[] {getSelectedProject().getName()}) );  //$NON-NLS-1$
 		}
 	}
 
 	private void handleConvertTargetAction() {
 		Shell shell = ManagedBuilderUIPlugin.getDefault().getShell();
 		
-		String title = ManagedBuilderUIMessages.getFormattedString(PROJECT_CONVERTER_DIALOG, new String(getSelectedProject().getName())); 
+		String title = NewUIMessages.getFormattedString(PROJECT_CONVERTER_DIALOG, new String(getSelectedProject().getName())); 
 		ConvertTargetDialog dialog = new ConvertTargetDialog(shell, getSelectedProject(), title);
 		if ( dialog.open() == ConvertTargetDialog.OK ) {
 			if ( ConvertTargetDialog.isConversionSuccessful() == false) {									
 				MessageDialog.openError(
 								shell,
-								ManagedBuilderUIMessages
+								NewUIMessages
 										.getResourceString("ProjectConvert.conversionErrordialog.title"), //$NON-NLS-1$
-								ManagedBuilderUIMessages
+								NewUIMessages
 										.getFormattedString(
 												"ProjectConvert.conversionErrordialog.message", new String[] { getSelectedProject().getName() })); //$NON-NLS-1$
 			}

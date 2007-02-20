@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 Intel Corporation and others.
+ * Copyright (c) 2005, 2007 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,26 +10,23 @@
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.internal.core;
 
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.ProjectScope;
-import org.eclipse.core.runtime.content.*;
-import org.eclipse.core.runtime.preferences.IScopeContext;
+import org.eclipse.cdt.core.settings.model.ICStorageElement;
 import org.eclipse.cdt.managedbuilder.core.IBuildObject;
-import org.eclipse.cdt.managedbuilder.core.IProjectType;
-import org.eclipse.cdt.managedbuilder.core.IResourceConfiguration;
-import org.eclipse.cdt.managedbuilder.core.ITool;
 import org.eclipse.cdt.managedbuilder.core.IInputType;
-import org.eclipse.cdt.managedbuilder.core.IOutputType;
-import org.eclipse.cdt.managedbuilder.core.IManagedOutputNameProvider;
 import org.eclipse.cdt.managedbuilder.core.IManagedConfigElement;
-import org.eclipse.cdt.managedbuilder.core.IToolChain;
+import org.eclipse.cdt.managedbuilder.core.IManagedOutputNameProvider;
+import org.eclipse.cdt.managedbuilder.core.IOutputType;
+import org.eclipse.cdt.managedbuilder.core.IProjectType;
+import org.eclipse.cdt.managedbuilder.core.ITool;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
+import org.eclipse.cdt.managedbuilder.internal.enablement.OptionEnablementExpression;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.PluginVersionIdentifier;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
+import org.eclipse.core.runtime.content.IContentType;
+import org.eclipse.core.runtime.content.IContentTypeManager;
 
 public class OutputType extends BuildObject implements IOutputType {
 
@@ -56,6 +53,9 @@ public class OutputType extends BuildObject implements IOutputType {
 	private String namePattern;
 	private IConfigurationElement nameProviderElement = null;
 	private IManagedOutputNameProvider nameProvider = null;
+	
+	private BooleanExpressionApplicabilityCalculator booleanExpressionCalculator;
+
 	//  Miscellaneous
 	private boolean isExtensionOutputType = false;
 	private boolean isDirty = false;
@@ -83,6 +83,10 @@ public class OutputType extends BuildObject implements IOutputType {
 
 		loadFromManifest(element);
 		
+		IManagedConfigElement enablements[] = element.getChildren(OptionEnablementExpression.NAME);
+		if(enablements.length > 0)
+			booleanExpressionCalculator = new BooleanExpressionApplicabilityCalculator(enablements);
+
 		// Hook me up to the Managed Build Manager
 		ManagedBuildManager.addExtensionOutputType(this);
 	}
@@ -122,7 +126,7 @@ public class OutputType extends BuildObject implements IOutputType {
 	 * @param parent The <code>ITool</code> the OutputType will be added to. 
 	 * @param element The XML element that contains the OutputType settings.
 	 */
-	public OutputType(ITool parent, Element element) {
+	public OutputType(ITool parent, ICStorageElement element) {
 		this.parent = parent;
 		isExtensionOutputType = false;
 		
@@ -149,6 +153,7 @@ public class OutputType extends BuildObject implements IOutputType {
 		setId(Id);
 		setName(name);
 		isExtensionOutputType = false;
+		boolean copyIds = Id.equals(outputType.id);
 		
 		//  Copy the remaining attributes
 		if (outputType.outputContentTypeId != null) {
@@ -187,8 +192,13 @@ public class OutputType extends BuildObject implements IOutputType {
 		nameProviderElement = outputType.nameProviderElement; 
 		nameProvider = outputType.nameProvider; 
 		
-		setDirty(true);
-		setRebuildState(true);
+		if(copyIds) {
+			isDirty = outputType.isDirty;
+			rebuildState = outputType.rebuildState;
+		} else {
+			setDirty(true);
+			setRebuildState(true);
+		}
 	}
 
 	/*
@@ -262,13 +272,13 @@ public class OutputType extends BuildObject implements IOutputType {
 	 * 
 	 * @param element An XML element containing the OutputType information 
 	 */
-	protected void loadFromProject(Element element) {
+	protected void loadFromProject(ICStorageElement element) {
 		
 		// id
 		setId(element.getAttribute(IBuildObject.ID));
 
 		// name
-		if (element.hasAttribute(IBuildObject.NAME)) {
+		if (element.getAttribute(IBuildObject.NAME) != null) {
 			setName(element.getAttribute(IBuildObject.NAME));
 		}
 		
@@ -282,22 +292,22 @@ public class OutputType extends BuildObject implements IOutputType {
 		}
 		
 		// outputContentType
-		if (element.hasAttribute(IOutputType.OUTPUT_CONTENT_TYPE)) {
+		if (element.getAttribute(IOutputType.OUTPUT_CONTENT_TYPE) != null) {
 			outputContentTypeId = element.getAttribute(IOutputType.OUTPUT_CONTENT_TYPE); 			
 		}
 		
 		// outputs
-		if (element.hasAttribute(IOutputType.OUTPUTS)) {
+		if (element.getAttribute(IOutputType.OUTPUTS) != null) {
 			outputs = element.getAttribute(IOutputType.OUTPUTS);			
 		}
 		
 		// option
-		if (element.hasAttribute(IOutputType.OPTION)) {
+		if (element.getAttribute(IOutputType.OPTION) != null) {
 			optionId = element.getAttribute(IOutputType.OPTION);
 		}
 		
 		// multipleOfType
-		if (element.hasAttribute(IOutputType.MULTIPLE_OF_TYPE)) {
+		if (element.getAttribute(IOutputType.MULTIPLE_OF_TYPE) != null) {
 			String isMOT = element.getAttribute(IOutputType.MULTIPLE_OF_TYPE);
 			if (isMOT != null){
 				multipleOfType = new Boolean("true".equals(isMOT)); //$NON-NLS-1$
@@ -305,13 +315,13 @@ public class OutputType extends BuildObject implements IOutputType {
 		}
 		
 		// primaryInputType
-		if (element.hasAttribute(IOutputType.PRIMARY_INPUT_TYPE)) {
+		if (element.getAttribute(IOutputType.PRIMARY_INPUT_TYPE) != null) {
 			primaryInputTypeId = element.getAttribute(IOutputType.PRIMARY_INPUT_TYPE);
 			primaryInputType = parent.getInputTypeById(primaryInputTypeId);
 		}
 		
 		// primaryOutput
-        if (element.hasAttribute(IOutputType.PRIMARY_OUTPUT)) {
+        if (element.getAttribute(IOutputType.PRIMARY_OUTPUT) != null) {
 			String isPO = element.getAttribute(IOutputType.PRIMARY_OUTPUT);
 			if (isPO != null){
 				primaryOutput = new Boolean("true".equals(isPO)); //$NON-NLS-1$
@@ -319,28 +329,28 @@ public class OutputType extends BuildObject implements IOutputType {
         }
 		
 		// outputPrefix
-		if (element.hasAttribute(IOutputType.OUTPUT_PREFIX)) {
+		if (element.getAttribute(IOutputType.OUTPUT_PREFIX) != null) {
 			outputPrefix = element.getAttribute(IOutputType.OUTPUT_PREFIX);
 		}
 		
 		// outputNames
-		if (element.hasAttribute(IOutputType.OUTPUT_NAMES)) {
+		if (element.getAttribute(IOutputType.OUTPUT_NAMES) != null) {
 			outputNames = element.getAttribute(IOutputType.OUTPUT_NAMES);
 		}
 		
 		// namePattern
-		if (element.hasAttribute(IOutputType.NAME_PATTERN)) {
+		if (element.getAttribute(IOutputType.NAME_PATTERN) != null) {
 			namePattern = element.getAttribute(IOutputType.NAME_PATTERN);
 		}
 		
 		// buildVariable
-		if (element.hasAttribute(IOutputType.BUILD_VARIABLE)) {
+		if (element.getAttribute(IOutputType.BUILD_VARIABLE) != null) {
 			buildVariable = element.getAttribute(IOutputType.BUILD_VARIABLE);
 		}
 		
 		// Note: Name Provider cannot be specified in a project file because
 		//       an IConfigurationElement is needed to load it!
-		if (element.hasAttribute(IOutputType.NAME_PROVIDER)) {
+		if (element.getAttribute(IOutputType.NAME_PROVIDER) != null) {
 			// TODO:  Issue warning?
 		}
 	}
@@ -351,7 +361,7 @@ public class OutputType extends BuildObject implements IOutputType {
 	 * @param doc
 	 * @param element
 	 */
-	public void serialize(Document doc, Element element) {
+	public void serialize(ICStorageElement element) {
 		if (superClass != null)
 			element.setAttribute(IProjectType.SUPERCLASS, superClass.getId());
 		
@@ -649,16 +659,20 @@ public class OutputType extends BuildObject implements IOutputType {
 		}
 	}
 
+	public String[] getOutputExtensions(ITool tool, IProject project) {
+		//  Use content type if specified and registered with Eclipse
+		IContentType type = getOutputContentType();
+		if (type != null) {
+			return ((Tool)tool).getContentTypeFileSpecs(type, project);
+		}
+		return getOutputExtensionsAttribute();
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.build.managed.IOuputType#getOutputExtensions()
 	 */
 	public String[] getOutputExtensions(ITool tool) {
-		//  Use content type if specified and registered with Eclipse
-		IContentType type = getOutputContentType();
-		if (type != null) {
-			return ((Tool)tool).getContentTypeFileSpecs(type);
-		}
-		return getOutputExtensionsAttribute();
+		return getOutputExtensions(tool, ((Tool)tool).getProject());
 	}
 
 	/* (non-Javadoc)
@@ -884,4 +898,26 @@ public class OutputType extends BuildObject implements IOutputType {
 
 		rebuildState = rebuild;
 	}
+	
+	public BooleanExpressionApplicabilityCalculator getBooleanExpressionCalculator(){
+		if(booleanExpressionCalculator == null){
+			if(superClass != null){
+				return ((OutputType)superClass).getBooleanExpressionCalculator();
+			}
+		}
+		return booleanExpressionCalculator;
+	}
+	
+	public boolean isEnabled(ITool tool) {
+		if(tool.isExtensionElement())
+			return true;
+		
+		BooleanExpressionApplicabilityCalculator calc = getBooleanExpressionCalculator();
+		if(calc == null)
+			return true;
+		
+		return calc.isOutputTypeEnabled(tool, this);
+	}
+
+
 }

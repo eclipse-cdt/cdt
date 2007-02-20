@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 QNX Software Systems and others.
+ * Copyright (c) 2000, 2007 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,6 +16,7 @@ import org.eclipse.cdt.core.model.CoreModelUtil;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ISourceEntry;
 import org.eclipse.cdt.core.model.ISourceRoot;
+import org.eclipse.cdt.core.settings.model.ICSourceEntry;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IPath;
 
@@ -24,13 +25,13 @@ import org.eclipse.core.runtime.IPath;
  */
 public class SourceRoot extends CContainer implements ISourceRoot {
 
-	ISourceEntry sourceEntry;
+	ICSourceEntry sourceEntry;
 
 	/**
 	 * @param parent
 	 * @param res
 	 */
-	public SourceRoot(ICElement parent, IResource res, ISourceEntry entry) {
+	public SourceRoot(ICElement parent, IResource res, ICSourceEntry entry) {
 		super(parent, res);
 		sourceEntry = entry;
 		IPath path = getPath();
@@ -41,7 +42,7 @@ public class SourceRoot extends CContainer implements ISourceRoot {
 		}
 	}
 
-	public ISourceEntry getSourceEntry() {
+	public ICSourceEntry getSourceEntry() {
 		return sourceEntry;
 	}
 
@@ -62,7 +63,7 @@ public class SourceRoot extends CContainer implements ISourceRoot {
 	}
 
 	public boolean isOnSourceEntry(IPath path) {
-		if (sourceEntry.getPath().isPrefixOf(path) 
+		if (sourceEntry.getFullPath().isPrefixOf(path) 
 				&& !CoreModelUtil.isExcluded(path, sourceEntry.fullExclusionPatternChars())) {
 			return true;
 		}

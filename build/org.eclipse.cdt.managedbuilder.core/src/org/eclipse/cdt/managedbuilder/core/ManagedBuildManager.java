@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2006 IBM Corporation and others.
+ * Copyright (c) 2003, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.core;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -19,40 +17,46 @@ import java.io.InputStream;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
 import java.util.Random;
+import java.util.Set;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.FactoryConfigurationError;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.OutputKeys;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerConfigurationException;
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.TransformerFactoryConfigurationError;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
 
 import org.eclipse.cdt.core.AbstractCExtension;
+import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.IPathEntry;
 import org.eclipse.cdt.core.parser.IScannerInfo;
 import org.eclipse.cdt.core.parser.IScannerInfoChangeListener;
 import org.eclipse.cdt.core.parser.IScannerInfoProvider;
+import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
+import org.eclipse.cdt.core.settings.model.ICLanguageSettingEntry;
+import org.eclipse.cdt.core.settings.model.ICProjectDescription;
+import org.eclipse.cdt.core.settings.model.extension.CConfigurationData;
+import org.eclipse.cdt.managedbuilder.buildproperties.IBuildProperty;
+import org.eclipse.cdt.managedbuilder.buildproperties.IBuildPropertyManager;
 import org.eclipse.cdt.managedbuilder.envvar.IEnvironmentBuildPathsChangeListener;
 import org.eclipse.cdt.managedbuilder.envvar.IEnvironmentVariableProvider;
+import org.eclipse.cdt.managedbuilder.internal.buildproperties.BuildPropertyManager;
 import org.eclipse.cdt.managedbuilder.internal.core.BooleanExpressionApplicabilityCalculator;
 import org.eclipse.cdt.managedbuilder.internal.core.Builder;
+import org.eclipse.cdt.managedbuilder.internal.core.BuilderFactory;
+import org.eclipse.cdt.managedbuilder.internal.core.CommonBuilder;
 import org.eclipse.cdt.managedbuilder.internal.core.Configuration;
 import org.eclipse.cdt.managedbuilder.internal.core.DefaultManagedConfigElement;
+import org.eclipse.cdt.managedbuilder.internal.core.FolderInfo;
+import org.eclipse.cdt.managedbuilder.internal.core.IMatchKeyProvider;
 import org.eclipse.cdt.managedbuilder.internal.core.InputType;
 import org.eclipse.cdt.managedbuilder.internal.core.ManagedBuildInfo;
 import org.eclipse.cdt.managedbuilder.internal.core.ManagedCommandLineGenerator;
@@ -67,21 +71,28 @@ import org.eclipse.cdt.managedbuilder.internal.core.Target;
 import org.eclipse.cdt.managedbuilder.internal.core.TargetPlatform;
 import org.eclipse.cdt.managedbuilder.internal.core.Tool;
 import org.eclipse.cdt.managedbuilder.internal.core.ToolChain;
+import org.eclipse.cdt.managedbuilder.internal.dataprovider.BuildConfigurationData;
 import org.eclipse.cdt.managedbuilder.internal.envvar.EnvironmentVariableProvider;
 import org.eclipse.cdt.managedbuilder.internal.macros.BuildMacroProvider;
 import org.eclipse.cdt.managedbuilder.macros.IBuildMacroProvider;
 import org.eclipse.cdt.managedbuilder.makegen.IManagedBuilderMakefileGenerator;
 import org.eclipse.cdt.managedbuilder.makegen.gnu.GnuMakefileGenerator;
 import org.eclipse.cdt.managedbuilder.projectconverter.UpdateManagedProjectManager;
+import org.eclipse.core.resources.ICommand;
+import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IResourceStatus;
+import org.eclipse.core.resources.IWorkspaceRoot;
+import org.eclipse.core.resources.IWorkspaceRunnable;
+import org.eclipse.core.resources.IncrementalProjectBuilder;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
@@ -89,16 +100,17 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.PluginVersionIdentifier;
 import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.osgi.framework.Bundle;
+import org.osgi.framework.Version;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-import org.w3c.dom.ProcessingInstruction;
 
 /**
  * This is the main entry point for getting at the build information
@@ -132,10 +144,24 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 	public static final int ERROR_CATEGORY = 0;
 	public static final int ERROR_FILTER = 1;
 	
+	public static final String BUILD_TYPE_PROPERTY_ID = "org.eclipse.cdt.build.core.buildType";	//$NON-NLS-1$
+	public static final String BUILD_ARTEFACT_TYPE_PROPERTY_ID = "org.eclipse.cdt.build.core.buildArtefactType";	//$NON-NLS-1$
+
+	public static final String BUILD_TYPE_PROPERTY_DEBUG = "org.eclipse.cdt.build.core.buildType.debug";	//$NON-NLS-1$
+	public static final String BUILD_TYPE_PROPERTY_RELEASE = "org.eclipse.cdt.build.core.buildType.release";	//$NON-NLS-1$
+	public static final String BUILD_ARTEFACT_TYPE_PROPERTY_EXE = "org.eclipse.cdt.build.core.buildArtefactType.exe";	//$NON-NLS-1$
+	public static final String BUILD_ARTEFACT_TYPE_PROPERTY_STATICLIB = "org.eclipse.cdt.build.core.buildArtefactType.staticLib";	//$NON-NLS-1$
+	public static final String BUILD_ARTEFACT_TYPE_PROPERTY_SHAREDLIB = "org.eclipse.cdt.build.core.buildArtefactType.sharedLib";	//$NON-NLS-1$
+
+	public static final String CFG_DATA_PROVIDER_ID = ManagedBuilderCorePlugin.getUniqueIdentifier() + ".configurationDataProvider";
+	
 	private static final String NEWLINE = System.getProperty("line.separator");	//$NON-NLS-1$
 	
+	public static final String INTERNAL_BUILDER_ID = "org.eclipse.cdt.build.core.internal.builder";	//$NON-NLS-1$
+	
 	// This is the version of the manifest and project files
-	private static final PluginVersionIdentifier buildInfoVersion = new PluginVersionIdentifier(3, 1, 0);
+	private static final PluginVersionIdentifier buildInfoVersion = new PluginVersionIdentifier(4, 0, 0);
+	private static final Version version = new Version(4, 0, 0);
 	private static Map depCalculatorsMap;
 	private static boolean projectTypesLoaded = false;
 	private static boolean projectTypesLoading = false;
@@ -177,6 +203,9 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 	//  reflects the content and structure of the extension section within the 
 	//  declaring plug-in's manifest (plugin.xml) file. 
 	private static Map configElementMap;
+	
+//	private static List sortedToolChains;
+//	private static Map builtTypeToToolChainListMap;
 	// Listeners interested in build model changes
 	private static Map buildModelListeners;
 	// Random number for derived object model elements
@@ -184,14 +213,39 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 	// Environment Build Paths Change Listener
 	private static IEnvironmentBuildPathsChangeListener fEnvironmentBuildPathsChangeListener;
 	
+	private static HashMap fSortedToolChains;
+	private static HashMap fSortedTools;
+	private static HashMap fSortedBuilders;
+	
+	private static ISorter fToolChainSorter = new ISorter(){
+		public void sort() {
+			resortToolChains();
+		}
+	};
+	private static ISorter fToolSorter = new ISorter(){
+		public void sort() {
+			resortTools();
+		}
+	};
+	private static ISorter fBuilderSorter = new ISorter(){
+		public void sort() {
+			resortBuilders();
+		}
+	};
+	
+	private static interface ISorter {
+		void sort();
+	}
+
+	
 	static {
 		getEnvironmentVariableProvider().subscribe(
 				fEnvironmentBuildPathsChangeListener = new IEnvironmentBuildPathsChangeListener(){
 					public void buildPathsChanged(IConfiguration configuration, int buildPathType){
-						if(buildPathType == IEnvVarBuildPath.BUILDPATH_INCLUDE){
-							initializePathEntries(configuration,null);
-							notifyListeners(configuration,null);
-						}
+//						if(buildPathType == IEnvVarBuildPath.BUILDPATH_INCLUDE){
+//							initializePathEntries(configuration,null);
+//							notifyListeners(configuration,null);
+//						}
 					}
 				});
 	}
@@ -268,7 +322,15 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 		return (IProjectType)getExtensionProjectTypeMap().get(id);
 	}
 	
+	public static Version getVersion(){
+		return version;
+	}
+	
 	protected static Map getExtensionDepCalcMap() {
+		try {
+			loadExtensions();
+		} catch (BuildException e) {
+		}
 		if (depCalculatorsMap == null) {
 			depCalculatorsMap = new HashMap();
 		}
@@ -281,6 +343,10 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 	 * @return Map
 	 */
 	public static SortedMap getExtensionProjectTypeMap() {
+		try {
+			loadExtensions();
+		} catch (BuildException e) {
+		}
 		if (projectTypeMap == null) {
 			projectTypeMap = new TreeMap();
 		}
@@ -317,6 +383,11 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 	 * @return Map
 	 */
 	public static SortedMap getExtensionToolChainMap() {
+		try {
+			loadExtensions();
+		} catch (BuildException e) {
+		}
+
 		if (extensionToolChainMap == null) {
 			extensionToolChainMap =  new TreeMap();
 		}
@@ -329,6 +400,10 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 	 * @return Map
 	 */
 	public static SortedMap getExtensionToolMap() {
+		try {
+			loadExtensions();
+		} catch (BuildException e) {
+		}
 		if (extensionToolMap == null) {
 			extensionToolMap = new TreeMap();
 		}
@@ -353,6 +428,10 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 	 * @return Map
 	 */
 	public static SortedMap getExtensionBuilderMap() {
+		try {
+			loadExtensions();
+		} catch (BuildException e) {
+		}
 		if (extensionBuilderMap == null) {
 			extensionBuilderMap = new TreeMap();
 		}
@@ -776,7 +855,12 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 			//build path change listener
 			if (config.isTemporary() ||
 					(option != null && option.getValueType() != IOption.INCLUDE_PATH 
-							&& option.getValueType() != IOption.PREPROCESSOR_SYMBOLS)) {
+							&& option.getValueType() != IOption.PREPROCESSOR_SYMBOLS
+							&& option.getValueType() != IOption.INCLUDE_FILES
+							&& option.getValueType() != IOption.LIBRARY_PATHS
+							&& option.getValueType() != IOption.LIBRARY_FILES
+							&& option.getValueType() != IOption.MACRO_FILES
+							)) {
 				return;
 			}
 		} catch (BuildException e) {return;}
@@ -799,17 +883,19 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 					(option != null
 					&& option.getValueType() != IOption.INCLUDE_PATH
 					&& option.getValueType() != IOption.PREPROCESSOR_SYMBOLS
-					&& option.getValueType() != IOption.LIBRARIES
+					&& option.getValueType() != IOption.INCLUDE_FILES
+					&& option.getValueType() != IOption.LIBRARY_PATHS
+					&& option.getValueType() != IOption.LIBRARY_FILES
+					&& option.getValueType() != IOption.MACRO_FILES
 					))
 				return;
 		} catch (BuildException e){
 			return;
 		}
-		IResource rc = config.getOwner();
-		if(rc != null){
-			IManagedBuildInfo info = getBuildInfo(rc);
-			if(info instanceof ManagedBuildInfo && config.equals(info.getDefaultConfiguration()))
-				((ManagedBuildInfo)info).initializePathEntries();
+		
+		try {
+			updateCoreSettings(config);
+		} catch (CoreException e) {
 		}
 			
 	}
@@ -820,18 +906,23 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 			initializePathEntries(cfg,option);
 	}
 	
-	private static void notifyListeners(IResourceConfiguration resConfig, IOption option) {
+	private static void notifyListeners(IResourceInfo resConfig, IOption option) {
 		// Continue if change is something that effect the scanreser
 		try {
 			if (resConfig.getParent().isTemporary() ||
 					(option != null && option.getValueType() != IOption.INCLUDE_PATH 
-				&& option.getValueType() != IOption.PREPROCESSOR_SYMBOLS)) {
+				&& option.getValueType() != IOption.PREPROCESSOR_SYMBOLS
+				&& option.getValueType() != IOption.INCLUDE_FILES
+				&& option.getValueType() != IOption.LIBRARY_PATHS
+				&& option.getValueType() != IOption.LIBRARY_FILES
+				&& option.getValueType() != IOption.MACRO_FILES
+					)) {
 				return;
 			}
 		} catch (BuildException e) {return;}
 		
 		// Figure out if there is a listener for this change
-		IResource resource = resConfig.getOwner();
+		IResource resource = resConfig.getParent().getOwner();
 		List listeners = (List) getBuildModelListeners().get(resource);
 		if (listeners == null) {
 			return;
@@ -850,8 +941,8 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 	 */
 	public static void setNewProjectVersion(IProject newProject) {
 		// Get the build info for the argument
-		ManagedBuildInfo info = findBuildInfo(newProject, true);
-		info.setVersion(buildInfoVersion.toString());		
+//		ManagedBuildInfo info = findBuildInfo(newProject, true);
+//		info.setVersion(buildInfoVersion.toString());		
 	}
 
 	/**
@@ -884,8 +975,8 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 			} else {
 				// Event handling Failed. 
 			} 
-			initializePathEntries(config,retOpt);
-			notifyListeners(config, retOpt);
+//			initializePathEntries(config,retOpt);
+//			notifyListeners(config, retOpt);
 		} catch (BuildException e) {
 			return null;
 		}
@@ -906,7 +997,7 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 	 *        has changed to <code>IHoldsOptions holder</code>. Client code
 	 *        assuming <code>ITool</code> as type, will continue to work unchanged.
 	 */
-	public static IOption setOption(IResourceConfiguration resConfig, IHoldsOptions holder, IOption option, boolean value) {
+	public static IOption setOption(IResourceInfo resConfig, IHoldsOptions holder, IOption option, boolean value) {
 		IOption retOpt;
 		try {
 			// Request a value change and set dirty if real change results
@@ -922,7 +1013,7 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 			} else {
 				// Event handling Failed. 
 			} 
-			initializePathEntries(resConfig,retOpt);
+	//		initializePathEntries(resConfig,retOpt);
 			notifyListeners(resConfig, retOpt);
 		} catch (BuildException e) {
 			return null;
@@ -958,8 +1049,8 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 			} else {
 				// Event handling Failed. 
 			} 
-			initializePathEntries(config,retOpt);
-			notifyListeners(config, retOpt);
+//			initializePathEntries(config,retOpt);
+//			notifyListeners(config, retOpt);
 		} catch (BuildException e) {
 			return null;
 		}
@@ -980,7 +1071,7 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 	 *        has changed to <code>IHoldsOptions holder</code>. Client code
 	 *        assuming <code>ITool</code> as type, will continue to work unchanged.
 	 */
-	public static IOption setOption(IResourceConfiguration resConfig, IHoldsOptions holder, IOption option, String value) {
+	public static IOption setOption(IResourceInfo resConfig, IHoldsOptions holder, IOption option, String value) {
 		IOption retOpt;
 		try {
 			retOpt = resConfig.setOption(holder, option, value);
@@ -995,7 +1086,7 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 			} else {
 				// Event handling Failed. 
 			} 
-			initializePathEntries(resConfig,retOpt);
+	//		initializePathEntries(resConfig,retOpt);
 			notifyListeners(resConfig, retOpt);
 		} catch (BuildException e) {
 			return null;
@@ -1031,8 +1122,8 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 			} else {
 				// Event handling Failed. 
 			} 
-			initializePathEntries(config,retOpt);
-			notifyListeners(config, retOpt);				
+//			initializePathEntries(config,retOpt);
+//			notifyListeners(config, retOpt);				
 		} catch (BuildException e) {
 			return null;
 		}
@@ -1053,7 +1144,7 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 	 *        has changed to <code>IHoldsOptions holder</code>. Client code
 	 *        assuming <code>ITool</code> as type, will continue to work unchanged.
 	 */
-	public static IOption setOption(IResourceConfiguration resConfig, IHoldsOptions holder, IOption option, String[] value) {
+	public static IOption setOption(IResourceInfo resConfig, IHoldsOptions holder, IOption option, String[] value) {
 		IOption retOpt;
 		try {
 			retOpt = resConfig.setOption(holder, option, value);
@@ -1068,7 +1159,7 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 			} else {
 				// Event handling Failed. 
 			} 
-			initializePathEntries(resConfig,retOpt);
+//			initializePathEntries(resConfig,retOpt);
 			notifyListeners(resConfig, retOpt);				
 		} catch (BuildException e) {
 			return null;
@@ -1100,6 +1191,16 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 			resConfig.setToolCommand(tool, command);
 		}
 	}
+	
+	public static boolean saveBuildInfo(IProject project, boolean force) {
+		try {
+			return updateBuildInfo(project, force);
+		} catch (CoreException e) {
+			ManagedBuilderCorePlugin.log(e);
+			return false;
+		}
+	}
+
 	/**
 	 * Saves the build information associated with a project and all resources
 	 * in the project to the build info file.
@@ -1107,7 +1208,39 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 	 * @param project
 	 * @param force 
 	 */
-	public static boolean saveBuildInfo(IProject project, boolean force) {
+	private static boolean updateBuildInfo(IProject project, boolean force) throws CoreException {
+		IManagedBuildInfo info = getBuildInfo(project, false);
+		if(info == null)
+			return true;
+
+		ICProjectDescription projDes = CoreModel.getDefault().getProjectDescription(project);
+		IManagedProject mProj = info.getManagedProject();
+		
+		IConfiguration cfgs[] = mProj.getConfigurations();
+		ICConfigurationDescription cfgDess[] = projDes.getConfigurations();
+		
+		for(int i = 0; i < cfgs.length; i++){
+			IConfiguration cfg = cfgs[i];
+//			try {
+				applyConfiguration(cfg, projDes, force);
+//			} catch (CoreException e) {
+//			}
+		}
+		
+		for(int i = 0; i < cfgDess.length; i++){
+			ICConfigurationDescription cfgDes = cfgDess[i];
+			IConfiguration cfg = mProj.getConfiguration(cfgDes.getId());
+			if(cfg == null)
+				mProj.removeConfiguration(cfgDes.getId());
+		}
+
+//		try {
+			CoreModel.getDefault().setProjectDescription(project, projDes);
+//		} catch (CoreException e) {
+//			return false;
+//		}
+		return true;
+		/*
 		// Create document
 		Exception err = null;
 		try {
@@ -1231,12 +1364,66 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 		// property page changes will be sticky, in the UI, which is nonintuitive and confusing
 		// Therefore, just always return success, i.e. true, from this routine
 		return true;
+		*/
 	}
+	
+	public static void updateCoreSettings(IProject project) throws CoreException {
+		updateBuildInfo(project, true);
+	}
+	
+	public static void updateCoreSettings(IConfiguration cfg) throws CoreException{
+		IProject project = cfg.getOwner().getProject();
+		ICProjectDescription projDes = CoreModel.getDefault().getProjectDescription(project);
+		if(projDes != null){
+			if(applyConfiguration(cfg, projDes, true)){
+				CoreModel.getDefault().setProjectDescription(project, projDes);
+			}
+		}
+	}
+	
+	public static void updateCoreSettings(IProject project, IConfiguration[] cfgs) throws CoreException{
+		if(cfgs == null){
+			IManagedBuildInfo info = getBuildInfo(project);
+			if(info != null && info.isValid() && info.getManagedProject() != null)
+				cfgs = info.getManagedProject().getConfigurations(); 
+		}
+		
+		if(cfgs == null || cfgs.length == 0)
+			return;
+		
+		ICProjectDescription projDes = CoreModel.getDefault().getProjectDescription(project);
+		boolean updated = false;
+		if(projDes != null){
+			for(int i = 0; i < cfgs.length; i++){
+				if(applyConfiguration(cfgs[i], projDes, true)){
+					updated = true;
+				}
+			}
+			if(updated)
+				CoreModel.getDefault().setProjectDescription(project, projDes);
+		}
+	}		
+	
+	private static boolean applyConfiguration(IConfiguration cfg, ICProjectDescription des, boolean force) throws CoreException{
+		boolean updated = false;
+		ICConfigurationDescription cfgDes = des.getConfigurationById(cfg.getId());
+		if(cfgDes == null){
+			des.createConfiguration(ManagedBuildManager.CFG_DATA_PROVIDER_ID, cfg.getConfigurationData());
+			updated = true;
+		} else if(force || cfg.isDirty()){
+			cfgDes.setConfigurationData(CFG_DATA_PROVIDER_ID, cfg.getConfigurationData());
+			updated = true;
+		}
+		
+		return updated;
+	}
+	
 
 	/**
 	 * @param resource
 	 */
 	public static void removeBuildInfo(IResource resource) {
+		/*
 		IManagedBuildInfo info = findBuildInfo(resource, false);
 		if(info != null){
 			IConfiguration[] configs = info.getManagedProject().getConfigurations();
@@ -1252,6 +1439,7 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 			} catch (CoreException e) {
 			}
 		}
+		*/
 	}
 
 	/**
@@ -1277,6 +1465,22 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 		performValueHandlerEvent(resConfig, 
 				IManagedOptionValueHandler.EVENT_SETDEFAULT);
 
+	}
+	
+	public static void resetOptionSettings(IResourceInfo rcInfo){
+		if(rcInfo instanceof IFileInfo){
+			Configuration cfg = (Configuration)rcInfo.getParent();
+			IProject project;
+			if(cfg.isExtensionElement() || cfg.isPreference())
+				project = null;
+			else
+				project = cfg.getOwner().getProject();
+			
+			resetResourceConfiguration(project, (IFileInfo)rcInfo);
+		} else {
+			FolderInfo fo = (FolderInfo)rcInfo;
+			fo.resetOptionSettings();
+		}
 	}
 	/**
 	 * Adds a ProjectType that is is specified in the manifest to the 
@@ -1535,6 +1739,8 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 	 * @return
 	 */
 	public static IStatus initBuildInfoContainer(IResource resource) {
+		return Status.OK_STATUS;
+		/*
 		ManagedBuildInfo buildInfo = null;
 
 		// Get the build info associated with this project for this session
@@ -1553,6 +1759,7 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 			IStatus.OK, 
 			ManagedMakeMessages.getFormattedString("ManagedBuildInfo.message.init.ok", resource.getName()),	//$NON-NLS-1$ 
 			null);
+			*/
 	}
 	
 	/* (non-Javadoc)
@@ -1865,7 +2072,7 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 				//      loaded from a manifest file or a dynamic element provider.  It cannot
 				//      be to an object loaded from a managed build system project file (.cdtbuild).
 				//
-		
+
 				Iterator projectTypeIter = getExtensionProjectTypeMap().values().iterator();
 				while (projectTypeIter.hasNext()) {
 					try {
@@ -2071,6 +2278,7 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 				customConfigLoader.buildDefsResolved();					
 			}
 		}
+		
 		performAdjustments();
 		projectTypesLoading = false;
 		projectTypesLoaded = true;
@@ -2095,35 +2303,44 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 	}
 	
 	private static void adjustConfig(IConfiguration cfg){
-		IToolChain tc = cfg.getToolChain();
-		adjustHolder(cfg, tc);
-		
-		ITool tools[] = cfg.getTools();
-		for(int i = 0; i < tools.length; i++){
-			adjustHolder(cfg, tools[i]);
+		IResourceInfo rcInfos[] = cfg.getResourceInfos();
+		for(int i = 0 ; i < rcInfos.length; i++){
+			if(rcInfos[i] instanceof IFolderInfo){
+				IFolderInfo info = (IFolderInfo)rcInfos[i];
+				IToolChain tc = info.getToolChain();
+				adjustHolder(info, tc);
+
+				ITool tools[] = tc.getTools();
+				for(int j = 0; j < tools.length; j++){
+					adjustHolder(info, tools[j]);
+				}
+			} else if (rcInfos[i] instanceof IFileInfo){
+				IFileInfo info = (IFileInfo)rcInfos[i];
+				ITool rcTools[] = info.getTools();
+				for(int j = 0; j < rcTools.length; j++){
+					adjustHolder(info, rcTools[j]);
+				}
+				
+			}
 		}
 		
 		IResourceConfiguration rcCfgs[] = cfg.getResourceConfigurations();
 		
 		for(int i = 0; i <rcCfgs.length; i++){
-			ITool rcTools[] = rcCfgs[i].getTools();
-			for(int j = 0; j < rcTools.length; j++){
-				adjustHolder(rcCfgs[i], rcTools[j]);
-			}
 		}
 		
 	}
 	
-	private static void adjustHolder(IBuildObject cfg, IHoldsOptions holder){
+	private static void adjustHolder(IResourceInfo rcInfo, IHoldsOptions holder){
 		IOption options[] = holder.getOptions();
 		
 		for(int i = 0; i < options.length; i++){
 			Option option = (Option)options[i];
 			BooleanExpressionApplicabilityCalculator calc = 
-				option.getBooleanExpressionCalculator();
+				option.getBooleanExpressionCalculator(true);
 			
 			if(calc != null)
-				calc.performAdjustment(cfg,holder,option);
+				calc.adjustOption(rcInfo,holder,option, true);
 		}
 	}
 	
@@ -2138,7 +2355,7 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 				} else if (element.getName().equals(IConfiguration.CONFIGURATION_ELEMENT_NAME)) {
 					new Configuration((ProjectType)null, element, revision);
 				} else if (element.getName().equals(IToolChain.TOOL_CHAIN_ELEMENT_NAME)) {
-					new ToolChain((Configuration)null, element, revision);
+					new ToolChain((IFolderInfo)null, element, revision);
 				} else if (element.getName().equals(ITool.TOOL_ELEMENT_NAME)) {
 					new Tool((ProjectType)null, element, revision);
 				} else if (element.getName().equals(ITargetPlatform.TARGET_PLATFORM_ELEMENT_NAME)) {
@@ -2217,15 +2434,19 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 	 * @param resource The resource the build information is associated with
 	 */
 	public static ManagedBuildInfo createBuildInfo(IResource resource) {
-		ManagedBuildInfo buildInfo = new ManagedBuildInfo(resource);
+		IProject proj = resource.getProject();
+		ManagedBuildInfo buildInfo = new ManagedBuildInfo(proj);
 		try {
-			// Associate the build info with the project for the duration of the session
-			resource.setSessionProperty(buildInfoProperty, buildInfo);
+			setLoaddedBuildInfo(proj, buildInfo);
 		} catch (CoreException e) {
-			// There is no point in keeping the info around if it isn't associated with the project
 			buildInfo = null;
 		}
 		return buildInfo;
+	}
+	
+	public static void setLoaddedBuildInfo(IProject project, IManagedBuildInfo info) throws CoreException{
+		// Associate the build info with the project for the duration of the session
+		project.setSessionProperty(buildInfoProperty, info);
 	}
 	
 	private static IManagedConfigElementProvider createConfigProvider(
@@ -2247,30 +2468,42 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 	 * @return
 	 */
 	public static boolean manages(IResource resource) {
-		// The managed build manager manages build information for the 
-		// resource IFF it it is a project and has a build file with the proper
-		// root element
-		IProject project = null;
-		if (resource instanceof IProject){
-			project = (IProject)resource;
-		} else if (resource instanceof IFile) {
-			project = ((IFile)resource).getProject();
-		} else {
+		ICProjectDescription des = CoreModel.getDefault().getProjectDescription(resource.getProject(), false);
+		if(des == null){
 			return false;
 		}
-		IFile file = project.getFile(SETTINGS_FILE_NAME);
-		if (file.exists()) {
-			try {
-				InputStream stream = file.getContents();
-				DocumentBuilder parser = DocumentBuilderFactory.newInstance().newDocumentBuilder();
-				Document document = parser.parse(stream);
-				NodeList nodes = document.getElementsByTagName(ROOT_NODE_NAME);
-				return (nodes.getLength() > 0);
-			} catch (Exception e) {
-				return false;
-			}
-		}
+
+		ICConfigurationDescription cfgDes = des.getActiveConfiguration();
+		IConfiguration cfg = ManagedBuildManager.getConfigurationForDescription(cfgDes);
+		if(cfg != null)
+			return true;
 		return false;
+		
+
+		//		// The managed build manager manages build information for the 
+//		// resource IFF it it is a project and has a build file with the proper
+//		// root element
+//		IProject project = null;
+//		if (resource instanceof IProject){
+//			project = (IProject)resource;
+//		} else if (resource instanceof IFile) {
+//			project = ((IFile)resource).getProject();
+//		} else {
+//			return false;
+//		}
+//		IFile file = project.getFile(SETTINGS_FILE_NAME);
+//		if (file.exists()) {
+//			try {
+//				InputStream stream = file.getContents();
+//				DocumentBuilder parser = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+//				Document document = parser.parse(stream);
+//				NodeList nodes = document.getElementsByTagName(ROOT_NODE_NAME);
+//				return (nodes.getLength() > 0);
+//			} catch (Exception e) {
+//				return false;
+//			}
+//		}
+//		return false;
 	}
 
 	/* (non-Javadoc)
@@ -2283,25 +2516,32 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 	 * @param resource
 	 * @return
 	 */
-	private static ManagedBuildInfo findBuildInfo(IResource resource, boolean forceLoad) {
+	private static ManagedBuildInfo findBuildInfo(IResource rc, boolean forceLoad) {
 
-		if (resource == null) return null;
+		if (rc == null) return null;
 
 		ManagedBuildInfo buildInfo = null;
+		IProject proj = rc.getProject();
 
 		// Check if there is any build info associated with this project for this session
 		try {
-			buildInfo = (ManagedBuildInfo)resource.getSessionProperty(buildInfoProperty);
-			// Make sure that if a project has build info, that the info is not corrupted
-			if (buildInfo != null) {
-				buildInfo.updateOwner(resource);
-			}
+			buildInfo = getLoaddedBuildInfo(proj);
 		} catch (CoreException e) {
 			return null;
 		}
-		
-		if (buildInfo == null && resource instanceof IProject)
-			buildInfo = findBuildInfoSynchronized((IProject)resource, forceLoad);
+	
+		if(buildInfo == null && forceLoad){
+			ICProjectDescription projDes = CoreModel.getDefault().getProjectDescription(proj, false);
+			if(projDes != null){
+				try {
+					buildInfo = getLoaddedBuildInfo(proj);
+				} catch (CoreException e) {
+					return null;
+				}
+			}
+		}
+//		if (buildInfo == null && resource instanceof IProject)
+//			buildInfo = findBuildInfoSynchronized((IProject)resource, forceLoad);
 /*		
 		// Nothing in session store, so see if we can load it from cdtbuild
 		if (buildInfo == null && resource instanceof IProject) {
@@ -2320,6 +2560,16 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 		}
 */
 		return buildInfo;
+	}
+	
+	private static ManagedBuildInfo getLoaddedBuildInfo(IProject project) throws CoreException{
+		// Check if there is any build info associated with this project for this session
+		ManagedBuildInfo buildInfo = (ManagedBuildInfo)project.getSessionProperty(buildInfoProperty);
+			// Make sure that if a project has build info, that the info is not corrupted
+		if (buildInfo != null) {
+			buildInfo.updateOwner(project);
+		}
+		return buildInfo;	
 	}
 
 	/* (non-Javadoc)
@@ -2347,7 +2597,7 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 
 		// Check if there is any build info associated with this project for this session
 		try {
-			buildInfo = (ManagedBuildInfo)resource.getSessionProperty(buildInfoProperty);
+			buildInfo = (ManagedBuildInfo)getLoaddedBuildInfo(resource.getProject());
 		} catch (CoreException e) {
 			// Continue, to see if any of the upcoming checks are successful
 		}
@@ -2373,7 +2623,7 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 	 * @param resource
 	 * @return
 	 */
-	synchronized private static ManagedBuildInfo findBuildInfoSynchronized(IProject project, boolean forceLoad) {
+/*	synchronized private static ManagedBuildInfo findBuildInfoSynchronized(IProject project, boolean forceLoad) {
 		ManagedBuildInfo buildInfo = null;
 
 		// Check if there is any build info associated with this project for this session
@@ -2447,7 +2697,7 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 
 		return buildInfo;
 	}
-	
+*/	
 	/**
 	 * Finds, but does not create, the managed build information for the 
 	 * argument.
@@ -2464,6 +2714,25 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 		return getBuildInfo(resource, true);
 	}
 
+	public static IManagedBuildInfo getBuildInfoLegacy(IProject project){
+		IManagedBuildInfo info = null;
+		try {
+			info = getLoaddedBuildInfo(project);
+		} catch (CoreException e) {
+		}
+		
+		if(info == null){
+			try {
+				info = loadBuildInfo(project);
+				
+				if(info != null)
+					setLoaddedBuildInfo(project, info);
+			} catch (Exception e) {
+			}
+		}
+		
+		return info;
+	}
 	/**
 	 * Finds, but does not create, the managed build information for the 
 	 * argument.
@@ -2855,12 +3124,14 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 	 * 
 	 * @since 3.0
 	 */
-	public static void performValueHandlerEvent(IResourceConfiguration config, int event) {
+	public static void performValueHandlerEvent(IResourceInfo config, int event) {
 
 		// Note: Resource configurations have no toolchain options
 		
 		// Get options associated with the resource configuration
-		ITool[] tools = config.getToolsToInvoke();
+		ITool[] tools = config instanceof IFileInfo ? 
+				((IFileInfo)config).getToolsToInvoke() :
+					((IFolderInfo)config).getFilteredTools();
 		for (int i = 0; i < tools.length; ++i) {
 			IOption[] toolOptions = tools[i].getOptions();
 			for (int j = 0; j < toolOptions.length; ++j) {
@@ -3247,4 +3518,749 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 		}
 		return path;
 	}
+	
+/*	private static IBuildObject getBuildObjectFromDataObject(CDataObject data){
+		if(data instanceof BuildConfigurationData)
+			return ((BuildConfigurationData)data).getConfiguration();
+		else if(data instanceof BuildFolderData)
+			return ((BuildFolderData)data).getFolderInfo();
+		else if(data instanceof BuildFileData)
+			return ((BuildFileData)data).getFileInfo();
+		return null;
+	}
+*/	
+	public static IConfiguration getConfigurationForDescription(ICConfigurationDescription cfgDes){
+		if(cfgDes == null)
+			return null;
+		CConfigurationData cfgData = cfgDes.getConfigurationData();
+		if(cfgData instanceof BuildConfigurationData)
+			return ((BuildConfigurationData)cfgData).getConfiguration();
+		return null;
+	}
+	
+	public static int optionTypeToEntryKind(int type){
+		switch(type){
+		case IOption.INCLUDE_PATH:
+			return ICLanguageSettingEntry.INCLUDE_PATH;
+		case IOption.PREPROCESSOR_SYMBOLS:
+			return ICLanguageSettingEntry.MACRO;
+		case IOption.INCLUDE_FILES:
+			return ICLanguageSettingEntry.INCLUDE_FILE;
+		case IOption.LIBRARY_PATHS:
+			return ICLanguageSettingEntry.LIBRARY_PATH;
+		case IOption.LIBRARY_FILES:
+			return ICLanguageSettingEntry.LIBRARY_FILE;
+		case IOption.MACRO_FILES:
+			return ICLanguageSettingEntry.MACRO_FILE;
+//		case IOption.LIBRARIES:
+//			return ICLanguageSettingEntry.LIBRARY_PATH;
+		}
+		return 0;
+	}
+
+	public static int entryKindToOptionType(int kind){
+		switch(kind){
+		case ICLanguageSettingEntry.INCLUDE_PATH:
+			return IOption.INCLUDE_PATH;
+		case ICLanguageSettingEntry.INCLUDE_FILE:
+			return IOption.INCLUDE_FILES;
+		case ICLanguageSettingEntry.MACRO:
+			return IOption.PREPROCESSOR_SYMBOLS;
+		case ICLanguageSettingEntry.MACRO_FILE:
+			return IOption.MACRO_FILES;
+		case ICLanguageSettingEntry.LIBRARY_PATH:
+			return IOption.LIBRARY_PATHS;//TODO IOption.LIBRARIES;
+		case ICLanguageSettingEntry.LIBRARY_FILE:
+			return IOption.LIBRARY_FILES;
+		}
+		return 0;
+	}
+	
+	public static ICConfigurationDescription getDescriptionForConfiguration(IConfiguration cfg){
+		ICConfigurationDescription des = ((Configuration)cfg).getConfigurationDescription();
+		if(des == null){
+			if(((Configuration)cfg).isPreference()){
+				try {
+					des = CCorePlugin.getDefault().getPreferenceConfiguration(CFG_DATA_PROVIDER_ID);
+				} catch (CoreException e) {
+					ManagedBuilderCorePlugin.log(e);
+				}
+			} else {
+				IProject project = cfg.getOwner().getProject();
+				ICProjectDescription projDes = CoreModel.getDefault().getProjectDescription(project, false);
+				if(projDes != null){
+					des = projDes.getConfigurationById(cfg.getId());
+				}
+			}
+		}
+		return des;
+	}
+	
+	public static IPath getBuildFullPath(IConfiguration cfg, IBuilder builder){
+		IProject project = cfg.getOwner().getProject();
+//		String path = builder.getBuildPath();
+		
+		IPath buildDirectory = builder.getBuildLocation();
+		IPath fullPath = null;
+		if (buildDirectory != null && !buildDirectory.isEmpty()) {
+			IResource res = project.getParent().findMember(buildDirectory);
+			if (res instanceof IContainer && res.exists()) {
+				fullPath = res.getFullPath();
+			} else {
+				IContainer crs[] = ((IWorkspaceRoot)project.getParent()).findContainersForLocation(buildDirectory);
+				if(crs.length != 0){
+					String projName = project.getName();
+					for(int i = 0; i < crs.length; i++){
+						IPath path = crs[i].getFullPath();
+						if(path.segmentCount() != 0 && path.segment(0).equals(projName)){
+							fullPath = path;
+							break;
+						}
+					}
+					
+					if(fullPath == null){
+						fullPath = crs[0].getFullPath();
+					}
+				}
+			}
+		} else {
+			fullPath = cfg.getOwner().getProject().getFullPath().append(cfg.getName());
+		}
+		
+		return fullPath;
+	}
+	
+	public static String locationToFullPath(String path){
+		if(!path.startsWith("${")) 
+			return null;
+		int index = path.lastIndexOf('}');
+		if(index == -1)
+			return null;
+		
+		String varName = "workspace_loc";
+		String str1 = path.substring(2, index);
+		String result = null;
+		if(str1.startsWith(varName)){
+			str1 = str1.substring(varName.length());
+			if(str1.length() != 0){
+				if(str1.startsWith(":")){
+					result = str1.substring(1);
+				}
+			} else {
+				result = "/";
+			}
+		}
+		
+		return result;
+	}
+	
+	public static String fullPathToLocation(String path){
+		StringBuffer buf = new StringBuffer();
+		return buf.append("${").append("workspace_loc:").append(path).append("}").toString();
+	}
+
+	public static IPath getBuildLocation(IConfiguration cfg, IBuilder builder) {
+		if(cfg.getOwner() == null)
+			return Path.EMPTY;
+		
+		IProject project = cfg.getOwner().getProject(); 
+		IPath buildDirectory = builder.getBuildLocation();
+		if (buildDirectory != null && !buildDirectory.isEmpty()) {
+			IResource res = project.getParent().findMember(buildDirectory);
+			if (res instanceof IContainer && res.exists()) {
+				buildDirectory = res.getLocation();
+			}
+		} else {
+			buildDirectory = project.getLocation();
+			if(builder.isManagedBuildOn())
+				buildDirectory = buildDirectory.append(cfg.getName());
+		}
+		return buildDirectory;
+	}
+	
+	public static IBuilder[] createBuilders(IProject project, Map args){
+		return ManagedBuilderCorePlugin.createBuilders(project, args);
+	}
+	
+	public static IBuilder createCustomBuilder(IConfiguration cfg, String builderId) throws CoreException{
+		return ManagedBuilderCorePlugin.createCustomBuilder(cfg, builderId);
+	}
+	
+	public static IBuilder createCustomBuilder(IConfiguration cfg, IBuilder base){
+		return ManagedBuilderCorePlugin.createCustomBuilder(cfg, base);
+	}
+	
+	public static IBuilder createBuilderForEclipseBuilder(IConfiguration cfg, String eclipseBuilderID) throws CoreException {
+		return ManagedBuilderCorePlugin.createBuilderForEclipseBuilder(cfg, eclipseBuilderID);
+	}
+	
+/*	public static IToolChain[] getExtensionsToolChains(String propertyType, String propertyValue){
+		List all = getSortedToolChains();
+		List result = new ArrayList();
+		for(int i = 0; i < all.size(); i++){
+			List list = (List)all.get(i);
+			IToolChain tc = findToolChain(list, propertyType, propertyValue);
+			if(tc != null)
+				result.add(tc);
+		}
+		return (IToolChain[])result.toArray(new ToolChain[result.size()]);
+	}
+*/	
+/*	public static void resortToolChains(){
+		sortedToolChains = null;
+		getSortedToolChains();
+	}
+*/	
+/*	private static List getSortedToolChains(){
+		if(sortedToolChains == null){
+			sortedToolChains = new ArrayList();
+			SortedMap map = getExtensionToolChainMap();
+			for(Iterator iter = map.values().iterator(); iter.hasNext();){
+				ToolChain tc = (ToolChain)iter.next();
+				if(tc.isAbstract())
+					continue;
+				List list = searchIdentical(sortedToolChains, tc);
+				if(list == null){
+					list = new ArrayList();
+					sortedToolChains.add(list);
+				}
+				list.add(tc);
+				tc.setIdenticalList(list);
+			}
+		}
+		return sortedToolChains;
+	}
+*/	
+//	private static List findIdenticalToolChains(IToolChain tc){
+//		ToolChain tCh = (ToolChain)tc;
+//		List list = tCh.getIdenticalList();
+//		if(list == null){
+//			resortToolChains();
+//			list = tCh.getIdenticalList();
+//			if(list == null){
+//				list = new ArrayList(0);
+//				tCh.setIdenticalList(list);
+//			}
+//		}
+//
+//		return ((ToolChain)tc).getIdenticalList();
+//	}
+	
+	public static IToolChain[] getExtensionToolChains(IProjectType type){
+		List result = new ArrayList();
+		IConfiguration cfgs[] = type.getConfigurations();
+		
+		for(int i = 0; i < cfgs.length; i++){
+			IToolChain tc = cfgs[i].getToolChain();
+			if(tc == null)
+				continue;
+			
+			List list = findIdenticalElements((ToolChain)tc, fToolChainSorter);
+			int k = 0;
+			for(; k < result.size(); k++){
+				if(findIdenticalElements((ToolChain)result.get(k), fToolChainSorter) == list)
+					break;
+			}
+			
+			if(k == result.size()){
+				result.add(tc);
+			}
+		}
+		return (IToolChain[])result.toArray(new IToolChain[result.size()]);
+	}
+	
+	public static IConfiguration[] getExtensionConfigurations(IToolChain tChain, IProjectType type){
+		List list = new ArrayList();
+		IConfiguration cfgs[] = type.getConfigurations();
+		for(int i = 0; i < cfgs.length; i++){
+			IToolChain cur = cfgs[i].getToolChain();
+			if(cur != null
+					&& findIdenticalElements((ToolChain)cur, fToolChainSorter) == findIdenticalElements((ToolChain)tChain, fToolChainSorter)){
+				list.add(cfgs[i]);
+			}
+		}
+		return (IConfiguration[])list.toArray(new Configuration[list.size()]);
+	}
+
+	public static IConfiguration getFirstExtensionConfiguration(IToolChain tChain){
+		if(tChain.getParent() != null)
+			return tChain.getParent();
+		
+		List list = findIdenticalElements((ToolChain)tChain, fToolChainSorter);
+		if(list != null){
+			for(int i = 0; i < list.size(); i++){
+				ToolChain cur = (ToolChain)list.get(i);
+				if(cur.getParent() != null)
+					return cur.getParent();
+			}
+		}
+		
+		return null;
+	}
+
+	public static IConfiguration[] getExtensionConfigurations(IToolChain tChain, String propertyType, String propertyValue){
+//		List all = getSortedToolChains();
+		List list = findIdenticalElements((ToolChain)tChain, fToolChainSorter);
+		List result = new ArrayList();
+		boolean tcFound = false;
+		if(list != null){
+			for(int i = 0; i < list.size(); i++){
+				ToolChain cur = (ToolChain)list.get(i);
+				if(cur == tChain){
+					tcFound = true;
+				}
+				
+				IConfiguration cfg = cur.getParent();
+				if(cfg != null){
+					IBuildObjectProperties props = cfg.getBuildProperties();
+					if(props.containsValue(propertyType, propertyValue)){
+						result.add(cfg);
+					}
+				}
+			}
+			
+		}
+		
+		if(!tcFound) {
+			IConfiguration cfg = tChain.getParent();
+			if(cfg != null){
+				IBuildObjectProperties props = cfg.getBuildProperties();
+				if(props.containsValue(propertyType, propertyValue)){
+					result.add(cfg);
+				}
+			}
+		}
+		
+//		if(result.size() == 0){
+//			if(((ToolChain)tChain).supportsValue(propertyType, propertyValue)){
+//				IConfiguration cfg = getFirstExtensionConfiguration(tChain);
+//				if(cfg != null){
+//					result.add(cfg);
+//				}
+//			}
+//		}
+		return (IConfiguration[])result.toArray(new IConfiguration[result.size()]);
+	}
+	
+/*	public static IToolChain[] getRealToolChains(){
+		List all = getSortedToolChains();
+		IToolChain tcs[] = new ToolChain[all.size()];
+		for(int i = 0; i < tcs.length; i++){
+			List list = (List)all.get(i);
+			tcs[i] = (ToolChain)list.get(0);
+		}
+		return tcs;
+	}
+*/	
+	
+	private static HashMap getSortedToolChains(){
+		if(fSortedToolChains == null){
+			fSortedToolChains = getSortedElements(ManagedBuildManager.getExtensionToolChainMap().values());
+		}
+		return fSortedToolChains;
+	}
+
+	private static HashMap getSortedTools(){
+		if(fSortedTools == null){
+			fSortedTools = getSortedElements(ManagedBuildManager.getExtensionToolMap().values());
+		}
+		return fSortedTools;
+	}
+
+	private static HashMap getSortedBuilders(){
+		if(fSortedBuilders == null){
+			fSortedBuilders = getSortedElements(ManagedBuildManager.getExtensionBuilderMap().values());
+		}
+		return fSortedBuilders;
+	}
+
+	private static HashMap getSortedElements(Collection elements){
+		HashMap map = new HashMap();
+		for(Iterator iter = elements.iterator(); iter.hasNext();){
+			IMatchKeyProvider p = (IMatchKeyProvider)iter.next();
+			Object key = p.getMatchKey();
+			if(key == null)
+				continue;
+
+			List list = (List)map.get(key);
+			if(list == null){
+				list = new ArrayList();
+				map.put(key, list);
+			}
+			list.add(p);
+			p.setIdenticalList(list);
+		}
+		return map;
+	}
+	
+	public static IToolChain[] getRealToolChains(){
+		HashMap map = getSortedToolChains();
+		IToolChain tcs[] = new ToolChain[map.size()];
+		int i = 0;
+		for(Iterator iter = map.values().iterator(); iter.hasNext();){
+			List list = (List)iter.next();
+			tcs[i++] = (ToolChain)list.get(0);
+		}
+		return tcs;
+	}
+
+	public static ITool[] getRealTools(){
+		HashMap map = getSortedTools();
+		ITool ts[] = new Tool[map.size()];
+		int i = 0;
+		for(Iterator iter = map.values().iterator(); iter.hasNext();){
+			List list = (List)iter.next();
+			ts[i++] = (Tool)list.get(0);
+		}
+		return ts;
+	}
+
+	public static IBuilder[] getRealBuilders(){
+		HashMap map = getSortedBuilders();
+		IBuilder bs[] = new Builder[map.size()];
+		int i = 0;
+		for(Iterator iter = map.values().iterator(); iter.hasNext();){
+			List list = (List)iter.next();
+			bs[i++] = (Builder)list.get(0);
+		}
+		return bs;
+	}
+	
+	public static IBuilder getRealBuilder(IBuilder builder){
+		IBuilder extBuilder = builder;
+		IBuilder realBuilder = null;
+		for(;extBuilder != null && !extBuilder.isExtensionElement(); extBuilder = extBuilder.getSuperClass());
+
+		if(extBuilder != null){
+			List list = findIdenticalElements((Builder)extBuilder, fBuilderSorter);
+			if(list.size() == 0){
+				realBuilder = extBuilder;
+			} else {
+				IBuilder[] realBs = getRealBuilders();
+				for(int i = 0; i < realBs.length; i++){
+					List rList = findIdenticalElements((Builder)realBs[i], fBuilderSorter);
+					if(rList == list){
+						realBuilder = realBs[i];
+						break;
+					}
+				}
+			}
+		} else {
+			//TODO:
+		}
+		return realBuilder;
+	}
+
+	public static ITool getRealTool(ITool tool){
+		ITool extTool = tool;
+		ITool realTool = null;
+		for(;extTool != null && !extTool.isExtensionElement(); extTool= extTool.getSuperClass());
+
+		if(extTool != null){
+			List list = findIdenticalElements((Tool)extTool, fToolSorter);
+			if(list.size() == 0){
+				realTool = extTool;
+			} else {
+				ITool[] realTs = getRealTools();
+				for(int i = 0; i < realTs.length; i++){
+					List rList = findIdenticalElements((Tool)realTs[i], fToolSorter);
+					if(rList == list){
+						realTool = realTs[i];
+						break;
+					}
+				}
+			}
+		} else {
+			//TODO:
+		}
+		return realTool;
+	}
+
+	public static IToolChain getRealToolChain(IToolChain tc){
+		IToolChain extTc = tc;
+		IToolChain realTc = null;
+		for(;extTc != null && !extTc.isExtensionElement(); extTc= extTc.getSuperClass());
+
+		if(extTc != null){
+			List list = findIdenticalElements((ToolChain)extTc, fToolChainSorter);
+			if(list.size() == 0){
+				realTc = extTc;
+			} else {
+				IToolChain[] realTcs = getRealToolChains();
+				for(int i = 0; i < realTcs.length; i++){
+					List rList = findIdenticalElements((ToolChain)realTcs[i], fToolChainSorter);
+					if(rList == list){
+						realTc = realTcs[i];
+						break;
+					}
+				}
+			}
+		} else {
+			//TODO:
+		}
+		return realTc;
+	}
+	
+	public static IToolChain[] findIdenticalToolChains(IToolChain tc){
+		List list = findIdenticalElements((ToolChain)tc, fToolChainSorter);
+		return (ToolChain[])list.toArray(new ToolChain[list.size()]);
+	}
+
+	public static ITool[] findIdenticalTools(ITool tool){
+		List list = findIdenticalElements((Tool)tool, fToolSorter);
+		return (Tool[])list.toArray(new Tool[list.size()]);
+	}
+
+	public static IBuilder[] findIdenticalBuilders(IBuilder b){
+		List list = findIdenticalElements((Builder)b, fBuilderSorter);
+		return (Builder[])list.toArray(new Builder[list.size()]);
+	}
+
+	public static IToolChain[] getExtensionsToolChains(String propertyType, String propertyValue){
+		HashMap all = getSortedToolChains();
+		List result = new ArrayList();
+		for(Iterator iter = all.values().iterator(); iter.hasNext();){
+			List list = (List)iter.next();
+			IToolChain tc = findToolChain(list, propertyType, propertyValue);
+			if(tc != null)
+				result.add(tc);
+		}
+		return (IToolChain[])result.toArray(new ToolChain[result.size()]);
+	}
+	
+	public static void resortToolChains(){
+		fSortedToolChains = null;
+		getSortedToolChains();
+	}
+
+	public static void resortTools(){
+		fSortedTools = null;
+		getSortedTools();
+	}
+
+	public static void resortBuilders(){
+		fSortedBuilders = null;
+		getSortedBuilders();
+	}
+	
+	private static IToolChain findToolChain(List list, String propertyType, String propertyValue){
+		ToolChain bestMatch = null;
+		IConfiguration cfg = null;
+		IProjectType type = null;
+		for(int i = 0; i < list.size(); i++){
+			ToolChain tc = (ToolChain)list.get(i);
+			if(!tc.supportsValue(propertyType, propertyValue))
+				return null;
+			
+			if(!tc.supportsBuild(true))
+				return null;
+			
+			if(bestMatch == null)
+				bestMatch = tc;
+			
+			IConfiguration tcCfg = tc.getParent();
+			if(tcCfg != null){
+				if(cfg == null){
+					bestMatch = tc;
+					cfg = tcCfg;
+				}
+				
+				IBuildObjectProperties props =tcCfg.getBuildProperties();
+				IBuildProperty prop = props.getProperty(propertyType);
+				if(prop != null && propertyValue.equals(prop.getValue().getId())){
+					bestMatch = tc;
+					cfg = tcCfg;
+				}
+
+				IProjectType tcType = tcCfg.getProjectType();
+				if(tcType != null){
+					if(type == null){
+						type = tcType;
+						bestMatch = tc;
+					}
+					props = tcType.getBuildProperties();
+					prop = props.getProperty(propertyType); 
+					if(prop != null && propertyValue.equals(prop.getValue().getId())){
+						type = tcType;
+						bestMatch = tc;
+						break;
+					}
+				}
+			}
+		}
+		
+		return bestMatch;
+	}
+
+	private static List findIdenticalElements(IMatchKeyProvider p, ISorter sorter){
+		List list = p.getIdenticalList();
+		if(list == null){
+			sorter.sort();
+			list = p.getIdenticalList();
+			if(list == null){
+				list = new ArrayList(0);
+				p.setIdenticalList(list);
+			}
+		}
+
+		return list;
+	}
+	
+	
+	
+	public static IBuildPropertyManager getBuildPropertyManager(){
+		return BuildPropertyManager.getInstance();
+	}
+	
+	public static IConfiguration[] getReferencedConfigurations(IConfiguration config){
+		IConfiguration[] refConfigs = null;
+		ICConfigurationDescription cfgDes = getDescriptionForConfiguration(config);
+		if(cfgDes != null){
+			Map map = cfgDes.getReferenceInfo();
+			if(map.size() != 0){
+				List list = new ArrayList(map.size());
+				IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
+				CoreModel model = CoreModel.getDefault();
+				for(Iterator iter = map.entrySet().iterator(); iter.hasNext();){
+					Map.Entry entry = (Map.Entry)iter.next();
+					String projName = (String)entry.getKey();
+					String cfgId = (String)entry.getValue();
+					IProject project = root.getProject(projName);
+					if(!project.exists())
+						continue;
+					
+					ICProjectDescription des = model.getProjectDescription(project, false);
+					if(des == null)
+						continue;
+					
+					ICConfigurationDescription refCfgDes = des.getConfigurationById(cfgId);
+					if(refCfgDes == null)
+						continue;
+					
+					IConfiguration refdCfg = ManagedBuildManager.getConfigurationForDescription(refCfgDes);
+					if(refdCfg == null)
+						continue;
+					
+					list.add(refdCfg);
+				}
+				
+				if(list.size() != 0){
+					refConfigs = (IConfiguration[])list.toArray(new Configuration[list.size()]);
+				}
+			}
+		}
+		
+		if(refConfigs == null)
+			refConfigs = new Configuration[0];
+
+		return refConfigs;
+	}
+	
+	public static void buildConfigurations(IConfiguration[] configs, IProgressMonitor monitor) throws CoreException{
+		buildConfigurations(configs, null, monitor);
+	}
+
+	public static void buildConfigurations(IConfiguration[] configs, IBuilder builder, IProgressMonitor monitor) throws CoreException{
+		Map map = sortConfigs(configs);
+		for(Iterator iter = map.entrySet().iterator(); iter.hasNext();){
+			Map.Entry entry = (Map.Entry)iter.next();
+			IProject proj = (IProject)entry.getKey();
+			IConfiguration[] cfgs = (IConfiguration[])entry.getValue();
+			buildConfigurations(proj, cfgs, builder, monitor);
+		}
+	}
+
+	private static Map sortConfigs(IConfiguration cfgs[]){
+		Map cfgMap = new HashMap();
+		
+		for(int i = 0; i < cfgs.length; i++){
+			IConfiguration cfg = cfgs[i];
+			IProject proj = cfg.getOwner().getProject();
+			Set set = (Set)cfgMap.get(proj);
+			if(set == null){
+				set = new HashSet();
+				cfgMap.put(proj, set);
+			}
+			
+			set.add(cfg);
+		}
+		
+		if(cfgMap.size() != 0){
+			for(Iterator iter = cfgMap.entrySet().iterator(); iter.hasNext();){
+				Map.Entry entry = (Map.Entry)iter.next();
+				Set set = (Set)entry.getValue();
+				entry.setValue(set.toArray(new Configuration[set.size()]));
+			}
+		}
+		
+		return cfgMap;
+	}
+
+	private static void buildConfigurations(final IProject project, IConfiguration[] configs, IBuilder builder, final IProgressMonitor monitor) throws CoreException{
+//		final IProject project = configs[0].getOwner().getProject();
+		final boolean runAllBuidlers = false;
+		final Map map = builder != null ?
+				BuilderFactory.createBuildArgs(configs, builder)
+				: BuilderFactory.createBuildArgs(configs);
+		
+		IWorkspaceRunnable op = new IWorkspaceRunnable() {
+
+			/*
+			 * (non-Javadoc)
+			 * 
+			 * @see org.eclipse.core.resources.IWorkspaceRunnable#run(org.eclipse.core.runtime.IProgressMonitor)
+			 */
+			public void run(IProgressMonitor monitor) throws CoreException {
+				if (runAllBuidlers) {
+					ICommand[] commands = project.getDescription().getBuildSpec();
+					monitor.beginTask("", commands.length); //$NON-NLS-1$
+					for (int i = 0; i < commands.length; i++) {
+						if (commands[i].getBuilderName().equals(CommonBuilder.BUILDER_ID)) {
+							project.build(IncrementalProjectBuilder.FULL_BUILD, CommonBuilder.BUILDER_ID, map, new SubProgressMonitor(monitor, 1));
+						} else {
+							project.build(IncrementalProjectBuilder.FULL_BUILD, commands[i].getBuilderName(),
+							commands[i].getArguments(), new SubProgressMonitor(monitor, 1));
+						}
+					}
+					monitor.done();
+				} else {
+					project.build(IncrementalProjectBuilder.FULL_BUILD, CommonBuilder.BUILDER_ID, map, monitor);
+				}
+			}
+		};
+		try {
+			ResourcesPlugin.getWorkspace().run(op, monitor);
+		} finally {
+			monitor.done();
+		}
+
+	}
+	
+	public static IBuilder getInternalBuilder(){
+		return getExtensionBuilder(INTERNAL_BUILDER_ID);
+	}
+	
+	public static ITool getExtensionTool(ITool tool){
+		ITool extTool = tool;
+		for(;extTool != null && !extTool.isExtensionElement(); extTool = extTool.getSuperClass());
+		return extTool;
+	}
+	
+	public static IConfiguration getPreferenceConfiguration(boolean write){
+		try {
+			ICConfigurationDescription des = CCorePlugin.getDefault().getPreferenceConfiguration(CFG_DATA_PROVIDER_ID, write);
+			if(des != null)
+				return getConfigurationForDescription(des);
+		} catch (CoreException e) {
+			ManagedBuilderCorePlugin.log(e);
+		}
+		return null;
+	}
+
+	public static void setPreferenceConfiguration(IConfiguration cfg) throws CoreException{
+		ICConfigurationDescription des = getDescriptionForConfiguration(cfg);
+		if(des != null)
+			CCorePlugin.getDefault().setPreferenceConfiguration(CFG_DATA_PROVIDER_ID, des);
+	}
+
 }

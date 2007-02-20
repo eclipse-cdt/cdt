@@ -20,8 +20,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.ICDescriptor;
-import org.eclipse.cdt.core.ICExtensionReference;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ElementChangedEvent;
@@ -52,6 +50,8 @@ import org.eclipse.cdt.core.model.PathEntryContainerInitializer;
 import org.eclipse.cdt.core.resources.IPathEntryStore;
 import org.eclipse.cdt.core.resources.IPathEntryStoreListener;
 import org.eclipse.cdt.core.resources.PathEntryStoreChangedEvent;
+import org.eclipse.cdt.core.settings.model.util.PathEntryResolveInfo;
+import org.eclipse.cdt.core.settings.model.util.PathEntryResolveInfoElement;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -108,6 +108,7 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 
 	// Synchronized the access of the cache entries.
 	protected Map resolvedMap = new Hashtable();
+	private Map resolvedInfoMap = new Hashtable();
 
 	// Accessing the map is synch with the class
 	private Map storeMap = new HashMap();
@@ -403,9 +404,19 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 		}
 		return null;
 	}
+	
+	public PathEntryResolveInfo getResolveInfo(ICProject cproject) throws CModelException{
+		PathEntryResolveInfo info = (PathEntryResolveInfo)resolvedInfoMap.get(cproject);
+		if(info == null){
+			getResolvedPathEntries(cproject);
+			info = (PathEntryResolveInfo)resolvedInfoMap.get(cproject);
+		}
+		return info;
+	}
 
 	protected IPathEntry[] removeCachedResolvedPathEntries(ICProject cproject) {
 		ArrayList resolvedListEntries = (ArrayList)resolvedMap.remove(cproject);
+		resolvedInfoMap.remove(cproject);
 		if (resolvedListEntries != null) {
 			try {
 				return getCachedResolvedPathEntries(resolvedListEntries, cproject);
@@ -471,6 +482,7 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 	private ArrayList getResolvedPathEntries(ICProject cproject, boolean generateMarkers) throws CModelException {
 		ArrayList resolvedEntries = (ArrayList)resolvedMap.get(cproject);
 		if (resolvedEntries == null) {
+			List resolveInfoList = new ArrayList();
 			IPath projectPath = cproject.getPath();
 			IPathEntry[] rawEntries = getRawPathEntries(cproject);
 			resolvedEntries = new ArrayList();
@@ -485,14 +497,19 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 						// are not IPathEntryContainerExtension.
 						if (!(container instanceof IPathEntryContainerExtension)) {
 							IPathEntry[] containerEntries = container.getPathEntries();
+							List resolvedList = new ArrayList();
 							if (containerEntries != null) {
 								for (int j = 0; j < containerEntries.length; j++) {
 									IPathEntry newEntry = PathEntryUtil.cloneEntryAndExpand(projectPath, containerEntries[j]);
 									resolvedEntries.add(newEntry);
+									resolvedList.add(newEntry);
 								}
 							}
+							resolveInfoList.add(new PathEntryResolveInfoElement(centry, resolvedList));
 						} else {
-							resolvedEntries.add(PathEntryUtil.cloneEntryAndExpand(projectPath, entry));
+							IPathEntry resolved = PathEntryUtil.cloneEntryAndExpand(projectPath, entry);
+							resolvedEntries.add(resolved);
+							resolveInfoList.add(new PathEntryResolveInfoElement(entry, resolved));
 						}
 					}
 				} else {
@@ -501,6 +518,7 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 					if (e != null) {
 						resolvedEntries.add(e);
 					}
+					resolveInfoList.add(new PathEntryResolveInfoElement(entry, e));
 				}
 			}
 			resolvedEntries.trimToSize();
@@ -539,6 +557,7 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 			}
 
 			resolvedMap.put(cproject, resolvedEntries);
+			resolvedInfoMap.put(cproject, new PathEntryResolveInfo(resolveInfoList));
 		}
 		return resolvedEntries;
 	}
@@ -1148,33 +1167,41 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 	}
 
 	public IPathEntryStore createPathEntryStore(IProject project) throws CoreException {
-		IPathEntryStore store = null;
-		if (project != null) {
-			try {
-				ICDescriptor cdesc = CCorePlugin.getDefault().getCProjectDescription(project, false);
-				if (cdesc != null) {
-					ICExtensionReference[] cextensions = cdesc.get(PATHENTRY_STORE_UNIQ_ID, true);
-					if (cextensions.length > 0) {
-						for (int i = 0; i < cextensions.length; i++) {
-							try {
-								store = (IPathEntryStore)cextensions[i].createExtension();
-								break;
-							} catch (ClassCastException e) {
-								//
-								CCorePlugin.log(e);
-							}
-						}
-					}
-				}
-			} catch (CoreException e) {
-				// ignore since we fall back to a default....
-			}
-		}
-		if (store == null) {
-			store = new DefaultPathEntryStore(project);
-		}
-		return store;
+		return new PathEntryStoreProxy(project);
+//		IPathEntryStore store = null;
+//		if (project != null) {
+//			try {
+//				ICDescriptor cdesc = CCorePlugin.getDefault().getCProjectDescription(project, false);
+//				if (cdesc != null) {
+//					ICExtensionReference[] cextensions = cdesc.get(PATHENTRY_STORE_UNIQ_ID, true);
+//					if (cextensions.length > 0) {
+//						for (int i = 0; i < cextensions.length; i++) {
+//							try {
+//								store = (IPathEntryStore)cextensions[i].createExtension();
+//								break;
+//							} catch (ClassCastException e) {
+//								//
+//								CCorePlugin.log(e);
+//							}
+//						}
+//					}
+//				}
+//			} catch (CoreException e) {
+//				// ignore since we fall back to a default....
+//			}
+//		}
+//		if (store == null) {
+//			store = createDefaultStore(project);
+//		}
+//		return store;
 	}
+	
+//	private IPathEntryStore createDefaultStore(IProject project){
+//		if(CProjectDescriptionManager.getInstance().isNewStyleIndexCfg(project)){
+//			return new ConfigBasedPathEntryStore(project);
+//		}
+//		return  new DefaultPathEntryStore(project);
+//	}
 
 	/*
 	 * (non-Javadoc)
@@ -1204,6 +1231,7 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 			}
 		} else {
 			resolvedMap.remove(cproject);
+			resolvedInfoMap.remove(cproject);
 			containerRemove(cproject);
 		}
 	}
@@ -1269,6 +1297,7 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 					} finally {
 						if (store == null) {
 							resolvedMap.remove(cproject);
+							resolvedInfoMap.remove(cproject);
 							containerRemove(cproject);
 						}
 					}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2005 IBM Corporation and others.
+ * Copyright (c) 2004, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,14 +17,14 @@ import java.util.StringTokenizer;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.ICDescriptor;
 import org.eclipse.cdt.core.ICOwner;
+import org.eclipse.cdt.managedbuilder.core.IConfiguration;
+import org.eclipse.cdt.managedbuilder.core.IManagedBuildInfo;
+import org.eclipse.cdt.managedbuilder.core.ITargetPlatform;
+import org.eclipse.cdt.managedbuilder.core.IToolChain;
+import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Preferences;
-import org.eclipse.core.resources.IProject;
-import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
-import org.eclipse.cdt.managedbuilder.core.IManagedBuildInfo;
-import org.eclipse.cdt.managedbuilder.core.IConfiguration;
-import org.eclipse.cdt.managedbuilder.core.IToolChain;
-import org.eclipse.cdt.managedbuilder.core.ITargetPlatform;
 
 /**
  * @since 2.0
@@ -47,20 +47,21 @@ public class ManagedMakeProject implements ICOwner {
 		cproject.remove(CCorePlugin.BUILDER_MODEL_ID);
 		cproject.remove(CCorePlugin.BINARY_PARSER_UNIQ_ID);
 		
-		updateIndexers(cproject);
+//		updateIndexers(cproject);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.ICOwner#update(org.eclipse.cdt.core.ICDescriptor, java.lang.String)
 	 */
 	public void update(ICDescriptor cproject, String extensionID) throws CoreException {
-		if (extensionID.equals(CCorePlugin.BINARY_PARSER_UNIQ_ID)) {
+/*		if (extensionID.equals(CCorePlugin.BINARY_PARSER_UNIQ_ID)) {
 			updateBinaryParsers(cproject);
 		}
 				
 		if (extensionID.equals(CCorePlugin.INDEXER_UNIQ_ID)) {
 			updateIndexers(cproject);
 		}
+*/
 	}
 	
 	private void updateBinaryParsers(ICDescriptor cDescriptor) throws CoreException {

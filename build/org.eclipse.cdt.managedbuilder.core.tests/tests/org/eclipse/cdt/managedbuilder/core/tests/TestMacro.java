@@ -35,9 +35,6 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.PluginVersionIdentifier;
-/**
- * 
- */
 
 /**
  * 

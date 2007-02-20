@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2005 Intel Corporation and others.
+ * Copyright (c) 2004, 2007 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,8 @@
  * Intel Corporation - Initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.core;
+
+import org.eclipse.cdt.core.settings.model.extension.CTargetPlatformData;
 
 /**
  * This class defines the os/architecture combination upon which the 
@@ -142,5 +144,7 @@ public interface ITargetPlatform extends IBuildObject {
 	 * @return boolean 
 	 */
 	public boolean isExtensionElement();
+	
+	public CTargetPlatformData getTargetPlatformData();
 
 }

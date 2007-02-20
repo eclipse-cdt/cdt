@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2006 IBM Corporation and others.
+ * Copyright (c) 2004, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,6 +12,7 @@ package org.eclipse.cdt.managedbuilder.makegen.gnu;
 
 import org.eclipse.cdt.managedbuilder.core.BuildException;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
+import org.eclipse.cdt.managedbuilder.core.IFolderInfo;
 import org.eclipse.cdt.managedbuilder.core.IManagedBuildInfo;
 import org.eclipse.cdt.managedbuilder.core.IManagedCommandLineGenerator;
 import org.eclipse.cdt.managedbuilder.core.IManagedCommandLineInfo;
@@ -213,7 +214,8 @@ public class DefaultGCCDependencyCalculator implements IManagedDependencyGenerat
 			
 		} else {
 			ITool tool = null;
-			tools = config.getFilteredTools();
+			IFolderInfo foInfo = (IFolderInfo)config.getResourceInfo(resource.getProjectRelativePath(), false);
+			tools = foInfo.getFilteredTools();
 			for (int index = 0; index < tools.length; index++) {
 				ITool tmp = tools[index];
 				if (tmp.buildsFileType(inputExtension)) {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005 Intel Corporation and others.
+ * Copyright (c) 2005, 2007 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,15 +10,17 @@
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.envvar;
 
+import org.eclipse.cdt.core.envvar.IEnvironmentVariable;
+
 /**
  * this interface represents the given environment variable 
  * @since 3.0
  */
-public interface IBuildEnvironmentVariable{
-	public static final int ENVVAR_REPLACE = 1;
-	public static final int ENVVAR_REMOVE = 2;
-	public static final int ENVVAR_PREPEND = 3;
-	public static final int ENVVAR_APPEND = 4;
+public interface IBuildEnvironmentVariable extends IEnvironmentVariable{
+	public static final int ENVVAR_REPLACE = IEnvironmentVariable.ENVVAR_REPLACE;
+	public static final int ENVVAR_REMOVE = IEnvironmentVariable.ENVVAR_REMOVE;
+	public static final int ENVVAR_PREPEND = IEnvironmentVariable.ENVVAR_PREPEND;
+	public static final int ENVVAR_APPEND = IEnvironmentVariable.ENVVAR_APPEND;
 
 	/**
 	 * 

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 Intel Corporation and others.
+ * Copyright (c) 2005, 2007 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -41,6 +41,7 @@ import org.eclipse.cdt.managedbuilder.internal.core.ManagedMakeMessages;
 import org.eclipse.cdt.managedbuilder.internal.core.Tool;
 import org.eclipse.cdt.managedbuilder.internal.macros.OptionContextData;
 import org.eclipse.cdt.managedbuilder.makegen.gnu.GnuMakefileGenerator;
+import org.eclipse.cdt.managedbuilder.makegen.gnu.GnuMakefileGenerator.ToolInfoHolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IPath;
@@ -156,7 +157,7 @@ public class ManagedBuildGnuToolInfo implements IManagedBuildGnuToolInfo {
 	 * Other Methods
 	 */
 	
-	public boolean calculateInputs(GnuMakefileGenerator makeGen, IConfiguration config, IResource[] projResources, boolean lastChance) {
+	public boolean calculateInputs(GnuMakefileGenerator makeGen, IConfiguration config, IResource[] projResources, ToolInfoHolder h, boolean lastChance) {
 		// Get the inputs for this tool invocation
 		// Note that command inputs that are also dependencies are also added to the command dependencies list
 		
@@ -194,7 +195,11 @@ public class ManagedBuildGnuToolInfo implements IManagedBuildGnuToolInfo {
 						} else if (
 								optType == IOption.STRING_LIST ||
 								optType == IOption.LIBRARIES ||
-								optType == IOption.OBJECTS) {
+								optType == IOption.OBJECTS ||
+								optType == IOption.INCLUDE_FILES ||
+								optType == IOption.LIBRARY_PATHS ||
+								optType == IOption.LIBRARY_FILES ||
+								optType == IOption.MACRO_FILES) {
 							inputs = (List)option.getValue();
 						}
 						for (int j=0; j<inputs.size(); j++) {
@@ -266,7 +271,7 @@ public class ManagedBuildGnuToolInfo implements IManagedBuildGnuToolInfo {
 						}
 						// If there is an output variable with the same name, get
 						// the files associated with it.
-						List outMacroList = makeGen.getBuildVariableList(variable, GnuMakefileGenerator.PROJECT_RELATIVE,
+						List outMacroList = makeGen.getBuildVariableList(h, variable, GnuMakefileGenerator.PROJECT_RELATIVE,
 								null, true);
 						if (outMacroList != null) {
 							itEnumeratedInputs.addAll(outMacroList);
@@ -375,7 +380,11 @@ public class ManagedBuildGnuToolInfo implements IManagedBuildGnuToolInfo {
 						} else if (
 								optType == IOption.STRING_LIST ||
 								optType == IOption.LIBRARIES ||
-								optType == IOption.OBJECTS) {
+								optType == IOption.OBJECTS ||
+								optType == IOption.INCLUDE_FILES ||
+								optType == IOption.LIBRARY_PATHS ||
+								optType == IOption.LIBRARY_FILES ||
+								optType == IOption.MACRO_FILES) {
 							//  Mote that when using the enumerated inputs, the path(s) must be translated from project relative 
 							//  to top build directory relative
 							String[] paths = new String[itEnumeratedInputs.size()];
@@ -524,7 +533,11 @@ public class ManagedBuildGnuToolInfo implements IManagedBuildGnuToolInfo {
 						} else if (
 								optType == IOption.STRING_LIST ||
 								optType == IOption.LIBRARIES ||
-								optType == IOption.OBJECTS) {
+								optType == IOption.OBJECTS ||
+								optType == IOption.INCLUDE_FILES ||
+								optType == IOption.LIBRARY_PATHS ||
+								optType == IOption.LIBRARY_FILES ||
+								optType == IOption.MACRO_FILES) {
 							outputs = (List)option.getValue();
 							// Add outputPrefix to each if necessary
 							if (outputPrefix.length() > 0) {
@@ -771,7 +784,7 @@ public class ManagedBuildGnuToolInfo implements IManagedBuildGnuToolInfo {
 
 	private boolean callDependencyCalculator (GnuMakefileGenerator makeGen, IConfiguration config, HashSet handledInputExtensions, 
 			IManagedDependencyGeneratorType depGen, String[] extensionsList, Vector myCommandDependencies, HashMap myOutputMacros,
-			Vector myAdditionalTargets, boolean done) {
+			Vector myAdditionalTargets, ToolInfoHolder h, boolean done) {
 		
 		int calcType = depGen.getCalculatorType();
 		switch (calcType) {
@@ -782,7 +795,7 @@ public class ManagedBuildGnuToolInfo implements IManagedBuildGnuToolInfo {
  				String extensionName = extensionsList[i];
  				
  				// Generated files should not appear in the list.
- 				if(!makeGen.getOutputExtensions().contains(extensionName) && !handledInputExtensions.contains(extensionName)) {
+ 				if(!makeGen.getOutputExtensions(h).contains(extensionName) && !handledInputExtensions.contains(extensionName)) {
  					handledInputExtensions.add(extensionName);
  					String depExt = IManagedBuilderMakefileGenerator.DEP_EXT;
  					if (calcType == IManagedDependencyGeneratorType.TYPE_BUILD_COMMANDS) {
@@ -868,7 +881,7 @@ public class ManagedBuildGnuToolInfo implements IManagedBuildGnuToolInfo {
 		return done;
 	}
 	
-	public boolean calculateDependencies(GnuMakefileGenerator makeGen, IConfiguration config, HashSet handledInputExtensions, boolean lastChance) {
+	public boolean calculateDependencies(GnuMakefileGenerator makeGen, IConfiguration config, HashSet handledInputExtensions, ToolInfoHolder h, boolean lastChance) {
 		// Get the dependencies for this tool invocation
 		boolean done = true;
 		Vector myCommandDependencies = new Vector();
@@ -887,7 +900,7 @@ public class ManagedBuildGnuToolInfo implements IManagedBuildGnuToolInfo {
 				if (depGen != null) {
 					done = callDependencyCalculator (makeGen, config, handledInputExtensions, 
 							depGen, extensionsList, myCommandDependencies, myOutputMacros,
-							myAdditionalTargets, done);
+							myAdditionalTargets, h, done);
 				}
 				
 				// Add additional dependencies specified in AdditionalInput elements
@@ -940,7 +953,7 @@ public class ManagedBuildGnuToolInfo implements IManagedBuildGnuToolInfo {
 				if (depGen != null) {
 					done = callDependencyCalculator (makeGen, config, handledInputExtensions, 
 							depGen, extensionsList, myCommandDependencies, myOutputMacros,
-							myAdditionalTargets, done);
+							myAdditionalTargets, h, done);
 				}
 	 			
 			}

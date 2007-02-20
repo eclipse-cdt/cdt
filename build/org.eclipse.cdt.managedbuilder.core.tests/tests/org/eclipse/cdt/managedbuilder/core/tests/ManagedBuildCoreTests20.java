@@ -270,7 +270,7 @@ public class ManagedBuildCoreTests20 extends TestCase {
 		assertEquals(4, configs.length);
 		IManagedBuildInfo buildInfo = ManagedBuildManager.getBuildInfo(project);
 		buildInfo.setDefaultConfiguration(newProject.getConfiguration(configs[0].getId()));
-
+		buildInfo.setValid(true);
 		// Save, close, reopen
 		ManagedBuildManager.saveBuildInfo(project, true);
 		ManagedBuildManager.removeBuildInfo(project);
@@ -550,6 +550,8 @@ public class ManagedBuildCoreTests20 extends TestCase {
 		String buildArtifactName = projectName;
 		defaultConfig.setArtifactName(buildArtifactName);
 		defaultConfig.setArtifactExtension(newExt);
+		
+		ManagedBuildManager.getBuildInfo(project).setValid(true);
 		
 		// Initialize the path entry container
 		IStatus initResult = ManagedBuildManager.initBuildInfoContainer(project);
@@ -1781,6 +1783,7 @@ public class ManagedBuildCoreTests20 extends TestCase {
 		assertEquals(newProj.getName(), projType.getName());
 		ManagedBuildManager.setNewProjectVersion(project);
 
+		ManagedBuildManager.getBuildInfo(project).setValid(true);
 		// Initialize the path entry container
 		IStatus initResult = ManagedBuildManager.initBuildInfoContainer(project);
 		if (initResult.getCode() != IStatus.OK) {

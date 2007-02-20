@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 Intel Corporation and others.
+ * Copyright (c) 2006, 2007 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,6 +11,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.makegen.gnu;
 
+import java.util.Vector;
+
 import org.eclipse.cdt.managedbuilder.core.BuildException;
 import org.eclipse.cdt.managedbuilder.core.IBuildObject;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
@@ -19,16 +21,15 @@ import org.eclipse.cdt.managedbuilder.core.IManagedCommandLineInfo;
 import org.eclipse.cdt.managedbuilder.core.IResourceConfiguration;
 import org.eclipse.cdt.managedbuilder.core.ITool;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
+import org.eclipse.cdt.managedbuilder.internal.macros.BuildMacroProvider;
 import org.eclipse.cdt.managedbuilder.internal.macros.FileContextData;
-import org.eclipse.cdt.managedbuilder.internal.macros.MacroResolver;
 import org.eclipse.cdt.managedbuilder.macros.BuildMacroException;
 import org.eclipse.cdt.managedbuilder.macros.IBuildMacroProvider;
 import org.eclipse.cdt.managedbuilder.makegen.IManagedBuilderMakefileGenerator;
 import org.eclipse.cdt.managedbuilder.makegen.IManagedDependencyPreBuild;
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
-import java.util.Vector;
+import org.eclipse.core.runtime.IPath;
 
 /**
  * This dependency calculator uses the GCC -MM -MF -MP -MT options in order to
@@ -110,8 +111,8 @@ public class DefaultGCCDependencyCalculatorPreBuildCommands implements IManagedD
 		}
 		
 		needExplicitRuleForFile = resourceNameRequiresExplicitRule || 
-				MacroResolver.getReferencedExplitFileMacros(tool).length > 0
-				|| MacroResolver.getReferencedExplitFileMacros(
+				BuildMacroProvider.getReferencedExplitFileMacros(tool).length > 0
+				|| BuildMacroProvider.getReferencedExplitFileMacros(
 						tool.getToolCommand(), 
 						IBuildMacroProvider.CONTEXT_FILE,
 						new FileContextData(sourceLocation, outputLocation,

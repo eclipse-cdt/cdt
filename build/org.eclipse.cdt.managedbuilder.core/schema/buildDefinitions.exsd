@@ -21,7 +21,7 @@
             <element ref="builder" minOccurs="0" maxOccurs="unbounded"/>
             <element ref="dynamicElementProvider" minOccurs="0" maxOccurs="unbounded"/>
             <element ref="managedBuildRevision" minOccurs="0" maxOccurs="1"/>
-            <element ref="buildDefinitionStartup"/>
+            <element ref="buildDefinitionStartup" minOccurs="0" maxOccurs="unbounded"/>
          </sequence>
          <attribute name="point" type="string" use="required">
             <annotation>
@@ -67,7 +67,7 @@
                </documentation>
             </annotation>
          </attribute>
-         <attribute name="name" type="string" use="required">
+         <attribute name="name" type="string">
             <annotation>
                <documentation>
                   A human-readable project type name, such as &apos;Executable&apos;. This will be the name the user sees displayed in the UI.
@@ -142,6 +142,14 @@
                </documentation>
             </annotation>
          </attribute>
+         <attribute name="buildProperties" type="string">
+            <annotation>
+               <documentation>
+                  Specifies the comma-separated list of build property type - value pairs to be applied for all configurations of this project type.
+property type-value pairs are specified in the type_id=value_id format.
+               </documentation>
+            </annotation>
+         </attribute>
       </complexType>
    </element>
 
@@ -183,8 +191,9 @@
       </annotation>
       <complexType>
          <sequence>
-            <element ref="toolChain"/>
+            <element ref="toolChain" minOccurs="0" maxOccurs="1"/>
             <element ref="resourceConfiguration" minOccurs="0" maxOccurs="unbounded"/>
+            <element ref="enablement" minOccurs="0" maxOccurs="unbounded"/>
          </sequence>
          <attribute name="id" type="string" use="required">
             <annotation>
@@ -282,6 +291,14 @@
                </appInfo>
             </annotation>
          </attribute>
+         <attribute name="buildProperties" type="string">
+            <annotation>
+               <documentation>
+                  Specifies the comma-separated list of build property type - value pairs defined for this configuration.
+property type-value pairs are specified in the type_id=value_id format.
+               </documentation>
+            </annotation>
+         </attribute>
       </complexType>
    </element>
 
@@ -294,8 +311,8 @@
       <complexType>
          <sequence>
             <element ref="tool" minOccurs="1" maxOccurs="unbounded"/>
-            <element ref="targetPlatform"/>
-            <element ref="builder"/>
+            <element ref="targetPlatform" minOccurs="0" maxOccurs="1"/>
+            <element ref="builder" minOccurs="0" maxOccurs="1"/>
             <element ref="optionCategory" minOccurs="0" maxOccurs="unbounded"/>
             <element ref="option" minOccurs="0" maxOccurs="unbounded"/>
          </sequence>
@@ -435,6 +452,13 @@ The pathConverter of a toolchain applies for all tools of the toolchain except i
                </appInfo>
             </annotation>
          </attribute>
+         <attribute name="supportsManagedBuild" type="boolean">
+            <annotation>
+               <documentation>
+                  Specifies whether or not the tool-chain supports managed build. Default value is true.
+               </documentation>
+            </annotation>
+         </attribute>
       </complexType>
    </element>
 
@@ -506,11 +530,13 @@ The pathConverter of a toolchain applies for all tools of the toolchain except i
       </annotation>
       <complexType>
          <sequence>
-            <element ref="option" minOccurs="1" maxOccurs="unbounded"/>
-            <element ref="optionCategory" minOccurs="1" maxOccurs="unbounded"/>
+            <element ref="option" minOccurs="0" maxOccurs="unbounded"/>
+            <element ref="optionCategory" minOccurs="0" maxOccurs="unbounded"/>
             <element ref="inputType" minOccurs="0" maxOccurs="unbounded"/>
             <element ref="outputType" minOccurs="0" maxOccurs="unbounded"/>
             <element ref="envVarBuildPath" minOccurs="0" maxOccurs="unbounded"/>
+            <element ref="enablement" minOccurs="0" maxOccurs="unbounded"/>
+            <element ref="supportedProperties" minOccurs="0" maxOccurs="1"/>
          </sequence>
          <attribute name="id" type="string" use="required">
             <annotation>
@@ -713,6 +739,13 @@ The pathConverter of a toolchain applies for all tools of the toolchain except i
                </appInfo>
             </annotation>
          </attribute>
+         <attribute name="supportsManagedBuild" type="boolean">
+            <annotation>
+               <documentation>
+                  Specifies whether or not the tool supports managed build. Default value is true.
+               </documentation>
+            </annotation>
+         </attribute>
       </complexType>
    </element>
 
@@ -726,6 +759,7 @@ The pathConverter of a toolchain applies for all tools of the toolchain except i
          <sequence>
             <element ref="inputOrder" minOccurs="0" maxOccurs="unbounded"/>
             <element ref="additionalInput" minOccurs="0" maxOccurs="unbounded"/>
+            <element ref="enablement" minOccurs="0" maxOccurs="unbounded"/>
          </sequence>
          <attribute name="id" type="string" use="required">
             <annotation>
@@ -824,6 +858,20 @@ The pathConverter of a toolchain applies for all tools of the toolchain except i
                </documentation>
             </annotation>
          </attribute>
+         <attribute name="scannerConfigDiscoveryProfileId" type="string">
+            <annotation>
+               <documentation>
+                  Specifies an id of scanner configuration discovery profile for gathering the built-in compiler settings for resource type presented with this input type.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="languageId" type="string">
+            <annotation>
+               <documentation>
+                  Represents the language id, i.e. the id of language defined via the org.eclipse.cdt.core.language extension point
+               </documentation>
+            </annotation>
+         </attribute>
       </complexType>
    </element>
 
@@ -899,6 +947,9 @@ The pathConverter of a toolchain applies for all tools of the toolchain except i
          </documentation>
       </annotation>
       <complexType>
+         <sequence>
+            <element ref="enablement" minOccurs="0" maxOccurs="unbounded"/>
+         </sequence>
          <attribute name="id" type="string" use="required">
             <annotation>
                <documentation>
@@ -1153,6 +1204,14 @@ Additional special types exist to flag options of special relevance to the build
                   <enumeration value="libs">
                   </enumeration>
                   <enumeration value="userObjs">
+                  </enumeration>
+                  <enumeration value="symbolFiles">
+                  </enumeration>
+                  <enumeration value="includeFiles">
+                  </enumeration>
+                  <enumeration value="libPaths">
+                  </enumeration>
+                  <enumeration value="libFiles">
                   </enumeration>
                </restriction>
             </simpleType>
@@ -1535,6 +1594,49 @@ If this attribute is not specified, MBS will assume that there are no reserved m
                </documentation>
             </annotation>
          </attribute>
+         <attribute name="supportsManagedBuild" type="boolean">
+            <annotation>
+               <documentation>
+                  Specifies whether the duilder supports managed build. Default value is true.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="autoBuildTarget" type="string">
+            <annotation>
+               <documentation>
+                  represents the build target to be used for auto build
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="incrementalBuildTarget" type="string">
+            <annotation>
+               <documentation>
+                  represents the build target to be used for incremental build
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="cleanBuildTarget" type="string">
+            <annotation>
+               <documentation>
+                  represents the build target to be used for clean build
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="ignoreErrCmd" type="string">
+            <annotation>
+               <documentation>
+                  specifies the &quot;ignore error&quot; builder option.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="parallelBuildCmd" type="string">
+            <annotation>
+               <documentation>
+                  specifies the &quot;parallel build&quot; builder option. 
+If the builder supports specifying custom number of parallel jobs, the option definition may contain &quot;*&quot; the Build System sill substitute the &quot;*&quot; with the number of parallel threads to be used.
+               </documentation>
+            </annotation>
+         </attribute>
       </complexType>
    </element>
 
@@ -1747,13 +1849,14 @@ If the &quot;buildPathResolver&quot; attribute is specified, the &quot;pathDelim
       </annotation>
       <complexType>
          <choice>
-            <element ref="and"/>
-            <element ref="or"/>
-            <element ref="not"/>
-            <element ref="checkOption"/>
-            <element ref="checkString"/>
-            <element ref="false"/>
-            <element ref="checkHolder"/>
+            <element ref="and" minOccurs="0" maxOccurs="unbounded"/>
+            <element ref="or" minOccurs="0" maxOccurs="unbounded"/>
+            <element ref="not" minOccurs="0" maxOccurs="unbounded"/>
+            <element ref="checkOption" minOccurs="0" maxOccurs="unbounded"/>
+            <element ref="checkString" minOccurs="0" maxOccurs="unbounded"/>
+            <element ref="false" minOccurs="0" maxOccurs="unbounded"/>
+            <element ref="checkHolder" minOccurs="0" maxOccurs="unbounded"/>
+            <element ref="checkBuildProperty" minOccurs="0" maxOccurs="unbounded"/>
          </choice>
          <attribute name="type" type="string" use="default" value="ALL">
             <annotation>
@@ -1777,6 +1880,9 @@ type=&quot;UI_VISIBILITY|CMD_USAGE&quot;
                   This attribute should be used only for the CONTAINER_ATTRIBUTE enablement to specify the name of the attribute for which this enablement applies. Currently the following option attributes are supported:
 &quot;command&quot;
 &quot;commandFalse&quot;
+&quot;defaultValue&quot;
+&quot;value&quot;
+&quot;artifactExtension&quot;
                </documentation>
             </annotation>
             <simpleType>
@@ -1785,6 +1891,12 @@ type=&quot;UI_VISIBILITY|CMD_USAGE&quot;
                   </enumeration>
                   <enumeration value="commandFalse">
                   </enumeration>
+                  <enumeration value="defaultValue">
+                  </enumeration>
+                  <enumeration value="value">
+                  </enumeration>
+                  <enumeration value="artifactExtension">
+                  </enumeration>
                </restriction>
             </simpleType>
          </attribute>
@@ -1792,6 +1904,16 @@ type=&quot;UI_VISIBILITY|CMD_USAGE&quot;
             <annotation>
                <documentation>
                   This attribute should be used only for the CONTAINER_ATTRIBUTE enablement to specify the value of the attribute specified in the &quot;attribute&quot; for which this enablement applies
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="extensionAdjustment" type="boolean">
+            <annotation>
+               <documentation>
+                  The attribute is valid for the CONTAINER_ATTRIBUTE enablement type.
+true specifies that the enablement is defined for adjusting extension elements (extension elements are adjusted on tool-chain definition load)
+false specifies that the enablement is defined for non-extension elements adjustment. This adjustment is performed, e.g. when the Build properties set is chenged for configuration
+Default value is true.
                </documentation>
             </annotation>
          </attribute>
@@ -1806,12 +1928,13 @@ type=&quot;UI_VISIBILITY|CMD_USAGE&quot;
       </annotation>
       <complexType>
          <sequence>
-            <element ref="and"/>
-            <element ref="or"/>
-            <element ref="not"/>
-            <element ref="checkOption"/>
-            <element ref="checkString"/>
-            <element ref="checkHolder"/>
+            <element ref="and" minOccurs="0" maxOccurs="unbounded"/>
+            <element ref="or" minOccurs="0" maxOccurs="unbounded"/>
+            <element ref="not" minOccurs="0" maxOccurs="unbounded"/>
+            <element ref="checkOption" minOccurs="0" maxOccurs="unbounded"/>
+            <element ref="checkString" minOccurs="0" maxOccurs="unbounded"/>
+            <element ref="checkHolder" minOccurs="0" maxOccurs="unbounded"/>
+            <element ref="checkBuildProperty" minOccurs="0" maxOccurs="unbounded"/>
          </sequence>
       </complexType>
    </element>
@@ -1824,12 +1947,13 @@ type=&quot;UI_VISIBILITY|CMD_USAGE&quot;
       </annotation>
       <complexType>
          <sequence>
-            <element ref="and"/>
-            <element ref="or"/>
-            <element ref="not"/>
-            <element ref="checkOption"/>
-            <element ref="checkString"/>
-            <element ref="checkHolder"/>
+            <element ref="and" minOccurs="0" maxOccurs="unbounded"/>
+            <element ref="or" minOccurs="0" maxOccurs="unbounded"/>
+            <element ref="not" minOccurs="0" maxOccurs="unbounded"/>
+            <element ref="checkOption" minOccurs="0" maxOccurs="unbounded"/>
+            <element ref="checkString" minOccurs="0" maxOccurs="unbounded"/>
+            <element ref="checkHolder" minOccurs="0" maxOccurs="unbounded"/>
+            <element ref="checkBuildProperty" minOccurs="0" maxOccurs="unbounded"/>
          </sequence>
       </complexType>
    </element>
@@ -1842,12 +1966,13 @@ type=&quot;UI_VISIBILITY|CMD_USAGE&quot;
       </annotation>
       <complexType>
          <choice>
-            <element ref="and"/>
-            <element ref="or"/>
-            <element ref="not"/>
-            <element ref="checkOption"/>
-            <element ref="checkString"/>
-            <element ref="checkHolder"/>
+            <element ref="and" minOccurs="0" maxOccurs="unbounded"/>
+            <element ref="or" minOccurs="0" maxOccurs="unbounded"/>
+            <element ref="not" minOccurs="0" maxOccurs="unbounded"/>
+            <element ref="checkOption" minOccurs="0" maxOccurs="unbounded"/>
+            <element ref="checkString" minOccurs="0" maxOccurs="unbounded"/>
+            <element ref="checkHolder" minOccurs="0" maxOccurs="unbounded"/>
+            <element ref="checkBuildProperty" minOccurs="0" maxOccurs="unbounded"/>
          </choice>
       </complexType>
    </element>
@@ -1957,6 +2082,80 @@ The way the value is specified and treated depends on the value of the isRegex a
             <annotation>
                <documentation>
                   Specifies the holder id to be checked. The checkHolder is treated as true if the id specified in this attribute matches with the option&apos;s holder id or the id of some holder&apos;s super-class. Otherwise the checkHolder is treated as false.
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="checkBuildProperty">
+      <annotation>
+         <documentation>
+            Performs the Build Property check
+         </documentation>
+      </annotation>
+      <complexType>
+         <attribute name="property" type="string">
+            <annotation>
+               <documentation>
+                  specifies the id of the Build Property to be checked
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="value" type="string">
+            <annotation>
+               <documentation>
+                  Specifies the Build Property Value id to be checked
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="supportedProperties">
+      <annotation>
+         <documentation>
+            contains the list of supported properties
+         </documentation>
+      </annotation>
+      <complexType>
+         <sequence>
+            <element ref="property"/>
+         </sequence>
+      </complexType>
+   </element>
+
+   <element name="property">
+      <annotation>
+         <documentation>
+            contains the supported values for the property
+         </documentation>
+      </annotation>
+      <complexType>
+         <sequence>
+            <element ref="value" minOccurs="1" maxOccurs="unbounded"/>
+         </sequence>
+         <attribute name="id" type="string">
+            <annotation>
+               <documentation>
+                  the property type id
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="value">
+      <annotation>
+         <documentation>
+            represents the property value
+         </documentation>
+      </annotation>
+      <complexType>
+         <attribute name="id" type="string">
+            <annotation>
+               <documentation>
+                  represents the property value id
                </documentation>
             </annotation>
          </attribute>

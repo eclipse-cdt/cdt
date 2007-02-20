@@ -30,7 +30,7 @@
             id="org.eclipse.cdt.make.core.makeBuilder">
       </builder>
    </extension>
-   <extension
+   <!--extension
          id="makeBuilder"
          name="%builderMake.name"
          point="org.eclipse.core.resources.builders">
@@ -44,7 +44,7 @@
             </parameter>
          </run>
       </builder>
-   </extension>
+   </extension-->
    <extension
          id="make"
          name="%makeproject.name"
@@ -54,14 +54,14 @@
             natureID="org.eclipse.cdt.make.core.makeNature">
       </cproject>
    </extension>
-   <extension
+   <!--extension
          point="org.eclipse.cdt.make.core.MakeTargetBuilder">
       <builder
             builderID="org.eclipse.cdt.make.core.makeBuilder"
             id="org.eclipse.cdt.make.MakeTargetBuilder">
       </builder>
-   </extension>
-   <extension
+   </extension-->
+   <!--extension
          id="ScannerConfigNature"
          name="%epScannerConfigNature.name"
          point="org.eclipse.core.resources.natures">
@@ -87,7 +87,7 @@
                class="org.eclipse.cdt.make.core.scannerconfig.ScannerConfigBuilder">
          </run>
       </builder>
-   </extension>
+   </extension-->
    <extension
          id="DiscoveredScannerInfoProvider"
          point="org.eclipse.cdt.core.ScannerInfoProvider">
@@ -159,5 +159,14 @@
        file-names="Makefile,makefile,GNUMakefile"
        file-extensions="mk"/>
    </extension> 
+   
+   <extension
+         point="org.eclipse.cdt.make.core.MakeTargetBuilder">
+      <builder
+            builderID="org.eclipse.cdt.managedbuilder.core.genmakebuilder"
+            id="org.eclipse.cdt.make.MakeTargetBuilder">
+      </builder>
+   </extension>
+   
 
 </plugin>

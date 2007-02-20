@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 QNX Software Systems and others.
+ * Copyright (c) 2000, 2007 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,6 +16,9 @@ import org.eclipse.cdt.core.CCProjectNature;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.CProjectNature;
 import org.eclipse.cdt.core.resources.IPathEntryStore;
+import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
+import org.eclipse.cdt.core.settings.model.ICProjectDescription;
+import org.eclipse.cdt.core.settings.model.WriteAccessException;
 import org.eclipse.cdt.internal.core.model.APathEntry;
 import org.eclipse.cdt.internal.core.model.BatchOperation;
 import org.eclipse.cdt.internal.core.model.CModel;
@@ -30,6 +33,7 @@ import org.eclipse.cdt.internal.core.model.OutputEntry;
 import org.eclipse.cdt.internal.core.model.PathEntryManager;
 import org.eclipse.cdt.internal.core.model.ProjectEntry;
 import org.eclipse.cdt.internal.core.model.SourceEntry;
+import org.eclipse.cdt.internal.core.settings.model.CProjectDescriptionManager;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
@@ -49,6 +53,8 @@ public class CoreModel {
 	private static CoreModel cmodel = null;
 	private static CModelManager manager = CModelManager.getDefault();
 	private static PathEntryManager pathEntryManager = PathEntryManager.getDefault();
+	private static CProjectDescriptionManager descriptionManager = CProjectDescriptionManager.getInstance();
+	
 //	private static String FILE_EXT_PATTERN = "*."; //$NON-NLS-1$
 //	private static int FILE_EXT_PATTERN_LENGTH = FILE_EXT_PATTERN.length();
 
@@ -1264,5 +1270,80 @@ public class CoreModel {
 		}
 		return rc;
 	}
+	
+	/**
+	 * the method creates and returns a writable project description
+	 * 
+	 * @param project project for which the project description is requested
+	 * @param loadIfExists if true the method first tries to load and return the project description
+	 * from the settings file (.cproject)
+	 * if false, the stored settings are ignored and the new (empty) project description is created
+	 * NOTE: changes made to the returned project description will not be applied untill the {@link #setProjectDescription(IProject, ICProjectDescription)} is called 
+	 * @return {@link ICProjectDescription}
+	 * @throws CoreException
+	 */
+	public ICProjectDescription createProjectDescription(IProject project, boolean loadIfExists) throws CoreException{
+		return descriptionManager.createProjectDescription(project, loadIfExists);
+	}
+	
+	/**
+	 * returns the project description associated with this project
+	 * this is a convenience method fully equivalent to getProjectDescription(project, true)
+	 * see {@link #getProjectDescription(IProject, boolean)} for more detail
+	 * @param project
+	 * @return a writable copy of the ICProjectDescription or null if the project does not contain the
+	 * CDT data associated with it. 
+	 * Note: changes to the project description will not be reflected/used by the core
+	 * untill the {@link #setProjectDescription(IProject, ICProjectDescription)} is called
+	 * 
+	 * @see #getProjectDescription(IProject, boolean)
+	 */
+	public ICProjectDescription getProjectDescription(IProject project){
+		return descriptionManager.getProjectDescription(project);
+	}
+	
+	/**
+	 * this method is called to save/apply the project description
+	 * the method should be called to apply changes made to the project description
+	 * returned by the {@link #getProjectDescription(IProject, boolean)} or {@link #createProjectDescription(IProject, boolean)} 
+	 * 
+	 * @param project
+	 * @param des
+	 * @throws CoreException
+	 * 
+	 * @see {@link #getProjectDescription(IProject, boolean)}
+	 * @see #createProjectDescription(IProject, boolean)
+	 */
+	public void setProjectDescription(IProject project, ICProjectDescription des) throws CoreException {
+		descriptionManager.setProjectDescription(project, des);
+	}
 
+	/**
+	 * returns the project description associated with this project
+	 * 
+	 * @param project project for which the description is requested
+	 * @param write if true, the writable description copy is returned. 
+	 * If false the cached read-only description is returned.
+	 * 
+	 * CDT core maintains the cached project description settings. If only read access is needed to description,
+	 * then the read-only project description should be obtained.
+	 * This description always operates with cached data and thus it is better to use it for performance reasons
+	 * All set* calls to the read-only description result in the {@link WriteAccessException}
+	 * 
+	 * When the writable description is requested, the description copy is created.
+	 * Changes to this description will not be reflected/used by the core and Build System untill the
+	 * {@link #setProjectDescription(IProject, ICProjectDescription)} is called
+	 *
+	 * Each getProjectDescription(project, true) returns a new copy of the project description 
+	 * 
+	 * The writable description uses the cached data untill the first set call
+	 * after that the description communicates directly to the Build System
+	 * i.e. the implementer of the org.eclipse.cdt.core.CConfigurationDataProvider extension
+	 * This ensures the Core<->Build System settings integrity
+	 * 
+	 * @return {@link ICProjectDescription}
+	 */
+	public ICProjectDescription getProjectDescription(IProject project, boolean write){
+		return descriptionManager.getProjectDescription(project, write);
+	}
 }

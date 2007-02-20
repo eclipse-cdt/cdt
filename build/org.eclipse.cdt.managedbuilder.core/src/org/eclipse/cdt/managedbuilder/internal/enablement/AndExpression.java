@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005 Intel Corporation and others.
+ * Copyright (c) 2005, 2007 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,10 +10,10 @@
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.internal.enablement;
 
-import org.eclipse.cdt.managedbuilder.core.IBuildObject;
 import org.eclipse.cdt.managedbuilder.core.IHoldsOptions;
 import org.eclipse.cdt.managedbuilder.core.IManagedConfigElement;
 import org.eclipse.cdt.managedbuilder.core.IOption;
+import org.eclipse.cdt.managedbuilder.core.IResourceInfo;
 
 public class AndExpression extends CompositeExpression {
 	public static final String NAME = "and"; 	//$NON-NLS-1$
@@ -22,12 +22,12 @@ public class AndExpression extends CompositeExpression {
 		super(element);
 	}
 
-	public boolean evaluate(IBuildObject configuration, 
+	public boolean evaluate(IResourceInfo rcInfo, 
             IHoldsOptions holder, 
             IOption option) {
 		IBooleanExpression children[] = getChildren();
 		for(int i = 0; i < children.length; i++){
-			if(!children[i].evaluate(configuration, holder, option))
+			if(!children[i].evaluate(rcInfo, holder, option))
 				return false;
 		}
 		return true;

@@ -64,6 +64,7 @@ public class AllManagedBuildTests {
 		suite.addTest(MultiVersionSupportTests.suite());
 		suite.addTest(OptionEnablementTests.suite());
 		suite.addTest(ManagedBuildDependencyCalculatorTests.suite());
+
 		suite.addTest(BuildDescriptionModelTests.suite());
 		suite.addTest(PathConverterTest.suite());
 		//$JUnit-END$

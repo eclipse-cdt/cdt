@@ -140,7 +140,8 @@
          </configuration>
          <configuration
                name="Root Override Config"
-               id="root.override.config">
+               id="root.override.config"
+               isSystem="true">
             <toolReference
                   id="root.tool">
                <optionReference
@@ -155,7 +156,8 @@
          </configuration>
          <configuration
                name="Complete Override Config"
-               id="complete.override.config">
+               id="complete.override.config"
+               isSystem="true">
             <toolReference
                   id="root.tool">
                <optionReference
@@ -358,7 +360,8 @@
          </tool>
          <configuration
          		name="Who Cares"
-         		id="test.forward.parent.config">
+         		id="test.forward.parent.config"
+         		isSystem="true">
          	<toolReference
          		id="test.forward.tool"/>
          </configuration>
@@ -377,11 +380,13 @@
                outputFlag="-o"
                outputs="xy"
                command="EP"
-               id="error.parsers.tool">
+               id="error.parsers.tool"
+               isSystem="true">
          </tool>
          <configuration
                name="EP Config"
-               id="ep.config"/>
+               id="ep.config"
+               isSystem="true"/>
       </target>
    </extension>
 
@@ -1205,7 +1210,8 @@
 		          name="Dbg ToolChain"
 		          scannerConfigDiscoveryProfileId="org.eclipse.cdt.managedbuilder.core.GCCManagedMakePerProjectProfile"
 		          osList="solaris,linux,hpux,aix,qnx"
-		          archList="all">
+		          archList="all"
+		          isSystem="true">
 		          <targetPlatform
 		              id="cdt.managedbuild.target.testgnu.platform.exe.debug"
 		              name="Dbg Platform"
@@ -1272,7 +1278,8 @@
 		          name="Rel ToolChain"
 		          scannerConfigDiscoveryProfileId="org.eclipse.cdt.managedbuilder.core.GCCManagedMakePerProjectProfile"
 		          osList="solaris,linux,hpux,aix,qnx"
-		          archList="all">
+		          archList="all"
+		          isSystem="true">
 		          <targetPlatform
 		              id="cdt.managedbuild.target.testgnu.platform.exe.release"
 		              name="Rel Platform"		             
@@ -1346,7 +1353,8 @@
 		          name="so Debug ToolChain"
 		          scannerConfigDiscoveryProfileId="org.eclipse.cdt.managedbuilder.core.GCCManagedMakePerProjectProfile"		          
 		          osList="solaris,linux,hpux,aix,qnx"                
-		          archList="all">
+		          archList="all"
+		          isSystem="true">
 		          <targetPlatform
 		              id="cdt.managedbuild.target.testgnu.platform.so.debug"
 		              name="so Debug Platform"
@@ -1427,7 +1435,8 @@
 		          name="so Release ToolChain"
 		          scannerConfigDiscoveryProfileId="org.eclipse.cdt.managedbuilder.core.GCCManagedMakePerProjectProfile"		          
 		          osList="solaris,linux,hpux,aix,qnx"                
-		          archList="all">
+		          archList="all"
+		          isSystem="true">
 		          <targetPlatform
 		              id="cdt.managedbuild.target.testgnu.platform.so.release"
 		              name="so Release Platform"
@@ -1515,7 +1524,8 @@
 		          name="Dbg TC"
 		          scannerConfigDiscoveryProfileId="org.eclipse.cdt.managedbuilder.core.GCCManagedMakePerProjectProfile"		          
 		          osList="solaris,linux,hpux,aix,qnx"                
-		          archList="all">
+		          archList="all"
+		          isSystem="true">
 				  <targetPlatform
 					  id="cdt.managedbuild.target.testgnu.platform.lib.debug"
 				 	  name="Dbg P"
@@ -1580,7 +1590,8 @@
 		          name="Rel TC"
 		          scannerConfigDiscoveryProfileId="org.eclipse.cdt.managedbuilder.core.GCCManagedMakePerProjectProfile"		          
 		          osList="solaris,linux,hpux,aix,qnx"                
-		          archList="all">
+		          archList="all"
+		          isSystem="true">
 		          <targetPlatform
 		              id="cdt.managedbuild.target.testgnu.platform.lib.release"
 		              name="Rel P"
@@ -1648,7 +1659,8 @@
 			   id="cdt.managedbuild.test.java.attrs.config">
                <toolChain
 		          id="cdt.managedbuild.test.java.attrs.toolchain"
-		          name="The Tool-Chain">
+		          name="The Tool-Chain"
+		          isSystem="true">
 				  <tool
 					  id="cdt.managedbuild.test.java.attrs.tool"
 					  superClass="cdt.managedbuild.tool.testgnu.c.compiler"
@@ -2557,7 +2569,8 @@
                      name="MBS30ToolChainName.Dbg"
                      targetTool="cdt.managedbuild.tool.testgnu30.c.linker.exe.debug;cdt.managedbuild.tool.testgnu30.cpp.linker.exe.debug"
                      scannerConfigDiscoveryProfileId="org.eclipse.cdt.managedbuilder.core.GCCManagedMakePerProjectProfile"
-                     id="cdt.managedbuild.toolchain.testgnu30.exe.debug">
+                     id="cdt.managedbuild.toolchain.testgnu30.exe.debug"
+                     isSystem="true">
 		          <targetPlatform
 		              id="cdt.managedbuild.target.testgnu30.platform.exe.debug"
 		              name="MBS30PlatformName.Dbg"
@@ -2621,7 +2634,8 @@
                      name="MBS30ToolChainName.Rel"
                      targetTool="cdt.managedbuild.tool.testgnu30.c.linker.exe.release;cdt.managedbuild.tool.testgnu30.cpp.linker.exe.release"
                      scannerConfigDiscoveryProfileId="org.eclipse.cdt.managedbuilder.core.GCCManagedMakePerProjectProfile"
-                     id="cdt.managedbuild.toolchain.testgnu30.exe.release">
+                     id="cdt.managedbuild.toolchain.testgnu30.exe.release"
+                     isSystem="true">
 		          <targetPlatform
 		              id="cdt.managedbuild.target.testgnu30.platform.exe.release"
 		              name="MBS30PlatformName.Rel"		             
@@ -2693,7 +2707,8 @@
                      name="MBS30ToolChainName.Dbg"
                      targetTool="cdt.managedbuild.tool.testgnu30.c.linker.so.debug;cdt.managedbuild.tool.testgnu30.cpp.linker.so.debug"
                      scannerConfigDiscoveryProfileId="org.eclipse.cdt.managedbuilder.core.GCCManagedMakePerProjectProfile"
-                     id="cdt.managedbuild.toolchain.testgnu30.so.debug">
+                     id="cdt.managedbuild.toolchain.testgnu30.so.debug"
+                     isSystem="true">
 		          <targetPlatform
 		              id="cdt.managedbuild.target.testgnu30.platform.so.debug"
 		              name="MBS30PlatformName.Dbg"
@@ -2782,7 +2797,8 @@
                      name="MBS30ToolChainName.Rel"
                      targetTool="cdt.managedbuild.tool.testgnu30.c.linker.so.release;cdt.managedbuild.tool.testgnu30.cpp.linker.so.release"
                      scannerConfigDiscoveryProfileId="org.eclipse.cdt.managedbuilder.core.GCCManagedMakePerProjectProfile"
-                     id="cdt.managedbuild.toolchain.testgnu30.so.release">
+                     id="cdt.managedbuild.toolchain.testgnu30.so.release"
+                     isSystem="true">
 		          <targetPlatform
 		              id="cdt.managedbuild.target.testgnu30.platform.so.release"
 		              name="MBS30PlatformName.Rel"
@@ -2878,7 +2894,8 @@
                      name="MBS30ToolChainName.Dbg"
                      targetTool="cdt.managedbuild.tool.testgnu30.archiver.lib.debug"
                      scannerConfigDiscoveryProfileId="org.eclipse.cdt.managedbuilder.core.GCCManagedMakePerProjectProfile"
-                     id="cdt.managedbuild.toolchain.testgnu30.lib.debug">
+                     id="cdt.managedbuild.toolchain.testgnu30.lib.debug"
+                     isSystem="true">
 				  <targetPlatform
 					  id="cdt.managedbuild.target.testgnu30.platform.lib.debug"
 				 	  name="MBS30PlatformName.Dbg"
@@ -2939,7 +2956,8 @@
                      name="MBS30ToolChainName.Rel"
                      targetTool="cdt.managedbuild.tool.testgnu30.archiver.lib.release"
                      scannerConfigDiscoveryProfileId="org.eclipse.cdt.managedbuilder.core.GCCManagedMakePerProjectProfile"
-                     id="cdt.managedbuild.toolchain.testgnu30.lib.release">
+                     id="cdt.managedbuild.toolchain.testgnu30.lib.release"
+                     isSystem="true">
 		          <targetPlatform
 		              id="cdt.managedbuild.target.testgnu30.platform.lib.release"
 		              name="MBS30PlatformName.Rel"
@@ -3039,7 +3057,8 @@
                       name="ToolChainDbg"
                       scannerConfigDiscoveryProfileId="org.eclipse.cdt.managedbuilder.core.GCCManagedMakePerProjectProfile"
                       targetTool="foo.bar;cdt.managedbuild.tool30.deploy.x.c.1"
-                      id="cdt.managedbuild.Testprepost30.gnu.toolchain.exe.debug">
+                      id="cdt.managedbuild.Testprepost30.gnu.toolchain.exe.debug"
+                      isSystem="true">
 		          <targetPlatform
 		              id="cdt.managedbuild.Testprepost30.gnu.platform.exe.debug"
 		              name="PlatformDbg"
@@ -3128,7 +3147,8 @@
                       scannerConfigDiscoveryProfileId="org.eclipse.cdt.managedbuilder.core.GCCManagedMakePerProjectProfile"
                       targetTool="test30_1.gnu.so.deploy"
                       secondaryOutputs="test30_1.gnu.so.cjpeg.output"
-                      id="test30_1.gnu.so.toolchain">
+                      id="test30_1.gnu.so.toolchain"
+                      isSystem="true">
 		          <targetPlatform
 		              id="test30_1.gnu.so.platform"
 		              name="Platform for test30_1"
@@ -3273,7 +3293,8 @@
             id="test30_sto.dummy.toolchain.parent"
             isAbstract="true"
             name="test30_sto ToolChain.Parent"
-            osList="all">   
+            osList="all"
+            isSystem="true">   
          <optionCategory
                id="test30_sto.dummy.category.5"
                name="Category.Top.5.NoIcon"/>
@@ -3341,7 +3362,8 @@
                   id="test30_sto.dummy.toolchain"
                   isAbstract="false"
                   name="Toolchain for test30_sto"
-                  superClass="test30_sto.dummy.toolchain.parent">
+                  superClass="test30_sto.dummy.toolchain.parent"
+                  isSystem="true">
                <targetPlatform
                      archList="all"
                      id="test30_sto.dummy.platform"
@@ -3464,7 +3486,8 @@
                <toolChain
                       name="ToolChain for test30_2"
                       targetTool="test30_2.cat"
-                      id="test30_2.tar.toolchain">
+                      id="test30_2.tar.toolchain"
+                      isSystem="true">
 				  <builder
 		              id="test30_2.tar.builder"
 		              name="Builder for test30_2"
@@ -3596,7 +3619,8 @@
                      isToolChainSupported="org.eclipse.cdt.managedbuilder.core.tests.TestMacro"
                      name="Dbg ToolChain"
                      osList="solaris,linux,hpux,aix,qnx"
-                     scannerConfigDiscoveryProfileId="org.eclipse.cdt.managedbuilder.core.GCCManagedMakePerProjectProfile">
+                     scannerConfigDiscoveryProfileId="org.eclipse.cdt.managedbuilder.core.GCCManagedMakePerProjectProfile"
+                     isSystem="true">
 		          <targetPlatform
 		              id="cdt.managedbuild.target.testenv.platform.exe.debug"
 		              name="Dbg Platform"
@@ -3660,7 +3684,8 @@
                      isToolChainSupported="org.eclipse.cdt.managedbuilder.core.tests.TestMacro"
                      name="Rel ToolChain"
                      osList="solaris,linux,hpux,aix,qnx"
-                     scannerConfigDiscoveryProfileId="org.eclipse.cdt.managedbuilder.core.GCCManagedMakePerProjectProfile">
+                     scannerConfigDiscoveryProfileId="org.eclipse.cdt.managedbuilder.core.GCCManagedMakePerProjectProfile"
+                     isSystem="true">
 		          <targetPlatform
 		              id="cdt.managedbuild.target.testenv.platform.exe.release"
 		              name="Rel Platform"		             
@@ -3708,7 +3733,8 @@
                      id="cdt.managedbuild.toolchain.testenv.exe.xz"
                      isToolChainSupported="org.eclipse.cdt.managedbuilder.core.tests.TestMacro"
                      name="Three ToolChain"
-                     scannerConfigDiscoveryProfileId="org.eclipse.cdt.managedbuilder.core.GCCManagedMakePerProjectProfile">
+                     scannerConfigDiscoveryProfileId="org.eclipse.cdt.managedbuilder.core.GCCManagedMakePerProjectProfile"
+                     isSystem="true">
 		          <targetPlatform
 		              id="cdt.managedbuild.target.testenv.platform.exe.xz"
 		              name="xz Platform">
@@ -3734,7 +3760,8 @@
                <toolChain
                      id="cdt.managedbuild.toolchain.testenv.exe.min"
                      isToolChainSupported="org.eclipse.cdt.managedbuilder.core.tests.TestMacro"
-                     name="Three ToolChain">
+                     name="Three ToolChain"
+                     isSystem="true">
 		          <targetPlatform
 		              id="cdt.managedbuild.target.testenv.platform.exe.min"
 		              name="Rel Platform">
@@ -3765,7 +3792,8 @@
                      isToolChainSupported="org.eclipse.cdt.managedbuilder.core.tests.TestMacro"
                      name="Dbg ToolChain"
                      osList="solaris,linux,hpux,aix,qnx"
-                     scannerConfigDiscoveryProfileId="org.eclipse.cdt.managedbuilder.core.GCCManagedMakePerProjectProfile">
+                     scannerConfigDiscoveryProfileId="org.eclipse.cdt.managedbuilder.core.GCCManagedMakePerProjectProfile"
+                     isSystem="true">
 		          <targetPlatform
 		              id="cdt.managedbuild.target.testenv.platform.exe.five"
 		              name="Dbg Platform"
@@ -3818,7 +3846,8 @@
       	id="TopTC.toolchain.base"
       	name="TopLevel Toolchain"
       	isAbstract="true"
-      	scannerConfigDiscoveryProfileId="org.eclipse.cdt.managedbuilder.core.GCCManagedMakePerProjectProfile">
+      	scannerConfigDiscoveryProfileId="org.eclipse.cdt.managedbuilder.core.GCCManagedMakePerProjectProfile"
+      	isSystem="true">
       		<targetPlatform
       			id="TopTC.platform"
       			name="TopTC Platform"
@@ -3834,7 +3863,8 @@
       	id="TopTC.toolchain.release"
       	name="TopTC Release Toolchain"
       	isAbstract="true"
-      	superClass="TopTC.toolchain.base">
+      	superClass="TopTC.toolchain.base"
+      	isSystem="true">
       		<tool
       			id="TopTC.c.compiler.release"
       			superClass="cdt.managedbuild.tool.gnu.c.compiler"
@@ -3866,7 +3896,8 @@
       	id="TopTC.toolchain.debug"
       	name="TopTC Debug Toolchain"
       	isAbstract="true"
-      	superClass="TopTC.toolchain.base">
+      	superClass="TopTC.toolchain.base"
+      	isSystem="true">
       		<tool
       			id="TopTC.c.compiler.debug"
       			superClass="cdt.managedbuild.tool.gnu.c.compiler"
@@ -3906,7 +3937,8 @@
 		      	cleanCommand="rm -rf">
 		      		<toolChain
 		      			id="TopTC.toolchain.exe.debug"
-		      			superClass="TopTC.toolchain.debug">
+		      			superClass="TopTC.toolchain.debug"
+		      			isSystem="true">
 		      				<tool
 		      					id="TopTC..c.linker.exe.debug"
 		      					superClass="cdt.managedbuild.tool.gnu.c.linker"
@@ -3924,7 +3956,8 @@
 		      	cleanCommand="rm -rf">
 		      		<toolChain
 		      			id="TopTC.toolchain.exe.release"
-		      			superClass="TopTC.toolchain.release">
+		      			superClass="TopTC.toolchain.release"
+		      			isSystem="true">
 		      				<tool
 		      					id="TopTC..c.linker.exe.release"
 		      					superClass="cdt.managedbuild.tool.gnu.c.linker"
@@ -3958,7 +3991,8 @@
                      name="Debug IA32 ToolChain"
                      archList="x86"                                         
                      osList="linux"
-                     scannerConfigDiscoveryProfileId="org.eclipse.cdt.managedbuilder.core.GCCManagedMakePerProjectProfile">
+                     scannerConfigDiscoveryProfileId="org.eclipse.cdt.managedbuilder.core.GCCManagedMakePerProjectProfile"
+                     isSystem="true">
 		          <targetPlatform
 		              id="cdt.managedbuild.target.testMultipleVersions.platform.exe.debug"
 		              name="Debug IA32 Platform"
@@ -3997,7 +4031,8 @@
                      osList="linux"
                      id="cdt.managedbuild.toolchain.testMultipleVersions.exe.release"
                      name="Release IA32 ToolChain"
-                     scannerConfigDiscoveryProfileId="org.eclipse.cdt.managedbuilder.core.GCCManagedMakePerProjectProfile">
+                     scannerConfigDiscoveryProfileId="org.eclipse.cdt.managedbuilder.core.GCCManagedMakePerProjectProfile"
+                     isSystem="true">
 		          <targetPlatform
 		              id="cdt.managedbuild.target.testMultipleVersions.platform.exe.release"
 		              name="Release IA32 Platform"		             
@@ -4028,7 +4063,8 @@
                      configurationMacroSupplier="org.eclipse.cdt.managedbuilder.core.tests.TestMacro"
                      id="cdt.managedbuild.toolchain.testMultipleVersions.exe.debug64_2.2.0"
                      name="Debug IA64 ToolChain"
-                     scannerConfigDiscoveryProfileId="org.eclipse.cdt.managedbuilder.core.GCCManagedMakePerProjectProfile">
+                     scannerConfigDiscoveryProfileId="org.eclipse.cdt.managedbuilder.core.GCCManagedMakePerProjectProfile"
+                     isSystem="true">
 		          <targetPlatform
 		              id="cdt.managedbuild.target.testMultipleVersions.platform.exe.debug64"
 		              name="Debug IA64 Platform">
@@ -4055,7 +4091,8 @@
                      id="cdt.managedbuild.toolchain.testMultipleVersions.exe.release64_2.2.0"
                      versionsSupported="1.2.0,2.0.0,2.1.3"
                      isToolChainSupported="org.eclipse.cdt.managedbuilder.core.tests.TestMacro"
-                     name="Three ToolChain">
+                     name="Three ToolChain"
+                     isSystem="true">
 		          <targetPlatform
 		              id="cdt.managedbuild.target.testMultipleVersions.platform.exe.release64"
 		              name="Release IA64 Platform">
@@ -4092,7 +4129,7 @@
                id="config.testProjectConverterConvenienceRoutines.exe.debug"
                cleanCommand="rm -rf"
 			   errorParsers="org.eclipse.cdt.core.MakeErrorParser;org.eclipse.cdt.core.GCCErrorParser;org.eclipse.cdt.core.GLDErrorParser;org.eclipse.cdt.core.GASErrorParser">
-               <toolChain
+               <toolChain isSystem="true"
                      id="toolchain.testProjectConverterConvenienceRoutines.exe.debug_1.1.0"
                      name="Debug IA32 ToolChain"
                      archList="x86"                                         
@@ -4135,7 +4172,7 @@
               cleanCommand="rm"
               id="org.eclipse.cdt.managedbuilder.core.tests.BDMacroSupportConfiguration"
               name="Default">
-           <toolChain
+           <toolChain isSystem="true"
                  id="org.eclipse.cdt.managedbuilder.core.tests.BDMacroSupportToolchain"
                  isAbstract="false"
                  name="Build Definition Macro Support Toolchain"
@@ -4260,7 +4297,7 @@
                id="test.config_1.0.0"
                cleanCommand="rm -rf"
 			   errorParsers="org.eclipse.cdt.core.MakeErrorParser;org.eclipse.cdt.core.GCCErrorParser;org.eclipse.cdt.core.GLDErrorParser;org.eclipse.cdt.core.GASErrorParser">               
-               <toolChain
+               <toolChain isSystem="true"
 		          id="test.toolChain_1.0.0"
 		          name="Test ToolChain Ver 1.0"
 		          convertToId="test.toolChain_2.0.0"		          
@@ -4304,7 +4341,7 @@
                id="test.config_2.0.0"
                cleanCommand="rm -rf"
 			   errorParsers="org.eclipse.cdt.core.MakeErrorParser;org.eclipse.cdt.core.GCCErrorParser;org.eclipse.cdt.core.GLDErrorParser;org.eclipse.cdt.core.GASErrorParser">               
-               <toolChain
+               <toolChain isSystem="true"
 		          id="test.toolChain_2.0.0"
 		          name="Test ToolChain Ver 2.0"
 		          archList="all">
@@ -4342,7 +4379,7 @@
             superClass="cdt.managedbuild.target.gnu.exe"
             id="test.target">
             <configuration id="test.config" name="Test Configuration">
-            	<toolChain 
+            	<toolChain isSystem="true" 
             		id="test.toolchain" 
             		name="Test Toolchain"
             		convertToId="test.toolchain_1.2.0">
@@ -4372,7 +4409,7 @@
             superClass="cdt.managedbuild.target.gnu.exe"
             id="test.target_1.2.0">
             <configuration id="test.config_1.2.0" name="Test Configuration">
-            	<toolChain 
+            	<toolChain isSystem="true" 
             		id="test.toolchain_1.2.0" 
             		name="Test Toolchain 1.2.0">     
 					<builder
@@ -4407,7 +4444,7 @@
                id="testProject.config_1.0.0"
                cleanCommand="rm -rf"
 			   errorParsers="org.eclipse.cdt.core.MakeErrorParser;org.eclipse.cdt.core.GCCErrorParser;org.eclipse.cdt.core.GLDErrorParser;org.eclipse.cdt.core.GASErrorParser">               
-               <toolChain
+               <toolChain isSystem="true"
 		          id="testProject.toolChain_1.0.0"
 		          name="Test ToolChain Ver 1.0"
 		          archList="all">
@@ -4448,7 +4485,7 @@
                id="testProject.config_2.0.0"
                cleanCommand="rm -rf"
 			   errorParsers="org.eclipse.cdt.core.MakeErrorParser;org.eclipse.cdt.core.GCCErrorParser;org.eclipse.cdt.core.GLDErrorParser;org.eclipse.cdt.core.GASErrorParser">               
-               <toolChain
+               <toolChain isSystem="true"
 		          id="testProject.toolChain_2.0.0"
 		          name="Test ToolChain Ver 2.0"
 		          archList="all">
@@ -4671,7 +4708,7 @@
             name="Release"
             id="cdt.test.fortran.executable.release"
             cleanCommand="rm -rf">
-            <toolChain
+            <toolChain isSystem="true"
 		        id="cdt.test.fortran.toolchain.executable.release"
 		        name="ToolChain.Executable.Release"
 		        targetTool="cdt.test.fortran.linkstep.executable.release"
@@ -4715,7 +4752,7 @@
             name="Debug"
             id="cdt.test.fortran.executable.debug"
             cleanCommand="rm -rf">
-            <toolChain
+            <toolChain isSystem="true"
 		        id="cdt.test.fortran.toolchain.executable.debug"
 		        name="ToolChain.Executable.Debug"
 		        targetTool="cdt.test.fortran.linkstep.executable.debug"
@@ -4771,7 +4808,7 @@
                cleanCommand="rm -rf"
                id="cdt.test.assignToOption.debug"
                name="Debug">
-            <toolChain
+            <toolChain isSystem="true"
                   id="cdt.test.assignToOption.exeDebugToolchain"
                   isAbstract="false"
                   name="AssingToOption Tools"
@@ -4881,7 +4918,7 @@
          <configuration
                id="cdt.test.dollarValue.one"
                name="One">
-            <toolChain
+            <toolChain isSystem="true"
                   id="cdt.test.dollarValue.Toolchain"
                   isAbstract="false"
                   name="Tools">
@@ -4958,7 +4995,7 @@
                id="cdt.managedbuild.config.enablement.exe.debug"
                cleanCommand="rm -rf"
 			   errorParsers="org.eclipse.cdt.core.MakeErrorParser;org.eclipse.cdt.core.GCCErrorParser;org.eclipse.cdt.core.GLDErrorParser;org.eclipse.cdt.core.GASErrorParser">
-               <toolChain
+               <toolChain isSystem="true"
                      archList="all"
                      configurationEnvironmentSupplier="org.eclipse.cdt.managedbuilder.core.tests.TestMacro"
                      configurationMacroSupplier="org.eclipse.cdt.managedbuilder.core.tests.TestMacro"
@@ -5956,7 +5993,7 @@
               cleanCommand="rm -rf"
               id="test1.configuration"
               name="Test Configuration 1">
-		        <toolChain
+		        <toolChain isSystem="true"
 	              archList="foo"
 	              id="test1.toolChain1"
 	              isAbstract="false"
@@ -5981,7 +6018,7 @@
               cleanCommand="rm -rf"
               id="test1.configuration 2"
               name="Test Configuration 2">
-		        <toolChain
+		        <toolChain isSystem="true"
 	              archList="foo"
 	              id="test1.toolChain2"
 	              name="Test1 Tool Chain 2"
@@ -6025,7 +6062,7 @@
                name="Debug"
                cleanCommand="rm"
                id="depcalc2.managedbuild.config.gnu.exe.debug">
-			<toolChain
+			<toolChain isSystem="true"
 				id="test.dependency.calculator.2"
 				name="GCC using DependencyCalculator2"
 				superClass="cdt.managedbuild.toolchain.gnu.exe.debug">
@@ -6059,7 +6096,7 @@
                name="Debug"
                cleanCommand="rm"
                id="depcalc3.managedbuild.config.gnu.exe.debug">
-			<toolChain
+			<toolChain isSystem="true"
 				id="test.dependency.calculator.3"
 				name="GCC using DependencyCalculator3"
 				superClass="cdt.managedbuild.toolchain.gnu.exe.debug">
@@ -6093,7 +6130,7 @@
                name="Debug"
                cleanCommand="rm"
                id="depcalcPreBuild.managedbuild.config.gnu.exe.debug">
-			<toolChain
+			<toolChain isSystem="true"
 				id="test.dependency.calculator.PreBuild"
 				name="GCC using DependencyCalculatorPreBuild"
 				superClass="cdt.managedbuild.toolchain.gnu.exe.debug">
@@ -6132,7 +6169,7 @@
                id="cdt.managedbuild.config.bdm.exe.debug"
                cleanCommand="rm -rf"
 			   errorParsers="org.eclipse.cdt.core.MakeErrorParser;org.eclipse.cdt.core.GCCErrorParser;org.eclipse.cdt.core.GLDErrorParser;org.eclipse.cdt.core.GASErrorParser">
-               <toolChain
+               <toolChain isSystem="true"
                      archList="all"
                      osList="solaris,linux,hpux,aix,qnx"
                      name="MBS30ToolChainName.Dbg"
@@ -6243,14 +6280,14 @@
      <projectType
            id="org.eclipse.cdt.managedbuilder.core.tests.inputTypeOptionMakefileRenderingTest"
            isAbstract="false"
-           isTest="false"
+           isTest="true"
            name="org.eclipse.cdt.managedbuilder.core.tests.inputTypeOptionMakefileRenderingTest"
            superClass="cdt.managedbuild.target.gnu30.exe">
         <configuration
               id="org.eclipse.cdt.managedbuilder.core.tests.inputTypeOptionMakefileRenderingTest"
               name="org.eclipse.cdt.managedbuilder.core.tests.inputTypeOptionMakefileRenderingTest"
               parent="cdt.managedbuild.config.testgnu30.exe.release">
-           <toolChain
+           <toolChain isSystem="true"
                  id="org.eclipse.cdt.managedbuilder.core.tests.inputTypeOptionMakefileRenderingTest.toolChain"
                  isAbstract="false"
                  name="org.eclipse.cdt.managedbuilder.core.tests.inputTypeOptionMakefileRenderingTest.toolChain"
@@ -6313,12 +6350,12 @@
    <extension
          point="org.eclipse.cdt.managedbuilder.core.buildDefinitions">
       <managedBuildRevision fileVersion="3.1.0"/>
-      <toolChain
+      <toolChain isSystem="true"
             id="pathconvertertest.convertingtoolchain"
             isAbstract="false"
             name="path converting toolchain"
             optionPathConverter="org.eclipse.cdt.managedbuilder.core.tests.TestPathConverter1"/>
-      <toolChain
+      <toolChain isSystem="true"
             id="pathconvertertest.nonconvertingtoolchain"
             isAbstract="false"
             name="non path converting toolchain"
@@ -6350,7 +6387,7 @@
          <configuration
                id="pathconvertertest.tcnn.tonn"
                name="config toolchain-nn, tool-nn">
-            <toolChain
+            <toolChain isSystem="true"
                   id="pathconvertertest.config.tcnn.tonn.toolchain"
                   isAbstract="false"
                   name="toolchain tcnn tonn"
@@ -6375,7 +6412,7 @@
          <configuration
                id="pathconvertertest.tcny.tonn"
                name="config toolchain-ny, tool-nn">
-            <toolChain
+            <toolChain isSystem="true"
                   id="pathconvertertest.config.tcny.tonn.toolchain"
                   isAbstract="false"
                   name="toolchain tcny tonn"
@@ -6399,7 +6436,7 @@
          <configuration
                id="pathconvertertest.tcyy.tonn"
                name="config toolchain-yy, tool-nn">
-            <toolChain
+            <toolChain isSystem="true"
                   id="pathconvertertest.config.tcyy.tonn.toolchain"
                   isAbstract="false"
                   name="toolchain tcyy tonn"
@@ -6424,7 +6461,7 @@
          <configuration
                id="pathconvertertest.tcyy.tony"
                name="config toolchain-yy, tool-ny">
-            <toolChain
+            <toolChain isSystem="true"
                   id="pathconvertertest.config.tcyy.tony.toolchain"
                   isAbstract="false"
                   name="toolchain tcyy tony"
@@ -6449,7 +6486,7 @@
          <configuration
                id="pathconvertertest.tcyy.toyy"
                name="config toolchain-yy, tool-yy">
-            <toolChain
+            <toolChain isSystem="true"
                   id="pathconvertertest.config.tcyy.toyy.toolchain"
                   isAbstract="false"
                   name="toolchain tcyy toyy"

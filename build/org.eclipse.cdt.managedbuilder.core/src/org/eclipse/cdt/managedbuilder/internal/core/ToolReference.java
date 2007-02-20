@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2006 IBM Corporation and others.
+ * Copyright (c) 2003, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,24 +15,26 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.cdt.core.settings.model.extension.CLanguageData;
 import org.eclipse.cdt.managedbuilder.core.BuildException;
 import org.eclipse.cdt.managedbuilder.core.IBuildObject;
 import org.eclipse.cdt.managedbuilder.core.IConfigurationV2;
+import org.eclipse.cdt.managedbuilder.core.IEnvVarBuildPath;
 import org.eclipse.cdt.managedbuilder.core.IHoldsOptions;
 import org.eclipse.cdt.managedbuilder.core.IInputType;
-import org.eclipse.cdt.managedbuilder.core.IEnvVarBuildPath;
-import org.eclipse.cdt.managedbuilder.core.IOptionApplicability;
+import org.eclipse.cdt.managedbuilder.core.IManagedCommandLineGenerator;
 import org.eclipse.cdt.managedbuilder.core.IManagedConfigElement;
 import org.eclipse.cdt.managedbuilder.core.IOption;
+import org.eclipse.cdt.managedbuilder.core.IOptionApplicability;
 import org.eclipse.cdt.managedbuilder.core.IOptionCategory;
-import org.eclipse.cdt.managedbuilder.core.IOutputType;
 import org.eclipse.cdt.managedbuilder.core.IOptionPathConverter;
+import org.eclipse.cdt.managedbuilder.core.IOutputType;
 import org.eclipse.cdt.managedbuilder.core.IResourceConfiguration;
+import org.eclipse.cdt.managedbuilder.core.IResourceInfo;
 import org.eclipse.cdt.managedbuilder.core.ITool;
 import org.eclipse.cdt.managedbuilder.core.IToolChain;
 import org.eclipse.cdt.managedbuilder.core.IToolReference;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
-import org.eclipse.cdt.managedbuilder.core.IManagedCommandLineGenerator;
 import org.eclipse.cdt.managedbuilder.makegen.IManagedDependencyGenerator;
 import org.eclipse.cdt.managedbuilder.makegen.IManagedDependencyGeneratorType;
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -1275,6 +1277,52 @@ public class ToolReference implements IToolReference {
 		}
 		return null;
 	}
-	
-	
+
+	public CLanguageData getCLanguageData(IInputType type) {
+		return null;
+	}
+
+	public CLanguageData[] getCLanguageDatas() {
+		return new CLanguageData[0];
+	}
+
+	public IInputType getInputTypeForCLanguageData(CLanguageData data) {
+		return null;
+	}
+
+	public IResourceInfo getParentResourceInfo() {
+		return null;
+	}
+
+	public IInputType getEdtableInputType(IInputType base) {
+		return null;
+	}
+
+	public boolean isEnabled() {
+		return true;
+	}
+
+	public boolean isReal() {
+		return false;
+	}
+
+	public boolean supportsManagedBuild() {
+		return true;
+	}
+
+	public boolean supportsBuild(boolean managed) {
+		return true;
+	}
+
+	public boolean matches(ITool tool) {
+		return false;
+	}
+
+	public boolean isSystemObject() {
+		return false;
+	}
+
+	public String getUniqueRealName() {
+		return getName();
+	}
 }

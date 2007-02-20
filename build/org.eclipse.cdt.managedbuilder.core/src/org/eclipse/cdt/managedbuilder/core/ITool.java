@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2006 IBM Corporation and others.
+ * Copyright (c) 2003, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,6 +15,7 @@ import java.util.List;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IPath;
 
+import org.eclipse.cdt.core.settings.model.extension.CLanguageData;
 import org.eclipse.cdt.managedbuilder.makegen.IManagedDependencyGenerator;
 import org.eclipse.cdt.managedbuilder.makegen.IManagedDependencyGeneratorType;
 
@@ -43,10 +44,14 @@ public interface ITool extends IBuildObject, IHoldsOptions {
 	public static final String TOOL_ELEMENT_NAME = "tool";	//$NON-NLS-1$
 	public static final String WHITE_SPACE = " ";	//$NON-NLS-1$
 	public static final String EMPTY_STRING = "";	//$NON-NLS-1$
+	public static final String IS_SYSTEM = "isSystem";							//$NON-NLS-1$
 	
 	public static final String VERSIONS_SUPPORTED = "versionsSupported";	//$NON-NLS-1$
 	public static final String CONVERT_TO_ID = "convertToId";				//$NON-NLS-1$
 	public static final String OPTIONPATHCONVERTER = "optionPathConverter";				//$NON-NLS-1$
+	
+	public static final String SUPPORTS_MANAGED_BUILD = "supportsManagedBuild";
+	
 
 	public static final int FILTER_C = 0;
 	public static final int FILTER_CC = 1;
@@ -730,4 +735,34 @@ public interface ITool extends IBuildObject, IHoldsOptions {
 	 * or null, if no conversion is required
 	 */
 	public IOptionPathConverter getOptionPathConverter() ;
+	
+	CLanguageData getCLanguageData(IInputType type);
+	
+	CLanguageData[] getCLanguageDatas();
+	
+	IInputType getInputTypeForCLanguageData(CLanguageData data);
+	
+	IResourceInfo getParentResourceInfo();
+	
+/*	IInputType setSourceContentTypeIds(IInputType type, String[] ids);
+
+	IInputType setHeaderContentTypeIds(IInputType type, String[] ids);
+	
+	IInputType setSourceExtensionsAttribute(IInputType type, String[] extensions);
+
+	IInputType setHeaderExtensionsAttribute(IInputType type, String[] extensions);
+*/
+	IInputType getEdtableInputType(IInputType base);
+	
+	boolean isEnabled();
+	
+//	boolean isReal();
+	
+	boolean supportsBuild(boolean managed);
+	
+	boolean matches(ITool tool);
+	
+	boolean isSystemObject();
+	
+	String getUniqueRealName();
 }

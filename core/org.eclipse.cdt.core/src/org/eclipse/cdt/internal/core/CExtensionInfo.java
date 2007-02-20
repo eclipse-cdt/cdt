@@ -16,7 +16,15 @@ public class CExtensionInfo {
 
 	protected HashMap attribMap = new HashMap(4);
 
-	protected HashMap getAttributes() {
+	public CExtensionInfo(){
+		
+	}
+
+	public CExtensionInfo(CExtensionInfo base){
+		attribMap.putAll(base.attribMap);
+	}
+
+	public HashMap getAttributes() {
 		return attribMap;
 	}
 

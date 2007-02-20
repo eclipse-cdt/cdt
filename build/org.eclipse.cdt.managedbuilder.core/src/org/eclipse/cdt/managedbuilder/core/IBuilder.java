@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2005 Intel Corporation and others.
+ * Copyright (c) 2004, 2007 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,9 +10,11 @@
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.core;
 
+import org.eclipse.cdt.core.settings.model.extension.CBuildData;
 import org.eclipse.cdt.managedbuilder.macros.IFileContextBuildMacroValues;
 import org.eclipse.cdt.managedbuilder.macros.IReservedMacroNameSupplier;
 import org.eclipse.cdt.managedbuilder.makegen.IManagedBuilderMakefileGenerator;
+import org.eclipse.cdt.newmake.core.IMakeBuilderInfo;
 import org.eclipse.core.runtime.IConfigurationElement;
 
 /**
@@ -26,7 +28,7 @@ import org.eclipse.core.runtime.IConfigurationElement;
  * 
  * @since 2.1
  */
-public interface IBuilder extends IBuildObject {
+public interface IBuilder extends IBuildObject, IMakeBuilderInfo {
 	public static final String ARGUMENTS = "arguments";	//$NON-NLS-1$
 	public static final String BUILDER_ELEMENT_NAME = "builder"; 	//$NON-NLS-1$
 	public static final String BUILDFILEGEN_ID ="buildfileGenerator"; //$NON-NLS-1$
@@ -39,8 +41,49 @@ public interface IBuilder extends IBuildObject {
 	public static final String IS_VARIABLE_CASE_SENSITIVE = "isVariableCaseSensitive";			//$NON-NLS-1$
 	public static final String RESERVED_MACRO_NAMES = "reservedMacroNames";			//$NON-NLS-1$
 	public static final String RESERVED_MACRO_NAME_SUPPLIER = "reservedMacroNameSupplier";			//$NON-NLS-1$
+	public static final String IS_SYSTEM = "isSystem";							//$NON-NLS-1$
 	
+//	static final String BUILD_COMMAND = "buildCommand"; //$NON-NLS-1$
+	static final String ATTRIBUTE_BUILD_PATH = "buildPath"; //$NON-NLS-1$
+	static final String ATTRIBUTE_STOP_ON_ERROR = "stopOnError"; //$NON-NLS-1$
+//	static final String USE_DEFAULT_BUILD_CMD = "useDefaultBuildCmd"; //$NON-NLS-1$
+	static final String ATTRIBUTE_TARGET_AUTO = "autoBuildTarget"; //$NON-NLS-1$
+	static final String ATTRIBUTE_TARGET_INCREMENTAL = "incrementalBuildTarget"; //$NON-NLS-1$
+//	static final String BUILD_TARGET_FULL = "fullBuildTarget"; //$NON-NLS-1$
+	static final String ATTRIBUTE_TARGET_CLEAN = "cleanBuildTarget"; //$NON-NLS-1$
+//	static final String BUILD_FULL_ENABLED = "enableFullBuild"; //$NON-NLS-1$
+	static final String ATTRIBUTE_CLEAN_ENABLED = "enableCleanBuild"; //$NON-NLS-1$
+	static final String ATTRIBUTE_INCREMENTAL_ENABLED = "enabledIncrementalBuild"; //$NON-NLS-1$
+	static final String ATTRIBUTE_AUTO_ENABLED = "enableAutoBuild"; //$NON-NLS-1$
+//	static final String BUILD_ARGUMENTS = "buildArguments"; //$NON-NLS-1$
+	static final String ATTRIBUTE_ENVIRONMENT = "environment"; //$NON-NLS-1$
+	static final String ATTRIBUTE_APPEND_ENVIRONMENT = "appendEnvironment"; //$NON-NLS-1$ 
+//	public final static String BUILD_TARGET_INCREMENTAL = "build.target.inc"; //$NON-NLS-1$
+//	public final static String BUILD_TARGET_AUTO = "build.target.auto"; //$NON-NLS-1$
+//	public final static String BUILD_TARGET_CLEAN = "build.target.clean"; //$NON-NLS-1$
+//	public final static String BUILD_LOCATION = "build.location"; //$NON-NLS-1$
+//	public final static String BUILD_COMMAND = "build.command"; //$NON-NLS-1$
+//	public final static String BUILD_ARGUMENTS = "build.arguments"; //$NON-NLS-1$
+
+	static final String ATTRIBUTE_MANAGED_BUILD_ON = "managedBuildOn"; //$NON-NLS-1$ 
+	static final String ATTRIBUTE_KEEP_ENV = "keepEnvironmentInBuildfile"; //$NON-NLS-1$ 
+	static final String ATTRIBUTE_SUPORTS_MANAGED_BUILD = "supportsManagedBuild"; //$NON-NLS-1$
 	
+	static final String ATTRIBUTE_CUSTOMIZED_ERROR_PARSERS = "customizedErrorParsers"; //$NON-NLS-1$
+	static final String ATTRIBUTE_CUSTOM_PROPS = "customBuilderProperties"; //$NON-NLS-1$
+	
+//	static final String ATTRIBUTE_CUSTOMIZED_ERROR_PARSERS = "customizedErrorParsers"; //$NON-NLS-1$
+
+	static final String ATTRIBUTE_IGNORE_ERR_CMD = "ignoreErrCmd"; //$NON-NLS-1$
+	static final String ATTRIBUTE_STOP_ON_ERR = "stopOnErr"; //$NON-NLS-1$
+	static final String ATTRIBUTE_PARALLEL_BUILD_CMD = "parallelBuildCmd"; //$NON-NLS-1$
+	static final String ATTRIBUTE_PARALLELIZATION_NUMBER = "parallelizationNumber"; //$NON-NLS-1$
+	static final String ATTRIBUTE_PARALLEL_BUILD_ON = "parallelBuildOn"; //$NON-NLS-1$
+	static final String PARALLEL_PATTERN_NUM = "*"; //$NON-NLS-1$
+	static final String PARALLEL_PATTERN_NUM_START = "["; //$NON-NLS-1$
+	static final String PARALLEL_PATTERN_NUM_END = "]"; //$NON-NLS-1$
+	
+	static final String OUTPUT_ENTRIES = "outputEntries"; //$NON-NLS-1$
 	
 	/**
 	 * Returns the command line arguments to pass to the build/make utility used 
@@ -246,5 +289,29 @@ public interface IBuilder extends IBuildObject {
 	 * to be used for detecting the builder/buildfile-generator reserved variables
 	 * @return IReservedMacroNameSupplier
 	 */
-	public IReservedMacroNameSupplier getReservedMacroNameSupplier(); 
+	public IReservedMacroNameSupplier getReservedMacroNameSupplier();
+	
+	public CBuildData getBuildData();
+	
+	public boolean isCustomBuilder();
+	
+	public boolean supportsCustomizedBuild();
+	
+	public boolean keepEnvironmentVariablesInBuildfile();
+
+	public void setKeepEnvironmentVariablesInBuildfile(boolean keep);
+
+	public boolean canKeepEnvironmentVariablesInBuildfile();
+	
+	void setBuildPath(String path);
+
+	String getBuildPath();
+	
+	boolean isInternalBuilder();
+	
+	boolean matches(IBuilder builder);
+	
+	boolean isSystemObject();
+	
+	String getUniqueRealName();
 }

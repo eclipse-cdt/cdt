@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005 Intel Corporation and others.
+ * Copyright (c) 2005, 2007 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,31 +12,23 @@ package org.eclipse.cdt.managedbuilder.internal.envvar;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.envvar.IEnvironmentVariable;
+import org.eclipse.cdt.core.envvar.IEnvironmentVariableManager;
+import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.managedbuilder.core.IBuildPathResolver;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IEnvVarBuildPath;
-import org.eclipse.cdt.managedbuilder.core.IManagedProject;
 import org.eclipse.cdt.managedbuilder.core.ITool;
-import org.eclipse.cdt.managedbuilder.core.ManagedBuilderCorePlugin;
+import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.cdt.managedbuilder.envvar.IBuildEnvironmentVariable;
 import org.eclipse.cdt.managedbuilder.envvar.IEnvironmentBuildPathsChangeListener;
 import org.eclipse.cdt.managedbuilder.envvar.IEnvironmentVariableProvider;
 import org.eclipse.cdt.managedbuilder.envvar.IEnvironmentVariableSupplier;
-import org.eclipse.cdt.managedbuilder.internal.macros.DefaultMacroContextInfo;
-import org.eclipse.cdt.managedbuilder.internal.macros.DefaultMacroSubstitutor;
-import org.eclipse.cdt.managedbuilder.internal.macros.EnvironmentMacroSupplier;
-import org.eclipse.cdt.managedbuilder.internal.macros.IMacroContextInfo;
-import org.eclipse.cdt.managedbuilder.internal.macros.IMacroSubstitutor;
-import org.eclipse.cdt.managedbuilder.macros.BuildMacroException;
-import org.eclipse.cdt.managedbuilder.macros.IBuildMacro;
-import org.eclipse.cdt.managedbuilder.macros.IBuildMacroProvider;
-import org.eclipse.cdt.managedbuilder.macros.IBuildMacroSupplier;
-import org.eclipse.core.resources.IWorkspace;
-import org.eclipse.core.runtime.QualifiedName;
+import org.eclipse.cdt.utils.envvar.EnvVarOperationProcessor;
 
 /**
  * This class implements the IEnvironmentVariableProvider interface and provides all
@@ -47,24 +39,18 @@ import org.eclipse.core.runtime.QualifiedName;
  */
 public class EnvironmentVariableProvider implements
 		IEnvironmentVariableProvider {
-	private static final QualifiedName fBuildPathVarProperty = new QualifiedName(ManagedBuilderCorePlugin.getUniqueIdentifier(), "buildPathVar");	//$NON-NLS-1$
+//	private static final QualifiedName fBuildPathVarProperty = new QualifiedName(ManagedBuilderCorePlugin.getUniqueIdentifier(), "buildPathVar");	//$NON-NLS-1$
 
-	private static final String DELIMITER_WIN32 = ";";  //$NON-NLS-1$
-	private static final String DELIMITER_UNIX = ":";  //$NON-NLS-1$
+//	private static final String DELIMITER_WIN32 = ";";  //$NON-NLS-1$
+//	private static final String DELIMITER_UNIX = ":";  //$NON-NLS-1$
 	
 	private static EnvironmentVariableProvider fInstance = null;
 	private List fListeners = null;
+	private IEnvironmentVariableManager fMngr;
 
-	private EnvVarMacroSubstitutor fMacroSubstitutor;
+//	private StoredBuildPathEnvironmentContainer fIncludeStoredBuildPathVariables;
+//	private StoredBuildPathEnvironmentContainer fLibraryStoredBuildPathVariables;
 	
-	private StoredBuildPathEnvironmentContainer fIncludeStoredBuildPathVariables;
-	private StoredBuildPathEnvironmentContainer fLibraryStoredBuildPathVariables;
-	
-	public static final UserDefinedEnvironmentSupplier fUserSupplier = new UserDefinedEnvironmentSupplier();
-	public static final ExternalExtensionEnvironmentSupplier fExternalSupplier = new ExternalExtensionEnvironmentSupplier();
-	public static final MbsEnvironmentSupplier fMbsSupplier = new MbsEnvironmentSupplier();
-	public static final EclipseEnvironmentSupplier fEclipseSupplier = new EclipseEnvironmentSupplier();
-
 	/**
 	 * This class is used by the EnvironmentVariableProvider to calculate the build paths
 	 * in case a tool-integrator did not provide the special logic for obtaining the build 
@@ -92,125 +78,14 @@ public class EnvironmentVariableProvider implements
 
 	}
 
-	public class EnvVarMacroSubstitutor extends DefaultMacroSubstitutor {
-		private String fDefaultDelimiter;
-		public EnvVarMacroSubstitutor(int contextType, Object contextData, String inexistentMacroValue, String listDelimiter){
-			super(contextType,contextData,inexistentMacroValue,listDelimiter);
-			fDefaultDelimiter = listDelimiter;
-		}
-
-		public EnvVarMacroSubstitutor(IMacroContextInfo contextInfo, String inexistentMacroValue, String listDelimiter){
-			super(contextInfo, inexistentMacroValue, listDelimiter, null ,inexistentMacroValue);
-			fDefaultDelimiter = listDelimiter;
-		}
-		
-		public IBuildEnvironmentVariable resolveVariable(EnvVarDescriptor var) throws BuildMacroException {
-			String value;
-			if(var == null || (value = var.getValue()) == null || value.length() == 0 || var.getOperation() == IBuildEnvironmentVariable.ENVVAR_REMOVE)
-				return var;
-
-			String listDelimiter = var.getDelimiter();
-			if(listDelimiter == null)
-				listDelimiter = fDefaultDelimiter;
-			setListDelimiter(listDelimiter);
-			IBuildMacro macro = EnvironmentMacroSupplier.getInstance().createBuildMacro(var);
-			IMacroContextInfo varMacroInfo = getVarMacroContextInfo(var);
-			int varSupplierNum = getVarMacroSupplierNum(var,varMacroInfo);
-			value = resolveToString(new MacroDescriptor(macro,varMacroInfo,varSupplierNum));
-			removeResolvedMacro(var.getName());
-			return new BuildEnvVar(var.getName(),value,var.getOperation(),var.getDelimiter());
-		}
-		
-		protected IMacroContextInfo getVarMacroContextInfo(EnvVarDescriptor var){
-			IContextInfo info = var.getContextInfo();
-			if(info != null)
-				return getMacroContextInfoForContext(info.getContext());
-			return null;
-		}
-		
-		protected int getVarMacroSupplierNum(EnvVarDescriptor var, IMacroContextInfo varMacroInfo){
-			int varSupplierNum = -1;
-			IBuildMacroSupplier macroSuppliers[] = varMacroInfo.getSuppliers();
-			for(int i = 0; i < macroSuppliers.length; i++){
-				if(macroSuppliers[i] instanceof EnvironmentMacroSupplier){
-					varSupplierNum = i;
-					break;
-				}
-			}
-			return varSupplierNum;
-		}
-	}
-
-	protected EnvironmentVariableProvider(){
-		
+	protected EnvironmentVariableProvider(IEnvironmentVariableManager mngr){
+		fMngr = mngr;
 	}
 
 	public static EnvironmentVariableProvider getDefault(){
 		if(fInstance == null)
-			fInstance = new EnvironmentVariableProvider();
+			fInstance = new EnvironmentVariableProvider(CCorePlugin.getDefault().getBuildEnvironmentManager());
 		return fInstance;
-	}
-	
-	/*
-	 * returns a variable of a given name or null
-	 * the context information is taken from the contextInfo passed
-	 * @see org.eclipse.cdt.managedbuilder.internal.envvar.IContextInfo
-	 */
-	public EnvVarDescriptor getVariable(String variableName,
-			IContextInfo contextInfo, boolean includeParentLevels){
-
-		if(contextInfo == null)
-			return null;
-		if((variableName = EnvVarOperationProcessor.normalizeName(variableName)) == null) //$NON-NLS-1$
-			return null;
-
-
-		IContextInfo infos[] = getAllContextInfos(contextInfo);
-		
-		if(!includeParentLevels){
-			IEnvironmentVariableSupplier suppliers[] = infos[0].getSuppliers();
-			boolean bVarFound = false;
-			for(int i = 0; i < suppliers.length; i++){
-				if(suppliers[i].getVariable(variableName,infos[0].getContext()) != null){
-					bVarFound = true;
-					break;
-				}
-			}
-			if(!bVarFound)
-				return null;
-		}
-
-		IBuildEnvironmentVariable variable = null;
-		IContextInfo varContextInfo = null;
-		int varSupplierNum = -1;
-		
-		for(int i = infos.length-1 ; i >=0 ; i-- ) {
-			IContextInfo info = infos[i];
-			IEnvironmentVariableSupplier suppliers[] = info.getSuppliers();
-			
-			for(int j = suppliers.length-1 ; j >= 0 ; j-- ) {
-				IEnvironmentVariableSupplier supplier = suppliers[j];
-				IBuildEnvironmentVariable var = supplier.getVariable(variableName,info.getContext());
-				
-				if(var == null)
-					continue;
-				
-				varContextInfo = info;
-				varSupplierNum = j;
-					
-				if(variable == null)
-					variable = var;
-				else
-					variable = EnvVarOperationProcessor.performOperation(variable,var);
-			}
-		}
-	
-		if(variable != null){
-			if(variable.getOperation() == IBuildEnvironmentVariable.ENVVAR_REMOVE)
-				return null;
-			return new EnvVarDescriptor(variable,varContextInfo,varSupplierNum);
-		}
-		return null;
 	}
 	
 	/* (non-Javadoc)
@@ -222,163 +97,89 @@ public class EnvironmentVariableProvider implements
 		if(variableName == null || "".equals(variableName)) //$NON-NLS-1$
 			return null;
 		
-		IContextInfo info = getContextInfo(level);
-		EnvVarDescriptor var = getVariable(variableName,info,includeParentLevels);
-		if(level instanceof IConfiguration && includeParentLevels)
-			checkBuildPathVariable((IConfiguration)level,variableName,var);
-		
-		return resolveMacros ? calculateResolvedVariable(var,info) : var;
+		if(level instanceof IConfiguration){
+			return wrap(getVariable(variableName, (IConfiguration)level, resolveMacros));
+		}
+		return null;
 	}
 	
-	/*
-	 * returns the context info that should be used for the given level
-	 * or null if the the given level is not supported
-	 */
-	public IContextInfo getContextInfo(Object level){
-		DefaultContextInfo info = new DefaultContextInfo(level);
-		if(info.getSuppliers() == null)
-			return null;
-		return info;
+	public IEnvironmentVariable getVariable(String variableName,
+			IConfiguration cfg, boolean resolveMacros){
+		ICConfigurationDescription des = ManagedBuildManager.getDescriptionForConfiguration(cfg);
+		if(des != null){
+			return fMngr.getVariable(variableName, des, resolveMacros);
+		}
+		return null;
 	}
 	
-	/*
-	 * returns a list of defined variables.
-	 * the context information is taken from the contextInfo passed
-	 * @see org.eclipse.cdt.managedbuilder.internal.envvar.IContextInfo
-	 */
-	public EnvVarCollector getVariables(IContextInfo contextInfo,
-			boolean includeParentLevels) {
-		if(contextInfo == null)
+	public IEnvironmentVariable[] getVariables(IConfiguration cfg, boolean resolveMacros){
+		ICConfigurationDescription des = ManagedBuildManager.getDescriptionForConfiguration(cfg);
+		if(des != null){
+			return fMngr.getVariables(des, resolveMacros);
+		}
+		return new IBuildEnvironmentVariable[0];
+	}
+	
+	public static IBuildEnvironmentVariable wrap(IEnvironmentVariable var){
+		if(var == null)
 			return null;
-		
-		IContextInfo infos[] = getAllContextInfos(contextInfo);
-		HashSet set = null;
-		
-		if(!includeParentLevels){
-			IEnvironmentVariableSupplier suppliers[] = infos[0].getSuppliers();
-			set = new HashSet();
-			for(int i = 0; i < suppliers.length; i++){
-				IBuildEnvironmentVariable vars[] = suppliers[i].getVariables(infos[0].getContext());
-				if(vars != null){
-					for(int j = 0; j < vars.length; j++){
-						String name = EnvVarOperationProcessor.normalizeName(vars[j].
-								getName());
-						if(name != null)
-							set.add(name);
-					}
-				}
-			}
-			if(set.size() == 0)
-				return new EnvVarCollector();
-		}
-		
-		EnvVarCollector envVarSet = new EnvVarCollector();
-		
-		for(int i = infos.length-1 ; i >=0 ; i-- ) {
-			IContextInfo info = infos[i];
-			IEnvironmentVariableSupplier suppliers[] = info.getSuppliers();
-			
-			for(int j = suppliers.length-1 ; j >= 0 ; j-- ) {
-				IEnvironmentVariableSupplier supplier = suppliers[j];
-				IBuildEnvironmentVariable vars[] = null;
-				if(set != null){
-					List varList = new ArrayList();
-					Iterator iter = set.iterator();
-					
-					while(iter.hasNext()){
-						IBuildEnvironmentVariable var = supplier.getVariable((String)iter.next(),info.getContext());
-						if(var != null)
-							varList.add(var);
-					}
-					vars = (IBuildEnvironmentVariable[])varList.toArray(new IBuildEnvironmentVariable[varList.size()]);
-				}
-				else{
-					 vars = supplier.getVariables(info.getContext());
-				}
-				envVarSet.add(vars,info,j);
-			}
-		}
-
-		return envVarSet;		
+		if(var instanceof IBuildEnvironmentVariable)
+			return (IBuildEnvironmentVariable)var;
+		return new BuildEnvVar(var);
 	}
 
+	public static IBuildEnvironmentVariable[] wrap(IEnvironmentVariable vars[]){
+		if(vars == null)
+			return null;
+		if(vars instanceof IBuildEnvironmentVariable[])
+			return (IBuildEnvironmentVariable[])vars;
+		
+		IBuildEnvironmentVariable[] buildVars = new IBuildEnvironmentVariable[vars.length];
+		for(int i = 0; i < vars.length; i++){
+			buildVars[i] = wrap(vars[i]);
+		}
+		return buildVars;
+	}
+
+/*	protected ICConfigurationDescription getDescription(IConfiguration cfg){
+		IProject project = cfg.getOwner().getProject();
+		ICProjectDescription des = CoreModel.getDefault().getProjectDescription(project, false);
+		if(des != null){
+			return des.getConfigurationById(cfg.getId());
+		}
+		return null;
+	}
+*/	
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.envvar.IEnvironmentVariableProvider#getVariables()
 	 */
 	public IBuildEnvironmentVariable[] getVariables(Object level,
 			boolean includeParentLevels, boolean resolveMacros) {
-		
-		IContextInfo info = getContextInfo(level);
-		EnvVarCollector varSet = getVariables(info,includeParentLevels);
-		
-		EnvVarDescriptor vars[] = varSet != null ? varSet.toArray(false) : null;
 
-		if(level instanceof IConfiguration)
-			if(includeParentLevels)
-				checkBuildPathVariables((IConfiguration)level,varSet);
-			else if (vars != null){
-				for(int i = 0; i < vars.length; i++)
-					checkBuildPathVariable((IConfiguration)level,vars[i].getName(),vars[i]);
-			}
-
-		if(vars != null){
-			if(!resolveMacros)
-				return vars;
-			
-			IBuildEnvironmentVariable resolved[] = new IBuildEnvironmentVariable[vars.length];
-			for(int i = 0; i < vars.length; i++)
-				resolved[i] = calculateResolvedVariable(vars[i], info);
-			return resolved;
+		if(level instanceof IConfiguration){
+			return wrap(getVariables((IConfiguration)level, resolveMacros));
 		}
-		return null;
-	}
-	
-	/*
-	 * returns an array of the IContextInfo that holds the context informations
-	 * starting from the one passed to this method and including all subsequent parents
-	 */
-	private IContextInfo[] getAllContextInfos(IContextInfo contextInfo){
-		if(contextInfo == null)
-			return null;
-			
-		List list = new ArrayList();
-	
-		list.add(contextInfo);
-			
-		while((contextInfo = contextInfo.getNext()) != null)
-			list.add(contextInfo);
-		
-		return (IContextInfo[])list.toArray(new IContextInfo[list.size()]);
-	}
-	
-	private boolean isWin32(){
-		String os = System.getProperty("os.name").toLowerCase(); //$NON-NLS-1$
-		if (os.startsWith("windows ")) //$NON-NLS-1$
-			return true;
-		return false;
+		return new IBuildEnvironmentVariable[0];
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.envvar.IEnvironmentVariableProvider#getDefaultDelimiter()
 	 */
 	public String getDefaultDelimiter() {
-		return isWin32() ? DELIMITER_WIN32 : DELIMITER_UNIX;
+		return fMngr.getDefaultDelimiter();
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.envvar.IEnvironmentVariableProvider#isVariableCaseSensitive()
 	 */
 	public boolean isVariableCaseSensitive() {
-		return !isWin32();
+		return fMngr.isVariableCaseSensitive();
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.envvar.IEnvironmentVariableProvider#getSuppliers()
 	 */
 	public IEnvironmentVariableSupplier[] getSuppliers(Object level) {
-		IContextInfo info = getContextInfo(level);
-		if(info != null)
-			return info.getSuppliers();
 		return null;
 	}
 	
@@ -416,11 +217,11 @@ public class EnvironmentVariableProvider implements
 				for(int k = 0; k < vars.length; k++){
 					String varName = vars[k];
 					
-					EnvVarDescriptor var = getVariable(varName,getContextInfo(configuration),true);
+					IEnvironmentVariable var = getVariable(varName,configuration,true);
 					if(var == null)
 						continue;
 					
-					String varValue = calculateResolvedVariable(var, getContextInfo(configuration)).getValue();
+					String varValue = var.getValue();
 					String paths[] = pathResolver.resolveBuildPaths(buildPathType,varName,varValue,configuration);
 					if(paths != null && paths.length != 0)
 						list.addAll(Arrays.asList(paths));
@@ -476,36 +277,21 @@ public class EnvironmentVariableProvider implements
 	}
 	
 	/*
-	 * returns true if the first passed contextInfo is the child of the second one
-	 */
-	public boolean checkParentContextRelation(IContextInfo child, IContextInfo parent){
-		if(child == null || parent == null)
-			return false;
-
-		IContextInfo enumInfo = child;
-		do{
-			if(parent.getContext() == enumInfo.getContext())
-				return true;
-		}while((enumInfo = enumInfo.getNext()) != null);
-		return false;
-	}
-	
-	/*
 	 * performs a check of the build path variables for the given configuration
 	 * If the build variables are changed, the notification is sent
 	 */
-	public void checkBuildPathVariables(IConfiguration configuration){
-		checkBuildPathVariables(configuration,getVariables(getContextInfo(configuration),true));
-	}
+//	public void checkBuildPathVariables(IConfiguration configuration){
+//		checkBuildPathVariables(configuration,getVariables(getContextInfo(configuration),true));
+//	}
 
 	/*
 	 * performs a check of the build path variables of the specified type
 	 * for the given configuration
 	 * If the build variables are changed, the notification is sent
 	 */
-	public void checkBuildPathVariables(IConfiguration configuration,int buildPathType){
-		checkBuildPathVariables(configuration,buildPathType,getVariables(getContextInfo(configuration),true));
-	}
+//	public void checkBuildPathVariables(IConfiguration configuration,int buildPathType){
+//		checkBuildPathVariables(configuration,buildPathType,getVariables(getContextInfo(configuration),true));
+//	}
 
 	/*
 	 * performs a check of the build path variables
@@ -513,10 +299,10 @@ public class EnvironmentVariableProvider implements
 	 * defined for this configuration
 	 * If the build variables are changed, the notification is sent
 	 */
-	protected void checkBuildPathVariables(IConfiguration configuration, EnvVarCollector varSet){
-		checkBuildPathVariables(configuration,IEnvVarBuildPath.BUILDPATH_INCLUDE,varSet);
-		checkBuildPathVariables(configuration,IEnvVarBuildPath.BUILDPATH_LIBRARY,varSet);
-	}
+//	protected void checkBuildPathVariables(IConfiguration configuration, EnvVarCollector varSet){
+//		checkBuildPathVariables(configuration,IEnvVarBuildPath.BUILDPATH_INCLUDE,varSet);
+//		checkBuildPathVariables(configuration,IEnvVarBuildPath.BUILDPATH_LIBRARY,varSet);
+//	}
 
 	/*
 	 * performs a check of whether the given variable is the build path variable
@@ -526,10 +312,10 @@ public class EnvironmentVariableProvider implements
 	 * If it is not changed, other build path variables are not checked
 	 * In the case of the given variable is not the build path one, this method does nothing
 	 */
-	protected void checkBuildPathVariable(IConfiguration configuration, String varName, EnvVarDescriptor var){
-		checkBuildPathVariable(configuration, IEnvVarBuildPath.BUILDPATH_INCLUDE, varName, var);
-		checkBuildPathVariable(configuration, IEnvVarBuildPath.BUILDPATH_LIBRARY, varName, var);
-	}
+//	protected void checkBuildPathVariable(IConfiguration configuration, String varName, EnvVarDescriptor var){
+//		checkBuildPathVariable(configuration, IEnvVarBuildPath.BUILDPATH_INCLUDE, varName, var);
+//		checkBuildPathVariable(configuration, IEnvVarBuildPath.BUILDPATH_LIBRARY, varName, var);
+//	}
 
 	/*
 	 * performs a check of whether the given variable is the build path variable
@@ -539,15 +325,15 @@ public class EnvironmentVariableProvider implements
 	 * If it is not changed, other build path variables are not checked
 	 * In the case of the given variable is not the build path one, this method does nothing
 	 */
-	protected void checkBuildPathVariable(IConfiguration configuration, int buildPathType, String varName, EnvVarDescriptor var){
-		StoredBuildPathEnvironmentContainer buildPathVars = getStoredBuildPathVariables(buildPathType);
-		if(buildPathVars == null)
-			return;
-		if(buildPathVars.isVariableChanged(varName,var,configuration)){
-			buildPathVars.synchronize(getVariables(getContextInfo(configuration),true),configuration);
-			notifyListeners(configuration, buildPathType);
-		}
-	}
+//	protected void checkBuildPathVariable(IConfiguration configuration, int buildPathType, String varName, EnvVarDescriptor var){
+//		StoredBuildPathEnvironmentContainer buildPathVars = getStoredBuildPathVariables(buildPathType);
+//		if(buildPathVars == null)
+//			return;
+//		if(buildPathVars.isVariableChanged(varName,var,configuration)){
+//			buildPathVars.synchronize(getVariables(getContextInfo(configuration),true),configuration);
+//			notifyListeners(configuration, buildPathType);
+//		}
+//	}
 
 	/*
 	 * performs a check of the build path variables of the specified type
@@ -555,96 +341,39 @@ public class EnvironmentVariableProvider implements
 	 * defined for this configuration. 
 	 * If the build variables are changed, the notification is sent
 	 */
-	protected void checkBuildPathVariables(IConfiguration configuration, int buildPathType, EnvVarCollector varSet){
-		StoredBuildPathEnvironmentContainer buildPathVars = getStoredBuildPathVariables(buildPathType);
-		if(buildPathVars == null)
-			return;
-		if(buildPathVars.checkBuildPathChange(varSet,configuration)){
-			notifyListeners(configuration, buildPathType);
-		}
-	}
+//	protected void checkBuildPathVariables(IConfiguration configuration, int buildPathType, EnvVarCollector varSet){
+//		StoredBuildPathEnvironmentContainer buildPathVars = getStoredBuildPathVariables(buildPathType);
+//		if(buildPathVars == null)
+//			return;
+//		if(buildPathVars.checkBuildPathChange(varSet,configuration)){
+//			notifyListeners(configuration, buildPathType);
+//		}
+//	}
 	
 	/*
 	 * returns the container of the build variables of the specified type
 	 */
-	protected StoredBuildPathEnvironmentContainer getStoredBuildPathVariables(int buildPathType){
-		return buildPathType == IEnvVarBuildPath.BUILDPATH_LIBRARY ?
-				getStoredLibraryBuildPathVariables() :
-				getStoredIncludeBuildPathVariables();
-	}
+//	protected StoredBuildPathEnvironmentContainer getStoredBuildPathVariables(int buildPathType){
+//		return buildPathType == IEnvVarBuildPath.BUILDPATH_LIBRARY ?
+//				getStoredLibraryBuildPathVariables() :
+//				getStoredIncludeBuildPathVariables();
+//	}
 	
 	/*
 	 * returns the container of the Include path variables
 	 */
-	protected StoredBuildPathEnvironmentContainer getStoredIncludeBuildPathVariables(){
-		if(fIncludeStoredBuildPathVariables == null)
-			fIncludeStoredBuildPathVariables = new StoredBuildPathEnvironmentContainer(IEnvVarBuildPath.BUILDPATH_INCLUDE);
-		return fIncludeStoredBuildPathVariables;
-	}
+//	protected StoredBuildPathEnvironmentContainer getStoredIncludeBuildPathVariables(){
+//		if(fIncludeStoredBuildPathVariables == null)
+//			fIncludeStoredBuildPathVariables = new StoredBuildPathEnvironmentContainer(IEnvVarBuildPath.BUILDPATH_INCLUDE);
+//		return fIncludeStoredBuildPathVariables;
+//	}
 
 	/*
 	 * returns the container of the Library path variables
 	 */
-	protected StoredBuildPathEnvironmentContainer getStoredLibraryBuildPathVariables(){
-		if(fLibraryStoredBuildPathVariables == null)
-			fLibraryStoredBuildPathVariables = new StoredBuildPathEnvironmentContainer(IEnvVarBuildPath.BUILDPATH_LIBRARY);
-		return fLibraryStoredBuildPathVariables;
-	}	
-
-	public IBuildEnvironmentVariable calculateResolvedVariable(EnvVarDescriptor des, IContextInfo info){
-		if(des == null || info == null)
-			return null;
-
-		return calculateResolvedVariable(des,getMacroSubstitutor(getMacroContextInfoForContext(info.getContext()),""," ")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-	}
-
-	public IBuildEnvironmentVariable calculateResolvedVariable(EnvVarDescriptor des, IMacroSubstitutor sub){
-		if(des == null)
-			return null;
-		IBuildEnvironmentVariable var = des;
-
-		try{
-			if(sub instanceof EnvVarMacroSubstitutor)
-				var = ((EnvVarMacroSubstitutor)sub).resolveVariable(des);
-			else if(des.getOperation() != IBuildEnvironmentVariable.ENVVAR_REMOVE){
-				String name = des.getName();
-				var = new BuildEnvVar(name,sub.resolveToString(name),des.getOperation(),des.getDelimiter());
-			}
-		} catch (BuildMacroException e){
-		}
-		return var;
-		
-	}
-	
-	protected int getMacroContextTypeFromContext(Object context){
-		if(context instanceof IConfiguration)
-			return IBuildMacroProvider.CONTEXT_CONFIGURATION;
-		else if(context instanceof IManagedProject)
-			return IBuildMacroProvider.CONTEXT_PROJECT;
-		else if(context instanceof IWorkspace)
-			return IBuildMacroProvider.CONTEXT_WORKSPACE;
-		else if(context == null)
-			return IBuildMacroProvider.CONTEXT_ECLIPSEENV;
-		return 0;
-	}
-	
-	public IMacroContextInfo getMacroContextInfoForContext(Object context){
-		return new DefaultMacroContextInfo(getMacroContextTypeFromContext(context),context);
-	}
-	
-	public IMacroSubstitutor getMacroSubstitutor(IMacroContextInfo info, String inexistentMacroValue, String listDelimiter){
-		if(fMacroSubstitutor == null)
-			fMacroSubstitutor = new EnvVarMacroSubstitutor(info,inexistentMacroValue,listDelimiter);
-		else {
-			try {
-				fMacroSubstitutor.setMacroContextInfo(info);
-				fMacroSubstitutor.setInexistentMacroValue(inexistentMacroValue);
-				fMacroSubstitutor.setListDelimiter(listDelimiter);
-			} catch (BuildMacroException e){
-				fMacroSubstitutor = new EnvVarMacroSubstitutor(info,inexistentMacroValue,listDelimiter);
-			}
-		}
-		return fMacroSubstitutor;
-	}
-	
+//	protected StoredBuildPathEnvironmentContainer getStoredLibraryBuildPathVariables(){
+//		if(fLibraryStoredBuildPathVariables == null)
+//			fLibraryStoredBuildPathVariables = new StoredBuildPathEnvironmentContainer(IEnvVarBuildPath.BUILDPATH_LIBRARY);
+//		return fLibraryStoredBuildPathVariables;
+//	}	
 }

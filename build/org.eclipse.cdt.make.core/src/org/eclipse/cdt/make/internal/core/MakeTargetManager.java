@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 QNX Software Systems and others.
+ * Copyright (c) 2000, 2007 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,11 +17,18 @@ import java.util.Map;
 import java.util.Vector;
 import java.util.Map.Entry;
 
+import org.eclipse.cdt.core.model.CoreModel;
+import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
+import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.make.core.IMakeTarget;
 import org.eclipse.cdt.make.core.IMakeTargetListener;
 import org.eclipse.cdt.make.core.IMakeTargetManager;
 import org.eclipse.cdt.make.core.MakeCorePlugin;
 import org.eclipse.cdt.make.core.MakeTargetEvent;
+import org.eclipse.cdt.managedbuilder.core.IConfiguration;
+import org.eclipse.cdt.managedbuilder.core.IManagedBuildInfo;
+import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
+import org.eclipse.cdt.managedbuilder.core.ManagedBuilderCorePlugin;
 import org.eclipse.core.resources.ICommand;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IProject;
@@ -40,6 +47,7 @@ import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.core.runtime.Status;
 
 public class MakeTargetManager implements IMakeTargetManager, IResourceChangeListener {
@@ -48,15 +56,23 @@ public class MakeTargetManager implements IMakeTargetManager, IResourceChangeLis
 	private static String TARGETS_EXT = "targets"; //$NON-NLS-1$
 
 	private ListenerList listeners = new ListenerList();
-	Map projectMap = new HashMap();
+//	Map projectMap = new HashMap();
 	private HashMap builderMap;
 	protected Vector fProjects = new Vector();
+	private final static QualifiedName projectTargetsQualifiedName = new QualifiedName(
+			ManagedBuilderCorePlugin.getUniqueIdentifier(),
+			"targetMapQualifiedName"); //$NON-NLS-1$
 
 	public MakeTargetManager() {
 	}
 
 	public IMakeTarget createTarget(IProject project, String name, String targetBuilderID) throws CoreException {
-		return new MakeTarget(this, project, targetBuilderID, name);
+		IConfiguration cfg = getConfiguration(project);
+		return createTarget(cfg, null, targetBuilderID, name);
+	}
+	
+	public IMakeTarget createTarget(IConfiguration cfg, String builderId, String targetBuilderID, String name) throws CoreException {
+		return new MakeTarget(this, cfg, builderId, targetBuilderID, name);
 	}
 
 	public void addTarget(IMakeTarget target) throws CoreException {
@@ -65,12 +81,17 @@ public class MakeTargetManager implements IMakeTargetManager, IResourceChangeLis
 	
 	public void addTarget(IContainer container, IMakeTarget target) throws CoreException {
 		if (container instanceof IWorkspaceRoot) {
-			throw new CoreException(new Status(IStatus.ERROR, MakeCorePlugin.getUniqueIdentifier(), -1, MakeMessages.getString("MakeTargetManager.add_to_workspace_root"), null)); //$NON-NLS-1$
+			throw new CoreException(new Status(IStatus.ERROR, ManagedBuilderCorePlugin.getUniqueIdentifier(), -1, MakeMessages.getString("MakeTargetManager.add_to_workspace_root"), null)); //$NON-NLS-1$
 		}
-		ProjectTargets projectTargets = (ProjectTargets)projectMap.get(target.getProject());
-		if (projectTargets == null) {
-			projectTargets = readTargets(target.getProject());
-		}
+		
+//		ICConfigurationDescription cfgDescription = getDescription(target);
+//		if(cfgDescription == null){
+//			throw new CoreException(new Status(IStatus.ERROR,
+//					ManagedBuilderCorePlugin.getUniqueIdentifier(),
+//					"target refers inexistent configuration"));
+//		}
+		
+		ProjectTargets projectTargets = getProjectTargets(target);
 		((MakeTarget) target).setContainer(container == null ? target.getProject() : container);
 		projectTargets.add((MakeTarget) target);
 		try {
@@ -82,19 +103,67 @@ public class MakeTargetManager implements IMakeTargetManager, IResourceChangeLis
 		notifyListeners(new MakeTargetEvent(this, MakeTargetEvent.TARGET_ADD, target));
 	}
 
-	public boolean targetExists(IMakeTarget target) {
-		ProjectTargets projectTargets = (ProjectTargets)projectMap.get(target.getProject());
-		if (projectTargets == null) {
-			projectTargets = readTargets(target.getProject());
+	private ProjectTargets getProjectTargets(IMakeTarget target) throws CoreException{
+		return getProjectTargets(target, true);
+	}
+
+	private ProjectTargets getProjectTargets(IMakeTarget target, boolean load) throws CoreException{
+		return getProjectTargets(target.getConfiguration(), load);
+	}
+
+	private ProjectTargets getProjectTargets(IConfiguration cfg) throws CoreException{
+		return getProjectTargets(cfg, true);
+	}
+
+	private ProjectTargets getProjectTargets(IConfiguration cfg, boolean load) throws CoreException{
+		ICConfigurationDescription cfgDes = ManagedBuildManager.getDescriptionForConfiguration(cfg);
+		if(cfgDes == null){
+			throw new CoreException(new Status(IStatus.ERROR,
+					ManagedBuilderCorePlugin.getUniqueIdentifier(),
+					"target refers inexistent configuration"));
 		}
-		return projectTargets.contains((MakeTarget) target);
+		
+		ICProjectDescription des = cfgDes.getProjectDescription();
+		
+		ProjectTargets targets = (ProjectTargets)des.getSessionProperty(projectTargetsQualifiedName);//getLoaddedProjectTargets(des);
+		if(targets == null || targets.getProjectDescription() != des){
+			if(load){
+				if(targets == null)
+					targets = readTargets(cfg);
+				else
+					targets = new ProjectTargets(targets, des, cfg);
+				des.setSessionProperty(projectTargetsQualifiedName, targets);
+			} else {
+				targets = null;
+			}
+		}
+		return targets;
 	}
 	
-	public void removeTarget(IMakeTarget target) throws CoreException {
-		ProjectTargets projectTargets = (ProjectTargets)projectMap.get(target.getProject());
-		if (projectTargets == null) {
-			projectTargets = readTargets(target.getProject());
+//	private ProjectTargets getLoaddedProjectTargets(ICConfigurationDescription des){
+//		return (ProjectTargets)des.getSessionProperty(projectTargetsQualifiedName);
+//	}
+
+//	private void setLoaddedProjectTargets(ICConfigurationDescription des, ProjectTargets targets){
+//		des.setSessionProperty(projectTargetsQualifiedName, targets);
+//	}
+
+	public boolean targetExists(IMakeTarget target) {
+		try {
+			ProjectTargets projectTargets = getProjectTargets(target);
+			return projectTargets.contains((MakeTarget) target);
+		} catch (CoreException e) {
 		}
+		return false;
+	}
+	
+//	private ICConfigurationDescription getDescription(IMakeTarget target){
+//		IConfiguration cfg = target.getConfiguration();
+//		return ManagedBuildManager.getDescriptionForConfiguration(cfg);
+//	}
+	
+	public void removeTarget(IMakeTarget target) throws CoreException {
+		ProjectTargets projectTargets = getProjectTargets(target);
 		if (projectTargets.remove((MakeTarget) target)) {
 			try {
 				writeTargets(projectTargets);
@@ -107,10 +176,7 @@ public class MakeTargetManager implements IMakeTargetManager, IResourceChangeLis
 	}
 
 	public void renameTarget(IMakeTarget target, String name) throws CoreException {
-		ProjectTargets projectTargets = (ProjectTargets)projectMap.get(target.getProject());
-		if (projectTargets == null) {
-			projectTargets = readTargets(target.getProject());
-		}
+		ProjectTargets projectTargets = getProjectTargets(target);
 		if (!projectTargets.contains((MakeTarget)target)) {
 			throw new CoreException(new Status(IStatus.ERROR, MakeCorePlugin.getUniqueIdentifier(), -1, MakeMessages.getString("MakeTargetManager.target_exists"), null)); //$NON-NLS-1$
 		}
@@ -119,19 +185,42 @@ public class MakeTargetManager implements IMakeTargetManager, IResourceChangeLis
 	}
 
 	public IMakeTarget[] getTargets(IContainer container) throws CoreException {
-		ProjectTargets projectTargets = (ProjectTargets)projectMap.get(container.getProject());
-		if (projectTargets == null) {
-			projectTargets = readTargets(container.getProject());
+		IConfiguration cfg = getConfiguration(container);
+		return getTargets(cfg, container);
+	}
+	
+	private IConfiguration getConfiguration(IResource rc){
+		IProject project = rc.getProject();
+		IManagedBuildInfo info = ManagedBuildManager.getBuildInfo(project);
+		return info.getDefaultConfiguration();
+	}
+	
+	public IMakeTarget[] getTargets(IConfiguration cfg, IContainer container)
+			throws CoreException {
+		ProjectTargets targets = getProjectTargets(cfg);
+		return setConfiguration(cfg, targets.get(container));
+	}
+	
+	private IMakeTarget[] setConfiguration(IConfiguration cfg, IMakeTarget targets[]){
+		for(int i = 0; i < targets.length; i++){
+			((MakeTarget)targets[i]).setConfiguration(cfg);
 		}
-		return projectTargets.get(container);
+		return targets;
 	}
 
 	public IMakeTarget findTarget(IContainer container, String name) throws CoreException {
-		ProjectTargets projectTargets = (ProjectTargets)projectMap.get(container.getProject());
-		if (projectTargets == null) {
-			projectTargets = readTargets(container.getProject());
+		IConfiguration cfg = getConfiguration(container);
+		return findTarget(cfg, container, name);
+	}
+
+	public IMakeTarget findTarget(IConfiguration cfg, IContainer container,
+			String name) throws CoreException {
+		ProjectTargets targets = getProjectTargets(cfg);
+		IMakeTarget target = targets.findTarget(container, name);
+		if(target != null){
+			((MakeTarget)target).setConfiguration(cfg);
 		}
-		return projectTargets.findTarget(container, name);
+		return target;
 	}
 
 	public IProject[] getTargetBuilderProjects() {
@@ -230,7 +319,7 @@ public class MakeTargetManager implements IMakeTargetManager, IResourceChangeLis
 					if (0 != (flags & IResourceDelta.DESCRIPTION)) {
 						if (fProjects.contains(project) && !hasTargetBuilder(project)) {
 							fProjects.remove(project);
-							projectMap.remove(project);
+	//						projectMap.remove(project);
 							notifyListeners(new MakeTargetEvent(MakeTargetManager.this, MakeTargetEvent.PROJECT_REMOVED, project));
 						} else if (!fProjects.contains(project) && hasTargetBuilder(project)) {
 							fProjects.add(project);
@@ -240,7 +329,7 @@ public class MakeTargetManager implements IMakeTargetManager, IResourceChangeLis
 					if (0 != (flags & IResourceDelta.OPEN)) {
 						if (!project.isOpen() && fProjects.contains(project)) {
 							fProjects.remove(project);
-							projectMap.remove(project);
+//							projectMap.remove(project);
 							notifyListeners(new MakeTargetEvent(MakeTargetManager.this, MakeTargetEvent.PROJECT_REMOVED, project));
 						} else if (project.isOpen() && hasTargetBuilder(project) && !fProjects.contains(project)) {
 							fProjects.add(project);
@@ -256,7 +345,7 @@ public class MakeTargetManager implements IMakeTargetManager, IResourceChangeLis
 
 	protected void updateTarget(MakeTarget target) throws CoreException {
 	    if  (target.getContainer() != null ) { // target has not been added to manager.
-			ProjectTargets projectTargets = (ProjectTargets)projectMap.get(target.getProject());
+			ProjectTargets projectTargets = getProjectTargets(target, false);
 	    	if (projectTargets == null || !projectTargets.contains(target)) {
 	    		return; // target has not been added to manager.
 	    	}
@@ -267,28 +356,38 @@ public class MakeTargetManager implements IMakeTargetManager, IResourceChangeLis
 
 	protected void writeTargets(ProjectTargets projectTargets) throws CoreException {
 		projectTargets.saveTargets();
+		CoreModel.getDefault().setProjectDescription(projectTargets.getProject(), projectTargets.getProjectDescription());
 	}
 
-	protected ProjectTargets readTargets(IProject project) {
-		ProjectTargets projectTargets = new ProjectTargets(this, project);
-		projectMap.put(project, projectTargets);
+	protected ProjectTargets readTargets(IConfiguration cfg) throws CoreException {
+		ICConfigurationDescription cfgDes = ManagedBuildManager.getDescriptionForConfiguration(cfg);
+		if(cfgDes == null){
+			throw new CoreException(new Status(IStatus.ERROR,
+					ManagedBuilderCorePlugin.getUniqueIdentifier(),
+					"target refers inexistent configuration"));
+		}
+		
+		ICProjectDescription des = cfgDes.getProjectDescription();
+
+		ProjectTargets projectTargets = new ProjectTargets(this, des, cfg);
+//		projectMap.put(project, projectTargets);
 		return projectTargets;
 	}
 
 	protected void deleteTargets(IProject project) {
 		//Historical: We clean up after all other parts.
 		IPath targetFilePath =
-			MakeCorePlugin.getDefault().getStateLocation().append(project.getName()).addFileExtension(TARGETS_EXT);
+			ManagedBuilderCorePlugin.getDefault().getStateLocation().append(project.getName()).addFileExtension(TARGETS_EXT);
 		File targetFile = targetFilePath.toFile();
 		if (targetFile.exists()) {
 			targetFile.delete();
 		}
-		projectMap.remove(project);
+//		projectMap.remove(project);
 	}
 
 	protected void initializeBuilders() {
 		builderMap = new HashMap();
-        IExtensionPoint point = Platform.getExtensionRegistry().getExtensionPoint(MakeCorePlugin.PLUGIN_ID, MakeTargetManager.TARGET_BUILD_EXT);
+        IExtensionPoint point = Platform.getExtensionRegistry().getExtensionPoint(MakeCorePlugin.getUniqueIdentifier(), MakeTargetManager.TARGET_BUILD_EXT);
 		IExtension[] ext = point.getExtensions();
 		for (int i = 0; i < ext.length; i++) {
 			IConfigurationElement[] element = ext[i].getConfigurationElements();

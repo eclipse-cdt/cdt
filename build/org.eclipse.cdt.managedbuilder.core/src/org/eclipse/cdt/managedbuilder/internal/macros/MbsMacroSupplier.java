@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 Intel Corporation and others.
+ * Copyright (c) 2005, 2007 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,13 +11,13 @@
 package org.eclipse.cdt.managedbuilder.internal.macros;
 
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.cdtvariables.CdtVariableException;
 import org.eclipse.cdt.managedbuilder.core.BuildException;
 import org.eclipse.cdt.managedbuilder.core.IBuildObject;
 import org.eclipse.cdt.managedbuilder.core.IBuilder;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IHoldsOptions;
 import org.eclipse.cdt.managedbuilder.core.IInputType;
-import org.eclipse.cdt.managedbuilder.core.IManagedBuildInfo;
 import org.eclipse.cdt.managedbuilder.core.IManagedProject;
 import org.eclipse.cdt.managedbuilder.core.IOption;
 import org.eclipse.cdt.managedbuilder.core.IOutputType;
@@ -28,14 +28,12 @@ import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.cdt.managedbuilder.macros.BuildMacroException;
 import org.eclipse.cdt.managedbuilder.macros.IBuildMacro;
 import org.eclipse.cdt.managedbuilder.macros.IBuildMacroProvider;
-import org.eclipse.cdt.managedbuilder.macros.IBuildMacroSupplier;
 import org.eclipse.cdt.managedbuilder.macros.IFileContextBuildMacroValues;
 import org.eclipse.cdt.managedbuilder.macros.IFileContextData;
 import org.eclipse.cdt.managedbuilder.macros.IOptionContextData;
-import org.eclipse.cdt.managedbuilder.makegen.IManagedBuilderMakefileGenerator;
 import org.eclipse.cdt.utils.Platform;
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResource;
+import org.eclipse.cdt.utils.cdtvariables.CdtVariableResolver;
+import org.eclipse.cdt.utils.cdtvariables.IVariableSubstitutor;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
@@ -47,7 +45,7 @@ import org.osgi.framework.Bundle;
  * 
  * @since 3.0
  */
-public class MbsMacroSupplier implements IBuildMacroSupplier {
+public class MbsMacroSupplier extends BuildCdtVariablesSupplierBase {
 	private static MbsMacroSupplier fInstance;
 	public final static String DOT = ".";	//$NON-NLS-1$
 	public final static String EMPTY_STRING = ""; //$NON-NLS-1$
@@ -76,8 +74,8 @@ public class MbsMacroSupplier implements IBuildMacroSupplier {
 	};
 
 	private static final String fConfigurationMacros[] = new String[]{
-		"ConfigName",	//$NON-NLS-1$
-		"ConfigDescription",	//$NON-NLS-1$
+//		"ConfigName",	//$NON-NLS-1$
+//		"ConfigDescription",	//$NON-NLS-1$
 		"BuildArtifactFileName",	//$NON-NLS-1$
 		"BuildArtifactFileExt",	//$NON-NLS-1$
 		"BuildArtifactFileBaseName",	//$NON-NLS-1$
@@ -89,24 +87,24 @@ public class MbsMacroSupplier implements IBuildMacroSupplier {
 	};
 
 	private static final String fProjectMacros[] = new String[]{
-		"ProjName",	//$NON-NLS-1$
-		"ProjDirPath",	//$NON-NLS-1$
+//		"ProjName",	//$NON-NLS-1$
+//		"ProjDirPath",	//$NON-NLS-1$
 	};
 
 	private static final String fWorkspaceMacros[] = new String[]{
-		"WorkspaceDirPath",	//$NON-NLS-1$
-		"DirectoryDelimiter",	//$NON-NLS-1$
-		"PathDelimiter",	//$NON-NLS-1$
+//		"WorkspaceDirPath",	//$NON-NLS-1$
+//		"DirectoryDelimiter",	//$NON-NLS-1$
+//		"PathDelimiter",	//$NON-NLS-1$
 	};
 
 	private static final String fCDTEclipseMacros[] = new String[]{
-		"EclipseVersion",	//$NON-NLS-1$
-		"CDTVersion",	//$NON-NLS-1$
+//		"EclipseVersion",	//$NON-NLS-1$
+//		"CDTVersion",	//$NON-NLS-1$
 		"MBSVersion",	//$NON-NLS-1$
-		"HostOsName",	//$NON-NLS-1$
-		"HostArchName",	//$NON-NLS-1$
-		"OsType",	//$NON-NLS-1$
-		"ArchType",	//$NON-NLS-1$
+//		"HostOsName",	//$NON-NLS-1$
+//		"HostArchName",	//$NON-NLS-1$
+//		"OsType",	//$NON-NLS-1$
+//		"ArchType",	//$NON-NLS-1$
 	};
 	
 	private class OptionData extends OptionContextData {
@@ -128,6 +126,8 @@ public class MbsMacroSupplier implements IBuildMacroSupplier {
 	public class FileContextMacro extends BuildMacro{
 		private IFileContextData fContextData;
 		private IConfiguration fConfiguration;
+		//TODO: initialize builder
+		private IBuilder fBuilder;
 		private boolean fIsExplicit = true;
 		private boolean fIsInitialized;
 		private String fExplicitValue;
@@ -175,7 +175,7 @@ public class MbsMacroSupplier implements IBuildMacroSupplier {
 			
 			if(fStringValue == null){
 				fIsExplicit = true;
-				fStringValue = getExplicitFileMacroValue(fName, fContextData.getInputFileLocation(), fContextData.getOutputFileLocation(), fConfiguration);
+				fStringValue = getExplicitFileMacroValue(fName, fContextData.getInputFileLocation(), fContextData.getOutputFileLocation(), fBuilder, fConfiguration);
 				fExplicitValue = fStringValue;
 				fIsExplicitResolved = true;
 			}
@@ -186,7 +186,7 @@ public class MbsMacroSupplier implements IBuildMacroSupplier {
 		public String getExplicitMacroValue(){
 			loadValue();
 			if(!fIsExplicitResolved){
-				fExplicitValue = getExplicitFileMacroValue(fName, fContextData.getInputFileLocation(), fContextData.getOutputFileLocation(), fConfiguration);
+				fExplicitValue = getExplicitFileMacroValue(fName, fContextData.getInputFileLocation(), fContextData.getOutputFileLocation(), fBuilder, fConfiguration);
 				fIsExplicitResolved = true;
 			}
 			return fExplicitValue;
@@ -206,7 +206,7 @@ public class MbsMacroSupplier implements IBuildMacroSupplier {
 		}
 	}
 	
-	private String getExplicitFileMacroValue(String name, IPath inputFileLocation, IPath outputFileLocation, IConfiguration cfg){
+	private String getExplicitFileMacroValue(String name, IPath inputFileLocation, IPath outputFileLocation, IBuilder builder, IConfiguration cfg){
 		String value = null;
 		if("InputFileName".equals(name)){	//$NON-NLS-1$
 			if(inputFileLocation != null && inputFileLocation.segmentCount() > 0)
@@ -219,7 +219,7 @@ public class MbsMacroSupplier implements IBuildMacroSupplier {
 				value = getBaseName(inputFileLocation.lastSegment());
 		}else if("InputFileRelPath".equals(name)){	//$NON-NLS-1$
 			if(inputFileLocation != null && inputFileLocation.segmentCount() > 0){
-				IPath workingDirectory = getBuilderCWD(cfg);
+				IPath workingDirectory = getBuilderCWD(builder, cfg);
 				if(workingDirectory != null){
 					IPath filePath = ManagedBuildManager.calculateRelativePath(workingDirectory, inputFileLocation);
 					if(filePath != null)
@@ -229,7 +229,7 @@ public class MbsMacroSupplier implements IBuildMacroSupplier {
 		}
 		else if("InputDirRelPath".equals(name)){	//$NON-NLS-1$
 			if(inputFileLocation != null && inputFileLocation.segmentCount() > 0){
-				IPath workingDirectory = getBuilderCWD(cfg);
+				IPath workingDirectory = getBuilderCWD(builder, cfg);
 				if(workingDirectory != null){
 					IPath filePath = ManagedBuildManager.calculateRelativePath(workingDirectory, inputFileLocation.removeLastSegments(1).addTrailingSeparator());
 					if(filePath != null)
@@ -248,7 +248,7 @@ public class MbsMacroSupplier implements IBuildMacroSupplier {
 				value = getBaseName(outputFileLocation.lastSegment());
 		}else if("OutputFileRelPath".equals(name)){	//$NON-NLS-1$
 			if(outputFileLocation != null && outputFileLocation.segmentCount() > 0){
-				IPath workingDirectory = getBuilderCWD(cfg);
+				IPath workingDirectory = getBuilderCWD(builder, cfg);
 				if(workingDirectory != null){
 					IPath filePath = ManagedBuildManager.calculateRelativePath(workingDirectory, outputFileLocation);
 					if(filePath != null)
@@ -257,7 +257,7 @@ public class MbsMacroSupplier implements IBuildMacroSupplier {
 			}
 		}else if("OutputDirRelPath".equals(name)){	//$NON-NLS-1$
 			if(outputFileLocation != null && outputFileLocation.segmentCount() > 0){
-				IPath workingDirectory = getBuilderCWD(cfg);
+				IPath workingDirectory = getBuilderCWD(builder, cfg);
 				if(workingDirectory != null){
 					IPath filePath = ManagedBuildManager.calculateRelativePath(workingDirectory, outputFileLocation.removeLastSegments(1).addTrailingSeparator());
 					if(filePath != null)
@@ -343,9 +343,18 @@ public class MbsMacroSupplier implements IBuildMacroSupplier {
 			}
 			break;
 		case IBuildMacroProvider.CONTEXT_CONFIGURATION:
+			IConfiguration cfg = null;
+			IBuilder builder = null;
 			if(contextData instanceof IConfiguration){
-				macro = getMacro(macroName, (IConfiguration)contextData);
+				cfg = (IConfiguration)contextData;
+				builder = cfg.getBuilder();
+			} else if (contextData instanceof IBuilder){
+				builder = (IBuilder)contextData;
+				cfg = builder.getParent().getParent();
 			}
+			if(cfg != null)
+				macro = getMacro(macroName, builder, cfg);
+
 			break;
 		case IBuildMacroProvider.CONTEXT_PROJECT:
 			if(contextData instanceof IManagedProject){
@@ -391,7 +400,7 @@ public class MbsMacroSupplier implements IBuildMacroSupplier {
 		return macro;
 	}
 
-	public IBuildMacro getMacro(String macroName, IConfiguration cfg){
+	public IBuildMacro getMacro(String macroName, IBuilder builder, IConfiguration cfg){
 		IBuildMacro macro = null;
 		if("ConfigName".equals(macroName)){	//$NON-NLS-1$
 			macro = new BuildMacro(macroName,IBuildMacro.VALUE_TEXT,cfg.getName());
@@ -677,28 +686,11 @@ public class MbsMacroSupplier implements IBuildMacroSupplier {
 		return null;
 	}
 	
-	private IPath getBuilderCWD(IConfiguration cfg){
-		IPath workingDirectory = null;
-		IResource owner = cfg.getOwner();
-		IManagedBuildInfo info = ManagedBuildManager.getBuildInfo(owner);
-			
-		if(info != null){
-			if(info.getDefaultConfiguration().equals(cfg)){
-				IManagedBuilderMakefileGenerator generator = ManagedBuildManager.getBuildfileGenerator(info.getDefaultConfiguration());
-				generator.initialize((IProject)owner,info,null);
-				
-				IPath topBuildDir = generator.getBuildWorkingDir();
-				if(topBuildDir == null)
-					topBuildDir = new Path(info.getConfigurationName());
-
-				IPath projectLocation = owner.getLocation();
-				workingDirectory = projectLocation.append(topBuildDir);
-			}
-		}
-		return workingDirectory;
+	private IPath getBuilderCWD(IBuilder builder, IConfiguration cfg){
+		return ManagedBuildManager.getBuildLocation(cfg, builder);
 	}
 	
-	private IPath getOutputFilePath(IPath inputPath, IConfiguration cfg){
+	private IPath getOutputFilePath(IPath inputPath, IBuilder builder, IConfiguration cfg){
 		ITool buildTools[] = null; 
 		IResourceConfiguration rcCfg = cfg.getResourceConfiguration(inputPath.toString());
 		if(rcCfg != null) {
@@ -726,7 +718,7 @@ public class MbsMacroSupplier implements IBuildMacroSupplier {
 				path = namePath;
 			}
 			else{
-				IPath cwd = getBuilderCWD(cfg);
+				IPath cwd = getBuilderCWD(builder, cfg);
 				if(cwd != null)
 					path = cwd.append(namePath);
 			}
@@ -757,16 +749,16 @@ public class MbsMacroSupplier implements IBuildMacroSupplier {
 		return null;
 	}
 	
-	private class IncludeDefaultsSubstitutor implements IMacroSubstitutor {
+	private class IncludeDefaultsSubstitutor implements IVariableSubstitutor {
 		private IOptionContextData fOptionContextData;
 
 		public IncludeDefaultsSubstitutor(IOptionContextData data){
 			fOptionContextData = data;
 		}
 
-		public String resolveToString(String macroName) throws BuildMacroException {
+		public String resolveToString(String macroName) throws CdtVariableException {
 			if(!"IncludeDefaults".equals(macroName)) 	//$NON-NLS-1$
-				return MacroResolver.createMacroReference(macroName);
+				return CdtVariableResolver.createVariableReference(macroName);
 			IOptionContextData parent = getParent(fOptionContextData);
 			if(parent == null)
 				return EMPTY_STRING;
@@ -775,46 +767,46 @@ public class MbsMacroSupplier implements IBuildMacroSupplier {
 			String str = null;
 			String strL[] = null;
 			try{
-				switch(option.getValueType()){
+				switch(option.getBasicValueType()){
 				case IOption.STRING :
 					str = option.getStringValue();
 					break;
 				case IOption.STRING_LIST :
-					strL = option.getStringListValue();
+					strL = option.getBasicStringListValue();
 					break;
-				case IOption.INCLUDE_PATH :
-					strL = option.getIncludePaths();
-					break;
-				case IOption.PREPROCESSOR_SYMBOLS :
-					strL = option.getDefinedSymbols();
-					break;
-				case IOption.LIBRARIES :
-					strL = option.getLibraries();
-					break;
-				case IOption.OBJECTS :
-					strL = option.getUserObjects();
-					break;
+//				case IOption.INCLUDE_PATH :
+//					strL = option.getIncludePaths();
+//					break;
+//				case IOption.PREPROCESSOR_SYMBOLS :
+//					strL = option.getDefinedSymbols();
+//					break;
+//				case IOption.LIBRARIES :
+//					strL = option.getLibraries();
+//					break;
+//				case IOption.OBJECTS :
+//					strL = option.getUserObjects();
+//					break;
 				default :
 					break;
 				}
 				
 				if(str != null)
-					return MacroResolver.resolveToString(str,sub);
+					return CdtVariableResolver.resolveToString(str,sub);
 				else if(strL != null){
-					strL = MacroResolver.resolveStringListValues(strL,sub,true);
-					return MacroResolver.convertStringListToString(strL," "); 	//$NON-NLS-1$
+					strL = CdtVariableResolver.resolveStringListValues(strL,sub,true);
+					return CdtVariableResolver.convertStringListToString(strL," "); 	//$NON-NLS-1$
 				}
 			} catch (BuildException e){
 				
-			} catch (BuildMacroException e){
+			} catch (CdtVariableException e){
 				
 			}
 			return null;
 		}
 
-		public String[] resolveToStringList(String macroName) throws BuildMacroException {
+		public String[] resolveToStringList(String macroName) throws CdtVariableException {
 			if(!"IncludeDefaults".equals(macroName)) 	//$NON-NLS-1$
-				return new String[]{MacroResolver.createMacroReference(macroName)};
+				return new String[]{CdtVariableResolver.createVariableReference(macroName)};
 			
 			IOptionContextData parent = getParent(fOptionContextData);
 			if(parent == null)
@@ -824,36 +816,36 @@ public class MbsMacroSupplier implements IBuildMacroSupplier {
 			String str = null;
 			String strL[] = null;
 			try{
-				switch(option.getValueType()){
+				switch(option.getBasicValueType()){
 				case IOption.STRING :
 					str = option.getStringValue();
 					break;
 				case IOption.STRING_LIST :
-					strL = option.getStringListValue();
+					strL = option.getBasicStringListValue();
 					break;
-				case IOption.INCLUDE_PATH :
-					strL = option.getIncludePaths();
-					break;
-				case IOption.PREPROCESSOR_SYMBOLS :
-					strL = option.getDefinedSymbols();
-					break;
-				case IOption.LIBRARIES :
-					strL = option.getLibraries();
-					break;
-				case IOption.OBJECTS :
-					strL = option.getUserObjects();
-					break;
+//				case IOption.INCLUDE_PATH :
+//					strL = option.getIncludePaths();
+//					break;
+//				case IOption.PREPROCESSOR_SYMBOLS :
+//					strL = option.getDefinedSymbols();
+//					break;
+//				case IOption.LIBRARIES :
+//					strL = option.getLibraries();
+//					break;
+//				case IOption.OBJECTS :
+//					strL = option.getUserObjects();
+//					break;
 				default :
 					break;
 				}
 				
 				if(str != null)
-					return MacroResolver.resolveToStringList(str,sub);
+					return CdtVariableResolver.resolveToStringList(str,sub);
 				else if(strL != null)
-					return MacroResolver.resolveStringListValues(strL,sub,true);
+					return CdtVariableResolver.resolveStringListValues(strL,sub,true);
 			} catch (BuildException e){
 				
-			} catch (BuildMacroException e){
+			} catch (CdtVariableException e){
 				
 			}
 			return null;
@@ -907,18 +899,34 @@ public class MbsMacroSupplier implements IBuildMacroSupplier {
 						fStringListValue = option.getDefinedSymbols();
 						break;
 					case IOption.LIBRARIES:
-						fType = IBuildMacro.VALUE_PATH_FILE_LIST;
+						fType = IBuildMacro.VALUE_TEXT_LIST;
 						fStringListValue = option.getLibraries();
 						break;
 					case IOption.OBJECTS:
 						fType = IBuildMacro.VALUE_PATH_FILE_LIST;
 						fStringListValue = option.getUserObjects();
 						break;
+					case IOption.INCLUDE_FILES:
+						fType = IBuildMacro.VALUE_PATH_FILE_LIST;
+						fStringListValue = option.getBasicStringListValue();
+						break;
+					case IOption.LIBRARY_PATHS:
+						fType = IBuildMacro.VALUE_PATH_DIR_LIST;
+						fStringListValue = option.getBasicStringListValue();
+						break;
+					case IOption.LIBRARY_FILES:
+						fType = IBuildMacro.VALUE_PATH_FILE_LIST;
+						fStringListValue = option.getBasicStringListValue();
+						break;
+					case IOption.MACRO_FILES:
+						fType = IBuildMacro.VALUE_PATH_FILE_LIST;
+						fStringListValue = option.getBasicStringListValue();
+						break;
 					}
 					if(fStringValue != null)
-						fStringValue = MacroResolver.resolveToString(fStringValue,new IncludeDefaultsSubstitutor(fParentOptionContextData));
+						fStringValue = CdtVariableResolver.resolveToString(fStringValue,new IncludeDefaultsSubstitutor(fParentOptionContextData));
 					else if(fStringListValue != null)
-						fStringListValue = MacroResolver.resolveStringListValues(fStringListValue,new IncludeDefaultsSubstitutor(fParentOptionContextData), true);
+						fStringListValue = CdtVariableResolver.resolveStringListValues(fStringListValue,new IncludeDefaultsSubstitutor(fParentOptionContextData), true);
 				}catch(Exception e){
 					fType = 0;
 				}
@@ -983,7 +991,7 @@ public class MbsMacroSupplier implements IBuildMacroSupplier {
 		
 		boolean can = false;
 		try{
-			switch (option.getValueType()) {
+			switch (option.getBasicValueType()) {
 			case IOption.BOOLEAN:
 				break;
 			case IOption.STRING:

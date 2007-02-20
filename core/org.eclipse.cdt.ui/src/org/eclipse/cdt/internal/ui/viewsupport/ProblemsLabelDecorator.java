@@ -11,9 +11,11 @@
 package org.eclipse.cdt.internal.ui.viewsupport;
 
 import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceStatus;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.IBaseLabelProvider;
@@ -28,10 +30,14 @@ import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.ui.texteditor.MarkerUtilities;
 
 import org.eclipse.cdt.core.model.CModelException;
+import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ISourceRange;
 import org.eclipse.cdt.core.model.ISourceReference;
 import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
+import org.eclipse.cdt.core.settings.model.ICProjectDescription;
+import org.eclipse.cdt.core.settings.model.ICResourceDescription;
 import org.eclipse.cdt.ui.CElementImageDescriptor;
 import org.eclipse.cdt.ui.CUIPlugin;
 
@@ -86,7 +92,8 @@ public class ProblemsLabelDecorator implements ILabelDecorator, ILightweightLabe
 
 	private static final int ERRORTICK_WARNING= CElementImageDescriptor.WARNING;
 	private static final int ERRORTICK_ERROR= CElementImageDescriptor.ERROR;	
-
+	private static final int TICK_CONFIGURATION = CElementImageDescriptor.SYSTEM_INCLUDE;	
+	
 	private ImageDescriptorRegistry fRegistry;
 	private boolean fUseNewRegistry= false;
 	private IProblemChangedListener fProblemChangedListener;
@@ -154,9 +161,9 @@ public class ProblemsLabelDecorator implements ILabelDecorator, ILightweightLabe
 				switch (type) {
 					case ICElement.C_PROJECT:
 					case ICElement.C_CCONTAINER:
-						return getErrorTicksFromMarkers(element.getResource(), IResource.DEPTH_INFINITE, null);
+						return getErrorTicksFromMarkers(element.getResource(), IResource.DEPTH_INFINITE, null) | hasOwnConfig(element);
 					case ICElement.C_UNIT:
-						return getErrorTicksFromMarkers(element.getResource(), IResource.DEPTH_ONE, null);
+						return getErrorTicksFromMarkers(element.getResource(), IResource.DEPTH_ONE, null) | hasOwnConfig(element);
 					case ICElement.C_FUNCTION:
 					case ICElement.C_CLASS:
 					case ICElement.C_UNION:
@@ -351,11 +358,33 @@ public class ProblemsLabelDecorator implements ILabelDecorator, ILightweightLabe
 	 */
 	public void decorate(Object element, IDecoration decoration) { 
 		int adornmentFlags= computeAdornmentFlags(element);
+
+		if ((adornmentFlags & TICK_CONFIGURATION) != 0) {
+			decoration.addOverlay(CPluginImages.DESC_OVR_SYSTEM_INCLUDE);
+			adornmentFlags &= ~TICK_CONFIGURATION;
+		}
+		
 		if (adornmentFlags == ERRORTICK_ERROR) {
 			decoration.addOverlay(CPluginImages.DESC_OVR_ERROR);
 		} else if (adornmentFlags == ERRORTICK_WARNING) {
 			decoration.addOverlay(CPluginImages.DESC_OVR_WARNING);
-		}		
+		}  
 	}
 
+	private int hasOwnConfig (ICElement element) {
+		IResource r = element.getResource();
+		if (r == null || r instanceof IProject) return 0;
+		IPath path = r.getProjectRelativePath();
+		ICProjectDescription prjd = CoreModel.getDefault().getProjectDescription(r.getProject(), false); 
+		if (prjd != null) { 
+			ICConfigurationDescription [] cf = prjd.getConfigurations();
+			if (cf == null) return 0;
+			for (int i=0; i<cf.length; i++) {
+				ICResourceDescription out = cf[i].getResourceDescription(path, true);
+				if (out != null) return TICK_CONFIGURATION;
+			}
+		}
+		return 0;
+	}
+	
 }

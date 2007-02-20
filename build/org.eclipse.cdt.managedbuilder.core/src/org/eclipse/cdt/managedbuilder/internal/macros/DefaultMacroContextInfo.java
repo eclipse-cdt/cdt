@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 Intel Corporation and others.
+ * Copyright (c) 2005, 2007 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,6 +11,7 @@
 package org.eclipse.cdt.managedbuilder.internal.macros;
 
 import org.eclipse.cdt.managedbuilder.core.IBuildObject;
+import org.eclipse.cdt.managedbuilder.core.IBuilder;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IHoldsOptions;
 import org.eclipse.cdt.managedbuilder.core.IManagedProject;
@@ -18,9 +19,10 @@ import org.eclipse.cdt.managedbuilder.core.IResourceConfiguration;
 import org.eclipse.cdt.managedbuilder.core.ITool;
 import org.eclipse.cdt.managedbuilder.core.IToolChain;
 import org.eclipse.cdt.managedbuilder.macros.IBuildMacroProvider;
-import org.eclipse.cdt.managedbuilder.macros.IBuildMacroSupplier;
 import org.eclipse.cdt.managedbuilder.macros.IFileContextData;
 import org.eclipse.cdt.managedbuilder.macros.IOptionContextData;
+import org.eclipse.cdt.utils.cdtvariables.ICdtVariableSupplier;
+import org.eclipse.cdt.utils.cdtvariables.IVariableContextInfo;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
 
@@ -30,7 +32,7 @@ import org.eclipse.core.resources.ResourcesPlugin;
  * @since 3.0
  */
 public class DefaultMacroContextInfo implements IMacroContextInfo {
-	private IBuildMacroSupplier fSuppliers[];
+	private ICdtVariableSupplier fSuppliers[];
 	private int fType;
 	private Object fData;
 	
@@ -39,48 +41,56 @@ public class DefaultMacroContextInfo implements IMacroContextInfo {
 		fData = data;
 	}
 	
-	protected DefaultMacroContextInfo(int type, Object data, IBuildMacroSupplier suppliers[]){
+	public DefaultMacroContextInfo(int type, Object data, ICdtVariableSupplier suppliers[]){
 		fType = type;
 		fData = data;
 		fSuppliers = suppliers;
 	}
 
-	protected IBuildMacroSupplier[] getSuppliers(int type, Object data){
+	protected ICdtVariableSupplier[] getSuppliers(int type, Object data){
 		switch(type){
 		case IBuildMacroProvider.CONTEXT_FILE:
 			if(data instanceof IFileContextData){
-				return new IBuildMacroSupplier[]{
+				return new ICdtVariableSupplier[]{
 						BuildMacroProvider.fMbsMacroSupplier
 				};
 			}
 			break;
 		case IBuildMacroProvider.CONTEXT_OPTION:
 			if(data instanceof IOptionContextData){
-				return new IBuildMacroSupplier[]{
+				return new ICdtVariableSupplier[]{
 						BuildMacroProvider.fMbsMacroSupplier
 				};
 			}
 			break;
 		case IBuildMacroProvider.CONTEXT_TOOL:
 			if(data instanceof ITool){
-				return new IBuildMacroSupplier[]{
+				return new ICdtVariableSupplier[]{
 						BuildMacroProvider.fMbsMacroSupplier
 				};
 			}
 			break;
 		case IBuildMacroProvider.CONTEXT_CONFIGURATION:
+			IConfiguration cfg = null;
+			
 			if(data instanceof IConfiguration){
-				return new IBuildMacroSupplier[]{
-						BuildMacroProvider.fUserDefinedMacroSupplier,
-						BuildMacroProvider.fExternalExtensionMacroSupplier,
-						BuildMacroProvider.fEnvironmentMacroSupplier,
-						BuildMacroProvider.fMbsMacroSupplier
-				};
+				cfg = (IConfiguration)data;
+			} else if(data instanceof IBuilder){
+				cfg = ((IBuilder)data).getParent().getParent();
+			}
+			
+			if(cfg != null){
+				CoreMacrosSupplier supplier = BuildMacroProvider.createCoreSupplier(cfg);
+				if(supplier != null){
+					return new ICdtVariableSupplier[]{
+						supplier
+					};
+				}
 			}
 			break;
-		case IBuildMacroProvider.CONTEXT_PROJECT:
+/*		case IBuildMacroProvider.CONTEXT_PROJECT:
 			if(data instanceof IManagedProject){
-				return new IBuildMacroSupplier[]{
+				return new ICdtVariableSupplier[]{
 						BuildMacroProvider.fUserDefinedMacroSupplier,
 						BuildMacroProvider.fExternalExtensionMacroSupplier,
 						BuildMacroProvider.fEnvironmentMacroSupplier,
@@ -90,7 +100,7 @@ public class DefaultMacroContextInfo implements IMacroContextInfo {
 			break;
 		case IBuildMacroProvider.CONTEXT_WORKSPACE:
 			if(data instanceof IWorkspace){
-				return new IBuildMacroSupplier[]{
+				return new ICdtVariableSupplier[]{
 						BuildMacroProvider.fUserDefinedMacroSupplier,
 						BuildMacroProvider.fEnvironmentMacroSupplier,
 						BuildMacroProvider.fMbsMacroSupplier,
@@ -101,18 +111,19 @@ public class DefaultMacroContextInfo implements IMacroContextInfo {
 			break;
 		case IBuildMacroProvider.CONTEXT_INSTALLATIONS:
 			if(data == null){
-				return new IBuildMacroSupplier[]{
+				return new ICdtVariableSupplier[]{
 						BuildMacroProvider.fMbsMacroSupplier 
 				};
 			}
 			break;
 		case IBuildMacroProvider.CONTEXT_ECLIPSEENV:
 			if(data == null){
-				return new IBuildMacroSupplier[]{
+				return new ICdtVariableSupplier[]{
 						BuildMacroProvider.fEnvironmentMacroSupplier
 				};
 			}
 			break;
+		*/
 		}
 		return null;
 	}
@@ -134,7 +145,7 @@ public class DefaultMacroContextInfo implements IMacroContextInfo {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.internal.macros.IMacroContextInfo#getSuppliers()
 	 */
-	public IBuildMacroSupplier[] getSuppliers() {
+	public ICdtVariableSupplier[] getSuppliers() {
 		if(fSuppliers == null)
 			fSuppliers = getSuppliers(fType, fData);
 		return fSuppliers;
@@ -143,7 +154,7 @@ public class DefaultMacroContextInfo implements IMacroContextInfo {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.internal.macros.IMacroContextInfo#getNext()
 	 */
-	public IMacroContextInfo getNext() {
+	public IVariableContextInfo getNext() {
 		switch(fType){
 		case IBuildMacroProvider.CONTEXT_FILE:
 			if(fData instanceof IFileContextData){
@@ -203,8 +214,14 @@ public class DefaultMacroContextInfo implements IMacroContextInfo {
 			}
 			break;
 		case IBuildMacroProvider.CONTEXT_CONFIGURATION:
+			IConfiguration configuration = null;
 			if(fData instanceof IConfiguration){
-				IConfiguration configuration = (IConfiguration)fData;
+				configuration = (IConfiguration)fData;
+			} else if(fData instanceof IBuilder){
+				configuration = ((IBuilder)fData).getParent().getParent();
+			}
+			
+			if(configuration != null){
 				IManagedProject managedProject = configuration.getManagedProject();
 				if(managedProject != null)
 					return new DefaultMacroContextInfo(

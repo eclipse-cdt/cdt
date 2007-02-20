@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 Intel Corporation and others.
+ * Copyright (c) 2005, 2007 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,30 +11,35 @@
 package org.eclipse.cdt.managedbuilder.internal.core;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
-import org.eclipse.cdt.managedbuilder.core.BuildException;
+import org.eclipse.cdt.core.settings.model.ICSettingBase;
+import org.eclipse.cdt.core.settings.model.ICStorageElement;
+import org.eclipse.cdt.core.settings.model.extension.CFileData;
+import org.eclipse.cdt.core.settings.model.extension.CLanguageData;
 import org.eclipse.cdt.managedbuilder.core.IBuildObject;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
+import org.eclipse.cdt.managedbuilder.core.IFileInfo;
 import org.eclipse.cdt.managedbuilder.core.IHoldsOptions;
 import org.eclipse.cdt.managedbuilder.core.IManagedConfigElement;
 import org.eclipse.cdt.managedbuilder.core.IOption;
 import org.eclipse.cdt.managedbuilder.core.IResourceConfiguration;
+import org.eclipse.cdt.managedbuilder.core.IResourceInfo;
 import org.eclipse.cdt.managedbuilder.core.ITool;
 import org.eclipse.cdt.managedbuilder.core.IToolChain;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
+import org.eclipse.cdt.managedbuilder.internal.dataprovider.BuildFileData;
+import org.eclipse.cdt.managedbuilder.internal.dataprovider.BuildLanguageData;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.PluginVersionIdentifier;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 
-public class ResourceConfiguration extends BuildObject implements IResourceConfiguration {
+public class ResourceConfiguration extends ResourceInfo implements IFileInfo {
 
 	private static final String EMPTY_STRING = new String();
 
@@ -42,19 +47,14 @@ public class ResourceConfiguration extends BuildObject implements IResourceConfi
 	private static final String REBUILD_STATE = "rebuildState";  //$NON-NLS-1$
 
 	//  Parent and children
-	private IConfiguration parent;
 	private List toolList;
 	private Map toolMap;
 	//  Managed Build model attributes
-	private String resPath;
-	private Boolean isExcluded;
 	private Integer rcbsApplicability;
 	private String toolsToInvoke;
 	//  Miscellaneous
 	private boolean isExtensionResourceConfig = false;
-	private boolean isDirty = false;
 	private boolean resolved = true;
-	private boolean rebuildState;
 	
 	/*
 	 *  C O N S T R U C T O R S
@@ -70,7 +70,7 @@ public class ResourceConfiguration extends BuildObject implements IResourceConfi
 	 * @param managedBuildRevision
 	 */
 	public ResourceConfiguration(IConfiguration parent, IManagedConfigElement element, String managedBuildRevision) {
-		this.parent = parent;
+		super(parent, element, true);
 		isExtensionResourceConfig = true;
 		
 		// setup for resolving
@@ -88,6 +88,8 @@ public class ResourceConfiguration extends BuildObject implements IResourceConfi
 			Tool toolChild = new Tool(this, tools[n], getManagedBuildRevision());
 			toolList.add(toolChild);
 		}
+		
+		setDirty(false);
 	}
 
 	/**
@@ -98,44 +100,69 @@ public class ResourceConfiguration extends BuildObject implements IResourceConfi
 	 * @param element The XML element that contains the resource configuration settings.
 	 * @param managedBuildRevision
 	 */
-	public ResourceConfiguration(IConfiguration parent, Element element, String managedBuildRevision) {
-		this.parent = parent;
+	public ResourceConfiguration(IConfiguration parent, ICStorageElement element, String managedBuildRevision) {
+		super(parent, element, true);
 		isExtensionResourceConfig = false;
+		setResourceData(new BuildFileData(this));
 		
 		setManagedBuildRevision(managedBuildRevision);
 		// Initialize from the XML attributes
 		loadFromProject(element);
 
 		// Load children
-		NodeList configElements = element.getChildNodes();
-		for (int i = 0; i < configElements.getLength(); ++i) {
-			Node configElement = configElements.item(i);
-			if (configElement.getNodeName().equals(ITool.TOOL_ELEMENT_NAME)) {
-				Tool tool = new Tool((IBuildObject)this, (Element)configElement, getManagedBuildRevision());
+		ICStorageElement configElements[] = element.getChildren();
+		for (int i = 0; i < configElements.length; ++i) {
+			ICStorageElement configElement = configElements[i];
+			if (configElement.getName().equals(ITool.TOOL_ELEMENT_NAME)) {
+				Tool tool = new Tool((IBuildObject)this, configElement, getManagedBuildRevision());
 				addTool(tool);
 			}
 		}
 		
 		String rebuild = PropertyManager.getInstance().getProperty(this, REBUILD_STATE);
 		if(rebuild == null || Boolean.valueOf(rebuild).booleanValue())
-			rebuildState = true;
+			setRebuildState(true);
+		setDirty(false);
 	}
 	
-	public ResourceConfiguration(IConfiguration parent, String id, String resourceName, String path){
-		this.parent = parent;
+	public ResourceConfiguration(FolderInfo folderInfo, ITool baseTool, String id, String resourceName, IPath path){
+		super(folderInfo, path, id, resourceName);
+//		setParentFolder(folderInfo);
+//		setParentFolderId(folderInfo.getId());
+		
+		isExtensionResourceConfig = folderInfo.isExtensionElement();
+		if(!isExtensionResourceConfig)
+			setResourceData(new BuildFileData(this));
 	
-		setId(id);
-		setName(resourceName);
+		if ( folderInfo.getParent() != null)
+			setManagedBuildRevision(folderInfo.getParent().getManagedBuildRevision());
 		
-		if ( parent != null)
-			setManagedBuildRevision(parent.getManagedBuildRevision());
-		
-		resPath = path;
-		isDirty = false;
-		isExcluded = new Boolean(false);
+		setDirty(false);
 		toolsToInvoke = EMPTY_STRING;
 		rcbsApplicability = new Integer(KIND_DISABLE_RCBS_TOOL);
-		setRebuildState(true);
+		
+		
+		//	Get file extension.
+		String extString = path.getFileExtension();
+		if(baseTool != null){
+			if(baseTool.getParentResourceInfo() != folderInfo)
+				baseTool = null;
+		}
+		// Add the resource specific tools to this resource.
+		ITool tools[] = folderInfo.getFilteredTools();
+		String subId = new String();
+		for (int i = 0; i < tools.length; i++) {
+			if( tools[i].buildsFileType(extString) ) {
+				baseTool = tools[i];
+				break;
+			}
+		}
+		
+		if(baseTool != null){
+			subId = ManagedBuildManager.calculateChildId(baseTool.getId(), null);				
+			createTool(baseTool, subId, baseTool.getName(), false);
+			setRebuildState(true);
+		}
 	}
 
 	/**
@@ -145,67 +172,165 @@ public class ResourceConfiguration extends BuildObject implements IResourceConfi
 	 * @param parentConfig The <code>IConfiguration</code> to copy the settings from.
 	 * @param id A unique ID for the new configuration.
 	 */
-	public ResourceConfiguration(IConfiguration parent, ResourceConfiguration cloneConfig, String id) {
-		setId(id);
-		setName(cloneConfig.getName());
-		this.parent = parent;
-		isExtensionResourceConfig = false;
+	public ResourceConfiguration(IConfiguration cfg, ResourceConfiguration cloneConfig, String id, Map superClassIdMap, boolean cloneChildren) {
+		super(cfg, cloneConfig, id);
+		
+		isExtensionResourceConfig = cfg.isExtensionElement();
+		if(!cloneConfig.isExtensionResourceConfig)
+			cloneChildren = true;
+
+		if(!isExtensionResourceConfig)
+			setResourceData(new BuildFileData(this));
 
 		setManagedBuildRevision(cloneConfig.getManagedBuildRevision());
 		
 		//  Copy the remaining attributes
-		if (cloneConfig.resPath != null) {
-			resPath = new String(cloneConfig.resPath);
-		}
-		if (cloneConfig.isExcluded != null) {
-			isExcluded = new Boolean(cloneConfig.isExcluded.booleanValue());
-		}
 		if (cloneConfig.toolsToInvoke != null) {
 			toolsToInvoke = new String(cloneConfig.toolsToInvoke);
 		}
 		if (cloneConfig.rcbsApplicability != null) {
 			rcbsApplicability = new Integer(cloneConfig.rcbsApplicability.intValue());
 		}
-				
+		
+		boolean copyIds = cloneChildren && id.equals(cloneConfig.id);
 		// Clone the resource configuration's tool children
 		if (cloneConfig.toolList != null) {
 			Iterator iter = cloneConfig.getToolList().listIterator();
 			while (iter.hasNext()) {
 				Tool toolChild = (Tool) iter.next();
-				String subId;
+				String subId = null;
 				String subName;
 				
-				if (toolChild.getSuperClass() != null) {
-					subId = ManagedBuildManager.calculateChildId(
-								toolChild.getSuperClass().getId(),
-								null);
-					subName = toolChild.getSuperClass().getName();
-				} else {
-					subId = ManagedBuildManager.calculateChildId(
-								toolChild.getId(),
-								null);
-					subName = toolChild.getName();
-				}				
+				Map curIdMap = (Map)superClassIdMap.get(cloneConfig.getPath());
+				ITool extTool = ManagedBuildManager.getExtensionTool(toolChild);
+				if(curIdMap != null){
+					if(extTool != null){
+						subId = (String)curIdMap.get(extTool.getId());
+					}
+				}
+				
+				subName = toolChild.getName();
+				
+				if(subId == null){
+					if (extTool != null) {
+						subId = copyIds ? toolChild.getId() : ManagedBuildManager.calculateChildId(
+									extTool.getId(),
+									null);
+	//					subName = toolChild.getSuperClass().getName();
+					} else {
+						subId = copyIds ? toolChild.getId() : ManagedBuildManager.calculateChildId(
+									toolChild.getId(),
+									null);
+	//					subName = toolChild.getName();
+					}
+				}
 
 				//  The superclass for the cloned tool is not the same as the one from the tool being cloned.
 				//  The superclasses reside in different configurations. 
 				ITool toolSuperClass = null;
+				String superId = null;
 				//  Search for the tool in this configuration that has the same grand-superClass as the 
 				//  tool being cloned
-				ITool[] tools = parent.getTools();
-				for (int i=0; i<tools.length; i++) {
-				    ITool configTool = tools[i];
-				    if (toolChild.getSuperClass() != null 
-				    		&& configTool.getSuperClass() == toolChild.getSuperClass().getSuperClass())
-				    {
-				        toolSuperClass = configTool;
-				        break;
-				    }
+				ITool otherSuperTool = toolChild.getSuperClass();
+				if(otherSuperTool != null){
+					if(otherSuperTool.isExtensionElement()){
+						toolSuperClass = otherSuperTool;
+					} else {
+						IResourceInfo otherRcInfo = otherSuperTool.getParentResourceInfo();
+						IResourceInfo thisRcInfo = cfg.getResourceInfo(otherRcInfo.getPath(), true);
+						ITool otherExtTool = ManagedBuildManager.getExtensionTool(otherSuperTool);
+						if(otherExtTool != null){
+							if(thisRcInfo != null){
+								ITool tools[] = thisRcInfo.getTools();
+								for(int i = 0; i < tools.length; i++){
+									ITool thisExtTool = ManagedBuildManager.getExtensionTool(tools[i]);
+									if(otherExtTool.equals(thisExtTool)){
+										toolSuperClass = tools[i];
+										superId = toolSuperClass.getId();
+										break;
+									}
+								}
+							} else {
+								superId = copyIds ? otherSuperTool.getId() : ManagedBuildManager.calculateChildId(otherExtTool.getId(), null);
+								Map idMap = (Map)superClassIdMap.get(otherRcInfo.getPath());
+								if(idMap == null){
+									idMap = new HashMap();
+									superClassIdMap.put(otherRcInfo.getPath(), idMap);
+								}
+								idMap.put(otherExtTool.getId(), superId);
+							}
+						}
+					}
 				}
-				if (toolSuperClass == null) {
-				    // TODO: report an error
-				}
-				Tool newTool = new Tool(this, toolSuperClass, subId, subName, toolChild);
+//				IToolChain tCh = cloneConfig.getBaseToolChain();
+//				if(tCh != null){
+//					if(!tCh.isExtensionElement()){
+//						IFolderInfo fo = tCh.getParentFolderInfo();
+//						IPath path = fo.getPath();
+//						IResourceInfo baseFo = cfg.getResourceInfo(path, false);
+//						if(baseFo instanceof IFileInfo)
+//							baseFo = cfg.getResourceInfo(path.removeLastSegments(1), false);
+//						tCh = ((IFolderInfo)baseFo).getToolChain();
+//						
+//					}
+//					ITool[] tools = tCh.getTools();
+//					for (int i=0; i<tools.length; i++) {
+//					    ITool configTool = tools[i];
+//					    if (toolChild.getSuperClass() != null 
+//					    		&& configTool.getSuperClass() == toolChild.getSuperClass().getSuperClass())
+//					    {
+//					        toolSuperClass = configTool;
+//					        break;
+//					    }
+//					}
+//				} else {
+//					//TODO:
+//				}
+
+				Tool newTool = null;
+				if(toolSuperClass != null)
+					newTool = new Tool(this, toolSuperClass, subId, subName, toolChild);
+				else 
+					newTool = new Tool(this, superId, subId, subName, toolChild);
+
+				if(newTool != null)
+					addTool(newTool);
+			}
+		}
+		
+		if(copyIds){
+			isDirty = cloneConfig.isDirty;
+			needsRebuild = cloneConfig.needsRebuild;
+		} else {
+			setDirty(true);
+			setRebuildState(true);
+		}
+	}
+
+	public ResourceConfiguration(ResourceConfiguration baseInfo, IPath path, String id, String name) {
+		super(baseInfo, path, id, name);
+		
+		isExtensionResourceConfig = false;
+		setResourceData(new BuildFileData(this));
+
+		setManagedBuildRevision(baseInfo.getManagedBuildRevision());
+		
+		//  Copy the remaining attributes
+		toolsToInvoke = baseInfo.toolsToInvoke;
+		
+		rcbsApplicability = new Integer(KIND_DISABLE_RCBS_TOOL);
+				
+		// Clone the resource configuration's tool children
+		if (baseInfo.toolList != null) {
+			Iterator iter = baseInfo.getToolList().listIterator();
+			while (iter.hasNext()) {
+				Tool toolChild = (Tool) iter.next();
+				ITool superTool = toolChild.getSuperClass();
+				String baseId = superTool != null ? superTool.getId() : toolChild.getId();
+				String subId = ManagedBuildManager.calculateChildId(baseId, null);
+				String subName = toolChild.getName();
+
+				Tool newTool = new Tool(this, superTool, subId, subName, toolChild);
 				addTool(newTool);
 			}
 		}
@@ -213,7 +338,7 @@ public class ResourceConfiguration extends BuildObject implements IResourceConfi
 		setDirty(true);
 		setRebuildState(true);
 	}
-	
+
 	/*
 	 *  E L E M E N T   A T T R I B U T E   R E A D E R S   A N D   W R I T E R S
 	 */
@@ -226,21 +351,7 @@ public class ResourceConfiguration extends BuildObject implements IResourceConfi
 	 */
 	protected void loadFromManifest(IManagedConfigElement element) {
 		ManagedBuildManager.putConfigElement(this, element);
-		
-		// id
-		setId(element.getAttribute(IBuildObject.ID));
-		
-		// Get the name
-		setName(element.getAttribute(IBuildObject.NAME));
-		
-		// resourcePath
-		resPath = element.getAttribute(IResourceConfiguration.RESOURCE_PATH);
 
-		// exclude
-        String excludeStr = element.getAttribute(IResourceConfiguration.EXCLUDE);
-        if (excludeStr != null){
-    		isExcluded = new Boolean("true".equals(excludeStr)); //$NON-NLS-1$
-        }
 		// toolsToInvoke
 		toolsToInvoke = element.getAttribute(IResourceConfiguration.TOOLS_TO_INVOKE);
 
@@ -263,36 +374,14 @@ public class ResourceConfiguration extends BuildObject implements IResourceConfi
 	 * 
 	 * @param element An XML element containing the resource configuration information 
 	 */
-	protected void loadFromProject(Element element) {
-		
-		// id
-		setId(element.getAttribute(IBuildObject.ID));
-
-		// name
-		if (element.hasAttribute(IBuildObject.NAME)) {
-			setName(element.getAttribute(IBuildObject.NAME));
-		}
-		
-		// exclude
-		if (element.hasAttribute(IResourceConfiguration.EXCLUDE)) {
-			String excludeStr = element.getAttribute(IResourceConfiguration.EXCLUDE);
-			if (excludeStr != null){
-				isExcluded = new Boolean("true".equals(excludeStr)); //$NON-NLS-1$
-			}
-		}
-		
-		// resourcePath
-		if (element.hasAttribute(IResourceConfiguration.RESOURCE_PATH)) {
-			resPath = element.getAttribute(IResourceConfiguration.RESOURCE_PATH);
-		}
-
+	protected void loadFromProject(ICStorageElement element) {
 		// toolsToInvoke
-		if (element.hasAttribute(IResourceConfiguration.TOOLS_TO_INVOKE)) {
+		if (element.getAttribute(IResourceConfiguration.TOOLS_TO_INVOKE) != null) {
 			toolsToInvoke = element.getAttribute(IResourceConfiguration.TOOLS_TO_INVOKE);
 		}
 
 		// rcbsApplicability
-		if (element.hasAttribute(IResourceConfiguration.RCBS_APPLICABILITY)) {
+		if (element.getAttribute(IResourceConfiguration.RCBS_APPLICABILITY) != null) {
 			String rcbsApplicabilityStr = element.getAttribute(IResourceConfiguration.RCBS_APPLICABILITY);
 			if (rcbsApplicabilityStr == null || rcbsApplicabilityStr.equals(DISABLE_RCBS_TOOL)) {
 				rcbsApplicability = new Integer(KIND_DISABLE_RCBS_TOOL);
@@ -312,22 +401,8 @@ public class ResourceConfiguration extends BuildObject implements IResourceConfi
 	 * @param doc
 	 * @param element
 	 */
-	public void serialize(Document doc, Element element) {
-		
-		element.setAttribute(IBuildObject.ID, id);
-		
-		if (name != null) {
-			element.setAttribute(IBuildObject.NAME, name);
-		}
-		
-		if (isExcluded != null) {
-			element.setAttribute(IResourceConfiguration.EXCLUDE, isExcluded.toString());
-		}
-
-		if (resPath != null) {
-			element.setAttribute(IResourceConfiguration.RESOURCE_PATH, resPath);
-		}
-		
+	public void serialize(ICStorageElement element) {
+		super.serialize(element);
 		if (toolsToInvoke != null) {
 			element.setAttribute(IResourceConfiguration.TOOLS_TO_INVOKE, toolsToInvoke);
 		}
@@ -359,25 +434,18 @@ public class ResourceConfiguration extends BuildObject implements IResourceConfi
 		Iterator iter = toolElements.listIterator();
 		while (iter.hasNext()) {
 			Tool tool = (Tool) iter.next();
-			Element toolElement = doc.createElement(ITool.TOOL_ELEMENT_NAME);
-			element.appendChild(toolElement);
-			tool.serialize(doc, toolElement);
+			ICStorageElement toolElement = element.createChild(ITool.TOOL_ELEMENT_NAME);
+			tool.serialize(toolElement);
 		}
 		
 		// I am clean now
-		isDirty = false;
+		setDirty(false);
 	}
 
 	/*
 	 *  P A R E N T   A N D   C H I L D   H A N D L I N G
 	 */
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.build.managed.IResourceConfiguration#getParent()
-	 */
-	public IConfiguration getParent() {
-		return parent;
-	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.build.managed.IResourceConfiguration#getTools()
@@ -452,24 +520,12 @@ public class ResourceConfiguration extends BuildObject implements IResourceConfi
 	 */
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.build.managed.IResourceConfiguration#isExcluded()
-	 */
-	public boolean isExcluded() {
-		if (isExcluded != null) {
-			return isExcluded.booleanValue();
-		} else {
-			return false;
-		}
-	}
-
-		
-	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IResourceConfiguration#getResourcePath()
 	 */
 	public String getResourcePath() {
-		String path = resPath;
-		if (path == null) return EMPTY_STRING;
-		return path;
+		IPath path = getParent().getOwner().getProject().getFullPath();
+		path = path.append(getPath());
+		return path.toString();
 	}
 	
 	/* (non-Javadoc)
@@ -641,17 +697,6 @@ public class ResourceConfiguration extends BuildObject implements IResourceConfi
 		 */
 		if (rcbsApplicability == null || !(rcbsApplicability.intValue() == newValue)) {
 			rcbsApplicability = new Integer(newValue);
-			isDirty = true;
-			setRebuildState(true);
-		}
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.build.managed.IResourceConfiguration#setExclude()
-	 */
-	public void setExclude(boolean excluded) {
-		if (isExcluded == null || excluded != isExcluded.booleanValue()) {
-			isExcluded = new Boolean(excluded);
 			setDirty(true);
 			setRebuildState(true);
 		}
@@ -663,11 +708,8 @@ public class ResourceConfiguration extends BuildObject implements IResourceConfi
 	public void setResourcePath(String path) {
 		if( path == null)
 			return;
-		if (resPath == null || !path.equals(resPath)) {
-			resPath = path;
-			setDirty(true);
-			setRebuildState(true);
-		}
+		IPath p = new Path(path).removeFirstSegments(1);
+		setPath(p);
 	}
 
 	/*
@@ -689,7 +731,8 @@ public class ResourceConfiguration extends BuildObject implements IResourceConfi
  		if (isExtensionResourceConfig) return false;
 		
 		// If I need saving, just say yes
-		if (isDirty) return true;
+		if (super.isDirty())
+			return true;
 		
 		// Otherwise see if any tools need saving
 		Iterator iter = getToolList().listIterator();
@@ -698,15 +741,18 @@ public class ResourceConfiguration extends BuildObject implements IResourceConfi
 			if (toolChild.isDirty()) return true;
 		}
 		
-		return isDirty;
+		return false;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IResourceConfiguration#setDirty(boolean)
 	 */
 	public void setDirty(boolean isDirty) {
-		this.isDirty = isDirty;
-		// Propagate "false" to the children
+ 		if (isExtensionResourceConfig) return;
+ 		
+ 		super.setDirty(isDirty);
+
+ 		// Propagate "false" to the children
 		if (!isDirty) {
 			Iterator iter = getToolList().listIterator();
 			while (iter.hasNext()) {
@@ -752,7 +798,8 @@ public class ResourceConfiguration extends BuildObject implements IResourceConfi
 				tool.removeOption(opts[j]);
 			}
 		}
-		isExcluded = new Boolean(false);
+		
+		setExclude(false);
 	}
 
 	/* (non-Javadoc)
@@ -771,74 +818,6 @@ public class ResourceConfiguration extends BuildObject implements IResourceConfi
 			return ((IToolChain)holder).getParent();
 		}
 		return null;
-	}
-	
-	public IOption setOption(IHoldsOptions holder, IOption option, boolean value) throws BuildException {
-		// Is there a change?
-		IOption retOpt = option;
-		if (option.getBooleanValue() != value) {
-		    //  If this resource config does not already override this option, then we need to
-		    //  create a new option
-			retOpt = holder.getOptionToSet(option, false);
-			retOpt.setValue(value);
-		    // TODO: This causes the entire project to be rebuilt.  Is there a way to only have this 
-		    //       file rebuilt?  "Clean" its output?  Change its modification date?
-//			parent.setRebuildState(true);
-		}
-		return retOpt;
-	}
-	
-	public IOption setOption(IHoldsOptions holder, IOption option, String value) throws BuildException {
-		IOption retOpt = option;
-		String oldValue;
-		oldValue = option.getStringValue(); 
-		if (oldValue != null && !oldValue.equals(value)) {
-		    //  If this resource config does not already override this option, then we need to
-		    //  create a new option
-			retOpt = holder.getOptionToSet(option, false);
-			retOpt.setValue(value);
-		    // TODO: This causes the entire project to be rebuilt.  Is there a way to only have this 
-		    //       file rebuilt?  "Clean" its output?  Change its modification date?
-//			parent.setRebuildState(true);
-		}
-		return retOpt;
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.build.managed.IConfiguration#setOption(org.eclipse.cdt.core.build.managed.IOption, java.lang.String[])
-	 */
-	public IOption setOption(IHoldsOptions holder, IOption option, String[] value) throws BuildException {
-		IOption retOpt = option;
-		// Is there a change?
-		String[] oldValue;
-		switch (option.getValueType()) {
-			case IOption.STRING_LIST :
-				oldValue = option.getStringListValue();
-				break;
-			case IOption.INCLUDE_PATH :
-				oldValue = option.getIncludePaths();
-				break;
-			case IOption.PREPROCESSOR_SYMBOLS :
-				oldValue = option.getDefinedSymbols();
-				break;
-			case IOption.LIBRARIES :
-				oldValue = option.getLibraries();
-				break;
-			case IOption.OBJECTS :
-				oldValue = option.getUserObjects();
-				break;
-			default :
-				oldValue = new String[0];
-				break;
-		}
-		if(!Arrays.equals(value, oldValue)) {
-			retOpt = holder.getOptionToSet(option, false);
-			retOpt.setValue(value);
-		    // TODO: This causes the entire project to be rebuilt.  Is there a way to only have this 
-		    //       file rebuilt?  "Clean" its output?  Change its modification date?
-//			parent.setRebuildState(true);
-		} 
-		return retOpt;
 	}
 	
 	public IResource getOwner() {
@@ -876,7 +855,7 @@ public class ResourceConfiguration extends BuildObject implements IResourceConfi
 	 * @see org.eclipse.cdt.managedbuilder.core.IResourceConfiguration#needsRebuild()
 	 */
 	public boolean needsRebuild() {
-		if(rebuildState)
+		if(super.needsRebuild())
 			return true;
 		
 		ITool tools[] = getToolsToInvoke();
@@ -885,7 +864,7 @@ public class ResourceConfiguration extends BuildObject implements IResourceConfi
 				return true;
 		}
 
-		return rebuildState;
+		return false;
 	}
 
 	/* (non-Javadoc)
@@ -895,12 +874,12 @@ public class ResourceConfiguration extends BuildObject implements IResourceConfi
 		if(isExtensionResourceConfiguration() && rebuild)
 			return;
 		
-		if(rebuildState != rebuild){
-			rebuildState = rebuild;
+		if(needsRebuild() != rebuild){
+			super.setRebuildState(rebuild);
 			saveRebuildState();
 		}
 		
-		if(!rebuildState){
+		if(!rebuild){
 			ITool tools[] = getToolsToInvoke();
 			for(int i = 0; i < tools.length; i++){
 				tools[i].setRebuildState(false);
@@ -910,7 +889,86 @@ public class ResourceConfiguration extends BuildObject implements IResourceConfi
 	}
 	
 	private void saveRebuildState(){
-		PropertyManager.getInstance().setProperty(this, REBUILD_STATE, Boolean.toString(rebuildState));
+		PropertyManager.getInstance().setProperty(this, REBUILD_STATE, Boolean.toString(needsRebuild()));
 	}
 
+	public final int getKind() {
+		return ICSettingBase.SETTING_FILE;
+	}
+	
+	public CFileData getFileData(){
+		return (CFileData)getResourceData();
+	}
+	
+	public CLanguageData[] getCLanguageDatas() {
+		ITool tools[] = getTools/*ToInvoke*/();
+		List list = new ArrayList();
+		for(int i = 0; i < tools.length; i++){
+			CLanguageData datas[] = tools[i].getCLanguageDatas();
+			for(int j = 0; j < datas.length; j++){
+				list.add(datas[j]);
+			}
+		}
+		return (BuildLanguageData[])list.toArray(new BuildLanguageData[list.size()]);
+	}
+
+	public IToolChain getBaseToolChain() {
+		ITool tools[] = getToolsToInvoke();
+		ITool baseTool = null;
+		for(int i = 0; i < tools.length; i++){
+			ITool tool = tools[i];
+			ITool superTool = tool.getSuperClass(); 
+			if(superTool != null){
+				baseTool = superTool;
+				if(!superTool.isExtensionElement()){
+					break;
+				}
+			}
+		}
+		
+		IToolChain baseTc = null;
+		if(baseTool != null){
+			IBuildObject parent = baseTool.getParent();
+			if(parent instanceof IToolChain){
+				baseTc = (IToolChain)parent;
+			} else if(parent instanceof ResourceConfiguration){
+				baseTc = ((ResourceConfiguration)parent).getBaseToolChain();
+			}
+		}
+		
+		return baseTc;
+	}
+
+	public boolean isExtensionElement() {
+		return isExtensionResourceConfig;
+	}
+	
+	public boolean supportsBuild(boolean managed) {
+		ITool tools[] = getToolsToInvoke();
+		for(int i = 0; i < tools.length; i++){
+			if(!tools[i].supportsBuild(managed))
+				return false;
+		}
+		
+		return true;
+	}
+
+	public Set contributeErrorParsers(Set set) {
+		return contributeErrorParsers(getToolsToInvoke(), set);
+	}
+
+	public void resetErrorParsers() {
+		resetErrorParsers(getToolsToInvoke());
+	}
+
+	void removeErrorParsers(Set set) {
+		removeErrorParsers(getToolsToInvoke(), set);
+	}
+
+	void resolveProjectReferences(boolean onLoad){
+		for(Iterator iter = getToolList().iterator(); iter.hasNext();){
+			Tool tool = (Tool)iter.next();
+			tool.resolveProjectReferences(onLoad);
+		}
+	}
 }

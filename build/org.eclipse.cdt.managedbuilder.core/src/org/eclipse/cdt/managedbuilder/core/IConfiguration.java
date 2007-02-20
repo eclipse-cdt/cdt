@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2006 IBM Corporation and others.
+ * Copyright (c) 2003, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,10 +10,13 @@
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.core;
 
+import org.eclipse.cdt.core.settings.model.extension.CBuildData;
+import org.eclipse.cdt.core.settings.model.extension.CConfigurationData;
 import org.eclipse.cdt.managedbuilder.envvar.IConfigurationEnvironmentVariableSupplier;
 import org.eclipse.cdt.managedbuilder.macros.IConfigurationBuildMacroSupplier;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.IPath;
 
 /**
  * A tool-integrator defines default configurations as children of the project type.
@@ -27,7 +30,7 @@ import org.eclipse.core.resources.IResource;
  * 
  * @since 2.1
  */
-public interface IConfiguration extends IBuildObject {
+public interface IConfiguration extends IBuildObject, IBuildObjectPropertiesContainer {
 	public static final String ARTIFACT_NAME = "artifactName";	//$NON-NLS-1$
 	public static final String CLEAN_COMMAND = "cleanCommand";	//$NON-NLS-1$
     public static final String PREBUILD_STEP = "prebuildStep";      //$NON-NLS-1$ 
@@ -41,6 +44,11 @@ public interface IConfiguration extends IBuildObject {
 	public static final String PARENT = "parent";	//$NON-NLS-1$
 	
 	public static final String DESCRIPTION = "description"; //$NON-NLS-1$
+	
+	public static final String BUILD_PROPERTIES = "buildProperties"; //$NON-NLS-1$
+	public static final String IS_SYSTEM = "isSystem";							//$NON-NLS-1$
+
+	
 
 	
 	
@@ -323,7 +331,9 @@ public interface IConfiguration extends IBuildObject {
 	 * 
 	 * @param option
 	 */
-	public void removeResourceConfiguration(IResourceConfiguration resConfig);
+	public void removeResourceConfiguration(IResourceInfo resConfig);
+	
+	public void removeResourceInfo(IPath path);
 	
 	/**
 	 * Set (override) the extension that should be appended to the build artifact
@@ -404,6 +414,8 @@ public interface IConfiguration extends IBuildObject {
 	 * @param ids
 	 */
 	public void setErrorParserIds(String ids);
+
+	public void setErrorParserList(String ids[]);
 
 	/**
 	 * Sets the name of the receiver to the value specified in the argument
@@ -547,4 +559,65 @@ public interface IConfiguration extends IBuildObject {
 	 * @since 3.1
 	 */
 	public ITool getToolFromInputExtension(String sourceExtension);
+	
+	IResourceInfo getResourceInfo(IPath path, boolean exactPath);
+	
+	IResourceInfo[] getResourceInfos();
+	
+	IResourceInfo getResourceInfoById(String id);
+	
+	IFolderInfo getRootFolderInfo(); 
+	
+	IFileInfo createFileInfo(IPath path);
+
+	IFileInfo createFileInfo(IPath path, String id, String name);
+	
+	IFileInfo createFileInfo(IPath path, IFolderInfo base, ITool baseTool, String id, String name);
+
+	IFileInfo createFileInfo(IPath path, IFileInfo base, String id, String name);
+
+	IFolderInfo createFolderInfo(IPath path);
+
+	IFolderInfo createFolderInfo(IPath path, String id, String name);
+	
+	IFolderInfo createFolderInfo(IPath path, IFolderInfo base, String id, String name);
+	
+	CConfigurationData getConfigurationData();
+	
+	IPath[] getSourcePaths();
+
+	void setSourcePaths(IPath[] paths);
+	
+	CBuildData getBuildData();
+	
+	IBuilder getBuilder();
+	
+	IBuilder getEditableBuilder();
+	
+	String getOutputPrefix(String outputExtension);
+	
+	boolean isSystemObject();
+	
+	String getOutputExtension(String resourceExtension);
+	
+	String getOutputFlag(String outputExt);
+	
+	IManagedCommandLineInfo generateToolCommandLineInfo( String sourceExtension, String[] flags, 
+			String outputFlag, String outputPrefix, String outputName, String[] inputResources, IPath inputLocation, IPath outputLocation );
+	
+	String[] getUserObjects(String extension);
+	
+	String[] getLibs(String extension);
+	
+	boolean buildsFileType(String srcExt);
+	
+	boolean supportsBuild(boolean managed);
+	
+	boolean isManagedBuildOn();
+
+	void setManagedBuildOn(boolean on) throws BuildException;
+	
+	boolean isBuilderCompatible(IBuilder builder);
+	
+	void changeBuilder(IBuilder newBuilder, String id, String name);
 }

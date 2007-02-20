@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005 Texas Instruments Incorporated and others.
+ * Copyright (c) 2005, 2007 Texas Instruments Incorporated and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,25 +7,29 @@
  * 
  * Contributors:
  *     Texas Instruments - initial API and implementation
+ *     Intel Corporation - adaptation to new project model
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.ui.wizards;
+
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.Stack;
+import java.util.TreeMap;
 
 import org.eclipse.cdt.managedbuilder.core.BuildException;
 import org.eclipse.cdt.managedbuilder.core.IToolChain;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
-import org.eclipse.cdt.managedbuilder.internal.ui.ManagedBuilderUIMessages;
+import org.eclipse.cdt.ui.newui.NewUIMessages;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.wizard.IWizardPage;
-import java.util.Map;
-import java.util.TreeMap;
-import java.util.Set;
-import java.util.LinkedHashSet;
-import java.util.Iterator;
-import java.util.Stack;
-import org.eclipse.core.runtime.CoreException;
 
 /**
  *  This class is responsible for managing the use of custom pages in the Managed Build System's
@@ -35,6 +39,7 @@ import org.eclipse.core.runtime.CoreException;
  */
 public final class MBSCustomPageManager
 {
+	public static final String PAGE_ID = "org.eclipse.cdt.managedbuilder.ui.wizard.platformPage"; //$NON-NLS-1$
 
 	/**
 	 * ID attribute of nature element
@@ -109,6 +114,8 @@ public final class MBSCustomPageManager
 
 	private static final String EXTENSION_POINT_ID = "org.eclipse.cdt.managedbuilder.ui.newWizardPages"; //$NON-NLS-1$
 
+	
+	private static List hiddenList;
 	/**
 	 * 
 	 * Looks for contributions to the extension point org.eclipse.cdt.managedbuilder.ui.newWizardPages and adds all pages to the manager.
@@ -160,9 +167,9 @@ public final class MBSCustomPageManager
 						{
 							// there are currently no other supported element types
 							// so throw an exception
-							throw new BuildException(ManagedBuilderUIMessages.getResourceString("MBSCustomPageManager.error0") //$NON-NLS-1$
+							throw new BuildException(NewUIMessages.getResourceString("MBSCustomPageManager.error0") //$NON-NLS-1$
 									+ element.getName()
-									+ ManagedBuilderUIMessages.getResourceString("MBSCustomPageManager.error1") //$NON-NLS-1$
+									+ NewUIMessages.getResourceString("MBSCustomPageManager.error1") //$NON-NLS-1$
 									+ EXTENSION_POINT_ID);
 						}
 					}
@@ -179,7 +186,7 @@ public final class MBSCustomPageManager
 		// get the ID and wizard page
 		String id = element.getAttribute(ID);
 
-		String operationClassName = element.getAttribute(OPERATION_CLASS); // optional element so may be null
+//		String operationClassName = element.getAttribute(OPERATION_CLASS); // optional element so may be null
 
 		IWizardPage wizardPage = null;
 		Runnable operation = null;
@@ -237,9 +244,9 @@ public final class MBSCustomPageManager
 						// no other types supported... throw an exception
 						//						 there are currently no other supported element types
 						// so throw an exception
-						throw new BuildException(ManagedBuilderUIMessages.getResourceString("MBSCustomPageManager.error2") //$NON-NLS-1$
+						throw new BuildException(NewUIMessages.getResourceString("MBSCustomPageManager.error2") //$NON-NLS-1$
 								+ element.getName()
-								+ ManagedBuilderUIMessages.getResourceString("MBSCustomPageManager.error3") //$NON-NLS-1$
+								+ NewUIMessages.getResourceString("MBSCustomPageManager.error3") //$NON-NLS-1$
 								+ EXTENSION_POINT_ID);
 					}
 				}
@@ -255,7 +262,7 @@ public final class MBSCustomPageManager
 		if (projectType != null)
 			currentPageData.addProjectType(projectType);
 		else
-			throw new BuildException(ManagedBuilderUIMessages.getResourceString("MBSCustomPageManager.error4")); //$NON-NLS-1$
+			throw new BuildException(NewUIMessages.getResourceString("MBSCustomPageManager.error4")); //$NON-NLS-1$
 	}
 
 	private static void loadToolchain(IConfigurationElement element,
@@ -279,7 +286,7 @@ public final class MBSCustomPageManager
 			currentPageData.addToolchain(toolchainID, versionsSupported);
 		}
 		else
-			throw new BuildException(ManagedBuilderUIMessages.getResourceString("MBSCustomPageManager.error5")); //$NON-NLS-1$
+			throw new BuildException(NewUIMessages.getResourceString("MBSCustomPageManager.error5")); //$NON-NLS-1$
 	}
 
 	private static void loadNature(IConfigurationElement element,
@@ -290,7 +297,7 @@ public final class MBSCustomPageManager
 		if (nature != null)
 			currentPageData.addNature(nature);
 		else
-			throw new BuildException(ManagedBuilderUIMessages.getResourceString("MBSCustomPageManager.error6")); //$NON-NLS-1$
+			throw new BuildException(NewUIMessages.getResourceString("MBSCustomPageManager.error6")); //$NON-NLS-1$
 	}
 
 	/**
@@ -319,15 +326,14 @@ public final class MBSCustomPageManager
 		if(page == null)
 			return false;
 		
+		if (getPageHideStatus(pageID)) return false; 
 		
 		//	first, find out what project type, toolchain, and nature have been set
-		Map pagePropertiesMap = (Map) pageIDtoPagePropertiesMap.get(CProjectPlatformPage.PAGE_ID);
+		Map pagePropertiesMap = (Map) pageIDtoPagePropertiesMap.get(PAGE_ID);
 
-		String projectType = pagePropertiesMap.get(CProjectPlatformPage.PROJECT_TYPE).toString();
-
-		Set toolchainSet = (Set) pagePropertiesMap.get(CProjectPlatformPage.TOOLCHAIN);
-
-		String nature = pagePropertiesMap.get(CProjectPlatformPage.NATURE).toString();
+		Object projectType = pagePropertiesMap.get(PROJECT_TYPE);
+		Set toolchainSet = (Set) pagePropertiesMap.get(TOOLCHAIN);
+		Object nature = pagePropertiesMap.get(NATURE);
 
 		//		 does the page follow nature and project type constraints?
 		if (page.shouldBeVisibleForNature(nature)
@@ -352,20 +358,19 @@ public final class MBSCustomPageManager
 				while (toolchainIterator.hasNext())
 				{
 					IToolChain toolchain = (IToolChain) toolchainIterator.next();
-					String id = ManagedBuildManager.getIdFromIdAndVersion(toolchain.getId());
-					String version = ManagedBuildManager.getVersionFromIdAndVersion(toolchain.getId());
-
-					// check the ID and version
-					if (page.shouldBeVisibleForToolchain(id, version))
-					{
-						return true;
+					if(toolchain != null){
+						String id = ManagedBuildManager.getIdFromIdAndVersion(toolchain.getId());
+						String version = ManagedBuildManager.getVersionFromIdAndVersion(toolchain.getId());
+	
+						// check the ID and version
+						if (page.shouldBeVisibleForToolchain(id, version))
+						{
+							return true;
+						}
 					}
 				}
-
 			}
-
 		}
-
 		return false;
 	}
 
@@ -465,13 +470,13 @@ public final class MBSCustomPageManager
 			// look for the next page that satisfies all project type, toolchain, and nature criteria
 
 			// first, find out what project type, toolchain, and nature have been set
-			Map pagePropertiesMap = (Map) pageIDtoPagePropertiesMap.get(CProjectPlatformPage.PAGE_ID);
+//			Map pagePropertiesMap = (Map) pageIDtoPagePropertiesMap.get(PAGE_ID);
 
-			String projectType = pagePropertiesMap.get(CProjectPlatformPage.PROJECT_TYPE).toString();
+//			String projectType = pagePropertiesMap.get(PROJECT_TYPE).toString();
 
-			Set toolchainSet = (Set) pagePropertiesMap.get(CProjectPlatformPage.TOOLCHAIN);
+//			Set toolchainSet = (Set) pagePropertiesMap.get(TOOLCHAIN);
 
-			String nature = pagePropertiesMap.get(CProjectPlatformPage.NATURE).toString();
+//			String nature = pagePropertiesMap.get(NATURE).toString();
 
 			IWizardPage nextPage = null;
 
@@ -555,13 +560,13 @@ public final class MBSCustomPageManager
 			// look for the previous page that satisfies all project type, toolchain, and nature criteria
 
 			// first, find out what project type, toolchain, and nature have been set
-			Map pagePropertiesMap = (Map) pageIDtoPagePropertiesMap.get(CProjectPlatformPage.PAGE_ID);
+//			Map pagePropertiesMap = (Map) pageIDtoPagePropertiesMap.get(PAGE_ID);
 
-			String projectType = pagePropertiesMap.get(CProjectPlatformPage.PROJECT_TYPE).toString();
+//			String projectType = pagePropertiesMap.get(PROJECT_TYPE).toString();
 
-			Set toolchainSet = (Set) pagePropertiesMap.get(CProjectPlatformPage.TOOLCHAIN);
+//			Set toolchainSet = (Set) pagePropertiesMap.get(TOOLCHAIN);
 
-			String nature = pagePropertiesMap.get(CProjectPlatformPage.NATURE).toString();
+//			String nature = pagePropertiesMap.get(NATURE).toString();
 
 			IWizardPage prevPage = null;
 
@@ -714,11 +719,31 @@ public final class MBSCustomPageManager
 		idToPageDataMap = new TreeMap();
 		pageIDtoPagePropertiesMap = new TreeMap();
 		pageSet = new LinkedHashSet();
+		hiddenList = new ArrayList();
 	}
 
 	// singleton class - do not use
 	private MBSCustomPageManager()
 	{
 
+	}
+	
+	/**
+	 * Ability to hide pages explicitly, 
+	 * not depending of nature/projecttype filter 
+	 * 
+	 * @param p - page to hide
+	 * @param status - true means hidden
+	 */
+	public static void setPageHideStatus(String Id, boolean status) {
+		if (hiddenList.contains(Id)) {
+			if (!status) hiddenList.remove(Id);
+		} else {
+			if (status) hiddenList.add(Id);
+		}
+	}
+	
+	public static boolean getPageHideStatus(String Id) {
+		return hiddenList.contains(Id);
 	}
 }

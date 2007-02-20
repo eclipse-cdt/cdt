@@ -11,21 +11,13 @@
 package org.eclipse.cdt.make.builder.tests;
 
 import java.io.ByteArrayInputStream;
-import java.util.Map;
 
 import junit.framework.TestCase;
 
-import org.eclipse.cdt.core.CCProjectNature;
-import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.parser.IScannerInfo;
 import org.eclipse.cdt.make.core.MakeCorePlugin;
-import org.eclipse.cdt.make.core.MakeProjectNature;
-import org.eclipse.cdt.make.core.scannerconfig.ScannerConfigNature;
 import org.eclipse.cdt.make.core.tests.StandardBuildTestHelper;
-import org.eclipse.cdt.make.internal.core.scannerconfig2.PerProjectSICollector;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
@@ -61,33 +53,33 @@ public class ScannerConfigDiscoveryTests extends TestCase {
 		StandardBuildTestHelper.removeProject("SCDC");
 	}
 
-	public void testGetCCompilerBuiltins() throws CoreException {
-		MakeProjectNature.addNature(fCProject, fMonitor);
-		ScannerConfigNature.addScannerConfigNature(fCProject);
-		
-		PerProjectSICollector.calculateCompilerBuiltins(fCProject);
-		IScannerInfo scInfo = CCorePlugin.getDefault().getScannerInfoProvider(fCProject).
-				getScannerInformation(fCFile);
-		assertNotNull(scInfo);
-		String[] includes = scInfo.getIncludePaths();
-		assertTrue(includes.length > 0);
-		Map symbols = scInfo.getDefinedSymbols();
-		assertFalse(symbols.isEmpty());
-	}
+//	public void testGetCCompilerBuiltins() throws CoreException {
+//		MakeProjectNature.addNature(fCProject, fMonitor);
+//		ScannerConfigNature.addScannerConfigNature(fCProject);
+//		
+//		PerProjectSICollector.calculateCompilerBuiltins(fCProject);
+//		IScannerInfo scInfo = CCorePlugin.getDefault().getScannerInfoProvider(fCProject).
+//				getScannerInformation(fCFile);
+//		assertNotNull(scInfo);
+//		String[] includes = scInfo.getIncludePaths();
+//		assertTrue(includes.length > 0);
+//		Map symbols = scInfo.getDefinedSymbols();
+//		assertFalse(symbols.isEmpty());
+//	}
 
-	public void testGetCCCompilerBuiltins() throws CoreException {
-		CCProjectNature.addCCNature(fCProject, fMonitor);
-		MakeProjectNature.addNature(fCProject, fMonitor);
-		ScannerConfigNature.addScannerConfigNature(fCProject);
-		
-		PerProjectSICollector.calculateCompilerBuiltins(fCProject);
-		IScannerInfo scInfo = CCorePlugin.getDefault().getScannerInfoProvider(fCProject).
-				getScannerInformation(fCFile);
-		assertNotNull(scInfo);
-		String[] includes = scInfo.getIncludePaths();
-		assertTrue(includes.length > 0);
-		Map symbols = scInfo.getDefinedSymbols();
-		assertFalse(symbols.isEmpty());
-	}
+//	public void testGetCCCompilerBuiltins() throws CoreException {
+//		CCProjectNature.addCCNature(fCProject, fMonitor);
+//		MakeProjectNature.addNature(fCProject, fMonitor);
+//		ScannerConfigNature.addScannerConfigNature(fCProject);
+//		
+//		PerProjectSICollector.calculateCompilerBuiltins(fCProject);
+//		IScannerInfo scInfo = CCorePlugin.getDefault().getScannerInfoProvider(fCProject).
+//				getScannerInformation(fCFile);
+//		assertNotNull(scInfo);
+//		String[] includes = scInfo.getIncludePaths();
+//		assertTrue(includes.length > 0);
+//		Map symbols = scInfo.getDefinedSymbols();
+//		assertFalse(symbols.isEmpty());
+//	}
 
 }

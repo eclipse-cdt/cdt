@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005 Intel Corporation and others.
+ * Copyright (c) 2005, 2007 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,6 +17,7 @@ import org.eclipse.cdt.managedbuilder.core.IBuildObject;
 import org.eclipse.cdt.managedbuilder.core.IHoldsOptions;
 import org.eclipse.cdt.managedbuilder.core.IManagedConfigElement;
 import org.eclipse.cdt.managedbuilder.core.IOption;
+import org.eclipse.cdt.managedbuilder.core.IResourceInfo;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.cdt.managedbuilder.envvar.IEnvironmentVariableProvider;
 import org.eclipse.cdt.managedbuilder.internal.macros.OptionContextData;
@@ -30,9 +31,6 @@ public class CheckStringExpression implements IBooleanExpression {
 	public static final String VALUE = "value"; 	//$NON-NLS-1$
 	public static final String IS_REGEX = "isRegex"; 	//$NON-NLS-1$
 	
-	public static final String YES = "yes"; 	//$NON-NLS-1$
-	public static final String TRUE = "true"; 	//$NON-NLS-1$
-
 	private String fString;
 	private String fValue;
 	private boolean fIsRegex;
@@ -46,18 +44,10 @@ public class CheckStringExpression implements IBooleanExpression {
 		if(fValue == null)
 			fValue = new String();
 		
-		fIsRegex = getBooleanValue(element.getAttribute(IS_REGEX));
+		fIsRegex = OptionEnablementExpression.getBooleanValue(element.getAttribute(IS_REGEX));
 	}
 	
-	protected boolean getBooleanValue(String value){
-		if(TRUE.equalsIgnoreCase(value))
-			return true;
-		else if(YES.equalsIgnoreCase(value))
-			return true;
-		return false;
-	}
-
-	public boolean evaluate(IBuildObject configuration, 
+	public boolean evaluate(IResourceInfo rcInfo, 
             IHoldsOptions holder, 
             IOption option) {
 		

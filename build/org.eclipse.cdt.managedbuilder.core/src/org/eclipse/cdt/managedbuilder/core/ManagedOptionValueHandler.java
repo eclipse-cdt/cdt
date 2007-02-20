@@ -143,7 +143,14 @@ public class ManagedOptionValueHandler implements
 						return true;
 					}
 					break;
+				case IOption.INCLUDE_FILES:
+				case IOption.LIBRARY_PATHS:
+				case IOption.LIBRARY_FILES:
+				case IOption.MACRO_FILES:
 				default:
+					if (Arrays.equals(option.getBasicStringListValue(), (String[])defaultValue)) {
+						return true;
+					}
 					break;
 				}
 		} catch (BuildException e) {

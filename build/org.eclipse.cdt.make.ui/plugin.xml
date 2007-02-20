@@ -5,7 +5,7 @@
      <extension-point id="DiscoveryProfilePage" name="%discoveryProfilePage.name" schema="schema/DiscoveryProfilePage.exsd"/>
 
 
-   <extension
+   <!--extension
          point="org.eclipse.ui.newWizards">
       <wizard
             name="%WizardNewCMakeProject.name"
@@ -32,9 +32,9 @@
          <selection
                class="org.eclipse.core.resources.IProject">
          </selection>
-      </wizard>
+      </wizard-->
 <!-- For C++ Wizards -->
-      <wizard
+      <!--wizard
             name="%WizardNewCCMakeProject.name"
             icon="icons/etool16/newcc_app.gif"
             category="org.eclipse.cdt.ui.newCCWizards"
@@ -60,7 +60,7 @@
                class="org.eclipse.core.resources.IProject">
          </selection>
       </wizard>
-   </extension>
+   </extension-->
    <extension
          point="org.eclipse.ui.popupMenus">
       <objectContribution
@@ -81,10 +81,10 @@
                enablesFor="1"
                id="org.eclipse.cdt.make.ui.CViewCreateTargetAction">
          </action>
-         <filter
+         <!--filter
                name="projectNature"
                value="org.eclipse.cdt.make.core.makeNature">
-         </filter>
+         </filter-->
       </objectContribution>
    </extension>
    <extension
@@ -161,12 +161,12 @@
             class="org.eclipse.cdt.make.internal.ui.preferences.MakePreferencePage"
             id="org.eclipse.cdt.make.ui.preferences.MakePreferencePage">
       </page>
-      <page
+      <!--page
             name="%PreferenceMakeProject.name"
             category="org.eclipse.cdt.make.ui.preferences.MakePreferencePage"
             class="org.eclipse.cdt.make.internal.ui.preferences.NewMakeProjectPreferencePage"
             id="org.eclipse.cdt.make.ui.preferences.MakeProjectPreferencePage">
-      </page>
+      </page-->
       <page
             name="%PreferenceMakefileEditor.name"
             category="org.eclipse.cdt.make.ui.preferences.MakePreferencePage"

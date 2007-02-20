@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 Intel Corporation and others.
+ * Copyright (c) 2005, 2007 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,11 +10,10 @@
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.internal.core;
 
+import org.eclipse.cdt.core.settings.model.ICStorageElement;
 import org.eclipse.cdt.managedbuilder.core.IInputOrder;
 import org.eclipse.cdt.managedbuilder.core.IInputType;
 import org.eclipse.cdt.managedbuilder.core.IManagedConfigElement;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
 
 public class InputOrder implements IInputOrder {
 
@@ -77,7 +76,7 @@ public class InputOrder implements IInputOrder {
 	 * @param parent The <code>ITool</code> the InputOrder will be added to. 
 	 * @param element The XML element that contains the InputOrder settings.
 	 */
-	public InputOrder(IInputType parent, Element element) {
+	public InputOrder(IInputType parent, ICStorageElement element) {
 		this.parent = parent;
 		isExtensionInputOrder = false;
 		
@@ -143,20 +142,20 @@ public class InputOrder implements IInputOrder {
 	 * 
 	 * @param element An XML element containing the InputOrder information 
 	 */
-	protected void loadFromProject(Element element) {
+	protected void loadFromProject(ICStorageElement element) {
 		
 		// path
-		if (element.hasAttribute(IInputOrder.PATH)) {
+		if (element.getAttribute(IInputOrder.PATH) != null) {
 			path = element.getAttribute(IInputOrder.PATH);
 		}
 		
 		// order
-		if (element.hasAttribute(IInputOrder.ORDER)) {
+		if (element.getAttribute(IInputOrder.ORDER) != null) {
 			order = element.getAttribute(IInputOrder.ORDER);
 		}
 		
 		// excluded
-		if (element.hasAttribute(IInputOrder.EXCLUDED)) {
+		if (element.getAttribute(IInputOrder.EXCLUDED) != null) {
 			String isEx = element.getAttribute(IInputOrder.EXCLUDED);
 			if (isEx != null){
 				excluded = new Boolean("true".equals(isEx)); //$NON-NLS-1$
@@ -170,7 +169,7 @@ public class InputOrder implements IInputOrder {
 	 * @param doc
 	 * @param element
 	 */
-	public void serialize(Document doc, Element element) {
+	public void serialize(ICStorageElement element) {
 
 		if (path != null) {
 			element.setAttribute(IInputOrder.PATH, path);

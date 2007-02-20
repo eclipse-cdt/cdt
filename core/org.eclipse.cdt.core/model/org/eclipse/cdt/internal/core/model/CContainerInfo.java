@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 QNX Software Systems and others.
+ * Copyright (c) 2000, 2007 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,9 +16,12 @@ import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.ISourceRoot;
+import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
+import org.eclipse.cdt.core.settings.model.ICSourceEntry;
+import org.eclipse.cdt.internal.core.settings.model.CProjectDescription;
+import org.eclipse.cdt.internal.core.settings.model.CProjectDescriptionManager;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
-import org.eclipse.cdt.core.model.IPathEntry;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
@@ -65,7 +68,16 @@ public class CContainerInfo extends OpenableInfo {
 				resources = container.members(false);
 			}
 
-			IPathEntry[] entries = cproject.getResolvedPathEntries();
+//			IPathEntry[] entries = cproject.getResolvedPathEntries();
+			ICSourceEntry[] entries = null;
+			CProjectDescription des = (CProjectDescription)CProjectDescriptionManager.getInstance().getProjectDescription(cproject.getProject());
+			if(des != null){
+				ICConfigurationDescription cfg = des.getIndexConfiguration();
+				if(cfg != null){
+					entries = cfg.getSourceEntries();
+				}
+			}
+			
 			if (resources != null) {
 				for (int i = 0; i < resources.length; i++) {
 					IResource member = resources[i];
@@ -112,15 +124,18 @@ public class CContainerInfo extends OpenableInfo {
 		nonCResources = resources;
 	}
 
-	private static boolean isSourceEntry(IPath resourcePath, IPathEntry[] entries) {
+	private static boolean isSourceEntry(IPath resourcePath, ICSourceEntry[] entries) {
+		if(entries == null)
+			return false;
+		
 		for (int k = 0; k < entries.length; k++) {
-			IPathEntry entry = entries[k];
-			if (entry.getEntryKind() == IPathEntry.CDT_SOURCE) {
-				IPath sourcePath = entry.getPath();
+			ICSourceEntry entry = entries[k];
+//			if (entry.getEntryKind() == IPathEntry.CDT_SOURCE) {
+				IPath sourcePath = entry.getFullPath();
 				if (resourcePath.equals(sourcePath)) {
 					return true;
 				}
-			}
+//			}
 		}
 		return false;
 	}

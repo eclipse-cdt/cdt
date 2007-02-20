@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005 Intel Corporation and others.
+ * Copyright (c) 2005, 2007 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,14 +10,14 @@
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.internal.macros;
 
-import org.eclipse.cdt.managedbuilder.macros.IBuildMacroSupplier;
+import org.eclipse.cdt.utils.cdtvariables.IVariableContextInfo;
 
 /**
  * This interface represents the context information.
  * 
  * @since 3.0
  */
-public interface IMacroContextInfo {
+public interface IMacroContextInfo extends IVariableContextInfo{
 	/**
 	 * returns the context type
 	 * 
@@ -31,18 +31,4 @@ public interface IMacroContextInfo {
 	 * @return Object
 	 */
 	public Object getContextData();
-	
-	/**
-	 * Returns suppliers to be used for this context
-	 * 
-	 * @return IBuildMacroSupplier[]
-	 */
-	public IBuildMacroSupplier[] getSuppliers();
-	
-	/**
-	 * Returns context info for the next lower-precedence context
-	 * 
-	 * @return IMacroContextInfo
-	 */
-	public IMacroContextInfo getNext();
 }

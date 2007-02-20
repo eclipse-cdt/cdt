@@ -9,7 +9,7 @@ Bundle-Localization: plugin
 Export-Package: org.eclipse.cdt.internal.corext;x-internal:=true,
  org.eclipse.cdt.internal.corext.template.c;x-internal:=true,
  org.eclipse.cdt.internal.corext.util;x-internal:=true,
- org.eclipse.cdt.internal.ui;x-internal:=true,
+ org.eclipse.cdt.internal.ui,
  org.eclipse.cdt.internal.ui.actions;x-internal:=true,
  org.eclipse.cdt.internal.ui.browser.opentype;x-internal:=true,
  org.eclipse.cdt.internal.ui.buildconsole;x-internal:=true,
@@ -54,7 +54,8 @@ Export-Package: org.eclipse.cdt.internal.corext;x-internal:=true,
  org.eclipse.cdt.ui.text.folding,
  org.eclipse.cdt.ui.wizards,
  org.eclipse.cdt.ui.wizards.conversion,
- org.eclipse.cdt.utils.ui.controls
+ org.eclipse.cdt.utils.ui.controls,
+ org.eclipse.cdt.ui.newui
 Require-Bundle: org.eclipse.ui.ide;bundle-version="[3.3.0,4.0.0)",
  org.eclipse.ui.views;bundle-version="[3.2.0,4.0.0)",
  org.eclipse.jface.text;bundle-version="[3.3.0,4.0.0)",
@@ -71,7 +72,8 @@ Require-Bundle: org.eclipse.ui.ide;bundle-version="[3.3.0,4.0.0)",
  org.eclipse.help;bundle-version="[3.2.0,4.0.0)",
  org.eclipse.ui.navigator;bundle-version="[3.2.0,4.0.0)",
  org.eclipse.cdt.refactoring;bundle-version="[4.0.0,5.0.0)",
- org.eclipse.core.filesystem;bundle-version="[1.1.0,2.0.0)"
+ org.eclipse.core.filesystem;bundle-version="[1.1.0,2.0.0)",
+ org.eclipse.core.variables;bundle-version="[3.1.100,4.0.0)"
 Eclipse-LazyStart: true
 Bundle-RequiredExecutionEnvironment: J2SE-1.4
 Import-Package: com.ibm.icu.text

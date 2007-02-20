@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2005 IBM Corporation and others.
+ * Copyright (c) 2002, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -22,6 +22,7 @@ import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.IProjectNature;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Plugin;
 
@@ -104,6 +105,46 @@ public class ManagedCProjectNature implements IProjectNature {
 		description.setNatureIds(newNatures);
 		project.setDescription(description, monitor);
 	}
+	
+	/**
+	 * Update the Java command in the build spec (replace existing one if present,
+	 * add one first if none).
+	 */
+	public static IProjectDescription setBuildSpec(IProjectDescription description, ICommand newCommand) {
+
+		ICommand[] oldCommands = description.getBuildSpec();
+		ICommand oldCommand = getBuildSpec(description, newCommand.getBuilderName());
+		ICommand[] newCommands;
+
+		if (oldCommand == null) {
+			// Add a Java build spec before other builders (1FWJK7I)
+			newCommands = new ICommand[oldCommands.length + 1];
+			System.arraycopy(oldCommands, 0, newCommands, 1, oldCommands.length);
+			newCommands[0] = newCommand;
+		} else {
+			for (int i = 0, max = oldCommands.length; i < max; i++) {
+				if (oldCommands[i].getBuilderName().equals(oldCommand.getBuilderName())) {
+					oldCommands[i] = newCommand;
+					break;
+				}
+			}
+			newCommands = oldCommands;
+		}
+
+		// Commit the spec change into the project
+		description.setBuildSpec(newCommands);
+		return description;
+	}
+	
+	public static ICommand getBuildSpec(IProjectDescription description, String builderID) {
+		ICommand[] commands = description.getBuildSpec();
+		for (int i = 0; i < commands.length; ++i) {
+			if (commands[i].getBuilderName().equals(builderID)) {
+				return commands[i];
+			}
+		}
+		return null;
+	}
 
 	/**
 	 * Get the correct builderID
@@ -120,16 +161,14 @@ public class ManagedCProjectNature implements IProjectNature {
 	 * @see org.eclipse.core.resources.IProjectNature#configure()
 	 */
 	public void configure() throws CoreException {
-		// TODO Auto-generated method stub
-
+		addManagedBuilder(project, new NullProgressMonitor());
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.resources.IProjectNature#deconfigure()
 	 */
 	public void deconfigure() throws CoreException {
-		// TODO Auto-generated method stub
-
+		// TODO remove builder from here
 	}
 
 	/* (non-Javadoc)

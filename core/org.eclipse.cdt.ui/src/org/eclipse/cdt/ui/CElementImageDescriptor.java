@@ -255,16 +255,16 @@ public class CElementImageDescriptor extends CompositeImageDescriptor {
 //			x-= data.width;
 //			drawImage(data, x, size.y - data.height);
 //		}		
-	}		
+		}
 	
 	private void drawTopLeft() {
 		ImageData data= null;
 		if ((fFlags & DEFINES) != 0) {
 			data= CPluginImages.DESC_OVR_DEFINES.getImageData();
 			drawImage(data, 0, 0);
-		} 
+		}
 	}		
-
+	
 	private void drawBottomLeft() {
 		Point size= getSize();
 		int x= 0;

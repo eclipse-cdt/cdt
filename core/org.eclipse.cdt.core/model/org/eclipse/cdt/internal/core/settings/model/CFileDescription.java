@@ -1,0 +1,131 @@
+/*******************************************************************************
+ * Copyright (c) 2007 Intel Corporation and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ * Intel Corporation - Initial API and implementation
+ *******************************************************************************/
+package org.eclipse.cdt.internal.core.settings.model;
+
+import org.eclipse.cdt.core.settings.model.ICFileDescription;
+import org.eclipse.cdt.core.settings.model.ICFolderDescription;
+import org.eclipse.cdt.core.settings.model.ICLanguageSetting;
+import org.eclipse.cdt.core.settings.model.ICSettingBase;
+import org.eclipse.cdt.core.settings.model.extension.CDataObject;
+import org.eclipse.cdt.core.settings.model.extension.CFileData;
+import org.eclipse.cdt.core.settings.model.extension.CLanguageData;
+import org.eclipse.cdt.core.settings.model.extension.CResourceData;
+import org.eclipse.cdt.core.settings.model.util.PathSettingsContainer;
+import org.eclipse.core.runtime.IPath;
+
+public class CFileDescription extends CDataProxyContainer implements
+		ICFileDescription, IProxyFactory, IInternalResourceDescription {
+	private PathSettingsContainer fCache;
+	private ResourceDescriptionHolder fRcHolder;
+
+
+	CFileDescription(CFileData data, CConfigurationDescription cfg) {
+		super(data, cfg, cfg);
+	}
+
+	public IPath getPath() {
+		CResourceData data = (CResourceData)getData(false);
+		return data.getPath();
+	}
+
+	public boolean isExcluded() {
+		CResourceData data = (CResourceData)getData(false);
+		return data.isExcluded();
+	}
+
+	public void setExcluded(boolean excluded) {
+		if(isExcluded() == excluded)
+			return;
+		
+		CResourceData data = (CResourceData)getData(true);
+		data.setExcluded(excluded);
+	}
+
+	public void setPath(IPath path) {
+		CResourceData data = (CResourceData)getData(true);
+		data.setPath(path);
+	}
+	
+	void setData(CDataObject data) {
+		super.setData(data);
+		IPath cachedPath = getCachedPath();
+		IPath newPath = ((CResourceData)data).getPath();
+		if(cachedPath != null && !cachedPath.equals(newPath)){
+			fCache.setPath(newPath, true);
+		}
+	}
+
+	public IPath getCachedPath() {
+		if(fCache != null)
+			return fCache.getPath();
+		return null;
+	}
+
+	public final int getType() {
+		return ICSettingBase.SETTING_FILE;
+	}
+
+	public void setPathContainer(PathSettingsContainer cr) {
+		fCache = cr;
+	}
+
+	public ICLanguageSetting getLanguageSetting() {
+		CFileData data = getFileData(false);
+		IProxyProvider provider = getChildrenProxyProvider();
+		CLanguageData lData = data.getLanguageData();
+		if(lData != null)
+			return (ICLanguageSetting)provider.getProxy(lData);
+		return null;
+	}
+	
+	protected CFileData getFileData(boolean write){
+		return (CFileData)getData(write);
+	}
+
+	protected IProxyProvider createChildProxyProvider() {
+		ICDataScope scope = new ICDataScope(){
+
+			public CDataObject[] getChildren() {
+				return new CLanguageData[]{getFileData(false).getLanguageData()};
+			}
+
+			public boolean isStatic() {
+				return !containsWritableData();
+			}
+			
+		};
+		IProxyCache cache = new MapProxyCache();
+	
+		return new ProxyProvider(scope, cache, this);
+	}
+	
+	public CDataProxy createProxy(CDataObject data) {
+		if(data instanceof CLanguageData)
+			return new CLanguageSetting((CLanguageData)data, this, (CConfigurationDescription)getConfiguration());
+		return null;
+	}
+	
+	private ResourceDescriptionHolder getRcHolder(){
+		if(fRcHolder == null){
+			fRcHolder = ((CConfigurationDescription)getConfiguration()).createHolder(this);
+		}
+		return fRcHolder;
+	}
+
+	public ICFolderDescription getParentFolderDescription() {
+		return getRcHolder().getParentFolderDescription();
+	}
+
+	public PathSettingsContainer getPathContainer() {
+		return fCache;
+	}
+
+}

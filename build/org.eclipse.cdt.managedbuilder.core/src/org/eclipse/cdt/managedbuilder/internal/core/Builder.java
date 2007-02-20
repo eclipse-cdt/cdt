@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2006 Intel Corporation and others.
+ * Copyright (c) 2004, 2007 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,11 +11,29 @@
 package org.eclipse.cdt.managedbuilder.internal.core;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.SortedMap;
 import java.util.StringTokenizer;
 
+import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.ErrorParserManager;
+import org.eclipse.cdt.core.cdtvariables.CdtVariableException;
+import org.eclipse.cdt.core.cdtvariables.ICdtVariableManager;
+import org.eclipse.cdt.core.settings.model.COutputEntry;
+import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
+import org.eclipse.cdt.core.settings.model.ICLanguageSettingEntry;
+import org.eclipse.cdt.core.settings.model.ICOutputEntry;
+import org.eclipse.cdt.core.settings.model.ICStorageElement;
+import org.eclipse.cdt.core.settings.model.extension.CBuildData;
+import org.eclipse.cdt.core.settings.model.util.CDataUtil;
+import org.eclipse.cdt.core.settings.model.util.LanguageSettingEntriesSerializer;
 import org.eclipse.cdt.managedbuilder.core.IBuildObject;
 import org.eclipse.cdt.managedbuilder.core.IBuilder;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
@@ -25,23 +43,31 @@ import org.eclipse.cdt.managedbuilder.core.IProjectType;
 import org.eclipse.cdt.managedbuilder.core.IToolChain;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuilderCorePlugin;
+import org.eclipse.cdt.managedbuilder.internal.dataprovider.BuildBuildData;
+import org.eclipse.cdt.managedbuilder.internal.macros.BuildMacroProvider;
 import org.eclipse.cdt.managedbuilder.internal.macros.FileContextBuildMacroValues;
+import org.eclipse.cdt.managedbuilder.macros.BuildMacroException;
+import org.eclipse.cdt.managedbuilder.macros.IBuildMacroProvider;
 import org.eclipse.cdt.managedbuilder.macros.IFileContextBuildMacroValues;
 import org.eclipse.cdt.managedbuilder.macros.IReservedMacroNameSupplier;
 import org.eclipse.cdt.managedbuilder.makegen.IManagedBuilderMakefileGenerator;
+import org.eclipse.cdt.managedbuilder.makegen.IManagedBuilderMakefileGenerator2;
 import org.eclipse.cdt.managedbuilder.makegen.gnu.GnuMakefileGenerator;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionPoint;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.PluginVersionIdentifier;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
+import org.eclipse.core.variables.IStringVariableManager;
+import org.eclipse.core.variables.VariablesPlugin;
 
-public class Builder extends BuildObject implements IBuilder {
+public class Builder extends BuildObject implements IBuilder, IMatchKeyProvider  {
 
-	private static final String EMPTY_STRING = new String();
+	private static final String EMPTY_STRING = ""; //$NON-NLS-1$
 
 	//  Superclass
 	private IBuilder superClass;
@@ -64,6 +90,29 @@ public class Builder extends BuildObject implements IBuilder {
 	private IReservedMacroNameSupplier reservedMacroNameSupplier;
 	private IConfigurationElement reservedMacroNameSupplierElement;
 	
+	private String autoBuildTarget;
+	private Boolean autoBuildEnabled;
+	private String incrementalBuildTarget;
+	private Boolean incrementalBuildEnabled;
+	private String cleanBuildTarget;
+	private Boolean cleanBuildEnabled;
+	private Boolean managedBuildOn;
+	private Boolean keepEnvVarInBuildfile;
+	private Boolean supportsManagedBuild;
+	//custom builder settings
+	private String[] customizedErrorParserIds; 
+	private HashMap customizedEnvironment;
+	private Boolean appendEnvironment;// = Boolean.valueOf(true);
+	private String buildPath;
+	private HashMap customBuildProperties;
+//	private Boolean isWorkspaceBuildPath;
+	private String ignoreErrCmd;
+	private String parallelBuildCmd;
+	private Boolean stopOnErr;
+	private Integer parallelNum;
+	private Boolean parallelBuildOn;
+	private boolean isTest;
+	
 	//  Miscellaneous
 	private boolean isExtensionBuilder = false;
 	private boolean isDirty = false;
@@ -71,6 +120,15 @@ public class Builder extends BuildObject implements IBuilder {
 
 	private IConfigurationElement previousMbsVersionConversionElement = null;
 	private IConfigurationElement currentMbsVersionConversionElement = null;
+	
+	private BuildBuildData fBuildData;
+	
+	private Boolean fSupportsCustomizedBuild;
+
+	private List identicalList;
+	
+	private ICOutputEntry[] outputEntries;
+
 	/*
 	 *  C O N S T R U C T O R S
 	 */
@@ -101,7 +159,7 @@ public class Builder extends BuildObject implements IBuilder {
 		// Hook me up to the Managed Build Manager
 		ManagedBuildManager.addExtensionBuilder(this);
 	}
-
+	
 	/**
 	 * This constructor is called to create a Builder whose attributes and children will be 
 	 * added by separate calls.
@@ -128,6 +186,7 @@ public class Builder extends BuildObject implements IBuilder {
 			// Hook me up to the Managed Build Manager
 			ManagedBuildManager.addExtensionBuilder(this);
 		} else {
+			fBuildData = new BuildBuildData(this);
 			setDirty(true);
 		}
 	}
@@ -140,9 +199,11 @@ public class Builder extends BuildObject implements IBuilder {
 	 * @param element The XML element that contains the Builder settings.
 	 * @param managedBuildRevision 	The fileVersion of Managed Buid System
 	 */
-	public Builder(IToolChain parent, Element element, String managedBuildRevision) {
+	public Builder(IToolChain parent, ICStorageElement element, String managedBuildRevision) {
 		this.parent = parent;
 		isExtensionBuilder = false;
+		
+		fBuildData = new BuildBuildData(this);
 		
 		// Set the managedBuildRevision
 		setManagedBuildRevision(managedBuildRevision);
@@ -159,15 +220,18 @@ public class Builder extends BuildObject implements IBuilder {
 	 */
 	public Builder(IToolChain parent, String Id, String name, Builder builder) {
 		this.parent = parent;
+		
 		superClass = builder.superClass;
 		if (superClass != null) {
 			if (builder.superClassId != null) {
 				superClassId = new String(builder.superClassId);
 			}
 		}
+
 		setId(Id);
 		setName(name);
 		
+		boolean copyIds = Id.equals(builder.getId());
 		// Set the managedBuildRevision & the version
 		setManagedBuildRevision(builder.getManagedBuildRevision());
 		setVersion(getVersionFromId());
@@ -196,6 +260,26 @@ public class Builder extends BuildObject implements IBuilder {
 		if (builder.args != null) {
 			args = new String(builder.args);
 		}
+		autoBuildTarget = builder.autoBuildTarget;
+		autoBuildEnabled = builder.autoBuildEnabled;
+		incrementalBuildTarget = builder.incrementalBuildTarget;
+		incrementalBuildEnabled = builder.incrementalBuildEnabled;
+		cleanBuildTarget = builder.cleanBuildTarget;
+		cleanBuildEnabled = builder.cleanBuildEnabled;
+		managedBuildOn = builder.managedBuildOn;
+		keepEnvVarInBuildfile = builder.keepEnvVarInBuildfile;
+		supportsManagedBuild = builder.supportsManagedBuild;
+		if(builder.customizedErrorParserIds != null)
+			customizedErrorParserIds = (String[])builder.customizedErrorParserIds.clone();
+		if(builder.customizedEnvironment != null)
+			customizedEnvironment = (HashMap)builder.customizedEnvironment.clone();
+		appendEnvironment = builder.appendEnvironment;
+		buildPath = builder.buildPath;
+		if(builder.customBuildProperties != null)
+			customBuildProperties = (HashMap)builder.customBuildProperties.clone();
+
+			
+			
 		buildFileGeneratorElement = builder.buildFileGeneratorElement; 
 		
 		if(builder.fileContextBuildMacroValues != null){
@@ -214,8 +298,129 @@ public class Builder extends BuildObject implements IBuilder {
 		reservedMacroNameSupplierElement = builder.reservedMacroNameSupplierElement;
 		reservedMacroNameSupplier = builder.reservedMacroNameSupplier;
 
+		fBuildData = new BuildBuildData(this);
+		
+		stopOnErr = builder.stopOnErr;
+		ignoreErrCmd = builder.ignoreErrCmd;
+		parallelBuildCmd = builder.parallelBuildCmd;
+		parallelNum = builder.parallelNum;
+		parallelBuildOn = builder.parallelBuildOn;
+
+		if(builder.outputEntries != null){
+			outputEntries = (ICOutputEntry[])builder.outputEntries.clone();
+		}
+
+		if(copyIds){
+			isDirty = builder.isDirty;
+		} else {
+			setDirty(true);
+		}
+	}
+	
+	public void copySettings(Builder builder, boolean allBuildSettings){
+		try {
+			if(isAutoBuildEnable() != builder.isAutoBuildEnable())
+				setAutoBuildEnable(builder.isAutoBuildEnable());
+		} catch (CoreException e) {
+		}
+		try {
+			if(isIncrementalBuildEnabled() != builder.isIncrementalBuildEnabled())
+				setIncrementalBuildEnable(builder.isIncrementalBuildEnabled());
+		} catch (CoreException e) {
+		}
+		try {
+			if(isFullBuildEnabled() != builder.isFullBuildEnabled())
+				setFullBuildEnable(builder.isFullBuildEnabled());
+		} catch (CoreException e) {
+		}
+		try {
+			if(isCleanBuildEnabled() != builder.isCleanBuildEnabled())
+				setCleanBuildEnable(builder.isCleanBuildEnabled());
+		} catch (CoreException e) {
+		}
+		if(isStopOnError() != builder.isStopOnError()
+				&& supportsStopOnError(builder.isStopOnError())){
+			try {
+				setStopOnError(builder.isStopOnError());
+			} catch (CoreException e) {
+			}
+		}
+		if(getParallelizationNum() != builder.getParallelizationNum()
+				&& supportsParallelBuild()){
+			try {
+				setParallelizationNum(builder.getParallelizationNum());
+			} catch (CoreException e) {
+			}
+		}
+		if(isParallelBuildOn() != builder.isParallelBuildOn()
+				&& supportsParallelBuild()){
+			try {
+				setParallelBuildOn(builder.isParallelBuildOn());
+			} catch (CoreException e) {
+			}
+		}
+		if(builder.keepEnvironmentVariablesInBuildfile() && 
+				canKeepEnvironmentVariablesInBuildfile()){
+			setKeepEnvironmentVariablesInBuildfile(builder.keepEnvironmentVariablesInBuildfile());
+		}
+		if(isManagedBuildOn() != builder.isManagedBuildOn()
+				&& supportsBuild(builder.isManagedBuildOn())){
+			try {
+				setManagedBuildOn(builder.isManagedBuildOn());
+			} catch (CoreException e) {
+			}
+		}
+
+		if(builder.customizedErrorParserIds != null)
+			customizedErrorParserIds = (String[])builder.customizedErrorParserIds.clone();
+		if(builder.customizedEnvironment != null)
+			customizedEnvironment = (HashMap)builder.customizedEnvironment.clone();
+		appendEnvironment = builder.appendEnvironment;
+		if(!getBuildPath().equals(builder.getBuildPath()))
+			setBuildPath(builder.getBuildPath());
+		if(builder.customBuildProperties != null)
+			customBuildProperties = (HashMap)builder.customBuildProperties.clone();
+
+		if(allBuildSettings){
+			if(!getCommand().equals(builder.getCommand()))
+				setCommand(builder.getCommand());
+			if(!getArgumentsAttribute().equals(builder.getArgumentsAttribute()))
+				setArgumentsAttribute(builder.getArgumentsAttribute());
+			if(!getAutoBuildTarget().equals(builder.getAutoBuildTarget())){
+				try {
+					setAutoBuildTarget(builder.getAutoBuildTarget());
+				} catch (CoreException e) {
+				}
+			}
+			if(!getIncrementalBuildTarget().equals(builder.getIncrementalBuildTarget())){
+				try {
+					setIncrementalBuildTarget(builder.getIncrementalBuildTarget());
+				} catch (CoreException e) {
+				}
+			}
+			if(!getFullBuildTarget().equals(builder.getFullBuildTarget())){
+				try {
+					setFullBuildTarget(builder.getFullBuildTarget());
+				} catch (CoreException e) {
+				}
+			}
+			if(!getCleanBuildTarget().equals(builder.getCleanBuildTarget())){
+				try {
+					setCleanBuildTarget(builder.getCleanBuildTarget());
+				} catch (CoreException e) {
+				}
+			}
+		}
+
 		setDirty(true);
 	}
+	
+/*	public Builder(IToolChain parent, String Id, String name, Builder builder, ICStorageElement el) {
+		this(parent, Id, name, builder);
+		
+		loadFromProject(el);
+	}
+*/
 
 	/*
 	 *  E L E M E N T   A T T R I B U T E   R E A D E R S   A N D   W R I T E R S
@@ -282,6 +487,57 @@ public class Builder extends BuildObject implements IBuilder {
         
         // arguments
 		args = element.getAttribute(IBuilder.ARGUMENTS);
+		
+		autoBuildTarget = element.getAttribute(ATTRIBUTE_TARGET_AUTO);
+		String tmp = element.getAttribute(ATTRIBUTE_AUTO_ENABLED);
+		if(tmp != null)
+			autoBuildEnabled = Boolean.valueOf(tmp);
+		incrementalBuildTarget = element.getAttribute(ATTRIBUTE_TARGET_INCREMENTAL);
+		tmp = element.getAttribute(ATTRIBUTE_AUTO_ENABLED);
+		if(tmp != null)
+			incrementalBuildEnabled = Boolean.valueOf(tmp);
+		cleanBuildTarget = element.getAttribute(ATTRIBUTE_TARGET_CLEAN);
+		tmp = element.getAttribute(ATTRIBUTE_CLEAN_ENABLED);
+		if(tmp != null)
+			cleanBuildEnabled = Boolean.valueOf(tmp);
+		tmp = element.getAttribute(ATTRIBUTE_MANAGED_BUILD_ON);
+		if(tmp != null)
+			managedBuildOn = Boolean.valueOf(tmp);
+		tmp = element.getAttribute(ATTRIBUTE_KEEP_ENV);
+		if(tmp != null)
+			keepEnvVarInBuildfile = Boolean.valueOf(tmp);
+		tmp = element.getAttribute(ATTRIBUTE_SUPORTS_MANAGED_BUILD);
+		if(tmp != null)
+			supportsManagedBuild = Boolean.valueOf(tmp);
+		tmp = element.getAttribute(ATTRIBUTE_CUSTOMIZED_ERROR_PARSERS);
+		if(tmp != null)
+			customizedErrorParserIds = CDataUtil.stringToArray(tmp, ";"); //$NON-NLS-1$
+		tmp = element.getAttribute(ATTRIBUTE_ENVIRONMENT);
+		if(tmp != null)
+			customizedEnvironment = (HashMap)MapStorageElement.decodeMap(tmp);
+		tmp = element.getAttribute(ATTRIBUTE_APPEND_ENVIRONMENT);
+		if(tmp != null)
+			appendEnvironment = Boolean.valueOf(tmp);;
+		buildPath = element.getAttribute(ATTRIBUTE_BUILD_PATH);
+		tmp = element.getAttribute(ATTRIBUTE_CUSTOM_PROPS);
+		if(tmp != null)
+			customBuildProperties = (HashMap)MapStorageElement.decodeMap(tmp);
+
+		ignoreErrCmd = element.getAttribute(ATTRIBUTE_IGNORE_ERR_CMD);
+        tmp = element.getAttribute(ATTRIBUTE_STOP_ON_ERR);
+        if(tmp != null)
+        	stopOnErr = Boolean.valueOf(tmp);
+        parallelBuildCmd = element.getAttribute(ATTRIBUTE_PARALLEL_BUILD_CMD);
+        tmp = element.getAttribute(ATTRIBUTE_PARALLELIZATION_NUMBER);
+        if(tmp != null){
+        	try {
+        		parallelNum = Integer.decode(tmp);
+        	} catch (NumberFormatException e){
+        	}
+        }
+        tmp = element.getAttribute(ATTRIBUTE_PARALLEL_BUILD_ON);
+        if(tmp != null)
+        	parallelBuildOn = Boolean.valueOf(tmp);
         
 		// Get the semicolon separated list of IDs of the error parsers
 		errorParserIds = element.getAttribute(IToolChain.ERROR_PARSERS);
@@ -294,6 +550,29 @@ public class Builder extends BuildObject implements IBuilder {
 		
 		//load the File Context Build Macro Values
 		fileContextBuildMacroValues = new FileContextBuildMacroValues(this,element);
+		
+        tmp = element.getAttribute(IS_SYSTEM);
+        if(tmp != null)
+        	isTest = Boolean.valueOf(tmp).booleanValue();
+        
+        IManagedConfigElement[] children = element.getChildren();
+        for(int i = 0; i < children.length; i++){
+        	IManagedConfigElement child = children[i];
+        	String name = child.getName();
+        	if(OUTPUT_ENTRIES.equals(name)){
+        		ICLanguageSettingEntry entries[] = LanguageSettingEntriesSerializer.loadEntries(new ManagedConfigStorageElement(child));
+        		if(entries.length == 0){
+        			outputEntries = new ICOutputEntry[0];
+        		} else {
+	        		List list = new ArrayList(entries.length);
+	        		for(int k = 0; k < entries.length; k++){
+	        			if(entries[k].getKind() == ICLanguageSettingEntry.OUTPUT_PATH)
+	        				list.add(entries[k]);
+	        		}
+	        		outputEntries = (ICOutputEntry[])list.toArray(new ICOutputEntry[list.size()]);
+        		}
+        	}
+        }
 	}
 	
 	/* (non-Javadoc)
@@ -302,13 +581,13 @@ public class Builder extends BuildObject implements IBuilder {
 	 * 
 	 * @param element An XML element containing the builder information 
 	 */
-	protected void loadFromProject(Element element) {
+	protected void loadFromProject(ICStorageElement element) {
 		
 		// id
 		setId(element.getAttribute(IBuildObject.ID));
 
 		// name
-		if (element.hasAttribute(IBuildObject.NAME)) {
+		if (element.getAttribute(IBuildObject.NAME) != null) {
 			setName(element.getAttribute(IBuildObject.NAME));
 		}
 		
@@ -324,22 +603,22 @@ public class Builder extends BuildObject implements IBuilder {
 		}
 
 		// Get the 'versionSupported' attribute
-		if (element.hasAttribute(VERSIONS_SUPPORTED)) {
+		if (element.getAttribute(VERSIONS_SUPPORTED) != null) {
 			versionsSupported = element.getAttribute(VERSIONS_SUPPORTED);
 		}
 		
 		// Get the 'convertToId' id
-		if (element.hasAttribute(CONVERT_TO_ID)) {
+		if (element.getAttribute(CONVERT_TO_ID) != null) {
 			convertToId = element.getAttribute(CONVERT_TO_ID);
 		}
 		
 		// Get the unused children, if any
-		if (element.hasAttribute(IProjectType.UNUSED_CHILDREN)) {
+		if (element.getAttribute(IProjectType.UNUSED_CHILDREN) != null) {
 				unusedChildren = element.getAttribute(IProjectType.UNUSED_CHILDREN); 
 		}
 		
 		// isAbstract
-		if (element.hasAttribute(IProjectType.IS_ABSTRACT)) {
+		if (element.getAttribute(IProjectType.IS_ABSTRACT) != null) {
 			String isAbs = element.getAttribute(IProjectType.IS_ABSTRACT);
 			if (isAbs != null){
 				isAbstract = new Boolean("true".equals(isAbs)); //$NON-NLS-1$
@@ -347,25 +626,100 @@ public class Builder extends BuildObject implements IBuilder {
 		}
 
         // command
-		if (element.hasAttribute(IBuilder.COMMAND)) {
+		if (element.getAttribute(IBuilder.COMMAND) != null) {
 			command = element.getAttribute(IBuilder.COMMAND); 
 		}
         
         // arguments
-		if (element.hasAttribute(IBuilder.ARGUMENTS)) {
+		if (element.getAttribute(IBuilder.ARGUMENTS) != null) {
 			args = element.getAttribute(IBuilder.ARGUMENTS);
 		}
 		
+		autoBuildTarget = element.getAttribute(ATTRIBUTE_TARGET_AUTO);
+		String tmp = element.getAttribute(ATTRIBUTE_AUTO_ENABLED);
+		if(tmp != null)
+			autoBuildEnabled = Boolean.valueOf(tmp);
+		incrementalBuildTarget = element.getAttribute(ATTRIBUTE_TARGET_INCREMENTAL);
+		tmp = element.getAttribute(ATTRIBUTE_AUTO_ENABLED);
+		if(tmp != null)
+			incrementalBuildEnabled = Boolean.valueOf(tmp);
+		cleanBuildTarget = element.getAttribute(ATTRIBUTE_TARGET_CLEAN);
+		tmp = element.getAttribute(ATTRIBUTE_CLEAN_ENABLED);
+		if(tmp != null)
+			cleanBuildEnabled = Boolean.valueOf(tmp);
+		tmp = element.getAttribute(ATTRIBUTE_MANAGED_BUILD_ON);
+		if(tmp != null)
+			managedBuildOn = Boolean.valueOf(tmp);
+		tmp = element.getAttribute(ATTRIBUTE_KEEP_ENV);
+		if(tmp != null)
+			keepEnvVarInBuildfile = Boolean.valueOf(tmp);
+		tmp = element.getAttribute(ATTRIBUTE_SUPORTS_MANAGED_BUILD);
+		if(tmp != null)
+			supportsManagedBuild = Boolean.valueOf(tmp);
+		tmp = element.getAttribute(ATTRIBUTE_CUSTOMIZED_ERROR_PARSERS);
+		if(tmp != null)
+			customizedErrorParserIds = CDataUtil.stringToArray(tmp, ";"); //$NON-NLS-1$
+		tmp = element.getAttribute(ATTRIBUTE_ENVIRONMENT);
+		if(tmp != null)
+			customizedEnvironment = (HashMap)MapStorageElement.decodeMap(tmp);
+		tmp = element.getAttribute(ATTRIBUTE_APPEND_ENVIRONMENT);
+		if(tmp != null)
+			appendEnvironment = Boolean.valueOf(tmp);;
+		buildPath = element.getAttribute(ATTRIBUTE_BUILD_PATH);
+		tmp = element.getAttribute(ATTRIBUTE_CUSTOM_PROPS);
+		if(tmp != null)
+			customBuildProperties = (HashMap)MapStorageElement.decodeMap(tmp);
+
 		// Get the semicolon separated list of IDs of the error parsers
-		if (element.hasAttribute(IToolChain.ERROR_PARSERS)) {
+		if (element.getAttribute(IToolChain.ERROR_PARSERS) != null) {
 			errorParserIds = element.getAttribute(IToolChain.ERROR_PARSERS);
 		}
 		
 		// Note: build file generator cannot be specified in a project file because
 		//       an IConfigurationElement is needed to load it!
-		if (element.hasAttribute(IBuilder.BUILDFILEGEN_ID)) {
+		if (element.getAttribute(IBuilder.BUILDFILEGEN_ID) != null) {
 			// TODO:  Issue warning?
 		}
+		
+		ignoreErrCmd = element.getAttribute(ATTRIBUTE_IGNORE_ERR_CMD);
+        tmp = element.getAttribute(ATTRIBUTE_STOP_ON_ERR);
+        if(tmp != null)
+        	stopOnErr = Boolean.valueOf(tmp);
+        parallelBuildCmd = element.getAttribute(ATTRIBUTE_PARALLEL_BUILD_CMD);
+        tmp = element.getAttribute(ATTRIBUTE_PARALLELIZATION_NUMBER);
+        if(tmp != null){
+        	try {
+        		parallelNum = Integer.decode(tmp);
+        	} catch (NumberFormatException e){
+        	}
+        }
+        tmp = element.getAttribute(ATTRIBUTE_PARALLEL_BUILD_ON);
+        if(tmp != null)
+        	parallelBuildOn = Boolean.valueOf(tmp);
+
+        ICStorageElement[] children = element.getChildren();
+        for(int i = 0; i < children.length; i++){
+        	ICStorageElement child = children[i];
+        	String name = child.getName();
+        	if(OUTPUT_ENTRIES.equals(name)){
+        		ICLanguageSettingEntry entries[] = LanguageSettingEntriesSerializer.loadEntries(child);
+        		if(entries.length == 0){
+        			outputEntries = new ICOutputEntry[0];
+        		} else {
+	        		List list = new ArrayList(entries.length);
+	        		for(int k = 0; k < entries.length; k++){
+	        			if(entries[k].getKind() == ICLanguageSettingEntry.OUTPUT_PATH)
+	        				list.add(entries[k]);
+	        		}
+	        		outputEntries = (ICOutputEntry[])list.toArray(new ICOutputEntry[list.size()]);
+        		}
+        	}
+        }
+
+	}
+
+	public void serialize(ICStorageElement element) {
+		serialize(element, true);
 	}
 
 	/**
@@ -374,7 +728,7 @@ public class Builder extends BuildObject implements IBuilder {
 	 * @param doc
 	 * @param element
 	 */
-	public void serialize(Document doc, Element element) {
+	public void serialize(ICStorageElement element, boolean resetDirtyState) {
 		if (superClass != null)
 			element.setAttribute(IProjectType.SUPERCLASS, superClass.getId());
 		
@@ -413,15 +767,61 @@ public class Builder extends BuildObject implements IBuilder {
 		if (args != null) {
 			element.setAttribute(IBuilder.ARGUMENTS, args);
 		}
+		
+		if(autoBuildTarget != null)
+			element.setAttribute(ATTRIBUTE_TARGET_AUTO, autoBuildTarget);
+		if(autoBuildEnabled != null)
+			element.setAttribute(ATTRIBUTE_AUTO_ENABLED, autoBuildEnabled.toString());
+		if(incrementalBuildTarget != null)
+			element.setAttribute(ATTRIBUTE_TARGET_INCREMENTAL, incrementalBuildTarget);
+		if(incrementalBuildEnabled != null)
+			element.setAttribute(ATTRIBUTE_AUTO_ENABLED, incrementalBuildEnabled.toString());
+		if(cleanBuildTarget != null)
+			element.setAttribute(ATTRIBUTE_TARGET_CLEAN, cleanBuildTarget);
+		if(cleanBuildEnabled != null)
+			element.setAttribute(ATTRIBUTE_CLEAN_ENABLED, cleanBuildEnabled.toString());
+		if(managedBuildOn != null)
+			element.setAttribute(ATTRIBUTE_MANAGED_BUILD_ON, managedBuildOn.toString());
+		if(keepEnvVarInBuildfile != null)
+			element.setAttribute(ATTRIBUTE_KEEP_ENV, keepEnvVarInBuildfile.toString());
+		if(supportsManagedBuild != null)
+			element.setAttribute(ATTRIBUTE_SUPORTS_MANAGED_BUILD, supportsManagedBuild.toString());
+		if(customizedErrorParserIds != null)
+			element.setAttribute(ATTRIBUTE_CUSTOMIZED_ERROR_PARSERS, CDataUtil.arrayToString(customizedErrorParserIds, ";"));
+		if(customizedEnvironment != null)
+			element.setAttribute(ATTRIBUTE_ENVIRONMENT, MapStorageElement.encodeMap(customizedEnvironment));
+		if(appendEnvironment != null)
+			element.setAttribute(ATTRIBUTE_APPEND_ENVIRONMENT, appendEnvironment.toString());
+		if(buildPath != null)	
+			element.setAttribute(ATTRIBUTE_BUILD_PATH, buildPath);
+		if(customBuildProperties != null)
+			element.setAttribute(ATTRIBUTE_CUSTOM_PROPS, MapStorageElement.encodeMap(customBuildProperties));
 
+        if(ignoreErrCmd != null)
+        	element.setAttribute(ATTRIBUTE_IGNORE_ERR_CMD, ignoreErrCmd);
+        if(stopOnErr != null)
+        	element.setAttribute(ATTRIBUTE_STOP_ON_ERR, stopOnErr.toString());
+        if(parallelBuildCmd != null)
+        	element.setAttribute(ATTRIBUTE_PARALLEL_BUILD_CMD, parallelBuildCmd);
+        if(parallelNum != null)
+        	element.setAttribute(ATTRIBUTE_PARALLELIZATION_NUMBER, parallelNum.toString());
+        if(parallelBuildOn != null)
+        	element.setAttribute(ATTRIBUTE_MANAGED_BUILD_ON, parallelBuildOn.toString());
 		// Note: build file generator cannot be specified in a project file because
 		//       an IConfigurationElement is needed to load it!
 		if (buildFileGeneratorElement != null) {
 			//  TODO:  issue warning?
 		}
 		
-		// I am clean now
-		isDirty = false;
+		if(outputEntries != null){
+			ICStorageElement outEl = element.createChild(OUTPUT_ENTRIES);
+			LanguageSettingEntriesSerializer.serializeEntries(outputEntries, outEl);
+		}
+		
+		if(resetDirtyState){
+			// I am clean now
+			isDirty = false;
+		}
 	}
 
 	/*
@@ -493,13 +893,141 @@ public class Builder extends BuildObject implements IBuilder {
 	 * @see org.eclipse.cdt.core.build.managed.IBuilder#getArguments()
 	 */
 	public String getArguments() {
+		String args = getArgumentsAttribute(); 
+		String stopOnErrCmd = getStopOnErrCmd(isStopOnError());
+		String parallelBuildCmd = isParallelBuildOn() ? getParallelizationCmd(getParallelizationNum()) : EMPTY_STRING;
+		
+		args = addCmd(args, stopOnErrCmd);
+		args = addCmd(args, parallelBuildCmd);
+
+		return args;
+	}
+	
+	private String addCmd(String args, String cmd){
+		if(getCmdIndex(args, cmd) == -1){
+			if(args.length() != 0){
+				args += ' ';
+			}
+			args += cmd;
+		}
+		return args;
+	}
+	
+	private String removeCmd(String args, String cmd){
+		int index = getCmdIndex(args, cmd);
+		if(index != -1){
+			String prefix = args.substring(0, index).trim();
+			String suffix = args.substring(index + cmd.length(), args.length()).trim();
+			if(prefix.length() == 0){
+				args = suffix;
+			} else if (suffix.length() == 0){
+				args = prefix;
+			} else {
+				args = prefix + ' ' + suffix;
+			}
+			
+			args = args.trim();
+		}
+		return args;
+	}
+	
+	private int getCmdIndex(String args, String cmd){
+		if(cmd.length() == 0)
+			return -1;
+
+		String tmp = args;
+		int index = -1;
+		for(index = tmp.indexOf(cmd); index != -1; index = tmp.indexOf(cmd, index + 1)){
+			if(index != 0){
+				char c = tmp.charAt(index-1); 
+				if(c != '\t' && c != ' ')
+					continue;
+			}
+			int end = index + cmd.length();
+			if(end < tmp.length()){
+				char c = tmp.charAt(end);
+				if(c != '\t' && c != ' ')
+					continue;
+			} 
+
+			//found
+			break;
+		}
+		return index;
+	}
+	
+	public String getParallelizationCmd(int num){
+		String pattern = getParrallelBuildCmd();
+		if(pattern.length() == 0){
+			return EMPTY_STRING;
+		}if(num == 0){
+			return EMPTY_STRING;
+		}
+		
+		return processParallelPattern(pattern, num < 0, num);
+	}
+	
+	private String processParallelPattern(String pattern, boolean empty, int num){
+		int start = pattern.indexOf(PARALLEL_PATTERN_NUM_START);
+		int end = -1;
+		boolean hasStartChar = false;
+		String result;
+		if(start != -1){
+			end = pattern.indexOf(PARALLEL_PATTERN_NUM_END);
+			if(end != -1){
+				hasStartChar = true;
+			} else {
+				start = -1;
+			}
+		}
+		if(start == -1){
+			start = pattern.indexOf(PARALLEL_PATTERN_NUM);
+			if(start != -1){
+				end = start + PARALLEL_PATTERN_NUM.length();
+			}
+		}
+		if(start == -1){
+			result = pattern;
+		} else {
+			String prefix;
+			String suffix;
+			String numStr;
+			prefix = pattern.substring(0, start);
+			suffix = pattern.substring(end);
+			numStr = pattern.substring(start, end);
+			if(empty){
+				result = prefix + suffix;
+			} else {
+				String resolvedNum;
+				if(hasStartChar){
+					String numPrefix, numSuffix;
+					numStr = numStr.substring(0, PARALLEL_PATTERN_NUM_START.length());
+					numStr = numStr.substring(numStr.length() - PARALLEL_PATTERN_NUM_END.length());
+					int numStart = pattern.indexOf(PARALLEL_PATTERN_NUM);
+					if(numStart != -1){
+						int numEnd = numStart + PARALLEL_PATTERN_NUM.length();
+						numPrefix = numStr.substring(0, numStart);
+						numSuffix = numStr.substring(numEnd);
+						resolvedNum = numPrefix + new Integer(num).toString() + numSuffix;
+					} else {
+						resolvedNum = EMPTY_STRING;
+					}
+				} else {
+					resolvedNum = new Integer(num).toString();
+				}
+				result = prefix + resolvedNum + suffix;
+			}
+		}
+		return result;
+	}
+	
+	public String getArgumentsAttribute() {
 		if (args == null) {
 			// If I have a superClass, ask it
 			if (superClass != null) {
-				return superClass.getArguments();
-			} else {
-				return new String("-k"); //$NON-NLS-1$
+				return ((Builder)superClass).getArgumentsAttribute();
 			}
+			return EMPTY_STRING;
 		}
 		return args;
 	}
@@ -547,6 +1075,7 @@ public class Builder extends BuildObject implements IBuilder {
 	 * @see org.eclipse.cdt.core.build.managed.IBuilder.setCommand(String)
 	 */
 	public void setCommand(String cmd) {
+		if(getCommand().equals(cmd)) return;
 		if (cmd == null && command == null) return;
 		if (command == null || cmd == null || !cmd.equals(command)) {
 			command = cmd;
@@ -558,6 +1087,12 @@ public class Builder extends BuildObject implements IBuilder {
 	 * @see org.eclipse.cdt.core.build.managed.IBuilder#setArguments(String)
 	 */
 	public void setArguments(String newArgs) {
+		if(getArguments().equals(newArgs))
+			return;
+		setArgumentsAttribute(newArgs);
+	}
+
+	public void setArgumentsAttribute(String newArgs) {
 		if (newArgs == null && args == null) return;
 		if (args == null || newArgs == null || !newArgs.equals(args)) {
 			args = newArgs;
@@ -982,4 +1517,887 @@ public class Builder extends BuildObject implements IBuilder {
 	public IConfigurationElement getCurrentMbsVersionConversionElement() {
 		return currentMbsVersionConversionElement;
 	}
+
+	public CBuildData getBuildData() {
+		return fBuildData;
+	}
+
+	public String[] getErrorParsers() {
+		if(isCustomBuilder() && customizedErrorParserIds != null)
+			return (String[])customizedErrorParserIds.clone();
+		
+		IToolChain parent = getParent();
+		IConfiguration parentConfig = parent.getParent();
+		return parentConfig.getErrorParserList();
+	}
+
+	public void setErrorParsers(String[] parsers) throws CoreException {
+		if(isCustomBuilder()){
+			customizedErrorParserIds = (parsers != null && parsers.length != 0) ? (String[])parsers.clone() : parsers;
+		} else {
+			IToolChain parent = getParent();
+			IConfiguration parentConfig = parent.getParent();
+			parentConfig.setErrorParserList(parsers);
+		}
+	}
+	
+	private Object getMacroContextData(){
+		return this;//!isExtensionBuilder ? (Object)this : (Object)getParent().getParent();
+	}
+
+	public String getBuildArguments() {
+		String args = getArguments();
+		IBuildMacroProvider provider = ManagedBuildManager.getBuildMacroProvider();
+
+		try {
+			args = provider.resolveValue(args, "", " ", IBuildMacroProvider.CONTEXT_CONFIGURATION, getMacroContextData());
+		} catch (BuildMacroException e) {
+		}
+		
+		return args;
+	}
+
+	public IPath getBuildCommand() {
+		String command = getCommand();
+		IBuildMacroProvider provider = ManagedBuildManager.getBuildMacroProvider();
+
+		try {
+			command = provider.resolveValue(command, "", " ", IBuildMacroProvider.CONTEXT_CONFIGURATION, getMacroContextData());
+		} catch (BuildMacroException e) {
+		}
+
+		return new Path(command);
+	}
+	
+	private String getBuildPathAttribute(){
+		if(buildPath == null){
+			if(superClass != null){
+				return ((Builder)superClass).getBuildPathAttribute();
+			}
+		}
+		return buildPath;
+	}
+	
+	public void setBuildPath(String path){
+		buildPath = path;
+		setDirty(true);
+	}
+	
+	public String getBuildPath(){
+		String path = getBuildPathAttribute();
+		if(path == null){
+			boolean initBuildPathVar = false;
+			Configuration cfg = (Configuration)getConfguration();
+			if(cfg != null && !cfg.isPreference()){
+				IProject project = cfg.getOwner().getProject();
+				IPath projPath = project.getFullPath();
+				if(isManagedBuildOn()){
+					path = projPath.append(cfg.getName()).toString();
+					initBuildPathVar = !isExtensionBuilder;
+				} else {
+					path = projPath.toString();
+				}
+				IStringVariableManager mngr = VariablesPlugin.getDefault().getStringVariableManager();
+				path = mngr.generateVariableExpression("workspace_loc", path); //$NON-NLS-1$
+				if(initBuildPathVar)
+					buildPath = path;
+			} else {
+				path = "";  //$NON-NLS-1$
+			}
+		}
+		return path;
+	}
+	
+/*	public boolean isWorkspaceBuildPath(){
+		String path = getBuildPathAttribute();
+		if(path == null)
+			return true;
+	
+		if(isWorkspaceBuildPath == null){
+			if(superClass != null)
+				return superClass.isWorkspaceBuildPath();
+			return true;
+		}
+		return isWorkspaceBuildPath.booleanValue();
+	}
+*/
+	public IPath getBuildLocation() {
+		String path = getBuildPath();
+		
+		IBuildMacroProvider provider = ManagedBuildManager.getBuildMacroProvider();
+
+		try {
+			path = provider.resolveValue(path, "", " ", IBuildMacroProvider.CONTEXT_CONFIGURATION, getMacroContextData());
+		} catch (BuildMacroException e) {
+		}
+		
+		return new Path(path);
+	}
+
+	public boolean isDefaultBuildCmd() {
+		return isExtensionBuilder || (command == null && args == null && superClass != null);
+	}
+
+	public boolean isStopOnError() {
+		if(stopOnErr == null){
+			if(superClass != null){
+				return superClass.isStopOnError();
+			}
+			return true;
+		}
+		return stopOnErr.booleanValue();
+	}
+
+	public void setBuildArguments(String args) throws CoreException {
+		setArguments(args);
+	}
+
+	public void setBuildCommand(IPath command) throws CoreException {
+		String cmd = command != null ? command.toString() : null;
+		setCommand(cmd);
+	}
+
+	public void setBuildLocation(IPath location) throws CoreException {
+		String path = location != null ? location.toString() : null;
+		setBuildPath(path);
+	}
+
+	public void setStopOnError(boolean on) throws CoreException {
+		if(isStopOnError() == on)
+			return;
+		
+		if(supportsStopOnError(on)){
+			String curCmd = getStopOnErrCmd(isStopOnError());
+			String args = getArgumentsAttribute();
+			String updatedArgs = removeCmd(args, curCmd);
+			if(!updatedArgs.equals(args))
+				setArgumentsAttribute(updatedArgs);
+			stopOnErr = Boolean.valueOf(on);
+		}
+		setDirty(true);
+	}
+
+	public void setUseDefaultBuildCmd(boolean on) throws CoreException {
+		if(!isExtensionBuilder && superClass != null){
+			if(on){
+				command = null;
+				args = null;
+			} else {
+				command = getCommand();
+			}
+		}
+	}
+
+	public String getAutoBuildTargetAttribute() {
+		if(autoBuildTarget == null){
+			if(superClass != null)
+				return ((Builder)superClass).getAutoBuildTargetAttribute();
+			return null;
+		}
+		return autoBuildTarget;
+	}
+	
+	public String getAutoBuildTarget() {
+		String attr = getAutoBuildTargetAttribute();
+		
+		IBuildMacroProvider provider = ManagedBuildManager.getBuildMacroProvider();
+
+		try {
+			attr = provider.resolveValue(attr, "", " ", IBuildMacroProvider.CONTEXT_CONFIGURATION, getMacroContextData());
+		} catch (BuildMacroException e) {
+		}
+		
+		return attr;
+	}
+
+
+	public String getCleanBuildTargetAttribute() {
+		if(cleanBuildTarget == null){
+			if(superClass != null)
+				return ((Builder)superClass).getCleanBuildTargetAttribute();
+			return null;
+		}
+		return cleanBuildTarget;
+	}
+
+	public String getCleanBuildTarget() {
+		String attr = getCleanBuildTargetAttribute();
+		
+		IBuildMacroProvider provider = ManagedBuildManager.getBuildMacroProvider();
+
+		try {
+			attr = provider.resolveValue(attr, "", " ", IBuildMacroProvider.CONTEXT_CONFIGURATION, getMacroContextData());
+		} catch (BuildMacroException e) {
+		}
+		
+		return attr;
+	}
+
+	
+	public String getFullBuildTarget() {
+		return getIncrementalBuildTarget();
+	}
+
+	public String getIncrementalBuildTargetAttribute() {
+		if(incrementalBuildTarget == null){
+			if(superClass != null)
+				return ((Builder)superClass).getIncrementalBuildTargetAttribute();
+			return null;
+		}
+		return incrementalBuildTarget;
+	}
+
+	public String getIncrementalBuildTarget() {
+		String attr = getIncrementalBuildTargetAttribute();
+		
+		IBuildMacroProvider provider = ManagedBuildManager.getBuildMacroProvider();
+
+		try {
+			attr = provider.resolveValue(attr, "", " ", IBuildMacroProvider.CONTEXT_CONFIGURATION, getMacroContextData());
+		} catch (BuildMacroException e) {
+		}
+		
+		return attr;
+	}
+
+	public boolean isAutoBuildEnable() {
+		if(autoBuildEnabled == null){
+			if(superClass != null)
+				return superClass.isAutoBuildEnable();
+			return true;
+		}
+		return autoBuildEnabled.booleanValue();
+	}
+
+	public boolean isCleanBuildEnabled() {
+		if(cleanBuildEnabled == null){
+			if(superClass != null)
+				return superClass.isCleanBuildEnabled();
+			return true;
+		}
+		return cleanBuildEnabled.booleanValue();
+	}
+
+	public boolean isFullBuildEnabled() {
+		return isIncrementalBuildEnabled();
+	}
+
+	public boolean isIncrementalBuildEnabled() {
+		if(incrementalBuildEnabled == null){
+			if(superClass != null)
+				return superClass.isIncrementalBuildEnabled();
+			return true;
+		}
+		return incrementalBuildEnabled.booleanValue();
+	}
+
+	public void setAutoBuildEnable(boolean enabled) throws CoreException {
+		autoBuildEnabled = Boolean.valueOf(enabled);
+	}
+
+	public void setAutoBuildTarget(String target) throws CoreException {
+		autoBuildTarget = target;
+	}
+
+	public void setCleanBuildEnable(boolean enabled) throws CoreException {
+		cleanBuildEnabled = Boolean.valueOf(enabled);
+	}
+
+	public void setCleanBuildTarget(String target) throws CoreException {
+		cleanBuildTarget = target;
+	}
+
+	public void setFullBuildEnable(boolean enabled) throws CoreException {
+		setIncrementalBuildEnable(enabled);
+	}
+
+	public void setFullBuildTarget(String target) throws CoreException {
+		setIncrementalBuildTarget(target);
+	}
+
+	public void setIncrementalBuildEnable(boolean enabled) throws CoreException {
+		incrementalBuildEnabled = Boolean.valueOf(enabled);
+	}
+
+	public void setIncrementalBuildTarget(String target) throws CoreException {
+		incrementalBuildTarget = target;
+	}
+
+	public boolean appendEnvironment() {
+		if(appendEnvironment == null){
+			if(superClass != null){
+				return superClass.appendEnvironment();
+			}
+			return true;
+		}
+		return appendEnvironment.booleanValue();
+	}
+
+	public String getBuildAttribute(String name, String defaultValue) {
+		String result = null;
+		if(BUILD_TARGET_INCREMENTAL.equals(name)){
+			result = getIncrementalBuildTargetAttribute();
+		} else if(BUILD_TARGET_AUTO.equals(name)){
+			result =  getAutoBuildTargetAttribute();
+		} else if(BUILD_TARGET_CLEAN.equals(name)){
+			result = getCleanBuildTargetAttribute(); 
+		} else if(BUILD_LOCATION.equals(name)){
+			result = getBuildPathAttribute();
+		} else if(BUILD_COMMAND.equals(name)){
+			result = getCommand();
+		} else if(BUILD_ARGUMENTS.equals(name)){
+			result = getArguments();
+		} else if(BuilderFactory.BUILD_COMMAND.equals(name)){
+			result = getCommand();
+		} else if(BuilderFactory.BUILD_LOCATION.equals(name)){
+			result = getBuildPathAttribute();
+		} else if(BuilderFactory.STOP_ON_ERROR.equals(name)){
+			result = Boolean.valueOf(isStopOnError()).toString();
+		} else if(BuilderFactory.USE_DEFAULT_BUILD_CMD.equals(name)){
+			result = Boolean.valueOf(isDefaultBuildCmd()).toString();
+		} else if(BuilderFactory.BUILD_TARGET_AUTO.equals(name)){
+			result = getAutoBuildTargetAttribute();
+		} else if(BuilderFactory.BUILD_TARGET_INCREMENTAL.equals(name)){
+			result = getIncrementalBuildTargetAttribute();
+		} else if(BuilderFactory.BUILD_TARGET_FULL.equals(name)){
+			result = getIncrementalBuildTargetAttribute();
+		} else if(BuilderFactory.BUILD_TARGET_CLEAN.equals(name)){
+			result = getCleanBuildTargetAttribute();
+		} else if(BuilderFactory.BUILD_FULL_ENABLED.equals(name)){
+			result = Boolean.valueOf(isFullBuildEnabled()).toString();
+		} else if(BuilderFactory.BUILD_CLEAN_ENABLED.equals(name)){
+			result = Boolean.valueOf(isCleanBuildEnabled()).toString();
+		} else if(BuilderFactory.BUILD_INCREMENTAL_ENABLED.equals(name)){
+			result = Boolean.valueOf(isIncrementalBuildEnabled()).toString();
+		} else if(BuilderFactory.BUILD_AUTO_ENABLED.equals(name)){
+			result = Boolean.valueOf(isAutoBuildEnable()).toString();
+		} else if(BuilderFactory.BUILD_ARGUMENTS.equals(name)){
+			result = getArguments();
+		} else if(BuilderFactory.ENVIRONMENT.equals(name)){
+			result = customizedEnvironment != null ?
+				MapStorageElement.encodeMap(customizedEnvironment) : null;
+		} else if(BuilderFactory.BUILD_APPEND_ENVIRONMENT.equals(name)){
+			result = Boolean.valueOf(appendEnvironment()).toString();
+		} else if(customBuildProperties != null){
+			result = (String)customBuildProperties.get(name);
+		}
+		
+		if(result == null)
+			return defaultValue;
+		return result;
+	}
+	
+	public static String[] toBuildAttributes(String name) {
+		
+		if(ATTRIBUTE_TARGET_INCREMENTAL.equals(name)){
+			return new String[]{BUILD_TARGET_INCREMENTAL, BuilderFactory.BUILD_TARGET_INCREMENTAL, BUILD_TARGET_FULL, BuilderFactory.BUILD_TARGET_FULL};
+		} else if(ATTRIBUTE_TARGET_AUTO.equals(name)){
+			return new String[]{BUILD_TARGET_AUTO, BuilderFactory.BUILD_TARGET_AUTO};
+		} else if(ATTRIBUTE_TARGET_CLEAN.equals(name)){
+			return new String[]{BUILD_TARGET_CLEAN, BuilderFactory.BUILD_TARGET_CLEAN}; 
+		} else if(ATTRIBUTE_BUILD_PATH.equals(name)){
+			return new String[]{BUILD_LOCATION, BuilderFactory.BUILD_LOCATION};
+		} else if(COMMAND.equals(name)){
+			return new String[]{BUILD_COMMAND, BuilderFactory.BUILD_COMMAND};
+		} else if(ARGUMENTS.equals(name)){
+			return new String[]{BUILD_ARGUMENTS, BuilderFactory.BUILD_ARGUMENTS};
+		} else if(ATTRIBUTE_STOP_ON_ERROR.equals(name)){
+			return new String[]{BuilderFactory.STOP_ON_ERROR};
+		} //TODO else if(BuilderFactory.USE_DEFAULT_BUILD_CMD.equals(name)){
+		//	return getCommand();
+		//}
+		else if(ATTRIBUTE_INCREMENTAL_ENABLED.equals(name)) {
+			return new String[]{BuilderFactory.BUILD_INCREMENTAL_ENABLED, BuilderFactory.BUILD_FULL_ENABLED};
+		} else if(ATTRIBUTE_CLEAN_ENABLED.equals(name)){
+			return new String[]{BuilderFactory.BUILD_CLEAN_ENABLED};
+		} else if(ATTRIBUTE_AUTO_ENABLED.equals(name)){
+			return new String[]{BuilderFactory.BUILD_AUTO_ENABLED};
+		} else if(ATTRIBUTE_ENVIRONMENT.equals(name)){
+			return new String[]{BuilderFactory.ENVIRONMENT};
+		} else if(ATTRIBUTE_APPEND_ENVIRONMENT.equals(name)){
+			return new String[]{BuilderFactory.BUILD_APPEND_ENVIRONMENT};
+		} else if(ATTRIBUTE_CUSTOMIZED_ERROR_PARSERS.equals(name)){
+			return new String[]{ErrorParserManager.PREF_ERROR_PARSER};
+		}
+		
+		return new String[0];
+	}
+	
+	
+
+	public Map getEnvironment() {
+		if(customizedEnvironment != null)
+			return (HashMap)customizedEnvironment.clone();
+		return null;
+	}
+
+	public Map getExpandedEnvironment() throws CoreException {
+		if(customizedEnvironment != null){
+			Map expanded = (HashMap)customizedEnvironment.clone();
+			ICdtVariableManager mngr = CCorePlugin.getDefault().getCdtVariableManager();
+			String separator = CCorePlugin.getDefault().getBuildEnvironmentManager().getDefaultDelimiter();
+			ICConfigurationDescription cfgDes = ManagedBuildManager.getDescriptionForConfiguration(getParent().getParent());
+			for(Iterator iter = expanded.entrySet().iterator(); iter.hasNext();){
+				Map.Entry entry = (Map.Entry)iter.next();
+				String value = (String)entry.getValue();
+				try {
+					value = mngr.resolveValue(value, "", separator, cfgDes);
+					entry.setValue(value);
+				} catch (CdtVariableException e){
+				}
+			}
+			
+			return expanded;
+		}
+		return null;
+	}
+
+	public void setAppendEnvironment(boolean append) throws CoreException {
+		appendEnvironment = Boolean.valueOf(append);
+	}
+
+	public void setBuildAttribute(String name, String value)
+			throws CoreException {
+		if(BUILD_TARGET_INCREMENTAL.equals(name)){
+			incrementalBuildTarget = value;
+		} else if(BUILD_TARGET_AUTO.equals(name)){
+			autoBuildTarget = value;
+		} else if(BUILD_TARGET_CLEAN.equals(name)){
+			cleanBuildTarget = value;
+		} else if(BUILD_LOCATION.equals(name)){
+			buildPath = value;
+		} else if(BUILD_COMMAND.equals(name)){
+			command = value;
+		} else if(BUILD_ARGUMENTS.equals(name)){
+			args = value;
+		} else if(BuilderFactory.BUILD_COMMAND.equals(name)){
+			command = value;
+		} else if(BuilderFactory.BUILD_LOCATION.equals(name)){
+			buildPath = value;
+		} else if(BuilderFactory.STOP_ON_ERROR.equals(name)){
+			stopOnErr = Boolean.valueOf(value);
+		} else if(BuilderFactory.USE_DEFAULT_BUILD_CMD.equals(name)){
+			if(value == null || Boolean.valueOf(value).booleanValue()){
+				if(superClass != null)
+					command = null;
+			}
+		} else if(BuilderFactory.BUILD_TARGET_AUTO.equals(name)){
+			autoBuildTarget = value;
+		} else if(BuilderFactory.BUILD_TARGET_INCREMENTAL.equals(name)){
+			incrementalBuildTarget = value;
+		} else if(BuilderFactory.BUILD_TARGET_FULL.equals(name)){
+			autoBuildTarget = value;
+		} else if(BuilderFactory.BUILD_TARGET_CLEAN.equals(name)){
+			cleanBuildTarget = value;
+		} else if(BuilderFactory.BUILD_FULL_ENABLED.equals(name)){
+			autoBuildEnabled = value != null ?
+					Boolean.valueOf(value) : null;
+		} else if(BuilderFactory.BUILD_CLEAN_ENABLED.equals(name)){
+			cleanBuildEnabled = value != null ?
+					Boolean.valueOf(value) : null;	
+		} else if(BuilderFactory.BUILD_INCREMENTAL_ENABLED.equals(name)){
+			incrementalBuildEnabled = value != null ? 
+					Boolean.valueOf(value) : null;
+		} else if(BuilderFactory.BUILD_AUTO_ENABLED.equals(name)){
+			autoBuildEnabled = value != null ?
+					Boolean.valueOf(value) : null;
+		} else if(BuilderFactory.BUILD_ARGUMENTS.equals(name)){
+			args = value;
+		} else if(BuilderFactory.ENVIRONMENT.equals(name)){
+			if(value == null){
+				customizedEnvironment = null;
+			} else {
+				customizedEnvironment = (HashMap)MapStorageElement.decodeMap(value);
+			}
+		} else if(BuilderFactory.BUILD_APPEND_ENVIRONMENT.equals(name)){
+			appendEnvironment = value != null ?
+					Boolean.valueOf(value) : null;
+		} else {
+			getCustomBuildPropertiesMap().put(name, value);
+		}
+	}
+	
+	private Map getCustomBuildPropertiesMap(){
+		if(customBuildProperties == null){
+			customBuildProperties = new HashMap();
+		}
+		return customBuildProperties;
+	}
+
+	public void setEnvironment(Map env) throws CoreException {
+		customizedEnvironment = new HashMap(env);
+	}
+
+	public boolean isCustomBuilder() {
+		if(!isExtensionBuilder && getParent().getBuilder() != this)
+			return true;
+		return false;
+	}
+
+	public IConfiguration getConfguration(){
+		if(getParent() != null)
+			return getParent().getParent();
+		return null;
+	}
+
+	public boolean isManagedBuildOn() {
+		IConfiguration cfg = getConfguration();
+		if(cfg != null){
+			if(!cfg.supportsBuild(true))
+				return false;
+			else if(!cfg.supportsBuild(false))
+				return true;
+		}
+		if(managedBuildOn == null){
+			if(superClass != null)
+				return superClass.isManagedBuildOn();
+			return true;
+		}
+		return managedBuildOn.booleanValue();
+	}
+
+	public void setManagedBuildOn(boolean on) throws CoreException {
+		managedBuildOn = Boolean.valueOf(on);
+	}
+
+	public boolean canKeepEnvironmentVariablesInBuildfile() {
+		return BuildMacroProvider.canKeepMacrosInBuildfile(this);
+	}
+
+	public boolean keepEnvironmentVariablesInBuildfile() {
+		if(keepEnvVarInBuildfile == null){
+			if(superClass != null)
+				return superClass.keepEnvironmentVariablesInBuildfile();
+			return false;
+		}
+		return keepEnvVarInBuildfile.booleanValue();
+	}
+
+	public void setKeepEnvironmentVariablesInBuildfile(boolean keep) {
+		keepEnvVarInBuildfile = Boolean.valueOf(keep);
+	}
+
+	public boolean supportsCustomizedBuild() {
+		if(fSupportsCustomizedBuild == null){
+			IManagedBuilderMakefileGenerator makeGen = getBuildFileGenerator();
+			if(makeGen instanceof IManagedBuilderMakefileGenerator2)
+				fSupportsCustomizedBuild = Boolean.valueOf(true);
+			else
+				fSupportsCustomizedBuild = Boolean.valueOf(false);
+		}
+		return fSupportsCustomizedBuild.booleanValue();
+	}
+	
+	public boolean supportsBuild(boolean managed) {
+		if(supportsManagedBuild == null){
+			if(superClass != null)
+				return superClass.supportsBuild(managed);
+			return managed || !isInternalBuilder();
+		}
+		return supportsManagedBuild.booleanValue();
+	}
+	
+	public void setParent(IToolChain toolChain){
+		parent = toolChain;
+	}
+
+	public boolean matches(IBuilder builder){
+		if(builder == this)
+			return true;
+		
+		IBuilder rBld = ManagedBuildManager.getRealBuilder(this);
+		if(rBld == null)
+			return false;
+		
+		return rBld == ManagedBuildManager.getRealBuilder(builder);
+	}
+
+	public boolean performMatchComparison(IBuilder builder){
+		if(builder == null)
+			return false;
+		
+		if(builder == this)
+			return true;
+		
+//		if(tool.isReal() && isReal())
+//			return false;
+//		if(!tool.getToolCommand().equals(getToolCommand()))
+//			return false;
+		
+		if(!builder.getName().equals(getName()))
+			return false;
+
+		String thisVersion = ManagedBuildManager.getVersionFromIdAndVersion(getId());
+		String otherVersion = ManagedBuildManager.getVersionFromIdAndVersion(builder.getId());
+		if(thisVersion == null || thisVersion.length() == 0){
+			if(otherVersion != null && otherVersion.length() != 0)
+				return false;
+		} else {
+			if(!thisVersion.equals(otherVersion))
+				return false;
+		}
+
+		return true;
+	}
+	
+	private class MatchKey {
+		Builder builder;
+		
+		public MatchKey(Builder builder) {
+			this.builder = builder;
+		}
+		
+		public boolean equals(Object obj) {
+			if(obj == this)
+				return true;
+			if(!(obj instanceof MatchKey))
+				return false;
+			MatchKey other = (MatchKey)obj;
+			return builder.performMatchComparison(other.builder);
+		}
+
+		public int hashCode() {
+			String name = getName();
+			if(name == null)
+				name = getId();
+			int code = name.hashCode();
+			String version = ManagedBuildManager.getVersionFromIdAndVersion(getId());
+			if(version != null)
+				code += version.hashCode();
+			return code;
+		}
+		
+	}
+
+	public Object getMatchKey() {
+		if(isAbstract())
+			return null;
+		if(!isExtensionBuilder)
+			return null;
+		return new MatchKey(this);
+	}
+
+	public void setIdenticalList(List list) {
+		identicalList = list;
+	}
+
+	public String getNameAndVersion(){
+		String name = getName();
+		String version = ManagedBuildManager.getVersionFromIdAndVersion(getId());
+		if(version != null && version.length() != 0){
+			return new StringBuffer().append(name).append(" (").append(version).append("").toString();
+		}
+		return name;
+	}
+
+	public List getIdenticalList() {
+		return identicalList;
+	}
+
+	public boolean isInternalBuilder() {
+		IBuilder internalBuilder = ManagedBuildManager.getInternalBuilder();
+		for(IBuilder builder = this; builder != null; builder = builder.getSuperClass()){
+			if(internalBuilder == builder)
+				return true;
+		}
+		return false;
+	}
+
+	public int getParallelizationNum() {
+		if(supportsParallelBuild())
+			return getParallelizationNumAttribute();
+		return 1;
+	}
+	
+	public int getParallelizationNumAttribute(){
+		if(parallelNum == null){
+			if(superClass != null){
+				return ((Builder)superClass).getParallelizationNumAttribute();
+			}
+			return 1;
+		}
+		return parallelNum.intValue();
+	}
+
+	public void setParallelizationNum(int num) throws CoreException {
+//		if(num == 0 || supportsParallelBuild()){
+			parallelNum = new Integer(num);
+			String curCmd = getParallelizationCmd(getParallelizationNum());
+			String args = getArgumentsAttribute();
+			String updatedArgs = removeCmd(args, curCmd);
+			if(!updatedArgs.equals(args)){
+				setArgumentsAttribute(updatedArgs);
+			}
+			setDirty(true);
+//		}
+	}
+
+	public boolean supportsParallelBuild() {
+		if(isInternalBuilder())
+			return true;
+		return getParrallelBuildCmd().length() != 0;
+	}
+
+	public boolean supportsStopOnError(boolean on) {
+		if(isInternalBuilder())
+			return true;
+		
+		if(!on)
+			return getIgnoreErrCmdAttribute().length() != 0;
+		return true;
+	}
+	
+	public String getStopOnErrCmd(boolean stop){
+		if(!stop)
+			return getIgnoreErrCmdAttribute();
+		return EMPTY_STRING;
+	}
+	
+	public String getIgnoreErrCmdAttribute(){
+		if(ignoreErrCmd == null){
+			if(superClass != null){
+				return ((Builder)superClass).getIgnoreErrCmdAttribute();
+			}
+			return EMPTY_STRING;
+		}
+		return ignoreErrCmd;
+	}
+
+	public String getParrallelBuildCmd(){
+		if(parallelBuildCmd == null){
+			if(superClass != null){
+				return ((Builder)superClass).getParrallelBuildCmd();
+			}
+			return EMPTY_STRING;
+		}
+		return parallelBuildCmd;
+	}
+
+	public boolean isParallelBuildOn() {
+		if(parallelBuildOn == null){
+			if(superClass != null){
+				return superClass.isParallelBuildOn();
+			}
+			return false;
+		}
+		return parallelBuildOn.booleanValue();
+	}
+
+	public void setParallelBuildOn(boolean on) throws CoreException{
+		if(isParallelBuildOn() == on)
+			return;
+		if(on && !supportsParallelBuild())
+			return;
+		
+		String curCmd = getParallelizationCmd(getParallelizationNum());
+		String args = getArgumentsAttribute();
+		String updatedArgs = removeCmd(args, curCmd);
+		if(!updatedArgs.equals(args)){
+			setArgumentsAttribute(updatedArgs);
+		}
+		parallelBuildOn = Boolean.valueOf(on);
+		setDirty(true);
+	}
+	
+	public Set contributeErrorParsers(Set set){
+		if(set == null)
+			set = new HashSet();
+		
+		String ids[] = getErrorParserList();
+		if(ids.length != 0)
+			set.addAll(Arrays.asList(ids));
+		return set;
+	}
+
+	public void resetErrorParsers(){
+		errorParserIds = null;
+	}
+	
+	void removeErrorParsers(Set set){
+		Set oldSet = contributeErrorParsers(null);
+		oldSet.removeAll(set);
+		setErrorParserList((String[])oldSet.toArray(new String[oldSet.size()]));
+	}
+	
+	public void setErrorParserList(String[] ids) {
+		if(ids == null){
+			errorParserIds = null;
+		} else if(ids.length == 0){
+			errorParserIds = EMPTY_STRING;
+		} else {
+			StringBuffer buf = new StringBuffer();
+			buf.append(ids[0]);
+			for(int i = 1; i < ids.length; i++){
+				buf.append(";").append(ids[i]);
+			}
+			errorParserIds = buf.toString();
+		}
+	}
+	
+	public boolean isSystemObject() {
+		if(isTest)
+			return true;
+		if(getParent() != null)
+			return getParent().isSystemObject();
+		return false;
+	}
+
+	public String getUniqueRealName() {
+		String name = getName();
+		if(name == null){
+			name = getId();
+		} else {
+			String version = ManagedBuildManager.getVersionFromIdAndVersion(getId());
+			if(version != null){
+			StringBuffer buf = new StringBuffer();
+			buf.append(name);
+			buf.append(" (v").append(version).append(")");
+			name = buf.toString();
+			}
+		}
+		return name;
+	}
+	
+	public ICOutputEntry[] getOutputEntries(){
+		if(isManagedBuildOn()){
+			return getDefaultOutputSettings(true);
+		}
+		ICOutputEntry[] entries = getOutputEntrySettings();
+		if(entries == null || entries.length == 0){
+			entries = getDefaultOutputSettings(false);
+		}
+		return entries;
+	}
+	
+	private ICOutputEntry[] getDefaultOutputSettings(boolean managedBuildOn){
+		Configuration cfg = (Configuration)getConfguration();
+		if(cfg == null || cfg.isPreference() || cfg.isExtensionElement()){
+			return new ICOutputEntry[]{new COutputEntry(Path.EMPTY, null, ICLanguageSettingEntry.VALUE_WORKSPACE_PATH | ICLanguageSettingEntry.RESOLVED)};
+		}
+		
+		IPath path = cfg.getOwner().getProject().getFullPath();;
+		if(managedBuildOn){
+			path = path.append(cfg.getName());
+		}
+		return new ICOutputEntry[]{new COutputEntry(path, null, ICLanguageSettingEntry.VALUE_WORKSPACE_PATH | ICLanguageSettingEntry.RESOLVED)};
+	}
+
+	public ICOutputEntry[] getOutputEntrySettings(){
+		if(outputEntries == null){
+			if(superClass != null){
+				return ((Builder)superClass).getOutputEntrySettings();
+			}
+			return null;
+				
+		}
+		return (ICOutputEntry[])outputEntries.clone();
+	}
+
+	public void setOutputEntries(ICOutputEntry[] entries){
+		if(entries != null)
+			outputEntries = (ICOutputEntry[])entries.clone();
+		else
+			outputEntries = null;
+	}
+
 }

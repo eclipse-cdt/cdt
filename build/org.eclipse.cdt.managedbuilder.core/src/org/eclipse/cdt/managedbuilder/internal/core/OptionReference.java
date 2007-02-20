@@ -17,13 +17,13 @@ import java.util.List;
 import java.util.ListIterator;
 
 import org.eclipse.cdt.managedbuilder.core.BuildException;
+import org.eclipse.cdt.managedbuilder.core.IBuildObject;
 import org.eclipse.cdt.managedbuilder.core.IHoldsOptions;
-import org.eclipse.cdt.managedbuilder.core.IOptionApplicability;
 import org.eclipse.cdt.managedbuilder.core.IManagedConfigElement;
 import org.eclipse.cdt.managedbuilder.core.IManagedOptionValueHandler;
 import org.eclipse.cdt.managedbuilder.core.IOption;
+import org.eclipse.cdt.managedbuilder.core.IOptionApplicability;
 import org.eclipse.cdt.managedbuilder.core.IOptionCategory;
-import org.eclipse.cdt.managedbuilder.core.IBuildObject;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.PluginVersionIdentifier;
@@ -133,6 +133,11 @@ public class OptionReference implements IOption {
 			case PREPROCESSOR_SYMBOLS:
 			case LIBRARIES:
 			case OBJECTS:
+			case INCLUDE_FILES:
+			case LIBRARY_PATHS:
+			case LIBRARY_FILES:
+			case MACRO_FILES:
+
 				List valueList = new ArrayList();
 				NodeList nodes = element.getElementsByTagName(LIST_VALUE);
 				for (int i = 0; i < nodes.getLength(); ++i) {
@@ -196,6 +201,10 @@ public class OptionReference implements IOption {
 				case PREPROCESSOR_SYMBOLS:
 				case LIBRARIES:
 				case OBJECTS:
+				case INCLUDE_FILES:
+				case LIBRARY_PATHS:
+				case LIBRARY_FILES:
+				case MACRO_FILES:
 					List valueList = new ArrayList();
 					IManagedConfigElement[] valueElements = element.getChildren(LIST_VALUE);
 					for (int i = 0; i < valueElements.length; ++i) {
@@ -245,6 +254,10 @@ public class OptionReference implements IOption {
 			case PREPROCESSOR_SYMBOLS:
 			case LIBRARIES:
 			case OBJECTS:
+			case INCLUDE_FILES:
+			case LIBRARY_PATHS:
+			case LIBRARY_FILES:
+			case MACRO_FILES:
 				ArrayList stringList = (ArrayList)value;
 				ListIterator iter = stringList.listIterator();
 				while (iter.hasNext()) {
@@ -634,7 +647,11 @@ public class OptionReference implements IOption {
 			|| getValueType() == INCLUDE_PATH
 			|| getValueType() == PREPROCESSOR_SYMBOLS
 			|| getValueType() == LIBRARIES
-			|| getValueType() == OBJECTS) {
+			|| getValueType() == OBJECTS
+			|| getValueType() == INCLUDE_FILES
+			|| getValueType() == LIBRARY_PATHS
+			|| getValueType() == LIBRARY_FILES
+			|| getValueType() == MACRO_FILES) {
 			// Just replace what the option reference is holding onto 
 			this.value = new ArrayList(Arrays.asList(value));
 		}
@@ -815,4 +832,30 @@ public class OptionReference implements IOption {
 	public boolean isValid() {
 		return option.isValid();
 	}
+
+	public String[] getBasicStringListValue() throws BuildException {
+		if (getBasicValueType() != STRING_LIST) {
+			throw new BuildException(ManagedMakeMessages.getResourceString("Option.error.bad_value_type")); //$NON-NLS-1$
+		}
+		ArrayList v = (ArrayList)getValue();
+		if (v == null) {
+			return new String[0];
+		}
+		
+		return (String[]) v.toArray(new String[v.size()]);
+	}
+
+	public int getBasicValueType() throws BuildException {
+		switch(getValueType()){
+		case IOption.BOOLEAN:
+			return IOption.BOOLEAN;
+		case IOption.STRING:
+			return IOption.STRING;
+		case IOption.ENUMERATED:
+			return IOption.ENUMERATED;
+		default:
+			return IOption.STRING_LIST;
+		}
+	}
+
 }

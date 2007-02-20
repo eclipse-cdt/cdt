@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005 Intel Corporation and others.
+ * Copyright (c) 2005, 2007 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,8 +10,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.macros;
 
-import org.eclipse.cdt.managedbuilder.internal.macros.BuildMacroStatus;
-import org.eclipse.core.runtime.CoreException;
+import org.eclipse.cdt.core.cdtvariables.CdtVariableException;
 import org.eclipse.core.runtime.IStatus;
 
 /**
@@ -20,7 +19,7 @@ import org.eclipse.core.runtime.IStatus;
  * 
  * @since 3.0
  */
-public class BuildMacroException extends CoreException {
+public class BuildMacroException extends CdtVariableException {
 	/**
 	 * All serializable objects should have a stable serialVersionUID
 	 */
@@ -51,16 +50,16 @@ public class BuildMacroException extends CoreException {
 	 * @param contextType the context type used in the operation
 	 * @param contextData the context data used in the operation
 	 */
-	public BuildMacroException(int code, 
-			String message, 
-			Throwable exception, 
-			String macroName, 
-			String expression, 
-			String referencedName,
-			int contextType,
-			Object contextData) {
-		super(new BuildMacroStatus(code, message, exception, macroName, expression, referencedName, contextType, contextData));
-	}
+//	public BuildMacroException(int code, 
+//			String message, 
+//			Throwable exception, 
+//			String macroName, 
+//			String expression, 
+//			String referencedName,
+//			int contextType,
+//			Object contextData) {
+//		super(new BuildMacroStatus(code, message, exception, macroName, expression, referencedName, contextType, contextData));
+//	}
 
 	/**
 	 * Creates an exception containing a single IBuildMacroStatus status with the IStatus.ERROR severity and with the default message
@@ -74,13 +73,17 @@ public class BuildMacroException extends CoreException {
 	 * @param contextType the context type used in the operation
 	 * @param contextData the context data used in the operation
 	 */
-	public BuildMacroException(int code, 
-			String macroName, 
-			String expression, 
-			String referencedName,
-			int contextType,
-			Object contextData) {
-		super(new BuildMacroStatus(code, macroName, expression, referencedName, contextType, contextData));
+//	public BuildMacroException(int code, 
+//			String macroName, 
+//			String expression, 
+//			String referencedName,
+//			int contextType,
+//			Object contextData) {
+//		super(new BuildMacroStatus(code, macroName, expression, referencedName, contextType, contextData));
+//	}
+	
+	public BuildMacroException(CdtVariableException e){
+		super(e.getStatus());
 	}
 	
 	/**

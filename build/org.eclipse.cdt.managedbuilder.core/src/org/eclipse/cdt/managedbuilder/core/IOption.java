@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2005 IBM Corporation and others.
+ * Copyright (c) 2003, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -25,7 +25,11 @@ public interface IOption extends IBuildObject {
 	public static final int PREPROCESSOR_SYMBOLS = 5;
 	public static final int LIBRARIES = 6;
 	public static final int OBJECTS = 7;
-
+	public static final int INCLUDE_FILES = 8;
+	public static final int LIBRARY_PATHS = 9;
+	public static final int LIBRARY_FILES = 10;
+	public static final int MACRO_FILES = 11;
+	
 	// Browse type
 	public static final int BROWSE_NONE = 0;
 	public static final String NONE = "none";	//$NON-NLS-1$
@@ -61,6 +65,10 @@ public interface IOption extends IBuildObject {
 	public static final String TYPE_STR_LIST = "stringList"; //$NON-NLS-1$
 	public static final String TYPE_USER_OBJS = "userObjs"; //$NON-NLS-1$
 	public static final String TYPE_DEFINED_SYMBOLS = "definedSymbols"; //$NON-NLS-1$
+	public static final String TYPE_LIB_PATHS = "libPaths"; //$NON-NLS-1$
+	public static final String TYPE_LIB_FILES = "libFiles"; //$NON-NLS-1$
+	public static final String TYPE_INC_FILES = "includeFiles"; //$NON-NLS-1$
+	public static final String TYPE_SYMBOL_FILES = "symbolFiles"; //$NON-NLS-1$
 	public static final String VALUE = "value"; //$NON-NLS-1$
 	public static final String VALUE_TYPE = "valueType"; //$NON-NLS-1$
 	public static final String VALUE_HANDLER = "valueHandler"; //$NON-NLS-1$
@@ -426,4 +434,28 @@ public interface IOption extends IBuildObject {
 	 * @pre Can only be used after Ids in MBS grammar have been resolved by pointers.
 	 */
 	public boolean isValid();
+	
+	/**
+	 * Returns the type of the option value, i.e. whether it is string, boolean, 
+	 * string list or enumenration. As opposed to the getValueType() method,
+	 * the returned type does not specifies the "sense" of the value, e.g. whether it represents the list of includes or not.
+	 *
+	 * possible return values:
+	 *  IOption.BOOLEAN
+	 *  IOption.STRING
+	 *  IOption.ENUMERATED
+	 *  IOption.STRING_LIST
+	 *  
+	 *  the STRING_LIST basic value type corresponds to the following option value types:
+	 *  INCLUDE_PATH, PREPROCESSOR_SYMBOLS, LIBRARIES, OBJECTS, INCLUDE_FILES, LIBRARY_PATHS, LIBRARY_FILES, MACRO_FILES  
+	 *   
+	 */
+	int getBasicValueType() throws BuildException ;
+	
+	/**
+	 * in case the option basic value type is STRING_LIST, returns the String list value,
+	 * throws BuildException otherwise 
+	 * @return
+	 */
+	String[] getBasicStringListValue() throws BuildException;
 }

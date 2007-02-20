@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 Texas Instruments Incorporated and others.
+ * Copyright (c) 2006, 2007 Texas Instruments Incorporated and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -295,7 +295,9 @@ public class BuildFilesAction extends ActionDelegate implements
 					IManagedBuildInfo buildInfo = ManagedBuildManager
 							.getBuildInfo(file.getProject());
 
-					if (buildInfo == null || !buildInfo.isValid()) {
+					if (buildInfo == null || !buildInfo.isValid() 
+							|| buildInfo.getDefaultConfiguration() == null
+							|| !buildInfo.getDefaultConfiguration().isManagedBuildOn()) {
 						return false;
 					}
 

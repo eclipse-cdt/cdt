@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2005 Intel Corporation and others.
+ * Copyright (c) 2004, 2007 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,16 +11,21 @@
 package org.eclipse.cdt.managedbuilder.internal.core;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.cdt.managedbuilder.core.IConfigurationNameProvider;
-import org.eclipse.cdt.managedbuilder.core.IManagedOptionValueHandler;
-import org.eclipse.cdt.managedbuilder.core.IProjectType;
+import org.eclipse.cdt.managedbuilder.buildproperties.IBuildProperty;
+import org.eclipse.cdt.managedbuilder.buildproperties.IBuildPropertyType;
+import org.eclipse.cdt.managedbuilder.buildproperties.IBuildPropertyValue;
+import org.eclipse.cdt.managedbuilder.core.IBuildObjectProperties;
+import org.eclipse.cdt.managedbuilder.core.IBuildPropertiesRestriction;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
+import org.eclipse.cdt.managedbuilder.core.IConfigurationNameProvider;
 import org.eclipse.cdt.managedbuilder.core.IManagedConfigElement;
+import org.eclipse.cdt.managedbuilder.core.IProjectType;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.cdt.managedbuilder.envvar.IProjectEnvironmentVariableSupplier;
 import org.eclipse.cdt.managedbuilder.macros.IProjectBuildMacroSupplier;
@@ -32,7 +37,7 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.PluginVersionIdentifier;
 
 
-public class ProjectType extends BuildObject implements IProjectType {
+public class ProjectType extends BuildObject implements IProjectType, IBuildPropertiesRestriction, IBuildPropertyChangeListener {
 	
 	private static final String EMPTY_STRING = new String();
 	//private static final IConfiguration[] emptyConfigs = new IConfiguration[0];
@@ -56,6 +61,9 @@ public class ProjectType extends BuildObject implements IProjectType {
 	private IProjectEnvironmentVariableSupplier environmentVariableSupplier = null;
 	private IConfigurationElement buildMacroSupplierElement = null;
 	private IProjectBuildMacroSupplier buildMacroSupplier = null;
+	
+	BuildObjectProperties buildProperties;
+
 
 	//  Miscellaneous
 	private boolean resolved = true;
@@ -155,6 +163,11 @@ public class ProjectType extends BuildObject implements IProjectType {
 		
 		// superClass
 		superClassId = element.getAttribute(SUPERCLASS);
+		
+		String props = element.getAttribute(BUILD_PROPERTIES);
+		if(props != null)
+			buildProperties = new BuildObjectProperties(props, this, this);
+
 
 		// Get the unused children, if any
 		unusedChildren = element.getAttribute(UNUSED_CHILDREN); 
@@ -286,10 +299,21 @@ public class ProjectType extends BuildObject implements IProjectType {
 	 * @see org.eclipse.cdt.managedbuilder.core.IBuildObject#getName()
 	 */
 	public String getName() {
+		String name = getNameAttribute();
+		if(name.length() == 0){
+			IBuildObjectProperties props = getBuildProperties();
+			IBuildProperty prop = props.getProperty(ManagedBuildManager.BUILD_ARTEFACT_TYPE_PROPERTY_ID);
+			if(prop != null)
+				name = prop.getValue().getName();
+		}
+		return name;
+	}
+
+	public String getNameAttribute() {
 		// If I am unnamed, see if I can inherit one from my parent
 		if (name == null) {
 			if (superClass != null) {
-				return superClass.getName();
+				return (superClass).getNameAttribute();
 			} else {
 				return new String(""); //$NON-NLS-1$
 			}
@@ -643,5 +667,96 @@ public class ProjectType extends BuildObject implements IProjectType {
 
 	public IConfigurationElement getCurrentMbsVersionConversionElement() {
 		return currentMbsVersionConversionElement;
+	}
+	
+	public IBuildObjectProperties getBuildProperties() {
+		if(buildProperties == null){
+			BuildObjectProperties parentProps = findBuildProperties();
+			if(parentProps != null)
+				buildProperties = new BuildObjectProperties(parentProps, this, this);
+			else
+				buildProperties = new BuildObjectProperties(this, this);
+		}
+		return buildProperties;
+	}
+	
+	BuildObjectProperties findBuildProperties(){
+		if(buildProperties == null){
+			if(superClass != null){
+				return ((ProjectType)superClass).findBuildProperties();
+			}
+			return null;
+		}
+		return buildProperties;
+	}
+
+	public void propertiesChanged() {
+		List list = getConfigurationList();
+		for(int i = 0; i < list.size(); i++){
+			((Configuration)list.get(i)).propertiesChanged();
+		}
+	}
+
+	public boolean supportsType(IBuildPropertyType type) {
+		return supportsType(type.getId());
+	}
+
+	public boolean supportsValue(IBuildPropertyType type,
+			IBuildPropertyValue value) {
+		return supportsValue(type.getId(), value.getId());
+	}
+
+	public boolean supportsType(String typeId) {
+		List list = getConfigurationList();
+		for(int i = 0; i < list.size(); i++){
+			if(((Configuration)list.get(i)).supportsType(typeId))
+				return true;
+		}
+		return false;
+	}
+
+	public boolean supportsValue(String typeId, String valueId) {
+		List list = getConfigurationList();
+		for(int i = 0; i < list.size(); i++){
+			if(((Configuration)list.get(i)).supportsValue(typeId, valueId))
+				return true;
+		}
+		return false;
+	}
+
+	public String[] getRequiredTypeIds() {
+		List result = new ArrayList();
+		List list = getConfigurationList();
+		for(int i = 0; i < list.size(); i++){
+			result.addAll(Arrays.asList(((Configuration)list.get(i)).getRequiredTypeIds()));
+		}
+		return (String[])result.toArray(new String[result.size()]);
+	}
+
+	public String[] getSupportedTypeIds() {
+		List result = new ArrayList();
+		List list = getConfigurationList();
+		for(int i = 0; i < list.size(); i++){
+			result.addAll(Arrays.asList(((Configuration)list.get(i)).getSupportedTypeIds()));
+		}
+		return (String[])result.toArray(new String[result.size()]);
+	}
+
+	public String[] getSupportedValueIds(String typeId) {
+		List result = new ArrayList();
+		List list = getConfigurationList();
+		for(int i = 0; i < list.size(); i++){
+			result.addAll(Arrays.asList(((Configuration)list.get(i)).getSupportedValueIds(typeId)));
+		}
+		return (String[])result.toArray(new String[result.size()]);
+	}
+
+	public boolean requiresType(String typeId) {
+		List list = getConfigurationList();
+		for(int i = 0; i < list.size(); i++){
+			if(((Configuration)list.get(i)).requiresType(typeId))
+				return true;
+		}
+		return false;
 	}
 }

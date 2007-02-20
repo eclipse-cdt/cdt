@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005 Intel Corporation and others.
+ * Copyright (c) 2005, 2007 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,11 @@
  * Intel Corporation - Initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.internal.enablement;
+
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 import org.eclipse.cdt.managedbuilder.core.IManagedConfigElement;
 
@@ -48,10 +53,40 @@ public abstract class CompositeExpression implements IBooleanExpression {
 			return new FalseExpression(element);
 		else if(CheckHolderExpression.NAME.equals(name))
 			return new CheckHolderExpression(element);
+		else if(CheckBuildPropertyExpression.NAME.equals(name)){
+			return new CheckBuildPropertyExpression(element);
+		}
 		return null;
 	}
 	
 	public IBooleanExpression[] getChildren(){
 		return fChildren;
+	}
+	
+	public Map getReferencedProperties(Map map){
+		IBooleanExpression children[] = getChildren();
+		if(map == null)
+			map = new HashMap();
+
+		for(int i = 0; i < children.length; i++){
+			IBooleanExpression child = children[i];
+			if(child instanceof CompositeExpression){
+				((CompositeExpression)child).getReferencedProperties(map);
+			} else if(child instanceof CheckBuildPropertyExpression){
+				CheckBuildPropertyExpression bp = (CheckBuildPropertyExpression)child;
+				String prop = bp.getPropertyId();
+				String val = bp.getValueId();
+				if(prop != null && prop.length() != 0  
+						&& val != null && val.length() != 0){
+					Set set = (Set)map.get(prop);
+					if(set == null){
+						set = new HashSet();
+						map.put(prop, set);
+					}
+					set.add(val);
+				}
+			}
+		}
+		return map;
 	}
 }

@@ -20,7 +20,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
 
 import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.ICDescriptor;
 import org.eclipse.cdt.core.ICExtensionReference;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.ui.CUIPlugin;
@@ -62,8 +61,7 @@ public class DOMSourceIndexerBlock extends AbstractIndexerPage {
 		}
 		
 		if (proj != null) {
-			ICDescriptor cdesc = CCorePlugin.getDefault().getCProjectDescription(proj, false);
-			ICExtensionReference[] cext = cdesc.get(CCorePlugin.INDEXER_UNIQ_ID);
+			ICExtensionReference[] cext = CCorePlugin.getDefault().getBinaryParserExtensions(proj);
 			if (cext.length > 0) {
 				for (int i = 0; i < cext.length; i++) {
 //					String id = cext[i].getID();
@@ -141,8 +139,7 @@ public class DOMSourceIndexerBlock extends AbstractIndexerPage {
 
 	public void loadPersistedValues(IProject project) throws CoreException {
 		
-		ICDescriptor cdesc = CCorePlugin.getDefault().getCProjectDescription(project, false);
-		ICExtensionReference[] cext = cdesc.get(CCorePlugin.INDEXER_UNIQ_ID);
+		ICExtensionReference[] cext = CCorePlugin.getDefault().getBinaryParserExtensions(project);
 		if (cext.length > 0) {
 			for (int i = 0; i < cext.length; i++) {
 //				String id = cext[i].getID();

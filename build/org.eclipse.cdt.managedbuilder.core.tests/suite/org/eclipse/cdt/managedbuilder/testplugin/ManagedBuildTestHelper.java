@@ -165,6 +165,27 @@ public class ManagedBuildTestHelper {
 		return file;
 	}
 
+	static public IFolder createFolder(IProject project, String name){
+		IFolder folder = project.getFolder(name);
+		if( !folder.exists() ){
+			try {
+				IPath dirPath = folder.getFullPath().removeLastSegments(1).removeFirstSegments(1);
+				if(dirPath.segmentCount() > 0){
+					IFolder rc = project.getFolder(dirPath);
+					if(!rc.exists()){
+						rc.create(true, true, null);
+					}
+				}
+					
+//				file.create( new ByteArrayInputStream( "#include <stdio.h>\n extern void bar(); \n int main() { \nprintf(\"Hello, World!!\"); \n bar();\n return 0; }".getBytes() ), false, null );
+				folder.create(true , false, null );
+			} catch (CoreException e) {
+				TestCase.fail(e.getLocalizedMessage());
+			}
+		}
+		return folder;
+	}
+
 	/**
 	 * Remove the <code>IProject</code> with the name specified in the argument from the 
 	 * receiver's workspace.
@@ -296,6 +317,8 @@ public class ManagedBuildTestHelper {
 				for(int i = 0; i < cfgs.length; i++){
 					cfgs[i].setArtifactName(newProject.getDefaultArtifactName());
 				}
+				
+				ManagedBuildManager.getBuildInfo(project).setValid(true);
 			}
 		};
 		NullProgressMonitor monitor = new NullProgressMonitor();
@@ -316,7 +339,7 @@ public class ManagedBuildTestHelper {
 	static public void addManagedBuildNature (IProject project) {
 		// Create the buildinformation object for the project
 		IManagedBuildInfo info = ManagedBuildManager.createBuildInfo(project);
-		info.setValid(true);
+//		info.setValid(true);
 		
 		// Add the managed build nature
 		try {
@@ -696,6 +719,10 @@ public class ManagedBuildTestHelper {
 						case IOption.PREPROCESSOR_SYMBOLS:
 						case IOption.LIBRARIES:
 						case IOption.OBJECTS:
+						case IOption.INCLUDE_FILES:
+						case IOption.LIBRARY_PATHS:
+						case IOption.LIBRARY_FILES:
+						case IOption.MACRO_FILES:
 						{
 							String val[] = (String[])value;
 							if(rcCfg != null)

@@ -36,6 +36,7 @@
  * Javier Montalvo Orus (Symbian) - Fixing 165476 - [ftp] On warftpd-1.65 in MSDOS mode, cannot expand drives
  * Javier Montalvo Orus (Symbian) - Fixing 168120 - [ftp] root filter resolves to home dir
  * Javier Montalvo Orus (Symbian) - Fixing 169680 - [ftp] FTP files subsystem and service should use passive mode
+ * Javier Montalvo Orus (Symbian) - Fixing 174828 - [ftp] Folders are attempted to be removed as files
  ********************************************************************************/
 
 package org.eclipse.rse.internal.services.files.ftp;
@@ -944,6 +945,7 @@ public class FTPService extends AbstractFileService implements IFileService, IFT
 		}
 		else
 		{
+			listThread.start();
 			listThread.join();
 			if(_exception!=null)
 			{

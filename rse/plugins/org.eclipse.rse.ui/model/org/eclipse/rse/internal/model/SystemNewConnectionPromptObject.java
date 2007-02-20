@@ -15,6 +15,9 @@
  ********************************************************************************/
 
 package org.eclipse.rse.internal.model;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -40,75 +43,86 @@ import org.eclipse.swt.widgets.Shell;
  * It shows as "New Connection..." in the tree. When expanded, they get the new connection
  *  wizard. 
  */
-public class SystemNewConnectionPromptObject 
-       implements  ISystemPromptableObject, ISystemViewRunnableObject, IAdaptable
-{
-    private Object parent;	
-    private String[] systemTypes;
-    private ISystemPromptableObject[] children;
-    private SystemNewConnectionAction action = null;
-    private boolean systemTypesSet = false;
-    private String newConnText;
-    private boolean isRootPrompt = false;
-    
-    /**
-     * Constructor
-     */
-    public SystemNewConnectionPromptObject()
-    {
-    	setSystemTypes(RSECorePlugin.getDefault().getRegistry().getSystemTypeNames());
-    	isRootPrompt = true;
-    }
-    /**
-     * Constructor for child instances
-     */
-    public SystemNewConnectionPromptObject(SystemNewConnectionPromptObject parent, String systemType)
-    {
-    	this.parent = parent;
-    	setSystemTypes(new String[] {systemType});
-    }
-    
-    // ----------------------------------------------------
-    // METHODS FOR CONFIGURING THIS OBJECT
-    // ----------------------------------------------------
-    
-    /**
-     * Set the system types to restrict the New Connection wizard to
-     */
-    public void setSystemTypes(String[] systemTypes)
-    {
-    	this.systemTypes = systemTypes;
-    	this.systemTypesSet = true;
-    }
-    
-    /* (non-Javadoc)
-     * @see org.eclipse.rse.model.ISystemPromptableObject#getSystemTypes()
-     */
-    public String[] getSystemTypes() {
-    	String[] types = systemTypes;
-    	if (types == null || !systemTypesSet) types = new String[0];
-			return types;
+public class SystemNewConnectionPromptObject implements ISystemPromptableObject, ISystemViewRunnableObject, IAdaptable {
+	private Object parent;
+	private IRSESystemType[] systemTypes;
+	private ISystemPromptableObject[] children;
+	private SystemNewConnectionAction action = null;
+	private boolean systemTypesSet = false;
+	private String newConnText;
+	private boolean isRootPrompt = false;
+
+	/**
+	 * Constructor
+	 */
+	public SystemNewConnectionPromptObject() {
+		setSystemTypes(RSECorePlugin.getDefault().getRegistry().getSystemTypes());
+		isRootPrompt = true;
+	}
+
+	/**
+	 * Constructor for child instances
+	 */
+	public SystemNewConnectionPromptObject(SystemNewConnectionPromptObject parent, IRSESystemType systemType) {
+		this.parent = parent;
+		setSystemTypes(new IRSESystemType[] { systemType });
+	}
+
+	// ----------------------------------------------------
+	// METHODS FOR CONFIGURING THIS OBJECT
+	// ----------------------------------------------------
+
+	/**
+	 * Set the system types to restrict the New Connection wizard to
+	 */
+	public void setSystemTypes(IRSESystemType[] systemTypes) {
+		this.systemTypes = systemTypes;
+		this.systemTypesSet = true;
+	}
+	
+	/**
+	 * @deprecated Use {@link #setSystemTypes(IRSESystemType[])}.
+	 */
+	public void setSystemTypes(String[] systemTypes) {
+		if (systemTypes != null) {
+			List types = new ArrayList();
+			for (int i = 0; i < systemTypes.length; i++) {
+				IRSESystemType type = RSECorePlugin.getDefault().getRegistry().getSystemType(systemTypes[i]);
+				if (type != null) types.add(type);
+			}
+			setSystemTypes((IRSESystemType[])types.toArray(new IRSESystemType[types.size()]));
+		} else {
+			setSystemTypes((IRSESystemType[])null);
 		}
-    
-		/**
-     * Set the parent object so that we can respond to getParent requests
-     */
-    public void setParent(Object parent)
-    {
-    	this.parent = parent;
-    }
-    
-    // ----------------------------------------------------
-    // METHODS CALLED BY THE SYSTEMVIEWPROMPTABLEADAPTER...
-    // ----------------------------------------------------
-    
-    /**
-     * Get the parent object (within tree view)
-     */
-    public Object getParent()
-    {
-    	return parent;
-    }
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.model.ISystemPromptableObject#getSystemTypes()
+	 */
+	public IRSESystemType[] getSystemTypes() {
+		IRSESystemType[] types = systemTypes;
+		if (types == null || !systemTypesSet)
+			types = new IRSESystemType[0];
+		return types;
+	}
+
+	/**
+	 * Set the parent object so that we can respond to getParent requests
+	 */
+	public void setParent(Object parent) {
+		this.parent = parent;
+	}
+
+	// ----------------------------------------------------
+	// METHODS CALLED BY THE SYSTEMVIEWPROMPTABLEADAPTER...
+	// ----------------------------------------------------
+
+	/**
+	 * Get the parent object (within tree view)
+	 */
+	public Object getParent() {
+		return parent;
+	}
 
 	/**
 	 * Return the child promptable objects.
@@ -123,9 +137,7 @@ public class SystemNewConnectionPromptObject
 			// Basically, once initialized, the list of system types cannot change, but
 			// it doesn't hurt to check this in case it changes because of future extensions.
 			if (isRootPrompt) {
-				String[] typeNames = RSECorePlugin.getDefault().getRegistry().getSystemTypeNames();
-				if (systemTypes == null || typeNames.length != systemTypes.length)
-					systemTypes = typeNames;
+				systemTypes = RSECorePlugin.getDefault().getRegistry().getSystemTypes();
 			}
 
 			if (systemTypes != null) {
@@ -138,21 +150,20 @@ public class SystemNewConnectionPromptObject
 
 		return children;
 	}
-	
+
 	/**
 	 * Return true if we have children, false if run when expanded
 	 */
-	public boolean hasChildren()
-	{
-	
+	public boolean hasChildren() {
+
 		// DKM - I think we shouuld indicate children even if there's only one connection type	
 		//if (systemTypes.length == 1)	
 		if (systemTypes == null || (systemTypes.length == 1 && !isRootPrompt))
 			return false;
 		else
-		  return true;
+			return true;
 	}
-	    
+
 	/**
 	 * Returns an image descriptor for the image. More efficient than getting the image.
 	 * Calls getImage on the subsystem's owning factory.
@@ -161,12 +172,11 @@ public class SystemNewConnectionPromptObject
 		if (hasChildren())
 			return RSEUIPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_NEWCONNECTION_ID);
 		else {
-			IRSESystemType sysType = RSECorePlugin.getDefault().getRegistry().getSystemType(systemTypes[0]);
-			RSESystemTypeAdapter adapter = (RSESystemTypeAdapter)(sysType.getAdapter(IRSESystemType.class));
-			return adapter.getImageDescriptor(sysType);
+			RSESystemTypeAdapter adapter = (RSESystemTypeAdapter)(systemTypes[0].getAdapter(IRSESystemType.class));
+			return adapter.getImageDescriptor(systemTypes[0]);
 		}
 	}
-	
+
 	/**
 	 * Return the label for this object
 	 */
@@ -184,68 +194,59 @@ public class SystemNewConnectionPromptObject
 
 		return newConnText;
 	}
-	
+
 	/**
 	 * Return the type label for this object
 	 */
-	public String getType()
-	{
+	public String getType() {
 		if (hasChildren())
-		  return SystemResources.RESID_NEWCONN_EXPANDABLEPROMPT_VALUE;
+			return SystemResources.RESID_NEWCONN_EXPANDABLEPROMPT_VALUE;
 		else
-		  return SystemResources.RESID_NEWCONN_PROMPT_VALUE;		
-	}	
-	
+			return SystemResources.RESID_NEWCONN_PROMPT_VALUE;
+	}
+
 	/**
 	 * Run this prompt. This should return an appropriate ISystemMessageObject to show
 	 * as the child, reflecting if it ran successfully, was cancelled or failed. 
 	 */
-	public Object[] run(Shell shell)
-	{
-		if (action == null)
-		{
-		  action = new SystemNewConnectionAction(shell, false, false, null);
+	public Object[] run(Shell shell) {
+		if (action == null) {
+			action = new SystemNewConnectionAction(shell, false, false, null);
 		}
-		if (systemTypes!=null)
-		  action.restrictSystemTypes(systemTypes);
-		
-		try 
-		{
-		  action.run();
-		} catch (Exception exc)
-		{
-		   return new Object[] {
-		       new SystemMessageObject(RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_EXPAND_FAILED),
-		                                  ISystemMessageObject.MSGTYPE_ERROR,null)};
+		if (systemTypes != null) {
+			List systemTypeNames = new ArrayList();
+			for (int i = 0; i < systemTypes.length; i++) systemTypeNames.add(systemTypes[i].getName());
+			action.restrictSystemTypes((String[])systemTypeNames.toArray(new String[systemTypeNames.size()]));
 		}
-		
-		
+
+		try {
+			action.run();
+		} catch (Exception exc) {
+			return new Object[] { new SystemMessageObject(RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_EXPAND_FAILED), ISystemMessageObject.MSGTYPE_ERROR, null) };
+		}
+
 		IHost newConnection = (IHost)action.getValue();
-		
+
 		// create appropriate object to return...
 		ISystemMessageObject result = null;
-		if (newConnection != null)
-		{
-		   result = new SystemMessageObject(RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_EXPAND_CONNECTIONCREATED),
-		                                    ISystemMessageObject.MSGTYPE_OBJECTCREATED,null);
-	    }		  
-	    else
-		   result = new SystemMessageObject(RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_EXPAND_CANCELLED),
-		                                    ISystemMessageObject.MSGTYPE_CANCEL,null);
-	    return new Object[] {result};
+		if (newConnection != null) {
+			result = new SystemMessageObject(RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_EXPAND_CONNECTIONCREATED), ISystemMessageObject.MSGTYPE_OBJECTCREATED,
+																				null);
+		} else
+			result = new SystemMessageObject(RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_EXPAND_CANCELLED), ISystemMessageObject.MSGTYPE_CANCEL, null);
+		return new Object[] { result };
 	}
-     
-    // ----------------------------------------------------
-    // METHODS REQUIRED BY THE IADAPTABLE INTERFACE...
-    // ----------------------------------------------------
 
-    /**
+	// ----------------------------------------------------
+	// METHODS REQUIRED BY THE IADAPTABLE INTERFACE...
+	// ----------------------------------------------------
+
+	/**
 	 * This is the method required by the IAdaptable interface.
 	 * Given an adapter class type, return an object castable to the type, or
 	 *  null if this is not possible.
 	 */
-    public Object getAdapter(Class adapterType)
-    {
-   	    return Platform.getAdapterManager().getAdapter(this, adapterType);	
-    }               
+	public Object getAdapter(Class adapterType) {
+		return Platform.getAdapterManager().getAdapter(this, adapterType);
+	}
 }

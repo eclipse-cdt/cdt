@@ -103,8 +103,9 @@ New connection wizard may have the need of contributing different attribute valu
          <attribute name="categoryId" type="string">
             <annotation>
                <documentation>
-                  A fully qualified valid category id previously defined by this or some other plug-in. If omitted or if the specified category id is invalid, the wizard will be added as non-categorized root element. 
-
+                  A fully qualified valid category id previously defined by this or some other plug-in. If omitted or if the specified category id is invalid, the wizard will be added as non-categorized root element.
+&lt;p&gt;
+The default RSE wizard category id is &quot;org.eclipse.rse.ui.wizards.newconnection.default.category&quot;.
                </documentation>
             </annotation>
          </attribute>
@@ -148,7 +149,6 @@ New connection wizard may have the need of contributing different attribute valu
             <annotation>
                <documentation>
                   The fully qualified id of the parent category or empty if it is a root category.
-
                </documentation>
             </annotation>
          </attribute>
@@ -166,16 +166,16 @@ New connection wizard may have the need of contributing different attribute valu
 &lt;pre&gt;
   &lt;extension
         point=&quot;org.eclipse.rse.ui.newConnectionWizard&quot;&gt;
-		&lt;category id=&quot;org.eclipse.rse.ui.wizards.newconnection.default.category&quot;
-				name=&quot;%Creation.category.name&quot;/&gt;
-		&lt;newConnectionWizard
-	        id=&quot;org.eclipse.rse.ui.wizards.newconnection.RSEDefaultnNewConnectionWizard&quot;
-        	class=&quot;org.eclipse.rse.ui.wizards.newconnection.RSEDefaultNewConnectionWizard&quot;
-	        name=&quot;%DefaultRSENewConnectionWizard.name&quot;
-			canFinishEarly=&quot;false&quot;
-    	    categoryId=&quot;org.eclipse.rse.ui.wizards.newconnection.default.category&quot;
-        	hasPages=&quot;true&quot;&gt;
-		&lt;/newConnectionWizard&gt;
+  &lt;category id=&quot;org.eclipse.rse.ui.wizards.newconnection.default.category&quot;
+    name=&quot;%Creation.category.name&quot;/&gt;
+  &lt;newConnectionWizard
+         id=&quot;org.eclipse.rse.ui.wizards.newconnection.RSEDefaultnNewConnectionWizard&quot;
+         class=&quot;org.eclipse.rse.ui.wizards.newconnection.RSEDefaultNewConnectionWizard&quot;
+         name=&quot;%DefaultRSENewConnectionWizard.name&quot;
+   canFinishEarly=&quot;false&quot;
+         categoryId=&quot;org.eclipse.rse.ui.wizards.newconnection.default.category&quot;
+         hasPages=&quot;true&quot;&gt;
+  &lt;/newConnectionWizard&gt;
   &lt;/extension&gt;
 &lt;/pre&gt;
 &lt;/p&gt;

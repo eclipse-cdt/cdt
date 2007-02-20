@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.rse.ui.wizards.newconnection;
 
-import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -29,8 +28,8 @@ import org.eclipse.rse.ui.wizards.registries.RSEWizardDescriptor;
 public class RSENewConnectionWizardDescriptor extends RSEWizardDescriptor implements IRSENewConnectionWizardDescriptor {
 	private final SystemTypeMatcher systemTypeMatcher;
 
-	// The list of resolved system types supported by this wizard.
-	private List resolvedSystemTypes;
+	// The list of resolved system type ids supported by this wizard.
+	private List resolvedSystemTypeIds;
 	
 	/**
 	 * Constructor
@@ -54,14 +53,14 @@ public class RSENewConnectionWizardDescriptor extends RSEWizardDescriptor implem
 	 * @see org.eclipse.rse.ui.wizards.newconnection.INewConnectionWizardDescriptor#getSystemTypeIds()
 	 */
 	public String[] getSystemTypeIds() {
-		if (resolvedSystemTypes == null) {
-			resolvedSystemTypes = new LinkedList();
+		if (resolvedSystemTypeIds == null) {
+			resolvedSystemTypeIds = new LinkedList();
 			
 			// If the subsystem configuration supports all system types, just add all
 			// currently registered system types to th resolved list
 			if (systemTypeMatcher.supportsAllSystemTypes()) {
-				String[] systemTypes = RSECorePlugin.getDefault().getRegistry().getSystemTypeNames();
-				if (systemTypes != null) resolvedSystemTypes.addAll(Arrays.asList(systemTypes));
+				IRSESystemType[] systemTypes = RSECorePlugin.getDefault().getRegistry().getSystemTypes();
+				for (int i = 0; i < systemTypes.length; i++) resolvedSystemTypeIds.add(systemTypes[i].getId());
 			} else {
 				// We have to match the given lists of system type ids against
 				// the list of available system types. As the list of system types cannot
@@ -74,15 +73,15 @@ public class RSENewConnectionWizardDescriptor extends RSEWizardDescriptor implem
 					if (systemTypeMatcher.matches(systemType)
 							|| (adapter != null
 									&& adapter.acceptWizardDescriptor(getConfigurationElement().getName(), this))) {
-						if (!resolvedSystemTypes.contains(systemType.getId())) {
-								resolvedSystemTypes.add(systemType.getId());
+						if (!resolvedSystemTypeIds.contains(systemType.getId())) {
+								resolvedSystemTypeIds.add(systemType.getId());
 						}
 					}
 				}
 			}
 		}
 
-		return (String[])resolvedSystemTypes.toArray(new String[resolvedSystemTypes.size()]);
+		return (String[])resolvedSystemTypeIds.toArray(new String[resolvedSystemTypeIds.size()]);
 	}
 
 }

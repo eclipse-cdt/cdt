@@ -14,9 +14,11 @@ package org.eclipse.rse.ui.wizards.newconnection;
 import java.util.Arrays;
 
 import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.viewers.AbstractTreeViewer;
 import org.eclipse.jface.viewers.DecoratingLabelProvider;
 import org.eclipse.jface.viewers.DoubleClickEvent;
+import org.eclipse.jface.viewers.IBasicPropertyConstants;
 import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.ISelectionProvider;
@@ -26,8 +28,10 @@ import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.jface.wizard.IWizard;
+import org.eclipse.jface.wizard.IWizardContainer;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.rse.core.IRSESystemType;
 import org.eclipse.rse.ui.RSESystemTypeAdapter;
@@ -58,6 +62,10 @@ public class RSENewConnectionWizardSelectionPage extends WizardPage {
 	private ViewerFilter filteredTreeWizardStateFilter;
 	private RSENewConnectionWizardSelectionTreeDataManager filteredTreeDataManager;
 	
+	/**
+	 * Internal class. The wizard state filter is responsible to filter
+	 * out any not enabled wizard from the tree.
+	 */
 	private class NewConnectionWizardStateFilter extends ViewerFilter {
 		
 		/* (non-Javadoc)
@@ -91,6 +99,22 @@ public class RSENewConnectionWizardSelectionPage extends WizardPage {
 	}
 	
 	/**
+	 * Internal class. The wizard viewer comparator is responsible for
+	 * the sorting in the tree. Current implementation is not prioritizing
+	 * categories.
+	 */
+	private class NewConnectionWizardViewerComparator extends ViewerComparator {
+	
+		/* (non-Javadoc)
+		 * @see org.eclipse.jface.viewers.ViewerComparator#isSorterProperty(java.lang.Object, java.lang.String)
+		 */
+		public boolean isSorterProperty(Object element, String property) {
+			// The comparator is affected if the label of the elements should change.
+      return property.equals(IBasicPropertyConstants.P_TEXT);
+		}
+	}
+	
+ 	/**
 	 * Constructor.
 	 */
 	public RSENewConnectionWizardSelectionPage() {
@@ -151,13 +175,15 @@ public class RSENewConnectionWizardSelectionPage extends WizardPage {
     filteredTreeFilter = new RSEWizardSelectionTreePatternFilter();
     filteredTree = new FilteredTree(composite, SWT.SINGLE | SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER, filteredTreeFilter);
 		filteredTree.setBackground(parent.getDisplay().getSystemColor(SWT.COLOR_WIDGET_BACKGROUND));
-
+		GridData layoutData = new GridData(GridData.FILL_BOTH);
+		layoutData.heightHint = 275; layoutData.widthHint = 450;
+		filteredTree.setLayoutData(layoutData);
+		
     final TreeViewer treeViewer = filteredTree.getViewer();
     treeViewer.setContentProvider(new RSEWizardSelectionTreeContentProvider());
     // Explicitly allow the tree items to get decorated!!!
 		treeViewer.setLabelProvider(new DecoratingLabelProvider(new RSEWizardSelectionTreeLabelProvider(), PlatformUI.getWorkbench().getDecoratorManager().getLabelDecorator()));
-//		treeViewer.setComparator(NewWizardCollectionComparator.INSTANCE);
-//		treeViewer.addSelectionChangedListener(this);
+		treeViewer.setComparator(new NewConnectionWizardViewerComparator());
 		treeViewer.setAutoExpandLevel(2);
 
 		filteredTreeWizardStateFilter = new NewConnectionWizardStateFilter();
@@ -170,7 +196,6 @@ public class RSENewConnectionWizardSelectionPage extends WizardPage {
 		});
 		treeViewer.addDoubleClickListener(new IDoubleClickListener() {
 			public void doubleClick(DoubleClickEvent event) {
-//				onSelectionChanged();
 				if (canFlipToNextPage()) getWizard().getContainer().showPage(getNextPage());
 			}
 		});
@@ -182,6 +207,19 @@ public class RSENewConnectionWizardSelectionPage extends WizardPage {
 		Dialog.applyDialogFont(composite);
 		
 		setControl(composite);
+		
+		// Initialize the selection in the tree
+		if (getWizard() instanceof ISelectionProvider) {
+			ISelectionProvider selectionProvider = (ISelectionProvider)getWizard();
+			if (selectionProvider.getSelection() instanceof IStructuredSelection) {
+				IStructuredSelection selection = (IStructuredSelection)selectionProvider.getSelection();
+				if (selection.getFirstElement() instanceof IRSESystemType) {
+					IRSESystemType systemType = (IRSESystemType)selection.getFirstElement();
+					RSENewConnectionWizardSelectionTreeElement treeElement = filteredTreeDataManager.getTreeElementForSystemType(systemType);
+					if (treeElement != null) treeViewer.setSelection(new StructuredSelection(treeElement), true);
+				}
+			}
+		}
 	}
 
 	/* (non-Javadoc)
@@ -192,7 +230,7 @@ public class RSENewConnectionWizardSelectionPage extends WizardPage {
 	}
 
 	/**
-	 * Called from the selection and double-click listener to propage the current
+	 * Called from the selection listener to propage the current
 	 * system type selection to the underlaying wizard.
 	 */
 	protected void onSelectionChanged() {
@@ -208,56 +246,33 @@ public class RSENewConnectionWizardSelectionPage extends WizardPage {
 				} else {
 					if (!getDefaultDescription().equals(getDescription())) setDescription(getDefaultDescription());
 				}
+			} else {
+				selectionProvider.setSelection(null);
 			}
 		}
+		
+		// Update the wizard container UI elements
+		IWizardContainer container = getContainer();
+		if (container != null && container.getCurrentPage() != null) {
+			container.updateWindowTitle();
+			container.updateTitleBar();
+			container.updateButtons();
+		}
 	}
-	
-	/**
-	 * @see org.eclipse.rse.ui.wizards.AbstractSystemWizardPage#createContents(org.eclipse.swt.widgets.Composite)
-	 */
-//	public Control createContents(Composite parent) {
-//		
-//		int nbrColumns = 2;
-//		Composite composite_prompts = SystemWidgetHelpers.createComposite(parent, nbrColumns);
-//		SystemWidgetHelpers.setCompositeHelp(composite_prompts, parentHelpId);
-//		
-//		String temp = SystemWidgetHelpers.appendColon(SystemResources.RESID_CONNECTION_SYSTEMTYPE_LABEL);
-//		
-//		Label labelSystemType = SystemWidgetHelpers.createLabel(composite_prompts, temp);
-//		labelSystemType.setToolTipText(SystemResources.RESID_CONNECTION_SYSTEMTYPE_TIP);
-//		
-//		if (restrictedSystemTypes == null) {
-//			textSystemType = SystemWidgetHelpers.createSystemTypeListBox(parent, null);
-//		}
-//		else {
-//			String[] systemTypeNames = new String[restrictedSystemTypes.length];
-//			
-//			for (int i = 0; i < restrictedSystemTypes.length; i++) {
-//				systemTypeNames[i] = restrictedSystemTypes[i].getName();
-//			}
-//			
-//			textSystemType = SystemWidgetHelpers.createSystemTypeListBox(parent, null, systemTypeNames);
-//		}
-//		
-//		textSystemType.setToolTipText(SystemResources.RESID_CONNECTION_SYSTEMTYPE_TIP);
-//		SystemWidgetHelpers.setHelp(textSystemType, RSEUIPlugin.HELPPREFIX + "ccon0003"); //$NON-NLS-1$
-//		
-//		textSystemType.addSelectionListener(this);
-//		
-//		descriptionSystemType = SystemWidgetHelpers.createMultiLineTextField(parent,null,30);
-//		descriptionSystemType.setEditable(false);
-//
-//		widgetSelected(null);
-//		
-//		return composite_prompts;
-//	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.rse.ui.wizards.AbstractSystemWizardPage#performFinish()
+	 * @see org.eclipse.jface.wizard.WizardPage#getDialogSettings()
 	 */
-	public boolean performFinish() {
-		return true;
+	protected IDialogSettings getDialogSettings() {
+		// If the wizard is set and returns dialog settings, we re-use them here
+		IDialogSettings settings = super.getDialogSettings();
+		// If the dialog settings could not set from the wizard, fallback to the plugins
+		// dialog settings store.
+		if (settings == null) settings = RSEUIPlugin.getDefault().getDialogSettings();
+		String sectionName = this.getClass().getName();
+		if (settings.getSection(sectionName) == null) settings.addNewSection(sectionName);
+		settings = settings.getSection(sectionName);
+
+		return settings;
 	}
-
-
 }

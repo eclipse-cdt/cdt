@@ -77,8 +77,7 @@ public class RSECoreRegistry implements IRSECoreRegistry {
 		return instance;
 	}
 
-	/**
-	 * Returns all system types that have been defined.
+	/* (non-Javadoc)
 	 * @see org.eclipse.rse.core.IRSECoreRegistry#getSystemTypes()
 	 */
 	public IRSESystemType[] getSystemTypes() {
@@ -91,12 +90,25 @@ public class RSECoreRegistry implements IRSECoreRegistry {
 		return systemTypes;
 	}
 
-	/**
-	 * Returns the system type with the given name.
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.core.IRSECoreRegistry#getSystemTypeById(java.lang.String)
+	 */
+	public IRSESystemType getSystemTypeById(String systemTypeId) {
+		if (systemTypeId != null) {
+			IRSESystemType[] types = getSystemTypes();
+			for (int i = 0; i < types.length; i++) {
+				if (types[i].getId().equals(systemTypeId)) {
+					return types[i];
+				}
+			}
+		}
+		return null;
+	}
+	
+	/* (non-Javadoc)
 	 * @see org.eclipse.rse.core.IRSECoreRegistry#getSystemType(java.lang.String)
 	 */
 	public IRSESystemType getSystemType(String name) {
-
 		IRSESystemType[] types = getSystemTypes();
 
 		for (int i = 0; i < types.length; i++) {
@@ -108,21 +120,6 @@ public class RSECoreRegistry implements IRSECoreRegistry {
 		}
 
 		return null;
-	}
-
-	/**
-	 * @see org.eclipse.rse.core.IRSECoreRegistry#getSystemTypeNames()
-	 */
-	public String[] getSystemTypeNames() {
-		IRSESystemType[] types = getSystemTypes();
-		String[] names = new String[types.length];
-
-		for (int i = 0; i < types.length; i++) {
-			IRSESystemType type = types[i];
-			names[i] = type.getName();
-		}
-
-		return names;
 	}
 
 	/**

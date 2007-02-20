@@ -21,6 +21,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.ISelectionProvider;
@@ -32,6 +33,7 @@ import org.eclipse.jface.wizard.IWizardContainer;
 import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.rse.core.IRSESystemType;
+import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.ui.ISystemIconConstants;
 import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemResources;
@@ -43,8 +45,11 @@ import org.eclipse.ui.IWorkbench;
  * The New Connection wizard. This wizard allows users to create new RSE connections.
  */
 public class RSEMainNewConnectionWizard extends Wizard implements INewWizard, ISelectionProvider {
+	protected static final String LAST_SELECTED_SYSTEM_TYPE_ID = "lastSelectedSystemTypeId"; //$NON-NLS-1$
+	
 	private IWizard selectedWizard;
 	private IRSESystemType selectedSystemType;
+	private boolean selectedWizardCanFinishEarly;
 	
 	private final RSENewConnectionWizardSelectionPage mainPage;
 	private final List initializedWizards = new LinkedList();
@@ -61,12 +66,21 @@ public class RSEMainNewConnectionWizard extends Wizard implements INewWizard, IS
 		setWindowTitle(SystemResources.RESID_NEWCONN_TITLE);
 		setForcePreviousAndNextButtons(true);
 		setNeedsProgressMonitor(true);
+
+		// Initialize the dialog settings for this wizard
+		IDialogSettings settings = RSEUIPlugin.getDefault().getDialogSettings();
+		String sectionName = this.getClass().getName();
+		if (settings.getSection(sectionName) == null) settings.addNewSection(sectionName);
+		setDialogSettings(settings.getSection(sectionName));
 		
 		mainPage = new RSENewConnectionWizardSelectionPage();
 		initializedWizards.clear();
 		selectionChangedListener.clear();
+		
+		// and finally restore the wizard state
+		restoreFromDialogSettings();
 	}
-
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.wizard.Wizard#getDefaultPageImage()
 	 */
@@ -141,8 +155,10 @@ public class RSEMainNewConnectionWizard extends Wizard implements INewWizard, IS
 		if (selection instanceof IStructuredSelection 
 				&& ((IStructuredSelection)selection).getFirstElement() instanceof IRSESystemType) {
 			selectedSystemType = (IRSESystemType)((IStructuredSelection)selection).getFirstElement();
-			onSelectedSystemTypeChanged();
+		} else {
+			selectedSystemType = null;
 		}
+		onSelectedSystemTypeChanged();
 	}
 
 	/* (non-Javadoc)
@@ -172,7 +188,13 @@ public class RSEMainNewConnectionWizard extends Wizard implements INewWizard, IS
 		
 		// Check if a wizard is registered for the selected system type
 		IRSENewConnectionWizardDescriptor descriptor = getSelection() != null ? RSENewConnectionWizardRegistry.getInstance().getWizardForSelection((IStructuredSelection)getSelection()) : null;
-		selectedWizard =  descriptor != null ? descriptor.getWizard() : null;
+		if (descriptor != null) {
+			selectedWizard = descriptor.getWizard();
+			selectedWizardCanFinishEarly = descriptor.canFinishEarly();
+		} else {
+			selectedWizard = null;
+			selectedWizardCanFinishEarly = false;
+		}
 		
 		// register the newly selected wizard as selection changed listener
 		if (selectedWizard instanceof ISelectionChangedListener) {
@@ -230,17 +252,48 @@ public class RSEMainNewConnectionWizard extends Wizard implements INewWizard, IS
 	}
 
 	/* (non-Javadoc)
+	 * @see org.eclipse.jface.wizard.Wizard#canFinish()
+	 */
+	public boolean canFinish() {
+		// We can finish from the main new connection wizard only if the selected
+		// wizard can finish early
+		return selectedWizardCanFinishEarly;
+	}
+	
+	/* (non-Javadoc)
 	 * @see org.eclipse.rse.ui.wizards.AbstractSystemWizard#performFinish()
 	 */
 	public boolean performFinish() {
-		boolean result = true;
-		if (mainPage != null) result = mainPage.performFinish();
-
 		// Note: Do _NOT_ delegate the performFinish from here to the selected
 		// wizard!! The outer wizard dialog is handling the nested wizards by
 		// default already itself!!
 
-		return result;
+		// Save the current selection to the dialog settings
+		IDialogSettings dialogSettings = getDialogSettings();
+		if (dialogSettings != null && getSelection() instanceof IStructuredSelection) {
+			IStructuredSelection selection = (IStructuredSelection)getSelection();
+			if (selection.getFirstElement() instanceof IRSESystemType) {
+				dialogSettings.put(LAST_SELECTED_SYSTEM_TYPE_ID, ((IRSESystemType)selection.getFirstElement()).getId());
+			}
+		}
+		
+		return true;
 	}
 
+	/**
+	 * Restore the persistent saved wizard state. This method
+	 * is called from the wizards constructor.
+	 */
+	protected void restoreFromDialogSettings() {
+		IDialogSettings dialogSettings = getDialogSettings();
+		if (dialogSettings != null) {
+			String systemTypeId = dialogSettings.get(LAST_SELECTED_SYSTEM_TYPE_ID);
+			if (systemTypeId != null) {
+				IRSESystemType systemType = RSECorePlugin.getDefault().getRegistry().getSystemTypeById(systemTypeId);
+				if (systemType != null) {
+					setSelection(new StructuredSelection(systemType));
+				}
+			}
+		}
+	}
 }

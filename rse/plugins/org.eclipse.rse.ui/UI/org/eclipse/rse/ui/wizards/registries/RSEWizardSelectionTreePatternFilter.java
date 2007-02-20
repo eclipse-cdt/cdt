@@ -34,10 +34,8 @@ public class RSEWizardSelectionTreePatternFilter extends PatternFilter {
 	protected boolean isLeafMatch(Viewer viewer, Object element) {
 		if (element instanceof RSEWizardSelectionTreeElement) {
 			RSEWizardSelectionTreeElement treeElement = (RSEWizardSelectionTreeElement)element;
-			// we filter only the wizard nodes, not the category nodes (yet).
-			if (treeElement.getWizardRegistryElement() instanceof IRSEWizardCategory) {
-				return true;
-			} else {
+			// we filter only the wizard nodes
+			if (treeElement.getWizardRegistryElement() instanceof IRSEWizardDescriptor) {
 				return wordMatches(treeElement.getLabel());
 			}
 

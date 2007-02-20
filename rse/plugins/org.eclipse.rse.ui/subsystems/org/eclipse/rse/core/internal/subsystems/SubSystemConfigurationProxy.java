@@ -164,8 +164,8 @@ public class SubSystemConfigurationProxy implements ISubSystemConfigurationProxy
 			// If the subsystem configuration supports all system types, just add all
 			// currently registered system types to th resolved list
 			if (supportsAllSystemTypes()) {
-				String[] systemTypes = RSECorePlugin.getDefault().getRegistry().getSystemTypeNames();
-				if (systemTypes != null) resolvedSystemTypes.addAll(Arrays.asList(systemTypes));
+				IRSESystemType[] systemTypes = RSECorePlugin.getDefault().getRegistry().getSystemTypes();
+				for (int i = 0; i < systemTypes.length; i++) resolvedSystemTypes.add(systemTypes[i].getName());
 			} else {
 				// We have to match the given lists of system type ids against
 				// the list of available system types. As the list of system types cannot

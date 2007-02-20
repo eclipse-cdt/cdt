@@ -17,6 +17,7 @@
 package org.eclipse.rse.model;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.rse.core.IRSESystemType;
 import org.eclipse.swt.widgets.Shell;
 
 /**
@@ -29,9 +30,7 @@ import org.eclipse.swt.widgets.Shell;
  * <p>
  * Related adapter is org.eclipse.rse.ui.view.SystemViewPromptableAdapter
  */
-public interface ISystemPromptableObject extends IAdaptable
-{
-
+public interface ISystemPromptableObject extends IAdaptable {
 	/**
 	 * Returns the list of system types this promptable object
 	 * is associated with. This is important to implement label
@@ -39,9 +38,9 @@ public interface ISystemPromptableObject extends IAdaptable
 	 * 
 	 * @return The list of associated system types or an empty list.
 	 */
-	public String[] getSystemTypes();
-	
-  /**
+	public IRSESystemType[] getSystemTypes();
+
+	/**
 	 * Get the parent object (within tree view)
 	 */
 	public Object getParent();

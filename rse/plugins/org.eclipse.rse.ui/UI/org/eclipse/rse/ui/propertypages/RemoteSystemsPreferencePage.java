@@ -18,10 +18,14 @@
 package org.eclipse.rse.ui.propertypages;
 
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.rse.core.IRSEPreferenceNames;
+import org.eclipse.rse.core.IRSESystemType;
 import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.model.ISystemPreferenceChangeEvents;
 import org.eclipse.rse.internal.model.SystemPreferenceChangeEvent;
@@ -91,11 +95,15 @@ public class RemoteSystemsPreferencePage
 	{
 		IPreferenceStore coreStore = new PreferencesMapper(RSECorePlugin.getDefault().getPluginPreferences());
 
+		List systemTypeNames = new ArrayList();
+		IRSESystemType[] systemTypes = RSECorePlugin.getDefault().getRegistry().getSystemTypes();
+		for (int i = 0; i < systemTypes.length; i++) systemTypeNames.add(systemTypes[i].getName());
+
 		// DEFAULT SYSTEM TYPE		
 		SystemComboBoxFieldEditor systemTypeEditor = new SystemComboBoxFieldEditor(
 			IRSEPreferenceNames.SYSTEMTYPE,
 			SystemResources.RESID_PREF_SYSTEMTYPE_PREFIX_LABEL,
-			RSECorePlugin.getDefault().getRegistry().getSystemTypeNames(),
+			(String[])systemTypeNames.toArray(new String[systemTypeNames.size()]),
 			true, // readonly
 			getFieldEditorParent()
 		);

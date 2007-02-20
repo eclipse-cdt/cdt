@@ -20,6 +20,7 @@ import java.util.Arrays;
 import java.util.Locale;
 
 import org.eclipse.jface.action.IAction;
+import org.eclipse.rse.core.IRSESystemType;
 import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.SystemBasePlugin;
 import org.eclipse.rse.core.model.IHost;
@@ -772,7 +773,7 @@ public class SystemWidgetHelpers {
 		
 		List list = createListBox(group, listener, false, null, SystemResources.RESID_CONNECTION_SYSTEMTYPE_TIP);
 		
-		String[] typeItems = ((systemTypes == null) ? RSECorePlugin.getDefault().getRegistry().getSystemTypeNames() : systemTypes);
+		String[] typeItems = ((systemTypes == null) ? getSystemTypeNames() : systemTypes);
 		
 		if (systemTypes == null) {
 			for (int i = 0; i < typeItems.length; i++) {
@@ -1126,13 +1127,28 @@ public class SystemWidgetHelpers {
 		return createSystemTypeCombo(parent, listener, null);
 	}
 
+	private static String[] systemTypeNames = null;
+
+	/**
+	 * Internal method. Helper to get the list of registered system type names.
+	 */
+	private static String[] getSystemTypeNames() {
+		if (systemTypeNames == null) {
+			java.util.List names = new ArrayList();
+			IRSESystemType[] systemTypes = RSECorePlugin.getDefault().getRegistry().getSystemTypes();
+			for (int i = 0; i < systemTypes.length; i++) names.add(systemTypes[i].getName());
+			systemTypeNames = (String[])names.toArray(new String[names.size()]);
+		}
+		return systemTypeNames;
+	}
+	
 	/**
 	 * Creates a readonly system type combination box with the given system types.
 	 * Does NOT create the leading prompt or anything except the combo.
 	 */
 	public static Combo createSystemTypeCombo(Composite parent, Listener listener, String[] systemTypes) {
 		Combo combo = createReadonlyCombo(parent, listener, SystemResources.RESID_CONNECTION_SYSTEMTYPE_TIP);
-		String[] typeItems = ((systemTypes == null) ? RSECorePlugin.getDefault().getRegistry().getSystemTypeNames() : systemTypes);
+		String[] typeItems = ((systemTypes == null) ? getSystemTypeNames() : systemTypes);
 		
 		ArrayList list = new ArrayList();
 

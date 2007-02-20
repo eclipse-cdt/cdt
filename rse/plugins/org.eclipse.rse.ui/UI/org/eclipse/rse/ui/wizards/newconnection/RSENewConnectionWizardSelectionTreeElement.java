@@ -72,7 +72,22 @@ public class RSENewConnectionWizardSelectionTreeElement extends RSEWizardSelecti
 		
 		return image;
 	}
-	
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.ui.wizards.registries.RSEWizardSelectionTreeElement#getDescription()
+	 */
+	public String getDescription() {
+		// Check the system type adapter for the description in case the wizard descriptor does
+		// not come up with a description itself.
+		String description = super.getDescription();
+		if (description == null) {
+			RSESystemTypeAdapter adapter = (RSESystemTypeAdapter)(getSystemType().getAdapter(IRSESystemType.class));
+			if (adapter != null) {
+				description = adapter.getDescription(getSystemType());
+			}
+		}
+		return description;
+	}
 
 	/* (non-Javadoc)
 	 * @see java.lang.Object#equals(java.lang.Object)

@@ -29,20 +29,26 @@ public interface IRSECoreRegistry {
 
 	/**
 	 * Returns all defined system types.
+	 * 
 	 * @return an array of all defined system types.
 	 */
 	public IRSESystemType[] getSystemTypes();
 
 	/**
-	 * Returns the names of all defined system types.
-	 * @return all defined system type names 
-	 */
-	public String[] getSystemTypeNames();
-
-	/**
 	 * Returns a system type object given the name.
+	 * 
 	 * @param name the name of the system type
 	 * @return the system type object with the given name, or <code>null</code> if none is found
+	 * 
+	 * @deprecated Use {@link #getSystemTypeById(String)}.
 	 */
 	public IRSESystemType getSystemType(String name);
+	
+	/**
+	 * Returns a system type object given by the id.
+	 * 
+	 * @param systemTypeId The system type id.
+	 * @return The system type object with the given id, or <code>null</code> if none is found
+	 */
+	public IRSESystemType getSystemTypeById(String systemTypeId);
 }

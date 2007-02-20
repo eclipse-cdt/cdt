@@ -26,6 +26,10 @@ import org.eclipse.rse.ui.wizards.registries.RSEWizardSelectionTreeElement;
  * New connection wizard selection tree data manager.
  */
 public class RSENewConnectionWizardSelectionTreeDataManager extends RSEAbstractWizardSelectionTreeDataManager {
+	// The element map is required to translate from IRSESystemType object instance
+	// into RSENewConnectionWizardSelectionTreeElement object instances as the tree
+	// and the wizard using these different object instances in their selections!
+	private Map elementMap;
 	
 	/**
 	 * Constructor.
@@ -34,10 +38,28 @@ public class RSENewConnectionWizardSelectionTreeDataManager extends RSEAbstractW
 		super();
 	}
 
+	/**
+	 * Returns the corresponding wizard selection tree element for the specified
+	 * system type.
+	 * 
+	 * @param systemType The system type. Must be not <code>null</code>.
+	 * @return The wizard selection tree element or <code>null</code>.
+	 */
+	public RSENewConnectionWizardSelectionTreeElement getTreeElementForSystemType(IRSESystemType systemType) {
+		assert systemType != null;
+		return (RSENewConnectionWizardSelectionTreeElement)elementMap.get(systemType);
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.rse.ui.internal.wizards.newconnection.RSEAbstractWizardSelectionTreeDataManager#initialize(java.util.Set)
 	 */
 	protected void initialize(Set rootElement) {
+		// we must check the elementMap here for null as the static
+		// constructors may not have called yet as this method is called
+		// from the base classes constructor!
+		if (elementMap == null) elementMap = new HashMap();
+		elementMap.clear();
+		
 		Map categoryCache = new HashMap();
 		
 		// The new connection wizard selection is combining system types
@@ -59,6 +81,8 @@ public class RSENewConnectionWizardSelectionTreeDataManager extends RSEAbstractW
 			// and categorise the wizard.
 			RSENewConnectionWizardSelectionTreeElement wizardElement = new RSENewConnectionWizardSelectionTreeElement(systemType, descriptor);
 			wizardElement.setParentElement(null);
+			elementMap.put(systemType, wizardElement);
+			
 			String categoryId = descriptor.getCategoryId();
 			// if the wizard is of type IRSEDynamicNewConnectionWizard, call validateCategoryId!
 			if (descriptor.getWizard() instanceof IRSEDynamicNewConnectionWizard) {

@@ -646,7 +646,9 @@ public class SystemConnectionForm
 	      if (!updateMode)
 	      {
 		    profileCombo  = SystemWidgetHelpers.createReadonlyCombo(
-		      composite_prompts,null,SystemResources.RESID_CONNECTION_PROFILE_TIP);		
+		      composite_prompts,null,SystemResources.RESID_CONNECTION_PROFILE_TIP);
+		    if (defaultProfileNames != null) profileCombo.setItems(defaultProfileNames);
+		    if (defaultProfile != null) setProfileNamePreSelection(defaultProfile);
 		    SystemWidgetHelpers.setHelp(profileCombo, RSEUIPlugin.HELPPREFIX + "ccon0001"); //$NON-NLS-1$     
 	      }
         }

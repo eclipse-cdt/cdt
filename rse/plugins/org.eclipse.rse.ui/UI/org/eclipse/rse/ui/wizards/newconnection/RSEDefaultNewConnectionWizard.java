@@ -95,6 +95,7 @@ public class RSEDefaultNewConnectionWizard extends RSEAbstractNewConnectionWizar
 		if (mainPage != null && getSystemType() != null) {
 			mainPage.restrictSystemType(getSystemType().getName());
 			mainPage.setTitle(getPageTitle());
+			systemTypeSelected(getSystemType().getName(), true);
 		}
 	}
 

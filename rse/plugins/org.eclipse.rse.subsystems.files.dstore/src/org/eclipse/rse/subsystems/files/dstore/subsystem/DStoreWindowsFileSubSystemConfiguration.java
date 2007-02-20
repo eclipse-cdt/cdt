@@ -62,6 +62,16 @@ public class DStoreWindowsFileSubSystemConfiguration extends DStoreFileSubSystem
 
 		      mgr.createSystemFilter(pool, filterName, filterStrings);
 		  }
+		 else
+		 {
+			 Vector filterStrings = new Vector();
+			 filterStrings = new Vector();
+		      RemoteFileFilterString defaultFilterString = new RemoteFileFilterString(this);
+		      filterStrings.add(defaultFilterString.toString());	
+		      String filterName = SystemFileResources.RESID_FILTER_DRIVES;
+
+		      mgr.createSystemFilter(pool, filterName, filterStrings);
+		 }
 		}
 		 catch (Exception exc)
 			{

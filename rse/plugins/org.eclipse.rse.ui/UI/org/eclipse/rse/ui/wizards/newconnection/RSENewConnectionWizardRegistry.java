@@ -63,7 +63,7 @@ public class RSENewConnectionWizardRegistry extends RSEAbstractWizardRegistry {
 	 * @see org.eclipse.rse.ui.wizards.registries.RSEAbstractWizardRegistry#getExtensionPointId()
 	 */
 	protected String getExtensionPointId() {
-		return RSEUIPlugin.getDefault().getBundle().getSymbolicName() + ".newConnectionWizard"; //$NON-NLS-1$
+		return RSEUIPlugin.getDefault().getBundle().getSymbolicName() + ".newConnectionWizards"; //$NON-NLS-1$
 	}
 	
 	/**

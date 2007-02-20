@@ -14,7 +14,7 @@ Contributors:
 <plugin>
 
     <extension
-          point="org.eclipse.rse.ui.newConnectionWizard">
+          point="org.eclipse.rse.ui.newConnectionWizards">
        <newConnectionWizard
              canFinishEarly="false"
              categoryId="org.eclipse.rse.ui.wizards.newconnection.default.category"

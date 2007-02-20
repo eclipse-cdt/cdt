@@ -484,7 +484,7 @@ Contributors:
 <!-- ================================================================= -->
    <extension-point id="keystoreProviders" name="%extPoint.keystoreProviders" schema="schema/keystoreProviders.exsd"/>
 
-   <extension-point id="newConnectionWizard" name="%extPoint.newConnectionWizard" schema="schema/newConnectionWizard.exsd"/>
+   <extension-point id="newConnectionWizards" name="%extPoint.newConnectionWizard" schema="schema/newConnectionWizards.exsd"/>
 
 
 <!-- ================================================================= -->
@@ -605,7 +605,7 @@ Contributors:
         </decorator>
      </extension>
   <extension
-        point="org.eclipse.rse.ui.newConnectionWizard">
+        point="org.eclipse.rse.ui.newConnectionWizards">
 		<category id="org.eclipse.rse.ui.wizards.newconnection.default.category"
 				name="%Creation.category.name"/>
 		<newConnectionWizard

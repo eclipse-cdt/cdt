@@ -27,6 +27,7 @@ import java.io.FileOutputStream;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
@@ -50,6 +51,7 @@ import org.eclipse.rse.services.files.AbstractFileService;
 import org.eclipse.rse.services.files.IFileService;
 import org.eclipse.rse.services.files.IHostFile;
 import org.eclipse.rse.services.files.RemoteFileException;
+import org.eclipse.rse.services.files.RemoteFileIOException;
 
 public class LocalFileService extends AbstractFileService implements IFileService, ILocalService
 {
@@ -1364,5 +1366,43 @@ public class LocalFileService extends AbstractFileService implements IFileServic
 		}
 	}
 
-	
+	/**
+	 * Gets the input stream to access the contents of a remote file.
+	 * @since 2.0
+	 * @see org.eclipse.rse.services.files.AbstractFileService#getInputStream(IProgressMonitor, String, String, boolean)
+	 */
+	public InputStream getInputStream(IProgressMonitor monitor, String remoteParent, String remoteFile, boolean isBinary) throws SystemMessageException {
+		
+		File file = new File(remoteParent, remoteFile);
+		InputStream stream = null;
+		
+		try {
+			stream = new FileInputStream(file);
+		}
+		catch (Exception e) {
+			throw new RemoteFileIOException(e);
+		}
+		
+		return stream;
+	}
+
+	/**
+	 * Gets the output stream to write to a remote file.
+	 * @since 2.0
+	 * @see org.eclipse.rse.services.files.AbstractFileService#getOutputStream(IProgressMonitor, String, String, boolean)
+	 */
+	public OutputStream getOutputStream(IProgressMonitor monitor, String remoteParent, String remoteFile, boolean isBinary) throws SystemMessageException {
+		
+		File file = new File(remoteParent, remoteFile);
+		OutputStream stream = null;
+		
+		try {
+			stream = new FileOutputStream(file);
+		}
+		catch (Exception e) {
+			throw new RemoteFileIOException(e);
+		}
+		
+		return stream;
+	}	
 }

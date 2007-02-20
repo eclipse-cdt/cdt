@@ -16,6 +16,9 @@
 
 package org.eclipse.rse.services.files;
 
+import java.io.InputStream;
+import java.io.OutputStream;
+
 import org.eclipse.core.runtime.IProgressMonitor;
 
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
@@ -101,5 +104,21 @@ public abstract class AbstractFileService implements IFileService
 	 */
 	public String getEncoding(IProgressMonitor monitor) throws SystemMessageException {
 		return System.getProperty("file.encoding"); //$NON-NLS-1$
+	}
+
+	/**
+	 * The default implementation returns <code>null</code>. Clients can override to return an input stream to the file.
+	 * @see org.eclipse.rse.services.files.IFileService#getInputStream(IProgressMonitor, String, String, boolean)
+	 */
+	public InputStream getInputStream(IProgressMonitor monitor, String remoteParent, String remoteFile, boolean isBinary) throws SystemMessageException {
+		return null;
+	}
+
+	/**
+	 * The default implementation returns <code>null</code>. Clients can override to return an output stream to the file.
+	 * @see org.eclipse.rse.services.files.IFileService#getOutputStream(IProgressMonitor, String, String, boolean)
+	 */
+	public OutputStream getOutputStream(IProgressMonitor monitor, String remoteParent, String remoteFile, boolean isBinary) throws SystemMessageException {
+		return null;
 	}
 }

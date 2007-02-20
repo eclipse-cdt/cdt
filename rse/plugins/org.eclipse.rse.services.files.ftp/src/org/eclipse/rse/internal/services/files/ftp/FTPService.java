@@ -1070,6 +1070,83 @@ public class FTPService extends AbstractFileService implements IFileService, IFT
 		
 		return result;
 	}
-	
-	
+
+	/**
+	 * Gets the input stream to access the contents of a remote file.
+	 * @since 2.0 
+	 * @see org.eclipse.rse.services.files.AbstractFileService#getInputStream(org.eclipse.core.runtime.IProgressMonitor, java.lang.String, java.lang.String, boolean)
+	 */
+	public InputStream getInputStream(IProgressMonitor monitor, String remoteParent, String remoteFile, boolean isBinary) throws SystemMessageException {
+		
+		if (monitor != null){
+			
+			if (monitor.isCanceled()) {
+				return null;
+			}	
+		}
+
+		FTPClient ftpClient = getFTPClient();
+		
+		InputStream stream = null;
+		
+		try {
+			remoteParent = adaptPath(remoteParent);
+			
+			ftpClient.changeWorkingDirectory(remoteParent);
+			
+			if (isBinary) {
+				ftpClient.setFileType(FTP.BINARY_FILE_TYPE);
+			}
+			else {
+				ftpClient.setFileType(FTP.ASCII_FILE_TYPE);
+			}
+			
+			stream = ftpClient.retrieveFileStream(remoteFile);
+		}
+		catch (Exception e) {			
+			throw new RemoteFileIOException(e);
+		}
+		
+		return stream;
+	}
+
+	/**
+	 * Gets the output stream to write to a remote file.
+	 * @since 2.0
+	 * @see org.eclipse.rse.services.files.AbstractFileService#getOutputStream(org.eclipse.core.runtime.IProgressMonitor, java.lang.String, java.lang.String, boolean)
+	 */
+	public OutputStream getOutputStream(IProgressMonitor monitor, String remoteParent, String remoteFile, boolean isBinary) throws SystemMessageException {
+		
+		if (monitor != null){
+			
+			if (monitor.isCanceled()) {
+				return null;
+			}	
+		}
+		
+		FTPClient ftpClient = getFTPClient();
+		
+		OutputStream stream = null;
+		
+		try {
+			
+			remoteParent = adaptPath(remoteParent);
+			
+			ftpClient.changeWorkingDirectory(remoteParent);
+				
+			if (isBinary) {
+				ftpClient.setFileType(FTP.BINARY_FILE_TYPE);
+			}
+			else {
+				ftpClient.setFileType(FTP.ASCII_FILE_TYPE);
+			}
+			
+			stream = ftpClient.storeFileStream(remoteFile);
+		}
+		catch (Exception e) {
+			throw new RemoteFileIOException(e);
+		}
+		
+		return stream;
+	}
 }

@@ -18,8 +18,10 @@ package org.eclipse.rse.services.files;
 
 import java.io.File;
 import java.io.InputStream;
+import java.io.OutputStream;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+
 import org.eclipse.rse.services.IService;
 import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
 
@@ -293,4 +295,28 @@ public interface IFileService extends IService
 	 * @since 2.0
 	 */
 	public String getEncoding(IProgressMonitor monitor) throws SystemMessageException;
+	
+	/**
+	 * Gets the input stream to access the contents a remote file. Clients should close the input stream when done.
+	 * @param monitor the progress monitor.
+	 * @param remoteParent the absolute path of the parent.
+	 * @param remoteFile the name of the remote file.
+	 * @param isBinary <code>true</code> if the file is a binary file, <code>false</code> otherwise.
+	 * @return the input stream to access the contents of the remote file.
+	 * @throws SystemMessageException if an error occurs. 
+	 * @since 2.0
+	 */
+	public InputStream getInputStream(IProgressMonitor monitor, String remoteParent, String remoteFile, boolean isBinary) throws SystemMessageException;
+	
+	/**
+	 * Gets the output stream to write to a remote file. Clients should close the output stream when done.
+	 * @param monitor the progress monitor.
+	 * @param remoteParent the absolute path of the parent.
+	 * @param remoteFile the name of the remote file.
+	 * @param isBinary <code>true</code> if the file is a binary file, <code>false</code> otherwise.
+	 * @return the input stream to access the contents of the remote file.
+	 * @throws SystemMessageException if an error occurs.
+	 * @since 2.0
+	 */
+	public OutputStream getOutputStream(IProgressMonitor monitor, String remoteParent, String remoteFile, boolean isBinary) throws SystemMessageException;
 }

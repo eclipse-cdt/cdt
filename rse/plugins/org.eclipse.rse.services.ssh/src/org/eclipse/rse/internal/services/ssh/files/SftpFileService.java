@@ -7,7 +7,8 @@
  * 
  * Contributors: 
  * Martin Oberhuber (Wind River) - initial API and implementation
- * Dave Dykstal (IBM) - fixing bug 162510: correctly process filter strings  
+ * Dave Dykstal (IBM) - fixing bug 162510: correctly process filter strings
+ * Kushal Munir (IBM) - for API bug   
  *******************************************************************************/
 
 package org.eclipse.rse.internal.services.ssh.files;
@@ -765,4 +766,71 @@ public class SftpFileService extends AbstractFileService implements IFileService
 		return false;
 	}
 
+	/**
+	 * Gets the input stream to access the contents of a remote file. Clients should call {@link #disconnect()} after closing the input stream.
+	 * @since 2.0
+	 * @see org.eclipse.rse.services.files.AbstractFileService#getInputStream(IProgressMonitor, String, String, boolean) 
+	 */
+	public InputStream getInputStream(IProgressMonitor monitor, String remoteParent, String remoteFile, boolean isBinary) throws SystemMessageException {
+		
+		InputStream stream = null;
+		
+		try {
+			String remotePath = remoteParent + '/' + remoteFile;
+			int mode = ChannelSftp.OVERWRITE;
+			MyProgressMonitor sftpMonitor = new MyProgressMonitor(monitor);
+			getChannel("SftpFileService.getInputStream " + remoteFile); //check the session is healthy //$NON-NLS-1$
+			ChannelSftp channel = (ChannelSftp)fSessionProvider.getSession().openChannel("sftp"); //$NON-NLS-1$
+			channel.connect();
+			stream = channel.get(remotePath, sftpMonitor, mode);
+			Activator.trace("SftpFileService.getInputStream " + remoteFile + " ok"); //$NON-NLS-1$ //$NON-NLS-2$
+		}
+		catch (Exception e) {
+			Activator.trace("SftpFileService.getInputStream " + remoteFile + " failed: " + e.toString()); //$NON-NLS-1$ //$NON-NLS-2$
+			throw makeSystemMessageException(e);
+		}
+		
+		return stream;
+	}
+
+	/**
+	 * Gets the output stream to write to a remote file. Clients should call {@link #disconnect()} after closing the output stream.
+	 * @since 2.0
+	 * @see org.eclipse.rse.services.files.AbstractFileService#getOutputStream(IProgressMonitor, String, String, boolean)
+	 */
+	public OutputStream getOutputStream(IProgressMonitor monitor, String remoteParent, String remoteFile, boolean isBinary) throws SystemMessageException {
+		
+		if (monitor == null) {
+			monitor = new NullProgressMonitor();
+		}
+		
+		OutputStream stream = null;
+		
+		try {
+			SftpProgressMonitor sftpMonitor = new MyProgressMonitor(monitor);
+			int mode = ChannelSftp.OVERWRITE;
+			String dst = remoteParent;
+			
+			if (remoteFile != null) {
+				
+				if (!dst.endsWith("/")) { //$NON-NLS-1$
+					dst += '/';
+				}
+				
+				dst += remoteFile;
+			}
+			
+			getChannel("SftpFileService.getOutputStream " + remoteFile); //check the session is healthy //$NON-NLS-1$ 
+			ChannelSftp channel = (ChannelSftp)fSessionProvider.getSession().openChannel("sftp"); //$NON-NLS-1$
+		    channel.connect();
+			stream = channel.put(dst, sftpMonitor, mode); 
+			Activator.trace("SftpFileService.getOutputStream " + remoteFile + " ok"); //$NON-NLS-1$ //$NON-NLS-2$
+		}
+		catch (Exception e) {
+			Activator.trace("SftpFileService.getOutputStream " + remoteFile + " failed: " + e.toString()); //$NON-NLS-1$ //$NON-NLS-2$
+			throw makeSystemMessageException(e);
+		}
+		
+		return stream;
+	}
 }

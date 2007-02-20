@@ -130,6 +130,21 @@ public class LocalFileSubSystemConfiguration extends FileServiceSubSystemConfigu
 		        filterName = SystemFileResources.RESID_FILTER_ROOTFILES;
 		      mgr.createSystemFilter(pool, filterName, filterStrings);
 		  }
+		  else
+		  {
+			  Vector filterStrings = new Vector();
+		      RemoteFileFilterString defaultFilterString = new RemoteFileFilterString(this);
+		      if (!_isWindows)
+		        defaultFilterString.setPath(getSeparator());
+		      filterStrings.add(defaultFilterString.toString());
+		      //System.out.println("creating filter...");	
+		      String filterName = null;
+		      if (_isWindows)
+		        filterName = SystemFileResources.RESID_FILTER_DRIVES;
+		      else
+		        filterName = SystemFileResources.RESID_FILTER_ROOTFILES;
+		      mgr.createSystemFilter(pool, filterName, filterStrings);
+		  }
 		} catch (Exception exc)
 		{
 			SystemBasePlugin.logError("Error creating default filter pool",exc); //$NON-NLS-1$

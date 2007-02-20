@@ -42,9 +42,9 @@ import org.eclipse.swt.widgets.Control;
 
 public class RSEDefaultNewConnectionWizardMainPage extends AbstractSystemWizardPage implements ISystemConnectionFormCaller {
 		
-	protected String[] restrictSystemTypesTo;
-	protected final SystemConnectionForm form;
-	protected String parentHelpId;
+	private String[] restrictSystemTypesTo;
+	private SystemConnectionForm form;
+	private String parentHelpId;
 
 	/**
 	 * Constructor. Use this when you want to supply your own title and
@@ -55,7 +55,6 @@ public class RSEDefaultNewConnectionWizardMainPage extends AbstractSystemWizardP
 		
 		parentHelpId = RSEUIPlugin.HELPPREFIX + "wncc0000"; //$NON-NLS-1$
 		setHelp(parentHelpId);
-		form = new SystemConnectionForm(this, this);
 	}
 
 	/**
@@ -66,7 +65,7 @@ public class RSEDefaultNewConnectionWizardMainPage extends AbstractSystemWizardP
 	public void restrictSystemType(String systemType) {
 		assert systemType != null;
 		restrictSystemTypesTo = new String[] { systemType };
-		form.restrictSystemTypes(restrictSystemTypesTo);
+		getForm().restrictSystemTypes(restrictSystemTypesTo);
 	}
 
 	/**
@@ -76,6 +75,7 @@ public class RSEDefaultNewConnectionWizardMainPage extends AbstractSystemWizardP
 	 * @see org.eclipse.rse.ui.SystemConnectionForm
 	 */
 	public SystemConnectionForm getForm() {
+		if (form == null) form = new SystemConnectionForm(this, this);
 		return form;
 	}
 
@@ -83,21 +83,21 @@ public class RSEDefaultNewConnectionWizardMainPage extends AbstractSystemWizardP
 	 * Call this to specify a validator for the connection name. It will be called per keystroke.
 	 */
 	public void setConnectionNameValidators(ISystemValidator[] v) {
-		form.setConnectionNameValidators(v);
+		getForm().setConnectionNameValidators(v);
 	}
 
 	/**
 	 * Call this to specify a validator for the hostname. It will be called per keystroke.
 	 */
 	public void setHostNameValidator(ISystemValidator v) {
-		form.setHostNameValidator(v);
+		getForm().setHostNameValidator(v);
 	}
 
 	/**
 	 * Call this to specify a validator for the userId. It will be called per keystroke.
 	 */
 	public void setUserIdValidator(ISystemValidator v) {
-		form.setUserIdValidator(v);
+		getForm().setUserIdValidator(v);
 	}
 
 	/**
@@ -106,42 +106,42 @@ public class RSEDefaultNewConnectionWizardMainPage extends AbstractSystemWizardP
 	 *  it and set it here by calling this.
 	 */
 	public void setUserId(String userId) {
-		form.setUserId(userId);
+		getForm().setUserId(userId);
 	}
 
 	/**
 	 * Set the profile names to show in the combo
 	 */
 	public void setProfileNames(String[] names) {
-		form.setProfileNames(names);
+		getForm().setProfileNames(names);
 	}
 
 	/**
 	 * Set the profile name to preselect
 	 */
 	public void setProfileNamePreSelection(String name) {
-		form.setProfileNamePreSelection(name);
+		getForm().setProfileNamePreSelection(name);
 	}
 
 	/**
 	 * Set the currently selected connection so as to better initialize input fields
 	 */
 	public void setCurrentlySelectedConnection(IHost connection) {
-		form.setCurrentlySelectedConnection(connection);
+		getForm().setCurrentlySelectedConnection(connection);
 	}
 
 	/**
 	 * Preset the connection name
 	 */
 	public void setConnectionName(String name) {
-		form.setConnectionName(name);
+		getForm().setConnectionName(name);
 	}
 
 	/**
 	 * Preset the host name
 	 */
 	public void setHostName(String name) {
-		form.setHostName(name);
+		getForm().setHostName(name);
 	}
 
 	/**
@@ -150,7 +150,7 @@ public class RSEDefaultNewConnectionWizardMainPage extends AbstractSystemWizardP
 	 *  to the caller (JFace). This is used as the contents of this page.
 	 */
 	public Control createContents(Composite parent) {
-		return form.createContents(parent, SystemConnectionForm.CREATE_MODE, parentHelpId);
+		return getForm().createContents(parent, SystemConnectionForm.CREATE_MODE, parentHelpId);
 	}
 
 	/**
@@ -158,7 +158,7 @@ public class RSEDefaultNewConnectionWizardMainPage extends AbstractSystemWizardP
 	 * Override from parent. Return control to be given initial focus.
 	 */
 	protected Control getInitialFocusControl() {
-		return form.getInitialFocusControl();
+		return getForm().getInitialFocusControl();
 	}
 
 	/**
@@ -170,7 +170,7 @@ public class RSEDefaultNewConnectionWizardMainPage extends AbstractSystemWizardP
 	 * @return whether the wizard finished successfully
 	 */
 	public boolean performFinish() {
-		return form.verify(true);
+		return getForm().verify(true);
 	}
 
 	// --------------------------------- //
@@ -182,7 +182,7 @@ public class RSEDefaultNewConnectionWizardMainPage extends AbstractSystemWizardP
 	 * Call this after finish ends successfully.
 	 */
 	public String getConnectionName() {
-		return form.getConnectionName();
+		return getForm().getConnectionName();
 	}
 
 	/**
@@ -190,7 +190,7 @@ public class RSEDefaultNewConnectionWizardMainPage extends AbstractSystemWizardP
 	 * Call this after finish ends successfully.
 	 */
 	public String getHostName() {
-		return form.getHostName();
+		return getForm().getHostName();
 	}
 
 	/**
@@ -198,7 +198,7 @@ public class RSEDefaultNewConnectionWizardMainPage extends AbstractSystemWizardP
 	 * Call this after finish ends successfully.
 	 */
 	public String getDefaultUserId() {
-		return form.getDefaultUserId();
+		return getForm().getDefaultUserId();
 	}
 
 	/**
@@ -206,7 +206,7 @@ public class RSEDefaultNewConnectionWizardMainPage extends AbstractSystemWizardP
 	 * @see org.eclipse.rse.core.IRSEUserIdConstants
 	 */
 	public int getDefaultUserIdLocation() {
-		return form.getUserIdLocation();
+		return getForm().getUserIdLocation();
 	}
 
 	/**
@@ -214,7 +214,7 @@ public class RSEDefaultNewConnectionWizardMainPage extends AbstractSystemWizardP
 	 * Call this after finish ends successfully.
 	 */
 	public String getConnectionDescription() {
-		return form.getConnectionDescription();
+		return getForm().getConnectionDescription();
 	}
 
 	/**
@@ -222,7 +222,7 @@ public class RSEDefaultNewConnectionWizardMainPage extends AbstractSystemWizardP
 	 * Call this after finish ends successfully.
 	 */
 	public String getProfileName() {
-		return form.getProfileName();
+		return getForm().getProfileName();
 	}
 
 
@@ -232,8 +232,8 @@ public class RSEDefaultNewConnectionWizardMainPage extends AbstractSystemWizardP
 	 */
 	public boolean isPageComplete() {
 		//System.out.println("Inside isPageComplete. " + form.isPageComplete());
-		if (form != null)
-			return form.isPageComplete() && form.isConnectionUnique();
+		if (getForm() != null)
+			return getForm().isPageComplete() && getForm().isConnectionUnique();
 		else
 			return false;
 	}
@@ -249,7 +249,7 @@ public class RSEDefaultNewConnectionWizardMainPage extends AbstractSystemWizardP
 		// verify contents of page before going to main page
 		// this is done because the main page may have input that is not valid, but can
 		// only be verified when next is pressed since it requires a long running operation
-		boolean verify = form.verify(true);
+		boolean verify = getForm().verify(true);
 
 		if (!verify) {
 			return null;
@@ -271,7 +271,7 @@ public class RSEDefaultNewConnectionWizardMainPage extends AbstractSystemWizardP
 
 		RSEDefaultNewConnectionWizard newConnWizard = getWizard() instanceof RSEDefaultNewConnectionWizard ? (RSEDefaultNewConnectionWizard)getWizard() : null;
 		if (newConnWizard != null) {
-			return (isPageComplete() && newConnWizard.hasAdditionalPages() && form.isConnectionUnique());
+			return (isPageComplete() && newConnWizard.hasAdditionalPages() && getForm().isConnectionUnique());
 		} else
 			return super.canFlipToNextPage();
 	}

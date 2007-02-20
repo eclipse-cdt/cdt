@@ -121,7 +121,6 @@ public class SystemConnectionForm
 	protected boolean callerInstanceOfWizardPage, callerInstanceOfSystemPromptDialog, callerInstanceOfPropertyPage;
 	protected boolean userIdFromSystemTypeDefault;
 	protected boolean updateMode = false;
-	protected boolean initDone = false;
 	protected boolean contentsCreated = false;
 	protected boolean connectionNameEmpty = false;
     protected boolean connectionNameListen = true;
@@ -609,8 +608,7 @@ public class SystemConnectionForm
 	 * @param parent The parent composite
 	 * @param updateMode true if we are in update mode versus create mode.
 	 */
-	public Control createContents(Composite parent, boolean updateMode, String parentHelpId)
-	{	    
+	public Control createContents(Composite parent, boolean updateMode, String parentHelpId) {
 		contentsCreated = true;
 		Label labelSystemType = null;
 		String temp = null;
@@ -621,189 +619,168 @@ public class SystemConnectionForm
 		SystemWidgetHelpers.setCompositeHelp(composite_prompts, parentHelpId);
 
 		// Type display
-		if (updateMode)
-		{
-		  temp = SystemWidgetHelpers.appendColon(SystemResources.RESID_CONNECTION_TYPE_LABEL);
-		  labelType = SystemWidgetHelpers.createLabel(composite_prompts, temp);
-		  labelTypeValue = SystemWidgetHelpers.createLabel(
-			composite_prompts, SystemResources.RESID_CONNECTION_TYPE_VALUE);
+		if (updateMode) {
+			temp = SystemWidgetHelpers.appendColon(SystemResources.RESID_CONNECTION_TYPE_LABEL);
+			labelType = SystemWidgetHelpers.createLabel(composite_prompts, temp);
+			labelTypeValue = SystemWidgetHelpers.createLabel(composite_prompts, SystemResources.RESID_CONNECTION_TYPE_VALUE);
 		}
 
-        // PROFILE SELECTION
-        if (updateMode)
-        {
-  		  temp = SystemWidgetHelpers.appendColon(SystemResources.RESID_CONNECTION_PROFILE_LABEL);
-		  labelProfile = SystemWidgetHelpers.createLabel(composite_prompts, temp);
-   		  labelProfile.setToolTipText(SystemResources.RESID_CONNECTION_PROFILE_READONLY_TIP);
-   		  labelProfileValue = SystemWidgetHelpers.createLabel(composite_prompts, ""); //$NON-NLS-1$
-   		  labelProfileValue.setToolTipText(SystemResources.RESID_CONNECTION_PROFILE_READONLY_TIP);
-        }
-        else //if (!updateMode)
-        {
-    	  temp = SystemWidgetHelpers.appendColon(SystemResources.RESID_CONNECTION_PROFILE_LABEL);
-		  labelProfile = SystemWidgetHelpers.createLabel(composite_prompts, temp);
-   		  labelProfile.setToolTipText(SystemResources.RESID_CONNECTION_PROFILE_TIP);			
-	      if (!updateMode)
-	      {
-		    profileCombo  = SystemWidgetHelpers.createReadonlyCombo(
-		      composite_prompts,null,SystemResources.RESID_CONNECTION_PROFILE_TIP);
-		    if (defaultProfileNames != null) profileCombo.setItems(defaultProfileNames);
-		    if (defaultProfile != null) setProfileNamePreSelection(defaultProfile);
-		    SystemWidgetHelpers.setHelp(profileCombo, RSEUIPlugin.HELPPREFIX + "ccon0001"); //$NON-NLS-1$     
-	      }
-        }
-        
-	    if (!updateMode)
-	      SystemWidgetHelpers.createLabel(composite_prompts, " ", 2); // filler //$NON-NLS-1$
+		// PROFILE SELECTION
+		if (updateMode) {
+			temp = SystemWidgetHelpers.appendColon(SystemResources.RESID_CONNECTION_PROFILE_LABEL);
+			labelProfile = SystemWidgetHelpers.createLabel(composite_prompts, temp);
+			labelProfile.setToolTipText(SystemResources.RESID_CONNECTION_PROFILE_READONLY_TIP);
+			labelProfileValue = SystemWidgetHelpers.createLabel(composite_prompts, ""); //$NON-NLS-1$
+			labelProfileValue.setToolTipText(SystemResources.RESID_CONNECTION_PROFILE_READONLY_TIP);
+		} else // if (!updateMode)
+		{
+			temp = SystemWidgetHelpers.appendColon(SystemResources.RESID_CONNECTION_PROFILE_LABEL);
+			labelProfile = SystemWidgetHelpers.createLabel(composite_prompts, temp);
+			labelProfile.setToolTipText(SystemResources.RESID_CONNECTION_PROFILE_TIP);
+			if (!updateMode) {
+				profileCombo = SystemWidgetHelpers.createReadonlyCombo(composite_prompts, null, SystemResources.RESID_CONNECTION_PROFILE_TIP);
+				SystemWidgetHelpers.setHelp(profileCombo, RSEUIPlugin.HELPPREFIX + "ccon0001"); //$NON-NLS-1$     
+			}
+		}
+
+		if (!updateMode)
+			SystemWidgetHelpers.createLabel(composite_prompts, " ", 2); // filler //$NON-NLS-1$
 
 		// SYSTEMTYPE PROMPT IN UPDATE MODE OR RESTRICTED MODE
-	    if (updateMode || ((restrictSystemTypesTo != null) && (restrictSystemTypesTo.length==1)) )
-	    {
-	    	if (updateMode)
-	    	{
-	    	 temp = SystemWidgetHelpers.appendColon(SystemResources.RESID_CONNECTION_SYSTEMTYPE_LABEL);
-		     labelSystemType = SystemWidgetHelpers.createLabel(composite_prompts, temp);
-             labelSystemType.setToolTipText(SystemResources.RESID_CONNECTION_SYSTEMTYPE_READONLY_TIP);
-		     textSystemTypeReadOnly = SystemWidgetHelpers.createLabel(composite_prompts,""); //$NON-NLS-1$	    
-		     textSystemTypeReadOnly.setToolTipText(SystemResources.RESID_CONNECTION_SYSTEMTYPE_READONLY_TIP);
-	    	}
-	    	else
-	    	  singleTypeMode = true;
-	    }
-	    
-	    if (updateMode)
-	      SystemWidgetHelpers.createLabel(composite_prompts, " ", nbrColumns); // filler //$NON-NLS-1$
+		if (updateMode || ((restrictSystemTypesTo != null) && (restrictSystemTypesTo.length == 1))) {
+			if (updateMode) {
+				temp = SystemWidgetHelpers.appendColon(SystemResources.RESID_CONNECTION_SYSTEMTYPE_LABEL);
+				labelSystemType = SystemWidgetHelpers.createLabel(composite_prompts, temp);
+				labelSystemType.setToolTipText(SystemResources.RESID_CONNECTION_SYSTEMTYPE_READONLY_TIP);
+				textSystemTypeReadOnly = SystemWidgetHelpers.createLabel(composite_prompts, ""); //$NON-NLS-1$	    
+				textSystemTypeReadOnly.setToolTipText(SystemResources.RESID_CONNECTION_SYSTEMTYPE_READONLY_TIP);
+			} else
+				singleTypeMode = true;
+		}
+
+		if (updateMode)
+			SystemWidgetHelpers.createLabel(composite_prompts, " ", nbrColumns); // filler //$NON-NLS-1$
 
 		// CONNECTION NAME PROMPT
-	    temp = SystemWidgetHelpers.appendColon(SystemResources.RESID_CONNECTION_CONNECTIONNAME_LABEL);
-		labelConnectionName = SystemWidgetHelpers.createLabel(composite_prompts, temp);	    
-	    labelConnectionName.setToolTipText(SystemResources.RESID_CONNECTION_CONNECTIONNAME_TIP);
-		textConnectionName  = SystemWidgetHelpers.createTextField(
-			composite_prompts,null,SystemResources.RESID_CONNECTION_CONNECTIONNAME_TIP);			
-	    SystemWidgetHelpers.setHelp(textConnectionName, RSEUIPlugin.HELPPREFIX + "ccon0002"); //$NON-NLS-1$ 
+		temp = SystemWidgetHelpers.appendColon(SystemResources.RESID_CONNECTION_CONNECTIONNAME_LABEL);
+		labelConnectionName = SystemWidgetHelpers.createLabel(composite_prompts, temp);
+		labelConnectionName.setToolTipText(SystemResources.RESID_CONNECTION_CONNECTIONNAME_TIP);
+		textConnectionName = SystemWidgetHelpers.createTextField(composite_prompts, null, SystemResources.RESID_CONNECTION_CONNECTIONNAME_TIP);
+		SystemWidgetHelpers.setHelp(textConnectionName, RSEUIPlugin.HELPPREFIX + "ccon0002"); //$NON-NLS-1$ 
 
 		// SYSTEMTYPE PROMPT IN CREATE MODE
-	    //if (!updateMode)
-	    if ((labelSystemType == null) && !singleTypeMode)
-	    {	    	
-	      temp = SystemWidgetHelpers.appendColon(SystemResources.RESID_CONNECTION_SYSTEMTYPE_LABEL);
-		  labelSystemType = SystemWidgetHelpers.createLabel(composite_prompts, temp);
-          labelSystemType.setToolTipText(SystemResources.RESID_CONNECTION_SYSTEMTYPE_TIP);
-		  textSystemType = SystemWidgetHelpers.createSystemTypeCombo(composite_prompts,null,restrictSystemTypesTo);		
-          textSystemType.setToolTipText(SystemResources.RESID_CONNECTION_SYSTEMTYPE_TIP);
-	      SystemWidgetHelpers.setHelp(textSystemType, RSEUIPlugin.HELPPREFIX + "ccon0003"); //$NON-NLS-1$ 
-	    }
+		// if (!updateMode)
+		if ((labelSystemType == null) && !singleTypeMode) {
+			temp = SystemWidgetHelpers.appendColon(SystemResources.RESID_CONNECTION_SYSTEMTYPE_LABEL);
+			labelSystemType = SystemWidgetHelpers.createLabel(composite_prompts, temp);
+			labelSystemType.setToolTipText(SystemResources.RESID_CONNECTION_SYSTEMTYPE_TIP);
+			textSystemType = SystemWidgetHelpers.createSystemTypeCombo(composite_prompts, null, restrictSystemTypesTo);
+			textSystemType.setToolTipText(SystemResources.RESID_CONNECTION_SYSTEMTYPE_TIP);
+			SystemWidgetHelpers.setHelp(textSystemType, RSEUIPlugin.HELPPREFIX + "ccon0003"); //$NON-NLS-1$ 
+		}
 
 		// HOSTNAME PROMPT
-	    temp = SystemWidgetHelpers.appendColon(SystemResources.RESID_CONNECTION_HOSTNAME_LABEL);
+		temp = SystemWidgetHelpers.appendColon(SystemResources.RESID_CONNECTION_HOSTNAME_LABEL);
 		labelHostName = SystemWidgetHelpers.createLabel(composite_prompts, temp);
-        labelHostName.setToolTipText(SystemResources.RESID_CONNECTION_HOSTNAME_TIP);
-        
-        if (!updateMode && (defaultSystemType==null))
-        {
-		  defaultSystemType = RSEPreferencesManager.getSystemType();
-		  if ((defaultSystemType == null) || (defaultSystemType.length() == 0))
-		    defaultSystemType = lastSystemType;
-		  if ((defaultSystemType == null) || (defaultSystemType.length() == 0))
-            defaultSystemType = textSystemType.getItem(0); 	
-        }
-        
-		textHostName = SystemWidgetHelpers.createHostNameCombo(composite_prompts,null,defaultSystemType);
-        textHostName.setToolTipText(SystemResources.RESID_CONNECTION_HOSTNAME_TIP);
-	    SystemWidgetHelpers.setHelp(textHostName, RSEUIPlugin.HELPPREFIX + "ccon0004"); //$NON-NLS-1$     
-		
+		labelHostName.setToolTipText(SystemResources.RESID_CONNECTION_HOSTNAME_TIP);
+
+		if (!updateMode && (defaultSystemType == null)) {
+			defaultSystemType = RSEPreferencesManager.getSystemType();
+			if ((defaultSystemType == null) || (defaultSystemType.length() == 0))
+				defaultSystemType = lastSystemType;
+			if ((defaultSystemType == null) || (defaultSystemType.length() == 0))
+				defaultSystemType = textSystemType.getItem(0);
+		}
+
+		textHostName = SystemWidgetHelpers.createHostNameCombo(composite_prompts, null, defaultSystemType);
+		textHostName.setToolTipText(SystemResources.RESID_CONNECTION_HOSTNAME_TIP);
+		SystemWidgetHelpers.setHelp(textHostName, RSEUIPlugin.HELPPREFIX + "ccon0004"); //$NON-NLS-1$     
+
 		// USERID PROMPT
-		/* We are testing the usability of not prompting for the user ID, so that the
-		 *  user has less to think about when creating a new connection. Phil.
+		/*
+		 * We are testing the usability of not prompting for the user ID, so that the user has less to think about when
+		 * creating a new connection. Phil.
 		 */
 		if (updateMode) // added for this experiment
 		{
 			temp = SystemWidgetHelpers.appendColon(SystemResources.RESID_CONNECTION_DEFAULTUSERID_LABEL);
-		   labelUserId = SystemWidgetHelpers.createLabel(composite_prompts, temp);
-   		   labelUserId.setToolTipText(SystemResources.RESID_CONNECTION_DEFAULTUSERID_TIP);
-           textUserId = SystemWidgetHelpers.createInheritableTextField(
-               composite_prompts,SystemResources.RESID_CONNECTION_DEFAULTUSERID_INHERITBUTTON_TIP,SystemResources.RESID_CONNECTION_DEFAULTUSERID_TIP);
-	       SystemWidgetHelpers.setHelp(textUserId, RSEUIPlugin.HELPPREFIX + "ccon0005"); //$NON-NLS-1$     
+			labelUserId = SystemWidgetHelpers.createLabel(composite_prompts, temp);
+			labelUserId.setToolTipText(SystemResources.RESID_CONNECTION_DEFAULTUSERID_TIP);
+			textUserId = SystemWidgetHelpers.createInheritableTextField(composite_prompts, SystemResources.RESID_CONNECTION_DEFAULTUSERID_INHERITBUTTON_TIP,
+																																	SystemResources.RESID_CONNECTION_DEFAULTUSERID_TIP);
+			SystemWidgetHelpers.setHelp(textUserId, RSEUIPlugin.HELPPREFIX + "ccon0005"); //$NON-NLS-1$     
 		}
 
 		// DESCRIPTION PROMPT
 		temp = SystemWidgetHelpers.appendColon(SystemResources.RESID_CONNECTION_DESCRIPTION_LABEL);
 		labelDescription = SystemWidgetHelpers.createLabel(composite_prompts, temp);
-        labelDescription.setToolTipText(SystemResources.RESID_CONNECTION_DESCRIPTION_TIP);
-		textDescription  = SystemWidgetHelpers.createTextField(
-		   composite_prompts,null,SystemResources.RESID_CONNECTION_DESCRIPTION_TIP);		   
-	    SystemWidgetHelpers.setHelp(textDescription, RSEUIPlugin.HELPPREFIX + "ccon0006"); //$NON-NLS-1$     
+		labelDescription.setToolTipText(SystemResources.RESID_CONNECTION_DESCRIPTION_TIP);
+		textDescription = SystemWidgetHelpers.createTextField(composite_prompts, null, SystemResources.RESID_CONNECTION_DESCRIPTION_TIP);
+		SystemWidgetHelpers.setHelp(textDescription, RSEUIPlugin.HELPPREFIX + "ccon0006"); //$NON-NLS-1$     
 
 		// VERIFY HOST NAME CHECKBOX
-	    SystemWidgetHelpers.createLabel(composite_prompts, " ", nbrColumns); // filler //$NON-NLS-1$
-	    verifyHostNameCB = SystemWidgetHelpers.createCheckBox(composite_prompts, nbrColumns, null, SystemResources.RESID_CONNECTION_VERIFYHOSTNAME_LABEL, SystemResources.RESID_CONNECTION_VERIFYHOSTNAME_TOOLTIP);
-	    if (updateMode)
-	    	verifyHostNameCB.setSelection(false);
-	    else
-	    	verifyHostNameCB.setSelection(SystemPreferencesManager.getVerifyConnection());
-	     
-	    // yantzi: artemis 6.0, work offline
-	    if (enableOfflineCB())
-	    {
-		    workOfflineCB = SystemWidgetHelpers.createCheckBox(composite_prompts, nbrColumns, null, SystemResources.RESID_OFFLINE_WORKOFFLINE_LABEL, SystemResources.RESID_OFFLINE_WORKOFFLINE_TOOLTIP);
-			SystemWidgetHelpers.setHelp(workOfflineCB, RSEUIPlugin.HELPPREFIX + "wofp0000"); //$NON-NLS-1$
-	    }     
+		SystemWidgetHelpers.createLabel(composite_prompts, " ", nbrColumns); // filler //$NON-NLS-1$
+		verifyHostNameCB = SystemWidgetHelpers.createCheckBox(composite_prompts, nbrColumns, null, SystemResources.RESID_CONNECTION_VERIFYHOSTNAME_LABEL,
+																													SystemResources.RESID_CONNECTION_VERIFYHOSTNAME_TOOLTIP);
+		if (updateMode)
+			verifyHostNameCB.setSelection(false);
+		else
+			verifyHostNameCB.setSelection(SystemPreferencesManager.getVerifyConnection());
 
-	    if (!initDone)	
-	      doInitializeFields();		  
-	      
-        connectionNameEmpty = (textConnectionName.getText().trim().length() == 0); // d43191
+		// yantzi: artemis 6.0, work offline
+		if (enableOfflineCB()) {
+			workOfflineCB = SystemWidgetHelpers.createCheckBox(composite_prompts, nbrColumns, null, SystemResources.RESID_OFFLINE_WORKOFFLINE_LABEL,
+																													SystemResources.RESID_OFFLINE_WORKOFFLINE_TOOLTIP);
+			SystemWidgetHelpers.setHelp(workOfflineCB, RSEUIPlugin.HELPPREFIX + "wofp0000"); //$NON-NLS-1$
+		}
+
+
+		connectionNameEmpty = (textConnectionName.getText().trim().length() == 0); // d43191
 
 		textConnectionName.setFocus();
-		  		  
-		
+
 		// add keystroke listeners...
-		textConnectionName.addModifyListener(
-			new ModifyListener() {
-				public void modifyText(ModifyEvent e) {
-					validateConnectionNameInput(true);
-				}
+		textConnectionName.addModifyListener(new ModifyListener() {
+			public void modifyText(ModifyEvent e) {
+				validateConnectionNameInput(true);
 			}
-		);
-		textHostName.addModifyListener(
-			new ModifyListener() {
-				public void modifyText(ModifyEvent e) {
-					validateHostNameInput();
-					validateConnectionNameInput(false);
-				}
+		});
+		textHostName.addModifyListener(new ModifyListener() {
+			public void modifyText(ModifyEvent e) {
+				validateHostNameInput();
+				validateConnectionNameInput(false);
 			}
-		);		
-		if (textUserId!=null)
-		  textUserId.addModifyListener(
-		  	new ModifyListener() 
-		  	{
-				public void modifyText(ModifyEvent e) 
-				{
+		});
+		if (textUserId != null)
+			textUserId.addModifyListener(new ModifyListener() {
+				public void modifyText(ModifyEvent e) {
 					validateUserIdInput();
 				}
 			});
- 
-        if (profileCombo != null) {
-            profileCombo.addSelectionListener(this);
-        }
-        
-        if (textSystemType != null) {
-            originalHostName = textHostName.getText();
-            textSystemType.addSelectionListener(this);
-        }
-        
-        if (verifyHostNameCB != null) {
-            verifyHostNameCB.addSelectionListener(this);
-        }
 
-        if ((textSystemType!=null) && (textSystemType.getText()!=null))
-          caller.systemTypeSelected(textSystemType.getText(), true);
-        else if ((restrictSystemTypesTo!=null) && (restrictSystemTypesTo.length==1))
-          caller.systemTypeSelected(restrictSystemTypesTo[0], true);
-              
-        if (textUserId == null)
-          userIdLocation = IRSEUserIdConstants.USERID_LOCATION_NOTSET;
-                               
+		if (profileCombo != null) {
+			profileCombo.addSelectionListener(this);
+		}
+
+		if (textSystemType != null) {
+			originalHostName = textHostName.getText();
+			textSystemType.addSelectionListener(this);
+		}
+
+		if (verifyHostNameCB != null) {
+			verifyHostNameCB.addSelectionListener(this);
+		}
+
+		if ((textSystemType != null) && (textSystemType.getText() != null))
+			caller.systemTypeSelected(textSystemType.getText(), true);
+		else if ((restrictSystemTypesTo != null) && (restrictSystemTypesTo.length == 1))
+			caller.systemTypeSelected(restrictSystemTypesTo[0], true);
+
+		if (textUserId == null)
+			userIdLocation = IRSEUserIdConstants.USERID_LOCATION_NOTSET;
+
+		doInitializeFields();
+
 		return composite_prompts; // composite;
 	}
 	
@@ -1050,7 +1027,7 @@ public class SystemConnectionForm
 			workOfflineCB.setSelection(defaultWorkOffline);
 		}
 		
-		initDone = true;
+		verify(false);
 	}
 	
 	/**

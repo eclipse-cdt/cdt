@@ -31,7 +31,7 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.rse.core.model.ISystemContainer;
 import org.eclipse.rse.core.subsystems.ISubSystem;
-import org.eclipse.rse.internal.ui.view.SystemTableTreeViewProvider;
+import org.eclipse.rse.internal.ui.view.SystemTableViewProvider;
 import org.eclipse.rse.model.ISystemRegistryUI;
 import org.eclipse.rse.model.ISystemResourceChangeEvents;
 import org.eclipse.rse.model.SystemRegistry;
@@ -146,7 +146,7 @@ FocusListener
 						    Object[] children = _adapter.getChildren(monitor, (IAdaptable)_inputObject);
 		   					if (children != null)
 		   					{
-		   						SystemTableTreeViewProvider provider = (SystemTableTreeViewProvider)_viewer.getContentProvider();
+		   						SystemTableViewProvider provider = (SystemTableViewProvider)_viewer.getContentProvider();
 		   						if (provider!=null) {
 		   							//bug 150924: provider can be lost when disconnecting while this job runs
 									provider.setCache(children);

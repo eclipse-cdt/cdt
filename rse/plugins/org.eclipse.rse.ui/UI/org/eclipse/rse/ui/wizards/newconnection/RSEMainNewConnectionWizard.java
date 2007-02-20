@@ -132,6 +132,8 @@ public class RSEMainNewConnectionWizard extends Wizard implements INewWizard, IS
 	 * Notify the registered selection changed listener about a changed selection.
 	 */
 	private void fireSelectionChanged() {
+		if (getSelection() == null) return;
+		
 		SelectionChangedEvent event = new SelectionChangedEvent(this, getSelection());
 		Iterator iterator = selectionChangedListener.iterator();
 		while (iterator.hasNext()) {

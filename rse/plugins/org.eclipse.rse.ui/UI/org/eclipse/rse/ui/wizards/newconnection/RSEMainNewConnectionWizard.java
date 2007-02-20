@@ -51,7 +51,7 @@ public class RSEMainNewConnectionWizard extends Wizard implements INewWizard, IS
 	private IRSESystemType selectedSystemType;
 	private boolean selectedWizardCanFinishEarly;
 	
-	private final RSENewConnectionWizardSelectionPage mainPage;
+	private RSENewConnectionWizardSelectionPage mainPage;
 	private final List initializedWizards = new LinkedList();
 	private final List selectionChangedListener = new LinkedList();
 	
@@ -80,7 +80,23 @@ public class RSEMainNewConnectionWizard extends Wizard implements INewWizard, IS
 		// and finally restore the wizard state
 		restoreFromDialogSettings();
 	}
-	
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.wizard.Wizard#dispose()
+	 */
+	public void dispose() {
+		super.dispose();
+		
+		selectedWizard = null;
+		selectedSystemType = null;
+		selectedWizardCanFinishEarly = false;
+		mainPage = null;
+		initializedWizards.clear();
+		selectionChangedListener.clear();
+		restrictedSystemTypes = null;
+		onlySystemType = false;
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.wizard.Wizard#getDefaultPageImage()
 	 */

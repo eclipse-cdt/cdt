@@ -70,6 +70,24 @@ public class RSEDefaultNewConnectionWizard extends RSEAbstractNewConnectionWizar
 	}
 
 	/* (non-Javadoc)
+	 * @see org.eclipse.jface.wizard.Wizard#dispose()
+	 */
+	public void dispose() {
+		super.dispose();
+		
+		mainPage = null;
+		subsystemFactorySuppliedWizardPages = null;
+		ssfWizardPagesPerSystemType.clear();
+		defaultUserId = null;
+		defaultHostName = null;
+		defaultConnectionName = null;
+		activeProfileNames = null;
+		privateProfileIndex = -1;
+		privateProfile = null;
+		currentlySelectedConnection = null;
+	}
+
+	/* (non-Javadoc)
 	 * @see org.eclipse.rse.ui.wizards.AbstractNewConnectionWizard#selectionChanged(org.eclipse.jface.viewers.SelectionChangedEvent)
 	 */
 	public void selectionChanged(SelectionChangedEvent event) {

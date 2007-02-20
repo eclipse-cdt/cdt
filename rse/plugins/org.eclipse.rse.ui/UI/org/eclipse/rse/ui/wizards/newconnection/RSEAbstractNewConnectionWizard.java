@@ -41,6 +41,14 @@ public abstract class RSEAbstractNewConnectionWizard extends Wizard implements I
 	}
 	
 	/* (non-Javadoc)
+	 * @see org.eclipse.jface.wizard.Wizard#dispose()
+	 */
+	public void dispose() {
+		super.dispose();
+		systemType = null;
+	}
+
+	/* (non-Javadoc)
 	 * @see org.eclipse.rse.ui.wizards.IRSENewConnectionWizardDelegate#getSystemType()
 	 */
 	public IRSESystemType getSystemType() {

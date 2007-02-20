@@ -228,6 +228,18 @@ public abstract class AbstractSystemWizardPage
     // -----------------------
     // PARENT-OVERRIDE METHODS
     // ----------------------- 
+	
+	public void dispose() {
+		super.dispose();
+		
+		// Once the page is disposed, the widgets are not longer accessible
+		msgLine = null;
+		input = null;
+		parentComposite = null;
+		pendingMessage = null;
+		pendingErrorMessage = null;
+	}
+	
 	/**
 	 * Parent override. <br>
 	 * Creates the wizard's UI component.
@@ -301,7 +313,7 @@ public abstract class AbstractSystemWizardPage
 	 */
 	public void clearErrorMessage() 
 	{
-		if (msgLine!=null)
+		if (msgLine!=null && !msgLine.isDisposed())
 			msgLine.clearErrorMessage();
 	}
 	
@@ -311,7 +323,7 @@ public abstract class AbstractSystemWizardPage
 	 */
 	public void clearMessage() 
 	{
-		if (msgLine!=null)
+		if (msgLine!=null && !msgLine.isDisposed())
 			msgLine.clearMessage();
 	}
 		

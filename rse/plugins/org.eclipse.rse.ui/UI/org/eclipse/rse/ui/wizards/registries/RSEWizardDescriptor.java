@@ -33,17 +33,34 @@ public class RSEWizardDescriptor extends RSEWizardRegistryElement implements IRS
 	 */
 	public RSEWizardDescriptor(RSEAbstractWizardRegistry wizardRegistry, IConfigurationElement element) {
 		super(wizardRegistry, element);
-
-		// Try to instanciate the wizard.
-		try {
-			wizard = (IWizard)element.createExecutableExtension("class"); //$NON-NLS-1$
-		} catch (CoreException e) {
-			String message = "RSE new connection wizard failed creation (plugin: {0}, id: {1})."; //$NON-NLS-1$
-			message = MessageFormat.format(message, new Object[] { element.getContributor().getName(), element.getDeclaringExtension().getSimpleIdentifier()});
-			RSECorePlugin.getDefault().getLogger().logError(message, e);
-		}
+		internalGetWizard();
 	}
-	
+
+	/**
+	 * Internal method. Returns the wizard instance or create a new one
+	 * if the wizard had been disposed before.
+	 * 
+	 * @return The wizard instance to use.
+	 */
+	private IWizard internalGetWizard() {
+		if (wizard == null 
+				|| (wizard != null && wizard.getStartingPage() != null
+						&& wizard.getStartingPage().getControl() != null
+						&& wizard.getStartingPage().getControl().isDisposed())) {
+			// Try to instanciate the wizard.
+			IConfigurationElement element = getConfigurationElement();
+			try {
+				wizard = (IWizard)element.createExecutableExtension("class"); //$NON-NLS-1$
+			} catch (CoreException e) {
+				String message = "RSE new connection wizard failed creation (plugin: {0}, id: {1})."; //$NON-NLS-1$
+				message = MessageFormat.format(message, new Object[] { element.getContributor().getName(), element.getDeclaringExtension().getSimpleIdentifier()});
+				RSECorePlugin.getDefault().getLogger().logError(message, e);
+			}
+		}
+		
+		return wizard;
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.rse.ui.wizards.registries.IWizardDescriptor#isValid()
 	 */
@@ -55,7 +72,7 @@ public class RSEWizardDescriptor extends RSEWizardRegistryElement implements IRS
 	 * @see org.eclipse.rse.ui.wizards.registries.IWizardDescriptor#getWizard()
 	 */
 	public IWizard getWizard() {
-		return wizard;
+		return internalGetWizard();
 	}
 
 	/* (non-Javadoc)

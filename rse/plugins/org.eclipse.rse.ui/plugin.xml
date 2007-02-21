@@ -607,7 +607,7 @@ Contributors:
   <extension
         point="org.eclipse.rse.ui.newConnectionWizards">
 		<category id="org.eclipse.rse.ui.wizards.newconnection.default.category"
-				name="%Creation.category.name"/>
+				name="%Connection.default.category.name"/>
 		<newConnectionWizard
 	        id="org.eclipse.rse.ui.wizards.newconnection.RSEDefaultNewConnectionWizard"
         	class="org.eclipse.rse.ui.wizards.newconnection.RSEDefaultNewConnectionWizard"

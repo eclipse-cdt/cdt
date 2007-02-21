@@ -2094,12 +2094,12 @@ public class SystemView extends SafeTreeViewer implements ISystemTree, ISystemRe
 		Object remoteResourceParent = event.getResourceParent();
 		Object remoteResource = event.getResource();
 		boolean originatedHere = (event.getOriginatingViewer() == this);
-		Vector remoteResourceNames = null;
-		if (remoteResource instanceof Vector) {
-			remoteResourceNames = (Vector) remoteResource;
-			remoteResource = remoteResourceNames.elementAt(0);
+		List remoteResourceNames = null;
+		if (remoteResource instanceof List) { 
+			remoteResourceNames = (List) remoteResource;
+			remoteResource = remoteResourceNames.get(0);
 		}
-		getRemoteResourceAbsoluteName(remoteResourceParent); // DWD may not be necessary
+		// getRemoteResourceAbsoluteName(remoteResourceParent); // DWD may not be necessary
 		String remoteResourceName = getRemoteResourceAbsoluteName(remoteResource);
 		if (remoteResourceName == null) return;
 
@@ -2175,7 +2175,7 @@ public class SystemView extends SafeTreeViewer implements ISystemTree, ISystemRe
 			// delete all existing references to the remote object(s)...
 			if (remoteResourceNames != null) {
 				for (int idx = 0; idx < remoteResourceNames.size(); idx++)
-					deleteRemoteObject(remoteResourceNames.elementAt(idx), ss);
+					deleteRemoteObject(remoteResourceNames.get(idx), ss);
 			} else
 				deleteRemoteObject(remoteResourceName, ss);
 
@@ -2272,7 +2272,7 @@ public class SystemView extends SafeTreeViewer implements ISystemTree, ISystemRe
 		Iterator i = selection.iterator();
 		while (i.hasNext()) {
 			Object element = i.next();
-			IRemoteObjectIdentifier ra = getRemoteAdapter(element);
+			ISystemViewElementAdapter ra = getViewAdapter(element);
 			if (ra != null) {
 				if (prevSelection == null) prevSelection = new Vector();
 				prevSelection.addElement(ra.getAbsoluteName(element));
@@ -2290,7 +2290,7 @@ public class SystemView extends SafeTreeViewer implements ISystemTree, ISystemRe
 		if (remoteResource instanceof String)
 			remoteResourceName = (String) remoteResource;
 		else {
-			IRemoteObjectIdentifier ra = getRemoteAdapter(remoteResource);
+			ISystemViewElementAdapter ra = getViewAdapter(remoteResource);
 			if (ra == null) return null;
 			remoteResourceName = ra.getAbsoluteName(remoteResource);
 		}

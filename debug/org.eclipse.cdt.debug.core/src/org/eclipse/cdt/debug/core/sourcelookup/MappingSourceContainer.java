@@ -88,7 +88,7 @@ public class MappingSourceContainer extends AbstractSourceContainer {
 			try {
 				Object[] objects = container.findSourceElements( name );
 				if ( objects.length > 0 ) {
-					if ( isFindDuplicates() ) {
+					if ( isFindDuplicates() && results != null ) {
 						for( int j = 0; j < objects.length; j++ ) {
 							results.add( objects[j] );
 						}

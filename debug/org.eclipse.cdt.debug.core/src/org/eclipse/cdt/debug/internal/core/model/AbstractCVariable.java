@@ -13,7 +13,6 @@ package org.eclipse.cdt.debug.internal.core.model;
 import org.eclipse.cdt.debug.core.model.ICStackFrame;
 import org.eclipse.cdt.debug.core.model.ICVariable;
 import org.eclipse.cdt.debug.core.model.IEnableDisableTarget;
-import org.eclipse.debug.core.DebugException;
 
 /**
  * The super class for all variable types.

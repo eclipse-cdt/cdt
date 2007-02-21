@@ -124,26 +124,24 @@ public class CSourceLocator implements ICSourceLocator, IPersistableSourceLocato
 		if ( f instanceof ICStackFrame ) {
 			ICStackFrame frame = (ICStackFrame)f;
 			LinkedList list = new LinkedList();
-			if ( frame != null ) {
-				Object result = null;
-				String fileName = frame.getFile();
-				if ( fileName != null && fileName.length() > 0 ) {
-					ICSourceLocation[] locations = getSourceLocations();
-					for( int i = 0; i < locations.length; ++i ) {
-						try {
-							result = locations[i].findSourceElement( fileName );
-						}
-						catch( CoreException e ) {
-							// do nothing
-						}
-						if ( result != null ) {
-							if ( result instanceof List )
-								list.addAll( (List)result );
-							else
-								list.add( result );
-							if ( !searchForDuplicateFiles() )
-								break;
-						}
+			Object result = null;
+			String fileName = frame.getFile();
+			if ( fileName != null && fileName.length() > 0 ) {
+				ICSourceLocation[] locations = getSourceLocations();
+				for( int i = 0; i < locations.length; ++i ) {
+					try {
+						result = locations[i].findSourceElement( fileName );
+					}
+					catch( CoreException e ) {
+						// do nothing
+					}
+					if ( result != null ) {
+						if ( result instanceof List )
+							list.addAll( (List)result );
+						else
+							list.add( result );
+						if ( !searchForDuplicateFiles() )
+							break;
 					}
 				}
 			}

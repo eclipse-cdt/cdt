@@ -1294,7 +1294,7 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 		}
 	}
 
-	protected IThread getCurrentThread() throws DebugException {
+	protected IThread getCurrentThread() {
 		IThread[] threads = getThreads();
 		for( int i = 0; i < threads.length; ++i ) {
 			if ( ((CThread)threads[i]).isCurrent() )
@@ -1368,7 +1368,7 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 		return globals;
 	}
 
-	private List getCFileGlobals( IBinaryObject file ) throws DebugException {
+	private List getCFileGlobals( IBinaryObject file ) {
 		ArrayList list = new ArrayList();
 		ISymbol[] symbols = file.getSymbols();
 		for( int i = 0; i < symbols.length; ++i ) {
@@ -1677,7 +1677,7 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 			vo = getCDITarget().getGlobalVariableDescriptors( info.getPath().lastSegment(), null, info.getName() );
 		}
 		catch( CDIException e ) {
-			throw new DebugException( new Status( IStatus.ERROR, CDIDebugModel.getPluginIdentifier(), DebugException.TARGET_REQUEST_FAILED, (vo != null) ? vo.getName() + ": " + e.getMessage() : e.getMessage(), null ) ); //$NON-NLS-1$
+			throw new DebugException( new Status( IStatus.ERROR, CDIDebugModel.getPluginIdentifier(), DebugException.TARGET_REQUEST_FAILED, e.getMessage(), null ) );
 		}
 		return CVariableFactory.createGlobalVariable( this, info, vo );
 	}

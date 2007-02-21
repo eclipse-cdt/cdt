@@ -30,7 +30,6 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.IJobManager;
 import org.eclipse.core.runtime.jobs.Job;
@@ -66,7 +65,7 @@ public abstract class AbstractImportExecutableWizard extends Wizard implements I
 	
 	private void waitForJob(String name)
 	{
-		IJobManager jobMan = Platform.getJobManager();
+		IJobManager jobMan = Job.getJobManager();
 		Job[] jobs = jobMan.find(null);
 
 		for (int i = 0; i < jobs.length; i++) {
@@ -151,7 +150,7 @@ public abstract class AbstractImportExecutableWizard extends Wizard implements I
 		setConfigurationDefaults(wc, targetProject);
 
 		final IStructuredSelection selection = new StructuredSelection(wc.doSave());
-		final String identifier = new String("org.eclipse.debug.ui.launchGroup.debug");
+		final String identifier = new String("org.eclipse.debug.ui.launchGroup.debug"); //$NON-NLS-1$
 
 		UIJob openLaunchConfigJob = new UIJob(Messages.AbstractImportExecutableWizard_CreateLaunchConfiguration) {
 

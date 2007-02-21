@@ -516,7 +516,7 @@ public abstract class CVariable extends AbstractCVariable implements ICDIEventLi
 		}
 	}
 
-	private String processExpression( String oldExpression ) throws DebugException {
+	private String processExpression( String oldExpression ) {
 		return oldExpression;
 	}
 

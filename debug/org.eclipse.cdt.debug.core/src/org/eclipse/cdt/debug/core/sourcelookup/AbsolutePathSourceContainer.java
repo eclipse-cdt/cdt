@@ -48,7 +48,7 @@ public class AbsolutePathSourceContainer extends AbstractSourceContainer {
 				return wfiles;
 			
 			// The file is not already in the workspace so try to create an external translation unit for it.
-			String projectName = getDirector().getLaunchConfiguration().getAttribute(ICDTLaunchConfigurationConstants.ATTR_PROJECT_NAME, "");
+			String projectName = getDirector().getLaunchConfiguration().getAttribute(ICDTLaunchConfigurationConstants.ATTR_PROJECT_NAME, ""); //$NON-NLS-1$
 			ICProject project = CoreModel.getDefault().getCModel().getCProject(projectName);
 			if (project != null)
 			{
@@ -85,7 +85,7 @@ public class AbsolutePathSourceContainer extends AbstractSourceContainer {
 	}
 
 	public String getName() {
-		return SourceLookupMessages.getString( "AbsolutePathSourceContainer.0" );
+		return SourceLookupMessages.getString( "AbsolutePathSourceContainer.0" ); //$NON-NLS-1$
 	}
 
 	/* (non-Javadoc)

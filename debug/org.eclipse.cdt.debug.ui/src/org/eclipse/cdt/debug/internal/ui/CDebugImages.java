@@ -26,8 +26,7 @@ import org.eclipse.swt.graphics.Image;
  * 
  * @since Aug 30, 2002
  */
-public class CDebugImages
-{
+public class CDebugImages {
 	private static final String NAME_PREFIX = "org.eclipse.cdt.debug.ui."; //$NON-NLS-1$
 	private static final int NAME_PREFIX_LENGTH = NAME_PREFIX.length();
 

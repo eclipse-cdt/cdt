@@ -10,6 +10,9 @@
  *******************************************************************************/
 package org.eclipse.cdt.debug.internal.ui.editors;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import org.eclipse.cdt.debug.core.model.ICStackFrame;
 import org.eclipse.cdt.debug.internal.ui.CDebugUIUtils;
 import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
@@ -23,11 +26,8 @@ import org.eclipse.jface.text.IInformationControlCreator;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITextHoverExtension;
 import org.eclipse.jface.text.ITextViewer;
-import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import java.util.regex.*;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IPartListener;
 import org.eclipse.ui.ISelectionListener;
@@ -40,37 +40,37 @@ import org.eclipse.ui.IWorkbenchPart;
 
 class LanguageOperators {
 	public String getAssignmentOperator() {
-		return "=";
+		return "="; //$NON-NLS-1$
 	}
 
 	public String getGreaterThanEqualToOperator() {
-		return ">=";
+		return ">="; //$NON-NLS-1$
 	}
 
 	public String getEqualToOperator() {
-		return "==";
+		return "=="; //$NON-NLS-1$
 	}
 
 	public String getNotEqualToOperator() {
-		return "!=";
+		return "!="; //$NON-NLS-1$
 	}
 
 	public String getLessThenEqualToOperator() {
-		return "<=";
+		return "<="; //$NON-NLS-1$
 	}
 
 	public String getValueChangeOperatorsRegex() {
-		return "(\\+\\+)|(\\-\\-)|(\\+\\=)|"
-				+ "(\\-\\=)|(\\*\\=)|(/\\=)|(\\&\\=)"
-				+ "(\\%\\=)|(\\^\\=)|(\\|\\=)|(\\<\\<\\=)|(\\>\\>\\=)";
+		return "(\\+\\+)|(\\-\\-)|(\\+\\=)|" //$NON-NLS-1$
+				+ "(\\-\\=)|(\\*\\=)|(/\\=)|(\\&\\=)" //$NON-NLS-1$
+				+ "(\\%\\=)|(\\^\\=)|(\\|\\=)|(\\<\\<\\=)|(\\>\\>\\=)"; //$NON-NLS-1$
 	}
 
 	public String getEqualToOperatorsRegex() {
-		return "\\=\\=|\\<\\=|\\>\\=|!\\=";
+		return "\\=\\=|\\<\\=|\\>\\=|!\\="; //$NON-NLS-1$
 	}
 
 	public String getIdentifierRegex() {
-		return "[_A-Za-z][_A-Za-z0-9]*";
+		return "[_A-Za-z][_A-Za-z0-9]*"; //$NON-NLS-1$
 	}
 }
 
@@ -127,37 +127,32 @@ public class DebugTextHover implements ICEditorTextHover, ITextHoverExtension,
 				// evaluated.
 				if (match_found) {
 					return null;
-				} else {
-					pattern = Pattern.compile(operatorsObj
-							.getEqualToOperatorsRegex());
-					String[] tokens = pattern.split(expression);
-					for (int i = 0; i < tokens.length; i++) {
-						//If the expression contains assignment operator that
-						// can change the value of a variable, the expression
-						// should not be evaluated.
-						if (tokens[i].indexOf(operatorsObj
-								.getAssignmentOperator()) != -1)
-							return null;
-					}
-					//Supressing function calls from evaluation.
-					String functionCallRegex = operatorsObj
-							.getIdentifierRegex()
-							+ "\\s*\\(";
-					pattern = Pattern.compile(functionCallRegex);
-					matcher = pattern.matcher(expression);
-					match_found = matcher.find();
-					if (match_found) {
+				}
+				pattern = Pattern.compile(operatorsObj
+						.getEqualToOperatorsRegex());
+				String[] tokens = pattern.split(expression);
+				for (int i = 0; i < tokens.length; i++) {
+					//If the expression contains assignment operator that
+					// can change the value of a variable, the expression
+					// should not be evaluated.
+					if (tokens[i].indexOf(operatorsObj
+							.getAssignmentOperator()) != -1)
 						return null;
-					}
+				}
+				//Supressing function calls from evaluation.
+				String functionCallRegex = operatorsObj.getIdentifierRegex() + "\\s*\\("; //$NON-NLS-1$
+				pattern = Pattern.compile(functionCallRegex);
+				matcher = pattern.matcher(expression);
+				match_found = matcher.find();
+				if (match_found) {
+					return null;
 				}
 				StringBuffer buffer = new StringBuffer();
 				String result = evaluateExpression(frame, expression);
 				if (result == null)
 					return null;
 				try {
-					if (result != null)
-						appendVariable(buffer, makeHTMLSafe(expression),
-								makeHTMLSafe(result.trim()));
+					appendVariable(buffer, makeHTMLSafe(expression), makeHTMLSafe(result.trim()));
 				} catch (DebugException x) {
 					CDebugUIPlugin.log(x);
 				}
@@ -199,8 +194,7 @@ public class DebugTextHover implements ICEditorTextHover, ITextHoverExtension,
 	/**
 	 * Append HTML for the given variable to the given buffer
 	 */
-	private static void appendVariable(StringBuffer buffer, String expression,
-			String value) throws DebugException {
+	private static void appendVariable(StringBuffer buffer, String expression, String value) throws DebugException {
 		if (value.length() > MAX_HOVER_INFO_SIZE)
 			value = value.substring(0, MAX_HOVER_INFO_SIZE) + " ..."; //$NON-NLS-1$
 		buffer.append("<p>"); //$NON-NLS-1$

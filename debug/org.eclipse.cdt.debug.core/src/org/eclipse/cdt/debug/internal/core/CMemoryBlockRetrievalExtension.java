@@ -174,10 +174,8 @@ public class CMemoryBlockRetrievalExtension extends PlatformObject implements IM
 						memorySpaceID = sbuf.toString();
 					} 
 					catch( CDIException e ) { // thrown by CDI client decoding method
-						addrBigInt = null;
 					}
-					catch (CoreException e) {
-						addrBigInt = null; // thrown by our decoding method
+					catch (CoreException e) {  // thrown by our decoding method
 					}
 				}
 				
@@ -382,7 +380,7 @@ public class CMemoryBlockRetrievalExtension extends PlatformObject implements IM
 	 * 
 	 */
 	public static String addressToString(BigInteger address, String memorySpaceID) {
-		return memorySpaceID + ":0x" + address.toString(16);
+		return memorySpaceID + ":0x" + address.toString(16); //$NON-NLS-1$
 	}
 
 	/*
@@ -395,7 +393,7 @@ public class CMemoryBlockRetrievalExtension extends PlatformObject implements IM
 		
 		// minimum is "<space>:0x?"
 		if (index == -1 || str.length() <= index + 3 || str.charAt(index+1) != '0' || str.charAt(index+2) != 'x') {
-			IStatus s = new Status( IStatus.ERROR, CDebugCorePlugin.getUniqueIdentifier(), CDebugCorePlugin.INTERNAL_ERROR, InternalDebugCoreMessages.getString( "CMemoryBlockRetrievalExtension.5" ), null );
+			IStatus s = new Status( IStatus.ERROR, CDebugCorePlugin.getUniqueIdentifier(), CDebugCorePlugin.INTERNAL_ERROR, InternalDebugCoreMessages.getString( "CMemoryBlockRetrievalExtension.5" ), null ); //$NON-NLS-1$
 			throw new CoreException( s );
 		}
 

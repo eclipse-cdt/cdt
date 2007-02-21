@@ -786,12 +786,14 @@ public class CThread extends CDebugElement implements ICThread, IRestart, IResum
 	}
 
 	protected void setCurrent( boolean current ) {
-		if (!current)
-		{
-			if (getCDITarget().getConfiguration() instanceof ICDITargetConfiguration2 && ((ICDITargetConfiguration2)getCDITarget().getConfiguration()).supportsThreadControl())
-				current = true; // When the debugger can control individual threads treat every thread is "current"
+		boolean c = current;
+		if ( !c ) {
+			if ( getCDITarget().getConfiguration() instanceof ICDITargetConfiguration2
+					&& ((ICDITargetConfiguration2)getCDITarget().getConfiguration()).supportsThreadControl() )
+				c = true; // When the debugger can control individual
+								// threads treat every thread is "current"
 		}
-		fIsCurrent = current;
+		fIsCurrent = c;
 	}
 
 	protected int getStackDepth() throws DebugException {

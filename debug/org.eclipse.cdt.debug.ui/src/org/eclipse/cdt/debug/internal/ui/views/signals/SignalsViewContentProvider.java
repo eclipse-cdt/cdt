@@ -41,11 +41,9 @@ public class SignalsViewContentProvider implements IStructuredContentProvider {
 		if ( inputElement instanceof ICDebugTarget ) {
 			ICDebugTarget target = (ICDebugTarget)inputElement;
 			try {
-				if ( target != null ) {
-					Object[] signals = target.getSignals();
-					if ( signals != null )
-						return signals;
-				}
+				Object[] signals = target.getSignals();
+				if ( signals != null )
+					return signals;
 			}
 			catch( DebugException e ) {
 				if ( getExceptionHandler() != null )

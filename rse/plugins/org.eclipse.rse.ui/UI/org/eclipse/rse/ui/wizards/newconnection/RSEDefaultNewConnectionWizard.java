@@ -93,9 +93,10 @@ public class RSEDefaultNewConnectionWizard extends RSEAbstractNewConnectionWizar
 	public void selectionChanged(SelectionChangedEvent event) {
 		super.selectionChanged(event);
 		if (mainPage != null && getSystemType() != null) {
-			mainPage.restrictSystemType(getSystemType().getName());
+			IRSESystemType systemType = getSystemType();
 			mainPage.setTitle(getPageTitle());
-			systemTypeSelected(getSystemType().getName(), true);
+			mainPage.setSystemType(systemType);
+			subsystemFactorySuppliedWizardPages = getAdditionalWizardPages(systemType.getName());
 		}
 	}
 
@@ -116,7 +117,7 @@ public class RSEDefaultNewConnectionWizard extends RSEAbstractNewConnectionWizar
 				mainPage.setHostName(defaultHostName);
 
 			if (mainPage != null && getSystemType() != null)
-				mainPage.restrictSystemType(getSystemType().getName());
+				mainPage.setSystemType(getSystemType());
 
 			String defaultProfileName = RSEUIPlugin.getDefault().getSystemRegistry().getSystemProfileManager().getDefaultPrivateSystemProfile().getName();
 
@@ -335,25 +336,6 @@ public class RSEDefaultNewConnectionWizard extends RSEAbstractNewConnectionWizar
 		}
 
 		return mainPage;
-	}
-
-	/**
-	 * Return the form of the main page of this wizard
-	 */
-	//    public SystemConnectionForm getMainPageForm()
-	//    {
-	//    	return (mainPage).getForm();
-	//    }
-	// ----------------------------------------
-	// CALLBACKS FROM SYSTEM CONNECTION PAGE...
-	// ----------------------------------------
-	/**
-	 * Event: the user has selected a system type.
-	 */
-	public void systemTypeSelected(String systemType, boolean duringInitialization) {
-		subsystemFactorySuppliedWizardPages = getAdditionalWizardPages(systemType);
-		if (!duringInitialization)
-			getContainer().updateButtons();
 	}
 
 	/*

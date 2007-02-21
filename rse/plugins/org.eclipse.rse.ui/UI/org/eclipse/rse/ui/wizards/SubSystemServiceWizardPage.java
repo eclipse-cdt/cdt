@@ -85,7 +85,7 @@ public class SubSystemServiceWizardPage extends AbstractSystemNewConnectionWizar
 			
 			IServiceSubSystemConfiguration currentFactory = (IServiceSubSystemConfiguration)getSubSystemConfiguration();
 			
-			IRSESystemType systemType = getMainPage() != null ? getMainPage().getSystemType() : null;
+			IRSESystemType systemType = getMainPage() != null && getMainPage().getWizard() instanceof RSEDefaultNewConnectionWizard ? ((RSEDefaultNewConnectionWizard)getMainPage().getWizard()).getSystemType() : null;
 			String systemTypeName = systemType != null ? systemType.getName() : null;
 			
 			IServiceSubSystemConfiguration[] factories = getServiceSubSystemFactories(systemTypeName, currentFactory.getServiceType());

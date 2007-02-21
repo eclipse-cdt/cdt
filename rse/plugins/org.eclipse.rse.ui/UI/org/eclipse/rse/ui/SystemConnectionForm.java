@@ -18,6 +18,7 @@
 package org.eclipse.rse.ui;
 import java.lang.reflect.InvocationTargetException;
 import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.Vector;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -36,6 +37,7 @@ import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.model.ISystemProfile;
 import org.eclipse.rse.core.model.ISystemRegistry;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
+import org.eclipse.rse.ui.dialogs.ISystemPromptDialog;
 import org.eclipse.rse.ui.dialogs.SystemPromptDialog;
 import org.eclipse.rse.ui.messages.ISystemMessageLine;
 import org.eclipse.rse.ui.validators.ISystemValidator;
@@ -56,6 +58,7 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.ui.IWorkbenchPropertyPage;
 import org.eclipse.ui.dialogs.PropertyPage;
 
 
@@ -140,9 +143,9 @@ public class SystemConnectionForm
 		this.msgLine = msgLine;
 		this.caller = caller;
 		this.defaultProfileNames = RSEUIPlugin.getTheSystemRegistry().getActiveSystemProfileNames();
-		callerInstanceOfWizardPage = (caller instanceof WizardPage);
-		callerInstanceOfSystemPromptDialog = (caller instanceof SystemPromptDialog);		
-		callerInstanceOfPropertyPage = (caller instanceof PropertyPage);
+		callerInstanceOfWizardPage = caller instanceof IWizardPage;
+		callerInstanceOfSystemPromptDialog = caller instanceof ISystemPromptDialog;		
+		callerInstanceOfPropertyPage = caller instanceof IWorkbenchPropertyPage;
 
         userIdValidator = new ValidatorUserId(true); // false => allow empty? Yes.
         defaultUserId = ""; //$NON-NLS-1$
@@ -1135,32 +1138,35 @@ public class SystemConnectionForm
 	 * in the Dialog's message line.
 	 * @see #setHostNameValidator(ISystemValidator)
 	 */
-	protected SystemMessage validateHostNameInput() 
-	{			
-	    String hostName = textHostName.getText().trim();
-	    if (connectionNameEmpty) // d43191
-	      internalSetConnectionName(hostName);	    
-	    errorMessage= null;
+	protected SystemMessage validateHostNameInput() {
+		final String hostName = textHostName.getText().trim();
+		
+		// d43191
+		if (connectionNameEmpty) internalSetConnectionName(hostName);
+		
+		errorMessage = null;
+		
 		if (hostValidator != null)
-	      errorMessage= hostValidator.validate(hostName);
-	    else if (getHostName().length() == 0)
-		  errorMessage = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_VALIDATE_HOSTNAME_EMPTY);    	
-		if (updateMode && !userPickedVerifyHostnameCB)
-		{
+			errorMessage = hostValidator.validate(hostName);
+		else if (getHostName().length() == 0)
+			errorMessage = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_VALIDATE_HOSTNAME_EMPTY);
+		
+		if (updateMode && !userPickedVerifyHostnameCB) {
 			boolean hostNameChanged = !hostName.equals(defaultHostName);
 			verifyHostNameCB.setSelection(hostNameChanged);
 		}
+		
 		showErrorMessage(errorMessage);
-		setPageComplete();		
-		return errorMessage;		
+		setPageComplete();
+		return errorMessage;
 	}
+	
   	/**
-	 * This hook method is called whenever the text changes in the input field.
-	 * The default implementation delegates the request to an <code>ISystemValidator</code> object.
-	 * If the <code>ISystemValidator</code> reports an error the error message is displayed
-	 * in the Dialog's message line.
-	 * @see #setUserIdValidator(ISystemValidator)	
-	 */	
+		 * This hook method is called whenever the text changes in the input field. The default implementation delegates the
+		 * request to an <code>ISystemValidator</code> object. If the <code>ISystemValidator</code> reports an error the
+		 * error message is displayed in the Dialog's message line.
+		 * @see #setUserIdValidator(ISystemValidator)
+		 */	
 	protected SystemMessage validateUserIdInput() 
 	{			
 	    errorMessage= null;

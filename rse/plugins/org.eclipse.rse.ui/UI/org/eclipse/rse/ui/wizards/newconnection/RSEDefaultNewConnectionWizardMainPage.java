@@ -42,7 +42,6 @@ import org.eclipse.swt.widgets.Control;
 
 public class RSEDefaultNewConnectionWizardMainPage extends AbstractSystemWizardPage implements ISystemConnectionFormCaller {
 		
-	private String[] restrictSystemTypesTo;
 	private SystemConnectionForm form;
 	private String parentHelpId;
 
@@ -58,16 +57,18 @@ public class RSEDefaultNewConnectionWizardMainPage extends AbstractSystemWizardP
 	}
 
 	/**
-	 * Call this to restrict the system type that the user is allowed to choose
+	 * Set the system type the page is working with.
 	 * 
-	 * @param systemType The system type to restrict the page to. Must be not <code>null</code>.
+	 * @param systemType The system type.
 	 */
-	public void restrictSystemType(String systemType) {
-		assert systemType != null;
-		restrictSystemTypesTo = new String[] { systemType };
-		getForm().restrictSystemTypes(restrictSystemTypesTo);
+	public void setSystemType(IRSESystemType systemType) {
+		if (systemType != null) {
+			// The page _always_ restrict the system connection form
+			// to only one system type.
+			getForm().restrictSystemType(systemType.getName());
+		}
 	}
-
+	
 	/**
 	 * Overrride this if you want to supply your own form. This may be called
 	 *  multiple times so please only instantatiate if the form instance variable
@@ -271,34 +272,17 @@ public class RSEDefaultNewConnectionWizardMainPage extends AbstractSystemWizardP
 
 		RSEDefaultNewConnectionWizard newConnWizard = getWizard() instanceof RSEDefaultNewConnectionWizard ? (RSEDefaultNewConnectionWizard)getWizard() : null;
 		if (newConnWizard != null) {
-			return (isPageComplete() && newConnWizard.hasAdditionalPages() && getForm().isConnectionUnique());
-		} else
-			return super.canFlipToNextPage();
-	}
-
-	// ----------------------------------------
-	// CALLBACKS FROM SYSTEM CONNECTION FORM...
-	// ----------------------------------------
-	/**
-	 * Event: the user has selected a system type.
-	 */
-	public void systemTypeSelected(String systemType, boolean duringInitialization) {
-		RSEDefaultNewConnectionWizard newConnWizard = getWizard() instanceof RSEDefaultNewConnectionWizard ? (RSEDefaultNewConnectionWizard)getWizard() : null;
-		if (newConnWizard != null) {
-			newConnWizard.systemTypeSelected(systemType, duringInitialization);
+			return (isPageComplete() && newConnWizard.hasAdditionalPages());
 		}
+		
+		return super.canFlipToNextPage();
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.rse.ui.wizards.ISystemNewConnectionWizardMainPage#getSystemType()
+	 * @see org.eclipse.rse.ui.ISystemConnectionFormCaller#systemTypeSelected(java.lang.String, boolean)
 	 */
-	public IRSESystemType getSystemType() {
-		if (getWizard() instanceof RSEDefaultNewConnectionWizard) {
-			RSEDefaultNewConnectionWizard wizard = (RSEDefaultNewConnectionWizard)getWizard();
-			return wizard.getSystemType();
-		}
-			
-		return null;
+	public void systemTypeSelected(String systemType, boolean duringInitialization) {
+		// Not applicable: The Page is driving the system connection form and not the way around!!!
 	}
 
 }

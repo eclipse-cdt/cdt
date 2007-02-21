@@ -42,6 +42,8 @@ public class PDOMInclude implements IIndexFragmentInclude {
 	private static final int FLAG_OFFSET 				 = 26;
 
 	private static final int FLAG_SYSTEM_INCLUDE = 1;
+	private static final int FLAG_INACTIVE_INCLUDE = 2;
+	private static final int FLAG_UNRESOLVED_INCLUDE = 4;
 	
 	private final int RECORD_SIZE = 27;
 
@@ -66,6 +68,12 @@ public class PDOMInclude implements IIndexFragmentInclude {
 		byte flags= 0;
 		if (include.isSystemInclude()) {
 			flags |= FLAG_SYSTEM_INCLUDE;
+		}
+		if (!include.isActive()) {
+			flags |= FLAG_INACTIVE_INCLUDE;
+		}
+		if (!include.isResolved()) {
+			flags |= FLAG_UNRESOLVED_INCLUDE;
 		}
 		return flags;
 	}
@@ -167,6 +175,14 @@ public class PDOMInclude implements IIndexFragmentInclude {
 
 	public boolean isSystemInclude() throws CoreException {
 		return (getFlag() & FLAG_SYSTEM_INCLUDE) != 0;
+	}
+	
+	public boolean isActive() throws CoreException {
+		return (getFlag() & FLAG_INACTIVE_INCLUDE) == 0;
+	}
+	
+	public boolean isResolved() throws CoreException {
+		return (getFlag() & FLAG_UNRESOLVED_INCLUDE) == 0;
 	}
 	
 	public int getNameOffset() throws CoreException {

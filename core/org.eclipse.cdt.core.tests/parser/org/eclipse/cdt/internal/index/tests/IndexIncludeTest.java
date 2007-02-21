@@ -210,7 +210,62 @@ public class IndexIncludeTest extends IndexTestBase {
 			TestScannerProvider.sIncludes= null;
 		}
 	}
-	
+
+	public void testInactiveInclude() throws Exception {
+		TestScannerProvider.sIncludes= new String[]{fProject.getProject().getLocation().toOSString()};
+		try {
+			String content = "#if 0\n#include \"inactive20070213.h\"\n#endif\n";
+			IFile file= TestSourceReader.createFile(fProject.getProject(), "source20070213.cpp", content);
+			CCoreInternals.getPDOMManager().reindex(fProject);
+			waitForIndexer();
+			
+			fIndex.acquireReadLock();
+			try {
+				IIndexFile ifile= fIndex.getFile(IndexLocationFactory.getWorkspaceIFL(file));
+				assertNotNull(ifile);
+				IIndexInclude[] includes= ifile.getIncludes();
+				assertEquals(1, includes.length);
+				
+				assertFalse(includes[0].isActive());
+				checkInclude(includes[0], content, "inactive20070213.h", false);
+			}
+			finally {
+				fIndex.releaseReadLock();
+			}
+		}
+		finally {
+			TestScannerProvider.sIncludes= null;
+		}
+	}
+
+	public void testUnresolvedInclude() throws Exception {
+		TestScannerProvider.sIncludes= new String[]{fProject.getProject().getLocation().toOSString()};
+		try {
+			String content = "#include \"unresolved20070213.h\"\n";
+			IFile file= TestSourceReader.createFile(fProject.getProject(), "source20070214.cpp", content);
+			CCoreInternals.getPDOMManager().reindex(fProject);
+			waitForIndexer();
+			
+			fIndex.acquireReadLock();
+			try {
+				IIndexFile ifile= fIndex.getFile(IndexLocationFactory.getWorkspaceIFL(file));
+				assertNotNull(ifile);
+				IIndexInclude[] includes= ifile.getIncludes();
+				assertEquals(1, includes.length);
+				
+				assertTrue(includes[0].isActive());
+				assertFalse(includes[0].isResolved());
+				checkInclude(includes[0], content, "unresolved20070213.h", false);
+			}
+			finally {
+				fIndex.releaseReadLock();
+			}
+		}
+		finally {
+			TestScannerProvider.sIncludes= null;
+		}
+	}
+
 	private void checkInclude(IIndexInclude include, String content, String includeName, boolean isSystem) throws CoreException {
 		int offset= content.indexOf(includeName);
 		assertEquals(offset, include.getNameOffset());

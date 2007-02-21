@@ -1,5 +1,5 @@
 /**********************************************************************
- * Copyright (c) 2006 QNX Software Systems and others.
+ * Copyright (c) 2006, 2007 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  * 
  * Contributors: 
  *     QNX Software Systems - Initial API and implementation
+ *     Anton Leherbauer (Wind River Systems)
  **********************************************************************/
 
 package org.eclipse.cdt.managedbuilder.pdomdepgen;
@@ -67,9 +68,11 @@ public class PDOMDependencyCalculator implements IManagedDependencyCalculator {
 							IIndexInclude[] includes = index.findIncludes(file, IIndex.DEPTH_INFINITE);
 
 							List/*<IPath>*/ list = new ArrayList/*<IPath>*/();
-							for (int i = 0; i < includes.length; ++i)
-								list.add(IndexLocationFactory.getAbsolutePath(includes[i].getIncludesLocation()));
-
+							for (int i = 0; i < includes.length; ++i) {
+								if (includes[i].isResolved()) {
+									list.add(IndexLocationFactory.getAbsolutePath(includes[i].getIncludesLocation()));
+								}
+							}
 							dependencies = (IPath[])list.toArray(new IPath[list.size()]);
 						} else
 							dependencies = new IPath[0];

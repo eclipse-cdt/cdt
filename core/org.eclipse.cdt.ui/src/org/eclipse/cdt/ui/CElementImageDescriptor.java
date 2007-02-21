@@ -88,12 +88,15 @@ public class CElementImageDescriptor extends CompositeImageDescriptor {
     /** Flag to render the 'defines' adornment in the type hierarchy*/
     public final static int DEFINES= 0x4000;      
 
+    /** Flag to render the 'inactive' adornment for include directives */
+    public final static int INACTIVE= 0x8000;      
+
 	private ImageDescriptor fBaseImage;
 	private int fFlags;
 	private Point fSize;
 
 	/**
-	 * Create a new JavaElementImageDescriptor.
+	 * Create a new CElementImageDescriptor.
 	 * 
 	 * @param baseImage an image descriptor used as the base image
 	 * @param flags flags indicating which adornments are to be rendered. See <code>setAdornments</code>
@@ -255,7 +258,7 @@ public class CElementImageDescriptor extends CompositeImageDescriptor {
 //			x-= data.width;
 //			drawImage(data, x, size.y - data.height);
 //		}		
-		}
+	}		
 	
 	private void drawTopLeft() {
 		ImageData data= null;
@@ -263,8 +266,12 @@ public class CElementImageDescriptor extends CompositeImageDescriptor {
 			data= CPluginImages.DESC_OVR_DEFINES.getImageData();
 			drawImage(data, 0, 0);
 		}
+		if ((fFlags & INACTIVE) != 0) {
+			data= CPluginImages.DESC_OVR_INACTIVE.getImageData();
+			drawImage(data, 0, 0);
+		} 
 	}		
-	
+
 	private void drawBottomLeft() {
 		Point size= getSize();
 		int x= 0;

@@ -12,25 +12,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.viewsupport;
 
-import org.eclipse.cdt.core.model.CModelException;
-import org.eclipse.cdt.core.model.CoreModel;
-import org.eclipse.cdt.core.model.IBinary;
-import org.eclipse.cdt.core.model.IBinaryModule;
-import org.eclipse.cdt.core.model.ICElement;
-import org.eclipse.cdt.core.model.ICProject;
-import org.eclipse.cdt.core.model.IContributedCElement;
-import org.eclipse.cdt.core.model.IDeclaration;
-import org.eclipse.cdt.core.model.IField;
-import org.eclipse.cdt.core.model.IIncludeReference;
-import org.eclipse.cdt.core.model.ILibraryReference;
-import org.eclipse.cdt.core.model.IMethodDeclaration;
-import org.eclipse.cdt.core.model.ISourceRoot;
-import org.eclipse.cdt.core.model.ITemplate;
-import org.eclipse.cdt.core.model.ITranslationUnit;
-import org.eclipse.cdt.core.parser.ast.ASTAccessVisibility;
-import org.eclipse.cdt.internal.ui.CPluginImages;
-import org.eclipse.cdt.ui.CElementImageDescriptor;
-import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IAdaptable;
@@ -41,6 +22,28 @@ import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 
+import org.eclipse.cdt.core.model.CModelException;
+import org.eclipse.cdt.core.model.CoreModel;
+import org.eclipse.cdt.core.model.IBinary;
+import org.eclipse.cdt.core.model.IBinaryModule;
+import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.core.model.IContributedCElement;
+import org.eclipse.cdt.core.model.IDeclaration;
+import org.eclipse.cdt.core.model.IField;
+import org.eclipse.cdt.core.model.IInclude;
+import org.eclipse.cdt.core.model.IIncludeReference;
+import org.eclipse.cdt.core.model.ILibraryReference;
+import org.eclipse.cdt.core.model.IMethodDeclaration;
+import org.eclipse.cdt.core.model.ISourceRoot;
+import org.eclipse.cdt.core.model.ITemplate;
+import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.cdt.core.parser.ast.ASTAccessVisibility;
+import org.eclipse.cdt.ui.CElementImageDescriptor;
+import org.eclipse.cdt.ui.CUIPlugin;
+
+import org.eclipse.cdt.internal.ui.CPluginImages;
+
 
 /**
  * Default strategy of the C plugin for the construction of C element icons.
@@ -48,7 +51,7 @@ import org.eclipse.ui.model.IWorkbenchAdapter;
 public class CElementImageProvider {
 	
 	/**
-	 * Flags for the CImageLabelProvider:
+	 * Flags for the CElementImageProvider:
 	 * Generate images with overlays.
 	 */
 	public final static int OVERLAY_ICONS= 0x1;
@@ -103,7 +106,7 @@ public class CElementImageProvider {
 	 * Returns the icon for a given element. The icon depends on the element type
 	 * and element properties. If configured, overlay icons are constructed for
 	 * <code>ISourceReference</code>s.
-	 * @param flags Flags as defined by the JavaImageLabelProvider
+	 * @param flags Flags as defined by the CElementImageProvider
 	 */
 	public Image getImageLabel(Object element, int flags) {
 		ImageDescriptor descriptor= null;
@@ -365,7 +368,6 @@ public class CElementImageProvider {
 			case ICElement.C_TEMPLATE_METHOD:
 			case ICElement.C_TEMPLATE_METHOD_DECLARATION:
 				try {
-					
 					IMethodDeclaration  md= (IMethodDeclaration)celement;
 					ASTAccessVisibility visibility =md.getVisibility();
 					return getMethodImageDescriptor(visibility); 
@@ -405,8 +407,9 @@ public class CElementImageProvider {
 			case ICElement.C_USING:
 				return getUsingImageDescriptor();
 
+			default:
+				return getImageDescriptor(type);
 		}
-		return null;
 	}	
 
 
@@ -415,24 +418,32 @@ public class CElementImageProvider {
 	private int computeCAdornmentFlags(ICElement element, int renderFlags) {
 		
 		int flags= computeBasicAdornmentFlags(element, renderFlags);
-
-		try {
-			if (showOverlayIcons(renderFlags) && element instanceof IDeclaration) {
-				IDeclaration decl = (IDeclaration) element;
-				if(decl.isStatic()){
-					flags |= CElementImageDescriptor.STATIC;
+		if (showOverlayIcons(renderFlags)) {
+			try {
+				if (element instanceof IDeclaration) {
+					IDeclaration decl = (IDeclaration) element;
+					if(decl.isStatic()){
+						flags |= CElementImageDescriptor.STATIC;
+					}
+					if(decl.isConst()){
+						flags |= CElementImageDescriptor.CONSTANT;
+					}
+					if(decl.isVolatile()){
+						flags |= CElementImageDescriptor.VOLATILE;
+					}
+					if(element instanceof ITemplate){
+						flags |= CElementImageDescriptor.TEMPLATE;
+					}
+				} else if (element instanceof IInclude) {
+					IInclude include= (IInclude) element;
+					if (!include.isActive()) {
+						flags |= CElementImageDescriptor.INACTIVE;
+					} else if (!include.isResolved()) {
+						flags |= CElementImageDescriptor.WARNING;
+					}
 				}
-				if(decl.isConst()){
-					flags |= CElementImageDescriptor.CONSTANT;
-				}
-				if(decl.isVolatile()){
-					flags |= CElementImageDescriptor.VOLATILE;
-				}
-				if(element instanceof ITemplate){
-					flags |= CElementImageDescriptor.TEMPLATE;
-				}
+			} catch (CModelException e) {
 			}
-		} catch (CModelException e) {
 		}
 		return flags;
 	}
@@ -444,7 +455,7 @@ public class CElementImageProvider {
 		}
 		if ((renderFlags & OVERLAY_WARNING) !=0) {
 			flags |= CElementImageDescriptor.WARNING;
-		}		
+		}
 //		if ((renderFlags & OVERLAY_OVERRIDE) !=0) {
 //			flags |= CElementImageDescriptor.OVERRIDES;
 //		}

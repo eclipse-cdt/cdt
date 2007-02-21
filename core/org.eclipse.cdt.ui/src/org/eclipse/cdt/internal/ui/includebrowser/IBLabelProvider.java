@@ -81,6 +81,9 @@ public class IBLabelProvider extends LabelProvider implements IColorProvider {
         if (node.isSystemInclude()) {
             flags |= CElementImageDescriptor.SYSTEM_INCLUDE;
         }
+        if (!node.isActiveCode()) {
+            flags |= CElementImageDescriptor.INACTIVE;
+        }
         
         if (node.isRecursive()) {
             flags |= CElementImageDescriptor.RECURSIVE_RELATION;
@@ -94,7 +97,7 @@ public class IBLabelProvider extends LabelProvider implements IColorProvider {
             }
         }
 
-        if (node.getRepresentedTranslationUnit() == null) {
+        if (node.isActiveCode() && node.getRepresentedTranslationUnit() == null) {
         	flags |= CElementImageDescriptor.WARNING;
         }
 

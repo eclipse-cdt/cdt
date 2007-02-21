@@ -122,7 +122,7 @@ public class IBContentProvider extends AsyncTreeContentProvider {
 									name, include.getNameOffset(), 
 									include.getNameLength(), 
 									include.getIncludedBy().getTimestamp());
-							newnode.setIsActiveCode(true);
+							newnode.setIsActiveCode(include.isActive());
 							newnode.setIsSystemInclude(include.isSystemInclude());
 							result.add(newnode);
 						}

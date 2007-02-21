@@ -443,6 +443,33 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
     }
 
     /**
+     * Represents an include directive without sub-contexts.
+     * This allows to model inactive includes and unresolved includes.
+     */
+    protected static class _Include extends _Context implements
+    		_IPreprocessorIncludeDirective {
+
+        public final int fNameOffset;
+        public final int fNameEndOffset;
+		public final char[] fName;
+		public final boolean fSystemInclude;
+    	public final boolean fIsActive;
+    	public final boolean fIsResolved;
+
+		public _Include(_CompositeContext parent, int startOffset, int endOffset, int nameOffset, int nameEndoffset,
+				char[] name, boolean systemInclude, boolean active, boolean resolved) {
+            super(parent, startOffset, endOffset);
+            fNameOffset= nameOffset;
+            fNameEndOffset= nameEndoffset;
+            fName= name;
+            fSystemInclude= systemInclude;
+            fIsActive= active;
+            fIsResolved= resolved;
+        }
+
+    }
+
+    /**
      * @author jcamelon
      */
     public static class ASTInclusionStatement extends ASTNode implements
@@ -454,7 +481,8 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
         public int startOffset;
         public int endOffset;
 		private boolean fSystemInclude;
-
+		private boolean fIsActive= true;
+		private boolean fIsResolved= true;
 
         /**
          * @param cs
@@ -463,11 +491,6 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
             this.path = cs;
         }
 
-        /*
-         * (non-Javadoc)
-         * 
-         * @see org.eclipse.cdt.core.dom.ast.IASTPreprocessorIncludeStatement#getPath()
-         */
         public String getPath() {
             return new String(path);
         }
@@ -490,6 +513,22 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
 		
 		public void setSystemInclude(boolean val) {
 			fSystemInclude= val;
+		}
+
+		public boolean isActive() {
+			return fIsActive;
+		}
+		
+		public void setActive(boolean val) {
+			fIsActive= val;
+		}
+
+		public boolean isResolved() {
+			return fIsResolved;
+		}
+		
+		public void setResolved(boolean val) {
+			fIsResolved= val;
 		}
     }
 
@@ -604,6 +643,8 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
     }
 
     public static interface _IPreprocessorDirective {
+    }
+    public static interface _IPreprocessorIncludeDirective extends _IPreprocessorDirective {
     }
 
     protected class _Undef extends _Context implements
@@ -1216,7 +1257,7 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
     }
 
     protected static class _Inclusion extends _CompositeFileContext implements
-            _IPreprocessorDirective {
+            _IPreprocessorIncludeDirective {
 
         public final int fNameOffset;
         public final int fNameEndOffset;
@@ -1539,7 +1580,7 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
         collectContexts(V_INCLUSIONS, tu, contexts, 0);
         IASTPreprocessorIncludeStatement[] result = new IASTPreprocessorIncludeStatement[size];
         for (int i = 0; i < size; ++i) 
-            result[i] = createASTInclusion(((_Inclusion) contexts[i]));
+            result[i] = (IASTPreprocessorIncludeStatement)createPreprocessorStatement(contexts[i]);
 
         return result;
     }
@@ -1561,6 +1602,26 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
 		result.setParent(rootNode);
 		result.setPropertyInParent(IASTTranslationUnit.PREPROCESSOR_STATEMENT);
 		result.setSystemInclude(inc.fSystemInclude);
+		result.setActive(true);
+		result.setResolved(true);
+        return result;
+    }
+
+    private IASTPreprocessorIncludeStatement createASTInclusion(_Include inc) {
+    	ASTInclusionStatement result = new ASTInclusionStatement(inc.fName);
+        result.setOffsetAndLength(inc.context_directive_start, inc.getDirectiveLength());
+        result.startOffset = inc.getContextStart();
+        result.endOffset = inc.context_directive_end;
+        ASTIncludeName name= new ASTIncludeName(inc.fName);
+        name.setPropertyInParent(IASTPreprocessorIncludeStatement.INCLUDE_NAME);
+        name.setParent(result);
+        name.setOffsetAndLength(inc.fNameOffset, inc.fNameEndOffset-inc.fNameOffset);
+        result.setName(name);
+		result.setParent(rootNode);
+		result.setPropertyInParent(IASTTranslationUnit.PREPROCESSOR_STATEMENT);
+		result.setSystemInclude(inc.fSystemInclude);
+		result.setActive(inc.fIsActive);
+		result.setResolved(inc.fIsResolved);
         return result;
     }
 
@@ -1587,6 +1648,8 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
         IASTPreprocessorStatement result = null;
         if (context instanceof _Inclusion)
             result = createASTInclusion(((_Inclusion) context));
+        else if (context instanceof _Include)
+            result = createASTInclusion(((_Include) context));
         else if (context instanceof _MacroDefinition)
             result = createASTMacroDefinition((_MacroDefinition) context);
         else if (context instanceof _Undef)
@@ -2172,6 +2235,14 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
     }
 
     /*
+     * @see org.eclipse.cdt.internal.core.parser.scanner2.IScannerPreprocessorLog#encounterPoundInclude(int, int, int, int, char[], boolean, boolean)
+     */
+    public void encounterPoundInclude(int startOffset, int nameOffset, int nameEndOffset, int endOffset, char[] name,
+    		boolean systemInclude, boolean active) {
+    	currentContext.addSubContext(new _Include(currentContext, startOffset, endOffset, nameOffset, nameEndOffset, name, systemInclude, active, false));
+    }
+
+    /*
      * (non-Javadoc)
      * 
      * @see org.eclipse.cdt.internal.core.parser.scanner2.ILocationResolver#getTranslationUnitPath()
@@ -2256,7 +2327,7 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
             ++count;
             break;
         case V_INCLUSIONS:
-            if (source instanceof _Inclusion) {
+            if (source instanceof _IPreprocessorIncludeDirective) {
                 if (result != null)
                     result[startAt++] = source;
                 ++count;
@@ -2264,7 +2335,6 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
             break;
         case V_PROBLEMS:
             if (source instanceof _Problem) {
-
                 if (result != null)
                     result[startAt++] = source;
                 ++count;

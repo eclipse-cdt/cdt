@@ -9,6 +9,7 @@
  *    Markus Schorn - initial API and implementation
  *    Bryan Wilkinson (QNX)
  *    Andrew Ferguson (Symbian)
+ *    Anton Leherbauer (Wind River Systems)
  *******************************************************************************/ 
 
 package org.eclipse.cdt.internal.core.index;
@@ -151,6 +152,9 @@ public class CIndex implements IIndex {
 	}
 
 	public IIndexFile resolveInclude(IIndexInclude include) throws CoreException {
+		if (!include.isResolved()) {
+			return null;
+		}
 		IIndexFragmentInclude fragmentInclude = (IIndexFragmentInclude) include;
 		IIndexFragment frag= fragmentInclude.getFragment();
 		if (isPrimaryFragment(frag)) {
@@ -380,7 +384,7 @@ public class CIndex implements IIndex {
 		List result = new ArrayList();
 		for (int i = 0; i < fFragments.length; i++) {
 			IIndexFragmentBinding adapted = fFragments[i].adaptBinding(binding);
-			if (adapted instanceof IIndexFragmentBinding) {
+			if (adapted != null) {
 				result.add(adapted);
 			}
 		}

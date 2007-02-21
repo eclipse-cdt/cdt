@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Anton Leherbauer (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.viewsupport;
 
@@ -17,8 +18,12 @@ import org.eclipse.jface.viewers.IColorProvider;
 import org.eclipse.jface.viewers.ILabelDecorator;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
+
+import org.eclipse.cdt.core.model.IInclude;
+import org.eclipse.cdt.ui.CUIPlugin;
 
 public class CUILabelProvider extends LabelProvider implements IColorProvider {
 	
@@ -29,6 +34,7 @@ public class CUILabelProvider extends LabelProvider implements IColorProvider {
 
 	private int fImageFlags;
 	private int fTextFlags;
+	private Color fInactiveColor;
 
 	/**
 	 * Creates a new label provider with default flags.
@@ -38,8 +44,8 @@ public class CUILabelProvider extends LabelProvider implements IColorProvider {
 	}
 
 	/**
-	 * @param textFlags Flags defined in <code>JavaElementLabels</code>.
-	 * @param imageFlags Flags defined in <code>JavaElementImageProvider</code>.
+	 * @param textFlags Flags defined in <code>CElementLabels</code>.
+	 * @param imageFlags Flags defined in <code>CElementImageProvider</code>.
 	 */
 	public CUILabelProvider(int textFlags, int imageFlags) {
 		fImageLabelProvider= new CElementImageProvider();
@@ -48,6 +54,7 @@ public class CUILabelProvider extends LabelProvider implements IColorProvider {
 		fStorageLabelProvider= new StorageLabelProvider();
 		fImageFlags= imageFlags;
 		fTextFlags= textFlags;
+		fInactiveColor= CUIPlugin.getStandardDisplay().getSystemColor(SWT.COLOR_DARK_GRAY);
 	}
 	
 	/**
@@ -220,6 +227,12 @@ public class CUILabelProvider extends LabelProvider implements IColorProvider {
 	 * @see org.eclipse.jface.viewers.IColorProvider#getForeground(java.lang.Object)
 	 */
 	public Color getForeground(Object element) {
+		if (element instanceof IInclude) {
+			IInclude include= (IInclude)element;
+			if (!include.isActive()) {
+				return fInactiveColor;
+			}
+		}
 		return null;
 	}
 

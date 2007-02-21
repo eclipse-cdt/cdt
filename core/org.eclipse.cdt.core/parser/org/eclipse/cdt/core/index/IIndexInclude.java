@@ -46,8 +46,13 @@ public interface IIndexInclude {
 	IIndexFileLocation getIncludedByLocation() throws CoreException;
 	
 	/**
-	 * Returns the IIndexFileLocation of the file that is included by this directive.
-	 * @return the IIndexFileLocation of the file that is included by this directive
+	 * Returns the IIndexFileLocation of the file that is included by this
+	 * directive. In case of an unresolved or inactive include <code>null</code>
+	 * will be returned.
+	 * 
+	 * @return the IIndexFileLocation of the file that is included by this
+	 *         directive or <code>null</code> if the include is unresolved or
+	 *         inactive
 	 * @throws CoreException
 	 */
 	IIndexFileLocation getIncludesLocation() throws CoreException;
@@ -72,4 +77,20 @@ public interface IIndexInclude {
 	 * @throws CoreException 
 	 */
 	boolean isSystemInclude() throws CoreException;
+
+	/**
+	 * Test whether this include is in active code (not skipped by conditional preprocessing).
+	 * 
+	 * @return whether this include is in active code
+	 * @throws CoreException
+	 */
+	boolean isActive() throws CoreException;
+
+	/**
+	 * Test whether this include has been resolved (found in the file system).
+	 * 
+	 * @return whether this is a resolved include
+	 * @throws CoreException
+	 */
+	boolean isResolved() throws CoreException;
 }

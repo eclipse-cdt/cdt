@@ -465,7 +465,6 @@ public class DOMLocationTests extends AST2BaseTest {
     public void testBug162180() throws Exception {
         StringBuffer buffer = new StringBuffer();
         buffer.append( "#include <notfound.h>\n"); //$NON-NLS-1$
-        int declOffset= buffer.length();
         buffer.append( "int x;\n"); //$NON-NLS-1$
         String code = buffer.toString();
         for (ParserLanguage p = ParserLanguage.C; p != null; p = (p == ParserLanguage.C) ? ParserLanguage.CPP
@@ -474,7 +473,7 @@ public class DOMLocationTests extends AST2BaseTest {
             IASTDeclaration[] decls= tu.getDeclarations();
             assertEquals( decls.length, 1 );
             IASTPreprocessorStatement [] statements = tu.getAllPreprocessorStatements();
-            assertEquals( statements.length, 0 );
+            assertEquals( statements.length, 1 );
             IASTProblem[] problems = tu.getPreprocessorProblems();
             assertEquals( problems.length, 1 );
             assertSoleLocation( decls[0], code, "int x;");  
@@ -494,7 +493,6 @@ public class DOMLocationTests extends AST2BaseTest {
         buffer.append( "#include <notfound.h>\n"); //$NON-NLS-1$
         buffer.append( "#include <notfound1.h> \r\n"); //$NON-NLS-1$
         buffer.append( "#include <notfound2.h>  // more stuff \n"); //$NON-NLS-1$
-        int declOffset= buffer.length();
         buffer.append( "int x;\n"); //$NON-NLS-1$
         String code = buffer.toString();
         for (ParserLanguage p = ParserLanguage.C; p != null; p = (p == ParserLanguage.C) ? ParserLanguage.CPP
@@ -504,12 +502,12 @@ public class DOMLocationTests extends AST2BaseTest {
             IASTPreprocessorStatement [] statements = tu.getAllPreprocessorStatements();
             IASTProblem[] problems = tu.getPreprocessorProblems();
             assertEquals( 1, decls.length);
-            assertEquals( 0, statements.length);
+            assertEquals( 3, statements.length);
             assertEquals( 3, problems.length);
             String snip= "<notfound.h>";
-            assertSoleLocation(problems[0], code, "#include <notfound.h>");
-            assertSoleLocation(problems[1], code, "#include <notfound1.h> ");
-            assertSoleLocation(problems[2], code, "#include <notfound2.h>  // more stuff ");
+            assertSoleLocation(statements[0], code, "#include <notfound.h>");
+            assertSoleLocation(statements[1], code, "#include <notfound1.h>");
+            assertSoleLocation(statements[2], code, "#include <notfound2.h>");
             assertSoleLocation(decls[0], code, "int x;");
         }
     }
@@ -590,7 +588,7 @@ public class DOMLocationTests extends AST2BaseTest {
             IASTPreprocessorStatement [] statements = tu.getAllPreprocessorStatements();
             IASTProblem[] problems = tu.getPreprocessorProblems();
             assertEquals( 1, decls.length);
-            assertEquals( 0, statements.length);
+            assertEquals( 1, statements.length);
             assertEquals( 2, problems.length);
             assertSoleLocation(problems[0], code, "#include \"\"");
             assertSoleLocation(problems[1], code, "else");

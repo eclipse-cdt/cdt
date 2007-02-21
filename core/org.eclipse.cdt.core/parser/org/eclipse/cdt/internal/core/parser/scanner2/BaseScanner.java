@@ -2636,10 +2636,10 @@ abstract class BaseScanner implements IScanner {
             if (type != ppKeywords.undefined) {
                 switch (type) {
                 case ppInclude:
-                    handlePPInclude(pos, false, startingLineNumber);
+                    handlePPInclude(pos, false, startingLineNumber, true);
                     return;
                 case ppInclude_next:
-                    handlePPInclude(pos, true, startingLineNumber);
+                    handlePPInclude(pos, true, startingLineNumber, true);
                     return;
                 case ppDefine:
                     handlePPDefine(pos, startingLineNumber);
@@ -2760,7 +2760,7 @@ abstract class BaseScanner implements IScanner {
     protected abstract void processIf(int startPos, int endPos, boolean taken);
 
     protected void handlePPInclude(int pos2, boolean include_next,
-            int startingLineNumber) {
+            int startingLineNumber, boolean active) {
         char[] buffer = bufferStack[bufferStackPos];
         int limit = bufferLimit[bufferStackPos];
 
@@ -2845,6 +2845,7 @@ abstract class BaseScanner implements IScanner {
         	nameOffset= pos;
         	int len= bufferPos[bufferStackPos] - nameOffset;
         	nameEndOffset= nameOffset + len;
+        	endOffset= nameEndOffset;
         	bufferPos[bufferStackPos]--;
         	
             Object expObject = definitions.get(buffer, nameOffset, len);
@@ -2874,19 +2875,46 @@ abstract class BaseScanner implements IScanner {
         }
 
         if (filename == null || filename == EMPTY_STRING) {
-            handleProblem(IProblem.PREPROCESSOR_INVALID_DIRECTIVE, startOffset,
-                    null);
-            return;
+        	if (active) {
+	            handleProblem(IProblem.PREPROCESSOR_INVALID_DIRECTIVE, startOffset,
+	                    null);
+	            return;
+        	}
+        	filename= new String(buffer, nameOffset, nameEndOffset - nameOffset);
         }
         char[] fileNameArray = filename.toCharArray();
+
         // TODO else we need to do macro processing on the rest of the line
         endLine = getLineNumber(bufferPos[bufferStackPos]);
         skipToNewLine();
 
-        findAndPushInclusion(filename, fileNameArray, local, include_next, startOffset, nameOffset, nameEndOffset, endOffset, startingLineNumber, nameLine, endLine);
+        if (active) {
+        	findAndPushInclusion(filename, fileNameArray, local, include_next, startOffset, nameOffset, nameEndOffset, endOffset, startingLineNumber, nameLine, endLine);
+        } else {
+        	processInclude(fileNameArray, local, active, startOffset, nameOffset, nameEndOffset, endOffset, startingLineNumber, nameLine, endLine);
+        }
     }
 
     /**
+     * Process an include directive without following the inclusion.
+     * 
+	 * @param fileName
+	 * @param local
+	 * @param active
+	 * @param startOffset
+	 * @param nameOffset
+	 * @param nameEndOffset
+	 * @param endOffset
+	 * @param startingLineNumber
+	 * @param nameLine
+	 * @param endLine
+	 */
+	protected void processInclude(char[] fileName, boolean local, boolean active, int startOffset, int nameOffset,
+			int nameEndOffset, int endOffset, int startingLineNumber, int nameLine, int endLine) {
+		// default: do nothing
+	}
+
+	/**
      * @param filename
      * @param fileNameArray
      * @param local
@@ -2922,6 +2950,7 @@ abstract class BaseScanner implements IScanner {
 		                        endLine, false)));
 		        return;
 		    }
+		    processInclude(fileNameArray, local, true, startOffset, nameOffset, nameEndOffset, endOffset, startingLine, nameLine, endLine);
 		    handleProblem(IProblem.PREPROCESSOR_INCLUSION_NOT_FOUND, startOffset,
 		            fileNameArray);
 		    return;
@@ -2981,6 +3010,7 @@ abstract class BaseScanner implements IScanner {
                 }
             }
         }
+	    processInclude(fileNameArray, local, true, startOffset, nameOffset, nameEndOffset, endOffset, startingLine, nameLine, endLine);
         handleProblem(IProblem.PREPROCESSOR_INCLUSION_NOT_FOUND, startOffset,
                 fileNameArray);
     }
@@ -3551,6 +3581,12 @@ abstract class BaseScanner implements IScanner {
                                                 start, len));
                                 skipToNewLine();
                             }
+                            break;
+                        case ppInclude:
+                            handlePPInclude(startPos, false, getLineNumber(startPos), false);
+                            break;
+                        case ppInclude_next:
+                            handlePPInclude(startPos, true, getLineNumber(startPos), false);
                             break;
                         }
                     }

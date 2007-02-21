@@ -74,7 +74,9 @@ public interface IScannerPreprocessorLog {
     public void encounterPoundUndef(int startOffset, int endOffset,
             char[] symbol, int nameOffset, IMacroDefinition macroDefinition);
 
-    public void encounterProblem(IASTProblem problem);
+	public void encounterPoundInclude(int startOffset, int nameOffset, int nameEndOffset, int endOffset, char[] name, boolean systemInclude, boolean active);
+
+	public void encounterProblem(IASTProblem problem);
 
     public IMacroDefinition registerBuiltinObjectStyleMacro(ObjectStyleMacro macro);
 
@@ -83,5 +85,5 @@ public interface IScannerPreprocessorLog {
     public IMacroDefinition registerBuiltinDynamicFunctionStyleMacro(DynamicFunctionStyleMacro macro);
 
     public IMacroDefinition registerBuiltinDynamicStyleMacro(DynamicStyleMacro macro);
-    
+
 }

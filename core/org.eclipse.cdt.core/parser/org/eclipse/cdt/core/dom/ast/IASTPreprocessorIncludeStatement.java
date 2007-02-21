@@ -29,6 +29,7 @@ public interface IASTPreprocessorIncludeStatement extends
 
 	/**
 	 * Returns the absolute location of the file found through #include.
+	 * Only valid if {@link #isResolved()} returns <code>true</code>.
 	 */
 	public String getPath();
 	
@@ -44,4 +45,16 @@ public interface IASTPreprocessorIncludeStatement extends
 	 * @since 4.0
 	 */
 	public boolean isSystemInclude();
+
+	/**
+	 * Returns whether this include directive was actually taken.
+	 * @since 4.0
+	 */
+	public boolean isActive();
+
+	/**
+	 * Returns whether this include file was successfully resolved.
+	 * @since 4.0
+	 */
+	public boolean isResolved();
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 QNX Software Systems and others.
+ * Copyright (c) 2005, 2007 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  * QNX - Initial API and implementation
  * Markus Schorn (Wind River Systems)
  * Andrew Ferguson (Symbian)
+ * Anton Leherbauer (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.index;
 
@@ -16,10 +17,12 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ICodeReaderFactory;
@@ -49,6 +52,7 @@ public class IndexBasedCodeReaderFactory implements ICodeReaderFactory {
 	private Map/*<IIndexFileLocation,FileInfo>*/ fileInfoCache;
 	private Map/*<String,IIndexFileLocation>*/ iflCache;
 	private List usedMacros = new ArrayList();
+	private Set/*<FileInfo>*/ fIncluded= new HashSet();
 	/** The fallback code reader factory used in case a header file is not indexed */
 	private ICodeReaderFactory fFallBackFactory;
 	
@@ -118,6 +122,10 @@ public class IndexBasedCodeReaderFactory implements ICodeReaderFactory {
 			IIndexFileLocation incLocation = findLocation(canonicalPath);
 			FileInfo info= createInfo(incLocation, null);
 
+			if (isIncluded(info)) {
+				return new CodeReader(canonicalPath, EMPTY_CHARS);
+			}
+
 			// try to build macro dictionary off index
 			if (info.fFile != null) {
 				try {
@@ -145,6 +153,7 @@ public class IndexBasedCodeReaderFactory implements ICodeReaderFactory {
 				} catch (NeedToParseException e) {
 				}
 			}
+			setIncluded(info);
 		}
 		catch (CoreException e) {
 			CCorePlugin.log(e);
@@ -155,6 +164,23 @@ public class IndexBasedCodeReaderFactory implements ICodeReaderFactory {
 			return fFallBackFactory.createCodeReaderForInclusion(scanner, canonicalPath);
 		}
 		return ParserUtil.createReader(canonicalPath, null);
+	}
+
+	/**
+	 * Mark the given inclusion as included.
+	 * @param info
+	 */
+	private void setIncluded(FileInfo info) {
+		fIncluded.add(info);
+	}
+
+	/**
+	 * Test whether the given inclusion is already included.
+	 * @param info
+	 * @return <code>true</code> if the inclusion is already included.
+	 */
+	private boolean isIncluded(FileInfo info) {
+		return fIncluded.contains(info);
 	}
 
 	private FileInfo createInfo(IIndexFileLocation location, IIndexFile file) throws CoreException {
@@ -171,10 +197,13 @@ public class IndexBasedCodeReaderFactory implements ICodeReaderFactory {
 		if (!target.add(fileInfo)) {
 			return;
 		}
+		if (isIncluded(fileInfo)) {
+			return;
+		}
 		if (fileInfo.fFile == null || fileInfo.isRequested()) {
 			throw new NeedToParseException();
 		}
-		
+
 		// Follow the includes
 		IIndexFile file= fileInfo.fFile;
 		IIndexInclude[] includeDirectives= file.getIncludes();
@@ -185,6 +214,7 @@ public class IndexBasedCodeReaderFactory implements ICodeReaderFactory {
 				getInfosForMacroDictionary(nextInfo, target);
 			}
 		}
+		setIncluded(fileInfo);
 	}
 	
 	public void clearMacroAttachements() {
@@ -198,6 +228,7 @@ public class IndexBasedCodeReaderFactory implements ICodeReaderFactory {
 			}
 		}
 		usedMacros.clear();
+		fIncluded.clear();
 	}
 
 	public ICodeReaderCache getCodeReaderCache() {

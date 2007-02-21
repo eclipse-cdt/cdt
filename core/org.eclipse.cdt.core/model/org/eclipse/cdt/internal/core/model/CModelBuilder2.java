@@ -296,16 +296,6 @@ public class CModelBuilder2 implements IContributedModelBuilder {
 				createInclusion(fTranslationUnit, includeDirective);
 			}
 		}
-		// problem includes
-		final IASTProblem[] ppProblems= ast.getPreprocessorProblems();
-		for (int i= 0; i < ppProblems.length; i++) {
-			IASTProblem problem= ppProblems[i];
-			if (problem.getID() == IASTProblem.PREPROCESSOR_INCLUSION_NOT_FOUND) {
-				if (isLocalToFile(problem)) {
-					createProblemInclusion(fTranslationUnit, problem);
-				}
-			}
-		}
 		// macros
 		final IASTPreprocessorMacroDefinition[] macroDefinitions= ast.getMacroDefinitions();
 		for (int i= 0; i < macroDefinitions.length; i++) {
@@ -347,6 +337,7 @@ public class CModelBuilder2 implements IContributedModelBuilder {
 		}
 		if (problemRequestor != null && problemRequestor.isActive()) {
 			problemRequestor.beginReporting();
+			final IASTProblem[] ppProblems= ast.getPreprocessorProblems();
 			IASTProblem[] problems= ppProblems;
 			for (int i= 0; i < problems.length; i++) {
 				IASTProblem problem= problems[i];
@@ -378,40 +369,13 @@ public class CModelBuilder2 implements IContributedModelBuilder {
 		final IASTName name= inclusion.getName();
 		Include element= new Include(parent, ASTStringUtil.getSimpleName(name), inclusion.isSystemInclude());
 		element.setFullPathName(inclusion.getPath());
+		element.setActive(inclusion.isActive());
+		element.setResolved(inclusion.isResolved());
 		// add to parent
 		parent.addChild(element);
 		// set positions
 		setIdentifierPosition(element, name);
 		setBodyPosition(element, inclusion);
-		return element;
-	}
-
-	private Include createProblemInclusion(Parent parent, IASTProblem problem) throws CModelException {
-		// create element
-		String name= problem.getArguments();
-		if (name == null || name.length() == 0) {
-			return null;
-		}
-		String signature= problem.getRawSignature();
-		int nameIdx= signature.indexOf(name);
-		boolean isStandard= false;
-		if (nameIdx > 0) {
-			isStandard= signature.charAt(nameIdx-1) == '<';
-		}
-		Include element= new Include(parent, name, isStandard);
-		// add to parent
-		parent.addChild(element);
-		// set positions
-		if (nameIdx > 0) {
-			final IASTFileLocation problemLocation= problem.getFileLocation();
-			if (problemLocation != null) {
-				final int startOffset= problemLocation.getNodeOffset();
-				element.setIdPos(startOffset + nameIdx, name.length());
-			}
-		} else {
-			setIdentifierPosition(element, problem);
-		}
-		setBodyPosition(element, problem);
 		return element;
 	}
 
@@ -425,7 +389,6 @@ public class CModelBuilder2 implements IContributedModelBuilder {
 		setIdentifierPosition(element, name);
 		setBodyPosition(element, macro);
 		return element;
-
 	}
 
 	private void createDeclaration(Parent parent, IASTDeclaration declaration) throws CModelException, DOMException {

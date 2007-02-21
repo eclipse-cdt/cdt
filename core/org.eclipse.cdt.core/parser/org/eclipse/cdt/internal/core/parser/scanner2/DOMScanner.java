@@ -172,6 +172,14 @@ public class DOMScanner extends BaseScanner {
     }
 
     /*
+     * @see org.eclipse.cdt.internal.core.parser.scanner2.BaseScanner#processInclude(char[], boolean, boolean, int, int, int, int, int, int, int)
+     */
+    protected void processInclude(char[] filename, boolean local, boolean active, int startOffset, int nameOffset,
+    		int nameEndOffset, int endOffset, int startingLineNumber, int nameLine, int endLine) {
+    	locationMap.encounterPoundInclude(getGlobalOffset(startOffset), getGlobalOffset(nameOffset), getGlobalOffset(nameEndOffset), getGlobalOffset(endOffset), filename, !local, active);
+    }
+
+    /*
      * (non-Javadoc)
      * 
      * @see org.eclipse.cdt.internal.core.parser.scanner2.BaseScanner#createReaderDuple(java.lang.String)

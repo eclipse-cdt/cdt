@@ -69,7 +69,7 @@ public class SystemViewLabelAndContentProvider extends LabelProvider
 	private boolean                     filesOnly, foldersOnly;
 	private String                      filterString = null;
 	private Hashtable                   resolvedChildrenPerFolder = null; // local cache to improve performance
-	
+	private boolean  _enableDeferredQueries = true;
 	private SystemDeferredTreeContentManager manager;
 	/**
 	 * The cache of images that have been dispensed by this provider.
@@ -245,7 +245,13 @@ public class SystemViewLabelAndContentProvider extends LabelProvider
 	{
 	    //IPreferenceStore store = RSEUIPlugin.getDefault().getPreferenceStore();
 	    //return store.getBoolean(ISystemPreferencesConstants.USE_DEFERRED_QUERIES);
-		return true; // DKM now enforcing deferred queries
+		//return true; // DKM now enforcing deferred queries
+		return _enableDeferredQueries;
+	}
+	
+	public void setEnableDeferredQueries(boolean enable)
+	{
+		_enableDeferredQueries = enable;
 	}
 
     

@@ -644,6 +644,11 @@ public interface ISystemRegistry extends ISchedulingRule {
 	public List findFilterReferencesFor(Object resource, ISubSystem subsystem);
 
 	/**
+	 * Returns filter references associated with this resource under the subsystem
+	 */
+	public List findFilterReferencesFor(Object resource, ISubSystem subsystem, boolean onlyCached);
+
+	/**
 	 * Marks all filters for this subsystem as stale to prevent caching
 	 * @param subsystem
 	 */

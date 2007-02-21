@@ -189,8 +189,10 @@ public abstract class RemoteFile implements IRemoteFile,  IAdaptable, Comparable
 		    	  	  parentFile = ss.getRemoteFileObject(pathOnly);
 		    	  	else if (pathOnly.length() == 1)
 		    	  	{
-		    	  		// parentFile is already null
-		    	  		//parentFile = null;
+		    	  		if (pathOnly.charAt(0) == sep)
+		    	  		{
+		    	  			parentFile = ss.getRemoteFileObject(pathOnly); // root file
+		    	  		}
 		    	  	}
 		    	  	else if (!(pathOnly.charAt(pathOnly.length()-1)==sep))
 		              parentFile = ss.getRemoteFileObject(pathOnly+sep);

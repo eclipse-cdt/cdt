@@ -30,6 +30,7 @@ import org.eclipse.rse.core.SystemAdapterHelpers;
 import org.eclipse.rse.core.filters.ISystemFilterReference;
 import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.model.ISystemRegistry;
+import org.eclipse.rse.core.model.SystemChildrenContentsType;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.ui.RSEUIPlugin;
@@ -48,6 +49,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Item;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
@@ -309,6 +311,7 @@ public class SystemResourceSelectionForm implements ISelectionChangedListener
 		ISystemViewElementAdapter adapter = getAdapter(selection);
 		if (adapter != null)
 		{
+			Object parent = adapter.getParent(selection);
 			ISystemRegistry registry = RSEUIPlugin.getTheSystemRegistry();
 			ISubSystem ss = adapter.getSubSystem(selection);
 			IHost connection = ss.getHost();
@@ -319,22 +322,21 @@ public class SystemResourceSelectionForm implements ISelectionChangedListener
 		 			_connectionCombo.select(connection);
 		 		}
 			}
-			List filterRefs = registry.findFilterReferencesFor(selection, ss);
+			List filterRefs = registry.findFilterReferencesFor(selection, ss, false);
 			
 			SystemView systemView = _systemViewForm.getSystemView();
 			if (filterRefs.size() > 0)
 			{
 				ISystemFilterReference ref = (ISystemFilterReference)filterRefs.get(0);
-				systemView.setExpandedElements(new Object[] {ref});
-				systemView.refreshRemoteObject(selection,  selection, true);
+				systemView.expandTo(ref, selection);
+
 				return true;
 			}
 			else
 			{
-				Object parent = adapter.getParent(selection);
 				if (setPreSelection(parent))
-				{					
-					systemView.refreshRemoteObject(selection,  selection, true);		
+				{
+					systemView.expandTo(parent, selection);
 					return true;
 				}				
 			}

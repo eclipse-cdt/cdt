@@ -66,7 +66,7 @@ public abstract class SystemRemoteResourceDialog extends SystemPromptDialog
 	
 	public void initForm()
 	{
-		_form.setPreSelection(_preSelection);		
+			
 		if (_customViewerFilter != null)
 		{
 			_form.applyViewerFilter(_customViewerFilter);
@@ -75,6 +75,7 @@ public abstract class SystemRemoteResourceDialog extends SystemPromptDialog
 		{
 			_form.applyViewerFilter(getViewerFilter());
 		}
+		_form.setPreSelection(_preSelection);	
 		_form.setSelectionValidator(_selectionValidator);
 	 	_form.setShowPropertySheet(_showPropertySheet);
 	 	_form.setSelectionTreeToolTipText(getTreeTip());

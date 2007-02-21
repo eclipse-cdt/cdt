@@ -3159,6 +3159,11 @@ public class SystemRegistry implements ISystemRegistryUI, ISystemModelChangeEven
 	 
 	public List findFilterReferencesFor(Object resource, ISubSystem subsystem)
 	{
+		return findFilterReferencesFor(resource, subsystem, true);
+	}
+		
+	public List findFilterReferencesFor(Object resource, ISubSystem subsystem, boolean onlyCached)
+	{
 	    String elementName = getRemoteResourceAbsoluteName(resource);
 	   List results = new ArrayList();
 	    if (subsystem != null && elementName != null)
@@ -3168,7 +3173,8 @@ public class SystemRegistry implements ISystemRegistryUI, ISystemModelChangeEven
 		    {
 		        ISystemFilterReference filterRef = refs[i];
 		   
-		        if (!filterRef.isStale() && filterRef.hasContents(SystemChildrenContentsType.getInstance()))
+		        if (!onlyCached || (!filterRef.isStale() && filterRef.hasContents(SystemChildrenContentsType.getInstance())))
+		        	
 		        {
 		    	    	// #1
 		    	    	if (subsystem.doesFilterMatch(filterRef.getReferencedFilter(), elementName))

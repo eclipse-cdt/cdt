@@ -5033,6 +5033,51 @@ public class SystemView extends SafeTreeViewer implements ISystemTree, ISystemRe
 	// ----------------------------------
 	// Support for EXPAND TO-> ACTIONS...
 	// ----------------------------------
+	
+	public void expandTo(Object parentObject, Object remoteObject)
+	{
+		SystemViewLabelAndContentProvider provider = (SystemViewLabelAndContentProvider)getContentProvider();
+		provider.setEnableDeferredQueries(false); 
+		
+		ISystemViewElementAdapter adapter = getViewAdapter(parentObject);
+		ISystemViewElementAdapter targetAdapter = getViewAdapter(remoteObject);
+		
+		
+		ISubSystem ss = adapter.getSubSystem(parentObject);
+		String parentName = adapter.getAbsoluteName(parentObject);
+		String remoteObjectName = targetAdapter.getAbsoluteName(remoteObject);
+		Item parentItem = findFirstRemoteItemReference(parentName, ss, null);
+		if (parentItem != null)
+		{		
+			createChildren(parentItem);
+			Item[] children = getItems(parentItem);
+			setExpanded(parentItem, true);
+			for (int i = 0; i < children.length; i++)
+			{
+				
+				Item child = children[i];
+				Object data = child.getData();
+				if (data.equals(remoteObject))
+				{
+					select(remoteObject, false);
+					provider.setEnableDeferredQueries(true);
+					return;
+				}
+				else
+				{
+					ISystemViewElementAdapter dataAdapter = (ISystemViewElementAdapter)((IAdaptable)data).getAdapter(ISystemViewElementAdapter.class);
+					String path = dataAdapter.getAbsoluteName(data);
+					if (remoteObjectName.startsWith(path))
+					{
+						expandTo(data, remoteObject);
+					}
+				}
+			}
+		}
+		provider.setEnableDeferredQueries(true);
+	}
+	
+	
 	/**
 	 * Called when user selects an Expand To action to expand the selected remote object with a quick filter
 	 */

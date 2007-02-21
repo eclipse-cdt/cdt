@@ -154,7 +154,11 @@ public final class FileServiceSubSystem extends RemoteFileSubSystem implements I
 	 */
 	public IRemoteFile getRemoteFileObject(String folderOrFileName) throws SystemMessageException 
 	{
-		String fofName = ArchiveHandlerManager.cleanUpVirtualPath(folderOrFileName);
+		String fofName = folderOrFileName;
+		if (folderOrFileName.length() > 1)
+		{
+			fofName =	ArchiveHandlerManager.cleanUpVirtualPath(folderOrFileName);
+		}
 		IRemoteFile file = getCachedRemoteFile(fofName);
 		if (file != null && !file.isStale()) {
 			return file;

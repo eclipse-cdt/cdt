@@ -15,10 +15,10 @@ package org.eclipse.cdt.managedbuilder.ui.newui;
 import java.util.ArrayList;
 import java.util.Iterator;
 
-import org.eclipse.cdt.internal.ui.dialogs.StatusInfo;
-import org.eclipse.cdt.internal.ui.dialogs.TypedViewerFilter;
 import org.eclipse.cdt.managedbuilder.core.IOption;
+import org.eclipse.cdt.ui.newui.CDTStatusInfo;
 import org.eclipse.cdt.ui.newui.NewUIMessages;
+import org.eclipse.cdt.ui.newui.TypedCDTViewerFilter;
 import org.eclipse.cdt.utils.cdtvariables.IVariableContextInfo;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
@@ -176,7 +176,7 @@ public class FileListControl {
 							dialog.setInitialSelection(container);
 
 							Class[] filteredResources = {IContainer.class, IProject.class};
-							dialog.addFilter(new TypedViewerFilter(filteredResources));
+							dialog.addFilter(new TypedCDTViewerFilter(filteredResources));
 							dialog.setTitle(WORKSPACE_DIR_DIALOG_TITLE); 
 			                dialog.setMessage(WORKSPACE_DIR_DIALOG_MSG); 
 						} else {
@@ -186,23 +186,18 @@ public class FileListControl {
 								if(fs != null && fs.length > 0)
 									resource = fs[0];
 							}
-							if(resource == null)
-								resource = rc;
-
+							if(resource == null) resource = rc;
 
 							dialog.setInitialSelection(resource);
-
 							dialog.setValidator(new ISelectionStatusValidator() {
 							    public IStatus validate(Object[] selection) {
 							    	if (selection != null)
 							    		if (selection.length > 0)
 							    			if (!(selection[0] instanceof IFile))
-							    				return new StatusInfo(IStatus.ERROR, WORKSPACE_FILE_DIALOG_ERR);
-							    	return new StatusInfo();
+							    				return new CDTStatusInfo(IStatus.ERROR, WORKSPACE_FILE_DIALOG_ERR);
+							    	return new CDTStatusInfo();
 							    }
-
 							});
-							
 							dialog.setTitle(WORKSPACE_FILE_DIALOG_TITLE); 
 			                dialog.setMessage(WORKSPACE_FILE_DIALOG_MSG); 
 						}

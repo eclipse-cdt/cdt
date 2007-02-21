@@ -188,7 +188,7 @@ public class SystemNewConnectionPromptObject implements ISystemPromptableObject,
 				else
 					newConnText = SystemResources.RESID_NEWCONN_PROMPT_LABEL + " ..."; //$NON-NLS-1$
 			} else if (getSystemTypes().length > 0) {
-				newConnText = systemTypes[0] + " ..."; //$NON-NLS-1$
+				newConnText = systemTypes[0].getName() + " ..."; //$NON-NLS-1$
 			}
 		}
 

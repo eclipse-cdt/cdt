@@ -4,7 +4,7 @@
 
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
-<meta name="copyright" content="Copyright (c) IBM Corporation and others 2004, 2006. This page is made available under license. For full details see the LEGAL in the documentation book that contains this page." >
+<meta name="copyright" content="Copyright (c) IBM Corporation and others 2004, 2006. This page is made available under license. For full details see the LEGAL in the documentation book that contains this page."/>
 <link rel="stylesheet" type="text/css" href="../book.css"/>
 <title>Connecting to a remote Linux or UNIX server</title>
 </head>
@@ -123,15 +123,17 @@ can, however, configure it to use SSL encryption.
 <p>Because all dstore data transfer is done through a single TCP/IP 
 connection, the connection can also be tunneled through an ssh channel.
 In fact, the same ssh channel can also be used to start the server,
-like in the following example:
+like in the following example:</p>
 <pre>
 ssh -l moberhuber build.eclipse.org -L27127:build.eclipse.org:27127 \
   "sh -c 'cd ~/rseserver/latest; perl ./server.pl 27127'"
 </pre>
+<p>
 Here, the RSE Server is started on port 27127 through an ssh connection,
 and at the same time port 27127 is forwarded through ssh to the local 
 host. You can now connect RSE to localhost:27127, and the connection
 will transparently be forwarded to the remote system.
+</p>
 </div>
 </div>
 </div><br></br>

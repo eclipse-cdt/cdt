@@ -572,6 +572,7 @@ public class NewVarDialog extends Dialog {
 		}
 		fContainer.layout(true,true);
 	}
+
 	
 	/*
 	 * updates the state of the dialog controls
@@ -580,6 +581,12 @@ public class NewVarDialog extends Dialog {
 		if(!fTotalSizeCalculated)
 			return;
 		handleTypeModified();
+
+		Button b = getButton(IDialogConstants.OK_ID);
+		if (b != null) {
+			String name = getSelectedVarName();
+			b.setEnabled(!EMPTY_STRING.equals(name));
+		}
 	}
 	
 	protected Point getInitialSize() {

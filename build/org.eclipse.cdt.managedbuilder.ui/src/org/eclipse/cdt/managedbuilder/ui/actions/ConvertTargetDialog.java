@@ -13,8 +13,6 @@ package org.eclipse.cdt.managedbuilder.ui.actions;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.eclipse.cdt.internal.ui.dialogs.StatusDialog;
-import org.eclipse.cdt.internal.ui.dialogs.StatusInfo;
 import org.eclipse.cdt.managedbuilder.core.IConvertManagedBuildObject;
 import org.eclipse.cdt.managedbuilder.core.IManagedBuildInfo;
 import org.eclipse.cdt.managedbuilder.core.IManagedProject;
@@ -24,12 +22,14 @@ import org.eclipse.cdt.ui.newui.NewUIMessages;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Event;
@@ -38,7 +38,7 @@ import org.eclipse.swt.widgets.List;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 
-public class ConvertTargetDialog extends StatusDialog {
+public class ConvertTargetDialog extends Dialog {
 
 	final private String title;
 	protected List convertersList;
@@ -168,13 +168,9 @@ public class ConvertTargetDialog extends StatusDialog {
 	}
 	
 	private void validateState() {
-		StatusInfo status= new StatusInfo();
-		if ( convertersList.getSelectionIndex() == -1 ) {
-			// No error, just disable 'Ok' button
-			status.setError("");	//$NON-NLS-1$
-		}
-		updateStatus(status);
-		return;
+		Button b = getButton(IDialogConstants.OK_ID);
+		if (b != null)
+			b.setEnabled(convertersList.getSelectionIndex() != -1); 
 	}
 	
 	private Map getConversionElements() {

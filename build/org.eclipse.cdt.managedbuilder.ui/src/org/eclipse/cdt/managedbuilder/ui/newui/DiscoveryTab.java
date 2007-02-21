@@ -17,7 +17,6 @@ import java.util.Map;
 
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICResourceDescription;
-import org.eclipse.cdt.internal.ui.util.PixelConverter;
 import org.eclipse.cdt.make.core.scannerconfig.IConfigurationScannerConfigBuilderInfo;
 import org.eclipse.cdt.make.core.scannerconfig.IScannerConfigBuilderInfo2;
 import org.eclipse.cdt.make.core.scannerconfig.InfoContext;
@@ -34,6 +33,7 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -125,8 +125,7 @@ public class DiscoveryTab extends AbstractCBuildPropertyTab implements IBuildInf
         
         profileComp = new Composite(usercomp, SWT.NONE);
         gd = new GridData(GridData.FILL, GridData.FILL, true, true);
-        PixelConverter converter = new PixelConverter(parent);
-        gd.heightHint = converter.convertVerticalDLUsToPixels(DEFAULT_HEIGHT);
+        gd.heightHint = Dialog.convertVerticalDLUsToPixels(getFontMetrics(parent), DEFAULT_HEIGHT);
         profileComp.setLayoutData(gd);
         profileComp.setLayout(new TabFolderLayout());
     }

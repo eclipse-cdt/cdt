@@ -26,6 +26,8 @@ import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.FontMetrics;
+import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -484,5 +486,19 @@ public abstract class AbstractCPropertyTab implements ICPropertyTab {
 	public boolean canBeVisible() {
 		return true;
 	}
+
+	/**
+	 * Added to avoid usage PixelConverter class.
+	 * @param control
+	 * @return FontMetrics
+	 */
+	public static FontMetrics getFontMetrics(Control control) {
+		GC gc = new GC(control);
+		gc.setFont(control.getFont());
+		FontMetrics fFontMetrics= gc.getFontMetrics();
+		gc.dispose();
+		return fFontMetrics;
+	}
+
 
 }

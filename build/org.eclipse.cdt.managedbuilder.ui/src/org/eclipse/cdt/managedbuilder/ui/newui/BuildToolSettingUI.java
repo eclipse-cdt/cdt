@@ -18,17 +18,19 @@ import java.util.List;
 import java.util.Set;
 import java.util.Vector;
 
-import org.eclipse.cdt.internal.ui.util.PixelConverter;
 import org.eclipse.cdt.managedbuilder.core.BuildException;
 import org.eclipse.cdt.managedbuilder.core.IOption;
 import org.eclipse.cdt.managedbuilder.core.IResourceInfo;
 import org.eclipse.cdt.managedbuilder.core.ITool;
-import org.eclipse.cdt.ui.newui.NewUIMessages;
+import org.eclipse.cdt.ui.newui.AbstractCPropertyTab;
 import org.eclipse.cdt.ui.newui.MultiLineTextFieldEditor;
+import org.eclipse.cdt.ui.newui.NewUIMessages;
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.preference.FieldEditor;
 import org.eclipse.jface.preference.StringFieldEditor;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.FontMetrics;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
@@ -100,8 +102,6 @@ public class BuildToolSettingUI extends AbstractToolSettingUI {
 	// Map that holds all user object options and its values
 	private HashMap userObjsMap;
 	
-	private AbstractCBuildPropertyTab buildPropPage;
-	
 	public BuildToolSettingUI(AbstractCBuildPropertyTab page,
 			IResourceInfo info, ITool _tool) {
 		// Cache the configuration and tool this page is for
@@ -130,15 +130,15 @@ public class BuildToolSettingUI extends AbstractToolSettingUI {
 		// Load up the preference store
 		super.createFieldEditors();
 		// Add a string editor to edit the tool command
-		Composite parent = getFieldEditorParent(); 
-		PixelConverter converter = new PixelConverter(parent);
+		Composite parent = getFieldEditorParent();
+		FontMetrics fm = AbstractCPropertyTab.getFontMetrics(parent);
 		commandStringField = new StringFieldEditor(fTool.getId(),
 				NewUIMessages.getResourceString(COMMAND),
 				parent);
 		commandStringField.setEmptyStringAllowed(false);
 		GridData gd = ((GridData)commandStringField.getTextControl(parent).getLayoutData());
 		gd.grabExcessHorizontalSpace = true;
-		gd.minimumWidth = converter.convertWidthInCharsToPixels(3);
+		gd.minimumWidth = Dialog.convertWidthInCharsToPixels(fm, 3);
 		addField(commandStringField);
 		// Add a field editor that displays overall build options
 		Composite par = getFieldEditorParent();
@@ -147,17 +147,17 @@ public class BuildToolSettingUI extends AbstractToolSettingUI {
 		allOptionFieldEditor.getTextControl(par).setEditable(false);
 //		gd = ((GridData)allOptionFieldEditor.getTextControl().getLayoutData());
 		gd.grabExcessHorizontalSpace = true;
-		gd.minimumWidth = converter.convertWidthInCharsToPixels(20);
+		gd.minimumWidth = Dialog.convertWidthInCharsToPixels(fm, 20);
 		addField(allOptionFieldEditor);
 		
 		// Create the Advanced Settings group
-		createAdvancedSettingsGroup(converter);
+		createAdvancedSettingsGroup(fm);
 	}		
 
 	/* (non-Javadoc)
 	 * Creates the group that contains the build artifact name controls.
 	 */
-	private void createAdvancedSettingsGroup(PixelConverter converter) {
+	private void createAdvancedSettingsGroup(FontMetrics fm) {
 		addField( createLabelEditor( getFieldEditorParent(), WHITESPACE ) ); //$NON-NLS-1$
 		addField( createLabelEditor( getFieldEditorParent(), NewUIMessages.getResourceString(ADVANCED_GROUP) ) );
 		
@@ -168,8 +168,8 @@ public class BuildToolSettingUI extends AbstractToolSettingUI {
 				parent);
 		GridData gd = ((GridData)commandLinePatternField.getTextControl(parent).getLayoutData());
 		gd.grabExcessHorizontalSpace = true;
-		gd.widthHint =  converter.convertWidthInCharsToPixels(30);
-		gd.minimumWidth = converter.convertWidthInCharsToPixels(20);
+		gd.widthHint =  Dialog.convertWidthInCharsToPixels(fm,30);
+		gd.minimumWidth = Dialog.convertWidthInCharsToPixels(fm, 20);
 		addField(commandLinePatternField);
 
 	}
@@ -178,23 +178,6 @@ public class BuildToolSettingUI extends AbstractToolSettingUI {
 		return new LabelFieldEditor( parent, title );
 	}
 
-	/**
-	 * Creates single string from the string array with a separator
-	 * 
-	 * @param items
-	 * @return
-	 */
-	private String createList(String[] items) {
-		StringBuffer path = new StringBuffer(""); //$NON-NLS-1$
-		for (int i = 0; i < items.length; i++) {
-			path.append(items[i]);
-			if (i < (items.length - 1)) {
-				path.append(DEFAULT_SEPERATOR);
-			}
-		}
-		return path.toString();
-	}
-	
 	/**
 	 * @return
 	 */

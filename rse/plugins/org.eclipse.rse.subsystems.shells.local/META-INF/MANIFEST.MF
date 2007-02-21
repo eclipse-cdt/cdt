@@ -18,5 +18,6 @@ Require-Bundle: org.eclipse.ui,
 Eclipse-LazyStart: true
 Bundle-Vendor: %providerName
 Export-Package: org.eclipse.rse.internal.subsystems.shells.local;x-internal:=true,
- org.eclipse.rse.internal.subsystems.shells.local.model;x-internal:=true
+ org.eclipse.rse.internal.subsystems.shells.local.model;x-internal:=true,
+ org.eclipse.rse.subsystems.shells.local
 Bundle-RequiredExecutionEnvironment: J2SE-1.4

@@ -14,7 +14,7 @@
  * {Name} (company) - description of contribution.
  ********************************************************************************/
 
-package org.eclipse.rse.internal.subsystems.files.local;
+package org.eclipse.rse.subsystems.files.local;
 
 import java.util.Vector;
 
@@ -29,6 +29,8 @@ import org.eclipse.rse.internal.connectorservice.local.LocalConnectorServiceMana
 import org.eclipse.rse.internal.services.local.ILocalService;
 import org.eclipse.rse.internal.services.local.files.LocalFileService;
 import org.eclipse.rse.internal.services.local.search.LocalSearchService;
+import org.eclipse.rse.internal.subsystems.files.local.LocalLanguageUtilityFactory;
+import org.eclipse.rse.internal.subsystems.files.local.LocalSearchResultConfiguration;
 import org.eclipse.rse.internal.subsystems.files.local.model.LocalFileAdapter;
 import org.eclipse.rse.services.clientserver.SystemSearchString;
 import org.eclipse.rse.services.files.IFileService;

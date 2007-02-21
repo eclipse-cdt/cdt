@@ -14,7 +14,7 @@
  * {Name} (company) - description of contribution.
  ********************************************************************************/
 
-package org.eclipse.rse.internal.subsystems.processes.local;
+package org.eclipse.rse.subsystems.processes.local;
 
 
 import org.eclipse.rse.core.model.IHost;
@@ -24,6 +24,7 @@ import org.eclipse.rse.internal.connectorservice.local.LocalConnectorService;
 import org.eclipse.rse.internal.connectorservice.local.LocalConnectorServiceManager;
 import org.eclipse.rse.internal.services.local.ILocalService;
 import org.eclipse.rse.internal.services.local.processes.LocalProcessService;
+import org.eclipse.rse.internal.subsystems.processes.local.LocalProcessAdapter;
 import org.eclipse.rse.services.processes.IProcessService;
 import org.eclipse.rse.subsystems.processes.core.subsystem.IHostProcessToRemoteProcessAdapter;
 import org.eclipse.rse.subsystems.processes.servicesubsystem.ProcessServiceSubSystem;

@@ -15,7 +15,7 @@
  * Martin Oberhuber (Wind River) - Adapted template for ssh service.
  *******************************************************************************/
 
-package org.eclipse.rse.internal.subsystems.shells.ssh;
+package org.eclipse.rse.subsystems.shells.ssh;
 
 import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.subsystems.IConnectorService;
@@ -24,6 +24,7 @@ import org.eclipse.rse.internal.connectorservice.ssh.SshConnectorService;
 import org.eclipse.rse.internal.connectorservice.ssh.SshConnectorServiceManager;
 import org.eclipse.rse.internal.services.ssh.ISshService;
 import org.eclipse.rse.internal.services.ssh.shell.SshShellService;
+import org.eclipse.rse.internal.subsystems.shells.ssh.SshServiceCommandShell;
 import org.eclipse.rse.services.shells.IHostShell;
 import org.eclipse.rse.services.shells.IShellService;
 import org.eclipse.rse.subsystems.shells.core.subsystems.IRemoteCmdSubSystem;

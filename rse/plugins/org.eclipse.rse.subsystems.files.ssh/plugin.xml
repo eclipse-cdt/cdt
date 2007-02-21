@@ -20,7 +20,7 @@ Martin Oberhuber - initial API and implementation
 			iconlive="icons/full/obj16/systemfileslive_obj.gif"
 			icon="icons/full/obj16/systemfiles_obj.gif"
 			category="files"
-			class="org.eclipse.rse.internal.subsystems.files.ssh.SftpFileSubSystemConfiguration"
+			class="org.eclipse.rse.subsystems.files.ssh.SftpFileSubSystemConfiguration"
 			vendor="%providerName"
             priority="100"
 			id="ssh.files">

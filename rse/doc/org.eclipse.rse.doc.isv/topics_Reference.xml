@@ -99,12 +99,16 @@
 			<topic label="org.eclipse.rse.subsystems.files.dstore.old" href="reference/api/org/eclipse/rse/subsystems/files/dstore/old/package-summary.html"/>
 			<topic label="org.eclipse.rse.subsystems.files.dstore" href="reference/api/org/eclipse/rse/subsystems/files/dstore/package-summary.html"/>
 			<topic label="org.eclipse.rse.subsystems.files.dstore.subsystem" href="reference/api/org/eclipse/rse/subsystems/files/dstore/subsystem/package-summary.html"/>
+			<topic label="org.eclipse.rse.subsystems.files.ftp" href="reference/api/org/eclipse/rse/subsystems/files/ftp/package-summary.html"/>
+			<topic label="org.eclipse.rse.subsystems.files.local" href="reference/api/org/eclipse/rse/subsystems/files/local/package-summary.html"/>
+			<topic label="org.eclipse.rse.subsystems.files.ssh" href="reference/api/org/eclipse/rse/subsystems/files/ssh/package-summary.html"/>
 		</topic>
 		<topic label="Process Subsystem" href="provisional_api.html">
 			<topic label="org.eclipse.rse.subsystems.processes.core" href="reference/api/org/eclipse/rse/subsystems/processes/core/package-summary.html"/>
 			<topic label="org.eclipse.rse.subsystems.processes.core.subsystem.impl" href="reference/api/org/eclipse/rse/subsystems/processes/core/subsystem/impl/package-summary.html"/>
 			<topic label="org.eclipse.rse.subsystems.processes.core.subsystem" href="reference/api/org/eclipse/rse/subsystems/processes/core/subsystem/package-summary.html"/>
 			<topic label="org.eclipse.rse.subsystems.processes.dstore" href="reference/api/org/eclipse/rse/subsystems/processes/dstore/package-summary.html"/>
+			<topic label="org.eclipse.rse.subsystems.processes.local" href="reference/api/org/eclipse/rse/subsystems/processes/local/package-summary.html"/>
 			<topic label="org.eclipse.rse.subsystems.processes.servicesubsystem" href="reference/api/org/eclipse/rse/subsystems/processes/servicesubsystem/package-summary.html"/>
 		</topic>
 		<topic label="Shell Subsystem" href="provisional_api.html">
@@ -114,6 +118,8 @@
 			<topic label="org.eclipse.rse.subsystems.shells.core.subsystems.servicesubsystem" href="reference/api/org/eclipse/rse/subsystems/shells/core/subsystems/servicesubsystem/package-summary.html"/>
 			<topic label="org.eclipse.rse.subsystems.shells.dstore.model" href="reference/api/org/eclipse/rse/subsystems/shells/dstore/model/package-summary.html"/>
 			<topic label="org.eclipse.rse.subsystems.shells.dstore" href="reference/api/org/eclipse/rse/subsystems/shells/dstore/package-summary.html"/>
+			<topic label="org.eclipse.rse.subsystems.shells.local" href="reference/api/org/eclipse/rse/subsystems/shells/local/package-summary.html"/>
+			<topic label="org.eclipse.rse.subsystems.shells.ssh" href="reference/api/org/eclipse/rse/subsystems/shells/ssh/package-summary.html"/>
 		</topic>
 		<topic label="User Interface" href="provisional_api.html">
 			<topic label="org.eclipse.rse.ui" href="reference/api/org/eclipse/rse/ui/package-summary.html"/>

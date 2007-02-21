@@ -9,7 +9,7 @@
  * Martin Oberhuber (Wind River) - initial API and implementation 
  *******************************************************************************/
 
-package org.eclipse.rse.internal.subsystems.files.ssh;
+package org.eclipse.rse.subsystems.files.ssh;
 
 import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.subsystems.IConnectorService;
@@ -18,6 +18,7 @@ import org.eclipse.rse.internal.connectorservice.ssh.SshConnectorService;
 import org.eclipse.rse.internal.connectorservice.ssh.SshConnectorServiceManager;
 import org.eclipse.rse.internal.services.ssh.ISshService;
 import org.eclipse.rse.internal.services.ssh.files.SftpFileService;
+import org.eclipse.rse.internal.subsystems.files.ssh.SftpFileAdapter;
 import org.eclipse.rse.services.clientserver.SystemSearchString;
 import org.eclipse.rse.services.files.IFileService;
 import org.eclipse.rse.services.search.IHostSearchResultConfiguration;

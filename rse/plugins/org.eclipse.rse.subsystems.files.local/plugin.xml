@@ -27,7 +27,7 @@ Contributors:
             iconlive="icons/full/obj16/systemfileslive_obj.gif"
             icon="icons/full/obj16/systemfiles_obj.gif"
             category="files"
-            class="org.eclipse.rse.internal.subsystems.files.local.LocalFileSubSystemConfiguration"
+            class="org.eclipse.rse.subsystems.files.local.LocalFileSubSystemConfiguration"
             vendor="%providerName"
             priority="100"
             id="local.files">

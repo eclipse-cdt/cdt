@@ -232,7 +232,14 @@ public class SubSystemConfigurationAdapter implements ISubSystemConfigurationAda
 			for (int i = 0; i < propertyPageExtensions.length; i++)
 			{
 				IConfigurationElement configurationElement = propertyPageExtensions[i];
+				
 				String objectClass = configurationElement.getAttribute("objectClass"); //$NON-NLS-1$
+				// The objectClass attribute is a) deprecated and b) optional. If null, do not
+				// try to instanciate a class from it as it will lead to a NPE. It is very bad
+				// style to let throw the exception and catch it with an empty catch block. If
+				// the debugger is configured to intercept NPE's, we end up always here.
+				if (objectClass == null) continue;
+					
 				String name = configurationElement.getAttribute("name"); //$NON-NLS-1$
 				Class objCls = null;
 				try

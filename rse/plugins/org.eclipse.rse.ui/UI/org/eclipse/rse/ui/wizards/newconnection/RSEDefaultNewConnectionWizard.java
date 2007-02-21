@@ -16,6 +16,7 @@
 
 package org.eclipse.rse.ui.wizards.newconnection;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Hashtable;
 import java.util.List;
@@ -26,6 +27,7 @@ import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.rse.core.IRSESystemType;
+import org.eclipse.rse.core.RSEPreferencesManager;
 import org.eclipse.rse.core.SystemBasePlugin;
 import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.model.ISystemNewConnectionWizardPage;
@@ -119,7 +121,16 @@ public class RSEDefaultNewConnectionWizard extends RSEAbstractNewConnectionWizar
 			if (mainPage != null && getSystemType() != null)
 				mainPage.setSystemType(getSystemType());
 
-			String defaultProfileName = RSEUIPlugin.getDefault().getSystemRegistry().getSystemProfileManager().getDefaultPrivateSystemProfile().getName();
+			// If the team profile is available and active, then we default to the team profile.
+			// If the team profile is not available or inactive, the default private system profile
+			// is used (if available).
+			List profileNames = activeProfileNames != null ? Arrays.asList(activeProfileNames) : new ArrayList();
+			
+			String defaultProfileName = RSEPreferencesManager.getDefaultTeamProfileName();
+			if (!profileNames.contains(defaultProfileName)) {
+				ISystemProfile defaultPrivateProfile = RSEUIPlugin.getDefault().getSystemRegistry().getSystemProfileManager().getDefaultPrivateSystemProfile();
+				if (defaultPrivateProfile != null) defaultProfileName = defaultPrivateProfile.getName();
+			}
 
 			mainPage.setProfileNames(activeProfileNames);
 			// if there is no connection currently selected, default the profile to
@@ -127,9 +138,8 @@ public class RSEDefaultNewConnectionWizard extends RSEAbstractNewConnectionWizar
 			// 1. the profile the last connection was created in, in this session
 			// 3. the default profile.
 			if (currentlySelectedConnection == null) {
-				if (lastProfile != null && "".equals(lastProfile))lastProfile = null; //$NON-NLS-1$
+				if (lastProfile != null && "".equals(lastProfile)) lastProfile = null; //$NON-NLS-1$
 				if (lastProfile == null && activeProfileNames != null) {
-					List profileNames = Arrays.asList(activeProfileNames);
 					if (defaultProfileName != null && profileNames.contains(defaultProfileName))
 						lastProfile = defaultProfileName;
 

@@ -27,7 +27,6 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.OperationCanceledException;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Preferences;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
@@ -200,7 +199,7 @@ public class CleanFilesAction extends ActionDelegate implements
 				if (monitor.isCanceled()) {
 					return Status.CANCEL_STATUS;
 				}
-				Job[] buildJobs = Platform.getJobManager().find(
+				Job[] buildJobs = Job.getJobManager().find(
 						ResourcesPlugin.FAMILY_MANUAL_BUILD);
 				for (int i = 0; i < buildJobs.length; i++) {
 					Job curr = buildJobs[i];

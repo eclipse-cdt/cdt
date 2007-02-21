@@ -3,7 +3,7 @@ Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
 Bundle-SymbolicName: org.eclipse.tm.discovery.wizard
 Bundle-Version: 1.0.1.qualifier
-Bundle-Activator: org.eclipse.tm.discovery.wizard.Activator
+Bundle-Activator: org.eclipse.tm.internal.discovery.wizard.Activator
 Bundle-Localization: plugin
 Require-Bundle: org.eclipse.ui,
  org.eclipse.emf.ecore.edit;bundle-version="[2.2.0,3.0.0)",
@@ -13,6 +13,6 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.tm.discovery.model,
  org.eclipse.tm.discovery.model.edit
 Eclipse-LazyStart: true
-Export-Package: org.eclipse.tm.discovery.wizard
+Export-Package: org.eclipse.tm.internal.discovery.wizard;x-friends:="org.eclipse.rse.internal.discovery"
 Bundle-Vendor: %providerName
 Bundle-RequiredExecutionEnvironment: J2SE-1.4

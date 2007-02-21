@@ -3,17 +3,17 @@ Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
 Bundle-SymbolicName: org.eclipse.tm.discovery.engine;singleton:=true
 Bundle-Version: 1.0.1.qualifier
-Bundle-Activator: org.eclipse.tm.discovery.engine.Activator
+Bundle-Activator: org.eclipse.tm.internal.discovery.engine.Activator
 Bundle-Localization: plugin
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
  org.eclipse.emf.ecore.xmi,
  org.eclipse.tm.discovery.model
 Eclipse-LazyStart: true
-Export-Package: org.eclipse.tm.discovery.engine,
- org.eclipse.tm.discovery.protocol,
- org.eclipse.tm.discovery.transport
+Export-Package: org.eclipse.tm.discovery.protocol,
+ org.eclipse.tm.discovery.transport,
+ org.eclipse.tm.internal.discovery.engine;x-friends:="org.eclipse.tm.internal.discovery.wizard"
 Import-Package: org.eclipse.tm.discovery.model,
- org.eclipse.tm.discovery.model.util
+ org.eclipse.tm.internal.discovery.model.util
 Bundle-Vendor: %providerName
 Bundle-RequiredExecutionEnvironment: J2SE-1.4

@@ -11,7 +11,7 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.emf.ecore.xmi;bundle-version="[2.2.0,3.0.0)"
 Eclipse-LazyStart: true
 Export-Package: org.eclipse.tm.discovery.model,
- org.eclipse.tm.discovery.model.impl,
- org.eclipse.tm.discovery.model.util
+ org.eclipse.tm.internal.discovery.model.impl;x-internal:=true,
+ org.eclipse.tm.internal.discovery.model.util;x-internal:=true
 Bundle-Vendor: %providerName
 Bundle-RequiredExecutionEnvironment: J2SE-1.4

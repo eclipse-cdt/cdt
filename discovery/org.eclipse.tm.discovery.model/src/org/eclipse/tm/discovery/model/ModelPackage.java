@@ -1,11 +1,11 @@
 /********************************************************************************
- * Copyright (c) 2006 Symbian Software Ltd. All rights reserved.
+ * Copyright (c) 2006, 2007 Symbian Software Ltd. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
  * 
  * Contributors:
- *   Javier Montalvo Orús (Symbian) - initial API and implementation
+ *   Javier Montalvo Orus (Symbian) - initial API and implementation
  ********************************************************************************/
 
 package org.eclipse.tm.discovery.model;
@@ -56,13 +56,13 @@ public interface ModelPackage extends EPackage {
 	 * 
 	 * @generated
 	 */
-	ModelPackage eINSTANCE = org.eclipse.tm.discovery.model.impl.ModelPackageImpl.init();
+	ModelPackage eINSTANCE = org.eclipse.tm.internal.discovery.model.impl.ModelPackageImpl.init();
 
 	/**
-	 * The meta object id for the '{@link org.eclipse.tm.discovery.model.impl.DeviceImpl <em>Device</em>}' class.
+	 * The meta object id for the '{@link org.eclipse.tm.internal.discovery.model.impl.DeviceImpl <em>Device</em>}' class.
 	 * 
-	 * @see org.eclipse.tm.discovery.model.impl.DeviceImpl
-	 * @see org.eclipse.tm.discovery.model.impl.ModelPackageImpl#getDevice()
+	 * @see org.eclipse.tm.internal.discovery.model.impl.DeviceImpl
+	 * @see org.eclipse.tm.internal.discovery.model.impl.ModelPackageImpl#getDevice()
 	 * @generated
 	 */
 	int DEVICE = 0;
@@ -100,10 +100,10 @@ public interface ModelPackage extends EPackage {
 	int DEVICE_FEATURE_COUNT = 3;
 
 	/**
-	 * The meta object id for the '{@link org.eclipse.tm.discovery.model.impl.NetworkImpl <em>Network</em>}' class.
+	 * The meta object id for the '{@link org.eclipse.tm.internal.discovery.model.impl.NetworkImpl <em>Network</em>}' class.
 	 * 
-	 * @see org.eclipse.tm.discovery.model.impl.NetworkImpl
-	 * @see org.eclipse.tm.discovery.model.impl.ModelPackageImpl#getNetwork()
+	 * @see org.eclipse.tm.internal.discovery.model.impl.NetworkImpl
+	 * @see org.eclipse.tm.internal.discovery.model.impl.ModelPackageImpl#getNetwork()
 	 * @generated
 	 */
 	int NETWORK = 1;
@@ -125,10 +125,10 @@ public interface ModelPackage extends EPackage {
 	int NETWORK_FEATURE_COUNT = 1;
 
 	/**
-	 * The meta object id for the '{@link org.eclipse.tm.discovery.model.impl.PairImpl <em>Pair</em>}' class.
+	 * The meta object id for the '{@link org.eclipse.tm.internal.discovery.model.impl.PairImpl <em>Pair</em>}' class.
 	 * 
-	 * @see org.eclipse.tm.discovery.model.impl.PairImpl
-	 * @see org.eclipse.tm.discovery.model.impl.ModelPackageImpl#getPair()
+	 * @see org.eclipse.tm.internal.discovery.model.impl.PairImpl
+	 * @see org.eclipse.tm.internal.discovery.model.impl.ModelPackageImpl#getPair()
 	 * @generated
 	 */
 	int PAIR = 2;
@@ -158,10 +158,10 @@ public interface ModelPackage extends EPackage {
 	int PAIR_FEATURE_COUNT = 2;
 
 	/**
-	 * The meta object id for the '{@link org.eclipse.tm.discovery.model.impl.ServiceImpl <em>Service</em>}' class.
+	 * The meta object id for the '{@link org.eclipse.tm.internal.discovery.model.impl.ServiceImpl <em>Service</em>}' class.
 	 * 
-	 * @see org.eclipse.tm.discovery.model.impl.ServiceImpl
-	 * @see org.eclipse.tm.discovery.model.impl.ModelPackageImpl#getService()
+	 * @see org.eclipse.tm.internal.discovery.model.impl.ServiceImpl
+	 * @see org.eclipse.tm.internal.discovery.model.impl.ModelPackageImpl#getService()
 	 * @generated
 	 */
 	int SERVICE = 3;
@@ -191,10 +191,10 @@ public interface ModelPackage extends EPackage {
 	int SERVICE_FEATURE_COUNT = 2;
 
 	/**
-	 * The meta object id for the '{@link org.eclipse.tm.discovery.model.impl.ServiceTypeImpl <em>Service Type</em>}' class.
+	 * The meta object id for the '{@link org.eclipse.tm.internal.discovery.model.impl.ServiceTypeImpl <em>Service Type</em>}' class.
 	 * 
-	 * @see org.eclipse.tm.discovery.model.impl.ServiceTypeImpl
-	 * @see org.eclipse.tm.discovery.model.impl.ModelPackageImpl#getServiceType()
+	 * @see org.eclipse.tm.internal.discovery.model.impl.ServiceTypeImpl
+	 * @see org.eclipse.tm.internal.discovery.model.impl.ModelPackageImpl#getServiceType()
 	 * @generated
 	 */
 	int SERVICE_TYPE = 4;
@@ -395,10 +395,10 @@ public interface ModelPackage extends EPackage {
 	
 	interface Literals {
 		/**
-		 * The meta object literal for the '{@link org.eclipse.tm.discovery.model.impl.DeviceImpl <em>Device</em>}' class.
+		 * The meta object literal for the '{@link org.eclipse.tm.internal.discovery.model.impl.DeviceImpl <em>Device</em>}' class.
 		 * 
-		 * @see org.eclipse.tm.discovery.model.impl.DeviceImpl
-		 * @see org.eclipse.tm.discovery.model.impl.ModelPackageImpl#getDevice()
+		 * @see org.eclipse.tm.internal.discovery.model.impl.DeviceImpl
+		 * @see org.eclipse.tm.internal.discovery.model.impl.ModelPackageImpl#getDevice()
 		 * @generated
 		 */
 		
@@ -426,10 +426,10 @@ public interface ModelPackage extends EPackage {
 		EAttribute DEVICE__NAME = eINSTANCE.getDevice_Name();
 
 		/**
-		 * The meta object literal for the '{@link org.eclipse.tm.discovery.model.impl.NetworkImpl <em>Network</em>}' class.
+		 * The meta object literal for the '{@link org.eclipse.tm.internal.discovery.model.impl.NetworkImpl <em>Network</em>}' class.
 		 * 
-		 * @see org.eclipse.tm.discovery.model.impl.NetworkImpl
-		 * @see org.eclipse.tm.discovery.model.impl.ModelPackageImpl#getNetwork()
+		 * @see org.eclipse.tm.internal.discovery.model.impl.NetworkImpl
+		 * @see org.eclipse.tm.internal.discovery.model.impl.ModelPackageImpl#getNetwork()
 		 * @generated
 		 */
 		EClass NETWORK = eINSTANCE.getNetwork();
@@ -442,10 +442,10 @@ public interface ModelPackage extends EPackage {
 		EReference NETWORK__DEVICE = eINSTANCE.getNetwork_Device();
 
 		/**
-		 * The meta object literal for the '{@link org.eclipse.tm.discovery.model.impl.PairImpl <em>Pair</em>}' class.
+		 * The meta object literal for the '{@link org.eclipse.tm.internal.discovery.model.impl.PairImpl <em>Pair</em>}' class.
 		 * 
-		 * @see org.eclipse.tm.discovery.model.impl.PairImpl
-		 * @see org.eclipse.tm.discovery.model.impl.ModelPackageImpl#getPair()
+		 * @see org.eclipse.tm.internal.discovery.model.impl.PairImpl
+		 * @see org.eclipse.tm.internal.discovery.model.impl.ModelPackageImpl#getPair()
 		 * @generated
 		 */
 		EClass PAIR = eINSTANCE.getPair();
@@ -465,10 +465,10 @@ public interface ModelPackage extends EPackage {
 		EAttribute PAIR__VALUE = eINSTANCE.getPair_Value();
 
 		/**
-		 * The meta object literal for the '{@link org.eclipse.tm.discovery.model.impl.ServiceImpl <em>Service</em>}' class.
+		 * The meta object literal for the '{@link org.eclipse.tm.internal.discovery.model.impl.ServiceImpl <em>Service</em>}' class.
 		 * 
-		 * @see org.eclipse.tm.discovery.model.impl.ServiceImpl
-		 * @see org.eclipse.tm.discovery.model.impl.ModelPackageImpl#getService()
+		 * @see org.eclipse.tm.internal.discovery.model.impl.ServiceImpl
+		 * @see org.eclipse.tm.internal.discovery.model.impl.ModelPackageImpl#getService()
 		 * @generated
 		 */
 		EClass SERVICE = eINSTANCE.getService();
@@ -488,10 +488,10 @@ public interface ModelPackage extends EPackage {
 		EAttribute SERVICE__NAME = eINSTANCE.getService_Name();
 
 		/**
-		 * The meta object literal for the '{@link org.eclipse.tm.discovery.model.impl.ServiceTypeImpl <em>Service Type</em>}' class.
+		 * The meta object literal for the '{@link org.eclipse.tm.internal.discovery.model.impl.ServiceTypeImpl <em>Service Type</em>}' class.
 		 * 
-		 * @see org.eclipse.tm.discovery.model.impl.ServiceTypeImpl
-		 * @see org.eclipse.tm.discovery.model.impl.ModelPackageImpl#getServiceType()
+		 * @see org.eclipse.tm.internal.discovery.model.impl.ServiceTypeImpl
+		 * @see org.eclipse.tm.internal.discovery.model.impl.ModelPackageImpl#getServiceType()
 		 * @generated
 		 */
 		EClass SERVICE_TYPE = eINSTANCE.getServiceType();

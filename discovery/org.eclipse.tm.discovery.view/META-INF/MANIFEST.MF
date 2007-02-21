@@ -3,7 +3,7 @@ Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
 Bundle-SymbolicName: org.eclipse.tm.discovery.view;singleton:=true
 Bundle-Version: 1.0.1.qualifier
-Bundle-Activator: org.eclipse.tm.discovery.view.Activator
+Bundle-Activator: org.eclipse.tm.internal.discovery.view.Activator
 Bundle-Localization: plugin
 Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.ui.forms,
@@ -17,9 +17,9 @@ Require-Bundle: org.eclipse.core.runtime,
 Eclipse-LazyStart: false
 Import-Package: org.eclipse.emf.common.ui,
  org.eclipse.emf.common.util,
- org.eclipse.tm.discovery.engine,
- org.eclipse.tm.discovery.model.provider,
- org.eclipse.tm.discovery.model.util
-Export-Package: org.eclipse.tm.discovery.view
+ org.eclipse.tm.internal.discovery.engine,
+ org.eclipse.tm.internal.discovery.model.provider,
+ org.eclipse.tm.internal.discovery.model.util
+Export-Package: org.eclipse.tm.internal.discovery.view
 Bundle-Vendor: %providerName
 Bundle-RequiredExecutionEnvironment: J2SE-1.4

@@ -2,13 +2,13 @@
 <?eclipse version="3.2"?>
 
 <!--
-Copyright (c) 2006 Symbian Software Ltd. All rights reserved.
+Copyright (c) 2006, 2007 Symbian Software Ltd. All rights reserved.
 This program and the accompanying materials are made available under the terms
 of the Eclipse Public License v1.0 which accompanies this distribution, and is 
 available at http://www.eclipse.org/legal/epl-v10.html
   
 Contributors:
-   Javier Montalvo Orús (Symbian) - initial API and implementation
+   Javier Montalvo Orus (Symbian) - initial API and implementation
 -->
 
 <plugin>
@@ -18,7 +18,7 @@ Contributors:
        <newConnectionWizard
              canFinishEarly="false"
              categoryId="org.eclipse.rse.ui.wizards.newconnection.default.category"
-             class="org.eclipse.rse.discovery.ServiceDiscoveryWizard"
+             class="org.eclipse.rse.internal.discovery.ServiceDiscoveryWizard"
              hasPages="true"
              id="org.eclipse.rse.discovery.ServiceDiscoveryWizard"
              name="%NewConnectionWizard.discovery.name"
@@ -34,7 +34,7 @@ Contributors:
 			iconLive=""/>
 	</extension>
     
-    <extension
+    <!-- extension
          point="org.eclipse.rse.ui.subsystemConfigurations">
       <configuration
             systemTypeIds="org.eclipse.rse.systemtype.discovery"
@@ -47,7 +47,7 @@ Contributors:
             priority="100"
             id="Discovery">
       </configuration>
-      </extension>
+      </extension -->
     
 </plugin>
 

@@ -17,13 +17,12 @@ import java.util.Comparator;
 import org.eclipse.cdt.core.cdtvariables.CdtVariableException;
 import org.eclipse.cdt.core.cdtvariables.ICdtVariable;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
-import org.eclipse.cdt.internal.ui.dialogs.StatusDialog;
-import org.eclipse.cdt.internal.ui.dialogs.StatusInfo;
 import org.eclipse.cdt.managedbuilder.core.IOption;
 import org.eclipse.cdt.managedbuilder.internal.macros.BuildMacro;
 import org.eclipse.cdt.managedbuilder.macros.IBuildMacro;
 import org.eclipse.cdt.ui.newui.NewUIMessages;
 import org.eclipse.cdt.utils.cdtvariables.CdtVariableResolver;
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
@@ -48,7 +47,7 @@ import org.eclipse.swt.widgets.Text;
 /*
  * the dialog used to create or edit the build macro
  */
-public class NewVarDialog extends StatusDialog {
+public class NewVarDialog extends Dialog {
 	// String constants
 	private static final String PREFIX = "NewBuildMacroDialog";	//$NON-NLS-1$
 	private static final String LABEL = PREFIX + ".label";	//$NON-NLS-1$
@@ -64,16 +63,10 @@ public class NewVarDialog extends StatusDialog {
 	private static final String TYPE_PATH_ANY = TYPE + ".path.any";	//$NON-NLS-1$
 	private static final String TYPE_PATH_ANY_LIST = TYPE + ".path.any.list";	//$NON-NLS-1$
 	
-
 	private static final String BROWSE = LABEL + ".browse";	//$NON-NLS-1$
 	private static final String LIST_TITLE = LABEL + ".list.title";	//$NON-NLS-1$
-
 	private static final String TITLE_NEW = LABEL + ".title.new"; 	//$NON-NLS-1$
 	private static final String TITLE_EDIT = LABEL + ".title.edit"; 	//$NON-NLS-1$
-	
-//	private static final String STATUS = LABEL + ".status"; 	//$NON-NLS-1$
-//	private static final String STATUS_CANNOT_CTREATE = STATUS + ".cannot.create"; 	//$NON-NLS-1$
-	
 	private static final String EMPTY_STRING = new String();
 
 	// The title of the dialog.
@@ -82,12 +75,6 @@ public class NewVarDialog extends StatusDialog {
 	private ICdtVariable fEditedMacro;
 	//the resulting macro. Can be accessed only when the dialog is closed
 	private ICdtVariable fResultingMacro;
-	//the string that holds the value is used in the "replace" operation
-	//private String fReplaceValue = null;
-	//the string that holds the value is used in the "append/prepend" operations
-	//private String fAppPrepValue = null;
-	//specifies whether the fAppPrepValue holds the prepended or appended value
-	//private boolean fAppPrepPrepend = true;
 	
 	private boolean fTotalSizeCalculated;
 
@@ -96,7 +83,6 @@ public class NewVarDialog extends StatusDialog {
 	public boolean isForAllCfgs = false;
 
 	// Widgets
-//	protected Text fMacroNameEdit;
 	private Composite fContainer;
 	private Combo fMacroNameEdit;
 	private Label fMacroValueLabel;
@@ -594,7 +580,6 @@ public class NewVarDialog extends StatusDialog {
 		if(!fTotalSizeCalculated)
 			return;
 		handleTypeModified();
-		validateState();
 	}
 	
 	protected Point getInitialSize() {
@@ -603,27 +588,4 @@ public class NewVarDialog extends StatusDialog {
 		updateWidgetState();
 		return size;
 	}
-
-	
-	/* (non-Javadoc)
-	 * Update the status message and button state based on the variable name
-	 * 
-	 */
-	private void validateState() {
-		StatusInfo status= new StatusInfo();
-		String name = getSelectedVarName();
-		
-		if(EMPTY_STRING.equals(name)){
-			// Not an error
-			status.setError("");	//$NON-NLS-1$
-		}
-		//TODO:
-		
-		//else if(!fMacrosBlock.canCreate(name)){
-		//	status.setError(ManagedBuilderUIMessages.getFormattedString(STATUS_CANNOT_CTREATE, name));
-		//}
-		updateStatus(status);
-		return;
-	}
-
 }

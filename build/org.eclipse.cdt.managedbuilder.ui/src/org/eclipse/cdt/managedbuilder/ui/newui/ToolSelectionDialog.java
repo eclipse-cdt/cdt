@@ -13,11 +13,11 @@ package org.eclipse.cdt.managedbuilder.ui.newui;
 import java.util.ArrayList;
 import java.util.Iterator;
 
-import org.eclipse.cdt.internal.ui.dialogs.StatusDialog;
 import org.eclipse.cdt.managedbuilder.core.IFolderInfo;
 import org.eclipse.cdt.managedbuilder.core.IModificationStatus;
 import org.eclipse.cdt.managedbuilder.core.ITool;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.swt.SWT;
@@ -37,7 +37,7 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 
-public class ToolSelectionDialog extends StatusDialog {
+public class ToolSelectionDialog extends Dialog {
 
 	private Table t1, t2;
 	private CLabel errorLabel;
@@ -47,11 +47,16 @@ public class ToolSelectionDialog extends StatusDialog {
 	Font boldFont = JFaceResources.getFontRegistry().getBold(JFaceResources.DIALOG_FONT);
 	Color red;
 	
-	public ToolSelectionDialog(Shell shell ) {
-		super (shell);
-		this.setTitle(Messages.getString("ToolSelectionDialog.0")); //$NON-NLS-1$
-	}
+	public ToolSelectionDialog(Shell shell ) { super (shell); }
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.window.Window#configureShell(org.eclipse.swt.widgets.Shell)
+	 */
+	protected void configureShell(Shell shell) {
+		super.configureShell(shell);
+		shell.setText(Messages.getString("ToolSelectionDialog.0")); //$NON-NLS-1$
+	}
+	
 	protected Control createDialogArea(Composite parent) {
 		Composite composite = new Composite(parent, SWT.NULL);
 		composite.setFont(parent.getFont());

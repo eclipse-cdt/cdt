@@ -7,6 +7,7 @@
  * 
  * Contributors: 
  * Uwe Stieber (Wind River) - initial API and implementation.
+ * Javier Montalvo Orus (Symbian) - [174992] default wizard hides special ones 
  *******************************************************************************/
 package org.eclipse.rse.ui.wizards.newconnection;
 
@@ -93,7 +94,8 @@ public class RSENewConnectionWizardRegistry extends RSEAbstractWizardRegistry {
 	 */
 	public IRSENewConnectionWizardDescriptor getWizardForSystemType(IRSESystemType systemType) {
 		assert systemType != null;
-		
+
+		IRSENewConnectionWizardDescriptor defaultDescriptor = (IRSENewConnectionWizardDescriptor)findElementById("org.eclipse.rse.ui.wizards.newconnection.RSEDefaultNewConnectionWizard"); //$NON-NLS-1$		
 		IRSENewConnectionWizardDescriptor descriptor = null;
 		String id = systemType.getId();
 		
@@ -116,14 +118,17 @@ public class RSENewConnectionWizardRegistry extends RSEAbstractWizardRegistry {
 				IRSEWizardRegistryElement element = elements[i];
 				if (element instanceof IRSENewConnectionWizardDescriptor) {
 					IRSENewConnectionWizardDescriptor candidate = (IRSENewConnectionWizardDescriptor)element;
-					String[] systemTypeIds = candidate.getSystemTypeIds();
-					if (Arrays.asList(systemTypeIds).contains(id)) {
-						if (descriptor == null) {
-							descriptor = candidate;
-						} else {
-							String message = "Duplicated new connection wizard registration for system type ''{0}'' (wizard id = {1})."; //$NON-NLS-1$
-							message = MessageFormat.format(message, new Object[] { id, candidate.getId()});
-							RSECorePlugin.getDefault().getLogger().logWarning(message);
+					if(candidate != defaultDescriptor)
+						{
+						String[] systemTypeIds = candidate.getSystemTypeIds();
+						if (Arrays.asList(systemTypeIds).contains(id)) {
+							if (descriptor == null) {
+								descriptor = candidate;
+							} else {
+								String message = "Duplicated new connection wizard registration for system type ''{0}'' (wizard id = {1})."; //$NON-NLS-1$
+								message = MessageFormat.format(message, new Object[] { id, candidate.getId()});
+								RSECorePlugin.getDefault().getLogger().logWarning(message);
+							}
 						}
 					}
 				}
@@ -132,10 +137,7 @@ public class RSENewConnectionWizardRegistry extends RSEAbstractWizardRegistry {
 			// if the descriptor here is still null, always return the default RSE
 			// new connection wizard descriptor
 			if (descriptor == null) {
-				IRSEWizardRegistryElement element = findElementById("org.eclipse.rse.ui.wizards.newconnection.RSEDefaultNewConnectionWizard"); //$NON-NLS-1$
-				if (element instanceof IRSENewConnectionWizardDescriptor) {
-					descriptor = (IRSENewConnectionWizardDescriptor)element;
-				}
+				descriptor = defaultDescriptor;
 			}
 		}
 		

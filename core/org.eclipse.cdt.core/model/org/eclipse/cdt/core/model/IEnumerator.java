@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.model;
 
-public interface IEnumerator extends ICElement, ISourceManipulation{
+public interface IEnumerator extends ICElement, ISourceManipulation, ISourceReference {
 
 	/**
 	 * Returns the enumerator's constant expression if any.

@@ -48,8 +48,8 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.actions.WorkspaceModifyDelegatingOperation;
+import org.eclipse.ui.dialogs.PreferencesUtil;
 import org.eclipse.ui.ide.IDE;
-import org.eclipse.ui.internal.dialogs.PropertyDialog;
 import org.eclipse.ui.wizards.newresource.BasicNewProjectResourceWizard;
 import org.eclipse.ui.wizards.newresource.BasicNewResourceWizard;
 
@@ -198,9 +198,8 @@ public abstract class NewModelProjectWizard extends BasicNewResourceWizard imple
 			}
 		}
 		// run properties dialog if required
-		if (fMainPage.h_selected.showProperties()) {
-			PropertyDialog.createDialogOn(getShell(), propertyId, newProject).open();
-		}
+		if (fMainPage.h_selected.showProperties())
+			PreferencesUtil.createPropertyDialogOn(getShell(), newProject, propertyId, null, null).open();
 		return true;
 	}
 

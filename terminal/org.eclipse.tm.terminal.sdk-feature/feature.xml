@@ -29,21 +29,15 @@
 
    <includes
          id="org.eclipse.tm.terminal.serial"
-         version="0.0.0"
-         name="%featureNameSerial"
-         optional="true"/>
+         version="0.0.0"/>
 
    <includes
          id="org.eclipse.tm.terminal.ssh"
-         version="0.0.0"
-         name="%featureNameSsh"
-         optional="true"/>
+         version="0.0.0"/>
 
    <includes
          id="org.eclipse.tm.terminal.view"
-         version="0.0.0"
-         name="%featureNameView"
-         optional="true"/>
+         version="0.0.0"/>
 
    <includes
          id="org.eclipse.tm.terminal.source"

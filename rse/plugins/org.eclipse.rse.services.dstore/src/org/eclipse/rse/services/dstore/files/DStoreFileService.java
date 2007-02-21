@@ -1307,8 +1307,14 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 
 			DataElement queryCmd = ds.localDescriptorQuery(encodingElement.getDescriptor(), C_SYSTEM_ENCODING);
 
-			ds.command(queryCmd, encodingElement, true);
+			DataElement status = ds.command(queryCmd, encodingElement, true);
 
+			try {
+				getStatusMonitor(ds).waitForUpdate(status);
+			}
+			catch (Exception e) {
+			}
+			
 			remoteEncoding = encodingElement.getValue();
 		}
 

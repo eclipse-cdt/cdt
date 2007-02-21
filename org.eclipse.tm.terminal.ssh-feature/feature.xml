@@ -26,7 +26,11 @@
       <import plugin="org.eclipse.ui"/>
       <import plugin="org.eclipse.core.runtime"/>
       <import plugin="org.eclipse.tm.terminal"/>
+      <!-- Bug 174796: Dont make dependency on jsch explicit in order to allow
+           installing the full Terminal feature (Serial, Telnet) on Platform
+           without CVS
       <import plugin="com.jcraft.jsch"/>
+      -->
    </requires>
 
    <plugin

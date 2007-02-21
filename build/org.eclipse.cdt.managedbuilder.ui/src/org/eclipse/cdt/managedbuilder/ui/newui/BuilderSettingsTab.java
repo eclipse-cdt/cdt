@@ -18,6 +18,7 @@ import org.eclipse.cdt.managedbuilder.core.IBuilder;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.internal.buildmodel.BuildProcessManager;
 import org.eclipse.cdt.managedbuilder.internal.core.Configuration;
+import org.eclipse.cdt.newmake.core.IMakeBuilderInfo;
 import org.eclipse.cdt.ui.newui.AbstractCPropertyTab;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.swt.SWT;
@@ -168,7 +169,8 @@ public class BuilderSettingsTab extends AbstractCBuildPropertyTab {
 		t_autoBuild = setupBlock(g4, b_autoBuild);
 		t_autoBuild.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
-				try { bld.setAutoBuildTarget(t_autoBuild.getText());
+				try {
+					bld.setBuildAttribute(IMakeBuilderInfo.BUILD_TARGET_AUTO, t_autoBuild.getText());
 				} catch (CoreException ex) {}
 			}} );
 		setupLabel(g4, Messages.getString("BuilderSettingsTab.18"), 3, GridData.BEGINNING); //$NON-NLS-1$
@@ -176,14 +178,16 @@ public class BuilderSettingsTab extends AbstractCBuildPropertyTab {
 		t_cmdBuild = setupBlock(g4, b_cmdBuild);
 		t_cmdBuild.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
-				try { bld.setIncrementalBuildTarget(t_cmdBuild.getText());
+				try { 
+					bld.setBuildAttribute(IMakeBuilderInfo.BUILD_TARGET_INCREMENTAL, t_cmdBuild.getText());
 				} catch (CoreException ex) {}
 			}} );
 		b_cmdClean = setupCheck(g4, Messages.getString("BuilderSettingsTab.20"), 1, GridData.BEGINNING); //$NON-NLS-1$
 		t_cmdClean = setupBlock(g4, b_cmdClean);
 		t_cmdClean.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
-				try { bld.setCleanBuildTarget(t_cmdClean.getText());
+				try { 
+					bld.setBuildAttribute(IMakeBuilderInfo.BUILD_TARGET_CLEAN, t_cmdClean.getText());
 				} catch (CoreException ex) {}
 			}} );
 

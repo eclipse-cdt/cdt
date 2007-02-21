@@ -15,6 +15,7 @@ import org.eclipse.swt.widgets.TableColumn;
 
 import org.eclipse.cdt.core.settings.model.CMacroEntry;
 import org.eclipse.cdt.core.settings.model.ICLanguageSettingEntry;
+import org.eclipse.cdt.core.settings.model.ICSettingEntry;
 
 public class SymbolTab extends AbstractLangsListTab {
 
@@ -49,5 +50,5 @@ public class SymbolTab extends AbstractLangsListTab {
 			return null;
 	}
 	
-	public int getKind() { return ICLanguageSettingEntry.MACRO; }
+	public int getKind() { return ICSettingEntry.MACRO; }
 }

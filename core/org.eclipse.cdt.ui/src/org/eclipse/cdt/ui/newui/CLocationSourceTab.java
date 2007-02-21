@@ -17,8 +17,8 @@ import org.eclipse.swt.widgets.Composite;
 
 import org.eclipse.cdt.core.settings.model.CSourceEntry;
 import org.eclipse.cdt.core.settings.model.ICExclusionPatternPathEntry;
-import org.eclipse.cdt.core.settings.model.ICLanguageSettingEntry;
 import org.eclipse.cdt.core.settings.model.ICResourceDescription;
+import org.eclipse.cdt.core.settings.model.ICSettingEntry;
 import org.eclipse.cdt.core.settings.model.ICSourceEntry;
 
 public class CLocationSourceTab extends CLocationTab {
@@ -29,10 +29,10 @@ public class CLocationSourceTab extends CLocationTab {
 	}
 	
 	public ICExclusionPatternPathEntry newEntry(IPath p, IPath[] ex, boolean isWorkspacePath) {
-		return new CSourceEntry(p, ex, isWorkspacePath ? ICLanguageSettingEntry.VALUE_WORKSPACE_PATH : 0);
+		return new CSourceEntry(p, ex, isWorkspacePath ? ICSettingEntry.VALUE_WORKSPACE_PATH : 0);
 	}
 	public ICExclusionPatternPathEntry newEntry(IFolder f, IPath[] ex, boolean isWorkspacePath) {
-		return new CSourceEntry(f, ex, isWorkspacePath ? ICLanguageSettingEntry.VALUE_WORKSPACE_PATH : 0);
+		return new CSourceEntry(f, ex, isWorkspacePath ? ICSettingEntry.VALUE_WORKSPACE_PATH : 0);
 	}
 	public ICExclusionPatternPathEntry[] getEntries(ICResourceDescription cfgd) {
 		return cfgd.getConfiguration().getSourceEntries();

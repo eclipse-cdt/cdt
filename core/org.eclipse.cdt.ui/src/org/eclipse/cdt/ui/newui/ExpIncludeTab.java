@@ -12,13 +12,14 @@ package org.eclipse.cdt.ui.newui;
 
 import org.eclipse.cdt.core.settings.model.CIncludePathEntry;
 import org.eclipse.cdt.core.settings.model.ICLanguageSettingEntry;
+import org.eclipse.cdt.core.settings.model.ICSettingEntry;
 
 public class ExpIncludeTab extends AbstractExportTab {
 	
 	public ICLanguageSettingEntry doAdd(String s1, String s2) {
 		int flags = 0;
 		if (s1.equals(s2))  
-			flags = ICLanguageSettingEntry.VALUE_WORKSPACE_PATH;
+			flags = ICSettingEntry.VALUE_WORKSPACE_PATH;
 		return new CIncludePathEntry(s2, flags);
 	}
 
@@ -26,6 +27,6 @@ public class ExpIncludeTab extends AbstractExportTab {
 		return doAdd(s1, s2);
 	}
 	
-	public int getKind() { return ICLanguageSettingEntry.INCLUDE_PATH; }
+	public int getKind() { return ICSettingEntry.INCLUDE_PATH; }
 	public boolean hasValues() { return false; }
 }

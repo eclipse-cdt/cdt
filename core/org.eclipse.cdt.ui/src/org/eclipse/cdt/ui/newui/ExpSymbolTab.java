@@ -12,6 +12,7 @@ package org.eclipse.cdt.ui.newui;
 
 import org.eclipse.cdt.core.settings.model.CMacroEntry;
 import org.eclipse.cdt.core.settings.model.ICLanguageSettingEntry;
+import org.eclipse.cdt.core.settings.model.ICSettingEntry;
 
 public class ExpSymbolTab extends AbstractExportTab {
 
@@ -23,6 +24,6 @@ public class ExpSymbolTab extends AbstractExportTab {
 		return doAdd(s1, s2);
 	}
 	
-	public int getKind() { return ICLanguageSettingEntry.MACRO; }
+	public int getKind() { return ICSettingEntry.MACRO; }
 	public boolean hasValues() { return true; }
 }

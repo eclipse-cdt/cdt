@@ -15,6 +15,7 @@ import org.eclipse.cdt.core.resources.IPathEntryStoreListener;
 import org.eclipse.cdt.core.resources.PathEntryStoreChangedEvent;
 import org.eclipse.cdt.core.settings.model.CLibraryFileEntry;
 import org.eclipse.cdt.core.settings.model.ICLanguageSettingEntry;
+import org.eclipse.cdt.core.settings.model.ICSettingEntry;
 
 public class ExpLibraryTab extends AbstractExportTab implements IPathEntryStoreListener {
 	IPathEntryStore fStore;
@@ -25,7 +26,7 @@ public class ExpLibraryTab extends AbstractExportTab implements IPathEntryStoreL
 
 	public ICLanguageSettingEntry doAdd(String s1, String s2) {
 		int flags = 0;
-		if (s1.equals(s2)) flags = ICLanguageSettingEntry.VALUE_WORKSPACE_PATH;
+		if (s1.equals(s2)) flags = ICSettingEntry.VALUE_WORKSPACE_PATH;
 		return new CLibraryFileEntry(s2, flags);
 	}
 
@@ -33,7 +34,7 @@ public class ExpLibraryTab extends AbstractExportTab implements IPathEntryStoreL
 		return doAdd(s1, s2);
 	}
 	
-	public int getKind() { return ICLanguageSettingEntry.LIBRARY_FILE; }
+	public int getKind() { return ICSettingEntry.LIBRARY_FILE; }
 	public boolean hasValues() { return false; }	
 }
 

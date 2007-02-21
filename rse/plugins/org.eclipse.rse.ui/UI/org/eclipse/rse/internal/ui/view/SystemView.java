@@ -4924,54 +4924,6 @@ public class SystemView extends SafeTreeViewer implements ISystemTree, ISystemRe
 		return getItemCount((Control) w);
 	}
 
-	protected Widget doFindItem(Object element) {
-		// compare with root
-		Object root = getRoot();
-		if (root == null) {
-			return null;
-		}
-
-		Item[] items = getChildren(getControl());
-		if (items != null) {
-			for (int i = 0; i < items.length; i++) {
-				Widget o = findExactItem(items[i], element);
-				if (o != null) {
-					return o;
-				}
-			}
-		}
-		return null;
-	}
-	private Widget findExactItem(Item parent, Object element) {
-
-		// compare with node
-		Object data = parent.getData();
-		if (data != null) {
-			if (data == element) 
-			{
-				return parent;
-			}
-			else
-			{
-				// fix for 174270 
-				if (data.equals(element))
-				{
-					return parent;
-				}
-			}
-		}
-		// recurse over children
-		Item[] items = getChildren(parent);
-		for (int i = 0; i < items.length; i++) {
-			Item item = items[i];
-			Widget o = findExactItem(item, element);
-			if (o != null) {
-				return o;
-			}
-		}
-		return null;
-	}
-	
 	/** 
 	 * Return the tree item of the first selected object
 	 */

@@ -658,7 +658,7 @@ Contributors:
                     </Message>
                     <Message ID="1220" Indicator="E">
                           <LevelOne>Host name '%1' not found or valid</LevelOne>
-                          <LevelTwo>A remote system of host name '%1' was found. If you are working disconnected, de-select the checkbox to verify the host name</LevelTwo>
+                          <LevelTwo>A remote system of host name '%1' was not found. If you are working disconnected, de-select the checkbox to verify the host name</LevelTwo>
                     </Message>
                     <Message ID="1221" Indicator="I">
                           <LevelOne>Verifying host name...</LevelOne>

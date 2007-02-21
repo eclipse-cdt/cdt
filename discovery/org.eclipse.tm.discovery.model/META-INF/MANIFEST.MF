@@ -12,6 +12,6 @@ Require-Bundle: org.eclipse.ui,
 Eclipse-LazyStart: true
 Export-Package: org.eclipse.tm.discovery.model,
  org.eclipse.tm.internal.discovery.model.impl;x-internal:=true,
- org.eclipse.tm.internal.discovery.model.util;x-internal:=true
+ org.eclipse.tm.internal.discovery.model.util;x-friends:="org.eclipse.tm.discovery.engine,org.eclipse.tm.discovery.model.edit"
 Bundle-Vendor: %providerName
 Bundle-RequiredExecutionEnvironment: J2SE-1.4

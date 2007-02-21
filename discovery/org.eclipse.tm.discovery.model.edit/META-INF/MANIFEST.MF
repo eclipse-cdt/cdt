@@ -7,7 +7,7 @@ Bundle-ClassPath: .
 Bundle-Activator: org.eclipse.tm.internal.discovery.model.provider.DiscoveryModelEditPlugin$Implementation
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin
-Export-Package: org.eclipse.tm.internal.discovery.model.provider;x-friends:="org.eclipse.tm.internal.discovery.wizard"
+Export-Package: org.eclipse.tm.internal.discovery.model.provider;x-friends:="org.eclipse.tm.discovery.view,org.eclipse.tm.discovery.wizard"
 Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.emf.edit;visibility:=reexport,
  org.eclipse.tm.discovery.model

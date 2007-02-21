@@ -26,7 +26,6 @@ import org.eclipse.cdt.managedbuilder.core.IManagedOptionValueHandler;
 import org.eclipse.cdt.managedbuilder.core.IOption;
 import org.eclipse.cdt.managedbuilder.core.IOptionApplicability;
 import org.eclipse.cdt.managedbuilder.core.IOptionCategory;
-import org.eclipse.cdt.managedbuilder.core.IResourceConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IResourceInfo;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.jface.preference.BooleanFieldEditor;
@@ -205,7 +204,7 @@ public class BuildOptionSettingsUI extends AbstractToolSettingUI {
 		// Write the preference store values back to the build model
 		
 		Object[][] clonedOptions;
-		IResourceConfiguration realRcCfg = null;
+//		IResourceConfiguration realRcCfg = null;
 		IConfiguration realCfg = null;
 		IBuildObject handler = null;
 		
@@ -371,7 +370,6 @@ public class BuildOptionSettingsUI extends AbstractToolSettingUI {
 		Object source = event.getSource();
 		IOption changedOption = null;
 		IHoldsOptions changedHolder = null;
-		IOption newOption = null;
 		String id = null;
 
 		if(source instanceof FieldEditor){
@@ -389,20 +387,20 @@ public class BuildOptionSettingsUI extends AbstractToolSettingUI {
 					case IOption.STRING:
 						if(fe instanceof StringFieldEditor){
 							String val = ((StringFieldEditor)fe).getStringValue();
-								newOption = ManagedBuildManager.setOption(fInfo,changedHolder,changedOption,val);
+							ManagedBuildManager.setOption(fInfo,changedHolder,changedOption,val);
 						}
 						break;
 					case IOption.BOOLEAN:
 						if(fe instanceof BooleanFieldEditor){
 							boolean val = ((BooleanFieldEditor)fe).getBooleanValue();
-							newOption = ManagedBuildManager.setOption(fInfo,changedHolder,changedOption,val);
+							ManagedBuildManager.setOption(fInfo,changedHolder,changedOption,val);
 						}
 						break;
 					case IOption.ENUMERATED:
 						if(fe instanceof BuildOptionComboFieldEditor){
 							String name = ((BuildOptionComboFieldEditor)fe).getSelection();
 							String enumId = changedOption.getEnumeratedId(name);
-							newOption = ManagedBuildManager.setOption(fInfo,changedHolder,changedOption,
+							ManagedBuildManager.setOption(fInfo,changedHolder,changedOption,
 									(enumId != null && enumId.length() > 0) ? enumId : name);
 	
 						}
@@ -418,7 +416,7 @@ public class BuildOptionSettingsUI extends AbstractToolSettingUI {
 					case IOption.MACRO_FILES:
 						if(fe instanceof FileListControlFieldEditor){
 							String val[] =((FileListControlFieldEditor)fe).getStringListValue();
-							newOption = ManagedBuildManager.setOption(fInfo, changedHolder, changedOption, val);
+							ManagedBuildManager.setOption(fInfo, changedHolder, changedOption, val);
 						}
 						break;
 					default:

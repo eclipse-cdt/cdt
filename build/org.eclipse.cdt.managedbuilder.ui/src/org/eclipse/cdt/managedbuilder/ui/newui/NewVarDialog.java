@@ -52,7 +52,6 @@ public class NewVarDialog extends StatusDialog {
 	// String constants
 	private static final String PREFIX = "NewBuildMacroDialog";	//$NON-NLS-1$
 	private static final String LABEL = PREFIX + ".label";	//$NON-NLS-1$
-	private static final String ZNAME = LABEL + ".name";	//$NON-NLS-1$
 	private static final String VALUE = LABEL + ".value";	//$NON-NLS-1$
 
 	private static final String TYPE = LABEL + ".type";	//$NON-NLS-1$

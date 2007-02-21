@@ -120,7 +120,6 @@ public class BuildOptionComboFieldEditor extends FieldEditor {
 		optionSelector.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent evt) {
 				String oldValue = selected;
-				String name = optionSelector.getText();
 				int index = optionSelector.getSelectionIndex();
 				selected = index == -1 ? new String() : optionSelector.getItem(index);
 				setPresentsDefaultValue(false);

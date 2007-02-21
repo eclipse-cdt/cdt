@@ -20,11 +20,10 @@ import java.util.Map;
 import java.util.StringTokenizer;
 
 import org.eclipse.cdt.make.core.makefile.IMakefile;
+import org.eclipse.cdt.make.internal.core.BuildInfoFactory;
 import org.eclipse.cdt.make.internal.core.MakeTargetManager;
 import org.eclipse.cdt.make.internal.core.makefile.gnu.GNUMakefile;
 import org.eclipse.cdt.make.internal.core.makefile.posix.PosixMakefile;
-import org.eclipse.cdt.managedbuilder.core.ManagedBuilderCorePlugin;
-import org.eclipse.cdt.newmake.core.IMakeBuilderInfo;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -322,4 +321,17 @@ public class MakeCorePlugin extends Plugin {
 //			}
 //		}
 	}
+	
+	public static IMakeBuilderInfo createBuildInfo(Preferences prefs, String builderID, boolean useDefaults) {
+		return BuildInfoFactory.create(prefs, builderID, useDefaults);
+	}
+
+	public static IMakeBuilderInfo createBuildInfo(IProject project, String builderID) throws CoreException {
+		return BuildInfoFactory.create(project, builderID);
+	}
+
+	public static IMakeBuilderInfo createBuildInfo(Map args, String builderID) {
+		return BuildInfoFactory.create(args, builderID);
+	}
+
 }

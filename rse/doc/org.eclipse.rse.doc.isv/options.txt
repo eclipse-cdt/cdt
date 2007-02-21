@@ -22,6 +22,7 @@
 ;../org.eclipse.rse.subsystems.processes.core/src
 ;../org.eclipse.rse.subsystems.processes.dstore/src
 ;../org.eclipse.rse.subsystems.processes.local/src
+;../org.eclipse.rse.subsystems.processes.shell.linux/src
 ;../org.eclipse.rse.subsystems.shells.core/src
 ;../org.eclipse.rse.subsystems.shells.dstore/src
 ;../org.eclipse.rse.subsystems.shells.local/src
@@ -141,6 +142,7 @@ org.eclipse.rse.subsystems.processes.core.subsystem.impl
 org.eclipse.rse.subsystems.processes.dstore
 org.eclipse.rse.subsystems.processes.servicesubsystem
 org.eclipse.rse.subsystems.processes.local
+org.eclipse.rse.subsystems.processes.shell.linux
 org.eclipse.rse.subsystems.shells.core
 org.eclipse.rse.subsystems.shells.core.model
 org.eclipse.rse.subsystems.shells.core.subsystems

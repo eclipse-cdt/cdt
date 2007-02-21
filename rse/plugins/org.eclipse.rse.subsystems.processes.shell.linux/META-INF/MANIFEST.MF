@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
-Bundle-SymbolicName: org.eclipse.rse.subsystems.processes.ssh.linux;singleton:=true
+Bundle-SymbolicName: org.eclipse.rse.subsystems.processes.shell.linux;singleton:=true
 Bundle-Version: 0.9.0.qualifier
 Bundle-Activator: org.eclipse.rse.internal.subsystems.processes.shell.linux.Activator
 Bundle-Localization: plugin

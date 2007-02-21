@@ -110,6 +110,7 @@
 			<topic label="org.eclipse.rse.subsystems.processes.dstore" href="reference/api/org/eclipse/rse/subsystems/processes/dstore/package-summary.html"/>
 			<topic label="org.eclipse.rse.subsystems.processes.local" href="reference/api/org/eclipse/rse/subsystems/processes/local/package-summary.html"/>
 			<topic label="org.eclipse.rse.subsystems.processes.servicesubsystem" href="reference/api/org/eclipse/rse/subsystems/processes/servicesubsystem/package-summary.html"/>
+			<topic label="org.eclipse.rse.subsystems.processes.shell.linux" href="reference/api/org/eclipse/rse/subsystems/processes/shell/linux/package-summary.html"/>
 		</topic>
 		<topic label="Shell Subsystem" href="provisional_api.html">
 			<topic label="org.eclipse.rse.subsystems.shells.core" href="reference/api/org/eclipse/rse/subsystems/shells/core/package-summary.html"/>

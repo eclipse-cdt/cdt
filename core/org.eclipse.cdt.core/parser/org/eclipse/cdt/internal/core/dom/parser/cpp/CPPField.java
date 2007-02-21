@@ -24,6 +24,7 @@ import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.ICompositeType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeclSpecifier;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTVisiblityLabel;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
@@ -143,6 +144,17 @@ public class CPPField extends CPPVariable implements ICPPField, ICPPInternalBind
 	public ICPPClassType getClassOwner() throws DOMException {
 		ICPPClassScope scope = (ICPPClassScope) getScope();
 		return scope.getClassType();
+	}
+	
+	public boolean isStatic() {
+        // definition of a static field doesn't necessarily say static
+		if (getDeclarations() == null) {
+			IASTNode def= getDefinition();
+			if (def instanceof ICPPASTQualifiedName) {
+				return true;
+			}
+		}
+		return super.isStatic();
 	}
 	
 	/* (non-Javadoc)

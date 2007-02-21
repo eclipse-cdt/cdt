@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Ed Swartz (Nokia)
  *******************************************************************************/
 /*
  * Created on Nov 29, 2004
@@ -1814,18 +1815,6 @@ public class AST2CPPTests extends AST2BaseTest {
         assertInstances(col, f, 3);
     }
 
-    public void _testBug84469() throws Exception {
-        StringBuffer buffer = new StringBuffer();
-        buffer.append("struct S { int i; };        \n"); //$NON-NLS-1$
-        buffer.append("void f() {         ;        \n"); //$NON-NLS-1$
-        buffer.append("   int S::* pm = &S::i;      \n"); //$NON-NLS-1$
-        buffer.append("}                           \n"); //$NON-NLS-1$
-
-        IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP);
-        CPPNameCollector col = new CPPNameCollector();
-        tu.accept(col);
-    }
-
     // public void testFindTypeBinding_1() throws Exception {
     // IASTTranslationUnit tu = parse(
     // "int x = 5; int y(x);", ParserLanguage.CPP); //$NON-NLS-1$
@@ -2125,7 +2114,7 @@ public class AST2CPPTests extends AST2BaseTest {
         assertInstances(col, f2, 1);
     }
 
-    public void _testBug45763_4() throws Exception {
+    public void testBug45763_4() throws Exception {
         StringBuffer buffer = new StringBuffer();
         buffer.append("void f( int );                  \n"); //$NON-NLS-1$
         buffer.append("void f( char );                 \n"); //$NON-NLS-1$
@@ -2516,7 +2505,7 @@ public class AST2CPPTests extends AST2BaseTest {
         assertSame(decls[0], col.getName(6));
     }
 
-    public void _testBug86274() throws Exception {
+    public void testBug86274() throws Exception {
         StringBuffer buffer = new StringBuffer();
         buffer.append("class D {};                   \n"); //$NON-NLS-1$
         buffer.append("D d1;                         \n"); //$NON-NLS-1$
@@ -5146,5 +5135,47 @@ public class AST2CPPTests extends AST2BaseTest {
     	buffer.append( "}\n"); //$NON-NLS-1$
     	
     	parse( buffer.toString(), ParserLanguage.CPP, true, true );
+    }
+    
+    /**
+     * Test redundant class specifiers 
+     */
+    public void testBug174791() throws Exception {
+    	StringBuffer buffer = new StringBuffer( );
+    	buffer.append( "class MyClass {\r\n"); //$NON-NLS-1$
+    	buffer.append( "	int MyClass::field;\r\n"); //$NON-NLS-1$
+    	buffer.append( "	static int MyClass::static_field;\r\n"); //$NON-NLS-1$
+    	buffer.append( "};\r\n" ); //$NON-NLS-1$
+    	buffer.append( "int MyClass::static_field;\r\n" ); //$NON-NLS-1$
+    	
+    	IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.CPP, true, true );
+    	
+    	// check class
+    	IASTSimpleDeclaration sd = (IASTSimpleDeclaration) tu.getDeclarations()[0];
+    	ICPPASTCompositeTypeSpecifier cts = (ICPPASTCompositeTypeSpecifier) sd.getDeclSpecifier();
+
+    	IASTSimpleDeclaration md = (IASTSimpleDeclaration) cts.getMembers()[0];
+		IASTName name = md.getDeclarators()[0].getName();
+		IField field = (IField) name.resolveBinding();
+		// would crash and/or return wrong result
+		assertFalse(field.isStatic());
+		assertFalse(field.isExtern());
+		assertFalse(field.isAuto());
+		assertFalse(field.isRegister());
+
+		md = (IASTSimpleDeclaration) cts.getMembers()[1];
+		name = md.getDeclarators()[0].getName();
+		field = (IField) name.resolveBinding();
+		// would crash
+		assertTrue(field.isStatic());
+		assertFalse(field.isExtern());
+		assertFalse(field.isAuto());
+		assertFalse(field.isRegister());
+
+		// check real static defn
+		sd = (IASTSimpleDeclaration) tu.getDeclarations()[1];
+		name = sd.getDeclarators()[0].getName();
+		field = (IField) name.resolveBinding();
+		assertTrue(field.isStatic());
     }
 }

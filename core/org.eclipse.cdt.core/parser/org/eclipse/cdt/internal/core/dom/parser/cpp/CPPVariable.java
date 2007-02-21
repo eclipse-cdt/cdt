@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2006 IBM Corporation and others.
+ * Copyright (c) 2004, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Markus Schorn (Wind River Systems)
+ *     Ed Swartz (Nokia)
  *******************************************************************************/
 /*
  * Created on Nov 29, 2004
@@ -115,16 +116,10 @@ public class CPPVariable extends PlatformObject implements ICPPVariable, ICPPInt
 	}
 	
 	protected boolean isDefinition( IASTName name ){
-	    IASTNode node = name.getParent();
-	    if( node instanceof ICPPASTQualifiedName )
-	        node = node.getParent();
-	    
-	    if( !( node instanceof IASTDeclarator ) )
-	        return false;
-	    
-	    IASTDeclarator dtor = (IASTDeclarator) node;
-	    while( dtor.getParent() instanceof IASTDeclarator )
-	        dtor = (IASTDeclarator) dtor.getParent();
+	    IASTDeclarator dtor= findDeclarator(name);
+	    if (dtor == null) {
+	    	return false;
+	    }
 	    
 	    IASTSimpleDeclaration simpleDecl = (IASTSimpleDeclaration) dtor.getParent();
 	    IASTDeclSpecifier declSpec = simpleDecl.getDeclSpecifier();
@@ -142,6 +137,21 @@ public class CPPVariable extends PlatformObject implements ICPPVariable, ICPPInt
 	    
 	    return true;
 	}
+	
+	private IASTDeclarator findDeclarator(IASTName name) {
+	    IASTNode node = name.getParent();
+	    if( node instanceof ICPPASTQualifiedName )
+	        node = node.getParent();
+	    
+	    if( !( node instanceof IASTDeclarator ) )
+	        return null;
+	    
+	    IASTDeclarator dtor = (IASTDeclarator) node;
+	    while( dtor.getParent() instanceof IASTDeclarator )
+	        dtor = (IASTDeclarator) dtor.getParent();
+	    
+	    return dtor;
+	}		
 	
 	public void addDeclaration( IASTNode node ) {
 		if( !(node instanceof IASTName) )
@@ -249,17 +259,16 @@ public class CPPVariable extends PlatformObject implements ICPPVariable, ICPPInt
      */
     public boolean isStatic() {
         IASTDeclarator dtor = null;
-        if( declarations != null )
-            dtor = (IASTDeclarator) declarations[0].getParent();
-        else {
-            //definition of a static field doesn't necessarily say static
-            if( definition.getParent() instanceof ICPPASTQualifiedName )
-                return true;
-            dtor = (IASTDeclarator) definition.getParent();
+        if( declarations != null ) {
+            dtor= findDeclarator(declarations[0]);
         }
-
-        while( dtor.getPropertyInParent() == IASTDeclarator.NESTED_DECLARATOR )
-            dtor = (IASTDeclarator) dtor.getParent();
+        else {
+        	dtor= findDeclarator(definition);
+        }
+        
+        if (dtor == null) {
+        	return false;
+        }
         
         IASTNode node = dtor.getParent();
         if( node instanceof IASTSimpleDeclaration ){

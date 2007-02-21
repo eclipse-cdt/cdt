@@ -40,10 +40,12 @@ import org.eclipse.dstore.core.model.IDataStoreProvider;
 import org.eclipse.rse.dstore.universal.miners.IUniversalDataStoreConstants;
 import org.eclipse.rse.dstore.universal.miners.filesystem.UniversalByteStreamHandler;
 import org.eclipse.rse.dstore.universal.miners.filesystem.UniversalFileSystemMiner;
+import org.eclipse.rse.services.clientserver.FileTypeMatcher;
+import org.eclipse.rse.services.clientserver.IMatcher;
 import org.eclipse.rse.services.clientserver.IServiceConstants;
 import org.eclipse.rse.services.clientserver.ISystemFileTypes;
+import org.eclipse.rse.services.clientserver.NamePatternMatcher;
 import org.eclipse.rse.services.clientserver.PathUtility;
-import org.eclipse.rse.services.clientserver.StringCompare;
 import org.eclipse.rse.services.clientserver.archiveutils.ArchiveHandlerManager;
 import org.eclipse.rse.services.clientserver.messages.ISystemMessageProvider;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
@@ -828,9 +830,15 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 		_fileElementMap.put(path, element);
 		return file;
 	}
-	
-	protected IHostFile[] convertToHostFiles(DataElement[] elements, String filter)
+	protected IHostFile[] convertToHostFiles(DataElement[] elements, String fileFilter)
 	{
+		IMatcher filematcher = null;
+		if (fileFilter.endsWith(",")) { //$NON-NLS-1$
+			String[] types = fileFilter.split(","); //$NON-NLS-1$
+			filematcher = new FileTypeMatcher(types, true);
+		} else {
+			filematcher = new NamePatternMatcher(fileFilter, true, true);
+		}
 		ArrayList results = new ArrayList(elements.length);
 		for (int i = 0; i < elements.length; i++)
 		{
@@ -841,7 +849,7 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 				// filter files
 				if (type.equals(UNIVERSAL_FILE_DESCRIPTOR) || type.equals(UNIVERSAL_VIRTUAL_FILE_DESCRIPTOR))
 				{
-					if (StringCompare.compare(filter, element.getName(), true))
+					if (filematcher.matches(element.getName()))
 					{
 						results.add(convertToHostFile(element));
 					}
@@ -854,6 +862,8 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 		}
 		return (IHostFile[]) results.toArray(new IHostFile[results.size()]);
 	}
+	
+
 
 	public IHostFile getUserHome()
 	{

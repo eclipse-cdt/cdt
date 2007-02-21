@@ -131,11 +131,16 @@ public abstract class NewModelProjectWizard extends BasicNewResourceWizard imple
 		newProject = createIProject(fMainPage.getProjectName(), null);
 		// fMainPage.getProjectLocation());
 		if (newProject != null) {
-			if (fMainPage.h_selected.needsConfig()) {
-				boolean def = fMainPage.isCurrent();
-				fMainPage.h_selected.createProject(newProject, fConfigPage.getConfigurations(def), fConfigPage.getNames(def));
-			} else 
-				fMainPage.h_selected.createProject(newProject, null, null);
+			try {
+				if (fMainPage.h_selected.needsConfig()) {
+					boolean def = fMainPage.isCurrent();
+					fMainPage.h_selected.createProject(newProject, fConfigPage.getConfigurations(def), fConfigPage.getNames(def));
+				} else 
+					fMainPage.h_selected.createProject(newProject, null, null);
+			} catch (CoreException e) {
+				ManagedBuilderUIPlugin.log(e);
+				throw e;
+			}
 		}
 		monitor.done();
 	}

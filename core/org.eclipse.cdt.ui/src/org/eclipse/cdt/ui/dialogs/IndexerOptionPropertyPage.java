@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corp. - Rational Software - initial implementation
  *     Anton Leherbauer (Wind River Systems)
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 
 package org.eclipse.cdt.ui.dialogs;
@@ -16,6 +17,7 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.Preferences;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -23,21 +25,18 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.PropertyPage;
 
-import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.model.CoreModel;
-import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.ui.CUIPlugin;
 
 import org.eclipse.cdt.internal.ui.ICHelpContextIds;
 
-public class IndexerOptionPropertyPage extends PropertyPage {
+public class IndexerOptionPropertyPage extends PropertyPage implements ICOptionContainer {
 
 	private IndexerBlock optionPage;
-	private String oldIndexerID;
 
 	public IndexerOptionPropertyPage(){
 		super();
 		optionPage = new IndexerBlock();
+		optionPage.setContainer(this);
 	}
 
 	protected Control createContents(Composite parent) {
@@ -46,44 +45,38 @@ public class IndexerOptionPropertyPage extends PropertyPage {
 
 		optionPage.createControl(composite);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(composite, ICHelpContextIds.PROJECT_INDEXER_PROPERTIES);	
-		initialize();
 		
 		return composite;
 	}
 
 	protected void performDefaults() {
-		ICProject tempProject = CoreModel.getDefault().create(getProject());
-		optionPage.resetIndexerPageSettings(tempProject);
+		optionPage.performDefaults();
 	}
-	
-	private void initialize(){
-		ICProject project = CoreModel.getDefault().create(getProject());
+		
+	public boolean performOk() {
 		try {
-			oldIndexerID = CCorePlugin.getPDOMManager().getIndexerId(project);
-			optionPage.setIndexerID(oldIndexerID, project);
+			optionPage.performApply(new NullProgressMonitor());
 		} catch (CoreException e) {
 			CUIPlugin.getDefault().log(e);
 		}
-	}
-	
-	public boolean performOk() {
-		ICProject tempProject = CoreModel.getDefault().create(getProject());
-		try {
-			optionPage.persistIndexerSettings(tempProject, new NullProgressMonitor());
-		} catch (CoreException e) {}
-		
 		return true;
 	}
 	
 	public IProject getProject(){
-		IAdaptable tempElement = getElement();
-		IProject project;
-		if (tempElement instanceof IProject) {
-			project = (IProject) tempElement;
-		} else {
-			project = (IProject)tempElement.getAdapter(IProject.class);
+		IProject project= null;
+		IAdaptable elem = getElement();
+		if (elem instanceof IProject) {
+			project= (IProject) elem;
+		} else if (elem != null) {
+			project= (IProject) elem.getAdapter(IProject.class);
 		}
 		return project;
 	}
 
+	public Preferences getPreferences() {
+		throw new UnsupportedOperationException();
+	}
+
+	public void updateContainer() {
+	}
 }

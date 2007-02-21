@@ -31,6 +31,7 @@ import org.eclipse.cdt.core.testplugin.CProjectHelper;
 import org.eclipse.cdt.core.testplugin.TestScannerProvider;
 import org.eclipse.cdt.core.testplugin.util.TestSourceReader;
 import org.eclipse.cdt.internal.core.CCoreInternals;
+import org.eclipse.cdt.internal.core.pdom.indexer.IndexerPreferences;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -79,11 +80,11 @@ public class IndexIncludeTest extends IndexTestBase {
 	
 	public void testFastIndexer() throws Exception {
 		CCoreInternals.getPDOMManager().setIndexerId(fProject, IPDOMManager.ID_FAST_INDEXER);
-		CCoreInternals.getPDOMManager().setIndexAllFiles(fProject, false);
+		IndexerPreferences.set(fProject.getProject(), IndexerPreferences.KEY_INDEX_ALL_FILES, "false");
 		waitForIndexer();
 		checkHeader(false);
 
-		CCoreInternals.getPDOMManager().setIndexAllFiles(fProject, true);
+		IndexerPreferences.set(fProject.getProject(), IndexerPreferences.KEY_INDEX_ALL_FILES, "true");
 		waitForIndexer();
 		checkHeader(true);
 		
@@ -96,11 +97,11 @@ public class IndexIncludeTest extends IndexTestBase {
 
 	public void testFullIndexer() throws Exception {
 		CCoreInternals.getPDOMManager().setIndexerId(fProject, IPDOMManager.ID_FULL_INDEXER);
-		CCoreInternals.getPDOMManager().setIndexAllFiles(fProject, false);
+		IndexerPreferences.set(fProject.getProject(), IndexerPreferences.KEY_INDEX_ALL_FILES, "false");
 		waitForIndexer();
 		checkHeader(false);
 
-		CCoreInternals.getPDOMManager().setIndexAllFiles(fProject, true);
+		IndexerPreferences.set(fProject.getProject(), IndexerPreferences.KEY_INDEX_ALL_FILES, "true");
 		waitForIndexer();
 		checkHeader(true);
 		

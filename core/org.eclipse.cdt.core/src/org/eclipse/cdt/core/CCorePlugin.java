@@ -34,7 +34,6 @@ import org.eclipse.cdt.core.model.IWorkingCopy;
 import org.eclipse.cdt.core.parser.IScannerInfoProvider;
 import org.eclipse.cdt.core.resources.IConsole;
 import org.eclipse.cdt.core.resources.IPathEntryVariableManager;
-import org.eclipse.cdt.core.resources.ScannerProvider;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.core.settings.model.WriteAccessException;

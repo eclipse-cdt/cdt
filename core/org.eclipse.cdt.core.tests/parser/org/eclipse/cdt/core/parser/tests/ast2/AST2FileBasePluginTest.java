@@ -72,7 +72,6 @@ public class AST2FileBasePluginTest extends TestCase {
 	            	className = aClassName;
 	            	numProjects++;
 	            }
-	            CCorePlugin.getPDOMManager().setIndexerId(cPrj, IPDOMManager.ID_NO_INDEXER);
 	        } catch ( CoreException e ) {
 	            /*boo*/
 	        }

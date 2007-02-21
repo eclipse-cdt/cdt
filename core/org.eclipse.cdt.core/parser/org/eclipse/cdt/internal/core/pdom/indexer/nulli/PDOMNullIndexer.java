@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 QNX Software Systems and others.
+ * Copyright (c) 2006, 2007 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,10 +17,10 @@ import org.eclipse.cdt.core.dom.IPDOMIndexer;
 import org.eclipse.cdt.core.dom.IPDOMIndexerTask;
 import org.eclipse.cdt.core.dom.IPDOMManager;
 import org.eclipse.cdt.core.model.ICElementDelta;
-import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.internal.core.CCoreInternals;
 import org.eclipse.cdt.internal.core.index.IWritableIndex;
 import org.eclipse.cdt.internal.core.index.IWritableIndexManager;
+import org.eclipse.cdt.internal.core.pdom.indexer.AbstractPDOMIndexer;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 
@@ -29,18 +29,12 @@ import org.eclipse.core.runtime.IProgressMonitor;
  *
  * The Null Indexer which does nothing.
  */
-public class PDOMNullIndexer implements IPDOMIndexer {
+public class PDOMNullIndexer extends AbstractPDOMIndexer {
 
 	public static final String ID = IPDOMManager.ID_NO_INDEXER;
-	
-	private ICProject project;
-
-	public ICProject getProject() {
-		return project;
-	}
-	
-	public void setProject(ICProject project) {
-		this.project = project;
+		
+	public PDOMNullIndexer() {
+		fProperties.clear(); // don't accept any properties
 	}
 	
 	public void handleDelta(ICElementDelta delta) {
@@ -92,16 +86,5 @@ public class PDOMNullIndexer implements IPDOMIndexer {
 
 	public String getID() {
 		return ID;
-	}
-
-	public boolean getIndexAllFiles() {
-		return false;
-	}
-
-	public void setIndexAllFiles(boolean value) {
-	}
-	
-	public boolean isIndexAllFiles(boolean val) {
-		return true;
 	}
 }

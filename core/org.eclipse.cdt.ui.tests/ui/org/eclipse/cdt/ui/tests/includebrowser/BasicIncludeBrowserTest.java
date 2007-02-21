@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2007 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -24,6 +24,7 @@ import org.eclipse.cdt.core.testplugin.CProjectHelper;
 import org.eclipse.cdt.core.testplugin.TestScannerProvider;
 
 import org.eclipse.cdt.internal.core.CCoreInternals;
+import org.eclipse.cdt.internal.core.pdom.indexer.IndexerPreferences;
 
 
 public class BasicIncludeBrowserTest extends IncludeBrowserBaseTest {
@@ -74,7 +75,7 @@ public class BasicIncludeBrowserTest extends IncludeBrowserBaseTest {
 	public void _testInclusionAccrossProjects() throws Exception {
 		ICProject op= CProjectHelper.createCCProject("__ibTest_other__", "bin", IPDOMManager.ID_FAST_INDEXER);
 		try {
-			CCoreInternals.getPDOMManager().setIndexAllFiles(op, true);
+			IndexerPreferences.set(op.getProject(), IndexerPreferences.KEY_INDEX_ALL_FILES, "true");
 			CCoreInternals.getPDOMManager().reindex(op);
 			fIndex= CCorePlugin.getIndexManager().getIndex(new ICProject[] {getProject(), op});
 			

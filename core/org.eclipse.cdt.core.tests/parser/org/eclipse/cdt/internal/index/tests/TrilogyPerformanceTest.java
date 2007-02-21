@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 Symbian Software Systems and others.
+ * Copyright (c) 2006, 2007 Symbian Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  * Andrew Ferguson (Symbian) - Initial implementation
+ * Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.index.tests;
 
@@ -19,7 +20,7 @@ import org.eclipse.cdt.core.index.IndexFilter;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.testplugin.CTestPlugin;
 import org.eclipse.cdt.core.testplugin.TestScannerProvider;
-import org.eclipse.cdt.internal.core.CCoreInternals;
+import org.eclipse.cdt.internal.core.pdom.indexer.IndexerPreferences;
 import org.eclipse.cdt.utils.spawner.EnvironmentReader;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
@@ -55,7 +56,7 @@ public class TrilogyPerformanceTest extends IndexTestBase {
 			assertTrue(CCorePlugin.getIndexManager().joinIndexer(360000, new NullProgressMonitor()));
 			TestScannerProvider.sIncludes = new String[]{EnvironmentReader.getEnvVar("INETSDK")+"\\Include"};
 			try {
-				CCoreInternals.getPDOMManager().setIndexAllFiles(cproject, true);
+				IndexerPreferences.set(cproject.getProject(), IndexerPreferences.KEY_INDEX_ALL_FILES, "true");
 				long start = System.currentTimeMillis();
 				CCorePlugin.getPDOMManager().reindex(cproject);
 				assertTrue(CCorePlugin.getIndexManager().joinIndexer(360000, new NullProgressMonitor()));

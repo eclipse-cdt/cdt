@@ -23,9 +23,7 @@ in multi-tab and single-tab mode. It&apos;s up to page to select
 displaying mode.
 
 In multi-tab page, tabs are displayed in order defined by 
-their weights. 
-
-
+their weights.
       </documentation>
    </annotation>
 
@@ -99,8 +97,6 @@ Ignored for single-tab pages.
 Usually pages are to be derived from 
 org.eclipse.cdt.ui.newui.AbstractPage,
 but it is not obligatory.
-
-
                </documentation>
                <appInfo>
                   <meta.attribute kind="java"/>
@@ -119,7 +115,6 @@ but it is not obligatory.
                <documentation>
                   Abstract value to be used for sorting tabs inside of tab folder.
 Ignored for single-tab page.
-
                </documentation>
             </annotation>
          </attribute>
@@ -140,7 +135,7 @@ Ignored for single-tab page.
          <meta.section type="examples"/>
       </appInfo>
       <documentation>
-           &lt;extension
+         &lt;extension
            point=&quot;org.eclipse.cdt.ui.cPropertyTab&quot;&gt;
      &lt;tab
            class=&quot;org.eclipse.cdt.managedbuilder.ui.newui.DiscoveryTab&quot;
@@ -148,7 +143,7 @@ Ignored for single-tab page.
            name=&quot;Discovery options&quot;
            weight=&quot;100&quot; 
            parent=&quot;org.eclipse.cdt.ui.newui.Page_PathAndSymb&quot;/&gt;
-  &lt;/entension&gt; 
+  &lt;/extension&gt;
       </documentation>
    </annotation>
 
@@ -195,8 +190,7 @@ CBuildLocationOutputTab
 CPropertyVarsTab       
 DiscoveryTab           
 ToolChainEditTab       
-ToolSettingsTab        
-
+ToolSettingsTab
       </documentation>
    </annotation>
 

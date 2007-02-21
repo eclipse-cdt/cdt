@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Anton Leherbauer (Wind River Systems)
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.preferences;
 
@@ -164,7 +165,6 @@ public final class PreferencesMessages extends NLS {
 	public static String PathEntryVariablesBlock_addVariableButton;
 	public static String PathEntryVariablesBlock_editVariableButton;
 	public static String PathEntryVariablesBlock_removeVariableButton;
-	public static String IndexerPrefs_description;
 	public static String ProposalFilterPreferencesUtil_defaultFilterName;
 
 	public static String CEditorPreferencePage_typing_tabTitle;

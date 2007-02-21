@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 QNX Software Systems and others.
+ * Copyright (c) 2000, 2007 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -51,6 +51,7 @@ import org.eclipse.cdt.core.model.ISourceRoot;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.model.IWorkingCopy;
 import org.eclipse.cdt.internal.core.CCoreInternals;
+import org.eclipse.cdt.internal.core.LocalProjectScope;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
@@ -770,6 +771,7 @@ public class CModelManager implements IResourceChangeListener, ICDescriptorListe
 				case IResourceChangeEvent.POST_CHANGE :
 					try {
 						if (delta != null) {
+							checkForProjectRename(delta);
 							ICElementDelta[] translatedDeltas = fDeltaProcessor.processResourceDelta(delta);
 							if (translatedDeltas.length > 0) {
 								for (int i = 0; i < translatedDeltas.length; i++) {
@@ -1160,6 +1162,21 @@ public class CModelManager implements IResourceChangeListener, ICDescriptorListe
 		}
 	}
 
+	private void checkForProjectRename(IResourceDelta delta) {
+		IResourceDelta[] rem= delta.getAffectedChildren(IResourceDelta.REMOVED);
+		for (int i = 0; i < rem.length; i++) {
+			delta = rem[i];
+			IResource res= delta.getResource();
+			if (res.getType() == IResource.PROJECT) {
+				IPath movedTo= null;
+				if ((delta.getFlags() & IResourceDelta.MOVED_TO) != 0) {
+					movedTo= delta.getMovedToPath();
+				}
+				LocalProjectScope.deletePreferences(res.getFullPath(), movedTo);
+			}				
+		}
+	}
+	
 	private void deleting(IProject project, IResourceDelta delta) {
 		// stop the binary runner for this project
 		removeBinaryRunner(project);

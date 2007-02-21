@@ -189,7 +189,7 @@ public class PDOM extends PlatformObject implements IIndexFragment, IPDOM {
 	protected void clear() throws CoreException {
 		Database db = getDB();
 		// Clear out the database
-		db.clear(0);
+		db.clear(1);
 
 		// Zero out the File Index and Linkages
 		db.putInt(FILE_INDEX, 0);
@@ -535,7 +535,7 @@ public class PDOM extends PlatformObject implements IIndexFragment, IPDOM {
 	}
 
 	public IIndexFragmentBinding adaptBinding(IIndexFragmentBinding binding) throws CoreException {
-		if (binding instanceof IBinding) {
+		if (binding != null) {
 			return adaptBinding((IBinding) binding);
 		}
 		return null;

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 QNX Software Systems and others.
+ * Copyright (c) 2000, 2007 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,11 +7,10 @@
  *
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.ui.wizards;
 
-import org.eclipse.cdt.ui.dialogs.ICOptionContainer;
-import org.eclipse.cdt.ui.dialogs.TabFolderOptionBlock;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Preferences;
@@ -19,7 +18,10 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.widgets.Composite;
 
-public abstract class NewCProjectWizardOptionPage extends WizardPage implements ICOptionContainer {
+import org.eclipse.cdt.ui.dialogs.ICOptionContainerExtension;
+import org.eclipse.cdt.ui.dialogs.TabFolderOptionBlock;
+
+public abstract class NewCProjectWizardOptionPage extends WizardPage implements ICOptionContainerExtension {
 
 	private TabFolderOptionBlock fOptionBlock;
 
@@ -62,6 +64,14 @@ public abstract class NewCProjectWizardOptionPage extends WizardPage implements 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.ui.dialogs.ICOptionContainer#getProject()
 	 */
-	public abstract IProject getProject();
+	public IProject getProject() {
+		return ((NewCProjectWizard)getWizard()).getNewProject();
+	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.ui.dialogs.ICOptionContainer#getProject()
+	 */
+	public IProject getProjectHandle() {
+		return ((NewCProjectWizard)getWizard()).getProjectHandle();
+	}
 }

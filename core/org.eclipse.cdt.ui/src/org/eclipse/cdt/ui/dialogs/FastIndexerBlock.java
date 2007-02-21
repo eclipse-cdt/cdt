@@ -1,14 +1,13 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2007 IBM Corporation and others.
+ * Copyright (c) 2007 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     IBM Corp. - Rational Software - initial implementation
- *     Markus Schorn (Wind River Systems)
- *******************************************************************************/
+ *    Markus Schorn - initial API and implementation
+ *******************************************************************************/ 
 
 package org.eclipse.cdt.ui.dialogs;
 
@@ -21,16 +20,13 @@ import org.eclipse.cdt.utils.ui.controls.ControlFactory;
 
 import org.eclipse.cdt.internal.core.pdom.indexer.IndexerPreferences;
 
-
-public class DOMSourceIndexerBlock extends AbstractIndexerPage {
+public class FastIndexerBlock extends AbstractIndexerPage {
 	private Button fAllFiles;
-	
-		
+
 	public void createControl(Composite parent) {
 		Composite page = ControlFactory.createComposite(parent, 1);
 		fAllFiles= ControlFactory.createCheckBox(page, INDEX_ALL_FILES);
 		setControl(page);
-		
 	}
 
 	public Properties getProperties() {

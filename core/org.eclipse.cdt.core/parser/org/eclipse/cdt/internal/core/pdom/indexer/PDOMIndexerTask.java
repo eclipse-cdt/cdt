@@ -95,6 +95,7 @@ public abstract class PDOMIndexerTask implements IPDOMIndexerTask {
 
 	private static final Object NO_CONTEXT = new Object();
 	protected static final int MAX_ERRORS = 500;
+	private static final String TRUE = String.valueOf(true);
 
 	protected volatile int fTotalSourcesEstimate= 0;
 	protected volatile int fCompletedSources= 0;
@@ -283,7 +284,7 @@ public abstract class PDOMIndexerTask implements IPDOMIndexerTask {
 	}
 
 	protected boolean getIndexAllFiles() {
-		return getIndexer().getIndexAllFiles();
+		return TRUE.equals(getIndexer().getProperty(IndexerPreferences.KEY_INDEX_ALL_FILES));
 	}
 
 	protected ITranslationUnit findContext(IIndex index, IIndexFileLocation location) {

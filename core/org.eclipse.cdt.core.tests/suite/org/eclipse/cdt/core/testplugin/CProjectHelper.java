@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005 IBM Corporation and others.
+ * Copyright (c) 2005, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Andrew Ferguson (Symbian)
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.core.testplugin;
 import java.io.File;
@@ -32,6 +33,7 @@ import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.ISourceRoot;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.internal.core.CCoreInternals;
+import org.eclipse.cdt.internal.core.pdom.indexer.IndexerPreferences;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
@@ -94,7 +96,7 @@ public class CProjectHelper {
 				}
 				newProject[0] = CCorePlugin.getDefault().getCoreModel().create(project);
 				if (indexerID != null) {
-					CCoreInternals.getPDOMManager().setIndexAllFiles(newProject[0], true);
+					IndexerPreferences.set(newProject[0].getProject(), IndexerPreferences.KEY_INDEX_ALL_FILES, "true");
 					CCoreInternals.getPDOMManager().setIndexerId(newProject[0], indexerID);
 				}
 			}

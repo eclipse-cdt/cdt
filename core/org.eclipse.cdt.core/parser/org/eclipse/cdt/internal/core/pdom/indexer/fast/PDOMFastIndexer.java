@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 QNX Software Systems and others.
+ * Copyright (c) 2006, 2007 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,37 +13,25 @@
 package org.eclipse.cdt.internal.core.pdom.indexer.fast;
 
 
-import org.eclipse.cdt.core.dom.IPDOMIndexer;
 import org.eclipse.cdt.core.dom.IPDOMManager;
 import org.eclipse.cdt.core.model.ICElementDelta;
-import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.internal.core.CCoreInternals;
+import org.eclipse.cdt.internal.core.pdom.indexer.AbstractPDOMIndexer;
 import org.eclipse.core.runtime.CoreException;
 
 /**
  * @author Doug Schaefer
  *
  */
-public class PDOMFastIndexer implements IPDOMIndexer {
+public class PDOMFastIndexer extends AbstractPDOMIndexer {
 
 	// Must match extension id
 	public static final String ID = IPDOMManager.ID_FAST_INDEXER;
 	
-	protected ICProject project;
-
-	private boolean fIndexAllFiles;
 	
 	public PDOMFastIndexer() {
 	}
 
-	public ICProject getProject() {
-		return project;
-	}
-	
-	public void setProject(ICProject project) {
-		this.project = project;
-	}
-	
 	public void handleDelta(ICElementDelta delta) throws CoreException {
 		PDOMFastHandleDelta fhd= new PDOMFastHandleDelta(this, delta);
 		if (fhd.estimateRemainingSources() > 0) {
@@ -57,17 +45,5 @@ public class PDOMFastIndexer implements IPDOMIndexer {
 	
 	public String getID() {
 		return ID;
-	}
-
-	public void setIndexAllFiles(boolean val) {
-		fIndexAllFiles= val;
-	}
-
-	public boolean getIndexAllFiles() {
-		return fIndexAllFiles;
-	}
-	
-	public boolean isIndexAllFiles(boolean val) {
-		return fIndexAllFiles==val;
 	}
 }

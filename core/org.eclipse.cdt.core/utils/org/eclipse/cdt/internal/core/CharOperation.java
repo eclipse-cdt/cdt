@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core;
 
@@ -1712,7 +1713,8 @@ public final class CharOperation {
 		// offsets inside pattern
 		int pSegmentStart, pLength = pattern.length;
 
-		if (freeLeadingDoubleStar = pattern[0] != pathSeparator){
+		freeLeadingDoubleStar= (pattern[0] != pathSeparator);
+		if (freeLeadingDoubleStar){
 			pSegmentStart = 0;
 		} else {
 			pSegmentStart = 1;

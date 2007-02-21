@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 QNX Software Systems and others.
+ * Copyright (c) 2000, 2007 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
  *     Sergey Prigogin, Google
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core;
 
@@ -17,10 +18,9 @@ import java.util.Map;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.CCorePreferenceConstants;
-import org.eclipse.cdt.core.dom.IPDOMManager;
 import org.eclipse.cdt.core.formatter.DefaultCodeFormatterConstants;
 import org.eclipse.cdt.internal.core.model.CModelManager;
-import org.eclipse.cdt.internal.core.pdom.PDOMManager;
+import org.eclipse.cdt.internal.core.pdom.indexer.IndexerPreferences;
 import org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer;
 import org.eclipse.core.runtime.preferences.DefaultScope;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
@@ -54,8 +54,6 @@ public class CCorePreferenceInitializer extends AbstractPreferenceInitializer {
 		}
 
 		// indexer defaults
-		defaultPreferences.putBoolean(PDOMManager.INDEX_ALL_FILES, false);
-		defaultPreferences.put(PDOMManager.INDEXER_ID_KEY, IPDOMManager.ID_FAST_INDEXER);
+		IndexerPreferences.initializeDefaultPreferences(defaultPreferences);
 	}
-
 }

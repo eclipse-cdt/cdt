@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 QNX Software Systems and others.
+ * Copyright (c) 2006, 2007 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,9 +8,12 @@
  * Contributors:
  * QNX - Initial API and implementation
  * Andrew Ferguson (Symbian)
+ * Markus Schorn (Wind River Systems)
  *******************************************************************************/
 
 package org.eclipse.cdt.core.dom;
+
+import java.util.Properties;
 
 import org.eclipse.cdt.core.model.ICElementDelta;
 import org.eclipse.cdt.core.model.ICProject;
@@ -37,21 +40,21 @@ public interface IPDOMIndexer {
 	public String getID();
 	
 	/**
-	 * Returns whether to index source files that are not actually part of the build.
+	 * Returns the value of a property.
 	 * @since 4.0
 	 */
-	public boolean getIndexAllFiles();
+	public String getProperty(String key);
 	
 	/**
 	 * Clients are not allowed to call this method, it is called by the framework. 
 	 * @since 4.0
 	 */
-	public void setIndexAllFiles(boolean value);
+	public void setProperties(Properties props);
 	
 	/**
 	 * Clients are not allowed to call this method, it is called by the framework. 
 	 * Used to check whether we need to reindex a project.
 	 * @since 4.0
 	 */
-	public boolean isIndexAllFiles(boolean value);
+	public boolean hasProperties(Properties props);
 }

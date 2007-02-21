@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 QNX Software Systems and others.
+ * Copyright (c) 2000, 2007 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.ui.wizards;
 
@@ -134,7 +135,7 @@ public abstract class NewCProjectWizard extends BasicNewResourceWizard implement
 	 * Overwrite this method if you do not have a main page
 	 */
 
-	protected IProject getProjectHandle() throws UnsupportedOperationException {
+	public IProject getProjectHandle() throws UnsupportedOperationException {
 		if (null == fMainPage)
 			throw new UnsupportedOperationException();
 		return fMainPage.getProjectHandle();

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2007 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,7 +19,6 @@ public class Messages extends NLS {
 	public static String PDOMManager_JoinIndexerTask;
 	public static String PDOMManager_notifyJob_label;
 	public static String PDOMManager_notifyTask_message;
-	public static String PDOMManager_savePrefsJob;
 	public static String PDOMManager_StartJob_name;
 	public static String WritablePDOM_error_unknownLinkage;
 	static {

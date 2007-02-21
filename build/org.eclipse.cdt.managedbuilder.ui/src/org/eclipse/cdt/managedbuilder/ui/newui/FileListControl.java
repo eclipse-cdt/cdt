@@ -61,7 +61,7 @@ import org.eclipse.ui.dialogs.ElementTreeSelectionDialog;
 import org.eclipse.ui.dialogs.ISelectionStatusValidator;
 import org.eclipse.ui.model.WorkbenchContentProvider;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
-import org.eclipse.ui.views.navigator.ResourceSorter;
+import org.eclipse.ui.views.navigator.ResourceComparator;
 
 /**
  * Instances of this class allow the user to add,remove, delete, moveup and movedown
@@ -160,7 +160,7 @@ public class FileListControl {
 								new WorkbenchLabelProvider(), new WorkbenchContentProvider());
 
 		                dialog.setInput(ResourcesPlugin.getWorkspace().getRoot()); 
-		                dialog.setSorter(new ResourceSorter(ResourceSorter.NAME));
+		                dialog.setComparator(new ResourceComparator(ResourceComparator.NAME));
 						
 						if (type == IOption.BROWSE_DIR)	{
 							IResource container = null;
@@ -297,13 +297,13 @@ public class FileListControl {
 	//toolbar
 	private ToolBar toolBar;
 	// toolbar items
-	private ToolItem titleItem, addItem, deleteItem, editItem, moveUpItem,
+	private ToolItem addItem, deleteItem, editItem, moveUpItem,
 			moveDownItem;
 	// title label
 	private Label title;
 	// images
-	private Image addImage, deleteImage, editImage, moveUpImage, moveDownImage;
-	private Composite composite;
+//	private Image addImage, deleteImage, editImage, moveUpImage, moveDownImage;
+//	private Composite composite;
 	// list control
 	private List list;
 	private String compTitle;

@@ -454,7 +454,7 @@ public class BuilderSettingsTab extends AbstractCBuildPropertyTab {
 		
 			b2.setManagedBuildOn(b1.isManagedBuildOn());
 		} catch (CoreException ex) {
-			//TODO: log
+			ManagedBuilderUIPlugin.log(ex);
 		}
 	}
 

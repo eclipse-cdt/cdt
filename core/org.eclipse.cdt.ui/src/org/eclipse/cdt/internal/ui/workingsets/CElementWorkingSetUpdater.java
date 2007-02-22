@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -21,6 +21,10 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.ui.IWorkingSet;
 import org.eclipse.ui.IWorkingSetUpdater;
 
@@ -33,6 +37,22 @@ import org.eclipse.cdt.core.model.IElementChangedListener;
 
 
 public class CElementWorkingSetUpdater implements IWorkingSetUpdater, IElementChangedListener {
+
+	private static class WorkingSetCheck extends Job {
+		private final IWorkingSet fWorkingSet;
+		WorkingSetCheck(final IWorkingSet workingSet) {
+			super("Check WorkingSet"); //$NON-NLS-1$
+			fWorkingSet= workingSet;
+		}
+		/*
+		 * @see org.eclipse.core.runtime.jobs.Job#run(org.eclipse.core.runtime.IProgressMonitor)
+		 */
+		protected IStatus run(IProgressMonitor monitor) {
+			checkElementExistence(fWorkingSet);
+			return Status.OK_STATUS;
+		}
+	
+	}
 
 	public static final String ID= "org.eclipse.cdt.ui.CElementWorkingSetPage"; //$NON-NLS-1$
 	
@@ -73,11 +93,15 @@ public class CElementWorkingSetUpdater implements IWorkingSetUpdater, IElementCh
 	/**
 	 * {@inheritDoc}
 	 */
-	public void add(IWorkingSet workingSet) {
-		checkElementExistence(workingSet);
+	public void add(final IWorkingSet workingSet) {
 		synchronized (fWorkingSets) {
 			fWorkingSets.add(workingSet);
 		}
+		// delay the check - this may be called very early in the bootstrap
+		Job check= new WorkingSetCheck(workingSet);
+		check.setUser(false);
+		check.setPriority(Job.SHORT);
+		check.schedule(1000);
 	}
 
 	/**
@@ -209,7 +233,7 @@ public class CElementWorkingSetUpdater implements IWorkingSetUpdater, IElementCh
 			&& (flags & IResourceDelta.OPEN) != 0;
 	}
 	
-	private void checkElementExistence(IWorkingSet workingSet) {
+	private static void checkElementExistence(IWorkingSet workingSet) {
 		List elements= new ArrayList(Arrays.asList(workingSet.getElements()));
 		boolean changed= false;
 		for (Iterator iter= elements.iterator(); iter.hasNext();) {

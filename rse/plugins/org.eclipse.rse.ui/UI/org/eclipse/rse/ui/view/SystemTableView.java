@@ -1577,7 +1577,11 @@ public class SystemTableView
 	 */
 	protected IRemoteObjectIdentifier getRemoteObjectIdentifier(Object o) 
 	{
-		return (IRemoteObjectIdentifier)((IAdaptable)o).getAdapter(IRemoteObjectIdentifier.class);
+		IRemoteObjectIdentifier objectId = null;
+		try{
+			objectId = (IRemoteObjectIdentifier)((IAdaptable)o).getAdapter(IRemoteObjectIdentifier.class);
+		}catch(ClassCastException e){}
+		return objectId;
 	}
 
 	/**

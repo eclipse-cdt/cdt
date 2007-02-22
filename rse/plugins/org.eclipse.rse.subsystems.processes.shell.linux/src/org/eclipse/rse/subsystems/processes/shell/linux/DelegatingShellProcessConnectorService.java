@@ -24,7 +24,6 @@ import org.eclipse.rse.subsystems.shells.core.subsystems.servicesubsystem.IShell
 public class DelegatingShellProcessConnectorService extends AbstractDelegatingConnectorService 
 {
 	private IConnectorService _realService;
-	private ISubSystem _subSystem;
 	public DelegatingShellProcessConnectorService(IHost host) 
 	{
 		super(host);

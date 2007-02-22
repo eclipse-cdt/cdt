@@ -2561,6 +2561,11 @@ public abstract class SubSystem extends RSEModelObject implements IAdaptable, IS
 			_connectorService.registerSubSystem(this);
 			setDirty(true);
 		}		
+		else
+		{
+			// register the subsystem
+			_connectorService.registerSubSystem(this);
+		}
 	}
 	
 	

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 QNX Software Systems and others.
+ * Copyright (c) 2005, 2007 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -37,7 +37,6 @@ import org.eclipse.cdt.internal.ui.util.ProblemTreeViewer;
 import org.eclipse.cdt.internal.ui.viewsupport.AppearanceAwareLabelProvider;
 import org.eclipse.cdt.internal.ui.viewsupport.CElementLabels;
 import org.eclipse.cdt.internal.ui.viewsupport.DecoratingCLabelProvider;
-import org.eclipse.cdt.internal.ui.viewsupport.StandardCElementLabelProvider;
 
 /**
  * Control which shows outline information in C/C++ editor. Based on
@@ -83,7 +82,7 @@ public class COutlineInformationControl extends AbstractInformationControl {
         fSortingAction= new LexicalSortingAction(treeViewer);
 		treeViewer.addFilter(new NamePatternFilter());
         treeViewer.setLabelProvider(new DecoratingCLabelProvider(
-                new StandardCElementLabelProvider(TEXT_FLAGS, IMAGE_FLAGS), true));
+                new AppearanceAwareLabelProvider(TEXT_FLAGS, IMAGE_FLAGS), true));
         treeViewer.setAutoExpandLevel(AbstractTreeViewer.ALL_LEVELS);
         return treeViewer;
     }

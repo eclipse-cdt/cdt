@@ -53,7 +53,7 @@ public class RSEWizardDescriptor extends RSEWizardRegistryElement implements IRS
 				wizard = (IWizard)element.createExecutableExtension("class"); //$NON-NLS-1$
 			} catch (CoreException e) {
 				String message = "RSE new connection wizard failed creation (plugin: {0}, id: {1})."; //$NON-NLS-1$
-				message = MessageFormat.format(message, new Object[] { element.getContributor().getName(), element.getDeclaringExtension().getSimpleIdentifier()});
+				message = MessageFormat.format(message, new Object[] { element.getContributor().getName(), element.getAttribute("id")}); //$NON-NLS-1$
 				RSECorePlugin.getDefault().getLogger().logError(message, e);
 			}
 		}

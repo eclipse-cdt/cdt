@@ -176,7 +176,7 @@ public class RSENewConnectionWizardSelectionPage extends WizardPage {
     filteredTree = new FilteredTree(composite, SWT.SINGLE | SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER, filteredTreeFilter);
 		filteredTree.setBackground(parent.getDisplay().getSystemColor(SWT.COLOR_WIDGET_BACKGROUND));
 		GridData layoutData = new GridData(GridData.FILL_BOTH);
-		layoutData.heightHint = 275; layoutData.widthHint = 450;
+		layoutData.heightHint = 325; layoutData.widthHint = 450;
 		filteredTree.setLayoutData(layoutData);
 		
     final TreeViewer treeViewer = filteredTree.getViewer();

@@ -19,6 +19,7 @@ package org.eclipse.rse.ui.wizards.newconnection;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Hashtable;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Vector;
@@ -27,7 +28,6 @@ import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.rse.core.IRSESystemType;
-import org.eclipse.rse.core.RSEPreferencesManager;
 import org.eclipse.rse.core.SystemBasePlugin;
 import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.model.ISystemNewConnectionWizardPage;
@@ -61,14 +61,20 @@ public class RSEDefaultNewConnectionWizard extends RSEAbstractNewConnectionWizar
 	private String[] activeProfileNames = null;
 	private int privateProfileIndex = -1;
 	private ISystemProfile privateProfile = null;
-	private IHost currentlySelectedConnection = null;
+	private IHost selectedContext = null;
 	private static String lastProfile = null;
 
 	/**
 	 * Constructor.
 	 */
 	public RSEDefaultNewConnectionWizard() {
-		activeProfileNames = SystemStartHere.getSystemProfileManager().getActiveSystemProfileNames();
+		String[] profiles = SystemStartHere.getSystemProfileManager().getActiveSystemProfileNames();
+		// normalize the profiles by sorting our null or empty profile names
+		List normalized = new LinkedList();
+		for (int i = 0; i < profiles.length; i++) {
+			if (profiles[i] != null && !"".equals(profiles[i].trim())) normalized.add(profiles[i]); //$NON-NLS-1$
+		}
+		activeProfileNames = (String[])normalized.toArray(new String[normalized.size()]);
 	}
 
 	/* (non-Javadoc)
@@ -86,7 +92,7 @@ public class RSEDefaultNewConnectionWizard extends RSEAbstractNewConnectionWizar
 		activeProfileNames = null;
 		privateProfileIndex = -1;
 		privateProfile = null;
-		currentlySelectedConnection = null;
+		selectedContext = null;
 	}
 
 	/* (non-Javadoc)
@@ -109,51 +115,15 @@ public class RSEDefaultNewConnectionWizard extends RSEAbstractNewConnectionWizar
 		try {
 			mainPage = createMainPage(getSystemType());
 			mainPage.setConnectionNameValidators(SystemConnectionForm.getConnectionNameValidators());
-			mainPage.setCurrentlySelectedConnection(currentlySelectedConnection);
+			mainPage.setCurrentlySelectedConnection(selectedContext);
 
-			if (defaultUserId != null)
-				mainPage.setUserId(defaultUserId);
-			if (defaultConnectionName != null)
-				mainPage.setConnectionName(defaultConnectionName);
-			if (defaultHostName != null)
-				mainPage.setHostName(defaultHostName);
+			if (defaultUserId != null) mainPage.setUserId(defaultUserId);
+			if (defaultConnectionName != null) mainPage.setConnectionName(defaultConnectionName);
+			if (defaultHostName != null) mainPage.setHostName(defaultHostName);
 
-			if (mainPage != null && getSystemType() != null)
-				mainPage.setSystemType(getSystemType());
+			if (mainPage != null && getSystemType() != null) mainPage.setSystemType(getSystemType());
 
-			// If the team profile is available and active, then we default to the team profile.
-			// If the team profile is not available or inactive, the default private system profile
-			// is used (if available).
-			List profileNames = activeProfileNames != null ? Arrays.asList(activeProfileNames) : new ArrayList();
-			
-			String defaultProfileName = RSEPreferencesManager.getDefaultTeamProfileName();
-			if (!profileNames.contains(defaultProfileName)) {
-				ISystemProfile defaultPrivateProfile = RSEUIPlugin.getDefault().getSystemRegistry().getSystemProfileManager().getDefaultPrivateSystemProfile();
-				if (defaultPrivateProfile != null) defaultProfileName = defaultPrivateProfile.getName();
-			}
-
-			mainPage.setProfileNames(activeProfileNames);
-			// if there is no connection currently selected, default the profile to
-			// place the new connection into to be the first of:
-			// 1. the profile the last connection was created in, in this session
-			// 3. the default profile.
-			if (currentlySelectedConnection == null) {
-				if (lastProfile != null && "".equals(lastProfile)) lastProfile = null; //$NON-NLS-1$
-				if (lastProfile == null && activeProfileNames != null) {
-					if (defaultProfileName != null && profileNames.contains(defaultProfileName))
-						lastProfile = defaultProfileName;
-
-					// find the first non empty profile if any.
-					for (int i = 0; i < activeProfileNames.length && lastProfile == null; i++) {
-						if (!"".equals(activeProfileNames[i])) { //$NON-NLS-1$
-							lastProfile = activeProfileNames[i];
-						}
-					}
-				}
-
-				if (lastProfile != null)
-					mainPage.setProfileNamePreSelection(lastProfile);
-			}
+			updateDefaultSelectedProfile();
 
 			addPage(mainPage);
 		} catch (Exception exc) {
@@ -190,10 +160,63 @@ public class RSEDefaultNewConnectionWizard extends RSEAbstractNewConnectionWizar
 	}
 
 	/**
-	 * Set the currently selected connection. Used to better default entry fields.
+	 * Calculates the default profile name to propose on the default new
+	 * connection wizard main page.
+	 * 
+	 * Expected order of default profile selection:
+	 *   1. If a connection is selected, the default profile is the one from the connection.
+	 *   2. If the wizard is invoked the 1st time, the default private system profile is the
+	 *      default profile.
+	 *   3. If the wizard is invoked the 2nd time and a last profile is remembered, the last
+	 *      profile is the default profile.
+	 *   4. The first non-empty profile from the list of active profiles is the default profile.
+	 *
+	 *   In case a profile name is not in the list of currently active profiles, the logic will
+	 *   fall trough to the next lower level.
 	 */
-	public void setCurrentlySelectedConnection(IHost conn) {
-		this.currentlySelectedConnection = conn;
+	protected void updateDefaultSelectedProfile() {
+		if (mainPage == null) return;
+
+		List profileNames = activeProfileNames != null ? Arrays.asList(activeProfileNames) : new ArrayList();
+		mainPage.setProfileNames(activeProfileNames);
+		
+		// 1. If a connection is selected, the default profile is the one from the connection.
+		String defaultProfileName = selectedContext != null ? selectedContext.getSystemProfileName() : null;
+		if (defaultProfileName == null || !profileNames.contains(defaultProfileName)) {
+			// 3. If the wizard is invoked the 2nd time and a last profile is remembered, the last
+			//    profile is the default profile.
+			if (lastProfile != null && "".equals(lastProfile)) lastProfile = null; //$NON-NLS-1$
+			defaultProfileName = lastProfile;
+			if (defaultProfileName == null || !profileNames.contains(defaultProfileName)) {
+				// 2. If the wizard is invoked the 1st time, the default private system profile is the
+				//    default profile.
+				ISystemProfile defaultPrivateProfile = RSEUIPlugin.getDefault().getSystemRegistry().getSystemProfileManager().getDefaultPrivateSystemProfile();
+				if (defaultPrivateProfile != null) defaultProfileName = defaultPrivateProfile.getName();
+				if (defaultProfileName == null || !profileNames.contains(defaultProfileName)) {
+					// 4. The first non-empty profile from the list of active profiles is the default profile.
+					//    Note: The profile names get normalized within the constructor.  
+					if (activeProfileNames.length > 0) defaultProfileName = activeProfileNames[0];
+				}
+			}
+		}
+
+		// set the default profile to the page and remember it.
+		if (defaultProfileName != null) {
+			mainPage.setProfileNamePreSelection(defaultProfileName);
+			// do not update the last selected profile marker if the default profile
+			// name came for the selected context.
+			if (selectedContext == null || !defaultProfileName.equals(selectedContext.getSystemProfileName()))
+				lastProfile = defaultProfileName;
+		}
+		
+	}
+	
+	/**
+	 * Set the currently selected context. Used to better default entry fields.
+	 */
+	public void setSelectedContext(IHost selectedContext) {
+		this.selectedContext = selectedContext;
+		updateDefaultSelectedProfile();
 	}
 
 	/**

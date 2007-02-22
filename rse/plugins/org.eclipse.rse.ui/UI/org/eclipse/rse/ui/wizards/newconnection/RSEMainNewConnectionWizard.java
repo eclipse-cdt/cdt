@@ -34,6 +34,7 @@ import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.rse.core.IRSESystemType;
 import org.eclipse.rse.core.RSECorePlugin;
+import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.ui.ISystemIconConstants;
 import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemResources;
@@ -46,6 +47,8 @@ import org.eclipse.ui.IWorkbench;
  */
 public class RSEMainNewConnectionWizard extends Wizard implements INewWizard, ISelectionProvider {
 	protected static final String LAST_SELECTED_SYSTEM_TYPE_ID = "lastSelectedSystemTypeId"; //$NON-NLS-1$
+	
+	private IHost selectedContext;
 	
 	private IWizard selectedWizard;
 	private IRSESystemType selectedSystemType;
@@ -73,6 +76,7 @@ public class RSEMainNewConnectionWizard extends Wizard implements INewWizard, IS
 		if (settings.getSection(sectionName) == null) settings.addNewSection(sectionName);
 		setDialogSettings(settings.getSection(sectionName));
 		
+		selectedContext = null;
 		mainPage = new RSENewConnectionWizardSelectionPage();
 		initializedWizards.clear();
 		selectionChangedListener.clear();
@@ -87,6 +91,7 @@ public class RSEMainNewConnectionWizard extends Wizard implements INewWizard, IS
 	public void dispose() {
 		super.dispose();
 		
+		selectedContext = null;
 		selectedWizard = null;
 		selectedSystemType = null;
 		selectedWizardCanFinishEarly = false;
@@ -170,13 +175,24 @@ public class RSEMainNewConnectionWizard extends Wizard implements INewWizard, IS
 	 * @see org.eclipse.jface.viewers.ISelectionProvider#setSelection(org.eclipse.jface.viewers.ISelection)
 	 */
 	public void setSelection(ISelection selection) {
-		if (selection instanceof IStructuredSelection 
-				&& ((IStructuredSelection)selection).getFirstElement() instanceof IRSESystemType) {
-			selectedSystemType = (IRSESystemType)((IStructuredSelection)selection).getFirstElement();
-		} else {
-			selectedSystemType = null;
+		if (selection instanceof IStructuredSelection) {
+			IStructuredSelection sel = (IStructuredSelection)selection;
+			if (sel.getFirstElement() instanceof IRSESystemType) {
+				selectedSystemType = (IRSESystemType)((IStructuredSelection)selection).getFirstElement();
+			} else if (sel.getFirstElement() instanceof IHost) {
+				selectedContext = (IHost)sel.getFirstElement();
+				if (selectedContext.getSystemType() != null) {
+					String systemTypeName = selectedContext.getSystemType();
+					IRSESystemType systemType = RSECorePlugin.getDefault().getRegistry().getSystemType(systemTypeName);
+					if (systemType != null) {
+						selectedSystemType = systemType;
+					}
+				}
+			} else {
+				selectedSystemType = null;
+			}
+			onSelectedSystemTypeChanged();
 		}
-		onSelectedSystemTypeChanged();
 	}
 
 	/* (non-Javadoc)
@@ -212,6 +228,13 @@ public class RSEMainNewConnectionWizard extends Wizard implements INewWizard, IS
 		} else {
 			selectedWizard = null;
 			selectedWizardCanFinishEarly = false;
+		}
+		
+		// if the newly selected wizard is the default RSE new connection wizard
+		// and the selected context is non-null, set the selected context to the
+		// default RSE new connection wizard.
+		if (selectedWizard instanceof RSEDefaultNewConnectionWizard) {
+			((RSEDefaultNewConnectionWizard)selectedWizard).setSelectedContext(selectedContext);
 		}
 		
 		// register the newly selected wizard as selection changed listener

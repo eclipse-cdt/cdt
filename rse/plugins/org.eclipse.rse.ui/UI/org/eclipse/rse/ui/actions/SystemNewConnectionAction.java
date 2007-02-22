@@ -48,7 +48,7 @@ public class SystemNewConnectionAction extends SystemBaseWizardAction {
 	private boolean fromPopupMenu = true;
 	private ISelectionProvider sp;
 	private String[] restrictSystemTypesTo;
-	private String systemTypeFromSelectedContext;
+	private IHost selectedContext;
 
 	/**
 	 * Constructor.
@@ -105,7 +105,7 @@ public class SystemNewConnectionAction extends SystemBaseWizardAction {
 	 */
 	protected IWizard createWizard() {
 		RSEMainNewConnectionWizard newConnWizard = new RSEMainNewConnectionWizard();
-		if (!fromPopupMenu && (sp != null)) {
+		if (!fromPopupMenu && sp != null) {
 			setSelection(sp.getSelection());
 		}
 
@@ -121,8 +121,9 @@ public class SystemNewConnectionAction extends SystemBaseWizardAction {
 
 		// if there is a system type available from the current context, this system type
 		// is selected by default
-		if (systemTypeFromSelectedContext != null && RSECorePlugin.getDefault().getRegistry().getSystemType(systemTypeFromSelectedContext) != null) {
-			newConnWizard.setSelection(new StructuredSelection(RSECorePlugin.getDefault().getRegistry().getSystemType(systemTypeFromSelectedContext)));
+		if (selectedContext != null){
+			// send a selection changed event to the wizard with the selected context.
+			newConnWizard.setSelection(new StructuredSelection(selectedContext));
 		}
 		
 		return newConnWizard;
@@ -202,7 +203,7 @@ public class SystemNewConnectionAction extends SystemBaseWizardAction {
 				}
 			}
 			
-			systemTypeFromSelectedContext = conn != null ? conn.getSystemType() : null;
+			selectedContext = conn;
 		}
 		return enable;
 	}

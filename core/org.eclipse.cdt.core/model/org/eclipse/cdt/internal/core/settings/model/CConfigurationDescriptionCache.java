@@ -81,6 +81,8 @@ public class CConfigurationDescriptionCache extends CDefaultConfigurationData
 		fData = CProjectDescriptionManager.getInstance().loadData(this);
 		copySettingsFrom(fData, true);
 		
+		CProjectDescriptionManager.getInstance().reconsileBinaryParserSettings(this, true);
+		CProjectDescriptionManager.getInstance().reconsileErrorParserSettings(this, true);
 		((CBuildSettingCache)fBuildData).initEnvironmentCache();
 		ICdtVariable vars[] = CdtVariableManager.getDefault().getVariables(this);
 		fMacros = new StorableCdtVariables(vars, true);

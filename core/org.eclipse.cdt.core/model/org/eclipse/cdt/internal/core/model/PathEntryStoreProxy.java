@@ -21,6 +21,7 @@ import org.eclipse.cdt.core.resources.IPathEntryStoreListener;
 import org.eclipse.cdt.core.resources.PathEntryStoreChangedEvent;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.internal.core.settings.model.AbstractCExtensionProxy;
+import org.eclipse.cdt.internal.core.settings.model.CProjectDescriptionEvent;
 import org.eclipse.cdt.internal.core.settings.model.ConfigBasedPathEntryStore;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
@@ -131,4 +132,14 @@ public class PathEntryStoreProxy extends AbstractCExtensionProxy implements IPat
 		if(oldProvider != null)
 			fireContentChangedEvent(getProject());
 	}
+
+	protected boolean doHandleEvent(CProjectDescriptionEvent event) {
+		IPathEntryStore oldStore = fStore;
+		boolean result = super.doHandleEvent(event); 
+		if(!result)
+			postProcessProviderChange(fStore, oldStore);
+		
+		return result;
+	}
+
 }

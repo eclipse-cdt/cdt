@@ -55,7 +55,7 @@ public abstract class AbstractCExtensionProxy implements ICProjectDescriptionLis
 		return fProject;
 	}
 	
-	private void checkUpdateProvider(ICProjectDescription des, boolean recreate, boolean rescan){
+	private boolean checkUpdateProvider(ICProjectDescription des, boolean recreate, boolean rescan){
 		Object newProvider = null;
 		Object oldProvider = null;
 
@@ -108,8 +108,11 @@ public abstract class AbstractCExtensionProxy implements ICProjectDescriptionLis
 			}
 		}
 		
-		if(newProvider != null)
+		if(newProvider != null){
 			postProcessProviderChange(newProvider, oldProvider);
+			return true;
+		}
+		return false;
 	}
 	
 	protected boolean isNewStyleCfg(ICConfigurationDescription des){
@@ -138,6 +141,10 @@ public abstract class AbstractCExtensionProxy implements ICProjectDescriptionLis
 		if(!fProject.equals(event.getProject()))
 			return;
 		
+		doHandleEvent(event);
+	}
+	
+	protected boolean doHandleEvent(CProjectDescriptionEvent event){
 		boolean force = false;
 		switch(event.getEventType()){
 		case CProjectDescriptionEvent.LOADDED:
@@ -145,8 +152,10 @@ public abstract class AbstractCExtensionProxy implements ICProjectDescriptionLis
 		case CProjectDescriptionEvent.APPLIED:
 			ICProjectDescription des = event.getNewCProjectDescription();
 			if(des != null)
-				checkUpdateProvider(des, force, true);
+				return checkUpdateProvider(des, force, true);
 			break;
 		}
+		
+		return false;
 	}
 }

@@ -48,7 +48,6 @@ public class CConfigurationSpecSettings implements ICSettingsStorage{
 	private static final String OWNER_ID = "owner"; //$NON-NLS-1$
 	private static final String OLD_OWNER_ID = "id"; //$NON-NLS-1$
 
-	private final static String EMPTY_STRING = new String();
 	static final String ID = "id";	//$NON-NLS-1$
 	static final String NAME = "name";	//$NON-NLS-1$
 	private ICConfigurationDescription fCfg;
@@ -193,39 +192,39 @@ public class CConfigurationSpecSettings implements ICSettingsStorage{
 			fRefInfoMap = null;
 	}
 	
-	 private Map normalizeRefs(Map ref){
-			for(Iterator iter = ref.entrySet().iterator(); iter.hasNext();){
-				Map.Entry entry = (Map.Entry)iter.next();
-				Object projObj = entry.getKey();
-				Object cfgObj = entry.getValue();
-				if(projObj instanceof String && (cfgObj == null || cfgObj instanceof String)){
-					String proj = ((String)projObj).trim();
-					String cfg = (String)cfgObj;
-					if(cfg == null)
-						cfg = EMPTY_STRING;
-					else 
-						cfg = cfg.trim();
-					
-					if(proj.length() > 0){
-						entry.setValue(cfg);
-					} else {
-						iter.remove();
-					}
-				}
-			}
-			return ref;
-		}
+//	 private Map normalizeRefs(Map ref){
+//			for(Iterator iter = ref.entrySet().iterator(); iter.hasNext();){
+//				Map.Entry entry = (Map.Entry)iter.next();
+//				Object projObj = entry.getKey();
+//				Object cfgObj = entry.getValue();
+//				if(projObj instanceof String && (cfgObj == null || cfgObj instanceof String)){
+//					String proj = ((String)projObj).trim();
+//					String cfg = (String)cfgObj;
+//					if(cfg == null)
+//						cfg = EMPTY_STRING;
+//					else 
+//						cfg = cfg.trim();
+//					
+//					if(proj.length() > 0){
+//						entry.setValue(cfg);
+//					} else {
+//						iter.remove();
+//					}
+//				}
+//			}
+//			return ref;
+//		}
 
-	 private String[] normalizeRef(String projName, String cfgId){
-		if(projName == null || (projName = projName.trim()).length() == 0)
-			return null;
-		if(cfgId == null)
-			cfgId = EMPTY_STRING;
-		else 
-			cfgId = cfgId.trim();
-					
-		return new String[] {projName, cfgId};
-	}
+//	 private String[] normalizeRef(String projName, String cfgId){
+//		if(projName == null || (projName = projName.trim()).length() == 0)
+//			return null;
+//		if(cfgId == null)
+//			cfgId = EMPTY_STRING;
+//		else 
+//			cfgId = cfgId.trim();
+//					
+//		return new String[] {projName, cfgId};
+//	}
 
 	private ICStorageElement getSettingsStorageElement() throws CoreException{
 		if(fSettingsStorageElement == null)
@@ -485,10 +484,31 @@ public class CConfigurationSpecSettings implements ICSettingsStorage{
 	}
 	
 	public ICConfigExtensionReference[] get(String extensionPointID) {
-		CConfigExtensionReference[] refs = (CConfigExtensionReference[])getExtMap().get(extensionPointID);
+		ICConfigExtensionReference[] refs = (CConfigExtensionReference[])getExtMap().get(extensionPointID);
+		if (refs == null)
+			refs = new ICConfigExtensionReference[0];
+		
+		if(checkReconsile(extensionPointID, refs))
+			refs = (CConfigExtensionReference[])getExtMap().get(extensionPointID);
+		
 		if (refs == null)
 			return new ICConfigExtensionReference[0];
 		return (ICConfigExtensionReference[])refs.clone();
+	}
+	
+	private void reconsileExtensionSettings(){
+		get(CCorePlugin.BINARY_PARSER_UNIQ_ID);
+		get(CCorePlugin.ERROR_PARSER_UNIQ_ID);
+	}
+	
+	private boolean checkReconsile(String extPointId, ICConfigExtensionReference refs[]){
+		if(!(((IInternalCCfgInfo)fCfg).getConfigurationData(false) instanceof CConfigurationDescriptionCache)){
+			if(CCorePlugin.BINARY_PARSER_UNIQ_ID.equals(extPointId))
+				return CProjectDescriptionManager.getInstance().reconsileBinaryParserExtRefs(fCfg, refs);
+			else if(CCorePlugin.ERROR_PARSER_UNIQ_ID.equals(extPointId))
+				return CProjectDescriptionManager.getInstance().reconsileErrorParserExtRefs(fCfg, refs);
+		}
+		return false;
 	}
 
 //	synchronized private ICConfigExtensionReference[] get(String extensionID, boolean update) throws CoreException {
@@ -710,6 +730,7 @@ public class CConfigurationSpecSettings implements ICSettingsStorage{
 	}
 	
 	private void copyExtensionInfo(CConfigurationSpecSettings other){
+		other.reconsileExtensionSettings();
 		if(other.fExtMap != null && other.fExtMap.size() != 0){
 			fExtMap = (HashMap)other.fExtMap.clone();
 			for(Iterator iter = fExtMap.entrySet().iterator(); iter.hasNext();){

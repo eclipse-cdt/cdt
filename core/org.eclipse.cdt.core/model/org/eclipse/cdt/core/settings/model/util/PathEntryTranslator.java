@@ -712,7 +712,7 @@ public class PathEntryTranslator {
 		private IProject fProject;
 
 		PathEntryComposer(String projName, IProject project){
-			this(new Path(projName), project);
+			this(new Path(projName).makeAbsolute(), project);
 		}
 
 		PathEntryComposer(IPath path, IProject project){
@@ -909,13 +909,13 @@ public class PathEntryTranslator {
 			
 			if(addedThisSet.size() != 0){
 				Map map = getEntriesMap(kind, true);
-
+				IPath fullPath = fProject.getFullPath().append(path);
 				for(int i = 0; i < entries.length; i++){
 					if(!addedThisSet.remove(entries[i]))
 						continue;
 
 					ICLanguageSettingEntry entry = entries[i];
-					map.put(entry, new PathEntryComposer(path, entry, exportedEntries.contains(entry), fProject));
+					map.put(entry, new PathEntryComposer(fullPath, entry, exportedEntries.contains(entry), fProject));
 				}
 			}
 		}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005 QnX Software Systems and others.
+ * Copyright (c) 2005, 2007 QnX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -41,7 +41,7 @@ public class PathEntryStoreChangedOperation extends CModelOperation {
 		// Clear the old cache entries.
 		IPathEntry[] oldResolvedEntries = manager.removeCachedResolvedPathEntries(cproject);
 		IPathEntry[] newResolvedEntries = manager.getResolvedPathEntries(cproject);
-		if(needDelta(cproject.getProject())){
+//		if(needDelta(cproject.getProject())){
 			ICElementDelta[] deltas = manager.generatePathEntryDeltas(cproject, oldResolvedEntries, newResolvedEntries);
 			if (deltas.length > 0) {
 				cproject.close();
@@ -49,16 +49,6 @@ public class PathEntryStoreChangedOperation extends CModelOperation {
 					addDelta(deltas[i]);
 				}
 			}
-		}
+//		}
 	}
-	
-	private boolean needDelta(IProject project){
-		try {
-			PathEntryStoreProxy store = (PathEntryStoreProxy)PathEntryManager.getDefault().getPathEntryStore(project, false);
-			return !(store.getStore() instanceof ConfigBasedPathEntryStore);
-		} catch (CoreException e) {
-		}
-		return false;
-	}
-
 }

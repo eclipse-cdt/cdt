@@ -25,11 +25,20 @@ public class SetPathEntryContainerOperation extends CModelOperation {
 	IPathEntryContainer newContainer;
 	ICProject[] affectedProjects;
 	PathEntryManager fPathEntryManager;
+	IPath containerPath;
 
 	public SetPathEntryContainerOperation(ICProject[] affectedProjects, IPathEntryContainer newContainer) {
 		super(affectedProjects);
 		this.affectedProjects = affectedProjects;
 		this.newContainer = newContainer;
+		this.containerPath = (newContainer == null) ? new Path("") : newContainer.getPath(); //$NON-NLS-1$
+		fPathEntryManager = PathEntryManager.getDefault();
+	}
+
+	public SetPathEntryContainerOperation(ICProject[] affectedProjects, IPath containerPath) {
+		super(affectedProjects);
+		this.affectedProjects = affectedProjects;
+		this.containerPath = containerPath;
 		fPathEntryManager = PathEntryManager.getDefault();
 	}
 
@@ -45,7 +54,7 @@ public class SetPathEntryContainerOperation extends CModelOperation {
 			return;
 		}
 		
-		IPath containerPath = (newContainer == null) ? new Path("") : newContainer.getPath(); //$NON-NLS-1$
+//		IPath containerPath = (newContainer == null) ? new Path("") : newContainer.getPath(); //$NON-NLS-1$
 		final int projectLength = affectedProjects.length;
 		final ICProject[] modifiedProjects = new ICProject[projectLength];
 		System.arraycopy(affectedProjects, 0, modifiedProjects, 0, projectLength);
@@ -69,7 +78,7 @@ public class SetPathEntryContainerOperation extends CModelOperation {
 					}
 				}
 			}
-			if (!found) {
+			if (!found || newContainer == null) {
 				// filter out this project - does not reference the container
 				// path
 				modifiedProjects[i] = null;
@@ -77,6 +86,7 @@ public class SetPathEntryContainerOperation extends CModelOperation {
 				fPathEntryManager.containerPut(affectedProject, containerPath, newContainer);
 				continue;
 			}
+			
 			IPathEntryContainer oldContainer = fPathEntryManager.containerGet(affectedProject, containerPath, true);
 			if (oldContainer != null && newContainer != null && oldContainer.equals(newContainer)) {
 				modifiedProjects[i] = null; // filter out this project -

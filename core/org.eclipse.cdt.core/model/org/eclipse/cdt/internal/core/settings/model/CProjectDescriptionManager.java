@@ -47,6 +47,8 @@ import org.eclipse.cdt.core.model.ICElementDelta;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.ILanguageDescriptor;
 import org.eclipse.cdt.core.model.LanguageManager;
+import org.eclipse.cdt.core.settings.model.ICBuildSetting;
+import org.eclipse.cdt.core.settings.model.ICConfigExtensionReference;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICFileDescription;
 import org.eclipse.cdt.core.settings.model.ICFolderDescription;
@@ -587,6 +589,7 @@ public class CProjectDescriptionManager {
 		try {
 			project.setSessionProperty(PROJECT_DESCRCIPTION_PROPERTY, holder);
 		} catch (CoreException e){
+			CCorePlugin.log(e);
 			//TODO: externalize
 			final ProjectInfoHolder f = holder; 
 			Job setDesJob = new Job("Set loadded description job"){ 	//$NON-NLS-1$
@@ -783,6 +786,100 @@ public class CProjectDescriptionManager {
 		ISafeRunnable r = new DesSerializationRunnable(des, element);
 		return r;
 	}
+	
+	void reconsileBinaryParserSettings(ICConfigurationDescription cfgDes, boolean toExtensionRefs){
+		if(toExtensionRefs)
+			reconsileBinaryParserExtRefs(cfgDes, null);
+		else {
+			ICTargetPlatformSetting tp = cfgDes.getTargetPlatformSetting();
+			if(tp != null){
+					String ids[] = getIds(cfgDes, CCorePlugin.BINARY_PARSER_UNIQ_ID);
+					tp.setBinaryParserIds(ids);
+			}
+		}
+	}
+
+	void reconsileErrorParserSettings(ICConfigurationDescription cfgDes, boolean toExtensionRefs){
+		if(toExtensionRefs)
+			reconsileErrorParserExtRefs(cfgDes, null);
+		else {
+			ICBuildSetting bs = cfgDes.getBuildSetting();
+			if(bs != null){
+				String ids[] = getIds(cfgDes, CCorePlugin.ERROR_PARSER_UNIQ_ID);
+				bs.setErrorParserIDs(ids);
+			}
+		}
+	}
+	
+	boolean reconsileBinaryParserExtRefs(ICConfigurationDescription cfgDes, ICConfigExtensionReference refs[]){
+		ICTargetPlatformSetting tp = cfgDes.getTargetPlatformSetting();
+		if(tp != null){
+			String ids[] = tp.getBinaryParserIds();
+			if(ids != null){
+				return reconsileExtensionReferences(cfgDes, CCorePlugin.BINARY_PARSER_UNIQ_ID, refs, ids);
+			}
+		}
+		return false;
+	}
+
+	boolean reconsileErrorParserExtRefs(ICConfigurationDescription cfgDes, ICConfigExtensionReference refs[]){
+		ICBuildSetting bs = cfgDes.getBuildSetting();
+		if(bs != null){
+			String ids[] = bs.getErrorParserIDs();
+			if(ids != null){
+				return reconsileExtensionReferences(cfgDes, CCorePlugin.ERROR_PARSER_UNIQ_ID, refs, ids);  	//$NON-NLS-1$
+			}
+		}
+		
+		return false;
+	}
+
+	private String[] getIds(ICConfigurationDescription des, String extPointId){
+		return getIds(des.get(extPointId));
+	}
+
+	private String[] getIds(ICConfigExtensionReference refs[]){
+		String[] ids = new String[refs.length];
+		for(int i = 0; i < refs.length; i++){
+			ids[i] = refs[i].getID();
+		}
+		return ids;
+	}
+
+	boolean reconsileExtensionReferences(ICConfigurationDescription des, String extPointId, String[] extIds){
+		return reconsileExtensionReferences(des, extPointId, null, extIds);
+	}
+
+	boolean reconsileExtensionReferences(ICConfigurationDescription des, String extPointId, ICConfigExtensionReference refs[], String[] extIds){
+		boolean modified = false;
+		if(refs == null)
+			refs = des.get(extPointId);
+		Set idSet = new HashSet(Arrays.asList(extIds)); 
+		for(int i = 0; i < refs.length; i++){
+			if(!idSet.remove(refs[i].getID())){
+				try {
+					des.remove(refs[i]);
+					modified = true;
+				} catch (CoreException e) {
+					CCorePlugin.log(e);
+				}
+			}
+		}
+		
+		if(idSet.size() != 0){
+			for(Iterator iter = idSet.iterator(); iter.hasNext();){
+				String id = (String)iter.next();
+				try {
+					des.create(extPointId, id);
+					modified = true;
+				} catch (CoreException e) {
+					CCorePlugin.log(e);
+				}
+			}
+		}
+		return modified;
+	}
+
 	void serialize(final CProjectDescription des) throws CoreException{
 		ISafeRunnable r = createDesSerializationRunnable(des);
 		runWspModification(r, new NullProgressMonitor());
@@ -2305,7 +2402,7 @@ public class CProjectDescriptionManager {
 			try {
 				des = loadPreference(buildSystemId);
 			} catch (CoreException e) {
-				CCorePlugin.log(e);
+	//			CCorePlugin.log(e);
 			}
 			
 			if(des == null){

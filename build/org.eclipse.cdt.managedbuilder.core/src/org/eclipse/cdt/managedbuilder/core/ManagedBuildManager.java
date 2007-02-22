@@ -2439,6 +2439,7 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 		try {
 			setLoaddedBuildInfo(proj, buildInfo);
 		} catch (CoreException e) {
+			ManagedBuilderCorePlugin.log(e);
 			buildInfo = null;
 		}
 		return buildInfo;

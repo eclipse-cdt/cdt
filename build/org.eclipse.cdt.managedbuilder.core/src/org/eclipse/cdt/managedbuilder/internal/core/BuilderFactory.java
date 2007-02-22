@@ -274,6 +274,8 @@ public class BuilderFactory {
 
 	private static IBuilder createBuilder(IConfiguration cfg, Map args){
 		IToolChain tCh = cfg.getToolChain();
+		if(args.get(IBuilder.ID) == null)
+			args.put(IBuilder.ID, ManagedBuildManager.calculateChildId(cfg.getId(), null));
 		MapStorageElement el = new BuildArgsStorageElement(args, null);
 		Builder builder = new Builder(tCh, el, ManagedBuildManager.getVersion().toString());
 		return builder;

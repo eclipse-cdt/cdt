@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 QNX Software Systems and others.
+ * Copyright (c) 2000, 2007 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -52,6 +52,7 @@ import org.eclipse.cdt.core.resources.IPathEntryStoreListener;
 import org.eclipse.cdt.core.resources.PathEntryStoreChangedEvent;
 import org.eclipse.cdt.core.settings.model.util.PathEntryResolveInfo;
 import org.eclipse.cdt.core.settings.model.util.PathEntryResolveInfoElement;
+import org.eclipse.cdt.internal.core.settings.model.ConfigBasedPathEntryStore;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -623,6 +624,13 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 		op.runOperation(monitor);
 	}
 
+	public void clearPathEntryContainer(ICProject[] affectedProjects, IPath containerPath , IProgressMonitor monitor)
+		throws CModelException {
+
+		SetPathEntryContainerOperation op = new SetPathEntryContainerOperation(affectedProjects, containerPath);
+		op.runOperation(monitor);
+	}
+
 	public synchronized IPathEntryContainer[] getPathEntryContainers(ICProject cproject) {
 		IPathEntryContainer[] pcs = NO_PATHENTRYCONTAINERS;
 		Map projectContainers = (Map)Containers.get(cproject);
@@ -971,8 +979,20 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 		markerTask.setRule(rule);
 		markerTask.schedule();
 	}
+	
+	private boolean needDelta(ICProject cproject){
+		try {
+			PathEntryStoreProxy store = (PathEntryStoreProxy)getPathEntryStore(cproject.getProject(), false);
+			return store == null || !(store.getStore() instanceof ConfigBasedPathEntryStore);
+		} catch (CoreException e) {
+		}
+		return false;
+	}
 
 	public ICElementDelta[] generatePathEntryDeltas(ICProject cproject, IPathEntry[] oldEntries, IPathEntry[] newEntries) {
+		if(!needDelta(cproject))
+			return new ICElementDelta[0];
+
 		ArrayList list = new ArrayList();
 
 		// if nothing was known before do not generate any deltas.

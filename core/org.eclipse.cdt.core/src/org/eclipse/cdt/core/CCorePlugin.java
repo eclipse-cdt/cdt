@@ -97,6 +97,7 @@ public class CCorePlugin extends Plugin {
 	public static final String DEFAULT_INDEXER = PDOMFastIndexer.ID;
 	
 	public final static String ERROR_PARSER_SIMPLE_ID = "ErrorParser"; //$NON-NLS-1$
+	public final static String ERROR_PARSER_UNIQ_ID = PLUGIN_ID + "." + ERROR_PARSER_SIMPLE_ID; //$NON-NLS-1$
 
 	// default store for pathentry
 	public final static String DEFAULT_PATHENTRY_STORE_ID = PLUGIN_ID + ".cdtPathEntryStore"; //$NON-NLS-1$

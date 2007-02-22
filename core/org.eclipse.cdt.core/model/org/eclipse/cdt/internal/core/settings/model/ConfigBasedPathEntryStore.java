@@ -11,13 +11,16 @@
 package org.eclipse.cdt.internal.core.settings.model;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.ICExtensionReference;
+import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.CoreModel;
+import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.IPathEntry;
 import org.eclipse.cdt.core.resources.IPathEntryStore;
 import org.eclipse.cdt.core.resources.IPathEntryStoreListener;
@@ -29,8 +32,11 @@ import org.eclipse.cdt.core.settings.model.extension.CConfigurationData;
 import org.eclipse.cdt.core.settings.model.util.PathEntryTranslator;
 import org.eclipse.cdt.core.settings.model.util.PathEntryTranslator.PathEntryCollector;
 import org.eclipse.cdt.core.settings.model.util.PathEntryTranslator.ReferenceSettingsInfo;
+import org.eclipse.cdt.internal.core.model.CModelManager;
+import org.eclipse.cdt.internal.core.model.PathEntryManager;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.QualifiedName;
 
 public class ConfigBasedPathEntryStore implements IPathEntryStore, ICProjectDescriptionListener {
@@ -143,13 +149,37 @@ public class ConfigBasedPathEntryStore implements IPathEntryStore, ICProjectDesc
 		switch(event.getEventType()){
 			case CProjectDescriptionEvent.APPLIED:{
 				CProjectDescription des = (CProjectDescription)event.getNewCProjectDescription();
+				CProjectDescription oldDes = (CProjectDescription)event.getOldCProjectDescription();
+				IPathEntry oldCrEntries[] = null;
+				if(oldDes != null){
+					ICConfigurationDescription oldIndexCfg = oldDes.getIndexConfiguration();
+					PathEntryCollector oldCr = getCachedCollector(oldIndexCfg);
+					if(oldCr != null)
+						oldCrEntries = oldCr.getEntries(PathEntryTranslator.INCLUDE_BUILT_INS);
+				}
 				if(des != null){
 					//TODO: smart delta handling
 					ICConfigurationDescription[] cfgDess = des.getConfigurations();
 					for(int i = 0; i < cfgDess.length; i++){
 						setCachedCollector(cfgDess[i], null);
 					}
-//					ICConfigurationDescription cfgDes = des.getIndexConfiguration();
+					
+					if(oldCrEntries != null){
+						PathEntryCollector newCr = getCollector(des);
+						IPathEntry[] newCrEntries = newCr.getEntries(PathEntryTranslator.INCLUDE_BUILT_INS);
+						if(!Arrays.equals(oldCrEntries, newCrEntries)){
+							CModelManager manager = CModelManager.getDefault();
+							ICProject cproject = manager.create(project);
+							
+
+				//			ConfigBasedPathEntryContainer newContainer = createContainer(des);
+							try {
+								PathEntryManager.getDefault().clearPathEntryContainer(new ICProject[]{cproject}, ConfigBasedPathEntryContainer.CONTAINER_PATH, new NullProgressMonitor());
+							} catch (CModelException e) {
+								CCorePlugin.log(e);
+							}
+						}
+					}
 				}
 				fireContentChangedEvent(fProject);
 				break;
@@ -186,10 +216,26 @@ public class ConfigBasedPathEntryStore implements IPathEntryStore, ICProjectDesc
 	}
 	
 	public static IPathEntry[] getContainerEntries(IProject project){
-		PathEntryCollector cr = getCollector(project);
+		ICProjectDescription des = CCorePlugin.getDefault().getProjectDescription(project, false);
+		if(des != null)
+			return getContainerEntries(des);
+		return new IPathEntry[0];
+	}
+
+	public static IPathEntry[] getContainerEntries(ICProjectDescription des){
+		PathEntryCollector cr = getCollector(des);
 		if(cr != null)
 			return cr.getEntries(PathEntryTranslator.INCLUDE_BUILT_INS);
 		return new IPathEntry[0];
 	}
 
+	public static ConfigBasedPathEntryContainer createContainer(IProject project){
+		IPathEntry[] entries = getContainerEntries(project);
+		return new ConfigBasedPathEntryContainer(entries);
+	}
+
+	public static ConfigBasedPathEntryContainer createContainer(ICProjectDescription des){
+		IPathEntry[] entries = getContainerEntries(des);
+		return new ConfigBasedPathEntryContainer(entries);
+	}
 }

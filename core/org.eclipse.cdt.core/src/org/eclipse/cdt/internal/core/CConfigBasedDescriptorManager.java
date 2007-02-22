@@ -322,12 +322,12 @@ public class CConfigBasedDescriptorManager implements ICDescriptorManager {
 					dr = findDescriptor(newDes);
 					updatedCfg = newDes.getIndexConfiguration();
 					if(dr != null){
-						desEvent = new CDescriptorEvent(dr, CDescriptorEvent.CDTPROJECT_ADDED, 0);
+						desEvent = new CDescriptorEvent(dr, CDescriptorEvent.CDTPROJECT_ADDED, CDescriptorEvent.EXTENSION_CHANGED | CDescriptorEvent.OWNER_CHANGED);
 					}
 				} else if(newDes == null) {
 					dr = findDescriptor(oldDes);
 					if(dr != null){
-						desEvent = new CDescriptorEvent(dr, CDescriptorEvent.CDTPROJECT_REMOVED, 0);
+						desEvent = new CDescriptorEvent(dr, CDescriptorEvent.CDTPROJECT_REMOVED, CDescriptorEvent.EXTENSION_CHANGED | CDescriptorEvent.OWNER_CHANGED);
 					}
 				} else {
 					dr = findDescriptor(newDes);

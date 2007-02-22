@@ -16,6 +16,7 @@
 
 package org.eclipse.rse.shells.ui.actions;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.Iterator;
 
 import org.eclipse.core.runtime.IAdaptable;
@@ -26,7 +27,9 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.window.Window;
 import org.eclipse.rse.core.filters.ISystemFilterReference;
 import org.eclipse.rse.core.model.IHost;
+import org.eclipse.rse.core.model.ISystemRegistry;
 import org.eclipse.rse.core.subsystems.ISubSystem;
+import org.eclipse.rse.core.subsystems.SubSystem;
 import org.eclipse.rse.services.clientserver.PathUtility;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.shells.ui.RemoteCommandHelpers;
@@ -41,6 +44,8 @@ import org.eclipse.rse.ui.ISystemMessages;
 import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.actions.SystemBaseAction;
 import org.eclipse.rse.ui.dialogs.SystemPromptDialog;
+import org.eclipse.rse.ui.operations.SystemFetchOperation.PromptForPassword;
+import org.eclipse.rse.ui.operations.SystemFetchOperation.UpdateRegistry;
 import org.eclipse.rse.ui.view.ISystemViewElementAdapter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
@@ -51,6 +56,7 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 
@@ -61,6 +67,43 @@ import org.eclipse.swt.widgets.Shell;
  */
 public class SystemCommandAction extends SystemBaseAction
 {
+	
+	public class PromptForPassword implements Runnable
+	{
+		public SubSystem _ss;
+		public PromptForPassword(SubSystem ss)
+		{
+			_ss = ss;
+		}
+		
+		public void run()
+		{
+			try
+			{
+				_ss.promptForPassword();
+			}
+			catch (Exception e)
+			{
+				
+			}
+		}
+	}
+	
+	public class UpdateRegistry implements Runnable
+	{
+		private SubSystem _ss;
+		public UpdateRegistry(SubSystem ss)
+		{
+			_ss = ss;
+		}
+		
+		public void run()
+		{
+			ISystemRegistry registry = RSEUIPlugin.getTheSystemRegistry();
+			registry.connectedStatusChange(_ss, true, false);
+		}
+	}
+	
 	private IRemoteFile _selected;
 	private ISystemFilterReference _selectedFilterRef;
 	
@@ -68,6 +111,7 @@ public class SystemCommandAction extends SystemBaseAction
 	private boolean _isShell;
 	private IRemoteCmdSubSystem _cmdSubSystem;
 
+	
 
 	/**
 	 * The command dialog used when running a command. 
@@ -492,7 +536,7 @@ public class SystemCommandAction extends SystemBaseAction
 				}
 				else
 				{
-					cmdSubSystem.connect();
+					connect(new NullProgressMonitor(), (SubSystem)cmdSubSystem);
 					if (cmdSubSystem.isConnected())
 					{
 						SystemCommandsUI commandsUI = SystemCommandsUI.getInstance();
@@ -511,6 +555,29 @@ public class SystemCommandAction extends SystemBaseAction
 			//	RSEUIPlugin.getDefault().logInfo("Exception invoking command " + cmd + " on " + sysConn.getAliasName());
 		}
 
+	}
+	
+	private boolean connect(IProgressMonitor monitor, SubSystem ss)
+	{
+		if (!ss.isConnected())
+		{
+			
+			Display dis = Display.getDefault();
+			dis.syncExec(new PromptForPassword(ss));
+			try
+			{
+				ss.getConnectorService().connect(monitor);
+			}
+			catch (InvocationTargetException exc)
+			{
+			}
+			catch (Exception e)
+			{
+			}
+			
+			dis.asyncExec(new UpdateRegistry(ss));			
+		}
+		return true;
 	}
 
 	/**

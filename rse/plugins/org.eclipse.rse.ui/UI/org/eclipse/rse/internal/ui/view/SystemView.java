@@ -4362,7 +4362,7 @@ public class SystemView extends SafeTreeViewer implements ISystemTree, ISystemRe
 				element = elements.next();
 				//multiSource[idx++] = element;
 				adapter = getAdapter(element);
-				if (getAdapter(element) != null) continue;
+				if (getRemoteAdapter(element) != null) continue;
 				ok = adapter.doDelete(getShell(), element, monitor);
 				if (ok) {
 					anyOk = true;

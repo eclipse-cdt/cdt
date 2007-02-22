@@ -133,7 +133,7 @@ public class SystemTableView
 	{
 		public Object getValue(Object element, String property)
 		{
-			ISystemViewElementAdapter adapter = getAdapter(element);
+			ISystemViewElementAdapter adapter = getViewAdapter(element);
 			adapter.setPropertySourceInput(element);
 			Object value = adapter.getPropertyValue(property);
 			if (value == null)
@@ -154,7 +154,7 @@ public class SystemTableView
 			if (element instanceof TableItem && value != null)
 			{
 				Object obj = ((TableItem) element).getData();
-				ISystemViewElementAdapter adapter = getAdapter(obj);
+				ISystemViewElementAdapter adapter = getViewAdapter(obj);
 				if (adapter != null)
 				{
 					adapter.setPropertyValue(property, value);
@@ -427,7 +427,7 @@ public class SystemTableView
 	/**
 	 * Convenience method for retrieving the view adapter for an object 
 	 */
-	protected ISystemViewElementAdapter getAdapter(Object obj)
+	protected ISystemViewElementAdapter getViewAdapter(Object obj)
 	{
 		ISystemViewElementAdapter adapter = SystemAdapterHelpers.getAdapter(obj, this);
 		if (adapter != null)
@@ -445,7 +445,7 @@ public class SystemTableView
 		if (children != null && children.length > 0)
 		{
 			IAdaptable child = (IAdaptable) children[0];
-			return getAdapter(child);
+			return getViewAdapter(child);
 		}
 		return null;
 	}
@@ -465,7 +465,7 @@ public class SystemTableView
 			if (children != null && children.length > 0)
 			{
 				IAdaptable child = (IAdaptable) children[0];
-				return getCustomDescriptors(getAdapter(child));
+				return getCustomDescriptors(getViewAdapter(child));
 			}
 
 			return new IPropertyDescriptor[0];
@@ -488,7 +488,7 @@ public class SystemTableView
 			if (children != null && children.length > 0)
 			{
 				IAdaptable child = (IAdaptable) children[0];
-				return getAdapter(child).getPropertyDescriptors()[0];
+				return getViewAdapter(child).getPropertyDescriptors()[0];
 			}
 
 			return null;
@@ -1038,7 +1038,7 @@ public class SystemTableView
 					{
 						Object dchild = remoteResource;
 
-						ISystemViewElementAdapter dadapt = getAdapter(dchild);
+						ISystemViewElementAdapter dadapt = getViewAdapter(dchild);
 						if (dadapt != null)
 						{
 							ISubSystem dSubSystem = dadapt.getSubSystem(dchild);
@@ -1052,7 +1052,7 @@ public class SystemTableView
 									Object existingChild = children[i];
 									if (existingChild != null)
 									{
-										ISystemViewElementAdapter eadapt = getAdapter(existingChild);
+										ISystemViewElementAdapter eadapt = getViewAdapter(existingChild);
 										ISubSystem eSubSystem = eadapt.getSubSystem(existingChild);
 
 										if (dSubSystem == eSubSystem)
@@ -1114,7 +1114,7 @@ public class SystemTableView
 								}
 								else
 								{
-									String previousName = getAdapter(previousResult).getAbsoluteName(previousResult);
+									String previousName = getViewAdapter(previousResult).getAbsoluteName(previousResult);
 
 									if (previousName != null && previousName.equals(oldName))
 									{
@@ -1165,7 +1165,7 @@ public class SystemTableView
 			remoteResourceName = (String) remoteResource;
 		else
 		{
-			IRemoteObjectIdentifier ra = getAdapter(remoteResource);
+			IRemoteObjectIdentifier ra = getViewAdapter(remoteResource);
 			if (ra == null)
 				return null;
 			remoteResourceName = ra.getAbsoluteName(remoteResource);
@@ -1181,7 +1181,7 @@ public class SystemTableView
 		  return;
 		
 		_selectionFlagsUpdated = false;
-		ISystemViewElementAdapter adapter = getAdapter(firstSelection);
+		ISystemViewElementAdapter adapter = getViewAdapter(firstSelection);
 		if (adapter != null)
 		{
 		   displayMessage(adapter.getStatusLineText(firstSelection));
@@ -1422,7 +1422,7 @@ public class SystemTableView
 			{
 				element = elements.next();
 				//multiSource[idx++] = element;
-				adapter = getAdapter(element);
+				adapter = getViewAdapter(element);
 				ok = adapter.doDelete(getShell(), element, monitor);
 				if (ok)
 				{
@@ -1511,10 +1511,10 @@ public class SystemTableView
 			while (ok && elements.hasNext())
 			{
 				element = elements.next();
-				adapter = getAdapter(element);
+				adapter = getViewAdapter(element);
 				Object parentElement = getParentForContent(element);
 
-				remoteAdapter = getAdapter(element);
+				remoteAdapter = getViewAdapter(element);
 				if (remoteAdapter != null)
 					oldFullName = remoteAdapter.getAbsoluteName(element);
 				// pre-rename
@@ -1665,7 +1665,7 @@ public class SystemTableView
 			while (elements.hasNext())
 			{
 				Object element = elements.next();
-				ISystemViewElementAdapter adapter = getAdapter(element);
+				ISystemViewElementAdapter adapter = getViewAdapter(element);
 				adapters.put(adapter, element); // want only unique adapters
 			}
 			Enumeration uniqueAdapters = adapters.keys();
@@ -1774,7 +1774,7 @@ public class SystemTableView
 		while (elements.hasNext())
 		{
 			Object element = elements.next();
-			ISystemViewElementAdapter adapter = getAdapter(element);
+			ISystemViewElementAdapter adapter = getViewAdapter(element);
 
 			if (_selectionShowRefreshAction)
 				_selectionShowRefreshAction = adapter.showRefresh(element);
@@ -1812,7 +1812,7 @@ public class SystemTableView
 			Object data = item.getData();
 			if (data instanceof IAdaptable)
 			{
-				ISystemViewElementAdapter adapter = getAdapter(data);
+				ISystemViewElementAdapter adapter = getViewAdapter(data);
 				String itemName = adapter.getName(data);
 
 				if (StringCompare.compare(name, itemName, false))

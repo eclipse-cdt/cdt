@@ -33,6 +33,7 @@ import org.eclipse.rse.core.model.IRSEModelObject;
 import org.eclipse.rse.core.model.ISystemProfile;
 import org.eclipse.rse.core.model.ISystemRegistry;
 import org.eclipse.rse.core.subsystems.IConnectorService;
+import org.eclipse.rse.core.subsystems.IDelegatingConnectorService;
 import org.eclipse.rse.core.subsystems.IServerLauncherProperties;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.persistence.dom.IRSEDOMConstants;
@@ -295,7 +296,10 @@ public class RSEDOMExporter implements IRSEDOMExporter {
 		IConnectorService[] connectorServices = host.getConnectorServices();
 		for (int i = 0; i < connectorServices.length; i++) {
 			IConnectorService service = connectorServices[i];
-			createNode(node, service, clean);
+			if (!(service instanceof IDelegatingConnectorService)) // don't persist delegated ones
+			{
+				createNode(node, service, clean);
+			}
 		}
 
 		createPropertySetNodes(node, host, clean);

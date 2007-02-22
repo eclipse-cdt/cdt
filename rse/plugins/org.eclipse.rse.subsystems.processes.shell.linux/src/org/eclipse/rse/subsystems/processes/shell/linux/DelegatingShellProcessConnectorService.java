@@ -16,26 +16,42 @@ package org.eclipse.rse.subsystems.processes.shell.linux;
 import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.subsystems.AbstractDelegatingConnectorService;
 import org.eclipse.rse.core.subsystems.IConnectorService;
+import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.internal.subsystems.processes.shell.linux.Activator;
+import org.eclipse.rse.subsystems.processes.servicesubsystem.IProcessServiceSubSystem;
 import org.eclipse.rse.subsystems.shells.core.subsystems.servicesubsystem.IShellServiceSubSystem;
 
 public class DelegatingShellProcessConnectorService extends AbstractDelegatingConnectorService 
 {
-
-	public DelegatingShellProcessConnectorService(IHost host) {
+	private IConnectorService _realService;
+	private ISubSystem _subSystem;
+	public DelegatingShellProcessConnectorService(IHost host) 
+	{
 		super(host);
 	}
 
 	public IConnectorService getRealConnectorService()
 	{
-		IShellServiceSubSystem ss = Activator.getShellServiceSubSystem(getHost());
-		if (ss != null)
+		if (_realService != null)
 		{
-			return ss.getConnectorService();
+			return _realService;
 		}
 		else
 		{
-			return null;
+			IShellServiceSubSystem ss = Activator.getShellServiceSubSystem(getHost());
+			if (ss != null)
+			{
+				_realService = ss.getConnectorService();
+				
+				// register the process subsystem
+				IProcessServiceSubSystem ps = Activator.getProcessServiceSubSystem(getHost());
+				_realService.registerSubSystem(ps);
+				return _realService;
+			}
+			else
+			{
+				return null;
+			}
 		}
 	}
 

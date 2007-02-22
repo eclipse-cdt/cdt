@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,8 +11,14 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui;
 
+import java.io.File;
+
+import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IWorkspaceRoot;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.ui.IElementFactory;
 import org.eclipse.ui.IMemento;
@@ -35,6 +41,7 @@ public class PersistableCElementFactory implements IElementFactory, IPersistable
     // These persistence constants are stored in XML.  Do not
     // change them.
     private static final String TAG_PATH = "path";//$NON-NLS-1$
+    private static final String TAG_TYPE = "type";//$NON-NLS-1$
 
     private static final String FACTORY_ID = "org.eclipse.cdt.ui.PersistableCElementFactory";//$NON-NLS-1$
 
@@ -66,14 +73,42 @@ public class PersistableCElementFactory implements IElementFactory, IPersistable
 			return null;
 		}
 
-        fCElement = CoreModel.getDefault().create(new Path(fileName));
+        IPath elementPath= new Path(fileName);
+        fCElement = CoreModel.getDefault().create(elementPath);
         if (fCElement != null && fCElement.getResource() != null) {
         	IResource resource= fCElement.getResource();
         	if (!resource.isAccessible()) {
         		return resource;
         	}
         }
-        return fCElement;
+        if (fCElement != null) {
+        	return fCElement;
+        }
+        
+        final IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
+        Integer elementType= memento.getInteger(TAG_TYPE);
+		if (elementType == null) {
+			if (elementPath.segmentCount() == 1) {
+				return root.getProject(fileName);
+			}
+        	IFolder folder= root.getFolder(elementPath);
+        	File osFile= folder.getLocation().toFile();
+        	if (osFile.isDirectory()) {
+        		return folder;
+        	}
+        	return root.getFile(elementPath);
+        }
+		switch (elementType.intValue()) {
+		case IResource.ROOT:
+			return root;
+		case IResource.PROJECT:
+			return root.getProject(fileName);
+		case IResource.FOLDER:
+			return root.getFolder(elementPath);
+		case IResource.FILE:
+			return root.getFile(elementPath);
+		}
+        return null;
     }
 
     /**
@@ -89,6 +124,7 @@ public class PersistableCElementFactory implements IElementFactory, IPersistable
     public void saveState(IMemento memento) {
     	if (fCElement.getResource() != null) {
 	        memento.putString(TAG_PATH, fCElement.getResource().getFullPath().toString());
+	        memento.putInteger(TAG_TYPE, fCElement.getResource().getType());
     	}
     }
 }

@@ -46,6 +46,7 @@ import org.eclipse.jface.text.reconciler.IReconciler;
 import org.eclipse.jface.text.reconciler.MonoReconciler;
 import org.eclipse.jface.text.rules.DefaultDamagerRepairer;
 import org.eclipse.jface.text.rules.RuleBasedScanner;
+import org.eclipse.jface.text.source.Annotation;
 import org.eclipse.jface.text.source.IAnnotationHover;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.text.source.SourceViewerConfiguration;
@@ -523,7 +524,11 @@ public class CSourceViewerConfiguration extends TextSourceViewerConfiguration {
 	 * @see SourceViewerConfiguration#getAnnotationHover(ISourceViewer)
 	 */
 	public IAnnotationHover getAnnotationHover(ISourceViewer sourceViewer) {
-		return new CAnnotationHover();
+		return new HTMLAnnotationHover() {
+			protected boolean isIncluded(Annotation annotation) {
+				return isShowInVerticalRuler(annotation);
+			}
+		};
 	}
 
 	/*

@@ -35,26 +35,15 @@ import org.eclipse.jface.text.TextUtilities;
 import org.eclipse.jface.text.source.Annotation;
 import org.eclipse.jface.text.source.AnnotationModel;
 import org.eclipse.jface.text.source.AnnotationModelEvent;
-import org.eclipse.jface.text.source.IAnnotationAccessExtension;
 import org.eclipse.jface.text.source.IAnnotationModel;
 import org.eclipse.jface.text.source.IAnnotationModelListener;
 import org.eclipse.jface.text.source.IAnnotationModelListenerExtension;
-import org.eclipse.jface.text.source.IAnnotationPresentation;
-import org.eclipse.jface.text.source.ImageUtilities;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.GC;
-import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.graphics.Rectangle;
-import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.IStorageEditorInput;
-import org.eclipse.ui.editors.text.EditorsUI;
 import org.eclipse.ui.editors.text.ForwardingDocumentProvider;
 import org.eclipse.ui.editors.text.TextFileDocumentProvider;
-import org.eclipse.ui.texteditor.AnnotationPreference;
-import org.eclipse.ui.texteditor.AnnotationPreferenceLookup;
 import org.eclipse.ui.texteditor.IDocumentProvider;
 import org.eclipse.ui.texteditor.MarkerAnnotation;
 import org.eclipse.ui.texteditor.MarkerUtilities;
@@ -71,11 +60,10 @@ import org.eclipse.cdt.ui.text.ICPartitions;
 
 import org.eclipse.cdt.internal.core.model.IBufferFactory;
 
-import org.eclipse.cdt.internal.ui.CPluginImages;
 import org.eclipse.cdt.internal.ui.text.IProblemRequestorExtension;
 
 /**
- * CDocumentProvider2
+ * A document provider for C/C++ content.
  */
 public class CDocumentProvider extends TextFileDocumentProvider {
 	/**
@@ -86,118 +74,20 @@ public class CDocumentProvider extends TextFileDocumentProvider {
 	}
 
 	/**
-	 * Annotation representating an <code>IProblem</code>.
+	 * Annotation representing an <code>IProblem</code>.
 	 */
-	static protected class ProblemAnnotation extends Annotation implements ICAnnotation, IAnnotationPresentation {
+	static protected class ProblemAnnotation extends Annotation implements ICAnnotation {
 
-		private static final String SPELLING_ANNOTATION_TYPE= "org.eclipse.ui.workbench.texteditor.spelling"; //$NON-NLS-1$
-		
-		//XXX: To be fully correct these constants should be non-static
-		/** 
-		 * The layer in which task problem annotations are located.
-		 */
-		//private static final int TASK_LAYER;
-		/** 
-		 * The layer in which info problem annotations are located.
-		 */
-		private static final int INFO_LAYER;
-		/** 
-		 * The layer in which warning problem annotations representing are located.
-		 */
-		private static final int WARNING_LAYER;
-		/** 
-		 * The layer in which error problem annotations representing are located.
-		 */
-		private static final int ERROR_LAYER;
-		
-		static {
-			AnnotationPreferenceLookup lookup= EditorsUI.getAnnotationPreferenceLookup();
-			//TASK_LAYER= computeLayer("org.eclipse.ui.workbench.texteditor.task", lookup); //$NON-NLS-1$
-			INFO_LAYER= computeLayer("org.eclipse.cdt.ui.info", lookup); //$NON-NLS-1$
-			WARNING_LAYER= computeLayer("org.eclipse.cdt.ui.warning", lookup); //$NON-NLS-1$
-			ERROR_LAYER= computeLayer("org.eclipse.cdt.ui.error", lookup); //$NON-NLS-1$
-		}
-		
-		private static int computeLayer(String annotationType, AnnotationPreferenceLookup lookup) {
-			Annotation annotation= new Annotation(annotationType, false, null);
-			AnnotationPreference preference= lookup.getAnnotationPreference(annotation);
-			if (preference != null)
-				return preference.getPresentationLayer() + 1;
-			return IAnnotationAccessExtension.DEFAULT_LAYER + 1;
-		}
-		
-		private static Image fgQuickFixImage;
-		private static Image fgQuickFixErrorImage;
-		private static boolean fgQuickFixImagesInitialized= false;
+		private static final String INDEXER_ANNOTATION_TYPE= "org.eclipse.cdt.ui.indexmarker"; //$NON-NLS-1$
 		
 		private ITranslationUnit fTranslationUnit;
 		private List fOverlaids;
 		private IProblem fProblem;
-		private Image fImage;
-		private boolean fQuickFixImagesInitialized= false;
-		private int fLayer= IAnnotationAccessExtension.DEFAULT_LAYER;
-		
 		
 		public ProblemAnnotation(IProblem problem, ITranslationUnit cu) {
-			
 			fProblem= problem;
 			fTranslationUnit= cu;
-			
-			//if (SpellProblem.Spelling == fProblem.getID()) {
-			//	setType(SPELLING_ANNOTATION_TYPE);
-			//	fLayer= WARNING_LAYER;
-			//if (IProblem.Task == fProblem.getID()) {
-			//	setType(CMarkerAnnotation.TASK_ANNOTATION_TYPE);
-			//	fLayer= TASK_LAYER;
-			if (fProblem.isWarning()) {
-				setType(CMarkerAnnotation.WARNING_ANNOTATION_TYPE);
-				fLayer= WARNING_LAYER;
-			} else if (fProblem.isError()) {
-				setType(CMarkerAnnotation.ERROR_ANNOTATION_TYPE);
-				fLayer= ERROR_LAYER;
-			} else {
-				setType(CMarkerAnnotation.INFO_ANNOTATION_TYPE);
-				fLayer= INFO_LAYER;
-			}
-		}
-		
-		/*
-		 * @see org.eclipse.jface.text.source.IAnnotationPresentation#getLayer()
-		 */
-		public int getLayer() {
-			return fLayer;
-		}
-		
-		private void initializeImages() {
-			// http://bugs.eclipse.org/bugs/show_bug.cgi?id=18936
-			if (!fQuickFixImagesInitialized) {
-				if (isProblem() && indicateQuixFixableProblems()) { // no light bulb for tasks
-					if (!fgQuickFixImagesInitialized) {
-						fgQuickFixImage= CPluginImages.get(CPluginImages.IMG_OBJS_FIXABLE_PROBLEM);
-						fgQuickFixErrorImage= CPluginImages.get(CPluginImages.IMG_OBJS_FIXABLE_ERROR);
-						fgQuickFixImagesInitialized= true;
-					}
-					if (CMarkerAnnotation.ERROR_ANNOTATION_TYPE.equals(getType()))
-						fImage= fgQuickFixErrorImage;
-					else
-						fImage= fgQuickFixImage;
-				}
-				fQuickFixImagesInitialized= true;
-			}
-		}
-	
-		private boolean indicateQuixFixableProblems() {
-			return PreferenceConstants.getPreferenceStore().getBoolean(PreferenceConstants.EDITOR_CORRECTION_INDICATION);
-		}
-
-		/*
-		 * @see org.eclipse.jface.text.source.IAnnotationPresentation#paint(org.eclipse.swt.graphics.GC, org.eclipse.swt.widgets.Canvas, org.eclipse.swt.graphics.Rectangle)
-		 */
-		public void paint(GC gc, Canvas canvas, Rectangle r) {
-			initializeImages();
-			if (fImage != null) {
-				ImageUtilities.drawImage(fImage, gc, canvas, r, SWT.CENTER, SWT.TOP);
-			}
+			setType(INDEXER_ANNOTATION_TYPE);
 		}
 		
 		/*
@@ -225,10 +115,7 @@ public class CDocumentProvider extends TextFileDocumentProvider {
 		 * @see ICAnnotation#isProblem()
 		 */
 		public boolean isProblem() {
-			String type= getType();
-			return  CMarkerAnnotation.WARNING_ANNOTATION_TYPE.equals(type)  || 
-						CMarkerAnnotation.ERROR_ANNOTATION_TYPE.equals(type) ||
-						SPELLING_ANNOTATION_TYPE.equals(type);
+			return fProblem.isError() || fProblem.isWarning();
 		}
 		
 		/*
@@ -239,7 +126,7 @@ public class CDocumentProvider extends TextFileDocumentProvider {
 		}
 		
 		/*
-		 * @see org.eclipse.cdt.internal.ui.editor.IJavaAnnotation#getOverlay()
+		 * @see ICAnnotation#getOverlay()
 		 */
 		public ICAnnotation getOverlay() {
 			return null;

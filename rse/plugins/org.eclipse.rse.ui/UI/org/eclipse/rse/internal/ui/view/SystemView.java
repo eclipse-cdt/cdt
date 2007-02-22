@@ -889,7 +889,7 @@ public class SystemView extends SafeTreeViewer implements ISystemTree, ISystemRe
 			
 			// GO INTO ACTION...
 			// OPEN IN NEW WINDOW ACTION...
-			if (fromSystemViewPart && showOpenViewActions() && !selectionIsRemoteObject) {
+			if (fromSystemViewPart && showOpenViewActions()) {
 
 				
 				GoIntoAction goIntoAction = getGoIntoAction();

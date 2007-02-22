@@ -99,7 +99,7 @@ public class IBViewPart extends ViewPart
     private static final String TRUE = String.valueOf(true);
     private static final String KEY_WORKING_SET_FILTER = "workingSetFilter"; //$NON-NLS-1$
     private static final String KEY_FILTER_SYSTEM = "systemFilter"; //$NON-NLS-1$
-//    private static final String KEY_FILTER_INACTIVE = "inactiveFilter"; //$NON-NLS-1$
+    private static final String KEY_FILTER_INACTIVE = "inactiveFilter"; //$NON-NLS-1$
     private static final String KEY_INPUT_PATH= "inputPath"; //$NON-NLS-1$
     
     private IMemento fMemento;
@@ -120,7 +120,7 @@ public class IBViewPart extends ViewPart
 
     // filters, sorter
     private IBWorkingSetFilter fWorkingSetFilter;
-//    private ViewerFilter fInactiveFilter;
+    private ViewerFilter fInactiveFilter;
     private ViewerFilter fSystemFilter;
     private ViewerComparator fSorterAlphaNumeric;
     private ViewerComparator fSorterReferencePosition;
@@ -128,7 +128,7 @@ public class IBViewPart extends ViewPart
     // actions
     private Action fIncludedByAction;
     private Action fIncludesToAction;
-//    private Action fFilterInactiveAction;
+    private Action fFilterInactiveAction;
     private Action fFilterSystemAction;
     private Action fShowFolderInLabelsAction;
     private Action fNextAction;
@@ -241,19 +241,19 @@ public class IBViewPart extends ViewPart
     private void initializeActionStates() {
         boolean includedBy= true;
         boolean filterSystem= false;
-//        boolean filterInactive= false;
+        boolean filterInactive= false;
         
         if (fMemento != null) {
             filterSystem= TRUE.equals(fMemento.getString(KEY_FILTER_SYSTEM));
-//            filterInactive= TRUE.equals(fMemento.getString(KEY_FILTER_INACTIVE));
+            filterInactive= TRUE.equals(fMemento.getString(KEY_FILTER_INACTIVE));
         }
         
         fIncludedByAction.setChecked(includedBy);
         fIncludesToAction.setChecked(!includedBy);
         fContentProvider.setComputeIncludedBy(includedBy);
         
-//        fFilterInactiveAction.setChecked(filterInactive);
-//        fFilterInactiveAction.run();
+        fFilterInactiveAction.setChecked(filterInactive);
+        fFilterInactiveAction.run();
         fFilterSystemAction.setChecked(filterSystem);
         fFilterSystemAction.run();
         updateSorter();
@@ -294,7 +294,7 @@ public class IBViewPart extends ViewPart
         if (fWorkingSetFilter != null) {
             fWorkingSetFilter.getUI().saveState(memento, KEY_WORKING_SET_FILTER);
         }
-//        memento.putString(KEY_FILTER_INACTIVE, String.valueOf(fFilterInactiveAction.isChecked()));
+        memento.putString(KEY_FILTER_INACTIVE, String.valueOf(fFilterInactiveAction.isChecked()));
         memento.putString(KEY_FILTER_SYSTEM, String.valueOf(fFilterSystemAction.isChecked()));
         ITranslationUnit input= getInput();
         if (input != null) {
@@ -400,27 +400,27 @@ public class IBViewPart extends ViewPart
         fIncludesToAction.setToolTipText(IBMessages.IBViewPart_showIncludesTo_tooltip);
         CPluginImages.setImageDescriptors(fIncludesToAction, CPluginImages.T_LCL, CPluginImages.IMG_ACTION_SHOW_RELATES_TO);       
 
-//        fInactiveFilter= new ViewerFilter() {
-//            public boolean select(Viewer viewer, Object parentElement, Object element) {
-//                if (element instanceof IBNode) {
-//                    IBNode node= (IBNode) element;
-//                    return node.isActiveCode();
-//                }
-//                return true;
-//            }
-//        };
-//        fFilterInactiveAction= new Action(IBMessages.IBViewPart_hideInactive_label, IAction.AS_CHECK_BOX) {
-//            public void run() {
-//                if (isChecked()) {
-//                    fTreeViewer.addFilter(fInactiveFilter);
-//                }
-//                else {
-//                    fTreeViewer.removeFilter(fInactiveFilter);
-//                }
-//            }
-//        };
-//        fFilterInactiveAction.setToolTipText(IBMessages.IBViewPart_hideInactive_tooltip);
-//        CPluginImages.setImageDescriptors(fFilterInactiveAction, CPluginImages.T_LCL, CPluginImages.IMG_ACTION_HIDE_INACTIVE);       
+        fInactiveFilter= new ViewerFilter() {
+            public boolean select(Viewer viewer, Object parentElement, Object element) {
+                if (element instanceof IBNode) {
+                    IBNode node= (IBNode) element;
+                    return node.isActiveCode();
+                }
+                return true;
+            }
+        };
+        fFilterInactiveAction= new Action(IBMessages.IBViewPart_hideInactive_label, IAction.AS_CHECK_BOX) {
+            public void run() {
+                if (isChecked()) {
+                    fTreeViewer.addFilter(fInactiveFilter);
+                }
+                else {
+                    fTreeViewer.removeFilter(fInactiveFilter);
+                }
+            }
+        };
+        fFilterInactiveAction.setToolTipText(IBMessages.IBViewPart_hideInactive_tooltip);
+        CPluginImages.setImageDescriptors(fFilterInactiveAction, CPluginImages.T_LCL, CPluginImages.IMG_ACTION_HIDE_INACTIVE);       
 
         fSystemFilter= new ViewerFilter() {
             public boolean select(Viewer viewer, Object parentElement, Object element) {
@@ -514,7 +514,7 @@ public class IBViewPart extends ViewPart
         tm.add(fPreviousAction);
         tm.add(new Separator());
         tm.add(fFilterSystemAction);
-//        tm.add(fFilterInactiveAction);
+        tm.add(fFilterInactiveAction);
         tm.add(new Separator());
         tm.add(fIncludedByAction);
         tm.add(fIncludesToAction);
@@ -524,9 +524,6 @@ public class IBViewPart extends ViewPart
         // local menu
         IMenuManager mm = actionBars.getMenuManager();
 
-//        tm.add(fNext);
-//        tm.add(fPrevious);
-//        tm.add(new Separator());
         fWorkingSetFilterUI.fillActionBars(actionBars);
         mm.add(fIncludedByAction);
         mm.add(fIncludesToAction);
@@ -534,7 +531,7 @@ public class IBViewPart extends ViewPart
         mm.add(fShowFolderInLabelsAction);
         mm.add(new Separator());
         mm.add(fFilterSystemAction);
-//        mm.add(fFilterInactiveAction);
+        mm.add(fFilterInactiveAction);
     }
     
     private IBNode getNextNode(boolean forward) {

@@ -16,6 +16,7 @@ that have attributes and may contain other DataElements.  The attributes of a Da
 strings.  A particular attribute is retrieved by calling <code>getAttribute(</code><i>attribute index</i><code>)</code>.
 A particular attribute is set by calling <code>setAttribute(</code><i>attribute index</i><code>, </code><i>attribute value</i><code>)</code>.
 The attribute indices that can be used are as follows:
+</p>
 <table>
 <tr><td><b>Attribute</b></td><td><b>Description</b></td></tr>
 <tr><td><code>A_TYPE</code></td><td>Attribute indicating the type of object.  The type can be used to indicate the type of an instance of data, a descriptor, a relationship or a commnad.</td></tr>
@@ -23,9 +24,8 @@ The attribute indices that can be used are as follows:
 <tr><td><code>A_VALUE</code></td><td>Attribute indicating the more information about that object</td></tr>
 <tr><td><code>A_SOURCE</code></td><td>Attribute indicating source information about an object, if applicable</td></tr>
 <tr><td><code>A_REF_TYPE</code></td><td>Attribute indicating whether the object is a normal object ("value"), a spirit ("spirit"), or a reference to another DataElement ("reference").  In the DataStore, a reference to another DataElement is represented with a DataElement. For more information on spirit elements, see <a href="MemoryManagement.html">Memory Management in DataStore</a> </td></tr>
-<tr><td><code>A_ID</code></td><td>The unique ID of a DataElement.</td></tr>.
+<tr><td><code>A_ID</code></td><td>The unique ID of a DataElement.</td></tr>
 </table>
-</p>
 <p>
 Rather than representing different types of objects as different classes, the type attribute of a DataElement
 indicates its type.  There are two general categories of DataElements.  There are schema elements, <A href="#descriptors">descriptors</a>, and instances of
@@ -196,7 +196,7 @@ contributed by a miner are expected to be handled by the contributing miner.  Wh
 a miner creates a new command descriptor, the <code>A_SOURCE</code> attribute indicates
 to the DataStore that an instance of that command should be routed to that miner when
 it's issued.
-<p>
+</p>
 
 <p>
 See the section, <a href="Miners.html">Miners</a> to find out how miners contribute schemas

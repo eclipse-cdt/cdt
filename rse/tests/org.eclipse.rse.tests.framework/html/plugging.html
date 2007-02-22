@@ -3,10 +3,10 @@
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-    <title>Artemis Test Framework</title>
+    <title>RSE Test Framework</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <meta http-equiv="Content-Style-Type" content="text/css"/>
-    <link rel="stylesheet" type="text/css" href="../book.css"/>
+    <meta http-equiv="Content-Style-Type" content="text/css" />
+    <link rel="stylesheet" type="text/css" href="../book.css" />
 </head>
 <body>
     <h2>Plugging into the Test Suite View</h2>
@@ -23,7 +23,6 @@
 	&lt;type ... /&gt;
 &lt;/extension&gt;
 </pre>
-	</p>
     <h3>Defining A Test Suite</h3>
     <p>An existing JUnit test suite can be registered as follows:</p>
 <pre class="code">
@@ -62,7 +61,7 @@
     <code>junit.framework.TestCase</code>.  This allows you to use the <code>remark(String)</code>
      method in your testcases to cause a line to be printed in the results pane before the final status of 
     the tests.  It's a reasonable replacement for <code>System.out.println()</code>
-     if you want to have extra stuff print for your tests.
+     if you want to have extra stuff print for your tests.</p>
     <h3>How Your Test Is Run</h3>
     <p>You test suite will run inside of a eclipse user job. 
     This means you don't have direct access to the UI thread or 
@@ -71,13 +70,13 @@
     testing support will provide the ability for testing UI constructs from the test job.</p>
     <h3>Configuration And Prerequisites</h3>
     <p>The Test Suite View is contributed by the plugin 
-    <code>org.eclipse.rse.tests.framework</code>.
+    <code>org.eclipse.rse.tests.framework</code>.</p>
     <p>Your test suites need only require those plugins that you directly 
     reference -- which would be at least the <code>org.junit</code> plugin. If 
     you implement TestSuiteProvider or use any of the utility classes for annotating 
     the result log you must also require <code>org.eclipse.rse.tests.framework</code>.</p>
     <p>The plugin <code>org.eclipse.rse.tests.framework</code> does not 
     depend on anything other than <code>org.junit</code> and 
-    <code>org.eclipse.*</code> plugins.
+    <code>org.eclipse.*</code> plugins.</p>
 </body>
 </html>

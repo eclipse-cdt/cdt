@@ -197,10 +197,10 @@ following summarizes the minimum set of classes you will be creating in order to
       in the <samp>startup()</samp> method of your plugin class, add code to instantiate the class and register the object with
       the platform adapter manager, once for each class in your resource model. For example:
       <br><samp>
-		&nbsp;&nbsp;MyAdapterFactory factory = new MyAdapterFactory(); // extends AbstractSystemRemoteAdapterFactory<br>
-		&nbsp;&nbsp;IAdapterManager manager = Platform.getAdapterManager();<br>
-		&nbsp;&nbsp;manager.registerAdapters(factory, MyModelObject1.class);<br>
-		&nbsp;&nbsp;manager.registerAdapters(factory, MyModelObject2.class);<br>
+		MyAdapterFactory factory = new MyAdapterFactory(); // extends AbstractSystemRemoteAdapterFactory<br>
+		IAdapterManager manager = Platform.getAdapterManager();<br>
+		manager.registerAdapters(factory, MyModelObject1.class);<br>
+		manager.registerAdapters(factory, MyModelObject2.class);<br>
       </samp>
   </li>
   <li>If your filter string from step 5 is complicated enough, you will probably find the

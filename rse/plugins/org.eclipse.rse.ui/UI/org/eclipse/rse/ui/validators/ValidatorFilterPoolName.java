@@ -35,9 +35,8 @@ public class ValidatorFilterPoolName
 	
 	/**
 	 * Constructor accepting a Vector. 
-	 * @param A vector containing list of existing filter names to compare against.
+	 * @param existingList vector containing list of existing filter names to compare against.
 	 *        Note that toString() is used to get the string from each item.
-	 * @param existingList if comparisons are to be case sensitive, false if case insensitive.	 
 	 */
 	public ValidatorFilterPoolName(Vector existingList)
 	{
@@ -46,8 +45,7 @@ public class ValidatorFilterPoolName
 	}
 	/**
 	 * Constructor accepting an Array. 
-	 * @param An array containing list of existing strings to compare against.
-	 * @param existingList if comparisons are to be case sensitive, false if case insensitive.
+	 * @param existingList An array containing list of existing strings to compare against.
 	 */
 	public ValidatorFilterPoolName(String[] existingList)
 	{

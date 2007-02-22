@@ -44,8 +44,6 @@ import org.eclipse.rse.ui.ISystemMessages;
 import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.actions.SystemBaseAction;
 import org.eclipse.rse.ui.dialogs.SystemPromptDialog;
-import org.eclipse.rse.ui.operations.SystemFetchOperation.PromptForPassword;
-import org.eclipse.rse.ui.operations.SystemFetchOperation.UpdateRegistry;
 import org.eclipse.rse.ui.view.ISystemViewElementAdapter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;

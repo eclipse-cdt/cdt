@@ -378,7 +378,7 @@ public abstract class SystemBasePlugin extends AbstractUIPlugin
 	 * Parse the given message file into memory, into a SystemMessageFile
 	 * object.
 	 * 
-	 * @param descriptor -
+	 * @param bundle -
 	 *            the descriptor for this plugin
 	 * @param fileName -
 	 *            unqualified name of the .xml message file, inluding the .xml
@@ -422,7 +422,7 @@ public abstract class SystemBasePlugin extends AbstractUIPlugin
 	 * Parse the given message file into memory, into a SystemMessageFile
 	 * object.
 	 * 
-	 * @param descriptor -
+	 * @param bundle -
 	 *            the descriptor for this plugin
 	 * @param fileName -
 	 *            unqualified name of the .xml message file, inluding the .xml
@@ -503,7 +503,7 @@ public abstract class SystemBasePlugin extends AbstractUIPlugin
 	}
 
 	/**
-	 * Scan this plugin's message file for duplicates. This just calls the {@link org.eclipse.rse.ui.messages.SystemMessageFile#scanForDuplicates()}
+	 * Scan this plugin's message file for duplicates. This just calls the {@link SystemMessageFile#scanForDuplicates()}
 	 * method on the SystemMessageFile object.
 	 * @param msgFile - the message file to scan
 	 * @return true if duplicates found. The duplicates are written to standard out and the system core log file.
@@ -515,7 +515,7 @@ public abstract class SystemBasePlugin extends AbstractUIPlugin
 
 	/**
 	 * Generate HTML from this plugin's message file. This is handy for documentation purposes.
-	 * This just calls the {@link org.eclipse.rse.ui.messages.SystemMessageFile#printHTML(String)}
+	 * This just calls the {@link SystemMessageFile#printHTML(String)}
 	 * method on the SystemMessageFile object.
 	 * @param msgFile - the message file to print
 	 * @return true if all went well, false if it failed for some reason.
@@ -645,7 +645,7 @@ public abstract class SystemBasePlugin extends AbstractUIPlugin
 	 * Debug messages are only logged when running this plugin in the workbench,
 	 * and when Logger.DEBUG has been set to true.
 	 * 
-	 * @param classname - Class issuing the debug message. Typically you pass getClass().getName()
+	 * @param prefix - Class issuing the debug message. Typically you pass getClass().getName()
 	 * @param message - Message to be written to the log file
 	 */
 	public static void logDebugMessage(String prefix, String message) 

@@ -21,6 +21,7 @@ import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.subsystems.IConnectorService;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.internal.subsystems.processes.shell.linux.Activator;
+import org.eclipse.rse.internal.subsystems.processes.shell.linux.DelegatingShellProcessConnectorService;
 import org.eclipse.rse.internal.subsystems.processes.shell.linux.LinuxShellProcessService;
 import org.eclipse.rse.internal.subsystems.processes.shell.linux.ShellProcessAdapter;
 import org.eclipse.rse.services.processes.IProcessService;

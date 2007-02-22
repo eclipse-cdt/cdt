@@ -1165,7 +1165,7 @@ public class SystemTableView
 			remoteResourceName = (String) remoteResource;
 		else
 		{
-			IRemoteObjectIdentifier ra = getRemoteObjectIdentifier(remoteResource);
+			IRemoteObjectIdentifier ra = getAdapter(remoteResource);
 			if (ra == null)
 				return null;
 			remoteResourceName = ra.getAbsoluteName(remoteResource);
@@ -1514,7 +1514,7 @@ public class SystemTableView
 				adapter = getAdapter(element);
 				Object parentElement = getParentForContent(element);
 
-				remoteAdapter = getRemoteObjectIdentifier(element);
+				remoteAdapter = getAdapter(element);
 				if (remoteAdapter != null)
 					oldFullName = remoteAdapter.getAbsoluteName(element);
 				// pre-rename
@@ -1571,18 +1571,6 @@ public class SystemTableView
 		return adapter;
 	}
 	
-	/**
-	 * Returns the implementation of IRemoteObjectIdentifier for the given
-	 * object.  Returns null if this object does not adaptable to this.
-	 */
-	protected IRemoteObjectIdentifier getRemoteObjectIdentifier(Object o) 
-	{
-		IRemoteObjectIdentifier objectId = null;
-		try{
-			objectId = (IRemoteObjectIdentifier)((IAdaptable)o).getAdapter(IRemoteObjectIdentifier.class);
-		}catch(ClassCastException e){}
-		return objectId;
-	}
 
 	/**
 	* Return true if select all should be enabled for the given object.

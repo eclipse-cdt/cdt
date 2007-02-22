@@ -1275,9 +1275,9 @@ public class SystemView extends SafeTreeViewer implements ISystemTree, ISystemRe
 	 * Returns the implementation of IRemoteObjectIdentifier for the given
 	 * object.  Returns null if this object does not adaptable to this.
 	 */
-	protected IRemoteObjectIdentifier getRemoteAdapter(Object o) 
+	protected ISystemRemoteElementAdapter getRemoteAdapter(Object o) 
 	{
-		return (IRemoteObjectIdentifier)((IAdaptable)o).getAdapter(IRemoteObjectIdentifier.class);
+		return (ISystemRemoteElementAdapter)((IAdaptable)o).getAdapter(ISystemRemoteElementAdapter.class);
 	}
 	
 	protected ISystemViewElementAdapter getViewAdapter(Object o)
@@ -1312,8 +1312,8 @@ public class SystemView extends SafeTreeViewer implements ISystemTree, ISystemRe
 			return ((ISubSystem) (((ISystemFilterPoolReference) firstSelection).getProvider())).getHost();
 		else if (firstSelection instanceof ISystemFilterReference)
 			return ((ISubSystem) (((ISystemFilterReference) firstSelection).getProvider())).getHost();
-		else if (getRemoteAdapter(firstSelection) != null) {
-			ISubSystem ss = getAdapter(firstSelection).getSubSystem(firstSelection);
+		else if (getViewAdapter(firstSelection) != null) {
+			ISubSystem ss = getViewAdapter(firstSelection).getSubSystem(firstSelection);
 			if (ss != null)
 				return ss.getHost();
 			else
@@ -3774,12 +3774,7 @@ public class SystemView extends SafeTreeViewer implements ISystemTree, ISystemRe
 		return null;
 	}
 
-	protected IRemoteObjectIdentifier getRemoteData(Item item, Object rawData) {
-		if (rawData != null)
-			return getRemoteAdapter(rawData);
-		else
-			return null;
-	}
+
 
 	/**
 	 * Find the first binary-match or name-match of remote object, given its absolute name.
@@ -4367,7 +4362,7 @@ public class SystemView extends SafeTreeViewer implements ISystemTree, ISystemRe
 				element = elements.next();
 				//multiSource[idx++] = element;
 				adapter = getAdapter(element);
-				if (getRemoteAdapter(element) != null) continue;
+				if (getAdapter(element) != null) continue;
 				ok = adapter.doDelete(getShell(), element, monitor);
 				if (ok) {
 					anyOk = true;
@@ -5088,7 +5083,7 @@ public class SystemView extends SafeTreeViewer implements ISystemTree, ISystemRe
 		TreeItem selectedItem = getFirstSelectedTreeItem();
 		if (selectedItem == null) return;
 		Object element = selectedItem.getData();
-		IRemoteObjectIdentifier remoteAdapter = getRemoteAdapter(element);
+		ISystemViewElementAdapter remoteAdapter = getViewAdapter(element);
 		if (remoteAdapter == null) return;
 		// update our hashtables, keyed by object address and tree path...
 		if (expandToFiltersByObject == null) expandToFiltersByObject = new Hashtable();

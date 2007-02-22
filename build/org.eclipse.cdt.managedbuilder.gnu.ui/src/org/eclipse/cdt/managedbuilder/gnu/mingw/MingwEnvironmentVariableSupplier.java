@@ -11,6 +11,8 @@
 
 package org.eclipse.cdt.managedbuilder.gnu.mingw;
 
+import java.io.File;
+
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.envvar.IBuildEnvironmentVariable;
 import org.eclipse.cdt.managedbuilder.envvar.IConfigurationEnvironmentVariableSupplier;
@@ -56,13 +58,22 @@ public class MingwEnvironmentVariableSupplier implements
 	private final IBuildEnvironmentVariable path;
 	
 	public MingwEnvironmentVariableSupplier() {
-		String bin = "C:/MinGW/bin";
+		// 1. Try the mingw directory in the platform install directory
+		String bin = Platform.getInstallLocation().getURL().getFile().substring(1) + "mingw/bin";
 		
-		// TODO try finding MinGW in either of:
-		// HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\MinGW, InstallLocation
-		// or using:
-		//		String bin = Platform.getInstallLocation().getURL().getFile().substring(1)
-		//		+ "mingw/bin";
+		if (!new File(bin).exists()) {
+			// 2. Try looking if the mingw installer ran
+			bin = WindowsRegistry.getRegistry().getLocalMachineValue(
+					"SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\MinGW",
+					"InstallLocation");
+			if (bin != null)
+				bin += "\\bin";
+			
+			if (bin == null || !new File(bin).exists()) {
+				// 3. Try the standard location
+				bin = "C:/MinGW/bin";
+			}
+		}
 
 		path = new MingwBuildEnvironmentVariable(
 			"PATH",

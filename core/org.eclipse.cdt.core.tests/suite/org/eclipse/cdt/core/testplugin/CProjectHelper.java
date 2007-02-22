@@ -32,7 +32,6 @@ import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.ISourceRoot;
 import org.eclipse.cdt.core.model.ITranslationUnit;
-import org.eclipse.cdt.internal.core.CCoreInternals;
 import org.eclipse.cdt.internal.core.pdom.indexer.IndexerPreferences;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
@@ -81,6 +80,10 @@ public class CProjectHelper {
 			public void run(IProgressMonitor monitor) throws CoreException {
 				IWorkspaceRoot root = ws.getRoot();
 				IProject project = root.getProject(projectName);
+				if (indexerID != null) {
+					IndexerPreferences.set(project, IndexerPreferences.KEY_INDEX_ALL_FILES, "true");
+					IndexerPreferences.set(project, IndexerPreferences.KEY_INDEXER_ID, indexerID);
+				}
 				if (!project.exists()) {
 					project.create(null);
 				} else {
@@ -95,10 +98,6 @@ public class CProjectHelper {
 					CCorePlugin.getDefault().mapCProjectOwner(project, projectId, false);
 				}
 				newProject[0] = CCorePlugin.getDefault().getCoreModel().create(project);
-				if (indexerID != null) {
-					IndexerPreferences.set(newProject[0].getProject(), IndexerPreferences.KEY_INDEX_ALL_FILES, "true");
-					CCoreInternals.getPDOMManager().setIndexerId(newProject[0], indexerID);
-				}
 			}
 		}, null);
 

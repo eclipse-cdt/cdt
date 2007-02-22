@@ -32,7 +32,7 @@ public class StdProjectTypeHandler extends CWizardHandler {
 		super(_name, null, _image, p, null);
 	}
 
-	protected void addTc(IToolChain tc) {
+	public void addTc(IToolChain tc) {
 		if (tc == null) {
 			tcs.put(IDEWorkbenchMessages.getString("StdProjectTypeHandler.0"), null); //$NON-NLS-1$
 		} else {

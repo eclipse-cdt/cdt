@@ -119,7 +119,7 @@ public class CWizardHandler implements ICWizardHandler {
 		}
 	}
 
-	protected void addTc(IToolChain tc) {
+	public void addTc(IToolChain tc) {
 		if (tc.isAbstract() || tc.isSystemObject()) return;
 		IConfiguration[] cfgs = null;
 		// New style managed project type. Configurations are referenced via propertyId.

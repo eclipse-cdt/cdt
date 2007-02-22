@@ -78,7 +78,6 @@ import org.eclipse.rse.core.model.ISystemMessageObject;
 import org.eclipse.rse.core.model.ISystemRegistry;
 import org.eclipse.rse.core.model.SystemMessageObject;
 import org.eclipse.rse.core.references.IRSEBaseReferencingObject;
-import org.eclipse.rse.core.subsystems.IRemoteObjectIdentifier;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.model.ISystemPromptableObject;
 import org.eclipse.rse.model.ISystemRemoteChangeEvent;
@@ -478,7 +477,7 @@ public class SystemView extends SafeTreeViewer implements ISystemTree, ISystemRe
 		IStructuredSelection s = (IStructuredSelection) event.getSelection();
 		Object element = s.getFirstElement();
 		if (element == null) return;
-		ISystemViewElementAdapter adapter = getAdapter(element);
+		ISystemViewElementAdapter adapter = getViewAdapter(element);
 		boolean alreadyHandled = false;
 		if (adapter != null) alreadyHandled = adapter.handleDoubleClick(element);
 		if (!alreadyHandled && isExpandable(element)) {
@@ -816,8 +815,8 @@ public class SystemView extends SafeTreeViewer implements ISystemTree, ISystemRe
 			while (elements.hasNext() && !skipAdapterActions) {
 				Object element = elements.next();
 				if (adapter == null) {
-					adapter = getAdapter(element);
-				} else if (adapter != getAdapter(element)) {
+					adapter = getViewAdapter(element);
+				} else if (adapter != getRemoteAdapter(element)) {
 					// selected elements have different adapters
 					skipAdapterActions = true;
 				}
@@ -1047,7 +1046,7 @@ public class SystemView extends SafeTreeViewer implements ISystemTree, ISystemRe
 
 		while (enableDelete && elements.hasNext()) {
 			Object element = elements.next();
-			ISystemViewElementAdapter adapter = getAdapter(element);
+			ISystemViewElementAdapter adapter = getViewAdapter(element);
 			if (adapter == null) continue;
 			if (enableDelete) enableDelete = adapter.showDelete(element) && adapter.canDelete(element);
 		}
@@ -1056,7 +1055,7 @@ public class SystemView extends SafeTreeViewer implements ISystemTree, ISystemRe
 		((SystemCommonDeleteAction) getDeleteAction()).setEnabled(enableDelete);
 		((SystemCommonSelectAllAction) getSelectAllAction()).setEnabled(enableSelectAll(sel)); // added by Phil. Noticed Edit->Select All not enabled when it should be
 
-		ISystemViewElementAdapter adapter = getAdapter(firstSelection);
+		ISystemViewElementAdapter adapter = getViewAdapter(firstSelection);
 		if (adapter != null) {
 			displayMessage(adapter.getStatusLineText(firstSelection));
 			if ((mouseButtonPressed == LEFT_BUTTON) && (!expandingTreeOnly)) //d40615
@@ -1255,7 +1254,7 @@ public class SystemView extends SafeTreeViewer implements ISystemTree, ISystemRe
 	 * object.  Returns null if the adapter is not defined or the
 	 * object is not adaptable.
 	 */
-	protected ISystemViewElementAdapter getAdapter(Object o) {
+	protected ISystemViewElementAdapter getViewAdapter(Object o) {
 
 		ISystemViewInputProvider provider = getInputProvider();
 
@@ -1277,13 +1276,13 @@ public class SystemView extends SafeTreeViewer implements ISystemTree, ISystemRe
 	 */
 	protected ISystemRemoteElementAdapter getRemoteAdapter(Object o) 
 	{
-		return (ISystemRemoteElementAdapter)((IAdaptable)o).getAdapter(ISystemRemoteElementAdapter.class);
+		if (o instanceof IAdaptable)
+		{
+			return (ISystemRemoteElementAdapter)((IAdaptable)o).getAdapter(ISystemRemoteElementAdapter.class);
+		}
+		return null;
 	}
 	
-	protected ISystemViewElementAdapter getViewAdapter(Object o)
-	{
-		return SystemAdapterHelpers.getAdapter(o, this);
-	}
 
 	/**
 	 *
@@ -1891,7 +1890,7 @@ public class SystemView extends SafeTreeViewer implements ISystemTree, ISystemRe
 				while (i.hasNext()) {
 
 					Object element = i.next();
-					ISystemViewElementAdapter adapter = _originatingViewer.getAdapter(element);
+					ISystemViewElementAdapter adapter = _originatingViewer.getViewAdapter(element);
 					if ((parentElementItem == null) && (adapter != null) && (!adapter.hasChildren((IAdaptable)element))) {
 						//parentItem = getParentItem((Item)findItem(element));
 						parentItem = getParentItem(items[itemIdx]);
@@ -1944,7 +1943,7 @@ public class SystemView extends SafeTreeViewer implements ISystemTree, ISystemRe
 				Vector selRemoteObjects = new Vector();
 				if (j.hasNext()) {
 					Object element = j.next();
-					ISystemViewElementAdapter adapter = _originatingViewer.getAdapter(element);
+					ISystemViewElementAdapter adapter = _originatingViewer.getViewAdapter(element);
 					if (adapter != null) {
 						Item parItem = getParentItem((Item) findItem(element));
 
@@ -2802,10 +2801,6 @@ public class SystemView extends SafeTreeViewer implements ISystemTree, ISystemRe
 	}
 
 	protected void doOurInternalRefresh(Widget widget, Object element, boolean doStruct, boolean firstCall) {
-		if (debug) {
-			logDebugMsg("in doOurInternalRefresh on " + getAdapter(element).getName(element)); //$NON-NLS-1$
-			logDebugMsg("...current selection is " + getFirstSelectionName(getSelection())); //$NON-NLS-1$
-		}
 		if (widget instanceof Item) {
 			if (doStruct) {
 				updatePlus((Item) widget, element);
@@ -2855,11 +2850,11 @@ public class SystemView extends SafeTreeViewer implements ISystemTree, ISystemRe
 			Object firstSel = ss.getFirstElement();
 			String name = null;
 			if (firstSel != null) {
-				ISystemViewElementAdapter ra = getViewAdapter(firstSel);
+				ISystemRemoteElementAdapter ra = getRemoteAdapter(firstSel);
 				if (ra != null)
 					name = ra.getAbsoluteName(firstSel);
 				else
-					name = getAdapter(firstSel).getName(firstSel);
+					name = getViewAdapter(firstSel).getName(firstSel);
 			}
 			return name;
 		} else
@@ -3077,7 +3072,7 @@ public class SystemView extends SafeTreeViewer implements ISystemTree, ISystemRe
 			// ...if this selected item is expanded, recursively gather up all its expanded descendents
 			Object data = currItem.getData();
 			ISystemViewElementAdapter adapter = null;
-			if (data != null) adapter = getAdapter(data);
+			if (data != null) adapter = getViewAdapter(data);
 			//if (adapter instanceof ISystemRemoteElementAdapter) {
 			//  anyGivenItemsRemote = true;
 			//}
@@ -3163,7 +3158,7 @@ public class SystemView extends SafeTreeViewer implements ISystemTree, ISystemRe
 					TreeItem currItem = roots[idx];
 					Object data = currItem.getData();
 					ISystemViewElementAdapter adapter = null;
-					if (data != null) adapter = getAdapter(data);
+					if (data != null) adapter = getViewAdapter(data);
 					if (currItem.getExpanded() && (adapter != null) && adapter.isPromptable(data))
 						setExpandedState(data, false);
 					else if (currItem.getExpanded()) {
@@ -3271,7 +3266,7 @@ public class SystemView extends SafeTreeViewer implements ISystemTree, ISystemRe
 				TreeItem currChild = itemChildren[idx];
 				Object data = currChild.getData();
 				ISystemViewElementAdapter adapter = null;
-				if (data != null) adapter = getAdapter(data);
+				if (data != null) adapter = getViewAdapter(data);
 				if (currChild.getExpanded() && (adapter != null) && adapter.isPromptable(data))
 					setExpandedState(data, false);
 				else if (currChild.getExpanded()) {
@@ -4212,7 +4207,7 @@ public class SystemView extends SafeTreeViewer implements ISystemTree, ISystemRe
 		while (elements.hasNext()) {
 
 			Object element = elements.next();
-			ISystemViewElementAdapter adapter = getAdapter(element);
+			ISystemViewElementAdapter adapter = getViewAdapter(element);
 			if (adapter == null) continue;
 
 			if (selectionShowRefreshAction) selectionShowRefreshAction = adapter.showRefresh(element);
@@ -4361,7 +4356,7 @@ public class SystemView extends SafeTreeViewer implements ISystemTree, ISystemRe
 			while (ok && elements.hasNext()) {
 				element = elements.next();
 				//multiSource[idx++] = element;
-				adapter = getAdapter(element);
+				adapter = getViewAdapter(element);
 				if (getRemoteAdapter(element) != null) continue;
 				ok = adapter.doDelete(getShell(), element, monitor);
 				if (ok) {
@@ -4413,7 +4408,7 @@ public class SystemView extends SafeTreeViewer implements ISystemTree, ISystemRe
 						
 						while (iter.hasNext()) {
 							Object obj = iter.next();
-							ISystemViewElementAdapter adp = getAdapter(obj);
+							ISystemViewElementAdapter adp = getViewAdapter(obj);
 							Object parent = adp.getParent(obj);
 							
 							if ((parent != null) && !(refreshedList.contains(parent))) {
@@ -4475,18 +4470,20 @@ public class SystemView extends SafeTreeViewer implements ISystemTree, ISystemRe
 		Object element = null;
 		Object parentElement = getSelectedParent();
 		ISystemViewElementAdapter adapter = null;
-		ISystemViewElementAdapter remoteAdapter = null;
+		ISystemRemoteElementAdapter remoteAdapter = null;
 		String oldFullName = null;
 		boolean ok = true;
 		try {
 			int nameIdx = 0;
 			while (ok && elements.hasNext()) {
 				element = elements.next();
-				adapter = getAdapter(element);
-				remoteAdapter = getViewAdapter(element);
-				if (remoteAdapter != null) oldFullName = remoteAdapter.getAbsoluteName(element); // pre-rename
+				adapter = getViewAdapter(element);
+				remoteAdapter = getRemoteAdapter(element);
+				if (remoteAdapter != null) 
+					oldFullName = remoteAdapter.getAbsoluteName(element); // pre-rename
 				ok = adapter.doRename(getShell(), element, newNames[nameIdx++]);
-				if (ok) {
+				if (ok) 
+				{
 					if (remoteAdapter != null)
 					{
 						ISubSystem ss = adapter.getSubSystem(element);

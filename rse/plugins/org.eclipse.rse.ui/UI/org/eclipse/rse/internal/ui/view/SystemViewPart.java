@@ -1006,7 +1006,7 @@ public class SystemViewPart
 			for (int i = 0; i < expandedElements.length; i++)
 			{
 				Object o = expandedElements[i];
-				ISystemViewElementAdapter adapter = systemView.getAdapter(o);
+				ISystemViewElementAdapter adapter = systemView.getViewAdapter(o);
 				//ISystemRemoteElementAdapter radapter = systemView.getRemoteAdapter(o);
 				//if (adapter.saveExpansionState(o) && (radapter==null))
 				if (adapter.saveExpansionState(o))
@@ -1026,7 +1026,7 @@ public class SystemViewPart
 			for (int i = 0; i < elements.length; i++)
 			{
 				Object o = elements[i];
-				ISystemViewElementAdapter adapter = systemView.getAdapter(o);
+				ISystemViewElementAdapter adapter = systemView.getViewAdapter(o);
 				//ISystemRemoteElementAdapter radapter = systemView.getRemoteAdapter(o);
 				//if (adapter.saveExpansionState(o) && (radapter==null))
 				if (adapter.saveExpansionState(o))
@@ -1061,7 +1061,7 @@ public class SystemViewPart
 			for (int idx = elementNodes.length - 1; idx >= 0; idx--)
 			{
 				o = elementNodes[idx];
-				adapter = systemView.getAdapter(o);
+				adapter = systemView.getViewAdapter(o);
 				idBuffer.append(MEMENTO_DELIM + adapter.getMementoHandle(o));
 			}
 		}
@@ -1808,7 +1808,7 @@ public class SystemViewPart
 	{
 		//System.out.println("INSIDE SAVEINPUTSTATE IN SYSTEMVIEWPART");
 		IAdaptable inputObj = getSite().getPage().getInput();
-		ISystemViewElementAdapter adapter = systemView.getAdapter(inputObj);
+		ISystemViewElementAdapter adapter = systemView.getViewAdapter(inputObj);
 		if ((adapter != null) && (adapter.saveExpansionState(inputObj)))
 		{
 			String handle = getInputMementoHandle(inputObj, adapter);

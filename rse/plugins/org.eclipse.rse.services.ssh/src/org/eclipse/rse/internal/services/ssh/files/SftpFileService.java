@@ -756,14 +756,54 @@ public class SftpFileService extends AbstractFileService implements IFileService
 	public boolean setLastModified(IProgressMonitor monitor, String parent,
 			String name, long timestamp) throws SystemMessageException 
 	{
-		// TODO implement this to set the timestamp on the specified file
-		return false;
+		boolean ok=false;
+		if (fDirChannelMutex.waitForLock(monitor, fDirChannelTimeout)) {
+			try {
+				String path = parent + '/' + name;
+				getChannel("SftpFileService.setLastModified").setMtime(path, (int)(timestamp/1000)); //$NON-NLS-1$
+				ok=true;
+				Activator.trace("SftpFileService.setLastModified ok"); //$NON-NLS-1$
+			} catch (Exception e) {
+				Activator.trace("SftpFileService.setLastModified failed: "+e.toString()); //$NON-NLS-1$
+				throw makeSystemMessageException(e);
+			} finally {
+				fDirChannelMutex.release();
+			}
+		}
+		return ok;
 	}
 
 	public boolean setReadOnly(IProgressMonitor monitor, String parent,
 			String name, boolean readOnly) throws SystemMessageException {
-		// TODO Auto-generated method stub
-		return false;
+		boolean ok=false;
+		if (fDirChannelMutex.waitForLock(monitor, fDirChannelTimeout)) {
+			try {
+				String path = parent + '/' + name;
+				SftpATTRS attr = getChannel("SftpFileService.setReadOnly").stat(path); //$NON-NLS-1$
+				int permOld = attr.getPermissions();
+				int permNew = permOld;
+				if (readOnly) {
+					permNew &= ~128;
+				} else {
+					permNew |= 128;
+				}
+				if (permNew != permOld) {
+					//getChannel("SftpFileService.setReadOnly").chmod(permNew, path); //$NON-NLS-1$
+					attr.setPERMISSIONS(permNew); 
+					getChannel("SftpFileService.setReadOnly").setStat(path, attr); //$NON-NLS-1$
+					ok=true;
+					Activator.trace("SftpFileService.setReadOnly ok"); //$NON-NLS-1$
+				} else {
+					Activator.trace("SftpFileService.setReadOnly nothing-to-do"); //$NON-NLS-1$
+				}
+			} catch (Exception e) {
+				Activator.trace("SftpFileService.rename failed: "+e.toString()); //$NON-NLS-1$
+				throw makeSystemMessageException(e);
+			} finally {
+				fDirChannelMutex.release();
+			}
+		}
+		return ok;
 	}
 
 	/**

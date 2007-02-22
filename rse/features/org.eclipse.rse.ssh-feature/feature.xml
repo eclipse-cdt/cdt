@@ -25,14 +25,25 @@
 
    <requires>
       <import plugin="org.eclipse.core.runtime"/>
-      <import plugin="org.eclipse.rse.services"/>
-      <import plugin="com.jcraft.jsch" version="0.1.28" match="compatible"/>
-      <import plugin="org.eclipse.rse.ui"/>
       <import plugin="org.eclipse.ui"/>
+      <!-- Feature dependency due to bug 175004 (UM doesnt use plugins for "Select Required" -->
+      <!-- But take care of bug 154505 (UM "Select Required" selects container features) -->
+      <import feature="org.eclipse.rse.core" version="2.0.0.qualifier" match="compatible"/>
+      <!--
       <import plugin="org.eclipse.rse.subsystems.files.core"/>
       <import plugin="org.eclipse.rse.files.ui"/>
       <import plugin="org.eclipse.rse.subsystems.shells.core"/>
       <import plugin="org.eclipse.rse.shells.ui"/>
+      <import plugin="org.eclipse.rse.services"/>
+      <import plugin="org.eclipse.rse.ui"/>
+      -->
+      <!-- Bug 175108: Excplicit dependency on CVS for SSH -->
+      <!-- TM Site users can deselect SSH if they have Platform Only -->
+      <!-- Europa Users should be able to do "Select Required" -->
+      <import feature="org.eclipse.cvs" version="1.0.0" match="greaterOrEqual"/>
+      <!--
+      <import plugin="com.jcraft.jsch" version="0.1.28" match="compatible"/>
+      -->
    </requires>
 
    <plugin

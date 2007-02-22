@@ -23,9 +23,18 @@
    </url>
 
    <requires>
+      <!-- Feature dependency due to bug 175004 (UM doesnt use plugins for "Select Required" -->
+      <!-- But take care of bug 154505 (UM "Select Required" selects container features) -->
       <import feature="org.eclipse.rse.core" version="2.0.0.qualifier" match="equivalent"/>
       <import feature="org.eclipse.rse.local" version="2.0.0.qualifier" match="equivalent"/>
-      <import plugin="org.junit"/>
+      <import feature="org.eclipse.rse.ftp" version="2.0.0.qualifier" match="equivalent"/>
+      <!-- org.junit either comes with the JDT feature (org.eclipse.jdt),  -->
+      <!-- or with the eclipse-test-framework download. So, don't put a    -->
+      <!-- feature dependency here since it is no hard dependency          -->
+      <!-- (although it would help Europa users to get their stuff, but    -->
+      <!-- it could invalidate the configuration for Platform users:       --> 
+      <!-- bug 151797)                                                     -->
+      <import plugin="org.junit" version="3.8.2" match="compatible"/>
    </requires>
 
    <plugin

@@ -25,7 +25,9 @@
    </url>
 
    <requires>
-      <import feature="org.eclipse.rse.core"/>
+      <!-- Feature dependency due to bug 175004 (UM doesnt use plugins for "Select Required" -->
+      <!-- But take care of bug 154505 (UM "Select Required" selects container features) -->
+      <import feature="org.eclipse.rse.core" version="2.0.0.qualifier" match="compatible"/>
       <import feature="org.eclipse.cdt"/>
    </requires>
 

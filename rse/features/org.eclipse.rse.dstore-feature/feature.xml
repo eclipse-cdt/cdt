@@ -24,10 +24,12 @@
    </url>
 
    <requires>
-      <import feature="org.eclipse.rse.core"/>
       <import plugin="org.eclipse.ui"/>
       <import plugin="org.eclipse.core.runtime"/>
       <import plugin="org.eclipse.ui.views"/>
+      <!-- Feature dependency due to bug 175004 (UM doesnt use plugins for "Select Required" -->
+      <!-- But take care of bug 154505 (UM "Select Required" selects container features) -->
+      <import feature="org.eclipse.rse.core" version="2.0.0.qualifier" match="compatible"/>
    </requires>
 
    <plugin

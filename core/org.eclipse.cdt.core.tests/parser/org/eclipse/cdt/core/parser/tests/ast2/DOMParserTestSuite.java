@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2006 IBM Corporation and others.
+ * Copyright (c) 2004, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -28,10 +28,10 @@ public class DOMParserTestSuite extends TestCase {
 		suite.addTest( AST2Tests.suite() );
 		suite.addTestSuite( GCCTests.class );
 		suite.addTestSuite( AST2CPPTests.class );
-		suite.addTestSuite( AST2TemplateTests.class );
+		suite.addTest( AST2TemplateTests.suite() );
 		suite.addTestSuite( QuickParser2Tests.class );
-		suite.addTestSuite( CompleteParser2Tests.class );
-		suite.addTestSuite( DOMLocationTests.class );
+		suite.addTest( CompleteParser2Tests.suite() );
+		suite.addTest( DOMLocationTests.suite() );
         suite.addTestSuite( DOMLocationMacroTests.class );
 		suite.addTest( DOMLocationInclusionTests.suite() );
 		suite.addTestSuite( AST2KnRTests.class );

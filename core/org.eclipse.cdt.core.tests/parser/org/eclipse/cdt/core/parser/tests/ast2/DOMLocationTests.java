@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2006 IBM Corporation and others.
+ * Copyright (c) 2004, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,8 @@
  * Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.core.parser.tests.ast2;
+
+import junit.framework.TestSuite;
 
 import org.eclipse.cdt.core.dom.ast.IASTBinaryExpression;
 import org.eclipse.cdt.core.dom.ast.IASTCastExpression;
@@ -74,6 +76,10 @@ public class DOMLocationTests extends AST2BaseTest {
 	public DOMLocationTests(String name) {
 		setName(name);
 	}
+
+    public static TestSuite suite() {
+    	return suite(DOMLocationTests.class);
+    }
 
 	public void testBaseCase() throws ParserException {
         for (ParserLanguage p = ParserLanguage.C; p != null; p = (p == ParserLanguage.C) ? ParserLanguage.CPP
@@ -671,7 +677,7 @@ public class DOMLocationTests extends AST2BaseTest {
         assertSoleLocation(problems[0], buffer.indexOf("X"), "X".length() );
     }
 
-    public void _testBug171520() throws Exception {
+    public void testBug171520() throws Exception {
     	// https://bugs.eclipse.org/bugs/show_bug.cgi?id=171520
         StringBuffer buffer = new StringBuffer();
         buffer.append("int i = sizeof(int);");

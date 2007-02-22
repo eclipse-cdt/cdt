@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005 IBM Corporation and others.
+ * Copyright (c) 2005, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,11 +7,14 @@
  *
  * Contributors:
  * IBM - Initial API and implementation
+ * Markus Schorn (Wind River Systems)
  *******************************************************************************/
 /*
  * Created on Mar 11, 2005
  */
 package org.eclipse.cdt.core.parser.tests.ast2;
+
+import junit.framework.TestSuite;
 
 import org.eclipse.cdt.core.dom.ast.IASTCompoundStatement;
 import org.eclipse.cdt.core.dom.ast.IASTExpressionStatement;
@@ -67,6 +70,10 @@ public class AST2TemplateTests extends AST2BaseTest {
 	public AST2TemplateTests(String name) {
 		super(name);
 	}
+
+    public static TestSuite suite() {
+    	return suite(AST2TemplateTests.class);
+    }
 
 	public void testBasicClassTemplate() throws Exception {
 		IASTTranslationUnit tu = parse( "template <class T> class A{ T t; };", ParserLanguage.CPP ); //$NON-NLS-1$

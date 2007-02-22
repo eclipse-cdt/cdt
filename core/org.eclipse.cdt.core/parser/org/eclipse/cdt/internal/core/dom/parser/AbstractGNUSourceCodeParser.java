@@ -2080,6 +2080,11 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
 
     protected IASTNode[] parseTypeIdOrUnaryExpression(
             boolean typeIdWithParentheses) throws EndOfFileException {
+    	return parseTypeIdOrUnaryExpression(typeIdWithParentheses, new int[1]);
+    }
+
+    protected IASTNode[] parseTypeIdOrUnaryExpression(
+            boolean typeIdWithParentheses, int[] endoffset) throws EndOfFileException {
         IASTTypeId typeId = null;
         IASTExpression unaryExpression = null;
         IToken typeIdLA = null, unaryExpressionLA = null;
@@ -2094,13 +2099,18 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
             		switch (LT(1)) {
             		case IToken.tRPAREN:
             		case IToken.tEOC:
-            			consume();
+            			endoffset[0]= consume().getEndOffset();
             			break;
             		default:
             			typeId = null;
             		}
             	}
-            	if (typeId != null) typeIdLA = LA(1);
+            	if (typeId != null) {
+            		typeIdLA = LA(1);
+            		if (!typeIdWithParentheses) {
+            			endoffset[0]= calculateEndOffset(typeId);
+            		}
+            	}
             }
         } catch (BacktrackException e) {
 			typeId = null;        	
@@ -2123,6 +2133,7 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
             backup(unaryExpressionLA);
             result = new IASTNode[1];
             result[0] = unaryExpression;
+            endoffset[0]= calculateEndOffset(unaryExpression);
             return result;
         }
         if (unaryExpression != null && typeId != null
@@ -2141,27 +2152,26 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
     protected IASTExpression parseSizeofExpression() throws BacktrackException,
             EndOfFileException {
         int startingOffset = consume().getOffset(); // t_sizeof
-        IASTNode[] choice = parseTypeIdOrUnaryExpression(true);
+        int[] endoffset= new int[] {0};
+        IASTNode[] choice = parseTypeIdOrUnaryExpression(true, endoffset);
         switch (choice.length) {
         case 1:
-            int lastOffset = calculateEndOffset(choice[0]);
             if (choice[0] instanceof IASTExpression)
                 return buildUnaryExpression(IASTUnaryExpression.op_sizeof,
-                        (IASTExpression) choice[0], startingOffset, lastOffset);
+                        (IASTExpression) choice[0], startingOffset, endoffset[0]);
             else if (choice[0] instanceof IASTTypeId)
                 return buildTypeIdExpression(IASTTypeIdExpression.op_sizeof,
-                        (IASTTypeId) choice[0], startingOffset, lastOffset);
+                        (IASTTypeId) choice[0], startingOffset, endoffset[0]);
             throwBacktrack(LA(1));
             break;
         case 2:
-            lastOffset = calculateEndOffset(choice[0]);
             IASTAmbiguousExpression ambExpr = createAmbiguousExpression();
             IASTExpression e1 = buildTypeIdExpression(
                     IASTTypeIdExpression.op_sizeof, (IASTTypeId) choice[0],
-                    startingOffset, lastOffset);
+                    startingOffset, endoffset[0]);
             IASTExpression e2 = buildUnaryExpression(
                     IASTUnaryExpression.op_sizeof, (IASTExpression) choice[1],
-                    startingOffset, lastOffset);
+                    startingOffset, endoffset[0]);
             ambExpr.addExpression(e1);
             e1.setParent(ambExpr);
             e1.setPropertyInParent(IASTAmbiguousExpression.SUBEXPRESSION);

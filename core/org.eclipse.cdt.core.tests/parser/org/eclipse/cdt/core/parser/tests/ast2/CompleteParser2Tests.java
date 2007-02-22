@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2005 IBM Corporation and others.
+ * Copyright (c) 2004, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  * IBM - Initial API and implementation
+ * Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.core.parser.tests.ast2;
 
@@ -15,7 +16,7 @@ import java.io.Writer;
 import java.util.ArrayList;
 import java.util.List;
 
-import junit.framework.TestCase;
+import junit.framework.TestSuite;
 
 import org.eclipse.cdt.core.dom.ast.IASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTCompoundStatement;
@@ -68,6 +69,7 @@ import org.eclipse.cdt.core.parser.NullLogService;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.ParserMode;
 import org.eclipse.cdt.core.parser.ScannerInfo;
+import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
 import org.eclipse.cdt.internal.core.dom.parser.ISourceCodeParser;
 import org.eclipse.cdt.internal.core.dom.parser.c.ANSICParserExtensionConfiguration;
 import org.eclipse.cdt.internal.core.dom.parser.c.CVisitor;
@@ -90,7 +92,7 @@ import org.eclipse.core.runtime.Platform;
 /**
  * @author jcamelon
  */
-public class CompleteParser2Tests extends TestCase {
+public class CompleteParser2Tests extends BaseTestCase {
 
     private static final NullLogService NULL_LOG = new NullLogService();
     
@@ -99,6 +101,10 @@ public class CompleteParser2Tests extends TestCase {
 	public CompleteParser2Tests(String name) {
 		super(name);
 	}
+
+    public static TestSuite suite() {
+    	return suite(CompleteParser2Tests.class);
+    }
 
 	static private class CPPNameCollector extends CPPASTVisitor {
         {

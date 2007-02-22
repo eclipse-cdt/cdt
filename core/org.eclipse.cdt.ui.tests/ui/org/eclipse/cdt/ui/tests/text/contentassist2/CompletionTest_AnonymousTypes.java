@@ -27,7 +27,7 @@ public class CompletionTest_AnonymousTypes  extends CompletionProposalsBaseTest{
 	public CompletionTest_AnonymousTypes(String name) {
 		super(name);
 		// see https://bugs.eclipse.org/bugs/show_bug.cgi?id=174809
-		setExpectFailure(174809);
+		// setExpectFailure(174809);
 	}
 	
 	public static Test suite() {

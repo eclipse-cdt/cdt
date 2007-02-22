@@ -7,6 +7,7 @@
  *
  * Contributors:
  * QNX - Initial API and implementation
+ * Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.text.contentassist;
 
@@ -196,17 +197,24 @@ public class DOMCompletionProposalComputer extends ParsingBasedProposalComputer 
 	protected void handleBinding(IBinding binding,
 			CContentAssistInvocationContext cContext,
 			IASTCompletionContext astContext, List proposals) {
-		if (binding instanceof ICPPClassType) {
-			handleClass((ICPPClassType) binding, cContext, proposals);
-		} else if (binding instanceof IFunction)  {
-			handleFunction((IFunction)binding, cContext, proposals);
-		} else if (binding instanceof IVariable)  {
-			handleVariable((IVariable) binding, cContext, proposals);
-		} else if (!cContext.isContextInformationStyle()) {
-			proposals.add(createProposal(binding.getName(), binding.getName(), getImage(binding), cContext));
+		if (!isAnonymousBinding(binding)) {
+			if (binding instanceof ICPPClassType) {
+				handleClass((ICPPClassType) binding, cContext, proposals);
+			} else if (binding instanceof IFunction)  {
+				handleFunction((IFunction)binding, cContext, proposals);
+			} else if (binding instanceof IVariable)  {
+				handleVariable((IVariable) binding, cContext, proposals);
+			} else if (!cContext.isContextInformationStyle()) {
+				proposals.add(createProposal(binding.getName(), binding.getName(), getImage(binding), cContext));
+			}
 		}
 	}
 	
+	private boolean isAnonymousBinding(IBinding binding) {
+		char[] name= binding.getNameCharArray();
+		return name.length == 0 || name[0] == '{';
+	}
+
 	private void handleClass(ICPPClassType classType, CContentAssistInvocationContext context, List proposals) {
 		if (context.isContextInformationStyle()) {
 			try {

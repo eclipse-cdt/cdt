@@ -284,6 +284,7 @@ import org.eclipse.ui.internal.ide.dialogs.ProjectContentsLocationArea.IErrorMes
 	    }
 
 	    public IPath getProjectLocation() {
+	    	if (locationArea.isDefault()) return null;
 	    	return new Path(locationArea.getProjectLocation());
 	    }
 	    

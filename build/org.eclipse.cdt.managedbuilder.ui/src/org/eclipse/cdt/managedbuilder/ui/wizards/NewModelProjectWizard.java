@@ -128,8 +128,7 @@ public abstract class NewModelProjectWizard extends BasicNewResourceWizard imple
 		}
 		monitor.beginTask(NewUIMessages.getResourceString(MSG_CREATE), 8); //$NON-NLS-1$
 		
-		newProject = createIProject(fMainPage.getProjectName(), null);
-		// fMainPage.getProjectLocation());
+		newProject = createIProject(fMainPage.getProjectName(), fMainPage.getProjectLocation());
 		if (newProject != null) {
 			try {
 				if (fMainPage.h_selected.needsConfig()) {

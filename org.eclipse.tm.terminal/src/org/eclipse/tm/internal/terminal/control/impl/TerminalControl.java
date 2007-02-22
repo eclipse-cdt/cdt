@@ -224,6 +224,8 @@ public class TerminalControl implements ITerminalControlForText, ITerminalContro
 		if(fConnector==null)
 			return;
 		fConnector.connect(this);
+		// clean the error message
+		setMsg(""); //$NON-NLS-1$
 		waitForConnect();
 	}
 	/* (non-Javadoc)

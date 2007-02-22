@@ -1735,6 +1735,12 @@
 					  osList="win32"					  
 					  archList="all">
 				  </targetPlatform>
+                  <builder
+                        id="cdt.managedbuild.tool.gnu.builder.mingw.base"
+                        isAbstract="false"
+                        isVariableCaseSensitive="false"
+                        superClass="org.eclipse.cdt.build.core.internal.builder">
+                  </builder>
 				  <tool
 					  id="cdt.managedbuild.tool.gnu.assembler.mingw.base"
 					  superClass="cdt.managedbuild.tool.gnu.assembler">
@@ -1780,12 +1786,7 @@
 			  		value="org.eclipse.cdt.build.core.buildArtefactType.staticLib"/>
 			  	</not>
 			  </enablement>
-                  </tool>
-                  <builder
-                        id="cdt.managedbuild.tool.gnu.builder.mingw.base"
-                        isAbstract="false"
-                        isVariableCaseSensitive="false">
-                  </builder>                  
+                  </tool>                  
 
                </toolChain>                                   
 

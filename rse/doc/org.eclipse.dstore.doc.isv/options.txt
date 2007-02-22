@@ -1,4 +1,5 @@
 -charset "iso-8859-1"
+-source 1.4
 -sourcepath "../org.eclipse.dstore.core/src
 ;../org.eclipse.dstore.extra/src"
 -d reference/api

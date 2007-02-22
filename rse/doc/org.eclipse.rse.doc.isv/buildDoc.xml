@@ -132,9 +132,10 @@
 
 		<echo message="sep = ${argsListDelimiter}"/>
 		<echo message="javadoc = ${javadoc}"/>
-		<exec dir="." executable="${javadoc}" output="temp.bin.log">
+		<exec dir="." executable="${javadoc}" output="temp.bin.log" resultproperty="javadocResult">
 			<arg line="@${basedir}/${optionsFile} -J-Xmx1000M" />
 		</exec>
+		<echo message="javadoc result = ${javadocResult}"/>
 	</target>
 
 </project>

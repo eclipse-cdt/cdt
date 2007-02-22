@@ -54,12 +54,17 @@ public class ShellProcessSubSystemConfiguration extends
         return hostProcessAdapter;
     }
 
-    public IConnectorService getConnectorService(IHost host) {
+    public IConnectorService getConnectorService(IHost host) 
+    {
     	IShellServiceSubSystem ss = Activator.getShellServiceSubSystem(host);
-    	if (ss!=null) {
+    	if (ss!=null) 
+    	{
     		return ss.getConnectorService();
     	}
-    	return null;
+    	else
+    	{
+    		return new DelegatingShellProcessConnectorService(host);
+    	} 
     }
     
     public Class getServiceImplType() {

@@ -18,6 +18,7 @@ package org.eclipse.rse.ui.widgets.services;
 
 import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.subsystems.IConnectorService;
+import org.eclipse.rse.core.subsystems.IDelegatingConnectorService;
 import org.eclipse.rse.core.subsystems.IServerLauncherProperties;
 import org.eclipse.rse.core.subsystems.IServiceSubSystemConfiguration;
 import org.eclipse.rse.model.DummyHost;
@@ -73,19 +74,29 @@ public class FactoryServiceElement extends ServiceElement
 		if (_children == null)
 		{
 			IHost host = getHost();
-			_children = new ServiceElement[2];
-			_children[0] = new ServiceServiceElement(host, this, getService());
+			
+			ServiceServiceElement serviceElement = new ServiceServiceElement(host, this, getService());
 		
 			IConnectorService connectorService = getConnectorService();		
-			_children[1] = new ConnectorServiceElement(host, this, connectorService);
-			if (host instanceof DummyHost)
+			if (connectorService != null && !(connectorService instanceof IDelegatingConnectorService))
 			{
-				IServerLauncherProperties sl = connectorService.getRemoteServerLauncherProperties();
-				if (sl == null)
+				_children = new ServiceElement[2];
+				_children[0] = serviceElement;
+				_children[1] = new ConnectorServiceElement(host, this, connectorService);
+				if (host instanceof DummyHost)
 				{
-					sl = _factory.createServerLauncher(connectorService);
-					connectorService.setRemoteServerLauncherProperties(sl);
+					IServerLauncherProperties sl = connectorService.getRemoteServerLauncherProperties();
+					if (sl == null)
+					{
+						sl = _factory.createServerLauncher(connectorService);
+						connectorService.setRemoteServerLauncherProperties(sl);
+					}
 				}
+			}
+			else
+			{
+				_children = new ServiceElement[1];
+				_children[0] = serviceElement;
 			}
 		}
 		return _children;
@@ -119,10 +130,14 @@ public class FactoryServiceElement extends ServiceElement
 
 	public void commit()
 	{
+		if (_isSelected)
+		{
 		ServiceElement[] children = getChildren();
 		for (int i = 0; i < children.length; i++)
 		{
-			children[i].commit();
+			//if (children[i].isSelected())
+				children[i].commit();
+		}
 		}
 	}
 	

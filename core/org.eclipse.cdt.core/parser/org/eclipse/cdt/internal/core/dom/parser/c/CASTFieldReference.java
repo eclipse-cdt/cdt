@@ -12,23 +12,15 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.c;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
-import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTCompletionContext;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTFieldReference;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IBinding;
-import org.eclipse.cdt.core.dom.ast.ICompositeType;
-import org.eclipse.cdt.core.dom.ast.IField;
 import org.eclipse.cdt.core.dom.ast.IType;
-import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPSemantics;
 
 /**
  * @author jcamelon
@@ -105,37 +97,6 @@ public class CASTFieldReference extends CASTNode implements IASTFieldReference, 
     }
 
 	public IBinding[] findBindings(IASTName n, boolean isPrefix) {
-		IASTExpression expression = getFieldOwner();
-		IType type = expression.getExpressionType();
-		type = CPPSemantics.getUltimateType(type, true); //stop at pointer to member?
-		
-		if (type instanceof ICompositeType) {
-			ICompositeType compType = (ICompositeType) type;
-			List bindings = new ArrayList();
-			char[] name = n.toCharArray();
-			
-			try {
-				IField[] fields = compType.getFields();
-				for (int i = 0; i < fields.length; i++) {
-					char[] potential = fields[i].getNameCharArray();
-					if (nameMatches(potential, name, isPrefix)) {
-						bindings.add(fields[i]);
-					}
-				}
-			} catch (DOMException e) {
-			}
-			
-			return (IBinding[]) bindings.toArray(new IBinding[bindings.size()]);
-		}
-		
-		return null;
-	}
-	
-	private boolean nameMatches(char[] potential, char[] name, boolean isPrefix) {
-		if (isPrefix) {
-			return CharArrayUtils.equals(potential, 0, name.length, name, false);
-		} else {
-			return CharArrayUtils.equals(potential, name);
-		}
+		return CVisitor.findBindingsForContentAssist(n, isPrefix);
 	}
 }

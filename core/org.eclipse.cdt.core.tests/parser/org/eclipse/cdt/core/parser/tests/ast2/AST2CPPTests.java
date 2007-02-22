@@ -2169,7 +2169,7 @@ public class AST2CPPTests extends AST2BaseTest {
         tu.accept(col);
 
         IASTName name = col.getName(11);
-        IBinding[] bs = CPPSemantics.prefixLookup(name);
+        IBinding[] bs = CPPSemantics.findBindingsForContentAssist(name, true);
         assertEquals(4, bs.length);
     }
 

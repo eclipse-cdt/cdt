@@ -14,20 +14,14 @@ package org.eclipse.cdt.internal.core.dom.parser.cpp;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.cdt.core.dom.ILinkage;
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTCompletionContext;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IBinding;
-import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.cpp.CPPASTVisitor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier;
-import org.eclipse.cdt.core.index.IIndex;
-import org.eclipse.cdt.core.index.IndexFilter;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.NullProgressMonitor;
 
 /**
  * @author jcamelon
@@ -113,54 +107,33 @@ public class CPPASTBaseSpecifier extends CPPASTNode implements
 	}
 
 	public IBinding[] findBindings(IASTName n, boolean isPrefix) {
+		IBinding[] bindings = CPPSemantics.findBindingsForContentAssist(n, isPrefix);
 		List filtered = new ArrayList();
-		IndexFilter filter = new IndexFilter(){
-			public boolean acceptBinding(IBinding binding) {
-				if (binding instanceof ICPPClassType) {
-					ICPPClassType classType = (ICPPClassType) binding;
-					try {
-						int key = classType.getKey();
-						if (key == ICPPClassType.k_class) {
-							return true;
-						}
-					} catch (DOMException e) {
-					}
-				}
-				return false;
-			}
-			public boolean acceptLinkage(ILinkage linkage) {
-				return linkage.getID() == ILinkage.CPP_LINKAGE_ID;
-			}
-		};
 		
-		IScope scope = CPPVisitor.getContainingScope(n);
-		
-		if (scope != null) {
-			try {
-				IBinding[] bindings = scope.find(n.toString(), isPrefix);
-				for (int i = 0; i < bindings.length; i++) {
-					if (filter.acceptBinding(bindings[i])) {
-						filtered.add(bindings[i]);
-					}
-				}
-			} catch (DOMException e) {
-			}	
-		}
-				
-		IIndex index = getTranslationUnit().getIndex();
-		
-		if (index != null) {
-			try {
-				IBinding[] bindings = isPrefix ?
-						index.findBindingsForPrefix(n.toCharArray(), filter) :
-						index.findBindings(n.toCharArray(), filter, new NullProgressMonitor());
-				for (int i = 0; i < bindings.length; i++) {
-					filtered.add(bindings[i]);
-				}
-			} catch (CoreException e) {
+		ICPPClassType classType = null;
+		if (getParent() instanceof CPPASTCompositeTypeSpecifier) {
+			IASTName className = ((CPPASTCompositeTypeSpecifier) getParent()).getName();
+			IBinding binding = className.resolveBinding();
+			if (binding instanceof ICPPClassType) {
+				classType = (ICPPClassType) binding;
 			}
 		}
-			
+		
+		
+		for (int i = 0; i < bindings.length; i++) {
+			if (bindings[i] instanceof ICPPClassType) {
+				ICPPClassType base = (ICPPClassType) bindings[i];
+				try {
+					int key = base.getKey();
+					if (key == ICPPClassType.k_class &&
+							(classType == null || !base.isSameType(classType))) {
+						filtered.add(base);
+					}
+				} catch (DOMException e) {
+				}
+			}
+		}
+		
 		return (IBinding[]) filtered.toArray(new IBinding[filtered.size()]);
 	}
 }

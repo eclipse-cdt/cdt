@@ -308,6 +308,22 @@ public class CompletionTests extends AbstractContentAssistTest {
 		assertCompletionResults(fCursorOffset, expected, true);
 	}
 
+	//namespace ns {void nsfunc(){C/*cursor*/
+	public void testTypes_NamespaceScope() throws Exception {
+		final String[] expected= {
+				"C1", "C2", "C3", "CNS"	
+		};
+		assertCompletionResults(fCursorOffset, expected, true);
+	}
+	
+	//namespace ns {void gfunc(){::C/*cursor*/
+	public void testTypes_GlobalQualification() throws Exception {
+		final String[] expected= {
+				"C1", "C2", "C3"
+		};
+		assertCompletionResults(fCursorOffset, expected, true);
+	}
+	
 	//void f() {e/*cursor*/
 	public void testEnums_GlobalScope() throws Exception {
 		final String[] expected= {
@@ -582,6 +598,14 @@ public class CompletionTests extends AbstractContentAssistTest {
 		final String[] expected= {
 				"tConvert(void)"
 //				"tConvert<T>(void)"
+		};
+		assertCompletionResults(fCursorOffset, expected, true);
+	}
+	
+	//using namespace ns;void gfunc(){NSC/*cursor*/
+	public void testUsingDirective() throws Exception {
+		final String[] expected= {
+				"NSCONST"	
 		};
 		assertCompletionResults(fCursorOffset, expected, true);
 	}

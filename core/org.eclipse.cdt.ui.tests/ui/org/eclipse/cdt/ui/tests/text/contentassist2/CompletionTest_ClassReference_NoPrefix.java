@@ -31,7 +31,6 @@ public class CompletionTest_ClassReference_NoPrefix  extends CompletionProposals
 	private final String[] expectedResults = {
 		"aClass",
 		"anotherClass",
-		"ClassA",
 		"xOtherClass"
 	};
 	

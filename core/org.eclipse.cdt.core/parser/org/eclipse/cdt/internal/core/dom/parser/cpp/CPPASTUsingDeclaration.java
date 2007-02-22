@@ -14,20 +14,12 @@ package org.eclipse.cdt.internal.core.dom.parser.cpp;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.cdt.core.dom.ILinkage;
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTCompletionContext;
-import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IBinding;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
-import org.eclipse.cdt.core.index.IIndex;
-import org.eclipse.cdt.core.index.IndexFilter;
-import org.eclipse.cdt.core.parser.util.CharArrayUtils;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.NullProgressMonitor;
 
 /**
  * @author jcamelon
@@ -97,53 +89,15 @@ public class CPPASTUsingDeclaration extends CPPASTNode implements
 	}
 	
 	public IBinding[] findBindings(IASTName n, boolean isPrefix) {
+		IBinding[] bindings = CPPSemantics.findBindingsForContentAssist(n, isPrefix);
 		List filtered = new ArrayList();
-		IndexFilter filter = new IndexFilter() {
-			public boolean acceptBinding(IBinding binding) {
-				return binding instanceof ICPPNamespace;
-			}
-			public boolean acceptLinkage(ILinkage linkage) {
-				return linkage.getID() == ILinkage.CPP_LINKAGE_ID;
-			}
-		};
 		
-		IASTDeclaration[] decls = getTranslationUnit().getDeclarations();
-		char[] nChars = n.toCharArray();
-		for (int i = 0; i < decls.length; i++) {
-			if (decls[i] instanceof ICPPASTNamespaceDefinition) {
-				ICPPASTNamespaceDefinition defn = (ICPPASTNamespaceDefinition) decls[i];
-				IASTName name = defn.getName();
-				if (nameMatches(name.toCharArray(), nChars, isPrefix)) {
-					IBinding binding = name.resolveBinding();
-					if (filter.acceptBinding(binding)) {
-						filtered.add(binding);
-					}
-				}
+		for (int i = 0;i < bindings.length; i++) {
+			if (bindings[i] instanceof ICPPNamespace) {
+				filtered.add(bindings[i]);
 			}
-		}
-		
-		IIndex index = getTranslationUnit().getIndex();
-		
-		if (index != null) {
-			try {
-				IBinding[] bindings = isPrefix ? 
-						index.findBindingsForPrefix(n.toCharArray(), filter) :
-						index.findBindings(n.toCharArray(), filter, new NullProgressMonitor());
-				for (int i = 0; i < bindings.length; i++) {
-					filtered.add(bindings[i]);
-				}
-			} catch (CoreException e) {
-			}	
 		}
 		
 		return (IBinding[]) filtered.toArray(new IBinding[filtered.size()]);
-	}
-	
-	private boolean nameMatches(char[] potential, char[] name, boolean isPrefix) {
-		if (isPrefix) {
-			return CharArrayUtils.equals(potential, 0, name.length, name, false);
-		} else {
-			return CharArrayUtils.equals(potential, name);
-		}
 	}
 }

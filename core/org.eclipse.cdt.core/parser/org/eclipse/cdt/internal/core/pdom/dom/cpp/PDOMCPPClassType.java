@@ -193,6 +193,9 @@ ICPPClassScope, IPDOMMemberOwner, IIndexType, IIndexScope {
 			return;
 		visited.add(this);
 
+		// Class is in its own scope
+		visitor.visit(this);
+		
 		// Get my members
 		accept(visitor);
 

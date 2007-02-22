@@ -30,9 +30,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateId;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPMember;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 
@@ -61,9 +59,15 @@ public class CPPASTQualifiedName extends CPPASTNode implements
 	}
 
 	public IASTCompletionContext getCompletionContext() {
-		removeNullNames();
-		IASTName lastName = getLastName();
-		return lastName != null ? lastName.getCompletionContext() : null;
+        IASTNode node = getParent();
+    	while (node != null) {
+    		if (node instanceof IASTCompletionContext) {
+    			return (IASTCompletionContext) node;
+    		}
+    		node = node.getParent();
+    	}
+    	
+    	return null;
 	}
 
 	/*
@@ -304,77 +308,63 @@ public class CPPASTQualifiedName extends CPPASTNode implements
     }
 
 	public IBinding[] findBindings(IASTName n, boolean isPrefix) {
-		IBinding binding = names[names.length - 2].resolveBinding();
-		if (binding instanceof ICPPClassType) {
-			return findClassScopeBindings((ICPPClassType) binding, 
-					n.toCharArray(), isPrefix);
-		} else if (binding instanceof ICPPNamespace) {
-			return findNamespaceScopeBindings((ICPPNamespace) binding, 
-					n.toCharArray(), isPrefix);
-		}
+		IBinding[] bindings = CPPSemantics.findBindingsForContentAssist(n, isPrefix);
 		
-		return null;
+		if (names.length - 2 >= 0) {
+			IBinding binding = names[names.length - 2].resolveBinding();
+			if (binding instanceof ICPPClassType) {
+				ICPPClassType classType = (ICPPClassType) binding;
+				final boolean isDeclaration = getParent().getParent() instanceof IASTSimpleDeclaration;
+				List filtered = filterClassScopeBindings(classType, bindings, isDeclaration);
+			
+				if (isDeclaration && nameMatches(classType.getNameCharArray(), n
+								.toCharArray(), isPrefix)) {
+					try {
+						ICPPConstructor[] constructors = classType.getConstructors();
+						for (int i = 0; i < constructors.length; i++) {
+							if (!constructors[i].isImplicit()) {
+								filtered.add(constructors[i]);
+							}
+						}
+					} catch (DOMException e) {
+					}
+				}
+				
+				return (IBinding[]) filtered.toArray(new IBinding[filtered.size()]);
+			}
+		}
+
+		return bindings;
 	}
 	
-	private IBinding[] findClassScopeBindings(ICPPClassType classType,
-			char[] name, boolean isPrefix) {
+	private List filterClassScopeBindings(ICPPClassType classType,
+			IBinding[] bindings, final boolean isDeclaration) {
 		List filtered = new ArrayList();
 		
 		try {
-			ICPPClassType[] nested = classType.getNestedClasses();
-			for (int i = 0; i < nested.length; i++) {
-				char[] potential = nested[i].getNameCharArray();
-				if (nameMatches(potential, name, isPrefix)) {
-					filtered.add(nested[i]);
-				}
-			}
-		} catch (DOMException e) {
-		}
-		
-		try {
-			final boolean isDeclaration = getParent().getParent() instanceof IASTSimpleDeclaration;
-			IBinding[] bindings = classType.getCompositeScope().find(new String(name), isPrefix);
 			for (int i = 0; i < bindings.length; i++) {
-				if (bindings[i] instanceof ICPPMember) {
-					ICPPMember member = (ICPPMember) bindings[i];
-					if (!classType.isSameType(member.getClassOwner())) continue;
-					
-					if (member instanceof IField) {
-						IField field = (IField) member;
-						if (!field.isStatic()) continue;
-					} else if (member instanceof ICPPMethod) {
-						ICPPMethod method = (ICPPMethod) member;
-						if (method.isImplicit()) continue;
-						if (method.isDestructor() || method instanceof ICPPConstructor) {
-							if (!isDeclaration) continue;
-						} else if (!method.isStatic() && !isDeclaration) continue;
-					}
-				} else if (!(bindings[i] instanceof IEnumerator) || isDeclaration) continue;
+				if (bindings[i] instanceof IField) {
+					IField field = (IField) bindings[i];
+					if (!field.isStatic()) continue;
+				} else if (bindings[i] instanceof ICPPMethod) {
+					ICPPMethod method = (ICPPMethod) bindings[i];
+					if (method.isImplicit()) continue;
+					if (method.isDestructor() || method instanceof ICPPConstructor) {
+						if (!isDeclaration) continue;
+					} else if (!method.isStatic() && !isDeclaration) continue;
+				} else if (bindings[i] instanceof ICPPClassType) {
+					ICPPClassType type = (ICPPClassType) bindings[i];
+					if (type.isSameType(classType)) continue;
+				} else if (!(bindings[i] instanceof IEnumerator) || isDeclaration) {
+					continue;
+				}
 				
 				filtered.add(bindings[i]);
 			}
-		} catch(DOMException e) {
-		}
-		
-		return (IBinding[]) filtered.toArray(new IBinding[filtered.size()]);
-	}
-	
-	private IBinding[] findNamespaceScopeBindings(ICPPNamespace namespace,
-			char[] name, boolean isPrefix) {
-		List bindings = new ArrayList();
-		
-		try {
-			IBinding[] members = namespace.getMemberBindings();
-			for (int i = 0 ; i < members.length; i++) {
-				char[] potential = members[i].getNameCharArray();
-				if (nameMatches(potential, name, isPrefix)) {
-					bindings.add(members[i]);
-				}
-			}
 		} catch (DOMException e) {
 		}
 		
-		return (IBinding[]) bindings.toArray(new IBinding[bindings.size()]);
+		return filtered;
 	}
 	
 	private boolean nameMatches(char[] potential, char[] name, boolean isPrefix) {

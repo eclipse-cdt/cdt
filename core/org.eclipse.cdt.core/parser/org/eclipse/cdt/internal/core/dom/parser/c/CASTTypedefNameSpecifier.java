@@ -15,21 +15,14 @@ package org.eclipse.cdt.internal.core.dom.parser.c;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.cdt.core.dom.ILinkage;
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
-import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTCompletionContext;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.ICompositeType;
 import org.eclipse.cdt.core.dom.ast.IEnumeration;
-import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.c.ICASTTypedefNameSpecifier;
-import org.eclipse.cdt.core.index.IIndex;
-import org.eclipse.cdt.core.index.IndexFilter;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.NullProgressMonitor;
 
 /**
  * @author jcamelon
@@ -80,45 +73,14 @@ public class CASTTypedefNameSpecifier extends CASTBaseDeclSpecifier implements
 	}
 
 	public IBinding[] findBindings(IASTName n, boolean isPrefix) {
+		IBinding[] bindings = CVisitor.findBindingsForContentAssist(n, isPrefix);
 		List filtered = new ArrayList();
-		IndexFilter filter = new IndexFilter() {
-			public boolean acceptBinding(IBinding binding) {
-				return binding instanceof ICompositeType
-				|| binding instanceof IEnumeration
-				|| binding instanceof ITypedef;
-			}
-			public boolean acceptLinkage(ILinkage linkage) {
-				return linkage.getID() == ILinkage.C_LINKAGE_ID;
-			}
-		};
 		
-		IScope scope = CVisitor.getContainingScope(n);
-		
-		if (scope == null) {
-			scope = getTranslationUnit().getScope();
-		}
-		
-		try {
-			IBinding[] bindings = scope.find(n.toString(), isPrefix);
-			for (int i = 0 ; i < bindings.length; i++) {
-				if (filter.acceptBinding(bindings[i])) {
-					filtered.add(bindings[i]);
-				}
-			}
-		} catch (DOMException e) {
-		}
-		
-		IIndex index = getTranslationUnit().getIndex();
-		
-		if (index != null) {
-			try {
-				IBinding[] bindings = isPrefix ?
-						index.findBindingsForPrefix(n.toCharArray(), filter) :
-						index.findBindings(n.toCharArray(), filter, new NullProgressMonitor());
-				for (int i = 0; i < bindings.length; i++) {
-					filtered.add(bindings[i]);
-				}
-			} catch (CoreException e) {
+		for (int i = 0; i < bindings.length; i++) {
+			if (bindings[i] instanceof ICompositeType
+					|| bindings[i] instanceof IEnumeration
+					|| bindings[i] instanceof ITypedef) {
+				filtered.add(bindings[i]);
 			}
 		}
 		

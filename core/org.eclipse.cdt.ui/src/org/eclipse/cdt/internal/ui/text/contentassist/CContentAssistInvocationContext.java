@@ -117,19 +117,22 @@ public class CContentAssistInvocationContext extends ContentAssistInvocationCont
 		if (proj == null) return null;
 		
 		try{
-			fIndex = CCorePlugin.getIndexManager().getIndex(proj,
-					IIndexManager.ADD_DEPENDENCIES | IIndexManager.ADD_DEPENDENT);
-
-			try {
-				fIndex.acquireReadLock();
-			} catch (InterruptedException e) {
-				fIndex = null;
-			}
-			
 			IPDOMManager manager = CCorePlugin.getPDOMManager();
 			String indexerId = manager.getIndexerId(proj);
+			
+			if (!IPDOMManager.ID_NO_INDEXER.equals(indexerId)) {
+				fIndex = CCorePlugin.getIndexManager().getIndex(proj,
+						IIndexManager.ADD_DEPENDENCIES | IIndexManager.ADD_DEPENDENT);
+
+				try {
+					fIndex.acquireReadLock();
+				} catch (InterruptedException e) {
+					fIndex = null;
+				}
+			}
+
 			int flags = ITranslationUnit.AST_SKIP_ALL_HEADERS;
-			if (fIndex == null || IPDOMManager.ID_NO_INDEXER.equals(indexerId)) {
+			if (fIndex == null) {
 				flags = 0;
 			}
 			

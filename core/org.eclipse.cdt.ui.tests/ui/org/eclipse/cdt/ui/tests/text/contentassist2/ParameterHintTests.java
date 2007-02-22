@@ -70,7 +70,7 @@ public class ParameterHintTests extends AbstractContentAssistTest {
 	////TODO move function into header once indexer supports templates
 	//template<class T>void tFunc(T x, T y);
 	//void foo(){tFunc(
-	public void testTemplateFunction() throws Exception {
+	public void _testTemplateFunction() throws Exception {
 		assertParameterHints(new String[] {
 				"tFunc(T x,T y) void"
 		});
@@ -158,7 +158,7 @@ public class ParameterHintTests extends AbstractContentAssistTest {
 		});
 	}
 	
-	//void foo(){int pi = 3;pi(
+	//int pi = 3;void foo(){pi(
 	public void testFunctionsOnly() throws Exception {
 		assertParameterHints(new String[] {
 				"pi(aClass a) int"

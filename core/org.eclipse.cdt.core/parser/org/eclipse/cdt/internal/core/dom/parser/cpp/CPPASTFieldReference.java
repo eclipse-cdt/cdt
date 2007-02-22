@@ -15,20 +15,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
-import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTCompletionContext;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IBinding;
-import org.eclipse.cdt.core.dom.ast.IField;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFieldReference;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPBase;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
-import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
 
 /**
@@ -116,73 +110,19 @@ public class CPPASTFieldReference extends CPPASTNode implements
     }
 
 	public IBinding[] findBindings(IASTName n, boolean isPrefix) {
-		IASTExpression expression = getFieldOwner();
-		IType type = expression.getExpressionType();
-		type = CPPSemantics.getUltimateType(type, true); //stop at pointer to member?
+		IBinding[] bindings = CPPSemantics.findBindingsForContentAssist(n, isPrefix);
+		List filtered = new ArrayList();
 		
-		if (type instanceof ICPPClassType) {
-			ICPPClassType classType = (ICPPClassType) type;
-			List bindings = new ArrayList();
-			char[] name = n.toCharArray();
-			
-			try {
-				IField[] fields = classType.getFields();
-				if (fields != null) {
-					for (int i = 0; i < fields.length; i++) {
-						char[] potential = fields[i].getNameCharArray();
-						if (nameMatches(potential, name, isPrefix)) {
-							bindings.add(fields[i]);
-						}
-					}
-				}
-			} catch (DOMException e) {
-			}
-			
-			try {
-				ICPPMethod[] methods = classType.getMethods();
-				if (methods != null) {
-					for (int i = 0; i < methods.length; i++) {
-						if (!(methods[i] instanceof ICPPConstructor) && !methods[i].isImplicit()) {
-							char[] potential = methods[i].getNameCharArray();
-							if (nameMatches(potential, name, isPrefix)) {
-								bindings.add(methods[i]);
-							}
-						}
-					}
-				}
-			} catch (DOMException e) {
-			}
-			
-			collectBases(classType, bindings, n.toCharArray(), isPrefix);
-			return (IBinding[]) bindings.toArray(new IBinding[bindings.size()]);
-		}
-		
-		return null;
-	}
-    
-	private void collectBases(ICPPClassType classType, List bindings, char[] name, boolean isPrefix) {
-		if (nameMatches(classType.getNameCharArray(), name, isPrefix)) {
-			bindings.add(classType);
-		}
-		
-		try {
-			ICPPBase[] bases = classType.getBases();
-			for (int i = 0; i < bases.length; i++) {
-				IBinding base = bases[i].getBaseClass();
-				if (base instanceof ICPPClassType) {
-					ICPPClassType baseClass = (ICPPClassType) base;
-					collectBases(baseClass, bindings, name, isPrefix);
+		for (int i = 0; i < bindings.length; i++) {
+			if (bindings[i] instanceof ICPPMethod) {
+				ICPPMethod method = (ICPPMethod) bindings[i];
+				if (method.isImplicit()) {
+					continue;
 				}
 			}
-		} catch (DOMException e) {
+			filtered.add(bindings[i]);
 		}
-	}
-	
-	private boolean nameMatches(char[] potential, char[] name, boolean isPrefix) {
-		if (isPrefix) {
-			return CharArrayUtils.equals(potential, 0, name.length, name, false);
-		} else {
-			return CharArrayUtils.equals(potential, name);
-		}
+		
+		return (IBinding[]) filtered.toArray(new IBinding[filtered.size()]);
 	}
 }

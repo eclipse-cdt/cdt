@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.dom.ILinkage;
 import org.eclipse.cdt.core.dom.ast.ASTNodeProperty;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTArrayDeclarator;
@@ -94,6 +95,7 @@ import org.eclipse.cdt.core.dom.ast.gnu.IGNUASTCompoundStatementExpression;
 import org.eclipse.cdt.core.dom.ast.gnu.c.ICASTKnRFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.gnu.c.IGCCASTSimpleDeclSpecifier;
 import org.eclipse.cdt.core.index.IIndex;
+import org.eclipse.cdt.core.index.IndexFilter;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.core.parser.util.CharArrayObjectMap;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
@@ -102,6 +104,7 @@ import org.eclipse.cdt.internal.core.dom.parser.ASTInternal;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.NullProgressMonitor;
 
 /**
  * Created on Nov 5, 2004
@@ -1194,8 +1197,14 @@ public class CVisitor {
 			    }
 			} else if ( parent instanceof IASTTranslationUnit ){
 				IASTTranslationUnit translation = (IASTTranslationUnit) parent;
-				nodes = translation.getDeclarations();
-				scope = (ICScope) translation.getScope();
+				if (!prefix || translation.getIndex() == null) {
+					nodes = translation.getDeclarations();
+					scope = (ICScope) translation.getScope();
+				} else {
+					//The index will be search later
+					nodes = null;
+					scope = null;
+				}
 			} else if( parent instanceof IASTStandardFunctionDeclarator ){
 			    IASTStandardFunctionDeclarator dtor = (IASTStandardFunctionDeclarator) parent;
 				nodes = dtor.getParameters();
@@ -1306,6 +1315,24 @@ public class CVisitor {
 		    for ( int i = 0; i < vals.length; i++ ) {
                 result = (IBinding[]) ArrayUtil.append( IBinding.class, result, ((IASTName) vals[i]).resolveBinding() );
             }
+		    
+		    IASTTranslationUnit tu = (IASTTranslationUnit)blockItem;
+			IIndex index = tu.getIndex();
+			if (index != null) {
+				try {
+					IndexFilter filter = IndexFilter
+							.getFilter(ILinkage.C_LINKAGE_ID);
+					IBinding[] bindings = prefix ? index.findBindingsForPrefix(
+							name.toCharArray(), filter) : index.findBindings(
+							name.toCharArray(), filter,
+							new NullProgressMonitor());
+							
+							result = (IBinding[]) ArrayUtil.addAll(IBinding.class, result, bindings);
+				} catch (CoreException e) {
+					CCorePlugin.log(e);
+				}
+			}
+		    
 		    return ArrayUtil.trim( IBinding.class, result );
 		}
 		if( blockItem != null) {
@@ -1899,15 +1926,15 @@ public class CVisitor {
         return null;
     }
     
-    public static IBinding [] prefixLookup( IASTName name ){
+    public static IBinding [] findBindingsForContentAssist( IASTName name, boolean isPrefix ){
         ASTNodeProperty prop = name.getPropertyInParent();
         
         IBinding [] result = null; 
         
         if( prop == IASTFieldReference.FIELD_NAME ){
-            result = (IBinding[]) findBinding( (IASTFieldReference) name.getParent(), true );
+            result = (IBinding[]) findBinding( (IASTFieldReference) name.getParent(), isPrefix );
         } else {
-	        int bits = PREFIX_LOOKUP;
+	        int bits = isPrefix ? PREFIX_LOOKUP : COMPLETE;
 	        if( prop == IASTElaboratedTypeSpecifier.TYPE_NAME ){
 	            bits |= TAGS;
 	        } else if( prop == IASTIdExpression.ID_NAME ){
@@ -1916,7 +1943,8 @@ public class CVisitor {
 	        
 	        IASTNode blockItem = getContainingBlockItem( name );
 	        try {
-	            result = (IBinding[]) findBinding( blockItem, name, bits );
+	            result = isPrefix ? (IBinding[]) findBinding( blockItem, name, bits ) :
+	            	new IBinding[] { (IBinding) findBinding( blockItem, name, bits ) };
 	        } catch ( DOMException e ) {
 	        }
         }

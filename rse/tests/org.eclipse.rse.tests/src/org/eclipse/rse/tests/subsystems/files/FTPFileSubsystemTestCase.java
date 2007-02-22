@@ -17,7 +17,9 @@ import org.apache.commons.net.ftp.FTPFile;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.rse.core.model.IHost;
+import org.eclipse.rse.core.model.IPropertySet;
 import org.eclipse.rse.core.model.ISystemRegistry;
+import org.eclipse.rse.core.model.PropertySet;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
 import org.eclipse.rse.internal.services.files.ftp.FTPService;
@@ -25,6 +27,7 @@ import org.eclipse.rse.services.files.IFileService;
 import org.eclipse.rse.services.files.IHostFile;
 import org.eclipse.rse.subsystems.files.ftp.FTPFileSubSystemConfiguration;
 import org.eclipse.rse.tests.RSETestsPlugin;
+import org.eclipse.rse.tests.core.RSEWaitAndDispatchUtil;
 import org.eclipse.rse.tests.core.connection.IRSEConnectionProperties;
 import org.eclipse.rse.tests.core.connection.RSEBaseConnectionTestCase;
 import org.eclipse.rse.ui.RSEUIPlugin;
@@ -54,16 +57,16 @@ public class FTPFileSubsystemTestCase extends RSEBaseConnectionTestCase {
 	}
 
 	/**
-	 * Test the FTP read access via ftp://ftp.suse.com
+	 * Test the FTP read access to a real remote FTP host.
 	 */
-	public void testFTPAccessToHost_ftp_suse_com() {
-		if (!RSETestsPlugin.isTestCaseEnabled("FTPFileSubsystemTestCase.testFTPAccessToHost_ftp_suse_com")) return; //$NON-NLS-1$
+	public void testFTPReadAccessToRemoteHost() {
+		if (!RSETestsPlugin.isTestCaseEnabled("FTPFileSubsystemTestCase.testFTPReadAccessToRemoteHost")) return; //$NON-NLS-1$
 		
 		ISystemRegistry systemRegistry = RSEUIPlugin.getTheSystemRegistry();
 		assertNotNull("Failed to get RSE system registry instance!", systemRegistry); //$NON-NLS-1$
 		
 		// Calculate the location of the test connection properties
-		IPath location = getTestDataLocation("testFTPAccessToHost_ftp_suse_com", false); //$NON-NLS-1$
+		IPath location = getTestDataLocation("testFTPReadAccessToRemoteHost", false); //$NON-NLS-1$
 		assertNotNull("Cannot locate test data! Missing test data location?", location); //$NON-NLS-1$
 		location = location.append("connection.properties"); //$NON-NLS-1$
 		assertNotNull("Failed to construct location to 'connection.properties' test data file!", location); //$NON-NLS-1$
@@ -93,19 +96,6 @@ public class FTPFileSubsystemTestCase extends RSEBaseConnectionTestCase {
 		assertNull("Failed to get ftp.files subsystem! Possible cause: " + cause, exception); //$NON-NLS-1$
 		assertNotNull("No ftp.files subystem", subSystem); //$NON-NLS-1$
 
-		// we expect that the subsystem is not connected yet
-		assertFalse("ftp.files subsystem is unexpectedly connected!", subSystem.isConnected()); //$NON-NLS-1$
-		try {
-			subSystem.connect();
-		} catch(Exception e) {
-			exception = e;
-			cause = e.getLocalizedMessage();
-		}
-		assertNull("Failed to connect ftp.files subsystem to host " + properties.getProperty(IRSEConnectionProperties.ATTR_NAME) + "! Possible cause: " + cause, exception); //$NON-NLS-1$ //$NON-NLS-2$
-		assertTrue("Failed to connect ftp.files subsystem to host " + properties.getProperty(IRSEConnectionProperties.ATTR_NAME) + "! Unknown cause!", subSystem.isConnected()); //$NON-NLS-1$ //$NON-NLS-2$
-		// expand the subsystem
-		systemRegistry.expandSubSystem(subSystem);
-		
 		ISubSystemConfiguration configuration = systemRegistry.getSubSystemConfiguration(subSystem);
 		assertNotNull("Failed to get ftp.files subsystem configuration instance!", configuration); //$NON-NLS-1$
 		
@@ -120,7 +110,32 @@ public class FTPFileSubsystemTestCase extends RSEBaseConnectionTestCase {
 		IFileService service = ftpConfiguration.getFileService(connection);
 		assertNotNull("Failed to get IFileService instance from ftp.files subsystem configuration!", service); //$NON-NLS-1$
 		assertTrue("IFileService instance is not of expected type FTPService!", service instanceof FTPService); //$NON-NLS-1$
-		FTPService ftpService = (FTPService)service;
+		final FTPService ftpService = (FTPService)service;
+		
+		// configure the service to use passive ftp
+		IPropertySet set = new PropertySet("testFTPReadAccessToRemoteHost"); //$NON-NLS-1$
+		set.addProperty("passive", "true"); //$NON-NLS-1$ //$NON-NLS-2$
+		ftpService.setPropertySet(set);
+		
+		// we expect that the subsystem is not connected yet
+		assertFalse("ftp.files subsystem is unexpectedly connected!", subSystem.isConnected()); //$NON-NLS-1$
+		try {
+			subSystem.connect();
+		} catch(Exception e) {
+			exception = e;
+			cause = e.getLocalizedMessage();
+		}
+		assertNull("Failed to connect ftp.files subsystem to host " + properties.getProperty(IRSEConnectionProperties.ATTR_NAME) + "! Possible cause: " + cause, exception); //$NON-NLS-1$ //$NON-NLS-2$
+
+		// Wait hard-coded 10 seconds to get around asynchronous connection problems.
+		RSEWaitAndDispatchUtil.waitAndDispatch(10000);
+
+		// if we could not connect in 10 sec. we give up here. The server might be not reachable
+		// or exceeded the max number of connection or ... or ... or ... Just do not fail in this case.
+		if (!subSystem.isConnected() || !ftpService.isConnected()) return;
+		
+		// expand the subsystem
+		systemRegistry.expandSubSystem(subSystem);
 		
 		// now we have the service reference and can start reading things from the server
 		IHostFile[] roots = ftpService.getRoots(new NullProgressMonitor());
@@ -141,5 +156,7 @@ public class FTPFileSubsystemTestCase extends RSEBaseConnectionTestCase {
 		}
 		assertNull("Failed to list the files from ftp server " + properties.getProperty(IRSEConnectionProperties.ATTR_NAME) + "! Possible cause: " + cause, exception); //$NON-NLS-1$ //$NON-NLS-2$
 		assertNotNull("Unexpected return value null for FTPClient.listFiles()!", files); //$NON-NLS-1$
+		
+		if (ftpService.isConnected()) ftpService.disconnect();
 	}
 }

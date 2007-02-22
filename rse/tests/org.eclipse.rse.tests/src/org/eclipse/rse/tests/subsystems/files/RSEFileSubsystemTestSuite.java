@@ -41,7 +41,12 @@ public class RSEFileSubsystemTestSuite extends DelegatingTestSuiteHolder {
 		TestSuite suite = new TestSuite("RSE File Subsystem Test Suite"); //$NON-NLS-1$
 		// add the single test suites to the overall one here.
 		suite.addTestSuite(FileServiceTest.class);
-		suite.addTestSuite(FTPFileSubsystemTestCase.class);
+
+		// Do not include the ftp sub system test case within the automated tests.
+		// Most server seems to limit the amount of connections per IP-address, so
+		// we run in problems with that. The test needs to be executed manually with
+		// the ftp server to use possibly changed to whatever host will do.
+		// suite.addTestSuite(FTPFileSubsystemTestCase.class);
 		
 		return suite;
 	}

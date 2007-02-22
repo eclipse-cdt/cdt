@@ -163,16 +163,18 @@ public class RSEDefaultNewConnectionWizard extends RSEAbstractNewConnectionWizar
 	 * Calculates the default profile name to propose on the default new
 	 * connection wizard main page.
 	 * 
+	 * <pre>
 	 * Expected order of default profile selection:
 	 *   1. If a connection is selected, the default profile is the one from the connection.
-	 *   2. If the wizard is invoked the 1st time, the default private system profile is the
-	 *      default profile.
-	 *   3. If the wizard is invoked the 2nd time and a last profile is remembered, the last
-	 *      profile is the default profile.
+	 *   2. If the wizard remembered the last profile and this last remembered profile is still
+	 *      available and active, the remembered last profile is the default profile. 
+	 *   3. If the default private system profile is availabe and active, the default private system profile
+	 *      is the default profile.
 	 *   4. The first non-empty profile from the list of active profiles is the default profile.
 	 *
 	 *   In case a profile name is not in the list of currently active profiles, the logic will
 	 *   fall trough to the next lower level.
+	 * </pre>
 	 */
 	protected void updateDefaultSelectedProfile() {
 		if (mainPage == null) return;

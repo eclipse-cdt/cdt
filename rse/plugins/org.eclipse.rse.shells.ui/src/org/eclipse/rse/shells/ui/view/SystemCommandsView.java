@@ -311,6 +311,6 @@ public class SystemCommandsView extends SystemTableView implements ISystemThemeC
 
 	protected Object getParentForContent(Object element)
 	{
-		return getAdapter(element).getParent(element);
+		return getViewAdapter(element).getParent(element);
 	}
 }

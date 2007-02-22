@@ -158,7 +158,7 @@ public class SystemBuildErrorView extends SystemTableView
 	
 	protected Object getParentForContent(Object element)
 	{
-		return getAdapter(element).getParent(element);		
+		return getViewAdapter(element).getParent(element);		
 	}
 
 }

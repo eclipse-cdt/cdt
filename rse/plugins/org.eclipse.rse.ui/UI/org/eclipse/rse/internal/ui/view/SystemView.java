@@ -1282,7 +1282,7 @@ public class SystemView extends SafeTreeViewer implements ISystemTree, ISystemRe
 	
 	protected ISystemViewElementAdapter getViewAdapter(Object o)
 	{
-		return (ISystemViewElementAdapter)((IAdaptable)o).getAdapter(ISystemViewElementAdapter.class);
+		return SystemAdapterHelpers.getAdapter(o, this);
 	}
 
 	/**

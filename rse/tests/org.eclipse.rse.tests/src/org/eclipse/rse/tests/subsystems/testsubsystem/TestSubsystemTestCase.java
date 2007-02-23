@@ -154,7 +154,7 @@ public class TestSubsystemTestCase extends RSEBaseConnectionTestCase {
 		assertTrue("missing selection", selection != null); //$NON-NLS-1$
 		assertTrue("not a structured selection", selection instanceof IStructuredSelection); //$NON-NLS-1$
 		 structSel = (IStructuredSelection)selection;
-		assertEquals("invalid number of selected items", 0, structSel.size()); //$NON-NLS-1$
+		assertEquals("invalid number of selected items", 1, structSel.size()); //$NON-NLS-1$
 	}
 	
 	public void testBugzilla170728() {

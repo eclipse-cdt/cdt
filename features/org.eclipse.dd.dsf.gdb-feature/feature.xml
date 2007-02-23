@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
       id="org.eclipse.dd.dsf.mi"
-      label="DSF MI Feature"
+      label="Debugger Services Framework gdb/mi support"
       version="0.9.0.qualifier">
 
    <description url="http://www.eclipse.org/dsdp/dd/">

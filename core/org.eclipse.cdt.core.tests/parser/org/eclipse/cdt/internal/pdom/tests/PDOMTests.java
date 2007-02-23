@@ -41,6 +41,7 @@ public class PDOMTests extends TestSuite {
 
 		IndexCBindingResolutionTest.addTests(suite);
 		IndexCPPBindingResolutionTest.addTests(suite);
+		IndexCBindingResolutionBugs.addTests(suite);
 		suite.addTest(IndexBindingResolutionBugs.suite());
 		
 		suite.addTest(CFunctionTests.suite());

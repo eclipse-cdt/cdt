@@ -18,7 +18,6 @@ import org.eclipse.cdt.core.dom.ast.IParameter;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.index.IIndexBinding;
-import org.eclipse.cdt.internal.core.index.IIndexFragmentBinding;
 import org.eclipse.cdt.internal.core.index.composite.ICompositesFactory;
 
 class CompositeCFunction extends CompositeCBinding implements IIndexBinding, IFunction {
@@ -33,7 +32,7 @@ class CompositeCFunction extends CompositeCBinding implements IIndexBinding, IFu
 		IParameter[] preResult = ((IFunction)rbinding).getParameters();
 		IParameter[] result = new IParameter[preResult.length];
 		for(int i=0; i<preResult.length; i++) {
-			result[i] = (IParameter) cf.getCompositeBinding((IIndexFragmentBinding) preResult[i]);
+			result[i] = (IParameter) cf.getCompositeBinding(preResult[i]);
 		}
 		return result;
 	}

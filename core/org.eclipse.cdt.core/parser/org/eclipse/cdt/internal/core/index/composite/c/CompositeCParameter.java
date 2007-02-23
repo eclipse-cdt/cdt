@@ -12,7 +12,6 @@ package org.eclipse.cdt.internal.core.index.composite.c;
 
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IBinding;
-import org.eclipse.cdt.core.dom.ast.IEnumerator;
 import org.eclipse.cdt.core.dom.ast.IParameter;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.index.IIndexBinding;
@@ -25,7 +24,7 @@ class CompositeCParameter extends CompositeCBinding implements IIndexBinding, IP
 	}
 
 	public IType getType() throws DOMException {
-		IType rtype = ((IEnumerator)rbinding).getType();
+		IType rtype = ((IParameter)rbinding).getType();
 		return cf.getCompositeType(rtype);
 	}
 

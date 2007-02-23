@@ -115,6 +115,8 @@ public class SystemFileTransferModeRegistry
 		try {
 			wb = PlatformUI.getWorkbench();
 		}
+		// exception occurs if this is initialized before workbench has started
+		// TODO: we need to listen for workbench start to complete, then reinitialize
 		catch (Exception e) {
 			wb = null;
 		}

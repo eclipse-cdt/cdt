@@ -268,7 +268,9 @@ public class SystemViewLabelAndContentProvider extends LabelProvider
     	}
     	if (supportsDeferredQueries())
     	{
-	        if (manager != null && adapter.supportsDeferredQueries()) 
+    		  // The adapter  needs to be checked to be not null, otherwise
+    		  // we run into an NPE here.
+	        if (manager != null && adapter != null && adapter.supportsDeferredQueries()) 
 	        {
 	        	ISubSystem ss = null;
 	        	if (object instanceof IContextObject)

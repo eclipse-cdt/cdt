@@ -327,7 +327,12 @@ abstract public class AbstractVMLayoutNode implements IVMLayoutNode {
     }
     
     protected class ViewerUpdate implements IViewerUpdate {
-        final private Done fDone;
+        
+    	public void cancel() {
+			// FIXME M5
+		}
+
+		final private Done fDone;
         private boolean fDoneInvoked = false;
         final private TreePath fTreePath;
         private IStatus fStatus;

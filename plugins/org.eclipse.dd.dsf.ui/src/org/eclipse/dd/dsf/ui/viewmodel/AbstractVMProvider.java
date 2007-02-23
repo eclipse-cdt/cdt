@@ -531,7 +531,12 @@ abstract public class AbstractVMProvider implements IVMProvider
     }
     
     class ViewerUpdate implements IViewerUpdate {
-        private IStatus fStatus;
+        
+    	public void cancel() {
+        	// FIXME M5
+		}
+
+		private IStatus fStatus;
         private boolean fDoneInvoked = false;
         final private Done fDone;
         final protected IViewerUpdate fClientUpdate;
@@ -550,7 +555,10 @@ abstract public class AbstractVMProvider implements IVMProvider
         public void beginTask(String name, int totalWork) {}
         public void internalWorked(double work) {}
         public boolean isCanceled() { return fClientUpdate.isCanceled(); }
-        public void setCanceled(boolean value) { fClientUpdate.setCanceled(value); }
+        public void setCanceled(boolean value) { 
+        	// FIXME M5
+        	// fClientUpdate.setCanceled(value); 
+        }
         public void setTaskName(String name) {}
         public void subTask(String name) {}
         public void worked(int work) {}

@@ -23,6 +23,10 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.IDE;
 
+import org.eclipse.cdt.core.dom.IPDOMManager;
+import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.core.testplugin.CProjectHelper;
+
 import org.eclipse.cdt.internal.ui.callhierarchy.CHNode;
 import org.eclipse.cdt.internal.ui.editor.CEditor;
 
@@ -690,4 +694,57 @@ public class BasicCallHierarchyTest extends CallHierarchyBaseTest {
 		expandTreeItem(i1);
 		checkTreeNode(i1, 0, null);
 	}
+	
+	
+	public void _testFunctionsWithParamsC_175267() throws Exception {
+		doTestFunctionsWithParams("functionsWithParams.c");
+	}
+
+	public void testFunctionsWithParamsCpp() throws Exception {
+		doTestFunctionsWithParams("functionsWithParams.cpp");
+	}
+
+	// {testFunctionsWithParams}
+	// void proto(int);
+	// void func(int a) {
+	// };
+	// void main(int a) {
+	//    proto(1); //ref
+	//    func(1); //ref
+	// };
+	private void doTestFunctionsWithParams(String filename) throws IOException, Exception, PartInitException {
+		ICProject triggerCompositeBindings= CProjectHelper.createCCProject("__disturb__", "bin", IPDOMManager.ID_FAST_INDEXER);
+		try {
+			String content = readTaggedComment("testFunctionsWithParams");
+			IFile file= createFile(getProject(), filename, content);
+			waitForIndexer(fIndex, file, INDEXER_WAIT_TIME);
+			IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
+			CEditor editor= (CEditor) IDE.openEditor(page, file);
+
+			editor.selectAndReveal(content.indexOf("proto"), 5);
+			openCallHierarchy(editor);
+			Tree tree = getCHTreeViewer().getTree();
+			checkTreeNode(tree, 0, "proto(int)");
+			checkTreeNode(tree, 0, 0, "main(int)");
+
+			editor.selectAndReveal(content.indexOf("func"), 2);
+			openCallHierarchy(editor);
+			checkTreeNode(tree, 0, "func(int)");
+			checkTreeNode(tree, 0, 0, "main(int)");
+
+			editor.selectAndReveal(content.indexOf("proto(1); //ref"), 0);
+			openCallHierarchy(editor);
+			checkTreeNode(tree, 0, "proto(int)");
+			checkTreeNode(tree, 0, 0, "main(int)");
+
+			editor.selectAndReveal(content.indexOf("func(1); //ref"), 7);
+			openCallHierarchy(editor);
+			checkTreeNode(tree, 0, "func(int)");
+			checkTreeNode(tree, 0, 0, "main(int)");
+		}
+		finally {
+			CProjectHelper.delete(triggerCompositeBindings);
+		}
+	}
+
 }

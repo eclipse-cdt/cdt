@@ -66,7 +66,10 @@ public class PreferencesTest extends RSECoreTestCase {
 	
 	public void testDefaultUserIds() {
 		IRSECoreRegistry registry = RSECorePlugin.getDefault().getRegistry();
-		IRSESystemType systemType = registry.getSystemType("Local"); //$NON-NLS-1$
+		//TODO should we test deprecated methods as well? Probably yes...
+		IRSESystemType systemTypeDeprecated = registry.getSystemType("Local"); //$NON-NLS-1$
+		IRSESystemType systemType = registry.getSystemTypeById("org.eclipse.rse.systemtype.local"); //$NON-NLS-1$
+		assertEquals(systemType, systemTypeDeprecated);
 		String oldValue = RSEPreferencesManager.getDefaultUserId(systemType);
 		RSEPreferencesManager.setDefaultUserId(systemType, "bogus1"); //$NON-NLS-1$
 		assertEquals("bogus1", RSEPreferencesManager.getDefaultUserId(systemType)); //$NON-NLS-1$

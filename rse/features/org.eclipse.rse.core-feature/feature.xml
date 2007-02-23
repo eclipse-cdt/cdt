@@ -19,8 +19,8 @@
    </license>
 
    <url>
-      <update label="%updateSiteName" url="http://download.eclipse.org/dsdp/tm/updates"/>
-      <discovery label="%updateSiteName" url="http://download.eclipse.org/dsdp/tm/updates"/>
+      <update label="%tmUpdateSiteName" url="http://download.eclipse.org/dsdp/tm/updates/milestones"/>
+      <discovery label="%epMilestoneSiteName" url="http://download.eclipse.org/eclipse/updates/3.3milestones/site.xml"/>
    </url>
 
    <requires>

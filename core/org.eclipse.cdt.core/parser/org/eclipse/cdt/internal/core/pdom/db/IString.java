@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 QNX Software Systems and others.
+ * Copyright (c) 2006, 2007 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  * QNX - Initial API and implementation
+ * Andrew Ferguson (Symbian)
  *******************************************************************************/
 
 package org.eclipse.cdt.internal.core.pdom.db;
@@ -30,47 +31,51 @@ public interface IString {
 	/**
 	 * Compare this IString record and the specified IString record
 	 * @param chars
+	 * @param caseSensitive whether to compare in a case-sensitive way
 	 * @return <ul><li> -1 if this &lt; string
 	 * <li> 0 if this == string
 	 * <li> 1 if this &gt; string
 	 * </ul>
 	 * @throws CoreException
 	 */
-	public int compare(IString string) throws CoreException;
+	public int compare(IString string, boolean caseSensitive) throws CoreException;
 	
 	/**
 	 * Compare this IString record and the specified String object
 	 * @param chars
+	 * @param caseSensitive whether to compare in a case-sensitive way
 	 * @return <ul><li> -1 if this &lt; string
 	 * <li> 0 if this == string
 	 * <li> 1 if this &gt; string
 	 * </ul>
 	 * @throws CoreException
 	 */
-	public int compare(String string) throws CoreException;
+	public int compare(String string, boolean caseSensitive) throws CoreException;
 	
 	/**
 	 * Compare this IString record and the specified character array
 	 * @param chars
+	 * @param caseSensitive whether to compare in a case-sensitive way
 	 * @return <ul><li> -1 if this &lt; chars
 	 * <li> 0 if this == chars
 	 * <li> 1 if this &gt; chars
 	 * </ul>
 	 * @throws CoreException
 	 */
-	public int compare(char[] chars) throws CoreException;
+	public int compare(char[] chars, boolean caseSensitive) throws CoreException;
 
 	
 	/**
 	 * Compare this IString record and the specified character array
 	 * @param chars
+	 * @param caseSensitive whether to compare in a case-sensitive way
 	 * @return <ul><li> -1 if this &lt; chars
 	 * <li> 0 if this has a prefix chars
 	 * <li> 1 if this &gt; chars and does not have the prefix
 	 * </ul>
 	 * @throws CoreException
 	 */
-	public int comparePrefix(char[] name) throws CoreException;
+	public int comparePrefix(char[] name, boolean caseSensitive) throws CoreException;
 
 	/**
 	 * Get an equivalent character array to this IString record<p>

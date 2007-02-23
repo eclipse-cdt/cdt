@@ -351,7 +351,7 @@ public class PDOM extends PlatformObject implements IIndexFragment, IPDOM {
 				bindings.add(linkage);
 				for (int i=0; i < names.length; i++) {
 					char[] name= names[i];
-					BindingCollector collector= new BindingCollector(linkage, name, filter, false);
+					BindingCollector collector= new BindingCollector(linkage, name, filter, false, true);
 					for (Iterator in = bindings.iterator(); in.hasNext();) {
 						PDOMNode node= (PDOMNode) in.next();
 						node.accept(collector);
@@ -607,12 +607,12 @@ public class PDOM extends PlatformObject implements IIndexFragment, IPDOM {
 		return fPath;
 	}
 	
-	public IIndexFragmentBinding[] findBindingsForPrefix(char[] prefix, IndexFilter filter) throws CoreException {
+	public IIndexFragmentBinding[] findBindingsForPrefix(char[] prefix, IndexFilter filter, boolean caseSensitive) throws CoreException {
 		ArrayList result = new ArrayList();
 		for (Iterator iter = fLinkageIDCache.values().iterator(); iter.hasNext();) {
 			PDOMLinkage linkage = (PDOMLinkage) iter.next();
 			if (filter.acceptLinkage(linkage)) {
-				IBinding[] bindings = linkage.findBindingsForPrefix(prefix, filter);
+				IBinding[] bindings = linkage.findBindingsForPrefix(prefix, filter, caseSensitive);
 				for (int j = 0; j < bindings.length; j++) {
 					result.add(bindings[j]);
 				}

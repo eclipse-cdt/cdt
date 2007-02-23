@@ -1046,7 +1046,7 @@ public class CPPSemantics {
 									try {
 										IndexFilter filter = IndexFilter.getFilter(ILinkage.CPP_LINKAGE_ID);
 										IBinding[] bindings = data.prefixLookup ?
-												index.findBindingsForPrefix(data.astName.toCharArray(), filter) :
+												index.findBindingsForPrefix(data.astName.toCharArray(), filter, false) :
 												index.findBindings(data.astName.toCharArray(), filter, new NullProgressMonitor());
 										mergeResults(data, bindings, true);
 										useASTResults = false;

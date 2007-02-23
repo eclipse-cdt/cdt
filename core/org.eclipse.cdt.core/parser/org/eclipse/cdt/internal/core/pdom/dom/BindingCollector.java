@@ -8,6 +8,7 @@
  * Contributors:
  * QNX - Initial API and implementation
  * Markus Schorn (Wind River Systems)
+ * Andrew Ferguson (Symbian)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom.dom;
 
@@ -27,15 +28,15 @@ public final class BindingCollector extends NamedNodeCollector {
 	 * Collects all bindings with given name.
 	 */
 	public BindingCollector(PDOMLinkage linkage, char[] name) {
-		this(linkage, name, null, false);
+		this(linkage, name, null, false, true);
 	}
 		
 	/**
 	 * Collects all bindings with given name, passing the filter. If prefixLookup is set to
 	 * <code>true</code> a binding is considered if its name starts with the given prefix.
 	 */
-	public BindingCollector(PDOMLinkage linkage, char[] name, IndexFilter filter, boolean prefixLookup) {
-		super(linkage, name, prefixLookup);
+	public BindingCollector(PDOMLinkage linkage, char[] name, IndexFilter filter, boolean prefixLookup, boolean caseSensitive) {
+		super(linkage, name, prefixLookup, caseSensitive);
 		this.filter= filter;
 	}
 		

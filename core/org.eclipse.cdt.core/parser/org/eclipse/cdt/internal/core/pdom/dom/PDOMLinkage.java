@@ -252,8 +252,8 @@ public abstract class PDOMLinkage extends PDOMNamedNode implements IIndexLinkage
 	protected abstract boolean isFileLocalBinding(IBinding binding) throws DOMException;
 	public abstract int getBindingType(IBinding binding);
 	
-	public IBinding[] findBindingsForPrefix(char[] prefix, IndexFilter filter) throws CoreException {
-		BindingCollector visitor = new BindingCollector(this, prefix, filter, true);
+	public IBinding[] findBindingsForPrefix(char[] prefix, IndexFilter filter, boolean caseSensitive) throws CoreException {
+		BindingCollector visitor = new BindingCollector(this, prefix, filter, true, caseSensitive);
 		getIndex().accept(visitor);
 		
 		return visitor.getBindings();

@@ -327,7 +327,7 @@ public class CompletionTests extends AbstractContentAssistTest {
 	//void f() {e/*cursor*/
 	public void testEnums_GlobalScope() throws Exception {
 		final String[] expected= {
-				"e11", "e12"
+				"e11", "e12", "E1"
 		};
 		assertCompletionResults(fCursorOffset, expected, true);
 	}
@@ -335,7 +335,7 @@ public class CompletionTests extends AbstractContentAssistTest {
 	//void C3::f() {e/*cursor*/
 	public void testEnums_MethodScope() throws Exception {
 		final String[] expected= {
-				"e11", "e12", "e21", "e22"
+				"e11", "e12", "e21", "e22", "E1"
 		};
 		assertCompletionResults(fCursorOffset, expected, true);
 	}

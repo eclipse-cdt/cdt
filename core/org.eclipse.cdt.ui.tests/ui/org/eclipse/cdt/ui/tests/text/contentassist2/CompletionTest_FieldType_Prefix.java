@@ -37,7 +37,7 @@ public class CompletionTest_FieldType_Prefix  extends CompletionProposalsBaseTes
 	public CompletionTest_FieldType_Prefix(String name) {
 		super(name);
 		// see https://bugs.eclipse.org/bugs/show_bug.cgi?id=109724
-		setExpectFailure(109724);
+		// setExpectFailure(109724);
 	}
 	
 	public static Test suite() {

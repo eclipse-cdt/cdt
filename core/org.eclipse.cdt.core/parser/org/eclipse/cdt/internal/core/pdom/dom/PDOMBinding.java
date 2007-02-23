@@ -250,7 +250,7 @@ public abstract class PDOMBinding extends PDOMNamedNode implements IIndexFragmen
 			int cmp = 0; 
 			do {
 				IString s0 = b0.getDBName(), s1 = b1.getDBName();
-				cmp = s0.compare(s1);
+				cmp = s0.compare(s1, true);
 				if(cmp==0) {
 					b0 = (PDOMBinding) b0.getParentBinding();
 					b1 = (PDOMBinding) b1.getParentBinding();

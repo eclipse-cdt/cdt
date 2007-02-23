@@ -43,7 +43,10 @@ public class CPPFindBinding extends FindBinding {
 			btree.accept(new IBTreeVisitor() {
 				public int compare(int record) throws CoreException {
 					IString nm1 = PDOMNamedNode.getDBName(pdom, record);
-					int cmp = nm1.compare(name);
+					
+					int cmp= nm1.compare(name, false);
+					cmp= cmp==0 ? nm1.compare(name, true) : cmp;
+					
 					if(cmp==0) {
 						int c1 = PDOMNode.getNodeType(pdom, record);
 						cmp = c1 < c2 ? -1 : (c1 > c2 ? 1 : 0);

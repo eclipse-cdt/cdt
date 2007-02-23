@@ -34,7 +34,8 @@ public class FindBinding {
 		public int compare(int record1, int record2) throws CoreException {
 			IString nm1 = PDOMNamedNode.getDBName(pdom, record1);
 			IString nm2 = PDOMNamedNode.getDBName(pdom, record2);
-			int cmp = nm1.compare(nm2);
+			int cmp= nm1.compare(nm2, false);
+			cmp= cmp==0 ? nm1.compare(nm2, true) : cmp;
 			if(cmp == 0) {
 				int t1 = PDOMNamedNode.getNodeType(pdom, record1);
 				int t2 = PDOMNamedNode.getNodeType(pdom, record2);
@@ -49,7 +50,8 @@ public class FindBinding {
 		btree.accept(new IBTreeVisitor() {
 			public int compare(int record) throws CoreException {
 				IString nm1 = PDOMNamedNode.getDBName(pdom, record);
-				return nm1.compare(name);
+				int cmp= nm1.compare(name, false); 
+				return cmp==0 ? nm1.compare(name, true) : cmp;
 			}
 			public boolean visit(int record) throws CoreException {
 				PDOMNamedNode nnode = (PDOMNamedNode) PDOMLinkage.getLinkage(pdom, record).getNode(record);

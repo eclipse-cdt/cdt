@@ -230,8 +230,8 @@ public class ContentAssistTests extends BaseUITestCase {
         
         results = getResults( cu, c2.indexOf( "::" ) + 2 ); //$NON-NLS-1$
         assertEquals( 2, results.length );
-        assertEquals( "getAbility(void) enum _Ability", results[0].getDisplayString()  ); //$NON-NLS-1$
-        assertEquals( "Strategy(enum _Ability a)", results[1].getDisplayString()  ); //$NON-NLS-1$
+        assertEquals( "getAbility(void) enum _Ability", results[1].getDisplayString()  ); //$NON-NLS-1$
+        assertEquals( "Strategy(enum _Ability a)", results[0].getDisplayString()  ); //$NON-NLS-1$
 }
     
     public void testBug72559() throws Exception {

@@ -67,7 +67,7 @@ public class PDOMFile implements IIndexFragmentFile {
 		public int compare(int record1, int record2) throws CoreException {
 			IString name1 = db.getString(db.getInt(record1 + LOCATION_REPRESENTATION));
 			IString name2 = db.getString(db.getInt(record2 + LOCATION_REPRESENTATION));
-			return name1.compare(name2);
+			return name1.compare(name2, true);
 		}
 	}
 
@@ -358,7 +358,7 @@ public class PDOMFile implements IIndexFragmentFile {
 
 		public int compare(int record) throws CoreException {
 			IString name = db.getString(db.getInt(record + PDOMFile.LOCATION_REPRESENTATION));
-			return name.compare(rawKey);
+			return name.compare(rawKey, true);
 		}
 
 		public boolean visit(int record) throws CoreException {

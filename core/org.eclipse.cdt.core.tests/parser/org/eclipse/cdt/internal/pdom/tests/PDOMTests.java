@@ -23,6 +23,7 @@ public class PDOMTests extends TestSuite {
 	public static Test suite() {
 		TestSuite suite = new PDOMTests();
 		
+		suite.addTest(DBTest.suite());
 		suite.addTest(PDOMSearchTest.suite());
 		suite.addTestSuite(EnumerationTests.class);
 		suite.addTestSuite(ClassTests.class);

@@ -7,6 +7,7 @@
  *
  * Contributors:
  * QNX - Initial API and implementation
+ * Andrew Ferguson (Symbian)
  *******************************************************************************/
 
 package org.eclipse.cdt.internal.core.pdom.db;
@@ -154,17 +155,42 @@ public class ShortString implements IString {
 		// Custom hash code function to allow DBStrings in hashmaps.
 		return record;
 	}
+	
+	public int compare(char[] other, boolean caseSensitive) throws CoreException {
+		Chunk chunk = db.getChunk(record);
+		
+		int i1 = record + CHARS;
+		int i2 = 0;
+		int n1 = i1 + chunk.getInt(record + LENGTH) * 2;
+		int n2 = other.length;
+		
+		while (i1 < n1 && i2 < n2) {
+			int cmp= compareChars(chunk.getChar(i1), other[i2], caseSensitive);
+			if(cmp!=0)
+				return cmp;
+			
+			i1 += 2;
+			++i2;
+		}
 
-	public int compare(IString string) throws CoreException {
+		if (i1 == n1 && i2 != n2)
+			return -1;
+		else if (i2 == n2 && i1 != n1)
+			return 1;
+		else
+			return 0;
+	}
+	
+	public int compare(IString string, boolean caseSensitive) throws CoreException {
 		if (string instanceof ShortString)
-			return compare((ShortString)string);
+			return compare((ShortString)string, caseSensitive);
 		else if (string instanceof LongString)
-			return - ((LongString)string).compare(this);
+			return - ((LongString)string).compare(this, caseSensitive);
 		else
 			throw new IllegalArgumentException();
 	}
 	
-	public int compare(ShortString other) throws CoreException {
+	public int compare(ShortString other, boolean caseSensitive) throws CoreException {
 		Chunk chunk1 = db.getChunk(record);
 		Chunk chunk2 = other.db.getChunk(other.record);
 
@@ -174,13 +200,9 @@ public class ShortString implements IString {
 		int n2 = i2 + chunk2.getInt(other.record + LENGTH) * 2;
 		
 		while (i1 < n1 && i2 < n2) {
-			char c1 = chunk1.getChar(i1);
-			char c2 = chunk2.getChar(i2);
-			
-			if (c1 < c2)
-				return -1;
-			if (c1 > c2)
-				return 1;
+			int cmp= compareChars(chunk1.getChar(i1), chunk2.getChar(i2), caseSensitive);
+			if(cmp!=0)
+				return cmp;
 			
 			i1 += 2;
 			i2 += 2;
@@ -194,22 +216,18 @@ public class ShortString implements IString {
 			return 0;
 	}
 	
-	public int compare(char[] other) throws CoreException {
+	public int compare(String other, boolean caseSensitive) throws CoreException {
 		Chunk chunk = db.getChunk(record);
 		
 		int i1 = record + CHARS;
 		int i2 = 0;
 		int n1 = i1 + chunk.getInt(record + LENGTH) * 2;
-		int n2 = other.length;
+		int n2 = other.length();
 		
 		while (i1 < n1 && i2 < n2) {
-			char c1 = chunk.getChar(i1);
-			char c2 = other[i2];
-			
-			if (c1 < c2)
-				return -1;
-			if (c1 > c2)
-				return 1;
+			int cmp= compareChars(chunk.getChar(i1), other.charAt(i2), caseSensitive);
+			if(cmp!=0)
+				return cmp;
 			
 			i1 += 2;
 			++i2;
@@ -223,7 +241,7 @@ public class ShortString implements IString {
 			return 0;
 	}
 	
-	public int comparePrefix(char[] other) throws CoreException {
+	public int comparePrefix(char[] other, boolean caseSensitive) throws CoreException {
 		Chunk chunk = db.getChunk(record);
 		
 		int i1 = record + CHARS;
@@ -232,13 +250,9 @@ public class ShortString implements IString {
 		int n2 = other.length;
 		
 		while (i1 < n1 && i2 < n2) {
-			char c1 = chunk.getChar(i1);
-			char c2 = other[i2];
-			
-			if (c1 < c2)
-				return -1;
-			if (c1 > c2)
-				return 1;
+			int cmp= compareChars(chunk.getChar(i1), other[i2], caseSensitive);
+			if(cmp!=0)
+				return cmp;
 			
 			i1 += 2;
 			++i2;
@@ -249,34 +263,76 @@ public class ShortString implements IString {
 		else
 			return 0;
 	}
-
-	public int compare(String other) throws CoreException {
-		Chunk chunk = db.getChunk(record);
-		
-		int i1 = record + CHARS;
-		int i2 = 0;
-		int n1 = i1 + chunk.getInt(record + LENGTH) * 2;
-		int n2 = other.length();
-		
-		while (i1 < n1 && i2 < n2) {
-			char c1 = chunk.getChar(i1);
-			char c2 = other.charAt(i2);
-			
-			if (c1 < c2)
-				return -1;
-			if (c1 > c2)
-				return 1;
-			
-			i1 += 2;
-			++i2;
-		}
-
-		if (i1 == n1 && i2 != n2)
-			return -1;
-		else if (i2 == n2 && i1 != n1)
-			return 1;
-		else
-			return 0;
+	
+	public char charAt(int i) throws CoreException {
+		int ptr = record + CHARS + (i*2);
+		return db.getChar(ptr);
 	}
+	
+	public int getLength() throws CoreException {
+		return db.getInt(record + LENGTH);
+	}
+	
+	/**
+	 * Compare characters case-sensitively, or case-insensitively.
+	 * 
+	 * <b>Limitation</b> This only maps the range a-z,A-Z onto each other
+	 * @param a a character
+	 * @param b a character
+	 * @param caseSensitive whether to compare case-sensitively
+	 * @return 
+	 * <ul>
+	 * <li>-1 if a < b
+	 * <li>0 if a == b
+	 * <li>1 if a > b
+	 * </ul>
+	 */
+	public static int compareChars(char a, char b, boolean caseSensitive) {
+		if(caseSensitive) {
+			if (a < b)
+				return -1;
+			if (a > b)
+				return 1;
+		} else {
+			if (a != b) {
+				a= a >= 'a' && a <='z' ? (char) (a - 32) : a;
+				b= b >= 'a' && b <='z' ? (char) (b - 32) : b;
+				if (a < b)
+					return -1;
+				if (a > b)
+					return 1;
+			}
+		}
+		return 0;
+	}
+	
+/* TODO - this is more correct than the above implementation, but we need to
+ * benchmark first.
+ * 
+ * public static int compareChars(char a, char b, boolean caseSensitive) {
+		if(caseSensitive) {
+			if (a < b)
+				return -1;
+			if (a > b)
+				return 1;
+		} else {
+			if (a != b) {
+				a = Character.toUpperCase(a);
+				b = Character.toUpperCase(b);
+				if (a != b) {
+					a = Character.toLowerCase(a);
+					b = Character.toLowerCase(b);
+					if (a != b) {
+						if (a < b)
+							return -1;
+						if (a > b)
+							return 1;
+					}
+				}
+			}
+		}
+		return 0;
+	}
+*/
 
 }

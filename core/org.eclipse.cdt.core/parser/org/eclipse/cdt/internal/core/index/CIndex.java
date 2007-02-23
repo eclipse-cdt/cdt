@@ -430,9 +430,9 @@ public class CIndex implements IIndex {
 		};
 	}
 	
-	public IIndexBinding[] findBindingsForPrefix(char[] prefix, IndexFilter filter) throws CoreException {
+	public IIndexBinding[] findBindingsForPrefix(char[] prefix, IndexFilter filter, boolean caseSensitive) throws CoreException {
 		if(SPECIALCASE_SINGLES && fFragments.length==1) {
-			return fFragments[0].findBindingsForPrefix(prefix, filter);
+			return fFragments[0].findBindingsForPrefix(prefix, filter, caseSensitive);
 		} else {
 			List result = new ArrayList();
 			ILinkage[] linkages = Linkage.getAllLinkages();
@@ -441,7 +441,7 @@ public class CIndex implements IIndex {
 					IIndexFragmentBinding[][] fragmentBindings = new IIndexFragmentBinding[fPrimaryFragmentCount][];
 					for (int i = 0; i < fPrimaryFragmentCount; i++) {
 						try {
-							IBinding[] part = fFragments[i].findBindingsForPrefix(prefix, retargetFilter(linkages[j], filter));
+							IBinding[] part = fFragments[i].findBindingsForPrefix(prefix, retargetFilter(linkages[j], filter), caseSensitive);
 							fragmentBindings[i] = new IIndexFragmentBinding[part.length];
 							System.arraycopy(part, 0, fragmentBindings[i], 0, part.length);
 						} catch (CoreException e) {

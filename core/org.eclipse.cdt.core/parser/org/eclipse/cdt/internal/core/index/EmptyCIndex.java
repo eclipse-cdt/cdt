@@ -99,7 +99,7 @@ final public class EmptyCIndex implements IIndex {
 		return null;
 	}
 
-	public IIndexBinding[] findBindingsForPrefix(char[] prefix, IndexFilter filter) {
+	public IIndexBinding[] findBindingsForPrefix(char[] prefix, IndexFilter filter, boolean caseSensitive) {
 		return IIndexBinding.EMPTY_INDEX_BINDING_ARRAY;
 	}
 	

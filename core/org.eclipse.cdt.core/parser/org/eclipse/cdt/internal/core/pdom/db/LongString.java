@@ -7,9 +7,12 @@
  *
  * Contributors:
  * QNX - Initial API and implementation
+ * Andrew Ferguson (Symbian)
  *******************************************************************************/
 
 package org.eclipse.cdt.internal.core.pdom.db;
+
+import java.util.NoSuchElementException;
 
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNotImplementedError;
 import org.eclipse.core.runtime.CoreException;
@@ -128,33 +131,112 @@ public class LongString implements IString {
 		return record1;
 	}
 	
-	public int compare(IString string) throws CoreException {
+	public int compare(IString string, boolean caseSensitive) throws CoreException {
 		if (string instanceof LongString)
-			return compare((LongString)string);
+			return compare((LongString)string, caseSensitive);
 		else if (string instanceof ShortString)
-			return compare((ShortString)string);
+			return compare((ShortString)string, caseSensitive);
 		else
 			throw new IllegalArgumentException();
 	}
 
-	public int compare(LongString string) throws CoreException {
-		throw new PDOMNotImplementedError();
+	public int compare(char[] other, boolean caseSensitive) throws CoreException {
+		CharIterator i1 = new CharIterator();
+		int i2 = 0;
+		int n2 = other.length;
+		
+		while (i1.hasNext() && i2 < n2) {
+			int cmp= ShortString.compareChars(i1.next(), other[i2], caseSensitive);
+			if(cmp!=0)
+				return cmp;
+			
+			++i2;
+		}
+
+		if (!i1.hasNext() && i2 != n2)
+			return -1;
+		else if (i2 == n2 && i1.hasNext())
+			return 1;
+		else
+			return 0;
 	}
 	
-	public int compare(ShortString string) throws CoreException {
-		throw new PDOMNotImplementedError();
+	public int compare(ShortString other, boolean caseSensitive) throws CoreException {
+		CharIterator i1 = new CharIterator();
+		int index2 = 0;
+		int length2 = other.getLength();
+		
+		while (i1.hasNext() && index2<length2) {
+			int cmp= ShortString.compareChars(i1.next(), other.charAt(index2), caseSensitive);
+			if(cmp!=0)
+				return cmp;
+			index2++;
+		}
+
+		if (!i1.hasNext() && index2 != length2)
+			return -1;
+		else if (index2 == length2 && i1.hasNext())
+			return 1;
+		else
+			return 0;
 	}
 	
-	public int compare(String string) throws CoreException {
-		throw new PDOMNotImplementedError();
+	public int compare(LongString other, boolean caseSensitive) throws CoreException {
+		CharIterator i1 = new CharIterator();
+		CharIterator i2 = other.new CharIterator();
+		
+		while (i1.hasNext() && i2.hasNext()) {
+			int cmp= ShortString.compareChars(i1.next(), i2.next(), caseSensitive);
+			if(cmp!=0)
+				return cmp;
+		}
+
+		if (!i1.hasNext() && i2.hasNext())
+			return -1;
+		else if (!i2.hasNext() && i1.hasNext())
+			return 1;
+		else
+			return 0;
+	}
+	
+	public int compare(String other, boolean caseSensitive) throws CoreException {
+		CharIterator i1 = new CharIterator();
+		int i2 = 0;
+		int n2 = other.length();
+		
+		while (i1.hasNext() && i2 < n2) {
+			int cmp= ShortString.compareChars(i1.next(), other.charAt(i2), caseSensitive);
+			if(cmp!=0)
+				return cmp;
+			
+			++i2;
+		}
+
+		if (!i1.hasNext() && i2 != n2)
+			return -1;
+		else if (i2 == n2 && i1.hasNext())
+			return 1;
+		else
+			return 0;
 	}
 
-	public int compare(char[] chars) throws CoreException {
-		throw new PDOMNotImplementedError();
-	}
+	public int comparePrefix(char[] other, boolean caseSensitive) throws CoreException {
+		CharIterator i1 = new CharIterator();
+		int i2 = 0;
+		int n2 = other.length;
+		
+		while (i1.hasNext() && i2 < n2) {
+			int cmp= ShortString.compareChars(i1.next(), other[i2], caseSensitive);
+			if(cmp!=0)
+				return cmp;
+			
+			++i2;
+		}
 
-	public int comparePrefix(char[] name) {
-		throw new PDOMNotImplementedError();
+		if (!i1.hasNext() && i2 != n2)
+			return -1;
+		else
+			return 0;
 	}
 
 	private interface IReader {
@@ -187,6 +269,40 @@ public class LongString implements IString {
 		for (int i = 0; i < length; ++i) {
 			reader.appendChar(db.getChar(p));
 			p += 2;
+		}
+	}
+	
+	/**
+     * Convenience class for sequential access to LongString characters
+     */
+	private class CharIterator {
+		int p;
+		int count;
+		int length;
+		
+		public CharIterator() throws CoreException {
+			p = record1 + CHARS1;
+			length =  db.getInt(record1 + LENGTH);
+		}
+		
+		public char next() throws CoreException {
+			char result = db.getChar(p);
+			p += 2;
+			count++;
+			if(count>length) {
+				throw new NoSuchElementException();
+			}
+			if(count == NUM_CHARS1) {
+				p = db.getInt(record1 + NEXT1) + CHARSN;
+			}
+			if(count > NUM_CHARS1 && ((count-NUM_CHARS1) % NUM_CHARSN)==0) {
+				p = db.getInt(record1 + NEXTN) + CHARSN;
+			}
+			return result;
+		}
+		
+		public boolean hasNext() {
+			return count<length;
 		}
 	}
 	

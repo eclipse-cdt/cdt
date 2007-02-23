@@ -26,6 +26,7 @@ public class NamedNodeCollector implements IBTreeVisitor, IPDOMVisitor {
 	private final PDOMLinkage linkage;
 	private final char[] name;
 	private final boolean prefixLookup;
+	private final boolean caseSensitive;
 	
 	private List nodes = new ArrayList();
 
@@ -33,17 +34,18 @@ public class NamedNodeCollector implements IBTreeVisitor, IPDOMVisitor {
 	 * Collects all nodes with given name.
 	 */
 	public NamedNodeCollector(PDOMLinkage linkage, char[] name) {
-		this(linkage, name, false);
+		this(linkage, name, false, true);
 	}
 		
 	/**
 	 * Collects all nodes with given name, passing the filter. If prefixLookup is set to
 	 * <code>true</code> a binding is considered if its name starts with the given prefix.
 	 */
-	public NamedNodeCollector(PDOMLinkage linkage, char[] name, boolean prefixLookup) {
-		this.name = name;
+	public NamedNodeCollector(PDOMLinkage linkage, char[] name, boolean prefixLookup, boolean caseSensitive) {
+		this.name= name;
 		this.linkage= linkage;
-		this.prefixLookup = prefixLookup;
+		this.prefixLookup= prefixLookup;
+		this.caseSensitive= caseSensitive;
 	}
 	
 	final public int compare(int record) throws CoreException {
@@ -52,10 +54,20 @@ public class NamedNodeCollector implements IBTreeVisitor, IPDOMVisitor {
 	}
 
 	private int compare(PDOMNamedNode node) throws CoreException {
+		int cmp;
 		if (prefixLookup) {
-			return node.getDBName().comparePrefix(name);
+			cmp= node.getDBName().comparePrefix(name, false);
+			if(caseSensitive) {
+				cmp= cmp==0 ? node.getDBName().comparePrefix(name, true) : cmp;
+			}
+			return cmp;
+		} else {
+			cmp= node.getDBName().compare(name, false);
+			if(caseSensitive) {
+				cmp= cmp==0 ? node.getDBName().compare(name, true) : cmp;
+			}
 		}
-		return node.getDBName().compare(name);
+		return cmp;
 	}
 	
 	final public boolean visit(int record) throws CoreException {

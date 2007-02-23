@@ -47,7 +47,7 @@ public class CCompletionProposalComparator implements Comparator {
         String id1 = c1.getIdString();
         String id2 = c2.getIdString();
         
-		return id1.compareToIgnoreCase(id2);
+		return id1.compareTo(id2);
 	}	
 	
 }

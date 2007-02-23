@@ -98,7 +98,6 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.PluginVersionIdentifier;
-import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -118,7 +117,7 @@ import org.w3c.dom.NodeList;
  */
 public class ManagedBuildManager extends AbstractCExtension implements IScannerInfoProvider {
 
-	private static final QualifiedName buildInfoProperty = new QualifiedName(ManagedBuilderCorePlugin.getUniqueIdentifier(), "managedBuildInfo");	//$NON-NLS-1$
+//	private static final QualifiedName buildInfoProperty = new QualifiedName(ManagedBuilderCorePlugin.getUniqueIdentifier(), "managedBuildInfo");	//$NON-NLS-1$
 	private static final String ROOT_NODE_NAME = "ManagedProjectBuildInfo";	//$NON-NLS-1$
 	public  static final String SETTINGS_FILE_NAME = ".cdtbuild";	//$NON-NLS-1$
 	private static final ITarget[] emptyTargets = new ITarget[0];
@@ -216,6 +215,8 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 	private static HashMap fSortedToolChains;
 	private static HashMap fSortedTools;
 	private static HashMap fSortedBuilders;
+	
+	private static Map fInfoMap = new HashMap();
 	
 	private static ISorter fToolChainSorter = new ISorter(){
 		public void sort() {
@@ -1943,7 +1944,8 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 					ManagedBuildManager.performValueHandlerEvent(configs[i], IManagedOptionValueHandler.EVENT_OPEN);
 				}
 				//  Finish up
-				project.setSessionProperty(buildInfoProperty, buildInfo);
+				//project.setSessionProperty(buildInfoProperty, buildInfo);
+				setLoaddedBuildInfo(project, buildInfo);
 			}
 		} catch (Exception e) {
 			throw e;
@@ -2445,9 +2447,13 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 		return buildInfo;
 	}
 	
-	public static void setLoaddedBuildInfo(IProject project, IManagedBuildInfo info) throws CoreException{
+	public synchronized static void setLoaddedBuildInfo(IProject project, IManagedBuildInfo info) throws CoreException{
 		// Associate the build info with the project for the duration of the session
-		project.setSessionProperty(buildInfoProperty, info);
+		//project.setSessionProperty(buildInfoProperty, info);
+		if(info != null)
+			fInfoMap.put(project, info);
+		else
+			fInfoMap.remove(project);
 	}
 	
 	private static IManagedConfigElementProvider createConfigProvider(
@@ -2563,9 +2569,9 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 		return buildInfo;
 	}
 	
-	private static ManagedBuildInfo getLoaddedBuildInfo(IProject project) throws CoreException{
+	synchronized static ManagedBuildInfo getLoaddedBuildInfo(IProject project) throws CoreException{
 		// Check if there is any build info associated with this project for this session
-		ManagedBuildInfo buildInfo = (ManagedBuildInfo)project.getSessionProperty(buildInfoProperty);
+		ManagedBuildInfo buildInfo = (ManagedBuildInfo)fInfoMap.get(project);//project.getSessionProperty(buildInfoProperty);
 			// Make sure that if a project has build info, that the info is not corrupted
 		if (buildInfo != null) {
 			buildInfo.updateOwner(project);
@@ -4262,6 +4268,14 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 		ICConfigurationDescription des = getDescriptionForConfiguration(cfg);
 		if(des != null)
 			CCorePlugin.getDefault().setPreferenceConfiguration(CFG_DATA_PROVIDER_ID, des);
+	}
+	
+	static synchronized void updateLoaddedInfo(IProject fromProject, IProject toProject, IManagedBuildInfo info){
+		try {
+			setLoaddedBuildInfo(fromProject, null);
+			setLoaddedBuildInfo(toProject, info);
+		} catch (CoreException e) {
+		}
 	}
 
 }

@@ -36,6 +36,12 @@ public abstract class AbstractCExtensionProxy implements ICProjectDescriptionLis
 			checkUpdateProvider(CProjectDescriptionManager.getInstance().getProjectDescription(fProject, false), false, false);
 	}
 
+	public void updateProject(IProject project){
+		IProject oldProj = fProject;
+		fProject = project;
+		if(oldProj == null || !oldProj.equals(fProject))
+			fInited = false;
+	}
 
 	private ICExtensionReference getRef(ICConfigurationDescription cfg, boolean update){
 		if(fExtPointId != null){
@@ -151,8 +157,10 @@ public abstract class AbstractCExtensionProxy implements ICProjectDescriptionLis
 			force = true;
 		case CProjectDescriptionEvent.APPLIED:
 			ICProjectDescription des = event.getNewCProjectDescription();
-			if(des != null)
+			if(des != null){
+				updateProject(des.getProject());
 				return checkUpdateProvider(des, force, true);
+			}
 			break;
 		}
 		

@@ -52,6 +52,7 @@ import org.eclipse.cdt.core.resources.IPathEntryStoreListener;
 import org.eclipse.cdt.core.resources.PathEntryStoreChangedEvent;
 import org.eclipse.cdt.core.settings.model.util.PathEntryResolveInfo;
 import org.eclipse.cdt.core.settings.model.util.PathEntryResolveInfoElement;
+import org.eclipse.cdt.internal.core.settings.model.AbstractCExtensionProxy;
 import org.eclipse.cdt.internal.core.settings.model.ConfigBasedPathEntryStore;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
@@ -1178,10 +1179,14 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 
 	public synchronized IPathEntryStore getPathEntryStore(IProject project, boolean create) throws CoreException {
 		IPathEntryStore store = (IPathEntryStore)storeMap.get(project);
-		if (store == null && create == true) {
-			store = createPathEntryStore(project);
-			storeMap.put(project, store);
-			store.addPathEntryStoreListener(this);
+		if (store == null) {
+			if(create == true){
+				store = createPathEntryStore(project);
+				storeMap.put(project, store);
+				store.addPathEntryStoreListener(this);
+			}
+		} else if (store instanceof AbstractCExtensionProxy){
+			((AbstractCExtensionProxy)store).updateProject(project);
 		}
 		return store;
 	}

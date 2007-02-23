@@ -63,6 +63,10 @@ public class CProjectDescription implements ICProjectDescription, ICDataProxyCon
 //		loadActiveCfgId();
 	}
 	
+	void updateProject(IProject project){
+		fProject = project;
+	}
+	
 	void loadDatas(){
 		if(!fIsReadOnly || !fIsLoadding)
 			return;

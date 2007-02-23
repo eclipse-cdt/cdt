@@ -21,6 +21,7 @@ import java.io.InputStream;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -77,13 +78,18 @@ import org.eclipse.cdt.internal.core.CConfigBasedDescriptorManager;
 import org.eclipse.cdt.internal.core.envvar.ContributedEnvironment;
 import org.eclipse.cdt.internal.core.model.CElementDelta;
 import org.eclipse.cdt.internal.core.model.CModelManager;
+import org.eclipse.cdt.internal.core.model.CoreModelMessages;
 import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IResourceChangeEvent;
+import org.eclipse.core.resources.ISavedState;
 import org.eclipse.core.resources.IWorkspace;
+import org.eclipse.core.resources.IWorkspaceRoot;
+import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IExtension;
@@ -120,7 +126,7 @@ public class CProjectDescriptionManager {
 	private static final String CONVERTED_CFG_ID_PREFIX = "converted.config"; //$NON-NLS-1$
 
 	private static final String STORAGE_FILE_NAME = ".cproject";	//$NON-NLS-1$
-	private static final QualifiedName PROJECT_DESCRCIPTION_PROPERTY = new QualifiedName(CCorePlugin.PLUGIN_ID, "projectDescription");	//$NON-NLS-1$
+//	private static final QualifiedName PROJECT_DESCRCIPTION_PROPERTY = new QualifiedName(CCorePlugin.PLUGIN_ID, "projectDescription");	//$NON-NLS-1$
 	private static final String ROOT_ELEMENT_NAME = "cproject";	//$NON-NLS-1$
 	private static final String VERSION_ELEMENT_NAME = "fileVersion";	//$NON-NLS-1$
 	public static final Version DESCRIPTION_VERSION = new Version("4.0"); 	//$NON-NLS-1$
@@ -138,6 +144,8 @@ public class CProjectDescriptionManager {
 	public static final String DEFAULT_PROVIDER_ID = CCorePlugin.PLUGIN_ID + ".defaultConfigDataProvider"; //$NON-NLS-1$
 	private static final String DEFAULT_CFG_ID_PREFIX = CCorePlugin.PLUGIN_ID + ".default.config"; //$NON-NLS-1$
 	private static final String DEFAULT_CFG_NAME = "Configuration"; //$NON-NLS-1$
+	
+	private static final QualifiedName SCANNER_INFO_PROVIDER_PROPERTY = new QualifiedName(CCorePlugin.PLUGIN_ID, "scannerInfoProvider"); //$NON-NLS-1$
 
 	private class CompositeSafeRunnable implements ISafeRunnable {
 		private List fRunnables = new ArrayList();
@@ -159,6 +167,8 @@ public class CProjectDescriptionManager {
 					r.handleException(e);
 					if(fStopOnErr)
 						throw e;
+					else
+						r.handleException(e);
 				}
 			}
 		}
@@ -182,10 +192,10 @@ public class CProjectDescriptionManager {
 		}
 		
 	}
-	private class ProjectInfoHolder{
-		ICProjectDescription fDescription;
-		ScannerInfoProviderProxy fSIProvider;
-	}
+//	private class ProjectInfoHolder{
+//		CProjectDescription fDescription;
+//		ScannerInfoProviderProxy fSIProvider;
+//	}
 	
 	private class ListenerDescriptor{
 		ICProjectDescriptionListener fListener;
@@ -207,6 +217,8 @@ public class CProjectDescriptionManager {
 	private Map fPreferenceMap = new HashMap();
 	private CConfigBasedDescriptorManager fDescriptorManager;
 	private ThreadLocal fLoaddingDescriptions = new ThreadLocal();
+	private Map fDescriptionMap = new HashMap(); //calls to this map are "manually" synchronized with the CProjectDescriptionManager object lock;
+	private ResourceChangeHandler fRcChangeHandler;
 
 //	private CStorage fPrefCfgStorage;
 	private ICDataProxyContainer fPrefUpdater = new ICDataProxyContainer(){
@@ -241,15 +253,68 @@ public class CProjectDescriptionManager {
 	}
 
 	public void startup(){
-		if(fDescriptorManager == null){
-			fDescriptorManager = CConfigBasedDescriptorManager.getInstance();
-			fDescriptorManager.startup();
+		if(fRcChangeHandler == null){
+			fRcChangeHandler = new ResourceChangeHandler();
+	
+			ResourcesPlugin.getWorkspace().addResourceChangeListener(
+					fRcChangeHandler, 
+					IResourceChangeEvent.POST_CHANGE 
+					| IResourceChangeEvent.PRE_DELETE
+					| IResourceChangeEvent.PRE_CLOSE
+					/*| IResourceChangeEvent.POST_BUILD*/);
+
+			if(fDescriptorManager == null){
+				fDescriptorManager = CConfigBasedDescriptorManager.getInstance();
+				fDescriptorManager.startup();
+			}
+			
+			IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
+			Job rcJob = new Job(CoreModelMessages.getFormattedString("CProjectDescriptionManager.startRcChangeHandling")){ 	//$NON-NLS-1$
+				protected IStatus run(IProgressMonitor monitor) {
+					try{
+						startSaveParticipant();
+					} catch (CoreException e){
+						CCorePlugin.log(e);
+						return e.getStatus();
+					}
+					return new Status(
+							IStatus.OK,
+							CCorePlugin.PLUGIN_ID,
+							IStatus.OK,
+							new String(),
+							null);
+				}
+			};
+						
+			rcJob.setRule(root);
+			rcJob.setPriority(Job.INTERACTIVE);
+			rcJob.setSystem(true);
+			rcJob.schedule();
+		}
+	}
+
+	/*
+	 * This method adds a save participant and resource change listener
+	 * Throws CoreException if the methods fails to add a save participant.
+	 * The resource change listener in not added in this case either.
+	 */
+	private void startSaveParticipant() throws CoreException{
+		// Set up a listener for resource change events
+		ISavedState lastState =
+			ResourcesPlugin.getWorkspace().addSaveParticipant(CCorePlugin.getDefault(), fRcChangeHandler);
+
+		if (lastState != null) {
+			lastState.processResourceChangeEvents(fRcChangeHandler);
 		}
 	}
 
 	public void shutdown(){
 		if(fDescriptorManager != null){
 			fDescriptorManager.shutdown();
+		}
+		
+		if(fRcChangeHandler != null){
+			ResourcesPlugin.getWorkspace().removeResourceChangeListener(fRcChangeHandler);
 		}
 	}
 	
@@ -281,6 +346,10 @@ public class CProjectDescriptionManager {
 	}
 
 	public ICProjectDescription getProjectDescription(IProject project, boolean write){
+		return getProjectDescription(project, true, write);
+	}
+
+	public ICProjectDescription getProjectDescription(IProject project, boolean load, boolean write){
 		ICProjectDescription des = null;
 		des = getLoaddedDescription(project);
 		IProjectDescription eDes = null; 
@@ -288,7 +357,7 @@ public class CProjectDescriptionManager {
 		if(des == null)
 			des = getDescriptionLoadding(project);
 		
-		if(des == null){
+		if(des == null && load && project.isOpen()){
 			try {
 				des = loadProjectDescription(project);
 			} catch (CoreException e) {
@@ -461,8 +530,8 @@ public class CProjectDescriptionManager {
 		runWspModification(r, monitor);
 	}
 	
-	private void runWspModification(final ISafeRunnable runnable, IProgressMonitor monitor){
-		IWorkspace wsp = ResourcesPlugin.getWorkspace();
+	public void runWspModification(final ISafeRunnable runnable, IProgressMonitor monitor){
+		final IWorkspace wsp = ResourcesPlugin.getWorkspace();
 		boolean scheduleRule = true;
 		if(!wsp.isTreeLocked()) {
 			ISchedulingRule rule = wsp.getRoot();
@@ -470,11 +539,10 @@ public class CProjectDescriptionManager {
 			try{
 				mngr.beginRule(rule, monitor);
 				scheduleRule = false;
-				try {
-					runnable.run();
-				} catch (Exception e){
-					runnable.handleException(e);
-				}
+				
+				runAtomic(runnable);
+			} catch (CoreException e) {
+				CCorePlugin.log(e);
 			} catch (Exception e) {
 			} finally {
 				mngr.endRule(rule);
@@ -482,12 +550,13 @@ public class CProjectDescriptionManager {
 		}
 		
 		if(scheduleRule){
-			Job job = new Job("info serialization"){
+			Job job = new Job(CoreModelMessages.getFormattedString("CProjectDescriptionManager.serializing")){ //$NON-NLS-1$
 				protected IStatus run(IProgressMonitor monitor) {
 					try {
-						runnable.run();
-					} catch (Exception e) {
-						runnable.handleException(e);
+						runAtomic(runnable);
+					} catch (CoreException e) {
+						CCorePlugin.log(e);
+						return e.getStatus();
 					}
 					return Status.OK_STATUS;
 				}
@@ -496,6 +565,35 @@ public class CProjectDescriptionManager {
 			job.setRule(wsp.getRoot());
 			job.setSystem(true);
 			job.schedule();
+		}
+	}
+	
+	private void runAtomic(final ISafeRunnable r) throws CoreException{
+		IWorkspace wsp = ResourcesPlugin.getWorkspace();
+		
+		try {
+			wsp.run(new IWorkspaceRunnable(){
+	
+				public void run(IProgressMonitor monitor) throws CoreException {
+					try {
+						r.run();
+					} catch (Exception e){
+						throw new CoreException(new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, e.getMessage(), e));
+					}
+				}
+				
+			}, wsp.getRoot(), IWorkspace.AVOID_UPDATE, new NullProgressMonitor());
+		} catch (CoreException e){
+			IStatus status = e.getStatus();
+			if(CCorePlugin.PLUGIN_ID.equals(status.getPlugin())){
+				Throwable t = status.getException();
+				if(t instanceof Exception){
+					r.handleException((Exception)t);
+					return;
+				}
+			}
+			
+			throw e;
 		}
 	}
 	
@@ -546,90 +644,105 @@ public class CProjectDescriptionManager {
 		return des;
 	}
 	
-	private ICProjectDescription getLoaddedDescription(IProject project){
-		try {
-			ProjectInfoHolder holder = getInfoHolder(project);
-			if(holder != null)
-				return holder.fDescription;
-		} catch (CoreException e) {
-		}
-		return null;
+	public synchronized ICProjectDescription getLoaddedDescription(IProject project){
+		CProjectDescription des = (CProjectDescription)fDescriptionMap.get(project);
+		if(des != null)
+			des.updateProject(project);
+		
+		return des;
+////		try {
+//			ProjectInfoHolder holder = getInfoHolder(project);
+//			if(holder != null){
+//				CProjectDescription des = holder.fDescription;
+//				if(des != null)
+//					des.updateProject(project);
+//				return des;
+//			}
+////		} catch (CoreException e) {
+////		}
+//		return null;
 	}
 	
-	private ProjectInfoHolder getInfoHolder(final IProject project) throws CoreException{
-		return (ProjectInfoHolder)project.getSessionProperty(PROJECT_DESCRCIPTION_PROPERTY);
-	}
+//	synchronized private ProjectInfoHolder getInfoHolder(final IProject project){
+//		return (ProjectInfoHolder)fProjectInfoMap.get(project);
+////		return (ProjectInfoHolder)project.getSessionProperty(PROJECT_DESCRCIPTION_PROPERTY);
+//	}
 	
 	public synchronized ScannerInfoProviderProxy getScannerInfoProviderProxy(IProject project){
-		ProjectInfoHolder holder = null;
-		try {
-			holder = getInfoHolder(project);
-		} catch (CoreException e) {
-			holder = new ProjectInfoHolder();
-		}
-		boolean needSet = false;
-		if(holder == null){
-			holder = new ProjectInfoHolder();
-			needSet = true;
+		ICProjectDescription des = getProjectDescription(project, false);
+		if(des == null){
+			return new ScannerInfoProviderProxy(project);
 		}
 		
-		ScannerInfoProviderProxy provider = holder.fSIProvider;
+		ScannerInfoProviderProxy provider = (ScannerInfoProviderProxy)des.getSessionProperty(SCANNER_INFO_PROVIDER_PROPERTY);
 		if(provider == null){
 			provider = new ScannerInfoProviderProxy(project);
-			holder.fSIProvider = provider;
+			des.setSessionProperty(SCANNER_INFO_PROVIDER_PROPERTY, provider);
+		} else {
+			provider.updateProject(project);
 		}
-		
-		if(needSet)
-			setInfoHolder(project, holder);
-		
+
 		return provider;
 	}
 	
-	private void setInfoHolder(final IProject project, final ProjectInfoHolder holder){
-		try {
-			project.setSessionProperty(PROJECT_DESCRCIPTION_PROPERTY, holder);
-		} catch (CoreException e){
-			CCorePlugin.log(e);
-			//TODO: externalize
-			final ProjectInfoHolder f = holder; 
-			Job setDesJob = new Job("Set loadded description job"){ 	//$NON-NLS-1$
-				protected IStatus run(IProgressMonitor monitor){
-					try {
-						project.setSessionProperty(PROJECT_DESCRCIPTION_PROPERTY, f);
-					} catch (CoreException e) {
-						return e.getStatus();
-					}
-					return Status.OK_STATUS;
-				}
-			};
-			
-			setDesJob.setRule(ResourcesPlugin.getWorkspace().getRoot());
-			setDesJob.setPriority(Job.INTERACTIVE);
-			setDesJob.setSystem(true);
-			setDesJob.schedule();
-		}
-	}
+//	synchronized void setInfoHolder(final IProject project, final ProjectInfoHolder holder){
+//		if(holder != null)
+//			fProjectInfoMap.put(project, holder);
+//		else
+//			fProjectInfoMap.remove(project);
+////		try {
+////			project.setSessionProperty(PROJECT_DESCRCIPTION_PROPERTY, holder);
+////		} catch (CoreException e){
+////			CCorePlugin.log(e);
+////			//TODO: externalize
+////			final ProjectInfoHolder f = holder; 
+////			Job setDesJob = new Job("Set loadded description job"){ 	//$NON-NLS-1$
+////				protected IStatus run(IProgressMonitor monitor){
+////					try {
+////						project.setSessionProperty(PROJECT_DESCRCIPTION_PROPERTY, f);
+////					} catch (CoreException e) {
+////						return e.getStatus();
+////					}
+////					return Status.OK_STATUS;
+////				}
+////			};
+////			
+////			setDesJob.setRule(ResourcesPlugin.getWorkspace().getRoot());
+////			setDesJob.setPriority(Job.INTERACTIVE);
+////			setDesJob.setSystem(true);
+////			setDesJob.schedule();
+////		}
+//	}
 
 	synchronized boolean setLoaddedDescription(final IProject project, ICProjectDescription des, boolean overwriteIfExists){
-		try {
-			ProjectInfoHolder holder = getInfoHolder(project);
-			boolean needSet = false;
-			if(holder == null){
-				holder = new ProjectInfoHolder();
-				needSet = true;
-			}
+		if(!overwriteIfExists && fDescriptionMap.get(project) != null)
+			return false;
+		
+		if(des != null)
+			fDescriptionMap.put(project, des);
+		else
+			fDescriptionMap.remove(project);
 
-			boolean shouldOverwrite = overwriteIfExists || holder.fDescription == null;
-			if(shouldOverwrite){
-				holder.fDescription = des;
-				if(needSet){
-					setInfoHolder(project, holder);
-				}
-			}
-			return shouldOverwrite;
-		} catch (CoreException e) {
-		}
-		return false;
+		return true;
+////		try {
+//			ProjectInfoHolder holder = getInfoHolder(project);
+//			boolean needSet = false;
+//			if(holder == null){
+//				holder = new ProjectInfoHolder();
+//				needSet = true;
+//			}
+//
+//			boolean shouldOverwrite = overwriteIfExists || holder.fDescription == null;
+//			if(shouldOverwrite){
+//				holder.fDescription = (CProjectDescription)des;
+//				if(needSet){
+//					setInfoHolder(project, holder);
+//				}
+//			}
+//			return shouldOverwrite;
+////		} catch (CoreException e) {
+////		}
+////		return false;
 	}
 
 	private ICProjectDescription loadProjectDescription(IProject project) throws CoreException{
@@ -1989,13 +2102,6 @@ public class CProjectDescriptionManager {
 		return result;
 	}
 
-	
-	private boolean compare(Object o1, Object o2){
-		if(o1 != null)
-			return o1.equals(o2);
-		return o2 == null;
-	}
-
 /*	public boolean entriesEqual(ICLanguageSettingEntry entries1[], ICLanguageSettingEntry entries2[]){
 		if(entries1.length != entries2.length)
 			return false;
@@ -2723,5 +2829,4 @@ public class CProjectDescriptionManager {
 		
 		return data != null && !PathEntryConfigurationDataProvider.isPathEntryData(data);
 	}
-
 }

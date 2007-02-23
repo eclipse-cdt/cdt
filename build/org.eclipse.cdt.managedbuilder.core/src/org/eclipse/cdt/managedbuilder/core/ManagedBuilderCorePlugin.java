@@ -15,7 +15,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.make.core.scannerconfig.IDiscoveredPathManager;
 import org.eclipse.cdt.make.core.scannerconfig.IExternalScannerInfoProvider;
 import org.eclipse.cdt.make.core.scannerconfig.IScannerConfigBuilderInfo;
@@ -27,27 +26,21 @@ import org.eclipse.cdt.make.internal.core.scannerconfig.util.TraceUtil;
 import org.eclipse.cdt.managedbuilder.internal.buildmodel.DbgUtil;
 import org.eclipse.cdt.managedbuilder.internal.core.BuilderFactory;
 import org.eclipse.cdt.managedbuilder.internal.core.GeneratedMakefileBuilder;
-import org.eclipse.cdt.managedbuilder.internal.core.ManagedMakeMessages;
-import org.eclipse.cdt.managedbuilder.internal.core.ResourceChangeHandler;
 import org.eclipse.cdt.managedbuilder.internal.scannerconfig.ManagedBuildCPathEntryContainer;
 import org.eclipse.cdt.managedbuilder.internal.scannerconfig.ManagedBuildPathEntryContainerInitializer;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResourceChangeEvent;
-import org.eclipse.core.resources.ISavedState;
-import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Plugin;
 import org.eclipse.core.runtime.Preferences;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.jobs.Job;
 import org.osgi.framework.BundleContext;
 
 
@@ -74,7 +67,7 @@ public class ManagedBuilderCorePlugin extends Plugin {
 
 
 
-	private static ResourceChangeHandler listener;
+	private static ResourceChangeHandler2 listener;
 
 	private DiscoveredPathManager fDiscoveryPathManager;
 
@@ -119,7 +112,15 @@ public class ManagedBuilderCorePlugin extends Plugin {
 		//      elements
 		
 //		IJobManager jobManager = Platform.getJobManager();
-		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
+//		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
+		listener = new ResourceChangeHandler2();
+
+		ResourcesPlugin.getWorkspace().addResourceChangeListener(
+				listener, 
+				IResourceChangeEvent.POST_CHANGE 
+				| IResourceChangeEvent.PRE_DELETE
+				| IResourceChangeEvent.PRE_CLOSE
+				/*| IResourceChangeEvent.POST_BUILD*/);
 /*		try {
 			jobManager.beginRule(root, null);
 
@@ -133,27 +134,27 @@ public class ManagedBuilderCorePlugin extends Plugin {
 		//The startResourceChangeHandling() might result in throwing an error
 		//see bug# 132001
 		//Always schedule a job
-			Job rcJob = new Job(ManagedMakeMessages.getResourceString("ManagedBuilderCorePlugin.resourceChangeHandlingInitializationJob")){ 	//$NON-NLS-1$
-				protected IStatus run(IProgressMonitor monitor) {
-					try{
-						startResourceChangeHandling();
-					} catch (CoreException e){
-						CCorePlugin.log(e);
-						return e.getStatus();
-					}
-					return new Status(
-							IStatus.OK,
-							ManagedBuilderCorePlugin.getUniqueIdentifier(),
-							IStatus.OK,
-							new String(),
-							null);
-				}
-			};
-			
-			rcJob.setRule(root);
-			rcJob.setPriority(Job.INTERACTIVE);
-			rcJob.setSystem(true);
-			rcJob.schedule();
+//			Job rcJob = new Job(ManagedMakeMessages.getResourceString("ManagedBuilderCorePlugin.resourceChangeHandlingInitializationJob")){ 	//$NON-NLS-1$
+//				protected IStatus run(IProgressMonitor monitor) {
+//					try{
+//						startResourceChangeHandling();
+//					} catch (CoreException e){
+//						CCorePlugin.log(e);
+//						return e.getStatus();
+//					}
+//					return new Status(
+//							IStatus.OK,
+//							ManagedBuilderCorePlugin.getUniqueIdentifier(),
+//							IStatus.OK,
+//							new String(),
+//							null);
+//				}
+//			};
+//			
+//			rcJob.setRule(root);
+//			rcJob.setPriority(Job.INTERACTIVE);
+//			rcJob.setSystem(true);
+//			rcJob.schedule();
 /*
 		} finally {
 			jobManager.endRule(root);
@@ -166,23 +167,23 @@ public class ManagedBuilderCorePlugin extends Plugin {
 	 * Throws CoreException if the methods fails to add a save participant.
 	 * The resource change listener in not added in this case either.
 	 */
-	private void startResourceChangeHandling() throws CoreException{
-		// Set up a listener for resource change events
-		listener = new ResourceChangeHandler();
-		ISavedState lastState =
-			ResourcesPlugin.getWorkspace().addSaveParticipant(ManagedBuilderCorePlugin.this, listener);
-
-		ResourcesPlugin.getWorkspace().addResourceChangeListener(
-				listener, 
-				IResourceChangeEvent.POST_CHANGE 
-				| IResourceChangeEvent.PRE_DELETE
-				| IResourceChangeEvent.PRE_CLOSE
-				/*| IResourceChangeEvent.POST_BUILD*/);
-
-		if (lastState != null) {
-			lastState.processResourceChangeEvents(listener);
-		}
-	}
+//	private void startResourceChangeHandling() throws CoreException{
+//		// Set up a listener for resource change events
+//		listener = new ResourceChangeHandler();
+//		ISavedState lastState =
+//			ResourcesPlugin.getWorkspace().addSaveParticipant(ManagedBuilderCorePlugin.this, listener);
+//
+//		ResourcesPlugin.getWorkspace().addResourceChangeListener(
+//				listener, 
+//				IResourceChangeEvent.POST_CHANGE 
+//				| IResourceChangeEvent.PRE_DELETE
+//				| IResourceChangeEvent.PRE_CLOSE
+//				/*| IResourceChangeEvent.POST_BUILD*/);
+//
+//		if (lastState != null) {
+//			lastState.processResourceChangeEvents(listener);
+//		}
+//	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.Plugin#start(org.osgi.framework.BundleContext)

@@ -8,9 +8,8 @@
  * Contributors:
  * Intel Corporation - Initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.internal.core.settings.model;
+package org.eclipse.cdt.core.settings.model;
 
-import org.eclipse.cdt.core.settings.model.ICLanguageSettingEntry;
 
 
 public abstract class ACLanguageSettingEntry implements ICLanguageSettingEntry {

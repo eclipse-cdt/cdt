@@ -10,8 +10,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.settings.model.util;
 
+import org.eclipse.cdt.core.settings.model.ACLanguageSettingEntry;
 import org.eclipse.cdt.core.settings.model.ICLanguageSettingEntry;
-import org.eclipse.cdt.internal.core.settings.model.ACLanguageSettingEntry;
 
 public class EntryNameKey {
 	ICLanguageSettingEntry fEntry;

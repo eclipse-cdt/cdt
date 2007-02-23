@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.settings.model;
 
-import org.eclipse.cdt.internal.core.settings.model.ACLanguageSettingPathEntry;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IPath;
 

@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.settings.model;
 
-import org.eclipse.cdt.internal.core.settings.model.ACLanguageSettingEntry;
 
 
 public final class CMacroEntry extends ACLanguageSettingEntry implements ICMacroEntry{

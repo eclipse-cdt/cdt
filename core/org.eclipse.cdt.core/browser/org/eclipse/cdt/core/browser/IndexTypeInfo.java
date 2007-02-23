@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 QNX Software Systems and others.
+ * Copyright (c) 2006, 2007 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,40 +8,46 @@
  * Contributors:
  * 		QNX - Initial API and implementation
  * 		IBM Corporation
+ *      Andrew Ferguson (Symbian)
  *******************************************************************************/
-
 package org.eclipse.cdt.core.browser;
 
 import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.dom.IName;
-import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IBinding;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPBinding;
 import org.eclipse.cdt.core.index.IIndex;
+import org.eclipse.cdt.core.index.IIndexBinding;
+import org.eclipse.cdt.core.index.IIndexFileLocation;
+import org.eclipse.cdt.core.index.IIndexName;
+import org.eclipse.cdt.core.index.IndexFilter;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.parser.ast.ASTAccessVisibility;
-import org.eclipse.cdt.internal.core.CCoreInternals;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPVisitor;
-import org.eclipse.cdt.internal.core.pdom.PDOM;
+import org.eclipse.cdt.internal.core.browser.util.IndexModelUtil;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNotImplementedError;
+import org.eclipse.core.filesystem.URIUtil;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.Path;
 
 /**
  * @author Doug Schaefer
  *
  */
-public class PDOMTypeInfo implements ITypeInfo {
-
-	private final IBinding binding;
+public class IndexTypeInfo implements ITypeInfo {
+	private final String[] fqn;
 	private final int elementType;
-	private final ICProject project;
-
-	public PDOMTypeInfo(IBinding binding, int elementType, ICProject project) {
-		this.binding = binding;
-		this.elementType = elementType;
-		this.project = project;
-	}
+	private final IIndex index;
+	private ITypeReference reference; // lazily constructed
 	
+	public IndexTypeInfo(String[] fqn, int elementType, IIndex index) {
+		this.fqn = fqn;
+		this.elementType = elementType;
+		this.index = index;
+	}
+
 	public void addDerivedReference(ITypeReference location) {
 		throw new PDOMNotImplementedError();
 	}
@@ -83,7 +89,13 @@ public class PDOMTypeInfo implements ITypeInfo {
 	}
 
 	public ICProject getEnclosingProject() {
-		return project;
+		if(getResolvedReference()!=null) {
+			IProject project = reference.getProject();
+			if(project!=null) {
+				return CCorePlugin.getDefault().getCoreModel().getCModel().getCProject(project.getName());
+			}
+		}
+		return null;
 	}
 
 	public ITypeInfo getEnclosingType() {
@@ -96,23 +108,11 @@ public class PDOMTypeInfo implements ITypeInfo {
 	}
 
 	public String getName() {
-		return binding.getName();
+		return fqn[fqn.length-1];
 	}
 
 	public IQualifiedTypeName getQualifiedTypeName() {
-		String qn;
-		if(binding instanceof ICPPBinding) {
-			try {
-				qn = CPPVisitor.renderQualifiedName(((ICPPBinding)binding).getQualifiedName());
-			} catch(DOMException de) {
-				CCorePlugin.log(de); // can't happen when (binding instanceof PDOMBinding)
-				return null;
-			}
-		} else {
-			qn = binding.getName();
-		}
-		
-		return new QualifiedTypeName(qn);
+		return new QualifiedTypeName(fqn);
 	}
 
 	public ITypeReference[] getReferences() {
@@ -120,14 +120,50 @@ public class PDOMTypeInfo implements ITypeInfo {
 	}
 
 	public ITypeReference getResolvedReference() {
-		try {
-			PDOM pdom = (PDOM) CCoreInternals.getPDOMManager().getPDOM(project);
-			IName[] names= pdom.findNames(binding, IIndex.FIND_DEFINITIONS);
-			return names != null && names.length > 0 ? new PDOMTypeReference(names[0], project) : null;
-		} catch (CoreException e) {
-			CCorePlugin.log(e);
-			return null;
+		if(reference==null) {
+			try {
+				index.acquireReadLock();
+
+				char[][] cfqn = new char[fqn.length][];
+				for(int i=0; i<fqn.length; i++)
+					cfqn[i] = fqn[i].toCharArray();
+
+				IIndexBinding[] ibs = index.findBindings(cfqn, new IndexFilter() {
+					public boolean acceptBinding(IBinding binding) {
+						return IndexModelUtil.bindingHasCElementType(binding, new int[]{elementType});
+					}
+				}, new NullProgressMonitor());
+				if(ibs.length>0) {
+					IIndexName[] names = index.findNames(ibs[0], IIndex.FIND_DEFINITIONS);
+					if(names.length>0) {
+						IIndexFileLocation ifl = names[0].getFile().getLocation();
+						String fullPath = ifl.getFullPath();
+						if(fullPath!=null) {
+							IFile file = ResourcesPlugin.getWorkspace().getRoot().getFile(new Path(fullPath));
+							if(file!=null) {
+								reference = new TypeReference(
+										file, file.getProject(), names[0].getNodeOffset(), names[0].getNodeLength()
+								);
+							}
+						} else {
+							IPath path = URIUtil.toPath(ifl.getURI());
+							if(path!=null) {
+								reference = new TypeReference(
+										path, null, names[0].getNodeOffset(), names[0].getNodeLength()
+								);
+							}
+						}
+					}
+				}
+			} catch(CoreException ce) {
+				CCorePlugin.log(ce);				
+			} catch (InterruptedException ie) {
+				CCorePlugin.log(ie);
+			} finally {
+				index.releaseReadLock();
+			}
 		}
+		return reference;
 	}
 
 	public ITypeInfo getRootNamespace(boolean includeGlobalNamespace) {

@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     QNX Software Systems - initial API and implementation
+ *     Andrew Ferguson (Symbian)
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.browser.opentype;
 
@@ -23,7 +24,6 @@ import org.eclipse.ui.IWorkbenchWindowActionDelegate;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.texteditor.ITextEditor;
 
-import org.eclipse.cdt.core.browser.AllTypesCache;
 import org.eclipse.cdt.core.browser.ITypeInfo;
 import org.eclipse.cdt.core.browser.ITypeReference;
 import org.eclipse.cdt.core.model.CModelException;
@@ -44,16 +44,7 @@ public class OpenTypeAction implements IWorkbenchWindowActionDelegate {
 	 * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
 	 */
 	public void run(IAction action) {
-		ITypeInfo[] elements = AllTypesCache.getAllTypes();
-		if (elements.length == 0) {
-			String title = OpenTypeMessages.getString("OpenTypeAction.notypes.title"); //$NON-NLS-1$
-			String message = OpenTypeMessages.getString("OpenTypeAction.notypes.message"); //$NON-NLS-1$
-			MessageDialog.openInformation(getShell(), title, message);
-			return;
-		}
-		
 		OpenTypeDialog dialog = new OpenTypeDialog(getShell());
-		dialog.setElements(elements);
 		int result = dialog.open();
 		if (result != IDialogConstants.OK_ID)
 			return;

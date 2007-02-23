@@ -7,33 +7,24 @@
  *
  * Contributors:
  *     QNX Software Systems - initial API and implementation
+ *     Andrew Ferguson (Symbian)
  *******************************************************************************/
 package org.eclipse.cdt.core.browser;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.regex.Pattern;
 
 import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.dom.ILinkage;
-import org.eclipse.cdt.core.dom.IPDOMNode;
-import org.eclipse.cdt.core.dom.IPDOMVisitor;
-import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IBinding;
-import org.eclipse.cdt.core.dom.ast.ICompositeType;
-import org.eclipse.cdt.core.dom.ast.IEnumeration;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespaceAlias;
+import org.eclipse.cdt.core.index.IIndex;
+import org.eclipse.cdt.core.index.IIndexBinding;
+import org.eclipse.cdt.core.index.IndexFilter;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICProject;
-import org.eclipse.cdt.internal.core.CCoreInternals;
-import org.eclipse.cdt.internal.core.pdom.PDOM;
-import org.eclipse.cdt.internal.core.pdom.PDOMManager;
-import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
-import org.eclipse.cdt.internal.core.pdom.dom.PDOMLinkage;
-import org.eclipse.cdt.internal.core.pdom.dom.c.PDOMCStructure;
+import org.eclipse.cdt.internal.core.browser.util.IndexModelUtil;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.NullProgressMonitor;
 
 /**
  * Manages a search cache for types in the workspace. Instead of returning
@@ -49,137 +40,69 @@ import org.eclipse.core.runtime.CoreException;
  * waits for the completion of the background job.
  */
 public class AllTypesCache {
+	private static final boolean DEBUG = false;
+	
+	private static ITypeInfo[] getTypes(ICProject[] projects, final int[] kinds, IProgressMonitor monitor) throws CoreException {
+		IIndex index = CCorePlugin.getIndexManager().getIndex(projects);
+		
+		try {
+			index.acquireReadLock();
+			
+			long start = System.currentTimeMillis();
+			
+			IIndexBinding[] all =
+				index.findBindings(Pattern.compile(".*"), false, new IndexFilter() { //$NON-NLS-1$
+					public boolean acceptBinding(IBinding binding) {
+						return IndexModelUtil.bindingHasCElementType(binding, kinds);
+					}},
+					monitor
+				);
+			
+			if(DEBUG) {
+				System.out.println("Index search took "+(System.currentTimeMillis() - start)); //$NON-NLS-1$
+				start = System.currentTimeMillis();
+			}
+			
+			ITypeInfo[] result = new ITypeInfo[all.length];
+			for(int i=0; i<all.length; i++) {
+				IIndexBinding ib = (IIndexBinding) all[i];				
+				result[i] = new IndexTypeInfo(ib.getQualifiedName(), IndexModelUtil.getElementType(ib), index);
+			}
 
-	private abstract static class TypesCollector implements IPDOMVisitor {
-		private final int[] kinds;
-		protected final List types;
-		protected final ICProject project;
-		
-		protected TypesCollector(int[] kinds, List types, ICProject project) {
-			this.kinds = kinds;
-			this.types = types;
-			this.project = project;
-		}
-		
-		protected abstract void visitKind(IPDOMNode node, int kind);
-		
-		public boolean visit(IPDOMNode node) throws CoreException {
-			for (int i = 0; i < kinds.length; ++i)
-				visitKind(node, kinds[i]);
-			return true;
-		}
-		
-		public void leave(IPDOMNode node) throws CoreException {
-		}
-		
-		public List getTypes() {
-			return types;
-		}
-	}
-	
-	private static class CTypesCollector extends TypesCollector {
-		public CTypesCollector(int[] kinds, List types, ICProject project) {
-			super(kinds, types, project);
-		}
-		
-		protected void visitKind(IPDOMNode node, int kind) {
-			switch (kind) {
-			case ICElement.C_NAMESPACE:
-				return;
-			case ICElement.C_CLASS:
-				return;
-			case ICElement.C_STRUCT:
-				if (node instanceof PDOMCStructure)
-					types.add(new PDOMTypeInfo((IBinding)node, kind, project));
-				return;
-			case ICElement.C_UNION:
-				return;
-			case ICElement.C_ENUMERATION:
-				return;
-			case ICElement.C_TYPEDEF:
-				return;
-			}
-		}
-	}
-	
-	private static class CPPTypesCollector extends TypesCollector {
-		public CPPTypesCollector(int[] kinds, List types, ICProject project) {
-			super(kinds, types, project);
-		}
-		
-		protected void visitKind(IPDOMNode node, int kind) {
-			try {
-				switch (kind) {
-				case ICElement.C_NAMESPACE:
-					if (node instanceof ICPPNamespace || node instanceof ICPPNamespaceAlias)
-						types.add(new PDOMTypeInfo((PDOMBinding)node, kind, project));
-					return;
-				case ICElement.C_CLASS:
-					if (node instanceof ICPPClassType
-							&& ((ICPPClassType)node).getKey() == ICPPClassType.k_class)
-						types.add(new PDOMTypeInfo((PDOMBinding)node, kind, project));
-					return;
-				case ICElement.C_STRUCT:
-					if (node instanceof ICPPClassType
-							&& ((ICPPClassType)node).getKey() == ICompositeType.k_struct)
-						types.add(new PDOMTypeInfo((PDOMBinding)node, kind, project));
-					return;
-				case ICElement.C_UNION:
-					if (node instanceof ICPPClassType
-							&& ((ICPPClassType)node).getKey() == ICompositeType.k_union)
-						types.add(new PDOMTypeInfo((PDOMBinding)node, kind, project));
-					return;
-				case ICElement.C_ENUMERATION:
-					if (node instanceof IEnumeration
-							/*&& node instanceof ICPPBinding*/)
-							types.add(new PDOMTypeInfo((IEnumeration)node, kind, project));
-					return;
-				case ICElement.C_TYPEDEF:
-					return;
-				}
-			} catch (DOMException e) {
-				CCorePlugin.log(e);
-			}
-		}
-	}
-	
-	private static ITypeInfo[] getTypes(ICProject[] projects, int[] kinds) throws CoreException {
-		List types = new ArrayList();
-		PDOMManager pdomManager = CCoreInternals.getPDOMManager();
-		
-		for (int i = 0; i < projects.length; ++i) {
-			ICProject project = projects[i];
-			CTypesCollector cCollector = new CTypesCollector(kinds, types, project);
-			CPPTypesCollector cppCollector = new CPPTypesCollector(kinds, types, project);
-				
-			PDOM pdom = (PDOM)pdomManager.getPDOM(project);
-			PDOMLinkage linkage= pdom.getLinkage(ILinkage.C_LINKAGE_ID);
-			if (linkage != null) {
-				linkage.accept(cCollector);
+			if(DEBUG) {
+				System.out.println("Wrapping as ITypeInfo took "+(System.currentTimeMillis() - start)); //$NON-NLS-1$
+				start = System.currentTimeMillis();
 			}
 			
-			linkage= pdom.getLinkage(ILinkage.CPP_LINKAGE_ID);
-			if (linkage != null) {
-				linkage.accept(cppCollector);
-			}
+			return result;
+		} catch(InterruptedException ie) {
+			ie.printStackTrace();
+		} finally {
+			index.releaseReadLock();
 		}
-			
-		return (ITypeInfo[])types.toArray(new ITypeInfo[types.size()]);
+		return new ITypeInfo[0];
+	}
+
+	/**
+	 * Returns all types in the workspace.
+	 */
+	public static ITypeInfo[] getAllTypes() {
+		return getAllTypes(new NullProgressMonitor());
 	}
 	
 	/**
 	 * Returns all types in the workspace.
 	 */
-	public static ITypeInfo[] getAllTypes() {
+	public static ITypeInfo[] getAllTypes(IProgressMonitor monitor) {
 		try {
 			ICProject[] projects = CoreModel.getDefault().getCModel().getCProjects();
-			return getTypes(projects, ITypeInfo.KNOWN_TYPES);
+			return getTypes(projects, ITypeInfo.KNOWN_TYPES, monitor);
 		} catch (CoreException e) {
 			CCorePlugin.log(e);
 			return new ITypeInfo[0];
 		}
 	}
-	
+
 	/**
 	 * Returns all types in the given scope.
 	 * 
@@ -189,13 +112,13 @@ public class AllTypesCache {
 	 */
 	public static ITypeInfo[] getTypes(ITypeSearchScope scope, int[] kinds) {
 		try {
-			return getTypes(scope.getEnclosingProjects(), kinds);
+			return getTypes(scope.getEnclosingProjects(), kinds, new NullProgressMonitor());
 		} catch (CoreException e) {
 			CCorePlugin.log(e);
 			return new ITypeInfo[0];
 		}
 	}
-	
+
 	/**
 	 * Returns all namespaces in the given scope.
 	 * 
@@ -204,13 +127,13 @@ public class AllTypesCache {
 	 */
 	public static ITypeInfo[] getNamespaces(ITypeSearchScope scope, boolean includeGlobalNamespace) {
 		try {
-			return getTypes(scope.getEnclosingProjects(), new int[] {ICElement.C_NAMESPACE});
+			return getTypes(scope.getEnclosingProjects(), new int[] {ICElement.C_NAMESPACE}, new NullProgressMonitor());
 		} catch (CoreException e) {
 			CCorePlugin.log(e);
 			return new ITypeInfo[0];
 		}
 	}
-	
+
 	/** Returns first type in the cache which matches the given
 	 *  type and name.  If no type is found, <code>null</code>
 	 *  is returned.

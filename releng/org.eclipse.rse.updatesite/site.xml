@@ -7,39 +7,39 @@
       This is the Target Management Project Update Site.
    </description>
    <feature url="features/org.eclipse.rse.core_2.0.0.qualifier.jar" id="org.eclipse.rse.core" version="2.0.0.qualifier">
-      <category name="RSE Runtime only"/>
+      <category name="RSE End-User Runtime"/>
    </feature>
    <feature url="features/org.eclipse.rse.dstore_2.0.0.qualifier.jar" id="org.eclipse.rse.dstore" version="2.0.0.qualifier">
-      <category name="RSE Runtime only"/>
+      <category name="RSE End-User Runtime"/>
    </feature>
    <feature url="features/org.eclipse.rse.ftp_2.0.0.qualifier.jar" id="org.eclipse.rse.ftp" version="2.0.0.qualifier">
-      <category name="RSE Runtime only"/>
+      <category name="RSE End-User Runtime"/>
    </feature>
    <feature url="features/org.eclipse.rse.local_2.0.0.qualifier.jar" id="org.eclipse.rse.local" version="2.0.0.qualifier">
-      <category name="RSE Runtime only"/>
+      <category name="RSE End-User Runtime"/>
    </feature>
    <!-- !EUROPA_ONLY! Combined Runtime
    <feature url="features/org.eclipse.rse_2.0.0.qualifier.jar" id="org.eclipse.rse" version="2.0.0.qualifier">
-      <category name="RSE Runtime only"/>
+      <category name="RSE End-User Runtime"/>
    </feature>
    !EUROPA_ONLY! -->
    <feature url="features/org.eclipse.rse.sdk_2.0.0.qualifier.jar" id="org.eclipse.rse.sdk" version="2.0.0.qualifier">
-      <category name="Remote System Explorer (RSE) SDK"/>
+      <category name="Remote System Explorer (RSE) Extender SDK"/>
    </feature>
    <feature url="features/org.eclipse.rse.ssh_2.0.0.qualifier.jar" id="org.eclipse.rse.ssh" version="2.0.0.qualifier">
-      <category name="RSE Runtime only"/>
+      <category name="RSE End-User Runtime"/>
    </feature>
    <feature url="features/org.eclipse.rse.examples_2.0.0.qualifier.jar" id="org.eclipse.rse.examples" version="2.0.0.qualifier">
-      <category name="Remote System Explorer (RSE) SDK"/>
+      <category name="Remote System Explorer (RSE) Extender SDK"/>
    </feature>
    <feature url="features/org.eclipse.rse.remotecdt_1.0.100.qualifier.jar" id="org.eclipse.rse.remotecdt" version="1.0.100.qualifier">
-      <category name="Target Management Add-ons"/>
+      <category name="Target Management Add-ons and Stand-alone Offerings"/>
    </feature>
    <feature url="features/org.eclipse.rse.efs_2.0.0.qualifier.jar" id="org.eclipse.rse.efs" version="2.0.0.qualifier">
-      <category name="Target Management Add-ons"/>
+      <category name="Target Management Add-ons and Stand-alone Offerings"/>
    </feature>
    <feature url="features/org.eclipse.tm.discovery_2.0.0.qualifier.jar" id="org.eclipse.tm.discovery" version="2.0.0.qualifier">
-      <category name="Target Management Add-ons"/>
+      <category name="Target Management Add-ons and Stand-alone Offerings"/>
    </feature>
    <feature url="features/org.apache.commons.net_1.4.1.qualifier.jar" id="org.apache.commons.net" version="1.4.1.qualifier">
       <category name="Enabling Features"/>
@@ -48,24 +48,24 @@
       <category name="Enabling Features"/>
    </feature>
    <feature url="features/org.eclipse.tm.terminal.sdk_1.0.0.qualifier.jar" id="org.eclipse.tm.terminal.sdk" version="1.0.0.qualifier">
-      <category name="Target Management Add-ons"/>
+      <category name="Target Management Add-ons and Stand-alone Offerings"/>
    </feature>
    <feature url="features/org.eclipse.rse.tests_2.0.0.qualifier.jar" id="org.eclipse.rse.tests" version="2.0.0.qualifier">
-      <category name="Remote System Explorer (RSE) SDK"/>
+      <category name="Remote System Explorer (RSE) Extender SDK"/>
    </feature>
-   <category-def name="RSE Runtime only" label="RSE_Runtime">
+   <category-def name="RSE End-User Runtime" label="RSE_Runtime">
       <description>
          RSE Runtime-only features: no developer documentation or sources.
       </description>
    </category-def>
-   <category-def name="Remote System Explorer (RSE) SDK" label="RSE_SDK">
+   <category-def name="Remote System Explorer (RSE) Extender SDK" label="RSE_SDK">
       <description>
-         Remote System Explorer (RSE) with developer documentation and sources..
+         Remote System Explorer (RSE) with developer documentation and sources.
       </description>
    </category-def>
-   <category-def name="Target Management Add-ons" label="Target Management Add-ons">
+   <category-def name="Target Management Add-ons and Stand-alone Offerings" label="Target Management Add-ons and Stand-alone Offerings">
       <description>
-         Target Management Core Components as well as Experimental add-ons for RSE
+         Target Management Core Components as well as Experimental add-ons for RSE.
       </description>
    </category-def>
    <category-def name="Enabling Features" label="Enabling Features">

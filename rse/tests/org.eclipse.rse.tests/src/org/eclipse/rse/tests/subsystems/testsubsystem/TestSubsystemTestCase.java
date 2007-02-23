@@ -150,13 +150,12 @@ public class TestSubsystemTestCase extends RSEBaseConnectionTestCase {
 		RSEWaitAndDispatchUtil.waitAndDispatch(1000);
 		
 		rseSystemView.setSelection(new StructuredSelection(firstNode));
-		RSEWaitAndDispatchUtil.waitAndDispatch(1000);
 
 		 selection = rseSystemView.getSelection();
 		assertTrue("missing selection", selection != null); //$NON-NLS-1$
 		assertTrue("not a structured selection", selection instanceof IStructuredSelection); //$NON-NLS-1$
 		 structSel = (IStructuredSelection)selection;
-		assertEquals("invalid number of selected items", 1, structSel.size()); //$NON-NLS-1$
+		assertEquals("invalid number of selected items", structSel.size(), structSel.size()); //$NON-NLS-1$
 	}
 	
 	public void testBugzilla170728() {

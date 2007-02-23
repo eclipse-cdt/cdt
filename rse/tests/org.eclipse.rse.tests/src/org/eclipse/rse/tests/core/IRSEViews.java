@@ -16,6 +16,11 @@ package org.eclipse.rse.tests.core;
 public interface IRSEViews {
 
 	/**
+	 * The unique remote systems perspective id.
+	 */
+	public final String RSE_PERSPECTIVE_ID = "org.eclipse.rse.ui.view.SystemPerspective"; //$NON-NLS-1$
+
+	/**
 	 * The unique remote systems view id.
 	 */
 	public final String RSE_REMOTE_SYSTEMS_VIEW_ID = "org.eclipse.rse.ui.view.systemView"; //$NON-NLS-1$

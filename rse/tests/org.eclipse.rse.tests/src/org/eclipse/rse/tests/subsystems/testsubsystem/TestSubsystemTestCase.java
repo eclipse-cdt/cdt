@@ -18,32 +18,77 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.rse.core.filters.ISystemFilterPoolManager;
 import org.eclipse.rse.core.model.IHost;
-import org.eclipse.rse.internal.ui.view.SystemPerspectiveHelpers;
+import org.eclipse.rse.internal.ui.view.SystemView;
+import org.eclipse.rse.internal.ui.view.SystemViewPart;
 import org.eclipse.rse.model.ISystemResourceChangeEvents;
 import org.eclipse.rse.model.SystemRegistry;
 import org.eclipse.rse.model.SystemResourceChangeEvent;
 import org.eclipse.rse.tests.RSETestsPlugin;
+import org.eclipse.rse.tests.core.IRSEViews;
 import org.eclipse.rse.tests.core.RSEWaitAndDispatchUtil;
 import org.eclipse.rse.tests.core.connection.RSEBaseConnectionTestCase;
 import org.eclipse.rse.tests.testsubsystem.TestSubSystemContainerNode;
 import org.eclipse.rse.tests.testsubsystem.TestSubSystemNode;
 import org.eclipse.rse.tests.testsubsystem.interfaces.ITestSubSystem;
 import org.eclipse.rse.ui.RSEUIPlugin;
+import org.eclipse.ui.IViewPart;
+import org.eclipse.ui.PlatformUI;
 
 public class TestSubsystemTestCase extends RSEBaseConnectionTestCase {
 	private ITestSubSystem testSubSystem;
+	SystemView rseSystemView;
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.tests.core.RSECoreTestCase#setUp()
+	 */
+	protected void setUp() throws Exception {
+		super.setUp();
+		
+		// all view managment must happen in the UI thread!
+		PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
+			public void run() {
+				// For the test subsystem test case we need the RSE remote systems view
+				IViewPart viewPart = showView(IRSEViews.RSE_REMOTE_SYSTEMS_VIEW_ID, IRSEViews.RSE_PERSPECTIVE_ID);
+				assertNotNull("Failed to show required RSE remote systems view!", viewPart); //$NON-NLS-1$
+				if (viewPart instanceof SystemViewPart) {
+					rseSystemView = ((SystemViewPart)viewPart).getSystemView();
+				}
+			}
+		});
+		assertNotNull("Failed to get remote system viewer instance from RSE remote systems view!", rseSystemView); //$NON-NLS-1$
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.tests.core.RSECoreTestCase#tearDown()
+	 */
+	protected void tearDown() throws Exception {
+		rseSystemView = null;
+		testSubSystem = null;
+		
+		super.tearDown();
+	}
 	
 	public void testAddAndDeleteDeepNodes() {
 		if (!RSETestsPlugin.isTestCaseEnabled("TestSubsystemTestCase.testAddAndDeleteDeepNodes")) return; //$NON-NLS-1$
-		testAddAndDeleteNodes(true);
+		// these test _must_ run in UI thread
+		PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
+			public void run() {
+				internalTestAddAndDeleteNodes(true);
+			}
+		});
 	}
 		
 	public void testAddAndDeleteFlatNodes() {
 		if (!RSETestsPlugin.isTestCaseEnabled("TestSubsystemTestCase.testAddAndDeleteFlatNodes")) return; //$NON-NLS-1$
-		testAddAndDeleteNodes(false);
+		// these test _must_ run in UI thread
+		PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
+			public void run() {
+				internalTestAddAndDeleteNodes(false);
+			}
+		});
 	}
 			
-	public void testAddAndDeleteNodes(boolean deep) {
+	public void internalTestAddAndDeleteNodes(boolean deep) {
 		IHost	connection = getLocalSystemConnection();
 		assertNotNull("Failed to get local system connection", connection); //$NON-NLS-1$
 		
@@ -83,13 +128,13 @@ public class TestSubsystemTestCase extends RSEBaseConnectionTestCase {
 				}
 			}
 		}
-		SystemPerspectiveHelpers.findRSEView().refresh(testSubSystem);
-		SystemPerspectiveHelpers.findRSEView().expandToLevel(testSubSystem, AbstractTreeViewer.ALL_LEVELS);
+		rseSystemView.refresh(testSubSystem);
+		rseSystemView.expandToLevel(testSubSystem, AbstractTreeViewer.ALL_LEVELS);
 		RSEWaitAndDispatchUtil.waitAndDispatch(1000);
 		
-		SystemPerspectiveHelpers.findRSEView().setSelection(new StructuredSelection(node));
+		rseSystemView.setSelection(new StructuredSelection(node));
 
-		ISelection selection = SystemPerspectiveHelpers.findRSEView().getSelection();
+		ISelection selection = rseSystemView.getSelection();
 		assertTrue("missing selection", selection != null); //$NON-NLS-1$
 		assertTrue("not a structured selection", selection instanceof IStructuredSelection); //$NON-NLS-1$
 		IStructuredSelection structSel = (IStructuredSelection)selection;
@@ -103,9 +148,9 @@ public class TestSubsystemTestCase extends RSEBaseConnectionTestCase {
 		registry.fireEvent(new SystemResourceChangeEvent(testSubSystem, ISystemResourceChangeEvents.EVENT_REFRESH, testSubSystem));
 		RSEWaitAndDispatchUtil.waitAndDispatch(1000);
 		
-		SystemPerspectiveHelpers.findRSEView().setSelection(new StructuredSelection(firstNode));
+		rseSystemView.setSelection(new StructuredSelection(firstNode));
 
-		 selection = SystemPerspectiveHelpers.findRSEView().getSelection();
+		 selection = rseSystemView.getSelection();
 		assertTrue("missing selection", selection != null); //$NON-NLS-1$
 		assertTrue("not a structured selection", selection instanceof IStructuredSelection); //$NON-NLS-1$
 		 structSel = (IStructuredSelection)selection;
@@ -113,6 +158,16 @@ public class TestSubsystemTestCase extends RSEBaseConnectionTestCase {
 	}
 	
 	public void testBugzilla170728() {
+		if (!RSETestsPlugin.isTestCaseEnabled("TestSubsystemTestCase.testBugzilla170728")) return; //$NON-NLS-1$
+		// these test _must_ run in UI thread
+		PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
+			public void run() {
+				internalTestBugzilla170728();
+			}
+		});
+	}
+
+	public void internalTestBugzilla170728() {
 		IHost	connection = getLocalSystemConnection();
 		assertNotNull("Failed to get local system connection", connection); //$NON-NLS-1$
 		
@@ -130,9 +185,9 @@ public class TestSubsystemTestCase extends RSEBaseConnectionTestCase {
 		assertNotNull("No test subystem", testSubSystem); //$NON-NLS-1$
 
 		RSEUIPlugin.getTheSystemRegistry().invalidateFiltersFor(testSubSystem);
-		SystemPerspectiveHelpers.findRSEView().refresh(testSubSystem);
+		rseSystemView.refresh(testSubSystem);
 		RSEWaitAndDispatchUtil.waitAndDispatch(1000);
-		SystemPerspectiveHelpers.findRSEView().expandToLevel(testSubSystem, AbstractTreeViewer.ALL_LEVELS);
+		rseSystemView.expandToLevel(testSubSystem, AbstractTreeViewer.ALL_LEVELS);
 		RSEWaitAndDispatchUtil.waitAndDispatch(1000);
 
 		ISystemFilterPoolManager mgr = testSubSystem.getFilterPoolReferenceManager().getDefaultSystemFilterPoolManager();
@@ -149,11 +204,11 @@ public class TestSubsystemTestCase extends RSEBaseConnectionTestCase {
 			testSubSystem.addChildNode(new TestSubSystemNode("Node 4")); //$NON-NLS-1$
 			
 			RSEUIPlugin.getTheSystemRegistry().invalidateFiltersFor(testSubSystem);
-			SystemPerspectiveHelpers.findRSEView().refresh(testSubSystem);
+			rseSystemView.refresh(testSubSystem);
 			
 			RSEWaitAndDispatchUtil.waitAndDispatch(1000);
-			SystemPerspectiveHelpers.findRSEView().expandToLevel(testSubSystem, AbstractTreeViewer.ALL_LEVELS);
-			SystemPerspectiveHelpers.findRSEView().refresh(testSubSystem);
+			rseSystemView.expandToLevel(testSubSystem, AbstractTreeViewer.ALL_LEVELS);
+			rseSystemView.refresh(testSubSystem);
 			RSEWaitAndDispatchUtil.waitAndDispatch(1000);
 			
 			node.setName("Node 1 (changed)"); //$NON-NLS-1$

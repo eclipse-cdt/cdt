@@ -93,7 +93,7 @@ public class RSECoreTestCase extends TestCase {
 	 */
 	protected void initializeProperties() {
 		setProperty(IRSECoreTestCaseProperties.PROP_MAXIMIZE_REMOTE_SYSTEMS_VIEW, false);
-		setProperty(IRSECoreTestCaseProperties.PROP_SWITCH_TO_PERSPECTIVE, "org.eclipse.rse.ui.view.SystemPerspective"); //$NON-NLS-1$
+		setProperty(IRSECoreTestCaseProperties.PROP_SWITCH_TO_PERSPECTIVE, IRSEViews.RSE_PERSPECTIVE_ID);
 		setProperty(IRSECoreTestCaseProperties.PROP_FORCE_BACKGROUND_EXECUTION, false);
 		setProperty(IRSECoreTestCaseProperties.PROP_PERFORMANCE_TIMING_INCLUDE_SETUP_TEARDOWN, false);
 		setProperty(PROP_RSE_SYSTEMS_VIEW_ZOOM_STATE_CHANGED, false);
@@ -422,7 +422,7 @@ public class RSECoreTestCase extends TestCase {
 	 * @param perspectiveId The unique perspective id within the view should be searched. Must be not <code>null</code>.
 	 * @return The view reference instance to the view or <code>null</code> if not available.
 	 */
-	protected final IViewReference findView(String viewId, String perspectiveId) {
+	public final IViewReference findView(String viewId, String perspectiveId) {
 		assert viewId != null && perspectiveId != null;
 		if (viewId == null || perspectiveId == null) return null;
 		
@@ -455,7 +455,7 @@ public class RSECoreTestCase extends TestCase {
 	 * @param perspectiveId The unique perspective id within the view should be activated. Must be not <code>null</code>.
 	 * @return The view part instance to the view or <code>null</code> if it cannot be shown.
 	 */
-	protected final IViewPart showView(String viewId, String perspectiveId) {
+	public final IViewPart showView(String viewId, String perspectiveId) {
 		assert viewId != null && perspectiveId != null;
 		if (viewId == null || perspectiveId == null) return null;
 		
@@ -494,7 +494,7 @@ public class RSECoreTestCase extends TestCase {
 	 * @param viewId The unique view id. Must be not <code>null</code>.
 	 * @param perspectiveId The unique perspective id the view should be hidden from. Must be not <code>null</code>.
 	 */
-	protected final void hideView(String viewId, String perspectiveId) {
+	public final void hideView(String viewId, String perspectiveId) {
 		assert viewId != null && perspectiveId != null;
 		if (viewId == null || perspectiveId == null) return;
 		

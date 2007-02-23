@@ -41,7 +41,7 @@ public class ExternalSearchDocumentProvider extends TextFileDocumentProvider {
 	 */
 	protected FileInfo createFileInfo(Object element) throws CoreException {
 		final FileInfo info= super.createFileInfo(element);
-		if (info.fModel == null) {
+		if (info != null && info.fModel == null) {
 			info.fModel= createAnnotationModel(element);
 			if (info.fModel != null) {
 				IAnnotationModel fileBufferAnnotationModel= info.fTextFileBuffer.getAnnotationModel();

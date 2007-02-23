@@ -133,6 +133,7 @@ public class TestSubsystemTestCase extends RSEBaseConnectionTestCase {
 		RSEWaitAndDispatchUtil.waitAndDispatch(1000);
 		
 		rseSystemView.setSelection(new StructuredSelection(node));
+		RSEWaitAndDispatchUtil.waitAndDispatch(1000);
 
 		ISelection selection = rseSystemView.getSelection();
 		assertTrue("missing selection", selection != null); //$NON-NLS-1$
@@ -149,6 +150,7 @@ public class TestSubsystemTestCase extends RSEBaseConnectionTestCase {
 		RSEWaitAndDispatchUtil.waitAndDispatch(1000);
 		
 		rseSystemView.setSelection(new StructuredSelection(firstNode));
+		RSEWaitAndDispatchUtil.waitAndDispatch(1000);
 
 		 selection = rseSystemView.getSelection();
 		assertTrue("missing selection", selection != null); //$NON-NLS-1$

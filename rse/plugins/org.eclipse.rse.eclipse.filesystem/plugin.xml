@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-Copyright (c) 2006 IBM Corporation. All rights reserved.
+Copyright (c) 2006, 2007 IBM Corporation. All rights reserved.
 This program and the accompanying materials are made available under the terms
 of the Eclipse Public License v1.0 which accompanies this distribution, and is 
 available at http://www.eclipse.org/legal/epl-v10.html
@@ -32,48 +32,6 @@ Contributors:
        label="RSE">
       </filesystemContributor>
    </extension>
-   
-   <!--
-   <extension
-         id="org.eclipse.rse.eclipse.filesystem"
-         point="org.eclipse.core.filesystem.filesystems">
-      <filesystem scheme="rse">
-         <run class="org.eclipse.rse.eclipse.filesystem.SSHFileSystem"/>
-      </filesystem>
-   </extension>
-   <extension
-         id="org.eclipse.rse.eclipse.filesystemSupport"
-         point="org.eclipse.ui.ide.filesystemSupport">
-      <filesystemContributor 
-       scheme="rse"
-       class="org.eclipse.rse.eclipse.filesystem.SSHFileSystemContributor"
-       label="RSE">
-      </filesystemContributor>
-   </extension>
-   -->
-   
-   <!-- remote eclipse filesystem not properly supported yet-->
-   <!--
-      <extension
-         point="org.eclipse.ui.popupMenus">
-      <objectContribution  
-      		adaptable="false" 
-   			id="org.eclipse.rse.eclipse.filesystem.createproject.">
-            <visibility> 
-                <objectClass name="org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile"/>   
-            </visibility>
-            
-         <action
-               label="Create Remote Project"
-               tooltip="%ImportToProject.tooltip"
-               class="org.eclipse.rse.eclipse.filesystem.ui.actions.CreateRemoteProjectActionDelegate"
-               menubarPath="group.importexport"
-               enablesFor="1"
-               id="importToProject">
-         </action>
-       </objectContribution>
-      </extension>
-      -->
       
       <extension point="org.eclipse.ui.popupMenus">
 	      <objectContribution
@@ -92,7 +50,5 @@ Contributors:
          </action>
       </objectContribution>
       </extension>
-      
-      
- <!--  -->     
+    
 </plugin>

@@ -807,7 +807,7 @@ public class SftpFileService extends AbstractFileService implements IFileService
 	}
 
 	/**
-	 * Gets the input stream to access the contents of a remote file. Clients should call {@link #disconnect()} after closing the input stream.
+	 * Gets the input stream to access the contents of a remote file.
 	 * @since 2.0
 	 * @see org.eclipse.rse.services.files.AbstractFileService#getInputStream(IProgressMonitor, String, String, boolean) 
 	 */
@@ -817,8 +817,6 @@ public class SftpFileService extends AbstractFileService implements IFileService
 		
 		try {
 			String remotePath = remoteParent + '/' + remoteFile;
-			int mode = ChannelSftp.OVERWRITE;
-			MyProgressMonitor sftpMonitor = new MyProgressMonitor(monitor);
 			ChannelSftp channel = getChannel("SftpFileService.getInputStream " + remoteFile); //check the session is healthy //$NON-NLS-1$
 			
 			stream = channel.get(remotePath);
@@ -833,7 +831,7 @@ public class SftpFileService extends AbstractFileService implements IFileService
 	}
 
 	/**
-	 * Gets the output stream to write to a remote file. Clients should call {@link #disconnect()} after closing the output stream.
+	 * Gets the output stream to write to a remote file.
 	 * @since 2.0
 	 * @see org.eclipse.rse.services.files.AbstractFileService#getOutputStream(IProgressMonitor, String, String, boolean)
 	 */

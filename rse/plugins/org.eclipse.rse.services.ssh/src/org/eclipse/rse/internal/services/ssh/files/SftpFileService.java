@@ -819,10 +819,9 @@ public class SftpFileService extends AbstractFileService implements IFileService
 			String remotePath = remoteParent + '/' + remoteFile;
 			int mode = ChannelSftp.OVERWRITE;
 			MyProgressMonitor sftpMonitor = new MyProgressMonitor(monitor);
-			getChannel("SftpFileService.getInputStream " + remoteFile); //check the session is healthy //$NON-NLS-1$
-			ChannelSftp channel = (ChannelSftp)fSessionProvider.getSession().openChannel("sftp"); //$NON-NLS-1$
-			channel.connect();
-			stream = channel.get(remotePath, sftpMonitor, mode);
+			ChannelSftp channel = getChannel("SftpFileService.getInputStream " + remoteFile); //check the session is healthy //$NON-NLS-1$
+			
+			stream = channel.get(remotePath);
 			Activator.trace("SftpFileService.getInputStream " + remoteFile + " ok"); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		catch (Exception e) {
@@ -860,9 +859,8 @@ public class SftpFileService extends AbstractFileService implements IFileService
 				dst += remoteFile;
 			}
 			
-			getChannel("SftpFileService.getOutputStream " + remoteFile); //check the session is healthy //$NON-NLS-1$ 
-			ChannelSftp channel = (ChannelSftp)fSessionProvider.getSession().openChannel("sftp"); //$NON-NLS-1$
-		    channel.connect();
+			ChannelSftp channel = getChannel("SftpFileService.getOutputStream " + remoteFile); //check the session is healthy //$NON-NLS-1$
+			
 			stream = channel.put(dst, sftpMonitor, mode); 
 			Activator.trace("SftpFileService.getOutputStream " + remoteFile + " ok"); //$NON-NLS-1$ //$NON-NLS-2$
 		}

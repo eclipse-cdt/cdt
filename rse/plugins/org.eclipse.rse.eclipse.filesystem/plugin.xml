@@ -33,6 +33,25 @@ Contributors:
       </filesystemContributor>
    </extension>
    
+   <!--
+   <extension
+         id="org.eclipse.rse.eclipse.filesystem"
+         point="org.eclipse.core.filesystem.filesystems">
+      <filesystem scheme="rse">
+         <run class="org.eclipse.rse.eclipse.filesystem.SSHFileSystem"/>
+      </filesystem>
+   </extension>
+   <extension
+         id="org.eclipse.rse.eclipse.filesystemSupport"
+         point="org.eclipse.ui.ide.filesystemSupport">
+      <filesystemContributor 
+       scheme="rse"
+       class="org.eclipse.rse.eclipse.filesystem.SSHFileSystemContributor"
+       label="RSE">
+      </filesystemContributor>
+   </extension>
+   -->
+   
    <!-- remote eclipse filesystem not properly supported yet-->
    <!--
       <extension

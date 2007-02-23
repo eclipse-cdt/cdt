@@ -110,7 +110,15 @@ public class SystemFileTransferModeRegistry
 		// editor registry. We can be out of sync because we may not have
 		// been listening for editor registry changes (e.g. if our plugin wasn't
 		// started while those changes were made).
-		IWorkbench wb = PlatformUI.getWorkbench();
+		IWorkbench wb = null;
+		
+		try {
+			wb = PlatformUI.getWorkbench();
+		}
+		catch (Exception e) {
+			wb = null;
+		}
+		
 		if (wb != null)
 		{
 			IEditorRegistry registry = wb.getEditorRegistry();

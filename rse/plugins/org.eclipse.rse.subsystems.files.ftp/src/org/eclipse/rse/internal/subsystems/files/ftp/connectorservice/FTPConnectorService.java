@@ -44,14 +44,6 @@ public class FTPConnectorService extends AbstractConnectorService
 	{		
 		super(SystemFileResources.RESID_FTP_CONNECTORSERVICE_NAME,SystemFileResources.RESID_FTP_CONNECTORSERVICE_DESCRIPTION, host, port);
 		_ftpService = new FTPService();
-		
-		_propertySet = getPropertySet("FTP Settings"); //$NON-NLS-1$
-		
-		if(_propertySet==null)
-		{
-			_propertySet = createPropertySet("FTP Settings"); //$NON-NLS-1$
-			_propertySet.addProperty("passive","false",PropertyType.getEnumPropertyType(new String[]{"true","false"})); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
-		}	
 	} 
 	
 	public void internalConnect(IProgressMonitor monitor) throws Exception
@@ -61,6 +53,13 @@ public class FTPConnectorService extends AbstractConnectorService
 
 	private void internalConnect() throws Exception
 	{
+		_propertySet = getPropertySet("FTP Settings"); //$NON-NLS-1$
+		
+		if(_propertySet==null)
+		{
+			_propertySet = createPropertySet("FTP Settings"); //$NON-NLS-1$
+			_propertySet.addProperty("passive","false",PropertyType.getEnumPropertyType(new String[]{"true","false"})); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+		}	
 		
 		SystemSignonInformation info = getPasswordInformation();
 		_ftpService.setHostName(info.getHostname());

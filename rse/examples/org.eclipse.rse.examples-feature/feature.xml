@@ -4,7 +4,8 @@
       label="%featureName"
       version="2.0.0.qualifier"
       provider-name="%providerName"
-      image="eclipse_update_120.jpg">
+      image="eclipse_update_120.jpg"
+      plugin="org.eclipse.rse.examples.tutorial">
 
    <description>
       %description

@@ -69,7 +69,7 @@ public class PDOM extends PlatformObject implements IIndexFragment, IPDOM {
 
 	private Database db;
 
-	public static final int VERSION = 24;
+	public static final int VERSION = 25;
 	// 0 - the beginning of it all
 	// 1 - first change to kick off upgrades
 	// 2 - added file inclusions
@@ -95,6 +95,7 @@ public class PDOM extends PlatformObject implements IIndexFragment, IPDOM {
 	// 22 - fix inheritance relations (167396)
 	// 23 - types on c-variables, return types on c-functions
 	// 24 - file local scopes (161216)
+	// 25 - change ordering of bindings (175275)
 
 	public static final int LINKAGES = Database.DATA_AREA;
 	public static final int FILE_INDEX = Database.DATA_AREA + 4;

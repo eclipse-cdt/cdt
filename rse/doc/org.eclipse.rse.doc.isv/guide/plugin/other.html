@@ -4,7 +4,7 @@
 <head>
 <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=UTF-8">
 <META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
-<meta name="copyright" content="Copyright (c) IBM Corporation and others 2002, 2006. This page is made available under license. For full details see the LEGAL in the documentation book that contains this page." >
+<meta name="copyright" content="Copyright (c) IBM Corporation and others 2002, 2007. This page is made available under license. For full details see the LEGAL in the documentation book that contains this page." >
 <LINK REL="STYLESHEET" HREF="../../book.css" TYPE="text/css">
 <title>Other Relevant Extension Points</title>
 </head>
@@ -23,7 +23,8 @@ the information needed to enable them to in Remote System Explorer.
 			<TH>Description</TH>
 		</TR>
 		<TR>
-			<TD><samp>org.eclipse.ui.viewActions</samp></TD>
+			<TD><a name="viewActions"></a>
+			<samp><a href="../../../org.eclipse.platform.doc.isv/guide/workbench_basicext_viewActions.htm">org.eclipse.ui.viewActions</a></samp></TD>
 			<TD>For adding actions to the pulldown menu in any view's local toolbar, or to the toolbar itself.
 			To use this you need to know the ID of the RSE views, for the <samp>targetID</samp> attribute: There are:
 			<ul>
@@ -37,18 +38,35 @@ the information needed to enable them to in Remote System Explorer.
 			</TD>
 		</TR>
 		<TR>
-			<TD><samp>org.eclipse.ui.propertyPages</samp></TD>
-			<TD>For adding property pages for non-remote objects within the
+			<TD><a name="property"></a>
+			<samp>
+			   <!-- a href="../../../org.eclipse.platform.doc.isv/guide/preferences_prop_contribute.htm" -->
+			   <a href="propertypage.html">
+			   org.eclipse.ui.propertyPages</a></samp></TD>
+			<TD>For adding property pages for objects within the
 			Remote System Explorer. To use this you need to know the class type
 			of these objects for the <samp>objectClass</samp> attribute of the <samp>&lt;page&gt;</samp> element:
 			<ul>
-            <li>Connections: <samp><A href="../../reference/api/org/eclipse/rse/core/model/IHost.html">org.eclipse.rse.core.model.IHost</A></samp>
-            <li>SubSystems: <samp><A href="../../reference/api/org/eclipse/rse/core/subsystems/ISubSystem.html">org.eclipse.rse.core.subsystems.ISubSystem</A></samp>
-            <li>Filter Pools: <samp><A href="../../reference/api/org/eclipse/rse/core/filters/ISystemFilterPoolReference.html">org.eclipse.rse.core.filters.ISystemFilterPoolReference</A></samp>
-            <li>Filters: <samp><A href="../../reference/api/org/eclipse/rse/core/filters/ISystemFilterReference.html">org.eclipse.rse.core.filters.ISystemFilterReference</A></samp>
+            <li>Connections: <samp><A href="../../reference/api/org/eclipse/rse/core/model/IHost.html">org.eclipse.rse.core.model.IHost</A></samp></li>
+            <li>SubSystems: <samp><A href="../../reference/api/org/eclipse/rse/core/subsystems/ISubSystem.html">org.eclipse.rse.core.subsystems.ISubSystem</A></samp></li>
+            <li>Filter Pools: <samp><A href="../../reference/api/org/eclipse/rse/core/filters/ISystemFilterPoolReference.html">org.eclipse.rse.core.filters.ISystemFilterPoolReference</A></samp></li>
+            <li>Filters: <samp><A href="../../reference/api/org/eclipse/rse/core/filters/ISystemFilterReference.html">org.eclipse.rse.core.filters.ISystemFilterReference</A></samp></li>
+       		<li>Remote Elements: your model objects, which are adaptable to <samp>ISystemViewElementAdapter</samp>.
+          		For the RSE-provided reusable file, process and shell subsystems, these are
+              <samp><a href="../../reference/api/org/eclipse/rse/subsystems/files/core/subsystems/IRemoteFile.html">IRemoteFile</a></samp>, 
+              <samp><a href="../../reference/api/org/eclipse/rse/subsystems/processes/core/subsystem/IRemoteProcess.html">IRemoteProcess</a></samp> and
+              <samp><a href="../../reference/api/org/eclipse/rse/subsystems/shells/core/subsystems/IRemoteCommandShell.html">IRemoteCommandShell</a></samp>, respectively.
+          		In the Remote Command View, you'll also find
+              <samp><a href="../../reference/api/org/eclipse/rse/subsystems/shells/core/subsystems/IRemoteError.html">IRemoteError</a></samp> and 
+    	      <samp><a href="../../reference/api/org/eclipse/rse/subsystems/shells/core/subsystems/IRemoteOutput.html">IRemoteOutput</a></samp>. 
+			</li>
 			</ul>
-            It is possible to scope your property pages to only appear for certain system types or subsystems, using
-             the <samp>&lt;filter&gt;</samp> element. For example:<br>
+            Because all RSE elements adapt to 
+            <samp><A href="../../reference/api/org/eclipse/rse/ui/view/ISystemViewElementAdapter.html">ISystemViewElementAdapter</A></samp>,
+            which in turn implements 
+            <samp><A href="../../../org.eclipse.platform.doc.isv/reference/api/org/eclipse/ui/IActionFilter.html">org.eclipse.ui.IActionFilter</A></samp>,
+            it is possible to scope your property pages to only appear for certain system types or subsystems, using
+            the extension point's <samp>&lt;filter&gt;</samp> element. For example:<br>
             <pre><code>
                &lt;extension point=&quot;org.eclipse.ui.propertyPages&quot;&gt;
                    &lt;page name=&quot;Team Info&quot;
@@ -63,18 +81,36 @@ the information needed to enable them to in Remote System Explorer.
             </TD>
 		</TR>
 		<TR>
-			<TD><samp>org.eclipse.ui.popupMenus</samp></TD>
-			<TD>For adding pop-up menu actions for non-remote objects within the Remote System Explorer.
+			<TD><a name="popup"></a>
+			<samp>
+			  <!-- a href="../../../org.eclipse.platform.doc.isv/guide/workbench_basicext_popupMenus.htm" -->
+			  <a href="popup.html">
+			  org.eclipse.ui.popupMenus</a></samp>
+			</TD>
+			<TD>For adding pop-up menu actions for objects within the Remote System Explorer.
 			To use this you need to know the class type of these objects for the <samp>objectClass</samp> attribute
 			of the &lt;objectContribution&gt; element:
 			<ul>
-            <li>Connections: <samp><A href="../../reference/api/org/eclipse/rse/core/model/IHost.html">org.eclipse.rse.core.model.IHost</A></samp>
-            <li>SubSystems: <samp><A href="../../reference/api/org/eclipse/rse/core/subsystems/ISubSystem.html">org.eclipse.rse.core.subsystems.ISubSystem</A></samp>
-            <li>Filter Pools: <samp><A href="../../reference/api/org/eclipse/rse/core/filters/ISystemFilterPoolReference.html">org.eclipse.rse.core.filters.ISystemFilterPoolReference</A></samp>
-            <li>Filters: <samp><A href="../../reference/api/org/eclipse/rse/core/filters/ISystemFilterReference.html">org.eclipse.rse.core.filters.ISystemFilterReference</A></samp>
+            <li>Connections: <samp><A href="../../reference/api/org/eclipse/rse/core/model/IHost.html">org.eclipse.rse.core.model.IHost</A></samp></li>
+            <li>SubSystems: <samp><A href="../../reference/api/org/eclipse/rse/core/subsystems/ISubSystem.html">org.eclipse.rse.core.subsystems.ISubSystem</A></samp></li>
+            <li>Filter Pools: <samp><A href="../../reference/api/org/eclipse/rse/core/filters/ISystemFilterPoolReference.html">org.eclipse.rse.core.filters.ISystemFilterPoolReference</A></samp></li>
+            <li>Filters: <samp><A href="../../reference/api/org/eclipse/rse/core/filters/ISystemFilterReference.html">org.eclipse.rse.core.filters.ISystemFilterReference</A></samp></li>
+       		<li>Remote Elements: your model objects, which are adaptable to <samp>ISystemViewElementAdapter</samp>.
+          		For the RSE-provided reusable file, process and shell subsystems, these are
+              <samp><a href="../../reference/api/org/eclipse/rse/subsystems/files/core/subsystems/IRemoteFile.html">IRemoteFile</a></samp>, 
+              <samp><a href="../../reference/api/org/eclipse/rse/subsystems/processes/core/subsystem/IRemoteProcess.html">IRemoteProcess</a></samp> and
+              <samp><a href="../../reference/api/org/eclipse/rse/subsystems/shells/core/subsystems/IRemoteCommandShell.html">IRemoteCommandShell</a></samp>, respectively.
+          		In the Remote Command View, you'll also find
+              <samp><a href="../../reference/api/org/eclipse/rse/subsystems/shells/core/subsystems/IRemoteError.html">IRemoteError</a></samp> and 
+    	      <samp><a href="../../reference/api/org/eclipse/rse/subsystems/shells/core/subsystems/IRemoteOutput.html">IRemoteOutput</a></samp>. 
+			</li>
 			</ul>
-            It is possible to scope your actions to only appear for certain system types or subsystems, using
-             the <samp>&lt;filter&gt;</samp> element. For example:<br>
+            Because all RSE elements adapt to 
+            <samp><A href="../../reference/api/org/eclipse/rse/ui/view/ISystemViewElementAdapter.html">ISystemViewElementAdapter</A></samp>,
+            which in turn extends 
+            <samp><A href="../../../org.eclipse.platform.doc.isv/reference/api/org/eclipse/ui/IActionFilter.html">org.eclipse.ui.IActionFilter</A></samp>,
+            it is possible to scope your actions to only appear for certain system types or subsystems, using
+            the extension point's <samp>&lt;filter&gt;</samp> element. For example:<br>
             <pre><code>
                &lt;extension point=&quot;org.eclipse.ui.popupMenus&quot;&gt;
                    &lt;objectContribution

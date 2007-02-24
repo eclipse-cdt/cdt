@@ -25,20 +25,29 @@
 <ul>
 <li>Added a <b>milestone update site</b> for RSE 2.0 milestone builds at
   <a href="http://download.eclipse.org/dsdp/tm/updates/milestones">http://download.eclipse.org/dsdp/tm/updates/milestones</a>.
-  As per [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=175241">], the RSE Core feature references
+  As per [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=175241">175241</a>], the RSE Core feature references
   this update site os when you install an RSE 2.0 milestone, you can "check for updates" to get the next
   one or add components from the site.</li>
-<li><b>Terminal</b>: [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=168893">168893</a>] 
-  [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=170810">170810</a>]
-  Use rxtx-2.1 (gnu.io) for serial line support instead of javax.comm. See the new
-  <a href="http://dev.eclipse.org/viewcvs/index.cgi/org.eclipse.tm.core/terminal/org.eclipse.tm.terminal.serial/README.txt?root=DSDP_Project&view=co">README</a> for installing RXTX.</li>
+<li><b>Terminal</b>: Use rxtx-2.1 (gnu.io) for serial line support instead of javax.comm. See the new
+  <a href="http://dev.eclipse.org/viewcvs/index.cgi/org.eclipse.tm.core/terminal/org.eclipse.tm.terminal.serial/README.txt?root=DSDP_Project&view=co">README</a> for installing RXTX
+  [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=168893">168893</a>] 
+  [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=170810">170810</a>].</li>
 <li>A <b>Shell Processes</b> subsystem is now available for Linux, to show Processes through an SSH or other contributed Shell channel.
   This is important enabling technology, since it shows how to add functionality in one subsystem, by re-using another subsystem.
-  Thanks to Montavista for this contribution. [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=159522">159522</a>] 
+  Thanks to Montavista for this contribution [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=159522">159522</a>]. 
+<li><b>Encodings of remote files</b> can now be specified. This is actually the first plan item that's completed
+[<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=163820">163820</a>].
+<li><b>FTP now supports passive mode</b> [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=169680">169680</a>].
 <li><b>Read-only</b> and <b>Last-modified</b> properties on remote file systems are now supported by API,
   so copying files across systems can keep these attributes. A new Preference setting governs the transfer
   of timestamps. Also, IRemoteFileService now has API to get streams for remote files, thus allowing to 
   download only parts of a huge remote file. See [<a href="https://bugs.eclipse.org/bugs/showdependencytree.cgi?id=170926">170926</a>] for details. 
+<li><b>SystemRemoteResourceDialog.setPreSelection()</b> now works correctly [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=174944">174944</a>].
+<li><b>SystemTypes can now be contributed dynamically</b> through the new extension point 
+<samp><a href="http://dsdp.eclipse.org/help/latest/index.jsp?topic=/org.eclipse.rse.doc.isv/reference/extension-points/org_eclipse_rse_core_systemTypeProviders.html">org.eclipse.rse.core.systemTypeProviders</a></samp>
+[<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=172662">172662</a>].
+Using this new functionality, it is also possible to hook up new system types with existing 
+subsystemConfigurations [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=173265">173265</a>].
 <li>Use 
   <a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced&classification=DSDP&product=Target+Management&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&resolution=FIXED&resolution=WONTFIX&resolution=INVALID&resolution=WORKSFORME&chfieldfrom=2006-12-24&chfieldto=Now&chfield=resolution&cmdtype=doit">
   <!-- <a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced&classification=DSDP&product=Target+Management&target_milestone=2.0+M5&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&resolution=FIXED&resolution=WONTFIX&resolution=INVALID&resolution=WORKSFORME&cmdtype=doit">  -->
@@ -127,8 +136,12 @@ by name. Client code needs to use the <b><i>systemTypeIds</i></b> tag now rather
 because newer Eclipse versions have all required functionality in the base extension points already. 
 Example code, tutorials and ISV docs were updated and have the required information for how to migrate
 to the new extension points. [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=172651">172651</a>]
-<li><b>Moved extension point</b> <samp>org.eclipse.rse.ui.archiveHandlers</samp> to <samp><b>org.eclipse.rse.services.archiveHandlers</b></samp>
+<li><b>Moved extension point</b> <samp>org.eclipse.rse.ui.archiveHandlers</samp> to 
+<samp><a href="http://dsdp.eclipse.org/help/latest/topic/org.eclipse.rse.doc.isv/reference/extension-points/org_eclipse_rse_services_archivehandlers.html">org.eclipse.rse.services.archiveHandlers</a></samp>
 [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=173871">173871</a>].
+<li><b>newConnectionWizards:</b> The old <samp>newConnectionWizardDelegates</samp> extension point
+ has been replaced by a new <samp><a href="http://dsdp.eclipse.org/help/latest/topic/org.eclipse.rse.doc.isv/reference/extension-points/org_eclipse_rse_ui_newConnectionWizards.html">newConnectionWizards</a></samp> extension point for more flexibility.
+ See the bugzilla item for details [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=173772">173772</a>].
 <li><b>Deep Filtering:</b> The SystemView now supports Context Information for queries of multiple filters to the same remote elements.
   That is, the SystemViewElementAdapter.getChildren() method can know the filer context in which a query is made.
   This is necessary in order to properly support "deep filtering" by file types. An API change was required 

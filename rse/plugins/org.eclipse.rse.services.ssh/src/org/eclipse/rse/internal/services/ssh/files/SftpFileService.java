@@ -57,6 +57,77 @@ import org.eclipse.rse.services.files.RemoteFileSecurityException;
 
 public class SftpFileService extends AbstractFileService implements IFileService, ISshService
 {
+
+	private class SftpBufferedInputStream extends BufferedInputStream {
+		
+		private ChannelSftp channel;
+		
+		/**
+		 * Creates a BufferedInputStream  and saves its argument, the input stream, for later use. An internal buffer array is created.
+		 * @param in the underlying input stream.
+		 * @param channel the associated channel.
+		 */
+		public SftpBufferedInputStream(InputStream in, ChannelSftp channel) {
+			super(in);
+			this.channel = channel;
+		}
+
+		/**
+		 * Creates a BufferedInputStream  and saves its argument, the input stream, for later use. An internal buffer array of the given size is created.
+		 * @param in the underlying input stream.
+		 * @param size the buffer size.
+		 * @param channel the associated channel.
+		 */
+		public SftpBufferedInputStream(InputStream in, int size, ChannelSftp channel) {
+			super(in, size);
+			this.channel = channel;
+		}
+
+		/**
+		 * Closes the underlying input stream and channel.
+		 * @see java.io.BufferedInputStream#close()
+		 */
+		public void close() throws IOException {
+			super.close();
+			channel.disconnect();
+		}
+	}
+	
+	private class SftpBufferedOutputStream extends BufferedOutputStream {
+		
+		private ChannelSftp channel;
+		
+		/**
+		 * Creates a new buffered output stream to write data to the specified underlying output stream with a default 512-byte buffer size.
+		 * @param out the underlying output stream.
+		 * @param channel the associated channel.
+		 */
+		public SftpBufferedOutputStream(OutputStream out, ChannelSftp channel) {
+			super(out);
+			this.channel = channel;
+		}
+
+		/**
+		 * Creates a new buffered output stream to write data to the specified underlying output stream with the specified buffer size.
+		 * @param out the underlying output stream.
+		 * @param size the buffer size.
+		 * @param channel the associated channel.
+		 */
+		public SftpBufferedOutputStream(OutputStream out, int size, ChannelSftp channel) {
+			super(out, size);
+			this.channel = channel;
+		}
+
+		/**
+		 * Closes the underlying output stream and the channel.
+		 * @see java.io.FilterOutputStream#close()
+		 */
+		public void close() throws IOException {
+			super.close();
+			channel.disconnect();
+		}
+	}
+	
 	//private SshConnectorService fConnector;
 	private ISshSessionProvider fSessionProvider;
 	private ChannelSftp fChannelSftp;
@@ -817,9 +888,10 @@ public class SftpFileService extends AbstractFileService implements IFileService
 		
 		try {
 			String remotePath = remoteParent + '/' + remoteFile;
-			ChannelSftp channel = getChannel("SftpFileService.getInputStream " + remoteFile); //check the session is healthy //$NON-NLS-1$
-			
-			stream = channel.get(remotePath);
+			getChannel("SftpFileService.getInputStream " + remoteFile); //check the session is healthy //$NON-NLS-1$
+			ChannelSftp channel = (ChannelSftp)fSessionProvider.getSession().openChannel("sftp"); //$NON-NLS-1$
+		    channel.connect();
+			stream = new SftpBufferedInputStream(channel.get(remotePath), channel);
 			Activator.trace("SftpFileService.getInputStream " + remoteFile + " ok"); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		catch (Exception e) {
@@ -857,9 +929,10 @@ public class SftpFileService extends AbstractFileService implements IFileService
 				dst += remoteFile;
 			}
 			
-			ChannelSftp channel = getChannel("SftpFileService.getOutputStream " + remoteFile); //check the session is healthy //$NON-NLS-1$
-			
-			stream = channel.put(dst, sftpMonitor, mode); 
+			getChannel("SftpFileService.getOutputStream " + remoteFile); //check the session is healthy //$NON-NLS-1$
+			ChannelSftp channel = (ChannelSftp)fSessionProvider.getSession().openChannel("sftp"); //$NON-NLS-1$
+		    channel.connect();
+			stream = new SftpBufferedOutputStream(channel.put(dst, sftpMonitor, mode), channel); 
 			Activator.trace("SftpFileService.getOutputStream " + remoteFile + " ok"); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		catch (Exception e) {

@@ -80,7 +80,7 @@ add the line highlighted <a href="rseSamplesResources3.html">here</a>.
    &lt;extension point=&quot;org.eclipse.rse.ui.subsystemConfigurations&quot;&gt;
         &lt;configuration
              id=&quot;samples.subsystems.factory&quot;
-             systemTypes=&quot;Linux;Unix;Windows&quot;
+             systemTypeIds=&quot;org.eclipse.rse.systemtype.linux;org.eclipse.rse.systemtype.unix;org.eclipse.rse.systemtype.windows&quot;
              name=&quot;Teams&quot;
              class=&quot;samples.subsystems.DeveloperSubSystemConfiguration&quot;
              category=&quot;users&quot;
@@ -90,7 +90,8 @@ add the line highlighted <a href="rseSamplesResources3.html">here</a>.
    &lt;/extension&gt;            
 </samp></pre>
 <b>Note:</b> You would normal use the <samp>icon</samp> and <samp>iconlive</samp> attributes to specify 
-a unique icon for your subsystem, but to keep it simple here, just use the default icon.
+a unique icon for your subsystem, but to keep it simple here, just use the default icon. Also, the
+<samp>priority</samp> attribute has been left out for simplicity.
 </li>
 </ol>
 		<p>Now you are far enough along that you can try our what you have, before proceeding. Select

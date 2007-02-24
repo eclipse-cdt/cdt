@@ -25,17 +25,20 @@
 <ul>
 <li>Added a <b>milestone update site</b> for RSE 2.0 milestone builds at
   <a href="http://download.eclipse.org/dsdp/tm/updates/milestones">http://download.eclipse.org/dsdp/tm/updates/milestones</a>.
-  Builds on this site are tested against the latest Eclipse Platform 3.3 Milestones
-  only. Update jars are currently packed but unsigned, until the fix for Platform bug 
-  <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=168594">168594</a>
-  is available as a milestone (supposedly 3.3M5). Contributions to the Europa 
-  coordinated release are served from this site.<br/>
-  The official TM update site will continue serving RSE 1.0 stream updates only, 
-  which are compatible with Eclipse 3.2.x, until RSE 2.0 is released.</li>
+  As per [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=175241">], the RSE Core feature references
+  this update site os when you install an RSE 2.0 milestone, you can "check for updates" to get the next
+  one or add components from the site.</li>
 <li><b>Terminal</b>: [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=168893">168893</a>] 
   [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=170810">170810</a>]
   Use rxtx-2.1 (gnu.io) for serial line support instead of javax.comm. See the new
   <a href="http://dev.eclipse.org/viewcvs/index.cgi/org.eclipse.tm.core/terminal/org.eclipse.tm.terminal.serial/README.txt?root=DSDP_Project&view=co">README</a> for installing RXTX.</li>
+<li>A <b>Shell Processes</b> subsystem is now available for Linux, to show Processes through an SSH or other contributed Shell channel.
+  This is important enabling technology, since it shows how to add functionality in one subsystem, by re-using another subsystem.
+  Thanks to Montavista for this contribution. [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=159522">159522</a>] 
+<li><b>Read-only</b> and <b>Last-modified</b> properties on remote file systems are now supported by API,
+  so copying files across systems can keep these attributes. A new Preference setting governs the transfer
+  of timestamps. Also, IRemoteFileService now has API to get streams for remote files, thus allowing to 
+  download only parts of a huge remote file. See [<a href="https://bugs.eclipse.org/bugs/showdependencytree.cgi?id=170926">170926</a>] for details. 
 <li>Use 
   <a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced&classification=DSDP&product=Target+Management&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&resolution=FIXED&resolution=WONTFIX&resolution=INVALID&resolution=WORKSFORME&chfieldfrom=2006-12-24&chfieldto=Now&chfield=resolution&cmdtype=doit">
   <!-- <a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced&classification=DSDP&product=Target+Management&target_milestone=2.0+M5&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&resolution=FIXED&resolution=WONTFIX&resolution=INVALID&resolution=WORKSFORME&cmdtype=doit">  -->
@@ -85,37 +88,24 @@ are the best places for you to get started.
 	</tr>
 </table>
 <table><tbody><tr><td>
-<p>As per the Target Management 
-<a href="http://www.eclipse.org/dsdp/tm/development/plan.php#M4">plan</a>,
-we reached API Freeze for RSE 1.0.</p>
-<p>In fact we have reviewed and documented all relevant APIs, and they
-have proven useful in earlier proprietary versions of RSE.<br/>
-Yet, due to a lack of public feedback so far we still want to 
-<b>declare the APIs provisional for now</b>.</p>
-<p><b>We are committed to not introducing any incompatible
-API changes on the RSE 1.0 maintenance stream (1.0.x).</b><br/>
-<b>But we reserve the right to change any API for RSE 2.0</b>
-in a not backward compatible way.<br/>
-All such API changes will be voted on
+<p>An important part of the <a href="http://www.eclipse.org/dsdp/tm/development/tm_project_plan_2_0.html">Target Management 2.0 Project Plan</a>
+is to harden the APIs which were provisional by RSE 1.0. Naturally, this requires
+API changes, and especially moving lots of classes which we cannot guarantee to 
+support in the future into internal packages.</p> 
+<p>We are committed to not introducing any incompatible
+API changes on the RSE 1.0 maintenance stream (1.0.x), but we need to 
+change the API for RSE 2.0 in a not backward compatible way.<br/>
+All such API changes are voted on
 by committers on the <a href="http://dev.eclipse.org/mailman/listinfo/dsdp-tm-dev">
 dsdp-tm-dev</a> developer mailing list, and documented in a migration guide
 for future releases.</p>
-<p>Currently, we see the following areas for potential API changes:
+<p>Currently, we see the following areas for more potential API changes:
 <ul>
-  <li>Classes and Interfaces that are not meant for public use will be
-   moved to packages tagged as <tt>internal</tt>. This will apply 
-   particularly to the "implementation" plugins for the ssh, ftp and
-   local subsystems (these do not define any new APIs anyways).</li>
   <li>The <tt>IConnectorService</tt> interface may be slightly modified
    in order to allow for better UI / Non-UI separation.</li>
   <li>Some more RSE Model classes may be moved from the UI plugin to the 
    non-UI core plugin.</li>
 </ul>
-If you want to start programming against RSE APIs now, best let us know
-about your endeavours and keep yourself up-to-date. Stay in contact with
-the <a href="http://dev.eclipse.org/mailman/listinfo/dsdp-tm-dev">
-dsdp-tm-dev</a> developer mailing list, and give feedback to make the 
-APIs better.
 </td></tr></tbody></table>
 
 <table border="0" cellspacing="5" cellpadding="2" width="100%">
@@ -125,6 +115,31 @@ APIs better.
 	</tr>
 </table>
 <table><tbody><tr><td>
+The following lists those API changes that are not backward compatible and require
+user attention. A short hint on what needs to change is given directly in the list.
+More information can be found in the associated bugzilla items.
+<ul>
+<li><b>Modified Extension Point subsystemConfigurations</b> to reference system types by ID rather than
+by name. Client code needs to use the <b><i>systemTypeIds</i></b> tag now rather than <samp>systemTypes</samp>
+[<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=162081">162081</a>].
+<li><b>Removed Extension Points for Popup Menus and Property Pages:</b> The RSE-specific extension points
+<samp>org.eclipse.rse.ui.propertyPages</samp> and <samp>org.eclipse.rse.ui.popupMenus</samp> were removed
+because newer Eclipse versions have all required functionality in the base extension points already. 
+Example code, tutorials and ISV docs were updated and have the required information for how to migrate
+to the new extension points. [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=172651">172651</a>]
+<li><b>Moved extension point</b> <samp>org.eclipse.rse.ui.archiveHandlers</samp> to <samp><b>org.eclipse.rse.services.archiveHandlers</b></samp>
+[<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=173871">173871</a>].
+<li><b>Deep Filtering:</b> The SystemView now supports Context Information for queries of multiple filters to the same remote elements.
+  That is, the SystemViewElementAdapter.getChildren() method can know the filer context in which a query is made.
+  This is necessary in order to properly support "deep filtering" by file types. An API change was required 
+  to get this implemented: <b>Existing code needs to change</b> two method signatures in classes deriving from
+  AbstractSystemViewAdapter. See [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=170627">170627</a>] for details.
+<li><b>Making classes internal:</b> Many classes have been made internal, and PDE support for generating
+  warnings of discourage access has been enabled. Client code should not have used the classes which are
+  now internal anyways; but if you do, just running "organize imports" should make your code compile again.
+  See [<a href="https://bugs.eclipse.org/bugs/showdependencytree.cgi?id=170922">170922</a>] for details.
+</ul>
+
 Use 
   <a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced&short_desc_type=allwordssubstr&short_desc=%5Bapi%5D&classification=DSDP&product=Target+Management&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&resolution=FIXED&resolution=WONTFIX&resolution=INVALID&resolution=WORKSFORME&chfieldfrom=2006-12-24&chfieldto=2007-07-01&chfield=resolution&cmdtype=doit">
   <!-- <a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced&short_desc_type=allwordssubstr&short_desc=%5Bapi%5D&classification=DSDP&product=Target+Management&target_milestone=2.0+M5&target_milestone=2.0+M6&target_milestone=2.0+M7&target_milestone=2.0+RC1&target_milestone=2.0&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&resolution=FIXED&resolution=WONTFIX&resolution=INVALID&resolution=WORKSFORME&cmdtype=doit">  -->

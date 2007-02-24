@@ -172,8 +172,8 @@ We'll strive to fix these as soon as possible.
 <ul>
   <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=162993">bug 162993</a> - maj - ssh connection gets confused</li>
 </ul>
-<p>No major or critical bugs are known at the time of release.
 -->
+<p>No major or critical bugs are known at the time of release.
 Use 
 <a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced&classification=DSDP&product=Target+Management&component=RSE&bug_status=UNCONFIRMED&bug_status=NEW&bug_status=ASSIGNED&bug_status=REOPENED&bug_severity=blocker&bug_severity=critical&bug_severity=major&cmdtype=doit">this query</a>
 for an up-to-date list of major or critical bugs.</p>

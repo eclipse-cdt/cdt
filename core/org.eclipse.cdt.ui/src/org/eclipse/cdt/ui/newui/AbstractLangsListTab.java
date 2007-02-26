@@ -208,24 +208,26 @@ public abstract class AbstractLangsListTab extends AbstractCPropertyTab {
 	public void updateData(ICResourceDescription cfg) {
 		if (cfg == null) return;
 		updateExport();
-		ICLanguageSetting []ls = getLangSetting(cfg);
-		Arrays.sort(ls, CDTListComparator.getInstance());
 		langTree.removeAll();
 		TreeItem firstItem = null;
-		for (int i=0; i<ls.length; i++) {
-			if ((ls[i].getSupportedEntryKinds() & getKind()) != 0) {
-				TreeItem t = new TreeItem(langTree, SWT.NONE);
-				t.setText(0, ls[i].getName());
-				t.setData(ls[i]);
-				if (firstItem == null) { 
-					firstItem = t;
-					lang = ls[i];
+		ICLanguageSetting []ls = getLangSetting(cfg);
+		if (ls != null) {
+			Arrays.sort(ls, CDTListComparator.getInstance());
+			for (int i=0; i<ls.length; i++) {
+				if ((ls[i].getSupportedEntryKinds() & getKind()) != 0) {
+					TreeItem t = new TreeItem(langTree, SWT.NONE);
+					t.setText(0, ls[i].getName());
+					t.setData(ls[i]);
+					if (firstItem == null) { 
+						firstItem = t;
+						lang = ls[i];
+					}
 				}
 			}
-		}
-		
-		if (firstItem != null && table != null) {
-			langTree.setSelection(firstItem);
+
+			if (firstItem != null && table != null) {
+				langTree.setSelection(firstItem);
+			}
 		}
 		update();
 	}
@@ -388,7 +390,8 @@ public abstract class AbstractLangsListTab extends AbstractCPropertyTab {
 			return foDes.getLanguageSettings();
 		case ICSettingBase.SETTING_FILE:
 			ICFileDescription fiDes = (ICFileDescription)rcDes;
-			return new ICLanguageSetting[] { fiDes.getLanguageSetting() };
+			ICLanguageSetting ls = fiDes.getLanguageSetting();
+			return (ls != null) ? new ICLanguageSetting[] { ls } : null;
 		}
 		return null;
 	}
@@ -396,6 +399,7 @@ public abstract class AbstractLangsListTab extends AbstractCPropertyTab {
 	public boolean canBeVisible() {
 		if (getResDesc() == null) return true;
 		ICLanguageSetting [] ls = getLangSetting(getResDesc());
+		if (ls == null) return false;
 		for (int i=0; i<ls.length; i++) {
 			if ((ls[i].getSupportedEntryKinds() & getKind()) != 0)
 				return true;

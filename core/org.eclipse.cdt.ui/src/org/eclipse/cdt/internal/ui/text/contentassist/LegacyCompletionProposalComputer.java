@@ -13,6 +13,7 @@
 package org.eclipse.cdt.internal.ui.text.contentassist;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
@@ -45,6 +46,10 @@ public class LegacyCompletionProposalComputer extends ParsingBasedProposalComput
 			CContentAssistInvocationContext context,
 			ASTCompletionNode completionNode, String prefix) throws CoreException {
 		
+		if (context.isContextInformationStyle()) {
+			// context information cannot be supported by completionContributors
+			return Collections.EMPTY_LIST;
+		}
 		ITextViewer viewer = context.getViewer();
 		int offset = context.getInvocationOffset();
 		IWorkingCopy workingCopy = context.getTranslationUnit().getWorkingCopy();

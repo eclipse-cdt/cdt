@@ -21,7 +21,6 @@ import java.io.InputStream;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -361,7 +360,7 @@ public class CProjectDescriptionManager {
 			try {
 				des = loadProjectDescription(project);
 			} catch (CoreException e) {
-				CCorePlugin.log(e);
+//				CCorePlugin.log(e);
 			}
 			if(des == null){
 				//TODO: check if conversion needed

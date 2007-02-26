@@ -94,6 +94,7 @@ public abstract class AbstractCPropertyTab implements ICPropertyTab {
 	public static final String WORKSPACE_DIR_DIALOG_MSG = NewUIMessages.getResourceString("BrowseEntryDialog.wsp.dir.dlg.msg");	//$NON-NLS-1$
 	public static final String WORKSPACE_FILE_DIALOG_MSG = NewUIMessages.getResourceString("BrowseEntryDialog.wsp.file.dlg.msg");	//$NON-NLS-1$
 	public static final String WORKSPACE_FILE_DIALOG_ERR = NewUIMessages.getResourceString("BrowseEntryDialog.wsp.file.dlg.err");	//$NON-NLS-1$
+	public static final String WORKSPACE_DIR_DIALOG_ERR = NewUIMessages.getResourceString("BrowseEntryDialog.wsp.dir.dlg.err");	//$NON-NLS-1$
 
 	protected Composite usercomp; // space where user can create widgets 
 	protected Composite buttoncomp; // space for buttons on the right
@@ -408,6 +409,15 @@ public abstract class AbstractCPropertyTab implements ICPropertyTab {
 					container = cs[0];
 			}
 			dialog.setInitialSelection(container);
+			dialog.setValidator(new ISelectionStatusValidator() {
+			    public IStatus validate(Object[] selection) {
+			    	if (selection != null)
+			    		if (selection.length > 0)
+			    			if ((selection[0] instanceof IFile))
+			    				return new StatusInfo(IStatus.ERROR, WORKSPACE_DIR_DIALOG_ERR);
+			    	return new StatusInfo();
+			    }
+			});
 			dialog.setTitle(WORKSPACE_DIR_DIALOG_TITLE); 
             dialog.setMessage(WORKSPACE_DIR_DIALOG_MSG); 
 		} else {

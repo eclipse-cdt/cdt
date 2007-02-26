@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2007 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -57,4 +57,14 @@ public interface IWritableIndexFragment extends IIndexFragment {
 	 * Releases a write lock, reestablishing a certain amount of read locks.
 	 */
 	void releaseWriteLock(int establishReadLockCount);
+	
+	/**
+	 * Write the key, value mapping to the fragment properties. If a mapping for the
+	 * same key already exists, it is overwritten.
+	 * @param key a non-null property name
+	 * @param value a value to associate with the key. may not be null.
+	 * @throws CoreException
+	 * @throws NullPointerException if key is null
+	 */
+	public void setProperty(String propertyName, String value) throws CoreException;
 }

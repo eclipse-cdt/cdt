@@ -46,6 +46,7 @@ import org.eclipse.cdt.internal.core.index.IIndexFragmentFile;
 import org.eclipse.cdt.internal.core.index.IIndexFragmentInclude;
 import org.eclipse.cdt.internal.core.index.IIndexFragmentName;
 import org.eclipse.cdt.internal.core.pdom.db.BTree;
+import org.eclipse.cdt.internal.core.pdom.db.DBProperties;
 import org.eclipse.cdt.internal.core.pdom.db.Database;
 import org.eclipse.cdt.internal.core.pdom.dom.BindingCollector;
 import org.eclipse.cdt.internal.core.pdom.dom.IPDOMLinkageFactory;
@@ -67,10 +68,9 @@ import org.eclipse.core.runtime.Status;
  * @author Doug Schaefer
  */
 public class PDOM extends PlatformObject implements IIndexFragment, IPDOM {
+	protected Database db;
 
-	private Database db;
-
-	public static final int VERSION = 25;
+	public static final int VERSION = 26;
 	// 0 - the beginning of it all
 	// 1 - first change to kick off upgrades
 	// 2 - added file inclusions
@@ -97,9 +97,11 @@ public class PDOM extends PlatformObject implements IIndexFragment, IPDOM {
 	// 23 - types on c-variables, return types on c-functions
 	// 24 - file local scopes (161216)
 	// 25 - change ordering of bindings (175275)
+	// 26 - add properties storage
 
 	public static final int LINKAGES = Database.DATA_AREA;
 	public static final int FILE_INDEX = Database.DATA_AREA + 4;
+	public static final int PROPERTIES = Database.DATA_AREA + 8;
 
 	// Local caches
 	private BTree fileIndex;
@@ -633,4 +635,8 @@ public class PDOM extends PlatformObject implements IIndexFragment, IPDOM {
 		}
 		return (IIndexFragmentBinding[]) result.toArray(new IIndexFragmentBinding[result.size()]);
 	}
+
+	public String getProperty(String propertyName) throws CoreException {
+		return new DBProperties(db, PROPERTIES).getProperty(propertyName);
+	}		
 }

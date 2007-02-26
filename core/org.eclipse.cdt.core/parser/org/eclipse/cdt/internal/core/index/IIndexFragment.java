@@ -157,4 +157,12 @@ public interface IIndexFragment {
 	 * @return
 	 */
 	IIndexLinkage[] getLinkages();
+	
+	/**
+	 * Read the named property in this fragment
+	 * @param key a case-sensitive identifier for a property, or null
+	 * @return the value associated with the key, or null if either no such property is set, or the specified key was null
+	 * @throws CoreException
+	 */
+	public String getProperty(String propertyName) throws CoreException;
 }

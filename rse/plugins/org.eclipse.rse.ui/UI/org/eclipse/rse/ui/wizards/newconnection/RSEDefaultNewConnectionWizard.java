@@ -48,7 +48,7 @@ import org.eclipse.rse.ui.messages.SystemMessageDialog;
 
 
 /**
- *
+ * Standard RSE new connection wizard implementation.
  */
 public class RSEDefaultNewConnectionWizard extends RSEAbstractNewConnectionWizard {
 
@@ -104,7 +104,7 @@ public class RSEDefaultNewConnectionWizard extends RSEAbstractNewConnectionWizar
 			IRSESystemType systemType = getSystemType();
 			mainPage.setTitle(getPageTitle());
 			mainPage.setSystemType(systemType);
-			subsystemFactorySuppliedWizardPages = getAdditionalWizardPages(systemType.getName());
+			subsystemFactorySuppliedWizardPages = getAdditionalWizardPages(systemType);
 		}
 	}
 	
@@ -138,10 +138,12 @@ public class RSEDefaultNewConnectionWizard extends RSEAbstractNewConnectionWizar
 	 * Creates the wizard's main page. This method is an override from the parent class.
 	 */
 	protected RSEDefaultNewConnectionWizardMainPage createMainPage(IRSESystemType systemType) {
-		mainPage = new RSEDefaultNewConnectionWizardMainPage(this, getPageTitle(), SystemResources.RESID_NEWCONN_PAGE1_DESCRIPTION);
-		mainPage.setTitle(getPageTitle());
-		mainPage.setSystemType(systemType);
-		subsystemFactorySuppliedWizardPages = getAdditionalWizardPages(systemType.getName());
+		if (mainPage == null) {
+			mainPage = new RSEDefaultNewConnectionWizardMainPage(this, getPageTitle(), SystemResources.RESID_NEWCONN_PAGE1_DESCRIPTION);
+			mainPage.setTitle(getPageTitle());
+			mainPage.setSystemType(systemType);
+			subsystemFactorySuppliedWizardPages = systemType != null ? getAdditionalWizardPages(systemType) : null;
+		}
 
 		return mainPage;
 	}
@@ -354,18 +356,21 @@ public class RSEDefaultNewConnectionWizard extends RSEAbstractNewConnectionWizar
 		return ok;
 	}
 
-	/*
+	/**
 	 * Private method to get all the wizard pages from all the subsystem factories, given a
-	 *  system type.
+	 * system type.
+	 * 
+	 * @param systemType The system type to query the additional subsystem service pages for. Must be not <code>null</code>.
 	 */
-	protected ISystemNewConnectionWizardPage[] getAdditionalWizardPages(String systemType) {
+	private ISystemNewConnectionWizardPage[] getAdditionalWizardPages(IRSESystemType systemType) {
+		assert systemType != null;
 		// this query is expensive, so only do it once...
 		subsystemFactorySuppliedWizardPages = (ISystemNewConnectionWizardPage[])ssfWizardPagesPerSystemType.get(systemType);
 		if (subsystemFactorySuppliedWizardPages == null) {
 			// query all affected subsystems for their list of additional wizard pages...
 			Vector additionalPages = new Vector();
 			ISystemRegistry sr = RSEUIPlugin.getTheSystemRegistry();
-			ISubSystemConfiguration[] factories = sr.getSubSystemConfigurationsBySystemType(systemType, true);
+			ISubSystemConfiguration[] factories = sr.getSubSystemConfigurationsBySystemType(systemType.getName(), true);
 			for (int idx = 0; idx < factories.length; idx++) {
 				ISubSystemConfigurationAdapter adapter = (ISubSystemConfigurationAdapter)factories[idx].getAdapter(ISubSystemConfigurationAdapter.class);
 

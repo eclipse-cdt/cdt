@@ -105,11 +105,13 @@ public class SystemViewPromptableAdapter
 	 */
 	public Object[] getChildren(IProgressMonitor monitor, IAdaptable element)
 	{
+		// Note: Do _not_ call promptable.run(getShell()) here. It leads only to
+		// senseless invocations of the new connection wizard dialog on refreshs!
+		// It cannot be a desirable effect of refreshing the system view to create
+		// new connections. We leave the invocation of the dialog to the double
+		// click handler and the context menu.
 		ISystemPromptableObject promptable = (ISystemPromptableObject)element;
-		if (!promptable.hasChildren())
-		  return promptable.run(getShell());
-		else
-		  return promptable.getChildren();
+		 return promptable.getChildren();
 	}
 	
 	/**
@@ -118,8 +120,19 @@ public class SystemViewPromptableAdapter
 	 */
 	public boolean hasChildren(IAdaptable element)
 	{
+		ISystemPromptableObject promptable = (ISystemPromptableObject)element;
+		return promptable.hasChildren();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.ui.view.AbstractSystemViewAdapter#handleDoubleClick(java.lang.Object)
+	 */
+	public boolean handleDoubleClick(Object element) {
+		ISystemPromptableObject promptable = (ISystemPromptableObject)element;
+		promptable.run(getShell());
 		return true;
 	}
+	
 	/**
 	 * Return our unique property descriptors
 	 */

@@ -87,9 +87,6 @@ public class RSEMainNewConnectionWizard extends Wizard implements INewWizard, IS
 		mainPage = new RSENewConnectionWizardSelectionPage();
 		initializedWizards.clear();
 		selectionChangedListener.clear();
-		
-		// and finally restore the wizard state
-		restoreFromDialogSettings();
 	}
 
 	/* (non-Javadoc)
@@ -308,7 +305,10 @@ public class RSEMainNewConnectionWizard extends Wizard implements INewWizard, IS
 		}
 		
 		// Initialize the wizard pages and remember which wizard we have initialized already.
-		if (selectedWizard != null && !initializedWizards.contains(selectedWizard)) {
+		// Note: Do not call IWizard.addPages() here in case the main wizard is restricted to
+		//       a single system type. The IWizard.addPages() method will be called from the
+		//       enclosing wizard dialog directly instead!
+		if (!onlySystemType && selectedWizard != null && !initializedWizards.contains(selectedWizard)) {
 			selectedWizard.addPages();
 			initializedWizards.add(selectedWizard);
 		}
@@ -330,6 +330,8 @@ public class RSEMainNewConnectionWizard extends Wizard implements INewWizard, IS
 	 */
 	public void addPages() {
 		addPage(mainPage);
+		// and restore the wizard's selection state from last session
+		restoreFromDialogSettings();
 	}
 
 	/* (non-Javadoc)

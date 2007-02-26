@@ -31,6 +31,9 @@ public class RSENewConnectionWizardSelectionTreeDataManager extends RSEAbstractW
 	// and the wizard using these different object instances in their selections!
 	private Map elementMap;
 	
+	// The category map is doing the same as the element but for categories.
+	private Map categoryMap;
+	
 	/**
 	 * Constructor.
 	 */
@@ -50,6 +53,17 @@ public class RSENewConnectionWizardSelectionTreeDataManager extends RSEAbstractW
 		return (RSENewConnectionWizardSelectionTreeElement)elementMap.get(systemType);
 	}
 	
+	/**
+	 * Returns the corresponding wizard selection tree element for the specified category.
+	 * 
+	 * @param category The category. Must be not <code>null</code>.
+	 * @return The wizard selection tree element or <code>null</code>.
+	 */
+	public RSEWizardSelectionTreeElement getTreeElementForCategory(IRSEWizardCategory category) {
+		assert category != null;
+		return (RSEWizardSelectionTreeElement)categoryMap.get(category);
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.rse.ui.internal.wizards.newconnection.RSEAbstractWizardSelectionTreeDataManager#initialize(java.util.Set)
 	 */
@@ -60,7 +74,8 @@ public class RSENewConnectionWizardSelectionTreeDataManager extends RSEAbstractW
 		if (elementMap == null) elementMap = new HashMap();
 		elementMap.clear();
 		
-		Map categoryCache = new HashMap();
+		if (categoryMap == null) categoryMap = new HashMap();
+		categoryMap.clear();
 		
 		// The new connection wizard selection is combining system types
 		// with registered new connection wizard.
@@ -106,11 +121,11 @@ public class RSENewConnectionWizardSelectionTreeDataManager extends RSEAbstractW
 			
 			// if the category id is not null, check if we have accessed the category
 			// already once.
-			RSEWizardSelectionTreeElement categoryElement = (RSEWizardSelectionTreeElement)categoryCache.get(category);
+			RSEWizardSelectionTreeElement categoryElement = (RSEWizardSelectionTreeElement)categoryMap.get(category);
 			if (categoryElement == null) {
 				categoryElement = new RSEWizardSelectionTreeElement(category);
 				categoryElement.setParentElement(null);
-				categoryCache.put(category, categoryElement);
+				categoryMap.put(category, categoryElement);
 			}
 			categoryElement.add(wizardElement);
 			wizardElement.setParentElement(categoryElement);
@@ -131,11 +146,11 @@ public class RSENewConnectionWizardSelectionTreeDataManager extends RSEAbstractW
 				
 				category = (IRSEWizardCategory)candidate;
 				
-				RSEWizardSelectionTreeElement parentElement = (RSEWizardSelectionTreeElement)categoryCache.get(category);
+				RSEWizardSelectionTreeElement parentElement = (RSEWizardSelectionTreeElement)categoryMap.get(category);
 				if (parentElement == null) {
 					parentElement = new RSEWizardSelectionTreeElement(category);
 					parentElement.setParentElement(null);
-					categoryCache.put(category, parentElement);
+					categoryMap.put(category, parentElement);
 				}
 				parentElement.add(categoryElement);
 				categoryElement.setParentElement(parentElement);

@@ -10,7 +10,14 @@
 &lt;p&gt;
 Each system type must have exactly one new connection wizard associated. In case multiple new connection wizard contributions would match the same system type, the new connection wizard which matched the system type first, will be used.
 &lt;p&gt;
-One new connection wizard may be registered for multiple system types. Such wizards should implement the &lt;code&gt;org.eclipse.jface.viewers.ISelectionChangedListener&lt;/code&gt; interface to get notified about the currently selected system type within the new connection system type selection page.
+One new connection wizard may be registered for multiple system types. Such wizards should implement the &lt;code&gt;org.eclipse.jface.viewers.ISelectionChangedListener&lt;/code&gt; interface. to get notified about the currently selected system type within the new connection system type selection page.
+&lt;p&gt;
+&lt;b&gt;Note:&lt;/b&gt; The main RSE new connection wizard is using the &lt;code&gt;selectionChanged(SelectionChangedEvent)&lt;/code&gt; to notify the nested wizards about
+ &lt;ul&gt;
+   &lt;li&gt; system type selection changes in the RSE new connection wizard selection page and&lt;/li&gt;
+   &lt;li&gt; the selected context of a view or toolbar or menu the caller of the main RSE new connection wizard is passing in.&lt;/li&gt;
+ &lt;/ul&gt;&lt;br&gt;
+ If the caller of the main RSE new connection wizard has passed in a selected context, the structured selection given via the &lt;code&gt;selectionChanged&lt;/code&gt; call has two elements. The first element is always the selected system type (instance of type &lt;code&gt;IRSESystemType&lt;/code&gt;) and the second one, if present, is the selected context from the caller (instance of type &lt;code&gt;ISelection&lt;/code&gt;).
 &lt;p&gt;
 New connection wizard may have the need of contributing different attribute values for the same attribute dependent on the current system type selection. These wizards should implement the &lt;code&gt;org.eclipse.rse.ui.wizards.newconnection.IRSEDynamicNewConnectionWizard&lt;/code&gt;.
       </documentation>
@@ -164,18 +171,17 @@ The default RSE wizard category id is &quot;org.eclipse.rse.ui.wizards.newconnec
 
 &lt;p&gt;
 &lt;pre&gt;
-  &lt;extension
-        point=&quot;org.eclipse.rse.ui.newConnectionWizard&quot;&gt;
-  &lt;category id=&quot;org.eclipse.rse.ui.wizards.newconnection.default.category&quot;
-    name=&quot;%Creation.category.name&quot;/&gt;
-  &lt;newConnectionWizard
-         id=&quot;org.eclipse.rse.ui.wizards.newconnection.RSEDefaultnNewConnectionWizard&quot;
+  &lt;extension point=&quot;org.eclipse.rse.ui.newConnectionWizard&quot;&gt;
+     &lt;category id=&quot;org.eclipse.rse.ui.wizards.newconnection.default.category&quot;
+               name=&quot;%Creation.category.name&quot;/&gt;
+     &lt;newConnectionWizard
+         id=&quot;org.eclipse.rse.ui.wizards.newconnection.RSEDefaultNewConnectionWizard&quot;
          class=&quot;org.eclipse.rse.ui.wizards.newconnection.RSEDefaultNewConnectionWizard&quot;
          name=&quot;%DefaultRSENewConnectionWizard.name&quot;
-   canFinishEarly=&quot;false&quot;
+         canFinishEarly=&quot;false&quot;
          categoryId=&quot;org.eclipse.rse.ui.wizards.newconnection.default.category&quot;
          hasPages=&quot;true&quot;&gt;
-  &lt;/newConnectionWizard&gt;
+     &lt;/newConnectionWizard&gt;
   &lt;/extension&gt;
 &lt;/pre&gt;
 &lt;/p&gt;

@@ -17,6 +17,7 @@
 
 package org.eclipse.rse.ui.wizards.newconnection;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -48,7 +49,13 @@ import org.eclipse.ui.IWorkbench;
 public class RSEMainNewConnectionWizard extends Wizard implements INewWizard, ISelectionProvider {
 	protected static final String LAST_SELECTED_SYSTEM_TYPE_ID = "lastSelectedSystemTypeId"; //$NON-NLS-1$
 	
-	private IHost selectedContext;
+	// The selected context as passed in from the invoking class.
+	// Just pass on to the wizards. Do not interpret here!
+	// @see #setSelectedContext(ISelection).
+	private ISelection selectedContext;
+	// The connection context as determined from the invoking class
+	// @see #setConnectionContext(IHost)
+	private IHost connectionContext;
 	
 	private IWizard selectedWizard;
 	private IRSESystemType selectedSystemType;
@@ -133,6 +140,16 @@ public class RSEMainNewConnectionWizard extends Wizard implements INewWizard, IS
 		onSelectedSystemTypeChanged();
 	}
 
+	/**
+	 * Returns if or if not the main new connection wizard has been restricted to only
+	 * one system type.
+	 * 
+	 * @return <code>True</code> if the wizard is restricted to only one system type, <code>false</code> otherwise.
+	 */
+	public final boolean isRestrictedToSingleSystemType() {
+		return onlySystemType;
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.ISelectionProvider#addSelectionChangedListener(org.eclipse.jface.viewers.ISelectionChangedListener)
 	 */
@@ -167,8 +184,25 @@ public class RSEMainNewConnectionWizard extends Wizard implements INewWizard, IS
 	 * @see org.eclipse.jface.viewers.ISelectionProvider#getSelection()
 	 */
 	public ISelection getSelection() {
-		IRSESystemType selected = onlySystemType ? restrictedSystemTypes[0] : selectedSystemType;
-		return selected != null ? new StructuredSelection(selected) : null;
+		ISelection selection = null;
+
+		// The system type must be available to construct the selection as
+		// the system type is per contract always the first element
+		IRSESystemType selected = isRestrictedToSingleSystemType() ? restrictedSystemTypes[0] : selectedSystemType;
+		if (selected != null) {
+			List selectionElements = new ArrayList();
+			selectionElements.add(selected);
+			// The second element in the selection is the selected context of the
+			// called as passed in to us (if available).
+			if (selectedContext != null) {
+				selectionElements.add(selectedContext);
+			}
+			
+			// construct the selection now
+			selection = new StructuredSelection(selectionElements);
+		}
+		
+		return selection;
 	}
 
 	/* (non-Javadoc)
@@ -178,23 +212,49 @@ public class RSEMainNewConnectionWizard extends Wizard implements INewWizard, IS
 		if (selection instanceof IStructuredSelection) {
 			IStructuredSelection sel = (IStructuredSelection)selection;
 			if (sel.getFirstElement() instanceof IRSESystemType) {
+				// update the selected system type.
 				selectedSystemType = (IRSESystemType)((IStructuredSelection)selection).getFirstElement();
-			} else if (sel.getFirstElement() instanceof IHost) {
-				selectedContext = (IHost)sel.getFirstElement();
-				if (selectedContext.getSystemType() != null) {
-					String systemTypeName = selectedContext.getSystemType();
-					IRSESystemType systemType = RSECorePlugin.getDefault().getRegistry().getSystemType(systemTypeName);
-					if (systemType != null) {
-						selectedSystemType = systemType;
-					}
-				}
 			} else {
 				selectedSystemType = null;
 			}
+			
+			// signal the system type change
 			onSelectedSystemTypeChanged();
 		}
 	}
 
+	/**
+	 * Sets the currently selected context for the wizard as know by the caller
+	 * of this method. The selected context is not interpreted by the main wizard,
+	 * the selection is passed on as is to the nested wizards.
+	 * 
+	 * @param selectedContext The selected context or <code>null</code>.
+	 */
+	public void setSelectedContext(ISelection selectedContext) {
+		this.selectedContext = selectedContext;
+	}
+
+	/**
+	 * Set the connection context for the wizard as determinded from
+	 * the caller of this method. If non-null, the method will query
+	 * the connections context system type and invoke <code>
+	 * setSelection(...)</code> to apply the system type as the selected
+	 * one.
+	 * 
+	 * @param connectionContext The connection context or <code>null</code>.
+	 */
+	public void setConnectionContext(IHost connectionContext) {
+		this.connectionContext = connectionContext;
+		// If there is an connection context, extract the connections
+		// system type from the connection context as use as default
+		if (connectionContext != null && connectionContext.getSystemType() != null) {
+			String systemTypeName = connectionContext.getSystemType();
+			IRSESystemType systemType = RSECorePlugin.getDefault().getRegistry().getSystemType(systemTypeName);
+			// if we have found the system type object, pass on to setSelection(...)!
+			if (systemType != null) setSelection(new StructuredSelection(systemType));
+		}
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IWorkbenchWizard#init(org.eclipse.ui.IWorkbench, org.eclipse.jface.viewers.IStructuredSelection)
 	 */
@@ -230,11 +290,16 @@ public class RSEMainNewConnectionWizard extends Wizard implements INewWizard, IS
 			selectedWizardCanFinishEarly = false;
 		}
 		
+		// Check on the container association of the selected wizard.
+		if (getContainer() != null && selectedWizard != null && !getContainer().equals(selectedWizard.getContainer())) {
+			selectedWizard.setContainer(getContainer());
+		}
+		
 		// if the newly selected wizard is the default RSE new connection wizard
 		// and the selected context is non-null, set the selected context to the
 		// default RSE new connection wizard.
 		if (selectedWizard instanceof RSEDefaultNewConnectionWizard) {
-			((RSEDefaultNewConnectionWizard)selectedWizard).setSelectedContext(selectedContext);
+			((RSEDefaultNewConnectionWizard)selectedWizard).setSelectedContext(connectionContext);
 		}
 		
 		// register the newly selected wizard as selection changed listener
@@ -242,14 +307,14 @@ public class RSEMainNewConnectionWizard extends Wizard implements INewWizard, IS
 			addSelectionChangedListener((ISelectionChangedListener)selectedWizard);
 		}
 		
-		// notify the selection changed event to the listeners
-		fireSelectionChanged();
-		
 		// Initialize the wizard pages and remember which wizard we have initialized already
 		if (selectedWizard != null && !initializedWizards.contains(selectedWizard)) {
 			selectedWizard.addPages();
 			initializedWizards.add(selectedWizard);
 		}
+
+		// notify the selection changed event to the listeners
+		fireSelectionChanged();
 
 		// Update the wizard container UI elements
 		IWizardContainer container = getContainer();
@@ -261,20 +326,10 @@ public class RSEMainNewConnectionWizard extends Wizard implements INewWizard, IS
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.jface.wizard.Wizard#getStartingPage()
-	 */
-	public IWizardPage getStartingPage() {
-		if (onlySystemType && getSelectedWizard() != null) return getSelectedWizard().getStartingPage();
-		return super.getStartingPage();
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.rse.ui.wizards.AbstractSystemWizard#addPages()
+	 * @see org.eclipse.jface.wizard.Wizard#addPages()
 	 */
 	public void addPages() {
-		// It we are not restricted to only one system type, add the
-		// system type selection page.
-		if (!onlySystemType) addPage(mainPage);
+		addPage(mainPage);
 	}
 
 	/* (non-Javadoc)
@@ -305,10 +360,6 @@ public class RSEMainNewConnectionWizard extends Wizard implements INewWizard, IS
 	 * @see org.eclipse.rse.ui.wizards.AbstractSystemWizard#performFinish()
 	 */
 	public boolean performFinish() {
-		// Note: Do _NOT_ delegate the performFinish from here to the selected
-		// wizard!! The outer wizard dialog is handling the nested wizards by
-		// default already itself!!
-
 		// Save the current selection to the dialog settings
 		IDialogSettings dialogSettings = getDialogSettings();
 		if (dialogSettings != null && getSelection() instanceof IStructuredSelection) {
@@ -317,6 +368,8 @@ public class RSEMainNewConnectionWizard extends Wizard implements INewWizard, IS
 				dialogSettings.put(LAST_SELECTED_SYSTEM_TYPE_ID, ((IRSESystemType)selection.getFirstElement()).getId());
 			}
 		}
+		
+		if (mainPage != null) mainPage.saveWidgetValues();
 		
 		return true;
 	}

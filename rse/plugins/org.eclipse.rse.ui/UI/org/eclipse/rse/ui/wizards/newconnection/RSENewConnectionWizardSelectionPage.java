@@ -11,7 +11,9 @@
 
 package org.eclipse.rse.ui.wizards.newconnection;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogSettings;
@@ -37,7 +39,10 @@ import org.eclipse.rse.core.IRSESystemType;
 import org.eclipse.rse.ui.RSESystemTypeAdapter;
 import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemResources;
+import org.eclipse.rse.ui.wizards.registries.IRSEWizardCategory;
+import org.eclipse.rse.ui.wizards.registries.IRSEWizardRegistryElement;
 import org.eclipse.rse.ui.wizards.registries.RSEWizardSelectionTreeContentProvider;
+import org.eclipse.rse.ui.wizards.registries.RSEWizardSelectionTreeElement;
 import org.eclipse.rse.ui.wizards.registries.RSEWizardSelectionTreeLabelProvider;
 import org.eclipse.rse.ui.wizards.registries.RSEWizardSelectionTreePatternFilter;
 import org.eclipse.swt.SWT;
@@ -54,6 +59,9 @@ import org.eclipse.ui.dialogs.PatternFilter;
  */
 public class RSENewConnectionWizardSelectionPage extends WizardPage {
 	private final String helpId = RSEUIPlugin.HELPPREFIX + "wncc0000"; //$NON-NLS-1$;
+	
+	private static final String EXPANDED_CATEGORIES_SETTINGS_ID = "filteredTree.expandedCatogryIds"; //$NON-NLS-1$
+	private static final String[] DEFAULT_EXPANDED_CATEGORY_IDS = new String[] { "org.eclipse.rse.ui.wizards.newconnection.default.category" }; //$NON-NLS-1$
 	
 	private IRSESystemType[] restrictedSystemTypes;
 
@@ -184,7 +192,6 @@ public class RSENewConnectionWizardSelectionPage extends WizardPage {
     // Explicitly allow the tree items to get decorated!!!
 		treeViewer.setLabelProvider(new DecoratingLabelProvider(new RSEWizardSelectionTreeLabelProvider(), PlatformUI.getWorkbench().getDecoratorManager().getLabelDecorator()));
 		treeViewer.setComparator(new NewConnectionWizardViewerComparator());
-		treeViewer.setAutoExpandLevel(2);
 
 		filteredTreeWizardStateFilter = new NewConnectionWizardStateFilter();
 		treeViewer.addFilter(filteredTreeWizardStateFilter);
@@ -208,6 +215,10 @@ public class RSENewConnectionWizardSelectionPage extends WizardPage {
 		
 		setControl(composite);
 		
+		// Restore the expanded state of the category items within the tree
+		// before initializing the selection.
+		restoreWidgetValues();
+		
 		// Initialize the selection in the tree
 		if (getWizard() instanceof ISelectionProvider) {
 			ISelectionProvider selectionProvider = (ISelectionProvider)getWizard();
@@ -220,13 +231,12 @@ public class RSENewConnectionWizardSelectionPage extends WizardPage {
 				}
 			}
 		}
-	}
+		
+		// we put the initial focus into the filter field
+		filteredTree.getFilterControl().setFocus();
+		
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), helpId);
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.dialogs.DialogPage#performHelp()
-	 */
-	public void performHelp() {
-		PlatformUI.getWorkbench().getHelpSystem().displayHelp(helpId);
 	}
 
 	/**
@@ -274,5 +284,62 @@ public class RSENewConnectionWizardSelectionPage extends WizardPage {
 		settings = settings.getSection(sectionName);
 
 		return settings;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.dialogs.DialogPage#setVisible(boolean)
+	 */
+	public void setVisible(boolean visible) {
+		super.setVisible(visible);
+		// if the page will become hidden, save the expansion state of
+		// the tree elements.
+		if (!visible) saveWidgetValues();
+	}
+
+	/**
+	 * Restore the tree state from the dialog settings.
+	 */
+	public void restoreWidgetValues() {
+		IDialogSettings settings = getDialogSettings();
+		if (settings != null) {
+			String[] expandedCategories = settings.getArray(EXPANDED_CATEGORIES_SETTINGS_ID);
+			// by default we expand always the "General" category.
+			if (expandedCategories == null) expandedCategories = DEFAULT_EXPANDED_CATEGORY_IDS;
+			if (expandedCategories != null) {
+				List expanded = new ArrayList();
+				for (int i = 0; i < expandedCategories.length; i++) {
+					String categoryId = expandedCategories[i];
+					if (categoryId != null && !"".equals(categoryId.trim())) { //$NON-NLS-1$
+						IRSEWizardRegistryElement registryElement = RSENewConnectionWizardRegistry.getInstance().findElementById(categoryId);
+						if (registryElement instanceof IRSEWizardCategory) {
+							RSEWizardSelectionTreeElement treeElement = filteredTreeDataManager.getTreeElementForCategory((IRSEWizardCategory)registryElement);
+							if (treeElement != null) expanded.add(treeElement);
+						}
+					}
+				}
+				
+				if (expanded.size() > 0) filteredTree.getViewer().setExpandedElements(expanded.toArray());
+			}
+		}
+	}
+	
+	/**
+	 * Saves the tree state to the dialog settings.
+	 */
+	public void saveWidgetValues() {
+		IDialogSettings settings = getDialogSettings();
+		if (settings != null) {
+      List expandedCategories = new ArrayList();
+			Object[] expanded = filteredTree.getViewer().getVisibleExpandedElements();
+      for (int i = 0; i < expanded.length; i++) {
+          if (expanded[i] instanceof RSEWizardSelectionTreeElement) {
+          	IRSEWizardRegistryElement registryElement = ((RSEWizardSelectionTreeElement)expanded[i]).getWizardRegistryElement();
+          	if (registryElement instanceof IRSEWizardCategory) {
+          		expandedCategories.add(((IRSEWizardCategory)registryElement).getId());
+          	}
+          }
+      }
+      settings.put(EXPANDED_CATEGORIES_SETTINGS_ID, (String[])expandedCategories.toArray(new String[expandedCategories.size()]));
+		}
 	}
 }

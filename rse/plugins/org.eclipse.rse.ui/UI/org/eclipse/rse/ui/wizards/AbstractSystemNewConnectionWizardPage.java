@@ -137,7 +137,7 @@ public abstract class AbstractSystemNewConnectionWizardPage extends AbstractSyst
     	  IWizardPage wizardPage = ourWizard.getStartingPage();
     	  
     	  if (wizardPage instanceof RSEDefaultNewConnectionWizardMainPage) {
-    		  return ((RSEDefaultNewConnectionWizardMainPage)wizardPage).getForm();
+    		  return ((RSEDefaultNewConnectionWizardMainPage)wizardPage).getSystemConnectionForm();
     	  }
     	  else {
     		  return null;

@@ -18,9 +18,9 @@ package org.eclipse.rse.ui.actions;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.wizard.IWizard;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.rse.core.IRSESystemType;
@@ -48,7 +48,13 @@ public class SystemNewConnectionAction extends SystemBaseWizardAction {
 	private boolean fromPopupMenu = true;
 	private ISelectionProvider sp;
 	private String[] restrictSystemTypesTo;
-	private IHost selectedContext;
+
+	// The current selection the action is knowing of. Just pass on
+	// to the wizards. Do not interpret here!
+	private ISelection selectedContext;
+	// The associated connection object of the selected context if
+	// determinable from the selected context
+	private IHost connectionContext;
 
 	/**
 	 * Constructor.
@@ -104,12 +110,19 @@ public class SystemNewConnectionAction extends SystemBaseWizardAction {
 	 * Our default implementation is to return <code>RSEMainNewConnectionWizard</code>.
 	 */
 	protected IWizard createWizard() {
+		// create the new connection wizard instance.
 		RSEMainNewConnectionWizard newConnWizard = new RSEMainNewConnectionWizard();
-		if (!fromPopupMenu && sp != null) {
-			setSelection(sp.getSelection());
-		}
+		
+		// simulate a selection changed event if the action is not called from
+		// a popup menu and a selection provider is set
+		if (!fromPopupMenu && sp != null) setSelection(sp.getSelection());
 
+		// First, restrict the wizard in the system types to show if this is
+		// requested.
 		if (restrictSystemTypesTo != null) {
+			// Till now, we get the list of system types to restrict to via system
+			// type name. This should be changed to be a list of system type objects
+			// as soon as possible. Till than, we have to translate the lists here.
 			List systemTypes = new LinkedList();
 			for (int i = 0; i < restrictSystemTypesTo.length; i++) {
 				IRSESystemType systemType = RSECorePlugin.getDefault().getRegistry().getSystemType(restrictSystemTypesTo[i]);
@@ -119,14 +132,18 @@ public class SystemNewConnectionAction extends SystemBaseWizardAction {
 			newConnWizard.restrictToSystemTypes((IRSESystemType[])systemTypes.toArray(new IRSESystemType[systemTypes.size()]));
 		}
 
-		// if there is a system type available from the current context, this system type
-		// is selected by default
-		if (selectedContext != null){
-			// send a selection changed event to the wizard with the selected context.
-			newConnWizard.setSelection(new StructuredSelection(selectedContext));
-		}
+		// If there is an remembered selection, we pass on the selected context
+		// totally untranslated to the wizards. The specific wizards have to
+		// interpret the selection themself. We simple cannot know here what is
+		// necessary and what not. Wizard providers may want to get selections
+		// we have no idea from. Only chance to do so, pass the selection on.
+		newConnWizard.setSelectedContext(selectedContext);
 		
-		return newConnWizard;
+		// if we had determined the connection context of the selected context, pass
+		// on as well to the new connection wizard.
+		newConnWizard.setConnectionContext(connectionContext); 
+		
+		return newConnWizard.isRestrictedToSingleSystemType() ? newConnWizard.getSelectedWizard() : newConnWizard;
 	}
 
 	/* (non-Javadoc)
@@ -175,12 +192,17 @@ public class SystemNewConnectionAction extends SystemBaseWizardAction {
 		this.restrictSystemTypesTo = systemTypes;
 	}
 
-	/**
-	 * Override of parent method so we can deduce currently selected connection (direct or indirect if child object selected).
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.ui.actions.SystemBaseAction#updateSelection(org.eclipse.jface.viewers.IStructuredSelection)
 	 */
 	public boolean updateSelection(IStructuredSelection selection) {
-		boolean enable = super.updateSelection(selection);
-		if (enable) {
+		boolean enabled = super.updateSelection(selection); 
+		// store the selection. The wizard contributor may want to analyse
+		// the current selection by themself.
+		selectedContext = selection;
+		
+		// and try to determine the connection context from the selection
+		if (enabled) {
 			Object firstSelection = getFirstSelection();
 			IHost conn = null;
 			if (firstSelection != null) {
@@ -202,9 +224,10 @@ public class SystemNewConnectionAction extends SystemBaseWizardAction {
 					conn = ss.getHost();
 				}
 			}
-			
-			selectedContext = conn;
+
+			connectionContext = conn;
 		}
-		return enable;
+		
+		return enabled;
 	}
 }

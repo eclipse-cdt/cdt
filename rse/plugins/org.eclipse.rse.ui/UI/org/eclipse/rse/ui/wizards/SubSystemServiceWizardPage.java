@@ -94,8 +94,8 @@ public class SubSystemServiceWizardPage extends AbstractSystemNewConnectionWizar
 			if (getWizard() instanceof RSEDefaultNewConnectionWizard)
 			{
 				RSEDefaultNewConnectionWizard wizard = (RSEDefaultNewConnectionWizard)getWizard();
-				if (wizard.getMainPage() instanceof RSEDefaultNewConnectionWizardMainPage) {
-					dummyHost = new DummyHost(((RSEDefaultNewConnectionWizardMainPage)wizard.getMainPage()).getHostName(),
+				if (wizard.getStartingPage() instanceof RSEDefaultNewConnectionWizardMainPage) {
+					dummyHost = new DummyHost(((RSEDefaultNewConnectionWizardMainPage)wizard.getStartingPage()).getSystemConnectionForm().getHostName(),
 																		 wizard.getSystemType() != null ? wizard.getSystemType().getName() : null);
 				}
 			}

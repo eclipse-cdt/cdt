@@ -93,19 +93,19 @@ Contributors:
                           <LevelTwo>The name must be a valid file name within the workbench and the underlying file system.</LevelTwo>
                     </Message>
                     <Message ID="1020" Indicator="E">
-                          <LevelOne>Enter system type</LevelOne>
+                          <LevelOne>Please enter a valid system type.</LevelOne>
                           <LevelTwo>You must select a system type. The system type is the type of the operating system of the remote sytem.</LevelTwo>
                     </Message>
                     <Message ID="1021" Indicator="E">
-                          <LevelOne>Enter connection name</LevelOne>
+                          <LevelOne>Please enter a valid connection name.</LevelOne>
                           <LevelTwo>You must enter a connection name. This name is arbitrary, but must be unique to the selected profile.</LevelTwo>
                     </Message>
                     <Message ID="1022" Indicator="E">
-                          <LevelOne>Connection name is not unique for its profile</LevelOne>
+                          <LevelOne>Connection name is not unique for the selected profile.</LevelOne>
                           <LevelTwo>Connection names must be unique to the profile that contains the connection. Specify a name not already in use.</LevelTwo>
                     </Message>
                     <Message ID="1023" Indicator="E">
-                          <LevelOne>Not a valid connection name</LevelOne>
+                          <LevelOne>Invalid connection name. Must be a valid folder name in the underlaying file system.</LevelOne>
                           <LevelTwo>The connection name is not syntactically valid. The name must be a valid folder name within the workbench and the underlying file system.</LevelTwo>
                     </Message>
                     <Message ID="1024" Indicator="E">

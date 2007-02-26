@@ -107,20 +107,22 @@ public class RSEDefaultNewConnectionWizard extends RSEAbstractNewConnectionWizar
 			subsystemFactorySuppliedWizardPages = getAdditionalWizardPages(systemType.getName());
 		}
 	}
-
+	
 	/**
 	 * Creates the wizard pages. This method is an override from the parent Wizard class.
 	 */
 	public void addPages() {
 		try {
 			mainPage = createMainPage(getSystemType());
-			mainPage.setConnectionNameValidators(SystemConnectionForm.getConnectionNameValidators());
-			mainPage.setCurrentlySelectedConnection(selectedContext);
+			SystemConnectionForm form = mainPage.getSystemConnectionForm();
+			if (form != null) {
+				form.setCurrentlySelectedConnection(selectedContext);
 
-			if (defaultUserId != null) mainPage.setUserId(defaultUserId);
-			if (defaultConnectionName != null) mainPage.setConnectionName(defaultConnectionName);
-			if (defaultHostName != null) mainPage.setHostName(defaultHostName);
-
+				if (defaultUserId != null) form.setUserId(defaultUserId);
+				if (defaultConnectionName != null) form.setConnectionName(defaultConnectionName);
+				if (defaultHostName != null) form.setHostName(defaultHostName);
+			}
+			
 			if (mainPage != null && getSystemType() != null) mainPage.setSystemType(getSystemType());
 
 			updateDefaultSelectedProfile();
@@ -180,7 +182,7 @@ public class RSEDefaultNewConnectionWizard extends RSEAbstractNewConnectionWizar
 		if (mainPage == null) return;
 
 		List profileNames = activeProfileNames != null ? Arrays.asList(activeProfileNames) : new ArrayList();
-		mainPage.setProfileNames(activeProfileNames);
+		mainPage.getSystemConnectionForm().setProfileNames(activeProfileNames);
 		
 		// 1. If a connection is selected, the default profile is the one from the connection.
 		String defaultProfileName = selectedContext != null ? selectedContext.getSystemProfileName() : null;
@@ -197,14 +199,14 @@ public class RSEDefaultNewConnectionWizard extends RSEAbstractNewConnectionWizar
 				if (defaultProfileName == null || !profileNames.contains(defaultProfileName)) {
 					// 4. The first non-empty profile from the list of active profiles is the default profile.
 					//    Note: The profile names get normalized within the constructor.  
-					if (activeProfileNames.length > 0) defaultProfileName = activeProfileNames[0];
+					if (profileNames.size() > 0) defaultProfileName = (String)profileNames.get(0);
 				}
 			}
 		}
 
 		// set the default profile to the page and remember it.
 		if (defaultProfileName != null) {
-			mainPage.setProfileNamePreSelection(defaultProfileName);
+			mainPage.getSystemConnectionForm().setProfileNamePreSelection(defaultProfileName);
 			// do not update the last selected profile marker if the default profile
 			// name came for the selected context.
 			if (selectedContext == null || !defaultProfileName.equals(selectedContext.getSystemProfileName()))
@@ -228,8 +230,7 @@ public class RSEDefaultNewConnectionWizard extends RSEAbstractNewConnectionWizar
 	 */
 	public void setUserId(String userId) {
 		defaultUserId = userId;
-		if (mainPage != null)
-			mainPage.setUserId(userId);
+		if (mainPage != null) mainPage.getSystemConnectionForm().setUserId(userId);
 	}
 
 	/**
@@ -237,8 +238,7 @@ public class RSEDefaultNewConnectionWizard extends RSEAbstractNewConnectionWizar
 	 */
 	public void setConnectionName(String name) {
 		defaultConnectionName = name;
-		if (mainPage != null)
-			mainPage.setConnectionName(name);
+		if (mainPage != null) mainPage.getSystemConnectionForm().setConnectionName(name);
 	}
 
 	/**
@@ -246,8 +246,7 @@ public class RSEDefaultNewConnectionWizard extends RSEAbstractNewConnectionWizar
 	 */
 	public void setHostName(String name) {
 		defaultHostName = name;
-		if (mainPage != null)
-			mainPage.setHostName(name);
+		if (mainPage != null) mainPage.getSystemConnectionForm().setHostName(name);
 	}
 
 	/**
@@ -272,7 +271,7 @@ public class RSEDefaultNewConnectionWizard extends RSEAbstractNewConnectionWizar
 	 * @return whether the wizard finished successfully
 	 */
 	public boolean performFinish() {
-		boolean ok = mainPage.performFinish();
+		boolean ok = mainPage.getSystemConnectionForm().verify(true);
 		if (!ok)
 			setPageError(mainPage);
 		else if (ok && hasAdditionalPages()) {
@@ -310,8 +309,9 @@ public class RSEDefaultNewConnectionWizard extends RSEAbstractNewConnectionWizar
 			if (ok) {
 				try {
 					String sysType = getSystemType() != null ? getSystemType().getName() : null;
-					IHost conn = sr.createHost(mainPage.getProfileName(), sysType, mainPage.getConnectionName(), mainPage.getHostName(),
-																			mainPage.getConnectionDescription(), mainPage.getDefaultUserId(), mainPage.getDefaultUserIdLocation(),
+					SystemConnectionForm form = mainPage.getSystemConnectionForm();
+					IHost conn = sr.createHost(form.getProfileName(), sysType, form.getConnectionName(), form.getHostName(),
+																			form.getConnectionDescription(), form.getDefaultUserId(), form.getUserIdLocation(),
 																			subsystemFactorySuppliedWizardPages);
 
 					setBusyCursor(false);
@@ -329,7 +329,7 @@ public class RSEDefaultNewConnectionWizard extends RSEAbstractNewConnectionWizar
 							sr.expandHost(conn);
 					}
 
-					lastProfile = mainPage.getProfileName();
+					lastProfile = form.getProfileName();
 				} catch (Exception exc) {
 					if (cursorSet)
 						setBusyCursor(false);
@@ -349,30 +349,6 @@ public class RSEDefaultNewConnectionWizard extends RSEAbstractNewConnectionWizar
 		return ok;
 	}
 
-	// callbacks from rename page
-
-	/**
-	 * Set the new profile name specified on the rename profile page...
-	 */
-	protected void setNewPrivateProfileName(String newName) {
-		activeProfileNames[privateProfileIndex] = newName;
-		if (mainPage != null) {
-			mainPage.setProfileNames(activeProfileNames);
-			mainPage.setProfileNamePreSelection(newName);
-		}
-	}
-
-	/**
-	 * Return the main page of this wizard
-	 */
-	public IWizardPage getMainPage() {
-		if (mainPage == null) {
-			addPages();
-		}
-
-		return mainPage;
-	}
-
 	/*
 	 * Private method to get all the wizard pages from all the subsystem factories, given a
 	 *  system type.
@@ -390,8 +366,10 @@ public class RSEDefaultNewConnectionWizard extends RSEAbstractNewConnectionWizar
 
 				ISystemNewConnectionWizardPage[] pages = adapter.getNewConnectionWizardPages(factories[idx], this);
 				if (pages != null) {
-					for (int widx = 0; widx < pages.length; widx++)
+					for (int widx = 0; widx < pages.length; widx++) {
+						if (pages[widx] instanceof IWizardPage) ((IWizardPage)pages[widx]).setWizard(this);
 						additionalPages.addElement(pages[widx]);
+					}
 				}
 			}
 			subsystemFactorySuppliedWizardPages = new ISystemNewConnectionWizardPage[additionalPages.size()];

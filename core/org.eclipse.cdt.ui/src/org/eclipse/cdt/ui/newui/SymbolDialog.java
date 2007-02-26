@@ -55,7 +55,7 @@ public class SymbolDialog extends AbstractPropertyDialog {
 		GridData gd;
 		
 		Label l1 = new Label(c, SWT.NONE);
-		l1.setText("Name:");  //$NON-NLS-1$
+		l1.setText(NewUIMessages.getResourceString("SymbolDialog.0")); //$NON-NLS-1$
 		l1.setLayoutData(new GridData(GridData.BEGINNING));
 		
 		txt1 = new Text(c, SWT.SINGLE | SWT.BORDER);
@@ -68,7 +68,7 @@ public class SymbolDialog extends AbstractPropertyDialog {
 			}}); 
 		
 		Label l2 = new Label(c, SWT.NONE);
-		l2.setText("Value:");  //$NON-NLS-1$
+		l2.setText(NewUIMessages.getResourceString("SymbolDialog.1")); //$NON-NLS-1$
 		l2.setLayoutData(new GridData(GridData.BEGINNING));
 		
 		txt2 = new Text(c, SWT.SINGLE | SWT.BORDER);
@@ -83,40 +83,38 @@ public class SymbolDialog extends AbstractPropertyDialog {
 		b_vars = setupButton(c, "Variables..."); //$NON-NLS-1$
 		
 		b_add2all = new Button(c, SWT.CHECK);
-		b_add2all.setText("Add to all configurations"); //$NON-NLS-1$
+		b_add2all.setText(NewUIMessages.getResourceString("SymbolDialog.2")); //$NON-NLS-1$
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = 4;
-		if (!newAction) {
-			gd.heightHint = 1;
-			b_add2all.setVisible(false);
-			txt1.setText(data1);
-			txt1.setEnabled(false); // don't change name
-			txt2.setText(data2); 
-		}
 		b_add2all.setLayoutData(gd);
+		if (!newAction) {
+			b_add2all.setVisible(false);
+			txt1.setEnabled(false); // don't change name
+		}
 		
 		// add 2 placeholders
 		new Label(c, 0).setLayoutData(new GridData());
 		new Label(c, 0).setLayoutData(new GridData());
 		b_ok = setupButton(c, IDialogConstants.OK_LABEL);
 		b_ko = setupButton(c, IDialogConstants.CANCEL_LABEL);
-
+		
 		c.getShell().setDefaultButton(b_ok);
 		c.pack();
 		Rectangle r = shell.getBounds();
 		r.width = 400;
 		shell.setBounds(r);
+
+		// moved here to avoid accessing b_ok before it created.
+		txt1.setText(data1);
+		txt2.setText(data2); 
 		
 		setButtons();
 		return c;
 	}	
 	
 	private void setButtons() {
-		b_ok.setEnabled(
-				(txt1.getText().trim().length() > 0) &&
-				(txt2.getText().trim().length() > 0));
+		b_ok.setEnabled(txt1.getText().trim().length() > 0);
 	}
-
 	
 	public void buttonPressed(SelectionEvent e) {
 		if (e.widget.equals(b_ok)) { 

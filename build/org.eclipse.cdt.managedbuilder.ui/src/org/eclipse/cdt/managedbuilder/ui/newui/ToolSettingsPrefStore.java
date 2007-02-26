@@ -17,6 +17,8 @@ import org.eclipse.cdt.core.settings.model.ICSettingBase;
 import org.eclipse.cdt.managedbuilder.core.BuildException;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IHoldsOptions;
+import org.eclipse.cdt.managedbuilder.core.IManagedCommandLineGenerator;
+import org.eclipse.cdt.managedbuilder.core.IManagedCommandLineInfo;
 import org.eclipse.cdt.managedbuilder.core.IOption;
 import org.eclipse.cdt.managedbuilder.core.IOptionCategory;
 import org.eclipse.cdt.managedbuilder.core.IResourceInfo;
@@ -27,9 +29,9 @@ import org.eclipse.cdt.managedbuilder.internal.macros.BuildMacroProvider;
 import org.eclipse.cdt.managedbuilder.internal.macros.BuildfileMacroSubstitutor;
 import org.eclipse.cdt.utils.cdtvariables.SupplierBasedCdtVariableSubstitutor;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.jface.util.PropertyChangeEvent;
 
 public class ToolSettingsPrefStore implements IPreferenceStore {
@@ -146,11 +148,17 @@ public class ToolSettingsPrefStore implements IPreferenceStore {
 			else if(ALL_OPTIONS_ID.equals(name)){
 				try {
 					SupplierBasedCdtVariableSubstitutor macroSubstitutor = new BuildfileMacroSubstitutor(null, EMPTY_STRING, " ");  //$NON-NLS-1$
-					return listToString(((Tool)optCategory).getToolCommandFlags(
+					Tool tool = (Tool)optCategory;
+					String[] flags = tool.getToolCommandFlags(
 							null,
 							null,
-							macroSubstitutor,
-							obtainMacroProvider()));
+							macroSubstitutor, 
+							obtainMacroProvider());
+					IManagedCommandLineGenerator cmdLGen = tool.getCommandLineGenerator();
+					IManagedCommandLineInfo cmdLInfo = cmdLGen.generateCommandLineInfo(tool,
+							EMPTY_STRING, flags, EMPTY_STRING, EMPTY_STRING, EMPTY_STRING,
+							null,tool.getCommandLinePattern());
+					return cmdLInfo.getFlags();
 				} catch (BuildException e) {}
 			}
 		} else {

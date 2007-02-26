@@ -254,11 +254,12 @@ public interface IIndex {
 	/**
 	 * Searches for all bindings with names that start with the given prefix.
 	 * @param prefix the prefix with which all returned bindings must start
+	 * @param filescope if true, only bindings at file scope are returned
 	 * @param filter a filter that allows for skipping parts of the index
 	 * @return an array of bindings with the prefix
 	 * @throws CoreException
 	 */
-	public IIndexBinding[] findBindingsForPrefix(char[] prefix, IndexFilter filter, boolean caseSensitive) throws CoreException;
+	public IIndexBinding[] findBindingsForPrefix(char[] prefix, boolean filescope, IndexFilter filter) throws CoreException;
 	
 	/**
 	 * Searches for all names that resolve to the given binding. You can limit the result to references, declarations

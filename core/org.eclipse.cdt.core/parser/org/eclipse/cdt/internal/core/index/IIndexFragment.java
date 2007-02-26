@@ -150,7 +150,7 @@ public interface IIndexFragment {
 	/**
 	 * Returns all bindings with the given prefix, accepted by the given filter
 	 */
-	IIndexFragmentBinding[] findBindingsForPrefix(char[] prefix, IndexFilter filter, boolean caseSensitive) throws CoreException;
+	IIndexFragmentBinding[] findBindingsForPrefix(char[] prefix, boolean filescope, IndexFilter filter) throws CoreException;
 	
 	/**
 	 * Returns the linkages that are contained in this fragment

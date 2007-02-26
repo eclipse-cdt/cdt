@@ -1323,7 +1323,7 @@ public class CVisitor {
 					IndexFilter filter = IndexFilter
 							.getFilter(ILinkage.C_LINKAGE_ID);
 					IBinding[] bindings = prefix ? index.findBindingsForPrefix(
-							name.toCharArray(), filter, false) : index.findBindings(
+							name.toCharArray(), true, filter) : index.findBindings(
 							name.toCharArray(), filter,
 							new NullProgressMonitor());
 							

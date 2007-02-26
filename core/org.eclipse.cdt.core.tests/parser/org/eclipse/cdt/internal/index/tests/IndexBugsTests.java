@@ -31,6 +31,7 @@ import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.ICompositeType;
 import org.eclipse.cdt.core.dom.ast.IEnumeration;
 import org.eclipse.cdt.core.dom.ast.IEnumerator;
+import org.eclipse.cdt.core.dom.ast.IFunction;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
@@ -537,5 +538,70 @@ public class IndexBugsTests extends BaseTestCase {
 		finally {
 			fIndex.releaseReadLock();
 		}
+	}
+	
+	// class a {};
+	// class A {};
+	// namespace aa {
+	//   class a {
+	//     class e {
+	//      class AA {class A{};};
+	//     };
+	//   };
+	// };
+	public void testFindBindingsWithPrefix() throws Exception {
+		waitForIndexer();
+		String content= getContentsForTest(1)[0].toString();
+
+		IFile file= TestSourceReader.createFile(fCProject.getProject(), "testFBWP.cpp", content);
+		TestSourceReader.waitUntilFileIsIndexed(fIndex, file, INDEX_WAIT_TIME);
+
+		fIndex.acquireReadLock();
+		try {
+			final IndexFilter NON_FUNCTIONS = new IndexFilter() {
+				public boolean acceptBinding(IBinding binding) {
+					return !(binding instanceof IFunction);
+				}
+			};
+			
+			IBinding[] bindings= fIndex.findBindingsForPrefix(new char[] {'a'}, true, NON_FUNCTIONS);
+			assertEquals(3,bindings.length);
+			
+			bindings= fIndex.findBindingsForPrefix(new char[] {'a'}, false, NON_FUNCTIONS);
+			assertEquals(6,bindings.length);
+			
+			bindings= fIndex.findBindingsForPrefix(new char[] {'a','A'}, true, NON_FUNCTIONS);
+			assertEquals(1,bindings.length);
+			
+			bindings= fIndex.findBindingsForPrefix(new char[] {'a','A'}, false, NON_FUNCTIONS);
+			assertEquals(2, bindings.length);
+		}
+		finally {
+			fIndex.releaseReadLock();
+		}		
+	}
+	
+	// class a { class b { class c { void f(); }; }; };
+	public void testFilterFindBindingsFQCharArray() throws Exception {
+		waitForIndexer();
+		String content= getContentsForTest(1)[0].toString();
+
+		IFile file= TestSourceReader.createFile(fCProject.getProject(), "testFilterFindBindingsFQCharArray.cpp", content);
+		TestSourceReader.waitUntilFileIsIndexed(fIndex, file, INDEX_WAIT_TIME);
+
+		fIndex.acquireReadLock();
+		try {
+			final IndexFilter NON_CLASS = new IndexFilter() {
+				public boolean acceptBinding(IBinding binding) {
+					return !(binding instanceof ICPPClassType);
+				}
+			};
+			
+			IBinding[] bindings= fIndex.findBindings(new char[][]{{'a'},{'b'},{'c'},{'f'}}, NON_CLASS, NPM);
+			assertEquals(1,bindings.length);
+		}
+		finally {
+			fIndex.releaseReadLock();
+		}		
 	}
 }

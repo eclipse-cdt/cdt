@@ -49,6 +49,7 @@ import org.eclipse.cdt.internal.core.pdom.db.BTree;
 import org.eclipse.cdt.internal.core.pdom.db.Database;
 import org.eclipse.cdt.internal.core.pdom.dom.BindingCollector;
 import org.eclipse.cdt.internal.core.pdom.dom.IPDOMLinkageFactory;
+import org.eclipse.cdt.internal.core.pdom.dom.ApplyVisitor;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMFile;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMInclude;
@@ -352,7 +353,8 @@ public class PDOM extends PlatformObject implements IIndexFragment, IPDOM {
 				bindings.add(linkage);
 				for (int i=0; i < names.length; i++) {
 					char[] name= names[i];
-					BindingCollector collector= new BindingCollector(linkage, name, filter, false, true);
+					IndexFilter levelFilter= i==names.length-1 ? filter : IndexFilter.ALL;
+					BindingCollector collector= new BindingCollector(linkage, name, levelFilter, false, true);
 					for (Iterator in = bindings.iterator(); in.hasNext();) {
 						PDOMNode node= (PDOMNode) in.next();
 						node.accept(collector);
@@ -608,12 +610,22 @@ public class PDOM extends PlatformObject implements IIndexFragment, IPDOM {
 		return fPath;
 	}
 	
-	public IIndexFragmentBinding[] findBindingsForPrefix(char[] prefix, IndexFilter filter, boolean caseSensitive) throws CoreException {
-		ArrayList result = new ArrayList();
-		for (Iterator iter = fLinkageIDCache.values().iterator(); iter.hasNext();) {
-			PDOMLinkage linkage = (PDOMLinkage) iter.next();
+	public IIndexFragmentBinding[] findBindingsForPrefix(char[] prefix, boolean filescope, IndexFilter filter) throws CoreException {
+		ArrayList result= new ArrayList();
+		for (Iterator iter= fLinkageIDCache.values().iterator(); iter.hasNext();) {
+			PDOMLinkage linkage= (PDOMLinkage) iter.next();
 			if (filter.acceptLinkage(linkage)) {
-				IBinding[] bindings = linkage.findBindingsForPrefix(prefix, filter, caseSensitive);
+				IBinding[] bindings;
+				if(filescope) {
+					BindingCollector visitor = new BindingCollector(linkage, prefix, filter, true, false);
+					linkage.accept(visitor);
+					bindings= visitor.getBindings();
+				} else {
+					BindingCollector visitor = new BindingCollector(linkage, prefix, filter, true, false);
+					linkage.accept(visitor);
+					linkage.accept(new ApplyVisitor(linkage, visitor));
+					bindings= visitor.getBindings();
+				}
 				for (int j = 0; j < bindings.length; j++) {
 					result.add(bindings[j]);
 				}

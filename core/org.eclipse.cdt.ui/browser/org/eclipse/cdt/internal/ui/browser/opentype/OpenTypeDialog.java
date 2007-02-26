@@ -78,7 +78,7 @@ public class OpenTypeDialog extends TypeSelectionDialog {
 			IIndex index = CCorePlugin.getIndexManager().getIndex(CoreModel.getDefault().getCModel().getCProjects());
 			try {
 				index.acquireReadLock();
-				IBinding[] bindings= index.findBindingsForPrefix(prefix, IndexFilter.ALL, false);
+				IBinding[] bindings= index.findBindingsForPrefix(prefix, false, IndexFilter.ALL);
 				for(int i=0; i<bindings.length; i++) {
 					IBinding binding = bindings[i];
 					try {

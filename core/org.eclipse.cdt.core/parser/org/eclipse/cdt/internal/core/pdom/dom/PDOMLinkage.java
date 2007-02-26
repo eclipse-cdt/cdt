@@ -32,7 +32,6 @@ import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespaceScope;
 import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.core.index.IIndexLinkage;
-import org.eclipse.cdt.core.index.IndexFilter;
 import org.eclipse.cdt.internal.core.Util;
 import org.eclipse.cdt.internal.core.dom.parser.ASTInternal;
 import org.eclipse.cdt.internal.core.index.IIndexScope;
@@ -251,13 +250,6 @@ public abstract class PDOMLinkage extends PDOMNamedNode implements IIndexLinkage
 	
 	protected abstract boolean isFileLocalBinding(IBinding binding) throws DOMException;
 	public abstract int getBindingType(IBinding binding);
-	
-	public IBinding[] findBindingsForPrefix(char[] prefix, IndexFilter filter, boolean caseSensitive) throws CoreException {
-		BindingCollector visitor = new BindingCollector(this, prefix, filter, true, caseSensitive);
-		getIndex().accept(visitor);
-		
-		return visitor.getBindings();
-	}
 	
 	/**
 	 * Callback informing the linkage that a name has been added. This is

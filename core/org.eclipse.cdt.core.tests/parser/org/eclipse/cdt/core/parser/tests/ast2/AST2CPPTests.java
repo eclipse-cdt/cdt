@@ -14,6 +14,7 @@
  */
 package org.eclipse.cdt.core.parser.tests.ast2;
 
+import java.util.HashSet;
 import java.util.Iterator;
 
 import org.eclipse.cdt.core.dom.ast.ASTSignatureUtil;
@@ -2169,8 +2170,21 @@ public class AST2CPPTests extends AST2BaseTest {
         tu.accept(col);
 
         IASTName name = col.getName(11);
+        assertEquals("a", name.toString());
         IBinding[] bs = CPPSemantics.findBindingsForContentAssist(name, true);
-        assertEquals(4, bs.length);
+
+        // check the result
+        HashSet result= new HashSet();
+        for (int i = 0; i < bs.length; i++) {
+			IBinding binding = bs[i];
+			result.add(binding.getName());
+		}
+        assertTrue(result.contains("a1"));
+        assertTrue(result.contains("a2"));
+        assertTrue(result.contains("a3"));
+        assertTrue(result.contains("a4"));
+        assertTrue(result.contains("A"));
+        assertEquals(5, bs.length);
     }
 
     public void testIsStatic() throws Exception {

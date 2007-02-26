@@ -33,6 +33,7 @@ public class RSESystemType implements IRSESystemType {
 
 	private static final String ATTR_ID = "id"; //$NON-NLS-1$
 	private static final String ATTR_NAME = "name"; //$NON-NLS-1$
+	private static final String ATTR_LABEL = "label"; //$NON-NLS-1$
 	private static final String ATTR_DESCRIPTION = "description"; //$NON-NLS-1$
 	private static final String ATTR_ICON = "icon"; //$NON-NLS-1$
 	private static final String ATTR_ICONLIVE = "iconLive"; //$NON-NLS-1$
@@ -42,6 +43,7 @@ public class RSESystemType implements IRSESystemType {
 
 	private String id = null;
 	private String name = null;
+	private String label = null;
 	private String description = null;
 	private Map properties;
 	private Bundle definingBundle = null;
@@ -55,6 +57,7 @@ public class RSESystemType implements IRSESystemType {
 
 		id = element.getAttribute(ATTR_ID);
 		name = element.getAttribute(ATTR_NAME);
+		label = element.getAttribute(ATTR_LABEL);
 		description = element.getAttribute(ATTR_DESCRIPTION);
 
 		loadProperties(element);
@@ -103,6 +106,15 @@ public class RSESystemType implements IRSESystemType {
 	 */
 	public String getId() {
 		return id;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.core.IRSESystemType#getLabel()
+	 */
+	public String getLabel() {
+		// fallback to the id if the label should be null.
+		if (label == null) return getId();
+		return label;
 	}
 
 	/* (non-Javadoc)

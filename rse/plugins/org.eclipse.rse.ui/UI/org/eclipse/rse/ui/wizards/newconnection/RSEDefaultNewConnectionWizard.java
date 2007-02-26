@@ -114,6 +114,7 @@ public class RSEDefaultNewConnectionWizard extends RSEAbstractNewConnectionWizar
 	public void addPages() {
 		try {
 			mainPage = createMainPage(getSystemType());
+		
 			SystemConnectionForm form = mainPage.getSystemConnectionForm();
 			if (form != null) {
 				form.setCurrentlySelectedConnection(selectedContext);
@@ -138,6 +139,10 @@ public class RSEDefaultNewConnectionWizard extends RSEAbstractNewConnectionWizar
 	 */
 	protected RSEDefaultNewConnectionWizardMainPage createMainPage(IRSESystemType systemType) {
 		mainPage = new RSEDefaultNewConnectionWizardMainPage(this, getPageTitle(), SystemResources.RESID_NEWCONN_PAGE1_DESCRIPTION);
+		mainPage.setTitle(getPageTitle());
+		mainPage.setSystemType(systemType);
+		subsystemFactorySuppliedWizardPages = getAdditionalWizardPages(systemType.getName());
+
 		return mainPage;
 	}
 
@@ -148,7 +153,7 @@ public class RSEDefaultNewConnectionWizard extends RSEAbstractNewConnectionWizar
 		if (getSystemType() == null) {
 			pageTitle = SystemResources.RESID_NEWCONN_PAGE1_TITLE;
 		} else {
-			String onlySystemType = getSystemType().getName();
+			String onlySystemType = getSystemType().getLabel();
 
 			if (onlySystemType.equals(IRSESystemType.SYSTEMTYPE_LOCAL)) {
 				pageTitle = SystemResources.RESID_NEWCONN_PAGE1_LOCAL_TITLE;

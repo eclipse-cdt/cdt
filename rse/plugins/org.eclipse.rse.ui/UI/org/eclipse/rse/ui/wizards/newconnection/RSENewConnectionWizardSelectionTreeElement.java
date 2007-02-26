@@ -51,7 +51,7 @@ public class RSENewConnectionWizardSelectionTreeElement extends RSEWizardSelecti
 	 * @see org.eclipse.rse.ui.internal.wizards.newconnection.RSEWizardSelectionTreeElement#getLabel()
 	 */
 	public String getLabel() {
-		return getSystemType().getName();
+		return getSystemType().getLabel();
 	}
 
 	/* (non-Javadoc)

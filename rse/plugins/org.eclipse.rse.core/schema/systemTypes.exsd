@@ -67,7 +67,9 @@
          <attribute name="name" type="string" use="required">
             <annotation>
                <documentation>
-                  The display name for the system type, such as &quot;Solaris&quot;. This name is also currently used when referencing the system type in filters, subsystem configurations and similar, therefore it is not translatable. Future versions of RSE may change this and reference the systemType id instead of the name.
+                  The display name for the system type, such as &quot;Solaris&quot;. This name is also currently used as internal identifier when referencing the system type in filters, subsystem configurations and similar, therefore it is not translatable. Future versions of RSE may change this and reference the systemType id instead of the name.
+&lt;p&gt;
+&lt;b&gt;Deprecated:&lt;/b&gt; Use system type id to specify a unique identifier and system type label to specify a translatable UI label.
 &lt;p&gt;
 RSE pre-defines a number of system types, although they may not appear unless a subsystem configuration is registered against that type. These are the supplied system types:
 &lt;ul&gt;
@@ -77,6 +79,19 @@ RSE pre-defines a number of system types, although they may not appear unless a 
 &lt;/ul&gt;
 &lt;/p&gt;
                </documentation>
+               <appInfo>
+                  <meta.attribute deprecated="true"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+         <attribute name="label" type="string" use="required">
+            <annotation>
+               <documentation>
+                  A label used in the UI to identify the system type besides the system type icon.
+               </documentation>
+               <appInfo>
+                  <meta.attribute translatable="true"/>
+               </appInfo>
             </annotation>
          </attribute>
          <attribute name="description" type="string">
@@ -123,7 +138,6 @@ If not specified, a default icon will be used by RSE.
                   A semicolon separated list of fully qualified subsystem configuration ids this system type wants to get registered against.
 &lt;p&gt;
 &lt;b&gt;Note:&lt;/b&gt; The list specified here does not imply that the corresponding subsystem configurations exist. The list contains only possibilites, not requirements.
-
                </documentation>
             </annotation>
          </attribute>

@@ -138,13 +138,13 @@ public class RSECoreRegistry implements IRSECoreRegistry {
 			IConfigurationElement element = elements[i];
 
 			if (element.getName().equals(ELEMENT_SYTEM_TYPE)) {
-				RSESystemType type = new RSESystemType(element);
+				IRSESystemType type = new RSESystemType(element);
 				if (!typeIds.contains(type.getId())) {
 					types.add(type);
 					typeIds.add(type.getId());
 					
 					String message = "Successfully registered RSE system type ''{0}'' (id = ''{1}'')."; //$NON-NLS-1$
-					message = MessageFormat.format(message, new Object[] { type.getName(), type.getId() });
+					message = MessageFormat.format(message, new Object[] { type.getLabel(), type.getId() });
 					RSECorePlugin.getDefault().getLogger().logInfo(message);
 				} else {
 					String message = "RSE system type contribution skipped. Non-unique system type id (plugin: {0}, id: {1})."; //$NON-NLS-1$
@@ -171,7 +171,7 @@ public class RSECoreRegistry implements IRSECoreRegistry {
 							typeIds.add(type.getId());
 							
 							String message = "Successfully registered RSE system type ''{0}'' (id = ''{1}'')."; //$NON-NLS-1$
-							message = MessageFormat.format(message, new Object[] { type.getName(), type.getId() });
+							message = MessageFormat.format(message, new Object[] { type.getLabel(), type.getId() });
 							RSECorePlugin.getDefault().getLogger().logInfo(message);
 						} else {
 							String message = "RSE system type contribution skipped. Non-unique system type id (plugin: {0}, id: {1})."; //$NON-NLS-1$

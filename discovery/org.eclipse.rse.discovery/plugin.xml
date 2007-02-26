@@ -29,8 +29,9 @@ Contributors:
    <extension
          point="org.eclipse.rse.core.systemTypes">
 	   <systemType id="org.eclipse.rse.systemtype.discovery"
+	          label="%DiscoverySystemLabel"
             name="Discovery"
-			description="Discovery"
+			description="%DiscoverySystemDescription"
 			iconLive=""/>
 	</extension>
     

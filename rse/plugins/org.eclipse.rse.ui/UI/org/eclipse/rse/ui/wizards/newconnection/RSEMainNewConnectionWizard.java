@@ -307,7 +307,7 @@ public class RSEMainNewConnectionWizard extends Wizard implements INewWizard, IS
 			addSelectionChangedListener((ISelectionChangedListener)selectedWizard);
 		}
 		
-		// Initialize the wizard pages and remember which wizard we have initialized already
+		// Initialize the wizard pages and remember which wizard we have initialized already.
 		if (selectedWizard != null && !initializedWizards.contains(selectedWizard)) {
 			selectedWizard.addPages();
 			initializedWizards.add(selectedWizard);
@@ -338,7 +338,7 @@ public class RSEMainNewConnectionWizard extends Wizard implements INewWizard, IS
 	public IWizardPage getNextPage(IWizardPage page) {
 		IWizardPage nextPage = null;
 		if (page != null && page == mainPage && getSelectedWizard() != null) {
-			 nextPage = getSelectedWizard().getStartingPage();
+			nextPage = getSelectedWizard().getStartingPage();
 		}
 		
 		if (nextPage == null) super.getNextPage(page);

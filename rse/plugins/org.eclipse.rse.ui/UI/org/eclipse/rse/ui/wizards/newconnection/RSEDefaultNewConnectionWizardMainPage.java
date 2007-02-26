@@ -59,10 +59,9 @@ public class RSEDefaultNewConnectionWizardMainPage extends WizardPage implements
 		if (title != null) setTitle(title);
 		if (description != null) setDescription(description);
 		
-//		setHelp(parentHelpId);
 		messageLine = new RSEDialogPageMessageLine(this);
 	}
-
+	
 	/**
 	 * Set the system type the page is working with.
 	 * 

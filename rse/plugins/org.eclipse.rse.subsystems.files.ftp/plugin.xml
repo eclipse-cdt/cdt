@@ -19,6 +19,7 @@ Martin Oberhuber (Wind River) - add FTP Only system type
 <plugin>
 	<extension point="org.eclipse.rse.core.systemTypes">
 		<systemType
+		      label="%FtpSystemLabel"
         	description="%FtpSystemDescription"
             icon="icons/full/obj16/systemfiles_obj.gif"
             iconLive="icons/full/obj16/systemfileslive_obj.gif"

@@ -84,8 +84,17 @@ public interface IRSESystemType extends IAdaptable {
 	public String getId();
 
 	/**
+	 * Returns the translatable label for use in the UI.
+	 *   
+	 * @return The UI label or <code>null</code> if not set.
+	 */
+	public String getLabel();
+	
+	/**
 	 * Returns the name of the system type.
 	 * @return the name of the system type
+	 * 
+	 * @deprecated Use {@link #getId()} for accessing the unique id or {@link #getLabel()} for the UI label.
 	 */
 	public String getName();
 

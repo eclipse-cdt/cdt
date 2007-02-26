@@ -14,6 +14,7 @@ Martin Oberhuber (Wind River) - initial API and implementation
 	<!-- Register a System that will only show Daytime subsystems -->
 	<extension point="org.eclipse.rse.core.systemTypes">
 		<systemType id="org.eclipse.rse.examples.daytime.systemtype"
+		  label="%DaytimeSystemLabel"
 			name="Daytime"
 			description="%DaytimeSystemDescription"
 			icon="icons/full/obj16/daytime_obj.gif"

@@ -38,6 +38,9 @@ public abstract class RSEAbstractNewConnectionWizard extends Wizard implements I
 	public RSEAbstractNewConnectionWizard() {
 		systemType = null;
 		isBusy = false;
+		
+		setNeedsProgressMonitor(true);
+		setForcePreviousAndNextButtons(true);
 	}
 	
 	/* (non-Javadoc)

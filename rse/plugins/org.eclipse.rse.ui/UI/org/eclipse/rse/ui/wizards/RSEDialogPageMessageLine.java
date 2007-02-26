@@ -77,14 +77,7 @@ public class RSEDialogPageMessageLine implements ISystemMessageLine {
 	 */
 	public void setErrorMessage(String message) {
 		assert page != null;
-		// Per Eclipse UI style, wizard pager should never start with errors!
-		if (message != null && message.toLowerCase().startsWith("please enter")) { //$NON-NLS-1$
-			errorSystemMessage = null;
-			page.setErrorMessage(null);
-			setMessage(message);
-		} else {
-			page.setErrorMessage(message);
-		}
+		page.setErrorMessage(message);
 	}
 
 	/* (non-Javadoc)

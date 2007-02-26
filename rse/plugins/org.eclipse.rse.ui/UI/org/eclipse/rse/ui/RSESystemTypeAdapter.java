@@ -136,7 +136,7 @@ public class RSESystemTypeAdapter extends RSEAdapter implements IRSESystemTypeCo
 	public String getLabel(Object object) {
 
 		if ((object != null) && (object instanceof IRSESystemType)) {
-			return ((IRSESystemType)object).getName();
+			return ((IRSESystemType)object).getLabel();
 		}
 		else {
 			return super.getLabel(object);

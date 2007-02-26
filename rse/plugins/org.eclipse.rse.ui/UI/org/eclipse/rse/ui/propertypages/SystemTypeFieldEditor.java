@@ -362,7 +362,7 @@ public class SystemTypeFieldEditor extends FieldEditor
 		Object value = ""; //$NON-NLS-1$
 		
 		if (property.equals(P_NAME))
-			value = row.getName();
+			value = row.getLabel();
 		else if (property.equals(P_ENABLED))
 			value = (adapter.isEnabled(row) ? new Integer(0) : new Integer(1));
 		else if (property.equals(P_USERID))
@@ -399,7 +399,7 @@ public class SystemTypeFieldEditor extends FieldEditor
 		else
 			return;
 		
-		keyValues.put(row.getName(), "");		 //$NON-NLS-1$
+		keyValues.put(row.getLabel(), "");		 //$NON-NLS-1$
 		tableViewer.update(row, null);
 	}
 
@@ -424,7 +424,7 @@ public class SystemTypeFieldEditor extends FieldEditor
 		RSESystemTypeAdapter adapter = (RSESystemTypeAdapter)(currType.getAdapter(IRSESystemType.class));
 
 		if (columnIndex == COLUMN_NAME)
-			return currType.getName();
+			return currType.getLabel();
 		else if (columnIndex == COLUMN_ENABLED)
 			return Boolean.toString(adapter.isEnabled(currType));
 		else if (columnIndex == COLUMN_USERID)

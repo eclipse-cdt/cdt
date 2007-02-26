@@ -19,8 +19,10 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.wizard.IWizard;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.rse.core.IRSESystemType;
@@ -143,7 +145,17 @@ public class SystemNewConnectionAction extends SystemBaseWizardAction {
 		// on as well to the new connection wizard.
 		newConnWizard.setConnectionContext(connectionContext); 
 		
-		return newConnWizard.isRestrictedToSingleSystemType() ? newConnWizard.getSelectedWizard() : newConnWizard;
+		// If the wizard is restricted to only one system type, the main wizard has to be skipped
+		// and the dialog needs to be initialized directly with the selected wizard.
+		if (newConnWizard.isRestrictedToSingleSystemType()) {
+			IWizard wizard = newConnWizard.getSelectedWizard();
+			if (wizard instanceof ISelectionChangedListener) {
+				((ISelectionChangedListener)wizard).selectionChanged(new SelectionChangedEvent(newConnWizard, newConnWizard.getSelection()));
+			}
+			return wizard;
+		}
+		
+		return newConnWizard;
 	}
 
 	/* (non-Javadoc)

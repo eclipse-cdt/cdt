@@ -40,14 +40,14 @@ public class CompletionTest_FunctionReference_Prefix  extends CompletionProposal
 			"xSecondEnum",
 			"xThirdEnum",
 			"xEnumeration",
-			/* FIXME: DOM search is currently case sensitive? */
-			"XMacro(x,y)"
+			"XMacro(x, y)",
+			"XStruct"
 	};
 	
 	public CompletionTest_FunctionReference_Prefix(String name) {
 		super(name);
 		// see https://bugs.eclipse.org/bugs/show_bug.cgi?id=109724
-		setExpectFailure(109724);
+		//setExpectFailure(109724);
 	}
 	
 	public static Test suite() {

@@ -31,7 +31,6 @@ public class CompletionTest_NewTypeReference_Prefix  extends CompletionProposals
 			"aClass",
 			"anotherClass",
 			"aNamespace",
-			// missing proposal:
 			"AStruct"
 			// extra proposal:
 			// anEnumeration

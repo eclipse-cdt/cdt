@@ -38,7 +38,6 @@ public class CompletionTest_SingleName_Method_Prefix	  extends CompletionProposa
 			"aFirstEnum",
 			"aSecondEnum",
 			"aThirdEnum",
-			// missing proposals:
 			"AStruct",
 			"AMacro(x)"
 	};

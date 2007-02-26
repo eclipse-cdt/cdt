@@ -139,12 +139,12 @@ public class DOMCompletionProposalComputer extends ParsingBasedProposalComputer 
 		IASTPreprocessorMacroDefinition[] macros = completionNode.getTranslationUnit().getMacroDefinitions();
 		if (macros != null)
 			for (int i = 0; i < macros.length; ++i)
-				if (CharArrayUtils.equals(macros[i].getName().toCharArray(), 0, prefixChars.length, prefixChars, false))
+				if (CharArrayUtils.equals(macros[i].getName().toCharArray(), 0, prefixChars.length, prefixChars, true))
 					handleMacro(macros[i], context, proposals);
 		macros = completionNode.getTranslationUnit().getBuiltinMacroDefinitions();
 		if (macros != null)
 			for (int i = 0; i < macros.length; ++i)
-				if (CharArrayUtils.equals(macros[i].getName().toCharArray(), 0, prefixChars.length, prefixChars, false))
+				if (CharArrayUtils.equals(macros[i].getName().toCharArray(), 0, prefixChars.length, prefixChars, true))
 					handleMacro(macros[i], context, proposals);
 	}
 	

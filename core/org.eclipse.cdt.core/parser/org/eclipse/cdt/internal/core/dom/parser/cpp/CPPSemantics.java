@@ -1844,7 +1844,7 @@ public class CPPSemantics {
 	    }
 	    char[] c = potential.toCharArray();
 	    char [] n = data.name();
-	    return (data.prefixLookup && CharArrayUtils.equals(c, 0, n.length, n, false))
+	    return (data.prefixLookup && CharArrayUtils.equals(c, 0, n.length, n, true))
 			|| (!data.prefixLookup && CharArrayUtils.equals(c, n));
 	}
 	

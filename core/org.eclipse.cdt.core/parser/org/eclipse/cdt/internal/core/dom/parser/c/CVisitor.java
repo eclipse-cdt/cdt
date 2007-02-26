@@ -616,7 +616,7 @@ public class CVisitor {
 		            char [] p = fieldReference.getFieldName().toCharArray();
                     IField [] fields = ((ICompositeType) type).getFields();
                     for ( int i = 0; i < fields.length; i++ ) {
-                        if( CharArrayUtils.equals( fields[i].getNameCharArray(), 0, p.length, p, false ) ){
+                        if( CharArrayUtils.equals( fields[i].getNameCharArray(), 0, p.length, p, true ) ){
                             result = (IBinding[]) ArrayUtil.append( IBinding.class, result, fields[i] );
                         }
                     }
@@ -1446,7 +1446,7 @@ public class CVisitor {
 	    char [] c = candidate.toCharArray();
         if( prefixMap == null && CharArrayUtils.equals( c, name ) ){
             return candidate;
-        } else if( prefixMap != null && CharArrayUtils.equals( c, 0, name.length, name, false ) && !prefixMap.containsKey( c ) ){
+        } else if( prefixMap != null && CharArrayUtils.equals( c, 0, name.length, name, true ) && !prefixMap.containsKey( c ) ){
 	        prefixMap.put( c, candidate );
 	    }
         return prefixMap;
@@ -1468,7 +1468,7 @@ public class CVisitor {
 		    char [] n = name.toCharArray();
 		    if( prefixMap == null && CharArrayUtils.equals( c, n ) )
 		        return tempName;
-		    else if( prefixMap != null && CharArrayUtils.equals( c, 0, n.length, n, false ) && !prefixMap.containsKey( c ) )
+		    else if( prefixMap != null && CharArrayUtils.equals( c, 0, n.length, n, true ) && !prefixMap.containsKey( c ) )
 		        prefixMap.put( c, tempName );
 		} else {
 		    return checkForBinding( scope, paramDecl.getDeclSpecifier(), name, typesOnly, prefixMap );
@@ -1994,7 +1994,7 @@ public class CVisitor {
 	                ILabel label = labels[i];
 	                if (prefixLookup) {
 	                	if (CharArrayUtils.equals(label.getNameCharArray(),
-	                			0, n.length, n, false)) {
+	                			0, n.length, n, true)) {
 	                		b3.add(label);
 	                	}
 	                } else {

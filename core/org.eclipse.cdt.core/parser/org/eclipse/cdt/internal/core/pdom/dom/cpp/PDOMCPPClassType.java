@@ -37,7 +37,6 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.index.IIndexBinding;
-import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.internal.core.Util;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPClassScope;
@@ -46,10 +45,10 @@ import org.eclipse.cdt.internal.core.index.IIndexScope;
 import org.eclipse.cdt.internal.core.index.IIndexType;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.db.PDOMNodeLinkedList;
+import org.eclipse.cdt.internal.core.pdom.dom.BindingCollector;
 import org.eclipse.cdt.internal.core.pdom.dom.IPDOMMemberOwner;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMLinkage;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMName;
-import org.eclipse.cdt.internal.core.pdom.dom.PDOMNamedNode;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
 import org.eclipse.core.runtime.CoreException;
 
@@ -366,30 +365,6 @@ ICPPClassScope, IPDOMMemberOwner, IIndexType, IIndexScope {
 		return true;
 	}
 
-	private static class BindingCollector implements IPDOMVisitor {
-		private List fBindings = new ArrayList();
-		private char[] fName;
-		
-		public BindingCollector(char[] name) {
-			fName= name;
-		}
-		
-		public boolean visit(IPDOMNode node) throws CoreException {
-			if (node instanceof PDOMNamedNode && node instanceof IBinding) {
-				PDOMNamedNode nn= (PDOMNamedNode) node;
-				if (nn.getDBName().equals(fName)) {
-					fBindings.add(node);
-				}
-			}
-			return false;
-		}
-		public void leave(IPDOMNode node) throws CoreException {
-		}
-		public IBinding[] getBindings() {
-			return (IBinding[])fBindings.toArray(new IBinding[fBindings.size()]);
-		}
-	}
-
 	public IBinding getBinding(IASTName name, boolean resolve) throws DOMException {
 		try {
 		    if (getDBName().equals(name.toCharArray())) {
@@ -400,40 +375,13 @@ ICPPClassScope, IPDOMMemberOwner, IIndexType, IIndexScope {
 	            return this;
 		    }
 			
-			BindingCollector visitor= new BindingCollector(name.toCharArray());
+		    BindingCollector visitor = new BindingCollector(getLinkageImpl(), name.toCharArray());
 			accept(visitor);
 			return CPPSemantics.resolveAmbiguities(name, visitor.getBindings());
 		} catch (CoreException e) {
 			CCorePlugin.log(e);
 		}
 		return null;
-	}
-
-	private static class BindingFinder implements IPDOMVisitor {
-		private List fBindings = new ArrayList();
-		private char[] fName;
-		private boolean fPrefixLookup;
-		
-		public BindingFinder(char[] name, boolean prefiexLookup) {
-			fName= name;
-			fPrefixLookup= prefiexLookup;
-		}
-		
-		public boolean visit(IPDOMNode node) throws CoreException {
-			if (node instanceof PDOMNamedNode && node instanceof IBinding) {
-				char[] n= ((PDOMNamedNode) node).getDBName().getChars();
-				if ((fPrefixLookup && CharArrayUtils.equals(n, 0, fName.length, fName, false))
-						|| (!fPrefixLookup && CharArrayUtils.equals(n, fName))) {
-					fBindings.add(node);
-				}
-			}
-			return false;
-		}
-		public void leave(IPDOMNode node) throws CoreException {
-		}
-		public IBinding[] getBindings() {
-			return (IBinding[])fBindings.toArray(new IBinding[fBindings.size()]);
-		}
 	}
 	
 	public IBinding[] find(String name) throws DOMException {
@@ -442,7 +390,7 @@ ICPPClassScope, IPDOMMemberOwner, IIndexType, IIndexScope {
 	
 	public IBinding[] find(String name, boolean prefixLookup) throws DOMException {
 		try {
-			BindingFinder visitor= new BindingFinder(name.toCharArray(), prefixLookup);
+			BindingCollector visitor = new BindingCollector(getLinkageImpl(), name.toCharArray(), null, prefixLookup, !prefixLookup);
 			acceptInHierarchy(new HashSet(), visitor);
 			return visitor.getBindings();
 		} catch (CoreException e) {

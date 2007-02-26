@@ -319,7 +319,7 @@ public class CPPClassScope extends CPPScope implements ICPPClassScope {
 	    IBinding[] results = null;
 	    results = (IBinding[]) ArrayUtil.addAll( IBinding.class, results, super.find( name, prefixLookup ));
 
-	    if((prefixLookup && CharArrayUtils.equals(compName.toCharArray(), 0, n.length, n, false))
+	    if((prefixLookup && CharArrayUtils.equals(compName.toCharArray(), 0, n.length, n, true))
 	    		|| (!prefixLookup && CharArrayUtils.equals(compName.toCharArray(), n))) {
 	        results = (IBinding[]) ArrayUtil.addAll( IBinding.class, results, getConstructors( bindings, true ) );
 	    }

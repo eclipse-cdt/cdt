@@ -369,7 +369,7 @@ public class CPPASTQualifiedName extends CPPASTNode implements
 	
 	private boolean nameMatches(char[] potential, char[] name, boolean isPrefix) {
 		if (isPrefix) {
-			return CharArrayUtils.equals(potential, 0, name.length, name, false);
+			return CharArrayUtils.equals(potential, 0, name.length, name, true);
 		} else {
 			return CharArrayUtils.equals(potential, name);
 		}

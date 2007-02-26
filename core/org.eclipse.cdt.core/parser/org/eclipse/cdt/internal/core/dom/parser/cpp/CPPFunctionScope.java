@@ -89,7 +89,7 @@ public class CPPFunctionScope extends CPPScope implements ICPPFunctionScope {
 	    
 	    for (int i = 0; i < labels.size(); i++) {
 	    	char[] key = labels.keyAt(i);
-	    	if ((prefixLookup && CharArrayUtils.equals(key, 0, n.length, n, false))
+	    	if ((prefixLookup && CharArrayUtils.equals(key, 0, n.length, n, true))
 		    		|| (!prefixLookup && CharArrayUtils.equals(key, n))) {
 	    		bindings.add(labels.get(key));
 	    	}

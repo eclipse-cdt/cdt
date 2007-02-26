@@ -107,7 +107,7 @@ class PDOMCPPNamespace extends PDOMCPPBinding implements ICPPNamespace, ICPPName
 	
 	public IBinding[] find(String name, boolean prefixLookup) {
 		try {
-			BindingCollector visitor = new BindingCollector(getLinkageImpl(), name.toCharArray(), null, prefixLookup, true);
+			BindingCollector visitor = new BindingCollector(getLinkageImpl(), name.toCharArray(), null, prefixLookup, !prefixLookup);
 			getIndex().accept(visitor);
 			return visitor.getBindings();
 		} catch (CoreException e) {

@@ -32,6 +32,7 @@ public class ManagedCommandLineGenerator implements
 	public final String WHITESPACE = " ";	//$NON-NLS-1$
 	public final String WILDCARD = "%";	//$NON-NLS-1$
 	public final String UNDERLINE = "_"; //$NON-NLS-1$
+	public final String EMPTY = ""; //$NON-NLS-1$
 	
 	public final String VAR_FIRST_CHAR = "$"; //$NON-NLS-1$
 	public final char VAR_SECOND_CHAR = '{'; //$NON-NLS-1$
@@ -92,9 +93,9 @@ public class ManagedCommandLineGenerator implements
 					else if( varName.compareToIgnoreCase( OUTPUT_PREFIX_PRM_NAME ) == 0 ) sb.append( outputPrefix.trim() );
 					else if( varName.compareToIgnoreCase( OUTPUT_PRM_NAME ) == 0 )
 						{
-							StringBuffer tempBuffer = new StringBuffer("");
+							StringBuffer tempBuffer = new StringBuffer(EMPTY);
 						
-							if(!outputName.equals("")) //$NON-NLS-1$
+							if(!outputName.equals(EMPTY))
 							{
 //								 if the output name isn't a variable then quote it
 								if(outputName.indexOf("$(") != 0) //$NON-NLS-1$
@@ -105,11 +106,12 @@ public class ManagedCommandLineGenerator implements
 							
 							sb.append(tempBuffer.toString().trim());
 						}
-					else if( varName.compareToIgnoreCase( INPUTS_PRM_NAME ) == 0 ){
-						StringBuffer tempBuffer = new StringBuffer("");  //$NON-NLS-1$
+					else if( varName.compareToIgnoreCase( INPUTS_PRM_NAME ) == 0 && 
+							(inputResources != null)){
+						StringBuffer tempBuffer = new StringBuffer(EMPTY);
 						for(int k = 0; k < inputResources.length; k++)
 						{
-							if(!inputResources[k].equals("")) //$NON-NLS-1$
+							if(!inputResources[k].equals(EMPTY))
 							{
 								// if the input resource isn't a variable then quote it
 								if(inputResources[k].indexOf("$(") != 0) //$NON-NLS-1$

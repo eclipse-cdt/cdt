@@ -67,7 +67,6 @@ public abstract class AbstractCExtensionProxy implements ICProjectDescriptionLis
 
 		synchronized(this){
 			if(recreate || rescan || !fInited){
-				fInited = true;
 				ICExtensionReference ref = null;
 				boolean newStile = true;
 				ICConfigurationDescription cfg = null;
@@ -111,6 +110,8 @@ public abstract class AbstractCExtensionProxy implements ICProjectDescriptionLis
 					
 					initializeProvider(fProvider);
 				}
+				
+				fInited = true;
 			}
 		}
 		

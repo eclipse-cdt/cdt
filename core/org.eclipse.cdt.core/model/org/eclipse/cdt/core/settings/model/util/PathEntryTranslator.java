@@ -766,44 +766,61 @@ public class PathEntryTranslator {
 			return new IPath[0];
 		}
 
-		private IPath getEntryPath(ICSettingEntry entry){
+		private IPath[] getEntryPath(ICSettingEntry entry){
 			return valueToEntryPath(entry.getName(), (entry.getFlags() & ICSettingEntry.VALUE_WORKSPACE_PATH) != 0);
 		}
 
-		private IPath valueToEntryPath(String value, boolean isWsp){
+		private IPath[] valueToEntryPath(String value, boolean isWsp){
 			IPath path = new Path(value);
+			IPath result[] = new IPath[2];
 			if(isWsp){
 				if(!path.isAbsolute()){
+					result[0] = fProject.getFullPath().makeRelative();
+					result[1] = path;
 					path = fProject.getFullPath().append(path);
+				} else {
+					if(path.segmentCount() != 0){
+						result[0] = new Path(path.segment(0));
+						result[1] = path.removeFirstSegments(1).makeRelative();
+					}
 				}
-				path = path.makeRelative();
+//				path = path.makeRelative();
 			} else {
 				if(!path.isAbsolute()){
 					IPath location = fProject.getLocation();
 					if(location != null)
 						path = location.append(path);
 				}
+				result[1] = path;
 			}
 			
-			return path;
+			return result;
 		}
 		
 		public IPathEntry toPathEntry(){
 			if(fLangEntry != null){
 				switch(fLangEntry.getKind()){
-				case ICLanguageSettingEntry.INCLUDE_FILE:
-					return CoreModel.newIncludeFileEntry(fPath, null, null, getEntryPath(fLangEntry), getExclusionPatterns(), fIsExported);
-				case ICLanguageSettingEntry.INCLUDE_PATH:
-					ICIncludePathEntry ipe = (ICIncludePathEntry)fLangEntry;
-					return CoreModel.newIncludeEntry(fPath, null, getEntryPath(fLangEntry), !ipe.isLocal(), getExclusionPatterns(), fIsExported);
+				case ICLanguageSettingEntry.INCLUDE_FILE:{
+						IPath paths[] = getEntryPath(fLangEntry);
+						return CoreModel.newIncludeFileEntry(fPath, null, paths[0], paths[1], getExclusionPatterns(), fIsExported);
+					}
+				case ICLanguageSettingEntry.INCLUDE_PATH:{
+						IPath paths[] = getEntryPath(fLangEntry);
+						ICIncludePathEntry ipe = (ICIncludePathEntry)fLangEntry;
+						return CoreModel.newIncludeEntry(fPath, paths[0], paths[1], !ipe.isLocal(), getExclusionPatterns(), fIsExported);
+					}
 				case ICLanguageSettingEntry.MACRO:
 					return CoreModel.newMacroEntry(fPath, fLangEntry.getName(), fLangEntry.getValue(), getExclusionPatterns(), fIsExported);
-				case ICLanguageSettingEntry.MACRO_FILE:
-					return CoreModel.newMacroFileEntry(fPath, null, null, getEntryPath(fLangEntry), getExclusionPatterns(), fIsExported);
+				case ICLanguageSettingEntry.MACRO_FILE:{
+						IPath paths[] = getEntryPath(fLangEntry);
+						return CoreModel.newMacroFileEntry(fPath, paths[0], null, paths[1], getExclusionPatterns(), fIsExported);
+					}
 				case ICLanguageSettingEntry.LIBRARY_PATH:
 					return null;
-				case ICLanguageSettingEntry.LIBRARY_FILE:
-					return CoreModel.newLibraryEntry(fPath, null, getEntryPath(fLangEntry), null, null, null, fIsExported);
+				case ICLanguageSettingEntry.LIBRARY_FILE:{
+						IPath paths[] = getEntryPath(fLangEntry);
+						return CoreModel.newLibraryEntry(fPath, paths[0], paths[1], null, null, null, fIsExported);
+					}
 				case ICLanguageSettingEntry.OUTPUT_PATH:
 					return CoreModel.newOutputEntry(fPath, getExclusionPatterns());
 				case ICLanguageSettingEntry.SOURCE_PATH:

@@ -79,9 +79,6 @@ RSE pre-defines a number of system types, although they may not appear unless a 
 &lt;/ul&gt;
 &lt;/p&gt;
                </documentation>
-               <appInfo>
-                  <meta.attribute deprecated="true"/>
-               </appInfo>
             </annotation>
          </attribute>
          <attribute name="label" type="string" use="required">

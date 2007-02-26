@@ -37,7 +37,7 @@ public interface ICSettingEntry {
 	
 	boolean isBuiltIn();
 	
-//	boolean isResolved();
+	boolean isResolved();
 	
 	boolean equalsByName(ICLanguageSettingEntry entry);
 

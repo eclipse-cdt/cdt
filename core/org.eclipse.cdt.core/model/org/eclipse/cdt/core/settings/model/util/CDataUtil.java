@@ -15,6 +15,19 @@ import java.util.List;
 import java.util.Random;
 import java.util.StringTokenizer;
 
+import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.cdtvariables.CdtVariableException;
+import org.eclipse.cdt.core.cdtvariables.ICdtVariableManager;
+import org.eclipse.cdt.core.settings.model.CIncludeFileEntry;
+import org.eclipse.cdt.core.settings.model.CIncludePathEntry;
+import org.eclipse.cdt.core.settings.model.CLibraryFileEntry;
+import org.eclipse.cdt.core.settings.model.CLibraryPathEntry;
+import org.eclipse.cdt.core.settings.model.CMacroEntry;
+import org.eclipse.cdt.core.settings.model.CMacroFileEntry;
+import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
+import org.eclipse.cdt.core.settings.model.ICLanguageSettingEntry;
+import org.eclipse.cdt.core.settings.model.ICSettingEntry;
+
 public class CDataUtil {
 	private static Random randomNumber;
 	public static final String[] EMPTY_STRING_ARRAY = new String[0];
@@ -73,5 +86,56 @@ public class CDataUtil {
 		}
 		return (String[])list.toArray(new String[list.size()]);
 	}
+	
+	public static ICLanguageSettingEntry[] resolveEntries(ICLanguageSettingEntry entries[], ICConfigurationDescription cfgDes){
+		if(entries.length == 0)
+			return entries;
+		
+		ICLanguageSettingEntry[] resolved = new ICLanguageSettingEntry[entries.length];
+		ICdtVariableManager mngr = CCorePlugin.getDefault().getCdtVariableManager();
+
+		for(int i = 0; i < entries.length; i++){
+			ICLanguageSettingEntry entry = entries[i];
+			resolved[i] = createResolvedEntry(entry, cfgDes, mngr);
+		}
+		
+		return resolved;
+	}
+	
+	private static ICLanguageSettingEntry createResolvedEntry(ICLanguageSettingEntry entry, ICConfigurationDescription cfg, ICdtVariableManager mngr){
+		if(entry.isResolved())
+			return entry;
+		
+		String name = entry.getName();
+		try {
+			name = mngr.resolveValue(name, "", " ", cfg);  //$NON-NLS-1$  //$NON-NLS-2$
+		} catch (CdtVariableException e) {
+			CCorePlugin.log(e);
+		}
+		
+		switch (entry.getKind()) {
+		case ICLanguageSettingEntry.INCLUDE_PATH:
+			return new CIncludePathEntry(name, ICSettingEntry.RESOLVED | entry.getFlags());
+		case ICLanguageSettingEntry.INCLUDE_FILE:
+			return new CIncludeFileEntry(name, ICSettingEntry.RESOLVED | entry.getFlags());
+		case ICLanguageSettingEntry.MACRO:
+			String value = entry.getValue();
+			try {
+				value = mngr.resolveValue(value, "", " ", cfg);  //$NON-NLS-1$  //$NON-NLS-2$
+			} catch (CdtVariableException e) {
+				CCorePlugin.log(e);
+			}
+			return new CMacroEntry(name, value, ICSettingEntry.RESOLVED | entry.getFlags());
+		case ICLanguageSettingEntry.MACRO_FILE:
+			return new CMacroFileEntry(name, ICSettingEntry.RESOLVED | entry.getFlags());
+		case ICLanguageSettingEntry.LIBRARY_PATH:
+			return new CLibraryPathEntry(name, ICSettingEntry.RESOLVED | entry.getFlags());
+		case ICLanguageSettingEntry.LIBRARY_FILE:
+			return new CLibraryFileEntry(name, ICSettingEntry.RESOLVED | entry.getFlags());
+		default:
+			throw new IllegalArgumentException();
+		}
+	}
+
 
 }

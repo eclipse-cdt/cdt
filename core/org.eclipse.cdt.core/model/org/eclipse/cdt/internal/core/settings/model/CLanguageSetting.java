@@ -20,8 +20,8 @@ import org.eclipse.cdt.core.settings.model.ICLanguageSettingEntry;
 import org.eclipse.cdt.core.settings.model.ICSettingBase;
 import org.eclipse.cdt.core.settings.model.extension.CLanguageData;
 import org.eclipse.cdt.core.settings.model.extension.impl.CDefaultLanguageData;
+import org.eclipse.cdt.core.settings.model.util.CDataUtil;
 import org.eclipse.cdt.core.settings.model.util.EntryStore;
-import org.eclipse.cdt.core.settings.model.util.KindBasedStore;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ProjectScope;
 import org.eclipse.core.runtime.Platform;
@@ -380,8 +380,9 @@ public class CLanguageSetting extends CDataProxy implements
 //	}
 
 	public ICLanguageSettingEntry[] getResolvedSettingEntries(int kind) {
-		// TODO Auto-generated method stub
-		return getSettingEntries(kind);
+		ICLanguageSettingEntry entries[] = getSettingEntries(kind);
+		entries = CDataUtil.resolveEntries(entries, getConfiguration());
+		return entries;
 	}
 
 	public void setSourceContentTypeIds(String[] ids) {

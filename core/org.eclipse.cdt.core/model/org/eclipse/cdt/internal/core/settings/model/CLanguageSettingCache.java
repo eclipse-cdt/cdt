@@ -19,10 +19,14 @@ import org.eclipse.cdt.core.settings.model.ICResourceDescription;
 import org.eclipse.cdt.core.settings.model.ICSettingContainer;
 import org.eclipse.cdt.core.settings.model.extension.CLanguageData;
 import org.eclipse.cdt.core.settings.model.extension.impl.CDefaultLanguageData;
+import org.eclipse.cdt.core.settings.model.util.CDataUtil;
+import org.eclipse.cdt.core.settings.model.util.EntryStore;
 
 public class CLanguageSettingCache extends CDefaultLanguageData implements
 		ICLanguageSetting, ICachedData {
 	private ICResourceDescription fParent;
+	protected EntryStore fResolvedEntriesStore;
+
 	public CLanguageSettingCache(CLanguageData base, CFolderDescriptionCache folderCache) {
 		fId = base.getId();
 		fParent = folderCache;
@@ -41,10 +45,24 @@ public class CLanguageSettingCache extends CDefaultLanguageData implements
 	}
 */
 	public ICLanguageSettingEntry[] getResolvedSettingEntries(int kind) {
-		// TODO Auto-generated method stub
-		return getSettingEntries(kind);
+		ICLanguageSettingEntry[] entries = getSettingEntries(kind);
+		if(entries.length != 0){
+			if(fResolvedEntriesStore == null){
+				fResolvedEntriesStore = new EntryStore();
+			}
+			
+			ICLanguageSettingEntry[] resolved = fResolvedEntriesStore.getEntries();
+			if(resolved.length == 0){
+				resolved = CDataUtil.resolveEntries(entries, getConfiguration());
+				fResolvedEntriesStore.storeEntries(kind, resolved);
+			}
+			
+			entries = resolved;
+		}
+		return entries;
 	}
-
+	
+	
 	public ICLanguageSettingEntry[] getSettingEntries(int kind) {
 //		int kinds[] = KindBasedStore.getSupportedKinds();
 //		List list = new ArrayList();

@@ -58,13 +58,11 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 
 public class IndexBugsTests extends BaseTestCase {
 	private static final int INDEX_WAIT_TIME = 8000;
-	private static final IProgressMonitor NPM = new NullProgressMonitor();
 	private ICProject fCProject;
 	protected IIndex fIndex;
 

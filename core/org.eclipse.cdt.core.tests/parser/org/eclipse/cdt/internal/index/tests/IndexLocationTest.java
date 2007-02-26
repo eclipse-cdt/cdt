@@ -22,14 +22,20 @@ import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.IPDOMManager;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.index.IIndex;
+import org.eclipse.cdt.core.index.IIndexFileLocation;
 import org.eclipse.cdt.core.index.IIndexName;
 import org.eclipse.cdt.core.index.IndexFilter;
+import org.eclipse.cdt.core.index.IndexLocationFactory;
+import org.eclipse.cdt.core.index.ProjectRelativeLocationConverter;
+import org.eclipse.cdt.core.index.URIRelativeLocationConverter;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.testplugin.CProjectHelper;
 import org.eclipse.cdt.core.testplugin.CTestPlugin;
 import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
 import org.eclipse.cdt.core.testplugin.util.TestSourceReader;
 import org.eclipse.core.commands.ExecutionException;
+import org.eclipse.core.filesystem.URIUtil;
+import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -39,7 +45,7 @@ import org.eclipse.core.runtime.Path;
 import org.osgi.framework.Bundle;
 
 public class IndexLocationTest extends BaseTestCase {
-	ICProject cproject;
+	ICProject cproject, emptyCProject;
 	File movedLocation;
 	File externalHeader;
 	
@@ -49,7 +55,8 @@ public class IndexLocationTest extends BaseTestCase {
 
 	protected void setUp() throws Exception {
 		cproject= CProjectHelper.createCProject("LocationTests", "bin", IPDOMManager.ID_NO_INDEXER);
-
+		emptyCProject= CProjectHelper.createCProject("Empty", "bin", IPDOMManager.ID_NO_INDEXER);
+		
 		Bundle b = CTestPlugin.getDefault().getBundle();
 		StringBuffer[] testData = TestSourceReader.getContentsForTest(b, "parser", getClass(), getName(), 3);
 
@@ -76,6 +83,9 @@ public class IndexLocationTest extends BaseTestCase {
 	protected void tearDown() throws Exception {
 		if (cproject != null) {
 			cproject.getProject().delete(IResource.FORCE | IResource.ALWAYS_DELETE_PROJECT_CONTENT, new NullProgressMonitor());
+		}
+		if (emptyCProject != null) {
+			emptyCProject.getProject().delete(IResource.FORCE | IResource.ALWAYS_DELETE_PROJECT_CONTENT, new NullProgressMonitor());
 		}
 		movedLocation.delete();
 		externalHeader.delete();
@@ -144,6 +154,85 @@ public class IndexLocationTest extends BaseTestCase {
 		}
 		finally {
 			index.releaseReadLock();
+		}
+	}
+	
+	public void testProjectRelativeLocationConverter() throws Exception {
+		String[] paths = new String[] {"this.cpp", "inc/header.h", "a b c/d/e f/g.h", "a \\b /c.d"};
+		for(int i=0; i<paths.length; i++) {
+			IFile file= cproject.getProject().getFile(paths[i]);
+			IIndexFileLocation ifl1= IndexLocationFactory.getWorkspaceIFL(file);
+			ProjectRelativeLocationConverter prlc1= new ProjectRelativeLocationConverter(cproject);
+			String r1= prlc1.toInternalFormat(ifl1);
+			assertNotNull(r1);
+			ProjectRelativeLocationConverter prlc2= new ProjectRelativeLocationConverter(emptyCProject);
+			IIndexFileLocation ifl2= prlc2.fromInternalFormat(r1);
+			assertNotNull(ifl2);
+			assertEquals(
+				new Path(ifl1.getFullPath()).removeFirstSegments(1),
+				new Path(ifl2.getFullPath()).removeFirstSegments(1)
+			);
+		}
+	}
+	
+	public void testURLC_PRLC_Interaction1() throws Exception {
+		String[] paths = new String[] {
+				"c:/foo/bar/baz.cpp",
+				"c:\\foo\\bar\\a b c\\baz.cpp",
+				"c:/foo/bar/a b/baz.cpp",
+				"c:\\foo\\bar\\a b c\\a b/baz.cpp"
+			};
+		String[] expectedFullPaths = new String[] {
+				"/"+cproject.getProject().getName()+"/baz.cpp",
+				"/"+cproject.getProject().getName()+"/a b c/baz.cpp",
+				"/"+cproject.getProject().getName()+"/a b/baz.cpp",
+				"/"+cproject.getProject().getName()+"/a b c/a b/baz.cpp"
+		};
+		IContainer root= ResourcesPlugin.getWorkspace().getRoot();
+		// loc -uri-> raw -project-> loc
+		for(int i=0; i<paths.length; i++) {
+			URI base = URIUtil.toURI("c:/foo/bar/");
+			IIndexFileLocation ifl1 = IndexLocationFactory.getExternalIFL(paths[i]);
+			URIRelativeLocationConverter urlc = new URIRelativeLocationConverter(base);
+			String r1 = urlc.toInternalFormat(ifl1);
+			assertNotNull(r1);
+			ProjectRelativeLocationConverter prlc= new ProjectRelativeLocationConverter(cproject);
+			IIndexFileLocation ifl2= prlc.fromInternalFormat(r1);
+			String r2= prlc.toInternalFormat(ifl2);
+			assertNotNull(r2);
+			assertNull(ifl1.getFullPath());
+			assertEquals(expectedFullPaths[i], ifl2.getFullPath());
+			assertEquals(URIUtil.toURI(paths[i]).normalize(), ifl1.getURI());
+			assertEquals(root.getFile(new Path(expectedFullPaths[i])).getLocationURI(), ifl2.getURI());
+		}
+	}
+	
+	public void testURLC_PRLC_Interaction2() throws Exception {
+		String[] paths = new String[] {
+				"a b c/d/e f/g.h",
+				"a \\b /c.d",
+				"/a b c/d-e/f.g"
+			};
+		String[] expectedFullPaths = new String[] {
+				"/"+cproject.getProject().getName()+"/a b c/d/e f/g.h",
+				"/"+cproject.getProject().getName()+"/a /b /c.d",
+				"/"+cproject.getProject().getName()+"/a b c/d-e/f.g"
+		};
+		// loc -project-> raw -uri-> loc
+		for(int i=0; i<paths.length; i++) {
+			IFile file= cproject.getProject().getFile(paths[i]);
+			IIndexFileLocation ifl1= IndexLocationFactory.getWorkspaceIFL(file);
+			ProjectRelativeLocationConverter prlc= new ProjectRelativeLocationConverter(cproject);
+			String r1= prlc.toInternalFormat(ifl1);
+			assertNotNull(r1);
+			URI base = URIUtil.toURI("c:/foo/bar/");
+			URIRelativeLocationConverter c1 = new URIRelativeLocationConverter(base);
+			IIndexFileLocation ifl2= c1.fromInternalFormat(r1);
+			assertNotNull(ifl2);
+			assertEquals(expectedFullPaths[i], ifl1.getFullPath());
+			assertNull(ifl2.getFullPath());
+			assertEquals(cproject.getProject().getFile(paths[i]).getLocationURI(), ifl1.getURI());
+			assertEquals(URIUtil.toURI("c:/foo/bar/"+paths[i]).normalize(), ifl2.getURI());
 		}
 	}
 }

@@ -32,12 +32,9 @@ import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 
 public class EnclosingNamesTest extends BaseTestCase {
-	private static final IProgressMonitor NPM = new NullProgressMonitor();
 	private ICProject fCProject;
 	protected IIndex fIndex;
 

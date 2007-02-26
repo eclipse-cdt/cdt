@@ -37,11 +37,9 @@ import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 
 public class IndexIncludeTest extends IndexTestBase {
-	private static final IProgressMonitor NPM= new NullProgressMonitor();
 
 	public static TestSuite suite() {
 		TestSuite suite= suite(IndexIncludeTest.class, "_");

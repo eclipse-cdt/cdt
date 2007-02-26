@@ -28,11 +28,9 @@ import org.eclipse.cdt.core.testplugin.CProjectHelper;
 import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
 import org.eclipse.cdt.core.testplugin.util.TestSourceReader;
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 
 public class IndexListenerTest extends BaseTestCase {
-	private static final IProgressMonitor NPM = new NullProgressMonitor();
 	private ICProject fProject1;
 	private ICProject fProject2;
 

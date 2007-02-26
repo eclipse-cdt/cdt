@@ -15,6 +15,9 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.Vector;
 
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.NullProgressMonitor;
+
 import junit.framework.AssertionFailedError;
 import junit.framework.Test;
 import junit.framework.TestCase;
@@ -23,6 +26,8 @@ import junit.framework.TestResult;
 import junit.framework.TestSuite;
 
 public class BaseTestCase extends TestCase {
+	protected static final IProgressMonitor NPM= new NullProgressMonitor();
+
 	private boolean fExpectFailure= false;
 	private int fBugnumber= 0;
 	

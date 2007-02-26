@@ -36,13 +36,10 @@ import org.eclipse.cdt.internal.core.index.CIndex;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.NullProgressMonitor;
 
 public class IndexSearchTest extends IndexTestBase {
 
 	private static final IndexFilter INDEX_FILTER = new IndexFilter();
-	private static final IProgressMonitor NPM= new NullProgressMonitor();
 
 	public static TestSuite suite() {
 		TestSuite suite= suite(IndexSearchTest.class, "_");

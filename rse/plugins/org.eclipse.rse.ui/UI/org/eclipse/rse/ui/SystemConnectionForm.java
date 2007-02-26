@@ -1049,8 +1049,7 @@ public class SystemConnectionForm implements Listener, IRSEUserIdConstants, Sele
 		final String hostName = textHostName.getText().trim();
 
 		// d43191
-		if (connectionNameEmpty)
-			internalSetConnectionName(hostName);
+		if (connectionNameEmpty && contentsCreated) internalSetConnectionName(hostName);
 
 		errorMessage = null;
 

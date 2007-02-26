@@ -696,7 +696,7 @@ public class BasicCallHierarchyTest extends CallHierarchyBaseTest {
 	}
 	
 	
-	public void _testFunctionsWithParamsC_175267() throws Exception {
+	public void testFunctionsWithParamsC_175267() throws Exception {
 		doTestFunctionsWithParams("functionsWithParams.c");
 	}
 

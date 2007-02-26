@@ -37,7 +37,7 @@ public class BuildOptionComboFieldEditor extends FieldEditor {
 	 */
 	public BuildOptionComboFieldEditor (String name, String label, String [] opts, String sel, Composite parent) {
 		init(name, label);
-		options = opts;
+		setOptions(opts);
 		selected = sel;
 		createControl(parent);
 	}
@@ -112,7 +112,7 @@ public class BuildOptionComboFieldEditor extends FieldEditor {
 		label.setLayoutData(labelData);
 		
 		// Now add the combo selector
-		optionSelector = ControlFactory.createSelectCombo(parent, options, selected);
+		optionSelector = ControlFactory.createSelectCombo(parent, getOptions(), selected);
 		GridData selectorData = (GridData) optionSelector.getLayoutData();
 		selectorData.horizontalSpan = numColumns - 1;
 		selectorData.grabExcessHorizontalSpace = true;
@@ -134,7 +134,7 @@ public class BuildOptionComboFieldEditor extends FieldEditor {
 	protected void doLoad() {
 		// set all the options to option selector
 		optionSelector.removeAll();
-		optionSelector.setItems(options);
+		optionSelector.setItems(getOptions());
 
 		// get the selected option from preference store
 		selected = getPreferenceStore().getString(getPreferenceName());
@@ -204,5 +204,17 @@ public class BuildOptionComboFieldEditor extends FieldEditor {
     public void setEnabled(boolean enabled, Composite parent) {
         getLabelControl(parent).setEnabled(enabled);
         optionSelector.setEnabled(enabled);
+    }
+    /**
+    * Set the list of enum values for this combo field editor
+    */
+    public void setOptions(String[] options){
+    	this.options = options;
+    }
+    /**
+     * Set the list of enum values for this combo field editor
+     */
+    public String[] getOptions(){
+    	return options;
     }
 }

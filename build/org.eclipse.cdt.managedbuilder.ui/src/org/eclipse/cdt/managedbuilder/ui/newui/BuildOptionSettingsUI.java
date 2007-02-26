@@ -323,19 +323,17 @@ public class BuildOptionSettingsUI extends AbstractToolSettingUI {
 			IOption opt = (IOption) options[index][1];
 			String prefName = getToolSettingsPrefStore().getOptionPrefName(opt); 
 
-
 			// is the option on this page?
 			if (fieldsMap.containsKey(prefName)) {
 				// check to see if the option has an applicability calculator
 				IOptionApplicability applicabilityCalculator = opt.getApplicabilityCalculator();
-
+				
 				if (applicabilityCalculator != null) {
 					FieldEditor fieldEditor = (FieldEditor) fieldsMap.get(prefName);
 					Composite parent = (Composite) fieldEditorsToParentMap.get(fieldEditor);
 					setFieldEditorEnablement(holder, opt, applicabilityCalculator, fieldEditor, parent);
 				}
 			}
-
 		}
 		
 		Collection fieldsList = fieldsMap.values();
@@ -422,8 +420,7 @@ public class BuildOptionSettingsUI extends AbstractToolSettingUI {
 					default:
 						break;
 					}
-				} catch (BuildException e) {
-				}
+				} catch (BuildException e) {}
 			}
 		}
 
@@ -439,19 +436,24 @@ public class BuildOptionSettingsUI extends AbstractToolSettingUI {
 			IOption opt = (IOption) options[index][1];
 			String prefName = getToolSettingsPrefStore().getOptionPrefName(opt); 
 
-
 			// is the option on this page?
 			if (fieldsMap.containsKey(prefName)) {
 				// check to see if the option has an applicability calculator
 				IOptionApplicability applicabilityCalculator = opt.getApplicabilityCalculator();
 
+				FieldEditor fieldEditor = (FieldEditor) fieldsMap.get(prefName);
+				try {
+					if ( opt.getValueType() == IOption.ENUMERATED ) {
+						// the item list of this enumerated option may have changed, update it
+						updateEnumList( fieldEditor, opt, holder, fInfo );
+					}
+				} catch ( BuildException be ) {}
+				
 				if (applicabilityCalculator != null) {
-					FieldEditor fieldEditor = (FieldEditor) fieldsMap.get(prefName);
 					Composite parent = (Composite) fieldEditorsToParentMap.get(fieldEditor);
 					setFieldEditorEnablement(holder, opt, applicabilityCalculator, fieldEditor, parent);
 				}
 			}
-
 		}
 		
 		Iterator iter = fieldsMap.values().iterator();
@@ -460,12 +462,75 @@ public class BuildOptionSettingsUI extends AbstractToolSettingUI {
 			if(id == null || !id.equals(editor.getPreferenceName()))
 				editor.load();
 		}
-
 	}
 	
 	public void setValues() {
 		updateFields();
 	}
 
+	/**
+	 * The items shown in an enumerated option may depend on other option values.
+	 * Whenever an option changes, check and update the valid enum values in
+	 * the combo fieldeditor.
+	 * 
+	 * See also https://bugs.eclipse.org/bugs/show_bug.cgi?id=154053
+	 * 
+	 * @param fieldEditor enumerated combo fieldeditor
+	 * @param opt         enumerated option type to update
+	 * @param holder      the option holder
+	 * @param config      project or resource info
+	 * @throws BuildException
+	 */
+	protected void updateEnumList( FieldEditor fieldEditor, IOption opt, IHoldsOptions holder, IResourceInfo config ) throws BuildException
+	{
+		// Get all applicable values for this enumerated Option, and filter out
+		// the disable values
+		String[] enumNames = opt.getApplicableValues();
 
+		// get the currently selected enum value, the updated enum list may not contain
+		// it, in that case a new value has to be selected
+		String selectedEnum = opt.getSelectedEnum();
+		String selectedEnumName = opt.getEnumName(selectedEnum);
+
+		// get the default value for this enumerated option
+		String defaultEnumId = (String)opt.getDefaultValue();
+		String defaultEnumName = opt.getEnumName(defaultEnumId);
+
+		boolean selectNewEnum = true;
+		boolean selectDefault = false;
+
+		Vector enumValidList = new Vector();
+		for (int i = 0; i < enumNames.length; ++i) {
+			if (opt.getValueHandler().isEnumValueAppropriate(config, 
+					opt.getOptionHolder(), opt, opt.getValueHandlerExtraArgument(), enumNames[i])) {
+				if ( selectedEnumName.equals(enumNames[i]) ) {
+					// the currently selected enum is part of the new item list, no need to select a new value.
+					selectNewEnum = false;
+				}
+				if ( defaultEnumName.equals(enumNames[i]) ) {
+					// the default enum value is part of new item list
+					selectDefault = true;
+				}
+				enumValidList.add(enumNames[i]);
+			}
+		}
+		String[] enumValidNames = new String[enumValidList.size()];
+		enumValidList.copyInto(enumValidNames);
+
+		if ( selectNewEnum ) {
+			// apparantly the currently selected enum value is not part anymore of the enum list
+			// select a new value.
+			String selection = null;
+			if ( selectDefault ) {
+				// the default enum value is part of the item list, use it
+				selection = (String)opt.getDefaultValue();
+			} else if ( enumValidNames.length > 0 ) {
+				// select the first item in the item list
+				selection = opt.getEnumeratedId(enumValidNames[0]);
+			}
+			ManagedBuildManager.setOption(config,holder,opt,selection);
+		}
+		((BuildOptionComboFieldEditor)fieldEditor).setOptions(enumValidNames);
+		fieldEditor.load();
+	}
 }

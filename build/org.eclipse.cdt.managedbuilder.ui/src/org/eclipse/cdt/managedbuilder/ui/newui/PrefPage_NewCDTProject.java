@@ -36,4 +36,5 @@ public class PrefPage_NewCDTProject extends AbstractPrefPage {
 		return true;
 	}
 
+	protected boolean needsHeader() { return true; }
 }

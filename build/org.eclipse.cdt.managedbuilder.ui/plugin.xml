@@ -347,9 +347,9 @@
            />
      <tab
            class="org.eclipse.cdt.managedbuilder.ui.newui.BuilderSettingsTab"
+           icon="icons/obj16/build_settings.gif"
            name="Builder settings"
-           parent="org.eclipse.cdt.managedbuilder.ui.newui.PrefPage_NewCDTProject"
-           />
+           parent="org.eclipse.cdt.managedbuilder.ui.newui.PrefPage_NewCDTProject"/>
   </extension>   
 
       <extension

@@ -9,4 +9,6 @@ public class PrefPage_Env extends AbstractPrefPage {
 		forEach(ICPropertyTab.OK, null);
 		return true;
 	}
+
+	protected boolean needsHeader() { return false;	}
 }

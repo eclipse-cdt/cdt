@@ -41,14 +41,15 @@ public abstract class AbstractPrefPage extends AbstractPage
 		compositeLayout.marginWidth = 0;
 		composite.setLayout( compositeLayout );
 		
-		Group configGroup = ControlFactory.createGroup(composite, EMPTY_STR, 1);
-		GridData gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
-		gd.grabExcessHorizontalSpace = true;
-		configGroup.setLayoutData(gd);
-		titleLabel = ControlFactory.createLabel(configGroup, 
-				NewUIMessages.getResourceString("AbstractPrefPage.0") + //$NON-NLS-1$
-				NewUIMessages.getResourceString("AbstractPrefPage.1")); //$NON-NLS-1$
-		
+		if (needsHeader()) {
+			Group configGroup = ControlFactory.createGroup(composite, EMPTY_STR, 1);
+			GridData gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
+			gd.grabExcessHorizontalSpace = true;
+			configGroup.setLayoutData(gd);
+			titleLabel = ControlFactory.createLabel(configGroup, 
+					NewUIMessages.getResourceString("AbstractPrefPage.0") + //$NON-NLS-1$
+					NewUIMessages.getResourceString("AbstractPrefPage.1")); //$NON-NLS-1$
+		}
 		createWidgets(composite);
     	return composite;
 	}
@@ -58,6 +59,5 @@ public abstract class AbstractPrefPage extends AbstractPage
 	public void init(IWorkbench workbench) {}
 	public ICResourceDescription getResDesc() { return null; }
 	public void performApply() { performOk(); }
-
-
+	abstract protected boolean needsHeader(); 
 }

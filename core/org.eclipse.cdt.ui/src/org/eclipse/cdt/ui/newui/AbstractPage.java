@@ -406,9 +406,8 @@ implements
 		doneOK = true; // further pages need not to do anything
 		try {
 			CoreModel.getDefault().setProjectDescription(getProject(), prjd);
-		} catch (CoreException e) { }	
-		// update views (in particular, display resource configurations)
-		WorkbenchPlugin.getDefault().getDecoratorManager().updateForEnablementChange();
+		} catch (CoreException e) { }
+		updateViews();
 		return true;
 	}
 	
@@ -431,8 +430,7 @@ implements
 				} catch (CoreException e) {
 					System.out.println("setProjectDescription: " + e.getLocalizedMessage()); //$NON-NLS-1$
 				}
-				// update views (in particular, display resource configurations)
-				WorkbenchPlugin.getDefault().getDecoratorManager().updateForEnablementChange();
+				updateViews();
 			}
 		};
 		IRunnableWithProgress op = new WorkspaceModifyDelegatingOperation(runnable);
@@ -844,5 +842,9 @@ implements
 		else
 			return true; // Projects and folders are always applicable
 	}
-	
+
+	// update views (in particular, display resource configurations)
+	public static void updateViews() {
+		WorkbenchPlugin.getDefault().getDecoratorManager().updateForEnablementChange();
+	}
 }

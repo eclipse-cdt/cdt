@@ -10,7 +10,9 @@
  *******************************************************************************/
 package org.eclipse.cdt.ui.actions;
 
+import org.eclipse.core.resources.IProject;
 import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.swt.events.MenuAdapter;
 import org.eclipse.swt.events.MenuEvent;
@@ -18,6 +20,11 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowPulldownDelegate2;
+
+import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.newui.ManageConfigDialog;
+
+import org.eclipse.cdt.internal.ui.actions.ActionMessages;
 
 /**
  * Action which changes active build configuration of the current project 
@@ -61,7 +68,14 @@ public class ChangeBuildConfigMenuAction extends ChangeBuildConfigActionBase imp
 	 * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
 	 */
 	public void run(IAction action) {
-		// do nothing
+		if (fProjects.size() == 1) {
+			IProject project = (IProject)fProjects.toArray(new IProject[1])[0]; 
+			ManageConfigDialog.manage(project);
+		} else {
+			MessageDialog.openInformation(CUIPlugin.getActiveWorkbenchShell(),
+					ActionMessages.getString("ChangeBuildConfigMenuAction.title"),  //$NON-NLS-1$
+					ActionMessages.getString("ChangeBuildConfigMenuAction.text")); //$NON-NLS-1$
+		}
 	}
 
 	/**

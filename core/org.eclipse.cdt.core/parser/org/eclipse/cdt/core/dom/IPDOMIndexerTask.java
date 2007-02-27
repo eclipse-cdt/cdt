@@ -14,6 +14,7 @@
  */
 package org.eclipse.cdt.core.dom;
 
+import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.core.runtime.IProgressMonitor;
 
 
@@ -22,7 +23,10 @@ import org.eclipse.core.runtime.IProgressMonitor;
  *
  */
 public interface IPDOMIndexerTask {
-
+	public static final String TRACE_ACTIVITY   = CCorePlugin.PLUGIN_ID + "/debug/indexer/activity";  //$NON-NLS-1$
+	public static final String TRACE_STATISTICS = CCorePlugin.PLUGIN_ID + "/debug/indexer/statistics";  //$NON-NLS-1$
+	public static final String TRACE_PROBLEMS   = CCorePlugin.PLUGIN_ID + "/debug/indexer/problems";  //$NON-NLS-1$
+	
 	/**
 	 * Run the sub job progress to the main job.
 	 * 

@@ -115,14 +115,15 @@ public abstract class PDOMIndexerTask implements IPDOMIndexerTask {
 	private int fProblemBindingCount= 0;
 
 	protected PDOMIndexerTask() {
-		fShowActivity= checkDebugOption("indexer/activity", "true");  //$NON-NLS-1$//$NON-NLS-2$
-		fShowStatistics= checkDebugOption("indexer/statistics", "true");  //$NON-NLS-1$//$NON-NLS-2$
-		fShowProblems= checkDebugOption("indexer/problems", "true");  //$NON-NLS-1$//$NON-NLS-2$
+		fShowActivity= checkDebugOption(TRACE_ACTIVITY, "true");  //$NON-NLS-1$
+		fShowStatistics= checkDebugOption(TRACE_STATISTICS, "true");  //$NON-NLS-1$
+		fShowProblems= checkDebugOption(TRACE_PROBLEMS, "true");  //$NON-NLS-1$
 	}
 
 	private boolean checkDebugOption(String option, String value) {
-		String trace = Platform.getDebugOption(CCorePlugin.PLUGIN_ID + "/debug/" + option);  //$NON-NLS-1$
-		return (trace != null && trace.equalsIgnoreCase(value));
+		String trace= Platform.getDebugOption(option); 
+		boolean internallyActivated= Boolean.getBoolean(option);
+		return internallyActivated || (trace != null && trace.equalsIgnoreCase(value));
 	}
 
 	protected void processDelta(ICElementDelta delta, Collection added, Collection changed, Collection removed,

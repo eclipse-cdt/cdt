@@ -33,50 +33,71 @@ if [ ! -f eclipse/plugins/org.eclipse.core.resources_3.3.0.v20070202.jar ]; then
   #tar xfvz eclipse-platform-3.3M5-linux-gtk-ppc.tar.gz
   #rm eclipse-platform-3.3M5-linux-gtk-ppc.tar.gz
   # Eclipse SDK 3.3M5: Need the SDK because EMF needs JDT (somehow)
+  echo "Getting Eclipse SDK..."
   wget "http://download.eclipse.org/eclipse/downloads/drops/S-3.3M5-200702091006/eclipse-SDK-3.3M5-linux-gtk-ppc.tar.gz"
   tar xfvz eclipse-SDK-3.3M5-linux-gtk-ppc.tar.gz
   rm eclipse-SDK-3.3M5-linux-gtk-ppc.tar.gz
 fi
+if [ ! -h eclipse/startup.jar ]; then
+  curdir2=`pwd`
+  cd eclipse/plugins
+  LAUNCHER=`ls org.eclipse.equinox.launcher_*.jar | sort | tail -1`
+  echo "LAUNCHER=${LAUNCHER}" 
+  ln -s plugins/${LAUNCHER} ../startup.jar
+  cd ${curdir2}
+fi
 if [ ! -f eclipse/plugins/org.eclipse.cdt.core_4.0.0.200702161600.jar ]; then
   # CDT 4.0.0 Runtime
+  echo "Getting CDT Runtime..."
   wget "http://download.eclipse.org/tools/cdt/releases/europa/dist/4.0.0M5/cdt-4.0.0-M5-linux.ppc.tar.gz"
   tar xfvz cdt-4.0.0-M5-linux.ppc.tar.gz
   rm cdt-4.0.0-M5-linux.ppc.tar.gz
 fi
 if [ ! -f eclipse/plugins/org.eclipse.emf_2.2.0.v200702121527.jar ]; then
   # EMF 2.3.0 Runtime
+  echo "Getting EMF Runtime..."
   wget "http://download.eclipse.org//modeling/emf/emf/downloads/drops/2.3.0/S200702121527/emf-sdo-runtime-2.3.0M5.zip"
   unzip -o emf-sdo-runtime-2.3.0M5.zip
   rm emf-sdo-runtime-2.3.0M5.zip 
 fi
 if [ ! -f eclipse/plugins/org.junit_3.8.2/junit.jar ]; then
   # Eclipse Test Framework
+  echo "Getting Eclipse Test Framework..."
   wget "http://download.eclipse.org/eclipse/downloads/drops/S-3.3M5-200702091006/eclipse-test-framework-3.3M5.zip"
   unzip -o eclipse-test-framework-3.3M5.zip
   rm eclipse-test-framework-3.3M5.zip
 fi
 
 # checkout the basebuilder
-if [ ! -f org.eclipse.releng.basebuilder/plugins/org.eclipse.core.runtime_3.3.100.v20061204.jar ]; then
+#if [ ! -f org.eclipse.releng.basebuilder/plugins/org.eclipse.core.runtime_3.3.100.v20061204.jar ]; then
+if [ ! -f org.eclipse.releng.basebuilder/plugins/org.eclipse.update.core_3.2.100.200702211317.jar ]; then
   if [ -d org.eclipse.releng.basebuilder ]; then
+    echo "Re-getting basebuilder from CVS..."
     rm -rf org.eclipse.releng.basebuilder
+  else
+    echo "Getting basebuilder from CVS..."
   fi
-  cvs -d :pserver:anonymous@dev.eclipse.org:/cvsroot/eclipse co -r M4_33 org.eclipse.releng.basebuilder
+  cvs -q -d :pserver:anonymous@dev.eclipse.org:/cvsroot/eclipse co -r M5_33 org.eclipse.releng.basebuilder
 fi
 
 # checkout the RSE builder
 if [ -f org.eclipse.rse.build/CVS/Entries ]; then
+  echo "Updating org.eclipse.rse.build from CVS"
   cd org.eclipse.rse.build
-  cvs update -dPR
+  cvs -q update -dPR
   cd ..
 else
   if [ -d org.eclipse.rse.build ]; then
+    echo "Re-getting org.eclipse.rse.build from CVS"
     rm -rf org.eclipse.rse.build
+  else
+    echo "Getting org.eclipse.rse.build from CVS"
   fi
-  cvs -d :pserver:anonymous@dev.eclipse.org:/cvsroot/dsdp co -Rd org.eclipse.rse.build org.eclipse.tm.rse/releng/org.eclipse.rse.build
+  cvs -q -d :pserver:anonymous@dev.eclipse.org:/cvsroot/dsdp co -Rd org.eclipse.rse.build org.eclipse.tm.rse/releng/org.eclipse.rse.build
 fi
 
 # prepare directories for the build
+echo "Preparing directories and symbolic links..."
 if [ ! -d working/package ]; then
   mkdir -p working/package
 fi

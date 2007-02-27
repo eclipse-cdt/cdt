@@ -67,13 +67,14 @@ if [ `basename $SITE` = testUpdates ]; then
     mv -f web/site.xsl.new web/site.xsl
     echo "Conditioning the site... $SITE"
     #java -Dorg.eclipse.update.jarprocessor.pack200=$mydir \
-    #    -jar $HOME/ws2/eclipse/startup.jar \
-    #    -application org.eclipse.update.core.siteOptimizer \
-    #    -jarProcessor -outputDir $SITE \
-    #    -processAll -repack $SITE
-    java -Dorg.eclipse.update.jarprocessor.pack200=$mydir \
-    	$HOME/ws2/jarprocessor/jarprocessor.jar \
-		-outputDir $SITE -processAll -repack $SITE
+    java \
+        -jar $HOME/ws2/eclipse/startup.jar \
+        -application org.eclipse.update.core.siteOptimizer \
+        -jarProcessor -outputDir $SITE \
+        -processAll -repack $SITE
+    #java -Dorg.eclipse.update.jarprocessor.pack200=$mydir \
+    #	$HOME/ws2/jarprocessor/jarprocessor.jar \
+	#	-outputDir $SITE -processAll -repack $SITE
 elif [ `basename $SITE` = signedUpdates ]; then
     echo "Working on signed update site"
     echo "Signing jars from test update site (expecting conditioned jars)..."
@@ -252,13 +253,14 @@ sed -e '/!EUROPA_ONLY!/d' site.xml > site-europa.xml
 # See https://bugs.eclipse.org/bugs/show_bug.cgi?id=154069
 echo "Packing the site... $SITE"
 #java -Dorg.eclipse.update.jarprocessor.pack200=$mydir \
-#    -jar $HOME/ws2/eclipse/startup.jar \
-#    -application org.eclipse.update.core.siteOptimizer \
-#    -jarProcessor -outputDir $SITE \
-#    -processAll -pack $SITE
-java -Dorg.eclipse.update.jarprocessor.pack200=$mydir \
-    $HOME/ws2/jarprocessor/jarprocessor.jar \
-    -outputDir $SITE -processAll -pack $SITE
+java \
+    -jar $HOME/ws2/eclipse/startup.jar \
+    -application org.eclipse.update.core.siteOptimizer \
+    -jarProcessor -outputDir $SITE \
+    -processAll -pack $SITE
+#java -Dorg.eclipse.update.jarprocessor.pack200=$mydir \
+#    $HOME/ws2/jarprocessor/jarprocessor.jar \
+#    -outputDir $SITE -processAll -pack $SITE
 
 #Create the digest
 echo "Creating digest..."

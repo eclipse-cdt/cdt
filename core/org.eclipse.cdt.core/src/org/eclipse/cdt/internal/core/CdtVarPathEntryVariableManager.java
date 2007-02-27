@@ -19,9 +19,11 @@ import java.util.Set;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.cdtvariables.CdtVariableException;
 import org.eclipse.cdt.core.cdtvariables.ICdtVariable;
+import org.eclipse.cdt.core.cdtvariables.ICdtVariableManager;
 import org.eclipse.cdt.core.resources.IPathEntryVariableChangeListener;
 import org.eclipse.cdt.core.resources.IPathEntryVariableManager;
 import org.eclipse.cdt.core.resources.PathEntryVariableChangeEvent;
+import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.internal.core.cdtvariables.ICdtVariableChangeListener;
 import org.eclipse.cdt.internal.core.cdtvariables.ICoreVariableContextInfo;
 import org.eclipse.cdt.internal.core.cdtvariables.UserDefinedVariableSupplier;
@@ -127,6 +129,23 @@ public class CdtVarPathEntryVariableManager implements
 			}
 		}
 		return null;
+	}
+
+	public static boolean isPathEntryVariable(ICdtVariable var, ICConfigurationDescription cfg){
+		return isPathEntryVariable(var, cfg, CCorePlugin.getDefault().getCdtVariableManager());
+	}
+
+	public static boolean isPathEntryVariable(ICdtVariable var, ICConfigurationDescription cfg, ICdtVariableManager mngr){
+		if(mngr.isUserVariable(var, cfg))
+			return false;
+		
+		if(!mngr.isUserVariable(var, null))
+			return false;
+		
+		if(getVariablePath(var) == null)
+			return false;
+		
+		return true;
 	}
 
 	public String[] getVariableNames() {

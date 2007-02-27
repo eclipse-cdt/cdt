@@ -18,6 +18,7 @@ import java.util.Map;
 import org.eclipse.cdt.core.cdtvariables.CdtVariableException;
 import org.eclipse.cdt.core.cdtvariables.ICdtVariable;
 import org.eclipse.cdt.core.settings.model.ICStorageElement;
+import org.eclipse.cdt.internal.core.cdtvariables.UserDefinedVariableSupplier.VarKey;
 import org.eclipse.cdt.internal.core.settings.model.ExceptionFactory;
 import org.eclipse.cdt.utils.cdtvariables.CdtVariableResolver;
 
@@ -374,5 +375,17 @@ public class StorableCdtVariables {
 			return true;
 		}
 		return false;
+	}
+	
+	public boolean contains(ICdtVariable var){
+		ICdtVariable curVar = getMacro(var.getName());
+		if(curVar == null)
+			return false;
+		
+		if(new VarKey(curVar, false).equals(new VarKey(var, false)))
+			return true;
+		
+		return false;
+
 	}
 }

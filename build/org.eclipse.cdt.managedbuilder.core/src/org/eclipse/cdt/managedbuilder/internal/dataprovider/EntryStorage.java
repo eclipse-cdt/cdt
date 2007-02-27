@@ -189,6 +189,9 @@ public class EntryStorage {
 				if(size > 0){
 					for(int j = 0; j < size; j++){
 						String value = (String)list.get(j);
+						if(value.indexOf('"') == 0 && value.lastIndexOf('"') == value.length() - 1 && value.length() != 1){
+							value = value.substring(1, value.length() - 1);
+						}
 						ICLanguageSettingEntry entry = createEntry(discoveredEntryFromString(value), false, false);
 						EntryInfo discoveredInfo = fDiscoveredEntries.getEntryInfo(entry);
 						if(discoveredInfo != null){

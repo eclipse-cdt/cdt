@@ -84,7 +84,9 @@ public class ConfigurationDataProvider extends CConfigurationDataProvider implem
 	}
 
 	public CConfigurationData applyConfiguration(
-			ICConfigurationDescription des, CConfigurationData base)
+			ICConfigurationDescription des, 
+			ICConfigurationDescription baseDescription,
+			CConfigurationData base)
 			throws CoreException {
 		if(des.isPreferenceConfiguration())
 			return applyPreferences(des, base);
@@ -115,7 +117,9 @@ public class ConfigurationDataProvider extends CConfigurationDataProvider implem
 			
 
 	public CConfigurationData createConfiguration(
-			ICConfigurationDescription des, CConfigurationData base, boolean clone)
+			ICConfigurationDescription des, 
+			ICConfigurationDescription baseDescription,
+			CConfigurationData base, boolean clone)
 			throws CoreException {
 		if(des.isPreferenceConfiguration())
 			return createPreferences(des, base);

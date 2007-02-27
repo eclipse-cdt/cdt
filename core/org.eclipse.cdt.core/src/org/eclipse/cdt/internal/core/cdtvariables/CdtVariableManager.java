@@ -31,6 +31,7 @@ public class CdtVariableManager implements ICdtVariableManager {
 	static private CdtVariableManager fDefault;
 	
 	public static UserDefinedVariableSupplier fUserDefinedMacroSupplier = UserDefinedVariableSupplier.getInstance();
+	public static BuildSystemVariableSupplier fBuildSystemVariableSupplier = BuildSystemVariableSupplier.getInstance();
 	public static EnvironmentVariableSupplier fEnvironmentMacroSupplier = EnvironmentVariableSupplier.getInstance();
 	public static CdtMacroSupplier fCdtMacroSupplier = CdtMacroSupplier.getInstance();
 	public static EclipseVariablesVariableSupplier fEclipseVariablesMacroSupplier = EclipseVariablesVariableSupplier.getInstance();
@@ -199,6 +200,12 @@ public class CdtVariableManager implements ICdtVariableManager {
 
 	public boolean isUserVariable(ICdtVariable variable,
 			ICConfigurationDescription cfg) {
-		return variable instanceof StorableCdtVariable;
+		if(!(variable instanceof StorableCdtVariable))
+			return false;
+		
+		if(cfg != null)
+			return UserDefinedVariableSupplier.getInstance().containsVariable(ICoreVariableContextInfo.CONTEXT_CONFIGURATION, cfg, variable);
+		
+		return UserDefinedVariableSupplier.getInstance().containsVariable(ICoreVariableContextInfo.CONTEXT_WORKSPACE, null, variable);
 	}
 }

@@ -89,7 +89,7 @@ public class CConfigurationDescriptionCache extends CDefaultConfigurationData
 		fInitializing = false;
 	}
 
-	CConfigurationDescriptionCache(CConfigurationData base, CConfigurationSpecSettings settingsBase, CProjectDescription parent, ICStorageElement rootEl, boolean saving) throws CoreException {
+	CConfigurationDescriptionCache(ICConfigurationDescription baseDescription, CConfigurationData base, CConfigurationSpecSettings settingsBase, CProjectDescription parent, ICStorageElement rootEl, boolean saving) throws CoreException {
 		super(base.getId(), base.getName(), null);
 		fInitializing = true;
 		fParent = parent;
@@ -97,9 +97,10 @@ public class CConfigurationDescriptionCache extends CDefaultConfigurationData
 		
 		if(base instanceof CConfigurationDescriptionCache){
 			fData = ((CConfigurationDescriptionCache)base).getConfigurationData();
-			fData = CProjectDescriptionManager.getInstance().applyData(this, fData);
+			fData = CProjectDescriptionManager.getInstance().applyData(this, baseDescription, fData);
 		} else {
-			base = CProjectDescriptionManager.getInstance().applyData(this, base);
+			fData = base;
+			base = CProjectDescriptionManager.getInstance().applyData(this, baseDescription, base);
 			fData = base;
 		} 
 		fDataLoadded = true;

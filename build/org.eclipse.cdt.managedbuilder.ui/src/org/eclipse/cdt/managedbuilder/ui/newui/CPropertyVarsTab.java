@@ -452,7 +452,7 @@ public class CPropertyVarsTab extends AbstractCPropertyTab {
 	}
 	
 	private boolean isUserVar(ICdtVariable v) {
-		return mgr.isUserVariable(v, cfgd);
+		return cfgd != null ? mgr.isUserVariable(v, cfgd) : vars.contains(v);
 	}
 	
 	/* check whether variable is dynamic */

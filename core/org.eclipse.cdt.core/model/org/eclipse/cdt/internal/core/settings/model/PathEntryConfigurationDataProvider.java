@@ -12,9 +12,7 @@ package org.eclipse.cdt.internal.core.settings.model;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.IPathEntry;
@@ -220,7 +218,9 @@ public class PathEntryConfigurationDataProvider extends
 	}
 	
 	public CConfigurationData applyConfiguration(
-			ICConfigurationDescription des, CConfigurationData base)
+			ICConfigurationDescription des,
+			ICConfigurationDescription baseDescription,
+			CConfigurationData base)
 			throws CoreException {
 		//TODO: check external/reference info here as well.
 		if(!fFactory.isModified(base))
@@ -229,8 +229,8 @@ public class PathEntryConfigurationDataProvider extends
 		
 		
 		IProject project = des.getProjectDescription().getProject();
-		ReferenceSettingsInfo refInfo = new ReferenceSettingsInfo(des);
-		IPathEntry entries[] = PathEntryTranslator.getPathEntries(project, base, refInfo, PathEntryTranslator.INCLUDE_USER);
+//		ReferenceSettingsInfo refInfo = new ReferenceSettingsInfo(des);
+		IPathEntry entries[] = PathEntryTranslator.getPathEntries(project, baseDescription, PathEntryTranslator.INCLUDE_USER);
 		CModelManager manager = CModelManager.getDefault();
 		ICProject cproject = manager.create(project);
 		IPathEntry[] curRawEntries = PathEntryManager.getDefault().getRawPathEntries(cproject);
@@ -249,7 +249,9 @@ public class PathEntryConfigurationDataProvider extends
 	}
 
 	public CConfigurationData createConfiguration(
-			ICConfigurationDescription des, CConfigurationData base,
+			ICConfigurationDescription des, 
+			ICConfigurationDescription baseDescription,
+			CConfigurationData base,
 			boolean clone) throws CoreException {
 		CfgData copy = new CfgData(des.getId(), des.getName(), base, clone);
 		copy.setModified(false);

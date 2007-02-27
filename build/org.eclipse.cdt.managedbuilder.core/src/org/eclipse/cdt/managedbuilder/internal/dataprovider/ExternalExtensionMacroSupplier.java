@@ -149,7 +149,7 @@ public class ExternalExtensionMacroSupplier implements ICdtVariableSupplier{
 		case IBuildMacroProvider.CONTEXT_PROJECT:
 			if (contextData instanceof IManagedProject) {
 				IManagedProject project = (IManagedProject)contextData; 
-				IProjectBuildMacroSupplier supplier = project.getProjectType().getBuildMacroSupplier();
+				IProjectBuildMacroSupplier supplier = project.getProjectType() != null ? project.getProjectType().getBuildMacroSupplier() : null;
 				if(supplier == null)
 					return null;
 				return supplier.getMacro(macroName,project,new ExtensionMacroProvider(contextType, contextData));
@@ -187,7 +187,7 @@ public class ExternalExtensionMacroSupplier implements ICdtVariableSupplier{
 		case IBuildMacroProvider.CONTEXT_PROJECT:
 			if (contextData instanceof IManagedProject) {
 				IManagedProject project = (IManagedProject)contextData; 
-				IProjectBuildMacroSupplier supplier = project.getProjectType().getBuildMacroSupplier();
+				IProjectBuildMacroSupplier supplier = project.getProjectType() != null ? project.getProjectType().getBuildMacroSupplier() : null;
 				if(supplier != null)
 					macros = supplier.getMacros(project,new ExtensionMacroProvider(contextType, contextData));
 			}

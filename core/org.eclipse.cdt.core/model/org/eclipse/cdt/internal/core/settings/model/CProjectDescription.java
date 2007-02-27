@@ -108,7 +108,7 @@ public class CProjectDescription implements ICProjectDescription, ICDataProxyCon
 					if(baseData instanceof CConfigurationDescriptionCache){
 						baseData = ((CConfigurationDescriptionCache)baseData).getConfigurationData();
 					}
-					CConfigurationDescriptionCache cache = new CConfigurationDescriptionCache(baseData, cfgDes.getSpecSettings(), this, null, saving);
+					CConfigurationDescriptionCache cache = new CConfigurationDescriptionCache((ICConfigurationDescription)cfgDes, baseData, cfgDes.getSpecSettings(), this, null, saving);
 					configurationCreated(cache);
 				} else {
 					CConfigurationData baseData = cfgDes.getConfigurationData(false);

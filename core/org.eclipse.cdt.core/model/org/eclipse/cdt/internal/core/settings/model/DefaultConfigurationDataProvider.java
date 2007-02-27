@@ -20,14 +20,18 @@ public class DefaultConfigurationDataProvider extends
 		CConfigurationDataProvider {
 
 	public CConfigurationData applyConfiguration(
-			ICConfigurationDescription des, CConfigurationData base)
+			ICConfigurationDescription des, 
+			ICConfigurationDescription baseDescription,
+			CConfigurationData base)
 			throws CoreException {
 		//TODO: implement load/store
 		return base;
 	}
 
 	public CConfigurationData createConfiguration(
-			ICConfigurationDescription des, CConfigurationData base,
+			ICConfigurationDescription des, 
+			ICConfigurationDescription baseDescription,
+			CConfigurationData base,
 			boolean clone) throws CoreException {
 		//TODO: implement load/store
 		CDefaultConfigurationData data = new CDefaultConfigurationData(des.getId(), des.getName(), base, null, clone);

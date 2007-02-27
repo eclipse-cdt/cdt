@@ -44,6 +44,7 @@ public class DefaultVariableContextInfo implements ICoreVariableContextInfo {
 			if(data instanceof ICConfigurationDescription){
 				return new ICdtVariableSupplier[]{
 						CdtVariableManager.fUserDefinedMacroSupplier,
+						CdtVariableManager.fBuildSystemVariableSupplier,
 						CdtVariableManager.fEnvironmentMacroSupplier,
 						CdtVariableManager.fCdtMacroSupplier
 				};

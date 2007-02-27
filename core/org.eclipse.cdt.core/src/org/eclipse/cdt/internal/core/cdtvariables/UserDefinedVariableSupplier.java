@@ -268,7 +268,7 @@ public class UserDefinedVariableSupplier extends CoreMacroSupplierBase {
 		}
 	}
 	
-	private static class VarKey {
+	static class VarKey {
 		private ICdtVariable fVar;
 		private boolean fNameOnly;
 		
@@ -484,7 +484,7 @@ public class UserDefinedVariableSupplier extends CoreMacroSupplierBase {
 		StorableCdtVariables macros = loadNewStileWorkspaceMacros();
 		
 		//now load PathEntry Variables from preferences
-		
+		loadPathEntryVariables(macros);
 		
 		return macros;
 	}
@@ -670,6 +670,17 @@ public class UserDefinedVariableSupplier extends CoreMacroSupplierBase {
 		for(int i = 0; i < listeners.length; i++){
 			listeners[i].variablesChanged(event);
 		}
+	}
+	
+	public boolean containsVariable(int context, Object data, ICdtVariable var){
+		ICdtVariable varContained = getMacro(var.getName(), context, data);
+		if(varContained == null)
+			return false;
+		
+		if(new VarKey(varContained, false).equals(new VarKey(var, false)))
+			return true;
+		
+		return false;
 	}
 	
 }

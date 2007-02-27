@@ -149,6 +149,7 @@ public class CProjectDescriptionManager {
 	private static final String DEFAULT_CFG_NAME = "Configuration"; //$NON-NLS-1$
 	
 	private static final QualifiedName SCANNER_INFO_PROVIDER_PROPERTY = new QualifiedName(CCorePlugin.PLUGIN_ID, "scannerInfoProvider"); //$NON-NLS-1$
+	private static final QualifiedName LOAD_FLAG = new QualifiedName(CCorePlugin.PLUGIN_ID, "descriptionLoadded"); //$NON-NLS-1$
 
 	private class CompositeSafeRunnable implements ISafeRunnable {
 		private List fRunnables = new ArrayList();
@@ -376,7 +377,7 @@ public class CProjectDescriptionManager {
 			}
 	
 			if(des != null){
-				if(setLoaddedDescription(project, des, false)){
+				if(setLoaddedDescriptionOnLoad(project, des)){
 
 					if(eDes != null)
 						saveConversion(project, eDes, (CProjectDescription)des, new NullProgressMonitor());
@@ -414,6 +415,18 @@ public class CProjectDescriptionManager {
 		return des;
 	}
 	
+	private synchronized boolean setLoaddedDescriptionOnLoad(IProject project, ICProjectDescription des){
+		des.setSessionProperty(LOAD_FLAG, Boolean.TRUE);
+		ICProjectDescription oldDes = getLoaddedDescription(project);
+
+		setLoaddedDescription(project, des, true);
+
+		if(oldDes == null)
+			return true;
+
+		return oldDes.getSessionProperty(LOAD_FLAG) == null;
+	}
+
 	private CProjectDescriptionEvent createLoaddedEvent(ICProjectDescription des){
 		return new CProjectDescriptionEvent(CProjectDescriptionEvent.LOADDED,
 				null,
@@ -1304,9 +1317,9 @@ public class CProjectDescriptionManager {
 		return provider.loadConfiguration(des);
 	}
 	
-	CConfigurationData applyData(ICConfigurationDescription des, CConfigurationData base) throws CoreException {
+	CConfigurationData applyData(ICConfigurationDescription des, ICConfigurationDescription baseDescription, CConfigurationData base) throws CoreException {
 		CConfigurationDataProvider provider = getProvider(des);
-		return provider.applyConfiguration(des, base);
+		return provider.applyConfiguration(des, baseDescription, base);
 	}
 	
 	void removeData(ICConfigurationDescription des, CConfigurationData data) throws CoreException{
@@ -1314,9 +1327,9 @@ public class CProjectDescriptionManager {
 		provider.removeConfiguration(des, data);
 	}
 	
-	CConfigurationData createData(ICConfigurationDescription des, CConfigurationData base, boolean clone) throws CoreException{
+	CConfigurationData createData(ICConfigurationDescription des, ICConfigurationDescription baseDescription, CConfigurationData base, boolean clone) throws CoreException{
 		CConfigurationDataProvider provider = getProvider(des);
-		return provider.createConfiguration(des, base, clone);
+		return provider.createConfiguration(des, baseDescription, base, clone);
 	}
 	
 	private CConfigurationDataProvider getProvider(ICConfigurationDescription des) throws CoreException{
@@ -2583,7 +2596,7 @@ public class CProjectDescriptionManager {
 		rootParent.removeChild(rootEl);
 		ICStorageElement baseRootEl = settings.getRootStorageElement();
 		rootEl = rootParent.importChild(baseRootEl);
-		CConfigurationDescriptionCache cache = new CConfigurationDescriptionCache(baseData, cfgDes.getSpecSettings(), null, rootEl, true);
+		CConfigurationDescriptionCache cache = new CConfigurationDescriptionCache(des, baseData, cfgDes.getSpecSettings(), null, rootEl, true);
 		
 		return cache;
 	}

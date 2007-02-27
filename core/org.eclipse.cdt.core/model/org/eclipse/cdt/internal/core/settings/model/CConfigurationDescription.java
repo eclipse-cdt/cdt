@@ -41,7 +41,6 @@ import org.eclipse.cdt.core.settings.model.extension.CFolderData;
 import org.eclipse.cdt.core.settings.model.extension.CLanguageData;
 import org.eclipse.cdt.core.settings.model.extension.CResourceData;
 import org.eclipse.cdt.core.settings.model.extension.CTargetPlatformData;
-import org.eclipse.cdt.core.settings.model.extension.impl.CDefaultConfigurationData;
 import org.eclipse.cdt.core.settings.model.util.PathSettingsContainer;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -99,7 +98,7 @@ public class CConfigurationDescription extends CDataProxyContainer implements IC
 		if(baseData instanceof CConfigurationDescriptionCache){
 			baseData = ((CConfigurationDescriptionCache)baseData).getConfigurationData();
 		}
-		setData(CProjectDescriptionManager.getInstance().createData(this, baseData, false));
+		setData(CProjectDescriptionManager.getInstance().createData(this, base, baseData, false));
 	}
 
 	/*
@@ -138,8 +137,9 @@ public class CConfigurationDescription extends CDataProxyContainer implements IC
 	void doWritable() throws CoreException{
 		CConfigurationData data = getConfigurationData(false);
 		if(data instanceof CConfigurationDescriptionCache){
-			data = ((CConfigurationDescriptionCache)data).getConfigurationData();
-			setData(CProjectDescriptionManager.getInstance().createData(this, data, true));
+			CConfigurationDescriptionCache cache = (CConfigurationDescriptionCache)data;
+			data = cache.getConfigurationData();
+			setData(CProjectDescriptionManager.getInstance().createData(this, cache, data, true));
 		}
 	}
 	

@@ -17,7 +17,16 @@ import org.eclipse.cdt.utils.cdtvariables.IVariableContextInfo;
 import org.eclipse.cdt.utils.cdtvariables.SupplierBasedCdtVariableManager;
 
 public class BuildSystemVariableSupplier extends CoreMacroSupplierBase {
-
+	private static BuildSystemVariableSupplier fInstance;
+	private BuildSystemVariableSupplier(){
+	}
+	
+	public static BuildSystemVariableSupplier getInstance(){
+		if(fInstance == null){
+			fInstance = new BuildSystemVariableSupplier();
+		}
+		return fInstance;
+	}
 	private class ExtensionMacroProvider extends CdtVariableManager{
 		private IVariableContextInfo fStartInfo;
 		private int fContextType;

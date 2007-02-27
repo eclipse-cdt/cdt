@@ -636,7 +636,7 @@ public class CommonBuilder extends ACBuilder {
 		
 		IConfiguration cfg = builder.getParent().getParent();
 		boolean isParallel = builder.getParallelizationNum() != 0;
-		boolean buildIncrementaly = true;
+//		boolean buildIncrementaly = true;
 		boolean resumeOnErr = !builder.isStopOnError();
 		
 		// Get the project and make sure there's a monitor to cancel the build
@@ -654,12 +654,14 @@ public class CommonBuilder extends ACBuilder {
 		OutputStream epmOutputStream = null;
 		try {
 			int flags = 0;
-			IResourceDelta delta = null;
+			IResourceDelta delta = getDelta(currentProject);
 			
-			if(buildIncrementaly){
+			if(delta != null){
 				flags = BuildDescriptionManager.REBUILD | BuildDescriptionManager.REMOVED | BuildDescriptionManager.DEPS;
-				delta = getDelta(currentProject);
+//				delta = getDelta(currentProject);
 			}
+			
+			boolean buildIncrementaly = delta != null;
 			
 			IBuildDescription des = BuildDescriptionManager.createBuildDescription(cfg, delta, flags);
 	

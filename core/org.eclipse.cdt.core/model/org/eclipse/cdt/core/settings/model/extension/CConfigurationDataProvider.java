@@ -40,7 +40,9 @@ public abstract class CConfigurationDataProvider {
 	 * @return
 	 * @throws CoreException
 	 */
-	public abstract CConfigurationData createConfiguration(ICConfigurationDescription des, CConfigurationData base, boolean clone) throws CoreException;
+	public abstract CConfigurationData createConfiguration(ICConfigurationDescription des, 
+			ICConfigurationDescription baseDescription,
+			CConfigurationData baseData, boolean clone) throws CoreException;
 	
 	/**
 	 * called to notify the provider that the configuration is removed
@@ -60,5 +62,7 @@ public abstract class CConfigurationDataProvider {
 	 * @return
 	 * @throws CoreException
 	 */
-	public abstract CConfigurationData applyConfiguration(ICConfigurationDescription des, CConfigurationData base) throws CoreException;
+	public abstract CConfigurationData applyConfiguration(ICConfigurationDescription des, 
+			ICConfigurationDescription baseDescription,
+			CConfigurationData baseData) throws CoreException;
 }

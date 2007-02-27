@@ -13,6 +13,7 @@ package org.eclipse.tm.internal.terminal.ssh;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InterruptedIOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Collections;
@@ -240,8 +241,12 @@ class SshConnection extends Thread {
 			fConn.setOutputStream(channel.getOutputStream());
 			fConn.setChannel(channel);
 			fControl.setState(TerminalState.CONNECTED);
-			// read data until the connection gets terminated
-			readDataForever(fConn.getInputStream());
+			try {
+				// read data until the connection gets terminated
+				readDataForever(fConn.getInputStream());
+			} catch (InterruptedIOException e) {
+				// we got interrupted: we are done...
+			}
 			// when reading is done, we set the state to closed
 			fControl.setState(TerminalState.CLOSED);
 		} catch (JSchException e) {
@@ -275,23 +280,9 @@ class SshConnection extends Thread {
 	private void readDataForever(InputStream in) throws IOException {
 		// read the data
 		byte bytes[]=new byte[32*1024];
+		int n;
 		// read until the thread gets interrupted....
-		while(!isInterrupted()) {
-			int n;
-			// We have to poll. There seems no better way to cancel
-			// the read from ssh....
-			while(in.available()==0) {
-				try {
-					sleep(1);
-				} catch (InterruptedException e) {
-					// propagate the interrupt 
-					interrupt();
-					return;
-				}
-			}
-			// read some bytes
-			if((n=in.read(bytes))==-1)
-				return;
+		while( (n=in.read(bytes))!=-1) {
 			// we assume we get ASCII UTF8 bytes
 			fControl.writeToTerminal(new String(bytes,0,n,"UTF8")); //$NON-NLS-1$
 		}

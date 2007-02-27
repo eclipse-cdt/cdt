@@ -19,7 +19,7 @@ import org.eclipse.core.filesystem.URIUtil;
  * A IIndexLocationConverter for converting relative paths within an index, by prefixing them
  * with the supplied base URI
  * <br>
- * This location converter is internal-representation-compatible with ProjectRelativeLocationConverter
+ * This location converter is internal-representation-compatible with ResourceContainerRelativeLocationConverter
  */
 /*
  * Internal representation is uri relative path (non encoded form)

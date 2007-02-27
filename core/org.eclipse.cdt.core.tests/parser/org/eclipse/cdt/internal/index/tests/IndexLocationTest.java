@@ -26,7 +26,7 @@ import org.eclipse.cdt.core.index.IIndexFileLocation;
 import org.eclipse.cdt.core.index.IIndexName;
 import org.eclipse.cdt.core.index.IndexFilter;
 import org.eclipse.cdt.core.index.IndexLocationFactory;
-import org.eclipse.cdt.core.index.ProjectRelativeLocationConverter;
+import org.eclipse.cdt.core.index.ResourceContainerRelativeLocationConverter;
 import org.eclipse.cdt.core.index.URIRelativeLocationConverter;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.testplugin.CProjectHelper;
@@ -157,15 +157,15 @@ public class IndexLocationTest extends BaseTestCase {
 		}
 	}
 	
-	public void testProjectRelativeLocationConverter() throws Exception {
+	public void testResourceContainerRelativeLocationConverter() throws Exception {
 		String[] paths = new String[] {"this.cpp", "inc/header.h", "a b c/d/e f/g.h", "a \\b /c.d"};
 		for(int i=0; i<paths.length; i++) {
 			IFile file= cproject.getProject().getFile(paths[i]);
 			IIndexFileLocation ifl1= IndexLocationFactory.getWorkspaceIFL(file);
-			ProjectRelativeLocationConverter prlc1= new ProjectRelativeLocationConverter(cproject);
+			ResourceContainerRelativeLocationConverter prlc1= new ResourceContainerRelativeLocationConverter(cproject.getProject());
 			String r1= prlc1.toInternalFormat(ifl1);
 			assertNotNull(r1);
-			ProjectRelativeLocationConverter prlc2= new ProjectRelativeLocationConverter(emptyCProject);
+			ResourceContainerRelativeLocationConverter prlc2= new ResourceContainerRelativeLocationConverter(emptyCProject.getProject());
 			IIndexFileLocation ifl2= prlc2.fromInternalFormat(r1);
 			assertNotNull(ifl2);
 			assertEquals(
@@ -175,7 +175,7 @@ public class IndexLocationTest extends BaseTestCase {
 		}
 	}
 	
-	public void testURLC_PRLC_Interaction1() throws Exception {
+	public void testURLC_RCRLC_Interaction1() throws Exception {
 		String[] paths = new String[] {
 				"c:/foo/bar/baz.cpp",
 				"c:\\foo\\bar\\a b c\\baz.cpp",
@@ -196,7 +196,7 @@ public class IndexLocationTest extends BaseTestCase {
 			URIRelativeLocationConverter urlc = new URIRelativeLocationConverter(base);
 			String r1 = urlc.toInternalFormat(ifl1);
 			assertNotNull(r1);
-			ProjectRelativeLocationConverter prlc= new ProjectRelativeLocationConverter(cproject);
+			ResourceContainerRelativeLocationConverter prlc= new ResourceContainerRelativeLocationConverter(cproject.getProject());
 			IIndexFileLocation ifl2= prlc.fromInternalFormat(r1);
 			String r2= prlc.toInternalFormat(ifl2);
 			assertNotNull(r2);
@@ -207,7 +207,7 @@ public class IndexLocationTest extends BaseTestCase {
 		}
 	}
 	
-	public void testURLC_PRLC_Interaction2() throws Exception {
+	public void testURLC_RCRLC_Interaction2() throws Exception {
 		String[] paths = new String[] {
 				"a b c/d/e f/g.h",
 				"a \\b /c.d",
@@ -222,7 +222,7 @@ public class IndexLocationTest extends BaseTestCase {
 		for(int i=0; i<paths.length; i++) {
 			IFile file= cproject.getProject().getFile(paths[i]);
 			IIndexFileLocation ifl1= IndexLocationFactory.getWorkspaceIFL(file);
-			ProjectRelativeLocationConverter prlc= new ProjectRelativeLocationConverter(cproject);
+			ResourceContainerRelativeLocationConverter prlc= new ResourceContainerRelativeLocationConverter(cproject.getProject());
 			String r1= prlc.toInternalFormat(ifl1);
 			assertNotNull(r1);
 			URI base = URIUtil.toURI("c:/foo/bar/");

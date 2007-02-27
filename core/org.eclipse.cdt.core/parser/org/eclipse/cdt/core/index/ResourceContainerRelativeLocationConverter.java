@@ -9,54 +9,52 @@
  * Andrew Ferguson (Symbian) - Initial implementation
  *******************************************************************************/
 package org.eclipse.cdt.core.index;
-
-import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.internal.core.index.IndexFileLocation;
+import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
-
 /**
- * A location converter for converting project resource locations to be project relative. Resources outside of
- * the associated project will be ignored.
+ * A location converter for converting project resource locations to be relative to a specified container.
+ * Resources outside of the associated project will not be converted (ignored).
  * <br>
  * This location converter is internal-representation-compatible with URIRelativeLocationConverter
  */
  /*
-  * Internal representation is project relative path
+  * Internal representation is a relative path
   */
-public class ProjectRelativeLocationConverter implements IIndexLocationConverter {
+public class ResourceContainerRelativeLocationConverter implements IIndexLocationConverter {
 	protected IWorkspaceRoot root;
-	protected String cprojectName;
+	protected IPath fullPath;
 	
 	/**
-	 * @param cproject the CDT project to convert relative to
+	 * @param container the resource container to convert relative to
 	 */
-	public ProjectRelativeLocationConverter(ICProject cproject) {
-		this.cprojectName = cproject.getProject().getName();
+	public ResourceContainerRelativeLocationConverter(IContainer container) {
+		this.fullPath = container.getFullPath();
 		this.root = ResourcesPlugin.getWorkspace().getRoot();
 	}
-	
 	/*
 	 * (non-Javadoc)
 	 * @see org.eclipse.cdt.core.index.IIndexLocationConverter#fromInternalFormat(java.lang.String)
 	 */
 	public IIndexFileLocation fromInternalFormat(String raw) {
-		IResource member= root.getFile(new Path(cprojectName +"/"+ raw)); //$NON-NLS-1$
+		IResource member= root.getFile(fullPath.append(raw)); 
 		return new IndexFileLocation(member.getLocationURI(), member.getFullPath().toString());
-	}
-	
+	}
 	/*
 	 * (non-Javadoc)
 	 * @see org.eclipse.cdt.core.index.IIndexLocationConverter#toInternalFormat(org.eclipse.cdt.core.index.IIndexFileLocation)
 	 */
 	public String toInternalFormat(IIndexFileLocation location) {
-		String fullPath= location.getFullPath();
-		if(fullPath!=null) {
-			IPath path = new Path(fullPath).removeFirstSegments(1);
-			return path.toString();
+		String sFullPath= location.getFullPath();
+		if(sFullPath!=null) {
+			IPath path= new Path(sFullPath);
+			if(fullPath.isPrefixOf(path)) {
+				return path.removeFirstSegments(fullPath.segmentCount()).toString();
+			}
 		}
 		return null;
 	}

@@ -88,17 +88,23 @@ public class DBPropertiesTests extends BaseTestCase {
 		try {
 			ps.setProperty(null, "val1");
 			fail("NullPointerException expected");
-		} catch(NullPointerException e) {}
+		} catch(NullPointerException e) {
+		} catch(AssertionError e) {
+		}
 		
 		try {
 			ps.setProperty("key", null);
 			fail("NullPointerException expected");
-		} catch(NullPointerException e) {}
+		} catch(NullPointerException e) {
+		} catch(AssertionError e) {
+		}
 
 		try {
 			ps.setProperty(null, null);
 			fail("NullPointerException expected");
-		} catch(NullPointerException e) {}
+		} catch(NullPointerException e) {
+		} catch(AssertionError e) {
+		}
 		
 		assertFalse(ps.removeProperty(null));
 		

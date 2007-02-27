@@ -48,9 +48,9 @@ import org.eclipse.cdt.internal.core.index.IIndexFragmentName;
 import org.eclipse.cdt.internal.core.pdom.db.BTree;
 import org.eclipse.cdt.internal.core.pdom.db.DBProperties;
 import org.eclipse.cdt.internal.core.pdom.db.Database;
+import org.eclipse.cdt.internal.core.pdom.dom.ApplyVisitor;
 import org.eclipse.cdt.internal.core.pdom.dom.BindingCollector;
 import org.eclipse.cdt.internal.core.pdom.dom.IPDOMLinkageFactory;
-import org.eclipse.cdt.internal.core.pdom.dom.ApplyVisitor;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMFile;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMInclude;
@@ -190,15 +190,21 @@ public class PDOM extends PlatformObject implements IIndexFragment, IPDOM {
 		return file;		
 	}
 
+	protected void clearFileIndex() throws CoreException {
+		db.putInt(FILE_INDEX, 0);
+		fileIndex = null;	
+	}
+	
 	protected void clear() throws CoreException {
 		Database db = getDB();
 		// Clear out the database
 		db.clear(1);
 
 		// Zero out the File Index and Linkages
-		db.putInt(FILE_INDEX, 0);
-		fileIndex = null;
-
+		clearFileIndex();
+		
+		db.putInt(PROPERTIES, 0);
+		
 		db.putInt(LINKAGES, 0);
 		fLinkageIDCache.clear();
 	}

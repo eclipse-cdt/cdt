@@ -21,11 +21,13 @@ import org.eclipse.cdt.core.settings.model.extension.CLanguageData;
 import org.eclipse.cdt.core.settings.model.extension.impl.CDefaultLanguageData;
 import org.eclipse.cdt.core.settings.model.util.CDataUtil;
 import org.eclipse.cdt.core.settings.model.util.EntryStore;
+import org.eclipse.core.resources.IProject;
 
 public class CLanguageSettingCache extends CDefaultLanguageData implements
 		ICLanguageSetting, ICachedData {
 	private ICResourceDescription fParent;
 	protected EntryStore fResolvedEntriesStore;
+	private String fCachedExtensions[];
 
 	public CLanguageSettingCache(CLanguageData base, CFolderDescriptionCache folderCache) {
 		fId = base.getId();
@@ -51,7 +53,7 @@ public class CLanguageSettingCache extends CDefaultLanguageData implements
 				fResolvedEntriesStore = new EntryStore();
 			}
 			
-			ICLanguageSettingEntry[] resolved = fResolvedEntriesStore.getEntries();
+			ICLanguageSettingEntry[] resolved = fResolvedEntriesStore.getEntries(kind);
 			if(resolved.length == 0){
 				resolved = CDataUtil.resolveEntries(entries, getConfiguration());
 				fResolvedEntriesStore.storeEntries(kind, resolved);
@@ -62,7 +64,35 @@ public class CLanguageSettingCache extends CDefaultLanguageData implements
 		return entries;
 	}
 	
+	private IProject getProject(){
+		return getConfiguration().getProjectDescription().getProject();
+	}
+
 	
+	public String[] getSourceExtensions() {
+		if(fCachedExtensions == null ){
+			String[] typeIds = getSourceContentTypeIds();
+			String exts[] = null;
+			if(typeIds != null && typeIds.length != 0){
+				exts = CProjectDescriptionManager.getInstance().getExtensionsFromContentTypes(getProject(), typeIds);
+			} else {
+				exts = super.getSourceExtensions();
+				if(exts != null && exts.length != 0)
+					exts = (String[])exts.clone();
+				else
+					exts = CDefaultLanguageData.EMPTY_STRING_ARRAY;
+			}
+			
+			if(exts == null)
+				exts = CDefaultLanguageData.EMPTY_STRING_ARRAY;
+			fCachedExtensions = exts;
+		}
+		
+		if(fCachedExtensions.length != 0)
+			return (String[])fCachedExtensions.clone();
+		return fCachedExtensions;
+	}
+
 	public ICLanguageSettingEntry[] getSettingEntries(int kind) {
 //		int kinds[] = KindBasedStore.getSupportedKinds();
 //		List list = new ArrayList();

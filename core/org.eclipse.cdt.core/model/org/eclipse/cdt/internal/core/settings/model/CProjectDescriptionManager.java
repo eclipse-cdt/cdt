@@ -70,6 +70,7 @@ import org.eclipse.cdt.core.settings.model.extension.CResourceData;
 import org.eclipse.cdt.core.settings.model.extension.ICProjectConverter;
 import org.eclipse.cdt.core.settings.model.extension.impl.CDataFacroty;
 import org.eclipse.cdt.core.settings.model.extension.impl.CDefaultConfigurationData;
+import org.eclipse.cdt.core.settings.model.extension.impl.CDefaultLanguageData;
 import org.eclipse.cdt.core.settings.model.util.CDataUtil;
 import org.eclipse.cdt.core.settings.model.util.KindBasedStore;
 import org.eclipse.cdt.core.settings.model.util.ListComparator;
@@ -89,6 +90,7 @@ import org.eclipse.core.resources.ISavedState;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.IWorkspaceRunnable;
+import org.eclipse.core.resources.ProjectScope;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IExtension;
@@ -103,9 +105,11 @@ import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.content.IContentType;
 import org.eclipse.core.runtime.content.IContentTypeManager;
+import org.eclipse.core.runtime.content.IContentTypeSettings;
 import org.eclipse.core.runtime.jobs.IJobManager;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.core.runtime.preferences.IScopeContext;
 import org.osgi.framework.Version;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -2827,5 +2831,59 @@ public class CProjectDescriptionManager {
 		}
 		
 		return data != null && !PathEntryConfigurationDataProvider.isPathEntryData(data);
+	}
+	
+	public String[] getContentTypeFileSpecs (IProject project, IContentType type) {
+		String[] globalSpecs = type.getFileSpecs(IContentType.FILE_EXTENSION_SPEC); 
+		IContentTypeSettings settings = null;
+		if (project != null) {
+			IScopeContext projectScope = new ProjectScope(project);
+			try {
+				settings = type.getSettings(projectScope);
+			} catch (Exception e) {}
+			if (settings != null) {
+				String[] specs = settings.getFileSpecs(IContentType.FILE_EXTENSION_SPEC);
+				if (specs.length > 0) {
+					int total = globalSpecs.length + specs.length;
+					String[] projSpecs = new String[total];
+					int i=0;
+					for (int j=0; j<specs.length; j++) {
+						projSpecs[i] = specs[j];
+						i++;
+					}								
+					for (int j=0; j<globalSpecs.length; j++) {
+						projSpecs[i] = globalSpecs[j];
+						i++;
+					}								
+					return projSpecs;
+				}
+			}
+		}
+		return globalSpecs;		
+	}
+	public String[] getExtensionsFromContentTypes(IProject project, String[] typeIds){
+		String[] exts = null;
+		if(typeIds != null && typeIds.length != 0){
+			IContentTypeManager manager = Platform.getContentTypeManager();
+			IContentType type;
+			if(typeIds.length == 1){
+				type = manager.getContentType(typeIds[0]);
+				if(type != null)
+					exts = getContentTypeFileSpecs(project, type);
+			} else {
+				List list = new ArrayList();
+				for(int i = 0; i < typeIds.length; i++){
+					type = manager.getContentType(typeIds[i]);
+					if(type != null) {
+						list.addAll(Arrays.asList(getContentTypeFileSpecs(project, type)));
+					}
+				}
+				exts = (String[])list.toArray(new String[list.size()]);
+			}
+		}
+		
+		if(exts == null)
+			exts = CDefaultLanguageData.EMPTY_STRING_ARRAY;
+		return exts;
 	}
 }

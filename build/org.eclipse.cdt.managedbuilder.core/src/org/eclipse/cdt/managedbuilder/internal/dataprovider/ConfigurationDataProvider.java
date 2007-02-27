@@ -297,7 +297,7 @@ public class ConfigurationDataProvider extends CConfigurationDataProvider implem
 				Tool tool = (Tool)tc.createTool(extTool, id, name, false);
 				InputType type = (InputType)tool.getInputTypes()[0];
 				type = (InputType)tool.getEdtableInputType(type);
-				type.setSourceContentTypes(type.getSourceContentTypes());
+				type.setSourceContentTypes(des.getContentTypes());
 				type.setLanguageNameAttribute(des.getName());
 				type.setName(des.getName());
 				type.setLanguageIdAttribute(des.getId());

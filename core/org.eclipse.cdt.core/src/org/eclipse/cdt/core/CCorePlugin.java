@@ -40,6 +40,7 @@ import org.eclipse.cdt.core.settings.model.WriteAccessException;
 import org.eclipse.cdt.internal.core.CConfigBasedDescriptorManager;
 import org.eclipse.cdt.internal.core.CContentTypes;
 import org.eclipse.cdt.internal.core.CDTLogWriter;
+import org.eclipse.cdt.internal.core.CdtVarPathEntryVariableManager;
 import org.eclipse.cdt.internal.core.PathEntryVariableManager;
 import org.eclipse.cdt.internal.core.PositionTrackerManager;
 import org.eclipse.cdt.internal.core.cdtvariables.CdtVariableManager;
@@ -187,7 +188,7 @@ public class CCorePlugin extends Plugin {
 	
 	private PDOMManager pdomManager;
 
-	private PathEntryVariableManager fPathEntryVariableManager;
+	private CdtVarPathEntryVariableManager fPathEntryVariableManager;
 
 	// -------- static methods --------
 
@@ -329,7 +330,7 @@ public class CCorePlugin extends Plugin {
 		fDescriptorManager = fNewCProjectDescriptionManager.getDescriptorManager();
 
 		// Start file type manager first !!
-		fPathEntryVariableManager = new PathEntryVariableManager();
+		fPathEntryVariableManager = new CdtVarPathEntryVariableManager();
 		fPathEntryVariableManager.startup();
 
 		cdtLog = new CDTLogWriter(CCorePlugin.getDefault().getStateLocation().append(".log").toFile()); //$NON-NLS-1$

@@ -31,6 +31,7 @@ import org.eclipse.cdt.core.model.ILibraryEntry;
 import org.eclipse.cdt.core.model.IMacroEntry;
 import org.eclipse.cdt.core.model.IMacroFileEntry;
 import org.eclipse.cdt.core.model.IPathEntry;
+import org.eclipse.cdt.core.resources.IPathEntryVariableManager;
 import org.eclipse.cdt.core.settings.model.CIncludeFileEntry;
 import org.eclipse.cdt.core.settings.model.CIncludePathEntry;
 import org.eclipse.cdt.core.settings.model.CLibraryFileEntry;
@@ -556,12 +557,21 @@ public class PathEntryTranslator {
 				do{
 		//			IPath p;
 		//			IPath inc = getIncludePath();
+					IPath unresolvedBase = basePath;
+					IPath unresolvedValue = valuePath;
+					IPathEntryVariableManager mngr = CCorePlugin.getDefault().getPathEntryVariableManager();
+					
+					basePath = mngr.resolvePath(basePath);
+					valuePath = mngr.resolvePath(valuePath);
+					
 					if (!basePath.isEmpty()) {
 						IPath loc = basePath;
 						if (!loc.isAbsolute()) {
 							ResourceInfo rcInfo = findResourceInfo(fRoot, loc.append(valuePath), !isFile);
 							if (rcInfo.fExists) {
 								fResourceInfo = rcInfo;
+								fName = unresolvedBase.append(unresolvedValue).toString();
+								fValue = fName;
 //								fFullPath = fResourceInfo.fRc.getFullPath();
 //								fLocation = fResourceInfo.fRc.getLocation();
 //								fName = fValuePath.toString();
@@ -570,6 +580,8 @@ public class PathEntryTranslator {
 							}
 						}
 						fLocation = loc.append(valuePath);
+						fName = unresolvedBase.append(unresolvedValue).toString();
+						fValue = fName;
 //						fName = fValuePath.toString();
 //						fValue = fValuePath.toString();
 						break;

@@ -15,6 +15,11 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -28,13 +33,15 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.cdtvariables.CdtVariableException;
 import org.eclipse.cdt.core.cdtvariables.ICdtVariable;
-import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICStorageElement;
+import org.eclipse.cdt.core.settings.model.util.CDataUtil;
 import org.eclipse.cdt.core.settings.model.util.XmlStorageElement;
 import org.eclipse.cdt.internal.core.settings.model.CConfigurationSpecSettings;
 import org.eclipse.cdt.internal.core.settings.model.ExceptionFactory;
 import org.eclipse.cdt.internal.core.settings.model.IInternalCCfgInfo;
+import org.eclipse.cdt.utils.cdtvariables.CdtVariableResolver;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.preferences.InstanceScope;
@@ -54,10 +61,13 @@ public class UserDefinedVariableSupplier extends CoreMacroSupplierBase {
 //	public static final String MACROS_ELEMENT_NAME = "macros"; //$NON-NLS-1$
 	public static final String NODENAME = "macros";  //$NON-NLS-1$
 	public static final String PREFNAME_WORKSPACE = "workspace";  //$NON-NLS-1$
+	static final String OLD_VARIABLE_PREFIX = "pathEntryVariable."; //$NON-NLS-1$
+
 
 	private static UserDefinedVariableSupplier fInstance;
 	
 	private StorableCdtVariables fWorkspaceMacros;
+	private Set fListeners;
 	
 	private StorableCdtVariables getStorableMacros(int contextType, Object contextData){
 		StorableCdtVariables macros = null;
@@ -83,7 +93,7 @@ public class UserDefinedVariableSupplier extends CoreMacroSupplierBase {
 	}
 	
 	private UserDefinedVariableSupplier(){
-		
+		fListeners = Collections.synchronizedSet(new HashSet());
 	}
 
 	public static UserDefinedVariableSupplier getInstance(){
@@ -127,12 +137,21 @@ public class UserDefinedVariableSupplier extends CoreMacroSupplierBase {
 		if(macros == null)
 			return null;
 		
+		ICdtVariable oldVar = macros.getMacro(macroName);
+		
 		ICdtVariable macro = macros.createMacro(macroName,type,value);
 		if(macros.isChanged()){
 			setRebuildStateForContext(contextType, contextData);
 			macros.setChanged(false);
 		}
 		
+		if(macro != null){
+			VariableChangeEvent event = createVariableChangeEvent(macro, oldVar);
+			if(event != null){
+				notifyListeners(event);
+			}
+		}
+
 		return macro;
 
 	}
@@ -148,12 +167,21 @@ public class UserDefinedVariableSupplier extends CoreMacroSupplierBase {
 		if(macros == null)
 			return null;
 		
+		ICdtVariable oldVar = macros.getMacro(macroName);
+
 		ICdtVariable macro = macros.createMacro(macroName,type,value);
 		if(macros.isChanged()){
 			setRebuildStateForContext(contextType, contextData);
 			macros.setChanged(false);
 		}
 		
+		if(macro != null){
+			VariableChangeEvent event = createVariableChangeEvent(macro, oldVar);
+			if(event != null){
+				notifyListeners(event);
+			}
+		}
+
 		return macro;
 
 	}
@@ -168,12 +196,20 @@ public class UserDefinedVariableSupplier extends CoreMacroSupplierBase {
 		if(macros == null)
 			return null;
 		
+		ICdtVariable oldVar = macros.getMacro(macroName);
+		
 		ICdtVariable macro = macros.createMacro(copy);
 		if(macros.isChanged()){
 			setRebuildStateForContext(contextType, contextData);
 			macros.setChanged(false);
 		}
 		
+		if(macro != null){
+			VariableChangeEvent event = createVariableChangeEvent(macro, oldVar);
+			if(event != null){
+				notifyListeners(event);
+			}
+		}
 		return macro;
 	}
 
@@ -182,8 +218,15 @@ public class UserDefinedVariableSupplier extends CoreMacroSupplierBase {
 		if(macros == null)
 			return null;
 		ICdtVariable macro = macros.deleteMacro(name);
-		if(macro != null)
+		if(macro != null){
 			setRebuildStateForContext(contextType, contextData);
+			
+			VariableChangeEvent event = createVariableChangeEvent(null, macro);
+			if(event != null){
+				notifyListeners(event);
+			}
+
+		}
 		
 		return macro;
 	}
@@ -193,8 +236,16 @@ public class UserDefinedVariableSupplier extends CoreMacroSupplierBase {
 		if(macros == null)
 			return;
 
+		ICdtVariable[] oldVars = macros.getMacros();
+		
 		if(macros.deleteAll())
 			setRebuildStateForContext(contextType, contextData);
+		
+		VariableChangeEvent event = createVariableChangeEvent(null, oldVars);
+		if(event != null){
+			notifyListeners(event);
+		}
+
 	}
 	
 	public void setMacros(ICdtVariable m[], int contextType, Object contextData){
@@ -202,11 +253,183 @@ public class UserDefinedVariableSupplier extends CoreMacroSupplierBase {
 		if(macros == null)
 			return;
 
+		ICdtVariable[] oldVars = macros.getMacros();
+		
 		macros.setMacros(m);
 		if(macros.isChanged()){
 			setRebuildStateForContext(contextType, contextData);
 			macros.setChanged(false);
+			
+			VariableChangeEvent event = createVariableChangeEvent(m, oldVars);
+			if(event != null){
+				notifyListeners(event);
+			}
+
 		}
+	}
+	
+	private static class VarKey {
+		private ICdtVariable fVar;
+		private boolean fNameOnly;
+		
+		VarKey(ICdtVariable var, boolean nameOnly){
+			fVar = var;
+			fNameOnly = nameOnly;
+		}
+		
+		public ICdtVariable getVariable(){
+			return fVar; 
+		}
+
+		public boolean equals(Object obj) {
+			if(obj == this)
+				return true;
+			
+			if(!(obj instanceof VarKey))
+				return false;
+			
+			VarKey other = (VarKey)obj;
+			
+			ICdtVariable otherVar = other.fVar;
+			
+			if(fVar == otherVar)
+				return true;
+			
+			if(!CDataUtil.objectsEqual(fVar.getName(), otherVar.getName()))
+				return false;
+
+			if(fNameOnly)
+				return true;
+			
+			if(fVar.getValueType() != otherVar.getValueType())
+				return false;
+
+			if(CdtVariableResolver.isStringListVariable(fVar.getValueType())){
+				try {
+					if(!Arrays.equals(fVar.getStringListValue(), otherVar.getStringListValue()))
+						return false;
+				} catch (CdtVariableException e) {
+					CCorePlugin.log(e);
+				}
+			} else {
+				try {
+					if(!CDataUtil.objectsEqual(fVar.getStringValue(), otherVar.getStringValue()))
+						return false;
+				} catch (CdtVariableException e) {
+					CCorePlugin.log(e);
+				}
+			}
+				
+			return true;
+		}
+
+		public int hashCode() {
+			int code = 51;
+			
+			String name = fVar.getName();
+			if(name != null)
+				code += name.hashCode();
+
+			if(fNameOnly)
+				return code;
+			
+			code += fVar.getValueType();
+			if(CdtVariableResolver.isStringListVariable(fVar.getValueType())){
+				try {
+					String[] value = fVar.getStringListValue();
+					if(value != null){
+						for(int i = 0; i < value.length; i++){
+							code += value[i].hashCode();
+						}
+					}
+				} catch (CdtVariableException e) {
+					CCorePlugin.log(e);
+				}
+			} else {
+				try {
+					String value =fVar.getStringValue();
+					if(value != null){
+						code += value.hashCode();
+					}
+				} catch (CdtVariableException e) {
+					CCorePlugin.log(e);
+				}
+			}
+			
+			return code;
+		}
+		
+	}
+
+	static VariableChangeEvent createVariableChangeEvent(ICdtVariable newVar, ICdtVariable oldVar){
+		ICdtVariable newVars[] = newVar != null ? new ICdtVariable[]{newVar} : null;
+		ICdtVariable oldVars[] = oldVar != null ? new ICdtVariable[]{oldVar} : null;
+		
+		return createVariableChangeEvent(newVars, oldVars);
+	}
+
+	static ICdtVariable[] varsFromKeySet(Set set){
+		ICdtVariable vars[] = new ICdtVariable[set.size()];
+		int i = 0;
+		for(Iterator iter = set.iterator(); iter.hasNext(); i++){
+			VarKey key = (VarKey)iter.next();
+			vars[i] = key.getVariable();
+		}
+		
+		return vars;
+	}
+	static VariableChangeEvent createVariableChangeEvent(ICdtVariable[] newVars, ICdtVariable[] oldVars){
+		ICdtVariable[] addedVars = null, removedVars = null, changedVars = null;
+		
+		if(oldVars == null || oldVars.length == 0){
+			if(newVars != null && newVars.length != 0)
+				addedVars = (ICdtVariable[])newVars.clone() ;
+		} else if(newVars == null || newVars.length == 0){
+			removedVars = (ICdtVariable[])oldVars.clone();
+		} else {
+			HashSet newSet = new HashSet(newVars.length);
+			HashSet oldSet = new HashSet(oldVars.length);
+			
+			for(int i = 0; i < newVars.length; i++){
+				newSet.add(new VarKey(newVars[i], true));
+			}
+	
+			for(int i = 0; i < oldVars.length; i++){
+				oldSet.add(new VarKey(oldVars[i], true));
+			}
+	
+			HashSet newSetCopy = (HashSet)newSet.clone();
+	
+			newSet.removeAll(oldSet);
+			oldSet.removeAll(newSetCopy);
+			
+			if(newSet.size() != 0){
+				addedVars = varsFromKeySet(newSet);
+			}
+			
+			if(oldSet.size() != 0){
+				removedVars = varsFromKeySet(oldSet);
+			}
+			
+			newSetCopy.removeAll(newSet);
+			
+			HashSet modifiedSet = new HashSet(newSetCopy.size());
+			for(Iterator iter = newSetCopy.iterator(); iter.hasNext();){
+				VarKey key = (VarKey)iter.next();
+				modifiedSet.add(new VarKey(key.getVariable(), false));
+			}
+			
+			for(int i = 0; i < oldVars.length; i++){
+				modifiedSet.remove(new VarKey(oldVars[i], false));
+			}
+			
+			if(modifiedSet.size() != 0)
+				changedVars = varsFromKeySet(modifiedSet); 
+		}
+		
+		if(addedVars != null || removedVars != null || changedVars != null)
+			return new VariableChangeEvent(addedVars, removedVars, changedVars);
+		return null;
 	}
 
 	/*
@@ -228,8 +451,20 @@ public class UserDefinedVariableSupplier extends CoreMacroSupplierBase {
 	}
 	
 	public void setWorkspaceVariables(StorableCdtVariables vars) throws CoreException{
+		StorableCdtVariables old = getStorableMacros(ICoreVariableContextInfo.CONTEXT_WORKSPACE, null);
+		ICdtVariable[] oldVars = null;
+		if(old != null)
+			oldVars = old.getMacros();
+		
+		ICdtVariable[] newVars = vars.getMacros();
+		
 		fWorkspaceMacros = new StorableCdtVariables(vars, false);
 		
+		VariableChangeEvent event = createVariableChangeEvent(newVars, oldVars);
+		if(event != null){
+			notifyListeners(event);
+		}
+
 		storeWorkspaceVariables(true);
 	}
 	
@@ -246,11 +481,37 @@ public class UserDefinedVariableSupplier extends CoreMacroSupplierBase {
 	 * loads the stored workspace macros
 	 */
 	protected StorableCdtVariables loadWorkspaceMacros(){
+		StorableCdtVariables macros = loadNewStileWorkspaceMacros();
+		
+		//now load PathEntry Variables from preferences
+		
+		
+		return macros;
+	}
+	
+	protected void loadPathEntryVariables(StorableCdtVariables vars){
+		org.eclipse.core.runtime.Preferences prefs = CCorePlugin.getDefault().getPluginPreferences();
+		String[] names = prefs.propertyNames();
+		for(int i = 0; i < names.length; i++){
+			String name = names[i];
+			if (name.startsWith(OLD_VARIABLE_PREFIX)) {
+				String value = prefs.getString(name);
+				prefs.setToDefault(name);
+				if(value.length() != 0){
+					name = name.substring(OLD_VARIABLE_PREFIX.length());
+					vars.createMacro(name, ICdtVariable.VALUE_PATH_ANY, value);
+				}
+			}
+		}
+	}
+	
+	protected StorableCdtVariables loadNewStileWorkspaceMacros(){
 		InputStream stream = loadInputStream(getWorkspaceNode(),PREFNAME_WORKSPACE);
 		if(stream == null)
 			return new StorableCdtVariables(false);
 		return loadMacrosFromStream(stream);
 	}
+	
 	
 	/*
 	 * stores the given macros 
@@ -394,6 +655,21 @@ public class UserDefinedVariableSupplier extends CoreMacroSupplierBase {
 		}
 
 */		
+	}
+	
+	public void addListener(ICdtVariableChangeListener listener){
+		fListeners.add(listener);
+	}
+	
+	public void removeListener(ICdtVariableChangeListener listener){
+		fListeners.remove(listener);
+	}
+	
+	private void notifyListeners(VariableChangeEvent event){
+		ICdtVariableChangeListener[] listeners = (ICdtVariableChangeListener[])fListeners.toArray(new ICdtVariableChangeListener[fListeners.size()]);
+		for(int i = 0; i < listeners.length; i++){
+			listeners[i].variablesChanged(event);
+		}
 	}
 	
 }

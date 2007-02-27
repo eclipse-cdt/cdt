@@ -100,18 +100,33 @@ public class DescriptionScannerInfoProvider implements IScannerInfoProvider, ICP
 		return info;
 	}
 	
+	private static ICLanguageSettingPathEntry[] getPathEntries(ICLanguageSetting ls, int kind){
+		ICLanguageSettingEntry entries[] = ls.getResolvedSettingEntries(kind);
+		ICLanguageSettingPathEntry pathEntries[] = new ICLanguageSettingPathEntry[entries.length];
+		System.arraycopy(entries, 0, pathEntries, 0, entries.length);
+		
+		return pathEntries;
+	}
+
+	private static ICMacroEntry[] getMacroEntries(ICLanguageSetting ls){
+		ICLanguageSettingEntry entries[] = ls.getResolvedSettingEntries(ICLanguageSettingEntry.MACRO);
+		ICMacroEntry macroEntries[] = new ICMacroEntry[entries.length];
+		System.arraycopy(entries, 0, macroEntries, 0, entries.length);
+		
+		return macroEntries;
+	}
 
 	private IScannerInfo createScannerInfo(ICLanguageSetting ls){
-		ICLanguageSettingPathEntry pathEntries[] = (ICLanguageSettingPathEntry[])ls.getResolvedSettingEntries(ICLanguageSettingEntry.INCLUDE_PATH);
+		ICLanguageSettingPathEntry pathEntries[] = getPathEntries(ls, ICLanguageSettingEntry.INCLUDE_PATH);
 		String incs[] = getValues(pathEntries);
 		
-		pathEntries = (ICLanguageSettingPathEntry[])ls.getResolvedSettingEntries(ICLanguageSettingEntry.INCLUDE_FILE);
+		pathEntries = getPathEntries(ls, ICLanguageSettingEntry.INCLUDE_FILE);
 		String incFiles[] = getValues(pathEntries);
 
-		pathEntries = (ICLanguageSettingPathEntry[])ls.getResolvedSettingEntries(ICLanguageSettingEntry.MACRO_FILE);
+		pathEntries = getPathEntries(ls, ICLanguageSettingEntry.MACRO_FILE);
 		String macroFiles[] = getValues(pathEntries);
 		
-		ICMacroEntry macroEntries[] = (ICMacroEntry[])ls.getResolvedSettingEntries(ICLanguageSettingEntry.MACRO);
+		ICMacroEntry macroEntries[] = getMacroEntries(ls);
 		Map macrosMap = getValues(macroEntries);
 		
 		return new ExtendedScannerInfo(macrosMap, incs, macroFiles, incFiles);

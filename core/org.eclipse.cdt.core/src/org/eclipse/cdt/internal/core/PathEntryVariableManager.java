@@ -44,8 +44,17 @@ public class PathEntryVariableManager implements IPathEntryVariableManager {
 
 	/**
 	 * Constructor for the class.
-	 */
-	public PathEntryVariableManager() {
+	 * 
+	 * The current manager implementation is not used any more
+	 * Instead the CdtVarPathEntryVariableManager is used that actually wraps the CdtVariables contributed at workspace level
+	 * 
+	 * NOTE: all PathEntryVariableManager functionality remains workable with the new
+	 * CdtVarPathEntryVariableManager. We could either remove this class or copy the contents of the 
+	 * CdtVarPathEntryVariableManager to this class to preserve internal class name for better backward compatibility.
+	 * 
+	 * 
+	 */ 
+	private PathEntryVariableManager() {
 		this.listeners = Collections.synchronizedSet(new HashSet());
 		this.preferences = CCorePlugin.getDefault().getPluginPreferences();
 	}

@@ -11,7 +11,6 @@
 package org.eclipse.cdt.internal.core.settings.model;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
@@ -23,12 +22,6 @@ import org.eclipse.cdt.core.settings.model.extension.impl.CDefaultLanguageData;
 import org.eclipse.cdt.core.settings.model.util.CDataUtil;
 import org.eclipse.cdt.core.settings.model.util.EntryStore;
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.ProjectScope;
-import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.content.IContentType;
-import org.eclipse.core.runtime.content.IContentTypeManager;
-import org.eclipse.core.runtime.content.IContentTypeSettings;
-import org.eclipse.core.runtime.preferences.IScopeContext;
 
 public class CLanguageSetting extends CDataProxy implements
 		ICLanguageSetting {
@@ -97,36 +90,6 @@ public class CLanguageSetting extends CDataProxy implements
 		return (getSupportedEntryKinds() & kind) == kind;
 	}
 	
-	public String[] getContentTypeFileSpecs (IContentType type) {
-		String[] globalSpecs = type.getFileSpecs(IContentType.FILE_EXTENSION_SPEC); 
-		IContentTypeSettings settings = null;
-		IProject project = getProject();
-		if (project != null) {
-			IScopeContext projectScope = new ProjectScope(project);
-			try {
-				settings = type.getSettings(projectScope);
-			} catch (Exception e) {}
-			if (settings != null) {
-				String[] specs = settings.getFileSpecs(IContentType.FILE_EXTENSION_SPEC);
-				if (specs.length > 0) {
-					int total = globalSpecs.length + specs.length;
-					String[] projSpecs = new String[total];
-					int i=0;
-					for (int j=0; j<specs.length; j++) {
-						projSpecs[i] = specs[j];
-						i++;
-					}								
-					for (int j=0; j<globalSpecs.length; j++) {
-						projSpecs[i] = globalSpecs[j];
-						i++;
-					}								
-					return projSpecs;
-				}
-			}
-		}
-		return globalSpecs;		
-	}
-	
 	private IProject getProject(){
 		return getConfiguration().getProjectDescription().getProject();
 	}
@@ -153,28 +116,13 @@ public class CLanguageSetting extends CDataProxy implements
 		String[] exts = null;
 		String[] typeIds = data.getSourceContentTypeIds();
 		if(typeIds != null && typeIds.length != 0){
-			IContentTypeManager manager = Platform.getContentTypeManager();
-			IContentType type;
-			if(typeIds.length == 1){
-				type = manager.getContentType(typeIds[0]);
-				if(type != null)
-					exts = getContentTypeFileSpecs(type);
-			} else {
-				List list = new ArrayList();
-				for(int i = 0; i < typeIds.length; i++){
-					type = manager.getContentType(typeIds[i]);
-					if(type != null) {
-						list.addAll(Arrays.asList(getContentTypeFileSpecs(type)));
-					}
-				}
-				exts = (String[])list.toArray(new String[list.size()]);
-			}
+			exts = CProjectDescriptionManager.getInstance().getExtensionsFromContentTypes(getProject(), typeIds);
 		} else {
 			exts = data.getSourceExtensions();
-			if(exts != null)
+			if(exts != null && exts.length != 0)
 				exts = (String[])exts.clone();
 			else
-				exts = new String[0];
+				exts = CDefaultLanguageData.EMPTY_STRING_ARRAY;
 		}
 		
 		if(exts == null)

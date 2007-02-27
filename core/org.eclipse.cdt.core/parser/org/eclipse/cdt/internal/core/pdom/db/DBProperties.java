@@ -33,7 +33,7 @@ public class DBProperties {
 	 * @throws CoreException
 	 */
 	public DBProperties(Database db) throws CoreException {
-		this.record= db.malloc(4);
+		this.record= db.malloc(RECORD_SIZE);
 		this.index= new BTree(db, record + PROP_INDEX, DBProperty.getComparator(db));
 		this.db= db;
 	}
@@ -125,7 +125,7 @@ public class DBProperties {
 	 * it can be repopulated.
 	 * @throws CoreException
 	 */
-	private void clear() throws CoreException {
+	public void clear() throws CoreException {
 		index.accept(new IBTreeVisitor(){
 			public int compare(int record) throws CoreException {
 				return 0;
@@ -148,6 +148,10 @@ public class DBProperties {
 		db.free(record);
 	}
 
+	public int getRecord() {
+		return record;
+	}
+	
 	private static class DBProperty {
 		static final int KEY = 0;
 		static final int VALUE = 4;

@@ -3,14 +3,14 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
 <link rel="stylesheet" href="http://www.eclipse.org/default_style.css" type="text/css">
-<title>Build Notes for RSE @buildId@</title>
+<title>Build Notes for TM @buildId@</title>
 </head>
 
 <body>
 <table border="0" cellspacing="5" cellpadding="2" width="100%">
 	<tr>
 		<td align="LEFT" width="80%">
-		<p><b><font class=indextop>Build Notes for RSE @buildId@</font></b><br>
+		<p><b><font class=indextop>Build Notes for TM @buildId@</font></b><br>
 		@dateLong@ </p>
 		</td>
 	</tr>
@@ -23,11 +23,17 @@
 </table>
 <table><tbody><tr><td>
 <ul>
-<li>Added a <b>milestone update site</b> for RSE 2.0 milestone builds at
+<li>Taking into account that TM is actually more than the core RSE framework,
+  and especially includes components like the Terminal that do not require RSE,
+  we changed all references to read <b>TM 2.0</b> instead of RSE 2.0.</li>
+<li>TM 2.0M5 <b>requires Eclipse 3.3M5</b>. Platform Runtime is the minimum
+  requirement for dstore and ftp. Terminal-ssh and RSE-ssh also require the
+  <b>CVS Client Runtime</b> (The dependency on CVS Client Runtime should go away
+  again with M6 by resolving <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=175686">bug 175686</a>).</li>
+<li>Added a <b>milestone update site</b> for TM 2.0 milestone builds at
   <a href="http://download.eclipse.org/dsdp/tm/updates/milestones">http://download.eclipse.org/dsdp/tm/updates/milestones</a>.
-  As per [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=175241">175241</a>], the RSE Core feature references
-  this update site os when you install an RSE 2.0 milestone, you can "check for updates" to get the next
-  one or add components from the site.</li>
+  "Check for updates" will automatically reference this milestone update site, so you can get milestone
+  patches from there [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=175241">175241</a>].</li>
 <li><b>Terminal</b>: Use rxtx-2.1 (gnu.io) for serial line support instead of javax.comm. See the new
   <a href="http://dev.eclipse.org/viewcvs/index.cgi/org.eclipse.tm.core/terminal/org.eclipse.tm.terminal.serial/README.txt?root=DSDP_Project&view=co">README</a> for installing RXTX
   [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=168893">168893</a>] 
@@ -49,7 +55,7 @@
 Using this new functionality, it is also possible to hook up new system types with existing 
 subsystemConfigurations [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=173265">173265</a>].
 <li>Use 
-  <a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced&classification=DSDP&product=Target+Management&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&resolution=FIXED&resolution=WONTFIX&resolution=INVALID&resolution=WORKSFORME&chfieldfrom=2006-12-24&chfieldto=Now&chfield=resolution&cmdtype=doit">
+  <a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced&classification=DSDP&product=Target+Management&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&resolution=FIXED&resolution=WONTFIX&resolution=INVALID&resolution=WORKSFORME&chfieldfrom=2006-12-24&chfieldto=2007-02-25&chfield=resolution&cmdtype=doit">
   <!-- <a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced&classification=DSDP&product=Target+Management&target_milestone=2.0+M5&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&resolution=FIXED&resolution=WONTFIX&resolution=INVALID&resolution=WORKSFORME&cmdtype=doit">  -->
   this query</a> to show the list of bugs fixed since the last release,
   <a href="http://download.eclipse.org/dsdp/tm/downloads/drops/S-2.0M4-200701040900/index.php">
@@ -63,8 +69,8 @@ subsystemConfigurations [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=
 <li>For other questions, please check the
   <a href="http://wiki.eclipse.org/index.php/TM_and_RSE_FAQ">TM and RSE FAQ</a>
   as well as the
-  <a href="http://wiki.eclipse.org/index.php/RSE_2.0_Known_Issues_and_Workarounds">
-  RSE 2.0 Known Issues and Workarounds</a>.</li>
+  <a href="http://wiki.eclipse.org/index.php/TM_2.0_Known_Issues_and_Workarounds">
+  TM 2.0 Known Issues and Workarounds</a>.</li>
 </ul>
 </td></tr></tbody></table>
 
@@ -103,7 +109,7 @@ API changes, and especially moving lots of classes which we cannot guarantee to
 support in the future into internal packages.</p> 
 <p>We are committed to not introducing any incompatible
 API changes on the RSE 1.0 maintenance stream (1.0.x), but we need to 
-change the API for RSE 2.0 in a not backward compatible way.<br/>
+change the API for TM 2.0 in a not backward compatible way.<br/>
 All such API changes are voted on
 by committers on the <a href="http://dev.eclipse.org/mailman/listinfo/dsdp-tm-dev">
 dsdp-tm-dev</a> developer mailing list, and documented in a migration guide
@@ -130,27 +136,27 @@ More information can be found in the associated bugzilla items.
 <ul>
 <li><b>Modified Extension Point subsystemConfigurations</b> to reference system types by ID rather than
 by name. Client code needs to use the <b><i>systemTypeIds</i></b> tag now rather than <samp>systemTypes</samp>
-[<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=162081">162081</a>].
+[<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=162081">162081</a>].</li>
 <li><b>Removed Extension Points for Popup Menus and Property Pages:</b> The RSE-specific extension points
 <samp>org.eclipse.rse.ui.propertyPages</samp> and <samp>org.eclipse.rse.ui.popupMenus</samp> were removed
 because newer Eclipse versions have all required functionality in the base extension points already. 
 Example code, tutorials and ISV docs were updated and have the required information for how to migrate
-to the new extension points. [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=172651">172651</a>]
+to the new extension points. [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=172651">172651</a>].</li>
 <li><b>Moved extension point</b> <samp>org.eclipse.rse.ui.archiveHandlers</samp> to 
 <samp><a href="http://dsdp.eclipse.org/help/latest/topic/org.eclipse.rse.doc.isv/reference/extension-points/org_eclipse_rse_services_archivehandlers.html">org.eclipse.rse.services.archiveHandlers</a></samp>
 [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=173871">173871</a>].
 <li><b>newConnectionWizards:</b> The old <samp>newConnectionWizardDelegates</samp> extension point
- has been replaced by a new <samp><a href="http://dsdp.eclipse.org/help/latest/topic/org.eclipse.rse.doc.isv/reference/extension-points/org_eclipse_rse_ui_newConnectionWizards.html">newConnectionWizards</a></samp> extension point for more flexibility.
- See the bugzilla item for details [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=173772">173772</a>].
+ has been replaced by a new <samp><a href="http://dsdp.eclipse.org/help/latest/topic/org.eclipse.rse.doc.isv/reference/extension-points/org_eclipse_rse_ui_newConnectionWizards.html">newConnectionWizards</a></samp>
+ extension point for more flexibility [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=173772">173772</a>].</li>
 <li><b>Deep Filtering:</b> The SystemView now supports Context Information for queries of multiple filters to the same remote elements.
   That is, the SystemViewElementAdapter.getChildren() method can know the filer context in which a query is made.
   This is necessary in order to properly support "deep filtering" by file types. An API change was required 
   to get this implemented: <b>Existing code needs to change</b> two method signatures in classes deriving from
-  AbstractSystemViewAdapter. See [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=170627">170627</a>] for details.
+  AbstractSystemViewAdapter. For details, see [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=170627">170627</a>].</li>
 <li><b>Making classes internal:</b> Many classes have been made internal, and PDE support for generating
   warnings of discourage access has been enabled. Client code should not have used the classes which are
   now internal anyways; but if you do, just running "organize imports" should make your code compile again.
-  See [<a href="https://bugs.eclipse.org/bugs/showdependencytree.cgi?id=170922">170922</a>] for details.
+  For details, see [<a href="https://bugs.eclipse.org/bugs/showdependencytree.cgi?id=170922">170922</a>].</li>
 </ul>
 
 Use 
@@ -175,14 +181,14 @@ We'll strive to fix these as soon as possible.
 -->
 <p>No major or critical bugs are known at the time of release.
 Use 
-<a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced&classification=DSDP&product=Target+Management&component=RSE&bug_status=UNCONFIRMED&bug_status=NEW&bug_status=ASSIGNED&bug_status=REOPENED&bug_severity=blocker&bug_severity=critical&bug_severity=major&cmdtype=doit">this query</a>
+<a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced&classification=DSDP&product=Target+Management&bug_status=UNCONFIRMED&bug_status=NEW&bug_status=ASSIGNED&bug_status=REOPENED&bug_severity=blocker&bug_severity=critical&bug_severity=major&cmdtype=doit">this query</a>
 for an up-to-date list of major or critical bugs.</p>
 
 <p>The 
-<a href="http://wiki.eclipse.org/index.php/RSE_2.0_Known_Issues_and_Workarounds">
-RSE 2.0 Known Issues and Workarounds</a> Wiki page gives an up-to-date list
+<a href="http://wiki.eclipse.org/index.php/TM_2.0_Known_Issues_and_Workarounds">
+TM 2.0 Known Issues and Workarounds</a> Wiki page gives an up-to-date list
 of the most frequent and obvious problems, and describes workarounds for them.<br/>
-If you have other questions regarding RSE, please check the
+If you have other questions regarding TM or RSE, please check the
 <a href="http://wiki.eclipse.org/index.php/TM_and_RSE_FAQ">TM and RSE FAQ</a>
 </p>
 

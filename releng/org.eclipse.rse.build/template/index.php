@@ -4,14 +4,14 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
 <link rel="stylesheet" href="http://www.eclipse.org/default_style.css" type="text/css">
-<title>DSDP-TM RSE Downloads</title>
+<title>DSDP-TM Downloads</title>
 </head>
 
 <body>
 <table border="0" cellspacing="5" cellpadding="2" width="100%">
 	<tr>
 		<td align="LEFT" width="80%">
-		<p><b><font class=indextop>RSE @buildTypeLong@ Build: @buildId@</font></b><br>
+		<p><b><font class=indextop>TM @buildTypeLong@ Build: @buildId@</font></b><br>
 		@dateLong@ </p>
 		<p>These downloads are provided under the
 		<a href="http://www.eclipse.org/legal/epl/notice.php">Eclipse.org Software 
@@ -47,16 +47,23 @@
 </table>
 <table>
   <tbody>
-    <tr><td><b>RSE 2.0 requires 
-    	<a href="http://download.eclipse.org/eclipse/downloads/drops/S-3.3M4-200612141445/index.php">
-         Eclipse-Platform-3.3M4</a> or later.
+    <tr><td><b>TM 2.0M5 requires 
+    	<a href="http://download.eclipse.org/eclipse/downloads/drops/S-3.3M5eh-200702220951/index.php">
+         Eclipse 3.3M5</a> or later.
     </b></td></tr>
     <tr><td>
-      Prerequisites for add-ons (like CDT, EMF) should be retrieved from the
+      We recommend installing
+        <a href="http://download.eclipse.org/eclipse/downloads/drops/S-3.3M5eh-200702220951/index.php#EclipseSDK">eclipse-SDK</a>. 
+        If you do not want JDT, PDE and the developer docs, please install 
+        <a href="http://download.eclipse.org/eclipse/downloads/drops/S-3.3M5eh-200702220951/index.php#PlatformRuntime">eclipse-platform</a> together with
+        <a href="http://download.eclipse.org/eclipse/downloads/drops/S-3.3M5eh-200702220951/index.php#CVSRuntime">eclipse-CVS-Client</a>.
+    </td></tr> 
+    <tr><td>
+      Prerequisites for other add-ons (like CDT, EMF) should be retrieved from the
       <a href="http://download.eclipse.org/europa/releases/">Europa Discovery Site</a>.
     </td></tr> 
     <tr><td>
-      Earlier versions (e.g. Eclipse 3.2.x) will <b>not</b> work!
+      Earlier versions (e.g. Eclipse 3.2.x, Eclipse 3.3M4) will <b>not</b> work!
     </td></tr> 
   </tbody>
 </table>
@@ -141,9 +148,9 @@
         <td><a href="http://www.eclipse.org/downloads/download.php?file=/dsdp/tm/downloads/drops/@dropDir@/RSE-efs-@buildId@.zip">RSE-efs-@buildId@.zip</a></td>
         <td><small>&nbsp;</small><br/>
 			An experimental Eclipse Filesystem (EFS) provider, which
-			uses RSE contributed file services. It currently works for accessing
-			remote file systems, but cannot be used to hold Projects of an 
-			Eclipse Workspace due to resource locking issues. Includes Source.
+			uses RSE contributed file services. It currently works for ssh
+			connections with limitations. See 
+			<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=170916">bug 170916</a> for details. Includes Source.
         </td>
     </tr>
 	<tr><td><div align=left><img src = "OK.gif" width=19 height=23></div></td>

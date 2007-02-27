@@ -602,6 +602,16 @@ public class SystemRegistry implements ISystemRegistryUI, ISystemModelChangeEven
 		return factories;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.core.model.ISystemRegistry#getSubSystemConfigurationsBySystemType(org.eclipse.rse.core.IRSESystemType)
+	 */
+	public ISubSystemConfiguration[] getSubSystemConfigurationsBySystemType(IRSESystemType systemType) {
+		return getSubSystemConfigurationsBySystemType(systemType != null ? systemType.getName() : null);
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.core.model.ISystemRegistry#getSubSystemConfigurationsBySystemType(java.lang.String)
+	 */
 	public ISubSystemConfiguration[] getSubSystemConfigurationsBySystemType(String systemType)
 	{
 		return getSubSystemConfigurationsBySystemType(systemType, false);
@@ -1757,6 +1767,28 @@ public class SystemRegistry implements ISystemRegistryUI, ISystemModelChangeEven
 		return conns;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.core.model.ISystemRegistry#getHostsBySystemType(org.eclipse.rse.core.IRSESystemType)
+	 */
+	public IHost[] getHostsBySystemType(IRSESystemType systemType) {
+		List connections = new ArrayList();
+		
+		if (systemType != null) {
+			IHost[] candidates = getHosts();
+			for (int i = 0; i < candidates.length; i++) {
+				IHost candidate = candidates[i];
+				//FIXME: If IHost.getSystemType() returns the id or the IRSESystemType
+				//       object, this comparisation must be adapted.
+				IRSESystemType candidateType = RSECorePlugin.getDefault().getRegistry().getSystemType(candidate.getSystemType());
+				if (systemType.equals(candidateType)) {
+					connections.add(candidate);
+				}
+			}
+		}
+		
+		return (IHost[])connections.toArray(new IHost[connections.size()]);
+	}
+	
 	/**
 	 * Return all connections for all active profiles, for the given system type.
 	 * Never returns null!

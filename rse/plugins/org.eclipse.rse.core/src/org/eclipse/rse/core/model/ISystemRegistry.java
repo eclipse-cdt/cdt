@@ -21,6 +21,7 @@ import java.util.Vector;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
+import org.eclipse.rse.core.IRSESystemType;
 import org.eclipse.rse.core.filters.ISystemFilterPool;
 import org.eclipse.rse.core.filters.ISystemFilterStartHere;
 import org.eclipse.rse.core.subsystems.IConnectorService;
@@ -36,6 +37,8 @@ import org.eclipse.rse.core.subsystems.ISubSystemConfigurationProxy;
  * The idea here is that connections are grouped by system profile. At any 
  *  time, there is a user-specified number of profiles "active" and connections
  *  from each active profile are worked with.
+ * <p>
+ * This interface is not intended to be implemented by clients.
  */
 public interface ISystemRegistry extends ISchedulingRule {
 
@@ -109,6 +112,12 @@ public interface ISystemRegistry extends ISchedulingRule {
 	 */
 	public ISubSystemConfiguration[] getSubSystemConfigurationsByCategory(String factoryCategory);
 
+	/**
+	 * Return all subsystem factories which support the given system type. If the type is null,
+	 * returns all.
+	 */
+	public ISubSystemConfiguration[] getSubSystemConfigurationsBySystemType(IRSESystemType systemType);
+	
 	/**
 	 * Return all subsystem factories which support the given system type. If the type is null,
 	 *  returns all.
@@ -368,6 +377,15 @@ public interface ISystemRegistry extends ISchedulingRule {
 	 */
 	public IHost[] getHostsBySubSystemConfigurationCategory(String factoryCategory);
 
+	/**
+	 * Returns all connections for all active profiles, for the given system type.
+	 * If the specified system type is null, an empty array is returned.
+	 * 
+	 * @param systemType The system type instance.
+	 * @return The list of connections or an empty array.
+	 */
+	public IHost[] getHostsBySystemType(IRSESystemType systemType);
+	
 	/**
 	 * Return all connections for all active profiles, for the given system type.
 	 */

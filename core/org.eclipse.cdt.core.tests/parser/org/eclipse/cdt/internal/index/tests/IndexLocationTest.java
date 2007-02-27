@@ -37,6 +37,7 @@ import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.filesystem.URIUtil;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
@@ -48,6 +49,7 @@ public class IndexLocationTest extends BaseTestCase {
 	ICProject cproject, emptyCProject;
 	File movedLocation;
 	File externalHeader;
+	IFolder linkedFolder;
 	
 	public static Test suite() {
 		return suite(IndexLocationTest.class);
@@ -55,6 +57,8 @@ public class IndexLocationTest extends BaseTestCase {
 
 	protected void setUp() throws Exception {
 		cproject= CProjectHelper.createCProject("LocationTests", "bin", IPDOMManager.ID_NO_INDEXER);
+		linkedFolder= cproject.getProject().getFolder("linkedFolder");
+		
 		emptyCProject= CProjectHelper.createCProject("Empty", "bin", IPDOMManager.ID_NO_INDEXER);
 		
 		Bundle b = CTestPlugin.getDefault().getBundle();
@@ -232,6 +236,35 @@ public class IndexLocationTest extends BaseTestCase {
 			assertEquals(expectedFullPaths[i], ifl1.getFullPath());
 			assertNull(ifl2.getFullPath());
 			assertEquals(cproject.getProject().getFile(paths[i]).getLocationURI(), ifl1.getURI());
+			assertEquals(URIUtil.toURI("c:/foo/bar/"+paths[i]).normalize(), ifl2.getURI());
+		}
+	}
+	
+	public void testURLC_RCRLC_Interaction3() throws Exception {
+		String[] paths = new String[] {
+				"a b c/d/e f/g.h",
+				"a \\b /c.d",
+				"/a b c/d-e/f.g"
+			};
+		String[] expectedFullPaths = new String[] {
+				linkedFolder.getFullPath()+"/a b c/d/e f/g.h",
+				linkedFolder.getFullPath()+"/a /b /c.d",
+				linkedFolder.getFullPath()+"/a b c/d-e/f.g"
+		};
+		// loc -project-> raw -uri-> loc
+		for(int i=0; i<paths.length; i++) {
+			IFile file= linkedFolder.getFile(paths[i]);
+			IIndexFileLocation ifl1= IndexLocationFactory.getWorkspaceIFL(file);
+			ResourceContainerRelativeLocationConverter prlc= new ResourceContainerRelativeLocationConverter(linkedFolder);
+			String r1= prlc.toInternalFormat(ifl1);
+			assertNotNull(r1);
+			URI base = URIUtil.toURI("c:/foo/bar/");
+			URIRelativeLocationConverter c1 = new URIRelativeLocationConverter(base);
+			IIndexFileLocation ifl2= c1.fromInternalFormat(r1);
+			assertNotNull(ifl2);
+			assertEquals(expectedFullPaths[i], ifl1.getFullPath());
+			assertNull(ifl2.getFullPath());
+			assertEquals(linkedFolder.getFile(paths[i]).getLocationURI(), ifl1.getURI());
 			assertEquals(URIUtil.toURI("c:/foo/bar/"+paths[i]).normalize(), ifl2.getURI());
 		}
 	}

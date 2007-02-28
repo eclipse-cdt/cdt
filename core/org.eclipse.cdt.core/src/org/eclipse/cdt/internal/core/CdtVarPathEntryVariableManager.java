@@ -163,6 +163,9 @@ public class CdtVarPathEntryVariableManager implements
 	}
 
 	public IPath resolvePath(IPath path) {
+		if(path == null)
+			return null;
+		
 		String str = path.toPortableString();
 		
 		try {

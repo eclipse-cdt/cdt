@@ -93,6 +93,7 @@ public class ProblemsLabelDecorator implements ILabelDecorator, ILightweightLabe
 	private static final int ERRORTICK_WARNING= CElementImageDescriptor.WARNING;
 	private static final int ERRORTICK_ERROR= CElementImageDescriptor.ERROR;	
 	private static final int TICK_CONFIGURATION = CElementImageDescriptor.SYSTEM_INCLUDE;	
+	private static final int TICK_EXCLUDE       = CElementImageDescriptor.INACTIVE;	
 	
 	private ImageDescriptorRegistry fRegistry;
 	private boolean fUseNewRegistry= false;
@@ -161,9 +162,9 @@ public class ProblemsLabelDecorator implements ILabelDecorator, ILightweightLabe
 				switch (type) {
 					case ICElement.C_PROJECT:
 					case ICElement.C_CCONTAINER:
-						return getErrorTicksFromMarkers(element.getResource(), IResource.DEPTH_INFINITE, null) | hasOwnConfig(element);
+						return getErrorTicksFromMarkers(element.getResource(), IResource.DEPTH_INFINITE, null) | getTicks(element.getResource());
 					case ICElement.C_UNIT:
-						return getErrorTicksFromMarkers(element.getResource(), IResource.DEPTH_ONE, null) | hasOwnConfig(element);
+						return getErrorTicksFromMarkers(element.getResource(), IResource.DEPTH_ONE, null) | getTicks(element.getResource());
 					case ICElement.C_FUNCTION:
 					case ICElement.C_CLASS:
 					case ICElement.C_UNION:
@@ -177,7 +178,7 @@ public class ProblemsLabelDecorator implements ILabelDecorator, ILightweightLabe
 					default:
 				}
 			} else if (obj instanceof IResource) {
-				return getErrorTicksFromMarkers((IResource) obj, IResource.DEPTH_INFINITE, null);
+				return getErrorTicksFromMarkers((IResource) obj, IResource.DEPTH_INFINITE, null) | getTicks((IResource)obj);
 			}
 		} catch (CoreException e) {
 			if (e instanceof CModelException) {
@@ -363,6 +364,10 @@ public class ProblemsLabelDecorator implements ILabelDecorator, ILightweightLabe
 			decoration.addOverlay(CPluginImages.DESC_OVR_SYSTEM_INCLUDE);
 			adornmentFlags &= ~TICK_CONFIGURATION;
 		}
+		if ((adornmentFlags & TICK_EXCLUDE) != 0) {
+			decoration.addOverlay(CPluginImages.DESC_OVR_INACTIVE);
+			adornmentFlags &= ~TICK_EXCLUDE;
+		}
 		
 		if (adornmentFlags == ERRORTICK_ERROR) {
 			decoration.addOverlay(CPluginImages.DESC_OVR_ERROR);
@@ -371,20 +376,22 @@ public class ProblemsLabelDecorator implements ILabelDecorator, ILightweightLabe
 		}  
 	}
 
-	private int hasOwnConfig (ICElement element) {
-		IResource r = element.getResource();
-		if (r == null || r instanceof IProject) return 0;
+	private int getTicks (IResource r) {
+		if (r == null || r instanceof IProject) return 0;		
 		IPath path = r.getProjectRelativePath();
-		ICProjectDescription prjd = CoreModel.getDefault().getProjectDescription(r.getProject(), false); 
+		ICProjectDescription prjd = CoreModel.getDefault().getProjectDescription(r.getProject(), false);
+		int result = 0;
 		if (prjd != null) { 
 			ICConfigurationDescription [] cf = prjd.getConfigurations();
 			if (cf == null) return 0;
 			for (int i=0; i<cf.length; i++) {
 				ICResourceDescription out = cf[i].getResourceDescription(path, true);
-				if (out != null) return TICK_CONFIGURATION;
+				if (out != null) result |= TICK_CONFIGURATION;
+			// exclude ticks behaviour is an item to discuss.	
+			//	out = cf[i].getResourceDescription(path, false);
+			//	if (out.isExcluded()) result |= TICK_EXCLUDE;
 			}
 		}
-		return 0;
+		return result;
 	}
-	
 }

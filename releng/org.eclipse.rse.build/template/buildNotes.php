@@ -111,7 +111,7 @@ support in the future into internal packages.</p>
 API changes on the RSE 1.0 maintenance stream (1.0.x), but we need to 
 change the API for TM 2.0 in a not backward compatible way.<br/>
 All such API changes are voted on
-by committers on the <a href="http://dev.eclipse.org/mailman/listinfo/dsdp-tm-dev">
+by committers on the <a href="https://dev.eclipse.org/mailman/listinfo/dsdp-tm-dev">
 dsdp-tm-dev</a> developer mailing list, and documented in a migration guide
 for future releases.</p>
 <p>Currently, we see the following areas for more potential API changes:

@@ -16,11 +16,11 @@
 <ul>
   <li><A href="#Services">Service Layer</A></li>
   <li><A href="#Subsystems">Subsystem Layer</A></li>
-  <li><A href="#UIs">UI Layer</A></li>
+  <li><A href="#UI">UI Layer</A></li>
 </ul>
 
 
-<h2><A name="Services">RSE Service Layer</A></h2>
+<A name="Services"></A><h2>RSE Service Layer</h2>
 <p>
 This is the headless, barebones API layer that is used to interact with different protocols to
 provide remote services that can be integrated into RSE.  By default, RSE defines the following
@@ -38,7 +38,7 @@ different protocols.  For example, the IFileService could be implemented locally
 other protocol.  Similarly, the IShellService could be implemented locally via DataStore, telnet, SSH or something
 else.
 </p>
-		<h2><A name="SubSystems">RSE Subsystem Layer</A></h2>
+<A name="Subsystems"></A><h2>RSE Subsystem Layer</h2>
 <p>
 RSE subsystems integrate the services of the service layer with connection information, model artifacts and persistence.
 Each subsystem is associated with a single service type.  For example, the file service subsystem is associated with the
@@ -67,7 +67,7 @@ specify a criteria for which to query a set of data.  In addition to filters, th
 associated with a subsystem, each of which can be saved and restored across sessions.
 </p>
 
-<h2><A name="UI">RSE UI Layer</A></h2>
+<A name="UI"></A><h2>RSE UI Layer</h2>
 <p>
 The Remote System Explorer perspective provides views that render the subsystems and associated artifacts.  Users can create
 new connections, which can be expanded to reveal subsystems and the information the subsystems reveal about a system.

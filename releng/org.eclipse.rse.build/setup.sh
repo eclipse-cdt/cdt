@@ -140,19 +140,16 @@ if [ ! -e staging ]; then
 fi
 
 # create symlinks as needed
-ln -s org.eclipse.rse.build/bin/doit_ibuild.sh .
+ln -s org.eclipse.rse.build/bin/doit_irsbuild.sh .
 ln -s org.eclipse.rse.build/bin/doit_nightly.sh .
-chmod a+x doit_ibuild.sh doit_nightly.sh
+chmod a+x doit_irsbuild.sh doit_nightly.sh
 cd org.eclipse.rse.build
 chmod a+x build.pl build.rb go.sh nightly.sh
 cd ..
 
 echo "Your build environment is now created."
 echo ""
-echo "Run ./doit_ibuild to create an I-build."
-echo "You will need to enter 3 items by keyboard blindly."
-echo ""
-echo "When done, cd testUpdates/bin and run ./mkTestUpdates.sh"
+echo "Run \"./doit_irsbuild.sh I\" to create an I-build."
 echo ""
 echo "Test the testUpdates, then copy them to updates:"
 echo "cd updates"
@@ -160,6 +157,7 @@ echo "rm -rf plugins features"
 echo "cp -R ../testUpdates/plugins ."
 echo "cp -R ../testUpdates/features ."
 echo "cd bin"
+echo "cvs update"
 echo "./mkTestUpdates.sh"
 
 exit 0

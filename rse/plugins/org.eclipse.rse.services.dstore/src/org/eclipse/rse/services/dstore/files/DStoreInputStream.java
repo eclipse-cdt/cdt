@@ -120,10 +120,6 @@ public class DStoreInputStream extends InputStream
 		if (_localFileInputStream != null)
 		{
 			int result = _localFileInputStream.read();
-			if (result == -1)
-			{
-				System.out.println("result is -1");
-			}
 			return result;
 		}
 		return 0;
@@ -134,10 +130,6 @@ public class DStoreInputStream extends InputStream
 		if (_localFileInputStream != null)
 		{
 			int result =  _localFileInputStream.read(b, off, len);
-			if (result == -1)
-			{
-				System.out.println("result is -1");
-			}
 			return result;
 		}
 		return 0;
@@ -148,10 +140,6 @@ public class DStoreInputStream extends InputStream
 		if (_localFileInputStream != null)
 		{
 			int result = _localFileInputStream.read(b);
-			if (result == -1)
-			{
-				System.out.println("result is -1");
-			}
 			return result;
 		}
 		return 0;

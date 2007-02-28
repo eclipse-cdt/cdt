@@ -52,7 +52,6 @@
 This example ant file shows how to invoke the tool headlessly, the same approach would work from a shell or batch file.
 
 &lt;pre&gt;
-&lt;!-- Test script. This would be part of the documentation, rather than submitted to CVS --&gt;
 &lt;project name=&quot;Generate PDOM&quot; default=&quot;generate&quot;&gt;
 	&lt;target name=&quot;generate&quot;&gt;
 		&lt;!-- This script shows how to invoke the default project provider (ExternalExportProjectProvider) --&gt;

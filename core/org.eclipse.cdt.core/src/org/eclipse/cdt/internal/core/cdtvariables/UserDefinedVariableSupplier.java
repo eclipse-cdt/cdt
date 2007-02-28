@@ -486,6 +486,13 @@ public class UserDefinedVariableSupplier extends CoreMacroSupplierBase {
 		//now load PathEntry Variables from preferences
 		loadPathEntryVariables(macros);
 		
+		if(macros.isDirty()){
+			try {
+				storeWorkspaceMacros(macros, true);
+			} catch (CoreException e) {
+				CCorePlugin.log(e);
+			}
+		}
 		return macros;
 	}
 	

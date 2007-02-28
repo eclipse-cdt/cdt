@@ -38,12 +38,19 @@ if [ ! -f eclipse/plugins/org.eclipse.core.resources_3.3.0.v20070202.jar ]; then
   tar xfvz eclipse-SDK-3.3M5-linux-gtk-ppc.tar.gz
   rm eclipse-SDK-3.3M5-linux-gtk-ppc.tar.gz
 fi
-if [ ! -h eclipse/startup.jar ]; then
+if [ ! -f eclipse/startup.jar ]; then
   curdir2=`pwd`
   cd eclipse/plugins
-  LAUNCHER=`ls org.eclipse.equinox.launcher_*.jar | sort | tail -1`
-  echo "LAUNCHER=${LAUNCHER}" 
-  ln -s plugins/${LAUNCHER} ../startup.jar
+  if [ -h ../startup.jar ]; then
+    rm ../startup.jar
+  fi
+  LAUNCHER=`ls org.eclipse.equinox.launcher*.jar | sort | tail -1`
+  if [ "${LAUNCHER}" != "" ]; then
+    echo "eclipse LAUNCHER=${LAUNCHER}" 
+    ln -s plugins/${LAUNCHER} ../startup.jar
+  else
+    echo "Eclipse: NO startup.jar LAUNCHER FOUND!"
+  fi
   cd ${curdir2}
 fi
 if [ ! -f eclipse/plugins/org.eclipse.cdt.core_4.0.0.200702161600.jar ]; then
@@ -77,7 +84,22 @@ if [ ! -f org.eclipse.releng.basebuilder/plugins/org.eclipse.update.core_3.2.100
   else
     echo "Getting basebuilder from CVS..."
   fi
-  cvs -q -d :pserver:anonymous@dev.eclipse.org:/cvsroot/eclipse co -r M5_33 org.eclipse.releng.basebuilder
+  cvs -Q -d :pserver:anonymous@dev.eclipse.org:/cvsroot/eclipse co -r M5_33 org.eclipse.releng.basebuilder
+fi
+if [ ! -f org.eclipse.releng.basebuilder/startup.jar ]; then
+  curdir2=`pwd`
+  cd org.eclipse.releng.basebuilder/plugins
+  if [ -h ../startup.jar ]; then
+    rm ../startup.jar
+  fi
+  LAUNCHER=`ls org.eclipse.equinox.launcher*.jar | sort | tail -1`
+  if [ "${LAUNCHER}" != "" ]; then
+    echo "basebuilder: LAUNCHER=${LAUNCHER}" 
+    ln -s plugins/${LAUNCHER} ../startup.jar
+  else 
+    echo "basebuilder: NO LAUNCHER FOUND"
+  fi
+  cd ${curdir2}
 fi
 
 # checkout the RSE builder

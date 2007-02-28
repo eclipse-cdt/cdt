@@ -23,6 +23,7 @@ umask 022
 
 #Use Java5 on build.eclipse.org - need JRE for pack200
 export PATH=/shared/common/ibm-java2-ppc64-50/jre/bin:/shared/common/ibm-java2-ppc64-50/bin:$PATH
+basebuilder=${HOME}/ws2/org.eclipse.releng.basebuilder
 
 # patch site.xml
 cd ..
@@ -67,8 +68,9 @@ if [ `basename $SITE` = testUpdates ]; then
     mv -f web/site.xsl.new web/site.xsl
     echo "Conditioning the site... $SITE"
     #java -Dorg.eclipse.update.jarprocessor.pack200=$mydir \
+    #java -jar $HOME/ws2/eclipse/startup.jar \
     java \
-        -jar $HOME/ws2/eclipse/startup.jar \
+        -jar ${basebuilder}/plugins/org.eclipse.equinox.launcher.jar \
         -application org.eclipse.update.core.siteOptimizer \
         -jarProcessor -outputDir $SITE \
         -processAll -repack $SITE
@@ -253,8 +255,8 @@ sed -e '/!EUROPA_ONLY!/d' site.xml > site-europa.xml
 # See https://bugs.eclipse.org/bugs/show_bug.cgi?id=154069
 echo "Packing the site... $SITE"
 #java -Dorg.eclipse.update.jarprocessor.pack200=$mydir \
-java \
-    -jar $HOME/ws2/eclipse/startup.jar \
+#java -jar $HOME/ws2/eclipse/startup.jar \
+    -jar ${basebuilder}/plugins/org.eclipse.equinox.launcher.jar \
     -application org.eclipse.update.core.siteOptimizer \
     -jarProcessor -outputDir $SITE \
     -processAll -pack $SITE
@@ -264,7 +266,8 @@ java \
 
 #Create the digest
 echo "Creating digest..."
-java -jar $HOME/ws2/eclipse/startup.jar \
+#java -jar $HOME/ws2/eclipse/startup.jar \
+java -jar ${basebuilder}/plugins/org.eclipse.equinox.launcher.jar \
     -application org.eclipse.update.core.siteOptimizer \
     -digestBuilder -digestOutputDir=$SITE \
     -siteXML=$SITE/site.xml

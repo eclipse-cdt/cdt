@@ -76,7 +76,7 @@ $timeStamp = "${mydstamp}-${mytstamp}";
 $buildId = $buildType . $timeStamp;
 $buildId = ask("Enter the build id", $buildType . $timeStamp);
 
-$incantation = "java -cp ${basebuilder}/startup.jar org.eclipse.core.launcher.Main ";
+$incantation = "java -cp ${basebuilder}/plugins/org.eclipse.equinox.launcher.jar org.eclipse.core.launcher.Main ";
 $incantation .= "-application org.eclipse.ant.core.antRunner ";
 $incantation .= "-buildfile ${pdeBuild}/scripts/build.xml ";
 $incantation .= "-DbuildDirectory=${buildDirectory} ";

@@ -56,7 +56,7 @@ if [ "$3" != "" ]; then
 fi
 rm -rf "${buildDirectory}"
 
-command="java -cp ${basebuilder}/startup.jar org.eclipse.core.launcher.Main "
+command="java -cp ${basebuilder}/plugins/org.eclipse.equinox.launcher.jar org.eclipse.core.launcher.Main "
 command="$command -application org.eclipse.ant.core.antRunner "
 command="$command -buildfile ${pdeBuild}/scripts/build.xml "
 command="$command -DbuildDirectory=${buildDirectory} "

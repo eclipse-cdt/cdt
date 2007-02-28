@@ -56,7 +56,7 @@ mydstamp = Time.now.strftime("%Y%m%d")
 mytstamp = Time.now.strftime("%H%M")
 buildId = ask("Enter the build id", buildType + mydstamp + "-" + mydstamp)
 
-command = "java -cp #{basebuilder}/startup.jar org.eclipse.core.launcher.Main "
+command = "java -cp #{basebuilder}/plugins/org.eclipse.equinox.launcher.jar org.eclipse.core.launcher.Main "
 command += "-application org.eclipse.ant.core.antRunner "
 command += "-buildfile #{pdeBuild}/scripts/build.xml "
 command += "-DbuildDirectory=#{buildDirectory} "

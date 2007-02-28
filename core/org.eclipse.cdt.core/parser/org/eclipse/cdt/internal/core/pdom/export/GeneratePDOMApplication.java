@@ -70,7 +70,7 @@ public class GeneratePDOMApplication implements IApplication {
 			System.setProperty(IPDOMIndexerTask.TRACE_STATISTICS, Boolean.TRUE.toString());
 		}
 
-		IExportProjectProvider pprovider = getDescription(pproviderFQN);
+		IExportProjectProvider pprovider = getExportProjectProvider(pproviderFQN);
 		if(pprovider==null) {
 			output(MessageFormat.format(Messages.GeneratePDOMApplication_CouldNotFindInitializer, new Object[]{pproviderFQN}));
 			return null;
@@ -93,13 +93,13 @@ public class GeneratePDOMApplication implements IApplication {
 	}
 
 	/**
-	 * Returns the IProjectForExportManager registed in the plug-in registry under the
+	 * Returns the IExportProjectProvider registed in the plug-in registry under the
 	 * specified fully qualified class name
 	 * May return null
 	 * @param fqn
 	 * @return
 	 */
-	private static synchronized IExportProjectProvider getDescription(String fqn) {
+	private static synchronized IExportProjectProvider getExportProjectProvider(String fqn) {
 		if(projectInitializers==null) {
 			projectInitializers = new HashMap();
 			IExtensionRegistry registry = Platform.getExtensionRegistry();

@@ -93,6 +93,7 @@ public class CProjectDescription implements ICProjectDescription, ICDataProxyCon
 */	
 	public CProjectDescription(CProjectDescription base, boolean saving, ICStorageElement el) {
 		fActiveCfgId = base.fActiveCfgId;
+		fIndexCfgId = base.fIndexCfgId;
 		fProject = base.fProject;
 		fRootStorageElement = el;
 		fIsReadOnly = saving;
@@ -359,13 +360,22 @@ public class CProjectDescription implements ICProjectDescription, ICDataProxyCon
 		if(fIndexCfg == null){
 			String id = getIndexConfigurationId();
 			fIndexCfg = getConfigurationById(id);
+			if(fIndexCfg == null){
+				fIndexCfg = getActiveConfiguration();
+				if(fIndexCfg != null){
+					fIndexCfgId = fIndexCfg.getId();
+				} else {
+					fIndexCfgId = null;
+				}
+			}
 		}
 		return fIndexCfg;
 	}
 	
 	private String getIndexConfigurationId(){
-		if(fIndexCfgId == null)
+		if(fIndexCfgId == null){
 			fIndexCfgId = getActiveConfigurationId();
+		}
 		return fIndexCfgId;
 	}
 	

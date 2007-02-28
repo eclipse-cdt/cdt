@@ -27,6 +27,7 @@ import org.eclipse.cdt.core.model.IPathEntryContainer;
 import org.eclipse.cdt.core.parser.IScannerInfo;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICProjectDescription;
+import org.eclipse.cdt.core.settings.model.ICStorageElement;
 import org.eclipse.cdt.core.settings.model.WriteAccessException;
 import org.eclipse.cdt.managedbuilder.core.BuildException;
 import org.eclipse.cdt.managedbuilder.core.IBuildObject;
@@ -123,16 +124,18 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 	 * @param element
 	 * @param managedBuildRevision
 	 */
-	public ManagedBuildInfo(IResource owner, Element element, String managedBuildRevision) {
+	public ManagedBuildInfo(IResource owner, ICStorageElement element, boolean loadConfigs, String managedBuildRevision) {
 		this(owner);
 		
 		// Recreate the managed build project element and its children
-		NodeList projNodes = element.getElementsByTagName(IManagedProject.MANAGED_PROJECT_ELEMENT_NAME);
+		ICStorageElement projNodes[] = element.getChildren();
 		// TODO:  There should only be 1?
-		for (int projIndex = projNodes.getLength() - 1; projIndex >= 0; --projIndex) {
-			ManagedProject proj = new ManagedProject(this, (Element)projNodes.item(projIndex), managedBuildRevision);
-			if (!proj.resolveReferences())
-				proj.setValid(false);
+		for (int projIndex = projNodes.length - 1; projIndex >= 0; --projIndex) {
+			if(IManagedProject.MANAGED_PROJECT_ELEMENT_NAME.equals(projNodes[projIndex].getName())){
+				ManagedProject proj = new ManagedProject(this, projNodes[projIndex], loadConfigs, managedBuildRevision);
+				if (!proj.resolveReferences())
+					proj.setValid(false);
+			}
 		}
 
 		// Switch the rebuild off since this is an existing project

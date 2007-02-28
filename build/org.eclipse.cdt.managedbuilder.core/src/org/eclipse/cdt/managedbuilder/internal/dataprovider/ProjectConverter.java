@@ -106,6 +106,7 @@ public class ProjectConverter implements ICProjectConverter {
 
 			Configuration cfg = ConfigurationDataProvider.getClearPreference(des.getId());
 			cfg.applyToManagedProject(mProj);
+			cfg.setConfigurationDescription(des);
 
 			des.setConfigurationData(ManagedBuildManager.CFG_DATA_PROVIDER_ID, cfg.getConfigurationData());
 		} 
@@ -278,7 +279,8 @@ public class ProjectConverter implements ICProjectConverter {
 					cfg = (Configuration)cfgs[i];
 					data = cfg.getConfigurationData();
 					try {
-						newDes.createConfiguration(ManagedBuildManager.CFG_DATA_PROVIDER_ID, data);
+						ICConfigurationDescription cfgDes = newDes.createConfiguration(ManagedBuildManager.CFG_DATA_PROVIDER_ID, data);
+						cfg.setConfigurationDescription(cfgDes);
 					} catch (WriteAccessException e) {
 						ManagedBuilderCorePlugin.log(e);
 					} catch (CoreException e) {

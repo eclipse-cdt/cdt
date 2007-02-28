@@ -21,6 +21,7 @@ import java.util.Set;
 import org.eclipse.cdt.core.model.ILanguageDescriptor;
 import org.eclipse.cdt.core.model.LanguageManager;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
+import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.core.settings.model.ICStorageElement;
 import org.eclipse.cdt.core.settings.model.extension.CConfigurationData;
 import org.eclipse.cdt.core.settings.model.extension.CConfigurationDataProvider;
@@ -29,6 +30,7 @@ import org.eclipse.cdt.managedbuilder.core.IFolderInfo;
 import org.eclipse.cdt.managedbuilder.core.IHoldsOptions;
 import org.eclipse.cdt.managedbuilder.core.IInputType;
 import org.eclipse.cdt.managedbuilder.core.IManagedBuildInfo;
+import org.eclipse.cdt.managedbuilder.core.IManagedOptionValueHandler;
 import org.eclipse.cdt.managedbuilder.core.IManagedProject;
 import org.eclipse.cdt.managedbuilder.core.IOption;
 import org.eclipse.cdt.managedbuilder.core.IResourceInfo;
@@ -38,6 +40,7 @@ import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.cdt.managedbuilder.internal.core.Configuration;
 import org.eclipse.cdt.managedbuilder.internal.core.ISettingsChangeListener;
 import org.eclipse.cdt.managedbuilder.internal.core.InputType;
+import org.eclipse.cdt.managedbuilder.internal.core.ManagedBuildInfo;
 import org.eclipse.cdt.managedbuilder.internal.core.ManagedProject;
 import org.eclipse.cdt.managedbuilder.internal.core.NotificationManager;
 import org.eclipse.cdt.managedbuilder.internal.core.Tool;
@@ -70,6 +73,7 @@ public class ConfigurationDataProvider extends CConfigurationDataProvider implem
 		ICStorageElement cfgElemen = rootElement.createChild(IConfiguration.CONFIGURATION_ELEMENT_NAME);
 		Configuration cfg = (Configuration)appliedCfg.getConfiguration();
 		cfg.setConfigurationDescription(des);
+		ManagedBuildManager.performValueHandlerEvent(cfg, IManagedOptionValueHandler.EVENT_APPLY);
 		cfg.serialize(cfgElemen);
 		
 		return appliedCfg;
@@ -96,10 +100,21 @@ public class ConfigurationDataProvider extends CConfigurationDataProvider implem
 		IManagedBuildInfo info = getBuildInfo(des);
 		ManagedProject mProj = (ManagedProject)info.getManagedProject();
 		mProj.applyConfiguration((Configuration)appliedCfg.getConfiguration());
+		writeManagedProjectInfo(des.getProjectDescription(), mProj);
 		info.setValid(true);
 		
 		return appliedCfg;
 	}
+	
+	private static void writeManagedProjectInfo(ICProjectDescription des,
+			ManagedProject mProj) throws CoreException {
+		ICStorageElement rootElement = des.getStorage(BUILD_SYSTEM_DATA_MODULE_NAME, true);
+		rootElement.clear();
+		rootElement.setAttribute(VERSION_ATTRIBUTE, ManagedBuildManager.getVersion().toString());
+		ICStorageElement mProjElem = rootElement.createChild(IManagedProject.MANAGED_PROJECT_ELEMENT_NAME);
+		mProj.serializeProjectInfo(mProjElem);
+	}
+
 
 	protected CConfigurationData createPreferences(
 			ICConfigurationDescription des, CConfigurationData base)
@@ -149,9 +164,34 @@ public class ConfigurationDataProvider extends CConfigurationDataProvider implem
 	private IManagedProject getManagedProject(ICConfigurationDescription des, IManagedBuildInfo info){
 		IManagedProject mProj = info.getManagedProject();
 		if(mProj == null){
-			mProj = new ManagedProject(des.getProjectDescription());
+			mProj = createManagedProject(info, des.getProjectDescription());
+		}
+		return mProj;
+	}
+	
+	private IManagedProject createManagedProject(IManagedBuildInfo info, ICProjectDescription des){
+		IManagedProject mProj = null;
+		try {
+			ICStorageElement rootElem = des.getStorage(BUILD_SYSTEM_DATA_MODULE_NAME, false);
+			if(rootElem != null){
+				String version = rootElem.getAttribute(VERSION_ATTRIBUTE);
+				ICStorageElement children[] = rootElem.getChildren();
+				for(int i = 0; i < children.length; i++){
+					if(IManagedProject.MANAGED_PROJECT_ELEMENT_NAME.equals(children[i].getName())){
+						mProj = new ManagedProject((ManagedBuildInfo)info, children[i], false, version);
+						break;
+					}
+				}
+			}
+		} catch (CoreException e) {
+			mProj = null;
+		}
+		
+		if(mProj == null){
+			mProj = new ManagedProject(des);
 			info.setManagedProject(mProj);
 		}
+		
 		return mProj;
 	}
 	
@@ -164,6 +204,7 @@ public class ConfigurationDataProvider extends CConfigurationDataProvider implem
 		for(int i = 0; i < children.length; i++){
 			if(IConfiguration.CONFIGURATION_ELEMENT_NAME.equals(children[i].getName())){
 				cfg = new Configuration(mProj, children[i], version, isPreference);
+				ManagedBuildManager.performValueHandlerEvent(cfg, IManagedOptionValueHandler.EVENT_OPEN);
 				break;
 			}
 		}
@@ -353,6 +394,7 @@ public class ConfigurationDataProvider extends CConfigurationDataProvider implem
 	public void removeConfiguration(ICConfigurationDescription des,
 			CConfigurationData data) {
 		IConfiguration cfg = ((BuildConfigurationData)data).getConfiguration();
+		ManagedBuildManager.performValueHandlerEvent(cfg, IManagedOptionValueHandler.EVENT_CLOSE);
 		IManagedBuildInfo info = getBuildInfo(des);
 		IManagedProject mProj = info.getManagedProject();
 		mProj.removeConfiguration(cfg.getId());

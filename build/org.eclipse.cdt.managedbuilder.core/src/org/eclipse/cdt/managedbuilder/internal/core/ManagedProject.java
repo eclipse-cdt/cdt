@@ -124,7 +124,7 @@ public class ManagedProject extends BuildObject implements IManagedProject, IBui
 	 * @param element
 	 * @param managedBuildRevision the fileVersion of Managed Build System
 	 */
-	public ManagedProject(ManagedBuildInfo buildInfo, Element element, String managedBuildRevision) {
+	public ManagedProject(ManagedBuildInfo buildInfo, ICStorageElement element, boolean loadConfigs, String managedBuildRevision) {
 		this(buildInfo.getOwner());
 		
 		setManagedBuildRevision(managedBuildRevision);
@@ -133,24 +133,25 @@ public class ManagedProject extends BuildObject implements IManagedProject, IBui
 		if (loadFromProject(element)) {
 			
 			// check for migration support.
-			boolean isSupportAvailable = projectType.checkForMigrationSupport();
+			boolean isSupportAvailable = projectType != null ? projectType.checkForMigrationSupport() : true;
 			if (isSupportAvailable == false) {
 				setValid(false);
 			}
 			
-			// Load children
-			NodeList configElements = element.getChildNodes();
-			for (int i = 0; i < configElements.getLength(); ++i) {
-				Node configElement = configElements.item(i);
-				if (configElement.getNodeName().equals(IConfiguration.CONFIGURATION_ELEMENT_NAME)) {
-					ICStorageElement el = new XmlStorageElement((Element)configElement);
-					Configuration config = new Configuration(this, el, managedBuildRevision, false);
-				}/*else if (configElement.getNodeName().equals(StorableMacros.MACROS_ELEMENT_NAME)) {
-					//load user-defined macros
-					ICStorageElement el = new XmlStorageElement((Element)configElement);
-					userDefinedMacros = new StorableMacros(el);
-				}*/
-
+			if(loadConfigs){
+				// Load children
+				ICStorageElement configElements[] = element.getChildren();
+				for (int i = 0; i < configElements.length; ++i) {
+					ICStorageElement configElement = configElements[i];
+					if (configElement.getName().equals(IConfiguration.CONFIGURATION_ELEMENT_NAME)) {
+						Configuration config = new Configuration(this, configElement, managedBuildRevision, false);
+					}/*else if (configElement.getNodeName().equals(StorableMacros.MACROS_ELEMENT_NAME)) {
+						//load user-defined macros
+						ICStorageElement el = new XmlStorageElement((Element)configElement);
+						userDefinedMacros = new StorableMacros(el);
+					}*/
+	
+				}
 			}
 		} else {
 			setValid(false);
@@ -170,13 +171,13 @@ public class ManagedProject extends BuildObject implements IManagedProject, IBui
 	 * 
 	 * @param element An XML element containing the project information 
 	 */
-	protected boolean loadFromProject(Element element) {
+	protected boolean loadFromProject(ICStorageElement element) {
 		
 		// id
 		setId(element.getAttribute(IBuildObject.ID));
 
 		// name
-		if (element.hasAttribute(IBuildObject.NAME)) {
+		if (element.getAttribute(IBuildObject.NAME) != null) {
 			setName(element.getAttribute(IBuildObject.NAME));
 		}
 		
@@ -194,6 +195,21 @@ public class ManagedProject extends BuildObject implements IManagedProject, IBui
 			buildProperties = new BuildObjectProperties(props, this, this);
 
 		return true;
+	}
+
+	public void serializeProjectInfo(ICStorageElement element) {
+		element.setAttribute(IBuildObject.ID, id);
+		
+		if (name != null) {
+			element.setAttribute(IBuildObject.NAME, name);
+		}
+
+		if (projectType != null) {
+			element.setAttribute(PROJECTTYPE, projectType.getId());
+		}
+		
+		// I am clean now
+		isDirty = false;
 	}
 
 	/* (non-Javadoc)

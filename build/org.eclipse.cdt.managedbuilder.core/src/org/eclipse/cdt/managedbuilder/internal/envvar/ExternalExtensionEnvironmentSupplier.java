@@ -93,7 +93,7 @@ public class ExternalExtensionEnvironmentSupplier implements
 		}
 		else if (context instanceof IManagedProject) {
 			IManagedProject project = (IManagedProject)context; 
-			IProjectEnvironmentVariableSupplier supplier = null;//project.getProjectType().getEnvironmentVariableSupplier();
+			IProjectEnvironmentVariableSupplier supplier = project.getProjectType() != null ? project.getProjectType().getEnvironmentVariableSupplier() : null;
 			if(supplier == null)
 				return null;
 			variables = supplier.getVariables(project,fProvider);

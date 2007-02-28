@@ -13,37 +13,25 @@
 package org.eclipse.cdt.internal.core.pdom.indexer.fast;
 
 
+import org.eclipse.cdt.core.dom.IPDOMIndexerTask;
 import org.eclipse.cdt.core.dom.IPDOMManager;
-import org.eclipse.cdt.core.model.ICElementDelta;
-import org.eclipse.cdt.internal.core.CCoreInternals;
+import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.internal.core.pdom.indexer.AbstractPDOMIndexer;
-import org.eclipse.core.runtime.CoreException;
 
 /**
  * @author Doug Schaefer
  *
  */
 public class PDOMFastIndexer extends AbstractPDOMIndexer {
-
 	// Must match extension id
 	public static final String ID = IPDOMManager.ID_FAST_INDEXER;
-	
-	
-	public PDOMFastIndexer() {
-	}
-
-	public void handleDelta(ICElementDelta delta) throws CoreException {
-		PDOMFastHandleDelta fhd= new PDOMFastHandleDelta(this, delta);
-		if (fhd.estimateRemainingSources() > 0) {
-			CCoreInternals.getPDOMManager().enqueue(fhd);
-		}
-	}
-	
-	public void reindex() throws CoreException {
-		CCoreInternals.getPDOMManager().enqueue(new PDOMFastReindex(this));
-	}
-	
+		
 	public String getID() {
 		return ID;
+	}
+
+	public IPDOMIndexerTask createTask(ITranslationUnit[] added,
+			ITranslationUnit[] changed, ITranslationUnit[] removed) {
+		return new PDOMFastIndexerTask(this, added, changed, removed);
 	}
 }

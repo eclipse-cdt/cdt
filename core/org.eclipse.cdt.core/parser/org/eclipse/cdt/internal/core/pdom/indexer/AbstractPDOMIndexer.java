@@ -39,7 +39,7 @@ public abstract class AbstractPDOMIndexer implements IPDOMIndexer {
 		return fProperties.getProperty(key);
 	}
 
-	public boolean hasProperties(Properties props) {
+	public boolean needsToRebuildForProperties(Properties props) {
 		for (Iterator i= fProperties.entrySet().iterator(); i.hasNext();) {
 			Map.Entry entry = (Map.Entry) i.next();
 			String key = (String) entry.getKey();
@@ -48,11 +48,11 @@ public abstract class AbstractPDOMIndexer implements IPDOMIndexer {
 			if (myval != null) { // relevant property
 				String v2= (String) props.get(key);
 				if (v2 != null && !myval.equals(v2)) {
-					return false;
+					return true;
 				}
 			}
 		}
-		return true;
+		return false;
 	}
 
 	public void setProperties(Properties props) {

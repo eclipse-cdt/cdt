@@ -15,9 +15,8 @@ package org.eclipse.cdt.core.dom;
 
 import java.util.Properties;
 
-import org.eclipse.cdt.core.model.ICElementDelta;
 import org.eclipse.cdt.core.model.ICProject;
-import org.eclipse.core.runtime.CoreException;
+import org.eclipse.cdt.core.model.ITranslationUnit;
 
 
 /**
@@ -28,11 +27,7 @@ public interface IPDOMIndexer {
 
 	public void setProject(ICProject project);
 	public ICProject getProject();
-	
-	public void handleDelta(ICElementDelta delta) throws CoreException;
-	
-	public void reindex() throws CoreException;
-	
+		
 	/**
 	 * Return the unique ID of type of this indexer
 	 * @return the unique ID of type of this indexer
@@ -56,5 +51,12 @@ public interface IPDOMIndexer {
 	 * Used to check whether we need to reindex a project.
 	 * @since 4.0
 	 */
-	public boolean hasProperties(Properties props);
+	public boolean needsToRebuildForProperties(Properties props);
+	
+	/**
+	 * Clients are not allowed to call this method, it is called by the framework. 
+	 * Creates a task that handles the changes.
+	 * @since 4.0
+	 */
+	public IPDOMIndexerTask createTask(ITranslationUnit[] added, ITranslationUnit[] changed, ITranslationUnit[] removed);
 }

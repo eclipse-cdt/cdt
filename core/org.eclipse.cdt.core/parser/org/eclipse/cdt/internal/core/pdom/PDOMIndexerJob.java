@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 QNX Software Systems
+ * Copyright (c) 2005, 2007 QNX Software Systems
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,6 +16,7 @@ import org.eclipse.cdt.core.dom.IPDOMIndexer;
 import org.eclipse.cdt.core.dom.IPDOMIndexerTask;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
@@ -26,7 +27,7 @@ import org.eclipse.core.runtime.jobs.Job;
  */
 public class PDOMIndexerJob extends Job {
 
-	private static final int TOTAL_MONITOR_WORK = 1000;
+	private static final int TOTAL_MONITOR_WORK = 100000;
 	private final PDOMManager pdomManager;
 	private IPDOMIndexerTask currentTask;
 	private boolean cancelledByManager= false;
@@ -49,6 +50,15 @@ public class PDOMIndexerJob extends Job {
 		Job monitorJob= startMonitorJob(monitor);
 		try {
 			do {
+				IProgressMonitor npm= new NullProgressMonitor() {
+					public boolean isCanceled() {
+						return fMonitor.isCanceled();
+					}
+					public void setCanceled(boolean cancelled) {
+						fMonitor.setCanceled(cancelled);
+					}
+					
+				};
 				synchronized(taskMutex) {
 					currentTask= null;
 					taskMutex.notify();
@@ -64,7 +74,7 @@ public class PDOMIndexerJob extends Job {
 				}
 
 				if (currentTask != null) {
-					currentTask.run(monitor);
+					currentTask.run(npm);
 				}
 			}
 			while (currentTask != null);

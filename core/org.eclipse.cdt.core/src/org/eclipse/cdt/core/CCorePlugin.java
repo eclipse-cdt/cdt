@@ -41,7 +41,6 @@ import org.eclipse.cdt.internal.core.CConfigBasedDescriptorManager;
 import org.eclipse.cdt.internal.core.CContentTypes;
 import org.eclipse.cdt.internal.core.CDTLogWriter;
 import org.eclipse.cdt.internal.core.CdtVarPathEntryVariableManager;
-import org.eclipse.cdt.internal.core.PathEntryVariableManager;
 import org.eclipse.cdt.internal.core.PositionTrackerManager;
 import org.eclipse.cdt.internal.core.cdtvariables.CdtVariableManager;
 import org.eclipse.cdt.internal.core.envvar.EnvironmentVariableManager;

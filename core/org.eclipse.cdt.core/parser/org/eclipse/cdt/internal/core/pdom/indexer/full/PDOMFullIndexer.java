@@ -12,11 +12,10 @@
 
 package org.eclipse.cdt.internal.core.pdom.indexer.full;
 
+import org.eclipse.cdt.core.dom.IPDOMIndexerTask;
 import org.eclipse.cdt.core.dom.IPDOMManager;
-import org.eclipse.cdt.core.model.ICElementDelta;
-import org.eclipse.cdt.internal.core.CCoreInternals;
+import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.internal.core.pdom.indexer.AbstractPDOMIndexer;
-import org.eclipse.core.runtime.CoreException;
 
 /**
  * The Full indexer does full parsing in order to gather index information.
@@ -28,18 +27,12 @@ import org.eclipse.core.runtime.CoreException;
 public class PDOMFullIndexer extends AbstractPDOMIndexer {
 	public static final String ID = IPDOMManager.ID_FULL_INDEXER;
 	
-	public void handleDelta(ICElementDelta delta) throws CoreException {
-		PDOMFullHandleDelta task = new PDOMFullHandleDelta(this, delta);
-		if (task.estimateRemainingSources() > 0) {
-			CCoreInternals.getPDOMManager().enqueue(task);
-		}
-	}
-
-	public void reindex() throws CoreException {
-		CCoreInternals.getPDOMManager().enqueue(new PDOMFullReindex(this));
-	}
-
 	public String getID() {
 		return ID;
+	}
+	
+	public IPDOMIndexerTask createTask(ITranslationUnit[] added,
+			ITranslationUnit[] changed, ITranslationUnit[] removed) {
+		return new PDOMFullIndexerTask(this, added, changed, removed);
 	}
 }

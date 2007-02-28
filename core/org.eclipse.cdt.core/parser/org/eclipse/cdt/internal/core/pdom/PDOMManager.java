@@ -41,6 +41,9 @@ import org.eclipse.cdt.internal.core.index.IndexerStateEvent;
 import org.eclipse.cdt.internal.core.pdom.PDOM.IListener;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMProjectIndexLocationConverter;
 import org.eclipse.cdt.internal.core.pdom.indexer.IndexerPreferences;
+import org.eclipse.cdt.internal.core.pdom.indexer.PDOMImportTask;
+import org.eclipse.cdt.internal.core.pdom.indexer.PDOMRebuildTask;
+import org.eclipse.cdt.internal.core.pdom.indexer.PDOMResourceDeltaTask;
 import org.eclipse.cdt.internal.core.pdom.indexer.nulli.PDOMNullIndexer;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResourceDelta;
@@ -79,8 +82,8 @@ public class PDOMManager implements IPDOMManager, IWritableIndexManager, IListen
 	}
 	
 	private final class PCL implements IPreferenceChangeListener {
-		private IProject fProject;
-		public PCL(IProject prj) {
+		private ICProject fProject;
+		public PCL(ICProject prj) {
 			fProject= prj;
 		}
 		public void preferenceChange(PreferenceChangeEvent event) {
@@ -225,21 +228,15 @@ public class PDOMManager implements IPDOMManager, IWritableIndexManager, IListen
     	IndexerPreferences.set(prj, IndexerPreferences.KEY_INDEXER_ID, indexerId);
     	CCoreInternals.savePreferences(prj);
     }
-
-    public IPDOMIndexer getIndexer(ICProject project) {
-		return getIndexer(project, true);
-	}
 	
-	protected void onPreferenceChange(IProject project, PreferenceChangeEvent event) {
+	protected void onPreferenceChange(ICProject cproject, PreferenceChangeEvent event) {
+		IProject project= cproject.getProject();
 		if (project.exists() && project.isOpen()) {
-			ICProject cproject= CoreModel.getDefault().create(project);
-			if (cproject != null) {
-				try {
-					changeIndexer(cproject);
-				}
-				catch (Exception e) {
-					CCorePlugin.log(e);
-				}
+			try {
+				changeIndexer(cproject);
+			}
+			catch (Exception e) {
+				CCorePlugin.log(e);
 			}
 		}
 	}
@@ -255,11 +252,14 @@ public class PDOMManager implements IPDOMManager, IWritableIndexManager, IListen
 		synchronized (fIndexerMutex) {
 			oldIndexer= getIndexer(cproject, false);
 			if (oldIndexer != null) {
-				if (oldIndexer.getID().equals(newid) && oldIndexer.hasProperties(props)) {
-					return;
+				if (oldIndexer.getID().equals(newid)) {
+					if (!oldIndexer.needsToRebuildForProperties(props)) {
+						oldIndexer.setProperties(props);
+						return;
+					}
 				}
+				createIndexer(cproject, newid, props, true);
 			}
-			createIndexer(cproject, newid, props, true);
 		}
 		
 		if (oldIndexer != null) {
@@ -267,7 +267,7 @@ public class PDOMManager implements IPDOMManager, IWritableIndexManager, IListen
 		}
 	}
 
-	public IPDOMIndexer getIndexer(ICProject project, boolean create) {
+	private IPDOMIndexer getIndexer(ICProject project, boolean create) {
 		assert !Thread.holdsLock(fProjectToPDOM);
 		synchronized (fIndexerMutex) {
 			IProject prj = project.getProject();
@@ -333,12 +333,17 @@ public class PDOMManager implements IPDOMManager, IWritableIndexManager, IListen
 		project.getProject().setSessionProperty(indexerProperty, indexer);
 
 		if (reindex) {
-			indexer.reindex();
+			if (forceReindex) {
+				enqueue(new PDOMRebuildTask(indexer));
+			}
+			else {
+				enqueue(new PDOMImportTask(indexer));
+			}
 		}
 		return indexer;
     }
 
-    public void enqueue(IPDOMIndexerTask subjob) {
+	public void enqueue(IPDOMIndexerTask subjob) {
     	synchronized (fTaskQueueMutex) {
     		fTaskQueue.addLast(subjob);
 			if (fIndexerJob == null) {
@@ -362,8 +367,11 @@ public class PDOMManager implements IPDOMManager, IWritableIndexManager, IListen
     		}
     		else {
     			if (fCurrentTask != null) {
-    				fCompletedSources+= fCurrentTask.getCompletedSourcesCount();
-    				fCompletedHeaders+= fCurrentTask.getCompletedHeadersCount();
+    				IndexerProgress info= fCurrentTask.getProgressInformation();
+    				if (info != null) {
+    					fCompletedSources+= info.fCompletedSources;
+    					fCompletedHeaders+= info.fCompletedHeaders;
+    				}
     			}
     			result= fCurrentTask= (IPDOMIndexerTask)fTaskQueue.removeFirst();
     		}
@@ -403,7 +411,7 @@ public class PDOMManager implements IPDOMManager, IWritableIndexManager, IListen
 		IProject prj= project.getProject();
 		PCL pcl= (PCL) fPrefListeners.get(prj);
 		if (pcl == null) {
-			pcl= new PCL(prj);
+			pcl= new PCL(project);
 			fPrefListeners.put(prj, pcl);
 		}
 		IndexerPreferences.addChangeListener(prj, pcl);
@@ -419,11 +427,14 @@ public class PDOMManager implements IPDOMManager, IWritableIndexManager, IListen
 
 	public void changeProject(ICProject project, ICElementDelta delta) throws CoreException {
 		IPDOMIndexer indexer = getIndexer(project, true);
-		if (indexer != null)
-			indexer.handleDelta(delta);
-
+		if (indexer != null) {
+			PDOMResourceDeltaTask resourceDeltaTask = new PDOMResourceDeltaTask(indexer, delta);
+			if (!resourceDeltaTask.isEmpty()) {
+				enqueue(resourceDeltaTask);
+			}
+		}
 	}
-
+	
 	public void removeProject(ICProject project) {
 		IPDOMIndexer indexer= getIndexer(project, false);
 		if (indexer != null) {
@@ -496,7 +507,7 @@ public class PDOMManager implements IPDOMManager, IWritableIndexManager, IListen
 		
 		synchronized(fIndexerMutex) {
 			indexer= getIndexer(project, true);
-			indexer.reindex();
+			enqueue(new PDOMRebuildTask(indexer));
 		}
 	}
 
@@ -632,19 +643,33 @@ public class PDOMManager implements IPDOMManager, IWritableIndexManager, IListen
 		int remainingSources= 0;
 		int completedSources= 0;
 		int completedHeaders= 0;
+		int unknown= 0;
 		String detail= null;
+		IndexerProgress info;
 		synchronized (fTaskQueueMutex) {
 			completedHeaders= fCompletedHeaders;
 			completedSources= fCompletedSources;
 			for (Iterator iter = fTaskQueue.iterator(); iter.hasNext();) {
 				IPDOMIndexerTask task = (IPDOMIndexerTask) iter.next();
-				remainingSources+= task.estimateRemainingSources();
+				info= task.getProgressInformation();
+				if (info == null) {
+					unknown++;
+				}
+				else {
+					remainingSources+= info.getRemainingSources();
+				}
 			}
 			if (fCurrentTask != null) {
-				remainingSources+= fCurrentTask.estimateRemainingSources();
-				completedHeaders+= fCurrentTask.getCompletedHeadersCount();
-				completedSources+= fCurrentTask.getCompletedSourcesCount();
-				detail= fCurrentTask.getMonitorMessageDetail();
+				info= fCurrentTask.getProgressInformation();
+				if (info == null) {
+					unknown++;
+				}
+				else {
+					remainingSources+= info.getRemainingSources();
+					completedHeaders+= info.fCompletedHeaders;
+					completedSources+= info.fCompletedSources;
+					detail= info.fMonitorDetail;
+				}
 			}
 		}
 		
@@ -657,6 +682,7 @@ public class PDOMManager implements IPDOMManager, IWritableIndexManager, IListen
 		}
 		monitor.subTask(msg);
 		
+		totalSources+= unknown*1000;
 		if (completedSources > 0 && totalSources >= completedSources) {
 			int newTick= completedSources*base/totalSources;
 			if (newTick > currentTicks) {

@@ -52,6 +52,12 @@ public interface IIndexFragment {
 	final int FIND_ALL_OCCURENCES = 		  IIndex.FIND_ALL_OCCURENCES;
 	
 	/**
+	 * Property key constant for the fragment ID. The fragment ID should uniquely identify the fragments usage within
+	 * a logical index.
+	 */
+	public static final String PROPERTY_FRAGMENT_ID= "org.eclipse.cdt.internal.core.index.fragment.id"; //$NON-NLS-1$
+	
+	/**
 	 * Returns the file for the given location. May return <code>null</code>, if no such file exists.
 	 * This method may only return files that are actually managed by this fragement.
 	 * @param location the IIndexFileLocation representing the location of the file
@@ -159,10 +165,12 @@ public interface IIndexFragment {
 	IIndexLinkage[] getLinkages();
 	
 	/**
-	 * Read the named property in this fragment
+	 * Read the named property in this fragment. All fragments are expected to return a non-null value for 
+	 *    <pre>PROPERTY_FRAGMENT_ID</pre>
 	 * @param key a case-sensitive identifier for a property, or null
 	 * @return the value associated with the key, or null if either no such property is set, or the specified key was null
 	 * @throws CoreException
+	 * @see IIndexFragment#PROPERTY_FRAGMENT_ID
 	 */
-	public String getProperty(String propertyName) throws CoreException;
+	public String getProperty(String propertyName) throws CoreException;	
 }

@@ -46,6 +46,7 @@
    <extension-point id="language" name="%language.name" schema="schema/language.exsd"/>
    <extension-point id="CConfigurationDataProvider" name="CConfigurationData provider" schema="schema/CConfigurationDataProvider.exsd"/>
    <extension-point id="projectConverter" name="project converter" schema="schema/projectConverter.exsd"/>
+   <extension-point id="CIndex" name="CIndex" schema="schema/CIndex.exsd"/>
 <!-- =================================================================================== -->
 <!-- Define the list of the Binary Parser provided by the CDT                            -->
 <!-- =================================================================================== -->
@@ -221,6 +222,28 @@
                class="org.eclipse.cdt.core.CCProjectNature">
          </run>
       </runtime>
+   </extension>
+   <extension
+         id="GeneratePDOM"
+         name="GeneratePDOM"
+         point="org.eclipse.core.runtime.applications">
+      <application
+            visible="true">
+         <run
+               class="org.eclipse.cdt.internal.core.pdom.export.GeneratePDOMApplication">
+         </run>
+      </application>
+   </extension>
+   <extension
+         id="GeneratePDOM"
+         name="GeneratePDOM"
+         point="org.eclipse.core.runtime.applications">
+      <application
+            visible="true">
+         <run
+               class="org.eclipse.cdt.internal.core.pdom.export.GeneratePDOMApplication">
+         </run>
+      </application>
    </extension>
 <!-- =================================================================================== -->
 <!-- CDT file type mappings                                                              -->
@@ -578,6 +601,20 @@
             class="org.eclipse.cdt.internal.core.settings.model.ConfigBasedEntriesContainerInitializer"
             id="org.eclipse.cdt.core.CFG_BASED_CONTAINER">
       </pathEntryContainerInitializer>
+   </extension>
+   <extension
+         point="org.eclipse.cdt.core.ScannerInfoProvider">
+      <cextension>
+         <run
+              class="org.eclipse.cdt.core.index.export.ConfigurableScannerInfoProvider">
+         </run>
+      </cextension>
+   </extension>
+   <extension
+         point="org.eclipse.cdt.core.CIndex">
+      <ExportProjectProvider
+            class="org.eclipse.cdt.core.index.export.ExternalExportProjectProvider">
+      </ExportProjectProvider>
    </extension>
 
 <!-- =================================================================================== -->

@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Markus Schorn (Wind River Systems)
+ *     Andrew Ferguson (Symbian)
  *******************************************************************************/
 
 package org.eclipse.cdt.core;
@@ -91,6 +92,9 @@ public class CCorePlugin extends Plugin {
 	public final static String PREF_USE_STRUCTURAL_PARSE_MODE = "useStructualParseMode"; //$NON-NLS-1$
 	public final static String PREF_USE_NEW_MODEL_BUILDER = "useNewModelBuilder"; //$NON-NLS-1$
 	
+	public static final String INDEX_SIMPLE_ID = "CIndex"; //$NON-NLS-1$
+	public static final String INDEX_UNIQ_ID = PLUGIN_ID + "." + INDEX_SIMPLE_ID; //$NON-NLS-1$
+	 		
 	public static final String INDEXER_SIMPLE_ID = "CIndexer"; //$NON-NLS-1$
 	public static final String INDEXER_UNIQ_ID = PLUGIN_ID + "." + INDEXER_SIMPLE_ID; //$NON-NLS-1$
 	public static final String PREF_INDEXER = "indexer"; //$NON-NLS-1$

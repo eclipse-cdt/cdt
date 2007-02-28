@@ -13,10 +13,15 @@
 package org.eclipse.cdt.internal.core.pdom;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.nio.channels.FileChannel;
 import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
@@ -27,18 +32,21 @@ import org.eclipse.cdt.core.dom.IPDOMIndexerTask;
 import org.eclipse.cdt.core.dom.IPDOMManager;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.index.IIndexChangeListener;
+import org.eclipse.cdt.core.index.IIndexLocationConverter;
 import org.eclipse.cdt.core.index.IIndexerStateListener;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICElementDelta;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.IElementChangedListener;
 import org.eclipse.cdt.internal.core.CCoreInternals;
+import org.eclipse.cdt.internal.core.index.IIndexFragment;
 import org.eclipse.cdt.internal.core.index.IWritableIndex;
 import org.eclipse.cdt.internal.core.index.IWritableIndexManager;
 import org.eclipse.cdt.internal.core.index.IndexChangeEvent;
 import org.eclipse.cdt.internal.core.index.IndexFactory;
 import org.eclipse.cdt.internal.core.index.IndexerStateEvent;
 import org.eclipse.cdt.internal.core.pdom.PDOM.IListener;
+import org.eclipse.cdt.internal.core.pdom.dom.PDOMFile;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMProjectIndexLocationConverter;
 import org.eclipse.cdt.internal.core.pdom.indexer.IndexerPreferences;
 import org.eclipse.cdt.internal.core.pdom.indexer.PDOMImportTask;
@@ -197,6 +205,7 @@ public class PDOMManager implements IPDOMManager, IWritableIndexManager, IListen
 				}
 			
 				pdom = new WritablePDOM(dbFile, new PDOMProjectIndexLocationConverter(rproject));
+				pdom.setProperty(IIndexFragment.PROPERTY_FRAGMENT_ID, "org.eclipse.cdt.internal.pdom["+rproject.getName()+"]"); //$NON-NLS-1$ //$NON-NLS-2$
 				pdom.addListener(this);
 			}
 			
@@ -704,5 +713,62 @@ public class PDOMManager implements IPDOMManager, IWritableIndexManager, IListen
 	public IIndex getIndex(ICProject[] projects, int options) throws CoreException {
 		return fIndexFactory.getIndex(projects, options);
 	}
+	
+	/**
+     * Exports the project PDOM to the specified location, rewriting locations with
+     * the specified location converter.
+     * <br>
+	 * Note. this method does not acquire or release any locks. It is expected
+     * that this will be done by the caller.
+	 * @param targetLocation a location that does not currently exist
+	 * @param newConverter
+	 * @throws CoreException
+	 * @throws IllegalArgumentException if a file exists at targetLocation
+	 */
+	public void exportProjectPDOM(ICProject cproject, File targetLocation, final IIndexLocationConverter newConverter) throws CoreException {
+		if(targetLocation.exists()) {
+			boolean deleted= targetLocation.delete();
+			if(!deleted) {
+				throw new IllegalArgumentException(
+						MessageFormat.format(Messages.PDOMManager_ExistingFileCollides,
+								new Object[] {targetLocation})
+				);
+			}
+		}
+		try {
+			// copy it
+			PDOM pdom= (PDOM) getPDOM(cproject);
+			pdom.acquireWriteLock();
+			try {
+				File db = pdom.getDB().getLocation();
+				FileChannel from = new FileInputStream(db).getChannel();
+				FileChannel to = new FileOutputStream(targetLocation).getChannel();
+				from.transferTo(0, from.size(), to);
+				to.close();
+				from.close();
+			} finally {
+				pdom.releaseWriteLock();
+			}
 
+			// overwrite internal location representations
+			final WritablePDOM newPDOM = new WritablePDOM(targetLocation, pdom.getLocationConverter());
+			
+			newPDOM.acquireWriteLock();
+			try {
+				List notConverted= newPDOM.rewriteLocations(newConverter);
+				
+				// remove content where converter returns null
+				for(Iterator i = notConverted.iterator(); i.hasNext(); ) {
+					PDOMFile file = (PDOMFile) i.next();
+					file.clear();
+				}
+			} finally {
+				newPDOM.releaseWriteLock();
+			}
+		} catch(IOException ioe) {
+			throw new CoreException(CCorePlugin.createStatus(ioe.getMessage()));
+		} catch(InterruptedException ie) {
+			throw new CoreException(CCorePlugin.createStatus(ie.getMessage()));
+		}
+	}
 }

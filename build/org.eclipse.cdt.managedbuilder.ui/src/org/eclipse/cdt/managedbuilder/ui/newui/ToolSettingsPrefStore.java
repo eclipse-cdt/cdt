@@ -209,7 +209,8 @@ public class ToolSettingsPrefStore implements IPreferenceStore {
 			
 			IOption option = (IOption)options[i][1];
 			
-			if(option.getName().equals(name) //TODO: name vs ID !
+			String optionName = option.getName(); 
+			if( ((optionName != null) && optionName.equals(name)) //TODO: name vs ID !
 					|| ((!option.isExtensionElement() || ((Option)option).isAdjustedExtension() || ((Option)option).wasOptRef())
 						&& option.getSuperClass() != null
 						&& option.getSuperClass().getId().equals(name)))

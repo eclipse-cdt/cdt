@@ -66,6 +66,7 @@ import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICFolderDescription;
 import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.core.settings.model.ICResourceDescription;
+import org.eclipse.cdt.managedbuilder.core.BuildException;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.utils.ui.controls.ControlFactory;
 
@@ -597,8 +598,12 @@ implements
 		return out;
 	}
 	
-	public void cfgChanged(ICConfigurationDescription _cfgd) {
+	private void cfgChanged(ICConfigurationDescription _cfgd) {
 		resd = getResDesc(_cfgd);
+		
+		if (excludeFromBuildCheck != null)
+			excludeFromBuildCheck.setSelection(resd.isExcluded());
+
 		for (int i=0; i<pages.size(); i++) {
 			AbstractPage ap = (AbstractPage)pages.get(i);
 			if (ap.displayedConfig)

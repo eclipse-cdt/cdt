@@ -188,7 +188,7 @@ public class GeneratePDOMApplication implements IApplication {
 				worked += work;
 				int pc = totalWork<1 ? 0 : (int) ((worked*100D)/totalWork);
 				if(shouldOutput()) {
-					writer.println(pc+"% "+subTask+" "+worked+" "+totalWork);  //$NON-NLS-1$ //$NON-NLS-2$//$NON-NLS-3$
+					writer.println(pc+"% "+subTask);  //$NON-NLS-1$
 				}
 			}
 		}

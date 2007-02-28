@@ -61,37 +61,37 @@ public class ExternalExportProjectProvider extends AbstractExportProjectProvider
 	protected static final String ARG_SOURCE = "-source"; //$NON-NLS-1$
 	protected static final String ARG_INCLUDE = "-include"; //$NON-NLS-1$
 	protected static final String ARG_FRAGMENT_ID = "-id"; //$NON-NLS-1$
-	
+
 	private IFolder content;
 	private String fragmentId;
-	
+
 	public ExternalExportProjectProvider() {
 		super();
 	}
-	
+
 	/*
 	 * (non-Javadoc)
 	 * @see org.eclipse.cdt.core.index.export.IProjectForExportManager#createProject(java.util.Map)
 	 */
 	public ICProject createProject() throws CoreException {
-			// -source
-			File source= new File(getSingleString(ARG_SOURCE));
-			if(!source.exists()) {
-				fail(MessageFormat.format(Messages.ExternalContentPEM_LocationToIndexNonExistent, new Object[] {source}));
-			}
-			
-			// -include
-			List includeFiles= new ArrayList();
-			if(isPresent(ARG_INCLUDE)) {
-				includeFiles.addAll(getParameters(ARG_INCLUDE));				
-			}
-			
-			// -id
-			fragmentId= getSingleString(ARG_FRAGMENT_ID);
-			
-			return createCProject("__"+System.currentTimeMillis(), source, IPDOMManager.ID_FAST_INDEXER, includeFiles); //$NON-NLS-1$			
+		// -source
+		File source= new File(getSingleString(ARG_SOURCE));
+		if(!source.exists()) {
+			fail(MessageFormat.format(Messages.ExternalContentPEM_LocationToIndexNonExistent, new Object[] {source}));
+		}
+
+		// -include
+		List includeFiles= new ArrayList();
+		if(isPresent(ARG_INCLUDE)) {
+			includeFiles.addAll(getParameters(ARG_INCLUDE));				
+		}
+
+		// -id
+		fragmentId= getSingleString(ARG_FRAGMENT_ID);
+
+		return createCProject("__"+System.currentTimeMillis(), source, IPDOMManager.ID_FAST_INDEXER, includeFiles); //$NON-NLS-1$			
 	}
-	
+
 	/**
 	 * Returns the project folder the external content is stored in
 	 * @return the project folder the external content is stored in
@@ -99,7 +99,7 @@ public class ExternalExportProjectProvider extends AbstractExportProjectProvider
 	protected IFolder getContentFolder() {
 		return content;
 	}
-	
+
 	/**
 	 * Convenience method for creating a cproject
 	 * @param projectName the name for the new project
@@ -114,14 +114,14 @@ public class ExternalExportProjectProvider extends AbstractExportProjectProvider
 			final File location,
 			final String indexerID,
 			final List includeFiles
-			) throws CoreException {
+	) throws CoreException {
 		final IWorkspace ws = ResourcesPlugin.getWorkspace();
 		final ICProject newProject[] = new ICProject[1];
-		
+
 		ws.run(new IWorkspaceRunnable() {
 			public void run(IProgressMonitor monitor) throws CoreException {
 				IWorkspaceRoot root = ws.getRoot();
-				
+
 				IProject project = root.getProject(projectName);
 				if (!project.exists()) {
 					project.create(NPM);
@@ -137,13 +137,13 @@ public class ExternalExportProjectProvider extends AbstractExportProjectProvider
 				if (!project.hasNature(CCProjectNature.CC_NATURE_ID)) {
 					addNatureToProject(project, CCProjectNature.CC_NATURE_ID, NPM);
 				}
-				
+
 				ICProject cproject = CCorePlugin.getDefault().getCoreModel().create(project);
-				
+
 				// External content appears under a linked folder
 				content= cproject.getProject().getFolder(CONTENT);
 				content.createLink(new Path(location.getAbsolutePath()), IResource.NONE, null);
-				
+
 				// Setup path entries
 				List entries= new ArrayList(Arrays.asList(CoreModel.getRawPathEntries(cproject)));
 				for(Iterator j= includeFiles.iterator(); j.hasNext(); ) {
@@ -151,14 +151,14 @@ public class ExternalExportProjectProvider extends AbstractExportProjectProvider
 							CoreModel.newIncludeFileEntry(
 									cproject.getProject().getFullPath(),
 									new Path((String) j.next())
-					));
+							));
 				}
 				entries.add(CoreModel.newSourceEntry(content.getProjectRelativePath()));
 				cproject.setRawPathEntries(
-					(IPathEntry[]) entries.toArray(new IPathEntry[includeFiles.size()]),
-					new NullProgressMonitor()
+						(IPathEntry[]) entries.toArray(new IPathEntry[includeFiles.size()]),
+						new NullProgressMonitor()
 				);
-				
+
 				newProject[0]= cproject;
 			}
 		}, null);
@@ -167,10 +167,10 @@ public class ExternalExportProjectProvider extends AbstractExportProjectProvider
 			IndexerPreferences.set(newProject[0].getProject(), IndexerPreferences.KEY_INDEX_ALL_FILES, Boolean.TRUE.toString());
 			IndexerPreferences.set(newProject[0].getProject(), IndexerPreferences.KEY_INDEXER_ID, indexerID);
 		}
-		
+
 		return newProject[0];
 	}
-	
+
 	/*
 	 * This should be a platform/CDT API
 	 */
@@ -183,8 +183,8 @@ public class ExternalExportProjectProvider extends AbstractExportProjectProvider
 		description.setNatureIds(newNatures);
 		proj.setDescription(description, monitor);
 	}
-	
-	
+
+
 	/*
 	 * (non-Javadoc)
 	 * @see org.eclipse.cdt.core.index.export.IExportProjectProvider#getLocationConverter(org.eclipse.cdt.core.model.ICProject)
@@ -192,7 +192,7 @@ public class ExternalExportProjectProvider extends AbstractExportProjectProvider
 	public IIndexLocationConverter getLocationConverter(final ICProject cproject) {
 		return new ResourceContainerRelativeLocationConverter(content);
 	}
-	
+
 	/*
 	 * (non-Javadoc)
 	 * @see org.eclipse.cdt.core.index.export.IExportProjectProvider#getExportProperties()

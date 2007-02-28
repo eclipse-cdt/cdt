@@ -718,8 +718,7 @@ public class PDOMManager implements IPDOMManager, IWritableIndexManager, IListen
      * Exports the project PDOM to the specified location, rewriting locations with
      * the specified location converter.
      * <br>
-	 * Note. this method does not acquire or release any locks. It is expected
-     * that this will be done by the caller.
+     * Note. This will acquire a write lock while the pdom is exported
 	 * @param targetLocation a location that does not currently exist
 	 * @param newConverter
 	 * @throws CoreException

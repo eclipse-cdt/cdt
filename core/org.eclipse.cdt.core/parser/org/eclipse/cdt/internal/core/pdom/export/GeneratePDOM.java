@@ -20,7 +20,6 @@ import org.eclipse.cdt.core.index.IIndexLocationConverter;
 import org.eclipse.cdt.core.index.export.IExportProjectProvider;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.internal.core.CCoreInternals;
-import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.WritablePDOM;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.ISafeRunnable;
@@ -54,11 +53,11 @@ public class GeneratePDOM implements ISafeRunnable {
 		CCorePlugin.getIndexManager().joinIndexer(Integer.MAX_VALUE, new NullProgressMonitor());
 		IIndexLocationConverter converter= pm.getLocationConverter(cproject);
 		try {
-			PDOM pdom = (PDOM) CCoreInternals.getPDOMManager().getPDOM(cproject);
-			pdom.acquireWriteLock(0);
+			CCoreInternals.getPDOMManager().exportProjectPDOM(cproject, targetLocation, converter);
+			WritablePDOM exportedPDOM= new WritablePDOM(targetLocation, converter);
+
+			exportedPDOM.acquireWriteLock(0);
 			try {
-				CCoreInternals.getPDOMManager().exportProjectPDOM(cproject, targetLocation, converter);
-				WritablePDOM exportedPDOM= new WritablePDOM(targetLocation, converter);
 				Map exportProperties= pm.getExportProperties();
 				if(exportProperties!=null) {
 					for(Iterator i = exportProperties.entrySet().iterator(); i.hasNext(); ) {
@@ -67,7 +66,7 @@ public class GeneratePDOM implements ISafeRunnable {
 					}
 				}
 			} finally {
-				pdom.releaseWriteLock(0);
+				exportedPDOM.releaseWriteLock(0);
 			}
 		} catch(InterruptedException ie) {
 			String msg= MessageFormat.format(Messages.GeneratePDOM_GenericGenerationFailed, new Object[] {ie.getMessage()});

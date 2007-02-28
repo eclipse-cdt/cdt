@@ -48,8 +48,8 @@
 -splitIndex
 -windowtitle "RSE API Specification"
 -doctitle "RSE API Specification"
--header "<b>RSE</b><br>Release 1.0"
--bottom "Copyright (c) IBM Corporation and others 2000, 2006. All Rights Reserved."
+-header "<b>RSE</b><br>Release 2.0"
+-bottom "Copyright (c) IBM Corporation and others 2000, 2007. All Rights Reserved."
 -group "RSE Core Plug-in Packages" "org.eclipse.rse.core;org.eclipse.rse.core.*"
 -group "RSE UI Plug-in Packages" "org.eclipse.rse.ui;org.eclipse.rse.ui.*"
 -link http://java.sun.com/j2se/1.4.2/docs/api

@@ -60,11 +60,11 @@ public abstract class AbstractExportTab extends AbstractCPropertyTab {
 //	boolean  savedShowBI  = false;
 //	List incs;
 	
+	public static final Image IMG_FS = CPluginImages.get(CPluginImages.IMG_FILESYSTEM); 
+	public static final Image IMG_WS = CPluginImages.get(CPluginImages.IMG_WORKSPACE); 
+	public static final Image IMG_MK = CPluginImages.get(CPluginImages.IMG_OBJS_MACRO);
 	private static final String ALL = "[All]"; //$NON-NLS-1$
 	private static final String LIST = "[List]"; //$NON-NLS-1$
-	private static final Image IMG_FS = CPluginImages.get(CPluginImages.IMG_FILESYSTEM); 
-	private static final Image IMG_WS = CPluginImages.get(CPluginImages.IMG_WORKSPACE); 
-	private static final Image IMG_MK = CPluginImages.get(CPluginImages.IMG_OBJS_MACRO);
 	private static Map names_l = new HashMap();
 	private static Map names_t = new HashMap();
 	private static String[] names_ls; 	
@@ -158,8 +158,8 @@ public abstract class AbstractExportTab extends AbstractCPropertyTab {
 	 * Methods to be implemented in descendants 
 	 */
 	public abstract int getKind();
-	public abstract ICLanguageSettingEntry doAdd(String s1, String s2);
-	public abstract ICLanguageSettingEntry doEdit(String s1, String s2);
+	public abstract ICLanguageSettingEntry doAdd(String s1, String s2, boolean isWsp);
+	public abstract ICLanguageSettingEntry doEdit(String s1, String s2, boolean isWsp);
 	public abstract boolean hasValues();
 	
 	/**
@@ -175,6 +175,7 @@ public abstract class AbstractExportTab extends AbstractCPropertyTab {
 		ICExternalSetting[] vals = cfg.getExternalSettings();
 		if (vals == null || vals.length == 0) {
 			tv.setInput(null);
+			setButtons();
 			return;
 		}
 		for (int i=0; i<vals.length; i++) {
@@ -214,9 +215,9 @@ public abstract class AbstractExportTab extends AbstractCPropertyTab {
 		case 0: // add
 			dlg = new ExpDialog(usercomp.getShell(), true,
 					"Create", EMPTY_STR, EMPTY_STR, cfg,         //$NON-NLS-1$
-					null, null, getKind(), names_ls, names_ts, namesList); 
+					null, null, getKind(), names_ls, names_ts, namesList, false); 
 			if (dlg.open()) {
-				ent[0] = doAdd(dlg.text1.trim(), dlg.text2.trim());
+				ent[0] = doAdd(dlg.text1.trim(), dlg.text2.trim(), dlg.check2);
 				if (ent[0] != null)
 					if (dlg.check1) { // apply to all ?
 						ICConfigurationDescription[] cfgs = page.getCfgsEditable();
@@ -240,14 +241,14 @@ public abstract class AbstractExportTab extends AbstractCPropertyTab {
 				s2 = old.getValue();
 			} else 
 				s1 = s2 = old.getName();
-			
+			boolean isWsp = (old.entry.getFlags() & ICSettingEntry.VALUE_WORKSPACE_PATH) != 0;
 			dlg = new ExpDialog(usercomp.getShell(), false,
 					"Edit", s1, s2, cfg, //$NON-NLS-1$
 					id2name(old.setting.getCompatibleLanguageIds(), names_l),
 					id2name(old.setting.getCompatibleContentTypeIds(), names_t),
-					getKind(), names_ls, names_ts, null); 
+					getKind(), names_ls, names_ts, null, isWsp); 
 			if (dlg.open()) {
-				ent[0] = doEdit(dlg.text1.trim(), dlg.text2.trim());
+				ent[0] = doEdit(dlg.text1.trim(), dlg.text2.trim(), dlg.check2);
 				ICLanguageSettingEntry[] ls = old.setting.getEntries(getKind());
 				ICLanguageSettingEntry[] ls2 = new ICLanguageSettingEntry[ls.length];
 				for (int x=0; x<ls.length; x++) 
@@ -439,4 +440,9 @@ outer:
 		for (int i=0; i<lst.length; i++) s = s + lst[i] + '\n';
 		return s;
 	}
+	static public Image getWspImage(boolean isWsp) {
+		return isWsp ? AbstractExportTab.IMG_WS : AbstractExportTab.IMG_FS;
+	}
+	
+
 }

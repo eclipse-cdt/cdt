@@ -48,7 +48,7 @@ public class LibraryTab extends AbstractLangsListTab implements IPathEntryStoreL
 				EMPTY_STR, getResDesc().getConfiguration(), 0);
 		if (dlg.open() && dlg.text1.trim().length() > 0 ) {
 			int flags = 0;
-			if (dlg.text1.equals(dlg.text2)) flags = ICSettingEntry.VALUE_WORKSPACE_PATH;
+			if (dlg.check2) flags = ICSettingEntry.VALUE_WORKSPACE_PATH;
 			return new CLibraryFileEntry(dlg.text1, flags);
 		}
 		return null;
@@ -62,7 +62,7 @@ public class LibraryTab extends AbstractLangsListTab implements IPathEntryStoreL
 				(ent.getFlags() & ICSettingEntry.VALUE_WORKSPACE_PATH));
 		if (dlg.open() && dlg.text1.trim().length() > 0 ) {
 			int flags = 0;
-			if (dlg.text1.equals(dlg.text2)) flags = ICSettingEntry.VALUE_WORKSPACE_PATH;
+			if (dlg.check2) flags = ICSettingEntry.VALUE_WORKSPACE_PATH;
 			return new CLibraryFileEntry(dlg.text1, flags);
 		}
 		return null;

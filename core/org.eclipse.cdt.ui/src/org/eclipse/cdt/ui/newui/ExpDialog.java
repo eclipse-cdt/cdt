@@ -34,7 +34,7 @@ import org.eclipse.cdt.core.settings.model.ICSettingEntry;
 
 public class ExpDialog extends AbstractPropertyDialog {
 	
-	protected static final String TO_ALL = "Apply to all"; //$NON-NLS-1$
+	protected static final String TO_ALL = NewUIMessages.getResourceString("ExpDialog.5"); //$NON-NLS-1$
 
 	public String[] sel_types = null;
 	public String[] sel_langs = null; 
@@ -46,13 +46,14 @@ public class ExpDialog extends AbstractPropertyDialog {
 	private Button c_langs;
 	private Button c_types;
 	private Button c_all;
+	private Button c_wsp;
 	
 	private Button b_vars;
 	private Button b_work;
 	private Button b_file;
 	private Button b_ok;
 	private Button b_ko;
-	private boolean newAction;
+	private boolean newAction, isWsp;
 	private int kind;
 	private ICConfigurationDescription cfgd;
 	private String[] names_l, names_t;
@@ -63,7 +64,7 @@ public class ExpDialog extends AbstractPropertyDialog {
 		ICConfigurationDescription _cfgd,
 		String[] _langs, String[] _types,
 		int _kind, String[] _names_l, String[] _names_t, 
-		java.util.List _existing) {
+		java.util.List _existing, boolean _isWsp) {
 		super(parent, title);
 		super.text1 = (_data1 == null) ? EMPTY_STR : _data1;
 		super.text2 = (_data2 == null) ? EMPTY_STR : _data2;
@@ -75,14 +76,20 @@ public class ExpDialog extends AbstractPropertyDialog {
 		names_l = _names_l;
 		names_t = _names_t;
 		existing = _existing;
+		isWsp = _isWsp;
 	}
 
 	protected Control createDialogArea(Composite c) {
-		c.setLayout(new GridLayout(4, true));
 		GridData gd;
+		if (c.getLayoutData() instanceof GridData) {
+			gd = (GridData)c.getLayoutData();
+			gd.horizontalIndent = 10;
+			c.setLayoutData(gd);
+		}
+		c.setLayout(new GridLayout(4, true));
 		
 		Label l1 = new Label(c, SWT.NONE);
-		l1.setText("Name:");  //$NON-NLS-1$
+		l1.setText(NewUIMessages.getResourceString("ExpDialog.6"));  //$NON-NLS-1$
 		l1.setLayoutData(new GridData(GridData.BEGINNING));
 		
 		txt1 = new Text(c, SWT.SINGLE | SWT.BORDER);
@@ -95,7 +102,7 @@ public class ExpDialog extends AbstractPropertyDialog {
 			}});
 				
 		Label l2 = new Label(c, SWT.NONE);
-		l2.setText("Value:");  //$NON-NLS-1$
+		l2.setText(NewUIMessages.getResourceString("ExpDialog.7"));  //$NON-NLS-1$
 		l2.setLayoutData(new GridData(GridData.BEGINNING));
 		
 		txt2 = new Text(c, SWT.SINGLE | SWT.BORDER);
@@ -128,9 +135,24 @@ public class ExpDialog extends AbstractPropertyDialog {
 		
 		b_work = setupButton(c, AbstractCPropertyTab.WORKSPACEBUTTON_NAME);
 		b_file = setupButton(c, AbstractCPropertyTab.FILESYSTEMBUTTON_NAME);
+
+		c_wsp = new Button(c, SWT.CHECK);
+		c_wsp.setText(NewUIMessages.getResourceString("ExpDialog.4")); //$NON-NLS-1$
+		gd = new GridData(GridData.BEGINNING);
+		gd.horizontalSpan = 3;
+		c_wsp.setLayoutData(gd);
+		c_wsp.setSelection(isWsp);
+		c_wsp.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				c_wsp.setImage(AbstractExportTab.getWspImage(c_wsp.getSelection()));
+			}});
+
+		c_wsp.setImage(AbstractExportTab.getWspImage(isWsp));
+		
 		if (kind == ICSettingEntry.MACRO) {
 			b_work.setVisible(false);
 			b_file.setVisible(false);
+			c_wsp.setVisible(false); 
 		}
 		
 		Group dest = new Group(c, SWT.NONE);
@@ -188,7 +210,7 @@ public class ExpDialog extends AbstractPropertyDialog {
 		c.getShell().setDefaultButton(b_ok);
 		c.pack();
 		Rectangle r = shell.getBounds();
-		r.width = 400;
+		r.width = 420;
 		shell.setBounds(r);
 		setButtons();
 		return c;
@@ -205,10 +227,10 @@ public class ExpDialog extends AbstractPropertyDialog {
 			name = txt2.getText().trim();
 		if (name.length() == 0) {
 			enabled = false;
-			message.setText("Name cannot be empty !"); //$NON-NLS-1$
+			message.setText(NewUIMessages.getResourceString("ExpDialog.8")); //$NON-NLS-1$
 		}
 		if (enabled && existing != null && existing.contains(name)) {
-			message.setText("The same name already exists !"); //$NON-NLS-1$
+			message.setText(NewUIMessages.getResourceString("ExpDialog.9")); //$NON-NLS-1$
 			enabled = false;
 		}
 		b_ok.setEnabled(enabled);
@@ -221,6 +243,7 @@ public class ExpDialog extends AbstractPropertyDialog {
 				super.text1 = txt1.getText();
 			super.text2 = txt2.getText();
 			super.check1 = c_all.getSelection();
+			super.check2 = c_wsp.getSelection();
 			sel_langs = (c_langs.getSelection()) ? null : langs.getSelection();
 			sel_types = (c_types.getSelection()) ? null : types.getSelection();
 			result = true;
@@ -239,7 +262,8 @@ public class ExpDialog extends AbstractPropertyDialog {
 			if (s != null) {
 				s = strip_wsp(s);
 				txt2.setText(s);
-				text1 = s; // to be compared with final text
+				c_wsp.setSelection(true);
+				c_wsp.setImage(AbstractExportTab.getWspImage(c_wsp.getSelection()));
 			}
 		} else if (e.widget.equals(b_file)) {
 			if (kind == ICSettingEntry.INCLUDE_PATH ||
@@ -247,7 +271,11 @@ public class ExpDialog extends AbstractPropertyDialog {
 				s = AbstractCPropertyTab.getFileSystemDirDialog(shell, txt2.getText());
 			else 
 				s = AbstractCPropertyTab.getFileSystemFileDialog(shell, txt2.getText());
-			if (s != null) txt2.setText(s);
+			if (s != null) {
+				txt2.setText(s);
+				c_wsp.setSelection(false);
+				c_wsp.setImage(AbstractExportTab.getWspImage(c_wsp.getSelection()));
+			}
 		}
 	}
 	

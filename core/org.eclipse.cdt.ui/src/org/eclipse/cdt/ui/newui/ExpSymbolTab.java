@@ -16,12 +16,13 @@ import org.eclipse.cdt.core.settings.model.ICSettingEntry;
 
 public class ExpSymbolTab extends AbstractExportTab {
 
-	public ICLanguageSettingEntry doAdd(String s1, String s2) {
+	// isWsp is ignored for symbols
+	public ICLanguageSettingEntry doAdd(String s1, String s2, boolean isWsp) {
 		return new CMacroEntry(s1, s2, 0);
 	}
 
-	public ICLanguageSettingEntry doEdit(String s1, String s2) {
-		return doAdd(s1, s2);
+	public ICLanguageSettingEntry doEdit(String s1, String s2, boolean isWsp) {
+		return doAdd(s1, s2, isWsp);
 	}
 	
 	public int getKind() { return ICSettingEntry.MACRO; }

@@ -13,8 +13,10 @@ package org.eclipse.cdt.ui.newui;
 //import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.CLabel;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
+import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -38,7 +40,9 @@ public class IncludeDialog extends AbstractPropertyDialog {
 	private Button b_ok;
 	private Button b_ko;
 	private int mode;
+	private Button c_wsp;
 	private ICConfigurationDescription cfgd;
+	private boolean isWsp = false;
 	
 	static final int NEW_FILE = 0;
 	static final int NEW_DIR  = 1;
@@ -55,7 +59,7 @@ public class IncludeDialog extends AbstractPropertyDialog {
 		sdata = _data;
 		cfgd = _cfgd;
 		if (flags == ICSettingEntry.VALUE_WORKSPACE_PATH)
-			text2 = sdata; // preserve "workspace" state
+			isWsp = true;
 	}
 
 	protected Control createDialogArea(Composite c) {
@@ -98,6 +102,19 @@ public class IncludeDialog extends AbstractPropertyDialog {
 		b_work = setupButton(c, AbstractCPropertyTab.WORKSPACEBUTTON_NAME);
 		b_file = setupButton(c, AbstractCPropertyTab.FILESYSTEMBUTTON_NAME);
 
+		c_wsp = new Button(c, SWT.CHECK);
+		c_wsp.setText(NewUIMessages.getResourceString("ExpDialog.4")); //$NON-NLS-1$
+		gd = new GridData(GridData.BEGINNING);
+		gd.horizontalSpan = 5;
+		c_wsp.setLayoutData(gd);
+		c_wsp.setSelection(isWsp);
+		c_wsp.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				c_wsp.setImage(AbstractExportTab.getWspImage(c_wsp.getSelection()));
+			}});
+		
+		c_wsp.setImage(AbstractExportTab.getWspImage(isWsp));
+		
 		c.getShell().setDefaultButton(b_ok);
 		c.pack();
 		setButtons();
@@ -113,6 +130,7 @@ public class IncludeDialog extends AbstractPropertyDialog {
 		if (e.widget.equals(b_ok)) { 
 			text1 = text.getText();
 			check1 = b_add2all.getSelection();
+			check2 = c_wsp.getSelection();
 			result = true;
 			shell.dispose(); 
 		} else if (e.widget.equals(b_ko)) {
@@ -125,14 +143,19 @@ public class IncludeDialog extends AbstractPropertyDialog {
 			if (s != null) {
 				s = strip_wsp(s);
 				text.setText(s);
-				text2 = s; // to be compared with final text
+				c_wsp.setSelection(true);
+				c_wsp.setImage(AbstractExportTab.getWspImage(c_wsp.getSelection()));
 			}
 		} else if (e.widget.equals(b_file)) {
 			if ((mode & DIR_MASK)== DIR_MASK)
 				s = AbstractCPropertyTab.getFileSystemDirDialog(shell, text.getText());
 			else 
 				s = AbstractCPropertyTab.getFileSystemFileDialog(shell, text.getText());
-			if (s != null) text.setText(s);
+			if (s != null) {
+				text.setText(s);
+				c_wsp.setSelection(false);
+				c_wsp.setImage(AbstractExportTab.getWspImage(c_wsp.getSelection()));
+			}
 		} else if (e.widget.equals(b_vars)) {
 			s = AbstractCPropertyTab.getVariableDialog(shell, cfgd);
 			if (s != null) text.insert(s);

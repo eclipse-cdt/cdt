@@ -34,7 +34,7 @@ public class IncludeTab extends AbstractLangsListTab {
 		if (dlg.open() && dlg.text1.trim().length() > 0 ) {
 			toAll = dlg.check1;
 			int flags = 0;
-			if (dlg.text1.equals(dlg.text2)) { // see IncludeDialog why.
+			if (dlg.check2) { // isWsp
 				flags = ICSettingEntry.VALUE_WORKSPACE_PATH;
 			}
 			return new CIncludePathEntry(dlg.text1, flags);
@@ -50,7 +50,7 @@ public class IncludeTab extends AbstractLangsListTab {
 				(ent.getFlags() & ICSettingEntry.VALUE_WORKSPACE_PATH));
 		if (dlg.open()) {
 			int flags = 0;
-			if (dlg.text1.equals(dlg.text2)) flags = ICSettingEntry.VALUE_WORKSPACE_PATH;
+			if (dlg.check2) flags = ICSettingEntry.VALUE_WORKSPACE_PATH;
 			return new CIncludePathEntry(dlg.text1, flags);
 		} else 
 			return null;

@@ -67,6 +67,9 @@ public class ProjectConverter implements ICProjectConverter {
 	
 	public boolean canConvertProject(IProject project, String oldOwnerId, ICProjectDescription oldDes) {
 		try {
+			if(oldOwnerId == null || oldDes == null)
+				return false;
+		
 			IProjectDescription eDes = project.getDescription();
 			Set natureSet = new HashSet(Arrays.asList(eDes.getNatureIds()));
 			if(natureSet.contains(OLD_MAKE_NATURE_ID))

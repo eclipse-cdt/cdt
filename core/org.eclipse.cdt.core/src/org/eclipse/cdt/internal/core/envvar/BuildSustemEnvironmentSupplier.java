@@ -169,13 +169,13 @@ public class BuildSustemEnvironmentSupplier implements
 	 */
 	public IEnvironmentVariable[] getVariables(Object context) {
 		if(context == null)
-			return null;
+			return new IEnvironmentVariable[0];
 		IEnvironmentVariable variables[] = null;
 		if(context instanceof ICConfigurationDescription){
 			ICConfigurationDescription cfg = (ICConfigurationDescription)context;
 			IEnvironmentContributor supplier = cfg.getBuildSetting().getBuildEnvironmentContributor();
 			if(supplier == null)
-				return null;
+				return new IEnvironmentVariable[0];
 			variables = supplier.getVariables(new ExtensionEnvVarProvider(context));
 		}
 		

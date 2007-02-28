@@ -11,6 +11,7 @@
 package org.eclipse.cdt.internal.core.cdtvariables;
 
 import org.eclipse.cdt.core.cdtvariables.ICdtVariable;
+import org.eclipse.cdt.core.cdtvariables.ICdtVariablesContributor;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.utils.cdtvariables.ICdtVariableSupplier;
 import org.eclipse.cdt.utils.cdtvariables.IVariableContextInfo;
@@ -98,11 +99,17 @@ public class BuildSystemVariableSupplier extends CoreMacroSupplierBase {
 
 	protected ICdtVariable getMacro(String name, int type, Object data) {
 		ICConfigurationDescription des = (ICConfigurationDescription)data;
-		return des.getBuildVariablesContributor().getVariable(name, new ExtensionMacroProvider(type, data));
+		ICdtVariablesContributor cr = des.getBuildVariablesContributor();
+		if(cr != null)
+			return cr.getVariable(name, new ExtensionMacroProvider(type, data));
+		return null;
 	}
 
 	protected ICdtVariable[] getMacros(int type, Object data) {
 		ICConfigurationDescription des = (ICConfigurationDescription)data;
-		return des.getBuildVariablesContributor().getVariables(new ExtensionMacroProvider(type, data));
+		ICdtVariablesContributor cr = des.getBuildVariablesContributor();
+		if(cr != null)
+			return cr.getVariables(new ExtensionMacroProvider(type, data));
+		return new ICdtVariable[0];
 	}
 }

@@ -20,6 +20,7 @@ import org.eclipse.jface.action.Action;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICProjectDescription;
+import org.eclipse.cdt.ui.newui.AbstractPage;
 
 /**
  * Action which changes active build configuration of the current project to 
@@ -57,6 +58,7 @@ public class BuildConfigAction extends Action {
 						configs[i].setActive();
 						try {
 							CoreModel.getDefault().setProjectDescription(prj, prjd);
+							AbstractPage.updateViews();
 						} catch (CoreException e) { }	
 						break;
 					}

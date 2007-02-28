@@ -385,11 +385,12 @@ public class ProblemsLabelDecorator implements ILabelDecorator, ILightweightLabe
 			ICConfigurationDescription [] cf = prjd.getConfigurations();
 			if (cf == null) return 0;
 			for (int i=0; i<cf.length; i++) {
-				ICResourceDescription out = cf[i].getResourceDescription(path, true);
-				if (out != null) result |= TICK_CONFIGURATION;
-			// exclude ticks behaviour is an item to discuss.	
-			//	out = cf[i].getResourceDescription(path, false);
-			//	if (out.isExcluded()) result |= TICK_EXCLUDE;
+				if (cf[i].isActive()) {
+					ICResourceDescription out = cf[i].getResourceDescription(path, true);
+					if (out != null) result |= TICK_CONFIGURATION;
+					out = cf[i].getResourceDescription(path, false);
+					if (out.isExcluded()) result |= TICK_EXCLUDE;
+				}
 			}
 		}
 		return result;

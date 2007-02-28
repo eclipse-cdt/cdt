@@ -314,9 +314,7 @@ public class StatusChangeListener implements IDomainListener
         return getStatus().getAttribute(DE.A_VALUE).equals("done") ||  getStatus().getAttribute(DE.A_NAME).equals("done"); //$NON-NLS-1$ //$NON-NLS-2$
     }
 	
-	/**
-	 * @see org.eclipse.rse.core.subsystems.ICommunicationsListener#isPassiveCommunicationsListener()
-	 */
+
 	public boolean isPassiveCommunicationsListener() {
 		return false;
 	}

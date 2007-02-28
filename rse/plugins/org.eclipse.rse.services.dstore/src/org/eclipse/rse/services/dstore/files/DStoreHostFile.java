@@ -362,8 +362,12 @@ public class DStoreHostFile implements IHostFile
 		if (str == null)
 		{
 			System.out.println("HELP:"+_element.toString()); //$NON-NLS-1$
+			return false;
 		}
-		return(str.equals("true")); //$NON-NLS-1$
+		else
+		{
+			return(str.equals("true")); //$NON-NLS-1$
+		}
 	}
 
 	public boolean canWrite() {

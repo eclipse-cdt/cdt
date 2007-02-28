@@ -30,7 +30,7 @@ public class DStoreInputStream extends InputStream
 	private DataElement _minerElement;
 	private String _encoding;
 	private int _mode;
-	private DataElement _cmdStatus;
+	private DataElement _cmdStatus; // leaving this, in case of need for error checking
 	private File _localFile;
 	private InputStream _localFileInputStream;
 	
@@ -52,7 +52,7 @@ public class DStoreInputStream extends InputStream
 		
 		try
 		{
-			_localFile = File.createTempFile("download", "rse");
+			_localFile = File.createTempFile("download", "rse");  //$NON-NLS-1$//$NON-NLS-2$
 			DataElement remoteElement = ds.createObject(universaltemp, de.getType(), _remotePath, String.valueOf(_mode));	
 			DataElement localElement = ds.createObject(universaltemp, de.getType(), _localFile.getAbsolutePath(), _encoding);
 			

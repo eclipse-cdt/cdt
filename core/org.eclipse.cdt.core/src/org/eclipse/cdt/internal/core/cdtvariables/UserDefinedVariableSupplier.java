@@ -509,7 +509,7 @@ public class UserDefinedVariableSupplier extends CoreMacroSupplierBase {
 		InputStream stream = loadInputStream(getWorkspaceNode(),PREFNAME_WORKSPACE);
 		if(stream == null)
 			return new StorableCdtVariables(false);
-		return loadMacrosFromStream(stream);
+		return loadMacrosFromStream(stream, false);
 	}
 	
 	
@@ -526,7 +526,7 @@ public class UserDefinedVariableSupplier extends CoreMacroSupplierBase {
 		storeOutputStream(stream,getWorkspaceNode(),PREFNAME_WORKSPACE);
 	}
 	
-	private StorableCdtVariables loadMacrosFromStream(InputStream stream){
+	private StorableCdtVariables loadMacrosFromStream(InputStream stream, boolean readOnly){
 		try{
 			DocumentBuilder parser = DocumentBuilderFactory.newInstance().newDocumentBuilder();
 			InputSource inputSource = new InputSource(stream);
@@ -536,7 +536,7 @@ public class UserDefinedVariableSupplier extends CoreMacroSupplierBase {
 			if(!StorableCdtVariables.MACROS_ELEMENT_NAME.equals(rootElement.getNodeName()))
 				return null;
 			
-			return new StorableCdtVariables(new XmlStorageElement(rootElement), true);
+			return new StorableCdtVariables(new XmlStorageElement(rootElement), readOnly);
 		}
 		catch(ParserConfigurationException e){
 			

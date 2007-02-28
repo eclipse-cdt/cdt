@@ -20,6 +20,7 @@ import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.managedbuilder.core.IBuilder;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IManagedProject;
+import org.eclipse.cdt.managedbuilder.internal.core.Configuration;
 import org.eclipse.cdt.managedbuilder.internal.macros.BuildMacroProvider;
 import org.eclipse.cdt.managedbuilder.internal.macros.DefaultMacroContextInfo;
 import org.eclipse.cdt.managedbuilder.internal.macros.MbsMacroSupplier;
@@ -126,6 +127,8 @@ public class BuildVariablesContributor implements ICdtVariablesContributor {
 	
 	private ContributorMacroContextInfo createContextInfo(ICdtVariableManager mngr){
 		IConfiguration cfg = fCfgData.getConfiguration();
+		if(((Configuration)cfg).isPreference())
+			return null;
 		IProject project = cfg.getOwner().getProject();
 		ICProjectDescription des = CoreModel.getDefault().getProjectDescription(project);
 		if(des != null){

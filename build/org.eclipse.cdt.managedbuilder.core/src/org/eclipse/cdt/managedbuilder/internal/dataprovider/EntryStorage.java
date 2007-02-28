@@ -11,9 +11,8 @@
 package org.eclipse.cdt.managedbuilder.internal.dataprovider;
 
 import java.util.ArrayList;
-import java.util.Iterator;
+import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 
 import org.eclipse.cdt.core.settings.model.CIncludeFileEntry;
 import org.eclipse.cdt.core.settings.model.CIncludePathEntry;
@@ -23,19 +22,22 @@ import org.eclipse.cdt.core.settings.model.CMacroEntry;
 import org.eclipse.cdt.core.settings.model.CMacroFileEntry;
 import org.eclipse.cdt.core.settings.model.ICLanguageSettingEntry;
 import org.eclipse.cdt.core.settings.model.ICLanguageSettingPathEntry;
-import org.eclipse.cdt.core.settings.model.util.EntryNameKey;
+import org.eclipse.cdt.core.settings.model.ICSettingEntry;
+import org.eclipse.cdt.managedbuilder.core.IEnvVarBuildPath;
 import org.eclipse.cdt.managedbuilder.core.IOption;
 import org.eclipse.cdt.managedbuilder.core.IResourceInfo;
 import org.eclipse.cdt.managedbuilder.core.ITool;
-import org.eclipse.cdt.managedbuilder.core.IToolChain;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
+import org.eclipse.cdt.managedbuilder.envvar.IEnvironmentVariableProvider;
 import org.eclipse.cdt.managedbuilder.internal.dataprovider.ProfileInfoProvider.DiscoveredEntry;
+import org.eclipse.cdt.managedbuilder.internal.dataprovider.SettingsSet.SettingLevel;
 
 
 public class EntryStorage {
 	private int fKind;
-	private EntryListMap fDiscoveredEntries = new EntryListMap();
-	private EntryListMap fUserEntries = new EntryListMap();
+	private SettingsSet fSettings;
+//	private EntryListMap fDiscoveredEntries = new EntryListMap();
+//	private EntryListMap fUserEntries = new EntryListMap();
 //	private ICLanguageSettingEntry fEntries[];
 	private BuildLanguageData fLangData;
 	private boolean fCacheInited;
@@ -61,16 +63,18 @@ public class EntryStorage {
 		if(list == null)
 			list = new ArrayList();
 		
-		for(Iterator iter = fUserEntries.getIterator(); iter.hasNext();){
-			EntryInfo info = (EntryInfo)iter.next();
+		ICLanguageSettingEntry entries[] = fSettings.getEntries();
+		list.addAll(Arrays.asList(entries));
+//		for(Iterator iter = fUserEntries.getIterator(); iter.hasNext();){
+//			EntryInfo info = (EntryInfo)iter.next();
+////			if(!info.isOverridden())
+//				list.add(info.getEntry());
+//		}
+//		for(Iterator iter = fDiscoveredEntries.getIterator(); iter.hasNext();){
+//			EntryInfo info = (EntryInfo)iter.next();
 //			if(!info.isOverridden())
-				list.add(info.getEntry());
-		}
-		for(Iterator iter = fDiscoveredEntries.getIterator(); iter.hasNext();){
-			EntryInfo info = (EntryInfo)iter.next();
-			if(!info.isOverridden())
-				list.add(info.getEntry());
-		}
+//				list.add(info.getEntry());
+//		}
 		return list;
 	}
 	
@@ -97,37 +101,37 @@ public class EntryStorage {
 			return;
 		}
 		initCache();
-		ArrayList userList = new ArrayList();
-		Map discoveredMap = fDiscoveredEntries.getEntryInfoMap();
-		boolean discoveredReadOnly = isDiscoveredEntriesReadOnly();
 		
-		for(int i = 0; i < entries.length; i++){
-			ICLanguageSettingEntry entry = entries[i];
-			EntryInfo info = (EntryInfo)discoveredMap.remove(new EntryNameKey(entry));
-			if(info == null || info.isOverridden() || !discoveredReadOnly){
-				if(info != null){
-					info.makeOverridden(true);
-				}
-				ICLanguageSettingEntry usrEntry = createEntry(entry, false);
-				userList.add(usrEntry);
-			}
-		}
+		fSettings.applyEntries(entries);
+//		ArrayList userList = new ArrayList();
+//		Map discoveredMap = fDiscoveredEntries.getEntryInfoMap();
+//		boolean discoveredReadOnly = isDiscoveredEntriesReadOnly();
+//		
+//		for(int i = 0; i < entries.length; i++){
+//			ICLanguageSettingEntry entry = entries[i];
+//			EntryInfo info = (EntryInfo)discoveredMap.remove(new EntryNameKey(entry));
+//			if(info == null || info.isOverridden() || !discoveredReadOnly){
+//				if(info != null){
+//					info.makeOverridden(true);
+//				}
+//				ICLanguageSettingEntry usrEntry = createEntry(entry, false);
+//				userList.add(usrEntry);
+//			}
+//		}
 		
-		for(Iterator iter = discoveredMap.values().iterator(); iter.hasNext();){
-			EntryInfo info = (EntryInfo)iter.next();
-			info.makeOverridden(false);
-		}
+//		for(Iterator iter = discoveredMap.values().iterator(); iter.hasNext();){
+//			EntryInfo info = (EntryInfo)iter.next();
+//			info.makeOverridden(false);
+//		}
 		
+		SettingLevel level = fSettings.getLevels()[0];
+		ICLanguageSettingEntry usrEntries[] = level.getEntries();
 		IOption options[] = fLangData.getOptionsForKind(fKind);
-		fUserEntries.clear();
 		if(options.length > 0){
 			IOption option = options[0];
-			int size = userList.size();
-			String optValue[] = new String[size]; 
-			for(int i = 0; i < size; i++){
-				ICLanguageSettingEntry entry = (ICLanguageSettingEntry)userList.get(i);
-				EntryInfo info = new EntryInfo(entry, false, true);
-				fUserEntries.addEntryInfo(info);
+			String optValue[] = new String[usrEntries.length]; 
+			for(int i = 0; i < usrEntries.length; i++){
+				ICLanguageSettingEntry entry = usrEntries[i];
 				optValue[i] = entryValueToOption(entry);
 			}
 			
@@ -154,21 +158,89 @@ public class EntryStorage {
 //			}
 //			
 //		} else {
+			fSettings = createEmptySettings();
+			SettingLevel levels[] = fSettings.getLevels();
 			fCacheInited = true;
 			DiscoveredEntry[] dEntries = fLangData.getDiscoveredEntryValues(fKind);
-			fDiscoveredEntries.clear();
-			boolean readOnly = isDiscoveredEntriesReadOnly();
-			if(dEntries.length != 0){
-				for(int i = 0; i < dEntries.length; i++){
-					DiscoveredEntry dEntry = dEntries[i];
-					ICLanguageSettingEntry entry = createEntry(dEntry, true, readOnly);
-					EntryInfo info = new EntryInfo(entry, true, false);
-					fDiscoveredEntries.addEntryInfo(info);
-				}
-			}
-			initUserValues();
-			fUserValuesInited = true;
+			addEntries(levels[2], dEntries);
+			
+			dEntries = getDiscoveredEnvironmentEntries();
+			addEntries(levels[1], dEntries);
+			
+			dEntries = getUserDiscoveredEntries();
+			addEntries(levels[0], dEntries);
+			
+			fSettings.adjustOverrideState();
+////			fDiscoveredEntries.clear();
+//			boolean readOnly = isDiscoveredEntriesReadOnly();
+//			if(dEntries.length != 0){
+//				SettingLevel level = levels[2];
+//				for(int i = 0; i < dEntries.length; i++){
+//					DiscoveredEntry dEntry = dEntries[i];
+//					ICLanguageSettingEntry entry = createEntry(dEntry, true, readOnly);
+//					level.addEntry(entry);
+////					EntryInfo info = new EntryInfo(entry, true, false);
+////					fDiscoveredEntries.addEntryInfo(info);
+//				}
+//			}
+//			initUserValues();
+//			fUserValuesInited = true;
 //		}
+	}
+	
+	private void addEntries(SettingLevel level, DiscoveredEntry dEntries[]){
+		if(dEntries.length != 0){
+			for(int i = 0; i < dEntries.length; i++){
+				DiscoveredEntry dEntry = dEntries[i];
+				ICLanguageSettingEntry entry = createEntry(dEntry);
+				level.addEntry(entry);
+			}
+		}
+	}
+	
+	private DiscoveredEntry[] getDiscoveredEnvironmentEntries(){
+		String paths[] = null;
+		switch(fKind){
+		case ICLanguageSettingEntry.INCLUDE_PATH:{
+				IEnvironmentVariableProvider provider = ManagedBuildManager.getEnvironmentVariableProvider();
+				paths = provider.getBuildPaths(fLangData.getConfiguration(), IEnvVarBuildPath.BUILDPATH_INCLUDE);
+			}
+			break;
+		case ICLanguageSettingEntry.LIBRARY_PATH:{
+				IEnvironmentVariableProvider provider = ManagedBuildManager.getEnvironmentVariableProvider();
+				paths = provider.getBuildPaths(fLangData.getConfiguration(), IEnvVarBuildPath.BUILDPATH_LIBRARY);
+			}
+			break;
+		}
+		
+		if(paths != null && paths.length != 0){
+			DiscoveredEntry entries[] = new DiscoveredEntry[paths.length];
+			for(int i = 0; i < paths.length; i++){
+				entries[i] = new DiscoveredEntry(paths[i]);
+			}
+			
+			return entries;
+		}
+		return new DiscoveredEntry[0];
+	}
+	
+	private SettingsSet createEmptySettings(){
+		SettingsSet settings = new SettingsSet(3);
+		SettingLevel levels[] = settings.getLevels();
+		
+		levels[0].setFlagsToClear(ICSettingEntry.READONLY | ICSettingEntry.BUILTIN);
+		levels[0].setFlagsToSet(0);
+		levels[0].setReadOnly(false);
+
+		levels[1].setFlagsToClear(ICSettingEntry.BUILTIN);
+		levels[1].setFlagsToSet(ICSettingEntry.READONLY);
+		levels[1].setReadOnly(true);
+
+		levels[2].setFlagsToClear(0);
+		levels[2].setFlagsToSet(ICSettingEntry.READONLY | ICSettingEntry.BUILTIN);
+		levels[2].setReadOnly(true);
+
+		return settings;
 	}
 	
 	private boolean isDiscoveredEntriesReadOnly(){
@@ -178,10 +250,39 @@ public class EntryStorage {
 		return true;
 	}
 	
-	private void initUserValues(){
+//	private void initUserValues(){
+//		IOption options[] = fLangData.getOptionsForKind(fKind);
+//		fUserEntries.clear();
+//		if(options.length > 0){
+//			for(int i = 0; i < options.length; i++){
+//				IOption option = options[i];
+//				List list = (List)option.getValue();
+//				int size = list.size();
+//				if(size > 0){
+//					for(int j = 0; j < size; j++){
+//						String value = (String)list.get(j);
+//						if(value.indexOf('"') == 0 && value.lastIndexOf('"') == value.length() - 1 && value.length() != 1){
+//							value = value.substring(1, value.length() - 1);
+//						}
+//						ICLanguageSettingEntry entry = createEntry(discoveredEntryFromString(value), false, false);
+//						EntryInfo discoveredInfo = fDiscoveredEntries.getEntryInfo(entry);
+//						if(discoveredInfo != null){
+////							discoveredInfo.setOptionInfo(option, j);
+//							discoveredInfo.makeOverridden(true);
+//						}
+//						EntryInfo userInfo = new EntryInfo(entry, false, true);
+//						fUserEntries.addEntryInfo(userInfo);
+//					}
+//				}
+//				
+//			}
+//		}
+//	}
+	
+	private DiscoveredEntry[] getUserDiscoveredEntries(){
 		IOption options[] = fLangData.getOptionsForKind(fKind);
-		fUserEntries.clear();
 		if(options.length > 0){
+			List entryList = new ArrayList();
 			for(int i = 0; i < options.length; i++){
 				IOption option = options[i];
 				List list = (List)option.getValue();
@@ -192,19 +293,14 @@ public class EntryStorage {
 						if(value.indexOf('"') == 0 && value.lastIndexOf('"') == value.length() - 1 && value.length() != 1){
 							value = value.substring(1, value.length() - 1);
 						}
-						ICLanguageSettingEntry entry = createEntry(discoveredEntryFromString(value), false, false);
-						EntryInfo discoveredInfo = fDiscoveredEntries.getEntryInfo(entry);
-						if(discoveredInfo != null){
-//							discoveredInfo.setOptionInfo(option, j);
-							discoveredInfo.makeOverridden(true);
-						}
-						EntryInfo userInfo = new EntryInfo(entry, false, true);
-						fUserEntries.addEntryInfo(userInfo);
+						entryList.add(discoveredEntryFromString(value));
 					}
 				}
-				
 			}
+			
+			return (DiscoveredEntry[])entryList.toArray(new DiscoveredEntry[entryList.size()]);
 		}
+		return new DiscoveredEntry[0];
 	}
 	
 	private DiscoveredEntry discoveredEntryFromString(String str){
@@ -225,9 +321,9 @@ public class EntryStorage {
 		return entriesList;
 	}
 */	
-	private ICLanguageSettingEntry createEntry(DiscoveredEntry dEntry, boolean discovered, boolean readOnly){
+	private ICLanguageSettingEntry createEntry(DiscoveredEntry dEntry/*, boolean discovered, boolean readOnly*/){
 		ICLanguageSettingEntry entry = null;
-		int flags = discovered ? ICLanguageSettingEntry.BUILTIN | ICLanguageSettingEntry.READONLY : 0;
+		int flags = 0;//discovered ? ICLanguageSettingEntry.BUILTIN | ICLanguageSettingEntry.READONLY : 0;
 		Object v[];
 		String value = dEntry.getValue(); 
 		String name = dEntry.getName(); 

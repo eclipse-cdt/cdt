@@ -11,19 +11,32 @@
 package org.eclipse.cdt.managedbuilder.internal.dataprovider;
 
 import org.eclipse.cdt.core.settings.model.ICLanguageSettingEntry;
+import org.eclipse.cdt.core.settings.model.util.EntryNameKey;
 
 public class EntryInfo {
 	private ICLanguageSettingEntry fEntry;
+	private EntryNameKey fNameKey;
 //	private IOption fOption;
 //	private String fEnvVarName;
 //	private int fPosition;
 	private boolean fIsDiscovered;
 	private boolean fIsOverRidden;
 
-	EntryInfo(ICLanguageSettingEntry entry, boolean discovered, boolean isOverridden){
+	EntryInfo(ICLanguageSettingEntry entry){
+		fEntry = entry;
+	}
+
+/*	EntryInfo(ICLanguageSettingEntry entry, boolean discovered, boolean isOverridden){
 		fEntry = entry;
 		fIsDiscovered = discovered;
 		fIsOverRidden = isOverridden;
+	}
+*/	
+	public EntryNameKey getNameKey(){
+		if(fNameKey == null){
+			fNameKey = new EntryNameKey(fEntry);
+		}
+		return fNameKey;
 	}
 
 /*	EntryInfo(ICLanguageSettingEntry entry, boolean discovered, IOption option, int position){

@@ -28,8 +28,7 @@ public class EntryListMap {
 	}
 
 	public void addEntryInfo(EntryInfo info){
-		ICLanguageSettingEntry entry = info.getEntry();
-		EntryNameKey key = new EntryNameKey(entry);
+		EntryNameKey key = info.getNameKey();
 		EntryInfo old = (EntryInfo)fMap.remove(key);
 		if(old != null)
 			fList.remove(old);
@@ -60,7 +59,7 @@ public class EntryListMap {
 		}
 
 		public void remove() {
-			fMap.remove(new EntryNameKey(((EntryInfo)fCurrent).getEntry()));
+			fMap.remove(((EntryInfo)fCurrent).getNameKey());
 			fIter.remove();
 		}
 		

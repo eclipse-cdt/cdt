@@ -137,5 +137,31 @@ public class CDataUtil {
 		}
 	}
 
+	public static ICLanguageSettingEntry createEntry(ICLanguageSettingEntry entry, int flagsToAdd, int flafsToClear){
+		return createEntry(entry, (entry.getFlags() | flagsToAdd) & (~flafsToClear));
+	}
 
+	public static ICLanguageSettingEntry createEntry(ICLanguageSettingEntry entry, int flags){
+		switch (entry.getKind()){
+		case ICLanguageSettingEntry.INCLUDE_PATH:
+			entry = new CIncludePathEntry(entry.getName(), flags);
+			break;
+		case ICLanguageSettingEntry.MACRO:
+			entry = new CMacroEntry(entry.getName(), entry.getValue(), flags);
+			break;
+		case ICLanguageSettingEntry.INCLUDE_FILE:
+			entry = new CIncludeFileEntry(entry.getName(), flags);
+			break;
+		case ICLanguageSettingEntry.MACRO_FILE:
+			entry = new CMacroFileEntry(entry.getName(), flags);
+			break;
+		case ICLanguageSettingEntry.LIBRARY_PATH:
+			entry = new CLibraryPathEntry(entry.getName(), flags);
+			break;
+		case ICLanguageSettingEntry.LIBRARY_FILE:
+			entry = new CLibraryFileEntry(entry.getName(), flags);
+			break;
+		}
+		return entry;
+	}
 }

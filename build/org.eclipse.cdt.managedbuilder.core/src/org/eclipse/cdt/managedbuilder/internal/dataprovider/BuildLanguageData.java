@@ -21,6 +21,7 @@ import org.eclipse.cdt.core.settings.model.util.IKindBasedInfo;
 import org.eclipse.cdt.core.settings.model.util.KindBasedStore;
 import org.eclipse.cdt.managedbuilder.core.BuildException;
 import org.eclipse.cdt.managedbuilder.core.IBuildObject;
+import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IInputType;
 import org.eclipse.cdt.managedbuilder.core.IOption;
 import org.eclipse.cdt.managedbuilder.core.IResourceInfo;
@@ -410,6 +411,10 @@ public class BuildLanguageData extends CLanguageData {
 				return tCh.getScannerConfigDiscoveryProfileId();
 		}
 		return null;
+	}
+	
+	public IConfiguration getConfiguration(){
+		return fTool.getParentResourceInfo().getParent();
 	}
 
 	public void setSourceContentTypeIds(String[] ids) {

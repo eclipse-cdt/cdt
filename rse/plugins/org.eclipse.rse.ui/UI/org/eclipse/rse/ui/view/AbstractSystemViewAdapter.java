@@ -396,7 +396,7 @@ public abstract class AbstractSystemViewAdapter
 		return getText(element);
 	}
     /**
-     * <i><b>Abstract</b>. Must be overridden.</i><br>.
+     * <i><b>Abstract</b></i>. <i>Must be overridden.</i><br>.
      * Return the fully-qualified name, versus just the displayable name, for this object.
      * For remote objects, this should be sufficient to uniquely identify this object within its
      *  subsystem.

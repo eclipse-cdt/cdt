@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.ui.newui;
 
+import java.util.Arrays;
+
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -346,7 +348,11 @@ public abstract class AbstractCPropertyTab implements ICPropertyTab {
 		
 		ListDialog dialog = new ListDialog(shell);
 		dialog.setContentProvider(new IStructuredContentProvider() {
-					public Object[] getElements(Object inputElement) { return (Object[])inputElement; }
+					public Object[] getElements(Object inputElement) {
+						Object[] obs = (Object[])inputElement;
+						Arrays.sort(obs, CDTListComparator.getInstance());
+						return obs;
+					}
 					public void dispose() {}
 					public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {}
 				});
@@ -366,7 +372,6 @@ public abstract class AbstractCPropertyTab implements ICPropertyTab {
 		dialog.setInput(vm.getVariables(cfgd));
 		dialog.setHeightInChars(10);
 		dialog.setTitle(NewUIMessages.getResourceString("AbstractCPropertyTab.0")); //$NON-NLS-1$
-
 		if (dialog.open() == Window.OK) {
 			Object[] selected = dialog.getResult();
 			if (selected.length > 0) {

@@ -837,6 +837,13 @@
               label="%DeleteRcConfigAction.label"
               menubarPath="buildGroup"
               />
+        <action
+              class="org.eclipse.cdt.ui.actions.ExcludeFromBuildAction"
+              enablesFor="+"
+              id="org.eclipse.cdt.ui.excludeAction0"
+              label="%ExcludeAction.label"
+              menubarPath="buildGroup"
+              />
      </objectContribution>
    </extension>
    
@@ -977,6 +984,13 @@
               enablesFor="+"
               id="org.eclipse.cdt.ui.deleteConfigsAction2"
               label="%DeleteRcConfigAction.label"
+              menubarPath="project/build"
+              />
+        <action
+              class="org.eclipse.cdt.ui.actions.ExcludeFromBuildAction"
+              enablesFor="+"
+              id="org.eclipse.cdt.ui.excludeAction2"
+              label="%ExcludeAction.label"
               menubarPath="project/build"
               />
      </actionSet>

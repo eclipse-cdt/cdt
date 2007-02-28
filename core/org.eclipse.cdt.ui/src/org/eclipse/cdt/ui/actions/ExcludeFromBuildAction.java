@@ -12,8 +12,8 @@ package org.eclipse.cdt.ui.actions;
 
 import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.List;
 
+import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
@@ -36,8 +36,10 @@ import org.eclipse.ui.dialogs.ListSelectionDialog;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICContainer;
 import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
+import org.eclipse.cdt.core.settings.model.ICFolderDescription;
 import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.core.settings.model.ICResourceDescription;
 import org.eclipse.cdt.ui.CUIPlugin;
@@ -49,43 +51,50 @@ import org.eclipse.cdt.internal.ui.actions.ActionMessages;
  * Action which changes active build configuration of the current project to 
  * the given one.
  */
-public class DeleteResConfigsAction 
+public class ExcludeFromBuildAction 
 implements IWorkbenchWindowPulldownDelegate2, IObjectActionDelegate {
 
 	protected ArrayList objects = null;
-	private   ArrayList outData = null;		
+	protected ArrayList cfgNames = null;
 
 	public void selectionChanged(IAction action, ISelection selection) {
 		objects = null;
+		boolean cfgsOK = true;
 		
 		if (!selection.isEmpty()) {
 	    	// case for context menu
 			if (selection instanceof IStructuredSelection) {
 				Object[] obs = ((IStructuredSelection)selection).toArray();
 				if (obs.length > 0) {
-					for (int i=0; i<obs.length; i++) {
+					for (int i=0; i<obs.length && cfgsOK; i++) {
+						// if project selected, don't do anything
+						if ((obs[i] instanceof IProject) || (obs[i] instanceof ICProject)) {
+							cfgsOK=false; 
+							break;
+						}
 						IResource res = null;
 						// only folders and files may be affected by this action
 						if (obs[i] instanceof ICContainer || obs[i] instanceof ITranslationUnit)
 							res = ((ICElement)obs[i]).getResource();
 						// project's configuration cannot be deleted
-						else if (obs[i] instanceof IResource && !(obs[i] instanceof IProject))
+						else if (obs[i] instanceof IResource)
 							res = (IResource)obs[i];
 						if (res != null) {
-							IProject p = res.getProject();
-							if (!p.isOpen()) continue;
-							IPath path = res.getProjectRelativePath();
-							// getting description in read-only mode
-							ICProjectDescription prjd = CoreModel.getDefault().getProjectDescription(p, false);
-							if (prjd == null) continue;
-							ICConfigurationDescription[] cfgds = prjd.getConfigurations();
+							ICConfigurationDescription[] cfgds = getCfgsRead(res);
 							if (cfgds == null || cfgds.length == 0) continue;
-							for (int j=0; j<cfgds.length; j++) {
-								ICResourceDescription rd = cfgds[j].getResourceDescription(path, true);
-								if (rd != null) {
-									if (objects == null) objects = new ArrayList();
-									objects.add(res);
-									break; // stop configurations scanning
+							if (objects == null) objects = new ArrayList();
+							objects.add(res);
+							if (cfgNames == null) {
+								cfgNames = new ArrayList(cfgds.length);
+								for (int j=0; j<cfgds.length; j++) 
+									cfgNames.add(cfgds[j].getName());
+							} else {
+								if (cfgNames.size() != cfgds.length) cfgsOK = false;
+								else for (int j=0; j<cfgds.length; j++) {
+									if (!cfgNames.contains(cfgds[j].getName())) {
+										cfgsOK = false;
+										break;
+									}
 								}
 							}
 						}
@@ -93,13 +102,20 @@ implements IWorkbenchWindowPulldownDelegate2, IObjectActionDelegate {
 				}
 			}
 		} 
-		action.setEnabled(objects != null);
+		action.setEnabled(cfgsOK && objects != null );
 	}
 	
 	public void run(IAction action) {
 		openDialog();
 	}
 	
+	private ICConfigurationDescription[] getCfgsRead(IResource res) {
+		IProject p = res.getProject();
+		if (!p.isOpen()) return null;
+		ICProjectDescription prjd = CoreModel.getDefault().getProjectDescription(p, false);
+		if (prjd == null) return null;
+		return prjd.getConfigurations();
+	}
 	
 	private void openDialog() {
 		if (objects == null || objects.size() == 0) return; 
@@ -107,76 +123,77 @@ implements IWorkbenchWindowPulldownDelegate2, IObjectActionDelegate {
 		
 		ListSelectionDialog dialog = new ListSelectionDialog(
 				CUIPlugin.getActiveWorkbenchShell(), 
-				objects, 
+				cfgNames, 
 				createSelectionDialogContentProvider(), 
-				new LabelProvider() {}, ActionMessages.getString("DeleteResConfigsAction.0")); //$NON-NLS-1$
-		dialog.setTitle(ActionMessages.getString("DeleteResConfigsAction.1")); //$NON-NLS-1$
+				new LabelProvider() {}, 
+				ActionMessages.getString("ExcludeFromBuildAction.0")); //$NON-NLS-1$
+		dialog.setTitle(ActionMessages.getString("ExcludeFromBuildAction.1")); //$NON-NLS-1$
+		
+		boolean[] status = new boolean[cfgNames.size()];
+		Iterator it = objects.iterator();
+		while(it.hasNext()) {
+			IResource res = (IResource)it.next();
+			ICConfigurationDescription[] cfgds = getCfgsRead(res);
+			IPath p = res.getProjectRelativePath();
+			for (int i=0; i<cfgds.length; i++) {
+				ICResourceDescription out = cfgds[i].getResourceDescription(p, false);
+				if (!out.isExcluded()) status[i] = true;
+			}
+		}
+		ArrayList lst = new ArrayList();
+		for (int i=0; i<status.length; i++) 
+			if (!status[i]) lst.add(cfgNames.get(i));
+		if (lst.size() > 0)
+			dialog.setInitialElementSelections(lst);
+		
 		if (dialog.open() == Window.OK) {
 			Object[] selected = dialog.getResult();
 			if (selected != null && selected.length > 0) {
-				for (int i = 0; i < selected.length; i++) {
-					((ResCfgData)selected[i]).delete();
+				Iterator it2 = objects.iterator();
+outer:				
+				while(it2.hasNext()) {
+					IResource res = (IResource)it2.next();
+					IProject p = res.getProject();
+					if (!p.isOpen()) continue;
+					// get writable description
+					ICProjectDescription prjd = CoreModel.getDefault().getProjectDescription(p, true);
+					if (prjd == null) continue;
+					ICConfigurationDescription[] cfgds = prjd.getConfigurations();
+					IPath p2 = res.getProjectRelativePath();
+					for (int i=0; i<cfgds.length; i++) {
+						ICResourceDescription out = cfgds[i].getResourceDescription(p2, false);
+						if (! p2.equals(out.getPath()) ) {
+							try {
+								if (res instanceof IFolder)
+									out = cfgds[i].createFolderDescription(p2, (ICFolderDescription)out);
+								else
+									out = cfgds[i].createFileDescription(p2, out);
+							} catch (CoreException e) { continue outer; }
+						}
+						if (out != null) {
+							boolean exclude = false;
+							for (int j=0; j<selected.length; j++) {
+								if (cfgds[i].getName().equals(selected[j])) {
+									exclude = true;
+									break;
+								}
+							}
+							out.setExcluded(exclude);
+						}
+					}
+					try {
+						CoreModel.getDefault().setProjectDescription(p, prjd);
+					} catch (CoreException e) {}
+					
 				}
 				AbstractPage.updateViews();
 			}
 		}
 	}
 
-	// Stores data for resource description with its "parents".
-	class ResCfgData {
-		IResource res;
-		ICProjectDescription prjd;
-		ICConfigurationDescription cfgd;
-		ICResourceDescription rdesc;
-		
-		public ResCfgData(IResource res2, ICProjectDescription prjd2,
-				ICConfigurationDescription cfgd2, ICResourceDescription rdesc2) {
-			res = res2; prjd = prjd2; cfgd = cfgd2; rdesc = rdesc2;
-		}
-		
-		// performs deletion
-		public void delete() {
-			try {
-				cfgd.removeResourceDescription(rdesc);
-				CoreModel.getDefault().setProjectDescription(res.getProject(), prjd);
-			} catch (CoreException e) {}
-		}
-		public String toString() {
-			return "[" + cfgd.getName() + "] for " + res.getName();   //$NON-NLS-1$ //$NON-NLS-2$
-		}
-	}
-	
-	
 	private IStructuredContentProvider createSelectionDialogContentProvider() {
 		return new IStructuredContentProvider() {
-
-			public Object[] getElements(Object inputElement) {
-				if (outData != null) return outData.toArray();
-				
-				outData = new ArrayList();
-				List ls = (List)inputElement;
-				Iterator it = ls.iterator();
-				IProject proj = null;
-				ICProjectDescription prjd = null;
-				ICConfigurationDescription[] cfgds = null;
-
-				// creating list of all res descs for all objects
-				while (it.hasNext()) {
-					IResource res = (IResource)it.next();
-					IPath path = res.getProjectRelativePath();
-					if (res.getProject() != proj) {
-						proj = res.getProject();
-						prjd = CoreModel.getDefault().getProjectDescription(proj);
-						cfgds = prjd.getConfigurations();
-					}
-					for (int i=0; i< cfgds.length; i++) {
-						ICResourceDescription rd = cfgds[i].getResourceDescription(path, true);
-						if (rd != null) 
-							outData.add(new ResCfgData(res, prjd, cfgds[i], rd));
-					}
-				}
-				return outData.toArray();
-			}
+			public Object[] getElements(Object inputElement) { return cfgNames.toArray(); }
 			public void dispose() {}
 			public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {}
 		};

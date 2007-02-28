@@ -16,17 +16,105 @@ package org.eclipse.rse.services.dstore.files;
 import java.io.IOException;
 import java.io.OutputStream;
 
+import org.eclipse.dstore.core.model.DataStore;
+import org.eclipse.rse.dstore.universal.miners.IUniversalDataStoreConstants;
+import org.eclipse.rse.dstore.universal.miners.filesystem.UniversalByteStreamHandler;
+
 public class DStoreOutputStream extends OutputStream 
 {
-	public DStoreOutputStream()
-	{
-		
+	private DataStore _dataStore;
+	private String _remotePath;
+	private String _encoding;
+	private int _mode;
+	private boolean _firstWrite = true;
+	private String _byteStreamHandlerId;
+	
+	public DStoreOutputStream(DataStore dataStore, String remotePath, String encoding, int mode)
+	{		
+		_dataStore = dataStore;
+		_remotePath = remotePath;
+		_encoding = encoding;
+		_mode = mode;
+		_byteStreamHandlerId = UniversalByteStreamHandler.class.getName();
 	}
 	
-	public void write(int arg0) throws IOException 
+		
+	
+	public void close() throws IOException 
 	{
 		// TODO Auto-generated method stub
-
+		super.close();
 	}
 
+
+
+	public void flush() throws IOException {
+		// TODO Auto-generated method stub
+		super.flush();
+	}
+
+
+
+	public void write(byte[] b, int offset, int length) throws IOException 
+	{
+		if (_mode == IUniversalDataStoreConstants.TEXT_MODE)
+		{
+			String tempStr = new String(b, 0, length);
+			b = tempStr.getBytes(_encoding);
+		}
+		if (_firstWrite)
+		{ 
+			_firstWrite = false;
+						
+			// send first set of bytes
+			_dataStore.replaceFile(_remotePath, b, length, true, _byteStreamHandlerId);
+		}
+		else
+		{ // append subsequent segments
+			_dataStore.replaceAppendFile(_remotePath, b, length, true, _byteStreamHandlerId);
+		}
+	}
+
+
+
+	public void write(byte[] b) throws IOException 
+	{
+		if (_mode == IUniversalDataStoreConstants.TEXT_MODE)
+		{
+			String tempStr = new String(b, 0, b.length);
+			b = tempStr.getBytes(_encoding);
+		}
+		if (_firstWrite)
+		{ 
+			_firstWrite = false;
+			// send first set of bytes
+			_dataStore.replaceFile(_remotePath, b, b.length, true, _byteStreamHandlerId);
+		}
+		else
+		{ // append subsequent segments
+			_dataStore.replaceAppendFile(_remotePath, b, b.length, true, _byteStreamHandlerId);
+		}
+	}
+
+
+
+	public void write(int c) throws IOException 
+	{
+		byte[] b = {(byte)c};
+		if (_mode == IUniversalDataStoreConstants.TEXT_MODE)
+		{
+			String tempStr = new String(b, 0, 1);
+			b = tempStr.getBytes(_encoding);
+		}
+		if (_firstWrite)
+		{ 
+			_firstWrite = false;
+			// send first set of bytes
+			_dataStore.replaceFile(_remotePath, b, b.length, true, _byteStreamHandlerId);
+		}
+		else
+		{ // append subsequent segments
+			_dataStore.replaceAppendFile(_remotePath, b, b.length, true, _byteStreamHandlerId);
+		}
+	}
 }

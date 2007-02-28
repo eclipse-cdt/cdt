@@ -1300,7 +1300,18 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 	 * @see org.eclipse.rse.services.files.IFileService#getOutputStream(org.eclipse.core.runtime.IProgressMonitor, java.lang.String, java.lang.String, boolean)
 	 */
 	public OutputStream getOutputStream(IProgressMonitor monitor, String remoteParent, String remoteFile, boolean isBinary) throws SystemMessageException {
-		// TODO Auto-generated method stub
-		return null;
+		String remotePath = remoteParent + getSeparator(remoteParent) + remoteFile;
+		int mode;
+
+		if (isBinary)
+		{
+			mode = BINARY_MODE;
+		}
+		else
+		{
+			mode = TEXT_MODE;
+		}
+		DStoreOutputStream outputStream = new DStoreOutputStream(getDataStore(), remotePath, getEncoding(monitor), mode);
+		return outputStream;
 	}
 }

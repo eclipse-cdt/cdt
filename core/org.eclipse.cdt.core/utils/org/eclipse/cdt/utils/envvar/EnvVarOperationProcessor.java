@@ -52,14 +52,14 @@ public class EnvVarOperationProcessor {
 				String delimiter = added.getDelimiter();
 				return new EnvirinmentVariable(name,
 						performAppend(initial.getValue(),added.getValue(),delimiter),
-						IEnvironmentVariable.ENVVAR_APPEND,
+//						IEnvironmentVariable.ENVVAR_APPEND,
 						delimiter);
 			}
 		case IEnvironmentVariable.ENVVAR_PREPEND:{
 				String delimiter = added.getDelimiter();
 				return new EnvirinmentVariable(name,
 						performPrepend(initial.getValue(),added.getValue(),delimiter),
-						IEnvironmentVariable.ENVVAR_PREPEND,
+//						IEnvironmentVariable.ENVVAR_PREPEND,
 						delimiter);
 			}
 		case IEnvironmentVariable.ENVVAR_REPLACE:

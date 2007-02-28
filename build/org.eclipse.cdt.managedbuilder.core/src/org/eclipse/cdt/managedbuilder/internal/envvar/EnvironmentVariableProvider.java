@@ -19,6 +19,7 @@ import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.envvar.IEnvironmentVariable;
 import org.eclipse.cdt.core.envvar.IEnvironmentVariableManager;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
+import org.eclipse.cdt.internal.core.envvar.EnvVarCollector;
 import org.eclipse.cdt.managedbuilder.core.IBuildPathResolver;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IEnvVarBuildPath;
@@ -47,9 +48,10 @@ public class EnvironmentVariableProvider implements
 	private static EnvironmentVariableProvider fInstance = null;
 	private List fListeners = null;
 	private IEnvironmentVariableManager fMngr;
+	private boolean fBuildPathVarCheckAllowed;
 
-//	private StoredBuildPathEnvironmentContainer fIncludeStoredBuildPathVariables;
-//	private StoredBuildPathEnvironmentContainer fLibraryStoredBuildPathVariables;
+	private StoredBuildPathEnvironmentContainer fIncludeStoredBuildPathVariables;
+	private StoredBuildPathEnvironmentContainer fLibraryStoredBuildPathVariables;
 	
 	/**
 	 * This class is used by the EnvironmentVariableProvider to calculate the build paths
@@ -77,14 +79,16 @@ public class EnvironmentVariableProvider implements
 		}
 
 	}
-
+	
 	protected EnvironmentVariableProvider(IEnvironmentVariableManager mngr){
 		fMngr = mngr;
 	}
 
 	public static EnvironmentVariableProvider getDefault(){
-		if(fInstance == null)
+		if(fInstance == null){
 			fInstance = new EnvironmentVariableProvider(CCorePlugin.getDefault().getBuildEnvironmentManager());
+			fInstance.fBuildPathVarCheckAllowed = true;
+		}
 		return fInstance;
 	}
 	
@@ -102,20 +106,35 @@ public class EnvironmentVariableProvider implements
 		}
 		return null;
 	}
-	
+
 	public IEnvironmentVariable getVariable(String variableName,
 			IConfiguration cfg, boolean resolveMacros){
+		return getVariable(variableName, cfg, resolveMacros, true);
+	}
+
+	public IEnvironmentVariable getVariable(String variableName,
+			IConfiguration cfg, boolean resolveMacros, boolean checkBuildPaths){
 		ICConfigurationDescription des = ManagedBuildManager.getDescriptionForConfiguration(cfg);
 		if(des != null){
-			return fMngr.getVariable(variableName, des, resolveMacros);
+			IEnvironmentVariable variable = fMngr.getVariable(variableName, des, resolveMacros);
+			if(checkBuildPaths && resolveMacros && fBuildPathVarCheckAllowed)
+				checkBuildPathVariable(cfg, variableName, variable);
+			return variable;
 		}
 		return null;
 	}
-	
+
 	public IEnvironmentVariable[] getVariables(IConfiguration cfg, boolean resolveMacros){
+		return getVariables(cfg, resolveMacros, true);
+	}
+
+	public IEnvironmentVariable[] getVariables(IConfiguration cfg, boolean resolveMacros, boolean checkBuildPaths){
 		ICConfigurationDescription des = ManagedBuildManager.getDescriptionForConfiguration(cfg);
 		if(des != null){
-			return fMngr.getVariables(des, resolveMacros);
+			IEnvironmentVariable vars[] = fMngr.getVariables(des, resolveMacros);
+			if(checkBuildPaths && resolveMacros && fBuildPathVarCheckAllowed)
+				checkBuildPathVariables(cfg,vars);
+			return vars;
 		}
 		return new IBuildEnvironmentVariable[0];
 	}
@@ -217,7 +236,7 @@ public class EnvironmentVariableProvider implements
 				for(int k = 0; k < vars.length; k++){
 					String varName = vars[k];
 					
-					IEnvironmentVariable var = getVariable(varName,configuration,true);
+					IEnvironmentVariable var = getVariable(varName,configuration,true, false);
 					if(var == null)
 						continue;
 					
@@ -280,18 +299,20 @@ public class EnvironmentVariableProvider implements
 	 * performs a check of the build path variables for the given configuration
 	 * If the build variables are changed, the notification is sent
 	 */
-//	public void checkBuildPathVariables(IConfiguration configuration){
-//		checkBuildPathVariables(configuration,getVariables(getContextInfo(configuration),true));
-//	}
+	public void checkBuildPathVariables(IConfiguration configuration){
+		checkBuildPathVariables(configuration, getVariables(configuration ,true, false));
+	}
 
 	/*
 	 * performs a check of the build path variables of the specified type
 	 * for the given configuration
 	 * If the build variables are changed, the notification is sent
 	 */
-//	public void checkBuildPathVariables(IConfiguration configuration,int buildPathType){
-//		checkBuildPathVariables(configuration,buildPathType,getVariables(getContextInfo(configuration),true));
-//	}
+	public void checkBuildPathVariables(IConfiguration configuration,int buildPathType){
+		EnvVarCollector cr = new EnvVarCollector();
+		cr.add(getVariables(configuration, true, false));
+		checkBuildPathVariables(configuration,buildPathType,cr);
+	}
 
 	/*
 	 * performs a check of the build path variables
@@ -299,10 +320,12 @@ public class EnvironmentVariableProvider implements
 	 * defined for this configuration
 	 * If the build variables are changed, the notification is sent
 	 */
-//	protected void checkBuildPathVariables(IConfiguration configuration, EnvVarCollector varSet){
-//		checkBuildPathVariables(configuration,IEnvVarBuildPath.BUILDPATH_INCLUDE,varSet);
-//		checkBuildPathVariables(configuration,IEnvVarBuildPath.BUILDPATH_LIBRARY,varSet);
-//	}
+	protected void checkBuildPathVariables(IConfiguration configuration, IEnvironmentVariable vars[]){
+		EnvVarCollector cr = new EnvVarCollector();
+		cr.add(vars);
+		checkBuildPathVariables(configuration,IEnvVarBuildPath.BUILDPATH_INCLUDE,cr);
+		checkBuildPathVariables(configuration,IEnvVarBuildPath.BUILDPATH_LIBRARY,cr);
+	}
 
 	/*
 	 * performs a check of whether the given variable is the build path variable
@@ -312,10 +335,10 @@ public class EnvironmentVariableProvider implements
 	 * If it is not changed, other build path variables are not checked
 	 * In the case of the given variable is not the build path one, this method does nothing
 	 */
-//	protected void checkBuildPathVariable(IConfiguration configuration, String varName, EnvVarDescriptor var){
-//		checkBuildPathVariable(configuration, IEnvVarBuildPath.BUILDPATH_INCLUDE, varName, var);
-//		checkBuildPathVariable(configuration, IEnvVarBuildPath.BUILDPATH_LIBRARY, varName, var);
-//	}
+	protected void checkBuildPathVariable(IConfiguration configuration, String varName, IEnvironmentVariable var){
+		checkBuildPathVariable(configuration, IEnvVarBuildPath.BUILDPATH_INCLUDE, varName, var);
+		checkBuildPathVariable(configuration, IEnvVarBuildPath.BUILDPATH_LIBRARY, varName, var);
+	}
 
 	/*
 	 * performs a check of whether the given variable is the build path variable
@@ -325,15 +348,17 @@ public class EnvironmentVariableProvider implements
 	 * If it is not changed, other build path variables are not checked
 	 * In the case of the given variable is not the build path one, this method does nothing
 	 */
-//	protected void checkBuildPathVariable(IConfiguration configuration, int buildPathType, String varName, EnvVarDescriptor var){
-//		StoredBuildPathEnvironmentContainer buildPathVars = getStoredBuildPathVariables(buildPathType);
-//		if(buildPathVars == null)
-//			return;
-//		if(buildPathVars.isVariableChanged(varName,var,configuration)){
-//			buildPathVars.synchronize(getVariables(getContextInfo(configuration),true),configuration);
-//			notifyListeners(configuration, buildPathType);
-//		}
-//	}
+	protected void checkBuildPathVariable(IConfiguration configuration, int buildPathType, String varName, IEnvironmentVariable var){
+		StoredBuildPathEnvironmentContainer buildPathVars = getStoredBuildPathVariables(buildPathType);
+		if(buildPathVars == null)
+			return;
+		if(buildPathVars.isVariableChanged(varName,var,configuration)){
+			EnvVarCollector cr = new EnvVarCollector();
+			cr.add(getVariables(configuration, true, false));
+			buildPathVars.synchronize(cr,configuration);
+			notifyListeners(configuration, buildPathType);
+		}
+	}
 
 	/*
 	 * performs a check of the build path variables of the specified type
@@ -341,39 +366,39 @@ public class EnvironmentVariableProvider implements
 	 * defined for this configuration. 
 	 * If the build variables are changed, the notification is sent
 	 */
-//	protected void checkBuildPathVariables(IConfiguration configuration, int buildPathType, EnvVarCollector varSet){
-//		StoredBuildPathEnvironmentContainer buildPathVars = getStoredBuildPathVariables(buildPathType);
-//		if(buildPathVars == null)
-//			return;
-//		if(buildPathVars.checkBuildPathChange(varSet,configuration)){
-//			notifyListeners(configuration, buildPathType);
-//		}
-//	}
+	protected void checkBuildPathVariables(IConfiguration configuration, int buildPathType, EnvVarCollector varSet){
+		StoredBuildPathEnvironmentContainer buildPathVars = getStoredBuildPathVariables(buildPathType);
+		if(buildPathVars == null)
+			return;
+		if(buildPathVars.checkBuildPathChange(varSet,configuration)){
+			notifyListeners(configuration, buildPathType);
+		}
+	}
 	
 	/*
 	 * returns the container of the build variables of the specified type
 	 */
-//	protected StoredBuildPathEnvironmentContainer getStoredBuildPathVariables(int buildPathType){
-//		return buildPathType == IEnvVarBuildPath.BUILDPATH_LIBRARY ?
-//				getStoredLibraryBuildPathVariables() :
-//				getStoredIncludeBuildPathVariables();
-//	}
+	protected StoredBuildPathEnvironmentContainer getStoredBuildPathVariables(int buildPathType){
+		return buildPathType == IEnvVarBuildPath.BUILDPATH_LIBRARY ?
+				getStoredLibraryBuildPathVariables() :
+				getStoredIncludeBuildPathVariables();
+	}
 	
 	/*
 	 * returns the container of the Include path variables
 	 */
-//	protected StoredBuildPathEnvironmentContainer getStoredIncludeBuildPathVariables(){
-//		if(fIncludeStoredBuildPathVariables == null)
-//			fIncludeStoredBuildPathVariables = new StoredBuildPathEnvironmentContainer(IEnvVarBuildPath.BUILDPATH_INCLUDE);
-//		return fIncludeStoredBuildPathVariables;
-//	}
+	protected StoredBuildPathEnvironmentContainer getStoredIncludeBuildPathVariables(){
+		if(fIncludeStoredBuildPathVariables == null)
+			fIncludeStoredBuildPathVariables = new StoredBuildPathEnvironmentContainer(IEnvVarBuildPath.BUILDPATH_INCLUDE);
+		return fIncludeStoredBuildPathVariables;
+	}
 
 	/*
 	 * returns the container of the Library path variables
 	 */
-//	protected StoredBuildPathEnvironmentContainer getStoredLibraryBuildPathVariables(){
-//		if(fLibraryStoredBuildPathVariables == null)
-//			fLibraryStoredBuildPathVariables = new StoredBuildPathEnvironmentContainer(IEnvVarBuildPath.BUILDPATH_LIBRARY);
-//		return fLibraryStoredBuildPathVariables;
-//	}	
+	protected StoredBuildPathEnvironmentContainer getStoredLibraryBuildPathVariables(){
+		if(fLibraryStoredBuildPathVariables == null)
+			fLibraryStoredBuildPathVariables = new StoredBuildPathEnvironmentContainer(IEnvVarBuildPath.BUILDPATH_LIBRARY);
+		return fLibraryStoredBuildPathVariables;
+	}	
 }

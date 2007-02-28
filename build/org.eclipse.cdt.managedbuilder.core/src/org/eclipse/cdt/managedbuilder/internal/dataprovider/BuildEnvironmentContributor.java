@@ -10,10 +10,15 @@
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.internal.dataprovider;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import org.eclipse.cdt.core.envvar.IEnvironmentContributor;
 import org.eclipse.cdt.core.envvar.IEnvironmentVariable;
 import org.eclipse.cdt.core.envvar.IEnvironmentVariableManager;
+import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
+import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.cdt.managedbuilder.internal.envvar.ExternalExtensionEnvironmentSupplier;
 import org.eclipse.cdt.managedbuilder.internal.envvar.MbsEnvironmentSupplier;
 import org.eclipse.cdt.utils.envvar.EnvironmentCollector;
@@ -21,33 +26,34 @@ import org.eclipse.cdt.utils.envvar.EnvironmentCollector;
 public class BuildEnvironmentContributor implements IEnvironmentContributor {
 	private BuildBuildData fBuildData;
 	private IConfiguration fCfg;
+	private ICConfigurationDescription fCfgDes;
 	
 	private MbsEnvironmentSupplier fMbsSupplier = new MbsEnvironmentSupplier();
 	
 	public BuildEnvironmentContributor(BuildBuildData buildData){
 		fBuildData = buildData;
 		fCfg = fBuildData.getBuilder().getParent().getParent();
+		fCfgDes = ManagedBuildManager.getDescriptionForConfiguration(fCfg);
 	}
 
 	public IEnvironmentVariable getVariable(String name,
 			IEnvironmentVariableManager provider) {
 		
 		EnvironmentCollector collector = new EnvironmentCollector();
-		IEnvironmentVariable result = null;
 		ExternalExtensionEnvironmentSupplier extSupplier = new ExternalExtensionEnvironmentSupplier(provider);
 		
+		boolean varFound = false;
+
 		IEnvironmentVariable var = extSupplier.getVariable(name, fCfg.getManagedProject());
-		if(var != null)
-			result = collector.addVariable(var);
+		varFound = processVariable(name, var, collector, provider, varFound);
 
 		var = fMbsSupplier.getVariable(name, fCfg);
-		if(var != null)
-			result = collector.addVariable(var);
+		varFound = processVariable(name, var, collector, provider, varFound);
 		
 		var = extSupplier.getVariable(name, fCfg);
-		if(var != null)
-			result = collector.addVariable(var);
-		return result;
+		varFound = processVariable(name, var, collector, provider, varFound);
+
+		return collector.getVariable(name);
 	}
 
 	public IEnvironmentVariable[] getVariables(
@@ -55,18 +61,59 @@ public class BuildEnvironmentContributor implements IEnvironmentContributor {
 		EnvironmentCollector collector = new EnvironmentCollector();
 		ExternalExtensionEnvironmentSupplier extSupplier = new ExternalExtensionEnvironmentSupplier(provider);
 		
+		Set set = null;
+
 		IEnvironmentVariable vars[] = extSupplier.getVariables(fCfg.getManagedProject());
-		if(vars != null && vars.length != 0)
-			collector.addVariables(vars);
+		set = processVariables(vars, collector, provider, set); 
 
 		vars = fMbsSupplier.getVariables(fCfg);
-		if(vars != null && vars.length != 0)
-			collector.addVariables(vars);
+		set = processVariables(vars, collector, provider, set); 
 		
 		vars = extSupplier.getVariables(fCfg);
-		if(vars != null && vars.length != 0)
-			collector.addVariables(vars);
+		set = processVariables(vars, collector, provider, set); 
+
 		return collector.getVariables();
+	}
+
+	private boolean processVariable(String name, IEnvironmentVariable var, EnvironmentCollector collector, IEnvironmentVariableManager provider, boolean varFound){
+		if(var != null){
+			if(!varFound){
+				varFound = true;
+				IEnvironmentVariable base = provider.getVariable(name, fCfgDes, false);
+				if(base != null)
+					collector.addVariable(base);
+			}
+			collector.addVariable(var);
+		}
+		
+		return varFound;
+	}
+
+	private Set processVariables(IEnvironmentVariable vars[], EnvironmentCollector collector, IEnvironmentVariableManager provider, Set set){
+		boolean checkSet = true;
+		if(vars != null && vars.length != 0){
+			if(set == null){
+				set = new HashSet();
+				checkSet = false;
+			}
+			
+			for(int i = 0; i < vars.length; i++){
+				if(vars[i] == null)
+					continue;
+				
+				if(set.add(vars[i].getName()) || !checkSet){
+					IEnvironmentVariable base = provider.getVariable(vars[i].getName(), fCfgDes, false);
+					if(base != null){
+						collector.addVariable(base);
+					}
+				}
+				
+				collector.addVariable(vars[i]);
+			}
+			//collector.addVariables(vars);
+		}
+		
+		return set;
 	}
 
 }

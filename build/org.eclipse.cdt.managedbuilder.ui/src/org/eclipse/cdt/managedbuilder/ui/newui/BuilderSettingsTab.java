@@ -402,8 +402,8 @@ public class BuilderSettingsTab extends AbstractCBuildPropertyTab {
 	 * @return
 	 */
 	private String getMC() {
-		String makeCommand = bld.getBuildCommand().toOSString();
-		String makeArgs = bld.getBuildArguments();
+		String makeCommand = bld.getCommand();
+		String makeArgs = bld.getArguments();
 		if (makeArgs != null) {	makeCommand += " " + makeArgs; } //$NON-NLS-1$
 		return makeCommand;
 	}

@@ -20,12 +20,12 @@ import org.eclipse.cdt.internal.core.parser.scanner2.ILocationResolver;
  * @author jcamelon
  *
  */
-public interface IScanner  {
+public interface IScanner {
 	
 	public static final int tPOUNDPOUND = -6;
 	public static final int tPOUND      = -7;
-	
-	public void setOffsetBoundary( int offset );
+
+    public void setOffsetBoundary( int offset );
 	public void setContentAssistMode( int offset );
 	public void setASTFactory( IASTFactory f );
 	

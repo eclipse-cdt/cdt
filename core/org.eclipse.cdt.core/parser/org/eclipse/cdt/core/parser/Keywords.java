@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2006 IBM Corporation and others.
+ * Copyright (c) 2002, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  * IBM Rational Software - Initial API and implementation
+ * Anton Leherbauer (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.core.parser;
 
@@ -242,6 +243,15 @@ public class Keywords {
 	public static final char[] cDEFINE = "define".toCharArray(); //$NON-NLS-1$
 	public static final char[] cUNDEF = "undef".toCharArray(); //$NON-NLS-1$
 	public static final char[] cERROR = "error".toCharArray(); //$NON-NLS-1$
-	public static final char[] cINCLUDE_NEXT = "include_next".toCharArray(); //$NON-NLS-1$
 	public static final char[] cPRAGMA = "pragma".toCharArray(); //$NON-NLS-1$
+	public static final char[] cLINE = "line".toCharArray(); //$NON-NLS-1$
+	
+	// preprocessor extensions (supported by GCC)
+	public static final char[] cINCLUDE_NEXT = "include_next".toCharArray(); //$NON-NLS-1$
+	public static final char[] cIMPORT = "import".toCharArray(); //$NON-NLS-1$
+	public static final char[] cIDENT = "ident".toCharArray(); //$NON-NLS-1$
+	public static final char[] cSCCS = "sccs".toCharArray(); //$NON-NLS-1$
+	public static final char[] cWARNING = "warning".toCharArray(); //$NON-NLS-1$
+	public static final char[] cASSERT = "assert".toCharArray(); //$NON-NLS-1$
+	public static final char[] cUNASSERT = "unassert".toCharArray(); //$NON-NLS-1$
 }

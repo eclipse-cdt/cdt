@@ -61,6 +61,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNewExpression;
 import org.eclipse.cdt.core.parser.ParserLanguage;
+import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.parser.ParserException;
 
 /**
@@ -195,6 +196,7 @@ public class DOMLocationTests extends AST2BaseTest {
      * @param length
      */
     private void assertSoleLocation(IASTNode n, int offset, int length) {
+    	assertEquals(length, ((ASTNode)n).getLength());
         IASTNodeLocation[] locations = n.getNodeLocations();
         assertEquals(1, locations.length);
         IASTNodeLocation nodeLocation = locations[0];
@@ -694,5 +696,30 @@ public class DOMLocationTests extends AST2BaseTest {
         IASTExpression expr= ((IASTInitializerExpression)initializer).getExpression();
         assertTrue(expr instanceof IASTTypeIdExpression);
         assertSoleLocation(expr, buffer.indexOf("sizeof"), "sizeof(int)".length());
+    }
+
+    public void testBug120607() throws Exception {
+ 	   // C/C++ Indexer rejects valid pre-processor directive
+ 	   // https://bugs.eclipse.org/bugs/show_bug.cgi?id=120607
+        StringBuffer buffer = new StringBuffer();
+        buffer.append("#import \"include_once.h\"\n");
+        buffer.append("#warning \"deprecated include\"\n");
+        buffer.append("#line 5\n");
+        buffer.append("# 5 \"foo.h\"\n");
+        buffer.append("#ident \"version 1.0\"\n");
+        buffer.append("#assert thisIsTrue(value)\n");
+        buffer.append("#unassert thisIsTrue(value)\n");
+        buffer.append("#invalid");
+        String code= buffer.toString();
+        IASTTranslationUnit tu = parse(code, ParserLanguage.CPP, true, false);
+
+        IASTProblem[] problems= tu.getPreprocessorProblems();
+        assertEquals(3, problems.length);
+        assertEquals(IASTProblem.PREPROCESSOR_INCLUSION_NOT_FOUND, problems[0].getID());
+        assertEquals(IASTProblem.PREPROCESSOR_POUND_WARNING, problems[1].getID());
+        assertEquals(IASTProblem.PREPROCESSOR_INVALID_DIRECTIVE, problems[2].getID());
+        assertSoleLocation(problems[0], code, "#import \"include_once.h\"");
+        assertSoleLocation(problems[1], code, "\"deprecated include\"");
+        assertSoleLocation(problems[2], code, "invalid");
     }
 }

@@ -28,6 +28,7 @@ import org.eclipse.cdt.core.parser.IExtendedScannerInfo;
 import org.eclipse.cdt.core.parser.IGCCToken;
 import org.eclipse.cdt.core.parser.IMacro;
 import org.eclipse.cdt.core.parser.IParserLogService;
+import org.eclipse.cdt.core.parser.IPreprocessorDirective;
 import org.eclipse.cdt.core.parser.IProblem;
 import org.eclipse.cdt.core.parser.IScanner;
 import org.eclipse.cdt.core.parser.IScannerInfo;
@@ -41,6 +42,7 @@ import org.eclipse.cdt.core.parser.ParserMode;
 import org.eclipse.cdt.core.parser.ast.IASTCompletionNode;
 import org.eclipse.cdt.core.parser.util.CharArrayIntMap;
 import org.eclipse.cdt.core.parser.util.CharArrayObjectMap;
+import org.eclipse.cdt.core.parser.util.CharArraySet;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.core.parser.util.CharTable;
 import org.eclipse.cdt.internal.core.parser.ast.ASTCompletionNode;
@@ -70,16 +72,18 @@ abstract class BaseScanner implements IScanner {
     protected static class InclusionData {
 
         public final Object inclusion;
-
         public final CodeReader reader;
+        public final boolean includeOnce;
 
-        /**
+		/**
          * @param reader
          * @param inclusion
+         * @param includeOnce
          */
-        public InclusionData(CodeReader reader, Object inclusion) {
+        public InclusionData(CodeReader reader, Object inclusion, boolean includeOnce) {
             this.reader = reader;
             this.inclusion = inclusion;
+            this.includeOnce= includeOnce;
         }
         
         public String toString() {
@@ -119,6 +123,9 @@ abstract class BaseScanner implements IScanner {
 
     protected String[] stdIncludePaths;
     protected String[] locIncludePaths = null;
+
+    /** Set of already included files */
+    protected CharArraySet includedFiles= new CharArraySet(32);
 
     int count;
 
@@ -176,6 +183,8 @@ abstract class BaseScanner implements IScanner {
     protected final boolean supportMinAndMax;
 
     protected final CharArrayIntMap additionalKeywords;
+
+    protected final CharArrayIntMap additionalPPKeywords;
 
     protected static class ExpressionEvaluator {
 
@@ -1257,6 +1266,16 @@ abstract class BaseScanner implements IScanner {
             keywords = cppkeywords;
 
         additionalKeywords = configuration.getAdditionalKeywords();
+//        additionalPPKeywords= configuration.getAdditionalPreprocessorKeywords();
+        // add default GNU extensions (will be paramameterized)
+        additionalPPKeywords= new CharArrayIntMap(8, IPreprocessorDirective.ppInvalid);
+        additionalPPKeywords.put(Keywords.cINCLUDE_NEXT, IPreprocessorDirective.ppInclude_next); 
+        additionalPPKeywords.put(Keywords.cIMPORT, IPreprocessorDirective.ppImport);
+        additionalPPKeywords.put(Keywords.cWARNING, IPreprocessorDirective.ppWarning);
+        additionalPPKeywords.put(Keywords.cIDENT, IPreprocessorDirective.ppIgnore);
+        additionalPPKeywords.put(Keywords.cSCCS, IPreprocessorDirective.ppIgnore);
+        additionalPPKeywords.put(Keywords.cASSERT, IPreprocessorDirective.ppIgnore);
+        additionalPPKeywords.put(Keywords.cUNASSERT, IPreprocessorDirective.ppIgnore);
 
         setupBuiltInMacros(configuration);
 
@@ -1379,8 +1398,12 @@ abstract class BaseScanner implements IScanner {
 
     protected void pushContext(char[] buffer, Object data) {
         if (data instanceof InclusionData) {
-            if (isCircularInclusion( (InclusionData)data ))
+            InclusionData inclusionData= (InclusionData)data;
+			if (isCircularInclusion( inclusionData ))
                 return;
+            if (inclusionData.includeOnce && isRepeatedInclusion(inclusionData))
+            	return;
+            includedFiles.put(inclusionData.reader.filename);
         }
         pushContext(buffer);
         bufferData[bufferStackPos] = data;
@@ -1404,6 +1427,17 @@ abstract class BaseScanner implements IScanner {
         }
         return false;
     }
+
+    /**
+     * Check if the given inclusion was already included before.
+     * 
+	 * @param inclusionData
+	 * @return
+	 */
+	private boolean isRepeatedInclusion(InclusionData inclusionData) {
+        return includedFiles.containsKey(inclusionData.reader.filename);
+	}
+
 
     protected Object popContext() {
         //NOTE - do not set counters to 0 or -1 or something
@@ -1434,7 +1468,7 @@ abstract class BaseScanner implements IScanner {
         int l = getLineNumber(o);
         Object i = createInclusionConstruct(r.filename, r.filename, false, o,
                 l, o, o, l, o, l, true);
-        InclusionData d = new InclusionData(r, i);
+        InclusionData d = new InclusionData(r, i, false);
         pushContext(r.buffer, d);
     }
 
@@ -2633,27 +2667,33 @@ abstract class BaseScanner implements IScanner {
             
             int end;
             int type = ppKeywords.get(buffer, start, len);
-            if (type != ppKeywords.undefined) {
+            if (type == ppKeywords.undefined) {
+            	type= additionalPPKeywords.get(buffer, start, len);
+            }
+            if (type != IPreprocessorDirective.ppInvalid) {
                 switch (type) {
-                case ppInclude:
+                case IPreprocessorDirective.ppInclude:
                     handlePPInclude(pos, false, startingLineNumber, true);
                     return;
-                case ppInclude_next:
+                case IPreprocessorDirective.ppInclude_next:
                     handlePPInclude(pos, true, startingLineNumber, true);
                     return;
-                case ppDefine:
+                case IPreprocessorDirective.ppImport:
+                    handlePPInclude(pos, false, startingLineNumber, true);
+                    return;
+                case IPreprocessorDirective.ppDefine:
                     handlePPDefine(pos, startingLineNumber);
                     return;
-                case ppUndef:
+                case IPreprocessorDirective.ppUndef:
                     handlePPUndef(pos);
                     return;
-                case ppIfdef:
+                case IPreprocessorDirective.ppIfdef:
                     handlePPIfdef(pos, true);
                     return;
-                case ppIfndef:
+                case IPreprocessorDirective.ppIfndef:
                     handlePPIfdef(pos, false);
                     return;
-                case ppIf: 
+                case IPreprocessorDirective.ppIf: 
                     start = bufferPos[bufferStackPos]+1;
                     skipToNewLine();
                     end= bufferPos[bufferStackPos]+1;
@@ -2675,13 +2715,13 @@ abstract class BaseScanner implements IScanner {
                     	processIf(pos, end, true);
                     }
                     return;
-                case ppElse:
-                case ppElif:
+                case IPreprocessorDirective.ppElse:
+                case IPreprocessorDirective.ppElif:
                     // Condition must have been true, skip over the rest
 
-                    if (branchState(type == ppElse ? BRANCH_ELSE : BRANCH_ELIF)) {
+                    if (branchState(type == IPreprocessorDirective.ppElse ? BRANCH_ELSE : BRANCH_ELIF)) {
                     	skipToNewLine();
-                        if (type == ppElse)
+                        if (type == IPreprocessorDirective.ppElse)
                             processElse(pos, bufferPos[bufferStackPos] + 1,
                                     false);
                         else
@@ -2697,16 +2737,19 @@ abstract class BaseScanner implements IScanner {
                     if (isLimitReached())
                         handleInvalidCompletion();
                     return;
-                case ppError:
+                case IPreprocessorDirective.ppError:
+                case IPreprocessorDirective.ppWarning:
                     skipOverWhiteSpace();
                     start = bufferPos[bufferStackPos] + 1;
                     skipToNewLine();
                     end= bufferPos[bufferStackPos] + 1;
-                    handleProblem(IProblem.PREPROCESSOR_POUND_ERROR, start,
+                    boolean isWarning= type == IPreprocessorDirective.ppWarning;
+                    handleProblem(isWarning ? IProblem.PREPROCESSOR_POUND_WARNING : IProblem.PREPROCESSOR_POUND_ERROR, start,
                             CharArrayUtils.extract(buffer, start, end-start));
                     processError(pos, end);
+                    processWarning(pos, end);
                     return;
-                case ppEndif:
+                case IPreprocessorDirective.ppEndif:
                     skipToNewLine();
                     if (branchState(BRANCH_END)) {
                         processEndif(pos, bufferPos[bufferStackPos] + 1);
@@ -2717,16 +2760,40 @@ abstract class BaseScanner implements IScanner {
                                 start, ppKeywords.findKey(buffer, start, len));
                     }
                     return;
-                case ppPragma:
+                case IPreprocessorDirective.ppPragma:
                     skipToNewLine();
                     processPragma(pos, bufferPos[bufferStackPos]+1);
                     return;
+                case IPreprocessorDirective.ppIgnore:
+                    skipToNewLine();
+                    return;
                 }
             }
-        } 
-            
-            // directive was not handled, create a problem
-        handleProblem(IProblem.PREPROCESSOR_INVALID_DIRECTIVE, start, null);
+        } else {
+        	// ignore preprocessor output lines of the form
+        	// # <linenum> "<filename>" flags
+            if (c >= '0' && c <= '9' && start > pos+1) {
+                while (++bufferPos[bufferStackPos] < limit) {
+                    c = buffer[bufferPos[bufferStackPos]];
+                    if ((c >= '0' && c <= '9'))
+                        continue;
+                    break;
+                }
+                if (bufferPos[bufferStackPos] < limit) {
+	                c = buffer[bufferPos[bufferStackPos]];
+	                if (c == ' ' || c == '\t') {
+	                	// now we have # <linenum> 
+	                	// skip the rest
+	                    skipToNewLine();
+	                    return;
+	                }
+                }
+            	--bufferPos[bufferStackPos];
+            }
+        }
+        // directive was not handled, create a problem
+        handleProblem(IProblem.PREPROCESSOR_INVALID_DIRECTIVE, start, 
+        		new String(buffer, start, getCurrentOffset() - start + 1).toCharArray());
         skipToNewLine();
     }
 
@@ -2747,6 +2814,16 @@ abstract class BaseScanner implements IScanner {
      * @param endPos
      */
     protected abstract void processError(int startPos, int endPos);
+
+    /**
+     * Process #warning directive.
+     * 
+     * @param startPos
+     * @param endPos
+     */
+    protected void processWarning(int startPos, int endPos) {
+    	// default: do nothing
+    }
 
     protected abstract void processElsif(int startPos, int endPos, boolean taken);
 
@@ -2877,7 +2954,7 @@ abstract class BaseScanner implements IScanner {
         if (filename == null || filename == EMPTY_STRING) {
         	if (active) {
 	            handleProblem(IProblem.PREPROCESSOR_INVALID_DIRECTIVE, startOffset,
-	                    null);
+	                    new String(buffer, startOffset, nameEndOffset - startOffset).toCharArray());
 	            return;
         	}
         	filename= new String(buffer, nameOffset, nameEndOffset - nameOffset);
@@ -2889,7 +2966,7 @@ abstract class BaseScanner implements IScanner {
         skipToNewLine();
 
         if (active) {
-        	findAndPushInclusion(filename, fileNameArray, local, include_next, startOffset, nameOffset, nameEndOffset, endOffset, startingLineNumber, nameLine, endLine);
+        	findAndPushInclusion(filename, fileNameArray, local, include_next, false, startOffset, nameOffset, nameEndOffset, endOffset, startingLineNumber, nameLine, endLine);
         } else {
         	processInclude(fileNameArray, local, active, startOffset, nameOffset, nameEndOffset, endOffset, startingLineNumber, nameLine, endLine);
         }
@@ -2916,18 +2993,19 @@ abstract class BaseScanner implements IScanner {
 
 	/**
      * @param filename
-     * @param fileNameArray
-     * @param local
-     * @param include_next
-     * @param startOffset
-     * @param nameOffset
-     * @param nameEndOffset
-     * @param endOffset
-     * @param startingLine
-     * @param nameLine
-     * @param endLine
+	 * @param fileNameArray
+	 * @param local
+	 * @param include_next
+	 * @param includeOnce
+	 * @param startOffset
+	 * @param nameOffset
+	 * @param nameEndOffset
+	 * @param endOffset
+	 * @param startingLine
+	 * @param nameLine
+	 * @param endLine
      */
-    protected void findAndPushInclusion(String filename, char[] fileNameArray, boolean local, boolean include_next, int startOffset, int nameOffset, int nameEndOffset, int endOffset, int startingLine, int nameLine, int endLine) {
+    protected void findAndPushInclusion(String filename, char[] fileNameArray, boolean local, boolean include_next, boolean includeOnce, int startOffset, int nameOffset, int nameEndOffset, int endOffset, int startingLine, int nameLine, int endLine) {
         if (parserMode == ParserMode.QUICK_PARSE) {
             Object inclusion = createInclusionConstruct(fileNameArray,
                     EMPTY_CHAR_ARRAY, local, startOffset, startingLine,
@@ -2947,7 +3025,7 @@ abstract class BaseScanner implements IScanner {
 		                        reader.filename, local, startOffset,
 		                        startingLine, nameOffset,
 		                        nameEndOffset, nameLine, endOffset,
-		                        endLine, false)));
+		                        endLine, false), includeOnce));
 		        return;
 		    }
 		    processInclude(fileNameArray, local, true, startOffset, nameOffset, nameEndOffset, endOffset, startingLine, nameLine, endLine);
@@ -2975,7 +3053,7 @@ abstract class BaseScanner implements IScanner {
                                     reader.filename, local, startOffset,
                                     startingLine, nameOffset,
                                     nameEndOffset, nameLine, endOffset,
-                                    endLine, false)));
+                                    endLine, false), includeOnce));
                     return;
                 }
             }
@@ -3005,7 +3083,7 @@ abstract class BaseScanner implements IScanner {
                                     reader.filename, local, startOffset,
                                     startingLine, nameOffset,
                                     nameEndOffset, nameLine, endOffset,
-                                    endLine, false)));
+                                    endLine, false), includeOnce));
                     return;
                 }
             }
@@ -3015,7 +3093,7 @@ abstract class BaseScanner implements IScanner {
                 fileNameArray);
     }
 
-    protected abstract CodeReader createReader(String path, String fileName);
+	protected abstract CodeReader createReader(String path, String fileName);
     
 
     private int findIncludePos(String[] paths, File currentDirectory) {
@@ -3494,23 +3572,23 @@ abstract class BaseScanner implements IScanner {
                     int type = ppKeywords.get(buffer, start, len);
                     if (type != ppKeywords.undefined) {
                         switch (type) {
-                        case ppIfdef:
-                        case ppIfndef:
-                        case ppIf:
+                        case IPreprocessorDirective.ppIfdef:
+                        case IPreprocessorDirective.ppIfndef:
+                        case IPreprocessorDirective.ppIf:
                             ++nesting;
                             branchState(BRANCH_IF);
                             skipToNewLine();
-                            if (type == ppIfdef)
+                            if (type == IPreprocessorDirective.ppIfdef)
                                 processIfdef(startPos,
                                         bufferPos[bufferStackPos]+1, true, false);
-                            else if (type == ppIfndef)
+                            else if (type == IPreprocessorDirective.ppIfndef)
                                 processIfdef(startPos,
                                         bufferPos[bufferStackPos]+1, false, false);
                             else
                                 processIf(startPos, bufferPos[bufferStackPos]+1,
                                         false);
                             break;
-                        case ppElse:
+                        case IPreprocessorDirective.ppElse:
                             if (branchState(BRANCH_ELSE)) {
                                 skipToNewLine();
                                 if (checkelse && nesting == 0) {
@@ -3529,7 +3607,7 @@ abstract class BaseScanner implements IScanner {
                                 skipToNewLine();
                             }
                             break;
-                        case ppElif:
+                        case IPreprocessorDirective.ppElif:
                             if (branchState(BRANCH_ELIF)) {
                                 if (checkelse && nesting == 0) {
                                     // check the condition
@@ -3563,7 +3641,7 @@ abstract class BaseScanner implements IScanner {
                                 skipToNewLine();
                             }
                             break;
-                        case ppEndif:
+                        case IPreprocessorDirective.ppEndif:
                             if (branchState(BRANCH_END)) {
                                 processEndif(startPos,
                                         bufferPos[bufferStackPos] + 1);
@@ -3582,10 +3660,13 @@ abstract class BaseScanner implements IScanner {
                                 skipToNewLine();
                             }
                             break;
-                        case ppInclude:
+                        case IPreprocessorDirective.ppInclude:
                             handlePPInclude(startPos, false, getLineNumber(startPos), false);
                             break;
-                        case ppInclude_next:
+                        case IPreprocessorDirective.ppInclude_next:
+                            handlePPInclude(startPos, true, getLineNumber(startPos), false);
+                            break;
+                        case IPreprocessorDirective.ppImport:
                             handlePPInclude(startPos, true, getLineNumber(startPos), false);
                             break;
                         }
@@ -4818,30 +4899,6 @@ abstract class BaseScanner implements IScanner {
 
     protected static CharArrayIntMap ppKeywords;
 
-    protected static final int ppIf = 0;
-
-    protected static final int ppIfdef = 1;
-
-    protected static final int ppIfndef = 2;
-
-    protected static final int ppElif = 3;
-
-    protected static final int ppElse = 4;
-
-    protected static final int ppEndif = 5;
-
-    protected static final int ppInclude = 6;
-
-    protected static final int ppDefine = 7;
-
-    protected static final int ppUndef = 8;
-
-    protected static final int ppError = 9;
-
-    protected static final int ppInclude_next = 10;
-
-    protected static final int ppPragma = 11;
-
     protected static final char[] TAB = { '\t' };
 
     protected static final char[] SPACE = { ' ' };
@@ -4940,19 +4997,19 @@ abstract class BaseScanner implements IScanner {
         cppkeywords.put(Keywords.cXOR_EQ, IToken.t_xor_eq); 
 
         // Preprocessor keywords
-        ppKeywords = new CharArrayIntMap(16, -1);
-        ppKeywords.put(Keywords.cIF, ppIf); 
-        ppKeywords.put(Keywords.cIFDEF, ppIfdef); 
-        ppKeywords.put(Keywords.cIFNDEF, ppIfndef); 
-        ppKeywords.put(Keywords.cELIF, ppElif); 
-        ppKeywords.put(Keywords.cELSE, ppElse); 
-        ppKeywords.put(Keywords.cENDIF, ppEndif); 
-        ppKeywords.put(Keywords.cINCLUDE, ppInclude); 
-        ppKeywords.put(Keywords.cDEFINE, ppDefine); 
-        ppKeywords.put(Keywords.cUNDEF, ppUndef); 
-        ppKeywords.put(Keywords.cERROR, ppError); 
-        ppKeywords.put(Keywords.cINCLUDE_NEXT, ppInclude_next); 
-        ppKeywords.put(Keywords.cPRAGMA, ppPragma); 
+        ppKeywords = new CharArrayIntMap(16, IPreprocessorDirective.ppInvalid);
+        ppKeywords.put(Keywords.cIF, IPreprocessorDirective.ppIf); 
+        ppKeywords.put(Keywords.cIFDEF, IPreprocessorDirective.ppIfdef); 
+        ppKeywords.put(Keywords.cIFNDEF, IPreprocessorDirective.ppIfndef); 
+        ppKeywords.put(Keywords.cELIF, IPreprocessorDirective.ppElif); 
+        ppKeywords.put(Keywords.cELSE, IPreprocessorDirective.ppElse); 
+        ppKeywords.put(Keywords.cENDIF, IPreprocessorDirective.ppEndif); 
+        ppKeywords.put(Keywords.cINCLUDE, IPreprocessorDirective.ppInclude); 
+        ppKeywords.put(Keywords.cDEFINE, IPreprocessorDirective.ppDefine); 
+        ppKeywords.put(Keywords.cUNDEF, IPreprocessorDirective.ppUndef); 
+        ppKeywords.put(Keywords.cERROR, IPreprocessorDirective.ppError); 
+        ppKeywords.put(Keywords.cPRAGMA, IPreprocessorDirective.ppPragma); 
+        ppKeywords.put(Keywords.cLINE, IPreprocessorDirective.ppIgnore);
     }
 
     /**

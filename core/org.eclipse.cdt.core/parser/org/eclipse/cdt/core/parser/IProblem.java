@@ -166,6 +166,10 @@ public interface IProblem
 	 * The text that follows a #error preprocessor directive 
 	 */
 	public final static String A_PREPROC_POUND_ERROR = ParserMessages.getString("IProblem.preproc.poundError"); //$NON-NLS-1$
+	/**
+	 * The text that follows a #warning preprocessor directive 
+	 */
+	public final static String A_PREPROC_POUND_WARNING = ParserMessages.getString("IProblem.preproc.poundWarning"); //$NON-NLS-1$
 
 	/**
 	 * The filename that failed somehow in an preprocessor include directive
@@ -410,6 +414,13 @@ public interface IProblem
 	 * Required attributes: none
 	 */	
 	public final static int PREPROCESSOR_INVALID_VA_ARGS = PREPROCESSOR_RELATED | 0x00D;
+	
+	/**
+	 * #warning encountered by Preprocessor.  
+	 * Required attributes:  A_PREPROC_POUND_WARNING
+	 * @see #A_PREPROC_POUND_WARNING
+	 */
+	public final static int PREPROCESSOR_POUND_WARNING = PREPROCESSOR_RELATED | 0x00E;
 	
 	/*
 	 * Parser Syntactic Problems

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2005 IBM Corporation and others.
+ * Copyright (c) 2004, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  * IBM - Initial API and implementation
+ * Anton Leherbauer (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.parser.scanner2;
 
@@ -148,7 +149,7 @@ public class Scanner2 extends BaseScanner {
      * @see org.eclipse.cdt.internal.core.parser.scanner2.BaseScanner#quickParsePushPopInclusion(java.lang.Object)
      */
     protected void quickParsePushPopInclusion(Object inclusion) {
-        callbackManager.pushCallback(new InclusionData(null, inclusion));
+        callbackManager.pushCallback(new InclusionData(null, inclusion, false));
         callbackManager.pushCallback(inclusion);
     }
 

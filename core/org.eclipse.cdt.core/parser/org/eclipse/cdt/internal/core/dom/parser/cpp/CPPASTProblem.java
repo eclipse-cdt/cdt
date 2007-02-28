@@ -7,6 +7,7 @@
  *
  * Contributors:
  * IBM - Initial API and implementation
+ * Anton Leherbauer (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
@@ -118,6 +119,8 @@ public class CPPASTProblem extends CPPASTNode implements IASTProblem {
                         new Integer(IASTProblem.PREPROCESSOR_POUND_ERROR),
                         ParserMessages
                                 .getString("ScannerProblemFactory.error.preproc.error")); //$NON-NLS-1$
+        errorMessages.put(new Integer(IASTProblem.PREPROCESSOR_POUND_WARNING), ParserMessages
+				.getString("ScannerProblemFactory.error.preproc.warning")); //$NON-NLS-1$
         errorMessages
                 .put(
                         new Integer(IASTProblem.PREPROCESSOR_INCLUSION_NOT_FOUND),

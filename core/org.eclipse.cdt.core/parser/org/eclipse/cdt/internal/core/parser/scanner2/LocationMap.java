@@ -256,6 +256,10 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
 
     }
 
+    public static class ASTWarning extends ASTNode implements
+    		IASTPreprocessorErrorStatement {
+    }
+
     /**
      * @author jcamelon
      */
@@ -384,6 +388,12 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
 
     }
 
+    protected static class _Warning extends _Context implements _IPreprocessorDirective {
+     	public _Warning(_CompositeContext parent, int startOffset, int endOffset) {
+    		super(parent, startOffset, endOffset);
+    	}
+    }
+    
     /**
      * @author jcamelon
      */
@@ -1658,6 +1668,8 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
             result = createASTPragma((_Pragma) context);
         else if (context instanceof _Error)
             result = createASTError((_Error) context);
+        else if (context instanceof _Warning)
+            result = createASTWarning((_Warning) context);
         else if (context instanceof _If)
             result = createASTIf((_If) context);
         else if (context instanceof _Ifdef)
@@ -1753,6 +1765,18 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
     private IASTPreprocessorStatement createASTError(_Error error) {
         IASTPreprocessorErrorStatement result = new ASTError();
         ((ASTNode) result).setOffsetAndLength(error.context_directive_start, error.getDirectiveLength());
+		result.setParent(rootNode);
+		result.setPropertyInParent(IASTTranslationUnit.PREPROCESSOR_STATEMENT);
+        return result;
+    }
+
+    /**
+     * @param warning
+     * @return
+     */
+    private IASTPreprocessorStatement createASTWarning(_Warning warning) {
+        IASTPreprocessorErrorStatement result = new ASTWarning();
+        ((ASTNode) result).setOffsetAndLength(warning.context_directive_start, warning.getDirectiveLength());
 		result.setParent(rootNode);
 		result.setPropertyInParent(IASTTranslationUnit.PREPROCESSOR_STATEMENT);
         return result;
@@ -2174,6 +2198,14 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
      */
     public void encounterPoundError(int startOffset, int endOffset) {
         currentContext.addSubContext(new _Error(currentContext, startOffset,
+                endOffset));
+    }
+
+    /*
+     * @see org.eclipse.cdt.internal.core.parser.scanner2.IScannerPreprocessorLog#encounterPoundWarning(int, int)
+     */
+    public void encounterPoundWarning(int startOffset, int endOffset) {
+        currentContext.addSubContext(new _Warning(currentContext, startOffset,
                 endOffset));
     }
 

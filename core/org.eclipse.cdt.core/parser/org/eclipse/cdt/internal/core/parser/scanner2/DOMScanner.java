@@ -462,6 +462,14 @@ public class DOMScanner extends BaseScanner {
     }
 
     /*
+     * @see org.eclipse.cdt.internal.core.parser.scanner2.BaseScanner#processWarning(int, int)
+     */
+    protected void processWarning(int startPos, int endPos) {
+        locationMap.encounterPoundWarning(getGlobalOffset(startPos),
+                getGlobalOffset(endPos));
+    }
+    
+    /*
      * (non-Javadoc)
      * 
      * @see org.eclipse.cdt.internal.core.parser.scanner2.BaseScanner#processEndif(int,

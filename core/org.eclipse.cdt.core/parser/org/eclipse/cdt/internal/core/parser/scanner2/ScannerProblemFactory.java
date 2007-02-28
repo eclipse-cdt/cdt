@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2006 IBM Corporation and others.
+ * Copyright (c) 2002, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  * IBM Rational Software - Initial API and implementation
+ * Anton Leherbauer (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.parser.scanner2;
 
@@ -60,6 +61,8 @@ public class ScannerProblemFactory extends BaseProblemFactory implements IProble
 		{
 			case IProblem.PREPROCESSOR_POUND_ERROR :
 				return  IProblem.A_PREPROC_POUND_ERROR;
+			case IProblem.PREPROCESSOR_POUND_WARNING :
+				return  IProblem.A_PREPROC_POUND_WARNING;
 			case IProblem.PREPROCESSOR_INCLUSION_NOT_FOUND :
 				return  IProblem.A_PREPROC_INCLUDE_FILENAME;
 			case IProblem.PREPROCESSOR_DEFINITION_NOT_FOUND :

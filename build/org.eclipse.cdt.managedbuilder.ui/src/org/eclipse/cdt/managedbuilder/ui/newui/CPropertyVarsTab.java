@@ -216,9 +216,24 @@ public class CPropertyVarsTab extends AbstractCPropertyTab {
 	 * called when the user macro selection was changed 
 	 */
 	private void handleSelectionChanged(SelectionChangedEvent event){
-		int size = ((IStructuredSelection)event.getSelection()).size();
-		buttonSetEnabled(1, size == 1);
-		buttonSetEnabled(2, size > 0);
+		updateButtons();
+	}
+	
+	private void updateButtons() {
+		Object[] obs = ((IStructuredSelection)tv.getSelection()).toArray();
+		boolean canEdit = false;
+		boolean canDel  = false;
+		if (obs != null && obs.length > 0) {
+			canEdit = (obs.length == 1);
+			for (int i=0; i<obs.length; i++) {
+				if (obs[i] instanceof ICdtVariable && isUserVar((ICdtVariable)obs[i])) { 
+					canDel = true;
+					break;
+				}
+			}
+		}
+		buttonSetEnabled(1, canEdit);
+		buttonSetEnabled(2, canDel);
 	}
 	
 	/*
@@ -328,7 +343,7 @@ public class CPropertyVarsTab extends AbstractCPropertyTab {
 				updateData(getResDesc());
 			}
 		});
-		if (page.isForPrefs()) b.setVisible(false);
+//		if (page.isForPrefs()) b.setVisible(false);
 		
 		fStatusLabel = new Label(usercomp, SWT.LEFT);
 		fStatusLabel.setFont(usercomp.getFont());
@@ -423,8 +438,32 @@ public class CPropertyVarsTab extends AbstractCPropertyTab {
 			updateState(e);
 		}
 		// get variables
-		ICdtVariable[] _vars = (cfgd != null) ? mgr.getVariables(cfgd) : vars.getMacros();
+		ICdtVariable[] _vars = mgr.getVariables(cfgd);
 		if (_vars == null) return;
+		
+		if (cfgd == null) {
+			if (fShowSysMacros) {
+				List lst = new ArrayList(_vars.length);
+				ICdtVariable[] uvars = vars.getMacros();
+				for (int i=0; i<uvars.length; i++) {
+					lst.add(uvars[i]);
+					for (int j=0; j<_vars.length; j++) {
+						if (_vars[j] != null && _vars[j].getName().equals(uvars[i].getName())) {
+							_vars[j] = null;
+							break;
+						}
+					}
+				}
+				// add system vars not rewritten by user's
+				for (int j=0; j<_vars.length; j++) {
+					if (_vars[j] != null && !mgr.isUserVariable(_vars[j], null)) 
+						lst.add(_vars[j]);
+				}
+				_vars = (ICdtVariable[])lst.toArray(new ICdtVariable[lst.size()]);
+			} else {
+				_vars = vars.getMacros();
+			}
+		}
 		
 		ArrayList list = new ArrayList(_vars.length);
 		for(int i = 0; i < _vars.length; i++){
@@ -433,6 +472,7 @@ public class CPropertyVarsTab extends AbstractCPropertyTab {
 		}
 		Collections.sort(list, CDTListComparator.getInstance());
 		tv.setInput(list.toArray(new ICdtVariable[list.size()]));
+		updateButtons();
 	}
 	
 	private void updateState(CdtVariableException e){

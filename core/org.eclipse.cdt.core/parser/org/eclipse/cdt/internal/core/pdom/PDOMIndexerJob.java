@@ -17,7 +17,6 @@ import org.eclipse.cdt.core.dom.IPDOMIndexerTask;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 
@@ -26,8 +25,9 @@ import org.eclipse.core.runtime.jobs.Job;
  *
  */
 public class PDOMIndexerJob extends Job {
-
-	private static final int TOTAL_MONITOR_WORK = 100000;
+	private static final int PROGRESS_UPDATE_INTERVAL = 500;
+	private static final int TOTAL_MONITOR_WORK = 1000;
+	
 	private final PDOMManager pdomManager;
 	private IPDOMIndexerTask currentTask;
 	private boolean cancelledByManager= false;
@@ -42,8 +42,6 @@ public class PDOMIndexerJob extends Job {
 	}
 
 	protected IStatus run(IProgressMonitor monitor) {
-		long start = System.currentTimeMillis();
-
 		fMonitor = monitor;
 		String taskName = CCorePlugin.getResourceString("pdom.indexer.task"); //$NON-NLS-1$
 		monitor.beginTask(taskName, TOTAL_MONITOR_WORK);
@@ -57,7 +55,6 @@ public class PDOMIndexerJob extends Job {
 					public void setCanceled(boolean cancelled) {
 						fMonitor.setCanceled(cancelled);
 					}
-					
 				};
 				synchronized(taskMutex) {
 					currentTask= null;
@@ -78,12 +75,6 @@ public class PDOMIndexerJob extends Job {
 				}
 			}
 			while (currentTask != null);
-
-			String showTimings = Platform.getDebugOption(CCorePlugin.PLUGIN_ID
-					+ "/debug/pdomtimings"); //$NON-NLS-1$
-			if (showTimings != null && showTimings.equalsIgnoreCase("true")) //$NON-NLS-1$
-				System.out.println("PDOM Indexer Job Time: " + (System.currentTimeMillis() - start)); //$NON-NLS-1$
-
 			return Status.OK_STATUS;
 		}
 		catch (RuntimeException e) {
@@ -117,7 +108,7 @@ public class PDOMIndexerJob extends Job {
 				while(!m.isCanceled() && !targetMonitor.isCanceled()) {
 					currentTick= pdomManager.getMonitorMessage(targetMonitor, currentTick, TOTAL_MONITOR_WORK);
 					try {
-						Thread.sleep(350);
+						Thread.sleep(PROGRESS_UPDATE_INTERVAL);
 					} catch (InterruptedException e) {
 						return Status.CANCEL_STATUS;
 					}

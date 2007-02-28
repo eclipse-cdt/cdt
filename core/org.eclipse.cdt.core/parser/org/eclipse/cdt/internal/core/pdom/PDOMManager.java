@@ -368,10 +368,8 @@ public class PDOMManager implements IPDOMManager, IWritableIndexManager, IListen
     		else {
     			if (fCurrentTask != null) {
     				IndexerProgress info= fCurrentTask.getProgressInformation();
-    				if (info != null) {
-    					fCompletedSources+= info.fCompletedSources;
-    					fCompletedHeaders+= info.fCompletedHeaders;
-    				}
+    				fCompletedSources+= info.fCompletedSources;
+    				fCompletedHeaders+= info.fCompletedHeaders;
     			}
     			result= fCurrentTask= (IPDOMIndexerTask)fTaskQueue.removeFirst();
     		}
@@ -601,7 +599,8 @@ public class PDOMManager implements IPDOMManager, IWritableIndexManager, IListen
 	}
 
 	public boolean joinIndexer(int waitMaxMillis, IProgressMonitor monitor) {
-		monitor.beginTask(Messages.PDOMManager_JoinIndexerTask, 1000);
+		final int totalTicks = 1000;
+		monitor.beginTask(Messages.PDOMManager_JoinIndexerTask, totalTicks);
 		long limit= System.currentTimeMillis()+waitMaxMillis;
 		try {
 			int currentTicks= 0;
@@ -609,7 +608,7 @@ public class PDOMManager implements IPDOMManager, IWritableIndexManager, IListen
 				if (monitor.isCanceled()) {
 					return false;
 				}
-				currentTicks= getMonitorMessage(monitor, currentTicks, 1000);
+				currentTicks= getMonitorMessage(monitor, currentTicks, totalTicks);
 				synchronized(fTaskQueueMutex) {
 					if (isIndexerIdle()) {
 						return true;
@@ -643,33 +642,26 @@ public class PDOMManager implements IPDOMManager, IWritableIndexManager, IListen
 		int remainingSources= 0;
 		int completedSources= 0;
 		int completedHeaders= 0;
-		int unknown= 0;
+		int totalEstimate= 0;
 		String detail= null;
 		IndexerProgress info;
 		synchronized (fTaskQueueMutex) {
 			completedHeaders= fCompletedHeaders;
 			completedSources= fCompletedSources;
+			totalEstimate= fCompletedHeaders+fCompletedSources;
 			for (Iterator iter = fTaskQueue.iterator(); iter.hasNext();) {
 				IPDOMIndexerTask task = (IPDOMIndexerTask) iter.next();
 				info= task.getProgressInformation();
-				if (info == null) {
-					unknown++;
-				}
-				else {
-					remainingSources+= info.getRemainingSources();
-				}
+				remainingSources+= info.getRemainingSources();
+				totalEstimate+= info.getTimeEstimate();
 			}
 			if (fCurrentTask != null) {
 				info= fCurrentTask.getProgressInformation();
-				if (info == null) {
-					unknown++;
-				}
-				else {
-					remainingSources+= info.getRemainingSources();
-					completedHeaders+= info.fCompletedHeaders;
-					completedSources+= info.fCompletedSources;
-					detail= info.fMonitorDetail;
-				}
+				remainingSources+= info.getRemainingSources();
+				completedHeaders+= info.fCompletedHeaders;
+				completedSources+= info.fCompletedSources;
+				detail= info.fMonitorDetail;
+				totalEstimate+= info.getTimeEstimate();
 			}
 		}
 		
@@ -682,9 +674,8 @@ public class PDOMManager implements IPDOMManager, IWritableIndexManager, IListen
 		}
 		monitor.subTask(msg);
 		
-		totalSources+= unknown*1000;
-		if (completedSources > 0 && totalSources >= completedSources) {
-			int newTick= completedSources*base/totalSources;
+		if (completedSources > 0 && totalEstimate >= completedSources) {
+			int newTick= completedSources*base/totalEstimate;
 			if (newTick > currentTicks) {
 				monitor.worked(newTick-currentTicks);
 				return newTick;

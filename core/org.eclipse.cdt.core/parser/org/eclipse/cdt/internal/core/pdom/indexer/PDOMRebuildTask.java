@@ -25,18 +25,27 @@ import org.eclipse.cdt.internal.core.index.IWritableIndexManager;
 import org.eclipse.cdt.internal.core.pdom.IndexerProgress;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.osgi.util.NLS;
 
 public class PDOMRebuildTask implements IPDOMIndexerTask {
 	private static final String TRUE= String.valueOf(true);
 	private static final ITranslationUnit[] NO_TUS = new ITranslationUnit[0];
 	
-	private IPDOMIndexer fIndexer;
-	private IPDOMIndexerTask fDelegate;
+	private final IPDOMIndexer fIndexer;
+	private final IndexerProgress fProgress;
+	private volatile IPDOMIndexerTask fDelegate;
 
 	public PDOMRebuildTask(IPDOMIndexer indexer) {
 		fIndexer= indexer;
+		fProgress= createProgress(indexer.getProject().getElementName());
 	}
 
+	private IndexerProgress createProgress(String prjName) {
+		IndexerProgress progress= new IndexerProgress();
+		progress.fTimeEstimate= 1000;
+		progress.fMonitorDetail= NLS.bind(Messages.PDOMIndexerTask_collectingFilesTask, prjName);
+		return progress;
+	}
 
 	public IPDOMIndexer getIndexer() {
 		return fIndexer;
@@ -73,7 +82,7 @@ public class PDOMRebuildTask implements IPDOMIndexerTask {
 		}
 	}
 
-	private void createDelegate(ICProject project, IProgressMonitor monitor) throws CoreException {
+	private synchronized void createDelegate(ICProject project, IProgressMonitor monitor) throws CoreException {
 		boolean allFiles= TRUE.equals(fIndexer.getProperty(IndexerPreferences.KEY_INDEX_ALL_FILES));
 		List list= new ArrayList();
 		TranslationUnitCollector collector= new TranslationUnitCollector(list, allFiles, monitor);
@@ -83,8 +92,7 @@ public class PDOMRebuildTask implements IPDOMIndexerTask {
 	}
 
 
-	public IndexerProgress getProgressInformation() {
-		return fDelegate != null ? fDelegate.getProgressInformation() : null;
+	public synchronized IndexerProgress getProgressInformation() {
+		return fDelegate != null ? fDelegate.getProgressInformation() : fProgress;
 	}
-
 }

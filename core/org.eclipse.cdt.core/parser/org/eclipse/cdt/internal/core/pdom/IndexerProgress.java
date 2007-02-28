@@ -16,6 +16,7 @@ public class IndexerProgress {
 	public int fTotalSourcesEstimate;
 	public int fCompletedHeaders;
 	public int fCompletedSources;
+	public int fTimeEstimate;
 	public String fMonitorDetail;
 
 	public IndexerProgress() {
@@ -31,5 +32,9 @@ public class IndexerProgress {
 
 	public int getRemainingSources() {
 		return fTotalSourcesEstimate-fCompletedSources;
+	}
+
+	public int getTimeEstimate() {
+		return fTotalSourcesEstimate > 0 ? fTotalSourcesEstimate : fTimeEstimate;
 	}
 }

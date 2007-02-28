@@ -17,6 +17,7 @@ import java.util.List;
 
 import org.eclipse.cdt.core.dom.IPDOMIndexer;
 import org.eclipse.cdt.core.dom.IPDOMIndexerTask;
+import org.eclipse.cdt.core.dom.IPDOMManager;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICContainer;
 import org.eclipse.cdt.core.model.ICElement;
@@ -30,23 +31,33 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 public class PDOMResourceDeltaTask implements IPDOMIndexerTask {
 	private static final String TRUE = String.valueOf(true);
 
-	private IPDOMIndexer fIndexer;
-	private boolean fAllFiles;
-	private IPDOMIndexerTask fDelegate;
+	final private IPDOMIndexer fIndexer;
+	final private boolean fAllFiles;
+	final private IPDOMIndexerTask fDelegate;
+	final private IndexerProgress fProgress;
 
 	public PDOMResourceDeltaTask(IPDOMIndexer indexer, ICElementDelta delta) throws CoreException {
 		fIndexer= indexer;
+		fProgress= new IndexerProgress();
 		fAllFiles= TRUE.equals(getIndexer().getProperty(IndexerPreferences.KEY_INDEX_ALL_FILES));
-		List a= new ArrayList();
-		List c= new ArrayList();
-		List r= new ArrayList();
+		if (!IPDOMManager.ID_NO_INDEXER.equals(fIndexer.getID())) {
+			List a= new ArrayList();
+			List c= new ArrayList();
+			List r= new ArrayList();
 
-		processDelta(delta, a, c, r, new NullProgressMonitor());
-		if (!a.isEmpty() || !c.isEmpty() || !r.isEmpty()) {
-			ITranslationUnit[] aa= (ITranslationUnit[]) a.toArray(new ITranslationUnit[a.size()]);
-			ITranslationUnit[] ca= (ITranslationUnit[]) c.toArray(new ITranslationUnit[c.size()]);
-			ITranslationUnit[] ra= (ITranslationUnit[]) r.toArray(new ITranslationUnit[r.size()]);
-			fDelegate= indexer.createTask(aa, ca, ra);
+			processDelta(delta, a, c, r, new NullProgressMonitor());
+			if (!a.isEmpty() || !c.isEmpty() || !r.isEmpty()) {
+				ITranslationUnit[] aa= (ITranslationUnit[]) a.toArray(new ITranslationUnit[a.size()]);
+				ITranslationUnit[] ca= (ITranslationUnit[]) c.toArray(new ITranslationUnit[c.size()]);
+				ITranslationUnit[] ra= (ITranslationUnit[]) r.toArray(new ITranslationUnit[r.size()]);
+				fDelegate= indexer.createTask(aa, ca, ra);
+			}
+			else {
+				fDelegate= null;
+			}
+		}
+		else {
+			fDelegate= null;
 		}
 	}
 	
@@ -90,7 +101,6 @@ public class PDOMResourceDeltaTask implements IPDOMIndexerTask {
 			}
 			break;
 		}
-
 	}
 
 	private void collectSources(ICContainer container, Collection sources, IProgressMonitor pm) throws CoreException {
@@ -108,11 +118,10 @@ public class PDOMResourceDeltaTask implements IPDOMIndexerTask {
 	}
 
 	public IndexerProgress getProgressInformation() {
-		return fDelegate == null ? null : fDelegate.getProgressInformation();
+		return fDelegate != null ? fDelegate.getProgressInformation() : fProgress;
 	}
 
 	public boolean isEmpty() {
 		return fDelegate == null;
 	}
-
 }

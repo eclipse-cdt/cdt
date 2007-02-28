@@ -607,11 +607,7 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 		}
 		
 		
-		DataElement remoteElement = ds.createObject(universaltemp, de.getType(), remotePath, String.valueOf(mode));
-	
-//		String tempRoot = getDataStoreRoot();
-		getDataStoreRoot();
-				
+		DataElement remoteElement = ds.createObject(universaltemp, de.getType(), remotePath, String.valueOf(mode));					
 		DataElement localElement = ds.createObject(universaltemp, de.getType(), localFile.getAbsolutePath(), encoding);
 		
 		DataElement bufferSizeElement = ds.createObject(universaltemp, "buffer_size", "" + getBufferDownloadSize(), ""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
@@ -703,57 +699,6 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 			}
 		}
 
-//		DownloadListener dlistener = new DownloadListener(shell, monitor, getConnectorService(), status, localFile, remotePath, (long) universalFile.getLength());
-//		try
-//		{
-//			dlistener.waitForUpdate();
-//		}
-//		catch (InterruptedException e)
-//		{
-//			UniversalSystemPlugin.logError(CLASSNAME + " InterruptedException while waiting for command", e);
-//		}
-
-//		if (!dlistener.isCancelled())
-//		{
-//
-//			setDataStoreRoot(tempRoot);
-//
-//			ArrayList resultList = remoteElement.getNestedData();
-//			DataElement resultChild = null;
-//
-//			for (int i = 0; i < resultList.size(); i++)
-//			{
-//
-//				resultChild = (DataElement) resultList.get(i);
-//
-//				if (resultChild.getType().equals(DOWNLOAD_RESULT_SUCCESS_TYPE))
-//				{
-//					return;
-//				}
-//				else if (resultChild.getType().equals(DOWNLOAD_RESULT_FILE_NOT_FOUND_EXCEPTION))
-//				{
-//					FileNotFoundException e = new FileNotFoundException(resultChild.getName());
-//					UniversalSystemPlugin.logError(CLASSNAME + "." + "copy: " + "error reading file " + remotePath, e);
-//					throw new RemoteFileIOException(e);
-//				}
-//				else if (resultChild.getType().equals(DOWNLOAD_RESULT_UNSUPPORTED_ENCODING_EXCEPTION))
-//				{
-//					UnsupportedEncodingException e = new UnsupportedEncodingException(resultChild.getName());
-//					UniversalSystemPlugin.logError(CLASSNAME + "." + "copy: " + "error reading file " + remotePath, e);
-//					throw new RemoteFileIOException(e);
-//				}
-//				else if (resultChild.getType().equals(DOWNLOAD_RESULT_IO_EXCEPTION))
-//				{
-//					IOException e = new IOException(resultChild.getName());
-//					UniversalSystemPlugin.logError(CLASSNAME + "." + "copy: " + "error reading file " + remotePath, e);
-//					throw new RemoteFileIOException(e);
-//				}
-//			}
-//		}
-//		else
-//		{
-//			throw new RemoteFileCancelledException();
-//		}
 		if (monitor != null)
 		{
 			//monitor.done();
@@ -1334,9 +1279,21 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 	/* (non-Javadoc)
 	 * @see org.eclipse.rse.services.files.IFileService#getInputStream(org.eclipse.core.runtime.IProgressMonitor, java.lang.String, java.lang.String, boolean)
 	 */
-	public InputStream getInputStream(IProgressMonitor monitor, String remoteParent, String remoteFile, boolean isBinary) throws SystemMessageException {
-		// TODO Auto-generated method stub
-		return null;
+	public InputStream getInputStream(IProgressMonitor monitor, String remoteParent, String remoteFile, boolean isBinary) throws SystemMessageException 
+	{
+		String remotePath = remoteParent + getSeparator(remoteParent) + remoteFile;
+		int mode;
+
+		if (isBinary)
+		{
+			mode = BINARY_MODE;
+		}
+		else
+		{
+			mode = TEXT_MODE;
+		}
+		DStoreInputStream inputStream = new DStoreInputStream(getDataStore(), remotePath, getMinerElement(), getEncoding(monitor), mode);
+		return inputStream;
 	}
 
 	/* (non-Javadoc)

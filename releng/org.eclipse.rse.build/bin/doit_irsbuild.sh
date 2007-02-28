@@ -112,13 +112,16 @@ if [ -f package.count -a "$FILES" != "" ]; then
     #chgrp dsdp-tmadmin ../N.latest/RSE-SDK-latest.zip
 
     if [ ${buildType} != N ]; then
-      #Update the testUpdates sites
+      #Update the testUpdates site
       echo "Refreshing update site"
       cd $HOME/downloads-tm/testUpdates/bin
+      cvs update
       ./mkTestUpdates.sh
-      #echo "Refreshing signedUpdates site"
-      #cd $HOME/downloads-tm/signedUpdates/bin
-      #./mkTestUpdates.sh
+      #Update the signedUpdates site
+      echo "Refreshing signedUpdates site"
+      cd $HOME/downloads-tm/signedUpdates/bin
+      cvs udpate
+      ./mkTestUpdates.sh
     fi
   fi
   

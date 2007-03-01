@@ -248,6 +248,14 @@ if [ -f site-europa.xml ]; then
 fi
 sed -e '/!EUROPA_ONLY!/d' site.xml > site-europa.xml
 
+#Get rid of Europa comments completely in order to avoid SAX exception 
+#in comment when the feature qualifier extends to --
+awk 'BEGIN {doit=1}
+  /-- !EUROPA_ONLY!/ {doit=0}
+  { if(doit==1) print; }
+  /!EUROPA_ONLY! --/ {doit=1}' site.xml > site.xml.tmp
+mv -f site.xml.tmp site.xml
+
 # optimize the site
 # see http://wiki.eclipse.org/index.php/Platform-releng-faq
 #Pack the site
@@ -270,7 +278,7 @@ echo "Creating digest..."
 java -jar ${basebuilder}/plugins/org.eclipse.equinox.launcher.jar \
     -application org.eclipse.update.core.siteOptimizer \
     -digestBuilder -digestOutputDir=$SITE \
-    -siteXML=$SITE/site.xml
+    -siteXML=$SITE/site-europa.xml
 
 cd $SITE
 chgrp -R dsdp-tmadmin .

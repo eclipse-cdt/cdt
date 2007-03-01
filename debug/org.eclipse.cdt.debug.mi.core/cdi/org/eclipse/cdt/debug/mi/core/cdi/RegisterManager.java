@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
+ *     Giuseppe Montalto, STMicroelectronics - bug 174988
  *******************************************************************************/
 package org.eclipse.cdt.debug.mi.core.cdi;
 
@@ -278,13 +279,58 @@ public class RegisterManager extends Manager {
 			}
 		}
 	}
+	
+	public MIVarChange[] updateMiVar(StackFrame frame, String varName) throws CDIException {
+		Target target = (Target)frame.getTarget();
+		Thread currentThread = (Thread)target.getCurrentThread();
+		StackFrame currentFrame = currentThread.getCurrentStackFrame();
+		target.lockTarget();
+		try {
+			target.setCurrentThread(frame.getThread(), false);
+			((Thread)frame.getThread()).setCurrentStackFrame(frame, false);
+				
+			MISession mi = target.getMISession();
+			CommandFactory factory = mi.getCommandFactory();
+			MIVarUpdate var = factory.createMIVarUpdate(varName);
+			mi.postCommand(var);
+			MIVarUpdateInfo info = var.getMIVarUpdateInfo();
+			if (info == null) {
+				throw new CDIException(CdiResources.getString("cdi.Common.No_answer")); //$NON-NLS-1$
+			}
+			return info.getMIVarChanges();
+		} catch (MIException e) {
+			throw new MI2CDIException(e);
+		} finally {
+			try {
+			target.setCurrentThread(currentThread, false);
+			currentThread.setCurrentStackFrame(currentFrame, false);
+			} finally {
+				target.releaseTarget();
+			}
+		}
+	}
 
 	public Variable createShadowRegister(Register register, StackFrame frame, String regName) throws CDIException {
 		Target target = (Target)frame.getTarget();
-		MIVar miVar = createMiVar(frame, regName);
-		ShadowRegister variable = new ShadowRegister(register, frame, regName, miVar);
 		Map varMap = getVariableMap(target);
-		varMap.put(miVar.getVarName(), variable);
+		ShadowRegister variable = null;
+
+		if(varMap.containsKey(regName)) {
+			variable = (ShadowRegister)varMap.get(regName);
+			updateMiVar(frame,variable.getMIVar().getVarName());
+		}
+		else {
+			MIVar miVar = createMiVar(frame, regName);
+			variable = new ShadowRegister(register, frame, regName, miVar);
+			/* varMap seems to be unused, so I changed it...
+			 * now it helds the register name, instead of the variable name; 
+			 * it now can be used to retrieve existing variables, thus avoiding 
+			 * variable prolification and also reducing the number of mi commands
+			 * to be sent to the target. 
+			 */
+			varMap.put(regName, variable);
+		}
+
 		return variable;
 	}
 

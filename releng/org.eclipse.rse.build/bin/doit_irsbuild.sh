@@ -29,7 +29,7 @@ mydir=`pwd`
 echo ${mydir}
 
 #Use Java5 on build.eclipse.org
-#export PATH=/shared/common/ibm-java2-ppc64-50/bin:$PATH
+#export PATH=/shared/dsdp/tm/ibm-java2-ppc64-50/bin:$PATH
 #export PATH=/shared/webtools/apps/IBMJava2-ppc64-142/bin:$PATH
 #export PATH=/shared/webtools/apps/IBMJava2-ppc-142/bin:$PATH
 export PATH=${HOME}/ws2/IBMJava2-ppc-142/bin:$PATH

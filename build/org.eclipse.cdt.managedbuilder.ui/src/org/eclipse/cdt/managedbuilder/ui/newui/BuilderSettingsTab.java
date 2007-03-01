@@ -266,11 +266,11 @@ public class BuilderSettingsTab extends AbstractCBuildPropertyTab {
 		b_dirFile.setEnabled(!mbOn);
 		
 		b_autoBuild.setSelection(bld.isAutoBuildEnable());
-		t_autoBuild.setText(bld.getAutoBuildTarget());
+		t_autoBuild.setText(bld.getBuildAttribute(IBuilder.BUILD_TARGET_AUTO, EMPTY_STR));
 		b_cmdBuild.setSelection(bld.isIncrementalBuildEnabled());
-		t_cmdBuild.setText(bld.getIncrementalBuildTarget());
+		t_cmdBuild.setText(bld.getBuildAttribute(IBuilder.BUILD_TARGET_INCREMENTAL, EMPTY_STR));
 		b_cmdClean.setSelection(bld.isCleanBuildEnabled());
-		t_cmdClean.setText(bld.getCleanBuildTarget());
+		t_cmdClean.setText(bld.getBuildAttribute(IBuilder.BUILD_TARGET_CLEAN, EMPTY_STR));
 		
 		boolean external = (c_builderType.getSelectionIndex() == 0);
 		boolean parallel = b_parallel.getSelection();

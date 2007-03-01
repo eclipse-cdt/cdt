@@ -9,6 +9,7 @@
  *     QNX Software Systems - Initial API and implementation
  *     Markus Schorn (Wind River Systems)
  *     Anton Leherbauer (Wind River Systems) - Fix bug 150045
+ *     Ken Ryall (Nokia) - Fix bug 175144
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.cview;
 
@@ -35,11 +36,9 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.ITreeViewerListener;
 import org.eclipse.jface.viewers.OpenEvent;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
-import org.eclipse.jface.viewers.TreeExpansionEvent;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.DND;
@@ -217,30 +216,6 @@ public class CView extends ViewPart implements ISetSelectionTarget, IPropertyCha
 		}
 	}
 
-	private ITreeViewerListener expansionListener = new ITreeViewerListener() {
-
-		public void treeCollapsed(TreeExpansionEvent event) {
-		}
-
-		public void treeExpanded(TreeExpansionEvent event) {
-			final Object element = event.getElement();
-			if (element instanceof IParent) {
-				//viewer.refresh (element);
-				Control ctrl = viewer.getControl();
-				if (ctrl != null && !ctrl.isDisposed()) {
-					ctrl.getDisplay().asyncExec(new Runnable() {
-
-						public void run() {
-							Control ctrl = viewer.getControl();
-							if (ctrl != null && !ctrl.isDisposed()) {
-								viewer.expandToLevel(element, 1);
-							}
-						}
-					});
-				}
-			}
-		}
-	};
 	private IContextActivation fContextActivation;
 
 	/**
@@ -556,8 +531,6 @@ public class CView extends ViewPart implements ISetSelectionTarget, IPropertyCha
 		IWorkingSetManager wsmanager = getViewSite().getWorkbenchWindow().getWorkbench().getWorkingSetManager();
 		wsmanager.addPropertyChangeListener(workingSetListener);
 
-		viewer.addTreeListener(expansionListener);
-
 		// Needs to be done before the actions
 		getSite().setSelectionProvider(viewer);
 		getSite().getPage().addPartListener(partListener);
@@ -614,9 +587,6 @@ public class CView extends ViewPart implements ISetSelectionTarget, IPropertyCha
 
 		getSite().getPage().removePartListener(partListener);
 		CUIPlugin.getDefault().getPreferenceStore().removePropertyChangeListener(this);
-		if (viewer != null) {
-			viewer.removeTreeListener(expansionListener);
-		}
 		if (getActionGroup() != null) {
 			getActionGroup().dispose();
 		}

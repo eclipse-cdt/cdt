@@ -624,7 +624,7 @@ public class ManagedBuildGnuToolInfo implements IManagedBuildGnuToolInfo {
 							currList.addAll(Arrays.asList(outNames));
 							myOutputMacros.put(variable, currList);
 						} else {
-							myOutputMacros.put(variable, Arrays.asList(outNames));
+							myOutputMacros.put(variable, new ArrayList(Arrays.asList(outNames)));
 						}
 					}
 				} else

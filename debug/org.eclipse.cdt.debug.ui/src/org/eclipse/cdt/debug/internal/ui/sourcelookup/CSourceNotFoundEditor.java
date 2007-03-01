@@ -32,8 +32,8 @@ import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.model.ISourceLocator;
 import org.eclipse.debug.core.sourcelookup.AbstractSourceLookupDirector;
 import org.eclipse.debug.core.sourcelookup.ISourceContainer;
-import org.eclipse.debug.internal.ui.sourcelookup.SourceLookupManager;
 import org.eclipse.debug.ui.sourcelookup.CommonSourceNotFoundEditor;
+import org.eclipse.debug.ui.sourcelookup.ISourceDisplay;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -168,15 +168,12 @@ public class CSourceNotFoundEditor extends CommonSourceNotFoundEditor {
 		if (res != null) {
 			Path newPath = new Path(res);
 			
-			if (newPath.lastSegment().equalsIgnoreCase(missingPath.lastSegment()))
-			{
+			if (newPath.lastSegment().equalsIgnoreCase(missingPath.lastSegment())) {
 				
-				if (missingPath.segmentCount() > 1)
-				{
+				if (missingPath.segmentCount() > 1) {
 					int missingPathSegCount = missingPath.segmentCount() - 2;
 					int newPathSegCount = newPath.segmentCount() - 2;
-					while (missingPathSegCount >= 0 && newPathSegCount >= 0)
-					{
+					while (missingPathSegCount >= 0 && newPathSegCount >= 0) {
 						if (!newPath.segment(newPathSegCount).equalsIgnoreCase(missingPath.segment(missingPathSegCount)))
 							break;
 						newPathSegCount--;
@@ -191,11 +188,12 @@ public class CSourceNotFoundEditor extends CommonSourceNotFoundEditor {
 				}
 				
 				IWorkbenchPage page = getEditorSite().getPage();
-				SourceLookupManager.getDefault().displaySource(context, page, true);
+				ISourceDisplay adapter = (ISourceDisplay)context.getAdapter(ISourceDisplay.class);
+				if (adapter != null) {						
+					adapter.displaySource(context, page, true);
+				}
 				closeEditor();
-				
 			}
 		}
 	}
-
 }

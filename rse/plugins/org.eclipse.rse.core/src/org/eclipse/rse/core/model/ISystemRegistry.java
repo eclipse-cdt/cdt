@@ -116,7 +116,7 @@ public interface ISystemRegistry extends ISchedulingRule {
 	 * Return all subsystem factories which support the given system type. If the type is null,
 	 * returns all.
 	 */
-	public ISubSystemConfiguration[] getSubSystemConfigurationsBySystemType(IRSESystemType systemType);
+	public ISubSystemConfiguration[] getSubSystemConfigurationsBySystemType(IRSESystemType systemType, boolean filterDuplicateServiceSubSystemFactories);
 	
 	/**
 	 * Return all subsystem factories which support the given system type. If the type is null,

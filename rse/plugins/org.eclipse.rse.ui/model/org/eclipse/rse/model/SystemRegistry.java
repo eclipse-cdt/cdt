@@ -603,10 +603,10 @@ public class SystemRegistry implements ISystemRegistryUI, ISystemModelChangeEven
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.rse.core.model.ISystemRegistry#getSubSystemConfigurationsBySystemType(org.eclipse.rse.core.IRSESystemType)
+	 * @see org.eclipse.rse.core.model.ISystemRegistry#getSubSystemConfigurationsBySystemType(org.eclipse.rse.core.IRSESystemType, boolean)
 	 */
-	public ISubSystemConfiguration[] getSubSystemConfigurationsBySystemType(IRSESystemType systemType) {
-		return getSubSystemConfigurationsBySystemType(systemType != null ? systemType.getName() : null);
+	public ISubSystemConfiguration[] getSubSystemConfigurationsBySystemType(IRSESystemType systemType, boolean filterDuplicateServiceSubSystemFactories) {
+		return getSubSystemConfigurationsBySystemType(systemType != null ? systemType.getName() : null, filterDuplicateServiceSubSystemFactories);
 	}
 	
 	/* (non-Javadoc)

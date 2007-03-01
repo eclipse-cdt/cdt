@@ -83,7 +83,7 @@ import org.eclipse.core.runtime.jobs.Job;
 
 public class CommonBuilder extends ACBuilder {
 
-	public final static String BUILDER_ID = ManagedBuilderCorePlugin.getUniqueIdentifier() + ".commonBuilder"; //$NON-NLS-1$
+	public final static String BUILDER_ID = ManagedBuilderCorePlugin.getUniqueIdentifier() + ".genmakebuilder"; //$NON-NLS-1$
 	private static final String BUILD_ERROR = "ManagedMakeBuilder.message.error";	//$NON-NLS-1$
 	private static final String BUILD_FINISHED = "ManagedMakeBuilder.message.finished";	//$NON-NLS-1$
 	private static final String CONSOLE_HEADER = "ManagedMakeBuilder.message.console.header";	//$NON-NLS-1$

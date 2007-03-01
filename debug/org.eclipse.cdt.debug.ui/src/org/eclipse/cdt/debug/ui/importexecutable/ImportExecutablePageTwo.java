@@ -385,7 +385,7 @@ public class ImportExecutablePageTwo extends WizardPage {
 		configTypes.setEnabled(isCreateLaunchConfigurationSelected);
 		configurationName.setEnabled(isCreateLaunchConfigurationSelected);
 		configurationNameLabel.setEnabled(isCreateLaunchConfigurationSelected);
-		if (shouldUpdateButtons )
+		if (shouldUpdateButtons && getContainer().getCurrentPage() != null)
 			getContainer().updateButtons();
 	}
 	

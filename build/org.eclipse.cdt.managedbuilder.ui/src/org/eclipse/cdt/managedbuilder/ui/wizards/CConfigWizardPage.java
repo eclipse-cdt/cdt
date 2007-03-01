@@ -28,11 +28,13 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
@@ -44,6 +46,7 @@ public class CConfigWizardPage extends MBSCustomPage {
 	private static final Image IMG = ManagedBuilderUIImages.get(ManagedBuilderUIImages.IMG_BUILD_CONFIG);
 	private static final String TITLE = IDEWorkbenchMessages.getString("CConfigWizardPage.0"); //$NON-NLS-1$
 	private static final String MESSAGE = IDEWorkbenchMessages.getString("CConfigWizardPage.1"); //$NON-NLS-1$
+	private static final String COMMENT = IDEWorkbenchMessages.getString("CConfigWizardPage.12"); //$NON-NLS-1$
 	private static final String DELIMITER = "_with_";  //$NON-NLS-1$
 	private static final String EMPTY_STR = "";  //$NON-NLS-1$
 	
@@ -161,6 +164,14 @@ public class CConfigWizardPage extends MBSCustomPage {
 			public void widgetSelected(SelectionEvent e) {
 				handler.setShowProperties(((Button)e.widget).getSelection());
 			}});
+
+		Group gr = new Group(parent, SWT.NONE);
+		gd = new GridData(GridData.FILL_HORIZONTAL);
+		gd.horizontalSpan = 3;
+		gr.setLayoutData(gd);
+		gr.setLayout(new FillLayout());
+		Label lb = new Label(gr, SWT.NONE);
+		lb.setText(COMMENT);
 	}
 
 	/**

@@ -120,7 +120,7 @@ if [ -f package.count -a "$FILES" != "" ]; then
       #Update the signedUpdates site
       echo "Refreshing signedUpdates site"
       cd $HOME/downloads-tm/signedUpdates/bin
-      cvs udpate
+      cvs update
       ./mkTestUpdates.sh
     fi
   fi

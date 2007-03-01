@@ -256,7 +256,7 @@ sed -e '/!EUROPA_ONLY!/d' site.xml > site-europa.xml
 echo "Packing the site... $SITE"
 #java -Dorg.eclipse.update.jarprocessor.pack200=$mydir \
 #java -jar $HOME/ws2/eclipse/startup.jar \
-    -jar ${basebuilder}/plugins/org.eclipse.equinox.launcher.jar \
+java -jar ${basebuilder}/plugins/org.eclipse.equinox.launcher.jar \
     -application org.eclipse.update.core.siteOptimizer \
     -jarProcessor -outputDir $SITE \
     -processAll -pack $SITE

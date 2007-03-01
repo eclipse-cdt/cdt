@@ -72,6 +72,7 @@ public class EnvDialog extends Dialog {
 		text1 = new Text(c, SWT.SINGLE | SWT.BORDER);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = 2;
+		gd.widthHint = 400;
 		text1.setLayoutData(gd);
 		text1.addModifyListener(new ModifyListener () {
 			public void modifyText(ModifyEvent e) { setButtons(); }});
@@ -81,7 +82,9 @@ public class EnvDialog extends Dialog {
 		l2.setLayoutData(new GridData(GridData.BEGINNING));
 		
 		text2 = new Text(c, SWT.SINGLE | SWT.BORDER);
-		text2.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		gd = new GridData(GridData.FILL_HORIZONTAL);
+		gd.widthHint = 250;
+		text2.setLayoutData(gd);
 		text2.addModifyListener(new ModifyListener () {
 			public void modifyText(ModifyEvent e) { setButtons(); }});
 

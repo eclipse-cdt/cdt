@@ -27,6 +27,7 @@ import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
@@ -147,10 +148,14 @@ public class EnvironmentTab extends AbstractCPropertyTab {
 		table = new Table(usercomp, SWT.BORDER | SWT.MULTI | SWT.WRAP | SWT.H_SCROLL | SWT.FULL_SELECTION);
 		table.setHeaderVisible(true);
 		table.setLinesVisible(true);
-		table.addSelectionListener(new SelectionAdapter() {
+		table.addSelectionListener(new SelectionListener() {
 			public void widgetSelected(SelectionEvent e) {
 				updateButtons();
-		}});
+			}
+			public void widgetDefaultSelected(SelectionEvent e) {
+	    		if (buttonIsEnabled(2) && table.getSelectionIndex() != -1)
+    				buttonPressed(2);
+			}});
 		
 		tv = new TableViewer(table);
 		tv.setContentProvider(new IStructuredContentProvider() {

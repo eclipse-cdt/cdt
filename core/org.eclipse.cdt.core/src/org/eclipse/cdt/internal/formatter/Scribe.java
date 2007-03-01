@@ -90,8 +90,6 @@ public class Scribe {
 	/** indent empty lines */
 	private final boolean indentEmptyLines;
 
-	private boolean preserveWhitespace;
-
 	private boolean preserveNewlines;
 
 	private List fSkipPositions= Collections.EMPTY_LIST;
@@ -610,21 +608,31 @@ public class Scribe {
 	}
 
 	public void printRaw(int startOffset, int length) {
-		if (startOffset + length < scanner.getCurrentPosition()) {
-			// safeguard: don't move backwards
+		assert length >= 0;
+		if (length == 0) {
 			return;
 		}
-		boolean savedPreserveWS= preserveWhitespace;
+		if (startOffset > scanner.getCurrentPosition()) {
+			printComment();
+		}
+		if (pendingSpace) {
+			addInsertEdit(scanner.getCurrentPosition(), " "); //$NON-NLS-1$
+			pendingSpace= false;
+			needSpace= false;
+		}
+		if (startOffset + length < scanner.getCurrentPosition()) {
+			// don't move backwards
+			return;
+		}
 		boolean savedPreserveNL= preserveNewlines;
 		boolean savedSkipOverInactive= skipOverInactive;
 		int savedScannerEndPos= scannerEndPosition;
-		preserveWhitespace= false;
 		preserveNewlines= true;
 		skipOverInactive= false;
 		scannerEndPosition= startOffset + length;
-		int parenLevel= 0;
 		try {
-			scanner.resetTo(startOffset, startOffset + length - 1);
+			scanner.resetTo(Math.max(startOffset, scanner.getCurrentPosition()), startOffset + length - 1);
+			int parenLevel= 0;
 			while (true) {
 				boolean hasWhitespace= printComment();
 				currentToken= scanner.nextToken();
@@ -633,6 +641,11 @@ public class Scribe {
 						space();
 					}
 					break;
+				}
+				if (pendingSpace) {
+					addInsertEdit(scanner.getCurrentTokenStartPosition(), " "); //$NON-NLS-1$
+					pendingSpace= false;
+					needSpace= false;
 				}
 				switch (currentToken.type) {
 				case Token.tLBRACE:
@@ -695,12 +708,12 @@ public class Scribe {
 						print(currentToken.getLength(), hasWhitespace);
 					}
 				}
+				hasWhitespace= false;
 			}
 		} finally {
 			scannerEndPosition= savedScannerEndPos;
 			scanner.resetTo(startOffset + length, scannerEndPosition - 1);
 			skipOverInactive= savedSkipOverInactive;
-			preserveWhitespace= savedPreserveWS;
 			preserveNewlines= savedPreserveNL;
 		}
 	}
@@ -725,7 +738,6 @@ public class Scribe {
 		}
 	}
 
-
 	private void print(int length, boolean considerSpaceIfAny) {
 		if (checkLineWrapping && length + column > pageWidth) {
 			handleLineTooLong();
@@ -739,7 +751,6 @@ public class Scribe {
 			addInsertEdit(scanner.getCurrentTokenStartPosition(), " "); //$NON-NLS-1$
 		}
 		pendingSpace= false;
-		needSpace= false;
 		column+= length;
 		needSpace= true;
 	}
@@ -883,6 +894,7 @@ public class Scribe {
 					int endOffset= Math.min(scannerEndPosition, inactivePos.getOffset() + inactivePos.getLength());
 					if (startOffset < endOffset) {
 						int savedIndentLevel= indentationLevel;
+						scanner.resetTo(scanner.getCurrentTokenStartPosition(), scanner.eofPosition - 1);
 						printRaw(startOffset, endOffset - startOffset);
 						while (indentationLevel > savedIndentLevel) {
 							unIndent();
@@ -914,14 +926,8 @@ public class Scribe {
 					}
 				}
 				if (count == 0) {
-					if (preserveWhitespace) {
-						addReplaceEdit(scanner.getCurrentTokenStartPosition(), scanner.getCurrentTokenEndPosition(),
-								" "); //$NON-NLS-1$
-						++column;
-					} else {
-						hasWhitespace= true;
-						addDeleteEdit(scanner.getCurrentTokenStartPosition(), scanner.getCurrentTokenEndPosition());
-					}
+					hasWhitespace= true;
+					addDeleteEdit(scanner.getCurrentTokenStartPosition(), scanner.getCurrentTokenEndPosition());
 				} else if (hasComment) {
 					if (count == 1) {
 						printNewLine(scanner.getCurrentTokenStartPosition());

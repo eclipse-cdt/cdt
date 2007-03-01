@@ -408,8 +408,10 @@ public class CodeFormatterVisitor extends CPPASTVisitor {
 		}
 		
 		// common to all declarators
-		scribe.printComment();
 		formatPointers(node.getPointerOperators());
+		if (scribe.printComment()) {
+			scribe.space();
+		}
 		IASTName name= node.getName();
 		if (name != null) {
 			name.accept(this);
@@ -793,6 +795,9 @@ public class CodeFormatterVisitor extends CPPASTVisitor {
 	private void formatPointers(IASTPointerOperator[] pointers) {
 		for (int i = 0; i < pointers.length; i++) {
 			IASTPointerOperator pointer= pointers[i];
+			if (scribe.printComment()) {
+				scribe.space();
+			}
 			scribe.printModifiers();
 			if (pointer instanceof ICPPASTReferenceOperator) {
 				scribe.printNextToken(Token.tAMPER, false);
@@ -806,7 +811,7 @@ public class CodeFormatterVisitor extends CPPASTVisitor {
 				}
 				scribe.printNextToken(Token.tSTAR, false);
 			} else {
-				skipNode(pointer);
+				formatNode(pointer);
 			}
 		}
 	}
@@ -1732,9 +1737,6 @@ public class CodeFormatterVisitor extends CPPASTVisitor {
 	}
 	
 	private void formatNode(IASTNode node) {
-		if (scribe.printComment()) {
-			scribe.space();
-		}
 		final IASTNodeLocation[] locations= node.getNodeLocations();
 		final IASTNodeLocation minLocation= getMinFileLocation(locations);
 		if (minLocation != null) {

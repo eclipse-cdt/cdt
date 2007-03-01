@@ -107,7 +107,7 @@ public abstract class AbstractImportExecutableWizard extends Wizard implements I
 	 *            project receiving the executables
 	 * @throws CoreException
 	 */
-	private void addExecutables(ICProject project) throws CoreException {
+	private void addExecutables(ICProject project) {
 
 		String[] executables = pageOne.getSelectedExecutables();
 
@@ -116,7 +116,13 @@ public abstract class AbstractImportExecutableWizard extends Wizard implements I
 			String executableName = location.toFile().getName();
 			IFile exeFile = project.getProject().getFile(executableName);
 			if (!exeFile.exists())
-				exeFile.createLink(location, 0, null);
+			{
+				try {
+					exeFile.createLink(location, 0, null);
+				} catch (Exception e) {
+					this.getImportExecutablePage2().setErrorMessage("Error importing: " + executables[i]);
+				}
+			}
 		}
 	}
 

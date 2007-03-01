@@ -24,6 +24,8 @@ public class Messages extends NLS {
 		NLS.initializeMessages(BUNDLE_NAME, Messages.class);
 	}
 
+	public static String AbstractImportExecutableWizard_ErrorImporting;
+
 	public static String ImportExecutableWizard_pageOneTitle;
 
 	public static String ImportExecutableWizard_pageOneDescription;

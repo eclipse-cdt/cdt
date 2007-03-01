@@ -731,6 +731,16 @@
    <extension
          point="org.eclipse.ui.popupMenus">
       <objectContribution
+          adaptable="true"
+          id="org.eclipse.cdt.ui.rebuildIndexContribution"
+          objectClass="org.eclipse.cdt.core.model.ICProject">
+         <action
+             class="org.eclipse.cdt.internal.ui.indexview.RebuildIndexActionDelegate"
+             id="org.eclipse.cdt.ui.rebuildIndexAction"
+             label="%RebuildIndex.name"
+             menubarPath="buildGroup"/>
+      </objectContribution>
+      <objectContribution
             objectClass="org.eclipse.core.resources.IMarker"
             id="org.eclipse.cdt.ui.action.DeleteTaskAction">
          <filter
@@ -1704,20 +1714,6 @@
                 values="org.eclipse.cdt.internal.ui.text.contentassist.ContentAssistComputerParameter"/>
         </command>
    </extension>
-
- <extension
-       point="org.eclipse.ui.popupMenus">
-    <objectContribution
-          adaptable="true"
-          id="org.eclipse.cdt.ui.rebuildIndexContribution"
-          objectClass="org.eclipse.cdt.core.model.ICProject">
-       <action
-             class="org.eclipse.cdt.internal.ui.indexview.RebuildIndexActionDelegate"
-             id="org.eclipse.cdt.ui.rebuildIndexAction"
-             label="%RebuildIndex.name"
-             menubarPath="buildGroup"/>
-    </objectContribution>
- </extension>
 
 <!--- Common Navigator extensions -->
  <extension

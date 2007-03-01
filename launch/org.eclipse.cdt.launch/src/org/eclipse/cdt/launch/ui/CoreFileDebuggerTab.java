@@ -20,6 +20,8 @@ import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.debug.core.CDebugCorePlugin;
 import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
 import org.eclipse.cdt.debug.core.ICDebugConfiguration;
+import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
+import org.eclipse.cdt.debug.ui.ICDebuggerPage;
 import org.eclipse.cdt.launch.internal.ui.AbstractCDebuggerTab;
 import org.eclipse.cdt.launch.internal.ui.LaunchMessages;
 import org.eclipse.cdt.launch.internal.ui.LaunchUIPlugin;
@@ -58,6 +60,17 @@ public class CoreFileDebuggerTab extends AbstractCDebuggerTab {
 	public void setDefaults(ILaunchConfigurationWorkingCopy config) {
 		config.setAttribute(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_START_MODE,
 							ICDTLaunchConfigurationConstants.DEBUGGER_MODE_CORE);
+		ICDebugConfiguration dc = CDebugCorePlugin.getDefault().getDefaultDebugConfiguration();
+		if (dc != null) {
+			String id = dc.getID();
+			config.setAttribute(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_ID, id);
+			try {
+				ICDebuggerPage tab = CDebugUIPlugin.getDefault().getDebuggerPage(id);
+				tab.setDefaults(config);
+			} catch (CoreException e) {
+				LaunchUIPlugin.errorDialog(LaunchMessages.getString("AbstractCDebuggerTab.ErrorLoadingDebuggerPage"), e.getStatus()); //$NON-NLS-1$
+			}
+		}
 	}
 
 	/*

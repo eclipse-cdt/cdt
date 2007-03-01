@@ -73,7 +73,7 @@ public class ConfigurationDataProvider extends CConfigurationDataProvider implem
 		ICStorageElement cfgElemen = rootElement.createChild(IConfiguration.CONFIGURATION_ELEMENT_NAME);
 		Configuration cfg = (Configuration)appliedCfg.getConfiguration();
 		cfg.setConfigurationDescription(des);
-		ManagedBuildManager.performValueHandlerEvent(cfg, IManagedOptionValueHandler.EVENT_APPLY);
+//		ManagedBuildManager.performValueHandlerEvent(cfg, IManagedOptionValueHandler.EVENT_APPLY);
 		cfg.serialize(cfgElemen);
 		
 		return appliedCfg;

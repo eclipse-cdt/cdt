@@ -14,10 +14,7 @@ package org.eclipse.cdt.ui.newui;
 /**
  * The class have the same functionality as superclass.
  * The only need to create it is distinguishing tabs.
- * 
- * @author okrasiln
- *
- */
+*/
 public class Page_BuildSettings extends AbstractPage {
 	protected boolean isSingle() {	return false; }
 }

@@ -74,7 +74,7 @@ public class BuildOptionSettingsUI extends AbstractToolSettingUI {
 			IHoldsOptions holder = (IHoldsOptions)options[index][0];
 			if (holder == null) break;	//  The array may not be full
 			IOption opt = (IOption)options[index][1];
-			String prefName = opt.getName(); 
+			String optId = getToolSettingsPrefStore().getOptionId(opt);
 			
 			// check to see if the option has an applicability calculator
 			IOptionApplicability applicabilityCalculator = opt.getApplicabilityCalculator();
@@ -96,15 +96,15 @@ public class BuildOptionSettingsUI extends AbstractToolSettingUI {
 							// browse button of the appropriate type.
 							switch (opt.getBrowseType()) {
 								case IOption.BROWSE_DIR: {
-									stringField = new DirectoryFieldEditor(prefName, opt.getName(), fieldEditorParent);
+									stringField = new DirectoryFieldEditor(optId, opt.getName(), fieldEditorParent);
 								} break;
 		
 								case IOption.BROWSE_FILE: {
-									stringField = new FileFieldEditor(prefName, opt.getName(), fieldEditorParent);
+									stringField = new FileFieldEditor(optId, opt.getName(), fieldEditorParent);
 								} break;
 		
 								case IOption.BROWSE_NONE: {
-									stringField = new StringFieldEditor(prefName, opt.getName(), fieldEditorParent);
+									stringField = new StringFieldEditor(optId, opt.getName(), fieldEditorParent);
 								} break;
 		
 								default: {
@@ -126,7 +126,7 @@ public class BuildOptionSettingsUI extends AbstractToolSettingUI {
 								}
 							}
 							
-							fieldEditor = new TooltipBooleanFieldEditor(prefName, opt.getName(), opt.getToolTip(), fieldEditorParent);
+							fieldEditor = new TooltipBooleanFieldEditor(optId, opt.getName(), opt.getToolTip(), fieldEditorParent);
 						} break;
 						
 						case IOption.ENUMERATED: {
@@ -148,7 +148,7 @@ public class BuildOptionSettingsUI extends AbstractToolSettingUI {
 							String[] enumValidNames = new String[enumValidList.size()];
 							enumValidList.copyInto(enumValidNames);
 	
-							fieldEditor = new BuildOptionComboFieldEditor(prefName, opt.getName(), opt.getToolTip(), enumValidNames, sel, fieldEditorParent);
+							fieldEditor = new BuildOptionComboFieldEditor(optId, opt.getName(), opt.getToolTip(), enumValidNames, sel, fieldEditorParent);
 						} break;
 						
 						case IOption.INCLUDE_PATH:
@@ -161,7 +161,7 @@ public class BuildOptionSettingsUI extends AbstractToolSettingUI {
 						case IOption.LIBRARY_FILES:
 						case IOption.MACRO_FILES:
 						{
-							fieldEditor = new FileListControlFieldEditor(prefName, opt.getName(), opt.getToolTip(), fieldEditorParent, opt.getBrowseType());
+							fieldEditor = new FileListControlFieldEditor(optId, opt.getName(), opt.getToolTip(), fieldEditorParent, opt.getBrowseType());
 						} break;
 						
 						default:
@@ -171,7 +171,7 @@ public class BuildOptionSettingsUI extends AbstractToolSettingUI {
 					setFieldEditorEnablement(holder, opt, applicabilityCalculator, fieldEditor, fieldEditorParent);
 
 					addField(fieldEditor);
-					fieldsMap.put(prefName, fieldEditor);
+					fieldsMap.put(optId, fieldEditor);
 					fieldEditorsToParentMap.put(fieldEditor, fieldEditorParent);
 
 				} catch (BuildException e) {
@@ -321,7 +321,7 @@ public class BuildOptionSettingsUI extends AbstractToolSettingUI {
 			if (holder == null)
 				break; //  The array may not be full
 			IOption opt = (IOption) options[index][1];
-			String prefName = getToolSettingsPrefStore().getOptionPrefName(opt); 
+			String prefName = getToolSettingsPrefStore().getOptionId(opt); 
 
 			// is the option on this page?
 			if (fieldsMap.containsKey(prefName)) {
@@ -375,7 +375,7 @@ public class BuildOptionSettingsUI extends AbstractToolSettingUI {
 			
 			id = fe.getPreferenceName();
 			
-			Object option[] = this.getToolSettingsPrefStore().getOption(id);
+			Object[] option = this.getToolSettingsPrefStore().getOption(id);
 			
 			if(option != null){
 				changedOption = (IOption)option[1];
@@ -434,14 +434,14 @@ public class BuildOptionSettingsUI extends AbstractToolSettingUI {
 			if (holder == null)
 				break; //  The array may not be full
 			IOption opt = (IOption) options[index][1];
-			String prefName = getToolSettingsPrefStore().getOptionPrefName(opt); 
+			String optId = getToolSettingsPrefStore().getOptionId(opt); 
 
 			// is the option on this page?
-			if (fieldsMap.containsKey(prefName)) {
+			if (fieldsMap.containsKey(optId)) {
 				// check to see if the option has an applicability calculator
 				IOptionApplicability applicabilityCalculator = opt.getApplicabilityCalculator();
 
-				FieldEditor fieldEditor = (FieldEditor) fieldsMap.get(prefName);
+				FieldEditor fieldEditor = (FieldEditor) fieldsMap.get(optId);
 				try {
 					if ( opt.getValueType() == IOption.ENUMERATED ) {
 						// the item list of this enumerated option may have changed, update it
@@ -481,8 +481,7 @@ public class BuildOptionSettingsUI extends AbstractToolSettingUI {
 	 * @param config      project or resource info
 	 * @throws BuildException
 	 */
-	protected void updateEnumList( FieldEditor fieldEditor, IOption opt, IHoldsOptions holder, IResourceInfo config ) throws BuildException
-	{
+	protected void updateEnumList( FieldEditor fieldEditor, IOption opt, IHoldsOptions holder, IResourceInfo config ) throws BuildException	{
 		// Get all applicable values for this enumerated Option, and filter out
 		// the disable values
 		String[] enumNames = opt.getApplicableValues();

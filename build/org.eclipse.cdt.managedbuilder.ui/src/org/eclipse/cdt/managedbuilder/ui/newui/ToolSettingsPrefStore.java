@@ -64,7 +64,7 @@ public class ToolSettingsPrefStore implements IPreferenceStore {
 		return rcInfo.getParent();
 	}
 	
-	public String getOptionPrefName(IOption option){
+	public String getOptionId(IOption option){
 		IOption extOption = getExtensionOption(option);
 		if(extOption != null)
 			return extOption.getId();
@@ -196,7 +196,7 @@ public class ToolSettingsPrefStore implements IPreferenceStore {
 		return null;
 	}
 	
-	public Object[] getOption(String name){
+	public Object[] getOption(String id){
 		if (selectedElement == null) return null;
 		
 		IHoldsOptions selectedHolder = selectedElement.getHoldOptions();
@@ -209,11 +209,10 @@ public class ToolSettingsPrefStore implements IPreferenceStore {
 			
 			IOption option = (IOption)options[i][1];
 			
-			String optionName = option.getName(); 
-			if( ((optionName != null) && optionName.equals(name)) //TODO: name vs ID !
+			if( ( option.getId().equals(id))
 					|| ((!option.isExtensionElement() || ((Option)option).isAdjustedExtension() || ((Option)option).wasOptRef())
 						&& option.getSuperClass() != null
-						&& option.getSuperClass().getId().equals(name)))
+						&& option.getSuperClass().getId().equals(id)))
 				return options[i];
 		}
 		return null;

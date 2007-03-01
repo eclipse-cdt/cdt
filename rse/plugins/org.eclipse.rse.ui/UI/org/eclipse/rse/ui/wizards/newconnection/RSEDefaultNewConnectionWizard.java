@@ -370,7 +370,7 @@ public class RSEDefaultNewConnectionWizard extends RSEAbstractNewConnectionWizar
 			// query all affected subsystems for their list of additional wizard pages...
 			Vector additionalPages = new Vector();
 			ISystemRegistry sr = RSEUIPlugin.getTheSystemRegistry();
-			ISubSystemConfiguration[] factories = sr.getSubSystemConfigurationsBySystemType(systemType.getName(), true);
+			ISubSystemConfiguration[] factories = sr.getSubSystemConfigurationsBySystemType(systemType, true);
 			for (int idx = 0; idx < factories.length; idx++) {
 				ISubSystemConfigurationAdapter adapter = (ISubSystemConfigurationAdapter)factories[idx].getAdapter(ISubSystemConfigurationAdapter.class);
 

@@ -323,6 +323,9 @@ public class RSEMainNewConnectionWizard extends Wizard implements INewWizard, IS
 			container.updateTitleBar();
 			container.updateButtons();
 		}
+		
+		// Save the current selection to the dialog settings
+		saveWidgetValues();
 	}
 
 	/* (non-Javadoc)
@@ -331,7 +334,7 @@ public class RSEMainNewConnectionWizard extends Wizard implements INewWizard, IS
 	public void addPages() {
 		addPage(mainPage);
 		// and restore the wizard's selection state from last session
-		restoreFromDialogSettings();
+		restoreWidgetValues();
 	}
 
 	/* (non-Javadoc)
@@ -363,13 +366,7 @@ public class RSEMainNewConnectionWizard extends Wizard implements INewWizard, IS
 	 */
 	public boolean performFinish() {
 		// Save the current selection to the dialog settings
-		IDialogSettings dialogSettings = getDialogSettings();
-		if (dialogSettings != null && getSelection() instanceof IStructuredSelection) {
-			IStructuredSelection selection = (IStructuredSelection)getSelection();
-			if (selection.getFirstElement() instanceof IRSESystemType) {
-				dialogSettings.put(LAST_SELECTED_SYSTEM_TYPE_ID, ((IRSESystemType)selection.getFirstElement()).getId());
-			}
-		}
+		saveWidgetValues();
 		
 		if (mainPage != null) mainPage.saveWidgetValues();
 		
@@ -377,10 +374,25 @@ public class RSEMainNewConnectionWizard extends Wizard implements INewWizard, IS
 	}
 
 	/**
+	 * Save the last selected system type id to the dialog settings.
+	 * Called from <code>onSelectedSystemTypeChanged</code> and <code>
+	 * performFinish</code>.
+	 */
+	protected void saveWidgetValues() {
+		IDialogSettings dialogSettings = getDialogSettings();
+		if (dialogSettings != null && getSelection() instanceof IStructuredSelection) {
+			IStructuredSelection selection = (IStructuredSelection)getSelection();
+			if (selection.getFirstElement() instanceof IRSESystemType) {
+				dialogSettings.put(LAST_SELECTED_SYSTEM_TYPE_ID, ((IRSESystemType)selection.getFirstElement()).getId());
+			}
+		}
+	}
+	
+	/**
 	 * Restore the persistent saved wizard state. This method
 	 * is called from the wizards constructor.
 	 */
-	protected void restoreFromDialogSettings() {
+	protected void restoreWidgetValues() {
 		IDialogSettings dialogSettings = getDialogSettings();
 		if (dialogSettings != null) {
 			String systemTypeId = dialogSettings.get(LAST_SELECTED_SYSTEM_TYPE_ID);

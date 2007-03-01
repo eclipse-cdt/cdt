@@ -3176,7 +3176,7 @@ public class SystemView extends SafeTreeViewer implements ISystemTree, ISystemRe
 				roots = tree.getItems(); // re-query roots 	
 				smartRefresh(roots, expandedChildren, forceRemote);
 			}
-		} else if (getRemoteAdapter(element) != null) {
+		} else if (getViewAdapter(element) != null) {
 
 			Item item = null;
 			if (element instanceof String) {

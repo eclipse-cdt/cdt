@@ -277,7 +277,9 @@ public class CMainTab extends CLaunchConfigurationTab {
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#performApply(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
 	 */
 	public void performApply(ILaunchConfigurationWorkingCopy config) {
-		config.setMappedResources(new IResource[] { this.getCProject().getProject() });
+		ICProject cProject = this.getCProject();
+		if (cProject != null)
+			config.setMappedResources(new IResource[] { cProject.getProject() });
 		config.setAttribute(ICDTLaunchConfigurationConstants.ATTR_PROJECT_NAME, fProjText.getText());
 		config.setAttribute(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_NAME, fProgText.getText());
 		if (fTerminalButton != null) {

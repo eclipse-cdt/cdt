@@ -35,11 +35,13 @@ import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.internal.core.index.IIndexFragmentFile;
 import org.eclipse.cdt.internal.core.index.IWritableIndex;
 import org.eclipse.cdt.internal.core.pdom.IndexerProgress;
-import org.eclipse.core.resources.IFile;
+import org.eclipse.cdt.internal.core.pdom.PDOMWriter;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Platform;
 
 public abstract class PDOMIndexerTask extends PDOMWriter implements IPDOMIndexerTask {
 	private static final Object NO_CONTEXT = new Object();
@@ -48,9 +50,12 @@ public abstract class PDOMIndexerTask extends PDOMWriter implements IPDOMIndexer
 	
 	private IPDOMIndexer fIndexer;
 	protected Map/*<IIndexFileLocation, Object>*/ fContextMap = new HashMap/*<IIndexFileLocation, Object>*/();
+	private boolean fCheckTimestamps= false;
 
 	protected PDOMIndexerTask(IPDOMIndexer indexer) {
 		fIndexer= indexer;
+		setShowActivity(checkDebugOption(TRACE_ACTIVITY, TRUE));
+		setShowProblems(checkDebugOption(TRACE_PROBLEMS, TRUE));
 	}
 
 	final public IPDOMIndexer getIndexer() {
@@ -65,6 +70,21 @@ public abstract class PDOMIndexerTask extends PDOMWriter implements IPDOMIndexer
 		return super.getProgressInformation();
 	}
 	
+	final public void setCheckTimestamps(boolean val) {
+		fCheckTimestamps= val;
+	}
+	
+	/**
+	 * Checks whether a given debug option is enabled. See {@link IPDOMIndexerTask}
+	 * for valid values.
+	 * @since 4.0
+	 */
+	public static boolean checkDebugOption(String option, String value) {
+		String trace= Platform.getDebugOption(option); 
+		boolean internallyActivated= Boolean.getBoolean(option);
+		return internallyActivated || (trace != null && trace.equalsIgnoreCase(value));
+	}
+
 	/**
 	 * Figurues out whether all files (sources without config, headers not included)
 	 * should be parsed.
@@ -97,7 +117,11 @@ public abstract class PDOMIndexerTask extends PDOMWriter implements IPDOMIndexer
 			if (monitor.isCanceled()) 
 				return;
 			ITranslationUnit tu = (ITranslationUnit) iter.next();
-			if (needToUpdate(getIndexFileLocation(tu))) {
+			final IIndexFileLocation ifl = IndexLocationFactory.getIFL(tu);
+			if (fCheckTimestamps && !isOutdated(tu, ifl, index)) {
+				updateInfo(0,0,-1);
+			}
+			else if (needToUpdate(ifl)) {
 				parseTU(tu, index, readlockCount, monitor);
 			}
 		}
@@ -107,10 +131,15 @@ public abstract class PDOMIndexerTask extends PDOMWriter implements IPDOMIndexer
 			if (monitor.isCanceled()) 
 				return;
 			ITranslationUnit tu = (ITranslationUnit) iter.next();
-			IIndexFileLocation location = getIndexFileLocation(tu);
-			if (!needToUpdate(location)) {
+			IIndexFileLocation location = IndexLocationFactory.getIFL(tu);
+			if (fCheckTimestamps && !isOutdated(tu, location, index)) {
+				updateInfo(0,0,-1);
 				iter.remove();
-			} else {
+			}
+			else if (!needToUpdate(location)) {
+				iter.remove();
+			} 
+			else {
 				ITranslationUnit context= findContext(index, location);
 				if (context != null) {
 					parseTU(context, index, readlockCount, monitor);
@@ -124,7 +153,12 @@ public abstract class PDOMIndexerTask extends PDOMWriter implements IPDOMIndexer
 				if (monitor.isCanceled()) 
 					return;
 				ITranslationUnit tu = (ITranslationUnit) iter.next();
-				if (!needToUpdate(getIndexFileLocation(tu))) {
+				final IIndexFileLocation ifl = IndexLocationFactory.getIFL(tu);
+				if (fCheckTimestamps && !isOutdated(tu, ifl, index)) {
+					updateInfo(0,0,-1);
+					iter.remove();
+				} 
+				else if (!needToUpdate(ifl)) {
 					iter.remove();
 				}
 				else {
@@ -133,6 +167,21 @@ public abstract class PDOMIndexerTask extends PDOMWriter implements IPDOMIndexer
 			}
 		}
 	}
+	
+	private boolean isOutdated(ITranslationUnit tu, IIndexFileLocation ifl, IIndex index) throws CoreException {
+		boolean outofdate= true;
+		IResource res= tu.getResource();
+		if (res != null) {
+			IIndexFile indexFile= index.getFile(ifl);
+			if (indexFile != null) {
+				if (res.getLocalTimeStamp() == indexFile.getTimestamp()) {
+					outofdate= false;
+				}
+			}
+		}
+		return outofdate;
+	}
+
 
 	private void parseTU(ITranslationUnit tu, IWritableIndex index, int readlockCount, IProgressMonitor pm) throws CoreException, InterruptedException {
 		IPath path= tu.getPath();
@@ -140,7 +189,7 @@ public abstract class PDOMIndexerTask extends PDOMWriter implements IPDOMIndexer
 			if (fShowActivity) {
 				System.out.println("Indexer: parsing " + path.toOSString()); //$NON-NLS-1$
 			}
-			setMonitorDetail(MessageFormat.format(Messages.PDOMIndexerTask_parsingFileTask,
+			pm.subTask(MessageFormat.format(Messages.PDOMIndexerTask_parsingFileTask,
 					new Object[]{path.lastSegment(), path.removeLastSegments(1).toString()}));
 			long start= System.currentTimeMillis();
 			IASTTranslationUnit ast= createAST(tu, pm);
@@ -218,7 +267,7 @@ public abstract class PDOMIndexerTask extends PDOMWriter implements IPDOMIndexer
 	protected void removeTU(IWritableIndex index, ITranslationUnit tu, int readlocks) throws CoreException, InterruptedException {
 		index.acquireWriteLock(readlocks);
 		try {
-			IIndexFragmentFile file = (IIndexFragmentFile) index.getFile(getIndexFileLocation(tu));
+			IIndexFragmentFile file = (IIndexFragmentFile) index.getFile(IndexLocationFactory.getIFL(tu));
 			if (file != null)
 				index.clearFile(file);
 		} finally {
@@ -226,13 +275,6 @@ public abstract class PDOMIndexerTask extends PDOMWriter implements IPDOMIndexer
 		}
 	}
 
-	protected IIndexFileLocation getIndexFileLocation(ITranslationUnit tu) {
-		if(tu.getResource()!=null)
-			return IndexLocationFactory.getWorkspaceIFL((IFile)tu.getResource());
-		else
-			return IndexLocationFactory.getExternalIFL(tu.getLocation());
-	}
-	
 	protected void traceEnd(long start) {
 		if (checkDebugOption(IPDOMIndexerTask.TRACE_STATISTICS, TRUE)) {
 			IndexerProgress info= getProgressInformation();

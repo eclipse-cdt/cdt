@@ -17,7 +17,6 @@ public class IndexerProgress {
 	public int fCompletedHeaders;
 	public int fCompletedSources;
 	public int fTimeEstimate;
-	public String fMonitorDetail;
 
 	public IndexerProgress() {
 	}
@@ -26,7 +25,6 @@ public class IndexerProgress {
 		fTotalSourcesEstimate= info.fTotalSourcesEstimate;
 		fCompletedHeaders= info.fCompletedHeaders;
 		fCompletedSources= info.fCompletedSources;
-		fMonitorDetail= info.fMonitorDetail;
 	}
 
 

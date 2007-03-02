@@ -14,6 +14,7 @@
 package org.eclipse.cdt.internal.core.pdom;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.BitSet;
@@ -25,6 +26,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 
+import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ILinkage;
 import org.eclipse.cdt.core.dom.IName;
 import org.eclipse.cdt.core.dom.IPDOM;
@@ -48,6 +50,7 @@ import org.eclipse.cdt.internal.core.index.IIndexFragmentName;
 import org.eclipse.cdt.internal.core.pdom.db.BTree;
 import org.eclipse.cdt.internal.core.pdom.db.DBProperties;
 import org.eclipse.cdt.internal.core.pdom.db.Database;
+import org.eclipse.cdt.internal.core.pdom.db.IBTreeVisitor;
 import org.eclipse.cdt.internal.core.pdom.dom.ApplyVisitor;
 import org.eclipse.cdt.internal.core.pdom.dom.BindingCollector;
 import org.eclipse.cdt.internal.core.pdom.dom.IPDOMLinkageFactory;
@@ -110,15 +113,24 @@ public class PDOM extends PlatformObject implements IIndexFragment, IPDOM {
 	private IIndexLocationConverter locationConverter;
 	
 	public PDOM(File dbPath, IIndexLocationConverter locationConverter) throws CoreException {
-		// Load up the database
+		loadDatabase(dbPath);
+		this.locationConverter = locationConverter;
+	}
+
+	private void loadDatabase(File dbPath) throws CoreException {
 		fPath= dbPath;
+		boolean exists= fPath.exists();
 		db = new Database(fPath);
 
-		if (db.getVersion() == VERSION) {
-			readLinkages();
+		if (exists) {
+			int version= db.getVersion();
+			if (version == VERSION) {
+				readLinkages();
+			}
 		}
-
-		this.locationConverter = locationConverter;
+		else {
+			db.setVersion(VERSION);
+		}
 	}
 
 	public IIndexLocationConverter getLocationConverter() {
@@ -180,6 +192,21 @@ public class PDOM extends PlatformObject implements IIndexFragment, IPDOM {
 		return PDOMFile.findFile(this, getFileIndex(), location, locationConverter);
 	}
 
+	public List/*<IIndexFileLocation>*/ getAllFileLocations() throws CoreException {
+		final List locations = new ArrayList();
+		getFileIndex().accept(new IBTreeVisitor(){
+			public int compare(int record) throws CoreException {
+				return 0;
+			}
+			public boolean visit(int record) throws CoreException {
+				PDOMFile file = new PDOMFile(PDOM.this, record);
+				locations.add(file.getLocation());
+				return true;
+			}
+		});
+		return locations;
+	}
+	
 	protected IIndexFragmentFile addFile(IIndexFileLocation location) throws CoreException {
 		IIndexFragmentFile file = getFile(location);
 		if (file == null) {
@@ -208,6 +235,18 @@ public class PDOM extends PlatformObject implements IIndexFragment, IPDOM {
 		db.putInt(LINKAGES, 0);
 		fLinkageIDCache.clear();
 	}
+	
+	void reloadFromFile(File file) throws CoreException {
+		File oldFile= fPath;
+		fLinkageIDCache.clear();
+		try {
+			db.close();
+		} catch (IOException e) {
+			CCorePlugin.log(e);
+		}
+		loadDatabase(file);
+		oldFile.delete();
+	}		
 
 	public boolean isEmpty() throws CoreException {
 		return getFirstLinkageRecord() == 0;

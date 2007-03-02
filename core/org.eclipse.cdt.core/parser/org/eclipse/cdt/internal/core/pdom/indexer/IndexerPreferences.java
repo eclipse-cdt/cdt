@@ -36,12 +36,14 @@ import org.osgi.service.prefs.Preferences;
  * @since 4.0
  */
 public class IndexerPreferences {
+	private static final String DEFAULT_INDEX_IMPORT_LOCATION = ".settings/cdt-index.zip"; //$NON-NLS-1$
 	public static final String KEY_INDEXER_ID= "indexerId"; //$NON-NLS-1$
 	public static final String KEY_INDEX_ALL_FILES= "indexAllFiles"; //$NON-NLS-1$
 	
 	private static final String QUALIFIER = CCorePlugin.PLUGIN_ID;
 	private static final String INDEXER_NODE = "indexer"; //$NON-NLS-1$
 	private static final String KEY_INDEXER_PREFS_SCOPE = "preferenceScope"; //$NON-NLS-1$
+	private static final String KEY_INDEX_IMPORT_LOCATION = "indexImportLocation"; //$NON-NLS-1$
 
 	public static final int SCOPE_INSTANCE = 0;
 	public static final int SCOPE_PROJECT_PRIVATE = 1;
@@ -218,16 +220,24 @@ public class IndexerPreferences {
 	private static Preferences[] getInstancePreferencesArray() {
 		return new Preferences[] {
 				getInstancePreferences(),
-				new ConfigurationScope().getNode(QUALIFIER).node(INDEXER_NODE), 
-				new DefaultScope().getNode(QUALIFIER).node(INDEXER_NODE)
+				getConfigurationPreferences(), 
+				getDefaultPreferences()
 		};
+	}
+
+	private static Preferences getDefaultPreferences() {
+		return new DefaultScope().getNode(QUALIFIER).node(INDEXER_NODE);
+	}
+
+	private static Preferences getConfigurationPreferences() {
+		return new ConfigurationScope().getNode(QUALIFIER).node(INDEXER_NODE);
 	}
 
 	private static Preferences getInstancePreferences() {
 		return new InstanceScope().getNode(QUALIFIER).node(INDEXER_NODE);
 	}
 
-	private static Preferences getProjectPreferences(IProject project) {
+	public static Preferences getProjectPreferences(IProject project) {
 		return new ProjectScope(project).getNode(QUALIFIER).node(INDEXER_NODE);
 	}
 
@@ -253,6 +263,7 @@ public class IndexerPreferences {
 		Preferences prefs= defaultPreferences.node(INDEXER_NODE);
 		prefs.put(KEY_INDEXER_ID, IPDOMManager.ID_FAST_INDEXER);
 		prefs.putBoolean(KEY_INDEX_ALL_FILES, false);
+		prefs.put(KEY_INDEX_IMPORT_LOCATION, DEFAULT_INDEX_IMPORT_LOCATION);
 	}
 
 	public static void addChangeListener(IProject prj, IPreferenceChangeListener pcl) {
@@ -284,6 +295,24 @@ public class IndexerPreferences {
 		if (node instanceof IEclipsePreferences) {
 			IEclipsePreferences enode= (IEclipsePreferences) node;
 			enode.removePreferenceChangeListener(pcl);
+		}
+	}
+
+	public static String getIndexImportLocation(IProject project) {
+		Preferences[] prefs= new Preferences[] {
+				getProjectPreferences(project),
+				getInstancePreferences(),
+				getConfigurationPreferences(),
+				getDefaultPreferences()
+		};
+		
+		return Platform.getPreferencesService().get(KEY_INDEX_IMPORT_LOCATION, DEFAULT_INDEX_IMPORT_LOCATION, prefs);
+	}
+
+	public static void setIndexImportLocation(IProject project, String location) {
+		if (!location.equals(getIndexImportLocation(project))) {
+			getProjectPreferences(project).put(KEY_INDEX_IMPORT_LOCATION, location);
+			CCoreInternals.savePreferences(project);
 		}
 	}
 }

@@ -16,6 +16,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.nio.channels.FileChannel;
 import java.text.MessageFormat;
 import java.util.HashMap;
@@ -38,8 +40,8 @@ import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICElementDelta;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.IElementChangedListener;
+import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.internal.core.CCoreInternals;
-import org.eclipse.cdt.internal.core.index.IIndexFragment;
 import org.eclipse.cdt.internal.core.index.IWritableIndex;
 import org.eclipse.cdt.internal.core.index.IWritableIndexManager;
 import org.eclipse.cdt.internal.core.index.IndexChangeEvent;
@@ -49,12 +51,14 @@ import org.eclipse.cdt.internal.core.pdom.PDOM.IListener;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMFile;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMProjectIndexLocationConverter;
 import org.eclipse.cdt.internal.core.pdom.indexer.IndexerPreferences;
-import org.eclipse.cdt.internal.core.pdom.indexer.PDOMImportTask;
 import org.eclipse.cdt.internal.core.pdom.indexer.PDOMRebuildTask;
 import org.eclipse.cdt.internal.core.pdom.indexer.PDOMResourceDeltaTask;
 import org.eclipse.cdt.internal.core.pdom.indexer.nulli.PDOMNullIndexer;
+import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceDelta;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
@@ -62,10 +66,12 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.ListenerList;
+import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences.IPreferenceChangeListener;
@@ -105,6 +111,7 @@ public class PDOMManager implements IPDOMManager, IWritableIndexManager, IListen
 
 	private static final ISchedulingRule NOTIFICATION_SCHEDULING_RULE = new PerInstanceSchedulingRule();
 	private static final ISchedulingRule INDEXER_SCHEDULING_RULE = new PerInstanceSchedulingRule();
+	private static final ITranslationUnit[] NO_TUS = new ITranslationUnit[0];
 
 	/**
 	 * Protects indexerJob, currentTask and taskQueue.
@@ -148,27 +155,11 @@ public class PDOMManager implements IPDOMManager, IWritableIndexManager, IListen
 		final CoreModel model = CoreModel.getDefault();
 		model.addElementChangedListener(fCModelListener);
 		
-		Job startup= new Job(Messages.PDOMManager_StartJob_name) {
-			protected IStatus run(IProgressMonitor monitor) {
-				ICProject[] projects;
-				try {
-					projects = model.getCModel().getCProjects();
-					for (int i = 0; i < projects.length; i++) {
-						ICProject project = projects[i];
-						if (project.getProject().isOpen()) {
-							addProject(project, null);
-						}
-					}
-				} catch (CoreException e) {
-					CCorePlugin.log(e);
-					return e.getStatus();
-				} 
-				return Status.OK_STATUS;
-			}
-		};
-		startup.setSystem(true);
-		startup.setRule(INDEXER_SCHEDULING_RULE); // block indexer until init is done.
-		startup.schedule(1000);
+		IProject[] projects= ResourcesPlugin.getWorkspace().getRoot().getProjects();
+		for (int i = 0; i < projects.length; i++) {
+			IProject project = projects[i];
+			addProject(project);
+		}
 	}
 
 	public IPDOM getPDOM(ICProject project) throws CoreException {
@@ -182,7 +173,7 @@ public class PDOMManager implements IPDOMManager, IWritableIndexManager, IListen
 			String dbName= rproject.getPersistentProperty(dbNameProperty);
 			File dbFile= null;
 			if (dbName != null) {
-				dbFile= CCorePlugin.getDefault().getStateLocation().append(dbName).toFile();
+				dbFile= fileFromDatabaseName(dbName);
 				ICProject currentCOwner= (ICProject) fFileToProject.get(dbFile);
 				if (currentCOwner != null) {
 					IProject currentOwner= currentCOwner.getProject();
@@ -199,13 +190,12 @@ public class PDOMManager implements IPDOMManager, IWritableIndexManager, IListen
 
 			if (pdom == null) {
 				if (dbName == null) {
-					dbName= getDefaultName(project);
-					rproject.setPersistentProperty(dbNameProperty, dbName);
-					dbFile= CCorePlugin.getDefault().getStateLocation().append(dbName).toFile();
+					dbName = createNewDatabaseName(project);
+					dbFile= fileFromDatabaseName(dbName);
+					storeDatabaseName(rproject, dbName);
 				}
 			
 				pdom = new WritablePDOM(dbFile, new PDOMProjectIndexLocationConverter(rproject));
-				pdom.setProperty(IIndexFragment.PROPERTY_FRAGMENT_ID, "org.eclipse.cdt.internal.pdom["+rproject.getName()+"]"); //$NON-NLS-1$ //$NON-NLS-2$
 				pdom.addListener(this);
 			}
 			
@@ -215,8 +205,29 @@ public class PDOMManager implements IPDOMManager, IWritableIndexManager, IListen
 		}
 	}
 
-	private String getDefaultName(ICProject project) {
-		return project.getElementName() + "." + System.currentTimeMillis() + ".pdom";  //$NON-NLS-1$//$NON-NLS-2$
+	private void storeDatabaseName(IProject rproject, String dbName)
+			throws CoreException {
+		rproject.setPersistentProperty(dbNameProperty, dbName);
+	}
+
+	private String createNewDatabaseName(ICProject project) {
+		String dbName;
+		long time= System.currentTimeMillis();
+		File file;
+		do {
+			dbName= getDefaultName(project, time++);
+			file= fileFromDatabaseName(dbName);
+		}
+		while (file.exists());
+		return dbName;
+	}
+
+	private File fileFromDatabaseName(String dbName) {
+		return CCorePlugin.getDefault().getStateLocation().append(dbName).toFile();
+	}
+
+	private String getDefaultName(ICProject project, long time) {
+		return project.getElementName() + "." + time + ".pdom";  //$NON-NLS-1$//$NON-NLS-2$
 	}
 
 	public String getDefaultIndexerId() {
@@ -259,7 +270,7 @@ public class PDOMManager implements IPDOMManager, IWritableIndexManager, IListen
 		Properties props= IndexerPreferences.getProperties(prj);
 		
 		synchronized (fIndexerMutex) {
-			oldIndexer= getIndexer(cproject, false);
+			oldIndexer= getIndexer(cproject);
 			if (oldIndexer != null) {
 				if (oldIndexer.getID().equals(newid)) {
 					if (!oldIndexer.needsToRebuildForProperties(props)) {
@@ -267,7 +278,9 @@ public class PDOMManager implements IPDOMManager, IWritableIndexManager, IListen
 						return;
 					}
 				}
-				createIndexer(cproject, newid, props, true);
+				IPDOMIndexer indexer= createIndexer(cproject, newid, props);
+				registerIndexer(cproject, indexer);
+				enqueue(new PDOMRebuildTask(indexer));
 			}
 		}
 		
@@ -276,7 +289,14 @@ public class PDOMManager implements IPDOMManager, IWritableIndexManager, IListen
 		}
 	}
 
-	private IPDOMIndexer getIndexer(ICProject project, boolean create) {
+	private void registerIndexer(ICProject project, IPDOMIndexer indexer) throws CoreException {
+		assert Thread.holdsLock(fIndexerMutex);
+		indexer.setProject(project);
+		registerPreferenceListener(project);
+		project.getProject().setSessionProperty(indexerProperty, indexer);
+	}
+
+	private IPDOMIndexer getIndexer(ICProject project) {
 		assert !Thread.holdsLock(fProjectToPDOM);
 		synchronized (fIndexerMutex) {
 			IProject prj = project.getProject();
@@ -296,24 +316,66 @@ public class PDOMManager implements IPDOMManager, IWritableIndexManager, IListen
 				return indexer;
 			}
 
-			if (create) {
-				try {
-					Properties props= IndexerPreferences.getProperties(prj);
-					return createIndexer(project, getIndexerId(project), props, false);
-				} catch (CoreException e) {
-					CCorePlugin.log(e);
-				}
-			}
 			return null;
 		}
 	}
-		
-    private IPDOMIndexer createIndexer(ICProject project, String indexerId, Properties props, boolean forceReindex) throws CoreException  {
-    	assert Thread.holdsLock(fIndexerMutex);
-    	
-    	PDOM pdom= (PDOM) getPDOM(project);
-    	boolean reindex= forceReindex || pdom.versionMismatch() || pdom.isEmpty();
 
+	private void createIndexer(ICProject project, IProgressMonitor pm) {
+		assert !Thread.holdsLock(fProjectToPDOM);
+		IProject prj= project.getProject();
+		try {
+			synchronized (fIndexerMutex) {
+				PDOM pdom= (PDOM) getPDOM(project);
+				Properties props= IndexerPreferences.getProperties(prj);
+				IPDOMIndexer indexer= createIndexer(project, getIndexerId(project), props);
+
+				boolean performImport= false;
+				boolean rebuild= false;
+				if (!IPDOMManager.ID_NO_INDEXER.equals(indexer.getID()) && pdom.isEmpty()) {
+					performImport= true;
+				}
+				else if (pdom.versionMismatch()) {
+					rebuild= true;
+				}
+				
+				if (!performImport) {
+					registerIndexer(project, indexer);
+					if (rebuild) {
+						enqueue(new PDOMRebuildTask(indexer));
+					}
+					return;
+				}
+			}
+					
+			// perform import
+			PDOMImporter importer= new PDOMImporter(project);
+			importer.performImport(pm);
+
+			synchronized (fIndexerMutex) {
+				Properties props= IndexerPreferences.getProperties(prj);
+				IPDOMIndexer indexer= createIndexer(project, getIndexerId(project), props);
+
+				registerIndexer(project, indexer);
+				IPDOMIndexerTask task= null;
+				if (!importer.wasSuccessful()) {
+					task= new PDOMRebuildTask(indexer);
+				}
+				else {
+					ITranslationUnit[] tus= importer.getTranslationUnitsToUpdate();
+					if (tus.length > 0) {
+						task= indexer.createTask(NO_TUS, tus, NO_TUS);
+					}
+				}
+				if (task != null) {
+					enqueue(task);
+				}
+			}
+		} catch (CoreException e) {
+			CCorePlugin.log(e);
+		}
+	}
+		
+    private IPDOMIndexer createIndexer(ICProject project, String indexerId, Properties props) throws CoreException  {
     	IPDOMIndexer indexer = null;
     	// Look up in extension point
     	IExtension indexerExt = Platform.getExtensionRegistry().getExtension(CCorePlugin.INDEXER_UNIQ_ID, indexerId);
@@ -337,18 +399,6 @@ public class PDOMManager implements IPDOMManager, IWritableIndexManager, IListen
     	if (indexer == null) 
     		indexer = new PDOMNullIndexer();
 
-		indexer.setProject(project);
-		registerPreferenceListener(project);
-		project.getProject().setSessionProperty(indexerProperty, indexer);
-
-		if (reindex) {
-			if (forceReindex) {
-				enqueue(new PDOMRebuildTask(indexer));
-			}
-			else {
-				enqueue(new PDOMImportTask(indexer));
-			}
-		}
 		return indexer;
     }
 
@@ -410,8 +460,39 @@ public class PDOMManager implements IPDOMManager, IWritableIndexManager, IListen
     	}
     }
     
-	public void addProject(ICProject project, ICElementDelta delta) {
-		getIndexer(project, true); // if the indexer is new this triggers a rebuild
+	public void addProject(final IProject project) {
+		Job addProject= new Job(Messages.PDOMManager_StartJob_name) {
+			protected IStatus run(IProgressMonitor monitor) {
+				monitor.beginTask("", 100); //$NON-NLS-1$
+				if (project.isOpen()) {
+					ICProject cproject= CoreModel.getDefault().create(project);
+					if (cproject != null) {
+						syncronizeProjectSettings(project, new SubProgressMonitor(monitor, 1));
+						if (getIndexer(cproject) == null) {
+							createIndexer(cproject, new SubProgressMonitor(monitor, 99));
+						}
+					}
+				}
+				return Status.OK_STATUS;
+			}
+
+			private void syncronizeProjectSettings(IProject project, IProgressMonitor monitor) {
+				try {
+					IFolder settings= project.getFolder(".settings");  //$NON-NLS-1$
+					settings.refreshLocal(IResource.DEPTH_INFINITE, monitor);
+				} catch (CoreException e) {
+					CCorePlugin.log(e);
+				}
+				monitor.done();
+			}
+
+			public boolean belongsTo(Object family) {
+				return family == PDOMManager.this;
+			}
+		};
+		addProject.setRule(project); 
+		addProject.setSystem(true);
+		addProject.schedule();
 	}
 
 	private void registerPreferenceListener(ICProject project) {
@@ -433,7 +514,7 @@ public class PDOMManager implements IPDOMManager, IWritableIndexManager, IListen
 	}
 
 	public void changeProject(ICProject project, ICElementDelta delta) throws CoreException {
-		IPDOMIndexer indexer = getIndexer(project, true);
+		IPDOMIndexer indexer = getIndexer(project);
 		if (indexer != null) {
 			PDOMResourceDeltaTask resourceDeltaTask = new PDOMResourceDeltaTask(indexer, delta);
 			if (!resourceDeltaTask.isEmpty()) {
@@ -443,7 +524,7 @@ public class PDOMManager implements IPDOMManager, IWritableIndexManager, IListen
 	}
 	
 	public void removeProject(ICProject project) {
-		IPDOMIndexer indexer= getIndexer(project, false);
+		IPDOMIndexer indexer= getIndexer(project);
 		if (indexer != null) {
 			stopIndexer(indexer);
 		}
@@ -452,7 +533,7 @@ public class PDOMManager implements IPDOMManager, IWritableIndexManager, IListen
 
 	public void deleteProject(ICProject cproject, IResourceDelta delta) {
 		// Project is about to be deleted. Stop all indexing tasks for it
-		IPDOMIndexer indexer = getIndexer(cproject, false);
+		IPDOMIndexer indexer = getIndexer(cproject);
 		if (indexer != null) {
 			stopIndexer(indexer);
 		}
@@ -505,7 +586,7 @@ public class PDOMManager implements IPDOMManager, IWritableIndexManager, IListen
 		assert !Thread.holdsLock(fProjectToPDOM);
 		IPDOMIndexer indexer= null;
 		synchronized (fIndexerMutex) {
-			indexer= getIndexer(project, false);
+			indexer= getIndexer(project);
 		}
 		// don't attempt to hold lock on indexerMutex while cancelling
 		if (indexer != null) {
@@ -513,8 +594,10 @@ public class PDOMManager implements IPDOMManager, IWritableIndexManager, IListen
 		}
 		
 		synchronized(fIndexerMutex) {
-			indexer= getIndexer(project, true);
-			enqueue(new PDOMRebuildTask(indexer));
+			indexer= getIndexer(project);
+			if (indexer != null) {
+				enqueue(new PDOMRebuildTask(indexer));
+			}
 		}
 	}
 
@@ -607,7 +690,36 @@ public class PDOMManager implements IPDOMManager, IWritableIndexManager, IListen
 		}
 	}
 
-	public boolean joinIndexer(int waitMaxMillis, IProgressMonitor monitor) {
+	public boolean joinIndexer(final int waitMaxMillis, final IProgressMonitor monitor) {
+		assert monitor != null;
+		Thread th= new Thread() {
+			public void run() {
+				try {
+					Thread.sleep(waitMaxMillis);
+					monitor.setCanceled(true);
+				}
+				catch (InterruptedException e) {
+				}
+			}
+		};
+		th.setDaemon(true);
+		th.start();
+		try {
+			try {
+				Job.getJobManager().join(this, monitor);
+				assert Job.getJobManager().find(this).length == 0;
+				return true;
+			} catch (OperationCanceledException e1) {
+			} catch (InterruptedException e1) {
+			}
+			return Job.getJobManager().find(this).length == 0;
+		}
+		finally {
+			th.interrupt();
+		}
+	}
+	
+	public boolean joinIndexerOld(int waitMaxMillis, IProgressMonitor monitor) {
 		final int totalTicks = 1000;
 		monitor.beginTask(Messages.PDOMManager_JoinIndexerTask, totalTicks);
 		long limit= System.currentTimeMillis()+waitMaxMillis;
@@ -669,7 +781,7 @@ public class PDOMManager implements IPDOMManager, IWritableIndexManager, IListen
 				remainingSources+= info.getRemainingSources();
 				completedHeaders+= info.fCompletedHeaders;
 				completedSources+= info.fCompletedSources;
-				detail= info.fMonitorDetail;
+				detail= PDOMIndexerJob.sMonitorDetail;
 				totalEstimate+= info.getTimeEstimate();
 			}
 		}
@@ -768,6 +880,43 @@ public class PDOMManager implements IPDOMManager, IWritableIndexManager, IListen
 			throw new CoreException(CCorePlugin.createStatus(ioe.getMessage()));
 		} catch(InterruptedException ie) {
 			throw new CoreException(CCorePlugin.createStatus(ie.getMessage()));
+		}
+	}
+
+	/**
+	 * Resets the pdom for the project with the provided stream. 
+	 * @throws CoreException
+	 * @throws OperationCanceledException in case the thread was interrupted
+	 * @since 4.0
+	 */
+	public void importProjectPDOM(ICProject project, InputStream stream) throws CoreException, IOException {
+		// make a copy of the database
+		String newName= createNewDatabaseName(project);
+		File newFile= fileFromDatabaseName(newName);
+		OutputStream out= new FileOutputStream(newFile);
+		try {
+			byte[] buffer= new byte[2048];
+			int read;
+			while ((read= stream.read(buffer)) >= 0) {
+				out.write(buffer, 0, read);
+			}
+		}
+		finally {
+			out.close();
+		}
+		
+		WritablePDOM pdom= (WritablePDOM) getPDOM(project);
+		try {
+			pdom.acquireWriteLock();
+		} catch (InterruptedException e) {
+			throw new OperationCanceledException();
+		}
+		try {
+			pdom.reloadFromFile(newFile);
+			storeDatabaseName(project.getProject(), newName);
+		}
+		finally {
+			pdom.releaseWriteLock();
 		}
 	}
 }

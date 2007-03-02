@@ -15,9 +15,11 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.IPDOMIndexer;
 import org.eclipse.cdt.core.dom.IPDOMIndexerTask;
 import org.eclipse.cdt.core.dom.IPDOMManager;
+import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICContainer;
 import org.eclipse.cdt.core.model.ICElement;
@@ -36,6 +38,8 @@ public class PDOMResourceDeltaTask implements IPDOMIndexerTask {
 	final private IPDOMIndexerTask fDelegate;
 	final private IndexerProgress fProgress;
 
+	private IIndex fIndex;
+
 	public PDOMResourceDeltaTask(IPDOMIndexer indexer, ICElementDelta delta) throws CoreException {
 		fIndexer= indexer;
 		fProgress= new IndexerProgress();
@@ -44,16 +48,31 @@ public class PDOMResourceDeltaTask implements IPDOMIndexerTask {
 			List a= new ArrayList();
 			List c= new ArrayList();
 			List r= new ArrayList();
-
-			processDelta(delta, a, c, r, new NullProgressMonitor());
-			if (!a.isEmpty() || !c.isEmpty() || !r.isEmpty()) {
-				ITranslationUnit[] aa= (ITranslationUnit[]) a.toArray(new ITranslationUnit[a.size()]);
-				ITranslationUnit[] ca= (ITranslationUnit[]) c.toArray(new ITranslationUnit[c.size()]);
-				ITranslationUnit[] ra= (ITranslationUnit[]) r.toArray(new ITranslationUnit[r.size()]);
-				fDelegate= indexer.createTask(aa, ca, ra);
-			}
-			else {
+			
+			fIndex= CCorePlugin.getIndexManager().getIndex(indexer.getProject());
+			try {
+				fIndex.acquireReadLock();
+			} catch (InterruptedException e) {
 				fDelegate= null;
+				return;
+			}
+			try {
+				processDelta(delta, a, c, r, new NullProgressMonitor());
+				if (!a.isEmpty() || !c.isEmpty() || !r.isEmpty()) {
+					ITranslationUnit[] aa= (ITranslationUnit[]) a.toArray(new ITranslationUnit[a.size()]);
+					ITranslationUnit[] ca= (ITranslationUnit[]) c.toArray(new ITranslationUnit[c.size()]);
+					ITranslationUnit[] ra= (ITranslationUnit[]) r.toArray(new ITranslationUnit[r.size()]);
+					fDelegate= indexer.createTask(aa, ca, ra);
+					if (fDelegate instanceof PDOMIndexerTask) {
+						((PDOMIndexerTask) fDelegate).setCheckTimestamps(true);
+					}
+				}
+				else {
+					fDelegate= null;
+				}
+			}
+			finally {
+				fIndex.releaseReadLock();
 			}
 		}
 		else {

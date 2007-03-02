@@ -9,7 +9,7 @@
  *    Markus Schorn - initial API and implementation
  *******************************************************************************/ 
 
-package org.eclipse.cdt.internal.core.pdom.indexer;
+package org.eclipse.cdt.internal.core.pdom;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -17,7 +17,6 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.cdt.core.dom.IPDOMIndexerTask;
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorIncludeStatement;
@@ -29,20 +28,18 @@ import org.eclipse.cdt.core.index.IIndexFile;
 import org.eclipse.cdt.core.index.IIndexFileLocation;
 import org.eclipse.cdt.internal.core.index.IIndexFragmentFile;
 import org.eclipse.cdt.internal.core.index.IWritableIndex;
-import org.eclipse.cdt.internal.core.pdom.IndexerProgress;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMASTAdapter;
+import org.eclipse.cdt.internal.core.pdom.indexer.IndexerASTVisitor;
+import org.eclipse.cdt.internal.core.pdom.indexer.IndexerStatistics;
 import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.Platform;
 
 /**
  * Abstract class to write information from AST 
  * @since 4.0
  */
 abstract public class PDOMWriter {
-	private static final String TRUE = "true"; //$NON-NLS-1$
-	
 	protected boolean fShowActivity;
 	protected boolean fShowProblems;
 	protected IndexerStatistics fStatistics;
@@ -50,22 +47,17 @@ abstract public class PDOMWriter {
 	private IndexerProgress fInfo= new IndexerProgress();
 
 	public PDOMWriter() {
-		fShowActivity= checkDebugOption(IPDOMIndexerTask.TRACE_ACTIVITY, TRUE);  
-		fShowProblems= checkDebugOption(IPDOMIndexerTask.TRACE_PROBLEMS, TRUE);  
 		fStatistics= new IndexerStatistics();
 	}
 	
-	/**
-	 * Checks whether a given debug option is enabled. See {@link IPDOMIndexerTask}
-	 * for valid values.
-	 * @since 4.0
-	 */
-	protected boolean checkDebugOption(String option, String value) {
-		String trace= Platform.getDebugOption(option); 
-		boolean internallyActivated= Boolean.getBoolean(option);
-		return internallyActivated || (trace != null && trace.equalsIgnoreCase(value));
+	public void setShowActivity(boolean val) {
+		fShowActivity= val;
 	}
-
+	
+	public void setShowProblems(boolean val) {
+		fShowProblems= val;
+	}
+	
 	/**
 	 * Called to check whether a translation unit still needs to be updated.
 	 * @see #addSymbols(IASTTranslationUnit, IWritableIndex, int, IProgressMonitor)
@@ -299,16 +291,6 @@ abstract public class PDOMWriter {
 			fInfo.fCompletedHeaders+= completedHeaders;
 			fInfo.fCompletedSources+= completedSources;
 			fInfo.fTotalSourcesEstimate+= totalEstimate;
-		}
-	}
-
-	/**
-	 * Updates the current monitor detail.
-	 * @since 4.0
-	 */
-	protected void setMonitorDetail(String detail) {
-		synchronized(fInfo) {
-			fInfo.fMonitorDetail= detail;
 		}
 	}
 }

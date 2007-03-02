@@ -113,7 +113,7 @@ class PDOMFullIndexerTask extends PDOMIndexerTask {
 		filePathsToParse= new HashMap/*<IIndexFileLocation, Object>*/();
 		for (Iterator iter = sources.iterator(); iter.hasNext();) {
 			ITranslationUnit tu = (ITranslationUnit) iter.next();
-			filePathsToParse.put(getIndexFileLocation(tu), REQUIRED);
+			filePathsToParse.put(IndexLocationFactory.getIFL(tu), REQUIRED);
 		}
 	}
 

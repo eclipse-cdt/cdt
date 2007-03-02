@@ -28,8 +28,8 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.osgi.util.NLS;
 
 public class PDOMRebuildTask implements IPDOMIndexerTask {
-	private static final String TRUE= String.valueOf(true);
-	private static final ITranslationUnit[] NO_TUS = new ITranslationUnit[0];
+	protected static final String TRUE= String.valueOf(true);
+	protected static final ITranslationUnit[] NO_TUS = new ITranslationUnit[0];
 	
 	private final IPDOMIndexer fIndexer;
 	private final IndexerProgress fProgress;
@@ -37,13 +37,12 @@ public class PDOMRebuildTask implements IPDOMIndexerTask {
 
 	public PDOMRebuildTask(IPDOMIndexer indexer) {
 		fIndexer= indexer;
-		fProgress= createProgress(indexer.getProject().getElementName());
+		fProgress= createProgress();
 	}
 
-	private IndexerProgress createProgress(String prjName) {
+	private IndexerProgress createProgress() {
 		IndexerProgress progress= new IndexerProgress();
 		progress.fTimeEstimate= 1000;
-		progress.fMonitorDetail= NLS.bind(Messages.PDOMIndexerTask_collectingFilesTask, prjName);
 		return progress;
 	}
 
@@ -52,6 +51,9 @@ public class PDOMRebuildTask implements IPDOMIndexerTask {
 	}
 
 	public void run(IProgressMonitor monitor) {
+		monitor.subTask(NLS.bind(Messages.PDOMIndexerTask_collectingFilesTask, 
+				fIndexer.getProject().getElementName()));
+
 		ICProject project= fIndexer.getProject();
 		if (project.getProject().isOpen()) {
 			try {

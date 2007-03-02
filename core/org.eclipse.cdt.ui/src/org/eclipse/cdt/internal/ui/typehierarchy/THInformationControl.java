@@ -19,6 +19,7 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
@@ -41,6 +42,7 @@ public class THInformationControl extends AbstractInformationControl implements 
 	private THHierarchyModel fModel;
 	private THLabelProvider fHierarchyLabelProvider;
 	private TreeViewer fHierarchyTreeViewer;
+	private boolean fDisposed= false;
 
 	public THInformationControl(Shell parent, int shellStyle, int treeStyle) {
 		super(parent, shellStyle, treeStyle, ICEditorActionDefinitionIds.OPEN_QUICK_TYPE_HIERARCHY, true);
@@ -127,20 +129,27 @@ public class THInformationControl extends AbstractInformationControl implements 
 		return null;
 	}
 
+	public void widgetDisposed(DisposeEvent event) {
+		fDisposed= true;
+		super.widgetDisposed(event);
+	}
+
 	public void onEvent(int event) {
-		switch (event) {
-		case THHierarchyModel.END_OF_COMPUTATION:
-			if (fModel.hasTrivialHierarchy()) {
-				fHierarchyLabelProvider.setHideNonImplementers(false);
-			}
-			fHierarchyTreeViewer.refresh();
-			THNode selection= fModel.getSelectionInHierarchy();
-			if (selection != null) {
-				fHierarchyTreeViewer.setSelection(new StructuredSelection(selection));
-				fHierarchyTreeViewer.expandToLevel(selection, 1);
-			}
-			break;
-		}		
+		if (!fDisposed) {
+			switch (event) {
+			case THHierarchyModel.END_OF_COMPUTATION:
+				if (fModel.hasTrivialHierarchy()) {
+					fHierarchyLabelProvider.setHideNonImplementers(false);
+				}
+				fHierarchyTreeViewer.refresh();
+				THNode selection= fModel.getSelectionInHierarchy();
+				if (selection != null) {
+					fHierarchyTreeViewer.setSelection(new StructuredSelection(selection));
+					fHierarchyTreeViewer.expandToLevel(selection, 1);
+				}
+				break;
+			}		
+		}
 	}
 
 	public void setMessage(String msg) {

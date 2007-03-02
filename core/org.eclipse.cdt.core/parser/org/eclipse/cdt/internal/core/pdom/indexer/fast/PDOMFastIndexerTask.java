@@ -112,7 +112,7 @@ class PDOMFastIndexerTask extends PDOMIndexerTask {
 	private void registerTUsInReaderFactory(Collection files) throws CoreException {
 		for (Iterator iter = files.iterator(); iter.hasNext();) {
 			ITranslationUnit tu = (ITranslationUnit) iter.next();
-			IIndexFileLocation location = getIndexFileLocation(tu);
+			IIndexFileLocation location = IndexLocationFactory.getIFL(tu);
 			FileInfo info= fCodeReaderFactory.createFileInfo(location);
 			info.setRequested(true);
 		}

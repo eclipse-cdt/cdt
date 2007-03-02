@@ -14,9 +14,11 @@ package org.eclipse.cdt.internal.core.pdom;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.IPDOMIndexer;
 import org.eclipse.cdt.core.dom.IPDOMIndexerTask;
+import org.eclipse.cdt.internal.core.pdom.indexer.PDOMIndexerTask;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 
@@ -27,17 +29,19 @@ import org.eclipse.core.runtime.jobs.Job;
 public class PDOMIndexerJob extends Job {
 	private static final int PROGRESS_UPDATE_INTERVAL = 500;
 	private static final int TOTAL_MONITOR_WORK = 1000;
+	static volatile String sMonitorDetail= null;
 	
 	private final PDOMManager pdomManager;
 	private IPDOMIndexerTask currentTask;
 	private boolean cancelledByManager= false;
 	private Object taskMutex = new Object();
-	
 	private IProgressMonitor fMonitor;
-
+	private final boolean fShowActivity;
+	
 	public PDOMIndexerJob(PDOMManager manager) {
 		super(CCorePlugin.getResourceString("pdom.indexer.name")); //$NON-NLS-1$
 		this.pdomManager = manager;
+		fShowActivity= PDOMIndexerTask.checkDebugOption(IPDOMIndexerTask.TRACE_ACTIVITY, "true"); //$NON-NLS-1$
 		setPriority(Job.LONG);
 	}
 
@@ -47,15 +51,18 @@ public class PDOMIndexerJob extends Job {
 		monitor.beginTask(taskName, TOTAL_MONITOR_WORK);
 		Job monitorJob= startMonitorJob(monitor);
 		try {
+			IProgressMonitor npm= new NullProgressMonitor() {
+				public boolean isCanceled() {
+					return fMonitor.isCanceled();
+				}
+				public void setCanceled(boolean cancelled) {
+					fMonitor.setCanceled(cancelled);
+				}
+				public void subTask(String name) {
+					sMonitorDetail= name;
+				}
+			};
 			do {
-				IProgressMonitor npm= new NullProgressMonitor() {
-					public boolean isCanceled() {
-						return fMonitor.isCanceled();
-					}
-					public void setCanceled(boolean cancelled) {
-						fMonitor.setCanceled(cancelled);
-					}
-				};
 				synchronized(taskMutex) {
 					currentTask= null;
 					taskMutex.notify();
@@ -71,7 +78,22 @@ public class PDOMIndexerJob extends Job {
 				}
 
 				if (currentTask != null) {
-					currentTask.run(npm);
+					try {
+						String name= null;
+						long time= 0;
+						if (fShowActivity) {
+							name= getClassName(currentTask);
+							time= -System.currentTimeMillis();
+							System.out.println("Indexer: start " + name); //$NON-NLS-1$
+						}
+						currentTask.run(npm);
+						if (fShowActivity) {
+							time += System.currentTimeMillis();
+							System.out.println("Indexer: completed " + name + "[" + time + "ms]"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+						}
+					}
+					catch (OperationCanceledException e) {
+					}
 				}
 			}
 			while (currentTask != null);
@@ -99,6 +121,12 @@ public class PDOMIndexerJob extends Job {
 			monitorJob.cancel();
 			monitor.done();
 		}
+	}
+
+	private String getClassName(Object obj) {
+		String name= obj.getClass().getName();
+		name= name.substring(name.lastIndexOf('.')+1);
+		return name;
 	}
 		
 	private Job startMonitorJob(final IProgressMonitor targetMonitor) {
@@ -135,5 +163,9 @@ public class PDOMIndexerJob extends Job {
 				}
 			}
 		}
+	}
+	
+	public boolean belongsTo(Object family) {
+		return family == pdomManager;
 	}
 }

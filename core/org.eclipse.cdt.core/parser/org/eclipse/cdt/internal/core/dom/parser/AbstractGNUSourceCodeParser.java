@@ -60,6 +60,8 @@ import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier.IASTEnumerator;
 import org.eclipse.cdt.core.dom.ast.gnu.IGNUASTCompoundStatementExpression;
 import org.eclipse.cdt.core.dom.ast.gnu.IGNUASTTypeIdExpression;
 import org.eclipse.cdt.core.dom.ast.gnu.IGNUASTUnaryExpression;
+import org.eclipse.cdt.core.dom.parser.IBuiltinBindingsProvider;
+import org.eclipse.cdt.core.dom.parser.ISourceCodeParser;
 import org.eclipse.cdt.core.parser.AbstractParserLogService;
 import org.eclipse.cdt.core.parser.EndOfFileException;
 import org.eclipse.cdt.core.parser.IGCCToken;
@@ -89,18 +91,19 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
 
     protected final boolean supportKnRC;
 
-    protected final boolean supportGCCOtherBuiltinSymbols;
-    
     protected final boolean supportAttributeSpecifiers;
     
     protected final boolean supportDeclspecSpecifiers;
+
+	protected final IBuiltinBindingsProvider builtinBindingsProvider;
 
     protected AbstractGNUSourceCodeParser(IScanner scanner,
             IParserLogService logService, ParserMode parserMode,
             boolean supportStatementsInExpressions,
             boolean supportTypeOfUnaries, boolean supportAlignOfUnaries,
-            boolean supportKnRC, boolean supportGCCOtherBuiltinSymbols,
-    		boolean supportAttributeSpecifiers, boolean supportDeclspecSpecifiers) {
+            boolean supportKnRC, boolean supportAttributeSpecifiers,
+    		boolean supportDeclspecSpecifiers, 
+    		IBuiltinBindingsProvider builtinBindingsProvider) {
         this.scanner = scanner;
         this.log = wrapLogService(logService);
         this.mode = parserMode;
@@ -108,9 +111,9 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
         this.supportTypeOfUnaries = supportTypeOfUnaries;
         this.supportAlignOfUnaries = supportAlignOfUnaries;
         this.supportKnRC = supportKnRC;
-        this.supportGCCOtherBuiltinSymbols = supportGCCOtherBuiltinSymbols;
         this.supportAttributeSpecifiers = supportAttributeSpecifiers;
         this.supportDeclspecSpecifiers = supportDeclspecSpecifiers;
+        this.builtinBindingsProvider= builtinBindingsProvider;
     }
 
 	protected boolean parsePassed = true;
@@ -2303,7 +2306,36 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
     		}
     	}
     }    
-    
+
+    /**
+	 * Hook method to support (skip) additional declspec modifiers.
+	 * @throws BacktrackException
+     * @throws EndOfFileException 
+	 */
+	protected void handleOtherDeclSpecModifier() throws BacktrackException, EndOfFileException {
+		// default action: consume keyword plus optional parenthesised "something"
+		consume();
+
+		IToken token = LA(1);
+
+		if (token.getType() == IToken.tLPAREN) {
+			consume();
+			int openParen= 1;
+			while(true) {
+				token = LA(1);
+				consume();
+				if (token.getType() == IToken.tLPAREN) {
+					++openParen;
+				} else if (token.getType() == IToken.tRPAREN) {
+					--openParen;
+					if (openParen == 0) {
+						break;
+					}
+				}
+			}
+		}
+	}
+
     /**
      * In case a cast expression is followed by +/- or & we should avoid it:
      * (a)+1 vs. (int)+1;

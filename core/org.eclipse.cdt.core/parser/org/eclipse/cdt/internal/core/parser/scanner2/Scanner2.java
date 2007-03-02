@@ -14,6 +14,7 @@ package org.eclipse.cdt.internal.core.parser.scanner2;
 import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.cdt.core.dom.parser.IScannerExtensionConfiguration;
 import org.eclipse.cdt.core.parser.CodeReader;
 import org.eclipse.cdt.core.parser.IParserLogService;
 import org.eclipse.cdt.core.parser.IProblem;

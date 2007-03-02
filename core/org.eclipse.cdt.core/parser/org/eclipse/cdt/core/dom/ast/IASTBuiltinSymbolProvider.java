@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005 IBM Corporation and others.
+ * Copyright (c) 2005, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  * IBM - Initial API and implementation
+ * Anton Leherbauer (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.ast;
 
@@ -15,6 +16,8 @@ package org.eclipse.cdt.core.dom.ast;
  * provided by a Built-in Symbol Provider that implements this interface.
  * 
  * @author dsteffle
+ * 
+ * @deprecated Use {@link org.eclipse.cdt.core.dom.parser.IBuiltinBindingsProvider} instead
  */
 public interface IASTBuiltinSymbolProvider {
 	

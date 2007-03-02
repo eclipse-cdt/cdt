@@ -134,6 +134,8 @@ import org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPASTExplicitTemplateInstantiation
 import org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPASTPointer;
 import org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPASTPointerToMember;
 import org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPASTSimpleDeclSpecifier;
+import org.eclipse.cdt.core.dom.parser.IExtensionToken;
+import org.eclipse.cdt.core.dom.parser.cpp.ICPPParserExtensionConfiguration;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.parser.EndOfFileException;
 import org.eclipse.cdt.core.parser.IGCCToken;
@@ -142,14 +144,12 @@ import org.eclipse.cdt.core.parser.IScanner;
 import org.eclipse.cdt.core.parser.IToken;
 import org.eclipse.cdt.core.parser.ITokenDuple;
 import org.eclipse.cdt.core.parser.ParseError;
-import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.ParserMode;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.internal.core.dom.parser.ASTInternal;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.AbstractGNUSourceCodeParser;
 import org.eclipse.cdt.internal.core.dom.parser.BacktrackException;
-import org.eclipse.cdt.internal.core.dom.parser.GCCBuiltinSymbolProvider;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguousDeclaration;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguousExpression;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguousStatement;
@@ -1993,11 +1993,14 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
     public GNUCPPSourceParser(IScanner scanner, ParserMode mode,
             IParserLogService log, ICPPParserExtensionConfiguration config,
             IIndex index) {
-        super(scanner, log, mode, config.supportStatementsInExpressions(),
-                config.supportTypeofUnaryExpressions(), config
-                        .supportAlignOfUnaryExpression(), config.supportKnRC(),
-                config.supportGCCOtherBuiltinSymbols(), config.supportAttributeSpecifiers(),
-                config.supportDeclspecSpecifiers());
+        super(scanner, log, mode, 
+        		config.supportStatementsInExpressions(),
+                config.supportTypeofUnaryExpressions(), 
+                config.supportAlignOfUnaryExpression(), 
+                config.supportKnRC(),
+                config.supportAttributeSpecifiers(), 
+                config.supportDeclspecSpecifiers(),
+                config.getBuiltinBindingsProvider());
         allowCPPRestrict = config.allowRestrictPointerOperators();
         supportExtendedTemplateSyntax = config.supportExtendedTemplateSyntax();
         supportMinAndMaxOperators = config.supportMinAndMaxOperators();
@@ -3504,7 +3507,11 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
             	break;
             	
             default:
-                if (supportTypeOfUnaries && LT(1) == IGCCToken.t_typeof) {
+            	if (LT(1) >= IExtensionToken.t__otherDeclSpecModifierFirst && LT(1) <= IExtensionToken.t__otherDeclSpecModifierLast) {
+            		handleOtherDeclSpecModifier();
+            		break;
+            	}
+            	if (supportTypeOfUnaries && LT(1) == IGCCToken.t_typeof) {
                     typeofExpression = unaryTypeofExpression();
                     if (typeofExpression != null) {
                         flags.setEncounteredTypename(true);
@@ -4674,16 +4681,15 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
             translationUnit.setIndex(index);
 
             // add built-in names to the scope
-            if (supportGCCOtherBuiltinSymbols) {
-                IScope tuScope = translationUnit.getScope();
-
-                IBinding[] bindings = new GCCBuiltinSymbolProvider(
-                        translationUnit.getScope(), ParserLanguage.CPP)
-                        .getBuiltinBindings();
-                for (int i = 0; i < bindings.length; i++) {
-                	ASTInternal.addBinding(tuScope, bindings[i]);
-                }
-            }
+			// add built-in names to the scope
+			if (builtinBindingsProvider != null) {
+				IScope tuScope = translationUnit.getScope();
+				
+				IBinding[] bindings = builtinBindingsProvider.getBuiltinBindings(tuScope);
+				for(int i=0; i<bindings.length; i++) {
+					ASTInternal.addBinding(tuScope, bindings[i]);
+				}
+			}
         } catch (Exception e2) {
             logException("translationUnit::createCompilationUnit()", e2); //$NON-NLS-1$
             return;

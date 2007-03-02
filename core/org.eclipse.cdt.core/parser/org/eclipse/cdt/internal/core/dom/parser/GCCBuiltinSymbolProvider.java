@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 IBM Corporation and others.
+ * Copyright (c) 2005, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,12 +8,12 @@
  * Contributors:
  * IBM - Initial API and implementation
  * Markus Schorn (Wind River Systems)
+ * Anton Leherbauer (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser;
 
 import org.eclipse.cdt.core.dom.ILinkage;
 import org.eclipse.cdt.core.dom.ast.ASTNodeProperty;
-import org.eclipse.cdt.core.dom.ast.IASTBuiltinSymbolProvider;
 import org.eclipse.cdt.core.dom.ast.IBasicType;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IFunctionType;
@@ -22,6 +22,7 @@ import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBasicType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPParameter;
+import org.eclipse.cdt.core.dom.parser.IBuiltinBindingsProvider;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.internal.core.dom.Linkage;
@@ -42,12 +43,12 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.GPPPointerType;
 import org.eclipse.core.runtime.PlatformObject;
 
 /**
- * This is the IASTBuiltinSymbolProvider used to implement the "Other" built-in GCC symbols defined:
+ * This is the IBuiltinBindingsProvider used to implement the "Other" built-in GCC symbols defined:
  * http://gcc.gnu.org/onlinedocs/gcc/Other-Builtins.html#Other-Builtins
  * 
  * @author dsteffle
  */
-public class GCCBuiltinSymbolProvider implements IASTBuiltinSymbolProvider {
+public class GCCBuiltinSymbolProvider implements IBuiltinBindingsProvider {
 	/**
 	 * <code>BUILTIN_GCC_SYMBOL</code> is a built-in GCC symbol.
 	 */
@@ -290,12 +291,11 @@ public class GCCBuiltinSymbolProvider implements IASTBuiltinSymbolProvider {
 	private IBinding[] bindings=new IBinding[NUM_OTHER_GCC_BUILTINS];
 	private IScope scope=null;
 	private ParserLanguage lang=null;
-	public GCCBuiltinSymbolProvider(IScope scope, ParserLanguage lang) {
-		this.scope = scope;
+	public GCCBuiltinSymbolProvider(ParserLanguage lang) {
 		this.lang = lang;
 	}
 	
-	public void initialize() {
+	private void initialize() {
 		__builtin_va_list();
 		__builtin_expect();
         __builtin_prefetch();
@@ -913,7 +913,7 @@ public class GCCBuiltinSymbolProvider implements IASTBuiltinSymbolProvider {
 		bindings = (IBinding[])ArrayUtil.append(IBinding.class, bindings, temp);
 	}
     
-    public void __builtin_exit() {
+    private void __builtin_exit() {
         // void __builtin_abort(void)
         IBinding temp = null;
         if (lang == ParserLanguage.C) {
@@ -2148,7 +2148,7 @@ public class GCCBuiltinSymbolProvider implements IASTBuiltinSymbolProvider {
         bindings = (IBinding[])ArrayUtil.append(IBinding.class, bindings, temp);
     }
     
-    public void __builtin_less_greater() {
+    private void __builtin_less_greater() {
         IBinding temp = null;
         // int __builtin_isgreater(real-floating, real-floating)
         if (lang == ParserLanguage.C) {
@@ -2294,7 +2294,8 @@ public class GCCBuiltinSymbolProvider implements IASTBuiltinSymbolProvider {
         bindings = (IBinding[])ArrayUtil.append(IBinding.class, bindings, temp);
     }
     
-	public IBinding[] getBuiltinBindings() {
+	public IBinding[] getBuiltinBindings(IScope scope) {
+		this.scope= scope;
 		initialize();
 		return (IBinding[])ArrayUtil.trim(IBinding.class, bindings);
 	}

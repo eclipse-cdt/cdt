@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2005 IBM Corporation and others.
+ * Copyright (c) 2004, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,15 +7,21 @@
  *
  * Contributors:
  * IBM - Initial API and implementation
+ * Anton Leherbauer (Wind River Systems)
  *******************************************************************************/
-package org.eclipse.cdt.internal.core.parser.scanner2;
+package org.eclipse.cdt.core.dom.parser;
 
+import org.eclipse.cdt.core.parser.IPreprocessorDirective;
+import org.eclipse.cdt.core.parser.Keywords;
+import org.eclipse.cdt.core.parser.util.CharArrayIntMap;
 import org.eclipse.cdt.core.parser.util.CharArrayObjectMap;
+import org.eclipse.cdt.internal.core.parser.scanner2.FunctionStyleMacro;
+import org.eclipse.cdt.internal.core.parser.scanner2.ObjectStyleMacro;
 
 /**
  * @author jcamelon
  */
-public abstract class GNUScannerExtensionConfiguration implements IScannerExtensionConfiguration {
+public abstract class GNUScannerExtensionConfiguration extends AbstractScannerExtensionConfiguration {
 
     protected static final char[] emptyCharArray = "".toCharArray(); //$NON-NLS-1$
 
@@ -105,4 +111,18 @@ public abstract class GNUScannerExtensionConfiguration implements IScannerExtens
         return realDefinitions;
     }
     
+    /*
+     * @see org.eclipse.cdt.internal.core.parser.scanner2.IScannerExtensionConfiguration#getAdditionalPreprocessorKeywords()
+     */
+    public CharArrayIntMap getAdditionalPreprocessorKeywords() {
+    	CharArrayIntMap additionalPPKeywords= new CharArrayIntMap(8, IPreprocessorDirective.ppInvalid);
+        additionalPPKeywords.put(Keywords.cINCLUDE_NEXT, IPreprocessorDirective.ppInclude_next); 
+        additionalPPKeywords.put(Keywords.cIMPORT, IPreprocessorDirective.ppImport);
+        additionalPPKeywords.put(Keywords.cWARNING, IPreprocessorDirective.ppWarning);
+        additionalPPKeywords.put(Keywords.cIDENT, IPreprocessorDirective.ppIgnore);
+        additionalPPKeywords.put(Keywords.cSCCS, IPreprocessorDirective.ppIgnore);
+        additionalPPKeywords.put(Keywords.cASSERT, IPreprocessorDirective.ppIgnore);
+        additionalPPKeywords.put(Keywords.cUNASSERT, IPreprocessorDirective.ppIgnore);
+    	return additionalPPKeywords;
+    }
 }

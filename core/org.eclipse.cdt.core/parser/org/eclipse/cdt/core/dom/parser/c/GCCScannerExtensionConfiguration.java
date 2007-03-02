@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2005 IBM Corporation and others.
+ * Copyright (c) 2004, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,18 +9,21 @@
  * IBM - Initial API and implementation
  * Ed Swartz (Nokia)
  *******************************************************************************/
-package org.eclipse.cdt.internal.core.parser.scanner2;
+package org.eclipse.cdt.core.dom.parser.c;
 
+import org.eclipse.cdt.core.dom.parser.GNUScannerExtensionConfiguration;
 import org.eclipse.cdt.core.parser.GCCKeywords;
 import org.eclipse.cdt.core.parser.IGCCToken;
 import org.eclipse.cdt.core.parser.util.CharArrayIntMap;
 import org.eclipse.cdt.core.parser.util.CharArrayObjectMap;
-import org.eclipse.cdt.internal.core.parser.scanner2.BaseScanner.ExpressionEvaluator;
+import org.eclipse.cdt.internal.core.parser.scanner2.DynamicFunctionStyleMacro;
+import org.eclipse.cdt.internal.core.parser.scanner2.ExpressionEvaluator;
+import org.eclipse.cdt.internal.core.parser.scanner2.FunctionStyleMacro;
 
 /**
  * @author jcamelon
  */
-public class GCCScannerExtensionConfiguration extends GNUScannerExtensionConfiguration implements IScannerExtensionConfiguration {
+public class GCCScannerExtensionConfiguration extends GNUScannerExtensionConfiguration {
 
     /* (non-Javadoc)
      * @see org.eclipse.cdt.internal.core.parser.scanner2.IScannerConfiguration#supportMinAndMaxOperators()

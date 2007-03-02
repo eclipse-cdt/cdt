@@ -9,8 +9,10 @@
  * IBM - Initial API and implementation
  * Ed Swartz (Nokia)
  *******************************************************************************/
-package org.eclipse.cdt.internal.core.parser.scanner2;
+package org.eclipse.cdt.core.dom.parser.cpp;
 
+import org.eclipse.cdt.core.dom.parser.GNUScannerExtensionConfiguration;
+import org.eclipse.cdt.core.dom.parser.IScannerExtensionConfiguration;
 import org.eclipse.cdt.core.parser.GCCKeywords;
 import org.eclipse.cdt.core.parser.IGCCToken;
 import org.eclipse.cdt.core.parser.IToken;

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2005 IBM Corporation and others.
+ * Copyright (c) 2004, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -42,6 +42,16 @@ import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.c.CASTVisitor;
 import org.eclipse.cdt.core.dom.ast.c.ICASTTypeIdInitializerExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.CPPASTVisitor;
+import org.eclipse.cdt.core.dom.parser.IScannerExtensionConfiguration;
+import org.eclipse.cdt.core.dom.parser.ISourceCodeParser;
+import org.eclipse.cdt.core.dom.parser.c.ANSICParserExtensionConfiguration;
+import org.eclipse.cdt.core.dom.parser.c.GCCParserExtensionConfiguration;
+import org.eclipse.cdt.core.dom.parser.c.GCCScannerExtensionConfiguration;
+import org.eclipse.cdt.core.dom.parser.c.ICParserExtensionConfiguration;
+import org.eclipse.cdt.core.dom.parser.cpp.ANSICPPParserExtensionConfiguration;
+import org.eclipse.cdt.core.dom.parser.cpp.GPPParserExtensionConfiguration;
+import org.eclipse.cdt.core.dom.parser.cpp.GPPScannerExtensionConfiguration;
+import org.eclipse.cdt.core.dom.parser.cpp.ICPPParserExtensionConfiguration;
 import org.eclipse.cdt.core.parser.CodeReader;
 import org.eclipse.cdt.core.parser.IParserLogService;
 import org.eclipse.cdt.core.parser.IScanner;
@@ -52,23 +62,13 @@ import org.eclipse.cdt.core.parser.ScannerInfo;
 import org.eclipse.cdt.core.testplugin.CTestPlugin;
 import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
 import org.eclipse.cdt.core.testplugin.util.TestSourceReader;
-import org.eclipse.cdt.internal.core.dom.parser.ISourceCodeParser;
-import org.eclipse.cdt.internal.core.dom.parser.c.ANSICParserExtensionConfiguration;
 import org.eclipse.cdt.internal.core.dom.parser.c.CVisitor;
-import org.eclipse.cdt.internal.core.dom.parser.c.GCCParserExtensionConfiguration;
 import org.eclipse.cdt.internal.core.dom.parser.c.GNUCSourceParser;
-import org.eclipse.cdt.internal.core.dom.parser.c.ICParserExtensionConfiguration;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.ANSICPPParserExtensionConfiguration;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPVisitor;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.GNUCPPSourceParser;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.GPPParserExtensionConfiguration;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPParserExtensionConfiguration;
 import org.eclipse.cdt.internal.core.parser.ParserException;
 import org.eclipse.cdt.internal.core.parser.scanner2.DOMScanner;
 import org.eclipse.cdt.internal.core.parser.scanner2.FileCodeReaderFactory;
-import org.eclipse.cdt.internal.core.parser.scanner2.GCCScannerExtensionConfiguration;
-import org.eclipse.cdt.internal.core.parser.scanner2.GPPScannerExtensionConfiguration;
-import org.eclipse.cdt.internal.core.parser.scanner2.IScannerExtensionConfiguration;
 
 /**
  * @author aniefer

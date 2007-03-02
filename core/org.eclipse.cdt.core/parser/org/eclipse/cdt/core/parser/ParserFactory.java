@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2005 IBM Corporation and others.
+ * Copyright (c) 2002, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Set;
 
+import org.eclipse.cdt.core.dom.parser.IScannerExtensionConfiguration;
 import org.eclipse.cdt.core.parser.ast.IASTFactory;
 import org.eclipse.cdt.core.parser.extension.ExtensionDialect;
 import org.eclipse.cdt.core.parser.extension.IParserExtension;
@@ -26,7 +27,6 @@ import org.eclipse.cdt.internal.core.parser.ast.complete.CompleteParseASTFactory
 import org.eclipse.cdt.internal.core.parser.ast.quick.QuickParseASTFactory;
 import org.eclipse.cdt.internal.core.parser.scanner2.GCCOldScannerExtensionConfiguration;
 import org.eclipse.cdt.internal.core.parser.scanner2.GPPOldScannerExtensionConfiguration;
-import org.eclipse.cdt.internal.core.parser.scanner2.IScannerExtensionConfiguration;
 import org.eclipse.cdt.internal.core.parser.scanner2.Scanner2;
 import org.eclipse.cdt.internal.core.parser.token.KeywordSets;
 

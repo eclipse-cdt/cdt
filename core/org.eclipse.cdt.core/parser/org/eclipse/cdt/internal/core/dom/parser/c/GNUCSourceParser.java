@@ -94,6 +94,8 @@ import org.eclipse.cdt.core.dom.ast.gnu.IGNUASTCompoundStatementExpression;
 import org.eclipse.cdt.core.dom.ast.gnu.c.ICASTKnRFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.gnu.c.IGCCASTArrayRangeDesignator;
 import org.eclipse.cdt.core.dom.ast.gnu.c.IGCCASTSimpleDeclSpecifier;
+import org.eclipse.cdt.core.dom.parser.IExtensionToken;
+import org.eclipse.cdt.core.dom.parser.c.ICParserExtensionConfiguration;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.parser.EndOfFileException;
 import org.eclipse.cdt.core.parser.IGCCToken;
@@ -101,7 +103,6 @@ import org.eclipse.cdt.core.parser.IParserLogService;
 import org.eclipse.cdt.core.parser.IScanner;
 import org.eclipse.cdt.core.parser.IToken;
 import org.eclipse.cdt.core.parser.ParseError;
-import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.ParserMode;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
@@ -109,7 +110,6 @@ import org.eclipse.cdt.internal.core.dom.parser.ASTInternal;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.AbstractGNUSourceCodeParser;
 import org.eclipse.cdt.internal.core.dom.parser.BacktrackException;
-import org.eclipse.cdt.internal.core.dom.parser.GCCBuiltinSymbolProvider;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguousExpression;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguousStatement;
 
@@ -143,13 +143,14 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
     public GNUCSourceParser(IScanner scanner, ParserMode parserMode,
             IParserLogService logService, ICParserExtensionConfiguration config,
             IIndex index) {
-        super(scanner, logService, parserMode, config
-                .supportStatementsInExpressions(), config
-                .supportTypeofUnaryExpressions(), config
-                .supportAlignOfUnaryExpression(), config
-                .supportKnRC(), config.supportGCCOtherBuiltinSymbols(),
-                config.supportAttributeSpecifiers(),
-                config.supportDeclspecSpecifiers());
+        super(scanner, logService, parserMode, 
+        		config.supportStatementsInExpressions(), 
+        		config.supportTypeofUnaryExpressions(),
+        		config.supportAlignOfUnaryExpression(),
+        		config.supportKnRC(), 
+        		config.supportAttributeSpecifiers(),
+                config.supportDeclspecSpecifiers(),
+                config.getBuiltinBindingsProvider());
         supportGCCStyleDesignators = config.supportGCCStyleDesignators();
         this.index= index;
     }
@@ -593,10 +594,10 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
             translationUnit.setIndex(index);
 
 			// add built-in names to the scope
-			if (supportGCCOtherBuiltinSymbols) {
+			if (builtinBindingsProvider != null) {
 				IScope tuScope = translationUnit.getScope();
 				
-				IBinding[] bindings = new GCCBuiltinSymbolProvider(translationUnit.getScope(), ParserLanguage.C).getBuiltinBindings();
+				IBinding[] bindings = builtinBindingsProvider.getBuiltinBindings(tuScope);
 				for(int i=0; i<bindings.length; i++) {
 					ASTInternal.addBinding(tuScope, bindings[i]);
 				}
@@ -1598,7 +1599,11 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
             		throwBacktrack(LA(1).getOffset(), LA(1).getLength());
             	break;
             default:
-                if (supportTypeOfUnaries && LT(1) == IGCCToken.t_typeof) {
+            	if (LT(1) >= IExtensionToken.t__otherDeclSpecModifierFirst && LT(1) <= IExtensionToken.t__otherDeclSpecModifierLast) {
+            		handleOtherDeclSpecModifier();
+            		break;
+            	}
+            	if (supportTypeOfUnaries && LT(1) == IGCCToken.t_typeof) {
                     typeofExpression = unaryTypeofExpression();
                     if (typeofExpression != null) {
                         flags.setEncounteredTypename(true);
@@ -1694,7 +1699,7 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
         return declSpec;
     }
 
-    /**
+	/**
      * @return
      */
     protected ICASTSimpleDeclSpecifier createSimpleTypeSpecifier() {

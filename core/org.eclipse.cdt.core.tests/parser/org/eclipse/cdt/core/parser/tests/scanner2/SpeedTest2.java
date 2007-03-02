@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005 IBM Corporation and others.
+ * Copyright (c) 2005, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,6 +17,9 @@ import java.util.Map;
 
 import junit.framework.TestCase;
 
+import org.eclipse.cdt.core.dom.parser.IScannerExtensionConfiguration;
+import org.eclipse.cdt.core.dom.parser.c.GCCScannerExtensionConfiguration;
+import org.eclipse.cdt.core.dom.parser.cpp.GPPScannerExtensionConfiguration;
 import org.eclipse.cdt.core.parser.CodeReader;
 import org.eclipse.cdt.core.parser.IParser;
 import org.eclipse.cdt.core.parser.IParserLogService;
@@ -29,9 +32,6 @@ import org.eclipse.cdt.core.parser.ParserFactoryError;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.ParserMode;
 import org.eclipse.cdt.core.parser.ScannerInfo;
-import org.eclipse.cdt.internal.core.parser.scanner2.GCCScannerExtensionConfiguration;
-import org.eclipse.cdt.internal.core.parser.scanner2.GPPScannerExtensionConfiguration;
-import org.eclipse.cdt.internal.core.parser.scanner2.IScannerExtensionConfiguration;
 import org.eclipse.cdt.internal.core.parser.scanner2.Scanner2;
 
 // A test that just calculates the speed of the parser

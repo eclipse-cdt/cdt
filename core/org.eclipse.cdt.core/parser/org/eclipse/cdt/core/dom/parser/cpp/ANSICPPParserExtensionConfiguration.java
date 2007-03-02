@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005 IBM Corporation and others.
+ * Copyright (c) 2002, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,23 +7,14 @@
  *
  * Contributors:
  * IBM Rational Software - Initial API and implementation
+ * Ed Swartz (Nokia)
+ * Anton Leherbauer (Wind River Systems)
  *******************************************************************************/
-package org.eclipse.cdt.internal.core.dom.parser;
-
-import org.eclipse.cdt.core.dom.ast.ASTCompletionNode;
-import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
+package org.eclipse.cdt.core.dom.parser.cpp;
 
 /**
  * @author jcamelon
  */
-public interface ISourceCodeParser {
+public class ANSICPPParserExtensionConfiguration extends AbstractCPPParserExtensionConfiguration {
 
-    public void cancel();
-
-    public IASTTranslationUnit parse();
-    
-    public boolean encounteredError();
-    
-    public ASTCompletionNode getCompletionNode();
-    
 }

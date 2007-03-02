@@ -211,7 +211,7 @@ public class BuildStepsTab extends AbstractCBuildPropertyTab {
 						s = createList(add[0].getPaths());
 				}
 				preCmd.setText(s);
-				s = Messages.getString("BuildStepsTab.7"); //$NON-NLS-1$
+				s = EMPTY_STR;
 				IOutputType[] tmp2 = tool.getOutputTypes();
 				if (tmp2 != null && tmp2.length > 0) {
 					s = createList(tmp2[0].getOutputNames());

@@ -136,7 +136,7 @@ public abstract class AbstractCPPLanguage extends AbstractLanguage {
 	 * @return an instance of IScanner
 	 */
 	protected IScanner createScanner(CodeReader reader, IScannerInfo scanInfo, ICodeReaderFactory fileCreator, IParserLogService log) {
-		return new DOMScanner(reader, scanInfo, ParserMode.COMPLETE_PARSE, ParserLanguage.C,
+		return new DOMScanner(reader, scanInfo, ParserMode.COMPLETE_PARSE, ParserLanguage.CPP,
 				log, getScannerExtensionConfiguration(), fileCreator);
 	}
 

@@ -323,9 +323,6 @@ public class RSEMainNewConnectionWizard extends Wizard implements INewWizard, IS
 			container.updateTitleBar();
 			container.updateButtons();
 		}
-		
-		// Save the current selection to the dialog settings
-		saveWidgetValues();
 	}
 
 	/* (non-Javadoc)
@@ -371,6 +368,14 @@ public class RSEMainNewConnectionWizard extends Wizard implements INewWizard, IS
 		if (mainPage != null) mainPage.saveWidgetValues();
 		
 		return true;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.wizard.Wizard#doNextPressed()
+	 */
+	protected boolean doNextPressed() {
+		saveWidgetValues();
+		return super.doNextPressed();
 	}
 
 	/**

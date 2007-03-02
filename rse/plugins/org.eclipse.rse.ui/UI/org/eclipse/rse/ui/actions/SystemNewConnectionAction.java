@@ -37,8 +37,6 @@ import org.eclipse.rse.ui.ISystemIconConstants;
 import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemResources;
 import org.eclipse.rse.ui.wizards.newconnection.RSEMainNewConnectionWizard;
-import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Shell;
 
 
@@ -163,38 +161,7 @@ public class SystemNewConnectionAction extends SystemBaseWizardAction {
 	 */
 	protected WizardDialog doCreateWizardDialog(Shell shell, IWizard wizard) {
 		// The new connection action is always using the standard Eclipse WizardDialog!!!
-		WizardDialog dialog = new WizardDialog(getShell(), wizard) {
-			private boolean computeShellSizeFromScratch = true;
-			
-			/* (non-Javadoc)
-			 * @see org.eclipse.jface.window.Window#getConstrainedShellBounds(org.eclipse.swt.graphics.Rectangle)
-			 */
-			protected Rectangle getConstrainedShellBounds(Rectangle preferredSize) {
-				// The parent shell might have very large bounds if badly selected. We
-				// will recalculate the wizard dialogs shell size the first time we end
-				// up here. That asures that the dialog does not inherit shell bounds
-				// from a much larger window.
-				if (computeShellSizeFromScratch) {
-					Point newSize = getInitialSize();
-					Point newLoaction = getInitialLocation(newSize);
-					
-					preferredSize.height = newSize.y;
-					preferredSize.width = newSize.x;
-					preferredSize.y = newLoaction.y;
-					preferredSize.x = newLoaction.x;
-					
-					computeShellSizeFromScratch = false;
-				}
-				
-				Rectangle bounds = super.getConstrainedShellBounds(preferredSize);
-				// We allow to resize the dialog in height, but not in width
-				// to more to 500 pixel.
-				bounds.width = Math.min(bounds.width, 500);
-				return bounds;
-			}
-		};
-
-		return dialog;
+		return new WizardDialog(getShell(), wizard);
 	}
 
 	/**

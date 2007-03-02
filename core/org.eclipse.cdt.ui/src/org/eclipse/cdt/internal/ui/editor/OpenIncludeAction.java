@@ -43,6 +43,8 @@ import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.parser.ExtendedScannerInfo;
+import org.eclipse.cdt.core.parser.IExtendedScannerInfo;
 import org.eclipse.cdt.core.parser.IScannerInfo;
 import org.eclipse.cdt.core.parser.IScannerInfoProvider;
 import org.eclipse.cdt.ui.CUIPlugin;
@@ -95,12 +97,22 @@ public class OpenIncludeAction extends Action {
 						info = provider.getScannerInformation(proj);
 					}
 					if (info != null) {
+						// search in system includes
 						String[] includePaths = info.getIncludePaths();
 						findFile(includePaths, includeName, filesFound);
 					}
 					if (filesFound.size() == 0) {
-						// Fall back and search the project
-						findFile(proj, new Path(includeName), filesFound);
+						// search in local includes
+						if (info != null) {
+							IExtendedScannerInfo scanInfo = new ExtendedScannerInfo(info);
+							String[] localIncludePaths = scanInfo.getLocalIncludePath();
+							findFile(localIncludePaths, includeName, filesFound);
+						}
+						
+						if (filesFound.size() == 0) {
+							// Fall back and search the project
+							findFile(proj, new Path(includeName), filesFound);
+						}
 					}
 				}
 			}

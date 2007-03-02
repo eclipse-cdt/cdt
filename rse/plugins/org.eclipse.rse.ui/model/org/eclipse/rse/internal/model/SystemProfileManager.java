@@ -43,9 +43,11 @@ public class SystemProfileManager implements ISystemProfileManager {
 	private static final String PROFILE_FILE_NAME = "profile"; //$NON-NLS-1$
 
 	/**
-	 * Default constructor
+	 * Ordinarily there should be only one instance of a SystemProfileManager
+	 * created on the system, so the static method {@link #getSystemProfileManager()} is 
+	 * preferred to using this.
 	 */
-	protected SystemProfileManager() {
+	private SystemProfileManager() {
 		super();
 	}
 

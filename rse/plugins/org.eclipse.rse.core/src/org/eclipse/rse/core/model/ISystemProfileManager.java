@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2002, 2006 IBM Corporation. All rights reserved.
+ * Copyright (c) 2002, 2007 IBM Corporation. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -126,8 +126,8 @@ public interface ISystemProfileManager {
 	public boolean isSystemProfileActive(String profileName);
 
 	/**
-	 * @generated This field/method will be replaced during code generation 
-	 * @return The list of Profiles references
+	 * @return The list of profiles known to this manager. This list is generated
+	 * at the point of this call and may thus be manipulated by the caller.
 	 */
 	java.util.List getProfiles();
 

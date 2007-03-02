@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2006 IBM Corporation. All rights reserved.
+ * Copyright (c) 2006, 2007 IBM Corporation. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -1229,14 +1229,6 @@ public class SystemResources extends NLS
 
 	
 	public static String ACTION_COMPILE_NOPROMPT_LABEL;
-
-	// RSE Model Objects 
-	public static String RESID_MODELOBJECTS_FILTERSTRING_DESCRIPTION;
-	public static String RESID_MODELOBJECTS_HOSTPOOL_DESCRIPTION;
-	public static String RESID_MODELOBJECTS_PROFILE_DESCRIPTION;
-	public static String RESID_MODELOBJECTS_SERVERLAUNCHER_DESCRIPTION;
-	public static String RESID_MODELOBJECTS_FILTER_DESCRIPTION;
-	public static String RESID_MODELOBJECTS_FILTERPOOL_DESCRIPTION;
 
 	// Services form
 	public static String RESID_SERVICESFORM_CONFIGURATION_TOOLTIP;

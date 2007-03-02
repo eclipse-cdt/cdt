@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2006 IBM Corporation. All rights reserved.
+ * Copyright (c) 2006, 2007 IBM Corporation. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -27,10 +27,17 @@ public class RSEModelResources extends NLS {
 
 	public static String RESID_MODELOBJECTS_MODELOBJECT_DESCRIPTION;
 	public static String RESID_MODELOBJECTS_REFERENCINGOBJECT_DESCRIPTION;
+	public static String RESID_MODELOBJECTS_FILTERSTRING_DESCRIPTION;
+	public static String RESID_MODELOBJECTS_HOSTPOOL_DESCRIPTION;
+	public static String RESID_MODELOBJECTS_PROFILE_DESCRIPTION;
+	public static String RESID_MODELOBJECTS_SERVERLAUNCHER_DESCRIPTION;
+	public static String RESID_MODELOBJECTS_FILTER_DESCRIPTION;
+	public static String RESID_MODELOBJECTS_FILTERPOOL_DESCRIPTION;
 
 	static {
 		// load message values from bundle file
 		NLS.initializeMessages(BUNDLE_NAME, RSEModelResources.class);
 	}
+
 
 }

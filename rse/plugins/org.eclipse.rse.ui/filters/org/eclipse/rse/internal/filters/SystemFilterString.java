@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2002, 2006 IBM Corporation. All rights reserved.
+ * Copyright (c) 2002, 2007 IBM Corporation. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -24,10 +24,10 @@ import org.eclipse.rse.core.filters.ISystemFilterPoolManager;
 import org.eclipse.rse.core.filters.ISystemFilterPoolManagerProvider;
 import org.eclipse.rse.core.filters.ISystemFilterString;
 import org.eclipse.rse.core.model.RSEModelObject;
+import org.eclipse.rse.core.model.RSEModelResources;
 import org.eclipse.rse.core.references.IRSEBaseReferencingObject;
 import org.eclipse.rse.internal.references.SystemReferencedObjectHelper;
 import org.eclipse.rse.ui.RSEUIPlugin;
-import org.eclipse.rse.ui.SystemResources;
 
 
 /**
@@ -220,7 +220,7 @@ public class SystemFilterString extends RSEModelObject implements ISystemFilterS
 	
 	public String getDescription()
 	{
-		return SystemResources.RESID_MODELOBJECTS_FILTERSTRING_DESCRIPTION;
+		return RSEModelResources.RESID_MODELOBJECTS_FILTERSTRING_DESCRIPTION;
 	}
 	
 	public String getString()

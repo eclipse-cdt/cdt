@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2006 IBM Corporation. All rights reserved.
+ * Copyright (c) 2006, 2007 IBM Corporation. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -22,9 +22,15 @@ import org.eclipse.core.resources.WorkspaceJob;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.persistence.IRSEPersistenceProvider;
 import org.eclipse.rse.persistence.dom.RSEDOM;
 
+/**
+ * The SaveRSEDOMJob is a workspace job that belongs to the family 
+ * {@link RSECorePlugin#getThePersistenceManager()}. It is used to 
+ * same a DOM to the workspace. A DOM corresponds to a profile.
+ */
 public class SaveRSEDOMJob extends WorkspaceJob {
 
 	private RSEDOM _dom;
@@ -49,6 +55,15 @@ public class SaveRSEDOMJob extends WorkspaceJob {
 			}
 		}
 		return result;
+	}
+	
+	public boolean belongsTo(Object family) {
+		Object[] families = new Object[] {RSECorePlugin.getThePersistenceManager()};
+		for (int i = 0; i < families.length; i++) {
+			Object object = families[i];
+			if (family == object) return true;
+		}
+		return super.belongsTo(family);
 	}
 
 }

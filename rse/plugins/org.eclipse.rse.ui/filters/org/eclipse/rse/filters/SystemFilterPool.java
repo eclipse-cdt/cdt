@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2002, 2006 IBM Corporation. All rights reserved.
+ * Copyright (c) 2002, 2007 IBM Corporation. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -32,6 +32,7 @@ import org.eclipse.rse.core.filters.ISystemFilterPoolManager;
 import org.eclipse.rse.core.filters.ISystemFilterPoolManagerProvider;
 import org.eclipse.rse.core.filters.ISystemFilterSavePolicies;
 import org.eclipse.rse.core.filters.SystemFilterNamingPolicy;
+import org.eclipse.rse.core.model.RSEModelResources;
 import org.eclipse.rse.internal.filters.SystemFilter;
 import org.eclipse.rse.internal.filters.SystemFilterContainerCommonMethods;
 import org.eclipse.rse.internal.filters.SystemFilterPoolReference;
@@ -286,8 +287,6 @@ public class SystemFilterPool extends SystemPersistableReferencedObject
 	 * Use this method only if you are not using a SystemFilterPoolManager, else
 	 *  use the createSystemFilterPool method in that class.
 	 * 
-     * @param mofHelpers SystemMOFHelpers object with helper methods for saving and restoring via mof
-     * @param poolFolder the folder that will hold the filter pool.
      *   This folder will be created if it does not already exist.
      * @param name the name of the filter pool. Typically this is also the name
      *   of the given folder, but this is not required. For the save policy of one file
@@ -296,15 +295,6 @@ public class SystemFilterPool extends SystemPersistableReferencedObject
      *   to allow nested filters. 
      * @param isDeletable true if this filter pool is allowed to be deleted by users.
      * @param tryToRestore true to attempt a restore first, false if a pure create operation.
-     * @param savePolicy The save policy for the filter pool and filters. One of the
-     *   following constants from the SystemFilterConstants interface:
-     *   <ul>
-     *     <li>SAVE_POLICY_ONE_FILEANDFOLDER_PER_POOL - one file and folder per pool
-     *     <li>SAVE_POLICY_ONE_FILE_PER_POOL_SAME_FOLDER - one file per pool, all files in one folder
-     *     <li>SAVE_POLICY_ONE_FILE_PER_FILTER - one file per filter, one folder per pool
-     *   </ul> 
-     * @param namingPolicy The names to use for file and folders when persisting to disk. Pass
-     *     null to just use the defaults.
 	 */
 	public ISystemFilterPool createSystemFilterPool(
 	                                                      String name,
@@ -558,7 +548,7 @@ public class SystemFilterPool extends SystemPersistableReferencedObject
 	
 	public String getDescription() 
 	{
-		return SystemResources.RESID_MODELOBJECTS_FILTERPOOL_DESCRIPTION;
+		return RSEModelResources.RESID_MODELOBJECTS_FILTERPOOL_DESCRIPTION;
 	}
 	
 	/**
@@ -860,7 +850,7 @@ public class SystemFilterPool extends SystemPersistableReferencedObject
     /**
      * Duplicates a given filter in the list.
      * @param filter SystemFilter object to clone
-     * @param alias New, unique, alias name to give this filter. Clone will fail if this is not unique.
+     * @param aliasName New, unique, alias name to give this filter. Clone will fail if this is not unique.
      */
     public ISystemFilter cloneSystemFilter(ISystemFilter filter, String aliasName)
     {
@@ -945,8 +935,6 @@ public class SystemFilterPool extends SystemPersistableReferencedObject
      * Restore specific filter pool. You should not call this directly, as it is possible
      *  that certain data is not restored if the save policy is one file per filter. Rather,
      *  you should call the createSystemFilterPoolMethod.
-     * @param mofHelpers SystemMOFHelpers object with helper methods for saving and restoring via mof
-     * @param folder The filter pool folder. 
      * @param name name of pool to restore. Used to deduce file name for save policy of one file per pool.
      * @param savePolicy policy used to save the pool. One of the following from SystemFilterPoolManager:
      * <ul>

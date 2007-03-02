@@ -22,13 +22,13 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.rse.core.IRSEUserIdConstants;
+import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.RSEPreferencesManager;
 import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.model.ISystemHostPool;
 import org.eclipse.rse.core.model.ISystemProfile;
 import org.eclipse.rse.core.model.RSEModelObject;
-import org.eclipse.rse.ui.RSEUIPlugin;
-import org.eclipse.rse.ui.SystemResources;
+import org.eclipse.rse.core.model.RSEModelResources;
 
 
 /**
@@ -67,7 +67,7 @@ public class SystemHostPool extends RSEModelObject implements ISystemHostPool
 	}
 
     // -------------------------------------------------------------------------------------
-    // CONNECTION POOL METHODS...
+    // Host Pool Methods
     // -------------------------------------------------------------------------------------
 	/**
 	 * Return (and create if necessary) the connection pool for a given system profile.
@@ -75,15 +75,12 @@ public class SystemHostPool extends RSEModelObject implements ISystemHostPool
 	public static ISystemHostPool getSystemHostPool(ISystemProfile profile)
 	    throws Exception
 	{
-		//System.out.println("in getSystemConnectionPool for " + profile);
 		if (pools == null)
 		  pools = new Hashtable();
 		SystemHostPool pool = (SystemHostPool)pools.get(profile);
-		//System.out.println("... pool: " + pool);
 		if (pool == null)
 		{
 		  pool = new SystemHostPool();
-			  // FIXME (SystemConnectionPoolImpl)initMOF().createSystemConnectionPool();
 		  pool.setName(profile.getName());
 		  try {
 		    pool.restore(); // restore connections
@@ -392,7 +389,7 @@ public class SystemHostPool extends RSEModelObject implements ISystemHostPool
     	conn.deletingHost(); // let connection do any necessary cleanup
         getHostList().remove(conn);
         setDirty(true);
-        RSEUIPlugin.getThePersistenceManager().commit(conn.getSystemProfile());
+        RSECorePlugin.getThePersistenceManager().commit(conn.getSystemProfile());
     }
 
     /**
@@ -503,7 +500,7 @@ public class SystemHostPool extends RSEModelObject implements ISystemHostPool
 	 */
 	public boolean commit()
 	{
-		return RSEUIPlugin.getThePersistenceManager().commit(this);
+		return RSECorePlugin.getThePersistenceManager().commit(this);
 	}
 	
     /**
@@ -604,7 +601,7 @@ public class SystemHostPool extends RSEModelObject implements ISystemHostPool
 	
 	public String getDescription()
 	{
-		return SystemResources.RESID_MODELOBJECTS_HOSTPOOL_DESCRIPTION;
+		return RSEModelResources.RESID_MODELOBJECTS_HOSTPOOL_DESCRIPTION;
 	}
 
 	/**

@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2006 IBM Corporation. All rights reserved.
+ * Copyright (c) 2006, 2007 IBM Corporation. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -536,12 +536,12 @@ public interface ISystemRegistry extends ISchedulingRule {
 	 * @param systemType system type matching one of the system type names defined via the
 	 *                    systemTypes extension point.
 	 * @param connectionName unique connection name.
-	 * @param hostName ip name of host.
+	 * @param hostAddress ip name of host.
 	 * @param description optional description of the connection. Can be null.
 	 * @return SystemConnection object, or null if it failed to create. This is typically
 	 *   because the connectionName is not unique. Call getLastException() if necessary.
 	 */
-	public IHost createHost(String systemType, String connectionName, String hostName, String description) throws Exception;
+	public IHost createHost(String systemType, String connectionName, String hostAddress, String description) throws Exception;
 	
 	/**
 	 * Creates subsystems for a given host and subsystem configurations.

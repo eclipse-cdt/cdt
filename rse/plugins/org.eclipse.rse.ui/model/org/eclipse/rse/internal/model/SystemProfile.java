@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2002, 2006 IBM Corporation. All rights reserved.
+ * Copyright (c) 2002, 2007 IBM Corporation. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -24,10 +24,11 @@ import org.eclipse.rse.core.filters.ISystemFilterPoolManager;
 import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.model.ISystemProfile;
 import org.eclipse.rse.core.model.ISystemProfileManager;
+import org.eclipse.rse.core.model.ISystemRegistry;
 import org.eclipse.rse.core.model.RSEModelObject;
+import org.eclipse.rse.core.model.RSEModelResources;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
 import org.eclipse.rse.ui.RSEUIPlugin;
-import org.eclipse.rse.ui.SystemResources;
 
 /**
  * A profile contains hosts and filter pools. It is the unit of save/restore for RSE model 
@@ -67,7 +68,7 @@ public class SystemProfile extends RSEModelObject implements ISystemProfile, IAd
     
     /**
      * Convenience method for create a new connection within this profile.
-     * Shortcut for {@link org.eclipse.rse.model.ISystemRegistry#createHost(String,String,String,String)}
+     * Shortcut for {@link ISystemRegistry#createHost(String,String,String,String)}
      */
     public IHost createHost(String systemType, String connectionName, String hostName, String description) throws Exception
     {
@@ -163,7 +164,7 @@ public class SystemProfile extends RSEModelObject implements ISystemProfile, IAd
 	
 	public String getDescription()
 	{
-		return SystemResources.RESID_MODELOBJECTS_PROFILE_DESCRIPTION;
+		return RSEModelResources.RESID_MODELOBJECTS_PROFILE_DESCRIPTION;
 	}
 
 	/**

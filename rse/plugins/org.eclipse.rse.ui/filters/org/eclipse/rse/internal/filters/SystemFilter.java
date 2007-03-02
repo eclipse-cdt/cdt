@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2002, 2006 IBM Corporation. All rights reserved.
+ * Copyright (c) 2002, 2007 IBM Corporation. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -31,11 +31,11 @@ import org.eclipse.rse.core.filters.ISystemFilterPool;
 import org.eclipse.rse.core.filters.ISystemFilterPoolManager;
 import org.eclipse.rse.core.filters.ISystemFilterPoolManagerProvider;
 import org.eclipse.rse.core.filters.ISystemFilterString;
+import org.eclipse.rse.core.model.RSEModelResources;
 import org.eclipse.rse.core.references.IRSEReferencedObject;
 import org.eclipse.rse.filters.SystemFilterSimple;
 import org.eclipse.rse.internal.references.SystemReferencedObject;
 import org.eclipse.rse.ui.RSEUIPlugin;
-import org.eclipse.rse.ui.SystemResources;
 
 
 /**
@@ -555,7 +555,7 @@ public class SystemFilter extends SystemReferencedObject implements ISystemFilte
     /**
      * Duplicates a given filter in the list.
      * @param filter SystemFilter object to clone
-     * @param alias New, unique, alias name to give this filter. Clone will fail if this is not unique.
+     * @param aliasName New, unique, alias name to give this filter. Clone will fail if this is not unique.
      */
     public ISystemFilter cloneSystemFilter(ISystemFilter filter, String aliasName)
     {
@@ -938,7 +938,6 @@ public class SystemFilter extends SystemReferencedObject implements ISystemFilte
 
     /**
      * Restore specific filter. Used when save policy is SAVE_POLICY_ONE_FILE_PER_FILTER
-     * @param mofHelpers helper object with routines for saving/restoring using mof.
      * @param folder the folder containing the saved file.
      * @param name The name of the saved filter. The file name is derived from this.
      * @param parentPool the SystemFilterPool that is the parent of this filter. Will be perpetuated to nested filters.
@@ -1021,7 +1020,7 @@ public class SystemFilter extends SystemReferencedObject implements ISystemFilte
 	
 	public String getDescription()
 	{
-		return SystemResources.RESID_MODELOBJECTS_FILTER_DESCRIPTION;
+		return RSEModelResources.RESID_MODELOBJECTS_FILTER_DESCRIPTION;
 	}
 
 	/**

@@ -51,11 +51,7 @@ import org.eclipse.ui.XMLMemento;
  * An internal class. Clients must not instantiate or subclass it.
  */
 
-public class SystemFileTransferModeRegistry  
-	implements ISystemFileTransferModeRegistry, IPropertyListener {
-
-
-
+public class SystemFileTransferModeRegistry implements ISystemFileTransferModeRegistry, IPropertyListener {
 
 	private static SystemFileTransferModeRegistry instance;
 	
@@ -312,20 +308,29 @@ public class SystemFileTransferModeRegistry
 		//DY int extIndex = fileName.indexOf('.');
 		int extIndex = fileName.lastIndexOf('.');
 
+		String name = null;
+		String extension = null;
 		
 		// if there is no extension
 		if ((extIndex == -1) || (extIndex == (fileName.length() - 1))) {
-			return null;
+			name = fileName;
+		}
+		else {
+			name = fileName.substring(0, extIndex);
+			extension = fileName.substring(extIndex + 1);
+		}		
+		
+		// check if the name and extension combination exists already
+		SystemFileTransferModeMapping mapping = (SystemFileTransferModeMapping)(typeModeMappings.get(getMappingKey(new SystemFileTransferModeMapping(name, extension))));
+		
+		// if not, check only for the extension
+		if (mapping == null) {
+			mapping = (SystemFileTransferModeMapping)(typeModeMappings.get(getMappingKey(new SystemFileTransferModeMapping(extension))));
 		}
 		
-		
-		String name = fileName.substring(0, extIndex);
-		String extension = fileName.substring(extIndex + 1);		
-		
-		SystemFileTransferModeMapping mapping = (SystemFileTransferModeMapping)(typeModeMappings.get(getMappingKey(new SystemFileTransferModeMapping(extension))));
-		
-		if (mapping == null)
+		if (mapping == null) {
 			return null;
+		}
 			
 		
 		SystemFileTransferModeMapping fileMapping = new SystemFileTransferModeMapping(name, extension);

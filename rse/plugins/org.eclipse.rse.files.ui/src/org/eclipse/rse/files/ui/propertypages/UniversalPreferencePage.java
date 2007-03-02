@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2002, 2006 IBM Corporation. All rights reserved.
+ * Copyright (c) 2002, 2007 IBM Corporation. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -602,9 +602,8 @@ public class UniversalPreferencePage
 			String name = dialog.getName();
 			String extension = dialog.getExtension();
 			
-			if (extension.length() > 0) {
-				addResourceType(name, extension);
-			}
+			// add the resource type
+			addResourceType(name, extension);
 		}
 	}
 	
@@ -632,19 +631,10 @@ public class UniversalPreferencePage
 	 * This is typically called after the extension dialog is shown to the user.
 	 */
 	public void addResourceType(String newName, String newExtension) {
-	
-		// no extension is provided
-		if (newExtension == null || newExtension.length() < 1) {
-// Note by DWD - this path is never taken because the dialog that gathers resource types checks for this condition
-			SystemMessageFile mf = RSEUIPlugin.getPluginMessageFile();
-			Shell shell = getControl().getShell();
-			SystemMessage message = mf.getMessage(ISystemMessages.MSG_ERROR_EXTENSION_EMPTY);
-			SystemMessageDialog.displayErrorMessage(shell, message);
-			return;
-		}
 
-		if (newName == null || newName.length() < 1)
+		if (newName == null || newName.length() < 1) {
 			newName = "*"; //$NON-NLS-1$
+		}
 		else {
 			
 			int index = newName.indexOf('*');
@@ -664,7 +654,15 @@ public class UniversalPreferencePage
 		}
 	
 		// Find the index at which to insert the new entry.
-		String newFilename = (newName + "." + newExtension).toUpperCase(); //$NON-NLS-1$
+		String newFileName = null;
+		
+		if (newExtension == null || newExtension.length() < 1) {
+			newFileName = newName.toUpperCase();
+		}
+		else {
+			newFileName = (newName + "." + newExtension).toUpperCase(); //$NON-NLS-1$
+		}
+		
 		IFileEditorMapping resourceType;
 		boolean found = false;
 		int i = 0;
@@ -673,7 +671,7 @@ public class UniversalPreferencePage
 			
 			resourceType = (FileEditorMapping)(editorMappings.get(i));
 			
-			int result = newFilename.compareTo(resourceType.getLabel().toUpperCase());
+			int result = newFileName.compareTo(resourceType.getLabel().toUpperCase());
 			
 			// if the type already exists
 			if (result == 0) {

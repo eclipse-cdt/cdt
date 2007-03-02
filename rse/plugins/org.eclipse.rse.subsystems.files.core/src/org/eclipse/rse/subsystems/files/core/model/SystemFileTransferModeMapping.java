@@ -22,27 +22,24 @@ package org.eclipse.rse.subsystems.files.core.model;
  * An internal class. Clients must not instantiate or subclass it.
  */
 
-public class SystemFileTransferModeMapping
-	implements ISystemFileTransferModeMapping, Cloneable {
-
-
-		
+public class SystemFileTransferModeMapping implements ISystemFileTransferModeMapping, Cloneable {
 	
 	private String name;
 	private String extension;
 	private boolean isBinary = true;
 
-
 	/**
-	 * Constructor for SystemFileTransferModeMapping
+	 * Constructor for SystemFileTransferModeMapping. The name is set to <code>*</code>.
+	 * @param extension the extension. Can be <code>null</code>.
 	 */
 	public SystemFileTransferModeMapping(String extension) {
 		this("*", extension); //$NON-NLS-1$
 	}
 		
-	
 	/**
-	 * Constructor for SystemFileTransferModeMapping
+	 * Constructor for SystemFileTransferModeMapping.
+	 * @param name the name. If the name is <code>null</code> or if it is an empty string, it is set to <code>*</code>.
+	 * @param extension the extension. Can be <code>null</code>.
 	 */
 	public SystemFileTransferModeMapping(String name, String extension) {
 		
@@ -70,7 +67,13 @@ public class SystemFileTransferModeMapping
 	 * @see ISystemFileTransferModeMapping#getLabel()
 	 */
 	public String getLabel() {
-		return (name + "." + extension); //$NON-NLS-1$
+		
+		if (extension != null) {
+			return (name + "." + extension);  //$NON-NLS-1$
+		}
+		else {
+			return name;
+		}
 	}
 
 

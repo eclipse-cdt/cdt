@@ -64,7 +64,7 @@ public class SystemExpandAction extends SystemBaseAction {
 		ISystemViewElementAdapter adapter = null;
 		while (!enable && e.hasNext()) {
 			Object selectedObject = e.next();
-			adapter = getAdapter(selectedObject);
+			adapter = getViewAdapter(selectedObject);
 			if (adapter != null) {
 				if (adapter.hasChildren((IAdaptable)selectedObject)) enable = true;
 			}

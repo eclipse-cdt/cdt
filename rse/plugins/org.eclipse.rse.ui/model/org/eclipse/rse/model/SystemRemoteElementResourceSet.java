@@ -67,7 +67,7 @@ public class SystemRemoteElementResourceSet extends AbstractSystemResourceSet
 		_subSystem = subSystem;
 	}
 	
-	public ISystemViewElementAdapter getAdapter()
+	public ISystemViewElementAdapter getViewAdapter()
 	{
 		return _adapter;
 	}

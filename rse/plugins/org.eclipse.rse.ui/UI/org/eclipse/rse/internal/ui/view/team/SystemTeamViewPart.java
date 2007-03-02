@@ -491,7 +491,7 @@ public class SystemTeamViewPart
 		}
 		else
 		{
-			ISystemViewElementAdapter adapter = SystemAdapterHelpers.getAdapter(firstSelection, treeViewer);
+			ISystemViewElementAdapter adapter = SystemAdapterHelpers.getViewAdapter(firstSelection, treeViewer);
 			if (adapter != null)
 			{
 				if ((firstSelection instanceof SystemTeamViewSubSystemConfigurationNode) ||
@@ -547,7 +547,7 @@ public class SystemTeamViewPart
 		while (elements.hasNext())
 		{
 		  Object element= elements.next();
-		  ISystemViewElementAdapter adapter = SystemAdapterHelpers.getAdapter(element, treeViewer);
+		  ISystemViewElementAdapter adapter = SystemAdapterHelpers.getViewAdapter(element, treeViewer);
 		  if (adapter != null)
 		  	adapters.put(adapter,element); // want only unique adapters
 		}
@@ -1219,7 +1219,7 @@ public class SystemTeamViewPart
 	 */	
 	protected String internalGetMementoHandleKey(Object o)
 	{
-		ISystemViewElementAdapter adapter = SystemAdapterHelpers.getAdapter(o, treeViewer);
+		ISystemViewElementAdapter adapter = SystemAdapterHelpers.getViewAdapter(o, treeViewer);
 		String handle = null;
 		if (adapter != null)
 			handle = adapter.getMementoHandleKey(o);
@@ -1248,7 +1248,7 @@ public class SystemTeamViewPart
 	 */	
 	protected String internalGetMementoHandle(Object o)
 	{
-		ISystemViewElementAdapter adapter = SystemAdapterHelpers.getAdapter(o, treeViewer);
+		ISystemViewElementAdapter adapter = SystemAdapterHelpers.getViewAdapter(o, treeViewer);
 		String handle = null;
 		if (adapter != null)
 			handle = adapter.getMementoHandle(o);
@@ -1439,7 +1439,7 @@ public class SystemTeamViewPart
 		Object firstSelection = sel.getFirstElement();
 		if (firstSelection == null)
 		  return;
-		ISystemViewElementAdapter adapter = SystemAdapterHelpers.getAdapter(firstSelection);
+		ISystemViewElementAdapter adapter = SystemAdapterHelpers.getViewAdapter(firstSelection);
 		if (adapter != null)
 		{
 		   setMessage(adapter.getStatusLineText(firstSelection));

@@ -180,7 +180,7 @@ public class SystemSelectRemoteObjectAPIProviderImpl
 	{
 		this.subsystem = subsystem;
 		if (subsystem != null)
-		  this.subsystemAdapter = getAdapter(subsystem);
+		  this.subsystemAdapter = getViewAdapter(subsystem);
 		else
 		  this.subsystemAdapter = null;
 	}
@@ -603,9 +603,9 @@ public class SystemSelectRemoteObjectAPIProviderImpl
      * object.  Returns null if the adapter is not defined or the
      * object is not adaptable.
      */
-    protected ISystemViewElementAdapter getAdapter(Object o) 
+    protected ISystemViewElementAdapter getViewAdapter(Object o) 
     {
-    	return SystemAdapterHelpers.getAdapter(o);
+    	return SystemAdapterHelpers.getViewAdapter(o);
     }
     
     /**

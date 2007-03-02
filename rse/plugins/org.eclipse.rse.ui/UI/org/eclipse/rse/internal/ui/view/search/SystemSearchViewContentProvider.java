@@ -50,7 +50,7 @@ public class SystemSearchViewContentProvider implements ITreeContentProvider {
 		}
 		
 		if (parentElement instanceof IAdaptable) {
-			ISystemViewElementAdapter adapter = getAdapter(parentElement);
+			ISystemViewElementAdapter adapter = getViewAdapter(parentElement);
 			
 			if (adapter == null) {
 				return null;
@@ -73,7 +73,7 @@ public class SystemSearchViewContentProvider implements ITreeContentProvider {
 		}
 		
 		if (element instanceof IAdaptable) {
-			ISystemViewElementAdapter adapter = getAdapter(element);
+			ISystemViewElementAdapter adapter = getViewAdapter(element);
 			
 			if (adapter == null) {
 				return null;
@@ -96,7 +96,7 @@ public class SystemSearchViewContentProvider implements ITreeContentProvider {
 		}
 		
 		if (element instanceof IAdaptable) {
-			ISystemViewElementAdapter adapter = getAdapter(element);
+			ISystemViewElementAdapter adapter = getViewAdapter(element);
 			
 			if (adapter == null) {
 				return false;
@@ -119,7 +119,7 @@ public class SystemSearchViewContentProvider implements ITreeContentProvider {
 		}
 		
 		if (inputElement instanceof IAdaptable) {
-			ISystemViewElementAdapter adapter = getAdapter(inputElement);
+			ISystemViewElementAdapter adapter = getViewAdapter(inputElement);
 			
 			if (adapter == null) {
 				return null;
@@ -148,7 +148,7 @@ public class SystemSearchViewContentProvider implements ITreeContentProvider {
 		}
 		
 		if (newInput instanceof IAdaptable) {
-			ISystemViewElementAdapter adapter = getAdapter(newInput);
+			ISystemViewElementAdapter adapter = getViewAdapter(newInput);
 			
 			if (adapter != null) {
 				viewer.refresh();
@@ -161,9 +161,9 @@ public class SystemSearchViewContentProvider implements ITreeContentProvider {
 	 * @param the object
 	 * @return the adapter
 	 */
-	public ISystemViewElementAdapter getAdapter(Object element) 
+	public ISystemViewElementAdapter getViewAdapter(Object element) 
 	{
-    	return SystemAdapterHelpers.getAdapter(element);
+    	return SystemAdapterHelpers.getViewAdapter(element);
 	}
 	/**
 	 * Set the ViewPart of this provider

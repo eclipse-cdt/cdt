@@ -65,7 +65,7 @@ public class SystemViewAPIProviderForConnections
 	public Object[] getSystemViewRoots()
 	{
 		//return sr.getSubSystems(connection);
-		return getAdapter(connection).getChildren(new NullProgressMonitor(), connection); // pc42690
+		return getViewAdapter(connection).getChildren(new NullProgressMonitor(), connection); // pc42690
 	}
 	/**
 	 * Return true if {@link #getSystemViewRoots()} will return a non-empty list
@@ -84,7 +84,7 @@ public class SystemViewAPIProviderForConnections
 	public Object[] getConnectionChildren(IHost selectedConnection)
 	{
 		//return sr.getSubSystems(selectedConnection);
-		return getAdapter(selectedConnection).getChildren(new NullProgressMonitor(), selectedConnection); // pc42690
+		return getViewAdapter(selectedConnection).getChildren(new NullProgressMonitor(), selectedConnection); // pc42690
 	}
 	/**
 	 * This method is called by the connection adapter when deciding to show a plus-sign

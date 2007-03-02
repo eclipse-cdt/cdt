@@ -429,7 +429,7 @@ public class SystemTableView
 	 */
 	protected ISystemViewElementAdapter getViewAdapter(Object obj)
 	{
-		ISystemViewElementAdapter adapter = SystemAdapterHelpers.getAdapter(obj, this);
+		ISystemViewElementAdapter adapter = SystemAdapterHelpers.getViewAdapter(obj, this);
 		if (adapter != null)
 			adapter.setPropertySourceInput(obj);
 		return adapter;

@@ -127,7 +127,7 @@ public class SystemSearchViewPart extends ViewPart
 
 			if (!selection.isEmpty()) {
 				Object element = selection.getFirstElement();
-				ISystemViewElementAdapter adapter = getAdapter(element);
+				ISystemViewElementAdapter adapter = getViewAdapter(element);
 				adapter.setViewer(currentViewer);
 				adapter.handleDoubleClick(element);
 			}
@@ -370,7 +370,7 @@ public class SystemSearchViewPart extends ViewPart
 			return false;
 		}
 		
-		ISystemViewElementAdapter adapter = getAdapter(input);
+		ISystemViewElementAdapter adapter = getViewAdapter(input);
 		
 		if (adapter == null) {
 			return false;
@@ -408,7 +408,7 @@ public class SystemSearchViewPart extends ViewPart
 	public void addSearchResult(IAdaptable resultSet) {
 		
 		// if the correct adapter is not registered, then return
-		ISystemViewElementAdapter adapter = getAdapter(resultSet);
+		ISystemViewElementAdapter adapter = getViewAdapter(resultSet);
 		
 		if (adapter == null) {
 			return;
@@ -607,7 +607,7 @@ public class SystemSearchViewPart extends ViewPart
 				
 				Object input = treeView.getInput();
 				
-				ISystemViewElementAdapter adapter = getAdapter(input);
+				ISystemViewElementAdapter adapter = getViewAdapter(input);
 				
 				if (adapter != null && adapter instanceof ISystemRemoveElementAdapter) {
 					ISystemRemoveElementAdapter rmAdapter = (ISystemRemoveElementAdapter)adapter;
@@ -650,7 +650,7 @@ public class SystemSearchViewPart extends ViewPart
 			return;
 		}
 		
-		ISystemViewElementAdapter adapter = getAdapter(resultSet);
+		ISystemViewElementAdapter adapter = getViewAdapter(resultSet);
 
 		// if the correct adapter is not registered, then return
 		if (adapter == null) {
@@ -703,7 +703,7 @@ public class SystemSearchViewPart extends ViewPart
 		
 		Object input = currentViewer.getInput();
 				
-		ISystemViewElementAdapter adapter = getAdapter(input);
+		ISystemViewElementAdapter adapter = getViewAdapter(input);
 		
 		// adapter should be an instance of ISystemRemoveElementAdapter
 		if (adapter == null || !(adapter instanceof ISystemRemoveElementAdapter)) {
@@ -827,7 +827,7 @@ public class SystemSearchViewPart extends ViewPart
 		
 		Object input = currentViewer.getInput();
 		
-		ISystemViewElementAdapter adapter = getAdapter(input);
+		ISystemViewElementAdapter adapter = getViewAdapter(input);
 		
 		// universal search
 		if (currentViewer instanceof SystemSearchTableView) 
@@ -887,8 +887,8 @@ public class SystemSearchViewPart extends ViewPart
 	 * @param element the object the object for which I want the adapter.
 	 * @return the adapter for the object.
 	 */
-	public ISystemViewElementAdapter getAdapter(Object element) {
-		return SystemAdapterHelpers.getAdapter(element);
+	public ISystemViewElementAdapter getViewAdapter(Object element) {
+		return SystemAdapterHelpers.getViewAdapter(element);
 	}
 
 	/**
@@ -917,7 +917,7 @@ public class SystemSearchViewPart extends ViewPart
 				IHostSearchResultSet source = ((IHostSearchResultConfiguration)actualSource).getParentResultSet();
 				
 				// get title to use from adapter
-				ISystemViewElementAdapter adapter = getAdapter(source);
+				ISystemViewElementAdapter adapter = getViewAdapter(source);
 				
 				if (adapter == null) {
 					return;
@@ -1037,7 +1037,7 @@ public class SystemSearchViewPart extends ViewPart
 			// adapter actions
 			SystemMenuManager ourMenu = new SystemMenuManager(menu);
 			Object element = selection.getFirstElement();
-			ISystemViewElementAdapter adapter = getAdapter(element);
+			ISystemViewElementAdapter adapter = getViewAdapter(element);
 			adapter.setViewer(currentViewer);	
 			adapter.addActions(ourMenu, selection,
 							   getShell(),
@@ -1163,7 +1163,7 @@ public class SystemSearchViewPart extends ViewPart
 		
 		// set viewer for adapters of the selected elements
 		while (iter.hasNext()) {
-		    ISystemViewElementAdapter adapter = getAdapter(iter.next());
+		    ISystemViewElementAdapter adapter = getViewAdapter(iter.next());
 		    adapter.setViewer(currentViewer);
 		}
 		

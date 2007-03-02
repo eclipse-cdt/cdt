@@ -254,7 +254,7 @@ public class SystemResourceSelectionForm implements ISelectionChangedListener
 		}
 	}
 	
-	protected ISystemViewElementAdapter getAdapter(Object selection)
+	protected ISystemViewElementAdapter getViewAdapter(Object selection)
 	{
 		if (selection != null && selection instanceof IAdaptable)
 		{
@@ -308,7 +308,7 @@ public class SystemResourceSelectionForm implements ISelectionChangedListener
 	
 	public boolean setPreSelection(Object selection)
 	{
-		ISystemViewElementAdapter adapter = getAdapter(selection);
+		ISystemViewElementAdapter adapter = getViewAdapter(selection);
 		if (adapter != null)
 		{
 			Object parent = adapter.getParent(selection);
@@ -401,7 +401,7 @@ public class SystemResourceSelectionForm implements ISelectionChangedListener
     
 	private void setPathTextFromSelection(Object selection)
 	{
-		ISystemViewElementAdapter adapter = getAdapter(selection);
+		ISystemViewElementAdapter adapter = getViewAdapter(selection);
 		String text = adapter.getAbsoluteName(selection);
 	
 		setPathText(text);

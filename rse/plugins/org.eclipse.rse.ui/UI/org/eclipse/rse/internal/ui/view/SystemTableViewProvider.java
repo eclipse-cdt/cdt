@@ -129,11 +129,11 @@ public class SystemTableViewProvider implements ILabelProvider, ITableLabelProvi
 	    ISystemViewElementAdapter result = null;
 	    if (_viewer != null) 
 	    {
-	        result = SystemAdapterHelpers.getAdapter(object, _viewer);
+	        result = SystemAdapterHelpers.getViewAdapter(object, _viewer);
 	    }
 	    else 
 	    {
-	        result = SystemAdapterHelpers.getAdapter(object);
+	        result = SystemAdapterHelpers.getViewAdapter(object);
 	    }
         result.setPropertySourceInput(object);
         return result;

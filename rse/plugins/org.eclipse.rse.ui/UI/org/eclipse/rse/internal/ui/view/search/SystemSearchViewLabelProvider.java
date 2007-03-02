@@ -48,7 +48,7 @@ public class SystemSearchViewLabelProvider extends LabelProvider {
 		}
 		
 		if (element instanceof IAdaptable) {
-			ISystemViewElementAdapter adapter = getAdapter(element);
+			ISystemViewElementAdapter adapter = getViewAdapter(element);
 			
 			if (adapter != null) {
 				ImageDescriptor descriptor = adapter.getImageDescriptor(element);
@@ -72,7 +72,7 @@ public class SystemSearchViewLabelProvider extends LabelProvider {
 		}
 		
 		if (element instanceof IAdaptable) {
-			ISystemViewElementAdapter adapter = getAdapter(element);
+			ISystemViewElementAdapter adapter = getViewAdapter(element);
 			
 			if (adapter != null) {
 				return adapter.getText(element);
@@ -87,8 +87,8 @@ public class SystemSearchViewLabelProvider extends LabelProvider {
 	 * @param the object
 	 * @return the adapter
 	 */
-	public ISystemViewElementAdapter getAdapter(Object element) 
+	public ISystemViewElementAdapter getViewAdapter(Object element) 
 	{
-    	return SystemAdapterHelpers.getAdapter(element);
+    	return SystemAdapterHelpers.getViewAdapter(element);
 	}
 }

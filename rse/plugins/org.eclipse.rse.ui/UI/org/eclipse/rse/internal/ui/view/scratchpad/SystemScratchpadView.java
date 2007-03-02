@@ -267,9 +267,9 @@ public class SystemScratchpadView
 	/**
 	 * Convenience method for retrieving the view adapter for an object 
 	 */
-	protected ISystemViewElementAdapter getAdapter(Object obj)
+	protected ISystemViewElementAdapter getViewAdapter(Object obj)
 	{
-		return SystemAdapterHelpers.getAdapter(obj, this);
+		return SystemAdapterHelpers.getViewAdapter(obj, this);
 	}
 
 
@@ -581,7 +581,7 @@ public class SystemScratchpadView
 			  return;
 			
 			_selectionFlagsUpdated = false;
-			ISystemViewElementAdapter adapter = getAdapter(firstSelection);
+			ISystemViewElementAdapter adapter = getViewAdapter(firstSelection);
 			if (adapter != null)
 			{
 			   displayMessage(adapter.getStatusLineText(firstSelection));
@@ -839,7 +839,7 @@ public class SystemScratchpadView
 			{
 				element = elements.next();
 				//multiSource[idx++] = element;
-				adapter = getAdapter(element);
+				adapter = getViewAdapter(element);
 				ok = adapter.doDelete(getShell(), element, monitor);
 				if (ok)
 				{
@@ -929,7 +929,7 @@ public class SystemScratchpadView
 			while (ok && elements.hasNext())
 			{
 				element = elements.next();
-				adapter = getAdapter(element);
+				adapter = getViewAdapter(element);
 				Object parentElement = getParentForContent(element);
 
 				remoteAdapter = getRemoteAdapter(element);
@@ -1117,7 +1117,7 @@ public class SystemScratchpadView
 			while (elements.hasNext())
 			{
 				Object element = elements.next();
-				ISystemViewElementAdapter adapter = getAdapter(element);
+				ISystemViewElementAdapter adapter = getViewAdapter(element);
 				if (adapter != null)
 				{
 					adapters.put(adapter, element); // want only unique adapters
@@ -1358,7 +1358,7 @@ public class SystemScratchpadView
 		while (elements.hasNext())
 		{
 			Object element = elements.next();
-			ISystemViewElementAdapter adapter = getAdapter(element);
+			ISystemViewElementAdapter adapter = getViewAdapter(element);
 			if (adapter != null)
 			{
 				if (_selectionShowRefreshAction)

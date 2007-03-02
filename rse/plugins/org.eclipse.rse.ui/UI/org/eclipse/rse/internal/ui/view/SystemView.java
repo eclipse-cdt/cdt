@@ -1264,9 +1264,9 @@ public class SystemView extends SafeTreeViewer implements ISystemTree, ISystemRe
 		// not updated when selecting a connection in the Remote Systems view.
 		// This ensures that the input provider for the Remote Systems view is set for the adapter.
 		if (provider != null) {
-			return SystemAdapterHelpers.getAdapter(o, this, provider);
+			return SystemAdapterHelpers.getViewAdapter(o, this, provider);
 		} else {
-			return SystemAdapterHelpers.getAdapter(o, this);
+			return SystemAdapterHelpers.getViewAdapter(o, this);
 		}
 	}
 
@@ -4234,7 +4234,7 @@ public class SystemView extends SafeTreeViewer implements ISystemTree, ISystemRe
 					SystemRemoteElementResourceSet set = null;
 					if (lastSet != null)
 					{
-						if (lastSet.getAdapter() == adapter && lastSet.getSubSystem() == srcSubSystem)
+						if (lastSet.getViewAdapter() == adapter && lastSet.getSubSystem() == srcSubSystem)
 						{
 							set = lastSet;
 						}
@@ -4369,7 +4369,7 @@ public class SystemView extends SafeTreeViewer implements ISystemTree, ISystemRe
 			for (int s = 0; s < _setList.size() && ok; s++) {
 				set = (SystemRemoteElementResourceSet) _setList.get(s);
 				ISubSystem srcSubSystem = set.getSubSystem();
-				ISystemViewElementAdapter srcAdapter = set.getAdapter();
+				ISystemViewElementAdapter srcAdapter = set.getViewAdapter();
 
 				if (srcSubSystem != null) {
 					
@@ -5165,7 +5165,7 @@ public class SystemView extends SafeTreeViewer implements ISystemTree, ISystemRe
 	protected SystemRemoteElementResourceSet getSetFor(ISubSystem subSystem, ISystemViewElementAdapter adapter) {
 		for (int i = 0; i < _setList.size(); i++) {
 			SystemRemoteElementResourceSet set = (SystemRemoteElementResourceSet) _setList.get(i);
-			if (set.getAdapter() == adapter && set.getSubSystem() == subSystem) {
+			if (set.getViewAdapter() == adapter && set.getSubSystem() == subSystem) {
 				return set;
 			}
 		}

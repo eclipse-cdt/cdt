@@ -99,7 +99,7 @@ public class SystemSearchTableView extends SystemTableTreeView
 						{
 							Object dchild = remoteResourceNames.get(d);
 
-							ISystemViewElementAdapter dadapt = getAdapter(dchild);
+							ISystemViewElementAdapter dadapt = getViewAdapter(dchild);
 							ISubSystem dSubSystem = dadapt.getSubSystem(dchild);
 							String dkey = dadapt.getAbsoluteName(dchild);
 
@@ -117,7 +117,7 @@ public class SystemSearchTableView extends SystemTableTreeView
 								
 								if (existingChild != null)
 								{
-									ISystemViewElementAdapter eadapt = getAdapter(existingChild);
+									ISystemViewElementAdapter eadapt = getViewAdapter(existingChild);
 									ISubSystem eSubSystem = eadapt.getSubSystem(existingChild);
 
 									if (dSubSystem == eSubSystem)
@@ -363,7 +363,7 @@ public class SystemSearchTableView extends SystemTableTreeView
 
 	protected Object getParentForContent(Object element)
 	{
-		return getAdapter(element).getParent(element);
+		return getViewAdapter(element).getParent(element);
 	}
 	
 

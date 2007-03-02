@@ -11,7 +11,7 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * Uwe Stieber (Wind River) - [174418] SystemAdapterHelpers.getAdapter(Object) try to find adapter twice
+ * Uwe Stieber (Wind River) - [174418] SystemAdapterHelpers.getViewAdapter(Object) try to find adapter twice
  ********************************************************************************/
 
 package org.eclipse.rse.core;
@@ -36,7 +36,7 @@ public class SystemAdapterHelpers {
 	 * object.  Returns null if the adapter is not defined or the
 	 * object is not adaptable.
 	 */
-	public static ISystemViewElementAdapter getAdapter(Object o) {
+	public static ISystemViewElementAdapter getViewAdapter(Object o) {
 		ISystemViewElementAdapter adapter = null;
 
 		// In case the object itself is an adaptable, call the objects getAdapter() method
@@ -55,8 +55,8 @@ public class SystemAdapterHelpers {
 	 *  the adapter, but also sets its viewer to the given viewer. Many actions rely
 	 *  on this being set.
 	 */
-	public static ISystemViewElementAdapter getAdapter(Object o, Viewer viewer) {
-		ISystemViewElementAdapter adapter = getAdapter(o);
+	public static ISystemViewElementAdapter getViewAdapter(Object o, Viewer viewer) {
+		ISystemViewElementAdapter adapter = getViewAdapter(o);
 		if (adapter != null) {
 			//FIXME This is not thread-safe.
 			adapter.setViewer(viewer);
@@ -69,8 +69,8 @@ public class SystemAdapterHelpers {
 	 * the adapter, but also sets its viewer and input provider to the given viewer.
 	 * Many actions rely on this being set.
 	 */
-	public static ISystemViewElementAdapter getAdapter(Object o, Viewer viewer, ISystemViewInputProvider inputProvider) {
-		ISystemViewElementAdapter adapter = getAdapter(o, viewer);
+	public static ISystemViewElementAdapter getViewAdapter(Object o, Viewer viewer, ISystemViewInputProvider inputProvider) {
+		ISystemViewElementAdapter adapter = getViewAdapter(o, viewer);
 
 		if (adapter != null) {
 			//FIXME This is not thread-safe.

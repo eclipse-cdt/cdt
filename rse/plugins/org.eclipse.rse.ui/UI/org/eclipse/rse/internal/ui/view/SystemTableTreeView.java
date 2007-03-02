@@ -144,7 +144,7 @@ implements IMenuListener, ISystemDeleteTarget, ISystemRenameTarget, ISystemSelec
 	{
 		public Object getValue(Object element, String property)
 		{
-			ISystemViewElementAdapter adapter = getAdapter(element);
+			ISystemViewElementAdapter adapter = getViewAdapter(element);
 			adapter.setPropertySourceInput(element);
 			Object value = adapter.getPropertyValue(property);
 			if (value == null)
@@ -165,7 +165,7 @@ implements IMenuListener, ISystemDeleteTarget, ISystemRenameTarget, ISystemSelec
 			if (element instanceof TableItem && value != null)
 			{
 				Object obj = ((TableItem) element).getData();
-				ISystemViewElementAdapter adapter = getAdapter(obj);
+				ISystemViewElementAdapter adapter = getViewAdapter(obj);
 				if (adapter != null)
 				{
 					adapter.setPropertyValue(property, value);
@@ -421,9 +421,9 @@ implements IMenuListener, ISystemDeleteTarget, ISystemRenameTarget, ISystemSelec
 	/**
 	 * Convenience method for retrieving the view adapter for an object 
 	 */
-	protected ISystemViewElementAdapter getAdapter(Object obj)
+	protected ISystemViewElementAdapter getViewAdapter(Object obj)
 	{
-		return SystemAdapterHelpers.getAdapter(obj, this);
+		return SystemAdapterHelpers.getViewAdapter(obj, this);
 	}
 	
 	public SystemTableViewColumnManager getColumnManager()
@@ -456,7 +456,7 @@ implements IMenuListener, ISystemDeleteTarget, ISystemRenameTarget, ISystemSelec
 			if (children != null && children.length > 0)
 			{
 				IAdaptable child = (IAdaptable) children[0];
-				ISystemViewElementAdapter adapter = getAdapter(child);
+				ISystemViewElementAdapter adapter = getViewAdapter(child);
 				adapter.setPropertySourceInput(child);
 				return getCustomDescriptors(adapter);
 			}
@@ -478,7 +478,7 @@ implements IMenuListener, ISystemDeleteTarget, ISystemRenameTarget, ISystemSelec
 			if (children != null && children.length > 0)
 			{
 				IAdaptable child = (IAdaptable) children[0];
-				return getAdapter(child).getPropertyDescriptors()[0];
+				return getViewAdapter(child).getPropertyDescriptors()[0];
 			}
 
 			return null;
@@ -951,7 +951,7 @@ implements IMenuListener, ISystemDeleteTarget, ISystemRenameTarget, ISystemSelec
 					{
 						Object dchild = remoteResource;
 
-						ISystemViewElementAdapter dadapt = getAdapter(dchild);
+						ISystemViewElementAdapter dadapt = getViewAdapter(dchild);
 						if (dadapt != null)
 						{
 							ISubSystem dSubSystem = dadapt.getSubSystem(dchild);
@@ -965,7 +965,7 @@ implements IMenuListener, ISystemDeleteTarget, ISystemRenameTarget, ISystemSelec
 									Object existingChild = children[i];
 									if (existingChild != null)
 									{
-										ISystemViewElementAdapter eadapt = getAdapter(existingChild);
+										ISystemViewElementAdapter eadapt = getViewAdapter(existingChild);
 										ISubSystem eSubSystem = eadapt.getSubSystem(existingChild);
 
 										if (dSubSystem == eSubSystem)
@@ -1022,7 +1022,7 @@ implements IMenuListener, ISystemDeleteTarget, ISystemRenameTarget, ISystemSelec
 								}
 								else
 								{
-									String previousName = getAdapter(previousResult).getAbsoluteName(previousResult);
+									String previousName = getViewAdapter(previousResult).getAbsoluteName(previousResult);
 
 									if (previousName != null && previousName.equals(oldName))
 									{
@@ -1070,7 +1070,7 @@ implements IMenuListener, ISystemDeleteTarget, ISystemRenameTarget, ISystemSelec
 			  return;
 			
 			_selectionFlagsUpdated = false;
-			ISystemViewElementAdapter adapter = getAdapter(firstSelection);
+			ISystemViewElementAdapter adapter = getViewAdapter(firstSelection);
 			if (adapter != null)
 			{
 			   displayMessage(adapter.getStatusLineText(firstSelection));
@@ -1107,7 +1107,7 @@ implements IMenuListener, ISystemDeleteTarget, ISystemRenameTarget, ISystemSelec
 	/**
 	 * Convenience method for retrieving the view adapter for an object's children 
 	 */
-	public ISystemViewElementAdapter getAdapterForContents()
+	public ISystemViewElementAdapter getViewAdapterForContents()
 	{
 		SystemTableTreeViewProvider provider = (SystemTableTreeViewProvider) getContentProvider();
 		if (provider != null)
@@ -1116,7 +1116,7 @@ implements IMenuListener, ISystemDeleteTarget, ISystemRenameTarget, ISystemSelec
 		if (children != null && children.length > 0)
 		{
 			IAdaptable child = (IAdaptable) children[0];
-			return getAdapter(child);
+			return getViewAdapter(child);
 		}
 		}
 		return null;
@@ -1291,7 +1291,7 @@ implements IMenuListener, ISystemDeleteTarget, ISystemRenameTarget, ISystemSelec
 			{
 				element = elements.next();
 				//multiSource[idx++] = element;
-				adapter = getAdapter(element);
+				adapter = getViewAdapter(element);
 				ok = adapter.doDelete(getShell(), element, monitor);
 				if (ok)
 				{
@@ -1381,7 +1381,7 @@ implements IMenuListener, ISystemDeleteTarget, ISystemRenameTarget, ISystemSelec
 			while (ok && elements.hasNext())
 			{
 				element = elements.next();
-				adapter = getAdapter(element);
+				adapter = getViewAdapter(element);
 				Object parentElement = getParentForContent(element);
 
 				remoteAdapter = getRemoteAdapter(element);
@@ -1573,7 +1573,7 @@ implements IMenuListener, ISystemDeleteTarget, ISystemRenameTarget, ISystemSelec
 			while (elements.hasNext())
 			{
 				Object element = elements.next();
-				ISystemViewElementAdapter adapter = getAdapter(element);
+				ISystemViewElementAdapter adapter = getViewAdapter(element);
 				adapters.put(adapter, element); // want only unique adapters
 			}
 			Enumeration uniqueAdapters = adapters.keys();
@@ -1792,7 +1792,7 @@ implements IMenuListener, ISystemDeleteTarget, ISystemRenameTarget, ISystemSelec
 		while (elements.hasNext())
 		{
 			Object element = elements.next();
-			ISystemViewElementAdapter adapter = getAdapter(element);
+			ISystemViewElementAdapter adapter = getViewAdapter(element);
 
 			if (_selectionShowRefreshAction)
 				_selectionShowRefreshAction = adapter.showRefresh(element);
@@ -1831,7 +1831,7 @@ implements IMenuListener, ISystemDeleteTarget, ISystemRenameTarget, ISystemSelec
 			Object data = item.getData();
 			if (data instanceof IAdaptable)
 			{
-				ISystemViewElementAdapter adapter = getAdapter(data);
+				ISystemViewElementAdapter adapter = getViewAdapter(data);
 				String itemName = adapter.getName(data);
 
 				if (StringCompare.compare(name, itemName, false))

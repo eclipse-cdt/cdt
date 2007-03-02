@@ -581,6 +581,11 @@ public class DStoreConnectorService extends AbstractConnectorService implements 
 			// this will be the temp remoteuser userid.
 			//launchStatus = clientConnection.launchServer(getLocalUserId(), getPassword(getPasswordInformation()));
 			SystemSignonInformation info = getPasswordInformation();
+			if (info == null)
+			{
+				System.out.println("password info = null!");
+			}
+			
 			int daemonPort = 0;
 			if (serverLauncher != null)
 				daemonPort = serverLauncher.getDaemonPort();

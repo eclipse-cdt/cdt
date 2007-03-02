@@ -179,7 +179,7 @@ public class SystemViewLabelAndContentProvider extends LabelProvider
      * object.  Returns null if the adapter is not defined or the
      * object is not adaptable.
      */
-    protected ISystemViewElementAdapter getAdapter(Object o) 
+    protected ISystemViewElementAdapter getViewAdapter(Object o) 
     {
     	if (o instanceof IContextObject)
     	{
@@ -260,7 +260,7 @@ public class SystemViewLabelAndContentProvider extends LabelProvider
      */
     public Object[] getChildren(Object object) 
     {
-    	ISystemViewElementAdapter adapter = getAdapter(object);
+    	ISystemViewElementAdapter adapter = getViewAdapter(object);
     	Object element = object;
     	if (object instanceof IContextObject)
     	{
@@ -369,7 +369,7 @@ public class SystemViewLabelAndContentProvider extends LabelProvider
      */
     public Object getParent(Object element) 
     {
-    	ISystemViewElementAdapter adapter = getAdapter(element);
+    	ISystemViewElementAdapter adapter = getViewAdapter(element);
     	if (adapter != null) 
     	  return adapter.getParent(element);
     	return null;
@@ -385,7 +385,7 @@ public class SystemViewLabelAndContentProvider extends LabelProvider
      */
     public boolean hasChildren(Object element) 
     {
-    	ISystemViewElementAdapter adapter = getAdapter(element);
+    	ISystemViewElementAdapter adapter = getViewAdapter(element);
     	if (element instanceof IContextObject)
     	{
     		return adapter.hasChildren((IContextObject)element);
@@ -438,7 +438,7 @@ public class SystemViewLabelAndContentProvider extends LabelProvider
     }
     public Image getImage(Object element) 
     {
-    	ISystemViewElementAdapter adapter = getAdapter(element);
+    	ISystemViewElementAdapter adapter = getViewAdapter(element);
     	//System.out.println("Inside getImage. element = " + element + ", adapter = " + adapter);
 	    if (adapter == null)
 		  return null;
@@ -474,7 +474,7 @@ public class SystemViewLabelAndContentProvider extends LabelProvider
      */
     public String getText(Object element) 
     {
-    	ISystemViewElementAdapter adapter = getAdapter(element);
+    	ISystemViewElementAdapter adapter = getViewAdapter(element);
     	//System.out.println("INSIDE GETTEXT FOR SVLandCprovider: " + element + ", adapter = " + adapter);
 	    if (adapter == null)
 	    {

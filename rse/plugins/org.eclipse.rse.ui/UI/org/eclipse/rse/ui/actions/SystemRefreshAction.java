@@ -88,7 +88,7 @@ public class SystemRefreshAction extends SystemBaseAction
 				}
 				
 				// get the adapter and find out if it's a leaf node. If so, refresh the parent as well.
-				ISystemViewElementAdapter adapter = getAdapter(obj);
+				ISystemViewElementAdapter adapter = getViewAdapter(obj);
 				
 				if (adapter != null) {
 					Object parent = adapter.getParent(obj);

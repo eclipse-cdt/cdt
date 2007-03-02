@@ -1525,7 +1525,7 @@ public abstract class AbstractSystemViewAdapter
      * object.  Returns null if the adapter is not defined or the
      * object is not adaptable.
      * <p/>
-     * Just a convenient shortcut to {@link org.eclipse.rse.core.SystemAdapterHelpers#getAdapter(Object, Viewer)}
+     * Just a convenient shortcut to {@link org.eclipse.rse.core.SystemAdapterHelpers#getViewAdapter(Object, Viewer)}
      * <p/>
      * Should we allow clients to override this in order to provide an
      * optimized implementation for their models? But it's being called
@@ -1535,7 +1535,7 @@ public abstract class AbstractSystemViewAdapter
      */
     protected ISystemViewElementAdapter getSystemViewElementAdapter(Object o) 
     {
-        return SystemAdapterHelpers.getAdapter(o, getViewer());
+        return SystemAdapterHelpers.getViewAdapter(o, getViewer());
         /*
     	ISystemViewElementAdapter adapter = null;
     	if (!(o instanceof IAdaptable)) 

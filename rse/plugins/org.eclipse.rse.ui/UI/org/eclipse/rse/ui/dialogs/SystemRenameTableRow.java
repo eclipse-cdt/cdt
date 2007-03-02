@@ -43,7 +43,7 @@ public class SystemRenameTableRow extends SystemDeleteTableRow
     {
     	super(element,rowNbr);
     	this.newName = getName();
-    	this.inputValidator = getAdapter(element).getNameValidator(element);    	
+    	this.inputValidator = getViewAdapter(element).getNameValidator(element);    	
 		if (inputValidator != null) {
 			  nameLengthLimit = inputValidator.getMaximumNameLength();
 		}
@@ -114,7 +114,7 @@ public class SystemRenameTableRow extends SystemDeleteTableRow
     {
     	// this is all for defect 42145
     	Object element = super.getElement(); 
-    	ISystemViewElementAdapter adapter = super.getAdapter();
+    	ISystemViewElementAdapter adapter = super.getViewAdapter();
     	String cName = newName;
     	if (adapter != null)
     	  cName = adapter.getCanonicalNewName(element, newName);
@@ -130,7 +130,7 @@ public class SystemRenameTableRow extends SystemDeleteTableRow
     public boolean newNameEqualsOldName()
     {
     	Object element = super.getElement(); 
-    	ISystemViewElementAdapter adapter = super.getAdapter();
+    	ISystemViewElementAdapter adapter = super.getViewAdapter();
     	if (adapter != null)
     	  return adapter.namesAreEqual(element, newName);
     	else

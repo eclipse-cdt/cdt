@@ -48,7 +48,7 @@ public class SystemDeleteTableRow
     	if (element instanceof SystemSimpleContentElement)
     	  element = ((SystemSimpleContentElement)element).getData();
     	this.element = element;    	
-        this.adapter = getAdapter(element);    	
+        this.adapter = getViewAdapter(element);    	
         this.remoteAdapter = getRemoteAdapter(element);
         this.rowNbr = rowNbr;
     	//this.oldName = getAdapter(element).getText(element);
@@ -66,7 +66,7 @@ public class SystemDeleteTableRow
     	if (typeElement instanceof ISystemFilterPoolReference)
     	{
     	  typeElement = ((ISystemFilterPoolReference)typeElement).getReferencedFilterPool();
-    	  typeAdapter = getAdapter(typeElement);
+    	  typeAdapter = getViewAdapter(typeElement);
     	}
     	if (typeAdapter != null)
     	  this.type = typeAdapter.getType(typeElement);
@@ -138,7 +138,7 @@ public class SystemDeleteTableRow
     /**
      * Get the input object adapter for the input object this row represents
      */
-    public ISystemViewElementAdapter getAdapter()
+    public ISystemViewElementAdapter getViewAdapter()
     {
     	return adapter;
     }
@@ -162,9 +162,9 @@ public class SystemDeleteTableRow
      * object.  Returns null if the adapter is not defined or the
      * object is not adaptable.
      */
-    protected ISystemViewElementAdapter getAdapter(Object o) 
+    protected ISystemViewElementAdapter getViewAdapter(Object o) 
     {
-    	return SystemAdapterHelpers.getAdapter(o);
+    	return SystemAdapterHelpers.getViewAdapter(o);
     }
     
     /**

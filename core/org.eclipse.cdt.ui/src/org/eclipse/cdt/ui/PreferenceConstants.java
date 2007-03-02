@@ -936,7 +936,7 @@ public class PreferenceConstants {
 		store.setDefault(EDITOR_MULTI_LINE_COMMENT_BOLD, false);
 		store.setDefault(EDITOR_MULTI_LINE_COMMENT_ITALIC, false);
 
-		PreferenceConverter.setDefault(store, EDITOR_SINGLE_LINE_COMMENT_COLOR, new RGB(63, 125, 95));
+		PreferenceConverter.setDefault(store, EDITOR_SINGLE_LINE_COMMENT_COLOR, new RGB(63, 127, 95));
 		store.setDefault(EDITOR_SINGLE_LINE_COMMENT_BOLD, false);
 		store.setDefault(EDITOR_SINGLE_LINE_COMMENT_ITALIC, false);
 

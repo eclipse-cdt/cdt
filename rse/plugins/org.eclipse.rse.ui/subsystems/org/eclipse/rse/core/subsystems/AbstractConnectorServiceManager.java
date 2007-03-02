@@ -176,31 +176,5 @@ public abstract class AbstractConnectorServiceManager implements IConnectorServi
      */
     public abstract Class getSubSystemCommonInterface(ISubSystem subsystem);
         
-    /**
-     * <i>Internal use. Fully implemented, no need to override.</i><br>
-     * Updates user-editable attributes of an existing subsystem instance.
-     * The goal of this method is to intercept the request and forward it on to all our
-     *  subsystems in this SystemConnection, that share a single IConnectorService,
-     *  so we keep them all in synch in terms of these two properties used
-     *  by all ISystems.
-     * @see org.eclipse.rse.core.subsystems.SubSystemConfiguration#updateSubSystem(ISubSystem, boolean, String, boolean, int)
-     */    
-    public void updateSubSystems(Shell shell, ISubSystem subsystem, boolean updateUserId, String userId, boolean updatePort, int port)
-    {
-    	ISystemRegistry sr = RSEUIPlugin.getDefault().getSystemRegistry();    	
-    	IHost conn = subsystem.getHost();
-    	ISubSystem[] subsystems = sr.getSubSystems(conn);
-        if (subsystems != null)
-        {
-          for (int idx=0; idx<subsystems.length; idx++)
-          {
-          	 ISubSystem ss = subsystems[idx];
-          	 if ( (ss != subsystem) && sharesSystem(ss) )
-          	 {
-          	   ISubSystemConfiguration ssFactory = ss.getSubSystemConfiguration();
-          	   ssFactory.updateSubSystem(ss, updateUserId, userId, updatePort, port);
-          	 }
-          }
-        }    	
-    }    
+  
 }

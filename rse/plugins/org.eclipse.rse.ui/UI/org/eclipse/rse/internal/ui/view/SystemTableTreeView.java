@@ -751,7 +751,7 @@ implements IMenuListener, ISystemDeleteTarget, ISystemRenameTarget, ISystemSelec
 	}
 
 	public void setCurrentColumnWidths(int[] widths)
-	{
+	{		
 	}
 
 	public int[] getLastColumnWidths()

@@ -67,7 +67,7 @@ public final class CompletionProposalComputerRegistry {
 	/**
 	 * Returns the default computer registry.
 	 * <p>
-	 * TODO keep this or add some other singleton, e.g. JavaPlugin?
+	 * TODO keep this or add some other singleton, e.g. CUIPlugin?
 	 * </p>
 	 * 
 	 * @return the singleton instance
@@ -118,7 +118,7 @@ public final class CompletionProposalComputerRegistry {
 
 	/**
 	 * Returns the list of {@link CompletionProposalComputerDescriptor}s describing all extensions
-	 * to the <code>javaCompletionProposalComputer</code> extension point for the given partition
+	 * to the <code>completionProposalComputer</code> extension point for the given partition
 	 * type.
 	 * <p>
 	 * A valid partition is either one of the constants defined in
@@ -137,7 +137,7 @@ public final class CompletionProposalComputerRegistry {
 	 * 
 	 * @param partition
 	 *        the partition type for which to retrieve the computer descriptors
-	 * @return the list of extensions to the <code>javaCompletionProposalComputer</code> extension
+	 * @return the list of extensions to the <code>completionProposalComputer</code> extension
 	 *         point (element type: {@link CompletionProposalComputerDescriptor})
 	 */
 	List getProposalComputerDescriptors(String partition) {
@@ -148,7 +148,7 @@ public final class CompletionProposalComputerRegistry {
 
 	/**
 	 * Returns the list of {@link CompletionProposalComputerDescriptor}s describing all extensions
-	 * to the <code>javaCompletionProposalComputer</code> extension point.
+	 * to the <code>completionProposalComputer</code> extension point.
 	 * <p>
 	 * The returned list is read-only and is sorted in the order that the extensions were read in.
 	 * There are no duplicate elements in the returned list. The returned list may change if plug-ins
@@ -158,7 +158,7 @@ public final class CompletionProposalComputerRegistry {
 	 * over it.
 	 * </p>
 	 * 
-	 * @return the list of extensions to the <code>javaCompletionProposalComputer</code> extension
+	 * @return the list of extensions to the <code>completionProposalComputer</code> extension
 	 *         point (element type: {@link CompletionProposalComputerDescriptor})
 	 */
 	List getProposalComputerDescriptors() {
@@ -168,7 +168,7 @@ public final class CompletionProposalComputerRegistry {
 	
 	/**
 	 * Returns the list of proposal categories contributed to the
-	 * <code>javaCompletionProposalComputer</code> extension point.
+	 * <code>completionProposalComputer</code> extension point.
 	 * <p>
 	 * <p>
 	 * The returned list is read-only and is sorted in the order that the extensions were read in.
@@ -177,7 +177,7 @@ public final class CompletionProposalComputerRegistry {
 	 * </p>
 	 * 
 	 * @return list of proposal categories contributed to the
-	 *         <code>javaCompletionProposalComputer</code> extension point (element type:
+	 *         <code>completionProposalComputer</code> extension point (element type:
 	 *         {@link CompletionProposalCategory})
 	 */
 	public List getProposalCategories() {
@@ -333,11 +333,15 @@ public final class CompletionProposalComputerRegistry {
         
 		final String avoidHint;
 		final String culpritName= culprit == null ? null : culprit.getName();
-		if (affectedPlugins.isEmpty())
+		if (affectedPlugins.isEmpty()) {
+			if (culpritName.equals(CUIPlugin.PLUGIN_ID)) {
+				// don't warn about internal computers
+				return;
+			}
 			avoidHint= Messages.format(ContentAssistMessages.CompletionProposalComputerRegistry_messageAvoidanceHint, new Object[] {culpritName, category.getDisplayName()});
-		else
+		} else {
 			avoidHint= Messages.format(ContentAssistMessages.CompletionProposalComputerRegistry_messageAvoidanceHintWithWarning, new Object[] {culpritName, category.getDisplayName(), toString(affectedPlugins)});
-        
+		}        
 		String message= status.getMessage();
         // inlined from MessageDialog.openError
         MessageDialog dialog = new MessageDialog(CUIPlugin.getActiveWorkbenchShell(), title, null /* default image */, message, MessageDialog.ERROR, new String[] { IDialogConstants.OK_LABEL }, 0) {

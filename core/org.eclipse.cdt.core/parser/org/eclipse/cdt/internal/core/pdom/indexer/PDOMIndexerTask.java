@@ -194,7 +194,7 @@ public abstract class PDOMIndexerTask extends PDOMWriter implements IPDOMIndexer
 			long start= System.currentTimeMillis();
 			IASTTranslationUnit ast= createAST(tu, pm);
 			fStatistics.fParsingTime += System.currentTimeMillis()-start;
-			if (tu != null) {
+			if (ast != null) {
 				addSymbols(ast, index, readlockCount, pm);
 			}
 		}

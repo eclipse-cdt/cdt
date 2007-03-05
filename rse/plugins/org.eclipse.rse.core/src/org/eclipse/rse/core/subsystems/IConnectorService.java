@@ -21,19 +21,21 @@ import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.model.IRSEModelObject;
 
 /**
- * This is the interface implemented by ConnectorService (formerly System) objects.
+ * This is the interface implemented by AbstractConnectorService
+ * (formerly System) objects.
  * <p>
  * A connector service manages a live connection to a remote system, with
  * operations for connecting and disconnecting, and storing information
- * typically cached from a subsystem: user ID, password, port, etc.
+ * typically cached from a subsystem: credentials, port, etc.
  * <p>
- * The SubSystem interface includes a method, getConnectorService(), which returns an
- * instance of an object that implements this interface for that subsystem.
+ * The SubSystem interface includes a method, getConnectorService(),
+ * which returns an instance of an object that implements this interface
+ * for that subsystem.
  * <p>
  * A single connector service object can be unique to a subsystem instance, but
  * it can also be shared across multiple subsystems in a single host if those
- * subsystems share a physical connection to the remote system. This sharing is done via
- * subclasses of {@link org.eclipse.rse.core.subsystems.AbstractConnectorServiceManager}
+ * subsystems share a physical connection to the remote system.
+ * This sharing is done using implementers of {@link IConnectorServiceManager} 
  * which are returned by another getter method in SubSystem.
  */
 public interface IConnectorService extends IRSEModelObject {

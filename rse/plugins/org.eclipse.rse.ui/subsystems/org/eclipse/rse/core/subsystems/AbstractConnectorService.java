@@ -480,7 +480,9 @@ public abstract class AbstractConnectorService extends RSEModelObject implements
 		// dy:  March 24, 2003:  check if prompting is temporarily suppressed by a tool
 		// vendor, this should only be suppressed if the user cancelled a previous signon
 		// dialog (or some other good reason)
-		if (isSuppressSignonPrompt()) throw new InterruptedException();
+		if (isSuppressSignonPrompt()) {
+			throw new InterruptedException();
+		}
 
 		ISubSystem subsystem = getPrimarySubSystem();
 		IHost host = subsystem.getHost();

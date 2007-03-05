@@ -60,8 +60,8 @@ import org.eclipse.ui.dialogs.PatternFilter;
  * <b>Note:</b> The page allows filtering of the presented wizard list by adapting
  * the associated system type to<br>
  * <ul>
- * <li><code>org.eclipse.rse.ui.RSESystemTypeAdapter</code>: calling <code>RSESystemTypeAdapter.isEnabled(...)</code> and</li>
- * <li><code>org.eclipse.jface.viewers.ViewerFilter</code>: calling <code>ViewerFilter.select(...)</code>.
+ * <li><code>org.eclipse.jface.viewers.ViewerFilter</code>: calling <code>ViewerFilter.select(...)</code> and double-check via.</li>
+ * <li><code>org.eclipse.rse.ui.RSESystemTypeAdapter</code>: calling <code>RSESystemTypeAdapter.isEnabled(...)</code>.</li>
  * </ul>
  */
 public class RSENewConnectionWizardSelectionPage extends WizardPage {
@@ -103,18 +103,19 @@ public class RSENewConnectionWizardSelectionPage extends WizardPage {
 					if (!Arrays.asList(restricted).contains(systemType)) return false;
 				}
 				
-				// first check if the system type is enabled at all.
-				RSESystemTypeAdapter adapter = (RSESystemTypeAdapter)(systemType.getAdapter(IRSESystemType.class));
-				if (adapter != null && !adapter.isEnabled(systemType)) {
-					return false;
-				}
-				
-				// second, adapt the system type to a viewer filter and pass on the select request
+				// First, adapt the system type to a viewer filter and pass on the select request
 				// to the viewer filter adapter if available
 				ViewerFilter filter = (ViewerFilter)(systemType.getAdapter(ViewerFilter.class));
 				if (filter != null && !filter.select(viewer, parentElement, element)) {
 					return false;
 				}
+
+				// Second, double check if the system type passed the viewer filter but is disabled.
+				RSESystemTypeAdapter adapter = (RSESystemTypeAdapter)(systemType.getAdapter(IRSESystemType.class));
+				if (adapter != null && !adapter.isEnabled(systemType)) {
+					return false;
+				}
+				
 			}
 			
 			// In all other cases, the element passes the filter

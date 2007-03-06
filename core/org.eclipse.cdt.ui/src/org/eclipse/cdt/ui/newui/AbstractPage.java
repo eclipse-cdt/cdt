@@ -404,6 +404,7 @@ implements
 	 */
 	public boolean performOk() {
 		if (doneOK || noContentOnPage || !displayedConfig) return true;
+		forEach(ICPropertyTab.OK, null);
 		doneOK = true; // further pages need not to do anything
 		try {
 			CoreModel.getDefault().setProjectDescription(getProject(), prjd);
@@ -555,11 +556,15 @@ implements
 	 * @param p - project to check
 	 * @returns true if it's new-style project. 
 	 */ 
-	public boolean isCDTProject(IProject p) {
+	public static boolean isCDTPrj(IProject p) {
 		ICProjectDescription prjd = CoreModel.getDefault().getProjectDescription(p, false); 
 		if (prjd == null) return false; 
 		ICConfigurationDescription[] cfgs = prjd.getConfigurations();
 		return (cfgs != null && cfgs.length > 0);
+	}
+	
+	public boolean isCDTProject(IProject p) {
+		return isCDTPrj(p);
 	}
 	
 	public ICResourceDescription getResDesc() {

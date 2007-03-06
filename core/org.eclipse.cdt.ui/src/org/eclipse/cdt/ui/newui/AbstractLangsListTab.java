@@ -24,16 +24,20 @@ import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeColumn;
@@ -64,21 +68,57 @@ public abstract class AbstractLangsListTab extends AbstractCPropertyTab {
 	protected ICLanguageSetting lang;
 	protected List incs;
 	protected List exported; 
+	protected SashForm sashForm;
 	
 	private final static Image IMG_FS = CPluginImages.get(CPluginImages.IMG_FILESYSTEM); 
 	private final static Image IMG_WS = CPluginImages.get(CPluginImages.IMG_WORKSPACE); 
 	private final static Image IMG_MK = CPluginImages.get(CPluginImages.IMG_OBJS_MACRO);
+	private static final int[] DEFAULT_SASH_WEIGHTS = new int[] { 10, 30 };
 	
 	public void createControls(Composite parent) {
 		super.createControls(parent);
-		usercomp.setLayout(new GridLayout(2, false));
-		addTree(usercomp).setLayoutData(new GridData(GridData.FILL_VERTICAL));
-	    table = new Table(usercomp, SWT.BORDER | SWT.SINGLE | SWT.V_SCROLL | SWT.FULL_SELECTION);
+		usercomp.setLayout(new GridLayout(1, false));
+		
+		// Create the sash form
+		sashForm = new SashForm(usercomp, SWT.NONE);
+		sashForm.setOrientation(SWT.HORIZONTAL);
+		sashForm.setLayoutData(new GridData(GridData.FILL_BOTH));
+		
+		GridLayout layout = new GridLayout();
+		layout.numColumns = 2;
+		layout.marginHeight = 5;
+		sashForm.setLayout(layout);
+
+		addTree(sashForm).setLayoutData(new GridData(GridData.FILL_VERTICAL));
+	    table = new Table(sashForm, SWT.BORDER | SWT.SINGLE | SWT.V_SCROLL | SWT.FULL_SELECTION);
 	    GridData gd = new GridData(GridData.FILL_BOTH);
 	    gd.widthHint = 255;
 	    table.setLayoutData(gd);
   	    table.setHeaderVisible(true);
   	    table.setLinesVisible(true);
+
+  	    sashForm.setWeights(DEFAULT_SASH_WEIGHTS);
+		
+		sashForm.addListener(SWT.Selection, new Listener() {
+			public void handleEvent(Event event) {
+				if (event.detail == SWT.DRAG) return;
+				int shift = event.x - sashForm.getBounds().x;
+				GridData data = (GridData) langTree.getLayoutData();
+				if ((data.widthHint + shift) < 20) return;
+				Point computedSize = usercomp.getShell().computeSize(SWT.DEFAULT, SWT.DEFAULT);
+				Point currentSize = usercomp.getShell().getSize();
+				boolean customSize = !computedSize.equals(currentSize);
+				data.widthHint = data.widthHint;
+				sashForm.layout(true);
+				computedSize = usercomp.getShell().computeSize(SWT.DEFAULT, SWT.DEFAULT);
+				if (customSize)
+					computedSize.x = Math.max(computedSize.x, currentSize.x);
+				computedSize.y = Math.max(computedSize.y, currentSize.y);
+				if (computedSize.equals(currentSize)) {
+					return;
+				}
+			}
+		});
 
   	    tv = new TableViewer(table);
 

@@ -91,7 +91,7 @@ public class ChangeBuildConfigActionBase {
 				for (; i < cfgDescs.length; i++) {
 					if (cfgDescs[i].getName().equals(sName)) {
 						String sNewDesc = cfgDescs[i].getDescription();
-						if (sNewDesc.equals("")) { 	//$NON-NLS-1$
+						if (sNewDesc != null && sNewDesc.length() == 0) {
 							sNewDesc = null;
 						}
 						if (commonDesc) {

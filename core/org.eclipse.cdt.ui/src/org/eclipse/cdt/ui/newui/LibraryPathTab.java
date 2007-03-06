@@ -24,6 +24,7 @@ import org.eclipse.cdt.core.settings.model.ICSettingEntry;
 
 public class LibraryPathTab extends AbstractLangsListTab implements IPathEntryStoreListener {
 	IPathEntryStore fStore;
+	private static final int[] PRIVATE_SASH_WEIGHTS = new int[] { 0, 30 };
 
 	public void additionalTableSet() {
 		  TableColumn c = new TableColumn(table, SWT.NONE);
@@ -33,7 +34,8 @@ public class LibraryPathTab extends AbstractLangsListTab implements IPathEntrySt
 
 	public void createControls(Composite parent) {
 		super.createControls(parent);
-		((GridData)langTree.getLayoutData()).widthHint = 0;
+//		((GridData)langTree.getLayoutData()).widthHint = 0;
+  	    sashForm.setWeights(PRIVATE_SASH_WEIGHTS);
 		langTree.setVisible(false);
 	}
 	

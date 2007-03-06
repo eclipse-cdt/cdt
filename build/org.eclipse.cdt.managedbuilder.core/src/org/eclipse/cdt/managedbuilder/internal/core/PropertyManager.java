@@ -83,12 +83,17 @@ public class PropertyManager {
 
 	protected Map getLoaddedData(IConfiguration cfg){
 		Map map = null;
+		IProject proj = null;
 		try {
-			IProject proj = cfg.getOwner().getProject();
-			map = (Map)proj.getSessionProperty(propsSessionProperty);
+			if(!((Configuration)cfg).isPreference()){
+				proj = cfg.getOwner().getProject();
+				map = (Map)proj.getSessionProperty(propsSessionProperty);
+			}
 			if(map == null){
 				map = new HashMap();
-				proj.setSessionProperty(propsSessionProperty, map);
+				if(proj != null){
+					proj.setSessionProperty(propsSessionProperty, map);
+				}
 			}
 			map = (Map)map.get(cfg.getId());
 		} catch (CoreException e) {
@@ -97,6 +102,9 @@ public class PropertyManager {
 	}
 
 	protected void clearLoaddedData(IConfiguration cfg){
+		if(((Configuration)cfg).isPreference())
+			return;
+		
 		IProject proj = cfg.getOwner().getProject();
 		try {
 			proj.setSessionProperty(propsSessionProperty, null);
@@ -368,6 +376,9 @@ public class PropertyManager {
 	}
 
 	public void clearProperties(IConfiguration cfg){
+		if(cfg.getOwner() == null)
+			return;
+		
 		clearLoaddedData(cfg);
 		storeData(cfg, null);
 	}
@@ -391,7 +402,7 @@ public class PropertyManager {
 	}
 
 	public void serialize(IConfiguration cfg){
-		if(cfg.isTemporary())
+		if(cfg.isTemporary() || cfg.getOwner() == null)
 			return;
 		
 		storeData(cfg);

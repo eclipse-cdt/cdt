@@ -72,9 +72,13 @@ public class CStorage implements ICSettingsStorage{
 	}
 	
 	private InternalXmlStorageElement createAddStorageElement(String id, Element element){
-		InternalXmlStorageElement se = new InternalXmlStorageElement(element, null, false, new String[]{MODULE_ID_ATTRIBUTE}, null, fIsReadOnly);
+		InternalXmlStorageElement se = createStorageElement(element, fIsReadOnly);
 		fStorageElementMap.put(id, se);
 		return se;
+	}
+	
+	public static InternalXmlStorageElement createStorageElement(Element el, boolean isReadOnly){
+		return new InternalXmlStorageElement(el, null, false, new String[]{MODULE_ID_ATTRIBUTE}, null, isReadOnly);
 	}
 
 //	public ICStorageElement getStorage(String id){

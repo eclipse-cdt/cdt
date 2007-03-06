@@ -43,6 +43,7 @@ public class CProjectDescription implements ICProjectDescription, ICDataProxyCon
 	private HashMap fPropertiesMap;
 	private boolean fNeedsActiveCfgIdPersistence;
 	private boolean fIsLoadding;
+	private boolean fIsApplying;
 
 	CProjectDescription(IProject project, ICStorageElement element, boolean loadding) throws CoreException {
 		fProject = project;
@@ -71,7 +72,6 @@ public class CProjectDescription implements ICProjectDescription, ICDataProxyCon
 		if(!fIsReadOnly || !fIsLoadding)
 			return;
 		
-		fIsLoadding = false;
 		for(Iterator iter = fCfgMap.values().iterator(); iter.hasNext();){
 			CConfigurationDescriptionCache cache = (CConfigurationDescriptionCache)iter.next();
 			try {
@@ -81,12 +81,35 @@ public class CProjectDescription implements ICProjectDescription, ICDataProxyCon
 				iter.remove();
 			}
 		}
+		
+		fIsLoadding = false;
 	}
-	
+
+	void applyDatas(){
+		if(!fIsReadOnly || !fIsApplying)
+			return;
+		
+		for(Iterator iter = fCfgMap.values().iterator(); iter.hasNext();){
+			CConfigurationDescriptionCache cache = (CConfigurationDescriptionCache)iter.next();
+			try {
+				cache.applyData();
+			} catch (CoreException e) {
+				CCorePlugin.log(e);
+				iter.remove();
+			}
+		}
+		
+		fIsApplying = false;
+	}
+
 	public boolean isLoadding(){
 		return fIsLoadding;
 	}
-	
+
+	public boolean isApplying(){
+		return fIsApplying;
+	}
+
 /*	CProjectDescription(IProject project) throws CoreException {
 		this(project, CProjectDescriptionManager.getInstance().createStorage(project, true, false));
 	}
@@ -98,8 +121,7 @@ public class CProjectDescription implements ICProjectDescription, ICDataProxyCon
 		fRootStorageElement = el;
 		fIsReadOnly = saving;
 		fIsLoadding = base.fIsLoadding;
-		
-		
+		fIsApplying = saving || base.fIsApplying;
 		
 		for(Iterator iter = base.fCfgMap.values().iterator(); iter.hasNext();){
 			try {
@@ -109,7 +131,7 @@ public class CProjectDescription implements ICProjectDescription, ICDataProxyCon
 					if(baseData instanceof CConfigurationDescriptionCache){
 						baseData = ((CConfigurationDescriptionCache)baseData).getConfigurationData();
 					}
-					CConfigurationDescriptionCache cache = new CConfigurationDescriptionCache((ICConfigurationDescription)cfgDes, baseData, cfgDes.getSpecSettings(), this, null, saving);
+					CConfigurationDescriptionCache cache = new CConfigurationDescriptionCache((ICConfigurationDescription)cfgDes, baseData, cfgDes.getSpecSettings(), this, null);
 					configurationCreated(cache);
 				} else {
 					CConfigurationData baseData = cfgDes.getConfigurationData(false);
@@ -349,7 +371,7 @@ public class CProjectDescription implements ICProjectDescription, ICDataProxyCon
 	}
 
 	public boolean isReadOnly() {
-		return fIsReadOnly;
+		return fIsReadOnly && !(fIsLoadding || fIsApplying);
 	}
 
 	public ICSettingObject getChildSettingById(String id) {

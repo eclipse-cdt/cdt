@@ -66,7 +66,6 @@ import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICFolderDescription;
 import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.core.settings.model.ICResourceDescription;
-import org.eclipse.cdt.managedbuilder.core.BuildException;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.utils.ui.controls.ControlFactory;
 

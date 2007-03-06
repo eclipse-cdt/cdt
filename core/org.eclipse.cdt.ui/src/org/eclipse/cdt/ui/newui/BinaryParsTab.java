@@ -170,6 +170,7 @@ public class BinaryParsTab extends AbstractCPropertyTab {
 		}
 		// add remaining parsers (unchecked)
 		Iterator it = clone.keySet().iterator();
+//		i = 0;
 		while (it.hasNext()) {
 			String s = (String)it.next();
 			data[i++] = clone.get(s);

@@ -80,4 +80,8 @@ public class ManagedConfigStorageElement implements ICStorageElement {
 	public void setValue(String value) {
 		throw new WriteAccessException();
 	}
+
+	public String[] getAttributeNames() {
+		throw new UnsupportedOperationException();
+	}
 }

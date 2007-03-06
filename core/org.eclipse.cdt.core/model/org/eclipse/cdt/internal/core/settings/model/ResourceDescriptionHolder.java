@@ -113,7 +113,7 @@ public class ResourceDescriptionHolder {
 	
 	public ICSourceEntry[] calculateSourceEntriesFromPaths(IProject project, IPath paths[]){
 		if(paths == null || paths.length == 0)
-			paths = new IPath[]{new Path("")};
+			paths = new IPath[]{new Path("")}; //$NON-NLS-1$
 		
 //		Set set = new HashSet(paths.length);
 		PathSettingsContainer cr = PathSettingsContainer.createRootContainer();

@@ -15,7 +15,6 @@ import org.eclipse.cdt.make.core.IMakeTarget;
 import org.eclipse.cdt.make.internal.ui.MakeUIImages;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.graphics.Image;

@@ -293,7 +293,12 @@ public class BuilderFactory {
 				String type = (String)args.get(CONTENTS);
 				if(type == null){
 					IConfiguration cfg = info.getDefaultConfiguration();
-					IBuilder builder = cfg.getEditableBuilder();
+					IBuilder builder;
+					if(args.size() == 0){
+						builder = cfg.getEditableBuilder();
+					} else {
+						builder = createBuilder(cfg, args);
+					}
 					builders = new IBuilder[]{builder};
 					//TODO:
 				} else if (CONTENTS_BUILDER.equals(type)){

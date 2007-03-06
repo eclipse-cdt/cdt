@@ -25,10 +25,6 @@ import java.util.StringTokenizer;
 import org.eclipse.cdt.core.settings.model.ICStorageElement;
 import org.eclipse.cdt.core.settings.model.extension.CTargetPlatformData;
 import org.eclipse.cdt.make.core.scannerconfig.IDiscoveredPathManager;
-import org.eclipse.cdt.make.core.scannerconfig.IScannerConfigBuilderInfo2;
-import org.eclipse.cdt.make.core.scannerconfig.InfoContext;
-import org.eclipse.cdt.make.internal.core.scannerconfig2.ScannerConfigInfoFactory2;
-import org.eclipse.cdt.make.internal.core.scannerconfig2.ScannerConfigProfileManager;
 import org.eclipse.cdt.managedbuilder.buildproperties.IBuildPropertyType;
 import org.eclipse.cdt.managedbuilder.buildproperties.IBuildPropertyValue;
 import org.eclipse.cdt.managedbuilder.core.IBuildObject;
@@ -120,7 +116,6 @@ public class ToolChain extends HoldsOptions implements IToolChain, IBuildPropert
 	
 	private IFolderInfo parentFolderInfo;
 	
-	private IScannerConfigBuilderInfo2 scannerConfigInfo;
 	private IDiscoveredPathManager.IDiscoveredPathInfo discoveredInfo;
 	private Boolean isRcTypeBasedDiscovery;
 
@@ -194,13 +189,7 @@ public class ToolChain extends HoldsOptions implements IToolChain, IBuildPropert
 				addTool(toolChild);
 			}  else if (toolChainElement.getName().equals(SupportedProperties.SUPPORTED_PROPERTIES)){
 				loadProperties(toolChainElement);
-			} else if(toolChainElement.getName().equals(DISCOVERY_INFO)){
-				ICStorageElement el = new ManagedConfigStorageElement(toolChainElement);
-				String profileId = getScannerConfigDiscoveryProfileId();
-				if(profileId == null)
-					profileId = ScannerConfigProfileManager.NULL_PROFILE_ID;
-				scannerConfigInfo = ScannerConfigInfoFactory2.create(new InfoContext(null), el, profileId);
-			}
+			} 
 		}		
 	}
 
@@ -283,12 +272,7 @@ public class ToolChain extends HoldsOptions implements IToolChain, IBuildPropert
 				//load user-defined macros
 				userDefinedMacros = new StorableMacros(configElement);
 
-			}*/else if(configElement.getName().equals(DISCOVERY_INFO)){
-				String profileId = getScannerConfigDiscoveryProfileId();
-				if(profileId == null)
-					profileId = ScannerConfigProfileManager.NULL_PROFILE_ID;
-				scannerConfigInfo = ScannerConfigInfoFactory2.create(new InfoContext(getParentResourceInfo(), null, null), configElement, profileId);
-			}
+			}*/
 		}
 		
 		String rebuild = PropertyManager.getInstance().getProperty(this, REBUILD_STATE);
@@ -356,9 +340,6 @@ public class ToolChain extends HoldsOptions implements IToolChain, IBuildPropert
         }
         
 		isRcTypeBasedDiscovery = toolChain.isRcTypeBasedDiscovery;
-		if(toolChain.scannerConfigInfo != null){
-			scannerConfigInfo = ScannerConfigInfoFactory2.create(new InfoContext(folderInfo, null, null), toolChain.scannerConfigInfo, ScannerConfigProfileManager.NULL_PROFILE_ID); 
-		}
 
        	supportsManagedBuild = toolChain.supportsManagedBuild; 
 
@@ -885,10 +866,6 @@ public class ToolChain extends HoldsOptions implements IToolChain, IBuildPropert
 				element.setAttribute(SCANNER_CONFIG_PROFILE_ID, scannerConfigDiscoveryProfileId);
 			if(isRcTypeBasedDiscovery != null)
 				element.setAttribute(RESOURCE_TYPE_BASED_DISCOVERY, isRcTypeBasedDiscovery.toString());
-			if(scannerConfigInfo != null){
-				ICStorageElement cfgInfoEl = element.createChild(DISCOVERY_INFO);
-				ScannerConfigInfoFactory2.serialize(scannerConfigInfo, cfgInfoEl);
-			}
 			saveRebuildState();
 
 			// I am clean now
@@ -2602,29 +2579,7 @@ public class ToolChain extends HoldsOptions implements IToolChain, IBuildPropert
 		}
 	}
 
-	public IScannerConfigBuilderInfo2 setScannerConfigBuilderInfo(IScannerConfigBuilderInfo2 info){
-		IScannerConfigBuilderInfo2 oldInfo = scannerConfigInfo;
-		scannerConfigInfo = info;
-		return oldInfo;
-	}
-
-	public IScannerConfigBuilderInfo2 getScannerConfigBuilderInfoElement(boolean searchSuper){
-		if(scannerConfigInfo == null){
-			if(superClass != null && searchSuper){
-				return ((ToolChain)superClass).getScannerConfigBuilderInfoElement(true);
-			}
-			return null;
-		}
-		return scannerConfigInfo;
-	}
-
-	public IScannerConfigBuilderInfo2 getScannerConfigBuilderInfo(){
-		return getScannerConfigBuilderInfoElement(true);
-	}
-	
 	public boolean hasScannerConfigSettings(){
-		if(getScannerConfigBuilderInfoElement(true) != null)
-			return true;
 		
 		if(getScannerConfigDiscoveryProfileId() != null)
 			return true;

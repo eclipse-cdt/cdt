@@ -190,7 +190,7 @@ public class CDefaultConfigurationData extends CConfigurationData {
 	
 	public CFolderData createRootFolderData() throws CoreException{
 		if(fRootFolderData == null){
-			createFolderData(new Path(""), null);
+			createFolderData(new Path(""), null);	//$NON-NLS-1$
 		}
 		return fRootFolderData;
 	}

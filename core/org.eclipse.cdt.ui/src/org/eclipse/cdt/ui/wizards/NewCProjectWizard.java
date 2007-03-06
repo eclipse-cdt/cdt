@@ -46,14 +46,6 @@ import org.eclipse.ui.wizards.newresource.BasicNewProjectResourceWizard;
 import org.eclipse.ui.wizards.newresource.BasicNewResourceWizard;
 
 import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.model.CoreModel;
-import org.eclipse.cdt.core.settings.model.ICProjectDescription;
-import org.eclipse.cdt.core.settings.model.extension.CConfigurationData;
-import org.eclipse.cdt.managedbuilder.core.IBuilder;
-import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
-import org.eclipse.cdt.managedbuilder.internal.core.Configuration;
-import org.eclipse.cdt.managedbuilder.internal.core.ManagedBuildInfo;
-import org.eclipse.cdt.managedbuilder.internal.core.ManagedProject;
 import org.eclipse.cdt.ui.CUIPlugin;
 
 import org.eclipse.cdt.internal.ui.CPluginImages;
@@ -335,27 +327,11 @@ public abstract class NewCProjectWizard extends BasicNewResourceWizard implement
 		IProjectDescription description = workspace.newProjectDescription(newProjectHandle.getName());
 		description.setLocation(newPath);
 
-		newProject = CCorePlugin.getDefault().createCProject(description, newProjectHandle, monitor, getProjectID());
+		if(getBuildSystemId() != null)
+			newProject = CCorePlugin.getDefault().createCDTProject(description, newProjectHandle, getBuildSystemId(), monitor);
+		else
+			newProject = CCorePlugin.getDefault().createCProject(description, newProjectHandle, monitor, getProjectID());
 		
-		// Create the build info for this project
-		CoreModel coreModel = CoreModel.getDefault();
-		ICProjectDescription des = coreModel.getProjectDescription(newProject);
-		des = coreModel.createProjectDescription(newProject, true);
-		ManagedBuildInfo info = ManagedBuildManager.createBuildInfo(newProject);
-		ManagedProject mProj = new ManagedProject(des);
-		info.setManagedProject(mProj);
-		
-		String s = "0";  //$NON-NLS-1$
-		String name = "default"; //$NON-NLS-1$
-		Configuration cfg = new Configuration(mProj, null, ManagedBuildManager.calculateChildId(s, null), name);
-		IBuilder bld = cfg.getEditableBuilder();
-		if (bld != null)
-			bld.setManagedBuildOn(false);
-		cfg.setArtifactName(newProject.getName());
-		CConfigurationData data = cfg.getConfigurationData();
-		des.createConfiguration(ManagedBuildManager.CFG_DATA_PROVIDER_ID, data);
-		coreModel.setProjectDescription(newProject, des);
-
 		return newProject;
 	}
 
@@ -365,5 +341,9 @@ public abstract class NewCProjectWizard extends BasicNewResourceWizard implement
 	 * @return String
 	 */
 	public abstract String getProjectID();
+	
+	public String getBuildSystemId(){
+		return null;
+	}
 
 }

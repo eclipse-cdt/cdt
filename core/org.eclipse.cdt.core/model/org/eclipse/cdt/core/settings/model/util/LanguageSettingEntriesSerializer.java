@@ -30,33 +30,33 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 
 public class LanguageSettingEntriesSerializer {
-	public static final String ELEMENT_ENTRY = "entry";
-	public static final String ATTRIBUTE_KIND = "kind";
-	public static final String ATTRIBUTE_NAME = "name";
-	public static final String ATTRIBUTE_VALUE = "value";
-	public static final String ATTRIBUTE_FLAGS = "flags";
-	public static final String ATTRIBUTE_EXCLUDING = "excluding";
+	public static final String ELEMENT_ENTRY = "entry"; //$NON-NLS-1$
+	public static final String ATTRIBUTE_KIND = "kind"; //$NON-NLS-1$
+	public static final String ATTRIBUTE_NAME = "name"; //$NON-NLS-1$
+	public static final String ATTRIBUTE_VALUE = "value"; //$NON-NLS-1$
+	public static final String ATTRIBUTE_FLAGS = "flags"; //$NON-NLS-1$
+	public static final String ATTRIBUTE_EXCLUDING = "excluding"; //$NON-NLS-1$
 	
-//	public static final String ATTRIBUTE_FULL_PATH = "fullPath";
-//	public static final String ATTRIBUTE_LOCATION = "location";
+//	public static final String ATTRIBUTE_FULL_PATH = "fullPath"; //$NON-NLS-1$
+//	public static final String ATTRIBUTE_LOCATION = "location"; //$NON-NLS-1$
 	
 
-	public static final String INCLUDE_PATH = "includePath";
-	public static final String INCLUDE_FILE = "includeFile";
-	public static final String MACRO = "macro";
-	public static final String MACRO_FILE = "macroFile";
-	public static final String LIBRARY_PATH = "libraryPath";
-	public static final String LIBRARY_FILE = "libraryFile";
-	public static final String SOURCE_PATH = "sourcePath";
-	public static final String OUTPUT_PATH = "outputPath";
+	public static final String INCLUDE_PATH = "includePath"; //$NON-NLS-1$
+	public static final String INCLUDE_FILE = "includeFile"; //$NON-NLS-1$
+	public static final String MACRO = "macro"; //$NON-NLS-1$
+	public static final String MACRO_FILE = "macroFile"; //$NON-NLS-1$
+	public static final String LIBRARY_PATH = "libraryPath"; //$NON-NLS-1$
+	public static final String LIBRARY_FILE = "libraryFile"; //$NON-NLS-1$
+	public static final String SOURCE_PATH = "sourcePath"; //$NON-NLS-1$
+	public static final String OUTPUT_PATH = "outputPath"; //$NON-NLS-1$
 
-	public static final String BUILTIN = "BUILTIN";
-	public static final String READONLY = "READONLY";
-	public static final String LOCAL = "LOCAL";
-	public static final String VALUE_WORKSPACE_PATH = "VALUE_WORKSPACE_PATH";
-	public static final String RESOLVED = "RESOLVED";
+	public static final String BUILTIN = "BUILTIN"; //$NON-NLS-1$
+	public static final String READONLY = "READONLY"; //$NON-NLS-1$
+	public static final String LOCAL = "LOCAL"; //$NON-NLS-1$
+	public static final String VALUE_WORKSPACE_PATH = "VALUE_WORKSPACE_PATH"; //$NON-NLS-1$
+	public static final String RESOLVED = "RESOLVED"; //$NON-NLS-1$
 	
-	public static final String FLAGS_SEPARATOR = "|";
+	public static final String FLAGS_SEPARATOR = "|"; //$NON-NLS-1$
 
 	public static ICLanguageSettingEntry[] loadEntries(ICStorageElement el){
 		List list = loadEntriesList(el);

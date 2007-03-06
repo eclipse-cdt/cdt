@@ -48,6 +48,10 @@ public class SetCProjectDescriptionOperation extends CModelOperation {
 		}
 
 		CProjectDescription fNewDescriptionCache = new CProjectDescription(fSetDescription, true, el);
+		mngr.setDescriptionApplying(project, fNewDescriptionCache);
+		fNewDescriptionCache.applyDatas();
+		mngr.clearDescriptionApplying(project);
+		
 		
 		ICDescriptionDelta delta = mngr.createDelta(fNewDescriptionCache, fOldDescriptionCache);
 		mngr.checkRemovedConfigurations(delta);
@@ -64,7 +68,7 @@ public class SetCProjectDescriptionOperation extends CModelOperation {
 		mngr.setLoaddedDescription(project, fNewDescriptionCache, true);
 		mngr.checkActiveCfgChange(fNewDescriptionCache, fOldDescriptionCache, new NullProgressMonitor());
 		
-		event = mngr.createAppliedEvent(fNewDescriptionCache, fOldDescriptionCache, fSetDescription, delta);
+		event = mngr.createDataAppliedEvent(fNewDescriptionCache, fOldDescriptionCache, fSetDescription, delta);
 		mngr.notifyListeners(event);
 		
 		cProject.close();
@@ -75,6 +79,9 @@ public class SetCProjectDescriptionOperation extends CModelOperation {
 			((InternalXmlStorageElement)fNewDescriptionCache.getRootStorageElement()).setReadOnly(true);
 		} catch (CoreException e1) {
 		}
+
+		event = mngr.createAppliedEvent(fNewDescriptionCache, fOldDescriptionCache, fSetDescription, delta);
+		mngr.notifyListeners(event);
 
 		try {
 			mngr.serialize(fNewDescriptionCache);

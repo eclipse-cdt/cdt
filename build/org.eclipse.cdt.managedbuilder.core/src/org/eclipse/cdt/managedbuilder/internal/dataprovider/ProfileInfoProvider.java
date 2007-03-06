@@ -14,9 +14,10 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.cdt.build.core.scannerconfig.CfgInfoContext;
+import org.eclipse.cdt.build.internal.core.scannerconfig.CfgDiscoveredPathManager;
 import org.eclipse.cdt.core.settings.model.ICLanguageSettingEntry;
 import org.eclipse.cdt.make.core.scannerconfig.IDiscoveredPathManager;
-import org.eclipse.cdt.make.core.scannerconfig.InfoContext;
 import org.eclipse.cdt.managedbuilder.core.IResourceInfo;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuilderCorePlugin;
 import org.eclipse.core.resources.IProject;
@@ -61,14 +62,14 @@ public class ProfileInfoProvider {
 //    private IResource fResource;
 //    private IPath fRcPath;
 	private IProject fProject;
-    private InfoContext fContext;
-    private IDiscoveredPathManager fMngr;
+    private CfgInfoContext fContext;
+    private CfgDiscoveredPathManager fMngr;
 	
 	public ProfileInfoProvider(BuildLanguageData lData){
 		fLlanguageData = lData;
 		IResourceInfo rcInfo = lData.getTool().getParentResourceInfo();
-		fContext = new InfoContext(rcInfo, lData.getTool(), lData.getInputType());
-		fMngr = ManagedBuilderCorePlugin.getDefault().getDiscoveryManager();
+		fContext = new CfgInfoContext(rcInfo, lData.getTool(), lData.getInputType());
+		fMngr = CfgDiscoveredPathManager.getInstance();
 		IResource rc = rcInfo.getParent().getOwner(); 
 		fProject = rc != null ? rc.getProject() : null;
 

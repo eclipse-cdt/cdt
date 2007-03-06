@@ -26,7 +26,7 @@ public class CConfigurationDataProviderDescriptor {
 	final static String CLASS = "class";	//$NON-NLS-1$
 	final static String NATURES = "natures";	//$NON-NLS-1$
 	final static String ECLIPSE_BUILDERS = "eclipseBuilders";	//$NON-NLS-1$
-	final static String DELIMITER = ";";
+	final static String DELIMITER = ";"; //$NON-NLS-1$
 	
 
 	private String fId;
@@ -93,10 +93,10 @@ public class CConfigurationDataProviderDescriptor {
 				if(obj instanceof CConfigurationDataProvider){
 					return (CConfigurationDataProvider)obj;
 				} else
-					throw ExceptionFactory.createCoreException("illegal provider implementation");
+					throw ExceptionFactory.createCoreException(SettingsModelMessages.getString("CConfigurationDataProviderDescriptor.1")); //$NON-NLS-1$
 			}
 		}
-		throw ExceptionFactory.createCoreException("no provider defined");
+		throw ExceptionFactory.createCoreException(SettingsModelMessages.getString("CConfigurationDataProviderDescriptor.2")); //$NON-NLS-1$
 	}
 	
 	public String getId(){

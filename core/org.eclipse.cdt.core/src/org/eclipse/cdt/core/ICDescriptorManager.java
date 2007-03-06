@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.core;
 
+import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -51,6 +52,12 @@ public interface ICDescriptorManager {
 	 * @throws CoreException
 	 */
 	public void runDescriptorOperation(IProject project, ICDescriptorOperation op, IProgressMonitor monitor) throws CoreException;
+	
+	public void runDescriptorOperation(IProject project,
+			ICProjectDescription des,
+			ICDescriptorOperation op,
+			IProgressMonitor monitor)
+				throws CoreException;
 	
 	/**
 	 * @param listener

@@ -93,6 +93,10 @@ public class MapStorageElement implements ICStorageElement {
 		
 		return map;
 	}
+	
+	protected boolean isSystemKey(String key){
+		return key.indexOf('?') == 0 && key.lastIndexOf('?') == key.length() - 1;
+	}
 
 	public void clear() {
 		fMap.clear();
@@ -269,5 +273,18 @@ public class MapStorageElement implements ICStorageElement {
 			throws UnsupportedOperationException {
 		// TODO
 		throw new UnsupportedOperationException();
+	}
+
+	public String[] getAttributeNames() {
+		List list = new ArrayList(fMap.size());
+		for(Iterator iter = fMap.entrySet().iterator(); iter.hasNext();){
+			Map.Entry entry = (Map.Entry)iter.next();
+			String key = (String)entry.getKey();
+			if(!isSystemKey(key)){
+				list.add(key);
+			}
+		}
+		
+		return (String[])list.toArray(new String[list.size()]);
 	}
 }

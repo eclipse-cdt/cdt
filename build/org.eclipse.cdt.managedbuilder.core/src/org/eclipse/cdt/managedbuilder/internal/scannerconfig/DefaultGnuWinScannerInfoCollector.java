@@ -14,8 +14,10 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.cdt.make.core.scannerconfig.InfoContext;
 import org.eclipse.cdt.make.core.scannerconfig.ScannerInfoTypes;
 import org.eclipse.cdt.make.internal.core.scannerconfig.util.CygpathTranslator;
+import org.eclipse.core.resources.IProject;
 
 /**
  * Implementation class for gathering the built-in compiler settings for 
@@ -24,7 +26,7 @@ import org.eclipse.cdt.make.internal.core.scannerconfig.util.CygpathTranslator;
  * @since 2.0
  */
 public class DefaultGnuWinScannerInfoCollector extends DefaultGCCScannerInfoCollector {
-	
+	private IProject fProject; 
     /* (non-Javadoc)
      * @see org.eclipse.cdt.make.core.scannerconfig.IScannerInfoCollector#contributeToScannerConfig(java.lang.Object, java.util.Map)
      */
@@ -36,7 +38,7 @@ public class DefaultGnuWinScannerInfoCollector extends DefaultGCCScannerInfoColl
 //            List symbols = (List) scannerInfo.get(ScannerInfoTypes.SYMBOL_DEFINITIONS);
             
     		// This method will be called by the parser each time there is a new value
-            List translatedIncludes = CygpathTranslator.translateIncludePaths(getProject(), includes);
+            List translatedIncludes = CygpathTranslator.translateIncludePaths(fProject, includes);
     		Iterator pathIter = translatedIncludes.listIterator();
     		while (pathIter.hasNext()) {
     			String convertedPath = (String) pathIter.next();
@@ -62,5 +64,13 @@ public class DefaultGnuWinScannerInfoCollector extends DefaultGCCScannerInfoColl
     		super.contributeToScannerConfig(resource, scannerInfo);
         }
 //	}
-	
+	public void setProject(IProject project) {
+		fProject = project;
+		super.setProject(project);
+	}
+
+	public void setInfoContext(InfoContext context) {
+		fProject = context.getProject();
+		super.setInfoContext(context);
+	}
 }

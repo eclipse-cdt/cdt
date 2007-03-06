@@ -19,6 +19,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.ICDescriptor;
+import org.eclipse.cdt.core.ICDescriptorOperation;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.IPathEntry;
 import org.eclipse.cdt.core.settings.model.ICConfigExtensionReference;
@@ -31,11 +34,9 @@ import org.eclipse.cdt.core.settings.model.extension.CConfigurationData;
 import org.eclipse.cdt.core.settings.model.extension.ICProjectConverter;
 import org.eclipse.cdt.core.settings.model.util.PathEntryTranslator;
 import org.eclipse.cdt.core.settings.model.util.PathEntryTranslator.ReferenceSettingsInfo;
-import org.eclipse.cdt.make.core.scannerconfig.IScannerConfigBuilderInfo2;
-import org.eclipse.cdt.make.core.scannerconfig.InfoContext;
-import org.eclipse.cdt.make.internal.core.scannerconfig2.ScannerConfigInfoFactory2;
-import org.eclipse.cdt.make.internal.core.scannerconfig2.ScannerConfigProfileManager;
-import org.eclipse.cdt.managedbuilder.core.IBuilder;
+import org.eclipse.cdt.make.core.IMakeTarget;
+import org.eclipse.cdt.make.core.IMakeTargetManager;
+import org.eclipse.cdt.make.core.MakeCorePlugin;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IManagedBuildInfo;
 import org.eclipse.cdt.managedbuilder.core.IManagedProject;
@@ -47,10 +48,21 @@ import org.eclipse.cdt.managedbuilder.internal.core.Configuration;
 import org.eclipse.cdt.managedbuilder.internal.core.ManagedProject;
 import org.eclipse.cdt.managedbuilder.internal.core.ToolChain;
 import org.eclipse.core.resources.ICommand;
+import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IResourceVisitor;
+import org.eclipse.core.resources.IWorkspace;
+import org.eclipse.core.resources.IWorkspaceRunnable;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
 
 public class ProjectConverter implements ICProjectConverter {
 	private final static String OLD_MAKE_BUILDER_ID = "org.eclipse.cdt.make.core.makeBuilder";	//$NON-NLS-1$
@@ -63,6 +75,8 @@ public class ProjectConverter implements ICProjectConverter {
 	private final static String OLD_PATH_ENTRY_ID = "org.eclipse.cdt.core.pathentry"; //$NON-NLS-1$
 	private final static String OLD_DISCOVERY_NATURE_ID = "org.eclipse.cdt.make.core.ScannerConfigNature"; //$NON-NLS-1$
 	private final static String OLD_DISCOVERY_BUILDER_ID = "org.eclipse.cdt.make.core.ScannerConfigBuilder"; //$NON-NLS-1$
+	private final static String OLD_MAKE_TARGET_BUIDER_ID = "org.eclipse.cdt.make.MakeTargetBuilder"; //$NON-NLS-1$
+	private final static String NEW_MAKE_TARGET_BUIDER_ID = "org.eclipse.cdt.build.MakeTargetBuilder"; //$NON-NLS-1$
 
 	
 	public boolean canConvertProject(IProject project, String oldOwnerId, ICProjectDescription oldDes) {
@@ -91,15 +105,22 @@ public class ProjectConverter implements ICProjectConverter {
 		CoreModel model = CoreModel.getDefault();
 		ICProjectDescription newDes = null;
 		IManagedBuildInfo info = null;
-		boolean adjustBinErrParsers = false;
+		String[] binErrParserIds = null;
+//		boolean convertMakeTargetInfo = false;
 
 		if(natureSet.contains(OLD_MNG_NATURE_ID)){
 			newDes = model.createProjectDescription(project, false);
 			info = convertManagedBuildInfo(project, newDes);
 		} else if(natureSet.contains(OLD_MAKE_NATURE_ID)){
-			adjustBinErrParsers = true;
 			newDes = oldDes;
 			ICConfigurationDescription des = newDes.getConfigurations()[0];
+			ICConfigExtensionReference refs[] = des.get(OLD_BINARY_PARSER_ID);
+			if(refs.length != 0){
+				binErrParserIds = new String[refs.length];
+				for(int i = 0; i < refs.length; i++){
+					binErrParserIds[i] = refs[i].getID();
+				}
+			}
 			info = ManagedBuildManager.createBuildInfo(project);
 			ManagedProject mProj = new ManagedProject(newDes);
 			info.setManagedProject(mProj);
@@ -133,6 +154,7 @@ public class ProjectConverter implements ICProjectConverter {
 					makeBuilderCmd = cmd;
 					iter.remove();
 					changeEDes = true;
+//					convertMakeTargetInfo = true;
 				} else if(OLD_DISCOVERY_BUILDER_ID.equals(cmd.getBuilderName())){
 					iter.remove();
 					changeEDes = true;
@@ -148,18 +170,20 @@ public class ProjectConverter implements ICProjectConverter {
 				if(makeBuilderCmd != null)
 					loadBuilderSettings(cfg, makeBuilderCmd);
 				
-				loadDiscoveryOptions(cfgDes, cfg);
+//				loadDiscoveryOptions(cfgDes, cfg);
 				
 				loadPathEntryInfo(project, cfgDes, data);
 				
-				if(adjustBinErrParsers){
-					ICConfigExtensionReference refs[] = cfgDes.get(OLD_ERROR_PARSER_ID);
-					String ids[] = idsFromRefs(refs);
-					data.getTargetPlatformData().setBinaryParserIds(ids);
-					
-					refs = cfgDes.get(OLD_ERROR_PARSER_ID);
-					ids = idsFromRefs(refs);
-					data.getBuildData().setErrorParserIDs(ids);
+				if(binErrParserIds != null){
+					data.getTargetPlatformData().setBinaryParserIds(binErrParserIds);
+					cfgDes.get(OLD_BINARY_PARSER_ID);
+//					ICConfigExtensionReference refs[] = cfgDes.get(OLD_BINARY_PARSER_ID);
+//					String ids[] = idsFromRefs(refs);
+//					data.getTargetPlatformData().setBinaryParserIds(ids);
+//					
+//					refs = cfgDes.get(OLD_ERROR_PARSER_ID);
+//					ids = idsFromRefs(refs);
+//					data.getBuildData().setErrorParserIDs(ids);
 				}
 				
 				try {
@@ -167,6 +191,14 @@ public class ProjectConverter implements ICProjectConverter {
 				} catch (CoreException e){
 				}
 			}
+			
+//			if(convertMakeTargetInfo){
+//				try {
+//					convertMakeTargetInfo(project, newDes, null);
+//				} catch (CoreException e){
+//					ManagedBuilderCorePlugin.log(e);
+//				}
+//			}
 			
 			if(changeEDes){
 				cmds = (ICommand[])list.toArray(new ICommand[list.size()]);
@@ -183,6 +215,73 @@ public class ProjectConverter implements ICProjectConverter {
 		}
 
 		return newDes;
+	}
+	
+	private static void convertMakeTargetInfo(final IProject project, ICProjectDescription des, IProgressMonitor monitor) throws CoreException{
+		if(monitor == null)
+			monitor = new NullProgressMonitor();
+		
+		CCorePlugin.getDefault().getCDescriptorManager().runDescriptorOperation(project, des, new ICDescriptorOperation(){
+
+			public void execute(ICDescriptor descriptor,
+					IProgressMonitor monitor) throws CoreException {
+				final IMakeTargetManager mngr = MakeCorePlugin.getDefault().getTargetManager();
+				
+				project.accept(new IResourceVisitor(){
+
+					public boolean visit(IResource resource)
+							throws CoreException {
+						if(resource.getType() == IResource.FILE)
+							return false;
+						
+						try {
+							IContainer cr = (IContainer)resource;
+							IMakeTarget targets[] = mngr.getTargets(cr);
+							for(int i = 0; i < targets.length; i++){
+								IMakeTarget t = targets[i];
+								if(!OLD_MAKE_TARGET_BUIDER_ID.equals(t.getTargetBuilderID()))
+									continue;
+								
+								IMakeTarget newT = mngr.createTarget(project, t.getName(), NEW_MAKE_TARGET_BUIDER_ID);
+								copySettings(t, newT);
+								mngr.removeTarget(t);
+								mngr.addTarget(newT);
+							}
+						} catch ( CoreException e){
+							ManagedBuilderCorePlugin.log(e);
+						}
+						return true;
+					}
+					
+				});
+			}
+			
+		}, monitor);
+	}
+	
+	private static void copySettings(IMakeTarget fromTarget, IMakeTarget toTarget) throws CoreException{
+			toTarget.setAppendEnvironment(fromTarget.appendEnvironment());
+			toTarget.setAppendProjectEnvironment(fromTarget.appendProjectEnvironment());
+
+			toTarget.setBuildAttribute(IMakeTarget.BUILD_LOCATION, fromTarget.getBuildAttribute(IMakeTarget.BUILD_LOCATION, null));
+			toTarget.setBuildAttribute(IMakeTarget.BUILD_COMMAND, fromTarget.getBuildAttribute(IMakeTarget.BUILD_COMMAND, null));
+			toTarget.setBuildAttribute(IMakeTarget.BUILD_ARGUMENTS, fromTarget.getBuildAttribute(IMakeTarget.BUILD_ARGUMENTS, null));
+			toTarget.setBuildAttribute(IMakeTarget.BUILD_TARGET, fromTarget.getBuildAttribute(IMakeTarget.BUILD_TARGET, null));
+			
+			Map fromMap = fromTarget.getEnvironment();
+			if(fromMap != null)
+				toTarget.setEnvironment(new HashMap(fromMap));
+			
+//			toTarget.setErrorParsers(fromTarget.getErrorParsers());
+			
+			toTarget.setRunAllBuilders(fromTarget.runAllBuilders());
+			
+			toTarget.setStopOnError(fromTarget.isStopOnError());
+			
+			toTarget.setUseDefaultBuildCmd(fromTarget.isDefaultBuildCmd());
+			
+			toTarget.setContainer(fromTarget.getContainer());
+
 	}
 	
 	private void loadPathEntryInfo(IProject project, ICConfigurationDescription des, CConfigurationData data){
@@ -242,30 +341,156 @@ public class ProjectConverter implements ICProjectConverter {
 		return ids;
 	}
 	
-	private void loadDiscoveryOptions(ICConfigurationDescription des, IConfiguration cfg){
-		try {
-			ICStorageElement discoveryStorage = des.getStorage(OLD_DISCOVERY_MODULE_ID, false);
-			if(discoveryStorage != null){
-				Configuration config = (Configuration)cfg;
-				IScannerConfigBuilderInfo2 scannerConfigInfo = ScannerConfigInfoFactory2.create(new InfoContext(cfg), discoveryStorage, ScannerConfigProfileManager.NULL_PROFILE_ID);
-				config.setPerRcTypeDiscovery(false);
-				config.setScannerConfigInfo(scannerConfigInfo);
-				des.removeStorage(OLD_DISCOVERY_MODULE_ID);
+//	private void loadDiscoveryOptions(ICConfigurationDescription des, IConfiguration cfg){
+//		try {
+//			ICStorageElement discoveryStorage = des.getStorage(OLD_DISCOVERY_MODULE_ID, false);
+//			if(discoveryStorage != null){
+//				Configuration config = (Configuration)cfg;
+//				IScannerConfigBuilderInfo2 scannerConfigInfo = ScannerConfigInfoFactory2.create(new CfgInfoContext(cfg), discoveryStorage, ScannerConfigProfileManager.NULL_PROFILE_ID);
+//				config.setPerRcTypeDiscovery(false);
+//				config.setScannerConfigInfo(scannerConfigInfo);
+//				des.removeStorage(OLD_DISCOVERY_MODULE_ID);
+//			}
+//		} catch (CoreException e) {
+//			ManagedBuilderCorePlugin.log(e);
+//		}
+//		
+//		
+//	}
+	
+	private void loadBuilderSettings(IConfiguration cfg, ICommand cmd){
+		Builder builder = (Builder)BuilderFactory.createBuilderFromCommand(cfg, cmd);
+		if(builder.getCommand() != null && builder.getCommand().length() != 0){
+			String[] errParserIds = builder.getCustomizedErrorParserIds();
+			builder.setCustomizedErrorParserIds(null);
+			((ToolChain)cfg.getToolChain()).setBuilder((Builder)builder);
+			if(errParserIds != null && errParserIds.length != 0){
+				cfg.setErrorParserList(errParserIds);
 			}
+		}
+	}
+	
+	private static boolean convertOldStdMakeToNewStyle(final IProject project, boolean checkOnly, IProgressMonitor monitor, boolean throwExceptions) throws CoreException {
+		try {
+			ICDescriptor dr = CCorePlugin.getDefault().getCProjectDescription(project, false);
+			if(dr == null){
+				if(throwExceptions)
+					throw new CoreException(new Status(IStatus.ERROR,
+							ManagedBuilderCorePlugin.getUniqueIdentifier(),
+							"the specified project is not an CDT project"));
+				return false;
+			}
+
+			if(!MakeCorePlugin.MAKE_PROJECT_ID.equals(dr.getProjectOwner().getID())){
+				if(throwExceptions)
+					throw new CoreException(new Status(IStatus.ERROR,
+							ManagedBuilderCorePlugin.getUniqueIdentifier(),
+							"the specified project is not an old style make project, the owner ID is " + dr.getProjectOwner().getID()));
+				return false;
+			}
+			
+			ICProjectDescription des = CCorePlugin.getDefault().getProjectDescription(project, false);
+			ICConfigurationDescription cfgs[] = des.getConfigurations();
+			if(cfgs.length != 1){
+				if(throwExceptions)
+					throw new CoreException(new Status(IStatus.ERROR,
+							ManagedBuilderCorePlugin.getUniqueIdentifier(),
+							"the specified project is not an old style project: the number of configurations is " + cfgs.length));
+				return false;
+			}
+			
+			if(!CCorePlugin.DEFAULT_PROVIDER_ID.equals(cfgs[0].getBuildSystemId())){
+				if(throwExceptions)
+					throw new CoreException(new Status(IStatus.ERROR,
+							ManagedBuilderCorePlugin.getUniqueIdentifier(),
+							"the specified project is not an old style project: the number of configurations is " + cfgs.length));
+				return false;
+			}
+			
+			final IProjectDescription eDes = project.getDescription();
+			String natureIds[] = eDes.getNatureIds();
+			Set set = new HashSet(Arrays.asList(natureIds));
+			if(!set.contains(OLD_MAKE_NATURE_ID)){
+				if(throwExceptions)
+					throw new CoreException(new Status(IStatus.ERROR,
+							ManagedBuilderCorePlugin.getUniqueIdentifier(),
+							"the specified project is not an old style make project: nature IDs are " + natureIds.toString()));
+				return false;
+			}
+			
+			if(!checkOnly){
+				ProjectConverter instance = new ProjectConverter();
+				ICProjectDescription oldDes = CCorePlugin.getDefault().getProjectDescription(project);
+				if(!instance.canConvertProject(project, MakeCorePlugin.MAKE_PROJECT_ID, oldDes)){
+					if(throwExceptions)
+						throw new CoreException(new Status(IStatus.ERROR,
+								ManagedBuilderCorePlugin.getUniqueIdentifier(),
+								"the specified project can not be converted"));
+					return false;
+				}
+				
+				final ICProjectDescription newDes = instance.convertProject(project, eDes, MakeCorePlugin.MAKE_PROJECT_ID, oldDes);
+				if(newDes == null){
+					if(throwExceptions)
+						throw new CoreException(new Status(IStatus.ERROR,
+								ManagedBuilderCorePlugin.getUniqueIdentifier(),
+								"the project conversion failed"));
+					return false;
+				}
+				
+				final IWorkspace wsp = ResourcesPlugin.getWorkspace();
+				wsp.run(new IWorkspaceRunnable(){
+
+					public void run(IProgressMonitor monitor)
+							throws CoreException {
+						project.setDescription(eDes, monitor);
+						CCorePlugin.getDefault().setProjectDescription(project, newDes);
+						Job job = new Job("targets conversion"){
+
+							protected IStatus run(IProgressMonitor monitor) {
+								try {
+									ICProjectDescription des = CCorePlugin.getDefault().getProjectDescription(project);
+									convertMakeTargetInfo(project, des, monitor);
+								} catch (CoreException e) {
+									return e.getStatus();
+								}
+								return Status.OK_STATUS;
+							}
+							
+						};
+						
+						job.setRule(wsp.getRoot());
+						job.schedule();
+					}
+					
+				}, wsp.getRoot(), IWorkspace.AVOID_UPDATE, monitor);
+			}
+			return true;
+		} catch (CoreException e) {
+			if(throwExceptions)
+				throw e;
+			ManagedBuilderCorePlugin.log(e);
+		}
+		if(throwExceptions)
+			throw new CoreException(new Status(IStatus.ERROR,
+					ManagedBuilderCorePlugin.getUniqueIdentifier(),
+					"the project conversion failed due to unknown reason"));
+		return false;
+	}
+	
+	public static boolean isOldStyleMakeProject(IProject project){
+		try {
+			return convertOldStdMakeToNewStyle(project, true, null, false);
 		} catch (CoreException e) {
 			ManagedBuilderCorePlugin.log(e);
 		}
-		
-		
+		return false;
 	}
-	
-	private void loadBuilderSettings(IConfiguration cfg, ICommand cmd){
-		IBuilder builder = BuilderFactory.createBuilderFromCommand(cfg, cmd);
-		if(builder.getCommand() != null && builder.getCommand().length() != 0){
-			((ToolChain)cfg.getToolChain()).setBuilder((Builder)builder);
-		}
+
+	public static void convertOldStdMakeToNewStyle(IProject project, IProgressMonitor monitor) throws CoreException{
+		convertOldStdMakeToNewStyle(project, false, monitor, true);
 	}
-	
+
 	private IManagedBuildInfo convertManagedBuildInfo(IProject project, ICProjectDescription newDes){
 		IManagedBuildInfo info = ManagedBuildManager.getBuildInfoLegacy(project);
 		if(info != null && info.isValid()){

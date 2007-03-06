@@ -62,7 +62,7 @@ public class CDataUtil {
 		if(array == null)
 			return null;
 		if(array.length == 0)
-			return "";
+			return ""; //$NON-NLS-1$
 		if(array.length == 1)
 			return array[0];
 		StringBuffer buf = new StringBuffer();

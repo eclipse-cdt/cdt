@@ -18,6 +18,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.eclipse.cdt.build.internal.core.scannerconfig2.CfgScannerConfigInfoFactory2;
 import org.eclipse.cdt.core.model.ILanguageDescriptor;
 import org.eclipse.cdt.core.model.LanguageManager;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
@@ -37,6 +38,7 @@ import org.eclipse.cdt.managedbuilder.core.IResourceInfo;
 import org.eclipse.cdt.managedbuilder.core.ITool;
 import org.eclipse.cdt.managedbuilder.core.IToolChain;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
+import org.eclipse.cdt.managedbuilder.core.ManagedBuilderCorePlugin;
 import org.eclipse.cdt.managedbuilder.internal.core.Configuration;
 import org.eclipse.cdt.managedbuilder.internal.core.ISettingsChangeListener;
 import org.eclipse.cdt.managedbuilder.internal.core.InputType;
@@ -101,6 +103,11 @@ public class ConfigurationDataProvider extends CConfigurationDataProvider implem
 		ManagedProject mProj = (ManagedProject)info.getManagedProject();
 		mProj.applyConfiguration((Configuration)appliedCfg.getConfiguration());
 		writeManagedProjectInfo(des.getProjectDescription(), mProj);
+		try {
+			CfgScannerConfigInfoFactory2.save(des.getProjectDescription(), baseDescription.getProjectDescription());
+		} catch (CoreException e){
+			ManagedBuilderCorePlugin.log(e);
+		}
 		info.setValid(true);
 		
 		return appliedCfg;
@@ -139,8 +146,11 @@ public class ConfigurationDataProvider extends CConfigurationDataProvider implem
 		if(des.isPreferenceConfiguration())
 			return createPreferences(des, base);
 		
+		IManagedBuildInfo info = getBuildInfo(des);
+		ManagedProject mProj = (ManagedProject)info.getManagedProject();
+
 		Configuration cfg = (Configuration)((BuildConfigurationData)base).getConfiguration();
-		Configuration newCfg = new Configuration((ManagedProject)cfg.getManagedProject(), cfg, des.getId(), true, true, false);
+		Configuration newCfg = new Configuration(mProj, cfg, des.getId(), true, true, false);
 		newCfg.setConfigurationDescription(des);
 		newCfg.setName(des.getName());
 		if(!newCfg.getId().equals(cfg.getId())){

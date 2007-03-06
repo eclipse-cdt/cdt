@@ -13,7 +13,6 @@ package org.eclipse.cdt.internal.core;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 
 import org.eclipse.cdt.core.ICDescriptor;
@@ -22,8 +21,9 @@ import org.eclipse.cdt.core.ICExtensionReference;
 import org.eclipse.cdt.core.ICOwnerInfo;
 import org.eclipse.cdt.core.settings.model.ICConfigExtensionReference;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
+import org.eclipse.cdt.core.settings.model.ICProjectDescription;
+import org.eclipse.cdt.core.settings.model.util.CDataUtil;
 import org.eclipse.cdt.core.settings.model.util.CExtensionUtil;
-import org.eclipse.cdt.internal.core.settings.model.CConfigurationDescription;
 import org.eclipse.cdt.internal.core.settings.model.CConfigurationSpecSettings;
 import org.eclipse.cdt.internal.core.settings.model.CProjectDescriptionManager;
 import org.eclipse.cdt.internal.core.settings.model.IInternalCCfgInfo;
@@ -85,8 +85,11 @@ public class CConfigBasedDescriptor implements ICDescriptor {
 
 		public void setExtensionData(String key, String value)
 				throws CoreException {
-			fCfgExtRef.setExtensionData(key, value);
-			checkApply();
+			if(!CDataUtil.objectsEqual(fCfgExtRef.getExtensionData(key), value)){
+				fIsDirty = true;
+				fCfgExtRef.setExtensionData(key, value);
+				checkApply();
+			}
 		}
 	}
 	
@@ -114,7 +117,7 @@ public class CConfigBasedDescriptor implements ICDescriptor {
 	
 	private void checkApply() throws CoreException {
 		if(fApplyOnChange){
-			CProjectDescriptionManager.getInstance().setProjectDescription(fProject, fCfgDes.getProjectDescription());
+			apply(false);
 			fIsDirty = false;
 		} else {
 			fIsDirty = true;
@@ -124,7 +127,22 @@ public class CConfigBasedDescriptor implements ICDescriptor {
 	public ICExtensionReference create(String extensionPoint, String id)
 			throws CoreException {
 		ICConfigExtensionReference ref = fCfgDes.create(extensionPoint, id);
+
+		//write is done for all configurations to avoid "data loss" on configuration change
+		ICProjectDescription des = fCfgDes.getProjectDescription();
+		ICConfigurationDescription cfgs[] = des.getConfigurations();
+		for(int i = 0; i < cfgs.length; i++){
+			ICConfigurationDescription cfg = cfgs[i];
+			if(cfg != fCfgDes){
+				try {
+					cfg.create(extensionPoint, id);
+				} catch (CoreException e){
+				}
+			}
+		}
+		
 		ICExtensionReference r = create(ref);
+		fIsDirty = true;
 		checkApply();
 		return r;
 	}
@@ -132,7 +150,10 @@ public class CConfigBasedDescriptor implements ICDescriptor {
 	public void updateConfiguration(ICConfigurationDescription des) throws CoreException{
 		fCfgDes = des;
 		fProject = fCfgDes.getProjectDescription().getProject();
-		fOwner = ((IInternalCCfgInfo)fCfgDes).getSpecSettings().getCOwner();
+		CConfigurationSpecSettings settings = ((IInternalCCfgInfo)fCfgDes).getSpecSettings(); 
+		fOwner = settings.getCOwner();
+//		settings.setDescriptor(this);
+		fStorageDataElMap.clear();
 	}
 	
 	private CConfigBaseDescriptorExtensionReference create(ICConfigExtensionReference ref){
@@ -199,8 +220,15 @@ public class CConfigBasedDescriptor implements ICDescriptor {
 
 	public ICExtensionReference[] get(String extensionPoint, boolean update)
 			throws CoreException {
-		if(update)
+		ICExtensionReference[] refs = get(extensionPoint);
+		if(refs.length == 0 && update){
+			boolean prevApplyOnChange = fApplyOnChange;
+			fApplyOnChange = false;
 			fOwner.update(fProject, this, extensionPoint);
+			fApplyOnChange = prevApplyOnChange;
+			checkApply();
+			refs = get(extensionPoint);
+		}
 		return get(extensionPoint);
 	}
 
@@ -229,29 +257,59 @@ public class CConfigBasedDescriptor implements ICDescriptor {
 	public void remove(ICExtensionReference extension) throws CoreException {
 		ICConfigExtensionReference ref =((CConfigBaseDescriptorExtensionReference)extension).fCfgExtRef;
 		fCfgDes.remove(ref);
+
+		//write is done for all configurations to avoid "data loss" on configuration change
+		ICProjectDescription des = fCfgDes.getProjectDescription();
+		ICConfigurationDescription cfgs[] = des.getConfigurations();
+		for(int i = 0; i < cfgs.length; i++){
+			ICConfigurationDescription cfg = cfgs[i];
+			if(cfg != fCfgDes){
+				try {
+					ICConfigExtensionReference rs[] = cfg.get(ref.getExtensionPoint());
+					for(int k = 0; k < rs.length; k++){
+						if(ref.getID().equals(rs[i].getID())){
+							cfg.remove(rs[i]);
+							break;
+						}
+					}
+				} catch (CoreException e) {
+				}
+			}
+		}
+		fIsDirty = true;
 		checkApply();
 	}
 
 	public void remove(String extensionPoint) throws CoreException {
 		fCfgDes.remove(extensionPoint);
+		
+		//write is done for all configurations to avoid "data loss" on configuration change
+		ICProjectDescription des = fCfgDes.getProjectDescription();
+		ICConfigurationDescription cfgs[] = des.getConfigurations();
+		for(int i = 0; i < cfgs.length; i++){
+			ICConfigurationDescription cfg = cfgs[i];
+			if(cfg != fCfgDes){
+				try {
+					cfg.remove(extensionPoint);
+				} catch (CoreException e) {
+				}
+			}
+		}
+		fIsDirty = true;
 		checkApply();
 	}
 
 	public void saveProjectData() throws CoreException {
-		CConfigurationSpecSettings specSettings = ((IInternalCCfgInfo)fCfgDes).getSpecSettings(); 
-		for(Iterator iter = fStorageDataElMap.entrySet().iterator(); iter.hasNext();){
-			Map.Entry entry = (Map.Entry)iter.next();
-			String id = (String)entry.getKey();
-			Element el = (Element)entry.getValue();
-			InternalXmlStorageElement storEl = new InternalXmlStorageElement(el, false);
-			specSettings.importStorage(id, storEl);
-			iter.remove();
-		}
+		CConfigBasedDescriptorManager.getInstance().reconsile(this, fCfgDes.getProjectDescription());
+		
 		checkApply();
 	}
-
+	
+	public Map getStorageDataElMap(){
+		return (HashMap)fStorageDataElMap.clone(); 
+	}
+	
 	public ICConfigurationDescription getConfigurationDescription() {
 		return fCfgDes;
 	}
-
 }

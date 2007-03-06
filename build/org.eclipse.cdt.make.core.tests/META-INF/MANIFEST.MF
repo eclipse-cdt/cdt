@@ -12,7 +12,6 @@ Require-Bundle: org.eclipse.core.runtime,
  org.junit,
  org.eclipse.cdt.make.core,
  org.eclipse.cdt.core,
- org.eclipse.core.resources,
- org.eclipse.cdt.managedbuilder.core
+ org.eclipse.core.resources
 Eclipse-AutoStart: true
 Bundle-Vendor: Eclipse.org

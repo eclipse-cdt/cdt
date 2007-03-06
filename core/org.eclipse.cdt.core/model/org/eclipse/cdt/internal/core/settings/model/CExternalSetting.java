@@ -22,13 +22,13 @@ import org.eclipse.cdt.core.settings.model.util.KindBasedStore;
 import org.eclipse.cdt.core.settings.model.util.LanguageSettingEntriesSerializer;
 
 public class CExternalSetting implements ICExternalSetting {
-	static final String ELEMENT_SETTING_INFO = "externalSetting";
+	static final String ELEMENT_SETTING_INFO = "externalSetting"; //$NON-NLS-1$
 //	private static final String ATTRIBUTE_ID = "id";
-	private static final String ATTRIBUTE_EXTENSIONS = "extensions";
-	private static final String ATTRIBUTE_CONTENT_TYPE_IDS = "contentTypes";
-	private static final String ATTRIBUTE_LANGUAGE_IDS = "languages";
+	private static final String ATTRIBUTE_EXTENSIONS = "extensions"; //$NON-NLS-1$
+	private static final String ATTRIBUTE_CONTENT_TYPE_IDS = "contentTypes"; //$NON-NLS-1$
+	private static final String ATTRIBUTE_LANGUAGE_IDS = "languages"; //$NON-NLS-1$
 //	private static final String[] EMPTY_STRING_ARRAY = new String[0];
-	private static final String SEPARATOR = ":";
+	private static final String SEPARATOR = ":"; //$NON-NLS-1$
 
 //	private EntryStore fEntryStore = new EntryStore();
 	private KindBasedStore fStore = new KindBasedStore();

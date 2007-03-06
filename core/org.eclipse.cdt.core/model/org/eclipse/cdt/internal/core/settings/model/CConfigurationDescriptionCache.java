@@ -59,6 +59,7 @@ public class CConfigurationDescriptionCache extends CDefaultConfigurationData
 	private StorableCdtVariables fMacros;
 	private boolean fDataLoadded;
 	private boolean fInitializing;
+	private ICConfigurationDescription fBaseDescription;
 
 	CConfigurationDescriptionCache(ICStorageElement storage, CProjectDescription parent) throws CoreException{
 		super(null);
@@ -72,6 +73,10 @@ public class CConfigurationDescriptionCache extends CDefaultConfigurationData
 //		loadData();
 	}
 	
+	public boolean isInitializing(){
+		return fInitializing;
+	}
+	
 	void loadData() throws CoreException{
 		if(fDataLoadded)
 			return;
@@ -81,39 +86,58 @@ public class CConfigurationDescriptionCache extends CDefaultConfigurationData
 		fData = CProjectDescriptionManager.getInstance().loadData(this);
 		copySettingsFrom(fData, true);
 		
-		CProjectDescriptionManager.getInstance().reconsileBinaryParserSettings(this, true);
-		CProjectDescriptionManager.getInstance().reconsileErrorParserSettings(this, true);
+		fSpecSettings.reconsileExtensionSettings(true);
 		((CBuildSettingCache)fBuildData).initEnvironmentCache();
 		ICdtVariable vars[] = CdtVariableManager.getDefault().getVariables(this);
 		fMacros = new StorableCdtVariables(vars, true);
 		fInitializing = false;
 	}
 
-	CConfigurationDescriptionCache(ICConfigurationDescription baseDescription, CConfigurationData base, CConfigurationSpecSettings settingsBase, CProjectDescription parent, ICStorageElement rootEl, boolean saving) throws CoreException {
+	CConfigurationDescriptionCache(ICConfigurationDescription baseDescription, CConfigurationData base, CConfigurationSpecSettings settingsBase, CProjectDescription parent, ICStorageElement rootEl) throws CoreException {
 		super(base.getId(), base.getName(), null);
 		fInitializing = true;
 		fParent = parent;
 		fSpecSettings = new CConfigurationSpecSettings(this, settingsBase, rootEl);
-		
+		fBaseDescription = baseDescription;
 		if(base instanceof CConfigurationDescriptionCache){
 			fData = ((CConfigurationDescriptionCache)base).getConfigurationData();
-			fData = CProjectDescriptionManager.getInstance().applyData(this, baseDescription, fData);
+//			fData = CProjectDescriptionManager.getInstance().applyData(this, baseDescription, fData);
 		} else {
 			fData = base;
-			base = CProjectDescriptionManager.getInstance().applyData(this, baseDescription, base);
-			fData = base;
+//			base = CProjectDescriptionManager.getInstance().applyData(this, baseDescription, base);
+//			fData = base;
 		} 
+//		fDataLoadded = true;
+//		fName = fData.getName();
+//		fId = fData.getId();
+//		
+//		copySettingsFrom(base, true);
+//		
+//		ICdtVariable vars[] = CdtVariableManager.getDefault().getVariables(this);
+//		fMacros = new StorableCdtVariables(vars, true);
+//		if(saving)
+//			fSpecSettings.serialize();
+//		
+//		fInitializing = false;
+	}
+	
+	void applyData() throws CoreException{
+		if(fBaseDescription == null)
+			return;
+		
+		fData = CProjectDescriptionManager.getInstance().applyData(this, fBaseDescription, fData);
 		fDataLoadded = true;
 		fName = fData.getName();
 		fId = fData.getId();
 		
-		copySettingsFrom(base, true);
+		copySettingsFrom(fData, true);
 		
 		ICdtVariable vars[] = CdtVariableManager.getDefault().getVariables(this);
 		fMacros = new StorableCdtVariables(vars, true);
-		if(saving)
+//		if(saving)
 			fSpecSettings.serialize();
 		
+		fBaseDescription = null;
 		fInitializing = false;
 	}
 	
@@ -180,7 +204,7 @@ public class CConfigurationDescriptionCache extends CDefaultConfigurationData
 
 	public void removeResourceDescription(ICResourceDescription des)
 			throws CoreException {
-		throw new CoreException(new DescriptionStatus("description is read only"));
+		throw new CoreException(new DescriptionStatus(SettingsModelMessages.getString("CConfigurationDescriptionCache.0"))); //$NON-NLS-1$
 	}
 
 	public CFileData createFileData(IPath path, CFileData base) throws CoreException{
@@ -283,7 +307,7 @@ public class CConfigurationDescriptionCache extends CDefaultConfigurationData
 	}
 
 	public boolean isReadOnly() {
-		return true;
+		return !fInitializing;
 	}
 
 	public ICTargetPlatformSetting getTargetPlatformSetting() {

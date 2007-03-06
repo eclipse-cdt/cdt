@@ -41,10 +41,14 @@ public class CTargetPlatformSettingCache extends CDefaultTargetPlatformData
 	}
 
 	public void setBinaryParserIds(String[] ids) {
-		throw ExceptionFactory.createIsReadOnlyException();
+		if(!fCfgCache.isInitializing())
+			throw ExceptionFactory.createIsReadOnlyException();
+		
+		super.setBinaryParserIds(ids);
 	}
 
 	public void setName(String name) {
-		throw ExceptionFactory.createIsReadOnlyException();
+		if(!fCfgCache.isInitializing())
+			throw ExceptionFactory.createIsReadOnlyException();
 	}
 }

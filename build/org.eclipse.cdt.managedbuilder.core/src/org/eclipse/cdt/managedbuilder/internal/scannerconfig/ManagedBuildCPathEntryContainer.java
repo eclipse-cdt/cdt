@@ -17,6 +17,7 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Vector;
 
+import org.eclipse.cdt.build.internal.core.scannerconfig2.CfgScannerConfigProfileManager;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.IMacroEntry;
 import org.eclipse.cdt.core.model.IPathEntry;
@@ -25,7 +26,6 @@ import org.eclipse.cdt.make.core.scannerconfig.IExternalScannerInfoProvider;
 import org.eclipse.cdt.make.core.scannerconfig.IScannerConfigBuilderInfo2;
 import org.eclipse.cdt.make.core.scannerconfig.IScannerInfoCollector;
 import org.eclipse.cdt.make.core.scannerconfig.InfoContext;
-import org.eclipse.cdt.make.internal.core.scannerconfig.ScannerConfigUtil;
 import org.eclipse.cdt.make.internal.core.scannerconfig2.SCProfileInstance;
 import org.eclipse.cdt.make.internal.core.scannerconfig2.ScannerConfigProfileManager;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
@@ -190,7 +190,7 @@ public class ManagedBuildCPathEntryContainer implements IPathEntryContainer {
         if (scdProfileId != null) {
 			// See if we can load a dynamic resolver
         	//FIXME:
-        	InfoContext context = ScannerConfigUtil.createContextForProject(project);
+        	InfoContext context = CfgScannerConfigProfileManager.createDefaultContext(project);
 	        profileInstance = ScannerConfigProfileManager.getInstance().
 	                getSCProfileInstance(project, context, scdProfileId);
 	        collector = profileInstance.createScannerInfoCollector();

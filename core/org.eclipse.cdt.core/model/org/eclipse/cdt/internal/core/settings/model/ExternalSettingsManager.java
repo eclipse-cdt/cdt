@@ -111,7 +111,7 @@ public class ExternalSettingsManager {
 			if(deltas != null){
 				deltaMap.put(configs[i].getId(), deltas);
 				if(configs[i].isActive())
-					deltaMap.put("", deltas);
+					deltaMap.put("", deltas); //$NON-NLS-1$
 			}
 		}
 	}
@@ -413,7 +413,7 @@ public class ExternalSettingsManager {
 				if(deltas != null){
 					deltaMap.put(newCfg.getId(), deltas);
 					if(!activeCfgChanged && newCfg.isActive()){
-						deltaMap.put("", deltas);
+						deltaMap.put("", deltas); //$NON-NLS-1$
 					}
 				}
 			}
@@ -423,7 +423,7 @@ public class ExternalSettingsManager {
 				ICConfigurationDescription oldCfg = oldDes.getActiveConfiguration();
 				ExtSettingsDelta deltas[] = getSettingChange(newCfg, oldCfg);
 				if(deltas != null)
-					deltaMap.put("", deltas);
+					deltaMap.put("", deltas); //$NON-NLS-1$
 			}
 		}
 		

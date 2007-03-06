@@ -38,6 +38,7 @@ import org.eclipse.cdt.core.resources.IPathEntryVariableManager;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.core.settings.model.WriteAccessException;
+import org.eclipse.cdt.core.settings.model.util.CDataUtil;
 import org.eclipse.cdt.internal.core.CConfigBasedDescriptorManager;
 import org.eclipse.cdt.internal.core.CContentTypes;
 import org.eclipse.cdt.internal.core.CDTLogWriter;
@@ -109,6 +110,8 @@ public class CCorePlugin extends Plugin {
 	// Build Model Interface Discovery
 	public final static String BUILD_SCANNER_INFO_SIMPLE_ID = "ScannerInfoProvider"; //$NON-NLS-1$
 	public final static String BUILD_SCANNER_INFO_UNIQ_ID = PLUGIN_ID + "." + BUILD_SCANNER_INFO_SIMPLE_ID; //$NON-NLS-1$
+
+	public static final String DEFAULT_PROVIDER_ID = CCorePlugin.PLUGIN_ID + ".defaultConfigDataProvider"; //$NON-NLS-1$
 
 	/**
 	 * Name of the extension point for contributing a source code formatter
@@ -732,7 +735,6 @@ public class CCorePlugin extends Plugin {
 	 *
 	 * @exception CoreException if the operation fails
 	 * @exception OperationCanceledException if the operation is canceled
-	 * @deprecated
 	 */
 	public IProject createCProject(
 		final IProjectDescription description,
@@ -759,7 +761,7 @@ public class CCorePlugin extends Plugin {
 					// Open first.
 					projectHandle.open(IResource.BACKGROUND_REFRESH, new SubProgressMonitor(monitor, 1));
 
-//					mapCProjectOwner(projectHandle, projectID, false);
+					mapCProjectOwner(projectHandle, projectID, false);
 
 					// Add C Nature ... does not add duplicates
 					CProjectNature.addCNature(projectHandle, new SubProgressMonitor(monitor, 1));
@@ -774,6 +776,14 @@ public class CCorePlugin extends Plugin {
 	public IProject createCDTProject(
 			final IProjectDescription description,
 			final IProject projectHandle,
+			IProgressMonitor monitor) throws CoreException, OperationCanceledException{
+		return createCDTProject(description, projectHandle, null, monitor);
+	}
+
+	public IProject createCDTProject(
+			final IProjectDescription description,
+			final IProject projectHandle,
+			final String bsId,
 			IProgressMonitor monitor)
 			throws CoreException, OperationCanceledException {
 
@@ -799,6 +809,29 @@ public class CCorePlugin extends Plugin {
 
 						// Add C Nature ... does not add duplicates
 						CProjectNature.addCNature(projectHandle, new SubProgressMonitor(monitor, 1));
+						
+						if(bsId != null){
+							ICProjectDescription projDes = createProjectDescription(projectHandle, true);
+							ICConfigurationDescription cfgs[] = projDes.getConfigurations();
+							ICConfigurationDescription cfg = null;
+							for(int i = 0; i < cfgs.length; i++){
+								if(bsId.equals(cfgs[i].getBuildSystemId())){
+									cfg = cfgs[i];
+									break;
+								}
+							}
+							
+							if(cfg == null){
+								ICConfigurationDescription prefCfg = getPreferenceConfiguration(bsId);
+								if(prefCfg != null){
+									cfg = projDes.createConfiguration(CDataUtil.genId(prefCfg.getId()), prefCfg.getName(), prefCfg);
+								}
+							}
+							
+							if(cfg != null){
+								setProjectDescription(projectHandle, projDes);
+							}
+						}
 					} finally {
 						monitor.done();
 					}
@@ -851,6 +884,17 @@ public class CCorePlugin extends Plugin {
 		createCProject(description, projectHandle, monitor, projectID);
 	}
 
+	public void convertProjectToNewC(IProject projectHandle, String bsId, IProgressMonitor monitor)
+		throws CoreException {
+		if ((projectHandle == null) || (monitor == null) || (bsId == null)) {
+			throw new NullPointerException();
+		}
+		IWorkspace workspace = ResourcesPlugin.getWorkspace();
+		IProjectDescription description = workspace.newProjectDescription(projectHandle.getName());
+		description.setLocation(projectHandle.getFullPath());
+		createCDTProject(description, projectHandle, bsId, monitor);
+	}
+
 	/**
 	 * Method to convert a project to a C++ nature 
 	 * 
@@ -867,6 +911,16 @@ public class CCorePlugin extends Plugin {
 			return;
 		}
 		createCProject(projectHandle.getDescription(), projectHandle, monitor, projectID);
+		// now add C++ nature
+		convertProjectFromCtoCC(projectHandle, monitor);
+	}
+
+	public void convertProjectToNewCC(IProject projectHandle, String bsId, IProgressMonitor monitor)
+		throws CoreException {
+		if ((projectHandle == null) || (monitor == null) || (bsId == null)) {
+			throw new NullPointerException();
+		}
+		createCDTProject(projectHandle.getDescription(), projectHandle, bsId, monitor);
 		// now add C++ nature
 		convertProjectFromCtoCC(projectHandle, monitor);
 	}

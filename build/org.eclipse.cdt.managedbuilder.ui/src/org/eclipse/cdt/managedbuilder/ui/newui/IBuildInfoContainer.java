@@ -10,9 +10,9 @@
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.ui.newui;
 
+import org.eclipse.cdt.build.core.scannerconfig.CfgInfoContext;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.make.core.scannerconfig.IScannerConfigBuilderInfo2;
-import org.eclipse.cdt.make.core.scannerconfig.InfoContext;
 import org.eclipse.core.resources.IProject;
 
 /**
@@ -25,7 +25,7 @@ import org.eclipse.core.resources.IProject;
  */
 public interface IBuildInfoContainer {
 	public IScannerConfigBuilderInfo2 getBuildInfo();
-	public InfoContext getContext();
+	public CfgInfoContext getContext();
 	public ICConfigurationDescription getConfiguration();
 	public IProject getProject();
 }

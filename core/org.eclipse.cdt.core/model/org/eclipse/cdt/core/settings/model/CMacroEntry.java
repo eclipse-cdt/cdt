@@ -19,7 +19,7 @@ public final class CMacroEntry extends ACLanguageSettingEntry implements ICMacro
 		super(name, flags);
 		fValue = value;
 		if(fValue == null)
-			fValue = "";
+			fValue = "";	//$NON-NLS-1$
 	}
 
 	public String getValue() {

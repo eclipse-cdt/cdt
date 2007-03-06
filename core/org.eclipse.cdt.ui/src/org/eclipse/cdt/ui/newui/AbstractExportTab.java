@@ -55,7 +55,7 @@ public abstract class AbstractExportTab extends AbstractCPropertyTab {
 	protected ICConfigurationDescription cfg;
 	protected static final LanguageManager lm = LanguageManager.getInstance();
 	protected static final IContentTypeManager ctm = Platform.getContentTypeManager();
-	
+
 //	protected boolean showBI = false;
 //	boolean  savedShowBI  = false;
 //	List incs;

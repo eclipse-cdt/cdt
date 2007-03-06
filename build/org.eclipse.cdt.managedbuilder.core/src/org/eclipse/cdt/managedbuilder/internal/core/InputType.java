@@ -19,10 +19,6 @@ import java.util.Vector;
 
 import org.eclipse.cdt.core.settings.model.ICStorageElement;
 import org.eclipse.cdt.core.settings.model.util.CDataUtil;
-import org.eclipse.cdt.make.core.scannerconfig.IScannerConfigBuilderInfo2;
-import org.eclipse.cdt.make.core.scannerconfig.InfoContext;
-import org.eclipse.cdt.make.internal.core.scannerconfig2.ScannerConfigInfoFactory2;
-import org.eclipse.cdt.make.internal.core.scannerconfig2.ScannerConfigProfileManager;
 import org.eclipse.cdt.managedbuilder.core.IAdditionalInput;
 import org.eclipse.cdt.managedbuilder.core.IBuildObject;
 import org.eclipse.cdt.managedbuilder.core.IFileInfo;
@@ -81,7 +77,6 @@ public class InputType extends BuildObject implements IInputType {
 	private IConfigurationElement languageInfoCalculatorElement;
 	private ILanguageInfoCalculator languageInfoCalculator;
 	private String buildInfoDicsoveryProfileId;
-	private IScannerConfigBuilderInfo2 scannerConfigInfo;
 	
 	private BooleanExpressionApplicabilityCalculator booleanExpressionCalculator;
 
@@ -143,10 +138,7 @@ public class InputType extends BuildObject implements IInputType {
 			} else if (iElement.getName().equals(IAdditionalInput.ADDITIONAL_INPUT_ELEMENT_NAME)) {
 				AdditionalInput addlInput = new AdditionalInput(this, iElement);
 				getAdditionalInputList().add(addlInput);
-			} else if (iElement.getName().equals(DISCOVERY_INFO)){
-				ICStorageElement el = new ManagedConfigStorageElement(iElement);
-				scannerConfigInfo = ScannerConfigInfoFactory2.create(new InfoContext(null), el, ScannerConfigProfileManager.NULL_PROFILE_ID);
-			}
+			} 
 		}
 	}
 
@@ -204,9 +196,7 @@ public class InputType extends BuildObject implements IInputType {
 			} else if (configElement.getName().equals(IAdditionalInput.ADDITIONAL_INPUT_ELEMENT_NAME)) {
 				AdditionalInput addlInput = new AdditionalInput(this, configElement);
 				getAdditionalInputList().add(addlInput);
-			} else if(configElement.getName().equals(DISCOVERY_INFO)){
-				scannerConfigInfo = ScannerConfigInfoFactory2.create(new InfoContext(parent.getParentResourceInfo(), parent, this), configElement, ScannerConfigProfileManager.NULL_PROFILE_ID);
-			}
+			} 
 		}
 	}
 
@@ -284,9 +274,6 @@ public class InputType extends BuildObject implements IInputType {
 		languageInfoCalculator = inputType.languageInfoCalculator;
 		buildInfoDicsoveryProfileId = inputType.buildInfoDicsoveryProfileId;
 
-		if(inputType.scannerConfigInfo != null){
-			scannerConfigInfo = ScannerConfigInfoFactory2.create(new InfoContext(parent.getParentResourceInfo(), parent, this), inputType.scannerConfigInfo, inputType.scannerConfigInfo.getSelectedProfileId());
-		}
 		//  Clone the children
 		if (inputType.inputOrderList != null) {
 			Iterator iter = inputType.getInputOrderList().listIterator();
@@ -744,11 +731,6 @@ public class InputType extends BuildObject implements IInputType {
 			AdditionalInput ai = (AdditionalInput) iter.next();
 			ICStorageElement aiElement = element.createChild(AdditionalInput.ADDITIONAL_INPUT_ELEMENT_NAME);
 			ai.serialize(aiElement);
-		}
-		
-		if(scannerConfigInfo != null){
-			ICStorageElement el = element.createChild(DISCOVERY_INFO);
-			ScannerConfigInfoFactory2.serialize(scannerConfigInfo, el);
 		}
 		
 		// I am clean now
@@ -1861,32 +1843,8 @@ public class InputType extends BuildObject implements IInputType {
 		
 		return calc.isInputTypeEnabled(tool, this);
 	}
-	
-	public IScannerConfigBuilderInfo2 getScannerConfigBuilderInfoElement(boolean searchSuper){
-		if(scannerConfigInfo == null){
-			if(superClass != null && searchSuper){
-				return ((InputType)superClass).getScannerConfigBuilderInfoElement(true);
-			}
-			return null;
-		}
-		return scannerConfigInfo;
-	}
 
-	IScannerConfigBuilderInfo2 getScannerConfigBuilderInfo(ITool tool){
-		IScannerConfigBuilderInfo2 info = getScannerConfigBuilderInfoElement(true);
-		if(info == null){
-			info = ((Tool)tool).getScannerConfigBuilderInfo();
-		}
-		return info;
-	}
-
-	public void setScannerConfigBuilderInfo(IScannerConfigBuilderInfo2 info){
-		scannerConfigInfo = info;
-	}
-	
 	public boolean hasScannerConfigSettings(){
-		if(getScannerConfigBuilderInfoElement(true) != null)
-			return true;
 		
 		if(getDiscoveryProfileIdAttribute() != null)
 			return true;

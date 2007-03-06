@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.cdtvariables.ICdtVariablesContributor;
 import org.eclipse.cdt.core.settings.model.CSourceEntry;
 import org.eclipse.cdt.core.settings.model.ICBuildSetting;
@@ -113,9 +114,11 @@ public class CConfigurationDescription extends CDataProxyContainer implements IC
 		fCfgSpecSettings = new CConfigurationSpecSettings(this, storage, el);
 		fCfgSpecSettings.setId(id);
 		fCfgSpecSettings.setName(name);
-		fCfgSpecSettings.setBuildSystemId(CProjectDescriptionManager.DEFAULT_PROVIDER_ID);
-		CConfigurationData data = CProjectDescriptionManager.getInstance().createDefaultConfigData(projectDes.getProject(), id, name, PathEntryConfigurationDataProvider.getDataFactory());
+		fCfgSpecSettings.setBuildSystemId(CCorePlugin.DEFAULT_PROVIDER_ID);
+		CProjectDescriptionManager mngr = CProjectDescriptionManager.getInstance();
+		CConfigurationData data = mngr.createDefaultConfigData(projectDes.getProject(), id, name, PathEntryConfigurationDataProvider.getDataFactory());
 		setData(data);
+		fCfgSpecSettings.reconsileExtensionSettings(false);
 	}
 
 	/*
@@ -135,8 +138,8 @@ public class CConfigurationDescription extends CDataProxyContainer implements IC
 	}
 
 	void doWritable() throws CoreException{
-		CConfigurationData data = getConfigurationData(false);
-		if(data instanceof CConfigurationDescriptionCache){
+		if(!containsWritableData()){
+			CConfigurationData data = getConfigurationData(false);
 			CConfigurationDescriptionCache cache = (CConfigurationDescriptionCache)data;
 			data = cache.getConfigurationData();
 			setData(CProjectDescriptionManager.getInstance().createData(this, cache, data, true));
@@ -332,12 +335,19 @@ public class CConfigurationDescription extends CDataProxyContainer implements IC
 	public CConfigurationSpecSettings getSpecSettings() throws CoreException{
 		if(fCfgSpecSettings == null){
 			if(fCfgCache != null){
-				fCfgSpecSettings = new CConfigurationSpecSettings(this, fCfgCache.getSpecSettings());
+				if(fCfgCache.isInitializing())
+					fCfgSpecSettings = fCfgCache.getSpecSettings();
+				else
+					fCfgSpecSettings = new CConfigurationSpecSettings(this, fCfgCache.getSpecSettings());
 			} else {
 				fCfgSpecSettings = new CConfigurationSpecSettings(this, (ICStorageElement)null);
 			}
 
 //			fCfgSpecSettings = CProjectDescriptionManager.getInstance().createConfigurationSpecSettings(this);
+		} else if( fCfgSpecSettings.getConfigurarion() != this){
+			if(!fCfgCache.isInitializing()){
+				fCfgSpecSettings = new CConfigurationSpecSettings(this, fCfgCache.getSpecSettings());
+			}
 		}
 		return fCfgSpecSettings;
 	}
@@ -413,11 +423,11 @@ public class CConfigurationDescription extends CDataProxyContainer implements IC
 		 
 		
 		if(createdData == null)
-			throw ExceptionFactory.createCoreException("data was not created");
+			throw ExceptionFactory.createCoreException(SettingsModelMessages.getString("CConfigurationDescription.0")); //$NON-NLS-1$
 		
 		CDataProxy proxy = getChildrenProxyProvider().getProxy(createdData);
 		if(!(proxy instanceof ICFileDescription))
-			throw ExceptionFactory.createCoreException("expected proxy of type ICFileDescription, but was " + proxy.getClass().getName());
+			throw ExceptionFactory.createCoreException(SettingsModelMessages.getString("CConfigurationDescription.1") + proxy.getClass().getName()); //$NON-NLS-1$
 
 		return (ICFileDescription)proxy;
 	}
@@ -428,11 +438,11 @@ public class CConfigurationDescription extends CDataProxyContainer implements IC
 		CFolderData createdData = data.createFolderData(path, baseRcData);
 		
 		if(createdData == null)
-			throw ExceptionFactory.createCoreException("data was not created");
+			throw ExceptionFactory.createCoreException(SettingsModelMessages.getString("CConfigurationDescription.2")); //$NON-NLS-1$
 		
 		CDataProxy proxy = getChildrenProxyProvider().getProxy(createdData);
 		if(!(proxy instanceof ICFolderDescription))
-			throw ExceptionFactory.createCoreException("expected proxy of type ICFolderDescription, but was " + proxy.getClass().getName());
+			throw ExceptionFactory.createCoreException(SettingsModelMessages.getString("CConfigurationDescription.3") + proxy.getClass().getName()); //$NON-NLS-1$
 
 		return (ICFolderDescription)proxy;
 	}
@@ -704,5 +714,13 @@ public class CConfigurationDescription extends CDataProxyContainer implements IC
 
 	public boolean isPreferenceConfiguration() {
 		return fIsPreference;
+	}
+	
+	protected boolean containsWritableData(){
+		if(super.containsWritableData())
+			return true;
+		
+		CConfigurationDescriptionCache data = (CConfigurationDescriptionCache)doGetData();
+		return data.isInitializing();
 	}
 }

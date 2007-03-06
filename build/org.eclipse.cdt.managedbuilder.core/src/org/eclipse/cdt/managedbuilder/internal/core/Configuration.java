@@ -20,6 +20,7 @@ import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.Vector;
 
+import org.eclipse.cdt.build.core.scannerconfig.ICfgScannerConfigBuilderInfo2Set;
 import org.eclipse.cdt.core.settings.model.CIncludePathEntry;
 import org.eclipse.cdt.core.settings.model.CLibraryPathEntry;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
@@ -31,10 +32,7 @@ import org.eclipse.cdt.core.settings.model.ICStorageElement;
 import org.eclipse.cdt.core.settings.model.extension.CBuildData;
 import org.eclipse.cdt.core.settings.model.extension.CConfigurationData;
 import org.eclipse.cdt.core.settings.model.util.PathSettingsContainer;
-import org.eclipse.cdt.make.core.scannerconfig.IConfigurationScannerConfigBuilderInfo;
 import org.eclipse.cdt.make.core.scannerconfig.IDiscoveredPathManager;
-import org.eclipse.cdt.make.core.scannerconfig.IScannerConfigBuilderInfo2;
-import org.eclipse.cdt.make.internal.core.scannerconfig2.ScannerConfigInfoFactory2;
 import org.eclipse.cdt.managedbuilder.buildproperties.IBuildProperty;
 import org.eclipse.cdt.managedbuilder.buildproperties.IBuildPropertyType;
 import org.eclipse.cdt.managedbuilder.buildproperties.IBuildPropertyValue;
@@ -127,7 +125,7 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 //	private IScannerConfigBuilderInfo2 scannerCfgBuilderInfo;
 //	private IDiscoveredPathManager.IDiscoveredPathInfo discoveredInfo;
 //	private Boolean isPerResourceDiscovery;
-	private IConfigurationScannerConfigBuilderInfo cfgScannerInfo;
+	private ICfgScannerConfigBuilderInfo2Set cfgScannerInfo;
 	private boolean isPreferenceConfig;
 	
 	//property name for holding the rebuild state
@@ -2753,15 +2751,15 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 		tc.setPerRcTypeDiscovery(on);
 	}
 
-	public IScannerConfigBuilderInfo2 getScannerConfigInfo(){
-		ToolChain tc = (ToolChain)getRootFolderInfo().getToolChain();
-		return tc.getScannerConfigBuilderInfo();
-	}
+//	public IScannerConfigBuilderInfo2 getScannerConfigInfo(){
+//		ToolChain tc = (ToolChain)getRootFolderInfo().getToolChain();
+//		return tc.getScannerConfigBuilderInfo();
+//	}
 
-	public IScannerConfigBuilderInfo2 setScannerConfigInfo(IScannerConfigBuilderInfo2 info){
-		ToolChain tc = (ToolChain)getRootFolderInfo().getToolChain();
-		return tc.setScannerConfigBuilderInfo(info);
-	}
+//	public IScannerConfigBuilderInfo2 setScannerConfigInfo(IScannerConfigBuilderInfo2 info){
+//		ToolChain tc = (ToolChain)getRootFolderInfo().getToolChain();
+//		return tc.setScannerConfigBuilderInfo(info);
+//	}
 
 	public IDiscoveredPathManager.IDiscoveredPathInfo setDiscoveredPathInfo(IDiscoveredPathManager.IDiscoveredPathInfo info){
 		ToolChain tc = (ToolChain)getRootFolderInfo().getToolChain();
@@ -2783,14 +2781,11 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 		return tc.setDiscoveredPathInfo(null);
 	}
 	
-	public IConfigurationScannerConfigBuilderInfo getCfgScannerConfigInfo(){
-		if(cfgScannerInfo == null){
-			cfgScannerInfo = ScannerConfigInfoFactory2.create(this, true);
-		}
+	public ICfgScannerConfigBuilderInfo2Set getCfgScannerConfigInfo(){
 		return cfgScannerInfo;
 	}
 	
-	public void setCfgScannerConfigInfo(IConfigurationScannerConfigBuilderInfo info){
+	public void setCfgScannerConfigInfo(ICfgScannerConfigBuilderInfo2Set info){
 		cfgScannerInfo = info;
 	}
 	

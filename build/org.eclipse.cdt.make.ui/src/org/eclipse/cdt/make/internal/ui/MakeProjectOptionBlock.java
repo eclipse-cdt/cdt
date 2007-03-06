@@ -13,8 +13,13 @@ package org.eclipse.cdt.make.internal.ui;
 import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.cdt.make.core.MakeBuilder;
+import org.eclipse.cdt.make.core.MakeCorePlugin;
 import org.eclipse.cdt.make.internal.ui.properties.MakePropertyPage;
 import org.eclipse.cdt.make.ui.IMakeHelpContextIds;
+import org.eclipse.cdt.make.ui.dialogs.DiscoveryOptionsBlock;
+import org.eclipse.cdt.make.ui.dialogs.SettingsBlock;
+import org.eclipse.cdt.ui.dialogs.BinaryParserBlock;
 import org.eclipse.cdt.ui.dialogs.ICOptionContainer;
 import org.eclipse.cdt.ui.dialogs.ICOptionPage;
 import org.eclipse.cdt.ui.dialogs.TabFolderOptionBlock;
@@ -34,12 +39,11 @@ public class MakeProjectOptionBlock extends TabFolderOptionBlock {
 	}
 
 	protected void addTabs() {
-		
-//		addTab(new SettingsBlock(MakeCorePlugin.getDefault().getPluginPreferences(), MakeBuilder.BUILDER_ID));
-//		addTab(new MakeEnvironmentBlock(MakeCorePlugin.getDefault().getPluginPreferences(), MakeBuilder.BUILDER_ID));
-//		addTab(new ErrorParserBlock(MakeCorePlugin.getDefault().getPluginPreferences()));
-//		addTab(new BinaryParserBlock());
-//		addTab(new DiscoveryOptionsBlock());
+		addTab(new SettingsBlock(MakeCorePlugin.getDefault().getPluginPreferences(), MakeBuilder.BUILDER_ID));
+		addTab(new MakeEnvironmentBlock(MakeCorePlugin.getDefault().getPluginPreferences(), MakeBuilder.BUILDER_ID));
+		addTab(new ErrorParserBlock(MakeCorePlugin.getDefault().getPluginPreferences()));
+		addTab(new BinaryParserBlock());
+		addTab(new DiscoveryOptionsBlock());
 	}
 
 	public void setOptionContainer(ICOptionContainer parent) {

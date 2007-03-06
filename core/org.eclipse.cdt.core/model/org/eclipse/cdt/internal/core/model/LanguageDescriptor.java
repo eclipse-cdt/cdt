@@ -23,8 +23,8 @@ import org.eclipse.core.runtime.content.IContentTypeManager;
 
 public class LanguageDescriptor extends CExtensionDescriptor implements
 		ILanguageDescriptor {
-	private static final String ATTRIBUTE_CLASS = "class";
-	private static final String ELEMENT_CONTENT_TYPE = "contentType";
+	private static final String ATTRIBUTE_CLASS = "class"; //$NON-NLS-1$
+	private static final String ELEMENT_CONTENT_TYPE = "contentType"; //$NON-NLS-1$
 	private static final String NAMESPACE_SEPARATOR = "."; //$NON-NLS-1$
 
 	private ILanguage fLanguage;

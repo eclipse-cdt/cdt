@@ -29,6 +29,8 @@ public interface ICStorageElement {
 	
 	String getAttribute(String name);
 	
+	String[] getAttributeNames();
+	
 	ICStorageElement getParent();
 	
 	void setAttribute(String name, String value);

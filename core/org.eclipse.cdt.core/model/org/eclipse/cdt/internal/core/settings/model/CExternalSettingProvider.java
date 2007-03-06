@@ -23,7 +23,7 @@ import org.eclipse.cdt.internal.core.settings.model.ExternalSettingsManager.ExtS
 
 public class CExternalSettingProvider {
 	private Map fSettingsMap;;
-	static final String ELEMENT_EXT_SETTINGS_CONTAINER = "externalSettings";
+	static final String ELEMENT_EXT_SETTINGS_CONTAINER = "externalSettings"; //$NON-NLS-1$
 	static final CExternalSetting[] EMPTY_EXT_SETTINGS_ARRAY = new CExternalSetting[0];
 	
 	private boolean fIsModified;

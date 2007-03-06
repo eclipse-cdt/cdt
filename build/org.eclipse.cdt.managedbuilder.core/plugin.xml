@@ -6,7 +6,6 @@
    <extension-point id="buildDefinitions" name="Managed Build Definitions" schema="schema/buildDefinitions.exsd"/>
    <extension-point id="projectConverter" name="Managed Build Project Converter" schema="schema/Converter.exsd"/>
    <extension-point id="buildProperties" name="Build Properties" schema="schema/buildProperties.exsd"/>
-   <extension-point id="ScannerConfigurationDiscoveryProfile" name="%extensionScannerConfigurationDiscoveryProfile.name" schema="schema/ScannerConfigurationDiscoveryProfile.exsd"/>
    
 
 <!-- =================================================================================== -->
@@ -90,7 +89,7 @@
    <extension
          id="GCCManagedMakePerProjectProfileCPP"
          name="GNU C/C++ managed make per project SCD profile"
-         point="org.eclipse.cdt.managedbuilder.core.ScannerConfigurationDiscoveryProfile">
+         point="org.eclipse.cdt.make.core.ScannerConfigurationDiscoveryProfile">
       <scannerInfoCollector
             class="org.eclipse.cdt.managedbuilder.internal.scannerconfig.DefaultGCCScannerInfoCollector"
             scope="project"/>
@@ -105,7 +104,7 @@
    <extension
          id="GCCManagedMakePerProjectProfileC"
          name="GNU C/C++ managed make per project SCD profile"
-         point="org.eclipse.cdt.managedbuilder.core.ScannerConfigurationDiscoveryProfile">
+         point="org.eclipse.cdt.make.core.ScannerConfigurationDiscoveryProfile">
       <scannerInfoCollector
             class="org.eclipse.cdt.managedbuilder.internal.scannerconfig.DefaultGCCScannerInfoCollector"
             scope="project"/>
@@ -120,7 +119,7 @@
    <extension
          id="GCCWinManagedMakePerProjectProfile"
          name="GNU C/C++ managed make per project SCD profile (Windows)"
-         point="org.eclipse.cdt.managedbuilder.core.ScannerConfigurationDiscoveryProfile">
+         point="org.eclipse.cdt.make.core.ScannerConfigurationDiscoveryProfile">
       <scannerInfoCollector
             class="org.eclipse.cdt.managedbuilder.internal.scannerconfig.DefaultGnuWinScannerInfoCollector"
             scope="project"/>
@@ -135,7 +134,7 @@
    <extension
          id="GCCWinManagedMakePerProjectProfileCPP"
          name="GNU C/C++ managed make per project SCD profile (Windows)"
-         point="org.eclipse.cdt.managedbuilder.core.ScannerConfigurationDiscoveryProfile">
+         point="org.eclipse.cdt.make.core.ScannerConfigurationDiscoveryProfile">
       <scannerInfoCollector
             class="org.eclipse.cdt.managedbuilder.internal.scannerconfig.DefaultGnuWinScannerInfoCollector"
             scope="project"/>
@@ -150,7 +149,7 @@
    <extension
          id="GCCWinManagedMakePerProjectProfileC"
          name="GNU C/C++ managed make per project SCD profile (Windows)"
-         point="org.eclipse.cdt.managedbuilder.core.ScannerConfigurationDiscoveryProfile">
+         point="org.eclipse.cdt.make.core.ScannerConfigurationDiscoveryProfile">
       <scannerInfoCollector
             class="org.eclipse.cdt.managedbuilder.internal.scannerconfig.DefaultGnuWinScannerInfoCollector"
             scope="project"/>
@@ -224,8 +223,8 @@
          name="pre-4.0 projects converter"
          point="org.eclipse.cdt.core.projectConverter">
          <converter
-         	owners="org.eclipse.cdt.managedbuilder.core.managedMake;org.eclipse.cdt.make.core.make"
-         	natures="org.eclipse.cdt.managedbuilder.core.managedBuildNature;org.eclipse.cdt.make.core.makeNature"
+         	owners="org.eclipse.cdt.managedbuilder.core.managedMake"
+         	natures="org.eclipse.cdt.managedbuilder.core.managedBuildNature"
          	class="org.eclipse.cdt.managedbuilder.internal.dataprovider.ProjectConverter"
          />
    </extension> 
@@ -392,7 +391,7 @@
       </requires-nature>
       <runtime>
          <run
-               class="org.eclipse.cdt.make.core.scannerconfig.ScannerConfigNature">
+               class="org.eclipse.cdt.build.core.scannerconfig.ScannerConfigNature">
          </run>
       </runtime>
       <builder
@@ -406,8 +405,15 @@
       <builder
             hasNature="true">
          <run
-               class="org.eclipse.cdt.make.core.scannerconfig.ScannerConfigBuilder">
+               class="org.eclipse.cdt.build.core.scannerconfig.ScannerConfigBuilder">
          </run>
+      </builder>
+   </extension>
+   <extension
+         point="org.eclipse.cdt.make.core.MakeTargetBuilder">
+      <builder
+            builderID="org.eclipse.cdt.managedbuilder.core.genmakebuilder"
+            id="org.eclipse.cdt.build.MakeTargetBuilder">
       </builder>
    </extension>
       

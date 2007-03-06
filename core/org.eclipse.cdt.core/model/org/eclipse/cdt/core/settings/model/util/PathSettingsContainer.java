@@ -315,7 +315,7 @@ public class PathSettingsContainer {
 			if(fDirectParentContainer != null)
 				fPath = fDirectParentContainer.getPath().append(fName);
 			else
-				fPath = new Path("/");
+				fPath = Path.ROOT;
 		}
 		return fPath;
 	}

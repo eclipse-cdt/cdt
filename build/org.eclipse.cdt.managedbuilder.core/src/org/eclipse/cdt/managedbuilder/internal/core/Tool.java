@@ -29,10 +29,6 @@ import org.eclipse.cdt.core.cdtvariables.CdtVariableException;
 import org.eclipse.cdt.core.settings.model.ICStorageElement;
 import org.eclipse.cdt.core.settings.model.extension.CLanguageData;
 import org.eclipse.cdt.make.core.scannerconfig.IDiscoveredPathManager;
-import org.eclipse.cdt.make.core.scannerconfig.IScannerConfigBuilderInfo2;
-import org.eclipse.cdt.make.core.scannerconfig.InfoContext;
-import org.eclipse.cdt.make.internal.core.scannerconfig2.ScannerConfigInfoFactory2;
-import org.eclipse.cdt.make.internal.core.scannerconfig2.ScannerConfigProfileManager;
 import org.eclipse.cdt.managedbuilder.buildproperties.IBuildPropertyType;
 import org.eclipse.cdt.managedbuilder.buildproperties.IBuildPropertyValue;
 import org.eclipse.cdt.managedbuilder.core.BuildException;
@@ -56,7 +52,6 @@ import org.eclipse.cdt.managedbuilder.core.IResourceInfo;
 import org.eclipse.cdt.managedbuilder.core.ITool;
 import org.eclipse.cdt.managedbuilder.core.IToolChain;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
-import org.eclipse.cdt.managedbuilder.core.ManagedBuilderCorePlugin;
 import org.eclipse.cdt.managedbuilder.internal.dataprovider.BuildLanguageData;
 import org.eclipse.cdt.managedbuilder.internal.enablement.OptionEnablementExpression;
 import org.eclipse.cdt.managedbuilder.internal.macros.BuildMacroProvider;
@@ -157,66 +152,8 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 	private HashMap typeToDataMap = new HashMap();
 	private boolean fDataMapInited;
 	private List identicalList;
-	private HashMap scannerInfoMap;
 	private HashMap discoveredInfoMap = new HashMap();
 	private String scannerConfigDiscoveryProfileId;
-	private IScannerConfigBuilderInfo2 scannerConfigInfo;
-
-	
-	interface IScannerConfigInfo {
-		String getProfileId();
-		
-		IScannerConfigBuilderInfo2 getInfo2();
-	}
-	
-	static class ScannerConfigInfo implements IScannerConfigInfo {
-		private String profileId;
-		private IScannerConfigBuilderInfo2 info2;
-		
-		public ScannerConfigInfo(ICStorageElement el, InfoContext context){
-			profileId = el.getAttribute(IInputType.SCANNER_CONFIG_PROFILE_ID);
-			
-			ICStorageElement children[] = el.getChildren();
-			for(int i = 0; i < children.length; i++){
-				if(IInputType.DISCOVERY_INFO.equals(children[i].getName())){
-					String defaultProfile = profileId;
-					if(defaultProfile == null)
-						defaultProfile = ScannerConfigProfileManager.NULL_PROFILE_ID;
-						
-					ScannerConfigInfoFactory2.create(context, children[i], defaultProfile);
-					break;
-				}
-			}
-		}
-		
-		public ScannerConfigInfo(IManagedConfigElement el, InfoContext context){
-			this(new ManagedConfigStorageElement(el), context);
-		}
-		
-		public ScannerConfigInfo(String profileId, IScannerConfigBuilderInfo2 info2){
-			this.profileId = profileId;
-			this.info2 = info2;
-		}
-		
-		public void serialize(ICStorageElement element){
-			if(profileId != null){
-				element.setAttribute(IInputType.SCANNER_CONFIG_PROFILE_ID, profileId);
-			}
-
-			if(info2 != null){
-				ICStorageElement el = element.createChild(IInputType.DISCOVERY_INFO);
-				ScannerConfigInfoFactory2.serialize(info2, el);
-			}
-		}
-
-		public IScannerConfigBuilderInfo2 getInfo2() {
-			return info2;
-		}
-
-		public String getProfileId() {
-			return profileId;
-		}
-	}
 
 	/*
 	 *  C O N S T R U C T O R S
@@ -268,12 +205,6 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 				addEnvVarBuildPath(new EnvVarBuildPath(this,toolElement));
 			} else if (toolElement.getName().equals(SupportedProperties.SUPPORTED_PROPERTIES)){
 				loadProperties(toolElement);
-			} else if(toolElement.getName().equals(IToolChain.DISCOVERY_INFO)){
-				ICStorageElement se = new ManagedConfigStorageElement(toolElement);
-				String profileId = getDiscoveryProfileId();
-				if(profileId == null)
-					profileId = ScannerConfigProfileManager.NULL_PROFILE_ID;
-				scannerConfigInfo = ScannerConfigInfoFactory2.create(new InfoContext(null), se, profileId);
 			}
 		}
 	}
@@ -315,9 +246,9 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 		setName(name);
 		setVersion(getVersionFromId());
 		
-		if(!superClass.isExtensionElement()){
-			((Tool)superClass).updateScannerInfoSettingsToInputTypes();
-		}
+//		if(!superClass.isExtensionElement()){
+//			((Tool)superClass).updateScannerInfoSettingsToInputTypes();
+//		}
 
 		isExtensionTool = isExtensionElement;
 		if (isExtensionElement) {
@@ -353,9 +284,9 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 		setVersion(getVersionFromId());
 		
 		isExtensionTool = isExtensionElement;
-		if(superClass != null && !superClass.isExtensionElement()){
-			((Tool)superClass).updateScannerInfoSettingsToInputTypes();
-		}
+//		if(superClass != null && !superClass.isExtensionElement()){
+//			((Tool)superClass).updateScannerInfoSettingsToInputTypes();
+//		}
 		if (isExtensionElement) {
 			// Hook me up to the Managed Build Manager
 			ManagedBuildManager.addExtensionTool(this);
@@ -400,12 +331,7 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 			} else if (toolElement.getName().equals(ITool.OUTPUT_TYPE)) {
 				OutputType outputType = new OutputType(this, toolElement);
 				addOutputType(outputType);
-			} else if(toolElement.getName().equals(IToolChain.DISCOVERY_INFO)){
-				String profileId = getDiscoveryProfileId();
-				if(profileId == null)
-					profileId = ScannerConfigProfileManager.NULL_PROFILE_ID;
-				scannerConfigInfo = ScannerConfigInfoFactory2.create(new InfoContext(getParentResourceInfo(), this, null), toolElement, profileId);
-			}
+			} 
 		}
 		
 		String rebuild = PropertyManager.getInstance().getProperty(this, REBUILD_STATE);
@@ -510,7 +436,7 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 		if(tool.envVarBuildPathList != null)
 			envVarBuildPathList = new ArrayList(tool.envVarBuildPathList);
 		
-		tool.updateScannerInfoSettingsToInputTypes();
+//		tool.updateScannerInfoSettingsToInputTypes();
 
 		//  Clone the children in superclass
 		super.copyChildren(tool);
@@ -1143,7 +1069,7 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 			super.serialize(element);
 
 			// Serialize my children
-			updateScannerInfoSettingsToInputTypes();
+//			updateScannerInfoSettingsToInputTypes();
 			
 			Iterator iter;
 			List typeElements = getInputTypeList();
@@ -1186,10 +1112,6 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 
 			if(scannerConfigDiscoveryProfileId != null)
 				element.setAttribute(IToolChain.SCANNER_CONFIG_PROFILE_ID, scannerConfigDiscoveryProfileId);
-			if(scannerConfigInfo != null){
-				ICStorageElement cfgInfoEl = element.createChild(IToolChain.DISCOVERY_INFO);
-				ScannerConfigInfoFactory2.serialize(scannerConfigInfo, cfgInfoEl);
-			}
 
 			saveRebuildState();
 
@@ -1200,33 +1122,33 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 		}
 	}
 	
-	private void updateScannerInfoSettingsToInputTypes(){
-		if(isExtensionTool)
-			return;
-
-		HashMap scannerCfgMap = getScannerInfoMap(false);
-		if(scannerCfgMap != null){
-			scannerCfgMap = (HashMap)scannerCfgMap.clone();
-			for(Iterator iter = scannerCfgMap.entrySet().iterator(); iter.hasNext();){
-				Map.Entry entry = (Map.Entry)iter.next();
-				String id = (String)entry.getKey();
-				InputType type = (InputType)getInputTypeById(id);
-				if(type == null)
-					continue;
-				
-				ScannerConfigInfoFactory2.BuildProperty info = (ScannerConfigInfoFactory2.BuildProperty)entry.getValue();
-				if(info.isDirty()){
-					if(type.isExtensionElement()){
-						type = (InputType)getEdtableInputType(type);
-					}
-					type.setScannerConfigBuilderInfo(info);
-				} else {
-					if(type.getScannerConfigBuilderInfoElement(false) != null)
-						type.setScannerConfigBuilderInfo(info);
-				}
-			}
-		}
-	}
+//	private void updateScannerInfoSettingsToInputTypes(){
+//		if(isExtensionTool)
+//			return;
+//
+//		HashMap scannerCfgMap = getScannerInfoMap(false);
+//		if(scannerCfgMap != null){
+//			scannerCfgMap = (HashMap)scannerCfgMap.clone();
+//			for(Iterator iter = scannerCfgMap.entrySet().iterator(); iter.hasNext();){
+//				Map.Entry entry = (Map.Entry)iter.next();
+//				String id = (String)entry.getKey();
+//				InputType type = (InputType)getInputTypeById(id);
+//				if(type == null)
+//					continue;
+//				
+//				ScannerConfigInfoFactory2.BuildProperty info = (ScannerConfigInfoFactory2.BuildProperty)entry.getValue();
+//				if(info.isDirty()){
+//					if(type.isExtensionElement()){
+//						type = (InputType)getEdtableInputType(type);
+//					}
+//					type.setScannerConfigBuilderInfo(info);
+//				} else {
+//					if(type.getScannerConfigBuilderInfoElement(false) != null)
+//						type.setScannerConfigBuilderInfo(info);
+//				}
+//			}
+//		}
+//	}
 
 	/*
 	 *  P A R E N T   A N D   C H I L D   H A N D L I N G
@@ -1266,14 +1188,14 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 				typeToDataMap.put(type, data);
 			}
 			
-			HashMap scannerInfoMap = getScannerInfoMap(false);
-			if(scannerInfoMap != null){
-				IScannerConfigBuilderInfo2 info = (IScannerConfigBuilderInfo2)scannerInfoMap.get(getTypeKey(superClass));
-				if(info != null){
-					info = ScannerConfigInfoFactory2.create(new InfoContext(getParentResourceInfo(), this, type), info, info.getSelectedProfileId());
-					scannerInfoMap.put(getTypeKey(type), info);
-				}
-			}
+//			HashMap scannerInfoMap = getScannerInfoMap(false);
+//			if(scannerInfoMap != null){
+//				IScannerConfigBuilderInfo2 info = (IScannerConfigBuilderInfo2)scannerInfoMap.get(getTypeKey(superClass));
+//				if(info != null){
+//					info = ScannerConfigInfoFactory2.create(new CfgInfoContext(getParentResourceInfo(), this, type), info, info.getSelectedProfileId());
+//					scannerInfoMap.put(getTypeKey(type), info);
+//				}
+//			}
 		}
 		addInputType(type);
 		setDirty(true);
@@ -3918,48 +3840,8 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 		return name;
 	}
 
-	public IScannerConfigBuilderInfo2 setScannerConfigInfo(IInputType type, IScannerConfigBuilderInfo2 info){
-		if(isExtensionTool)
-			return null;
-		InputType inType = (InputType)type;
-		HashMap map = getScannerInfoMap(true);
-		IScannerConfigBuilderInfo2 oldInfo = (IScannerConfigBuilderInfo2)map.put(getTypeKey(inType), info);
-		return oldInfo;
-	}
-
-	public IScannerConfigBuilderInfo2 getScannerConfigInfo(IInputType type){
-		if(isExtensionTool)
-			return null;
-		InputType inType = (InputType)type;
-		IScannerConfigBuilderInfo2 info = null;
-//		if(inType.getParent() == this){
-//			info = inType.getScannerConfigBuilderInfo();
-//		}
-		
-		if(info == null){
-			HashMap scannerInfoMap = getScannerInfoMap(true);
-			info = (IScannerConfigBuilderInfo2)scannerInfoMap.get(getTypeKey(inType));
-			
-			if(info == null){
-				boolean create = inType != null ? inType.getDiscoveryProfileIdAttribute() != null : getDiscoveryProfileIdAttribute() != null;
-				if(create){
-					String id = inType != null ? inType.getDiscoveryProfileId(this) : null;
-					if(id == null)
-						id = ScannerConfigProfileManager.NULL_PROFILE_ID;
-					info = ScannerConfigInfoFactory2.create(new InfoContext(getParentResourceInfo(), this, type), ManagedBuilderCorePlugin.getDefault().getPluginPreferences(), id, false);
-				}
-			}
-			if(info != null)
-				scannerInfoMap.put(getTypeKey(inType), info);
-		}
-		
-		return info;
-	}
-	
 	private boolean typeContributesToScannerConfig(InputType inType){
 //		InputType inType = (InputType)type;
-		if(inType.getScannerConfigBuilderInfo(this) != null)
-			return true;
 		
 		if(inType.getDiscoveryProfileId(this) != null)
 			return true;
@@ -3975,8 +3857,6 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 	}
 	
 	private boolean hasScannerConfigSettings(){
-		if(getScannerConfigBuilderInfoElement(true) != null)
-			return true;
 		
 		if(getDiscoveryProfileIdAttribute() != null)
 			return true;
@@ -3984,30 +3864,6 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 		return false;
 	}
 	
-	private HashMap getScannerInfoMap(boolean create){
-		if(scannerInfoMap == null && create && !isExtensionTool){
-			Collection types = getLanguageInputTypes();
-			scannerInfoMap = new HashMap();
-			if(types != null){
-				if(types.size() != 0){
-					for(Iterator iter = types.iterator(); iter.hasNext();){
-						InputType type = (InputType)iter.next();
-						IScannerConfigBuilderInfo2 info = type.getScannerConfigBuilderInfoElement(true);
-						if(info != null){
-							if(info != type.getScannerConfigBuilderInfoElement(false)){
-								info = ScannerConfigInfoFactory2.create(new InfoContext(getParentResourceInfo(), this, type), info, ScannerConfigProfileManager.NULL_PROFILE_ID);
-							}
-							scannerInfoMap.put(getTypeKey(type), info);
-						}
-					}
-				} else {
-					
-				}
-			}
-		}
-		return scannerInfoMap;
-	}
-
 	public IDiscoveredPathManager.IDiscoveredPathInfo setDiscoveredPathInfo(IInputType type, IDiscoveredPathManager.IDiscoveredPathInfo info){
 		return (IDiscoveredPathManager.IDiscoveredPathInfo)discoveredInfoMap.put(getTypeKey(type), info);
 	}
@@ -4024,30 +3880,6 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 		if(type != null)
 			return type.getId();
 		return null;
-	}
-	
-	public IScannerConfigBuilderInfo2 getScannerConfigBuilderInfoElement(boolean searchSuper){
-		if(scannerConfigInfo == null){
-			if(superClass != null && searchSuper){
-				return ((Tool)superClass).getScannerConfigBuilderInfoElement(true);
-			}
-			return null;
-		}
-		return scannerConfigInfo;
-	}
-
-	IScannerConfigBuilderInfo2 getScannerConfigBuilderInfo(){
-		IScannerConfigBuilderInfo2 info = getScannerConfigBuilderInfoElement(true);
-		if(info == null){
-			IToolChain tc = getToolChain();
-			if(tc != null)
-				info = ((ToolChain)tc).getScannerConfigBuilderInfo();
-		}
-		return info;
-	}
-
-	public void setScannerConfigBuilderInfo(IScannerConfigBuilderInfo2 info){
-		scannerConfigInfo = info;
 	}
 	
 	public String getDiscoveryProfileIdAttribute(){

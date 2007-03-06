@@ -21,6 +21,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.eclipse.cdt.build.core.scannerconfig.CfgInfoContext;
+import org.eclipse.cdt.build.core.scannerconfig.ICfgScannerConfigBuilderInfo2Set;
+import org.eclipse.cdt.build.internal.core.scannerconfig2.CfgScannerConfigProfileManager;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.CommandLauncher;
 import org.eclipse.cdt.core.ConsoleOutputStream;
@@ -33,6 +36,8 @@ import org.eclipse.cdt.core.resources.IConsole;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.util.ListComparator;
 import org.eclipse.cdt.internal.core.ConsoleOutputSniffer;
+import org.eclipse.cdt.make.core.scannerconfig.IScannerConfigBuilderInfo2;
+import org.eclipse.cdt.make.core.scannerconfig.InfoContext;
 import org.eclipse.cdt.make.internal.core.scannerconfig.ScannerInfoConsoleParserFactory;
 import org.eclipse.cdt.managedbuilder.buildmodel.BuildDescriptionManager;
 import org.eclipse.cdt.managedbuilder.buildmodel.IBuildDescription;
@@ -1445,8 +1450,17 @@ public class CommonBuilder extends ACBuilder {
 				OutputStream stdout = epm.getOutputStream();
 				OutputStream stderr = epm.getOutputStream();
 				// Sniff console output for scanner info
+				ICfgScannerConfigBuilderInfo2Set container = CfgScannerConfigProfileManager.getCfgScannerConfigBuildInfo(cfg);
+				CfgInfoContext context = new CfgInfoContext(cfg);
+				InfoContext baseContext; 
+				IScannerConfigBuilderInfo2 info = container.getInfo(context);
+				if(info == null){
+					baseContext = new InfoContext(currProject);
+				} else {
+					baseContext = context.toInfoContext();
+				}
 				ConsoleOutputSniffer sniffer = ScannerInfoConsoleParserFactory.getMakeBuilderOutputSniffer(
-						stdout, stderr, cfg, null, workingDirectory, null, this, null);
+						stdout, stderr, currProject, baseContext, workingDirectory, info, this, null);
 				OutputStream consoleOut = (sniffer == null ? stdout : sniffer.getOutputStream());
 				OutputStream consoleErr = (sniffer == null ? stderr : sniffer.getErrorStream());
 				Process p = launcher.execute(buildCommand, buildArguments, env, workingDirectory);

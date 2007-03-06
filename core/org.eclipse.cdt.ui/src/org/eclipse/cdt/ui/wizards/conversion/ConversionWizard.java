@@ -116,7 +116,7 @@ public abstract class ConversionWizard
      */
     protected void doRun(IProgressMonitor monitor) throws CoreException {
         try{
-            mainPage.doRun(monitor, getProjectID());
+            mainPage.doRun(monitor, getProjectID(), getBuildSystemId());
         } catch (CoreException ce){
             CCorePlugin.log(ce);
             throw ce;

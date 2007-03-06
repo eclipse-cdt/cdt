@@ -73,7 +73,7 @@ public class KindBasedStore implements Cloneable {
 				return INDEX_OUPUT_PATH;
 			break;
 		}
-		throw new IllegalArgumentException("illegal kind");
+		throw new IllegalArgumentException(UtilMessages.getString("KindBasedStore.0")); //$NON-NLS-1$
 	}
 	
 	public static int[] getLanguageEntryKinds(){
@@ -99,7 +99,7 @@ public class KindBasedStore implements Cloneable {
 		case INDEX_OUPUT_PATH:
 			return ICSettingEntry.OUTPUT_PATH;
 		}
-		throw new IllegalArgumentException("illegal kind");
+		throw new IllegalArgumentException(UtilMessages.getString("KindBasedStore.1")); //$NON-NLS-1$
 	}
 	public Object get(int kind){
 		return fEntryStorage[kindToIndex(kind)];

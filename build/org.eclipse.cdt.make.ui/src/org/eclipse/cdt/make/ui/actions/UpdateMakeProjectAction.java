@@ -16,13 +16,14 @@ import java.util.Vector;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.make.core.IMakeBuilderInfo;
 import org.eclipse.cdt.make.core.IMakeTarget;
 import org.eclipse.cdt.make.core.IMakeTargetManager;
+import org.eclipse.cdt.make.core.MakeBuilder;
 import org.eclipse.cdt.make.core.MakeCorePlugin;
 import org.eclipse.cdt.make.core.MakeProjectNature;
 import org.eclipse.cdt.make.internal.ui.MakeUIPlugin;
 import org.eclipse.cdt.make.ui.wizards.UpdateMakeProjectWizard;
-import org.eclipse.cdt.newmake.core.IMakeBuilderInfo;
 import org.eclipse.core.resources.ICommand;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
@@ -211,7 +212,7 @@ public class UpdateMakeProjectAction implements IWorkbenchWindowActionDelegate {
 				MakeProjectNature.addNature(project[i], new SubProgressMonitor(monitor, 1));
 
 				// move existing build properties to new
-				IMakeBuilderInfo newInfo = null; //TODO: MakeCorePlugin.createBuildInfo(project[i], MakeBuilder.BUILDER_ID);
+				IMakeBuilderInfo newInfo = MakeCorePlugin.createBuildInfo(project[i], MakeBuilder.BUILDER_ID);
 				final int LOCATION = 0, FULL_ARGS = 1, INC_ARGS = 2, STOP_ERORR = 3, USE_DEFAULT = 4;
 				QualifiedName[] qName = new QualifiedName[USE_DEFAULT + 1];
 				qName[LOCATION] = new QualifiedName(CCorePlugin.PLUGIN_ID, "buildLocation"); //$NON-NLS-1$

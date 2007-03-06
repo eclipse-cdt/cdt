@@ -162,11 +162,11 @@ public class CFolderDescription extends CDataProxyContainer implements
 		
 		CLanguageData lData = data.createLanguageDataForContentTypes(languageId, typeIds);
 		if(lData == null)
-			throw ExceptionFactory.createCoreException("data was not created");
+			throw ExceptionFactory.createCoreException(SettingsModelMessages.getString("CFolderDescription.0")); //$NON-NLS-1$
 		
 		CDataProxy proxy = getChildrenProxyProvider().getProxy(lData);
 		if(!(proxy instanceof ICLanguageSetting))
-			throw ExceptionFactory.createCoreException("expected proxy of type ICLanguageSetting, but was " + proxy.getClass().getName());
+			throw ExceptionFactory.createCoreException(SettingsModelMessages.getString("CFolderDescription.1") + proxy.getClass().getName()); //$NON-NLS-1$
 
 		return (ICLanguageSetting)proxy;
 	}
@@ -178,11 +178,11 @@ public class CFolderDescription extends CDataProxyContainer implements
 		
 		CLanguageData lData = data.createLanguageDataForExtensions(languageId, extensions);
 		if(lData == null)
-			throw ExceptionFactory.createCoreException("data was not created");
+			throw ExceptionFactory.createCoreException(SettingsModelMessages.getString("CFolderDescription.2")); //$NON-NLS-1$
 		
 		CDataProxy proxy = getChildrenProxyProvider().getProxy(lData);
 		if(!(proxy instanceof ICLanguageSetting))
-			throw ExceptionFactory.createCoreException("expected proxy of type ICLanguageSetting, but was " + proxy.getClass().getName());
+			throw ExceptionFactory.createCoreException(SettingsModelMessages.getString("CFolderDescription.3") + proxy.getClass().getName()); //$NON-NLS-1$
 
 		return (ICLanguageSetting)proxy;
 	}

@@ -51,6 +51,34 @@
              Create a new C project
          </description>
       </wizard>
+      <wizard
+            name="%WizardConvertMakeProject.name"
+            icon="icons/obj16/convert-normal.gif"
+            category="org.eclipse.cdt.ui.newCWizards"
+            class="org.eclipse.cdt.managedbuilder.ui.wizards.ConvertToMakeWizard"
+            finalPerspective="org.eclipse.cdt.ui.CPerspective"
+            id="org.eclipse.cdt.ui.wizards.ConvertToMakeWizard">
+         <description>
+            %WizardConvertMakeProject.description
+         </description>
+         <selection
+               class="org.eclipse.core.resources.IProject">
+         </selection>
+      </wizard>
+      <wizard
+            name="%WizardConvertMakeProject.name"
+            icon="icons/obj16/convert-normal.gif"
+            category="org.eclipse.cdt.ui.newCCWizards"
+            class="org.eclipse.cdt.managedbuilder.ui.wizards.ConvertToMakeWizard"
+            finalPerspective="org.eclipse.cdt.ui.CPerspective"
+            id="org.eclipse.cdt.ui.wizards.ConvertToMakeWizard">
+         <description>
+            %WizardConvertMakeProject.description
+         </description>
+         <selection
+               class="org.eclipse.core.resources.IProject">
+         </selection>
+      </wizard>
    </extension>
       
    <extension
@@ -390,7 +418,7 @@
          </wizard>
       </extension>
   
-     <extension
+     <!--extension
          point="org.eclipse.cdt.managedbuilder.ui.DiscoveryProfileUI">
       <profilePage
             class="org.eclipse.cdt.managedbuilder.ui.newui.GCCPerProjectSCDProfilePage"
@@ -402,7 +430,7 @@
             name="Per file"
             profileId="org.eclipse.cdt.make.core.GCCStandardMakePerFileProfile"
             profilePattern="PerFileProfile"/>
-   </extension>
+   </extension -->
 
 <!-- Custom wizard pages - for testing only 
      <extension

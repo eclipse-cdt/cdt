@@ -11,7 +11,10 @@
 package org.eclipse.cdt.core.settings.model.util;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.eclipse.cdt.core.settings.model.ICStorageElement;
 import org.w3c.dom.Document;
@@ -303,6 +306,66 @@ public class XmlStorageElement implements ICStorageElement {
 
 	public boolean isParentRefAlowed(){
 		return fParentRefAlowed;
+	}
+	
+	public boolean matches(ICStorageElement el){
+		if(!getName().equals(el.getName()))
+			return false;
+		
+		String value = getValue();
+		if(value == null){
+			if(el.getValue() != null)
+				return false;
+		} else if(!value.equals(el.getValue()))
+			return false;
+
+		
+		String[] attrs = getAttributeNames();
+		String[] otherAttrs = el.getAttributeNames();
+		if(attrs.length != otherAttrs.length)
+			return false;
+		
+		if(attrs.length != 0){
+			Set set = new HashSet(Arrays.asList(attrs));
+			set.removeAll(Arrays.asList(otherAttrs));
+			if(set.size() != 0)
+				return false;
+
+			for(int i = 0; i < attrs.length; i++){
+				if(!getAttribute(attrs[i]).equals(el.getAttribute(attrs[i])))
+					return false;
+			}
+
+		}
+		
+		
+		XmlStorageElement[] children = (XmlStorageElement[])getChildren();
+		ICStorageElement[] otherChildren = el.getChildren();
+		
+		if(children.length != otherChildren.length)
+			return false;
+		
+		if(children.length != 0){
+			for(int i = 0; i < children.length; i++){
+				if(!children[i].matches(otherChildren[i]))
+					return false;
+			}
+		}
+		
+		return true;
+	}
+
+	public String[] getAttributeNames() {
+		NamedNodeMap nodeMap = fElement.getAttributes();
+		int length = nodeMap.getLength();
+		List list = new ArrayList(length);
+		for(int i = 0; i < length; i++){
+			Node node = nodeMap.item(i);
+			String name = node.getNodeName();
+			if(isPropertyAlowed(name))
+				list.add(name);
+		}
+		return (String[])list.toArray(new String[list.size()]);
 	}
 
 }

@@ -50,7 +50,6 @@ public interface IToolChain extends IBuildObject, IHoldsOptions {
 	
 	// The attribute name for the scanner info collector
 	public static final String SCANNER_CONFIG_PROFILE_ID = "scannerConfigDiscoveryProfileId"; //$NON-NLS-1$
-	public static final String DISCOVERY_INFO = "discoveryInfo";	//$NON-NLS-1$
 
 	/**
 	 * Returns the configuration that is the parent of this tool-chain.

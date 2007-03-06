@@ -440,6 +440,23 @@ public abstract class ConvertProjectWizardPage
             convertProjects(selection, monitor, projectID);
         }
     }
+    
+    public void doRun(IProgressMonitor monitor, String projectID, String bsId) throws CoreException {
+    	if(bsId == null)
+    		doRun(monitor, projectID);
+    	else {
+	        Object[] selection = getCheckedElements();
+	        int      totalSelected = selection.length;
+	
+	        if ((selection != null) && (totalSelected > 0)) {
+	            if (monitor == null) {
+	                monitor = new NullProgressMonitor();
+	            }
+	            monitor.beginTask(CUIPlugin.getResourceString(KEY_TITLE), 1);
+	            convertProjects(selection, bsId, monitor);
+	        }
+    	}
+    }
 
     /**
      * convertProjects calls the convertProject() method on each project
@@ -464,6 +481,19 @@ public abstract class ConvertProjectWizardPage
 		}
     }
 
+    private void convertProjects(Object[] selected, String bsId, IProgressMonitor monitor)
+    						throws CoreException {
+		monitor.beginTask(CUIPlugin.getResourceString(KEY_CONVERTING), 
+		    selected.length);
+		try {
+			for (int i = 0; i < selected.length; i++) {
+			IProject project = (IProject)selected[i];
+			convertProject(project, bsId, new SubProgressMonitor(monitor, 1));
+			}
+		} finally {
+			monitor.done();
+		}
+	}
     /**
      * Method finish we always finish successfully  :)
      * 
@@ -511,9 +541,35 @@ public abstract class ConvertProjectWizardPage
     		}            			
     	}                           	
     }
-	protected void addCNature(IProject project, IProgressMonitor monitor, boolean addMakeBuilder) throws CoreException{
+
+    public void convertProject(IProject project,
+    		String bsId,
+            IProgressMonitor monitor)
+            throws CoreException{
+		// Add the correct nature
+		if (convertToC) {
+			if (!project.hasNature(CProjectNature.C_NATURE_ID)){
+				addCNature(project, monitor, true);          	
+			} else {
+				if (project.hasNature(CCProjectNature.CC_NATURE_ID)){
+						// remove the C++ nature
+						CCProjectNature.removeCCNature(project, monitor);
+				}    			
+			}
+		} else {
+			if (convertToCC && !project.hasNature(CCProjectNature.CC_NATURE_ID)) {
+				addCCNature(project, monitor, true);          	
+			}            			
+		}                           	
+	}
+
+    protected void addCNature(IProject project, IProgressMonitor monitor, boolean addMakeBuilder) throws CoreException{
 		if ( getWizard() instanceof ConversionWizard) {
-     		CCorePlugin.getDefault().convertProjectToC(project, monitor, ((ConversionWizard)getWizard()).getProjectID());
+			ConversionWizard cw = (ConversionWizard)getWizard();
+			if(cw.getBuildSystemId() != null)
+				CCorePlugin.getDefault().convertProjectToNewC(project, cw.getBuildSystemId(), monitor);
+			else
+				CCorePlugin.getDefault().convertProjectToC(project, monitor, cw.getProjectID());
 		}
      }
      
@@ -522,7 +578,11 @@ public abstract class ConvertProjectWizardPage
 	     	if (project.hasNature(CProjectNature.C_NATURE_ID)) {     		
 		     	CCorePlugin.getDefault().convertProjectFromCtoCC(project, monitor);
      		} else {
-	     		CCorePlugin.getDefault().convertProjectToCC(project, monitor, ((ConversionWizard)getWizard()).getProjectID());
+     			ConversionWizard cw = (ConversionWizard)getWizard();
+     			if(cw.getBuildSystemId() != null)
+    	     		CCorePlugin.getDefault().convertProjectToNewCC(project, cw.getBuildSystemId(), monitor);
+     			else
+     				CCorePlugin.getDefault().convertProjectToCC(project, monitor, cw.getProjectID());
      		}
 		}
      }

@@ -640,7 +640,7 @@ public class Builder extends BuildObject implements IBuilder, IMatchKeyProvider 
 		if(tmp != null)
 			autoBuildEnabled = Boolean.valueOf(tmp);
 		incrementalBuildTarget = element.getAttribute(ATTRIBUTE_TARGET_INCREMENTAL);
-		tmp = element.getAttribute(ATTRIBUTE_AUTO_ENABLED);
+		tmp = element.getAttribute(ATTRIBUTE_INCREMENTAL_ENABLED);
 		if(tmp != null)
 			incrementalBuildEnabled = Boolean.valueOf(tmp);
 		cleanBuildTarget = element.getAttribute(ATTRIBUTE_TARGET_CLEAN);
@@ -1522,6 +1522,12 @@ public class Builder extends BuildObject implements IBuilder, IMatchKeyProvider 
 		return fBuildData;
 	}
 
+//	public String[] getCustomizedErrorParserIds(){
+//		if(customizedErrorParserIds != null)
+//			return (String[])customizedErrorParserIds.clone();
+//		return null;
+//	}
+	
 	public String[] getErrorParsers() {
 		if(isCustomBuilder() && customizedErrorParserIds != null)
 			return (String[])customizedErrorParserIds.clone();
@@ -1529,6 +1535,16 @@ public class Builder extends BuildObject implements IBuilder, IMatchKeyProvider 
 		IToolChain parent = getParent();
 		IConfiguration parentConfig = parent.getParent();
 		return parentConfig.getErrorParserList();
+	}
+	
+	public String[] getCustomizedErrorParserIds(){
+		if(customizedErrorParserIds != null)
+			return (String[])customizedErrorParserIds.clone();
+		return null;
+	}
+	
+	public void setCustomizedErrorParserIds(String[] ids){
+		customizedErrorParserIds = ids != null ? (String[])ids.clone() : ids;
 	}
 
 	public void setErrorParsers(String[] parsers) throws CoreException {

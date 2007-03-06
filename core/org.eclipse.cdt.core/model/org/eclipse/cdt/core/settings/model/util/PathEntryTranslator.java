@@ -233,7 +233,7 @@ public class PathEntryTranslator {
 			case IPathEntry.CDT_MACRO_FILE:
 				return INDEX_CDT_MACRO_FILE;
 			}
-			throw new IllegalArgumentException("illegal kind");
+			throw new IllegalArgumentException(UtilMessages.getString("PathEntryTranslator.0")); //$NON-NLS-1$
 		}
 		
 		public static int[] getSupportedKinds(){
@@ -261,7 +261,7 @@ public class PathEntryTranslator {
 			case INDEX_CDT_MACRO_FILE:
 				return IPathEntry.CDT_MACRO_FILE;
 			}
-			throw new IllegalArgumentException("illegal kind");
+			throw new IllegalArgumentException(UtilMessages.getString("PathEntryTranslator.1")); //$NON-NLS-1$
 		}
 		public Object get(int kind){
 			return fEntryStorage[kindToIndex(kind)];
@@ -897,7 +897,7 @@ public class PathEntryTranslator {
 	
 	private static String resolveAll(String value, ICConfigurationDescription cfg){
 		try {
-			return CCorePlugin.getDefault().getCdtVariableManager().resolveValue(value, "", " ", cfg);
+			return CCorePlugin.getDefault().getCdtVariableManager().resolveValue(value, "", " ", cfg); //$NON-NLS-1$ //$NON-NLS-2$
 		} catch (CdtVariableException e) {
 			CCorePlugin.log(e);
 		}
@@ -1236,7 +1236,7 @@ public class PathEntryTranslator {
 	
 	public static ICSourceEntry[] calculateSourceEntriesFromPaths(IProject project, PathSettingsContainer rcDatas, IPath paths[]){
 		if(paths == null || paths.length == 0)
-			paths = new IPath[]{new Path("")};
+			paths = new IPath[]{new Path("")}; //$NON-NLS-1$
 		
 //		Set set = new HashSet(paths.length);
 		PathSettingsContainer cr = PathSettingsContainer.createRootContainer();
@@ -2103,7 +2103,7 @@ public class PathEntryTranslator {
 		String v = el.getAttribute(attr);
 		if(v != null)
 			return v;
-		return "";
+		return ""; //$NON-NLS-1$
 	}
 	
 	static IPathEntry decodePathEntry(IProject project, ICStorageElement element) throws CModelException {

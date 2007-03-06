@@ -12,6 +12,7 @@ package org.eclipse.cdt.internal.core;
 
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Vector;
@@ -31,10 +32,12 @@ import org.eclipse.cdt.internal.core.settings.model.CConfigurationSpecSettings;
 import org.eclipse.cdt.internal.core.settings.model.CProjectDescription;
 import org.eclipse.cdt.internal.core.settings.model.CProjectDescriptionEvent;
 import org.eclipse.cdt.internal.core.settings.model.CProjectDescriptionManager;
+import org.eclipse.cdt.internal.core.settings.model.CStorage;
 import org.eclipse.cdt.internal.core.settings.model.ExceptionFactory;
 import org.eclipse.cdt.internal.core.settings.model.ICDescriptionDelta;
 import org.eclipse.cdt.internal.core.settings.model.ICProjectDescriptionListener;
 import org.eclipse.cdt.internal.core.settings.model.IInternalCCfgInfo;
+import org.eclipse.cdt.internal.core.settings.model.InternalXmlStorageElement;
 import org.eclipse.cdt.internal.core.settings.model.PathEntryConfigurationDataProvider;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
@@ -47,6 +50,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.core.runtime.Status;
+import org.w3c.dom.Element;
 
 public class CConfigBasedDescriptorManager implements ICDescriptorManager {
 	private static CConfigBasedDescriptorManager fInstance;
@@ -57,7 +61,28 @@ public class CConfigBasedDescriptorManager implements ICDescriptorManager {
 	private static final QualifiedName DESCRIPTOR_PROPERTY = new QualifiedName(CCorePlugin.PLUGIN_ID, "CDescriptor"); //$NON-NLS-1$
 
 	private List fListeners = Collections.synchronizedList(new Vector());
+//	private ThreadLocal fApplyingDescriptorMap = new ThreadLocal();
+	private ThreadLocal fThreadInfo = new ThreadLocal();
 
+	private class ThreadInfo {
+		Map fApplyingDescriptorMap;
+		Map fOperatingDescriptorMap;
+		
+		public Map getApplyingDescriptorMap(boolean create){
+			if(fApplyingDescriptorMap == null && create){
+				fApplyingDescriptorMap = new HashMap(1);
+			}
+			return fApplyingDescriptorMap;
+		}
+
+		public Map getOperatingDescriptorMap(boolean create){
+			if(fOperatingDescriptorMap == null && create){
+				fOperatingDescriptorMap = new HashMap(1);
+			}
+			return fOperatingDescriptorMap;
+		}
+
+	}
 
 	private CConfigBasedDescriptorManager(){
 	}
@@ -118,7 +143,7 @@ public class CConfigBasedDescriptorManager implements ICDescriptorManager {
 		settings.setCOwner(ownerId);
 		COwner owner = settings.getCOwner();
 		setLoaddedDescriptor(projDes, null);
-		dr = findDescriptor(projDes);
+		dr = findDescriptor((CProjectDescription)projDes);
 		dr.setApplyOnChange(false);
 		owner.configure(project, dr);
 		dr.setApplyOnChange(true);
@@ -174,17 +199,50 @@ public class CConfigBasedDescriptorManager implements ICDescriptorManager {
 		}
 
 		synchronized (dr) {
+			boolean initialApplyOnChange = dr.isApplyOnChange();
 			dr.setApplyOnChange(false);
 			try {
 				op.execute(dr, monitor);
 			} finally {
-				dr.setApplyOnChange(true);
+				dr.setApplyOnChange(initialApplyOnChange);
 			}
 		}
 		
 		dr.apply(false);
 	}
-	
+
+	public void runDescriptorOperation(IProject project,
+			ICProjectDescription des,
+			ICDescriptorOperation op,
+			IProgressMonitor monitor)
+				throws CoreException {
+		CConfigBasedDescriptor dr = getOperatingDescriptor(project);
+		if(dr != null){
+			throw new CoreException(new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, -1, "description based descriptor operation can not be nested", null));
+		}
+		
+		if(des.isReadOnly()){
+			throw new CoreException(new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, -1, "can not perform descriptor operation based on the read only description", null));
+		}
+		
+		dr = loadDescriptor((CProjectDescription)des);
+		
+		if (dr == null) {
+			throw new CoreException(new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, -1, "Failed to create descriptor", null));
+		}
+		
+		setOperatingDescriptor(project, dr);
+
+		synchronized (dr) {
+			dr.setApplyOnChange(false);
+			try {
+				op.execute(dr, monitor);
+			} finally {
+				clearOperatingDescriptor(project);
+			}
+		}
+	}
+
 	private CConfigBasedDescriptor getLoaddedDescriptor(ICProjectDescription des){
 		return (CConfigBasedDescriptor)des.getSessionProperty(DESCRIPTOR_PROPERTY);
 	}
@@ -194,8 +252,13 @@ public class CConfigBasedDescriptorManager implements ICDescriptorManager {
 	}
 	
 	private CConfigBasedDescriptor findDescriptor(IProject project, boolean create) throws CoreException{
-		ICProjectDescription des = CProjectDescriptionManager.getInstance().getProjectDescription(project, false);
-		CConfigBasedDescriptor dr = null;
+		CConfigBasedDescriptor dr = getOperatingDescriptor(project);
+		if(dr != null)
+			return dr;
+		
+		CProjectDescription des = (CProjectDescription)CProjectDescriptionManager.getInstance().getProjectDescription(project, false);
+
+//		CConfigBasedDescriptor dr = null;
 		if(des == null && create){
 			des = createProjDescriptionForDescriptor(project);
 		}
@@ -205,8 +268,18 @@ public class CConfigBasedDescriptorManager implements ICDescriptorManager {
 		return dr;
 	}
 	
-	private CConfigBasedDescriptor findDescriptor(ICProjectDescription des) throws CoreException{
-		CConfigBasedDescriptor dr = getLoaddedDescriptor(des);
+	private CConfigBasedDescriptor findDescriptor(CProjectDescription des) throws CoreException{
+		CConfigBasedDescriptor dr = getApplyingDescriptor(des.getProject());
+		if(dr != null)
+			return dr;
+		
+		if(des.isApplying()){
+			dr = loadDescriptor(des);
+			setApplyingDescriptor(des.getProject(), dr);
+			return dr;
+		}
+		
+		dr = getLoaddedDescriptor(des);
 		if(dr == null){
 			dr = loadDescriptor((CProjectDescription)des);
 			if(dr != null){
@@ -221,7 +294,7 @@ public class CConfigBasedDescriptorManager implements ICDescriptorManager {
 		CProjectDescription des = (CProjectDescription)mngr.createProjectDescription(project, false);
 			
 		CConfigurationData data = mngr.createDefaultConfigData(project, PathEntryConfigurationDataProvider.getDataFactory());
-		des.createConfiguration(CProjectDescriptionManager.DEFAULT_PROVIDER_ID, data);
+		des.createConfiguration(CCorePlugin.DEFAULT_PROVIDER_ID, data);
 		
 		return des;
 	}
@@ -237,7 +310,10 @@ public class CConfigBasedDescriptorManager implements ICDescriptorManager {
 	
 			
 			if(cfgDes != null){
-				dr = new CConfigBasedDescriptor((CConfigurationDescription)cfgDes);
+				if(cfgDes.isReadOnly())
+					throw ExceptionFactory.createCoreException("error: read-only configuration can not be used for CDescriptor");
+					
+				dr = new CConfigBasedDescriptor(cfgDes);
 			} else {
 				throw ExceptionFactory.createCoreException("the project does not contain valid configurations");
 			}
@@ -285,7 +361,7 @@ public class CConfigBasedDescriptorManager implements ICDescriptorManager {
 				}
 				
 			};
-			CProjectDescriptionManager.getInstance().addListener(fDescriptionListener, CProjectDescriptionEvent.APPLIED | CProjectDescriptionEvent.LOADDED);
+			CProjectDescriptionManager.getInstance().addListener(fDescriptionListener, CProjectDescriptionEvent.APPLIED | CProjectDescriptionEvent.LOADDED | CProjectDescriptionEvent.DATA_APPLIED | CProjectDescriptionEvent.ABOUT_TO_APPLY);
 		}
 	}
 	
@@ -299,18 +375,39 @@ public class CConfigBasedDescriptorManager implements ICDescriptorManager {
 		try {
 			switch(event.getEventType()){
 			case CProjectDescriptionEvent.LOADDED:{
-				CProjectDescription des = (CProjectDescription)event.getNewCProjectDescription();
-				CConfigBasedDescriptor dr = getLoaddedDescriptor(des);
-				if(dr != null){
-					//the descriptor was requested while load process
-					des = (CProjectDescription)CProjectDescriptionManager.getInstance().getProjectDescription(des.getProject(), true);
-					ICConfigurationDescription cfgDescription = des.getIndexConfiguration();
-					if(cfgDescription != null)
-						dr.updateConfiguration((CConfigurationDescription)cfgDescription);
-					else
-						setLoaddedDescriptor(des, null);
+					CProjectDescription des = (CProjectDescription)event.getNewCProjectDescription();
+					CConfigBasedDescriptor dr = getLoaddedDescriptor(des);
+					if(dr != null){
+						//the descriptor was requested while load process
+						des = (CProjectDescription)CProjectDescriptionManager.getInstance().getProjectDescription(des.getProject(), true);
+						ICConfigurationDescription cfgDescription = des.getIndexConfiguration();
+						if(cfgDescription != null)
+							dr.updateConfiguration((CConfigurationDescription)cfgDescription);
+						else
+							setLoaddedDescriptor(des, null);
+					}
 				}
-			}
+				break;
+			case CProjectDescriptionEvent.ABOUT_TO_APPLY:{
+					CProjectDescription des = (CProjectDescription)event.getNewCProjectDescription();
+					if(des != null){
+						CConfigBasedDescriptor dr = getLoaddedDescriptor(des);
+						if(dr != null 
+								&& dr.getConfigurationDescription().getProjectDescription() != des){
+							reconsile(dr, des);
+						}
+					}
+				}
+				break;
+			case CProjectDescriptionEvent.DATA_APPLIED:{
+					CProjectDescription des = (CProjectDescription)event.getNewCProjectDescription();
+					if(des != null){
+						CConfigBasedDescriptor dr = clearApplyingDescriptor(event.getProject());
+						if(dr != null){
+							reconsile(dr, des);
+						}
+					}
+				}
 				break;
 			case CProjectDescriptionEvent.APPLIED:
 				CProjectDescription newDes = (CProjectDescription)event.getNewCProjectDescription();
@@ -408,6 +505,130 @@ public class CConfigBasedDescriptorManager implements ICDescriptorManager {
 				}
 			});
 		}
+	}
+	
+	public boolean reconsile(CConfigBasedDescriptor descriptor, ICProjectDescription des){
+		Map map = descriptor.getStorageDataElMap();
+		boolean reconsiled = false;
+		if(map.size() != 0){
+			for(Iterator iter = map.entrySet().iterator(); iter.hasNext();){
+				Map.Entry entry = (Map.Entry)iter.next();
+				String id = (String)entry.getKey();
+				Element el = (Element)entry.getValue();
+				if(reconsile(id, el, des))
+					reconsiled = true;
+			}
+		}
+		return reconsiled;
+	}
+	
+	private boolean reconsile(String id, Element el, ICProjectDescription des){
+		ICConfigurationDescription cfgs[] = des.getConfigurations();
+		boolean reconsiled = false;
+		
+		for(int i = 0; i < cfgs.length; i++){
+			try {
+				if(reconsile(id, el, cfgs[i]))
+					reconsiled = true;
+			} catch (CoreException e) {
+				CCorePlugin.log(e);
+			}
+		}
+		
+		return reconsiled;
+	}
+	
+	private boolean reconsile(String id, Element el, ICConfigurationDescription cfg) throws CoreException{
+		CConfigurationSpecSettings setting = ((IInternalCCfgInfo)cfg).getSpecSettings();
+		InternalXmlStorageElement storEl = (InternalXmlStorageElement)setting.getStorage(id, false);
+		InternalXmlStorageElement newStorEl = CStorage.createStorageElement(el, false);
+		if(storEl == null 
+				|| (!storEl.isDirty() && !newStorEl.matches(storEl))){
+			setting.importStorage(id, newStorEl);
+			return true;
+		}
+		return false;
+	}
+	
+	private CConfigBasedDescriptor getApplyingDescriptor(IProject project){
+		Map map = getApplyingDescriptorMap(false);
+		if(map != null){
+			return (CConfigBasedDescriptor)map.get(project);
+		}
+		return null;
+	}
+
+	private void setApplyingDescriptor(IProject project, CConfigBasedDescriptor dr){
+		if(dr == null)
+			clearApplyingDescriptor(project);
+		else {
+			Map map = getApplyingDescriptorMap(true);
+			map.put(project, dr);
+		}
+	}
+
+	private CConfigBasedDescriptor clearApplyingDescriptor(IProject project){
+		Map map = getApplyingDescriptorMap(false);
+		if(map != null){
+			return (CConfigBasedDescriptor)map.remove(project);
+		}
+		return null;
+	}
+
+	private Map getApplyingDescriptorMap(boolean create){
+		ThreadInfo info = getThreadInfo(create);
+		if(info == null)
+			return null;
+		
+		return info.getApplyingDescriptorMap(create);
+//		Map map = (Map)fApplyingDescriptorMap.get();
+//		if(map == null && create){
+//			map = new HashMap(1);
+//			fApplyingDescriptorMap.set(map);
+//		}
+//		return map;
+	}
+	
+	private CConfigBasedDescriptor getOperatingDescriptor(IProject project){
+		Map map = getOperatingDescriptorMap(false);
+		if(map != null){
+			return (CConfigBasedDescriptor)map.get(project);
+		}
+		return null;
+	}
+
+	private void setOperatingDescriptor(IProject project, CConfigBasedDescriptor dr){
+		if(dr == null)
+			clearOperatingDescriptor(project);
+		else {
+			Map map = getOperatingDescriptorMap(true);
+			map.put(project, dr);
+		}
+	}
+
+	private CConfigBasedDescriptor clearOperatingDescriptor(IProject project){
+		Map map = getOperatingDescriptorMap(false);
+		if(map != null){
+			return (CConfigBasedDescriptor)map.remove(project);
+		}
+		return null;
+	}
+	
+	private Map getOperatingDescriptorMap(boolean create){
+		ThreadInfo info = getThreadInfo(create);
+		if(info == null)
+			return null;
+		
+		return info.getOperatingDescriptorMap(create);
+	}
+
+	private ThreadInfo getThreadInfo(boolean create){
+		ThreadInfo info = (ThreadInfo)fThreadInfo.get();
+		if(info == null && create){
+			info = new ThreadInfo();
+			fThreadInfo.set(info);
+		}
+		return info;
 	}
 
 }

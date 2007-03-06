@@ -119,48 +119,48 @@ public class MakeProjectNature implements IProjectNature {
 		project.setDescription(description, mon);
 	}
 
-//	public void addBuildSpec() throws CoreException {
-//		addToBuildSpec(getProject(), MakeBuilder.BUILDER_ID, null);
-//	}
+	public void addBuildSpec() throws CoreException {
+		addToBuildSpec(getProject(), MakeBuilder.BUILDER_ID, null);
+	}
 
 	/**
 		* @see IProjectNature#configure
 		*/
 	public void configure() throws CoreException {
-//		addBuildSpec();
-//		IMakeBuilderInfo info = MakeCorePlugin.createBuildInfo(MakeCorePlugin.getDefault().getPluginPreferences(), MakeBuilder.BUILDER_ID, false);
-//		IMakeBuilderInfo projectInfo = MakeCorePlugin.createBuildInfo(getProject(), MakeBuilder.BUILDER_ID);
-//		projectInfo.setBuildAttribute(IMakeCommonBuildInfo.BUILD_ARGUMENTS, info.getBuildAttribute(IMakeCommonBuildInfo.BUILD_ARGUMENTS, "")); //$NON-NLS-1$
-//		projectInfo.setBuildAttribute(IMakeCommonBuildInfo.BUILD_COMMAND, info.getBuildAttribute(IMakeCommonBuildInfo.BUILD_COMMAND, "make")); //$NON-NLS-1$
-//
-//		projectInfo.setUseDefaultBuildCmd(info.isDefaultBuildCmd());
-//		projectInfo.setStopOnError(info.isStopOnError());
-//
-//		projectInfo.setAutoBuildEnable(info.isAutoBuildEnable());
-//		projectInfo.setBuildAttribute(IMakeBuilderInfo.BUILD_TARGET_AUTO, info.getBuildAttribute(IMakeBuilderInfo.BUILD_TARGET_AUTO, "")); //$NON-NLS-1$
-//		
-//		projectInfo.setIncrementalBuildEnable(info.isIncrementalBuildEnabled());
-//		projectInfo.setBuildAttribute(IMakeBuilderInfo.BUILD_TARGET_INCREMENTAL, info.getBuildAttribute(IMakeBuilderInfo.BUILD_TARGET_INCREMENTAL, "")); //$NON-NLS-1$
-//
-//		projectInfo.setFullBuildEnable(info.isIncrementalBuildEnabled());
-//
-//		projectInfo.setCleanBuildEnable(info.isCleanBuildEnabled());
-//		projectInfo.setBuildAttribute(IMakeBuilderInfo.BUILD_TARGET_CLEAN, info.getBuildAttribute(IMakeBuilderInfo.BUILD_TARGET_CLEAN, "")); //$NON-NLS-1$
-//
-//		projectInfo.setErrorParsers(info.getErrorParsers());
-//		projectInfo.setAppendEnvironment(info.appendEnvironment());
-//		projectInfo.setEnvironment(info.getEnvironment());
+		addBuildSpec();
+		IMakeBuilderInfo info = MakeCorePlugin.createBuildInfo(MakeCorePlugin.getDefault().getPluginPreferences(), MakeBuilder.BUILDER_ID, false);
+		IMakeBuilderInfo projectInfo = MakeCorePlugin.createBuildInfo(getProject(), MakeBuilder.BUILDER_ID);
+		projectInfo.setBuildAttribute(IMakeCommonBuildInfo.BUILD_ARGUMENTS, info.getBuildAttribute(IMakeCommonBuildInfo.BUILD_ARGUMENTS, "")); //$NON-NLS-1$
+		projectInfo.setBuildAttribute(IMakeCommonBuildInfo.BUILD_COMMAND, info.getBuildAttribute(IMakeCommonBuildInfo.BUILD_COMMAND, "make")); //$NON-NLS-1$
+
+		projectInfo.setUseDefaultBuildCmd(info.isDefaultBuildCmd());
+		projectInfo.setStopOnError(info.isStopOnError());
+
+		projectInfo.setAutoBuildEnable(info.isAutoBuildEnable());
+		projectInfo.setBuildAttribute(IMakeBuilderInfo.BUILD_TARGET_AUTO, info.getBuildAttribute(IMakeBuilderInfo.BUILD_TARGET_AUTO, "")); //$NON-NLS-1$
+		
+		projectInfo.setIncrementalBuildEnable(info.isIncrementalBuildEnabled());
+		projectInfo.setBuildAttribute(IMakeBuilderInfo.BUILD_TARGET_INCREMENTAL, info.getBuildAttribute(IMakeBuilderInfo.BUILD_TARGET_INCREMENTAL, "")); //$NON-NLS-1$
+
+		projectInfo.setFullBuildEnable(info.isIncrementalBuildEnabled());
+
+		projectInfo.setCleanBuildEnable(info.isCleanBuildEnabled());
+		projectInfo.setBuildAttribute(IMakeBuilderInfo.BUILD_TARGET_CLEAN, info.getBuildAttribute(IMakeBuilderInfo.BUILD_TARGET_CLEAN, "")); //$NON-NLS-1$
+
+		projectInfo.setErrorParsers(info.getErrorParsers());
+		projectInfo.setAppendEnvironment(info.appendEnvironment());
+		projectInfo.setEnvironment(info.getEnvironment());
 	}
 
-//	public void removeBuildSpec() throws CoreException {
-//		removeFromBuildSpec(getProject(), MakeBuilder.BUILDER_ID, null);
-//	}
+	public void removeBuildSpec() throws CoreException {
+		removeFromBuildSpec(getProject(), MakeBuilder.BUILDER_ID, null);
+	}
 
 	/**
 	 * @see IProjectNature#deconfigure
 	 */
 	public void deconfigure() throws CoreException {
-//		removeBuildSpec();
+		removeBuildSpec();
 	}
 
 	/**

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 QNX Software Systems and others.
+ * Copyright (c) 2000, 2005 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.make.core;
 
-import org.eclipse.cdt.managedbuilder.core.IConfiguration;
-import org.eclipse.cdt.newmake.core.IMakeCommonBuildInfo;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
@@ -27,7 +25,6 @@ public interface IMakeTarget extends IAdaptable, IMakeCommonBuildInfo {
 	
 	IProject getProject();
 	
-	IConfiguration getConfiguration();
 	/**
 	 * @deprecated
 	 */

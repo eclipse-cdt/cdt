@@ -274,7 +274,7 @@ public class RSESystemTypeAdapter extends RSEAdapter implements IRSESystemTypeCo
 			IConnectorService[] connectorServices = registry.getConnectorServices(host);
 			boolean passwordsSupported = false;
 			for (int i = 0; i < connectorServices.length && passwordsSupported == false; i++) {
-				passwordsSupported |= !connectorServices[i].isSuppressSignonPrompt();
+				passwordsSupported |= connectorServices[i].supportsPassword();
 			}
 			return passwordsSupported;
 		}

@@ -37,6 +37,8 @@ import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemMenuManager;
 import org.eclipse.rse.ui.SystemResources;
 import org.eclipse.rse.ui.actions.SystemClearAllPasswordsAction;
+import org.eclipse.rse.ui.actions.SystemCommonDeleteAction;
+import org.eclipse.rse.ui.actions.SystemCommonRenameAction;
 import org.eclipse.rse.ui.actions.SystemConnectAllSubSystemsAction;
 import org.eclipse.rse.ui.actions.SystemCopyConnectionAction;
 import org.eclipse.rse.ui.actions.SystemDisconnectAllSubSystemsAction;
@@ -44,6 +46,10 @@ import org.eclipse.rse.ui.actions.SystemMoveConnectionAction;
 import org.eclipse.rse.ui.actions.SystemMoveDownConnectionAction;
 import org.eclipse.rse.ui.actions.SystemMoveUpConnectionAction;
 import org.eclipse.rse.ui.actions.SystemNewConnectionFromExistingConnectionAction;
+import org.eclipse.rse.ui.actions.SystemOpenExplorerPerspectiveAction;
+import org.eclipse.rse.ui.actions.SystemRefreshAction;
+import org.eclipse.rse.ui.actions.SystemShowInMonitorAction;
+import org.eclipse.rse.ui.actions.SystemShowInTableAction;
 import org.eclipse.rse.ui.actions.SystemWorkOfflineAction;
 import org.eclipse.rse.ui.validators.ISystemValidator;
 import org.eclipse.rse.ui.validators.ValidatorSpecialChar;
@@ -53,6 +59,7 @@ import org.eclipse.rse.ui.view.ISystemPropertyConstants;
 import org.eclipse.rse.ui.view.ISystemViewElementAdapter;
 import org.eclipse.rse.ui.view.ISystemViewInputProvider;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.views.framelist.GoIntoAction;
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
 import org.eclipse.ui.views.properties.PropertyDescriptor;
 import org.eclipse.ui.views.properties.TextPropertyDescriptor;
@@ -93,7 +100,18 @@ public class SystemViewConnectionAdapter
 	// -------------------
 	private static PropertyDescriptor[] propertyDescriptorArray = null;
 	
-	
+	/**
+	 * Returns the system type object for the specified host.
+	 * 
+	 * @param host The host to get the system type object from.
+	 * @return The system type object or <code>null</code>.
+	 */
+	private IRSESystemType getSystemTypeForHost(IHost host) {
+		if (host != null) {
+			return RSECorePlugin.getDefault().getRegistry().getSystemType((host.getSystemType()));
+		}
+		return null;
+	}
 	/**
 	 * Returns any actions that should be contributed to the popup menu
 	 * for the given element.
@@ -108,46 +126,46 @@ public class SystemViewConnectionAdapter
 		// bugzilla#161195: _ALL_ actions needs to be passed to the system type for approval.
 		//                  _Never_ add any action without the system type provider having said ok to this.
 		IHost host = (IHost)selection.getFirstElement();
-		IRSESystemType sysType = RSECorePlugin.getDefault().getRegistry().getSystemType((host.getSystemType()));
-		Object adapter = sysType.getAdapter(IRSESystemType.class);
+		IRSESystemType sysType = getSystemTypeForHost(host);
+		Object adapter = sysType != null ? sysType.getAdapter(IRSESystemType.class) : null;
 		RSESystemTypeAdapter sysTypeAdapter = adapter instanceof RSESystemTypeAdapter ? (RSESystemTypeAdapter)adapter : null;
 		
 		//updateAction.setValue(null); // reset
 		if (sysTypeAdapter == null
-				|| sysTypeAdapter.acceptContextMenuActionContribution(host, sysType, menu.getMenuManager(), anotherConnectionAction))
+				|| sysTypeAdapter.acceptContextMenuActionContribution(host, anotherConnectionAction.getClass()))
 			menu.add(menuGroup, anotherConnectionAction);
 
 		if (sysTypeAdapter == null
-				|| sysTypeAdapter.acceptContextMenuActionContribution(host, sysType, menu.getMenuManager(), copyAction))
+				|| sysTypeAdapter.acceptContextMenuActionContribution(host, copyAction.getClass()))
 			menu.add(menuGroup, copyAction);
 		
 		if (sysTypeAdapter == null
-				|| sysTypeAdapter.acceptContextMenuActionContribution(host, sysType, menu.getMenuManager(), moveAction))
+				|| sysTypeAdapter.acceptContextMenuActionContribution(host, moveAction.getClass()))
 			menu.add(menuGroup, moveAction);
 		if (sysTypeAdapter == null
-				|| sysTypeAdapter.acceptContextMenuActionContribution(host, sysType, menu.getMenuManager(), upAction))
+				|| sysTypeAdapter.acceptContextMenuActionContribution(host, upAction.getClass()))
 			menu.add(menuGroup, upAction);
 		if (sysTypeAdapter == null
-				|| sysTypeAdapter.acceptContextMenuActionContribution(host, sysType, menu.getMenuManager(), downAction))
+				|| sysTypeAdapter.acceptContextMenuActionContribution(host, downAction.getClass()))
 			menu.add(menuGroup, downAction);
 
 		// MJB: RE defect 40854
 		addConnectOrDisconnectAction(menu, menuGroup, selection);
 
 		if (sysTypeAdapter == null
-				|| sysTypeAdapter.acceptContextMenuActionContribution(host, sysType, menu.getMenuManager(), clearPasswordAction))
+				|| sysTypeAdapter.acceptContextMenuActionContribution(host, clearPasswordAction.getClass()))
 			menu.add(menuGroup, clearPasswordAction);
 
 		// yantzi: artemis 6.0, offline support, only add work offline action for system types that support offline mode
 		if (sysTypeAdapter == null
-				|| sysTypeAdapter.acceptContextMenuActionContribution(host, sysType, menu.getMenuManager(), offlineAction))
+				|| sysTypeAdapter.acceptContextMenuActionContribution(host, offlineAction.getClass()))
 			menu.add(menuGroup, offlineAction);
 	}
 	
 	private void addConnectOrDisconnectAction(SystemMenuManager menu, String menuGroup, IStructuredSelection selection) {
 		IHost host = (IHost)selection.getFirstElement();
-		IRSESystemType sysType = RSECorePlugin.getDefault().getRegistry().getSystemType((host.getSystemType()));
-		Object adapter = sysType.getAdapter(IRSESystemType.class);
+		IRSESystemType sysType = getSystemTypeForHost(host);
+		Object adapter = sysType != null ? sysType.getAdapter(IRSESystemType.class) : null;
 		RSESystemTypeAdapter sysTypeAdapter = adapter instanceof RSESystemTypeAdapter ? (RSESystemTypeAdapter)adapter : null;
 		
 		ISystemRegistry sysReg = RSEUIPlugin.getTheSystemRegistry();
@@ -158,11 +176,11 @@ public class SystemViewConnectionAdapter
 			boolean allConnected = sysReg.areAllSubSystemsConnected(host);
 			
 			if (!allConnected && (sysTypeAdapter == null
-														|| sysTypeAdapter.acceptContextMenuActionContribution(host, sysType, menu.getMenuManager(), connectAction)))
+														|| sysTypeAdapter.acceptContextMenuActionContribution(host, connectAction.getClass())))
 				menu.add(menuGroup, connectAction);
 
 			if (anyConnected && (sysTypeAdapter == null
-														|| sysTypeAdapter.acceptContextMenuActionContribution(host, sysType, menu.getMenuManager(), disconnectAction)))
+														|| sysTypeAdapter.acceptContextMenuActionContribution(host, disconnectAction.getClass())))
 				menu.add(menuGroup, disconnectAction);
 		}
 	}
@@ -182,17 +200,111 @@ public class SystemViewConnectionAdapter
 	    	
 		actionsCreated = true;
 	}
-	
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.ui.view.AbstractSystemViewAdapter#showDelete(java.lang.Object)
+	 */
+	public boolean showDelete(Object element) {
+		// bugzilla#161195: _ALL_ actions needs to be passed to the system type for approval.
+		//                  _Never_ add any action without the system type provider having said ok to this.
+		if (element instanceof IHost) {
+			IRSESystemType sysType = getSystemTypeForHost((IHost)element);
+			Object adapter = sysType != null ? sysType.getAdapter(IRSESystemType.class) : null;
+			RSESystemTypeAdapter sysTypeAdapter = adapter instanceof RSESystemTypeAdapter ? (RSESystemTypeAdapter)adapter : null;
+			if (sysTypeAdapter != null) {
+				return sysTypeAdapter.acceptContextMenuActionContribution((IHost)element, SystemCommonDeleteAction.class);
+			}
+		}
+		return super.showDelete(element);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.ui.view.AbstractSystemViewAdapter#showGenericShowInTableAction(java.lang.Object)
+	 */
+	public boolean showGenericShowInTableAction(Object element) {
+		// bugzilla#161195: _ALL_ actions needs to be passed to the system type for approval.
+		//                  _Never_ add any action without the system type provider having said ok to this.
+		if (element instanceof IHost) {
+			IRSESystemType sysType = getSystemTypeForHost((IHost)element);
+			Object adapter = sysType != null ? sysType.getAdapter(IRSESystemType.class) : null;
+			RSESystemTypeAdapter sysTypeAdapter = adapter instanceof RSESystemTypeAdapter ? (RSESystemTypeAdapter)adapter : null;
+			if (sysTypeAdapter != null) {
+				boolean accepted = false;
+				Class[] affectedClasses = new Class[] { SystemShowInTableAction.class, SystemShowInMonitorAction.class };
+				for (int i = 0; i < affectedClasses.length && accepted == false; i++) {
+					accepted |= sysTypeAdapter.acceptContextMenuActionContribution((IHost)element, affectedClasses[i]);
+				}
+				return accepted;
+			}
+		}
+		return super.showGenericShowInTableAction(element);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.ui.view.AbstractSystemViewAdapter#showOpenViewActions(java.lang.Object)
+	 */
+	public boolean showOpenViewActions(Object element) {
+		// bugzilla#161195: _ALL_ actions needs to be passed to the system type for approval.
+		//                  _Never_ add any action without the system type provider having said ok to this.
+		if (element instanceof IHost) {
+			IRSESystemType sysType = getSystemTypeForHost((IHost)element);
+			Object adapter = sysType != null ? sysType.getAdapter(IRSESystemType.class) : null;
+			RSESystemTypeAdapter sysTypeAdapter = adapter instanceof RSESystemTypeAdapter ? (RSESystemTypeAdapter)adapter : null;
+			if (sysTypeAdapter != null) {
+				boolean accepted = false;
+				Class[] affectedClasses = new Class[] { GoIntoAction.class, SystemOpenExplorerPerspectiveAction.class };
+				for (int i = 0; i < affectedClasses.length && accepted == false; i++) {
+					accepted |= sysTypeAdapter.acceptContextMenuActionContribution((IHost)element, affectedClasses[i]);
+				}
+				return accepted;
+			}
+		}
+		return super.showOpenViewActions(element);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.ui.view.AbstractSystemViewAdapter#showRefresh(java.lang.Object)
+	 */
+	public boolean showRefresh(Object element) {
+		// bugzilla#161195: _ALL_ actions needs to be passed to the system type for approval.
+		//                  _Never_ add any action without the system type provider having said ok to this.
+		if (element instanceof IHost) {
+			IRSESystemType sysType = getSystemTypeForHost((IHost)element);
+			Object adapter = sysType != null ? sysType.getAdapter(IRSESystemType.class) : null;
+			RSESystemTypeAdapter sysTypeAdapter = adapter instanceof RSESystemTypeAdapter ? (RSESystemTypeAdapter)adapter : null;
+			if (sysTypeAdapter != null) {
+				return sysTypeAdapter.acceptContextMenuActionContribution((IHost)element, SystemRefreshAction.class);
+			}
+		}
+		return super.showRefresh(element);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.ui.view.AbstractSystemViewAdapter#showRename(java.lang.Object)
+	 */
+	public boolean showRename(Object element) {
+		// bugzilla#161195: _ALL_ actions needs to be passed to the system type for approval.
+		//                  _Never_ add any action without the system type provider having said ok to this.
+		if (element instanceof IHost) {
+			IRSESystemType sysType = getSystemTypeForHost((IHost)element);
+			Object adapter = sysType != null ? sysType.getAdapter(IRSESystemType.class) : null;
+			RSESystemTypeAdapter sysTypeAdapter = adapter instanceof RSESystemTypeAdapter ? (RSESystemTypeAdapter)adapter : null;
+			if (sysTypeAdapter != null) {
+				return sysTypeAdapter.acceptContextMenuActionContribution((IHost)element, SystemCommonRenameAction.class);
+			}
+		}
+		return super.showRename(element);
+	}
+
 	/**
 	 * Returns an image descriptor for the image. More efficient than getting the image.
 	 * @param element The element for which an image is desired
 	 */
 	public ImageDescriptor getImageDescriptor(Object element) {
 		IHost connection = (IHost)element;
-		String systemTypeName = connection.getSystemType();		
 		boolean anyConnected = RSEUIPlugin.getTheSystemRegistry().isAnySubSystemConnected(connection);
 		ImageDescriptor descriptor = null;
-		IRSESystemType systemType = RSECorePlugin.getDefault().getRegistry().getSystemType(systemTypeName);
+		IRSESystemType systemType = getSystemTypeForHost(connection);
 		if (systemType != null) {
 			RSESystemTypeAdapter sysTypeAdapter = (RSESystemTypeAdapter)(systemType.getAdapter(IRSESystemType.class));
 			if (anyConnected) {

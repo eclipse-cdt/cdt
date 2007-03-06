@@ -23,11 +23,10 @@ import java.net.URL;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.rse.core.IRSESystemType;
 import org.eclipse.rse.core.IRSESystemTypeConstants;
+import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.RSEPreferencesManager;
 import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.model.ISystemRegistry;
@@ -244,32 +243,34 @@ public class RSESystemTypeAdapter extends RSEAdapter implements IRSESystemTypeCo
 	
 	
 	/**
-	 * Called to approve the contribution of the specified action to the context menu of the
-	 * specified host of the specified system type. System type providers should implement
-	 * this method in a way that specific actions might be denied, but all other action contributions,
-	 * including unknown action contributions, should be accepted.
+	 * Called to approve the contribution of the specified action class to the context menu of the
+	 * specified host. 
+	 * <p>
+	 * <b>Note:</b> System type providers should implement this method in a way that specific
+	 * 							actions might be denied, but all other action contributions, including unknown
+	 * 							action contributions, should be accepted.
 	 * <p>
 	 * This method is called from:<br>
 	 * <ul>
-	 * <li>SystemViewConnectioAdapter.addActions(...)</li>
+	 * <li>SystemViewConnectionAdapter.addActions(...)</li>
+	 * <li>SystemViewConnectionAdapter.showDelete(...)</li>
 	 * </ul>
 	 * 
-	 * @param host The host object.
-	 * @param systemType The system type object.
-	 * @param menuManager The menu manager.
-	 * @param action The contributed action.
+	 * @param host The host object. Must be not <code>null</code>.
+	 * @param actionClass The contributed action. Must be not <code>null</code>.
 	 * 
 	 * @return <code>True</code> if the contributed action is accepted for the specified context, <code>false</code> otherwise.
 	 */
-	public boolean acceptContextMenuActionContribution(IHost host, IRSESystemType systemType, IMenuManager menuManager, IAction action) {
+	public boolean acceptContextMenuActionContribution(IHost host, Class actionClass) {
+		assert host != null && actionClass != null;
 		// The SystemWorkOfflineAction is accepted if isEnabledOffline is returning true
-		if (action instanceof SystemWorkOfflineAction) {
-			return isEnableOffline(systemType);
+		if (actionClass.equals(SystemWorkOfflineAction.class)) {
+			return isEnableOffline(RSECorePlugin.getDefault().getRegistry().getSystemType(host.getSystemType()));
 		}
 		
 		// SystemClearAllPasswordsAction is accepted only if passwords are supported
 		// by any of the sub systems.
-		if (action instanceof SystemClearAllPasswordsAction) {
+		if (actionClass.equals(SystemClearAllPasswordsAction.class)) {
 			ISystemRegistry registry = RSEUIPlugin.getDefault().getSystemRegistry();
 			IConnectorService[] connectorServices = registry.getConnectorServices(host);
 			boolean passwordsSupported = false;

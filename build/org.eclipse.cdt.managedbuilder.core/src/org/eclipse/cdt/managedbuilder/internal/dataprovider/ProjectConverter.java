@@ -451,6 +451,7 @@ public class ProjectConverter implements ICProjectConverter {
 								try {
 									ICProjectDescription des = CCorePlugin.getDefault().getProjectDescription(project);
 									convertMakeTargetInfo(project, des, monitor);
+									CCorePlugin.getDefault().setProjectDescription(project, des);
 								} catch (CoreException e) {
 									return e.getStatus();
 								}

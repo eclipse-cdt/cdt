@@ -28,7 +28,6 @@ import org.eclipse.cdt.managedbuilder.core.ITool;
 import org.eclipse.cdt.managedbuilder.core.IToolChain;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.cdt.managedbuilder.internal.macros.BuildMacroProvider;
-import org.eclipse.cdt.utils.ui.controls.ControlFactory;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
@@ -45,22 +44,20 @@ import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.custom.ScrolledComposite;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Listener;
 
 
 public class ToolSettingsTab extends AbstractCBuildPropertyTab implements IPreferencePageContainer {
 		/*
 		 * String constants
 		 */
-		//private static final String PREFIX = "ToolsSettingsBlock";	//$NON-NLS-1$
-		//private static final String LABEL = PREFIX + ".label";	//$NON-NLS-1$
-		//private static final String SETTINGS_LABEL = LABEL + ".Settings";	//$NON-NLS-1$
-		//private static final String TREE_LABEL = LABEL + ".ToolTree";	//$NON-NLS-1$
-		//private static final String OPTIONS_LABEL = LABEL + ".ToolOptions";	//$NON-NLS-1$
-		private static final int[] DEFAULT_SASH_WEIGHTS = new int[] { 20, 30 };
+		private static final int[] DEFAULT_SASH_WEIGHTS = new int[] { 10, 20 };
 		
 		/*
 		 * Dialog widgets
@@ -96,24 +93,40 @@ public class ToolSettingsTab extends AbstractCBuildPropertyTab implements IPrefe
 			sashForm = new SashForm(usercomp, SWT.NONE);
 			sashForm.setOrientation(SWT.HORIZONTAL);
 			sashForm.setLayoutData(new GridData(GridData.FILL_BOTH));
+			
 			GridLayout layout = new GridLayout();
 			layout.numColumns = 2;
 			layout.marginHeight = 5;
-			layout.marginWidth = 5;
 			sashForm.setLayout(layout);
 			createSelectionArea(sashForm);
 			createEditArea(sashForm);
 			sashForm.setWeights(DEFAULT_SASH_WEIGHTS);
-
+			sashForm.addListener(SWT.Selection, new Listener() {
+				public void handleEvent(Event event) {
+					if (event.detail == SWT.DRAG) return;
+					int shift = event.x - sashForm.getBounds().x;
+					GridData data = (GridData) containerSC.getLayoutData();
+					if ((data.widthHint + shift) < 20) return;
+					Point computedSize = usercomp.getShell().computeSize(SWT.DEFAULT, SWT.DEFAULT);
+					Point currentSize = usercomp.getShell().getSize();
+					boolean customSize = !computedSize.equals(currentSize);
+					data.widthHint = data.widthHint;
+					sashForm.layout(true);
+					computedSize = usercomp.getShell().computeSize(SWT.DEFAULT, SWT.DEFAULT);
+					if (customSize)
+						computedSize.x = Math.max(computedSize.x, currentSize.x);
+					computedSize.y = Math.max(computedSize.y, currentSize.y);
+					if (computedSize.equals(currentSize)) {
+						return;
+					}
+				}
+			});
 			propertyObject = page.getElement();
 			setValues();
-//			WorkbenchHelp.setHelp(composite, ManagedBuilderHelpContextIds.MAN_PROJ_BUILD_PROP);
 		}
 		
 		protected void createSelectionArea (Composite parent) {
-			// Create a label and list viewer
-			Composite composite = ControlFactory.createComposite(parent, 1);
-			optionList = new TreeViewer(composite, SWT.SINGLE|SWT.H_SCROLL|SWT.V_SCROLL|SWT.BORDER);
+			optionList = new TreeViewer(parent, SWT.SINGLE|SWT.H_SCROLL|SWT.V_SCROLL|SWT.BORDER);
 			optionList.addSelectionChangedListener(new ISelectionChangedListener() {
 				public void selectionChanged(SelectionChangedEvent event) {
 					handleOptionSelection();
@@ -483,19 +496,6 @@ public class ToolSettingsTab extends AbstractCBuildPropertyTab implements IPrefe
 				// Call an MBS CallBack function to inform that Settings related to Apply/OK button 
 				// press have been applied.
 				if (setOption == null) setOption = option;
-				
-//				if (setOption.getValueHandler().handleValue(
-//						handler, 
-//						setOption.getOptionHolder(), 
-//						setOption,
-//						setOption.getValueHandlerExtraArgument(), 
-//						IManagedOptionValueHandler.EVENT_APPLY)) {
-//					// TODO : Event is handled successfully and returned true.
-//					// May need to do something here say log a message.
-//				} else {
-//					// Event handling Failed. 
-//				}
-//	
 			} catch (BuildException e) {
 			} catch (ClassCastException e) {
 			}

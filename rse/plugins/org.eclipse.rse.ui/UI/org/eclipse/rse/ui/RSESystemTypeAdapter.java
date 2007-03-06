@@ -23,10 +23,17 @@ import java.net.URL;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.rse.core.IRSESystemType;
 import org.eclipse.rse.core.IRSESystemTypeConstants;
 import org.eclipse.rse.core.RSEPreferencesManager;
+import org.eclipse.rse.core.model.IHost;
+import org.eclipse.rse.core.model.ISystemRegistry;
+import org.eclipse.rse.core.subsystems.IConnectorService;
+import org.eclipse.rse.ui.actions.SystemClearAllPasswordsAction;
+import org.eclipse.rse.ui.actions.SystemWorkOfflineAction;
 import org.eclipse.rse.ui.wizards.registries.IRSEWizardDescriptor;
 import org.osgi.framework.Bundle;
 
@@ -233,6 +240,47 @@ public class RSESystemTypeAdapter extends RSEAdapter implements IRSESystemTypeCo
 			result = (IRSESystemType) systemTypeCandidate;
 		}
 		return result;
+	}
+	
+	
+	/**
+	 * Called to approve the contribution of the specified action to the context menu of the
+	 * specified host of the specified system type. System type providers should implement
+	 * this method in a way that specific actions might be denied, but all other action contributions,
+	 * including unknown action contributions, should be accepted.
+	 * <p>
+	 * This method is called from:<br>
+	 * <ul>
+	 * <li>SystemViewConnectioAdapter.addActions(...)</li>
+	 * </ul>
+	 * 
+	 * @param host The host object.
+	 * @param systemType The system type object.
+	 * @param menuManager The menu manager.
+	 * @param action The contributed action.
+	 * 
+	 * @return <code>True</code> if the contributed action is accepted for the specified context, <code>false</code> otherwise.
+	 */
+	public boolean acceptContextMenuActionContribution(IHost host, IRSESystemType systemType, IMenuManager menuManager, IAction action) {
+		// The SystemWorkOfflineAction is accepted if isEnabledOffline is returning true
+		if (action instanceof SystemWorkOfflineAction) {
+			return isEnableOffline(systemType);
+		}
+		
+		// SystemClearAllPasswordsAction is accepted only if passwords are supported
+		// by any of the sub systems.
+		if (action instanceof SystemClearAllPasswordsAction) {
+			ISystemRegistry registry = RSEUIPlugin.getDefault().getSystemRegistry();
+			IConnectorService[] connectorServices = registry.getConnectorServices(host);
+			boolean passwordsSupported = false;
+			for (int i = 0; i < connectorServices.length && passwordsSupported == false; i++) {
+				passwordsSupported |= !connectorServices[i].isSuppressSignonPrompt();
+			}
+			return passwordsSupported;
+		}
+		
+		// Accept all the rest not special handled here.		
+		return true;
 	}
 	
 	/**

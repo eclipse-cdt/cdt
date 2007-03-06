@@ -102,43 +102,68 @@ public class SystemViewConnectionAdapter
 	 * @param shell Shell of viewer
 	 * @param menuGroup recommended menu group to add actions to. If added to another group, you must be sure to create that group first.
 	 */
-	public void addActions(SystemMenuManager menu, IStructuredSelection selection, Shell shell, String menuGroup)
-	{
-		if (!actionsCreated)
-		  createActions();
-	    //updateAction.setValue(null); // reset
-	    menu.add(menuGroup, anotherConnectionAction);	    
-	    menu.add(menuGroup, copyAction);	    
-	    menu.add(menuGroup, moveAction);	    
-	    menu.add(menuGroup, upAction);
-	    menu.add(menuGroup, downAction);
-	    
-	    // MJB: RE defect 40854 
-	    addConnectOrDisconnectAction(menu, menuGroup, selection);
-	    
-	    menu.add(menuGroup, clearPasswordAction);
-	    
-		IRSESystemType sysType = RSECorePlugin.getDefault().getRegistry().getSystemType((((IHost)selection.getFirstElement()).getSystemType()));
-		RSESystemTypeAdapter sysTypeAdapter = (RSESystemTypeAdapter)(sysType.getAdapter(IRSESystemType.class));
-	    
-	    // yantzi: artemis 6.0, offline support, only add work offline action for system types that support offline mode
-   	    if (sysTypeAdapter.isEnableOffline(sysType))
-	    {    
-		    menu.add(menuGroup, offlineAction);
-	    }
+	public void addActions(SystemMenuManager menu, IStructuredSelection selection, Shell shell, String menuGroup) {
+		if (!actionsCreated) createActions();
+
+		// bugzilla#161195: _ALL_ actions needs to be passed to the system type for approval.
+		//                  _Never_ add any action without the system type provider having said ok to this.
+		IHost host = (IHost)selection.getFirstElement();
+		IRSESystemType sysType = RSECorePlugin.getDefault().getRegistry().getSystemType((host.getSystemType()));
+		Object adapter = sysType.getAdapter(IRSESystemType.class);
+		RSESystemTypeAdapter sysTypeAdapter = adapter instanceof RSESystemTypeAdapter ? (RSESystemTypeAdapter)adapter : null;
+		
+		//updateAction.setValue(null); // reset
+		if (sysTypeAdapter == null
+				|| sysTypeAdapter.acceptContextMenuActionContribution(host, sysType, menu.getMenuManager(), anotherConnectionAction))
+			menu.add(menuGroup, anotherConnectionAction);
+
+		if (sysTypeAdapter == null
+				|| sysTypeAdapter.acceptContextMenuActionContribution(host, sysType, menu.getMenuManager(), copyAction))
+			menu.add(menuGroup, copyAction);
+		
+		if (sysTypeAdapter == null
+				|| sysTypeAdapter.acceptContextMenuActionContribution(host, sysType, menu.getMenuManager(), moveAction))
+			menu.add(menuGroup, moveAction);
+		if (sysTypeAdapter == null
+				|| sysTypeAdapter.acceptContextMenuActionContribution(host, sysType, menu.getMenuManager(), upAction))
+			menu.add(menuGroup, upAction);
+		if (sysTypeAdapter == null
+				|| sysTypeAdapter.acceptContextMenuActionContribution(host, sysType, menu.getMenuManager(), downAction))
+			menu.add(menuGroup, downAction);
+
+		// MJB: RE defect 40854
+		addConnectOrDisconnectAction(menu, menuGroup, selection);
+
+		if (sysTypeAdapter == null
+				|| sysTypeAdapter.acceptContextMenuActionContribution(host, sysType, menu.getMenuManager(), clearPasswordAction))
+			menu.add(menuGroup, clearPasswordAction);
+
+		// yantzi: artemis 6.0, offline support, only add work offline action for system types that support offline mode
+		if (sysTypeAdapter == null
+				|| sysTypeAdapter.acceptContextMenuActionContribution(host, sysType, menu.getMenuManager(), offlineAction))
+			menu.add(menuGroup, offlineAction);
 	}
 	
-	private void addConnectOrDisconnectAction(SystemMenuManager menu, String menuGroup, IStructuredSelection selection)
-	{
-		IHost sysCon = (IHost) selection.getFirstElement();
-		ISystemRegistry sysReg = RSEUIPlugin.getTheSystemRegistry();
-		boolean anySupportsConnect = sysReg.isAnySubSystemSupportsConnect(sysCon);
+	private void addConnectOrDisconnectAction(SystemMenuManager menu, String menuGroup, IStructuredSelection selection) {
+		IHost host = (IHost)selection.getFirstElement();
+		IRSESystemType sysType = RSECorePlugin.getDefault().getRegistry().getSystemType((host.getSystemType()));
+		Object adapter = sysType.getAdapter(IRSESystemType.class);
+		RSESystemTypeAdapter sysTypeAdapter = adapter instanceof RSESystemTypeAdapter ? (RSESystemTypeAdapter)adapter : null;
 		
+		ISystemRegistry sysReg = RSEUIPlugin.getTheSystemRegistry();
+		boolean anySupportsConnect = sysReg.isAnySubSystemSupportsConnect(host);
+
 		if (anySupportsConnect) {
-			boolean anyConnected = sysReg.isAnySubSystemConnected(sysCon);
-			boolean allConnected = sysReg.areAllSubSystemsConnected(sysCon);
-			if (!allConnected) menu.add(menuGroup, connectAction);
-			if (anyConnected) menu.add(menuGroup, disconnectAction);
+			boolean anyConnected = sysReg.isAnySubSystemConnected(host);
+			boolean allConnected = sysReg.areAllSubSystemsConnected(host);
+			
+			if (!allConnected && (sysTypeAdapter == null
+														|| sysTypeAdapter.acceptContextMenuActionContribution(host, sysType, menu.getMenuManager(), connectAction)))
+				menu.add(menuGroup, connectAction);
+
+			if (anyConnected && (sysTypeAdapter == null
+														|| sysTypeAdapter.acceptContextMenuActionContribution(host, sysType, menu.getMenuManager(), disconnectAction)))
+				menu.add(menuGroup, disconnectAction);
 		}
 	}
 	

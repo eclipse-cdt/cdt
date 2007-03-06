@@ -50,7 +50,7 @@ import org.eclipse.ui.views.properties.PropertyDescriptor;
  */
 public class SystemTeamViewProfileAdapter 
        extends AbstractSystemViewAdapter 
-       implements ISystemViewElementAdapter, IRSEUserIdConstants
+       implements IRSEUserIdConstants
 {
 	
 	private boolean actionsCreated = false;

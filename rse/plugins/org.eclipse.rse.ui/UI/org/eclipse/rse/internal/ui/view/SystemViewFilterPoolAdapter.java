@@ -45,7 +45,7 @@ import org.eclipse.ui.views.properties.PropertyDescriptor;
  * These are the masters, and only shown in work-with for the master.
  * These are children of SubSystemConfiguration objects
  */
-public class SystemViewFilterPoolAdapter extends AbstractSystemViewAdapter implements ISystemViewElementAdapter
+public class SystemViewFilterPoolAdapter extends AbstractSystemViewAdapter
 {
 	protected String translatedType;
 	//protected Object parent;

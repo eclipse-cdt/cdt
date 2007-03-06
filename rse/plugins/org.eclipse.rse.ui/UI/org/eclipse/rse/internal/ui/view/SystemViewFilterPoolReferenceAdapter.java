@@ -48,7 +48,7 @@ import org.eclipse.ui.views.properties.PropertyDescriptor;
  * These are children of SubSystem objects
  */
 public class SystemViewFilterPoolReferenceAdapter 
-       extends AbstractSystemViewAdapter implements ISystemViewElementAdapter
+       extends AbstractSystemViewAdapter
 {
 	protected String translatedType;
 	//protected Object parent;

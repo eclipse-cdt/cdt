@@ -59,6 +59,7 @@ import org.eclipse.rse.ui.view.ISystemPropertyConstants;
 import org.eclipse.rse.ui.view.ISystemViewElementAdapter;
 import org.eclipse.rse.ui.view.ISystemViewInputProvider;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.dialogs.PropertyDialogAction;
 import org.eclipse.ui.views.framelist.GoIntoAction;
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
 import org.eclipse.ui.views.properties.PropertyDescriptor;
@@ -70,7 +71,7 @@ import org.eclipse.ui.views.properties.TextPropertyDescriptor;
  */
 public class SystemViewConnectionAdapter 
        extends AbstractSystemViewAdapter 
-       implements ISystemViewElementAdapter, IRSEUserIdConstants
+       implements IRSEUserIdConstants
 {
 	private SystemNewConnectionFromExistingConnectionAction anotherConnectionAction = null;
 	//private SystemUpdateConnectionAction updateAction = null;
@@ -262,6 +263,23 @@ public class SystemViewConnectionAdapter
 		return super.showOpenViewActions(element);
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.ui.view.AbstractSystemViewAdapter#showProperties(java.lang.Object)
+	 */
+	public boolean showProperties(Object element) {
+		// bugzilla#161195: _ALL_ actions needs to be passed to the system type for approval.
+		//                  _Never_ add any action without the system type provider having said ok to this.
+		if (element instanceof IHost) {
+			IRSESystemType sysType = getSystemTypeForHost((IHost)element);
+			Object adapter = sysType != null ? sysType.getAdapter(IRSESystemType.class) : null;
+			RSESystemTypeAdapter sysTypeAdapter = adapter instanceof RSESystemTypeAdapter ? (RSESystemTypeAdapter)adapter : null;
+			if (sysTypeAdapter != null) {
+				return sysTypeAdapter.acceptContextMenuActionContribution((IHost)element, PropertyDialogAction.class);
+			}
+		}
+		return super.showProperties(element);
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.rse.ui.view.AbstractSystemViewAdapter#showRefresh(java.lang.Object)
 	 */

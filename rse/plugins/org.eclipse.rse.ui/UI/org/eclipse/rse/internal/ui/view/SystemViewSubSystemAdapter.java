@@ -48,7 +48,7 @@ import org.eclipse.ui.views.properties.TextPropertyDescriptor;
  * These are children of SystemConnection objects
  */
 public class SystemViewSubSystemAdapter extends AbstractSystemViewAdapter 
-       implements ISystemViewElementAdapter, ISystemPropertyConstants, IRSEUserIdConstants
+       implements ISystemPropertyConstants, IRSEUserIdConstants
 {
 	protected String translatedType;
     // for reset property support

@@ -41,7 +41,7 @@ import org.eclipse.ui.views.properties.PropertyDescriptor;
 /**
  * Default Adapter for displaying filter string objects in tree views.
  */
-public class SystemViewFilterStringAdapter extends AbstractSystemViewAdapter implements ISystemViewElementAdapter
+public class SystemViewFilterStringAdapter extends AbstractSystemViewAdapter
 {
 	//private static String translatedFilterString = null;	
 	// -------------------

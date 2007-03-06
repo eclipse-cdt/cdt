@@ -1035,6 +1035,22 @@ public abstract class AbstractSystemViewAdapter
 		return true;
 	}    
 
+	// ----------------------------------------------
+	// METHODS TO SUPPORT COMMON PROPERTIES ACTION...
+	// ----------------------------------------------
+	/**
+     * <i><b>Overridable</b> by subclasses, and usually is.</i><br>
+	 * Return true if we should show the properties action in the popup for the given element.
+	 * Note the actual work to show the properties dialog is handled for you.
+	 * <p>
+	 * Default is true.
+	 */
+	public boolean showProperties(Object element)
+	{
+		return true;
+	}    
+
+
 	// ------------------------------------------------------------
 	// METHODS TO SUPPORT COMMON OPEN-IN-NEW-PERSPECTIVE ACTIONS...
 	// ------------------------------------------------------------

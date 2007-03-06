@@ -189,6 +189,7 @@ public class SystemView extends SafeTreeViewer implements ISystemTree, ISystemRe
 	protected SystemCommonRenameAction renameAction; // for common rename menu item	
 	protected SystemCommonSelectAllAction selectAllAction; // for common Ctrl+A select-all
 	// special flags needed when building popup menu, set after examining selections
+	protected boolean selectionShowPropertiesAction;
 	protected boolean selectionShowRefreshAction;
 	protected boolean selectionShowOpenViewActions;
 	protected boolean selectionShowGenericShowInTableAction;
@@ -872,20 +873,15 @@ public class SystemView extends SafeTreeViewer implements ISystemTree, ISystemRe
 				((ISystemAction) getDeleteAction()).setInputs(getShell(), this, selection);
 				menu.add(new Separator());
 			}
-
-
-	
-
 			
 			// PROPERTIES ACTION...
 			// This is supplied by the system, so we pretty much get it for free. It finds the
 			// registered propertyPages extension points registered for the selected object's class type.
 			//propertyDialogAction.selectionChanged(selection);		  
-
-			PropertyDialogAction pdAction = getPropertyDialogAction();
-
-			if (pdAction.isApplicableForSelection()) menu.appendToGroup(ISystemContextMenuConstants.GROUP_PROPERTIES, pdAction);
-
+			if (showProperties()) {
+				PropertyDialogAction pdAction = getPropertyDialogAction();
+				if (pdAction.isApplicableForSelection()) menu.appendToGroup(ISystemContextMenuConstants.GROUP_PROPERTIES, pdAction);
+			}
 			
 			// GO INTO ACTION...
 			// OPEN IN NEW WINDOW ACTION...
@@ -4189,6 +4185,7 @@ public class SystemView extends SafeTreeViewer implements ISystemTree, ISystemRe
 
 		
 		// initial these variables to true. Then if set to false even once, leave as false always...
+		selectionShowPropertiesAction = true;
 		selectionShowRefreshAction = true;
 		selectionShowOpenViewActions = true;
 		selectionShowGenericShowInTableAction = true;
@@ -4210,6 +4207,8 @@ public class SystemView extends SafeTreeViewer implements ISystemTree, ISystemRe
 			ISystemViewElementAdapter adapter = getViewAdapter(element);
 			if (adapter == null) continue;
 
+			if (selectionShowPropertiesAction) selectionShowPropertiesAction = adapter.showProperties(element);
+			
 			if (selectionShowRefreshAction) selectionShowRefreshAction = adapter.showRefresh(element);
 
 			if (selectionShowOpenViewActions) selectionShowOpenViewActions = adapter.showOpenViewActions(element);
@@ -4256,6 +4255,14 @@ public class SystemView extends SafeTreeViewer implements ISystemTree, ISystemRe
 
 	}
 
+	/**
+	 * Decides whether to even show the properties menu item.
+	 * Assumes scanSelections() has already been called
+	 */
+	protected boolean showProperties() {
+		return selectionShowPropertiesAction;
+	}
+	
 	/**
 	 * Decides whether to even show the refresh menu item.
 	 * Assumes scanSelections() has already been called

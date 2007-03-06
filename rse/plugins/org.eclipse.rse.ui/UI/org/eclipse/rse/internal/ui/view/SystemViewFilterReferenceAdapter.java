@@ -71,8 +71,7 @@ import org.eclipse.ui.views.properties.PropertyDescriptor;
  * These are children of SystemFilterPoolReference and SystemFilterReference objects
  */
 public class SystemViewFilterReferenceAdapter 
-	extends AbstractSystemViewAdapter 
-	implements ISystemViewElementAdapter
+	extends AbstractSystemViewAdapter
 {
 	//private static String translatedFilterString = null;	
 	// -------------------

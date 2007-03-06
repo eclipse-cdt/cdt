@@ -63,7 +63,7 @@ import org.eclipse.ui.views.properties.PropertyDescriptor;
  * behaviour. If this is done, you must register your subclass with the 
  * platform's adapter manager in your plugin class's startup method.
  */
-public class SystemViewFilterAdapter extends AbstractSystemViewAdapter implements ISystemViewElementAdapter
+public class SystemViewFilterAdapter extends AbstractSystemViewAdapter
 {
 	//private static String translatedFilterString = null;	
 	// -------------------

@@ -36,7 +36,7 @@ import org.eclipse.swt.widgets.Shell;
 /**
  * Adapter for the root-providing object of the SystemView tree viewer.
  */
-public class SystemViewRootInputAdapter extends AbstractSystemViewAdapter implements ISystemViewElementAdapter
+public class SystemViewRootInputAdapter extends AbstractSystemViewAdapter
 {
     private SystemNewConnectionPromptObject newConnPrompt;
     private Object[] newConnPromptArray;

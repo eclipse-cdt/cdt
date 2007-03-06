@@ -321,6 +321,14 @@ public interface ISystemViewElementAdapter extends IPropertySource, ISystemDragD
 	 */
 	public boolean showRefresh(Object element);
 
+	// ----------------------------------------------
+	// METHODS TO SUPPORT COMMON PROPERTIES ACTION...
+	// ----------------------------------------------
+	/**
+	 * Return true if we should show the properties action in the popup for the given element.
+	 */
+	public boolean showProperties(Object element);
+
 	// ------------------------------------------------------------
 	// METHODS TO SUPPORT COMMON OPEN-IN-NEW-PERSPECTIVE ACTIONS...
 	// ------------------------------------------------------------

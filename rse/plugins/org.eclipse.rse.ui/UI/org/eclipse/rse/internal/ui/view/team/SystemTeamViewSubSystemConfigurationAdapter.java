@@ -38,8 +38,7 @@ import org.eclipse.ui.views.properties.PropertyDescriptor;
  *  the Team view.
  */
 public class SystemTeamViewSubSystemConfigurationAdapter 
-       extends AbstractSystemViewAdapter 
-       implements ISystemViewElementAdapter
+       extends AbstractSystemViewAdapter
 {
 	private boolean actionsCreated = false;
 	//private Hashtable categoriesByProfile = new Hashtable();	

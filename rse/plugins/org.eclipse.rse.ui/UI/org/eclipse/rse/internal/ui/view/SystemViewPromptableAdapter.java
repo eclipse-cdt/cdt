@@ -33,7 +33,7 @@ import org.eclipse.swt.widgets.Shell;
  * These are objects that, when expanded, launch a wizard to create something.
  */
 public class SystemViewPromptableAdapter 
-       extends AbstractSystemViewAdapter implements ISystemViewElementAdapter
+       extends AbstractSystemViewAdapter
 {		
 	protected SystemRunAction runAction;
 

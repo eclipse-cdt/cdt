@@ -35,7 +35,7 @@ import org.eclipse.ui.views.properties.IPropertyDescriptor;
  * <p>
  */
 public class SystemViewMessageAdapter 
-       extends AbstractSystemViewAdapter implements ISystemViewElementAdapter
+       extends AbstractSystemViewAdapter
 {		
 	
 	/**

@@ -38,7 +38,7 @@ import org.eclipse.swt.widgets.Shell;
 /**
  * Adapter for the root-providing object of the SystemView tree viewer.
  */
-public class SystemViewScratchpadAdapter extends AbstractSystemViewAdapter implements ISystemViewElementAdapter,ISystemRemoteElementAdapter,ISystemDragDropAdapter
+public class SystemViewScratchpadAdapter extends AbstractSystemViewAdapter implements ISystemRemoteElementAdapter,ISystemDragDropAdapter
 {
 
 	private SystemPasteFromClipboardAction _pasteToScratchpadAction = null;

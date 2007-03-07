@@ -79,8 +79,8 @@ public final class InfoContext {
 	 * @return boolean
 	 */
 	public boolean isDefaultContext(){
-		if(fProject == null)
-			return false;
+//		if(fProject == null)
+//			return false;
 		
 		if(fInstanceId.length() != 0)
 			return false;

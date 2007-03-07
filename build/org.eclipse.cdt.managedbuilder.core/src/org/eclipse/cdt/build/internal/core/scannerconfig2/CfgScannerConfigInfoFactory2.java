@@ -1,12 +1,12 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2007 IBM Corporation and others.
+ * Copyright (c) 2007 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * IBM - Initial API and implementation
+ * Intel Corporation - Initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.build.internal.core.scannerconfig2;
 
@@ -18,9 +18,11 @@ import org.eclipse.cdt.build.core.scannerconfig.CfgInfoContext;
 import org.eclipse.cdt.build.core.scannerconfig.ICfgScannerConfigBuilderInfo2Set;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICProjectDescription;
+import org.eclipse.cdt.make.core.MakeCorePlugin;
 import org.eclipse.cdt.make.core.scannerconfig.IScannerConfigBuilderInfo2;
 import org.eclipse.cdt.make.core.scannerconfig.IScannerConfigBuilderInfo2Set;
 import org.eclipse.cdt.make.core.scannerconfig.InfoContext;
+import org.eclipse.cdt.make.internal.core.scannerconfig2.ScannerConfigProfileManager;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IFileInfo;
 import org.eclipse.cdt.managedbuilder.core.IFolderInfo;
@@ -33,15 +35,9 @@ import org.eclipse.cdt.managedbuilder.internal.core.Configuration;
 import org.eclipse.cdt.managedbuilder.internal.core.InputType;
 import org.eclipse.cdt.managedbuilder.internal.core.Tool;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.Preferences;
 import org.eclipse.core.runtime.QualifiedName;
-import org.eclipse.cdt.make.internal.core.scannerconfig2.ScannerConfigProfileManager;
 
-
-/**
- * New ScannerConfigInfoFactory
- * 
- * @author vhirsl
- */
 public class CfgScannerConfigInfoFactory2 {
 	private static final QualifiedName CONTAINER_INFO_PROPERTY = new QualifiedName(ManagedBuilderCorePlugin.getUniqueIdentifier(), "ScannerConfigBuilderInfo2Container"); //$NON-NLS-1$
 
@@ -93,23 +89,28 @@ public class CfgScannerConfigInfoFactory2 {
 		
 		private IScannerConfigBuilderInfo2Set getContainer() throws CoreException{
 			if(fContainer == null){
-				ICConfigurationDescription cfgDes = ManagedBuildManager.getDescriptionForConfiguration(cfg);
-				if(cfgDes != null){
-					ICProjectDescription projDes = cfgDes.getProjectDescription();
-					if(projDes != null){
-						ContainerInfo cInfo = (ContainerInfo)projDes.getSessionProperty(CONTAINER_INFO_PROPERTY);
-						if(cInfo != null && cInfo.fDes == projDes){
-							fContainer = cInfo.fContainer;
-						} else {
-							fContainer = ScannerConfigProfileManager.createScannerConfigBuildInfo2Set(cfg.getOwner().getProject());
-							cInfo = new ContainerInfo(projDes, fContainer);
-							projDes.setSessionProperty(CONTAINER_INFO_PROPERTY, cInfo);
+				if(!cfg.isPreference()){
+					ICConfigurationDescription cfgDes = ManagedBuildManager.getDescriptionForConfiguration(cfg);
+					if(cfgDes != null){
+						ICProjectDescription projDes = cfgDes.getProjectDescription();
+						if(projDes != null){
+							ContainerInfo cInfo = (ContainerInfo)projDes.getSessionProperty(CONTAINER_INFO_PROPERTY);
+							if(cInfo != null && cInfo.fDes == projDes){
+								fContainer = cInfo.fContainer;
+							} else {
+								fContainer = ScannerConfigProfileManager.createScannerConfigBuildInfo2Set(cfg.getOwner().getProject());
+								cInfo = new ContainerInfo(projDes, fContainer);
+								projDes.setSessionProperty(CONTAINER_INFO_PROPERTY, cInfo);
+							}
 						}
 					}
-				}
-				
-				if(fContainer == null){
-					fContainer = ScannerConfigProfileManager.createScannerConfigBuildInfo2Set(cfg.getOwner().getProject());
+
+					if(fContainer == null){
+						fContainer = ScannerConfigProfileManager.createScannerConfigBuildInfo2Set(cfg.getOwner().getProject());
+					}
+				} else {
+					Preferences prefs = MakeCorePlugin.getDefault().getPluginPreferences();
+					fContainer = ScannerConfigProfileManager.createScannerConfigBuildInfo2Set(prefs, false);
 				}
 			}
 			return fContainer;
@@ -285,6 +286,16 @@ public class CfgScannerConfigInfoFactory2 {
 				baseContainer.save();
 			}
 			des.setSessionProperty(CONTAINER_INFO_PROPERTY, null);
+		}
+	}
+	
+	public static void savePreference(IConfiguration cfg) throws CoreException{
+		ICfgScannerConfigBuilderInfo2Set container = ((Configuration)cfg).getCfgScannerConfigInfo();
+		if(container != null){
+			IScannerConfigBuilderInfo2Set baseContainer = ((CfgInfo)container).fContainer;
+			if(baseContainer != null){
+				baseContainer.save();
+			}
 		}
 	}
 }

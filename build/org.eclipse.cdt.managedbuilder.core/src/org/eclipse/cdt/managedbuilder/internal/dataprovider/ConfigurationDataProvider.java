@@ -86,6 +86,13 @@ public class ConfigurationDataProvider extends CConfigurationDataProvider implem
 
 		BuildConfigurationData appliedCfg = writeConfiguration(des, base);
 		
+		IConfiguration cfg = ((BuildConfigurationData)base).getConfiguration();
+		try {
+			CfgScannerConfigInfoFactory2.savePreference(cfg);
+		} catch (CoreException e){
+			ManagedBuilderCorePlugin.log(e);
+		}
+	
 		return appliedCfg;
 	}
 
@@ -228,6 +235,8 @@ public class ConfigurationDataProvider extends CConfigurationDataProvider implem
 		
 		cfg = updatePreferenceOnLoad(cfg, des);
 		
+		cfg.setConfigurationDescription(des);
+
 		return cfg.getConfigurationData();
 	}
 	

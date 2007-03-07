@@ -17,12 +17,13 @@ import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IInputType;
 import org.eclipse.cdt.managedbuilder.core.IResourceInfo;
 import org.eclipse.cdt.managedbuilder.core.ITool;
+import org.eclipse.cdt.managedbuilder.internal.core.Configuration;
 import org.eclipse.core.resources.IProject;
 
 public final class CfgInfoContext{
 	private static final String DELIMITER = ";";
 	private static final int NULL_OBJ_CODE = 29;
-	private IConfiguration fCfg;
+	private Configuration fCfg;
 	private IResourceInfo fRcInfo;
 	private ITool fTool;
 	private IInputType fInType;
@@ -36,7 +37,7 @@ public final class CfgInfoContext{
 		this.fRcInfo = rcInfo;
 		this.fTool = tool;
 		this.fInType = inType;
-		this.fCfg = fRcInfo.getParent();
+		this.fCfg = (Configuration)fRcInfo.getParent();
 		this.fContext = baseContext;
 	}
 
@@ -45,7 +46,7 @@ public final class CfgInfoContext{
 	}
 
 	private CfgInfoContext(IConfiguration cfg, InfoContext baseContext){
-		this.fCfg = cfg;
+		this.fCfg = (Configuration)cfg;
 		this.fContext = baseContext;
 	}
 	
@@ -67,7 +68,7 @@ public final class CfgInfoContext{
 	
 	public InfoContext toInfoContext(){
 		if(fContext == null){
-			IProject project = fCfg.getOwner().getProject();
+			IProject project = fCfg.isPreference() ? null : fCfg.getOwner().getProject();
 			StringBuffer buf = new StringBuffer();
 			buf.append(fCfg.getId());
 			if(fRcInfo != null){

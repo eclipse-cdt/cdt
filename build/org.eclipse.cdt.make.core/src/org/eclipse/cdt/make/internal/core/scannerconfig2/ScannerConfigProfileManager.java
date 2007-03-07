@@ -217,6 +217,14 @@ public class ScannerConfigProfileManager {
         return ScannerConfigInfoFactory2.createInfoSet(project, profileId);
     }
 
+    public static IScannerConfigBuilderInfo2Set createScannerConfigBuildInfo2Set(Preferences prefs, boolean useDefaults) throws CoreException {
+    	return ScannerConfigInfoFactory2.createInfoSet(prefs, ScannerConfigProfileManager.NULL_PROFILE_ID, useDefaults);
+    }
+
+    public static IScannerConfigBuilderInfo2Set createScannerConfigBuildInfo2Set(Preferences prefs, String profileId, boolean useDefaults) throws CoreException {
+        return ScannerConfigInfoFactory2.createInfoSet(prefs, profileId, useDefaults);
+    }
+
 	/**
      * Set selectedProfile to profileId 
      * @param prefs

@@ -17,10 +17,10 @@
             hasPages="true"
             icon="icons/elcl16/newmngcc_app.gif"
             id="org.eclipse.cdt.managedbuilder.ui.wizards.NewCWizard3"
-            name="CDT project"
+            name="%CDTproject"
             project="true">
           <description>
-             Create a new language-neutral project
+             %CDTproject.desc
           </description>
        </wizard>
       <wizard
@@ -31,10 +31,10 @@
             hasPages="true"
             icon="icons/elcl16/newmngcc_app.gif"
             id="org.eclipse.cdt.managedbuilder.ui.wizards.NewCWizard1"
-            name="C++ project"
+            name="%CPPproject"
             project="true">
           <description>
-             Create a new C++ project
+             %CPPproject.desc
           </description>
        </wizard>
        <wizard
@@ -45,42 +45,46 @@
              hasPages="true"
              icon="icons/elcl16/newmngcc_app.gif"
              id="org.eclipse.cdt.managedbuilder.ui.wizards.NewCWizard2"
-             name="C project"
+             name="%Cproject"
              project="true">
          <description>
-             Create a new C project
+             %Cproject.desc
          </description>
       </wizard>
       <wizard
-            name="%WizardConvertMakeProject.name"
-            icon="icons/obj16/convert-normal.gif"
             category="org.eclipse.cdt.ui.newCWizards"
             class="org.eclipse.cdt.managedbuilder.ui.wizards.ConvertToMakeWizard"
             finalPerspective="org.eclipse.cdt.ui.CPerspective"
-            id="org.eclipse.cdt.ui.wizards.ConvertToMakeWizard">
+            hasPages="true"
+            icon="icons/obj16/convert-normal.gif"
+            id="org.eclipse.cdt.ui.wizards.ConvertToMakeWizard"
+            name="%WizardConvertMakeProject.name"
+            >
          <description>
             %WizardConvertMakeProject.description
          </description>
          <selection
-               class="org.eclipse.core.resources.IProject">
+            class="org.eclipse.core.resources.IProject">
          </selection>
       </wizard>
       <wizard
-            name="%WizardConvertMakeProject.name"
-            icon="icons/obj16/convert-normal.gif"
             category="org.eclipse.cdt.ui.newCCWizards"
             class="org.eclipse.cdt.managedbuilder.ui.wizards.ConvertToMakeWizard"
             finalPerspective="org.eclipse.cdt.ui.CPerspective"
-            id="org.eclipse.cdt.ui.wizards.ConvertToMakeWizard">
+            hasPages="true"
+            icon="icons/obj16/convert-normal.gif"
+            id="org.eclipse.cdt.ui.wizards.ConvertToMakeWizard"
+            name="%WizardConvertMakeProject.name"
+            >
          <description>
             %WizardConvertMakeProject.description
          </description>
          <selection
-               class="org.eclipse.core.resources.IProject">
+            class="org.eclipse.core.resources.IProject">
          </selection>
       </wizard>
    </extension>
-      
+
    <extension
          point="org.eclipse.ui.preferencePages">
       <page
@@ -232,31 +236,31 @@
      <tab
            class="org.eclipse.cdt.managedbuilder.ui.newui.DiscoveryTab"
            icon="icons/elcl16/discovery.gif"
-           name="Discovery options"
+           name="%Discovery.options"
            weight="005"
            parent="org.eclipse.cdt.ui.newui.Page_PathAndSymb"/>
      <tab
            class="org.eclipse.cdt.managedbuilder.ui.newui.ToolSettingsTab"
            icon="icons/elcl16/config-tool.gif"
-           name="Tool settings"
+           name="%Tool.settings"
            weight="001"
            parent="org.eclipse.cdt.ui.newui.Page_BuildSettings"/>
      <tab
            class="org.eclipse.cdt.managedbuilder.ui.newui.BuildStepsTab"
            icon="icons/obj16/steps.gif"
-           name="Build steps"
+           name="%Build.steps"
            parent="org.eclipse.cdt.ui.newui.Page_BuildSettings"
            weight="002"/>
      <tab
            class="org.eclipse.cdt.managedbuilder.ui.newui.ArtifactTab"
            icon="icons/obj16/artifact.gif"
-           name="Build artifact"
+           name="%Build.artifact"
            parent="org.eclipse.cdt.ui.newui.Page_BuildSettings"
            weight="003"/>
      <tab
            class="org.eclipse.cdt.managedbuilder.ui.newui.BuilderSettingsTab"
            icon="icons/obj16/build_settings.gif"
-           name="Builder settings"
+           name="%Builder.settings"
            parent="org.eclipse.cdt.ui.newui.Page_BuildSettings"
            weight="004"/>
      <tab
@@ -272,71 +276,64 @@
      <tab
            class="org.eclipse.cdt.ui.newui.IncludeTab"
            icon="icons/obj16/hfolder_obj.gif"
-           name="Includes"
+           name="%Includes"
            weight="001"
            parent="org.eclipse.cdt.ui.newui.Page_PathAndSymb"
            tooltip="&quot;Includes list&quot;"/>
      <tab
            class="org.eclipse.cdt.ui.newui.SymbolTab"
            icon="icons/obj16/define_obj.gif"
-           name="Symbols"
+           name="%Symbols"
            weight="002"
            parent="org.eclipse.cdt.ui.newui.Page_PathAndSymb"
            tooltip="&quot;Macros list&quot;"/>
      <tab
            class="org.eclipse.cdt.ui.newui.LibraryTab"
            icon="icons/obj16/lib_obj.gif"
-           name="Libraries"
+           name="%Libraries"
            weight="003"
            parent="org.eclipse.cdt.ui.newui.Page_PathAndSymb"
            tooltip="&quot;Libraries list&quot;"/>
      <tab
            class="org.eclipse.cdt.ui.newui.LibraryPathTab"
            icon="icons/obj16/opentype.gif"
-           name="Library paths"
+           name="%Library.paths"
            weight="004"
            parent="org.eclipse.cdt.ui.newui.Page_PathAndSymb"/>
      <tab
            class="org.eclipse.cdt.ui.newui.RefsTab"
            icon="icons/obj16/search_ref_obj.gif"
-           name="References"
+           name="%References"
            weight="010"
            parent="org.eclipse.cdt.ui.newui.Page_PathAndSymb"/>
      <tab
            class="org.eclipse.cdt.ui.newui.CLocationSourceTab"
            icon="icons/obj16/fldr_obj.gif"
-           name="Source location"
+           name="%Source.location"
            weight="008"           
            parent="org.eclipse.cdt.ui.newui.Page_PathAndSymb"/>
      <tab
            class="org.eclipse.cdt.managedbuilder.ui.newui.CBuildLocationOutputTab"
            icon="icons/obj16/output_folder_obj.gif"
-           name="Output location"
+           name="%Output.location"
            weight="009"           
            parent="org.eclipse.cdt.ui.newui.Page_PathAndSymb"/>
-<!-- temporary disabled          
-     <tab
-           class="org.eclipse.cdt.ui.newui.SDKsTab"
-           name="SDKs"
-           parent="org.eclipse.cdt.ui.newui.Page_PathAndSymb"
-           />
--->           
      <tab
            class="org.eclipse.cdt.ui.newui.EnvironmentTab"
            icon="icons/obj16/environment.gif"
-           name="Environment"
+           name="%Environment"
            weight="005"
            parent="org.eclipse.cdt.ui.newui.Page_BuildSettings"/>
      <tab
            class="org.eclipse.cdt.ui.newui.BinaryParsTab"
            icon="icons/obj16/bin_obj.gif"
-           name="Binary parsers"
+           name="%Binary.parsers"
            weight="006"
            parent="org.eclipse.cdt.ui.newui.Page_BuildSettings"/>
      <tab
            class="org.eclipse.cdt.ui.newui.ErrorParsTab"
            icon="icons/obj16/error_obj.gif"
-           name="Error parsers"
+           name="%Error.parsers"
            weight="007"
            parent="org.eclipse.cdt.ui.newui.Page_BuildSettings"/>
      <tab
@@ -348,25 +345,25 @@
 	      <tab
            class="org.eclipse.cdt.ui.newui.ExpIncludeTab"
            icon="icons/obj16/hfolder_obj.gif"
-           name="Includes"
+           name="%Includes"
            parent="org.eclipse.cdt.ui.newui.Page_ExpPathAndSymb"
            tooltip="&quot;Includes list&quot;"/>
      <tab
            class="org.eclipse.cdt.ui.newui.ExpSymbolTab"
            icon="icons/obj16/define_obj.gif"
-           name="Symbols"
+           name="%Symbols"
            parent="org.eclipse.cdt.ui.newui.Page_ExpPathAndSymb"
            tooltip="&quot;Macros list&quot;"/>
      <tab
            class="org.eclipse.cdt.ui.newui.ExpLibraryTab"
            icon="icons/obj16/lib_obj.gif"
-           name="Libraries"
+           name="%Libraries"
            parent="org.eclipse.cdt.ui.newui.Page_ExpPathAndSymb"
            tooltip="&quot;Libraries list&quot;"/>
      <tab
            class="org.eclipse.cdt.ui.newui.ExpLibraryPathTab"
            icon="icons/obj16/opentype.gif"
-           name="Library paths"
+           name="%Library.paths"
            parent="org.eclipse.cdt.ui.newui.Page_ExpPathAndSymb"/>
 
      <!-- tabs for Preference pages -->      
@@ -381,57 +378,43 @@
            parent="org.eclipse.cdt.ui.newui.PrefPage_Vars"/>
      <tab
            class="org.eclipse.cdt.ui.newui.BinaryParsTab"
-           name="Binary parsers"
+           name="%Binary.parsers"
            icon="icons/obj16/bin_obj.gif"
            parent="org.eclipse.cdt.managedbuilder.ui.newui.PrefPage_NewCDTProject"
            />
      <tab
            class="org.eclipse.cdt.ui.newui.ErrorParsTab"
-           name="Error parsers"
+           name="%Error.parsers"
            icon="icons/obj16/error_obj.gif"
            parent="org.eclipse.cdt.managedbuilder.ui.newui.PrefPage_NewCDTProject"
            />
      <tab
            class="org.eclipse.cdt.managedbuilder.ui.newui.DiscoveryTab"
            icon="icons/elcl16/discovery.gif"
-           name="Discovery options"
+           name="%Discovery.options"
            parent="org.eclipse.cdt.managedbuilder.ui.newui.PrefPage_NewCDTProject"
            />
      <tab
            class="org.eclipse.cdt.managedbuilder.ui.newui.BuilderSettingsTab"
            icon="icons/obj16/build_settings.gif"
-           name="Builder settings"
+           name="%Builder.settings"
            parent="org.eclipse.cdt.managedbuilder.ui.newui.PrefPage_NewCDTProject"/>
   </extension>   
 
       <extension
             id="BuildSystemWizard"
-            name="BuildSystemWizard"
+            name="%Build.System.Wizard"
             point="org.eclipse.cdt.managedbuilder.ui.CDTWizard">
          <wizard
                class="org.eclipse.cdt.managedbuilder.ui.wizards.CNewWizard"
-               name="Build System Wizard">
+               name="%Build.System.Wizard">
          </wizard>
          <wizard
                class="org.eclipse.cdt.managedbuilder.ui.wizards.StdBuildWizard"
-               name="Make project Wizard">
+               name="%Make.Project.Wizard">
          </wizard>
       </extension>
   
-     <!--extension
-         point="org.eclipse.cdt.managedbuilder.ui.DiscoveryProfileUI">
-      <profilePage
-            class="org.eclipse.cdt.managedbuilder.ui.newui.GCCPerProjectSCDProfilePage"
-            name="Per project"
-            profileId="org.eclipse.cdt.make.core.GCCStandardMakePerProjectProfile"
-            profilePattern="PerProjectProfile"/>
-      <profilePage
-            class="org.eclipse.cdt.managedbuilder.ui.newui.GCCPerFileSCDProfilePage"
-            name="Per file"
-            profileId="org.eclipse.cdt.make.core.GCCStandardMakePerFileProfile"
-            profilePattern="PerFileProfile"/>
-   </extension -->
-
 <!-- Custom wizard pages - for testing only 
      <extension
          point="org.eclipse.cdt.managedbuilder.ui.newWizardPages">
@@ -482,7 +465,7 @@
         <dialog
               class="org.eclipse.cdt.managedbuilder.ui.newui.NewCfgDialog"
               mbs_id="org.eclipse.cdt.managedbuilder.core.configurationDataProvider"
-              title="MBS: create configuration"/>
+              title="%MBS.create.configuration"/>
   </extension>
 
      <extension

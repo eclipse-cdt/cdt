@@ -17,9 +17,9 @@ import org.eclipse.cdt.ui.newui.AbstractPrefPage;
 import org.eclipse.core.runtime.CoreException;
 
 public class PrefPage_NewCDTProject extends AbstractPrefPage {
-	protected boolean isSingle() { return false; }
+	private ICConfigurationDescription prefCfgd = null;
 
-	private static ICConfigurationDescription prefCfgd = null;
+	protected boolean isSingle() { return false; }
 
 	public ICResourceDescription getResDesc() {
 		if (prefCfgd == null)

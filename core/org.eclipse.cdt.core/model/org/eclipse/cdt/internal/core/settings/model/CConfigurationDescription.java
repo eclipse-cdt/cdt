@@ -472,6 +472,7 @@ public class CConfigurationDescription extends CDataProxyContainer implements IC
 		IPath entryPath;
 		IPath paths[];
 		PathSettingsContainer cr = PathSettingsContainer.createRootContainer();
+		cr.setValue(Boolean.TRUE);
 		Set srcPathSet = new HashSet();
 		IProject project = fIsPreference ? null : getProjectDescription().getProject();
 		IPath projPath = project != null ? project.getFullPath() : null;

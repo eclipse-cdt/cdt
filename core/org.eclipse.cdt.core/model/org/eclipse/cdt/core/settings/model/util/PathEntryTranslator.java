@@ -1300,6 +1300,7 @@ public class PathEntryTranslator {
 		Set srcPathSet = new HashSet();
 		IPath projPath = fProject != null ? fProject.getFullPath() : null;
 		PathSettingsContainer cr = PathSettingsContainer.createRootContainer();
+		cr.setValue(Boolean.TRUE);
 
 //		Map exclusionMap = new HashMap();
 		

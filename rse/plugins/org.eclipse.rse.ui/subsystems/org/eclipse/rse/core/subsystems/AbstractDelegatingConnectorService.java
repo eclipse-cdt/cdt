@@ -14,13 +14,8 @@
 package org.eclipse.rse.core.subsystems;
 
 import org.eclipse.core.runtime.IProgressMonitor;
-
 import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.model.IPropertySet;
-import org.eclipse.rse.core.subsystems.ICommunicationsListener;
-import org.eclipse.rse.core.subsystems.IConnectorService;
-import org.eclipse.rse.core.subsystems.IServerLauncherProperties;
-import org.eclipse.rse.core.subsystems.ISubSystem;
 
 public abstract class AbstractDelegatingConnectorService implements IDelegatingConnectorService 
 {

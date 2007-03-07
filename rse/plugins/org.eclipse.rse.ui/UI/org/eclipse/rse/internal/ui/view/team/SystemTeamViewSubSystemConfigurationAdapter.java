@@ -28,7 +28,6 @@ import org.eclipse.rse.ui.SystemMenuManager;
 import org.eclipse.rse.ui.SystemResources;
 import org.eclipse.rse.ui.filters.actions.SystemFilterWorkWithFilterPoolsAction;
 import org.eclipse.rse.ui.view.AbstractSystemViewAdapter;
-import org.eclipse.rse.ui.view.ISystemViewElementAdapter;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.views.properties.PropertyDescriptor;
 

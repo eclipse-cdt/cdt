@@ -680,12 +680,6 @@
             class="org.eclipse.cdt.internal.ui.preferences.AppearancePreferencePage"
             id="org.eclipse.cdt.ui.preferences.AppearancePreferencePage">
       </page>
-      <!--page
-            name="%pathEntryVariablesPrefName"
-            category="org.eclipse.cdt.ui.preferences.CPluginPreferencePage"
-            class="org.eclipse.cdt.internal.ui.preferences.PathEntryVariablePreferencePage"
-            id="org.eclipse.cdt.ui.preferences.PathEntryVariablePreferencePage">
-      </page-->
       <page
             category="org.eclipse.cdt.ui.preferences.CPluginPreferencePage"
             class="org.eclipse.cdt.internal.ui.preferences.IndexerPreferencePage"

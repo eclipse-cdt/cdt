@@ -12,6 +12,7 @@
  * 
  * Contributors:
  * David Dykstal (IBM) - 168870: moved SystemPreferencesManager to a new package
+ * David Dykstal (IBM) - 168977: refactoring IConnectorService and ServerLauncher hierarchies
  ********************************************************************************/
 
 package org.eclipse.rse.core.subsystems;
@@ -41,7 +42,6 @@ import org.eclipse.rse.core.filters.ISystemFilterPoolReferenceManager;
 import org.eclipse.rse.core.filters.ISystemFilterSavePolicies;
 import org.eclipse.rse.core.filters.ISystemFilterString;
 import org.eclipse.rse.core.filters.SystemFilterPoolManager;
-import org.eclipse.rse.core.internal.subsystems.RemoteServerLauncherConstants;
 import org.eclipse.rse.core.internal.subsystems.SubSystemConfigurationProxy;
 import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.model.ISystemModelChangeEvents;

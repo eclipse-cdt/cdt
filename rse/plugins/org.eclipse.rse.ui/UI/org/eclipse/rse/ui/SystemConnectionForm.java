@@ -14,6 +14,7 @@
  * David Dykstal (IBM) - moved SystemPreferencesManager to a new package
  *                     - created and used RSEPreferencesManager
  * Uwe Stieber (Wind River) - bugfixing and reworked new connection wizard
+ * David Dykstal (IBM) - 168977: refactoring IConnectorService and ServerLauncher hierarchies
  ********************************************************************************/
 
 package org.eclipse.rse.ui;
@@ -911,14 +912,14 @@ public class SystemConnectionForm implements Listener, IRSEUserIdConstants, Sele
 		}
 
 		// ---------------------------------------------------		
-		// connection name: Don't set during context creation!
+		// connection name
 		// ---------------------------------------------------
-		if (defaultConnectionName != null && contentsCreated)
+		if (defaultConnectionName != null)
 			textConnectionName.setText(defaultConnectionName);
 		textConnectionName.setTextLimit(connectionNameLength);
 
 		// -----------		
-		// host name
+		// host name (address)
 		// -----------
 		if (defaultHostName != null) {
 			textHostName.setText(defaultHostName);

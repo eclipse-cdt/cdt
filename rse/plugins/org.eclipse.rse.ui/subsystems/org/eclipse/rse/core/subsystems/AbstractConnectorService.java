@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2002, 2006 IBM Corporation. All rights reserved.
+ * Copyright (c) 2002, 2007 IBM Corporation. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -11,13 +11,12 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * David Dykstal (IBM) - 168977: refactoring IConnectorService and ServerLauncher hierarchies
  ********************************************************************************/
 
 package org.eclipse.rse.core.subsystems;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.rse.core.IRSEUserIdConstants;
@@ -25,7 +24,6 @@ import org.eclipse.rse.core.PasswordPersistenceManager;
 import org.eclipse.rse.core.SystemBasePlugin;
 import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.model.ISystemRegistry;
-import org.eclipse.rse.core.model.RSEModelObject;
 import org.eclipse.rse.core.model.SystemSignonInformation;
 import org.eclipse.rse.core.subsystems.util.ISubSystemConfigurationAdapter;
 import org.eclipse.rse.logging.Logger;
@@ -75,41 +73,12 @@ import org.eclipse.ui.PlatformUI;
  * 
  * @see org.eclipse.rse.core.subsystems.AbstractConnectorServiceManager
  */ 
-public abstract class AbstractConnectorService extends RSEModelObject implements IConnectorService, IRSEUserIdConstants
+public abstract class AbstractConnectorService extends SuperAbstractConnectorService implements IRSEUserIdConstants
 {
 
-    private ISubSystem _primarySubSystem;
-    private List _registeredSubSystems;
-    private String _name, _description;
-    private int _port;
     private String _userId;
-    private boolean _usingSSL;
-    private IHost _host;
-    
-	/**
-	 * The cached value of the '{@link #getRemoteServerLauncher() <em>Remote Server Launcher</em>}' containment reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #getRemoteServerLauncher()
-	 * @generated
-	 * @ordered
-	 */
-	protected IServerLauncherProperties _remoteServerLauncherProperties = null;
-   
-    
     private transient SystemSignonInformation _passwordInfo;
     protected Shell shell;
-	private Vector commListeners = new Vector(5);
-	private IServerLauncher starter;
-	/**
-	 * The result of calling launch in the server launcher object, in the connect method  
-	 */
-	protected Object launchResult;
-	/**
-	 * The result of calling connect in the server launcher object, in the connect method
-	 */
-	protected Object connectResult;
-
 	// dy:  March 24, 2003 Added _suppressSignonPrompt flag to suppress prompting the
 	// user to signon if they already cancelled signon.  Then intent is to allows tools
 	// writers to prevent multiple signon prompts during a "transaction" if the user cancel 
@@ -119,142 +88,10 @@ public abstract class AbstractConnectorService extends RSEModelObject implements
 
 	public AbstractConnectorService(String name, String description, IHost host, int port)
 	{
-		super();
-		_name = name;
-		_description = description;
-		_port = port;
-		_host = host;
-		_registeredSubSystems = new ArrayList();
+		super(name, description, host, port);
 	}	
 
 	
-    /**
-     * <i>Not implemented, you should override if possible.</i><br>
-     * Return the version, release, modification of the remote system,
-     *  if connected, if applicable and if available. Else return null. It
-     *  is up to each subsystem to decide how to interpret what is returned.<br>
-     * This is used to show the VRM in the property sheet, when the subsystem is selected.
-     * <p>
-     * Up to each implementer to decide if this will be cached.
-     * <p>
-     * Returns an empty string by default, override if possible
-     */
-    public String getVersionReleaseModification()
-    {
-    	return ""; //$NON-NLS-1$
-    }
-    /**
-     * <i>Not implemented, you should override if possible.</i><br>
-     * Return the home directory of the remote system for the current user, if available.
-     * <p>
-     * Up to each implementer to decide how to implement, and if this will be cached.
-     * <p>
-     * Returns an empty string by default, override if possible
-     */
-    public String getHomeDirectory()
-    {
-    	return ""; //$NON-NLS-1$
-    }        
-    /**
-     * <i>Not implemented, you should override if possible.</i><br>
-     * Return the temp directory of the remote system for the current user, if available.
-     * <p>
-     * Up to each implementer to decide how to implement, and if this will be cached.
-     * <p>
-     * Returns an empty string by default, override if possible
-     */
-    public String getTempDirectory()
-    {
-    	return ""; //$NON-NLS-1$
-    }    
-    
-    /**
-     * Set the subsystem, when its not known at constructor time
-     */
-    public void registerSubSystem(ISubSystem ss)
-    {
-    	if (!_registeredSubSystems.contains(ss))
-    	{    		
-    		_registeredSubSystems.add(ss);
-    	}   	
-    }
-    
-    /**
-     * Removes the subsystem from teh list
-     * @param ss
-     */
-    public void deregisterSubSystem(ISubSystem ss)
-    {
-    	_registeredSubSystems.remove(ss);
-    }
-    
-    // ------------------
-    // Utility methods...
-    // ------------------
-
-    final public ISubSystem[] getSubSystems()
-    {
-    	return (ISubSystem[])_registeredSubSystems.toArray(new ISubSystem[_registeredSubSystems.size()]);
-    }
-    
-    /* (non-Javadoc)
-     * @see org.eclipse.rse.core.subsystems.IConnectorService#getPrimarySubSystem()
-     */
-    final public ISubSystem getPrimarySubSystem()
-    {
-    	if (_primarySubSystem == null)
-    	{
-    		if (_registeredSubSystems.size() == 0)
-    		{
-    			
-    		}
-    		else
-    		{
-    			ISubSystem ss = (ISubSystem)_registeredSubSystems.get(0);
-    			_primarySubSystem = ss.getPrimarySubSystem();
-    		}
-    	}
-    	return _primarySubSystem;
-    }
-    
-    final public IHost getHost()
-    {
-    	return _host;
-    }
-    
-    /**
-     * <i>Useful utility method. Fully implemented, do not override.</i><br>
-     * Returns the system type for this connection:<br> <code>getSubSystem().getSystemConnection().getSystemType()</code>
-     */
-    final public String getHostType()
-    {
-    	return getHost().getSystemType();
-    }
-    
-    /**
-     * 
-     */
-    final public String getName()
-    {
-    	return _name;
-    }
-    
-    final public String getDescription()
-    {
-    	return _description;
-    }
-    
-    /**
-     * <i>Useful utility method. Fully implemented, do not override.</i><br>
-     * Returns the host name for the connection this system's subsystem is associated with:</br>
-     * <code>getSubSystem().getSystemConnection().getHostName()</code>
-     */
-    final public String getHostName()
-    {
-    	return getHost().getHostName();
-    }
-    
-  
     /**
 	 * <i>Useful utility method. Fully implemented, do not override.</i><br>
 	 * Returns the active userId if we are connected.
@@ -300,13 +137,6 @@ public abstract class AbstractConnectorService extends RSEModelObject implements
 			_userId = newId;
 			setDirty(true);
 		}
-	}
-    
-    /* (non-Javadoc)
-	 * @see org.eclipse.rse.core.subsystems.IConnectorService#setHost(org.eclipse.rse.model.IHost)
-	 */
-	final public void setHost(IHost host) {
-		_host = host;
 	}
     
     /**
@@ -431,27 +261,6 @@ public abstract class AbstractConnectorService extends RSEModelObject implements
 		return true;
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.rse.core.subsystems.IConnectorService#supportsRemoteServerLaunching()
-	 */
-	public boolean supportsRemoteServerLaunching() {
-		return false;
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.rse.core.subsystems.IConnectorService#hasRemoteServerLauncherProperties()
-	 */
-	public boolean hasRemoteServerLauncherProperties() {
-		return false;
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.rse.core.subsystems.IConnectorService#supportsServerLaunchProperties()
-	 */
-	public boolean supportsServerLaunchProperties() {
-		return false;
-	}
-
 	/**
      * Return true if this connector service can share it's uid and password
      * with other connector services in this host (connection).
@@ -836,73 +645,30 @@ public abstract class AbstractConnectorService extends RSEModelObject implements
     	intializeSubSystems(monitor);
     }
     
-    protected void intializeSubSystems(IProgressMonitor monitor)
-    {
-    	for (int i = 0; i < _registeredSubSystems.size(); i++)
-    	{
-    		ISubSystem ss = (ISubSystem)_registeredSubSystems.get(i);
-    		ss.initializeSubSystem(monitor);    		
-    	}
-    }
-    
-    protected void unintializeSubSystems(IProgressMonitor monitor)
-    {
-    	for (int i = 0; i < _registeredSubSystems.size(); i++)
-    	{
-    		ISubSystem ss = (ISubSystem)_registeredSubSystems.get(i);
-    		ss.uninitializeSubSystem(monitor);    		
-    	}
-    }
-     
-    /**
-     * <i>You must override</i>
-     * unless subsystem.getParentSubSystemConfiguration().supportsServerLaunchProperties 
-     * returns true.
-     * <p>
-     * Attempt to connect to the remote system.<br> 
-     * If the subsystem supports server launch,
-     * the default behavior is to get the remote server launcher by
-     * {@link #getRemoteServerLauncher()}, and if {@link IServerLauncher#isLaunched()}
-     * returns false, to call {@link IServerLauncher#launch(IProgressMonitor)}. 
-	 * <p>
-	 * This is called, by default, from the connect(...) methods of the subsystem.
-     */    
-    protected void internalConnect(IProgressMonitor monitor) throws Exception
-    { 
-    	if (supportsServerLaunchProperties())
-    	{
-    		starter = getRemoteServerLauncher();
-    		starter.setSignonInformation(getPasswordInformation());
-    		starter.setServerLauncherProperties(getRemoteServerLauncherProperties());
-			launchResult = null;
-    		if (!starter.isLaunched())
-    		{ 
-				try {
-					launchResult = starter.launch(monitor);		
-				} catch (Exception exc) {
-					throw new java.lang.reflect.InvocationTargetException(exc);				
-				}				
-    		}
-			connectResult = null;
-			try {
-				connectResult = starter.connect(monitor, getConnectPort());		
-			} catch (Exception exc) {
-				throw new java.lang.reflect.InvocationTargetException(exc);				
-			}				    		
-    	}
-    }
-    /**
-     * Return the port to use for connecting to the remote server, once it is running.
-     * By default, this is the subsystem's port property, via {@link #getPort()}.
-     * Override if appropriate. 
-     * <br> This is called by the default implementation of {@link #connect(IProgressMonitor)}, if
-     * subsystem.getParentSubSystemConfiguration().supportsServerLaunchProperties() is true.
-     */
-    protected int getConnectPort()
-    {
-    	return getPort();
-    }
-    
+    //    protected void internalConnect(IProgressMonitor monitor) throws Exception
+//    { 
+//    	if (supportsServerLaunchProperties())
+//    	{
+//    		IServerLauncher starter = getRemoteServerLauncher();
+//    		starter.setSignonInformation(getPasswordInformation());
+//    		starter.setServerLauncherProperties(getRemoteServerLauncherProperties());
+//			launchResult = null;
+//    		if (!starter.isLaunched())
+//    		{ 
+//				try {
+//					launchResult = starter.launch(monitor);		
+//				} catch (Exception exc) {
+//					throw new java.lang.reflect.InvocationTargetException(exc);				
+//				}				
+//    		}
+//			connectResult = null;
+//			try {
+//				connectResult = starter.connect(monitor, getConnectPort());		
+//			} catch (Exception exc) {
+//				throw new java.lang.reflect.InvocationTargetException(exc);				
+//			}				    		
+//    	}
+//    }
     /**
      * Disconnects from the remote system.
      * <p>
@@ -925,109 +691,7 @@ public abstract class AbstractConnectorService extends RSEModelObject implements
 		clearPasswordCache();
     }
     
-    public void internalDisconnect(IProgressMonitor monitor) throws Exception 
-    {
-		if (supportsServerLaunchProperties() &&(starter != null))
-		{
-			try {
-				starter.disconnect();
-				starter = null; // for now, to be safe. Maybe we could optimize.		
-			} catch (Exception exc) {
-				throw new java.lang.reflect.InvocationTargetException(exc);				
-			}
-		}    	
-    }
-	
-  
-    // -----------------------------------------------------
-    // Methods that should be overridden by child classes...
-    // -----------------------------------------------------    
-	/**
-	 * Return the remote server launcher, which implements IServerLauncher.
-	 * This is called by the default implementation of connect() and disconnect(), if 
-	 * subsystem.getParentSubSystemConfiguration().supportsServerLaunchProperties returns true.
-	 * <p>This returns null be default!
-	 */
-	public IServerLauncher getRemoteServerLauncher()
-	{
-		return null;
-	}
-	
-	/**
-     * <i>Optionally override if you add any instance variables.</i><br>
-	 * The following is called whenever a system is redefined or disconnected.
-	 * Each subsystem needs to be informed so it can clear out any expansions, etc.
-	 * By default it does nothing. Override if you have an internal object that must be nulled out.
-	 */
-	public void reset()
-	{
-	}    
-
-
-	/**
-     * <i>Fully implemented, no need to override.</i><br>
-	 * @see IConnectorService#addCommunicationsListener(ICommunicationsListener)
-	 */
-	public void addCommunicationsListener(ICommunicationsListener listener) 
-	{
-		if (!commListeners.contains(listener)) {
-			commListeners.add(listener);
-		}
-	}
-
-	/**
-     * <i>Fully implemented, no need to override.</i><br>
-	 * @see IConnectorService#removeCommunicationsListener(ICommunicationsListener)
-	 */
-	public void removeCommunicationsListener(ICommunicationsListener listener) 
-	{
-		commListeners.remove(listener);		
-	}
-
-
-	/**
-     * <i><b>Private</b> - used internally.</i><br>
-	 * Helper method for firing communication events
-	 */
-	protected void fireCommunicationsEvent(int eventType) 
-	{
-		CommunicationsEvent e = new CommunicationsEvent(this, eventType);
-		
-		Object[] items = commListeners.toArray();
-
-		for (int loop=0; loop < items.length; loop++) {		
-			((ICommunicationsListener) items[loop]).communicationsStateChange(e);
-		}							
-		
-	}
-	
-	/**
-     * <i><b>Private</b> - used internally.</i><br>
-	 * Returns the count of active communication listeners (i.e. excludes
-	 * passive listeners.)
-	 */
- 	protected int getCommunicationListenerCount() 
- 	{
- 		int count = 0;
- 		for (int i = 0; i < commListeners.size(); i++)
- 		{
- 			if (!((ICommunicationsListener) commListeners.get(i)).isPassiveCommunicationsListener())
- 			{
- 				count++;
- 			}
- 		}
- 		
- 		return count;
- 	}
- 	/**
-     * <i><b>Private</b> - used internally.</i><br>
- 	 */ 	
- 	protected void clearCommunicationListeners() 
- 	{
- 		commListeners.clear();
- 	}
-
-	/**
+    /**
 	 * Returns the suppressSignonPrompt flag.  If this is set to true then the user
 	 * will not be prompted to signon, instead an InterruptedException will be thrown 
 	 * by the promptForPassword method.
@@ -1056,129 +720,6 @@ public abstract class AbstractConnectorService extends RSEModelObject implements
 		_suppressSignonPrompt = suppressSignonPrompt;
 	}
 
-	// -------------------------
-	// PRIVATE HELPER METHODS...
-	// -------------------------
-//	/**
-//	 * Call this method to identify specific server launch types that are not to be permitted.
-//	 * <p>
-//	 * You normally do not call this! Rather, your subsystem factory class will override
-//	 * {@link org.eclipse.rse.core.subsystems.SubSystemConfiguration#supportsServerLaunchType(ServerLaunchType)}.
-//	 * However, this method is needed by ISVs that re-use predefined subsystem factories,
-//	 * and merely supply their own IConnectorService object via the "systemClass" attribute of the
-//	 * subsystemConfigurations extension point.
-//	 * 
-//	 * @see org.eclipse.rse.core.subsystems.ServerLaunchType
-//	 */
-//	protected void enableServerLaunchType(ISubSystem subsystem, ServerLaunchType serverLaunchType, boolean enable)
-//	{
-//		IServerLauncherProperties sl =getRemoteServerLauncherProperties();
-//		if (sl instanceof RemoteServerLauncher)
-//		{
-//			RemoteServerLauncher isl = (RemoteServerLauncher)sl;
-//			isl.enableServerLaunchType(serverLaunchType, enable);
-//		}
-//	}
-	/**
-	 * This methods returns the enablement state per server launch type.
-	 * If {@link RemoteServerLauncher#enableServerLaunchType(ServerLaunchType, boolean)} has not been
-	 *  called for this server launch type, then it is enabled by default.
-	 * @see org.eclipse.rse.core.subsystems.ServerLaunchType
-	 */
-	protected boolean isEnabledServerLaunchType(ISubSystem subsystem, ServerLaunchType serverLaunchType)
-	{
-		IServerLauncherProperties sl = getRemoteServerLauncherProperties();
-		if (sl instanceof RemoteServerLauncher)
-		{
-			RemoteServerLauncher isl = (RemoteServerLauncher)sl;
-			return isl.isEnabledServerLaunchType(serverLaunchType);
-		}
-		else
-			return subsystem.getSubSystemConfiguration().supportsServerLaunchType(serverLaunchType);
-	} 	
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.rse.core.subsystems.IConnectorService#notifyDisconnection()
-	 */
-	public void notifyDisconnection() 
-	{
-		
-		 // Fire comm event to signal state changed
-		if (!isConnected()) fireCommunicationsEvent(CommunicationsEvent.AFTER_DISCONNECT);
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.rse.core.subsystems.IConnectorService#notifyConnection()
-	 */
-	public void notifyConnection()
-	{
-		if (isConnected()) fireCommunicationsEvent(CommunicationsEvent.AFTER_CONNECT);
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.rse.core.subsystems.IConnectorService#notifyError()
-	 */
-	public void notifyError() 
-	{
-		fireCommunicationsEvent(CommunicationsEvent.CONNECTION_ERROR);
-
-	}
-	
-	
-	public void setPort(int port)
-    {
-		if (port != _port)
-		{
-			_port = port;
-			setDirty(true);
-		}
-    }
-
-    public int getPort()
-    {
-    	return _port;
-    }
-    
-    public boolean isUsingSSL()
-    {
-    	return _usingSSL;
-    }
-    
-    public void setIsUsingSSL(boolean flag)
-    {
-    	if (_usingSSL != flag)
-    	{
-    		_usingSSL = flag;
-    		setDirty(true);
-    	}
-    }
-	    
-
-	public IServerLauncherProperties getRemoteServerLauncherProperties()
-	{
-		return _remoteServerLauncherProperties;
-	}
-
-
-	public void setRemoteServerLauncherProperties(IServerLauncherProperties newRemoteServerLauncher)
-	{
-		if (_remoteServerLauncherProperties != newRemoteServerLauncher)
-		{
-			_remoteServerLauncherProperties = newRemoteServerLauncher;
-			setDirty(true);
-		}		
-	}
-
-	public boolean hasRemoteSearchLauncherProperties()
-	{
-		return _remoteServerLauncherProperties != null;
-	}
-
-	public boolean commit()
-	{
-		return RSEUIPlugin.getThePersistenceManager().commit(getHost());
-	}
-	
 	private void logException(Throwable t) {
 		Logger log = LoggerFactory.getLogger(RSEUIPlugin.getDefault());
 		log.logError("Unexpected exception", t); //$NON-NLS-1$

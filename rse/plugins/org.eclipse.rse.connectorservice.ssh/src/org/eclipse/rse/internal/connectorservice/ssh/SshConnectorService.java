@@ -7,6 +7,7 @@
  * 
  * Contributors: 
  * Martin Oberhuber (Wind River) - initial API and implementation
+ * David Dykstal (IBM) - 168977: refactoring IConnectorService and ServerLauncher hierarchies
  *******************************************************************************/
 
 package org.eclipse.rse.internal.connectorservice.ssh;
@@ -700,18 +701,6 @@ public class SshConnectorService extends AbstractConnectorService implements ISs
 				fSessionLostHandler.sessionLost();
 			}
 		}
-		return false;
-	}
-
-	public boolean hasRemoteServerLauncherProperties() {
-		return false;
-	}
-
-	public boolean supportsRemoteServerLaunching() {
-		return false;
-	}
-
-	public boolean supportsServerLaunchProperties() {
 		return false;
 	}
 

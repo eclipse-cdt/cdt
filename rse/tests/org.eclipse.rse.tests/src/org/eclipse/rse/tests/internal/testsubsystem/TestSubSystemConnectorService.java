@@ -7,6 +7,7 @@
  * 
  * Contributors: 
  * Tobias Schwarz (Wind River) - initial API and implementation
+ * David Dykstal (IBM) - 168977: refactoring IConnectorService and ServerLauncher hierarchies
  *******************************************************************************/
 package org.eclipse.rse.tests.internal.testsubsystem;
 
@@ -40,7 +41,6 @@ public class TestSubSystemConnectorService extends AbstractConnectorService {
 	 * @see org.eclipse.rse.core.subsystems.AbstractConnectorService#internalConnect(org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	protected void internalConnect(IProgressMonitor monitor) throws Exception {
-		super.internalConnect(monitor);
 		connected = true;
 	}
 
@@ -48,29 +48,7 @@ public class TestSubSystemConnectorService extends AbstractConnectorService {
 	 * @see org.eclipse.rse.core.subsystems.AbstractConnectorService#internalDisconnect(org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	public void internalDisconnect(IProgressMonitor monitor) throws Exception {
-		super.internalDisconnect(monitor);
 		connected = false;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.rse.core.subsystems.AbstractConnectorService#supportsRemoteServerLaunching()
-	 */
-	public boolean supportsRemoteServerLaunching() {
-		return false;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.rse.core.subsystems.AbstractConnectorService#hasRemoteServerLauncherProperties()
-	 */
-	public boolean hasRemoteServerLauncherProperties() {
-		return false;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.rse.core.subsystems.AbstractConnectorService#supportsServerLaunchProperties()
-	 */
-	public boolean supportsServerLaunchProperties() {
-		return false;
 	}
 
 	/* (non-Javadoc)

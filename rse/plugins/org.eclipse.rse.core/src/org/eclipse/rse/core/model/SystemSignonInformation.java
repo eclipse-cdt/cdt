@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2002, 2006 IBM Corporation. All rights reserved.
+ * Copyright (c) 2002, 2007 IBM Corporation. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -11,10 +11,12 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * David Dykstal (IBM) - 168977: refactoring IConnectorService and ServerLauncher hierarchies
  ********************************************************************************/
 
 package org.eclipse.rse.core.model;
+
+import org.eclipse.rse.core.subsystems.ICredentials;
 
 /**
  * This class encapsulates the signon information required for a remote system.  This class 
@@ -24,7 +26,7 @@ package org.eclipse.rse.core.model;
  * 
  * @author yantzi
  */
-public final class SystemSignonInformation {
+public final class SystemSignonInformation implements ICredentials {
 
 	private String _hostname;
 	private String _userid;

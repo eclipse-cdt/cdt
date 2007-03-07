@@ -11,16 +11,16 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * David Dykstal (IBM) - 168977: refactoring IConnectorService and ServerLauncher hierarchies
  ********************************************************************************/
 
-package org.eclipse.rse.core.internal.subsystems;
+package org.eclipse.rse.internal.core.subsystems;
+import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.model.IPropertySet;
 import org.eclipse.rse.core.model.RSEModelObject;
 import org.eclipse.rse.core.model.RSEModelResources;
 import org.eclipse.rse.core.subsystems.IConnectorService;
 import org.eclipse.rse.core.subsystems.IServerLauncherProperties;
-import org.eclipse.rse.ui.RSEUIPlugin;
 
 
 public abstract class ServerLauncher extends RSEModelObject implements IServerLauncherProperties
@@ -101,7 +101,7 @@ public abstract class ServerLauncher extends RSEModelObject implements IServerLa
 
 	public boolean commit() 
 	{
-		return RSEUIPlugin.getThePersistenceManager().commit(getConnectorService().getHost());
+		return RSECorePlugin.getThePersistenceManager().commit(getConnectorService().getHost());
 	}
 	
 	

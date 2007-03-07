@@ -11,7 +11,7 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * David Dykstal (IBM) - 168977: refactoring IConnectorService and ServerLauncher hierarchies
  ********************************************************************************/
 
 package org.eclipse.rse.core.model;
@@ -33,6 +33,14 @@ public class RSEModelResources extends NLS {
 	public static String RESID_MODELOBJECTS_SERVERLAUNCHER_DESCRIPTION;
 	public static String RESID_MODELOBJECTS_FILTER_DESCRIPTION;
 	public static String RESID_MODELOBJECTS_FILTERPOOL_DESCRIPTION;
+	
+	public static String RESID_PROP_SERVERLAUNCHER_MEANS_LABEL;
+	public static String RESID_PROP_SERVERLAUNCHER_PATH;
+	public static String RESID_PROP_SERVERLAUNCHER_INVOCATION;
+	public static String RESID_CONNECTION_DAEMON_PORT_LABEL;
+	public static String RESID_CONNECTION_PORT_LABEL;
+	public static String RESID_SUBSYSTEM_AUTODETECT_LABEL;
+
 
 	static {
 		// load message values from bundle file

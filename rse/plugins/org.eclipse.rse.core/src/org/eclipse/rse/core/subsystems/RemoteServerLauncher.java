@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2004, 2006 IBM Corporation. All rights reserved.
+ * Copyright (c) 2004, 2007 IBM Corporation. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -11,20 +11,19 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * David Dykstal (IBM) - 168977: refactoring IConnectorService and ServerLauncher hierarchies
  ********************************************************************************/
 
 package org.eclipse.rse.core.subsystems;
 import java.util.Arrays;
 import java.util.List;
 
-import org.eclipse.rse.core.internal.subsystems.RemoteServerLauncherConstants;
-import org.eclipse.rse.core.internal.subsystems.ServerLauncher;
 import org.eclipse.rse.core.model.IProperty;
 import org.eclipse.rse.core.model.IPropertySet;
 import org.eclipse.rse.core.model.IPropertyType;
 import org.eclipse.rse.core.model.PropertyType;
-import org.eclipse.rse.ui.SystemResources;
+import org.eclipse.rse.core.model.RSEModelResources;
+import org.eclipse.rse.internal.core.subsystems.ServerLauncher;
 
 
 /**
@@ -36,7 +35,7 @@ import org.eclipse.rse.ui.SystemResources;
  *  user a number of ways to start that remote server from the client, as well to connect
  *  to it if it is already running. This class encapsulates the properties to support that.
  * <p>
- * Create instances via {@link org.eclipse.rse.core.subsystems.SubSystemConfiguration#createServerLauncher(IConnectorService)}
+ * Create instances via {@link ISubSystemConfiguration#createServerLauncher(IConnectorService)}
  * <!-- end-user-doc -->
  * <p>
  * The following features are implemented:
@@ -97,7 +96,7 @@ public class RemoteServerLauncher extends ServerLauncher implements IRemoteServe
 
 	protected IPropertyType _serverLauncherEnumType;
 	
-	protected RemoteServerLauncher(String name, IConnectorService connectorService)
+	public RemoteServerLauncher(String name, IConnectorService connectorService)
 	{
 		super(name, connectorService);		
 	}
@@ -140,14 +139,14 @@ public class RemoteServerLauncher extends ServerLauncher implements IRemoteServe
 			try
 			{
 				IProperty launchTypeProperty = set.getProperty(KEY_SERVER_LAUNCH_TYPE_NAME);
-				launchTypeProperty.setLabel(SystemResources.RESID_PROP_SERVERLAUNCHER_MEANS_LABEL);
+				launchTypeProperty.setLabel(RSEModelResources.RESID_PROP_SERVERLAUNCHER_MEANS_LABEL);
 				String launchTypeName = launchTypeProperty.getValue();
 				_serverLaunchType  = ServerLaunchType.get(launchTypeName);
 				
 				IProperty daemonPortProperty = set.getProperty(KEY_DAEMON_PORT);
 				boolean daemon = _serverLaunchType == null || _serverLaunchType.getType() == ServerLaunchType.DAEMON;
 				daemonPortProperty.setEnabled(daemon);
-				daemonPortProperty.setLabel(SystemResources.RESID_CONNECTION_DAEMON_PORT_LABEL);
+				daemonPortProperty.setLabel(RSEModelResources.RESID_CONNECTION_DAEMON_PORT_LABEL);
 				
 				_daemonPort = Integer.parseInt(daemonPortProperty.getValue());
 				
@@ -156,7 +155,7 @@ public class RemoteServerLauncher extends ServerLauncher implements IRemoteServe
 				{
 					boolean autoDetect = _serverLaunchType == null || _serverLaunchType.getType() == ServerLaunchType.REXEC;
 					autoDetectProperty.setEnabled(autoDetect);
-					autoDetectProperty.setLabel(SystemResources.RESID_SUBSYSTEM_AUTODETECT_LABEL);
+					autoDetectProperty.setLabel(RSEModelResources.RESID_SUBSYSTEM_AUTODETECT_LABEL);
 				
 					_autoDetectSSL = Boolean.getBoolean(autoDetectProperty.getValue());
 				}
@@ -164,18 +163,18 @@ public class RemoteServerLauncher extends ServerLauncher implements IRemoteServe
 				boolean usingRexec = _serverLaunchType != null && _serverLaunchType.getType() == ServerLaunchType.REXEC;
 				IProperty rexecPortProperty = set.getProperty(KEY_REXEC_PORT);
 				rexecPortProperty.setEnabled(usingRexec);
-				rexecPortProperty.setLabel(SystemResources.RESID_CONNECTION_PORT_LABEL);
+				rexecPortProperty.setLabel(RSEModelResources.RESID_CONNECTION_PORT_LABEL);
 				
 				_rexecPort  = Integer.parseInt(rexecPortProperty.getValue());
 				
 				IProperty serverPathProperty = set.getProperty(KEY_SERVER_PATH);
 				serverPathProperty.setEnabled(usingRexec);
-				serverPathProperty.setLabel(SystemResources.RESID_PROP_SERVERLAUNCHER_PATH);
+				serverPathProperty.setLabel(RSEModelResources.RESID_PROP_SERVERLAUNCHER_PATH);
 				_serverPath = serverPathProperty.getValue();
 				
 				IProperty serverScriptProperty = set.getProperty(KEY_SERVER_SCRIPT);
 				serverScriptProperty.setEnabled(usingRexec);
-				serverScriptProperty.setLabel(SystemResources.RESID_PROP_SERVERLAUNCHER_INVOCATION);
+				serverScriptProperty.setLabel(RSEModelResources.RESID_PROP_SERVERLAUNCHER_INVOCATION);
 				_serverScript = serverScriptProperty.getValue();
 				
 				_hasSetServerLaunchType = true;
@@ -199,28 +198,28 @@ public class RemoteServerLauncher extends ServerLauncher implements IRemoteServe
 		if (_serverLaunchType == null)
 			_serverLaunchType = ServerLaunchType.get(ServerLaunchType.DAEMON);
 		IProperty launchTypeProperty = set.addProperty(KEY_SERVER_LAUNCH_TYPE_NAME, _serverLaunchType.getName(), getServerLauncherPropertyType());
-		launchTypeProperty.setLabel(SystemResources.RESID_PROP_SERVERLAUNCHER_MEANS_LABEL);
+		launchTypeProperty.setLabel(RSEModelResources.RESID_PROP_SERVERLAUNCHER_MEANS_LABEL);
 		
 		IProperty daemonPortProperty = set.addProperty(KEY_DAEMON_PORT, ""+_daemonPort, PropertyType.getIntegerPropertyType()); //$NON-NLS-1$
 		daemonPortProperty.setEnabled(_serverLaunchType.getType() == ServerLaunchType.DAEMON);
-		daemonPortProperty.setLabel(SystemResources.RESID_CONNECTION_DAEMON_PORT_LABEL);
+		daemonPortProperty.setLabel(RSEModelResources.RESID_CONNECTION_DAEMON_PORT_LABEL);
 		
 		IProperty rexecPortProperty  = set.addProperty(KEY_REXEC_PORT, ""+_rexecPort, PropertyType.getIntegerPropertyType());	 //$NON-NLS-1$
 		boolean usingRexec = _serverLaunchType.getType() == ServerLaunchType.REXEC;
 		rexecPortProperty.setEnabled(usingRexec);
-		rexecPortProperty.setLabel(SystemResources.RESID_CONNECTION_PORT_LABEL);
+		rexecPortProperty.setLabel(RSEModelResources.RESID_CONNECTION_PORT_LABEL);
 		
 		IProperty autoDetectSSLProperty  = set.addProperty(KEY_AUTODETECT_SSL, ""+_autoDetectSSL, PropertyType.getBooleanPropertyType());	 //$NON-NLS-1$
 		autoDetectSSLProperty.setEnabled(usingRexec);
-		autoDetectSSLProperty.setLabel(SystemResources.RESID_SUBSYSTEM_AUTODETECT_LABEL);
+		autoDetectSSLProperty.setLabel(RSEModelResources.RESID_SUBSYSTEM_AUTODETECT_LABEL);
 		
 		IProperty serverPathProperty  = set.addProperty(KEY_SERVER_PATH, ""+_serverPath); //$NON-NLS-1$
-		serverPathProperty.setLabel(SystemResources.RESID_PROP_SERVERLAUNCHER_PATH);
+		serverPathProperty.setLabel(RSEModelResources.RESID_PROP_SERVERLAUNCHER_PATH);
 		serverPathProperty.setEnabled(usingRexec);
 		
 		IProperty serverScriptProperty  = set.addProperty(KEY_SERVER_SCRIPT, ""+_serverScript); //$NON-NLS-1$
 		serverScriptProperty.setEnabled(usingRexec);
-		serverScriptProperty.setLabel(SystemResources.RESID_PROP_SERVERLAUNCHER_INVOCATION);
+		serverScriptProperty.setLabel(RSEModelResources.RESID_PROP_SERVERLAUNCHER_INVOCATION);
 	}
 	
 	
@@ -430,7 +429,7 @@ public class RemoteServerLauncher extends ServerLauncher implements IRemoteServe
 	 * If {@link #enableServerLaunchType(ServerLaunchType,boolean)} has not been
 	 *  called for this server launch type, then we defer to the subsystem factory's
 	 *  method: 
-	 * {@link org.eclipse.rse.core.subsystems.SubSystemConfiguration#supportsServerLaunchType(ServerLaunchType)}.
+	 * {@link ISubSystemConfiguration#supportsServerLaunchType(ServerLaunchType)}.
 	 * @see org.eclipse.rse.core.subsystems.ServerLaunchType
 	 */
 	public boolean isEnabledServerLaunchType(ServerLaunchType serverLaunchType)

@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2006 IBM Corporation. All rights reserved.
+ * Copyright (c) 2006, 2007 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -12,6 +12,7 @@
  * 
  * Contributors:
  * Martin Oberhuber (Wind River) - Adapted original tutorial code to Open RSE.
+ * David Dykstal (IBM) - 168977: refactoring IConnectorService and ServerLauncher hierarchies
  ********************************************************************************/
 
 package samples.subsystems;
@@ -57,7 +58,6 @@ public class DeveloperConnectorService extends AbstractConnectorService {
 	 */
 	protected void internalConnect(IProgressMonitor monitor) throws Exception
 	{
-		super.internalConnect(monitor);
 		// pretend. Normally, we'd connect to our remote server-side code here
 		connected=true;
 	}
@@ -67,33 +67,8 @@ public class DeveloperConnectorService extends AbstractConnectorService {
 	 */
 	public void internalDisconnect(IProgressMonitor monitor) throws Exception
 	{
-		super.internalDisconnect(monitor);
 		// pretend. Normally, we'd disconnect from our remote server-side code here
 		connected=false;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.rse.core.subsystems.IConnectorService#supportsRemoteServerLaunching()
-	 */
-	public boolean supportsRemoteServerLaunching()
-	{
-		return false;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.rse.core.subsystems.IConnectorService#hasRemoteServerLauncherProperties()
-	 */
-	public boolean hasRemoteServerLauncherProperties()
-	{
-		return false;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.rse.core.subsystems.IConnectorService#supportsServerLaunchProperties()
-	 */
-	public boolean supportsServerLaunchProperties()
-	{
-		return false;
 	}
 
 	/**

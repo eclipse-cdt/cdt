@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation. All rights reserved.
+ * Copyright (c) 2006, 2007 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -14,6 +14,7 @@
  * Javier Montalvo Orus (Symbian) - Bug 140348 - FTP did not use port number
  * Javier Montalvo Orus (Symbian) - Bug 161209 - Need a Log of ftp commands
  * Javier Montalvo Orus (Symbian) - Bug 169680 - [ftp] FTP files subsystem and service should use passive mode
+ * David Dykstal (IBM) - 168977: refactoring IConnectorService and ServerLauncher hierarchies
  ********************************************************************************/
 
 package org.eclipse.rse.internal.subsystems.files.ftp.connectorservice;
@@ -103,26 +104,9 @@ public class FTPConnectorService extends AbstractConnectorService
 		_ftpService.disconnect();
 	}
 	
-	
-	public boolean hasRemoteServerLauncherProperties()
-	{
-		return false;
-	}
-
-	public boolean supportsRemoteServerLaunching()
-	{
-		return false;
-	}
-
-	public boolean isConnected() 
+		public boolean isConnected() 
 	{
 		return (_ftpService != null && _ftpService.isConnected());
 	}
 
-	public boolean supportsServerLaunchProperties()
-	{
-		return false;
-	}
-	
-	
 }

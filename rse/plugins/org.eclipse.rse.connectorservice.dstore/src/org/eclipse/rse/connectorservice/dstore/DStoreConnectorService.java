@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2002, 2006 IBM Corporation. All rights reserved.
+ * Copyright (c) 2002, 2007 IBM Corporation. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -11,7 +11,7 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * David Dykstal (IBM) - 168977: refactoring IConnectorService and ServerLauncher hierarchies
  ********************************************************************************/
 
 package org.eclipse.rse.connectorservice.dstore;
@@ -85,6 +85,8 @@ public class DStoreConnectorService extends AbstractConnectorService implements 
 	
 	private ClientConnection clientConnection = null;
 	private ConnectionStatusListener _connectionStatusListener = null;
+	private IServerLauncher starter = null;
+	private IServerLauncherProperties _remoteServerLauncherProperties = null;
 
 	// Shortcut to sysInfo to save time
 	private transient DataElement sysInfo = null;
@@ -93,10 +95,6 @@ public class DStoreConnectorService extends AbstractConnectorService implements 
 	private static String DSTORE_PACKAGE = "org.eclipse.dstore.core"; //$NON-NLS-1$
 	
 	private Exception connectException;
-	//private Hashtable restrictedTypes = null;
-	private IServerLauncher starter;	
-
-	
 	private class ShowConnectMessage implements Runnable
 	{
 		private SystemMessage _msg;
@@ -448,6 +446,7 @@ public class DStoreConnectorService extends AbstractConnectorService implements 
 	 */
 	public IServerLauncher getRemoteServerLauncher()
 	{
+		
 		if (starter == null)
 		  starter = new RexecDstoreServer();
 		((RexecDstoreServer)starter).setClientConnection(clientConnection);
@@ -455,6 +454,22 @@ public class DStoreConnectorService extends AbstractConnectorService implements 
 		return starter;
 	}
 	
+	public IServerLauncherProperties getRemoteServerLauncherProperties() {
+		return _remoteServerLauncherProperties;
+	}
+
+	public void setRemoteServerLauncherProperties(IServerLauncherProperties newRemoteServerLauncher) {
+		if (_remoteServerLauncherProperties != newRemoteServerLauncher)
+		{
+			_remoteServerLauncherProperties = newRemoteServerLauncher;
+			setDirty(true);
+		}		
+	}
+
+	public boolean hasRemoteServerLauncherProperties() {
+		return _remoteServerLauncherProperties != null;
+	}
+
 
 	
 	/**
@@ -1303,19 +1318,10 @@ public class DStoreConnectorService extends AbstractConnectorService implements 
 //		}
 //	}
 
-	public boolean hasRemoteServerLauncherProperties() 
-	{
-		return getRemoteServerLauncherProperties() != null;
-	}
-
-
-
 	public boolean supportsRemoteServerLaunching() 
 	{
 		return true;
 	}
-
-
 
 	public boolean supportsServerLaunchProperties()
 	{

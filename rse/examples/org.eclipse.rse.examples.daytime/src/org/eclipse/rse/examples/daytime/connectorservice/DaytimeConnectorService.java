@@ -12,6 +12,7 @@
  * 
  * Contributors:
  * Martin Oberhuber (Wind River) - adapted template for daytime example.
+ * David Dykstal (IBM) - 168977: refactoring IConnectorService and ServerLauncher hierarchies
  ********************************************************************************/
 
 package org.eclipse.rse.examples.daytime.connectorservice;
@@ -71,19 +72,6 @@ public class DaytimeConnectorService extends AbstractConnectorService {
 
 	public void internalDisconnect(IProgressMonitor monitor) throws Exception {
 		fIsConnected = false;
-		super.internalDisconnect(monitor);
-	}
-
-	public boolean hasRemoteServerLauncherProperties() {
-		return false;
-	}
-
-	public boolean supportsRemoteServerLaunching() {
-		return false;
-	}
-
-	public boolean supportsServerLaunchProperties() {
-		return false;
 	}
 
 	/**

@@ -68,6 +68,13 @@ public class StdProjectTypeHandler extends CWizardHandler {
 			Configuration cfg = new Configuration(mProj, (ToolChain)tcs[i], ManagedBuildManager.calculateChildId(s, null), name);
 			IBuilder bld = cfg.getEditableBuilder();
 			if (bld != null) {
+				if(bld.isInternalBuilder()){
+					IConfiguration prefCfg = ManagedBuildManager.getPreferenceConfiguration(false);
+					IBuilder prefBuilder = prefCfg.getBuilder();
+					cfg.changeBuilder(prefBuilder, ManagedBuildManager.calculateChildId(cfg.getId(), null), prefBuilder.getName());
+					bld = cfg.getEditableBuilder();
+					bld.setBuildPath(null);
+				}
 				bld.setManagedBuildOn(false);
 			} else {
 				System.out.println(IDEWorkbenchMessages.getString("StdProjectTypeHandler.3"));			 //$NON-NLS-1$

@@ -14,6 +14,7 @@ import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICResourceDescription;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.cdt.ui.newui.AbstractPrefPage;
+import org.eclipse.cdt.ui.newui.ICPropertyTab;
 import org.eclipse.core.runtime.CoreException;
 
 public class PrefPage_NewCDTProject extends AbstractPrefPage {
@@ -30,6 +31,7 @@ public class PrefPage_NewCDTProject extends AbstractPrefPage {
 	}
 	
 	public boolean performOk() {
+		forEach(ICPropertyTab.OK, null);
 		try {
 			CCorePlugin.getDefault().setPreferenceConfiguration(ManagedBuildManager.CFG_DATA_PROVIDER_ID, prefCfgd);
 		} catch (CoreException e) { return false; }

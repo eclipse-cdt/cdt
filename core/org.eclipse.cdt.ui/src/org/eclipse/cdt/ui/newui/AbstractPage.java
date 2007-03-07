@@ -69,6 +69,8 @@ import org.eclipse.cdt.core.settings.model.ICResourceDescription;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.utils.ui.controls.ControlFactory;
 
+import org.eclipse.cdt.internal.ui.util.ProblemMarkerManager;
+
 /**
  * It is a parent for all standard CDT property pages
  * in new CDT model. 
@@ -95,7 +97,7 @@ public abstract class AbstractPage extends PropertyPage
 implements
 		IWorkbenchPropertyPage, // ext point 
 		IPreferencePageContainer, // dynamic pages
-		ICPropertyProvider // utility methods for tabs 
+		ICPropertyProvider // utility methods for tabs
 {
 	// Toggle this constant to <false> 
 	// to hide "Manage configurations" button.
@@ -131,7 +133,7 @@ implements
 
 	private static final Object NOT_NULL = new Object();
 	public static final String EMPTY_STR = "";  //$NON-NLS-1$
-	
+
 	/*
 	 * Dialog widgets
 	 */
@@ -408,7 +410,7 @@ implements
 		try {
 			CoreModel.getDefault().setProjectDescription(getProject(), prjd);
 		} catch (CoreException e) { }
-		updateViews();
+		updateViews(internalElement);
 		return true;
 	}
 	
@@ -431,7 +433,7 @@ implements
 				} catch (CoreException e) {
 					System.out.println("setProjectDescription: " + e.getLocalizedMessage()); //$NON-NLS-1$
 				}
-				updateViews();
+				updateViews(internalElement);
 			}
 		};
 		IRunnableWithProgress op = new WorkspaceModifyDelegatingOperation(runnable);
@@ -853,7 +855,7 @@ implements
 	}
 
 	// update views (in particular, display resource configurations)
-	public static void updateViews() {
+	public static void updateViews(IResource res) {
 		WorkbenchPlugin.getDefault().getDecoratorManager().updateForEnablementChange();
-	}
+	}	
 }

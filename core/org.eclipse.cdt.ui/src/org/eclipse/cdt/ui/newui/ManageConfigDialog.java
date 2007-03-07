@@ -76,7 +76,7 @@ public class ManageConfigDialog extends Dialog {
 			if (d.open() == OK) {
 				try {
 					CoreModel.getDefault().setProjectDescription(prj, prjd);
-					AbstractPage.updateViews();
+					AbstractPage.updateViews(prj);
 				} catch (CoreException e) { return false; }
 				return true;
 			}

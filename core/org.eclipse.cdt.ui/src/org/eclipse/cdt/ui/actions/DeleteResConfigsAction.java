@@ -116,8 +116,8 @@ implements IWorkbenchWindowPulldownDelegate2, IObjectActionDelegate {
 			if (selected != null && selected.length > 0) {
 				for (int i = 0; i < selected.length; i++) {
 					((ResCfgData)selected[i]).delete();
+					AbstractPage.updateViews(((ResCfgData)selected[i]).res);
 				}
-				AbstractPage.updateViews();
 			}
 		}
 	}

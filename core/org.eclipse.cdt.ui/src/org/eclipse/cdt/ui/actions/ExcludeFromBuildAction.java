@@ -184,9 +184,8 @@ outer:
 					try {
 						CoreModel.getDefault().setProjectDescription(p, prjd);
 					} catch (CoreException e) {}
-					
+					AbstractPage.updateViews(res);
 				}
-				AbstractPage.updateViews();
 			}
 		}
 	}

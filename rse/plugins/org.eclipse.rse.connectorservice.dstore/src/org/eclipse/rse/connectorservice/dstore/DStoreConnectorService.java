@@ -324,7 +324,7 @@ public class DStoreConnectorService extends AbstractConnectorService implements 
 				notifyDisconnection();
 				clientConnection = null;
 				// DKM - no need to clear uid cache
-				clearPasswordCache(false); // clear in-memory password
+				clearPassword(false); // clear in-memory password
 				//clearUserIdCache(); // Clear any cached local user IDs
 				sysInfo = null;
 				installInfo = null;
@@ -933,7 +933,7 @@ public class DStoreConnectorService extends AbstractConnectorService implements 
 				{
 					if (launchFailed)
 				    {
-				        clearPasswordCache(true);
+				        clearPassword(true);
 				    }
 				
 					// Display error message
@@ -1048,7 +1048,7 @@ public class DStoreConnectorService extends AbstractConnectorService implements 
 			{
 				if (launchFailed)
 			    {
-			        clearPasswordCache(true);
+			        clearPassword(true);
 			    }
 				
 				DisplaySystemMessageAction msgAction = new DisplaySystemMessageAction(msg);

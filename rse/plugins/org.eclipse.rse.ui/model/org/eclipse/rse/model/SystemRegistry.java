@@ -2544,9 +2544,9 @@ public class SystemRegistry implements ISystemRegistryUI, ISystemModelChangeEven
 						if (subsystems[idx].isConnected()) subsystems[idx].disconnect(); // MJB: added conditional for defect 45754
 						if (defaultUserIdChanged)
 						{
-							subsystems[idx].getConnectorService().clearUserIdCache();
+							subsystems[idx].getConnectorService().clearUserId();
 						}
-						subsystems[idx].getConnectorService().clearPasswordCache();
+						subsystems[idx].getConnectorService().clearPassword(false);
 					}
 					catch (Exception exc)
 					{

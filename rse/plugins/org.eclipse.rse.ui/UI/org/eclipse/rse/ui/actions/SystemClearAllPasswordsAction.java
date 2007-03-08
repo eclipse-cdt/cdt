@@ -64,7 +64,7 @@ public class SystemClearAllPasswordsAction extends SystemBaseAction {
 	            ISubSystem subsystem = subsystems[i];
 	            IConnectorService system = subsystem.getConnectorService();
 	            
-	            anyOk = !system.isConnected() && system.isPasswordCached(true);
+	            anyOk = !system.isConnected() && system.hasPassword(true);
 	            
 	            if (anyOk) 
 	            {
@@ -92,13 +92,13 @@ public class SystemClearAllPasswordsAction extends SystemBaseAction {
         	{
     			IConnectorService system = ss.getConnectorService();
     		
-    			if (system.isPasswordCached() || system.isPasswordCached(true))
+    			if (system.hasPassword(false) || system.hasPassword(true))
     			{
 	    			// get the user id
 	    			
 	    			// clear userid/password from memory and fire event
 	    			//DKM and disk now
-	    			system.clearPasswordCache(true);
+	    			system.clearPassword(true);
 	    			RSEUIPlugin.getTheSystemRegistry().fireEvent(new SystemResourceChangeEvent(ss, 
 	    					ISystemResourceChangeEvents.EVENT_PROPERTY_CHANGE, 
 	    					ss.getHost()));

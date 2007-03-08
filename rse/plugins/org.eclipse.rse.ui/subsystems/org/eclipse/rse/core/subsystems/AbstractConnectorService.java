@@ -141,26 +141,14 @@ public abstract class AbstractConnectorService extends SuperAbstractConnectorSer
     
     /**
 	 * <i>Useful utility method. Fully implemented, do not override.</i><br>
-	 * Clear internal userId cache. Called when user uses the property dialog to 
+	 * Clear internal userId. Called when user uses the property dialog to 
 	 * change his userId. By default, sets internal userId value to null so that on
 	 * the next call to getUserId() it is requeried from subsystem. 
-	 * Also calls {@link #clearPasswordCache()}.
+	 * Also clears the password.
 	 */
-	final public void clearUserIdCache() {
+	final public void clearUserId() {
 		_userId = null;
-		clearPasswordCache();
-	}
-
-	/**
-	 * <i>Useful utility method. Fully implemented, do not override.</i><br>
-	 * Clear internal password cache. Called when user uses the property dialog to 
-	 * change his userId.  This method does not remove the password from the disk
-	 * cache - only the memory cache.
-	 * 
-	 * @see #clearUserIdCache()
-	 */
-	final public void clearPasswordCache() {
-		clearPasswordCache(false);
+		clearPassword(false);
 	}
 
 	/**
@@ -169,9 +157,9 @@ public abstract class AbstractConnectorService extends SuperAbstractConnectorSer
 	 * change his userId.  
 	 * 
 	 * @param onDisk if this is true, clear the password from the disk cache as well
-	 * @see #clearUserIdCache()
+	 * @see #clearUserId()
 	 */
-	final public void clearPasswordCache(boolean onDisk) {
+	final public void clearPassword(boolean onDisk) {
 		setPasswordInformation(null);
 		String userId = getUserId();
 		if (onDisk) {
@@ -195,7 +183,7 @@ public abstract class AbstractConnectorService extends SuperAbstractConnectorSer
 	 * false if the check should be made for a password in memory only.
 	 * @return true if the password is known, false otherwise.
 	 */
-	final public boolean isPasswordCached(boolean onDisk) {
+	final public boolean hasPassword(boolean onDisk) {
 		boolean cached = (getPasswordInformation() != null);
 		if (!cached && onDisk) {
 			//  now check if cached on disk
@@ -208,15 +196,6 @@ public abstract class AbstractConnectorService extends SuperAbstractConnectorSer
 		}
 		return cached;
 	}
-    
-	/**
-     * <i>Useful utility method. Fully implemented, do not override.</i><br>
-	 * Return true if password is currently cached.
-	 */
-    final public boolean isPasswordCached()
-    {
-        return isPasswordCached(false);
-    }
     
     /**
      * Return true if this system can inherit the uid and password of
@@ -436,9 +415,9 @@ public abstract class AbstractConnectorService extends SuperAbstractConnectorSer
 	        for (int s = 0; s < uniqueSystems.size(); s++)
 	        {
 	            IConnectorService system = (IConnectorService)uniqueSystems.get(s);
-	            if (system.isPasswordCached(fromDisk))
+	            if (system.hasPassword(fromDisk))
 	            {
-	                system.clearPasswordCache(fromDisk);
+	                system.clearPassword(fromDisk);
 	            }            
 	        }
     	}
@@ -467,7 +446,7 @@ public abstract class AbstractConnectorService extends SuperAbstractConnectorSer
         for (int s = 0; s < uniqueSystems.size(); s++)
         {
             IConnectorService system = (IConnectorService)uniqueSystems.get(s);
-            if (!system.isConnected() && !system.isPasswordCached())
+            if (!system.isConnected() && !system.hasPassword(false))
             {
                 if (system.getPrimarySubSystem().forceUserIdToUpperCase())
                 {
@@ -565,16 +544,6 @@ public abstract class AbstractConnectorService extends SuperAbstractConnectorSer
 			String hostName = getHostName();
 			PasswordPersistenceManager.getInstance().remove(systemType, hostName, _userId);
 		}
-	}
-    
-    /**
-	 * <i>Useful utility method. Fully implemented, no need to override.</i><br>
-	 * A convenience method, fully equivalent to <code>setPassword(matchingUserId, password, false)</code>
-	 * @param matchingUserId the user for which to set the password
-	 * @param password the password to set for this userid
-	 */
-	public void setPassword(String matchingUserId, String password) {
-		setPassword(matchingUserId, password, false);
 	}
     
     /**
@@ -688,7 +657,7 @@ public abstract class AbstractConnectorService extends SuperAbstractConnectorSer
     {
     	internalDisconnect(monitor);
 		unintializeSubSystems(monitor);
-		clearPasswordCache();
+		clearPassword(false);
     }
     
     /**

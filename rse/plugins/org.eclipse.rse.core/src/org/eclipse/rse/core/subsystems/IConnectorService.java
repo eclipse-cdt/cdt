@@ -187,41 +187,25 @@ public interface IConnectorService extends IRSEModelObject {
 	/**
 	 * Set the password if you got it from somewhere
 	 */
-	public void setPassword(String matchingUserId, String password);
-
-	/**
-	 * Set the password if you got it from somewhere
-	 */
 	public void setPassword(String matchingUserId, String password, boolean persist);
 
 	/**
 	 * Clear internal userId cache. Called when user uses the property dialog to 
 	 * change his userId.
 	 */
-	public void clearUserIdCache();
-
-	/**
-	 * Clear internal password cache. Called when user uses the property dialog to 
-	 * change his userId.
-	 */
-	public void clearPasswordCache();
+	public void clearUserId();
 
 	/**
 	 * Clear internal password cache. Called when user uses the property dialog to 
 	 * change his userId.  
-	 * @param clearDiskCache if true, clears the password from disk 
+	 * @param onDisk if true, clears the password from disk 
 	 */
-	public void clearPasswordCache(boolean clearDiskCache);
+	public void clearPassword(boolean onDisk);
 
 	/**
 	 * Return true if password is currently cached.
 	 */
-	public boolean isPasswordCached();
-
-	/**
-	 * Return true if password is currently cached.
-	 */
-	public boolean isPasswordCached(boolean onDisk);
+	public boolean hasPassword(boolean onDisk);
 
 	/**
 	 * Return true if this system can inherit the uid and password of

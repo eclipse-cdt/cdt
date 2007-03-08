@@ -368,7 +368,7 @@ public final class SignonPreferencePage extends PreferencePage implements IWorkb
 										system = subsystems[k].getConnectorService();
 										if (system != null)
 										{
-											system.clearPasswordCache();
+											system.clearPassword(false);
 										}
 									}
 								}

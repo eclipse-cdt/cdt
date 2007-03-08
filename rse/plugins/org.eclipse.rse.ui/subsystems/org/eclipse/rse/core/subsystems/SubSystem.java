@@ -448,7 +448,7 @@ public abstract class SubSystem extends RSEModelObject implements IAdaptable, IS
      	  RSEPreferencesManager.clearUserId(previousUserIdKey);    	
     	IConnectorService system = getConnectorService();
     	if (system != null)
-    	  system.clearUserIdCache();
+    	  system.clearUserId();
     }
 
     /**

@@ -350,7 +350,7 @@ public class SshConnectorService extends AbstractConnectorService implements ISs
 				//TODO MOB - keep the session to avoid NPEs in services (disables gc for the session!)
 				// session = null;
 				// DKM - no need to clear uid cache
-				clearPasswordCache(false); // clear in-memory password
+				clearPassword(false); // clear in-memory password
 				//clearUserIdCache(); // Clear any cached local user IDs
 			}
 		}

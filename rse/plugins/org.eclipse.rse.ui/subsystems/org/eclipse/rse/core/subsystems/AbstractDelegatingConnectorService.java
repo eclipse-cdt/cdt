@@ -39,30 +39,20 @@ public abstract class AbstractDelegatingConnectorService implements IDelegatingC
 		
 	}
 
-	public void clearPasswordCache() 
-	{
+	public void clearPassword(boolean clearDiskCache) {
 		IConnectorService conServ = getRealConnectorService();
 		if (conServ != null)
 		{
-			conServ.clearPasswordCache();
+			conServ.clearPassword(clearDiskCache);
 		}
 
 	}
 
-	public void clearPasswordCache(boolean clearDiskCache) {
+	public void clearUserId() {
 		IConnectorService conServ = getRealConnectorService();
 		if (conServ != null)
 		{
-			conServ.clearPasswordCache(clearDiskCache);
-		}
-
-	}
-
-	public void clearUserIdCache() {
-		IConnectorService conServ = getRealConnectorService();
-		if (conServ != null)
-		{
-			conServ.clearUserIdCache();
+			conServ.clearUserId();
 		}
 	}
 
@@ -223,20 +213,11 @@ public abstract class AbstractDelegatingConnectorService implements IDelegatingC
 		return false;
 	}
 
-	public boolean isPasswordCached() {
+	public boolean hasPassword(boolean onDisk) {
 		IConnectorService conServ = getRealConnectorService();
 		if (conServ != null)
 		{
-			return conServ.isPasswordCached();
-		}
-		return false;
-	}
-
-	public boolean isPasswordCached(boolean onDisk) {
-		IConnectorService conServ = getRealConnectorService();
-		if (conServ != null)
-		{
-			return conServ.isPasswordCached(onDisk);
+			return conServ.hasPassword(onDisk);
 		}
 		return false;
 	}
@@ -347,14 +328,6 @@ public abstract class AbstractDelegatingConnectorService implements IDelegatingC
 		if (conServ != null)
 		{
 			conServ.setIsUsingSSL(flag);
-		}
-	}
-
-	public void setPassword(String matchingUserId, String password) {
-		IConnectorService conServ = getRealConnectorService();
-		if (conServ != null)
-		{
-			conServ.setPassword(matchingUserId, password);
 		}
 	}
 

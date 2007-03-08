@@ -58,7 +58,7 @@ public class SystemClearPasswordAction extends SystemBaseAction
 		if (obj instanceof ISubSystem) {
 			ISubSystem subsystem = (ISubSystem) obj;
 			IConnectorService cs = subsystem.getConnectorService();
-			result = !cs.isConnected() && cs.isPasswordCached(true);
+			result = !cs.isConnected() && cs.hasPassword(true);
 		}
 		return result;
 	}
@@ -71,7 +71,7 @@ public class SystemClearPasswordAction extends SystemBaseAction
 		ISubSystem ss = (ISubSystem)getFirstSelection();
 		try {
 			IConnectorService system = ss.getConnectorService();
-			system.clearPasswordCache(true);
+			system.clearPassword(true);
 			RSEUIPlugin.getTheSystemRegistry().fireEvent(new SystemResourceChangeEvent(ss, 
 					ISystemResourceChangeEvents.EVENT_PROPERTY_CHANGE, 
 					ss.getHost()));

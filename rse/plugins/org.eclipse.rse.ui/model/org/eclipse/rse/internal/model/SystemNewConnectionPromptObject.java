@@ -16,11 +16,14 @@
 
 package org.eclipse.rse.internal.model;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.rse.core.IRSESystemType;
 import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.model.IHost;
@@ -140,6 +143,9 @@ public class SystemNewConnectionPromptObject implements ISystemPromptableObject,
 				systemTypes = RSECorePlugin.getDefault().getRegistry().getSystemTypes();
 			}
 
+			// Note: Do not filter out the disabled system types here. The system
+			// type enabling is dynamic, so we have to filter them dynamic. Here
+			// we build a static list of _all_ available system types.
 			if (systemTypes != null) {
 				children = new ISystemPromptableObject[systemTypes.length];
 				for (int idx = 0; idx < children.length; idx++) {
@@ -148,9 +154,69 @@ public class SystemNewConnectionPromptObject implements ISystemPromptableObject,
 			}
 		}
 
-		return children;
+		return getChildrenFiltered(children);
 	}
 
+	private static class RSESystemTypeSorter implements Comparator {
+
+		public int compare(Object o1, Object o2) {
+			if (o1 instanceof IRSESystemType && o2 instanceof IRSESystemType) {
+				return ((IRSESystemType)o1).getLabel().compareTo(((IRSESystemType)o2).getLabel());
+			} else if (o1 instanceof ISystemPromptableObject && o2 instanceof ISystemPromptableObject) {
+				return ((ISystemPromptableObject)o1).getText().compareTo(((ISystemPromptableObject)o2).getText());
+			}
+			return 0;
+		}
+	}
+	
+	protected final static Comparator SYSTEM_TYPE_SORTER = new RSESystemTypeSorter();
+	
+	/**
+	 * Filter the list of children to return and remove the disabled children.
+	 * 
+	 * @param children The list of children to filter.
+	 * @return The filtered list of children or <code>null</code> if the passed in list of children had been <code>null</code>.
+	 */
+	private ISystemPromptableObject[] getChildrenFiltered(ISystemPromptableObject[] children) {
+		if (children == null) return null;
+		
+		List filtered = new ArrayList();
+		for (int i = 0; i < children.length; i++) {
+			ISystemPromptableObject promptObject = children[i];
+			if (promptObject instanceof SystemNewConnectionPromptObject) {
+				IRSESystemType[] systemTypes = ((SystemNewConnectionPromptObject)promptObject).getSystemTypes();
+				boolean enabled = true;
+				for (int j = 0; j < systemTypes.length && enabled; j++) {
+					IRSESystemType systemType = systemTypes[j];
+					
+					// As we should consistently show the same new connection wizards list
+					// within the new connection wizard itself and this new connection prompt
+					// object, we have to do the same here as what the wizard is doing for
+					// filtering the selectable list of new connection wizards.
+					ViewerFilter filter = (ViewerFilter)(systemType.getAdapter(ViewerFilter.class));
+					if (filter != null && !filter.select(null, null, systemType)) {
+						enabled = false;
+					}
+
+					if (enabled) {
+						RSESystemTypeAdapter adapter = (RSESystemTypeAdapter)(systemType.getAdapter(IRSESystemType.class));
+						if (adapter != null && !adapter.isEnabled(systemType)) {
+							enabled = false;
+						}
+					}
+				}
+				
+				if (enabled) filtered.add(promptObject);
+			} else {
+				// it's a ISystemPromptableObject but not a SystemNewConnectionPromptObject?
+				filtered.add(promptObject);
+			}
+		}
+		
+		if (!filtered.isEmpty()) Collections.sort(filtered, SYSTEM_TYPE_SORTER);
+		return (ISystemPromptableObject[])filtered.toArray(new ISystemPromptableObject[filtered.size()]);
+	}
+	
 	/**
 	 * Return true if we have children, false if run when expanded
 	 */

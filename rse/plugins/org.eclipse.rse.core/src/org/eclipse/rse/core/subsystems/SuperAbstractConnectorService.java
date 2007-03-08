@@ -50,6 +50,19 @@ public abstract class SuperAbstractConnectorService extends RSEModelObject imple
 		_port = port;
 	}
 
+	public final boolean isServerLaunchTypeEnabled(ISubSystem subsystem, ServerLaunchType serverLaunchType) {
+		IServerLauncher sl = getRemoteServerLauncher();
+		if (sl instanceof RemoteServerLauncher) {
+			RemoteServerLauncher isl = (RemoteServerLauncher) sl;
+			return isl.isEnabledServerLaunchType(serverLaunchType);
+		} else
+			return subsystem.getSubSystemConfiguration().supportsServerLaunchType(serverLaunchType);
+	}
+	
+	public IServerLauncher getRemoteServerLauncher() {
+		return null;
+	}
+
 	public boolean supportsRemoteServerLaunching() {
 		return false;
 	}
@@ -65,15 +78,15 @@ public abstract class SuperAbstractConnectorService extends RSEModelObject imple
 	public void setRemoteServerLauncherProperties(IServerLauncherProperties newRemoteServerLauncher) {
 	}
 
-	public boolean hasRemoteServerLauncherProperties() {
-		return false;
+	public final boolean hasRemoteServerLauncherProperties() {
+		return getRemoteServerLauncherProperties() != null;
 	}
 
 	/**
 	 * <i>Fully implemented, no need to override.</i><br>
 	 * @see IConnectorService#addCommunicationsListener(ICommunicationsListener)
 	 */
-	public void addCommunicationsListener(ICommunicationsListener listener) {
+	public final void addCommunicationsListener(ICommunicationsListener listener) {
 		if (!commListeners.contains(listener)) {
 			commListeners.add(listener);
 		}
@@ -83,7 +96,7 @@ public abstract class SuperAbstractConnectorService extends RSEModelObject imple
 	 * <i>Fully implemented, no need to override.</i><br>
 	 * @see IConnectorService#removeCommunicationsListener(ICommunicationsListener)
 	 */
-	public void removeCommunicationsListener(ICommunicationsListener listener) {
+	public final void removeCommunicationsListener(ICommunicationsListener listener) {
 		commListeners.remove(listener);		
 	}
 
@@ -112,14 +125,6 @@ public abstract class SuperAbstractConnectorService extends RSEModelObject imple
 		commListeners.clear();
 	}
 
-	public final IHost getHost() {
-		return _host;
-	}
-
-	public final void setHost(IHost host) {
-		_host = host;
-	}
-
 	/**
 	 * <i><b>Private</b> - used internally.</i><br>
 	 * Helper method for firing communication events
@@ -135,6 +140,14 @@ public abstract class SuperAbstractConnectorService extends RSEModelObject imple
 		
 	}
 
+	public final IHost getHost() {
+		return _host;
+	}
+
+	public final void setHost(IHost host) {
+		_host = host;
+	}
+
 	public final String getDescription() {
 		return _description;
 	}
@@ -146,7 +159,7 @@ public abstract class SuperAbstractConnectorService extends RSEModelObject imple
 		return _name;
 	}
 
-	public void setPort(int port) {
+	public final void setPort(int port) {
 		if (port != _port)
 		{
 			_port = port;
@@ -154,7 +167,7 @@ public abstract class SuperAbstractConnectorService extends RSEModelObject imple
 		}
 	}
 
-	public int getPort() {
+	public final int getPort() {
 		return _port;
 	}
 
@@ -177,7 +190,7 @@ public abstract class SuperAbstractConnectorService extends RSEModelObject imple
 	/**
 	 * Set the subsystem, when its not known at constructor time
 	 */
-	public void registerSubSystem(ISubSystem ss) {
+	public final void registerSubSystem(ISubSystem ss) {
 		if (!_registeredSubSystems.contains(ss))
 		{    		
 			_registeredSubSystems.add(ss);
@@ -192,7 +205,7 @@ public abstract class SuperAbstractConnectorService extends RSEModelObject imple
 		_registeredSubSystems.remove(ss);
 	}
 
-	public boolean commit() {
+	public final boolean commit() {
 		return RSECorePlugin.getThePersistenceManager().commit(getHost());
 	}
 
@@ -205,6 +218,18 @@ public abstract class SuperAbstractConnectorService extends RSEModelObject imple
 	 * Returns an empty string by default, override if possible
 	 */
 	public String getHomeDirectory() {
+		return ""; //$NON-NLS-1$
+	}
+
+	/**
+	 * <i>Not implemented, you should override if possible.</i><br>
+	 * Return the temp directory of the remote system for the current user, if available.
+	 * <p>
+	 * Up to each implementer to decide how to implement, and if this will be cached.
+	 * <p>
+	 * Returns an empty string by default, override if possible
+	 */
+	public String getTempDirectory() {
 		return ""; //$NON-NLS-1$
 	}
 
@@ -265,26 +290,26 @@ public abstract class SuperAbstractConnectorService extends RSEModelObject imple
 	public void reset() {
 	}
 
-	public void notifyDisconnection() {
+	protected void notifyDisconnection() {
 		
 		 // Fire comm event to signal state changed
 		if (!isConnected()) fireCommunicationsEvent(CommunicationsEvent.AFTER_DISCONNECT);
 	}
 
-	public void notifyConnection() {
+	protected void notifyConnection() {
 		if (isConnected()) fireCommunicationsEvent(CommunicationsEvent.AFTER_CONNECT);
 	}
 
-	public void notifyError() {
+	protected void notifyError() {
 		fireCommunicationsEvent(CommunicationsEvent.CONNECTION_ERROR);
 	
 	}
 
-	public boolean isUsingSSL() {
+	public final boolean isUsingSSL() {
 		return _usingSSL;
 	}
 
-	public void setIsUsingSSL(boolean flag) {
+	public final void setIsUsingSSL(boolean flag) {
 		if (_usingSSL != flag)
 		{
 			_usingSSL = flag;
@@ -307,58 +332,6 @@ public abstract class SuperAbstractConnectorService extends RSEModelObject imple
 		return (ISubSystem[])_registeredSubSystems.toArray(new ISubSystem[_registeredSubSystems.size()]);
 	}
 
-	/**
-	 * <i>Not implemented, you should override if possible.</i><br>
-	 * Return the temp directory of the remote system for the current user, if available.
-	 * <p>
-	 * Up to each implementer to decide how to implement, and if this will be cached.
-	 * <p>
-	 * Returns an empty string by default, override if possible
-	 */
-	public String getTempDirectory() {
-		return ""; //$NON-NLS-1$
-	}
-
-	/**
-	 * This methods returns the enablement state per server launch type.
-	 * If {@link RemoteServerLauncher#enableServerLaunchType(ServerLaunchType, boolean)} has not been
-	 *  called for this server launch type, then it is enabled by default.
-	 * @see org.eclipse.rse.core.subsystems.ServerLaunchType
-	 */
-	protected boolean isEnabledServerLaunchType(ISubSystem subsystem, ServerLaunchType serverLaunchType) {
-		IServerLauncherProperties sl = getRemoteServerLauncherProperties();
-		if (sl instanceof RemoteServerLauncher)
-		{
-			RemoteServerLauncher isl = (RemoteServerLauncher)sl;
-			return isl.isEnabledServerLaunchType(serverLaunchType);
-		}
-		else
-			return subsystem.getSubSystemConfiguration().supportsServerLaunchType(serverLaunchType);
-	}
-
-	/**
-	 * Return the remote server launcher, which implements IServerLauncher.
-	 * This is called by the default implementation of connect() and disconnect(), if 
-	 * subsystem.getParentSubSystemConfiguration().supportsServerLaunchProperties returns true.
-	 * <p>This returns null be default!
-	 */
-	public IServerLauncher getRemoteServerLauncher() {
-		return null;
-	}
-
-	/**
-	 * <i>You must override</i>
-	 * unless subsystem.getParentSubSystemConfiguration().supportsServerLaunchProperties 
-	 * returns true.
-	 * <p>
-	 * Attempt to connect to the remote system.<br> 
-	 * If the subsystem supports server launch,
-	 * the default behavior is to get the remote server launcher by
-	 * {@link #getRemoteServerLauncher()}, and if {@link IServerLauncher#isLaunched()}
-	 * returns false, to call {@link IServerLauncher#launch(IProgressMonitor)}. 
-	 * <p>
-	 * This is called, by default, from the connect(...) methods of the subsystem.
-	 */
 	protected abstract void internalConnect(IProgressMonitor monitor) throws Exception;
 
 	protected abstract void internalDisconnect(IProgressMonitor monitor) throws Exception;

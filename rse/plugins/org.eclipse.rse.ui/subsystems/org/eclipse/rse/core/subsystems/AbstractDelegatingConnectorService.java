@@ -240,30 +240,6 @@ public abstract class AbstractDelegatingConnectorService implements IDelegatingC
 		return false;
 	}
 
-	public void notifyConnection() {
-		IConnectorService conServ = getRealConnectorService();
-		if (conServ != null)
-		{
-			conServ.notifyConnection();
-		}
-	}
-
-	public void notifyDisconnection() {
-		IConnectorService conServ = getRealConnectorService();
-		if (conServ != null)
-		{
-			conServ.notifyDisconnection();
-		}
-	}
-
-	public void notifyError() {
-		IConnectorService conServ = getRealConnectorService();
-		if (conServ != null)
-		{
-			conServ.notifyError();
-		}
-	}
-
 	public void promptForPassword(boolean forcePrompt)
 			throws InterruptedException {
 		IConnectorService conServ = getRealConnectorService();

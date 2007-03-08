@@ -414,11 +414,11 @@ public class DStoreConnectorService extends AbstractConnectorService implements 
 
 	/**
 	 * Return if you support remotely launching a server script 
-	 * @deprecated Use instead {@link #isEnabledServerLaunchType(ISubSystem, ServerLaunchType)} 
+	 * @deprecated Use instead {@link #isServerLaunchTypeEnabled(ISubSystem, ServerLaunchType)} 
 	 *  or {@link org.eclipse.rse.core.subsystems.SubSystemConfiguration#supportsServerLaunchType(ServerLaunchType)}
 	 */			
 	public boolean getRexecLaunchEnabled(SubSystem subsystemImpl) {
-		return isEnabledServerLaunchType(subsystemImpl, ServerLaunchType.REXEC_LITERAL);
+		return isServerLaunchTypeEnabled(subsystemImpl, ServerLaunchType.REXEC_LITERAL);
 	}
 
 //	/**
@@ -432,11 +432,11 @@ public class DStoreConnectorService extends AbstractConnectorService implements 
 
 	/**
 	 * Return if you support connecting to a server already running 
-	 * @deprecated Use instead {@link #isEnabledServerLaunchType(ISubSystem, ServerLaunchType)} 
+	 * @deprecated Use instead {@link #isServerLaunchTypeEnabled(ISubSystem, ServerLaunchType)} 
 	 *  or {@link org.eclipse.rse.core.subsystems.SubSystemConfiguration#supportsServerLaunchType(ServerLaunchType)} 
 	 */			
 	public boolean getNoLaunchEnabled(SubSystem subsystemImpl) {
-		return isEnabledServerLaunchType(subsystemImpl, ServerLaunchType.RUNNING_LITERAL);
+		return isServerLaunchTypeEnabled(subsystemImpl, ServerLaunchType.RUNNING_LITERAL);
 	}	
 	
 	/**
@@ -465,12 +465,6 @@ public class DStoreConnectorService extends AbstractConnectorService implements 
 			setDirty(true);
 		}		
 	}
-
-	public boolean hasRemoteServerLauncherProperties() {
-		return _remoteServerLauncherProperties != null;
-	}
-
-
 	
 	/**
 	 * @see org.eclipse.rse.core.subsystems.IConnectorService#connect(IProgressMonitor)
@@ -1275,9 +1269,9 @@ public class DStoreConnectorService extends AbstractConnectorService implements 
 		}
 	}
 
-	/**
-	* @see org.eclipse.rse.core.subsystems.AbstractConnectorService#getPasswordInformation()
-	*/
+//	/**
+//	* @see org.eclipse.rse.core.subsystems.AbstractConnectorService#getPasswordInformation()
+//	*/
 //	public SystemSignonInformation getPasswordInformation()
 //	{
 //		// For Windows we want to avoid the signon prompt (because we never
@@ -1301,9 +1295,9 @@ public class DStoreConnectorService extends AbstractConnectorService implements 
 //		}
 //	}
 
-	/**
-	 * @see org.eclipse.rse.core.subsystems.AbstractConnectorService#isPasswordCached()
-	 */
+//	/**
+//	 * @see AbstractConnectorService#hasPassword(boolean)
+//	 */
 //	public boolean isPasswordCached()
 //	{
 //		// For Windows we never prompt for userid / password so we don't need 

@@ -21,12 +21,13 @@ import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.model.IRSEModelObject;
 
 /**
- * This is the interface implemented by AbstractConnectorService
- * (formerly System) objects.
+ * A connector service provides the means of establishing a connection from 
+ * a subsystem (or a number of subsystems) to a target system (a host).
  * <p>
  * A connector service manages a live connection to a remote system, with
  * operations for connecting and disconnecting, and storing information
- * typically cached from a subsystem: credentials, port, etc.
+ * typically cached from a subsystem: credentials (such as a userId/password),
+ * port, etc.
  * <p>
  * The SubSystem interface includes a method, getConnectorService(),
  * which returns an instance of an object that implements this interface
@@ -41,56 +42,51 @@ import org.eclipse.rse.core.model.IRSEModelObject;
 public interface IConnectorService extends IRSEModelObject {
 
 	/**
-	 * Return the subsystem object this system is associated with
+	 * @return the primary subsystem object this connector service is associated
+	 * with. This is usually the subsystem that first established this
+	 * connector service.
 	 */
 	public ISubSystem getPrimarySubSystem();
 
 	/**
-	 * Return all the subsystems that use this service
+	 * Return all the subsystems that use this connector service
 	 * @return the subsystems that use this service
 	 */
 	public ISubSystem[] getSubSystems();
 
 	/**
-	 * Set the subsystem, when its not known at constructor time
+	 * Adds a subsystem to this connector service. Does nothing if the
+	 * subsystem is already known to this connector service.
+	 * @param ss a subsystem that is using this connector service.
 	 */
 	public void registerSubSystem(ISubSystem ss);
 
 	/**
-	 * Deregister the subsystem
-	 * @param ss
+	 * Deregister the subsystem. Does nothing if the subsystem is not present.
+	 * @param ss the subsystem to remove from this connector service.
 	 */
 	public void deregisterSubSystem(ISubSystem ss);
 
 	/**
-	 * Return true if currently connected.
+	 * @return true if currently connected.
 	 */
 	public boolean isConnected();
 
 	/**
-	 * Attempt to connect to the remote system.
+	 * Connects to the remote system.
+	 * @param monitor a monitor for tracking the progress and canceling a connect
+	 * operation.
+	 * @throws Exception an exception of there is a failure to connect.
 	 */
 	public void connect(IProgressMonitor monitor) throws Exception;
 
 	/**
-	 * Disconnect from the remote system
+	 * Disconnects from the remote system.
+	 * @param monitor a monitor for tracking the progress and canceling a disconnect
+	 * operation.
+	 * @throws Exception an exception of the disconnect fails.
 	 */
 	public void disconnect(IProgressMonitor monitor) throws Exception;
-
-	/**
-	 * Notifies all listeners of a disconnection through a communications event
-	 */
-	public void notifyDisconnection();
-
-	/**
-	 * Notifies all listeners of a connection through a communications event
-	 */
-	public void notifyConnection();
-
-	/**
-	 * Notifies all listeners of an error through a communications event
-	 */
-	public void notifyError();
 
 	/**
 	 * Reset after some fundamental change, such as a hostname change.
@@ -99,206 +95,239 @@ public interface IConnectorService extends IRSEModelObject {
 	public void reset();
 
 	/**
-	 * Return the version, release, modification of the remote system,
-	 *  if connected, if applicable and if available. Else return null.
-	 * <p>
-	 * Up to each implementer to decide if this will be cached.
+	 * @return the version, release, modification of the remote system,
+	 * if connected, if applicable, and if available. Return null if
+	 * this information is not available.
 	 */
 	public String getVersionReleaseModification();
 
 	/**
-	 * Return the home directory of the remote system for the current user, if available.
-	 * <p>
-	 * Up to each implementer to decide how to implement, and if this will be cached.
+	 * @return the home directory of the remote system for the current user,
+	 * if available.
 	 */
 	public String getHomeDirectory();
 
 	/**
-	 * Return the temp directory of the remote system for the current user, if available.
-	 * <p>
-	 * Up to each implementer to decide how to implement, and if this will be cached.
+	 * @return the temporary directory of the remote system for the current user,
+	 * if available.
 	 */
 	public String getTempDirectory();
 
-	// --------------------------------------------------------------------
-	// Utility methods that offer combined connection and subsystem info...
-	// --------------------------------------------------------------------
 	/**
-	 * Return the system type for this connection.
+	 * @return the system type for this connection.
 	 */
 	public String getHostType();
 
 	/**
-	 * Return the name of this connector service
 	 * @return the name of this connector service
 	 */
 	public String getName();
 
+	/**
+	 * Sets the host used by this connector service.
+	 * @param host 
+	 */
 	public void setHost(IHost host);
 
 	/**
-	 * Return the host
-	 * @return the host
+	 * @return the host used by this connector service.
 	 */
 	public IHost getHost();
 
 	/**
-	 * Return the host name for the connection this system's subsystem is associated with
+	 * @return the host name for the connection associated with this
+	 * connector service.
 	 */
 	public String getHostName();
 
 	/**
-	 * Return the port for this connector
+	 * @return the port for this connector service. Usually only used for
+	 * IP based connections.
 	 */
 	public int getPort();
 
 	/**
-	 * Set the port for this connector
-	 * @param port
+	 * Set the port for this connector. Usually only used by IP based
+	 * connections.
+	 * @param port the IP port used by this connector service.
 	 */
 	public void setPort(int port);
 
 	/**
-	 * Return the userId for this system's subsystem we are associated with
+	 * @return true if this connector service will attempt to 
+	 * use SSL when establishing its connection.
+	 */
+	public boolean isUsingSSL();
+
+	/**
+	 * @param flag true if the connector service should attempt to use SSL when 
+	 * establishing the connection.
+	 */
+	public void setIsUsingSSL(boolean flag);
+
+	/**
+	 * @return the userId that will be used by this connector when
+	 * establishing its connection.
 	 */
 	public String getUserId();
 
 	/**
-	 * Set the user id for this connector
-	 * @param userId
+	 * Set the user id this connector service will use when establishing its
+	 * connection.
+	 * @param userId the user id string for this connector service.
 	 */
 	public void setUserId(String userId);
 
-	public boolean isUsingSSL();
-
-	public void setIsUsingSSL(boolean flag);
-
 	/**
-	 * Return the password for this system's subsystem we are associated with.
+	 * Acquire the password for this connector service.
 	 * <p>
-	 * If not currently set in transient memory, prompts the user for a password.
+	 * Implementations may retain a remembered password or
+	 * use this acquire the password using some implementation defined means.
 	 * <p>
-	 * Throws InterruptedException if user is prompted and user cancels that prompt.
-	 * @param forcePrompt forces the prompt dialog to be displayed even if the password is currently
-	 * in memory.
+	 * Throws InterruptedException if acquisition of the 
+	 * password is canceled for some reason.
+	 * @param reacquire if true will force the connector service to discard
+	 * any remembered value and reacquire the password.
 	 */
-	public void promptForPassword(boolean forcePrompt) throws InterruptedException;
+	public void promptForPassword(boolean reacquire) throws InterruptedException;
 
 	/**
-	 * Set the password if you got it from somewhere
+	 * Sets the password used by this connector service.
+	 * Can be used if the connector service acquires a password by some external
+	 * means.
+	 * @param matchingUserId The user id to be associated with this password.
+	 * @param password the password
+	 * @param persist true if the password is to be persisted for later use.
 	 */
 	public void setPassword(String matchingUserId, String password, boolean persist);
 
 	/**
-	 * Clear internal userId cache. Called when user uses the property dialog to 
-	 * change his userId.
+	 * Clears the userId held by this service.
+	 * Should be called if there is a change to the user id for 
+	 * any using subsystem.
 	 */
 	public void clearUserId();
 
 	/**
-	 * Clear internal password cache. Called when user uses the property dialog to 
+	 * Clear password held by this service and optionally 
+	 * clear its persistent form. 
+	 * Called when user uses the property dialog to 
 	 * change his userId.  
-	 * @param onDisk if true, clears the password from disk 
+	 * @param onDisk if true, clears the persistent form of the password 
 	 */
 	public void clearPassword(boolean onDisk);
 
 	/**
-	 * Return true if password is currently cached.
+	 * @param onDisk retrieve the persistent form of the password.
+	 * @return true if password is currently known to this service.
 	 */
 	public boolean hasPassword(boolean onDisk);
 
 	/**
-	 * Return true if this system can inherit the uid and password of
-	 * other ISystems in this connection
-	 * 
+	 * Returns true if this system can inherit the uid and password of
+	 * from the connection (Host).
 	 * @return true if it can inherit the user/password
 	 */
 	public boolean inheritConnectionUserPassword();
 
-	/*
-	 * Return true if this system can share it's uid and password
-	 * with other ISystems in this connection
-	 * 
-	 * @return true if it can share the user/password
+	/**
+	 * Return true if this system can share it's userId and password
+	 * with other connector services in this host.
+	 * @return true if it can share the userId/password
 	 */
 	public boolean shareUserPasswordWithConnection();
 
 	/**
-	 * Register a communications listener
+	 * Register a communications listener. These listeners will be informed
+	 * of connect and disconnect events.
+	 * @param listener a listener for the communications event.
 	 */
 	public void addCommunicationsListener(ICommunicationsListener listener);
 
 	/**
-	 * Remove a communications listener
+	 * Remove a communications listener.
+	 * @param listener a listener for the communications event.
 	 */
 	public void removeCommunicationsListener(ICommunicationsListener listener);
 
 	/**
-	 * Returns the suppressSignonPrompt flag.  If this is set to true then the user
-	 * will not be prompted to signon, instead an InterruptedException will be thrown 
-	 * by the promptForPassword method.
-	 * 
-	 * @return boolean
+	 * @return true if the password acquisition is to be suppressed.
 	 */
 	public boolean isSuppressSignonPrompt();
 
 	/**
-	 * Sets the suppressSignonPrompt flag.  Tool writers can use this to temporarily
-	 * disable the user from being prompted to signon.  This would cause the promptForPassword
-	 * method to throw an InterruptedException instead of prompting.  The intent of this
-	 * method is to allow tool writeres to prevent multiple signon prompts during a 
-	 * set period of time (such as a series of related communication calls) if the user
-	 * cancels the first prompt.  <b>It is the callers responsability to set this value 
-	 * back to false when the tool no longer needs to suppress the signon prompt or all
-	 * other tools sharing this connection will be affected.</b>
+	 * Suppresses the acquisition of a password by the connector service.
+	 * Causes {@link #promptForPassword(boolean)} to immediately
+	 * throw an InterruptedException.
+	 * <p>
+	 * The intent is to allow tool writers to prevent multiple 
+	 * attempts to acquire a password during a set period of time.
+	 * <b>It is the callers responsibility to set this value 
+	 * back to false when the tool no longer needs to suppress
+	 * acquisition of the password.</b>
 	 * 
-	 * @param suppressSignonPrompt
+	 * @param suppressSignonPrompt <code>true</code> if acquisition is to be suppressed.
+	 * <code>false</code> if acquisition is to be allowed.
 	 */
 	public void setSuppressSignonPrompt(boolean suppressSignonPrompt);
 
 	/**
-	 * Returns the value of the '<em><b>Remote Server Launcher</b></em>' containment reference.
-	 * It is bidirectional and its opposite is '{@link org.eclipse.rse.core.subsystems.IServerLauncherProperties#getConnectorService()}'.
-	 * <!-- begin-user-doc -->
-	 * <p>
-	 * Get the remote server launcher, which may be null. This an optional object containing
-	 *  properties used to launch the remote server that communicates with this subsystem.
-	 * </p>
-	 * <!-- end-user-doc -->
-	 * @return the value of the '<em>Remote Server Launcher</em>' containment reference.
-	 * @see #setRemoteServerLauncherProperties(IServerLauncherProperties)
-	 * @see org.eclipse.rse.core.subsystems.IServerLauncherProperties#getConnectorService()
-	 * @model opposite="parentSubSystem" containment="true"
-	 * @generated
+	 * This methods returns the enablement state of a server launch type.
+	 * If {@link RemoteServerLauncher#enableServerLaunchType(ServerLaunchType, boolean)} has not been
+	 * called for this server launch type, then it is enabled by default.
+	 * @param subsystem the subystem for which this may be enabled.
+	 * @param serverLaunchType the type to check for enabledment.
+	 * @return true if the connector service supports server launching and 
+	 * this launch type is enabled.
+	 * @see org.eclipse.rse.core.subsystems.ServerLaunchType
+	 */
+	public boolean isServerLaunchTypeEnabled(ISubSystem subsystem, ServerLaunchType serverLaunchType);
+
+	/**
+	 * Gets the properties associated with a remote server launcher.
+	 * These may be null.
+	 * This an optional object containing
+	 * properties used to launch the remote server that
+	 * communicates with this client.
+	 * @return the properties of the server launcher
 	 */
 	IServerLauncherProperties getRemoteServerLauncherProperties();
 
 	/**
-	 * Sets the value of the '{@link org.eclipse.rse.core.subsystems.IConnectorService#getRemoteServerLauncherProperties()}' containment reference.
-	 * <!-- begin-user-doc -->
-	 * Set the remote server launcher, which is an optional object containing
-	 *  properties used to launch the remote server that communicates with this subsystem.
-	 * <!-- end-user-doc -->
+	 * Set the properties for the remote server launcher
+	 * This is an object containing
+	 * properties used to launch a remote server that 
+	 * communicates with this client.
 	 * @param value the new value of the '<em>Remote Server Launcher</em>' containment reference.
-	 * @see #getRemoteServerLauncherProperties()
-	 * @generated
 	 */
 	void setRemoteServerLauncherProperties(IServerLauncherProperties value);
 
+	/**
+	 * @return true if the connector service has server launcher properties.
+	 */
 	boolean hasRemoteServerLauncherProperties();
 
-	boolean supportsRemoteServerLaunching();
-
 	/**
-	 * Tell us if this subsystem factory supports server launch properties, which allow the user
-	 * to configure how the server-side code for these subsystems are started. There is a Server
-	 * Launch Setting property page, with a pluggable composite, where users can configure these 
-	 * properties. 
+	 * @return true if the connector service supports the concept of remote
+	 * server launch properties. This will always return false {@link #supportsRemoteServerLaunching()}
+	 * is false. 
 	 */
-	public boolean supportsServerLaunchProperties();
+	boolean supportsServerLaunchProperties();
 
 	/**
-	 * Report if this connector service can use a user identifier.
+	 * @return true if the connector service supports the concept of remote
+	 * server launching.
+	 */
+	boolean supportsRemoteServerLaunching();
+	
+	/**
+	 * @return the server launcher. Will be null unless {@link #supportsRemoteServerLaunching()} 
+	 * is true.
+	 */
+	IServerLauncher getRemoteServerLauncher();
+
+	/**
+	 * Reports if this connector service can use a user identifier.
 	 * Returns true in default implementation.
 	 * Typically used to indicate if a login dialog needs to be presented when connecting.
 	 * @return true if and only if the connector service can use a user id.
@@ -306,7 +335,7 @@ public interface IConnectorService extends IRSEModelObject {
 	public boolean supportsUserId();
 
 	/**
-	 * Report if this connector service requires a user id.
+	 * Reports if this connector service requires a user id.
 	 * Returns true in default implementation.
 	 * Typically used to indicate if a login dialog can allow an empty user id.
 	 * Must be ignored if supportsUserId() is false.
@@ -315,17 +344,20 @@ public interface IConnectorService extends IRSEModelObject {
 	public boolean requiresUserId();
 
 	/**
-	 * Can be used to determine if a password field is present on a login dialog for this connector service.
+	 * Determines if this connector service understand the concept of a
+	 * password.
 	 * The default implementation of this interface should return true.
-	 * @return true if the subsystem can use a password, false if a password is irrelevant.
+	 * @return true if the connector service can use a password, 
+	 * false if a password is irrelevant.
 	 */
 	public boolean supportsPassword();
 
 	/**
-	 * If a password is supported this is used to determine if the password is required.
-	 * Must be ignored if supportsPassword() returns false.
+	 * Determines if a password is required for this connector service.
+	 * Must be ignored if {@link #supportsPassword()} returns false.
 	 * The default implementation of this interface should return true.
-	 * @return true if the connector service requires a password, false if a password may be empty.
+	 * @return true if the connector service requires a password, 
+	 * false if a password may be empty.
 	 */
 	public boolean requiresPassword();
 

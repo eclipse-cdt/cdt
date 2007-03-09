@@ -16,8 +16,8 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 
 class SourcePath {
-	static final String ELEMENT_NAME = "sourcePath";
-	private static final String ATTRIBUTE_PATH = "path";
+	static final String ELEMENT_NAME = "sourcePath"; //$NON-NLS-1$
+	private static final String ATTRIBUTE_PATH = "path"; //$NON-NLS-1$
 	private IPath path;
 	
 	SourcePath(IPath path) {

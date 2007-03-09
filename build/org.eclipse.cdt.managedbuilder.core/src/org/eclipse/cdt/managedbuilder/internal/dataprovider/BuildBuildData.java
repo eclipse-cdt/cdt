@@ -40,7 +40,7 @@ public class BuildBuildData extends CBuildData {
 	
 	private IPath createAbsolutePathFromWorkspacePath(IPath path){
 		IStringVariableManager mngr = VariablesPlugin.getDefault().getStringVariableManager();
-		String locationString = mngr.generateVariableExpression("workspace_loc", path.toString());
+		String locationString = mngr.generateVariableExpression("workspace_loc", path.toString()); //$NON-NLS-1$
 		return new Path(locationString);
 	}
 

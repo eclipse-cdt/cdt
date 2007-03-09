@@ -98,7 +98,7 @@ public class BuildProperties implements IBuildProperties {
 	public String toStringExistingProperties(){
 		int size = fPropertiesMap.size(); 
 		if(size == 0)
-			return "";
+			return ""; //$NON-NLS-1$
 		else if(size == 1)
 			return fPropertiesMap.values().iterator().next().toString();
 		

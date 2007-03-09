@@ -13,7 +13,7 @@ package org.eclipse.cdt.managedbuilder.core;
 import org.eclipse.cdt.core.settings.model.extension.CFolderData;
 
 public interface IFolderInfo extends IResourceInfo {
-	public final static String FOLDER_INFO_ELEMENT_NAME = "folderInfo";
+	public final static String FOLDER_INFO_ELEMENT_NAME = "folderInfo"; //$NON-NLS-1$
 
 	ITool[] getFilteredTools();
 	

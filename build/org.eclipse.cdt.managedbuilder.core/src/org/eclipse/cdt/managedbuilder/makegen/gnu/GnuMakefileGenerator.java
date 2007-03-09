@@ -1221,7 +1221,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 			IPath projectRelativePath = subDir.getProjectRelativePath();
 			
 			if(!projectRelativePath.toString().equals("")) //$NON-NLS-1$
-				buffer.append("-include " + escapeWhitespaces(projectRelativePath.toString()) + SEPARATOR + "subdir.mk"+ NEWLINE); //$NON-NLS-1$
+				buffer.append("-include " + escapeWhitespaces(projectRelativePath.toString()) + SEPARATOR + "subdir.mk"+ NEWLINE); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		
 		buffer.append("-include objects.mk" + NEWLINE + NEWLINE); //$NON-NLS-1$
@@ -3544,7 +3544,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 		String[] bufferLines = inBufferString.split("[\\r\\n]");	//$NON-NLS-1$
 		for (int i=0; i<bufferLines.length; i++) {
 			String bufferLine = bufferLines[i];
-			if (bufferLine.endsWith(":")) {
+			if (bufferLine.endsWith(":")) { //$NON-NLS-1$
 				StringBuffer outBuffer = addDefaultHeader(); 
 				outBuffer.append(inBuffer);
 				Util.save(outBuffer, makefile);
@@ -3703,7 +3703,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 	 * @return
 	 */
 	static public String escapedEcho(String string) {
-		String escapedString = string.replaceAll("'", "'\"'\"'"); 
+		String escapedString = string.replaceAll("'", "'\"'\"'");  //$NON-NLS-1$ //$NON-NLS-2$
 		return ECHO + WHITESPACE + SINGLE_QUOTE + escapedString + SINGLE_QUOTE + NEWLINE;
 	}
 	
@@ -3736,7 +3736,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 
 	static public boolean containsSpecialCharacters(String path)
 	{
-		return path.matches(".*(\\s|[\\{\\}\\(\\)\\$\\@%=;]).*");
+		return path.matches(".*(\\s|[\\{\\}\\(\\)\\$\\@%=;]).*"); //$NON-NLS-1$
 	}
 	
 	/* (non-Javadoc)
@@ -4344,7 +4344,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 		if(folderPath != null){
 			folderPath = folderPath.removeFirstSegments(1);
 		} else {
-			folderPath = new Path("");
+			folderPath = new Path(""); //$NON-NLS-1$
 		}
 		IResourceInfo rcInfo = config.getResourceInfo(folderPath, false);
 		if(rcInfo instanceof IFileInfo){
@@ -4388,7 +4388,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 		if(folderPath != null){
 			folderPath = folderPath.removeFirstSegments(1);
 		} else {
-			folderPath = new Path("");
+			folderPath = new Path(""); //$NON-NLS-1$
 		}
 		ToolInfoHolder h = getToolInfo(folderPath);
 		ITool[] tools = h.buildTools;
@@ -4594,8 +4594,8 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 	 * @return a String without the outermost quotes (if the input has them)
 	 */
 	public static String ensureUnquoted(String path) {
-		boolean doubleQuoted = path.startsWith("\"") && path.endsWith("\"");
-		boolean singleQuoted = path.startsWith("'") && path.endsWith("'");
+		boolean doubleQuoted = path.startsWith("\"") && path.endsWith("\""); //$NON-NLS-1$ //$NON-NLS-2$
+		boolean singleQuoted = path.startsWith("'") && path.endsWith("'"); //$NON-NLS-1$ //$NON-NLS-2$
 		return doubleQuoted || singleQuoted ? path.substring(1,path.length()-1) : path; 
 	}
 
@@ -4658,7 +4658,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 		
 		srcPaths = config.getSourcePaths();
 		if(srcPaths.length == 0){
-			srcPaths = new IPath[]{new Path("")};
+			srcPaths = new IPath[]{new Path("")}; //$NON-NLS-1$
 		} else {
 		}
 	}

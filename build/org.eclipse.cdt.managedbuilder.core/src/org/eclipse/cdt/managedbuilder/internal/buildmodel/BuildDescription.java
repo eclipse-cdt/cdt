@@ -707,7 +707,7 @@ public class BuildDescription implements IBuildDescription {
 		
 		fSourcePaths = fCfg.getSourcePaths();
 		if(fSourcePaths.length == 0){
-			fSourcePaths = new IPath[]{new Path("")};
+			fSourcePaths = new IPath[]{Path.EMPTY};
 		} 
 		fInputStep = createStep(null,null);
 		fOutputStep = createStep(null,null);
@@ -2085,7 +2085,7 @@ public class BuildDescription implements IBuildDescription {
 	private ToolInfoHolder getToolInfo(BuildResource rc){
 		IPath path = rc.isProjectResource() ? 
 				rc.getFullPath().removeFirstSegments(1).makeRelative() :
-					new Path("");
+					Path.EMPTY;
 		return getToolInfo(path);
 	}
 	

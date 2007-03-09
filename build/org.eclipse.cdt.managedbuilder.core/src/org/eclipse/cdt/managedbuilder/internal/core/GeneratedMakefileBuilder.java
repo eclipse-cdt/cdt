@@ -1296,14 +1296,25 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 				buf.append(System.getProperty("line.separator", "\n")); //$NON-NLS-1$//$NON-NLS-2$
 				
 				// Report time and number of threads used
-				buf.append("Time consumed: ");
-				buf.append(t2 - t1);
-				buf.append(" ms.  ");
+//				buf.append("Time consumed: ");
+//				buf.append(t2 - t1);
+//				buf.append(" ms.  ");
+//				if (isParallel) {
+//					buf.append("Parallel threads used: ");
+//					buf.append(ParallelBuilder.lastThreadsUsed);
+//				}
+//				buf.append("\n");
+				
+				// Report time and number of threads used
+				buf.append(ManagedMakeMessages.getFormattedString("CommonBuilder.6", Integer.toString((int)(t2 - t1)))); //$NON-NLS-1$
+//				buf.append(t2 - t1);
+//				buf.append(" ms.  ");
 				if (isParallel) {
-					buf.append("Parallel threads used: ");
-					buf.append(ParallelBuilder.lastThreadsUsed);
+					buf.append(ManagedMakeMessages.getFormattedString("CommonBuilder.7", Integer.toString(ParallelBuilder.lastThreadsUsed))); //$NON-NLS-1$
+//					buf.append(ParallelBuilder.lastThreadsUsed);
 				}
-				buf.append("\n");
+				buf.append(System.getProperty("line.separator", "\n")); //$NON-NLS-1$ //$NON-NLS-2$
+
 				// Write message on the console 
 				consoleOutStream.write(buf.toString().getBytes());
 				consoleOutStream.flush();
@@ -1583,7 +1594,7 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 	
 	public void cleanFile(IFile file, IProgressMonitor monitor) {
 
-		monitor.subTask("Cleaning output file(s) for "
+		monitor.subTask(ManagedMakeMessages.getResourceString("GeneratedMakefileBuilder.0") //$NON-NLS-1$
 				+ file.getProjectRelativePath());
 
 		// remove all markers on the file

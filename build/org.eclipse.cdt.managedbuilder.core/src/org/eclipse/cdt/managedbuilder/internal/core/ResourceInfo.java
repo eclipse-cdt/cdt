@@ -278,7 +278,7 @@ public abstract class ResourceInfo extends BuildObject implements IResourceInfo 
 		}
 		
 		if (isExcluded) {
-			element.setAttribute(IResourceInfo.EXCLUDE, "true");
+			element.setAttribute(IResourceInfo.EXCLUDE, "true"); //$NON-NLS-1$
 		}
 
 		if (path != null) {

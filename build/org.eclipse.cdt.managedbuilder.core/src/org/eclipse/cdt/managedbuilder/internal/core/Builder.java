@@ -787,7 +787,7 @@ public class Builder extends BuildObject implements IBuilder, IMatchKeyProvider 
 		if(supportsManagedBuild != null)
 			element.setAttribute(ATTRIBUTE_SUPORTS_MANAGED_BUILD, supportsManagedBuild.toString());
 		if(customizedErrorParserIds != null)
-			element.setAttribute(ATTRIBUTE_CUSTOMIZED_ERROR_PARSERS, CDataUtil.arrayToString(customizedErrorParserIds, ";"));
+			element.setAttribute(ATTRIBUTE_CUSTOMIZED_ERROR_PARSERS, CDataUtil.arrayToString(customizedErrorParserIds, ";")); //$NON-NLS-1$
 		if(customizedEnvironment != null)
 			element.setAttribute(ATTRIBUTE_ENVIRONMENT, MapStorageElement.encodeMap(customizedEnvironment));
 		if(appendEnvironment != null)
@@ -1566,7 +1566,7 @@ public class Builder extends BuildObject implements IBuilder, IMatchKeyProvider 
 		IBuildMacroProvider provider = ManagedBuildManager.getBuildMacroProvider();
 
 		try {
-			args = provider.resolveValue(args, "", " ", IBuildMacroProvider.CONTEXT_CONFIGURATION, getMacroContextData());
+			args = provider.resolveValue(args, "", " ", IBuildMacroProvider.CONTEXT_CONFIGURATION, getMacroContextData()); //$NON-NLS-1$ //$NON-NLS-2$
 		} catch (BuildMacroException e) {
 		}
 		
@@ -1578,7 +1578,7 @@ public class Builder extends BuildObject implements IBuilder, IMatchKeyProvider 
 		IBuildMacroProvider provider = ManagedBuildManager.getBuildMacroProvider();
 
 		try {
-			command = provider.resolveValue(command, "", " ", IBuildMacroProvider.CONTEXT_CONFIGURATION, getMacroContextData());
+			command = provider.resolveValue(command, "", " ", IBuildMacroProvider.CONTEXT_CONFIGURATION, getMacroContextData()); //$NON-NLS-1$ //$NON-NLS-2$
 		} catch (BuildMacroException e) {
 		}
 
@@ -1643,7 +1643,7 @@ public class Builder extends BuildObject implements IBuilder, IMatchKeyProvider 
 		IBuildMacroProvider provider = ManagedBuildManager.getBuildMacroProvider();
 
 		try {
-			path = provider.resolveValue(path, "", " ", IBuildMacroProvider.CONTEXT_CONFIGURATION, getMacroContextData());
+			path = provider.resolveValue(path, "", " ", IBuildMacroProvider.CONTEXT_CONFIGURATION, getMacroContextData()); //$NON-NLS-1$ //$NON-NLS-2$
 		} catch (BuildMacroException e) {
 		}
 		
@@ -1719,7 +1719,7 @@ public class Builder extends BuildObject implements IBuilder, IMatchKeyProvider 
 		IBuildMacroProvider provider = ManagedBuildManager.getBuildMacroProvider();
 
 		try {
-			attr = provider.resolveValue(attr, "", " ", IBuildMacroProvider.CONTEXT_CONFIGURATION, getMacroContextData());
+			attr = provider.resolveValue(attr, "", " ", IBuildMacroProvider.CONTEXT_CONFIGURATION, getMacroContextData()); //$NON-NLS-1$ //$NON-NLS-2$
 		} catch (BuildMacroException e) {
 		}
 		
@@ -1742,7 +1742,7 @@ public class Builder extends BuildObject implements IBuilder, IMatchKeyProvider 
 		IBuildMacroProvider provider = ManagedBuildManager.getBuildMacroProvider();
 
 		try {
-			attr = provider.resolveValue(attr, "", " ", IBuildMacroProvider.CONTEXT_CONFIGURATION, getMacroContextData());
+			attr = provider.resolveValue(attr, "", " ", IBuildMacroProvider.CONTEXT_CONFIGURATION, getMacroContextData()); //$NON-NLS-1$ //$NON-NLS-2$
 		} catch (BuildMacroException e) {
 		}
 		
@@ -1769,7 +1769,7 @@ public class Builder extends BuildObject implements IBuilder, IMatchKeyProvider 
 		IBuildMacroProvider provider = ManagedBuildManager.getBuildMacroProvider();
 
 		try {
-			attr = provider.resolveValue(attr, "", " ", IBuildMacroProvider.CONTEXT_CONFIGURATION, getMacroContextData());
+			attr = provider.resolveValue(attr, "", " ", IBuildMacroProvider.CONTEXT_CONFIGURATION, getMacroContextData()); //$NON-NLS-1$ //$NON-NLS-2$
 		} catch (BuildMacroException e) {
 		}
 		
@@ -1957,7 +1957,7 @@ public class Builder extends BuildObject implements IBuilder, IMatchKeyProvider 
 				Map.Entry entry = (Map.Entry)iter.next();
 				String value = (String)entry.getValue();
 				try {
-					value = mngr.resolveValue(value, "", separator, cfgDes);
+					value = mngr.resolveValue(value, "", separator, cfgDes); //$NON-NLS-1$
 					entry.setValue(value);
 				} catch (CdtVariableException e){
 				}
@@ -2201,7 +2201,7 @@ public class Builder extends BuildObject implements IBuilder, IMatchKeyProvider 
 		String name = getName();
 		String version = ManagedBuildManager.getVersionFromIdAndVersion(getId());
 		if(version != null && version.length() != 0){
-			return new StringBuffer().append(name).append(" (").append(version).append("").toString();
+			return new StringBuffer().append(name).append(" (").append(version).append("").toString(); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		return name;
 	}
@@ -2344,7 +2344,7 @@ public class Builder extends BuildObject implements IBuilder, IMatchKeyProvider 
 			StringBuffer buf = new StringBuffer();
 			buf.append(ids[0]);
 			for(int i = 1; i < ids.length; i++){
-				buf.append(";").append(ids[i]);
+				buf.append(";").append(ids[i]); //$NON-NLS-1$
 			}
 			errorParserIds = buf.toString();
 		}
@@ -2367,7 +2367,7 @@ public class Builder extends BuildObject implements IBuilder, IMatchKeyProvider 
 			if(version != null){
 			StringBuffer buf = new StringBuffer();
 			buf.append(name);
-			buf.append(" (v").append(version).append(")");
+			buf.append(" (v").append(version).append(")"); //$NON-NLS-1$ //$NON-NLS-2$
 			name = buf.toString();
 			}
 		}

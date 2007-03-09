@@ -29,14 +29,14 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 
 public class BuildPropertyManager implements IBuildPropertyManager{
-	private static final String PROPERTIES_EXT_POINT_ID = "org.eclipse.cdt.managedbuilder.core.buildProperties";
-	static final String PROPERTY_VALUE_SEPARATOR = "=";  
-	static final String PROPERTIES_SEPARATOR = ",";
-	static final String ELEMENT_PROPERTY_TYPE = "propertyType";
-	static final String ELEMENT_PROPERTY_VALUE = "propertyValue";
-	static final String ATTRIBUTE_PROPERTY = "property";
-	static final String ATTRIBUTE_NAME = "name";
-	static final String ATTRIBUTE_ID = "id";
+	private static final String PROPERTIES_EXT_POINT_ID = "org.eclipse.cdt.managedbuilder.core.buildProperties"; //$NON-NLS-1$
+	static final String PROPERTY_VALUE_SEPARATOR = "=";   //$NON-NLS-1$
+	static final String PROPERTIES_SEPARATOR = ","; //$NON-NLS-1$
+	static final String ELEMENT_PROPERTY_TYPE = "propertyType"; //$NON-NLS-1$
+	static final String ELEMENT_PROPERTY_VALUE = "propertyValue"; //$NON-NLS-1$
+	static final String ATTRIBUTE_PROPERTY = "property"; //$NON-NLS-1$
+	static final String ATTRIBUTE_NAME = "name"; //$NON-NLS-1$
+	static final String ATTRIBUTE_ID = "id"; //$NON-NLS-1$
 
 	private static BuildPropertyManager fInstance;
 	
@@ -73,7 +73,7 @@ public class BuildPropertyManager implements IBuildPropertyManager{
 			if(!name.equals(type.getName()))
 				throw new CoreException(new Status(IStatus.ERROR,
 						ManagedBuilderCorePlugin.getUniqueIdentifier(),
-						"property type of the specified id already exists and has different name"));
+						BuildPropertiesMessages.getString("BuildPropertyManager.8"))); //$NON-NLS-1$
 		} else {
 			type = new BuildPropertyType(id, name);
 			fPropertyTypeMap.put(id, type);
@@ -87,7 +87,7 @@ public class BuildPropertyManager implements IBuildPropertyManager{
 			throw new CoreException(new Status(
 					IStatus.ERROR,
 					ManagedBuilderCorePlugin.getUniqueIdentifier(),
-					"specified property type does not exist"));
+					BuildPropertiesMessages.getString("BuildPropertyManager.9"))); //$NON-NLS-1$
 		
 		return createPropertyValue(type, id, name);
 	}
@@ -98,7 +98,7 @@ public class BuildPropertyManager implements IBuildPropertyManager{
 			if(!name.equals(value.getName()))
 				throw new CoreException(new Status(IStatus.ERROR,
 						ManagedBuilderCorePlugin.getUniqueIdentifier(),
-						"property value of the specified id already exists and has different name"));
+						BuildPropertiesMessages.getString("BuildPropertyManager.10"))); //$NON-NLS-1$
 		} else {
 			value = new BuildPropertyValue(id, name);
 			((BuildPropertyType)type).addSupportedValue(value);
@@ -117,7 +117,7 @@ public class BuildPropertyManager implements IBuildPropertyManager{
 			throw new CoreException(new Status(
 					IStatus.ERROR,
 					ManagedBuilderCorePlugin.getUniqueIdentifier(),
-					"specified property type does not exist"));
+					BuildPropertiesMessages.getString("BuildPropertyManager.11"))); //$NON-NLS-1$
 		
 		BuildProperty property = new BuildProperty(type, value);
 		return property;
@@ -193,12 +193,12 @@ public class BuildPropertyManager implements IBuildPropertyManager{
 		if(id == null)
 			throw new CoreException(new Status(IStatus.ERROR,
 					ManagedBuilderCorePlugin.getUniqueIdentifier(),
-					"id not specified"));
+					BuildPropertiesMessages.getString("BuildPropertyManager.12"))); //$NON-NLS-1$
 		String name = el.getAttribute(ATTRIBUTE_NAME);
 		if(name == null)
 			throw new CoreException(new Status(IStatus.ERROR,
 					ManagedBuilderCorePlugin.getUniqueIdentifier(),
-					"name not specified"));
+					BuildPropertiesMessages.getString("BuildPropertyManager.13"))); //$NON-NLS-1$
 
 		return createPropertyType(id, name);
 	}
@@ -208,17 +208,17 @@ public class BuildPropertyManager implements IBuildPropertyManager{
 		if(id == null)
 			throw new CoreException(new Status(IStatus.ERROR,
 					ManagedBuilderCorePlugin.getUniqueIdentifier(),
-					"id not specified"));
+					BuildPropertiesMessages.getString("BuildPropertyManager.14"))); //$NON-NLS-1$
 		String name = el.getAttribute(ATTRIBUTE_NAME);
 		if(name == null)
 			throw new CoreException(new Status(IStatus.ERROR,
 					ManagedBuilderCorePlugin.getUniqueIdentifier(),
-					"name not specified"));
+					BuildPropertiesMessages.getString("BuildPropertyManager.15"))); //$NON-NLS-1$
 		String property = el.getAttribute(ATTRIBUTE_PROPERTY);
 		if(property == null)
 			throw new CoreException(new Status(IStatus.ERROR,
 					ManagedBuilderCorePlugin.getUniqueIdentifier(),
-					"property not specified"));
+					BuildPropertiesMessages.getString("BuildPropertyManager.16"))); //$NON-NLS-1$
 
 		
 		return createPropertyValue(property, id, name);

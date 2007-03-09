@@ -94,7 +94,7 @@ public class BuildResource implements IBuildResource {
 	public void setRemoved(boolean removed) {
 		if(DbgUtil.DEBUG){
 			if(removed)
-				DbgUtil.trace("REMOVED state: resource " + DbgUtil.resourceName(this));
+				DbgUtil.trace("REMOVED state: resource " + DbgUtil.resourceName(this)); //$NON-NLS-1$
 		}
 		fIsRemoved = removed;
 		if(fIsRemoved)

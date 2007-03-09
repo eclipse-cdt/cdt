@@ -8,18 +8,18 @@
  * Contributors:
  * Intel Corporation - Initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.internal.core.settings.model;
+package org.eclipse.cdt.managedbuilder.internal.buildproperties;
 
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
-public class SettingsModelMessages {
-	private static final String BUNDLE_NAME = "org.eclipse.cdt.internal.core.settings.model.SettingsModelMessages"; //$NON-NLS-1$
+public class BuildPropertiesMessages {
+	private static final String BUNDLE_NAME = "org.eclipse.cdt.managedbuilder.internal.buildproperties.BuildPropertiesMessages"; //$NON-NLS-1$
 
 	private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle
 			.getBundle(BUNDLE_NAME);
 
-	private SettingsModelMessages() {
+	private BuildPropertiesMessages() {
 	}
 
 	public static String getString(String key) {

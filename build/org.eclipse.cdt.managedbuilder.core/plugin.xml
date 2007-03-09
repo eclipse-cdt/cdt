@@ -25,7 +25,7 @@
 <!-- =================================================================================== -->
    <extension
          id="genmakebuilder"
-         name="%GeneratedMakefileCBuilder.name"
+         name="%CommonBuilder.name"
          point="org.eclipse.core.resources.builders">
       <builder
             hasNature="true"
@@ -43,7 +43,7 @@
 <!-- =================================================================================== -->
    <extension
          id="managedBuildNature"
-         name="%ManagedBuildNature.name"
+         name="%CDTBuildNature.name"
          point="org.eclipse.core.resources.natures">
       <requires-nature
             id="org.eclipse.cdt.core.cnature">
@@ -65,7 +65,7 @@
    </extension>
    <extension
          id="managedMake"
-         name="%ManagedMakeProject.name"
+         name="%CDTBuildProject.name"
          point="org.eclipse.cdt.core.CProject">
       <cproject
             natureID="org.eclipse.cdt.managedbuilder.core.managedBuildNature"
@@ -211,7 +211,7 @@
    </extension>
    <extension
          id="configurationDataProvider"
-         name="CDT Build System"
+         name="%BuildSystem.name"
          point="org.eclipse.cdt.core.CConfigurationDataProvider">
          <provider
          	natures="org.eclipse.cdt.managedbuilder.core.managedBuildNature;org.eclipse.cdt.managedbuilder.core.ScannerConfigNature"
@@ -220,7 +220,7 @@
    </extension>
    <extension
          id="ProjectConverter"
-         name="pre-4.0 projects converter"
+         name="%ProjectConverter.name"
          point="org.eclipse.cdt.core.projectConverter">
          <converter
          	owners="org.eclipse.cdt.managedbuilder.core.managedMake"
@@ -233,30 +233,30 @@
          id="baseProperties"
          name="Base Build Properties Definition"
          point="org.eclipse.cdt.managedbuilder.core.buildProperties">
-      <propertyType id="org.eclipse.cdt.build.core.buildType" name="Build Type"/>
-      <propertyType id="org.eclipse.cdt.build.core.buildArtefactType" name="Build Artefact Type"/>
+      <propertyType id="org.eclipse.cdt.build.core.buildType" name="%BuildProperty.type.name.buildType"/>
+      <propertyType id="org.eclipse.cdt.build.core.buildArtefactType" name="%BuildProperty.type.name.buildArtefactType"/>
 
       <propertyValue 
             property="org.eclipse.cdt.build.core.buildType" 
             id="org.eclipse.cdt.build.core.buildType.debug" 
-            name="Debug"/>
+            name="%BuildProperty.value.name.debug"/>
       <propertyValue 
             property="org.eclipse.cdt.build.core.buildType" 
             id="org.eclipse.cdt.build.core.buildType.release" 
-            name="Release"/>
+            name="%BuildProperty.value.name.release"/>
 
       <propertyValue 
             property="org.eclipse.cdt.build.core.buildArtefactType" 
             id="org.eclipse.cdt.build.core.buildArtefactType.exe" 
-            name="Executable"/>
+            name="%BuildProperty.type.name.executable"/>
       <propertyValue 
             property="org.eclipse.cdt.build.core.buildArtefactType" 
             id="org.eclipse.cdt.build.core.buildArtefactType.staticLib" 
-            name="Static Library"/>
+            name="%BuildProperty.type.name.staticLibrary"/>
      <propertyValue 
             property="org.eclipse.cdt.build.core.buildArtefactType" 
             id="org.eclipse.cdt.build.core.buildArtefactType.sharedLib" 
-            name="Shared Library"/>
+            name="%BuildProperty.type.name.sharedLibrary"/>
 
       </extension>
       
@@ -378,7 +378,7 @@
       
       <builder
       	id="org.eclipse.cdt.build.core.internal.builder"
-      	name="CDT Internal Builder">
+      	name="%InternalBuilder.name">
       </builder>
       </extension>
       

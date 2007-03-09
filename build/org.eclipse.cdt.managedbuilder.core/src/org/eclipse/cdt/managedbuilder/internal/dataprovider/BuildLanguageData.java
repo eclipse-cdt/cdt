@@ -55,9 +55,9 @@ public class BuildLanguageData extends CLanguageData {
 				typeId = extType.getId();
 			else
 				typeId = inType.getId();
-			fId = new StringBuffer(fTool.getId()).append(".").append(typeId).toString();
+			fId = new StringBuffer(fTool.getId()).append(".").append(typeId).toString(); //$NON-NLS-1$
 		} else {
-			fId = new StringBuffer(fTool.getId()).append(".").append("languagedata").toString();
+			fId = new StringBuffer(fTool.getId()).append(".").append("languagedata").toString(); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		
 		fDiscoveredInfo = new ProfileInfoProvider(this);

@@ -50,7 +50,7 @@ public interface ITool extends IBuildObject, IHoldsOptions {
 	public static final String CONVERT_TO_ID = "convertToId";				//$NON-NLS-1$
 	public static final String OPTIONPATHCONVERTER = "optionPathConverter";				//$NON-NLS-1$
 	
-	public static final String SUPPORTS_MANAGED_BUILD = "supportsManagedBuild";
+	public static final String SUPPORTS_MANAGED_BUILD = "supportsManagedBuild"; //$NON-NLS-1$
 	
 
 	public static final int FILTER_C = 0;

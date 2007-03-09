@@ -58,7 +58,6 @@ import org.eclipse.cdt.managedbuilder.macros.IBuildMacroProvider;
 import org.eclipse.cdt.managedbuilder.makegen.IManagedBuilderMakefileGenerator;
 import org.eclipse.cdt.managedbuilder.makegen.IManagedBuilderMakefileGenerator2;
 import org.eclipse.cdt.newmake.core.IMakeBuilderInfo;
-import org.eclipse.cdt.newmake.internal.core.MakeMessages;
 import org.eclipse.cdt.newmake.internal.core.StreamMonitor;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
@@ -376,7 +375,7 @@ public class CommonBuilder extends ACBuilder {
 
 			IConfiguration cfgs[] = getReferencedConfigs(builders);
 
-			monitor.beginTask("", num + cfgs.length);
+			monitor.beginTask("", num + cfgs.length); //$NON-NLS-1$
 
 			if(cfgs.length != 0)
 				ManagedBuildManager.buildConfigurations(cfgs, new SubProgressMonitor(monitor, 1));
@@ -424,7 +423,7 @@ public class CommonBuilder extends ACBuilder {
 							IStatus.ERROR,
 							ManagedBuilderCorePlugin.getUniqueIdentifier(),
 							0,
-							"customized builder created for builder that does not support customization",
+							ManagedMakeMessages.getResourceString("CommonBuilder.1"), //$NON-NLS-1$
 							null));
 
 				}
@@ -441,7 +440,7 @@ public class CommonBuilder extends ACBuilder {
 							IStatus.ERROR,
 							ManagedBuilderCorePlugin.getUniqueIdentifier(),
 							0,
-							"request for building non active configuration for the builder that does not support this",
+							ManagedMakeMessages.getResourceString("CommonBuilder.2"), //$NON-NLS-1$
 							null));
 
 				}
@@ -563,7 +562,7 @@ public class CommonBuilder extends ACBuilder {
 	private String concatMessages(List msgs){
 		int size = msgs.size();
 		if(size == 0){
-			return "";
+			return ""; //$NON-NLS-1$
 		} else if(size == 1){
 			return (String)msgs.get(0);
 		} 
@@ -571,7 +570,7 @@ public class CommonBuilder extends ACBuilder {
 		StringBuffer buf = new StringBuffer();
 		buf.append(msgs.get(0));
 		for(int i = 1; i < size; i++){
-			buf.append("\n");
+			buf.append(System.getProperty("line.separator", "\n")); //$NON-NLS-1$ //$NON-NLS-2$
 			buf.append((String)msgs.get(i));
 		}
 		return buf.toString(); 
@@ -752,14 +751,14 @@ public class CommonBuilder extends ACBuilder {
 				buf.append(System.getProperty("line.separator", "\n")); //$NON-NLS-1$//$NON-NLS-2$
 				
 				// Report time and number of threads used
-				buf.append("Time consumed: ");
-				buf.append(t2 - t1);
-				buf.append(" ms.  ");
+				buf.append(ManagedMakeMessages.getFormattedString("CommonBuilder.6", Integer.toString((int)(t2 - t1)))); //$NON-NLS-1$
+//				buf.append(t2 - t1);
+//				buf.append(" ms.  ");
 				if (isParallel) {
-					buf.append("Parallel threads used: ");
-					buf.append(ParallelBuilder.lastThreadsUsed);
+					buf.append(ManagedMakeMessages.getFormattedString("CommonBuilder.7", Integer.toString(ParallelBuilder.lastThreadsUsed))); //$NON-NLS-1$
+//					buf.append(ParallelBuilder.lastThreadsUsed);
 				}
-				buf.append("\n");
+				buf.append(System.getProperty("line.separator", "\n")); //$NON-NLS-1$ //$NON-NLS-2$
 				// Write message on the console 
 				consoleOutStream.write(buf.toString().getBytes());
 				consoleOutStream.flush();
@@ -1293,14 +1292,14 @@ public class CommonBuilder extends ACBuilder {
 		if(buildPath == null){
 			throw new CoreException(new Status(IStatus.ERROR, 
 					ManagedBuilderCorePlugin.getUniqueIdentifier(), 
-					"can not clean programmatically: build workspace path is not specified"));
+					ManagedMakeMessages.getResourceString("CommonBuilder.0"))); //$NON-NLS-1$
 		}
 		
 		IPath projectFullPath = getProject().getFullPath();
 		if(!projectFullPath.isPrefixOf(buildPath)){
 			throw new CoreException(new Status(IStatus.ERROR, 
 					ManagedBuilderCorePlugin.getUniqueIdentifier(), 
-					"can not clean programmatically: build workspace path is not the project path"));
+					ManagedMakeMessages.getResourceString("CommonBuilder.16"))); //$NON-NLS-1$
 		}
 			
 		IWorkspace workspace = CCorePlugin.getWorkspace();
@@ -1309,7 +1308,7 @@ public class CommonBuilder extends ACBuilder {
 			if(rc.getType() != IResource.FOLDER){
 				throw new CoreException(new Status(IStatus.ERROR, 
 						ManagedBuilderCorePlugin.getUniqueIdentifier(), 
-						"can not clean programmatically: build workspace path is not folder"));
+						ManagedMakeMessages.getResourceString("CommonBuilder.12"))); //$NON-NLS-1$
 			}
 			
 			IFolder buildDir = (IFolder)rc;
@@ -1317,7 +1316,7 @@ public class CommonBuilder extends ACBuilder {
 				outputError(buildDir.getName(), "Could not delete the build directory");	//$NON-NLS-1$
 				throw new CoreException(new Status(IStatus.ERROR, 
 						ManagedBuilderCorePlugin.getUniqueIdentifier(), 
-						"can not clean programmatically: build folder is not accessible"));
+						ManagedMakeMessages.getResourceString("CommonBuilder.13"))); //$NON-NLS-1$
 			}
 		String status;		
 		try {
@@ -1365,7 +1364,7 @@ public class CommonBuilder extends ACBuilder {
 		if (monitor == null) {
 			monitor = new NullProgressMonitor();
 		}
-		monitor.beginTask(MakeMessages.getString("MakeBuilder.Invoking_Make_Builder") + currProject.getName(), 100); //$NON-NLS-1$
+		monitor.beginTask(ManagedMakeMessages.getResourceString("MakeBuilder.Invoking_Make_Builder") + currProject.getName(), 100); //$NON-NLS-1$
 
 		try {
 			IPath buildCommand = builder.getBuildCommand();
@@ -1472,11 +1471,11 @@ public class CommonBuilder extends ACBuilder {
 					} catch (IOException e) {
 					}
 					// Before launching give visual cues via the monitor
-					monitor.subTask(MakeMessages.getString("MakeBuilder.Invoking_Command") + launcher.getCommandLine()); //$NON-NLS-1$
+					monitor.subTask(ManagedMakeMessages.getResourceString("MakeBuilder.Invoking_Command") + launcher.getCommandLine()); //$NON-NLS-1$
 					if (launcher.waitAndRead(consoleOut, consoleErr, new SubProgressMonitor(monitor, 0))
 						!= CommandLauncher.OK)
 						errMsg = launcher.getErrorMessage();
-					monitor.subTask(MakeMessages.getString("MakeBuilder.Updating_project")); //$NON-NLS-1$
+					monitor.subTask(ManagedMakeMessages.getResourceString("MakeBuilder.Updating_project")); //$NON-NLS-1$
 
 					try {
 						// Do not allow the cancel of the refresh, since the builder is external
@@ -1497,7 +1496,7 @@ public class CommonBuilder extends ACBuilder {
 						buf.append(' ');
 					}
 
-					String errorDesc = MakeMessages.getFormattedString("MakeBuilder.buildError", buf.toString()); //$NON-NLS-1$
+					String errorDesc = ManagedMakeMessages.getFormattedString("MakeBuilder.buildError", buf.toString()); //$NON-NLS-1$
 					buf = new StringBuffer(errorDesc);
 					buf.append(System.getProperty("line.separator", "\n")); //$NON-NLS-1$ //$NON-NLS-2$
 					buf.append("(").append(errMsg).append(")"); //$NON-NLS-1$ //$NON-NLS-2$
@@ -1508,7 +1507,7 @@ public class CommonBuilder extends ACBuilder {
 				stdout.close();
 				stderr.close();
 
-				monitor.subTask(MakeMessages.getString("MakeBuilder.Creating_Markers")); //$NON-NLS-1$
+				monitor.subTask(ManagedMakeMessages.getResourceString("MakeBuilder.Creating_Markers")); //$NON-NLS-1$
 				consoleOut.close();
 				consoleErr.close();
 				epm.reportProblems();
@@ -1564,7 +1563,7 @@ public class CommonBuilder extends ACBuilder {
 			}
 
 			if(preBuildStep != null && preBuildStep.length() != 0){
-				targetsArray = new String[]{"pre-build", "main-build"};
+				targetsArray = new String[]{"pre-build", "main-build"}; //$NON-NLS-1$ //$NON-NLS-2$
 			}
 		}
 		

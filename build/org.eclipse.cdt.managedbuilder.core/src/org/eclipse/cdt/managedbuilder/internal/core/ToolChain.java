@@ -2091,7 +2091,7 @@ public class ToolChain extends HoldsOptions implements IToolChain, IBuildPropert
 				targetPlatform = new TargetPlatform(this, subId, platform.getName(), (TargetPlatform)extPlatform);
 			} else {
 				String subId = ManagedBuildManager.calculateChildId(getId(), null);
-				targetPlatform = new TargetPlatform(this, null, subId, "", false);
+				targetPlatform = new TargetPlatform(this, null, subId, "", false); //$NON-NLS-1$
 			}
 		}
 			
@@ -2340,7 +2340,7 @@ public class ToolChain extends HoldsOptions implements IToolChain, IBuildPropert
 		String name = getName();
 		String version = ManagedBuildManager.getVersionFromIdAndVersion(getId());
 		if(version != null && version.length() != 0){
-			return new StringBuffer().append(name).append(" (").append(version).append("").toString();
+			return new StringBuffer().append(name).append(" (").append(version).append("").toString(); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		return name;
 	}
@@ -2550,7 +2550,7 @@ public class ToolChain extends HoldsOptions implements IToolChain, IBuildPropert
 			StringBuffer buf = new StringBuffer();
 			buf.append(ids[0]);
 			for(int i = 1; i < ids.length; i++){
-				buf.append(";").append(ids[i]);
+				buf.append(";").append(ids[i]); //$NON-NLS-1$
 			}
 			errorParserIds = buf.toString();
 		}
@@ -2565,7 +2565,7 @@ public class ToolChain extends HoldsOptions implements IToolChain, IBuildPropert
 			if(version != null){
 			StringBuffer buf = new StringBuffer();
 			buf.append(name);
-			buf.append(" (v").append(version).append(")");
+			buf.append(" (v").append(version).append(")"); //$NON-NLS-1$ //$NON-NLS-2$
 			name = buf.toString();
 			}
 		}

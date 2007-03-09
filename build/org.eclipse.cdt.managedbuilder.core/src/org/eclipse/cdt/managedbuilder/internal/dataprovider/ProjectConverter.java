@@ -377,7 +377,7 @@ public class ProjectConverter implements ICProjectConverter {
 				if(throwExceptions)
 					throw new CoreException(new Status(IStatus.ERROR,
 							ManagedBuilderCorePlugin.getUniqueIdentifier(),
-							"the specified project is not an CDT project"));
+							DataProviderMessages.getString("ProjectConverter.0"))); //$NON-NLS-1$
 				return false;
 			}
 
@@ -385,7 +385,7 @@ public class ProjectConverter implements ICProjectConverter {
 				if(throwExceptions)
 					throw new CoreException(new Status(IStatus.ERROR,
 							ManagedBuilderCorePlugin.getUniqueIdentifier(),
-							"the specified project is not an old style make project, the owner ID is " + dr.getProjectOwner().getID()));
+							DataProviderMessages.getString("ProjectConverter.1") + dr.getProjectOwner().getID())); //$NON-NLS-1$
 				return false;
 			}
 			
@@ -395,7 +395,7 @@ public class ProjectConverter implements ICProjectConverter {
 				if(throwExceptions)
 					throw new CoreException(new Status(IStatus.ERROR,
 							ManagedBuilderCorePlugin.getUniqueIdentifier(),
-							"the specified project is not an old style project: the number of configurations is " + cfgs.length));
+							DataProviderMessages.getString("ProjectConverter.2") + cfgs.length)); //$NON-NLS-1$
 				return false;
 			}
 			
@@ -403,7 +403,7 @@ public class ProjectConverter implements ICProjectConverter {
 				if(throwExceptions)
 					throw new CoreException(new Status(IStatus.ERROR,
 							ManagedBuilderCorePlugin.getUniqueIdentifier(),
-							"the specified project is not an old style project: the number of configurations is " + cfgs.length));
+							DataProviderMessages.getString("ProjectConverter.3") + cfgs.length)); //$NON-NLS-1$
 				return false;
 			}
 			
@@ -414,7 +414,7 @@ public class ProjectConverter implements ICProjectConverter {
 				if(throwExceptions)
 					throw new CoreException(new Status(IStatus.ERROR,
 							ManagedBuilderCorePlugin.getUniqueIdentifier(),
-							"the specified project is not an old style make project: nature IDs are " + natureIds.toString()));
+							DataProviderMessages.getString("ProjectConverter.4") + natureIds.toString())); //$NON-NLS-1$
 				return false;
 			}
 			
@@ -425,7 +425,7 @@ public class ProjectConverter implements ICProjectConverter {
 					if(throwExceptions)
 						throw new CoreException(new Status(IStatus.ERROR,
 								ManagedBuilderCorePlugin.getUniqueIdentifier(),
-								"the specified project can not be converted"));
+								DataProviderMessages.getString("ProjectConverter.5"))); //$NON-NLS-1$
 					return false;
 				}
 				
@@ -434,7 +434,7 @@ public class ProjectConverter implements ICProjectConverter {
 					if(throwExceptions)
 						throw new CoreException(new Status(IStatus.ERROR,
 								ManagedBuilderCorePlugin.getUniqueIdentifier(),
-								"the project conversion failed"));
+								DataProviderMessages.getString("ProjectConverter.6"))); //$NON-NLS-1$
 					return false;
 				}
 				
@@ -445,7 +445,7 @@ public class ProjectConverter implements ICProjectConverter {
 							throws CoreException {
 						project.setDescription(eDes, monitor);
 						CCorePlugin.getDefault().setProjectDescription(project, newDes);
-						Job job = new Job("targets conversion"){
+						Job job = new Job(DataProviderMessages.getString("ProjectConverter.7")){ //$NON-NLS-1$
 
 							protected IStatus run(IProgressMonitor monitor) {
 								try {
@@ -475,7 +475,7 @@ public class ProjectConverter implements ICProjectConverter {
 		if(throwExceptions)
 			throw new CoreException(new Status(IStatus.ERROR,
 					ManagedBuilderCorePlugin.getUniqueIdentifier(),
-					"the project conversion failed due to unknown reason"));
+					DataProviderMessages.getString("ProjectConverter.8"))); //$NON-NLS-1$
 		return false;
 	}
 	

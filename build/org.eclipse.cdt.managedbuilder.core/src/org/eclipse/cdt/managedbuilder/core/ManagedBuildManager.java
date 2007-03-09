@@ -153,7 +153,7 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 	public static final String BUILD_ARTEFACT_TYPE_PROPERTY_STATICLIB = "org.eclipse.cdt.build.core.buildArtefactType.staticLib";	//$NON-NLS-1$
 	public static final String BUILD_ARTEFACT_TYPE_PROPERTY_SHAREDLIB = "org.eclipse.cdt.build.core.buildArtefactType.sharedLib";	//$NON-NLS-1$
 
-	public static final String CFG_DATA_PROVIDER_ID = ManagedBuilderCorePlugin.getUniqueIdentifier() + ".configurationDataProvider";
+	public static final String CFG_DATA_PROVIDER_ID = ManagedBuilderCorePlugin.getUniqueIdentifier() + ".configurationDataProvider"; //$NON-NLS-1$
 	
 	private static final String NEWLINE = System.getProperty("line.separator");	//$NON-NLS-1$
 	
@@ -3639,23 +3639,23 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 	}
 	
 	public static String locationToFullPath(String path){
-		if(!path.startsWith("${")) 
+		if(!path.startsWith("${"))  //$NON-NLS-1$
 			return null;
 		int index = path.lastIndexOf('}');
 		if(index == -1)
 			return null;
 		
-		String varName = "workspace_loc";
+		String varName = "workspace_loc"; //$NON-NLS-1$
 		String str1 = path.substring(2, index);
 		String result = null;
 		if(str1.startsWith(varName)){
 			str1 = str1.substring(varName.length());
 			if(str1.length() != 0){
-				if(str1.startsWith(":")){
+				if(str1.startsWith(":")){ //$NON-NLS-1$
 					result = str1.substring(1);
 				}
 			} else {
-				result = "/";
+				result = "/"; //$NON-NLS-1$
 			}
 		}
 		
@@ -3664,7 +3664,7 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 	
 	public static String fullPathToLocation(String path){
 		StringBuffer buf = new StringBuffer();
-		return buf.append("${").append("workspace_loc:").append(path).append("}").toString();
+		return buf.append("${").append("workspace_loc:").append(path).append("}").toString(); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	}
 
 	public static IPath getBuildLocation(IConfiguration cfg, IBuilder builder) {

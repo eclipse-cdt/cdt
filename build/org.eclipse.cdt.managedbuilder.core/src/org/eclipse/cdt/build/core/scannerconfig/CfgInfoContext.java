@@ -21,7 +21,7 @@ import org.eclipse.cdt.managedbuilder.internal.core.Configuration;
 import org.eclipse.core.resources.IProject;
 
 public final class CfgInfoContext{
-	private static final String DELIMITER = ";";
+	private static final String DELIMITER = ";"; //$NON-NLS-1$
 	private static final int NULL_OBJ_CODE = 29;
 	private Configuration fCfg;
 	private IResourceInfo fRcInfo;

@@ -74,7 +74,7 @@ public class ScannerConfigBuilder extends ACBuilder {
 		if(bInfo != null){
 			IConfiguration cfgs[] = bInfo.getManagedProject().getConfigurations();
 			if(cfgs.length != 0){
-				monitor.beginTask(MakeMessages.getString("ScannerConfigBuilder.Invoking_Builder"), cfgs.length);
+				monitor.beginTask(MakeMessages.getString("ScannerConfigBuilder.Invoking_Builder"), cfgs.length); //$NON-NLS-1$
 				for(int i = 0; i < cfgs.length; i++){
 					build(cfgs[i], 0, new SubProgressMonitor(monitor, 1));
 				}
@@ -104,7 +104,7 @@ public class ScannerConfigBuilder extends ACBuilder {
 						int num = infoMap.size();
 						if(num != 0){
 							Properties envProps = calcEnvironment(cfg);
-							monitor.beginTask(MakeMessages.getString("ScannerConfigBuilder.Invoking_Builder"), num);
+							monitor.beginTask(MakeMessages.getString("ScannerConfigBuilder.Invoking_Builder"), num); //$NON-NLS-1$
 							for(Iterator iter = infoMap.entrySet().iterator(); iter.hasNext();){
 								try {
 									Map.Entry entry = (Map.Entry)iter.next();
@@ -144,7 +144,7 @@ public class ScannerConfigBuilder extends ACBuilder {
 
         if (autodiscoveryEnabled2 || ((flags & FORCE_DISCOVERY) != 0)) {
             monitor.beginTask(MakeMessages.getString("ScannerConfigBuilder.Invoking_Builder"), 100); //$NON-NLS-1$
-            monitor.subTask(MakeMessages.getString("ScannerConfigBuilder.Invoking_Builder") +   //$NON-NLS-1$ 
+            monitor.subTask(MakeMessages.getString("ScannerConfigBuilder.Invoking_Builder") + //$NON-NLS-1$
                     project.getName());
             
             if(env == null)

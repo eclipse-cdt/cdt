@@ -200,7 +200,7 @@ public class BuilderFactory {
 	}
 	
 	private static Map builderToMap(IBuilder builder){
-		MapStorageElement el = new MapStorageElement("", null);
+		MapStorageElement el = new MapStorageElement("", null); //$NON-NLS-1$
 		((Builder)builder).serialize(el, false);
 		
 		return el.toStringMap();
@@ -215,7 +215,7 @@ public class BuilderFactory {
 		if(builder != null)
 			return createCustomBuilder(cfg, builder);
 		throw new CoreException(new Status(IStatus.ERROR, ManagedBuilderCorePlugin.getUniqueIdentifier(), -1,
-				"can not find builder with the specified id", null));
+				ManagedMakeMessages.getResourceString("BuilderFactory.1"), null)); //$NON-NLS-1$
 	}
 
 	public static IBuilder createCustomBuilder(IConfiguration cfg, IBuilder base){
@@ -248,7 +248,7 @@ public class BuilderFactory {
 		ICommand command = getBuildSpec(project.getDescription(), eclipseBuilderID);
 		if (command == null) {
 			throw new CoreException(new Status(IStatus.ERROR, ManagedBuilderCorePlugin.getUniqueIdentifier(), -1,
-					MakeMessages.getString("BuildInfoFactory.Missing_Builder") + eclipseBuilderID, null)); //$NON-NLS-1$
+					ManagedMakeMessages.getResourceString("BuildInfoFactory.Missing_Builder") + eclipseBuilderID, null)); //$NON-NLS-1$
 		}
 		
 		return createBuilderFromCommand(cfg, command);

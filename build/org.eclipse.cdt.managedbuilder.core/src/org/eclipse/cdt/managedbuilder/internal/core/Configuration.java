@@ -896,7 +896,7 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 	
 	private IFolderInfo createRootFolderInfo(){
 		String id = ManagedBuildManager.calculateChildId(this.id, null);
-		String name = "/";
+		String name = "/"; //$NON-NLS-1$
 		
 		rootFolderInfo = new FolderInfo(this, new Path(name), id, name, isExtensionConfig);
 		addResourceConfiguration(rootFolderInfo);
@@ -2193,7 +2193,7 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 		if(sourcePaths == null){
 			if(parent != null)
 				return parent.getSourcePaths();
-			return new IPath[]{new Path("")};
+			return new IPath[]{new Path("")}; //$NON-NLS-1$
 			
 		}
 		return (IPath[])sourcePaths.clone();
@@ -2220,7 +2220,7 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 			StringBuffer buf = new StringBuffer();
 			buf.append(ids[0]);
 			for(int i = 1; i < ids.length; i++){
-				buf.append(";").append(ids[i]);
+				buf.append(";").append(ids[i]); //$NON-NLS-1$
 			}
 			errorParserIds = buf.toString();
 		}

@@ -43,7 +43,7 @@ public interface IToolChain extends IBuildObject, IHoldsOptions {
 	public static final String IS_TOOL_CHAIN_SUPPORTED = "isToolChainSupported";			//$NON-NLS-1$
 	public static final String CONFIGURATION_ENVIRONMENT_SUPPLIER = "configurationEnvironmentSupplier";			//$NON-NLS-1$
 	public static final String CONFIGURATION_MACRO_SUPPLIER = "configurationMacroSupplier";			//$NON-NLS-1$
-	public static final String SUPPORTS_MANAGED_BUILD = "supportsManagedBuild";
+	public static final String SUPPORTS_MANAGED_BUILD = "supportsManagedBuild"; //$NON-NLS-1$
 	public static final String IS_SYSTEM= "isSystem";							//$NON-NLS-1$
 	public static final String NON_INTERNAL_BUILDER_ID = "nonInternalBuilderId";	//$NON-NLS-1$
 	public static final String RESOURCE_TYPE_BASED_DISCOVERY = "resourceTypeBasedDiscovery";	//$NON-NLS-1$

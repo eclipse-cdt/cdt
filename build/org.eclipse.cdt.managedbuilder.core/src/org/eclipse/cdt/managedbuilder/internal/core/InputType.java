@@ -613,7 +613,7 @@ public class InputType extends BuildObject implements IInputType {
 		if(array == null)
 			return null;
 		if(array.length == 0)
-			return "";
+			return ""; //$NON-NLS-1$
 		
 		StringBuffer buf = new StringBuffer();
 		buf.append(array[0]);
@@ -1052,10 +1052,10 @@ public class InputType extends BuildObject implements IInputType {
 			//  TODO: This is a temporary hack until we decide how to specify the langauge (C vs. C++)
 			//  of a .h file.  If the content type is the CDT-defined C/C++ content type, then
 			//  add "h" to the list if it is not already there.
-			if (type.getId().compareTo("org.eclipse.cdt.core.cxxHeader") == 0) {  // $NON-NLS-1$
+			if (type.getId().compareTo("org.eclipse.cdt.core.cxxHeader") == 0) {   //$NON-NLS-1$
 				boolean h_found = false;
 				for (int i=0; i<exts.length; i++) {
-					if (exts[i].compareTo("h") == 0) {  // $NON-NLS-1$
+					if (exts[i].compareTo("h") == 0) {  //$NON-NLS-1$
 						h_found = true;
 						break;
 					}
@@ -1066,7 +1066,7 @@ public class InputType extends BuildObject implements IInputType {
 					for (; i<exts.length; i++) {
 						cppexts[i] = exts[i];
 					}
-					cppexts[i] = "h";  // $NON-NLS-1$
+					cppexts[i] = "h";  //$NON-NLS-1$
 					return cppexts;
 				}
 			}

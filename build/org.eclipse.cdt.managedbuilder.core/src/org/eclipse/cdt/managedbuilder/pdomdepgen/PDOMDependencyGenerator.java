@@ -1,5 +1,5 @@
 /**********************************************************************
- * Copyright (c) 2006 QNX Software Systems and others.
+ * Copyright (c) 2006, 2007 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -32,7 +32,7 @@ public class PDOMDependencyGenerator implements IManagedDependencyGenerator2 {
 	}
 
 	public String getDependencyFileExtension(IConfiguration buildContext, ITool tool) {
-		return "";
+		return ""; //$NON-NLS-1$
 	}
 
 	public IManagedDependencyInfo getDependencySourceInfo(IPath source, IBuildObject buildContext, ITool tool, IPath topBuildDirectory) {

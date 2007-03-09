@@ -24,7 +24,6 @@ import org.eclipse.cdt.core.CCProjectNature;
 import org.eclipse.cdt.core.CProjectNature;
 import org.eclipse.cdt.core.settings.model.ICSettingBase;
 import org.eclipse.cdt.core.settings.model.ICStorageElement;
-import org.eclipse.cdt.core.settings.model.extension.CConfigurationDataProvider;
 import org.eclipse.cdt.core.settings.model.extension.CFolderData;
 import org.eclipse.cdt.core.settings.model.extension.CLanguageData;
 import org.eclipse.cdt.core.settings.model.util.CDataUtil;
@@ -105,9 +104,9 @@ public class FolderInfo extends ResourceInfo implements IFolderInfo {
 		isExtensionElement = true;
 		IManagedConfigElement tcEl = null;
 		if(!hasBody){
-			setPath(new Path("/"));
+			setPath(Path.ROOT);
 			setId(ManagedBuildManager.calculateChildId(parent.getId(), null));
-			setName("/");
+			setName("/"); //$NON-NLS-1$
 			tcEl = element;
 		} else {
 			IManagedConfigElement children[] = element.getChildren(IToolChain.TOOL_CHAIN_ELEMENT_NAME);
@@ -127,9 +126,9 @@ public class FolderInfo extends ResourceInfo implements IFolderInfo {
 		setResourceData(new BuildFolderData(this));
 		ICStorageElement tcEl = null;
 		if(!hasBody){
-			setPath(new Path("/"));
+			setPath(Path.ROOT);
 			setId(ManagedBuildManager.calculateChildId(parent.getId(), null));
-			setName("/");
+			setName("/"); //$NON-NLS-1$
 			tcEl = element;
 		} else {
 			ICStorageElement nodes[] = element.getChildren();
@@ -238,7 +237,7 @@ public class FolderInfo extends ResourceInfo implements IFolderInfo {
 				tp = new TargetPlatform(newChain, subId, tpBase.getName(), (TargetPlatform)tpBase);
 			} else {
 				subId = copyIds ? tpBase.getId() : ManagedBuildManager.calculateChildId(getId(), null);
-				subName = tpBase != null ? tpBase.getName() : "";
+				subName = tpBase != null ? tpBase.getName() : ""; //$NON-NLS-1$
 				tp = new TargetPlatform((ToolChain)newChain, null, subId, subName, false);
 			}
 
@@ -457,7 +456,7 @@ public class FolderInfo extends ResourceInfo implements IFolderInfo {
 	
 	public ITool getToolFromOutputExtension(String extension) {
 		// Treat a null argument as an empty string
-		String ext = extension == null ? "" : extension;
+		String ext = extension == null ? "" : extension; //$NON-NLS-1$
 		// Get all the tools for the current config
 		ITool[] tools = getFilteredTools();
 		for (int index = 0; index < tools.length; index++) {
@@ -772,7 +771,7 @@ public class FolderInfo extends ResourceInfo implements IFolderInfo {
 	void updateToolChainWithConverter(IConfigurationElement el, IToolChain newSuperClass, String Id, String name) throws BuildException{
 		IBuildObject bo = ManagedBuildManager.convert(getToolChain(), newSuperClass.getId(), true);
 		if(!(bo instanceof ToolChain)){
-			throw new BuildException("converter invocation failed");
+			throw new BuildException(ManagedMakeMessages.getResourceString("FolderInfo.4")); //$NON-NLS-1$
 		}
 		if(toolChain != bo){
 			setUpdatedToolChain((ToolChain)bo);

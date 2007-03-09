@@ -13,7 +13,7 @@ package org.eclipse.cdt.managedbuilder.core;
 import org.eclipse.cdt.core.settings.model.extension.CFileData;
 
 public interface IFileInfo extends IResourceConfiguration {
-	public static final String FILE_INFO_ELEMENT_NAME = "fileInfo";
+	public static final String FILE_INFO_ELEMENT_NAME = "fileInfo"; //$NON-NLS-1$
 	
 	CFileData getFileData();
 

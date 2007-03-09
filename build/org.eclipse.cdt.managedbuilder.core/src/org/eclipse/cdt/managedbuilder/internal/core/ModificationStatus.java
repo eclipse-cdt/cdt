@@ -33,7 +33,7 @@ public class ModificationStatus extends Status implements IModificationStatus {
 			Set undefinedProps,
 			ITool[][] conflicts,
 			ITool nonMbsTools[]){
-		super(IStatus.OK, ManagedBuilderCorePlugin.getUniqueIdentifier(), "");
+		super(IStatus.OK, ManagedBuilderCorePlugin.getUniqueIdentifier(), ""); //$NON-NLS-1$
 
 		int severity = IStatus.OK;
 		int flags = 0;

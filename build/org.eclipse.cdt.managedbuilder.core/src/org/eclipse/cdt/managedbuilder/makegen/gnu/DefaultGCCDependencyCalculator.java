@@ -127,7 +127,7 @@ public class DefaultGCCDependencyCalculator implements IManagedDependencyGenerat
 				String resolvedCommand = null;
 
 				// does the resource have spaces in its name?
-				if (resource.getProjectRelativePath().toString().indexOf(" ") != -1) {
+				if (resource.getProjectRelativePath().toString().indexOf(" ") != -1) { //$NON-NLS-1$
 					// use fully qualified strings
 					resolvedCommand = ManagedBuildManager
 							.getBuildMacroProvider()
@@ -182,7 +182,7 @@ public class DefaultGCCDependencyCalculator implements IManagedDependencyGenerat
 				String resolvedCommand = null;
 
 				// does the resource have spaces in its name?
-				if (resource.getProjectRelativePath().toString().indexOf(" ") != -1) {
+				if (resource.getProjectRelativePath().toString().indexOf(" ") != -1) { //$NON-NLS-1$
 					// use fully qualified strings
 					resolvedCommand = ManagedBuildManager
 							.getBuildMacroProvider()
@@ -260,7 +260,7 @@ public class DefaultGCCDependencyCalculator implements IManagedDependencyGenerat
 				String resolvedCommand = null;
 
 				// does the resource have spaces in its name?
-				if (resource.getProjectRelativePath().toString().indexOf(" ") != -1) {
+				if (resource.getProjectRelativePath().toString().indexOf(" ") != -1) { //$NON-NLS-1$
 					// use fully qualified strings
 					resolvedCommand = ManagedBuildManager
 							.getBuildMacroProvider()

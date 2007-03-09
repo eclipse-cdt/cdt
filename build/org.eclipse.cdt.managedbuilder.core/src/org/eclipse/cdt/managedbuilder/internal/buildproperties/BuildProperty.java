@@ -40,7 +40,7 @@ public class BuildProperty implements IBuildProperty{
 		if(fType == null){
 			throw new CoreException(new Status(IStatus.ERROR,
 					ManagedBuilderCorePlugin.getUniqueIdentifier(),
-					"the specified type does not exist"));
+					BuildPropertiesMessages.getString("BuildProperty.0"))); //$NON-NLS-1$
 		}
 		setValue(value);
 	}
@@ -60,7 +60,7 @@ public class BuildProperty implements IBuildProperty{
 		if(value == null)
 			throw new CoreException(new Status(IStatus.ERROR,
 				ManagedBuilderCorePlugin.getUniqueIdentifier(),
-				"invalid value id"));
+				BuildPropertiesMessages.getString("BuildProperty.1"))); //$NON-NLS-1$
 
 		setValue(value);
 	}

@@ -23,9 +23,9 @@ public class MapStorageElement implements ICStorageElement {
 	private HashMap fMap;
 	private String fName;
 	private MapStorageElement fParent;
-	private static final String CHILDREN_KEY = "?children?";
-	private static final String NAME_KEY = "?name?";
-	private static final String VALUE_KEY = "?value?";
+	private static final String CHILDREN_KEY = "?children?"; //$NON-NLS-1$
+	private static final String NAME_KEY = "?name?"; //$NON-NLS-1$
+	private static final String VALUE_KEY = "?value?"; //$NON-NLS-1$
 	private List fChildren = new ArrayList();
 	private String fValue;
 

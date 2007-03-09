@@ -25,6 +25,7 @@ import org.eclipse.cdt.managedbuilder.core.IResourceConfiguration;
 import org.eclipse.cdt.managedbuilder.core.ITool;
 import org.eclipse.cdt.managedbuilder.core.IToolChain;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
+import org.eclipse.cdt.managedbuilder.internal.core.ManagedMakeMessages;
 import org.eclipse.cdt.managedbuilder.macros.BuildMacroException;
 import org.eclipse.cdt.managedbuilder.macros.IBuildMacro;
 import org.eclipse.cdt.managedbuilder.macros.IBuildMacroProvider;
@@ -384,7 +385,7 @@ public class MbsMacroSupplier extends BuildCdtVariablesSupplierBase {
 			if(!canHandle(optionContext))
 				optionContext = null;
 			macro = new OptionMacro(macroName,optionContext);
-		} else if("ParentVersion".equals(macroName)){
+		} else if("ParentVersion".equals(macroName)){ //$NON-NLS-1$
 			IHoldsOptions holder = OptionContextData.getHolder(optionContext);
 			if(holder != null && holder.getVersion() != null)
 				macro = new BuildMacro(macroName,IBuildMacro.VALUE_TEXT,holder.getVersion().toString());
@@ -454,7 +455,7 @@ public class MbsMacroSupplier extends BuildCdtVariablesSupplierBase {
 				else {
 					// bad
 					throw new AssertionError(
-							"tool parent must be one of configuration, toolchain, or resource configuration");
+							ManagedMakeMessages.getResourceString("MbsMacroSupplier.1")); //$NON-NLS-1$
 				}
 
 				if (config != null) {
@@ -514,7 +515,7 @@ public class MbsMacroSupplier extends BuildCdtVariablesSupplierBase {
 				else {
 					// bad
 					throw new AssertionError(
-							"tool parent must be one of configuration, toolchain, or resource configuration");
+							ManagedMakeMessages.getResourceString("MbsMacroSupplier.2")); //$NON-NLS-1$
 				}
 
 				if (config != null) {

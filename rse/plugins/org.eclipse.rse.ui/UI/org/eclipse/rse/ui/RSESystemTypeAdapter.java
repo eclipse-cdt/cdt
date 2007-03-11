@@ -190,6 +190,11 @@ public class RSESystemTypeAdapter extends RSEAdapter implements IRSESystemTypeCo
 		IRSESystemType systemType = getSystemType(object);
 		if ( systemType != null) {
 			result = RSEPreferencesManager.getIsSystemTypeEnabled(systemType);
+			// if enabled, check if the system type has any registered subsystems. If
+			// not, this will auto-disable the system type.
+			if (result && RSEUIPlugin.getDefault().getSystemRegistry().getSubSystemConfigurationsBySystemType(systemType, true).length == 0) {
+				result = false;
+			}
 		}
 		return result;
 	}

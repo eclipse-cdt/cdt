@@ -11,3 +11,7 @@ AClass::AClass(int x)throw(int):ABaseClass(x){for (int i=0;i < 12;i++) {}}
 int
 main(int argc, char **argv) {
 }
+// handling of string concat
+char* s1= "this "   "is "  "one ""string.";
+char* s2= "this " "is " 
+"one " "string.";

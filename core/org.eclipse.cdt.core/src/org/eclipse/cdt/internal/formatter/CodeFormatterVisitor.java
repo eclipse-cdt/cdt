@@ -1246,7 +1246,7 @@ public class CodeFormatterVisitor extends CPPASTVisitor {
 		final List initializers = Arrays.asList(node.getInitializers());
 		if (initializers.isEmpty() && preferences.keep_empty_array_initializer_on_one_line) {
 			scribe.printNextToken(Token.tLBRACE, preferences.insert_space_before_opening_brace_in_array_initializer);
-			scribe.printNextToken(Token.tLBRACE, preferences.insert_space_between_empty_braces_in_array_initializer);
+			scribe.printNextToken(Token.tRBRACE, preferences.insert_space_between_empty_braces_in_array_initializer);
 		} else {
 			final int line= scribe.line;
 	        final String brace_position= preferences.brace_position_for_array_initializer;
@@ -1301,7 +1301,39 @@ public class CodeFormatterVisitor extends CPPASTVisitor {
 	}
 
 	private int visit(IASTLiteralExpression node) {
-		scribe.printNextToken(peekNextToken(), scribe.printComment());
+		if (node.getKind() == IASTLiteralExpression.lk_string_literal) {
+			// handle concatentation of string literals
+			if (node.getNodeLocations().length > 1) {
+				// cannot handle embedded macros
+				skipNode(node);
+			} else {
+				int token;
+				boolean needSpace= false;
+				final int line= scribe.line;
+				boolean indented= false;
+				try {
+					while (true) {
+						scribe.printCommentPreservingNewLines();
+						scribe.printNextToken(Token.tSTRING, needSpace);
+						token= peekNextToken();
+						if (token != Token.tSTRING) {
+							break;
+						}
+						needSpace= true;
+						if (!indented && line != scribe.line) {
+							indented= true;
+							scribe.indent();
+						}
+					}
+				} finally {
+					if (indented) {
+						scribe.unIndent();
+					}
+				}
+			}
+		} else {
+			scribe.printNextToken(peekNextToken(), scribe.printComment());
+		}
     	return PROCESS_SKIP;
 	}
 

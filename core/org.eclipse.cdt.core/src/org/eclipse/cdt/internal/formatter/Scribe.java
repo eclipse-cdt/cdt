@@ -608,8 +608,7 @@ public class Scribe {
 	}
 
 	public void printRaw(int startOffset, int length) {
-		assert length >= 0;
-		if (length == 0) {
+		if (length <= 0) {
 			return;
 		}
 		if (startOffset > scanner.getCurrentPosition()) {
@@ -873,8 +872,9 @@ public class Scribe {
 
 	public void printEndOfTranslationUnit() {
 		int currentTokenStartPosition= scanner.getCurrentPosition();
-		printRaw(currentTokenStartPosition, scannerEndPosition - currentTokenStartPosition + 1);
-		return;
+		if (currentTokenStartPosition <= scannerEndPosition) {
+			printRaw(currentTokenStartPosition, scannerEndPosition - currentTokenStartPosition + 1);
+		}
 	}
 
 	public boolean printComment() {
@@ -1580,6 +1580,16 @@ public class Scribe {
 		}
 		scanner.resetTo(skipStart, scannerEndPosition - 1);
 		return false;
+	}
+
+	public boolean printCommentPreservingNewLines() {
+		final boolean savedPreserveNL= this.preserveNewlines;
+		this.preserveNewlines= true;
+		try {
+			return printComment();
+		} finally {
+			this.preserveNewlines= savedPreserveNL;
+		}
 	}
 
 }

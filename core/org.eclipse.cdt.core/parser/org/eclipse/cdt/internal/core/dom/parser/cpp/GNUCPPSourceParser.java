@@ -1839,9 +1839,13 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
                 templateIdScopes.push(IToken.tLPAREN);
             }
             IASTExpression lhs = expression();
-            int finalOffset = Integer.MAX_VALUE;
-            if (LT(1) == IToken.tRPAREN)
+            int finalOffset= 0;
+            if (LT(1) == IToken.tRPAREN) {
                 finalOffset = consume().getEndOffset();
+            } else {
+            	// missing parenthesis, assume it's there and keep going.
+            	finalOffset = LA(1).getOffset();
+            }
             if (templateIdScopes.size() > 0) {
                 templateIdScopes.pop();
             }

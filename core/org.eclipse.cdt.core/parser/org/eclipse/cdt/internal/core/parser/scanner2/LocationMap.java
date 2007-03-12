@@ -1892,6 +1892,7 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
         _WeightedContext[] result = new _WeightedContext[2];
         _Context cc = null;
         int currentCount = 0;
+        length= Math.min(tu.context_ends, length);
         for (int i = offset; i < offset + length; ++i) {
             _Context r = tu.findContextContainingOffset(i);
             if (cc == null) {

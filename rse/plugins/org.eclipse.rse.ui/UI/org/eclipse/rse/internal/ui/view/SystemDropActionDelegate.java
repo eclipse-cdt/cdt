@@ -18,6 +18,7 @@ package org.eclipse.rse.internal.ui.view;
 
 import java.util.ArrayList;
 
+import org.eclipse.core.resources.IProjectNature;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
@@ -53,9 +54,11 @@ public class SystemDropActionDelegate implements IDropActionDelegate
 		String localPath = null;
 		IResource resource = null;
 		
+		if (target instanceof IProjectNature)
+		{
+			target = ((IProjectNature)target).getProject();
+		}
 		
-		
-
 		if (target instanceof IResource)
 		{		
 			resource = (IResource) target;

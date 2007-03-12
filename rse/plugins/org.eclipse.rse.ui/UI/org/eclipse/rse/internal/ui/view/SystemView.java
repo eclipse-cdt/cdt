@@ -47,9 +47,9 @@ import org.eclipse.jface.viewers.IBasicPropertyConstants;
 import org.eclipse.jface.viewers.IContentProvider;
 import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ILabelDecorator;
+import org.eclipse.jface.viewers.IPostSelectionProvider;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
-import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.ITreePathContentProvider;
@@ -125,7 +125,6 @@ import org.eclipse.rse.ui.view.ISystemViewInputProvider;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.dnd.DND;
-import org.eclipse.swt.dnd.FileTransfer;
 import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.KeyAdapter;
@@ -162,7 +161,8 @@ import org.eclipse.ui.views.framelist.GoIntoAction;
  * At one time implemented the following as well: MenuListener, IDoubleClickListener, ArmListener, IWireEventTarget
  */
 public class SystemView extends SafeTreeViewer implements ISystemTree, ISystemResourceChangeListener, ISystemRemoteChangeListener, IMenuListener,
-		ISelectionChangedListener, ISelectionProvider, ITreeViewerListener, ISystemResourceChangeEvents, ISystemDeleteTarget, ISystemRenameTarget, ISystemSelectAllTarget
+IPostSelectionProvider,		
+ISelectionChangedListener, ITreeViewerListener, ISystemResourceChangeEvents, ISystemDeleteTarget, ISystemRenameTarget, ISystemSelectAllTarget
 {
 
 	protected Shell shell; // shell hosting this viewer
@@ -5023,8 +5023,10 @@ public class SystemView extends SafeTreeViewer implements ISystemTree, ISystemRe
 	protected void initDragAndDrop() {
 		int ops = DND.DROP_COPY | DND.DROP_MOVE;
 		Transfer[] transfers = new Transfer[] { PluginTransfer.getInstance(),
-		/*ResourceTransfer.getInstance(),*/
-		FileTransfer.getInstance(), EditorInputTransfer.getInstance() };
+		/*ResourceTransfer.getInstance(),
+		FileTransfer.getInstance(), 
+		*/
+		EditorInputTransfer.getInstance() };
 		addDragSupport(ops | DND.DROP_DEFAULT, transfers, new SystemViewDataDragAdapter(this));
 		addDropSupport(ops | DND.DROP_DEFAULT, transfers, new SystemViewDataDropAdapter(this));
 	}

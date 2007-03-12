@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation. All rights reserved.
+ * Copyright (c) 2006, 2007 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -11,7 +11,8 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * David Dykstal (IBM) - moved methods to SystemPreferencesManager
+ * David Dykstal (IBM) - moved methods to SystemPreferencesManager.
+ * Uwe Stieber (Wind River) - bugfixing.
  ********************************************************************************/
 
 package org.eclipse.rse.ui;
@@ -500,14 +501,22 @@ public class RSEUIPlugin extends SystemBasePlugin implements ISystemMessageProvi
 	      	//logError("Error creating default Local connection", exc);
 	      //}
 //	    }
-		 // new support to allow products to not pre-create a local connection
-		if (SystemResourceManager.isFirstTime() && SystemPreferencesManager.getShowLocalConnection()) {	
-			ISystemProfileManager profileManager = SystemProfileManager.getSystemProfileManager();
-			ISystemProfile profile = profileManager.getDefaultPrivateSystemProfile();
-			String userName = System.getProperty("user.name"); //$NON-NLS-1$
-			registry.createLocalHost(profile, SystemResources.TERM_LOCAL, userName);
-	    }
-    }
+		
+		// new support to allow products to not pre-create a local connection
+		if (SystemResourceManager.isFirstTime() && SystemPreferencesManager.getShowLocalConnection()) {
+			// create the connection only if the local system type is enabled!
+			IRSESystemType systemType = RSECorePlugin.getDefault().getRegistry().getSystemTypeById(IRSESystemType.SYSTEMTYPE_LOCAL_ID);
+			if (systemType != null) {
+				RSESystemTypeAdapter adapter = (RSESystemTypeAdapter)(systemType.getAdapter(IRSESystemType.class));
+				if (adapter != null && adapter.isEnabled(systemType)) {
+					ISystemProfileManager profileManager = SystemProfileManager.getSystemProfileManager();
+					ISystemProfile profile = profileManager.getDefaultPrivateSystemProfile();
+					String userName = System.getProperty("user.name"); //$NON-NLS-1$
+					registry.createLocalHost(profile, SystemResources.TERM_LOCAL, userName);
+				}
+			}
+		}
+	}
 
     /**
      * For pathpath access to our adapters for non-local objects in our model. Exploits the knowledge we use singleton adapters.

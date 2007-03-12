@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation and Wind River Systems, Inc. All rights reserved.
+ * Copyright (c) 2006, 2007 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -13,6 +13,7 @@
  * Contributors:
  * Michael Scharf (Wind River) - patch for an NPE in getSubSystemConfigurations()
  * David Dykstal (IBM) - moved SystemsPreferencesManager to a new package
+ * Uwe Stieber (Wind River) - bugfixing
  ********************************************************************************/
 
 package org.eclipse.rse.model;
@@ -256,16 +257,9 @@ public class SystemRegistry implements ISystemRegistryUI, ISystemModelChangeEven
 			IRSESystemType sysType = RSECorePlugin.getDefault().getRegistry().getSystemType(con.getSystemType());
 			if (sysType != null) { // sysType can be null if workspace contains a host that is no longer defined by the workbench
 				RSESystemTypeAdapter adapter = (RSESystemTypeAdapter)(sysType.getAdapter(IRSESystemType.class));
-				if (adapter.isEnabled(sysType)) {
-					
-					// Bug 154524 Local node is shown in RSE even though the Local subsystem is not installed
-					// so we check for subsystems
-					ISubSystem[] subsystems = con.getSubSystems();
-					
-					if (subsystems != null && subsystems.length != 0) {
-						result.add(con);
-					}
-				}
+				// Note: System types without registered subsystems get disabled by the adapter itself!
+				//       There is no need to re-check this here again.
+				if (adapter.isEnabled(sysType)) result.add(con);
 			}
 		}
 		return result.toArray();

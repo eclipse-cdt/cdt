@@ -256,7 +256,6 @@ public abstract class AbstractLangsListTab extends AbstractCPropertyTab {
 						ICLanguageSettingEntry ent = (ICLanguageSettingEntry)it.next();
 						if (ent.isBuiltIn()) lstS.add(ent);
 					}
-					Collections.sort(lstS, CDTListComparator.getInstance());
 					incs.addAll(lstS);
 				}
 			}

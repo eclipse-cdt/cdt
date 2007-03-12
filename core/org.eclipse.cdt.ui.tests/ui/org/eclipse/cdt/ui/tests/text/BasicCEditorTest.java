@@ -114,6 +114,7 @@ public class BasicCEditorTest extends BaseUITestCase {
 		assertEquals("Edit failed", newtext, newContent.substring(0, newtext.length()));
 		// save
 		fEditor.doSave(new NullProgressMonitor());
+		assertFalse("Editor is still dirty", fEditor.isDirty());
 		// close and reopen
 		EditorTestHelper.closeEditor(fEditor);
 		setUpEditor(file);
@@ -141,6 +142,7 @@ public class BasicCEditorTest extends BaseUITestCase {
 		assertEquals("Edit failed", newtext, newContent.substring(0, newtext.length()));
 		// save
 		fEditor.doSave(new NullProgressMonitor());
+		assertFalse("Editor is still dirty", fEditor.isDirty());
 		// close and reopen
 		EditorTestHelper.closeEditor(fEditor);
 		setUpEditor(tmpFile);

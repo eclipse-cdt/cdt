@@ -863,7 +863,7 @@ public class CDocumentProvider extends TextFileDocumentProvider {
 				}
 			};
 		}
-		return super.createSaveOperation(element, document, overwrite);
+		return null;
 	}
 
 	/**

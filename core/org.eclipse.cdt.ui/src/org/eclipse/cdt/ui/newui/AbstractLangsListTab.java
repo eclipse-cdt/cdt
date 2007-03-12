@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 
 import org.eclipse.jface.resource.JFaceResources;
@@ -66,10 +67,16 @@ public abstract class AbstractLangsListTab extends AbstractCPropertyTab {
 //	protected boolean showBI = false;
 //	boolean  savedShowBI  = false;
 	protected ICLanguageSetting lang;
-	protected List incs;
-	protected List exported; 
+	protected LinkedList incs;
+	protected ArrayList exported; 
 	protected SashForm sashForm;
 	
+	protected final static String[] BUTTONS = {ADD_STR, EDIT_STR, DEL_STR, 
+			NewUIMessages.getResourceString("AbstractLangsListTab.2"), //$NON-NLS-1$
+    		null, MOVEUP_STR, MOVEDOWN_STR };
+	protected final static String[] BUTTSYM = {ADD_STR, EDIT_STR, DEL_STR, 
+		NewUIMessages.getResourceString("AbstractLangsListTab.2")}; //$NON-NLS-1$
+
 	private final static Image IMG_FS = CPluginImages.get(CPluginImages.IMG_FILESYSTEM); 
 	private final static Image IMG_WS = CPluginImages.get(CPluginImages.IMG_WORKSPACE); 
 	private final static Image IMG_MK = CPluginImages.get(CPluginImages.IMG_OBJS_MACRO);
@@ -149,27 +156,38 @@ public abstract class AbstractLangsListTab extends AbstractCPropertyTab {
 	    	}
 	    });
 	    additionalTableSet();
-	    initButtons(new String[] {ADD_STR, EDIT_STR, DEL_STR, NewUIMessages.getResourceString("AbstractLangsListTab.2")}); //$NON-NLS-1$
+	    initButtons((getKind() == ICSettingEntry.MACRO) ? BUTTSYM : BUTTONS); 
 	    updateData(getResDesc());
 	}
 	
-	
     /**
-     * Updates state of add/edit/delete buttons
+     * Updates state for all buttons
      * Called when table selection changes.
      */
     public void updateButtons() {
-    	int i = table.getSelectionIndex();
-		boolean x = i != -1;
-		boolean y = x;
-		if (x) {
-			ICLanguageSettingEntry ent = (ICLanguageSettingEntry)(table.getItem(i).getData());
-			if (ent.isReadOnly()) x = false;
-			if (ent.isBuiltIn() || ent.isReadOnly()) y = false;
+    	int index = table.getSelectionIndex();
+    	boolean canAdd = langTree.getItemCount() > 0;
+		boolean canExport = index != -1;
+		boolean canEdit = canExport;
+		boolean canDelete = canEdit;
+		if (canExport) {
+			ICLanguageSettingEntry ent = (ICLanguageSettingEntry)(table.getItem(index).getData());
+			if (ent.isReadOnly()) canEdit = false;
+			if (ent.isBuiltIn() || ent.isReadOnly()) canDelete = false;
 		}
-		buttonSetEnabled(0, langTree.getItemCount() > 0);
-    	buttonSetEnabled(1, x);
-    	buttonSetEnabled(2, y);
+    	boolean canMoveUp = canDelete && index > 0;
+    	boolean canMoveDown = canDelete && (index < table.getItemCount() - 1); 
+    	if (canMoveDown && showBIButton.getSelection()) {
+    		ICLanguageSettingEntry ent = (ICLanguageSettingEntry)(table.getItem(index+1).getData());
+    		if (ent.isBuiltIn()) canMoveDown = false; // cannot exchange with built in
+    	}
+    	buttonSetEnabled(0, canAdd); // add
+    	buttonSetEnabled(1, canEdit); // edit
+    	buttonSetEnabled(2, canDelete); // delete
+    	buttonSetEnabled(3, canExport); // export
+    	// there is a separator instead of button #4
+    	buttonSetEnabled(5, canMoveUp); // up
+    	buttonSetEnabled(6, canMoveDown); // down
     }
 	
 	private Tree addTree(Composite comp) {
@@ -212,29 +230,37 @@ public abstract class AbstractLangsListTab extends AbstractCPropertyTab {
 	/**
 	 * Called when language changed or item added/edited/removed.
 	 * Refreshes whole table contwnts
+	 * 
+	 * Note, this method is rewritten in Symbols tab.
 	 */
-	public void update() {
+	public void update() { update(0); } 
+   
+	public void update(int shift) {
 		if (lang != null) {
 			int x = table.getSelectionIndex();
-			if (x == -1) x = 0;
+			if (x == -1) x = 0; 
+			else x += shift; // used only for UP/DOWN 
 			
-			ArrayList lst = new ArrayList();
-			
-			incs = lang.getSettingEntriesList(getKind());
-			if (incs == null) incs = new ArrayList(0);
-			Iterator it = incs.iterator();
-			boolean userOnly = !showBIButton.getSelection();
-			
-			while (it.hasNext()) {
-				ICLanguageSettingEntry ent = (ICLanguageSettingEntry)it.next();
-				
-				if (ent.isBuiltIn() && userOnly)
-					continue; // do not show built-in values
-				lst.add(ent);
+			incs = new LinkedList();
+			List lst = lang.getSettingEntriesList(getKind());
+			if (lst != null) {
+				Iterator it = lst.iterator();
+				while (it.hasNext()) {
+					ICLanguageSettingEntry ent = (ICLanguageSettingEntry)it.next();
+					if (!ent.isBuiltIn()) incs.add(ent);
+				}
+				if (showBIButton.getSelection()) {
+					ArrayList lstS = new ArrayList();
+					it = lst.iterator();
+					while (it.hasNext()) {
+						ICLanguageSettingEntry ent = (ICLanguageSettingEntry)it.next();
+						if (ent.isBuiltIn()) lstS.add(ent);
+					}
+					Collections.sort(lstS, CDTListComparator.getInstance());
+					incs.addAll(lstS);
+				}
 			}
-			Collections.sort(lst, CDTListComparator.getInstance());
-			tv.setInput(lst.toArray(new Object[lst.size()]));
-			
+			tv.setInput(incs.toArray(new Object[incs.size()]));
 			if (table.getItemCount() > x) table.select(x);
 			else if (table.getItemCount() > 0) table.select(0);
 		}		
@@ -285,7 +311,7 @@ public abstract class AbstractLangsListTab extends AbstractCPropertyTab {
 		}
 	}
 	/**
-	 * Unified "Add/Edit/Delete" buttons handler
+	 * Unified buttons handler
 	 */
 	public void buttonPressed(int i) {
 		ICLanguageSettingEntry ent;
@@ -312,8 +338,9 @@ public abstract class AbstractLangsListTab extends AbstractCPropertyTab {
 			if (old.isReadOnly()) return;
 			ent = doEdit(old);
 			if (ent != null) {
-				incs.remove(old);
-				incs.add(ent);
+				int toModify = incs.indexOf(old);
+				incs.remove(toModify);
+				incs.add(toModify, ent);
 				lang.setSettingEntries(getKind(), incs);
 				update();
 			}
@@ -332,6 +359,23 @@ public abstract class AbstractLangsListTab extends AbstractCPropertyTab {
 			page.getResDesc().getConfiguration().createExternalSetting(new String[] {lang.getId()}, null, null, new ICLanguageSettingEntry[] {old});
 			updateExport();
 			update();
+			break;
+		// there is a separator instead of button #4
+		case 5: // move up	
+		case 6: // move down
+			old = (ICLanguageSettingEntry)(table.getItem(n).getData());
+			int x = incs.indexOf(old);
+			if (x < 0) break;
+			if (i == 6) x++; // "down" simply means "up underlying item"
+			old = (ICLanguageSettingEntry)incs.get(x);
+			ICLanguageSettingEntry old2 = (ICLanguageSettingEntry)incs.get(x - 1);
+			incs.remove(x);
+			incs.remove(x - 1);
+			incs.add(x - 1, old);
+			incs.add(x, old2);
+			lang.setSettingEntries(getKind(), incs);
+			update(i == 5 ? -1 : 1);			
+			break;			
 		default:
 			break;
 		}

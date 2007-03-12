@@ -10,6 +10,11 @@
  *******************************************************************************/
 package org.eclipse.cdt.ui.newui;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.LinkedList;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.TableColumn;
 
@@ -18,7 +23,6 @@ import org.eclipse.cdt.core.settings.model.ICLanguageSettingEntry;
 import org.eclipse.cdt.core.settings.model.ICSettingEntry;
 
 public class SymbolTab extends AbstractLangsListTab {
-
     public void additionalTableSet() {
     	TableColumn tc = new TableColumn(table, SWT.LEFT);
     	tc.setText(NewUIMessages.getResourceString("SymbolTab.0")); //$NON-NLS-1$
@@ -51,4 +55,28 @@ public class SymbolTab extends AbstractLangsListTab {
 	}
 	
 	public int getKind() { return ICSettingEntry.MACRO; }
+
+	// Specific version of "update()" for Symbols tab only
+	public void update() {
+		if (lang != null) {
+			int x = table.getSelectionIndex();
+			if (x == -1) x = 0;
+			
+			ArrayList lst = new ArrayList();
+			incs = new LinkedList(lang.getSettingEntriesList(getKind())); 
+			if (incs != null) {
+				Iterator it = incs.iterator();
+				while (it.hasNext()) {
+					ICLanguageSettingEntry ent = (ICLanguageSettingEntry)it.next();
+					if (!(ent.isBuiltIn() && (!showBIButton.getSelection()))) lst.add(ent);
+				}
+				Collections.sort(lst, CDTListComparator.getInstance());
+			}
+			tv.setInput(lst.toArray(new Object[lst.size()]));
+			if (table.getItemCount() > x) table.select(x);
+			else if (table.getItemCount() > 0) table.select(0);
+		}		
+		updateButtons();
+	}
+	
 }

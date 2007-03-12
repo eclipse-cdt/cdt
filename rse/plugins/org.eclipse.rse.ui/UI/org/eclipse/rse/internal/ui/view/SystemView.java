@@ -125,6 +125,7 @@ import org.eclipse.rse.ui.view.ISystemViewInputProvider;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.dnd.DND;
+import org.eclipse.swt.dnd.FileTransfer;
 import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.KeyAdapter;
@@ -5016,21 +5017,28 @@ ISelectionChangedListener, ITreeViewerListener, ISystemResourceChangeEvents, ISy
 		return expandable;
 	}
 
-	/**
-	 * Initialize drag and drop support for this view.
-	 * 
-	 */
-	protected void initDragAndDrop() {
-		int ops = DND.DROP_COPY | DND.DROP_MOVE;
-		Transfer[] transfers = new Transfer[] { PluginTransfer.getInstance(),
-		/*ResourceTransfer.getInstance(),
-		FileTransfer.getInstance(), 
-		*/
-		EditorInputTransfer.getInstance() };
-		addDragSupport(ops | DND.DROP_DEFAULT, transfers, new SystemViewDataDragAdapter(this));
-		addDropSupport(ops | DND.DROP_DEFAULT, transfers, new SystemViewDataDropAdapter(this));
-	}
 
+    /**
+     * Initialize drag and drop support for this view.
+     * 
+     */  
+    protected void initDragAndDrop() 
+    {
+        int ops = DND.DROP_COPY | DND.DROP_MOVE;
+        Transfer[] dragtransfers = new Transfer[]   
+            { PluginTransfer.getInstance(), 
+        		EditorInputTransfer.getInstance()
+            };  
+   
+        Transfer[] droptransfers = new Transfer[]   
+            { PluginTransfer.getInstance(), 
+        		FileTransfer.getInstance(),
+                EditorInputTransfer.getInstance()
+             };  
+        
+        addDragSupport(ops | DND.DROP_DEFAULT, dragtransfers, new SystemViewDataDragAdapter(this));
+        addDropSupport(ops | DND.DROP_DEFAULT, droptransfers, new SystemViewDataDropAdapter(this));
+    }
 	// ----------------------------------
 	// Support for EXPAND TO-> ACTIONS...
 	// ----------------------------------

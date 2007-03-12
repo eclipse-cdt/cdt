@@ -90,6 +90,7 @@ import org.eclipse.rse.ui.messages.ISystemMessageLine;
 import org.eclipse.rse.ui.messages.SystemMessageDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.DND;
+import org.eclipse.swt.dnd.FileTransfer;
 import org.eclipse.swt.dnd.TextTransfer;
 import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.events.KeyAdapter;
@@ -809,14 +810,12 @@ public class SystemTableView
 	protected void initDragAndDrop()
 	{
 		int ops = DND.DROP_COPY | DND.DROP_MOVE;
-		Transfer[] transfers = new Transfer[] { PluginTransfer.getInstance(), TextTransfer.getInstance(), EditorInputTransfer.getInstance()
-				/*, FileTransfer.getInstance()*/
-				};
-
-		addDragSupport(ops, transfers, new SystemViewDataDragAdapter(this));
-		addDropSupport(ops | DND.DROP_DEFAULT, transfers, new SystemViewDataDropAdapter(this));
+		Transfer[] dragtransfers = new Transfer[] { PluginTransfer.getInstance(), TextTransfer.getInstance(),  EditorInputTransfer.getInstance()};
+		Transfer[] droptransfers = new Transfer[] { PluginTransfer.getInstance(), TextTransfer.getInstance(), FileTransfer.getInstance(), EditorInputTransfer.getInstance()};
+		
+		addDragSupport(ops, dragtransfers, new SystemViewDataDragAdapter((ISelectionProvider) this));
+		addDropSupport(ops | DND.DROP_DEFAULT, droptransfers, new SystemViewDataDropAdapter(this));
 	}
-
 	/** 
 	 * Used to asynchronously update the view whenever properties change.
 	 * @see org.eclipse.rse.model.ISystemResourceChangeListener#systemResourceChanged(org.eclipse.rse.model.ISystemResourceChangeEvent)

@@ -26,9 +26,8 @@ public abstract class AbstractDelegatingConnectorService implements IDelegatingC
 		_host = host;
 	}
 	
-
 	public abstract IConnectorService getRealConnectorService();
-	
+
 	public void addCommunicationsListener(ICommunicationsListener listener) 
 	{
 		IConnectorService conServ = getRealConnectorService();
@@ -36,7 +35,24 @@ public abstract class AbstractDelegatingConnectorService implements IDelegatingC
 		{
 			conServ.addCommunicationsListener(listener);
 		}
-		
+	}
+	
+	public boolean addPropertySet(IPropertySet set) {
+		IConnectorService conServ = getRealConnectorService();
+		if (conServ != null)
+		{
+			return conServ.addPropertySet(set);
+		}
+		return false;
+	}
+
+	public boolean addPropertySets(IPropertySet[] sets) {
+		IConnectorService conServ = getRealConnectorService();
+		if (conServ != null)
+		{
+			return conServ.addPropertySets(sets);
+		}
+		return false;
 	}
 
 	public void clearPassword(boolean clearDiskCache) {
@@ -45,7 +61,6 @@ public abstract class AbstractDelegatingConnectorService implements IDelegatingC
 		{
 			conServ.clearPassword(clearDiskCache);
 		}
-
 	}
 
 	public void clearUserId() {
@@ -56,12 +71,39 @@ public abstract class AbstractDelegatingConnectorService implements IDelegatingC
 		}
 	}
 
+	public boolean commit() {
+		IConnectorService conServ = getRealConnectorService();
+		if (conServ != null)
+		{
+			return conServ.commit();
+		}
+		return false;
+	}
+
 	public void connect(IProgressMonitor monitor) throws Exception {
 		IConnectorService conServ = getRealConnectorService();
 		if (conServ != null)
 		{
 			conServ.connect(monitor);
 		}
+	}
+
+	public IPropertySet createPropertySet(String name) {
+		IConnectorService conServ = getRealConnectorService();
+		if (conServ != null)
+		{
+			return conServ.createPropertySet(name);
+		}
+		return null;
+	}
+
+	public IPropertySet createPropertySet(String name, String description) {
+		IConnectorService conServ = getRealConnectorService();
+		if (conServ != null)
+		{
+			return conServ.createPropertySet(name, description);
+		}
+		return null;
 	}
 
 	public void deregisterSubSystem(ISubSystem ss) {
@@ -78,7 +120,15 @@ public abstract class AbstractDelegatingConnectorService implements IDelegatingC
 		{
 			conServ.disconnect(monitor);
 		}
+	}
 
+	public String getDescription() {
+		IConnectorService conServ = getRealConnectorService();
+		if (conServ != null)
+		{
+			return conServ.getDescription();
+		}
+		return null;
 	}
 
 	public String getHomeDirectory() 
@@ -141,6 +191,33 @@ public abstract class AbstractDelegatingConnectorService implements IDelegatingC
 		return null;
 	}
 
+	public IPropertySet getPropertySet(String name) {
+		IConnectorService conServ = getRealConnectorService();
+		if (conServ != null)
+		{
+			return conServ.getPropertySet(name);
+		}
+		return null;
+	}
+
+	public IPropertySet[] getPropertySets() {
+		IConnectorService conServ = getRealConnectorService();
+		if (conServ != null)
+		{
+			return conServ.getPropertySets();
+		}
+		return null;
+	}
+
+	public IServerLauncher getRemoteServerLauncher() {
+		IConnectorService conServ = getRealConnectorService();
+		if (conServ != null)
+		{
+			return conServ.getRemoteServerLauncher();
+		}
+		return null;
+	}
+
 	public IServerLauncherProperties getRemoteServerLauncherProperties() {
 		IConnectorService conServ = getRealConnectorService();
 		if (conServ != null)
@@ -186,6 +263,15 @@ public abstract class AbstractDelegatingConnectorService implements IDelegatingC
 		return null;
 	}
 
+	public boolean hasPassword(boolean onDisk) {
+		IConnectorService conServ = getRealConnectorService();
+		if (conServ != null)
+		{
+			return conServ.hasPassword(onDisk);
+		}
+		return false;
+	}
+
 	public boolean hasRemoteServerLauncherProperties() {
 		IConnectorService conServ = getRealConnectorService();
 		if (conServ != null)
@@ -213,11 +299,21 @@ public abstract class AbstractDelegatingConnectorService implements IDelegatingC
 		return false;
 	}
 
-	public boolean hasPassword(boolean onDisk) {
+	public boolean isDirty() {
 		IConnectorService conServ = getRealConnectorService();
 		if (conServ != null)
 		{
-			return conServ.hasPassword(onDisk);
+			return conServ.isDirty();
+		}
+		return false;
+	}
+
+	public boolean isServerLaunchTypeEnabled(ISubSystem subsystem,
+			ServerLaunchType serverLaunchType) {
+		IConnectorService conServ = getRealConnectorService();
+		if (conServ != null)
+		{
+			return conServ.isServerLaunchTypeEnabled(subsystem, serverLaunchType);
 		}
 		return false;
 	}
@@ -265,6 +361,15 @@ public abstract class AbstractDelegatingConnectorService implements IDelegatingC
 		}
 	}
 
+	public boolean removePropertySet(String name) {
+		IConnectorService conServ = getRealConnectorService();
+		if (conServ != null)
+		{
+			return conServ.removePropertySet(name);
+		}
+		return false;
+	}
+
 	public boolean requiresPassword() {
 		IConnectorService conServ = getRealConnectorService();
 		if (conServ != null)
@@ -288,6 +393,14 @@ public abstract class AbstractDelegatingConnectorService implements IDelegatingC
 		if (conServ != null)
 		{
 			conServ.reset();
+		}
+	}
+
+	public void setDirty(boolean flag) {
+		IConnectorService conServ = getRealConnectorService();
+		if (conServ != null)
+		{
+			conServ.setDirty(flag);
 		}
 	}
 
@@ -349,6 +462,14 @@ public abstract class AbstractDelegatingConnectorService implements IDelegatingC
 		}
 	}
 
+	public void setWasRestored(boolean flag) {
+		IConnectorService conServ = getRealConnectorService();
+		if (conServ != null)
+		{
+			conServ.setWasRestored(flag);
+		}
+	}
+
 	public boolean shareUserPasswordWithConnection() {
 		IConnectorService conServ = getRealConnectorService();
 		if (conServ != null)
@@ -385,6 +506,7 @@ public abstract class AbstractDelegatingConnectorService implements IDelegatingC
 		return false;
 	}
 
+
 	public boolean supportsUserId() {
 		IConnectorService conServ = getRealConnectorService();
 		if (conServ != null)
@@ -394,111 +516,6 @@ public abstract class AbstractDelegatingConnectorService implements IDelegatingC
 		return false;
 	}
 
-	public String getDescription() {
-		IConnectorService conServ = getRealConnectorService();
-		if (conServ != null)
-		{
-			return conServ.getDescription();
-		}
-		return null;
-	}
-
-	public boolean addPropertySet(IPropertySet set) {
-		IConnectorService conServ = getRealConnectorService();
-		if (conServ != null)
-		{
-			return conServ.addPropertySet(set);
-		}
-		return false;
-	}
-
-	public boolean addPropertySets(IPropertySet[] sets) {
-		IConnectorService conServ = getRealConnectorService();
-		if (conServ != null)
-		{
-			return conServ.addPropertySets(sets);
-		}
-		return false;
-	}
-
-	public IPropertySet createPropertySet(String name) {
-		IConnectorService conServ = getRealConnectorService();
-		if (conServ != null)
-		{
-			return conServ.createPropertySet(name);
-		}
-		return null;
-	}
-
-	public IPropertySet createPropertySet(String name, String description) {
-		IConnectorService conServ = getRealConnectorService();
-		if (conServ != null)
-		{
-			return conServ.createPropertySet(name, description);
-		}
-		return null;
-	}
-
-	public IPropertySet getPropertySet(String name) {
-		IConnectorService conServ = getRealConnectorService();
-		if (conServ != null)
-		{
-			return conServ.getPropertySet(name);
-		}
-		return null;
-	}
-
-	public IPropertySet[] getPropertySets() {
-		IConnectorService conServ = getRealConnectorService();
-		if (conServ != null)
-		{
-			return conServ.getPropertySets();
-		}
-		return null;
-	}
-
-	public boolean removePropertySet(String name) {
-		IConnectorService conServ = getRealConnectorService();
-		if (conServ != null)
-		{
-			return conServ.removePropertySet(name);
-		}
-		return false;
-	}
-
-	public boolean commit() {
-		IConnectorService conServ = getRealConnectorService();
-		if (conServ != null)
-		{
-			return conServ.commit();
-		}
-		return false;
-	}
-
-	public boolean isDirty() {
-		IConnectorService conServ = getRealConnectorService();
-		if (conServ != null)
-		{
-			return conServ.isDirty();
-		}
-		return false;
-	}
-
-	public void setDirty(boolean flag) {
-		IConnectorService conServ = getRealConnectorService();
-		if (conServ != null)
-		{
-			conServ.setDirty(flag);
-		}
-	}
-
-	public void setWasRestored(boolean flag) {
-		IConnectorService conServ = getRealConnectorService();
-		if (conServ != null)
-		{
-			conServ.setWasRestored(flag);
-		}
-	}
 
 	public boolean wasRestored() {
 		IConnectorService conServ = getRealConnectorService();

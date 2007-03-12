@@ -230,24 +230,21 @@ public class CConfigWizardPage extends MBSCustomPage {
      */
     public void setVisible(boolean visible) {
     	isVisible = visible;
-		if (handler != null) {
-			if (handler.needsConfig()) { 
+		if (visible && handler != null) { 
+			if (handler.needsConfig()) {
 				tv.setInput(cfgItems(getDefaultCfgs(handler)));
 				tv.setAllChecked(true);
-//				setPageComplete(validatePage());
-				if (visible) {
-					String s = EMPTY_STR;
-					IToolChain[] tc = handler.getSelectedToolChains();
-					for (int i=0; i < tc.length; i++) {
-						s = s + tc[i].getName();
-						if (i < tc.length - 1) s = s + ", ";  //$NON-NLS-1$
-					}
-					l_chains.setText(s);
-					l_projtype.setText(handler.getName());
+				String s = EMPTY_STR;
+				IToolChain[] tc = handler.getSelectedToolChains();
+				for (int i=0; i < tc.length; i++) {
+					s = s + tc[i].getName();
+					if (i < tc.length - 1) s = s + ", ";  //$NON-NLS-1$
 				}
+				l_chains.setText(s);
+				l_projtype.setText(handler.getName());
 			}
+			propButton.setSelection(handler.showProperties());
 		}
-		propButton.setSelection(handler.showProperties());
 		parent.setVisible(visible);
 		if (visible) update();
     }

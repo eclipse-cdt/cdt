@@ -40,7 +40,7 @@ public class CPPASTName extends CPPASTNode implements IASTName {
     private static final char[] EMPTY_CHAR_ARRAY = {};
 	private static final String EMPTY_STRING = "";  //$NON-NLS-1$
 
-	private static final int MAX_RESOLUTION_DEPTH = 3;
+	private static final int MAX_RESOLUTION_DEPTH = 5;
 
     private IBinding binding = null;
     private int fResolutionDepth= 0;
@@ -75,6 +75,12 @@ public class CPPASTName extends CPPASTNode implements IASTName {
         }
         return binding;
     }
+
+	public void incResolutionDepth() {
+		if (binding == null && ++fResolutionDepth > MAX_RESOLUTION_DEPTH) {
+			binding= new RecursionResolvingBinding(this);
+		}
+	}
 
     public IASTCompletionContext getCompletionContext() {
         IASTNode node = getParent();

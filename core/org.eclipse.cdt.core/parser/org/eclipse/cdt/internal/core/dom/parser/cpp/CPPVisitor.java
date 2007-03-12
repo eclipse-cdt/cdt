@@ -940,6 +940,9 @@ public class CPPVisitor {
 				IASTName ns [] = ((ICPPASTQualifiedName)name).getNames();
 				name = ns[ ns.length - 1 ];
 			}
+			if (name instanceof CPPASTName) {
+				((CPPASTName) name).incResolutionDepth();
+			}
 			IBinding binding = name.getBinding();
 			if( binding == null ){
 				binding = CPPSemantics.resolveBinding( name );

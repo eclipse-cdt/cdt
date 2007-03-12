@@ -1610,7 +1610,7 @@ ISelectionChangedListener, ITreeViewerListener, ISystemResourceChangeEvents, ISy
 					logDebugMsg("SV event: EVENT_ADD "); //$NON-NLS-1$
 				}
 				clearSelection();
-				//refresh(parent);
+				//refresh(parent);t
 				parentItem = findItem(parent);
 				if (parentItem == null) return Status.OK_STATUS;
 				if ((parentItem instanceof Item) && !getExpanded((Item) parentItem)) {
@@ -1630,8 +1630,32 @@ ISelectionChangedListener, ITreeViewerListener, ISystemResourceChangeEvents, ISy
 						if (pos >= 0) pos++; // want to add after previous
 					} else
 						pos = _event.getPosition();
+					
+					Item[] currentItems = null;
+					if (parentItem instanceof Tree)
+					{
+						currentItems = ((Tree)parentItem).getItems();
+					}
+					else
+					{	
+						currentItems = getItems((Item)parentItem);
+					}
+					boolean exists = false;
+					// check for src
+					for (int i = 0; i < currentItems.length && !exists; i++)
+					{
+						Item cur = currentItems[i];
+						if (cur.getData() == src)
+						{
+							exists = true;
+						}
+					}
+
 					//logDebugMsg("ADDING CONN? "+ addingConnection + ", position="+pos);
-					createTreeItem(parentItem, src, pos);
+					if (!exists)
+					{
+						createTreeItem(parentItem, src, pos);
+					}
 					setSelection(new StructuredSelection(src), true);
 				}
 				break;

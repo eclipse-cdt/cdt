@@ -77,7 +77,7 @@ import org.eclipse.cdt.internal.ui.dialogs.StatusInfo;
  *   communication way for new CDT model pages and tabs.   
  */
 public abstract class AbstractCPropertyTab implements ICPropertyTab {
-	public static final int BUTTON_WIDTH = 100; // used as hint for all push buttons
+	public static final int BUTTON_WIDTH = 120; // used as hint for all push buttons
 
 	// commonly used button names
 	public static final String EMPTY_STR = ""; //$NON-NLS-1$
@@ -88,9 +88,9 @@ public abstract class AbstractCPropertyTab implements ICPropertyTab {
 	public static final String MOVEDOWN_STR = NewUIMessages.getResourceString("FileListControl.movedown"); //$NON-NLS-1$
 	public static final String WORKSPACEBUTTON_NAME = NewUIMessages.getResourceString("FileListControl.button.workspace"); //$NON-NLS-1$
 	public static final String FILESYSTEMBUTTON_NAME = NewUIMessages.getResourceString("FileListControl.button.fs"); //$NON-NLS-1$
-	public static final String VARIABLESBUTTON_NAME = "Variables..."; //$NON-NLS-1$ 
+	public static final String VARIABLESBUTTON_NAME = NewUIMessages.getResourceString("AbstractCPropertyTab.1"); //$NON-NLS-1$
 	public static final String FILESYSTEM_DIR_DIALOG_MSG = NewUIMessages.getResourceString("BrowseEntryDialog.fs.dir.dlg.msg");	//$NON-NLS-1$
-	public static final String FILESYSTEM_FILE_DIALOG_TITLE = ""; //$NON-NLS-1$	
+	public static final String FILESYSTEM_FILE_DIALOG_TITLE = EMPTY_STR;	
 	public static final String WORKSPACE_DIR_DIALOG_TITLE = NewUIMessages.getResourceString("BrowseEntryDialog.wsp.dir.dlg.title");	//$NON-NLS-1$
 	public static final String WORKSPACE_FILE_DIALOG_TITLE = NewUIMessages.getResourceString("BrowseEntryDialog.wsp.file.dlg.title");	//$NON-NLS-1$
 	public static final String WORKSPACE_DIR_DIALOG_MSG = NewUIMessages.getResourceString("BrowseEntryDialog.wsp.dir.dlg.msg");	//$NON-NLS-1$
@@ -159,7 +159,7 @@ public abstract class AbstractCPropertyTab implements ICPropertyTab {
 			GridData gdb = new GridData(GridData.VERTICAL_ALIGN_CENTER);
 			gdb.grabExcessHorizontalSpace = false;
 			gdb.horizontalAlignment = SWT.FILL;
-			gdb.widthHint = width;
+			gdb.minimumWidth = width;
 			
 			if (names[i] != null)
 				buttons[i].setText(names[i]);
@@ -266,7 +266,7 @@ public abstract class AbstractCPropertyTab implements ICPropertyTab {
 		b.setText(name);
 		setupControl(b, span, mode);
 		GridData g = (GridData)b.getLayoutData();
-		g.widthHint = BUTTON_WIDTH;
+		g.minimumWidth = BUTTON_WIDTH;
 		g.horizontalAlignment = SWT.RIGHT;
 		b.setLayoutData(g);
 		return b;

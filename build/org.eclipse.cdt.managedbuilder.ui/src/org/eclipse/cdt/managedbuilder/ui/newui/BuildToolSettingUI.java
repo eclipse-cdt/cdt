@@ -158,7 +158,7 @@ public class BuildToolSettingUI extends AbstractToolSettingUI {
 	 * Creates the group that contains the build artifact name controls.
 	 */
 	private void createAdvancedSettingsGroup(FontMetrics fm) {
-		addField( createLabelEditor( getFieldEditorParent(), WHITESPACE ) ); //$NON-NLS-1$
+		addField( createLabelEditor( getFieldEditorParent(), WHITESPACE ) );
 		addField( createLabelEditor( getFieldEditorParent(), NewUIMessages.getResourceString(ADVANCED_GROUP) ) );
 		
 		// Add a string editor to edit the tool command line pattern

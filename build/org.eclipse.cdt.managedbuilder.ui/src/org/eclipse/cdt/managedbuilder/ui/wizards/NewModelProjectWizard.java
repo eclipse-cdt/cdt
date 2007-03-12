@@ -126,7 +126,7 @@ public abstract class NewModelProjectWizard extends BasicNewResourceWizard imple
 		if (monitor == null) {
 			monitor = new NullProgressMonitor();
 		}
-		monitor.beginTask(NewUIMessages.getResourceString(MSG_CREATE), 8); //$NON-NLS-1$
+		monitor.beginTask(NewUIMessages.getResourceString(MSG_CREATE), 8);
 		
 		newProject = createIProject(fMainPage.getProjectName(), fMainPage.getProjectLocation());
 		if (newProject != null) {

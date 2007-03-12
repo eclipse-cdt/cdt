@@ -65,7 +65,8 @@ public class ErrorParsTab extends AbstractCPropertyTab {
 		
 		initButtons(new String[] {
 				MOVEUP_STR, MOVEDOWN_STR, null, 
-				"Check all", "Uncheck all"  //$NON-NLS-1$//$NON-NLS-2$
+				NewUIMessages.getResourceString("ErrorParsTab.0"), //$NON-NLS-1$
+				NewUIMessages.getResourceString("ErrorParsTab.1")  //$NON-NLS-1$
 				});
 		initMapParsers();
 	}

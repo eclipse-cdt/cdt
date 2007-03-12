@@ -181,7 +181,7 @@ public class CPropertyVarsTab extends AbstractCPropertyTab {
 					return "? " + var.getValueType();   //$NON-NLS-1$
 				}
 			case 2:
-				return getString(var);  //$NON-NLS-1$
+				return getString(var);  
 			}
 			return EMPTY_STR;
 		}

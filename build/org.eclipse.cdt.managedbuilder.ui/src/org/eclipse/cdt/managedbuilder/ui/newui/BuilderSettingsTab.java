@@ -26,9 +26,6 @@ import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.layout.FormAttachment;
-import org.eclipse.swt.layout.FormData;
-import org.eclipse.swt.layout.FormLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -201,11 +198,13 @@ public class BuilderSettingsTab extends AbstractCBuildPropertyTab {
 			}} );
 		Composite c = new Composite(g5, SWT.NONE);
 		setupControl(c, 2, GridData.FILL_HORIZONTAL);
-		FormLayout f = new FormLayout();
+		GridLayout f = new GridLayout(4, false);
 		c.setLayout(f);
-		b_dirVars = setupBottomButton(c, VARIABLESBUTTON_NAME, null);
-		b_dirFile = setupBottomButton(c, FILESYSTEMBUTTON_NAME, b_dirVars);
-		b_dirWsp = setupBottomButton(c, WORKSPACEBUTTON_NAME, b_dirFile);
+		Label dummy = new Label(c, 0);
+		dummy.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		b_dirWsp = setupBottomButton(c, WORKSPACEBUTTON_NAME);
+		b_dirFile = setupBottomButton(c, FILESYSTEMBUTTON_NAME);
+		b_dirVars = setupBottomButton(c, VARIABLESBUTTON_NAME);
 	}
 
 	void setManagedBuild(boolean enable) {
@@ -301,16 +300,11 @@ public class BuilderSettingsTab extends AbstractCBuildPropertyTab {
 		}
 	}
 	
-	Button setupBottomButton(Composite c, String name, Control x) {
+	Button setupBottomButton(Composite c, String name) {
 		Button b = new Button(c, SWT.PUSH);
-		b.setText(name); 
-		FormData fd = new FormData();
-		fd.width = BUTTON_WIDTH;
-		fd.top = new FormAttachment(0, 2);
-		if (x != null) 
-			fd.right = new FormAttachment(x, -5);
-		else
-			fd.right = new FormAttachment(100, 0);
+		b.setText(name);
+		GridData fd = new GridData(GridData.CENTER);
+		fd.minimumWidth = BUTTON_WIDTH; 
 		b.setLayoutData(fd);
 		b.setData(t_dir);
 		b.addSelectionListener(new SelectionAdapter() {

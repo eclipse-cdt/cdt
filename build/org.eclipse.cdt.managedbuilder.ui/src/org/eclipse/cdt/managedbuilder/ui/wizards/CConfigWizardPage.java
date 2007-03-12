@@ -123,7 +123,7 @@ public class CConfigWizardPage extends MBSCustomPage {
 		});
 		tv.setLabelProvider(new LabelProvider() {
 			public String getText(Object element) {
-				return element == null ? EMPTY_STR : ((CfgItem)element).name;//$NON-NLS-1$
+				return element == null ? EMPTY_STR : ((CfgItem)element).name;
 			}
 			public Image getImage(Object element) { return IMG; }
 		});

@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITextSelection;
@@ -31,11 +32,17 @@ import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IBinding;
+import org.eclipse.cdt.core.dom.ast.ICompositeType;
+import org.eclipse.cdt.core.dom.ast.IEnumeration;
+import org.eclipse.cdt.core.dom.ast.ITypedef;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.core.index.IIndexFile;
 import org.eclipse.cdt.core.index.IIndexFileLocation;
 import org.eclipse.cdt.core.index.IIndexName;
+import org.eclipse.cdt.core.index.IndexFilter;
 import org.eclipse.cdt.core.index.IndexLocationFactory;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.ICElement;
@@ -53,12 +60,50 @@ import org.eclipse.cdt.internal.corext.util.CModelUtil;
 public class IndexUI {
 	private static final ICElementHandle[] EMPTY_ELEMENTS = new ICElementHandle[0];
 
-	public static IIndexBinding elementToBinding(IIndex index, ICElement element) throws CoreException {
-		IIndexName name= elementToName(index, element);
-		if (name != null) {
-			return index.findBinding(name);
+	public static IIndexBinding elementToBinding(IIndex index, ICElement element) throws CoreException, DOMException {
+		if (element instanceof ISourceReference) {
+			ISourceReference sf = ((ISourceReference)element);
+			ISourceRange range= sf.getSourceRange();
+			if (range.getIdLength() != 0) {
+				IIndexName name= elementToName(index, element);
+				if (name != null) {
+					return index.findBinding(name);
+				}
+			}
+			else {
+				String name= element.getElementName();
+				name= name.substring(name.lastIndexOf(':')+1);
+				IIndexBinding[] bindings= index.findBindings(name.toCharArray(), IndexFilter.ALL, new NullProgressMonitor());
+				for (int i = 0; i < bindings.length; i++) {
+					IIndexBinding binding = bindings[i];
+					if (checkBinding(binding, element)) {
+						return binding;
+					}
+				}
+			}
 		}
 		return null;
+	}
+
+	private static boolean checkBinding(IIndexBinding binding, ICElement element) throws DOMException {
+		switch(element.getElementType()) {
+		case ICElement.C_ENUMERATION:
+			return binding instanceof IEnumeration;
+		case ICElement.C_NAMESPACE:
+			return binding instanceof ICPPNamespace;
+		case ICElement.C_STRUCT:
+			return binding instanceof ICompositeType && 
+				((ICompositeType) binding).getKey() == ICompositeType.k_struct;
+		case ICElement.C_CLASS:
+			return binding instanceof ICPPClassType && 
+				((ICompositeType) binding).getKey() == ICPPClassType.k_class;
+		case ICElement.C_UNION:
+			return binding instanceof ICompositeType && 
+				((ICompositeType) binding).getKey() == ICompositeType.k_union;
+		case ICElement.C_TYPEDEF:
+			return binding instanceof ITypedef;
+		}
+		return false;
 	}
 
 	public static IIndexName elementToName(IIndex index, ICElement element) throws CoreException {

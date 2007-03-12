@@ -37,6 +37,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.text.IRegion;
+import org.eclipse.jface.text.Region;
 
 abstract class CElementHandle implements ICElementHandle, ISourceReference {
 	protected static final String[] EMPTY_STRING_ARRAY = new String[0];
@@ -60,6 +61,7 @@ abstract class CElementHandle implements ICElementHandle, ISourceReference {
 		else {
 			fName= name;
 		}
+		fRegion= new Region(0,0);
 	}
 	
 	public boolean equals(Object obj) {

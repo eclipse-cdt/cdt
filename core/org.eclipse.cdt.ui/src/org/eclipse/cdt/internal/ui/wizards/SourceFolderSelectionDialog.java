@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2006 QNX Software Systems and others.
+ * Copyright (c) 2004, 2007 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,10 +7,12 @@
  *
  * Contributors:
  *     QNX Software Systems - initial API and implementation
+ *     Anton Leherbauer (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.wizards;
 
 import org.eclipse.jface.viewers.ILabelProvider;
+import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.swt.widgets.Shell;
@@ -34,16 +36,22 @@ public class SourceFolderSelectionDialog extends ElementTreeSelectionDialog {
     private static final Class[] FILTER_CLASSES = new Class[] { ICModel.class, ICContainer.class, ICProject.class };
     private static final ViewerFilter fFilter = new TypedViewerFilter(FILTER_CLASSES);
     
-    private static final CElementContentProvider fContentProvider = new CElementContentProvider();
-    private static final ILabelProvider fLabelProvider = new CElementLabelProvider(CElementLabelProvider.SHOW_DEFAULT);
     private static final ViewerSorter fSorter = new CElementSorter();
     
     public SourceFolderSelectionDialog(Shell parent) {
-        super(parent, fLabelProvider, fContentProvider);
+        super(parent, createLabelProvider(), createContentProvider());
         setValidator(fValidator);
         setComparator(fSorter);
         addFilter(fFilter);
         setTitle(NewWizardMessages.getString("SourceFolderSelectionDialog.title")); //$NON-NLS-1$
         setMessage(NewWizardMessages.getString("SourceFolderSelectionDialog.description")); //$NON-NLS-1$
     }
+
+	private static ITreeContentProvider createContentProvider() {
+		return new CElementContentProvider();
+	}
+
+	private static ILabelProvider createLabelProvider() {
+		return new CElementLabelProvider(CElementLabelProvider.SHOW_DEFAULT);
+	}
 }

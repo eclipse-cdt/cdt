@@ -70,10 +70,10 @@ public class SystemDropActionDelegate implements IDropActionDelegate
 		}
 		else if (target instanceof IAdaptable)
 		{
-		    Object resourceObj = ((IAdaptable)target).getAdapter(IResource.class);
-		    if (resourceObj != null && resourceObj instanceof IResource)
+		    target = ((IAdaptable)target).getAdapter(IResource.class);
+		    if (target != null && target instanceof IResource)
 		    {
-		        resource = (IResource)resourceObj;
+		        resource = (IResource)target;
 		        localPath = resource.getLocation().toOSString();
 		    }
 		}

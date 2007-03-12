@@ -29,54 +29,114 @@ public interface IRSESystemType extends IAdaptable {
 
 	/**
 	 * Linux system type, "Linux".
+	 * @deprecated Use {@link #SYSTEMTYPE_LINUX_ID}.
 	 */
 	public static final String SYSTEMTYPE_LINUX = "Linux"; //$NON-NLS-1$
+	
+	/**
+	 * Linus system type, "org.eclipse.rse.systemtype.linux".
+	 */
+	public static final String SYSTEMTYPE_LINUX_ID = "org.eclipse.rse.systemtype.linux"; //$NON-NLS-1$
 
 	/**
 	 * Power Linux type, "Power Linux".
+	 * @deprecated Use {@link #SYSTEMTYPE_POWER_LINUX_ID}.
 	 */
 	public static final String SYSTEMTYPE_POWER_LINUX = "Power Linux"; //$NON-NLS-1$
+	
+	/**
+	 * Power Linux type, "org.eclipse.rse.systemtype.linux.power".
+	 */
+	public static final String SYSTEMTYPE_POWER_LINUX_ID = "org.eclipse.rse.systemtype.linux.power"; //$NON-NLS-1$
 
 	/**
 	 * Power Linux type, "zSeries Linux".
+	 * @deprecated Use {@link #SYSTEMTYPE_ZSERIES_LINUX_ID}.
 	 */
 	public static final String SYSTEMTYPE_ZSERIES_LINUX = "zSeries Linux"; //$NON-NLS-1$
 
 	/**
+	 * Power Linux type, "org.eclipse.rse.systemtype.linux.zseries".
+	 */
+	public static final String SYSTEMTYPE_ZSERIES_LINUX_ID = "org.eclipse.rse.systemtype.linux.zSeries"; //$NON-NLS-1$
+	
+	/**
 	 * Unix system type, "Unix".
+	 * @deprecated Use {@link #SYSTEMTYPE_UNIX_ID}.
 	 */
 	public static final String SYSTEMTYPE_UNIX = "Unix"; //$NON-NLS-1$
 
 	/**
+	 * Unix system type, "org.eclipse.rse.systemtype.unix".
+	 */
+	public static final String SYSTEMTYPE_UNIX_ID = "org.eclipse.rse.systemtype.unix"; //$NON-NLS-1$
+	
+	/**
 	 * AIX system type, "AIX".
+	 * @deprecated Use {@link #SYSTEMTYPE_AIX_ID}.
 	 */
 	public static final String SYSTEMTYPE_AIX = "AIX"; //$NON-NLS-1$
 
 	/**
+	 * AIX system type, "org.eclipse.rse.systemtype.aix".
+	 */
+	public static final String SYSTEMTYPE_AIX_ID = "org.eclipse.rse.systemtype.aix"; //$NON-NLS-1$
+	
+	/**
 	 * PASE system type, "PASE".
+	 * @deprecated Use {@link #SYSTEMTYPE_PASE_ID}.
 	 */
 	public static final String SYSTEMTYPE_PASE = "PASE"; //$NON-NLS-1$
 
 	/**
+	 * PASE system type, "org.eclipse.rse.systemtype.PASE".
+	 */
+	public static final String SYSTEMTYPE_PASE_ID = "org.eclipse.rse.systemtype.iseries.PASE"; //$NON-NLS-1$
+	
+	/**
 	 * iSeries system type, "iSeries".
+	 * @deprecated Use {@link #SYSTEMTYPE_ISERIES_ID}.
 	 */
 	public static final String SYSTEMTYPE_ISERIES = "iSeries"; //$NON-NLS-1$
 
 	/**
+	 * iSeries system type, "org.eclipse.rse.systemtype.iseries".
+	 */
+	public static final String SYSTEMTYPE_ISERIES_ID = "org.eclipse.rse.systemtype.iseries"; //$NON-NLS-1$
+	
+	/**
 	 * Local system type, "Local".
+	 * @deprecated Use {@link #SYSTEMTYPE_LOCAL_ID}.
 	 */
 	public static final String SYSTEMTYPE_LOCAL = "Local"; //$NON-NLS-1$
 
 	/**
+	 * Local system type, "org.eclipse.rse.systemtype.local".
+	 */
+	public static final String SYSTEMTYPE_LOCAL_ID = "org.eclipse.rse.systemtype.local"; //$NON-NLS-1$
+	
+	/**
 	 * z/OS system type, "z/OS".
+	 * @deprecated Use {@link #SYSTEMTYPE_ZSERIES_ID}.
 	 */
 	public static final String SYSTEMTYPE_ZSERIES = "z/OS"; //$NON-NLS-1$
 
 	/**
+	 * z/OS system type, "org.eclipse.rse.systemtype.zseries".
+	 */
+	public static final String SYSTEMTYPE_ZSERIES_ID = "org.eclipse.rse.systemtype.zseries"; //$NON-NLS-1$
+	
+	/**
 	 * Windows system type, "Windows".
+	 * @deprecated Use {@link #SYSTEMTYPE_WINDOWS_ID}.
 	 */
 	public static final String SYSTEMTYPE_WINDOWS = "Windows"; //$NON-NLS-1$
 
+	/**
+	 * Windows system type, "org.eclipse.rse.systemtype.windows".
+	 */
+	public static final String SYSTEMTYPE_WINDOWS_ID = "org.eclipse.rse.systemtype.windows"; //$NON-NLS-1$
+	
 	/**
 	 * Returns the id of the system type.
 	 * @return the id of the system type
